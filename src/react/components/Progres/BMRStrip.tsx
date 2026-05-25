@@ -7,11 +7,11 @@
 //   M: 10·kg + 6.25·cm - 5·age + 5
 //   F: 10·kg + 6.25·cm - 5·age - 161
 //
-// Height NOT collected in OnboardingData (D046 §28-H5 GDPR scope: age/sex/
-// weight/goal/frequency/experience only). Average-by-sex fallback per
-// Romanian population norms 178cm M / 165cm F provides usable BMR estimate
-// without adding onboarding friction (Gigel filter). Post-Beta optional
-// height field consideration.
+// Height collected in onboarding (P-02 — step 7, fitness metric pentru
+// Mifflin-St Jeor BMR + US Navy BF%). Real height din onboardingStore.data.
+// height feeds formula direct. Sex-average fallback per Romanian population
+// norms (178cm M / 165cm F) pastrat DOAR pentru useri pre-v3 cu height null
+// (onboarded inainte de P-02) — zero regresie BMR pentru ei.
 //
 // Renders empty placeholder cand sex/weight/age incomplete (T0 fresh user
 // pre-onboarding).
@@ -21,8 +21,8 @@ import { Flame } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import type { Sex } from '../../stores/onboardingStore';
 
-// Romanian population height averages (INS data ~2020). Used as BMR fallback
-// when explicit height NU collected (current onboarding scope). Heuristic
+// Romanian population height averages (INS data ~2020). BMR fallback DOAR
+// pentru useri pre-v3 cu height null (onboarded inainte de P-02). Heuristic
 // surfaces useful estimate vs no data at all (Gigel filter: scan-ready value).
 const HEIGHT_CM_BY_SEX_AVG: Record<Sex, number> = {
   m: 178,
@@ -31,16 +31,19 @@ const HEIGHT_CM_BY_SEX_AVG: Record<Sex, number> = {
 
 /**
  * Mifflin-St Jeor BMR (kcal/day). Returns null cand inputs incomplete.
+ * Foloseste height-ul colectat (P-02); fallback sex-avg doar cand height null
+ * (user pre-v3) — Gigel vede estimare utila in loc de placeholder.
  */
 function computeMifflinStJeorBMR(
   sex: Sex | null,
   weightKg: number | null,
   ageYears: number | null,
+  heightCm: number | null,
 ): number | null {
   if (sex === null || weightKg === null || ageYears === null) return null;
   if (weightKg <= 0 || ageYears <= 0) return null;
-  const heightCm = HEIGHT_CM_BY_SEX_AVG[sex];
-  const base = 10 * weightKg + 6.25 * heightCm - 5 * ageYears;
+  const h = heightCm !== null && heightCm > 0 ? heightCm : HEIGHT_CM_BY_SEX_AVG[sex];
+  const base = 10 * weightKg + 6.25 * h - 5 * ageYears;
   const bmr = sex === 'm' ? base + 5 : base - 161;
   return Math.round(bmr);
 }
@@ -49,7 +52,8 @@ export function BMRStrip(): JSX.Element {
   const sex = useOnboardingStore((s) => s.data.sex);
   const weight = useOnboardingStore((s) => s.data.weight);
   const age = useOnboardingStore((s) => s.data.age);
-  const bmr = computeMifflinStJeorBMR(sex, weight, age);
+  const height = useOnboardingStore((s) => s.data.height);
+  const bmr = computeMifflinStJeorBMR(sex, weight, age, height);
 
   return (
     <section

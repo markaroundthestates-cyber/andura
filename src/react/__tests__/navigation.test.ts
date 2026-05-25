@@ -24,6 +24,10 @@ describe('Navigation helper — mockup goto() convention LOCK', () => {
     expect(gotoPath('onb-7')).toBe('/onboarding/7');
   });
 
+  it('onb-8 → /onboarding/8 (P-02 summary step)', () => {
+    expect(gotoPath('onb-8')).toBe('/onboarding/8');
+  });
+
   it('antrenor → /app/antrenor', () => {
     expect(gotoPath('antrenor')).toBe('/app/antrenor');
   });

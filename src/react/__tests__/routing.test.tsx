@@ -104,8 +104,9 @@ describe('Routing — top-level screens', () => {
   it('renders Onboarding step la /onboarding/3', () => {
     renderAt('/onboarding/3');
     // Phase 5 task_14: Onboarding refactored with Big 6 hard typing — step 3
-    // renders goal selection cu "Ce vrei sa obtii?" heading.
-    expect(screen.getByText(/Pasul 3 din 7/i)).toBeInTheDocument();
+    // renders goal selection cu "Ce vrei sa obtii?" heading. P-02: 8 pasi
+    // (inaltime step 7, summary step 8).
+    expect(screen.getByText(/Pasul 3 din 8/i)).toBeInTheDocument();
   });
 });
 
@@ -131,7 +132,7 @@ describe('Routing — ProtectedRoute redirect', () => {
     useAppStore.getState().setAuthenticated(true);
     useOnboardingStore.setState({ completed: false, completedAt: null });
     renderAt('/app/antrenor');
-    expect(screen.getByText(/Pasul 1 din 7/i)).toBeInTheDocument();
+    expect(screen.getByText(/Pasul 1 din 8/i)).toBeInTheDocument();
     useAppStore.getState().setAuthenticated(false);
   });
 });

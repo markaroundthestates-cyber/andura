@@ -9,9 +9,9 @@ import { useOnboardingStore, validateOnboardingField } from '../../stores/onboar
 import type { OnboardingData } from '../../stores/onboardingStore';
 import { toast } from '../../lib/toast';
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 8;
 
-type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export function Onboarding(): JSX.Element {
   const { step } = useParams<{ step: string }>();
@@ -45,6 +45,10 @@ export function Onboarding(): JSX.Element {
     if (stepNum === 6) {
       if (data.weight === null) return { ok: false, reason: 'Completeaza greutatea.' };
       return validateOnboardingField('weight', data.weight);
+    }
+    if (stepNum === 7) {
+      if (data.height === null) return { ok: false, reason: 'Completeaza inaltimea.' };
+      return validateOnboardingField('height', data.height);
     }
     return { ok: true };
   }
@@ -100,7 +104,8 @@ export function Onboarding(): JSX.Element {
       {stepNum === 4 && <Step4 value={data.frequency} onChange={(v) => setField('frequency', v)} />}
       {stepNum === 5 && <Step5 value={data.experience} onChange={(v) => setField('experience', v)} />}
       {stepNum === 6 && <Step6 value={data.weight} onChange={(v) => setField('weight', v)} />}
-      {stepNum === 7 && <Step7 data={data} />}
+      {stepNum === 7 && <Step7Height value={data.height} onChange={(v) => setField('height', v)} />}
+      {stepNum === 8 && <Step8Summary data={data} />}
 
       <div className="flex-1" />
 
@@ -357,7 +362,63 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
   );
 }
 
-function Step7({ data }: { data: OnboardingData }): JSX.Element {
+// P-02 — Inaltime step (mockup andura-clasic.html #screen-onb-inaltime L599-
+// 621 "Cat esti de inalt?"). Fitness metric necesar Mifflin-St Jeor BMR +
+// US Navy BF% (NU medical). Bounds 120-230 cm match ONBOARDING_BOUNDS.height
+// + SettingsProfile composition input. Modeled pe Step6 (weight) numeric
+// pattern: keystroke commits allowed, range gate + aria-invalid on out-of-range.
+function Step7Height({ value, onChange }: NumericStepProps): JSX.Element {
+  // A11Y HIGH chat5 parity — surface range validation pentru screen reader.
+  // Show doar daca value e ne-null + out-of-range. WCAG SC 3.3.1 + 3.3.3.
+  const error = value !== null && (value < 120 || value > 230)
+    ? 'Inaltime intre 120 si 230 cm.'
+    : null;
+  return (
+    <>
+      <h1 className="text-2xl font-bold text-ink mb-2">Cat esti de inalt?</h1>
+      <p className="text-sm text-ink2 mb-6">Necesar pentru calculul caloriilor de baza (BMR).</p>
+      <input
+        type="number"
+        value={value ?? ''}
+        // MED-A-3 fix parity (see Step1/Step6) — NaN guard before commit la
+        // store. Number.isFinite(NaN) === false → null.
+        onChange={(e) => {
+          const v = e.target.value;
+          if (!v) return onChange(null);
+          const n = Number(v);
+          onChange(Number.isFinite(n) ? n : null);
+        }}
+        placeholder="ex. 175"
+        step="1"
+        min={120}
+        max={230}
+        required
+        aria-required="true"
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={error ? 'onb-height-error' : undefined}
+        inputMode="numeric"
+        autoComplete="off"
+        enterKeyHint="next"
+        aria-label="Inaltime in centimetri"
+        data-testid="onb-height-input"
+        className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono"
+      />
+      <p className="text-xs text-ink2 mt-2 text-center">cm</p>
+      {error && (
+        <p
+          id="onb-height-error"
+          role="alert"
+          data-testid="onb-height-error"
+          className="mt-2 text-sm text-danger text-center"
+        >
+          {error}
+        </p>
+      )}
+    </>
+  );
+}
+
+function Step8Summary({ data }: { data: OnboardingData }): JSX.Element {
   return (
     <>
       <h1 className="text-2xl font-bold text-ink mb-2">Verifica datele</h1>
@@ -369,6 +430,7 @@ function Step7({ data }: { data: OnboardingData }): JSX.Element {
         <div className="flex justify-between text-sm"><span className="text-ink2">Frecventa</span><span className="text-ink font-medium">{data.frequency ? `${data.frequency}/sapt` : '-'}</span></div>
         <div className="flex justify-between text-sm"><span className="text-ink2">Experienta</span><span className="text-ink font-medium">{data.experience ? data.experience.charAt(0).toUpperCase() + data.experience.slice(1) : '-'}</span></div>
         <div className="flex justify-between text-sm"><span className="text-ink2">Greutate</span><span className="text-ink font-medium">{data.weight ? `${data.weight} kg` : '-'}</span></div>
+        <div className="flex justify-between text-sm"><span className="text-ink2">Inaltime</span><span className="text-ink font-medium">{data.height ? `${data.height} cm` : '-'}</span></div>
       </div>
     </>
   );

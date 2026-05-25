@@ -34,6 +34,7 @@ beforeEach(() => {
       frequency: '4',
       experience: 'intermediar',
       weight: 81,
+      height: 175,
     },
     completed: true,
     completedAt: Date.now(),

@@ -34,7 +34,7 @@ function renderScreen() {
 beforeEach(() => {
   useAppStore.getState().setAuthenticated(true);
   useOnboardingStore.setState({
-    data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 80 },
+    data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 80, height: 175 },
     completed: true,
     completedAt: Date.now(),
   });

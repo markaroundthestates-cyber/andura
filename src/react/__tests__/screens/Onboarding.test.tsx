@@ -17,7 +17,7 @@ function renderAt(step: number) {
 
 beforeEach(() => {
   useOnboardingStore.setState({
-    data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: null },
+    data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: null, height: null },
     completed: false,
     completedAt: null,
   });
@@ -78,12 +78,37 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(useOnboardingStore.getState().data.weight).toBe(78);
   });
 
+  // P-02 — inaltime step (mockup #screen-onb-inaltime). Fitness metric pentru
+  // BMR Mifflin-St Jeor. Persist + range gate mirror weight step.
+  it('step 7 height input persist', () => {
+    renderAt(7);
+    fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '175' } });
+    expect(useOnboardingStore.getState().data.height).toBe(175);
+  });
+
+  it('step 7 cleared height input persists null (not 0)', () => {
+    useOnboardingStore.setState({
+      data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: null, height: 175 },
+      completed: false,
+      completedAt: null,
+    });
+    renderAt(7);
+    fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '' } });
+    expect(useOnboardingStore.getState().data.height).toBeNull();
+  });
+
+  it('step 7 fara inaltime blocheaza Continua (stay on step 7)', () => {
+    renderAt(7);
+    fireEvent.click(screen.getByTestId('onb-next'));
+    expect(screen.getByTestId('onboarding-step-7')).toBeInTheDocument();
+  });
+
   // §LOW-1 REVIEW-chat3 fresh-eyes — empty input must clear to null,
   // not silently save 0 (Number("")=0 garbage data). Mirror SettingsProfile
   // pattern (cont/SettingsProfile.tsx:103, 117).
   it('step 1 cleared age input persists null (not 0)', () => {
     useOnboardingStore.setState({
-      data: { age: 32, sex: null, goal: null, frequency: null, experience: null, weight: null },
+      data: { age: 32, sex: null, goal: null, frequency: null, experience: null, weight: null, height: null },
       completed: false,
       completedAt: null,
     });
@@ -94,7 +119,7 @@ describe('Onboarding — Big 6 hard typing', () => {
 
   it('step 6 cleared weight input persists null (not 0)', () => {
     useOnboardingStore.setState({
-      data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: 78 },
+      data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: 78, height: null },
       completed: false,
       completedAt: null,
     });
@@ -113,41 +138,43 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(useOnboardingStore.getState().data.age).toBeNull();
   });
 
-  it('step 7 summary cu data finalized', () => {
+  it('step 8 summary cu data finalized', () => {
     useOnboardingStore.setState({
       data: {
         age: 32, sex: 'm', goal: 'masa', frequency: '3',
-        experience: 'intermediar', weight: 78,
+        experience: 'intermediar', weight: 78, height: 175,
       },
       completed: false,
       completedAt: null,
     });
-    renderAt(7);
+    renderAt(8);
     const summary = screen.getByTestId('onb-summary');
     expect(summary.textContent).toMatch(/32/);
     expect(summary.textContent).toMatch(/Barbat/);
     expect(summary.textContent).toMatch(/Masa musculara/);
+    // P-02 — inaltime apare in summary.
+    expect(summary.textContent).toMatch(/175 cm/);
   });
 
-  it('step 7 Gata navigates antrenor + finalizes (Big 6 valid)', () => {
-    // U-02 (CRIT) — finalize cere Big 6 complet. Date valide → completeaza.
+  it('step 8 Gata navigates antrenor + finalizes (Big 6 + height valid)', () => {
+    // U-02 (CRIT) — finalize cere toate campurile complet (incl. height P-02).
     useOnboardingStore.setState({
       data: {
         age: 32, sex: 'm', goal: 'masa', frequency: '3',
-        experience: 'intermediar', weight: 78,
+        experience: 'intermediar', weight: 78, height: 175,
       },
       completed: false,
       completedAt: null,
     });
-    renderAt(7);
+    renderAt(8);
     fireEvent.click(screen.getByTestId('onb-next'));
     expect(useOnboardingStore.getState().completed).toBe(true);
     expect(screen.getByTestId('antrenor')).toBeInTheDocument();
   });
 
-  // U-02 (CRIT) — click-through gol (Big 6 null) NU completeaza onboarding.
-  it('step 7 Gata cu Big 6 null NU finalizeaza (no click-through gol)', () => {
-    renderAt(7);
+  // U-02 (CRIT) — click-through gol (toate null) NU completeaza onboarding.
+  it('step 8 Gata cu campuri null NU finalizeaza (no click-through gol)', () => {
+    renderAt(8);
     fireEvent.click(screen.getByTestId('onb-next'));
     expect(useOnboardingStore.getState().completed).toBe(false);
     expect(screen.queryByTestId('antrenor')).not.toBeInTheDocument();
@@ -257,5 +284,38 @@ describe('Onboarding — A11Y HIGH chat5 form aria attributes', () => {
     fireEvent.change(screen.getByTestId('onb-weight-input'), { target: { value: '300' } });
     expect(screen.getByTestId('onb-weight-input')).toHaveAttribute('aria-invalid', 'true');
     expect(screen.getByTestId('onb-weight-error').textContent).toMatch(/30 si 250/);
+  });
+
+  // P-02 — height step aria parity (mirror weight step WCAG 3.3.1 + 3.3.3).
+  it('step 7 height input has aria-required + required', () => {
+    renderAt(7);
+    const input = screen.getByTestId('onb-height-input');
+    expect(input).toHaveAttribute('aria-required', 'true');
+    expect(input).toHaveAttribute('required');
+  });
+
+  it('step 7 height input NO aria-invalid pe valid 175', () => {
+    renderAt(7);
+    fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '175' } });
+    expect(screen.getByTestId('onb-height-input')).not.toHaveAttribute('aria-invalid');
+    expect(screen.queryByTestId('onb-height-error')).not.toBeInTheDocument();
+  });
+
+  it('step 7 height input aria-invalid + error cand value < 120', () => {
+    renderAt(7);
+    fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '100' } });
+    const input = screen.getByTestId('onb-height-input');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('aria-describedby', 'onb-height-error');
+    const err = screen.getByTestId('onb-height-error');
+    expect(err).toHaveAttribute('role', 'alert');
+    expect(err.textContent).toMatch(/Inaltime intre 120 si 230/);
+  });
+
+  it('step 7 height input aria-invalid cand value > 230', () => {
+    renderAt(7);
+    fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '250' } });
+    expect(screen.getByTestId('onb-height-input')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByTestId('onb-height-error').textContent).toMatch(/120 si 230/);
   });
 });

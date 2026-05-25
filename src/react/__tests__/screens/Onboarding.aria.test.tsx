@@ -29,7 +29,7 @@ function renderAt(step: number): ReturnType<typeof render> {
 
 beforeEach(() => {
   useOnboardingStore.setState({
-    data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: null },
+    data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: null, height: null },
     completed: false,
     completedAt: null,
   });

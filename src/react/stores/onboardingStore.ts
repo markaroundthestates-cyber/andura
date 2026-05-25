@@ -23,6 +23,7 @@ export interface OnboardingData {
   frequency: Frequency | null;
   experience: Experience | null;
   weight: number | null;
+  height: number | null;
 }
 
 /**
@@ -40,6 +41,12 @@ export interface OnboardingData {
  *  - weight 30-250 kg → audit §30.6 spec. Mockup L645 shows max=300 but audit
  *                       nuclear authoritative pre-Beta (Bugatti: tighter band
  *                       protects engine math; 250kg already extreme outlier).
+ *  - height 120-230 cm → P-02 fitness metric (Mifflin-St Jeor BMR + US Navy
+ *                       BF%). Band matches SettingsProfile composition input
+ *                       (min=120 max=230) for cross-screen consistency. Mockup
+ *                       onb step shows 100-250 but tighter band protects engine
+ *                       math (sub-120cm/over-230cm = data-entry error, not real
+ *                       adult). NU medical — pure fitness math input (D-height).
  *  - frequency '2'-'5' → type-narrow literal union, no numeric out-of-range
  *                       possible (TS compiler enforces).
  *  - sex/goal/experience → type-narrow literal unions, safe by construction.
@@ -51,7 +58,8 @@ export interface OnboardingData {
 export const ONBOARDING_BOUNDS = {
   age: { min: 16, max: 99 },
   weight: { min: 30, max: 250 },
-} as const satisfies Record<'age' | 'weight', { min: number; max: number }>;
+  height: { min: 120, max: 230 },
+} as const satisfies Record<'age' | 'weight' | 'height', { min: number; max: number }>;
 
 /**
  * Two-tier validation strategy pentru §30-C1 fix:
@@ -74,7 +82,7 @@ export function isSafeOnboardingValue<K extends keyof OnboardingData>(
   value: OnboardingData[K],
 ): boolean {
   if (value === null) return true;
-  if (key === 'age' || key === 'weight') {
+  if (key === 'age' || key === 'weight' || key === 'height') {
     const n = value as number;
     // Reject NaN/Infinity/negative/zero — never typed naturally; indicates
     // paste of "abc" → NaN, or programmatic abuse. Engines NaN-propagate.
@@ -107,6 +115,15 @@ export function validateOnboardingField<K extends keyof OnboardingData>(
     }
   }
 
+  if (key === 'height') {
+    const n = value as number;
+    if (!Number.isFinite(n)) return { ok: false, reason: 'Inaltime invalida.' };
+    const { min, max } = ONBOARDING_BOUNDS.height;
+    if (n < min || n > max) {
+      return { ok: false, reason: `Inaltime intre ${min} si ${max} cm.` };
+    }
+  }
+
   return { ok: true };
 }
 
@@ -129,6 +146,7 @@ const EMPTY: OnboardingData = {
   frequency: null,
   experience: null,
   weight: null,
+  height: null,
 };
 
 /**
@@ -186,7 +204,12 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
     {
       name: 'wv2-onboarding-store',
       storage: createJSONStorage(() => localStorage),
-      version: 2,
+      // v3 (P-02 height): height added to OnboardingData. Backward-compat —
+      // both migrate branches spread `...EMPTY` first, so v0/v1/v2 persisted
+      // users get `height: null` default without corrupting existing Big 6.
+      // Existing user re-prompted for height doar daca redo onboarding; pana
+      // atunci BMR foloseste fallback sex-avg (BMRStrip) → zero regresie.
+      version: 3,
       // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
       // fields (NU actions). Match appStore + scheduleStore + workoutStore
       // existing pattern. data + completed + completedAt persisted; actions

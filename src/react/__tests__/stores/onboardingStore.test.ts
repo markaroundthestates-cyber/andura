@@ -26,6 +26,7 @@ function resetStore(): void {
       frequency: null,
       experience: null,
       weight: null,
+      height: null,
     },
     completed: false,
     completedAt: null,
@@ -42,6 +43,12 @@ describe('onboardingStore — ONBOARDING_BOUNDS constants', () => {
   it('weight bounds 30-250 kg (audit §30.6)', () => {
     expect(ONBOARDING_BOUNDS.weight.min).toBe(30);
     expect(ONBOARDING_BOUNDS.weight.max).toBe(250);
+  });
+
+  // P-02 — height fitness metric bounds (Mifflin-St Jeor BMR + US Navy BF%).
+  it('height bounds 120-230 cm (P-02 — SettingsProfile composition parity)', () => {
+    expect(ONBOARDING_BOUNDS.height.min).toBe(120);
+    expect(ONBOARDING_BOUNDS.height.max).toBe(230);
   });
 });
 
@@ -82,6 +89,16 @@ describe('onboardingStore — isSafeOnboardingValue catastrophe gate', () => {
   it('rejects zero (engine math divide-by-zero protection)', () => {
     expect(isSafeOnboardingValue('age', 0)).toBe(false);
     expect(isSafeOnboardingValue('weight', 0)).toBe(false);
+  });
+
+  // P-02 — height treated as numeric catastrophe-gated field like age/weight.
+  it('height: accepts null + valid, rejects NaN/Infinity/neg/zero', () => {
+    expect(isSafeOnboardingValue('height', null)).toBe(true);
+    expect(isSafeOnboardingValue('height', 175)).toBe(true);
+    expect(isSafeOnboardingValue('height', NaN)).toBe(false);
+    expect(isSafeOnboardingValue('height', Infinity)).toBe(false);
+    expect(isSafeOnboardingValue('height', -10)).toBe(false);
+    expect(isSafeOnboardingValue('height', 0)).toBe(false);
   });
 
   it('accepts literal-union fields (type-narrow safe by construction)', () => {
@@ -155,6 +172,26 @@ describe('onboardingStore — validateOnboardingField range gate', () => {
     if (!ageRes.ok) expect(ageRes.reason.toLowerCase()).toContain('invalida');
   });
 
+  // P-02 — height range gate (120-230 cm) cu reason Gigel-friendly.
+  it('accepts height boundary min (120) + max (230)', () => {
+    expect(validateOnboardingField('height', 120)).toEqual({ ok: true });
+    expect(validateOnboardingField('height', 230)).toEqual({ ok: true });
+  });
+
+  it('rejects height below min (100) cu reason', () => {
+    const result = validateOnboardingField('height', 100);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toContain('120');
+      expect(result.reason).toContain('230');
+      expect(result.reason.toLowerCase()).toContain('inaltime');
+    }
+  });
+
+  it('rejects height above max (250)', () => {
+    expect(validateOnboardingField('height', 250).ok).toBe(false);
+  });
+
   it('accepts literal-union fields unconditional', () => {
     expect(validateOnboardingField('sex', 'm')).toEqual({ ok: true });
     expect(validateOnboardingField('goal', 'forta')).toEqual({ ok: true });
@@ -169,6 +206,13 @@ describe('onboardingStore — setField catastrophe rejection', () => {
   it('commits valid age', () => {
     useOnboardingStore.getState().setField('age', 32);
     expect(useOnboardingStore.getState().data.age).toBe(32);
+  });
+
+  it('commits valid height + rejects NaN silently (P-02)', () => {
+    useOnboardingStore.getState().setField('height', 175);
+    expect(useOnboardingStore.getState().data.height).toBe(175);
+    useOnboardingStore.getState().setField('height', NaN);
+    expect(useOnboardingStore.getState().data.height).toBe(175);
   });
 
   it('commits in-progress typing value (1) for UX continuity', () => {
@@ -230,6 +274,7 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
         frequency: '3',
         experience: 'avansat',
         weight: 78,
+        height: 175,
       },
     });
     useOnboardingStore.getState().finalize();
@@ -246,13 +291,14 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
         frequency: '3',
         experience: 'avansat',
         weight: 999,
+        height: 175,
       },
     });
     useOnboardingStore.getState().finalize();
     expect(useOnboardingStore.getState().completed).toBe(false);
   });
 
-  it('finalizes cu all Big 6 valid', () => {
+  it('finalizes cu all Big 6 + height valid', () => {
     useOnboardingStore.setState({
       data: {
         age: 32,
@@ -261,6 +307,7 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
         frequency: '3',
         experience: 'avansat',
         weight: 78,
+        height: 175,
       },
     });
     useOnboardingStore.getState().finalize();
@@ -268,7 +315,7 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
     expect(useOnboardingStore.getState().completedAt).not.toBeNull();
   });
 
-  it('finalizes cu boundary values (age 16 + weight 30)', () => {
+  it('finalizes cu boundary values (age 16 + weight 30 + height 120)', () => {
     useOnboardingStore.setState({
       data: {
         age: 16,
@@ -277,13 +324,14 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
         frequency: '2',
         experience: 'incepator',
         weight: 30,
+        height: 120,
       },
     });
     useOnboardingStore.getState().finalize();
     expect(useOnboardingStore.getState().completed).toBe(true);
   });
 
-  it('finalizes cu boundary values (age 99 + weight 250)', () => {
+  it('finalizes cu boundary values (age 99 + weight 250 + height 230)', () => {
     useOnboardingStore.setState({
       data: {
         age: 99,
@@ -292,10 +340,45 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
         frequency: '2',
         experience: 'avansat',
         weight: 250,
+        height: 230,
       },
     });
     useOnboardingStore.getState().finalize();
     expect(useOnboardingStore.getState().completed).toBe(true);
+  });
+
+  // P-02 — height required ca Big 6: out-of-range height refuza finalize.
+  it('refuses finalize cu height out-of-range (300)', () => {
+    useOnboardingStore.setState({
+      data: {
+        age: 32,
+        sex: 'm',
+        goal: 'forta',
+        frequency: '3',
+        experience: 'avansat',
+        weight: 78,
+        height: 300,
+      },
+    });
+    useOnboardingStore.getState().finalize();
+    expect(useOnboardingStore.getState().completed).toBe(false);
+  });
+
+  // P-02 — height null (user pre-v3 sau skip) refuza finalize (consistent U-02).
+  it('refuses finalize cu height null', () => {
+    useOnboardingStore.setState({
+      data: {
+        age: 32,
+        sex: 'm',
+        goal: 'forta',
+        frequency: '3',
+        experience: 'avansat',
+        weight: 78,
+        height: null,
+      },
+    });
+    useOnboardingStore.getState().finalize();
+    expect(useOnboardingStore.getState().completed).toBe(false);
   });
 
   // U-02 (CRIT) — click-through gol: toate Big 6 null NU completeaza.
@@ -317,6 +400,7 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
         frequency: '3',
         experience: 'avansat',
         weight: 78,
+        height: 175,
       },
     });
     useOnboardingStore.getState().finalize();
@@ -332,6 +416,7 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
         frequency: '3',
         experience: 'avansat',
         weight: 78,
+        height: 175,
       },
     });
     useOnboardingStore.getState().finalize();

@@ -42,6 +42,7 @@ function resetStore(): void {
       frequency: null,
       experience: null,
       weight: null,
+      height: null,
     },
     completed: false,
     completedAt: null,

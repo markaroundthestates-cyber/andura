@@ -26,7 +26,7 @@ const MONDAY_2026_05_18 = new Date(2026, 4, 18);  // dayIdx 0 (L, PUSH session)
 
 function resetStores(): void {
   useOnboardingStore.setState({
-    data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 75 },
+    data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 75, height: 175 },
     completed: true,
     completedAt: Date.now(),
   });
@@ -122,7 +122,7 @@ describe('scheduleAdapterAggregate — composePlannedWorkoutToday real wire asyn
 
   it('empty stores → defensive defaults, pipeline completes', async () => {
     useOnboardingStore.setState({
-      data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: null },
+      data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: null, height: null },
       completed: false,
       completedAt: null,
     });
