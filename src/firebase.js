@@ -68,6 +68,13 @@ export function getUserPath() {
   return null;
 }
 
+// §25-M2 audit fix — forward-compat schema version stamped on the user-doc
+// whole-tree write (syncToFirebase). Read side (syncFromFirebase) treats an
+// absent `_schemaVersion` as v1 (legacy docs predate this field). Additive
+// only — no migration logic yet; bump + add a transform here when a future
+// breaking RTDB shape change ships.
+export const USER_DOC_SCHEMA_VERSION = 1;
+
 // NOTE: 'photos' is intentionally excluded — base64 images are too large for Firebase RTDB free tier.
 // Photos are stored locally only. Users should be aware they are NOT backed up to the cloud.
 export const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs','session-burns','session-ratings','muted','notif-enabled','suppl-list','early-stops','pr-records','phase-log','closed-days','step-streaks','steps-today','bf-override','phase-override','current-kcal','phase-change-date','readiness','unavailable-equipment','sf.userConfig', // sf.userConfig — bio + targetKg + equipment prefs (per audit night 2026-04-26 + ADR sync drift finding)
@@ -227,6 +234,7 @@ export async function syncToFirebase() {
     });
     payload['_device'] = getDeviceId();
     payload['_ts'] = Date.now();
+    payload['_schemaVersion'] = USER_DOC_SCHEMA_VERSION;
     const ok = await fbSet(userPath, payload);
     return ok;
   } catch (e) { console.warn('Firebase sync failed:', e); return false; }
@@ -250,6 +258,14 @@ export async function syncFromFirebase() {
     }
     const remote = await fbGet(userPath);
     if (!remote) return false;
+
+    // §25-M2 — tolerant schema-version read: absent → treat as v1 (legacy doc
+    // predating the field). Newer-than-client = forward-compat warn only (we
+    // still merge known SYNC_KEYS; unknown keys handled by drift warn below).
+    const remoteSchema = typeof remote['_schemaVersion'] === 'number' ? remote['_schemaVersion'] : 1;
+    if (remoteSchema > USER_DOC_SCHEMA_VERSION) {
+      console.warn(`[Firebase] remote doc schema v${remoteSchema} newer than client v${USER_DOC_SCHEMA_VERSION} — merging known keys only`);
+    }
 
     suppressInvalidations(() => {
       SYNC_KEYS.forEach(k => {
