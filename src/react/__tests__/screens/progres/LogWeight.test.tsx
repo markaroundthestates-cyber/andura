@@ -54,6 +54,15 @@ describe('LogWeight — render', () => {
     expect(dateInput.value).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 
+  // U-15 — date input max=azi (anti data viitoare).
+  it('date input has max attribute equal to today (blocks future dates)', () => {
+    renderLogWeight();
+    const dateInput = screen.getByTestId('weight-date-input') as HTMLInputElement;
+    expect(dateInput).toHaveAttribute('max');
+    expect(dateInput.getAttribute('max')).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(dateInput.getAttribute('max')).toBe(dateInput.value);
+  });
+
   it('renders Salveaza + Anuleaza buttons', () => {
     renderLogWeight();
     expect(screen.getByTestId('weight-save')).toBeInTheDocument();

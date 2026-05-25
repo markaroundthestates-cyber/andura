@@ -125,6 +125,8 @@ export function LogWeight(): JSX.Element {
             aria-describedby={dateError ? 'weight-date-error' : undefined}
             value={date}
             onChange={(e) => setDate(e.target.value)}
+            // U-15 — max=azi blocheaza logare pe data viitoare.
+            max={todayIso()}
             data-testid="weight-date-input"
             className="w-full p-3 border border-lineStrong rounded-xl bg-paper2 text-base text-ink"
           />

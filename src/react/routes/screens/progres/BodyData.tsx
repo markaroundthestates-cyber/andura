@@ -162,6 +162,8 @@ export function BodyData(): JSX.Element {
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
+            // U-15 — max=azi blocheaza logare pe data viitoare.
+            max={todayIso()}
             data-testid="bd-date-input"
             className="w-full p-3 border border-lineStrong rounded-xl bg-paper2 text-base text-ink"
           />

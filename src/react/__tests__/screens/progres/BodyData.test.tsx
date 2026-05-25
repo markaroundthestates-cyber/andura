@@ -52,6 +52,15 @@ describe('BodyData — render', () => {
     expect(screen.getByTestId('body-data-cancel')).toBeInTheDocument();
   });
 
+  // U-15 — date input max=azi (anti data viitoare).
+  it('date input has max attribute equal to today (blocks future dates)', () => {
+    renderBodyData();
+    const dateInput = screen.getByTestId('bd-date-input') as HTMLInputElement;
+    expect(dateInput).toHaveAttribute('max');
+    expect(dateInput.getAttribute('max')).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(dateInput.getAttribute('max')).toBe(dateInput.value);
+  });
+
   it('Save disabled cand no field filled (zero entries)', () => {
     renderBodyData();
     expect(screen.getByTestId('body-data-save')).toBeDisabled();
