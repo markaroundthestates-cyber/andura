@@ -2,10 +2,10 @@
 title: Andura — Decisions Single Source of Truth
 type: ssot-decisions
 status: live
-last_updated: 2026-05-23
+last_updated: 2026-05-25
 schema_version: 1
-latest_entry: D076
-total_entries: 75
+latest_entry: D077
+total_entries: 76
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -126,6 +126,7 @@ D072 | 2026-05-23 | REGLAJ | Pre-Beta gate matrix 11 PASS / 3 YELLOW / 1 INFO si
 D073 | 2026-05-23 | REGLAJ | Vault docs ~4100+ LOC trail comprehensive singular reference point pattern — post-overnight final closure cumulative work substantial vault docs trail ~4100+ LOC. 23+ outbox files `📤_outbox/` + 4 inbox handovers `📥_inbox/HANDOVER_<date>_<topic>.md` chat 1-5 narrative scribe end-of-chat (§F3.8) + master index `📤_outbox/MASTER_INDEX_CHAT5.md` cross-reference + decisions draft `📤_outbox/DECISIONS_CHAT5_DRAFT.md` 23 LOCK candidates + 1 PROPOSAL partial-closure + 15 §P-items strategic surface + investigation reports targeted (AA-DEAD-CODE + FIREBASE-RULES-PREP + LEDGER-SYNC-FINAL-FINAL). Singular reference point master index = Daniel CEO + chat 6 startup baseline navigation aid §CC.2 step 4-5. D062 periodic cleanup pattern preserved batch periodic + Daniel verbal trigger anti-overreach. | LOCKED V1 | DECISIONS.md §D073 + 📤_outbox/MASTER_INDEX_CHAT5.md + D062
 D074 | 2026-05-23 | REGLAJ | D063 wording scope clarification — React wrappers ONLY, NOT orchestrator pipeline adapters — gsd-eval-auditor chat 5 surfaced conflation: D063 LOCKED V1 "Sentry adapter coverage 11/11 + anti-drift test" wording interpreted broadly ca include both React wrappers + orchestrator pipeline adapters. Clarification: D063 scope = React wrappers `src/react/lib/engineWrappers.ts` ONLY = canonical Big 11 React adapter layer 11/11 captureException instrumented. Out of scope post-Beta deferred candidate: orchestrator pipeline adapters `src/coach/orchestrator/adapters/*` = 0/8 Sentry instrumented currently (8 .js adapters: bayesianNutrition + deload + energyAdjustment + goalAdaptation + periodization + specialization + tempo + warmup) = separate Beta-launch decision. Anti-drift test `src/react/__tests__/lib/assert_all_adapters_instrumented.test.ts` (commit ad82ab65 Wave 12 BLOCKER 2 closure) scope = React wrappers only per D063 strict wording. NO supersede of D063 — scope precision NOT decision change (D007 append-only invariant respected). | LOCKED V1 | DECISIONS.md §D074 + §D063 + src/coach/orchestrator/adapters/* + src/react/lib/engineWrappers.ts + src/react/__tests__/lib/assert_all_adapters_instrumented.test.ts
 D076 | 2026-05-23 | ARCH | Phase 6 prod-extras blessed divergence ratify (DRIFT-1 Option B amend) — 7 React components engine-wired in production absent din mockup andura-clasic.html pre-amend: PatternsBanner + AlertsBanner + StatsGrid + ReadinessVerdict + PRNotificationBanner + PRWallRecent (Antrenor home) + BodyData (Progres tab). Ratify divergence ca blessed Phase 6 prod-extras layer. Mockup amended v1.1 cu component sections pentru reflect prod (commit `8dfe36e3` 2026-05-23). DECISIONS LOCK ratify path STRENGTHENS mockup authority NU erodes (D015 LOCK V1 amendment precedent preserved). Engine value preservation rationale: Marius signal-richness (StatsGrid + ReadinessVerdict + PR pipeline) + AlertsBanner urgent injury-risk safety floor + PatternsBanner stagnation surfacing (Big 11 patternLearning consumer) + PRNotificationBanner real PR detection from CRIT shape #2/#3 LANDED. Removing all 7 = HIGH-cost regression (BodyData persistence loss + Marius signal degradation + AlertsBanner safety gate loss). Quality long-horizon mandate (Daniel verbatim "10x mai mult timp acum") + Bugatti craft preserves built features + mockup amendment precedent via DECISIONS LOCK strengthens D015 authority pattern. Replaces prior `7eeb050e` D050 collision attempt. | LOCKED V1 | DECISIONS.md §D076 + 04-architecture/mockups/andura-clasic.html v1.1 (commit 8dfe36e3) + 📤_outbox/DRIFT_1_PARADIGM_INVESTIGATION_chat5.md
+D077 | 2026-05-25 | REGLAJ | Pre-Beta quality cycle extins: iterate audit→fix→reverify pana 0 findings + 100% quality, apoi audit anti-RE + audit security finale, ABIA apoi Daniel verify manual + Beta | LOCKED V1 | DECISIONS.md §D077
 
 ---
 
@@ -1900,6 +1901,23 @@ Future paradigm questions of similar shape decided via this precedent (NU premat
 #### §7 Replaces prior collision attempt
 
 Prior commit `7eeb050e` "D050 LOCK V1 Phase 6 prod-extras blessed divergence" landed on agent worktree branch — collision cu D050 PROC `git commit -o -m -- <paths>` pattern LANDED on main DECISIONS.md (different content). D076 = correct sequential append next post-D075 ratifying same decision content. D050 main entry status preserved LOCKED V1 (NU re-opened per D007 invariant).
+
+---
+
+## D077 — Pre-Beta quality cycle extins (iterate→0 + anti-RE + security audits finale)
+
+**Decizie Daniel CEO 2026-05-25 (chat 6 birou RC):** Pre-Beta = **zero greșeli absolut**, fără grabă, verificare + răsverificare până la saturare.
+
+**Ciclul LOCKED V1:**
+1. Rezolv toate bugs → raportez "toate rezolvate"
+2. **Audit nuclear complet** (fiecare virgulă, FRESH pe latest commit — nu ledger acumulat)
+3. **Verify track full auto**
+4. Tot ce apare → rezolv → reluăm audit → **repeat până 0 findings + 100% quality**
+5. **+ audit anti-RE** (expunere logică/moat engines în bundle client-side)
+6. **+ audit security** (auth, Firebase rules, GDPR, secrets)
+7. **ABIA atunci** Daniel verifică manual + Beta launch
+
+Supersede verdict prematur "READY-WITH-DANIEL-1-HARD" (chat 5) — NU se cere walkthrough Daniel până flawless. Extinde D029 (audit nuclear) + D031 (push manual Daniel-trigger) + quality_long_horizon mandate (Daniel "10x mai mult timp acum sa il facem bine"). Triaj forensic chat 6 = 410 ledger open → 21 real-open reale (rest zgomot already-fixed/stale) → wave-1 (7) + wave-2 (6) fixuri integrate → next wave-3 follow-up-uri → audit fresh per ciclu.
 
 ---
 

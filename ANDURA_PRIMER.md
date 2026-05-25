@@ -231,6 +231,8 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 
 **2026-05-23 post-push** — 60-commit push origin/main `d89517fe..fd47d383` LANDED + handover sync (D076 main scribe + HANDOVER post-push narrative + 3 SSOT continuity refresh + outbox 14 archived `_CONSUMED/chat5/`). Chat 5 wrap state final.
 
+**2026-05-25 chat 6 (birou RC → continuă acasă)** — Verdict prematur "READY-WITH-DANIEL" corectat → **D077** quality cycle extins (iterate→0 findings + 100% quality → audit anti-RE + security finale → ABIA apoi Daniel + Beta). Triaj forensic 410 ledger open (5 agenți Opus) → reconciliere 410/410: 275 already-fixed + 101 stale + **21 real-open** + 13 needs-Daniel (teza "ledger zgomotos" dovedită cap-coadă). Wave-1 (7 fixuri funcționale: SHAPE recent-sessions transform + pain CDL persist + profile Compozitie/Tinte + workout substitution/why/setloginput) + time-bomb `scheduleStore` fixat permanent, cherry-pick integrat main. Wave-2 (6: toast dedup + firebase `_schemaVersion` + PostSummary Marius/streak + Auth separatoare + TDEE delta + governance docs) salvate din worktrees blocked (off baza veche) via cp+commit pe main. Suita **5775 PASS / 0 FAIL**, typecheck clean, lint 0-err. ~14 commits ahead origin NU pushed (același PC acasă → local). Follow-up-uri parțiale: 43-H2 muscleRecovery consumption + profile persistence (onboardingStore extension incl. `inaltime`). Next: wave-3 → onboarding paradigm → audit nuclear FRESH per D077. Handover: `📥_inbox/HANDOVER_2026-05-25_chat6...md` + CHAT_STATE.
+
 ---
 
 ## §6 Ce e de făcut (Backlog Ordered)
