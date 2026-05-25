@@ -309,8 +309,46 @@ export async function logMigrationEvent(event) {
 }
 
 /**
+ * §S-18 audit fix (AUDIT-3) — wipe any residual anonymous IndexedDB databases
+ * (`andura_anonymous_<deviceId>`). When a user trained anonymously then authed,
+ * the anonymous DB lingers post account-delete (`wipeUserDB(uid)` only deletes
+ * `andura_<uid>`) → GDPR Art. 17 residue in the IndexedDB tier. Enumerates
+ * `indexedDB.databases()` (same pattern as `dataCleanup.fullReset`) + deletes
+ * every DB whose name starts with the anonymous prefix. Graceful when the
+ * `databases()` API is unavailable (older Safari) — returns deleted: [].
+ *
+ * @returns {Promise<{ deleted: string[] }>}
+ */
+export async function wipeAnonymousDBs() {
+  const prefix = `${DB_NAME_PREFIX}_anonymous_`;
+  /** @type {string[]} */
+  const deleted = [];
+  try {
+    if (typeof indexedDB === 'undefined' || typeof indexedDB.databases !== 'function') {
+      return { deleted };
+    }
+    const dbs = await indexedDB.databases();
+    for (const info of dbs) {
+      const name = info?.name;
+      if (typeof name === 'string' && name.startsWith(prefix)) {
+        try {
+          await Dexie.delete(name);
+          deleted.push(name);
+        } catch { /* skip this DB, continue */ }
+      }
+    }
+  } catch { /* enumeration failed — non-fatal */ }
+  return { deleted };
+}
+
+/**
  * Wipe entire user IndexedDB cu Dexie `delete()`. Per §56.12 LOCKED V1
  * opt-in IndexedDB wipe toggle (Logout flow batch 3).
+ *
+ * §S-18 audit fix — also clears residual anonymous DBs so account deletion
+ * leaves no IndexedDB-tier residue from a pre-auth anonymous session on this
+ * device (GDPR Art. 17). The auth-DB delete result is what the return value
+ * reflects (back-compat); anonymous cleanup is best-effort + non-fatal.
  *
  * @param {string} uid    Firebase Auth uid
  * @returns {Promise<{ deleted: boolean, dbName: string }>}
@@ -324,6 +362,8 @@ export async function wipeUserDB(uid) {
   try {
     await closeDb();
     await Dexie.delete(dbName);
+    // §S-18 — sweep anonymous residue on the same device (best-effort).
+    await wipeAnonymousDBs();
     return { deleted: true, dbName };
   } catch {
     return { deleted: false, dbName };
