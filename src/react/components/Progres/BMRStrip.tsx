@@ -68,7 +68,7 @@ export function BMRStrip(): JSX.Element {
         </p>
         {bmr !== null ? (
           <p className="text-xl font-bold text-ink font-mono" data-testid="bmr-value">
-            {bmr.toLocaleString('ro-RO').replace(/,/g, ' ')}
+            {bmr.toLocaleString('ro-RO').replace(/,/g, ' ')}{' '}
             <span className="text-sm font-normal text-ink2 ml-2">kcal/zi</span>
           </p>
         ) : (
