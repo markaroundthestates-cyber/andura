@@ -41,6 +41,13 @@ const PHASE_LABELS = {
 
 const MESOCYCLE_WEEKS = 4; // Linear Block Periodization V1 — 4-week mesocycle clasic
 
+// RO thousands separator (dot, ICU ro-RO) — consistency cross-strip parity
+// cu BMRStrip ("1.850"). Prior raw {kcalTarget} rendea "2640" inconsistent
+// langa BMRStrip "1.850". Mirror BMRStrip pattern toLocaleString('ro-RO').
+function fmtNum(n: number): string {
+  return n.toLocaleString('ro-RO').replace(/,/g, ' ');
+}
+
 /**
  * Read user phase override from localStorage (B001 SchimbaFazaConfirm
  * persist). Returns 'Auto' fallback cand absent / unknown value.
@@ -94,7 +101,7 @@ export function TDEEStrip(): JSX.Element {
   const showComparison =
     loggedKcal != null && target != null && target.source !== 'manual';
   const kcalDelta = showComparison ? loggedKcal - target.kcalTarget : 0;
-  const deltaLabel = kcalDelta >= 0 ? `+${kcalDelta}` : String(kcalDelta);
+  const deltaLabel = kcalDelta >= 0 ? `+${fmtNum(kcalDelta)}` : `-${fmtNum(Math.abs(kcalDelta))}`;
 
   return (
     <section
@@ -132,16 +139,16 @@ export function TDEEStrip(): JSX.Element {
               className="text-xl font-bold text-ink font-mono"
               data-testid="tdee-current-vs-target"
             >
-              {loggedKcal} kcal
+              {fmtNum(loggedKcal)} kcal
               <span className="text-sm font-normal text-ink2 ml-2">
-                · tinta {target.kcalTarget} ({deltaLabel})
+                · tinta {fmtNum(target.kcalTarget)} ({deltaLabel})
               </span>
             </p>
           ) : (
             <p className="text-xl font-bold text-ink font-mono">
-              {target?.kcalTarget ?? '—'} kcal
+              {target ? fmtNum(target.kcalTarget) : '—'} kcal
               <span className="text-sm font-normal text-ink2 ml-2">
-                · {target?.proteinTarget ?? '—'} g proteine
+                · {target ? fmtNum(target.proteinTarget) : '—'} g proteine
               </span>
             </p>
           )}

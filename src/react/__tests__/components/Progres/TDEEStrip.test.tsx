@@ -32,7 +32,8 @@ describe('TDEEStrip', () => {
   it('renders kcal value after async resolve', async () => {
     render(<TDEEStrip />);
     await waitFor(() => {
-      expect(screen.getByText(/2640 kcal/)).toBeInTheDocument();
+      // RO thousands separator (dot, ICU ro-RO) — parity BMRStrip.
+      expect(screen.getByText(/2\.640 kcal/)).toBeInTheDocument();
     });
     expect(screen.getByText(/180 g proteine/)).toBeInTheDocument();
   });
@@ -71,8 +72,9 @@ describe('TDEEStrip', () => {
       expect(screen.getByTestId('tdee-current-vs-target')).toBeInTheDocument();
     });
     const row = screen.getByTestId('tdee-current-vs-target');
-    expect(row.textContent).toMatch(/2800 kcal/);
-    expect(row.textContent).toMatch(/tinta 2640/);
+    // RO thousands separator (dot, ICU ro-RO) — parity BMRStrip.
+    expect(row.textContent).toMatch(/2\.800 kcal/);
+    expect(row.textContent).toMatch(/tinta 2\.640/);
     expect(row.textContent).toMatch(/\(\+160\)/);
     expect(screen.getByText(/Azi vs tinta/i)).toBeInTheDocument();
   });

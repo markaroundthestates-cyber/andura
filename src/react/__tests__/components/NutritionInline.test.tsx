@@ -34,7 +34,8 @@ describe('NutritionInline — render mockup verbatim', () => {
 
   it('renders auto target defaults (2640 kcal / 180g protein mockup verbatim)', () => {
     render(<NutritionInline />);
-    expect(screen.getByTestId('nutri-kcal-val').textContent).toBe('2640');
+    // RO thousands separator (dot, ICU ro-RO) — parity TDEEStrip/BMRStrip.
+    expect(screen.getByTestId('nutri-kcal-val').textContent).toBe('2.640');
     expect(screen.getByTestId('nutri-protein-val').textContent).toBe('180');
   });
 
@@ -82,7 +83,7 @@ describe('NutritionInline — edit mode kcal', () => {
     fireEvent.click(screen.getByTestId('nutri-kcal-edit'));
     fireEvent.change(screen.getByTestId('nutri-kcal-input'), { target: { value: '2200' } });
     fireEvent.click(screen.getByTestId('nutri-save'));
-    expect(screen.getByTestId('nutri-kcal-val').textContent).toBe('2200');
+    expect(screen.getByTestId('nutri-kcal-val').textContent).toBe('2.200');
     expect(screen.getByTestId('nutri-kcal-source').textContent).toMatch(/Logat manual/);
   });
 

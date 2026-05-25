@@ -39,6 +39,13 @@ function todayIso(): string {
   return `${y}-${m}-${dd}`;
 }
 
+// RO thousands separator (dot, ICU ro-RO) for display — consistency cross-strip
+// parity cu BMRStrip/TDEEStrip ("2.640"). Display-only (draft pastreaza numarul
+// brut pentru parse). Prior {displayKcal} raw rendea "2640" inconsistent.
+function fmtNum(n: number): string {
+  return n.toLocaleString('ro-RO').replace(/,/g, ' ');
+}
+
 export function NutritionInline(): JSX.Element {
   const dateISO = todayIso();
   const entry = useNutritionStore((s) => s.getDaily(dateISO));
@@ -138,7 +145,7 @@ export function NutritionInline(): JSX.Element {
                 className="text-2xl font-bold text-ink font-mono"
                 data-testid="nutri-kcal-val"
               >
-                {displayKcal}
+                {fmtNum(displayKcal)}
               </span>
             )}
             <span
