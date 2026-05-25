@@ -327,6 +327,13 @@ function tierForExperience(experience: unknown): 'T0' | 'T1' | 'T2' | null {
  * onboarding goal → the builder emits BULK/CUT/MAINTAIN only. null/auto ->
  * undefined (let the engine auto-detect; meta.goalPhase absent = conservative).
  * Pure.
+ *
+ * Deliberately a SEPARATE map from periodization resolveGoalId →
+ * goalAdaptation basePhaseForGoal: those key on the canonical EN goal-id vocab
+ * (hipertrofie/recompozitie/sanatate) and never return undefined, whereas this
+ * boundary maps the RO onboarding Goal vocab (masa/mentenanta/auto — absent
+ * upstream) and MUST emit undefined for 'auto'/null so the engine auto-detects.
+ * Routing through the canonical chain would mis-default masa/mentenanta/slabire.
  */
 function goalPhaseForGoal(goal: unknown): 'BULK' | 'CUT' | 'MAINTAIN' | undefined {
   switch (goal) {
