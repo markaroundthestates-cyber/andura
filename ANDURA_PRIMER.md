@@ -2,7 +2,7 @@
 title: ANDURA_PRIMER.md — Singular Briefing Fresh Chat Instant Onboard
 type: ssot-primer
 status: live
-last_updated: 2026-05-20
+last_updated: 2026-05-26
 authority: Daniel CEO directive 2026-05-16 chat ACASĂ — "vreau la next chat sa stii ce e andura, ce face, cum functioneaza si ce trebuie sa fie. Sa stii unde am ramas, ce e de facut si ce vreau eu"
 purpose: §CC.2 startup primary read — fresh chat instant comprehensive context complete
 maintained_by: handover automatic update post-LANDED + Daniel CEO directive
