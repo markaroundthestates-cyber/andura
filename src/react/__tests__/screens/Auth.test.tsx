@@ -120,6 +120,28 @@ describe('Auth — no diacritics in WebView banner copy', () => {
   });
 });
 
+describe('Auth — §F-auth-06 "sau" separator dividers', () => {
+  it('renders "sau" divider before Skip-auth path', () => {
+    renderAuth();
+    const divider = screen.getByTestId('auth-divider-skip');
+    expect(divider).toBeInTheDocument();
+    expect(divider.textContent).toMatch(/sau/);
+  });
+
+  it('Skip divider is aria-hidden (decorative)', () => {
+    renderAuth();
+    expect(screen.getByTestId('auth-divider-skip')).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('Google divider absent when Google OAuth env not configured', () => {
+    // VITE_GOOGLE_OAUTH_CLIENT_ID unset in test env → showGoogle false →
+    // both Google button and its divider hidden (graceful degradation).
+    renderAuth();
+    expect(screen.queryByTestId('auth-google')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('auth-divider-google')).not.toBeInTheDocument();
+  });
+});
+
 describe('Auth — A11Y HIGH chat5 form aria attributes', () => {
   it('email input has aria-required="true"', () => {
     renderAuth();

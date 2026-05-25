@@ -217,6 +217,21 @@ export function Auth(): JSX.Element {
               </p>
             )}
 
+            {/* §F-auth-06 (MED) — "sau" separator between auth paths per mockup
+                andura-clasic.html#L452-456,L439-443. 1px line + ink3 "sau" label.
+                Email-send / Google / Skip stacked with explicit divider rows. */}
+            {showGoogle && (
+              <div
+                className="flex items-center gap-3 my-2"
+                data-testid="auth-divider-google"
+                aria-hidden="true"
+              >
+                <div className="flex-1 h-px bg-line" />
+                <span className="text-xs text-ink3">sau</span>
+                <div className="flex-1 h-px bg-line" />
+              </div>
+            )}
+
             {/* §B005/D-2 Google OAuth Slice 1.x — Gigel/Marius friction-low */}
             {showGoogle && (
               <button
@@ -234,6 +249,18 @@ export function Auth(): JSX.Element {
                 Continua cu Google
               </button>
             )}
+
+            {/* §F-auth-06 (MED) — "sau" separator before Skip-auth path per
+                mockup andura-clasic.html#L452-456. Matches divider above Google. */}
+            <div
+              className="flex items-center gap-3 my-2"
+              data-testid="auth-divider-skip"
+              aria-hidden="true"
+            >
+              <div className="flex-1 h-px bg-line" />
+              <span className="text-xs text-ink3">sau</span>
+              <div className="flex-1 h-px bg-line" />
+            </div>
 
             {/* §B006/D-2 Skip-auth Slice 1.x — Maria 65 test drive entry */}
             <button
