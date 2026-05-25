@@ -603,6 +603,27 @@ describe('Workout — why-exercise help button (F-workout-05)', async () => {
     expect(screen.queryByTestId('why-modal')).not.toBeInTheDocument();
   });
 
+  // U-04 (MED) — focus management paritate ExitConfirmSheet (WCAG 2.1.1/2.4.3).
+  it('why modal are aria-modal true', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('wv2-why-trigger'));
+    expect(screen.getByTestId('why-modal')).toHaveAttribute('aria-modal', 'true');
+  });
+
+  it('why modal auto-focuses "Am inteles" la open', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('wv2-why-trigger'));
+    expect(screen.getByTestId('why-modal-dismiss')).toHaveFocus();
+  });
+
+  it('Escape inchide why modal', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('wv2-why-trigger'));
+    expect(screen.getByTestId('why-modal')).toBeInTheDocument();
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByTestId('why-modal')).not.toBeInTheDocument();
+  });
+
   it('engine null → why.unavailable fallback copy', async () => {
     vi.mocked(getWhyExerciseSummary).mockReturnValueOnce(null);
     await renderWorkoutAndWait();

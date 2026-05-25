@@ -155,6 +155,11 @@ export function Workout(): JSX.Element {
   // andura-clasic.html#L1449). Null = closed; string = whyEngine summary shown
   // in a bottom-sheet explainer. Built on tap so it reflects current readiness.
   const [whyText, setWhyText] = useState<string | null>(null);
+  // U-04 (MED) — why-modal focus management (auto-focus + Escape + restore +
+  // trap), paritate cu ExitConfirmSheet sister pattern. whyDismissRef = singurul
+  // buton ("Am inteles") → Tab trap pe el insusi.
+  const whyDismissRef = useRef<HTMLButtonElement | null>(null);
+  const whyPrevFocusRef = useRef<HTMLElement | null>(null);
 
   // Init session on mount cand idle (no paused snapshot resumed via Antrenor).
   // §44-C1: idle mode === no live session + no paused snapshot + no lastSession
@@ -270,6 +275,33 @@ export function Workout(): JSX.Element {
     }, INACTIVITY_CHECK_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [lastActivityAt]);
+
+  // U-04 (MED) — why-modal a11y: auto-focus "Am inteles" la open, Escape inchide,
+  // Tab trap (singur buton → ramane focus pe el), restore focus la invoker on
+  // close. Paritate cu ExitConfirmSheet/AaFrictionModal sister pattern (WCAG
+  // 2.1.1 / 2.4.3). Open gated pe whyText !== null.
+  useEffect(() => {
+    if (whyText === null) return;
+    whyPrevFocusRef.current = document.activeElement as HTMLElement | null;
+    whyDismissRef.current?.focus();
+    function onKey(e: KeyboardEvent): void {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setWhyText(null);
+        return;
+      }
+      if (e.key === 'Tab') {
+        // Singur element focusabil → trap pe el insusi.
+        e.preventDefault();
+        whyDismissRef.current?.focus();
+      }
+    }
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      whyPrevFocusRef.current?.focus();
+    };
+  }, [whyText]);
 
   const bumpActivity = (): void => {
     setLastActivityAt(Date.now());
@@ -656,6 +688,7 @@ export function Workout(): JSX.Element {
             className="bg-paper rounded-t-2xl p-6 w-full max-w-md"
             data-testid="why-modal"
             role="dialog"
+            aria-modal="true"
             aria-label="De ce acest exercitiu?"
             onClick={(e) => e.stopPropagation()}
           >
@@ -666,6 +699,7 @@ export function Workout(): JSX.Element {
               {whyText}
             </p>
             <button
+              ref={whyDismissRef}
               type="button"
               onClick={() => setWhyText(null)}
               data-testid="why-modal-dismiss"
