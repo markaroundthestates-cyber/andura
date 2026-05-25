@@ -187,6 +187,32 @@ describe('SettingsProfile — Compozitie corporala (§F-pass2-settings-profile-0
     fireEvent.click(screen.getByTestId('profile-bf-manual'));
     expect(override.disabled).toBe(false);
   });
+
+  // RE-U-01 — inaltimea = single source (onboardingStore.data.height, P-02), NU
+  // stare locala separata. Campul porneste din store + persista la save → BMR
+  // (BMRStrip) reflecta valoarea editata aici.
+  it('inaltime input porneste din onboardingStore.data.height (NU gol)', () => {
+    renderScreen();
+    // beforeEach store height: 175
+    expect(screen.getByTestId('profile-height-input')).toHaveValue(175);
+  });
+
+  it('editarea inaltimii persista in onboardingStore pe save (single source BMR)', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-height-input'), { target: { value: '182' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(useOnboardingStore.getState().data.height).toBe(182);
+  });
+
+  it('respinge inaltime out-of-range pe save — store neschimbat + toast', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-height-input'), { target: { value: '300' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(useOnboardingStore.getState().data.height).toBe(175);
+    expect(screen.queryByTestId('settings-profile-saved')).toBeNull();
+    const items = toast.getSnapshot();
+    expect(items.some((t) => t.variant === 'warning' && /Inaltime intre 120 si 230/.test(String(t.message)))).toBe(true);
+  });
 });
 
 describe('SettingsProfile — Tinte personale (§F-pass2-settings-profile-04)', () => {

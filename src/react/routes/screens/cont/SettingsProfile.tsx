@@ -1,11 +1,12 @@
 // ══ SETTINGS PROFILE — Phase 6 task_09 Big 6 Edit Cont Sub-Screen ════════
 // Mockup verbatim source: 04-architecture/mockups/andura-clasic.html
-// #screen-settings-profile (L2016-2057). Big 6 edit reads/writes
+// #screen-settings-profile (L2016-2057). Big 6+1 edit reads/writes
 // useOnboardingStore.data. Avatar initial + body composition section
 // (§F-pass2-settings-profile-03) + targets section (§F-pass2-settings-
-// profile-04) mockup parity. Composition + targets = local form state V1 —
-// onboardingStore NU are talie/gat/inaltime/greutate-tinta; persistence
-// Phase 7+ cand store extinde.
+// profile-04) mockup parity. Inaltime = persistat in onboardingStore.data
+// .height (P-02) — SettingsProfile editeaza aceeasi sursa care alimenteaza
+// BMR (RE-U-01 reconciliere). Talie/gat + greutate-tinta = local form state
+// V1 (onboardingStore NU le are inca); persistence Phase 7+ cand store extinde.
 //
 // Sub-screen pattern Phase 6: sub-header back btn + heading + scroll body.
 
@@ -57,20 +58,21 @@ export function SettingsProfile(): JSX.Element {
   const [saved, setSaved] = useState(false);
 
   // §F-pass2-settings-profile-03 — Compozitie corporala (mockup L2034-2047).
-  // Talie + Gat + Inaltime → BF% auto US Navy. Local form state V1 (NU persistat
-  // — onboardingStore NU are aceste campuri; persistence Phase 7+ cand store
-  // extinde, per header note). Inaltime ceruta de engine (altfel BF null).
+  // Talie + Gat = local form state V1 (NU persistat — onboardingStore NU are
+  // aceste campuri; persistence Phase 7+ cand store extinde). Inaltime = NU mai
+  // e stare locala separata (RE-U-01): citeste/scrie draft.height (P-02 store)
+  // — aceeasi sursa care alimenteaza BMR. BF% US Navy ia inaltimea din draft.
   const [waist, setWaist] = useState('');
   const [neck, setNeck] = useState('');
-  const [height, setHeight] = useState('');
   const [bfManual, setBfManual] = useState(false);
   const [bfOverride, setBfOverride] = useState('');
 
   // Build engine arg omitting empty fields (exactOptionalPropertyTypes — NU
   // pasa undefined explicit). Engine returns null daca lipseste vreun camp.
+  // Inaltimea vine din draft.height (single source, P-02) — nu din stare locala.
   const bfArgs: { sex?: string; height_cm?: number; neck_cm?: number; waist_cm?: number } = {};
   if (draft.sex) bfArgs.sex = draft.sex;
-  if (height) bfArgs.height_cm = Number(height);
+  if (draft.height) bfArgs.height_cm = draft.height;
   if (neck) bfArgs.neck_cm = Number(neck);
   if (waist) bfArgs.waist_cm = Number(waist);
   const bfAuto = estimateBF_USNavy(bfArgs);
@@ -102,6 +104,14 @@ export function SettingsProfile(): JSX.Element {
     const weightCheck = validateOnboardingField('weight', draft.weight);
     if (!weightCheck.ok) {
       toast.show({ message: weightCheck.reason, variant: 'warning' });
+      return;
+    }
+    // RE-U-01 — inaltimea e acum editabila (draft.height, P-02 store). Aplica
+    // acelasi range gate ca age/weight inainte de commit (altfel BMR ar primi
+    // o inaltime out-of-range din edit-path, ca §U-12 pentru Big 6).
+    const heightCheck = validateOnboardingField('height', draft.height);
+    if (!heightCheck.ok) {
+      toast.show({ message: heightCheck.reason, variant: 'warning' });
       return;
     }
     (Object.keys(draft) as Array<keyof OnboardingData>).forEach((key) => {
@@ -183,8 +193,8 @@ export function SettingsProfile(): JSX.Element {
 
         {/* §F-pass2-settings-profile-03 — Compozitie corporala (mockup L2034-2047).
             Talie + Gat + Inaltime → BF% auto US Navy (engine usNavyBF.js) cu
-            override manual. Inaltime ceruta de engine (altfel BF null). Local
-            form state V1 — persistence Phase 7+ cand store extinde. */}
+            override manual. Inaltime = draft.height (P-02 store, RE-U-01) —
+            aceeasi sursa care alimenteaza BMR; talie/gat = local V1. */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Compozitie corporala
         </p>
@@ -225,8 +235,8 @@ export function SettingsProfile(): JSX.Element {
               step={0.5}
               inputMode="decimal"
               autoComplete="off"
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
+              value={draft.height ?? ''}
+              onChange={(e) => update('height', e.target.value ? Number(e.target.value) : null)}
               data-testid="profile-height-input"
               className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
             />
