@@ -12,11 +12,12 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { History, ChevronRight, Flame, Trophy } from 'lucide-react';
+import { History, Flame, Trophy } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { getPRHistoryAll, getStreakStats } from '../../../lib/prHistoryAggregate';
 import { CalendarHeatmap } from '../../../components/Istoric/CalendarHeatmap';
 import { RatingsStrip90Day } from '../../../components/Istoric/RatingsStrip90Day';
+import { VirtualSessionList } from '../../../components/Istoric/VirtualSessionList';
 import { gotoPath } from '../../../lib/navigation';
 
 // §F-istoric-08 — Romanian weekday + month labels no-diacritics manual map.
@@ -159,35 +160,15 @@ export function Istoric(): JSX.Element {
           </p>
         </div>
       ) : (
-        <ul className="flex flex-col gap-2" role="list" data-testid="istoric-list">
-          {sorted.map((session, idx) => {
-            // Find original index în sessionsHistory pentru detail navigate.
-            const originalIdx = sessionsHistory.findIndex((s) => s.ts === session.ts);
-            return (
-              <li key={`${session.ts}-${idx}`}>
-                <button
-                  type="button"
-                  onClick={() => navigate(`/app/istoric/${originalIdx}`)}
-                  data-testid={`istoric-session-${idx}`}
-                  data-session-idx={originalIdx}
-                  className="w-full flex items-center gap-3 p-4 bg-paper2 border border-line rounded-xl text-left"
-                >
-                  <History className="w-5 h-5 text-ink2 flex-shrink-0" aria-hidden="true" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">
-                      {formatDate(session.ts)}
-                    </p>
-                    <p className="text-base font-semibold text-ink mt-0.5">
-                      {session.title}
-                    </p>
-                    <p className="text-sm text-ink2 mt-0.5">{session.meta}</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-ink2 flex-shrink-0" strokeWidth={1.6} aria-hidden="true" />
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+        // §35-M2 perf — windowed list (window-scroll virtualization) pentru
+        // liste lungi. Comportament vizibil identic: ordering, drill-down nav
+        // la originalIdx, testid-uri rand neschimbate.
+        <VirtualSessionList
+          sorted={sorted}
+          sessionsHistory={sessionsHistory}
+          formatDate={formatDate}
+          onSelect={(originalIdx) => navigate(`/app/istoric/${originalIdx}`)}
+        />
       )}
     </section>
   );
