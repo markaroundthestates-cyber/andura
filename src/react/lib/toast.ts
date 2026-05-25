@@ -70,6 +70,10 @@ function show(input: ToastInput): string {
   const variant: ToastVariant = input.variant ?? 'info';
   const dismissible = input.dismissible ?? defaultDismissible(variant);
   const durationMs = input.durationMs ?? defaultDuration(variant);
+  // §32-M5 audit fix — suppress rapid-fire duplicate: if an identical
+  // message+variant is already visible, return its id instead of stacking.
+  const dup = items.find((t) => t.message === input.message && t.variant === variant);
+  if (dup) return dup.id;
   const id = `t${++nextId}`;
   const item: ToastItem = {
     id,

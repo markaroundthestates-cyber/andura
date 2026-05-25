@@ -91,6 +91,19 @@ describe('toast store - §32-H1 global pattern', () => {
     toast.show({ message: 'long', variant: 'info', durationMs: 10_000 });
     expect(toast.getSnapshot()[0]!.durationMs).toBe(10_000);
   });
+
+  it('§32-M5 dedup: identical rapid-fire message+variant returns same id, no stack', () => {
+    const a = toast.show({ message: 'salvat', variant: 'success' });
+    const b = toast.show({ message: 'salvat', variant: 'success' });
+    expect(b).toBe(a);
+    expect(toast.getSnapshot()).toHaveLength(1);
+  });
+
+  it('§32-M5 dedup: same message different variant NOT deduped', () => {
+    toast.show({ message: 'salvat', variant: 'info' });
+    toast.show({ message: 'salvat', variant: 'error' });
+    expect(toast.getSnapshot()).toHaveLength(2);
+  });
 });
 
 describe('toast store - §32-H3 critical safety notifications', () => {
