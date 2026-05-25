@@ -1,6 +1,13 @@
 // ══ DATA CLEANUP — Utilitare pentru resetare date de test si debugging ═══════
 import { getUserPath, buildAuthUrl, scheduleInvalidation } from '../firebase.js';
 import { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, CDL_KEYS } from './dataRegistry.js';
+import { AUTH_STORAGE_KEYS } from '../auth.js';
+
+// S-04 audit fix (AUDIT-3 §S-04 LOW) — never dump auth secrets into a backup
+// file. createAutoBackup downloads ALL localStorage to a user-accessible JSON;
+// firebase-id-token / firebase-refresh-token / firebase-uid would leak a
+// long-lived credential if that file is synced/shared. Set of auth keys to skip.
+const AUTH_KEY_SET = new Set(Object.values(AUTH_STORAGE_KEYS));
 
 // Re-export for backward compat (tests and other importers)
 export { USER_DATA_KEYS, TEST_RESIDUE_KEYS, PRESERVE_ON_RESET_KEYS, CDL_KEYS };
@@ -39,6 +46,8 @@ export function createAutoBackup() {
   for (let i = 0; i < localStorage.length; i++) {
     const k = localStorage.key(i);
     if (k === null) continue;
+    // S-04 — exclude auth tokens from the exported backup (credential leak).
+    if (AUTH_KEY_SET.has(k)) continue;
     data[k] = localStorage.getItem(k);
   }
   const backup = { timestamp: new Date().toISOString(), version: 'auto-full-reset', data };

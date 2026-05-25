@@ -27,6 +27,7 @@ import {
   PRESERVE_ON_RESET_KEYS,
   cleanDuplicateLogs,
 } from '../dataCleanup.js';
+import { AUTH_STORAGE_KEYS } from '../../auth.js';
 
 beforeEach(() => {
   localStorage.clear();
@@ -299,6 +300,29 @@ describe('createAutoBackup', () => {
     } finally {
       global.Blob = origBlob;
     }
+  });
+
+  it('S-04 excludes auth tokens (firebase-*) from backup — no credential leak', () => {
+    localStorage.setItem(AUTH_STORAGE_KEYS.idToken, 'ID_SECRET');
+    localStorage.setItem(AUTH_STORAGE_KEYS.refreshToken, 'REFRESH_SECRET');
+    localStorage.setItem(AUTH_STORAGE_KEYS.uid, 'uid-123');
+    localStorage.setItem('logs', '[{"real":true}]');
+    const backup = createAutoBackup();
+    // Auth secrets must NOT be present in the backup payload.
+    for (const k of Object.values(AUTH_STORAGE_KEYS)) {
+      expect(backup.data).not.toHaveProperty(k);
+    }
+    // Non-auth user data still backed up.
+    expect(backup.data.logs).toBe('[{"real":true}]');
+  });
+
+  it('S-04 last-backup written to localStorage also excludes auth tokens', () => {
+    localStorage.setItem(AUTH_STORAGE_KEYS.refreshToken, 'REFRESH_SECRET');
+    localStorage.setItem('weights', '{"80":true}');
+    createAutoBackup();
+    const parsed = JSON.parse(/** @type {string} */ (localStorage.getItem('last-backup')));
+    expect(parsed.data).not.toHaveProperty(AUTH_STORAGE_KEYS.refreshToken);
+    expect(parsed.data.weights).toBe('{"80":true}');
   });
 });
 
