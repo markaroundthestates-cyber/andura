@@ -84,7 +84,7 @@ export function Calendar7Day(): JSX.Element {
           )}
         </button>
       </div>
-      <div className="flex gap-1.5" role="list" aria-label="Zile saptamana">
+      <div className="flex gap-1.5">
         {days.map((kind, idx) => {
           const trainingDay = kind === 'training';
           return (

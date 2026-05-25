@@ -62,9 +62,10 @@ describe('PainButton — render', () => {
   });
 
   it('renders 15 region buttons', () => {
-    renderPainButton();
-    const regionGroup = screen.getByRole('list', { name: /Zone corp/i });
-    const regionButtons = regionGroup.querySelectorAll('button[data-region]');
+    const { container } = renderPainButton();
+    // a11y: container is NOT role="list" (stray list with <button> children
+    // reads empty to SR) — count region buttons directly via data-region.
+    const regionButtons = container.querySelectorAll('button[data-region]');
     expect(regionButtons.length).toBe(15);
   });
 

@@ -161,7 +161,7 @@ export function PainButton(): JSX.Element {
       <h2 className="text-2xl font-bold text-ink mb-2">Unde te doare?</h2>
       <p className="text-base text-ink2 mb-6">Coach evita exercitii care irita zona.</p>
 
-      <div className="grid grid-cols-2 gap-3 mb-6" role="list" aria-label="Zone corp">
+      <div className="grid grid-cols-2 gap-3 mb-6">
         {REGIONS.map((r) => {
           const selected = region === r.id;
           return (
@@ -185,7 +185,7 @@ export function PainButton(): JSX.Element {
 
       <div className="mb-6">
         <p className="text-base text-ink mb-3">Cat de tare?</p>
-        <div className="flex gap-3" role="list" aria-label="Intensitate durere">
+        <div className="flex gap-3">
           {([1, 2, 3] as const).map((lvl) => {
             const selected = intensity === lvl;
             return (
