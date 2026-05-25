@@ -129,7 +129,7 @@ export function Auth(): JSX.Element {
           Intra in cont
         </h1>
         <p className="text-sm text-ink2 mb-6 text-center">
-          Un tap cu Google. Fara parola, fara link pe email.
+          Iti trimitem un link de intrare pe email. Fara parola.
         </p>
 
         {sent ? (
@@ -287,7 +287,7 @@ export function Auth(): JSX.Element {
               className="w-full mt-3 py-3 border border-lineStrong rounded-xl text-sm text-ink2 flex items-center justify-center gap-2"
             >
               <FlaskConical className="w-4 h-4" aria-hidden="true" />
-              Incearca fara cont
+              Continua fara cont
             </button>
             {/* §F-auth-04 sub-gap (MED chat5 Wave 16) — Skip-auth risk-note
                 mockup andura-clasic.html#L462-464 verbatim. Anchoreaza
