@@ -5,7 +5,9 @@
 // picioare-quads/picioare-hamstrings/fese/gambe). Plus lagging detection:
 // muscles sub-volume 2+ saptamani vs equal Big 11 active-group distribution.
 //
-// Pure functions — no DB / DOM deps. Inputs: logs array. Testable in vacuum.
+// Time-dependent functions (recovery decay + recency cutoffs read the wall
+// clock). Inject `now` (default Date.now at I/O boundary) for deterministic
+// testing per ADR 026 §9. No DB / DOM deps. Inputs: logs array.
 // ZERO mutation algorithm semantics per §4.1 (FATIGUED/PARTIAL thresholds
 // preserved; aggregation preserved; refactor = taxonomy expansion only).
 //
@@ -59,11 +61,12 @@ const STATE_BY_RANK = ['recovered', 'partial', 'fatigued'];
 /**
  * Build per-group recovery state map.
  * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs — workout logs (db.js logs shape)
- * @param {Array<{type?: string, region?: string, intensity?: 1|2|3, ts?: number}>} [painEntries] — append-only pain CDL (DB('pain-cdl')), read at I/O boundary; engine stays pure
+ * @param {Array<{type?: string, region?: string, intensity?: 1|2|3, ts?: number}>} [painEntries] — append-only pain CDL (DB('pain-cdl')), read at I/O boundary
+ * @param {number} [now] — reference timestamp (default Date.now); inject for deterministic testing
  * @returns {{[group:string]: 'recovered'|'partial'|'fatigued'}}
  */
-export function getRecoveryByGroup(logs, painEntries) {
-  const headState = /** @type {Record<string, number>} */ (getMuscleState(logs));
+export function getRecoveryByGroup(logs, painEntries, now = Date.now()) {
+  const headState = /** @type {Record<string, number>} */ (getMuscleState(logs, now));
   /** @type {{[group:string]: 'recovered'|'partial'|'fatigued'}} */
   const groupState = {};
   const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP);
@@ -77,7 +80,7 @@ export function getRecoveryByGroup(logs, painEntries) {
     else if (max >= PARTIAL_THRESHOLD)  groupState[group] = 'partial';
     else                                groupState[group] = 'recovered';
   }
-  applyPainEscalation(groupState, painEntries);
+  applyPainEscalation(groupState, painEntries, now);
   return groupState;
 }
 
@@ -85,7 +88,7 @@ export function getRecoveryByGroup(logs, painEntries) {
  * Escalate group recovery states from recent pain CDL entries (in place).
  * now is an injectable reference timestamp (default Date.now — same
  * time-relative convention as sibling daysSinceGroup / getLaggingMuscles which
- * read Date.now directly). Empty/missing painEntries is a no-op (conservative
+ * also accept an injectable now). Empty/missing painEntries is a no-op (conservative
  * baseline preserved when the adapter has no pain CDL to pass).
  *
  * @param {{[group:string]: 'recovered'|'partial'|'fatigued'}} groupState — mutated in place
@@ -117,9 +120,10 @@ function applyPainEscalation(groupState, painEntries, now = Date.now()) {
  * Days since last session targeting a given group.
  * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs
  * @param {string} group
+ * @param {number} [now] — reference timestamp (default Date.now); inject for deterministic testing
  * @returns {number|null} — null if never trained
  */
-export function daysSinceGroup(logs, group) {
+export function daysSinceGroup(logs, group, now = Date.now()) {
   const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP);
   const heads = new Set(headMap[group] || []);
   if (heads.size === 0) return null;
@@ -136,7 +140,7 @@ export function daysSinceGroup(logs, group) {
     if (ts > latest) latest = ts;
   }
   if (latest === 0) return null;
-  return Math.floor((Date.now() - latest) / MS_PER_DAY);
+  return Math.floor((now - latest) / MS_PER_DAY);
 }
 
 /**
@@ -144,14 +148,16 @@ export function daysSinceGroup(logs, group) {
  * equal distribution (~16-17% target each). Lagging = group < 60% of average
  * peer group volume across last 14 days.
  *
- * @param {{ logs?: Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>, lookbackDays?: number } | null | undefined} profile — { logs: Array, lookbackDays?: 14 }
+ * @param {{ logs?: Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>, lookbackDays?: number, now?: number } | null | undefined} profile — { logs: Array, lookbackDays?: 14, now?: Date.now } — inject now for deterministic testing
  * @returns {Array<{group: string, label: string, ratio: number, sets: number}>}
  *   Sorted by ratio ascending (most lagging first).
  */
 export function getLaggingMuscles(profile) {
   const logs = profile?.logs || [];
   const lookbackDays = profile?.lookbackDays ?? 14;
-  const cutoff = Date.now() - lookbackDays * MS_PER_DAY;
+  const injectedNow = profile?.now;
+  const now = Number.isFinite(injectedNow) ? /** @type {number} */ (injectedNow) : Date.now();
+  const cutoff = now - lookbackDays * MS_PER_DAY;
 
   const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP);
   const exMap = /** @type {Record<string, {primary?: string[], secondary?: string[]}>} */ (EXERCISE_MUSCLES);

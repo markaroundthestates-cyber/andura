@@ -55,10 +55,11 @@ export const EXERCISE_MUSCLES = {
  * @typedef {{ baseline?: boolean, ex?: string, w?: number, ts?: number, date?: string, rpe?: number, [k: string]: unknown }} MuscleLog
  *
  * @param {MuscleLog[]} logs
+ * @param {number} [now] — reference timestamp for time-decay (default Date.now);
+ *   inject for deterministic testing. Decay math unchanged.
  * @returns {Record<string, number>}
  */
-export function getMuscleState(logs) {
-  const now = Date.now();
+export function getMuscleState(logs, now = Date.now()) {
   /** @type {Record<string, number>} */
   const state = {};
   Object.keys(MUSCLE_HEADS).forEach(m => { state[m] = 0; });

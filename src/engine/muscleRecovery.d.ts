@@ -52,9 +52,10 @@ export const PAIN_REGION_GROUP_MAP: Record<string, string[]>;
 
 export function getRecoveryByGroup(
   logs: LogEntry[],
-  painEntries?: PainCdlEntry[]
+  painEntries?: PainCdlEntry[],
+  now?: number
 ): Record<string, RecoveryState>;
-export function daysSinceGroup(logs: LogEntry[], group: string): number | null;
+export function daysSinceGroup(logs: LogEntry[], group: string, now?: number): number | null;
 export function getLaggingMuscles(
-  profile: { logs?: LogEntry[]; lookbackDays?: number } | null | undefined
+  profile: { logs?: LogEntry[]; lookbackDays?: number; now?: number } | null | undefined
 ): LaggingMuscle[];

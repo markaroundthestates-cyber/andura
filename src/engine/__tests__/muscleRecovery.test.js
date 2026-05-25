@@ -386,6 +386,48 @@ describe('decay rate SoT separation (dual-source hazard guard)', () => {
   });
 });
 
+// ══ E-02 — injectable `now` => deterministic output (ADR 026 §9 purity) ══
+// Decay + recency cutoffs read wall clock by default. Injecting a fixed `now`
+// makes the same logs yield identical output regardless of when the test runs.
+describe('injectable now — deterministic recovery (E-02)', () => {
+  const FIXED = 1_700_000_000_000; // fixed reference timestamp
+  // Heavy chest session 2h before fixed now (mirrors fatigued-threshold test).
+  const logsAt = (ms) => [
+    { ex: 'Incline DB Press', w: 30, reps: 8, rpe: 9, ts: ms - 2 * MS_PER_HOUR },
+    { ex: 'Flat DB Press', w: 32, reps: 8, rpe: 9, ts: ms - 2 * MS_PER_HOUR },
+    { ex: 'Pec Deck / Cable Fly', w: 20, reps: 10, rpe: 8, ts: ms - 2 * MS_PER_HOUR },
+  ];
+
+  it('getRecoveryByGroup with fixed now is reproducible (same input => same output)', () => {
+    const a = getRecoveryByGroup(logsAt(FIXED), undefined, FIXED);
+    const b = getRecoveryByGroup(logsAt(FIXED), undefined, FIXED);
+    expect(a).toEqual(b);
+    expect(a.piept).toBe('fatigued'); // recent heavy chest at fixed now
+  });
+
+  it('daysSinceGroup with fixed now computes exact elapsed days', () => {
+    const logs = [{ ex: 'Incline DB Press', w: 30, ts: FIXED - 3 * MS_PER_DAY }];
+    expect(daysSinceGroup(logs, 'piept', FIXED)).toBe(3);
+  });
+
+  it('getLaggingMuscles is reproducible + honors injected now cutoff', () => {
+    // Multi-group volume: chest trained heavily, back trained once => back lags.
+    const logs = [
+      { ex: 'Incline DB Press', w: 30, ts: FIXED - 1 * MS_PER_DAY },
+      { ex: 'Flat DB Press', w: 32, ts: FIXED - 1 * MS_PER_DAY },
+      { ex: 'Pec Deck / Cable Fly', w: 20, ts: FIXED - 1 * MS_PER_DAY },
+      { ex: 'Cable Row', w: 40, ts: FIXED - 1 * MS_PER_DAY },
+    ];
+    const a = getLaggingMuscles({ logs, lookbackDays: 14, now: FIXED });
+    const b = getLaggingMuscles({ logs, lookbackDays: 14, now: FIXED });
+    expect(a).toEqual(b); // deterministic with fixed now
+    // Shift now 30 days forward => all logs outside 14-day window => no active
+    // groups => empty result. Proves cutoff is driven by injected now.
+    const shifted = getLaggingMuscles({ logs, lookbackDays: 14, now: FIXED + 30 * MS_PER_DAY });
+    expect(shifted).toEqual([]);
+  });
+});
+
 // ══ Pain CDL -> Recovery escalation (item 43-H2 / ADR section 9 consumption) ══
 // muscleRecovery now CONSUMES the append-only pain CDL persisted by PainButton
 // (DB('pain-cdl')). A recent pain region escalates the recovery state of the
