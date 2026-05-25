@@ -124,6 +124,16 @@ export interface LogEntry {
 
 export const LOGS_MAX = 5000;
 
+// U-11 (MED) — rolling cap pe sessionsHistory (persistat integral cu exercises
+// breakdown per sesiune). Fara cap creste nelimitat → pe orizont 2-3 ani user
+// zilnic atinge quota localStorage (~5MB) → zustand persist esueaza silent →
+// pierdere istoric. Cap 500 = ~1.4 ani uz zilnic full-detail, peste fereastra
+// 90-zile a oricarui consumer (RatingsStrip90Day/PRWallRecent/CoachTodayCard).
+// Newest-tail (la fel ca append existent) → slice(-MAX) pastreaza recente.
+// NB: arhiva Tier1 IDB (audit) ar cere object-store nou + migrare schema =
+// disproportionat acestui fix; cap-ul singur rezolva riscul de quota.
+export const SESSIONS_HISTORY_MAX = 500;
+
 export function buildLogEntriesFromSummary(
   summary: LastSessionSummary,
   sessionStart: number
@@ -432,7 +442,9 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             lastSession: summary,
             // Phase 4 task_21: append la sessionsHistory cumulative list
             // pentru Istoric tab. Newest tail (reverse-chrono UI iter pe display).
-            sessionsHistory: [...s.sessionsHistory, summary],
+            // U-11 (MED): rolling cap SESSIONS_HISTORY_MAX — slice ultimele N
+            // (newest-tail) ca persist sa nu depaseasca quota localStorage.
+            sessionsHistory: [...s.sessionsHistory, summary].slice(-SESSIONS_HISTORY_MAX),
             exIdx: 0,
             setIdx: 0,
             history: {},

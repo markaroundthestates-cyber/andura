@@ -7,8 +7,9 @@ import {
   getCurrentMode,
   diffCalendarDays,
   nextStreak,
+  SESSIONS_HISTORY_MAX,
 } from '../../stores/workoutStore';
-import type { WorkoutMode } from '../../stores/workoutStore';
+import type { WorkoutMode, LastSessionSummary } from '../../stores/workoutStore';
 
 function resetStore(): void {
   useWorkoutStore.setState({
@@ -980,5 +981,39 @@ describe('workoutStore — sessionContext (U-03)', () => {
     const raw = localStorage.getItem('wv2-workout-store');
     const parsed = JSON.parse(raw!);
     expect(parsed.state.sessionContext).toBeUndefined();
+  });
+});
+
+// U-11 (MED) — sessionsHistory rolling cap (anti quota localStorage overflow).
+describe('workoutStore — sessionsHistory cap (U-11)', () => {
+  beforeEach(resetStore);
+
+  it('SESSIONS_HISTORY_MAX e 500', () => {
+    expect(SESSIONS_HISTORY_MAX).toBe(500);
+  });
+
+  it('finishSession capeaza sessionsHistory la SESSIONS_HISTORY_MAX', () => {
+    // Seed la cap exact, apoi inca o sesiune → ramane la cap (NU cap+1).
+    const seed: LastSessionSummary[] = Array.from({ length: SESSIONS_HISTORY_MAX }, (_, i) => ({
+      title: `S${i}`,
+      meta: '1 set',
+      ts: i,
+    }));
+    useWorkoutStore.setState({ sessionsHistory: seed });
+    useWorkoutStore.getState().finishSession({ title: 'NEW', meta: '1 set', ts: 999999 });
+    const hist = useWorkoutStore.getState().sessionsHistory;
+    expect(hist).toHaveLength(SESSIONS_HISTORY_MAX);
+    // Newest-tail: ultima = sesiunea noua; prima veche (S0) evictata.
+    expect(hist[hist.length - 1]?.title).toBe('NEW');
+    expect(hist[0]?.title).toBe('S1');
+  });
+
+  it('finishSession sub cap NU evicteaza (append normal)', () => {
+    useWorkoutStore.setState({ sessionsHistory: [] });
+    useWorkoutStore.getState().finishSession({ title: 'A', meta: '1 set', ts: 1 });
+    useWorkoutStore.getState().finishSession({ title: 'B', meta: '1 set', ts: 2 });
+    const hist = useWorkoutStore.getState().sessionsHistory;
+    expect(hist).toHaveLength(2);
+    expect(hist[1]?.title).toBe('B');
   });
 });
