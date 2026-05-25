@@ -71,15 +71,41 @@ async function renderWorkoutAndWait(): Promise<ReturnType<typeof renderWorkout>>
   await waitFor(() => {
     expect(screen.queryByTestId('workout-loading')).not.toBeInTheDocument();
   });
-  // Phase 6 task_02 Option C: also wait for input-sync useEffect to propagate
-  // kg/reps inputs from currentExercise (post exercises array load triggers
-  // sync via deps array). Empty-state path skips kg-input (NU în DOM).
+  // Phase 6 task_02 Option C + §F-pass2-setloginput-02: wait for input-sync
+  // useEffect to propagate kg/reps from currentExercise. Logging phase now
+  // opens at pre-log `tinta` (target display, NO kg-input) per mockup wv2 two-
+  // step — assert on the tinta target value instead. Empty-state skips both.
   await waitFor(() => {
-    const kgInput = screen.queryByTestId('kg-input');
+    const tintaKg = screen.queryByTestId('setlog-tinta-kg');
     const emptyBack = screen.queryByTestId('workout-empty-back');
-    expect(emptyBack !== null || (kgInput !== null && (kgInput as HTMLInputElement).value !== '0')).toBe(true);
+    expect(emptyBack !== null || (tintaKg !== null && (tintaKg.textContent ?? '') !== '0 kg')).toBe(true);
   });
   return result;
+}
+
+// §F-pass2-setloginput-02 — mockup wv2 two-step helper: pre-log `tinta` →
+// tap "Logheaza setul" → post-log reveals the rating row → tap a rating.
+// Replaces the old direct rating tap (rating was always visible pre-fix).
+function logSet(rating: 'Usor' | 'Potrivit' | 'Greu'): void {
+  fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
+  fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${rating}$`, 'i') }));
+}
+
+// Optional kg/reps revise before rating: tap Logheaza → pencil edit → change
+// inputs → rate. Mirrors mockup post-log pencil affordance.
+function logSetWithEdit(
+  rating: 'Usor' | 'Potrivit' | 'Greu',
+  changes: { kg?: string; reps?: string } = {},
+): void {
+  fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
+  fireEvent.click(screen.getByTestId('setlog-postlog-edit'));
+  if (changes.kg !== undefined) {
+    fireEvent.change(screen.getByTestId('kg-input'), { target: { value: changes.kg } });
+  }
+  if (changes.reps !== undefined) {
+    fireEvent.change(screen.getByTestId('reps-input'), { target: { value: changes.reps } });
+  }
+  fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${rating}$`, 'i') }));
 }
 
 function resetStore(): void {
@@ -132,14 +158,29 @@ describe('Workout — base render (phase=idle init → logging)', async () => {
     expect(screen.getByTestId('log-zone')).toHaveTextContent('Set 1/4');
   });
 
-  it('renders kg + reps inputs cu default target values', async () => {
+  it('opens pre-log tinta cu default target values (22.5 kg / 10 repetari)', async () => {
+    // §F-pass2-setloginput-02 — logging phase now opens at `tinta` (target
+    // display + Logheaza CTA), inputs hidden until pencil edit. Mockup wv2.
     await renderWorkoutAndWait();
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
+    expect(screen.getByTestId('setlog-tinta-reps')).toHaveTextContent('10');
+    expect(screen.queryByTestId('kg-input')).not.toBeInTheDocument();
+  });
+
+  it('renders kg + reps inputs after pencil edit (revise flow)', async () => {
+    // §F-pass2-setloginput-02 — Logheaza → post-log → pencil reveals editable
+    // inputs synced to target values.
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
+    fireEvent.click(screen.getByTestId('setlog-postlog-edit'));
     expect(screen.getByTestId('kg-input')).toHaveValue(22.5);
     expect(screen.getByTestId('reps-input')).toHaveValue(10);
   });
 
-  it('renders 3 rating buttons (Usor / Potrivit / Greu)', async () => {
+  it('renders 3 rating buttons (Usor / Potrivit / Greu) after Logheaza', async () => {
+    // §F-pass2-setloginput-02 — rating row hidden pre-log, revealed post-log.
     await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
     expect(screen.getByRole('button', { name: /^Usor$/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /^Potrivit$/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /^Greu$/i })).toBeInTheDocument();
@@ -161,30 +202,27 @@ describe('Workout — state machine logging → rest', async () => {
 
   it('rating set 1 of 4 advances phase la rest', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     expect(useWorkoutStore.getState().phase).toBe('rest');
   });
 
   it('rest overlay rendered cu countdown', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     expect(screen.getByTestId('rest-overlay')).toBeInTheDocument();
     expect(screen.getByTestId('rest-countdown')).toBeInTheDocument();
   });
 
   it('rest countdown starts at exercise restSec (Bench Press = 90s = 1:30)', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     expect(screen.getByTestId('rest-countdown')).toHaveTextContent('1:30');
   });
 
   it('logSet persists kg + reps + rating la history', async () => {
     await renderWorkoutAndWait();
-    const kgInput = screen.getByTestId('kg-input');
-    const repsInput = screen.getByTestId('reps-input');
-    fireEvent.change(kgInput, { target: { value: '25' } });
-    fireEvent.change(repsInput, { target: { value: '8' } });
-    fireEvent.click(screen.getByRole('button', { name: /^Greu$/i }));
+    // §F-pass2-setloginput-02 — revise kg/reps via pencil edit then rate.
+    logSetWithEdit('Greu', { kg: '25', reps: '8' });
     const hist = useWorkoutStore.getState().history[0];
     expect(hist).toHaveLength(1);
     // Phase 4 task_14: timestamp auto-stamped by logSet — match partial
@@ -195,7 +233,7 @@ describe('Workout — state machine logging → rest', async () => {
 
   it('skip rest button transitions phase back la logging', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     expect(useWorkoutStore.getState().phase).toBe('rest');
     fireEvent.click(screen.getByTestId('rest-skip'));
     expect(useWorkoutStore.getState().phase).toBe('logging');
@@ -203,14 +241,14 @@ describe('Workout — state machine logging → rest', async () => {
 
   it('set history renders previous sets in log zone', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     fireEvent.click(screen.getByTestId('rest-skip'));
     expect(screen.getByTestId('set-history-0')).toHaveTextContent(/22.5 kg x 10 reps - usor/);
   });
 
   it('set counter advances "Set 2/4" after first set logged', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     fireEvent.click(screen.getByTestId('rest-skip'));
     expect(screen.getByTestId('log-zone')).toHaveTextContent('Set 2/4');
   });
@@ -227,7 +265,7 @@ describe('Workout — rest countdown timer (fake timers)', async () => {
 
   it('rest countdown decrements each second', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     expect(screen.getByTestId('rest-countdown')).toHaveTextContent('1:30');
     act(() => {
       vi.advanceTimersByTime(3000);
@@ -237,7 +275,7 @@ describe('Workout — rest countdown timer (fake timers)', async () => {
 
   it('rest countdown reaching 0 auto-advances phase la logging', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     act(() => {
       vi.advanceTimersByTime(91000);
     });
@@ -265,8 +303,9 @@ describe('Workout — state machine transition + advance exercise', async () => 
   it('logging last set of exercise (4 of 4 Bench Press) → transition phase', async () => {
     await renderWorkoutAndWait();
     // Log 4 sets: rest skips between + > 30s gap pentru aaFriction bypass.
+    // §F-pass2-setloginput-02 — each set: Logheaza → rate (logSet helper).
     for (let i = 0; i < 4; i++) {
-      fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+      logSet('Potrivit');
       if (i < 3) {
         fireEvent.click(screen.getByTestId('rest-skip'));
         advanceBeyondFastSetsWindow();
@@ -279,7 +318,7 @@ describe('Workout — state machine transition + advance exercise', async () => 
   it('transition phase shows next exercise name', async () => {
     await renderWorkoutAndWait();
     for (let i = 0; i < 4; i++) {
-      fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+      logSet('Usor');
       if (i < 3) {
         fireEvent.click(screen.getByTestId('rest-skip'));
         advanceBeyondFastSetsWindow();
@@ -291,7 +330,7 @@ describe('Workout — state machine transition + advance exercise', async () => 
   it('transition advances exIdx after 1.5s', async () => {
     await renderWorkoutAndWait();
     for (let i = 0; i < 4; i++) {
-      fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+      logSet('Usor');
       if (i < 3) {
         fireEvent.click(screen.getByTestId('rest-skip'));
         advanceBeyondFastSetsWindow();
@@ -329,7 +368,7 @@ describe('Workout — finish last set of last exercise navigates post-rpe', asyn
       sessionStart: Date.now() - 1000,
     });
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     expect(screen.getByTestId('probe')).toHaveAttribute(
       'data-pathname',
       '/app/antrenor/post-rpe'
@@ -368,7 +407,7 @@ describe('Workout — exit confirm 3-option sheet', async () => {
   it('Salveaza pause stores pausedSnapshot + navigates antrenor', async () => {
     await renderWorkoutAndWait();
     // Log one set so we have content în history pre-pause.
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     fireEvent.click(screen.getByTestId('rest-skip'));
     fireEvent.click(screen.getByTestId('workout-exit-trigger'));
     fireEvent.click(screen.getByTestId('exit-pause'));
@@ -381,7 +420,7 @@ describe('Workout — exit confirm 3-option sheet', async () => {
 
   it('Renunt discards state + navigates antrenor', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Greu$/i }));
+    logSet('Greu');
     fireEvent.click(screen.getByTestId('rest-skip'));
     fireEvent.click(screen.getByTestId('workout-exit-trigger'));
     fireEvent.click(screen.getByTestId('exit-discard'));
@@ -472,9 +511,17 @@ describe('Workout — Romanian no-diacritics rule (D-LEGACY-064)', async () => {
 
   it('no diacritics in rest overlay', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     const overlay = screen.getByTestId('rest-overlay');
     expect(/[ăâîșțĂÂÎȘȚ]/.test(overlay.textContent ?? '')).toBe(false);
+  });
+
+  it('no diacritics in post-log confirmation (Tu ai facut...)', async () => {
+    // §F-pass2-setloginput-02 — verify the newly-surfaced post-log copy.
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
+    const postlog = screen.getByTestId('setlog-postlog');
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(postlog.textContent ?? '')).toBe(false);
   });
 });
 
@@ -485,7 +532,7 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
 
   it('logSet calls getPRDelta cu exercise + set + history', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     expect(getPRDelta).toHaveBeenCalledWith(
       'Bench Press',
       { w: 22.5, reps: 10 },
@@ -496,7 +543,7 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
   it('NU markPRHit cand getPRDelta returns null (no PR)', async () => {
     vi.mocked(getPRDelta).mockReturnValue(null);
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     expect(useWorkoutStore.getState().prHit).toBe(false);
     expect(useWorkoutStore.getState().prData).toBeNull();
   });
@@ -513,9 +560,8 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
       oneRMEstimate: 33.3,
     });
     await renderWorkoutAndWait();
-    const kgInput = screen.getByTestId('kg-input');
-    fireEvent.change(kgInput, { target: { value: '25' } });
-    fireEvent.click(screen.getByRole('button', { name: /^Greu$/i }));
+    // §F-pass2-setloginput-02 — revise kg via pencil edit then rate.
+    logSetWithEdit('Greu', { kg: '25' });
     const state = useWorkoutStore.getState();
     expect(state.prHit).toBe(true);
     expect(state.prData).toMatchObject({
@@ -539,7 +585,7 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
       oneRMEstimate: 30,
     });
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     expect(useWorkoutStore.getState().prData?.deltaKg).toBe(22.5);
     expect(useWorkoutStore.getState().prData?.oneRMEstimate).toBe(30);
   });
@@ -555,7 +601,7 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
       oneRMEstimate: 31.5,
     });
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     expect(useWorkoutStore.getState().prData?.type).toBe('volume');
   });
 
@@ -570,16 +616,16 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
       oneRMEstimate: 31.5,
     });
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     expect(useWorkoutStore.getState().prData?.type).toBe('reps');
   });
 
   it('history passed la getPRDelta accumulates set 2+ correctly', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     fireEvent.click(screen.getByTestId('rest-skip'));
     vi.mocked(getPRDelta).mockClear();
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     // Phase 4 task_14 LOCK 9: rapid set click triggers aaFriction fast_sets
     // (consecutive < 30s real time). Dismiss via "Continui oricum" override
     // → performLogSet proceeds → getPRDelta invocat cu accumulated history.
@@ -639,13 +685,15 @@ describe('Workout — inactivity watch (task_15 §A)', async () => {
     );
   });
 
-  it('rating click resets activity (prompt dismissed)', async () => {
+  it('log interaction resets activity (prompt dismissed)', async () => {
+    // §F-pass2-setloginput-02 — Logheaza tap is the first log interaction +
+    // bumps activity (onLog → bumpActivity), dismissing the inactivity prompt.
     await renderWorkoutAndWait();
     act(() => {
       vi.advanceTimersByTime(8 * 60 * 1000);
     });
     expect(screen.getByTestId('inactivity-prompt')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
     expect(screen.queryByTestId('inactivity-prompt')).not.toBeInTheDocument();
   });
 
@@ -667,7 +715,7 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
 
   it('NU trigger modal cand first set (history empty)', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     expect(screen.queryByTestId('aa-friction-modal')).not.toBeInTheDocument();
     // logSet did proceed → phase=rest (not last set of 4)
     expect(useWorkoutStore.getState().phase).toBe('rest');
@@ -675,10 +723,10 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
 
   it('triggers modal pe fast_sets pattern (2nd set rapid)', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     fireEvent.click(screen.getByTestId('rest-skip'));
     // 2nd set fires immediately = < 30s gap = fast_sets trigger
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     expect(screen.getByTestId('aa-friction-modal')).toBeInTheDocument();
     expect(screen.getByTestId('aa-friction-reason')).toHaveAttribute(
       'data-reason',
@@ -688,10 +736,10 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
 
   it('suspend state machine — phase NU advance la rest cand modal open', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     fireEvent.click(screen.getByTestId('rest-skip'));
     expect(useWorkoutStore.getState().phase).toBe('logging');
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     // Modal open — phase still logging, NU advanced la rest yet.
     expect(useWorkoutStore.getState().phase).toBe('logging');
     expect(useWorkoutStore.getState().history[0]?.length ?? 0).toBe(1); // only 1st set logged
@@ -699,9 +747,9 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
 
   it('Continui oricum → performLogSet proceeds + state machine advance', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     fireEvent.click(screen.getByTestId('rest-skip'));
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     fireEvent.click(screen.getByTestId('aa-friction-continue'));
     expect(screen.queryByTestId('aa-friction-modal')).not.toBeInTheDocument();
     expect(useWorkoutStore.getState().history[0]?.length).toBe(2);
@@ -710,9 +758,9 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
 
   it('Pauza 30s → performLogSet + override restCountdown la 30', async () => {
     await renderWorkoutAndWait();
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     fireEvent.click(screen.getByTestId('rest-skip'));
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    logSet('Potrivit');
     fireEvent.click(screen.getByTestId('aa-friction-pause'));
     expect(useWorkoutStore.getState().history[0]?.length).toBe(2);
     expect(useWorkoutStore.getState().phase).toBe('rest');
@@ -723,7 +771,7 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
   it('triggers modal pe kg_jump pattern (> 20% increase)', async () => {
     await renderWorkoutAndWait();
     // Set 1: 22.5 kg default
-    fireEvent.click(screen.getByRole('button', { name: /^Usor$/i }));
+    logSet('Usor');
     fireEvent.click(screen.getByTestId('rest-skip'));
     // Wait > 30s simulated via store manipulation — set sample timestamp far past
     useWorkoutStore.setState({
@@ -731,10 +779,8 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
         0: [{ kg: 22.5, reps: 10, rating: 'usor', timestamp: Date.now() - 60_000 }],
       },
     });
-    // Set 2: bump kg la 30 = +33% kg
-    const kgInput = screen.getByTestId('kg-input');
-    fireEvent.change(kgInput, { target: { value: '30' } });
-    fireEvent.click(screen.getByRole('button', { name: /^Potrivit$/i }));
+    // Set 2: bump kg la 30 = +33% kg via pencil edit then rate.
+    logSetWithEdit('Potrivit', { kg: '30' });
     expect(screen.getByTestId('aa-friction-modal')).toBeInTheDocument();
     expect(screen.getByTestId('aa-friction-reason')).toHaveAttribute(
       'data-reason',

@@ -124,6 +124,17 @@ export function Workout(): JSX.Element {
   // delta > 7 min → show prompt.
   const [lastActivityAt, setLastActivityAt] = useState<number>(Date.now());
   const [inactivityPromptOpen, setInactivityPromptOpen] = useState(false);
+  // §F-pass2-setloginput-02 — SetLogInput parent state machine wire (deferred
+  // tactical sibling per e02f0b94 "Parent state machine wire tactical sibling").
+  // Mockup wv2 two-step within the logging phase (andura-clasic.html#L1463-1485):
+  //   pre-log `tinta` (Tinta X repetari Y kg + "Logheaza setul" CTA) →
+  //   post-log readonly "Tu ai facut X repetari cu Y kg" + pencil + rating row.
+  // `setLogged` flips on Logheaza (onLog); `editing` is the pencil revise escape
+  // (onEdit) surfacing the editable inputs (React-port a11y editable mode kept).
+  // FSM (logging/rest/transition + timers + LOCK 9 aaFriction) untouched — this
+  // is purely the inner log-zone UI. Reset per new set via effect below.
+  const [setLogged, setSetLogged] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   // Init session on mount cand idle (no paused snapshot resumed via Antrenor).
   // §44-C1: idle mode === no live session + no paused snapshot + no lastSession
@@ -216,6 +227,14 @@ export function Workout(): JSX.Element {
     setKgInput(currentExercise.targetKg);
     setRepsInput(currentExercise.targetReps);
   }, [safeExIdx, currentExercise.targetKg, currentExercise.targetReps]);
+
+  // §F-pass2-setloginput-02 — each new set begins at pre-log `tinta`. Keyed on
+  // exercise (safeExIdx) + set index (currentSetIdx bumps when a set logs into
+  // history), so post-rest next-set returns to the target display + Logheaza.
+  useEffect(() => {
+    setSetLogged(false);
+    setEditing(false);
+  }, [safeExIdx, currentSetIdx]);
 
   // Phase 4 task_15 §A: inactivity watch — interval 30s checks idle minutes
   // vs lastActivityAt; > 7 min triggers prompt overlay. Reset triggers
@@ -456,9 +475,22 @@ export function Workout(): JSX.Element {
             ))}
           </div>
 
+          {/* §F-pass2-setloginput-02 — mockup wv2 two-step (andura-clasic.html
+              #L1463-1485). Pre-log `tinta` (target + Logheaza CTA) → post-log
+              readonly "Tu ai facut..." + pencil revise + rating row. `editing`
+              = pencil escape to editable inputs. */}
           <SetLogInput
             kg={kgInput}
             reps={repsInput}
+            mode={editing ? 'editable' : setLogged ? 'post-log' : 'tinta'}
+            onLog={() => {
+              bumpActivity();
+              setSetLogged(true);
+            }}
+            onEdit={() => {
+              bumpActivity();
+              setEditing(true);
+            }}
             onKgChange={(n) => {
               bumpActivity();
               setKgInput(n);
@@ -469,7 +501,9 @@ export function Workout(): JSX.Element {
             }}
           />
 
-          <SetRatingButtons onRate={handleLogSet} />
+          {/* Rating row appears only after Logheaza (post-log) or while revising
+              (editing). Pre-log tinta hides it per mockup wv2. */}
+          {(setLogged || editing) && <SetRatingButtons onRate={handleLogSet} />}
         </div>
       )}
 
