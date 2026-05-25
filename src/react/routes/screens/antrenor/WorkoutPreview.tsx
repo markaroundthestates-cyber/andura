@@ -136,19 +136,26 @@ export function WorkoutPreview(): JSX.Element {
     return () => { cancelled = true; };
   }, []);
   const title = workout?.workoutTitle ?? 'Push (piept si umeri)';
+  // Banner stays the self-report transparency signal (user said "Excelent" →
+  // "Coach urca intensitatea"). The duration/volume PRESCRIPTION, however, now
+  // tracks the ENGINE intensityMod baseline (deload output) — C3. The blunt
+  // self-report multiplier no longer stacks on the prescription (the self-report
+  // feeds the engine VIA readiness, C2); stacking it here double-counted.
+  // Magnitudes (-/+) unchanged (separate Daniel UX call).
+  const engineIntensityMod: IntensityMod = workout?.intensityMod ?? 'normal';
   const banner = bannerFor(intensityMod);
   const baseDuration = workout?.estimatedDuration ?? durationFor('normal');
   const baseVolume = workout?.volumeKg ?? volumeFor('normal');
   const duration =
-    intensityMod === 'minus'
+    engineIntensityMod === 'minus'
       ? Math.round(baseDuration * 0.7)
-      : intensityMod === 'plus'
+      : engineIntensityMod === 'plus'
       ? Math.round(baseDuration * 1.2)
       : baseDuration;
   const volume =
-    intensityMod === 'minus'
+    engineIntensityMod === 'minus'
       ? Math.round(baseVolume * 0.82)
-      : intensityMod === 'plus'
+      : engineIntensityMod === 'plus'
       ? Math.round(baseVolume * 1.16)
       : baseVolume;
   const coachLine = coachPick('preview', undefined, 0);

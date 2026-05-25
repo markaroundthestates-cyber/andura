@@ -31,7 +31,7 @@ import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout, getPRDelta, getWhyExerciseSummary } from '../../../lib/engineWrappers';
-import type { PlannedExercise } from '../../../lib/engineWrappers';
+import type { PlannedExercise, PlannedWorkoutOutput } from '../../../lib/engineWrappers';
 import { gotoPath } from '../../../lib/navigation';
 import { SessionTimer } from '../../../components/Workout/SessionTimer';
 import { RestOverlay } from '../../../components/Workout/RestOverlay';
@@ -62,9 +62,6 @@ export function Workout(): JSX.Element {
   const phase = useWorkoutStore((s) => s.phase);
   const history = useWorkoutStore((s) => s.history);
   const sessionStart = useWorkoutStore((s) => s.sessionStart);
-  // U-03 (HIGH) — session intensity (din EnergyCheck/PainButton via preview).
-  // Aplicat la target kg/reps ca adaptarea afisata pe preview sa fie reala.
-  const sessionContext = useWorkoutStore((s) => s.sessionContext);
   const pausedSnapshot = useWorkoutStore((s) => s.pausedSnapshot);
   const lastSession = useWorkoutStore((s) => s.lastSession);
   const startSession = useWorkoutStore((s) => s.startSession);
@@ -82,12 +79,18 @@ export function Workout(): JSX.Element {
   // Empty string default cand engine null/loading → store fallback la
   // '(sesiune nedefinita)' explicit marker NU 'Push' lie.
   const [workoutTitle, setWorkoutTitle] = useState<string>('');
+  // C3 — ENGINE intensityMod baseline (deload output from the pipeline). This
+  // is the adaptive signal applied to weight; the EnergyCheck self-report no
+  // longer multiplies weight separately (it now feeds the engine VIA readiness,
+  // C2). 'normal' default until the async plan resolves.
+  const [engineIntensityMod, setEngineIntensityMod] = useState<PlannedWorkoutOutput['intensityMod']>('normal');
   useEffect(() => {
     let cancelled = false;
     getTodayWorkout().then((planned) => {
       if (!cancelled) {
         setExercises(planned?.exercises ?? []);
         setWorkoutTitle(planned?.workoutTitle ?? '');
+        setEngineIntensityMod(planned?.intensityMod ?? 'normal');
       }
     });
     return () => { cancelled = true; };
@@ -104,12 +107,15 @@ export function Workout(): JSX.Element {
   const currentExercise: PlannedExercise = (hasWorkout && exercises !== null
     ? exercises[safeExIdx]
     : undefined) ?? defaultExercise;
-  // U-03 (HIGH) — aplica session intensityMod la target kg (paritate cu banner
-  // preview: minus -20% / plus +15%). Engine intensityMod reflecta doar deload
-  // (scheduleAdapterAggregate:209), NU alegerea energie/durere din sesiune;
-  // adaptarea afisata pe preview era pur cosmetica. Round 0.5 (incremente reale
-  // sala). 'normal' / context absent → target neschimbat.
-  const intensityMod = sessionContext?.intensityMod ?? 'normal';
+  // C3 — apply the ENGINE intensityMod baseline (deload output) to target kg.
+  // Was the EnergyCheck self-report (sessionContext.intensityMod) — but once
+  // readiness is persisted (C2), the self-report already shapes the prescription
+  // via the readiness read-side, so stacking a second blunt +/-20% multiplier
+  // here double-counted. The engine deload baseline is the single weight signal;
+  // the self-report still drives the preview banner + readiness, not weight.
+  // Magnitudes (-20% / +15%) unchanged (separate Daniel UX call). Round 0.5
+  // (incremente reale sala). 'normal' / no deload → target neschimbat.
+  const intensityMod = engineIntensityMod;
   const targetKg =
     intensityMod === 'minus'
       ? Math.round(currentExercise.targetKg * 0.8 * 2) / 2

@@ -205,33 +205,39 @@ describe('Workout — base render (phase=idle init → logging)', async () => {
   });
 });
 
-// U-03 (HIGH) — session intensityMod aplicat la target kg (adaptarea afisata
-// pe preview devine reala in sesiune). Bench Press target 22.5 kg.
-describe('Workout — session intensity applied to target (U-03)', async () => {
+// C3 — target kg modulated by the ENGINE intensityMod baseline (deload output),
+// NOT the EnergyCheck self-report. Once readiness is persisted (C2) the
+// self-report already shapes the prescription via the readiness read-side;
+// stacking a second self-report multiplier here double-counted. Bench Press
+// DP target 22.5 kg. Magnitudes (-20% / +15%) unchanged (deferred Daniel UX).
+describe('Workout — engine intensity applied to target (C3)', async () => {
   beforeEach(() => {
     resetStore();
   });
 
-  it('intensityMod minus reduce target kg -20% (22.5 → 18)', async () => {
-    useWorkoutStore.getState().setSessionContext({ intensityMod: 'minus', painContext: null });
+  it('engine intensityMod minus reduce target kg -20% (22.5 → 18)', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce({ ...PHASE_5_FIXTURE, intensityMod: 'minus' });
     await renderWorkoutAndWait();
     expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('18 kg');
   });
 
-  it('intensityMod plus creste target kg +15% (22.5 → 26)', async () => {
-    useWorkoutStore.getState().setSessionContext({ intensityMod: 'plus', painContext: null });
+  it('engine intensityMod plus creste target kg +15% (22.5 → 26)', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce({ ...PHASE_5_FIXTURE, intensityMod: 'plus' });
     await renderWorkoutAndWait();
     // 22.5 * 1.15 = 25.875 → round 0.5 = 26
     expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('26 kg');
   });
 
-  it('intensityMod normal pastreaza target kg neschimbat (22.5)', async () => {
-    useWorkoutStore.getState().setSessionContext({ intensityMod: 'normal', painContext: null });
+  it('engine intensityMod normal pastreaza target kg neschimbat (22.5)', async () => {
     await renderWorkoutAndWait();
     expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
   });
 
-  it('fara sessionContext target kg ramane baseline (22.5)', async () => {
+  it('self-report sessionContext NU mai multiplica weight (anti double-count)', async () => {
+    // Self-report minus, engine normal → weight stays baseline (no stacking).
+    // The self-report now feeds the engine VIA readiness (C2), not a direct
+    // weight multiplier here.
+    useWorkoutStore.getState().setSessionContext({ intensityMod: 'minus', painContext: null });
     await renderWorkoutAndWait();
     expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
   });
@@ -606,11 +612,11 @@ describe('Workout — why-exercise help button (F-workout-05)', async () => {
     expect(screen.queryByTestId('why-modal')).not.toBeInTheDocument();
   });
 
-  // RE-U-03 — why-modal recommendationKg = targetKg ADAPTAT (U-03), NU baseline.
-  // Pe sesiune minus, Bench Press 22.5 → 18 (-20%) — explainerul consistent cu
-  // tinta din SetLogInput (kgInput), nu cu recomandarea ne-adaptata.
-  it('why-modal primeste targetKg adaptat pe sesiune minus (22.5 → 18)', async () => {
-    useWorkoutStore.getState().setSessionContext({ intensityMod: 'minus', painContext: null });
+  // RE-C3 — why-modal recommendationKg = targetKg ADAPTAT pe engine intensityMod
+  // (deload), NU baseline. Pe deload minus, Bench Press 22.5 → 18 (-20%) —
+  // explainerul consistent cu tinta din SetLogInput (kgInput).
+  it('why-modal primeste targetKg adaptat pe engine deload minus (22.5 → 18)', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce({ ...PHASE_5_FIXTURE, intensityMod: 'minus' });
     await renderWorkoutAndWait();
     fireEvent.click(screen.getByTestId('wv2-why-trigger'));
     expect(getWhyExerciseSummary).toHaveBeenCalledWith({

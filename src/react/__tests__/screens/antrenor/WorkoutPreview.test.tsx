@@ -104,38 +104,92 @@ describe('WorkoutPreview — intensity banner variants', () => {
   });
 });
 
-describe('WorkoutPreview — duration + volume estimates', () => {
-  it('duration ~35 min cand intensityMod=minus', () => {
-    renderPreview({ intensityMod: 'minus' });
-    expect(screen.getByTestId('preview-duration').textContent).toMatch(/35/);
+// C3 — duration/volume prescription tracks the ENGINE intensityMod baseline
+// (deload), NOT the EnergyCheck self-report (which now feeds the engine via
+// readiness, C2). Engine base 50 min / 12450 kg so the +/- multipliers land on
+// the same numbers the old self-report path produced. Async: await the
+// getTodayWorkout resolve so workout?.intensityMod is read.
+describe('WorkoutPreview — duration + volume estimates (C3 engine baseline)', () => {
+  beforeEach(() => {
+    vi.mocked(engineWrappers.getTodayWorkout).mockReset();
   });
 
-  it('duration ~50 min cand intensityMod=normal', () => {
-    renderPreview({ intensityMod: 'normal' });
-    expect(screen.getByTestId('preview-duration').textContent).toMatch(/50/);
+  it('duration ~35 min cand engine intensityMod=minus', async () => {
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
+      makeWorkout({ intensityMod: 'minus', estimatedDuration: 50, volumeKg: 12450 }),
+    );
+    renderPreview();
+    await waitFor(() =>
+      expect(screen.getByTestId('preview-duration').textContent).toMatch(/35/),
+    );
   });
 
-  it('duration ~60 min cand intensityMod=plus', () => {
-    renderPreview({ intensityMod: 'plus' });
-    expect(screen.getByTestId('preview-duration').textContent).toMatch(/60/);
+  it('duration ~50 min cand engine intensityMod=normal', async () => {
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
+      makeWorkout({ intensityMod: 'normal', estimatedDuration: 50, volumeKg: 12450 }),
+    );
+    renderPreview();
+    await waitFor(() =>
+      expect(screen.getByTestId('preview-duration').textContent).toMatch(/50/),
+    );
   });
 
-  it('volume scales cu intensityMod (minus < normal < plus)', () => {
-    renderPreview({ intensityMod: 'minus' });
-    const minusText = screen.getByTestId('preview-volume').textContent ?? '';
-    const minusKg = parseInt(minusText.replace(/\D/g, ''), 10);
+  it('duration ~60 min cand engine intensityMod=plus', async () => {
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
+      makeWorkout({ intensityMod: 'plus', estimatedDuration: 50, volumeKg: 12450 }),
+    );
+    renderPreview();
+    await waitFor(() =>
+      expect(screen.getByTestId('preview-duration').textContent).toMatch(/60/),
+    );
+  });
 
-    renderPreview({ intensityMod: 'plus' });
-    const plusTexts = screen.getAllByTestId('preview-volume');
-    const plusKg = parseInt(plusTexts[plusTexts.length - 1]!.textContent?.replace(/\D/g, '') ?? '0', 10);
+  it('volume scales cu engine intensityMod (minus < plus)', async () => {
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
+      makeWorkout({ intensityMod: 'minus', estimatedDuration: 50, volumeKg: 12450 }),
+    );
+    const minus = renderPreview();
+    await waitFor(() => expect(screen.getByTestId('preview-volume')).toBeInTheDocument());
+    const minusKg = parseInt(
+      screen.getByTestId('preview-volume').textContent?.replace(/\D/g, '') ?? '0',
+      10,
+    );
+    minus.unmount();
+
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
+      makeWorkout({ intensityMod: 'plus', estimatedDuration: 50, volumeKg: 12450 }),
+    );
+    renderPreview();
+    await waitFor(() => expect(screen.getByTestId('preview-volume')).toBeInTheDocument());
+    const plusKg = parseInt(
+      screen.getByTestId('preview-volume').textContent?.replace(/\D/g, '') ?? '0',
+      10,
+    );
 
     expect(plusKg).toBeGreaterThan(minusKg);
   });
 
-  it('volume formatted cu space separator (ro-RO)', () => {
-    renderPreview({ intensityMod: 'normal' });
-    const volumeText = screen.getByTestId('preview-volume').textContent ?? '';
-    expect(volumeText).toMatch(/12 ?\.?\s*450\s*kg/);
+  it('self-report intensityMod does NOT scale duration (anti double-count)', async () => {
+    // Engine normal + self-report minus → duration stays baseline 50 (no -30%
+    // stacking from the self-report; it feeds the engine via readiness, C2).
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
+      makeWorkout({ intensityMod: 'normal', estimatedDuration: 50, volumeKg: 12450 }),
+    );
+    renderPreview({ intensityMod: 'minus' });
+    await waitFor(() =>
+      expect(screen.getByTestId('preview-duration').textContent).toMatch(/50/),
+    );
+  });
+
+  it('volume formatted cu space separator (ro-RO)', async () => {
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue(
+      makeWorkout({ intensityMod: 'normal', estimatedDuration: 50, volumeKg: 12450 }),
+    );
+    renderPreview();
+    await waitFor(() => {
+      const volumeText = screen.getByTestId('preview-volume').textContent ?? '';
+      expect(volumeText).toMatch(/12 ?\.?\s*450\s*kg/);
+    });
   });
 });
 
