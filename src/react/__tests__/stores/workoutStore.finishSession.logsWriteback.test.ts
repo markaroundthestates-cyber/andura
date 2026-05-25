@@ -10,6 +10,7 @@ import {
   useWorkoutStore,
   buildLogEntriesFromSummary,
   persistSessionLogs,
+  energyLightForIntensityMod,
   LOGS_MAX,
 } from '../../stores/workoutStore';
 import type { LastSessionSummary, LogEntry } from '../../stores/workoutStore';
@@ -125,6 +126,14 @@ describe('workoutStore — buildLogEntriesFromSummary', () => {
     const entries = buildLogEntriesFromSummary(summary, T0);
     const nonPr = entries.find((e) => e.ex === 'Bench Press' && e.set === 1);
     expect('isPR' in (nonPr ?? {})).toBe(false);
+  });
+});
+
+describe('workoutStore — energyLightForIntensityMod (GAP #2: readiness bucket)', () => {
+  it('maps plus->green, normal->yellow, minus->red (same bucketing as WorkoutPreview)', () => {
+    expect(energyLightForIntensityMod('plus')).toBe('green');
+    expect(energyLightForIntensityMod('normal')).toBe('yellow');
+    expect(energyLightForIntensityMod('minus')).toBe('red');
   });
 });
 

@@ -22,6 +22,22 @@ export type WorkoutPhase = 'logging' | 'rating' | 'rest' | 'transition' | 'idle'
 // (runtime-only, NU persistat) ca Workout.tsx sa aplice modifierul la target.
 export type SessionIntensityMod = 'plus' | 'normal' | 'minus';
 
+export type EnergyLight = 'green' | 'yellow' | 'red';
+
+// Pre-workout readiness bucket → traffic-light, the SAME 1:1 map WorkoutPreview
+// uses for its banner (plus = success/up, minus = danger/down, normal =
+// neutral). Persisted on the finished session as energyEmoji + energy so the
+// live energy engines read a real per-session readiness signal. Pure.
+const INTENSITY_MOD_TO_ENERGY: Readonly<Record<SessionIntensityMod, EnergyLight>> = {
+  plus: 'green',
+  normal: 'yellow',
+  minus: 'red',
+};
+
+export function energyLightForIntensityMod(mod: SessionIntensityMod): EnergyLight {
+  return INTENSITY_MOD_TO_ENERGY[mod];
+}
+
 export interface SessionPainContext {
   region: string;
   intensity: 1 | 2 | 3;
@@ -93,6 +109,19 @@ export interface LastSessionSummary {
   volumeKg?: number;
   // Phase 5 task_03: per-exercise breakdown pentru IstoricDetail.
   exercises?: SessionExerciseBreakdown[];
+  // Pre-workout readiness traffic-light persisted on the finished session so the
+  // live energy engines read a per-session signal off recentSessions[*]. Derived
+  // from the session's pre-workout intensityMod (the same plus/normal/minus
+  // readiness bucket WorkoutPreview shows): plus->green, normal->yellow,
+  // minus->red. Two engine vocabularies, ONE persisted value:
+  //   - energyEmoji ('green'|'yellow'|'red') → energyAdjustment green-streak UP gate
+  //   - energy (same value)                  → recovery red-flag + mesocycle red gate
+  // (energyDirection — deload vocabulary — is DERIVED from energyEmoji at the
+  // pipeline builder layer, NOT persisted as a third copy.) Optional + absent
+  // when the session had no energy-check (direct Antrenor entry) → engines see
+  // no-signal baseline. NU fabricate green when absent.
+  energyEmoji?: 'green' | 'yellow' | 'red';
+  energy?: 'green' | 'yellow' | 'red';
 }
 
 // ── Logs writeback shim (CRIT #2 shape-check audit chat 5) ─────────────────

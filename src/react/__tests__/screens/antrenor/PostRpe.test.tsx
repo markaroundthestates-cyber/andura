@@ -399,3 +399,50 @@ describe('PostRpe — Romanian no-diacritics rule (D-LEGACY-064)', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(text)).toBe(false);
   });
 });
+
+describe('PostRpe — energy signal persistence (GAP #2: energyEmoji + energy)', () => {
+  beforeEach(() => {
+    seedSession();
+  });
+
+  it('persists energyEmoji+energy=red on the finished session for a minus intensityMod', async () => {
+    useWorkoutStore.setState({
+      sessionContext: { intensityMod: 'minus', painContext: null },
+    });
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Grea/i }));
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession).not.toBeNull();
+    });
+    const saved = useWorkoutStore.getState().lastSession!;
+    expect(saved.energyEmoji).toBe('red');
+    expect(saved.energy).toBe('red');
+  });
+
+  it('persists energyEmoji+energy=green for a plus intensityMod', async () => {
+    useWorkoutStore.setState({
+      sessionContext: { intensityMod: 'plus', painContext: null },
+    });
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Usoara/i }));
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession).not.toBeNull();
+    });
+    const saved = useWorkoutStore.getState().lastSession!;
+    expect(saved.energyEmoji).toBe('green');
+    expect(saved.energy).toBe('green');
+  });
+
+  it('omits energy fields when no energy-check (sessionContext null, direct Antrenor entry)', async () => {
+    useWorkoutStore.setState({ sessionContext: null });
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Normala/i }));
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession).not.toBeNull();
+    });
+    const saved = useWorkoutStore.getState().lastSession!;
+    // NU fabricate green when absent — engines see no-signal baseline.
+    expect('energyEmoji' in saved).toBe(false);
+    expect('energy' in saved).toBe(false);
+  });
+});

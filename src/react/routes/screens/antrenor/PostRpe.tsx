@@ -26,7 +26,7 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useWorkoutStore } from '../../../stores/workoutStore';
+import { useWorkoutStore, energyLightForIntensityMod } from '../../../stores/workoutStore';
 import type {
   SessionExerciseBreakdown,
   LogEntry,
@@ -67,6 +67,7 @@ export function PostRpe(): JSX.Element {
   const navigate = useNavigate();
   const history = useWorkoutStore((s) => s.history);
   const sessionStart = useWorkoutStore((s) => s.sessionStart);
+  const sessionContext = useWorkoutStore((s) => s.sessionContext);
   const setLastRating = useWorkoutStore((s) => s.setLastRating);
   const finishSession = useWorkoutStore((s) => s.finishSession);
   const incrementStreak = useWorkoutStore((s) => s.incrementStreak);
@@ -136,6 +137,16 @@ export function PostRpe(): JSX.Element {
     const priorLogs = (DB.get<LogEntry[]>('logs') ?? []) as LogEntry[];
     const exercises = enrichExercisesWithPR(exercisesBase, priorLogs);
 
+    // Persist the pre-workout readiness traffic-light on the finished session so
+    // the live energy engines read a per-session signal off recentSessions[*].
+    // Source = sessionContext.intensityMod (set by WorkoutPreview from the
+    // EnergyCheck readiness pick); absent when the user entered Antrenor directly
+    // (no energy-check) → engines see no-signal baseline (NU fabricate green).
+    const energy =
+      sessionContext !== null
+        ? energyLightForIntensityMod(sessionContext.intensityMod)
+        : undefined;
+
     finishSession({
       title,
       meta,
@@ -144,6 +155,7 @@ export function PostRpe(): JSX.Element {
       durationMin: dur,
       volumeKg: volume,
       exercises,
+      ...(energy !== undefined ? { energyEmoji: energy, energy } : {}),
     });
     incrementStreak();
 
