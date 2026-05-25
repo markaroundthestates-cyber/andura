@@ -10,6 +10,7 @@ import {
   getDeloadSkipBanner,
   getWeekLabel,
   getState,
+  LINEAR_BLOCK_KEY,
   WEEK_POLICY,
 } from '../linearBlock.js';
 import { getDeloadSkipWarning } from '../progressionMatrix.js';
@@ -200,5 +201,51 @@ describe('WEEK_POLICY exposure', () => {
   it('weeks 1-4 are load, week 5 is deload', () => {
     [1, 2, 3, 4].forEach(w => expect(WEEK_POLICY[w].phase).toBe('load'));
     expect(WEEK_POLICY[5].phase).toBe('deload');
+  });
+});
+
+// ── getState defensive branches (uncovered catch + non-object parse) ─────────
+
+describe('getState — defensive parsing', () => {
+  it('returns null when nothing stored', () => {
+    expect(getState()).toBeNull();
+  });
+
+  it('returns null on malformed JSON (catch branch)', () => {
+    localStorage.setItem(LINEAR_BLOCK_KEY, '{not valid json');
+    expect(getState()).toBeNull();
+  });
+
+  it('returns null when parsed value is not an object', () => {
+    localStorage.setItem(LINEAR_BLOCK_KEY, '5');
+    expect(getState()).toBeNull();
+    localStorage.setItem(LINEAR_BLOCK_KEY, 'null');
+    expect(getState()).toBeNull();
+  });
+});
+
+describe('markDeloadSkipped — no prior state', () => {
+  it('creates a fresh state when none exists', () => {
+    expect(getState()).toBeNull();
+    const now = new Date('2026-05-29').getTime();
+    markDeloadSkipped({ now });
+    const s = getState();
+    expect(s).not.toBeNull();
+    expect(s.deloadSkippedAt).toBe(now);
+    expect(typeof s.cycleStartDate).toBe('string');
+  });
+});
+
+describe('getCycleWeek / getWeekPolicy — uninitialized fallback', () => {
+  it('getWeekPolicy defaults to week 1 load when uninitialized', () => {
+    const p = getWeekPolicy();
+    expect(p.week).toBe(1);
+    expect(p.phase).toBe('load');
+    expect(p.volumeMul).toBe(1.0);
+  });
+
+  it('getCycleWeek ignores malformed cycleStartDate (non-ISO → week 1)', () => {
+    localStorage.setItem(LINEAR_BLOCK_KEY, JSON.stringify({ cycleStartDate: '05/29/2026', deloadSkippedAt: null }));
+    expect(getCycleWeek({ today: new Date(2026, 4, 29) })).toBe(1);
   });
 });

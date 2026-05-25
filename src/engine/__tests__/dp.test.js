@@ -176,3 +176,62 @@ describe('DP.checkInSessionAdjust — RPE 4-tap thresholds', () => {
     expect(result.adjust).toBe(false);
   });
 });
+
+// ── getRepsRange (phase-aware passthrough) ───────────────────────────────────
+
+describe('DP.getRepsRange', () => {
+  it('returns phase-aware range (CUT caps Cable Curl isolation to [10,10])', () => {
+    // DB mock pins phase-override to CUT.
+    expect(DP.getRepsRange('Cable Curl')).toEqual([10, 10]);
+  });
+
+  it('returns full [8,12] for a compound in CUT', () => {
+    expect(DP.getRepsRange('Lat Pulldown')).toEqual([8, 12]);
+  });
+});
+
+// ── getSmartRecommendation — readiness gating + rep range string ─────────────
+
+describe('DP.getSmartRecommendation', () => {
+  afterEach(() => {
+    DP.getState = DP.getState.mockRestore?.() || DP.getState;
+  });
+
+  it('low readiness (<60) downgrades INCREASE → CONSOLIDATE, holds last weight', () => {
+    DP.getState = vi.fn(() => ({
+      lastW: 30, lastReps: 10, lastRPE: 7,
+      isStagnant: false, atTopReps: true,
+      range: [10, 10], rMin: 10, rMax: 10,
+      currentSets: 3, extraSets: 0,
+      logs: [
+        { w: 30, reps: '10', rpe: 7 },
+        { w: 30, reps: '10', rpe: 7 },
+        { w: 30, reps: '10', rpe: 7 },
+      ],
+    }));
+    const result = DP.getSmartRecommendation('Cable Curl', 50, null);
+    // Base recommend() would INCREASE; readiness 50 holds it at CONSOLIDATE.
+    expect(result.status).toBe('CONSOLIDATE');
+    expect(result.kg).toBe(30); // held at last weight
+    expect(typeof result.repsRange).toBe('string');
+    expect(result.repsRange).toMatch(/^\d+–\d+$/);
+  });
+
+  it('high readiness leaves INCREASE intact + attaches intensity label + rep range', () => {
+    DP.getState = vi.fn(() => ({
+      lastW: 30, lastReps: 10, lastRPE: 7,
+      isStagnant: false, atTopReps: true,
+      range: [10, 10], rMin: 10, rMax: 10,
+      currentSets: 3, extraSets: 0,
+      logs: [
+        { w: 30, reps: '10', rpe: 7 },
+        { w: 30, reps: '10', rpe: 7 },
+        { w: 30, reps: '10', rpe: 7 },
+      ],
+    }));
+    const result = DP.getSmartRecommendation('Cable Curl', 90, null);
+    expect(result.status).toBe('INCREASE');
+    expect(typeof result.intensityLabel).toBe('string');
+    expect(result.repsRange).toMatch(/^\d+–\d+$/);
+  });
+});

@@ -94,3 +94,61 @@ describe('predictToday', () => {
     expect(typeof result.day).toBe('string');
   });
 });
+
+// ── Edge / error branches (50% branch baseline) ──────────────────────────────
+
+describe('predictionEngine — edge + defensive branches', () => {
+  it('absenceProbabilityByDay handles null/undefined inputs gracefully', () => {
+    const a = absenceProbabilityByDay(null, null);
+    const b = absenceProbabilityByDay(undefined, undefined);
+    expect(a).toHaveLength(7);
+    expect(b).toHaveLength(7);
+    a.forEach(d => {
+      expect(Number.isFinite(d.probability)).toBe(true);
+      expect(d.sessions).toBe(0);
+      expect(d.skips).toBe(0);
+    });
+  });
+
+  it('skipsPerDayOfWeek ignores malformed date keys (no NaN dow leak)', () => {
+    // Invalid date strings → getDay() NaN → bucket skipped, not counted.
+    const skips = { 'not-a-date': true, '': true, 'NaN-NaN-NaN': true };
+    const result = absenceProbabilityByDay([], skips);
+    expect(result).toHaveLength(7);
+    expect(result.reduce((sum, d) => sum + d.skips, 0)).toBe(0);
+  });
+
+  it('logs without session/ts are skipped (insufficient stays true)', () => {
+    const logs = [{ ex: 'Bench', w: 80 }, { ex: 'Row' }]; // no ts/session
+    const result = absenceProbabilityByDay(logs, {});
+    result.forEach(d => expect(d.sessions).toBe(0));
+  });
+
+  it('falls back to todTs key when session id absent (uses ts)', () => {
+    const ts = new Date('2026-05-04T10:00:00').getTime(); // a Monday
+    const logs = Array.from({ length: 3 }, () => ({ ex: 'Bench', ts }));
+    const result = absenceProbabilityByDay(logs, {});
+    // All 3 share the same day key → counts as 1 distinct session that day.
+    const monday = result[1];
+    expect(monday.sessions).toBe(1);
+  });
+
+  it('getHighRiskDays threshold is strict (probability === threshold excluded)', () => {
+    // 5 sessions + 5 skips Monday = 0.5 prob; threshold 0.5 → strict > excludes.
+    const logs = makeSessionLogs({ 1: 5 });
+    const skips = makeSkips({ 1: 5 });
+    expect(getHighRiskDays(logs, skips, 0.5)).toHaveLength(0);
+    expect(getHighRiskDays(logs, skips, 0.49).length).toBeGreaterThan(0);
+  });
+
+  it('predictToday surfaces recommendation when today is high-risk', () => {
+    const dow = new Date().getDay();
+    // Build 5 sessions + 5 skips on TODAY dow → 0.5 prob > 0.3 → high risk.
+    const logs = makeSessionLogs({ [dow]: 5 });
+    const skips = makeSkips({ [dow]: 5 });
+    const result = predictToday(logs, skips);
+    expect(result.isHighRisk).toBe(true);
+    expect(result.recommendation).toMatch(/sanse sa sari/i);
+    expect(Number.isFinite(result.probability)).toBe(true);
+  });
+});

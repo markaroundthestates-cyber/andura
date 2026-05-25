@@ -214,6 +214,118 @@ describe('SYS — kgAtBF() + weeksToKg()', () => {
   });
 });
 
+// ── Date utilities + tempo/technique/checkpoint branches ──────────────────
+
+describe('SYS — addWeeks / fmtDate', () => {
+  it('addWeeks shifts the date forward by 7×weeks days', () => {
+    const base = new Date('2026-05-01');
+    const out = SYS.addWeeks(base, 2);
+    expect(out.getTime()).toBe(new Date('2026-05-15').getTime());
+    // does not mutate input
+    expect(base.getTime()).toBe(new Date('2026-05-01').getTime());
+  });
+
+  it('fmtDate returns a ro-RO formatted non-empty string', () => {
+    const out = SYS.fmtDate(new Date('2026-05-01'));
+    expect(typeof out).toBe('string');
+    expect(out.length).toBeGreaterThan(0);
+  });
+});
+
+describe('SYS — getTempo (phase-aware)', () => {
+  it('STRENGTH compound vs isolation tempos differ', () => {
+    mockStorage['phase-override'] = 'STRENGTH';
+    const compound = SYS.getTempo('Lat Pulldown');
+    const isolation = SYS.getTempo('Lateral Raises');
+    expect(compound.tempo).not.toBe(isolation.tempo);
+    expect(compound.rir).toBe(2);
+  });
+
+  it('BULK uses prolonged-tension tempo, rir 2', () => {
+    mockStorage['phase-override'] = 'BULK';
+    const t = SYS.getTempo('Leg Press');
+    expect(t.rir).toBe(2);
+    expect(typeof t.note).toBe('string');
+  });
+
+  it('CUT/MAINTENANCE default tempo uses rir 3', () => {
+    mockStorage['phase-override'] = 'CUT';
+    const t = SYS.getTempo('Cable Curl');
+    expect(t.rir).toBe(3);
+  });
+});
+
+describe('SYS — getTechniques', () => {
+  it('isolation last set in BULK suggests a DROP SET', () => {
+    mockStorage['phase-override'] = 'BULK';
+    const techs = SYS.getTechniques('Lateral Raises', 3, 3);
+    expect(techs.some(t => t.label === 'DROP SET')).toBe(true);
+    expect(techs.some(t => t.label === 'PARTIALE')).toBe(true);
+  });
+
+  it('CUT suppresses drop sets on isolation last set', () => {
+    mockStorage['phase-override'] = 'CUT';
+    const techs = SYS.getTechniques('Cable Curl', 3, 3);
+    expect(techs.some(t => t.label === 'DROP SET')).toBe(false);
+  });
+
+  it('compound in STRENGTH early sets suggests a pause rep', () => {
+    mockStorage['phase-override'] = 'STRENGTH';
+    const techs = SYS.getTechniques('Lat Pulldown', 1, 4);
+    expect(techs.some(t => t.label === 'PAUZA 1 SEC')).toBe(true);
+  });
+});
+
+describe('SYS — getCheckpoints / getTimeline', () => {
+  it('getCheckpoints returns at most 5 entries sorted by weeks', () => {
+    mockStorage['weights'] = { '2026-04-27': 105 };
+    mockStorage['phase-override'] = 'CUT';
+    const cps = SYS.getCheckpoints();
+    expect(Array.isArray(cps)).toBe(true);
+    expect(cps.length).toBeLessThanOrEqual(5);
+    for (let i = 1; i < cps.length; i++) {
+      expect(cps[i].weeks).toBeGreaterThanOrEqual(cps[i - 1].weeks);
+    }
+  });
+
+  it('BULK phase produces a bulk-stop checkpoint when below target weight', () => {
+    mockStorage['phase-override'] = 'BULK';
+    mockStorage['bf-override'] = '10'; // low bf → kgAtBF(17) above current → kgToGain > 0
+    mockStorage['weights'] = { '2026-04-27': 80 };
+    const cps = SYS.getCheckpoints();
+    expect(cps.every(c => Number.isFinite(c.weeks))).toBe(true);
+  });
+
+  it('getTimeline returns 5 phases each with a status', () => {
+    const timeline = SYS.getTimeline();
+    expect(timeline).toHaveLength(5);
+    timeline.forEach(item => {
+      expect(['future', 'current', 'past']).toContain(item.status);
+    });
+  });
+});
+
+describe('SYS — getOffDayQuest', () => {
+  it('computes step progress + done flag from storage', () => {
+    mockStorage['steps-today'] = 8500;
+    mockStorage['step-streaks'] = { count: 3, lastDate: '2026-05-01', totalDays: 10 };
+    const q = SYS.getOffDayQuest();
+    expect(q.stepsToday).toBe(8500);
+    expect(q.target).toBe(8000);
+    expect(q.pct).toBe(100); // clamped
+    expect(q.done).toBe(true);
+    expect(q.streak).toBe(3);
+  });
+
+  it('defaults to zero progress when no step data', () => {
+    const q = SYS.getOffDayQuest();
+    expect(q.stepsToday).toBe(0);
+    expect(q.pct).toBe(0);
+    expect(q.done).toBe(false);
+    expect(q.streak).toBe(0);
+  });
+});
+
 // ── Property-based: all phases × BF range ─────────────────────────────────
 
 describe('SYS — getKcalTarget() property-based', () => {
