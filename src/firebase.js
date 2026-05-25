@@ -219,6 +219,18 @@ export async function clearFirebaseKeys(keys) {
 }
 
 export async function syncToFirebase() {
+  // C3-S-01 audit fix (REAUDIT3 LOW) — gate the push on the suppress flag, mirroring
+  // syncFromFirebase below. The DB.set override (firebase.js:359) only blocks
+  // scheduling NEW timers when suppressed; an _syncTimer already armed before the
+  // flag was set still fires its callback. On the SPA delete path (no page reload to
+  // nuke the timer) that armed push could re-PUT users/{uid} during the awaited cloud
+  // wipe window — the exact resurrection RE-S-01 closed. Early-return here neutralizes
+  // any in-flight armed push (delete path + fullReset defense-in-depth) without
+  // touching normal sync behavior (flag falsy in normal operation).
+  if (window._suppressFirebaseSync) {
+    console.log('[Firebase] Sync suppressed, skipping push');
+    return false;
+  }
   try {
     const userPath = getUserPath();
     if (!userPath) {
