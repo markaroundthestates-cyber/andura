@@ -2,10 +2,10 @@
 title: Andura — Decisions Single Source of Truth
 type: ssot-decisions
 status: live
-last_updated: 2026-05-25
+last_updated: 2026-05-26
 schema_version: 1
-latest_entry: D079
-total_entries: 78
+latest_entry: D080
+total_entries: 79
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -129,6 +129,7 @@ D076 | 2026-05-23 | ARCH | Phase 6 prod-extras blessed divergence ratify (DRIFT-
 D077 | 2026-05-25 | REGLAJ | Pre-Beta quality cycle extins: iterate audit→fix→reverify pana 0 findings + 100% quality, apoi audit anti-RE + audit security finale, ABIA apoi Daniel verify manual + Beta | LOCKED V1 | DECISIONS.md §D077
 D078 | 2026-05-25 | STRATEGY | Andura = fitness app, NU medicina/kineto — onboarding colecteaza metrici fitness (Big 6 + inaltime) + disclaimer medical legal ATAT, ZERO istoric medical / health-condition intake. Daniel CEO LOCK verbatim "nu facem medicina, daca ne apucam sa o luam pe istoric medical facem aplicatie de kineto nu de fitness". Resolved needs-Daniel P-03/P-04 (audit fresh 2026-05-25): pas Istoric medical DROP = divergenta INTENTIONATA de mockup NU gap paritate; disclaimer modal (MedicalDisclaimerModal / U-01 mount) = SINGURUL touchpoint medical; inaltime ramane (metrica fitness BMR, D079-adiacent). Safety medicala via disclaimer + pain button in-sesiune + injury auto-disable (Specialization) + pushback tiers 60+/accidentare — NU chestionar medical intake. Filtru produs viitor (ca Gigel test): "asta-i fitness sau alunecam in medicina/kineto?". | LOCKED V1 | DECISIONS.md §D078
 D079 | 2026-05-25 | ARCH | Backup/restore cloud + migratii = WIRE in React (decizie Daniel CEO "A"), restaura arhitectura ADR 001 (local-first IDB + Firebase backup tier) pierduta la swap D028. Resolved needs-Daniel S-07 (audit fresh 2026-05-25): bootstrap orfan (schema migrations + tier rotation + Firebase sync/restore + auth-path migration) era importat DOAR de vanilla main.js retras, NU de React main.tsx → backup/restore + migratii NU rulau in productie desi Privacy Policy promite backup. Fix = src/react/lib/reactBoot.ts idempotent: runReactBoot() auth-independent fire-and-forget in main.tsx (non-blocking first paint) + runPostAuthSync() in AuthCallback ambele login-uri (Magic Link + Google). Restore local-always-wins aditiv (zero data-loss, verificat re-audit). Known-limitation: multi-device same-key concurrent edit = local-wins NU last-write-wins (cere per-entry timestamps) — deferred post-Beta, acceptabil single-device Beta. | LOCKED V1 | DECISIONS.md §D079 + src/react/lib/reactBoot.ts + ADR 001 + §D028
+D080 | 2026-05-26 | PROC | Extreme-quality pre-Beta mandate: Daniel NU QA — Claude audit exhaustiv (fiecare virgula + dead-code + paritate live + Coach Brain Eval oracle Claude + security/anti-RE) -> fix -> re-audit -> repeat pana 0 + brain validat live, ABIA apoi Daniel vede; + run-whole-arc step-after-step autonom pana Beta, Daniel-gated items prepped+queued NU blocking | LOCKED V1 | DECISIONS.md §D080
 
 ---
 
