@@ -55,6 +55,9 @@ function renderWorkout() {
       <Routes>
         <Route path="/app/antrenor/workout" element={<Workout />} />
         <Route path="/app/antrenor/post-rpe" element={<LocationProbe />} />
+        {/* §F-workout-03 — in-workout substitution row targets. */}
+        <Route path="/app/antrenor/equipment-swap" element={<LocationProbe />} />
+        <Route path="/app/antrenor/ceva-nu-merge" element={<LocationProbe />} />
         <Route path="/app/antrenor" element={<LocationProbe />} />
       </Routes>
     </MemoryRouter>
@@ -488,6 +491,37 @@ describe('Workout — empty state (task_17 §B WV2_FALLBACK retired)', async () 
     expect(screen.queryByTestId('log-zone')).not.toBeInTheDocument();
     expect(screen.queryByTestId('workout-title')).not.toBeInTheDocument();
     expect(screen.queryByTestId('workout-exit-trigger')).not.toBeInTheDocument();
+  });
+});
+
+describe('Workout — in-workout substitution row (F-workout-03)', async () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('renders both action buttons in logging phase', async () => {
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('wv2-ex-actions')).toBeInTheDocument();
+    expect(screen.getByTestId('wv2-ex-action-ocupat')).toHaveTextContent('Aparat ocupat');
+    expect(screen.getByTestId('wv2-ex-action-nuvreau')).toHaveTextContent('Nu vreau');
+  });
+
+  it('"Aparat ocupat" navigates la equipment-swap', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+    expect(screen.getByTestId('probe')).toHaveAttribute(
+      'data-pathname',
+      '/app/antrenor/equipment-swap'
+    );
+  });
+
+  it('"Nu vreau" navigates la ceva-nu-merge', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('wv2-ex-action-nuvreau'));
+    expect(screen.getByTestId('probe')).toHaveAttribute(
+      'data-pathname',
+      '/app/antrenor/ceva-nu-merge'
+    );
   });
 });
 

@@ -26,6 +26,7 @@
 import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Users, Hand } from 'lucide-react';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
@@ -455,6 +456,30 @@ export function Workout(): JSX.Element {
       {/* Log zone */}
       {(phase === 'logging' || phase === 'idle' || phase === 'rating') && (
         <div className="p-6" data-testid="log-zone">
+          {/* §F-workout-03 — in-workout substitution row (Daniel 2026-05-12
+              Slice 1.7, mockup andura-clasic.html#L1457-1460 wv2-ex-actions).
+              "Aparat ocupat" → EquipmentSwap; "Nu vreau" → CevaNuMerge picker. */}
+          <div className="flex gap-3 mb-4" data-testid="wv2-ex-actions">
+            <button
+              type="button"
+              onClick={() => navigate(gotoPath('equipment-swap'))}
+              data-testid="wv2-ex-action-ocupat"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
+            >
+              <Users className="w-4 h-4" aria-hidden="true" />
+              Aparat ocupat
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(gotoPath('ceva-nu-merge'))}
+              data-testid="wv2-ex-action-nuvreau"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
+            >
+              <Hand className="w-4 h-4" aria-hidden="true" />
+              Nu vreau
+            </button>
+          </div>
+
           <p className="text-sm text-ink2 mb-2">
             Set {currentSetIdx + 1}/{currentExercise.sets}
           </p>
