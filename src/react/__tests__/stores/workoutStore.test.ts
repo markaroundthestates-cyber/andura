@@ -17,6 +17,7 @@ function resetStore(): void {
     pausedSnapshot: null,
     lastSession: null,
     streak: 0,
+    sessionContext: null,
   });
   localStorage.clear();
 }
@@ -853,5 +854,56 @@ describe('workoutStore — persist middleware partialize', () => {
     const parsed = JSON.parse(raw!);
     expect(parsed.state.pausedSnapshot).not.toBeNull();
     expect(parsed.state.pausedSnapshot.history[0]).toHaveLength(1);
+  });
+});
+
+// U-03 (HIGH) — session intensity/pain context propagat preview → workout.
+describe('workoutStore — sessionContext (U-03)', () => {
+  beforeEach(resetStore);
+
+  it('default sessionContext null', () => {
+    expect(useWorkoutStore.getState().sessionContext).toBeNull();
+  });
+
+  it('setSessionContext stores intensityMod + painContext', () => {
+    useWorkoutStore.getState().setSessionContext({
+      intensityMod: 'minus',
+      painContext: { region: 'umar-stang', intensity: 2 },
+    });
+    const ctx = useWorkoutStore.getState().sessionContext;
+    expect(ctx?.intensityMod).toBe('minus');
+    expect(ctx?.painContext).toEqual({ region: 'umar-stang', intensity: 2 });
+  });
+
+  it('startSession NU sterge sessionContext (preview seteaza inainte de mount)', () => {
+    useWorkoutStore.getState().setSessionContext({ intensityMod: 'plus', painContext: null });
+    useWorkoutStore.getState().startSession(Date.now());
+    expect(useWorkoutStore.getState().sessionContext?.intensityMod).toBe('plus');
+  });
+
+  it('finishSession clears sessionContext (no leak la sesiunea urmatoare)', () => {
+    useWorkoutStore.getState().setSessionContext({ intensityMod: 'minus', painContext: null });
+    useWorkoutStore.getState().finishSession({ title: 'Push', meta: '4 seturi', ts: 1 });
+    expect(useWorkoutStore.getState().sessionContext).toBeNull();
+  });
+
+  it('discardSession clears sessionContext', () => {
+    useWorkoutStore.getState().setSessionContext({ intensityMod: 'plus', painContext: null });
+    useWorkoutStore.getState().discardSession();
+    expect(useWorkoutStore.getState().sessionContext).toBeNull();
+  });
+
+  it('reset clears sessionContext', () => {
+    useWorkoutStore.getState().setSessionContext({ intensityMod: 'minus', painContext: null });
+    useWorkoutStore.getState().reset();
+    expect(useWorkoutStore.getState().sessionContext).toBeNull();
+  });
+
+  it('sessionContext NU e persistat (runtime-only)', async () => {
+    useWorkoutStore.getState().setSessionContext({ intensityMod: 'minus', painContext: null });
+    await new Promise((r) => setTimeout(r, 20));
+    const raw = localStorage.getItem('wv2-workout-store');
+    const parsed = JSON.parse(raw!);
+    expect(parsed.state.sessionContext).toBeUndefined();
   });
 });

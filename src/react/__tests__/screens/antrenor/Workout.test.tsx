@@ -127,6 +127,7 @@ function resetStore(): void {
     pausedSnapshot: null,
     lastSession: null,
     streak: 0,
+    sessionContext: null,
   });
   localStorage.clear();
   vi.mocked(getPRDelta).mockReturnValue(null);
@@ -198,6 +199,38 @@ describe('Workout — base render (phase=idle init → logging)', async () => {
     expect(
       screen.getByRole('button', { name: /Iesi din sesiune/i })
     ).toBeInTheDocument();
+  });
+});
+
+// U-03 (HIGH) — session intensityMod aplicat la target kg (adaptarea afisata
+// pe preview devine reala in sesiune). Bench Press target 22.5 kg.
+describe('Workout — session intensity applied to target (U-03)', async () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('intensityMod minus reduce target kg -20% (22.5 → 18)', async () => {
+    useWorkoutStore.getState().setSessionContext({ intensityMod: 'minus', painContext: null });
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('18 kg');
+  });
+
+  it('intensityMod plus creste target kg +15% (22.5 → 26)', async () => {
+    useWorkoutStore.getState().setSessionContext({ intensityMod: 'plus', painContext: null });
+    await renderWorkoutAndWait();
+    // 22.5 * 1.15 = 25.875 → round 0.5 = 26
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('26 kg');
+  });
+
+  it('intensityMod normal pastreaza target kg neschimbat (22.5)', async () => {
+    useWorkoutStore.getState().setSessionContext({ intensityMod: 'normal', painContext: null });
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
+  });
+
+  it('fara sessionContext target kg ramane baseline (22.5)', async () => {
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
   });
 });
 

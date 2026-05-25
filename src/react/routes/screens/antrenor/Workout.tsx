@@ -62,6 +62,9 @@ export function Workout(): JSX.Element {
   const phase = useWorkoutStore((s) => s.phase);
   const history = useWorkoutStore((s) => s.history);
   const sessionStart = useWorkoutStore((s) => s.sessionStart);
+  // U-03 (HIGH) — session intensity (din EnergyCheck/PainButton via preview).
+  // Aplicat la target kg/reps ca adaptarea afisata pe preview sa fie reala.
+  const sessionContext = useWorkoutStore((s) => s.sessionContext);
   const pausedSnapshot = useWorkoutStore((s) => s.pausedSnapshot);
   const lastSession = useWorkoutStore((s) => s.lastSession);
   const startSession = useWorkoutStore((s) => s.startSession);
@@ -101,12 +104,24 @@ export function Workout(): JSX.Element {
   const currentExercise: PlannedExercise = (hasWorkout && exercises !== null
     ? exercises[safeExIdx]
     : undefined) ?? defaultExercise;
+  // U-03 (HIGH) — aplica session intensityMod la target kg (paritate cu banner
+  // preview: minus -20% / plus +15%). Engine intensityMod reflecta doar deload
+  // (scheduleAdapterAggregate:209), NU alegerea energie/durere din sesiune;
+  // adaptarea afisata pe preview era pur cosmetica. Round 0.5 (incremente reale
+  // sala). 'normal' / context absent → target neschimbat.
+  const intensityMod = sessionContext?.intensityMod ?? 'normal';
+  const targetKg =
+    intensityMod === 'minus'
+      ? Math.round(currentExercise.targetKg * 0.8 * 2) / 2
+      : intensityMod === 'plus'
+      ? Math.round(currentExercise.targetKg * 1.15 * 2) / 2
+      : currentExercise.targetKg;
   const currentSetIdx = hasWorkout ? history[safeExIdx]?.length ?? 0 : 0;
   const isLastSetOfExercise =
     hasWorkout && currentSetIdx + 1 >= currentExercise.sets;
   const isLastExercise = hasWorkout && exercises !== null && safeExIdx + 1 >= exercises.length;
 
-  const [kgInput, setKgInput] = useState<number>(currentExercise.targetKg);
+  const [kgInput, setKgInput] = useState<number>(targetKg);
   const [repsInput, setRepsInput] = useState<number>(currentExercise.targetReps);
   const [elapsed, setElapsed] = useState(0);
   const [restCountdown, setRestCountdown] = useState(0);
@@ -227,11 +242,13 @@ export function Workout(): JSX.Element {
     };
   }, []);
 
-  // Reset kg/reps inputs when advancing exercise.
+  // Reset kg/reps inputs when advancing exercise. U-03: kg target reflects
+  // session intensityMod (targetKg derived above) — depend on it so an
+  // adapted target rehydrates on exercise change.
   useEffect(() => {
-    setKgInput(currentExercise.targetKg);
+    setKgInput(targetKg);
     setRepsInput(currentExercise.targetReps);
-  }, [safeExIdx, currentExercise.targetKg, currentExercise.targetReps]);
+  }, [safeExIdx, targetKg, currentExercise.targetReps]);
 
   // §F-pass2-setloginput-02 — each new set begins at pre-log `tinta`. Keyed on
   // exercise (safeExIdx) + set index (currentSetIdx bumps when a set logs into

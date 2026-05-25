@@ -14,6 +14,24 @@ import { DB, todTs } from '../../db.js';
 
 export type WorkoutPhase = 'logging' | 'rating' | 'rest' | 'transition' | 'idle';
 
+// U-03 (HIGH) — session intensity/pain context carried preview → workout.
+// EnergyCheck/EnergyCause/PainButton/ScheduleOverride selectau intensityMod
+// 'plus'/'minus' + painContext, propagat doar via location.state efemer →
+// WorkoutPreview.handleStart naviga la /workout FARA state → adaptarea afisata
+// pe preview NU ajungea in sesiunea reala (target-uri pline). Stocam in store
+// (runtime-only, NU persistat) ca Workout.tsx sa aplice modifierul la target.
+export type SessionIntensityMod = 'plus' | 'normal' | 'minus';
+
+export interface SessionPainContext {
+  region: string;
+  intensity: 1 | 2 | 3;
+}
+
+export interface SessionContext {
+  intensityMod: SessionIntensityMod;
+  painContext: SessionPainContext | null;
+}
+
 export interface ExerciseHistoryEntry {
   kg: number;
   reps: number;
@@ -171,6 +189,10 @@ export interface WorkoutState {
   // tab list view + detail navigation. Reverse-chrono append (newest tail).
   sessionsHistory: LastSessionSummary[];
   streak: number;
+  // U-03 (HIGH) — runtime-only session intensity/pain context (NU persistat).
+  // null = sesiune fara adaptare (intrare directa Antrenor → workout). Set de
+  // WorkoutPreview.handleStart din location.state inainte de navigate workout.
+  sessionContext: SessionContext | null;
 }
 
 // ── §44-C1 Discriminated Union — WorkoutMode FSM tag ────────────────────────
@@ -257,6 +279,8 @@ export interface WorkoutActions {
   advanceExercise: () => void;
   markPRHit: (data?: PRData) => void;
   setLastRating: (rating: 'usoara' | 'normala' | 'grea') => void;
+  // U-03 (HIGH) — set session intensity/pain context (WorkoutPreview.handleStart).
+  setSessionContext: (ctx: SessionContext | null) => void;
   incrementStreak: () => void;
   resetStreak: () => void;
   /**
@@ -294,6 +318,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       lastSession: null,
       sessionsHistory: [],
       streak: 0,
+      sessionContext: null,
 
       startSession: (sessionStart) =>
         set({
@@ -354,6 +379,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           prHit: false,
           prData: null,
           pausedSnapshot: null,
+          sessionContext: null,
         }),
 
       finishSession: (summary) =>
@@ -375,6 +401,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             exIdx: 0,
             setIdx: 0,
             history: {},
+            sessionContext: null,
           };
         }),
 
@@ -401,6 +428,12 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
 
       setLastRating: (rating) => set({ lastRating: rating }),
 
+      // U-03 (HIGH) — WorkoutPreview.handleStart seteaza context inainte de
+      // navigate workout. startSession (mount Workout idle) NU il sterge (e
+      // setat fix inainte); cleared la session teardown (finish/discard/reset)
+      // ca sa NU se scurga la sesiunea urmatoare (intrare directa Antrenor).
+      setSessionContext: (ctx) => set({ sessionContext: ctx }),
+
       incrementStreak: () => set((s) => ({ streak: s.streak + 1 })),
 
       resetStreak: () => set({ streak: 0 }),
@@ -416,6 +449,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           sessionStart: null,
           lastRating: null,
           pausedSnapshot: null,
+          sessionContext: null,
         }),
     }),
     {

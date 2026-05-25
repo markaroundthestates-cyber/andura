@@ -25,12 +25,15 @@ import { gotoPath } from '../../../lib/navigation';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
 import type { PlannedWorkoutOutput } from '../../../lib/engineWrappers';
+import { useWorkoutStore } from '../../../stores/workoutStore';
 import type { IntensityMod } from './EnergyCheck';
 
 interface WorkoutPreviewLocationState {
   energyLevel?: string;
   intensityMod?: IntensityMod;
   cause?: string;
+  // U-03 (HIGH) — pain context propagat din PainButton (region + intensity).
+  painContext?: { region: string; intensity: 1 | 2 | 3 };
 }
 
 interface IntensityBanner {
@@ -97,7 +100,8 @@ const FALLBACK_EXERCISES: FallbackExercise[] = [
 export function WorkoutPreview(): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
-  const { intensityMod = 'normal' } =
+  const setSessionContext = useWorkoutStore((s) => s.setSessionContext);
+  const { intensityMod = 'normal', painContext } =
     (location.state as WorkoutPreviewLocationState | null) ?? {};
 
   // Phase 6 task_02 Option C: async getTodayWorkout — useState fallback null
@@ -150,6 +154,10 @@ export function WorkoutPreview(): JSX.Element {
   const coachLine = coachPick('preview', undefined, 0);
 
   function handleStart(): void {
+    // U-03 (HIGH) — persist session intensity/pain in store inainte de navigate
+    // (location.state se pierde la navigate fara state + la refresh). Workout.tsx
+    // aplica modifierul la target-uri ca adaptarea afisata aici sa fie reala.
+    setSessionContext({ intensityMod, painContext: painContext ?? null });
     navigate(gotoPath('workout'));
   }
 

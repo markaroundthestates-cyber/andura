@@ -19,6 +19,7 @@ vi.mock('../../../lib/engineWrappers', () => ({
 }));
 
 import { WorkoutPreview } from '../../../routes/screens/antrenor/WorkoutPreview';
+import { useWorkoutStore } from '../../../stores/workoutStore';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -26,7 +27,11 @@ function LocationProbe(): JSX.Element {
 }
 
 function renderPreview(
-  state?: { intensityMod?: 'plus' | 'normal' | 'minus'; cause?: string }
+  state?: {
+    intensityMod?: 'plus' | 'normal' | 'minus';
+    cause?: string;
+    painContext?: { region: string; intensity: 1 | 2 | 3 };
+  }
 ) {
   return render(
     <MemoryRouter
@@ -135,6 +140,10 @@ describe('WorkoutPreview — duration + volume estimates', () => {
 });
 
 describe('WorkoutPreview — navigation', () => {
+  beforeEach(() => {
+    useWorkoutStore.getState().setSessionContext(null);
+  });
+
   it('Start antrenament navigates la /app/antrenor/workout', () => {
     // §F-workout-preview-05 — CTA "Confirma, incep" mockup verbatim.
     renderPreview({ intensityMod: 'normal' });
@@ -143,6 +152,27 @@ describe('WorkoutPreview — navigation', () => {
       'data-pathname',
       '/app/antrenor/workout'
     );
+  });
+
+  // U-03 (HIGH) — handleStart persista intensityMod in store (location.state
+  // se pierde la navigate fara state). Workout.tsx il citeste de acolo.
+  it('Start persista intensityMod minus in workoutStore', () => {
+    renderPreview({ intensityMod: 'minus' });
+    fireEvent.click(screen.getByRole('button', { name: /Confirma, incep/i }));
+    expect(useWorkoutStore.getState().sessionContext?.intensityMod).toBe('minus');
+  });
+
+  // U-03 (HIGH) — painContext din PainButton propagat in store la start.
+  it('Start persista painContext in workoutStore', () => {
+    renderPreview({
+      intensityMod: 'minus',
+      painContext: { region: 'umar-stang', intensity: 3 },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Confirma, incep/i }));
+    expect(useWorkoutStore.getState().sessionContext?.painContext).toEqual({
+      region: 'umar-stang',
+      intensity: 3,
+    });
   });
 });
 
