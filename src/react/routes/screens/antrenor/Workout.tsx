@@ -577,6 +577,14 @@ export function Workout(): JSX.Element {
                 <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
             </div>
+            {/* Subtitle (equipment/setup) under the exercise name per mockup
+                andura-clasic.html#L1450 wv2-ex-sub. Rendered only cand the
+                planned exercise carries a display sub (RO display map). */}
+            {currentExercise.sub && (
+              <p className="text-sm text-ink2 mt-0.5" data-testid="wv2-ex-sub">
+                {currentExercise.sub}
+              </p>
+            )}
           </div>
 
           {/* §F-workout-03 — in-workout substitution row (Daniel 2026-05-12

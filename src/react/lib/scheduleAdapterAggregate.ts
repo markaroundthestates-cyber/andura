@@ -21,6 +21,7 @@ import type { LastSessionSummary } from '../stores/workoutStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { MS_PER_DAY } from '../../constants.js';
 import type { PlannedExercise, PlannedWorkoutOutput } from './engineWrappers';
+import { toExerciseDisplay } from './exerciseDisplay';
 
 // ── recentSessions engine-shape transform (SHAPE audit Gap HIGH #1) ────────
 // LastSessionSummary (UI/persist shape) carries display + numeric session
@@ -152,12 +153,19 @@ function buildUserStateForPipeline(): {
  * PlannedExercise consumer shape. Engine emits only name + sets count;
  * targetReps/targetKg/restSec derived defensive defaults V1 (Phase 7+
  * wires Bayesian Nutrition + DP recommendations per-exercise).
+ *
+ * CRIT parity: the engine name is an English canonical key (PR records,
+ * alternativeEngine maps). The `id` slug stays derived from it so engine
+ * identity is preserved, while `name`/`sub` carry the Romanian display form
+ * (Romanian-first app) via exerciseDisplay.toExerciseDisplay.
  */
 function toPlannedExercise(engineEx: { name: string; sets: number }, idx: number): PlannedExercise {
   const slug = engineEx.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const display = toExerciseDisplay(engineEx.name);
   return {
     id: `${slug}-${idx}`,
-    name: engineEx.name,
+    name: display.name,
+    ...(display.sub !== undefined ? { sub: display.sub } : {}),
     sets: engineEx.sets,
     targetReps: 10,
     targetKg: 20,

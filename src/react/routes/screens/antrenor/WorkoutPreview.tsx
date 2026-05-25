@@ -264,12 +264,14 @@ export function WorkoutPreview(): JSX.Element {
           ? workout.exercises.map((ex, i) => ({
               key: ex.id,
               name: ex.name,
+              sub: ex.sub,
               detail: `${ex.sets} seturi - ${ex.targetKg} kg - ${ex.targetReps} reps`,
               idx: i,
             }))
           : FALLBACK_EXERCISES.map((ex, i) => ({
               key: `fallback-${i}`,
               name: ex.name,
+              sub: undefined as string | undefined,
               detail: ex.detail,
               idx: i,
             }))
@@ -284,6 +286,14 @@ export function WorkoutPreview(): JSX.Element {
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-semibold text-ink truncate">{item.name}</div>
+              {/* Subtitle line (equipment/setup, e.g. "Cu gantere · banc 30°")
+                  per mockup andura-clasic.html#L1450 wv2-ex-sub. Rendered only
+                  cand engine exercise carries display sub (RO display map). */}
+              {item.sub && (
+                <div className="text-xs text-ink3 mt-0.5" data-testid="preview-exercise-sub">
+                  {item.sub}
+                </div>
+              )}
               <div className="text-xs text-ink3 font-mono mt-0.5">{item.detail}</div>
             </div>
             <Dumbbell className="w-4 h-4 text-ink3 flex-shrink-0" aria-hidden="true" />

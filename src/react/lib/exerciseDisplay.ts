@@ -1,0 +1,68 @@
+// ══ EXERCISE DISPLAY — English engine key → Romanian display name + subtitle ═
+// CRIT parity fix (workout-flow): active Workout + WorkoutPreview rendered raw
+// English engine keys ("Incline DB Press", "Pec Deck", "Lateral Raises", ...)
+// in a Romanian-first app. The engine uses English names as CANONICAL IDs
+// (PR records keyed by name, alternativeEngine maps, weight tables) — they are
+// identity, NOT display strings. Translating at the engine source would break
+// every keyed lookup, so the RO display name is applied at the React adapter
+// boundary (scheduleAdapterAggregate.toPlannedExercise) instead. `id` keeps the
+// English-derived slug so engine identity stays intact downstream.
+//
+// Coverage is the FULL set of engine names reachable in a planned session:
+// the union of src/engine/sessionBuilder.js EXERCISES_BY_TYPE +
+// coldStartGuidelines.js BASE_WEIGHTS/EXERCISE_BANK + alternativeEngine.js
+// ALTERNATIVES values + sessionBuilder MUSCLE_GROUP_EXERCISES. There is NO
+// nameRo field in the 657-exercise library; these are curated translations of
+// the bounded engine vocabulary, not 657 fabricated strings.
+//
+// RO display names + subtitles for the default Push demo verbatim from mockup
+// andura-clasic.html#L3970-3974 (Impins inclinat / Impins militar sezand /
+// Ridicari laterale / Extensii triceps cablu). Remaining names use standard RO
+// gym terminology; subtitles describe equipment/setup per src/engine/
+// sessionBuilder.js EQUIP_MAP. NO_DIACRITICS_RULE (D-LEGACY-064).
+
+export interface ExerciseDisplay {
+  name: string;
+  sub?: string;
+}
+
+// English engine key → Romanian display name + optional equipment/setup sub.
+const EXERCISE_DISPLAY: Readonly<Record<string, ExerciseDisplay>> = {
+  // ── Push ────────────────────────────────────────────────────────────────
+  'Incline DB Press': { name: 'Impins inclinat', sub: 'Cu gantere · banc 30°' },
+  'Flat DB Press': { name: 'Impins din piept', sub: 'Cu gantere · banc plat' },
+  'DB Shoulder Press': { name: 'Impins militar sezand', sub: 'Cu gantere' },
+  'Lateral Raises': { name: 'Ridicari laterale', sub: 'Cu gantere' },
+  'Pec Deck': { name: 'Impins la pec deck', sub: 'Aparat fluturari' },
+  'Pec Deck / Cable Fly': { name: 'Fluturari', sub: 'Pec deck / cablu' },
+  'Cable Fly': { name: 'Fluturari la cablu', sub: 'Cablu' },
+  'Overhead Triceps': { name: 'Extensii triceps deasupra capului', sub: 'Cablu' },
+  'Pushdown': { name: 'Extensii triceps la cablu', sub: 'Cablu, prindere strans' },
+
+  // ── Pull ────────────────────────────────────────────────────────────────
+  'Lat Pulldown': { name: 'Trageri verticale', sub: 'Aparat helcometru' },
+  'Cable Row': { name: 'Ramat la cablu', sub: 'Aparat helcometru' },
+  'Face Pulls': { name: 'Trageri la fata', sub: 'Cablu' },
+  'Bayesian Curl': { name: 'Flexii biceps la cablu', sub: 'Cablu' },
+  'Incline DB Curl': { name: 'Flexii biceps inclinat', sub: 'Cu gantere · banc inclinat' },
+  'Cable Curl': { name: 'Flexii biceps la cablu', sub: 'Cablu' },
+  'Preacher Curl': { name: 'Flexii biceps la pupitru', sub: 'Banc preacher' },
+  'Rear Delt Fly': { name: 'Fluturari deltoid posterior', sub: 'Aparat fluturari' },
+
+  // ── Legs ──────────────────────────────────────────────────────────────────
+  'Leg Press': { name: 'Presa de picioare', sub: 'Aparat presa' },
+  'Leg Extension': { name: 'Extensii cvadriceps', sub: 'Aparat picioare' },
+  'Leg Curl': { name: 'Flexii femurale', sub: 'Aparat picioare' },
+  'Romanian Deadlift': { name: 'Indreptari romanesti', sub: 'Cu bara' },
+  'Calf Raise': { name: 'Ridicari pe varfuri', sub: 'Aparat gambe' },
+};
+
+/**
+ * Map an engine exercise name (English canonical key) to its Romanian display
+ * form. Unknown names fall back to the original string with NO subtitle so the
+ * UI never shows an empty label — Bugatti truth: nu inventam un nume RO pentru
+ * un exercitiu necunoscut.
+ */
+export function toExerciseDisplay(engineName: string): ExerciseDisplay {
+  return EXERCISE_DISPLAY[engineName] ?? { name: engineName };
+}

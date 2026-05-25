@@ -99,6 +99,10 @@ export interface PRDelta {
 export interface PlannedExercise {
   id: string;
   name: string;
+  // Romanian display subtitle (equipment/setup, e.g. "Cu gantere · banc 30°").
+  // Optional — applied at the scheduleAdapterAggregate boundary via
+  // exerciseDisplay.toExerciseDisplay; absent for unknown engine names.
+  sub?: string;
   sets: number;
   targetReps: number;
   targetKg: number;
