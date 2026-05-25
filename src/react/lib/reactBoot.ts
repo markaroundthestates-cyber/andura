@@ -57,7 +57,14 @@ import { runAuthPathMigration } from '../../migrations/2026-05-02-auth-path-migr
 let _bootStarted = false;
 /** @type {Promise<void> | null} */
 let _postAuthInFlight: Promise<void> | null = null;
-let _postAuthDone = false;
+// RE-S-03 audit fix (REAUDIT-3 MED) — the done-flag is keyed BY UID, not a
+// boolean. A bare boolean was never reset on an in-session logout→login (both
+// LogoutConfirm + DeleteAccountConfirm sign out via pure SPA, no page reload),
+// so a second account authenticating within the same page load would hit
+// `if (_postAuthDone) return` and silently skip its cloud restore. Keying by
+// uid means a *different* uid always restores, while a repeat of the SAME uid
+// still dedups. null = no successful sync yet this page load.
+let _postAuthDoneForUid: string | null = null;
 
 /**
  * Auth-independent boot orchestration. Idempotent — only the first call does
@@ -117,9 +124,13 @@ export async function runReactBoot(): Promise<void> {
  *     the caller and never loses local data (restore is additive, see header).
  */
 export async function runPostAuthSync(): Promise<void> {
-  if (_postAuthDone) return;
+  // RE-S-03 — capture the current uid up-front. Dedup only when THIS uid has
+  // already synced this page load; a different uid (in-session account switch
+  // after a pure-SPA logout→login) always proceeds to its own restore.
+  const uid = getAuthState()?.uid;
+  if (!uid) return;
+  if (_postAuthDoneForUid === uid) return;
   if (_postAuthInFlight) return _postAuthInFlight;
-  if (!getAuthState()?.uid) return;
 
   _postAuthInFlight = (async () => {
     try {
@@ -134,10 +145,11 @@ export async function runPostAuthSync(): Promise<void> {
       // Restore from cloud + push merged local back (local-always-wins merge,
       // so this can only ADD missing remote data — never clobbers newer local).
       await initFirebaseSync();
-      _postAuthDone = true;
+      _postAuthDoneForUid = uid;
     } catch (err) {
       console.warn('[Sync] post-auth Firebase sync failed:', err);
-      // Leave _postAuthDone false so a later trigger (next boot) can retry.
+      // Leave _postAuthDoneForUid unset for this uid so a later trigger (next
+      // boot) can retry.
     } finally {
       _postAuthInFlight = null;
     }
@@ -154,5 +166,5 @@ export async function runPostAuthSync(): Promise<void> {
 export function __resetReactBootGuards(): void {
   _bootStarted = false;
   _postAuthInFlight = null;
-  _postAuthDone = false;
+  _postAuthDoneForUid = null;
 }

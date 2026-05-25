@@ -174,11 +174,31 @@ describe('runPostAuthSync — restore on login', () => {
     expect(runAuthPathMigration).toHaveBeenCalledOnce();
   });
 
-  it('does not re-sync once completed (done flag)', async () => {
+  it('does not re-sync once completed for the SAME uid (done flag keyed by uid)', async () => {
     mockGetAuthState.mockReturnValue({ uid: 'u-3', idToken: 't', expiry: Date.now() + 1e6 } as never);
     await runPostAuthSync();
     await runPostAuthSync();
     expect(initFirebaseSync).toHaveBeenCalledOnce();
+  });
+
+  it('RE-S-03 — restores again for a DIFFERENT uid (in-session logout→login)', async () => {
+    // First account authenticates + syncs (sets done-flag for uid-A).
+    mockGetAuthState.mockReturnValue({ uid: 'uid-A', idToken: 't', expiry: Date.now() + 1e6 } as never);
+    await runPostAuthSync();
+    expect(initFirebaseSync).toHaveBeenCalledOnce();
+
+    // Pure-SPA logout→login as a second account WITHOUT a page reload (so the
+    // module-level guard is NOT reset). Pre-fix the bare boolean `_postAuthDone`
+    // stayed true and uid-B silently skipped its cloud restore. Keyed by uid,
+    // the different uid now triggers a fresh restore.
+    mockGetAuthState.mockReturnValue({ uid: 'uid-B', idToken: 't2', expiry: Date.now() + 1e6 } as never);
+    await runPostAuthSync();
+    expect(initFirebaseSync).toHaveBeenCalledTimes(2);
+    expect(runAuthPathMigration).toHaveBeenCalledTimes(2);
+
+    // Re-confirming uid-B dedups (no third sync).
+    await runPostAuthSync();
+    expect(initFirebaseSync).toHaveBeenCalledTimes(2);
   });
 
   it('survives a path-migration throw + still attempts restore', async () => {
