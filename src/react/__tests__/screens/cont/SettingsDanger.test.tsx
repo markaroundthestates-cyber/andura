@@ -100,4 +100,13 @@ describe('SettingsDanger — D047 RIP-OUT navigation list', () => {
     const del = screen.getByTestId('danger-delete');
     expect(del.textContent).toMatch(/sterse permanent, imediat/);
   });
+
+  it('U-07 no internal decision ID leak in user-facing GDPR copy (§B039/D-6 removed)', () => {
+    const { container } = renderScreen();
+    // Internal decision ID prefix must not appear to Gigel.
+    expect(container.textContent).not.toMatch(/§B039/);
+    expect(container.textContent).not.toMatch(/D-6/);
+    // Human GDPR explanation still present.
+    expect(container.textContent).toMatch(/GDPR Art\. 17/);
+  });
 });

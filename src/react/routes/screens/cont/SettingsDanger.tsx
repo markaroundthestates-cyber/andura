@@ -90,8 +90,11 @@ export function SettingsDanger(): JSX.Element {
           </button>
         </div>
 
+        {/* U-07 audit fix (AUDIT-2 §U-07 MED) — removed internal decision ID
+            prefix "§B039/D-6 " that leaked into user-facing copy. Gigel saw a
+            cryptic internal reference; only the human GDPR explanation stays. */}
         <p className="text-xs text-ink2 leading-snug">
-          §B039/D-6 GDPR Art. 17: la &quot;Sterge contul&quot;, datele locale +
+          GDPR Art. 17: la &quot;Sterge contul&quot;, datele locale +
           backup Firebase RTDB se sterg automat (best-effort, propagare
           server &lt;5 min).
         </p>
