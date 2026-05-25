@@ -15,6 +15,13 @@ import { useScheduleStore } from '../../../stores/scheduleStore';
 import { isAuthFresh, signOut as authSignOut, getAuthState, getIdToken } from '../../../../auth.js';
 import { gotoPath } from '../../../lib/navigation';
 
+// RE-S-01 audit fix — upper bound on the awaited cloud (RTDB) DELETE so a hung
+// network never traps the user on the delete screen. The local wipe + sign-out
+// + navigation still proceed after this window even if the DELETE has not
+// resolved (a stale-but-valid token also authorizes the server-side DELETE for
+// up to ~1h, so the erasure still lands once connectivity returns).
+const REMOTE_WIPE_TIMEOUT_MS = 8000;
+
 function wipeAllLocalData(): void {
   try {
     useWorkoutStore.getState().reset();
@@ -62,7 +69,7 @@ export function DeleteAccountConfirm(): JSX.Element {
   const navigate = useNavigate();
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
 
-  function handleConfirm(): void {
+  async function handleConfirm(): Promise<void> {
     // §A016 — destructive action gate: require recent re-auth.
     if (!isAuthFresh()) {
       authSignOut();
@@ -71,11 +78,24 @@ export function DeleteAccountConfirm(): JSX.Element {
       return;
     }
     // §B039/D-6 — GDPR Art. 17 strict erasure Tier 0 + Tier 1 + Tier 2.
+    // RE-S-01 audit fix (REAUDIT-3 CRIT, GDPR Art. 17 + S-07 data-resurrection):
+    // the Tier 2 (RTDB) DELETE inside wipeRemoteData calls getIdToken(), which
+    // reads getAuthState() → null once authSignOut() has cleared the tokens.
+    // Previously authSignOut() ran synchronously while wipeRemoteData was still
+    // a pending microtask (`void`), so getIdToken returned null and the cloud
+    // DELETE never fired — the user's full RTDB backup survived "Sterge contul
+    // definitiv" and S-07 restore-on-login resurrected it on the next device.
+    // Fix: AWAIT wipeRemoteData() to completion (cloud DELETE issued with a
+    // still-valid token) BEFORE authSignOut() clears the tokens. A timeout
+    // fallback guarantees a hung network can't trap the user on this screen.
     const authState = getAuthState();
-    wipeAllLocalData();
     if (authState?.uid) {
-      void wipeRemoteData(authState.uid);
+      await Promise.race([
+        wipeRemoteData(authState.uid),
+        new Promise<void>((resolve) => setTimeout(resolve, REMOTE_WIPE_TIMEOUT_MS)),
+      ]);
     }
+    wipeAllLocalData();
     authSignOut();
     setAuthenticated(false);
     navigate('/auth');
@@ -110,7 +130,7 @@ export function DeleteAccountConfirm(): JSX.Element {
         <div className="w-full max-w-sm mt-8 flex flex-col gap-3">
           <button
             type="button"
-            onClick={handleConfirm}
+            onClick={() => { void handleConfirm(); }}
             data-testid="delete-confirm-accept"
             className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
           >
