@@ -10,6 +10,7 @@
 // All functions PURE — no Date.now, no Math.random, no side effects.
 
 import {
+  WEEK_PHASES,
   DELOAD_MULTIPLIERS,
   MARIUS_5_1_THRESHOLDS,
   ANTI_ABUSE,
@@ -24,11 +25,10 @@ import {
  * @returns {import('./types.js').MesocyclePhase}
  */
 export function computePhase(weekInMesocycle) {
+  // E-12: single source of truth = WEEK_PHASES (constants.js). Out-of-range
+  // coerces to W1 LOAD (defensive — engine total function never throws).
   const w = Number(weekInMesocycle);
-  if (w === 2) return 'LOAD+';
-  if (w === 3) return 'PEAK';
-  if (w === 4) return 'DELOAD';
-  return 'LOAD';
+  return /** @type {import('./types.js').MesocyclePhase} */ (WEEK_PHASES[w] ?? WEEK_PHASES[1]);
 }
 
 /**
