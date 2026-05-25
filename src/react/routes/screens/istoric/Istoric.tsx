@@ -89,21 +89,21 @@ export function Istoric(): JSX.Element {
           <p className="text-2xl font-bold text-ink font-mono" data-testid="stats-streak">
             {stats.currentStreak}
           </p>
-          <p className="text-xs text-ink2">Streak</p>
+          <p className="text-xs text-ink2">Zile consecutive</p>
         </div>
         <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
           <History className="w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
           <p className="text-2xl font-bold text-ink font-mono" data-testid="stats-total">
             {stats.totalSessions}
           </p>
-          <p className="text-xs text-ink2">Sesiuni</p>
+          <p className="text-xs text-ink2">Sesiuni total</p>
         </div>
         <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
           <Trophy className="w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
           <p className="text-2xl font-bold text-ink font-mono" data-testid="stats-pr">
             {stats.prCount}
           </p>
-          <p className="text-xs text-ink2">PR-uri</p>
+          <p className="text-xs text-ink2">Recorduri</p>
         </div>
       </div>
 
