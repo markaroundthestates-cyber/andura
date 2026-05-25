@@ -150,6 +150,42 @@ describe('SettingsProfile — interactions', () => {
   });
 });
 
+describe('SettingsProfile — Compozitie corporala (§F-pass2-settings-profile-03)', () => {
+  it('renders Compozitie corporala section heading', () => {
+    renderScreen();
+    expect(screen.getByText('Compozitie corporala')).toBeInTheDocument();
+  });
+
+  it('renders Talie + Gat + Inaltime inputs', () => {
+    renderScreen();
+    expect(screen.getByTestId('profile-waist-input')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-neck-input')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-height-input')).toBeInTheDocument();
+  });
+
+  it('BF% auto shows placeholder until masuratori complete', () => {
+    renderScreen();
+    expect(screen.getByTestId('profile-bf-auto').textContent).toBe('—');
+  });
+
+  it('BF% auto computes via US Navy engine cand talie+gat+inaltime filled', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-waist-input'), { target: { value: '85' } });
+    fireEvent.change(screen.getByTestId('profile-neck-input'), { target: { value: '38' } });
+    fireEvent.change(screen.getByTestId('profile-height-input'), { target: { value: '180' } });
+    // sex 'm' din store beforeEach — engine returns a finite %.
+    expect(screen.getByTestId('profile-bf-auto').textContent).toMatch(/^\d+(\.\d+)?%$/);
+  });
+
+  it('BF% manual override input disabled pana la check', () => {
+    renderScreen();
+    const override = screen.getByTestId('profile-bf-override') as HTMLInputElement;
+    expect(override.disabled).toBe(true);
+    fireEvent.click(screen.getByTestId('profile-bf-manual'));
+    expect(override.disabled).toBe(false);
+  });
+});
+
 describe('SettingsProfile — Romanian no-diacritics rule (D-LEGACY-064)', () => {
   it('no diacritics in UI rendered text', () => {
     const { container } = renderScreen();

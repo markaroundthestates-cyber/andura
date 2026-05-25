@@ -1,9 +1,10 @@
 // ══ SETTINGS PROFILE — Phase 6 task_09 Big 6 Edit Cont Sub-Screen ════════
 // Mockup verbatim source: 04-architecture/mockups/andura-clasic.html
-// #screen-settings-profile (L1898-1939). Big 6 edit reads/writes
-// useOnboardingStore.data. Avatar initial + body composition + targets
-// sections preserve mockup parity (composition+targets local form state V1;
-// persistence Phase 7+ când stores extend).
+// #screen-settings-profile (L2016-2057). Big 6 edit reads/writes
+// useOnboardingStore.data. Avatar initial + body composition section
+// (§F-pass2-settings-profile-03 mockup parity, local form state V1 —
+// onboardingStore NU are talie/gat/inaltime; persistence Phase 7+ cand
+// store extinde).
 //
 // Sub-screen pattern Phase 6: sub-header back btn + heading + scroll body.
 
@@ -16,6 +17,7 @@ import type { Sex, Goal, Frequency, Experience, OnboardingData } from '../../../
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { getUserProfileDisplay } from './userProfile';
+import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
 
 // §B003/D-1b audit fix — Goal labels 6 mockup parity (mockup L863-869).
 const GOAL_LABELS: Record<Goal, string> = {
@@ -51,6 +53,25 @@ export function SettingsProfile(): JSX.Element {
   // Draft state pentru edit apoi save commit (avoid live store thrash)
   const [draft, setDraft] = useState<OnboardingData>(data);
   const [saved, setSaved] = useState(false);
+
+  // §F-pass2-settings-profile-03 — Compozitie corporala (mockup L2034-2047).
+  // Talie + Gat + Inaltime → BF% auto US Navy. Local form state V1 (NU persistat
+  // — onboardingStore NU are aceste campuri; persistence Phase 7+ cand store
+  // extinde, per header note). Inaltime ceruta de engine (altfel BF null).
+  const [waist, setWaist] = useState('');
+  const [neck, setNeck] = useState('');
+  const [height, setHeight] = useState('');
+  const [bfManual, setBfManual] = useState(false);
+  const [bfOverride, setBfOverride] = useState('');
+
+  // Build engine arg omitting empty fields (exactOptionalPropertyTypes — NU
+  // pasa undefined explicit). Engine returns null daca lipseste vreun camp.
+  const bfArgs: { sex?: string; height_cm?: number; neck_cm?: number; waist_cm?: number } = {};
+  if (draft.sex) bfArgs.sex = draft.sex;
+  if (height) bfArgs.height_cm = Number(height);
+  if (neck) bfArgs.neck_cm = Number(neck);
+  if (waist) bfArgs.waist_cm = Number(waist);
+  const bfAuto = estimateBF_USNavy(bfArgs);
 
   function update<K extends keyof OnboardingData>(key: K, value: OnboardingData[K]): void {
     setDraft((d) => ({ ...d, [key]: value }));
@@ -134,6 +155,99 @@ export function SettingsProfile(): JSX.Element {
             </select>
           </SelectRow>
         </div>
+
+        {/* §F-pass2-settings-profile-03 — Compozitie corporala (mockup L2034-2047).
+            Talie + Gat + Inaltime → BF% auto US Navy (engine usNavyBF.js) cu
+            override manual. Inaltime ceruta de engine (altfel BF null). Local
+            form state V1 — persistence Phase 7+ cand store extinde. */}
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+          Compozitie corporala
+        </p>
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-1">
+          <LabelRow label="Talie (cm)">
+            <input
+              type="number"
+              min={50}
+              max={200}
+              step={0.5}
+              inputMode="decimal"
+              autoComplete="off"
+              value={waist}
+              onChange={(e) => setWaist(e.target.value)}
+              data-testid="profile-waist-input"
+              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+            />
+          </LabelRow>
+          <LabelRow label="Gat (cm)">
+            <input
+              type="number"
+              min={25}
+              max={60}
+              step={0.5}
+              inputMode="decimal"
+              autoComplete="off"
+              value={neck}
+              onChange={(e) => setNeck(e.target.value)}
+              data-testid="profile-neck-input"
+              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+            />
+          </LabelRow>
+          <LabelRow label="Inaltime (cm)">
+            <input
+              type="number"
+              min={120}
+              max={230}
+              step={0.5}
+              inputMode="decimal"
+              autoComplete="off"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              data-testid="profile-height-input"
+              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+            />
+          </LabelRow>
+          <div className="flex items-center justify-between px-4 py-3 border-b border-line">
+            <span className="text-sm text-ink">BF % auto</span>
+            <span className="flex items-center gap-2">
+              <span
+                className="font-mono text-sm font-semibold text-ink"
+                data-testid="profile-bf-auto"
+              >
+                {bfAuto != null ? `${bfAuto}%` : '—'}
+              </span>
+              <span className="text-[11px] text-ink3">US Navy</span>
+            </span>
+          </div>
+          <SelectRow label="Editez manual" htmlFor="profile-bf-manual" isLast>
+            <span className="flex items-center gap-2">
+              <input
+                id="profile-bf-manual"
+                type="checkbox"
+                checked={bfManual}
+                onChange={(e) => setBfManual(e.target.checked)}
+                data-testid="profile-bf-manual"
+                className="w-[18px] h-[18px] accent-brick"
+              />
+              <input
+                type="number"
+                min={3}
+                max={60}
+                step={0.1}
+                inputMode="decimal"
+                autoComplete="off"
+                disabled={!bfManual}
+                placeholder="—"
+                value={bfOverride}
+                onChange={(e) => setBfOverride(e.target.value)}
+                data-testid="profile-bf-override"
+                className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper2 text-ink3 font-mono text-sm disabled:opacity-60"
+              />
+            </span>
+          </SelectRow>
+        </div>
+        <p className="text-xs text-ink3 mb-4 px-1 leading-snug">
+          Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori.
+        </p>
 
         {/* §F-pass2-settings-profile-05 HIGH-BETA chat 4 Co-CTO decision: KEEP
             Antrenament section (Obiectiv + Frecventa + Experienta) onboarding
