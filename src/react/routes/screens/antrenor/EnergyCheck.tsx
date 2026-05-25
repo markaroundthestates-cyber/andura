@@ -6,11 +6,11 @@
 // direct workout-preview. Intensity propagated via location.state pentru
 // Phase 3 izolare flow (Phase 4+ trece la workoutStore intensity slice).
 //
-// Mockup parity (andura-clasic.html L878-897 traffic-light per intensity
-// bucket): plus = green (U+1F7E2), normal = yellow (U+1F7E1), minus = red
-// (U+1F534). 5-option spec extension preserved (intent: granular self-
-// report), bucketed visually to mockup 3-state Excelent/Normal/Obosit
-// color metaphor by intensity. Emoji is aria-hidden decorative.
+// Mockup parity (andura-clasic.html L878-897 traffic-light + per-option hint
+// subtitle). 5-option spec extension preserved (intent: granular self-report)
+// cu 5-step distinct color ramp green -> lime -> yellow -> orange -> red — fiecare
+// stare citeste diferit (prior emoji bucket bine+normal yellow / slabit+obosit
+// red erau indistinct). Color dot is aria-hidden decorative.
 //
 // PAR-009 SubHeader consume — mockup andura-clasic.html L879 sub-header
 // verbatim title "Cum te simti?" sticky top + back-btn. Body h1 "Cum te simti
@@ -44,8 +44,9 @@ export type IntensityMod = 'plus' | 'normal' | 'minus';
 
 interface EnergyOption {
   level: EnergyLevel;
-  emoji: string;
+  color: string;
   label: string;
+  hint: string;
   intensity: IntensityMod;
   // 1-5 readiness value persisted per-UID via saveReadiness (engine
   // readiness.js#getComputedReadinessScore read-side: StatsGrid /
@@ -56,16 +57,16 @@ interface EnergyOption {
   readiness: 1 | 2 | 3 | 4 | 5;
 }
 
-const GREEN = '\u{1F7E2}';
-const YELLOW = '\u{1F7E1}';
-const RED = '\u{1F534}';
-
+// 5-step distinct color ramp green -> lime -> yellow -> orange -> red so
+// adjacent states read differently (prior emoji bucketed bine+normal yellow,
+// slabit+obosit red -> indistinguishable). Anchored pe palette tokens succ/
+// warn/danger; lime + orange interpolate steps 2/4 warm-consistent.
 const ENERGY_OPTIONS: readonly EnergyOption[] = [
-  { level: 'excelent', emoji: GREEN, label: 'Excelent', intensity: 'plus', readiness: 5 },
-  { level: 'bine', emoji: YELLOW, label: 'Bine', intensity: 'normal', readiness: 4 },
-  { level: 'normal', emoji: YELLOW, label: 'Normal', intensity: 'normal', readiness: 3 },
-  { level: 'slabit', emoji: RED, label: 'Slabit', intensity: 'minus', readiness: 2 },
-  { level: 'obosit', emoji: RED, label: 'Obosit', intensity: 'minus', readiness: 1 },
+  { level: 'excelent', color: 'var(--succ)', label: 'Excelent', hint: 'Coach urca intensitatea +15%', intensity: 'plus', readiness: 5 },
+  { level: 'bine', color: '#6b9e3f', label: 'Bine', hint: 'Energie buna, sesiune completa', intensity: 'normal', readiness: 4 },
+  { level: 'normal', color: 'var(--warn)', label: 'Normal', hint: 'Sesiune standard, baseline', intensity: 'normal', readiness: 3 },
+  { level: 'slabit', color: '#d4702a', label: 'Slabit', hint: 'Coach reduce volumul putin', intensity: 'minus', readiness: 2 },
+  { level: 'obosit', color: 'var(--danger)', label: 'Obosit', hint: 'Coach reduce sesiunea imediat', intensity: 'minus', readiness: 1 },
 ];
 
 export function EnergyCheck(): JSX.Element {
@@ -109,12 +110,17 @@ export function EnergyCheck(): JSX.Element {
             onClick={() => handleSelect(opt)}
             data-energy-level={opt.level}
             data-intensity={opt.intensity}
-            className="energy-btn flex items-center gap-4 p-4 rounded-xl border border-lineStrong bg-paper2 hover:bg-paper transition"
+            className="energy-btn flex items-center gap-4 p-4 rounded-xl border border-lineStrong bg-paper2 hover:bg-paper transition text-left"
           >
-            <span className="text-3xl" aria-hidden="true">
-              {opt.emoji}
+            <span
+              className="w-5 h-5 rounded-full flex-shrink-0"
+              style={{ background: opt.color }}
+              aria-hidden="true"
+            />
+            <span className="flex flex-col">
+              <span className="text-base font-medium text-ink">{opt.label}</span>
+              <span className="text-sm text-ink2">{opt.hint}</span>
             </span>
-            <span className="text-base font-medium text-ink">{opt.label}</span>
           </button>
         ))}
       </div>
