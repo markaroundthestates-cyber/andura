@@ -48,7 +48,7 @@ function makeLogsForScenario(sessionCount, daysOld) {
 const SCENARIOS = [
   { name: 'cold_start',              sessions: 0,   daysOld: 0,   expectedLevel: 'cold_start'   },
   { name: 'cold_start_with_sessions',sessions: 2,   daysOld: 3,   expectedLevel: 'cold_start'   },
-  { name: 'initial',                 sessions: 8,   daysOld: 14,  expectedLevel: 'initial'       },
+  { name: 'initial',                 sessions: 8,   daysOld: 14,  expectedLevel: 'developing'    },
   { name: 'personalizing',           sessions: 25,  daysOld: 60,  expectedLevel: 'personalizing' },
   { name: 'personalized',            sessions: 60,  daysOld: 150, expectedLevel: 'personalized'  },
   { name: 'optimized',               sessions: 200, daysOld: 400, expectedLevel: 'optimized'     },
