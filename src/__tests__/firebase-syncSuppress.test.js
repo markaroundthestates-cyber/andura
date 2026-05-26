@@ -61,13 +61,14 @@ describe('firebase — C3-S-01 syncToFirebase suppress gate', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('normal sync (no suppress) still issues the users/{uid} PUT — behavior unchanged', async () => {
+  it('normal sync (no suppress) still issues the users/{uid} PATCH — behavior unchanged', async () => {
     DB.set('weights', { '2026-05-25': 80 });
     const ok = await syncToFirebase();
     expect(ok).toBe(true);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, init] = fetchMock.mock.calls[0];
     expect(String(url)).toContain('users/uid-suppress-test');
-    expect(init?.method).toBe('PUT');
+    // FCM-sync audit fix — PATCH (not whole-tree PUT) preserves sibling FCM nodes.
+    expect(init?.method).toBe('PATCH');
   });
 });

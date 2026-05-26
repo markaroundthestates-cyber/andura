@@ -43,7 +43,9 @@ describe('firebase — §25-M2 user-doc schema version', () => {
     await syncToFirebase();
     expect(fetchMock).toHaveBeenCalled();
     const [, init] = fetchMock.mock.calls[fetchMock.mock.calls.length - 1];
-    expect(init?.method).toBe('PUT');
+    // FCM-sync audit fix — PATCH (not PUT) so the sync does not clobber sibling
+    // nodes (fcmTokens / notificationPrefs). Payload still stamps _schemaVersion.
+    expect(init?.method).toBe('PATCH');
     const payload = JSON.parse(init.body);
     expect(payload._schemaVersion).toBe(USER_DOC_SCHEMA_VERSION);
   });

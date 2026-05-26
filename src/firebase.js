@@ -185,6 +185,27 @@ async function fbSet(path, data) {
   } catch { return false; }
 }
 
+// FCM-sync audit fix — RTDB REST PATCH (multi-path update). Unlike PUT (which
+// REPLACES the whole node, deleting any child not in the payload), PATCH updates
+// ONLY the provided child keys and leaves sibling subtrees intact. Used by
+// syncToFirebase so the user-tree sync no longer clobbers the FCM nodes
+// (`fcmTokens` + `notificationPrefs`) written as siblings by pushNotifications.ts
+// + notificationPrefsSync.ts. Per Firebase RTDB REST docs, PATCH on a path merges
+// the JSON body at that location (shallow, key-by-key) without touching unlisted
+// children. Mirror fbSet error contract (graceful false on any failure).
+/** @param {string} path @param {Record<string, unknown>} data */
+async function fbPatch(path, data) {
+  try {
+    const url = await _buildUrl(path);
+    const r = await _fbFetch(url, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return r.ok;
+  } catch { return false; }
+}
+
 /** @param {string} path */
 async function fbRemove(path) {
   try {
@@ -247,7 +268,12 @@ export async function syncToFirebase() {
     payload['_device'] = getDeviceId();
     payload['_ts'] = Date.now();
     payload['_schemaVersion'] = USER_DOC_SCHEMA_VERSION;
-    const ok = await fbSet(userPath, payload);
+    // FCM-sync audit fix — PATCH (not whole-tree PUT) so this sync updates only
+    // the SYNC_KEYS paths + metadata, leaving sibling nodes (fcmTokens,
+    // notificationPrefs — written by pushNotifications.ts / notificationPrefsSync.ts)
+    // intact. A PUT here carried only SYNC_KEYS and DELETED those siblings on the
+    // next ordinary log, killing push delivery; PATCH preserves them.
+    const ok = await fbPatch(userPath, payload);
     return ok;
   } catch (e) { console.warn('Firebase sync failed:', e); return false; }
 }
