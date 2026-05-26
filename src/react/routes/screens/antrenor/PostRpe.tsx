@@ -83,22 +83,30 @@ export function PostRpe(): JSX.Element {
         ? Math.max(1, Math.floor((Date.now() - sessionStart) / 60000))
         : 0;
 
-    // HIGH-CODE-06 fix (code review v2 chat 5): Bugatti truth — NU persist
-    // hardcoded fallback title la sessionsHistory cand planned workout null.
-    // Maria 65 antreneaza picioare → engine fault → Istoric forever showed
-    // 'Push (piept si umeri)' lie. Reject finishSession entirely + show
-    // error toast + navigate back la Antrenor. Data integrity > UX flow.
+    // H2 audit fix (midnight data loss) — re-deriving the plan here was the bug:
+    // getTodayWorkout() returns null when the day has rolled over into a rest day
+    // (or pipeline halt), so the COMPLETED session the user just logged was
+    // silently dropped. The save must NOT depend on the plan re-deriving; it must
+    // persist the in-memory sets the user actually logged this session.
+    //
+    // HIGH-CODE-06 truth preserved: when the plan is gone we must NOT fabricate a
+    // muscle-group title (the old 'Push (piept si umeri)' lie). We save under an
+    // honest neutral title 'Antrenament' (it genuinely WAS a workout — no claim
+    // about which muscles) + the real logged sets; exercise names degrade to the
+    // honest 'Exercitiu N' fallback below. Only a session with NOTHING logged is
+    // rejected (nothing to save) — that is the legitimate empty case.
     const planned = await getTodayWorkout();
-    if (planned === null || !planned.workoutTitle) {
+    if (setsDone === 0) {
       toast.show({
         message:
-          'Datele sesiunii lipsesc. Sesiunea NU a fost salvata in Istoric. Reincearca dupa ce reincarci pagina.',
+          'Sesiunea nu contine niciun set. Nu a fost salvata in Istoric.',
         variant: 'error',
       });
       navigate(gotoPath('antrenor'));
       return;
     }
-    const title = planned.workoutTitle;
+    const title =
+      planned !== null && planned.workoutTitle ? planned.workoutTitle : 'Antrenament';
     const meta = `${setsDone} seturi · ${dur} min · ${formatKg(volume)} kg`;
 
     const exercisesBase: SessionExerciseBreakdown[] = Object.entries(history)
