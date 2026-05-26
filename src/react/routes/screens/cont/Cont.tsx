@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   FileText,
   Download,
+  Upload,
   AlertTriangle,
   LifeBuoy,
   AlertOctagon,
@@ -65,6 +66,7 @@ const SECTIONS: readonly ContSection[] = [
       { id: 'privacy', label: 'Politica de confidentialitate', Icon: ShieldCheck, target: 'settings-privacy' },
       { id: 'terms', label: 'Termeni si conditii', Icon: FileText, target: 'settings-terms' },
       { id: 'export', label: 'Descarca datele tale (JSON)', Icon: Download, target: 'settings-export' },
+      { id: 'import', label: 'Importa istoric (greutate + nutritie)', Icon: Upload, target: 'settings-import' },
     ],
   },
   {

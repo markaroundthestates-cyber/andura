@@ -81,6 +81,7 @@ const SettingsPrefs = lazy(() => import('./screens/cont/SettingsPrefs').then((m)
 const SettingsPrivacy = lazy(() => import('./screens/cont/SettingsPrivacy').then((m) => ({ default: m.SettingsPrivacy })));
 const SettingsTerms = lazy(() => import('./screens/cont/SettingsTerms').then((m) => ({ default: m.SettingsTerms })));
 const SettingsExport = lazy(() => import('./screens/cont/SettingsExport').then((m) => ({ default: m.SettingsExport })));
+const SettingsImport = lazy(() => import('./screens/cont/SettingsImport').then((m) => ({ default: m.SettingsImport })));
 const SettingsDanger = lazy(() => import('./screens/cont/SettingsDanger').then((m) => ({ default: m.SettingsDanger })));
 const SettingsAbout = lazy(() => import('./screens/cont/SettingsAbout').then((m) => ({ default: m.SettingsAbout })));
 const SettingsSupport = lazy(() => import('./screens/cont/SettingsSupport').then((m) => ({ default: m.SettingsSupport })));
@@ -195,6 +196,7 @@ export const router = createBrowserRouter([
           { path: 'settings-privacy', element: <LazyRoute><SettingsPrivacy /></LazyRoute> },
           { path: 'settings-terms', element: <LazyRoute><SettingsTerms /></LazyRoute> },
           { path: 'settings-export', element: <LazyRoute><SettingsExport /></LazyRoute> },
+          { path: 'settings-import', element: <LazyRoute><SettingsImport /></LazyRoute> },
           { path: 'settings-danger', element: <LazyRoute><SettingsDanger /></LazyRoute> },
           { path: 'settings-about', element: <LazyRoute><SettingsAbout /></LazyRoute> },
           { path: 'settings-support', element: <LazyRoute><SettingsSupport /></LazyRoute> },

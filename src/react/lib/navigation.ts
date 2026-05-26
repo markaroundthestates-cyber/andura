@@ -40,7 +40,7 @@ export type GotoScreen =
   // Phase 6 Cont sub-screens (task_09-17)
   | 'settings-profile' | 'settings-notifications' | 'settings-subscription'
   | 'settings-appearance' | 'settings-prefs' | 'settings-privacy'
-  | 'settings-terms' | 'settings-export' | 'settings-danger'
+  | 'settings-terms' | 'settings-export' | 'settings-import' | 'settings-danger'
   | 'settings-about' | 'settings-support' | 'settings-faq'
   // §D047 RIP-OUT drill-down confirm screens (A003 ConfirmModal replacement)
   | 'logout-confirm' | 'delete-account-confirm' | 'reset-data-confirm'
@@ -107,6 +107,7 @@ export function gotoPath(screen: GotoScreen): string {
     screen === 'settings-subscription' || screen === 'settings-appearance' ||
     screen === 'settings-prefs' || screen === 'settings-privacy' ||
     screen === 'settings-terms' || screen === 'settings-export' ||
+    screen === 'settings-import' ||
     screen === 'settings-danger' || screen === 'settings-about' ||
     screen === 'settings-support' || screen === 'settings-faq' ||
     screen === 'settings-themes'
