@@ -43,6 +43,13 @@ import { DB, tod } from '../../db.js';
 import { DP } from '../../engine/dp.js';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
+// Piesa 1 nutrition-brain fix — real per-user maintenance TDEE base (omoara
+// baza flat 2640). Multiplicatorul de faza se aplica pe TDEE-ul real per-user.
+import {
+  readUserMaintenanceTDEE,
+  readUserWeightKg,
+  computeProteinTargetG,
+} from './userTdee';
 // §48-H1 audit fix — adapter integrity instrumentation. Every catch path
 // emits Sentry alert with source='engine-adapter-fallback' tag + adapter
 // name extra. Risk addressed (§48.5): silent divergence when engine returns
@@ -537,6 +544,48 @@ function mapBNConfidence(c: unknown): number {
 }
 
 /**
+ * Piesa 1 nutrition-brain fix — per-user nutrition baseline cand engine NU emite
+ * estimare (tier 'none' T0 fresh / posterior.mu absent / engine throws).
+ *
+ * Omoara baza flat 2640: kcalTarget = TDEE-ul REAL per-user (mentenanta) cand
+ * override de faza absent, sau TDEE × multiplicator de faza cand override
+ * prezent. proteinTarget = g/kg × greutate per-user. Maria 40kg mentenanta →
+ * ~1300-1500; Marius 110kg/2m bulk → ~3500-4000.
+ *
+ * Pure I/O-boundary read (onboardingStore) + delegare la userTdee pure helpers.
+ * Fallback la BASELINE_NUTRITION flat DOAR cand stats onboarding absente
+ * (cold start fara onboarding) — ultim resort, NU default.
+ *
+ * @param phaseKcal kcal-ul derivat din override-ul de faza (deja TDEE-real ×
+ *   multiplicator via getPhaseOverrideKcalToday), sau null cand AUTO/absent.
+ */
+function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine {
+  const tdee = readUserMaintenanceTDEE();
+  // Stats onboarding absente (cold start) → fallback flat 2640 ultim resort.
+  if (tdee === null && phaseKcal === null) return BASELINE_NUTRITION;
+
+  // kcal: override de faza (TDEE×mult) prioritar, altfel mentenanta = TDEE real.
+  const kcalTarget =
+    phaseKcal !== null
+      ? phaseKcal
+      : Math.max(Math.round(tdee as number), KCAL_FLOOR_DAILY_MIN);
+
+  const proteinTargetG =
+    computeProteinTargetG(readUserWeightKg()) ?? BASELINE_NUTRITION.proteinTargetG;
+
+  return {
+    kcalTarget,
+    proteinTargetG,
+    fatG: BASELINE_NUTRITION.fatG,
+    carbsG: BASELINE_NUTRITION.carbsG,
+    // 'engine' cand am o estimare derivata real (TDEE per-user sau override
+    // faza); 'baseline' doar cand cadem pe flat 2640 (cold start).
+    source: tdee !== null || phaseKcal !== null ? 'engine' : 'baseline',
+    confidence: 0,
+  };
+}
+
+/**
  * Real wire Bayesian Nutrition Engine adaptive TDEE per Kalman posterior.
  * LOCK 8 floor 1200 invariant preserved (Math.max guard) per DECISIONS
  * §D-LEGACY-041 observation filter NU adjustment.
@@ -578,9 +627,10 @@ function getPhaseOverrideKcalToday(): number | null {
     }>;
     const todayEntry = phaseLog.find((e) => e.date === todayISO);
     if (todayEntry) return Math.max(todayEntry.kcalTarget, KCAL_FLOOR_DAILY_MIN);
-    // Fallback: derive from baseline kcal * multiplier when no log for today
-    // (user picked phase earlier, days later → still apply override).
-    const baseKcal = BASELINE_NUTRITION.kcalTarget;
+    // Piesa 1 fix — derive from REAL per-user maintenance TDEE × multiplier
+    // (user picked phase earlier, days later → still apply override). Fallback
+    // la baza flat 2640 DOAR cand stats onboarding absente (cold start).
+    const baseKcal = readUserMaintenanceTDEE() ?? BASELINE_NUTRITION.kcalTarget;
     return Math.max(Math.round(baseKcal * multiplier), KCAL_FLOOR_DAILY_MIN);
   } catch {
     return null;
@@ -596,27 +646,27 @@ export async function getNutritionTargetsToday(
     // BayesianNutritionResult shapes; `as any` cast removed (Phase 4 task_11 §A pattern).
     const ctx = (userState ?? {}) as Parameters<typeof evaluateBN>[0];
     const result = await evaluateBN(ctx);
+    // Piesa 1 fix — engine fara estimare (tier 'none' T0 fresh): cade pe baza
+    // REALA per-user (TDEE × faza / mentenanta), NU flat 2640.
     if (!result || result.tier === 'none') {
-      if (phaseKcal !== null) {
-        return { ...BASELINE_NUTRITION, kcalTarget: phaseKcal, source: 'engine' };
-      }
-      return BASELINE_NUTRITION;
+      return buildPerUserBaseline(phaseKcal);
     }
     const mu = result.meta?.nutrition_inference_metadata?.posterior?.mu;
     if (!Number.isFinite(mu)) {
-      if (phaseKcal !== null) {
-        return { ...BASELINE_NUTRITION, kcalTarget: phaseKcal, source: 'engine' };
-      }
-      return BASELINE_NUTRITION;
+      return buildPerUserBaseline(phaseKcal);
     }
     const safeKcal = Math.max(mu as number, KCAL_FLOOR_DAILY_MIN);
     // B001 phase override priority — user explicit pick beats Bayesian estimate.
     // Bayesian engine continues to learn from logged kcal; phase override
     // gives immediate feedback while engine observations accumulate.
     const finalKcal = phaseKcal !== null ? phaseKcal : Math.round(safeKcal);
+    // Piesa 1 fix — proteine g/kg × greutate per-user (fallback flat 180 cand
+    // greutate absenta). Engine Kalman acopera DOAR kcal, NU macro split.
+    const proteinTargetG =
+      computeProteinTargetG(readUserWeightKg()) ?? BASELINE_NUTRITION.proteinTargetG;
     return {
       kcalTarget: finalKcal,
-      proteinTargetG: BASELINE_NUTRITION.proteinTargetG,
+      proteinTargetG,
       fatG: BASELINE_NUTRITION.fatG,
       carbsG: BASELINE_NUTRITION.carbsG,
       source: 'engine',
@@ -627,10 +677,7 @@ export async function getNutritionTargetsToday(
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getNutritionTargetsToday' },
     });
-    if (phaseKcal !== null) {
-      return { ...BASELINE_NUTRITION, kcalTarget: phaseKcal, source: 'engine' };
-    }
-    return BASELINE_NUTRITION;
+    return buildPerUserBaseline(phaseKcal);
   }
 }
 
