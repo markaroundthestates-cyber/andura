@@ -121,7 +121,7 @@ function fixtureT1ActiveUser() {
     meta: {
       movementId: 'back_squat',
       movementCategory: 'compound',
-      periodizationPhase: 'LOAD',
+      periodizationPhase: 'LOAD+',
       energyDirection: 'UP',
       persona: 'marius', // numeric pure imperative tone Q18=D
       formBreakdownToggled: false,
@@ -209,7 +209,7 @@ describe('Tempo Adapter — Golden-master parity legacy↔orchestrated (ADR 030 
     expect(orchResults[0].output.meta.form_cue.persona).toBe('gigica');
   });
 
-  it('T1 active user back_squat LOAD energy UP persona Marius → mind_muscle_active=true + numeric tone (legacy ≡ orchestrated)', async () => {
+  it('T1 active user back_squat LOAD+ energy UP persona Marius → mind_muscle_active=true + numeric tone (legacy ≡ orchestrated)', async () => {
     const userState = fixtureT1ActiveUser();
     const co = defaultConstraintObject();
 
@@ -227,7 +227,7 @@ describe('Tempo Adapter — Golden-master parity legacy↔orchestrated (ADR 030 
     expect(orchResults[0].output.meta.form_cue.cueText).toMatch(/Execute\.$/);
     // Depth tier-aware T1='rich' Q15=B
     expect(orchResults[0].output.meta.form_cue.depth).toBe('rich');
-    // LOAD phase = HIGH_INTENSITY_PHASES.LOAD → form-conservative amplification
+    // LOAD+ phase = HIGH_INTENSITY_PHASES.LOAD_PLUS → form-conservative amplification
     expect(orchResults[0].output.signals).toContain('tempo_form_conservative_amplification_high_intensity');
   });
 

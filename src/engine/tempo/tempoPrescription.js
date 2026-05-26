@@ -72,8 +72,8 @@ export function resolveTempoNotation({ periodizationPhase, energyDirection }) {
     };
   }
 
-  // Priority 3: High intensity (PEAK or LOAD) → form-conservative amplification Q11=B
-  if (phase === HIGH_INTENSITY_PHASES.PEAK || phase === HIGH_INTENSITY_PHASES.LOAD) {
+  // Priority 3: High intensity (PEAK or LOAD+) → form-conservative amplification Q11=B
+  if (phase === HIGH_INTENSITY_PHASES.PEAK || phase === HIGH_INTENSITY_PHASES.LOAD_PLUS) {
     return {
       notation:   TEMPO_NOTATION.FORM_CONSERVATIVE_AMPLIFIED,
       modulation: 'high_intensity_form_conservative',

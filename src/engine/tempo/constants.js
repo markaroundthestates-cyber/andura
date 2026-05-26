@@ -182,11 +182,15 @@ export const SUPPRESSION_MODE_BY_TIER = Object.freeze({
  * cue style modulation. Phase = PEAK or LOAD+ (high_intensity == true) → Tempo
  * emite slower eccentric, controlled concentric, safety emphasis.
  *
- * @type {Readonly<{PEAK: 'PEAK', LOAD: 'LOAD'}>}
+ * Mesocycle order LOAD(W1,lightest) → LOAD+(W2,heavy) → PEAK(W3) → DELOAD(W4).
+ * High-intensity = PEAK + LOAD+ (matches EnergyAdjustment forbiddenPhases), NU
+ * bare LOAD (W1 baseline). Mirrors energyAdjustment/constants.js:92 ['PEAK','LOAD+'].
+ *
+ * @type {Readonly<{PEAK: 'PEAK', LOAD_PLUS: 'LOAD+'}>}
  */
 export const HIGH_INTENSITY_PHASES = Object.freeze({
   PEAK: 'PEAK',
-  LOAD: 'LOAD',
+  LOAD_PLUS: 'LOAD+',
 });
 
 /**

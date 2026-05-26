@@ -85,6 +85,7 @@ export function enforceHardCapIntensity(corridor) {
  * - Forta:        floor 0.78, ceiling 0.90 (capped Layer C)
  * - Hipertrofie:  floor 0.70, ceiling 0.85
  * - Recompozitie: floor 0.65, ceiling 0.80
+ * - Slabire:      floor 0.60, ceiling 0.75 (cut: moderate load, rep 10-15 RIR 1-2)
  * - Longevitate:  floor 0.55, ceiling 0.75
  * - Sanatate:     floor 0.50, ceiling 0.70
  *
@@ -101,6 +102,7 @@ export function intensityCorridorForGoal(goalId) {
     case 'forta':        return { floor: 0.78, ceiling: 0.90 };
     case 'hipertrofie':  return { floor: 0.70, ceiling: 0.85 };
     case 'recompozitie': return { floor: 0.65, ceiling: 0.80 };
+    case 'slabire':      return { floor: 0.60, ceiling: 0.75 };
     case 'longevitate':  return { floor: 0.55, ceiling: 0.75 };
     case 'sanatate':     return { floor: 0.50, ceiling: 0.70 };
     default:             return { floor: 0.70, ceiling: 0.85 }; // hipertrofie default

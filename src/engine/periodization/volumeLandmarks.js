@@ -92,7 +92,7 @@ export function recoveryGreenMultiplier(ctx) {
  * @param {Object} input
  * @param {string} input.muscleGroup
  * @param {'maria'|'gigica'|'marius'} input.personaId
- * @param {'hipertrofie'|'forta'|'recompozitie'|'longevitate'|'sanatate'} input.goalId
+ * @param {'hipertrofie'|'forta'|'recompozitie'|'slabire'|'longevitate'|'sanatate'} input.goalId
  * @param {number} input.blockScaling     - 1.00 / 1.10 / 1.15 per macrocycle
  * @param {number} input.phaseVolumeMul   - 0.55 (DELOAD) sau 1.00 (LOAD/LOAD+/PEAK)
  * @param {boolean} [input.recoveryGreen]

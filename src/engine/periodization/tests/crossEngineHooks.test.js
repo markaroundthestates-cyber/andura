@@ -61,6 +61,12 @@ describe('intensityCorridorForGoal — goal-derived corridors', () => {
   it('Recompozitie → middle band (0.65, 0.80)', () => {
     expect(intensityCorridorForGoal('recompozitie')).toEqual({ floor: 0.65, ceiling: 0.80 });
   });
+  it('Slabire → cut band (0.60, 0.75), NU hipertrofie fall-through (F4 fix)', () => {
+    const corridor = intensityCorridorForGoal('slabire');
+    expect(corridor).toEqual({ floor: 0.60, ceiling: 0.75 });
+    // F4 regression guard — slabire must NOT silently inherit hipertrofie 0.70-0.85.
+    expect(corridor).not.toEqual({ floor: 0.70, ceiling: 0.85 });
+  });
   it('Longevitate → moderate band (0.55, 0.75)', () => {
     expect(intensityCorridorForGoal('longevitate')).toEqual({ floor: 0.55, ceiling: 0.75 });
   });

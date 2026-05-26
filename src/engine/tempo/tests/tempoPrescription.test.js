@@ -29,9 +29,14 @@ describe('resolveTempoNotation — Cluster B + D verbatim modulation', () => {
     expect(r.rationale).toContain('q11_b');
   });
 
-  it('LOAD phase → form-conservative amplification Q11=B', () => {
-    const r = resolveTempoNotation({ periodizationPhase: 'LOAD', energyDirection: 'NONE' });
+  it('LOAD+ phase (W2 heavy) → form-conservative amplification Q11=B', () => {
+    const r = resolveTempoNotation({ periodizationPhase: 'LOAD+', energyDirection: 'NONE' });
     expect(r.notation).toBe(TEMPO_NOTATION.FORM_CONSERVATIVE_AMPLIFIED);
+  });
+
+  it('bare LOAD phase (W1 lightest) → standard tempo, NOT amplified (F1 fix)', () => {
+    const r = resolveTempoNotation({ periodizationPhase: 'LOAD', energyDirection: 'NONE' });
+    expect(r.notation).toBe(TEMPO_NOTATION.STANDARD);
   });
 
   it('default phase + no energy modulation → standard hypertrophy 2-1-2-0', () => {
@@ -142,7 +147,7 @@ describe('resolveCueDeliveryTiming — Q8=D NU intra-set distraction', () => {
 describe('composeTempoPrescription — bundle integration', () => {
   it('returns full prescription bundle with all fields populated', () => {
     const r = composeTempoPrescription({
-      periodizationPhase: 'LOAD',
+      periodizationPhase: 'LOAD+',
       energyDirection:    'NONE',
       cueText:            'controleaza',
       persona:            'gigica',

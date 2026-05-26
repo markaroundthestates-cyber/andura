@@ -80,6 +80,7 @@ export const GOAL_MODIFIERS = Object.freeze({
   hipertrofie:  1.00, // Israetel canonical hypertrophy MEV-MAV target
   forta:        0.70, // lower volume / higher intensity per Forta template ADR 024 §1.2
   recompozitie: 0.85, // intermediate volume CUT-aware
+  slabire:      0.90, // volume-preserving deficit (retain muscle in cut, slight recovery cut)
   longevitate:  0.60, // sustainable load mobility emphasis ADR 024 §1.2
   sanatate:     0.50, // lifestyle integration controlled intensity ADR 024 §1.2
 });

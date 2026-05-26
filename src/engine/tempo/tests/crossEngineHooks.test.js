@@ -17,9 +17,14 @@ describe('detectHighIntensityAmplification — Cluster D11 Q11=B', () => {
     expect(r.rationale).toContain('q11_b');
   });
 
-  it('LOAD phase → amplified true', () => {
-    const r = detectHighIntensityAmplification({ periodizationPhase: 'LOAD' });
+  it('LOAD+ phase (W2 heavy) → amplified true', () => {
+    const r = detectHighIntensityAmplification({ periodizationPhase: 'LOAD+' });
     expect(r.amplified).toBe(true);
+  });
+
+  it('bare LOAD phase (W1 lightest) → NOT amplified (F1 fix: high-intensity = PEAK + LOAD+, NU bare LOAD)', () => {
+    const r = detectHighIntensityAmplification({ periodizationPhase: 'LOAD' });
+    expect(r.amplified).toBe(false);
   });
 
   it('ACCUMULATION phase → not amplified', () => {

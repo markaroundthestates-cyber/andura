@@ -55,7 +55,7 @@ import {
  */
 export function detectHighIntensityAmplification({ periodizationPhase }) {
   const phase = typeof periodizationPhase === 'string' ? periodizationPhase.toUpperCase() : null;
-  const amplified = phase === HIGH_INTENSITY_PHASES.PEAK || phase === HIGH_INTENSITY_PHASES.LOAD;
+  const amplified = phase === HIGH_INTENSITY_PHASES.PEAK || phase === HIGH_INTENSITY_PHASES.LOAD_PLUS;
   return {
     amplified,
     phase: phase ?? '',

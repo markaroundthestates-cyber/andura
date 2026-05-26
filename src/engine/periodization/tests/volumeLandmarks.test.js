@@ -248,6 +248,25 @@ describe('computeVolumeMap — full Israetel 11 grupuri matrix', () => {
       expect(fortaMap[mg]).toBeLessThanOrEqual(hyperMap[mg]);
     }
   });
+
+  it('Slabire goal uses its own modifier (0.90), volume-preserving but NOT full hipertrofie (F4 fix)', () => {
+    const hyperMap = computeVolumeMap({
+      personaId: 'marius', goalId: 'hipertrofie', blockScaling: 1.0, phaseVolumeMul: 1.0,
+    });
+    const slabireMap = computeVolumeMap({
+      personaId: 'marius', goalId: 'slabire', blockScaling: 1.0, phaseVolumeMul: 1.0,
+    });
+    // F4: before the fix, slabire fell through to GOAL_MODIFIERS.hipertrofie (1.00)
+    // → identical to hyperMap. Now slabire is deterministic 0.90 → strictly lighter
+    // on at least one group (capped groups can tie at MRV, so use <=, plus an
+    // unambiguous-strict check on a non-capped group).
+    let anyStrictlyLess = false;
+    for (const mg of Object.keys(hyperMap)) {
+      expect(slabireMap[mg]).toBeLessThanOrEqual(hyperMap[mg]);
+      if (slabireMap[mg] < hyperMap[mg]) anyStrictlyLess = true;
+    }
+    expect(anyStrictlyLess).toBe(true);
+  });
 });
 
 describe('mariaFunctionalToIsraetel — §45.3 Q19 6 movement patterns mapping', () => {
@@ -291,6 +310,7 @@ describe('Constants integrity check — frozen + spec values', () => {
     expect(GOAL_MODIFIERS.hipertrofie).toBe(1.00);
     expect(GOAL_MODIFIERS.forta).toBe(0.70);
     expect(GOAL_MODIFIERS.recompozitie).toBe(0.85);
+    expect(GOAL_MODIFIERS.slabire).toBe(0.90);
     expect(GOAL_MODIFIERS.longevitate).toBe(0.60);
     expect(GOAL_MODIFIERS.sanatate).toBe(0.50);
     expect(Object.isFrozen(GOAL_MODIFIERS)).toBe(true);
