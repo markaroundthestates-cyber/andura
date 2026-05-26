@@ -4,28 +4,19 @@ Backend-ul de notificari push e gata (Agent B): scheduler Cloud Functions care
 ruleaza la fiecare 15 minute, citeste preferintele fiecarui user din RTDB si
 trimite reminder-ul de antrenament + sumarul saptamanal duminica seara.
 
-**Codul nu poate fi deployat de mine** — necesita planul Blaze (card) si cativa
-pasi din consola Firebase pe care doar tu ii poti face. Mai jos, pasii in ordine.
+**Codul nu poate fi deployat de mine** — cativa pasi din consola Firebase pe care
+doar tu ii poti face. Mai jos, pasii in ordine.
 
 ---
 
-## (a) Upgrade Firebase la planul Blaze (OBLIGATORIU)
+## (a) Plan Blaze — DEJA ACTIV ✅ (Daniel confirmat 2026-05-26)
 
-Cloud Functions **si** Cloud Scheduler functioneaza DOAR pe planul Blaze
-(pay-as-you-go). Planul Spark (gratuit) nu permite deploy de functions.
+Cloud Functions + Cloud Scheduler cer Blaze (pay-as-you-go). Proiectul
+`fittracker-c34e8` e deja pe Blaze de mult timp → **nimic de facut aici**.
 
-- Firebase Console → proiectul `fittracker-c34e8` → in stanga jos, langa numele
-  planului → **Upgrade** → alege **Blaze (Pay as you go)**.
-- Necesita un card. **Nu inseamna ca platesti** — Blaze include un tier gratuit
-  generos. La volumul Andura (cativa useri, un tick la 15 min):
-  - Cloud Functions: primele 2M invocari/luna gratis. Noi facem ~2.880/luna.
-  - Cloud Scheduler: primele 3 job-uri gratis. Noi avem 1.
-  - FCM (push-ul in sine): **complet gratuit**, fara limita practica.
-- Recomandat: seteaza un **budget alert** (ex. 1 EUR/luna) in Google Cloud
-  Billing ca sa primesti mail daca vreodata depaseste — la scala asta nu va
-  depasi, dar e linistitor.
-
-**Pe scurt:** ai nevoie de card, dar costul real la scala beta = ~0 EUR.
+Cost real la scala beta = ~0 EUR (FCM gratuit; Functions ~2.880 invocari/luna in
+tier-ul gratuit de 2M; Cloud Scheduler 1 job, primele 3 gratuite). Optional:
+budget alert ~1 EUR/luna in Google Cloud Billing, pur ca plasa.
 
 ---
 
@@ -60,7 +51,7 @@ Web app config se vede la: Project settings → General → scroll la **Your app
 
 ## (d) Deploy
 
-Din radacina proiectului, dupa ce planul Blaze e activ:
+Din radacina proiectului (Blaze deja activ):
 
 ```
 firebase deploy --only functions,database
