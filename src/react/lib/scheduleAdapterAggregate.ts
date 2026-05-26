@@ -471,6 +471,19 @@ export function buildUserStateForPipeline(): {
       // computeMacrocycleBlock; advances volume scaling M1→M2→M3 + phase as the
       // user accumulates weeks. 0 for a brand-new user = correct (week 0, LOAD).
       weeksElapsed: trainingWeeks,
+      // Fix #6 — reactive deload AA trigger (energy-down sustained). The deload
+      // engine reads meta.recentSessionsForEnergy (deload/index.js:218) and
+      // isEnergyDownSustained checks the 3 most recent for energyDirection==DOWN
+      // (triggerHierarchy.js:244). The builder ALREADY stamps energyDirection on
+      // recentSessions[*] (from persisted energyEmoji), but the deload engine
+      // reads meta.recentSessionsForEnergy, NOT recentSessions[*] — the
+      // field-name mismatch the audit flagged (§2). Pointing the meta field at
+      // the same already-stamped array closes it: 3 consecutive red sessions →
+      // REACTIVE_AA deload → intensity_modifier → intensityMod 'minus' downstream.
+      // NU a new signal — the SAME energyDirection data, surfaced where deload
+      // reads it. The composite trigger (performanceDropPct/restTimeMultiplier/
+      // rirMismatch) needs CDL telemetry not assembled here — DEFERRED (see report).
+      recentSessionsForEnergy: recentSessions,
     },
   };
 }

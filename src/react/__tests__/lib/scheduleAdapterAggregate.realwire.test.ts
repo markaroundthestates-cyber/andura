@@ -18,6 +18,7 @@ import {
 } from '../../lib/scheduleAdapterAggregate';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
+import type { LastSessionSummary } from '../../stores/workoutStore';
 import {
   CALENDAR_OVERRIDE_KEY,
   commitCalendarEdit,
@@ -25,6 +26,7 @@ import {
   getDailyWorkout,
 } from '../../../engine/schedule/scheduleAdapter.js';
 import { DB, tod } from '../../../db.js';
+import { MS_PER_DAY } from '../../../constants.js';
 import { suggestStartWeight } from '../../../engine/coldStartGuidelines.js';
 
 const TUESDAY_2026_05_19 = new Date(2026, 4, 19); // dayIdx 1 (M, PULL session)
@@ -529,5 +531,74 @@ describe('scheduleAdapterAggregate — FIX #4 engine-sourced rest time', () => {
     });
     const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
     expect(out!.exercises[0]!.restSec).toBe(90); // documented fallback
+  });
+});
+
+// ── FIX #6 (partial): reactive deload AA trigger from sustained energy-down ──
+// The deload reactive triggers read meta fields the builder never assembled, so
+// reactive deload could essentially never fire. The cleanly-available trigger is
+// energy-down sustained: the builder already stamps energyDirection on
+// recentSessions[*] (from persisted energyEmoji) but the deload engine reads
+// meta.recentSessionsForEnergy (field-name mismatch, audit §2). Pointing that
+// meta field at the same array closes the gap. These tests drive the REAL
+// pipeline: 3 consecutive red-energy sessions -> REACTIVE_AA deload -> non-zero
+// intensity_modifier -> intensityMod 'minus' on the plan (which the Workout
+// screen multiplies into a lighter target). The COMPOSITE trigger
+// (performanceDropPct/restTimeMultiplier/rirMismatch) needs CDL telemetry not
+// assembled here and stays DEFERRED (see final report).
+describe('scheduleAdapterAggregate — FIX #6 reactive deload (energy-down sustained)', () => {
+  // A persisted session with a red energy traffic-light (builder maps red->DOWN).
+  function redSessionAt(daysAgo: number): LastSessionSummary {
+    const ts = Date.now() - daysAgo * MS_PER_DAY;
+    return {
+      title: 'Pull',
+      meta: 'x',
+      ts,
+      energyEmoji: 'red',
+      energy: 'red',
+      exercises: [
+        {
+          exerciseId: 'lat-pulldown',
+          exerciseName: 'Lat Pulldown',
+          sets: [{ kg: 50, reps: 10, rating: 'greu', timestamp: ts + 1000 }],
+          totalVolume: 500,
+          peakOneRM: 65,
+        },
+      ],
+    };
+  }
+
+  function greenSessionAt(daysAgo: number): LastSessionSummary {
+    return { ...redSessionAt(daysAgo), energyEmoji: 'green', energy: 'green' };
+  }
+
+  it('3 consecutive red-energy sessions → reactive deload → intensityMod "minus"', async () => {
+    // sessionsHistory is newest-tail; the builder reverses to newest-first, so
+    // these become the 3 most-recent for isEnergyDownSustained.
+    useWorkoutStore.setState({
+      sessionsHistory: [redSessionAt(3), redSessionAt(2), redSessionAt(1)],
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    // Reactive AA deload fired end-to-end → the plan carries the deload cut.
+    expect(out!.intensityMod).toBe('minus');
+  });
+
+  it('green-energy sessions → no reactive deload → intensityMod stays "normal"', async () => {
+    useWorkoutStore.setState({
+      sessionsHistory: [greenSessionAt(3), greenSessionAt(2), greenSessionAt(1)],
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    expect(out!.intensityMod).toBe('normal');
+  });
+
+  it('only 2 red sessions → below the 3-consecutive threshold → no reactive deload', async () => {
+    useWorkoutStore.setState({
+      sessionsHistory: [redSessionAt(2), redSessionAt(1)],
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    expect(out!.intensityMod).toBe('normal');
   });
 });
