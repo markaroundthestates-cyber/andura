@@ -18,6 +18,7 @@ import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { NutritionInline } from '../../../components/NutritionInline';
 import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
+import { ProjectionStrip } from '../../../components/Progres/ProjectionStrip';
 import { FatigueStrip } from '../../../components/Progres/FatigueStrip';
 import { BMRStrip } from '../../../components/Progres/BMRStrip';
 import { HeatMapWeekly } from '../../../components/Progres/HeatMapWeekly';
@@ -50,6 +51,8 @@ export function Progres(): JSX.Element {
       <h1 className="text-2xl font-bold text-ink mb-1">Progres</h1>
       <p className="text-sm text-ink2 mb-6">Body composition &middot; estimari calibrate.</p>
       <TDEEStrip />
+      {/* Piesa 4 — Preconizare forward projection (traiectorie curenta). */}
+      <ProjectionStrip />
       {/* §F-pass2-fatiguestrip-02 (HIGH-EPSILON 2026-05-22) — 2-col grid
           Oboseala + Calorii baza BMR per mockup L1717. Daniel LOCKED V1
           "single number NU visual bar" preserved per-strip layout. */}

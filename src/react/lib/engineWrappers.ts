@@ -681,6 +681,38 @@ export async function getNutritionTargetsToday(
   }
 }
 
+/**
+ * Piesa 4 (Preconizare) — TDEE EXPENDITURE estimate (kcal/zi), NU tinta.
+ *
+ * Returns BN engine posterior.mu (cheltuiala estimata, driven de demographicMu
+ * Piesa 1 + observatii energy-balance Piesa 2). Cand engine tier 'none' / mu
+ * absent / throws → cade pe mentenanta per-user (readUserMaintenanceTDEE).
+ * Returns null DOAR cand nici engine nici stats onboarding nu dau estimare
+ * (cold start total) → caller ascunde proiectia.
+ *
+ * Distinct de getNutritionTargetsToday: ACELA emite kcalTarget (tinta ajustata
+ * faza+floor); ASTA emite expenditure raw pentru energy-balance projection.
+ */
+export async function readTdeeEstimateKcal(
+  userState?: BayesianNutritionContext,
+): Promise<number | null> {
+  try {
+    const ctx = (userState ?? {}) as Parameters<typeof evaluateBN>[0];
+    const result = await evaluateBN(ctx);
+    const mu = result?.meta?.nutrition_inference_metadata?.posterior?.mu;
+    if (result && result.tier !== 'none' && Number.isFinite(mu)) {
+      return mu as number;
+    }
+  } catch (e) {
+    console.warn('[engineWrappers] readTdeeEstimateKcal failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'readTdeeEstimateKcal' },
+    });
+  }
+  // Engine no-estimate → per-user maintenance (Piesa 1). Null cand cold start.
+  return readUserMaintenanceTDEE();
+}
+
 // ── Adherence Engine wrapper (Phase 6 task_08) ──────────────────────────
 //
 // Anti-recurrence engine API verify (sketch v1 fabricated):

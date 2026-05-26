@@ -50,7 +50,7 @@ const REQUIRED_ADAPTERS = [
   'getWhyExerciseSummary',
 ] as const;
 
-const EXPECTED_CAPTURE_EXCEPTION_SITES = 13; // 11 Big-11 + getPatternsBanner extra sub-path + getWhyExerciseSummary (F-workout-05)
+const EXPECTED_CAPTURE_EXCEPTION_SITES = 14; // 11 Big-11 + getPatternsBanner extra sub-path + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare)
 
 describe('Sentry adapter coverage anti-drift gate (D063 LOCK V1)', () => {
   const source = readFileSync(ENGINE_WRAPPERS_PATH, 'utf-8');
