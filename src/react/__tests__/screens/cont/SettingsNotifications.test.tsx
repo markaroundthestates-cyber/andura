@@ -1,11 +1,28 @@
 // Phase 6 task_10 — SettingsNotifications sub-screen tests.
 
 import type { JSX } from 'react';
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { SettingsNotifications } from '../../../routes/screens/cont/SettingsNotifications';
 import { useSettingsStore } from '../../../stores/settingsStore';
+import { enablePushNotifications, disablePushNotifications } from '../../../lib/pushNotifications';
+import { syncNotificationPrefs } from '../../../lib/notificationPrefsSync';
+
+// Master toggle deleaga la modulul push real + sincronizeaza prefs la RTDB —
+// mock-uim ambele ca testele sa ramana izolate (fara FCM SDK / network).
+vi.mock('../../../lib/pushNotifications', () => ({
+  enablePushNotifications: vi.fn(() => Promise.resolve('granted')),
+  disablePushNotifications: vi.fn(() => Promise.resolve()),
+  isPushSupported: vi.fn(() => true),
+}));
+vi.mock('../../../lib/notificationPrefsSync', () => ({
+  syncNotificationPrefs: vi.fn(() => Promise.resolve()),
+}));
+
+const mockEnablePush = vi.mocked(enablePushNotifications);
+const mockDisablePush = vi.mocked(disablePushNotifications);
+const mockSyncPrefs = vi.mocked(syncNotificationPrefs);
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -26,6 +43,12 @@ function renderScreen() {
 beforeEach(() => {
   useSettingsStore.getState().reset();
   localStorage.clear();
+  mockEnablePush.mockReset();
+  mockEnablePush.mockResolvedValue('granted');
+  mockDisablePush.mockReset();
+  mockDisablePush.mockResolvedValue(undefined);
+  mockSyncPrefs.mockReset();
+  mockSyncPrefs.mockResolvedValue(undefined);
 });
 
 describe('SettingsNotifications — render + interactions', () => {
@@ -40,10 +63,10 @@ describe('SettingsNotifications — render + interactions', () => {
     expect(toggle).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('master toggle flip → store updated', () => {
+  it('master toggle flip → store updated', async () => {
     renderScreen();
     fireEvent.click(screen.getByTestId('notif-master-toggle'));
-    expect(useSettingsStore.getState().notificationsEnabled).toBe(false);
+    await waitFor(() => expect(useSettingsStore.getState().notificationsEnabled).toBe(false));
   });
 
   it('frequency radio 3 options + default zilnic selected', () => {
@@ -90,10 +113,10 @@ describe('SettingsNotifications — render + interactions', () => {
     expect(useSettingsStore.getState().notificationTime).toBe('07:00');
   });
 
-  it('disable master toggle → freq + days + time disabled', () => {
+  it('disable master toggle → freq + days + time disabled', async () => {
     renderScreen();
     fireEvent.click(screen.getByTestId('notif-master-toggle'));
-    expect(screen.getByTestId('notif-freq-zilnic')).toBeDisabled();
+    await waitFor(() => expect(screen.getByTestId('notif-freq-zilnic')).toBeDisabled());
     expect(screen.getByTestId('notif-day-0')).toBeDisabled();
     expect(screen.getByTestId('notif-time-input')).toBeDisabled();
   });
@@ -152,10 +175,10 @@ describe('SettingsNotifications — §F-pass2-settings-notif-02 per-event toggle
     expect(screen.getByTestId('notif-event-weekly-summary')).toHaveAttribute('aria-checked', 'false');
   });
 
-  it('per-event toggles disabled cand master toggle off', () => {
+  it('per-event toggles disabled cand master toggle off', async () => {
     renderScreen();
     fireEvent.click(screen.getByTestId('notif-master-toggle')); // disable master
-    expect(screen.getByTestId('notif-event-session-reminder')).toBeDisabled();
+    await waitFor(() => expect(screen.getByTestId('notif-event-session-reminder')).toBeDisabled());
     expect(screen.getByTestId('notif-event-daily-coach')).toBeDisabled();
   });
 });
@@ -175,65 +198,89 @@ describe('SettingsNotifications — §F-pass2-settings-notif-03 quiet hours disp
   });
 });
 
-describe('SettingsNotifications — §32-H2 permission ladder', () => {
-  const originalNotif = (globalThis as { Notification?: unknown }).Notification;
-
-  afterEach(() => {
-    if (originalNotif === undefined) {
-      delete (globalThis as { Notification?: unknown }).Notification;
-    } else {
-      (globalThis as { Notification?: unknown }).Notification = originalNotif;
-    }
-  });
-
-  function mockNotification(permission: 'default' | 'granted' | 'denied', requestResult?: 'granted' | 'denied'): { request: ReturnType<typeof vi.fn> } {
-    const request = vi.fn(() => Promise.resolve(requestResult ?? permission));
-    (globalThis as { Notification?: unknown }).Notification = Object.assign(
-      function (): void {},
-      { permission, requestPermission: request },
-    );
-    return { request };
-  }
-
-  it('toggle-on with default permission triggers requestPermission', async () => {
+describe('SettingsNotifications — FCM push wiring (handleToggle)', () => {
+  it('toggle-on delegheaza la enablePushNotifications (NU dubla request)', async () => {
     useSettingsStore.setState({ notificationsEnabled: false });
-    const { request } = mockNotification('default', 'granted');
+    mockEnablePush.mockResolvedValue('granted');
     renderScreen();
     fireEvent.click(screen.getByTestId('notif-master-toggle'));
-    await waitFor(() => expect(request).toHaveBeenCalled());
+    await waitFor(() => expect(mockEnablePush).toHaveBeenCalledTimes(1));
+  });
+
+  it("'granted' → store flag true + permission granted + sync prefs", async () => {
+    useSettingsStore.setState({ notificationsEnabled: false });
+    mockEnablePush.mockResolvedValue('granted');
+    renderScreen();
+    fireEvent.click(screen.getByTestId('notif-master-toggle'));
     await waitFor(() => expect(useSettingsStore.getState().notificationsEnabled).toBe(true));
+    expect(mockSyncPrefs).toHaveBeenCalled();
   });
 
-  it('toggle-on + denied permission does NOT enable store flag', async () => {
+  it("'denied' → store flag stays OFF + warning banner", async () => {
     useSettingsStore.setState({ notificationsEnabled: false });
-    mockNotification('default', 'denied');
+    mockEnablePush.mockResolvedValue('denied');
     renderScreen();
     fireEvent.click(screen.getByTestId('notif-master-toggle'));
-    await waitFor(() => {
-      expect(useSettingsStore.getState().notificationsEnabled).toBe(false);
-    });
+    await waitFor(() => expect(screen.getByTestId('notif-permission-warning')).toBeInTheDocument());
+    expect(useSettingsStore.getState().notificationsEnabled).toBe(false);
   });
 
-  it('already-granted: toggle works without re-prompt', () => {
+  it("'no-account' → store flag stays OFF + Gigel hint", async () => {
     useSettingsStore.setState({ notificationsEnabled: false });
-    const { request } = mockNotification('granted');
+    mockEnablePush.mockResolvedValue('no-account');
     renderScreen();
     fireEvent.click(screen.getByTestId('notif-master-toggle'));
-    expect(request).not.toHaveBeenCalled();
-    expect(useSettingsStore.getState().notificationsEnabled).toBe(true);
+    await waitFor(() => expect(screen.getByTestId('notif-no-account-warning')).toBeInTheDocument());
+    expect(useSettingsStore.getState().notificationsEnabled).toBe(false);
   });
 
-  it('denied permission + enabled store flag shows warning banner', () => {
-    useSettingsStore.setState({ notificationsEnabled: true });
-    mockNotification('denied');
+  it("'unsupported' → store flag stays OFF + unsupported note", async () => {
+    useSettingsStore.setState({ notificationsEnabled: false });
+    mockEnablePush.mockResolvedValue('unsupported');
     renderScreen();
-    expect(screen.getByTestId('notif-permission-warning')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('notif-master-toggle'));
+    await waitFor(() => expect(screen.getByTestId('notif-unsupported-warning')).toBeInTheDocument());
+    expect(useSettingsStore.getState().notificationsEnabled).toBe(false);
   });
 
-  it('unsupported (no Notification API) shows italic note when enabled', () => {
-    useSettingsStore.setState({ notificationsEnabled: true });
-    delete (globalThis as { Notification?: unknown }).Notification;
+  it("'error' → store flag stays OFF (fara UI greoi)", async () => {
+    useSettingsStore.setState({ notificationsEnabled: false });
+    mockEnablePush.mockResolvedValue('error');
     renderScreen();
-    expect(screen.getByTestId('notif-unsupported-warning')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('notif-master-toggle'));
+    await waitFor(() => expect(mockEnablePush).toHaveBeenCalled());
+    expect(useSettingsStore.getState().notificationsEnabled).toBe(false);
+  });
+
+  it('toggle-off → disablePushNotifications + store flag false', async () => {
+    useSettingsStore.setState({ notificationsEnabled: true });
+    renderScreen();
+    fireEvent.click(screen.getByTestId('notif-master-toggle'));
+    await waitFor(() => expect(mockDisablePush).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(useSettingsStore.getState().notificationsEnabled).toBe(false));
+  });
+
+  it('schimbare frecventa declanseaza syncNotificationPrefs', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('notif-freq-saptamanal'));
+    expect(mockSyncPrefs).toHaveBeenCalled();
+  });
+
+  it('toggle zi activa declanseaza syncNotificationPrefs', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('notif-day-5'));
+    expect(mockSyncPrefs).toHaveBeenCalled();
+  });
+
+  it('schimbare ora declanseaza syncNotificationPrefs', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('notif-time-input'), { target: { value: '20:00' } });
+    expect(mockSyncPrefs).toHaveBeenCalled();
+  });
+
+  it('toggle per-event declanseaza syncNotificationPrefs', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('notif-event-session-missed'));
+    expect(mockSyncPrefs).toHaveBeenCalled();
   });
 });

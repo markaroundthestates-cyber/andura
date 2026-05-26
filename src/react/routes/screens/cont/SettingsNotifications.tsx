@@ -1,8 +1,9 @@
 // ══ SETTINGS NOTIFICATIONS — Phase 6 task_10 Cont Sub-Screen ═════════════
 // Mockup verbatim source: andura-clasic.html#screen-settings-notifications
 // (L1942-1966). Toggle preferences + frecventa + zile active + ora.
-// UI-only V1 — ZERO actual notification dispatch (Phase 7+ service worker
-// + Notification API permissions flow).
+// Master toggle deleaga la modulul FCM push real (pushNotifications.ts) +
+// sincronizeaza preferintele la RTDB users/<uid>/notificationPrefs
+// (notificationPrefsSync.ts) ca scheduler-ul (Agent B) sa le citeasca.
 //
 // §F-pass2-settings-notif-02 HIGH-BETA chat 4 Co-CTO ADDITIVE decision —
 // Mockup paradigm: domain-grouped per-event toggles (Antrenament + Coaching +
@@ -20,8 +21,12 @@ import type { NotificationFrequency } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { Toggle } from '../../../components/Toggle';
+import { enablePushNotifications, disablePushNotifications } from '../../../lib/pushNotifications';
+import { syncNotificationPrefs } from '../../../lib/notificationPrefsSync';
 
-type NotifPermission = 'default' | 'granted' | 'denied' | 'unsupported';
+// 'no-account' = push CERE un cont (uid) ca antrenorul sa poata trimite
+// reminder-e server-side; anonim → hint Gigel-friendly.
+type NotifPermission = 'default' | 'granted' | 'denied' | 'unsupported' | 'no-account';
 
 function readPermission(): NotifPermission {
   if (typeof Notification === 'undefined') return 'unsupported';
@@ -113,25 +118,45 @@ export function SettingsNotifications(): JSX.Element {
       writeNotifEventEnabled(key, next);
       return { ...prev, [key]: next };
     });
+    void syncNotificationPrefs();
   }
 
   async function handleToggle(): Promise<void> {
-    // If turning ON + permission default → request browser permission first.
-    if (!enabled && permission === 'default') {
-      try {
-        const result = await Notification.requestPermission();
-        setPermission(result);
-        if (result === 'granted') {
-          toggleNotifications();
-        }
-        // result === 'denied' → don't enable store toggle; user can manually
-        // adjust browser settings later.
-      } catch {
-        // permission API throw → defensive no-op
-      }
+    // Turning OFF → best-effort dezactivare push (sterge token local + RTDB)
+    // apoi opreste flag-ul store.
+    if (enabled) {
+      await disablePushNotifications();
+      toggleNotifications();
+      void syncNotificationPrefs();
       return;
     }
-    toggleNotifications();
+
+    // Turning ON → delegheaza cererea de permisiune catre modulul push real
+    // (enablePushNotifications cere permisiunea INTERN — NU dubla request aici)
+    // + inregistreaza FCM token in RTDB. Mapeaza PushResult la UI state.
+    const result = await enablePushNotifications();
+    switch (result) {
+      case 'granted':
+        setPermission('granted');
+        toggleNotifications();
+        void syncNotificationPrefs();
+        break;
+      case 'denied':
+        // Pastreaza toggle OFF; warning denied existent se afiseaza.
+        setPermission('denied');
+        break;
+      case 'unsupported':
+        setPermission('unsupported');
+        break;
+      case 'no-account':
+        // Pastreaza toggle OFF + hint Gigel-friendly (vezi notif-no-account-warning).
+        setPermission('no-account');
+        break;
+      case 'error':
+        // Esec best-effort (config / network) → toggle ramane OFF, fara UI greoi.
+        console.warn('[notif] enablePushNotifications error');
+        break;
+    }
   }
 
   return (
@@ -157,7 +182,7 @@ export function SettingsNotifications(): JSX.Element {
           />
         </div>
 
-        {permission === 'denied' && enabled && (
+        {permission === 'denied' && (
           <div
             data-testid="notif-permission-warning"
             role="status"
@@ -174,7 +199,24 @@ export function SettingsNotifications(): JSX.Element {
             </p>
           </div>
         )}
-        {permission === 'unsupported' && enabled && (
+        {permission === 'no-account' && (
+          <div
+            data-testid="notif-no-account-warning"
+            role="status"
+            className="flex items-start gap-2 p-3 rounded-xl border mb-4"
+            style={{
+              background: 'var(--status-neutral-bg)',
+              borderColor: 'var(--status-neutral-border)',
+            }}
+          >
+            <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-ink" aria-hidden="true" />
+            <p className="text-xs text-ink2 leading-relaxed">
+              Notificarile cer un cont, ca antrenorul sa iti poata trimite
+              reminder-e. Conecteaza-te ca sa le activezi.
+            </p>
+          </div>
+        )}
+        {permission === 'unsupported' && (
           <p
             data-testid="notif-unsupported-warning"
             className="text-xs text-ink2 mb-4 italic"
@@ -198,7 +240,7 @@ export function SettingsNotifications(): JSX.Element {
               data-testid={`notif-freq-${opt.value}`}
               aria-pressed={frequency === opt.value}
               disabled={!enabled}
-              onClick={() => setNotificationFrequency(opt.value)}
+              onClick={() => { setNotificationFrequency(opt.value); void syncNotificationPrefs(); }}
               className={`w-full flex items-center justify-between px-4 py-3 text-left text-sm ${idx < FREQUENCY_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${frequency === opt.value ? 'text-brick font-semibold' : 'text-ink'} disabled:opacity-50`}
             >
               <span>{opt.label}</span>
@@ -224,7 +266,7 @@ export function SettingsNotifications(): JSX.Element {
               aria-label={`Ziua ${label}`}
               data-testid={`notif-day-${idx}`}
               disabled={!enabled}
-              onClick={() => toggleNotificationDay(idx)}
+              onClick={() => { toggleNotificationDay(idx); void syncNotificationPrefs(); }}
               className={`flex-1 py-2 rounded-lg text-sm font-semibold border disabled:opacity-50 ${days[idx] ? 'bg-brick text-paper border-brick' : 'bg-paper2 text-ink2 border-line'}`}
             >
               {label}
@@ -240,7 +282,7 @@ export function SettingsNotifications(): JSX.Element {
             type="time"
             value={time}
             disabled={!enabled}
-            onChange={(e) => setNotificationTime(e.target.value || time)}
+            onChange={(e) => { setNotificationTime(e.target.value || time); void syncNotificationPrefs(); }}
             aria-label="Ora reminder zilnic"
             data-testid="notif-time-input"
             className="w-full px-3 py-2 border border-lineStrong rounded-xl bg-paper text-ink font-mono text-base disabled:opacity-50"
