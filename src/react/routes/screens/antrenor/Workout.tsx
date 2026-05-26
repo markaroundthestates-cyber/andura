@@ -43,6 +43,7 @@ import { detectAggressiveLoad, deriveThresholds } from '../../../lib/aaFrictionD
 import type { AggressiveReason } from '../../../lib/aaFrictionDetect';
 import { getEngineSignals } from '../../../lib/engineSignalsAggregate';
 import { InactivityPrompt } from '../../../components/Workout/InactivityPrompt';
+import { DP } from '../../../../engine/dp.js';
 
 const INACTIVITY_THRESHOLD_MIN = 7; // Mockup wv2 verbatim L4401
 const INACTIVITY_CHECK_INTERVAL_MS = 30_000; // Mockup wv2 verbatim L4404
@@ -53,6 +54,21 @@ const INACTIVITY_CHECK_INTERVAL_MS = 30_000; // Mockup wv2 verbatim L4404
 // real aggregate replaces PHASE_4_DEMO_PUSH în engineWrappers.
 
 type SetRating = ExerciseHistoryEntry['rating'];
+
+// Fix #2 — in-session coarse rating → RPE for DP.checkInSessionAdjust.
+// DISTINCT from workoutStore.RATING_TO_RPE (usor 6.5 / potrivit 7.5 / greu 8.5):
+// that map calibrates the PERSISTED fatigue/dp history, where greu deliberately
+// caps at 8.5 so a SINGLE honest hard set never trips dp's RPE>=9 cliff. Here
+// the decision is the LIVE in-session correction "TWO consecutive heaviest-rating
+// sets -> this is too heavy NOW, drop the next set", which is exactly what
+// checkInSessionAdjust gates on 2x RPE 10. So greu (the hardest rating the UI
+// offers) maps to 10 for THIS decision only — not persisted. usor stays 6.5 so
+// the engine's 2x-easy UP path can still fire.
+const INSESSION_RATING_TO_RPE: Readonly<Record<SetRating, number>> = {
+  usor: 6.5,
+  potrivit: 7.5,
+  greu: 10,
+};
 
 export function Workout(): JSX.Element {
   const navigate = useNavigate();
@@ -165,6 +181,11 @@ export function Workout(): JSX.Element {
   // andura-clasic.html#L1449). Null = closed; string = whyEngine summary shown
   // in a bottom-sheet explainer. Built on tap so it reflects current readiness.
   const [whyText, setWhyText] = useState<string | null>(null);
+  // Fix #2 — in-session RPE auto-correction notice (DP.checkInSessionAdjust).
+  // Null = no adjustment surfaced; string = the engine's honest RO message
+  // (e.g. "Greutatea este prea mare · Trecem la 50 kg pentru urmatorul set").
+  // Shown in the log zone for the NEXT set; cleared when the user logs/advances.
+  const [adjustNotice, setAdjustNotice] = useState<string | null>(null);
   // U-04 (MED) — why-modal focus management (auto-focus + Escape + restore +
   // trap), paritate cu ExitConfirmSheet sister pattern. whyDismissRef = singurul
   // buton ("Am inteles") → Tab trap pe el insusi.
@@ -255,10 +276,13 @@ export function Workout(): JSX.Element {
 
   // Reset kg/reps inputs when advancing exercise. U-03: kg target reflects
   // session intensityMod (targetKg derived above) — depend on it so an
-  // adapted target rehydrates on exercise change.
+  // adapted target rehydrates on exercise change. Fix #2: also clear the
+  // in-session adjust notice — an auto-correction is scoped to the exercise it
+  // fired on; carrying it onto the next exercise would mislead.
   useEffect(() => {
     setKgInput(targetKg);
     setRepsInput(currentExercise.targetReps);
+    setAdjustNotice(null);
   }, [safeExIdx, targetKg, currentExercise.targetReps]);
 
   // §F-pass2-setloginput-02 — each new set begins at pre-log `tinta`. Keyed on
@@ -343,6 +367,35 @@ export function Workout(): JSX.Element {
         deltaPct: delta.deltaPct,
         oneRMEstimate: delta.oneRMEstimate,
       });
+    }
+
+    // Fix #2 — in-session RPE auto-correction (DP.checkInSessionAdjust, was dead
+    // code — never wired into the screen). Only meaningful when a NEXT set
+    // follows (the engine drops/bumps the upcoming set's weight). Compose the
+    // per-set rating history = prior logged sets + the just-logged one (the
+    // hook `history` won't reflect this set synchronously, same pattern as the
+    // getPRDelta history build above). Map coarse ratings to RPE via the
+    // in-session map (greu->10 so 2x-hard fires the DOWN path). The engine reads
+    // prior-session lastW from DB — when the user has no history it returns
+    // {adjust:false} and we no-op (honest: nothing to recalibrate against).
+    if (!isLastSetOfExercise) {
+      const ratedSets = [...(history[safeExIdx] ?? []), { kg: kgInput, reps: repsInput, rating }];
+      const recentRPEs = ratedSets.map((s) => INSESSION_RATING_TO_RPE[s.rating]);
+      const recentReps = ratedSets.map((s) => s.reps);
+      const adjust = DP.checkInSessionAdjust(exerciseName, recentRPEs, recentReps) as {
+        adjust: boolean;
+        dir?: 'down' | 'up';
+        newKg?: number;
+        msg?: string;
+      };
+      if (adjust.adjust && typeof adjust.newKg === 'number') {
+        // Pre-fill the next set's weight with the engine's corrected kg + surface
+        // the engine's honest RO message (NU a silent change).
+        setKgInput(adjust.newKg);
+        setAdjustNotice(adjust.msg ?? null);
+      } else {
+        setAdjustNotice(null);
+      }
     }
 
     if (isLastSetOfExercise) {
@@ -635,6 +688,20 @@ export function Workout(): JSX.Element {
           <p className="text-sm text-ink2 mb-2">
             Set {currentSetIdx + 1}/{currentExercise.sets}
           </p>
+
+          {/* Fix #2 — in-session RPE auto-correction notice. DP.checkInSessionAdjust
+              dropped/bumped the next set's weight after 2 consecutive hardest/easiest
+              sets; surfaced honestly (engine RO message) so the change is never silent.
+              role="status" so a screen reader announces the recalibration. */}
+          {adjustNotice !== null && (
+            <div
+              className="mb-3 p-3 rounded-xl bg-paper2 border border-lineStrong text-sm text-ink"
+              data-testid="insession-adjust-notice"
+              role="status"
+            >
+              {adjustNotice}
+            </div>
+          )}
 
           {/* Set history previous */}
           <div className="mb-4" data-testid="set-history">

@@ -46,6 +46,7 @@ vi.mock('../../../lib/engineWrappers', async () => {
 import { Workout } from '../../../routes/screens/antrenor/Workout';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { getPRDelta, getTodayWorkout, getWhyExerciseSummary } from '../../../lib/engineWrappers';
+import { DB } from '../../../../db.js';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -1035,5 +1036,81 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
       'data-reason',
       'kg_jump'
     );
+  });
+});
+
+// ── FIX #2: in-session RPE auto-correction (DP.checkInSessionAdjust) ────────
+// The engine function (2x hardest sets -> drop next set / 2x easiest + max reps
+// -> bump) existed + was tested but was NEVER wired into the screen. These
+// tests prove the wire end-to-end against the REAL DP engine (only engineWrappers
+// is mocked, NOT dp.js): logging two consecutive Greu sets drops the next set's
+// weight per the engine's logic AND surfaces the engine's honest message.
+describe('Workout — FIX #2 in-session RPE auto-correction wire', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  // Bench Press (fixture exercise 1, 4 sets). Prior persisted history at 60 kg
+  // gives DP a lastW to recalibrate from; getPrevWeight(60, bailib_stack) = 55.
+  function seedBenchHistory(): void {
+    DB.set('logs', [
+      { ex: 'Bench Press', w: 60, reps: 8, set: 1, ts: Date.now() - 1000 },
+      { ex: 'Bench Press', w: 60, reps: 8, set: 1, ts: Date.now() - 2000 },
+    ]);
+  }
+
+  // Push set 1 into the past so logging set 2 doesn't trip the separate
+  // fast_sets aaFriction guard (<30s between sets) — same technique the kg_jump
+  // test uses. This isolates the in-session RPE adjust under test.
+  function backdateFirstSet(): void {
+    const sets = useWorkoutStore.getState().history[0] ?? [];
+    useWorkoutStore.setState({
+      history: { 0: sets.map((s) => ({ ...s, timestamp: Date.now() - 60_000 })) },
+    });
+  }
+
+  it('two consecutive Greu sets drop the next set weight + surface the engine notice', async () => {
+    await renderWorkoutAndWait();
+    seedBenchHistory();
+    // No notice before any hard streak.
+    expect(screen.queryByTestId('insession-adjust-notice')).not.toBeInTheDocument();
+
+    // Set 1 Greu → only 1 hard set → engine does NOT adjust yet.
+    logSet('Greu');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(screen.queryByTestId('insession-adjust-notice')).not.toBeInTheDocument();
+    backdateFirstSet();
+
+    // Set 2 Greu → 2x RPE 10 → engine drops next set to getPrevWeight(60) = 55.
+    logSet('Greu');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    const notice = screen.getByTestId('insession-adjust-notice');
+    expect(notice).toBeInTheDocument();
+    expect(notice.textContent ?? '').toMatch(/55 kg/);
+    expect(notice.textContent ?? '').toMatch(/prea mare/i); // honest "too heavy" wording
+    // The next set's target weight is pre-filled with the dropped kg (55), NOT
+    // the original 22.5 default — the correction reached the prescription.
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('55 kg');
+  });
+
+  it('does NOT adjust on a single Greu set (engine needs 2 consecutive)', async () => {
+    await renderWorkoutAndWait();
+    seedBenchHistory();
+    logSet('Greu');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(screen.queryByTestId('insession-adjust-notice')).not.toBeInTheDocument();
+    // The target stays at the fixture default (no drop).
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
+  });
+
+  it('no adjustment when the user has no prior history (engine returns adjust:false)', async () => {
+    await renderWorkoutAndWait();
+    // No seedBenchHistory → DP.getState('Bench Press').lastW = 0 → no recalibration.
+    logSet('Greu');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    backdateFirstSet();
+    logSet('Greu');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(screen.queryByTestId('insession-adjust-notice')).not.toBeInTheDocument();
   });
 });
