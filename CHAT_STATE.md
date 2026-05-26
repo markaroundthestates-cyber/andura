@@ -1,9 +1,9 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-26 — run autonom overnight (CC terminal) wrap. Daniel a plecat la somn cu "ruleaza tot ce trebuie, task dupa task, nu te opri... step after step... sper sa nu te gasesc stand degeaba dimineata."
-**Topic active:** **CYCLE-4 EXTREME-QUALITY-READY.** Engine->UI complet cablat (creierul primeste inputuri reale live, dovedit E2E). Toate axele verzi. Dead-code arhivat. D080 lockat. Coach Brain Eval = regression guard pe main.
-**State:** main `2cfcf527`, **4271 teste PASS / 0 FAIL** + tsc + eslint clean. NU pushed (D031, acelasi PC). Buget API: ~$9 din $42 — **ROTEAZA CHEIA** (e in transcript).
-**Author:** Co-CTO overnight autonomous run
+**Last updated:** 2026-05-26 — sesiune birou RC (Daniel "sunt la birou"). G1 PUSH inchis + CI hardening complet pe baza annotations-urilor reale din Actions.
+**Topic active:** **CI/CD HARDENING post-push.** Cycle-4 pushed (G1). Apoi 8 fix-uri CI pe annotations reale: lint 0 + meta PWA + QA Report = smoke functional live (visual-regression demovat local) + Node 20 atacat (Pages migrat la deploy-pages -> managed Node20 workflow disparut; actiuni bumpate v6/v7/v8/v9) + submodul stricat 07-meta de-submodulat (git-128) + depcheck exit-255 curatat.
+**State:** main `48c4a7ae`, **PUSHED** (origin = HEAD). 4271 PASS / tsc / eslint 0 / depcheck 0 / build 0. Validat pe Actions push-ul `abe827a2`: QA "13/13 teste trec" live + Pages deploy-pages verde. Ultimele 3 commit-uri pending validare = **GitHub Partial System Outage** (dispatch 500, suite stuck) -> monitor in fundal reincearca. Buget API ~$9/$42 — **ROTEAZA CHEIA daca n-ai facut-o.**
+**Author:** Co-CTO birou RC session
 
 ---
 
@@ -18,7 +18,7 @@
 ---
 
 ## §1 Open questions / pending Daniel — CELE 4 GATE-URI
-- **G1 Push** origin (D031 — main e mult inaintea origin, decizia ta verbala).
+- **G1 Push** ✅ INCHIS — pushed `38d1e01b..48c4a7ae` (cycle-4 + 8 fix-uri CI) cu trigger verbal Daniel. origin = HEAD.
 - **G2 Smoke a-z live** (telefonul tau + Firebase real + judecata UX CEO — ABIA acum intri sa vezi produsul, per D080).
 - **G3 Google OAuth** — config Firebase/GCP console (checklist 6 pasi gata: `cycle3/OAUTH-ENABLEMENT-CHECKLIST.md`; codul e gata env-gated, lipseste doar `VITE_GOOGLE_OAUTH_CLIENT_ID` + console).
 - **G4 Beta GO** (decizia ta).
@@ -33,7 +33,7 @@ NIMIC mid-flight. Arcul a aterizat curat — 0 agenti la wrap, main verde, totul
 ---
 
 ## §3 NEXT P1 — de unde continui
-Produsul e **extreme-quality-ready** (endpoint-ul autonom atins — tot ce era autonom e facut). Urmatorul = **cele 4 gate-uri Daniel** (§1), necesita Daniel. Sesiune noua/Daniel: porneste direct cu gate-urile (push? smoke? OAuth console?) SAU directie noua.
+G1 push inchis. Imediat: cand GitHub iese din outage, valideaza annotations-urile curate pe ultimul push (`48c4a7ae`) — exit-255/git-128 disparute, Node 20 redus la reziduuri upstream (deploy-pages@v4 + composite security-review, forced-to-24, in afara controlului nostru). Apoi raman **G2 smoke a-z** (telefon+Firebase), **G3 OAuth console**, **G4 Beta GO**.
 
 ---
 
