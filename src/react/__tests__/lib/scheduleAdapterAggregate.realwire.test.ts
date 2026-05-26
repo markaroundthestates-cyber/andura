@@ -602,3 +602,76 @@ describe('scheduleAdapterAggregate — FIX #6 reactive deload (energy-down susta
     expect(out!.intensityMod).toBe('normal');
   });
 });
+
+// ── FIX #3: periodization weeksElapsed advances the mesocycle (macrocycle anchor) ──
+// The audit's exact finding: buildUserStateForPipeline NEVER set meta.weeksElapsed,
+// so periodization saw NaN → hasMacrocycleAnchor=false → every user frozen at
+// macrocycle week 0 forever (block 1 / meso 1 / LOAD, scheduled deload could never
+// fire). The builder now derives weeksElapsed = trainingWeeks (weeks since the
+// earliest logged session). These tests drive the REAL pipeline (NO engine mock)
+// and prove the week-4-of-mesocycle SCHEDULED deload fires once the training
+// history is old enough — i.e. accumulated weeks actually move the prescription.
+// (Probed against the raw engine: weeksElapsed 3 → deloadState SCHEDULED_LINEAR +
+// intensity_pct_decrement 12.5 → intensityMod 'minus'; weeksElapsed 0/4/8 → IDLE.)
+describe('scheduleAdapterAggregate — FIX #3 periodization weeksElapsed advances mesocycle', () => {
+  // A non-red session (green energy → no reactive-deload confound) whose ts sits
+  // `daysAgo` in the past. trainingWeeks = floor(daysAgo / 7) = weeksElapsed, so
+  // 24 days → 3 weeks → mesocycle week 4 (0-indexed 3) → scheduled deload window.
+  function greenSessionDaysAgo(daysAgo: number): LastSessionSummary {
+    const ts = Date.now() - daysAgo * MS_PER_DAY;
+    return {
+      title: 'Pull',
+      meta: 'x',
+      ts,
+      energyEmoji: 'green',
+      energy: 'green',
+      exercises: [
+        {
+          exerciseId: 'lat-pulldown',
+          exerciseName: 'Lat Pulldown',
+          sets: [{ kg: 50, reps: 10, rating: 'potrivit', timestamp: ts + 1000 }],
+          totalVolume: 500,
+          peakOneRM: 65,
+        },
+      ],
+    };
+  }
+
+  it('fresh history (week 0) → no scheduled deload → intensityMod "normal"', async () => {
+    // Earliest session 3 days ago → weeksElapsed 0 → mesocycle week 1 (LOAD).
+    useWorkoutStore.setState({ sessionsHistory: [greenSessionDaysAgo(3)] });
+    const us = buildUserStateForPipeline();
+    expect(us.meta.weeksElapsed).toBe(0);
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    expect(out!.intensityMod).toBe('normal');
+  });
+
+  it('~3 weeks of history → mesocycle week 4 scheduled deload → intensityMod "minus"', async () => {
+    // Earliest session 24 days ago → weeksElapsed 3 → mesocycle week 4 deload.
+    useWorkoutStore.setState({ sessionsHistory: [greenSessionDaysAgo(24)] });
+    const us = buildUserStateForPipeline();
+    expect(us.meta.weeksElapsed).toBe(3);
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    // The macrocycle anchor is live: accumulated weeks drove the scheduled deload
+    // (was permanently frozen at week 0 before the wire). Green energy rules out
+    // the reactive-deload path → this 'minus' is the periodization week-4 cut.
+    expect(out!.intensityMod).toBe('minus');
+  });
+
+  it('weeksElapsed differs with training age → the prescription is NOT frozen at week 0', async () => {
+    useWorkoutStore.setState({ sessionsHistory: [greenSessionDaysAgo(3)] });
+    const weekZero = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+
+    useWorkoutStore.setState({ sessionsHistory: [greenSessionDaysAgo(24)] });
+    const weekFour = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+
+    // Same user, same calendar day — only the training-history age differs, yet
+    // the mesocycle position moves the deload state. A regression that dropped
+    // weeksElapsed (NaN → frozen) would tie both at 'normal'.
+    expect(weekZero!.intensityMod).toBe('normal');
+    expect(weekFour!.intensityMod).toBe('minus');
+    expect(weekFour!.intensityMod).not.toBe(weekZero!.intensityMod);
+  });
+});
