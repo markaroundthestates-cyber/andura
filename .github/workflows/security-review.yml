@@ -13,12 +13,17 @@ on:
     branches: [main]
   workflow_dispatch:  # manual trigger Daniel CEO
 
+# Force Node 24 runtime for JS-based actions (silence Node 20 deprecation),
+# matching ci.yml / deploy.yml / track-7-nightly.yml.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   security:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 2
