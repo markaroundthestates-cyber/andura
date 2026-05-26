@@ -4,16 +4,21 @@
 // (4) bf% recompute din split FM:LBM; (5) no-data guard returns null;
 // (6) avgRecentLoggedIntake window + injectable now.
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   projectTrajectory,
   avgRecentLoggedIntake,
+  deriveCurrentBfPct,
   KCAL_PER_KG,
   FM_RATIO_LOSS,
   FM_RATIO_GAIN,
   MAINTENANCE_BALANCE_KCAL,
   MAX_ABS_DELTA_KG,
 } from '../../lib/nutritionProjection';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+import { useProgresStore } from '../../stores/progresStore';
+import { estimateBF_USNavy } from '../../../engine/usNavyBF.js';
+import { estimateBF_Deurenberg } from '../../../engine/bodyComposition.js';
 
 describe('projectTrajectory — deficit → loss', () => {
   it('eats 2000, TDEE 2500 → -500/day → ~-1.8kg in 28d', () => {
@@ -198,6 +203,66 @@ describe('projectTrajectory — absurd delta clamp', () => {
     // raw delta = (-6000*28)/7700 ≈ -21.8 → clamp -8
     expect(r!.deltaWeightKg).toBe(-MAX_ABS_DELTA_KG);
     expect(r!.projectedWeightKg).toBe(92);
+  });
+});
+
+describe('deriveCurrentBfPct — two-tier (US-Navy / Deurenberg / null)', () => {
+  beforeEach(() => {
+    useOnboardingStore.getState().reset();
+    useProgresStore.getState().reset();
+  });
+
+  it('cold start (no onboarding stats) → null', () => {
+    expect(deriveCurrentBfPct()).toBeNull();
+  });
+
+  it('onboarding stats only (no measurements) → Deurenberg estimate', () => {
+    const { setField } = useOnboardingStore.getState();
+    setField('sex', 'm');
+    setField('weight', 80);
+    setField('height', 180);
+    setField('age', 30);
+    const bf = deriveCurrentBfPct();
+    expect(bf).not.toBeNull();
+    expect(bf).toBe(estimateBF_Deurenberg({ sex: 'm', weightKg: 80, heightCm: 180, ageYears: 30 }));
+    // Deurenberg worked example ≈ 20.3
+    expect(bf).toBeCloseTo(20.3, 1);
+  });
+
+  it('neck + waist measured → US-Navy (accurate tier, overrides Deurenberg)', () => {
+    const { setField } = useOnboardingStore.getState();
+    setField('sex', 'm');
+    setField('weight', 80);
+    setField('height', 180);
+    setField('age', 30);
+    useProgresStore.getState().addBodyDataEntry({ date: '2026-05-26', neckCm: 38, waistCm: 85 });
+    const bf = deriveCurrentBfPct();
+    const navy = estimateBF_USNavy({ sex: 'm', height_cm: 180, neck_cm: 38, waist_cm: 85 });
+    expect(bf).toBe(navy);
+    // US-Navy differs from Deurenberg → confirms tier selection chose the measured one.
+    expect(bf).not.toBe(estimateBF_Deurenberg({ sex: 'm', weightKg: 80, heightCm: 180, ageYears: 30 }));
+  });
+
+  it('waist measured but neck missing → falls back to Deurenberg (US-Navy needs both)', () => {
+    const { setField } = useOnboardingStore.getState();
+    setField('sex', 'm');
+    setField('weight', 80);
+    setField('height', 180);
+    setField('age', 30);
+    useProgresStore.getState().addBodyDataEntry({ date: '2026-05-26', waistCm: 85 });
+    const bf = deriveCurrentBfPct();
+    expect(bf).toBe(estimateBF_Deurenberg({ sex: 'm', weightKg: 80, heightCm: 180, ageYears: 30 }));
+  });
+});
+
+describe('neck persistence round-trip (progresStore.bodyData)', () => {
+  beforeEach(() => useProgresStore.getState().reset());
+
+  it('addBodyDataEntry persists neckCm + reads back', () => {
+    useProgresStore.getState().addBodyDataEntry({ date: '2026-05-26', neckCm: 39, waistCm: 90 });
+    const last = useProgresStore.getState().bodyData.at(-1);
+    expect(last?.neckCm).toBe(39);
+    expect(last?.waistCm).toBe(90);
   });
 });
 

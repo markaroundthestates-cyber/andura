@@ -147,6 +147,7 @@ import { useOnboardingStore } from '../stores/onboardingStore';
 import { readBayesianNutritionContext } from './nutritionObservations';
 import { readTdeeEstimateKcal } from './engineWrappers';
 import { estimateBF_USNavy } from '../../engine/usNavyBF.js';
+import { estimateBF_Deurenberg } from '../../engine/bodyComposition.js';
 
 /** Orizont default proiectie — 28 zile (~4 saptamani), per Daniel verbatim. */
 export const DEFAULT_HORIZON_DAYS = 28;
@@ -189,22 +190,40 @@ export function avgRecentLoggedIntake(
 }
 
 /**
- * Deriva BF% curent (procent 0-100) din ultimele masuratori + onboarding via
- * US-Navy. Returns null cand masuratori insuficiente (azi: neck NU persistat
- * → mereu null pana cand BodyData colecteaza gat). Pure-ish: citeste stores.
+ * Deriva BF% curent (procent 0-100) — model two-tier:
+ *   - ACURAT: US-Navy cand neck+waist (+hip femei) masurate (persistate in
+ *     progresStore.bodyData via SettingsProfile) + height/sex onboarding.
+ *   - ESTIMAT: fallback Deurenberg (BMI/varsta/sex) — mereu disponibil
+ *     post-onboarding (Big6 + height). Estimare populationala (~4-5% SE).
+ * Returns null DOAR la cold start total (fara stats onboarding). Pure-ish:
+ * citeste stores. NU divide la fractie aici — consumer (projectTrajectory)
+ * asteapta PERCENT 0-100 (conventia usNavyBF). Engine fraction-boundary e
+ * separat (scheduleAdapterAggregate.estimateBfFraction).
  */
-function deriveCurrentBfPct(): number | null {
+export function deriveCurrentBfPct(): number | null {
+  const { sex, height, weight, age } = useOnboardingStore.getState().data;
   const bodyData = useProgresStore.getState().bodyData;
   const last = bodyData[bodyData.length - 1];
-  if (!last) return null;
-  const { sex, height } = useOnboardingStore.getState().data;
-  const args: { sex?: string; height_cm?: number; neck_cm?: number; waist_cm?: number; hip_cm?: number } = {};
-  if (sex) args.sex = sex;
-  if (height) args.height_cm = height;
-  if (last.waistCm !== undefined) args.waist_cm = last.waistCm;
-  if (last.hipsCm !== undefined) args.hip_cm = last.hipsCm;
-  // neck NU e persistat in bodyData V1 → estimateBF_USNavy returns null.
-  return estimateBF_USNavy(args);
+
+  // Tier 1 (ACURAT) — US-Navy cand exista masuratori (neck + waist).
+  if (last && last.neckCm !== undefined && last.waistCm !== undefined) {
+    const args: { sex?: string; height_cm?: number; neck_cm?: number; waist_cm?: number; hip_cm?: number } = {};
+    if (sex) args.sex = sex;
+    if (height) args.height_cm = height;
+    args.neck_cm = last.neckCm;
+    args.waist_cm = last.waistCm;
+    if (last.hipsCm !== undefined) args.hip_cm = last.hipsCm;
+    const navy = estimateBF_USNavy(args);
+    if (navy != null) return navy;
+  }
+
+  // Tier 2 (ESTIMAT) — Deurenberg din onboarding (mereu disponibil post-onb).
+  return estimateBF_Deurenberg({
+    weightKg: weight ?? NaN,
+    heightCm: height ?? NaN,
+    ageYears: age ?? NaN,
+    ...(sex ? { sex } : {}),
+  });
 }
 
 /**

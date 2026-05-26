@@ -166,18 +166,33 @@ describe('SettingsProfile — Compozitie corporala (§F-pass2-settings-profile-0
     expect(screen.getByTestId('profile-height-input')).toBeInTheDocument();
   });
 
-  it('BF% auto shows placeholder until masuratori complete', () => {
+  it('BF% auto shows Deurenberg ESTIMATE cand lipsesc masuratori (two-tier)', () => {
     renderScreen();
-    expect(screen.getByTestId('profile-bf-auto').textContent).toBe('—');
+    // beforeEach onboarding stats present (81kg/175cm/31yo/m) → Deurenberg fallback.
+    expect(screen.getByTestId('profile-bf-auto').textContent).toMatch(/^\d+(\.\d+)?%$/);
+    expect(screen.getByTestId('profile-bf-source').textContent).toBe('Estimat');
   });
 
-  it('BF% auto computes via US Navy engine cand talie+gat+inaltime filled', () => {
+  it('BF% auto switches to US Navy (sursa "US Navy") cand talie+gat+inaltime filled', () => {
     renderScreen();
     fireEvent.change(screen.getByTestId('profile-waist-input'), { target: { value: '85' } });
     fireEvent.change(screen.getByTestId('profile-neck-input'), { target: { value: '38' } });
     fireEvent.change(screen.getByTestId('profile-height-input'), { target: { value: '180' } });
     // sex 'm' din store beforeEach — engine returns a finite %.
     expect(screen.getByTestId('profile-bf-auto').textContent).toMatch(/^\d+(\.\d+)?%$/);
+    expect(screen.getByTestId('profile-bf-source').textContent).toBe('US Navy');
+  });
+
+  it('talie+gat persista in progresStore.bodyData pe save (A2 MED — NU mai discarded)', async () => {
+    const { useProgresStore } = await import('../../../stores/progresStore');
+    useProgresStore.getState().reset();
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-waist-input'), { target: { value: '85' } });
+    fireEvent.change(screen.getByTestId('profile-neck-input'), { target: { value: '38' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    const last = useProgresStore.getState().bodyData.at(-1);
+    expect(last?.waistCm).toBe(85);
+    expect(last?.neckCm).toBe(38);
   });
 
   it('BF% manual override input disabled pana la check', () => {

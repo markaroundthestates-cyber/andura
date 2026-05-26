@@ -16,11 +16,13 @@ import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../../stores/onboardingStore';
 import type { Sex, Goal, Frequency, Experience, OnboardingData } from '../../../stores/onboardingStore';
+import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
 import { getUserProfileDisplay } from './userProfile';
 import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
+import { estimateBF_Deurenberg } from '../../../../engine/bodyComposition.js';
 
 // §B003/D-1b audit fix — Goal labels 6 mockup parity (mockup L863-869).
 const GOAL_LABELS: Record<Goal, string> = {
@@ -49,6 +51,12 @@ export function SettingsProfile(): JSX.Element {
   const navigate = useNavigate();
   const data = useOnboardingStore((s) => s.data);
   const setField = useOnboardingStore((s) => s.setField);
+  // §two-tier-bf — neck + waist persist in progresStore.bodyData (mirror waist/
+  // hips). Seed local form din ultima intrare salvata (round-trip edit). Save
+  // scrie o intrare noua doar cand exista valori (NU mai e discarded — A2 MED).
+  const bodyData = useProgresStore((s) => s.bodyData);
+  const addBodyDataEntry = useProgresStore((s) => s.addBodyDataEntry);
+  const lastBody = bodyData[bodyData.length - 1];
   // §F-cont-01 user-wire (HIGH-BETA chat 4) — read avatar initial din id_token
   // JWT claims. Cumulative cu Cont.tsx wire pentru parity across screens.
   const profile = getUserProfileDisplay();
@@ -62,8 +70,8 @@ export function SettingsProfile(): JSX.Element {
   // aceste campuri; persistence Phase 7+ cand store extinde). Inaltime = NU mai
   // e stare locala separata (RE-U-01): citeste/scrie draft.height (P-02 store)
   // — aceeasi sursa care alimenteaza BMR. BF% US Navy ia inaltimea din draft.
-  const [waist, setWaist] = useState('');
-  const [neck, setNeck] = useState('');
+  const [waist, setWaist] = useState(lastBody?.waistCm != null ? String(lastBody.waistCm) : '');
+  const [neck, setNeck] = useState(lastBody?.neckCm != null ? String(lastBody.neckCm) : '');
   const [bfManual, setBfManual] = useState(false);
   const [bfOverride, setBfOverride] = useState('');
 
@@ -75,7 +83,17 @@ export function SettingsProfile(): JSX.Element {
   if (draft.height) bfArgs.height_cm = draft.height;
   if (neck) bfArgs.neck_cm = Number(neck);
   if (waist) bfArgs.waist_cm = Number(waist);
-  const bfAuto = estimateBF_USNavy(bfArgs);
+  const bfNavy = estimateBF_USNavy(bfArgs);
+  // Two-tier — US-Navy cand talie+gat masurate (acurat), altfel Deurenberg
+  // (estimat populational din BMI/varsta/sex, mereu disponibil post-onboarding).
+  const bfDeurenberg = estimateBF_Deurenberg({
+    weightKg: draft.weight ?? NaN,
+    heightCm: draft.height ?? NaN,
+    ageYears: draft.age ?? NaN,
+    ...(draft.sex ? { sex: draft.sex } : {}),
+  });
+  const bfAuto = bfNavy ?? bfDeurenberg;
+  const bfSource = bfNavy != null ? 'US Navy' : bfDeurenberg != null ? 'Estimat' : '';
 
   // §F-pass2-settings-profile-04 — Tinte personale (mockup L2049-2052).
   // Greutate tinta + luna tinta ("Pana in") → ETA luni ramase. Local form
@@ -117,6 +135,17 @@ export function SettingsProfile(): JSX.Element {
     (Object.keys(draft) as Array<keyof OnboardingData>).forEach((key) => {
       setField(key, draft[key]);
     });
+    // §two-tier-bf A2 MED fix — talie/gat NU mai sunt discarded: persist in
+    // progresStore.bodyData (sursa US-Navy din nutritionProjection). Scriem o
+    // intrare doar cand exista cel putin o masuratoare numerica valida.
+    const waistNum = waist ? Number(waist) : NaN;
+    const neckNum = neck ? Number(neck) : NaN;
+    const entry: { date: string; waistCm?: number; neckCm?: number } = { date: todayIso() };
+    if (Number.isFinite(waistNum) && waistNum > 0) entry.waistCm = waistNum;
+    if (Number.isFinite(neckNum) && neckNum > 0) entry.neckCm = neckNum;
+    if (entry.waistCm !== undefined || entry.neckCm !== undefined) {
+      addBodyDataEntry(entry);
+    }
     setSaved(true);
   }
 
@@ -250,7 +279,7 @@ export function SettingsProfile(): JSX.Element {
               >
                 {bfAuto != null ? `${bfAuto}%` : '—'}
               </span>
-              <span className="text-[11px] text-ink3">US Navy</span>
+              <span className="text-[11px] text-ink3" data-testid="profile-bf-source">{bfSource}</span>
             </span>
           </div>
           <SelectRow label="Editez manual" htmlFor="profile-bf-manual" isLast>
@@ -407,6 +436,15 @@ export function SettingsProfile(): JSX.Element {
  * Input month = 'YYYY-MM'. Returneaza un text Gigel-friendly cu lunile ramase
  * pana la luna tinta, sau null cand gol / data trecuta / invalid.
  */
+/** Data locala YYYY-MM-DD pentru intrarea bodyData (aliniat cu BodyData.tsx). */
+function todayIso(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
+}
+
 function monthsUntil(targetMonth: string): string | null {
   if (!targetMonth) return null;
   const match = /^(\d{4})-(\d{2})$/.exec(targetMonth);

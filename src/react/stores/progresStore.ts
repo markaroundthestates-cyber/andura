@@ -17,6 +17,7 @@ export interface BodyDataEntry {
   ts: number;
   // Optional measurement fields (cm) — partial entries supported.
   waistCm?: number;
+  neckCm?: number;
   chestCm?: number;
   hipsCm?: number;
   bicepsCm?: number;

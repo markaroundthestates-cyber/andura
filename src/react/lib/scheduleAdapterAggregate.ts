@@ -27,6 +27,7 @@ import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
 import { DB } from '../../db.js';
 import { PAIN_REGION_GROUP_MAP } from '../../engine/muscleRecoveryConstants.js';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
+import { estimateBF_Deurenberg } from '../../engine/bodyComposition.js';
 
 // ── RO onboarding → EN engine vocabulary (CRIT C1) ─────────────────────────
 // Onboarding stores experience/goal as RO strings (onboardingStore Experience
@@ -280,23 +281,18 @@ export function estimateBfFraction(input: {
   age?: number | null;
   sex?: string | null;
 }): number | undefined {
-  const weight = Number(input.weight);
-  const heightCm = Number(input.height);
-  const age = Number(input.age);
-  if (
-    !Number.isFinite(weight) || weight <= 0 ||
-    !Number.isFinite(heightCm) || heightCm <= 0 ||
-    !Number.isFinite(age) || age <= 0 ||
-    typeof input.sex !== 'string'
-  ) {
-    return undefined;
-  }
-  const heightM = heightCm / 100;
-  const bmi = weight / (heightM * heightM);
-  const sexFactor = input.sex.toLowerCase() === 'm' ? 1 : 0;
-  const bfPercent = 1.2 * bmi + 0.23 * age - 10.8 * sexFactor - 5.4;
+  // Canonical Deurenberg math lives in engine/bodyComposition (PERCENT 2-60).
+  // Single source of truth — here we divide to a FRACTION at the engine
+  // boundary (engine thresholds are fractional; raw percent false-positives
+  // every user, CRITICAL trap) + apply the engine clamp [0.03, 0.60].
+  const bfPercent = estimateBF_Deurenberg({
+    weightKg: Number(input.weight),
+    heightCm: Number(input.height),
+    ageYears: Number(input.age),
+    ...(typeof input.sex === 'string' ? { sex: input.sex } : {}),
+  });
+  if (bfPercent == null) return undefined;
   const fraction = bfPercent / 100; // percent → FRACTION (engine thresholds are fractional)
-  if (!Number.isFinite(fraction)) return undefined;
   return Math.min(0.6, Math.max(0.03, fraction));
 }
 
