@@ -1,4 +1,9 @@
-// ══ EXERCISE DISPLAY — English engine key → Romanian display name + subtitle ═
+// ══ EXERCISE DISPLAY — English engine key → user-facing display name + subtitle ═
+// Display names follow the Maria/Gigel persona rule: movements whose conventional
+// RO gym name IS English stay English (Face Pull, Lat Pulldown, Pec Deck, Romanian
+// Deadlift); accessory moves with a natural RO term get good Romanian (Ridicari
+// laterale, Ramat la cablu, Presa de picioare). Literal translations that confuse
+// a normal user are banned (ex: "Trageri la fata" read as a facial → "Face Pull").
 // CRIT parity fix (workout-flow): active Workout + WorkoutPreview rendered raw
 // English engine keys ("Incline DB Press", "Pec Deck", "Lateral Raises", ...)
 // in a Romanian-first app. The engine uses English names as CANONICAL IDs
@@ -26,23 +31,23 @@ export interface ExerciseDisplay {
   sub?: string;
 }
 
-// English engine key → Romanian display name + optional equipment/setup sub.
+// English engine key → user-facing display name + optional equipment/setup sub.
 const EXERCISE_DISPLAY: Readonly<Record<string, ExerciseDisplay>> = {
   // ── Push ────────────────────────────────────────────────────────────────
   'Incline DB Press': { name: 'Impins inclinat', sub: 'Cu gantere · banc 30°' },
   'Flat DB Press': { name: 'Impins din piept', sub: 'Cu gantere · banc plat' },
   'DB Shoulder Press': { name: 'Impins militar sezand', sub: 'Cu gantere' },
   'Lateral Raises': { name: 'Ridicari laterale', sub: 'Cu gantere' },
-  'Pec Deck': { name: 'Impins la pec deck', sub: 'Aparat fluturari' },
+  'Pec Deck': { name: 'Pec Deck', sub: 'Aparat fluturari' },
   'Pec Deck / Cable Fly': { name: 'Fluturari', sub: 'Pec deck / cablu' },
   'Cable Fly': { name: 'Fluturari la cablu', sub: 'Cablu' },
-  'Overhead Triceps': { name: 'Extensii triceps deasupra capului', sub: 'Cablu' },
+  'Overhead Triceps': { name: 'Extensii triceps peste cap', sub: 'Cablu' },
   'Pushdown': { name: 'Extensii triceps la cablu', sub: 'Cablu, prindere strans' },
 
   // ── Pull ────────────────────────────────────────────────────────────────
-  'Lat Pulldown': { name: 'Trageri verticale', sub: 'Aparat helcometru' },
+  'Lat Pulldown': { name: 'Lat Pulldown', sub: 'Aparat helcometru' },
   'Cable Row': { name: 'Ramat la cablu', sub: 'Aparat helcometru' },
-  'Face Pulls': { name: 'Trageri la fata', sub: 'Cablu' },
+  'Face Pulls': { name: 'Face Pull', sub: 'Cablu' },
   'Bayesian Curl': { name: 'Flexii biceps la cablu', sub: 'Cablu' },
   'Incline DB Curl': { name: 'Flexii biceps inclinat', sub: 'Cu gantere · banc inclinat' },
   'Cable Curl': { name: 'Flexii biceps la cablu', sub: 'Cablu' },
@@ -53,7 +58,7 @@ const EXERCISE_DISPLAY: Readonly<Record<string, ExerciseDisplay>> = {
   'Leg Press': { name: 'Presa de picioare', sub: 'Aparat presa' },
   'Leg Extension': { name: 'Extensii cvadriceps', sub: 'Aparat picioare' },
   'Leg Curl': { name: 'Flexii femurale', sub: 'Aparat picioare' },
-  'Romanian Deadlift': { name: 'Indreptari romanesti', sub: 'Cu bara' },
+  'Romanian Deadlift': { name: 'Romanian Deadlift', sub: 'Cu bara' },
   'Calf Raise': { name: 'Ridicari pe varfuri', sub: 'Aparat gambe' },
 };
 
