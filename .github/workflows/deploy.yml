@@ -76,7 +76,9 @@ on:
         default: ''
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 # Workflow-level env applies la deploy + lighthouse-live + checkly-deploy jobs.
 env:
@@ -88,6 +90,9 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       # §33-H2 audit fix — checkout configurable ref. Push trigger uses default
       # (current branch HEAD); workflow_dispatch can pass explicit ref to deploy
@@ -119,11 +124,16 @@ jobs:
           # Sign-in providers → Google + add VITE_GOOGLE_OAUTH_CLIENT_ID GitHub Secret.
           VITE_GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.VITE_GOOGLE_OAUTH_CLIENT_ID }}
 
-      - uses: peaceiris/actions-gh-pages@v4
+      # Official GitHub Actions Pages deployment (build_type=workflow). Replaces
+      # peaceiris/actions-gh-pages branch-push — this stops GitHub's managed
+      # "pages build and deployment" workflow (Node 20, not editable by us) from
+      # running, eliminating the Node 20 deprecation warning. Action versions
+      # forced to Node 24 via FORCE_JAVASCRIPT_ACTIONS_TO_NODE24 env above.
+      - uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: gh-pages
+          path: ./dist
+      - id: deployment
+        uses: actions/deploy-pages@v4
 
   # §33-H4 audit fix — post-deploy smoke health check against live andura.app.
   # Runs after gh-pages publish + propagation; curls root URL + verifies 200.
