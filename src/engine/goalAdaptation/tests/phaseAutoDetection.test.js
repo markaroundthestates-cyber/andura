@@ -5,6 +5,7 @@ import {
   tdeeMultiplierForPhase,
   applyDeloadKcalOverride,
   detectPhase,
+  detectAutoPhaseFromWeightTrend,
   computeLbm,
   computeMacroSplit,
 } from '../phaseAutoDetection.js';
@@ -222,5 +223,75 @@ describe('computeMacroSplit — §9.2.3 Cluster 3 verbatim bands', () => {
       kcalDeltaPct: 1.0,
     });
     expect(m.carb_g).toBe(0);
+  });
+});
+
+describe('detectAutoPhaseFromWeightTrend — AUTO driven de weight trend', () => {
+  const DAY = 1000 * 60 * 60 * 24;
+  const now = 1_700_000_000_000; // fixed ts anchor (pure, NU Date.now)
+
+  it('cold-start: zero cantariri → MAINTAIN (onest, nimic de detectat)', () => {
+    const r = detectAutoPhaseFromWeightTrend([]);
+    expect(r.phase).toBe(PHASES.MAINTAIN);
+    expect(r.signals).toContain('auto_insufficient_weighins');
+  });
+
+  it('o singura cantarire → MAINTAIN (insuficient)', () => {
+    const r = detectAutoPhaseFromWeightTrend([{ kg: 80, ts: now }]);
+    expect(r.phase).toBe(PHASES.MAINTAIN);
+    expect(r.signals).toContain('auto_insufficient_weighins');
+  });
+
+  it('span prea scurt (< 14 zile) → MAINTAIN', () => {
+    const r = detectAutoPhaseFromWeightTrend([
+      { kg: 82, ts: now },
+      { kg: 80, ts: now + 5 * DAY },
+    ]);
+    expect(r.phase).toBe(PHASES.MAINTAIN);
+    expect(r.signals).toContain('auto_span_too_short');
+  });
+
+  it('pierdere consistenta (> 0.1 kg/sapt) → CUT', () => {
+    const r = detectAutoPhaseFromWeightTrend([
+      { kg: 84, ts: now },
+      { kg: 82, ts: now + 28 * DAY }, // -2kg / 4 sapt = -0.5 kg/sapt
+    ]);
+    expect(r.phase).toBe(PHASES.CUT);
+    expect(r.signals).toContain('auto_weight_trend_down');
+  });
+
+  it('crestere consistenta (> 0.1 kg/sapt) → BULK', () => {
+    const r = detectAutoPhaseFromWeightTrend([
+      { kg: 80, ts: now },
+      { kg: 82, ts: now + 28 * DAY }, // +2kg / 4 sapt = +0.5 kg/sapt
+    ]);
+    expect(r.phase).toBe(PHASES.BULK);
+    expect(r.signals).toContain('auto_weight_trend_up');
+  });
+
+  it('platou (sub prag 0.1 kg/sapt) → MAINTAIN', () => {
+    const r = detectAutoPhaseFromWeightTrend([
+      { kg: 80.0, ts: now },
+      { kg: 80.1, ts: now + 28 * DAY }, // +0.025 kg/sapt = zgomot
+    ]);
+    expect(r.phase).toBe(PHASES.MAINTAIN);
+    expect(r.signals).toContain('auto_weight_trend_flat');
+  });
+
+  it('sorteaza defensiv dupa ts (ordine inversa input)', () => {
+    const r = detectAutoPhaseFromWeightTrend([
+      { kg: 82, ts: now + 28 * DAY },
+      { kg: 84, ts: now },
+    ]);
+    expect(r.phase).toBe(PHASES.CUT); // 84 → 82 scadere
+  });
+
+  it('ignora intrari invalide (kg/ts non-finite)', () => {
+    const r = detectAutoPhaseFromWeightTrend([
+      { kg: 84, ts: now },
+      { kg: NaN, ts: now + 14 * DAY },
+      { kg: 82, ts: now + 28 * DAY },
+    ]);
+    expect(r.phase).toBe(PHASES.CUT);
   });
 });

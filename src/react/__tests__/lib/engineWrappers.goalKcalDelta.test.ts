@@ -21,6 +21,7 @@ import { evaluate as evaluateBN } from '../../../engine/bayesianNutrition/index.
 import { createMockBNResult } from '../../../test-utils/createMockContext';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import type { Goal } from '../../stores/onboardingStore';
+import { useProgresStore } from '../../stores/progresStore';
 
 // User din bug report: barbat, 110kg, 184cm, 35 ani. Mentenanta TDEE ~3191.
 const USER = { sex: 'm' as const, weight: 110, height: 184, age: 35 };
@@ -42,13 +43,24 @@ const MAINTENANCE = 3224;
 beforeEach(() => {
   vi.clearAllMocks();
   useOnboardingStore.getState().reset();
+  useProgresStore.getState().reset();
   localStorage.clear();
 });
 
 afterEach(() => {
   useOnboardingStore.getState().reset();
+  useProgresStore.getState().reset();
   localStorage.clear();
 });
+
+const DAY = 1000 * 60 * 60 * 24;
+function addWeighIn(kg: number, daysAgo: number): void {
+  // progresStore.addWeightEntry stampeaza ts=Date.now(); pentru trend istoric
+  // controlat setam direct prin setState (test-only, ocoleste upsert-by-date).
+  const ts = Date.now() - daysAgo * DAY;
+  const date = new Date(ts).toISOString().slice(0, 10);
+  useProgresStore.setState((s) => ({ weightLog: [...s.weightLog, { kg, date, ts }] }));
+}
 
 describe('engineWrappers — goal-driven kcal delta (tier none / per-user maintenance)', () => {
   it('goal "mentenanta" == maintenance TDEE (no delta)', async () => {
@@ -183,5 +195,77 @@ describe('engineWrappers — goal-delta applies to adaptive Bayesian TDEE (poste
     const r = await getNutritionTargetsToday({});
     // 1400 × 0.82 = 1148 < 1200 → floored la 1200.
     expect(r.kcalTarget).toBe(1200);
+  });
+});
+
+describe('engineWrappers — AUTO auto-detects phase din weight trend (Problem 2)', () => {
+  it('AUTO cold-start (zero cantariri) → MAINTAIN (mentenanta, onest)', async () => {
+    setUser('auto');
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(MAINTENANCE);
+  });
+
+  it('AUTO cu weight trend SCADERE → CUT delta (sub mentenanta)', async () => {
+    setUser('auto');
+    addWeighIn(84, 28); // acum 28 zile
+    addWeighIn(82, 0); // azi → -2kg / 4 sapt
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+    expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
+  });
+
+  it('AUTO cu weight trend CRESTERE → BULK delta (peste mentenanta)', async () => {
+    setUser('auto');
+    addWeighIn(80, 28);
+    addWeighIn(82, 0); // +2kg / 4 sapt
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 1.08));
+    expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
+  });
+
+  it('AUTO cu platou (sub prag) → MAINTAIN (mentenanta)', async () => {
+    setUser('auto');
+    addWeighIn(80.0, 28);
+    addWeighIn(80.1, 0); // zgomot, sub prag 0.1 kg/sapt
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(MAINTENANCE);
+  });
+
+  it('AUTO span scurt (< 14 zile) → MAINTAIN (insuficient, mentenanta)', async () => {
+    setUser('auto');
+    addWeighIn(84, 5);
+    addWeighIn(82, 0); // span 5 zile, prea scurt
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(MAINTENANCE);
+  });
+
+  it('manual override CUT inca bate AUTO-detected BULK (precedence)', async () => {
+    setUser('auto');
+    addWeighIn(80, 28);
+    addWeighIn(82, 0); // AUTO ar detecta BULK
+    localStorage.setItem('phase-override', JSON.stringify('CUT'));
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    // Override CUT (0.82) bate AUTO BULK.
+    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+  });
+
+  it('AUTO trend scadere aplica CUT pe posterior.mu adaptiv (user care invata)', async () => {
+    setUser('auto');
+    addWeighIn(84, 28);
+    addWeighIn(82, 0);
+    vi.mocked(evaluateBN).mockResolvedValueOnce(
+      createMockBNResult({
+        confidence: 'high',
+        meta: { nutrition_inference_metadata: { posterior: { mu: 3000 } } },
+      }),
+    );
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(Math.round(3000 * 0.82));
   });
 });

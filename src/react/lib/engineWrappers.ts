@@ -51,6 +51,11 @@ import {
   computeProteinTargetG,
   readOnboardingGoal,
 } from './userTdee';
+// Problem 2 — AUTO phase auto-detection din weight trend (goal 'auto' onboarding
+// → engine recomanda faza, NU mentenanta flat). Cold-start onest: fara istoric
+// greutate → MAINTAIN (×1.0). PHASES enum + detector pure din Engine #2.
+import { detectAutoPhaseFromWeightTrend } from '../../engine/goalAdaptation/phaseAutoDetection.js';
+import { useProgresStore } from '../stores/progresStore';
 // §48-H1 audit fix — adapter integrity instrumentation. Every catch path
 // emits Sentry alert with source='engine-adapter-fallback' tag + adapter
 // name extra. Risk addressed (§48.5): silent divergence when engine returns
@@ -658,8 +663,13 @@ function getPhaseOverrideKcalToday(): number | null {
  *
  * Folosit DOAR cand NU exista override manual de faza (SchimbaFaza). Astfel
  * un user fresh care a ales "slabire" la onboarding vede deficit imediat,
- * fara sa deschida ecranul ascuns SchimbaFaza. Returns null cand goal absent
- * sau 'auto' → caller pastreaza estimarea de mentenanta/Bayesian as-is.
+ * fara sa deschida ecranul ascuns SchimbaFaza. Returns null cand goal absent.
+ *
+ * Problem 2 — 'auto' NU mai returneaza null (mentenanta flat tacuta). Ruleaza
+ * detectAutoPhaseFromWeightTrend (Engine #2): faza recomandata din trend-ul de
+ * greutate. Cold-start onest: fara istoric greutate → MAINTAIN (×1.0); pe
+ * masura ce se acumuleaza cantariri AUTO reflecta faza detectata (CUT cand
+ * scade / BULK cand creste). Driven de detector, NU hardcodat la mentenanta.
  */
 function getGoalKcalMultiplier(): number | null {
   let phaseKey: string | null;
@@ -677,11 +687,47 @@ function getGoalKcalMultiplier(): number | null {
     case 'longevitate':
       phaseKey = 'MAINTENANCE';
       break;
+    case 'auto':
+      // AUTO driven de detector: weight trend → CUT / BULK / MAINTENANCE.
+      phaseKey = detectAutoPhaseKey();
+      break;
     default:
-      // 'auto' / null → ZERO goal-delta (mentenanta cold-start, engine invata).
+      // goal null (cold-start fara onboarding) → ZERO goal-delta (mentenanta).
       return null;
   }
   return PHASE_MULTIPLIERS[phaseKey] ?? null;
+}
+
+/**
+ * Problem 2 — AUTO phase key din weight trend. Citeste weightLog (progresStore)
+ * + deleaga la detectorul pur Engine #2. Mapeaza PHASES engine → cheile
+ * PHASE_MULTIPLIERS (engine 'MAINTAIN' → 'MAINTENANCE'). Cold-start (fara
+ * istoric / span scurt) → 'MAINTENANCE' (×1.0). Defensive: throw → 'MAINTENANCE'.
+ */
+function detectAutoPhaseKey(): string {
+  try {
+    const weightLog = useProgresStore.getState().weightLog;
+    const { phase } = detectAutoPhaseFromWeightTrend(weightLog);
+    if (phase === 'CUT') return 'CUT';
+    if (phase === 'BULK') return 'BULK';
+    return 'MAINTENANCE'; // engine 'MAINTAIN' → PHASE_MULTIPLIERS 'MAINTENANCE'
+  } catch {
+    return 'MAINTENANCE';
+  }
+}
+
+/**
+ * Problem 2 (UI surface) — eticheta RO a fazei AUTO-detectate din weight trend,
+ * pentru SchimbaFaza ("Auto → Mentinere/Cut/Bulk recomandat"). Cold-start →
+ * 'Mentinere'. Reuse detectAutoPhaseKey (single source AUTO detection).
+ */
+const AUTO_PHASE_LABELS_RO: Record<string, string> = {
+  CUT: 'Cut',
+  BULK: 'Bulk',
+  MAINTENANCE: 'Mentinere',
+};
+export function getAutoDetectedPhaseLabelRo(): string {
+  return AUTO_PHASE_LABELS_RO[detectAutoPhaseKey()] ?? 'Mentinere';
 }
 
 export async function getNutritionTargetsToday(

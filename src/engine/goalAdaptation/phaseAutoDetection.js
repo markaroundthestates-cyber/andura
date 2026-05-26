@@ -163,6 +163,62 @@ export function detectPhase({ goalId: _goalId, templateId, user, recentSessions 
 }
 
 /**
+ * AUTO phase detection din weight trend (kg/saptamana) — driver pentru goal
+ * 'auto' onboarding cand NU exista goal explicit (slabire/masa/forta/...).
+ *
+ * Engine follows ce face corpul de fapt: pierdere consistenta → CUT (sustine
+ * deficit-ul), crestere consistenta → BULK (sustine surplus-ul), platou →
+ * MAINTAIN. Cold-start onest: < minWeighIns cantariri SAU span prea scurt →
+ * MAINTAIN (nimic de detectat din zero date; NU fabricam o faza).
+ *
+ * Prag |trend| >= flatBandKgPerWeek (0.1 kg/sapt) ca sa filtram zgomotul de
+ * cantar (hidratare/glicogen). Sub prag = platou → MAINTAIN.
+ *
+ * Pure function — primeste weightLog deja sortat optional; sorteaza defensiv
+ * dupa ts. NU citeste store / NU Date.now.
+ *
+ * @param {ReadonlyArray<{kg?: number, ts?: number}>} [weightLog]
+ * @param {{minWeighIns?: number, minSpanDays?: number, flatBandKgPerWeek?: number}} [opts]
+ * @returns {{phase: import('./types.js').NutritionPhase, signals: string[]}}
+ */
+export function detectAutoPhaseFromWeightTrend(weightLog, opts = {}) {
+  const minWeighIns = opts.minWeighIns ?? 2;
+  const minSpanDays = opts.minSpanDays ?? 14;
+  const flatBand = opts.flatBandKgPerWeek ?? 0.1;
+  const signals = [];
+
+  const valid = (Array.isArray(weightLog) ? weightLog : [])
+    .filter((e) => e && Number.isFinite(Number(e.kg)) && Number.isFinite(Number(e.ts)))
+    .map((e) => ({ kg: Number(e.kg), ts: Number(e.ts) }))
+    .sort((a, b) => a.ts - b.ts);
+
+  if (valid.length < minWeighIns) {
+    signals.push('auto_insufficient_weighins');
+    return { phase: PHASES.MAINTAIN, signals };
+  }
+
+  const first = valid[0];
+  const last = valid[valid.length - 1];
+  const spanDays = (last.ts - first.ts) / (1000 * 60 * 60 * 24);
+  if (!Number.isFinite(spanDays) || spanDays < minSpanDays) {
+    signals.push('auto_span_too_short');
+    return { phase: PHASES.MAINTAIN, signals };
+  }
+
+  const trendKgPerWeek = ((last.kg - first.kg) / spanDays) * 7;
+  if (trendKgPerWeek <= -flatBand) {
+    signals.push('auto_weight_trend_down');
+    return { phase: PHASES.CUT, signals };
+  }
+  if (trendKgPerWeek >= flatBand) {
+    signals.push('auto_weight_trend_up');
+    return { phase: PHASES.BULK, signals };
+  }
+  signals.push('auto_weight_trend_flat');
+  return { phase: PHASES.MAINTAIN, signals };
+}
+
+/**
  * Compute LBM (lean body mass) from weight + BF%. Defensive fallback cand
  * BF% missing → LBM = weight × 0.85 (V1 conservative anchor).
  *

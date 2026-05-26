@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { GitBranch } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { setPhaseOverride, getPhaseOverride } from '../../../../util/phaseOverride.js';
+import { getAutoDetectedPhaseLabelRo } from '../../../lib/engineWrappers';
 import { SYS } from '../../../../engine/sys.js';
 import { SubHeader } from '../../../components/SubHeader';
 
@@ -30,6 +31,10 @@ export function SchimbaFazaConfirm(): JSX.Element {
   const navigate = useNavigate();
   const initial: PhaseOption = (getPhaseOverride() as PhaseOption | null) ?? 'AUTO';
   const [selected, setSelected] = useState<PhaseOption>(initial);
+  // Problem 2 (UI surface) — afiseaza faza AUTO-detectata din weight trend pe
+  // optiunea Auto-detect ("Coach decide ... → Mentinere/Cut/Bulk recomandat").
+  // Cold-start (fara istoric greutate) → 'Mentinere'.
+  const autoDetectedLabel = getAutoDetectedPhaseLabelRo();
 
   function handleConfirm(): void {
     const tdee = typeof SYS?.estimateTDEE === 'function' ? SYS.estimateTDEE() : 2000;
@@ -89,7 +94,11 @@ export function SchimbaFazaConfirm(): JSX.Element {
                   <p className={`text-sm ${isSelected ? 'font-semibold' : 'font-medium'}`}>
                     {opt.label}
                   </p>
-                  <p className="text-xs text-ink2 mt-0.5">{opt.hint}</p>
+                  <p className="text-xs text-ink2 mt-0.5">
+                    {opt.value === 'AUTO'
+                      ? `${opt.hint} - acum: ${autoDetectedLabel} (recomandat)`
+                      : opt.hint}
+                  </p>
                 </div>
                 {isSelected && <span aria-hidden="true">•</span>}
               </button>
