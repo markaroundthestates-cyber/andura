@@ -55,12 +55,12 @@ jobs:
     name: Validate (typecheck + unit + build)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # Daniel iter 8 diagnostic: remove `cache: npm` to test hypothesis că
       # setup-node@v5 npm cache restore triggers git op sub the hood. If git 128
       # disappears post-removal, root cause confirmed.
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
 
@@ -118,7 +118,7 @@ jobs:
       - name: Build
         run: npm run build
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
@@ -170,16 +170,16 @@ jobs:
     # Run only on manual dispatch OR weekly cron — NU pe push/PR (cost optimization)
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
 
       - run: npm ci --ignore-scripts
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist/

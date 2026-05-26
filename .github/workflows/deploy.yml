@@ -97,11 +97,11 @@ jobs:
       # §33-H2 audit fix — checkout configurable ref. Push trigger uses default
       # (current branch HEAD); workflow_dispatch can pass explicit ref to deploy
       # any tag/SHA. Empty string falls back to default branch HEAD.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.ref || github.ref }}
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
 
@@ -190,8 +190,8 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -212,8 +212,8 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
