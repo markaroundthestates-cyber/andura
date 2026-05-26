@@ -2,7 +2,9 @@
 
 **Last updated:** 2026-05-26 — HANDOVER birou RC → acasa (Daniel inchide laptopul munca, continua de pe PC-ul de acasa = masina pe care rulez). Vezi `📥_inbox/HANDOVER_2026-05-26_birou-rc-nutrition-brain-plus-audit.md`.
 **Topic active:** **CREIERUL DE NUTRITIE RECONSTRUIT + AUDIT NUCLEAR + CLUSTER PLACEHOLDER.** 3 arce azi: (1) CI hardening 8 fixe validate VERDE pe Actions (CI annotations=ZERO pe e36cb941; outage GitHub a fost singura cauza a rosului). (2) Audit nuclear 7 agenti → `audit-nuclear-2026-05-26/AUDIT-NUCLEAR-FINAL.md` (~85% func, 0 CRIT, #1=nutritie dormant). (3) Nutritie LANDED complet (P1-P4+bf, modelul Daniel) + cluster placeholder 3/5.
-**State:** main `2fb9e965`, **4361 PASS** / tsc / eslint clean. **4 commit-uri ahead origin NEPUSHED** (reset+deploy-ci+aparate+F1F4) — pe PC-ul de acasa (continuitate OK, push=optional backup/deploy). Nutritia+bf (6 commits) deja PUSHED pe e36cb941. **ROTEAZA CHEIA API daca n-ai facut-o.**
+**State:** main `df51a7b3`, **4380 PASS** / tsc / eslint clean / build OK. **14 commit-uri ahead origin NEPUSHED** — pe PC-ul de acasa (continuitate OK, push=optional backup/deploy). **ROTEAZA CHEIA API daca n-ai facut-o.**
+
+**2026-05-26 acasa (sesiune curenta):** (a) **CI annotations FIX** `facd03b1` — pages actions v5 (Node 20 warning gone, tag-uri verificate) + lighthouse/checkly advisory `|| echo ::notice::` (exit 0, gata cu rosu). Curata annotations DOAR la urmatorul deploy DUPA push. (b) **FCM PUSH NOTIFICATIONS arc complet LANDED** (3 agenti Opus paralel worktree, manager-integrat): A=client (firebase/messaging lazy + SW `firebase-messaging-sw.js` + token lifecycle RTDB) · B=backend (`functions/` Cloud Functions scheduler `onSchedule` 15min Europe/Bucharest + `isDueNow` pura 22 teste + rules owner-scoped + `firebase.json`) · C=wiring (SettingsNotifications -> push real + `notificationPrefs` sync RTDB). Teme deferred (Daniel: le am 80% gata, le mapam pre-Beta). **Daniel-side ramane:** Blaze + VAPID + 4 secrets + deploy — checklist `📥_inbox/fcm-push-2026-05-26/DANIEL_SETUP_FCM.md`.
 **Author:** Co-CTO birou RC session
 
 ---
@@ -33,8 +35,8 @@ NIMIC mid-flight. Arcul a aterizat curat — 0 agenti la wrap, main verde, totul
 ---
 
 ## §3 NEXT P1 — de unde continui (ACASA)
-**Termina cluster-ul placeholder (ultimele 2/5):** (1) **Teme H-2** + (2) **Notificari H-3** — Daniel "le aplicam" = le IMPLEMENTAM sa functioneze (acum sunt placeholder care mint userul). Pattern: executor Opus / unul pe rand (ei nu pot git → eu commit), suita verde mandatory.
-Apoi: restul audit (**Daniel-side:** reguli RTDB Firebase A4-H2 + nod legacy `users/daniel`; **decizie:** k-anonimat implement vs inmoaie Termeni) + MED/LOW polish (dark strips, 404 route, target field, jargon RO, GDPR regiune) + checkly advisory low-pri.
+**Cluster placeholder INCHIS:** Notificari H-3 = FCM real LANDED (vezi header sesiune). Teme H-2 = deferred Daniel pre-Beta map (le are 80% gata). Ramane DOAR partea Daniel-side FCM: Blaze + VAPID + secrets + `firebase deploy --only functions,database` (checklist `DANIEL_SETUP_FCM.md`).
+**Next:** restul audit (**Daniel-side:** reguli RTDB Firebase A4-H2 + nod legacy `users/daniel`; **decizie:** k-anonimat implement vs inmoaie Termeni) + MED/LOW polish (dark strips, 404 route, target field, jargon RO, GDPR regiune) + checkly advisory low-pri.
 Apoi cele 4 gate: **push** (trigger Daniel) → **smoke a-z** → **OAuth console** → **Beta GO**.
 Detalii complete: `📥_inbox/HANDOVER_2026-05-26_birou-rc-nutrition-brain-plus-audit.md`. Spec nutritie: `📥_inbox/nutrition-impl-2026-05-26/SPEC.md`. Audit: `📥_inbox/audit-nuclear-2026-05-26/AUDIT-NUCLEAR-FINAL.md`.
 
