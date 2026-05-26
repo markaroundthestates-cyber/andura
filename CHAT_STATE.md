@@ -1,8 +1,8 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-26 — sesiune birou RC (Daniel "sunt la birou"). G1 PUSH inchis + CI hardening complet pe baza annotations-urilor reale din Actions.
-**Topic active:** **CI/CD HARDENING post-push.** Cycle-4 pushed (G1). Apoi 8 fix-uri CI pe annotations reale: lint 0 + meta PWA + QA Report = smoke functional live (visual-regression demovat local) + Node 20 atacat (Pages migrat la deploy-pages -> managed Node20 workflow disparut; actiuni bumpate v6/v7/v8/v9) + submodul stricat 07-meta de-submodulat (git-128) + depcheck exit-255 curatat.
-**State:** main `48c4a7ae`, **PUSHED** (origin = HEAD). 4271 PASS / tsc / eslint 0 / depcheck 0 / build 0. Validat pe Actions push-ul `abe827a2`: QA "13/13 teste trec" live + Pages deploy-pages verde. Ultimele 3 commit-uri pending validare = **GitHub Partial System Outage** (dispatch 500, suite stuck) -> monitor in fundal reincearca. Buget API ~$9/$42 — **ROTEAZA CHEIA daca n-ai facut-o.**
+**Last updated:** 2026-05-26 — HANDOVER birou RC → acasa (Daniel inchide laptopul munca, continua de pe PC-ul de acasa = masina pe care rulez). Vezi `📥_inbox/HANDOVER_2026-05-26_birou-rc-nutrition-brain-plus-audit.md`.
+**Topic active:** **CREIERUL DE NUTRITIE RECONSTRUIT + AUDIT NUCLEAR + CLUSTER PLACEHOLDER.** 3 arce azi: (1) CI hardening 8 fixe validate VERDE pe Actions (CI annotations=ZERO pe e36cb941; outage GitHub a fost singura cauza a rosului). (2) Audit nuclear 7 agenti → `audit-nuclear-2026-05-26/AUDIT-NUCLEAR-FINAL.md` (~85% func, 0 CRIT, #1=nutritie dormant). (3) Nutritie LANDED complet (P1-P4+bf, modelul Daniel) + cluster placeholder 3/5.
+**State:** main `2fb9e965`, **4361 PASS** / tsc / eslint clean. **4 commit-uri ahead origin NEPUSHED** (reset+deploy-ci+aparate+F1F4) — pe PC-ul de acasa (continuitate OK, push=optional backup/deploy). Nutritia+bf (6 commits) deja PUSHED pe e36cb941. **ROTEAZA CHEIA API daca n-ai facut-o.**
 **Author:** Co-CTO birou RC session
 
 ---
@@ -32,8 +32,11 @@ NIMIC mid-flight. Arcul a aterizat curat — 0 agenti la wrap, main verde, totul
 
 ---
 
-## §3 NEXT P1 — de unde continui
-G1 push inchis. Imediat: cand GitHub iese din outage, valideaza annotations-urile curate pe ultimul push (`48c4a7ae`) — exit-255/git-128 disparute, Node 20 redus la reziduuri upstream (deploy-pages@v4 + composite security-review, forced-to-24, in afara controlului nostru). Apoi raman **G2 smoke a-z** (telefon+Firebase), **G3 OAuth console**, **G4 Beta GO**.
+## §3 NEXT P1 — de unde continui (ACASA)
+**Termina cluster-ul placeholder (ultimele 2/5):** (1) **Teme H-2** + (2) **Notificari H-3** — Daniel "le aplicam" = le IMPLEMENTAM sa functioneze (acum sunt placeholder care mint userul). Pattern: executor Opus / unul pe rand (ei nu pot git → eu commit), suita verde mandatory.
+Apoi: restul audit (**Daniel-side:** reguli RTDB Firebase A4-H2 + nod legacy `users/daniel`; **decizie:** k-anonimat implement vs inmoaie Termeni) + MED/LOW polish (dark strips, 404 route, target field, jargon RO, GDPR regiune) + checkly advisory low-pri.
+Apoi cele 4 gate: **push** (trigger Daniel) → **smoke a-z** → **OAuth console** → **Beta GO**.
+Detalii complete: `📥_inbox/HANDOVER_2026-05-26_birou-rc-nutrition-brain-plus-audit.md`. Spec nutritie: `📥_inbox/nutrition-impl-2026-05-26/SPEC.md`. Audit: `📥_inbox/audit-nuclear-2026-05-26/AUDIT-NUCLEAR-FINAL.md`.
 
 ---
 

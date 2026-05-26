@@ -235,6 +235,8 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 
 **2026-05-26: Cycle-4 extreme-quality LANDED** — engine->UI complet cablat (keystone: creierul primeste inputuri reale live, greutatile se adapteaza dupa istoric+experienta dovedit E2E), Coach Brain Eval oracle validat (zero bug engine, engine matches/beats Claude), insula dead-code arhivata (114 fisiere -> 99-archive), toate axele verzi (a11y/parity/security/coverage 91.5%). Extreme-quality-ready. Next: gate-uri Daniel (push, smoke a-z, OAuth console, Beta GO).
 
+**2026-05-26 birou RC: CI hardening + audit nuclear + CREIERUL DE NUTRITIE reconstruit** — (1) 8 fixe CI validate VERDE pe Actions (annotations=ZERO; QA Report=smoke functional live, visual-regression demovat local, Node 20 eliminat, submodul/depcheck/lighthouse curatate; outage GitHub a fost singura cauza a rosului). (2) Audit nuclear 7 agenti Opus linie-cu-linie → ~85% func / 0 CRIT / math 96%; #1 finding = nutritie dormant. (3) **Nutritie LANDED complet pe modelul Daniel** (6 commits): bază TDEE reala per-om (gata cu 2640 flat), Kalman adaptiv LIVE din istoric (crede cantarul, floor 1000f/1200b), import generic bootstrap, preconizare "in ~4 sapt → X kg Y%bf", bf% in 2 trepte (Deurenberg/US-Navy). (4) Cluster placeholder audit 3/5: reset complet + aparate-lipsa persist + F1/F2 engine bugs. **Next: teme+notificari (implement) → restul audit → gate-uri Daniel.** Handover: `📥_inbox/HANDOVER_2026-05-26_birou-rc-nutrition-brain-plus-audit.md`.
+
 ---
 
 ## §6 Ce e de făcut (Backlog Ordered)
