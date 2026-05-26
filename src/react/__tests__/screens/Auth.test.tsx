@@ -214,6 +214,100 @@ describe('Auth — U-09 legal docs accessible pre-auth (inline modal)', () => {
   });
 });
 
+describe('Auth — Daniel-directed login/signup modes', () => {
+  it('default view is LOGIN: heading "Intra in cont" + send CTA "Trimite link de intrare"', () => {
+    renderAuth();
+    expect(screen.getByRole('heading', { name: /Intra in cont/i })).toBeInTheDocument();
+    expect(screen.getByTestId('auth-send').textContent).toMatch(/Trimite link de intrare/i);
+  });
+
+  it('login shows a "Creeaza cont" switch button below the send CTA', () => {
+    renderAuth();
+    const toSignup = screen.getByTestId('auth-to-signup');
+    expect(toSignup).toBeInTheDocument();
+    expect(toSignup.textContent).toMatch(/Creeaza cont/i);
+    const send = screen.getByTestId('auth-send');
+    expect(send.compareDocumentPosition(toSignup) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('clicking "Creeaza cont" switches to SIGNUP mode (heading + submit "Creeaza cont")', () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-to-signup'));
+    expect(screen.getByRole('heading', { name: /Creeaza cont/i })).toBeInTheDocument();
+    expect(screen.getByTestId('auth-send').textContent).toMatch(/Creeaza cont/i);
+  });
+
+  it('signup shows "Ai deja cont? Intra" back-to-login affordance', () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-to-signup'));
+    const toLogin = screen.getByTestId('auth-to-login');
+    expect(toLogin).toBeInTheDocument();
+    expect(toLogin.textContent).toMatch(/Ai deja cont/i);
+    fireEvent.click(toLogin);
+    expect(screen.getByRole('heading', { name: /Intra in cont/i })).toBeInTheDocument();
+  });
+
+  it('signup HIDES skip-auth + implicit-consent footer (login-only paths)', () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-to-signup'));
+    expect(screen.queryByTestId('auth-skip')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('auth-terms-footer')).not.toBeInTheDocument();
+  });
+});
+
+describe('Auth — signup consent checkbox gating', () => {
+  it('consent checkbox absent in login mode', () => {
+    renderAuth();
+    expect(screen.queryByTestId('auth-consent-checkbox')).not.toBeInTheDocument();
+  });
+
+  it('consent checkbox present in signup mode with linked Terms + Privacy', () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-to-signup'));
+    expect(screen.getByTestId('auth-consent-checkbox')).toBeInTheDocument();
+    const termsLink = screen.getByTestId('auth-consent-terms-link');
+    const privacyLink = screen.getByTestId('auth-consent-privacy-link');
+    expect(termsLink).toHaveAttribute('href', '/terms');
+    expect(privacyLink).toHaveAttribute('href', '/privacy');
+  });
+
+  it('submit DISABLED in signup until consent checked (email valid)', () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-to-signup'));
+    fireEvent.change(screen.getByTestId('auth-email-input'), {
+      target: { value: 'gigel@example.com' },
+    });
+    const send = screen.getByTestId('auth-send');
+    expect(send).toBeDisabled();
+    fireEvent.click(screen.getByTestId('auth-consent-checkbox'));
+    expect(send).not.toBeDisabled();
+  });
+
+  it('signup submit calls sendMagicLink + reaches sent state with first-timer note', async () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-to-signup'));
+    fireEvent.change(screen.getByTestId('auth-email-input'), {
+      target: { value: 'nou@example.com' },
+    });
+    fireEvent.click(screen.getByTestId('auth-consent-checkbox'));
+    fireEvent.click(screen.getByTestId('auth-send'));
+    await waitFor(() => {
+      expect(screen.getByTestId('auth-sent')).toBeInTheDocument();
+    });
+    expect(screen.getByTestId('auth-sent-signup-note').textContent).toMatch(
+      /Contul se creeaza cand deschizi linkul/i
+    );
+  });
+
+  it('label is associated via htmlFor + checkbox aria-required', () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-to-signup'));
+    const cb = screen.getByTestId('auth-consent-checkbox');
+    expect(cb).toHaveAttribute('id', 'auth-consent');
+    expect(cb).toHaveAttribute('aria-required', 'true');
+  });
+});
+
 describe('Auth — A11Y HIGH chat5 form aria attributes', () => {
   it('email input has aria-required="true"', () => {
     renderAuth();

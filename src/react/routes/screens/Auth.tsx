@@ -7,7 +7,7 @@
 
 import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, FlaskConical, ExternalLink, ArrowLeft, X } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { sendMagicLink, buildGoogleSignInUrl } from '../../../auth.js';
@@ -33,6 +33,13 @@ export function Auth(): JSX.Element {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Daniel-directed redesign 2026-05-26 — doua cai conventionale pe acelasi
+  // ecran: Login (default, primar) + Creeaza cont (sub-vedere mode state, NU
+  // ruta separata). Ambele cai apeleaza ACELASI sendMagicLink (Firebase
+  // creeaza contul la prima deschidere a linkului). Signup gateaza pe bifa
+  // explicita de consimtamant (Termeni + Confidentialitate).
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [consent, setConsent] = useState(false);
   // U-09 — legal doc inline modal pe Auth (Termeni/Confidentialitate erau
   // link-uri catre /app/cont/* gated de ProtectedRoute → bounce pe /auth
   // inainte ca Gigel sa poata citi ce accepta). Modal local-readable + link
@@ -40,8 +47,11 @@ export function Auth(): JSX.Element {
   // Cont + andura.app/terms) — doar puncte-cheie consimtamant.
   const [legalDoc, setLegalDoc] = useState<'terms' | 'privacy' | null>(null);
 
+  // Signup-only consent gate: nu permite submit fara bifa explicita.
+  const consentRequiredUnmet = mode === 'signup' && !consent;
+
   async function handleSend(): Promise<void> {
-    if (!isValidEmail(email) || sending) return;
+    if (!isValidEmail(email) || sending || consentRequiredUnmet) return;
     setSending(true);
     setError(null);
     const result = await sendMagicLink(email);
@@ -126,10 +136,12 @@ export function Auth(): JSX.Element {
         )}
 
         <h1 className="text-2xl font-bold text-ink mb-2 text-center">
-          Intra in cont
+          {mode === 'signup' ? 'Creeaza cont' : 'Intra in cont'}
         </h1>
         <p className="text-sm text-ink2 mb-6 text-center">
-          Iti trimitem un link de intrare pe email. Fara parola.
+          {mode === 'signup'
+            ? 'Iti trimitem un link pe email pentru a-ti crea contul. Fara parola.'
+            : 'Iti trimitem un link de intrare pe email. Fara parola.'}
         </p>
 
         {sent ? (
@@ -156,6 +168,14 @@ export function Auth(): JSX.Element {
             <p className="text-sm text-ink2 mb-4">
               Deschide-l de pe acest telefon. Linkul expira in 15 min.
             </p>
+            {mode === 'signup' && (
+              <p
+                className="text-xs text-ink3 mb-4"
+                data-testid="auth-sent-signup-note"
+              >
+                Contul se creeaza cand deschizi linkul.
+              </p>
+            )}
             <button
               type="button"
               onClick={() => setSent(false)}
@@ -173,8 +193,10 @@ export function Auth(): JSX.Element {
                 Cand Google e ascuns (env nesetat pre-Daniel-setup), email devine
                 primary (vezi styling conditional pe auth-send mai jos) ca sa nu
                 ramana ecranul fara CTA principal. Aliniere top-vs-centru ramane
-                centrata (decizie Daniel UX, in afara acestui fix tehnic). */}
-            {showGoogle && (
+                centrata (decizie Daniel UX, in afara acestui fix tehnic).
+                Daniel-directed redesign — Google = actiune de login, ascuns pe
+                calea de creare cont (focus pe email + bifa consimtamant). */}
+            {showGoogle && mode === 'login' && (
               <button
                 type="button"
                 onClick={handleGoogleSignIn}
@@ -193,7 +215,7 @@ export function Auth(): JSX.Element {
 
             {/* §F-auth-06 (MED) — "sau" separator intre Google si email per mockup
                 andura-clasic.html#L439-443. 1px line + ink3 "sau" label. */}
-            {showGoogle && (
+            {showGoogle && mode === 'login' && (
               <div
                 className="flex items-center gap-3 my-3"
                 data-testid="auth-divider-google"
@@ -243,18 +265,59 @@ export function Auth(): JSX.Element {
                 intent phrase: clear what link does pre-Beta).
                 P-01 — email = secondary (ghost) cand Google primary e prezent;
                 primary (brick) cand Google e ascuns (graceful degradation). */}
+            {/* Daniel-directed redesign — bifa de consimtamant explicita DOAR
+                pe calea de creare cont (conventional + GDPR). Login nu o cere
+                (userii existenti au acceptat deja la inscriere). Submit ramane
+                dezactivat pana cand bifa e marcata + email valid. Link-urile
+                deschid paginile publice reale /terms si /privacy. */}
+            {mode === 'signup' && (
+              <div className="flex items-start gap-2 mb-4" data-testid="auth-consent">
+                <input
+                  id="auth-consent"
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  aria-required="true"
+                  data-testid="auth-consent-checkbox"
+                  className="mt-0.5 w-4 h-4 flex-shrink-0 accent-brick"
+                />
+                <label htmlFor="auth-consent" className="text-xs text-ink2 leading-relaxed">
+                  Sunt de acord cu{' '}
+                  <Link
+                    to="/terms"
+                    data-testid="auth-consent-terms-link"
+                    className="underline text-brick"
+                  >
+                    Termenii si Conditiile
+                  </Link>{' '}
+                  si{' '}
+                  <Link
+                    to="/privacy"
+                    data-testid="auth-consent-privacy-link"
+                    className="underline text-brick"
+                  >
+                    Politica de Confidentialitate
+                  </Link>
+                  .
+                </label>
+              </div>
+            )}
             <button
               type="button"
               onClick={() => { void handleSend(); }}
-              disabled={!isValidEmail(email) || sending}
+              disabled={!isValidEmail(email) || sending || consentRequiredUnmet}
               data-testid="auth-send"
               className={
-                showGoogle
+                showGoogle && mode === 'login'
                   ? 'w-full py-3 border border-lineStrong rounded-[14px] text-base font-semibold text-ink bg-paper2 disabled:opacity-50'
                   : 'w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-50'
               }
             >
-              {sending ? 'Se trimite…' : 'Trimite link de intrare'}
+              {sending
+                ? 'Se trimite…'
+                : mode === 'signup'
+                  ? 'Creeaza cont'
+                  : 'Trimite link de intrare'}
             </button>
             {error && (
               <p
@@ -267,6 +330,33 @@ export function Auth(): JSX.Element {
               </p>
             )}
 
+            {/* Daniel-directed redesign — comutator intre cele doua cai. In
+                login: buton secundar "Creeaza cont" (sub CTA primar). In signup:
+                link inapoi "Ai deja cont? Intra". Acelasi ecran, mode state. */}
+            {mode === 'login' ? (
+              <button
+                type="button"
+                onClick={() => { setMode('signup'); setError(null); }}
+                data-testid="auth-to-signup"
+                className="w-full mt-3 py-3 border border-lineStrong rounded-[14px] text-base font-semibold text-ink bg-paper2"
+              >
+                Creeaza cont
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => { setMode('login'); setConsent(false); setError(null); }}
+                data-testid="auth-to-login"
+                className="w-full mt-3 py-2 text-sm text-ink2 text-center"
+              >
+                Ai deja cont? <span className="underline text-brick">Intra</span>
+              </button>
+            )}
+
+            {/* Skip-auth + dev mock = cale de login only (Maria 65 test drive).
+                Ascunse pe calea de creare cont, focusata pe email + bifa. */}
+            {mode === 'login' && (
+              <>
             {/* §F-auth-06 (MED) — "sau" separator before Skip-auth path per
                 mockup andura-clasic.html#L452-456. Matches divider above. */}
             <div
@@ -314,13 +404,19 @@ export function Auth(): JSX.Element {
                 Mock login (dev only)
               </button>
             )}
+              </>
+            )}
           </>
         )}
 
         {/* §F-auth-07 HIGH-ALFA — Terms + privacy acceptance footer per
             mockup L479-481. Legal compliance: implicit consent on continue.
             U-09 — butoane care deschid modal inline (NU Link catre /app/cont/*
-            gated; acelea faceau bounce pe /auth inainte de citire). */}
+            gated; acelea faceau bounce pe /auth inainte de citire).
+            Daniel-directed redesign — footer implicit-consent ramane pe login
+            (userii existenti au acceptat deja). Signup gateaza pe bifa explicita
+            de mai sus, deci footer-ul implicit nu se afiseaza pe signup. */}
+        {mode === 'login' && (
         <p
           className="mt-6 text-xs text-ink3 text-center leading-relaxed"
           data-testid="auth-terms-footer"
@@ -345,6 +441,7 @@ export function Auth(): JSX.Element {
           </button>
           . Nu folosim datele tale pentru reclame.
         </p>
+        )}
       </div>
 
       {/* U-09 — modal inline legal accesibil pre-auth. */}
