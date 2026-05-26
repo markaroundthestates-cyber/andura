@@ -49,7 +49,7 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 1. **Periodization** — Floor/Ceiling Range volume coridor Israetel framework persona-aware
 2. **Goal Adaptation** — 5 templates V1 + phase auto-detection CUT/BULK/MAINTAIN/RECOMP
 3. **Energy Adjustment** — bidirectional ±15% tier-aware T0=±10% T1+=±15% asymmetric
-4. **Bayesian Nutrition** — Kalman filter adaptive TDEE (NU 2000 kcal hardcoded)
+4. **Bayesian Nutrition** — TDEE adaptiv per-user, estimator Bayesian conjugat (Normal-Normal closed-form) din observatii reale de energy-balance pe trend-ul de greutate (cantarul = adevar de baza); NU 2000 kcal hardcoded. *Nota onestitate (audit 2026-05-26): valoarea kcal afisata e posterior-ul Bayesian conjugat, NU `kalmanState.mu` — stratul Kalman se calculeaza dar e descartat pentru numarul livrat. Vezi `📥_inbox/wiring-audit-2026-05-26/NUTRITION-MATH-FLAGS.md` (calibrare Daniel-supervised).*
 5. **Tempo / Form Cues** — persona-aware Maria verbal / Marius numeric / tap-to-expand 💡
 6. **Specialization** — PARALLEL modifier 4-gate strict (Marius Advanced+T1++Bulk/Recomp+injury auto-disable)
 7. **Warm-up & Mobility** — Instant Skip T0 default anti-Maria-friction
