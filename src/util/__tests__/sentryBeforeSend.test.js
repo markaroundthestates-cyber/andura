@@ -7,24 +7,16 @@
 // the test copy in sentryPiiStrip.test.js, this test catches it because
 // it exercises the real code path import path.
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-
-// Capture the beforeSend function via mock.
-let capturedBeforeSend = null;
-let capturedInitOpts = null;
+import { describe, it, expect, vi, afterEach } from 'vitest';
 
 vi.mock('@sentry/browser', () => ({
-  init: vi.fn((opts) => {
-    capturedInitOpts = opts;
-    capturedBeforeSend = opts.beforeSend;
-  }),
+  init: vi.fn(),
   withScope: vi.fn(),
   captureException: vi.fn(),
   captureMessage: vi.fn(),
 }));
 
 const ORIGINAL_HOSTNAME = window.location.hostname;
-const ORIGINAL_MODE = import.meta.env?.MODE;
 
 function setProductionHostname() {
   // jsdom default = localhost. Override via defineProperty to allow init.
@@ -42,11 +34,6 @@ function restoreHostname() {
     configurable: true,
   });
 }
-
-beforeEach(() => {
-  capturedBeforeSend = null;
-  capturedInitOpts = null;
-});
 
 afterEach(() => {
   restoreHostname();
@@ -134,7 +121,6 @@ describe('Sentry beforeSend — behavioral scrub via production source extractio
     const match = src.match(/const\s+scrubMsg\s*=\s*\(s\)\s*=>\s*\{([\s\S]*?)\n\s{8}\};/);
     if (!match) throw new Error('Could not extract scrubMsg from sentry.js — source structure changed');
     // Build standalone function from extracted body.
-    // eslint-disable-next-line no-new-func
     prodScrubMsg = new Function('s', match[1]);
   });
 

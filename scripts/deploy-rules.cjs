@@ -55,7 +55,7 @@ try {
 let activeProject;
 try {
   activeProject = execSync('firebase use', { encoding: 'utf8', cwd: REPO_ROOT }).trim();
-} catch (e) {
+} catch {
   err(`firebase use failed -- login expired or .firebaserc missing. Run: firebase login + firebase use default`);
   process.exit(1);
 }

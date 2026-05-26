@@ -3,7 +3,6 @@
 // aria-label "Inapoi" + data-testid + invokes onBack, supports rightAction
 // slot, danger flag applies text-brick title color.
 
-import type { JSX } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { SubHeader } from '../../components/SubHeader';
