@@ -43,7 +43,7 @@ jobs:
     steps:
       # Bumped v4 → v5 (Node 24 — silences Node 20 deprecation warning per
       # https://github.blog/changelog/2024-... actions/checkout migration).
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
