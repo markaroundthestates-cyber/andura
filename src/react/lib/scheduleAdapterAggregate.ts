@@ -462,6 +462,15 @@ export function buildUserStateForPipeline(): {
       // (goal 'auto'/null) → engine auto-detect, NU a fabricated phase.
       persona,
       ...(goalPhase !== undefined ? { goalPhase } : {}),
+      // Fix #3 — macrocycle anchor (periodization/index.js:85 reads
+      // meta.weeksElapsed). Was NEVER set → NaN → hasMacrocycleAnchor=false →
+      // every user frozen at macrocycle week 0 forever (block 1 / meso 1 / LOAD).
+      // weeksElapsed === trainingWeeks (weeks since the first logged session) —
+      // SAME continuous count, single source (NU a second derivation that could
+      // drift). Floors to the macrocycle block/mesocycle/phase via
+      // computeMacrocycleBlock; advances volume scaling M1→M2→M3 + phase as the
+      // user accumulates weeks. 0 for a brand-new user = correct (week 0, LOAD).
+      weeksElapsed: trainingWeeks,
     },
   };
 }

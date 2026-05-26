@@ -31,6 +31,7 @@ import { computeRiskScore } from '../../../engine/goalAdaptation/pushBackTiers.j
 import { isNewbieEffect } from '../../../engine/goalAdaptation/templates.js';
 import { evaluate as evaluateSpecialization } from '../../../engine/specialization/index.js';
 import { ACTIVATION_STATE } from '../../../engine/specialization/constants.js';
+import { evaluate as evaluatePeriodization } from '../../../engine/periodization/index.js';
 
 const NOW = Date.now();
 
@@ -336,5 +337,57 @@ describe('buildUserStateForPipeline — meta-wire activates specialization for a
     const s0 = (state.recentSessions as Array<Record<string, unknown>>)[0]!;
     expect(s0.injury).toBe(true);
     expect(typeof s0.weekIdx).toBe('number');
+  });
+});
+
+describe('buildUserStateForPipeline — FIX #3 weeksElapsed advances periodization', () => {
+  // periodization/index.js:85 reads meta.weeksElapsed; absent → NaN →
+  // hasMacrocycleAnchor=false → computeMacrocycleBlock(0) → every user frozen at
+  // macrocycle week 0 forever. The builder now sets it = trainingWeeks (weeks
+  // since the first logged session). These tests prove the field is set AND that
+  // a different weeksElapsed produces a different macrocycle block + volume map
+  // through the REAL periodization engine (NOT a hand-fed meta fixture).
+
+  it('sets meta.weeksElapsed to the training-start week count (== trainingWeeks)', () => {
+    seedSessions([sessionAt(5 * 7, 'potrivit', 'green'), sessionAt(0, 'potrivit', 'green')]);
+    const state = buildUserStateForPipeline();
+    expect(state.meta.weeksElapsed).toBe(5);
+    expect(state.meta.weeksElapsed).toBe(state.user.trainingWeeks);
+    expect(Number.isFinite(Number(state.meta.weeksElapsed))).toBe(true);
+  });
+
+  it('no sessions → weeksElapsed 0 (a brand-new user IS at macrocycle week 0)', () => {
+    seedSessions([]);
+    const state = buildUserStateForPipeline();
+    expect(state.meta.weeksElapsed).toBe(0);
+  });
+
+  it('weeksElapsed reaches the engine: week-0 vs week-5 user → different macrocycle block + volume', async () => {
+    // gigica persona (age 35) advances M1→M2 freely (only maria is gated).
+    seedOnboarding({ age: 35, experience: 'intermediar', goal: 'masa' });
+
+    // Week-0 user (no sessions) → mesocycle block 1 (scaling 1.00), LOAD.
+    seedSessions([]);
+    const week0State = buildUserStateForPipeline();
+    expect(week0State.meta.weeksElapsed).toBe(0);
+    const week0 = await evaluatePeriodization(week0State as never);
+
+    // Week-5 user → weeksIntoBlock 5 → mesocycleIdx 2 (scaling 1.10), LOAD.
+    seedSessions([sessionAt(5 * 7, 'potrivit', 'green'), sessionAt(0, 'potrivit', 'green')]);
+    const week5State = buildUserStateForPipeline();
+    expect(week5State.meta.weeksElapsed).toBe(5);
+    const week5 = await evaluatePeriodization(week5State as never);
+
+    // The macrocycle ADVANCED: mesocycleIdx 1 → 2 (was frozen at 1 forever).
+    const block0 = week0.meta.macrocycle_block as { mesocycleIdx: number };
+    const block5 = week5.meta.macrocycle_block as { mesocycleIdx: number };
+    expect(block0.mesocycleIdx).toBe(1);
+    expect(block5.mesocycleIdx).toBe(2);
+
+    // M2 scaling 1.10 lifts the volume map vs M1 1.00 — chest sets strictly
+    // higher (14 MAV × 0.70 gigica × 1.00 goal × {1.00 vs 1.10} block, < MRV 22).
+    const vol0 = week0.meta.volume_target_pct as Record<string, number>;
+    const vol5 = week5.meta.volume_target_pct as Record<string, number>;
+    expect(Number(vol5.chest)).toBeGreaterThan(Number(vol0.chest));
   });
 });
