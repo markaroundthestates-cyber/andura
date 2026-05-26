@@ -157,6 +157,26 @@ describe('scheduleAdapter — getDailyWorkout pipeline consumer', () => {
     expect(plan.exercises.length).toBeLessThan(5);
   });
 
+  it('A2 H-4: marking gantere missing EXCLUDES dumbbell exercise from session', async () => {
+    // PULL template: Lat Pulldown(bailib_stack), Cable Row(bailib_stack),
+    // Face Pulls(matrix_cable), Bayesian Curl(matrix_cable), Incline DB Curl(dumbbell).
+    // Baseline (nothing missing) includes the dumbbell exercise.
+    const baseline = await getDailyWorkout(buildUserState(), TUESDAY_2026_05_19);
+    expect(baseline).not.toBeNull();
+    const baselineNames = baseline.exercises.map((e) => e.name);
+    expect(baselineNames).toContain('Incline DB Curl'); // dumbbell-gated
+
+    // Mark gantere (→ engine 'dumbbell') missing. Same day, same template.
+    setMissingEquipment(['gantere']);
+    const adapted = await getDailyWorkout(buildUserState(), TUESDAY_2026_05_19);
+    expect(adapted).not.toBeNull();
+    const adaptedNames = adapted.exercises.map((e) => e.name);
+    // The dumbbell exercise is dropped; non-dumbbell PULL exercises remain.
+    expect(adaptedNames).not.toContain('Incline DB Curl');
+    expect(adaptedNames).toContain('Lat Pulldown'); // bailib_stack, unaffected
+    expect(adapted.exercises.length).toBeLessThan(baseline.exercises.length);
+  });
+
   it('runPipeline returns empty array → returns null (defensive)', async () => {
     const orchestratorModule = await import('../../../coach/orchestrator/index.js');
     vi.spyOn(orchestratorModule, 'runPipeline').mockResolvedValueOnce([]);

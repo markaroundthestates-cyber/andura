@@ -3,9 +3,14 @@
 // echipament absent permanent (home gym, sala mica). Different de
 // EquipmentSwap (ocupat temporar) — aici permanent setting per user.
 //
-// Phase 3 propagates `missingEquipment` array via location.state. Phase 4+
-// wires la userSettings store persist (durable across sessions, coach NU mai
-// recomanda exercitii pe aceste items).
+// A2 H-4 fix (2026-05-26): persist selectia missing-equipment in localStorage
+// via scheduleAdapter.setMissingEquipment (key wv2-missing-equipment) — durable
+// across sessions. getDailyWorkout o consuma (translateToEngineEquipment →
+// available equipment minus missing → sessionBuilder filtreaza/substituie
+// exercitiile ce cer echipament absent). Pana acum selectia se arunca in
+// location.state si NU se persista nicaieri (no-op). Nav origin-aware: din Cont
+// (settings) → inapoi la Cont; din workout flow (CevaNuMerge `from: 'workout'`)
+// → workout-preview pentru adaptare imediata sesiune.
 //
 // HIGH-GAMMA §F-aparate-lipsa-01: flat 10-item list per mockup
 // andura-clasic.html L1056-1097 verbatim naming (Slice 1.7 Daniel LOCKED 2026-
@@ -25,9 +30,13 @@
 
 import type { JSX } from 'react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import {
+  getMissingEquipment,
+  setMissingEquipment,
+} from '../../../../engine/schedule/scheduleAdapter.js';
 
 interface EquipmentItem {
   id: string;
@@ -50,7 +59,16 @@ const EQUIPMENT_ITEMS: readonly EquipmentItem[] = [
 
 export function AparateLipsa(): JSX.Element {
   const navigate = useNavigate();
-  const [missing, setMissing] = useState<Set<string>>(() => new Set());
+  const location = useLocation();
+  // Origin discriminator: workout flow (CevaNuMerge) pasaza `from: 'workout'`
+  // → save returneaza la workout-preview pentru adaptare sesiune imediata.
+  // Cont/settings entry NU pasaza state → save returneaza la Cont (NU dump
+  // workout-preview — user a venit din setari, nu dintr-un antrenament).
+  const from = (location.state as { from?: string } | null)?.from;
+  // Hydrate din persistenta — selectia anterioara survives reload.
+  const [missing, setMissing] = useState<Set<string>>(
+    () => new Set(getMissingEquipment())
+  );
 
   function toggle(itemId: string): void {
     setMissing((prev) => {
@@ -62,10 +80,16 @@ export function AparateLipsa(): JSX.Element {
   }
 
   function handleSave(): void {
-    // Phase 4+ wires la userSettings store persist.
-    navigate(gotoPath('workout-preview'), {
-      state: { missingEquipment: Array.from(missing) },
-    });
+    // Persist durable — getDailyWorkout consuma wv2-missing-equipment la
+    // urmatoarea compunere a antrenamentului (exclude/substituie exercitiile).
+    setMissingEquipment(Array.from(missing));
+    if (from === 'workout') {
+      navigate(gotoPath('workout-preview'), {
+        state: { missingEquipment: Array.from(missing) },
+      });
+    } else {
+      navigate(gotoPath('cont'));
+    }
   }
 
   function handleBack(): void {

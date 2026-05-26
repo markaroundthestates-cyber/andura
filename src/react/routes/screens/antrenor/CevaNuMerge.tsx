@@ -51,6 +51,13 @@ export function CevaNuMerge(): JSX.Element {
   const navigate = useNavigate();
 
   function handleSelect(option: ProblemOption): void {
+    // A2 H-4: aparate-lipsa reached from workout flow → tag origin so save
+    // returns la workout-preview (adapteaza sesiunea imediat). Din Cont nu se
+    // pasaza state → save se intoarce la Cont.
+    if (option.target === 'aparate-lipsa') {
+      navigate(gotoPath(option.target), { state: { from: 'workout' } });
+      return;
+    }
     navigate(gotoPath(option.target));
   }
 

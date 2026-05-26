@@ -2,10 +2,18 @@
 // MemoryRouter jsdom paradigm per D020.
 
 import type { JSX } from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AparateLipsa } from '../../../routes/screens/antrenor/AparateLipsa';
+import {
+  getMissingEquipment,
+  setMissingEquipment,
+} from '../../../../engine/schedule/scheduleAdapter.js';
+
+beforeEach(() => {
+  localStorage.clear();
+});
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -17,12 +25,19 @@ function LocationProbe(): JSX.Element {
   );
 }
 
-function renderLipsa() {
+// initState: location.state passed at entry. `from: 'workout'` = workout flow
+// origin (CevaNuMerge); undefined = Cont/settings entry.
+function renderLipsa(initState?: Record<string, unknown>) {
   return render(
-    <MemoryRouter initialEntries={['/app/antrenor/aparate-lipsa']}>
+    <MemoryRouter
+      initialEntries={[
+        { pathname: '/app/antrenor/aparate-lipsa', state: initState },
+      ]}
+    >
       <Routes>
         <Route path="/app/antrenor/aparate-lipsa" element={<AparateLipsa />} />
         <Route path="/app/antrenor/workout-preview" element={<LocationProbe />} />
+        <Route path="/app/cont" element={<LocationProbe />} />
       </Routes>
     </MemoryRouter>
   );
@@ -99,23 +114,58 @@ describe('AparateLipsa — toggle Set behavior', () => {
   });
 });
 
-describe('AparateLipsa — navigation flow', () => {
-  it('Save cu zero selections propagates empty array', () => {
+describe('AparateLipsa — navigation flow (A2 H-4 origin-aware)', () => {
+  it('Cont entry (no state): Save returns la Cont, NU workout-preview', () => {
     renderLipsa();
+    fireEvent.click(screen.getByTestId('aparate-save'));
+    const probe = screen.getByTestId('probe');
+    expect(probe).toHaveAttribute('data-pathname', '/app/cont');
+  });
+
+  it('workout flow entry (from: workout): Save goes la workout-preview cu ids', () => {
+    renderLipsa({ from: 'workout' });
+    fireEvent.click(screen.getByLabelText('Bara halterelor'));
+    fireEvent.click(screen.getByLabelText('Leg press'));
+    fireEvent.click(screen.getByTestId('aparate-save'));
+    const probe = screen.getByTestId('probe');
+    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
+    expect(probe.textContent).toContain('bara-halterelor');
+    expect(probe.textContent).toContain('leg-press');
+  });
+
+  it('workout flow Save cu zero selections propagates empty array', () => {
+    renderLipsa({ from: 'workout' });
     fireEvent.click(screen.getByTestId('aparate-save'));
     const probe = screen.getByTestId('probe');
     expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
     expect(probe.textContent).toContain('"missingEquipment":[]');
   });
+});
 
-  it('Save cu 2 items propagates ids', () => {
+describe('AparateLipsa — persistence (A2 H-4 wv2-missing-equipment)', () => {
+  it('Save persists selectia in localStorage (round-trip)', () => {
     renderLipsa();
-    fireEvent.click(screen.getByLabelText('Bara halterelor'));
+    fireEvent.click(screen.getByLabelText('Gantere'));
     fireEvent.click(screen.getByLabelText('Leg press'));
     fireEvent.click(screen.getByTestId('aparate-save'));
-    const probe = screen.getByTestId('probe');
-    expect(probe.textContent).toContain('bara-halterelor');
-    expect(probe.textContent).toContain('leg-press');
+    expect(getMissingEquipment().sort()).toEqual(['gantere', 'leg-press']);
+  });
+
+  it('hydrates checkbox state din persistenta la mount (survives reload)', () => {
+    setMissingEquipment(['gantere', 'banda-elastica']);
+    renderLipsa();
+    expect(screen.getByLabelText('Gantere')).toBeChecked();
+    expect(screen.getByLabelText('Banda elastica')).toBeChecked();
+    expect(screen.getByLabelText('Leg press')).not.toBeChecked();
+  });
+
+  it('Save cu zero selections clears persistenta (deselect round-trip)', () => {
+    setMissingEquipment(['gantere']);
+    renderLipsa();
+    // deselect ganterele hydrate
+    fireEvent.click(screen.getByLabelText('Gantere'));
+    fireEvent.click(screen.getByTestId('aparate-save'));
+    expect(getMissingEquipment()).toEqual([]);
   });
 });
 

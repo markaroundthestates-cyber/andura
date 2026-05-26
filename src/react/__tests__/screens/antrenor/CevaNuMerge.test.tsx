@@ -9,7 +9,10 @@ import { CevaNuMerge } from '../../../routes/screens/antrenor/CevaNuMerge';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
-  return <div data-testid="probe" data-pathname={loc.pathname} />;
+  const s = (loc.state ?? null) as { from?: string } | null;
+  return (
+    <div data-testid="probe" data-pathname={loc.pathname} data-from={s?.from ?? ''} />
+  );
 }
 
 function renderCevaNuMerge() {
@@ -85,13 +88,12 @@ describe('CevaNuMerge — navigation flow', () => {
     );
   });
 
-  it('Aparat lipsa → /app/antrenor/aparate-lipsa', () => {
+  it('Aparat lipsa → /app/antrenor/aparate-lipsa cu from: workout (A2 H-4)', () => {
     renderCevaNuMerge();
     fireEvent.click(screen.getByRole('button', { name: /Aparat lipsa/i }));
-    expect(screen.getByTestId('probe')).toHaveAttribute(
-      'data-pathname',
-      '/app/antrenor/aparate-lipsa'
-    );
+    const probe = screen.getByTestId('probe');
+    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/aparate-lipsa');
+    expect(probe).toHaveAttribute('data-from', 'workout');
   });
 
   it('Vreau alt antrenament → /app/antrenor/schedule-override', () => {
