@@ -428,6 +428,76 @@ export function isAuthenticated() {
   return getAuthState() !== null;
 }
 
+/**
+ * Restore-on-boot session rehydration. Called once per app load (see
+ * reactBoot.runReactBoot). The idToken expires after ~1h; the refresh token is
+ * long-lived. Without a boot-time refresh, a returning user keeps a stale
+ * idToken in localStorage — `getAuthState()` still reports them authenticated
+ * (idToken string present), so routing lets them in, but every subsequent
+ * Firebase REST call carries the expired token. The proactive refresh inside
+ * `getIdToken()` repairs that lazily, yet the first data reads on boot can fire
+ * before any refresh completes (and a *revoked/invalid* refresh token would
+ * leave the user wedged in a phantom-authed state with silent 401s).
+ *
+ * This collapses that into one deterministic boot step:
+ *   - No refresh token  → nothing to restore (anonymous / skip-auth / never
+ *     signed in). Returns false WITHOUT clearing anything.
+ *   - idToken still well within its TTL → already-restored, no network call.
+ *   - Otherwise → refresh from the stored refresh token. Success rehydrates the
+ *     idToken + expiry (via _persistAuth). Failure is classified:
+ *       * `no_refresh_token` / network/transient → leave tokens intact, return
+ *         false (offline returning user must NOT be force-signed-out; the lazy
+ *         getIdToken refresh retries later).
+ *       * a definitive auth rejection (TOKEN_EXPIRED / USER_DISABLED /
+ *         USER_NOT_FOUND / invalid refresh token) → the session is genuinely
+ *         dead: signOut() so routing shows a clean logged-out state instead of
+ *         a phantom-authed app that 401s on every fetch.
+ *
+ * Defensive: never throws. Returns true only when a usable idToken is in place.
+ *
+ * @param {number} [skewMs=120000] refresh when within this window of expiry
+ * @returns {Promise<boolean>} true if an authenticated session is in place
+ */
+export async function restoreSession(skewMs = 120_000) {
+  const refreshToken = _getItem(AUTH_STORAGE_KEYS.refreshToken);
+  if (!refreshToken) return false; // anonymous / skip-auth — nothing to restore
+  const auth = getAuthState();
+  const now = Date.now();
+  // idToken comfortably fresh → session already restored, skip the network call.
+  if (auth && auth.expiry && (auth.expiry - now) > skewMs) return true;
+  const refreshed = await refreshIdToken();
+  if (refreshed.ok && refreshed.idToken) return true;
+  // Definitive auth failures mean the refresh token is dead — sign out so the
+  // app routes to /auth cleanly. Transient (offline/5xx) failures keep the
+  // session so an offline returning user is not booted out.
+  if (_isDefinitiveAuthFailure(refreshed.error)) {
+    signOut();
+  }
+  return false;
+}
+
+/**
+ * Distinguishes a permanent auth rejection (refresh token dead) from a
+ * transient failure (offline, 5xx, timeout). Only the former should clear the
+ * session on boot. Firebase securetoken endpoint returns these error codes for
+ * a non-usable refresh token.
+ *
+ * @param {string|null|undefined} errorCode
+ * @returns {boolean}
+ */
+function _isDefinitiveAuthFailure(errorCode) {
+  if (typeof errorCode !== 'string') return false;
+  return (
+    errorCode === 'TOKEN_EXPIRED' ||
+    errorCode === 'USER_DISABLED' ||
+    errorCode === 'USER_NOT_FOUND' ||
+    errorCode === 'INVALID_REFRESH_TOKEN' ||
+    errorCode === 'INVALID_GRANT_TYPE' ||
+    errorCode === 'MISSING_REFRESH_TOKEN' ||
+    errorCode.startsWith('USER_DISABLED')
+  );
+}
+
 // ── internals ───────────────────────────────────────────────────────────
 
 // §25-H1 audit fix — Retry-After header parsing per RFC 7231 §7.1.3.

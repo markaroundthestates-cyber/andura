@@ -48,7 +48,7 @@
 import { runBootMigrations, startTierRotation, exposeForceRotationHelper } from '../../bootstrap.js';
 import { migrateLogsUtcToLocal } from '../../util/logsMigration.js';
 import { initFirebaseSync } from '../../firebase.js';
-import { getAuthState } from '../../auth.js';
+import { getAuthState, restoreSession } from '../../auth.js';
 import { runAuthPathMigration } from '../../migrations/2026-05-02-auth-path-migration.js';
 
 // Module-level idempotency guards. React 18 StrictMode double-invokes effects
@@ -101,7 +101,22 @@ export async function runReactBoot(): Promise<void> {
   await startTierRotation();
   exposeForceRotationHelper();
 
-  // 4. Returning authenticated user (token persisted from a prior session):
+  // 4. Restore-on-boot session rehydration. The idToken expires ~1h; the
+  //    refresh token is long-lived. Refresh proactively from the stored refresh
+  //    token so a returning user stays logged in across reloads/sessions with a
+  //    VALID token (not just a stale string that 401s on the next fetch). A
+  //    definitive auth rejection (dead refresh token) signs out cleanly inside
+  //    restoreSession; a transient/offline failure keeps the session. Awaited
+  //    (single network call) so the subsequent cloud sync uses a fresh token —
+  //    boot is already fire-and-forget from main.tsx, so this never blocks paint.
+  try {
+    await restoreSession();
+  } catch (err) {
+    console.warn('[Auth] boot session restore failed:', err);
+    // Non-fatal — getIdToken() will lazily refresh on the next data call.
+  }
+
+  // 5. Returning authenticated user (token persisted from a prior session):
   //    pull their cloud backup. Fire-and-forget — never block boot/paint.
   if (getAuthState()?.uid) {
     void runPostAuthSync();

@@ -12,6 +12,7 @@ import {
   signOut,
   isAuthenticated,
   isAuthFresh,
+  restoreSession,
   AUTH_FRESHNESS_WINDOW_MS,
   AUTH_STORAGE_KEYS,
 } from '../auth.js';
@@ -219,6 +220,75 @@ describe('auth — token state + refresh', () => {
     Object.values(AUTH_STORAGE_KEYS).forEach(k => {
       expect(localStorage.getItem(k)).toBeNull();
     });
+  });
+});
+
+describe('auth — restoreSession (stay-logged-in on boot)', () => {
+  beforeEach(() => { _resetStorage(); });
+  afterEach(() => { vi.restoreAllMocks(); });
+
+  it('returns false + no network when no refresh token (anonymous / skip-auth)', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    const ok = await restoreSession();
+    expect(ok).toBe(false);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('returns true WITHOUT a refresh when idToken still comfortably fresh', async () => {
+    localStorage.setItem(AUTH_STORAGE_KEYS.uid, 'uid-1');
+    localStorage.setItem(AUTH_STORAGE_KEYS.idToken, 'FRESH');
+    localStorage.setItem(AUTH_STORAGE_KEYS.refreshToken, 'RT');
+    localStorage.setItem(AUTH_STORAGE_KEYS.expiry, String(Date.now() + 30 * 60 * 1000));
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    const ok = await restoreSession();
+    expect(ok).toBe(true);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('refreshes the idToken when expired and a refresh token exists (returning user reload)', async () => {
+    localStorage.setItem(AUTH_STORAGE_KEYS.uid, 'uid-1');
+    localStorage.setItem(AUTH_STORAGE_KEYS.idToken, 'STALE');
+    localStorage.setItem(AUTH_STORAGE_KEYS.refreshToken, 'RT');
+    localStorage.setItem(AUTH_STORAGE_KEYS.expiry, String(Date.now() - 1000));
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ id_token: 'NEW', refresh_token: 'RT2', user_id: 'uid-1', expires_in: '3600' }),
+    });
+    const ok = await restoreSession();
+    expect(ok).toBe(true);
+    expect(localStorage.getItem(AUTH_STORAGE_KEYS.idToken)).toBe('NEW');
+    expect(isAuthenticated()).toBe(true);
+  });
+
+  it('keeps the session on a TRANSIENT refresh failure (offline returning user not booted out)', async () => {
+    localStorage.setItem(AUTH_STORAGE_KEYS.uid, 'uid-1');
+    localStorage.setItem(AUTH_STORAGE_KEYS.idToken, 'STALE');
+    localStorage.setItem(AUTH_STORAGE_KEYS.refreshToken, 'RT');
+    localStorage.setItem(AUTH_STORAGE_KEYS.expiry, String(Date.now() - 1000));
+    // Network error (offline) — fetch rejects.
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Failed to fetch'));
+    const ok = await restoreSession();
+    expect(ok).toBe(false);
+    // Tokens preserved — lazy getIdToken refresh retries later; NOT signed out.
+    expect(localStorage.getItem(AUTH_STORAGE_KEYS.refreshToken)).toBe('RT');
+    expect(isAuthenticated()).toBe(true);
+  });
+
+  it('signs out cleanly on a DEFINITIVE auth failure (dead/revoked refresh token)', async () => {
+    localStorage.setItem(AUTH_STORAGE_KEYS.uid, 'uid-1');
+    localStorage.setItem(AUTH_STORAGE_KEYS.idToken, 'STALE');
+    localStorage.setItem(AUTH_STORAGE_KEYS.refreshToken, 'RT');
+    localStorage.setItem(AUTH_STORAGE_KEYS.expiry, String(Date.now() - 1000));
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({ error: { message: 'TOKEN_EXPIRED' } }),
+    });
+    const ok = await restoreSession();
+    expect(ok).toBe(false);
+    // Dead refresh token → full sign-out so routing shows clean logged-out state.
+    expect(isAuthenticated()).toBe(false);
+    expect(localStorage.getItem(AUTH_STORAGE_KEYS.refreshToken)).toBeNull();
   });
 });
 

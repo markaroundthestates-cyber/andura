@@ -32,6 +32,7 @@ vi.mock('../../../migrations/2026-05-02-auth-path-migration.js', () => ({
 }));
 vi.mock('../../../auth.js', () => ({
   getAuthState: vi.fn(() => null),
+  restoreSession: vi.fn(async () => false),
 }));
 
 import {
@@ -43,9 +44,10 @@ import { runBootMigrations, startTierRotation, exposeForceRotationHelper } from 
 import { migrateLogsUtcToLocal } from '../../../util/logsMigration.js';
 import { initFirebaseSync } from '../../../firebase.js';
 import { runAuthPathMigration } from '../../../migrations/2026-05-02-auth-path-migration.js';
-import { getAuthState } from '../../../auth.js';
+import { getAuthState, restoreSession } from '../../../auth.js';
 
 const mockGetAuthState = vi.mocked(getAuthState);
+const mockRestoreSession = vi.mocked(restoreSession);
 const mockInitFirebaseSync = vi.mocked(initFirebaseSync);
 const mockRunAuthPathMigration = vi.mocked(runAuthPathMigration);
 const mockRunBootMigrations = vi.mocked(runBootMigrations);
@@ -65,6 +67,7 @@ beforeEach(() => {
   mockStartTierRotation.mockResolvedValue({ initial: { rotated: 0 } } as never);
   mockInitFirebaseSync.mockResolvedValue(undefined as never);
   mockRunAuthPathMigration.mockResolvedValue({ status: 'no-source' } as never);
+  mockRestoreSession.mockResolvedValue(false);
   consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
   consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
   consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -141,6 +144,31 @@ describe('runReactBoot — boot orchestration', () => {
     await Promise.resolve();
     await Promise.resolve();
     expect(initFirebaseSync).toHaveBeenCalledOnce();
+  });
+
+  it('restores the session on boot BEFORE deciding cloud sync (stay-logged-in)', async () => {
+    const order: string[] = [];
+    mockRestoreSession.mockImplementation(async () => { order.push('restore'); return true; });
+    mockGetAuthState.mockReturnValue({ uid: 'u-returning', idToken: 't', expiry: Date.now() + 1e6 } as never);
+    mockInitFirebaseSync.mockImplementation(async () => { order.push('sync'); });
+    await runReactBoot();
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(mockRestoreSession).toHaveBeenCalledOnce();
+    // Session restore (token refresh) precedes the cloud sync so the sync POST
+    // carries a fresh idToken.
+    expect(order[0]).toBe('restore');
+  });
+
+  it('continues boot when restoreSession throws (graceful — lazy refresh later)', async () => {
+    mockRestoreSession.mockRejectedValue(new Error('restore boom'));
+    mockGetAuthState.mockReturnValue({ uid: 'u-returning', idToken: 't', expiry: Date.now() + 1e6 } as never);
+    await runReactBoot();
+    await Promise.resolve();
+    await Promise.resolve();
+    // Boot does not abort — sync still proceeds for the (stale-but-present) session.
+    expect(initFirebaseSync).toHaveBeenCalledOnce();
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[Auth] boot session restore failed:', expect.any(Error));
   });
 });
 
