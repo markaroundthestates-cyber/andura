@@ -386,6 +386,22 @@ describe('migrationRunner — structured logging', () => {
     );
   });
 
+  it('does NOT log summary when 0 entries migrated (no-op noise silence)', () => {
+    // Empty storage keys → migratedThisMigration = 0 → log suprimat (Problem 3).
+    const db = makeDb({});
+    const logger = makeLogger();
+    const m = {
+      fromVersion: 1, toVersion: 2, description: 'noop',
+      storageKeys: ['absent-a', 'absent-b'],
+      migrate: e => e,
+    };
+    runMigrations({ migrations: [m], db, sentry: makeSentry(), logger });
+    const migratedLog = logger.log.mock.calls.find(
+      ([msg]) => typeof msg === 'string' && msg.includes('entries migrated'),
+    );
+    expect(migratedLog).toBeUndefined();
+  });
+
   it('returns per-migration breakdown in result', () => {
     const db = makeDb({ 'k1': [{ id: 'a' }], 'k2': [{ id: 'b' }] });
     const m1 = { fromVersion: 1, toVersion: 2, description: 'first',  storageKeys: ['k1'], migrate: e => e };

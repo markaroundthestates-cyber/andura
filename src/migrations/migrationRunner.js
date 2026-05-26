@@ -138,9 +138,14 @@ export function runMigrations(opts = {}) {
     totalEntriesMigrated += migratedThisMigration;
     perMigration.push({ fromVersion, toVersion, description, count: migratedThisMigration });
 
-    logger.log?.(
-      `[Migrations] ${description} (v${fromVersion}→v${toVersion}): ${migratedThisMigration} entries migrated across [${storageKeys.join(', ')}]`
-    );
+    // Log doar cand chiar s-a migrat ceva — 0 entries la fiecare load/nav
+    // (no-op migration) e zgomot pur in consola (Problem 3). Breakdown-ul
+    // ramane in result.perMigration indiferent.
+    if (migratedThisMigration > 0) {
+      logger.log?.(
+        `[Migrations] ${description} (v${fromVersion}→v${toVersion}): ${migratedThisMigration} entries migrated across [${storageKeys.join(', ')}]`
+      );
+    }
 
     if (migratedThisMigration > LARGE_MIGRATION_THRESHOLD) {
       logger.warn?.(
