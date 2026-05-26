@@ -268,7 +268,10 @@ export async function evaluate(ctx) {
   // preserved invariant). CDL log original append-only persists transparency
   // (ADR 011) — engine doar exclude din invatare. Anti-paternalism preserved.
   const rawObservations = Array.isArray(meta.observations) ? meta.observations : [];
-  const kcalFloorFilterResult = filterKcalFloorObservations(rawObservations);
+  // Floor sex-diferentiat (femei 1000 / barbati 1200) — caller pasa meta.kcalFloorMin
+  // derivat din sex. Fallback 1200 conservator cand absent (sex necunoscut).
+  const kcalFloorMin = Number.isFinite(meta.kcalFloorMin) ? meta.kcalFloorMin : undefined;
+  const kcalFloorFilterResult = filterKcalFloorObservations(rawObservations, kcalFloorMin);
   trace.kcalFloorFilter = {
     excludedCount:  kcalFloorFilterResult.excludedCount,
     citationSource: kcalFloorFilterResult.citationSource,

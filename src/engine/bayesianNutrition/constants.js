@@ -290,6 +290,40 @@ export const PERFORMANCE_BUDGET = Object.freeze({
 export const KCAL_FLOOR_DAILY_MIN = 1200;
 
 /**
+ * Kcal floor minim pe sexe — Daniel CEO directive LOCKED 2026-05-26 verbatim:
+ *   "minim ABSOLUT, nu recomandat — femei 1000 / barbati 1200."
+ *
+ * Supersede single-floor V1 1200 flat: floor diferentiat pe sex (WHO/ESPEN
+ * lower-bound feminine survival baseline 1000 < masculine 1200). Rol dublu:
+ *   (a) Andura NU *recomanda* o tinta sub floor (acoperire legala — NU prescrie
+ *       infometare); RECOMMENDED target clamped la floor.
+ *   (b) filterKcalFloorObservations filtreaza DOAR mis-log-uri evidente; zilele
+ *       reale de intake mic confirmate de trend (cantar = adevar) RAMAN sa
+ *       informeze TDEE prin energy-balance. ZERO blocare logare, ZERO morala.
+ *
+ * Fallback la KCAL_FLOOR_DAILY_MIN (1200 conservator) cand sex necunoscut.
+ *
+ * @type {Readonly<{ f: number, m: number }>}
+ */
+export const KCAL_FLOOR_BY_SEX = Object.freeze({
+  f: 1000,
+  m: 1200,
+});
+
+/**
+ * Resolve kcal floor minim pentru un sex dat. Pure. Fallback 1200 conservator
+ * cand sex absent/necunoscut.
+ *
+ * @param {'m'|'f'|null|undefined} [sex]
+ * @returns {number}
+ */
+export function resolveKcalFloorForSex(sex) {
+  if (sex === 'f') return KCAL_FLOOR_BY_SEX.f;
+  if (sex === 'm') return KCAL_FLOOR_BY_SEX.m;
+  return KCAL_FLOOR_DAILY_MIN;
+}
+
+/**
  * Citation source kcal floor — WHO scientific anchored universal applicable.
  * Romanian-first no-diacritics rule LOCK V1 PERMANENT 2026-05-10 strict.
  *

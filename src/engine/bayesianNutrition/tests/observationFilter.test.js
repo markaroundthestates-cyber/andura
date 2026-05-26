@@ -25,6 +25,8 @@ import {
 import {
   KCAL_FLOOR_DAILY_MIN,
   KCAL_FLOOR_CITATION_SOURCE,
+  KCAL_FLOOR_BY_SEX,
+  resolveKcalFloorForSex,
 } from '../constants.js';
 
 describe('filterKcalFloorObservations — defensive input handling', () => {
@@ -222,6 +224,48 @@ describe('getKcalFloorImportInformativeMessage — count-aware import context wo
     expect(typeof msg).toBe('string');
     expect(msg.length).toBeGreaterThan(0);
     expect(msg).toMatch(/Am detectat 0 zile/);
+  });
+});
+
+describe('Kcal floor sex-diferentiat — Daniel LOCKED 2026-05-26 (femei 1000 / barbati 1200)', () => {
+  it('KCAL_FLOOR_BY_SEX = { f: 1000, m: 1200 }', () => {
+    expect(KCAL_FLOOR_BY_SEX.f).toBe(1000);
+    expect(KCAL_FLOOR_BY_SEX.m).toBe(1200);
+  });
+
+  it('resolveKcalFloorForSex: f→1000, m→1200, null→1200 conservator', () => {
+    expect(resolveKcalFloorForSex('f')).toBe(1000);
+    expect(resolveKcalFloorForSex('m')).toBe(1200);
+    expect(resolveKcalFloorForSex(null)).toBe(KCAL_FLOOR_DAILY_MIN);
+    expect(resolveKcalFloorForSex(undefined)).toBe(KCAL_FLOOR_DAILY_MIN);
+  });
+
+  it('floor feminin 1000: log 1050 (femeie) INCLUS, dar EXCLUS la floor default 1200', () => {
+    const obs = [{ kcalDaily: 1050, weightDelta: 2000 }];
+    // Floor feminin 1000 → inclus (genuine low-intake confirmat ramane).
+    expect(filterKcalFloorObservations(obs, 1000).filtered).toEqual(obs);
+    expect(filterKcalFloorObservations(obs, 1000).excludedCount).toBe(0);
+    // Floor default 1200 → exclus.
+    expect(filterKcalFloorObservations(obs, 1200).excludedCount).toBe(1);
+  });
+
+  it('floor feminin 1000: log 900 (mis-log evident) EXCLUS chiar la 1000', () => {
+    const obs = [{ kcalDaily: 900, weightDelta: 2000 }];
+    expect(filterKcalFloorObservations(obs, 1000).excludedCount).toBe(1);
+  });
+
+  it('backward-compatible: apel fara floor arg → KCAL_FLOOR_DAILY_MIN (1200)', () => {
+    const obs = [{ kcalDaily: 1100, weightDelta: 2000 }];
+    const r = filterKcalFloorObservations(obs);
+    expect(r.floorMin).toBe(KCAL_FLOOR_DAILY_MIN);
+    expect(r.excludedCount).toBe(1);
+  });
+
+  it('floorMin invalid (0 / NaN / negative) → fallback 1200 conservator', () => {
+    const obs = [{ kcalDaily: 1100, weightDelta: 2000 }];
+    expect(filterKcalFloorObservations(obs, 0).floorMin).toBe(1200);
+    expect(filterKcalFloorObservations(obs, NaN).floorMin).toBe(1200);
+    expect(filterKcalFloorObservations(obs, -500).floorMin).toBe(1200);
   });
 });
 

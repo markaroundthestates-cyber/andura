@@ -25,6 +25,7 @@ import { Pencil, Check } from 'lucide-react';
 import { useNutritionStore } from '../stores/nutritionStore';
 import { getNutritionTargetTodayReal } from '../lib/bayesianNutritionAggregate';
 import type { NutritionTarget } from '../lib/bayesianNutritionAggregate';
+import { readBayesianNutritionContext } from '../lib/nutritionObservations';
 
 // Phase 6 task_04 baseline preserved sync render fallback (engine async
 // resolve replaces these on mount). Mockup verbatim wv2 L1812/L1825.
@@ -63,7 +64,10 @@ export function NutritionInline(): JSX.Element {
   const [engineTarget, setEngineTarget] = useState<NutritionTarget | null>(null);
   useEffect(() => {
     let cancelled = false;
-    getNutritionTargetTodayReal(dateISO).then((t) => {
+    // Piesa 2 — construieste ctx din weightLog + dailyLog + onboarding → engine
+    // iese din tier 'none' si adapteaza TDEE-ul real per-user (NU baseline 2640).
+    const ctx = readBayesianNutritionContext();
+    getNutritionTargetTodayReal(dateISO, ctx).then((t) => {
       if (!cancelled) setEngineTarget(t);
     });
     return () => { cancelled = true; };

@@ -36,6 +36,10 @@ import {
  *
  * @param {Array<Object>|null|undefined} observations
  *   Observations array — each obs poate avea: weightDelta, kcalDaily, etc.
+ * @param {number} [floorMin]
+ *   Override floor minim (kcal). Default KCAL_FLOOR_DAILY_MIN (1200 conservator).
+ *   Caller pasa floor sex-diferentiat (femei 1000 / barbati 1200) per Daniel
+ *   LOCKED 2026-05-26. Backward-compatible: apel fara arg → 1200 ca pana acum.
  * @returns {{
  *   filtered: Array<Object>,
  *   excludedCount: number,
@@ -45,15 +49,19 @@ import {
  *   filtered — observations after applying kcal floor filter
  *   excludedCount — count observations dropped (kcalDaily sub floor)
  *   citationSource — WHO scientific anchored reference for UI consumer
- *   floorMin — KCAL_FLOOR_DAILY_MIN value (caller transparency)
+ *   floorMin — floor value applied (caller transparency)
  */
-export function filterKcalFloorObservations(observations) {
+export function filterKcalFloorObservations(observations, floorMin) {
+  const floor = Number.isFinite(floorMin) && /** @type {number} */ (floorMin) > 0
+    ? /** @type {number} */ (floorMin)
+    : KCAL_FLOOR_DAILY_MIN;
+
   if (!Array.isArray(observations)) {
     return {
       filtered: [],
       excludedCount: 0,
       citationSource: KCAL_FLOOR_CITATION_SOURCE,
-      floorMin: KCAL_FLOOR_DAILY_MIN,
+      floorMin: floor,
     };
   }
 
@@ -63,7 +71,7 @@ export function filterKcalFloorObservations(observations) {
     const kcalDaily = obs.kcalDaily;
     if (kcalDaily == null) return true; // pass-through obs fara kcalDaily field
     if (!Number.isFinite(kcalDaily)) return true; // defensive: non-numeric pass-through
-    if (kcalDaily < KCAL_FLOOR_DAILY_MIN) {
+    if (kcalDaily < floor) {
       excludedCount += 1;
       return false;
     }
@@ -74,7 +82,7 @@ export function filterKcalFloorObservations(observations) {
     filtered,
     excludedCount,
     citationSource: KCAL_FLOOR_CITATION_SOURCE,
-    floorMin: KCAL_FLOOR_DAILY_MIN,
+    floorMin: floor,
   };
 }
 

@@ -15,6 +15,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { Flame } from 'lucide-react';
 import { getNutritionTargetTodayReal } from '../../lib/bayesianNutritionAggregate';
 import type { NutritionTarget } from '../../lib/bayesianNutritionAggregate';
+import { readBayesianNutritionContext } from '../../lib/nutritionObservations';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useNutritionStore } from '../../stores/nutritionStore';
 
@@ -88,7 +89,10 @@ export function TDEEStrip(): JSX.Element {
 
   useEffect(() => {
     let cancelled = false;
-    getNutritionTargetTodayReal(todayIso()).then((t) => {
+    // Piesa 2 — ctx din weightLog + dailyLog + onboarding → engine adapteaza
+    // TDEE-ul real per-user (iese din tier 'none', NU baseline 2640).
+    const ctx = readBayesianNutritionContext();
+    getNutritionTargetTodayReal(todayIso(), ctx).then((t) => {
       if (!cancelled) setTarget(t);
     });
     return () => { cancelled = true; };
