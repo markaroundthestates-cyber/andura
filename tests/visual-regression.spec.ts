@@ -7,9 +7,12 @@
 //   - mask dynamic content (timestamps, randomized IDs) via `mask:` option
 //   - maxDiffPixelRatio 0.02 (2% threshold tolerant of font rendering jitter)
 //
-// Baselines committed alongside this spec în __snapshots__/ — reviewer vede
-// both code + visual diff în same PR. Update intentionally: `npx playwright
-// test visual-regression --update-snapshots`.
+// LOCAL OPT-IN ONLY — excluded from the blocking CI smoke (qa-report.yml uses
+// --grep-invert "Visual regression"). No platform-matched baselines are
+// committed (CI=linux, dev=win32), and pixel-diffs fire on every intentional
+// design change. Run locally: `npm run test:visual`. Regenerate baselines after
+// an intended UI change: `npm run visual:update`. Promote to a CI gate post-Beta
+// once the design is frozen and linux baselines are generated + committed.
 
 import { test, expect } from '@playwright/test';
 

@@ -16,6 +16,9 @@ permissions:
 env:
   HUSKY: '0'
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+  # Target the live deployed site (liveProdMode in playwright.config.js skips the
+  # local preview webServer — no build needed; matches the propagation wait below).
+  PLAYWRIGHT_BASE_URL: 'https://andura.app'
 
 jobs:
   qa:
@@ -39,9 +42,12 @@ jobs:
       - name: Wait for GitHub Pages to propagate
         run: sleep 45
 
-      - name: Run Playwright tests
+      - name: Run Playwright tests (functional live smoke — visual-regression excluded)
         id: playwright
-        run: npx playwright test --reporter=json,html,list 2>&1 | tee playwright-output.txt
+        # Visual-regression is a local opt-in tool (npm run test:visual), NOT a CI
+        # gate — it has no platform-matched baselines and pixel-diffs every
+        # intentional design change. Exclude it from the blocking smoke.
+        run: npx playwright test --grep-invert "Visual regression" --reporter=json,html,list 2>&1 | tee playwright-output.txt
         continue-on-error: true
 
       - name: Upload HTML report
