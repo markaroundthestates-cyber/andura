@@ -40,6 +40,10 @@ const Splash = lazy(() => import('./screens/Splash').then((m) => ({ default: m.S
 const Auth = lazy(() => import('./screens/Auth').then((m) => ({ default: m.Auth })));
 const AuthCallback = lazy(() => import('./screens/AuthCallback').then((m) => ({ default: m.AuthCallback })));
 const Onboarding = lazy(() => import('./screens/Onboarding').then((m) => ({ default: m.Onboarding })));
+// Daniel-directed redesign 2026-05-26 — pagini legale publice (fix /terms 404).
+// Rute top-level publice (NU sub ProtectedRoute), siblings de /auth.
+const Terms = lazy(() => import('./screens/Terms').then((m) => ({ default: m.Terms })));
+const Privacy = lazy(() => import('./screens/Privacy').then((m) => ({ default: m.Privacy })));
 
 // §B007 lazy — Antrenor sub-screens (workout flow, 11 routes)
 const EnergyCheck = lazy(() => import('./screens/antrenor/EnergyCheck').then((m) => ({ default: m.EnergyCheck })));
@@ -133,6 +137,9 @@ export const router = createBrowserRouter([
   { path: '/auth/reactivate', element: <TopLevelRoute><Auth /></TopLevelRoute> },
   { path: '/auth-callback', element: <TopLevelRoute><AuthCallback /></TopLevelRoute> },
   { path: '/onboarding/:step', element: <TopLevelRoute><Onboarding /></TopLevelRoute> },
+  // Daniel-directed redesign 2026-05-26 — pagini legale publice (fix /terms 404).
+  { path: '/terms', element: <TopLevelRoute><Terms /></TopLevelRoute> },
+  { path: '/privacy', element: <TopLevelRoute><Privacy /></TopLevelRoute> },
   {
     path: '/app',
     element: (
