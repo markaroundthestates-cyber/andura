@@ -20,7 +20,7 @@
 // → caller pastreaza fallback baseline.
 
 import { useOnboardingStore } from '../stores/onboardingStore';
-import type { Sex } from '../stores/onboardingStore';
+import type { Sex, Goal } from '../stores/onboardingStore';
 
 // Activity factor "moderat activ" — verbatim legacy SYS.estimateTDEE()
 // (src/engine/sys.js:68). Single source of truth pentru BMR→TDEE multiplier.
@@ -85,6 +85,15 @@ export function readUserMaintenanceTDEE(): number | null {
  */
 export function readUserWeightKg(): number | null {
   return useOnboardingStore.getState().data.weight;
+}
+
+/**
+ * I/O boundary — read onboarding goal (RO vocab) din onboardingStore.
+ * Pentru goal-delta nutrition kcal (slabire→deficit / masa→surplus) cand
+ * NU exista override manual de faza (SchimbaFaza). Returns null cand absent.
+ */
+export function readOnboardingGoal(): Goal | null {
+  return useOnboardingStore.getState().data.goal;
 }
 
 /**

@@ -49,6 +49,7 @@ import {
   readUserMaintenanceTDEE,
   readUserWeightKg,
   computeProteinTargetG,
+  readOnboardingGoal,
 } from './userTdee';
 // §48-H1 audit fix — adapter integrity instrumentation. Every catch path
 // emits Sentry alert with source='engine-adapter-fallback' tag + adapter
@@ -564,11 +565,16 @@ function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine 
   // Stats onboarding absente (cold start) → fallback flat 2640 ultim resort.
   if (tdee === null && phaseKcal === null) return BASELINE_NUTRITION;
 
-  // kcal: override de faza (TDEE×mult) prioritar, altfel mentenanta = TDEE real.
+  // kcal precedence: override manual faza (TDEE×mult) > goal onboarding
+  // (TDEE×goalMult) > mentenanta (TDEE real). goalMult null cand AUTO/absent.
+  const goalMult = getGoalKcalMultiplier();
+  const baseTdee = tdee as number;
   const kcalTarget =
     phaseKcal !== null
       ? phaseKcal
-      : Math.max(Math.round(tdee as number), KCAL_FLOOR_DAILY_MIN);
+      : goalMult !== null
+        ? Math.max(Math.round(baseTdee * goalMult), KCAL_FLOOR_DAILY_MIN)
+        : Math.max(Math.round(baseTdee), KCAL_FLOOR_DAILY_MIN);
 
   const proteinTargetG =
     computeProteinTargetG(readUserWeightKg()) ?? BASELINE_NUTRITION.proteinTargetG;
@@ -637,6 +643,42 @@ function getPhaseOverrideKcalToday(): number | null {
   }
 }
 
+/**
+ * Goal-driven kcal phase delta — onboarding goal (RO vocab) → multiplicator,
+ * reutilizand PHASE_MULTIPLIERS (single source of truth, ZERO magic numbers
+ * duplicate). Mirror semantics goalPhaseForGoal (scheduleAdapterAggregate.ts)
+ * care drive faza workout: slabire→CUT / masa→BULK / forta→STRENGTH /
+ * mentenanta+longevitate→MAINTENANCE. 'auto'/null → null (NU aplica delta;
+ * cold-start = mentenanta, engine auto-detecteaza din progres in timp).
+ *
+ * Folosit DOAR cand NU exista override manual de faza (SchimbaFaza). Astfel
+ * un user fresh care a ales "slabire" la onboarding vede deficit imediat,
+ * fara sa deschida ecranul ascuns SchimbaFaza. Returns null cand goal absent
+ * sau 'auto' → caller pastreaza estimarea de mentenanta/Bayesian as-is.
+ */
+function getGoalKcalMultiplier(): number | null {
+  let phaseKey: string | null;
+  switch (readOnboardingGoal()) {
+    case 'slabire':
+      phaseKey = 'CUT';
+      break;
+    case 'masa':
+      phaseKey = 'BULK';
+      break;
+    case 'forta':
+      phaseKey = 'STRENGTH';
+      break;
+    case 'mentenanta':
+    case 'longevitate':
+      phaseKey = 'MAINTENANCE';
+      break;
+    default:
+      // 'auto' / null → ZERO goal-delta (mentenanta cold-start, engine invata).
+      return null;
+  }
+  return PHASE_MULTIPLIERS[phaseKey] ?? null;
+}
+
 export async function getNutritionTargetsToday(
   userState?: BayesianNutritionContext,
 ): Promise<NutritionTargetsEngine> {
@@ -655,10 +697,16 @@ export async function getNutritionTargetsToday(
     if (!Number.isFinite(mu)) {
       return buildPerUserBaseline(phaseKcal);
     }
-    const safeKcal = Math.max(mu as number, KCAL_FLOOR_DAILY_MIN);
-    // B001 phase override priority — user explicit pick beats Bayesian estimate.
-    // Bayesian engine continues to learn from logged kcal; phase override
-    // gives immediate feedback while engine observations accumulate.
+    // posterior.mu = TDEE de mentenanta adaptiv (Kalman). Goal-delta se aplica
+    // pe ACEASTA estimare cand NU exista override manual, ca un user care invata
+    // (TDEE adaptiv) sa primeasca tot deficit/surplus per goal onboarding.
+    const goalMult = getGoalKcalMultiplier();
+    const adjustedMu =
+      goalMult !== null ? (mu as number) * goalMult : (mu as number);
+    const safeKcal = Math.max(adjustedMu, KCAL_FLOOR_DAILY_MIN);
+    // Precedence: override manual faza (B001 SchimbaFaza) > goal onboarding
+    // (deja aplicat in adjustedMu) > estimare Bayesiana de mentenanta. User
+    // explicit pick beats goal + Bayesian; engine continua sa invete din log.
     const finalKcal = phaseKcal !== null ? phaseKcal : Math.round(safeKcal);
     // Piesa 1 fix — proteine g/kg × greutate per-user (fallback flat 180 cand
     // greutate absenta). Engine Kalman acopera DOAR kcal, NU macro split.
