@@ -59,6 +59,21 @@ describe('LogoutConfirm — D047 drill-down', () => {
     expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/auth');
   });
 
+  it('H1 — confirm wipes local user data (not just tokens) so next user starts clean', () => {
+    // Seed user A's local data + the data-owner marker.
+    localStorage.setItem('logs', JSON.stringify([{ ts: 1, ex: 'Squat', w: 100 }]));
+    localStorage.setItem('weights', JSON.stringify({ '2026-05-01': 80 }));
+    localStorage.setItem('wv2-workout-store', 'a-state');
+    localStorage.setItem('data-owner-uid', 'uid-A');
+    renderScreen();
+    fireEvent.click(screen.getByTestId('logout-confirm-accept'));
+    // Shared-device leak vector closed: A's data gone after logout.
+    expect(localStorage.getItem('logs')).toBeNull();
+    expect(localStorage.getItem('weights')).toBeNull();
+    expect(localStorage.getItem('wv2-workout-store')).toBeNull();
+    expect(localStorage.getItem('data-owner-uid')).toBeNull();
+  });
+
   it('U-14 confirm resets isSkipAuth so skip-auth user truly exits', () => {
     useAppStore.setState({ isSkipAuth: true, isAuthenticated: false });
     renderScreen();

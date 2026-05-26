@@ -9,9 +9,42 @@ import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
 import { useAppStore } from '../../../stores/appStore';
+import { useWorkoutStore } from '../../../stores/workoutStore';
+import { useNutritionStore } from '../../../stores/nutritionStore';
+import { useOnboardingStore } from '../../../stores/onboardingStore';
+import { useSettingsStore } from '../../../stores/settingsStore';
+import { useScheduleStore } from '../../../stores/scheduleStore';
+import { useProgresStore } from '../../../stores/progresStore';
 import { signOut as authSignOut } from '../../../../auth.js';
+import { wipeUserDataOnLogout } from '../../../../util/dataReset.js';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+
+// H1 shared-device PII leak fix — logout previously cleared only the auth
+// tokens, leaving ALL Tier-0 user data (logs / weight / body / pain / coach
+// state, written UNPREFIXED via src/db.js + the wv2-* stores) on the device. The
+// next person to sign in on the same browser saw user A's data, and the
+// local-always-wins Firebase merge could push A's data up to B's cloud. We now
+// wipe the local user-data on logout (cloud-SAFE — A's RTDB backup survives for
+// re-login, matching the "Datele tale raman salvate pe email" reassurance).
+function wipeLocalUserDataOnLogout(): void {
+  try {
+    // 1. In-memory Zustand resets so the UI shows empty state immediately
+    //    (no flash of A's data before the reload re-hydrates from cleared keys).
+    useWorkoutStore.getState().reset();
+    useWorkoutStore.getState().resetStreak();
+    useWorkoutStore.setState({ lastSession: null, sessionsHistory: [] });
+    useNutritionStore.getState().reset();
+    useOnboardingStore.getState().reset();
+    useSettingsStore.getState().reset();
+    useScheduleStore.getState().resetWeekly();
+    useProgresStore.getState().reset();
+    // 2. Authoritative localStorage + IndexedDB wipe (cloud untouched).
+    void wipeUserDataOnLogout();
+  } catch {
+    // Non-fatal — never block the sign-out + navigate on a wipe failure.
+  }
+}
 
 export function LogoutConfirm(): JSX.Element {
   const navigate = useNavigate();
@@ -21,6 +54,9 @@ export function LogoutConfirm(): JSX.Element {
   function handleConfirm(): void {
     // §A007 audit fix preserved — clear firebase-* tokens before navigate.
     authSignOut();
+    // H1 — wipe local user data so the next user on this device starts clean
+    // (cloud backup preserved for re-login).
+    wipeLocalUserDataOnLogout();
     setAuthenticated(false);
     // U-14 audit fix (AUDIT-2 §U-14 LOW) — also reset skip-auth so a user who
     // entered via "Incearca fara cont" actually exits to /auth. Without this,

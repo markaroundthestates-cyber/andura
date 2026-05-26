@@ -34,6 +34,10 @@ vi.mock('../../../auth.js', () => ({
   getAuthState: vi.fn(() => null),
   restoreSession: vi.fn(async () => false),
 }));
+// H1 account-switch guard — mock so we can assert it runs before the cloud sync.
+vi.mock('../../../util/dataReset.js', () => ({
+  enforceDataOwner: vi.fn(async () => false),
+}));
 
 import {
   runReactBoot,
@@ -45,6 +49,7 @@ import { migrateLogsUtcToLocal } from '../../../util/logsMigration.js';
 import { initFirebaseSync } from '../../../firebase.js';
 import { runAuthPathMigration } from '../../../migrations/2026-05-02-auth-path-migration.js';
 import { getAuthState, restoreSession } from '../../../auth.js';
+import { enforceDataOwner } from '../../../util/dataReset.js';
 
 const mockGetAuthState = vi.mocked(getAuthState);
 const mockRestoreSession = vi.mocked(restoreSession);
@@ -53,6 +58,7 @@ const mockRunAuthPathMigration = vi.mocked(runAuthPathMigration);
 const mockRunBootMigrations = vi.mocked(runBootMigrations);
 const mockStartTierRotation = vi.mocked(startTierRotation);
 const mockMigrateLogsUtcToLocal = vi.mocked(migrateLogsUtcToLocal);
+const mockEnforceDataOwner = vi.mocked(enforceDataOwner);
 
 let consoleLogSpy: ReturnType<typeof vi.spyOn>;
 let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
@@ -68,6 +74,7 @@ beforeEach(() => {
   mockInitFirebaseSync.mockResolvedValue(undefined as never);
   mockRunAuthPathMigration.mockResolvedValue({ status: 'no-source' } as never);
   mockRestoreSession.mockResolvedValue(false);
+  mockEnforceDataOwner.mockResolvedValue(false);
   consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
   consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
   consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -192,6 +199,29 @@ describe('runPostAuthSync — restore on login', () => {
     await runPostAuthSync();
     expect(runAuthPathMigration).not.toHaveBeenCalled();
     expect(initFirebaseSync).not.toHaveBeenCalled();
+  });
+
+  it('H1 — runs the data-owner guard with the current uid BEFORE the cloud sync', async () => {
+    mockGetAuthState.mockReturnValue({ uid: 'uid-switch', idToken: 't', expiry: Date.now() + 1e6 } as never);
+    const order: string[] = [];
+    mockEnforceDataOwner.mockImplementation(async () => { order.push('guard'); return false; });
+    mockInitFirebaseSync.mockImplementation(async () => { order.push('sync'); });
+
+    await runPostAuthSync();
+
+    // Account-switch guard purges a different prior user's local data BEFORE the
+    // local-always-wins merge could push it up to the new uid's cloud.
+    expect(mockEnforceDataOwner).toHaveBeenCalledWith('uid-switch');
+    expect(order[0]).toBe('guard');
+    expect(order).toContain('sync');
+  });
+
+  it('H1 — a guard throw is isolated + the sync still proceeds (best-effort)', async () => {
+    mockGetAuthState.mockReturnValue({ uid: 'uid-g', idToken: 't', expiry: Date.now() + 1e6 } as never);
+    mockEnforceDataOwner.mockRejectedValue(new Error('wipe boom'));
+    await runPostAuthSync();
+    expect(initFirebaseSync).toHaveBeenCalledOnce();
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[Auth] data-owner guard threw:', expect.any(Error));
   });
 
   it('dedups concurrent calls (single sync under burst)', async () => {

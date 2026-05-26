@@ -50,6 +50,7 @@ import { migrateLogsUtcToLocal } from '../../util/logsMigration.js';
 import { initFirebaseSync } from '../../firebase.js';
 import { getAuthState, restoreSession } from '../../auth.js';
 import { runAuthPathMigration } from '../../migrations/2026-05-02-auth-path-migration.js';
+import { enforceDataOwner } from '../../util/dataReset.js';
 
 // Module-level idempotency guards. React 18 StrictMode double-invokes effects
 // in dev, and main.tsx + a returning-user path could both reach boot — these
@@ -149,6 +150,17 @@ export async function runPostAuthSync(): Promise<void> {
 
   _postAuthInFlight = (async () => {
     try {
+      // H1 shared-device fix — account-switch guard. BEFORE any cloud sync, purge
+      // a DIFFERENT prior user's local data if this uid does not own it (e.g. user
+      // B opened a magic link on user A's still-authed browser without a logout).
+      // Without this, the local-always-wins merge below would push A's stale local
+      // data up to B's cloud. No-op for the same user / first login. Best-effort
+      // (own try/catch) so a wipe failure never blocks or aborts the sync.
+      try {
+        await enforceDataOwner(uid);
+      } catch (err) {
+        console.warn('[Auth] data-owner guard threw:', err);
+      }
       // Path migration FIRST so the subsequent restore reads from the
       // canonical users/{uid} node (not the legacy users/daniel literal).
       // Idempotent: no-op for non-Daniel uid or already-migrated.

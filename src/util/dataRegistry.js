@@ -37,8 +37,12 @@ export const DYNAMIC_KEY_PREFIXES = [
   'backup-',         // autoBackup.js / dataCleanup.js: timestamped backups
 ];
 
-// Keys that survive fullReset: device identity + UI preferences + last backup for undo
-export const PRESERVE_ON_RESET_KEYS = ['device-id', 'active-theme', 'last-backup'];
+// Keys that survive fullReset: device identity + UI preferences + last backup for undo.
+// `data-owner-uid` (H1 shared-device fix) is the marker recording which uid the
+// local Tier-0 data belongs to; it must survive a reset so the SAME user is not
+// needlessly re-wiped on their next login, while a DIFFERENT uid still triggers
+// the account-switch wipe (see util/dataReset.js enforceDataOwner).
+export const PRESERVE_ON_RESET_KEYS = ['device-id', 'active-theme', 'last-backup', 'data-owner-uid'];
 
 // Coach Decision Log + derived behavioral state (ADR 011, 013, 014).
 // Semantic: derived behavioral history, not raw input.

@@ -112,3 +112,73 @@ export async function clearUserCloudData() {
     // Firebase module / network unavailable — non-fatal; local reset still stands.
   }
 }
+
+// ── H1 shared-device PII leak — logout wipe + account-switch guard ───────────
+// EVIDENCE (VERDICT-CONSOLIDATED §Cluster 0 / SWEEP H1): Tier-0 localStorage has
+// no per-UID namespacing, and logout cleared only auth tokens — so user B on the
+// same device saw user A's logs/weight/body/pain, and the local-always-wins
+// Firebase merge could push A's data up to B's cloud. Design intent is
+// single-user-device, so the SAFE + lowest-blast-radius fix (vs full per-UID key
+// prefixing of every write) is to WIPE the local user-data keys when a session
+// ends (logout) AND when a DIFFERENT uid signs in (account switch), so the next
+// user starts clean and A's data cannot leak into / contaminate B's cloud.
+
+/**
+ * localStorage marker recording which uid the local Tier-0 data currently
+ * belongs to. Compared on every post-auth sync to detect an account switch.
+ * Preserved across reset (PRESERVE_ON_RESET_KEYS) so the SAME user is not
+ * re-wiped on their next login.
+ */
+export const DATA_OWNER_UID_KEY = 'data-owner-uid';
+
+/**
+ * LOGOUT wipe — clears the local user-data keys + IndexedDB Tier 1 so the next
+ * person on this shared device starts clean. Mirrors the reset wipe but is
+ * cloud-SAFE on purpose: it does NOT touch Firebase, because the user is only
+ * signing out (their cloud backup must survive for re-login). The auth tokens
+ * themselves are cleared separately by `auth.signOut()`. Also drops the
+ * data-owner marker so a fresh login re-establishes ownership cleanly.
+ *
+ * @returns {Promise<void>}
+ */
+export async function wipeUserDataOnLogout() {
+  clearUserDataKeys();
+  try { localStorage.removeItem(DATA_OWNER_UID_KEY); } catch { /* non-fatal */ }
+  await clearUserIndexedDB();
+}
+
+/**
+ * ACCOUNT-SWITCH guard — call on every post-auth sync, BEFORE the Firebase
+ * restore/push (so a different user's stale local data can't be merged up to the
+ * new uid's cloud). Compares the authenticated `currentUid` against the persisted
+ * data-owner marker:
+ *
+ *   - no marker yet (first login on this device) → record ownership, no wipe.
+ *   - marker === currentUid (same user reload / returning boot) → no-op, keep
+ *     the user's own data intact.
+ *   - marker !== currentUid (a DIFFERENT account authenticated without a logout
+ *     in between, e.g. user B opened a magic link on user A's still-authed
+ *     browser) → wipe local user-data + IndexedDB (NOT cloud — A's backup stays),
+ *     then record the new owner so B starts clean.
+ *
+ * Anonymous / skip-auth (no `currentUid`) → no-op (nothing to own).
+ *
+ * @param {string|null|undefined} currentUid
+ * @returns {Promise<boolean>} true if a wipe fired (account switch detected)
+ */
+export async function enforceDataOwner(currentUid) {
+  if (!currentUid) return false; // anonymous / skip-auth — nothing to own
+  let prevOwner = null;
+  try { prevOwner = localStorage.getItem(DATA_OWNER_UID_KEY); } catch { /* treat as absent */ }
+  if (prevOwner === currentUid) return false; // same user — keep their data
+  const isSwitch = prevOwner !== null && prevOwner !== currentUid;
+  if (isSwitch) {
+    // Different account on this device without a logout — purge the prior user's
+    // local data so it cannot leak to B or contaminate B's cloud on the merge.
+    clearUserDataKeys();
+    await clearUserIndexedDB();
+  }
+  // Record (or re-record) ownership for the now-authenticated uid.
+  try { localStorage.setItem(DATA_OWNER_UID_KEY, currentUid); } catch { /* non-fatal */ }
+  return isSwitch;
+}

@@ -1,6 +1,12 @@
 // A2 H-1 audit fix — authoritative reset key-clearing tests.
 import { describe, it, expect, beforeEach } from 'vitest';
-import { clearUserDataKeys, RESET_LEGACY_KEYS } from '../dataReset.js';
+import {
+  clearUserDataKeys,
+  RESET_LEGACY_KEYS,
+  wipeUserDataOnLogout,
+  enforceDataOwner,
+  DATA_OWNER_UID_KEY,
+} from '../dataReset.js';
 import { PRESERVE_ON_RESET_KEYS } from '../dataRegistry.js';
 
 beforeEach(() => {
@@ -72,5 +78,82 @@ describe('clearUserDataKeys', () => {
     localStorage.setItem('device-id', 'keep'); // preserved, not counted
     const removed = clearUserDataKeys();
     expect(removed).toBe(2);
+  });
+
+  it('PRESERVES the data-owner marker (H1 — same user not re-wiped next login)', () => {
+    localStorage.setItem(DATA_OWNER_UID_KEY, 'uid-A');
+    localStorage.setItem('logs', 'data');
+    clearUserDataKeys();
+    expect(localStorage.getItem(DATA_OWNER_UID_KEY)).toBe('uid-A');
+    expect(localStorage.getItem('logs')).toBeNull();
+  });
+});
+
+// ── H1 shared-device PII leak — logout wipe ──────────────────────────────────
+describe('wipeUserDataOnLogout', () => {
+  it('clears local user-data keys (the shared-device leak vector)', async () => {
+    localStorage.setItem('logs', 'a-data');
+    localStorage.setItem('weights', JSON.stringify({ '2026-05-01': 80 }));
+    localStorage.setItem('wv2-workout-store', 'x');
+    await wipeUserDataOnLogout();
+    expect(localStorage.getItem('logs')).toBeNull();
+    expect(localStorage.getItem('weights')).toBeNull();
+    expect(localStorage.getItem('wv2-workout-store')).toBeNull();
+  });
+
+  it('drops the data-owner marker (fresh login re-establishes ownership)', async () => {
+    localStorage.setItem(DATA_OWNER_UID_KEY, 'uid-A');
+    await wipeUserDataOnLogout();
+    expect(localStorage.getItem(DATA_OWNER_UID_KEY)).toBeNull();
+  });
+
+  it('is cloud-SAFE — preserves firebase-* tokens (signOut clears them separately)', async () => {
+    // wipeUserDataOnLogout must NOT touch the cloud or the auth tokens; auth.signOut
+    // owns the tokens. (Tokens preserved here; the component pairs this with signOut.)
+    localStorage.setItem('firebase-refresh-token', 'rtok');
+    localStorage.setItem('logs', 'data');
+    await wipeUserDataOnLogout();
+    expect(localStorage.getItem('firebase-refresh-token')).toBe('rtok');
+    expect(localStorage.getItem('logs')).toBeNull();
+  });
+});
+
+// ── H1 shared-device PII leak — account-switch guard ─────────────────────────
+describe('enforceDataOwner', () => {
+  it('first login (no marker) records ownership WITHOUT wiping existing data', async () => {
+    localStorage.setItem('logs', 'fresh-user-data');
+    const wiped = await enforceDataOwner('uid-A');
+    expect(wiped).toBe(false);
+    expect(localStorage.getItem(DATA_OWNER_UID_KEY)).toBe('uid-A');
+    // First login must not wipe — the data already belongs to this (new) owner.
+    expect(localStorage.getItem('logs')).toBe('fresh-user-data');
+  });
+
+  it('same user (marker === uid) is a no-op — keeps their own data', async () => {
+    localStorage.setItem(DATA_OWNER_UID_KEY, 'uid-A');
+    localStorage.setItem('logs', 'a-own-data');
+    const wiped = await enforceDataOwner('uid-A');
+    expect(wiped).toBe(false);
+    expect(localStorage.getItem('logs')).toBe('a-own-data');
+  });
+
+  it('DIFFERENT uid (account switch w/o logout) wipes prior data + records new owner', async () => {
+    localStorage.setItem(DATA_OWNER_UID_KEY, 'uid-A');
+    localStorage.setItem('logs', 'a-secret-data');
+    localStorage.setItem('weights', JSON.stringify({ '2026-05-01': 80 }));
+    const wiped = await enforceDataOwner('uid-B');
+    expect(wiped).toBe(true);
+    // User A's data is gone before any cloud merge can push it to B's cloud.
+    expect(localStorage.getItem('logs')).toBeNull();
+    expect(localStorage.getItem('weights')).toBeNull();
+    expect(localStorage.getItem(DATA_OWNER_UID_KEY)).toBe('uid-B');
+  });
+
+  it('anonymous / skip-auth (no uid) is a no-op (nothing to own)', async () => {
+    localStorage.setItem('logs', 'anon-local-data');
+    const wiped = await enforceDataOwner(null);
+    expect(wiped).toBe(false);
+    expect(localStorage.getItem('logs')).toBe('anon-local-data');
+    expect(localStorage.getItem(DATA_OWNER_UID_KEY)).toBeNull();
   });
 });
