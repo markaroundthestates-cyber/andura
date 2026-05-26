@@ -61,6 +61,12 @@ describe('SettingsThemes — Teme picker screen', () => {
     expect(localStorage.getItem('wv2-palette-theme')).toBe('brain-coach');
   });
 
+  it('honest copy: paletele se aplica la lansare, NU "se aplica instant"', () => {
+    const { container } = renderScreen();
+    expect(screen.getByText(/se va aplica la lansare/i)).toBeInTheDocument();
+    expect(/se aplica instant/i.test(container.textContent ?? '')).toBe(false);
+  });
+
   it('back navigates la /app/cont/settings-appearance', () => {
     renderScreen();
     fireEvent.click(screen.getByRole('button', { name: /Inapoi/i }));

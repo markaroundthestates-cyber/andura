@@ -91,7 +91,7 @@ export function SettingsThemes(): JSX.Element {
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink2 mb-4 leading-snug">
-          Alege paleta. Se aplica instant.
+          Alege paleta preferata. In curand: se va aplica la lansare.
         </p>
 
         <div className="grid grid-cols-2 gap-3" data-testid="settings-themes-grid">
@@ -128,7 +128,7 @@ export function SettingsThemes(): JSX.Element {
         </div>
 
         <p className="text-xs text-ink2 text-center mt-5 leading-relaxed">
-          4 teme disponibile.
+          Paletele se vor activa la lansare.
         </p>
       </div>
     </section>
