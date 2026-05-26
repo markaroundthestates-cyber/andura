@@ -56,7 +56,7 @@ describe('engineWrappers — getReadiness', () => {
     expect(r?.canPR).toBe(true);
   });
 
-  it('passes isInCut opts la verdict', () => {
+  it('passes isInCut + hasHistory opts la verdict', () => {
     vi.mocked(getComputedReadinessScore).mockReturnValue(75);
     vi.mocked(getReadinessVerdict).mockReturnValue({
       label: 'Sesiune normala',
@@ -65,7 +65,9 @@ describe('engineWrappers — getReadiness', () => {
       canPR: false,
     });
     getReadiness({ isInCut: true });
-    expect(getReadinessVerdict).toHaveBeenCalledWith(75, { isInCut: true });
+    // Cold-start honesty: wrapper deriva hasHistory din sessionsHistory.length.
+    // Test env store default = [] → hasHistory false.
+    expect(getReadinessVerdict).toHaveBeenCalledWith(75, { isInCut: true, hasHistory: false });
   });
 
   it('returns null daca verdict label null', () => {

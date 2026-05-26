@@ -30,7 +30,7 @@ export function getReadinessScore(
 
 export function getReadinessVerdict(
   score: number | null,
-  opts?: { isInCut?: boolean }
+  opts?: { isInCut?: boolean; hasHistory?: boolean }
 ): ReadinessVerdict;
 
 export function saveReadiness(value: number): void;

@@ -178,7 +178,12 @@ export function getReadiness(opts: { isInCut?: boolean } = {}): ReadinessOutput 
   try {
     const score = getComputedReadinessScore();
     if (score == null) return null;
-    const verdict = getReadinessVerdict(score, opts);
+    // Cold-start honesty: 'Zi de PR'/canPR DOAR cand user are istoric de
+    // antrenament. Un user fresh care a dat doar energy-check (readiness=3 →
+    // score 85) NU vede 'Zi de PR' — n-are nimic de batut. Mirror fatigue.js
+    // 'DATE INSUFICIENTE' gate. sessionsHistory.length === 0 → hasHistory=false.
+    const hasHistory = useWorkoutStore.getState().sessionsHistory.length > 0;
+    const verdict = getReadinessVerdict(score, { ...opts, hasHistory });
     if (!verdict || verdict.label == null) return null;
     return {
       score,

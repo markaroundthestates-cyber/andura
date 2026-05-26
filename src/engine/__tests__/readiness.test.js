@@ -42,6 +42,18 @@ describe('readiness — getReadinessVerdict', () => {
     expect(v.volumeMultiplier).toBe(1.1);
   });
 
+  it('score=85 non-CUT FARA istoric → Sesiune normala, canPR=false (cold-start honesty)', () => {
+    const v = getReadinessVerdict(85, { isInCut: false, hasHistory: false });
+    expect(v.label).toBe('Sesiune normala');
+    expect(v.canPR).toBe(false);
+  });
+
+  it('score=85 non-CUT CU istoric → Zi de PR (hasHistory explicit true)', () => {
+    const v = getReadinessVerdict(85, { isInCut: false, hasHistory: true });
+    expect(v.label).toBe('Zi de PR');
+    expect(v.canPR).toBe(true);
+  });
+
   it('score=30 → rest verdict, volumeMultiplier=0', () => {
     const vCut = getReadinessVerdict(30, { isInCut: true });
     expect(vCut.volumeMultiplier).toBe(0);

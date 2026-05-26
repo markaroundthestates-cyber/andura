@@ -43,9 +43,14 @@ export function getReadinessScore(readinessInput, kcalYesterday, protYesterday, 
 
 /**
  * @param {number | null | undefined} score
- * @param {{ isInCut?: boolean }} [opts]
+ * @param {{ isInCut?: boolean, hasHistory?: boolean }} [opts]
+ *
+ * `hasHistory` (default true pentru backward-compat engine callers) —
+ * cand false (user fresh care NU a antrenat niciodata) NU promovam 'Zi de PR':
+ * un PR-day claim e necinstit fara istoric de antrenament (nimic de batut).
+ * Mirror semantics fatigue.js 'DATE INSUFICIENTE' gate (last4.length < 2).
  */
-export function getReadinessVerdict(score, { isInCut = false } = {}) {
+export function getReadinessVerdict(score, { isInCut = false, hasHistory = true } = {}) {
   if (score == null) return { label: null, color: 'var(--text3)', volumeMultiplier: 1.0, canPR: false };
   if (isInCut) {
     // In CUT, PR-urile sunt rare — nu promovam 'Zi de PR'
@@ -55,8 +60,9 @@ export function getReadinessVerdict(score, { isInCut = false } = {}) {
     if (score >= READINESS_LOW)  return { label: 'Sesiune usoara',    color: 'var(--accent3)',  volumeMultiplier: 0.7,  canPR: false };
     return { label: 'Odihna',             color: 'var(--red)',      volumeMultiplier: 0,    canPR: false };
   } else {
-    // Phase normala / BULK — logica originala
-    if (score >= READINESS_PR)   return { label: 'Zi de PR',          color: 'var(--green)',    volumeMultiplier: 1.1,  canPR: true  };
+    // Phase normala / BULK — logica originala. PR-day DOAR cand exista istoric:
+    // user fresh (hasHistory=false) primeste 'Sesiune normala', NU 'Zi de PR'.
+    if (score >= READINESS_PR && hasHistory) return { label: 'Zi de PR',          color: 'var(--green)',    volumeMultiplier: 1.1,  canPR: true  };
     if (score >= READINESS_HIGH) return { label: 'Sesiune normala',   color: 'var(--accent)',   volumeMultiplier: 1.0,  canPR: false };
     if (score >= READINESS_MED)  return { label: 'Sesiune moderata',  color: 'var(--accent2)',  volumeMultiplier: 0.85, canPR: false };
     if (score >= READINESS_LOW)  return { label: 'Sesiune usoara',    color: 'var(--accent3)',  volumeMultiplier: 0.7,  canPR: false };
