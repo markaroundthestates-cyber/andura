@@ -25,6 +25,7 @@ export interface WorkoutPlan {
   exercises: ReadonlyArray<{ name: string; sets: number }>;
   intensityModifier: Record<string, unknown> | null;
   volumeTargets: Record<string, unknown> | null;
+  restTimeRange: readonly [number, number] | null;
   specializationTarget: string | null;
   deloadState: string;
   estimatedDurationMin: number;

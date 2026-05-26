@@ -19,7 +19,7 @@ import { getDailyWorkout } from '../../engine/schedule/scheduleAdapter.js';
 import { useWorkoutStore } from '../stores/workoutStore';
 import type { LastSessionSummary } from '../stores/workoutStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
-import { MS_PER_DAY } from '../../constants.js';
+import { MS_PER_DAY, COMPOUND_EX } from '../../constants.js';
 import type { PlannedExercise, PlannedWorkoutOutput } from './engineWrappers';
 import { toExerciseDisplay } from './exerciseDisplay';
 import { DP } from '../../engine/dp.js';
@@ -487,6 +487,36 @@ interface DpRecommendation {
   repsTarget?: number;
 }
 
+// Fix #4 — default rest fallback (the prior hardcode) used only when the engine
+// emits no rest range (empty user / goalAdaptation blueprint absent).
+const DEFAULT_REST_SEC = 90;
+
+/**
+ * Resolve a per-exercise rest in seconds from the engine's goal-adaptation rest
+ * range [minSec, maxSec] (template × phase × mode). A real coach rests compounds
+ * longer than isolation, so compounds (COMPOUND_EX) take the range MAX, isolation
+ * the range MIN. Range absent/malformed → DEFAULT_REST_SEC (prior 90s behavior).
+ * Pure.
+ *
+ * @param engineName English canonical exercise name (COMPOUND_EX keys on it)
+ * @param restRange engine rest-time prescription [minSec, maxSec] or null
+ */
+function resolveRestSec(
+  engineName: string,
+  restRange: readonly [number, number] | null,
+): number {
+  if (
+    !Array.isArray(restRange) ||
+    restRange.length < 2 ||
+    !Number.isFinite(restRange[0]) ||
+    !Number.isFinite(restRange[1])
+  ) {
+    return DEFAULT_REST_SEC;
+  }
+  const [minSec, maxSec] = restRange;
+  return COMPOUND_EX.includes(engineName) ? maxSec : minSec;
+}
+
 /**
  * Map engine exercise (sessionBuilder output `{ name, sets }`) to
  * PlannedExercise consumer shape. Engine emits only name + sets count; the
@@ -511,12 +541,16 @@ interface DpRecommendation {
  *
  * @param readinessScore live today readiness (getComputedReadinessScore) read
  *   ONCE by the composer and threaded in — null when no energy-check logged.
+ * @param restRange engine goal-adaptation rest prescription [minSec, maxSec]
+ *   (template × phase × mode), threaded from the plan. Compounds rest at the
+ *   range MAX, isolation at MIN (resolveRestSec). null → 90s fallback.
  */
 function toPlannedExercise(
   engineEx: { name: string; sets: number },
   idx: number,
   experienceEn: string,
   readinessScore: number | null,
+  restRange: readonly [number, number] | null,
 ): PlannedExercise {
   const slug = engineEx.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   const display = toExerciseDisplay(engineEx.name);
@@ -547,7 +581,9 @@ function toPlannedExercise(
     sets: engineEx.sets,
     targetReps,
     targetKg,
-    restSec: 90,
+    // Fix #4 — rest from the engine rest range (compound=MAX / isolation=MIN),
+    // NOT the prior hardcoded 90 for every exercise.
+    restSec: resolveRestSec(engineEx.name, restRange),
   };
 }
 
@@ -572,8 +608,13 @@ export async function composePlannedWorkoutToday(
     // DP.getSmartRecommendation. Null when no energy-check logged today (engine
     // skips the gate). Same source the readiness card + "why" explainer use.
     const readinessScore = getComputedReadinessScore();
+    // Fix #4 — engine goal-adaptation rest range [minSec, maxSec] threaded into
+    // each exercise's restSec (compound=MAX / iso=MIN). null → 90s fallback.
+    const restRangeRaw = plan.restTimeRange as [number, number] | null | undefined;
+    const restRange =
+      Array.isArray(restRangeRaw) && restRangeRaw.length >= 2 ? restRangeRaw : null;
     const exercises = (plan.exercises ?? []).map((ex, idx) =>
-      toPlannedExercise(ex, idx, experienceEn, readinessScore),
+      toPlannedExercise(ex, idx, experienceEn, readinessScore, restRange),
     );
     // Deload engine emits intensity_modifier object always (IDLE state =
     // {rir_increment:0, intensity_pct_decrement:0}). 'minus' only when

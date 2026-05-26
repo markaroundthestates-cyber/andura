@@ -12,13 +12,17 @@
 //   - exercise mapping engine → PlannedExercise (id/name/sets/targetReps/targetKg/restSec)
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { composePlannedWorkoutToday } from '../../lib/scheduleAdapterAggregate';
+import {
+  composePlannedWorkoutToday,
+  buildUserStateForPipeline,
+} from '../../lib/scheduleAdapterAggregate';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import {
   CALENDAR_OVERRIDE_KEY,
   commitCalendarEdit,
   getWeekStartIso,
+  getDailyWorkout,
 } from '../../../engine/schedule/scheduleAdapter.js';
 import { DB, tod } from '../../../db.js';
 import { suggestStartWeight } from '../../../engine/coldStartGuidelines.js';
@@ -198,6 +202,7 @@ describe('scheduleAdapterAggregate — falsy-coercion nullish coalesce LOW-CODE-
     exercises: [] as Array<{ name: string; sets: number }>,
     intensityModifier: null,
     volumeTargets: null,
+    restTimeRange: null,
     specializationTarget: null,
     deloadState: 'IDLE',
   };
@@ -454,5 +459,75 @@ describe('scheduleAdapterAggregate — FIX #1 readiness-gated planned weight', (
     const lowLat = findByEnSlug(lowOut!.exercises, 'Lat Pulldown');
     expect(lowLat!.targetKg).toBe(55); // gated hold
     expect(lowLat!.targetKg).not.toBe(noReadyLat!.targetKg);
+  });
+});
+
+// ── FIX #4: rest time comes from the engine, not the hardcoded 90 ──────────
+// The planner stamped restSec: 90 for EVERY exercise; the goal-adaptation rest
+// range (rest_time_modifier [minSec, maxSec]) was computed but dropped at the
+// getDailyWorkout boundary. Now getDailyWorkout returns restTimeRange and the
+// planner maps it per exercise: compounds (COMPOUND_EX) rest at MAX, isolation
+// at MIN. TUESDAY = PULL: Lat Pulldown (compound, bailib_stack) + Bayesian Curl
+// (isolation, matrix_cable) both survive the equipment filter.
+describe('scheduleAdapterAggregate — FIX #4 engine-sourced rest time', () => {
+  function findByEnSlug(
+    exercises: ReadonlyArray<{ id: string; restSec: number }>,
+    enName: string,
+  ): { id: string; restSec: number } | undefined {
+    const slug = enName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    return exercises.find((e) => e.id.startsWith(`${slug}-`));
+  }
+
+  it('rest range reaches the planner: compound restSec = range MAX, isolation = range MIN', async () => {
+    // Read the engine rest range directly from the SAME pipeline the composer
+    // drives (real builder userState) — proves the planner consumes THIS range.
+    const userState = buildUserStateForPipeline();
+    const plan = await getDailyWorkout(userState, TUESDAY_2026_05_19);
+    expect(plan).not.toBeNull();
+    const range = plan!.restTimeRange as readonly [number, number] | null;
+    expect(Array.isArray(range)).toBe(true);
+    const [minSec, maxSec] = range!;
+    expect(maxSec).toBeGreaterThan(minSec); // a real range, not a point
+
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const compound = findByEnSlug(out!.exercises, 'Lat Pulldown'); // COMPOUND_EX
+    const isolation = findByEnSlug(out!.exercises, 'Bayesian Curl'); // isolation
+    expect(compound).toBeDefined();
+    expect(isolation).toBeDefined();
+    // Wired end-to-end: compound takes the engine range MAX, isolation the MIN.
+    expect(compound!.restSec).toBe(maxSec);
+    expect(isolation!.restSec).toBe(minSec);
+    // ...and it is NOT the dead hardcoded 90 for both.
+    expect(compound!.restSec).toBeGreaterThan(isolation!.restSec);
+  });
+
+  it('every planned exercise rests per its compound/isolation class (not a flat 90)', async () => {
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    expect(out!.exercises.length).toBeGreaterThan(1);
+    const restValues = out!.exercises.map((e) => e.restSec);
+    // At least two distinct rest values across the session (compound vs iso) —
+    // the old code produced a single value (90) for every exercise.
+    expect(new Set(restValues).size).toBeGreaterThan(1);
+  });
+
+  it('falls back to 90s when the engine emits no rest range (empty user)', async () => {
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      type: 'training',
+      sessionType: 'PULL',
+      warmup: null,
+      exercises: [{ name: 'Lat Pulldown', sets: 3 }],
+      intensityModifier: null,
+      volumeTargets: null,
+      restTimeRange: null, // engine emitted no range
+      specializationTarget: null,
+      deloadState: 'IDLE',
+      estimatedDurationMin: 50,
+      volumeKg: 0,
+      workoutTitle: 'Antrenament azi',
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out!.exercises[0]!.restSec).toBe(90); // documented fallback
   });
 });

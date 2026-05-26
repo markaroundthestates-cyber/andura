@@ -411,6 +411,7 @@ const DAY_TO_SESSION_TYPE = Object.freeze([
  *   exercises: Array<{name: string, sets: number}>,
  *   intensityModifier: object|null,
  *   volumeTargets: object|null,
+ *   restTimeRange: [number, number]|null,
  *   specializationTarget: string|null,
  *   deloadState: string,
  *   estimatedDurationMin: number,
@@ -488,6 +489,11 @@ export async function getDailyWorkout(userState, now = new Date()) {
     exercises: session && Array.isArray(session.exercises) ? session.exercises : [],
     intensityModifier: blueprints.deload?.intensity_modifier ?? null,
     volumeTargets: blueprints.periodization?.volume_target_pct ?? null,
+    // Goal Adaptation rest-time prescription [minSec, maxSec] per template ×
+    // phase × mode (goalAdaptation/index.js:178 rest_time_modifier). Was
+    // computed by the engine but dropped here → planner hardcoded restSec 90.
+    // null when the blueprint is absent (empty user) → planner falls back to 90.
+    restTimeRange: blueprints.goalAdaptation?.rest_time_modifier ?? null,
     specializationTarget,
     deloadState: blueprints.deload?.deload_state ?? 'IDLE',
     estimatedDurationMin: 50,
