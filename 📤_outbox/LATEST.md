@@ -1,48 +1,31 @@
-# CHAT 6 WRAP 2026-05-25 — CC AUTONOMOUS RAPORT SSOT
+# OVERNIGHT 2026-05-26 — CC AUTONOMOUS RAPORT SSOT
 
-**Status:** **5775 PASS / 0 FAIL** baseline. main HEAD `4293fa78` (wave-2 docs). **~14 commits ahead origin/main, NU pushed** (D031, același PC acasă → commiturile-s local). Triaj forensic 410 ledger open → 21 real-open reale → wave-1 (7) + wave-2 (6) fixuri INTEGRATE + verde.
+**Status:** **4271 PASS / 0 FAIL** + tsc + eslint clean. main HEAD `35873b1b`. **Multe commits ahead origin/main, NU pushed** (D031, acelasi PC). **EXTREME-QUALITY-READY** — cycle-4 convergit pe toate axele.
 **Branch:** main (local ahead origin)
-**Model:** Opus 4.7 EXCLUSIVELY (executori + manager)
-**Mandate chat 6:** D077 quality cycle extins — zero greșeli, fără grabă, iterate→0 + anti-RE + security audits → ABIA apoi Daniel + Beta.
+**Model:** Opus 4.7 EXCLUSIVELY (toti agentii + manager)
+**Mandate:** D080 (LOCKED azi-noapte) — extreme-quality, Daniel NU QA, run-whole-arc autonom step-after-step -> ABIA apoi Daniel + Beta.
 
 ---
 
-## §1 Triaj forensic 410 ledger open (5 agenți Opus, read-only worktree)
+## §1 Cycle-3 redux — audit nuclear FRESH (11 axe) + fix-wave
+Audit fresh pe latest (NU ledger acumulat): security/dead-code/coverage/paritate/a11y/live-E2E/engine-wiring/perf/deps/Coach-Brain-Eval/i18n. Fix-wave 5 worktree-uri izolate -> integrat (22 commits, 62e06b3a, 6025 verde).
 
-Reconciliere 410/410, **zero scăpat** (tooling reutilizabil: `andura-dashboard/scripts/partition-open-triage.js` + `aggregate-triage.js`):
-- **275 already-fixed** (67%) — ledger stale, rezolvate chat 3/4/5 cu commit-dovadă verbatim
-- **101 stale/moot** (25%) — verify-tasks satisfied + findings "✓ pozitive" + count-claims depășite
-- **21 REAL_OPEN** (5%) — cod real
-- **13 NEEDS_DANIEL** (3%)
+## §2 Cycle-4 PIVOT — engine-wiring keystone (cea mai importanta descoperire)
+Creierul rula pe DEFAULTS: greutati hardcodate 20kg (dp.recommend calcula dar nu era consultat), readiness/energy/persona necablate ("vizor fara usa"). Keystone a cablat tot in `buildUserStateForPipeline`: per-set RPE pe logs (dp+fatigue intensitate reala), EnergyCheck->saveReadiness->engine, persona/tier/goalPhase/bfPct(FRACTIE)/weekIdx/trainingWeeks. **Dovedit E2E:** user cu istoric->55kg, cold-start variaza pe experienta (30/21kg). Commits: a673d6fd + 3f40aa52 + c75b5987.
 
-Verdict-uri per-finding cu dovadă: `andura-dashboard/data/triage/cluster-{1..5}-verdict.md`.
+## §3 Re-audit cycle-4 — toate axele VERZI
+a11y READY · paritate READY (2 CRIT nume-EN in antrenament rezolvate) · engine-input CLOSED (4 gaps inchise, test-proven) · live-E2E (brain adapts live) · security Beta-ready · coverage 91.5%.
 
-## §2 Wave-1 — 7 fixuri funcționale (cherry-pick integrat main, 5755 verde)
+## §4 Coach Brain Eval — teza "cea mai desteapta app" validata
+50k scenarii / 0 violari mecanice + oracle Opus 4.7 pe 900 = **76.5% string-match, ZERO bug engine.** Gap = artefacte vocabular (NONE=hold) + erori aritmetice ALE ORACOLULUI + alegeri defendabile (RECOMP body-aware, noise-robust TDEE). **Engine la nivelul lui Claude sau peste.** Cost ~$9/$42. Harness integrat pe main = regression guard permanent (27 self-teste).
 
-`363d4adc` SHAPE recent-sessions toEngineSession · `f9ab1994` pain CDL persist (§43-H2) · `8e4def78` Compozitie corporala BF% US Navy · `000e695a` Tinte personale · `defe3106` workout setloginput wire · `84c15faa` workout substitution row · `d3995d81` workout why-exercise · `36f0add2` time-bomb scheduleStore fixat PERMANENT.
+## §5 Dead-code + SSOT + curatenie
+114 fisiere insula vanilla arhivate -> `99-archive/` -> 0 cod mort src/. D080 + PRIMER §5 + CHAT_STATE lockate. 139 worktree-uri stale curatate (146 branch-uri pastrate). 1 test standalone stale (calibration) reparat.
 
-## §3 Wave-2 — 6 fixuri (salvate din worktrees blocked, 5775 verde)
-
-`ab9ffdd7` toast dedup · `c08e5898` firebase _schemaVersion · `87c7c517` PostSummary Marius+streak · `059aa43b` Auth separatoare · `0f217bf3` TDEE current-vs-tinta · `4293fa78` governance docs (ROPA + post-launch + build-tracking).
-
-Agenții wave-2 au pornit off baza veche `38d1e01b` → blocked de time-bomb (au refuzat corect `--no-verify`); munca disjunctă de wave-1 salvată via cp+commit pe main.
-
-## §4 Descoperiri + lecții
-
-- **§39-C1 false alarm** — library = 657 confirmat (264 tests, 2× `toBe(657)`). Gate intact.
-- **time-bomb scheduleStore** — 2 teste time-dependent (fixture 2026-05-18). Fixat permanent. Flag audit: posibile alte teste clock-dependent.
-- **Lecție worktree:** pornesc off HEAD vechi (origin), nu local main ahead → integrare via cp+commit.
-- **Anti-fabricare excelentă:** agenții au refuzat să inventeze metrici (RPE/energy/injury/weekIdx) + zero `--no-verify`.
-
-## §5 Follow-up-uri parțiale (parity-closed, wire pending)
-
-- `43-H2` — muscleRecovery să **consume** pain-cdl (region→muscle mapping, engine-side)
-- **Profil persistence** — onboardingStore extension (composition+targets, incl. `inaltime` pt BF%); atenție FSM tests
-
-## §6 Next P1 (per D077)
-
-Wave-3 (43-H2 consumption + profile persistence + Istoric virtualization 35-M2 + fontweight/spacing) → onboarding paradigm (lean: add `inaltime`) → **audit nuclear FRESH pe latest** → fix → repeat → 0 findings → anti-RE + security → Daniel + Beta.
+## §6 NEXT — cele 4 gate-uri Daniel (NU autonome, prepped+queued)
+1. **Push** (D031, trigger verbal) · 2. **Smoke a-z live** (telefon+Firebase real+judecata CEO) · 3. **Google OAuth** (checklist console gata: `cycle3/OAUTH-ENABLEMENT-CHECKLIST.md`, cod env-gated, lipseste `VITE_GOOGLE_OAUTH_CLIENT_ID`) · 4. **Beta GO**. (Post-Beta: TWA->Play Store.)
+Intrebare deschisa: "9 blockers" = framing legacy (gate real = D042/D043/D077). **ROTEAZA CHEIA API** (e in transcript plaintext).
 
 ---
 
-🦫 **Chat 6 wrap. Triaj 410/410 (21 real-open din zgomot) + wave-1 (7) + wave-2 (6) integrate, suita 5775 / 0 FAIL. 14 commits ahead origin NU pushed (același PC). D077 LOCKED. Next: wave-3 → onboarding → audit nuclear fresh. Handover: CHAT_STATE + HANDOVER_2026-05-25_chat6 inbox.**
+🦫 **Overnight wrap. EXTREME-QUALITY-READY: creierul lucreaza live (dovedit E2E), oracle-validat (0 bug engine), 114 dead-files arhivate, D080 lockat, eval-harness = regression guard pe main. main 35873b1b, 4271 verde, NU pushed. Ramane = cele 4 gate-uri Daniel. Handover narrativ: HANDOVER_2026-05-26_overnight-cycle4-extreme-quality-ready + CHAT_STATE §1.**
