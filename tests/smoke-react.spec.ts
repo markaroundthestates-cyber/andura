@@ -101,52 +101,49 @@ test.describe('React 4-tab smoke (public routes only — no auth required)', () 
     });
   }
 
-  test('PWA offline mode — page reloads from SW cache', async ({ page, context }) => {
+  test('PWA offline mode — page reloads from SW cache', async ({ page }) => {
     await page.goto('/');
     await dismissMedicalDisclaimerIfPresent(page);
-    // Wait briefly for SW registration; if not registered, test.skip().
+
+    // SW registration is async (injectRegister 'script-defer' + registerType
+    // 'prompt'). Poll up to 5s for a registration; dev builds may not register
+    // a SW at all → skip (offline shell unverifiable, prod-only feature).
     const swRegistered = await page.evaluate(async () => {
       if (!('serviceWorker' in navigator)) return false;
-      const reg = await navigator.serviceWorker.getRegistration();
-      return !!reg;
+      const deadline = Date.now() + 5_000;
+      while (Date.now() < deadline) {
+        if (await navigator.serviceWorker.getRegistration()) return true;
+        await new Promise((r) => setTimeout(r, 300));
+      }
+      return false;
     });
     if (!swRegistered) {
       test.skip(true, 'service worker not registered în current dev build — SW activates în prod build only');
       return;
     }
 
-    // SMOKE-REACT-2-FAIL-FIX (chat 5) — fix 2: page.reload post setOffline race
-    // pe net::ERR_INTERNET_DISCONNECTED (Playwright context.setOffline fires
-    // before SW intercept handshake completes). Switch la SW cache direct
-    // fetch assertion — verifica cached shell response via Cache Storage API
-    // direct fara reload race. Daca SW cache populated → offline shell ready.
-    await context.setOffline(true);
-    try {
-      const cacheHit = await page.evaluate(async () => {
-        if (!('caches' in window)) return { ok: false, reason: 'no-caches-api' };
-        const keys = await caches.keys();
-        if (!keys.length) return { ok: false, reason: 'no-cache-keys' };
-        // Try each cache for a precached shell entry (workbox-generateSW
-        // populates precache cu html/js/css din manifest).
-        for (const key of keys) {
+    // SMOKE-REACT-3-FAIL-FIX — the prior immediate caches.keys() check raced the
+    // workbox precache, which populates asynchronously AFTER the SW activates and
+    // is noticeably slower over the real network in the post-deploy live smoke
+    // (qa-report.yml hits andura.app). Wait for serviceWorker.ready, then poll the
+    // Cache Storage up to ~12s for any populated precache entry. If a precached
+    // shell resource exists, the offline shell is ready — no setOffline reload race
+    // needed (that was the chat-5 ERR_INTERNET_DISCONNECTED source). Soft assert
+    // preserves the signal without flaking on propagation timing.
+    const cacheReady = await page.evaluate(async () => {
+      if (!('caches' in window)) return false;
+      await navigator.serviceWorker.ready.catch(() => {});
+      const deadline = Date.now() + 12_000;
+      while (Date.now() < deadline) {
+        for (const key of await caches.keys()) {
           const cache = await caches.open(key);
-          const reqs = await cache.keys();
-          if (reqs.length > 0) {
-            // Found at least one cached resource — SW shell ready offline.
-            return { ok: true, cacheKey: key, entryCount: reqs.length };
-          }
+          if ((await cache.keys()).length > 0) return true;
         }
-        return { ok: false, reason: 'empty-caches' };
-      });
-      expect.soft(cacheHit.ok, `SW cache populated (${JSON.stringify(cacheHit)})`).toBe(true);
-    } catch (err) {
-      // Graceful fallback — eval failure (rare) NU should hard-fail suite.
-      // Soft signal via test annotation instead of throw.
-      // eslint-disable-next-line no-console
-      console.warn('PWA offline cache eval failed:', err);
-    } finally {
-      await context.setOffline(false);
-    }
+        await new Promise((r) => setTimeout(r, 500));
+      }
+      return false;
+    });
+    expect.soft(cacheReady, 'SW precache populated within timeout (offline shell ready)').toBe(true);
   });
 
   test('Homepage axe-core WCAG 2.1 AA scan — zero critical/serious', async ({ page }) => {
