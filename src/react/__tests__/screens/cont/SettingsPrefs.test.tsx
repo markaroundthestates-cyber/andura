@@ -35,16 +35,22 @@ describe('SettingsPrefs — render + interactions', () => {
     expect(screen.getByRole('heading', { name: 'Setari', level: 1 })).toBeInTheDocument();
   });
 
-  it('renders kg/lb radios + default kg', () => {
+  it('renders kg active + lb disabled (lb conversion post-Beta)', () => {
     renderScreen();
     expect(screen.getByTestId('unit-kg')).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByTestId('unit-lb')).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByTestId('unit-lb')).toBeDisabled();
   });
 
-  it('unit lb click → store updated', () => {
+  it('lb disabled → click is a no-op, store stays kg (no false switch)', () => {
     renderScreen();
     fireEvent.click(screen.getByTestId('unit-lb'));
-    expect(useSettingsStore.getState().unitSystem).toBe('lb');
+    expect(useSettingsStore.getState().unitSystem).toBe('kg');
+  });
+
+  it('honest note: doar kilograme momentan', () => {
+    renderScreen();
+    expect(screen.getByText(/Momentan doar kilograme/)).toBeInTheDocument();
   });
 
   it('renders week start L/D + default L', () => {
@@ -62,7 +68,7 @@ describe('SettingsPrefs — render + interactions', () => {
   it('locale section ro-RO display + post-Beta hint', () => {
     renderScreen();
     expect(screen.getByText(/Romana \(ro-RO\)/)).toBeInTheDocument();
-    expect(screen.getByText(/post-Beta/)).toBeInTheDocument();
+    expect(screen.getByText(/Engleza si alte limbi vor fi disponibile post-Beta/)).toBeInTheDocument();
   });
 
   it('back navigates la /app/cont', () => {

@@ -1,6 +1,8 @@
 // ══ SETTINGS PREFS — Phase 6 task_13 Cont Sub-Screen ═════════════════════
-// Units kg/lb + week start L/D + locale ro-RO fixed (V1 single locale).
-// Persist settingsStore.unitSystem + weekStart fields.
+// Units kg (lb disabled, post-Beta) + week start L/D + locale ro-RO fixed.
+// kg is the effective active unit (no weight display converts to lb yet), so
+// the lb option is shown-but-disabled with an honest note instead of pretending
+// a switch happened. Persist settingsStore.weekStart field.
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +24,6 @@ const WEEK_START_OPTIONS: ReadonlyArray<{ value: WeekStart; label: string }> = [
 
 export function SettingsPrefs(): JSX.Element {
   const navigate = useNavigate();
-  const unit = useSettingsStore((s) => s.unitSystem);
   const setUnitSystem = useSettingsStore((s) => s.setUnitSystem);
   const weekStart = useSettingsStore((s) => s.weekStart);
   const setWeekStart = useSettingsStore((s) => s.setWeekStart);
@@ -42,17 +43,22 @@ export function SettingsPrefs(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Unitati
         </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
           {UNIT_OPTIONS.map((opt, idx) => {
-            const selected = unit === opt.value;
+            // Honest V1: app shows weights in kg everywhere; lb conversion is
+            // post-Beta. kg is the effective active unit regardless of any
+            // legacy persisted value; lb is disabled (no false "switched" state).
+            const disabled = opt.value === 'lb';
+            const selected = opt.value === 'kg';
             return (
               <button
                 key={opt.value}
                 type="button"
                 data-testid={`unit-${opt.value}`}
                 aria-pressed={selected}
-                onClick={() => setUnitSystem(opt.value)}
-                className={`w-full flex items-center px-4 py-3 text-left ${idx < UNIT_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${selected ? 'text-brick font-semibold' : 'text-ink'}`}
+                disabled={disabled}
+                onClick={() => !disabled && setUnitSystem(opt.value)}
+                className={`w-full flex items-center px-4 py-3 text-left ${idx < UNIT_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${disabled ? 'text-ink2 opacity-60 cursor-not-allowed' : selected ? 'text-brick font-semibold' : 'text-ink'}`}
               >
                 <span className="flex-1 text-sm">{opt.label}</span>
                 {selected && <span aria-hidden="true">•</span>}
@@ -60,6 +66,9 @@ export function SettingsPrefs(): JSX.Element {
             );
           })}
         </div>
+        <p className="text-xs text-ink2 mb-4 mt-2 leading-snug">
+          Momentan doar kilograme. Pounds vor fi disponibile post-Beta.
+        </p>
 
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Inceput saptamana
