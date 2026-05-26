@@ -23,6 +23,7 @@ import { MS_PER_DAY } from '../../constants.js';
 import type { PlannedExercise, PlannedWorkoutOutput } from './engineWrappers';
 import { toExerciseDisplay } from './exerciseDisplay';
 import { DP } from '../../engine/dp.js';
+import { getComputedReadinessScore } from '../../engine/readiness.js';
 import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
 import { DB } from '../../db.js';
 import { PAIN_REGION_GROUP_MAP } from '../../engine/muscleRecoveryConstants.js';
@@ -465,10 +466,13 @@ export function buildUserStateForPipeline(): {
   };
 }
 
-// DP.recommend return slice we read for the planned target (kg + repsTarget).
-// DP emits a richer object (status/statusLabel/...) but the planner only needs
-// the prescriptive numbers. `kg` already rounded to the equipment step inside
-// DP.recommend; `repsTarget` is phase-aware (DP reads phase-override for CUT).
+// DP.getSmartRecommendation return slice we read for the planned target (kg +
+// repsTarget). DP emits a richer object (status/statusLabel/repsRange/...) but
+// the planner only needs the prescriptive numbers. `kg` already rounded to the
+// equipment step inside DP.recommend (which getSmartRecommendation wraps);
+// `repsTarget` is phase-aware (DP reads phase-override for CUT). When readiness
+// < 60 on an INCREASE day, getSmartRecommendation HOLDS the weight at lastW
+// (readiness gate) — that suppression IS the wire fix #1.
 interface DpRecommendation {
   kg?: number;
   repsTarget?: number;
@@ -481,8 +485,12 @@ interface DpRecommendation {
  * (CRIT C1 — was hardcoded targetKg:20 / targetReps:10 for every exercise).
  *
  *   - User WITH logged history (DP.getLogs(name) non-empty): targetKg/
- *     targetReps from DP.recommend(name) — the real double-progression output
- *     keyed on the ENGLISH canonical name.
+ *     targetReps from DP.getSmartRecommendation(name, readinessScore, null) —
+ *     the readiness-GATED double-progression output keyed on the ENGLISH
+ *     canonical name. On an INCREASE day with readiness < 60 the engine holds
+ *     the weight at lastW instead of adding a step ("don't push heavy when you
+ *     slept badly"). readinessScore null (no energy-check today) → engine runs
+ *     the plain double-progression (no gate), identical to the prior behavior.
  *   - NEW user / cold start (no logs): targetKg from suggestStartWeight(name,
  *     experienceEn) population prior; targetReps from DP's phase-aware INIT
  *     repsTarget (rMin, CUT-capped via phase-override).
@@ -491,16 +499,27 @@ interface DpRecommendation {
  * alternativeEngine maps, DP REP_RANGES). The `id` slug + the DP/cold-start
  * lookups all use that English name; only `name`/`sub` carry the Romanian
  * display form (Romanian-first app) via exerciseDisplay.toExerciseDisplay.
+ *
+ * @param readinessScore live today readiness (getComputedReadinessScore) read
+ *   ONCE by the composer and threaded in — null when no energy-check logged.
  */
 function toPlannedExercise(
   engineEx: { name: string; sets: number },
   idx: number,
   experienceEn: string,
+  readinessScore: number | null,
 ): PlannedExercise {
   const slug = engineEx.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   const display = toExerciseDisplay(engineEx.name);
   // English canonical name — DP records + cold-start guideline key on it.
-  const rec = DP.recommend(engineEx.name) as DpRecommendation | null;
+  // getSmartRecommendation wraps DP.recommend + applies the readiness gate
+  // (holds weight on INCREASE days when readinessScore < 60). This is the
+  // cycle-4 fix completion: the prescribed kg now consumes today's readiness.
+  const rec = DP.getSmartRecommendation(
+    engineEx.name,
+    readinessScore,
+    null,
+  ) as DpRecommendation | null;
   const hasHistory = DP.getLogs(engineEx.name, 1).length > 0;
   const targetReps =
     rec && typeof rec.repsTarget === 'number' ? rec.repsTarget : 10;
@@ -540,8 +559,12 @@ export async function composePlannedWorkoutToday(
     const experienceEn = experienceToEngine(
       useOnboardingStore.getState().data.experience,
     );
+    // Fix #1 — live readiness read ONCE here, threaded into every exercise's
+    // DP.getSmartRecommendation. Null when no energy-check logged today (engine
+    // skips the gate). Same source the readiness card + "why" explainer use.
+    const readinessScore = getComputedReadinessScore();
     const exercises = (plan.exercises ?? []).map((ex, idx) =>
-      toPlannedExercise(ex, idx, experienceEn),
+      toPlannedExercise(ex, idx, experienceEn, readinessScore),
     );
     // Deload engine emits intensity_modifier object always (IDLE state =
     // {rir_increment:0, intensity_pct_decrement:0}). 'minus' only when

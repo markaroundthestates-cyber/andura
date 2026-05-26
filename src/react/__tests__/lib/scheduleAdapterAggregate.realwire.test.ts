@@ -20,7 +20,7 @@ import {
   commitCalendarEdit,
   getWeekStartIso,
 } from '../../../engine/schedule/scheduleAdapter.js';
-import { DB } from '../../../db.js';
+import { DB, tod } from '../../../db.js';
 import { suggestStartWeight } from '../../../engine/coldStartGuidelines.js';
 
 const TUESDAY_2026_05_19 = new Date(2026, 4, 19); // dayIdx 1 (M, PULL session)
@@ -377,5 +377,82 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
     expect(full).toBeDefined();
     expect(typeof full!.name).toBe('string');
     expect(full!.name.length).toBeGreaterThan(0);
+  });
+});
+
+// ── FIX #1: readiness GATES the planned weight (DP.getSmartRecommendation) ──
+// Anti-recurrence of the cycle-4 "vizor fara usa": the live planner used to call
+// bare DP.recommend(), so today's readiness never touched the prescribed kg.
+// These tests drive the REAL pipeline (NO mock of the engine path) and prove a
+// DIFFERENT readiness produces a DIFFERENT recommended kg end-to-end:
+//   - seed Lat Pulldown at top reps (12) + light RPE → DP base = INCREASE day
+//   - LOW readiness (<60) → getSmartRecommendation HOLDS weight at lastW (55)
+//   - HIGH readiness → INCREASE intact → +1 step (55 -> 59 -> stack-rounded 60)
+// Readiness reads the REAL `tod()` (engine internal Date), so we seed against it.
+describe('scheduleAdapterAggregate — FIX #1 readiness-gated planned weight', () => {
+  function findByEnSlug(
+    exercises: ReadonlyArray<{ id: string; targetKg: number; targetReps: number }>,
+    enName: string,
+  ): { id: string; targetKg: number; targetReps: number } | undefined {
+    const slug = enName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    return exercises.find((e) => e.id.startsWith(`${slug}-`));
+  }
+
+  // Lat Pulldown at top reps (12) / RPE 7 across 3 sessions → DP INCREASE branch
+  // (atTopReps && lastRPE <= 8). 55 kg already sits on the bailib_stack.
+  function seedIncreaseDayLogs(): void {
+    DB.set('logs', [
+      { ex: 'Lat Pulldown', w: 55, reps: '12', rpe: 7, set: 1, ts: Date.now() - 1000 },
+      { ex: 'Lat Pulldown', w: 55, reps: '12', rpe: 7, set: 1, ts: Date.now() - 2000 },
+      { ex: 'Lat Pulldown', w: 55, reps: '12', rpe: 7, set: 1, ts: Date.now() - 3000 },
+    ]);
+  }
+
+  function yesterdayKey(): string {
+    const y = new Date();
+    y.setDate(y.getDate() - 1);
+    return y.toLocaleDateString('sv');
+  }
+
+  it('LOW readiness (<60) HOLDS the INCREASE weight; HIGH readiness adds a step', async () => {
+    // ── LOW readiness: energy 1 (=60) + a big kcal deficit yesterday (-20) → 40.
+    seedIncreaseDayLogs();
+    DB.set('readiness', { [tod()]: 1 });
+    DB.set('kcals', { [yesterdayKey()]: 1000 }); // 50% of KCAL_TARGET 2000 → -20
+    const lowOut = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const lowLat = findByEnSlug(lowOut!.exercises, 'Lat Pulldown');
+    expect(lowLat).toBeDefined();
+    // Readiness gate held the weight at lastW (55), did NOT add the +step.
+    expect(lowLat!.targetKg).toBe(55);
+
+    // ── HIGH readiness: energy 5 (=100), no deficit. Same logs → INCREASE fires.
+    seedIncreaseDayLogs();
+    DB.set('readiness', { [tod()]: 5 });
+    DB.set('kcals', {});
+    const highOut = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const highLat = findByEnSlug(highOut!.exercises, 'Lat Pulldown');
+    expect(highLat).toBeDefined();
+    // INCREASE: 55 + 4 = 59 → bailib_stack round → 60. Strictly heavier than LOW.
+    expect(highLat!.targetKg).toBe(60);
+    expect(highLat!.targetKg).toBeGreaterThan(lowLat!.targetKg);
+  });
+
+  it('readiness reaches the engine: low-readiness kg differs from no-readiness kg', async () => {
+    // No energy-check today (readiness null) → engine runs plain double-
+    // progression (INCREASE → 60). Then a LOW readiness → held at 55. The two
+    // diverging numbers prove the score is CONSUMED, not ignored.
+    seedIncreaseDayLogs();
+    DB.set('readiness', {}); // none today → getComputedReadinessScore() = null
+    const noReadyOut = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const noReadyLat = findByEnSlug(noReadyOut!.exercises, 'Lat Pulldown');
+    expect(noReadyLat!.targetKg).toBe(60); // ungated INCREASE
+
+    seedIncreaseDayLogs();
+    DB.set('readiness', { [tod()]: 1 });
+    DB.set('kcals', { [yesterdayKey()]: 1000 });
+    const lowOut = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const lowLat = findByEnSlug(lowOut!.exercises, 'Lat Pulldown');
+    expect(lowLat!.targetKg).toBe(55); // gated hold
+    expect(lowLat!.targetKg).not.toBe(noReadyLat!.targetKg);
   });
 });

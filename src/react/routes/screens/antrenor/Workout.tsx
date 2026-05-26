@@ -107,12 +107,14 @@ export function Workout(): JSX.Element {
   const currentExercise: PlannedExercise = (hasWorkout && exercises !== null
     ? exercises[safeExIdx]
     : undefined) ?? defaultExercise;
-  // C3 — apply the ENGINE intensityMod baseline (deload output) to target kg.
-  // Was the EnergyCheck self-report (sessionContext.intensityMod) — but once
-  // readiness is persisted (C2), the self-report already shapes the prescription
-  // via the readiness read-side, so stacking a second blunt +/-20% multiplier
-  // here double-counted. The engine deload baseline is the single weight signal;
-  // the self-report still drives the preview banner + readiness, not weight.
+  // Apply the ENGINE intensityMod baseline (deload output) to target kg. This
+  // is the COARSE deload-state modifier (±%), distinct from readiness: as of
+  // the wiring fix, today's readiness already shapes the per-exercise targetKg
+  // UPSTREAM in the pipeline — scheduleAdapterAggregate.toPlannedExercise calls
+  // DP.getSmartRecommendation(name, readinessScore, ...), which holds the weight
+  // on an INCREASE day when readiness < 60. So targetKg arrives readiness-gated;
+  // this block layers only the deload baseline on top (no double-count — the two
+  // signals are different: per-exercise progression gate vs whole-session deload).
   // Magnitudes (-20% / +15%) unchanged (separate Daniel UX call). Round 0.5
   // (incremente reale sala). 'normal' / no deload → target neschimbat.
   const intensityMod = engineIntensityMod;
