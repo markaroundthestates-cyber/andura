@@ -30,6 +30,13 @@ const LOCALE_STORAGE_KEY = 'sf.locale';
 const DEFAULT_LOCALE = 'ro';
 const FALLBACK_LOCALE = 'en';
 
+// Locales auto-selectable din navigator.language. `en` e EXCLUS: bundle-ul EN
+// e placeholder neterminat (markeri `TODO_EN:`) post-Beta — Andura V1 e RO-only
+// (vezi SettingsPrefs "Romana — Implicit"). Un browser en-US NU trebuie sa
+// primeasca raw TODO_EN strings; doar `ro` se auto-detecteaza. Alegere explicita
+// user (setLocale → localStorage) ramane onorata pentru orice bundle suportat.
+const AUTO_DETECT_LOCALES = Object.freeze(['ro']);
+
 /** @type {'ro' | 'en' | null} */
 let _cachedLocale = null;
 
@@ -84,12 +91,14 @@ export function getCurrentLocale() {
     }
   } catch { /* private mode etc — ignore */ }
 
-  // 2. navigator.language prefix match
+  // 2. navigator.language prefix match — doar locale auto-selectable
+  // (AUTO_DETECT_LOCALES). `en` exclus: placeholder neterminat, NU se
+  // auto-detecteaza din browser en-US (altfel leak TODO_EN user-facing).
   try {
     const nav = typeof navigator !== 'undefined' ? navigator.language : null;
     if (nav) {
       const prefix = String(nav).slice(0, 2).toLowerCase();
-      if (bundles[prefix]) {
+      if (AUTO_DETECT_LOCALES.includes(prefix) && bundles[prefix]) {
         _cachedLocale = /** @type {'ro' | 'en'} */ (prefix);
         return _cachedLocale;
       }

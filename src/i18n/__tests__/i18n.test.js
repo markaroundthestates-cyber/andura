@@ -129,6 +129,32 @@ describe('getCurrentLocale', () => {
     expect(['ro', 'en']).toContain(locale);
   });
 
+  it('en-US browser auto-detects RO, NU en (anti TODO_EN leak)', () => {
+    // BUG #6 regression — navigator en-US NU trebuie sa auto-selecteze bundle-ul
+    // EN (placeholder TODO_EN neterminat). EN nu e auto-detectabil; doar alegere
+    // explicita user (localStorage). Fara fix, why-explanation + alte strings
+    // leak-au raw "TODO_EN: ..." pe orice browser englez.
+    const navSpy = vi.spyOn(navigator, 'language', 'get').mockReturnValue('en-US');
+    _resetI18nCache();
+    expect(getCurrentLocale()).toBe('ro');
+    navSpy.mockRestore();
+  });
+
+  it('ro browser auto-detects RO', () => {
+    const navSpy = vi.spyOn(navigator, 'language', 'get').mockReturnValue('ro-RO');
+    _resetI18nCache();
+    expect(getCurrentLocale()).toBe('ro');
+    navSpy.mockRestore();
+  });
+
+  it('explicit en localStorage override still honored (post-Beta opt-in)', () => {
+    // Fix-ul exclude EN doar din AUTO-detect navigator; alegerea explicita
+    // (setLocale/localStorage) ramane valida pentru EN viitor.
+    localStorage.setItem('sf.locale', 'en');
+    _resetI18nCache();
+    expect(getCurrentLocale()).toBe('en');
+  });
+
   it('caches result across calls (no re-detect)', () => {
     setLocale('en');
     const first = getCurrentLocale();
