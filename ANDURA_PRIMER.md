@@ -245,7 +245,12 @@ Andura = **PWA fitness coach AI Romanian-first** live la `andura.app`. Bootstrap
 
 ## §6 Ce e de făcut (Backlog Ordered)
 
-**P1 NEXT:** Daniel CEO approve V2 design `📥_inbox/iter-1-mass-fix-v2/ORCHESTRATOR.md` + `_MASTER_BACKLOG.md` + sample `PROMPT_CC_iter1_wave_a_critical_real.md` → post-approve paste Wave A prompt in NEW CC session ACASĂ → ~12-16h autonomous execution → ~40 tasks LANDED Wave A → trigger Wave B/C/D sequential or hybrid parallel per `_DAG.md §2`. Iter 1 EXIT audit post all Waves → Daniel CEO decide CONTINUE iter 2 or EXIT loop convergence.
+**P1 NEXT (2026-05-27, post moat P3-wiring + nutritie redesign LANDED & PUSHED):** Daniel SMOKE gates — arcul autonom convergit, totul pe origin (4963 PASS / 275 files, build OK). Ramane Daniel-side:
+1. **Firebase console** (~2-5 min) — provider **Email link (passwordless) ON** + `andura.app` la authorized domains (`📥_inbox/auth-fixes-2026-05-26/DANIEL_AUTH_SETUP.md`). Fara asta butonul "Creeaza cont" apare dar `sendMagicLink` da eroare. Optional: Google OAuth + `VITE_GOOGLE_OAUTH_CLIENT_ID` (`📥_inbox/audit-fresh-2026-05-25/cycle3/OAUTH-ENABLEMENT-CHECKLIST.md`).
+2. **Smoke a-z live** — telefon + Firebase real + judecata CEO (creeaza cont → workout din 657 nume RO → substitutie aparat-ocupat → nutritie forward + cantar calibrator).
+3. **Beta GO** — decizia Daniel. Post-Beta: TWA → Play Store.
+
+> Backlog istoric mai jos (iter-1-mass-fix-v2 + Track 4 React phases 3-9 + Track 5/6/7) = **SUPERSEDED** — convergit prin iter 1/2/3 + cycle 1-4 + moat P3-wiring (vezi §5 timeline 2026-05-21→27). Pastrat ca referinta, NU forward-pointer activ.
 
 **Pre-Beta LOCK 1 100% complete ✅ (verified chat 2026-05-16 ACASĂ + deploy main same day post branch reconcile):**
 - library 657 ex ✅ LANDED
