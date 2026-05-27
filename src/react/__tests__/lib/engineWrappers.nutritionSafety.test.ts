@@ -1,10 +1,12 @@
 // ══ ENGINE WRAPPERS — Nutrition safety + AUTO body-comp wiring ════════════
-// BUG #13 (healthy-floor guardrail pe kcal OUTPUT) + BUG #5 (AUTO phase din
-// body-comp cand weight-trend e flat/cold-start). Real-store wiring (NU mock
-// engine): user fresh fara observatii BN → buildPerUserBaseline path.
+// BUG #4 (subponderal → surplus de crestere, NU mentenanta/deficit) + BUG #5
+// (AUTO phase din body-comp cand weight-trend e flat/cold-start). Real-store
+// wiring (NU mock engine): user fresh fara observatii BN → buildPerUserBaseline.
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { getNutritionTargetsToday, getAutoDetectedPhaseLabelRo } from '../../lib/engineWrappers';
+import { readUserMaintenanceTDEE } from '../../lib/userTdee';
+import { LEAN_GAIN_SURPLUS_MULT } from '../../../engine/bodyComposition.js';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
@@ -30,16 +32,16 @@ beforeEach(() => {
   useWorkoutStore.setState({ sessionsHistory: [] } as never);
 });
 
-describe('BUG #13 — getNutritionTargetsToday healthy-floor guardrail', () => {
-  it('subponderal + goal slabire → kcal ridicat la mentenanta (clamped)', async () => {
+describe('BUG #4 — getNutritionTargetsToday underweight-must-gain guardrail', () => {
+  it('subponderal + goal slabire → kcal ridicat la surplus de crestere (clamped)', async () => {
     // 55kg/182cm → BMI 16.6 (subponderal). Goal slabire ar da deficit CUT 0.82.
     setOnboarding({ weight: 55, height: 182, goal: 'slabire' });
+    const maintenanceTdee = readUserMaintenanceTDEE() as number;
     const t = await getNutritionTargetsToday();
     expect(t.healthyFloorClamped).toBe(true);
-    // Clamp la mentenanta: kcal >= mentenanta (NU sub, NU deficit). Mentenanta
-    // per-user ~BMR×1.25 + sesiuni; deficit-ul ar fi fost ~0.82× din asta.
-    // Verificam ca NU mai e in deficit: kcal == mentenanta (round).
-    expect(t.kcalTarget).toBeGreaterThan(0);
+    // BUG #4: NU mai e deficit nici mentenanta — e surplus de crestere (TDEE×1.08).
+    expect(t.kcalTarget).toBe(Math.round(maintenanceTdee * LEAN_GAIN_SURPLUS_MULT));
+    expect(t.kcalTarget).toBeGreaterThan(maintenanceTdee);
   });
 
   it('greutate sanatoasa + goal slabire → deficit permis (NU clamped)', async () => {
@@ -48,20 +50,26 @@ describe('BUG #13 — getNutritionTargetsToday healthy-floor guardrail', () => {
     expect(t.healthyFloorClamped).toBe(false);
   });
 
-  it('subponderal + goal masa (surplus) → NU clamped (recomandarea nu e deficit)', async () => {
-    setOnboarding({ weight: 55, height: 182, goal: 'masa' });
-    const t = await getNutritionTargetsToday();
-    expect(t.healthyFloorClamped).toBe(false);
-  });
-
-  it('clamp efectiv ridica kcal-ul vs un deficit pur', async () => {
-    // Comparam acelasi user subponderal: cu slabire (clamped) vs mentenanta.
+  it('subponderal indiferent de goal → tot un surplus de crestere (slabire/mentenanta egal)', async () => {
+    // BUG #4 esenta: subponderalul creste, oricare ar fi goal-ul ales. Slabire
+    // (deficit) si mentenanta (zero deficit) ajung AMANDOUA la acelasi surplus.
     setOnboarding({ weight: 55, height: 182, goal: 'slabire' });
-    const clamped = await getNutritionTargetsToday();
+    const cut = await getNutritionTargetsToday();
     setOnboarding({ weight: 55, height: 182, goal: 'mentenanta' });
     const maintain = await getNutritionTargetsToday();
-    // Clamped (slabire) ridica la mentenanta → egal cu mentenanta, NU mai jos.
-    expect(clamped.kcalTarget).toBe(maintain.kcalTarget);
+    expect(cut.healthyFloorClamped).toBe(true);
+    expect(maintain.healthyFloorClamped).toBe(true);
+    expect(cut.kcalTarget).toBe(maintain.kcalTarget); // ambele la surplus
+  });
+
+  it('subponderal + goal masa (BULK 1.08) → recomandarea egaleaza tinta de crestere (NU clamped)', async () => {
+    // Goal masa = BULK 1.08 = exact tinta de crestere → recomandarea egaleaza
+    // surplus-ul, deci NU mai are ce ridica (clamped false), dar e tot surplus.
+    setOnboarding({ weight: 55, height: 182, goal: 'masa' });
+    const maintenanceTdee = readUserMaintenanceTDEE() as number;
+    const masa = await getNutritionTargetsToday();
+    expect(masa.healthyFloorClamped).toBe(false);
+    expect(masa.kcalTarget).toBeGreaterThan(maintenanceTdee); // surplus, nu deficit
   });
 });
 

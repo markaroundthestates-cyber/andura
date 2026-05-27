@@ -59,9 +59,10 @@ import {
   detectAutoPhaseFromBodyComp,
 } from '../../engine/goalAdaptation/phaseAutoDetection.js';
 import { useProgresStore } from '../stores/progresStore';
-// BUG #13 safety — guardrail anti-subnutritie pe OUTPUT-ul de kcal: cand user-ul
-// e deja subponderal (BMI <= 18.5) NU servim deficit (clamp la mentenanta).
-// computeBMI + deriveCurrentBfPct alimenteaza si AUTO body-comp detection (BUG #5).
+// BUG #13 + BUG #4 safety — guardrail anti-subnutritie pe OUTPUT-ul de kcal:
+// cand user-ul e deja subponderal (BMI <= 18.5) NU servim deficit nici mentenanta,
+// ci un surplus moderat de crestere (clampKcalToHealthyFloor ridica la TDEE×1.08).
+// computeBMI alimenteaza si AUTO body-comp detection (BUG #5).
 import { clampKcalToHealthyFloor, computeBMI } from '../../engine/bodyComposition.js';
 import { useOnboardingStore } from '../stores/onboardingStore';
 // §48-H1 audit fix — adapter integrity instrumentation. Every catch path
@@ -554,8 +555,8 @@ export interface NutritionTargetsEngine {
   carbsG: number;
   source: 'engine' | 'baseline';
   confidence: number; // 0-1
-  // BUG #13 safety — true cand recomandarea a fost ridicata la mentenanta
-  // fiindca user-ul e subponderal (BMI <= 18.5). UI arata mesajul ferm-prietenos.
+  // BUG #4 safety — true cand recomandarea a fost ridicata la un surplus de
+  // crestere fiindca user-ul e subponderal (BMI <= 18.5). UI arata mesajul de sustinere.
   healthyFloorClamped?: boolean;
 }
 
@@ -656,11 +657,13 @@ const PHASE_MULTIPLIERS: Record<string, number> = {
 };
 
 /**
- * BUG #13 safety chokepoint — aplica guardrail-ul anti-subnutritie pe kcal-ul
- * final. Cand user-ul e deja subponderal (BMI <= 18.5) SI kcal-ul recomandat e
- * un deficit (sub mentenanta reala per-user), ridica la mentenanta (zero deficit
- * toward harm). Citeste greutate/inaltime (onboardingStore) + mentenanta reala
- * (readUserMaintenanceTDEE) la I/O boundary, deleaga la pura clampKcalToHealthyFloor.
+ * BUG #13 + BUG #4 safety chokepoint — aplica guardrail-ul anti-subnutritie pe
+ * kcal-ul final. Cand user-ul e deja subponderal (BMI <= 18.5), ridica kcal-ul
+ * la un surplus moderat de crestere (TDEE×1.08) daca recomandarea e sub el —
+ * subponderalul trebuie sa CREASCA spre o greutate sanatoasa, NU sa stea in
+ * deficit/mentenanta. Citeste greutate/inaltime (onboardingStore) + mentenanta
+ * reala (readUserMaintenanceTDEE) la I/O boundary, deleaga la pura
+ * clampKcalToHealthyFloor.
  *
  * Returns kcal-ul (posibil ridicat) + `clamped` (UI safety message). Cand lipsesc
  * stats (cold start) → passthrough (pura returneaza clamped=false).
@@ -831,8 +834,8 @@ export async function getNutritionTargetsToday(
     // (deja aplicat in adjustedMu) > estimare Bayesiana de mentenanta. User
     // explicit pick beats goal + Bayesian; engine continua sa invete din log.
     const finalKcal = phaseKcal !== null ? phaseKcal : Math.round(safeKcal);
-    // BUG #13 safety — guardrail anti-subnutritie: user subponderal + deficit →
-    // ridica la mentenanta (zero deficit toward harm). Aplicat DUPA precedenta
+    // BUG #4 safety — guardrail anti-subnutritie: user subponderal → ridica la
+    // un surplus moderat de crestere (TDEE×1.08). Aplicat DUPA precedenta
     // (override faza / goal / Bayesian) ca sa prinda orice deficit, oricare sursa.
     const guarded = applyHealthyFloorGuardrail(finalKcal);
     // Piesa 1 fix — proteine g/kg × greutate per-user (fallback flat 180 cand

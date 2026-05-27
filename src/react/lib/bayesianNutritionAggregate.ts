@@ -21,8 +21,8 @@ export interface NutritionTarget {
   proteinTarget: number;
   source: 'manual' | 'engine-bn' | 'baseline';
   confidence: number; // 0-1 Kalman filter posterior state
-  // BUG #13 safety — true cand kcal-ul a fost ridicat la mentenanta fiindca
-  // user-ul e subponderal (BMI <= 18.5). UI arata mesajul de siguranta.
+  // BUG #4 safety — true cand kcal-ul a fost ridicat la un surplus de crestere
+  // fiindca user-ul e subponderal (BMI <= 18.5). UI arata mesajul de sustinere.
   healthyFloorClamped?: boolean;
 }
 

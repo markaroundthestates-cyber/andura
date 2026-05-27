@@ -5,6 +5,7 @@ import {
   healthyFloorWeightKg,
   clampKcalToHealthyFloor,
   HEALTHY_MIN_BMI,
+  LEAN_GAIN_SURPLUS_MULT,
 } from '../bodyComposition.js';
 
 describe('estimateBF_Deurenberg', () => {
@@ -85,8 +86,8 @@ describe('healthyFloorWeightKg — greutate la BMI 18.5', () => {
   });
 });
 
-describe('clampKcalToHealthyFloor — BUG #13 anti-undereating guardrail', () => {
-  it('subponderal (BMI<18.5) + deficit → clamp UP la mentenanta', () => {
+describe('clampKcalToHealthyFloor — BUG #4 underweight-must-gain guardrail', () => {
+  it('subponderal (BMI<18.5) + deficit → clamp UP la surplus de crestere (NU mentenanta)', () => {
     // 55kg/182cm → BMI 16.6 (subponderal). Deficit 1800 vs mentenanta 2200.
     const r = clampKcalToHealthyFloor({
       kcalRecommendation: 1800,
@@ -95,19 +96,34 @@ describe('clampKcalToHealthyFloor — BUG #13 anti-undereating guardrail', () =>
       heightCm: 182,
     });
     expect(r.clamped).toBe(true);
-    expect(r.kcal).toBe(2200);
+    // BUG #4: ridica la SURPLUS (mentenanta × 1.08), NU la mentenanta plata.
+    expect(r.kcal).toBe(Math.round(2200 * LEAN_GAIN_SURPLUS_MULT));
+    expect(r.kcal).toBeGreaterThan(2200); // surplus, nu mentenanta
     expect(r.currentBmi).toBeCloseTo(16.6, 1);
   });
 
-  it('subponderal dar recomandarea deja >= mentenanta (bulk) → passthrough', () => {
+  it('subponderal + recomandare la mentenanta plata → tot ridicat la surplus', () => {
+    // Mentenanta (zero deficit) NU e suficient pentru subponderal — trebuie surplus.
     const r = clampKcalToHealthyFloor({
-      kcalRecommendation: 2400,
+      kcalRecommendation: 2200,
+      maintenanceKcal: 2200,
+      weightKg: 55,
+      heightCm: 182,
+    });
+    expect(r.clamped).toBe(true);
+    expect(r.kcal).toBe(Math.round(2200 * LEAN_GAIN_SURPLUS_MULT));
+  });
+
+  it('subponderal dar recomandarea deja >= surplus (bulk explicit) → passthrough', () => {
+    // Bulk agresiv 2500 > surplus tinta (2200×1.08 = 2376) → trece neatins.
+    const r = clampKcalToHealthyFloor({
+      kcalRecommendation: 2500,
       maintenanceKcal: 2200,
       weightKg: 55,
       heightCm: 182,
     });
     expect(r.clamped).toBe(false);
-    expect(r.kcal).toBe(2400);
+    expect(r.kcal).toBe(2500);
   });
 
   it('greutate sanatoasa + deficit → passthrough (deficit permis)', () => {
@@ -133,7 +149,7 @@ describe('clampKcalToHealthyFloor — BUG #13 anti-undereating guardrail', () =>
     expect(r.kcal).toBe(2286);
   });
 
-  it('exact la prag BMI 18.5 + deficit → clamp (la/sub minim)', () => {
+  it('exact la prag BMI 18.5 + deficit → clamp la surplus (la/sub minim)', () => {
     // greutate la exact BMI 18.5 (61.3kg/182cm).
     const r = clampKcalToHealthyFloor({
       kcalRecommendation: 1800,
@@ -143,6 +159,7 @@ describe('clampKcalToHealthyFloor — BUG #13 anti-undereating guardrail', () =>
     });
     expect(r.currentBmi).toBeCloseTo(HEALTHY_MIN_BMI, 1);
     expect(r.clamped).toBe(true);
+    expect(r.kcal).toBe(Math.round(2200 * LEAN_GAIN_SURPLUS_MULT));
   });
 
   it('cold start (greutate/inaltime absente) → passthrough fara clamp', () => {

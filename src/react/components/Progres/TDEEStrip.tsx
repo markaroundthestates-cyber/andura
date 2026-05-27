@@ -172,10 +172,11 @@ export function TDEEStrip(): JSX.Element {
       >
         Engine calculeaza auto. Loghezi optional pentru calibrare reala.
       </p>
-      {/* BUG #13 safety — cand kcal-ul a fost ridicat la mentenanta fiindca
-          user-ul e subponderal (BMI <= 18.5). Mesaj ferm-prietenos: coach-ul NU
-          conduce spre o greutate periculos de mica. Stil aliniat brand-ului de
-          disclaimer (AlertCircle brick) — guardrail pe OUTPUT, NU blocaj input. */}
+      {/* BUG #4 safety — cand user-ul e subponderal (BMI <= 18.5), tinta nu e
+          deficit nici mentenanta, ci un surplus moderat de crestere lenta-sanatoasa.
+          Mesaj de sustinere (NU "mergi mai jos"). Nota blanda de medic: subponderalul
+          sever poate avea o cauza medicala — formulata prietenos. Stil aliniat
+          brand-ului de disclaimer (AlertCircle brick) — guardrail pe OUTPUT. */}
       {target?.healthyFloorClamped && (
         <p
           className="text-xs text-brick mt-2.5 leading-snug flex items-start gap-1.5"
@@ -184,8 +185,9 @@ export function TDEEStrip(): JSX.Element {
         >
           <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" aria-hidden="true" />
           <span>
-            Esti deja sub greutatea sanatoasa minima, asa ca nu te tin in deficit.
-            Tinta de azi e la mentenanta. Pentru o tinta mai mica, vorbeste cu un medic.
+            Esti sub greutatea sanatoasa — hai sa crestem treptat, sanatos.
+            Tinta de azi are un mic surplus, nu deficit. Daca slabesti fara sa vrei,
+            merita o vorba cu un medic.
           </span>
         </p>
       )}

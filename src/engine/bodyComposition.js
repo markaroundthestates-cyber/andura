@@ -41,20 +41,37 @@ export function estimateBF_Deurenberg({ sex, weightKg, heightCm, ageYears } = {}
   return Math.round(Math.max(2, Math.min(60, bf)) * 10) / 10;
 }
 
-// ══ HEALTHY-FLOOR GUARDRAIL — anti-undereating safety (BUG #13) ════════════
+// ══ HEALTHY-FLOOR GUARDRAIL — anti-undereating safety (BUG #13 + BUG #4) ════
 //
-// WHO healthy-minimum BMI = 18.5 (sub = subponderal). Coach-ul NU optimizeaza
-// spre o tinta/faza care impinge user-ul SUB acest prag: cand greutatea curenta
-// e deja la/sub BMI 18.5, un deficit (kcal sub mentenanta) ar conduce spre rau.
+// WHO healthy-minimum BMI = 18.5 (sub = subponderal). Cand greutatea curenta e
+// deja la/sub BMI 18.5, un deficit (kcal sub mentenanta) ar conduce spre rau.
+//
+// BUG #4 (CEO 2026-05-27) — un user subponderal trebuie sa CREASCA spre o
+// greutate sanatoasa, NU sa stea la mentenanta. Mentenanta inseamna sa ramana
+// subponderal pe termen nelimitat. Deci guardrail-ul NU mai clamp la mentenanta
+// (zero deficit); clamp UP la un SURPLUS moderat de crestere lenta-sanatoasa
+// (TDEE × LEAN_GAIN_SURPLUS_MULT, +8%) — exact faza BULK conservativa pe care
+// engine-ul o recomanda deja AUTO unui user subponderal (phaseAutoDetection
+// detectAutoPhaseFromBodyComp → BULK la BMI <= 18.5). Reuse acelasi
+// multiplicator (single source, ZERO magic number nou).
+//
 // Guardrail-ul actioneaza pe OUTPUT (recomandarea de kcal), NU blocheaza
-// input-ul (anti-paternalism ADR 013) — clamp la mentenanta + mesaj ferm.
+// input-ul (anti-paternalism ADR 013) — clamp UP + mesaj de sustinere.
 //
 // Distinct de LOCK 8 (floor absolut 1200 kcal/zi): acela e un plafon jos in
 // valoare absoluta; ASTA e relativ la fiziologia user-ului (mentenanta lui),
-// ca un user subponderal sa NU primeasca deficit chiar daca 0.82×TDEE > 1200.
+// ca un user subponderal sa primeasca un surplus de crestere, NU deficit.
 
-/** Pragul WHO de BMI sanatos-minim. Sub = subponderal → fara deficit. */
+/** Pragul WHO de BMI sanatos-minim. Sub = subponderal → surplus de crestere. */
 export const HEALTHY_MIN_BMI = 18.5;
+
+// Multiplicatorul de surplus pentru crestere lenta-sanatoasa la subponderali —
+// identic cu BULK conservativ (TDEE_MULTIPLIERS.BULK_CONSERVATIVE 1.08) pe care
+// phaseAutoDetection il recomanda deja AUTO unui user sub BMI 18.5. +8% peste
+// mentenanta = surplus modest (~0.25 kg/saptamana), nu un bulk agresiv. Tinut
+// aici (NU importat din goalAdaptation/constants) ca bodyComposition sa ramana
+// un leaf pur fara dep pe graful de faze — valoarea e o constanta documentata.
+export const LEAN_GAIN_SURPLUS_MULT = 1.08;
 
 /**
  * BMI = greutate(kg) / inaltime(m)². Pure. Returns null cand inputs invalide.
@@ -74,7 +91,7 @@ export function computeBMI(weightKg, heightCm) {
 
 /**
  * Greutatea (kg) corespunzatoare BMI sanatos-minim pentru o inaltime data —
- * tinta de greutate "sanatoasa de jos" spre care clampam in loc de tinta nociva.
+ * tinta de greutate "sanatoasa de jos" spre care crestem un user subponderal.
  * Pure. Returns null cand inaltimea invalida.
  *
  * @param {number} heightCm
@@ -87,12 +104,15 @@ export function healthyFloorWeightKg(heightCm) {
 }
 
 /**
- * Guardrail anti-subnutritie pe recomandarea de kcal (BUG #13).
+ * Guardrail anti-subnutritie pe recomandarea de kcal (BUG #13 + BUG #4).
  *
- * Cand user-ul e deja la/sub BMI sanatos-minim (subponderal) SI recomandarea e
- * un deficit (sub mentenanta), coach-ul NU conduce spre rau: clamp recomandarea
- * UP la mentenanta (zero deficit). Daca recomandarea e deja >= mentenanta (bulk/
- * recomp/mentinere) sau user-ul NU e subponderal → recomandarea trece neatinsa.
+ * Cand user-ul e deja la/sub BMI sanatos-minim (subponderal), coach-ul NU il
+ * tine in deficit SAU la mentenanta — il duce spre o greutate sanatoasa cu un
+ * SURPLUS moderat de crestere lenta (tinta = mentenanta × LEAN_GAIN_SURPLUS_MULT,
+ * +8%). Daca recomandarea curenta e SUB acest surplus (deficit, mentenanta, sau
+ * un surplus prea mic), o ridicam la surplus-ul de crestere. Daca recomandarea
+ * e deja >= surplus-ul de crestere (bulk explicit egal/mai mare) → trece
+ * neatinsa. User NU subponderal → recomandarea trece neatinsa (deficit permis).
  *
  * Pure. Cand lipsesc greutate/inaltime/mentenanta (cold start) → passthrough
  * (nu fabricam un clamp fara semnal). `clamped` semnaleaza UI-ul sa arate mesajul.
@@ -114,9 +134,14 @@ export function clampKcalToHealthyFloor({ kcalRecommendation, maintenanceKcal, w
   if (bmi === null || !Number.isFinite(maint) || maint <= 0) {
     return { kcal: rec, clamped: false, currentBmi: bmi };
   }
-  // Subponderal + deficit → clamp la mentenanta (zero deficit toward harm).
-  if (bmi <= HEALTHY_MIN_BMI && rec < maint) {
-    return { kcal: Math.round(maint), clamped: true, currentBmi: bmi };
+  // Subponderal → tinteste un surplus moderat de crestere (NU deficit, NU
+  // mentenanta). Ridica recomandarea la surplus DOAR daca e sub el; un bulk
+  // explicit deja >= surplus trece neatins.
+  if (bmi <= HEALTHY_MIN_BMI) {
+    const leanGainTarget = Math.round(maint * LEAN_GAIN_SURPLUS_MULT);
+    if (rec < leanGainTarget) {
+      return { kcal: leanGainTarget, clamped: true, currentBmi: bmi };
+    }
   }
   return { kcal: rec, clamped: false, currentBmi: bmi };
 }

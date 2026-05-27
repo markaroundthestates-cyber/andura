@@ -300,16 +300,21 @@ describe('engineWrappers — per-user nutrition base (Piesa 1)', () => {
     expect(r.kcalTarget).toBeGreaterThan(Math.round(sedentaryBase * 1.08));
   });
 
-  // CLAIM (d) — kcal floor still clamps after the blend. Maria planning 2: her
-  // blended base 883×1.25 + 2×300/7 ≈ 1190 stays UNDER the 1200 floor -> clamped.
-  it('(d) kcal floor still clamps after planned-prior blend (Maria planned 2)', async () => {
+  // CLAIM (d) — BUG #4: Maria 40kg/155cm e SUBPONDERALA (BMI 16.6), deci
+  // guardrail-ul de crestere (healthy-floor) o ridica la un SURPLUS de crestere
+  // (mentenanta × 1.08), NU o lasa la podeaua de 1200 (care pentru ea ar fi
+  // sub-hranire). Surplus-ul supersede podeaua absoluta de 1200. (Podeaua 1200
+  // ramane enforced in cod pentru caile non-subponderale / cold-start.)
+  it('(d) BUG #4 subponderala → ridicata la surplus de crestere, peste podeaua 1200', async () => {
     setOnboarding(MARIA);
     useOnboardingStore.getState().setField('frequency', '2');
     const blended = Math.round(883 * NEAT_BASE + (2 * PER_SESSION_NET_KCAL) / SESSIONS_WINDOW_DAYS);
-    expect(blended).toBeLessThan(1200); // precondition: base is below floor
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(1200); // floor clamps the blended base
+    // Subponderala → surplus de crestere (clamped), NU podeaua 1200 nici deficit.
+    expect(r.healthyFloorClamped).toBe(true);
+    expect(r.kcalTarget).toBe(Math.round(blended * 1.08));
+    expect(r.kcalTarget).toBeGreaterThan(1200);
   });
 
   it('engine posterior present: kcal from Kalman mu, protein still per-user', async () => {

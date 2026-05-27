@@ -98,8 +98,8 @@ describe('TDEEStrip', () => {
     expect(explainer.className).toMatch(/italic/);
   });
 
-  // BUG #13 safety — mesaj cand kcal-ul a fost ridicat la mentenanta (subponderal).
-  it('BUG #13: NU arata mesajul de siguranta cand healthyFloorClamped absent', async () => {
+  // BUG #4 safety — mesaj cand kcal-ul a fost ridicat la surplus (subponderal).
+  it('BUG #4: NU arata mesajul de siguranta cand healthyFloorClamped absent', async () => {
     render(<TDEEStrip />);
     await waitFor(() => {
       expect(screen.getByTestId('tdee-strip')).toBeInTheDocument();
@@ -107,9 +107,9 @@ describe('TDEEStrip', () => {
     expect(screen.queryByTestId('tdee-healthy-floor-msg')).not.toBeInTheDocument();
   });
 
-  it('BUG #13: arata mesajul ferm-prietenos cand healthyFloorClamped true', async () => {
+  it('BUG #4: arata mesajul de sustinere (crestere) cand healthyFloorClamped true', async () => {
     vi.mocked(getNutritionTargetTodayReal).mockResolvedValueOnce({
-      kcalTarget: 2200,
+      kcalTarget: 2376,
       proteinTarget: 120,
       source: 'engine-bn',
       confidence: 0.5,
@@ -120,9 +120,13 @@ describe('TDEEStrip', () => {
       expect(screen.getByTestId('tdee-healthy-floor-msg')).toBeInTheDocument();
     });
     const msg = screen.getByTestId('tdee-healthy-floor-msg');
-    expect(msg.textContent).toMatch(/sub greutatea sanatoasa minima/);
-    expect(msg.textContent).toMatch(/mentenanta/);
+    // BUG #4: mesaj de crestere (NU "mentenanta"/"mai jos"); surplus, nu deficit;
+    // nota blanda de medic pastrata.
+    expect(msg.textContent).toMatch(/sub greutatea sanatoasa/);
+    expect(msg.textContent).toMatch(/crestem/);
+    expect(msg.textContent).toMatch(/surplus/);
     expect(msg.textContent).toMatch(/medic/);
+    expect(msg.textContent).not.toMatch(/mentenanta/);
     // RO no-diacritics (D-LEGACY-064).
     expect(/[ăâîșțĂÂÎȘȚ]/.test(msg.textContent ?? '')).toBe(false);
   });
