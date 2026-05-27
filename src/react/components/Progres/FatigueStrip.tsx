@@ -31,7 +31,7 @@ export function FatigueStrip(): JSX.Element {
   return (
     <section
       data-testid="fatigue-strip"
-      className="bg-white border border-line rounded-[14px] p-4 mb-4"
+      className="bg-white dark:bg-paper2 border border-line rounded-[14px] p-4 mb-4"
       aria-label="Stare oboseala"
     >
       <div className="flex-1 min-w-0">

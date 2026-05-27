@@ -84,7 +84,7 @@ export function RatingsStrip90Day(): JSX.Element {
         </h3>
         <span className="text-[11px] text-ink3 font-medium">ultimele 90 zile</span>
       </header>
-      <div className="bg-white border border-line rounded-2xl p-4">
+      <div className="bg-white dark:bg-paper2 border border-line rounded-2xl p-4">
         <div className="flex items-end gap-1.5 h-16 mb-3.5" data-testid="rh-strip">
           {weeks.map((cells, idx) => (
             <div

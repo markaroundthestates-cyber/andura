@@ -121,8 +121,11 @@ describe('FatigueStrip', () => {
     const strip = screen.getByTestId('fatigue-strip');
     expect(strip.className).toContain('bg-white');
     expect(strip.className).toContain('rounded-[14px]');
-    // Anti-regression: ZERO mockup-divergent tokens.
-    expect(strip.className).not.toContain('bg-paper2');
+    // Audit MED dark-strip fix — light theme stays mockup-literal bg-white, dark
+    // gets bg-paper2 variant (was hardcoded bg-white = white card on dark bg).
+    expect(strip.className).toContain('dark:bg-paper2');
+    // Anti-regression: light-theme surface NOT replaced by bare bg-paper2.
+    expect(strip.className).not.toContain(' bg-paper2');
     expect(strip.className).not.toContain('rounded-2xl');
   });
 });
