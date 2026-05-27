@@ -141,6 +141,22 @@ describe('AuthCallback — Magic Link success path', () => {
     expect(useAppStore.getState().isAuthenticated).toBe(true);
   });
 
+  it('Magic Link success -> history.replaceState strips oobCode (anti referrer leak)', async () => {
+    const replaceStateSpy = vi.spyOn(window.history, 'replaceState');
+    stubLocation(
+      '?oobCode=valid-code&email=gigel%40example.com&mode=signIn&apiKey=AIza-x&continueUrl=http%3A%2F%2Flocalhost%2Fauth-callback'
+    );
+    renderCallback();
+    await waitFor(() => {
+      expect(screen.getByTestId('location-sentinel')).toHaveAttribute(
+        'data-pathname',
+        '/app/antrenor'
+      );
+    });
+    // Parity cu Google path: URL cleaned to bare pathname (no oobCode/mode/apiKey).
+    expect(replaceStateSpy).toHaveBeenCalledWith(null, '', '/auth-callback');
+  });
+
   it('falls back la getPendingEmail() cand email lipseste din URL', async () => {
     const authModule = await import('../../../auth.js');
     vi.mocked(authModule.getPendingEmail).mockReturnValueOnce('maria65@example.com');

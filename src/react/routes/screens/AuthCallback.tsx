@@ -67,6 +67,11 @@ export function AuthCallback(): JSX.Element {
       const result = await verifyMagicLink(email, oobCode);
       if (cancelled) return;
       if (result.ok) {
+        // Strip the auth query params (oobCode/mode/apiKey/continueUrl) from the
+        // URL pre-navigate — parity cu Google path above (avoid token leak via
+        // referrer header on the runPostAuthSync fetch that fires below while the
+        // oobCode still lingers in window.location.search).
+        window.history.replaceState(null, '', window.location.pathname);
         setAuthenticated(true);
         // §S-07 audit fix — see Google path above. Pull cloud backup + path
         // migration post Magic Link verify, fire-and-forget.
