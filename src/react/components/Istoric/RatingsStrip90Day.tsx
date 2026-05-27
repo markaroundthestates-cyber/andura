@@ -17,6 +17,7 @@ import type { JSX } from 'react';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { deriveSessionRating } from '../../lib/sessionRating';
 import type { SessionRating } from '../../lib/sessionRating';
+import { pluralRo } from '../../lib/pluralRo';
 
 const MS_PER_DAY = 86_400_000;
 const WEEKS = 13;
@@ -107,7 +108,7 @@ export function RatingsStrip90Day(): JSX.Element {
         </div>
 
         <div className="grid grid-cols-3 gap-2.5 text-center">
-          <div role="group" aria-label={`Usor ${counts.usor} sesiuni`}>
+          <div role="group" aria-label={`Usor ${pluralRo(counts.usor, 'sesiune', 'sesiuni')}`}>
             <span className="block text-xs text-ink3">Usor</span>
             <span
               className="block text-lg font-bold font-mono text-heatGreu"
@@ -116,7 +117,7 @@ export function RatingsStrip90Day(): JSX.Element {
               {counts.usor}
             </span>
           </div>
-          <div role="group" aria-label={`Potrivit ${counts.potrivit} sesiuni`}>
+          <div role="group" aria-label={`Potrivit ${pluralRo(counts.potrivit, 'sesiune', 'sesiuni')}`}>
             <span className="block text-xs text-ink3">Potrivit</span>
             <span
               className="block text-lg font-bold font-mono text-ink"
@@ -125,7 +126,7 @@ export function RatingsStrip90Day(): JSX.Element {
               {counts.potrivit}
             </span>
           </div>
-          <div role="group" aria-label={`Greu ${counts.greu} sesiuni`}>
+          <div role="group" aria-label={`Greu ${pluralRo(counts.greu, 'sesiune', 'sesiuni')}`}>
             <span className="block text-xs text-ink3">Greu</span>
             <span
               className="block text-lg font-bold font-mono text-brick"
@@ -141,7 +142,7 @@ export function RatingsStrip90Day(): JSX.Element {
           data-testid="ratings-footer"
         >
           Coach-ul foloseste evaluarile tale ca sa ajusteze intensitatea.{' '}
-          <b>{counts.total} sesiuni</b> in ultimele 90 zile.
+          <b>{pluralRo(counts.total, 'sesiune', 'sesiuni')}</b> in ultimele 90 zile.
         </p>
       </div>
     </section>

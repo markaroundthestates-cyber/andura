@@ -16,6 +16,7 @@ import type { JSX } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, History } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { pluralRo } from '../../../lib/pluralRo';
 
 // §F-istoric-08 — Romanian weekday + month labels no-diacritics manual map.
 // Sunday-first index (Date.getDay() returns 0=Sunday). Mirror Istoric.tsx
@@ -174,7 +175,7 @@ export function IstoricDetail(): JSX.Element {
                 </span>
               </div>
               <div className="text-xs text-ink2 mb-2" data-testid="detail-ex-volume">
-                Volum: {ex.totalVolume}kg - {ex.sets.length} seturi
+                Volum: {ex.totalVolume}kg - {pluralRo(ex.sets.length, 'set', 'seturi')}
               </div>
               <table className="w-full text-sm">
                 <thead>

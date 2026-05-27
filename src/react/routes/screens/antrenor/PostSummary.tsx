@@ -66,7 +66,7 @@ interface ParsedMeta {
 
 function parseMeta(meta: string | undefined): ParsedMeta {
   if (!meta) return { sets: 0, dur: 0, volume: 0 };
-  const setsMatch = meta.match(/(\d+) seturi/);
+  const setsMatch = meta.match(/(\d+) (?:seturi|set)/);
   const durMatch = meta.match(/(\d+) min/);
   const volMatch = meta.match(/([\d\s]+) kg$/);
   return {

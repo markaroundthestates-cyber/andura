@@ -74,6 +74,13 @@ describe('RatingsStrip90Day — empty + aggregate', () => {
     expect(screen.getByTestId('count-greu').textContent).toBe('1');
     expect(screen.getByTestId('ratings-footer').textContent).toContain('3 sesiuni');
   });
+
+  it('seeds 1 session within 90d → footer singular "1 sesiune" (NU "sesiuni")', () => {
+    useWorkoutStore.setState({ sessionsHistory: [makeSession(5, 'potrivit')] });
+    render(<RatingsStrip90Day />);
+    const footer = screen.getByTestId('ratings-footer').textContent ?? '';
+    expect(footer).toContain('1 sesiune in ultimele');
+  });
 });
 
 describe('RatingsStrip90Day — bucket logic', () => {

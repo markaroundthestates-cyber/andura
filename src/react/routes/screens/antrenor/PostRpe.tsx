@@ -33,6 +33,7 @@ import type {
 } from '../../../stores/workoutStore';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
 import { gotoPath } from '../../../lib/navigation';
+import { pluralRo } from '../../../lib/pluralRo';
 import {
   enrichExercisesWithPR,
   refreshPRRecordsFromLogs,
@@ -107,7 +108,7 @@ export function PostRpe(): JSX.Element {
     }
     const title =
       planned !== null && planned.workoutTitle ? planned.workoutTitle : 'Antrenament';
-    const meta = `${setsDone} seturi · ${dur} min · ${formatKg(volume)} kg`;
+    const meta = `${pluralRo(setsDone, 'set', 'seturi')} · ${dur} min · ${formatKg(volume)} kg`;
 
     const exercisesBase: SessionExerciseBreakdown[] = Object.entries(history)
       .map(([exIdxStr, sets]) => {
