@@ -56,6 +56,55 @@ function isExerciseAvailable(exerciseName, availableTypes) {
 }
 
 /**
+ * BROAD-library degradation: search ALL 657 entries (not the thin curated
+ * equipment_alternatives list) for a performable, same-muscle alternative.
+ *
+ * WHY: the curated equipment_alternatives is rich for the 631 library exercises
+ * that carry a fallback_cascade, but the ~22 ORIGINAL anchor lifts (Leg Press,
+ * Incline DB Press, Flat Barbell Bench, ...) have NO cascade and only 1-2 curated
+ * alts. When none of those is performable with availableTypes, findAlternatives
+ * dead-ends at shouldSkip → getFallbackCascade returned a premature noAlt for a
+ * marquee lift. This widens the search to the whole library so an anchor on
+ * missing/busy equipment still lands a NAMED same-muscle swap (P3-MOAT-DESIGN §5.1
+ * "degrade to ranking-based search over the BROAD 657 library by muscle_target_primary").
+ *
+ * Rule (mirrors getValidAlternatives' tier/force philosophy, just over the broad
+ * pool instead of the thin curated list):
+ *   - Same muscle_target_primary as the original (a real, never-cross-muscle swap).
+ *   - Performable with availableTypes (bodyweight always counts).
+ *   - tier-1 strength (force_demand:'high'): candidates MUST also be force_demand:'high'
+ *     (NU degrade a heavy compound to an isolation/light movement — same strict
+ *     rule getValidAlternatives applies to tier-1). If none qualify, return [] →
+ *     honest noAlt (anti-paternalism: never force a clearly inferior substitute).
+ *   - tier-2/3: same-muscle flexible (any performable same-muscle alternative).
+ * Ranked best-first: same equipment_type +1, same force_demand +2, same tier +1.
+ *
+ * @param {string} exerciseName
+ * @param {string[]} availableTypes - coarse equipment_type values available
+ * @returns {{ name: string, similarity: number }[]} ranked broad-library candidates
+ */
+function findBroadAlternatives(exerciseName, availableTypes) {
+  const meta = EXERCISE_METADATA[exerciseName];
+  if (!meta || meta.muscle_target_primary === 'unknown') return [];
+
+  const tier1Strict = meta.tier === 1 && meta.force_demand === 'high';
+
+  const candidates = [];
+  for (const [name, m] of Object.entries(EXERCISE_METADATA)) {
+    if (name === exerciseName) continue;
+    if (m.muscle_target_primary !== meta.muscle_target_primary) continue;
+    if (tier1Strict && m.force_demand !== 'high') continue; // NU degrade heavy compound
+    if (!isExerciseAvailable(name, availableTypes)) continue;
+    let similarity = 0;
+    if (m.equipment_type === meta.equipment_type) similarity += 1;
+    if (m.force_demand === meta.force_demand) similarity += 2;
+    if (m.tier === meta.tier) similarity += 1;
+    candidates.push({ name, similarity });
+  }
+  return candidates.sort((a, b) => b.similarity - a.similarity);
+}
+
+/**
  * Resolve an exercise to itself or a substitute using the ordered fallback_cascade,
  * degrading to ranking-based findAlternatives when no cascade step is available.
  *
@@ -109,7 +158,7 @@ export function getFallbackCascade(exerciseName, availableTypes = []) {
     }
   }
 
-  // Graceful degradation → ranking-based finder.
+  // Graceful degradation #1 → ranking over the thin curated equipment_alternatives.
   const { alternatives } = findAlternatives(exerciseName);
   const firstAvailable = alternatives.find(alt => isExerciseAvailable(alt.name, availableTypes));
   if (firstAvailable) {
@@ -121,6 +170,20 @@ export function getFallbackCascade(exerciseName, availableTypes = []) {
     };
   }
 
-  // Nothing available — honest skip (anti-paternalism).
+  // Graceful degradation #2 → search the BROAD 657 library by muscle_target_primary.
+  // Catches the anchor lifts (no cascade + thin curated alts) so a marquee lift on
+  // missing/busy equipment still resolves a NAMED same-muscle swap instead of a
+  // premature noAlt (P3-MOAT-DESIGN §5.1). tier/force philosophy enforced inside.
+  const broad = findBroadAlternatives(exerciseName, availableTypes);
+  if (broad.length) {
+    return {
+      exercise: broad[0].name,
+      isAlternative: true,
+      cascadeStep: 'broad_library',
+      original: exerciseName,
+    };
+  }
+
+  // Nothing in the whole library matches — honest skip (anti-paternalism).
   return { isAlternative: false, noAlt: true, original: exerciseName };
 }

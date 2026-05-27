@@ -210,15 +210,31 @@ describe('MOAT B4 — EquipmentSwap preview shows the named alternative before c
 // ── Behaviour 5 — noAlt honesty at the React seam ─────────────────────────────
 describe('MOAT B5 — React substitution seam is honest when no alternative exists', () => {
   it('resolveMissingSwap returns honest null (noAlt) when nothing fits — no forced inferior, no crash', () => {
-    // Romanian Deadlift (barbell) with barbell missing and only dumbbell-ish left
-    // → the engine reports noAlt; the seam must surface honest null, not a stub.
-    setMissingEquipment(['power-rack', 'aparat-cablu', 'leg-press', 'aparat-extensii', 'aparat-tractiuni', 'banda-elastica']);
-    const res = resolveMissingSwap('Romanian Deadlift', 0);
+    // Leg Press (machine, tier-1 high-force quads) with EVERYTHING but bands +
+    // bodyweight missing → the library has no band/bodyweight high-force quads
+    // movement, so the tier-1-strict broad search finds nothing. The seam must
+    // surface honest null, not a forced inferior stub (anti-paternalism).
+    setMissingEquipment(['power-rack', 'gantere', 'aparat-cablu', 'leg-press', 'aparat-extensii', 'aparat-tractiuni']);
+    const res = resolveMissingSwap('Leg Press', 0);
     expect(res.noAlt).toBe(true);
     expect(res.swapped).toBe(false);
     expect(res.exercise).toBeNull();
     // Honest: the original is still named so the UI can say "skip {original}".
     expect(res.originalName.length).toBeGreaterThan(0);
+  });
+
+  it('resolveMissingSwap on an anchor lift whose equipment is missing → NAMED same-muscle swap (was a noAlt dead-end)', () => {
+    // Incline DB Press (dumbbell, no cascade, thin curated alts) with dumbbells
+    // missing → the anchor must NOT dead-end at noAlt for a marquee lift; the
+    // broad-library degradation resolves a NAMED, performable, RO alternative.
+    setMissingEquipment(['gantere']);
+    const res = resolveMissingSwap('Incline DB Press', 0);
+    expect(res.noAlt).toBe(false);
+    expect(res.swapped).toBe(true);
+    expect(res.exercise).not.toBeNull();
+    expect(res.alternativeName.length).toBeGreaterThan(0);
+    expect(isRomanianish(res.alternativeName)).toBe(true);
+    expect((res.exercise as PlannedExercise).engineName).not.toBe('Incline DB Press');
   });
 
   it('resolveRefusalSwap is honest (noAlt) for an unknown exercise — never fabricates', () => {
