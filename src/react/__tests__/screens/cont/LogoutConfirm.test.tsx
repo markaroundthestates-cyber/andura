@@ -43,10 +43,14 @@ describe('LogoutConfirm — D047 drill-down', () => {
     expect(screen.getByRole('heading', { name: /Iesi din cont/i, level: 1 })).toBeInTheDocument();
   });
 
-  it('renders confirm question + reassurance body', () => {
+  it('renders confirm question + honest cloud-vs-local body', () => {
     renderScreen();
     expect(screen.getByRole('heading', { name: /Iesi din cont\?/i })).toBeInTheDocument();
-    expect(screen.getByText(/Datele tale raman salvate pe email/i)).toBeInTheDocument();
+    // Cloud-safe reassurance: account + logged workouts + PRs come back.
+    expect(screen.getByText(/antrenamentele logate.*raman/i)).toBeInTheDocument();
+    // Honest local-wipe disclosure: visible history + weight chart + streak
+    // clear on this device (shared-device privacy, NOT recoverable on re-login).
+    expect(screen.getByText(/istoricul.*se sterg de pe acest/i)).toBeInTheDocument();
   });
 
   it('confirm clears firebase tokens + navigates /auth (signOut path A007 preserved)', () => {

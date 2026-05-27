@@ -84,8 +84,13 @@ export function LogoutConfirm(): JSX.Element {
         </div>
         <h2 className="text-2xl font-semibold text-ink mb-3">Iesi din cont?</h2>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Datele tale raman salvate pe email. La urmatoarea intrare cu acelasi
-          email le vei regasi exact unde le-ai lasat.
+          Contul tau si antrenamentele logate (cu tot cu recorduri) raman
+          salvate in siguranta si revin cand intri din nou cu acelasi email.
+        </p>
+        <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
+          Pentru siguranta ta pe un dispozitiv folosit in comun, istoricul
+          afisat, graficul de greutate si seria de zile se sterg de pe acest
+          telefon la deconectare.
         </p>
 
         <div className="w-full max-w-sm mt-8 flex flex-col gap-3">
