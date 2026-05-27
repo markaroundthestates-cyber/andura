@@ -81,6 +81,10 @@ export default [
       // Per D030 setup; some plugins (colored-tags) reference TS-only rules pre-loaded
       // which break pre-commit hook ESLint scan. Exclude entire .obsidian/ tree.
       '.obsidian/**',
+      // Claude Code harness dir — agent worktrees under .claude/worktrees/ are full
+      // repo copies + dist build artifacts; `eslint .` scanned them and blew past
+      // --max-warnings=9999, failing the pre-commit hook. NU Andura source. Exclude.
+      '.claude/**',
     ],
   },
   {
