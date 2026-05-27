@@ -27,11 +27,13 @@ import {
   SESSIONS_WINDOW_DAYS,
   BLEND_FULL_WEEKS,
   PROTEIN_G_PER_KG_BODYWEIGHT,
+  getCurrentWeightKg,
 } from '../../lib/userTdee';
 import { getNutritionTargetsToday } from '../../lib/engineWrappers';
 import { evaluate as evaluateBN } from '../../../engine/bayesianNutrition/index.js';
 import { createMockBNResult } from '../../../test-utils/createMockContext';
 import { useOnboardingStore } from '../../stores/onboardingStore';
+import { useProgresStore } from '../../stores/progresStore';
 
 // Maria: femeie 65 ani, 40kg, 155cm. Marius: barbat 30 ani, 110kg, 200cm.
 const MARIA = { sex: 'f' as const, weightKg: 40, ageYears: 65, heightCm: 155 };
@@ -331,5 +333,42 @@ describe('engineWrappers — per-user nutrition base (Piesa 1)', () => {
     const r = await getNutritionTargetsToday({});
     expect(r.kcalTarget).toBe(1400);
     expect(r.proteinTargetG).toBe(Math.round(40 * PROTEIN_G_PER_KG_BODYWEIGHT));
+  });
+});
+
+describe('getCurrentWeightKg — sursa canonica = cea mai recenta DUPA data, NU pozitia', () => {
+  beforeEach(() => {
+    useProgresStore.getState().reset();
+    useOnboardingStore.getState().reset();
+  });
+
+  it('o cantarire back-dated NU mascheaza greutatea curenta (today=92, apoi 2-saptamani-in-urma=110 → ramane 92)', () => {
+    const add = useProgresStore.getState().addWeightEntry;
+    // Logam intai ziua de azi (greutatea curenta reala).
+    add({ kg: 92, date: '2026-05-27' });
+    // Apoi logam o zi UITATA de acum 2 saptamani — addWeightEntry o pune la
+    // COADA (data noua), deci [length-1] ar fi 110 in lectura naiva veche.
+    add({ kg: 110, date: '2026-05-13' });
+    // Confirma ca intrarea back-dated chiar e ultima in array (premisa bug-ului).
+    const log = useProgresStore.getState().weightLog;
+    expect(log.at(-1)?.kg).toBe(110);
+    // Sursa canonica trebuie sa intoarca greutatea CURENTA (max dupa data), NU coada.
+    expect(getCurrentWeightKg()).toBe(92);
+  });
+
+  it('intoarce ultima dupa data chiar cand intrarile sunt logate crescator-in-data', () => {
+    const add = useProgresStore.getState().addWeightEntry;
+    add({ kg: 100, date: '2026-05-01' });
+    add({ kg: 95, date: '2026-05-15' });
+    expect(getCurrentWeightKg()).toBe(95);
+  });
+
+  it('fallback la greutatea de onboarding cand weightLog e gol', () => {
+    useOnboardingStore.getState().setField('weight', 77);
+    expect(getCurrentWeightKg()).toBe(77);
+  });
+
+  it('null cand niciun semnal (log gol + onboarding gol)', () => {
+    expect(getCurrentWeightKg()).toBeNull();
   });
 });

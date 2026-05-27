@@ -145,7 +145,27 @@ describe('HeatMapWeekly — weight snapshot 7-day mockup parity', () => {
     renderComponent();
     expect(screen.getByTestId('weight-snapshot-delta')).toHaveAttribute('data-delta-sign', 'down');
     expect(screen.getByTestId('weight-snapshot-delta')).toHaveTextContent(/14 kg/);
+    // Denominatorul = span calendaristic real (60z), NU numarul de cantariri (2).
+    expect(screen.getByTestId('weight-snapshot-delta')).toHaveTextContent(/60z/);
+    expect(screen.getByTestId('weight-snapshot-delta')).not.toHaveTextContent(/\b2z\b/);
     expect(screen.queryByTestId('weight-snapshot-delta-implausible')).not.toBeInTheDocument();
+  });
+
+  it('eticheta "/Nz" foloseste zile calendaristice, NU numarul de cantariri (2 intrari la 30 zile = 30z)', () => {
+    // Bug: {last7.length} (=2 intrari) afisat cu sufix "z" facea o pierdere de
+    // 4 kg pe 30 zile sa para "4 kg / 2z" (looks like 4kg in 2 zile). Trebuie 30z.
+    const now = Date.now();
+    useProgresStore.setState({
+      weightLog: [
+        { kg: 84, date: '2026-04-22', ts: now - 30 * 86400000 },
+        { kg: 80, date: '2026-05-22', ts: now },
+      ],
+    });
+    renderComponent();
+    const delta = screen.getByTestId('weight-snapshot-delta');
+    expect(delta).toHaveTextContent(/4 kg/);
+    expect(delta).toHaveTextContent(/30z/);
+    expect(delta).not.toHaveTextContent(/\b2z\b/);
   });
 
   it('hides delta cand only 1 entry (need 2 puncte)', () => {

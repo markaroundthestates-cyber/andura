@@ -64,10 +64,14 @@ export function HeatMapWeekly(): JSX.Element {
   const first = last7[0];
   const delta = latest && first && last7.length >= 2 ? +(latest.kg - first.kg).toFixed(1) : null;
   const deltaSign = delta === null ? '' : delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
+  // Span calendaristic real intre prima si ultima cantarire (zile, NU numarul
+  // de intrari) — denominatorul corect atat pentru guard-ul de plauzibilitate
+  // cat si pentru eticheta "/ Nz" (altfel 2 cantariri la 30 zile apareau ca "2z").
+  const spanLabelDays = latest && first ? spanDays(first.date, latest.date) : 1;
   // Implausible daca rata depaseste pragul fizic — probabil typo (ex. 53/153).
   const implausible =
     delta !== null && latest && first
-      ? Math.abs(delta) / spanDays(first.date, latest.date) > MAX_PLAUSIBLE_KG_PER_DAY
+      ? Math.abs(delta) / spanLabelDays > MAX_PLAUSIBLE_KG_PER_DAY
       : false;
 
   return (
@@ -98,7 +102,7 @@ export function HeatMapWeekly(): JSX.Element {
             data-delta-sign={deltaSign}
             style={{ color: delta < 0 ? 'var(--succ)' : delta > 0 ? 'var(--brick)' : 'var(--ink-2)' }}
           >
-            {delta < 0 ? '↓' : delta > 0 ? '↑' : '='} {Math.abs(delta)} kg / {last7.length}z
+            {delta < 0 ? '↓' : delta > 0 ? '↑' : '='} {Math.abs(delta)} kg / {spanLabelDays}z
           </p>
         )}
         {delta !== null && implausible && (

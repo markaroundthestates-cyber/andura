@@ -347,7 +347,17 @@ export function readUserMaintenanceTDEE(): number | null {
  */
 export function getCurrentWeightKg(): number | null {
   const weightLog = useProgresStore.getState().weightLog;
-  const lastWeight = weightLog[weightLog.length - 1];
+  // Cea mai recenta intrare dupa DATA, NU pozitia in array. addWeightEntry
+  // adauga datele noi la coada indiferent de ordine → o cantarire back-dated
+  // (zi uitata logata ulterior) ar deveni [length-1] si ar masca greutatea
+  // curenta reala, corupand BMR/TDEE/proteine/BF%/periodizare. Comparam `date`
+  // (YYYY-MM-DD, sortabil lexicografic) — robust la semantica mixta a lui `ts`
+  // (live = Date.now(), importate = Date.UTC(date)).
+  // reduce fara seed: acumulatorul e WeightEntry (NU | undefined sub
+  // noUncheckedIndexedAccess); arunca pe array gol, de aceea guard-ul .length.
+  const lastWeight = weightLog.length
+    ? weightLog.reduce((m, e) => (e.date > m.date ? e : m))
+    : undefined;
   return lastWeight?.kg ?? useOnboardingStore.getState().data.weight ?? null;
 }
 
