@@ -68,12 +68,17 @@ export function Splash(): JSX.Element {
         >
           {isAuthenticated ? 'Continua' : 'Log In'}
         </button>
+        {/* BUG #1 (CEO 2026-05-27) — "Creaza Cont" e o actiune primara pentru un
+            user nou; o legatura subliniata slaba e prea ascunsa. Buton secundar
+            proper (bordered, full-width), aliniat stilului secundar din Auth.tsx
+            (border lineStrong + bg-paper2 + rounded-14) pentru consistenta
+            cross-screen + prominenta corecta. */}
         {!isAuthenticated && (
           <button
             type="button"
             onClick={() => navigate('/auth', { state: { mode: 'signup' } })}
             data-testid="splash-secondary"
-            className="text-sm text-ink2 underline"
+            className="w-full py-4 border border-lineStrong text-ink bg-paper2 rounded-[14px] text-base font-semibold"
           >
             Creaza Cont
           </button>
