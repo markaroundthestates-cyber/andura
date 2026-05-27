@@ -44,6 +44,8 @@ const Onboarding = lazy(() => import('./screens/Onboarding').then((m) => ({ defa
 // Rute top-level publice (NU sub ProtectedRoute), siblings de /auth.
 const Terms = lazy(() => import('./screens/Terms').then((m) => ({ default: m.Terms })));
 const Privacy = lazy(() => import('./screens/Privacy').then((m) => ({ default: m.Privacy })));
+// Audit MED — catch-all 404 (inainte: URL gresit → white screen).
+const NotFound = lazy(() => import('./screens/NotFound').then((m) => ({ default: m.NotFound })));
 
 // §B007 lazy — Antrenor sub-screens (workout flow, 11 routes)
 const EnergyCheck = lazy(() => import('./screens/antrenor/EnergyCheck').then((m) => ({ default: m.EnergyCheck })));
@@ -222,4 +224,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  // Audit MED — catch-all 404. Orice path nepotrivit → ecran "pagina negasita"
+  // cu link spre acasa (inainte: white screen pe URL gresit).
+  { path: '*', element: <TopLevelRoute><NotFound /></TopLevelRoute> },
 ]);
