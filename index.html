@@ -13,7 +13,7 @@
        directives are ignored when delivered via <meta> (browsers log console errors).
        True clickjacking protection requires HTTP headers, which GH Pages cannot set.
        Accepted-risk pre-Beta; revisit when migrating to a host that supports custom headers. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.sentry.io https://o4511269200068608.ingest.de.sentry.io; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://*.sentry.io https://o4511269200068608.ingest.de.sentry.io; base-uri 'self'; form-action 'self'" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <!-- PWA manifest auto-injected by vite-plugin-pwa as /manifest.webmanifest.
