@@ -25,6 +25,7 @@ function renderScreen() {
 
 beforeEach(() => {
   localStorage.clear();
+  delete document.documentElement.dataset.palette;
 });
 
 describe('SettingsThemes — Teme picker screen', () => {
@@ -63,10 +64,40 @@ describe('SettingsThemes — Teme picker screen', () => {
     expect(localStorage.getItem('wv2-palette-theme')).toBe('brain-coach');
   });
 
-  it('honest copy: paletele se aplica la lansare, NU "se aplica instant"', () => {
+  // LIVE-PALETTE (2026-05-28): paletele se aplica INSTANT, NU deferred la lansare.
+  it('honest copy: paletele se aplica pe loc, NU deferred la lansare', () => {
     const { container } = renderScreen();
-    expect(screen.getByText(/se va aplica la lansare/i)).toBeInTheDocument();
-    expect(/se aplica instant/i.test(container.textContent ?? '')).toBe(false);
+    expect(screen.getByText(/se aplica pe loc/i)).toBeInTheDocument();
+    expect(screen.getByText(/se schimba instant/i)).toBeInTheDocument();
+    expect(/se (va )?aplic\w* la lansare/i.test(container.textContent ?? '')).toBe(false);
+  });
+
+  // LIVE-PALETTE — click an override palette sets <html data-palette> live.
+  it('click Luxury seteaza data-palette="luxury" pe documentElement', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('theme-palette-luxury'));
+    expect(document.documentElement.dataset.palette).toBe('luxury');
+  });
+
+  it('click Living Body seteaza data-palette="living-body" pe documentElement', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('theme-palette-living-body'));
+    expect(document.documentElement.dataset.palette).toBe('living-body');
+  });
+
+  // Clasic + Brain Coach NU seteaza data-palette (base theme light/dark le detine).
+  it('click Brain Coach sterge data-palette (base theme owns it)', () => {
+    document.documentElement.dataset.palette = 'luxury';
+    renderScreen();
+    fireEvent.click(screen.getByTestId('theme-palette-brain-coach'));
+    expect(document.documentElement.dataset.palette).toBeUndefined();
+  });
+
+  it('click Clasic sterge data-palette (base theme owns it)', () => {
+    document.documentElement.dataset.palette = 'living-body';
+    renderScreen();
+    fireEvent.click(screen.getByTestId('theme-palette-clasic'));
+    expect(document.documentElement.dataset.palette).toBeUndefined();
   });
 
   it('back navigates la /app/cont/settings-appearance', () => {

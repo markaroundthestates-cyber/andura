@@ -9,12 +9,16 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './react/routes/router';
 import { initSentry, captureException } from './util/sentry.js';
 import { applyInitialTheme, ThemeSync } from './react/lib/themeSync';
+import { applyInitialPalette, PaletteSync } from './react/lib/paletteSync';
 import { useSettingsStore } from './react/stores/settingsStore';
 import { runReactBoot } from './react/lib/reactBoot';
 import './styles/global.css';
 
 // Apply persisted theme synchronously pre-mount to prevent FOUC flash.
 applyInitialTheme();
+// Apply persisted palette (Luxury/Living Body override layer) pre-mount too —
+// same anti-FOUC reason; clasic/brain-coach clear the attr so theme owns them.
+applyInitialPalette();
 
 // §SECURITY-HIGH-1-SENTRY-FIX (DIM 10 SECURITY-AUDIT-DEEPER chat 5) —
 // GDPR Art. 7 consent gate. Sentry init pornit DOAR daca user opt-in
@@ -72,6 +76,7 @@ createRoot(rootEl).render(
         React.startTransition for smoother concurrent rendering. Silences
         the deprecation warning logged on every nav in v6.28+. */}
     <ThemeSync />
+    <PaletteSync />
     <RouterProvider router={router} future={{ v7_startTransition: true }} />
   </StrictMode>
 );

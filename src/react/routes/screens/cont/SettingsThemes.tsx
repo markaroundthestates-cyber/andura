@@ -2,12 +2,12 @@
 // Per mockup andura-clasic.html L2003-2037. 4-theme palette picker (Clasic /
 // Living Body / Luxury / Brain Coach) cu swatch + selected check icon.
 //
-// V1 scope (Karpathy SF) — visual palette selection persisted in localStorage
-// pentru SSR-friendly read. Actual CSS theme runtime swap = deferred post-Beta
-// (mockup themes are 4 paleta variants — Andura Clasic = default Beta).
-// Per PAR-002 recon spec line 132: Daniel CEO decision pending if themes
-// LANDED pre-Beta. V1 ships preference-only (no DOM mutation), matching
-// SettingsAppearance V1 paradigm. Phase 7+ wires actual theme runtime swap.
+// LIVE-PALETTE (2026-05-28): paletele se aplica INSTANT la click via
+// paletteSync (data-palette override layer in global.css). Clasic + Brain
+// Coach NU seteaza data-palette (base :root / [data-theme] light↔dark toggle
+// le detine); Luxury + Living Body au token block-uri dark dedicate. Selectia
+// persistata in localStorage 'wv2-palette-theme' (citita pre-mount in main.tsx
+// applyInitialPalette pentru anti-FOUC).
 
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
@@ -15,8 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
-
-type PaletteTheme = 'clasic' | 'living-body' | 'luxury' | 'brain-coach';
+import { applyPalette, type PaletteTheme } from '../../../lib/paletteSync';
 
 interface ThemeOption {
   id: PaletteTheme;
@@ -86,6 +85,7 @@ export function SettingsThemes(): JSX.Element {
   function handlePick(t: PaletteTheme): void {
     setSelected(t);
     writePaletteTheme(t);
+    applyPalette(t); // live apply — sets/clears <html data-palette>
   }
 
   return (
@@ -98,7 +98,7 @@ export function SettingsThemes(): JSX.Element {
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink2 mb-4 leading-snug">
-          Alege paleta preferata. In curand: se va aplica la lansare.
+          Alege paleta preferata. Se aplica pe loc.
         </p>
 
         <div className="grid grid-cols-2 gap-3" data-testid="settings-themes-grid">
@@ -135,7 +135,7 @@ export function SettingsThemes(): JSX.Element {
         </div>
 
         <p className="text-xs text-ink2 text-center mt-5 leading-relaxed">
-          Paletele se vor activa la lansare.
+          Paletele se schimba instant. Brain Coach e implicit.
         </p>
       </div>
     </section>

@@ -146,6 +146,128 @@
     --rating-usor: #5a9d68;           /* 90-day strip categorical green dark — distinct lighter than heat-usor dark */
   }
 
+  /* ══ PALETTE OVERRIDE LAYER — themes #3 Luxury + #4 Living Body ════════════
+     Two extra named themes selectable in cont → Teme. Both DARK designs ported
+     verbatim from their mockups (04-architecture/mockups/andura-luxury.html +
+     andura-living-body.html :root). Wired live via paletteSync (data-palette
+     attr). Clasic + Brain Coach use NO data-palette → base :root / [data-theme]
+     light/dark toggle owns them as before (zero blast radius on those two).
+
+     CASCADE: these blocks sit AFTER [data-theme="dark"] with the SAME single-
+     attribute specificity (0,1,0). Source-order tiebreak means data-palette
+     wins regardless of the light/dark toggle value — so Luxury/Living Body
+     render their fixed dark look no matter what data-theme is set to. Each
+     block redefines the COMPLETE 32-token set [data-theme="dark"] defines
+     (surfaces, ink 1-3, line + line-strong, brick/brick-dark/olive/deep,
+     succ/warn/danger, 12 status tints, 2 overlays, 7 heatmap) so no token
+     falls back to the cream :root (which would invert/wash out the surface). */
+
+  /* Luxury — bleu/champagne chiaroscuro (mockup andura-luxury.html :root).
+     paper=noir #050507, surface=carbon-2 #16161a, ink=silver, accent=champagne.
+     WCAG AA verified vs paper + paper-2 (cards). Mockup hex lifted where the
+     app's stricter card usage needed it: --ink-3 #7d7a71 (4.21:1 on paper-2,
+     FAIL) → #928e84 (5.52:1); --line-strong #6e5a2a (2.71:1 on paper-2) →
+     #8a7338 (3.94:1, champagne R>G>B family preserved). olive/deep/succ/warn/
+     danger absent from the mockup → derived in-palette, all AA as text. */
+  [data-palette="luxury"] {
+    --paper: #050507;      /* noir — phone bg near-black */
+    --paper-2: #16161a;    /* carbon-2 — secondary surface */
+    --ink: #c8c5be;        /* silver — primary text → 11.82:1 / 10.47:1 ✅ AAA */
+    --ink-2: #8a877f;      /* silver-2 — secondary text → 5.68:1 / 5.03:1 ✅ AA */
+    --ink-3: #928e84;      /* muted text → 6.23:1 / 5.52:1 ✅ AA (mockup silver-3 #7d7a71 failed 4.21:1 on paper-2) */
+    --line: rgba(201,166,99,0.12); /* champagne decorative hairline (mockup verbatim) */
+    --line-strong: #8a7338;/* UI boundary → 4.45:1 / 3.94:1 ✅ SC 1.4.11 (mockup #6e5a2a failed 2.71:1 on paper-2; champagne tonal family R>G>B preserved) */
+    --brick: #c9a663;      /* PRIMARY ACCENT champagne → 8.84:1 / 7.83:1 ✅ */
+    --brick-dark: #e89a9a; /* destructive-action TEXT — warm red → 9.23:1 / 8.18:1 ✅ (champagne would read as brand, not danger) */
+    --olive: #a8b878;      /* energy/cardio accent — muted gold-green → 9.5:1 / 8.41:1 ✅ */
+    --deep: #86a8cc;       /* rest/recovery accent — bleu-bright steel → 8.23:1 / 7.29:1 ✅ */
+    --succ: #7ab88a;       /* success green → 8.78:1 / 7.78:1 ✅ */
+    --warn: #e0bd75;       /* warning amber — champagne-bright → 11.35:1 / 10.06:1 ✅ */
+    --danger: #e89a9a;     /* danger red → 9.23:1 / 8.18:1 ✅ */
+
+    /* Status banner tints — champagne/bleu neutrals; semantic green/red hues
+       kept for success/danger. AA text 8-10:1 verified vs each tint bg. */
+    --status-success-bg: #15241a;
+    --status-success-border: #2c4636;
+    --status-success-text: #9fd9b0;
+    --status-danger-bg: #241416;
+    --status-danger-border: #46262c;
+    --status-danger-text: #e89a9a;
+    --status-neutral-bg: #241e12;
+    --status-neutral-border: #46402a;
+    --status-neutral-text: #e0bd75;
+    --status-info-bg: #0f1c2e;
+    --status-info-border: #2a4366;
+    --status-info-text: #9fc4e8;
+
+    /* Overlays — noir bg low-luma, strong backdrop for modal separation. */
+    --overlay-strong: rgb(0 0 0 / 0.78);
+    --overlay-soft: rgb(0 0 0 / 0.5);
+
+    /* Heatmap — green tier scale (usor lightest → greu deepest by hue, brighter
+       on dark per inverse polarity). usor-text AA over usor tile. recovery =
+       reserved V2 deload tint; border lifted to 3:1 for visible boundary. */
+    --heat-usor: #2a3a24;             /* L1 tier — deep desaturated green */
+    --heat-usor-text: #c2d9b0;        /* L1 text → 8.01:1 ✅ AAA over heat-usor */
+    --heat-normal: #4a6a40;           /* L2 tier — mid green */
+    --heat-greu: #7a9d68;             /* L3 tier — brighter sage (deepest=brightest on dark) */
+    --heat-recovery: #3a3322;         /* recovery tier — muted champagne-brown */
+    --heat-recovery-border: #6e5e3c;  /* recovery border → 3.23:1 vs paper ✅ */
+    --rating-usor: #6a9d72;           /* 90-day strip categorical green — lighter than heat-usor */
+  }
+
+  /* Living Body — warm dark earth + gold (mockup andura-living-body.html :root).
+     paper=bg #03050a, surface=bg-2 #07090f, ink=ivory #f0eadb, accent=warm gold
+     #d4a574. All four mockup base tokens already pass WCAG AA on both surfaces
+     (the mockup's own lift), ported verbatim. olive/deep/succ/warn/danger +
+     line-strong + status + heatmap absent from the mockup → derived in-palette
+     (warm earthy hues), all AA verified vs paper + paper-2. */
+  [data-palette="living-body"] {
+    --paper: #03050a;      /* bg — phone bg very dark warm earth */
+    --paper-2: #07090f;    /* bg-2 — secondary surface */
+    --ink: #f0eadb;        /* ivory — primary text → 16.99:1 / 16.58:1 ✅ AAA */
+    --ink-2: #b8b0a0;      /* secondary text → 9.47:1 / 9.25:1 ✅ AAA */
+    --ink-3: #8b8470;      /* muted text → 5.47:1 / 5.34:1 ✅ AA */
+    --line: rgba(212,165,116,0.12); /* gold decorative hairline (mockup card border verbatim) */
+    --line-strong: #8a7038;/* UI boundary → 4.33:1 / 4.22:1 ✅ SC 1.4.11 (warm gold-brown, derived) */
+    --brick: #d4a574;      /* PRIMARY ACCENT warm gold → 9.16:1 / 8.94:1 ✅ */
+    --brick-dark: #e89a9a; /* destructive-action TEXT — warm red → 9.24:1 / 9.02:1 ✅ */
+    --olive: #a6b478;      /* energy/cardio accent — warm sage → 9.15:1 / 8.93:1 ✅ */
+    --deep: #88b8b8;       /* rest/recovery accent — warm teal → 9.32:1 / 9.09:1 ✅ */
+    --succ: #82c092;       /* success green → 9.62:1 / 9.39:1 ✅ */
+    --warn: #e6c074;       /* warning amber — distinct from gold accent → 11.8:1 / 11.52:1 ✅ */
+    --danger: #e89a9a;     /* danger red → 9.24:1 / 9.02:1 ✅ */
+
+    /* Status banner tints — warm earth neutrals; semantic green/red kept.
+       AA text 8-10:1 verified vs each tint bg. */
+    --status-success-bg: #13241a;
+    --status-success-border: #2a4634;
+    --status-success-text: #9fd9b0;
+    --status-danger-bg: #241315;
+    --status-danger-border: #46252b;
+    --status-danger-text: #e89a9a;
+    --status-neutral-bg: #241d12;
+    --status-neutral-border: #463a26;
+    --status-neutral-text: #e6c074;
+    --status-info-bg: #10211f;
+    --status-info-border: #2c4642;
+    --status-info-text: #9fcfc8;
+
+    /* Overlays — very dark bg, strong backdrop for modal separation. */
+    --overlay-strong: rgb(0 0 0 / 0.78);
+    --overlay-soft: rgb(0 0 0 / 0.5);
+
+    /* Heatmap — green tier scale (inverse polarity: deeper=brighter on dark).
+       usor-text AA over usor tile. recovery = reserved V2 deload tint. */
+    --heat-usor: #283a28;             /* L1 tier — deep desaturated green */
+    --heat-usor-text: #c2d9b8;        /* L1 text → 8.06:1 ✅ AAA over heat-usor */
+    --heat-normal: #487a4f;           /* L2 tier — mid green */
+    --heat-greu: #74a36c;             /* L3 tier — brighter sage */
+    --heat-recovery: #3a3120;         /* recovery tier — muted gold-brown */
+    --heat-recovery-border: #6e5e38;  /* recovery border → 3.22:1 vs paper ✅ */
+    --rating-usor: #6a9d6e;           /* 90-day strip categorical green — lighter than heat-usor */
+  }
+
   /* LOCK V1 D056 — focus-visible global outline WCAG SC 2.4.7 (DECISIONS.md §D056)
      W4-AUDIT-DEEPER chat 5 CRIT a11y DIM 3 KEYBOARD — global focus-visible.
      Tailwind preflight elimina default outline pe button:focus. ZERO focus
@@ -203,6 +325,18 @@ html, body {
    the top while content scrolls. */
 [data-theme="dark"] body {
   background: radial-gradient(ellipse at 50% 0%, #1a1530, #050608 70%);
+  background-attachment: fixed;
+}
+
+/* Luxury + Living Body ambient — each ports its mockup's body radial glow.
+   Same specificity (0,1,1) as the dark rule above; placed after so the palette
+   glow wins for any data-theme value (overrides the mov glow when both set). */
+[data-palette="luxury"] body {
+  background: radial-gradient(ellipse at 50% 0%, #0a0d12, #020203 60%);
+  background-attachment: fixed;
+}
+[data-palette="living-body"] body {
+  background: radial-gradient(ellipse at 50% 40%, #0a0d14, #000 80%);
   background-attachment: fixed;
 }
 
