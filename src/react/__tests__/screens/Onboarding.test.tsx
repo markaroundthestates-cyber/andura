@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { Onboarding } from '../../routes/screens/Onboarding';
 import { useOnboardingStore } from '../../stores/onboardingStore';
+import { useProgresStore } from '../../stores/progresStore';
 
 function renderAt(step: number) {
   return render(
@@ -21,6 +22,7 @@ beforeEach(() => {
     completed: false,
     completedAt: null,
   });
+  useProgresStore.setState({ weightLog: [], bodyData: [] });
   localStorage.clear();
 });
 
@@ -170,6 +172,47 @@ describe('Onboarding — Big 6 hard typing', () => {
     fireEvent.click(screen.getByTestId('onb-next'));
     expect(useOnboardingStore.getState().completed).toBe(true);
     expect(screen.getByTestId('antrenor')).toBeInTheDocument();
+  });
+
+  // BUG #5 — finalize seed-uieste timeline-ul de greutate din greutatea de
+  // onboarding cand weightLog e gol (profil 55kg → 7-zile porneste de la 55,
+  // NU disconnect/gol).
+  it('BUG #5: finalize seeds weightLog din greutatea de onboarding cand e gol', () => {
+    useOnboardingStore.setState({
+      data: {
+        age: 28, sex: 'f', goal: 'masa', frequency: '3',
+        experience: 'incepator', weight: 55, height: 168,
+      },
+      completed: false,
+      completedAt: null,
+    });
+    expect(useProgresStore.getState().weightLog).toHaveLength(0);
+    renderAt(8);
+    fireEvent.click(screen.getByTestId('onb-next'));
+    const log = useProgresStore.getState().weightLog;
+    expect(log).toHaveLength(1);
+    expect(log[0]?.kg).toBe(55);
+  });
+
+  it('BUG #5: finalize NU suprascrie un weightLog existent (loguri reale pastrate)', () => {
+    useOnboardingStore.setState({
+      data: {
+        age: 28, sex: 'f', goal: 'masa', frequency: '3',
+        experience: 'incepator', weight: 55, height: 168,
+      },
+      completed: false,
+      completedAt: null,
+    });
+    // User a cantarit deja real (108) — seed-ul NU trebuie sa-l suprascrie.
+    useProgresStore.setState({
+      weightLog: [{ kg: 108, date: '2026-05-20', ts: Date.now() }],
+      bodyData: [],
+    });
+    renderAt(8);
+    fireEvent.click(screen.getByTestId('onb-next'));
+    const log = useProgresStore.getState().weightLog;
+    expect(log).toHaveLength(1);
+    expect(log[0]?.kg).toBe(108); // real log pastrat, NU suprascris cu 55
   });
 
   // U-02 (CRIT) — click-through gol (toate null) NU completeaza onboarding.

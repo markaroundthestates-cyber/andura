@@ -16,7 +16,17 @@ import {
 } from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../stores/onboardingStore';
 import type { OnboardingData, Frequency, Experience } from '../../stores/onboardingStore';
+import { useProgresStore } from '../../stores/progresStore';
 import { toast } from '../../lib/toast';
+
+/** Local ISO YYYY-MM-DD (date-only) — mirror LogWeight.todayIso (date-tz local). */
+function todayIso(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
+}
 
 const TOTAL_STEPS = 8;
 
@@ -74,6 +84,14 @@ export function Onboarding(): JSX.Element {
       // /onboarding/7). Fara verificare, user ar ajunge in app ne-onboarded.
       finalize();
       if (useOnboardingStore.getState().completed) {
+        // BUG #5 — seed timeline-ul de greutate din greutatea de onboarding cand
+        // e gol, ca "Greutate (7 zile)" sa porneasca de la greutatea reala a
+        // user-ului (NU disconnect intre profil si timeline). Idempotent: NU
+        // suprascrie loguri reale daca user-ul a cantarit deja.
+        const w = useOnboardingStore.getState().data.weight;
+        if (w !== null) {
+          useProgresStore.getState().seedFromProfileIfEmpty(w, todayIso());
+        }
         navigate('/app/antrenor');
       } else {
         toast.show({ message: 'Completeaza toti pasii inainte de a continua.', variant: 'warning' });

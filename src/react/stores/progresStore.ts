@@ -32,6 +32,12 @@ export interface ProgresState {
 export interface ProgresActions {
   addWeightEntry: (entry: Omit<WeightEntry, 'ts'>) => void;
   addBodyDataEntry: (entry: Omit<BodyDataEntry, 'ts'>) => void;
+  // BUG #5 — seed weightLog din greutatea de onboarding (profile.weight) cand e
+  // gol, ca timeline-ul "Greutate (7 zile)" sa porneasca de la greutatea reala a
+  // user-ului (NU gol/disconnect). Idempotent: NU face nimic daca weightLog deja
+  // are intrari (nu suprascriem loguri reale). Caller paseaza kg + date (I/O
+  // boundary citeste onboardingStore) → store decuplat de onboardingStore.
+  seedFromProfileIfEmpty: (kg: number, date: string) => void;
   reset: () => void;
 }
 
@@ -58,6 +64,15 @@ export const useProgresStore = create<ProgresState & ProgresActions>()(
         set((s) => ({
           bodyData: [...s.bodyData, { ...entry, ts: Date.now() }],
         })),
+      // BUG #5 — seed o singura intrare din greutatea de onboarding cand
+      // weightLog e gol. Idempotent (gol → seed; altfel no-op) ca sa NU
+      // suprascriem loguri reale. Ignora kg invalid (NU fabricam o intrare gresita).
+      seedFromProfileIfEmpty: (kg, date) =>
+        set((s) => {
+          if (s.weightLog.length > 0) return s;
+          if (!Number.isFinite(kg) || kg <= 0 || !date) return s;
+          return { weightLog: [{ kg, date, ts: Date.now() }] };
+        }),
       reset: () => set({ weightLog: [], bodyData: [] }),
     }),
     {
