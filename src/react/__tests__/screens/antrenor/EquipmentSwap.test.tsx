@@ -98,22 +98,24 @@ describe('EquipmentSwap — toggle behavior', () => {
 });
 
 describe('EquipmentSwap — navigation flow', () => {
-  it('Continue cu zero busy propagates empty array', () => {
+  it('Continue cu zero busy propagates empty coarse-type array', () => {
     renderSwap();
     fireEvent.click(screen.getByTestId('equipment-continue'));
     const probe = screen.getByTestId('probe');
     expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
-    expect(probe.textContent).toContain('"busy":[]');
+    // WP-5: payload is busy COARSE TYPES (library SoT), not gym-item ids.
+    expect(probe.textContent).toContain('"busyCoarseTypes":[]');
   });
 
-  it('Continue cu 2 busy propagates ids', () => {
+  it('Continue cu 2 busy propagates the blocked coarse types', () => {
     renderSwap();
+    // Bench press → barbell; Leg press → machine.
     fireEvent.click(screen.getByRole('button', { name: /Bench press/i }));
     fireEvent.click(screen.getByRole('button', { name: /Leg press/i }));
     fireEvent.click(screen.getByTestId('equipment-continue'));
     const probe = screen.getByTestId('probe');
-    expect(probe.textContent).toContain('"bench"');
-    expect(probe.textContent).toContain('"leg-press"');
+    expect(probe.textContent).toContain('"barbell"');
+    expect(probe.textContent).toContain('"machine"');
   });
 });
 

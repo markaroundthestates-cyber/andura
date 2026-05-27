@@ -386,6 +386,25 @@ export interface WorkoutActions {
   incrementStreak: (now?: number) => void;
   resetStreak: () => void;
   /**
+   * Swap the exercise at `exIdx` for an alternative (moat substitution — WP-5
+   * in-session "Aparat ocupat" / "Nu vreau"). The exercise LIST itself lives in
+   * the Workout screen's local state (sourced from getTodayWorkout); this action
+   * owns only the store-side integrity: it CLEARS any sets logged so far for
+   * `exIdx` (they belonged to the original, now-replaced exercise — meaningless
+   * for the alternative) and, when the swap targets the CURRENT exercise, resets
+   * `setIdx`/`phase` so logging restarts at set 1 of the new movement.
+   *
+   * RISK (§8.5) safety contract — surgical, no corruption:
+   *   - NEVER touches `sessionStart`, `streak`, `lastSession`, `sessionsHistory`,
+   *     `prHit`/`prData`, or any OTHER exercise's history.
+   *   - Only `history[exIdx]` is dropped (the partial sets of the swapped-out
+   *     movement). Sets already logged for prior exercises are invariant.
+   *   - If `exIdx` is the current exercise and we are mid-rest/transition, phase
+   *     returns to 'logging' at setIdx 0 (the new exercise starts fresh).
+   * A swap on a NOT-yet-started exercise (no sets logged) is a no-op on history.
+   */
+  swapExercise: (exIdx: number) => void;
+  /**
    * Resets ACTIVE-session runtime state only — NOT cumulative history.
    *
    * Cleared: `exIdx`, `setIdx`, `phase`, `prHit`, `prData`, `history`,
@@ -528,6 +547,24 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
 
       advanceExercise: () =>
         set((s) => ({ exIdx: s.exIdx + 1, setIdx: 0, phase: 'logging' })),
+
+      // WP-5 moat substitution — swap exercise at exIdx for an alternative. The
+      // list lives in Workout screen local state; here we own only store-side
+      // integrity. Drop history[exIdx] (partial sets belonged to the original);
+      // when swapping the CURRENT exercise, reset setIdx/phase so the new
+      // movement starts fresh at set 1. Never touches sessionStart/streak/
+      // lastSession/sessionsHistory/other-index history (safety contract §8.5).
+      swapExercise: (exIdx) =>
+        set((s) => {
+          const { [exIdx]: _dropped, ...restHistory } = s.history;
+          const isCurrent = s.exIdx === exIdx;
+          return {
+            history: restHistory,
+            ...(isCurrent
+              ? { setIdx: 0, phase: 'logging' as WorkoutPhase, prHit: false, prData: null }
+              : {}),
+          };
+        }),
 
       markPRHit: (data) => set({ prHit: true, prData: data ?? null }),
 

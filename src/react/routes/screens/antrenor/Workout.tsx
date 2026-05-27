@@ -44,6 +44,9 @@ import type { AggressiveReason } from '../../../lib/aaFrictionDetect';
 import { getEngineSignals } from '../../../lib/engineSignalsAggregate';
 import { InactivityPrompt } from '../../../components/Workout/InactivityPrompt';
 import { DP } from '../../../../engine/dp.js';
+import { resolveBusySwap, resolveRefusalSwap } from '../../../lib/substitution';
+import { toast } from '../../../lib/toast';
+import { incrementRefusal } from '../../../../engine/schedule/scheduleAdapter.js';
 
 const INACTIVITY_THRESHOLD_MIN = 7; // Mockup wv2 verbatim L4401
 const INACTIVITY_CHECK_INTERVAL_MS = 30_000; // Mockup wv2 verbatim L4404
@@ -87,6 +90,7 @@ export function Workout(): JSX.Element {
   const pauseSession = useWorkoutStore((s) => s.pauseSession);
   const discardSession = useWorkoutStore((s) => s.discardSession);
   const markPRHit = useWorkoutStore((s) => s.markPRHit);
+  const swapExercise = useWorkoutStore((s) => s.swapExercise);
 
   // Phase 6 task_02 Option C: async getTodayWorkout — 3-state useState pattern
   // per DECISIONS.md §D027 (null=loading, []=empty/rest day, [...]=session).
@@ -494,6 +498,71 @@ export function Workout(): JSX.Element {
     advanceExercise();
   }, [bumpActivity, isLastExercise, navigate, advanceExercise]);
 
+  // WP-5 moat — in-place substitution for the CURRENT exercise. The exercise
+  // list lives in this screen's local `exercises` state; the store owns the
+  // logged-set integrity. Swap = replace exercises[safeExIdx] with the
+  // alternative + swapExercise(safeExIdx) (drops partial sets of the original,
+  // restarts at set 1) + a NAMED toast (the key to the moat: the user SEES the
+  // alternative). Honest noAlt → toast tells the user to skip it (anti-
+  // paternalism, never force an inferior movement). Replaces the old behavior
+  // where the buttons navigated AWAY and the user never saw a named alternative.
+  const applySwap = useCallback(
+    (engineName: string, kind: 'busy' | 'refusal'): void => {
+      bumpActivity();
+      const res =
+        kind === 'busy'
+          ? resolveBusySwap(engineName, safeExIdx)
+          : resolveRefusalSwap(engineName, safeExIdx);
+      if (kind === 'refusal') {
+        // Preserve the existing refusal counter (threshold → "permanent?" flow).
+        incrementRefusal(engineName);
+      }
+      if (!res.swapped || res.exercise === null) {
+        toast.show({
+          message: `Nu am o alternativa buna pentru ${res.originalName}. Poti sari exercitiul.`,
+          variant: 'info',
+        });
+        return;
+      }
+      const swapped = res.exercise;
+      setExercises((prev) => {
+        if (prev === null) return prev;
+        const next = prev.slice();
+        next[safeExIdx] = swapped;
+        return next;
+      });
+      swapExercise(safeExIdx);
+      toast.show({
+        message:
+          kind === 'busy'
+            ? `Inlocuit ${res.originalName} cu ${res.alternativeName} — acelasi muschi`
+            : `Inlocuit ${res.originalName} cu ${res.alternativeName}`,
+        variant: 'success',
+      });
+    },
+    [bumpActivity, safeExIdx, swapExercise]
+  );
+
+  const handleOcupat = useCallback((): void => {
+    const engineName = currentExercise.engineName;
+    if (typeof engineName !== 'string' || engineName.length === 0) {
+      // No canonical name (defensive — pre-WP-5 fixture) → fall back to the old
+      // navigate path so the user is never stranded.
+      navigate(gotoPath('equipment-swap'));
+      return;
+    }
+    applySwap(engineName, 'busy');
+  }, [currentExercise.engineName, applySwap, navigate]);
+
+  const handleNuVreau = useCallback((): void => {
+    const engineName = currentExercise.engineName;
+    if (typeof engineName !== 'string' || engineName.length === 0) {
+      navigate(gotoPath('ceva-nu-merge'));
+      return;
+    }
+    applySwap(engineName, 'refusal');
+  }, [currentExercise.engineName, applySwap, navigate]);
+
   // §F-workout-05 — open the why-exercise explainer. Builds engine context on
   // tap (current readiness + recommendation kg vs last logged kg) so the verdict
   // reflects live state. Engine null → why.unavailable fallback copy.
@@ -663,11 +732,14 @@ export function Workout(): JSX.Element {
 
           {/* §F-workout-03 — in-workout substitution row (Daniel 2026-05-12
               Slice 1.7, mockup andura-clasic.html#L1457-1460 wv2-ex-actions).
-              "Aparat ocupat" → EquipmentSwap; "Nu vreau" → CevaNuMerge picker. */}
+              WP-5 moat: both buttons now produce an IN-PLACE named swap (toast
+              with the alternative's name) instead of navigating away. "Aparat
+              ocupat" → cascade excluding the busy machine; "Nu vreau" → ranked
+              preference alternative + refusal counter. */}
           <div className="flex gap-3 mb-4" data-testid="wv2-ex-actions">
             <button
               type="button"
-              onClick={() => navigate(gotoPath('equipment-swap'))}
+              onClick={handleOcupat}
               data-testid="wv2-ex-action-ocupat"
               className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
             >
@@ -676,7 +748,7 @@ export function Workout(): JSX.Element {
             </button>
             <button
               type="button"
-              onClick={() => navigate(gotoPath('ceva-nu-merge'))}
+              onClick={handleNuVreau}
               data-testid="wv2-ex-action-nuvreau"
               className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
             >

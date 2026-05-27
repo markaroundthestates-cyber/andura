@@ -112,10 +112,21 @@ export interface PRDelta {
 export interface PlannedExercise {
   id: string;
   name: string;
+  // English canonical engine name (PR records, library lookups, DP keys). The
+  // `name` field is the Romanian display form; `engineName` is the identity used
+  // by substitution (findAlternatives/getFallbackCascade), DP, and the exercise
+  // library. Set at the scheduleAdapterAggregate boundary. Optional for backward
+  // compat with any pre-WP-5 fixture that omits it (callers fall back to a
+  // best-effort lookup or skip substitution honestly).
+  engineName?: string;
   // Romanian display subtitle (equipment/setup, e.g. "Cu gantere · banc 30°").
   // Optional — applied at the scheduleAdapterAggregate boundary via
   // exerciseDisplay.toExerciseDisplay; absent for unknown engine names.
   sub?: string;
+  // WP-5 moat substitution marker: when this exercise was swapped in for another
+  // (equipment busy / missing / refused), this is the short reason shown in the
+  // `sub` slot (WorkoutPreview "Inlocuit · {motiv}"). Absent on un-swapped rows.
+  swapReason?: string;
   sets: number;
   targetReps: number;
   targetKg: number;
