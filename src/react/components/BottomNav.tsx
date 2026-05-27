@@ -56,7 +56,14 @@ export function BottomNav(): JSX.Element {
             }`}
             aria-current={active ? 'page' : undefined}
           >
-            <Icon size={compact ? 16 : 20} aria-hidden="true" />
+            {/* Active tab icon pops slightly (scale-110) for a subtle motion
+                cue on switch. transition-transform keeps it smooth; auto-gated
+                by the global prefers-reduced-motion block. */}
+            <Icon
+              size={compact ? 16 : 20}
+              aria-hidden="true"
+              className={`transition-transform ${active ? 'scale-110' : 'scale-100'}`}
+            />
             <span>{label}</span>
           </button>
         );

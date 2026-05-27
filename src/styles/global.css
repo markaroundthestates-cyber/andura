@@ -294,6 +294,38 @@
   .display-text { font-size: var(--display); letter-spacing: var(--tight); }
 }
 
+/* ══ MOTION — tasteful entrance keyframes (Daniel 2026-05-27) ══════════════
+   Reusable transform/opacity-only entrances, GPU-friendly, ease-out, <=8px
+   displacement, no infinite loops. Defined ONCE here (model: SVGCountdownRing
+   scoped-keyframe discipline) so screens just add a class. AUTO-gated for
+   vestibular safety by the global prefers-reduced-motion block below (L~300)
+   which collapses animation-duration → 0.01ms. Taste guardrail: quiet, not
+   gaudy — Gigel + Maria 65 must NOT find it dizzy. */
+@layer utilities {
+  @keyframes andura-fade-in-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes andura-scale-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes andura-slide-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  @keyframes andura-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .animate-fade-in-up { animation: andura-fade-in-up 280ms ease-out both; }
+  .animate-scale-in { animation: andura-scale-in 200ms ease-out both; }
+  .animate-slide-up { animation: andura-slide-up 260ms ease-out both; }
+  /* Backdrop fade for modal/sheet overlays — opacity only. */
+  .animate-fade-in { animation: andura-fade-in 200ms ease-out both; }
+}
+
 /* §6-C1 audit fix — prefers-reduced-motion vestibular safety (WCAG 2.3.3).
    Globally collapse animation/transition for users opting reduced motion. */
 @media (prefers-reduced-motion: reduce) {

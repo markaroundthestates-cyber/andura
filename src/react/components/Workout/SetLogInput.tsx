@@ -84,7 +84,7 @@ export function SetLogInput({
           type="button"
           onClick={onLog}
           data-testid="setlog-tinta-log-btn"
-          className="w-full flex items-center justify-center gap-2 p-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px]"
+          className="w-full flex items-center justify-center gap-2 p-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px] transition-transform active:scale-[.97]"
         >
           <Check className="w-5 h-5" aria-hidden="true" />
           Logheaza setul

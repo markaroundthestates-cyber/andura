@@ -47,6 +47,7 @@ import { useCoachStore } from '../../../stores/coachStore';
 import { coachPick, type CoachVoiceEndSessionRating } from '../../../lib/coachVoice';
 import { pluralRo } from '../../../lib/pluralRo';
 import { gotoPath } from '../../../lib/navigation';
+import { useCountUp } from '../../../hooks/useCountUp';
 import type { SessionRating } from './PostRpe';
 
 // Taxonomy bridge: workoutStore.lastRating ('usoara/normala/grea') →
@@ -161,6 +162,14 @@ export function PostSummary(): JSX.Element {
   // Phase 5+ wire la BMR + duration based calculation.
   const kcal = Math.round(volume * 0.03);
 
+  // Tasteful count-up on the closure stat numbers (2026-05-27). Values are
+  // synchronous from the store, so the hook initializes to the real number →
+  // tests asserting exact values stay green (rAF is not flushed under act);
+  // in a live browser the numbers roll up. Snaps under reduced motion.
+  const setsDisplay = useCountUp(sets);
+  const volumeDisplay = useCountUp(volume);
+  const kcalDisplay = useCountUp(kcal);
+
   const coachKey = lastRating ? mapRatingToCoachKey(lastRating as SessionRating) : null;
   const coachLine = coachKey ? coachPick('endSession', coachKey, 0) : '';
 
@@ -258,9 +267,9 @@ export function PostSummary(): JSX.Element {
          volum efort → estimate calorii). */}
       <div className="grid grid-cols-2 gap-3 mb-6" data-testid="summary-stats-grid">
         <StatCell label="Durata" value={`${dur} min`} testId="summary-duration" />
-        <StatCell label="Seturi logate" value={sets.toString()} testId="summary-sets" />
-        <StatCell label="Volum total" value={`${formatKg(volume)} kg`} testId="summary-volume" />
-        <StatCell label="Kcal estimate" value={kcal.toString()} testId="summary-kcal" />
+        <StatCell label="Seturi logate" value={setsDisplay.toString()} testId="summary-sets" />
+        <StatCell label="Volum total" value={`${formatKg(volumeDisplay)} kg`} testId="summary-volume" />
+        <StatCell label="Kcal estimate" value={kcalDisplay.toString()} testId="summary-kcal" />
       </div>
 
       {/* §F-post-summary-03 Grupe musculare pills — mockup L1673-1680.
@@ -356,7 +365,7 @@ export function PostSummary(): JSX.Element {
         type="button"
         onClick={handleFinish}
         data-testid="summary-finish"
-        className="mt-auto w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+        className="mt-auto w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold transition-transform active:scale-[.97]"
       >
         Terminat
       </button>

@@ -55,7 +55,7 @@ export function RestOverlay({
 }: RestOverlayProps): JSX.Element {
   return (
     <div
-      className="fixed left-3.5 right-3.5 bottom-[78px] z-40 flex items-center gap-3.5 rounded-[18px] px-4 py-3.5 shadow-[0_8px_24px_rgba(0,0,0,0.22)] bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick"
+      className="animate-scale-in fixed left-3.5 right-3.5 bottom-[78px] z-40 flex items-center gap-3.5 rounded-[18px] px-4 py-3.5 shadow-[0_8px_24px_rgba(0,0,0,0.22)] bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick"
       data-testid="rest-overlay"
       role="dialog"
       aria-label="Pauza activa"

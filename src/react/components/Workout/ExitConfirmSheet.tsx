@@ -83,12 +83,12 @@ export function ExitConfirmSheet({
   if (!open) return null;
   return (
     <div
-      className="fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
+      className="animate-fade-in fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
       data-testid="exit-sheet-backdrop"
       onClick={() => onChoose('continue')}
     >
       <div
-        className="bg-paper rounded-t-2xl pt-4 px-6 pb-6 w-full max-w-md"
+        className="animate-slide-up bg-paper rounded-t-2xl pt-4 px-6 pb-6 w-full max-w-md"
         data-testid="exit-sheet"
         role="dialog"
         aria-modal="true"
@@ -109,7 +109,7 @@ export function ExitConfirmSheet({
           type="button"
           onClick={() => onChoose('continue')}
           data-testid="exit-continue"
-          className="w-full py-3 bg-ink text-paper dark:bg-brick rounded-xl text-base font-semibold mb-2"
+          className="w-full py-3 bg-ink text-paper dark:bg-brick rounded-xl text-base font-semibold mb-2 transition-transform active:scale-[.97]"
         >
           Continua sesiunea
         </button>

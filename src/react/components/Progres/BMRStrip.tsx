@@ -21,6 +21,7 @@ import { Flame } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
 import type { Sex } from '../../stores/onboardingStore';
+import { useCountUp } from '../../hooks/useCountUp';
 
 // Romanian population height averages (INS data ~2020). BMR fallback DOAR
 // pentru useri pre-v3 cu height null (onboarded inainte de P-02). Heuristic
@@ -60,6 +61,10 @@ export function BMRStrip(): JSX.Element {
   const weightLog = useProgresStore((s) => s.weightLog);
   const weight = weightLog[weightLog.length - 1]?.kg ?? onboardingWeight;
   const bmr = computeMifflinStJeorBMR(sex, weight, age, height);
+  // Count-up the BMR hero number (2026-05-27). Hook called unconditionally
+  // (rules of hooks); 0 fallback when bmr null — only rendered in the bmr!==null
+  // branch. Snaps under reduced motion; final value synchronous in tests.
+  const bmrDisplay = useCountUp(bmr ?? 0);
 
   return (
     <section
@@ -74,7 +79,7 @@ export function BMRStrip(): JSX.Element {
         </p>
         {bmr !== null ? (
           <p className="text-xl font-bold text-ink font-mono" data-testid="bmr-value">
-            {bmr.toLocaleString('ro-RO').replace(/,/g, ' ')}{' '}
+            {bmrDisplay.toLocaleString('ro-RO').replace(/,/g, ' ')}{' '}
             <span className="text-sm font-normal text-ink2 ml-2">kcal/zi</span>
           </p>
         ) : (

@@ -37,19 +37,28 @@ export function Splash(): JSX.Element {
       <div aria-hidden="true" />
 
       {/* §F-splash-07 — brand block: logo + wordmark + subtitle column.
-          Mockup L405-411 gap:24px between logo-group and text-group. */}
+          Mockup L405-411 gap:24px between logo-group and text-group.
+          Entrance (2026-05-27): logo scaleIn, wordmark + tagline fadeInUp with a
+          small stagger, CTAs fade last. Pure CSS on mount, auto-gated by the
+          global prefers-reduced-motion block. */}
       <div className="flex flex-col items-center gap-6">
-        <div className="w-[72px] h-[72px] rounded-[22px] bg-ink text-paper flex items-center justify-center text-[32px] font-bold tracking-tight">
+        <div className="animate-scale-in w-[72px] h-[72px] rounded-[22px] bg-ink text-paper flex items-center justify-center text-[32px] font-bold tracking-tight">
           A
         </div>
         <div>
-          <h1 className="text-[42px] font-bold text-ink mb-2 tracking-tight">
+          <h1
+            className="animate-fade-in-up text-[42px] font-bold text-ink mb-2 tracking-tight"
+            style={{ animationDelay: '80ms' }}
+          >
             Andura
           </h1>
           {/* Tagline = coach-quote per mockup andura-clasic.html#L409
               (font-family Lora, font-style italic). Distinct de wordmark h1
               (F-splash-08 ramane Inter sans). */}
-          <p className="font-serif italic text-lg text-ink2 max-w-xs">
+          <p
+            className="animate-fade-in-up font-serif italic text-lg text-ink2 max-w-xs"
+            style={{ animationDelay: '140ms' }}
+          >
             Antrenorul tau personal,
             <br />
             fara zgomot.
@@ -59,12 +68,15 @@ export function Splash(): JSX.Element {
 
       {/* §F-splash-07 — bottom stack: CTAs + footer. Mockup L412-418
           width:100% column gap:12px. Footer below CTAs cu margin-top spacing. */}
-      <div className="w-full max-w-xs flex flex-col items-stretch gap-3">
+      <div
+        className="animate-fade-in-up w-full max-w-xs flex flex-col items-stretch gap-3"
+        style={{ animationDelay: '220ms' }}
+      >
         <button
           type="button"
           onClick={() => navigate(isAuthenticated ? '/app/antrenor' : '/auth')}
           data-testid="splash-cta"
-          className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+          className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold transition-transform active:scale-[.97]"
         >
           {isAuthenticated ? 'Continua' : 'Log In'}
         </button>
@@ -78,7 +90,7 @@ export function Splash(): JSX.Element {
             type="button"
             onClick={() => navigate('/auth', { state: { mode: 'signup' } })}
             data-testid="splash-secondary"
-            className="w-full py-4 border border-lineStrong text-ink bg-paper2 rounded-[14px] text-base font-semibold"
+            className="w-full py-4 border border-lineStrong text-ink bg-paper2 rounded-[14px] text-base font-semibold transition-transform active:scale-[.97]"
           >
             Creaza Cont
           </button>

@@ -67,11 +67,11 @@ export function MedicalDisclaimerModal({
   if (!open) return null;
   return (
     <div
-      className="fixed inset-0 bg-overlayStrong flex items-center justify-center z-[60] p-6"
+      className="animate-fade-in fixed inset-0 bg-overlayStrong flex items-center justify-center z-[60] p-6"
       data-testid="disclaimer-backdrop"
     >
       <div
-        className="bg-paper rounded-2xl p-6 w-full max-w-md max-h-[80vh] overflow-y-auto"
+        className="animate-scale-in bg-paper rounded-2xl p-6 w-full max-w-md max-h-[80vh] overflow-y-auto"
         data-testid="disclaimer-modal"
         role="dialog"
         aria-modal="true"
@@ -111,7 +111,7 @@ export function MedicalDisclaimerModal({
           type="button"
           onClick={onAcknowledge}
           data-testid="disclaimer-acknowledge"
-          className="w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold mb-2"
+          className="w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold mb-2 transition-transform active:scale-[.97]"
         >
           Am inteles, continui
         </button>

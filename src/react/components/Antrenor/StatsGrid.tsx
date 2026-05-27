@@ -7,6 +7,7 @@
 
 import type { JSX } from 'react';
 import type { ReadinessOutput, FatigueOutput } from '../../lib/engineWrappers';
+import { useCountUp } from '../../hooks/useCountUp';
 
 interface Props {
   streak: number;
@@ -19,6 +20,10 @@ export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
   // separat, deci label = doar substantivul: "zi" la 1, "zile" altfel (fara
   // prefix "de" care apare la pluralRo 20+).
   const streakLabel = streak === 1 ? 'zi' : 'zile';
+  // Tasteful count-up on the streak hero number (2026-05-27). Snaps to final
+  // under prefers-reduced-motion; in tests rAF is not flushed so the final
+  // value renders synchronously (label/plural assertions unaffected).
+  const streakDisplay = useCountUp(streak);
   return (
     <div
       className="grid grid-cols-3 gap-2 mb-4"
@@ -28,7 +33,7 @@ export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
       <div className="bg-paper2 rounded-lg p-3 text-center">
         <div className="text-xs text-ink2 uppercase tracking-wider">Streak</div>
         <div className="text-2xl font-bold text-ink mt-1" data-testid="stats-streak">
-          {streak}
+          {streakDisplay}
         </div>
         <div className="text-xs text-ink2 mt-0.5" data-testid="stats-streak-label">{streakLabel}</div>
       </div>

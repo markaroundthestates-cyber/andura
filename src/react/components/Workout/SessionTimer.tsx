@@ -174,12 +174,12 @@ function SessionTimerImpl({
 
       {menuOpen && (
         <div
-          className="fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
+          className="animate-fade-in fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
           data-testid="workout-menu-backdrop"
           onClick={closeMenu}
         >
           <div
-            className="bg-paper rounded-t-2xl p-4 w-full max-w-md"
+            className="animate-slide-up bg-paper rounded-t-2xl p-4 w-full max-w-md"
             data-testid="workout-menu-sheet"
             role="dialog"
             aria-label="Optiuni sesiune"

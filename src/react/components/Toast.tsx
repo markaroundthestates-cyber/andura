@@ -68,7 +68,7 @@ function ToastCard({ item }: ToastCardProps): JSX.Element {
       role={role}
       aria-live={live}
       aria-atomic="true"
-      className="pointer-events-auto bg-paper2 text-ink border border-line rounded-xl shadow-lg px-3 py-2 flex items-center gap-2 max-w-sm"
+      className="animate-fade-in-up pointer-events-auto bg-paper2 text-ink border border-line rounded-xl shadow-lg px-3 py-2 flex items-center gap-2 max-w-sm"
     >
       {variantIcon(item.variant)}
       <div className="flex-1 min-w-0 text-sm">{item.message}</div>

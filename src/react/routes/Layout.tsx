@@ -63,7 +63,12 @@ export function Layout(): JSX.Element {
       <main id="main-content" className={`flex-1 ${inSession ? 'pb-0' : 'pb-16'}`}>
         <ErrorBoundary>
           <Suspense fallback={<LoadingSkeleton testId="layout-suspense" />}>
-            <Outlet />
+            {/* Subtle screen entrance on route change. key={pathname} remounts
+                the wrapper so the fadeInUp replays per navigation. Animation is
+                transform/opacity only, auto-gated by prefers-reduced-motion. */}
+            <div key={pathname} className="animate-fade-in-up">
+              <Outlet />
+            </div>
           </Suspense>
         </ErrorBoundary>
       </main>

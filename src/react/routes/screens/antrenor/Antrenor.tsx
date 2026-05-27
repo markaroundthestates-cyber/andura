@@ -251,7 +251,7 @@ export function Antrenor(): JSX.Element {
         <button
           type="button"
           onClick={handleStart}
-          className="w-full bg-brick text-paper rounded-md py-3 font-semibold mt-2"
+          className="w-full bg-brick text-paper rounded-md py-3 font-semibold mt-2 transition-transform active:scale-[.97]"
         >
           Incepe antrenament
         </button>
