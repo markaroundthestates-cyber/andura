@@ -50,6 +50,9 @@ import { initFirebaseSync } from '../../../firebase.js';
 import { runAuthPathMigration } from '../../../migrations/2026-05-02-auth-path-migration.js';
 import { getAuthState, restoreSession } from '../../../auth.js';
 import { enforceDataOwner } from '../../../util/dataReset.js';
+// BUG #3 stay-logged-in — the boot bridge writes into the REAL appStore (NOT
+// mocked) so reload recognizes a persisted session app-wide. Assert via getState.
+import { useAppStore } from '../../stores/appStore';
 
 const mockGetAuthState = vi.mocked(getAuthState);
 const mockRestoreSession = vi.mocked(restoreSession);
@@ -67,6 +70,10 @@ let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 beforeEach(() => {
   vi.clearAllMocks();
   __resetReactBootGuards();
+  // BUG #3 — reset the real appStore auth flag so the boot-bridge tests start
+  // from the post-reload default (store persists only isSkipAuth, so a real
+  // reload re-instantiates isAuthenticated=false; mirror that here for isolation).
+  useAppStore.getState().setAuthenticated(false);
   mockGetAuthState.mockReturnValue(null);
   mockMigrateLogsUtcToLocal.mockReturnValue({ skipped: true, reason: 'already-migrated' } as never);
   mockRunBootMigrations.mockResolvedValue({ migrationsRun: 1, totalEntriesMigrated: 0, errors: [] } as never);
@@ -277,5 +284,38 @@ describe('runPostAuthSync — restore on login', () => {
     mockInitFirebaseSync.mockResolvedValueOnce(undefined as never);
     await runPostAuthSync();
     expect(initFirebaseSync).toHaveBeenCalledTimes(2);
+  });
+});
+
+// ── BUG #3 stay-logged-in: boot bridges persisted tokens → appStore ──────────
+// A returning user must NOT be forced to re-login each reload. The store only
+// persists isSkipAuth, so on every reload isAuthenticated starts false; pre-fix
+// it was synced from the persisted firebase-* tokens ONLY inside ProtectedRoute,
+// but Splash (`/`) is a top-level route outside that gate → a logged-in user
+// landing on `/` saw "Log In" + got bounced to /auth. runReactBoot now bridges
+// the persisted session into the store at boot so the whole app (Splash
+// included) recognizes the user. Simulates reload via fresh runReactBoot with a
+// reset store + persisted-token getAuthState.
+
+describe('runReactBoot — auth survives reload (BUG #3)', () => {
+  it('sets appStore.isAuthenticated true when a session is persisted (reload)', async () => {
+    // Reload state: store re-instantiated false (beforeEach), tokens persisted.
+    expect(useAppStore.getState().isAuthenticated).toBe(false);
+    mockGetAuthState.mockReturnValue({ uid: 'u-return', idToken: 't', expiry: Date.now() + 1e6 } as never);
+
+    await runReactBoot();
+
+    // Bridge ran: the returning user is recognized app-wide (Splash shows
+    // "Continua" + routes to /app, NOT "Log In" → /auth re-login).
+    expect(useAppStore.getState().isAuthenticated).toBe(true);
+  });
+
+  it('leaves appStore.isAuthenticated false for an anonymous boot (no tokens)', async () => {
+    mockGetAuthState.mockReturnValue(null);
+
+    await runReactBoot();
+
+    // No persisted session → no bridge → anon user still sees the entry CTA.
+    expect(useAppStore.getState().isAuthenticated).toBe(false);
   });
 });

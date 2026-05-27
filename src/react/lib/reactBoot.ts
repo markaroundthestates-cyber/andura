@@ -51,6 +51,7 @@ import { initFirebaseSync } from '../../firebase.js';
 import { getAuthState, restoreSession } from '../../auth.js';
 import { runAuthPathMigration } from '../../migrations/2026-05-02-auth-path-migration.js';
 import { enforceDataOwner } from '../../util/dataReset.js';
+import { useAppStore } from '../stores/appStore';
 
 // Module-level idempotency guards. React 18 StrictMode double-invokes effects
 // in dev, and main.tsx + a returning-user path could both reach boot — these
@@ -117,7 +118,21 @@ export async function runReactBoot(): Promise<void> {
     // Non-fatal — getIdToken() will lazily refresh on the next data call.
   }
 
-  // 5. Returning authenticated user (token persisted from a prior session):
+  // 5. Bridge persisted auth tokens → appStore.isAuthenticated at boot so a
+  //    returning user is recognized app-wide (Splash `/` included), NOT just
+  //    once they hit a ProtectedRoute. Pre-fix the store defaulted to false on
+  //    every reload (it persists only isSkipAuth) and was synced from storage
+  //    ONLY inside ProtectedRoute — but Splash is a top-level route outside that
+  //    gate, so a logged-in user landing on `/` saw "Log In" + got bounced to
+  //    /auth, forced to re-login each session despite valid persisted tokens.
+  //    ADDITIVE only (mirrors ProtectedRoute §7-C3): set true when storage has a
+  //    session; never set false (preserves dev mock login + test isolation +
+  //    skip-auth). signOut() still flips it false via the andura:signedout event.
+  if (getAuthState()) {
+    useAppStore.getState().setAuthenticated(true);
+  }
+
+  // 6. Returning authenticated user (token persisted from a prior session):
   //    pull their cloud backup. Fire-and-forget — never block boot/paint.
   if (getAuthState()?.uid) {
     void runPostAuthSync();
