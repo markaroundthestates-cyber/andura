@@ -5,26 +5,50 @@
 // Maria 40kg mentenanta primea 2640, Marius 110kg/2m bulk primea 2851 — ambele
 // absurde fiindca multiplicatorul de faza se aplica pe constanta hardcodata).
 //
-// Formula = Mifflin-St Jeor BMR (gold standard 1990) × activity factor 1.55.
-//   M: 10·kg + 6.25·cm - 5·age + 5
-//   F: 10·kg + 6.25·cm - 5·age - 161
+// MODEL FORWARD FIZIC (2026-05-27, redesign directiva Daniel CEO) — driver-ul
+// deterministic, scale-independent, pentru kcal-ul de mentenanta zilnic:
+//
+//   kcal = BMR(Mifflin) × NEAT_BASE + (sesiuni_saptamana × PER_SESSION_NET) / 7
+//
+// Inlocuieste multiplicatorul fix 1.55 (defect central: 1.55 = "moderat activ"
+// hardcodat ignora cate antrenamente face user-ul de fapt — 4 vs 6 sesiuni
+// dadeau ACELASI numar). Acum termenul de activitate vine din sesiunile REAL
+// logate saptamana asta (workoutStore.sessionsHistory), deci 4 vs 6 schimba
+// numarul imediat, fara sa fie nevoie de cantar.
+//
+//   M: BMR = 10·kg + 6.25·cm - 5·age + 5
+//   F: BMR = 10·kg + 6.25·cm - 5·age - 161
 //
 // Reuse: aceeasi formula Mifflin-St Jeor folosita de BMRStrip.tsx (strip-ul
-// "Calorii baza ~1.790 kcal/zi") + activity factor 1.55 verbatim din legacy
-// SYS.estimateTDEE() (src/engine/sys.js:68 `Math.round(bmr * 1.55)`). 1.55 =
-// "moderat activ" (3-5 sesiuni/sapt), default rezonabil pt user de sala.
+// "Calorii baza"). Termenul de faza (cut/bulk) se aplica PESTE acest model in
+// engineWrappers (goal/phase multiplier) — neschimbat.
 //
 // Pure-function discipline: computeMaintenanceTDEE NU citeste store / NU are
-// side-effects. readUserMaintenanceTDEE = I/O boundary (citeste onboardingStore)
-// + deleaga la pura. Returns null cand stats absente (cold start fara onboarding)
-// → caller pastreaza fallback baseline.
+// side-effects (sesiunile vin ca parametru). readUserMaintenanceTDEE = I/O
+// boundary (citeste onboardingStore + workoutStore) + deleaga la pura. Returns
+// null cand stats absente (cold start fara onboarding) → caller fallback baseline.
 
 import { useOnboardingStore } from '../stores/onboardingStore';
+import { useWorkoutStore } from '../stores/workoutStore';
 import type { Sex, Goal } from '../stores/onboardingStore';
 
-// Activity factor "moderat activ" — verbatim legacy SYS.estimateTDEE()
-// (src/engine/sys.js:68). Single source of truth pentru BMR→TDEE multiplier.
-export const ACTIVITY_FACTOR = 1.55;
+// NEAT base = non-exercise activity thermogenesis multiplier (viata in afara
+// salii: deplasari, casa, munca usoara). 1.25 = mijlocul benzii sedentar→usor
+// activ din tabelele clasice de activitate Harris-Benedict/Mifflin (1.2
+// sedentar, 1.375 usor activ). NU include antrenamentul — exercitiul intra
+// explicit prin termenul de sesiuni (vezi PER_SESSION_NET_KCAL). Estimare
+// documentata, conservativa.
+export const NEAT_BASE = 1.25;
+
+// Net kcal peste-repaus per sesiune de rezistenta (kcal). Banda tipica 250-350
+// pentru o sesiune de 45-75 min de antrenament cu greutati (net peste BMR,
+// dupa scaderea cheltuielii de repaus din durata). 300 = mijloc conservativ al
+// benzii. Estimare — NU masura calorimetrica per-user.
+export const PER_SESSION_NET_KCAL = 300;
+
+// Fereastra de numarare a sesiunilor (zile). 7 = saptamana curenta de
+// antrenament: termenul de activitate reflecta cadenta recenta reala.
+export const SESSIONS_WINDOW_DAYS = 7;
 
 // Protein target g/kg greutate corporala. Spec Piesa 1: "Proteine = g/kg ×
 // greutate (per-user, nu flat)". Constanta nu exista exportata in cod (engine
@@ -43,6 +67,13 @@ export interface UserStatsInput {
   weightKg: number | null;
   ageYears: number | null;
   heightCm: number | null;
+  /**
+   * Numarul de sesiuni de antrenament logate in fereastra curenta
+   * (SESSIONS_WINDOW_DAYS). Termenul de activitate al modelului forward.
+   * Optional — default 0 (cold start / fara antrenamente saptamana asta →
+   * doar NEAT base, onest). Citit la I/O boundary din workoutStore.
+   */
+  sessionsThisWeek?: number;
 }
 
 /**
@@ -61,22 +92,66 @@ export function computeMifflinStJeorBMR(stats: UserStatsInput): number | null {
 }
 
 /**
- * Per-user maintenance TDEE = BMR × activity factor. Returns null cand stats
- * incomplete (caller pastreaza baseline fallback). Pure function.
+ * Per-user maintenance TDEE via model forward fizic (deterministic, scale-
+ * independent):
+ *
+ *   kcal = BMR × NEAT_BASE + (sessionsThisWeek × PER_SESSION_NET_KCAL) / 7
+ *
+ * Termenul de activitate (sesiuni × net / 7) e media zilnica a arderii din
+ * antrenamente (varianta saptamana-medie: total saptamanal impartit pe 7 zile
+ * → fara varfuri per-zi, neted). 0 sesiuni → doar NEAT base (onest). Mai multe
+ * sesiuni → kcal mai mare imediat. Returns null cand stats incomplete (caller
+ * pastreaza baseline fallback). Pure function.
  */
 export function computeMaintenanceTDEE(stats: UserStatsInput): number | null {
   const bmr = computeMifflinStJeorBMR(stats);
   if (bmr === null) return null;
-  return Math.round(bmr * ACTIVITY_FACTOR);
+  const sessions =
+    stats.sessionsThisWeek != null && Number.isFinite(stats.sessionsThisWeek) && stats.sessionsThisWeek > 0
+      ? stats.sessionsThisWeek
+      : 0;
+  const neatBase = bmr * NEAT_BASE;
+  const weeklySessionBurnPerDay = (sessions * PER_SESSION_NET_KCAL) / SESSIONS_WINDOW_DAYS;
+  return Math.round(neatBase + weeklySessionBurnPerDay);
 }
 
 /**
- * I/O boundary — read user stats din onboardingStore + compute maintenance
- * TDEE. Returns null cand stats absente (cold start) → caller fallback baseline.
+ * Numara sesiunile logate in ultimele SESSIONS_WINDOW_DAYS, dupa timestamp-ul
+ * de finish (LastSessionSummary.ts). Pure — primeste sesiunile + now ca
+ * parametri (NU citeste store / NU Date.now intern).
+ */
+export function countSessionsInWindow(
+  sessions: ReadonlyArray<{ ts: number }>,
+  nowMs: number,
+  windowDays: number = SESSIONS_WINDOW_DAYS,
+): number {
+  if (!Array.isArray(sessions) || sessions.length === 0) return 0;
+  const cutoff = nowMs - windowDays * 24 * 60 * 60 * 1000;
+  let count = 0;
+  for (const s of sessions) {
+    if (s != null && Number.isFinite(s.ts) && s.ts >= cutoff && s.ts <= nowMs) count += 1;
+  }
+  return count;
+}
+
+/**
+ * I/O boundary — read user stats din onboardingStore + sesiuni recente din
+ * workoutStore + compute maintenance TDEE (model forward). Returns null cand
+ * stats absente (cold start) → caller fallback baseline.
  */
 export function readUserMaintenanceTDEE(): number | null {
   const { sex, weight, age, height } = useOnboardingStore.getState().data;
-  return computeMaintenanceTDEE({ sex, weightKg: weight, ageYears: age, heightCm: height });
+  const sessionsThisWeek = countSessionsInWindow(
+    useWorkoutStore.getState().sessionsHistory,
+    Date.now(),
+  );
+  return computeMaintenanceTDEE({
+    sex,
+    weightKg: weight,
+    ageYears: age,
+    heightCm: height,
+    sessionsThisWeek,
+  });
 }
 
 /**

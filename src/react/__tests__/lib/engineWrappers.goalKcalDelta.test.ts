@@ -35,10 +35,12 @@ function setUser(goal: Goal | null): void {
   if (goal !== null) s.setField('goal', goal);
 }
 
-// Maintenance TDEE pentru USER (Mifflin-St Jeor × 1.55):
+// Maintenance TDEE pentru USER — forward physical model (2026-05-27 redesign):
+// TDEE = BMR × NEAT_BASE(1.25) + (sessionsThisWeek × 300)/7. No sessions logged
+// in these tests → activity term = 0 → TDEE = BMR × 1.25.
 // BMR = 10·110 + 6.25·184 - 5·35 + 5 = 1100 + 1150 - 175 + 5 = 2080
-// TDEE = round(2080 × 1.55) = 3224.
-const MAINTENANCE = 3224;
+// TDEE = round(2080 × 1.25) = 2600.
+const MAINTENANCE = 2600;
 
 beforeEach(() => {
   vi.clearAllMocks();

@@ -36,17 +36,21 @@ import { useProgresStore } from '../../stores/progresStore';
 import { useNutritionStore } from '../../stores/nutritionStore';
 
 // User din bug report (goalKcalDelta.test parity): barbat, 110kg, 184cm, 35 ani.
-// Mifflin BMR = 10·110 + 6.25·184 − 5·35 + 5 = 2080; TDEE = round(2080×1.55) = 3224.
+// Forward physical model (2026-05-27 redesign): TDEE = BMR × NEAT_BASE(1.25) +
+// (sessionsThisWeek × 300)/7. These tests log NO workouts → activity term = 0 →
+// Mifflin BMR = 10·110 + 6.25·184 − 5·35 + 5 = 2080; TDEE = round(2080×1.25) = 2600.
 const USER = { sex: 'm' as const, weight: 110, height: 184, age: 35 };
-const MAINTENANCE = 3224;
+const MAINTENANCE = 2600;
 
-// Energy-balance trend: 100→99→98 kg across two 10-day windows, logging 2000
-// kcal/day. Each window: −1 kg / 10 d @ 2000 → TDEE = 2000 + 7700/10 = 2770.
-// Two observations ~2770 → tier T1 (input-dominated). The REAL conjugate update
-// blends the 3224 per-user prior with the ~2770 trend → posterior.mu ≈ 2820
-// (verified via Node run of the actual engine). The point: it ADAPTS below the
-// flat maintenance toward the cantar-implied TDEE — the brand promise made real.
-const ADAPTED_MU = 2820; // posterior.mu from real evaluateBN (±1 rounding)
+// Energy-balance trend (scale = slow calibrator): 100→99→98→97 kg over a 30-day
+// span (4 weigh-ins, linear-regression slope), logging 2000 kcal/day. Slope =
+// −0.1 kg/day → ONE trend observation TDEE = 2000 + 0.1×7700 = 2770. With 4
+// weigh-ins → tier T1 (trend calibrates, but slowly). The REAL conjugate update
+// blends the 2600 forward-model prior with the 2770 trend → posterior.mu ≈ 2736
+// (verified via Node run of the actual engine). The point: it ADAPTS off the
+// flat maintenance toward the cantar-implied TDEE (here UP — slabire while
+// logging only 2000 implies a higher real burn) — slowly, never day-to-day.
+const ADAPTED_MU = 2736; // posterior.mu from real evaluateBN (±1 rounding)
 
 function setUser(goal: Goal | null): void {
   const s = useOnboardingStore.getState();
@@ -66,6 +70,7 @@ function seedAdaptiveTrend(): void {
       { kg: 100, date: '2026-05-01', ts: Date.UTC(2026, 4, 1) },
       { kg: 99, date: '2026-05-11', ts: Date.UTC(2026, 4, 11) },
       { kg: 98, date: '2026-05-21', ts: Date.UTC(2026, 4, 21) },
+      { kg: 97, date: '2026-05-31', ts: Date.UTC(2026, 4, 31) },
     ],
   });
   useNutritionStore.setState({
@@ -74,6 +79,7 @@ function seedAdaptiveTrend(): void {
       { dateISO: '2026-05-09', kcal: 2000, protein: null, ts: 0 },
       { dateISO: '2026-05-15', kcal: 2000, protein: null, ts: 0 },
       { dateISO: '2026-05-19', kcal: 2000, protein: null, ts: 0 },
+      { dateISO: '2026-05-25', kcal: 2000, protein: null, ts: 0 },
     ],
   });
 }
@@ -97,7 +103,7 @@ describe('nutrition pipeline realwire — onboarding goal → kcal delta (NO eng
     const ctx = readBayesianNutritionContext();
     const r = await getNutritionTargetsToday(ctx);
     expect(r.source).toBe('engine'); // real engine produced the number, not fallback
-    // CUT 0.82 × adapted mu (~2820) ≈ 2313, strictly under the adapted estimate.
+    // CUT 0.82 × adapted mu (~2736) ≈ 2244, strictly under the adapted estimate.
     expect(r.kcalTarget).toBeLessThan(ADAPTED_MU);
     expect(r.kcalTarget).toBeCloseTo(Math.round(ADAPTED_MU * 0.82), -1);
   });
@@ -108,7 +114,7 @@ describe('nutrition pipeline realwire — onboarding goal → kcal delta (NO eng
     const ctx = readBayesianNutritionContext();
     const r = await getNutritionTargetsToday(ctx);
     expect(r.source).toBe('engine');
-    // BULK 1.08 × adapted mu (~2820) ≈ 3046, strictly above the adapted estimate.
+    // BULK 1.08 × adapted mu (~2736) ≈ 2955, strictly above the adapted estimate.
     expect(r.kcalTarget).toBeGreaterThan(ADAPTED_MU);
     expect(r.kcalTarget).toBeCloseTo(Math.round(ADAPTED_MU * 1.08), -1);
   });
@@ -140,13 +146,16 @@ describe('nutrition pipeline realwire — adapts to logged weight trend (NO engi
     setUser('mentenanta');
     seedAdaptiveTrend();
     const ctx = readBayesianNutritionContext();
-    // Tier escalates with accumulated observations (2 windows → T1).
+    // Tier escalates with accumulated weigh-ins (4 weigh-ins → T1, slow calibrator).
     expect(ctx.profileTier).toBe('T1');
     const r = await getNutritionTargetsToday(ctx);
     expect(r.source).toBe('engine');
-    // The cantar-implied TDEE (~2770) pulls the posterior below the 3224 prior.
-    // Proves the inference CONSUMED the logged trend (not the static maintenance).
-    expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
+    // The cantar-implied TDEE (~2770) pulls the posterior OFF the 2600 forward-
+    // model prior (here UP: losing weight while logging only 2000 implies a
+    // higher real burn). Proves the inference CONSUMED the logged trend (not the
+    // static maintenance). The KEY relationship: estimate != flat prior.
+    expect(r.kcalTarget).not.toBe(MAINTENANCE);
+    expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
     expect(r.kcalTarget).toBeCloseTo(ADAPTED_MU, -1);
   });
 

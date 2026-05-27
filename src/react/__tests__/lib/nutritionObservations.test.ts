@@ -11,6 +11,7 @@ import {
   buildNutritionObservations,
   buildBayesianNutritionContext,
   tierFromObservationCount,
+  tierFromWeighInCount,
   KCAL_PER_KG,
 } from '../../lib/nutritionObservations';
 import type { WeightEntry } from '../../stores/progresStore';
@@ -24,51 +25,91 @@ function d(dateISO: string, kcal: number | null): NutritionDailyEntry {
   return { dateISO, kcal, protein: null, ts: 0 };
 }
 
-describe('buildNutritionObservations — energy balance', () => {
-  it('returns [] cand < 2 cantariri (nu putem forma fereastra)', () => {
+// Forward-model redesign (2026-05-27): observatiile vin acum din TREND-ul de
+// regresie liniara peste >=3 cantariri ce acopera >=7 zile (scale = calibrator
+// lent). TDEE = avgIntake − panta(kg/zi) × 7700. Ferestrele scurte/zgomotoase
+// nu mai produc observatii (anti fals-pozitiv).
+describe('buildNutritionObservations — energy balance (trend, slow calibrator)', () => {
+  it('returns [] cand < 3 cantariri (trend insuficient)', () => {
     expect(buildNutritionObservations([], [])).toEqual([]);
     expect(buildNutritionObservations([w('2026-05-01', 100)], [])).toEqual([]);
+    // 2 cantariri = sub pragul de trend (cerem 3).
+    expect(buildNutritionObservations([w('2026-05-01', 100), w('2026-05-11', 99)], [])).toEqual([]);
   });
 
   it('returns [] cand fereastra fara intake logat (nu inventam intake)', () => {
-    const wl = [w('2026-05-01', 100), w('2026-05-11', 99)];
+    const wl = [w('2026-05-01', 100), w('2026-05-08', 99.5), w('2026-05-15', 99)];
     expect(buildNutritionObservations(wl, [])).toEqual([]);
   });
 
-  it('weight stable + intake 2000 → TDEE estimat ~= intake (Δkg=0)', () => {
-    const wl = [w('2026-05-01', 100), w('2026-05-11', 100)];
-    const dl = [d('2026-05-03', 2000), d('2026-05-07', 2000)];
+  it('weight stable + intake 2000 → TDEE estimat ~= intake (panta ~0)', () => {
+    const wl = [w('2026-05-01', 100), w('2026-05-08', 100), w('2026-05-15', 100)];
+    const dl = [d('2026-05-03', 2000), d('2026-05-10', 2000)];
     const obs = buildNutritionObservations(wl, dl);
     expect(obs).toHaveLength(1);
-    // Δkg=0 → TDEE = intake mediu = 2000.
+    // panta=0 → TDEE = intake mediu = 2000.
     expect(obs[0]!.weightDelta).toBeCloseTo(2000, 0);
     expect(obs[0]!.kcalDaily).toBe(2000);
   });
 
-  it('a slabit logand 2000 → TDEE estimat PESTE 2000 (a cheltuit mai mult)', () => {
-    // 10 zile, -1kg logand 2000/zi. TDEE = 2000 - (-1×7700)/10 = 2000 + 770 = 2770.
-    const wl = [w('2026-05-01', 100), w('2026-05-11', 99)];
-    const dl = [d('2026-05-03', 2000), d('2026-05-09', 2000)];
+  it('a slabit (trend descrescator) logand 2000 → TDEE PESTE 2000', () => {
+    // 100→99→98 pe 20 zile = panta -0.1 kg/zi. TDEE = 2000 - (-0.1)×7700 = 2770.
+    const wl = [w('2026-05-01', 100), w('2026-05-11', 99), w('2026-05-21', 98)];
+    const dl = [d('2026-05-05', 2000), d('2026-05-15', 2000)];
     const obs = buildNutritionObservations(wl, dl);
     expect(obs).toHaveLength(1);
-    expect(obs[0]!.weightDelta).toBeCloseTo(2000 + KCAL_PER_KG / 10, 0);
+    expect(obs[0]!.weightDelta).toBeCloseTo(2000 + 0.1 * KCAL_PER_KG, 0);
     expect(obs[0]!.weightDelta).toBeGreaterThan(2000);
   });
 
-  it('GRAIN OF SALT — s-a ingrasat logand "deficit" → TDEE SUB log (sub-raportat)', () => {
-    // 10 zile, +1kg dar logheaza doar 1800/zi (pretins deficit). Cantarul spune
-    // ca a mancat de fapt mai mult: TDEE = 1800 - (1×7700)/10 = 1800 - 770 = 1030.
-    // Estimarea coboara catre intake-ul REAL implicat de castig → log corectat.
-    const wl = [w('2026-05-01', 100), w('2026-05-11', 101)];
-    const dl = [d('2026-05-03', 1800), d('2026-05-09', 1800)];
+  it('GRAIN OF SALT — trend crescator logand "deficit" → TDEE SUB log (sub-raportat)', () => {
+    // 100→100.5→101 pe 20 zile = panta +0.05 kg/zi, logheaza 1800 (pretins deficit).
+    // Cantarul spune ca a mancat mai mult: TDEE = 1800 - 0.05×7700 = 1800 - 385 = 1415.
+    const wl = [w('2026-05-01', 100), w('2026-05-11', 100.5), w('2026-05-21', 101)];
+    const dl = [d('2026-05-05', 1800), d('2026-05-15', 1800)];
     const obs = buildNutritionObservations(wl, dl);
     expect(obs).toHaveLength(1);
-    expect(obs[0]!.weightDelta).toBeCloseTo(1800 - KCAL_PER_KG / 10, 0);
+    expect(obs[0]!.weightDelta).toBeCloseTo(1800 - 0.05 * KCAL_PER_KG, 0);
     expect(obs[0]!.weightDelta).toBeLessThan(1800);
   });
 
+  // SCALE FLAW FIXED — short/noisy windows produce NO observation.
+  it('SCALE FLAW — fereastra de 2 zile cu swing de 4kg → ZERO observatie', () => {
+    // Doua cantariri la 2 zile distanta, swing apa/glicogen 4kg. Vechiul model
+    // point-to-point ar fi produs TDEE garbage (4×7700/2 = 15400 kcal). Acum:
+    // span < 7 zile + < 3 cantariri → respins.
+    const wl = [w('2026-05-01', 100), w('2026-05-03', 96)];
+    const dl = [d('2026-05-01', 2000), d('2026-05-03', 2000)];
+    expect(buildNutritionObservations(wl, dl)).toEqual([]);
+  });
+
+  it('SCALE FLAW — 3 cantariri pe span scurt (< 7 zile) → ZERO observatie', () => {
+    // Span 4 zile (< MIN_WINDOW_DAYS 7) chiar cu 3 puncte → respins (zgomot zilnic).
+    const wl = [w('2026-05-01', 100), w('2026-05-03', 104), w('2026-05-05', 99)];
+    const dl = [d('2026-05-01', 2000), d('2026-05-03', 2000), d('2026-05-05', 2000)];
+    expect(buildNutritionObservations(wl, dl)).toEqual([]);
+  });
+
+  it('SCALE FLAW — o singura zi cu swing 4kg in mijloc NU defineste trend-ul', () => {
+    // Trend real plat (100→100), dar o citire aberanta de 104 la mijloc. Regresia
+    // liniara o trateaza ca outlier (panta ~0), NU ca delta de 4kg. Estimarea
+    // ramane langa intake (NU garbage). Vechiul point-to-point ar fi luat capetele.
+    const wl = [
+      w('2026-05-01', 100), w('2026-05-06', 104), w('2026-05-11', 100),
+      w('2026-05-16', 100), w('2026-05-21', 100),
+    ];
+    const dl = [d('2026-05-05', 2000), d('2026-05-15', 2000)];
+    const obs = buildNutritionObservations(wl, dl);
+    expect(obs).toHaveLength(1);
+    // Regresia trateaza 104 ca outlier (panta mica) → TDEE in banda rezonabila
+    // langa intake (~2616), NU o estimare absurda. Vechiul point-to-point pe o
+    // fereastra de o zi cu acest swing ar fi dat zeci de mii de kcal (garbage).
+    expect(obs[0]!.weightDelta).toBeGreaterThan(1700);
+    expect(obs[0]!.weightDelta).toBeLessThan(3500);
+  });
+
   it('pure — input arrays NU mutate', () => {
-    const wl = [w('2026-05-01', 100), w('2026-05-11', 99)];
+    const wl = [w('2026-05-01', 100), w('2026-05-08', 99.5), w('2026-05-15', 99)];
     const dl = [d('2026-05-05', 2100)];
     const snapW = JSON.parse(JSON.stringify(wl));
     const snapD = JSON.parse(JSON.stringify(dl));
@@ -84,13 +125,24 @@ describe('buildNutritionObservations — energy balance', () => {
   });
 });
 
-describe('tierFromObservationCount', () => {
+describe('tierFromObservationCount (compat — builder emite acum <=1 obs)', () => {
   it('0-1 → T0, 2-4 → T1, 5+ → T2', () => {
     expect(tierFromObservationCount(0)).toBe('T0');
     expect(tierFromObservationCount(1)).toBe('T0');
     expect(tierFromObservationCount(2)).toBe('T1');
     expect(tierFromObservationCount(4)).toBe('T1');
     expect(tierFromObservationCount(5)).toBe('T2');
+  });
+});
+
+describe('tierFromWeighInCount — scale = calibrator lent (cap T1)', () => {
+  it('< 4 cantariri → T0 (prior-dominat, modelul forward conduce)', () => {
+    expect(tierFromWeighInCount(0)).toBe('T0');
+    expect(tierFromWeighInCount(3)).toBe('T0');
+  });
+  it('>= 4 cantariri → T1 (trend calibreaza lent) si NICIODATA T2 (scale nu domina)', () => {
+    expect(tierFromWeighInCount(4)).toBe('T1');
+    expect(tierFromWeighInCount(50)).toBe('T1'); // cap T1 — NU urca la T2 din scale
   });
 });
 
@@ -134,23 +186,30 @@ describe('engine integration — demographic prior escapes tier none', () => {
     expect(mu).toBeCloseTo(1369, 0);
   });
 
-  it('user cu istoric greutate+kcal → posterior se rafineaza spre TDEE energy-balance', async () => {
-    // Maintenance prior 2640 (gresit-flat), dar trend real arata TDEE ~2770.
-    // Cu T1 (input-dominat) posterior se muta semnificativ spre observatii.
-    const wl = [w('2026-05-01', 100), w('2026-05-11', 99), w('2026-05-21', 98)];
-    const dl = [d('2026-05-05', 2000), d('2026-05-15', 2000)];
-    const obs = buildNutritionObservations(wl, dl);
+  it('user cu istoric greutate+kcal → trend-ul nudge-uieste posterior-ul (calibrator lent)', async () => {
+    // Prior forward-model 2600, trend real de slabire (100→96 pe 28 zile = panta
+    // -0.1429 kg/zi @ 2000 intake) → TDEE ~3100 (a cheltuit peste ce a logat).
+    // >=4 cantariri → T1 (trend-ul calibreaza, dar lent). Posterior se misca de
+    // la prior CATRE observatie, fara sa o atinga (scale = nudge lent, NU driver).
+    const wl = [
+      w('2026-05-01', 100), w('2026-05-08', 99), w('2026-05-15', 98),
+      w('2026-05-22', 97), w('2026-05-29', 96),
+    ];
+    const dl = [d('2026-05-05', 2000), d('2026-05-15', 2000), d('2026-05-25', 2000)];
     const ctx = buildBayesianNutritionContext({
-      weightLog: wl, dailyLog: dl, maintenanceTDEE: 2640, sex: 'm',
-      profileTier: tierFromObservationCount(obs.length),
+      weightLog: wl, dailyLog: dl, maintenanceTDEE: 2600, sex: 'm',
+      profileTier: tierFromWeighInCount(wl.length),
     });
+    expect(ctx.profileTier).toBe('T1');
     const r = await evaluateBN(ctx);
     expect(r.tier).not.toBe('none');
     const mu = r.meta?.nutrition_inference_metadata?.posterior?.mu;
-    // Observatii ~2770 trag posterior-ul sub prior-ul gresit 2640? Nu — 2770>2640,
-    // deci posterior intre 2640 si 2770, peste prior, sub observatii. Cheia:
-    // posterior s-a MUTAT de la baseline-ul flat catre estimarea per-user reala.
-    expect(mu).toBeGreaterThan(2640);
-    expect(mu as number).toBeLessThanOrEqual(2770 + 1);
+    const obs = buildNutritionObservations(wl, dl);
+    const obsTdee = obs[0]!.weightDelta; // ~3100
+    expect(obsTdee).toBeGreaterThan(2600);
+    // posterior intre prior 2600 si observatia ~3100: s-a MUTAT de la prior-ul
+    // forward CATRE estimarea cantar, fara overshoot (calibrator lent T1).
+    expect(mu).toBeGreaterThan(2600);
+    expect(mu as number).toBeLessThan(obsTdee);
   });
 });

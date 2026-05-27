@@ -17,7 +17,10 @@ import {
   computeMifflinStJeorBMR,
   computeMaintenanceTDEE,
   computeProteinTargetG,
-  ACTIVITY_FACTOR,
+  countSessionsInWindow,
+  NEAT_BASE,
+  PER_SESSION_NET_KCAL,
+  SESSIONS_WINDOW_DAYS,
   PROTEIN_G_PER_KG_BODYWEIGHT,
 } from '../../lib/userTdee';
 import { getNutritionTargetsToday } from '../../lib/engineWrappers';
@@ -61,9 +64,35 @@ describe('userTdee — pure helpers', () => {
     expect(computeMifflinStJeorBMR({ sex: 'f', weightKg: null, ageYears: 65, heightCm: 155 })).toBeNull();
   });
 
-  it('maintenance TDEE = BMR × activity factor', () => {
-    expect(computeMaintenanceTDEE(MARIA)).toBe(Math.round(883 * ACTIVITY_FACTOR));
-    expect(computeMaintenanceTDEE(MARIUS)).toBe(Math.round(2205 * ACTIVITY_FACTOR));
+  // Forward physical model (2026-05-27 redesign): TDEE = BMR × NEAT_BASE +
+  // (sessionsThisWeek × PER_SESSION_NET_KCAL)/7. With 0 sessions → BMR×NEAT only.
+  it('maintenance TDEE = forward model (NEAT base, 0 sessions)', () => {
+    expect(computeMaintenanceTDEE(MARIA)).toBe(Math.round(883 * NEAT_BASE));
+    expect(computeMaintenanceTDEE(MARIUS)).toBe(Math.round(2205 * NEAT_BASE));
+  });
+
+  it('maintenance TDEE RISES with more actual sessions this week (4 vs 6)', () => {
+    const base = Math.round(2205 * NEAT_BASE);
+    const four = computeMaintenanceTDEE({ ...MARIUS, sessionsThisWeek: 4 });
+    const six = computeMaintenanceTDEE({ ...MARIUS, sessionsThisWeek: 6 });
+    expect(four).toBe(Math.round(2205 * NEAT_BASE + (4 * PER_SESSION_NET_KCAL) / SESSIONS_WINDOW_DAYS));
+    expect(six).toBe(Math.round(2205 * NEAT_BASE + (6 * PER_SESSION_NET_KCAL) / SESSIONS_WINDOW_DAYS));
+    // The whole point of the redesign: 6 workouts > 4 workouts > sedentary base.
+    expect((four as number)).toBeGreaterThan(base);
+    expect((six as number)).toBeGreaterThan(four as number);
+  });
+
+  it('countSessionsInWindow counts only finishes within the last 7 days', () => {
+    const now = Date.UTC(2026, 4, 27);
+    const DAY = 24 * 60 * 60 * 1000;
+    const sessions = [
+      { ts: now - 1 * DAY }, // in window
+      { ts: now - 3 * DAY }, // in window
+      { ts: now - 6 * DAY }, // in window
+      { ts: now - 9 * DAY }, // OUT of window (>7 days)
+    ];
+    expect(countSessionsInWindow(sessions, now)).toBe(3);
+    expect(countSessionsInWindow([], now)).toBe(0);
   });
 
   it('protein target = g/kg × bodyweight per-user', () => {
@@ -88,25 +117,26 @@ describe('engineWrappers — per-user nutrition base (Piesa 1)', () => {
     expect(maria.kcalTarget).not.toBe(2640);
     expect(marius.kcalTarget).not.toBe(2640);
     expect(maria.kcalTarget).toBeLessThan(marius.kcalTarget);
-    // Maria mentenanta ~ 883×1.55 ≈ 1369 (range 1300-1500 per spec).
-    expect(maria.kcalTarget).toBeGreaterThanOrEqual(1300);
-    expect(maria.kcalTarget).toBeLessThanOrEqual(1500);
-    // Marius mentenanta ~ 2205×1.55 ≈ 3418.
-    expect(marius.kcalTarget).toBeGreaterThan(3000);
+    // Forward model, 0 sessions: Maria 883×1.25 ≈ 1104 → clamped to floor 1200.
+    expect(maria.kcalTarget).toBe(1200);
+    // Marius mentenanta ~ 2205×1.25 ≈ 2756 (NEAT base, 0 sessions this week).
+    expect(marius.kcalTarget).toBe(Math.round(2205 * NEAT_BASE));
     // Protein per-user, NOT flat 180.
     expect(maria.proteinTargetG).toBe(Math.round(40 * PROTEIN_G_PER_KG_BODYWEIGHT));
     expect(marius.proteinTargetG).toBe(Math.round(110 * PROTEIN_G_PER_KG_BODYWEIGHT));
     expect(maria.source).toBe('engine');
   });
 
-  it('phase override BULK applies multiplier to REAL per-user TDEE (Marius bulk 3500-4000)', async () => {
+  it('phase override BULK applies multiplier to REAL per-user TDEE (forward model)', async () => {
     setOnboarding(MARIUS);
     localStorage.setItem('phase-override', JSON.stringify('BULK'));
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    // 2205 BMR × 1.55 = 3418 TDEE × 1.08 BULK ≈ 3691.
-    expect(r.kcalTarget).toBeGreaterThanOrEqual(3500);
-    expect(r.kcalTarget).toBeLessThanOrEqual(4000);
+    // Forward model, 0 sessions: 2205 BMR × 1.25 NEAT = 2756 TDEE × 1.08 BULK ≈ 2976.
+    // BULK is a surplus over the per-user maintenance, NOT the flat 2640.
+    const maintenance = Math.round(2205 * NEAT_BASE);
+    expect(r.kcalTarget).toBe(Math.round(maintenance * 1.08));
+    expect(r.kcalTarget).toBeGreaterThan(maintenance);
     expect(r.kcalTarget).not.toBe(2640);
   });
 

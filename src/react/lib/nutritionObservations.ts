@@ -48,13 +48,22 @@ import { resolveKcalFloorForSex } from '../../engine/bayesianNutrition/constants
 export const KCAL_PER_KG = 7700;
 
 // Demographic prior sigma (kcal). Latimea incertitudinii prior-ului per-user.
-// ~250 kcal = banda rezonabila in jurul mentenantei Mifflin (activity factor
-// 1.55 ipoteza); lasa observatiile sa miste posterior-ul fara overshoot.
+// ~250 kcal = banda rezonabila in jurul estimarii forward Mifflin; lasa
+// observatiile sa miste posterior-ul fara overshoot.
 export const DEMOGRAPHIC_SIGMA_KCAL = 250;
 
-// Variatia minima de zile intre 2 cantariri ca sa formeze o fereastra valida.
-// Sub asta, zgomotul scalei (apa/glicogen) domina semnalul → skip.
-const MIN_WINDOW_DAYS = 1;
+// Span minim al ferestrei (zile, de la prima la ultima cantarire) ca sa formeze
+// o observatie valida. 7+ zile = o saptamana completa: zgomotul zilnic al
+// scalei (apa/glicogen, ±4-5 kg) se mediaza, NU domina semnalul. Sub asta o
+// fluctuatie de o zi ar produce o estimare TDEE garbage (fals pozitiv) →
+// cantarul devine driver zilnic in loc de calibrator lent. Scale = calibrator
+// lent (vezi cap-fisier), NU driver zilnic.
+const MIN_WINDOW_DAYS = 7;
+
+// Numarul minim de cantariri intr-o fereastra ca panta de regresie sa fie
+// semnificativa (2 = minim matematic pentru o panta; cerem 3 ca o singura
+// citire aberanta sa nu defineasca trend-ul).
+const MIN_WEIGH_INS_FOR_TREND = 3;
 
 export interface ObservationsBuilderInput {
   weightLog: ReadonlyArray<WeightEntry>;
@@ -109,26 +118,61 @@ function avgLoggedIntakeInWindow(
 }
 
 /**
- * Construieste observatiile (kcal-space) din trend greutate + intake logat.
+ * Panta de regresie liniara (kg/zi) a greutatii in timp, prin cele mai mici
+ * patrate. x = zile relative la primul punct, y = kg. Returns null cand < 2
+ * puncte sau varianta x nula (toate in aceeasi zi). Pure.
  *
- * Pentru fiecare pereche consecutiva de cantariri (sortate crescator pe data):
- *   Δgreutate = kg_end − kg_start  (negativ = a slabit)
- *   zile = (ms_end − ms_start) / zi
- *   intake_mediu = media kcal logate in fereastra
- *   TDEE_fereastra = intake_mediu − (Δgreutate × 7700) / zile
+ * Folosita ca trend robust la zgomot: o singura cantarire aberanta (apa/
+ * glicogen, ±4-5 kg intr-o zi) misca panta marginal in loc sa defineasca tot
+ * delta (ca la point-to-point start→end). Asa o fluctuatie de o zi NU mai
+ * produce o estimare TDEE garbage.
+ */
+function weightTrendSlopeKgPerDay(
+  points: ReadonlyArray<{ dayOffset: number; kg: number }>,
+): number | null {
+  const n = points.length;
+  if (n < 2) return null;
+  let sumX = 0;
+  let sumY = 0;
+  let sumXY = 0;
+  let sumXX = 0;
+  for (const p of points) {
+    sumX += p.dayOffset;
+    sumY += p.kg;
+    sumXY += p.dayOffset * p.kg;
+    sumXX += p.dayOffset * p.dayOffset;
+  }
+  const denom = n * sumXX - sumX * sumX;
+  if (denom === 0 || !Number.isFinite(denom)) return null;
+  const slope = (n * sumXY - sumX * sumY) / denom;
+  return Number.isFinite(slope) ? slope : null;
+}
+
+/**
+ * Construieste observatia (kcal-space) din TREND-ul greutatii (panta de
+ * regresie liniara) + intake-ul mediu logat, pe intreaga serie de cantariri.
  *
- * Cantarul conduce: daca a slabit logand X, TDEE > X (a cheltuit mai mult);
- * daca s-a ingrasat logand un "deficit", TDEE_fereastra scade catre intake-ul
- * REAL implicat de castig → log sub-raportat corectat de scala. Energy balance.
+ * Span = zile de la prima la ultima cantarire. Cerem span >= MIN_WINDOW_DAYS
+ * (>=7 zile, o saptamana) SI >= MIN_WEIGH_INS_FOR_TREND cantariri ca panta sa
+ * fie semnificativa. Sub aceste praguri → ZERO observatie (zgomotul zilnic al
+ * scalei domina; scale = calibrator lent, NU driver zilnic).
  *
- * Sare ferestrele fara intake logat (NU inventam intake) sau cu zile < prag
- * (zgomot scala domina). Pure — ZERO mutation input.
+ *   panta (kg/zi)  = regresie liniara peste cantaririle din serie
+ *   Δgreutate      = panta × span_zile  (negativ = a slabit, robust la noise)
+ *   intake_mediu   = media kcal logate in fereastra [prima, ultima]
+ *   TDEE           = intake_mediu − (Δgreutate × 7700) / span_zile
+ *                  = intake_mediu − panta × 7700
+ *
+ * Cantarul conduce inferenta lenta: daca trend-ul scade logand X, TDEE > X (a
+ * cheltuit mai mult); daca trend-ul creste logand un "deficit", TDEE coboara
+ * spre intake-ul REAL implicat de castig → log sub-raportat corectat. Energy
+ * balance. Pure — ZERO mutation input, ZERO Date.now.
  */
 export function buildNutritionObservations(
   weightLog: ReadonlyArray<WeightEntry>,
   dailyLog: ReadonlyArray<NutritionDailyEntry>,
 ): NutritionObservation[] {
-  if (!Array.isArray(weightLog) || weightLog.length < 2) return [];
+  if (!Array.isArray(weightLog) || weightLog.length < MIN_WEIGH_INS_FOR_TREND) return [];
 
   const sorted = weightLog
     .filter((w) => w != null && Number.isFinite(w.kg) && typeof w.date === 'string')
@@ -136,34 +180,38 @@ export function buildNutritionObservations(
     .filter((w) => Number.isFinite(w.ms))
     .sort((a, b) => a.ms - b.ms);
 
-  const observations: NutritionObservation[] = [];
-  for (let i = 1; i < sorted.length; i += 1) {
-    const start = sorted[i - 1];
-    const end = sorted[i];
-    if (start == null || end == null) continue;
-    const days = (end.ms - start.ms) / MS_PER_DAY;
-    if (days < MIN_WINDOW_DAYS) continue;
+  if (sorted.length < MIN_WEIGH_INS_FOR_TREND) return [];
 
-    const avgIntake = avgLoggedIntakeInWindow(dailyLog, start.ms, end.ms);
-    if (avgIntake == null) continue; // fara intake logat → nu putem estima
+  const first = sorted[0]!;
+  const last = sorted[sorted.length - 1]!;
+  const spanDays = (last.ms - first.ms) / MS_PER_DAY;
+  // Fereastra prea scurta (sub o saptamana) → zgomotul zilnic domina → skip.
+  if (spanDays < MIN_WINDOW_DAYS) return [];
 
-    const deltaKg = end.kg - start.kg;
-    // Energy balance: TDEE = intake − energie stocata/zi. Δkg>0 (ingrasare) →
-    // termen negativ → TDEE estimat SUB intake (a mancat peste cheltuiala);
-    // Δkg<0 (slabire) → termen pozitiv → TDEE PESTE intake.
-    const tdeeWindow = avgIntake - (deltaKg * KCAL_PER_KG) / days;
+  const avgIntake = avgLoggedIntakeInWindow(dailyLog, first.ms, last.ms);
+  if (avgIntake == null) return []; // fara intake logat → nu putem estima
 
-    // Defensiv: estimari absurde (scala glitch / mis-log extrem) → skip.
-    if (!Number.isFinite(tdeeWindow) || tdeeWindow <= 0 || tdeeWindow > 12000) continue;
+  // Trend robust: panta de regresie (kg/zi) peste TOATE cantaririle din serie,
+  // NU delta point-to-point start→end (care ar lua un swing de o zi ca semnal).
+  const slopeKgPerDay = weightTrendSlopeKgPerDay(
+    sorted.map((p) => ({ dayOffset: (p.ms - first.ms) / MS_PER_DAY, kg: p.kg })),
+  );
+  if (slopeKgPerDay == null) return [];
 
-    observations.push({
-      weightDelta: tdeeWindow, // contract: "sample value" in kcal (vezi cap-fisier)
+  // Energy balance: TDEE = intake − energie stocata/zi = intake − panta × 7700.
+  // panta>0 (ingrasare) → TDEE estimat SUB intake; panta<0 (slabire) → PESTE.
+  const tdeeTrend = avgIntake - slopeKgPerDay * KCAL_PER_KG;
+
+  // Defensiv: estimari absurde (scala glitch / mis-log extrem) → skip.
+  if (!Number.isFinite(tdeeTrend) || tdeeTrend <= 0 || tdeeTrend > 12000) return [];
+
+  return [
+    {
+      weightDelta: tdeeTrend, // contract: "sample value" in kcal (vezi cap-fisier)
       kcalDaily: Math.round(avgIntake),
-      timestampMs: end.ts,
-    });
-  }
-
-  return observations;
+      timestampMs: last.ts,
+    },
+  ];
 }
 
 /**
@@ -202,17 +250,35 @@ export function buildBayesianNutritionContext(
 }
 
 /**
- * Calibration tier din numarul de observatii acumulate. Mai multe date →
- * tier mai mare → engine-ul are incredere mai mare in input vs prior:
- *   0-1 obs → T0 (cold start, 70/30 prior-dominat, anti-overshoot)
- *   2-4 obs → T1 (80/20 input-dominat, calibrare in curs)
- *   5+  obs → T2 (90/10 input puternic, posterior erodeaza prior)
- * Pure.
+ * Calibration tier din numarul de observatii. NB: dupa redesign-ul forward-
+ * model (2026-05-27) builder-ul emite cel mult O observatie (un trend pe
+ * intreaga serie), deci aceasta functie ramane DOAR pentru compat/teste — tier-
+ * ul de productie se deriva din numarul de cantariri (vezi
+ * tierFromWeighInCount). Pure.
+ *   0-1 obs → T0 ; 2-4 obs → T1 ; 5+ obs → T2
  */
 export function tierFromObservationCount(n: number): string {
   if (!Number.isFinite(n) || n <= 1) return 'T0';
   if (n <= 4) return 'T1';
   return 'T2';
+}
+
+// Cantariri minime ca trend-ul sa fie de incredere (input-dominated tier T1).
+const WEIGH_INS_FOR_CALIBRATING_TIER = 4;
+
+/**
+ * Calibration tier din numarul de CANTARIRI (nu observatii) — scale = calibrator
+ * lent. Cu putine cantariri (<4) ramanem T0 (70/30 prior-dominat: modelul
+ * forward fizic conduce, scale abia il atinge). Cu >=4 cantariri pe un trend
+ * suficient de lung → T1 (80/20: trend-ul calibreaza estimarea, lent). NU
+ * urcam la T2 din scale: cantarul NU domina (90/10) ca sa NU clatine kcal de
+ * la zi la zi — ramane calibrator lent peste saptamani, NU driver. Pure.
+ */
+export function tierFromWeighInCount(weighInCount: number): string {
+  if (!Number.isFinite(weighInCount) || weighInCount < WEIGH_INS_FOR_CALIBRATING_TIER) {
+    return 'T0';
+  }
+  return 'T1';
 }
 
 /**
@@ -230,12 +296,13 @@ export function readBayesianNutritionContext(): BayesianNutritionContext {
   const sex = useOnboardingStore.getState().data.sex;
   const maintenanceTDEE = readUserMaintenanceTDEE();
 
-  const observations = buildNutritionObservations(weightLog, dailyLog);
+  // Tier din numarul de CANTARIRI (scale = calibrator lent, cap T1) — NU din
+  // numarul de observatii (acum mereu <=1 dupa redesign-ul forward-model).
   return buildBayesianNutritionContext({
     weightLog,
     dailyLog,
     maintenanceTDEE,
     sex,
-    profileTier: tierFromObservationCount(observations.length),
+    profileTier: tierFromWeighInCount(weightLog.length),
   });
 }

@@ -177,11 +177,13 @@ describe('applyHistoryImport — store write + bootstrap path (Piesa 2)', () => 
     expect(useNutritionStore.getState().dailyLog).toHaveLength(2);
   });
 
-  it('bootstrap: import → builder Piesa 2 produce observatii (tier > none)', () => {
-    // Import istoric: a slabit 2kg in 14 zile logand 2000 kcal/zi.
+  it('bootstrap: import → builder Piesa 2 produce o observatie trend (tier > none)', () => {
+    // Import istoric: a slabit 2kg in 14 zile (3 cantariri) logand 2000 kcal/zi.
+    // Forward-model redesign: o singura observatie de trend, NU point-to-point.
     applyHistoryImport(
       [
         { date: '2026-05-01', kg: 90 },
+        { date: '2026-05-08', kg: 89 },
         { date: '2026-05-15', kg: 88 },
       ],
       [
@@ -194,14 +196,16 @@ describe('applyHistoryImport — store write + bootstrap path (Piesa 2)', () => 
       useProgresStore.getState().weightLog,
       useNutritionStore.getState().dailyLog,
     );
-    expect(obs.length).toBeGreaterThanOrEqual(1);
-    // Energy balance: a slabit 2kg/14zile logand 2000 → TDEE > 2000.
-    // TDEE = 2000 - (-2 * 7700)/14 = 2000 + 1100 = 3100.
+    expect(obs).toHaveLength(1);
+    // Energy balance trend: panta -2kg/14zile = -0.1429 kg/zi logand 2000 →
+    // TDEE = 2000 - (-0.1429 * 7700) = 2000 + 1100 = 3100.
     expect(obs[0]!.weightDelta).toBeCloseTo(3100, 0);
   });
 
-  it('multe randuri istoric → multe observatii (Kalman converge in zile)', () => {
-    // 12 cantariri saptamanale + intake logat in fiecare fereastra → 11 obs.
+  it('multe randuri istoric → o observatie de trend robust (NU multe puncte zgomotoase)', () => {
+    // 12 cantariri saptamanale + intake logat → UN trend (forward-model redesign:
+    // builder-ul agrega seria intr-o singura observatie de panta, scale =
+    // calibrator lent, NU multe observatii point-to-point zgomotoase).
     const weightEntries: { date: string; kg: number }[] = [];
     const dailyEntries: { dateISO: string; kcal: number; protein: number }[] = [];
     for (let i = 0; i < 12; i += 1) {
@@ -217,6 +221,8 @@ describe('applyHistoryImport — store write + bootstrap path (Piesa 2)', () => 
       useProgresStore.getState().weightLog,
       useNutritionStore.getState().dailyLog,
     );
-    expect(obs.length).toBeGreaterThanOrEqual(3);
+    expect(obs).toHaveLength(1);
+    // Trend descrescator logand 2200 → TDEE peste 2200 (a cheltuit mai mult).
+    expect(obs[0]!.weightDelta).toBeGreaterThan(2200);
   });
 });
