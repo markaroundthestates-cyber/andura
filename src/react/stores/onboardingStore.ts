@@ -35,7 +35,7 @@ export interface OnboardingData {
  * `weight=999` → demographic prior fails → engine NaN downstream.
  *
  * Bounds source (LOCKED V1):
- *  - age 16-99   → D046 §28-H5 GDPR Romania parental consent → raise min to 16
+ *  - age 18-99   → CEO 2026-05-27 adults-only 18+ (supersedes D046 §28-H5 GDPR-16 parental-consent default)
  *                  (overrides audit §30.6 lower 13). Mockup andura-clasic.html
  *                  L563 `min="16" max="99"` consistent.
  *  - weight 30-250 kg → audit §30.6 spec. Mockup L645 shows max=300 but audit
@@ -56,7 +56,7 @@ export interface OnboardingData {
  *         §28-H5 + DECISIONS.md D046 §28-H5 GDPR LOCKED V1.
  */
 export const ONBOARDING_BOUNDS = {
-  age: { min: 16, max: 99 },
+  age: { min: 18, max: 99 },
   weight: { min: 30, max: 250 },
   height: { min: 120, max: 230 },
 } as const satisfies Record<'age' | 'weight' | 'height', { min: number; max: number }>;

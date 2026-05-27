@@ -172,8 +172,8 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
   // A11Y HIGH chat5 — surface range validation pentru screen reader. Show
   // doar daca value e ne-null + out-of-range (NU initial empty). WCAG SC
   // 3.3.1 + 3.3.3.
-  const error = value !== null && (value < 16 || value > 99)
-    ? 'Varsta intre 16 si 99 ani.'
+  const error = value !== null && (value < 18 || value > 99)
+    ? 'Varsta intre 18 si 99 ani.'
     : null;
   return (
     <>
@@ -193,7 +193,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
           onChange(Number.isFinite(n) ? n : null);
         }}
         placeholder="ex. 32"
-        min={16}
+        min={18}
         max={99}
         required
         aria-required="true"
@@ -217,7 +217,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         </p>
       ) : (
         // MED — helper line per mockup L565 "Intre 16 si 99 ani".
-        <p className="mt-2 text-xs text-ink3 text-center">Intre 16 si 99 ani</p>
+        <p className="mt-2 text-xs text-ink3 text-center">Intre 18 si 99 ani</p>
       )}
     </>
   );

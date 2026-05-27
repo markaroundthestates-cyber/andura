@@ -2,7 +2,7 @@
 // CRIT-BETA cluster fix 2026-05-22. Verifies two-tier validation:
 // (1) `isSafeOnboardingValue` catastrophe gate (NaN/Infinity/neg/0 rejected
 //     silently at setField — engine-killer protection).
-// (2) `validateOnboardingField` range gate (age 16-99, weight 30-250kg) —
+// (2) `validateOnboardingField` range gate (age 18-99, weight 30-250kg) —
 //     surfaces Gigel-friendly reason string for UI toast.
 // (3) `finalize()` gate refuses to mark completed if any field out-of-range.
 //
@@ -35,8 +35,8 @@ function resetStore(): void {
 }
 
 describe('onboardingStore — ONBOARDING_BOUNDS constants', () => {
-  it('age bounds 16-99 (D046 §28-H5 GDPR Romania)', () => {
-    expect(ONBOARDING_BOUNDS.age.min).toBe(16);
+  it('age bounds 18-99 (CEO 18+ adults-only, supersedes D046 §28-H5)', () => {
+    expect(ONBOARDING_BOUNDS.age.min).toBe(18);
     expect(ONBOARDING_BOUNDS.age.max).toBe(99);
   });
 
@@ -115,8 +115,8 @@ describe('onboardingStore — validateOnboardingField range gate', () => {
     expect(validateOnboardingField('weight', null)).toEqual({ ok: true });
   });
 
-  it('accepts age boundary min (16)', () => {
-    expect(validateOnboardingField('age', 16)).toEqual({ ok: true });
+  it('accepts age boundary min (18)', () => {
+    expect(validateOnboardingField('age', 18)).toEqual({ ok: true });
   });
 
   it('accepts age boundary max (99)', () => {
@@ -127,7 +127,7 @@ describe('onboardingStore — validateOnboardingField range gate', () => {
     const result = validateOnboardingField('age', 8);
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.reason).toContain('16');
+      expect(result.reason).toContain('18');
       expect(result.reason).toContain('99');
       expect(result.reason.toLowerCase()).toContain('varsta');
     }
@@ -315,10 +315,10 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
     expect(useOnboardingStore.getState().completedAt).not.toBeNull();
   });
 
-  it('finalizes cu boundary values (age 16 + weight 30 + height 120)', () => {
+  it('finalizes cu boundary values (age 18 + weight 30 + height 120)', () => {
     useOnboardingStore.setState({
       data: {
-        age: 16,
+        age: 18,
         sex: 'f',
         goal: 'longevitate',
         frequency: '2',

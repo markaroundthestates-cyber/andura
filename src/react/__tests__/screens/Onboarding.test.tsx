@@ -234,7 +234,7 @@ describe('Onboarding — A11Y HIGH chat5 form aria attributes', () => {
     expect(screen.queryByTestId('onb-age-error')).not.toBeInTheDocument();
   });
 
-  it('step 1 age input aria-invalid + error cand value < 16', () => {
+  it('step 1 age input aria-invalid + error cand value < 18', () => {
     renderAt(1);
     fireEvent.change(screen.getByTestId('onb-age-input'), { target: { value: '10' } });
     const input = screen.getByTestId('onb-age-input');
@@ -243,14 +243,14 @@ describe('Onboarding — A11Y HIGH chat5 form aria attributes', () => {
     const err = screen.getByTestId('onb-age-error');
     expect(err).toHaveAttribute('id', 'onb-age-error');
     expect(err).toHaveAttribute('role', 'alert');
-    expect(err.textContent).toMatch(/Varsta intre 16 si 99/);
+    expect(err.textContent).toMatch(/Varsta intre 18 si 99/);
   });
 
   it('step 1 age input aria-invalid cand value > 99', () => {
     renderAt(1);
     fireEvent.change(screen.getByTestId('onb-age-input'), { target: { value: '120' } });
     expect(screen.getByTestId('onb-age-input')).toHaveAttribute('aria-invalid', 'true');
-    expect(screen.getByTestId('onb-age-error').textContent).toMatch(/16 si 99/);
+    expect(screen.getByTestId('onb-age-error').textContent).toMatch(/18 si 99/);
   });
 
   it('step 6 weight input has aria-required + required', () => {

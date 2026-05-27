@@ -273,7 +273,7 @@ describe('SettingsProfile — U-12 Big 6 range gate on save (AUDIT-2 §U-12 HIGH
     expect(useOnboardingStore.getState().data.age).toBe(31);
     expect(screen.queryByTestId('settings-profile-saved')).toBeNull();
     const items = toast.getSnapshot();
-    expect(items.some((t) => t.variant === 'warning' && /Varsta intre 16 si 99/.test(String(t.message)))).toBe(true);
+    expect(items.some((t) => t.variant === 'warning' && /Varsta intre 18 si 99/.test(String(t.message)))).toBe(true);
   });
 
   it('rejects out-of-range weight on save — store unchanged + toast', () => {

@@ -181,7 +181,7 @@ export function SettingsProfile(): JSX.Element {
           <LabelRow label="Varsta">
             <input
               type="number"
-              min={16}
+              min={18}
               max={99}
               inputMode="numeric"
               autoComplete="off"
