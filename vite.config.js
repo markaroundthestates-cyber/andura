@@ -146,13 +146,50 @@ export default defineConfig({
         main: 'index.html',
       },
       output: {
-        manualChunks: {
-          // Phase 5 task_20 vendor split: react + zustand stack into
-          // separate chunk pentru better caching cross-deploys.
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-state': ['zustand'],
-          'vendor-icons': ['lucide-react'],
-          'vendor-data': ['dexie'],
+        // Phase 5 task_20 vendor split: react + zustand stack into
+        // separate chunk pentru better caching cross-deploys.
+        //
+        // Perf 2026-05-27 (size-limit ratchet) — manualChunks function form
+        // so we can match src/ paths, not just node_modules. The 657-exercise
+        // dataset (src/engine/exerciseLibrary.js ~485 KB raw — nameRo +
+        // equipment_type + muscle_target per record) plus the equipmentMap +
+        // muscleGroupMap static lookup tables previously landed in main,
+        // pushing it over the 135 KB gzip budget. Routing them into a
+        // dedicated 'data-library' chunk pulls that compressible static
+        // payload out of main. STATIC split only — engine pipeline stays sync
+        // (WP-7 lazy-load consciously deferred, session builder stabilized
+        // 2026-05-27).
+        //
+        // The 4 vendor splits below reproduce the prior object-form behavior
+        // exactly so vendor chunks do not regress: vendor-react keeps the
+        // react core + react-router stack, while react-dom (incl. the
+        // react-dom-client production build) + scheduler are imported directly
+        // by the app entry and stay in main, matching the object form which
+        // never grouped them into vendor-react.
+        manualChunks(id) {
+          const normalized = id.replace(/\\/g, '/');
+          if (normalized.includes('node_modules')) {
+            if (/node_modules\/(react-dom|scheduler)\//.test(normalized)) {
+              return undefined;
+            }
+            if (/node_modules\/(react|react-router|react-router-dom|@remix-run\/router)\//.test(normalized)) {
+              return 'vendor-react';
+            }
+            if (/node_modules\/zustand\//.test(normalized)) {
+              return 'vendor-state';
+            }
+            if (/node_modules\/lucide-react\//.test(normalized)) {
+              return 'vendor-icons';
+            }
+            if (/node_modules\/dexie\//.test(normalized)) {
+              return 'vendor-data';
+            }
+            return undefined;
+          }
+          if (/src\/engine\/(exerciseLibrary|equipmentMap|muscleGroupMap)\.js$/.test(normalized)) {
+            return 'data-library';
+          }
+          return undefined;
         },
       },
     },
