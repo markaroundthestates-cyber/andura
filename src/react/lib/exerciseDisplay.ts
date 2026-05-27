@@ -30,6 +30,8 @@
 // gym terminology; subtitles describe equipment/setup per src/engine/
 // sessionBuilder.js EQUIP_MAP. NO_DIACRITICS_RULE (D-LEGACY-064).
 
+import { getExerciseMetadata } from '../../engine/exerciseLibrary.js';
+
 export interface ExerciseDisplay {
   name: string;
   sub?: string;
@@ -75,10 +77,19 @@ const EXERCISE_DISPLAY: Readonly<Record<string, ExerciseDisplay>> = {
 
 /**
  * Map an engine exercise name (English canonical key) to its Romanian display
- * form. Unknown names fall back to the original string with NO subtitle so the
- * UI never shows an empty label — Bugatti truth: nu inventam un nume RO pentru
- * un exercitiu necunoscut.
+ * form. Precedence (WP-6 naming-at-scale):
+ *   1. EXERCISE_DISPLAY — the ~30 mockup-tuned curated names (source of truth
+ *      for those, verbatim from andura-clasic.html DESIGN MASTER; also carries
+ *      equipment/setup `sub`). Wins so Daniel-reviewed names stay intact.
+ *   2. library `nameRo` — the 657-exercise compositional RO names (WP-6), so the
+ *      remaining ~627 names render in Romanian instead of raw English keys.
+ *   3. EN fallback — original string with NO subtitle, so the UI never shows an
+ *      empty label for a truly unknown name.
  */
 export function toExerciseDisplay(engineName: string): ExerciseDisplay {
-  return EXERCISE_DISPLAY[engineName] ?? { name: engineName };
+  const mockup = EXERCISE_DISPLAY[engineName];
+  if (mockup) return mockup;
+  const nameRo = getExerciseMetadata(engineName).nameRo;
+  if (nameRo) return { name: nameRo };
+  return { name: engineName };
 }
