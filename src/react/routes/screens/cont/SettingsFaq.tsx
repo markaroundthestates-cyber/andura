@@ -47,7 +47,7 @@ const FAQ: ReadonlyArray<FaqSection> = [
       },
       {
         q: 'Pot folosi pe mai multe telefoane?',
-        a: 'Da, daca esti autentificat cu cont (Magic Link sau Google). Backup automat in Firebase eu-central-1. Modul test drive (fara cont) ramane Tier 0 local pe telefonul curent.',
+        a: 'Da, daca esti autentificat cu cont (Magic Link sau Google). Backup automat in Firebase europe-west1 (UE). Modul test drive (fara cont) ramane Tier 0 local pe telefonul curent.',
       },
       {
         q: 'Unde sunt salvate datele mele?',
