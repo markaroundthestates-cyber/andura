@@ -89,6 +89,20 @@ export default defineConfig({
         ],
         cleanupOutdatedCaches: true,
         navigateFallback: '/index.html',
+        // §SW-STALE-404 fix — exclude non-navigation paths from the SPA
+        // navigation fallback. Without a denylist the NavigationRoute returns
+        // /index.html (HTML) for ANY navigation-mode request, which can mask a
+        // genuinely-missing /assets/* chunk or sub-SW as an HTML 200 (MIME
+        // error) instead of a clean 404. /assets/ (hashed build output),
+        // sw.js + workbox-* + registerSW.js (SW lifecycle), and the FCM worker
+        // must hit the network/cache directly, never the app shell.
+        navigateFallbackDenylist: [
+          /^\/assets\//,
+          /^\/sw\.js$/,
+          /^\/workbox-/,
+          /^\/registerSW\.js$/,
+          /^\/firebase-messaging-sw\.js$/,
+        ],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/.*\.firebaseio\.com\/.*$/,
@@ -117,20 +131,36 @@ export default defineConfig({
               expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
             },
           },
-          // §S-13 audit fix (AUDIT-3) — same-origin /assets/*.js runtime cache.
-          // globIgnores excludes index-*.js (Sentry) + vendor-data-*.js (Dexie)
-          // from precache, but nothing runtime-cached them either → they failed
-          // to load offline. Dexie offline-fail breaks Tier 1 IndexedDB (the
-          // export + delete flows lazy-import vendor-data) — notable for a
-          // local-first PWA. StaleWhileRevalidate makes any /assets/*.js chunk
-          // available offline after first fetch while still updating in the
-          // background on the next online load.
+          // §S-13 audit fix (AUDIT-3) — runtime cache for the two chunks that
+          // globIgnores keeps OUT of the precache: index-*.js (Sentry) +
+          // vendor-data-*.js (Dexie). They are excluded from install precache
+          // for first-load weight, but without a runtime cache they failed to
+          // load offline. Dexie offline-fail breaks Tier 1 IndexedDB (export +
+          // delete flows lazy-import vendor-data) — notable for a local-first
+          // PWA. StaleWhileRevalidate makes both available offline after first
+          // fetch while still updating in the background on the next online load.
+          //
+          // §SW-STALE-404 fix — SCOPE this route to ONLY those two globIgnored
+          // chunks. The prior pattern matched EVERY same-origin /assets/*.js,
+          // which double-stored the precached hashed chunks (main, vendor-react,
+          // route chunks like Antrenor-<hash>.js) in a second cache that
+          // cleanupOutdatedCaches never purges (it cleans the precache only).
+          // After a deploy the SW served those stale runtime copies, and once
+          // an entry was evicted (maxEntries 60 / 30d) the stale shell fetched a
+          // hashed chunk the new deploy had already replaced → 404 (observed as
+          // `antrenor:1 ...404` when opening the Antrenor tab). Precached hashed
+          // chunks are content-addressed (hash = revision) + self-cleaned on SW
+          // activation, so they need NO runtime cache. Only the globIgnored two
+          // belong here. globIgnores list above is the single source of truth.
           {
-            urlPattern: ({ url, sameOrigin }) => sameOrigin && /\/assets\/.*\.js$/.test(url.pathname),
+            urlPattern: ({ url, sameOrigin }) =>
+              sameOrigin &&
+              (/\/assets\/index-[^/]*\.js$/.test(url.pathname) ||
+                /\/assets\/vendor-data-[^/]*\.js$/.test(url.pathname)),
             handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'app-assets-js',
-              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              expiration: { maxEntries: 8, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },
         ],
