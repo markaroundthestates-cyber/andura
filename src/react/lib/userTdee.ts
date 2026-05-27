@@ -38,6 +38,7 @@
 
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { useWorkoutStore } from '../stores/workoutStore';
+import { useProgresStore } from '../stores/progresStore';
 import type { Sex, Goal } from '../stores/onboardingStore';
 
 // NEAT base = non-exercise activity thermogenesis multiplier (viata in afara
@@ -312,7 +313,7 @@ export function readPlannedSessionsPerWeek(): number | null {
  * Returns null cand stats absente (cold start) → caller fallback baseline.
  */
 export function readUserMaintenanceTDEE(): number | null {
-  const { sex, weight, age, height } = useOnboardingStore.getState().data;
+  const { sex, age, height } = useOnboardingStore.getState().data;
   const sessionsHistory = useWorkoutStore.getState().sessionsHistory;
   const now = Date.now();
   const sessionsThisWeek = countSessionsInWindow(sessionsHistory, now);
@@ -320,7 +321,8 @@ export function readUserMaintenanceTDEE(): number | null {
   const plannedPerWeek = readPlannedSessionsPerWeek();
   return computeMaintenanceTDEE({
     sex,
-    weightKg: weight,
+    // Canonical curent: ultima greutate logata > onboarding (sursa unica).
+    weightKg: getCurrentWeightKg(),
     ageYears: age,
     heightCm: height,
     sessionsThisWeek,
@@ -332,11 +334,31 @@ export function readUserMaintenanceTDEE(): number | null {
 }
 
 /**
- * I/O boundary — read user bodyweight (kg) din onboardingStore. Pentru
- * protein target g/kg × greutate. Returns null cand absent.
+ * Sursa canonica de greutate CURENTA (kg) — adevarul unic pentru TOATE
+ * citirile de greutate curenta din app (TDEE/BMR/proteine/BF%/pipeline). Era
+ * fragmentata: nutritia/corpul citeau greutatea INGHETATA din onboarding, dar
+ * LogWeight scrie doar in progresStore.weightLog → logarea unei greutati nu
+ * misca nimic (split source-of-truth, audit CRIT).
+ *
+ * Regula: ultima greutate LOGATA (progresStore.weightLog, cea mai recenta intrare
+ * dupa data) daca exista, altfel greutatea de onboarding (initial/fallback).
+ * Onboarding ramane seed-ul + fallback-ul (seedFromProfileIfEmpty intact).
+ * Reads stores → I/O boundary (NU pura). Returns null cand niciun semnal.
+ */
+export function getCurrentWeightKg(): number | null {
+  const weightLog = useProgresStore.getState().weightLog;
+  const lastWeight = weightLog[weightLog.length - 1];
+  return lastWeight?.kg ?? useOnboardingStore.getState().data.weight ?? null;
+}
+
+/**
+ * I/O boundary — read user bodyweight (kg). Pentru protein target g/kg ×
+ * greutate. Delegheaza la sursa canonica getCurrentWeightKg (ultima greutate
+ * logata > onboarding) ca logarea unei greutati sa miste tinta de proteine.
+ * Returns null cand absent.
  */
 export function readUserWeightKg(): number | null {
-  return useOnboardingStore.getState().data.weight;
+  return getCurrentWeightKg();
 }
 
 /**

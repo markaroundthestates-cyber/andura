@@ -25,6 +25,11 @@ import { detectPR } from '../../engine/prEngine.js';
 import { whySummary } from '../../engine/whyEngine.js';
 import { evaluate as evaluateBN } from '../../engine/bayesianNutrition/index.js';
 import type { BayesianNutritionContext } from '../../engine/bayesianNutrition/index';
+// Audit MED — sex-aware kcal floor (Daniel CEO directive 2026-05-26: minim
+// ABSOLUT femei 1000 / barbati 1200). RECOMMENDED target se clampeaza la acest
+// floor per-sex (constants.js:293-311 rol (a)), NU la 1200 flat — aliniaza calea
+// de recomandare cu intentia LOCKED + filtrul de observatii (resolveKcalFloorForSex).
+import { resolveKcalFloorForSex } from '../../engine/bayesianNutrition/constants.js';
 import { detectGlobalStagnation } from '../../engine/stagnationDetector.js';
 import { getAdherenceScore } from '../../engine/adherence.js';
 import { runProactiveChecks } from '../../engine/proactiveEngine.js';
@@ -48,6 +53,7 @@ import { composePlannedWorkoutToday, estimateBfFraction } from './scheduleAdapte
 import {
   readUserMaintenanceTDEE,
   readUserWeightKg,
+  getCurrentWeightKg,
   computeProteinTargetG,
   readOnboardingGoal,
 } from './userTdee';
@@ -192,6 +198,23 @@ function flattenSessionsToEngineLogs(
 // ── Wrappers cu try/catch fallback safe ──────────────────────────────────
 
 /**
+ * Audit HIGH — readiness score cu tinta nutritionala REALA per-user (NU flat
+ * 2000/180). Citeste mentenanta per-user (readUserMaintenanceTDEE) + proteine
+ * g/kg × greutate (aceeasi sursa pe care o foloseste wrapper-ul de nutritie) si
+ * le threadeaza in engine. Un user mic care mananca corect (Maria tinta 1400,
+ * mananca 1400) NU mai e penalizat de ratio-ul fata de 2000 flat. Cold-start
+ * fara onboarding → null targets → engine cade pe flat (backward-compat).
+ *
+ * Single React boundary pentru readiness score — toti consumatorii il folosesc
+ * ca tinta per-user sa fie consistenta peste readiness/fatigue/DP-gate.
+ */
+export function getUserReadinessScore(): number | null {
+  const targetKcal = readUserMaintenanceTDEE();
+  const targetProt = computeProteinTargetG(readUserWeightKg());
+  return getComputedReadinessScore(targetKcal, targetProt);
+}
+
+/**
  * Compute today readiness verdict from DB-stored readiness input + nutrition
  * yesterday vs targets. Returns null daca readiness NU loged azi sau engine
  * throws (e.g. DB unavailable în SSR).
@@ -201,7 +224,7 @@ function flattenSessionsToEngineLogs(
  */
 export function getReadiness(opts: { isInCut?: boolean } = {}): ReadinessOutput | null {
   try {
-    const score = getComputedReadinessScore();
+    const score = getUserReadinessScore();
     if (score == null) return null;
     // Cold-start honesty: 'Zi de PR'/canPR DOAR cand user are istoric de
     // antrenament. Un user fresh care a dat doar energy-check (readiness=3 →
@@ -332,7 +355,7 @@ export interface WhyExerciseInput {
 
 export function getWhyExerciseSummary(input: WhyExerciseInput): string | null {
   try {
-    const score = getComputedReadinessScore();
+    const score = getUserReadinessScore();
     const exercise = {
       name: input.name,
       recommendation: {
@@ -541,12 +564,19 @@ export async function getTodayWorkout(): Promise<PlannedWorkoutOutput | null> {
 //
 // Anti-recurrence engine API verify (sketch corrected inline per Daniel
 // 2026-05-18 directive): BN engine emits `meta.nutrition_inference_metadata.
-// posterior.mu` as TDEE kcal point estimate (Kalman filter posterior mean) +
-// `confidence` enum ('low'|'medium'|'high'). NU emite macros (protein/fat/
-// carbs) — those derive în React-side aggregate task_04 din kcal + standard
-// macro split heuristic (e.g. 30/30/40). Sketch §B `kcal_target` /
-// `protein_target_g` / `fat_g` / `carbs_g` fields = inventate. Corecție:
-// kcalTarget din posterior.mu cu LOCK 8 floor 1200, macros = baseline V1.
+// posterior.mu` as TDEE kcal point estimate + `confidence` enum
+// ('low'|'medium'|'high'). NU emite macros (protein/fat/carbs) — those derive în
+// React-side aggregate task_04 din kcal + standard macro split heuristic (e.g.
+// 30/30/40). Sketch §B `kcal_target` / `protein_target_g` / `fat_g` / `carbs_g`
+// fields = inventate. Corecție: kcalTarget din posterior.mu, macros = baseline V1.
+//
+// ONESTITATE (audit MED): posterior.mu = posterior-ul BAYESIAN conjugat
+// (conjugateUpdate din observatiile energy-balance), NU filtrul Kalman.
+// bayesianNutrition/index.js calculeaza un kalmanState (B2) DAR il foloseste
+// doar pentru semnalul de fallback EWMA — il NU il livreaza ca posterior
+// (index.js:344 livreaza posterior.mu, NU kalmanState.mu). Kalman = INERT V1.
+// Calibrarea lenta de fond traieste in nutritionObservations (cantarul →
+// observatii energy-balance → conjugateUpdate), NU in Kalman.
 
 export interface NutritionTargetsEngine {
   kcalTarget: number;
@@ -569,7 +599,18 @@ const BASELINE_NUTRITION: NutritionTargetsEngine = {
   confidence: 0,
 };
 
-const KCAL_FLOOR_DAILY_MIN = 1200; // LOCK 8 D-LEGACY-041 floor invariant
+/**
+ * Audit MED — floor-ul de kcal per-user pe sex (CEO directive 2026-05-26: femei
+ * 1000 / barbati 1200, minim ABSOLUT). Citeste sexul din onboarding la I/O
+ * boundary, deleaga la resolveKcalFloorForSex (fallback 1200 KCAL_FLOOR_DAILY_MIN
+ * cand sex absent). Aliniaza calea de RECOMANDARE cu filtrul de observatii
+ * (acelasi floor per-sex). Inlocuieste const-ul local flat KCAL_FLOOR_DAILY_MIN
+ * 1200 (LOCK 8) — floor-ul absolut traieste acum canonic in bayesianNutrition/
+ * constants.js (resolveKcalFloorForSex fallback), single source.
+ */
+function readUserKcalFloor(): number {
+  return resolveKcalFloorForSex(useOnboardingStore.getState().data.sex);
+}
 
 function mapBNConfidence(c: unknown): number {
   if (c === 'high') return 1;
@@ -602,12 +643,13 @@ function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine 
   // (TDEE×goalMult) > mentenanta (TDEE real). goalMult null cand AUTO/absent.
   const goalMult = getGoalKcalMultiplier();
   const baseTdee = tdee as number;
+  const kcalFloor = readUserKcalFloor(); // sex-aware (femei 1000 / barbati 1200)
   const kcalTarget =
     phaseKcal !== null
       ? phaseKcal
       : goalMult !== null
-        ? Math.max(Math.round(baseTdee * goalMult), KCAL_FLOOR_DAILY_MIN)
-        : Math.max(Math.round(baseTdee), KCAL_FLOOR_DAILY_MIN);
+        ? Math.max(Math.round(baseTdee * goalMult), kcalFloor)
+        : Math.max(Math.round(baseTdee), kcalFloor);
 
   const proteinTargetG =
     computeProteinTargetG(readUserWeightKg()) ?? BASELINE_NUTRITION.proteinTargetG;
@@ -630,9 +672,10 @@ function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine 
 }
 
 /**
- * Real wire Bayesian Nutrition Engine adaptive TDEE per Kalman posterior.
- * LOCK 8 floor 1200 invariant preserved (Math.max guard) per DECISIONS
- * §D-LEGACY-041 observation filter NU adjustment.
+ * Real wire Bayesian Nutrition Engine adaptive TDEE per posterior-ul BAYESIAN
+ * conjugat (conjugateUpdate din observatiile energy-balance) — NU Kalman (inert
+ * V1, vezi nota header). LOCK 8 floor invariant preserved (Math.max guard) per
+ * DECISIONS §D-LEGACY-041 observation filter NU adjustment.
  *
  * Engine emits doar kcal estimate (posterior.mu); protein/fat/carbs targets
  * V1 = baseline preserved (engine domain NU acoperă macro split).
@@ -669,7 +712,10 @@ const PHASE_MULTIPLIERS: Record<string, number> = {
  * stats (cold start) → passthrough (pura returneaza clamped=false).
  */
 function applyHealthyFloorGuardrail(kcal: number): { kcal: number; clamped: boolean } {
-  const { weight, height } = useOnboardingStore.getState().data;
+  const { height } = useOnboardingStore.getState().data;
+  // Canonical greutate curenta (ultima logata > onboarding) pentru BMI — audit
+  // CRIT: logarea unei greutati misca detectia de subponderal + tinta de kcal.
+  const weight = getCurrentWeightKg();
   const maintenanceKcal = readUserMaintenanceTDEE();
   const r = clampKcalToHealthyFloor({
     kcalRecommendation: kcal,
@@ -694,12 +740,13 @@ function getPhaseOverrideKcalToday(): number | null {
       kcalTarget: number;
     }>;
     const todayEntry = phaseLog.find((e) => e.date === todayISO);
-    if (todayEntry) return Math.max(todayEntry.kcalTarget, KCAL_FLOOR_DAILY_MIN);
+    const kcalFloor = readUserKcalFloor(); // sex-aware (femei 1000 / barbati 1200)
+    if (todayEntry) return Math.max(todayEntry.kcalTarget, kcalFloor);
     // Piesa 1 fix — derive from REAL per-user maintenance TDEE × multiplier
     // (user picked phase earlier, days later → still apply override). Fallback
     // la baza flat 2640 DOAR cand stats onboarding absente (cold start).
     const baseKcal = readUserMaintenanceTDEE() ?? BASELINE_NUTRITION.kcalTarget;
-    return Math.max(Math.round(baseKcal * multiplier), KCAL_FLOOR_DAILY_MIN);
+    return Math.max(Math.round(baseKcal * multiplier), kcalFloor);
   } catch {
     return null;
   }
@@ -777,7 +824,9 @@ function detectAutoPhaseKey(): string {
     }
 
     // 2. weight-trend MAINTAIN (cold-start/flat) → decide din compozitia corporala.
-    const { sex, weight, height, age } = useOnboardingStore.getState().data;
+    // Canonical greutate curenta (ultima logata > onboarding) — audit CRIT.
+    const { sex, height, age } = useOnboardingStore.getState().data;
+    const weight = getCurrentWeightKg();
     const bfFraction = estimateBfFraction({ weight, height, age, sex });
     const bmi = computeBMI(Number(weight), Number(height));
     const bodyComp = detectAutoPhaseFromBodyComp({
@@ -823,13 +872,15 @@ export async function getNutritionTargetsToday(
     if (!Number.isFinite(mu)) {
       return buildPerUserBaseline(phaseKcal);
     }
-    // posterior.mu = TDEE de mentenanta adaptiv (Kalman). Goal-delta se aplica
-    // pe ACEASTA estimare cand NU exista override manual, ca un user care invata
-    // (TDEE adaptiv) sa primeasca tot deficit/surplus per goal onboarding.
+    // posterior.mu = TDEE de mentenanta adaptiv (posterior BAYESIAN conjugat din
+    // observatii, NU Kalman — inert V1). Goal-delta se aplica pe ACEASTA estimare
+    // cand NU exista override manual, ca un user care invata (TDEE adaptiv) sa
+    // primeasca tot deficit/surplus per goal onboarding.
     const goalMult = getGoalKcalMultiplier();
     const adjustedMu =
       goalMult !== null ? (mu as number) * goalMult : (mu as number);
-    const safeKcal = Math.max(adjustedMu, KCAL_FLOOR_DAILY_MIN);
+    // sex-aware floor (femei 1000 / barbati 1200) — aliniat cu filtrul de observatii.
+    const safeKcal = Math.max(adjustedMu, readUserKcalFloor());
     // Precedence: override manual faza (B001 SchimbaFaza) > goal onboarding
     // (deja aplicat in adjustedMu) > estimare Bayesiana de mentenanta. User
     // explicit pick beats goal + Bayesian; engine continua sa invete din log.
@@ -839,7 +890,7 @@ export async function getNutritionTargetsToday(
     // (override faza / goal / Bayesian) ca sa prinda orice deficit, oricare sursa.
     const guarded = applyHealthyFloorGuardrail(finalKcal);
     // Piesa 1 fix — proteine g/kg × greutate per-user (fallback flat 180 cand
-    // greutate absenta). Engine Kalman acopera DOAR kcal, NU macro split.
+    // greutate absenta). Engine BN acopera DOAR kcal, NU macro split.
     const proteinTargetG =
       computeProteinTargetG(readUserWeightKg()) ?? BASELINE_NUTRITION.proteinTargetG;
     return {
@@ -1135,7 +1186,7 @@ function readPainCdl(): PainCdlEntry[] | undefined {
  */
 export function getCoachRestReason(): CoachRestReason | null {
   try {
-    const readiness = getComputedReadinessScore();
+    const readiness = getUserReadinessScore();
     const sessions = useWorkoutStore.getState().sessionsHistory;
     const logs = flattenSessionsToEngineLogs(sessions);
     const groupState = getRecoveryByGroup(logs, readPainCdl());

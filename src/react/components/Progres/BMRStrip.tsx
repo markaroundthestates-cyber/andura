@@ -19,6 +19,7 @@
 import type { JSX } from 'react';
 import { Flame } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
+import { useProgresStore } from '../../stores/progresStore';
 import type { Sex } from '../../stores/onboardingStore';
 
 // Romanian population height averages (INS data ~2020). BMR fallback DOAR
@@ -50,9 +51,14 @@ function computeMifflinStJeorBMR(
 
 export function BMRStrip(): JSX.Element {
   const sex = useOnboardingStore((s) => s.data.sex);
-  const weight = useOnboardingStore((s) => s.data.weight);
+  const onboardingWeight = useOnboardingStore((s) => s.data.weight);
   const age = useOnboardingStore((s) => s.data.age);
   const height = useOnboardingStore((s) => s.data.height);
+  // Sursa canonica de greutate curenta: ultima greutate LOGATA > onboarding.
+  // Subscriptie reactiva la weightLog → logarea unei greutati recalculeaza BMR
+  // (era inghetat pe onboarding, audit CRIT split source-of-truth).
+  const weightLog = useProgresStore((s) => s.weightLog);
+  const weight = weightLog[weightLog.length - 1]?.kg ?? onboardingWeight;
   const bmr = computeMifflinStJeorBMR(sex, weight, age, height);
 
   return (

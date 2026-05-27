@@ -20,11 +20,16 @@ import { estimateBF_Deurenberg } from '../../../engine/bodyComposition.js';
 
 export function BodyFatStrip(): JSX.Element {
   const sex = useOnboardingStore((s) => s.data.sex);
-  const weight = useOnboardingStore((s) => s.data.weight);
+  const onboardingWeight = useOnboardingStore((s) => s.data.weight);
   const age = useOnboardingStore((s) => s.data.age);
   const height = useOnboardingStore((s) => s.data.height);
   const bodyData = useProgresStore((s) => s.bodyData);
   const last = bodyData[bodyData.length - 1];
+  // Sursa canonica de greutate curenta: ultima greutate LOGATA > onboarding.
+  // BF% Deurenberg foloseste greutatea reala curenta (era inghetata pe
+  // onboarding, audit CRIT split source-of-truth) → logarea misca bf% estimat.
+  const weightLog = useProgresStore((s) => s.weightLog);
+  const weight = weightLog[weightLog.length - 1]?.kg ?? onboardingWeight;
 
   // Tier 1 (ACURAT) — US-Navy cand talie+gat masurate. Build arg omitting empty
   // fields (exactOptionalPropertyTypes); engine returneaza null daca lipseste
@@ -63,7 +68,7 @@ export function BodyFatStrip(): JSX.Element {
         </p>
         {bf != null ? (
           <p className="text-xl font-bold text-ink font-mono" data-testid="bodyfat-value">
-            {bf}%
+            {bf}%{' '}
             <span className="text-sm font-normal text-ink2 ml-2" data-testid="bodyfat-source">
               {sourceLabel}
             </span>

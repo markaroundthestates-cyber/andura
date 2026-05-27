@@ -146,6 +146,7 @@ import { useNutritionStore } from '../stores/nutritionStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { readBayesianNutritionContext } from './nutritionObservations';
 import { readTdeeEstimateKcal } from './engineWrappers';
+import { getCurrentWeightKg } from './userTdee';
 import { estimateBF_USNavy } from '../../engine/usNavyBF.js';
 import { estimateBF_Deurenberg } from '../../engine/bodyComposition.js';
 
@@ -201,7 +202,10 @@ export function avgRecentLoggedIntake(
  * separat (scheduleAdapterAggregate.estimateBfFraction).
  */
 export function deriveCurrentBfPct(): number | null {
-  const { sex, height, weight, age } = useOnboardingStore.getState().data;
+  const { sex, height, age } = useOnboardingStore.getState().data;
+  // Canonical greutate curenta (ultima logata > onboarding) pentru Deurenberg —
+  // era inghetata pe onboarding (audit CRIT split source-of-truth).
+  const weight = getCurrentWeightKg();
   const bodyData = useProgresStore.getState().bodyData;
   const last = bodyData[bodyData.length - 1];
 
@@ -243,9 +247,8 @@ export async function readNutritionProjection(
   const dailyLog = useNutritionStore.getState().dailyLog;
   const avgIntakeKcal = avgRecentLoggedIntake(dailyLog, now);
 
-  const weightLog = useProgresStore.getState().weightLog;
-  const lastWeight = weightLog[weightLog.length - 1];
-  const currentWeightKg = lastWeight?.kg ?? useOnboardingStore.getState().data.weight ?? null;
+  // Canonical greutate curenta: ultima logata > onboarding (sursa unica, audit CRIT).
+  const currentWeightKg = getCurrentWeightKg();
 
   const currentBfPct = deriveCurrentBfPct();
 

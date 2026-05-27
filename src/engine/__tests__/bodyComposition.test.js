@@ -114,15 +114,19 @@ describe('clampKcalToHealthyFloor — BUG #4 underweight-must-gain guardrail', (
     expect(r.kcal).toBe(Math.round(2200 * LEAN_GAIN_SURPLUS_MULT));
   });
 
-  it('subponderal dar recomandarea deja >= surplus (bulk explicit) → passthrough', () => {
-    // Bulk agresiv 2500 > surplus tinta (2200×1.08 = 2376) → trece neatins.
+  it('subponderal dar recomandarea deja >= surplus (bulk explicit) → kcal neatins DAR clamped (mesaj sustinere)', () => {
+    // Bulk agresiv 2500 > surplus tinta (2200×1.08 = 2376) → kcal trece neatins
+    // (max(2500, 2376) = 2500). AUDIT HIGH: `clamped` derivat din BMI direct, deci
+    // mesajul de sustinere se afiseaza pentru ORICE subponderal (e adevarat:
+    // "esti sub greutatea sanatoasa, tinta are un surplus") — chiar daca kcal-ul
+    // nu a fost ridicat. Fix-ul cohortei mici unde floor-ul depasea leanGain.
     const r = clampKcalToHealthyFloor({
       kcalRecommendation: 2500,
       maintenanceKcal: 2200,
       weightKg: 55,
       heightCm: 182,
     });
-    expect(r.clamped).toBe(false);
+    expect(r.clamped).toBe(true);
     expect(r.kcal).toBe(2500);
   });
 

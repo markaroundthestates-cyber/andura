@@ -45,12 +45,16 @@ const MAINTENANCE = 2600;
 // Energy-balance trend (scale = slow calibrator): 100→99→98→97 kg over a 30-day
 // span (4 weigh-ins, linear-regression slope), logging 2000 kcal/day. Slope =
 // −0.1 kg/day → ONE trend observation TDEE = 2000 + 0.1×7700 = 2770. With 4
-// weigh-ins → tier T1 (trend calibrates, but slowly). The REAL conjugate update
-// blends the 2600 forward-model prior with the 2770 trend → posterior.mu ≈ 2736
-// (verified via Node run of the actual engine). The point: it ADAPTS off the
-// flat maintenance toward the cantar-implied TDEE (here UP — slabire while
-// logging only 2000 implies a higher real burn) — slowly, never day-to-day.
-const ADAPTED_MU = 2736; // posterior.mu from real evaluateBN (±1 rounding)
+// weigh-ins → tier T1 (trend calibrates, but slowly).
+//
+// AUDIT CRIT (greutate canonica): greutatea CURENTA = ultima LOGATA (97kg), NU
+// onboarding (110). Deci forward-model prior-ul foloseste 97kg: BMR = 10·97 +
+// 6.25·184 − 5·35 + 5 = 1950 → mentenanta = round(1950×1.25) = 2438. Conjugate
+// update blendeaza prior-ul 2438 cu trend-ul 2770 → posterior.mu ≈ 2704 (verificat
+// via run real al engine-ului). The point: it ADAPTS off the forward-model prior
+// toward the cantar-implied TDEE (here UP — slabire while logging only 2000
+// implies a higher real burn) — slowly, never day-to-day.
+const ADAPTED_MU = 2704; // posterior.mu from real evaluateBN (greutate canonica 97kg, ±1 rounding)
 
 function setUser(goal: Goal | null): void {
   const s = useOnboardingStore.getState();
@@ -184,10 +188,15 @@ describe('nutrition pipeline realwire — adapts to logged weight trend (NO engi
   });
 });
 
-// ── kcal floor (LOCK 8) enforced through the REAL wire ──────────────────────
-describe('nutrition pipeline realwire — kcal floor 1200 (NO engine mock)', () => {
-  it('a tiny user on a cut never drops below the 1200 daily floor', async () => {
+// ── kcal floor (sex-aware) enforced through the REAL wire ───────────────────
+describe('nutrition pipeline realwire — kcal floor sex-aware (NO engine mock)', () => {
+  it('o femeie mica pe cut nu coboara sub floor-ul feminin (1000, CEO directive 2026-05-26)', async () => {
     // Very small user → low maintenance; CUT would push under the floor.
+    // AUDIT MED — floor-ul de recomandare e per-sex (femei 1000 / barbati 1200),
+    // aliniat cu filtrul de observatii (resolveKcalFloorForSex), per directiva CEO
+    // 2026-05-26 ("minim ABSOLUT, nu recomandat — femei 1000 / barbati 1200").
+    // 42kg/150cm → BMI 18.67 (peste 18.5, NU subponderala → guardrail-ul de
+    // crestere NU se aplica), deci CUT-ul real coboara la floor-ul feminin 1000.
     const s = useOnboardingStore.getState();
     s.setField('sex', 'f');
     s.setField('weight', 42);
@@ -196,8 +205,8 @@ describe('nutrition pipeline realwire — kcal floor 1200 (NO engine mock)', () 
     s.setField('goal', 'slabire');
     const ctx = readBayesianNutritionContext();
     const r = await getNutritionTargetsToday(ctx);
-    // Whatever the CUT-adjusted estimate, the floor clamps it (D-LEGACY-041).
-    expect(r.kcalTarget).toBeGreaterThanOrEqual(1200);
+    // Floor-ul feminin (1000) clampeaza recomandarea de CUT, NU 1200 flat.
+    expect(r.kcalTarget).toBeGreaterThanOrEqual(1000);
   });
 });
 

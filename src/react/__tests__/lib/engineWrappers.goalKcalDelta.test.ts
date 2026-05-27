@@ -42,6 +42,15 @@ function setUser(goal: Goal | null): void {
 // TDEE = round(2080 × 1.25) = 2600.
 const MAINTENANCE = 2600;
 
+// AUDIT CRIT (greutate canonica): cand exista cantariri logate, greutatea CURENTA
+// = ultima logata (NU onboarding). Mentenanta pentru o greutate curenta data
+// (height/age USER fix, zero sesiuni): TDEE = round(BMR × 1.25). Helper pentru
+// testele cu trend, unde ultima cantarire devine greutatea curenta a forward-model.
+function maintenanceFor(currentWeightKg: number): number {
+  const bmr = 10 * currentWeightKg + 6.25 * USER.height - 5 * USER.age + 5;
+  return Math.round(bmr * 1.25);
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
   useOnboardingStore.getState().reset();
@@ -238,44 +247,55 @@ describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp B
     setUser('auto');
     addWeighIn(84, 28); // acum 28 zile
     addWeighIn(82, 0); // azi → -2kg / 4 sapt
+    // Greutate canonica curenta = ultima logata (82) → mentenanta din 82.
+    const maint = maintenanceFor(82);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
-    expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
+    expect(r.kcalTarget).toBe(Math.round(maint * 0.82));
+    expect(r.kcalTarget).toBeLessThan(maint);
   });
 
   it('AUTO cu weight trend CRESTERE → BULK delta (peste mentenanta)', async () => {
     setUser('auto');
     addWeighIn(80, 28);
     addWeighIn(82, 0); // +2kg / 4 sapt
+    // Greutate canonica curenta = ultima logata (82) → mentenanta din 82.
+    const maint = maintenanceFor(82);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 1.08));
-    expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
+    expect(r.kcalTarget).toBe(Math.round(maint * 1.08));
+    expect(r.kcalTarget).toBeGreaterThan(maint);
   });
 
   it('AUTO platou supraponderal (trend flat) → CUT din body-comp (BUG #5)', async () => {
     // Weight-trend flat (sub prag) → NU semnal directional → body-comp decide.
-    // USER supraponderal → CUT (un user gras la platou ARE nevoie de deficit).
+    // Greutate canonica curenta = ultima logata. Pentru body-comp CUT trebuie ca
+    // greutatea CURENTA sa fie supraponderala (110kg/184cm = BMI 32.5) — un user
+    // gras la platou ARE nevoie de deficit. Logam la 110 (flat) ca semnalul
+    // canonic curent sa fie supraponderal (audit CRIT: body-comp vede greutatea
+    // logata, NU onboarding-ul inghetat).
     setUser('auto');
-    addWeighIn(80.0, 28);
-    addWeighIn(80.1, 0); // zgomot, sub prag 0.1 kg/sapt
+    addWeighIn(110.0, 28);
+    addWeighIn(110.1, 0); // zgomot, sub prag 0.1 kg/sapt
+    const maint = maintenanceFor(110.1);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
-    expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
+    expect(r.kcalTarget).toBe(Math.round(maint * 0.82));
+    expect(r.kcalTarget).toBeLessThan(maint);
   });
 
   it('AUTO span scurt supraponderal (< 14 zile) → CUT din body-comp (BUG #5)', async () => {
-    // Span prea scurt pentru un trend de incredere → body-comp decide. USER
-    // supraponderal → CUT.
+    // Span prea scurt pentru un trend de incredere → body-comp decide. Greutate
+    // canonica curenta supraponderala (110kg/184cm = BMI 32.5) → CUT (audit CRIT:
+    // body-comp vede greutatea logata curenta).
     setUser('auto');
-    addWeighIn(84, 5);
-    addWeighIn(82, 0); // span 5 zile, prea scurt
+    addWeighIn(112, 5);
+    addWeighIn(110, 0); // span 5 zile, prea scurt → body-comp decide
+    const maint = maintenanceFor(110);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
-    expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
+    expect(r.kcalTarget).toBe(Math.round(maint * 0.82));
+    expect(r.kcalTarget).toBeLessThan(maint);
   });
 
   it('manual override CUT inca bate AUTO-detected BULK (precedence)', async () => {
@@ -283,10 +303,12 @@ describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp B
     addWeighIn(80, 28);
     addWeighIn(82, 0); // AUTO ar detecta BULK
     localStorage.setItem('phase-override', JSON.stringify('CUT'));
+    // Override CUT deriva din mentenanta reala per-user (greutate canonica = 82).
+    const maint = maintenanceFor(82);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
     // Override CUT (0.82) bate AUTO BULK.
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+    expect(r.kcalTarget).toBe(Math.round(maint * 0.82));
   });
 
   it('AUTO trend scadere aplica CUT pe posterior.mu adaptiv (user care invata)', async () => {

@@ -23,12 +23,18 @@ import { MS_PER_DAY, COMPOUND_EX } from '../../constants.js';
 import type { PlannedExercise, PlannedWorkoutOutput } from './engineWrappers';
 import { toExerciseDisplay } from './exerciseDisplay';
 import { DP } from '../../engine/dp.js';
-import { getComputedReadinessScore } from '../../engine/readiness.js';
+import { getComputedReadinessScore, getTodayReadiness } from '../../engine/readiness.js';
 import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
 import { DB } from '../../db.js';
 import { PAIN_REGION_GROUP_MAP } from '../../engine/muscleRecoveryConstants.js';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
 import { estimateBF_Deurenberg } from '../../engine/bodyComposition.js';
+import {
+  getCurrentWeightKg,
+  readUserMaintenanceTDEE,
+  readUserWeightKg,
+  computeProteinTargetG,
+} from './userTdee';
 
 // ── RO onboarding → EN engine vocabulary (CRIT C1) ─────────────────────────
 // Onboarding stores experience/goal as RO strings (onboardingStore Experience
@@ -226,6 +232,39 @@ const EMOJI_TO_DIRECTION: Readonly<Record<string, string>> = {
   yellow: 'NONE',
   red: 'DOWN',
 };
+
+/**
+ * Audit HIGH — readiness score cu tinta nutritionala REALA per-user (mentenanta
+ * + proteine g/kg × greutate), NU flat 2000/180. Acelasi calcul ca
+ * engineWrappers.getUserReadinessScore, inlinat aici ca sa NU cream un import
+ * circular (engineWrappers importa deja din acest modul). Threadeaza targets in
+ * engine; cold-start fara onboarding → null → engine cade pe flat.
+ */
+function readinessScoreForUser(): number | null {
+  const targetKcal = readUserMaintenanceTDEE();
+  const targetProt = computeProteinTargetG(readUserWeightKg());
+  return getComputedReadinessScore(targetKcal, targetProt);
+}
+
+/**
+ * Audit MED — emoji-ul de energie de AZI (din EnergyCheck) → traffic-light
+ * pentru engine-ul Energy Adjustment (resolveEmojiState citeste meta.energyEmoji
+ * 'green'|'yellow'|'red'). EnergyCheck persista readiness 1-5 (saveReadiness);
+ * il mapam pe banda traffic-light (mirror EnergyCheck intensity + EMOJI_TO_DIRECTION):
+ *   5 (excelent) / 4 (bine) → green (UP)
+ *   3 (normal)             → yellow (NONE)
+ *   2 (slabit) / 1 (obosit) → red (DOWN)
+ * Fara energy-check azi → undefined (engine ramane inert pe sesiunea curenta,
+ * NU fabricam un semnal). Reads readiness store → I/O boundary.
+ */
+function readTodayEnergyEmoji(): string | undefined {
+  const r = getTodayReadiness();
+  if (r == null || !Number.isFinite(r)) return undefined;
+  if (r >= 4) return 'green';
+  if (r === 3) return 'yellow';
+  if (r >= 1) return 'red';
+  return undefined;
+}
 
 // 4-week mesocycle cycle length (mesocycle.isMariusDualSignalGreen requires
 // weeks 1,2,3,4 present). Matches generator weekIdx = (i % 4) + 1.
@@ -428,10 +467,17 @@ export function buildUserStateForPipeline(): {
       if (weekIdx !== undefined) overlay.weekIdx = weekIdx;
       return Object.keys(overlay).length > 0 ? { ...s, ...overlay } : s;
     });
+  // Canonical greutate CURENTA: ultima greutate LOGATA > onboarding (sursa unica,
+  // audit CRIT). Feed pipeline-ul (bf%/demografice) cu greutatea reala curenta —
+  // era inghetata pe onboarding, deci logarea unei greutati nu misca planul.
+  const currentWeightKg = getCurrentWeightKg();
+  // Audit MED — emoji-ul de energie de AZI (EnergyCheck) pentru engine Energy
+  // Adjustment (meta.energyEmoji). undefined cand fara energy-check azi.
+  const todayEnergyEmoji = readTodayEnergyEmoji();
   // bfPct as a FRACTION (Deurenberg) — engine thresholds are fractional; a raw
   // percent would false-positive every user (CRITICAL trap, fact 10).
   const bfPct = estimateBfFraction({
-    weight: onboardingData.weight,
+    weight: currentWeightKg,
     height: onboardingData.height,
     age: onboardingData.age,
     sex: onboardingData.sex,
@@ -463,7 +509,8 @@ export function buildUserStateForPipeline(): {
       goal: onboardingData.goal,
       frequency: onboardingData.frequency,
       experience: onboardingData.experience,
-      weight: onboardingData.weight,
+      // Canonical greutate curenta (ultima logata > onboarding) — audit CRIT.
+      weight: currentWeightKg,
       height: onboardingData.height,
       // Degrade safe-absent: only set when the estimate/timeline is real.
       ...(bfPct !== undefined ? { bfPct } : {}),
@@ -507,6 +554,12 @@ export function buildUserStateForPipeline(): {
       // reads it. The composite trigger (performanceDropPct/restTimeMultiplier/
       // rirMismatch) needs CDL telemetry not assembled here — DEFERRED (see report).
       recentSessionsForEnergy: recentSessions,
+      // Audit MED — emoji-ul de energie de AZI (EnergyCheck) → engine Energy
+      // Adjustment (resolveEmojiState citeste meta.energyEmoji). Era nesetat →
+      // engine inert pe sesiunea curenta (green→UP / yellow→NONE / red→DOWN nu
+      // contribuiau). Omit cand fara energy-check azi (engine ramane inert onest,
+      // NU fabricam semnal). exactOptionalPropertyTypes: spread conditional.
+      ...(todayEnergyEmoji !== undefined ? { energyEmoji: todayEnergyEmoji } : {}),
     },
   };
 }
@@ -651,7 +704,7 @@ export function buildSwappedExercise(
   const experienceEn = experienceToEngine(
     useOnboardingStore.getState().data.experience,
   );
-  const readinessScore = getComputedReadinessScore();
+  const readinessScore = readinessScoreForUser();
   const planned = toPlannedExercise(
     { name: engineName, sets: 3 },
     idx,
@@ -660,6 +713,61 @@ export function buildSwappedExercise(
     null,
   );
   return { ...planned, swapReason };
+}
+
+// Audit HIGH "0 kg" — secunde estimate per set de lucru (timp sub tensiune +
+// tranzitie/setup), folosit la estimarea de durata. Banda tipica 30-50s pentru
+// un set de hipertrofie; 40 = mijloc conservativ. Estimare documentata.
+const SET_WORK_SEC = 40;
+
+/**
+ * Tonajul planificat REAL (kg) — suma sets × targetReps × targetKg peste
+ * exercitiile prescrise. Inlocuieste hardcode-ul volumeKg:0 din engine (care
+ * facea WorkoutPreview sa arate "0 kg"). Returns null cand NU exista exercitii
+ * (sau toate cu greutate 0, ex: bodyweight) → caller cade pe fallback-ul UI.
+ * Pure. Rotunjit la kg.
+ */
+export function computePlannedVolumeKg(
+  exercises: ReadonlyArray<{ sets: number; targetReps: number; targetKg: number }>,
+): number | null {
+  if (!Array.isArray(exercises) || exercises.length === 0) return null;
+  let total = 0;
+  for (const ex of exercises) {
+    const sets = Number(ex.sets);
+    const reps = Number(ex.targetReps);
+    const kg = Number(ex.targetKg);
+    if (Number.isFinite(sets) && Number.isFinite(reps) && Number.isFinite(kg)) {
+      total += sets * reps * kg;
+    }
+  }
+  // Tonaj 0 (toate bodyweight / greutati 0) → null ca UI sa cada pe fallback,
+  // NU sa afiseze "0 kg" (acelasi simptom pe care il reparam).
+  return total > 0 ? Math.round(total) : null;
+}
+
+/**
+ * Durata estimata (minute) REAL din volumul de seturi: fiecare set ~ SET_WORK_SEC
+ * de lucru + restSec de odihna, sumat peste exercitii, plus incalzirea. Inlocuieste
+ * hardcode-ul estimatedDurationMin:50 din engine. Returns null cand fara exercitii
+ * → caller cade pe fallback. Pure. Rotunjit la minut.
+ */
+export function computeEstimatedDurationMin(
+  exercises: ReadonlyArray<{ sets: number; restSec: number }>,
+  warmupMin: number = 0,
+): number | null {
+  if (!Array.isArray(exercises) || exercises.length === 0) return null;
+  let totalSec = 0;
+  for (const ex of exercises) {
+    const sets = Number(ex.sets);
+    const restSec = Number(ex.restSec);
+    if (Number.isFinite(sets) && sets > 0) {
+      const rest = Number.isFinite(restSec) ? restSec : 0;
+      totalSec += sets * (SET_WORK_SEC + rest);
+    }
+  }
+  if (totalSec <= 0) return null;
+  const warmup = Number.isFinite(warmupMin) && warmupMin > 0 ? warmupMin : 0;
+  return Math.round(totalSec / 60) + Math.round(warmup);
 }
 
 /**
@@ -682,7 +790,7 @@ export async function composePlannedWorkoutToday(
     // Fix #1 — live readiness read ONCE here, threaded into every exercise's
     // DP.getSmartRecommendation. Null when no energy-check logged today (engine
     // skips the gate). Same source the readiness card + "why" explainer use.
-    const readinessScore = getComputedReadinessScore();
+    const readinessScore = readinessScoreForUser();
     // Fix #4 — engine goal-adaptation rest range [minSec, maxSec] threaded into
     // each exercise's restSec (compound=MAX / iso=MIN). null → 90s fallback.
     const restRangeRaw = plan.restTimeRange as [number, number] | null | undefined;
@@ -709,19 +817,24 @@ export async function composePlannedWorkoutToday(
     const warmup = warmupRaw !== null && warmupLine.length > 0
       ? { line: warmupLine, durationMin: warmupDuration }
       : null;
-    // LOW-CODE-09 fix: nullish coalescing (??) NU falsy (||) — preserve
-    // legitimate 0/empty engine values (volumeKg=0 valid, estimatedDurationMin=0
-    // valid if engine ever emits, workoutTitle='' indicates shape mismatch
-    // surfaced explicit). Engine emits concrete defaults
-    // src/engine/schedule/scheduleAdapter.js:493-495 → fallback rarely fires;
-    // when it does, signals null/undefined NU coerced 0/empty.
+    // Audit HIGH "0 kg" — tonajul planificat REAL din exercitiile prescrise
+    // (sets × targetReps × targetKg), NU hardcode-ul 0 din engine
+    // (scheduleAdapter.js volumeKg:0 → WorkoutPreview arata "0 kg" via `0 ?? fb`).
+    // Sumam aici (React-side) unde targetKg/targetReps deja reale per exercitiu
+    // (DP / cold-start). null cand nu avem exercitii → fallback WorkoutPreview.
+    const volumeKg = computePlannedVolumeKg(exercises);
+    // Durata estimata REAL din volumul de seturi + odihna (vs hardcode 50 engine):
+    // per set ~ timp sub tensiune/tranzitie + restSec. null cand fara exercitii.
+    const estimatedDuration = computeEstimatedDurationMin(exercises, warmup?.durationMin ?? 0);
     return {
       workoutTitle: plan.workoutTitle ?? 'Antrenament azi',
       exerciseCount: exercises.length,
-      estimatedDuration: plan.estimatedDurationMin ?? 50,
+      // Real-or-fallback: cand computul da null (fara exercitii), cade pe valoarea
+      // engine (?? 50 / ?? 0 in WorkoutPreview). NU mai forteaza 0/50 hardcodat.
+      estimatedDuration: estimatedDuration ?? plan.estimatedDurationMin ?? 50,
       intensityMod: hasActiveDeload ? 'minus' : 'normal',
       exercises,
-      volumeKg: plan.volumeKg ?? 0,
+      volumeKg: volumeKg ?? plan.volumeKg ?? 0,
       warmup,
     };
   } catch (e) {

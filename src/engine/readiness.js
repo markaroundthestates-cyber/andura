@@ -84,7 +84,19 @@ export function getTodayReadiness() {
   return all[tod()] ?? null;
 }
 
-export function getComputedReadinessScore() {
+/**
+ * @param {number | null} [targetKcal] tinta de kcal per-user (mentenanta reala) —
+ *   threaded de la React boundary (readUserMaintenanceTDEE). Cand absent/null
+ *   cade pe KCAL_TARGET flat (engine isolation + cold-start fara onboarding).
+ * @param {number | null} [targetProt] tinta de proteine per-user (g/kg × greutate)
+ *   — threaded de la React. Cand absent/null cade pe PROT_TARGET flat.
+ *
+ * Audit HIGH: tinta flat 2000/180 penaliza nedrept un user mic care mananca
+ * corect (Maria tinta 1400, mananca 1400 → ratio 0.7 vs flat 2000 → -20 puncte
+ * gresit). Acum ratio-ul de adecvare nutritionala se calculeaza fata de tinta
+ * REALA per-user (aceeasi sursa pe care o foloseste wrapper-ul de nutritie).
+ */
+export function getComputedReadinessScore(targetKcal, targetProt) {
   const r = getTodayReadiness();
   if (r == null) return null;
   const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
@@ -93,6 +105,8 @@ export function getComputedReadinessScore() {
   const kcals = /** @type {any} */ (DB.get('kcals')) || {};
   /** @type {Record<string, number>} */
   const prots = /** @type {any} */ (DB.get('prots')) || {};
-  // KCAL_TARGET and PROT_TARGET imported directly from constants.js
-  return getReadinessScore(r, kcals[yDate], prots[yDate], KCAL_TARGET, PROT_TARGET);
+  // Per-user targets cand threaded (React boundary); altfel flat din constants.js.
+  const kcalTarget = targetKcal != null && Number.isFinite(targetKcal) && targetKcal > 0 ? targetKcal : KCAL_TARGET;
+  const protTarget = targetProt != null && Number.isFinite(targetProt) && targetProt > 0 ? targetProt : PROT_TARGET;
+  return getReadinessScore(r, kcals[yDate], prots[yDate], kcalTarget, protTarget);
 }

@@ -116,10 +116,14 @@ describe('scheduleAdapterAggregate — composePlannedWorkoutToday real wire asyn
     expect(/[ăâîșțĂÂÎȘȚ]/.test(out!.workoutTitle)).toBe(false);
   });
 
-  it('estimatedDuration defaults 50 min when engine emits 0', async () => {
+  it('estimatedDuration computed real din seturi+odihna (NU hardcode 50)', async () => {
+    // Audit HIGH — durata e calculata din volumul de seturi (sets × (lucru +
+    // odihna)) + incalzire, NU mai e hardcode-ul 50 din engine. O sesiune cu
+    // exercitii → durata pozitiva derivata real.
     const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
     expect(out).not.toBeNull();
-    expect(out!.estimatedDuration).toBe(50);
+    expect(typeof out!.estimatedDuration).toBe('number');
+    expect(out!.estimatedDuration).toBeGreaterThan(0);
   });
 
   it('intensityMod normal when no deload intensityModifier', async () => {
@@ -163,10 +167,16 @@ describe('scheduleAdapterAggregate — composePlannedWorkoutToday real wire asyn
     }
   });
 
-  it('volumeKg numeric non-negative (engine emits 0 V1 — Phase 7+ live)', async () => {
+  it('volumeKg computed real din exercitii (sets×reps×kg), NU 0 hardcodat', async () => {
+    // Audit HIGH "0 kg" — tonajul e calculat din exercitiile prescrise (targetKg/
+    // targetReps reale), NU hardcode-ul 0 din engine. Sesiune cu exercitii cu
+    // greutate → tonaj pozitiv.
     const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
     expect(out).not.toBeNull();
     expect(out!.volumeKg).toBeGreaterThanOrEqual(0);
+    if (out!.exercises.some((e) => e.targetKg > 0)) {
+      expect(out!.volumeKg).toBeGreaterThan(0);
+    }
   });
 });
 

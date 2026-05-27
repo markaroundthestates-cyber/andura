@@ -62,13 +62,16 @@ describe('BUG #4 — getNutritionTargetsToday underweight-must-gain guardrail', 
     expect(cut.kcalTarget).toBe(maintain.kcalTarget); // ambele la surplus
   });
 
-  it('subponderal + goal masa (BULK 1.08) → recomandarea egaleaza tinta de crestere (NU clamped)', async () => {
+  it('subponderal + goal masa (BULK 1.08) → tot surplus + mesaj de sustinere (clamped, audit HIGH)', async () => {
     // Goal masa = BULK 1.08 = exact tinta de crestere → recomandarea egaleaza
-    // surplus-ul, deci NU mai are ce ridica (clamped false), dar e tot surplus.
+    // surplus-ul (kcal neschimbat via max). Audit HIGH: mesajul de sustinere se
+    // afiseaza pentru ORICE subponderal (clamped derivat din BMI direct, NU din
+    // leanGain-vs-rec) — "esti sub greutatea sanatoasa, tinta are un mic surplus"
+    // e adevarat + util si cand kcal-ul e deja la surplus.
     setOnboarding({ weight: 55, height: 182, goal: 'masa' });
     const maintenanceTdee = readUserMaintenanceTDEE() as number;
     const masa = await getNutritionTargetsToday();
-    expect(masa.healthyFloorClamped).toBe(false);
+    expect(masa.healthyFloorClamped).toBe(true);
     expect(masa.kcalTarget).toBeGreaterThan(maintenanceTdee); // surplus, nu deficit
   });
 });

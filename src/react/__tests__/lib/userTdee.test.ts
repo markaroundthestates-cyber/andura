@@ -238,8 +238,11 @@ describe('engineWrappers — per-user nutrition base (Piesa 1)', () => {
     expect(maria.kcalTarget).not.toBe(2640);
     expect(marius.kcalTarget).not.toBe(2640);
     expect(maria.kcalTarget).toBeLessThan(marius.kcalTarget);
-    // Forward model, 0 sessions: Maria 883×1.25 ≈ 1104 → clamped to floor 1200.
-    expect(maria.kcalTarget).toBe(1200);
+    // Forward model, 0 sessions: Maria 883×1.25 ≈ 1104 mentenanta. Maria 40kg/155cm
+    // e SUBPONDERALA (BMI 16.6) → guardrail-ul de crestere o ridica la surplus
+    // (mentenanta × 1.08 = 1192), NU la podeaua absoluta. Floor-ul feminin (1000)
+    // nu mai forteaza artificial 1200; surplus-ul de crestere e tinta corecta.
+    expect(maria.kcalTarget).toBe(Math.round(Math.round(883 * NEAT_BASE) * 1.08));
     // Marius mentenanta ~ 2205×1.25 ≈ 2756 (NEAT base, 0 sessions this week).
     expect(marius.kcalTarget).toBe(Math.round(2205 * NEAT_BASE));
     // Protein per-user, NOT flat 180.

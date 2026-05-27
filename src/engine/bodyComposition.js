@@ -109,13 +109,21 @@ export function healthyFloorWeightKg(heightCm) {
  * Cand user-ul e deja la/sub BMI sanatos-minim (subponderal), coach-ul NU il
  * tine in deficit SAU la mentenanta — il duce spre o greutate sanatoasa cu un
  * SURPLUS moderat de crestere lenta (tinta = mentenanta × LEAN_GAIN_SURPLUS_MULT,
- * +8%). Daca recomandarea curenta e SUB acest surplus (deficit, mentenanta, sau
- * un surplus prea mic), o ridicam la surplus-ul de crestere. Daca recomandarea
- * e deja >= surplus-ul de crestere (bulk explicit egal/mai mare) → trece
- * neatinsa. User NU subponderal → recomandarea trece neatinsa (deficit permis).
+ * +8%). Recomandarea finala = max(rec, surplus de crestere): daca rec e SUB
+ * surplus (deficit/mentenanta/surplus prea mic) o ridicam; daca e deja >= surplus
+ * trece neatinsa (bulk explicit egal/mai mare).
+ *
+ * `clamped` (semnal UI pentru mesajul de sustinere) = subponderal, derivat DIRECT
+ * din BMI <= HEALTHY_MIN_BMI — NU din comparatia leanGain-vs-rec. Motiv (audit
+ * HIGH): pentru useri mici unde floor-ul absolut (1200) depaseste surplus-ul de
+ * crestere (ex: Maria mentenanta 1104 → leanGain 1192, rec floored la 1200 > 1192),
+ * vechea conditie `rec < leanGain` ramanea false → mesajul de sustinere nu se
+ * afisa exact pentru cohorta subponderala vizata. Mesajul ("esti sub greutatea
+ * sanatoasa, tinta are un mic surplus") e adevarat + util pentru ORICE subponderal,
+ * indiferent daca kcal-ul a fost ridicat sau era deja la/peste surplus.
  *
  * Pure. Cand lipsesc greutate/inaltime/mentenanta (cold start) → passthrough
- * (nu fabricam un clamp fara semnal). `clamped` semnaleaza UI-ul sa arate mesajul.
+ * (nu fabricam un clamp fara semnal).
  *
  * @param {Object} input
  * @param {number} input.kcalRecommendation - kcal recomandat (post faza/goal)
@@ -134,14 +142,12 @@ export function clampKcalToHealthyFloor({ kcalRecommendation, maintenanceKcal, w
   if (bmi === null || !Number.isFinite(maint) || maint <= 0) {
     return { kcal: rec, clamped: false, currentBmi: bmi };
   }
-  // Subponderal → tinteste un surplus moderat de crestere (NU deficit, NU
-  // mentenanta). Ridica recomandarea la surplus DOAR daca e sub el; un bulk
-  // explicit deja >= surplus trece neatins.
+  // Subponderal (BMI <= HEALTHY_MIN_BMI) → mesaj de sustinere ON (derivat din BMI
+  // direct) + kcal cel putin la surplus-ul de crestere (ridica daca sub el; un
+  // bulk explicit >= surplus trece neatins via max).
   if (bmi <= HEALTHY_MIN_BMI) {
     const leanGainTarget = Math.round(maint * LEAN_GAIN_SURPLUS_MULT);
-    if (rec < leanGainTarget) {
-      return { kcal: leanGainTarget, clamped: true, currentBmi: bmi };
-    }
+    return { kcal: Math.max(rec, leanGainTarget), clamped: true, currentBmi: bmi };
   }
   return { kcal: rec, clamped: false, currentBmi: bmi };
 }
