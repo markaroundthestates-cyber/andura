@@ -25,6 +25,7 @@ import { gotoPath } from '../../../lib/navigation';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
 import type { PlannedWorkoutOutput } from '../../../lib/engineWrappers';
+import { recomposeWithBusyTypes } from '../../../lib/substitution';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import type { IntensityMod } from './EnergyCheck';
 
@@ -34,6 +35,9 @@ interface WorkoutPreviewLocationState {
   cause?: string;
   // U-03 (HIGH) — pain context propagat din PainButton (region + intensity).
   painContext?: { region: string; intensity: 1 | 2 | 3 };
+  // WP-5 moat — busy coarse equipment types from EquipmentSwap. The preview
+  // recomposes the session with these temporarily unavailable → named swaps.
+  equipmentContext?: { busyCoarseTypes?: string[] };
 }
 
 interface IntensityBanner {
@@ -101,8 +105,9 @@ export function WorkoutPreview(): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
   const setSessionContext = useWorkoutStore((s) => s.setSessionContext);
-  const { intensityMod = 'normal', painContext } =
+  const { intensityMod = 'normal', painContext, equipmentContext } =
     (location.state as WorkoutPreviewLocationState | null) ?? {};
+  const busyCoarseTypes = equipmentContext?.busyCoarseTypes ?? [];
 
   // Phase 6 task_02 Option C: async getTodayWorkout — useState fallback null
   // while pipeline pending; preview still renders cu hardcoded fallback values
@@ -159,6 +164,15 @@ export function WorkoutPreview(): JSX.Element {
       ? Math.round(baseVolume * 1.16)
       : baseVolume;
   const coachLine = coachPick('preview', undefined, 0);
+
+  // WP-5 moat — when EquipmentSwap forwarded busy coarse types, recompose the
+  // planned exercises with them unavailable so the affected rows show their
+  // NAMED alternative (swapReason → "Inlocuit · {original} ocupat"). No busy
+  // types → the original list passes through untouched.
+  const displayExercises =
+    workout?.exercises && busyCoarseTypes.length > 0
+      ? recomposeWithBusyTypes(workout.exercises, busyCoarseTypes)
+      : workout?.exercises;
 
   function handleStart(): void {
     // U-03 (HIGH) — persist session intensity/pain in store inainte de navigate
@@ -271,11 +285,14 @@ export function WorkoutPreview(): JSX.Element {
         className="rounded-xl bg-paper2 border border-line divide-y divide-line mb-4"
         data-testid="preview-exercise-list"
       >
-        {(workout?.exercises && workout.exercises.length > 0
-          ? workout.exercises.map((ex, i) => ({
+        {(displayExercises && displayExercises.length > 0
+          ? displayExercises.map((ex, i) => ({
               key: ex.id,
               name: ex.name,
-              sub: ex.sub,
+              // WP-5 moat: a swapped-in alternative surfaces the substitution
+              // reason in the sub slot ("Inlocuit · {motiv}") so the user SEES
+              // it was replaced; otherwise the normal equipment/setup sub.
+              sub: ex.swapReason ? `Inlocuit · ${ex.swapReason}` : ex.sub,
               detail: `${ex.sets} seturi - ${ex.targetKg} kg - ${ex.targetReps} reps`,
               idx: i,
             }))
