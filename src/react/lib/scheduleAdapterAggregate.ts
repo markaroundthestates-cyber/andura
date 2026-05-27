@@ -613,6 +613,8 @@ function toPlannedExercise(
   return {
     id: `${slug}-${idx}`,
     name: display.name,
+    // English canonical name preserved for WP-5 substitution + DP/library keys.
+    engineName: engineEx.name,
     ...(display.sub !== undefined ? { sub: display.sub } : {}),
     sets: engineEx.sets,
     targetReps,
@@ -621,6 +623,43 @@ function toPlannedExercise(
     // NOT the prior hardcoded 90 for every exercise.
     restSec: resolveRestSec(engineEx.name, restRange),
   };
+}
+
+/**
+ * WP-5 moat substitution — build a ready-to-render PlannedExercise for an
+ * alternative swapped IN for a blocked/refused exercise. Re-uses the SAME
+ * prescription path as the initial plan (toPlannedExercise) so the alternative
+ * arrives with a real DP / cold-start targetKg/targetReps/rest, then stamps the
+ * substitution marker (`swapReason` → WorkoutPreview "Inlocuit · {motiv}").
+ *
+ * Reads experience (cold-start scaling) + live readiness (DP gate) at this
+ * boundary — the same sources composePlannedWorkoutToday threads in — so a
+ * mid-session swap is prescribed consistently with the rest of the session.
+ * Rest range is not re-derived per swap (the goal-adaptation range needs the
+ * full pipeline); restSec falls back to the engine default inside
+ * toPlannedExercise (null restRange → 90s), which matches an un-planned swap.
+ *
+ * @param engineName English canonical name of the alternative
+ * @param idx position in the session (id slug)
+ * @param swapReason short RO reason surfaced in the display sub slot
+ */
+export function buildSwappedExercise(
+  engineName: string,
+  idx: number,
+  swapReason: string,
+): PlannedExercise {
+  const experienceEn = experienceToEngine(
+    useOnboardingStore.getState().data.experience,
+  );
+  const readinessScore = getComputedReadinessScore();
+  const planned = toPlannedExercise(
+    { name: engineName, sets: 3 },
+    idx,
+    experienceEn,
+    readinessScore,
+    null,
+  );
+  return { ...planned, swapReason };
 }
 
 /**
