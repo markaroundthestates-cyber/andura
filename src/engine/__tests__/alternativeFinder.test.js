@@ -80,11 +80,45 @@ describe('getFallbackCascade §5.1 (cascade traversal)', () => {
     expect(r.original).toBe('Flat Barbell Bench');
   });
 
-  it('no cascade + nothing available → honest noAlt skip', () => {
+  it('no cascade + only bodyweight → broad-library finds a same-muscle bodyweight alt', () => {
+    // Lat Pulldown (cable, spate, tier-1 high force) with nothing but bodyweight:
+    // the thin curated alts (Cable Row) are not performable, but the broad library
+    // has high-force bodyweight back movements (e.g. Pull-up) → NAMED swap, not a
+    // premature noAlt (anchor-on-missing-equipment gate gap).
     const r = getFallbackCascade('Lat Pulldown', []);
+    expect(r.isAlternative).toBe(true);
+    expect(r.noAlt).toBeFalsy();
+    expect(r.cascadeStep).toBe('broad_library');
+    expect(r.original).toBe('Lat Pulldown');
+  });
+
+  it('anchor lift (Leg Press, machine missing) → NAMED same-muscle high-force alt (was noAlt)', () => {
+    // Leg Press: no fallback_cascade, thin curated alts (Leg Extension only).
+    // machine gone → thin path dead-ends; broad search over picioare-quads lands a
+    // real named high-force alternative (tier-1 strength stays high-force).
+    const r = getFallbackCascade('Leg Press', ['barbell', 'dumbbell', 'cable', 'bodyweight']);
+    expect(r.isAlternative).toBe(true);
+    expect(r.noAlt).toBeFalsy();
+    expect(r.cascadeStep).toBe('broad_library');
+    expect(typeof r.exercise).toBe('string');
+    expect(r.exercise).not.toBe('Leg Press');
+  });
+
+  it('anchor lift (Incline DB Press, dumbbells missing) → NAMED non-dumbbell same-muscle alt', () => {
+    const r = getFallbackCascade('Incline DB Press', ['barbell', 'machine', 'cable', 'bodyweight']);
+    expect(r.isAlternative).toBe(true);
+    expect(r.noAlt).toBeFalsy();
+    expect(typeof r.exercise).toBe('string');
+    expect(r.exercise).not.toBe('Incline DB Press');
+  });
+
+  it('genuinely-impossible anchor case still returns honest noAlt (Leg Press, only band)', () => {
+    // No band-performable high-force quads movement exists → tier-1-strict broad
+    // search finds nothing → honest skip (anti-paternalism, NU forteaza inferior).
+    const r = getFallbackCascade('Leg Press', ['band']);
     expect(r.isAlternative).toBe(false);
     expect(r.noAlt).toBe(true);
-    expect(r.original).toBe('Lat Pulldown');
+    expect(r.original).toBe('Leg Press');
   });
 
   it('unknown exercise → honest noAlt skip (anti-paternalism, NU forteaza inferior)', () => {

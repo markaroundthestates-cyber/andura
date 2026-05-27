@@ -141,10 +141,12 @@ describe('MOAT B1 — equipment-filtered session is fully performable (no facade
 
 // ── Behaviour 5 — noAlt honesty (engine substitution layer) ───────────────────
 describe('MOAT B5 — substitution is honest when no valid alternative exists', () => {
-  it('getFallbackCascade returns honest noAlt (never a forced inferior) — Romanian Deadlift, only dumbbells', () => {
-    // Romanian Deadlift (barbell) has no dumbbell-performable cascade/ranking
-    // alternative — the engine must say so honestly, not force an inferior swap.
-    const res = getFallbackCascade('Romanian Deadlift', ['dumbbell', 'bodyweight']);
+  it('getFallbackCascade returns honest noAlt (never a forced inferior) — Leg Press, only bands', () => {
+    // Leg Press (machine, picioare-quads, tier-1 high force) with ONLY bands left:
+    // the whole library has no band-performable, high-force quads movement, so the
+    // tier-1-strict broad search finds nothing and the engine must say so honestly
+    // (anti-paternalism: NU degrade a heavy compound to a light band substitute).
+    const res = getFallbackCascade('Leg Press', ['band']);
     expect(res.noAlt).toBe(true);
     expect(res.isAlternative).toBe(false);
     // It does NOT silently return the original as if performable.
@@ -219,5 +221,54 @@ describe('MOAT B2/B3 — blocked exercise resolves a concrete NAMED alternative'
     expect(getExerciseMetadata(first.name).muscle_target_primary).toBe(
       getExerciseMetadata('Incline DB Press').muscle_target_primary,
     );
+  });
+});
+
+// ── Anchor lifts on missing equipment — the gate gap the audit flagged ────────
+// The ~22 ORIGINAL anchor lifts carry NO fallback_cascade and only a thin (1-2)
+// curated equipment_alternatives list. When that thin list is not performable the
+// engine USED to dead-end at noAlt for a marquee lift (verified audit probe). The
+// broad-library degradation (findBroadAlternatives) must now resolve a NAMED
+// same-muscle alternative. These cases were NOT covered before (gate gap).
+describe('MOAT anchor-on-missing-equipment — broad-library degradation (was noAlt)', () => {
+  it('Leg Press (machine) with the machine missing → NAMED same-muscle alternative, NOT noAlt', () => {
+    // Leg Press: equipment_type machine, no fallback_cascade, thin alts (Leg
+    // Extension only). machine gone → the thin path dead-ends; broad search over
+    // picioare-quads must land a real high-force named alternative.
+    const res = getFallbackCascade('Leg Press', ['barbell', 'dumbbell', 'cable', 'bodyweight']);
+    expect(res.noAlt).toBeFalsy();
+    expect(res.isAlternative).toBe(true);
+    expect(res.cascadeStep).toBe('broad_library');
+    const altName = res.exercise ?? (res.exercises && res.exercises[0]);
+    expect(typeof altName).toBe('string');
+    expect(altName).not.toBe('Leg Press');
+    expect(isPerformable(altName, ['barbell', 'dumbbell', 'cable', 'bodyweight'])).toBe(true);
+    // Same primary muscle (real same-muscle swap, never cross-muscle).
+    expect(getExerciseMetadata(altName).muscle_target_primary).toBe('picioare-quads');
+    // tier-1 strength stays high-force (NU degrade a heavy compound to isolation).
+    expect(getExerciseMetadata(altName).force_demand).toBe('high');
+  });
+
+  it('Incline DB Press (dumbbell) with dumbbells missing → NAMED machine/barbell same-muscle alternative', () => {
+    // Incline DB Press: dumbbell, no cascade, thin alts (Flat DB Press +
+    // Pec Deck). dumbbells gone → broad search over piept must land a real named
+    // alternative performable on the remaining equipment.
+    const res = getFallbackCascade('Incline DB Press', ['barbell', 'machine', 'cable', 'bodyweight']);
+    expect(res.noAlt).toBeFalsy();
+    expect(res.isAlternative).toBe(true);
+    const altName = res.exercise ?? (res.exercises && res.exercises[0]);
+    expect(typeof altName).toBe('string');
+    expect(altName).not.toBe('Incline DB Press');
+    expect(getExerciseMetadata(altName).muscle_target_primary).toBe('piept');
+    expect(getExerciseMetadata(altName).equipment_type).not.toBe('dumbbell');
+    expect(isPerformable(altName, ['barbell', 'machine', 'cable', 'bodyweight'])).toBe(true);
+  });
+
+  it('genuinely-impossible anchor case still returns honest noAlt (Leg Press, only bands)', () => {
+    // No band-performable, high-force quads movement exists in the library, so the
+    // tier-1-strict broad search finds nothing → honest noAlt (anti-paternalism).
+    const res = getFallbackCascade('Leg Press', ['band']);
+    expect(res.noAlt).toBe(true);
+    expect(res.isAlternative).toBe(false);
   });
 });
