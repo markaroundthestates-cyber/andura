@@ -16,6 +16,14 @@
 // logate saptamana asta (workoutStore.sessionsHistory), deci 4 vs 6 schimba
 // numarul imediat, fara sa fie nevoie de cantar.
 //
+// BLEND planned-prior → actual-posterior (2026-05-27 rafinare, directiva
+// Daniel): la cold-start pur-actual ar da un user nou (planifica 4, inca n-a
+// logat o saptamana) numarul SEDENTAR → sub-hranit. Deci termenul de sesiuni e
+// un blend de incredere: frecventa PLANIFICATA (calendar/onboarding) e prior-ul
+// la cold-start, sesiunile logate REAL il rafineaza pe masura ce se aduna
+// istoric (vezi BLEND_FULL_WEEKS + blendEffectiveSessions). Cantarul
+// (nutritionObservations) ramane calibratorul lent de fond.
+//
 //   M: BMR = 10·kg + 6.25·cm - 5·age + 5
 //   F: BMR = 10·kg + 6.25·cm - 5·age - 161
 //
@@ -50,6 +58,30 @@ export const PER_SESSION_NET_KCAL = 300;
 // antrenament: termenul de activitate reflecta cadenta recenta reala.
 export const SESSIONS_WINDOW_DAYS = 7;
 
+// ── Planned-prior → actual-posterior confidence blend (2026-05-27 refinement) ──
+// Folosind DOAR sesiunile real-logate, un user nou care PLANIFICA 4/saptamana
+// dar inca n-a logat o saptamana intreaga primeste numarul SEDENTAR (BMR×1.25 +
+// 0) → sub-hranit. Fix (directiva Daniel CEO): frecventa PLANIFICATA = prior la
+// cold-start, sesiunile logate REAL rafineaza estimarea pe masura ce trece
+// timpul (blend de incredere, NU switch dur, NU pur-actual):
+//
+//   effectiveSessions = w × actualThisWeek + (1 − w) × plannedPerWeek
+//
+// w (increderea in actual) creste cu numarul de SAPTAMANI de istoric logat:
+// ~0 saptamani → w≈0 (crede planul) ; rampa liniara → w≈1 la BLEND_FULL_WEEKS.
+// Efect: user nou care planifica 4 e hranit pentru 4 imediat; cine logheaza 6
+// constant deriva spre 6; cine planifica 4 dar face 2 deriva in jos. Cantarul
+// (deja conectat in nutritionObservations, calibrator lent) ramane adevarul de
+// fond care corecteaza orice eroare reziduala peste saptamani — deci blend-ul e
+// doar o punte rezonabila + sigur la gaming (declari 7, faci 2 → te ingrasi →
+// cantarul prinde). Reuse spiritul tier-ramp (tierFromWeighInCount) — rampa
+// mica documentata, NU un subsistem nou.
+//
+// 4 saptamani = ~o saptamana per "tier" (T0→T1 calibrare la 4 cantariri,
+// nutritionObservations) → la 4 saptamani de cadenta reala increderea in actual
+// e completa; pana atunci planul tine kcal-ul realist.
+export const BLEND_FULL_WEEKS = 4;
+
 // Protein target g/kg greutate corporala. Spec Piesa 1: "Proteine = g/kg ×
 // greutate (per-user, nu flat)". Constanta nu exista exportata in cod (engine
 // MACRO_BANDS = g/kg LBM, dar LBM cere BF% indisponibil din onboarding singur).
@@ -69,11 +101,59 @@ export interface UserStatsInput {
   heightCm: number | null;
   /**
    * Numarul de sesiuni de antrenament logate in fereastra curenta
-   * (SESSIONS_WINDOW_DAYS). Termenul de activitate al modelului forward.
-   * Optional — default 0 (cold start / fara antrenamente saptamana asta →
-   * doar NEAT base, onest). Citit la I/O boundary din workoutStore.
+   * (SESSIONS_WINDOW_DAYS). Posterior-ul (semnalul ACTUAL) al modelului forward.
+   * Optional — default 0 (fara antrenamente logate saptamana asta). Citit la
+   * I/O boundary din workoutStore.
    */
   sessionsThisWeek?: number;
+  /**
+   * Frecventa de antrenament PLANIFICATA (sesiuni/saptamana) — prior-ul la
+   * cold-start. Sursa: planul explicit din calendar (zile active) sau, in
+   * lipsa, onboarding.frequency. Optional — cand absent NU exista prior, deci
+   * blend-ul cade pe actual pur (w=1). Citit la I/O boundary.
+   */
+  plannedPerWeek?: number;
+  /**
+   * Numarul de SAPTAMANI de istoric de antrenament logat (span de la prima
+   * sesiune pana acum). Conduce w-ul blend-ului: 0 → crede planul, creste spre
+   * incredere completa in actual la BLEND_FULL_WEEKS. Optional — default 0
+   * (cold start). Citit la I/O boundary din workoutStore.
+   */
+  loggedWeeks?: number;
+}
+
+/**
+ * Greutatea de incredere w in semnalul ACTUAL (vs planul prior), 0..1. Rampa
+ * liniara: 0 saptamani logate → 0 (crede planul) ; creste spre 1 la
+ * BLEND_FULL_WEEKS saptamani de istoric. Pure.
+ */
+export function blendWeightFromLoggedWeeks(loggedWeeks: number): number {
+  if (!Number.isFinite(loggedWeeks) || loggedWeeks <= 0) return 0;
+  if (loggedWeeks >= BLEND_FULL_WEEKS) return 1;
+  return loggedWeeks / BLEND_FULL_WEEKS;
+}
+
+/**
+ * Termenul efectiv de sesiuni dupa blend-ul planned-prior → actual-posterior.
+ *
+ *   effectiveSessions = w × actual + (1 − w) × planned ,  w = ramp(loggedWeeks)
+ *
+ * Cand NU exista plan (plannedPerWeek absent/<=0) → nu exista prior → cade pe
+ * actual pur (comportamentul pur-actual anterior). Pure.
+ */
+export function blendEffectiveSessions(
+  actualThisWeek: number,
+  plannedPerWeek: number | null | undefined,
+  loggedWeeks: number,
+): number {
+  const actual = Number.isFinite(actualThisWeek) && actualThisWeek > 0 ? actualThisWeek : 0;
+  const planned =
+    plannedPerWeek != null && Number.isFinite(plannedPerWeek) && plannedPerWeek > 0
+      ? plannedPerWeek
+      : null;
+  if (planned === null) return actual; // fara prior → actual pur
+  const w = blendWeightFromLoggedWeeks(loggedWeeks);
+  return w * actual + (1 - w) * planned;
 }
 
 /**
@@ -95,23 +175,26 @@ export function computeMifflinStJeorBMR(stats: UserStatsInput): number | null {
  * Per-user maintenance TDEE via model forward fizic (deterministic, scale-
  * independent):
  *
- *   kcal = BMR × NEAT_BASE + (sessionsThisWeek × PER_SESSION_NET_KCAL) / 7
+ *   kcal = BMR × NEAT_BASE + (effectiveSessions × PER_SESSION_NET_KCAL) / 7
  *
  * Termenul de activitate (sesiuni × net / 7) e media zilnica a arderii din
- * antrenamente (varianta saptamana-medie: total saptamanal impartit pe 7 zile
- * → fara varfuri per-zi, neted). 0 sesiuni → doar NEAT base (onest). Mai multe
- * sesiuni → kcal mai mare imediat. Returns null cand stats incomplete (caller
- * pastreaza baseline fallback). Pure function.
+ * antrenamente. effectiveSessions = blend planned-prior → actual-posterior
+ * (vezi blendEffectiveSessions): la cold-start (0 saptamani logate) foloseste
+ * frecventa PLANIFICATA (user nou care planifica 4 e hranit pentru 4, NU
+ * sedentar-zero), apoi deriva spre sesiunile logate REAL pe masura ce se aduna
+ * istoric (BLEND_FULL_WEEKS). Fara plan → cade pe actual pur. Returns null cand
+ * stats incomplete (caller pastreaza baseline fallback). Pure function.
  */
 export function computeMaintenanceTDEE(stats: UserStatsInput): number | null {
   const bmr = computeMifflinStJeorBMR(stats);
   if (bmr === null) return null;
-  const sessions =
-    stats.sessionsThisWeek != null && Number.isFinite(stats.sessionsThisWeek) && stats.sessionsThisWeek > 0
-      ? stats.sessionsThisWeek
-      : 0;
+  const effectiveSessions = blendEffectiveSessions(
+    stats.sessionsThisWeek ?? 0,
+    stats.plannedPerWeek,
+    stats.loggedWeeks ?? 0,
+  );
   const neatBase = bmr * NEAT_BASE;
-  const weeklySessionBurnPerDay = (sessions * PER_SESSION_NET_KCAL) / SESSIONS_WINDOW_DAYS;
+  const weeklySessionBurnPerDay = (effectiveSessions * PER_SESSION_NET_KCAL) / SESSIONS_WINDOW_DAYS;
   return Math.round(neatBase + weeklySessionBurnPerDay);
 }
 
@@ -135,22 +218,116 @@ export function countSessionsInWindow(
 }
 
 /**
+ * Numarul de SAPTAMANI de istoric de antrenament logat: span de la cea mai
+ * veche sesiune pana acum, in saptamani intregi. 0 sesiuni → 0. Pure (primeste
+ * sesiunile + now ca parametri). Conduce w-ul blend-ului — cu cat istoricul e
+ * mai lung, cu atat increderea in cadenta reala (vs plan) e mai mare.
+ */
+export function countLoggedWeeks(
+  sessions: ReadonlyArray<{ ts: number }>,
+  nowMs: number,
+): number {
+  if (!Array.isArray(sessions) || sessions.length === 0) return 0;
+  let oldest = Infinity;
+  for (const s of sessions) {
+    if (s != null && Number.isFinite(s.ts) && s.ts <= nowMs && s.ts < oldest) oldest = s.ts;
+  }
+  if (!Number.isFinite(oldest)) return 0;
+  const spanDays = (nowMs - oldest) / (24 * 60 * 60 * 1000);
+  return Math.floor(spanDays / 7);
+}
+
+// Calendar override key — mirror scheduleAdapter.CALENDAR_OVERRIDE_KEY. Citit
+// inline aici (NU import din scheduleAdapter.js) ca sa NU tragem intregul graf
+// engine-orchestrator (runPipeline + 8 adaptere + sessionBuilder + biblioteca)
+// in graful de module al lib-ului de nutritie pentru o singura cheie
+// localStorage — coupling fragil, blast-radius minim (Bugatti).
+const CALENDAR_OVERRIDE_KEY = 'wv2-calendar-override';
+
+/** ISO week-start (luni) YYYY-MM-DD pentru o data. Mirror scheduleAdapter.getWeekStartIso. */
+function weekStartIso(date: Date): string {
+  if (!(date instanceof Date) || isNaN(date.getTime())) return '';
+  const jsDow = date.getDay(); // duminica=0 ... sambata=6
+  const mondayIdx = jsDow === 0 ? 6 : jsDow - 1;
+  const monday = new Date(date);
+  monday.setDate(monday.getDate() - mondayIdx);
+  return monday.toLocaleDateString('sv'); // YYYY-MM-DD local tz
+}
+
+/**
+ * Numarul de zile active din override-ul de calendar al saptamanii CURENTE
+ * (planul explicit pe zile). Returns null cand absent / saptamana trecuta /
+ * malformat — exact semantica getCalendarOverride (week-key invalideaza natural
+ * override-ul vechi). Reads localStorage → I/O boundary.
+ */
+function readCalendarPlannedDays(now: Date = new Date()): number | null {
+  let raw: string | null = null;
+  try {
+    raw = localStorage.getItem(CALENDAR_OVERRIDE_KEY);
+  } catch {
+    return null;
+  }
+  if (!raw) return null;
+  let parsed: unknown = null;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return null;
+  }
+  if (!parsed || typeof parsed !== 'object') return null;
+  const obj = parsed as { weekStartIso?: unknown; selectedDays?: unknown };
+  if (obj.weekStartIso !== weekStartIso(now)) return null; // saptamana trecuta → ignora
+  if (!Array.isArray(obj.selectedDays)) return null;
+  const activeDays = obj.selectedDays.filter(
+    (d) => d != null && (d as { active?: boolean }).active === true,
+  ).length;
+  return activeDays > 0 ? activeDays : null;
+}
+
+/**
+ * I/O boundary — read frecventa de antrenament PLANIFICATA (sesiuni/saptamana).
+ * Prefera planul EXPLICIT din calendar (numarul de zile active din override-ul
+ * saptamanii curente) cand exista; altfel cade pe onboarding.frequency
+ * (declarat la onboard). Returns null cand niciun semnal disponibil. Reads
+ * localStorage + store → I/O boundary (NU pura).
+ */
+export function readPlannedSessionsPerWeek(): number | null {
+  // Plan explicit calendar = numarul de zile active in override-ul saptamanii
+  // curente. Prefer asta — e alegerea concreta a user-ului pe zile.
+  const calendarPlanned = readCalendarPlannedDays();
+  if (calendarPlanned != null) return calendarPlanned;
+  // Fallback onboarding.frequency ('2'|'3'|'4'|'5' → numar).
+  const freq = useOnboardingStore.getState().data.frequency;
+  if (freq != null) {
+    const n = Number(freq);
+    if (Number.isFinite(n) && n > 0) return n;
+  }
+  return null;
+}
+
+/**
  * I/O boundary — read user stats din onboardingStore + sesiuni recente din
- * workoutStore + compute maintenance TDEE (model forward). Returns null cand
- * stats absente (cold start) → caller fallback baseline.
+ * workoutStore + frecventa planificata (calendar/onboarding) + compute
+ * maintenance TDEE (model forward cu blend planned-prior → actual-posterior).
+ * Returns null cand stats absente (cold start) → caller fallback baseline.
  */
 export function readUserMaintenanceTDEE(): number | null {
   const { sex, weight, age, height } = useOnboardingStore.getState().data;
-  const sessionsThisWeek = countSessionsInWindow(
-    useWorkoutStore.getState().sessionsHistory,
-    Date.now(),
-  );
+  const sessionsHistory = useWorkoutStore.getState().sessionsHistory;
+  const now = Date.now();
+  const sessionsThisWeek = countSessionsInWindow(sessionsHistory, now);
+  const loggedWeeks = countLoggedWeeks(sessionsHistory, now);
+  const plannedPerWeek = readPlannedSessionsPerWeek();
   return computeMaintenanceTDEE({
     sex,
     weightKg: weight,
     ageYears: age,
     heightCm: height,
     sessionsThisWeek,
+    loggedWeeks,
+    // exactOptionalPropertyTypes: omit plannedPerWeek entirely cand absent (NU
+    // assign undefined explicit). Fara plan → blend cade pe actual pur.
+    ...(plannedPerWeek != null ? { plannedPerWeek } : {}),
   });
 }
 

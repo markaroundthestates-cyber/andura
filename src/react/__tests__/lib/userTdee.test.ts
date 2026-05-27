@@ -18,9 +18,14 @@ import {
   computeMaintenanceTDEE,
   computeProteinTargetG,
   countSessionsInWindow,
+  countLoggedWeeks,
+  blendWeightFromLoggedWeeks,
+  blendEffectiveSessions,
+  readPlannedSessionsPerWeek,
   NEAT_BASE,
   PER_SESSION_NET_KCAL,
   SESSIONS_WINDOW_DAYS,
+  BLEND_FULL_WEEKS,
   PROTEIN_G_PER_KG_BODYWEIGHT,
 } from '../../lib/userTdee';
 import { getNutritionTargetsToday } from '../../lib/engineWrappers';
@@ -102,6 +107,122 @@ describe('userTdee — pure helpers', () => {
   });
 });
 
+// Planned-prior -> actual-posterior confidence blend (2026-05-27 refinement).
+// Fixes the cold-start gap: a brand-new user who PLANS 4/week but hasn't logged
+// a full week must be fed for 4, NOT sedentary-zero. Plan is the prior at
+// cold-start; logged sessions refine it as weeks of history accumulate.
+describe('userTdee — planned-prior -> actual-posterior blend', () => {
+  const helper = (sessions: Partial<UserStatsInputLike>) =>
+    computeMaintenanceTDEE({ ...MARIUS, ...sessions } as never);
+
+  type UserStatsInputLike = {
+    sessionsThisWeek?: number;
+    plannedPerWeek?: number;
+    loggedWeeks?: number;
+  };
+
+  function tdeeForEffective(eff: number): number {
+    return Math.round(2205 * NEAT_BASE + (eff * PER_SESSION_NET_KCAL) / SESSIONS_WINDOW_DAYS);
+  }
+
+  it('blendWeightFromLoggedWeeks ramps 0 -> 1 over BLEND_FULL_WEEKS', () => {
+    expect(blendWeightFromLoggedWeeks(0)).toBe(0);
+    expect(blendWeightFromLoggedWeeks(BLEND_FULL_WEEKS / 2)).toBeCloseTo(0.5);
+    expect(blendWeightFromLoggedWeeks(BLEND_FULL_WEEKS)).toBe(1);
+    expect(blendWeightFromLoggedWeeks(BLEND_FULL_WEEKS + 10)).toBe(1); // capped
+    expect(blendWeightFromLoggedWeeks(-3)).toBe(0);
+  });
+
+  it('blendEffectiveSessions: no plan -> pure actual (prior-less fallback)', () => {
+    expect(blendEffectiveSessions(6, null, 0)).toBe(6);
+    expect(blendEffectiveSessions(6, undefined, 5)).toBe(6);
+    expect(blendEffectiveSessions(0, 0, 2)).toBe(0);
+  });
+
+  it('blendEffectiveSessions: cold-start trusts plan, drifts to actual', () => {
+    // 0 logged weeks -> w=0 -> pure plan.
+    expect(blendEffectiveSessions(0, 4, 0)).toBe(4);
+    // half-way -> 50/50.
+    expect(blendEffectiveSessions(2, 4, BLEND_FULL_WEEKS / 2)).toBeCloseTo(3);
+    // full weeks -> w=1 -> pure actual.
+    expect(blendEffectiveSessions(6, 4, BLEND_FULL_WEEKS)).toBe(6);
+  });
+
+  it('countLoggedWeeks = whole weeks span from oldest logged session to now', () => {
+    const now = Date.UTC(2026, 4, 27);
+    const DAY = 24 * 60 * 60 * 1000;
+    expect(countLoggedWeeks([], now)).toBe(0);
+    expect(countLoggedWeeks([{ ts: now - 3 * DAY }], now)).toBe(0); // <1 week
+    expect(countLoggedWeeks([{ ts: now - 10 * DAY }, { ts: now - 2 * DAY }], now)).toBe(1);
+    expect(countLoggedWeeks([{ ts: now - 25 * DAY }], now)).toBe(3);
+  });
+
+  // Helper: current ISO week-start (Monday), matching userTdee.weekStartIso.
+  function currentWeekStartIso(): string {
+    const d = new Date();
+    const jsDow = d.getDay();
+    const mondayIdx = jsDow === 0 ? 6 : jsDow - 1;
+    d.setDate(d.getDate() - mondayIdx);
+    return d.toLocaleDateString('sv');
+  }
+
+  it('readPlannedSessionsPerWeek prefers calendar plan, falls back to onboarding freq', () => {
+    // No signal at all -> null.
+    expect(readPlannedSessionsPerWeek()).toBeNull();
+
+    // Onboarding frequency only -> uses it.
+    useOnboardingStore.getState().setField('frequency', '3');
+    expect(readPlannedSessionsPerWeek()).toBe(3);
+
+    // Calendar override (current week, 5 active days) PREFERRED over onboarding.
+    const selectedDays = ['L', 'M', 'M2', 'J', 'V', 'S', 'D'].map((day, i) => ({
+      day,
+      active: i < 5, // 5 active days
+    }));
+    localStorage.setItem(
+      'wv2-calendar-override',
+      JSON.stringify({ selectedDays, weekStartIso: currentWeekStartIso(), committedAt: '' }),
+    );
+    expect(readPlannedSessionsPerWeek()).toBe(5);
+
+    // Stale (prior week) override -> ignored, falls back to onboarding freq.
+    localStorage.setItem(
+      'wv2-calendar-override',
+      JSON.stringify({ selectedDays, weekStartIso: '2000-01-03', committedAt: '' }),
+    );
+    expect(readPlannedSessionsPerWeek()).toBe(3);
+  });
+
+  // CLAIM (a) — cold-start: 0 logged weeks, planned=4 feeds for 4 sessions,
+  // NOT sedentary-zero. This is the whole point of the refinement.
+  it('(a) cold-start (0 logged weeks, planned 4) is fed for 4, NOT sedentary-zero', () => {
+    const sedentary = tdeeForEffective(0);
+    const coldStart = helper({ sessionsThisWeek: 0, plannedPerWeek: 4, loggedWeeks: 0 });
+    expect(coldStart).toBe(tdeeForEffective(4));
+    expect(coldStart as number).toBeGreaterThan(sedentary);
+  });
+
+  // CLAIM (b) — as logged weeks accumulate, the blend drifts toward actual.
+  it('(b) blend drifts toward actual as logged weeks accumulate (plan 4, actual 6)', () => {
+    const w0 = helper({ sessionsThisWeek: 6, plannedPerWeek: 4, loggedWeeks: 0 });
+    const wHalf = helper({ sessionsThisWeek: 6, plannedPerWeek: 4, loggedWeeks: BLEND_FULL_WEEKS / 2 });
+    const wFull = helper({ sessionsThisWeek: 6, plannedPerWeek: 4, loggedWeeks: BLEND_FULL_WEEKS });
+    expect(w0).toBe(tdeeForEffective(4)); // trusts plan
+    expect(wFull).toBe(tdeeForEffective(6)); // pure actual
+    expect(wHalf as number).toBeGreaterThan(w0 as number);
+    expect(wHalf as number).toBeLessThan(wFull as number);
+  });
+
+  // CLAIM (c) — plan 4 but sustained actual 2 -> drifts DOWN toward 2.
+  it('(c) plan 4 / sustained actual 2 drifts DOWN toward 2 over weeks', () => {
+    const start = helper({ sessionsThisWeek: 2, plannedPerWeek: 4, loggedWeeks: 0 });
+    const later = helper({ sessionsThisWeek: 2, plannedPerWeek: 4, loggedWeeks: BLEND_FULL_WEEKS });
+    expect(start).toBe(tdeeForEffective(4)); // starts at plan
+    expect(later).toBe(tdeeForEffective(2)); // drifts down to actual
+    expect(later as number).toBeLessThan(start as number);
+  });
+});
+
 describe('engineWrappers — per-user nutrition base (Piesa 1)', () => {
   it('tier none: light 40kg woman gets MUCH lower kcal than heavy 110kg man, NEITHER is 2640', async () => {
     // Maria mentenanta (no phase override = AUTO).
@@ -158,6 +279,37 @@ describe('engineWrappers — per-user nutrition base (Piesa 1)', () => {
     expect(r.kcalTarget).toBe(2640);
     expect(r.proteinTargetG).toBe(180);
     expect(r.source).toBe('baseline');
+  });
+
+  // CLAIM (a) end-to-end + (d) phase delta still applies on top of the blended
+  // base. Onboarding frequency='4' is the planned prior read at the I/O boundary
+  // (readPlannedSessionsPerWeek). Cold-start (no logged sessions) -> fed for the
+  // planned 4, NOT sedentary; BULK multiplier applies over that blended base.
+  it('(a)+(d) cold-start uses planned freq as base, phase BULK delta applies on top', async () => {
+    setOnboarding(MARIUS);
+    useOnboardingStore.getState().setField('frequency', '4');
+    const blendedBase = Math.round(2205 * NEAT_BASE + (4 * PER_SESSION_NET_KCAL) / SESSIONS_WINDOW_DAYS);
+    const sedentaryBase = Math.round(2205 * NEAT_BASE);
+
+    localStorage.setItem('phase-override', JSON.stringify('BULK'));
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+
+    // Base is the PLANNED-fed maintenance, not sedentary; BULK 1.08 over it.
+    expect(r.kcalTarget).toBe(Math.round(blendedBase * 1.08));
+    expect(r.kcalTarget).toBeGreaterThan(Math.round(sedentaryBase * 1.08));
+  });
+
+  // CLAIM (d) — kcal floor still clamps after the blend. Maria planning 2: her
+  // blended base 883×1.25 + 2×300/7 ≈ 1190 stays UNDER the 1200 floor -> clamped.
+  it('(d) kcal floor still clamps after planned-prior blend (Maria planned 2)', async () => {
+    setOnboarding(MARIA);
+    useOnboardingStore.getState().setField('frequency', '2');
+    const blended = Math.round(883 * NEAT_BASE + (2 * PER_SESSION_NET_KCAL) / SESSIONS_WINDOW_DAYS);
+    expect(blended).toBeLessThan(1200); // precondition: base is below floor
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(1200); // floor clamps the blended base
   });
 
   it('engine posterior present: kcal from Kalman mu, protein still per-user', async () => {
