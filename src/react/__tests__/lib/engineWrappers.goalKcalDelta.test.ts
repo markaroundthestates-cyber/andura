@@ -72,11 +72,15 @@ describe('engineWrappers — goal-driven kcal delta (tier none / per-user mainte
     expect(r.kcalTarget).toBe(MAINTENANCE);
   });
 
-  it('goal "auto" == maintenance TDEE (no delta — engine auto-detect)', async () => {
+  it('goal "auto" supraponderal (BMI 32.5) → CUT din body-comp (BUG #5)', async () => {
+    // USER e 110kg/184cm = BMI 32.5 supraponderal. Fara istoric de greutate,
+    // weight-trend e flat → AUTO cade pe body-comp → CUT (NU mai mentenanta
+    // tacuta). Asta e exact bug-ul raportat: "Auto da 2788 dar ar trebui CUT".
     setUser('auto');
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(MAINTENANCE);
+    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+    expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
   });
 
   it('goal "slabire" gives target meaningfully BELOW maintenance (~0.82x CUT)', async () => {
@@ -158,7 +162,9 @@ describe('engineWrappers — goal-delta applies to adaptive Bayesian TDEE (poste
     expect(r.kcalTarget).toBe(Math.round(3000 * 1.08));
   });
 
-  it('goal "auto" leaves posterior.mu unchanged (no delta)', async () => {
+  it('goal "auto" supraponderal aplica CUT din body-comp pe posterior.mu (BUG #5)', async () => {
+    // USER supraponderal (BMI 32.5) fara weight-trend → body-comp CUT 0.82,
+    // aplicat pe TDEE-ul adaptiv Kalman (posterior.mu). NU mai lasa mu neatins.
     setUser('auto');
     vi.mocked(evaluateBN).mockResolvedValueOnce(
       createMockBNResult({
@@ -167,7 +173,7 @@ describe('engineWrappers — goal-delta applies to adaptive Bayesian TDEE (poste
       }),
     );
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(3000);
+    expect(r.kcalTarget).toBe(Math.round(3000 * 0.82));
   });
 
   it('manual override BULK wins over goal-delta even on posterior.mu path', async () => {
@@ -200,12 +206,32 @@ describe('engineWrappers — goal-delta applies to adaptive Bayesian TDEE (poste
   });
 });
 
-describe('engineWrappers — AUTO auto-detects phase din weight trend (Problem 2)', () => {
-  it('AUTO cold-start (zero cantariri) → MAINTAIN (mentenanta, onest)', async () => {
+describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp BUG #5)', () => {
+  it('AUTO cold-start supraponderal (zero cantariri) → CUT din body-comp (BUG #5)', async () => {
+    // Fara cantariri, weight-trend e insuficient → body-comp decide. USER e
+    // supraponderal (BMI 32.5) → CUT. Inainte era MAINTAIN tacut (bug-ul).
     setUser('auto');
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(MAINTENANCE);
+    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+    expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
+  });
+
+  it('AUTO cold-start greutate sanatoasa → MAINTAIN (body-comp NU forteaza CUT)', async () => {
+    // Contra-proba BUG #5: un user AUTO la greutate sanatoasa (75kg/180cm =
+    // BMI 23.1, fara cantariri) ramane la MENTENANTA — body-comp da CUT DOAR
+    // la supraponderal/bf-mare, NU blanket. Mentenanta = BMR×1.25 (no sessions).
+    useOnboardingStore.getState().reset();
+    const s = useOnboardingStore.getState();
+    s.setField('sex', 'm');
+    s.setField('weight', 75);
+    s.setField('height', 180);
+    s.setField('age', 30);
+    s.setField('goal', 'auto');
+    // BMR = 10·75 + 6.25·180 - 5·30 + 5 = 750 + 1125 - 150 + 5 = 1730; ×1.25 = 2163.
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(2163);
   });
 
   it('AUTO cu weight trend SCADERE → CUT delta (sub mentenanta)', async () => {
@@ -228,22 +254,28 @@ describe('engineWrappers — AUTO auto-detects phase din weight trend (Problem 2
     expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
   });
 
-  it('AUTO cu platou (sub prag) → MAINTAIN (mentenanta)', async () => {
+  it('AUTO platou supraponderal (trend flat) → CUT din body-comp (BUG #5)', async () => {
+    // Weight-trend flat (sub prag) → NU semnal directional → body-comp decide.
+    // USER supraponderal → CUT (un user gras la platou ARE nevoie de deficit).
     setUser('auto');
     addWeighIn(80.0, 28);
     addWeighIn(80.1, 0); // zgomot, sub prag 0.1 kg/sapt
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(MAINTENANCE);
+    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+    expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
   });
 
-  it('AUTO span scurt (< 14 zile) → MAINTAIN (insuficient, mentenanta)', async () => {
+  it('AUTO span scurt supraponderal (< 14 zile) → CUT din body-comp (BUG #5)', async () => {
+    // Span prea scurt pentru un trend de incredere → body-comp decide. USER
+    // supraponderal → CUT.
     setUser('auto');
     addWeighIn(84, 5);
     addWeighIn(82, 0); // span 5 zile, prea scurt
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(MAINTENANCE);
+    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+    expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
   });
 
   it('manual override CUT inca bate AUTO-detected BULK (precedence)', async () => {

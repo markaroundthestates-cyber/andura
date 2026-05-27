@@ -20,9 +20,11 @@ import {
   DELOAD_KCAL_BONUS,
   MACRO_BANDS,
   TEMPLATE_IDS,
+  RECOMP_THRESHOLDS,
   SEX as _SEX,
 } from './constants.js';
 import { detectRecompSubPhase } from './templates.js';
+import { HEALTHY_MIN_BMI } from '../bodyComposition.js';
 
 /**
  * Goal-id → primary phase mapping per ADR 024 §1.2 + §9.2.3 verbatim:
@@ -215,6 +217,61 @@ export function detectAutoPhaseFromWeightTrend(weightLog, opts = {}) {
     return { phase: PHASES.BULK, signals };
   }
   signals.push('auto_weight_trend_flat');
+  return { phase: PHASES.MAINTAIN, signals };
+}
+
+// Pragul WHO de supraponderal (BMI >= 25). Sub 18.5 = subponderal
+// (HEALTHY_MIN_BMI, bodyComposition.js); intre = banda sanatoasa.
+export const BMI_OVERWEIGHT = 25;
+
+/**
+ * AUTO phase din COMPOZITIA CORPORALA (BMI + bf%) — semnal complementar weight-
+ * trend-ului (BUG #5). Un user nou supraponderal (110kg/1.84m, BMI 32.5) NU are
+ * inca istoric de greutate, deci weight-trend da MAINTAIN; aici citim direct
+ * compozitia ca sa recomandam faza potrivita:
+ *
+ *   - bf% mare (>= 0.25 M / 0.32 F) SAU BMI >= 25 (supraponderal) → CUT
+ *   - BMI <= 18.5 (subponderal) → BULK (creste spre greutate sanatoasa)
+ *   - altfel (banda sanatoasa / near-ideal) → MAINTAIN (candidat RECOMP)
+ *
+ * bf%-ul are prioritate cand exista (masura mai directa a grasimii decat BMI,
+ * care confunda muschiul cu grasimea la cei antrenati). Fara niciun semnal
+ * (bf% + BMI absente) → MAINTAIN (nimic de detectat). Pure — primeste fractia
+ * bf% (0-1) + BMI + sex ca parametri; I/O boundary (engineWrappers) le citeste.
+ *
+ * @param {{bfPctFraction?: number|null, bmi?: number|null, sex?: string}} [input]
+ * @returns {{phase: import('./types.js').NutritionPhase, signals: string[]}}
+ */
+export function detectAutoPhaseFromBodyComp({ bfPctFraction, bmi, sex } = {}) {
+  const signals = [];
+  const bf = Number(bfPctFraction);
+  const bmiNum = Number(bmi);
+  const sexLower = typeof sex === 'string' ? sex.toLowerCase() : '';
+  const isFemale = sexLower === 'f' || sexLower === 'female';
+  const bfHighThreshold = isFemale
+    ? RECOMP_THRESHOLDS.bfPctHighFemale
+    : RECOMP_THRESHOLDS.bfPctHighMale;
+
+  const hasBf = Number.isFinite(bf) && bf > 0 && bf < 1;
+  const hasBmi = Number.isFinite(bmiNum) && bmiNum > 0;
+
+  if (!hasBf && !hasBmi) {
+    signals.push('auto_bodycomp_no_signal');
+    return { phase: PHASES.MAINTAIN, signals };
+  }
+
+  // bf% mare (prioritar) SAU supraponderal → CUT.
+  if ((hasBf && bf >= bfHighThreshold) || (hasBmi && bmiNum >= BMI_OVERWEIGHT)) {
+    signals.push('auto_bodycomp_high_adiposity');
+    return { phase: PHASES.CUT, signals };
+  }
+  // Subponderal → BULK (creste spre greutate sanatoasa).
+  if (hasBmi && bmiNum <= HEALTHY_MIN_BMI) {
+    signals.push('auto_bodycomp_underweight');
+    return { phase: PHASES.BULK, signals };
+  }
+  // Banda sanatoasa / near-ideal → MAINTAIN (candidat RECOMP).
+  signals.push('auto_bodycomp_healthy_band');
   return { phase: PHASES.MAINTAIN, signals };
 }
 

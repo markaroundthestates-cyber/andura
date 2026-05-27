@@ -12,7 +12,7 @@
 
 import type { JSX } from 'react';
 import { useEffect, useState, useMemo } from 'react';
-import { Flame } from 'lucide-react';
+import { Flame, AlertCircle } from 'lucide-react';
 import { getNutritionTargetTodayReal } from '../../lib/bayesianNutritionAggregate';
 import type { NutritionTarget } from '../../lib/bayesianNutritionAggregate';
 import { readBayesianNutritionContext } from '../../lib/nutritionObservations';
@@ -172,6 +172,23 @@ export function TDEEStrip(): JSX.Element {
       >
         Engine calculeaza auto. Loghezi optional pentru calibrare reala.
       </p>
+      {/* BUG #13 safety — cand kcal-ul a fost ridicat la mentenanta fiindca
+          user-ul e subponderal (BMI <= 18.5). Mesaj ferm-prietenos: coach-ul NU
+          conduce spre o greutate periculos de mica. Stil aliniat brand-ului de
+          disclaimer (AlertCircle brick) — guardrail pe OUTPUT, NU blocaj input. */}
+      {target?.healthyFloorClamped && (
+        <p
+          className="text-xs text-brick mt-2.5 leading-snug flex items-start gap-1.5"
+          role="status"
+          data-testid="tdee-healthy-floor-msg"
+        >
+          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" aria-hidden="true" />
+          <span>
+            Esti deja sub greutatea sanatoasa minima, asa ca nu te tin in deficit.
+            Tinta de azi e la mentenanta. Pentru o tinta mai mica, vorbeste cu un medic.
+          </span>
+        </p>
+      )}
     </section>
   );
 }

@@ -42,7 +42,7 @@ import {
 import { DB, tod } from '../../db.js';
 import { DP } from '../../engine/dp.js';
 import { useWorkoutStore } from '../stores/workoutStore';
-import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
+import { composePlannedWorkoutToday, estimateBfFraction } from './scheduleAdapterAggregate';
 // Piesa 1 nutrition-brain fix — real per-user maintenance TDEE base (omoara
 // baza flat 2640). Multiplicatorul de faza se aplica pe TDEE-ul real per-user.
 import {
@@ -54,8 +54,16 @@ import {
 // Problem 2 — AUTO phase auto-detection din weight trend (goal 'auto' onboarding
 // → engine recomanda faza, NU mentenanta flat). Cold-start onest: fara istoric
 // greutate → MAINTAIN (×1.0). PHASES enum + detector pure din Engine #2.
-import { detectAutoPhaseFromWeightTrend } from '../../engine/goalAdaptation/phaseAutoDetection.js';
+import {
+  detectAutoPhaseFromWeightTrend,
+  detectAutoPhaseFromBodyComp,
+} from '../../engine/goalAdaptation/phaseAutoDetection.js';
 import { useProgresStore } from '../stores/progresStore';
+// BUG #13 safety — guardrail anti-subnutritie pe OUTPUT-ul de kcal: cand user-ul
+// e deja subponderal (BMI <= 18.5) NU servim deficit (clamp la mentenanta).
+// computeBMI + deriveCurrentBfPct alimenteaza si AUTO body-comp detection (BUG #5).
+import { clampKcalToHealthyFloor, computeBMI } from '../../engine/bodyComposition.js';
+import { useOnboardingStore } from '../stores/onboardingStore';
 // §48-H1 audit fix — adapter integrity instrumentation. Every catch path
 // emits Sentry alert with source='engine-adapter-fallback' tag + adapter
 // name extra. Risk addressed (§48.5): silent divergence when engine returns
@@ -546,6 +554,9 @@ export interface NutritionTargetsEngine {
   carbsG: number;
   source: 'engine' | 'baseline';
   confidence: number; // 0-1
+  // BUG #13 safety — true cand recomandarea a fost ridicata la mentenanta
+  // fiindca user-ul e subponderal (BMI <= 18.5). UI arata mesajul ferm-prietenos.
+  healthyFloorClamped?: boolean;
 }
 
 const BASELINE_NUTRITION: NutritionTargetsEngine = {
@@ -600,8 +611,12 @@ function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine 
   const proteinTargetG =
     computeProteinTargetG(readUserWeightKg()) ?? BASELINE_NUTRITION.proteinTargetG;
 
+  // BUG #13 safety — acelasi guardrail si pe calea baseline per-user (ex: user
+  // fresh subponderal care a ales "slabire" la onboarding → goalMult CUT 0.82).
+  const guarded = applyHealthyFloorGuardrail(kcalTarget);
+
   return {
-    kcalTarget,
+    kcalTarget: guarded.kcal,
     proteinTargetG,
     fatG: BASELINE_NUTRITION.fatG,
     carbsG: BASELINE_NUTRITION.carbsG,
@@ -609,6 +624,7 @@ function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine 
     // faza); 'baseline' doar cand cadem pe flat 2640 (cold start).
     source: tdee !== null || phaseKcal !== null ? 'engine' : 'baseline',
     confidence: 0,
+    healthyFloorClamped: guarded.clamped,
   };
 }
 
@@ -638,6 +654,28 @@ const PHASE_MULTIPLIERS: Record<string, number> = {
   MAINTENANCE: 1.0,
   STRENGTH: 1.05,
 };
+
+/**
+ * BUG #13 safety chokepoint — aplica guardrail-ul anti-subnutritie pe kcal-ul
+ * final. Cand user-ul e deja subponderal (BMI <= 18.5) SI kcal-ul recomandat e
+ * un deficit (sub mentenanta reala per-user), ridica la mentenanta (zero deficit
+ * toward harm). Citeste greutate/inaltime (onboardingStore) + mentenanta reala
+ * (readUserMaintenanceTDEE) la I/O boundary, deleaga la pura clampKcalToHealthyFloor.
+ *
+ * Returns kcal-ul (posibil ridicat) + `clamped` (UI safety message). Cand lipsesc
+ * stats (cold start) → passthrough (pura returneaza clamped=false).
+ */
+function applyHealthyFloorGuardrail(kcal: number): { kcal: number; clamped: boolean } {
+  const { weight, height } = useOnboardingStore.getState().data;
+  const maintenanceKcal = readUserMaintenanceTDEE();
+  const r = clampKcalToHealthyFloor({
+    kcalRecommendation: kcal,
+    maintenanceKcal: maintenanceKcal ?? NaN,
+    weightKg: weight,
+    heightCm: height,
+  });
+  return { kcal: r.kcal, clamped: r.clamped };
+}
 function getPhaseOverrideKcalToday(): number | null {
   try {
     const phaseRaw = JSON.parse(localStorage.getItem('phase-override') ?? 'null') as
@@ -676,11 +714,11 @@ function getPhaseOverrideKcalToday(): number | null {
  * un user fresh care a ales "slabire" la onboarding vede deficit imediat,
  * fara sa deschida ecranul ascuns SchimbaFaza. Returns null cand goal absent.
  *
- * Problem 2 — 'auto' NU mai returneaza null (mentenanta flat tacuta). Ruleaza
- * detectAutoPhaseFromWeightTrend (Engine #2): faza recomandata din trend-ul de
- * greutate. Cold-start onest: fara istoric greutate → MAINTAIN (×1.0); pe
- * masura ce se acumuleaza cantariri AUTO reflecta faza detectata (CUT cand
- * scade / BULK cand creste). Driven de detector, NU hardcodat la mentenanta.
+ * Problem 2 + BUG #5 — 'auto' NU mai returneaza null (mentenanta flat tacuta).
+ * Ruleaza detectAutoPhaseKey (Engine #2): weight-trend prioritar (CUT cand scade
+ * / BULK cand creste), iar cand trend-ul e flat/cold-start cade pe compozitia
+ * corporala (BMI/bf%) — un user nou supraponderal primeste CUT, NU mentenanta.
+ * Driven de detector, NU hardcodat la mentenanta.
  */
 function getGoalKcalMultiplier(): number | null {
   let phaseKey: string | null;
@@ -699,7 +737,8 @@ function getGoalKcalMultiplier(): number | null {
       phaseKey = 'MAINTENANCE';
       break;
     case 'auto':
-      // AUTO driven de detector: weight trend → CUT / BULK / MAINTENANCE.
+      // AUTO driven de detector: weight trend (prioritar) + body-comp (BMI/bf%
+      // cand trend-ul e flat/cold-start) → CUT / BULK / MAINTENANCE (BUG #5).
       phaseKey = detectAutoPhaseKey();
       break;
     default:
@@ -710,27 +749,49 @@ function getGoalKcalMultiplier(): number | null {
 }
 
 /**
- * Problem 2 — AUTO phase key din weight trend. Citeste weightLog (progresStore)
- * + deleaga la detectorul pur Engine #2. Mapeaza PHASES engine → cheile
- * PHASE_MULTIPLIERS (engine 'MAINTAIN' → 'MAINTENANCE'). Cold-start (fara
- * istoric / span scurt) → 'MAINTENANCE' (×1.0). Defensive: throw → 'MAINTENANCE'.
+ * AUTO phase key — combina DOUA semnale pure (Engine #2):
+ *   1. weight-trend (detectAutoPhaseFromWeightTrend): ce face corpul de fapt in
+ *      timp. Are PRIORITATE cand exista un trend directional clar (CUT/BULK) —
+ *      o pierdere/crestere consistenta sustine faza respectiva.
+ *   2. body-comp (detectAutoPhaseFromBodyComp): BMI + bf% din onboarding. Decide
+ *      cand weight-trend e MAINTAIN (cold-start / span scurt / platou) — asa un
+ *      user NOU supraponderal (110kg/1.84m, BMI 32.5, fara istoric) primeste CUT
+ *      in loc de mentenanta tacuta (BUG #5).
+ *
+ * Mapeaza PHASES engine → cheile PHASE_MULTIPLIERS ('MAINTAIN' → 'MAINTENANCE').
+ * Defensive: throw → 'MAINTENANCE'. Pure-ish I/O boundary (citeste stores).
  */
 function detectAutoPhaseKey(): string {
   try {
+    const phaseToKey = (phase: string): string =>
+      phase === 'CUT' ? 'CUT' : phase === 'BULK' ? 'BULK' : 'MAINTENANCE';
+
+    // 1. weight-trend prioritar cand are semnal directional (CUT/BULK).
     const weightLog = useProgresStore.getState().weightLog;
-    const { phase } = detectAutoPhaseFromWeightTrend(weightLog);
-    if (phase === 'CUT') return 'CUT';
-    if (phase === 'BULK') return 'BULK';
-    return 'MAINTENANCE'; // engine 'MAINTAIN' → PHASE_MULTIPLIERS 'MAINTENANCE'
+    const trend = detectAutoPhaseFromWeightTrend(weightLog);
+    if (trend.phase === 'CUT' || trend.phase === 'BULK') {
+      return phaseToKey(trend.phase);
+    }
+
+    // 2. weight-trend MAINTAIN (cold-start/flat) → decide din compozitia corporala.
+    const { sex, weight, height, age } = useOnboardingStore.getState().data;
+    const bfFraction = estimateBfFraction({ weight, height, age, sex });
+    const bmi = computeBMI(Number(weight), Number(height));
+    const bodyComp = detectAutoPhaseFromBodyComp({
+      bfPctFraction: bfFraction ?? null,
+      bmi,
+      ...(sex ? { sex } : {}),
+    });
+    return phaseToKey(bodyComp.phase);
   } catch {
     return 'MAINTENANCE';
   }
 }
 
 /**
- * Problem 2 (UI surface) — eticheta RO a fazei AUTO-detectate din weight trend,
- * pentru SchimbaFaza ("Auto → Mentinere/Cut/Bulk recomandat"). Cold-start →
- * 'Mentinere'. Reuse detectAutoPhaseKey (single source AUTO detection).
+ * Problem 2 + BUG #5 (UI surface) — eticheta RO a fazei AUTO-detectate (weight
+ * trend + body-comp), pentru SchimbaFaza ("Auto → Mentinere/Cut/Bulk recomandat").
+ * Cold-start fara stats → 'Mentinere'. Reuse detectAutoPhaseKey (single source).
  */
 const AUTO_PHASE_LABELS_RO: Record<string, string> = {
   CUT: 'Cut',
@@ -770,17 +831,22 @@ export async function getNutritionTargetsToday(
     // (deja aplicat in adjustedMu) > estimare Bayesiana de mentenanta. User
     // explicit pick beats goal + Bayesian; engine continua sa invete din log.
     const finalKcal = phaseKcal !== null ? phaseKcal : Math.round(safeKcal);
+    // BUG #13 safety — guardrail anti-subnutritie: user subponderal + deficit →
+    // ridica la mentenanta (zero deficit toward harm). Aplicat DUPA precedenta
+    // (override faza / goal / Bayesian) ca sa prinda orice deficit, oricare sursa.
+    const guarded = applyHealthyFloorGuardrail(finalKcal);
     // Piesa 1 fix — proteine g/kg × greutate per-user (fallback flat 180 cand
     // greutate absenta). Engine Kalman acopera DOAR kcal, NU macro split.
     const proteinTargetG =
       computeProteinTargetG(readUserWeightKg()) ?? BASELINE_NUTRITION.proteinTargetG;
     return {
-      kcalTarget: finalKcal,
+      kcalTarget: guarded.kcal,
       proteinTargetG,
       fatG: BASELINE_NUTRITION.fatG,
       carbsG: BASELINE_NUTRITION.carbsG,
       source: 'engine',
       confidence: mapBNConfidence(result.confidence),
+      healthyFloorClamped: guarded.clamped,
     };
   } catch (e) {
     console.warn('[engineWrappers] getNutritionTargetsToday failed:', e);

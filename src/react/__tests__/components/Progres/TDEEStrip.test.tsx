@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
 import { useNutritionStore } from '../../../stores/nutritionStore';
+import { getNutritionTargetTodayReal } from '../../../lib/bayesianNutritionAggregate';
 
 vi.mock('../../../lib/bayesianNutritionAggregate', () => ({
   getNutritionTargetTodayReal: vi.fn(async () => ({
@@ -95,5 +96,34 @@ describe('TDEEStrip', () => {
     expect(explainer.textContent).toMatch(/Engine calculeaza auto/);
     expect(explainer.textContent).toMatch(/Loghezi optional pentru calibrare reala/);
     expect(explainer.className).toMatch(/italic/);
+  });
+
+  // BUG #13 safety — mesaj cand kcal-ul a fost ridicat la mentenanta (subponderal).
+  it('BUG #13: NU arata mesajul de siguranta cand healthyFloorClamped absent', async () => {
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-strip')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('tdee-healthy-floor-msg')).not.toBeInTheDocument();
+  });
+
+  it('BUG #13: arata mesajul ferm-prietenos cand healthyFloorClamped true', async () => {
+    vi.mocked(getNutritionTargetTodayReal).mockResolvedValueOnce({
+      kcalTarget: 2200,
+      proteinTarget: 120,
+      source: 'engine-bn',
+      confidence: 0.5,
+      healthyFloorClamped: true,
+    });
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-healthy-floor-msg')).toBeInTheDocument();
+    });
+    const msg = screen.getByTestId('tdee-healthy-floor-msg');
+    expect(msg.textContent).toMatch(/sub greutatea sanatoasa minima/);
+    expect(msg.textContent).toMatch(/mentenanta/);
+    expect(msg.textContent).toMatch(/medic/);
+    // RO no-diacritics (D-LEGACY-064).
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(msg.textContent ?? '')).toBe(false);
   });
 });

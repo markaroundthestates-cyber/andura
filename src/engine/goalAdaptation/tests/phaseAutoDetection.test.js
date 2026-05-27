@@ -6,6 +6,7 @@ import {
   applyDeloadKcalOverride,
   detectPhase,
   detectAutoPhaseFromWeightTrend,
+  detectAutoPhaseFromBodyComp,
   computeLbm,
   computeMacroSplit,
 } from '../phaseAutoDetection.js';
@@ -293,5 +294,57 @@ describe('detectAutoPhaseFromWeightTrend — AUTO driven de weight trend', () =>
       { kg: 82, ts: now + 28 * DAY },
     ]);
     expect(r.phase).toBe(PHASES.CUT);
+  });
+});
+
+describe('detectAutoPhaseFromBodyComp — AUTO din BMI + bf% (BUG #5)', () => {
+  it('supraponderal (BMI 32.5, fara bf%) → CUT', () => {
+    // 110kg/1.84m fresh user — semnalul lipsa care lasa Auto pe mentenanta.
+    const r = detectAutoPhaseFromBodyComp({ bmi: 32.5, sex: 'm' });
+    expect(r.phase).toBe(PHASES.CUT);
+    expect(r.signals).toContain('auto_bodycomp_high_adiposity');
+  });
+
+  it('bf% mare male (>= 0.25) → CUT chiar daca BMI banda normala', () => {
+    const r = detectAutoPhaseFromBodyComp({ bfPctFraction: 0.30, bmi: 24, sex: 'm' });
+    expect(r.phase).toBe(PHASES.CUT);
+  });
+
+  it('bf% mare female threshold 0.32', () => {
+    expect(detectAutoPhaseFromBodyComp({ bfPctFraction: 0.33, bmi: 23, sex: 'f' }).phase)
+      .toBe(PHASES.CUT);
+    // 0.30 femeie e sub pragul 0.32 + BMI sanatos → MAINTAIN.
+    expect(detectAutoPhaseFromBodyComp({ bfPctFraction: 0.30, bmi: 23, sex: 'f' }).phase)
+      .toBe(PHASES.MAINTAIN);
+  });
+
+  it('subponderal (BMI <= 18.5) → BULK', () => {
+    const r = detectAutoPhaseFromBodyComp({ bmi: 16.6, sex: 'm' });
+    expect(r.phase).toBe(PHASES.BULK);
+    expect(r.signals).toContain('auto_bodycomp_underweight');
+  });
+
+  it('banda sanatoasa (BMI 22, bf% normal) → MAINTAIN', () => {
+    const r = detectAutoPhaseFromBodyComp({ bfPctFraction: 0.15, bmi: 22, sex: 'm' });
+    expect(r.phase).toBe(PHASES.MAINTAIN);
+    expect(r.signals).toContain('auto_bodycomp_healthy_band');
+  });
+
+  it('niciun semnal (bf% + BMI absente) → MAINTAIN onest', () => {
+    const r = detectAutoPhaseFromBodyComp({});
+    expect(r.phase).toBe(PHASES.MAINTAIN);
+    expect(r.signals).toContain('auto_bodycomp_no_signal');
+  });
+
+  it('bf% are prioritate: bf% slab dar BMI mare (muschios) → NU CUT pe bf%, dar BMI declanseaza', () => {
+    // Marius antrenat: BMI 26 (muschi), bf% 0.12 (slab). BMI-ul declanseaza CUT
+    // (V1 conservator — BMI peste 25). Documentat: bf% prioritar doar pe ramura high.
+    const r = detectAutoPhaseFromBodyComp({ bfPctFraction: 0.12, bmi: 26, sex: 'm' });
+    expect(r.phase).toBe(PHASES.CUT);
+  });
+
+  it('is pure — same input same output', () => {
+    const args = { bfPctFraction: 0.30, bmi: 24, sex: 'm' };
+    expect(detectAutoPhaseFromBodyComp(args)).toEqual(detectAutoPhaseFromBodyComp(args));
   });
 });

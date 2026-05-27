@@ -21,6 +21,9 @@ export interface NutritionTarget {
   proteinTarget: number;
   source: 'manual' | 'engine-bn' | 'baseline';
   confidence: number; // 0-1 Kalman filter posterior state
+  // BUG #13 safety — true cand kcal-ul a fost ridicat la mentenanta fiindca
+  // user-ul e subponderal (BMI <= 18.5). UI arata mesajul de siguranta.
+  healthyFloorClamped?: boolean;
 }
 
 /**
@@ -49,12 +52,14 @@ export async function getNutritionTargetTodayReal(
     };
   }
 
-  // Priority 2: engine real wire (LOCK 8 floor 1200 enforced inside wrapper)
+  // Priority 2: engine real wire (LOCK 8 floor 1200 + BUG #13 healthy-floor
+  // guardrail enforced inside wrapper)
   const engineTargets = await getNutritionTargetsToday(userState);
   return {
     kcalTarget: engineTargets.kcalTarget,
     proteinTarget: engineTargets.proteinTargetG,
     source: engineTargets.source === 'engine' ? 'engine-bn' : 'baseline',
     confidence: engineTargets.confidence,
+    healthyFloorClamped: engineTargets.healthyFloorClamped ?? false,
   };
 }

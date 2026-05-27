@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { estimateBF_Deurenberg } from '../bodyComposition.js';
+import {
+  estimateBF_Deurenberg,
+  computeBMI,
+  healthyFloorWeightKg,
+  clampKcalToHealthyFloor,
+  HEALTHY_MIN_BMI,
+} from '../bodyComposition.js';
 
 describe('estimateBF_Deurenberg', () => {
   it('80kg / 180cm / 30yo male → BMI 24.7 → ~20.3% (worked example)', () => {
@@ -47,5 +53,123 @@ describe('estimateBF_Deurenberg', () => {
     const a = estimateBF_Deurenberg({ sex: 'm', weightKg: 85, heightCm: 178, ageYears: 42 });
     const b = estimateBF_Deurenberg({ sex: 'm', weightKg: 85, heightCm: 178, ageYears: 42 });
     expect(a).toBe(b);
+  });
+});
+
+describe('computeBMI', () => {
+  it('80kg / 180cm → 24.7', () => {
+    expect(computeBMI(80, 180)).toBeCloseTo(24.7, 1);
+  });
+  it('110kg / 184cm → 32.5 (overweight)', () => {
+    expect(computeBMI(110, 184)).toBeCloseTo(32.5, 1);
+  });
+  it('55kg / 182cm → 16.6 (underweight)', () => {
+    expect(computeBMI(55, 182)).toBeCloseTo(16.6, 1);
+  });
+  it('returns null on invalid input', () => {
+    expect(computeBMI(0, 180)).toBeNull();
+    expect(computeBMI(80, 0)).toBeNull();
+    expect(computeBMI(NaN, 180)).toBeNull();
+    expect(computeBMI(80, NaN)).toBeNull();
+  });
+});
+
+describe('healthyFloorWeightKg — greutate la BMI 18.5', () => {
+  it('182cm → ~61.3 kg (BMI 18.5)', () => {
+    // 18.5 * 1.82^2 = 61.27
+    expect(healthyFloorWeightKg(182)).toBeCloseTo(61.3, 1);
+  });
+  it('returns null on invalid height', () => {
+    expect(healthyFloorWeightKg(0)).toBeNull();
+    expect(healthyFloorWeightKg(NaN)).toBeNull();
+  });
+});
+
+describe('clampKcalToHealthyFloor — BUG #13 anti-undereating guardrail', () => {
+  it('subponderal (BMI<18.5) + deficit → clamp UP la mentenanta', () => {
+    // 55kg/182cm → BMI 16.6 (subponderal). Deficit 1800 vs mentenanta 2200.
+    const r = clampKcalToHealthyFloor({
+      kcalRecommendation: 1800,
+      maintenanceKcal: 2200,
+      weightKg: 55,
+      heightCm: 182,
+    });
+    expect(r.clamped).toBe(true);
+    expect(r.kcal).toBe(2200);
+    expect(r.currentBmi).toBeCloseTo(16.6, 1);
+  });
+
+  it('subponderal dar recomandarea deja >= mentenanta (bulk) → passthrough', () => {
+    const r = clampKcalToHealthyFloor({
+      kcalRecommendation: 2400,
+      maintenanceKcal: 2200,
+      weightKg: 55,
+      heightCm: 182,
+    });
+    expect(r.clamped).toBe(false);
+    expect(r.kcal).toBe(2400);
+  });
+
+  it('greutate sanatoasa + deficit → passthrough (deficit permis)', () => {
+    // 80kg/180cm → BMI 24.7 (sanatos). Deficit normal pentru slabire.
+    const r = clampKcalToHealthyFloor({
+      kcalRecommendation: 2000,
+      maintenanceKcal: 2500,
+      weightKg: 80,
+      heightCm: 180,
+    });
+    expect(r.clamped).toBe(false);
+    expect(r.kcal).toBe(2000);
+  });
+
+  it('supraponderal + deficit → passthrough (deficit corect)', () => {
+    const r = clampKcalToHealthyFloor({
+      kcalRecommendation: 2286,
+      maintenanceKcal: 2788,
+      weightKg: 110,
+      heightCm: 184,
+    });
+    expect(r.clamped).toBe(false);
+    expect(r.kcal).toBe(2286);
+  });
+
+  it('exact la prag BMI 18.5 + deficit → clamp (la/sub minim)', () => {
+    // greutate la exact BMI 18.5 (61.3kg/182cm).
+    const r = clampKcalToHealthyFloor({
+      kcalRecommendation: 1800,
+      maintenanceKcal: 2200,
+      weightKg: healthyFloorWeightKg(182),
+      heightCm: 182,
+    });
+    expect(r.currentBmi).toBeCloseTo(HEALTHY_MIN_BMI, 1);
+    expect(r.clamped).toBe(true);
+  });
+
+  it('cold start (greutate/inaltime absente) → passthrough fara clamp', () => {
+    const r = clampKcalToHealthyFloor({
+      kcalRecommendation: 1800,
+      maintenanceKcal: 2200,
+      weightKg: null,
+      heightCm: null,
+    });
+    expect(r.clamped).toBe(false);
+    expect(r.kcal).toBe(1800);
+    expect(r.currentBmi).toBeNull();
+  });
+
+  it('mentenanta absenta → passthrough (nu fabricam clamp)', () => {
+    const r = clampKcalToHealthyFloor({
+      kcalRecommendation: 1800,
+      maintenanceKcal: NaN,
+      weightKg: 55,
+      heightCm: 182,
+    });
+    expect(r.clamped).toBe(false);
+    expect(r.kcal).toBe(1800);
+  });
+
+  it('is pure — same input same output', () => {
+    const args = { kcalRecommendation: 1800, maintenanceKcal: 2200, weightKg: 55, heightCm: 182 };
+    expect(clampKcalToHealthyFloor(args)).toEqual(clampKcalToHealthyFloor(args));
   });
 });
