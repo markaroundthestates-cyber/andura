@@ -25,6 +25,10 @@ interface SVGCountdownRingProps {
   remainingSec: number;
   diameter?: number;
   strokeWidth?: number;
+  // Tailwind class pentru culoarea textului mm:ss central. Default `text-ink`
+  // (fundal deschis). RestOverlay dark card paseaza `text-paper` (alb) pentru
+  // contrast pe fundalul --ink. Track + progress arc nemodificate.
+  timeColorClass?: string;
 }
 
 // Pure-function color state — exported pentru test fixture independent. Returns
@@ -41,6 +45,7 @@ export function SVGCountdownRing({
   remainingSec,
   diameter = 64,
   strokeWidth = 4,
+  timeColorClass = 'text-ink',
 }: SVGCountdownRingProps): JSX.Element {
   const center = diameter / 2;
   const radius = center - strokeWidth;
@@ -103,7 +108,7 @@ export function SVGCountdownRing({
         />
       </svg>
       <span
-        className="absolute text-lg font-bold text-ink font-mono"
+        className={`absolute text-lg font-bold ${timeColorClass} font-mono`}
         data-testid="rest-ring-time"
       >
         {mmss}

@@ -1,4 +1,4 @@
-// REST OVERLAY - Workout Phase=Rest Fixed Overlay Component
+// REST OVERLAY - Workout Phase=Rest Bottom Card
 // Phase 4 task_12 §A extract din Workout.tsx phase=rest conditional. Pure
 // presentational — countdown timer ring + Sari pauza skip button.
 //
@@ -11,6 +11,14 @@
 // non-empty. Stateless preserve — parent Workout.tsx passes
 // currentExercise.name (mockup L1515 next-exercise context hint).
 //
+// BUG #7+#8 (2026-05-27): aliniat la mockup andura-clasic.html L1600-1613 +
+// L2794-2803 — card NON-modal pinned bottom (NU full-screen inset-0), fundal
+// dark var(--ink) + text alb var(--paper), layout orizontal ring+body+skip.
+// Fix #7 = paritate vizuala (negru/alb vs vechiul bg-paper deschis fullscreen).
+// Fix #8 = cardul ocupa doar banda de jos, deci butoanele X + ... din header
+// (SessionTimer sticky top z-10) raman clickabile in timpul pauzei (vechiul
+// fixed inset-0 z-50 le acoperea + intercepta pointer events).
+//
 // Stateless: parent Workout.tsx owns countdown state (interval decrement
 // effect + auto-advance la phase=logging cand reaches 0) + onSkip handler
 // (setRestCountdown(0) + setPhase('logging')).
@@ -20,6 +28,7 @@
 // aria-label "Pauza activa" pentru Workout.test.tsx baseline preserve.
 
 import type { JSX } from 'react';
+import { SkipForward } from 'lucide-react';
 import { SVGCountdownRing } from './SVGCountdownRing';
 
 interface RestOverlayProps {
@@ -39,31 +48,45 @@ export function RestOverlay({
 }: RestOverlayProps): JSX.Element {
   return (
     <div
-      className="fixed inset-0 bg-paper/95 flex flex-col items-center justify-center z-50"
+      className="fixed left-3.5 right-3.5 bottom-[78px] z-40 flex items-center gap-3.5 rounded-[18px] px-4 py-3.5 shadow-[0_8px_24px_rgba(0,0,0,0.22)]"
+      style={{ background: 'var(--ink)', color: 'var(--paper)' }}
       data-testid="rest-overlay"
       role="dialog"
       aria-label="Pauza activa"
     >
-      <p className="text-sm text-ink2 mb-1">Pauza</p>
-      {currentExerciseName && (
-        <p
-          className="text-xs text-ink2 italic mb-4"
-          data-testid="rest-context-line"
-        >
-          {currentExerciseName} recupereaza
-        </p>
-      )}
-      {!currentExerciseName && <div className="mb-4" aria-hidden="true" />}
       <SVGCountdownRing
         totalSec={initialRestSec}
         remainingSec={countdownSec}
+        timeColorClass="text-paper"
       />
+      <div className="flex-1 min-w-0">
+        <p
+          className="text-[10px] font-bold uppercase tracking-[0.1em] text-brick"
+        >
+          Pauza
+        </p>
+        {currentExerciseName && (
+          <p
+            className="font-serif italic text-[13px] leading-snug mt-0.5"
+            style={{ color: 'var(--paper)' }}
+            data-testid="rest-context-line"
+          >
+            {currentExerciseName} recupereaza
+          </p>
+        )}
+      </div>
       <button
         type="button"
         onClick={onSkip}
         data-testid="rest-skip"
-        className="mt-6 px-6 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
+        className="flex-shrink-0 flex items-center gap-1.5 rounded-[10px] border px-3 py-2.5 text-xs font-semibold"
+        style={{
+          background: 'rgba(255,255,255,0.12)',
+          borderColor: 'rgba(255,255,255,0.2)',
+          color: 'var(--paper)',
+        }}
       >
+        <SkipForward className="w-3.5 h-3.5" aria-hidden="true" />
         Sari pauza
       </button>
     </div>

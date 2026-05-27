@@ -42,6 +42,25 @@ describe('RestOverlay - baseline render', () => {
     expect(btn.textContent).toBe('Sari pauza');
     expect(/[ăâîșțĂÂÎȘȚ]/.test(btn.textContent ?? '')).toBe(false);
   });
+
+  // BUG #7 — dark bottom card paritate mockup (background var(--ink) negru,
+  // text var(--paper) alb) vs vechiul bg-paper deschis fullscreen.
+  it('renders dark card (ink bg + paper text) per mockup parity', () => {
+    render(<RestOverlay countdownSec={60} initialRestSec={90} onSkip={vi.fn()} />);
+    const root = screen.getByTestId('rest-overlay');
+    expect(root.style.background).toContain('--ink');
+    expect(root.style.color).toContain('--paper');
+  });
+
+  // BUG #8 — cardul e pinned bottom (NU full-screen inset-0), deci NU acopera
+  // header-ul cu X + ... → butoanele raman clickabile in timpul pauzei. Fara
+  // fix, fixed inset-0 z-50 intercepta pointer events peste header z-10.
+  it('is a bottom-pinned card, NOT a full-screen inset-0 blocking overlay', () => {
+    render(<RestOverlay countdownSec={60} initialRestSec={90} onSkip={vi.fn()} />);
+    const root = screen.getByTestId('rest-overlay');
+    expect(root.className).not.toContain('inset-0');
+    expect(root.className).toContain('bottom-');
+  });
 });
 
 describe('RestOverlay - §F-pass2-restoverlay-03 contextual exercise cue', () => {
