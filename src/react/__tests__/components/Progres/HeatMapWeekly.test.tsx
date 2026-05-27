@@ -104,6 +104,50 @@ describe('HeatMapWeekly — weight snapshot 7-day mockup parity', () => {
     expect(screen.getByTestId('weight-snapshot-delta')).toHaveAttribute('data-delta-sign', 'up');
   });
 
+  it('suppresses celebratory delta cand schimbarea e fizic imposibila (fat-finger)', () => {
+    // Smoke artifact: 110kg apoi 53kg la o zi distanta = ↓57 kg / 2z verde.
+    // Rata 57 kg/zi >> prag 2 kg/zi → NU mai aratam trend-ul colorat.
+    const now = Date.now();
+    useProgresStore.setState({
+      weightLog: [
+        { kg: 110, date: '2026-05-21', ts: now - 86400000 },
+        { kg: 53, date: '2026-05-22', ts: now },
+      ],
+    });
+    renderComponent();
+    expect(screen.queryByTestId('weight-snapshot-delta')).not.toBeInTheDocument();
+    expect(screen.getByTestId('weight-snapshot-delta-implausible')).toHaveTextContent(/Verifica valoarea/i);
+  });
+
+  it('arata delta normala (sub prag) ca trend colorat, NU nota neutra', () => {
+    // 1.5 kg pe 1 zi = sub pragul de 2 kg/zi → trend valid.
+    const now = Date.now();
+    useProgresStore.setState({
+      weightLog: [
+        { kg: 81.5, date: '2026-05-21', ts: now - 86400000 },
+        { kg: 80, date: '2026-05-22', ts: now },
+      ],
+    });
+    renderComponent();
+    expect(screen.getByTestId('weight-snapshot-delta')).toHaveAttribute('data-delta-sign', 'down');
+    expect(screen.queryByTestId('weight-snapshot-delta-implausible')).not.toBeInTheDocument();
+  });
+
+  it('arata delta mare ca trend valid daca span-ul calendaristic o face plauzibila', () => {
+    // 14 kg pe 60 zile = 0.23 kg/zi, plauzibil chiar daca delta absolut e mare.
+    const now = Date.now();
+    useProgresStore.setState({
+      weightLog: [
+        { kg: 94, date: '2026-03-24', ts: now - 60 * 86400000 },
+        { kg: 80, date: '2026-05-23', ts: now },
+      ],
+    });
+    renderComponent();
+    expect(screen.getByTestId('weight-snapshot-delta')).toHaveAttribute('data-delta-sign', 'down');
+    expect(screen.getByTestId('weight-snapshot-delta')).toHaveTextContent(/14 kg/);
+    expect(screen.queryByTestId('weight-snapshot-delta-implausible')).not.toBeInTheDocument();
+  });
+
   it('hides delta cand only 1 entry (need 2 puncte)', () => {
     useProgresStore.setState({
       weightLog: [{ kg: 80, date: '2026-05-22', ts: Date.now() }],

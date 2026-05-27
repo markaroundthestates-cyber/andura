@@ -24,6 +24,24 @@ interface WeightBar {
   heightPct: number; // 30-100% relative to min-max range
 }
 
+// Plausibility guard — un fat-finger (ex. 53 in loc de 153) producea badge
+// verde "↓ 57 kg / 2z" care celebra o pierdere fizic imposibila intr-o apa
+// de sanatate. Daca rata implicita depaseste ~2 kg/zi pe span-ul real (zile
+// calendaristice intre prima si ultima cantarire), NU mai aratam trend-ul ca
+// reusita coloratata — afisam o nota neutra "verifica valoarea".
+const MAX_PLAUSIBLE_KG_PER_DAY = 2;
+const MS_PER_DAY = 86_400_000;
+
+// Span in zile calendaristice intre doua intrari (folosim `date` YYYY-MM-DD,
+// NU `ts` care e momentul salvarii — back-dating ar face ts-urile apropiate
+// chiar daca datele difera). min 1 ca sa nu impartim la 0 cand aceeasi zi.
+function spanDays(firstDate: string, lastDate: string): number {
+  const a = Date.parse(firstDate);
+  const b = Date.parse(lastDate);
+  if (Number.isNaN(a) || Number.isNaN(b)) return 1;
+  return Math.max(1, Math.round(Math.abs(b - a) / MS_PER_DAY));
+}
+
 function buildBars(weightLog: Array<{ kg: number; ts: number }>): WeightBar[] {
   const last7 = weightLog.slice(-7);
   if (last7.length === 0) return [];
@@ -46,6 +64,11 @@ export function HeatMapWeekly(): JSX.Element {
   const first = last7[0];
   const delta = latest && first && last7.length >= 2 ? +(latest.kg - first.kg).toFixed(1) : null;
   const deltaSign = delta === null ? '' : delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
+  // Implausible daca rata depaseste pragul fizic — probabil typo (ex. 53/153).
+  const implausible =
+    delta !== null && latest && first
+      ? Math.abs(delta) / spanDays(first.date, latest.date) > MAX_PLAUSIBLE_KG_PER_DAY
+      : false;
 
   return (
     <section
@@ -68,7 +91,7 @@ export function HeatMapWeekly(): JSX.Element {
             </p>
           )}
         </div>
-        {delta !== null && (
+        {delta !== null && !implausible && (
           <p
             className="text-xs font-medium"
             data-testid="weight-snapshot-delta"
@@ -76,6 +99,14 @@ export function HeatMapWeekly(): JSX.Element {
             style={{ color: delta < 0 ? 'var(--succ)' : delta > 0 ? 'var(--brick)' : 'var(--ink-2)' }}
           >
             {delta < 0 ? '↓' : delta > 0 ? '↑' : '='} {Math.abs(delta)} kg / {last7.length}z
+          </p>
+        )}
+        {delta !== null && implausible && (
+          <p
+            className="text-xs font-medium text-ink2"
+            data-testid="weight-snapshot-delta-implausible"
+          >
+            Verifica valoarea
           </p>
         )}
       </div>
