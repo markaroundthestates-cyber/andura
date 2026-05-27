@@ -66,16 +66,16 @@ export function Splash(): JSX.Element {
           data-testid="splash-cta"
           className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
         >
-          {isAuthenticated ? 'Continua' : 'Incepe'}
+          {isAuthenticated ? 'Continua' : 'Log In'}
         </button>
         {!isAuthenticated && (
           <button
             type="button"
-            onClick={() => navigate('/auth')}
+            onClick={() => navigate('/auth', { state: { mode: 'signup' } })}
             data-testid="splash-secondary"
             className="text-sm text-ink2 underline"
           >
-            Am deja cont
+            Creaza Cont
           </button>
         )}
         <p

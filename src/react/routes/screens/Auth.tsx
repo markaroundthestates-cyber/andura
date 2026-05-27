@@ -7,7 +7,7 @@
 
 import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, FlaskConical, ExternalLink, ArrowLeft, X } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { sendMagicLink, buildGoogleSignInUrl } from '../../../auth.js';
@@ -27,6 +27,7 @@ function isValidEmail(s: string): boolean {
 
 export function Auth(): JSX.Element {
   const navigate = useNavigate();
+  const location = useLocation();
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
   const setSkipAuth = useAppStore((s) => s.setSkipAuth);
   const [email, setEmail] = useState('');
@@ -38,7 +39,14 @@ export function Auth(): JSX.Element {
   // ruta separata). Ambele cai apeleaza ACELASI sendMagicLink (Firebase
   // creeaza contul la prima deschidere a linkului). Signup gateaza pe bifa
   // explicita de consimtamant (Termeni + Confidentialitate).
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  // Splash "Creaza Cont" pasaza state.mode='signup' (location.state, pattern
+  // existent) ca user-ul sa aterizeze direct pe calea de creare cont. Lipsa
+  // state → 'login' (default: "Log In" din Splash + acces direct /auth).
+  const initialMode =
+    (location.state as { mode?: 'login' | 'signup' } | null)?.mode === 'signup'
+      ? 'signup'
+      : 'login';
+  const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [consent, setConsent] = useState(false);
   // U-09 — legal doc inline modal pe Auth (Termeni/Confidentialitate erau
   // link-uri catre /app/cont/* gated de ProtectedRoute → bounce pe /auth

@@ -253,6 +253,28 @@ describe('Auth — Daniel-directed login/signup modes', () => {
     expect(screen.queryByTestId('auth-skip')).not.toBeInTheDocument();
     expect(screen.queryByTestId('auth-terms-footer')).not.toBeInTheDocument();
   });
+
+  // BUG #2 — Splash "Creaza Cont" navigates with location.state.mode='signup'
+  // so the user lands DIRECTLY on the account-creation path (not the login
+  // default). location.state pattern matches existing screens (AparateLipsa,
+  // WorkoutPreview, etc.).
+  it('opens directly in SIGNUP mode when location.state.mode is "signup"', () => {
+    render(
+      <MemoryRouter initialEntries={[{ pathname: '/auth', state: { mode: 'signup' } }]}>
+        <Routes>
+          <Route path="/auth" element={<Auth />} />
+        </Routes>
+      </MemoryRouter>
+    );
+    expect(screen.getByRole('heading', { name: /Creeaza cont/i })).toBeInTheDocument();
+    expect(screen.getByTestId('auth-consent-checkbox')).toBeInTheDocument();
+  });
+
+  it('defaults to LOGIN mode when navigated to /auth without state', () => {
+    // Splash "Log In" + direct /auth visit carry no state → login default.
+    renderAuth();
+    expect(screen.getByRole('heading', { name: /Intra in cont/i })).toBeInTheDocument();
+  });
 });
 
 describe('Auth — signup consent checkbox gating', () => {
