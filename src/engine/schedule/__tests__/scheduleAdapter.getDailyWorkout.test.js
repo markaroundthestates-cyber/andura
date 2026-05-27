@@ -11,6 +11,7 @@ import {
   commitCalendarEdit,
   setMissingEquipment,
 } from '../scheduleAdapter.js';
+import { getExerciseMetadata } from '../../exerciseLibrary.js';
 
 const TUESDAY_2026_05_19 = new Date(2026, 4, 19); // dayIdx 1 (M)
 const MONDAY_2026_05_18 = new Date(2026, 4, 18);  // dayIdx 0 (L)
@@ -146,35 +147,36 @@ describe('scheduleAdapter — getDailyWorkout pipeline consumer', () => {
     expect(plan === null || plan.type === 'training').toBe(true);
   });
 
-  it('missingEquipment filter applied via sessionBuilder ctx.equipment.available', async () => {
-    // Mark all dumbbell-mapping user equipment as missing
-    setMissingEquipment(['gantere', 'aparat-cablu', 'leg-press', 'aparat-extensii', 'aparat-tractiuni']);
+  it('missingEquipment filter applied via sessionBuilder coarse equipment', async () => {
+    // WP-4: mark gantere + aparat-cablu missing → dumbbell + cable coarse types
+    // unavailable. The session still composes (bodyweight + remaining types fill
+    // it — no DROP-to-empty), but no dumbbell/cable exercise survives.
+    setMissingEquipment(['gantere', 'aparat-cablu']);
     const plan = await getDailyWorkout(buildUserState(), TUESDAY_2026_05_19);
     expect(plan).not.toBeNull();
-    // With most engine equipment unavailable, sessionBuilder filters down to 0-1 exercises
-    // (some PULL exercises may remain depending on pec_deck availability — assert
-    // count <= original PULL template length, demonstrating filter applied)
-    expect(plan.exercises.length).toBeLessThan(5);
+    const types = plan.exercises.map(
+      (e) => getExerciseMetadata(e.name).equipment_type,
+    );
+    expect(types).not.toContain('dumbbell');
+    expect(types).not.toContain('cable');
   });
 
-  it('A2 H-4: marking gantere missing EXCLUDES dumbbell exercise from session', async () => {
-    // PULL template: Lat Pulldown(bailib_stack), Cable Row(bailib_stack),
-    // Face Pulls(matrix_cable), Bayesian Curl(matrix_cable), Incline DB Curl(dumbbell).
-    // Baseline (nothing missing) includes the dumbbell exercise.
+  it('A2 H-4: marking gantere missing EXCLUDES dumbbell exercises from session', async () => {
+    // Baseline (nothing missing) — selection may include a dumbbell exercise.
     const baseline = await getDailyWorkout(buildUserState(), TUESDAY_2026_05_19);
     expect(baseline).not.toBeNull();
-    const baselineNames = baseline.exercises.map((e) => e.name);
-    expect(baselineNames).toContain('Incline DB Curl'); // dumbbell-gated
 
-    // Mark gantere (→ engine 'dumbbell') missing. Same day, same template.
+    // Mark gantere (→ coarse 'dumbbell') missing. Same day, same session type.
     setMissingEquipment(['gantere']);
     const adapted = await getDailyWorkout(buildUserState(), TUESDAY_2026_05_19);
     expect(adapted).not.toBeNull();
-    const adaptedNames = adapted.exercises.map((e) => e.name);
-    // The dumbbell exercise is dropped; non-dumbbell PULL exercises remain.
-    expect(adaptedNames).not.toContain('Incline DB Curl');
-    expect(adaptedNames).toContain('Lat Pulldown'); // bailib_stack, unaffected
-    expect(adapted.exercises.length).toBeLessThan(baseline.exercises.length);
+    const adaptedTypes = adapted.exercises.map(
+      (e) => getExerciseMetadata(e.name).equipment_type,
+    );
+    // No dumbbell exercise survives; the session is still fully composed
+    // (substitution territory is WP-5 — here it just doesn't crash/empty).
+    expect(adaptedTypes).not.toContain('dumbbell');
+    expect(adapted.exercises.length).toBeGreaterThan(0);
   });
 
   it('runPipeline returns empty array → returns null (defensive)', async () => {

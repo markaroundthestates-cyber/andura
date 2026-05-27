@@ -344,6 +344,52 @@ const USER_TO_ENGINE_EQUIPMENT = Object.freeze({
   'banda-elastica':    [],
 });
 
+// ── WP-4 selection seam: coarse equipment vocabulary ─────────────────────
+// sessionBuilder now selects from the 657 library and filters on the library's
+// COARSE equipment_type (barbell|dumbbell|machine|cable|bodyweight|band), NOT
+// the fine-grained engine IDs above. This map says, per user picker ID, which
+// coarse types become unavailable when that item is missing. bodyweight is
+// never gated (no equipment required).
+//
+// NOTE: this is the minimal coarse bridge needed for WP-4 selection to run end
+// to end on this base. WP-3 (equipment-vocabulary unification) is expected to
+// supersede it with a shared equipmentMap module; keep this isolated so the
+// swap is a one-spot replacement.
+const ALL_COARSE_TYPES = Object.freeze([
+  'barbell', 'dumbbell', 'machine', 'cable', 'band',
+]); // bodyweight intentionally excluded — always available downstream
+
+const MISSING_USER_ID_TO_COARSE = Object.freeze({
+  'gantere':           ['dumbbell'],
+  'aparat-cablu':      ['cable'],
+  'leg-press':         ['machine'],
+  'aparat-extensii':   ['machine'],
+  'aparat-tractiuni':  ['cable'],
+  'banca-inclinata':   [], // a bench is a surface/setup, not an equipment_type
+  'banca-plana':       [], // (SETUP_ONLY) — does not remove a coarse type
+  'bara-halterelor':   ['barbell'],
+  'power-rack':        ['barbell'],
+  'banda-elastica':    ['band'],
+});
+
+/**
+ * Compute the coarse equipment types still AVAILABLE given the user's missing
+ * picker IDs. bodyweight is always available and is intentionally not listed
+ * here (sessionBuilder allows it unconditionally).
+ *
+ * @param {string[]} missingUserIds
+ * @returns {string[]} available coarse equipment_type values
+ */
+export function availableCoarseTypes(missingUserIds) {
+  const missing = new Set();
+  if (Array.isArray(missingUserIds)) {
+    for (const id of missingUserIds) {
+      for (const t of (MISSING_USER_ID_TO_COARSE[id] || [])) missing.add(t);
+    }
+  }
+  return ALL_COARSE_TYPES.filter((t) => !missing.has(t));
+}
+
 /**
  * Translate user-facing missing equipment IDs to engine equipment domain IDs.
  * Multi-mapping: one user ID may block multiple engine IDs (e.g. 'aparat-cablu'
@@ -365,17 +411,6 @@ export function translateToEngineEquipment(userIds) {
 }
 
 // ── Daily workout pipeline consumer (Phase 6 task_01) ────────────────────
-// Engine equipment domain — sessionBuilder.EQUIP_MAP target set. Filter
-// pipeline `available` set by subtracting translated missing equipment.
-const ENGINE_EQUIPMENT_DOMAIN = Object.freeze([
-  'matrix_cable',
-  'bailib_stack',
-  'pec_deck',
-  'leg_machine',
-  'leg_press_plates',
-  'dumbbell',
-]);
-
 // Day-of-week → session type V1 deterministic mapping per mockup convention
 // (L=Push, M=Pull, M2=Picioare, J=Umeri/brate, V=Full Upper, S=Push, D=Pull).
 // Engine pipeline blueprint outputs orthogonal — session type drives only
@@ -432,10 +467,10 @@ export async function getDailyWorkout(userState, now = new Date()) {
     }
   }
 
-  // Compute available equipment (engine domain) by subtracting missing
+  // Compute available equipment — WP-4 selection uses COARSE equipment types
+  // (library equipment_type), derived from the user's missing picker IDs.
   const missingUserIds = getMissingEquipment();
-  const missingEngineIds = new Set(translateToEngineEquipment(missingUserIds));
-  const availableEngineIds = ENGINE_EQUIPMENT_DOMAIN.filter(id => !missingEngineIds.has(id));
+  const availableCoarse = availableCoarseTypes(missingUserIds);
 
   // Build EngineContext + invoke 8-adapter pipeline sequential strict
   const ctx = buildEngineContext(userState);
@@ -471,13 +506,20 @@ export async function getDailyWorkout(userState, now = new Date()) {
     }
   }
 
-  // sessionBuilder ctx: equipment available + weak groups derived from
+  // sessionBuilder ctx: coarse equipment + weak groups derived from
   // Specialization target_muscle_group (single-element list for prioritization)
+  // + tier (persona/experience) + a per-user+day seed so the 657-pool selection
+  // is DETERMINISTIC (stable across renders, varies by day — PR identity).
   const sessionType = DAY_TO_SESSION_TYPE[dayIdx] || 'FULL_UPPER';
   const specializationTarget = blueprints.specialization?.target_muscle_group ?? null;
+  const userId = userState?.user?.uid ?? userState?.uid ?? '';
+  const seed = `${userId}|${getWeekStartIso(date)}|${dayIdx}`;
   const sessionCtx = {
-    equipment: { available: availableEngineIds },
+    equipment: { available: availableCoarse },
     weakGroups: specializationTarget ? [specializationTarget] : [],
+    profileTier: userState?.profileTier ?? null,
+    prNames: Array.isArray(userState?.prNames) ? userState.prNames : [],
+    seed,
   };
 
   const session = buildSession(sessionType, sessionCtx);
