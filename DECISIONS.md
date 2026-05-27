@@ -2,10 +2,10 @@
 title: Andura — Decisions Single Source of Truth
 type: ssot-decisions
 status: live
-last_updated: 2026-05-26
+last_updated: 2026-05-27
 schema_version: 1
-latest_entry: D082
-total_entries: 81
+latest_entry: D083
+total_entries: 82
 authority: Daniel CEO directive 2026-05-15 reglaj chat post wiki sprawl — "Ne trebuie un loc special dedicat cu toate deciziile, updatate la fiecare handover, nu trebuie sa avem aceeasi decizie si pas de 10 ori in forme diferite"
 ---
 
@@ -132,6 +132,7 @@ D079 | 2026-05-25 | ARCH | Backup/restore cloud + migratii = WIRE in React (deci
 D080 | 2026-05-26 | PROC | Extreme-quality pre-Beta mandate: Daniel NU QA — Claude audit exhaustiv (fiecare virgula + dead-code + paritate live + Coach Brain Eval oracle Claude + security/anti-RE) -> fix -> re-audit -> repeat pana 0 + brain validat live, ABIA apoi Daniel vede; + run-whole-arc step-after-step autonom pana Beta, Daniel-gated items prepped+queued NU blocking | LOCKED V1 | DECISIONS.md §D080
 D081 | 2026-05-27 | STRATEGY | Moat REAL pre-Beta, "Beta = launch = moatul meu" (Daniel) — zero pernă post-Beta. Audit due-diligence 5 lentile fresh-eyes Opus (`📥_inbox/wiring-audit-2026-05-26/VERDICT-CONSOLIDATED.md`) verdict: fundatia = inginerie reala (math 0 CRIT + nutritie/recuperare/PR/plumbing/Coach-Brain-Eval genuine) DAR prescriptia-antrenament fatada (readiness/RPE/periodizare/deload necablate la prescriptie — "pare destept dar nu e") + moat fatada (~22 exercitii reale nu 657, substitutie+alternativeEngine arhivate) + 3 bug HIGH (PII device-partajat, pierdere date miezul-noptii, FCM-sync clobber); cauza-radacina "engine testat izolat" != "merge pt user" (5 audituri verzi anterioare ratasera, inclusiv claim PRIMER "657 LANDED" care reflecta vanilla arhivat NU React-ul livrat). Daniel A LOCKED: tot REAL inainte de Beta. Plan P0 siguranta + P1 cablare-creier + P2 onestitate-stub + P3 revive-657-moat + P4 calibrare + re-audit pana 0 findings dual-source. Extinde (NU supersede) D042+D043+D077+D080. P0+P1+P2+P3-foundation LANDED green 4740; P3-wiring Daniel-gated (vocabular echipament + naming 627). | LOCKED V1 | DECISIONS.md §D081 + 📥_inbox/wiring-audit-2026-05-26/VERDICT-CONSOLIDATED.md
 D082 | 2026-05-27 | ARCH | Nutritie TDEE = model FORWARD determinist (Daniel-directed) inlocuieste factor activitate 1.55 fix: `BMR(Mifflin) × NEAT_base 1.25 + (sesiuni × 300kcal net)/7`, unde sesiuni = blend de incredere planned-prior → actual-posterior (`w = loggedWeeks/4`; cold-start = planificat din onboarding `frequency`/calendar, drift spre real in ~4 sapt). Motivatie Daniel: 1.55 fix ignora cate antrenamente face omul; iar "lasa cantarul sa optimizeze" e exclus la fluctuatie zilnica ±4-5kg (false positives). Cantarul devine calibrator LENT (ferestre ≥7 zile + ≥3 cantariri + panta regresie liniara, NU punct-la-punct, tier plafonat T1) → nudge pe saptamani, niciodata swing zilnic. Reparat flaw observatie `MIN_WINDOW_DAYS=1`. Anti-gaming: planned sigur pt ca pe termen lung cantarul backstop (zici 7 faci 2 → te ingrasi → te prinde). Pastreaza floor LOCK8 (1000f/1200b) + protein g/kg + faza delta (cut/bulk/mentenanta). Consecinta vizibila onesta: mentenanta ~2600 (era 3224 flat), bulk scade (activitatea vine din sesiuni reale). Extinde D046§3.4 (Kalman/adaptiv real) + D081 (moat real) — NU supersede. LANDED green 4956 (forward `4aeeb263` + blend `7948d9cf`). | LOCKED V1 | DECISIONS.md §D082 + src/react/lib/userTdee.ts + src/react/lib/nutritionObservations.ts
+D083 | 2026-05-27 | SAFETY | Andura = adults-only 18+ (Daniel CEO smoke 2026-05-27 verbatim "da 18+"). Ridicat min varsta onboarding 16 → 18, supersede sub-decizia D046 §28-H5 (default GDPR-Romania-16 parental-consent): Daniel a constatat la smoke ca app il lasa sa intre la 16 ani — NU dorit pt app de fitness cu prescriptie antrenament + nutritie + kcal. Schimbat ONBOARDING_BOUNDS.age.min + age input Onboarding + SettingsProfile (min/eroare/helper "intre 18 si 99 ani") + teste bounds/validare/finalize/componenta 16→18. Mockup NEATINS (provenance L565 ramane "16", override doc-ul). Restul D046 (ConfirmModal/OAuth/Bundle/Kalman) NEATINS — supersede DOAR sub-clauza varsta. LANDED green 5026 (`a803f7c4`). | LOCKED V1 | DECISIONS.md §D083 + src/react/stores/onboardingStore.ts + src/react/routes/screens/Onboarding.tsx + src/react/routes/screens/cont/SettingsProfile.tsx
 
 ---
 
