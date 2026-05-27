@@ -61,6 +61,12 @@ function formatTime(ts: number): string {
   return `${h}:${m}`;
 }
 
+// RO thousands separator (space) — mirror PostSummary formatKg pentru
+// cross-screen numeric consistency (12 450 kg, NU 12450kg).
+function formatKg(kg: number): string {
+  return kg.toLocaleString('ro-RO').replace(/,/g, ' ').replace(/\./g, ' ');
+}
+
 export function IstoricDetail(): JSX.Element {
   const navigate = useNavigate();
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -148,7 +154,7 @@ export function IstoricDetail(): JSX.Element {
           {session.volumeKg !== undefined && (
             <div className="p-3 bg-paper2 border border-line rounded-xl text-center" data-testid="detail-volume">
               <p className="text-xs text-ink2 uppercase">Tonaj kg</p>
-              <p className="text-xl font-bold text-ink font-mono">{session.volumeKg}</p>
+              <p className="text-xl font-bold text-ink font-mono">{formatKg(session.volumeKg)}</p>
             </div>
           )}
         </div>
@@ -171,11 +177,11 @@ export function IstoricDetail(): JSX.Element {
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-ink text-sm">{ex.exerciseName}</h3>
                 <span className="text-xs text-ink2 font-mono" data-testid="detail-ex-1rm">
-                  1RM est: {ex.peakOneRM}kg
+                  1RM est: {formatKg(ex.peakOneRM)} kg
                 </span>
               </div>
               <div className="text-xs text-ink2 mb-2" data-testid="detail-ex-volume">
-                Volum: {ex.totalVolume}kg - {pluralRo(ex.sets.length, 'set', 'seturi')}
+                Volum: {formatKg(ex.totalVolume)} kg · {pluralRo(ex.sets.length, 'set', 'seturi')}
               </div>
               <table className="w-full text-sm">
                 <thead>

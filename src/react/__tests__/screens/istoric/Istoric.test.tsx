@@ -128,7 +128,7 @@ describe('IstoricDetail — render', () => {
     renderIstoric('/app/istoric/0');
     expect(screen.getByTestId('detail-sets')).toHaveTextContent('5');
     expect(screen.getByTestId('detail-duration')).toHaveTextContent('52');
-    expect(screen.getByTestId('detail-volume')).toHaveTextContent('12450');
+    expect(screen.getByTestId('detail-volume')).toHaveTextContent('12 450');
   });
 
   it('Back button navigates Istoric list', () => {
@@ -183,8 +183,8 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
     renderIstoric('/app/istoric/0');
     expect(screen.getByTestId('istoric-detail-breakdown')).toBeInTheDocument();
     expect(screen.getByTestId('detail-ex-bench-press')).toBeInTheDocument();
-    expect(screen.getByTestId('detail-ex-volume').textContent).toMatch(/450kg/);
-    expect(screen.getByTestId('detail-ex-1rm').textContent).toMatch(/30kg/);
+    expect(screen.getByTestId('detail-ex-volume').textContent).toMatch(/450 kg/);
+    expect(screen.getByTestId('detail-ex-1rm').textContent).toMatch(/30 kg/);
     expect(screen.getByTestId('detail-set-bench-press-0').textContent).toMatch(/22\.5/);
     expect(screen.getByTestId('detail-set-bench-press-1').textContent).toMatch(/potrivit/);
   });
