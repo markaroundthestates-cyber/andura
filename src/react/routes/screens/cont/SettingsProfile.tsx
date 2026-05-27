@@ -21,6 +21,7 @@ import { gotoPath } from '../../../lib/navigation';
 import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
 import { getUserProfileDisplay } from './userProfile';
+import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
 import { estimateBF_Deurenberg, healthyFloorWeightKg } from '../../../../engine/bodyComposition.js';
 
@@ -56,6 +57,14 @@ export function SettingsProfile(): JSX.Element {
   // scrie o intrare noua doar cand exista valori (NU mai e discarded — A2 MED).
   const bodyData = useProgresStore((s) => s.bodyData);
   const addBodyDataEntry = useProgresStore((s) => s.addBodyDataEntry);
+  // §weight-continuity — editarea greutatii in profil trebuie sa fie autoritara
+  // peste un seed/log vechi. getCurrentWeightKg = ultima intrare weightLog >
+  // onboarding (sursa canonica TDEE/BMR/BF%/proteine). Daca scriem DOAR in
+  // onboarding (ca inainte), seed-ul de onboarding din weightLog (Onboarding.tsx
+  // seedFromProfileIfEmpty) umbreste valoarea editata → 110 onboard apoi 50 in
+  // profil = app foloseste tot 110. Fix: upsert intrarea de azi in weightLog pe
+  // save cand greutatea s-a schimbat, ca sursa canonica sa reflecte editarea.
+  const addWeightEntry = useProgresStore((s) => s.addWeightEntry);
   const lastBody = bodyData[bodyData.length - 1];
   // §F-cont-01 user-wire (HIGH-BETA chat 4) — read avatar initial din id_token
   // JWT claims. Cumulative cu Cont.tsx wire pentru parity across screens.
@@ -136,9 +145,22 @@ export function SettingsProfile(): JSX.Element {
       toast.show({ message: heightCheck.reason, variant: 'warning' });
       return;
     }
+    // §weight-continuity — captureaza greutatea canonica curenta INAINTE de
+    // commit ca sa detectam o schimbare reala (NU scriem un weigh-in fantoma in
+    // timeline cand user-ul a editat doar goal/sex/etc).
+    const priorWeight = getCurrentWeightKg();
     (Object.keys(draft) as Array<keyof OnboardingData>).forEach((key) => {
       setField(key, draft[key]);
     });
+    // §weight-continuity — greutatea editata in profil devine autoritara: upsert
+    // intrarea de AZI in weightLog (sursa canonica getCurrentWeightKg) cand
+    // greutatea s-a schimbat. addWeightEntry face upsert-by-date (progresStore
+    // U-10), deci suprascrie seed-ul/log-ul de azi → 110 onboard apoi 50 profil
+    // = TDEE/BMR/BF%/proteine/Antrenor/Progres folosesc 50 imediat. Onboarding
+    // ramane doar seed la cold-start. draft.weight deja validat range mai sus.
+    if (draft.weight !== null && draft.weight !== priorWeight) {
+      addWeightEntry({ kg: draft.weight, date: todayIso() });
+    }
     // §two-tier-bf A2 MED fix — talie/gat NU mai sunt discarded: persist in
     // progresStore.bodyData (sursa US-Navy din nutritionProjection). Scriem o
     // intrare doar cand exista cel putin o masuratoare numerica valida.

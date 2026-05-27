@@ -7,6 +7,14 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { SettingsProfile } from '../../../routes/screens/cont/SettingsProfile';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
+import { useProgresStore } from '../../../stores/progresStore';
+import {
+  getCurrentWeightKg,
+  readUserWeightKg,
+  readUserMaintenanceTDEE,
+  computeProteinTargetG,
+  computeMifflinStJeorBMR,
+} from '../../../lib/userTdee';
 import { toast } from '../../../lib/toast';
 
 function LocationProbe(): JSX.Element {
@@ -352,6 +360,94 @@ describe('SettingsProfile — U-12 Big 6 range gate on save (AUDIT-2 §U-12 HIGH
     fireEvent.click(screen.getByTestId('settings-profile-save'));
     expect(useOnboardingStore.getState().data.sex).toBe('m');
     expect(useOnboardingStore.getState().data.age).toBe(31);
+  });
+});
+
+describe('SettingsProfile — weight continuity (onboarding -> profil edit autoritar)', () => {
+  // BUG (Daniel live): onboarding 110 kg, apoi profil 50 kg → app trebuie sa
+  // foloseasca 50 PESTE TOT (TDEE/BMR/BF%/proteine/Antrenor/Progres). Radacina:
+  // Onboarding seedeaza weightLog din greutatea de onboarding (110); profil
+  // scria DOAR in onboardingStore, deci getCurrentWeightKg (ultima intrare
+  // weightLog > onboarding) raportata tot 110 → editarea era umbrita. Fix:
+  // profil upsert intrarea de azi in weightLog cand greutatea se schimba.
+  beforeEach(() => {
+    // Simuleaza onboarding 110: onboardingStore + seed weightLog (ca
+    // Onboarding.tsx seedFromProfileIfEmpty la finalize) → starea de plecare
+    // EXACTA in care bug-ul aparea (log vechi de 110 umbreste editarea).
+    useOnboardingStore.setState({
+      data: {
+        age: 30,
+        sex: 'm',
+        goal: 'masa',
+        frequency: '4',
+        experience: 'intermediar',
+        weight: 110,
+        height: 180,
+      },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    useProgresStore.getState().reset();
+    useProgresStore.getState().seedFromProfileIfEmpty(110, '2026-05-27');
+  });
+
+  it('canonical weight = 50 dupa edit (NU 110 din seed-ul de onboarding)', () => {
+    // Pre-conditie: seed-ul de 110 face sursa canonica = 110 (bug-ul vechi).
+    expect(getCurrentWeightKg()).toBe(110);
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-weight-input'), { target: { value: '50' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    // Editarea e autoritara: sursa canonica raporteaza 50, NU seed-ul de 110.
+    expect(getCurrentWeightKg()).toBe(50);
+    expect(readUserWeightKg()).toBe(50);
+    // weightLog reflecta editarea (upsert intrarea de azi), onboarding tot 50.
+    expect(useProgresStore.getState().weightLog.at(-1)?.kg).toBe(50);
+    expect(useOnboardingStore.getState().data.weight).toBe(50);
+  });
+
+  it('toate numerele derivate (BMR/TDEE/proteine) folosesc 50, NU 110', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-weight-input'), { target: { value: '50' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+
+    // Proteine = 1.8 g/kg × greutate → 90 g la 50 kg (NU 198 g la 110 kg).
+    expect(computeProteinTargetG(readUserWeightKg())).toBe(90);
+    expect(computeProteinTargetG(110)).toBe(198); // ancora: ce ar fi fost la 110
+
+    // BMR Mifflin (m, 180cm, 30y) la 50 kg vs 110 kg — TDEE mentenanta (care
+    // citeste getCurrentWeightKg la I/O boundary) trebuie sa fie pe banda lui 50.
+    const bmrAt50 = computeMifflinStJeorBMR({ sex: 'm', weightKg: 50, ageYears: 30, heightCm: 180 });
+    const bmrAt110 = computeMifflinStJeorBMR({ sex: 'm', weightKg: 110, ageYears: 30, heightCm: 180 });
+    expect(bmrAt50).not.toBeNull();
+    expect(bmrAt110).not.toBeNull();
+    const tdee = readUserMaintenanceTDEE();
+    expect(tdee).not.toBeNull();
+    // TDEE mentenanta = BMR×NEAT + termen sesiuni. Fara sesiuni logate +
+    // plan 4×/sapt (blend cold-start = plan). Granita superioara: TDEE la 50 kg
+    // < TDEE la 110 kg (greutatea conduce BMR). Demonstreaza ca foloseste 50.
+    expect(tdee as number).toBeLessThan(Math.round((bmrAt110 as number) * 1.25) + 200);
+    // Si pe banda lui 50: peste BMR-ul de 50 (×NEAT), sub cel de 110.
+    expect(tdee as number).toBeGreaterThan(bmrAt50 as number);
+  });
+
+  it('edit doar pe goal (NU greutate) NU scrie un weigh-in fantoma in weightLog', () => {
+    renderScreen();
+    const before = useProgresStore.getState().weightLog.length;
+    fireEvent.change(screen.getByTestId('profile-goal-select'), { target: { value: 'slabire' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    // Greutatea neschimbata (tot 110) → NU adaugam o intrare noua in timeline.
+    expect(useProgresStore.getState().weightLog.length).toBe(before);
+    expect(useOnboardingStore.getState().data.goal).toBe('slabire');
+    expect(getCurrentWeightKg()).toBe(110);
+  });
+
+  it('edit out-of-range NU misca greutatea canonica (save abortat)', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-weight-input'), { target: { value: '999' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    // Save abortat de range gate → nici onboarding nici weightLog atinse.
+    expect(getCurrentWeightKg()).toBe(110);
+    expect(useProgresStore.getState().weightLog.at(-1)?.kg).toBe(110);
   });
 });
 
