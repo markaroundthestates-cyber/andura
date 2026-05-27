@@ -59,7 +59,7 @@ export function resolveGoalId(user) {
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '');
   if (g.startsWith('hipertrofie') || g.startsWith('hypertrophy')) return 'hipertrofie';
-  if (g.startsWith('forta') || g.startsWith('forta') || g.startsWith('strength')) return 'forta';
+  if (g.startsWith('forta') || g.startsWith('strength')) return 'forta';
   if (g.startsWith('recompozit') || g.startsWith('recomp')) return 'recompozitie';
   if (g.startsWith('slabire') || g.startsWith('weight') || g.startsWith('fat-loss') || g.startsWith('fat loss')) return 'slabire';
   if (g.startsWith('longevitate') || g.startsWith('longevity')) return 'longevitate';
