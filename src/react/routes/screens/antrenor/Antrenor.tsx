@@ -11,13 +11,14 @@
 //   2. ReactivateCard (conditional lastSession > 14 zile + NOT dismissed)
 //   3. PatternsBanner (Phase 6 task_06 — STAGNATION + LOW_ADHERENCE)
 //   4. AlertsBanner (Phase 6 task_06 — proactiveEngine wrap)
-//   5. CoachTodayCard SAU CoachRestCard (swap by coachStore.schedContext)
-//   6. Calendar7Day
-//   7. StatsGrid 3-cell (streak + fatigue + readiness)
-//   8. ReadinessVerdict (F4 inline)
-//   9. PRNotificationBanner (F11 conditional prHit)
-//  10. PRWallRecent (Phase 6 task_06 — top 3 din getPRHistoryAll)
-//  11. "Incepe antrenament" CTA → /app/antrenor/energy-check
+//   5. StatsGrid 3-cell (streak + fatigue + readiness) — BUG #4 top per mockup
+//   6. ReadinessVerdict (F4 inline) — BUG #4 top per mockup
+//   7. PRNotificationBanner (F11 conditional prHit) — BUG #4 top per mockup
+//   8. CoachTodayCard SAU CoachRestCard (swap by coachStore.schedContext)
+//   9. Calendar7Day
+//  10. ObiectivSelector (6 obiective V1 LOCK)
+//  11. PRWallRecent (Phase 6 task_06 — top 3 din getPRHistoryAll)
+//  12. "Incepe antrenament" CTA → /app/antrenor/energy-check
 //
 // Persona-aware CSS class wrapper per coachStore.persona.
 //
@@ -214,6 +215,15 @@ export function Antrenor(): JSX.Element {
       <PatternsBanner banners={coach?.patternsBanner ?? []} />
       <AlertsBanner alerts={coach?.alerts ?? []} />
 
+      {/* BUG #4 — StatsGrid (streak + fatigue + readiness) + ReadinessVerdict +
+          PRNotificationBanner sit near the TOP, above the coach card per mockup
+          andura-clasic.html#L761-795 (StatsGrid L763 → ReadinessVerdict L784 →
+          PRNotificationBanner L792 → coach card L801). Always-render snapshot
+          near top home. */}
+      <StatsGrid streak={streak} fatigue={fatigue} readiness={readiness} />
+      <ReadinessVerdict readiness={readiness} />
+      <PRNotificationBanner prHit={prHit} />
+
       {/* §A002 audit fix + §B018 extract: engine-driven isRestDay routing —
           prefer coach.isRestDay (engine signal) when aggregate loaded, fallback
           coachStore.schedContext (user override mechanism). */}
@@ -235,9 +245,6 @@ export function Antrenor(): JSX.Element {
           user can pick goal din Antrenor home, NU doar din SettingsProfile. */}
       <ObiectivSelector />
 
-      <StatsGrid streak={streak} fatigue={fatigue} readiness={readiness} />
-      <ReadinessVerdict readiness={readiness} />
-      <PRNotificationBanner prHit={prHit} />
       <PRWallRecent records={coach?.prWallRecent ?? []} />
 
       {!pausedSnap && (
