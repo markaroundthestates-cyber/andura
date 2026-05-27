@@ -1,56 +1,63 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-26 — HANDOVER birou RC → acasa (Daniel inchide laptopul munca, continua de pe PC-ul de acasa = masina pe care rulez). Vezi `📥_inbox/HANDOVER_2026-05-26_birou-rc-nutrition-brain-plus-audit.md`.
-**Topic active:** **CREIERUL DE NUTRITIE RECONSTRUIT + AUDIT NUCLEAR + CLUSTER PLACEHOLDER.** 3 arce azi: (1) CI hardening 8 fixe validate VERDE pe Actions (CI annotations=ZERO pe e36cb941; outage GitHub a fost singura cauza a rosului). (2) Audit nuclear 7 agenti → `audit-nuclear-2026-05-26/AUDIT-NUCLEAR-FINAL.md` (~85% func, 0 CRIT, #1=nutritie dormant). (3) Nutritie LANDED complet (P1-P4+bf, modelul Daniel) + cluster placeholder 3/5.
-**State (2026-05-27 HANDOVER acasa → claude rc):** main P0+P1+P2+P3-foundation+P4 integrate, **4751 PASS** / tsc / build OK. **PUSHED pe origin** (~29 commits) ca rc sa continue de aici — deploy declansat (starea curenta = mai sigura + onesta decat live, fara regresii; moat inca ~22 exercitii pana P3-wiring). Handover: `📥_inbox/HANDOVER_2026-05-27_acasa-audit-5lens-plus-P0-P4-convergence.md`. **ROTEAZA CHEIA API daca n-ai facut-o.**
+**Last updated:** 2026-05-27 — sesiune acasa (Daniel la birou prin RC, revine acasa). Handover: `📥_inbox/HANDOVER_2026-05-27_moat-wiring-plus-nutrition-redesign.md`.
+**Topic active:** **MOATUL P3-WIRING COMPLET + NUTRITIE REDESIGN — LANDED & PUSHED.** Arc autonom cu agenti Opus paraleli (manager-integrat: ff/cherry-pick autoritativ pe main, agentii = executori in worktree izolat). Tot verde, **PUSHED pe origin** ca Daniel sa intre la smoke direct de acasa.
 
-**2026-05-26 acasa (sesiune curenta):** (a) **CI annotations FIX** `facd03b1` — pages actions v5 (Node 20 warning gone, tag-uri verificate) + lighthouse/checkly advisory `|| echo ::notice::` (exit 0, gata cu rosu). Curata annotations DOAR la urmatorul deploy DUPA push. (b) **FCM PUSH NOTIFICATIONS arc complet LANDED** (3 agenti Opus paralel worktree, manager-integrat): A=client (firebase/messaging lazy + SW `firebase-messaging-sw.js` + token lifecycle RTDB) · B=backend (`functions/` Cloud Functions scheduler `onSchedule` 15min Europe/Bucharest + `isDueNow` pura 22 teste + rules owner-scoped + `firebase.json`) · C=wiring (SettingsNotifications -> push real + `notificationPrefs` sync RTDB). Teme deferred (Daniel: le am 80% gata, le mapam pre-Beta). **Daniel-side ramane:** VAPID + 4 secrets (DONE — toate in GitHub Secrets) + `firebase deploy --only functions,database` (Blaze DEJA activ) — checklist `📥_inbox/fcm-push-2026-05-26/DANIEL_SETUP_FCM.md`. (c) **BUG KCAL FIX** `04d86055` — onboarding goal (slabire/masa/mentenanta) nu ajungea la target-ul kcal (doar la antrenament); acum slabire→deficit 0.82x, masa→surplus 1.08x, forta 1.05x, mentenanta/auto→mentenanta. Precedenta manual(SchimbaFaza)>goal>mentenanta, floor LOCK8 pastrat, +13 teste. (d) **AUTH SESSION PERSIST FIX** `6f9de2e1` — lipsea restore-on-boot (app se baza pe idToken expirat din localStorage); `restoreSession()` nou refresh din refresh-token la boot inainte de routing, +7 teste. (e) **SELF-SIGNUP** = NU bug cod (Magic Link self-creeaza cont, zero allowlist) → config Firebase consola: checklist `📥_inbox/auth-fixes-2026-05-26/DANIEL_AUTH_SETUP.md` (domenii autorizate andura.app + provider email-link ON + livrare email).
-**Author:** Co-CTO acasa session 2026-05-26
-
-**2026-05-27 ACASA — AUDIT DUE-DILIGENCE 5 LENTILE + CONVERGENTA P0-P3:** Daniel a fortat un audit real ("audit = TOT, fiecare buton+decizie din x factori; ar fi mandru un CTO?"). 5 lentile fresh-eyes Opus → `📥_inbox/wiring-audit-2026-05-26/VERDICT-CONSOLIDATED.md`. **Verdict:** fundatia = inginerie reala (math 0 CRIT, nutritie/recuperare/PR/plumbing/Coach-Brain-Eval genuine), DAR jumatatea de prescriptie-antrenament era fatada (readiness/RPE/periodizare/deload necablate — "pare destept dar nu e") + moat fatada (~22 exercitii reale nu 657, substitutie moarta, alternativeEngine+657 arhivate) + 3 bug-uri HIGH (PII leak device-partajat, pierdere date miezul-noptii, FCM-sync clobber). Cauza: "engine testat izolat" != "merge pt user" — 5 audituri verzi anterioare ratasera. **Decizie Daniel A LOCKED (D081): moat REAL pre-Beta, "Beta = launch = moatul meu" → zero deferral.** **LANDED & green (4740 PASS):** P0 siguranta (`3109b9e2` FCM-PATCH + `fd607e5d` midnight-save + `f372245b` PII-wipe) + P1 cablare creier (`58e126e6` readiness→greutate + comentariu mincinos reparat, `f69c9708` periodizare weeksElapsed, `26a19e70` rest din engine, `7c8244d8` RPE→corectie in-sesiune, `07b52df2` deload reactiv partial; **DEFERRED** set-count + weakness-selectie = mismatch vocabular Big-11↔head, = munca P3) + P2 stub-uri oneste (`c75b119d` Themes, `166f974f` kg/lb) + P3-foundation (`c9f395a1` biblioteca 657 + `e8abae47` alternativeFinder, aditiv, 276 teste, ZERO wiring inca). **P4 DONE** (teste E2E reale `00bd0134` + framing onest PRIMER `9c8cf7a6` + `NUTRITION-MATH-FLAGS.md`, math neatins). **NEXT P1 pe rc = P3-WIRING (moat-ul), decizii Daniel LUATE:** (1) vocabular echipament = **COARSE `equipment_type`** (renunta la ID-uri fine, repara 5 itemuri AparateLipsa moarte); (2) naming 627 = **DELEGARE COMPLETA agent + QA-gate** (fara review pe loturi). Executa WP-3/4/5/6/7/8 din `P3-MOAT-DESIGN.md` + mapa muscle-group Big-11↔head (deblocheaza si P1-deferred set-count+weakness). Apoi re-audit 5 lentile pana 0 findings. **Disciplina:** un singur agent pe main SAU worktree-ff-la-main + cherry-pick de la mine (NU mix non-izolat+worktree = revert-race). **NEPUSHED** (D031 + starea pre-fix nu merge live). **Lectie race:** mix non-izolat-main + worktree simultan = revert-race (worktree-urile impart tree-ul de lucru); branch-urile committate raman curate, gunoiul necommitat se arunca la reconcile (cherry-pick din branch = autoritativ).
+**State (2026-05-27):** main verde **4963 PASS / 275 files** + tsc clean + build OK, **PUSHED origin**. Moatul e REAL end-to-end (verificat prin pipeline real + gate care musca + audit fresh-eyes independent). Next = **gate-urile Daniel SMOKE** (vezi §1).
 
 ---
 
-## §0 Ce s-a facut overnight (cap-coada, autonom)
-1. Daniel "fa-ti un workflow... step after step, nu te opri" + a dat cheia API ($42) pt oracle -> run autonom complet peste noapte.
-2. **Cycle-3:** 11 audituri (security/dead-code/coverage/parity/a11y/live-E2E/engine-wiring/perf/deps/Coach-Brain-Eval) -> fix-wave 5 worktree-uri -> integrat (22 commits, 62e06b3a).
-3. **Cycle-4 PIVOT — engine-wiring keystone:** creierul rula pe defaults (20kg hardcodat, readiness/persona nicaieri). FIXAT: dp.recommend conduce greutatile, EnergyCheck->saveReadiness->engine, persona/tier/goalPhase/bfPct(fractie)/weekIdx/trainingWeeks cablate. **Dovedit E2E:** user cu istoric->55kg, cold-start->variaza pe experienta (30/21kg).
-4. **Re-audit cycle-4 — toate verzi:** a11y READY · parity READY (2 CRIT nume-EN rezolvate) · engine-input CLOSED · live-E2E (brain adapts) · security Beta-ready · coverage 91.5%.
-5. **Coach Brain Eval:** 50k/0 violari + oracle Opus 4.7 pe 900 scenarii = 76.5% string-match dar **ZERO bug engine** (gap = artefacte vocabular + erori aritmetice ale ORACOLULUI + alegeri defendabile). Engine matches/beats Claude. Teza validata + live.
-6. **Dead-code:** 114 fisiere insula vanilla arhivate -> 0 cod mort src/. **SSOT:** D080 + PRIMER §5. **Curatenie:** 139 worktree-uri stale (toate cele 146 branch-uri pastrate). Eval-harness integrat pe main (27 self-teste, regression guard).
+## §0 Ce s-a facut azi (cap-coada, autonom, agenti Opus paraleli)
+
+**Arc 1 — Moat REAL P3-wiring (D081), LANDED:**
+1. **WP-3** echipament coarse `equipment_type` SoT (toate 10 ID-uri AparateLipsa capata sens, era 5/10 moarte) + harta muscle Big-11↔librarie-11 (`equipmentMap.js`, `muscleGroupMap.js`).
+2. **WP-4** selectie reala din 657: `buildSession` trage din librarie filtrata muscle×echipament×tier, determinist (FNV seed), ancorat pe nume cu istoric PR (18/19 verbatim). Gata cu tabelul hardcodat ~22.
+3. **WP-5** substitutie NUMITA in-sesiune: cascade echipament-lipsa + swap in-place "ocupat"/"nu vreau" (`workoutStore.swapExercise`, `substitution.ts`), alternativa RO vizibila, zero navigate-away/blank.
+4. **WP-6** nume RO pentru toate 657 (`nameRo`) + QA-gate; ~30 nume curate mockup pastrate (SoT).
+5. **P1-deferred** (deblocat de harta muscle): set-count din periodizare (`setsForGroup`, era hardcodat 3) + weakness-selection LIVE (era moarta in spatele `contextSelectionEnabled=false`).
+6. **WP-8** gate E2E anti-fatada: 21 teste prin pipeline real, dovedit ca MUSCA (mutezi `resolveCascade` → 3 teste rosii). Exact remediul auditului 5-lentile (5 audituri verzi rataseera fatada).
+
+**Arc 2 — Calire calitate, LANDED:**
+7. **Mutation-hardening** +85 teste pe creierul slab-testat (dp 45 / fatigue 15 / readiness 25). `dp.js` avea 181 mutanti vii = teste-fatada (mock-uri fixate, ramuri reale neatinse) → acum conduse real.
+8. **Fix nume garble** (4 entries "inclinat cu bara Impins din piept" → ordine naturala) + QA-gate intarit (prinde verb-stranding) + 10 coliziuni display rezolvate.
+9. **Audit fresh-eyes read-only** pe moat: verdict REAL 4/5 scopuri, 1 MED (lifturi-ancora fara cascade → noAlt) → **reparat**: `findBroadAlternatives` degradeaza la librarie 657 pe grupa de muschi (tier/force-aware), Leg Press→Barbell Back Squat etc. + inchis gate-gap-ul.
+
+**Arc 3 — Nutritie redesign (D082, Daniel-directed), LANDED:**
+10. Model **forward determinist**: `BMR(Mifflin)×NEAT 1.25 + (sesiuni×300net)/7`, sesiuni = blend planned-prior→actual-posterior (`w=loggedWeeks/4`, cold-start=planificat). Inlocuieste factorul fix 1.55 care ignora antrenamentele.
+11. **Cantar = calibrator LENT** (ferestre ≥7 zile + ≥3 cantariri + panta regresie, plafonat T1) → reparat flaw `MIN_WINDOW_DAYS=1` care dadea false-positives pe fluctuatia zilnica ±4-5kg a lui Daniel.
+
+**Arc 4 — Polish:** 404 route, GDPR region `europe-west1`, dark strips.
+
+**Disciplina folosita:** agenti Opus in worktree izolat = executori; manager (chat) = ff/cherry-pick autoritativ pe main + verificare full-suite dupa fiecare integrare. Garda anti-stale-base in fiecare prompt (worktree-uri reciclate porneau pe baza veche `8fd8e8b2` → `git merge <main-sha>` inainte de lucru). Reconciliere manuala 1x (WP-4 stale-base, seam local → `equipmentMap.js` canonic).
 
 ---
 
-## §1 Open questions / pending Daniel — CELE 4 GATE-URI
-- **G1 Push** ✅ INCHIS — pushed `38d1e01b..48c4a7ae` (cycle-4 + 8 fix-uri CI) cu trigger verbal Daniel. origin = HEAD.
-- **G2 Smoke a-z live** (telefonul tau + Firebase real + judecata UX CEO — ABIA acum intri sa vezi produsul, per D080).
-- **G3 Google OAuth** — config Firebase/GCP console (checklist 6 pasi gata: `cycle3/OAUTH-ENABLEMENT-CHECKLIST.md`; codul e gata env-gated, lipseste doar `VITE_GOOGLE_OAUTH_CLIENT_ID` + console).
-- **G4 Beta GO** (decizia ta).
-- **Intrebare:** "9 blockers" — nu exista lista canonica de 9 in SSOT (framing legacy; gate real = D042/D043/D077). Te-ai referit la ceva anume?
-- Post-Beta: TWA->Play Store; pricing/ANAF; optional oracle re-run ~$9 pe generatorul fixat (numar mai curat, diminishing).
+## §1 NEXT P1 — gate-urile Daniel SMOKE (de aici continui)
+
+Totul e PUSHED. Daniel intra la smoke a-z de pe telefon. Ordinea:
+1. **Firebase console (Daniel-side, ~2-5 min)** — NU era facut (confirmat Daniel "nu am inca creaza cont pe andura"): provider **Email link (passwordless) ON** + **andura.app la authorized domains** (`📥_inbox/auth-fixes-2026-05-26/DANIEL_AUTH_SETUP.md`). Fara asta butonul "Creeaza cont" apare (e in cod, `Auth.tsx` mode signup) dar `sendMagicLink` da eroare. Optional: Google OAuth provider + `VITE_GOOGLE_OAUTH_CLIENT_ID` (`cycle3/OAUTH-ENABLEMENT-CHECKLIST.md`).
+2. **Smoke a-z live** — telefon + Firebase real + judecata UX CEO. Checkpoint-uri: "Creeaza cont" apare + merge; selectie workout (vine din 657, nume RO); substitutie (aparat ocupat → alternativa numita); nutritie (kcal forward + se misca cu antrenamentele).
+3. **Beta GO** — decizia ta.
+
+**Decizii UX in coada (pentru tine, NU blocheaza):**
+- Coliziune nume curat `Flat Barbell Bench` / `Flat DB Press` = ambele "Impins din piept" (diferă prin linia echipament) — vrei nume distincte? Sunt nume curate (SoT-ul tau), nu le-am atins.
+- **WP-7 lazy-load** amanat constient (warning build "chunk >600kB" benign; libul ~35KB gzip; `import()` dinamic ar propaga async prin sessionBuilder tocmai stabilizat). Revine ca optimizare post-smoke daca vrei.
 
 ---
 
 ## §2 Mid-flight la wrap
-NIMIC mid-flight. Arcul a aterizat curat — 0 agenti la wrap, main verde, totul committed (NU pushed). 3 .snap golden-master raman M din CRLF churn (zero content diff) + `.obsidian/community-plugins.json` (pre-existent).
+NIMIC mid-flight. Toti agentii au aterizat, main verde + pushed, 0 agenti la wrap. Reziduuri: `.tmp_*` scratch + `.claude/worktrees/` (agenti) — gunoi gitignored, necommitat.
 
 ---
 
-## §3 NEXT P1 — de unde continui (ACASA)
-**Cluster placeholder INCHIS:** Notificari H-3 = FCM real LANDED (vezi header sesiune). Teme H-2 = deferred Daniel pre-Beta map (le are 80% gata). Ramane DOAR partea Daniel-side FCM: Blaze + VAPID + secrets + `firebase deploy --only functions,database` (checklist `DANIEL_SETUP_FCM.md`).
-**Next:** restul audit (**Daniel-side:** reguli RTDB Firebase A4-H2 + nod legacy `users/daniel`; **decizie:** k-anonimat implement vs inmoaie Termeni) + MED/LOW polish (dark strips, 404 route, target field, jargon RO, GDPR regiune) + checkly advisory low-pri.
-Apoi cele 4 gate: **push** (trigger Daniel) → **smoke a-z** → **OAuth console** → **Beta GO**.
-Detalii complete: `📥_inbox/HANDOVER_2026-05-26_birou-rc-nutrition-brain-plus-audit.md`. Spec nutritie: `📥_inbox/nutrition-impl-2026-05-26/SPEC.md`. Audit: `📥_inbox/audit-nuclear-2026-05-26/AUDIT-NUCLEAR-FINAL.md`.
+## §3 Cross-refs
+- [[DECISIONS.md §D081]] moat real + [[DECISIONS.md §D082]] nutritie forward-model
+- [[ANDURA_PRIMER.md §5]] — milestone 2026-05-27
+- `📥_inbox/wiring-audit-2026-05-26/P3-MOAT-DESIGN.md` — spec-ul moat WP-1..WP-8
+- `📥_inbox/wiring-audit-2026-05-26/NUTRITION-MATH-FLAGS.md` — calibrare Bayesian/Kalman (baza schimbata azi, vezi nota header)
+- `📥_inbox/auth-fixes-2026-05-26/DANIEL_AUTH_SETUP.md` — pasii console email-link
+- main HEAD post-push (vezi git log) — 4963 verde, PUSHED
 
 ---
 
-## §4 Cross-refs
-- `📥_inbox/audit-fresh-2026-05-25/cycle3/CYCLE4-CONVERGENCE-SUMMARY.md` — verdict per-axa + extreme-quality-ready
-- `.../OAUTH-ENABLEMENT-CHECKLIST.md` — pasii G3 pt Daniel · `.../POST-CYCLE4-ROADMAP.md` — arcul la Beta
-- `.../ORACLE-AUTOMATED.md` (76.5% + 0 bug engine) · `.../ENGINE-INPUT-REVERIFY.md` (4 gaps closed) · `.../LIVE-E2E-REAUDIT.md` (brain adapts)
-- [[DECISIONS.md §D080]] — mandat extreme-quality + whole-arc autonom · [[ANDURA_PRIMER.md §5]] — milestone cycle-4
-- main HEAD `2cfcf527` (4271 verde, NEPUSHED)
-
----
-
-🦫 **Overnight autonomous run wrap. Cycle-4 EXTREME-QUALITY-READY: creierul functioneaza live (dovedit E2E), toate axele verzi, oracle-validat (0 bug engine), 114 dead-files arhivate, D080 lockat, eval-harness = regression guard pe main. main 2cfcf527, 4271 verde, NU pushed. Ramane = cele 4 gate-uri Daniel (push/smoke/OAuth-console/GO). Buget $9/$42, ROTEAZA CHEIA.**
+🦫 **Moat P3-wiring + nutritie redesign LANDED & PUSHED. Moatul e REAL (pipeline real + gate care musca + audit independent), creierul cablat (set-count/weakness/substitutie), nutritia pe model forward determinist + cantar calibrator lent. 4963 verde, build OK, pe origin. Ramane = smoke-ul Daniel (Firebase console email-link → smoke a-z telefon → Beta GO).**

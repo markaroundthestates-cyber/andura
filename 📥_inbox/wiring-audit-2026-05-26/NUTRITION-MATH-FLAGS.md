@@ -18,6 +18,8 @@ verification: >
 
 # NUTRITION-MATH-FLAGS — patru itemi de calibrare (Daniel decide)
 
+> **NOTA 2026-05-27 (post-redesign D082):** baza TDEE s-a SCHIMBAT de la acest doc. Modelul de azi (Daniel-directed) = **forward determinist** `BMR×NEAT 1.25 + (sesiuni reale × 300net)/7` cu blend planned→actual, NU mai `Mifflin×1.55` flat → posterior conjugat. Cifrele de baza din §A/§C/§D (3224 prior, 2640/2820/2770) sunt **istorice**. Analiza stratului de adaptare (Bayesian conjugat vs Kalman descartat §A-§B, gap de acoperire orchestrator §C, σ-collapse §D) **ramane valida** — schimbarea de azi a fost pe PRIOR-ul forward + observatia de cantar (acum panta-regresie pe ferestre ≥7 zile, NU punct-la-punct), nu pe formula posterior. Vezi [[DECISIONS.md §D082]].
+
 > **Verdict scurt:** math-ul de nutritie e corect si coerent (confirmat de E2E real-wire NOU + audit). Cei patru itemi de mai jos sunt **calibrare / onestitate de framing**, NU bug-uri de numar gresit. Niciunul nu produce un kcal periculos azi. **Eu am schimbat ZERO math.** Trei dintre ele cer o decizie de design pe care doar Daniel o ia (brand-promise "Kalman" + tightness CI). Al patrulea (§C) am putut sa-l verific complet si recomand explicit **NU unifica** (path-urile difera by-design pe input, nu pe formula).
 
 ---
