@@ -345,6 +345,13 @@ const USER_TO_ENGINE_EQUIPMENT = Object.freeze({
   'banda-elastica':    [],
 });
 
+// ── WP-4 selection seam: coarse equipment vocabulary ─────────────────────
+// sessionBuilder selects from the 657 library and filters on the library's
+// COARSE equipment_type (barbell|dumbbell|machine|cable|bodyweight|band). The
+// canonical user-ID → coarse mapping + availableCoarseTypes() now live in the
+// shared WP-3 module ../equipmentMap.js (imported above) — D081 SoT. The local
+// bridge that previously lived here was superseded at the WP-3↔WP-4 merge.
+
 /**
  * Translate user-facing missing equipment IDs to engine equipment domain IDs.
  * Multi-mapping: one user ID may block multiple engine IDs (e.g. 'aparat-cablu'
@@ -366,19 +373,6 @@ export function translateToEngineEquipment(userIds) {
 }
 
 // ── Daily workout pipeline consumer (Phase 6 task_01) ────────────────────
-// LEGACY fine-grained engine equipment domain (sala-pilot specific IDs).
-// Retained as documented reference + paired with translateToEngineEquipment
-// (still exported/tested). NO LONGER drives selection per D081 — getDailyWorkout
-// now derives a COARSE equipment_type set via equipmentMap.availableCoarseTypes.
-export const ENGINE_EQUIPMENT_DOMAIN = Object.freeze([
-  'matrix_cable',
-  'bailib_stack',
-  'pec_deck',
-  'leg_machine',
-  'leg_press_plates',
-  'dumbbell',
-]);
-
 // Day-of-week → session type V1 deterministic mapping per mockup convention
 // (L=Push, M=Pull, M2=Picioare, J=Umeri/brate, V=Full Upper, S=Push, D=Pull).
 // Engine pipeline blueprint outputs orthogonal — session type drives only
@@ -435,12 +429,10 @@ export async function getDailyWorkout(userState, now = new Date()) {
     }
   }
 
-  // Compute available equipment as COARSE equipment_type set per D081 (coarse
-  // equipment_type = SoT). buildSession filters on coarse types directly; the
-  // legacy fine-grained ENGINE_EQUIPMENT_DOMAIN / translateToEngineEquipment
-  // path is retained (exported, tested) but no longer drives selection here.
+  // Compute available equipment — WP-4 selection uses COARSE equipment types
+  // (library equipment_type), derived from the user's missing picker IDs.
   const missingUserIds = getMissingEquipment();
-  const availableTypes = availableCoarseTypes(missingUserIds);
+  const availableCoarse = availableCoarseTypes(missingUserIds);
 
   // Build EngineContext + invoke 8-adapter pipeline sequential strict
   const ctx = buildEngineContext(userState);
@@ -476,13 +468,20 @@ export async function getDailyWorkout(userState, now = new Date()) {
     }
   }
 
-  // sessionBuilder ctx: equipment available + weak groups derived from
+  // sessionBuilder ctx: coarse equipment + weak groups derived from
   // Specialization target_muscle_group (single-element list for prioritization)
+  // + tier (persona/experience) + a per-user+day seed so the 657-pool selection
+  // is DETERMINISTIC (stable across renders, varies by day — PR identity).
   const sessionType = DAY_TO_SESSION_TYPE[dayIdx] || 'FULL_UPPER';
   const specializationTarget = blueprints.specialization?.target_muscle_group ?? null;
+  const userId = userState?.user?.uid ?? userState?.uid ?? '';
+  const seed = `${userId}|${getWeekStartIso(date)}|${dayIdx}`;
   const sessionCtx = {
-    equipment: { available: availableTypes },
+    equipment: { available: availableCoarse },
     weakGroups: specializationTarget ? [specializationTarget] : [],
+    profileTier: userState?.profileTier ?? null,
+    prNames: Array.isArray(userState?.prNames) ? userState.prNames : [],
+    seed,
   };
 
   const session = buildSession(sessionType, sessionCtx);

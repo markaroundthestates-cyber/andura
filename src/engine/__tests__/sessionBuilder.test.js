@@ -1,96 +1,223 @@
 /**
- * Tests for TASK #22e + #22f — sessionBuilder pure function + weakness ordering.
+ * Tests for sessionBuilder pure function + weakness ordering.
+ *
+ * WP-4 (P3 moat) rewrite: selection now pulls from the 657-entry exerciseLibrary
+ * by muscle group, filters on COARSE equipment_type + tier, and is deterministic
+ * (seeded). Tests below cover the new contract: determinism, PR-anchoring, tier
+ * filtering, equipment-constrained pools, plus weakness ordering on Big-11 groups.
  */
 
 import { describe, it, expect } from 'vitest';
 import { buildSession, prioritizeWeakGroups } from '../sessionBuilder.js';
+import { getExerciseMetadata } from '../exerciseLibrary.js';
 
-// Coarse equipment_type vocabulary per D081 (sessionBuilder filters on coarse).
-// Legacy fine engine IDs still normalize to coarse via equipmentMap, but the
-// canonical available set is now coarse types.
-const allEquip = ['dumbbell', 'machine', 'cable', 'barbell', 'band'];
-const ctx = (available = allEquip, weakGroups = []) => ({ equipment: { available }, weakGroups });
+// Coarse equipment types (library equipment_type vocabulary).
+const allEquip = ['barbell', 'dumbbell', 'machine', 'cable', 'band'];
+const ctx = (over = {}) => ({
+  equipment: { available: over.available ?? allEquip },
+  weakGroups: over.weakGroups ?? [],
+  profileTier: over.profileTier ?? 'T2',
+  prNames: over.prNames ?? [],
+  seed: over.seed ?? 'user-1|2026-05-25|0',
+});
 
-// ── buildSession — OPT C pure function ───────────────────────────────────
+// ── buildSession — pure function, 657-pool selection ─────────────────────
 
 describe('buildSession — pure function', () => {
   it('returns correct type field for PUSH', () => {
-    const session = buildSession('PUSH', ctx());
-    expect(session.type).toBe('PUSH');
+    expect(buildSession('PUSH', ctx()).type).toBe('PUSH');
   });
 
-  it('PUSH session includes chest and shoulder exercises', () => {
+  it('PUSH session targets chest/shoulder/triceps groups', () => {
     const session = buildSession('PUSH', ctx());
-    const names = session.exercises.map(e => e.name);
-    expect(names).toContain('Incline DB Press');
-    expect(names).toContain('DB Shoulder Press');
-    expect(names).toContain('Lateral Raises');
+    const groups = session.exercises.map(
+      (e) => getExerciseMetadata(e.name).muscle_target_primary,
+    );
+    for (const g of groups) {
+      expect(['piept', 'umeri', 'triceps']).toContain(g);
+    }
+    expect(session.exercises.length).toBeGreaterThan(0);
   });
 
-  it('PULL session includes lat and curl exercises', () => {
+  it('PULL session targets back/biceps groups only', () => {
     const session = buildSession('PULL', ctx());
-    const names = session.exercises.map(e => e.name);
-    expect(names).toContain('Lat Pulldown');
-    expect(names).toContain('Cable Row');
-    expect(names).toContain('Bayesian Curl');
+    const groups = session.exercises.map(
+      (e) => getExerciseMetadata(e.name).muscle_target_primary,
+    );
+    for (const g of groups) {
+      expect(['spate', 'biceps']).toContain(g);
+    }
   });
 
-  it('unknown type falls back to FULL_UPPER exercises', () => {
+  it('unknown type falls back to FULL_UPPER targets', () => {
     const session = buildSession('UNKNOWN_TYPE', ctx());
     expect(session.type).toBe('UNKNOWN_TYPE');
     expect(session.exercises.length).toBeGreaterThan(0);
   });
 
-  it('filters exercises by available equipment (coarse types)', () => {
-    // Only dumbbell available → machine (Pec Deck default) + cable (Overhead
-    // Triceps) PUSH exercises drop, dumbbell ones stay.
-    const limitedCtx = ctx(['dumbbell']);
-    const session = buildSession('PUSH', limitedCtx);
-    const names = session.exercises.map(e => e.name);
-    expect(names).not.toContain('Pec Deck');
-    expect(names).not.toContain('Overhead Triceps');
-    expect(names).toContain('Incline DB Press');
-  });
-
-  it('legacy fine engine IDs normalize to coarse (back-compat)', () => {
-    // bailib_stack → cable; dumbbell passes through. Cable PUSH exercises
-    // (Overhead Triceps, Pushdown) become available; pec_deck is NOT in the set
-    // so Pec Deck (machine) still drops.
-    const legacyCtx = ctx(['dumbbell', 'bailib_stack']);
-    const session = buildSession('PUSH', legacyCtx);
-    const names = session.exercises.map(e => e.name);
-    expect(names).toContain('Incline DB Press');
-    expect(names).toContain('Overhead Triceps');
-    expect(names).not.toContain('Pec Deck');
+  it('selects ~6 exercises per session', () => {
+    expect(buildSession('PUSH', ctx()).exercises.length).toBe(6);
+    expect(buildSession('PULL', ctx()).exercises.length).toBe(6);
   });
 
   it('each exercise has sets defaulting to 3', () => {
-    const session = buildSession('PULL', ctx());
-    for (const ex of session.exercises) {
+    for (const ex of buildSession('PULL', ctx()).exercises) {
       expect(ex.sets).toBe(3);
     }
   });
 
-  it('handles missing ctx.equipment gracefully', () => {
+  it('includes at least one T1 compound on the primary group', () => {
+    const session = buildSession('PUSH', ctx());
+    const tiers = session.exercises.map((e) => getExerciseMetadata(e.name).tier);
+    expect(tiers).toContain(1);
+  });
+
+  // WP-4: missing equipment no longer DROPs to an empty session — bodyweight
+  // is always available, so a session is still produced (clean seam for WP-5
+  // substitution rather than a crash / empty list).
+  it('missing ctx.equipment yields a bodyweight-only session (not empty)', () => {
     const session = buildSession('PUSH', {});
     expect(session.type).toBe('PUSH');
-    expect(session.exercises).toEqual([]);
+    expect(session.exercises.length).toBeGreaterThan(0);
+    for (const ex of session.exercises) {
+      expect(getExerciseMetadata(ex.name).equipment_type).toBe('bodyweight');
+    }
   });
 });
 
-// ── prioritizeWeakGroups — OPT A weakness ordering ───────────────────────
+// ── Determinism — same user+day → same selection ─────────────────────────
+
+describe('buildSession — determinism (PR identity)', () => {
+  it('same seed → identical selection across calls', () => {
+    const a = buildSession('PUSH', ctx({ seed: 'u|d|0' }));
+    const b = buildSession('PUSH', ctx({ seed: 'u|d|0' }));
+    expect(a.exercises).toEqual(b.exercises);
+  });
+
+  it('different seed → may differ but stays within target groups', () => {
+    const a = buildSession('PUSH', ctx({ seed: 'u|d|0' }));
+    const b = buildSession('PUSH', ctx({ seed: 'u|d|1' }));
+    // Both valid PUSH sessions; identity stable per seed regardless of equality.
+    for (const session of [a, b]) {
+      for (const e of session.exercises) {
+        expect(['piept', 'umeri', 'triceps']).toContain(
+          getExerciseMetadata(e.name).muscle_target_primary,
+        );
+      }
+    }
+    expect(a.exercises.length).toBe(b.exercises.length);
+  });
+});
+
+// ── PR-anchoring — known/logged names preferred when valid ───────────────
+
+describe('buildSession — PR anchoring', () => {
+  it('prefers known engine anchor names over arbitrary 657 names', () => {
+    // With full equipment + advanced tier, the chest/shoulder/triceps anchors
+    // (Incline DB Press, DB Shoulder Press, Lateral Raises, etc.) should win.
+    const names = buildSession('PUSH', ctx()).exercises.map((e) => e.name);
+    const anchors = [
+      'Incline DB Press', 'Flat DB Press', 'DB Shoulder Press',
+      'Lateral Raises', 'Pushdown', 'Overhead Triceps',
+    ];
+    expect(names.some((n) => anchors.includes(n))).toBe(true);
+  });
+
+  it('a logged name (prNames) is preferred over equal-rank candidates', () => {
+    // Cable Curl carries PR history → must appear in a PULL session that has a
+    // biceps slot, ahead of other biceps isolation candidates.
+    const names = buildSession(
+      'PULL',
+      ctx({ prNames: ['Cable Curl'] }),
+    ).exercises.map((e) => e.name);
+    expect(names).toContain('Cable Curl');
+  });
+
+  it('Leg Press (anchor) selected for a quad-targeting session', () => {
+    const names = buildSession('LEGS', ctx()).exercises.map((e) => e.name);
+    expect(names).toContain('Leg Press');
+  });
+});
+
+// ── Tier filtering — persona / experience ────────────────────────────────
+
+describe('buildSession — tier filtering', () => {
+  it('T0 beginner never selects T3 accessories', () => {
+    const session = buildSession('PUSH', ctx({ profileTier: 'T0' }));
+    for (const ex of session.exercises) {
+      expect(getExerciseMetadata(ex.name).tier).toBeLessThanOrEqual(2);
+    }
+  });
+
+  it('T2 advanced may include T3 isolation/accessory (T0 may not)', () => {
+    // Under a constrained equipment pool (band-only) anchors thin out, so the
+    // tier ceiling becomes observable: advanced reaches a T3 where beginner
+    // stays capped at T2. Same seed → deterministic, comparable.
+    const constrained = { available: ['band'], seed: 'tier-probe' };
+    const advTiers = buildSession(
+      'PUSH', ctx({ ...constrained, profileTier: 'T2' }),
+    ).exercises.map((e) => getExerciseMetadata(e.name).tier);
+    const begTiers = buildSession(
+      'PUSH', ctx({ ...constrained, profileTier: 'T0' }),
+    ).exercises.map((e) => getExerciseMetadata(e.name).tier);
+    expect(advTiers).toContain(3);
+    expect(Math.max(...begTiers)).toBeLessThanOrEqual(2);
+  });
+
+  it('null tier is conservative (no T3)', () => {
+    const session = buildSession('PUSH', ctx({ profileTier: null }));
+    for (const ex of session.exercises) {
+      expect(getExerciseMetadata(ex.name).tier).toBeLessThanOrEqual(2);
+    }
+  });
+});
+
+// ── Equipment-constrained pool ───────────────────────────────────────────
+
+describe('buildSession — equipment-constrained pool', () => {
+  it('dumbbell-only → every non-bodyweight pick is a dumbbell exercise', () => {
+    const session = buildSession('PUSH', ctx({ available: ['dumbbell'] }));
+    for (const ex of session.exercises) {
+      const type = getExerciseMetadata(ex.name).equipment_type;
+      expect(['dumbbell', 'bodyweight']).toContain(type);
+    }
+  });
+
+  it('cable removed → no cable exercise selected', () => {
+    const avail = ['barbell', 'dumbbell', 'machine', 'band'];
+    const session = buildSession('PULL', ctx({ available: avail }));
+    for (const ex of session.exercises) {
+      expect(getExerciseMetadata(ex.name).equipment_type).not.toBe('cable');
+    }
+  });
+
+  it('bodyweight is always allowed even when no equipment available', () => {
+    const session = buildSession('PUSH', ctx({ available: [] }));
+    expect(session.exercises.length).toBeGreaterThan(0);
+    for (const ex of session.exercises) {
+      expect(getExerciseMetadata(ex.name).equipment_type).toBe('bodyweight');
+    }
+  });
+});
+
+// ── prioritizeWeakGroups — weakness ordering (Big-11 groups) ─────────────
 
 describe('prioritizeWeakGroups — weakness ordering', () => {
-  it('delt_rear weak → Face Pulls moves to first 2 positions', () => {
+  it('weak biceps → a biceps exercise moves to the first 2 positions', () => {
     const exercises = [
-      { name: 'Lat Pulldown', sets: 3 },
-      { name: 'Cable Row', sets: 3 },
-      { name: 'Face Pulls', sets: 3 },
-      { name: 'Bayesian Curl', sets: 3 },
+      { name: 'Lat Pulldown', sets: 3 },   // spate
+      { name: 'Cable Row', sets: 3 },       // spate
+      { name: 'Cable Curl', sets: 3 },      // biceps
+      { name: 'Hammer Curl', sets: 3 },     // biceps
     ];
-    const result = prioritizeWeakGroups(exercises, ['delt_rear']);
-    const names = result.map(e => e.name);
-    expect(names.indexOf('Face Pulls')).toBeLessThan(2);
+    const result = prioritizeWeakGroups(exercises, ['biceps']);
+    const names = result.map((e) => e.name);
+    const firstTwo = names.slice(0, 2);
+    expect(
+      firstTwo.some(
+        (n) => getExerciseMetadata(n).muscle_target_primary === 'biceps',
+      ),
+    ).toBe(true);
   });
 
   it('does NOT add exercises not in the original list', () => {
@@ -98,70 +225,33 @@ describe('prioritizeWeakGroups — weakness ordering', () => {
       { name: 'Lat Pulldown', sets: 3 },
       { name: 'Cable Row', sets: 3 },
     ];
-    // delt_rear exercises (Face Pulls, Rear Delt Fly) are NOT in the list
-    const result = prioritizeWeakGroups(exercises, ['delt_rear']);
-    const names = result.map(e => e.name);
-    expect(names).not.toContain('Face Pulls');
-    expect(names).not.toContain('Rear Delt Fly');
+    const result = prioritizeWeakGroups(exercises, ['biceps']);
     expect(result).toHaveLength(2);
+    const names = result.map((e) => e.name);
+    expect(names).toEqual(expect.arrayContaining(['Lat Pulldown', 'Cable Row']));
   });
 
-  it('preserves original ordering when weakGroup exercises not in session', () => {
+  it('preserves original ordering when weak group not in session', () => {
     const exercises = [
       { name: 'Lat Pulldown', sets: 3 },
-      { name: 'Bayesian Curl', sets: 3 },
+      { name: 'Cable Curl', sets: 3 },
       { name: 'Cable Row', sets: 3 },
     ];
-    // quad exercises (Leg Press, Leg Extension) are not in this PULL session
-    const result = prioritizeWeakGroups(exercises, ['quad']);
-    const names = result.map(e => e.name);
-    expect(names).toEqual(['Lat Pulldown', 'Bayesian Curl', 'Cable Row']);
+    // picioare-quads not present in this PULL session
+    const result = prioritizeWeakGroups(exercises, ['picioare-quads']);
+    const names = result.map((e) => e.name);
+    expect(names).toEqual(['Lat Pulldown', 'Cable Curl', 'Cable Row']);
   });
 
   it('total exercise count does not change after reordering', () => {
     const exercises = [
       { name: 'Lat Pulldown', sets: 3 },
       { name: 'Cable Row', sets: 3 },
-      { name: 'Face Pulls', sets: 3 },
-      { name: 'Bayesian Curl', sets: 3 },
+      { name: 'Cable Curl', sets: 3 },
+      { name: 'Hammer Curl', sets: 3 },
       { name: 'Incline DB Curl', sets: 3 },
     ];
-    const result = prioritizeWeakGroups(exercises, ['delt_rear']);
-    expect(result).toHaveLength(exercises.length);
-  });
-
-  // Big-11 RO vocab bridge: the live pipeline passes Specialization
-  // target_muscle_group (a Big-11 RO group), NOT an engine head key. Before the
-  // muscleGroupMap bridge this silently no-op'd. These prove it connects.
-  it('Big-11 RO "umeri" expands to shoulder heads → Face Pulls prioritized', () => {
-    const exercises = [
-      { name: 'Lat Pulldown', sets: 3 },
-      { name: 'Cable Row', sets: 3 },
-      { name: 'Face Pulls', sets: 3 }, // delt_rear → umeri
-      { name: 'Bayesian Curl', sets: 3 },
-    ];
-    const result = prioritizeWeakGroups(exercises, ['umeri']);
-    const names = result.map((e) => e.name);
-    expect(names.indexOf('Face Pulls')).toBeLessThan(2);
-  });
-
-  it('Big-11 RO "biceps" prioritizes curl exercises', () => {
-    const exercises = [
-      { name: 'Lat Pulldown', sets: 3 },
-      { name: 'Cable Row', sets: 3 },
-      { name: 'Bayesian Curl', sets: 3 }, // bi_long → biceps
-    ];
     const result = prioritizeWeakGroups(exercises, ['biceps']);
-    const names = result.map((e) => e.name);
-    expect(names.indexOf('Bayesian Curl')).toBeLessThan(2);
-  });
-
-  it('head-key vocab still works alongside Big-11 RO (back-compat)', () => {
-    const exercises = [
-      { name: 'Lat Pulldown', sets: 3 },
-      { name: 'Face Pulls', sets: 3 },
-    ];
-    const result = prioritizeWeakGroups(exercises, ['delt_rear']);
-    expect(result.map((e) => e.name).indexOf('Face Pulls')).toBeLessThan(2);
+    expect(result).toHaveLength(exercises.length);
   });
 });
