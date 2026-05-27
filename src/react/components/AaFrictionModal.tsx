@@ -112,7 +112,7 @@ export function AaFrictionModal({
           type="button"
           onClick={onAcknowledge}
           data-testid="aa-friction-pause"
-          className="w-full py-3 bg-ink text-paper rounded-xl text-base font-semibold mb-2"
+          className="w-full py-3 bg-ink text-paper dark:bg-brick rounded-xl text-base font-semibold mb-2"
         >
           {COPY.buttonPause}
         </button>

@@ -43,13 +43,17 @@ describe('RestOverlay - baseline render', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(btn.textContent ?? '')).toBe(false);
   });
 
-  // BUG #7 — dark bottom card paritate mockup (background var(--ink) negru,
-  // text var(--paper) alb) vs vechiul bg-paper deschis fullscreen.
-  it('renders dark card (ink bg + paper text) per mockup parity', () => {
+  // BUG #7 — dark bottom card paritate mockup (suprafata DARK) vs vechiul
+  // bg-paper deschis fullscreen. THEME-INVERSION fix (2026-05-27): clase
+  // bg-ink/text-paper (light) + dark:bg-paper2/dark:text-ink (mov) ca suprafata
+  // sa ramana dark in ambele teme, NU inline var(--ink) care inversa pe mov.
+  it('renders dark card (bg-ink/text-paper + dark overrides) per mockup parity', () => {
     render(<RestOverlay countdownSec={60} initialRestSec={90} onSkip={vi.fn()} />);
     const root = screen.getByTestId('rest-overlay');
-    expect(root.style.background).toContain('--ink');
-    expect(root.style.color).toContain('--paper');
+    expect(root.className).toContain('bg-ink');
+    expect(root.className).toContain('text-paper');
+    expect(root.className).toContain('dark:bg-paper2');
+    expect(root.className).toContain('dark:text-ink');
   });
 
   // BUG #8 — cardul e pinned bottom (NU full-screen inset-0), deci NU acopera

@@ -109,7 +109,7 @@ export function ExitConfirmSheet({
           type="button"
           onClick={() => onChoose('continue')}
           data-testid="exit-continue"
-          className="w-full py-3 bg-ink text-paper rounded-xl text-base font-semibold mb-2"
+          className="w-full py-3 bg-ink text-paper dark:bg-brick rounded-xl text-base font-semibold mb-2"
         >
           Continua sesiunea
         </button>

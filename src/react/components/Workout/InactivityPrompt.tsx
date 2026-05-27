@@ -54,7 +54,7 @@ export function InactivityPrompt({
           type="button"
           onClick={onContinue}
           data-testid="inactivity-continue"
-          className="flex-1 bg-ink text-paper border-0 rounded-lg py-2.5 text-sm font-semibold"
+          className="flex-1 bg-ink text-paper dark:bg-brick border-0 rounded-lg py-2.5 text-sm font-semibold"
         >
           Continui
         </button>

@@ -100,19 +100,24 @@ export function Calendar7Day(): JSX.Element {
               className="flex-1 py-2 rounded-lg text-xs font-semibold disabled:cursor-default"
               // Wiki spec calendar-feature-v1-spec.md §UX states 3 LOCKED
               // post-S1.6: training LOCKED state = #3d7a4a verde inchis; EDIT
-              // state = #d4e6cb verde deschis (signal "asta e programul,
-              // modifica"). Rest neutral var(--paper-2) invariant cross-states.
-              // Color text contrast WCAG: verde deschis + ink dark, verde
-              // inchis + white.
+              // state = verde deschis (signal "asta e programul, modifica").
+              // Rest neutral var(--paper-2) invariant cross-states.
+              // THEME-INVERSION fix (2026-05-27): edit-state era hardcodat
+              // #d4e6cb bg + var(--ink) text -> pe tema mov var(--ink) devine
+              // near-white => text alb pe verde-deschis = 1.18:1 ilizibil.
+              // Tokenizat la --heat-usor (#d4e6cb light / #2a4a30 dark) +
+              // --heat-usor-text (5.99:1 light / 6.43:1 dark) care au deja
+              // paritate dark. Locked (#3d7a4a verde inchis + white) ramane fix
+              // intentionat (verde inchis e dark surface in ambele teme).
               style={{
                 background: trainingDay
                   ? editMode
-                    ? '#d4e6cb'
+                    ? 'var(--heat-usor)'
                     : '#3d7a4a'
                   : 'var(--paper-2)',
                 color: trainingDay
                   ? editMode
-                    ? 'var(--ink)'
+                    ? 'var(--heat-usor-text)'
                     : '#ffffff'
                   : 'var(--ink)',
               }}

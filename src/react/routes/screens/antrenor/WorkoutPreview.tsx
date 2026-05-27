@@ -226,20 +226,21 @@ export function WorkoutPreview(): JSX.Element {
         <p className="text-base font-medium text-ink">{banner.msg}</p>
       </div>
       <div
-        className="bg-ink text-paper rounded-2xl p-4 mb-4"
+        className="bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick rounded-2xl p-4 mb-4"
         data-testid="preview-hero"
         role="region"
         aria-label="Sesiunea de azi"
       >
-        {/* a11y contrast: on bg-ink (dark in light theme) text-brick was 3.59:1
-            and text-ink3 chips 3.22:1 (< AA 4.5:1). Swapped to text-paper2 (an
-            existing token), ~15:1 vs bg-ink in BOTH themes. Eyebrow stays
-            distinct via uppercase/tracking/weight, not color. */}
-        <div className="text-xs font-semibold tracking-wider uppercase text-paper2">
+        {/* a11y contrast: on bg-ink (light theme dark card) text-paper2 ~15:1.
+            THEME-INVERSION fix (2026-05-27): card era light pe tema mov (bg-ink
+            inversa) -> mirror CoachTodayCard dark:bg-paper2 ca sa ramana dark.
+            Copiii primesc dark:text-ink/dark:text-ink2 (12-16:1 pe #14171f)
+            altfel text-paper2 ar fi dark-on-dark invizibil. */}
+        <div className="text-xs font-semibold tracking-wider uppercase text-paper2 dark:text-ink2">
           Sesiunea de azi
         </div>
-        <h1 className="text-xl font-bold mt-1 tracking-tight text-paper">{title}</h1>
-        <div className="flex gap-3.5 mt-2 text-sm text-paper2">
+        <h1 className="text-xl font-bold mt-1 tracking-tight text-paper dark:text-ink">{title}</h1>
+        <div className="flex gap-3.5 mt-2 text-sm text-paper2 dark:text-ink2">
           <span className="flex items-center gap-1.5" data-testid="preview-duration">
             <Clock className="w-3.5 h-3.5" aria-hidden="true" />
             ~ {duration} min

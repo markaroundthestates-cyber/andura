@@ -58,12 +58,16 @@ describe('Calendar7Day — render', () => {
     expect(dayL.style.color).toBe('rgb(255, 255, 255)'); // #ffffff white
   });
 
-  it('EDIT state training day uses #d4e6cb verde deschis + var(--ink) text', () => {
+  // THEME-INVERSION fix (2026-05-27): edit-state fill/text tokenizat la
+  // --heat-usor / --heat-usor-text (paritate dark exista) ca sa nu inverseze
+  // pe tema mov. Verde-deschis (#d4e6cb light) + text verde-inchis pastrate
+  // semantic; valorile devin token refs.
+  it('EDIT state training day uses --heat-usor fill + --heat-usor-text', () => {
     useScheduleStore.setState({ editMode: true });
     render(<Calendar7Day />);
     const dayL = screen.getByTestId('calendar-day-0'); // training
-    expect(dayL.style.background).toContain('rgb(212, 230, 203)'); // #d4e6cb
-    expect(dayL.style.color).toBe('var(--ink)');
+    expect(dayL.style.background).toContain('var(--heat-usor)');
+    expect(dayL.style.color).toBe('var(--heat-usor-text)');
   });
 
   it('rest day color invariant cross-states (var(--paper-2) LOCKED + EDIT)', () => {

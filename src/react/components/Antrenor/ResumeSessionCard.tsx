@@ -55,7 +55,7 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): JSX
             e.stopPropagation();
             onResume();
           }}
-          className="flex-1 bg-ink text-paper rounded-md px-3 py-2 text-sm font-semibold"
+          className="flex-1 bg-ink text-paper dark:bg-brick rounded-md px-3 py-2 text-sm font-semibold"
         >
           Reia
         </button>

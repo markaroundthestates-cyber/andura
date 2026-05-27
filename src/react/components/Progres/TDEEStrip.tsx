@@ -117,12 +117,21 @@ export function TDEEStrip(): JSX.Element {
         <span
           data-testid="tdee-faza-badge"
           className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide"
-          style={{ background: '#f0e8d8', color: '#7a6938' }}
+          // THEME-INVERSION fix (2026-05-27): erau hardcodate bg #f0e8d8 + text
+          // #7a6938 (singura suprafata light fully-hardcoded din src/react) ->
+          // blob cremos pe tema mov + doar 4.41:1 in ambele. Tokenizat la
+          // --status-neutral-* care re-skin per tema: light text 6.14:1, dark
+          // 11.12:1, ambele >=4.5 AA.
+          style={{
+            background: 'var(--status-neutral-bg)',
+            color: 'var(--status-neutral-text)',
+            border: '1px solid var(--status-neutral-border)',
+          }}
         >
           <span
             aria-hidden="true"
             className="w-1.5 h-1.5 rounded-full"
-            style={{ background: '#c69a2c' }}
+            style={{ background: 'var(--warn)' }}
           />
           Faza: {phaseLabel}
         </span>

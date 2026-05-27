@@ -13,11 +13,18 @@
 //
 // BUG #7+#8 (2026-05-27): aliniat la mockup andura-clasic.html L1600-1613 +
 // L2794-2803 — card NON-modal pinned bottom (NU full-screen inset-0), fundal
-// dark var(--ink) + text alb var(--paper), layout orizontal ring+body+skip.
+// dark + text deschis, layout orizontal ring+body+skip.
 // Fix #7 = paritate vizuala (negru/alb vs vechiul bg-paper deschis fullscreen).
 // Fix #8 = cardul ocupa doar banda de jos, deci butoanele X + ... din header
 // (SessionTimer sticky top z-10) raman clickabile in timpul pauzei (vechiul
 // fixed inset-0 z-50 le acoperea + intercepta pointer events).
+//
+// THEME-INVERSION fix (2026-05-27): card-ul ramane suprafata DARK in ambele
+// teme. Light = bg-ink (#1a1815) + text-paper. Dark = dark:bg-paper2 (#14171f)
+// + dark:text-ink, mirror CoachTodayCard pattern. Inainte inline var(--ink)/
+// var(--paper) inversa pe tema mov (--ink devine near-white) -> card alb,
+// "Sari pauza" invizibil. Skip button white-alpha bordura urcata .20 -> .35
+// pentru 3:1 UI boundary pe ambele suprafete dark (WCAG SC 1.4.11).
 //
 // Stateless: parent Workout.tsx owns countdown state (interval decrement
 // effect + auto-advance la phase=logging cand reaches 0) + onSkip handler
@@ -48,8 +55,7 @@ export function RestOverlay({
 }: RestOverlayProps): JSX.Element {
   return (
     <div
-      className="fixed left-3.5 right-3.5 bottom-[78px] z-40 flex items-center gap-3.5 rounded-[18px] px-4 py-3.5 shadow-[0_8px_24px_rgba(0,0,0,0.22)]"
-      style={{ background: 'var(--ink)', color: 'var(--paper)' }}
+      className="fixed left-3.5 right-3.5 bottom-[78px] z-40 flex items-center gap-3.5 rounded-[18px] px-4 py-3.5 shadow-[0_8px_24px_rgba(0,0,0,0.22)] bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick"
       data-testid="rest-overlay"
       role="dialog"
       aria-label="Pauza activa"
@@ -57,7 +63,7 @@ export function RestOverlay({
       <SVGCountdownRing
         totalSec={initialRestSec}
         remainingSec={countdownSec}
-        timeColorClass="text-paper"
+        timeColorClass="text-paper dark:text-ink"
       />
       <div className="flex-1 min-w-0">
         <p
@@ -67,8 +73,7 @@ export function RestOverlay({
         </p>
         {currentExerciseName && (
           <p
-            className="font-serif italic text-[13px] leading-snug mt-0.5"
-            style={{ color: 'var(--paper)' }}
+            className="font-serif italic text-[13px] leading-snug mt-0.5 text-paper dark:text-ink"
             data-testid="rest-context-line"
           >
             {currentExerciseName} recupereaza
@@ -79,11 +84,10 @@ export function RestOverlay({
         type="button"
         onClick={onSkip}
         data-testid="rest-skip"
-        className="flex-shrink-0 flex items-center gap-1.5 rounded-[10px] border px-3 py-2.5 text-xs font-semibold"
+        className="flex-shrink-0 flex items-center gap-1.5 rounded-[10px] border px-3 py-2.5 text-xs font-semibold text-paper dark:text-ink"
         style={{
           background: 'rgba(255,255,255,0.12)',
-          borderColor: 'rgba(255,255,255,0.2)',
-          color: 'var(--paper)',
+          borderColor: 'rgba(255,255,255,0.35)',
         }}
       >
         <SkipForward className="w-3.5 h-3.5" aria-hidden="true" />

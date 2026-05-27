@@ -44,7 +44,7 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): JSX.
         <button
           type="button"
           onClick={onStart}
-          className="flex-1 bg-ink text-paper rounded-lg px-3 py-2.5 text-sm font-semibold"
+          className="flex-1 bg-ink text-paper dark:bg-brick rounded-lg px-3 py-2.5 text-sm font-semibold"
         >
           Incep usor
         </button>
