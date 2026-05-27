@@ -65,6 +65,68 @@ describe('WP-6 nameRo QA-gate (657 entries)', () => {
     expect(offenders, `over-length: ${offenders.join(', ')}`).toEqual([]);
   });
 
+  // ── Word-order sanity (anti-garble) ──────────────────────────────────────
+  // WP-6 reorder pass stranded the movement verb AFTER the equipment/setup phrase
+  // for a handful of entries ("plat cu bara Impins din piept" instead of the
+  // natural "Impins din piept plat cu bara"), and bare-concatenated two movements
+  // ("Face Pull Impins din piept"). The original gate (diacritics/EN-token/length)
+  // is blind to word order, so the garble shipped green. This guard fails when a
+  // known RO movement verb is stranded AFTER an equipment phrase (the structural
+  // signature of the mis-order). Filter: would Maria/Gigel read this as a real
+  // exercise? "cu bara ... Impins" reads as broken Romanian.
+  const MOVEMENT_VERBS = [
+    'Impins', 'Ramat', 'Flexii', 'Genuflexiuni', 'Fluturari', 'Ridicari',
+    'Extensii', 'Presa', 'Tractiuni', 'Indreptari', 'Punte', 'Aplecari', 'Trageri',
+  ];
+  // Equipment / setup phrases that must NOT precede the movement verb. When one of
+  // these opens the name and a movement verb follows, the verb was stranded.
+  const EQUIP_PHRASES = [
+    'cu bara', 'cu gantere', 'cu gantera', 'la cablu', 'la aparat', 'la scripete',
+    'cu kettlebell', 'cu banda', 'cu greutate', 'la Smith',
+  ];
+
+  it('no nameRo strands a movement verb AFTER an equipment phrase (word-order garble)', () => {
+    const offenders = [];
+    for (const [key, meta] of ALL) {
+      const ro = meta.nameRo;
+      const verbIdx = MOVEMENT_VERBS
+        .map((v) => ro.indexOf(v))
+        .filter((i) => i >= 0)
+        .reduce((min, i) => (min < 0 || i < min ? i : min), -1);
+      if (verbIdx <= 0) continue; // verb absent or already leading — fine
+      for (const ep of EQUIP_PHRASES) {
+        const ei = ro.indexOf(ep);
+        if (ei >= 0 && ei < verbIdx) {
+          offenders.push(`${key} => ${ro} [equip "${ep}" precedes verb]`);
+          break;
+        }
+      }
+    }
+    expect(offenders, `word-order garble: ${offenders.join(', ')}`).toEqual([]);
+  });
+
+  it('no nameRo bare-concatenates two distinct movement verbs (e.g. "Face Pull Impins ...")', () => {
+    // A name should describe ONE movement. Two movement verbs (or a whitelist
+    // movement phrase + a second verb) signals a concatenation glitch like
+    // "Face Pull Impins din piept". Hammer Curl is whitelisted (Curl is its own
+    // verb token) so it is exempted via the standard-RO whitelist.
+    const offenders = [];
+    for (const [key, meta] of ALL) {
+      let ro = ` ${meta.nameRo} `;
+      for (const phrase of STD_RO_WHITELIST) ro = ro.split(phrase).join(' ');
+      const hits = MOVEMENT_VERBS.filter((v) => {
+        const re = new RegExp(`(^|\\s)${v}(?=\\s|$)`, 'g');
+        return (` ${ro} `.match(re) || []).length > 0;
+      });
+      // Also flag a surviving whitelist movement noun fused with a RO verb.
+      const fusedFacePull = /Face Pull\s+(Impins|Ramat|Extensii|Flexii|Presa)/.test(meta.nameRo);
+      if (hits.length >= 2 || fusedFacePull) {
+        offenders.push(`${key} => ${meta.nameRo} [${hits.join('+')}${fusedFacePull ? ' +fused' : ''}]`);
+      }
+    }
+    expect(offenders, `multi-verb concatenation: ${offenders.join(', ')}`).toEqual([]);
+  });
+
   it('the tricky non-compositional names resolved to descriptive RO (not literal)', () => {
     // Spot-anchors so a future regen cannot silently re-introduce literal disasters.
     expect(EXERCISE_METADATA['Scaption'].nameRo).toBe('Ridicari frontale-laterale 45 grade');
