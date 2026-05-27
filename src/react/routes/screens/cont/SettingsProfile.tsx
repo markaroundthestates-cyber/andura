@@ -22,7 +22,7 @@ import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
 import { getUserProfileDisplay } from './userProfile';
 import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
-import { estimateBF_Deurenberg } from '../../../../engine/bodyComposition.js';
+import { estimateBF_Deurenberg, healthyFloorWeightKg } from '../../../../engine/bodyComposition.js';
 
 // §B003/D-1b audit fix — Goal labels 6 mockup parity (mockup L863-869).
 const GOAL_LABELS: Record<Goal, string> = {
@@ -96,11 +96,15 @@ export function SettingsProfile(): JSX.Element {
   const bfSource = bfNavy != null ? 'US Navy' : bfDeurenberg != null ? 'Estimat' : '';
 
   // §F-pass2-settings-profile-04 — Tinte personale (mockup L2049-2052).
-  // Greutate tinta + luna tinta ("Pana in") → ETA luni ramase. Local form
-  // state V1 (NU persistat — onboardingStore NU are aceste campuri).
+  // Greutate tinta + luna tinta ("Pana in") → ETA realista la ritm sanatos.
+  // Local form state V1 (NU persistat — onboardingStore NU are aceste campuri).
   const [targetWeight, setTargetWeight] = useState('');
   const [targetMonth, setTargetMonth] = useState(''); // YYYY-MM din <input month>
-  const etaLabel = monthsUntil(targetMonth);
+  // BUG #8 safety — ETA derivata din greutate tinta + greutate curenta la un
+  // ritm sanatos (NU mai e un countdown de calendar care ignora cat ai de
+  // schimbat). Plus guard subponderal: tinta sub greutatea sanatoasa minima
+  // (BMI 18.5) → avertisment, NU proiectie spre o greutate periculoasa.
+  const targetEta = computeTargetEta(targetWeight, draft.weight ?? null, draft.height ?? null);
 
   function update<K extends keyof OnboardingData>(key: K, value: OnboardingData[K]): void {
     setDraft((d) => ({ ...d, [key]: value }));
@@ -313,9 +317,11 @@ export function SettingsProfile(): JSX.Element {
           Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori.
         </p>
 
-        {/* §F-pass2-settings-profile-04 — Tinte personale (mockup L2049-2052).
-            Greutate tinta + "Pana in" month picker → ETA luni ramase. Local
-            form state V1 — persistence Phase 7+ cand store extinde. */}
+        {/* §F-pass2-settings-profile-04 + BUG #8 — Tinte personale (mockup L2049-
+            2052). Greutate tinta + "Pana in" month picker (deadline dorit). ETA
+            afisata = orizont REALIST la ritm sanatos din greutate tinta vs
+            curenta (NU countdown de calendar). Tinta subponderala → avertisment.
+            Local form state V1 — persistence Phase 7+ cand store extinde. */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Tinte personale
         </p>
@@ -344,12 +350,21 @@ export function SettingsProfile(): JSX.Element {
             />
           </LabelRow>
         </div>
-        {etaLabel && (
+        {targetEta?.kind === 'subhealthy' && (
+          <p
+            className="text-xs text-brick mb-4 px-1 leading-snug font-medium"
+            role="alert"
+            data-testid="profile-target-warning"
+          >
+            Tinta e sub greutatea sanatoasa (~{fmtKg(targetEta.minKg)} kg minim la inaltimea ta). Alege o tinta sanatoasa.
+          </p>
+        )}
+        {targetEta?.kind === 'eta' && (
           <p
             className="text-xs text-ink3 mb-4 px-1 leading-snug"
             data-testid="profile-target-eta"
           >
-            {etaLabel}
+            {targetEta.label}
           </p>
         )}
 
@@ -431,11 +446,6 @@ export function SettingsProfile(): JSX.Element {
   );
 }
 
-/**
- * §F-pass2-settings-profile-04 — ETA label din luna tinta ("Pana in").
- * Input month = 'YYYY-MM'. Returneaza un text Gigel-friendly cu lunile ramase
- * pana la luna tinta, sau null cand gol / data trecuta / invalid.
- */
 /** Data locala YYYY-MM-DD pentru intrarea bodyData (aliniat cu BodyData.tsx). */
 function todayIso(): string {
   const d = new Date();
@@ -445,18 +455,74 @@ function todayIso(): string {
   return `${y}-${m}-${dd}`;
 }
 
-function monthsUntil(targetMonth: string): string | null {
-  if (!targetMonth) return null;
-  const match = /^(\d{4})-(\d{2})$/.exec(targetMonth);
-  if (!match) return null;
-  const year = Number(match[1]);
-  const month = Number(match[2]); // 1-12
-  if (month < 1 || month > 12) return null;
-  const now = new Date();
-  const diff = (year - now.getFullYear()) * 12 + (month - 1 - now.getMonth());
-  if (diff < 0) return null;
-  if (diff === 0) return 'Tinta luna aceasta';
-  return `Estimat in ~${diff} ${diff === 1 ? 'luna' : 'luni'}`;
+/** Format kg cu o zecimala (round-trip), aliniat cu ProjectionStrip. */
+function fmtKg(n: number): string {
+  return String(Math.round(n * 10) / 10);
+}
+
+// BUG #8 safety — ritm sanatos de schimbare a greutatii pentru ETA (kg/sapt).
+// Aliniat cu conventia engine-ului (sys.js weeksToKg): ~0.5 kg/sapt la slabire
+// (deficit realist), ~0.25 kg/sapt la crestere (lean gain). Asta face ca o
+// tinta realista sa arate un orizont realist — NU mai e un countdown de calendar
+// care ignora complet cat ai de schimbat (radacina BUG #8: "~1 luna" pentru -24 kg).
+const SAFE_LOSS_KG_PER_WEEK = 0.5;
+const SAFE_GAIN_KG_PER_WEEK = 0.25;
+
+/**
+ * Rezultat ETA tinta — discriminated:
+ *   - 'subhealthy': tinta sub greutatea sanatoasa minima (BMI 18.5) → avertisment
+ *     + SUPRIMA proiectia (nu proiectam niciodata spre o greutate periculoasa).
+ *   - 'eta': orizont realist la ritm sanatos pana la tinta.
+ */
+type TargetEta =
+  | { kind: 'subhealthy'; minKg: number }
+  | { kind: 'eta'; label: string };
+
+/**
+ * §F-pass2-settings-profile-04 + BUG #8 — ETA realista spre greutatea tinta.
+ *
+ * Inlocuieste vechiul countdown de calendar (care ignora greutatea tinta si
+ * arata "~1 luna" si pentru -24 kg). Acum:
+ *   1) Daca tinta < greutatea sanatoasa minima la inaltimea data (BMI 18.5) →
+ *      avertisment subponderal, fara ETA (anti-paternalism: NU blocam tastarea,
+ *      dar feedback-ul semnaleaza + nu proiectam spre o tinta periculoasa).
+ *   2) Altfel proiectam timpul la un ritm SANATOS (0.5 kg/sapt slabire,
+ *      0.25 kg/sapt crestere) → orizont realist in saptamani/luni.
+ * Returns null cand lipsesc input-uri (tinta/greutate/inaltime) sau tinta ~=
+ * greutatea curenta (nimic de proiectat).
+ */
+function computeTargetEta(
+  targetWeightStr: string,
+  currentWeightKg: number | null,
+  heightCm: number | null,
+): TargetEta | null {
+  const target = Number(targetWeightStr);
+  if (!targetWeightStr || !Number.isFinite(target) || target <= 0) return null;
+
+  // Guard subponderal — tinta sub BMI 18.5 la inaltimea data. Are precedenta
+  // peste orice ETA (nu proiectam spre o greutate periculoasa).
+  const minKg = healthyFloorWeightKg(heightCm ?? NaN);
+  if (minKg !== null && target < minKg) {
+    return { kind: 'subhealthy', minKg };
+  }
+
+  // ETA realista — necesita greutatea curenta ca punct de plecare.
+  if (currentWeightKg === null || !Number.isFinite(currentWeightKg) || currentWeightKg <= 0) {
+    return null;
+  }
+  const deltaKg = target - currentWeightKg;
+  if (Math.abs(deltaKg) < 0.5) return { kind: 'eta', label: 'Esti deja la tinta' };
+
+  const ratePerWeek = deltaKg < 0 ? SAFE_LOSS_KG_PER_WEEK : SAFE_GAIN_KG_PER_WEEK;
+  const weeks = Math.ceil(Math.abs(deltaKg) / ratePerWeek);
+  return { kind: 'eta', label: `Estimat in ${etaHorizonLabel(weeks)} la un ritm sanatos` };
+}
+
+/** Orizont uman din saptamani: <8 sapt → "~N saptamani", altfel "~N luni". */
+function etaHorizonLabel(weeks: number): string {
+  if (weeks < 8) return `~${weeks} ${weeks === 1 ? 'saptamana' : 'saptamani'}`;
+  const months = Math.round(weeks / 4.345);
+  return `~${months} ${months === 1 ? 'luna' : 'luni'}`;
 }
 
 interface LabelRowProps {

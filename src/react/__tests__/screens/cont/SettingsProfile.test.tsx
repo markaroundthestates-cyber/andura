@@ -230,7 +230,7 @@ describe('SettingsProfile — Compozitie corporala (§F-pass2-settings-profile-0
   });
 });
 
-describe('SettingsProfile — Tinte personale (§F-pass2-settings-profile-04)', () => {
+describe('SettingsProfile — Tinte personale (§F-pass2-settings-profile-04 + BUG #8)', () => {
   it('renders Tinte personale section heading', () => {
     renderScreen();
     expect(screen.getByText('Tinte personale')).toBeInTheDocument();
@@ -242,25 +242,64 @@ describe('SettingsProfile — Tinte personale (§F-pass2-settings-profile-04)', 
     expect(screen.getByTestId('profile-target-month-input')).toBeInTheDocument();
   });
 
-  it('ETA hidden until luna tinta selected', () => {
+  it('ETA + avertisment ascunse pana la introducerea greutatii tinta', () => {
     renderScreen();
+    expect(screen.queryByTestId('profile-target-eta')).toBeNull();
+    expect(screen.queryByTestId('profile-target-warning')).toBeNull();
+  });
+
+  it('ETA realista la ritm sanatos din greutate tinta (NU countdown de calendar)', () => {
+    renderScreen();
+    // beforeEach: 81 kg / 175 cm. Tinta 75 kg = -6 kg la 0.5 kg/sapt = 12 sapt
+    // = ~3 luni. ETA NU mai vine din luna tinta — vine din cat ai de schimbat.
+    fireEvent.change(screen.getByTestId('profile-target-weight-input'), { target: { value: '75' } });
+    expect(screen.getByTestId('profile-target-eta').textContent).toMatch(/Estimat in ~3 luni la un ritm sanatos/);
+  });
+
+  it('ETA in saptamani pentru o tinta apropiata (<8 sapt)', () => {
+    renderScreen();
+    // 81 -> 78 kg = -3 kg la 0.5 kg/sapt = 6 sapt (<8) → "~6 saptamani".
+    fireEvent.change(screen.getByTestId('profile-target-weight-input'), { target: { value: '78' } });
+    expect(screen.getByTestId('profile-target-eta').textContent).toMatch(/Estimat in ~6 saptamani la un ritm sanatos/);
+  });
+
+  it('ETA NU ignora marimea schimbarii — tinta agresiva da orizont lung, nu "~1 luna"', () => {
+    renderScreen();
+    // Radacina BUG #8: o tinta de slabire mare trebuie sa arate un orizont mare,
+    // NU "~1 luna". 81 -> 60 kg = -21 kg la 0.5 kg/sapt = 42 sapt ≈ ~10 luni.
+    fireEvent.change(screen.getByTestId('profile-target-weight-input'), { target: { value: '60' } });
+    const txt = screen.getByTestId('profile-target-eta').textContent ?? '';
+    expect(txt).toMatch(/Estimat in ~10 luni la un ritm sanatos/);
+    expect(txt).not.toMatch(/~1 luna/);
+  });
+
+  it('BUG #8 — tinta subponderala (sub BMI 18.5) → avertisment + SUPRIMA ETA', () => {
+    renderScreen();
+    // CEO smoke: 175 cm, tinta 31 kg (BMI 10.1, fatal). Min sanatos la 175 cm =
+    // 18.5 * 1.75^2 = 56.7 kg. 31 < 56.7 → avertisment, fara proiectie.
+    fireEvent.change(screen.getByTestId('profile-target-weight-input'), { target: { value: '31' } });
+    const warn = screen.getByTestId('profile-target-warning');
+    expect(warn.textContent).toMatch(/Tinta e sub greutatea sanatoasa/);
+    expect(warn.textContent).toMatch(/~56\.7 kg minim/);
+    expect(warn.textContent).toMatch(/Alege o tinta sanatoasa/);
+    // ETA suprimata — NU proiectam niciodata spre o greutate periculoasa.
     expect(screen.queryByTestId('profile-target-eta')).toBeNull();
   });
 
-  it('ETA derivat din luna tinta viitoare', () => {
+  it('BUG #8 — guard subponderal foloseste inaltimea curenta din draft', () => {
     renderScreen();
-    // Luna tinta 18 luni in viitor — ETA pozitiv, deterministic indiferent de data.
-    const now = new Date();
-    const future = new Date(now.getFullYear(), now.getMonth() + 18, 1);
-    const ym = `${future.getFullYear()}-${String(future.getMonth() + 1).padStart(2, '0')}`;
-    fireEvent.change(screen.getByTestId('profile-target-month-input'), { target: { value: ym } });
-    expect(screen.getByTestId('profile-target-eta').textContent).toMatch(/Estimat in ~18 luni/);
+    // La 200 cm, min sanatos = 18.5 * 2.0^2 = 74 kg. O tinta de 70 kg (sanatoasa
+    // la 175 cm) devine subponderala la 200 cm → avertisment.
+    fireEvent.change(screen.getByTestId('profile-height-input'), { target: { value: '200' } });
+    fireEvent.change(screen.getByTestId('profile-target-weight-input'), { target: { value: '70' } });
+    expect(screen.getByTestId('profile-target-warning').textContent).toMatch(/~74 kg minim/);
+    expect(screen.queryByTestId('profile-target-eta')).toBeNull();
   });
 
-  it('ETA ascuns pentru luna tinta din trecut', () => {
+  it('tinta ~= greutatea curenta → "Esti deja la tinta"', () => {
     renderScreen();
-    fireEvent.change(screen.getByTestId('profile-target-month-input'), { target: { value: '2000-01' } });
-    expect(screen.queryByTestId('profile-target-eta')).toBeNull();
+    fireEvent.change(screen.getByTestId('profile-target-weight-input'), { target: { value: '81' } });
+    expect(screen.getByTestId('profile-target-eta').textContent).toMatch(/Esti deja la tinta/);
   });
 });
 
