@@ -303,6 +303,21 @@ export function estimateBfFraction(input: {
  * when experience missing → engine resolveTier returns null → conservative
  * baseline (specialization stays gated). Pure.
  */
+/**
+ * Distinct EN exercise names the user has logged with a weight (the PR-anchor
+ * set for WP-4 selection). Reads the same `logs` channel DP.getLogs consumes.
+ * Pure-ish (reads persisted DB only). Returns [] when nothing logged.
+ */
+function distinctLoggedExerciseNames(): string[] {
+  const logs =
+    (DB.get('logs') as Array<{ ex?: string; w?: number }> | null) ?? [];
+  const names = new Set<string>();
+  for (const l of logs) {
+    if (l && typeof l.ex === 'string' && l.ex && l.w) names.add(l.ex);
+  }
+  return [...names];
+}
+
 function tierForExperience(experience: unknown): 'T0' | 'T1' | 'T2' | null {
   switch (experience) {
     case 'incepator':
@@ -371,6 +386,7 @@ export function buildUserStateForPipeline(): {
   user: Record<string, unknown>;
   recentSessions: ReadonlyArray<unknown>;
   weights: Record<string, unknown>;
+  prNames: string[];
   profileTier: string | null;
   flags: Record<string, unknown>;
   meta: Record<string, unknown>;
@@ -435,6 +451,11 @@ export function buildUserStateForPipeline(): {
   );
   const profileTier = tierForExperience(onboardingData.experience);
   const goalPhase = goalPhaseForGoal(onboardingData.goal);
+  // PR-anchor set for WP-4 selection: distinct exercise names the user has
+  // actually logged (weighted set). sessionBuilder prefers these over other
+  // candidates so existing users keep visible PR continuity. EN canonical names
+  // (logs key on the EN name, same as DP.getLogs / cold-start guidelines).
+  const prNames = distinctLoggedExerciseNames();
   return {
     user: {
       age: onboardingData.age,
@@ -450,6 +471,8 @@ export function buildUserStateForPipeline(): {
     },
     recentSessions,
     weights: {},
+    // WP-4 PR-anchor set (sessionBuilder prefers logged names).
+    prNames,
     // Gate 2 tier (specialization resolveTier reads top-level profileTier).
     profileTier,
     flags: {},
