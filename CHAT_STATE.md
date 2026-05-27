@@ -1,63 +1,65 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-27 — sesiune acasa (Daniel la birou prin RC, revine acasa). Handover: `📥_inbox/HANDOVER_2026-05-27_moat-wiring-plus-nutrition-redesign.md`.
-**Topic active:** **MOATUL P3-WIRING COMPLET + NUTRITIE REDESIGN — LANDED & PUSHED.** Arc autonom cu agenti Opus paraleli (manager-integrat: ff/cherry-pick autoritativ pe main, agentii = executori in worktree izolat). Tot verde, **PUSHED pe origin** ca Daniel sa intre la smoke direct de acasa.
+**Last updated:** 2026-05-27 — sesiune acasa, post smoke #1 Daniel. Agenti Opus paraleli (manager-integrat).
+**Topic active:** **SMOKE #1 FIX BATCH — LANDED pe main, NU pushed.** Daniel a facut primul smoke live → 13 findings → triate + fixate + integrate (manager cherry-pick autoritativ pe main, agentii = executori in worktree izolat). Tot verde 5026 teste. Asteapta Daniel: push + Firebase console + smoke #2.
 
-**State (2026-05-27):** main verde **4963 PASS / 275 files** + tsc clean + build OK, **PUSHED origin**. Moatul e REAL end-to-end (verificat prin pipeline real + gate care musca + audit fresh-eyes independent). Next = **gate-urile Daniel SMOKE** (vezi §1).
-
----
-
-## §0 Ce s-a facut azi (cap-coada, autonom, agenti Opus paraleli)
-
-**Arc 1 — Moat REAL P3-wiring (D081), LANDED:**
-1. **WP-3** echipament coarse `equipment_type` SoT (toate 10 ID-uri AparateLipsa capata sens, era 5/10 moarte) + harta muscle Big-11↔librarie-11 (`equipmentMap.js`, `muscleGroupMap.js`).
-2. **WP-4** selectie reala din 657: `buildSession` trage din librarie filtrata muscle×echipament×tier, determinist (FNV seed), ancorat pe nume cu istoric PR (18/19 verbatim). Gata cu tabelul hardcodat ~22.
-3. **WP-5** substitutie NUMITA in-sesiune: cascade echipament-lipsa + swap in-place "ocupat"/"nu vreau" (`workoutStore.swapExercise`, `substitution.ts`), alternativa RO vizibila, zero navigate-away/blank.
-4. **WP-6** nume RO pentru toate 657 (`nameRo`) + QA-gate; ~30 nume curate mockup pastrate (SoT).
-5. **P1-deferred** (deblocat de harta muscle): set-count din periodizare (`setsForGroup`, era hardcodat 3) + weakness-selection LIVE (era moarta in spatele `contextSelectionEnabled=false`).
-6. **WP-8** gate E2E anti-fatada: 21 teste prin pipeline real, dovedit ca MUSCA (mutezi `resolveCascade` → 3 teste rosii). Exact remediul auditului 5-lentile (5 audituri verzi rataseera fatada).
-
-**Arc 2 — Calire calitate, LANDED:**
-7. **Mutation-hardening** +85 teste pe creierul slab-testat (dp 45 / fatigue 15 / readiness 25). `dp.js` avea 181 mutanti vii = teste-fatada (mock-uri fixate, ramuri reale neatinse) → acum conduse real.
-8. **Fix nume garble** (4 entries "inclinat cu bara Impins din piept" → ordine naturala) + QA-gate intarit (prinde verb-stranding) + 10 coliziuni display rezolvate.
-9. **Audit fresh-eyes read-only** pe moat: verdict REAL 4/5 scopuri, 1 MED (lifturi-ancora fara cascade → noAlt) → **reparat**: `findBroadAlternatives` degradeaza la librarie 657 pe grupa de muschi (tier/force-aware), Leg Press→Barbell Back Squat etc. + inchis gate-gap-ul.
-
-**Arc 3 — Nutritie redesign (D082, Daniel-directed), LANDED:**
-10. Model **forward determinist**: `BMR(Mifflin)×NEAT 1.25 + (sesiuni×300net)/7`, sesiuni = blend planned-prior→actual-posterior (`w=loggedWeeks/4`, cold-start=planificat). Inlocuieste factorul fix 1.55 care ignora antrenamentele.
-11. **Cantar = calibrator LENT** (ferestre ≥7 zile + ≥3 cantariri + panta regresie, plafonat T1) → reparat flaw `MIN_WINDOW_DAYS=1` care dadea false-positives pe fluctuatia zilnica ±4-5kg a lui Daniel.
-
-**Arc 4 — Polish:** 404 route, GDPR region `europe-west1`, dark strips.
-
-**Disciplina folosita:** agenti Opus in worktree izolat = executori; manager (chat) = ff/cherry-pick autoritativ pe main + verificare full-suite dupa fiecare integrare. Garda anti-stale-base in fiecare prompt (worktree-uri reciclate porneau pe baza veche `8fd8e8b2` → `git merge <main-sha>` inainte de lucru). Reconciliere manuala 1x (WP-4 stale-base, seam local → `equipmentMap.js` canonic).
+**State (2026-05-27 post-smoke-1):** main **13 ahead origin, NU pushed** (D031). 5026 teste pass + tsc + build + size (main 129.53KB) toate verzi. 12 commit-uri fix + D083 + eslint hygiene.
 
 ---
 
-## §1 NEXT P1 — gate-urile Daniel SMOKE (de aici continui)
+## §0 Ce s-a facut (smoke #1 fix batch, autonom, agenti Opus worktree-izolati)
 
-Totul e PUSHED. Daniel intra la smoke a-z de pe telefon. Ordinea:
-1. **Firebase console (Daniel-side, ~2-5 min)** — NU era facut (confirmat Daniel "nu am inca creaza cont pe andura"): provider **Email link (passwordless) ON** + **andura.app la authorized domains** (`📥_inbox/auth-fixes-2026-05-26/DANIEL_AUTH_SETUP.md`). Fara asta butonul "Creeaza cont" apare (e in cod, `Auth.tsx` mode signup) dar `sendMagicLink` da eroare. Optional: Google OAuth provider + `VITE_GOOGLE_OAUTH_CLIENT_ID` (`cycle3/OAUTH-ENABLEMENT-CHECKLIST.md`).
-2. **Smoke a-z live** — telefon + Firebase real + judecata UX CEO. Checkpoint-uri: "Creeaza cont" apare + merge; selectie workout (vine din 657, nume RO); substitutie (aparat ocupat → alternativa numita); nutritie (kcal forward + se misca cu antrenamentele).
-3. **Beta GO** — decizia ta.
+Daniel smoke live #1 → 13 findings. Triaj pe codebase (root-cause grep, nu ghicit). 5 agenti Opus + age-18 manager-side. Integrat serial pe main (cherry-pick + full-suite verify dupa fiecare val), zero push.
 
-**Decizii UX in coada (pentru tine, NU blocheaza):**
-- Coliziune nume curat `Flat Barbell Bench` / `Flat DB Press` = ambele "Impins din piept" (diferă prin linia echipament) — vrei nume distincte? Sunt nume curate (SoT-ul tau), nu le-am atins.
-- **WP-7 lazy-load** amanat constient (warning build "chunk >600kB" benign; libul ~35KB gzip; `import()` dinamic ar propaga async prin sessionBuilder tocmai stabilizat). Revine ca optimizare post-smoke daca vrei.
+**Fixate (12 commits):**
+1. **Bundle** `fedae558` — size-limit RED (main 156>135KB): split librarie 657 in chunk static `data-library` → main 129.53KB. WP-7 lazy ramane amanat constient.
+2. **CSP FCM** `d8522955` — push notif pica (connect-src fara `firebaseinstallations`/`fcmregistrations`) → adaugate. Merge dupa deploy.
+3. **#4 Antrenor** `fae21c2c` — Streak/oboseala/readiness mutate SUS (erau jos), per mockup.
+4. **#3 auth persist** `30c0870f` — stay-logged-in: `isAuthenticated` se sincroniza doar in ProtectedRoute, Splash(/) in afara gate → re-login fortat. Fix: reactBoot punte sesiunea restaurata la boot.
+5. **#2 auth labels** `2eddac5b` — Splash "Incepe"→"Log In", "am deja cont"→"Creaza Cont".
+6. **#6 i18n** `12ff7f30` — TODO_EN leak: getCurrentLocale matcha bundle `en` pe browser EN. Fix: auto-detect doar `ro`. NU atins en.json.
+7. **#7+#8 rest** `6674673e` — RestOverlay era inset-0 light full-screen → nu matcha mockup + acoperea X/... . Rescris card dark bottom non-modal → matchează + butoane clickabile.
+8. **#13 safety + #5 auto-phase** `79d07979` — `clampKcalToHealthyFloor` (BMI≤18.5+deficit→zero deficit spre rau) + `detectAutoPhaseFromBodyComp` (gras→CUT). targetWeight era doar state local; gaura reala = deficit spre subponderal.
+9. **#12a + #12b bf** `4bfe36e8` — guard plauzibilitate US-Navy (gat 22cm imposibil → fallback Deurenberg 7.4%) + BodyFatStrip nou in Progres.
+10. **eslint** `b77dda89` — ignore `.claude/` (worktrees poluau lint peste --max-warnings=9999, blocau commit main-tree).
+11. **#12c 18+** `a803f7c4` (+D083) — min varsta onboarding 16→18 (onboardingStore + Onboarding + SettingsProfile + teste).
+
+**NU-bug-uri (triate, lasate):**
+- **#9** "Sesiune normala (85/100)" = design F4 readiness mockup-faithful (ReadinessVerdict.tsx, mockup L786 + asertat de test). Daca vrei "(NN/100)" scos = UX call al tau.
+- **#10** calendar Istoric = light deja paritate exacta mockup; "plain" = dark mode washed-out (heat tokens slabe) → pas de design, NU paritate.
+- **#1b** 404 deep-link = inerent GH Pages (recover via /?/ redirect + navigateFallback post-SW; setup spa-github-pages corect).
+- Erori consola: "async listener message channel" = extensie browser (nu noi); "install banner preventDefault" = intentionat (deferred custom install).
+
+**Disciplina + capcane:** agenti worktree-izolati = executori; manager (chat) = cherry-pick autoritativ + full-suite verify, zero git-ops paralel cu agentii. **Capcana stale-base:** worktree-urile se nasc pe baza veche (commits locale nepushate D031) → agentii sync via `git reset --hard <sha>` (BLOCAT sandbox) → folosit `merge --ff-only`/`checkout -B`. **`SendMessage` indisponibil** in toolset → re-dispatch in loc de resume agent stopat. **eslint `.claude/` pollution** rezolvat (altfel orice commit main-tree pica pe --max-warnings).
+
+---
+
+## §1 NEXT P1 — gate-urile Daniel (de aici continui)
+
+1. **Push** (D031, trigger verbal "push") — 13 commits local ahead → atunci CI verde (size-limit era singurul rosu) + deploy live ~3min.
+2. **Firebase console** (~2-5 min, Daniel-side) — Email link (passwordless) **ON** + `andura.app` la authorized domains (`📥_inbox/auth-fixes-2026-05-26/DANIEL_AUTH_SETUP.md`). Fara asta login-ul tot nu merge (labels fixate, dar sendMagicLink da eroare). Optional: Google OAuth + `VITE_GOOGLE_OAUTH_CLIENT_ID`.
+3. **Smoke #2** — telefon: Log In/Creaza Cont + stay-logged-in + nutritie AUTO→CUT la gras + bf% in Progres + rest dark + 18+ + push notif.
+4. **Beta GO** — decizia ta.
+
+**Decizii UX / design in coada (pt tine, NU blocheaza):**
+- **Paleta noua** — ai bagat `04-architecture/mockups/Andura-luxury-v2.html` (dark+auriu sampanie) + `Andura-brain-coach v2.html` (dark+mov AI). Ambele re-skin coerent + WCAG-aware peste structura Clasic. Pas de design DUPA functional, cu paleta aleasa de tine (inclin brain-coach mov pt "cea mai desteapta app"; luxury auriu pt premium). Rezolva si #10 (dark calendar) + "culori mai dragute".
+- **#9 readout F4** — mockup-faithful dar l-ai gasit ciudat la smoke; vrei parenteza "(85/100)" scoasa/reformulata?
+- **Marius cold-start CUT** (flag agent nutritie) — user slab-dar-muscular (BMI≥25 din muschi, fara cantariri) ia AUTO→CUT pana logheaza greutati (apoi weight-trend overrides). Vrei RECOMP/maintain default la cold-start pt atleti?
 
 ---
 
 ## §2 Mid-flight la wrap
-NIMIC mid-flight. Toti agentii au aterizat, main verde + pushed, 0 agenti la wrap. Reziduuri: `.tmp_*` scratch + `.claude/worktrees/` (agenti) — gunoi gitignored, necommitat.
+NIMIC mid-flight. Toti agentii aterizati + integrati, main verde, 0 agenti activi. Reziduuri main root de curatat (rm blocat sandbox): PNG-uri Playwright (`istoric-*.png`, `antrenor-fixed.png` de la agentul layout) + `.tmp_*` + `.claude/worktrees/` (gunoi untracked).
 
 ---
 
 ## §3 Cross-refs
-- [[DECISIONS.md §D081]] moat real + [[DECISIONS.md §D082]] nutritie forward-model
-- [[ANDURA_PRIMER.md §5]] — milestone 2026-05-27
-- `📥_inbox/wiring-audit-2026-05-26/P3-MOAT-DESIGN.md` — spec-ul moat WP-1..WP-8
-- `📥_inbox/wiring-audit-2026-05-26/NUTRITION-MATH-FLAGS.md` — calibrare Bayesian/Kalman (baza schimbata azi, vezi nota header)
-- `📥_inbox/auth-fixes-2026-05-26/DANIEL_AUTH_SETUP.md` — pasii console email-link
-- main HEAD post-push (vezi git log) — 4963 verde, PUSHED
+- [[DECISIONS.md §D083]] 18+ adults-only + [[DECISIONS.md §D081]] moat + [[DECISIONS.md §D082]] nutritie forward
+- [[ANDURA_PRIMER.md §5]] — milestone smoke-1-fix-batch 2026-05-27
+- `📥_inbox/auth-fixes-2026-05-26/DANIEL_AUTH_SETUP.md` — Firebase console email-link
+- `04-architecture/mockups/Andura-luxury-v2.html` + `Andura-brain-coach v2.html` — palete noi candidate (design pass)
+- main HEAD (git log) — 13 ahead origin, smoke-1 fixes nepushate
 
 ---
 
-🦫 **Moat P3-wiring + nutritie redesign LANDED & PUSHED. Moatul e REAL (pipeline real + gate care musca + audit independent), creierul cablat (set-count/weakness/substitutie), nutritia pe model forward determinist + cantar calibrator lent. 4963 verde, build OK, pe origin. Ramane = smoke-ul Daniel (Firebase console email-link → smoke a-z telefon → Beta GO).**
+🦫 **Smoke #1 → 13 findings → fixate + verzi pe main (5026 teste, 13 commits NU pushed). Ramane: push + Firebase console email-link + smoke #2 + palette pick. CEO flags deschise: #9 readout UX + Marius cold-start CUT. Design pass (palete v2 dark) dupa functional. Junk de curatat main root (rm sandbox-blocked).**
