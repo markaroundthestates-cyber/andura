@@ -8,8 +8,8 @@
 // ANCHORS on the known engine names that carry PR history, so existing users
 // keep continuity (the 18/21 names that exist verbatim as library keys).
 
-import { contextSelectionEnabled } from './calibration.js';
 import { EXERCISE_METADATA, getExerciseMetadata } from './exerciseLibrary.js';
+import { BIG11_RO_TO_EN_MAP } from './periodization/constants.js';
 
 // Session type -> Big-11 canonical RO muscle groups (library muscle_target_primary).
 // Replaces the hardcoded EXERCISES_BY_TYPE name table. Primary group(s) first =
@@ -44,6 +44,46 @@ const ANCHOR_NAMES = new Set([
 const SESSION_SIZE = 6;
 // Max T1 compound anchors per session (1-2 compound on the primary group).
 const MAX_T1 = 2;
+
+// Per-exercise set-count fallback when no engine volume signal is supplied
+// (keeps pure-function callers without periodization context stable).
+const DEFAULT_SETS = 3;
+// Per-exercise sanity clamp on the engine-derived set count. Below 2 = not a
+// real working set; above 5 = junk volume / fatigue per Israetel per-exercise.
+const MIN_SETS = 2;
+const MAX_SETS = 5;
+// Typical weekly frequency a muscle group is trained — the periodization
+// volume target is sets/WEEK, but buildSession plans ONE session, so the
+// weekly target is divided across the sessions that hit the group.
+const WEEKLY_FREQUENCY = 2;
+
+/**
+ * Per-exercise set count derived from the engine's weekly volume target.
+ *
+ * Periodization emits `volume_target_pct` = sets/WEEK per Big-11 group (EN
+ * keyed, varies by mesocycle phase — DELOAD halves it). This converts a
+ * group's weekly target into a per-exercise count for ONE session: weekly
+ * target / weekly frequency / exercises hitting the group this session,
+ * clamped [MIN_SETS, MAX_SETS]. Returns DEFAULT_SETS when no target is known
+ * for the group (empty map / unmapped group) so callers without periodization
+ * context keep the stable default.
+ *
+ * @param {string} big11RoGroup - exercise muscle_target_primary (Big-11 RO)
+ * @param {Record<string, number>|null|undefined} volumeTargets - Big-11 EN -> sets/week
+ * @param {number} exercisesInGroup - how many session exercises hit this group
+ * @returns {number}
+ */
+function setsForGroup(big11RoGroup, volumeTargets, exercisesInGroup) {
+  if (!volumeTargets || typeof volumeTargets !== 'object') return DEFAULT_SETS;
+  const enKey = BIG11_RO_TO_EN_MAP[big11RoGroup] ?? big11RoGroup;
+  const weekly = volumeTargets[enKey];
+  if (typeof weekly !== 'number' || !Number.isFinite(weekly) || weekly <= 0) {
+    return DEFAULT_SETS;
+  }
+  const perExercise = weekly / WEEKLY_FREQUENCY / Math.max(1, exercisesInGroup);
+  const rounded = Math.round(perExercise);
+  return Math.min(MAX_SETS, Math.max(MIN_SETS, rounded));
+}
 
 /**
  * Deterministic 32-bit hash of a string -> non-negative integer.
@@ -140,8 +180,10 @@ function seededKey(name, seed) {
  * remaining groups. Selection is deterministic (seeded on ctx.seed) and anchors
  * on PR-carrying / known names for continuity.
  *
- * When contextSelectionEnabled flag is true and ctx.weakGroups is non-empty,
- * applies weakness-prioritized ordering (weak-group exercises to positions 1-2).
+ * When ctx.weakGroups is non-empty (Specialization engine target), the weak
+ * group is filled FIRST (more exercises = more volume) and its exercises are
+ * reordered to positions 1-2. Per-exercise set counts come from
+ * ctx.volumeTargets (periodization sets/week), falling back to DEFAULT_SETS.
  *
  * @param {string} sessionType - 'PUSH'|'PULL'|'LEGS'|'UMERI_BRATE'|'UPPER_PICIOARE'|'FULL_UPPER'
  * @param {{
@@ -150,6 +192,7 @@ function seededKey(name, seed) {
  *   profileTier?: string|null,
  *   prNames?: string[],
  *   seed?: string,
+ *   volumeTargets?: Record<string, number>,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  */
@@ -168,6 +211,16 @@ export function buildSession(sessionType, ctx) {
     pool: poolForGroup(g, available, maxTier, prNames, seed),
   }));
 
+  // Weakness bias: when the Specialization engine flags a weak Big-11 group
+  // that this session trains, fill that group FIRST in the round-robin so it
+  // wins the limited SESSION_SIZE slots = MORE exercises (more volume) on the
+  // weak group. weakGroups arrive as Big-11 RO (specialization target), the
+  // same vocabulary as the pool group keys (WP-3 bridge) so they match directly.
+  const weakSet = new Set(ctx?.weakGroups ?? []);
+  if (weakSet.size > 0) {
+    pools.sort((a, b) => (weakSet.has(b.group) ? 1 : 0) - (weakSet.has(a.group) ? 1 : 0));
+  }
+
   const chosen = [];
   const chosenNames = new Set();
 
@@ -178,7 +231,7 @@ export function buildSession(sessionType, ctx) {
     if (t1Count >= MAX_T1) break;
     const t1 = pool.find((e) => e.meta.tier === 1 && !chosenNames.has(e.name));
     if (t1) {
-      chosen.push({ name: t1.name, sets: 3 });
+      chosen.push({ name: t1.name, sets: DEFAULT_SETS });
       chosenNames.add(t1.name);
       t1Count++;
     }
@@ -193,16 +246,33 @@ export function buildSession(sessionType, ctx) {
       if (chosen.length >= SESSION_SIZE) break;
       const next = pool.find((e) => !chosenNames.has(e.name));
       if (next) {
-        chosen.push({ name: next.name, sets: 3 });
+        chosen.push({ name: next.name, sets: DEFAULT_SETS });
         chosenNames.add(next.name);
         progressed = true;
       }
     }
   }
 
-  let exercises = chosen;
+  // Set-count from the periodization volume signal (sets/week per group),
+  // distributed across the exercises hitting each group this session. Without
+  // a volumeTargets signal every exercise keeps DEFAULT_SETS (no-op).
+  const groupOf = (name) => getExerciseMetadata(name).muscle_target_primary;
+  const perGroupCount = chosen.reduce((acc, e) => {
+    const g = groupOf(e.name);
+    acc[g] = (acc[g] || 0) + 1;
+    return acc;
+  }, /** @type {Record<string, number>} */ ({}));
+  let exercises = chosen.map((e) => {
+    const g = groupOf(e.name);
+    return { name: e.name, sets: setsForGroup(g, ctx?.volumeTargets, perGroupCount[g]) };
+  });
 
-  if (contextSelectionEnabled && (ctx?.weakGroups?.length ?? 0) > 0) {
+  // Weakness-prioritized ordering is LIVE whenever the pipeline supplies a weak
+  // group (the Specialization engine only emits one when its 4-gate eligibility
+  // passes, so presence of weakGroups IS the gate — no separate global flag is
+  // needed). Pairs with the pool-bias above: the weak group gets BOTH more
+  // volume (extra slots) and front-of-session ordering.
+  if ((ctx?.weakGroups?.length ?? 0) > 0) {
     exercises = prioritizeWeakGroups(exercises, ctx?.weakGroups ?? []);
   }
 

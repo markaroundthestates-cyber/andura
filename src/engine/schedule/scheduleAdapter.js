@@ -482,6 +482,9 @@ export async function getDailyWorkout(userState, now = new Date()) {
     profileTier: userState?.profileTier ?? null,
     prNames: Array.isArray(userState?.prNames) ? userState.prNames : [],
     seed,
+    // Periodization volume signal (sets/week per Big-11 group, varies by
+    // mesocycle phase) — drives per-exercise set counts in buildSession.
+    volumeTargets: blueprints.periodization?.volume_target_pct ?? null,
   };
 
   const session = buildSession(sessionType, sessionCtx);

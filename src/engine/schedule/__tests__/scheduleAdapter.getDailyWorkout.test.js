@@ -87,6 +87,25 @@ describe('scheduleAdapter — getDailyWorkout pipeline consumer', () => {
     expect(plan.warmup === null || typeof plan.warmup === 'object').toBe(true);
   });
 
+  it('set-count is periodization-driven end-to-end (DELOAD week < LOAD week)', async () => {
+    // LIVE-PROOF the full pipeline feeds periodization volume_target_pct into
+    // sessionBuilder set counts. weeksElapsed 0 -> LOAD; weeksElapsed 3 ->
+    // mesocycle week 4 = DELOAD (-45% volume). Monday is a PUSH day whose
+    // chest/shoulder weekly targets sit above the per-exercise floor, so the
+    // -45% deload cut is observable (PULL groups can floor-clamp in both
+    // phases, masking the delta — chest/shoulders do not). Same day = same
+    // selection, so only the engine-derived sets move.
+    const sumSets = (plan) => plan.exercises.reduce((a, e) => a + e.sets, 0);
+    const load = await getDailyWorkout(
+      buildUserState({ meta: { weeksElapsed: 0 } }), MONDAY_2026_05_18);
+    const deload = await getDailyWorkout(
+      buildUserState({ meta: { weeksElapsed: 3 } }), MONDAY_2026_05_18);
+    expect(load).not.toBeNull();
+    expect(deload).not.toBeNull();
+    expect(deload.deloadState !== undefined).toBe(true);
+    expect(sumSets(deload)).toBeLessThan(sumSets(load));
+  });
+
   it('delegates exercise selection to sessionBuilder (array shape)', async () => {
     const plan = await getDailyWorkout(buildUserState(), TUESDAY_2026_05_19);
     expect(plan).not.toBeNull();
