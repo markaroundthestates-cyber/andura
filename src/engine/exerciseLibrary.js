@@ -64,7 +64,7 @@ export const EXERCISE_METADATA = {
   // AUDIT 2026-05-02 (BATCH_05): OK conservative — DB compound chest
   'Flat DB Press':           { nameRo: 'Impins plat cu gantere', nameEn: 'Flat DB Press', equipment_type: 'dumbbell', equipment_alternatives: ['Incline DB Press', 'Pec Deck / Cable Fly'], force_demand: 'high', tier: 1, muscle_target_primary: 'piept', muscle_target_secondary: ['triceps'] },
   // AUDIT 2026-05-02 (BATCH_05): OK conservative — barbell compound chest
-  'Flat Barbell Bench':      { nameRo: 'plat cu bara Impins din piept', nameEn: 'Flat Barbell Bench', equipment_type: 'barbell',  equipment_alternatives: ['Flat DB Press'],             force_demand: 'high',   tier: 1, muscle_target_primary: 'piept',     muscle_target_secondary: ['umeri', 'triceps'] },
+  'Flat Barbell Bench':      { nameRo: 'Impins din piept plat cu bara', nameEn: 'Flat Barbell Bench', equipment_type: 'barbell',  equipment_alternatives: ['Flat DB Press'],             force_demand: 'high',   tier: 1, muscle_target_primary: 'piept',     muscle_target_secondary: ['umeri', 'triceps'] },
   // AUDIT 2026-05-02 (BATCH_05): OK conservative — cable compound back primary
   'Lat Pulldown':            { nameRo: 'Lat Pulldown', nameEn: 'Lat Pulldown', equipment_type: 'cable',    equipment_alternatives: ['Cable Row'],                  force_demand: 'high',   tier: 1, muscle_target_primary: 'spate',     muscle_target_secondary: ['biceps'] },
   // AUDIT 2026-05-02 (BATCH_05): OK conservative — cable compound back primary
@@ -121,7 +121,7 @@ export const EXERCISE_METADATA = {
 
   // ── Phase A — Tier 1 Compound Bench Press Barbell Variants (8 NEW) ────────
   // AUDIT 2026-05-13h: NEW Tier 1 compound barbell — primary bench press alt (Flat Barbell Bench existing preserved invariant)
-  'Incline Barbell Bench':   { nameRo: 'inclinat cu bara Impins din piept', nameEn: 'Incline Barbell Bench', equipment_type: 'barbell',  equipment_alternatives: ['Incline DB Press', 'Smith Incline Bench'],   force_demand: 'high', tier: 1, muscle_target_primary: 'piept', muscle_target_secondary: ['umeri', 'triceps'], fallback_cascade: [
+  'Incline Barbell Bench':   { nameRo: 'Impins din piept inclinat cu bara', nameEn: 'Incline Barbell Bench', equipment_type: 'barbell',  equipment_alternatives: ['Incline DB Press', 'Smith Incline Bench'],   force_demand: 'high', tier: 1, muscle_target_primary: 'piept', muscle_target_secondary: ['umeri', 'triceps'], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Smith Incline Bench' },
     { type: 'assisted_variant', exercise_id: 'Incline Chest Press Machine' },
     { type: 'muscle_group_compose', exercise_ids: ['Incline DB Press', 'Incline DB Fly'] },
@@ -531,7 +531,7 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Bench Dip Feet-on-Floor' },
   ] },
   // AUDIT 2026-05-13h: NEW Tier 1 bodyweight — pure bodyweight dip alt naming convention
-  'Dip Bodyweight':          { nameRo: 'Flotari la paralele', nameEn: 'Dip Bodyweight', equipment_type: 'bodyweight', equipment_alternatives: ['Dip', 'Bench Dip'],                          force_demand: 'high', tier: 1, muscle_target_primary: 'piept', muscle_target_secondary: ['triceps'], fallback_cascade: [
+  'Dip Bodyweight':          { nameRo: 'Flotari la paralele fara greutate', nameEn: 'Dip Bodyweight', equipment_type: 'bodyweight', equipment_alternatives: ['Dip', 'Bench Dip'],                          force_demand: 'high', tier: 1, muscle_target_primary: 'piept', muscle_target_secondary: ['triceps'], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Assisted Dip Machine' },
     { type: 'assisted_variant', exercise_id: 'Band-Assisted Dip' },
     { type: 'muscle_group_compose', exercise_ids: ['Decline DB Press', 'Pushdown'] },
@@ -1253,7 +1253,7 @@ export const EXERCISE_METADATA = {
   ] },
 
   // ── Phase H — Tier 2-3 Face Pull + Pullover + Shrug Accessory Variants (15 NEW) ────────
-  'Face Pull Bench':               { nameRo: 'Face Pull Impins din piept', nameEn: 'Face Pull Bench', equipment_type: 'cable', equipment_alternatives: ['Face Pulls', 'Rear Delt Cable'],           force_demand: 'medium', tier: 2, muscle_target_primary: 'umeri', muscle_target_secondary: ['spate'], fallback_cascade: [
+  'Face Pull Bench':               { nameRo: 'Face Pull pe banca', nameEn: 'Face Pull Bench', equipment_type: 'cable', equipment_alternatives: ['Face Pulls', 'Rear Delt Cable'],           force_demand: 'medium', tier: 2, muscle_target_primary: 'umeri', muscle_target_secondary: ['spate'], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Rear Delt Fly' },
     { type: 'assisted_variant', exercise_id: 'Face Pulls' },
     { type: 'muscle_group_compose', exercise_ids: ['Face Pulls', 'Rear Delt Cable'] },
@@ -1700,7 +1700,7 @@ export const EXERCISE_METADATA = {
     { type: 'bodyweight', exercise_id: 'Pike Push-up' },
     { type: 'light_variant', exercise_id: 'Wall Pike Push-up' },
   ] },
-  'Hammer Strength Lateral':       { nameRo: 'Ridicari laterale la aparat', nameEn: 'Hammer Strength Lateral', equipment_type: 'machine', equipment_alternatives: ['Machine Lateral Raise', 'DB Lateral Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'umeri', muscle_target_secondary: [], fallback_cascade: [
+  'Hammer Strength Lateral':       { nameRo: 'Ridicari laterale Hammer Strength', nameEn: 'Hammer Strength Lateral', equipment_type: 'machine', equipment_alternatives: ['Machine Lateral Raise', 'DB Lateral Raise'], force_demand: 'medium', tier: 2, muscle_target_primary: 'umeri', muscle_target_secondary: [], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Machine Lateral Raise' },
     { type: 'assisted_variant', exercise_id: 'Cable Lateral Raise' },
     { type: 'muscle_group_compose', exercise_ids: ['DB Lateral Raise', 'Cable Lateral Raise'] },
@@ -2088,7 +2088,7 @@ export const EXERCISE_METADATA = {
     { type: 'bodyweight', exercise_id: 'Pike Push-up' },
     { type: 'light_variant', exercise_id: 'Wall Pike Push-up' },
   ] },
-  'Y Raise Prone':                 { nameRo: 'Ridicari in Y la pronatie', nameEn: 'Y Raise Prone', equipment_type: 'dumbbell', equipment_alternatives: ['Y Raise', 'Y-T-W Raise'],                force_demand: 'low', tier: 3, muscle_target_primary: 'umeri', muscle_target_secondary: ['spate'], fallback_cascade: [
+  'Y Raise Prone':                 { nameRo: 'Ridicari in Y la pronatie cu gantere', nameEn: 'Y Raise Prone', equipment_type: 'dumbbell', equipment_alternatives: ['Y Raise', 'Y-T-W Raise'],                force_demand: 'low', tier: 3, muscle_target_primary: 'umeri', muscle_target_secondary: ['spate'], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Reverse Pec Deck' },
     { type: 'assisted_variant', exercise_id: 'Y Raise' },
     { type: 'muscle_group_compose', exercise_ids: ['Face Pull', 'Band Pull-Apart'] },
@@ -2517,7 +2517,7 @@ export const EXERCISE_METADATA = {
     { type: 'bodyweight', exercise_id: 'Hyperextension Bodyweight' },
     { type: 'light_variant', exercise_id: 'Wall Hip Hinge' },
   ] },
-  'Reverse Hyper':                 { nameRo: 'Extensii lombare inverse', nameEn: 'Reverse Hyper', equipment_type: 'machine', equipment_alternatives: ['Hyperextension Machine', 'Glute-Ham Raise'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-hamstrings', muscle_target_secondary: ['spate'], fallback_cascade: [
+  'Reverse Hyper':                 { nameRo: 'Extensii lombare inverse la aparat', nameEn: 'Reverse Hyper', equipment_type: 'machine', equipment_alternatives: ['Hyperextension Machine', 'Glute-Ham Raise'], force_demand: 'high', tier: 1, muscle_target_primary: 'picioare-hamstrings', muscle_target_secondary: ['spate'], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Hyperextension Machine' },
     { type: 'assisted_variant', exercise_id: 'Glute-Ham Raise' },
     { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Bridge Hold'] },
@@ -2709,7 +2709,7 @@ export const EXERCISE_METADATA = {
     { type: 'bodyweight', exercise_id: 'Glute Bridge Bodyweight' },
     { type: 'light_variant', exercise_id: 'Single-Leg Glute Bridge' },
   ] },
-  'Single-Leg Hip Thrust':         { nameRo: 'pe un picior Hip Thrust', nameEn: 'Single-Leg Hip Thrust', equipment_type: 'barbell', equipment_alternatives: ['Hip Thrust', 'DB Hip Thrust'], force_demand: 'medium', tier: 2, muscle_target_primary: 'fese', muscle_target_secondary: ['picioare-hamstrings'], fallback_cascade: [
+  'Single-Leg Hip Thrust':         { nameRo: 'Hip Thrust pe un picior', nameEn: 'Single-Leg Hip Thrust', equipment_type: 'barbell', equipment_alternatives: ['Hip Thrust', 'DB Hip Thrust'], force_demand: 'medium', tier: 2, muscle_target_primary: 'fese', muscle_target_secondary: ['picioare-hamstrings'], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Smith Hip Thrust' },
     { type: 'assisted_variant', exercise_id: 'DB Hip Thrust' },
     { type: 'muscle_group_compose', exercise_ids: ['Leg Curl Single-Leg', 'Glute Bridge Bodyweight Single-Leg'] },
@@ -2723,7 +2723,7 @@ export const EXERCISE_METADATA = {
     { type: 'bodyweight', exercise_id: 'Glute Bridge Bodyweight' },
     { type: 'light_variant', exercise_id: 'Single-Leg Glute Bridge' },
   ] },
-  'Reverse Hyper Bodyweight':      { nameRo: 'Extensii lombare inverse', nameEn: 'Reverse Hyper Bodyweight', equipment_type: 'bodyweight', equipment_alternatives: ['Reverse Hyper', 'Hyperextension Bodyweight'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare-hamstrings', muscle_target_secondary: [], fallback_cascade: [
+  'Reverse Hyper Bodyweight':      { nameRo: 'Extensii lombare inverse fara greutate', nameEn: 'Reverse Hyper Bodyweight', equipment_type: 'bodyweight', equipment_alternatives: ['Reverse Hyper', 'Hyperextension Bodyweight'], force_demand: 'medium', tier: 2, muscle_target_primary: 'picioare-hamstrings', muscle_target_secondary: [], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Reverse Hyper' },
     { type: 'assisted_variant', exercise_id: 'Hyperextension Machine' },
     { type: 'muscle_group_compose', exercise_ids: ['Leg Curl', 'Glute Bridge'] },
@@ -3040,7 +3040,7 @@ export const EXERCISE_METADATA = {
     { type: 'bodyweight', exercise_id: 'Single-Leg Glute Bridge' },
     { type: 'light_variant', exercise_id: 'Glute Bridge Bodyweight Single-Leg' },
   ] },
-  'Glute Bridge Bodyweight Single-Leg': { nameRo: 'Punte de fese pe un picior', nameEn: 'Glute Bridge Bodyweight Single-Leg', equipment_type: 'bodyweight', equipment_alternatives: ['Single-Leg Glute Bridge', 'Glute Bridge Bodyweight'], force_demand: 'low', tier: 3, muscle_target_primary: 'fese', muscle_target_secondary: ['picioare-hamstrings'], fallback_cascade: [
+  'Glute Bridge Bodyweight Single-Leg': { nameRo: 'Punte de fese un picior fara greutate', nameEn: 'Glute Bridge Bodyweight Single-Leg', equipment_type: 'bodyweight', equipment_alternatives: ['Single-Leg Glute Bridge', 'Glute Bridge Bodyweight'], force_demand: 'low', tier: 3, muscle_target_primary: 'fese', muscle_target_secondary: ['picioare-hamstrings'], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Smith Hip Thrust' },
     { type: 'assisted_variant', exercise_id: 'DB Glute Bridge' },
     { type: 'muscle_group_compose', exercise_ids: ['Glute Bridge Bodyweight', 'Donkey Kick'] },
@@ -3084,7 +3084,7 @@ export const EXERCISE_METADATA = {
     { type: 'bodyweight', exercise_id: 'Glute Bridge Bodyweight' },
     { type: 'light_variant', exercise_id: 'Single-Leg Glute Bridge' },
   ] },
-  'Marching Glute Bridge':         { nameRo: 'Punte de fese cu pasire', nameEn: 'Marching Glute Bridge', equipment_type: 'bodyweight', equipment_alternatives: ['Glute Bridge March', 'Glute Bridge Bodyweight'], force_demand: 'low', tier: 3, muscle_target_primary: 'fese', muscle_target_secondary: ['picioare-hamstrings'], fallback_cascade: [
+  'Marching Glute Bridge':         { nameRo: 'Punte de fese cu pasire alternativa', nameEn: 'Marching Glute Bridge', equipment_type: 'bodyweight', equipment_alternatives: ['Glute Bridge March', 'Glute Bridge Bodyweight'], force_demand: 'low', tier: 3, muscle_target_primary: 'fese', muscle_target_secondary: ['picioare-hamstrings'], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Smith Hip Thrust' },
     { type: 'assisted_variant', exercise_id: 'DB Glute Bridge' },
     { type: 'muscle_group_compose', exercise_ids: ['Glute Bridge Bodyweight', 'Single-Leg Glute Bridge'] },
@@ -3226,7 +3226,7 @@ export const EXERCISE_METADATA = {
     { type: 'bodyweight', exercise_id: 'Single-Leg Calf Raise Bodyweight' },
     { type: 'light_variant', exercise_id: 'Stair Calf Raise' },
   ] },
-  'Bodyweight Donkey Calf Raise':  { nameRo: 'Ridicari pe varfuri donkey', nameEn: 'Bodyweight Donkey Calf Raise', equipment_type: 'bodyweight', equipment_alternatives: ['Donkey Calf Raise', 'Calf Raise Bodyweight'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
+  'Bodyweight Donkey Calf Raise':  { nameRo: 'Ridicari pe varfuri donkey fara greutate', nameEn: 'Bodyweight Donkey Calf Raise', equipment_type: 'bodyweight', equipment_alternatives: ['Donkey Calf Raise', 'Calf Raise Bodyweight'], force_demand: 'medium', tier: 2, muscle_target_primary: 'gambe', muscle_target_secondary: [], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Donkey Calf Raise' },
     { type: 'assisted_variant', exercise_id: 'Smith Donkey Calf Raise' },
     { type: 'muscle_group_compose', exercise_ids: ['Calf Raise Bodyweight', 'Tibialis Raise'] },
@@ -3687,7 +3687,7 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Inverted Row Underhand' },
   ] },
   // AUDIT 2026-05-14: NEW Tier 1 compound bodyweight — neutral grip parallel hammer-style brachialis + brachioradialis
-  'Chin-Up Neutral Grip':         { nameRo: 'Tractiuni priza neutra', nameEn: 'Chin-Up Neutral Grip', equipment_type: 'bodyweight', equipment_alternatives: ['Neutral-Grip Pull-up', 'Chin-Up Underhand Strict'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps', 'antebrate'], fallback_cascade: [
+  'Chin-Up Neutral Grip':         { nameRo: 'Chin-Up priza neutra', nameEn: 'Chin-Up Neutral Grip', equipment_type: 'bodyweight', equipment_alternatives: ['Neutral-Grip Pull-up', 'Chin-Up Underhand Strict'], force_demand: 'high', tier: 1, muscle_target_primary: 'spate', muscle_target_secondary: ['biceps', 'antebrate'], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Neutral-Grip Lat Pulldown' },
     { type: 'assisted_variant', exercise_id: 'Chin-Up Assisted Band' },
     { type: 'muscle_group_compose', exercise_ids: ['Lat Pulldown', 'Cable Row'] },
@@ -3907,7 +3907,7 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Bench Dip' },
   ] },
   // AUDIT 2026-05-14: NEW Tier 2 isolation DB — single-arm seated overhead unilateral long head
-  'DB Overhead Triceps Extension Single-Arm Seated': { nameRo: 'Extensii triceps peste cap un brat', nameEn: 'DB Overhead Triceps Extension Single-Arm Seated', equipment_type: 'dumbbell', equipment_alternatives: ['DB Overhead Triceps Extension Two-Hand', 'Overhead Triceps'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+  'DB Overhead Triceps Extension Single-Arm Seated': { nameRo: 'Extensii triceps peste cap un brat sezand', nameEn: 'DB Overhead Triceps Extension Single-Arm Seated', equipment_type: 'dumbbell', equipment_alternatives: ['DB Overhead Triceps Extension Two-Hand', 'Overhead Triceps'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
     { type: 'assisted_variant', exercise_id: 'DB Overhead Triceps Extension Two-Hand' },
     { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'DB Kickback Standing'] },
@@ -3915,7 +3915,7 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Bench Dip' },
   ] },
   // AUDIT 2026-05-14: NEW Tier 2 isolation DB — single-arm standing overhead unilateral long head
-  'DB Overhead Triceps Extension Single-Arm Standing': { nameRo: 'Extensii triceps peste cap un brat', nameEn: 'DB Overhead Triceps Extension Single-Arm Standing', equipment_type: 'dumbbell', equipment_alternatives: ['DB Overhead Triceps Extension Single-Arm Seated', 'Overhead Triceps'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+  'DB Overhead Triceps Extension Single-Arm Standing': { nameRo: 'Extensii triceps peste cap in picioare', nameEn: 'DB Overhead Triceps Extension Single-Arm Standing', equipment_type: 'dumbbell', equipment_alternatives: ['DB Overhead Triceps Extension Single-Arm Seated', 'Overhead Triceps'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
     { type: 'assisted_variant', exercise_id: 'DB Overhead Triceps Extension Single-Arm Seated' },
     { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'DB Kickback Standing'] },
@@ -3963,7 +3963,7 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Bench Dip' },
   ] },
   // AUDIT 2026-05-14: NEW Tier 2 isolation DB — lying cross-body single-arm peak triceps
-  'DB Triceps Extension Lying Cross-Body Single-Arm': { nameRo: 'Extensii triceps culcat incrucisat', nameEn: 'DB Triceps Extension Lying Cross-Body Single-Arm', equipment_type: 'dumbbell', equipment_alternatives: ['DB Lying Triceps Extension Cross-Body', 'DB Lying Triceps Extension'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+  'DB Triceps Extension Lying Cross-Body Single-Arm': { nameRo: 'Extensii triceps culcat incrucisat un brat', nameEn: 'DB Triceps Extension Lying Cross-Body Single-Arm', equipment_type: 'dumbbell', equipment_alternatives: ['DB Lying Triceps Extension Cross-Body', 'DB Lying Triceps Extension'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Triceps Press Machine' },
     { type: 'assisted_variant', exercise_id: 'DB Lying Triceps Extension Cross-Body' },
     { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Cable Triceps Kickback Rope'] },
@@ -3995,7 +3995,7 @@ export const EXERCISE_METADATA = {
     { type: 'light_variant', exercise_id: 'Bench Dip Feet-on-Floor' },
   ] },
   // AUDIT 2026-05-14: NEW Tier 2 isolation cable — single-arm overhead extension cable unilateral long head
-  'Cable Single-Arm Overhead Triceps Extension': { nameRo: 'Extensii triceps peste cap un brat', nameEn: 'Cable Single-Arm Overhead Triceps Extension', equipment_type: 'cable', equipment_alternatives: ['Cable Overhead Triceps Extension Rope', 'DB Overhead Triceps Extension Single-Arm Seated'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
+  'Cable Single-Arm Overhead Triceps Extension': { nameRo: 'Extensii triceps peste cap la cablu', nameEn: 'Cable Single-Arm Overhead Triceps Extension', equipment_type: 'cable', equipment_alternatives: ['Cable Overhead Triceps Extension Rope', 'DB Overhead Triceps Extension Single-Arm Seated'], force_demand: 'medium', tier: 2, muscle_target_primary: 'triceps', muscle_target_secondary: [], fallback_cascade: [
     { type: 'easier_machine', exercise_id: 'Overhead Triceps' },
     { type: 'assisted_variant', exercise_id: 'Cable Overhead Triceps Extension Rope' },
     { type: 'muscle_group_compose', exercise_ids: ['Pushdown', 'Cable Triceps Kickback Rope'] },
