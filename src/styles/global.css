@@ -214,6 +214,17 @@
     --heat-recovery: #3a3322;         /* recovery tier — muted champagne-brown */
     --heat-recovery-border: #6e5e3c;  /* recovery border → 3.23:1 vs paper ✅ */
     --rating-usor: #6a9d72;           /* 90-day strip categorical green — lighter than heat-usor */
+
+    /* CoachTodayCard warm-accent tokens (var(--coach-*) in CoachTodayCard.tsx).
+       Undefined on :root + [data-theme="dark"] (cream fallback shows on mov =
+       pre-existing). Defined here in-palette so the cream hex fallbacks don't
+       sit on the champagne/noir surface once dark: fires for this palette.
+       AA verified vs --paper-2 #16161a: lora 9.4:1, meta 5.03:1, lagging
+       10.06:1, override 6.6:1. */
+    --coach-lora: #d4b87a;            /* italic quote — warm champagne */
+    --coach-meta: #8a877f;            /* sub-meta (duration/count) — silver-2 family */
+    --coach-lagging: #e0bd75;         /* secondary weakness line — brighter champagne */
+    --coach-override: #b09a6a;        /* "Vrei altceva azi?" CTA — muted gold hint */
   }
 
   /* Living Body — warm dark earth + gold (mockup andura-living-body.html :root).
@@ -266,6 +277,17 @@
     --heat-recovery: #3a3120;         /* recovery tier — muted gold-brown */
     --heat-recovery-border: #6e5e38;  /* recovery border → 3.22:1 vs paper ✅ */
     --rating-usor: #6a9d6e;           /* 90-day strip categorical green — lighter than heat-usor */
+
+    /* CoachTodayCard warm-accent tokens (var(--coach-*) in CoachTodayCard.tsx).
+       Undefined on :root + [data-theme="dark"] (cream fallback shows on mov =
+       pre-existing). Defined here in-palette so the cream hex fallbacks don't
+       sit on the warm-gold/earth surface once dark: fires for this palette.
+       AA verified vs --paper-2 #07090f: lora 8.94:1, meta 9.25:1, lagging
+       11.52:1, override 8.64:1. */
+    --coach-lora: #d4a574;            /* italic quote — warm gold (= brick accent) */
+    --coach-meta: #b8b0a0;            /* sub-meta (duration/count) — warm muted (= ink-2) */
+    --coach-lagging: #e6c074;         /* secondary weakness line — brighter amber */
+    --coach-override: #c0a878;        /* "Vrei altceva azi?" CTA — muted gold hint */
   }
 
   /* LOCK V1 D056 — focus-visible global outline WCAG SC 2.4.7 (DECISIONS.md §D056)
