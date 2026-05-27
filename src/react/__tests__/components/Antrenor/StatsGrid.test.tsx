@@ -1,5 +1,6 @@
-// §MED-CODE-23 — StatsGrid streak/zile plural via pluralRo helper.
-// Romanian paucal forms: 1 zi / 2-19 zile / 20+ de zile / 0 zile.
+// §MED-CODE-23 — StatsGrid streak unit label below big number.
+// Label = doar substantivul: "zi" la 1, "zile" altfel (numarul e separat,
+// deci fara prefix "de" — sub-label curat la orice streak).
 
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
@@ -28,19 +29,19 @@ describe('StatsGrid — Romanian streak/zile plural (pluralRo helper reuse)', ()
     expect(screen.getByTestId('stats-streak-label').textContent).toBe('zile');
   });
 
-  it('streak=20 → label "de zile" (boundary lower 20+ paucal)', () => {
+  it('streak=20 → label "zile" (no "de" prefix, number rendered separat)', () => {
     render(<StatsGrid streak={20} fatigue={null} readiness={null} />);
-    expect(screen.getByTestId('stats-streak-label').textContent).toBe('de zile');
+    expect(screen.getByTestId('stats-streak-label').textContent).toBe('zile');
   });
 
-  it('streak=100 → label "de zile" (20+ paucal)', () => {
+  it('streak=100 → label "zile" (no "de" prefix)', () => {
     render(<StatsGrid streak={100} fatigue={null} readiness={null} />);
-    expect(screen.getByTestId('stats-streak-label').textContent).toBe('de zile');
+    expect(screen.getByTestId('stats-streak-label').textContent).toBe('zile');
   });
 
-  it('streak=365 → label "de zile" (large 20+ paucal)', () => {
+  it('streak=365 → label "zile" (no "de" prefix)', () => {
     render(<StatsGrid streak={365} fatigue={null} readiness={null} />);
-    expect(screen.getByTestId('stats-streak-label').textContent).toBe('de zile');
+    expect(screen.getByTestId('stats-streak-label').textContent).toBe('zile');
   });
 
   it('streak=0 → label "zile" (UX preferred over "de zile")', () => {
