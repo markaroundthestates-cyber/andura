@@ -1017,3 +1017,66 @@ describe('workoutStore — sessionsHistory cap (U-11)', () => {
     expect(hist[1]?.title).toBe('B');
   });
 });
+
+describe('workoutStore — swapExercise (WP-5 moat substitution safety)', () => {
+  beforeEach(resetStore);
+
+  it('clears history of the swapped exercise but preserves other indices', () => {
+    useWorkoutStore.setState({
+      exIdx: 1,
+      setIdx: 2,
+      sessionStart: 1000,
+      history: {
+        0: [{ kg: 50, reps: 10, rating: 'potrivit' }],
+        1: [{ kg: 20, reps: 12, rating: 'usor' }],
+      },
+    });
+    useWorkoutStore.getState().swapExercise(1);
+    const s = useWorkoutStore.getState();
+    // Index 1 (the swapped, current exercise) history dropped + reset to logging.
+    expect(s.history[1]).toBeUndefined();
+    expect(s.setIdx).toBe(0);
+    expect(s.phase).toBe('logging');
+    // Index 0 (a prior, finished exercise) untouched.
+    expect(s.history[0]).toHaveLength(1);
+    // sessionStart never touched.
+    expect(s.sessionStart).toBe(1000);
+  });
+
+  it('swapping a NON-current exercise drops its history but does NOT reset phase/setIdx', () => {
+    useWorkoutStore.setState({
+      exIdx: 0,
+      setIdx: 1,
+      phase: 'rest',
+      sessionStart: 1000,
+      history: {
+        0: [{ kg: 50, reps: 10, rating: 'potrivit' }],
+        2: [{ kg: 30, reps: 8, rating: 'greu' }],
+      },
+    });
+    useWorkoutStore.getState().swapExercise(2);
+    const s = useWorkoutStore.getState();
+    expect(s.history[2]).toBeUndefined();
+    expect(s.history[0]).toHaveLength(1);
+    // Current exercise (idx 0) state preserved — not the one swapped.
+    expect(s.setIdx).toBe(1);
+    expect(s.phase).toBe('rest');
+  });
+
+  it('never corrupts streak / lastSession / sessionsHistory', () => {
+    useWorkoutStore.setState({
+      exIdx: 0,
+      sessionStart: 1000,
+      streak: 7,
+      lastStreakDate: '2026-05-27',
+      lastSession: { title: 'X', meta: 'm', ts: 5 },
+      sessionsHistory: [{ title: 'X', meta: 'm', ts: 5 }],
+      history: { 0: [{ kg: 50, reps: 10, rating: 'potrivit' }] },
+    });
+    useWorkoutStore.getState().swapExercise(0);
+    const s = useWorkoutStore.getState();
+    expect(s.streak).toBe(7);
+    expect(s.lastSession?.title).toBe('X');
+    expect(s.sessionsHistory).toHaveLength(1);
+  });
+});
