@@ -85,40 +85,45 @@
     --rating-usor: #a4cfa9;           /* 90-day strip categorical green (distinct from heat-usor) */
   }
 
-  /* Dark theme — inverse polarity. Warm-neutral palette preserves Clasic
-     character (R>G>B subtle warmth) vs flat grey. WCAG SC 1.4.3 AA verified
-     for ink/ink-2/ink-3 vs paper. Accent colors (brick/olive/deep/succ/warn)
-     retained — already meet 3:1 non-text on dark backgrounds. */
+  /* Dark theme — Brain Coach "mov" palette (CEO pick 2026-05-27), primary app
+     look from mockup andura-brain-coach.html. Token VALUES swapped to mov; NAMES
+     unchanged so tokenized components re-skin automatically. WCAG AA verified vs
+     paper #0a0c14 + paper-2 #14171f. Two tokens lifted off raw mockup hex for the
+     app's stricter usage: --ink-3 #7a73a0 (4.45:1 fails AA on cards) → #827bab;
+     --line-strong rgba 0.38 (~1.72:1, mockup hairline) → solid #6b5aa6 for SC
+     1.4.11 UI boundaries. Hierarchy ink>ink-2>ink-3>line-strong>line preserved. */
   [data-theme="dark"] {
-    --paper: #1a1815;      /* Inverse phone bg dark L=0.0042 */
-    --paper-2: #2a2622;    /* Secondary surface dark L≈0.024 */
-    --ink: #faf7f1;        /* Primary text light L=0.930 → 17.94:1 vs paper-dark ✅ AAA */
-    --ink-2: #d6cfc0;      /* Secondary text L≈0.654 → 11.78:1 vs paper-dark ✅ AAA */
-    --ink-3: #8a8378;      /* Muted text L≈0.219 → 5.05:1 vs paper-dark ✅ AA */
-    --line: #2e2a25;       /* Decorative border dark — subtle separation */
-    --line-strong: #5a5249;/* Interactive boundary — 3.17:1 vs paper-dark PASS SC 1.4.11 non-text 3:1 */
-    --brick: #e85a44;      /* Slightly brighter brick on dark — preserves accent strength */
-    --brick-dark: #c8412e; /* Pressed/hover variant */
-    --olive: #8f9758;      /* Brighter olive on dark for contrast parity */
-    --deep: #4a6b8f;       /* Brighter deep blue on dark */
-    --succ: #5a9d68;       /* Brighter success on dark */
-    --warn: #e8b048;       /* Brighter warning on dark */
-    --danger: #e85a44;     /* Danger (alias brick-dark variant) */
+    --paper: #0a0c14;      /* Phone bg near-black mov */
+    --paper-2: #14171f;    /* Secondary surface dark mov */
+    --ink: #f5f0ff;        /* Primary text mov → 17.47:1 ✅ AAA */
+    --ink-2: #ddd1f5;      /* Secondary text lavender → 13.49:1 ✅ AAA */
+    --ink-3: #827bab;      /* Muted text → 4.99:1 paper / 4.58:1 paper-2 ✅ AA */
+    --line: rgba(139,109,255,0.16); /* Decorative purple hairline (mockup verbatim) */
+    --line-strong: #6b5aa6;/* UI boundary → 3.38:1 / 3.10:1 ✅ SC 1.4.11 */
+    --brick: #a584ff;      /* PRIMARY ACCENT purple → 6.83:1 ✅ */
+    --brick-dark: #ff8585; /* Destructive-action TEXT (text-brickdark only) — mov red, 8.32:1 ✅ (light #a8351f preserved; deep purple failed as text 2.57:1) */
+    --olive: #6ee08e;      /* Energy/cardio accent — mov green */
+    --deep: #5dd6e6;       /* Rest/recovery accent — mov cyan */
+    --succ: #6ee08e;       /* Success green (mov) → 11.82:1 ✅ */
+    --warn: #f5b87a;       /* Warning amber (mov) → 11.17:1 ✅ */
+    --danger: #ff8585;     /* Danger red (mov) → 8.32:1 ✅ */
 
-    /* Status banner tints (B009 dark theme) — muted dark-tone variants
-       keeping hue identity while ensuring AA text contrast vs paper-dark. */
-    --status-success-bg: #1f3527;
-    --status-success-border: #2e4d39;
-    --status-success-text: #b5d9be;
-    --status-danger-bg: #3a1f1c;
-    --status-danger-border: #5a2e29;
-    --status-danger-text: #f0b8ad;
-    --status-neutral-bg: #3a3322;
-    --status-neutral-border: #5a4e30;
-    --status-neutral-text: #e8d99a;
-    --status-info-bg: #3a2422;
-    --status-info-border: #5a3329;
-    --status-info-text: #f0b8ad;
+    /* Status banner tints (B009 dark theme) — mov palette: success keeps green,
+       danger keeps red (semantic hue identity), neutral + info retinted purple
+       so they sit coherently on the mov-dark surface instead of clashing amber-
+       brown. AA text contrast (8-11:1) verified vs each tint bg. */
+    --status-success-bg: #163024;
+    --status-success-border: #285c3c;
+    --status-success-text: #b5e8c2;
+    --status-danger-bg: #2e1418;
+    --status-danger-border: #5c2630;
+    --status-danger-text: #ffb3b3;
+    --status-neutral-bg: #221d3a;
+    --status-neutral-border: #3b316d;
+    --status-neutral-text: #ddd1f5;
+    --status-info-bg: #1d1a30;
+    --status-info-border: #3b316d;
+    --status-info-text: #c4afff;
 
     /* Dark theme overlay: dial up alpha — paper-dark already low-luma, need
        stronger backdrop to keep modal visually separated from page bg. */
@@ -190,6 +195,15 @@ html, body {
      (state loss unless paused). overscroll-behavior: contain stops scroll
      chain propagation to browser-level pull-to-refresh gesture. */
   overscroll-behavior: contain;
+}
+
+/* Brain Coach mov ambient — radial glow behind the app column (mockup
+   andura-brain-coach.html body bg). Scoped to dark so light theme keeps its
+   flat cream surface. fixed background-attachment keeps the glow anchored to
+   the top while content scrolls. */
+[data-theme="dark"] body {
+  background: radial-gradient(ellipse at 50% 0%, #1a1530, #050608 70%);
+  background-attachment: fixed;
 }
 
 #root {

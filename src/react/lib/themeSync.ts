@@ -15,7 +15,8 @@ import type { Theme } from '../stores/settingsStore';
 const STORE_KEY = 'wv2-settings-store';
 
 function resolveAutoTheme(): 'light' | 'dark' {
-  if (typeof window === 'undefined' || !window.matchMedia) return 'light';
+  // No matchMedia (SSR / old browser) → fall back to dark (mov default look).
+  if (typeof window === 'undefined' || !window.matchMedia) return 'dark';
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
@@ -29,17 +30,20 @@ function applyTheme(theme: Theme): void {
  * Prevents light→dark flash of unstyled content on initial render.
  */
 export function applyInitialTheme(): void {
+  // Default = 'dark' (Brain Coach mov look, CEO pick 2026-05-27). Falls back to
+  // dark for a fresh user (no persisted store) or a parse failure, matching the
+  // settingsStore DEFAULTS.theme. A user who picked light keeps it (persisted).
   try {
     const raw = localStorage.getItem(STORE_KEY);
     if (!raw) {
-      applyTheme('light');
+      applyTheme('dark');
       return;
     }
     const parsed = JSON.parse(raw) as { state?: { theme?: Theme } };
-    const theme = parsed.state?.theme ?? 'light';
+    const theme = parsed.state?.theme ?? 'dark';
     applyTheme(theme);
   } catch {
-    applyTheme('light');
+    applyTheme('dark');
   }
 }
 

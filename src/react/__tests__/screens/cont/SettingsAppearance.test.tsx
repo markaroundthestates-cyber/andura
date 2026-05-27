@@ -34,17 +34,17 @@ describe('SettingsAppearance — render + interactions', () => {
     expect(screen.getByRole('heading', { name: 'Aspect', level: 1 })).toBeInTheDocument();
   });
 
-  it('renders 3 theme options + default light selected', () => {
+  it('renders 3 theme options + default dark selected', () => {
     renderScreen();
-    expect(screen.getByTestId('theme-light')).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByTestId('theme-dark')).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByTestId('theme-dark')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('theme-light')).toHaveAttribute('aria-pressed', 'false');
     expect(screen.getByTestId('theme-auto')).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('theme click → store updated', () => {
     renderScreen();
-    fireEvent.click(screen.getByTestId('theme-dark'));
-    expect(useSettingsStore.getState().theme).toBe('dark');
+    fireEvent.click(screen.getByTestId('theme-light'));
+    expect(useSettingsStore.getState().theme).toBe('light');
   });
 
   it('renders 2 nav style options + default comfortable selected', () => {

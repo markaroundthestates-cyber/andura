@@ -7,9 +7,9 @@ beforeEach(() => {
 });
 
 describe('settingsStore — task_18', () => {
-  it('defaults light theme + notifications on + kg units + disclaimer false', () => {
+  it('defaults dark theme + notifications on + kg units + disclaimer false', () => {
     const s = useSettingsStore.getState();
-    expect(s.theme).toBe('light');
+    expect(s.theme).toBe('dark');
     expect(s.notificationsEnabled).toBe(true);
     expect(s.unitSystem).toBe('kg');
     expect(s.acceptedDisclaimer).toBe(false);
@@ -42,10 +42,10 @@ describe('settingsStore — task_18', () => {
   });
 
   it('reset restores defaults', () => {
-    useSettingsStore.getState().setTheme('dark');
+    useSettingsStore.getState().setTheme('light');
     useSettingsStore.getState().acceptDisclaimer();
     useSettingsStore.getState().reset();
-    expect(useSettingsStore.getState().theme).toBe('light');
+    expect(useSettingsStore.getState().theme).toBe('dark');
     expect(useSettingsStore.getState().acceptedDisclaimer).toBe(false);
   });
 });

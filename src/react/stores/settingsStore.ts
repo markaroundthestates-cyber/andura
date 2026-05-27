@@ -41,7 +41,9 @@ interface SettingsActions {
 }
 
 const DEFAULTS: SettingsState = {
-  theme: 'light',
+  // Default = Brain Coach mov dark look (CEO pick 2026-05-27). Light cream
+  // theme stays available via the Aspect toggle (setTheme).
+  theme: 'dark',
   notificationsEnabled: true,
   notificationFrequency: 'zilnic',
   notificationDays: [true, true, true, true, true, false, false], // L-V active
