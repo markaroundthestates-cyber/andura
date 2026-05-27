@@ -41,10 +41,12 @@ describe('SettingsThemes — Teme picker screen', () => {
     expect(screen.getByTestId('theme-palette-brain-coach')).toBeInTheDocument();
   });
 
-  it('default selection is "clasic" cand localStorage gol', () => {
+  // THEME-INVERSION fix (2026-05-27): default real = brain-coach (tema mov),
+  // aliniat la settingsStore DEFAULTS.theme='dark'. Inainte 'clasic'.
+  it('default selection is "brain-coach" cand localStorage gol', () => {
     renderScreen();
-    expect(screen.getByTestId('theme-palette-clasic')).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByTestId('theme-palette-luxury')).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByTestId('theme-palette-brain-coach')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('theme-palette-clasic')).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('reads persisted selection din localStorage', () => {

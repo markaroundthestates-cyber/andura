@@ -1,8 +1,10 @@
 // ══ SETTINGS APPEARANCE — Phase 6 task_12 Cont Sub-Screen ════════════════
 // Mockup verbatim source: andura-clasic.html#screen-settings-appearance.
 // Theme selector (light/dark/auto) + bottom nav style (compact/comfortable).
-// Theme switch read/write settingsStore.theme. Phase 7+ wire actual CSS
-// theme runtime swap (currently store value-only V1).
+// Theme switch read/write settingsStore.theme. CSS runtime swap APLICAT live
+// via themeSync.ts (ThemeSync component + applyInitialTheme) — seteaza
+// <html data-theme>, iar global.css [data-theme="dark"] re-skin tokens.
+// Default = dark (tema mov Brain Coach, CEO pick 2026-05-27).
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';

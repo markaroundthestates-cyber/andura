@@ -25,11 +25,15 @@ interface ThemeOption {
   swatchClass: string;
 }
 
+// THEME-INVERSION fix (2026-05-27): "implicit" mutat de pe Clasic pe Brain
+// Coach — default real al app-ului e tema mov Brain Coach (CEO pick 2026-05-27,
+// settingsStore DEFAULTS.theme='dark' + themeSync applyInitialTheme). Eticheta
+// veche "Cremos - implicit" pe Clasic era stale (Clasic = optional acum).
 const THEME_OPTIONS: readonly ThemeOption[] = [
   {
     id: 'clasic',
     name: 'Andura Clasic',
-    meta: 'Cremos - implicit',
+    meta: 'Cremos luminos',
     swatchClass: 'bg-gradient-to-br from-paper from-50% to-brick to-50%',
   },
   {
@@ -47,20 +51,23 @@ const THEME_OPTIONS: readonly ThemeOption[] = [
   {
     id: 'brain-coach',
     name: 'Andura Brain Coach',
-    meta: 'Purple AI gradient',
+    meta: 'Mov AI - implicit',
     swatchClass: 'bg-gradient-to-br from-[#8b6dff] from-50% to-[#5dd6e6] to-50%',
   },
 ];
 
 const STORAGE_KEY = 'wv2-palette-theme';
 
+// THEME-INVERSION fix (2026-05-27): default 'brain-coach' (tema mov), aliniat
+// la settingsStore DEFAULTS.theme='dark'. Inainte 'clasic' contrazicea
+// default-ul real => picker arata Clasic selectat desi app-ul porneste mov.
 function readPaletteTheme(): PaletteTheme {
-  if (typeof localStorage === 'undefined') return 'clasic';
+  if (typeof localStorage === 'undefined') return 'brain-coach';
   const v = localStorage.getItem(STORAGE_KEY);
   if (v === 'clasic' || v === 'living-body' || v === 'luxury' || v === 'brain-coach') {
     return v;
   }
-  return 'clasic';
+  return 'brain-coach';
 }
 
 function writePaletteTheme(t: PaletteTheme): void {
@@ -70,7 +77,7 @@ function writePaletteTheme(t: PaletteTheme): void {
 
 export function SettingsThemes(): JSX.Element {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState<PaletteTheme>('clasic');
+  const [selected, setSelected] = useState<PaletteTheme>('brain-coach');
 
   useEffect(() => {
     setSelected(readPaletteTheme());
