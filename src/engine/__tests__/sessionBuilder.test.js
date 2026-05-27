@@ -5,7 +5,10 @@
 import { describe, it, expect } from 'vitest';
 import { buildSession, prioritizeWeakGroups } from '../sessionBuilder.js';
 
-const allEquip = ['dumbbell', 'pec_deck', 'bailib_stack', 'matrix_cable', 'leg_machine', 'leg_press_plates'];
+// Coarse equipment_type vocabulary per D081 (sessionBuilder filters on coarse).
+// Legacy fine engine IDs still normalize to coarse via equipmentMap, but the
+// canonical available set is now coarse types.
+const allEquip = ['dumbbell', 'machine', 'cable', 'barbell', 'band'];
 const ctx = (available = allEquip, weakGroups = []) => ({ equipment: { available }, weakGroups });
 
 // ── buildSession — OPT C pure function ───────────────────────────────────
@@ -38,13 +41,27 @@ describe('buildSession — pure function', () => {
     expect(session.exercises.length).toBeGreaterThan(0);
   });
 
-  it('filters exercises by available equipment', () => {
-    const limitedCtx = ctx(['dumbbell', 'bailib_stack']);
+  it('filters exercises by available equipment (coarse types)', () => {
+    // Only dumbbell available → machine (Pec Deck default) + cable (Overhead
+    // Triceps) PUSH exercises drop, dumbbell ones stay.
+    const limitedCtx = ctx(['dumbbell']);
     const session = buildSession('PUSH', limitedCtx);
     const names = session.exercises.map(e => e.name);
     expect(names).not.toContain('Pec Deck');
     expect(names).not.toContain('Overhead Triceps');
     expect(names).toContain('Incline DB Press');
+  });
+
+  it('legacy fine engine IDs normalize to coarse (back-compat)', () => {
+    // bailib_stack → cable; dumbbell passes through. Cable PUSH exercises
+    // (Overhead Triceps, Pushdown) become available; pec_deck is NOT in the set
+    // so Pec Deck (machine) still drops.
+    const legacyCtx = ctx(['dumbbell', 'bailib_stack']);
+    const session = buildSession('PUSH', legacyCtx);
+    const names = session.exercises.map(e => e.name);
+    expect(names).toContain('Incline DB Press');
+    expect(names).toContain('Overhead Triceps');
+    expect(names).not.toContain('Pec Deck');
   });
 
   it('each exercise has sets defaulting to 3', () => {
@@ -111,5 +128,40 @@ describe('prioritizeWeakGroups — weakness ordering', () => {
     ];
     const result = prioritizeWeakGroups(exercises, ['delt_rear']);
     expect(result).toHaveLength(exercises.length);
+  });
+
+  // Big-11 RO vocab bridge: the live pipeline passes Specialization
+  // target_muscle_group (a Big-11 RO group), NOT an engine head key. Before the
+  // muscleGroupMap bridge this silently no-op'd. These prove it connects.
+  it('Big-11 RO "umeri" expands to shoulder heads → Face Pulls prioritized', () => {
+    const exercises = [
+      { name: 'Lat Pulldown', sets: 3 },
+      { name: 'Cable Row', sets: 3 },
+      { name: 'Face Pulls', sets: 3 }, // delt_rear → umeri
+      { name: 'Bayesian Curl', sets: 3 },
+    ];
+    const result = prioritizeWeakGroups(exercises, ['umeri']);
+    const names = result.map((e) => e.name);
+    expect(names.indexOf('Face Pulls')).toBeLessThan(2);
+  });
+
+  it('Big-11 RO "biceps" prioritizes curl exercises', () => {
+    const exercises = [
+      { name: 'Lat Pulldown', sets: 3 },
+      { name: 'Cable Row', sets: 3 },
+      { name: 'Bayesian Curl', sets: 3 }, // bi_long → biceps
+    ];
+    const result = prioritizeWeakGroups(exercises, ['biceps']);
+    const names = result.map((e) => e.name);
+    expect(names.indexOf('Bayesian Curl')).toBeLessThan(2);
+  });
+
+  it('head-key vocab still works alongside Big-11 RO (back-compat)', () => {
+    const exercises = [
+      { name: 'Lat Pulldown', sets: 3 },
+      { name: 'Face Pulls', sets: 3 },
+    ];
+    const result = prioritizeWeakGroups(exercises, ['delt_rear']);
+    expect(result.map((e) => e.name).indexOf('Face Pulls')).toBeLessThan(2);
   });
 });

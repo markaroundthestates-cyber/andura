@@ -2,6 +2,9 @@
 // Pure function: no side effects, no class, no imports from app state.
 
 import { contextSelectionEnabled } from './calibration.js';
+import { getExerciseMetadata } from './exerciseLibrary.js';
+import { normalizeToCoarseTypes } from './equipmentMap.js';
+import { big11ToHeads, HEAD_TO_BIG11 } from './muscleGroupMap.js';
 
 const EXERCISES_BY_TYPE = {
   'PUSH': ['Incline DB Press', 'Pec Deck', 'DB Shoulder Press', 'Lateral Raises', 'Overhead Triceps', 'Pushdown'],
@@ -9,17 +12,6 @@ const EXERCISES_BY_TYPE = {
   'UMERI_BRATE': ['DB Shoulder Press', 'Lateral Raises', 'Rear Delt Fly', 'Bayesian Curl', 'Pushdown'],
   'UPPER_PICIOARE': ['Lat Pulldown', 'Incline DB Press', 'Leg Press', 'Leg Extension', 'Leg Curl'],
   'FULL_UPPER': ['Lat Pulldown', 'Incline DB Press', 'Cable Row', 'DB Shoulder Press', 'Bayesian Curl', 'Pushdown'],
-};
-
-const EQUIP_MAP = {
-  'Incline DB Press': 'dumbbell', 'DB Shoulder Press': 'dumbbell',
-  'Lateral Raises': 'dumbbell', 'Incline DB Curl': 'dumbbell',
-  'Pec Deck': 'pec_deck', 'Rear Delt Fly': 'pec_deck',
-  'Lat Pulldown': 'bailib_stack', 'Cable Row': 'bailib_stack',
-  'Face Pulls': 'matrix_cable', 'Bayesian Curl': 'matrix_cable',
-  'Overhead Triceps': 'matrix_cable', 'Pushdown': 'matrix_cable', 'Cable Fly': 'matrix_cable',
-  'Leg Extension': 'leg_machine', 'Leg Curl': 'leg_machine',
-  'Leg Press': 'leg_press_plates',
 };
 
 // Maps muscle group names to exercises that train them primarily
@@ -40,6 +32,13 @@ const MUSCLE_GROUP_EXERCISES = {
  * Build a session exercise list for the given session type.
  * Filters by available equipment from ctx.equipment.available.
  *
+ * Equipment filtering is COARSE per D081: an exercise is performable when its
+ * library `equipment_type` (barbell|dumbbell|machine|cable|bodyweight|band) is
+ * in the available coarse-type set. ctx.equipment.available may carry coarse
+ * types directly OR legacy fine engine IDs (matrix_cable/bailib_stack/...) —
+ * both are normalized to coarse via normalizeToCoarseTypes(). Bodyweight is
+ * always performable (no equipment required).
+ *
  * When contextSelectionEnabled flag is true, applies weakness-prioritized
  * ordering: exercises targeting ctx.weakGroups appear in positions 1-2.
  * Weakness-prioritized ordering. Does NOT add missing exercises.
@@ -50,10 +49,13 @@ const MUSCLE_GROUP_EXERCISES = {
  */
 export function buildSession(sessionType, ctx) {
   const byType = /** @type {Record<string, string[]>} */ (EXERCISES_BY_TYPE);
-  const equipMap = /** @type {Record<string, string>} */ (EQUIP_MAP);
   const names = byType[sessionType] || byType['FULL_UPPER'] || [];
-  const available = ctx?.equipment?.available ?? [];
-  const filtered = names.filter((n) => available.includes(equipMap[n] ?? ''));
+  const availableCoarse = new Set(normalizeToCoarseTypes(ctx?.equipment?.available ?? []));
+  const filtered = names.filter((n) => {
+    const type = getExerciseMetadata(n).equipment_type;
+    if (type === 'bodyweight') return true;
+    return availableCoarse.has(type);
+  });
   let exercises = filtered.map((name) => ({ name, sets: 3 }));
 
   if (contextSelectionEnabled && (ctx?.weakGroups?.length ?? 0) > 0) {
@@ -66,13 +68,27 @@ export function buildSession(sessionType, ctx) {
 /**
  * Reorder exercises so weak-group exercises appear in the first 2 positions.
  * Does NOT add exercises not already in the list.
+ *
+ * weakGroups entries may be engine HEAD groups (delt_rear, lat, quad, ... —
+ * MUSCLE_GROUP_EXERCISES keys) OR Big-11 RO groups (umeri, spate,
+ * picioare-quads, ... — the vocabulary the live pipeline emits via the
+ * Specialization engine's target_muscle_group). Big-11 RO groups are expanded
+ * to their composing head groups via muscleGroupMap.big11ToHeads, so weakness
+ * prioritization connects across both vocabularies (deferred-P1 vocab bridge).
+ *
  * @param {Array<{name: string, sets: number}>} exercises
  * @param {Array<string>} weakGroups
  */
 export function prioritizeWeakGroups(exercises, weakGroups) {
   const muscleMap = /** @type {Record<string, string[]>} */ (MUSCLE_GROUP_EXERCISES);
+  // Resolve each group to head keys: a direct head key stays as-is; a Big-11 RO
+  // group expands to its composing heads. (HEAD_TO_BIG11 membership tells the
+  // two apart — head keys are NOT Big-11 RO values.)
+  const headGroups = weakGroups.flatMap((g) =>
+    (g in HEAD_TO_BIG11) ? [g] : big11ToHeads(g)
+  );
   const weakExerciseNames = new Set(
-    weakGroups.flatMap((g) => muscleMap[g] ?? [])
+    headGroups.flatMap((g) => muscleMap[g] ?? [])
   );
 
   const weak = exercises.filter((e) => weakExerciseNames.has(e.name));

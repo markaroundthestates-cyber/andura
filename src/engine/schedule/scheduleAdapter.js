@@ -27,6 +27,7 @@ import {
   deloadAdapter,
 } from '../../coach/orchestrator/adapters/index.js';
 import { buildSession } from '../sessionBuilder.js';
+import { availableCoarseTypes } from '../equipmentMap.js';
 
 export const CALENDAR_OVERRIDE_KEY = 'wv2-calendar-override';
 export const MISSING_EQUIPMENT_KEY = 'wv2-missing-equipment';
@@ -365,9 +366,11 @@ export function translateToEngineEquipment(userIds) {
 }
 
 // ── Daily workout pipeline consumer (Phase 6 task_01) ────────────────────
-// Engine equipment domain — sessionBuilder.EQUIP_MAP target set. Filter
-// pipeline `available` set by subtracting translated missing equipment.
-const ENGINE_EQUIPMENT_DOMAIN = Object.freeze([
+// LEGACY fine-grained engine equipment domain (sala-pilot specific IDs).
+// Retained as documented reference + paired with translateToEngineEquipment
+// (still exported/tested). NO LONGER drives selection per D081 — getDailyWorkout
+// now derives a COARSE equipment_type set via equipmentMap.availableCoarseTypes.
+export const ENGINE_EQUIPMENT_DOMAIN = Object.freeze([
   'matrix_cable',
   'bailib_stack',
   'pec_deck',
@@ -432,10 +435,12 @@ export async function getDailyWorkout(userState, now = new Date()) {
     }
   }
 
-  // Compute available equipment (engine domain) by subtracting missing
+  // Compute available equipment as COARSE equipment_type set per D081 (coarse
+  // equipment_type = SoT). buildSession filters on coarse types directly; the
+  // legacy fine-grained ENGINE_EQUIPMENT_DOMAIN / translateToEngineEquipment
+  // path is retained (exported, tested) but no longer drives selection here.
   const missingUserIds = getMissingEquipment();
-  const missingEngineIds = new Set(translateToEngineEquipment(missingUserIds));
-  const availableEngineIds = ENGINE_EQUIPMENT_DOMAIN.filter(id => !missingEngineIds.has(id));
+  const availableTypes = availableCoarseTypes(missingUserIds);
 
   // Build EngineContext + invoke 8-adapter pipeline sequential strict
   const ctx = buildEngineContext(userState);
@@ -476,7 +481,7 @@ export async function getDailyWorkout(userState, now = new Date()) {
   const sessionType = DAY_TO_SESSION_TYPE[dayIdx] || 'FULL_UPPER';
   const specializationTarget = blueprints.specialization?.target_muscle_group ?? null;
   const sessionCtx = {
-    equipment: { available: availableEngineIds },
+    equipment: { available: availableTypes },
     weakGroups: specializationTarget ? [specializationTarget] : [],
   };
 
