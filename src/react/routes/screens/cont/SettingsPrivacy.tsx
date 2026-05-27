@@ -71,16 +71,17 @@ export function SettingsPrivacy(): JSX.Element {
           />
           <ToggleRow
             testId="privacy-telemetry-toggle"
-            title="Telemetrie anonima"
-            desc="Trimite metrici anonime de utilizare ca sa imbunatateasca app. Implicit oprit."
+            title="Raportare erori"
+            desc="Trimite automat rapoarte de eroare (crash-uri) ca sa reparam problemele. Implicit oprit."
             checked={telemetry}
             onToggle={() => setTelemetryOptIn(!telemetry)}
           />
         </div>
 
         <p className="text-xs text-ink2 leading-snug">
-          GDPR · K-anonimat 5+. Nici un identificator personal in metrici
-          (varsta in grup, NU exact). Poti revoca oricand.
+          Folosim Sentry doar pentru rapoarte de eroare, daca pornesti optiunea
+          de sus. Datele personale (email, identificatori) sunt sterse inainte
+          de trimitere. Nu colectam metrici de utilizare. Poti revoca oricand.
         </p>
 
         {/* §A025 audit fix (NC§28-C1) — Privacy Policy live content GDPR. */}
@@ -111,7 +112,7 @@ export function SettingsPrivacy(): JSX.Element {
             <li><strong>Acces + portabilitate:</strong> exporta toate datele JSON din Cont &gt; Descarca date</li>
             <li><strong>Stergere:</strong> sterge tot din Cont &gt; Deconectare si stergere &gt; Sterge contul</li>
             <li><strong>Rectificare:</strong> editeaza profilul direct in Cont &gt; Profil</li>
-            <li><strong>Opozitie telemetrie:</strong> toggle telemetrie anonima sus (default OFF)</li>
+            <li><strong>Opozitie:</strong> toggle raportare erori sus (default OFF)</li>
             <li><strong>Limitare procesare:</strong> dezactiveaza backup Firebase (deconectare cont)</li>
           </ul>
 
@@ -143,9 +144,9 @@ export function SettingsPrivacy(): JSX.Element {
           <p className="text-sm text-ink2 mb-3">
             Pentru a oferi serviciul, folosim doi sub-procesatori:{' '}
             <strong>Google Firebase</strong> (autentificare + backup RTDB,
-            regiune europe-west1 EU) si <strong>Sentry</strong> (monitorizare
-            erori app, opt-in telemetrie anonima). ZERO terti analytics,
-            ZERO advertising, ZERO data brokers.
+            regiune europe-west1 EU) si <strong>Sentry</strong> (raportare
+            erori app, opt-in, cu datele personale sterse). ZERO terti
+            analytics, ZERO advertising, ZERO data brokers.
           </p>
 
           <h3 className="text-sm font-semibold mt-3 mb-1.5">Contact + reclamatii</h3>

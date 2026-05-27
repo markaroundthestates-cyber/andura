@@ -69,8 +69,8 @@ export function SettingsTerms(): JSX.Element {
                 cripteaza datele in transit (HTTPS).
               </li>
               <li>
-                Telemetria anonima este opt-in (implicit oprita) si respecta
-                k-anonimat 5+ per GDPR.
+                Raportarea de erori (crash-uri) este opt-in (implicit oprita),
+                cu datele personale sterse inainte de trimitere.
               </li>
               <li>
                 Andura este in Beta gratuita. Functionalitati pot fi schimbate

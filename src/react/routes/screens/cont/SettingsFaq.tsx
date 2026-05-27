@@ -51,7 +51,7 @@ const FAQ: ReadonlyArray<FaqSection> = [
       },
       {
         q: 'Unde sunt salvate datele mele?',
-        a: 'Local-first pe telefon (localStorage Tier 0 + IndexedDB Tier 1). Backup optional Firebase RTDB criptat in transit. Nici un identificator personal in metrici telemetrie.',
+        a: 'Local-first pe telefon (localStorage Tier 0 + IndexedDB Tier 1). Backup optional Firebase RTDB criptat in transit. Nu colectam metrici de utilizare; raportarea de erori e opt-in, cu datele personale sterse.',
       },
     ],
   },

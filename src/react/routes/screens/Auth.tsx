@@ -527,7 +527,7 @@ function LegalModal({
               <li>Andura ofera recomandari, NU prescriptii medicale.</li>
               <li>Esti responsabil de propria siguranta in sala.</li>
               <li>Backup-ul Firebase e optional si cripteaza datele in transit (HTTPS).</li>
-              <li>Telemetria anonima e opt-in (implicit oprita), k-anonimat 5+ GDPR.</li>
+              <li>Raportarea de erori e opt-in (implicit oprita), cu datele personale sterse.</li>
               <li>Andura e in Beta gratuita; functii pot fi schimbate pana la V1.</li>
             </ul>
           </div>

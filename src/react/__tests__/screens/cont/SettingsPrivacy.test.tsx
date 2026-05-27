@@ -70,9 +70,10 @@ describe('SettingsPrivacy — render + toggles', () => {
     expect(useSettingsStore.getState().telemetryOptIn).toBe(true);
   });
 
-  it('renders GDPR k-anonimat hint', () => {
+  it('renders honest error-reporting hint (Sentry, no usage metrics)', () => {
     renderScreen();
-    expect(screen.getByText(/K-anonimat 5\+/)).toBeInTheDocument();
+    expect(screen.getByText(/Folosim Sentry doar pentru rapoarte de eroare/i)).toBeInTheDocument();
+    expect(screen.getByText(/Nu colectam metrici de utilizare/i)).toBeInTheDocument();
   });
 
   it('back navigates la /app/cont', () => {

@@ -46,7 +46,7 @@ describe('SettingsTerms — render + tabs', () => {
   it('T&C content has key bullets', () => {
     renderScreen();
     expect(screen.getByText(/Andura ofera recomandari/)).toBeInTheDocument();
-    expect(screen.getByText(/k-anonimat 5\+/i)).toBeInTheDocument();
+    expect(screen.getByText(/Raportarea de erori .* este opt-in/i)).toBeInTheDocument();
   });
 
   it('Medical content has safety guidance', () => {

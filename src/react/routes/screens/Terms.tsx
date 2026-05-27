@@ -81,10 +81,11 @@ export function Terms(): JSX.Element {
           </div>
 
           <div>
-            <h2 className="text-base font-semibold mb-1.5">Telemetrie anonima</h2>
+            <h2 className="text-base font-semibold mb-1.5">Raportare erori</h2>
             <p className="text-ink2">
-              Telemetria anonima este opt-in (implicit oprita) si respecta
-              k-anonimat 5+ conform GDPR. O poti porni sau opri oricand.
+              Raportarea de erori (crash-uri) este opt-in (implicit oprita) si
+              foloseste Sentry, cu datele personale sterse inainte de trimitere.
+              Nu colectam metrici de utilizare. O poti porni sau opri oricand.
             </p>
           </div>
 

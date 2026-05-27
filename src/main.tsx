@@ -18,10 +18,11 @@ applyInitialTheme();
 
 // §SECURITY-HIGH-1-SENTRY-FIX (DIM 10 SECURITY-AUDIT-DEEPER chat 5) —
 // GDPR Art. 7 consent gate. Sentry init pornit DOAR daca user opt-in
-// explicit via SettingsPrivacy "Telemetrie anonima" toggle (default FALSE
-// per settingsStore §51). Pre-fix unconditional call ignora consent =
-// drift fata de PrivacyPolicy claim "Implicit oprit" (SettingsPrivacy
-// L81 + L120). Subscribe lazy-init pe toggle false->true pentru a porni
+// explicit via SettingsPrivacy "Raportare erori" toggle (storage key
+// telemetryOptIn, default FALSE per settingsStore §51). Toggle gates ONLY
+// Sentry crash/error monitoring (PII-scrubbed) — NU usage metrics, NU
+// k-anonimat. Pre-fix unconditional call ignora consent = drift fata de
+// PrivacyPolicy claim "Implicit oprit". Subscribe lazy-init pe toggle false->true pentru a porni
 // Sentry mid-session dupa opt-in. NOTE: NU putem un-init Sentry runtime
 // (Sentry SDK limit) — daca user revoca post-init, scope ramane active
 // duration session, dar NO new envelopes envoit post-toggle false
