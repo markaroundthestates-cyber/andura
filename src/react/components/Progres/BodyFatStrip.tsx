@@ -1,0 +1,79 @@
+// ══ BODY FAT STRIP — BUG #12b: surface bf% estimat in Progres ════════════
+// Afiseaza estimarea de grasime corporala (bf%) pe tab-ul Progres, langa BMR.
+// Pana acum bf%-ul era calculat (US-Navy / Deurenberg, two-tier) dar surfat
+// DOAR in SettingsProfile (editare) — nu si pe dashboard-ul Progres. Aici il
+// aratam cu caveat "estimat" + sursa (US Navy cand exista talie+gat masurate,
+// altfel Estimat = Deurenberg din BMI/varsta/sex).
+//
+// Two-tier mirror nutritionProjection.deriveCurrentBfPct + SettingsProfile:
+//   - ACURAT: US-Navy cand talie+gat masurate (progresStore.bodyData) + height/sex.
+//   - ESTIMAT: fallback Deurenberg (mereu disponibil post-onboarding Big6+height).
+// Stil aliniat BMRStrip ("Calorii baza" strip) — single number + caveat, NU bar.
+// Placeholder cand stats incomplete (T0 fresh user pre-onboarding).
+
+import type { JSX } from 'react';
+import { Percent } from 'lucide-react';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+import { useProgresStore } from '../../stores/progresStore';
+import { estimateBF_USNavy } from '../../../engine/usNavyBF.js';
+import { estimateBF_Deurenberg } from '../../../engine/bodyComposition.js';
+
+export function BodyFatStrip(): JSX.Element {
+  const sex = useOnboardingStore((s) => s.data.sex);
+  const weight = useOnboardingStore((s) => s.data.weight);
+  const age = useOnboardingStore((s) => s.data.age);
+  const height = useOnboardingStore((s) => s.data.height);
+  const bodyData = useProgresStore((s) => s.bodyData);
+  const last = bodyData[bodyData.length - 1];
+
+  // Tier 1 (ACURAT) — US-Navy cand talie+gat masurate. Build arg omitting empty
+  // fields (exactOptionalPropertyTypes); engine returneaza null daca lipseste
+  // ceva SAU masuratorile sunt in afara benzii fiziologice (plauzibilitate).
+  let bfNavy: number | null = null;
+  if (last?.waistCm != null && last?.neckCm != null) {
+    const args: { sex?: string; height_cm?: number; neck_cm?: number; waist_cm?: number; hip_cm?: number } = {};
+    if (sex) args.sex = sex;
+    if (height) args.height_cm = height;
+    args.neck_cm = last.neckCm;
+    args.waist_cm = last.waistCm;
+    if (last.hipsCm != null) args.hip_cm = last.hipsCm;
+    bfNavy = estimateBF_USNavy(args);
+  }
+
+  // Tier 2 (ESTIMAT) — Deurenberg din onboarding (mereu disponibil post-onb).
+  const bfDeurenberg = estimateBF_Deurenberg({
+    weightKg: weight ?? NaN,
+    heightCm: height ?? NaN,
+    ageYears: age ?? NaN,
+    ...(sex ? { sex } : {}),
+  });
+  const bf = bfNavy ?? bfDeurenberg;
+  const sourceLabel = bfNavy != null ? 'US Navy' : 'estimat';
+
+  return (
+    <section
+      data-testid="bodyfat-strip"
+      className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4"
+      aria-label="Grasime corporala estimata"
+    >
+      <Percent className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
+      <div className="flex-1 min-w-0">
+        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
+          Grasime corporala
+        </p>
+        {bf != null ? (
+          <p className="text-xl font-bold text-ink font-mono" data-testid="bodyfat-value">
+            {bf}%
+            <span className="text-sm font-normal text-ink2 ml-2" data-testid="bodyfat-source">
+              {sourceLabel}
+            </span>
+          </p>
+        ) : (
+          <p className="text-sm text-ink2" data-testid="bodyfat-empty">
+            Estimarea apare dupa ce completezi datele de profil.
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}

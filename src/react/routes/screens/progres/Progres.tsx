@@ -21,6 +21,7 @@ import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
 import { ProjectionStrip } from '../../../components/Progres/ProjectionStrip';
 import { FatigueStrip } from '../../../components/Progres/FatigueStrip';
 import { BMRStrip } from '../../../components/Progres/BMRStrip';
+import { BodyFatStrip } from '../../../components/Progres/BodyFatStrip';
 import { HeatMapWeekly } from '../../../components/Progres/HeatMapWeekly';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
@@ -60,6 +61,9 @@ export function Progres(): JSX.Element {
         <FatigueStrip />
         <BMRStrip />
       </div>
+      {/* BUG #12b — bf% estimat surfat pe Progres (pana acum doar in
+          SettingsProfile). Two-tier US-Navy/Deurenberg cu caveat "estimat". */}
+      <BodyFatStrip />
       <HeatMapWeekly />
       {alerts.length > 0 && (
         <h2 data-testid="alerte-azi-label" className="text-xs text-ink2 uppercase tracking-wide font-semibold mt-4 mb-2">
