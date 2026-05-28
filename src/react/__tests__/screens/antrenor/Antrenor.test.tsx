@@ -189,9 +189,10 @@ describe('Antrenor home — resume session card', () => {
       },
     });
     renderAntrenor();
-    expect(screen.getByRole('region', { name: /Reia sesiunea/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /^Reia$/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Renunta/i })).toBeInTheDocument();
+    // Wave 2c i18n: ResumeSessionCard strings now via t() → EN default.
+    expect(screen.getByRole('region', { name: /Resume session/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Resume$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Discard/i })).toBeInTheDocument();
   });
 
   it('hides workout-start CTAs cand pausedSnapshot exists (Resume takes over)', () => {
@@ -226,7 +227,7 @@ describe('Antrenor home — resume session card', () => {
       },
     });
     renderAntrenor();
-    fireEvent.click(screen.getByRole('button', { name: /^Reia$/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^Resume$/i }));
     expect(useWorkoutStore.getState().pausedSnapshot).toBeNull();
     expect(useWorkoutStore.getState().exIdx).toBe(2);
   });
@@ -244,7 +245,7 @@ describe('Antrenor home — resume session card', () => {
       },
     });
     renderAntrenor();
-    fireEvent.click(screen.getByRole('button', { name: /Renunta/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Discard/i }));
     expect(useWorkoutStore.getState().pausedSnapshot).toBeNull();
     expect(useWorkoutStore.getState().history).toEqual({});
   });
@@ -262,8 +263,8 @@ describe('Antrenor home — reactivate card win-back', () => {
       lastSession: { title: 'Push', meta: '5 ex', ts: Date.now() - 17 * 86400000 },
     });
     renderAntrenor();
-    expect(screen.getByRole('region', { name: /Bun venit inapoi/i })).toBeInTheDocument();
-    expect(screen.getByText(/17 zile/i)).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: /Welcome back/i })).toBeInTheDocument();
+    expect(screen.getByText(/17 days/i)).toBeInTheDocument();
   });
 
   it('hides ReactivateCard cand dismissed', () => {
@@ -272,7 +273,7 @@ describe('Antrenor home — reactivate card win-back', () => {
     });
     useCoachStore.getState().dismissReactivate();
     renderAntrenor();
-    expect(screen.queryByRole('region', { name: /Bun venit inapoi/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: /Welcome back/i })).not.toBeInTheDocument();
   });
 
   it('hides ReactivateCard cand lastSession < 14 zile', () => {
@@ -280,7 +281,7 @@ describe('Antrenor home — reactivate card win-back', () => {
       lastSession: { title: 'Push', meta: '5 ex', ts: Date.now() - 5 * 86400000 },
     });
     renderAntrenor();
-    expect(screen.queryByRole('region', { name: /Bun venit inapoi/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: /Welcome back/i })).not.toBeInTheDocument();
   });
 
   it('clicks Mai tarziu → dismisses + hides card', () => {
@@ -288,7 +289,7 @@ describe('Antrenor home — reactivate card win-back', () => {
       lastSession: { title: 'Push', meta: '5 ex', ts: Date.now() - 17 * 86400000 },
     });
     renderAntrenor();
-    fireEvent.click(screen.getByRole('button', { name: /Mai tarziu/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Later/i }));
     expect(useCoachStore.getState().reactivateDismissed).toBe(true);
   });
 
@@ -306,8 +307,8 @@ describe('Antrenor home — reactivate card win-back', () => {
       },
     });
     renderAntrenor();
-    expect(screen.queryByRole('region', { name: /Bun venit inapoi/i })).not.toBeInTheDocument();
-    expect(screen.getByRole('region', { name: /Reia sesiunea/i })).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: /Welcome back/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('region', { name: /Resume session/i })).toBeInTheDocument();
   });
 });
 
@@ -385,14 +386,14 @@ describe('Antrenor home — F11 PR banner', () => {
 
   it('hides PR banner cand prHit=false', () => {
     renderAntrenor();
-    expect(screen.queryByRole('status', { name: /PR detectat/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('status', { name: /PR detected/i })).not.toBeInTheDocument();
   });
 
   it('renders PR banner cand prHit=true', () => {
     useWorkoutStore.setState({ prHit: true });
     renderAntrenor();
-    expect(screen.getByRole('status', { name: /PR detectat/i })).toBeInTheDocument();
-    expect(screen.getByText(/PR sesiunea trecuta/i)).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: /PR detected/i })).toBeInTheDocument();
+    expect(screen.getByText(/PR last session/i)).toBeInTheDocument();
   });
 });
 

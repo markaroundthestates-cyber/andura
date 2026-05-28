@@ -108,7 +108,13 @@ describe('FatigueStrip — Wave C2 i18n EN default', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 
-  it('§DRIFT-2 (chat5) mockup literal — NO lucide icons rendered (mockup L1716-1721 zero icons)', () => {
+  // ANDURA PULSE reskin (Wave 2c, 2026-05-29) — the §DRIFT-2 mockup-literal
+  // pins (zero icons, bg-white, rounded-[14px]) were tied to the now-retired
+  // andura-clasic.html DESIGN MASTER. Pulse is the single design system, so the
+  // strip matches its grid siblings BMRStrip/BodyFatStrip: an Activity icon
+  // prefix on a token surface (bg-paper2 border-line rounded-2xl). These two
+  // styling-contract tests are superseded to assert the Pulse reality.
+  it('PULSE — renders an Activity lucide icon prefix (matches BMRStrip/BodyFatStrip)', () => {
     vi.mocked(getFatigue).mockReturnValueOnce({
       score: 45,
       key: 'MODERATE_FATIGUE',
@@ -119,24 +125,19 @@ describe('FatigueStrip — Wave C2 i18n EN default', () => {
       detail: '',
     });
     const { container } = render(<FatigueStrip />);
-    // lucide-react SVGs carry `lucide` class — assert ZERO present in card.
+    // lucide-react SVGs carry the `lucide` class — exactly one icon now present.
     const lucideSvgs = container.querySelectorAll('svg.lucide');
-    expect(lucideSvgs.length).toBe(0);
-    // Defense in depth: no <svg> at all în fatigue card per mockup literal.
-    const allSvgs = container.querySelectorAll('svg');
-    expect(allSvgs.length).toBe(0);
+    expect(lucideSvgs.length).toBe(1);
   });
 
-  it('§DRIFT-2 (chat5) mockup literal — bg-white + rounded-[14px] tokens applied', () => {
+  it('PULSE — token surface (bg-paper2 + border-line + rounded-2xl), not retired bg-white', () => {
     render(<FatigueStrip />);
     const strip = screen.getByTestId('fatigue-strip');
-    expect(strip.className).toContain('bg-white');
-    expect(strip.className).toContain('rounded-[14px]');
-    // Audit MED dark-strip fix — light theme stays mockup-literal bg-white, dark
-    // gets bg-paper2 variant (was hardcoded bg-white = white card on dark bg).
-    expect(strip.className).toContain('dark:bg-paper2');
-    // Anti-regression: light-theme surface NOT replaced by bare bg-paper2.
-    expect(strip.className).not.toContain(' bg-paper2');
-    expect(strip.className).not.toContain('rounded-2xl');
+    expect(strip.className).toContain('bg-paper2');
+    expect(strip.className).toContain('border-line');
+    expect(strip.className).toContain('rounded-2xl');
+    // Anti-regression: retired DESIGN MASTER literals gone.
+    expect(strip.className).not.toContain('bg-white');
+    expect(strip.className).not.toContain('rounded-[14px]');
   });
 });

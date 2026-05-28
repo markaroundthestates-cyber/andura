@@ -13,6 +13,7 @@
 import type { JSX } from 'react';
 import { PlayCircle } from 'lucide-react';
 import type { PausedSession } from '../../stores/workoutStore';
+import { t } from '../../../i18n/index.js';
 
 interface Props {
   snapshot: PausedSession;
@@ -31,7 +32,7 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): JSX
       className="surface-elevated relative overflow-hidden bg-paper2 rounded-2xl p-4 mb-4 cursor-pointer"
       style={{ border: '1.5px solid var(--brick)' }}
       role="region"
-      aria-label="Reia sesiunea"
+      aria-label={t('resumeSession.title')}
       onClick={onResume}
       data-testid="resume-session-card"
     >
@@ -50,10 +51,10 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): JSX
           data-testid="resume-session-icon"
         />
         <div className="flex-1">
-          <div className="font-mono text-[11px] tracking-wider uppercase text-brick">Reia sesiunea</div>
+          <div className="font-mono text-[11px] tracking-wider uppercase text-brick">{t('resumeSession.title')}</div>
           <div className="font-display font-bold text-ink mt-0.5">{snapshot.title}</div>
           <div className="text-sm text-ink2 mt-0.5">
-            Oprit la ex {snapshot.exIdx + 1} · acum {minutesAgo} min
+            {t('resumeSession.metaLine', { n: snapshot.exIdx + 1, min: minutesAgo })}
           </div>
         </div>
       </div>
@@ -66,7 +67,7 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): JSX
           }}
           className="flex-1 bg-brick text-paper rounded-md px-3 py-2 text-sm font-semibold"
         >
-          Reia
+          {t('resumeSession.resumeCta')}
         </button>
         <button
           type="button"
@@ -76,7 +77,7 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): JSX
           }}
           className="bg-transparent text-ink2 border border-line rounded-md px-3.5 py-2 text-sm font-medium"
         >
-          Renunta
+          {t('resumeSession.discardCta')}
         </button>
       </div>
     </div>

@@ -889,21 +889,23 @@
 
   "reactivate": {
     "title": "Welcome back",
-    "body": "It's been a while. Want to start with a light session?",
+    "body": "We haven't talked in {days} days. No pressure - we'll ease back in with an adjusted session.",
     "startCta": "Start light",
-    "dismissCta": "Not now"
+    "dismissCta": "Later"
   },
 
   "resumeSession": {
-    "title": "Resume your session",
+    "title": "Resume session",
     "body": "You paused {when}. Continue where you left off?",
+    "metaLine": "Stopped at ex {n} · {min} min ago",
     "resumeCta": "Resume",
     "discardCta": "Discard"
   },
 
   "prNotification": {
-    "title": "New personal record!",
-    "body": "Tap to see the recap."
+    "ariaLabel": "PR detected",
+    "title": "PR last session",
+    "body": "Congrats - new record."
   },
 
   "calendar7Day": {

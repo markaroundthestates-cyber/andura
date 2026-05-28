@@ -13,6 +13,7 @@
 import type { JSX } from 'react';
 import { Hand } from 'lucide-react';
 import type { LastSessionSummary } from '../../stores/workoutStore';
+import { t } from '../../../i18n/index.js';
 
 interface Props {
   lastSession: LastSessionSummary;
@@ -26,7 +27,7 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): JSX.
     <div
       className="surface-elevated bg-paper2 border border-lineStrong rounded-2xl p-4 mb-4"
       role="region"
-      aria-label="Bun venit inapoi"
+      aria-label={t('reactivate.title')}
     >
       <div className="flex items-center gap-2.5 mb-1.5">
         <Hand
@@ -34,11 +35,10 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): JSX.
           aria-hidden="true"
           data-testid="reactivate-icon"
         />
-        <div className="font-display font-bold text-ink text-base">Bun venit inapoi</div>
+        <div className="font-display font-bold text-ink text-base">{t('reactivate.title')}</div>
       </div>
       <div className="text-sm text-ink2 leading-relaxed">
-        N-am vorbit de <b>{daysAgo} zile</b>. Fara presiune - reluam usor, cu o sesiune
-        ajustata.
+        {t('reactivate.body', { days: daysAgo })}
       </div>
       <div className="flex gap-2 mt-3">
         <button
@@ -46,14 +46,14 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): JSX.
           onClick={onStart}
           className="flex-1 bg-brick text-paper rounded-lg px-3 py-2.5 text-sm font-semibold"
         >
-          Incep usor
+          {t('reactivate.startCta')}
         </button>
         <button
           type="button"
           onClick={onDismiss}
           className="bg-transparent text-ink2 border border-line rounded-lg px-3.5 py-2.5 text-sm font-medium"
         >
-          Mai tarziu
+          {t('reactivate.dismissCta')}
         </button>
       </div>
     </div>

@@ -3,6 +3,12 @@
 //
 // §F-pass2-resume-02 (LOW chat5 Wave 11) — extend tests cu cream warm bg
 // class verification + data-testid root scope. Mockup L795 verbatim.
+//
+// Wave 2c i18n fix (2026-05-29) — the card's literal RO strings now flow
+// through t() (resumeSession.* keys). Default test locale is EN (jsdom
+// navigator.language en-US), so the meta line + Resume/Discard button copy
+// assert the EN bundle. Behavior (onResume/onDiscard wiring + testids)
+// unchanged.
 
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -28,15 +34,15 @@ describe('ResumeSessionCard — render', () => {
     expect(screen.getByText('Push · piept si umeri')).toBeInTheDocument();
   });
 
-  it('renders meta line "Oprit la ex 2 · acum 18 min"', () => {
+  it('renders meta line "Stopped at ex 2 · 18 min ago" (EN default)', () => {
     render(<ResumeSessionCard snapshot={makeSnapshot()} onResume={vi.fn()} onDiscard={vi.fn()} />);
-    expect(screen.getByText(/Oprit la ex 2 · acum 18 min/)).toBeInTheDocument();
+    expect(screen.getByText(/Stopped at ex 2 · 18 min ago/)).toBeInTheDocument();
   });
 
-  it('renders Reia + Renunta buttons', () => {
+  it('renders Resume + Discard buttons (EN default)', () => {
     render(<ResumeSessionCard snapshot={makeSnapshot()} onResume={vi.fn()} onDiscard={vi.fn()} />);
-    expect(screen.getByRole('button', { name: 'Reia' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Renunta' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Resume' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Discard' })).toBeInTheDocument();
   });
 
   it('§F-pass2-resume-01 PlayCircle brick icon present (mockup L796)', () => {
@@ -46,18 +52,18 @@ describe('ResumeSessionCard — render', () => {
     expect(icon.getAttribute('aria-hidden')).toBe('true');
   });
 
-  it('Reia button click calls onResume', () => {
+  it('Resume button click calls onResume', () => {
     const onResume = vi.fn();
     render(<ResumeSessionCard snapshot={makeSnapshot()} onResume={onResume} onDiscard={vi.fn()} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Reia' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Resume' }));
     expect(onResume).toHaveBeenCalled();
   });
 
-  it('Renunta button click calls onDiscard NU onResume', () => {
+  it('Discard button click calls onDiscard NU onResume', () => {
     const onResume = vi.fn();
     const onDiscard = vi.fn();
     render(<ResumeSessionCard snapshot={makeSnapshot()} onResume={onResume} onDiscard={onDiscard} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Renunta' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Discard' }));
     expect(onDiscard).toHaveBeenCalled();
     expect(onResume).not.toHaveBeenCalled();
   });

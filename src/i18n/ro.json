@@ -888,22 +888,24 @@
   },
 
   "reactivate": {
-    "title": "Bun revenit",
-    "body": "A trecut ceva timp. Vrei sa incepi cu o sesiune usoara?",
-    "startCta": "Incepe usor",
-    "dismissCta": "Nu acum"
+    "title": "Bun venit inapoi",
+    "body": "N-am vorbit de {days} zile. Fara presiune - reluam usor, cu o sesiune ajustata.",
+    "startCta": "Incep usor",
+    "dismissCta": "Mai tarziu"
   },
 
   "resumeSession": {
-    "title": "Continua sesiunea",
+    "title": "Reia sesiunea",
     "body": "Ai pus pe pauza {when}. Continui de unde ai ramas?",
-    "resumeCta": "Continua",
+    "metaLine": "Oprit la ex {n} · acum {min} min",
+    "resumeCta": "Reia",
     "discardCta": "Renunta"
   },
 
   "prNotification": {
-    "title": "Record personal nou!",
-    "body": "Tap ca sa vezi rezumatul."
+    "ariaLabel": "PR detectat",
+    "title": "PR sesiunea trecuta",
+    "body": "Felicitari - record nou."
   },
 
   "calendar7Day": {

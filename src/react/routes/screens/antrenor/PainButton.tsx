@@ -194,8 +194,8 @@ export function PainButton(): JSX.Element {
         onBack={handleBack}
         testIdBack="pain-button-back"
       />
-      <div className="p-6 flex-1">
-      <h2 className="text-2xl font-bold text-ink mb-2">{t('painButton.heading')}</h2>
+      <div className="p-6 flex-1 animate-card-rise">
+      <h2 className="font-display text-2xl font-bold text-ink tracking-tight mb-2">{t('painButton.heading')}</h2>
       <p className="text-base text-ink2 mb-6">{t('painButton.subtitle')}</p>
 
       <div className="grid grid-cols-2 gap-3 mb-6">
@@ -210,8 +210,8 @@ export function PainButton(): JSX.Element {
               aria-pressed={selected}
               className={
                 selected
-                  ? 'press-feedback p-3 rounded-xl border bg-brick text-paper border-brick'
-                  : 'press-feedback p-3 rounded-xl border bg-paper2 border-lineStrong text-ink'
+                  ? 'press-feedback p-3 rounded-2xl border bg-brick text-paper border-brick'
+                  : 'press-feedback p-3 rounded-2xl border bg-paper2 border-line text-ink'
               }
             >
               <span className="text-sm font-medium">{t(`painButton.regions.${id}`)}</span>
@@ -234,8 +234,8 @@ export function PainButton(): JSX.Element {
                 aria-pressed={selected}
                 className={
                   selected
-                    ? 'press-feedback flex-1 py-3 rounded-xl border bg-brick text-paper border-brick'
-                    : 'press-feedback flex-1 py-3 rounded-xl border bg-paper2 border-lineStrong text-ink'
+                    ? 'press-feedback flex-1 py-3 rounded-2xl border bg-brick text-paper border-brick'
+                    : 'press-feedback flex-1 py-3 rounded-2xl border bg-paper2 border-line text-ink'
                 }
               >
                 <span className="text-base font-medium">{intensityLabel(lvl)}</span>

@@ -123,8 +123,8 @@ export function EquipmentSwap(): JSX.Element {
         onBack={handleBack}
         testIdBack="equipment-swap-back"
       />
-      <div className="p-6 flex-1">
-      <h2 className="text-2xl font-bold text-ink mb-2">Aparate ocupate?</h2>
+      <div className="p-6 flex-1 animate-card-rise">
+      <h2 className="font-display text-2xl font-bold text-ink tracking-tight mb-2">Aparate ocupate?</h2>
       <p className="text-base text-ink2 mb-6">
         Marcheaza ce e ocupat. Iti arat ce faci in loc.
       </p>
@@ -146,8 +146,8 @@ export function EquipmentSwap(): JSX.Element {
                 aria-pressed={isBusy}
                 className={
                   isBusy
-                    ? 'flex items-center justify-between p-4 rounded-xl border bg-brick/10 border-brick'
-                    : 'flex items-center justify-between p-4 rounded-xl border bg-paper2 border-lineStrong'
+                    ? 'flex items-center justify-between p-4 rounded-2xl border bg-brick/10 border-brick transition'
+                    : 'flex items-center justify-between p-4 rounded-2xl border bg-paper2 border-line transition'
                 }
               >
                 <span className="text-base font-medium text-ink">{e.name}</span>

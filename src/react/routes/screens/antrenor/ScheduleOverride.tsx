@@ -71,8 +71,8 @@ export function ScheduleOverride(): JSX.Element {
         onBack={handleBack}
         testIdBack="schedule-override-back"
       />
-      <div className="p-6 flex-1">
-      <h2 className="text-2xl font-bold text-ink mb-2">{t('scheduleOverride.heading')}</h2>
+      <div className="p-6 flex-1 animate-card-rise">
+      <h2 className="font-display text-2xl font-bold text-ink tracking-tight mb-2">{t('scheduleOverride.heading')}</h2>
       <p className="text-base text-ink2 mb-6">
         {t('scheduleOverride.body')}
       </p>
@@ -83,7 +83,7 @@ export function ScheduleOverride(): JSX.Element {
             type="button"
             onClick={() => handleSelect(opt.kind)}
             data-override-kind={opt.kind}
-            className="flex flex-col items-start gap-1 p-4 rounded-xl border border-lineStrong bg-paper2 hover:bg-paper transition text-left"
+            className="flex flex-col items-start gap-1 p-4 rounded-2xl border border-line bg-paper2 hover:bg-paper transition text-left"
           >
             <span className="text-base font-medium text-ink">{t(opt.labelKey)}</span>
             <span className="text-sm text-ink2">{t(opt.descriptionKey)}</span>

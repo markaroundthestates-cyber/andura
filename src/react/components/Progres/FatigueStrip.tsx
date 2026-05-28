@@ -14,13 +14,21 @@
 // fatigue.js #L66-L92 deja emite Romanian human-friendly wording, NU jargon.
 // Mono font on numeric value reinforces 'metric snapshot' visual semantics.
 //
-// §DRIFT-2 (chat5 2026-05-23) — Option A mockup literal restore. Mockup
-// L1716-1721 verbatim: background:white, border-radius:14px (NU 16px Tailwind
-// rounded-2xl default), NU icon prefix. Removed lucide Activity icon (mockup
-// has ZERO icons in fatigue card), bg-paper2 → bg-white, rounded-2xl →
+// §DRIFT-2 (chat5 2026-05-23) — Option A mockup literal restore (SUPERSEDED).
+// Mockup L1716-1721 verbatim: background:white, border-radius:14px, NU icon
+// prefix. Removed lucide Activity icon, bg-paper2 → bg-white, rounded-2xl →
 // rounded-[14px]. D015 LOCK V1 DESIGN MASTER authority preserved.
+//
+// ANDURA PULSE reskin (Wave 2c, 2026-05-29) — the andura-clasic.html DESIGN
+// MASTER is retired (Pulse is the single design system now), so the §DRIFT-2
+// `bg-white rounded-[14px]` + no-icon mockup-literal pins no longer apply. The
+// strip now matches its grid sibling BMRStrip + BodyFatStrip: token surface
+// (bg-paper2 border-line rounded-2xl), an Activity icon prefix, and the
+// animate-card-rise entrance. Engine signal + display scale + testids
+// unchanged — presentation-only.
 
 import type { JSX } from 'react';
+import { Activity } from 'lucide-react';
 import { getFatigue, type FatigueOutput } from '../../lib/engineWrappers';
 import { t } from '../../../i18n/index.js';
 
@@ -59,9 +67,10 @@ export function FatigueStrip(): JSX.Element {
   return (
     <section
       data-testid="fatigue-strip"
-      className="bg-white dark:bg-paper2 border border-line rounded-[14px] p-4 mb-4"
+      className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4 animate-card-rise"
       aria-label={t('progres.fatigue.ariaLabel')}
     >
+      <Activity className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
           {t('progres.fatigue.todayLabel')}

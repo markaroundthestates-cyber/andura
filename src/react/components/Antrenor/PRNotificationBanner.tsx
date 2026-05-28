@@ -6,6 +6,7 @@
 // per lastSession history via engineWrappers.getPRDelta.
 
 import type { JSX } from 'react';
+import { t } from '../../../i18n/index.js';
 
 interface Props {
   prHit: boolean;
@@ -23,7 +24,7 @@ export function PRNotificationBanner({ prHit }: Props): JSX.Element | null {
       className="rounded-lg p-3 mb-4 text-center animate-pop-in"
       role="status"
       aria-live="polite"
-      aria-label="PR detectat"
+      aria-label={t('prNotification.ariaLabel')}
       // Pulse reskin (2026-05-29) — the PR moment now lands on the signature
       // volt→aqua gradient (the same celebratory accent as the Start CTA),
       // token-only so every theme reads native.
@@ -32,8 +33,8 @@ export function PRNotificationBanner({ prHit }: Props): JSX.Element | null {
         color: 'var(--on-accent)',
       }}
     >
-      <div className="font-display font-bold text-sm uppercase tracking-wider">PR sesiunea trecuta</div>
-      <div className="text-xs mt-1 opacity-90">Felicitari - record nou.</div>
+      <div className="font-display font-bold text-sm uppercase tracking-wider">{t('prNotification.title')}</div>
+      <div className="text-xs mt-1 opacity-90">{t('prNotification.body')}</div>
     </div>
   );
 }

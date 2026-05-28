@@ -3,6 +3,12 @@
 //
 // §F-pass2-reactivate-02 (LOW chat5 Wave 10) — border-lineStrong (warm
 // taupe interactive boundary) verbatim mockup `var(--line-strong)` L812.
+//
+// Wave 2c i18n fix (2026-05-29) — the card's literal RO strings now flow
+// through t() (reactivate.* keys). Default test locale is EN (jsdom
+// navigator.language en-US), so title/body/button copy assert the EN bundle.
+// Behavior (onStart/onDismiss wiring + testids) + the border-lineStrong
+// surface-contract test are unchanged.
 
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -18,20 +24,20 @@ function makeLastSession(daysAgo = 17): LastSessionSummary {
 }
 
 describe('ReactivateCard — render', () => {
-  it('renders title "Bun venit inapoi"', () => {
+  it('renders title "Welcome back" (EN default)', () => {
     render(<ReactivateCard lastSession={makeLastSession()} onStart={vi.fn()} onDismiss={vi.fn()} />);
-    expect(screen.getByText('Bun venit inapoi')).toBeInTheDocument();
+    expect(screen.getByText('Welcome back')).toBeInTheDocument();
   });
 
-  it('renders dynamic daysAgo computation', () => {
+  it('renders dynamic daysAgo computation (EN default)', () => {
     render(<ReactivateCard lastSession={makeLastSession(17)} onStart={vi.fn()} onDismiss={vi.fn()} />);
-    expect(screen.getByText(/17 zile/)).toBeInTheDocument();
+    expect(screen.getByText(/17 days/)).toBeInTheDocument();
   });
 
-  it('renders Incep usor + Mai tarziu buttons', () => {
+  it('renders Start light + Later buttons (EN default)', () => {
     render(<ReactivateCard lastSession={makeLastSession()} onStart={vi.fn()} onDismiss={vi.fn()} />);
-    expect(screen.getByRole('button', { name: 'Incep usor' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Mai tarziu' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Start light' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Later' })).toBeInTheDocument();
   });
 
   it('§F-pass2-reactivate-01 Hand brick icon present (mockup L814)', () => {
@@ -41,18 +47,18 @@ describe('ReactivateCard — render', () => {
     expect(icon.getAttribute('aria-hidden')).toBe('true');
   });
 
-  it('Incep usor click calls onStart', () => {
+  it('Start light click calls onStart', () => {
     const onStart = vi.fn();
     render(<ReactivateCard lastSession={makeLastSession()} onStart={onStart} onDismiss={vi.fn()} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Incep usor' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Start light' }));
     expect(onStart).toHaveBeenCalled();
   });
 
-  it('Mai tarziu click calls onDismiss NU onStart', () => {
+  it('Later click calls onDismiss NU onStart', () => {
     const onStart = vi.fn();
     const onDismiss = vi.fn();
     render(<ReactivateCard lastSession={makeLastSession()} onStart={onStart} onDismiss={onDismiss} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Mai tarziu' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Later' }));
     expect(onDismiss).toHaveBeenCalled();
     expect(onStart).not.toHaveBeenCalled();
   });
@@ -68,7 +74,7 @@ describe('ReactivateCard — render', () => {
     const { container } = render(
       <ReactivateCard lastSession={makeLastSession()} onStart={vi.fn()} onDismiss={vi.fn()} />,
     );
-    const card = container.querySelector('[role="region"][aria-label="Bun venit inapoi"]');
+    const card = container.querySelector('[role="region"][aria-label="Welcome back"]');
     expect(card).not.toBeNull();
     expect(card?.className).toMatch(/border-lineStrong/);
     expect(card?.className).not.toMatch(/\bborder-line\b/);
