@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { Flag } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
 export function FinishEarlyConfirm(): JSX.Element {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export function FinishEarlyConfirm(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="finish-early-confirm">
       <SubHeader
-        title="Termina mai devreme"
+        title={t('confirm.finishEarly.title')}
         onBack={handleCancel}
         testIdBack="finish-early-confirm-back"
       />
@@ -36,14 +37,12 @@ export function FinishEarlyConfirm(): JSX.Element {
         <div className="w-16 h-16 rounded-full bg-paper2 border border-line flex items-center justify-center mb-5">
           <Flag className="w-7 h-7 text-ink" aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-semibold text-ink mb-3">Termini sesiunea acum?</h2>
+        <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.finishEarly.heading')}</h2>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          <strong>Sesiunea partiala se salveaza.</strong> Coach-ul foloseste
-          datele logate pana acum — <strong>NU pierzi progresul</strong>.
+          {t('confirm.finishEarly.body1')}
         </p>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Seturile inregistrate raman in istoric. Coach-ul ajusteaza saptamana
-          in functie de ce ai facut.
+          {t('confirm.finishEarly.body2')}
         </p>
 
         <div className="w-full max-w-sm mt-8 flex flex-col gap-3">
@@ -53,7 +52,7 @@ export function FinishEarlyConfirm(): JSX.Element {
             data-testid="finish-early-confirm-accept"
             className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
           >
-            Termina acum
+            {t('confirm.finishEarly.acceptCta')}
           </button>
           <button
             type="button"
@@ -61,7 +60,7 @@ export function FinishEarlyConfirm(): JSX.Element {
             data-testid="finish-early-confirm-cancel"
             className="w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
           >
-            Continua sesiunea
+            {t('confirm.finishEarly.cancelCta')}
           </button>
         </div>
       </div>

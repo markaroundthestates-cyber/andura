@@ -19,6 +19,7 @@ import { signOut as authSignOut } from '../../../../auth.js';
 import { wipeUserDataOnLogout } from '../../../../util/dataReset.js';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
 // H1 shared-device PII leak fix — logout previously cleared only the auth
 // tokens, leaving ALL Tier-0 user data (logs / weight / body / pain / coach
@@ -73,7 +74,7 @@ export function LogoutConfirm(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="logout-confirm">
       <SubHeader
-        title="Iesi din cont"
+        title={t('confirm.logout.title')}
         onBack={handleCancel}
         testIdBack="logout-confirm-back"
       />
@@ -82,15 +83,12 @@ export function LogoutConfirm(): JSX.Element {
         <div className="w-16 h-16 rounded-full bg-paper2 border border-line flex items-center justify-center mb-5">
           <LogOut className="w-7 h-7 text-ink" aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-semibold text-ink mb-3">Iesi din cont?</h2>
+        <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.logout.heading')}</h2>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Contul tau si antrenamentele logate (cu tot cu recorduri) raman
-          salvate in siguranta si revin cand intri din nou cu acelasi email.
+          {t('confirm.logout.body1')}
         </p>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Pentru siguranta ta pe un dispozitiv folosit in comun, istoricul
-          afisat, graficul de greutate si seria de zile se sterg de pe acest
-          telefon la deconectare.
+          {t('confirm.logout.body2')}
         </p>
 
         <div className="w-full max-w-sm mt-8 flex flex-col gap-3">
@@ -100,7 +98,7 @@ export function LogoutConfirm(): JSX.Element {
             data-testid="logout-confirm-accept"
             className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
           >
-            Confirma actiunea
+            {t('confirm.logout.acceptCta')}
           </button>
           <button
             type="button"
@@ -108,7 +106,7 @@ export function LogoutConfirm(): JSX.Element {
             data-testid="logout-confirm-cancel"
             className="w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
           >
-            Anuleaza
+            {t('confirm.logout.cancelCta')}
           </button>
         </div>
       </div>

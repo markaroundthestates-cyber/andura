@@ -7,6 +7,14 @@ import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { RedoOnboardingConfirm } from '../../../routes/screens/cont/RedoOnboardingConfirm';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 
+// Wave E4 i18n locale pin — these specs were written against RO copy;
+// force RO locale so existing assertions keep their semantics. EN coverage
+// is verified separately by src/i18n/__tests__/i18nNoRoLeak.test.tsx.
+import { beforeEach as __i18nBeforeEach } from 'vitest';
+import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../../../i18n/index.js';
+__i18nBeforeEach(() => { try { localStorage.removeItem('sf.locale'); } catch {} __resetI18n(); __setLocale('ro'); });
+
+
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
   return <div data-testid="probe" data-pathname={loc.pathname} />;
@@ -30,7 +38,7 @@ beforeEach(() => {
     completed: true,
     completedAt: Date.now(),
   });
-  localStorage.clear();
+  localStorage.clear(); __resetI18n(); __setLocale("ro");
 });
 
 describe('RedoOnboardingConfirm — B002 drill-down', () => {

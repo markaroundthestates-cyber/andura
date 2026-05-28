@@ -13,6 +13,7 @@ import { RefreshCcw } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { resetCoachState } from '../../../../util/coachReset.js';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
 export function ResetCoachConfirm(): JSX.Element {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export function ResetCoachConfirm(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="reset-coach-confirm">
       <SubHeader
-        title="Reseteaza coach"
+        title={t('confirm.resetCoach.title')}
         onBack={handleCancel}
         testIdBack="reset-coach-confirm-back"
       />
@@ -38,13 +39,12 @@ export function ResetCoachConfirm(): JSX.Element {
         <div className="w-16 h-16 rounded-full bg-paper2 border border-line flex items-center justify-center mb-5">
           <RefreshCcw className="w-7 h-7 text-ink" aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-semibold text-ink mb-3">Atentie</h2>
+        <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.resetCoach.heading')}</h2>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Aceasta actiune va sterge progresul AI invatat despre tine si va
-          reporni coach-ul de la zero.
+          {t('confirm.resetCoach.body1')}
         </p>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Datele tale de antrenament raman intacte. Ireversibil.
+          {t('confirm.resetCoach.body2')}
         </p>
 
         <div className="w-full max-w-sm mt-8 flex flex-col gap-3">
@@ -54,7 +54,7 @@ export function ResetCoachConfirm(): JSX.Element {
             data-testid="reset-coach-confirm-accept"
             className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
           >
-            Confirma actiunea
+            {t('confirm.resetCoach.acceptCta')}
           </button>
           <button
             type="button"
@@ -62,7 +62,7 @@ export function ResetCoachConfirm(): JSX.Element {
             data-testid="reset-coach-confirm-cancel"
             className="w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
           >
-            Anuleaza
+            {t('confirm.resetCoach.cancelCta')}
           </button>
         </div>
       </div>

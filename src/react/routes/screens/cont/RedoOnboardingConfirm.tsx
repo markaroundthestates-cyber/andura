@@ -12,6 +12,7 @@ import { RotateCcw } from 'lucide-react';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
 export function RedoOnboardingConfirm(): JSX.Element {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ export function RedoOnboardingConfirm(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="redo-onboarding-confirm">
       <SubHeader
-        title="Refa onboarding"
+        title={t('confirm.redoOnboarding.title')}
         onBack={handleCancel}
         testIdBack="redo-onboarding-confirm-back"
       />
@@ -37,14 +38,12 @@ export function RedoOnboardingConfirm(): JSX.Element {
         <div className="w-16 h-16 rounded-full bg-paper2 border border-line flex items-center justify-center mb-5">
           <RotateCcw className="w-7 h-7 text-ink" aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-semibold text-ink mb-3">Atentie</h2>
+        <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.redoOnboarding.heading')}</h2>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Vei relua configurarea initiala — obiective, nivel de experienta,
-          disponibilitate.
+          {t('confirm.redoOnboarding.body1')}
         </p>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Profilul actual se pastreaza, dar raspunsurile vechi vor fi
-          suprascrise. Reversibil daca termini din nou onboarding-ul.
+          {t('confirm.redoOnboarding.body2')}
         </p>
 
         <div className="w-full max-w-sm mt-8 flex flex-col gap-3">
@@ -54,7 +53,7 @@ export function RedoOnboardingConfirm(): JSX.Element {
             data-testid="redo-onboarding-confirm-accept"
             className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
           >
-            Confirma actiunea
+            {t('confirm.redoOnboarding.acceptCta')}
           </button>
           <button
             type="button"
@@ -62,7 +61,7 @@ export function RedoOnboardingConfirm(): JSX.Element {
             data-testid="redo-onboarding-confirm-cancel"
             className="w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
           >
-            Anuleaza
+            {t('confirm.redoOnboarding.cancelCta')}
           </button>
         </div>
       </div>
