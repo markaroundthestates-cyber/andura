@@ -44,7 +44,11 @@ import { detectAggressiveLoad, deriveThresholds } from '../../../lib/aaFrictionD
 import type { AggressiveReason } from '../../../lib/aaFrictionDetect';
 import { getEngineSignals } from '../../../lib/engineSignalsAggregate';
 import { InactivityPrompt } from '../../../components/Workout/InactivityPrompt';
+import { PrFlash } from '../../../components/Workout/PrFlash';
 import { ExerciseMedia } from '../../../components/ExerciseMedia';
+import { Kicker } from '../../../components/pulse/Kicker';
+import { useCountUp } from '../../../hooks/useCountUp';
+import { Brain } from 'lucide-react';
 import { DP } from '../../../../engine/dp.js';
 import { resolveBusySwap, resolveMissingSwap, resolveRefusalSwap } from '../../../lib/substitution';
 import { toast } from '../../../lib/toast';
@@ -216,6 +220,12 @@ export function Workout(): JSX.Element {
   // (e.g. "Greutatea este prea mare · Trecem la 50 kg pentru urmatorul set").
   // Shown in the log zone for the NEXT set; cleared when the user logs/advances.
   const [adjustNotice, setAdjustNotice] = useState<string | null>(null);
+  // Pulse arc 2026-05-29 (blueprint C3-c) — mid-session PR celebration. Set at
+  // the EXISTING getPRDelta/markPRHit moment in performLogSet (we do NOT add a
+  // second detection path); cleared on overlay dismiss. Carries the exercise +
+  // positive kg delta the mockup PrFlash shows. The PostSummary PR banner stays
+  // the durable record — this is the in-the-moment hit only.
+  const [prFlash, setPrFlash] = useState<{ exercise: string; deltaKg: number } | null>(null);
   // U-04 (MED) — why-modal focus management (auto-focus + Escape + restore +
   // trap), paritate cu ExitConfirmSheet sister pattern. whyDismissRef = singurul
   // buton ("Am inteles") → Tab trap pe el insusi.
@@ -370,6 +380,17 @@ export function Workout(): JSX.Element {
     setInactivityPromptOpen(false);
   }, []);
 
+  // Pulse arc 2026-05-29 (blueprint C3-g) — live session volume = Σ kg×reps
+  // across every logged set so far (the mockup's count-up header stat). Derived
+  // from the real `history` store slice (NOT a mocked number); recomputes each
+  // time a set lands. useCountUp must run at top level (rules-of-hooks) above
+  // the loading/empty early returns; history is [] pre-session so it reads 0.
+  const liveVolumeKg = Object.values(history).reduce(
+    (acc, sets) => acc + sets.reduce((s, set) => s + set.kg * set.reps, 0),
+    0,
+  );
+  const liveVolumeDisplay = useCountUp(Math.round(liveVolumeKg));
+
   function performLogSet(rating: SetRating): void {
     logSet(safeExIdx, { kg: kgInput, reps: repsInput, rating });
 
@@ -397,6 +418,13 @@ export function Workout(): JSX.Element {
         deltaPct: delta.deltaPct,
         oneRMEstimate: delta.oneRMEstimate,
       });
+      // Pulse C3-c — fire the mid-session PR celebration at the SAME detection
+      // moment (no second path). The mockup PrFlash shows a positive kg delta,
+      // so we surface it for weight PRs with a real kg gain; volume/reps PRs
+      // (deltaKg 0) still flow to the PostSummary banner via markPRHit above.
+      if (delta.deltaKg > 0) {
+        setPrFlash({ exercise: exerciseName, deltaKg: delta.deltaKg });
+      }
     }
 
     // Fix #2 — in-session RPE auto-correction (DP.checkInSessionAdjust, was dead
@@ -848,6 +876,27 @@ export function Workout(): JSX.Element {
       {/* Log zone */}
       {(phase === 'logging' || phase === 'idle' || phase === 'rating') && (
         <div className="p-6" data-testid="log-zone">
+          {/* Pulse arc 2026-05-29 (blueprint C3-g) — live volume count-up chip.
+              Σ kg×reps so far, mono-styled like the mockup header stat. Lives in
+              the log-zone (re-renders per set) so SessionTimer's React.memo +
+              perf isolation stay intact. aria-hidden: the number is ambient
+              motivation, not a screen-reader announcement (sets/reps already
+              read). */}
+          <div className="flex items-center justify-between mb-4" aria-hidden="true">
+            <Kicker color="var(--aqua)">
+              {t('workout.progress.exercisesLabel_other', {
+                done: safeExIdx + 1,
+                total: exercises.length,
+              })}
+            </Kicker>
+            <span className="font-mono text-[11px] text-ink3" data-testid="workout-live-volume">
+              <span className="font-semibold" style={{ color: 'var(--aqua)' }}>
+                {liveVolumeDisplay.toLocaleString('en-US')}
+              </span>{' '}
+              {t('workout.liveVolumeLabel')}
+            </span>
+          </div>
+
           {/* §F-workout-05 — current exercise name + "why this exercise?"
               help-circle (mockup andura-clasic.html#L1447-1451 wv2-exname →
               openWhyExercise). Surfaces whyEngine categorical explainer. */}
@@ -856,7 +905,7 @@ export function Workout(): JSX.Element {
               {t('workout.currentExercise')}
             </p>
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-semibold text-ink">{currentExercise.name}</h2>
+              <h2 className="font-display text-2xl font-bold text-ink">{currentExercise.name}</h2>
               <button
                 type="button"
                 onClick={handleOpenWhy}
@@ -943,11 +992,20 @@ export function Workout(): JSX.Element {
               role="status" so a screen reader announces the recalibration. */}
           {adjustNotice !== null && (
             <div
-              className="mb-3 p-3 rounded-xl bg-paper2 border border-lineStrong text-sm text-ink"
+              className="animate-fade-in-up mb-3 flex items-start gap-2.5 p-3 rounded-2xl font-serif italic text-sm text-ink"
               data-testid="insession-adjust-notice"
               role="status"
+              style={{
+                background: 'color-mix(in oklab, var(--volt) 11%, var(--paper2))',
+                border: '1px solid color-mix(in oklab, var(--volt) 32%, transparent)',
+              }}
             >
-              {adjustNotice}
+              <Brain
+                className="w-4 h-4 flex-shrink-0 mt-0.5"
+                aria-hidden="true"
+                style={{ color: 'var(--volt-deep)' }}
+              />
+              <span>{adjustNotice}</span>
             </div>
           )}
 
@@ -1052,6 +1110,20 @@ export function Workout(): JSX.Element {
         onAcknowledge={handleAaAcknowledge}
         onForceContinue={handleAaForceContinue}
       />
+
+      {/* Pulse arc 2026-05-29 (blueprint C3-c) — mid-session PR celebration,
+          fired at the existing markPRHit moment in performLogSet. Transient +
+          auto-dismissing (never traps focus, never permanently blocks exit);
+          the PostSummary PR banner remains the durable record. Keyed on the
+          exercise so back-to-back PRs each re-trigger the burst. */}
+      {prFlash && (
+        <PrFlash
+          key={prFlash.exercise}
+          exercise={prFlash.exercise}
+          deltaKg={prFlash.deltaKg}
+          onClose={() => setPrFlash(null)}
+        />
+      )}
 
       <InactivityPrompt
         open={inactivityPromptOpen}

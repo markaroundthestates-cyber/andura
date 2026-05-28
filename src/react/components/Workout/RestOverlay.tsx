@@ -63,11 +63,17 @@ export function RestOverlay({
     >
       {/* Wave C3 (2026-05-28) — breath cadence wraps the ring (5s in / 5s out
           loop = a calm rest tempo the user can sync to). Subtle scale (0.96 → 1)
-          keeps the timer mm:ss legible. Auto-collapses under reduced-motion. */}
+          keeps the timer mm:ss legible. Auto-collapses under reduced-motion.
+          Pulse arc 2026-05-29 (blueprint C3-d) — the countdown ring is enlarged
+          (the mockup's prominent ring) WITHOUT breaking the deliberate
+          bottom-pinned non-modal layout (BUG #7+#8): the card stays a bottom
+          band so the header X + ⋯ remain clickable during rest. */}
       <div className="animate-breath">
         <SVGCountdownRing
           totalSec={initialRestSec}
           remainingSec={countdownSec}
+          diameter={84}
+          strokeWidth={6}
           timeColorClass="text-paper dark:text-ink"
         />
       </div>

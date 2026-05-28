@@ -77,6 +77,15 @@ export function ExerciseMedia({
     // polish, so the placeholder reads as intentional design, not a broken
     // image. "Imagine in curand" label only on the card variant where there
     // is room and the user is mid-set; smaller variants stay icon-only.
+    // Pulse arc 2026-05-29 (blueprint C3) — the card-variant placeholder picks
+    // up the mockup's .ex-media diagonal-hatch fill + a token-tinted "Coming
+    // soon" badge so the demo surface reads as intentional craft, not a gap.
+    // Smaller variants keep the soft radial wash (StatsGrid polish). Icon /
+    // role / aria-label / testids unchanged (consumed by WorkoutPreview rows +
+    // the flow agent), so this is a pure skin swap.
+    const placeholderBg = isCard
+      ? 'repeating-linear-gradient(135deg, var(--paper) 0 11px, var(--paper2) 11px 22px)'
+      : 'radial-gradient(circle at 30% 30%, color-mix(in oklab, var(--brick) 14%, transparent) 0%, transparent 60%)';
     return (
       <div
         className={`relative overflow-hidden bg-paper2 border border-line flex flex-col items-center justify-center ${sizeClass} ${className}`}
@@ -88,10 +97,7 @@ export function ExerciseMedia({
         <span
           aria-hidden="true"
           className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              'radial-gradient(circle at 30% 30%, color-mix(in oklab, var(--brick) 14%, transparent) 0%, transparent 60%)',
-          }}
+          style={{ background: placeholderBg }}
         />
         <Dumbbell
           aria-hidden="true"
@@ -99,9 +105,16 @@ export function ExerciseMedia({
           size={ICON_SIZE_BY_VARIANT[variant]}
         />
         {isCard && (
-          <p className="relative mt-2 text-xs uppercase tracking-wider text-ink3 font-medium">
+          <span
+            className="relative mt-2.5 font-mono text-[9px] uppercase tracking-[0.1em] font-medium px-2.5 py-1 rounded-full"
+            style={{
+              color: 'var(--brick)',
+              background: 'color-mix(in oklab, var(--brick) 12%, transparent)',
+              border: '1px solid color-mix(in oklab, var(--brick) 32%, transparent)',
+            }}
+          >
             {t('common.imageSoon')}
-          </p>
+          </span>
         )}
       </div>
     );
