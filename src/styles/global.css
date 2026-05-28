@@ -353,6 +353,24 @@
     filter: none;
   }
 
+  /* ── ELEVATED CARD SURFACE (Daniel UX polish 2026-05-28) ─────────────────
+     Optional dimensionality for hero cards (CoachTodayCard, ObiectivCard,
+     stat tile containers) — a barely-perceptible top-to-bottom gradient that
+     lifts the card off the page bg without resorting to box-shadow (would
+     clash with the mov ambient glow). Tokenized via color-mix(--paper-2):
+       top edge: paper-2 + 4% accent  (the card "catches" the page light)
+       bottom edge: paper-2            (settles into the page)
+     On Clasic (light cream) the gradient direction inverts implicitly via
+     color-mix(--paper-2, accent) which lifts the cream slightly warmer
+     without going muddy. */
+  .surface-elevated {
+    background-image: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--paper-2) 92%, var(--brick) 8%) 0%,
+      var(--paper-2) 50%
+    );
+  }
+
   /* Secondary CTA hairline — for "Creaza Cont" style outlined buttons. Adds
      a subtle accent inner glow on hover to feel responsive without competing
      with the primary CTA's halo. Pair with bg-paper2 + border-lineStrong. */
