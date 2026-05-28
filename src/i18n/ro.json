@@ -96,6 +96,34 @@
       "9": "oct",
       "10": "noi",
       "11": "dec"
+    },
+    "full": {
+      "0": "Ianuarie",
+      "1": "Februarie",
+      "2": "Martie",
+      "3": "Aprilie",
+      "4": "Mai",
+      "5": "Iunie",
+      "6": "Iulie",
+      "7": "August",
+      "8": "Septembrie",
+      "9": "Octombrie",
+      "10": "Noiembrie",
+      "11": "Decembrie"
+    },
+    "fullGenitive": {
+      "0": "ianuarie",
+      "1": "februarie",
+      "2": "martie",
+      "3": "aprilie",
+      "4": "mai",
+      "5": "iunie",
+      "6": "iulie",
+      "7": "august",
+      "8": "septembrie",
+      "9": "octombrie",
+      "10": "noiembrie",
+      "11": "decembrie"
     }
   },
 
@@ -510,6 +538,58 @@
     "ariaLabel": "Urmatoarele 7 zile",
     "today": "Azi",
     "restDayShort": "Pauza"
+  },
+
+  "calendar": {
+    "day7": {
+      "title": "Program de antrenament",
+      "editAriaEdit": "Editeaza",
+      "editAriaSave": "Salveaza",
+      "saveCta": "Salveaza",
+      "editHint": "Modifica zilele de antrenament in care esti disponibil.",
+      "dayLabels": {
+        "0": "L",
+        "1": "Ma",
+        "2": "Mi",
+        "3": "J",
+        "4": "V",
+        "5": "S",
+        "6": "D"
+      },
+      "kindTraining": "antrenament",
+      "kindRest": "odihna"
+    },
+    "heatmap": {
+      "ariaLabel": "Calendar antrenamente lunar",
+      "prevMonth": "Luna anterioara",
+      "nextMonth": "Luna urmatoare",
+      "monthAnnounce": "Calendarul afiseaza {month} {year}",
+      "dayLabels": {
+        "0": "L",
+        "1": "Ma",
+        "2": "Mi",
+        "3": "J",
+        "4": "V",
+        "5": "S",
+        "6": "D"
+      },
+      "cell": {
+        "rest": "zi libera",
+        "sessionLight": "antrenament usor",
+        "sessionFair": "antrenament potrivit",
+        "sessionHard": "antrenament greu",
+        "sessionPresent": "antrenament prezent",
+        "todaySuffix": " (azi)",
+        "futureSuffix": ", data viitoare"
+      },
+      "legend": {
+        "hard": "Greu",
+        "normal": "Normal",
+        "easy": "Usor",
+        "recovery": "Recuperare",
+        "rest": "Zi libera"
+      }
+    }
   },
 
   "exitConfirm": {

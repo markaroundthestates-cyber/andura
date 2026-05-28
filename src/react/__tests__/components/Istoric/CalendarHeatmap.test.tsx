@@ -1,43 +1,49 @@
 // ══ CALENDAR HEATMAP TESTS — F-istoric-01 ════════════════════════════════
+// Wave E3 i18n: month labels + day-letters + cell semantics flipped to EN
+// default. RO labels covered via dedicated RO-locale block below.
 // 7 cases per spec §9.1.
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CalendarHeatmap } from '../../../components/Istoric/CalendarHeatmap';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
-const CAL_MONTHS = [
-  'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie',
-  'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie',
+const CAL_MONTHS_EN = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
 ] as const;
 
 beforeEach(() => {
   useWorkoutStore.setState({ sessionsHistory: [] });
+  setLocale('en');
+  _resetI18nCache();
+  setLocale('en');
 });
 
 afterEach(() => {
   vi.useRealTimers();
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
 });
 
 describe('CalendarHeatmap — render basics', () => {
-  it('renders heading with current month/year', () => {
+  it('renders heading with current month/year (EN default)', () => {
     const now = new Date();
     render(<CalendarHeatmap />);
     const label = screen.getByTestId('cal-month-label');
-    expect(label.textContent).toContain(CAL_MONTHS[now.getMonth()]);
+    expect(label.textContent).toContain(CAL_MONTHS_EN[now.getMonth()]);
     expect(label.textContent).toContain(String(now.getFullYear()));
   });
 
-  it('renders 7 day-label headers L Ma Mi J V S D', () => {
+  it('renders 7 day-label headers (Monday-first single-letter EN)', () => {
     const { container } = render(<CalendarHeatmap />);
-    const headerLabels = ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D'];
-    headerLabels.forEach((lbl) => {
-      // Day labels are direct text nodes in header row
-      const matches = Array.from(container.querySelectorAll('div')).filter(
-        (el) => el.textContent === lbl
-      );
-      expect(matches.length).toBeGreaterThan(0);
-    });
+    // EN day-letters: M T W T F S S (Monday-first). RO would be L Ma Mi J V S D.
+    const headerGrid = container.querySelector('.grid.grid-cols-7.gap-1.mb-1\\.5');
+    expect(headerGrid).not.toBeNull();
+    const cells = headerGrid?.querySelectorAll('div') ?? [];
+    const text = Array.from(cells).map((el) => el.textContent ?? '');
+    expect(text).toEqual(['M', 'T', 'W', 'T', 'F', 'S', 'S']);
   });
 
   it('container data-testid present', () => {
@@ -46,24 +52,24 @@ describe('CalendarHeatmap — render basics', () => {
   });
 });
 
-describe('CalendarHeatmap — month navigation', () => {
+describe('CalendarHeatmap — month navigation (EN default)', () => {
   it('clicks chevron-right advances month label', () => {
     // Use fake current date so behavior deterministic.
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 4, 15)); // Mai 2026
+    vi.setSystemTime(new Date(2026, 4, 15)); // May 2026
     render(<CalendarHeatmap />);
-    expect(screen.getByTestId('cal-month-label').textContent).toBe('Mai 2026');
+    expect(screen.getByTestId('cal-month-label').textContent).toBe('May 2026');
     fireEvent.click(screen.getByTestId('cal-next'));
-    expect(screen.getByTestId('cal-month-label').textContent).toBe('Iunie 2026');
+    expect(screen.getByTestId('cal-month-label').textContent).toBe('June 2026');
   });
 
-  it('clicks chevron-left from Ianuarie wraps Decembrie prev year', () => {
+  it('clicks chevron-left from January wraps December prev year', () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 0, 15)); // Ianuarie 2026
+    vi.setSystemTime(new Date(2026, 0, 15)); // January 2026
     render(<CalendarHeatmap />);
-    expect(screen.getByTestId('cal-month-label').textContent).toBe('Ianuarie 2026');
+    expect(screen.getByTestId('cal-month-label').textContent).toBe('January 2026');
     fireEvent.click(screen.getByTestId('cal-prev'));
-    expect(screen.getByTestId('cal-month-label').textContent).toBe('Decembrie 2025');
+    expect(screen.getByTestId('cal-month-label').textContent).toBe('December 2025');
   });
 });
 
@@ -77,9 +83,9 @@ describe('CalendarHeatmap — cell paint from sessionsHistory', () => {
     expect(tierCells.length).toBe(0);
   });
 
-  it('seeds 1 session ts=today rating=greu → cell has l3 tier + greu aria-label', () => {
+  it('seeds 1 session ts=today rating=greu → cell has l3 tier + hard-session aria-label (EN)', () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 4, 15, 10)); // Mai 15 2026 10am
+    vi.setSystemTime(new Date(2026, 4, 15, 10)); // May 15 2026 10am
     useWorkoutStore.setState({
       sessionsHistory: [
         {
@@ -104,6 +110,47 @@ describe('CalendarHeatmap — cell paint from sessionsHistory', () => {
     render(<CalendarHeatmap />);
     const cell = screen.getByTestId('cal-cell-15');
     expect(cell.getAttribute('data-tier')).toBe('l3');
+    expect(cell.getAttribute('aria-label')).toContain('hard session');
+  });
+});
+
+describe('CalendarHeatmap — RO locale opt-in', () => {
+  beforeEach(() => {
+    setLocale('ro');
+    _resetI18nCache();
+    setLocale('ro');
+  });
+
+  it('renders RO month label under RO locale', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 15));
+    render(<CalendarHeatmap />);
+    expect(screen.getByTestId('cal-month-label').textContent).toBe('Mai 2026');
+  });
+
+  it('RO cell aria-label uses "antrenament greu" for hard sessions', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 15, 10));
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        {
+          title: 'Push',
+          meta: '',
+          ts: new Date(2026, 4, 15, 10).getTime(),
+          exercises: [
+            {
+              exerciseId: 'bench',
+              exerciseName: 'Bench',
+              sets: [{ kg: 100, reps: 5, rating: 'greu', timestamp: 0 }],
+              totalVolume: 500,
+              peakOneRM: 100,
+            },
+          ],
+        },
+      ],
+    });
+    render(<CalendarHeatmap />);
+    const cell = screen.getByTestId('cal-cell-15');
     expect(cell.getAttribute('aria-label')).toContain('antrenament greu');
   });
 });
