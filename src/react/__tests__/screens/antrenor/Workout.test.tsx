@@ -545,14 +545,18 @@ describe('Workout — in-workout substitution row (F-workout-03)', async () => {
     resetStore();
   });
 
-  it('renders both action buttons in logging phase', async () => {
+  it('renders three action buttons in logging phase (Ocupat + Lipsa + Nu vreau)', async () => {
+    // Daniel smoke 2026-05-28 #17 — third button "Aparat lipsa" added. Labels
+    // compressed for the 3-column row (full names live in aria-label / sheet
+    // titles). Mockup parity preserved at the testid level.
     await renderWorkoutAndWait();
     expect(screen.getByTestId('wv2-ex-actions')).toBeInTheDocument();
-    expect(screen.getByTestId('wv2-ex-action-ocupat')).toHaveTextContent('Aparat ocupat');
+    expect(screen.getByTestId('wv2-ex-action-ocupat')).toHaveTextContent('Ocupat');
+    expect(screen.getByTestId('wv2-ex-action-lipsa')).toHaveTextContent('Lipsa');
     expect(screen.getByTestId('wv2-ex-action-nuvreau')).toHaveTextContent('Nu vreau');
   });
 
-  it('"Aparat ocupat" navigates la equipment-swap', async () => {
+  it('"Ocupat" navigates la equipment-swap when no engineName (defensive fallback)', async () => {
     await renderWorkoutAndWait();
     fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
     expect(screen.getByTestId('probe')).toHaveAttribute(
@@ -561,13 +565,38 @@ describe('Workout — in-workout substitution row (F-workout-03)', async () => {
     );
   });
 
-  it('"Nu vreau" navigates la ceva-nu-merge', async () => {
+  it('"Nu vreau" navigates la ceva-nu-merge when no engineName (defensive fallback)', async () => {
     await renderWorkoutAndWait();
     fireEvent.click(screen.getByTestId('wv2-ex-action-nuvreau'));
     expect(screen.getByTestId('probe')).toHaveAttribute(
       'data-pathname',
       '/app/antrenor/ceva-nu-merge'
     );
+  });
+
+  it('"Lipsa" opens the in-session AparatLipsaSheet (no navigation away)', async () => {
+    // Daniel smoke 2026-05-28 #17 — Aparat lipsa stays IN-SESSION (sheet over
+    // the log zone). Persists wv2-missing-equipment so Cont -> AparateLipsa
+    // hydrates the new state on next mount.
+    await renderWorkoutAndWait();
+    expect(screen.queryByTestId('aparat-lipsa-sheet')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('wv2-ex-action-lipsa'));
+    expect(screen.getByTestId('aparat-lipsa-sheet')).toBeInTheDocument();
+    // No navigation — workout testid still mounted (would unmount on navigate
+    // because the test routes target the other paths via LocationProbe).
+    expect(screen.getByTestId('workout')).toBeInTheDocument();
+  });
+
+  it('saving the sheet persists wv2-missing-equipment + closes the sheet', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('wv2-ex-action-lipsa'));
+    // Mark gantere as missing
+    fireEvent.click(screen.getByTestId('aparat-lipsa-sheet-item-gantere'));
+    fireEvent.click(screen.getByTestId('aparat-lipsa-sheet-save'));
+    expect(screen.queryByTestId('aparat-lipsa-sheet')).not.toBeInTheDocument();
+    const raw = localStorage.getItem('wv2-missing-equipment');
+    expect(raw).not.toBeNull();
+    expect(JSON.parse(raw!)).toContain('gantere');
   });
 });
 
@@ -724,9 +753,12 @@ describe('Workout — global progress bar wired (P-11)', async () => {
     expect(screen.getByTestId('workout-progress-bar')).toBeInTheDocument();
   });
 
-  it('seturi cumulate 0/17 la start', async () => {
+  it('seturi cumulate 1/17 la start (ordinal: pe set 1)', async () => {
+    // Daniel smoke 2026-05-28: counter is the 1-indexed CURRENT-set ordinal
+    // (mockup wv2 setIdx semantic), not a "logged" tally — so first frame
+    // already reads "1/17" ("you are on set 1 of 17"), not "0/17".
     await renderWorkoutAndWait();
-    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('0/17 seturi');
+    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('1/17 seturi');
   });
 
   it('exercitiu curent 1/5 la start', async () => {
@@ -734,10 +766,22 @@ describe('Workout — global progress bar wired (P-11)', async () => {
     expect(screen.getByTestId('workout-progress-ex')).toHaveTextContent('1/5 exercitii');
   });
 
-  it('setsDone creste dupa logare set (0 → 1)', async () => {
+  it('setsDone stays 1/17 in rest after rating set 1 (set just done)', async () => {
+    // Ordinal semantic: rating set 1 enters rest -> ordinal=1 (set 1 done).
+    // The bump to 2 happens on skip-pause / auto-advance (start of set 2).
     await renderWorkoutAndWait();
-    logSet('Potrivit'); // logheaza primul set Bench Press
+    logSet('Potrivit');
     expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('1/17 seturi');
+  });
+
+  it('setsDone bumps 1 -> 2 after sari pauza (skip-rest moves to set 2)', async () => {
+    // Daniel smoke 2026-05-28 verbatim "logheaza setul + sar pauza, counter sta
+    // la 1/17 in loc sa avanseze" — sari pauza is the transition that advances
+    // the ordinal because the user has visibly moved to the next set.
+    await renderWorkoutAndWait();
+    logSet('Potrivit');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('2/17 seturi');
   });
 });
 

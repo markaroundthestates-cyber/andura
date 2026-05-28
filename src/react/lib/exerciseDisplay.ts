@@ -58,10 +58,28 @@ const EXERCISE_DISPLAY: Readonly<Record<string, ExerciseDisplay>> = {
   'Cable Row': { name: 'Ramat la cablu', sub: 'Aparat helcometru' },
   'Chest-Supported Row': { name: 'Ramat cu piept sprijinit', sub: 'Aparat' },
   'Face Pulls': { name: 'Face Pull', sub: 'Cablu' },
-  'Bayesian Curl': { name: 'Flexii biceps la cablu', sub: 'Cablu' },
-  'Incline DB Curl': { name: 'Flexii biceps inclinat', sub: 'Cu gantere · banc inclinat' },
-  'Cable Curl': { name: 'Flexii biceps la cablu', sub: 'Cablu' },
-  'Preacher Curl': { name: 'Flexii biceps la pupitru', sub: 'Banc preacher' },
+  // RO naming reglaj smoke 2026-05-28 — "Flexii biceps la X" cringe (Daniel
+  // "buseste rasul" on "la pupitru"). Match how lifters actually call them in
+  // sala: "Curl la cablu" / "Curl inclinat cu gantere". Single coherent
+  // vocabulary across the curl family.
+  'Bayesian Curl': { name: 'Curl la cablu', sub: 'Cablu · spate' },
+  'Incline DB Curl': { name: 'Curl inclinat cu gantere', sub: 'Banc inclinat' },
+  'Cable Curl': { name: 'Curl la cablu', sub: 'Cablu' },
+  // Daniel feedback smoke 2026-05-28 "Flexii biceps la pupitru ma si buseste rasul"
+  // → renamed to clean modern RO gym term. Curl la pupitru = how lifters actually
+  // say it in sala; "Flexii biceps" was the awkward dictionary calque. Variants
+  // ("Preacher Curl" family) follow the same vocabulary so a "Nu vreau" swap
+  // surfaces consistent naming (overrides library `nameRo` which still spells
+  // them "Flexii la pupitru ..." — not touched here, single SoT here).
+  'Preacher Curl': { name: 'Curl la pupitru', sub: 'Banc preacher' },
+  'EZ-bar Preacher Curl': { name: 'Curl la pupitru cu bara EZ', sub: 'Banc preacher' },
+  'DB Preacher Curl': { name: 'Curl la pupitru cu gantere', sub: 'Banc preacher' },
+  'Machine Preacher Curl': { name: 'Curl la pupitru la aparat', sub: 'Aparat preacher' },
+  'Cable Preacher Curl': { name: 'Curl la pupitru la cablu', sub: 'Cablu · banc preacher' },
+  // Cheat Curl Barbell library nameRo "Flexii cu avant cu bara" - awkward calque.
+  // Lifters say "Cheat curl cu bara" (English root + RO equipment). Same family
+  // override pattern as Preacher Curl.
+  'Cheat Curl Barbell': { name: 'Cheat curl cu bara', sub: 'Cu bara · momentum permis' },
   'Hammer Curl': { name: 'Hammer Curl', sub: 'Cu gantere · priza neutra' },
   'Rear Delt Fly': { name: 'Fluturari deltoid posterior', sub: 'Aparat fluturari' },
   'Rear Delt Cable': { name: 'Fluturari deltoid posterior', sub: 'Cablu' },

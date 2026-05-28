@@ -55,6 +55,54 @@ describe('resolveRefusalSwap — preference path (ignores equipment)', () => {
     expect(res.noAlt).toBe(true);
     expect(res.exercise).toBeNull();
   });
+
+  // Daniel smoke 2026-05-28 (#3.2) — tier-1 high-force lifts (Cheat Curl Barbell)
+  // whose 2 curated equipment_alternatives include lower force_demand entries
+  // used to dead-end at shouldSkip:true via the tier-1 strict rule. The broad
+  // refusal pool bypasses the strict rule (refusal != equipment failure) so the
+  // user always sees a named same-muscle candidate.
+  it('Cheat Curl Barbell (tier-1) refused → surfaces a named biceps alternative (no noAlt)', () => {
+    const res = resolveRefusalSwap('Cheat Curl Barbell', 0);
+    expect(res.swapped).toBe(true);
+    expect(res.noAlt).toBeFalsy();
+    expect(res.alternativeName.length).toBeGreaterThan(0);
+    expect(res.alternativeName).not.toBe(res.originalName);
+  });
+
+  // Daniel smoke 2026-05-28 (#2 + #6) — exhaustive cycle. The triedNames
+  // parameter excludes already-offered candidates so each tap gives a NEW one.
+  it('triedNames skip — consecutive refusals never repeat the same candidate', () => {
+    const seen = new Set<string>();
+    let tried: string[] = ['Incline DB Press']; // original is implicit-tried
+    for (let i = 0; i < 6; i++) {
+      const res = resolveRefusalSwap('Incline DB Press', 0, tried);
+      if (!res.swapped) break;
+      const name = res.alternativeEngineName!;
+      expect(name).toBeDefined();
+      expect(seen.has(name)).toBe(false); // never repeat
+      seen.add(name);
+      tried = [...tried, name];
+    }
+    // Sanity — broad pool yields well over 2 candidates for chest muscle.
+    expect(seen.size).toBeGreaterThan(2);
+  });
+
+  // Daniel smoke 2026-05-28 (#6) — pool-exhausted surface. When every same-
+  // muscle alternative has been tried, returns poolExhausted:true + muscleGroup.
+  it('exhausted pool returns poolExhausted:true with the RO muscle group label', () => {
+    // Saturate by walking until empty
+    let tried: string[] = [];
+    for (let i = 0; i < 100; i++) {
+      const r = resolveRefusalSwap('Incline DB Press', 0, tried);
+      if (!r.swapped) break;
+      tried = [...tried, r.alternativeEngineName!];
+    }
+    const res = resolveRefusalSwap('Incline DB Press', 0, tried);
+    expect(res.swapped).toBe(false);
+    expect(res.poolExhausted).toBe(true);
+    expect(res.muscleGroup).toBeDefined();
+    expect(res.muscleGroup!.length).toBeGreaterThan(0);
+  });
 });
 
 describe('resolveMissingSwap — permanent missing equipment mid-session', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { findAlternatives, getFallbackCascade } from '../alternativeFinder.js';
+import { findAlternatives, findRefusalPool, getFallbackCascade } from '../alternativeFinder.js';
 
 // Ported from archived smart-routing/__tests__/smartRouting.test.js (WP-2 MOAT revive).
 // The archived handleEquipmentBusy case is NOT ported — v1 equipment-detection module
@@ -131,5 +131,53 @@ describe('getFallbackCascade §5.1 (cascade traversal)', () => {
     const r = getFallbackCascade('Pike Push-up', []);
     expect(r.isAlternative).toBe(false);
     expect(r.exercise).toBe('Pike Push-up');
+  });
+});
+
+// Daniel smoke 2026-05-28 (#2 + #6 + #3.2) — exhaustive same-muscle pool for the
+// "Nu vreau" path. Equipment ignored; tier-1 strict bypassed; tried-set filters
+// out already-offered candidates so the UI can cycle through every alternative
+// once before reporting exhaustion.
+describe('findRefusalPool — exhaustive preference cycle (Nu vreau)', () => {
+  it('biceps tier-1 (Cheat Curl Barbell) yields a non-empty same-muscle pool', () => {
+    const r = findRefusalPool('Cheat Curl Barbell', []);
+    expect(r.muscleGroup).toBe('biceps');
+    expect(r.candidates.length).toBeGreaterThan(2); // broad library, not 2 curated
+    // The original is NOT in the returned pool.
+    expect(r.candidates.find((c) => c.name === 'Cheat Curl Barbell')).toBeUndefined();
+  });
+
+  it('triedNames filter removes already-offered candidates (no repeats)', () => {
+    const all = findRefusalPool('Incline DB Press', []).candidates.map((c) => c.name);
+    const skipFirst = findRefusalPool('Incline DB Press', [all[0]]).candidates.map((c) => c.name);
+    expect(skipFirst).not.toContain(all[0]);
+    expect(skipFirst.length).toBe(all.length - 1);
+  });
+
+  it('exhausted pool returns candidates=[] (caller surfaces poolExhausted copy)', () => {
+    const all = findRefusalPool('Incline DB Press', []).candidates.map((c) => c.name);
+    const r = findRefusalPool('Incline DB Press', all);
+    expect(r.candidates).toEqual([]);
+    // muscleGroup still returned so the caller can label the exhaustion message.
+    expect(r.muscleGroup.length).toBeGreaterThan(0);
+  });
+
+  it('unknown exercise → muscleGroup "unknown" + empty pool', () => {
+    const r = findRefusalPool('Totally Not Real', []);
+    expect(r.muscleGroup).toBe('unknown');
+    expect(r.candidates).toEqual([]);
+  });
+
+  it('bypasses tier-1 strict — different force_demand candidates still surface', () => {
+    // Cheat Curl Barbell is tier 1 / force_demand:'high'. findRefusalPool MUST
+    // include force_demand:'medium' biceps alternatives (refusal != equipment
+    // failure, the "don't degrade heavy compound" rule does not apply).
+    const r = findRefusalPool('Cheat Curl Barbell', []);
+    const hasMedium = r.candidates.some((c) => {
+      // We can't reach metadata directly here without importing — assert via
+      // name surface: at least one common medium-force biceps movement appears.
+      return c.name === 'Cable Curl' || c.name === 'Incline DB Curl' || c.name === 'Preacher Curl';
+    });
+    expect(hasMedium).toBe(true);
   });
 });
