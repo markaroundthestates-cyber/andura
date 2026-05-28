@@ -26,7 +26,8 @@
 import type { JSX } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Hand, HelpCircle } from 'lucide-react';
+import { Users, Hand, HelpCircle, PackageX } from 'lucide-react';
+import { AparatLipsaSheet } from '../../../components/Workout/AparatLipsaSheet';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
@@ -44,7 +45,7 @@ import type { AggressiveReason } from '../../../lib/aaFrictionDetect';
 import { getEngineSignals } from '../../../lib/engineSignalsAggregate';
 import { InactivityPrompt } from '../../../components/Workout/InactivityPrompt';
 import { DP } from '../../../../engine/dp.js';
-import { resolveBusySwap, resolveRefusalSwap } from '../../../lib/substitution';
+import { resolveBusySwap, resolveMissingSwap, resolveRefusalSwap } from '../../../lib/substitution';
 import { toast } from '../../../lib/toast';
 import { incrementRefusal } from '../../../../engine/schedule/scheduleAdapter.js';
 
@@ -94,6 +95,10 @@ export function Workout(): JSX.Element {
   // Daniel smoke 2026-05-28 (#2 + #6) — per-exIdx refusal-tried set + mutation.
   const refusalTriedByEx = useWorkoutStore((s) => s.refusalTriedByEx);
   const markRefusalTried = useWorkoutStore((s) => s.markRefusalTried);
+  // Daniel smoke 2026-05-28 (#18) — sessionContext.painContext set by PainButton
+  // in-session flow triggers the intensityMod override below (minus on remaining
+  // sets) — no workout-preview round-trip, no session reset.
+  const sessionContext = useWorkoutStore((s) => s.sessionContext);
 
   // Phase 6 task_02 Option C: async getTodayWorkout — 3-state useState pattern
   // per DECISIONS.md §D027 (null=loading, []=empty/rest day, [...]=session).
@@ -140,7 +145,17 @@ export function Workout(): JSX.Element {
   // signals are different: per-exercise progression gate vs whole-session deload).
   // Magnitudes (-20% / +15%) unchanged (separate Daniel UX call). Round 0.5
   // (incremente reale sala). 'normal' / no deload → target neschimbat.
-  const intensityMod = engineIntensityMod;
+  //
+  // Daniel smoke 2026-05-28 #18 — mid-session pain override: when PainButton
+  // posted a sessionContext with intensityMod='minus' + painContext, the
+  // remaining sets must lighten without restarting. sessionContext wins over
+  // the engine baseline ONLY when it carries pain (the pre-session intensityMod
+  // path still uses sessionContext too, identical end-state — this is honest).
+  // 'minus' wins as the conservative pick (we never STACK; max-magnitude rule).
+  const intensityMod =
+    sessionContext?.painContext !== null && sessionContext?.painContext !== undefined
+      ? 'minus'
+      : engineIntensityMod;
   const targetKg =
     intensityMod === 'minus'
       ? Math.round(currentExercise.targetKg * 0.8 * 2) / 2
@@ -188,6 +203,12 @@ export function Workout(): JSX.Element {
   // andura-clasic.html#L1449). Null = closed; string = whyEngine summary shown
   // in a bottom-sheet explainer. Built on tap so it reflects current readiness.
   const [whyText, setWhyText] = useState<string | null>(null);
+  // Daniel smoke 2026-05-28 #17 — in-session "Aparat lipsa" sheet open state.
+  // Tap the third action-row button -> sheet slides up -> user toggles items ->
+  // Salveaza persists wv2-missing-equipment (visible in Cont -> AparateLipsa on
+  // next mount) + recompose the current exercise via resolveMissingSwap if the
+  // new missing list now blocks its equipment.
+  const [aparatLipsaSheetOpen, setAparatLipsaSheetOpen] = useState(false);
   // Fix #2 — in-session RPE auto-correction notice (DP.checkInSessionAdjust).
   // Null = no adjustment surfaced; string = the engine's honest RO message
   // (e.g. "Greutatea este prea mare · Trecem la 50 kg pentru urmatorul set").
@@ -579,6 +600,63 @@ export function Workout(): JSX.Element {
     [bumpActivity, safeExIdx, swapExercise, refusalTriedByEx, markRefusalTried]
   );
 
+  // Daniel smoke 2026-05-28 #17 — in-session aparat-lipsa save flow. The sheet
+  // already persisted the new list (single SoT = wv2-missing-equipment local
+  // storage, read by Cont -> AparateLipsa next mount), so we only need to (a)
+  // close the sheet, (b) check if the new list blocks the CURRENT exercise's
+  // equipment and, if so, swap it in-place via resolveMissingSwap — same UX
+  // contract as Aparat ocupat (NAMED alternative + toast). When the current
+  // exercise is still performable, no swap, no toast — quiet success.
+  const handleAparatLipsaConfirm = useCallback(
+    (_missing: readonly string[]): void => {
+      setAparatLipsaSheetOpen(false);
+      bumpActivity();
+      const engineName = currentExercise.engineName;
+      if (typeof engineName !== 'string' || engineName.length === 0) return;
+      const res = resolveMissingSwap(engineName, safeExIdx);
+      // resolveMissingSwap returns swapped=false when the original is still
+      // performable with the new missing list (no equipment overlap). Honest
+      // noAlt when the user has marked so much missing that nothing works —
+      // toast tells them, mirrors Aparat ocupat path.
+      if (!res.swapped || res.exercise === null) {
+        if (res.noAlt) {
+          toast.show({
+            message: `Lista a fost salvata. Nu am o alternativa pentru ${res.originalName}. Poti sari exercitiul.`,
+            variant: 'info',
+          });
+        } else {
+          toast.show({
+            message: 'Lista a fost salvata. Sesiunea continua nemodificata.',
+            variant: 'success',
+          });
+        }
+        return;
+      }
+      const swapped = res.exercise;
+      setExercises((prev) => {
+        if (prev === null) return prev;
+        const next = prev.slice();
+        next[safeExIdx] = swapped;
+        return next;
+      });
+      swapExercise(safeExIdx);
+      toast.show({
+        message: `Inlocuit ${res.originalName} cu ${res.alternativeName} — aparatul lipsa.`,
+        variant: 'success',
+      });
+    },
+    [bumpActivity, currentExercise.engineName, safeExIdx, swapExercise]
+  );
+
+  const handleOpenAparatLipsa = useCallback((): void => {
+    bumpActivity();
+    setAparatLipsaSheetOpen(true);
+  }, [bumpActivity]);
+
+  const handleCloseAparatLipsa = useCallback((): void => {
+    setAparatLipsaSheetOpen(false);
+  }, []);
+
   const handleOcupat = useCallback((): void => {
     const engineName = currentExercise.engineName;
     if (typeof engineName !== 'string' || engineName.length === 0) {
@@ -645,7 +723,14 @@ export function Workout(): JSX.Element {
   // Stable callbacks for the memoized SessionTimer header (perf isolation).
   // Hooks declared above the loading/empty early returns so order is stable.
   const handleOpenExitSheet = useCallback((): void => setExitSheetOpen(true), []);
-  const handleGoPain = useCallback((): void => navigate(gotoPath('pain-button')), [navigate]);
+  // Daniel smoke 2026-05-28 #18 — tag origin so PainButton flows back to the
+  // active Workout (no workout-preview re-confirmation friction). Defensive
+  // signal — sessionStart!=null already gates PainButton.inSession but the tag
+  // covers edge cases (paused / freshly-resumed sessions etc.).
+  const handleGoPain = useCallback(
+    (): void => navigate(gotoPath('pain-button'), { state: { from: 'workout' } }),
+    [navigate],
+  );
   const handleGoFinishEarly = useCallback(
     (): void => navigate(gotoPath('finish-early-confirm')),
     [navigate]
@@ -792,25 +877,39 @@ export function Workout(): JSX.Element {
 
           {/* §F-workout-03 — in-workout substitution row (Daniel 2026-05-12
               Slice 1.7, mockup andura-clasic.html#L1457-1460 wv2-ex-actions).
-              WP-5 moat: both buttons now produce an IN-PLACE named swap (toast
+              WP-5 moat: all three buttons produce an IN-PLACE named swap (toast
               with the alternative's name) instead of navigating away. "Aparat
               ocupat" → cascade excluding the busy machine; "Nu vreau" → ranked
-              preference alternative + refusal counter. */}
-          <div className="flex gap-3 mb-4" data-testid="wv2-ex-actions">
+              preference alternative + refusal counter; "Aparat lipsa" (Daniel
+              smoke 2026-05-28 #17) → opens the 10-item picker sheet, persists
+              wv2-missing-equipment (visible in Cont → AparateLipsa next mount),
+              and recomposes the current exercise via resolveMissingSwap when
+              the new list blocks its equipment. Three-column layout — labels
+              kept short ("Lipsa") so the row stays single-line on Gigel's phone. */}
+          <div className="grid grid-cols-3 gap-2 mb-4" data-testid="wv2-ex-actions">
             <button
               type="button"
               onClick={handleOcupat}
               data-testid="wv2-ex-action-ocupat"
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
+              className="flex items-center justify-center gap-1.5 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
             >
               <Users className="w-4 h-4" aria-hidden="true" />
-              Aparat ocupat
+              Ocupat
+            </button>
+            <button
+              type="button"
+              onClick={handleOpenAparatLipsa}
+              data-testid="wv2-ex-action-lipsa"
+              className="flex items-center justify-center gap-1.5 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
+            >
+              <PackageX className="w-4 h-4" aria-hidden="true" />
+              Lipsa
             </button>
             <button
               type="button"
               onClick={handleNuVreau}
               data-testid="wv2-ex-action-nuvreau"
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
+              className="flex items-center justify-center gap-1.5 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
             >
               <Hand className="w-4 h-4" aria-hidden="true" />
               Nu vreau
@@ -935,6 +1034,16 @@ export function Workout(): JSX.Element {
           pauseSession(workoutTitle);
           navigate(gotoPath('antrenor'));
         }}
+      />
+
+      {/* Daniel smoke 2026-05-28 #17 — in-session Aparat lipsa picker. Saves
+          to wv2-missing-equipment so Cont → AparateLipsa hydrates fresh on
+          its next mount; if the new list blocks this exercise's equipment,
+          handleAparatLipsaConfirm swaps it in-place (resolveMissingSwap). */}
+      <AparatLipsaSheet
+        open={aparatLipsaSheetOpen}
+        onConfirm={handleAparatLipsaConfirm}
+        onClose={handleCloseAparatLipsa}
       />
 
       {/* §F-workout-05 — why-exercise explainer bottom sheet. Mockup

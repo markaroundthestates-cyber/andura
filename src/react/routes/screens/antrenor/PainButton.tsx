@@ -36,11 +36,12 @@
 
 import type { JSX } from 'react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
 import { DB } from '../../../../db.js';
+import { useWorkoutStore } from '../../../stores/workoutStore';
 
 export type BodyRegion =
   | 'gat'
@@ -122,8 +123,26 @@ export function persistPainCdl(region: BodyRegion, intensity: PainIntensity): vo
 
 export function PainButton(): JSX.Element {
   const navigate = useNavigate();
+  const location = useLocation();
+  const setSessionContext = useWorkoutStore((s) => s.setSessionContext);
+  const sessionStart = useWorkoutStore((s) => s.sessionStart);
   const [region, setRegion] = useState<BodyRegion | null>(null);
   const [intensity, setIntensity] = useState<PainIntensity>(1);
+
+  // Daniel smoke 2026-05-28 #18 verbatim "trebuie dupa sa se adapteze in timp
+  // real si sa continue antrenamentul cu varianta ajustata, nu sa ma puna sa
+  // il deschid iar". Pain reported MID-session now goes straight back to the
+  // active Workout (skipping the workout-preview re-confirmation friction) —
+  // sessionContext is set in the store so Workout.tsx can apply 'minus'
+  // intensity to remaining sets without restarting. Pre-session entry (no live
+  // session) keeps the historical preview route so the user sees the adapted
+  // session before starting fresh.
+  // `inSession` detection: a live session has sessionStart populated (set by
+  // Workout.tsx mount-init or paused-resume) and was reached via the ⋯ menu's
+  // pain action. Location state `from:'workout'` is a defensive secondary
+  // signal in case the route is hit elsewhere.
+  const fromState = (location.state as { from?: string } | null)?.from;
+  const inSession = sessionStart !== null || fromState === 'workout';
 
   function handleContinue(): void {
     if (!region) return;
@@ -135,6 +154,18 @@ export function PainButton(): JSX.Element {
       message: 'Siguranta e pe primul loc. Am ajustat restul sesiunii.',
       variant: 'success',
     });
+    if (inSession) {
+      // Daniel smoke 2026-05-28 #18 — in-session adapt: persist pain context
+      // on the store + return to workout (no preview round-trip). Workout.tsx
+      // applies the 'minus' intensity to remaining sets via engineIntensityMod
+      // override + the pain CDL feeds the next session through the pipeline.
+      setSessionContext({
+        intensityMod: 'minus',
+        painContext: { region, intensity },
+      });
+      navigate(gotoPath('workout'));
+      return;
+    }
     navigate(gotoPath('workout-preview'), {
       state: { painContext: { region, intensity }, intensityMod: 'minus' },
     });

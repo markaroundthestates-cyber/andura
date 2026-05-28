@@ -13,6 +13,7 @@ import {
   type PainCdlEntry,
 } from '../../../routes/screens/antrenor/PainButton';
 import { DB } from '../../../../db.js';
+import { useWorkoutStore } from '../../../stores/workoutStore';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -24,12 +25,16 @@ function LocationProbe(): JSX.Element {
   );
 }
 
-function renderPainButton() {
+function renderPainButton(initialState?: { from?: string }) {
+  const initialEntry = initialState
+    ? { pathname: '/app/antrenor/pain-button', state: initialState }
+    : '/app/antrenor/pain-button';
   return render(
-    <MemoryRouter initialEntries={['/app/antrenor/pain-button']}>
+    <MemoryRouter initialEntries={[initialEntry]}>
       <Routes>
         <Route path="/app/antrenor/pain-button" element={<PainButton />} />
         <Route path="/app/antrenor/workout-preview" element={<LocationProbe />} />
+        <Route path="/app/antrenor/workout" element={<LocationProbe />} />
         <Route path="/app/antrenor" element={<LocationProbe />} />
       </Routes>
     </MemoryRouter>
@@ -126,7 +131,10 @@ describe('PainButton — selection state', () => {
 });
 
 describe('PainButton — navigation flow', () => {
-  it('Continue propagates painContext + intensityMod=minus la workout-preview', () => {
+  it('Continue propagates painContext + intensityMod=minus la workout-preview (pre-session)', () => {
+    // Pre-session: no live workout (sessionStart=null, no from='workout') →
+    // historical preview route preserved so the user sees the adapted session
+    // before starting fresh.
     renderPainButton();
     fireEvent.click(screen.getByRole('button', { name: /^Genunchi drept$/i }));
     fireEvent.click(screen.getByRole('button', { name: /Mediu/i }));
@@ -136,6 +144,27 @@ describe('PainButton — navigation flow', () => {
     expect(probe.textContent).toContain('"region":"genunchi-drept"');
     expect(probe.textContent).toContain('"intensity":2');
     expect(probe.textContent).toContain('"intensityMod":"minus"');
+  });
+
+  it('Continue in-session: navigates back la workout + persists painContext on store (#18)', () => {
+    // Daniel smoke 2026-05-28 #18 verbatim "trebuie sa se adapteze in timp
+    // real... nu sa ma puna sa il deschid iar". Mid-session pain must NOT
+    // bounce through workout-preview — it stamps sessionContext on the store
+    // and returns to the live workout. The remaining-sets minus override
+    // lives in Workout.tsx (sessionContext.painContext != null → minus).
+    useWorkoutStore.getState().reset();
+    useWorkoutStore.setState({ sessionStart: 1000 });
+    renderPainButton({ from: 'workout' });
+    fireEvent.click(screen.getByRole('button', { name: /^Lombar$/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Usor/i }));
+    fireEvent.click(screen.getByTestId('pain-continue'));
+    const probe = screen.getByTestId('probe');
+    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout');
+    const ctx = useWorkoutStore.getState().sessionContext;
+    expect(ctx?.intensityMod).toBe('minus');
+    expect(ctx?.painContext?.region).toBe('lombar');
+    expect(ctx?.painContext?.intensity).toBe(1);
+    useWorkoutStore.getState().reset();
   });
 
   it('Exit navigates la /app/antrenor', () => {
