@@ -737,8 +737,9 @@ function applyHealthyFloorGuardrail(kcal: number): { kcal: number; clamped: bool
   return { kcal: r.kcal, clamped: r.clamped };
 }
 /**
- * Smoke 2026-05-28 #16 — citeste tinta personala (targetWeight + targetDate)
- * din onboardingStore si deriveaza kcal-ul tinta direct din deficit/surplus
+ * Smoke 2026-05-28 #16 — citeste tinta personala (greutate + deadline luna)
+ * din progresStore.targetObiectiv (SSOT post integration #8 + #16, scrisa de
+ * Progres > ObiectivCard) si deriveaza kcal-ul tinta direct din deficit/surplus
  * zilnic necesar pentru atingerea tintei pana la deadline. Cap-uit asimetric
  * (-25% TDEE deficit / +15% TDEE surplus) ca deadline-uri absurde sa nu produca
  * recomandari periculoase (Daniel example 110→62kg in 4 zile → cap automat la
@@ -748,14 +749,10 @@ function applyHealthyFloorGuardrail(kcal: number): { kcal: number; clamped: bool
  * multiplier) sau stats absente (cold start). I/O boundary (citeste stores).
  */
 function getTargetKcalToday(tdee: number | null): number | null {
-  const { targetWeight, targetDate } = useOnboardingStore.getState().data;
-  // targetWeight/targetDate optional pe interfata (backward-compat literal-uri
-  // de test) — tratam undefined si null la fel ca "nu setat".
-  const tgt = targetWeight ?? null;
-  const tgtDate = targetDate ?? null;
-  if (tgt === null || tgtDate === null) return null;
+  const { weightKg, month } = useProgresStore.getState().targetObiectiv;
+  if (weightKg === null || month === null) return null;
   const currentWeight = getCurrentWeightKg();
-  const r = computeTargetKcalOverride(currentWeight, tgt, tgtDate, tdee);
+  const r = computeTargetKcalOverride(currentWeight, weightKg, month, tdee);
   return r ? r.kcalTarget : null;
 }
 

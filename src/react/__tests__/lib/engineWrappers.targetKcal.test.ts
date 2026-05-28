@@ -1,9 +1,10 @@
 // ══ ENGINE WRAPPERS — targetWeight/targetDate ↔ kcal coupling (smoke #16) ═══
 // Daniel CEO smoke 2026-05-28 #16: greutatea-tinta + deadline trebuie sa
 // influenteze tinta de kcal a coach-ului (nu doar "notita in profil"). Aceste
-// teste verifica wire-ul: cand user-ul a setat targetWeight + targetDate in
-// onboardingStore, getNutritionTargetsToday produce kcal-ul tinta derivat din
-// deficit/surplus zilnic necesar, capped la -25%/+15% TDEE.
+// teste verifica wire-ul: cand user-ul a setat targetObiectiv (weightKg+month)
+// in progresStore (via Progres > ObiectivCard post integration #8 + #16),
+// getNutritionTargetsToday produce kcal-ul tinta derivat din deficit/surplus
+// zilnic necesar, capped la -25%/+15% TDEE.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
@@ -33,8 +34,11 @@ function setUserStats(overrides: { weight?: number; targetWeight?: number | null
   s.setField('experience', 'intermediar');
   s.setField('weight', overrides.weight ?? 110);
   s.setField('height', 182);
-  if (overrides.targetWeight !== undefined) s.setField('targetWeight', overrides.targetWeight);
-  if (overrides.targetDate !== undefined) s.setField('targetDate', overrides.targetDate);
+  // §obiectiv-tinta integration — tinta personala (weightKg + month) sta in
+  // progresStore.targetObiectiv (SSOT post #8 + #16), NU in onboardingStore.
+  const setTarget = useProgresStore.getState().setTargetObiectiv;
+  if (overrides.targetWeight !== undefined) setTarget({ weightKg: overrides.targetWeight });
+  if (overrides.targetDate !== undefined) setTarget({ month: overrides.targetDate });
 }
 
 describe('engineWrappers — smoke #16 target ↔ kcal coupling', () => {
@@ -90,8 +94,7 @@ describe('engineWrappers — smoke #16 target ↔ kcal coupling', () => {
     setUserStats({ weight: 70 });
     const future = new Date(Date.now() + 16 * 7 * 24 * 60 * 60 * 1000);
     const futureIso = future.toISOString().slice(0, 10);
-    useOnboardingStore.getState().setField('targetWeight', 74);
-    useOnboardingStore.getState().setField('targetDate', futureIso);
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 74, month: futureIso });
     vi.mocked(evaluateBN).mockResolvedValueOnce(
       createMockBNResult({
         confidence: 'medium',
@@ -109,8 +112,7 @@ describe('engineWrappers — smoke #16 target ↔ kcal coupling', () => {
     // Tinta agresiva masculin care ar duce sub 1200 dupa cap... improbabil, dar
     // verificam ca floor-ul ramane invariant LOCK8.
     setUserStats({ weight: 50 });
-    useOnboardingStore.getState().setField('targetWeight', 40);
-    useOnboardingStore.getState().setField('targetDate', '2026-06-04');
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 40, month: '2026-06-04' });
     vi.mocked(evaluateBN).mockResolvedValueOnce(
       createMockBNResult({
         confidence: 'medium',

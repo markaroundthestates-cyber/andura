@@ -21,6 +21,7 @@ import { useProgresStore } from '../../stores/progresStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { getCurrentWeightKg } from '../../lib/userTdee';
 import { computeTargetEta, fmtKg } from '../../lib/targetEta';
+import { evaluateTargetRate, MAX_SAFE_KG_PER_WEEK } from '../../lib/targetSafety';
 import { t } from '../../../i18n/index.js';
 
 /**
@@ -49,6 +50,10 @@ export function ObiectivCard(): JSX.Element {
   const currentWeightKg = getCurrentWeightKg();
 
   const eta = computeTargetEta(target.weightKg, currentWeightKg, height ?? null);
+  // §obiectiv-tinta integration (Smoke #16) — surface verdict cand ritm-ul
+  // necesar depaseste cap-ul fiziologic (1.5kg/sapt). evaluateTargetRate
+  // accepta YYYY-MM (daysUntilTarget interpreteaza ca ultima zi a lunii).
+  const rateVerdict = evaluateTargetRate(currentWeightKg, target.weightKg, target.month);
 
   function handleWeightChange(value: string): void {
     if (value === '') {
@@ -112,6 +117,24 @@ export function ObiectivCard(): JSX.Element {
           data-testid="obiectiv-warning"
         >
           {t('obiectiv.subhealthyWarning', { minKg: fmtKg(eta.minKg) })}
+        </p>
+      )}
+      {eta?.kind !== 'subhealthy' && rateVerdict?.kind === 'unsafe' && (
+        <p
+          className="text-xs text-brick mt-2 px-1 leading-snug font-medium"
+          role="alert"
+          data-testid="obiectiv-rate-warning"
+        >
+          {t('obiectiv.unsafeRateWarning', {
+            rate: fmtKg(rateVerdict.requiredKgPerWeek),
+            direction: t(
+              rateVerdict.direction === 'loss'
+                ? 'obiectiv.unsafeDirectionLoss'
+                : 'obiectiv.unsafeDirectionGain',
+            ),
+            cap: String(MAX_SAFE_KG_PER_WEEK),
+            safeDate: rateVerdict.safeDeadlineDate,
+          })}
         </p>
       )}
       {eta?.kind === 'at-target' && (

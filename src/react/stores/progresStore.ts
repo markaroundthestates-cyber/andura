@@ -156,8 +156,11 @@ export const useProgresStore = create<ProgresState & ProgresActions>()(
           }
           if ('month' in patch) {
             const m = patch.month;
-            // Accept YYYY-MM shape only; empty string normalized to null.
-            next.month = typeof m === 'string' && /^\d{4}-\d{2}$/.test(m) ? m : null;
+            // Accept YYYY-MM (UI <input type="month">) sau YYYY-MM-DD (engine-
+            // level precision pt teste / dezvoltatori). daysUntilTarget gestio-
+            // neaza ambele formate. Empty string normalizat la null.
+            next.month =
+              typeof m === 'string' && /^\d{4}-\d{2}(-\d{2})?$/.test(m) ? m : null;
           }
           return { targetObiectiv: next };
         }),
