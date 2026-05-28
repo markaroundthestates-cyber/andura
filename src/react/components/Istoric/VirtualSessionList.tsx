@@ -59,7 +59,7 @@ function SessionCard({
         onClick={() => onSelect(originalIdx)}
         data-testid={`istoric-session-${idx}`}
         data-session-idx={originalIdx}
-        className="w-full flex items-center gap-3 p-4 bg-paper2 border border-line rounded-xl text-left"
+        className="w-full flex items-center gap-3 p-4 bg-paper2 border border-line rounded-xl text-left press-feedback transition-transform hover:scale-[1.01] hover:border-lineStrong"
       >
         <History className="w-5 h-5 text-ink2 flex-shrink-0" aria-hidden="true" />
         <div className="flex-1 min-w-0">

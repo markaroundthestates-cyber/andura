@@ -185,6 +185,12 @@ export function CalendarHeatmap(): JSX.Element {
           const isFuture = cell.key !== null && cell.key > todayKey;
           const todayCls = isToday ? 'ring-2 ring-brick' : '';
           const futureCls = isFuture ? 'opacity-50' : '';
+          // Wave A5 polish (Daniel "Top Grade" 2026-05-28) — cells with logged
+          // sessions get a subtle hover lift (scale 1.06) so the past months
+          // feel scrub-able. Future/empty cells stay still — the lift would
+          // suggest interactivity that's not there. transform-only keeps the
+          // grid stable (no layout shift); reduced-motion auto-collapses.
+          const hoverCls = hasSession && !isFuture ? 'transition-transform hover:scale-110' : '';
           const labelSuffix = isToday
             ? t('calendar.heatmap.cell.todaySuffix')
             : isFuture
@@ -202,7 +208,7 @@ export function CalendarHeatmap(): JSX.Element {
               data-future={isFuture ? 'true' : undefined}
               aria-label={ariaLabel}
               aria-disabled={isFuture ? 'true' : undefined}
-              className={`aspect-square rounded-md flex items-center justify-center text-[11px] ${bg} ${textCls} ${todayCls} ${futureCls}`.trim()}
+              className={`aspect-square rounded-md flex items-center justify-center text-[11px] ${bg} ${textCls} ${todayCls} ${futureCls} ${hoverCls}`.trim()}
             >
               {cell.day}
             </div>

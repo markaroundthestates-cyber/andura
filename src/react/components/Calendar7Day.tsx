@@ -104,7 +104,7 @@ export function Calendar7Day(): JSX.Element {
               data-kind={kind}
               data-day={label}
               aria-label={`${label} - ${trainingDay ? t('calendar.day7.kindTraining') : t('calendar.day7.kindRest')}`}
-              className="flex-1 py-2 rounded-lg text-xs font-semibold disabled:cursor-default"
+              className="flex-1 py-2 rounded-lg text-xs font-semibold disabled:cursor-default transition-transform hover:scale-[1.02] enabled:hover:scale-[1.04]"
               // Wiki spec calendar-feature-v1-spec.md §UX states 3 LOCKED
               // post-S1.6: training LOCKED state = #3d7a4a verde inchis; EDIT
               // state = verde deschis (signal "asta e programul, modifica").
