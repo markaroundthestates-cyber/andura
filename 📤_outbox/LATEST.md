@@ -89,3 +89,15 @@ Wave E+F push trigger ulterior — CI/Deploy/Security worker re-runs auto.
 ---
 
 🦫 **Autonomous Arc #4 COMPLET + PUSHED LIVE. Smoke iar cand vrei.**
+
+---
+
+## POST-MEETING DELTA — smoke patch `632fd0d4`
+
+Daniel smoke post-meeting → bug critic: step 8 onboarding "Gata" silent fail. Root cause A2 #16 optional fields `targetWeight`/`targetDate` faceau `finalize()` sa esueze silent. Fix: enumerate explicit Big 7 required (skip optional). Regression test pinned. CI + Deploy verzi pe `632fd0d4` → andura.app LIVE.
+
+Plus "longevitate in onboarding" = cached PWA Daniel (codul live = zero longevitate user-facing). SW fix din Wave F prinde update automat la urmatoarea deschidere PWA.
+
+**Final state acasa-pickup:** `632fd0d4` LIVE + doc-commit SSOT ulterior. 5280 verzi (regression test +1). Toate gate-uri Daniel deschise raman (Beta GO / DMARC / rotat cheia API / cleanup #19 / V2 ExerciseMedia).
+
+**Detalii pickup:** `📥_inbox/HANDOVER_2026-05-28_autonomous-arcs-2-3-4-21-smoke-i18n-deep-anim-uxcolors-sw.md` (§"POST-HANDOVER PATCH").

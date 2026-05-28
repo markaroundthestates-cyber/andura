@@ -1,49 +1,47 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-28 sesiune BIROU Daniel via RC. **Autonomous Arc #4 (Wave E + F + SW fix) COMPLET local + PUSHED LIVE.**
-**Topic active:** Daniel mid-sedinta layoffs 21 oameni. Manager autonom: push + handover + CI verify all green.
+**Last updated:** 2026-05-28 sesiune BIROU finala. **Acasa-pickup: hard refresh PWA pe telefon → smoke direct live.**
+**Topic active:** Final state ziua de azi — 3 autonomous arcs (Wave A→F) + SW update fix + step 8 Gata bug-fix smoke. Toate PUSHED + verzi.
 
-**State:** main local HEAD post Wave F + SSOT + handover commits. origin/main reflects all live. **5279 verzi** + build clean (90 PWA precache 1490 KiB) + typecheck + size budget OK (main 175 KB / CSS 12 KB).
+**State:** main local HEAD `632fd0d4` + acum SSOT doc-commit pe deasupra. origin/main sync (auto la push). **CI + Deploy verzi pe `632fd0d4` LIVE pe andura.app.** Tests baseline post-cleanup: 5280 verzi (5279 + 1 nou pentru step 8 regression).
 
 ---
 
-## §0 Recap Autonomous Arc #4 (Wave E + F + SW fix)
+## §0 Recap zi completa 2026-05-28 (3 arcuri)
 
-Daniel critic: nu sens smoke pe i18n incomplete → finish primul. Plus SW stale installed PWA. Manager + 4 agenti Opus paraleli.
+**Arc #2 Wave A+B** — 21 smoke findings Daniel birou (workout flow + numbers safety + i18n shell + UX visual). Manager + 4 agenti Opus paraleli, ~28 commits, LANDED + PUSHED via D031 Daniel trigger.
 
-**Wave E** (4 agenti):
-- **E1 workout flow** (~100 keys) — WorkoutPreview + PostRpe + PostSummary + ExitConfirmSheet + AaFrictionModal LOCK 9 + PainButton + SetLogInput + SetRatingButtons + AparatLipsaSheet
-- **E2 body comp** (71 keys) — BMRStrip + ProjectionStrip + NutritionInline + LogWeight + BodyData + WeightTimeline + WeightLogList; ObiectivCard already wired Wave C1
-- **E3 calendar+istoric** (~120 keys) — Calendar7Day + CalendarHeatmap + Istoric + IstoricDetail + PrWall + RatingsStrip90Day + VirtualSessionList + months.full + weekdays.relativeShort + formatSessionsCount/formatSetsLabel locale-aware helpers
-- **E4 settings+coach engine** — 14 Settings + 8 Confirm + coach engine OUTPUT refactor (readiness/fatigue/coachVoice/engineWrappers emit semantic `key`, React boundary localizes) + `tArray()` helper NEW pentru list leaves
+**Arc #3 Wave C+D** — Daniel critic "ai cam ignorat" → i18n DEEP (PARTIAL shell-only) + Obiectiv goal mutare la Progres + drop longevitate + animatii GO WILD + UX/colors polish. 4 agenti + integration fix. Tema palette tuned WCAG AA.
 
-**SW update fix** (Daniel smoke installed PWA stale `52289184`): force `registration.update()` pe visibilitychange + 30min interval + initial nudge. Note: TWA/Play Store NU rezolva — Chrome wrapper, inner content tot SW cached.
+**Arc #4 Wave E+F+SW** — Daniel critic "nu sens smoke pe i18n incomplete" + SW stale installed PWA. **i18n DEEP TRUE zero-RO-leak** (workout + body comp + calendar + istoric + 17 Settings + coach engine OUTPUT refactor + 657 exercises) + **SW update fix** (`registration.update()` pe visibilitychange + 30min interval) + handover.
 
-**Wave F** manager integrate:
-- Merge --no-ff E2→E3→E1→E4 cu 2 conflicts rezolvate pe i18nNoRoLeak.test.tsx
-- 'program' removed din forbidden tokens (cognate EN/RO)
-- Main chunk budget bump 160→175 KB (Wave E +keys + tArray + new components)
-- Final **5279 verzi** + typecheck + build clean
+**Smoke patch `632fd0d4`** — Daniel step 8 onboarding "Gata" silent fail. Root cause: `finalize()` itera all fields, A2 #16 optional `targetWeight`/`targetDate` null faceau finalize sa esueze silent. Fix enumerate explicit Big 7 required, skip optional.
 
-**CI Wave D anterior `612c64de` PUSHED LIVE:** CI + Deploy + QA + Security Review TOATE verzi. npm audit 0 vulnerabilities. Checkly synthetic + Lighthouse + Track 7 Nightly active.
+## §1 Acasa-pickup — ce verifici la smoke
 
-## §1 NEXT — Daniel-side post-meeting
-1. **Smoke iar pe andura.app live** post Deploy verde Wave E+F+SW fix
-2. **EN total cover acum** — toggle in Cont > Setari > Limba; vezi EN pe TOTUL (workout flow + body comp + calendar + istoric + settings + coach engine output + 657 exercises). Bonus: SW auto-update — deschidere PWA pe icoana = check update automat fara reinstall.
-3. **Goal selector** = pe Progres tab (mutat din Cont)
-4. **`longevitate` disparut** — daca aveai persistat, migration → mentenanta auto
-5. **Animatii GO WILD** — page transitions + button ripple + ConfettiBurst PR + flame streak + chrome slide-down + workout breath ring
-6. **Palette catchy** — mov mai vibrant / cognac mai deep / amber-gold mai warm / Clasic intact
-7. **Gate-uri Daniel deschise inca:** Beta GO + DMARC SendGrid + rotit cheia API Anthropic
+1. **Hard refresh** pe `andura.app` (sau dezinstaleaza/reinstaleaza PWA pentru SW fix garantat)
+2. **Onboarding flow**: step 8 "Gata" merge → te duce la `/app/antrenor`. Goal selector (step 3) = 5 optiuni (auto/forta/masa/slabire/mentenanta) — ZERO longevitate.
+3. **EN total cover**: toggle Cont > Setari > Limba → English. Verifica zero RO pe TOTUL (workout flow + body comp + calendar + istoric + settings + coach engine output + 657 exercises). 60+ forbidden tokens guarded de CI test `i18nNoRoLeak.test.tsx`.
+4. **Goal selector** = pe Progres tab (NEW `ObiectivGoalCard`). Frecventa + Experienta raman setup in Cont > Profile.
+5. **Animatii GO WILD vizibile** — page transitions + button ripple + workout breath ring rest + PR ConfettiBurst pe PostSummary + flame streak + chrome banners slide-down.
+6. **Palette catchy** pe 4 teme — Brain Coach mov mai vibrant, Luxury cognac mai deep, Living Body amber-gold mai warm, Clasic intact.
+7. **SW auto-update** — la urmatoarea deschidere PWA pe iconata = check update automat (~30min visibility + initial nudge).
 
-## §2 Mid-flight
-NIMIC. Toate LANDED + pushed + CI verde. 0 agenti activi.
+## §2 Gate-uri Daniel deschise (decizi cand)
+- **Beta GO** — strategic decision (post smoke clean toate ramanele)
+- **DMARC SendGrid** — Yahoo deferred / Gmail spam (Google login merge ca alternativa, NU blocheaza Beta)
+- **Rotat cheia API Anthropic** (D088 inca deschisa — transcript plaintext)
+- **Cleanup #19 date test** — UI existent Cont > Setari > Sterge contul daca vrei reset
+- **Cleanup ambient** — `.tmp_*` files + worktrees locked sandbox-blocked (manual la tine)
+- **V2 ExerciseMedia sourcing** — WGER public CC vs ExRx vs custom vs Lottie (pipeline gata, doar URL-uri lipsesc)
 
 ## §3 Cross-refs
-- `📥_inbox/HANDOVER_2026-05-28_autonomous-arcs-2-3-4-21-smoke-i18n-deep-anim-uxcolors-sw.md` — narrative complet pentru pickup
-- `DECISIONS.md` §D091 (Wave E+F+SW LOCKED V1) + §D090 (Wave C+D) + §D089 (Wave A+B)
-- `📤_outbox/LATEST.md` — last raport arc #4
+- `📥_inbox/HANDOVER_2026-05-28_autonomous-arcs-2-3-4-21-smoke-i18n-deep-anim-uxcolors-sw.md` — narrative complet zi (3 arcuri)
+- `DECISIONS.md` §D089 + §D090 + §D091 + §D092 (Wave A+B / C+D / E+F+SW / step 8 fix)
+- `📤_outbox/LATEST.md` — final raport
+- Local + origin sync pe `632fd0d4` + doc-commit ulterior SSOT
+- Security: CI Snyk + npm audit prod 0 vulns + Security Review workflow last 2026-05-26 verde + Checkly + Lighthouse + Track 7 Nightly active
 
 ---
 
-🦫 **Autonomous Arc #4 COMPLET. Daniel: smoke iar live, ai EN total + goal selector pe Progres + longevitate dropped + animatii vizibile + palette catchy + SW auto-update. Bonne chance la sedinta.**
+🦫 **Pe ziua de azi: 3 arcuri + 1 bugfix critic + handover complet. Hard refresh la smoke. Te las.**

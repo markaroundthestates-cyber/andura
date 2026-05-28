@@ -101,4 +101,47 @@ Plus SW stale installed PWA (deschis iconita home-screen = varianta veche, trebu
 
 🦫 **Toata ziua de mister birou: 3 autonomous arcs, ~80+ atomic commits, 21 smoke findings + 4 paradigm shifts + 1 SW infra fix. LANDED + PUSHED LIVE. Cand revii: smoke live + decide gate-urile.**
 
-**Pe sedinta — bonne chance.**
+---
+
+## POST-HANDOVER PATCH (2026-05-28 evening, after meeting return)
+
+**Daniel smoke `andura.app` post-meeting → 1 bug critic gasit:**
+
+### Bug #step8-Gata-silent — `632fd0d4`
+**Sympton:** Butonul "Gata" pe step 8 onboarding nu te lasa sa avansezi. Click silent fail.
+
+**Root cause:** A2 #16 (targetSafety cuplare tinta-kcal, commit `51ff9934`) a adaugat `targetWeight` + `targetDate` ca OPTIONAL fields pe interfata `OnboardingData`. Default null. User le seteaza POST-onboarding in Progres > ObiectivCard (NU in wizard step). Insa `finalize()` itera `Object.keys(data)` + respinge silent la primul null → cele 2 optional null faceau finalize sa esueze imediat → `completed` ramanea false → click "Gata" arata toast "Completeaza toti pasii inainte de a continua" (gresit — Big 7 erau completate).
+
+**Fix:** Enumerate explicit `REQUIRED_FIELDS: ['age', 'sex', 'goal', 'frequency', 'experience', 'weight', 'height']`. Skip optional `targetWeight`/`targetDate`. Plus regression test pinned pe scenariul exact.
+
+**Despre #2 raport "longevitate in onboarding":** verificat grep `src/react/` — ZERO longevitate user-facing in codul deployed `af31476` (doar comentarii istorice in fisiere). Daniel vede cached PWA — SW fix `52289184` din Wave F prinde update-ul automat la urmatoarea deschidere PWA via `registration.update()` pe visibilitychange. Solutie pentru smoke imediat: hard refresh in Chrome SAU dezinstaleaza/reinstaleaza PWA.
+
+**Push:** `632fd0d4` → CI + Deploy verzi pe `andura.app` LIVE.
+
+---
+
+## Acasa-pickup checklist smoke
+
+1. **Hard refresh** Chrome pe telefon → andura.app SAU dezinstaleaza/reinstaleaza PWA (garantat ultima cu SW fix)
+2. **Onboarding** step 1-8 → "Gata" pe step 8 te duce la `/app/antrenor`. Step 3 goal = 5 optiuni (auto/forta/masa/slabire/mentenanta), ZERO longevitate.
+3. **EN total cover** — toggle Cont > Setari > Limba → English. Zero RO pe tot (workout/body comp/calendar/istoric/settings/coach engine output/657 exercises).
+4. **Goal selector** = pe Progres tab (NEW `ObiectivGoalCard`). Frecventa+Experienta stau in Cont > Profile.
+5. **Animatii GO WILD** — page transitions + button ripple + ConfettiBurst PR + flame streak + chrome slide-down + workout breath ring.
+6. **Palette catchy** pe 4 teme (mov mai vibrant / cognac mai deep / amber-gold mai warm / Clasic intact).
+7. **SW auto-update** — urmatoarea deschidere PWA pe iconita = check update automat (NU mai trebuie reinstall).
+
+## Gate-uri Daniel (decizi cand)
+- **Beta GO** strategic
+- **DMARC SendGrid** (Yahoo deferred / Gmail spam; Google login merge alternativ NU blocheaza Beta)
+- **Rotat cheia API Anthropic** (D088 transcript plaintext, inca deschisa)
+- **Cleanup #19** date test absurd (Cont > Sterge contul UI existent)
+- **Cleanup ambient** (.tmp_* / worktrees locked) — sandbox-blocked autonomous, manual la tine
+- **V2 ExerciseMedia sourcing** decision (WGER/ExRx/custom/Lottie)
+
+## Cross-refs final
+- `DECISIONS.md` §D089-D092 (Wave A+B / C+D / E+F+SW / step8 fix)
+- `📤_outbox/LATEST.md` — final raport
+- `CHAT_STATE.md` §0-§3 — live continuity
+- Local + origin sync pe `632fd0d4` + doc-commit SSOT ulterior
+
+**Sedinta nu se delegă; nici ce ai dus tu in ea. Mergi inainte cand te poti.**
