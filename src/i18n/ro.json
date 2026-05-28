@@ -1106,6 +1106,14 @@
       "about": "Despre Andura",
       "faq": "FAQ"
     },
+    "appearance": {
+      "heading": "Aspect",
+      "accentLabel": "Culoare accent",
+      "accentName": "Volt",
+      "modeLabel": "Mod",
+      "modeDark": "Intunecat",
+      "modeLight": "Luminos"
+    },
     "accountFallback": "Utilizator",
     "emailFallback": "Profilul tau Andura",
     "version": "Andura v1.0.0",

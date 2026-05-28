@@ -1106,6 +1106,14 @@
       "about": "About Andura",
       "faq": "FAQ"
     },
+    "appearance": {
+      "heading": "Appearance",
+      "accentLabel": "Accent color",
+      "accentName": "Volt",
+      "modeLabel": "Mode",
+      "modeDark": "Dark",
+      "modeLight": "Light"
+    },
     "accountFallback": "User",
     "emailFallback": "Your Andura profile",
     "version": "Andura v1.0.0",
