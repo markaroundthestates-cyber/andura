@@ -52,6 +52,8 @@
     "kg": "kg",
     "reps": "reps",
     "sets": "sets",
+    "set": "set",
+    "setsPlural": "sets",
     "today": "Today",
     "yesterday": "Yesterday",
     "tomorrow": "Tomorrow",
@@ -308,7 +310,22 @@
       "hard": "Hard"
     },
     "noteLabel": "Anything to remember? (optional)",
-    "submitCta": "Save"
+    "submitCta": "Save",
+    "heading": "How was your session?",
+    "intro": "Your answer calibrates tomorrow's session. Just one question.",
+    "footer": "Your answer is the only input we can't infer on our own. Thank you.",
+    "ratings": {
+      "easyLabel": "Easy",
+      "easyDescription": "I had more in the tank",
+      "rightLabel": "Just right",
+      "rightDescription": "Solid, balanced",
+      "hardLabel": "Hard",
+      "hardDescription": "I pushed to the limit"
+    },
+    "noSetsToast": "The session has no sets logged. It wasn't saved to History.",
+    "fallbackTitle": "Workout",
+    "fallbackExerciseName": "Exercise {n}",
+    "metaTemplate": "{sets} · {minutes} min · {kg} kg"
   },
 
   "postSummary": {
@@ -324,7 +341,53 @@
     },
     "prBanner": "+{deltaKg} kg on {exercise} — new PR!",
     "doneCta": "Done",
-    "shareCta": "Share"
+    "shareCta": "Share",
+    "heading": "Session complete",
+    "fallbackTitle": "Session",
+    "prBannerAriaLabel": "New PR detected",
+    "prNew": "New PR!",
+    "prFallbackDetail": "Top set on {title}",
+    "prSummaryDetail": "{exercise} - {sign}{kg} kg",
+    "prTypeLabel": {
+      "weight": "Weight PR",
+      "volume": "Volume PR",
+      "reps": "Reps PR"
+    },
+    "prOneRMEstimate": "Est. 1RM: {kg}kg",
+    "statsLabels": {
+      "duration": "Duration",
+      "durationValue": "{min} min",
+      "setsLogged": "Sets logged",
+      "totalVolume": "Total volume",
+      "kcalEstimate": "Est. kcal"
+    },
+    "muscleGroupsHeading": "Muscle groups",
+    "musclesAriaLabel": "Muscle groups",
+    "muscles": {
+      "chest": "Chest",
+      "shoulders": "Shoulders",
+      "triceps": "Triceps",
+      "abs": "Abs",
+      "back": "Back",
+      "biceps": "Biceps",
+      "forearms": "Forearms",
+      "quads": "Quads",
+      "hamstrings": "Hamstrings",
+      "glutes": "Glutes",
+      "calves": "Calves",
+      "fullBody": "Full body compound"
+    },
+    "mariusDetail": {
+      "heading": "Marius detail",
+      "tonnage": "Session tonnage",
+      "density": "Density",
+      "densityValue": "{kg} kg/min",
+      "oneRMLabel": "1RM {exercise} est."
+    },
+    "streakLine": "— keep the rhythm!",
+    "streakLabel_one": "{n} day in a row",
+    "streakLabel_other": "{n} days in a row",
+    "finishCta": "Done"
   },
 
   "progres": {

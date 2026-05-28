@@ -52,6 +52,8 @@
     "kg": "kg",
     "reps": "rep",
     "sets": "seturi",
+    "set": "set",
+    "setsPlural": "seturi",
     "today": "Azi",
     "yesterday": "Ieri",
     "tomorrow": "Maine",
@@ -308,7 +310,22 @@
       "hard": "Grea"
     },
     "noteLabel": "Vrei sa retii ceva? (optional)",
-    "submitCta": "Salveaza"
+    "submitCta": "Salveaza",
+    "heading": "Cum a fost sesiunea?",
+    "intro": "Raspunsul tau calibreaza sesiunea de maine. O singura intrebare.",
+    "footer": "Raspunsul tau e singurul input pe care nu-l putem deduce singuri. Multumim.",
+    "ratings": {
+      "easyLabel": "Usoara",
+      "easyDescription": "Aveam mai mult in rezerva",
+      "rightLabel": "Normala",
+      "rightDescription": "Solid, echilibrat",
+      "hardLabel": "Grea",
+      "hardDescription": "M-am dus la limita"
+    },
+    "noSetsToast": "Sesiunea nu contine niciun set. Nu a fost salvata in Istoric.",
+    "fallbackTitle": "Antrenament",
+    "fallbackExerciseName": "Exercitiu {n}",
+    "metaTemplate": "{sets} · {minutes} min · {kg} kg"
   },
 
   "postSummary": {
@@ -324,7 +341,53 @@
     },
     "prBanner": "+{deltaKg} kg la {exercise} — record nou!",
     "doneCta": "Gata",
-    "shareCta": "Distribuie"
+    "shareCta": "Distribuie",
+    "heading": "Sesiune terminata",
+    "fallbackTitle": "Sesiune",
+    "prBannerAriaLabel": "PR nou detectat",
+    "prNew": "PR nou!",
+    "prFallbackDetail": "Cel mai bun set la {title}",
+    "prSummaryDetail": "{exercise} - {sign}{kg} kg",
+    "prTypeLabel": {
+      "weight": "PR greutate",
+      "volume": "PR volum",
+      "reps": "PR repetari"
+    },
+    "prOneRMEstimate": "1RM estimat: {kg}kg",
+    "statsLabels": {
+      "duration": "Durata",
+      "durationValue": "{min} min",
+      "setsLogged": "Seturi logate",
+      "totalVolume": "Volum total",
+      "kcalEstimate": "Kcal estimate"
+    },
+    "muscleGroupsHeading": "Grupe musculare",
+    "musclesAriaLabel": "Grupe musculare",
+    "muscles": {
+      "chest": "Piept",
+      "shoulders": "Umeri",
+      "triceps": "Triceps",
+      "abs": "Abs",
+      "back": "Spate",
+      "biceps": "Biceps",
+      "forearms": "Antebrate",
+      "quads": "Cvadriceps",
+      "hamstrings": "Femurali",
+      "glutes": "Fesieri",
+      "calves": "Gambe",
+      "fullBody": "Compound full body"
+    },
+    "mariusDetail": {
+      "heading": "Detaliu Marius",
+      "tonnage": "Tonaj sesiune",
+      "density": "Densitate",
+      "densityValue": "{kg} kg/min",
+      "oneRMLabel": "1RM {exercise} est."
+    },
+    "streakLine": "— mentine ritmul!",
+    "streakLabel_one": "{n} zi consecutiva",
+    "streakLabel_other": "{n} zile consecutive",
+    "finishCta": "Terminat"
   },
 
   "progres": {

@@ -45,8 +45,8 @@ import { Trophy } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useCoachStore } from '../../../stores/coachStore';
 import { coachPick, type CoachVoiceEndSessionRating } from '../../../lib/coachVoice';
-import { pluralRo } from '../../../lib/pluralRo';
 import { gotoPath } from '../../../lib/navigation';
+import { t } from '../../../../i18n/index.js';
 import { useCountUp } from '../../../hooks/useCountUp';
 import { ConfettiBurst } from '../../../components/ConfettiBurst';
 import { Ripple } from '../../../components/Ripple';
@@ -92,6 +92,9 @@ interface MuscleGroup {
   primary: boolean;
 }
 
+// Muscle group derivation returns i18n keys (postSummary.muscles.*) so the
+// rendered label tracks the active locale; the data-muscle attribute keeps
+// the engine-friendly canonical key so tests / analytics aren't broken.
 function deriveMuscleGroups(title: string | undefined): MuscleGroup[] {
   if (!title) return [];
   const lower = title.toLowerCase();
@@ -99,30 +102,30 @@ function deriveMuscleGroups(title: string | undefined): MuscleGroup[] {
   // Keyword inference per session type (Push/Pull/Legs/Full).
   if (lower.includes('push') || lower.includes('piept')) {
     return [
-      { label: 'Piept', primary: true },
-      { label: 'Umeri', primary: true },
-      { label: 'Triceps', primary: true },
-      { label: 'Abs', primary: false },
+      { label: 'chest', primary: true },
+      { label: 'shoulders', primary: true },
+      { label: 'triceps', primary: true },
+      { label: 'abs', primary: false },
     ];
   }
   if (lower.includes('pull') || lower.includes('spate')) {
     return [
-      { label: 'Spate', primary: true },
-      { label: 'Biceps', primary: true },
-      { label: 'Antebrate', primary: false },
+      { label: 'back', primary: true },
+      { label: 'biceps', primary: true },
+      { label: 'forearms', primary: false },
     ];
   }
   if (lower.includes('legs') || lower.includes('picioare')) {
     return [
-      { label: 'Cvadriceps', primary: true },
-      { label: 'Femurali', primary: true },
-      { label: 'Fesieri', primary: true },
-      { label: 'Gambe', primary: false },
+      { label: 'quads', primary: true },
+      { label: 'hamstrings', primary: true },
+      { label: 'glutes', primary: true },
+      { label: 'calves', primary: false },
     ];
   }
   if (lower.includes('full') || lower.includes('total')) {
     return [
-      { label: 'Compound full body', primary: true },
+      { label: 'fullBody', primary: true },
     ];
   }
   return [];
@@ -209,10 +212,10 @@ export function PostSummary(): JSX.Element {
         className="text-2xl font-bold text-ink mb-1"
         data-testid="summary-heading"
       >
-        Sesiune terminata
+        {t('postSummary.heading')}
       </h1>
       <p className="text-base text-ink2 mb-4" data-testid="summary-title">
-        {lastSession?.title ?? 'Sesiune'}
+        {lastSession?.title ?? t('postSummary.fallbackTitle')}
       </p>
       {coachLine && (
         <p
@@ -233,7 +236,7 @@ export function PostSummary(): JSX.Element {
           className="relative flex flex-col gap-2 p-4 mb-4 rounded-xl bg-succ/10 border border-succ animate-card-rise animate-glow-pulse"
           data-testid="summary-pr-banner"
           role="status"
-          aria-label="PR nou detectat"
+          aria-label={t('postSummary.prBannerAriaLabel')}
         >
           {/* Wave C3 (2026-05-28) — celebratory confetti burst on PR moments.
               Theme-aware (brick/succ/warn/deep tokens) so it tints mov/champagne/
@@ -244,11 +247,17 @@ export function PostSummary(): JSX.Element {
           <div className="flex items-center gap-3">
             <Trophy className="w-6 h-6 text-succ flex-shrink-0 animate-scale-in" aria-hidden="true" />
             <div className="flex-1 min-w-0">
-              <p className="text-base font-semibold text-succ">PR nou!</p>
+              <p className="text-base font-semibold text-succ">{t('postSummary.prNew')}</p>
               <p className="text-sm text-ink2" data-testid="summary-pr-detail">
                 {prData
-                  ? `${prData.exercise} - ${prData.deltaKg > 0 ? '+' : ''}${prData.deltaKg} kg`
-                  : `Cel mai bun set la ${lastSession?.title ?? 'sesiune'}`}
+                  ? t('postSummary.prSummaryDetail', {
+                      exercise: prData.exercise,
+                      sign: prData.deltaKg > 0 ? '+' : '',
+                      kg: prData.deltaKg,
+                    })
+                  : t('postSummary.prFallbackDetail', {
+                      title: lastSession?.title ?? t('postSummary.fallbackTitle').toLowerCase(),
+                    })}
               </p>
             </div>
           </div>
@@ -260,10 +269,10 @@ export function PostSummary(): JSX.Element {
                 data-pr-type={prData.type}
               >
                 {prData.type === 'weight'
-                  ? 'PR greutate'
+                  ? t('postSummary.prTypeLabel.weight')
                   : prData.type === 'volume'
-                  ? 'PR volum'
-                  : 'PR repetari'}
+                  ? t('postSummary.prTypeLabel.volume')
+                  : t('postSummary.prTypeLabel.reps')}
               </span>
               {prData.deltaPct !== undefined && prData.deltaPct !== 0 && (
                 <span
@@ -278,7 +287,7 @@ export function PostSummary(): JSX.Element {
                   className="text-xs px-2 py-1 bg-paper2 text-ink rounded-md font-semibold"
                   data-testid="summary-pr-1rm"
                 >
-                  1RM estimat: {prData.oneRMEstimate}kg
+                  {t('postSummary.prOneRMEstimate', { kg: prData.oneRMEstimate })}
                 </span>
               )}
             </div>
@@ -291,10 +300,10 @@ export function PostSummary(): JSX.Element {
          total / Kcal estimate (mockup ordine reflects Gigel scan-flow timp →
          volum efort → estimate calorii). */}
       <div className="grid grid-cols-2 gap-3 mb-6" data-testid="summary-stats-grid">
-        <StatCell label="Durata" value={`${dur} min`} testId="summary-duration" />
-        <StatCell label="Seturi logate" value={setsDisplay.toString()} testId="summary-sets" />
-        <StatCell label="Volum total" value={`${formatKg(volumeDisplay)} kg`} testId="summary-volume" />
-        <StatCell label="Kcal estimate" value={kcalDisplay.toString()} testId="summary-kcal" />
+        <StatCell label={t('postSummary.statsLabels.duration')} value={t('postSummary.statsLabels.durationValue', { min: dur })} testId="summary-duration" />
+        <StatCell label={t('postSummary.statsLabels.setsLogged')} value={setsDisplay.toString()} testId="summary-sets" />
+        <StatCell label={t('postSummary.statsLabels.totalVolume')} value={`${formatKg(volumeDisplay)} kg`} testId="summary-volume" />
+        <StatCell label={t('postSummary.statsLabels.kcalEstimate')} value={kcalDisplay.toString()} testId="summary-kcal" />
       </div>
 
       {/* §F-post-summary-03 Grupe musculare pills — mockup L1673-1680.
@@ -302,7 +311,7 @@ export function PostSummary(): JSX.Element {
       {muscleGroups.length > 0 && (
         <div className="mb-6" data-testid="summary-muscles">
           <p className="text-sm font-semibold text-ink2 uppercase tracking-wide mb-3">
-            Grupe musculare
+            {t('postSummary.muscleGroupsHeading')}
           </p>
           <div className="flex flex-wrap gap-2">
             {muscleGroups.map((m) => (
@@ -320,7 +329,7 @@ export function PostSummary(): JSX.Element {
                       : 'w-2 h-2 rounded-full bg-ink3'
                   }
                 />
-                {m.label}
+                {t(`postSummary.muscles.${m.label}`)}
               </span>
             ))}
           </div>
@@ -338,26 +347,26 @@ export function PostSummary(): JSX.Element {
           data-testid="summary-marius-detail"
         >
           <p className="text-sm font-semibold text-ink2 uppercase tracking-wide mb-3">
-            Detaliu Marius
+            {t('postSummary.mariusDetail.heading')}
           </p>
           <div className="grid grid-cols-2 gap-3">
             <div data-testid="marius-tonaj">
-              <p className="text-sm text-ink2 mb-1">Tonaj sesiune</p>
+              <p className="text-sm text-ink2 mb-1">{t('postSummary.mariusDetail.tonnage')}</p>
               <p className="text-base font-semibold text-ink font-mono">
                 {formatKg(volume)} kg
               </p>
             </div>
             {dur > 0 && (
               <div data-testid="marius-densitate">
-                <p className="text-sm text-ink2 mb-1">Densitate</p>
+                <p className="text-sm text-ink2 mb-1">{t('postSummary.mariusDetail.density')}</p>
                 <p className="text-base font-semibold text-ink font-mono">
-                  {Math.round(volume / dur)} kg/min
+                  {t('postSummary.mariusDetail.densityValue', { kg: Math.round(volume / dur) })}
                 </p>
               </div>
             )}
             {prData?.oneRMEstimate !== undefined && prData.oneRMEstimate > 0 && (
               <div data-testid="marius-1rm">
-                <p className="text-sm text-ink2 mb-1">1RM {prData.exercise} est.</p>
+                <p className="text-sm text-ink2 mb-1">{t('postSummary.mariusDetail.oneRMLabel', { exercise: prData.exercise })}</p>
                 <p className="text-base font-semibold text-ink font-mono">
                   {prData.oneRMEstimate} kg
                   {prData.deltaKg !== 0 && (
@@ -384,9 +393,9 @@ export function PostSummary(): JSX.Element {
             Auto-collapses under reduced-motion. */}
         <span aria-hidden="true" className="animate-flame text-xl">🔥</span>
         <span className="font-semibold">
-          {pluralRo(streak, 'zi consecutiva', 'zile consecutive')}
+          {t(streak === 1 ? 'postSummary.streakLabel_one' : 'postSummary.streakLabel_other', { n: streak })}
         </span>
-        <span className="text-ink2">— mentine ritmul!</span>
+        <span className="text-ink2">{t('postSummary.streakLine')}</span>
       </p>
 
       <button
@@ -396,7 +405,7 @@ export function PostSummary(): JSX.Element {
         className="btn-primary-lift press-feedback relative overflow-hidden mt-auto w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
       >
         <Ripple color="rgba(255,255,255,0.5)" />
-        <span className="relative">Terminat</span>
+        <span className="relative">{t('postSummary.finishCta')}</span>
       </button>
     </section>
   );
