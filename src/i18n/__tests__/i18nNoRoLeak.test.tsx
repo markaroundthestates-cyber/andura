@@ -67,6 +67,32 @@ import { EnergyCheck } from '../../react/routes/screens/antrenor/EnergyCheck';
 import { Cont } from '../../react/routes/screens/cont/Cont';
 import { CoachRestCard } from '../../react/components/Antrenor/CoachRestCard';
 import { CoachTodayCard } from '../../react/components/Antrenor/CoachTodayCard';
+// Wave E4 — Settings sub-screens + Confirm screens + coach engine output.
+import { SettingsAbout } from '../../react/routes/screens/cont/SettingsAbout';
+import { SettingsAppearance } from '../../react/routes/screens/cont/SettingsAppearance';
+import { SettingsDanger } from '../../react/routes/screens/cont/SettingsDanger';
+import { SettingsExport } from '../../react/routes/screens/cont/SettingsExport';
+import { SettingsFaq } from '../../react/routes/screens/cont/SettingsFaq';
+import { SettingsImport } from '../../react/routes/screens/cont/SettingsImport';
+import { SettingsNotifications } from '../../react/routes/screens/cont/SettingsNotifications';
+import { SettingsPrefs } from '../../react/routes/screens/cont/SettingsPrefs';
+import { SettingsPrivacy } from '../../react/routes/screens/cont/SettingsPrivacy';
+import { SettingsProfile } from '../../react/routes/screens/cont/SettingsProfile';
+import { SettingsSubscription } from '../../react/routes/screens/cont/SettingsSubscription';
+import { SettingsSupport } from '../../react/routes/screens/cont/SettingsSupport';
+import { SettingsTerms } from '../../react/routes/screens/cont/SettingsTerms';
+import { SettingsThemes } from '../../react/routes/screens/cont/SettingsThemes';
+import { DeleteAccountConfirm } from '../../react/routes/screens/cont/DeleteAccountConfirm';
+import { LogoutConfirm } from '../../react/routes/screens/cont/LogoutConfirm';
+import { RedoOnboardingConfirm } from '../../react/routes/screens/cont/RedoOnboardingConfirm';
+import { ResetCoachConfirm } from '../../react/routes/screens/cont/ResetCoachConfirm';
+import { ResetDataConfirm } from '../../react/routes/screens/cont/ResetDataConfirm';
+import { SchimbaFazaConfirm } from '../../react/routes/screens/cont/SchimbaFazaConfirm';
+import { FinishEarlyConfirm } from '../../react/routes/screens/antrenor/FinishEarlyConfirm';
+import { ProgramChangeConfirm } from '../../react/routes/screens/antrenor/ProgramChangeConfirm';
+import { StatsGrid } from '../../react/components/Antrenor/StatsGrid';
+import { FatigueStrip } from '../../react/components/Progres/FatigueStrip';
+import { ReadinessVerdict } from '../../react/components/Antrenor/ReadinessVerdict';
 
 // ── Forbidden tokens (RO-only signals) ──────────────────────────────────────
 //
@@ -148,6 +174,69 @@ const FORBIDDEN_RO_TOKENS = [
   'pentru',
   'despre',
   'inapoi',
+  // Wave E4 — Settings + Confirm + coach engine output coverage.
+  'aspect',
+  'aspectul',
+  'tema',
+  'paleta',
+  'cremos',
+  'luminos',
+  'intunecat',
+  'abonament',
+  'gratuit',
+  'suport',
+  'cont',
+  'parola',
+  'confirma',
+  'confirmare',
+  'iesi',
+  'datele',
+  'stergere',
+  'sterse',
+  'permanent',
+  'permis',
+  'raportare',
+  'erori',
+  'sub-procesatori',
+  'masuratori',
+  'masuratorile',
+  'compozitie',
+  'corporala',
+  'frecventa',
+  'inaltime',
+  'experienta',
+  'incepator',
+  'intermediar',
+  'avansat',
+  'masculin',
+  'feminin',
+  'antrenamente',
+  'reseteaza',
+  'refa',
+  'schimba',
+  'schimbi',
+  'schimbarea',
+  'faza',
+  'mentinere',
+  'odihna',
+  'odihneste-te',
+  'recomandat',
+  'imediat',
+  'imediata',
+  'reversibil',
+  'ireversibil',
+  'ofera',
+  'recomandari',
+  'pieptul',
+  'spatele',
+  'umerii',
+  'bicepsul',
+  'tricepsul',
+  'quadricepsul',
+  'hamstringii',
+  'fesele',
+  'gambele',
+  'recupereaza',
 ];
 
 const RO_DIACRITICS = /[ăâîșțĂÂÎȘȚşţŞŢ]/;
@@ -278,6 +367,118 @@ describe('Wave C2 i18n — no RO leak under EN locale (Daniel mandate)', () => {
     await Promise.resolve();
     const card = screen.getByRole('region');
     assertNoRoLeak('CoachTodayCard', card.textContent ?? '');
+  });
+});
+
+// ── Wave E4 — Settings sub-screens + Confirm screens + coach engine output ─
+
+describe('Wave E4 i18n — Settings sub-screens render EN-clean under EN locale', () => {
+  function renderSubscreen(initialPath: string, element: JSX.Element): HTMLElement {
+    const { container } = render(withRouter(initialPath, element));
+    return container;
+  }
+
+  it.each([
+    ['SettingsAbout',         '/app/cont/settings-about',         <SettingsAbout />],
+    ['SettingsAppearance',    '/app/cont/settings-appearance',    <SettingsAppearance />],
+    ['SettingsDanger',        '/app/cont/settings-danger',        <SettingsDanger />],
+    ['SettingsExport',        '/app/cont/settings-export',        <SettingsExport />],
+    ['SettingsFaq',           '/app/cont/settings-faq',           <SettingsFaq />],
+    ['SettingsImport',        '/app/cont/settings-import',        <SettingsImport />],
+    ['SettingsNotifications', '/app/cont/settings-notifications', <SettingsNotifications />],
+    ['SettingsPrefs',         '/app/cont/settings-prefs',         <SettingsPrefs />],
+    ['SettingsPrivacy',       '/app/cont/settings-privacy',       <SettingsPrivacy />],
+    ['SettingsProfile',       '/app/cont/settings-profile',       <SettingsProfile />],
+    ['SettingsSubscription',  '/app/cont/settings-subscription',  <SettingsSubscription />],
+    ['SettingsSupport',       '/app/cont/settings-support',       <SettingsSupport />],
+    ['SettingsTerms',         '/app/cont/settings-terms',         <SettingsTerms />],
+    ['SettingsThemes',        '/app/cont/settings-themes',        <SettingsThemes />],
+  ] as const)('%s renders without RO leak under EN locale', (name, path, element) => {
+    const container = renderSubscreen(path, element);
+    assertNoRoLeak(name, container.textContent ?? '');
+  });
+});
+
+describe('Wave E4 i18n — Confirm screens render EN-clean under EN locale', () => {
+  function renderConfirm(initialPath: string, element: JSX.Element): HTMLElement {
+    const { container } = render(withRouter(initialPath, element));
+    return container;
+  }
+
+  it.each([
+    ['DeleteAccountConfirm',  '/app/cont/delete-account-confirm',  <DeleteAccountConfirm />],
+    ['LogoutConfirm',         '/app/cont/logout-confirm',          <LogoutConfirm />],
+    ['RedoOnboardingConfirm', '/app/cont/redo-onboarding-confirm', <RedoOnboardingConfirm />],
+    ['ResetCoachConfirm',     '/app/cont/reset-coach-confirm',     <ResetCoachConfirm />],
+    ['ResetDataConfirm',      '/app/cont/reset-data-confirm',      <ResetDataConfirm />],
+    ['SchimbaFazaConfirm',    '/app/cont/schimba-faza-confirm',    <SchimbaFazaConfirm />],
+    ['FinishEarlyConfirm',    '/app/antrenor/finish-early-confirm',<FinishEarlyConfirm />],
+    ['ProgramChangeConfirm',  '/app/antrenor/program-change-confirm',<ProgramChangeConfirm />],
+  ] as const)('%s renders without RO leak under EN locale', (name, path, element) => {
+    const container = renderConfirm(path, element);
+    assertNoRoLeak(name, container.textContent ?? '');
+  });
+});
+
+describe('Wave E4 i18n — Coach engine output is locale-aware under EN locale', () => {
+  it('StatsGrid with engine fatigue + readiness verdicts renders EN sublabels', () => {
+    const { container } = render(
+      <StatsGrid
+        streak={3}
+        fatigue={{
+          score: 45,
+          key: 'MODERATE_FATIGUE',
+          label: 'Pas mai conservator',
+          icon: '',
+          color: '',
+          recommend: 'reduce',
+          detail: 'Astazi mentinem greutatile.',
+        }}
+        readiness={{
+          score: 82,
+          key: 'NORMAL',
+          label: 'Sesiune normala',
+          color: '',
+          volumeMultiplier: 1.0,
+          canPR: false,
+        }}
+      />
+    );
+    const text = container.textContent ?? '';
+    // EN labels surface; RO engine `label` does NOT leak through.
+    expect(text).toContain('A bit more conservative');
+    expect(text).toContain('Normal session');
+    assertNoRoLeak('StatsGrid coach engine output', text);
+  });
+
+  it('ReadinessVerdict resolves PR_DAY key to EN "PR day"', () => {
+    const { container } = render(
+      <ReadinessVerdict
+        readiness={{
+          score: 90,
+          key: 'PR_DAY',
+          label: 'Zi de PR',
+          color: '',
+          volumeMultiplier: 1.1,
+          canPR: true,
+        }}
+      />
+    );
+    const text = container.textContent ?? '';
+    expect(text).toContain('PR day');
+    expect(text).toContain('you can try a PR');
+    assertNoRoLeak('ReadinessVerdict PR_DAY', text);
+  });
+
+  it('FatigueStrip renders EN-clean empty state under EN locale (engine getFatigue null)', () => {
+    // The top-of-file engineWrappers mock returns null for getFatigue, so the
+    // strip surfaces the EN empty hint rather than a verdict. Verdict-driven
+    // EN coverage is locked separately by FatigueStrip.test.tsx Wave E4 specs.
+    const { container } = render(<FatigueStrip />);
+    const text = container.textContent ?? '';
+    expect(text).toMatch(/Fatigue today/);
+    expect(text).toMatch(/Not enough sessions yet/);
+    assertNoRoLeak('FatigueStrip empty', text);
   });
 });
 
