@@ -12,10 +12,11 @@
 //
 // HERO redesign (Daniel 2026-05-28 "Kcal recomandate trebuiau sa apara sus"):
 // the recommended kcal is the most actionable number on the Progres screen, so
-// it now reads as a HERO — big tabular num-display number with a count-up
-// entrance (useCountUp, a11y-safe snap under reduced-motion), a palette-aware
-// accent bloom behind it for depth (surface-elevated + radial color-mix(--brick)),
-// and protein + source demoted to quiet secondary context. Logic, i18n keys,
+// it now reads as a HERO — big tabular num-display number on a surface-elevated
+// card with a palette-aware accent bloom behind it for depth; protein + source
+// demoted to quiet secondary context. (Count-up was tried + dropped: on an
+// async-resolved value it starts at 0 and only tweens via rAF, which reads as
+// a flash on every load and breaks under no-rAF test envs.) Logic, i18n keys,
 // and all testids unchanged — presentation-only.
 
 import type { JSX } from 'react';
@@ -26,7 +27,6 @@ import type { NutritionTarget } from '../../lib/bayesianNutritionAggregate';
 import { readBayesianNutritionContext } from '../../lib/nutritionObservations';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useNutritionStore } from '../../stores/nutritionStore';
-import { useCountUp } from '../../hooks/useCountUp';
 import { t } from '../../../i18n/index.js';
 
 function todayIso(): string {
@@ -121,14 +121,6 @@ export function TDEEStrip(): JSX.Element {
   const kcalDelta = showComparison ? loggedKcal - target.kcalTarget : 0;
   const deltaLabel = kcalDelta >= 0 ? `+${fmtNum(kcalDelta)}` : `-${fmtNum(Math.abs(kcalDelta))}`;
 
-  // HERO count-up — the primary kcal number animates into view on load.
-  // a11y: useCountUp snaps straight to the final value under prefers-reduced-
-  // motion, and inits to the final value so SSR/tests show the real number.
-  // Primary value = logged intake when comparing, else the engine target;
-  // 0 pre-load (renders '—' until target resolves).
-  const kcalPrimary = showComparison ? (loggedKcal as number) : (target?.kcalTarget ?? 0);
-  const kcalAnimated = useCountUp(kcalPrimary);
-
   return (
     <section
       data-testid="tdee-strip"
@@ -175,8 +167,8 @@ export function TDEEStrip(): JSX.Element {
       </div>
 
       {/* HERO — recommended kcal as the screen's primary read (Daniel 2026-05-28
-          "kcal recomandate sus"). Big tabular num-display + count-up + warm
-          flame accent; protein + source sit beneath as quiet context. */}
+          "kcal recomandate sus"). Big tabular num-display + warm flame accent;
+          protein + source sit beneath as quiet context. */}
       <div className="relative">
         <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-ink2 mb-2 flex items-center gap-1.5">
           <Flame className="w-3.5 h-3.5 text-brick" aria-hidden="true" />
@@ -185,23 +177,19 @@ export function TDEEStrip(): JSX.Element {
 
         {showComparison ? (
           <div data-testid="tdee-current-vs-target">
-            <div className="flex items-baseline gap-2">
-              <span className="num-display text-[3.4rem] leading-[0.95] font-bold text-ink">
-                {fmtNum(kcalAnimated)}
-              </span>
-              <span className="text-lg font-semibold text-ink2">kcal</span>
-            </div>
+            <p className="num-display text-[3.4rem] leading-[0.95] font-bold text-ink">
+              {fmtNum(loggedKcal ?? 0)}
+              <span className="text-lg font-semibold text-ink2">{' '}kcal</span>
+            </p>
             <p className="text-sm text-ink2 mt-1.5">
               {t('progres.tdee.withTarget', { kcal: fmtNum(target.kcalTarget), delta: deltaLabel })}
             </p>
           </div>
         ) : (
-          <div className="flex items-baseline gap-2">
-            <span className="num-display text-[3.4rem] leading-[0.95] font-bold text-ink">
-              {target ? fmtNum(kcalAnimated) : '—'}
-            </span>
-            <span className="text-lg font-semibold text-ink2">kcal</span>
-          </div>
+          <p className="num-display text-[3.4rem] leading-[0.95] font-bold text-ink">
+            {target ? fmtNum(target.kcalTarget) : '—'}
+            <span className="text-lg font-semibold text-ink2">{' '}kcal</span>
+          </p>
         )}
 
         {target && (

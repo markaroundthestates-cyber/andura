@@ -34,8 +34,11 @@ describe('TDEEStrip — Wave C2 i18n EN default', () => {
   it('renders kcal value after async resolve — EN protein label', async () => {
     render(<TDEEStrip />);
     await waitFor(() => {
-      // RO thousands separator (dot, ICU ro-RO) — parity BMRStrip.
-      expect(screen.getByText(/2\.640 kcal/)).toBeInTheDocument();
+      // RO thousands separator (dot, ICU ro-RO) — parity BMRStrip. Hero redesign
+      // 2026-05-28 styles the unit smaller in its own <span>, so the number +
+      // unit are separate DOM nodes; assert via the strip textContent (they
+      // render together visually as "2.640 kcal").
+      expect(screen.getByTestId('tdee-strip').textContent).toMatch(/2\.640\s*kcal/);
     });
     // Wave C2 i18n: EN default → "180 g protein" (was RO "180 g proteine").
     expect(screen.getByText(/180 g protein/)).toBeInTheDocument();
