@@ -399,6 +399,193 @@
   .animate-glow-pulse { animation: andura-glow-pulse 1100ms ease-out 2 both; }
   .animate-theme-sweep { animation: andura-theme-sweep 700ms ease-out both; }
 
+  /* ══ MOTION WAVE C3 (Daniel "go wild" 2026-05-28) ════════════════════════
+     Bolder, more present, but still tasteful. Every animation transform/
+     opacity-only, GPU-friendly, all auto-collapse under prefers-reduced-motion
+     via the global * cap below. Where iteration counts > 1 are used, durations
+     are calibrated so the entire celebration finishes inside ~1.4s (no
+     lingering noise after the user reads the moment). */
+
+  /* Screen-level page transition: enter fade + slide-up 6px. Used by Layout
+     `<div key={pathname}>` so route swap reads as a soft settle, not a hard
+     flicker. Slightly stronger than fade-in-up (12px → 6px keeps the bottom
+     nav still while content settles). */
+  @keyframes andura-page-enter {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-page-enter { animation: andura-page-enter 320ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+  /* Tap ripple — Material-style radial scale-up + fade-out, started at the tap
+     point. Element absolute-positioned over a button by Ripple component. The
+     ripple uses --brick by default; can be overridden via CSS var --ripple-color
+     on a button-by-button basis. */
+  @keyframes andura-ripple {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0.55; }
+    100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+  }
+  .andura-ripple-dot {
+    position: absolute;
+    border-radius: 9999px;
+    pointer-events: none;
+    background: var(--ripple-color, var(--brick));
+    width: 12px;
+    height: 12px;
+    animation: andura-ripple 520ms ease-out forwards;
+  }
+
+  /* Confetti particle — single particle, gravity-fall + slight rotation.
+     ConfettiBurst component spawns ~14 of these around a target. Each particle
+     varies translateX/rotation/scale via inline CSS vars so the burst reads
+     organic. */
+  @keyframes andura-confetti {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) rotate(0deg) scale(var(--confetti-scale, 1));
+    }
+    100% {
+      opacity: 0;
+      transform:
+        translate(var(--confetti-dx, 60px), var(--confetti-dy, 80px))
+        rotate(var(--confetti-rot, 220deg))
+        scale(0.4);
+    }
+  }
+  .andura-confetti-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    pointer-events: none;
+    animation: andura-confetti 900ms cubic-bezier(0.18, 0.7, 0.32, 1) forwards;
+    will-change: transform, opacity;
+  }
+
+  /* Success burst — a radial bloom around an icon/CTA when the user logs a
+     win (set logged, PR hit). Sits BEHIND the element, scaled from 0 → 1.6,
+     fades 0.55 → 0. One pass, 600ms — short so it never feels like a popup. */
+  @keyframes andura-success-burst {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.4);
+    }
+    35% {
+      opacity: 0.55;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(1.6);
+    }
+  }
+  .andura-success-burst {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 80px;
+    height: 80px;
+    border-radius: 9999px;
+    pointer-events: none;
+    background: radial-gradient(circle, color-mix(in oklab, var(--succ) 55%, transparent), transparent 70%);
+    animation: andura-success-burst 600ms ease-out forwards;
+  }
+
+  /* Edge flash — full-viewport tint pulse used for "registered" feedback on
+     destructive/safety actions (pain logged). One quick 50ms peak, then fades
+     320ms. Soft enough not to startle Gigel; firm enough to confirm. */
+  @keyframes andura-edge-flash {
+    0% { opacity: 0; }
+    8% { opacity: 0.18; }
+    100% { opacity: 0; }
+  }
+  .andura-edge-flash {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    box-shadow: inset 0 0 0 12px var(--flash-color, var(--brick));
+    background: linear-gradient(to bottom, color-mix(in oklab, var(--flash-color, var(--brick)) 12%, transparent), transparent 35%, transparent 65%, color-mix(in oklab, var(--flash-color, var(--brick)) 12%, transparent));
+    animation: andura-edge-flash 360ms ease-out forwards;
+  }
+
+  /* Form-field shake — horizontal jitter on validation error. 4 swings,
+     6px amplitude, 320ms total. Auto-cancels because the .animate-shake
+     class is removed after the animation by the consumer. */
+  @keyframes andura-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(2px); }
+  }
+  .animate-shake { animation: andura-shake 320ms ease-in-out both; }
+
+  /* Breath — slow inhale/exhale used on the rest-pause ring so the user can
+     follow a breathing cadence (5s in, 5s out — calm coaching rhythm). Loops
+     infinite under no-preference; collapses under reduced-motion. Scale stays
+     low (0.94 → 1) so the timer text stays legible. */
+  @keyframes andura-breath {
+    0%, 100% { transform: scale(0.96); opacity: 0.92; }
+    50% { transform: scale(1); opacity: 1; }
+  }
+  .animate-breath { animation: andura-breath 5000ms ease-in-out infinite; }
+
+  /* Flame flicker — playful jitter on the streak emoji. Tiny rotation + scale
+     pulse, 2s cycle. Looks "alive" without being distracting. */
+  @keyframes andura-flame {
+    0%, 100% { transform: rotate(-2deg) scale(1); }
+    25% { transform: rotate(3deg) scale(1.06); }
+    50% { transform: rotate(-1deg) scale(0.98); }
+    75% { transform: rotate(2deg) scale(1.04); }
+  }
+  .animate-flame {
+    animation: andura-flame 2000ms ease-in-out infinite;
+    display: inline-block;
+    transform-origin: 50% 80%;
+  }
+
+  /* Ambient drift — slow gradient position cycle for stat-tile washes. The
+     background-position move is GPU-cheap and stays inside the bounding box.
+     20s cycle reads as "the surface is alive" peripheral motion, never
+     foreground noise. Pair with .animate-card-rise for an entrance + ambient. */
+  @keyframes andura-ambient-drift {
+    0%, 100% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+  }
+  .animate-ambient-drift {
+    background-size: 200% 200%;
+    animation: andura-ambient-drift 22s ease-in-out infinite;
+  }
+
+  /* Roll-in — bottom-up scale+fade for exercise transition cards. Used by
+     Workout exercise advance so the new exercise card lands with intent. */
+  @keyframes andura-roll-in {
+    from { opacity: 0; transform: translateY(40px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .animate-roll-in { animation: andura-roll-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+  /* Hero-pop — used by "Hai sa-i dam!" / day-start overlay. Scale-bump entrance
+     + clean fade-out over 1.4s total. */
+  @keyframes andura-hero-pop {
+    0% { opacity: 0; transform: scale(0.84) translateY(-12px); }
+    18% { opacity: 1; transform: scale(1.04) translateY(0); }
+    30% { transform: scale(1); }
+    78% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.96) translateY(-6px); }
+  }
+  .animate-hero-pop { animation: andura-hero-pop 1400ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+  /* Checkmark draw — stroke-dashoffset animation on SVG checkmark. Component
+     sets stroke-dasharray inline; this keyframe just sweeps the offset to 0. */
+  @keyframes andura-check-draw {
+    from { stroke-dashoffset: 60; }
+    to { stroke-dashoffset: 0; }
+  }
+  .animate-check-draw {
+    stroke-dasharray: 60;
+    animation: andura-check-draw 380ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+
   /* Stagger utilities — apply to children of a list to cascade their entrance
      (use with .animate-card-rise or .animate-fade-in-up). 75ms steps keep the
      stack feeling fluid; capped at 6 children before the cascade becomes
@@ -410,6 +597,18 @@
   .delay-300 { animation-delay: 300ms; }
   .delay-375 { animation-delay: 375ms; }
   .delay-450 { animation-delay: 450ms; }
+  .delay-525 { animation-delay: 525ms; }
+  .delay-600 { animation-delay: 600ms; }
+
+  /* Press-feedback utility — bolder than the per-component active:scale-[.97]
+     sprinkles. Reusable single class makes "every interactive surface presses"
+     trivial. transition kept under 16ms-response budget (transform only). */
+  .press-feedback {
+    transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .press-feedback:active {
+    transform: scale(0.94);
+  }
 }
 
 /* §6-C1 audit fix — prefers-reduced-motion vestibular safety (WCAG 2.3.3).
@@ -506,3 +705,58 @@ html, body {
   width: calc(100% - 1.5rem);
   max-width: calc(430px - 1.5rem);
 }
+
+/* ══ AMBIENT PARTICLES — per-theme background motes (Wave C3 motion pass) ═══
+   Three diagonal points of light drifting very slowly across the app column.
+   Pure CSS — single ::before/::after layer + a third box-shadow node. The
+   particles sit BEHIND content (z-index: 0 on body::before, content sits on
+   #root with stacking context). Opacity capped low (0.06-0.10) so they read
+   as a "live surface" not as foreground noise. Light theme (Clasic) skips
+   the particle layer — flat cream is the brand. Each dark theme uses a hue
+   pulled from its --brick accent so the motes auto-tint per palette.
+
+   Vestibular safety: 32s cycle is well below the threshold for movement-
+   triggered discomfort, and prefers-reduced-motion completely halts them
+   via the global * cap below.
+
+   Implementation note: body::before holds two radial gradients (top + center)
+   that drift via background-position over 32s; body::after holds a single
+   third gradient with a different cycle offset so the cluster never reads
+   as "two synced lights". On mobile (≤480px) the gradient stops are tighter
+   so the motes don't sprawl off-column. */
+[data-theme="dark"] body::before,
+[data-palette="luxury"] body::before,
+[data-palette="living-body"] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle at 18% 22%, color-mix(in oklab, var(--brick) 28%, transparent) 0%, transparent 12%),
+    radial-gradient(circle at 78% 64%, color-mix(in oklab, var(--brick) 22%, transparent) 0%, transparent 10%);
+  background-size: 220% 220%, 260% 260%;
+  background-repeat: no-repeat;
+  opacity: 0.08;
+  animation: andura-ambient-drift 32s ease-in-out infinite;
+}
+[data-theme="dark"] body::after,
+[data-palette="luxury"] body::after,
+[data-palette="living-body"] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle at 42% 88%, color-mix(in oklab, var(--brick) 18%, transparent) 0%, transparent 8%);
+  background-size: 200% 200%;
+  background-repeat: no-repeat;
+  opacity: 0.07;
+  animation: andura-ambient-drift 41s ease-in-out infinite reverse;
+}
+
+/* Make sure content sits above the particle layer. #root already has its own
+   stacking context via box-shadow; explicit relative+z-index 1 is harmless and
+   defensive across browser quirks. */
+#root { position: relative; z-index: 1; }
