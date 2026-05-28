@@ -28,6 +28,7 @@ import type { PlannedWorkoutOutput } from '../../../lib/engineWrappers';
 import { recomposeWithBusyTypes } from '../../../lib/substitution';
 import { ExerciseMedia } from '../../../components/ExerciseMedia';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { t } from '../../../../i18n/index.js';
 import type { IntensityMod } from './EnergyCheck';
 
 interface WorkoutPreviewLocationState {
@@ -52,20 +53,20 @@ function bannerFor(intensityMod: IntensityMod): IntensityBanner {
     return {
       bg: 'var(--status-success-bg)',
       border: 'var(--status-success-border)',
-      msg: 'Coach urca intensitatea +15%. Mai grele cu o haltera, 1 rep in plus.',
+      msg: t('workout.preview.intensityBanner.plus'),
     };
   }
   if (intensityMod === 'minus') {
     return {
       bg: 'var(--status-danger-bg)',
       border: 'var(--status-danger-border)',
-      msg: 'Coach reduce intensitatea -20%. Mai usor azi, focus pe forma.',
+      msg: t('workout.preview.intensityBanner.minus'),
     };
   }
   return {
     bg: 'var(--status-neutral-bg)',
     border: 'var(--status-neutral-border)',
-    msg: 'Sesiune normala - baseline. Coach ajusteaza in timpul sesiunii daca apare ceva.',
+    msg: t('workout.preview.intensityBanner.normal'),
   };
 }
 
@@ -91,16 +92,27 @@ function formatVolume(kg: number): string {
 // Verbatim mockup andura-clasic.html#L945-984 — 5 exercises Push session
 // (incline DB press / military / lateral / triceps cable / abdominal plank).
 interface FallbackExercise {
-  name: string;
-  detail: string;
+  nameKey: string;
+  detail: { sets: number; kg?: number; reps?: string; seconds?: number };
 }
 const FALLBACK_EXERCISES: FallbackExercise[] = [
-  { name: 'Impins inclinat cu gantere',  detail: '4 seturi - 22.5 kg - 8-10 reps' },
-  { name: 'Impins militar sezand',       detail: '4 seturi - 20 kg - 8-10 reps' },
-  { name: 'Ridicari laterale',           detail: '3 seturi - 8 kg - 12-15 reps' },
-  { name: 'Extensii triceps la cablu',   detail: '3 seturi - 15 kg - 10-12 reps' },
-  { name: 'Plansa abdominala',           detail: '3 seturi - 45 sec' },
+  { nameKey: 'workout.preview.fallbackExercises.inclineDbPress',       detail: { sets: 4, kg: 22.5, reps: '8-10' } },
+  { nameKey: 'workout.preview.fallbackExercises.seatedMilitaryPress',  detail: { sets: 4, kg: 20,   reps: '8-10' } },
+  { nameKey: 'workout.preview.fallbackExercises.lateralRaise',         detail: { sets: 3, kg: 8,    reps: '12-15' } },
+  { nameKey: 'workout.preview.fallbackExercises.tricepCableExtension', detail: { sets: 3, kg: 15,   reps: '10-12' } },
+  { nameKey: 'workout.preview.fallbackExercises.plank',                detail: { sets: 3, seconds: 45 } },
 ];
+
+function fallbackDetail(d: FallbackExercise['detail']): string {
+  if (d.seconds !== undefined) {
+    return t('workout.preview.exerciseTimedDetail', { sets: d.sets, seconds: d.seconds });
+  }
+  return t('workout.preview.exerciseDetail', {
+    sets: d.sets,
+    kg: d.kg ?? 0,
+    reps: d.reps ?? '',
+  });
+}
 
 export function WorkoutPreview(): JSX.Element {
   const navigate = useNavigate();
@@ -141,7 +153,7 @@ export function WorkoutPreview(): JSX.Element {
       });
     return () => { cancelled = true; };
   }, []);
-  const title = workout?.workoutTitle ?? 'Push (piept si umeri)';
+  const title = workout?.workoutTitle ?? t('workout.preview.fallbackTitle');
   // Banner stays the self-report transparency signal (user said "Excelent" →
   // "Coach urca intensitatea"). The duration/volume PRESCRIPTION, however, now
   // tracks the ENGINE intensityMod baseline (deload output) — C3. The blunt
@@ -212,7 +224,7 @@ export function WorkoutPreview(): JSX.Element {
           }}
         >
           <p className="text-base text-ink">
-            Nu am putut incarca sesiunea de azi. Iti aratam o sesiune demo.
+            {t('workout.preview.errorBanner')}
           </p>
         </div>
       )}
@@ -221,7 +233,7 @@ export function WorkoutPreview(): JSX.Element {
         data-intensity={intensityMod}
         role="status"
         aria-live="polite"
-        aria-label="Intensitate sesiune"
+        aria-label={t('workout.preview.intensityBanner.ariaLabel')}
         style={{ background: banner.bg, borderColor: banner.border }}
       >
         <p className="text-base font-medium text-ink">{banner.msg}</p>
@@ -230,7 +242,7 @@ export function WorkoutPreview(): JSX.Element {
         className="bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick rounded-2xl p-4 mb-4"
         data-testid="preview-hero"
         role="region"
-        aria-label="Sesiunea de azi"
+        aria-label={t('workout.preview.ariaLabel')}
       >
         {/* a11y contrast: on bg-ink (light theme dark card) text-paper2 ~15:1.
             THEME-INVERSION fix (2026-05-27): card era light pe tema mov (bg-ink
@@ -238,7 +250,7 @@ export function WorkoutPreview(): JSX.Element {
             Copiii primesc dark:text-ink/dark:text-ink2 (12-16:1 pe #14171f)
             altfel text-paper2 ar fi dark-on-dark invizibil. */}
         <div className="text-xs font-semibold tracking-wider uppercase text-paper2 dark:text-ink2">
-          Sesiunea de azi
+          {t('workout.preview.todaysSessionKicker')}
         </div>
         <h1 className="text-xl font-bold mt-1 tracking-tight text-paper dark:text-ink">{title}</h1>
         <div className="flex gap-3.5 mt-2 text-sm text-paper2 dark:text-ink2">
@@ -248,7 +260,7 @@ export function WorkoutPreview(): JSX.Element {
           </span>
           <span className="flex items-center gap-1.5" data-testid="preview-exercise-count">
             <Layers className="w-3.5 h-3.5" aria-hidden="true" />
-            {exerciseCount} exercitii
+            {t('workout.preview.exercisesCount', { n: exerciseCount })}
           </span>
           <span className="flex items-center gap-1.5" data-testid="preview-volume">
             <TrendingUp className="w-3.5 h-3.5" aria-hidden="true" />
@@ -266,7 +278,7 @@ export function WorkoutPreview(): JSX.Element {
           className="flex items-center gap-2.5 p-3 rounded-xl border border-line bg-paper2 mb-4"
           data-testid="preview-warmup-row"
           role="region"
-          aria-label="Incalzire azi"
+          aria-label={t('workout.preview.warmupAriaLabel')}
         >
           <Flame className="w-4 h-4 text-brick flex-shrink-0" aria-hidden="true" />
           <span className="coach-quote font-serif italic text-ink2 text-sm flex-1 leading-relaxed">
@@ -281,7 +293,7 @@ export function WorkoutPreview(): JSX.Element {
           rest/halt; this guards sessionBuilder edge case 0 exercises).
           Each row: numbered badge + name + detail (sets/reps) + dumbbell icon. */}
       <div className="settings-section text-xs uppercase tracking-wider text-ink3 font-semibold mb-2">
-        Exercitii
+        {t('workout.preview.exercisesHeading')}
       </div>
       <ul
         className="rounded-xl bg-paper2 border border-line divide-y divide-line mb-4"
@@ -299,18 +311,21 @@ export function WorkoutPreview(): JSX.Element {
               // WP-5 moat: a swapped-in alternative surfaces the substitution
               // reason in the sub slot ("Inlocuit · {motiv}") so the user SEES
               // it was replaced; otherwise the normal equipment/setup sub.
-              sub: ex.swapReason ? `Inlocuit · ${ex.swapReason}` : ex.sub,
-              detail: `${ex.sets} seturi - ${ex.targetKg} kg - ${ex.targetReps} reps`,
+              sub: ex.swapReason ? t('workout.preview.swappedPrefix', { reason: ex.swapReason }) : ex.sub,
+              detail: t('workout.preview.exerciseDetail', { sets: ex.sets, kg: ex.targetKg, reps: ex.targetReps }),
               idx: i,
             }))
-          : FALLBACK_EXERCISES.map((ex, i) => ({
-              key: `fallback-${i}`,
-              name: ex.name,
-              engineName: ex.name,
-              sub: undefined as string | undefined,
-              detail: ex.detail,
-              idx: i,
-            }))
+          : FALLBACK_EXERCISES.map((ex, i) => {
+              const name = t(ex.nameKey);
+              return {
+                key: `fallback-${i}`,
+                name,
+                engineName: name,
+                sub: undefined as string | undefined,
+                detail: fallbackDetail(ex.detail),
+                idx: i,
+              };
+            })
         ).map((item) => (
           <li
             key={item.key}
@@ -368,8 +383,7 @@ export function WorkoutPreview(): JSX.Element {
         className="text-sm text-ink3 italic leading-relaxed mt-3.5 mb-4"
         data-testid="preview-closing-note"
       >
-        Coach-ul ajusteaza in timpul sesiunii daca apare ceva: durere,
-        oboseala, set greu. Nu trebuie sa stii dinainte tot.
+        {t('workout.preview.closingNote')}
       </p>
       {/* §F-workout-preview-05 (HIGH chat5 Wave 15) — CTA mockup verbatim
           andura-clasic.html#L993-995 (confirmation framing + check icon):
@@ -383,7 +397,7 @@ export function WorkoutPreview(): JSX.Element {
         className="btn-primary-lift w-full flex items-center justify-center gap-2 py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
       >
         <Check className="w-5 h-5" aria-hidden="true" />
-        Confirma, incep
+        {t('workout.preview.confirmStartCta')}
       </button>
     </section>
   );

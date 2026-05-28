@@ -51,10 +51,10 @@ describe('PostSummary — render base', () => {
     seedNormalSession();
   });
 
-  it('renders h1 "Sesiune terminata" closure framing per mockup L1630', () => {
+  it('renders h1 closure heading per mockup L1630 (EN default)', () => {
     renderSummary();
     expect(
-      screen.getByRole('heading', { name: /^Sesiune terminata$/i, level: 1 })
+      screen.getByRole('heading', { name: /^Session complete$/i, level: 1 })
     ).toBeInTheDocument();
   });
 
@@ -81,13 +81,13 @@ describe('PostSummary — render base', () => {
     expect(screen.getByTestId('summary-kcal')).toBeInTheDocument();
   });
 
-  it('renders Terminat CTA button', () => {
+  it('renders finish CTA button (EN default "Done")', () => {
     renderSummary();
     expect(screen.getByTestId('summary-finish')).toBeInTheDocument();
-    expect(screen.getByTestId('summary-finish')).toHaveTextContent(/Terminat/i);
+    expect(screen.getByTestId('summary-finish')).toHaveTextContent(/Done/i);
   });
 
-  it('§F-post-summary-06 stats grid order Durata/Seturi logate/Volum total/Kcal estimate', () => {
+  it('§F-post-summary-06 stats grid order Duration/Sets logged/Total volume/Est. kcal', () => {
     renderSummary();
     const grid = screen.getByTestId('summary-stats-grid');
     const cells = grid.querySelectorAll('[data-testid^="summary-"]');
@@ -98,10 +98,10 @@ describe('PostSummary — render base', () => {
       'summary-volume',
       'summary-kcal',
     ]);
-    expect(screen.getByTestId('summary-duration')).toHaveTextContent('Durata');
-    expect(screen.getByTestId('summary-sets')).toHaveTextContent('Seturi logate');
-    expect(screen.getByTestId('summary-volume')).toHaveTextContent('Volum total');
-    expect(screen.getByTestId('summary-kcal')).toHaveTextContent('Kcal estimate');
+    expect(screen.getByTestId('summary-duration')).toHaveTextContent('Duration');
+    expect(screen.getByTestId('summary-sets')).toHaveTextContent('Sets logged');
+    expect(screen.getByTestId('summary-volume')).toHaveTextContent('Total volume');
+    expect(screen.getByTestId('summary-kcal')).toHaveTextContent('Est. kcal');
   });
 });
 
@@ -208,31 +208,32 @@ describe('PostSummary — §F-post-summary-02 streak inline row', () => {
     seedNormalSession();
   });
 
-  it('renders streak count 12 in inline row cu flama + incurajare', () => {
+  it('renders streak count 12 in inline row cu flama + incurajare (EN default)', () => {
     renderSummary();
     const row = screen.getByTestId('summary-streak');
     expect(row).toHaveTextContent('12');
     expect(row).toHaveTextContent('🔥');
-    expect(row).toHaveTextContent('zile consecutive');
-    expect(row).toHaveTextContent('mentine ritmul!');
+    expect(row).toHaveTextContent('days in a row');
+    expect(row).toHaveTextContent('keep the rhythm!');
   });
 
-  it('uses plural "zile consecutive" cand streak > 1', () => {
+  it('uses plural "days in a row" cand streak > 1 (EN default)', () => {
     renderSummary();
-    expect(screen.getByTestId('summary-streak')).toHaveTextContent('zile consecutive');
+    expect(screen.getByTestId('summary-streak')).toHaveTextContent('days in a row');
   });
 
-  it('uses singular "zi consecutiva" cand streak = 1', () => {
+  it('uses singular "day in a row" cand streak = 1 (EN default)', () => {
     useWorkoutStore.setState({ streak: 1 });
     renderSummary();
     const text = screen.getByTestId('summary-streak').textContent ?? '';
-    expect(text).toMatch(/1\s+zi consecutiva/);
-    expect(text).not.toMatch(/zile/);
+    expect(text).toMatch(/1\s+day in a row/);
+    expect(text).not.toMatch(/days in a row/);
   });
 
   it('is NOT a card (inline row, NU label "Streak")', () => {
     renderSummary();
-    expect(screen.getByTestId('summary-streak').textContent).not.toMatch(/Streak/);
+    // "in a row" allowed; "Streak" capitalized label is what we forbid.
+    expect(screen.getByTestId('summary-streak').textContent).not.toMatch(/\bStreak\b/);
   });
 });
 
@@ -246,11 +247,11 @@ describe('PostSummary — F11 PR banner conditional', () => {
     expect(screen.queryByTestId('summary-pr-banner')).not.toBeInTheDocument();
   });
 
-  it('PR banner VISIBLE cand prHit=true', () => {
+  it('PR banner VISIBLE cand prHit=true (EN aria-label "New PR detected")', () => {
     useWorkoutStore.setState({ prHit: true });
     renderSummary();
     expect(screen.getByTestId('summary-pr-banner')).toBeInTheDocument();
-    expect(screen.getByRole('status', { name: /PR nou detectat/i })).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: /New PR detected/i })).toBeInTheDocument();
   });
 
   it('PR banner shows lastSession title', () => {
@@ -317,20 +318,23 @@ describe('PostSummary — §F-post-summary-03 muscle groups pills', () => {
     seedNormalSession();
   });
 
-  it('renders muscle pills for Push session (Piept primary + Umeri + Triceps + Abs)', () => {
+  it('renders muscle pills for Push session (Chest primary + Shoulders + Triceps + Abs, EN default)', () => {
     renderSummary();
     const muscles = screen.getByTestId('summary-muscles');
     expect(muscles).toBeInTheDocument();
-    expect(muscles).toHaveTextContent('Piept');
-    expect(muscles).toHaveTextContent('Umeri');
+    expect(muscles).toHaveTextContent('Chest');
+    expect(muscles).toHaveTextContent('Shoulders');
     expect(muscles).toHaveTextContent('Triceps');
     expect(muscles).toHaveTextContent('Abs');
   });
 
   it('marks primary muscles cu data-muscle-primary=true', () => {
     renderSummary();
-    const piept = screen.getByText('Piept').closest('[data-muscle]');
-    expect(piept).toHaveAttribute('data-muscle-primary', 'true');
+    // data-muscle attribute holds the canonical engine-friendly key (chest);
+    // the rendered label flips with locale (Chest under EN default).
+    const chest = screen.getByText('Chest').closest('[data-muscle]');
+    expect(chest).toHaveAttribute('data-muscle', 'chest');
+    expect(chest).toHaveAttribute('data-muscle-primary', 'true');
   });
 
   it('marks secondary muscles cu data-muscle-primary=false (Abs in Push)', () => {
@@ -339,7 +343,7 @@ describe('PostSummary — §F-post-summary-03 muscle groups pills', () => {
     expect(abs).toHaveAttribute('data-muscle-primary', 'false');
   });
 
-  it('renders Pull session muscle set cand title contine "pull" or "spate"', () => {
+  it('renders Pull session muscle set cand title contine "pull" or "spate" (EN default)', () => {
     useWorkoutStore.setState({
       lastSession: {
         title: 'Pull (spate si biceps)',
@@ -348,7 +352,7 @@ describe('PostSummary — §F-post-summary-03 muscle groups pills', () => {
       },
     });
     renderSummary();
-    expect(screen.getByText('Spate')).toBeInTheDocument();
+    expect(screen.getByText('Back')).toBeInTheDocument();
     expect(screen.getByText('Biceps')).toBeInTheDocument();
   });
 
@@ -388,7 +392,7 @@ describe('PostSummary — F11 PR banner enrichment (task_22)', () => {
     seedNormalSession();
   });
 
-  it('renders PR type label "PR greutate" cand type=weight', () => {
+  it('renders PR type label "Weight PR" cand type=weight (EN default)', () => {
     useWorkoutStore.setState({
       prHit: true,
       prData: {
@@ -402,25 +406,25 @@ describe('PostSummary — F11 PR banner enrichment (task_22)', () => {
     renderSummary();
     const label = screen.getByTestId('summary-pr-type-label');
     expect(label).toHaveAttribute('data-pr-type', 'weight');
-    expect(label.textContent).toMatch(/PR greutate/);
+    expect(label.textContent).toMatch(/Weight PR/);
   });
 
-  it('renders PR type label "PR volum" cand type=volume', () => {
+  it('renders PR type label "Volume PR" cand type=volume (EN default)', () => {
     useWorkoutStore.setState({
       prHit: true,
       prData: { exercise: 'Squat', deltaKg: 0, type: 'volume', deltaPct: 0, oneRMEstimate: 75 },
     });
     renderSummary();
-    expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/PR volum/);
+    expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/Volume PR/);
   });
 
-  it('renders PR type label "PR repetari" cand type=reps', () => {
+  it('renders PR type label "Reps PR" cand type=reps (EN default)', () => {
     useWorkoutStore.setState({
       prHit: true,
       prData: { exercise: 'Pullup', deltaKg: 0, type: 'reps', deltaPct: 0, oneRMEstimate: 25 },
     });
     renderSummary();
-    expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/PR repetari/);
+    expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/Reps PR/);
   });
 
   it('renders deltaPct cand non-zero', () => {
@@ -448,7 +452,7 @@ describe('PostSummary — F11 PR banner enrichment (task_22)', () => {
       prData: { exercise: 'Bench Press', deltaKg: 2.5, type: 'weight', deltaPct: 11.1, oneRMEstimate: 116.7 },
     });
     renderSummary();
-    expect(screen.getByTestId('summary-pr-1rm').textContent).toMatch(/1RM estimat: 116\.7kg/);
+    expect(screen.getByTestId('summary-pr-1rm').textContent).toMatch(/Est\. 1RM: 116\.7kg/);
   });
 
   it('NU renders 1RM cand zero', () => {
@@ -479,15 +483,15 @@ describe('PostSummary — F11 PR banner prData expand (task_10 §B)', () => {
     seedNormalSession();
   });
 
-  it('banner shows fallback copy cand prHit=true + prData=null', () => {
+  it('banner shows fallback copy cand prHit=true + prData=null (EN default)', () => {
     useWorkoutStore.setState({ prHit: true, prData: null });
     renderSummary();
     const detail = screen.getByTestId('summary-pr-detail');
-    expect(detail.textContent).toMatch(/Cel mai bun set la/);
+    expect(detail.textContent).toMatch(/Top set on/);
     expect(detail.textContent).toMatch(/Push \(piept si umeri\)/);
   });
 
-  it('banner shows prData exercise + deltaKg cand prData present', () => {
+  it('banner shows prData exercise + deltaKg cand prData present (EN default)', () => {
     useWorkoutStore.setState({
       prHit: true,
       prData: { exercise: 'Bench Press', deltaKg: 2.5, type: 'weight' },
@@ -496,8 +500,8 @@ describe('PostSummary — F11 PR banner prData expand (task_10 §B)', () => {
     const detail = screen.getByTestId('summary-pr-detail');
     expect(detail.textContent).toMatch(/Bench Press/);
     expect(detail.textContent).toMatch(/\+2\.5 kg/);
-    // task_22: type now displayed în separate enrichment label badge
-    expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/PR greutate/);
+    // task_22: type now displayed în separate enrichment label badge (Weight PR under EN)
+    expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/Weight PR/);
   });
 
   it('banner shows negative deltaKg fara double-sign', () => {
@@ -517,8 +521,8 @@ describe('PostSummary — F11 PR banner prData expand (task_10 §B)', () => {
       prData: { exercise: 'Deadlift', deltaKg: 10, type: 'volume' },
     });
     renderSummary();
-    // task_22: type label în enrichment badge cu RO copy "PR volum"
-    expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/PR volum/);
+    // task_22: type label în enrichment badge cu EN default copy "Volume PR"
+    expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/Volume PR/);
   });
 
   it('detail testid absent cand prHit=false (whole banner hidden)', () => {
@@ -539,15 +543,15 @@ describe('PostSummary — §F-post-summary-04 Detaliu Marius persona-gated', () 
     expect(screen.queryByTestId('summary-marius-detail')).not.toBeInTheDocument();
   });
 
-  it('section VISIBLE cand persona=marius cu Tonaj sesiune', () => {
+  it('section VISIBLE cand persona=marius cu tonnage (EN default)', () => {
     useCoachStore.setState({ persona: 'marius' });
     renderSummary();
     const block = screen.getByTestId('summary-marius-detail');
-    expect(block).toHaveTextContent('Detaliu Marius');
+    expect(block).toHaveTextContent('Marius detail');
     expect(screen.getByTestId('marius-tonaj')).toHaveTextContent('12 450 kg');
   });
 
-  it('renders Densitate (volume / durata) cand dur > 0', () => {
+  it('renders density (volume / durata) cand dur > 0', () => {
     useCoachStore.setState({ persona: 'marius' });
     renderSummary();
     // 12450 / 52 = 239.4 → round → 239
@@ -578,7 +582,8 @@ describe('PostSummary — §F-post-summary-04 Detaliu Marius persona-gated', () 
     });
     renderSummary();
     const oneRm = screen.getByTestId('marius-1rm');
-    expect(oneRm).toHaveTextContent('1RM Impins est.');
+    // Label is "1RM {exercise} est." in both bundles (Marius shorthand).
+    expect(oneRm).toHaveTextContent(/1RM Impins est\./);
     expect(oneRm).toHaveTextContent('33.4 kg');
     expect(oneRm).toHaveTextContent('+0.6');
   });

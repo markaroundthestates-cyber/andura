@@ -41,10 +41,12 @@ describe('AaFrictionModal - conditional render', () => {
         onForceContinue={vi.fn()}
       />
     );
-    expect(screen.getByTestId('aa-friction-title').textContent).toMatch(/Stai un pic/);
-    expect(screen.getByTestId('aa-friction-body').textContent).toMatch(/Ai marit ritmul/);
-    expect(screen.getByTestId('aa-friction-pause').textContent).toMatch(/Pauza 30 sec/);
-    expect(screen.getByTestId('aa-friction-continue').textContent).toMatch(/Continui oricum/);
+    // Wave E1 — under EN default these surface as EN copy; RO opt-in branch
+    // would surface the original RO copy via the same keys.
+    expect(screen.getByTestId('aa-friction-title').textContent).toMatch(/Hold up/);
+    expect(screen.getByTestId('aa-friction-body').textContent).toMatch(/picked up the pace/);
+    expect(screen.getByTestId('aa-friction-pause').textContent).toMatch(/Pause 30 sec/);
+    expect(screen.getByTestId('aa-friction-continue').textContent).toMatch(/Continue anyway/);
   });
 
   it('reason data-reason attribute reflects prop', () => {

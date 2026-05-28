@@ -33,31 +33,34 @@ import type {
 } from '../../../stores/workoutStore';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
 import { gotoPath } from '../../../lib/navigation';
-import { pluralRo } from '../../../lib/pluralRo';
 import {
   enrichExercisesWithPR,
   refreshPRRecordsFromLogs,
 } from '../../../lib/prRecordsWriteback';
 import { DB } from '../../../../db.js';
 import { toast } from '../../../lib/toast';
+import { t } from '../../../../i18n/index.js';
 
 export type SessionRating = 'usoara' | 'normala' | 'grea';
-
-interface RatingOption {
-  rating: SessionRating;
-  emoji: string;
-  label: string;
-  description: string;
-}
 
 const GREEN = '\u{1F7E2}';
 const YELLOW = '\u{1F7E1}';
 const RED = '\u{1F534}';
 
-const RATING_OPTIONS: readonly RatingOption[] = [
-  { rating: 'usoara', emoji: GREEN, label: 'Usoara', description: 'Aveam mai mult in rezerva' },
-  { rating: 'normala', emoji: YELLOW, label: 'Normala', description: 'Solid, echilibrat' },
-  { rating: 'grea', emoji: RED, label: 'Grea', description: 'M-am dus la limita' },
+// Labels + descriptions resolved at render time via t() so the locale flip
+// surfaces EN copy under default + RO copy when the user opts in via
+// Cont > Setari > Limba (Daniel 2026-05-28 mandate).
+interface RatingMeta {
+  rating: SessionRating;
+  emoji: string;
+  labelKey: string;
+  descriptionKey: string;
+}
+
+const RATING_META: readonly RatingMeta[] = [
+  { rating: 'usoara', emoji: GREEN,  labelKey: 'postRpe.ratings.easyLabel',  descriptionKey: 'postRpe.ratings.easyDescription' },
+  { rating: 'normala', emoji: YELLOW, labelKey: 'postRpe.ratings.rightLabel', descriptionKey: 'postRpe.ratings.rightDescription' },
+  { rating: 'grea', emoji: RED,    labelKey: 'postRpe.ratings.hardLabel',  descriptionKey: 'postRpe.ratings.hardDescription' },
 ];
 
 function formatKg(kg: number): string {
@@ -99,23 +102,30 @@ export function PostRpe(): JSX.Element {
     const planned = await getTodayWorkout();
     if (setsDone === 0) {
       toast.show({
-        message:
-          'Sesiunea nu contine niciun set. Nu a fost salvata in Istoric.',
+        message: t('postRpe.noSetsToast'),
         variant: 'error',
       });
       navigate(gotoPath('antrenor'));
       return;
     }
     const title =
-      planned !== null && planned.workoutTitle ? planned.workoutTitle : 'Antrenament';
-    const meta = `${pluralRo(setsDone, 'set', 'seturi')} · ${dur} min · ${formatKg(volume)} kg`;
+      planned !== null && planned.workoutTitle ? planned.workoutTitle : t('postRpe.fallbackTitle');
+    // Locale-aware sets phrase: RO uses pluralRo grammar (1 set / 4 seturi);
+    // EN uses the simple "{n} set(s)" form (1 set / 4 sets). Both flow into
+    // postRpe.metaTemplate "{sets} · {minutes} min · {kg} kg".
+    const setsPart = setsDone === 1 ? `1 ${t('common.set')}` : `${setsDone} ${t('common.setsPlural')}`;
+    const meta = t('postRpe.metaTemplate', {
+      sets: setsPart,
+      minutes: dur,
+      kg: formatKg(volume),
+    });
 
     const exercisesBase: SessionExerciseBreakdown[] = Object.entries(history)
       .map(([exIdxStr, sets]) => {
         const exIdx = Number(exIdxStr);
         const planEx = planned?.exercises[exIdx];
         const exerciseId = planEx?.id ?? `ex-${exIdx}`;
-        const exerciseName = planEx?.name ?? `Exercitiu ${exIdx + 1}`;
+        const exerciseName = planEx?.name ?? t('postRpe.fallbackExerciseName', { n: exIdx + 1 });
         let totalVolume = 0;
         let peakOneRM = 0;
         const breakdownSets = sets.map((s) => {
@@ -180,7 +190,7 @@ export function PostRpe(): JSX.Element {
 
   return (
     <section className="p-6 bg-paper" data-testid="post-rpe">
-      <h1 className="text-2xl font-bold text-ink mb-2">Cum a fost sesiunea?</h1>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('postRpe.heading')}</h1>
       {/* §F-post-rpe-01 (HIGH chat5 Wave 15) — coach quote Lora italic mockup
           andura-clasic.html#L1596 verbatim. Product personality signal Andura
           Suflet (D-LEGACY-052) — engine-transparent framing ("calibreaza
@@ -189,13 +199,13 @@ export function PostRpe(): JSX.Element {
         className="coach-quote text-base text-ink2 italic font-serif mb-6 leading-relaxed"
         data-testid="post-rpe-intro"
       >
-        „Raspunsul tau calibreaza sesiunea de maine. O singura intrebare."
+        „{t('postRpe.intro')}"
       </p>
       {/* No role="list": children are <button>s (not valid role="listitem"),
           which makes a screen reader announce an empty list. The "Cum a fost
           sesiunea?" heading already labels the group (parity §6-M3 revert). */}
       <div className="flex flex-col gap-3">
-        {RATING_OPTIONS.map((opt) => (
+        {RATING_META.map((opt) => (
           <button
             key={opt.rating}
             type="button"
@@ -205,8 +215,8 @@ export function PostRpe(): JSX.Element {
           >
             <span className="text-3xl" aria-hidden="true">{opt.emoji}</span>
             <span className="flex flex-col items-start gap-1">
-              <span className="text-base font-medium text-ink">{opt.label}</span>
-              <span className="text-sm text-ink2">{opt.description}</span>
+              <span className="text-base font-medium text-ink">{t(opt.labelKey)}</span>
+              <span className="text-sm text-ink2">{t(opt.descriptionKey)}</span>
             </span>
           </button>
         ))}
@@ -219,8 +229,7 @@ export function PostRpe(): JSX.Element {
         className="mt-6 text-xs text-ink3 text-center leading-relaxed"
         data-testid="post-rpe-footer"
       >
-        Raspunsul tau e singurul input pe care nu-l putem deduce singuri.
-        Multumim.
+        {t('postRpe.footer')}
       </p>
     </section>
   );

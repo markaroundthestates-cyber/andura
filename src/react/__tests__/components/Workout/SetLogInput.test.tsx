@@ -63,8 +63,9 @@ describe('SetLogInput — editable mode (default, backward compat)', () => {
     // A11Y HIGH chat5 — label text required marker. §F-pass2-setloginput-03
     // (LOW chat5 Wave 10) Romanian-first labels mockup verbatim: lowercase
     // "kg *" + "Repetari *" replacing English "Kg" / "Reps".
+    // Wave E1 — EN default surfaces "kg *" + "Reps *"; RO opt-in keeps "Repetari *".
     const kgLabel = screen.getByText('kg *');
-    const repsLabel = screen.getByText('Repetari *');
+    const repsLabel = screen.getByText('Reps *');
     expect(kgLabel).toHaveAttribute('for', 'kg-input');
     expect(repsLabel).toHaveAttribute('for', 'reps-input');
   });
@@ -109,26 +110,26 @@ describe('SetLogInput — §F-pass2-setloginput-01 tinta mode (pre-log)', () => 
     expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
   });
 
-  it('renders "Tinta" kicker label', () => {
+  it('renders target kicker label (EN default "Target")', () => {
     renderInput({ mode: 'tinta' });
-    expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('Tinta');
+    expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('Target');
   });
 
-  it('renders "repetari" sep label', () => {
+  it('renders "reps" sep label (EN default)', () => {
     renderInput({ mode: 'tinta' });
-    expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('repetari');
+    expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('reps');
   });
 
-  it('renders "Confirma setul" CTA button (smoke #4: confirmare obligatorie)', () => {
+  it('renders confirm-set CTA button (EN default, smoke #4: confirmare obligatorie)', () => {
     renderInput({ mode: 'tinta' });
     const btn = screen.getByTestId('setlog-tinta-log-btn');
     expect(btn).toBeInTheDocument();
-    expect(btn).toHaveTextContent('Confirma setul');
+    expect(btn).toHaveTextContent('Confirm set');
   });
 
-  it('renders "Cate ai facut?" label deasupra inputs (smoke #4)', () => {
+  it('renders "How many did you do?" label deasupra inputs (EN default, smoke #4)', () => {
     renderInput({ mode: 'tinta' });
-    expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('Cate ai facut?');
+    expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('How many did you do?');
   });
 
   it('tinta kg input pre-completat cu recomandarea', () => {
@@ -210,9 +211,9 @@ describe('SetLogInput — §F-pass2-setloginput-02 post-log mode (readonly + edi
     expect(screen.queryByTestId('reps-input')).not.toBeInTheDocument();
   });
 
-  it('renders "Tu ai facut" kicker label', () => {
+  it('renders post-log kicker label (EN default "You did")', () => {
     renderInput({ mode: 'post-log' });
-    expect(screen.getByTestId('setlog-postlog')).toHaveTextContent('Tu ai facut');
+    expect(screen.getByTestId('setlog-postlog')).toHaveTextContent('You did');
   });
 
   it('displays post-log reps + kg verbatim', () => {
@@ -239,9 +240,9 @@ describe('SetLogInput — §F-pass2-setloginput-02 post-log mode (readonly + edi
     expect(() => fireEvent.click(screen.getByTestId('setlog-postlog-edit'))).not.toThrow();
   });
 
-  it('pencil aria-label "Editeaza" present', () => {
+  it('pencil aria-label "Edit" present (EN default)', () => {
     renderInput({ mode: 'post-log' });
-    expect(screen.getByTestId('setlog-postlog-edit')).toHaveAttribute('aria-label', 'Editeaza');
+    expect(screen.getByTestId('setlog-postlog-edit')).toHaveAttribute('aria-label', 'Edit');
   });
 
   it('pencil tap target ≥44px (a11y WCAG 2.5.5)', () => {
@@ -289,13 +290,14 @@ describe('SetLogInput — A11Y HIGH chat5 editable mode aria attributes', () => 
     const err = screen.getByTestId('kg-input-error');
     expect(err).toHaveAttribute('id', 'kg-input-error');
     expect(err).toHaveAttribute('role', 'alert');
-    expect(err.textContent).toMatch(/Kg intre 1 si 500/);
+    // Wave E1 — EN default error copy "Kg between 1 and 500."; RO opt-in keeps original.
+    expect(err.textContent).toMatch(/Kg between 1 and 500/);
   });
 
   it('kg input aria-invalid cand kg > 500', () => {
     renderInput({ kg: 600, reps: 10 });
     expect(screen.getByTestId('kg-input')).toHaveAttribute('aria-invalid', 'true');
-    expect(screen.getByTestId('kg-input-error').textContent).toMatch(/1 si 500/);
+    expect(screen.getByTestId('kg-input-error').textContent).toMatch(/1 and 500/);
   });
 
   it('reps input aria-invalid + error cand reps < 1', () => {
@@ -303,13 +305,14 @@ describe('SetLogInput — A11Y HIGH chat5 editable mode aria attributes', () => 
     const input = screen.getByTestId('reps-input');
     expect(input).toHaveAttribute('aria-invalid', 'true');
     expect(input).toHaveAttribute('aria-describedby', 'reps-input-error');
-    expect(screen.getByTestId('reps-input-error').textContent).toMatch(/Repetari intre 1 si 100/);
+    // Wave E1 — EN default error copy.
+    expect(screen.getByTestId('reps-input-error').textContent).toMatch(/Reps between 1 and 100/);
   });
 
   it('reps input aria-invalid cand reps > 100', () => {
     renderInput({ kg: 22.5, reps: 150 });
     expect(screen.getByTestId('reps-input')).toHaveAttribute('aria-invalid', 'true');
-    expect(screen.getByTestId('reps-input-error').textContent).toMatch(/1 si 100/);
+    expect(screen.getByTestId('reps-input-error').textContent).toMatch(/1 and 100/);
   });
 
   it('editable mode error text no diacritics', () => {

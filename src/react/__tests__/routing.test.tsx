@@ -208,12 +208,12 @@ describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
     { path: '/app/antrenor/workout-preview', Component: WorkoutPreview, heading: /Push/i },
     { path: '/app/antrenor/workout', Component: Workout, heading: /Bench Press/i },
     { path: '/app/antrenor/ceva-nu-merge', Component: CevaNuMerge, heading: /Ce nu merge/i },
-    { path: '/app/antrenor/pain-button', Component: PainButton, heading: /Ma doare ceva/i },
+    { path: '/app/antrenor/pain-button', Component: PainButton, heading: /Something hurts/i },
     { path: '/app/antrenor/equipment-swap', Component: EquipmentSwap, heading: /Schimba echipament/i },
     { path: '/app/antrenor/aparate-lipsa', Component: AparateLipsa, heading: /^Aparate lipsa$/i },
     { path: '/app/antrenor/schedule-override', Component: ScheduleOverride, heading: /Schimbi planul de azi/i },
-    { path: '/app/antrenor/post-rpe', Component: PostRpe, heading: /Cum a fost sesiunea/i },
-    { path: '/app/antrenor/post-summary', Component: PostSummary, heading: /Sesiune/i },
+    { path: '/app/antrenor/post-rpe', Component: PostRpe, heading: /How was your session/i },
+    { path: '/app/antrenor/post-summary', Component: PostSummary, heading: /Session/i },
   ];
 
   it.each(stubs)('renders $heading stub la $path', async ({ path, Component, heading }) => {

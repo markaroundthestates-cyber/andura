@@ -52,6 +52,8 @@
     "kg": "kg",
     "reps": "rep",
     "sets": "seturi",
+    "set": "set",
+    "setsPlural": "seturi",
     "today": "Azi",
     "yesterday": "Ieri",
     "tomorrow": "Maine",
@@ -259,7 +261,38 @@
         "normal": "Zi normala"
       },
       "noPlan": "Nu ai antrenament programat azi.",
-      "engineError": "Nu am putut construi planul. Incearca din nou peste o clipa."
+      "engineError": "Nu am putut construi planul. Incearca din nou peste o clipa.",
+      "ariaLabel": "Sesiunea de azi",
+      "todaysSessionKicker": "Sesiunea de azi",
+      "fallbackTitle": "Push (piept si umeri)",
+      "exercisesCount": "{n} exercitii",
+      "intensityBanner": {
+        "ariaLabel": "Intensitate sesiune",
+        "plus": "Coach urca intensitatea +15%. Mai grele cu o haltera, 1 rep in plus.",
+        "minus": "Coach reduce intensitatea -20%. Mai usor azi, focus pe forma.",
+        "normal": "Sesiune normala - baseline. Coach ajusteaza in timpul sesiunii daca apare ceva."
+      },
+      "errorBanner": "Nu am putut incarca sesiunea de azi. Iti aratam o sesiune demo.",
+      "warmupAriaLabel": "Incalzire azi",
+      "exercisesHeading": "Exercitii",
+      "swappedPrefix": "Inlocuit · {reason}",
+      "exerciseDetail": "{sets} seturi - {kg} kg - {reps} reps",
+      "exerciseTimedDetail": "{sets} seturi - {seconds} sec",
+      "closingNote": "Coach-ul ajusteaza in timpul sesiunii daca apare ceva: durere, oboseala, set greu. Nu trebuie sa stii dinainte tot.",
+      "confirmStartCta": "Confirma, incep",
+      "fallbackExercises": {
+        "inclineDbPress": "Impins inclinat cu gantere",
+        "seatedMilitaryPress": "Impins militar sezand",
+        "lateralRaise": "Ridicari laterale",
+        "tricepCableExtension": "Extensii triceps la cablu",
+        "plank": "Plansa abdominala"
+      }
+    },
+    "aparatLipsaSheet": {
+      "title": "Aparat lipsa",
+      "subtitle": "Bifeaza aparatele pe care nu le ai. Coach-ul evita exercitiile lor si le scoate din lista din Cont.",
+      "saveCta": "Salveaza",
+      "closeCta": "Inchide"
     }
   },
 
@@ -314,7 +347,22 @@
       "hard": "Grea"
     },
     "noteLabel": "Vrei sa retii ceva? (optional)",
-    "submitCta": "Salveaza"
+    "submitCta": "Salveaza",
+    "heading": "Cum a fost sesiunea?",
+    "intro": "Raspunsul tau calibreaza sesiunea de maine. O singura intrebare.",
+    "footer": "Raspunsul tau e singurul input pe care nu-l putem deduce singuri. Multumim.",
+    "ratings": {
+      "easyLabel": "Usoara",
+      "easyDescription": "Aveam mai mult in rezerva",
+      "rightLabel": "Normala",
+      "rightDescription": "Solid, echilibrat",
+      "hardLabel": "Grea",
+      "hardDescription": "M-am dus la limita"
+    },
+    "noSetsToast": "Sesiunea nu contine niciun set. Nu a fost salvata in Istoric.",
+    "fallbackTitle": "Antrenament",
+    "fallbackExerciseName": "Exercitiu {n}",
+    "metaTemplate": "{sets} · {minutes} min · {kg} kg"
   },
 
   "postSummary": {
@@ -330,7 +378,53 @@
     },
     "prBanner": "+{deltaKg} kg la {exercise} — record nou!",
     "doneCta": "Gata",
-    "shareCta": "Distribuie"
+    "shareCta": "Distribuie",
+    "heading": "Sesiune terminata",
+    "fallbackTitle": "Sesiune",
+    "prBannerAriaLabel": "PR nou detectat",
+    "prNew": "PR nou!",
+    "prFallbackDetail": "Cel mai bun set la {title}",
+    "prSummaryDetail": "{exercise} - {sign}{kg} kg",
+    "prTypeLabel": {
+      "weight": "PR greutate",
+      "volume": "PR volum",
+      "reps": "PR repetari"
+    },
+    "prOneRMEstimate": "1RM estimat: {kg}kg",
+    "statsLabels": {
+      "duration": "Durata",
+      "durationValue": "{min} min",
+      "setsLogged": "Seturi logate",
+      "totalVolume": "Volum total",
+      "kcalEstimate": "Kcal estimate"
+    },
+    "muscleGroupsHeading": "Grupe musculare",
+    "musclesAriaLabel": "Grupe musculare",
+    "muscles": {
+      "chest": "Piept",
+      "shoulders": "Umeri",
+      "triceps": "Triceps",
+      "abs": "Abs",
+      "back": "Spate",
+      "biceps": "Biceps",
+      "forearms": "Antebrate",
+      "quads": "Cvadriceps",
+      "hamstrings": "Femurali",
+      "glutes": "Fesieri",
+      "calves": "Gambe",
+      "fullBody": "Compound full body"
+    },
+    "mariusDetail": {
+      "heading": "Detaliu Marius",
+      "tonnage": "Tonaj sesiune",
+      "density": "Densitate",
+      "densityValue": "{kg} kg/min",
+      "oneRMLabel": "1RM {exercise} est."
+    },
+    "streakLine": "— mentine ritmul!",
+    "streakLabel_one": "{n} zi consecutiva",
+    "streakLabel_other": "{n} zile consecutive",
+    "finishCta": "Terminat"
   },
 
   "progres": {
@@ -770,6 +864,15 @@
     "discard": "Renunta"
   },
 
+  "exitSheet": {
+    "title": "Iesi din sesiune?",
+    "progressLine": "Ai facut {done}/{total} exercitii. Cum continui?",
+    "continueCta": "Continua sesiunea",
+    "pauseCta": "Salveaza si reia mai tarziu",
+    "finishEarlyCta": "Termina mai devreme",
+    "discardCta": "Renunt la sesiune"
+  },
+
   "aaFriction": {
     "title": "Asta e un salt mare",
     "reasons": {
@@ -779,6 +882,76 @@
     },
     "acknowledgeCta": "Am sa fiu atent — logheaza-l",
     "forceCta": "Forteaza logarea oricum"
+  },
+
+  "painButton": {
+    "subHeaderTitle": "Ma doare ceva",
+    "heading": "Unde te doare?",
+    "subtitle": "Coach evita exercitii care irita zona.",
+    "intensityPrompt": "Cat de tare?",
+    "intensityLabels": {
+      "1": "Usor",
+      "2": "Mediu",
+      "3": "Sever"
+    },
+    "regions": {
+      "gat": "Gat",
+      "umar-stang": "Umar stang",
+      "umar-drept": "Umar drept",
+      "piept": "Piept",
+      "spate": "Spate",
+      "lombar": "Lombar",
+      "cot-stang": "Cot stang",
+      "cot-drept": "Cot drept",
+      "incheietura-stanga": "Incheietura stanga",
+      "incheietura-dreapta": "Incheietura dreapta",
+      "sold": "Sold",
+      "genunchi-stang": "Genunchi stang",
+      "genunchi-drept": "Genunchi drept",
+      "glezna-stanga": "Glezna stanga",
+      "glezna-dreapta": "Glezna dreapta"
+    },
+    "continueCta": "Continui adaptat",
+    "exitCta": "Salveaza si iesi",
+    "medicalCue": "Daca nu se potriveste niciuna, opreste sesiunea si consulta un medic.",
+    "reassureToast": "Siguranta e pe primul loc. Am ajustat restul sesiunii."
+  },
+
+  "setLog": {
+    "targetLabel": "Tinta",
+    "targetReps": "repetari",
+    "askDoneLabel": "Cate ai facut?",
+    "kgLabel": "kg",
+    "repsLabel": "Repetari",
+    "kgLabelRequired": "kg *",
+    "repsLabelRequired": "Repetari *",
+    "kgError": "Kg intre 1 si 500.",
+    "repsError": "Repetari intre 1 si 100.",
+    "confirmSetCta": "Confirma setul",
+    "youDidLabel": "Tu ai facut",
+    "youDidRepsWith": "repetari cu",
+    "editAriaLabel": "Editeaza"
+  },
+
+  "setRating": {
+    "prompt": "Cum a fost?",
+    "options": {
+      "usor": "Usor",
+      "potrivit": "Potrivit",
+      "greu": "Greu"
+    }
+  },
+
+  "perSetSafety": {
+    "title": "Stai un pic",
+    "body": "Ai marit ritmul peste obisnuit. Verifica forma si recupereaza inainte de set urmator.",
+    "pauseCta": "Pauza 30 sec",
+    "continueCta": "Continui oricum",
+    "reasons": {
+      "fast_sets": "Set-uri prea rapide",
+      "kg_jump": "Greutate marita brusc",
+      "rep_spike": "Repetari peste obisnuit"
+    }
   },
 
   "inactivity": {

@@ -52,6 +52,8 @@
     "kg": "kg",
     "reps": "reps",
     "sets": "sets",
+    "set": "set",
+    "setsPlural": "sets",
     "today": "Today",
     "yesterday": "Yesterday",
     "tomorrow": "Tomorrow",
@@ -259,7 +261,38 @@
         "normal": "Normal day"
       },
       "noPlan": "No workout planned today.",
-      "engineError": "Couldn't build the workout plan. Please try again in a moment."
+      "engineError": "Couldn't build the workout plan. Please try again in a moment.",
+      "ariaLabel": "Today's session",
+      "todaysSessionKicker": "Today's session",
+      "fallbackTitle": "Push (chest and shoulders)",
+      "exercisesCount": "{n} exercises",
+      "intensityBanner": {
+        "ariaLabel": "Session intensity",
+        "plus": "Coach is bumping intensity +15%. Heavier by one dumbbell, 1 rep extra.",
+        "minus": "Coach is trimming intensity -20%. Lighter today, focus on form.",
+        "normal": "Normal session - baseline. Coach adjusts during the session if anything comes up."
+      },
+      "errorBanner": "Couldn't load today's session. Showing you a demo session.",
+      "warmupAriaLabel": "Warm-up today",
+      "exercisesHeading": "Exercises",
+      "swappedPrefix": "Swapped · {reason}",
+      "exerciseDetail": "{sets} sets - {kg} kg - {reps} reps",
+      "exerciseTimedDetail": "{sets} sets - {seconds} sec",
+      "closingNote": "The coach adjusts during the session if anything comes up: pain, fatigue, hard set. You don't need to know everything up front.",
+      "confirmStartCta": "Confirm, let's start",
+      "fallbackExercises": {
+        "inclineDbPress": "Incline dumbbell press",
+        "seatedMilitaryPress": "Seated military press",
+        "lateralRaise": "Lateral raises",
+        "tricepCableExtension": "Tricep cable extensions",
+        "plank": "Plank"
+      }
+    },
+    "aparatLipsaSheet": {
+      "title": "Missing equipment",
+      "subtitle": "Check the equipment you don't have. The coach avoids those exercises and removes them from the list in Account.",
+      "saveCta": "Save",
+      "closeCta": "Close"
     }
   },
 
@@ -314,7 +347,22 @@
       "hard": "Hard"
     },
     "noteLabel": "Anything to remember? (optional)",
-    "submitCta": "Save"
+    "submitCta": "Save",
+    "heading": "How was your session?",
+    "intro": "Your answer calibrates tomorrow's session. Just one question.",
+    "footer": "Your answer is the only input we can't infer on our own. Thank you.",
+    "ratings": {
+      "easyLabel": "Easy",
+      "easyDescription": "I had more in the tank",
+      "rightLabel": "Just right",
+      "rightDescription": "Solid, balanced",
+      "hardLabel": "Hard",
+      "hardDescription": "I pushed to the limit"
+    },
+    "noSetsToast": "The session has no sets logged. It wasn't saved to History.",
+    "fallbackTitle": "Workout",
+    "fallbackExerciseName": "Exercise {n}",
+    "metaTemplate": "{sets} · {minutes} min · {kg} kg"
   },
 
   "postSummary": {
@@ -330,7 +378,53 @@
     },
     "prBanner": "+{deltaKg} kg on {exercise} — new PR!",
     "doneCta": "Done",
-    "shareCta": "Share"
+    "shareCta": "Share",
+    "heading": "Session complete",
+    "fallbackTitle": "Session",
+    "prBannerAriaLabel": "New PR detected",
+    "prNew": "New PR!",
+    "prFallbackDetail": "Top set on {title}",
+    "prSummaryDetail": "{exercise} - {sign}{kg} kg",
+    "prTypeLabel": {
+      "weight": "Weight PR",
+      "volume": "Volume PR",
+      "reps": "Reps PR"
+    },
+    "prOneRMEstimate": "Est. 1RM: {kg}kg",
+    "statsLabels": {
+      "duration": "Duration",
+      "durationValue": "{min} min",
+      "setsLogged": "Sets logged",
+      "totalVolume": "Total volume",
+      "kcalEstimate": "Est. kcal"
+    },
+    "muscleGroupsHeading": "Muscle groups",
+    "musclesAriaLabel": "Muscle groups",
+    "muscles": {
+      "chest": "Chest",
+      "shoulders": "Shoulders",
+      "triceps": "Triceps",
+      "abs": "Abs",
+      "back": "Back",
+      "biceps": "Biceps",
+      "forearms": "Forearms",
+      "quads": "Quads",
+      "hamstrings": "Hamstrings",
+      "glutes": "Glutes",
+      "calves": "Calves",
+      "fullBody": "Full body compound"
+    },
+    "mariusDetail": {
+      "heading": "Marius detail",
+      "tonnage": "Session tonnage",
+      "density": "Density",
+      "densityValue": "{kg} kg/min",
+      "oneRMLabel": "1RM {exercise} est."
+    },
+    "streakLine": "— keep the rhythm!",
+    "streakLabel_one": "{n} day in a row",
+    "streakLabel_other": "{n} days in a row",
+    "finishCta": "Done"
   },
 
   "progres": {
@@ -770,6 +864,15 @@
     "discard": "Discard"
   },
 
+  "exitSheet": {
+    "title": "Leave the session?",
+    "progressLine": "You've done {done}/{total} exercises. How do you want to continue?",
+    "continueCta": "Continue session",
+    "pauseCta": "Save and resume later",
+    "finishEarlyCta": "Finish early",
+    "discardCta": "Discard session"
+  },
+
   "aaFriction": {
     "title": "That's a big jump",
     "reasons": {
@@ -779,6 +882,76 @@
     },
     "acknowledgeCta": "I'll be careful — log it",
     "forceCta": "Force log anyway"
+  },
+
+  "painButton": {
+    "subHeaderTitle": "Something hurts",
+    "heading": "Where does it hurt?",
+    "subtitle": "Coach avoids exercises that aggravate the area.",
+    "intensityPrompt": "How bad is it?",
+    "intensityLabels": {
+      "1": "Mild",
+      "2": "Moderate",
+      "3": "Severe"
+    },
+    "regions": {
+      "gat": "Neck",
+      "umar-stang": "Left shoulder",
+      "umar-drept": "Right shoulder",
+      "piept": "Chest",
+      "spate": "Back",
+      "lombar": "Lower back",
+      "cot-stang": "Left elbow",
+      "cot-drept": "Right elbow",
+      "incheietura-stanga": "Left wrist",
+      "incheietura-dreapta": "Right wrist",
+      "sold": "Hip",
+      "genunchi-stang": "Left knee",
+      "genunchi-drept": "Right knee",
+      "glezna-stanga": "Left ankle",
+      "glezna-dreapta": "Right ankle"
+    },
+    "continueCta": "Continue adapted",
+    "exitCta": "Save and exit",
+    "medicalCue": "If none fits, stop the session and consult a doctor.",
+    "reassureToast": "Safety comes first. We've adjusted the rest of the session."
+  },
+
+  "setLog": {
+    "targetLabel": "Target",
+    "targetReps": "reps",
+    "askDoneLabel": "How many did you do?",
+    "kgLabel": "kg",
+    "repsLabel": "Reps",
+    "kgLabelRequired": "kg *",
+    "repsLabelRequired": "Reps *",
+    "kgError": "Kg between 1 and 500.",
+    "repsError": "Reps between 1 and 100.",
+    "confirmSetCta": "Confirm set",
+    "youDidLabel": "You did",
+    "youDidRepsWith": "reps with",
+    "editAriaLabel": "Edit"
+  },
+
+  "setRating": {
+    "prompt": "How was it?",
+    "options": {
+      "usor": "Easy",
+      "potrivit": "Just right",
+      "greu": "Hard"
+    }
+  },
+
+  "perSetSafety": {
+    "title": "Hold up",
+    "body": "You picked up the pace beyond usual. Check your form and recover before the next set.",
+    "pauseCta": "Pause 30 sec",
+    "continueCta": "Continue anyway",
+    "reasons": {
+      "fast_sets": "Sets too fast",
+      "kg_jump": "Weight jumped suddenly",
+      "rep_spike": "Reps above usual"
+    }
   },
 
   "inactivity": {

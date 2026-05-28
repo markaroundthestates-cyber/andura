@@ -42,17 +42,17 @@ function renderPainButton(initialState?: { from?: string }) {
 }
 
 describe('PainButton — render', () => {
-  it('renders SubHeader title "Ma doare ceva" (mockup L1013 verbatim)', () => {
+  it('renders SubHeader title "Something hurts" (EN default)', () => {
     renderPainButton();
     expect(
-      screen.getByRole('heading', { name: /Ma doare ceva/i, level: 1 })
+      screen.getByRole('heading', { name: /Something hurts/i, level: 1 })
     ).toBeInTheDocument();
   });
 
-  it('renders body sub-heading "Unde te doare?" (h2)', () => {
+  it('renders body sub-heading "Where does it hurt?" (h2, EN default)', () => {
     renderPainButton();
     expect(
-      screen.getByRole('heading', { name: /Unde te doare/i, level: 2 })
+      screen.getByRole('heading', { name: /Where does it hurt/i, level: 2 })
     ).toBeInTheDocument();
   });
 
@@ -61,9 +61,9 @@ describe('PainButton — render', () => {
     expect(screen.getByTestId('pain-button-back')).toBeInTheDocument();
   });
 
-  it('renders helper copy "Coach evita exercitii"', () => {
+  it('renders helper copy "Coach avoids exercises" (EN default)', () => {
     renderPainButton();
-    expect(screen.getByText(/Coach evita exercitii/i)).toBeInTheDocument();
+    expect(screen.getByText(/Coach avoids exercises/i)).toBeInTheDocument();
   });
 
   it('renders 15 region buttons', () => {
@@ -74,11 +74,11 @@ describe('PainButton — render', () => {
     expect(regionButtons.length).toBe(15);
   });
 
-  it('renders 3 intensity buttons (Usor / Mediu / Sever)', () => {
+  it('renders 3 intensity buttons (Mild / Moderate / Severe under EN default)', () => {
     renderPainButton();
-    expect(screen.getByRole('button', { name: /Usor/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Mediu/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Sever/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Mild/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Moderate/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Severe/i })).toBeInTheDocument();
   });
 
   it('renders Continue + Exit buttons', () => {
@@ -96,21 +96,21 @@ describe('PainButton — selection state', () => {
 
   it('Continue enabled cand region selected', () => {
     renderPainButton();
-    fireEvent.click(screen.getByRole('button', { name: /^Umar stang$/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^Left shoulder$/i }));
     expect(screen.getByTestId('pain-continue')).not.toBeDisabled();
   });
 
   it('region button aria-pressed reflects selection', () => {
     renderPainButton();
-    const lombar = screen.getByRole('button', { name: /^Lombar$/i });
-    expect(lombar).toHaveAttribute('aria-pressed', 'false');
-    fireEvent.click(lombar);
-    expect(lombar).toHaveAttribute('aria-pressed', 'true');
+    const lowerBack = screen.getByRole('button', { name: /^Lower back$/i });
+    expect(lowerBack).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(lowerBack);
+    expect(lowerBack).toHaveAttribute('aria-pressed', 'true');
   });
 
-  it('intensity defaults la 1 (Usor)', () => {
+  it('intensity defaults la 1 (Mild under EN default)', () => {
     renderPainButton();
-    expect(screen.getByRole('button', { name: /Usor/i })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: /Mild/i })).toHaveAttribute(
       'aria-pressed',
       'true'
     );
@@ -118,12 +118,12 @@ describe('PainButton — selection state', () => {
 
   it('intensity selection toggles aria-pressed', () => {
     renderPainButton();
-    fireEvent.click(screen.getByRole('button', { name: /Sever/i }));
-    expect(screen.getByRole('button', { name: /Sever/i })).toHaveAttribute(
+    fireEvent.click(screen.getByRole('button', { name: /Severe/i }));
+    expect(screen.getByRole('button', { name: /Severe/i })).toHaveAttribute(
       'aria-pressed',
       'true'
     );
-    expect(screen.getByRole('button', { name: /Usor/i })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: /Mild/i })).toHaveAttribute(
       'aria-pressed',
       'false'
     );
@@ -136,8 +136,8 @@ describe('PainButton — navigation flow', () => {
     // historical preview route preserved so the user sees the adapted session
     // before starting fresh.
     renderPainButton();
-    fireEvent.click(screen.getByRole('button', { name: /^Genunchi drept$/i }));
-    fireEvent.click(screen.getByRole('button', { name: /Mediu/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^Right knee$/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Moderate/i }));
     fireEvent.click(screen.getByTestId('pain-continue'));
     const probe = screen.getByTestId('probe');
     expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
@@ -155,8 +155,8 @@ describe('PainButton — navigation flow', () => {
     useWorkoutStore.getState().reset();
     useWorkoutStore.setState({ sessionStart: 1000 });
     renderPainButton({ from: 'workout' });
-    fireEvent.click(screen.getByRole('button', { name: /^Lombar$/i }));
-    fireEvent.click(screen.getByRole('button', { name: /Usor/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^Lower back$/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Mild/i }));
     fireEvent.click(screen.getByTestId('pain-continue'));
     const probe = screen.getByTestId('probe');
     expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout');
@@ -202,8 +202,8 @@ describe('PainButton — pain CDL persistence (§43-H2)', () => {
 
   it('Continue persists a {type:pain, region, intensity, ts} entry to DB(pain-cdl)', () => {
     renderPainButton();
-    fireEvent.click(screen.getByRole('button', { name: /^Lombar$/i }));
-    fireEvent.click(screen.getByRole('button', { name: /Sever/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^Lower back$/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Severe/i }));
     fireEvent.click(screen.getByTestId('pain-continue'));
 
     // Read back via the same DB key the recovery path reads.

@@ -44,6 +44,7 @@ import { Ripple } from '../../../components/Ripple';
 import { DB } from '../../../../db.js';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { edgeFlash, haptic } from '../../../lib/motion';
+import { t } from '../../../../i18n/index.js';
 
 export type BodyRegion =
   | 'gat'
@@ -64,34 +65,30 @@ export type BodyRegion =
 
 export type PainIntensity = 1 | 2 | 3;
 
-interface RegionOption {
-  id: BodyRegion;
-  label: string;
-}
-
-const REGIONS: readonly RegionOption[] = [
-  { id: 'gat', label: 'Gat' },
-  { id: 'umar-stang', label: 'Umar stang' },
-  { id: 'umar-drept', label: 'Umar drept' },
-  { id: 'piept', label: 'Piept' },
-  { id: 'spate', label: 'Spate' },
-  { id: 'lombar', label: 'Lombar' },
-  { id: 'cot-stang', label: 'Cot stang' },
-  { id: 'cot-drept', label: 'Cot drept' },
-  { id: 'incheietura-stanga', label: 'Incheietura stanga' },
-  { id: 'incheietura-dreapta', label: 'Incheietura dreapta' },
-  { id: 'sold', label: 'Sold' },
-  { id: 'genunchi-stang', label: 'Genunchi stang' },
-  { id: 'genunchi-drept', label: 'Genunchi drept' },
-  { id: 'glezna-stanga', label: 'Glezna stanga' },
-  { id: 'glezna-dreapta', label: 'Glezna dreapta' },
+// Region ID list stays canonical (engine + CDL persistence keys); the
+// rendered label flows through painButton.regions.* sub-tree so the
+// locale flip surfaces EN copy under default + RO opt-in.
+const REGION_IDS: readonly BodyRegion[] = [
+  'gat',
+  'umar-stang',
+  'umar-drept',
+  'piept',
+  'spate',
+  'lombar',
+  'cot-stang',
+  'cot-drept',
+  'incheietura-stanga',
+  'incheietura-dreapta',
+  'sold',
+  'genunchi-stang',
+  'genunchi-drept',
+  'glezna-stanga',
+  'glezna-dreapta',
 ];
 
-const INTENSITY_LABELS: Record<PainIntensity, string> = {
-  1: 'Usor',
-  2: 'Mediu',
-  3: 'Sever',
-};
+function intensityLabel(level: PainIntensity): string {
+  return t(`painButton.intensityLabels.${level}`);
+}
 
 // ── Pain CDL append-only persistence (ADR §9 §43-H2) ───────────────────────
 // DB('pain-cdl') key — append-only log the Recovery Engine reads next session.
@@ -160,7 +157,7 @@ export function PainButton(): JSX.Element {
     edgeFlash('var(--brick)');
     // §F-pain-button-02 reassurance toast — verbatim mockup L1017-1019.
     toast.show({
-      message: 'Siguranta e pe primul loc. Am ajustat restul sesiunii.',
+      message: t('painButton.reassureToast'),
       variant: 'success',
     });
     if (inSession) {
@@ -193,23 +190,23 @@ export function PainButton(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="pain-button">
       <SubHeader
-        title="Ma doare ceva"
+        title={t('painButton.subHeaderTitle')}
         onBack={handleBack}
         testIdBack="pain-button-back"
       />
       <div className="p-6 flex-1">
-      <h2 className="text-2xl font-bold text-ink mb-2">Unde te doare?</h2>
-      <p className="text-base text-ink2 mb-6">Coach evita exercitii care irita zona.</p>
+      <h2 className="text-2xl font-bold text-ink mb-2">{t('painButton.heading')}</h2>
+      <p className="text-base text-ink2 mb-6">{t('painButton.subtitle')}</p>
 
       <div className="grid grid-cols-2 gap-3 mb-6">
-        {REGIONS.map((r) => {
-          const selected = region === r.id;
+        {REGION_IDS.map((id) => {
+          const selected = region === id;
           return (
             <button
-              key={r.id}
+              key={id}
               type="button"
-              onClick={() => setRegion(r.id)}
-              data-region={r.id}
+              onClick={() => setRegion(id)}
+              data-region={id}
               aria-pressed={selected}
               className={
                 selected
@@ -217,14 +214,14 @@ export function PainButton(): JSX.Element {
                   : 'press-feedback p-3 rounded-xl border bg-paper2 border-lineStrong text-ink'
               }
             >
-              <span className="text-sm font-medium">{r.label}</span>
+              <span className="text-sm font-medium">{t(`painButton.regions.${id}`)}</span>
             </button>
           );
         })}
       </div>
 
       <div className="mb-6">
-        <p className="text-base text-ink mb-3">Cat de tare?</p>
+        <p className="text-base text-ink mb-3">{t('painButton.intensityPrompt')}</p>
         <div className="flex gap-3">
           {([1, 2, 3] as const).map((lvl) => {
             const selected = intensity === lvl;
@@ -241,7 +238,7 @@ export function PainButton(): JSX.Element {
                     : 'press-feedback flex-1 py-3 rounded-xl border bg-paper2 border-lineStrong text-ink'
                 }
               >
-                <span className="text-base font-medium">{INTENSITY_LABELS[lvl]}</span>
+                <span className="text-base font-medium">{intensityLabel(lvl)}</span>
               </button>
             );
           })}
@@ -256,7 +253,7 @@ export function PainButton(): JSX.Element {
         className="press-feedback relative overflow-hidden w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-50"
       >
         <Ripple color="rgba(255,255,255,0.5)" />
-        <span className="relative">Continui adaptat</span>
+        <span className="relative">{t('painButton.continueCta')}</span>
       </button>
       <button
         type="button"
@@ -264,7 +261,7 @@ export function PainButton(): JSX.Element {
         data-testid="pain-exit"
         className="w-full mt-3 py-3 text-ink2 text-sm"
       >
-        Salveaza si iesi
+        {t('painButton.exitCta')}
       </button>
       {/* §F-pain-button-02 closing italic — verbatim mockup L1021. Safety
           cue NU paternalistic per D-LEGACY-061 (informativ daca presets nu se
@@ -273,7 +270,7 @@ export function PainButton(): JSX.Element {
         className="mt-6 text-sm text-ink3 italic font-serif leading-relaxed"
         data-testid="pain-medical-cue"
       >
-        Daca nu se potriveste niciuna, opreste sesiunea si consulta un medic.
+        {t('painButton.medicalCue')}
       </p>
       </div>
     </section>

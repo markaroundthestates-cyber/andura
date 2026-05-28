@@ -96,9 +96,19 @@ async function renderWorkoutAndWait(): Promise<ReturnType<typeof renderWorkout>>
 // §F-pass2-setloginput-02 — mockup wv2 two-step helper: pre-log `tinta` →
 // tap "Logheaza setul" → post-log reveals the rating row → tap a rating.
 // Replaces the old direct rating tap (rating was always visible pre-fix).
+//
+// Wave E1 — under EN default the rating button labels surface as
+// Easy/Just right/Hard. The helper maps the test-facing RO alias to the
+// EN label so call sites stay stable; if/when tests are re-keyed to EN
+// directly this map can go away.
+const EN_RATING_LABEL: Record<'Usor' | 'Potrivit' | 'Greu', RegExp> = {
+  Usor: /^Easy$/i,
+  Potrivit: /^Just right$/i,
+  Greu: /^Hard$/i,
+};
 function logSet(rating: 'Usor' | 'Potrivit' | 'Greu'): void {
   fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
-  fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${rating}$`, 'i') }));
+  fireEvent.click(screen.getByRole('button', { name: EN_RATING_LABEL[rating] }));
 }
 
 // Optional kg/reps revise before rating: tap Logheaza → pencil edit → change
@@ -115,7 +125,7 @@ function logSetWithEdit(
   if (changes.reps !== undefined) {
     fireEvent.change(screen.getByTestId('reps-input'), { target: { value: changes.reps } });
   }
-  fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${rating}$`, 'i') }));
+  fireEvent.click(screen.getByRole('button', { name: EN_RATING_LABEL[rating] }));
 }
 
 function resetStore(): void {
@@ -188,13 +198,13 @@ describe('Workout — base render (phase=idle init → logging)', async () => {
     expect(screen.getByTestId('reps-input')).toHaveValue(10);
   });
 
-  it('renders 3 rating buttons (Usor / Potrivit / Greu) after Logheaza', async () => {
+  it('renders 3 rating buttons (Easy / Just right / Hard under EN default) after Logheaza', async () => {
     // §F-pass2-setloginput-02 — rating row hidden pre-log, revealed post-log.
     await renderWorkoutAndWait();
     fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
-    expect(screen.getByRole('button', { name: /^Usor$/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /^Potrivit$/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /^Greu$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Easy$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Just right$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Hard$/i })).toBeInTheDocument();
   });
 
   it('renders exit X button cu accessible name', async () => {

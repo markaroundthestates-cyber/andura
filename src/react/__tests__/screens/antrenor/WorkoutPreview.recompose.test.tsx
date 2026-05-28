@@ -67,13 +67,13 @@ beforeEach(() => {
 });
 
 describe('WorkoutPreview recompose with busy coarse types', () => {
-  it('barbell busy → barbell row shows a renamed alternative + "Inlocuit ·" sub', async () => {
+  it('barbell busy → barbell row shows a renamed alternative + "Swapped ·" sub (EN default)', async () => {
     renderPreview({ equipmentContext: { busyCoarseTypes: ['barbell'] } });
     await waitFor(() => {
       expect(screen.getByTestId('preview-exercise-list')).toBeInTheDocument();
     });
     // First row recomposed: the TITLE is now the alternative (Smith), not the
-    // barbell movement. (The "Inlocuit · ..." sub legitimately echoes the
+    // barbell movement. (The "Swapped · ..." sub legitimately echoes the
     // original name, so assert against the title div, not the whole row.)
     const titles = screen.getAllByText((_c, el) =>
       el?.classList.contains('truncate') === true && el.tagName === 'DIV'
@@ -81,12 +81,12 @@ describe('WorkoutPreview recompose with busy coarse types', () => {
     const firstTitle = titles[0]!.textContent ?? '';
     expect(firstTitle).not.toBe('inclinat cu bara');
     expect(firstTitle).toContain('Smith');
-    // The swap reason is surfaced.
+    // The swap reason is surfaced (Wave E1 — EN default copy is "Swapped ·").
     const subs = screen.getAllByTestId('preview-exercise-sub');
-    expect(subs.some((s) => (s.textContent ?? '').includes('Inlocuit'))).toBe(true);
+    expect(subs.some((s) => (s.textContent ?? '').includes('Swapped'))).toBe(true);
   });
 
-  it('no busy types → original list, no "Inlocuit" markers', async () => {
+  it('no busy types → original list, no "Swapped" markers (EN default)', async () => {
     renderPreview({});
     await waitFor(() => {
       expect(screen.getByTestId('preview-exercise-list')).toBeInTheDocument();
@@ -94,6 +94,6 @@ describe('WorkoutPreview recompose with busy coarse types', () => {
     const rows = screen.getAllByTestId('preview-exercise-row');
     expect(rows[0]!.textContent).toContain('inclinat cu bara');
     const subs = screen.queryAllByTestId('preview-exercise-sub');
-    expect(subs.every((s) => !(s.textContent ?? '').includes('Inlocuit'))).toBe(true);
+    expect(subs.every((s) => !(s.textContent ?? '').includes('Swapped'))).toBe(true);
   });
 });

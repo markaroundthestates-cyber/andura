@@ -49,6 +49,7 @@ import type { JSX, FocusEvent } from 'react';
 import { Check, Pencil } from 'lucide-react';
 import { Ripple } from '../Ripple';
 import { haptic } from '../../lib/motion';
+import { t } from '../../../i18n/index.js';
 
 export type SetLogInputMode = 'editable' | 'tinta' | 'post-log';
 
@@ -95,7 +96,7 @@ export function SetLogInput({
     return (
       <div className="mb-6" data-testid="setlog-tinta">
         <p className="text-xs uppercase tracking-wide font-medium text-ink2 mb-2">
-          Tinta
+          {t('setLog.targetLabel')}
         </p>
         <div className="flex items-baseline gap-2 mb-4" data-testid="setlog-tinta-target-display">
           <span
@@ -104,7 +105,7 @@ export function SetLogInput({
           >
             {reps}
           </span>
-          <span className="text-sm text-ink2">repetari</span>
+          <span className="text-sm text-ink2">{t('setLog.targetReps')}</span>
           <span
             className="text-3xl font-semibold text-ink ml-2"
             data-testid="setlog-tinta-kg"
@@ -114,12 +115,12 @@ export function SetLogInput({
         </div>
 
         <p className="text-xs uppercase tracking-wide font-medium text-ink2 mb-2 mt-3">
-          Cate ai facut?
+          {t('setLog.askDoneLabel')}
         </p>
         <div className="flex gap-3 mb-4">
           <div className="flex-1">
             <label className="text-sm text-ink2 block mb-1" htmlFor="setlog-tinta-kg-input">
-              kg
+              {t('setLog.kgLabel')}
             </label>
             <input
               id="setlog-tinta-kg-input"
@@ -137,7 +138,7 @@ export function SetLogInput({
           </div>
           <div className="flex-1">
             <label className="text-sm text-ink2 block mb-1" htmlFor="setlog-tinta-reps-input">
-              Repetari
+              {t('setLog.repsLabel')}
             </label>
             <input
               id="setlog-tinta-reps-input"
@@ -173,7 +174,7 @@ export function SetLogInput({
         >
           <Ripple color="rgba(255,255,255,0.55)" />
           <Check className="w-5 h-5 relative" aria-hidden="true" />
-          <span className="relative">Confirma setul</span>
+          <span className="relative">{t('setLog.confirmSetCta')}</span>
         </button>
       </div>
     );
@@ -185,18 +186,18 @@ export function SetLogInput({
     return (
       <div className="mb-6" data-testid="setlog-postlog">
         <p className="text-xs uppercase tracking-wide font-medium text-ink2 mb-2">
-          Tu ai facut
+          {t('setLog.youDidLabel')}
         </p>
         <div className="flex items-center gap-2">
           <p className="flex-1 text-base text-ink" data-testid="setlog-postlog-text">
             <span className="text-3xl font-semibold">{reps}</span>
-            <span className="text-sm text-ink2 mx-2">repetari cu</span>
+            <span className="text-sm text-ink2 mx-2">{t('setLog.youDidRepsWith')}</span>
             <span className="text-3xl font-semibold">{kg} kg</span>
           </p>
           <button
             type="button"
             onClick={onEdit}
-            aria-label="Editeaza"
+            aria-label={t('setLog.editAriaLabel')}
             data-testid="setlog-postlog-edit"
             className="p-2 rounded-full text-ink2 min-w-[44px] min-h-[44px] flex items-center justify-center"
           >
@@ -217,17 +218,17 @@ export function SetLogInput({
   // 3.3.1 + SC 3.3.3.
   const kgError =
     !Number.isFinite(kg) || kg < 1 || kg > 500
-      ? 'Kg intre 1 si 500.'
+      ? t('setLog.kgError')
       : null;
   const repsError =
     !Number.isFinite(reps) || reps < 1 || reps > 100
-      ? 'Repetari intre 1 si 100.'
+      ? t('setLog.repsError')
       : null;
   return (
     <div className="flex gap-3 mb-6">
       <div className="flex-1">
         <label className="text-sm text-ink2 block mb-1" htmlFor="kg-input">
-          kg *
+          {t('setLog.kgLabelRequired')}
         </label>
         <input
           id="kg-input"
@@ -257,7 +258,7 @@ export function SetLogInput({
       </div>
       <div className="flex-1">
         <label className="text-sm text-ink2 block mb-1" htmlFor="reps-input">
-          Repetari *
+          {t('setLog.repsLabelRequired')}
         </label>
         <input
           id="reps-input"
