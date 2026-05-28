@@ -40,6 +40,7 @@ import {
   incrementRefusal,
   getRefusalCounter,
 } from '../../../engine/schedule/scheduleAdapter.js';
+import { setLocale, _resetI18nCache } from '../../../i18n/index.js';
 
 const TUESDAY_2026_05_19 = new Date(2026, 4, 19); // dayIdx 1 (M, PULL)
 
@@ -86,6 +87,12 @@ beforeEach(() => {
   localStorage.clear();
   resetStores();
   vi.restoreAllMocks();
+  // MOAT B6 ("Romanian end-to-end") asserts the RO display chain. Wave C2
+  // i18n flipped DEFAULT_LOCALE to EN, so we must opt into RO explicitly
+  // here for these assertions to remain meaningful.
+  setLocale('ro');
+  _resetI18nCache();
+  setLocale('ro');
 });
 
 // ── Behaviour 2 — in-session "Aparat ocupat" busy swap ────────────────────────

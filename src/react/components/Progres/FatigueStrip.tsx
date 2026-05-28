@@ -22,6 +22,7 @@
 
 import type { JSX } from 'react';
 import { getFatigue } from '../../lib/engineWrappers';
+import { t } from '../../../i18n/index.js';
 
 export function FatigueStrip(): JSX.Element {
   const fatigue = getFatigue();
@@ -32,11 +33,11 @@ export function FatigueStrip(): JSX.Element {
     <section
       data-testid="fatigue-strip"
       className="bg-white dark:bg-paper2 border border-line rounded-[14px] p-4 mb-4"
-      aria-label="Stare oboseala"
+      aria-label={t('progres.fatigue.ariaLabel')}
     >
       <div className="flex-1 min-w-0">
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
-          Oboseala azi
+          {t('progres.fatigue.todayLabel')}
         </p>
         {fatigue ? (
           <>
@@ -60,7 +61,7 @@ export function FatigueStrip(): JSX.Element {
           </>
         ) : (
           <p className="text-sm text-ink2" data-testid="fatigue-empty">
-            Nu ai destule sesiuni inca. Estimarea apare dupa 2+ sesiuni.
+            {t('progres.fatigue.emptyHint')}
           </p>
         )}
       </div>

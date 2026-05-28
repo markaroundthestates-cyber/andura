@@ -18,17 +18,17 @@ beforeEach(() => {
   vi.mocked(getFatigue).mockReturnValue(null);
 });
 
-describe('FatigueStrip', () => {
-  it('renders heading "Oboseala azi"', () => {
+describe('FatigueStrip — Wave C2 i18n EN default', () => {
+  it('renders heading "Fatigue today" (EN default)', () => {
     render(<FatigueStrip />);
-    expect(screen.getByText(/Oboseala azi/i)).toBeInTheDocument();
+    expect(screen.getByText(/Fatigue today/i)).toBeInTheDocument();
   });
 
-  it('renders empty state cand getFatigue null', () => {
+  it('renders empty state cand getFatigue null — EN default', () => {
     render(<FatigueStrip />);
     expect(screen.getByTestId('fatigue-empty')).toBeInTheDocument();
-    // Pass 10 canonical "Nu ai X inca" prefix
-    expect(screen.getByTestId('fatigue-empty')).toHaveTextContent(/Nu ai destule sesiuni inca/i);
+    // Wave C2 i18n: EN default → "Not enough sessions yet" (was RO "Nu ai destule sesiuni inca").
+    expect(screen.getByTestId('fatigue-empty')).toHaveTextContent(/Not enough sessions yet/i);
   });
 
   it('renders score (/10 scale) + label cand fatigue present', () => {

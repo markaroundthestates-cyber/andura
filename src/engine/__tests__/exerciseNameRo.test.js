@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { EXERCISE_METADATA } from '../exerciseLibrary.js';
 import { toExerciseDisplay } from '../../react/lib/exerciseDisplay';
+import { setLocale, _resetI18nCache } from '../../i18n/index.js';
 
 // ══ WP-6 NAMING QA-GATE (D081) — anti-facade ════════════════════════════════
 // Asserts the 657-entry RO display layer is REAL, not a green-on-empty facade:
@@ -136,7 +137,18 @@ describe('WP-6 nameRo QA-gate (657 entries)', () => {
   });
 });
 
-describe('toExerciseDisplay precedence (mockup > library nameRo > EN)', () => {
+describe('toExerciseDisplay RO precedence (mockup > library nameRo > EN) — locale=ro opt-in', () => {
+  // Wave C2 i18n: toExerciseDisplay is now locale-aware. Default locale is EN
+  // post 2026-05-28 paradigm flip; these tests force RO opt-in to verify the
+  // RO precedence chain still works for users who switch from Cont > Setari.
+  beforeEach(() => {
+    setLocale('ro');
+  });
+  afterEach(() => {
+    try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+    _resetI18nCache();
+  });
+
   it('mockup-tuned curated name wins over library nameRo', () => {
     // "Incline DB Press" is curated in EXERCISE_DISPLAY ("Impins inclinat" + sub).
     const d = toExerciseDisplay('Incline DB Press');
@@ -155,5 +167,38 @@ describe('toExerciseDisplay precedence (mockup > library nameRo > EN)', () => {
     const d = toExerciseDisplay('Totally Unknown Move 9000');
     expect(d.name).toBe('Totally Unknown Move 9000');
     expect(d.sub).toBeUndefined();
+  });
+});
+
+describe('toExerciseDisplay EN precedence (curated EN > nameEn > engine name) — locale=en default', () => {
+  // Wave C2 i18n — EN locale is the default. The canonical engine key IS the
+  // EN name (English by design — PR records key on it), so most exercises
+  // simply echo the engine name. ~30 curated entries carry an EN subtitle.
+  beforeEach(() => {
+    setLocale('en');
+  });
+  afterEach(() => {
+    try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+    _resetI18nCache();
+  });
+
+  it('curated EN entry returns industry-standard EN name + subtitle', () => {
+    const d = toExerciseDisplay('Flat Barbell Bench');
+    expect(d.name).toBe('Bench Press');
+    expect(d.sub).toBe('Barbell');
+  });
+
+  it('uncurated engine name echoes raw (already English canonical)', () => {
+    const d = toExerciseDisplay('Scaption');
+    expect(d.name).toBe('Scaption');
+  });
+
+  it('zero RO diacritics or RO-specific tokens leak under EN locale', () => {
+    // Spot-check a few that have RO `nameRo` overrides — under EN they must
+    // never surface "Impins" / "Genuflexiuni" / "Ridicari".
+    for (const key of ['Incline DB Press', 'Flat DB Press', 'Lateral Raises', 'Scaption']) {
+      const d = toExerciseDisplay(key);
+      expect(d.name).not.toMatch(/Impins|Genuflexiuni|Ridicari|Flexii|Indreptari/i);
+    }
   });
 });

@@ -12,7 +12,7 @@ import { CoachRestCard } from '../../../components/Antrenor/CoachRestCard';
 import type { CoachRestReason } from '../../../lib/engineWrappers';
 
 describe('CoachRestCard — Bugatti truth fallback', () => {
-  it('renders generic non-claim line cand restReason=null (T0 fresh)', () => {
+  it('renders generic non-claim line cand restReason=null (T0 fresh) — EN default', () => {
     render(
       <CoachRestCard
         onLightSession={() => {}}
@@ -21,8 +21,9 @@ describe('CoachRestCard — Bugatti truth fallback', () => {
       />,
     );
     // Generic fallback — non-claim, no muscle group, no fake readiness.
+    // Wave C2 i18n: EN default → "Today is a recovery day".
     expect(
-      screen.getByText(/Astazi e zi de recuperare/i),
+      screen.getByText(/Today is a recovery day/i),
     ).toBeInTheDocument();
   });
 
@@ -50,7 +51,7 @@ describe('CoachRestCard — Bugatti truth fallback', () => {
     expect(container.textContent).not.toMatch(/readiness\s+32\/100/i);
   });
 
-  it('renders engine-driven fatigued groups + readiness cand restReason provided', () => {
+  it('renders engine-driven fatigued groups + readiness cand restReason provided — EN default', () => {
     const restReason: CoachRestReason = {
       fatiguedGroups: ['Pieptul', 'Quadricepsul'],
       readinessScore: 48,
@@ -62,13 +63,14 @@ describe('CoachRestCard — Bugatti truth fallback', () => {
         restReason={restReason}
       />,
     );
+    // Wave C2 i18n: EN default uses " and " joiner + "still recovering".
     expect(
-      screen.getByText(/Pieptul si Quadricepsul inca recupereaza/i),
+      screen.getByText(/Pieptul and Quadricepsul still recovering/i),
     ).toBeInTheDocument();
     expect(screen.getByText(/readiness 48\/100/i)).toBeInTheDocument();
   });
 
-  it('renders generic Muschii recupereaza cand fatiguedGroups=[] + readiness null', () => {
+  it('renders generic "Muscles are still recovering" cand fatiguedGroups=[] + readiness null — EN default', () => {
     const restReason: CoachRestReason = {
       fatiguedGroups: [],
       readinessScore: null,
@@ -80,7 +82,7 @@ describe('CoachRestCard — Bugatti truth fallback', () => {
         restReason={restReason}
       />,
     );
-    expect(screen.getByText(/Muschii recupereaza/i)).toBeInTheDocument();
+    expect(screen.getByText(/Muscles are still recovering/i)).toBeInTheDocument();
   });
 
   it('renders dynamic durationMinutes prop', () => {

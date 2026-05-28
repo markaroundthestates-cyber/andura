@@ -20,6 +20,7 @@ import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useProgresStore, latestBodyMeasurements } from '../../stores/progresStore';
 import { estimateBF_USNavy } from '../../../engine/usNavyBF.js';
 import { estimateBfDeurenbergCapped } from '../../../engine/bodyComposition.js';
+import { t } from '../../../i18n/index.js';
 
 export function BodyFatStrip(): JSX.Element {
   const sex = useOnboardingStore((s) => s.data.sex);
@@ -62,18 +63,18 @@ export function BodyFatStrip(): JSX.Element {
   });
   const bf = bfNavy ?? bfDeurenberg;
   const isUsingDeurenberg = bfNavy == null && bfDeurenberg != null;
-  const sourceLabel = bfNavy != null ? 'US Navy' : 'estimat';
+  const sourceLabel = bfNavy != null ? t('progres.bodyFat.sourceUsNavy') : t('progres.bodyFat.sourceEstimated');
 
   return (
     <section
       data-testid="bodyfat-strip"
       className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4"
-      aria-label="Grasime corporala estimata"
+      aria-label={t('progres.bodyFat.ariaLabel')}
     >
       <Percent className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
-          Grasime corporala
+          {t('progres.bodyFat.label')}
         </p>
         {bf != null ? (
           <>
@@ -91,14 +92,14 @@ export function BodyFatStrip(): JSX.Element {
                 className="text-xs text-ink3 mt-1 leading-snug"
                 data-testid="bodyfat-cta"
               >
-                {capped ? 'Estimat aproximativ. ' : 'Estimat din BMI. '}
-                Adauga talie + gat in Profil pentru estimat precis (US Navy).
+                {capped ? t('progres.bodyFat.captionApprox') : t('progres.bodyFat.captionFromBmi')}
+                {t('progres.bodyFat.nudge')}
               </p>
             )}
           </>
         ) : (
           <p className="text-sm text-ink2" data-testid="bodyfat-empty">
-            Estimarea apare dupa ce completezi datele de profil.
+            {t('progres.bodyFat.emptyHint')}
           </p>
         )}
       </div>

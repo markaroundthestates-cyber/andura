@@ -86,7 +86,8 @@ describe('Progres landing', () => {
     useProgresStore.setState({ bodyData: [{ date: '2026-05-17', ts: Date.now(), waistCm: 85, bicepsCm: 35 }] });
     renderProgres();
     expect(screen.getByTestId('last-body-card')).toBeInTheDocument();
-    expect(screen.getByTestId('last-body-card')).toHaveTextContent('Talie 85');
+    // Wave C2 i18n: EN default → "Waist 85" (was RO "Talie 85"); "Biceps" same.
+    expect(screen.getByTestId('last-body-card')).toHaveTextContent('Waist 85');
     expect(screen.getByTestId('last-body-card')).toHaveTextContent('Biceps 35');
   });
 });
@@ -138,7 +139,8 @@ describe('Progres — F-progres-07 Alerte azi banner mockup parity', () => {
     });
     renderProgres();
     expect(await screen.findByTestId('alerts-banner')).toBeInTheDocument();
-    expect(screen.getByTestId('alerte-azi-label')).toHaveTextContent(/Alerte azi/i);
+    // Wave C2 i18n: EN default → "Alerts today" (was RO "Alerte azi").
+    expect(screen.getByTestId('alerte-azi-label')).toHaveTextContent(/Alerts today/i);
     expect(screen.getByText(/sarit 2 antrenamente/i)).toBeInTheDocument();
     expect(screen.getByText(/stau pe loc de 3 saptamani/i)).toBeInTheDocument();
     expect(screen.getByText(/Umerii ramasi in urma/i)).toBeInTheDocument();

@@ -80,7 +80,7 @@ export function Progres(): JSX.Element {
       <HeatMapWeekly />
       {alerts.length > 0 && (
         <h2 data-testid="alerte-azi-label" className="text-xs text-ink2 uppercase tracking-wide font-semibold mt-4 mb-2">
-          Alerte azi
+          {t('progres.alertsToday')}
         </h2>
       )}
       <AlertsBanner alerts={alerts} />
@@ -91,7 +91,7 @@ export function Progres(): JSX.Element {
         className="btn-primary-lift w-full flex items-center gap-3 p-4 mb-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
       >
         <Scale className="w-5 h-5" aria-hidden="true" />
-        Logheaza greutate azi
+        {t('progres.logWeightToday')}
       </button>
       {lastWeight && (
         <button
@@ -101,7 +101,7 @@ export function Progres(): JSX.Element {
           className="w-full text-left p-4 mb-4 bg-paper2 border border-line rounded-xl flex items-center gap-3"
         >
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">Ultima cantarire</p>
+            <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">{t('progres.lastWeighIn')}</p>
             <p className="text-2xl font-bold text-ink mt-1 font-mono">{lastWeight.kg} kg</p>
             <p className="text-sm text-ink2">{lastWeight.date}</p>
           </div>
@@ -117,7 +117,7 @@ export function Progres(): JSX.Element {
           className="btn-secondary-lift w-full flex items-center gap-3 p-4 mb-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-base font-semibold"
         >
           <LineChart className="w-5 h-5" aria-hidden="true" />
-          Vezi trend greutate
+          {t('progres.viewWeightTrend')}
         </button>
       )}
       <button
@@ -127,18 +127,18 @@ export function Progres(): JSX.Element {
         className="btn-secondary-lift w-full flex items-center gap-3 p-4 mb-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-base font-semibold"
       >
         <Ruler className="w-5 h-5" aria-hidden="true" />
-        Masuratori corp
+        {t('progres.bodyMeasurements')}
       </button>
       {lastBody && (
         <div className="p-4 mb-4 bg-paper2 border border-line rounded-xl" data-testid="last-body-card">
-          <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">Ultima masurare</p>
+          <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">{t('progres.lastMeasurement')}</p>
           <p className="text-sm text-ink2 mt-1">{lastBody.date}</p>
           <div className="text-sm text-ink mt-1 flex flex-wrap gap-3">
-            {lastBody.waistCm !== undefined && <span>Talie {lastBody.waistCm} cm</span>}
-            {lastBody.chestCm !== undefined && <span>Piept {lastBody.chestCm} cm</span>}
-            {lastBody.hipsCm !== undefined && <span>Sold {lastBody.hipsCm} cm</span>}
-            {lastBody.bicepsCm !== undefined && <span>Biceps {lastBody.bicepsCm} cm</span>}
-            {lastBody.thighCm !== undefined && <span>Coapsa {lastBody.thighCm} cm</span>}
+            {lastBody.waistCm !== undefined && <span>{t('progres.measurements.waist')} {lastBody.waistCm} cm</span>}
+            {lastBody.chestCm !== undefined && <span>{t('progres.measurements.chest')} {lastBody.chestCm} cm</span>}
+            {lastBody.hipsCm !== undefined && <span>{t('progres.measurements.hips')} {lastBody.hipsCm} cm</span>}
+            {lastBody.bicepsCm !== undefined && <span>{t('progres.measurements.biceps')} {lastBody.bicepsCm} cm</span>}
+            {lastBody.thighCm !== undefined && <span>{t('progres.measurements.thigh')} {lastBody.thighCm} cm</span>}
           </div>
         </div>
       )}

@@ -38,6 +38,7 @@ import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { saveReadiness } from '../../../../engine/readiness.js';
+import { t } from '../../../../i18n/index.js';
 
 export type EnergyLevel = 'excelent' | 'bine' | 'normal' | 'slabit' | 'obosit';
 export type IntensityMod = 'plus' | 'normal' | 'minus';
@@ -45,8 +46,10 @@ export type IntensityMod = 'plus' | 'normal' | 'minus';
 interface EnergyOption {
   level: EnergyLevel;
   color: string;
-  label: string;
-  hint: string;
+  /** i18n key under energyCheck.levels.* — visible label localized at render. */
+  labelKey: string;
+  /** i18n key under energyCheck.levels.* — sub-hint localized at render. */
+  hintKey: string;
   intensity: IntensityMod;
   // 1-5 readiness value persisted per-UID via saveReadiness (engine
   // readiness.js#getComputedReadinessScore read-side: StatsGrid /
@@ -62,11 +65,11 @@ interface EnergyOption {
 // slabit+obosit red -> indistinguishable). Anchored pe palette tokens succ/
 // warn/danger; lime + orange interpolate steps 2/4 warm-consistent.
 const ENERGY_OPTIONS: readonly EnergyOption[] = [
-  { level: 'excelent', color: 'var(--succ)', label: 'Excelent', hint: 'Coach urca intensitatea +15%', intensity: 'plus', readiness: 5 },
-  { level: 'bine', color: '#6b9e3f', label: 'Bine', hint: 'Energie buna, sesiune completa', intensity: 'normal', readiness: 4 },
-  { level: 'normal', color: 'var(--warn)', label: 'Normal', hint: 'Sesiune standard, baseline', intensity: 'normal', readiness: 3 },
-  { level: 'slabit', color: '#d4702a', label: 'Slabit', hint: 'Coach reduce volumul putin', intensity: 'minus', readiness: 2 },
-  { level: 'obosit', color: 'var(--danger)', label: 'Obosit', hint: 'Coach reduce sesiunea imediat', intensity: 'minus', readiness: 1 },
+  { level: 'excelent', color: 'var(--succ)', labelKey: 'energyCheck.levels.excellent', hintKey: 'energyCheck.levels.excellentHint', intensity: 'plus', readiness: 5 },
+  { level: 'bine', color: '#6b9e3f', labelKey: 'energyCheck.levels.good', hintKey: 'energyCheck.levels.goodHint', intensity: 'normal', readiness: 4 },
+  { level: 'normal', color: 'var(--warn)', labelKey: 'energyCheck.levels.normal', hintKey: 'energyCheck.levels.normalHint', intensity: 'normal', readiness: 3 },
+  { level: 'slabit', color: '#d4702a', labelKey: 'energyCheck.levels.weak', hintKey: 'energyCheck.levels.weakHint', intensity: 'minus', readiness: 2 },
+  { level: 'obosit', color: 'var(--danger)', labelKey: 'energyCheck.levels.tired', hintKey: 'energyCheck.levels.tiredHint', intensity: 'minus', readiness: 1 },
 ];
 
 export function EnergyCheck(): JSX.Element {
@@ -93,14 +96,14 @@ export function EnergyCheck(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="energy-check">
       <SubHeader
-        title="Cum te simti?"
+        title={t('energyCheck.subHeaderTitle')}
         onBack={handleBack}
         testIdBack="energy-check-back"
       />
       <div className="p-6 flex-1">
-      <h2 className="text-2xl font-bold text-ink mb-2">Cum te simti azi?</h2>
+      <h2 className="text-2xl font-bold text-ink mb-2">{t('energyCheck.title')}</h2>
       <p className="text-base text-ink2 mb-6">
-        Coach-ul ajusteaza intensitatea pe baza energiei tale.
+        {t('energyCheck.subtitle')}
       </p>
       <div className="flex flex-col gap-3">
         {ENERGY_OPTIONS.map((opt) => (
@@ -118,8 +121,8 @@ export function EnergyCheck(): JSX.Element {
               aria-hidden="true"
             />
             <span className="flex flex-col">
-              <span className="text-base font-medium text-ink">{opt.label}</span>
-              <span className="text-sm text-ink2">{opt.hint}</span>
+              <span className="text-base font-medium text-ink">{t(opt.labelKey)}</span>
+              <span className="text-sm text-ink2">{t(opt.hintKey)}</span>
             </span>
           </button>
         ))}

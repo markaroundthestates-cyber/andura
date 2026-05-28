@@ -24,25 +24,28 @@ beforeEach(() => {
   useNutritionStore.getState().reset();
 });
 
-describe('TDEEStrip', () => {
-  it('renders heading "Target azi" + kcal placeholder before resolve', () => {
+describe('TDEEStrip — Wave C2 i18n EN default', () => {
+  it('renders heading "Target today" + kcal placeholder before resolve — EN default', () => {
     render(<TDEEStrip />);
-    expect(screen.getByText(/Target azi/i)).toBeInTheDocument();
+    // Wave C2 i18n: EN default → "Target today" (was RO "Target azi").
+    expect(screen.getByText(/Target today/i)).toBeInTheDocument();
   });
 
-  it('renders kcal value after async resolve', async () => {
+  it('renders kcal value after async resolve — EN protein label', async () => {
     render(<TDEEStrip />);
     await waitFor(() => {
       // RO thousands separator (dot, ICU ro-RO) — parity BMRStrip.
       expect(screen.getByText(/2\.640 kcal/)).toBeInTheDocument();
     });
-    expect(screen.getByText(/180 g proteine/)).toBeInTheDocument();
+    // Wave C2 i18n: EN default → "180 g protein" (was RO "180 g proteine").
+    expect(screen.getByText(/180 g protein/)).toBeInTheDocument();
   });
 
-  it('renders source label "Estimare adaptiva" cand engine-bn', async () => {
+  it('renders source label "Adaptive estimate" cand engine-bn — EN default', async () => {
     render(<TDEEStrip />);
     await waitFor(() => {
-      expect(screen.getByTestId('tdee-source').textContent).toMatch(/Estimare adaptiva/);
+      // Wave C2 i18n: EN default → "Adaptive estimate" (was RO "Estimare adaptiva").
+      expect(screen.getByTestId('tdee-source').textContent).toMatch(/Adaptive estimate/);
     });
   });
 
@@ -56,16 +59,16 @@ describe('TDEEStrip', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 
-  it('§F-pass2-tdeestrip-02 target-only display cand NU exista intake logat', async () => {
+  it('§F-pass2-tdeestrip-02 target-only display cand NU exista intake logat — EN default', async () => {
     // store reset in beforeEach → loggedKcal null → comparison hidden.
     render(<TDEEStrip />);
     await waitFor(() => {
-      expect(screen.getByText(/Target azi/i)).toBeInTheDocument();
+      expect(screen.getByText(/Target today/i)).toBeInTheDocument();
     });
     expect(screen.queryByTestId('tdee-current-vs-target')).not.toBeInTheDocument();
   });
 
-  it('§F-pass2-tdeestrip-02 current-vs-tinta cu delta cand intake logat (engine target)', async () => {
+  it('§F-pass2-tdeestrip-02 current-vs-target cu delta cand intake logat — EN default', async () => {
     // Logged 2800 kcal vs engine target 2640 → +160 surplus.
     useNutritionStore.getState().setDailyKcal(todayIso(), 2800);
     render(<TDEEStrip />);
@@ -75,9 +78,11 @@ describe('TDEEStrip', () => {
     const row = screen.getByTestId('tdee-current-vs-target');
     // RO thousands separator (dot, ICU ro-RO) — parity BMRStrip.
     expect(row.textContent).toMatch(/2\.800 kcal/);
-    expect(row.textContent).toMatch(/tinta 2\.640/);
+    // Wave C2 i18n: EN default → "target 2.640" (was RO "tinta 2.640").
+    expect(row.textContent).toMatch(/target 2\.640/);
     expect(row.textContent).toMatch(/\(\+160\)/);
-    expect(screen.getByText(/Azi vs tinta/i)).toBeInTheDocument();
+    // Wave C2 i18n: EN default → "Today vs target" (was RO "Azi vs tinta").
+    expect(screen.getByText(/Today vs target/i)).toBeInTheDocument();
   });
 
   it('§F-pass2-tdeestrip-02 negative delta cand sub tinta', async () => {
@@ -89,12 +94,13 @@ describe('TDEEStrip', () => {
     expect(screen.getByTestId('tdee-current-vs-target').textContent).toMatch(/\(-140\)/);
   });
 
-  it('§F-pass2-tdeestrip-03 italic explainer copy present (mockup L1713)', () => {
+  it('§F-pass2-tdeestrip-03 italic explainer copy present (mockup L1713) — EN default', () => {
     render(<TDEEStrip />);
     const explainer = screen.getByTestId('tdee-explainer');
     expect(explainer).toBeInTheDocument();
-    expect(explainer.textContent).toMatch(/Engine calculeaza auto/);
-    expect(explainer.textContent).toMatch(/Loghezi optional pentru calibrare reala/);
+    // Wave C2 i18n: EN default → "The engine calculates automatically" + "Log optionally to calibrate."
+    expect(explainer.textContent).toMatch(/engine calculates automatically/i);
+    expect(explainer.textContent).toMatch(/Log optionally to calibrate/i);
     expect(explainer.className).toMatch(/italic/);
   });
 

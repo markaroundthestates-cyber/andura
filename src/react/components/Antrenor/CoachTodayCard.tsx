@@ -40,6 +40,7 @@ import { gotoPath } from '../../lib/navigation';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { Ripple } from '../Ripple';
 import { haptic } from '../../lib/motion';
+import { t } from '../../../i18n/index.js';
 
 // §B037 audit fix (UI-REVIEW #2) — extract design tokens out of inline style
 // hex literals → CSS custom properties. Tailwind extend in `tailwind.config.js`
@@ -60,12 +61,12 @@ interface Props {
   workout?: PlannedWorkoutOutput | null;
 }
 
-// HIGH-CODE-03 — day-label RO no-diacritics formatter. 1=ieri, 2-6=N zile,
-// 7+=saptamana trecuta. Pure function (testable inline).
-function formatDaysSinceRo(days: number): string {
-  if (days <= 1) return 'ieri';
-  if (days <= 6) return `${days} zile`;
-  return 'saptamana trecuta';
+// HIGH-CODE-03 — day-label formatter. 1=yesterday, 2-6=N days, 7+=last week.
+// Locale-aware via i18n bundle. Pure function (testable inline).
+function formatDaysSince(days: number): string {
+  if (days <= 1) return t('coachToday.daysSince.yesterday');
+  if (days <= 6) return t('coachToday.daysSince.daysFmt', { n: days });
+  return t('coachToday.daysSince.lastWeek');
 }
 
 export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
@@ -75,7 +76,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
   // to ALL users regardless of actual plan) + D-LEGACY-064 violation (& vs
   // 'si'). Same pattern ca HIGH-CODE-03 quote engine-wire (Wave 9 74650a5f) —
   // here render-only fallback so generic copy suffices.
-  const title = workout?.workoutTitle ?? 'Antrenamentul de azi';
+  const title = workout?.workoutTitle ?? t('coachToday.fallbackTitle');
   const duration = workout?.estimatedDuration ?? 48;
   const exerciseCount = workout?.exerciseCount ?? 5;
   // HIGH-CODE-03 chat5 — engine-driven quote replaces hardcoded muscle-group
@@ -98,8 +99,8 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     try {
       const dynamic = engineWrappers.getCoachTodayQuote?.() ?? null;
       if (dynamic !== null) {
-        const dayLabel = formatDaysSinceRo(dynamic.daysSince);
-        return `${dynamic.recoveredLabel} recupereaza din ${dayLabel} - hai sa o facem curat.`;
+        const dayLabel = formatDaysSince(dynamic.daysSince);
+        return t('coachToday.recoveredQuote', { group: dynamic.recoveredLabel, when: dayLabel });
       }
     } catch {
       // fall through to generic fallback
@@ -137,7 +138,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     <div
       className="relative overflow-hidden bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick rounded-[18px] p-[18px] mb-2.5 animate-card-rise"
       role="region"
-      aria-label="Coach-ul recomanda azi"
+      aria-label={t('coachToday.ariaLabel')}
     >
       {/* §F-pass2-coachtoday-07 (LOW chat5 Wave 10) — decorative radial brick
          gradient mockup L742 verbatim. aria-hidden + presentation-only div,
@@ -168,7 +169,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
         }}
       />
       <div className="relative text-xs font-semibold tracking-wider uppercase text-brick">
-        Coach-ul recomanda azi
+        {t('coachToday.kicker')}
       </div>
       <div className="relative text-xl font-bold mt-1 tracking-tight">{title}</div>
       <div
@@ -190,11 +191,11 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
       <div className="relative flex gap-3.5 mt-3.5 text-sm" style={{ color: COACH_META_COLOR }}>
         <span className="flex items-center gap-1.5">
           <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-          ~ {duration} min
+          {t('coachToday.durationLabel', { min: duration })}
         </span>
         <span className="flex items-center gap-1.5">
           <Layers className="w-3.5 h-3.5" aria-hidden="true" />
-          {exerciseCount} exercitii
+          {t(exerciseCount === 1 ? 'coachToday.exercisesCount_one' : 'coachToday.exercisesCount_other', { n: exerciseCount })}
         </span>
       </div>
       {/* Wave C3 (2026-05-28) — "Incepe sesiunea" is the day's ritual launch.
@@ -210,7 +211,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
         className="btn-primary-lift press-feedback relative overflow-hidden w-full mt-3.5 bg-brick text-paper rounded-md py-2.5 font-semibold"
       >
         <Ripple color="rgba(255,255,255,0.55)" />
-        <span className="relative">Incepe sesiunea</span>
+        <span className="relative">{t('coachToday.startCta')}</span>
       </button>
       <div className="relative text-center mt-2.5">
         <button
@@ -220,7 +221,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
           className="text-sm underline underline-offset-2"
           style={{ color: COACH_OVERRIDE_COLOR }}
         >
-          Vrei altceva azi? &rarr;
+          {t('coachToday.overrideCta')}
         </button>
       </div>
     </div>

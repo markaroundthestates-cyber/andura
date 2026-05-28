@@ -22,18 +22,19 @@ beforeEach(() => {
   });
 });
 
-describe('BodyFatStrip', () => {
-  it('renders heading "Grasime corporala"', () => {
+describe('BodyFatStrip — Wave C2 i18n EN default', () => {
+  it('renders heading "Body fat" (EN default)', () => {
     render(<BodyFatStrip />);
-    expect(screen.getByText(/Grasime corporala/i)).toBeInTheDocument();
+    expect(screen.getByText(/Body fat/i)).toBeInTheDocument();
   });
 
-  it('arata bf% Deurenberg (estimat) cand DOAR onboarding stats (fara talie/gat)', () => {
+  it('arata bf% Deurenberg (estimated) cand DOAR onboarding stats (fara talie/gat)', () => {
     render(<BodyFatStrip />);
     // 80kg/180cm/31yo M → Deurenberg ~20.3%.
     const val = screen.getByTestId('bodyfat-value');
     expect(val.textContent).toMatch(/%/);
-    expect(screen.getByTestId('bodyfat-source').textContent).toMatch(/estimat/);
+    // Wave C2 i18n: EN default → "estimated" (was RO "estimat").
+    expect(screen.getByTestId('bodyfat-source').textContent).toMatch(/estimated/);
   });
 
   it('arata sursa "US Navy" cand talie+gat masurate (plauzibile)', () => {
@@ -42,9 +43,9 @@ describe('BodyFatStrip', () => {
     expect(screen.getByTestId('bodyfat-source').textContent).toMatch(/US Navy/);
   });
 
-  it('BUG #12a: gat imposibil (22cm) NU umfla — cade pe Deurenberg estimat', () => {
+  it('BUG #12a: gat imposibil (22cm) NU umfla — cade pe Deurenberg estimated', () => {
     // talie 75 / gat 22 ar fi dat 20.2% US-Navy (umflat); acum US-Navy → null,
-    // deci sursa = estimat (Deurenberg) iar valoarea reflecta profilul slab.
+    // deci sursa = estimated (Deurenberg) iar valoarea reflecta profilul slab.
     useOnboardingStore.setState({
       data: { age: 16, sex: 'm', goal: 'auto', frequency: '3', experience: 'incepator', weight: 55, height: 182 },
       completed: true,
@@ -52,7 +53,8 @@ describe('BodyFatStrip', () => {
     });
     useProgresStore.getState().addBodyDataEntry({ date: '2026-05-27', waistCm: 75, neckCm: 22 });
     render(<BodyFatStrip />);
-    expect(screen.getByTestId('bodyfat-source').textContent).toMatch(/estimat/);
+    // Wave C2 i18n: EN default → "estimated".
+    expect(screen.getByTestId('bodyfat-source').textContent).toMatch(/estimated/);
     // Deurenberg pentru BMI 16.6 / 16yo → ~7-8% (slab), departe de 20.2% umflat.
     const val = Number(screen.getByTestId('bodyfat-value').textContent?.replace(/[^\d.]/g, ''));
     expect(val).toBeLessThan(12);
@@ -73,11 +75,12 @@ describe('BodyFatStrip', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 
-  // Smoke 2026-05-28 #1 — CTA "adauga talie + gat" cand DOAR Deurenberg.
-  it('CTA "Adauga talie + gat" prezent cand fallback Deurenberg (fara masuratori)', () => {
+  // Smoke 2026-05-28 #1 — CTA "Add waist + neck" cand DOAR Deurenberg (EN default).
+  it('CTA "Add waist + neck" prezent cand fallback Deurenberg (fara masuratori)', () => {
     render(<BodyFatStrip />);
     const cta = screen.getByTestId('bodyfat-cta');
-    expect(cta.textContent).toMatch(/Adauga talie/);
+    // Wave C2 i18n: EN default → "Add waist + neck in Profile" (was RO "Adauga talie + gat in Profil").
+    expect(cta.textContent).toMatch(/Add waist/);
     expect(cta.textContent).toMatch(/US Navy/);
   });
 
@@ -87,7 +90,7 @@ describe('BodyFatStrip', () => {
     expect(screen.queryByTestId('bodyfat-cta')).not.toBeInTheDocument();
   });
 
-  it('caveat "Estimat aproximativ" cand cap-ul high-BMI a actionat (Daniel 109/182/36)', () => {
+  it('caveat "Approximate estimate" cand cap-ul high-BMI a actionat (Daniel 109/182/36) — EN default', () => {
     useOnboardingStore.setState({
       data: { age: 36, sex: 'm', goal: 'slabire', frequency: '4', experience: 'intermediar', weight: 109, height: 182 },
       completed: true,
@@ -95,18 +98,20 @@ describe('BodyFatStrip', () => {
     });
     render(<BodyFatStrip />);
     const cta = screen.getByTestId('bodyfat-cta');
-    expect(cta.textContent).toMatch(/aproximativ/);
+    // Wave C2 i18n: EN default → "Approximate estimate" (was RO "aproximativ").
+    expect(cta.textContent).toMatch(/Approximate estimate/);
     // Valoarea afisata e cap-ul (28%) NU raw-ul Deurenberg (31.6%)
     const val = Number(screen.getByTestId('bodyfat-value').textContent?.replace(/[^\d.]/g, ''));
     expect(val).toBeLessThan(31);
     expect(val).toBeCloseTo(28, 0);
   });
 
-  it('caveat "Estimat din BMI" cand cap-ul NU a actionat (BMI sub 27)', () => {
+  it('caveat "Estimated from BMI" cand cap-ul NU a actionat (BMI sub 27) — EN default', () => {
     // 80kg/180cm: BMI 24.7, cap nu se aplica.
     render(<BodyFatStrip />);
     const cta = screen.getByTestId('bodyfat-cta');
-    expect(cta.textContent).toMatch(/Estimat din BMI/);
-    expect(cta.textContent).not.toMatch(/aproximativ/);
+    // Wave C2 i18n: EN default → "Estimated from BMI" (was RO "Estimat din BMI").
+    expect(cta.textContent).toMatch(/Estimated from BMI/);
+    expect(cta.textContent).not.toMatch(/Approximate/);
   });
 });
