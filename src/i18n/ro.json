@@ -567,7 +567,16 @@
       "azi": "Azi",
       "tendinta": "Tendinta",
       "actiuni": "Actiuni",
+      "recuperare": "Recuperare musculara",
       "logManual": "Log manual"
+    },
+    "recovery": {
+      "ariaLabel": "Recuperare musculara pe grupe",
+      "state": {
+        "recovered": "Odihnit",
+        "partial": "In curs",
+        "fatigued": "Solicitat"
+      }
     },
     "measurements": {
       "waist": "Talie",

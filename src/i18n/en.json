@@ -567,7 +567,16 @@
       "azi": "Today",
       "tendinta": "Trend",
       "actiuni": "Actions",
+      "recuperare": "Muscle recovery",
       "logManual": "Manual log"
+    },
+    "recovery": {
+      "ariaLabel": "Muscle recovery by group",
+      "state": {
+        "recovered": "Fresh",
+        "partial": "Easing",
+        "fatigued": "Loaded"
+      }
     },
     "measurements": {
       "waist": "Waist",
