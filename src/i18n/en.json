@@ -79,6 +79,15 @@
       "4": "Thu",
       "5": "Fri",
       "6": "Sat"
+    },
+    "relativeShort": {
+      "0": "Sun",
+      "1": "Mon",
+      "2": "Tue",
+      "3": "Wed",
+      "4": "Thu",
+      "5": "Fri",
+      "6": "Sat"
     }
   },
 
@@ -483,6 +492,39 @@
       "easy": "Easy",
       "right": "Just right",
       "hard": "Hard"
+    },
+
+    "landing": {
+      "statDaysStreak": "Day streak",
+      "statTotalSessions": "Total sessions",
+      "statRecords": "Records",
+      "recordsHeading": "Records ({n})",
+      "seeAll": "See all",
+      "sessionsHeading": "Sessions",
+      "emptyTitle": "Your first session is waiting",
+      "emptyBody": "Finish a workout and it'll show up here with all the details.",
+      "recordSummary": "{kg} kg x {reps} (~{oneRM} kg 1RM)"
+    },
+
+    "ratingsStrip": {
+      "heading": "How your sessions felt",
+      "window": "last 90 days",
+      "ariaLabel": "How your sessions felt over the last 90 days",
+      "easy": "Easy",
+      "right": "Right",
+      "hard": "Hard",
+      "unrated": "Unrated",
+      "ariaGroupEasy": "Easy {count}",
+      "ariaGroupRight": "Right {count}",
+      "ariaGroupHard": "Hard {count}",
+      "footerLead": "The coach uses your ratings to adjust intensity.",
+      "footerCountSuffix": "in the last 90 days.",
+      "sessions_one": "{n} session",
+      "sessions_other": "{n} sessions"
+    },
+
+    "virtualList": {
+      "ariaLabel": "Session history list"
     }
   },
 

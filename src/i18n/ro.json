@@ -79,6 +79,15 @@
       "4": "Joi",
       "5": "Vin",
       "6": "Sam"
+    },
+    "relativeShort": {
+      "0": "duminica",
+      "1": "luni",
+      "2": "marti",
+      "3": "miercuri",
+      "4": "joi",
+      "5": "vineri",
+      "6": "sambata"
     }
   },
 
@@ -483,6 +492,39 @@
       "easy": "Usor",
       "right": "Potrivit",
       "hard": "Greu"
+    },
+
+    "landing": {
+      "statDaysStreak": "Zile consecutive",
+      "statTotalSessions": "Sesiuni total",
+      "statRecords": "Recorduri",
+      "recordsHeading": "Recorduri ({n})",
+      "seeAll": "Vezi toate",
+      "sessionsHeading": "Sesiuni",
+      "emptyTitle": "Prima ta sesiune te asteapta",
+      "emptyBody": "Termina un antrenament si apare aici cu toate detaliile.",
+      "recordSummary": "{kg} kg x {reps} (~{oneRM} kg 1RM)"
+    },
+
+    "ratingsStrip": {
+      "heading": "Cum au fost sesiunile",
+      "window": "ultimele 90 zile",
+      "ariaLabel": "Cum au fost sesiunile in ultimele 90 zile",
+      "easy": "Usor",
+      "right": "Potrivit",
+      "hard": "Greu",
+      "unrated": "Fara rating",
+      "ariaGroupEasy": "Usor {count}",
+      "ariaGroupRight": "Potrivit {count}",
+      "ariaGroupHard": "Greu {count}",
+      "footerLead": "Coach-ul foloseste evaluarile tale ca sa ajusteze intensitatea.",
+      "footerCountSuffix": "in ultimele 90 zile.",
+      "sessions_one": "{n} sesiune",
+      "sessions_other": "{n} sesiuni"
+    },
+
+    "virtualList": {
+      "ariaLabel": "Lista istoric sesiuni"
     }
   },
 

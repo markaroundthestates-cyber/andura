@@ -1,11 +1,14 @@
 // ══ RATINGS STRIP 90-DAY TESTS — F-istoric-03 ════════════════════════════
+// Wave E3 i18n: flipped to EN default (Daniel mandate 2026-05-28). RO opt-in
+// behaviour covered in its own block at the bottom.
 // Cases per spec §9.2.
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { RatingsStrip90Day, computeBuckets } from '../../../components/Istoric/RatingsStrip90Day';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import type { LastSessionSummary } from '../../../stores/workoutStore';
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 const MS_PER_DAY = 86_400_000;
 
@@ -28,14 +31,22 @@ function makeSession(daysAgo: number, rating: 'usor' | 'potrivit' | 'greu'): Las
 
 beforeEach(() => {
   useWorkoutStore.setState({ sessionsHistory: [] });
+  setLocale('en');
+  _resetI18nCache();
+  setLocale('en');
 });
 
-describe('RatingsStrip90Day — render basics', () => {
-  it('renders header "Cum au fost sesiunile" + "ultimele 90 zile"', () => {
+afterEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
+});
+
+describe('RatingsStrip90Day — render basics (EN default)', () => {
+  it('renders header "How your sessions felt" + "last 90 days"', () => {
     render(<RatingsStrip90Day />);
-    expect(screen.getByText(/Cum au fost sesiunile/i)).toBeInTheDocument();
-    // Header sub-label "ultimele 90 zile" also appears in footer copy; assert at least one match.
-    expect(screen.getAllByText(/ultimele 90 zile/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/How your sessions felt/i)).toBeInTheDocument();
+    // Header sub-label "last 90 days" also appears in footer copy; assert at least one match.
+    expect(screen.getAllByText(/last 90 days/i).length).toBeGreaterThan(0);
   });
 
   it('renders 13 rh-col columns', () => {
@@ -51,16 +62,16 @@ describe('RatingsStrip90Day — render basics', () => {
   });
 });
 
-describe('RatingsStrip90Day — empty + aggregate', () => {
-  it('empty sessions → all counts 0 + footer "0 sesiuni"', () => {
+describe('RatingsStrip90Day — empty + aggregate (EN default)', () => {
+  it('empty sessions → all counts 0 + footer "0 sessions"', () => {
     render(<RatingsStrip90Day />);
     expect(screen.getByTestId('count-usor').textContent).toBe('0');
     expect(screen.getByTestId('count-potrivit').textContent).toBe('0');
     expect(screen.getByTestId('count-greu').textContent).toBe('0');
-    expect(screen.getByTestId('ratings-footer').textContent).toContain('0 sesiuni');
+    expect(screen.getByTestId('ratings-footer').textContent).toContain('0 sessions');
   });
 
-  it('seeds 3 sessions (usor + potrivit + greu) within 90d → counts {1,1,1} + footer 3 sesiuni', () => {
+  it('seeds 3 sessions (usor + potrivit + greu) within 90d → counts {1,1,1} + footer 3 sessions', () => {
     useWorkoutStore.setState({
       sessionsHistory: [
         makeSession(5, 'usor'),
@@ -72,14 +83,14 @@ describe('RatingsStrip90Day — empty + aggregate', () => {
     expect(screen.getByTestId('count-usor').textContent).toBe('1');
     expect(screen.getByTestId('count-potrivit').textContent).toBe('1');
     expect(screen.getByTestId('count-greu').textContent).toBe('1');
-    expect(screen.getByTestId('ratings-footer').textContent).toContain('3 sesiuni');
+    expect(screen.getByTestId('ratings-footer').textContent).toContain('3 sessions');
   });
 
-  it('seeds 1 session within 90d → footer singular "1 sesiune" (NU "sesiuni")', () => {
+  it('seeds 1 session within 90d → footer singular "1 session" (NU "sessions")', () => {
     useWorkoutStore.setState({ sessionsHistory: [makeSession(5, 'potrivit')] });
     render(<RatingsStrip90Day />);
     const footer = screen.getByTestId('ratings-footer').textContent ?? '';
-    expect(footer).toContain('1 sesiune in ultimele');
+    expect(footer).toContain('1 session in the last');
   });
 });
 
@@ -132,5 +143,36 @@ describe('RatingsStrip90Day — unrated attribution (MED-A-2)', () => {
     expect(buckets.counts.potrivit).toBe(1);
     expect(buckets.counts.unrated).toBe(2);
     expect(buckets.counts.total).toBe(1);
+  });
+});
+
+describe('RatingsStrip90Day — RO locale opt-in (preserves pluralRo "de" rule)', () => {
+  beforeEach(() => {
+    setLocale('ro');
+    _resetI18nCache();
+    setLocale('ro');
+  });
+
+  it('RO header copy surfaces "Cum au fost sesiunile"', () => {
+    render(<RatingsStrip90Day />);
+    expect(screen.getByText(/Cum au fost sesiunile/i)).toBeInTheDocument();
+  });
+
+  it('RO footer pluralizes via pluralRo — singular "1 sesiune"', () => {
+    useWorkoutStore.setState({ sessionsHistory: [makeSession(5, 'potrivit')] });
+    render(<RatingsStrip90Day />);
+    expect(screen.getByTestId('ratings-footer').textContent).toContain('1 sesiune in ultimele 90 zile');
+  });
+
+  it('RO footer pluralizes via pluralRo — plural "3 sesiuni" (NU 3 de sesiuni)', () => {
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        makeSession(5, 'usor'),
+        makeSession(10, 'potrivit'),
+        makeSession(15, 'greu'),
+      ],
+    });
+    render(<RatingsStrip90Day />);
+    expect(screen.getByTestId('ratings-footer').textContent).toContain('3 sesiuni in ultimele');
   });
 });
