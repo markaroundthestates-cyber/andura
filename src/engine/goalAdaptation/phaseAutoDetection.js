@@ -31,9 +31,13 @@ import { HEALTHY_MIN_BMI } from '../bodyComposition.js';
  *   - forta:        BULK (volume support strength gain)
  *   - hipertrofie:  BULK conservative (volume support muscle gain)
  *   - recompozitie: MAINTAIN sub-phase RECOMP candidate
- *   - longevitate:  MAINTAIN (sustainable load)
  *   - sanatate:     MAINTAIN (lifestyle integration)
  *   - slabire:      CUT (kcal deficit primary)
+ *
+ * §obiectiv-drop-longevitate 2026-05-28 — 'longevitate' case dropped; default
+ * MAINTAIN fallback preserves backward-compat dacă upstream returneaza string
+ * vechi (defensive). Goal type UI deja shrinks 6→5 + onboardingStore migrate
+ * v4→v5 mapeaza persisted 'longevitate'→'mentenanta' la load.
  *
  * Special: 'slabire' goal is implicit when goalId='hipertrofie' but template
  * resolves to 'slabire' direct. Per template-id override mapping below.
@@ -46,7 +50,6 @@ export function basePhaseForGoal(goalId) {
     case 'forta':        return PHASES.BULK;
     case 'hipertrofie':  return PHASES.BULK;
     case 'recompozitie': return PHASES.MAINTAIN;
-    case 'longevitate':  return PHASES.MAINTAIN;
     case 'sanatate':     return PHASES.MAINTAIN;
     default:             return PHASES.MAINTAIN;
   }
@@ -57,8 +60,10 @@ export function basePhaseForGoal(goalId) {
  *   - slabire template:        CUT (cut-focused)
  *   - forta_dezvoltare:        BULK
  *   - tonifiere_definire:      MAINTAIN sub-phase candidate
- *   - longevitate:             MAINTAIN
  *   - sanatate_generala:       MAINTAIN
+ *
+ * §obiectiv-drop-longevitate 2026-05-28 — TEMPLATE_IDS.longevitate dropped;
+ * default MAINTAIN preserves backward-compat (defensive fallback).
  *
  * @param {string} templateId
  * @returns {import('./types.js').NutritionPhase}
@@ -68,7 +73,6 @@ export function basePhaseForTemplate(templateId) {
     case TEMPLATE_IDS.slabire:            return PHASES.CUT;
     case TEMPLATE_IDS.forta_dezvoltare:   return PHASES.BULK;
     case TEMPLATE_IDS.tonifiere_definire: return PHASES.MAINTAIN;
-    case TEMPLATE_IDS.longevitate:        return PHASES.MAINTAIN;
     case TEMPLATE_IDS.sanatate_generala:  return PHASES.MAINTAIN;
     default:                              return PHASES.MAINTAIN;
   }

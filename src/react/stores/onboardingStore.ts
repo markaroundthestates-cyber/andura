@@ -5,14 +5,20 @@
 // mentenanta + longevitate. Legacy values 'definire' + 'sanatate' migrated
 // pe load via persist `migrate` function (slabire ← definire, longevitate
 // ← sanatate). 'masa' + 'forta' stable cross-version.
+//
+// §obiectiv-drop-longevitate 2026-05-28 Daniel verbatim "drop longevitate".
+// Goal value 'longevitate' RIP — semantic duplicate cu 'mentenanta' (ambele
+// → MAINTENANCE phase, identice engine template parameters). Goal type
+// shrinks 6 → 5. Migration v4 → v5 maps persisted goal='longevitate' la
+// 'mentenanta' on load (zero data loss, semantic continuity).
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 export type Sex = 'm' | 'f';
-export type Goal = 'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta' | 'longevitate';
-/** Legacy goal values pre-D-1b (zustand persist migrate handles). */
-export type LegacyGoal = 'definire' | 'sanatate';
+export type Goal = 'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta';
+/** Legacy goal values pre-D-1b + pre-D080 (zustand persist migrate handles). */
+export type LegacyGoal = 'definire' | 'sanatate' | 'longevitate';
 export type Frequency = '2' | '3' | '4' | '5';
 export type Experience = 'incepator' | 'intermediar' | 'avansat';
 
@@ -193,17 +199,24 @@ const EMPTY: OnboardingData = {
 };
 
 /**
- * §B003/D-1b — migrate legacy Goal values to new 6-value mockup parity.
- * 'definire' → 'slabire' (cut goal renamed)
- * 'sanatate' → 'longevitate' (consolidated cu Sanatate generala umbrella)
- * 'masa' + 'forta' stable.
+ * §B003/D-1b + §obiectiv-drop-longevitate — migrate legacy Goal values:
+ * 'definire'    → 'slabire'     (D-1b: cut goal renamed)
+ * 'sanatate'    → 'mentenanta'  (D-1b consolidated → longevitate; D080 drops
+ *                                longevitate → mentenanta, so chain through)
+ * 'longevitate' → 'mentenanta'  (D080: longevitate dropped, semantic dup of
+ *                                mentenanta — ambele MAINTENANCE phase)
+ * 'masa' + 'forta' + 'slabire' + 'mentenanta' + 'auto' stable.
+ *
+ * Exported pentru unit tests (migration logic verifiable izolat de persist
+ * pipeline). Pure function — no store reads.
  */
-function migrateLegacyGoal(legacyValue: unknown): Goal | null {
+export function migrateLegacyGoal(legacyValue: unknown): Goal | null {
   if (legacyValue === 'definire') return 'slabire';
-  if (legacyValue === 'sanatate') return 'longevitate';
+  if (legacyValue === 'sanatate') return 'mentenanta';
+  if (legacyValue === 'longevitate') return 'mentenanta';
   if (
     legacyValue === 'auto' || legacyValue === 'forta' || legacyValue === 'masa' ||
-    legacyValue === 'slabire' || legacyValue === 'mentenanta' || legacyValue === 'longevitate'
+    legacyValue === 'slabire' || legacyValue === 'mentenanta'
   ) {
     return legacyValue;
   }
@@ -255,7 +268,12 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
       // v4 (smoke #16 targetWeight + targetDate): tinta personala persistata
       // pentru cuplare cu kcal recommendation. Migration spread `...EMPTY` →
       // existing users get both fields null implicit (no breaking change).
-      version: 4,
+      // v5 (§obiectiv-drop-longevitate 2026-05-28): Goal type shrinks 6 → 5
+      // (longevitate dropped — semantic duplicate of mentenanta). Existing
+      // persisted goal='longevitate' migrated → 'mentenanta' via migrateLegacy-
+      // Goal in v5 branch. Zero data loss, semantic continuity (ambele
+      // MAINTENANCE phase deja).
+      version: 5,
       // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
       // fields (NU actions). Match appStore + scheduleStore + workoutStore
       // existing pattern. data + completed + completedAt persisted; actions
@@ -267,8 +285,11 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
       }) as Partial<OnboardingState & OnboardingActions>,
       migrate: (persistedState: unknown, version: number): OnboardingState => {
         // §B003 migration v1 → v2: Goal 4→6 expansion legacy aliases.
+        // §obiectiv-drop-longevitate v4 → v5: Goal 6 → 5 (longevitate dropped).
+        // Both branches funnel through migrateLegacyGoal — which chain-handles
+        // 'definire'→'slabire', 'sanatate'→'mentenanta', 'longevitate'→'mentenanta'.
         const state = persistedState as Partial<OnboardingState> & { data?: { goal?: unknown } };
-        if (version < 2 && state?.data?.goal !== undefined) {
+        if (version < 5 && state?.data?.goal !== undefined) {
           const migrated = migrateLegacyGoal(state.data.goal);
           return {
             data: {

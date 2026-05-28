@@ -57,7 +57,8 @@ describe('Onboarding Step 3 (goal) — toggle button semantic', () => {
     fireEvent.click(screen.getByTestId('onb-goal-masa'));
     expect(screen.getByTestId('onb-goal-masa')).toHaveAttribute('aria-pressed', 'true');
     // All others must remain false.
-    ['auto', 'forta', 'slabire', 'mentenanta', 'longevitate'].forEach((g) => {
+    // §obiectiv-drop-longevitate 2026-05-28 — longevitate dropped from goal list.
+    ['auto', 'forta', 'slabire', 'mentenanta'].forEach((g) => {
       expect(screen.getByTestId(`onb-goal-${g}`)).toHaveAttribute('aria-pressed', 'false');
     });
   });

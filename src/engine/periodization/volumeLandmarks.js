@@ -4,7 +4,8 @@
 // Israetel 11 grupuri musculare baseline MEV/MAV/MRV ×
 //   persona modifiers (Maria 0.50 / Gigica 0.70 / Marius 1.00 + 10-15% bonus
 //   recovery green) × goal modifiers (Hipertrofie 1.00 / Forta 0.70 /
-//   Recompozitie 0.85 / Longevitate 0.60 / Sanatate 0.50).
+//   Recompozitie 0.85 / Sanatate 0.50). §obiectiv-drop-longevitate 2026-05-28:
+//   'longevitate' goal modifier dropped (semantic dup of sanatate).
 // Maria 65 Dual-Layer functional → Israetel 6 movement patterns mapping per
 //   §45.3 Q19 LOCKED.
 //
@@ -48,9 +49,11 @@ export function resolvePersonaId(user) {
 /**
  * Resolve goal id from user object — case + diacritic insensitive normalization
  * (Forta → forta, Recompozitie → recompozitie, Sanatate → sanatate).
+ * §obiectiv-drop-longevitate 2026-05-28: 'longevitate' branch dropped (UI Goal
+ * dropped — semantic dup of mentenanta; persisted users migrated → mentenanta).
  *
  * @param {{goal?: string}} [user]
- * @returns {'hipertrofie'|'forta'|'recompozitie'|'slabire'|'longevitate'|'sanatate'}
+ * @returns {'hipertrofie'|'forta'|'recompozitie'|'slabire'|'sanatate'}
  */
 export function resolveGoalId(user) {
   if (!user || typeof user.goal !== 'string') return 'hipertrofie';
@@ -62,7 +65,6 @@ export function resolveGoalId(user) {
   if (g.startsWith('forta') || g.startsWith('strength')) return 'forta';
   if (g.startsWith('recompozit') || g.startsWith('recomp')) return 'recompozitie';
   if (g.startsWith('slabire') || g.startsWith('weight') || g.startsWith('fat-loss') || g.startsWith('fat loss')) return 'slabire';
-  if (g.startsWith('longevitate') || g.startsWith('longevity')) return 'longevitate';
   if (g.startsWith('sanatate') || g.startsWith('sanatate') || g.startsWith('health')) return 'sanatate';
   return 'hipertrofie';
 }

@@ -153,7 +153,7 @@ describe('Routing — BottomNav active tab', () => {
   // Routes /app/{tab} stay Romanian (URL stability), only visible labels flip.
   // Tab buttons live inside the nav landmark — scope `within(nav)` so we don't
   // collide with content buttons that happen to match the label (e.g.
-  // ObiectivSelector "Auto — Coach-ul alege singur..." matches /Coach/i).
+  // ObiectivGoalCard "Auto — Coach-ul alege singur..." matches /Coach/i).
   it('Antrenor tab activ la /app/antrenor (label = "Coach")', () => {
     renderAt('/app/antrenor');
     const nav = screen.getByRole('navigation', { name: /Main navigation/i });

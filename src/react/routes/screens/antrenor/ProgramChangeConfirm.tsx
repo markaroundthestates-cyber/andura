@@ -3,10 +3,11 @@
 // Universal destructive drill-down pattern per D047 LOCKED V1 RIP-OUT —
 // consistency cu logout/delete/reset/redo-onboarding/schimba-faza/finish-early.
 //
-// Linkpoint: ObiectivSelector (Antrenor home) pick() navigates aici cu
-// state.pendingGoal + pendingLabel + pendingSub. Accept = commit goal pe
-// onboardingStore + back la /app/antrenor. Cancel = back fara commit (
-// fallback safe). Same-goal pick blocked deja in selector (no-op guard).
+// Linkpoint: ObiectivGoalCard (Progres tab, §obiectiv-relocate 2026-05-28)
+// pick() navigates aici cu state.pendingGoal + pendingLabel + pendingSub +
+// returnTo='progres'. Accept = commit goal pe onboardingStore + back la
+// returnTo tab. Cancel = back fara commit. Same-goal pick blocked deja in
+// selector (no-op guard).
 
 import type { JSX } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -20,6 +21,14 @@ interface PendingState {
   pendingGoal?: Goal;
   pendingLabel?: string;
   pendingSub?: string;
+  /**
+   * §obiectiv-relocate 2026-05-28 — Daniel verbatim "muta aia cu Obiectiv de
+   * la Coach la progres". Goal selector relocated la Progres > ObiectivGoalCard;
+   * back/confirm trebuie sa intoarca la tab-ul originator (Progres acum).
+   * Antrenor selector decommissioned 2026-05-28 but state.returnTo defaults la
+   * 'antrenor' pentru orice caller legacy / NU breaks invocation pattern.
+   */
+  returnTo?: 'antrenor' | 'progres';
 }
 
 export function ProgramChangeConfirm(): JSX.Element {
@@ -31,16 +40,17 @@ export function ProgramChangeConfirm(): JSX.Element {
   const pendingGoal = state?.pendingGoal ?? null;
   const pendingLabel = state?.pendingLabel ?? '-';
   const pendingSub = state?.pendingSub ?? '';
+  const returnTo = state?.returnTo ?? 'antrenor';
 
   function handleConfirm(): void {
     if (pendingGoal) {
       setField('goal', pendingGoal);
     }
-    navigate(gotoPath('antrenor'));
+    navigate(gotoPath(returnTo));
   }
 
   function handleCancel(): void {
-    navigate(gotoPath('antrenor'));
+    navigate(gotoPath(returnTo));
   }
 
   return (

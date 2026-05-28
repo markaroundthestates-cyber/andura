@@ -16,10 +16,11 @@
 //   7. PRNotificationBanner (F11 conditional prHit) — BUG #4 top per mockup
 //   8. CoachTodayCard SAU CoachRestCard (swap by coachStore.schedContext)
 //   9. Calendar7Day
-//  10. ObiectivSelector (6 obiective V1 LOCK)
-//  11. PRWallRecent (Phase 6 task_06 — top 3 din getPRHistoryAll)
-//  (Item 12 "Incepe antrenament" CTA removed 2026-05-28 — duplicate of
+//  10. PRWallRecent (Phase 6 task_06 — top 3 din getPRHistoryAll)
+//  (Item "Incepe antrenament" CTA removed 2026-05-28 — duplicate of
 //   CoachTodayCard "Incepe sesiunea" / CoachRestCard buttons, no extra signal.)
+//  (ObiectivSelector relocated 2026-05-28 to Progres > ObiectivGoalCard per
+//   Daniel verbatim "muta aia cu Obiectiv de la Coach la progres".)
 //
 // Persona-aware CSS class wrapper per coachStore.persona.
 //
@@ -46,7 +47,6 @@ import { PRNotificationBanner } from '../../../components/Antrenor/PRNotificatio
 import { PatternsBanner } from '../../../components/Antrenor/PatternsBanner';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
 import { PRWallRecent } from '../../../components/Antrenor/PRWallRecent';
-import { ObiectivSelector } from '../../../components/Antrenor/ObiectivSelector';
 import { Calendar7Day } from '../../../components/Calendar7Day';
 
 const FOURTEEN_DAYS_MS = 14 * 86400000;
@@ -241,11 +241,10 @@ export function Antrenor(): JSX.Element {
 
       <Calendar7Day />
 
-      {/* F-antrenor-03 parity per MOCKUP-PARITY-chat3 §2.2 + §4 P4.
-          Mockup L862-870 "Programe (6 obiective V1 LOCK)" — sits right after
-          Calendar7Day, before stats. Daniel "6 obiective V1 LOCK" decizie:
-          user can pick goal din Antrenor home, NU doar din SettingsProfile. */}
-      <ObiectivSelector />
+      {/* §obiectiv-relocate 2026-05-28 Daniel verbatim "muta aia cu Obiectiv de
+          la Coach la progres". ObiectivSelector decommissioned din Antrenor —
+          goal pick now lives la Progres > ObiectivGoalCard (top of tab, near
+          target weight). Antrenor ramane focused pe "today's session" context. */}
 
       <PRWallRecent records={coach?.prWallRecent ?? []} />
 

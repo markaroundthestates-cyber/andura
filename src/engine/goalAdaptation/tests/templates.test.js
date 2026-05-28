@@ -21,8 +21,11 @@ describe('resolveTemplateId — §9.2.2 Cluster 2 + ADR 024 §1.2 enumerare', ()
   it('slabire → slabire (CUT-focused template, deficit path)', () => {
     expect(resolveTemplateId('slabire')).toBe(TEMPLATE_IDS.slabire);
   });
-  it('longevitate → longevitate', () => {
-    expect(resolveTemplateId('longevitate')).toBe(TEMPLATE_IDS.longevitate);
+  // §obiectiv-drop-longevitate 2026-05-28 — `longevitate` template DROPPED
+  // (duplicate semantic cu mentenanta/sanatate, MAINTENANCE phase identic).
+  // resolveTemplateId('longevitate') ramane defensive fallback la tonifiere_definire.
+  it('longevitate (DROPPED goal) → defensive fallback tonifiere_definire', () => {
+    expect(resolveTemplateId('longevitate')).toBe(TEMPLATE_IDS.tonifiere_definire);
   });
   it('sanatate → sanatate_generala', () => {
     expect(resolveTemplateId('sanatate')).toBe(TEMPLATE_IDS.sanatate_generala);

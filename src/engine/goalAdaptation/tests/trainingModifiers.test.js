@@ -132,14 +132,9 @@ describe('computeRirTargetModifier — §9.2.4 Cluster 4 RIR ranges', () => {
     });
     expect(r).toEqual([0, 2]);
   });
-  it('Longevitate → RIR [2, 3]', () => {
-    const r = computeRirTargetModifier({
-      templateId: TEMPLATE_IDS.longevitate,
-      phase: PHASES.MAINTAIN,
-      mode: 'none',
-    });
-    expect(r).toEqual([2, 3]);
-  });
+  // §obiectiv-drop-longevitate 2026-05-28 — Longevitate template DROPPED
+  // (duplicate semantic + identic RIR/rep cu Sanatate Generala). Sanatate
+  // Generala ramane single MAINTENANCE-style template.
   it('Sanatate Generala → RIR [2, 3]', () => {
     const r = computeRirTargetModifier({
       templateId: TEMPLATE_IDS.sanatate_generala,

@@ -24,6 +24,7 @@ import { BMRStrip } from '../../../components/Progres/BMRStrip';
 import { BodyFatStrip } from '../../../components/Progres/BodyFatStrip';
 import { HeatMapWeekly } from '../../../components/Progres/HeatMapWeekly';
 import { ObiectivCard } from '../../../components/Progres/ObiectivCard';
+import { ObiectivGoalCard } from '../../../components/Progres/ObiectivGoalCard';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 import type { CoachTodayOutput } from '../../../lib/coachDirectorAggregate';
@@ -53,6 +54,11 @@ export function Progres(): JSX.Element {
           mockup andura-clasic.html#L1700 (font-weight:700). */}
       <h1 className="text-2xl font-bold text-ink mb-1">{t('tabs.progres.title')}</h1>
       <p className="text-sm text-ink2 mb-6">{t('tabs.progres.subtitle')}</p>
+      {/* §obiectiv-relocate 2026-05-28 Daniel verbatim "muta aia cu Obiectiv de
+          la Coach la progres ... alea de faze auto, forta slabire mentenanta
+          longevitate". Goal selector lives here aproape de ObiectivCard (target-
+          weight + ETA) — ambele sunt "obiectivul tau", logical co-location. */}
+      <ObiectivGoalCard />
       {/* §obiectiv-tinta 2026-05-28 Daniel verbatim — Obiectiv tinta moved here
           from Cont > Profil si tinte. Top placement: this is "where am I trying
           to get to", primary context for everything else on the screen (TDEE

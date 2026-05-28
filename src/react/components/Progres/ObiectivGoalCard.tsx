@@ -1,29 +1,29 @@
-// ══ OBIECTIV SELECTOR — Antrenor Home 6-Row Programe Picker ══════════════
-// F-antrenor-03 parity per MOCKUP-PARITY-chat3 §2.2 + §4 P4.
-// Mockup verbatim source: 04-architecture/mockups/andura-clasic.html L861-870
-// "Programe (6 obiective V1 LOCK — Auto + 5 specific. Auto = default.
-//  Restructure post-Gigel-test 2026-05-11: 'Tonifiere' → 'Masa musculara'
-//  (jargon → clar), added 'Mentenanta' (was missing for eutrophic stable),
-//  Longevitate+Sanatate generala consolidate → 'Longevitate / Sanatate'."
+// ══ OBIECTIV GOAL CARD — Progres tab goal selector ═══════════════════════
 //
-// 6 obiective labels MATCH onboardingStore Goal type (D-1b migration LANDED):
-//   auto / forta / masa / slabire / mentenanta / longevitate
+// Daniel verbatim 2026-05-28: "sa muti aia cu Obiectiv de la Coach la progres
+// ... ma refer la alea de faze auto, forta slabire mentenanta longevitate".
+// Goal selector relocated from Antrenor home (ObiectivSelector.tsx) + SettingsProfile
+// Antrenament > Obiectiv select. Logic groups it cu ObiectivCard (target
+// weight + deadline + ETA) at top of Progres — the Obiectiv hub.
 //
-// Pattern: aria-pressed toggle pe <button> (§6-M3 revert decision per commit
-// 88b4b64c — role=radiogroup necesita arrow-key handling roving tabIndex
-// pre-Beta inutil; aria-pressed pattern proven across Onboarding Step 2-5).
+// Behavior parity cu Antrenor ObiectivSelector (preserved):
+//   - Same-row click = no-op (already-active guard).
+//   - Different-row click = navigate la /app/progres/program-change-confirm cu
+//     state.pendingGoal/pendingLabel/pendingSub (universal destructive
+//     drill-down per D047 LOCKED V1).
+//   - aria-pressed toggle pattern (§6-M3 — NU radiogroup, evita arrow-key
+//     roving tabIndex pre-Beta inutil).
+//   - Tap target >= 44px (Maria 65 WCAG 2.5.5).
 //
-// PARITY-CONFIRM-MODALS Wave 2f (PAR-003): pick() navigates la drill-down
-// `program-change-confirm` cu route state (pendingGoal + label + sub) per
-// mockup L3211-3220 `pickProgram` → `goto('confirm-program-change')`.
-// Confirm screen commits goal pe accept; cancel = no-op (back fara setField).
-// Same-row click = no-op (mockup L3212 `is-active` guard preserved).
+// Frecventa + Experienta RAMAN in Cont > SettingsProfile (setup-once params,
+// NU progress-tracking goal). Doar selectorul de obiectiv s-a mutat aici.
 //
-// Tap target >=44px (p-3 + min-h-[44px] — Maria 65 WCAG 2.5.5).
+// testid prefix `obiectiv-row-*` + `obiectiv-ales-*` preserved (cross-screen
+// stable contract — used by smoke + audit pipelines).
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Dumbbell, Flame, TrendingDown, ShieldCheck, HeartPulse } from 'lucide-react';
+import { Sparkles, Dumbbell, Flame, TrendingDown, ShieldCheck } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import type { Goal } from '../../stores/onboardingStore';
@@ -36,17 +36,19 @@ interface ObiectivOption {
   Icon: LucideIcon;
 }
 
-// Mockup L864-869 verbatim labels + sub-copy + lucide icons.
+// Mockup L864-868 verbatim labels + sub-copy + lucide icons. 5 obiective
+// post-D080 longevitate drop (semantic duplicate cu mentenanta — ambele
+// MAINTENANCE engine phase, identice template parameters). Persisted users
+// cu goal='longevitate' migrated → 'mentenanta' via onboardingStore v4→v5.
 const OPTIONS: readonly ObiectivOption[] = [
-  { id: 'auto',        title: 'Auto',                   sub: 'Coach-ul alege singur, se adapteaza in timp', Icon: Sparkles },
-  { id: 'forta',       title: 'Forta',                  sub: 'Greutati mari, mai putine repetari',           Icon: Dumbbell },
-  { id: 'masa',        title: 'Masa musculara',         sub: 'Cresti musculatura vizibil',                   Icon: Flame },
-  { id: 'slabire',     title: 'Slabire',                sub: 'Pierzi grasime, pastrezi muschi',              Icon: TrendingDown },
-  { id: 'mentenanta',  title: 'Mentenanta',             sub: 'Pastrezi forma actuala',                       Icon: ShieldCheck },
-  { id: 'longevitate', title: 'Longevitate / Sanatate', sub: 'Fit pe termen lung, fara efort extrem',        Icon: HeartPulse },
+  { id: 'auto',        title: 'Auto',           sub: 'Coach-ul alege singur, se adapteaza in timp', Icon: Sparkles },
+  { id: 'forta',       title: 'Forta',          sub: 'Greutati mari, mai putine repetari',           Icon: Dumbbell },
+  { id: 'masa',        title: 'Masa musculara', sub: 'Cresti musculatura vizibil',                   Icon: Flame },
+  { id: 'slabire',     title: 'Slabire',        sub: 'Pierzi grasime, pastrezi muschi',              Icon: TrendingDown },
+  { id: 'mentenanta',  title: 'Mentenanta',     sub: 'Pastrezi forma actuala',                       Icon: ShieldCheck },
 ];
 
-export function ObiectivSelector(): JSX.Element {
+export function ObiectivGoalCard(): JSX.Element {
   const navigate = useNavigate();
   const goal = useOnboardingStore((s) => s.data.goal);
 
@@ -54,7 +56,6 @@ export function ObiectivSelector(): JSX.Element {
   const activeGoal: Goal = goal ?? 'auto';
 
   function pick(g: Goal): void {
-    // Same-row no-op guard (mockup L3212 is-active check).
     if (g === activeGoal) return;
     const opt = OPTIONS.find((o) => o.id === g);
     navigate(gotoPath('program-change-confirm'), {
@@ -62,14 +63,16 @@ export function ObiectivSelector(): JSX.Element {
         pendingGoal: g,
         pendingLabel: opt?.title ?? g,
         pendingSub: opt?.sub ?? '',
+        // ProgramChangeConfirm intoarce la Progres dupa confirm/cancel (caller-aware).
+        returnTo: 'progres',
       },
     });
   }
 
   return (
     <section
-      className="mb-4"
-      data-testid="obiectiv-selector"
+      className="mb-5"
+      data-testid="obiectiv-goal-card"
       aria-label="Obiectiv antrenament"
     >
       <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
