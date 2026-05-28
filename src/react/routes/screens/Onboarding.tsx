@@ -12,6 +12,13 @@ import {
   TrendingDown,
   ShieldCheck,
   Check,
+  User,
+  Calendar,
+  Target,
+  Activity,
+  Award,
+  Scale,
+  Ruler,
 } from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../stores/onboardingStore';
 import type { OnboardingData, Frequency, Experience } from '../../stores/onboardingStore';
@@ -135,19 +142,27 @@ export function Onboarding(): JSX.Element {
       </div>
 
       {/* MED — brick uppercase "Pasul N" kicker above the step heading per
-          mockup L502 (color #c8412e, uppercase, tracking-wide). */}
-      <p className="text-xs text-brick font-semibold uppercase tracking-wide mb-1">
+          mockup L502 (color #c8412e, uppercase, tracking-wide). Wave A5 polish
+          (Daniel "Top Grade" 2026-05-28) — the kicker leads the per-step
+          stagger so the eye lands on it first before the heading + question. */}
+      <p className="text-xs text-brick font-semibold uppercase tracking-wide mb-1 animate-fade-in-up delay-0">
         Pasul {stepNum}
       </p>
 
-      {stepNum === 1 && <Step1 value={data.age} onChange={(v) => setField('age', v)} />}
-      {stepNum === 2 && <Step2 value={data.sex} onChange={(v) => setField('sex', v)} />}
-      {stepNum === 3 && <Step3 value={data.goal} onChange={(v) => setField('goal', v)} />}
-      {stepNum === 4 && <Step4 value={data.frequency} onChange={(v) => setField('frequency', v)} />}
-      {stepNum === 5 && <Step5 value={data.experience} onChange={(v) => setField('experience', v)} />}
-      {stepNum === 6 && <Step6 value={data.weight} onChange={(v) => setField('weight', v)} />}
-      {stepNum === 7 && <Step7Height value={data.height} onChange={(v) => setField('height', v)} />}
-      {stepNum === 8 && <Step8Summary data={data} />}
+      {/* Wave A5 — each step re-mounts under a key so the fade-in-up replays
+          per navigation. Wrapping the active step lets the fade carry the
+          whole "title + helper + options" block as a unit (cleaner than
+          per-element animation that fights the staggered children inside). */}
+      <div key={`onb-step-${stepNum}`} className="animate-fade-in-up delay-75">
+        {stepNum === 1 && <Step1 value={data.age} onChange={(v) => setField('age', v)} />}
+        {stepNum === 2 && <Step2 value={data.sex} onChange={(v) => setField('sex', v)} />}
+        {stepNum === 3 && <Step3 value={data.goal} onChange={(v) => setField('goal', v)} />}
+        {stepNum === 4 && <Step4 value={data.frequency} onChange={(v) => setField('frequency', v)} />}
+        {stepNum === 5 && <Step5 value={data.experience} onChange={(v) => setField('experience', v)} />}
+        {stepNum === 6 && <Step6 value={data.weight} onChange={(v) => setField('weight', v)} />}
+        {stepNum === 7 && <Step7Height value={data.height} onChange={(v) => setField('height', v)} />}
+        {stepNum === 8 && <Step8Summary data={data} />}
+      </div>
 
       <div className="flex-1" />
 
@@ -166,7 +181,7 @@ export function Onboarding(): JSX.Element {
           type="button"
           onClick={next}
           data-testid="onb-next"
-          className="btn-primary-lift flex-1 px-5 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
+          className={`btn-primary-lift press-feedback flex-1 px-5 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold${isLast ? ' option-selected-ring' : ''}`}
         >
           {isLast ? 'Gata' : 'Continua'}
         </button>
@@ -221,7 +236,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         enterKeyHint="next"
         aria-label="Varsta in ani"
         data-testid="onb-age-input"
-        className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono"
+        className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono transition-colors focus:border-brick"
       />
       {error ? (
         <p
@@ -251,14 +266,14 @@ function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
           user benefit pre-Beta. Screen reader anunta "button, [label],
           pressed/not pressed" perfect valid. */}
       <div className="flex flex-col gap-3">
-        {(['m', 'f'] as const).map((v) => (
+        {(['m', 'f'] as const).map((v, idx) => (
           <button
             key={v}
             type="button"
             onClick={() => onChange(v)}
             data-testid={`onb-sex-${v}`}
             aria-pressed={value === v}
-            className={`p-4 rounded-xl border text-left ${value === v ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
+            className={`press-feedback animate-fade-in-up p-4 rounded-xl border text-left transition-colors ${idx === 0 ? 'delay-150' : 'delay-225'} ${value === v ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
           >
             <span className="font-medium">{v === 'm' ? 'Barbat (M)' : 'Femeie (F)'}</span>
           </button>
@@ -303,11 +318,14 @@ function Step3({ value, onChange }: OptionStepProps<GoalKey>): JSX.Element {
       <h1 className="text-2xl font-bold text-ink mb-2">Ce vrei sa obtii?</h1>
       <p className="text-sm text-ink2 mb-6">Alegi unul. Poti schimba mai tarziu.</p>
       <div className="flex flex-col gap-3">
-        {GOAL_OPTIONS.map(({ key, Icon, subtitle }) => {
+        {GOAL_OPTIONS.map(({ key, Icon, subtitle }, idx) => {
           const selected = value === key;
           // "Auto" recomandat: brick border cand neselectat inca (idle hint),
           // brick fill cand selectat (consistent cu restul optiunilor).
           const isAuto = key === 'auto';
+          // Stagger first 5 entries — max delay 525ms (~half a second total)
+          // keeps the reveal feeling fluid without becoming a wait.
+          const delayClass = ['delay-150', 'delay-225', 'delay-300', 'delay-375', 'delay-450'][idx] ?? 'delay-450';
           return (
             <button
               key={key}
@@ -315,9 +333,9 @@ function Step3({ value, onChange }: OptionStepProps<GoalKey>): JSX.Element {
               onClick={() => onChange(key)}
               data-testid={`onb-goal-${key}`}
               aria-pressed={selected}
-              className={`flex items-center gap-3 p-4 rounded-xl border text-left ${
+              className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-xl border text-left transition-colors ${
                 selected
-                  ? 'bg-brick text-paper border-brick'
+                  ? 'bg-brick text-paper border-brick option-selected-ring'
                   : isAuto
                     ? 'bg-paper2 border-2 border-brick text-ink'
                     : 'bg-paper2 border-lineStrong text-ink'
@@ -376,8 +394,9 @@ function Step4({ value, onChange }: OptionStepProps<Frequency>): JSX.Element {
       {/* aria-label pe fiecare buton numeric pastrat (Screen readers anunta
           numeric value semantic "3 sesiuni pe saptamana" nu doar "3"). */}
       <div className="flex flex-col gap-3">
-        {FREQ_OPTIONS.map(({ value: v, label, subtitle }) => {
+        {FREQ_OPTIONS.map(({ value: v, label, subtitle }, idx) => {
           const selected = value === v;
+          const delayClass = ['delay-150', 'delay-225', 'delay-300', 'delay-375'][idx] ?? 'delay-375';
           return (
             <button
               key={v}
@@ -386,7 +405,7 @@ function Step4({ value, onChange }: OptionStepProps<Frequency>): JSX.Element {
               data-testid={`onb-freq-${v}`}
               aria-pressed={selected}
               aria-label={`${v} sesiuni pe saptamana`}
-              className={`flex items-center gap-3 p-4 rounded-xl border text-left ${selected ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
+              className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-xl border text-left transition-colors ${selected ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
             >
               <span
                 className={`w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center font-bold font-mono ${selected ? 'bg-paper text-brick' : 'bg-paper text-ink2'}`}
@@ -422,8 +441,9 @@ function Step5({ value, onChange }: OptionStepProps<Experience>): JSX.Element {
       <h1 className="text-2xl font-bold text-ink mb-2">Cata experienta ai?</h1>
       <p className="text-sm text-ink2 mb-6">Calibram volumul si progresia de start.</p>
       <div className="flex flex-col gap-3">
-        {EXP_OPTIONS.map(({ value: v, label, subtitle }) => {
+        {EXP_OPTIONS.map(({ value: v, label, subtitle }, idx) => {
           const selected = value === v;
+          const delayClass = ['delay-150', 'delay-225', 'delay-300'][idx] ?? 'delay-300';
           return (
             <button
               key={v}
@@ -431,7 +451,7 @@ function Step5({ value, onChange }: OptionStepProps<Experience>): JSX.Element {
               onClick={() => onChange(v)}
               data-testid={`onb-exp-${v}`}
               aria-pressed={selected}
-              className={`p-4 rounded-xl border text-left ${selected ? 'bg-brick text-paper border-brick' : 'bg-paper2 border-lineStrong text-ink'}`}
+              className={`press-feedback animate-fade-in-up ${delayClass} p-4 rounded-xl border text-left transition-colors ${selected ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
             >
               <span className="block font-medium">{label}</span>
               <span className={`block text-xs mt-0.5 ${selected ? 'text-paper' : 'text-ink3'}`}>
@@ -479,7 +499,7 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
         enterKeyHint="done"
         aria-label="Greutate in kilograme"
         data-testid="onb-weight-input"
-        className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono"
+        className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono transition-colors focus:border-brick"
       />
       {error ? (
         <p
@@ -537,7 +557,7 @@ function Step7Height({ value, onChange }: NumericStepProps): JSX.Element {
         enterKeyHint="next"
         aria-label="Inaltime in centimetri"
         data-testid="onb-height-input"
-        className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono"
+        className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono transition-colors focus:border-brick"
       />
       {error ? (
         <p
@@ -557,18 +577,41 @@ function Step7Height({ value, onChange }: NumericStepProps): JSX.Element {
 }
 
 function Step8Summary({ data }: { data: OnboardingData }): JSX.Element {
+  // Wave A5 polish (Daniel "Top Grade" 2026-05-28) — each summary row gets a
+  // lucide icon (Calendar/User/Target/Activity/Award/Scale/Ruler) for visual
+  // affordance + a clean two-column hierarchy (icon+label left, value right).
+  // The summary card uses surface-elevated for subtle dimensionality so the
+  // final confirm screen reads as "this is your plan, finalize it" rather
+  // than a flat data dump.
+  const rows: Array<{ Icon: typeof Calendar; label: string; value: string }> = [
+    { Icon: Calendar, label: 'Varsta', value: data.age !== null ? `${data.age} ani` : '-' },
+    { Icon: User, label: 'Sex', value: data.sex === 'm' ? 'Barbat' : data.sex === 'f' ? 'Femeie' : '-' },
+    { Icon: Target, label: 'Obiectiv', value: data.goal ? GOAL_LABELS[data.goal] : '-' },
+    { Icon: Activity, label: 'Frecventa', value: data.frequency ? `${data.frequency}/sapt` : '-' },
+    { Icon: Award, label: 'Experienta', value: data.experience ? data.experience.charAt(0).toUpperCase() + data.experience.slice(1) : '-' },
+    { Icon: Scale, label: 'Greutate', value: data.weight !== null ? `${data.weight} kg` : '-' },
+    { Icon: Ruler, label: 'Inaltime', value: data.height !== null ? `${data.height} cm` : '-' },
+  ];
   return (
     <>
       <h1 className="text-2xl font-bold text-ink mb-2">Verifica datele</h1>
       <p className="text-sm text-ink2 mb-6">Poti reveni oricand sa schimbi.</p>
-      <div className="bg-paper2 border border-line rounded-xl p-4 space-y-2" data-testid="onb-summary">
-        <div className="flex justify-between text-sm"><span className="text-ink2">Varsta</span><span className="text-ink font-medium">{data.age ?? '-'}</span></div>
-        <div className="flex justify-between text-sm"><span className="text-ink2">Sex</span><span className="text-ink font-medium">{data.sex === 'm' ? 'Barbat' : data.sex === 'f' ? 'Femeie' : '-'}</span></div>
-        <div className="flex justify-between text-sm"><span className="text-ink2">Obiectiv</span><span className="text-ink font-medium">{data.goal ? GOAL_LABELS[data.goal] : '-'}</span></div>
-        <div className="flex justify-between text-sm"><span className="text-ink2">Frecventa</span><span className="text-ink font-medium">{data.frequency ? `${data.frequency}/sapt` : '-'}</span></div>
-        <div className="flex justify-between text-sm"><span className="text-ink2">Experienta</span><span className="text-ink font-medium">{data.experience ? data.experience.charAt(0).toUpperCase() + data.experience.slice(1) : '-'}</span></div>
-        <div className="flex justify-between text-sm"><span className="text-ink2">Greutate</span><span className="text-ink font-medium">{data.weight ? `${data.weight} kg` : '-'}</span></div>
-        <div className="flex justify-between text-sm"><span className="text-ink2">Inaltime</span><span className="text-ink font-medium">{data.height ? `${data.height} cm` : '-'}</span></div>
+      <div
+        className="surface-elevated bg-paper2 border border-line rounded-xl overflow-hidden"
+        data-testid="onb-summary"
+      >
+        {rows.map(({ Icon, label, value }, idx) => (
+          <div
+            key={label}
+            className={`flex items-center gap-3 px-4 py-3 text-sm animate-fade-in-up ${
+              idx === 0 ? 'delay-150' : idx === 1 ? 'delay-225' : idx === 2 ? 'delay-300' : idx === 3 ? 'delay-375' : idx === 4 ? 'delay-450' : idx === 5 ? 'delay-525' : 'delay-600'
+            } ${idx < rows.length - 1 ? 'border-b border-line' : ''}`}
+          >
+            <Icon className="w-4 h-4 text-brick flex-shrink-0" aria-hidden="true" />
+            <span className="flex-1 text-ink2">{label}</span>
+            <span className="text-ink font-medium tabular-nums">{value}</span>
+          </div>
+        ))}
       </div>
     </>
   );
