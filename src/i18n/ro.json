@@ -470,14 +470,6 @@
       "exercises_other": "{n} exercitii",
       "volume": "{kg} kg volum"
     },
-    "detail": {
-      "title": "Detaliu sesiune",
-      "back": "Inapoi",
-      "duration": "Durata",
-      "volume": "Volum total",
-      "sets": "Total seturi",
-      "ratings": "Ratinguri seturi"
-    },
     "prWall": {
       "title": "Recorduri recente",
       "empty": "Niciun record personal inca — logheaza cateva sesiuni.",
@@ -504,6 +496,52 @@
       "emptyTitle": "Prima ta sesiune te asteapta",
       "emptyBody": "Termina un antrenament si apare aici cu toate detaliile.",
       "recordSummary": "{kg} kg x {reps} (~{oneRM} kg 1RM)"
+    },
+
+    "detail": {
+      "title": "Detaliu sesiune",
+      "back": "Inapoi",
+      "backToHistory": "Inapoi la Istoric",
+      "backAria": "Inapoi",
+      "missing": "Sesiunea nu a fost gasita.",
+      "sessionKicker": "Sesiune",
+      "stats": {
+        "sets": "Seturi",
+        "minutes": "Min",
+        "tonnage": "Tonaj kg"
+      },
+      "exercisesHeading": "Exercitii",
+      "exerciseOneRm": "1RM est: {kg} kg",
+      "exerciseVolumeSets": "Volum: {kg} kg · {setsLabel}",
+      "exerciseSets_one": "{n} set",
+      "exerciseSets_other": "{n} seturi",
+      "table": {
+        "set": "Set",
+        "kg": "Kg",
+        "reps": "Reps",
+        "rating": "Cum a fost"
+      },
+      "legacyFallback": "Detaliu per exercitiu indisponibil pentru sesiuni inregistrate inainte de actualizare.",
+      "ratingLabels": {
+        "usor": "Usor",
+        "potrivit": "Potrivit",
+        "greu": "Greu"
+      }
+    },
+
+    "prWallScreen": {
+      "title": "Recorduri Personale",
+      "description": "Cronologic descrescator. Toate recordurile personale logate.",
+      "statTotal": "Total PR",
+      "statMonth": "Luna asta",
+      "statExercises": "Exercitii",
+      "emptyTitle": "Primul PR e la o sesiune distanta",
+      "emptyBody": "Depaseste un maxim si recordul apare aici cu data + greutatea.",
+      "rowLine": "{kg} kg x {reps} reps - {date}"
+    },
+
+    "prDate": {
+      "format": "{day} {month} {year}"
     },
 
     "ratingsStrip": {

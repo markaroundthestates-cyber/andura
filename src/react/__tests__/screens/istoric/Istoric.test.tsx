@@ -1,12 +1,13 @@
 // ══ ISTORIC TESTS — task_21 list + detail + empty state ══════════════════
 
 import type { JSX } from 'react';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Istoric } from '../../../routes/screens/istoric/Istoric';
 import { IstoricDetail } from '../../../routes/screens/istoric/IstoricDetail';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -41,7 +42,16 @@ function resetStore(): void {
     streak: 0,
   });
   localStorage.clear();
+  // Force EN locale — the post-2026-05-28 default.
+  setLocale('en');
+  _resetI18nCache();
+  setLocale('en');
 }
+
+afterEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
+});
 
 describe('Istoric — empty state', () => {
   beforeEach(() => {
@@ -136,10 +146,10 @@ describe('IstoricDetail — render', () => {
     expect(screen.getByTestId('istoric-home')).toBeInTheDocument();
   });
 
-  it('renders missing state cand sessionId invalid', () => {
+  it('renders missing state cand sessionId invalid (EN default copy)', () => {
     renderIstoric('/app/istoric/999');
     expect(screen.getByTestId('istoric-detail-missing')).toBeInTheDocument();
-    expect(screen.getByText(/Sesiunea nu a fost gasita/i)).toBeInTheDocument();
+    expect(screen.getByText(/Session not found/i)).toBeInTheDocument();
   });
 
   it('missing back button navigates Istoric', () => {
@@ -185,7 +195,8 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
     expect(screen.getByTestId('detail-ex-volume').textContent).toMatch(/450 kg/);
     expect(screen.getByTestId('detail-ex-1rm').textContent).toMatch(/30 kg/);
     expect(screen.getByTestId('detail-set-bench-press-0').textContent).toMatch(/22\.5/);
-    expect(screen.getByTestId('detail-set-bench-press-1').textContent).toMatch(/potrivit/);
+    // Rating column under EN default surfaces "Right" (ratingLabels.potrivit -> Right).
+    expect(screen.getByTestId('detail-set-bench-press-1').textContent).toMatch(/Right/);
   });
 
   it('marks PR sets visual (PR label)', () => {

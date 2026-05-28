@@ -470,14 +470,6 @@
       "exercises_other": "{n} exercises",
       "volume": "{kg} kg volume"
     },
-    "detail": {
-      "title": "Session detail",
-      "back": "Back",
-      "duration": "Duration",
-      "volume": "Total volume",
-      "sets": "Total sets",
-      "ratings": "Set ratings"
-    },
     "prWall": {
       "title": "Recent PRs",
       "empty": "No personal records yet — log a few sessions.",
@@ -504,6 +496,52 @@
       "emptyTitle": "Your first session is waiting",
       "emptyBody": "Finish a workout and it'll show up here with all the details.",
       "recordSummary": "{kg} kg x {reps} (~{oneRM} kg 1RM)"
+    },
+
+    "detail": {
+      "title": "Session detail",
+      "back": "Back",
+      "backToHistory": "Back to History",
+      "backAria": "Back",
+      "missing": "Session not found.",
+      "sessionKicker": "Session",
+      "stats": {
+        "sets": "Sets",
+        "minutes": "Min",
+        "tonnage": "Volume kg"
+      },
+      "exercisesHeading": "Exercises",
+      "exerciseOneRm": "1RM est: {kg} kg",
+      "exerciseVolumeSets": "Volume: {kg} kg · {setsLabel}",
+      "exerciseSets_one": "{n} set",
+      "exerciseSets_other": "{n} sets",
+      "table": {
+        "set": "Set",
+        "kg": "Kg",
+        "reps": "Reps",
+        "rating": "How it felt"
+      },
+      "legacyFallback": "Per-exercise detail unavailable for sessions logged before this update.",
+      "ratingLabels": {
+        "usor": "Easy",
+        "potrivit": "Right",
+        "greu": "Hard"
+      }
+    },
+
+    "prWallScreen": {
+      "title": "Personal Records",
+      "description": "Reverse-chrono. All personal records you've logged.",
+      "statTotal": "Total PR",
+      "statMonth": "This month",
+      "statExercises": "Exercises",
+      "emptyTitle": "Your first PR is one session away",
+      "emptyBody": "Beat a max and the record shows up here with date + weight.",
+      "rowLine": "{kg} kg x {reps} reps - {date}"
+    },
+
+    "prDate": {
+      "format": "{day} {month} {year}"
     },
 
     "ratingsStrip": {

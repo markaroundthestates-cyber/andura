@@ -17,41 +17,35 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, History } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { pluralRo } from '../../../lib/pluralRo';
+import { t, getCurrentLocale } from '../../../../i18n/index.js';
 
-// §F-istoric-08 — Romanian weekday + month labels no-diacritics manual map.
-// Sunday-first index (Date.getDay() returns 0=Sunday). Mirror Istoric.tsx
-// list pentru cross-screen consistency.
-const WEEKDAYS_RO = [
-  'duminica',
-  'luni',
-  'marti',
-  'miercuri',
-  'joi',
-  'vineri',
-  'sambata',
-] as const;
-
-const MONTHS_RO = [
-  'ian',
-  'feb',
-  'mar',
-  'apr',
-  'mai',
-  'iun',
-  'iul',
-  'aug',
-  'sep',
-  'oct',
-  'noi',
-  'dec',
-] as const;
-
+// §F-istoric-08 — weekday + month via i18n bundle (Wave E3).
+// Reads weekdays.relativeShort + months.short so the format flips locale
+// alongside the Istoric list. RO bundle preserves "luni/marti" lower-case
+// mockup parity (D-LEGACY-064); EN bundle ships "Mon · 7 May".
 function formatDate(ts: number): string {
   const d = new Date(ts);
-  const weekday = WEEKDAYS_RO[d.getDay()];
+  const weekday = t(`weekdays.relativeShort.${d.getDay()}`);
   const day = d.getDate();
-  const month = MONTHS_RO[d.getMonth()];
+  const month = t(`months.short.${d.getMonth()}`);
   return `${weekday} · ${day} ${month}`;
+}
+
+// Locale-aware sets pluralization. RO uses pluralRo's "de" rule; EN uses
+// istoric.detail.exerciseSets_{one,other} with {n} interpolation.
+function formatSetsLabel(n: number): string {
+  if (getCurrentLocale() === 'ro') return pluralRo(n, 'set', 'seturi');
+  return n === 1
+    ? t('istoric.detail.exerciseSets_one', { n })
+    : t('istoric.detail.exerciseSets_other', { n });
+}
+
+// Maps internal rating key to user-facing label per active locale.
+function ratingLabel(rating: string): string {
+  if (rating === 'usor' || rating === 'potrivit' || rating === 'greu') {
+    return t(`istoric.detail.ratingLabels.${rating}`);
+  }
+  return rating; // unknown / future rating — surface verbatim.
 }
 
 function formatTime(ts: number): string {
@@ -88,14 +82,14 @@ export function IstoricDetail(): JSX.Element {
         className="p-6 bg-paper min-h-screen flex flex-col items-center justify-center text-center"
         data-testid="istoric-detail-missing"
       >
-        <p className="text-base text-ink2 mb-4">Sesiunea nu a fost gasita.</p>
+        <p className="text-base text-ink2 mb-4">{t('istoric.detail.missing')}</p>
         <button
           type="button"
           onClick={handleBack}
           data-testid="istoric-detail-back-missing"
           className="px-4 py-2 bg-brick text-paper rounded-[14px] text-sm font-semibold"
         >
-          Inapoi la Istoric
+          {t('istoric.detail.backToHistory')}
         </button>
       </section>
     );
@@ -110,7 +104,7 @@ export function IstoricDetail(): JSX.Element {
         <button
           type="button"
           onClick={handleBack}
-          aria-label="Inapoi"
+          aria-label={t('istoric.detail.backAria')}
           data-testid="istoric-detail-back"
           className="p-2 rounded-full text-ink2"
         >
@@ -123,7 +117,7 @@ export function IstoricDetail(): JSX.Element {
         <div className="flex items-center gap-3 mb-2">
           <History className="w-5 h-5 text-ink2" aria-hidden="true" />
           <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">
-            Sesiune
+            {t('istoric.detail.sessionKicker')}
           </p>
         </div>
         <p className="text-base text-ink" data-testid="istoric-detail-date">
@@ -141,19 +135,19 @@ export function IstoricDetail(): JSX.Element {
         >
           {session.sets !== undefined && (
             <div className="p-3 bg-paper2 border border-line rounded-xl text-center" data-testid="detail-sets">
-              <p className="text-xs text-ink2 uppercase">Seturi</p>
+              <p className="text-xs text-ink2 uppercase">{t('istoric.detail.stats.sets')}</p>
               <p className="text-xl font-bold text-ink font-mono">{session.sets}</p>
             </div>
           )}
           {session.durationMin !== undefined && (
             <div className="p-3 bg-paper2 border border-line rounded-xl text-center" data-testid="detail-duration">
-              <p className="text-xs text-ink2 uppercase">Min</p>
+              <p className="text-xs text-ink2 uppercase">{t('istoric.detail.stats.minutes')}</p>
               <p className="text-xl font-bold text-ink font-mono">{session.durationMin}</p>
             </div>
           )}
           {session.volumeKg !== undefined && (
             <div className="p-3 bg-paper2 border border-line rounded-xl text-center" data-testid="detail-volume">
-              <p className="text-xs text-ink2 uppercase">Tonaj kg</p>
+              <p className="text-xs text-ink2 uppercase">{t('istoric.detail.stats.tonnage')}</p>
               <p className="text-xl font-bold text-ink font-mono">{formatKg(session.volumeKg)}</p>
             </div>
           )}
@@ -166,7 +160,7 @@ export function IstoricDetail(): JSX.Element {
       {session.exercises && session.exercises.length > 0 ? (
         <div data-testid="istoric-detail-breakdown">
           <p className="text-xs text-ink2 uppercase tracking-wide font-semibold mb-2">
-            Exercitii
+            {t('istoric.detail.exercisesHeading')}
           </p>
           {session.exercises.map((ex) => (
             <div
@@ -177,19 +171,22 @@ export function IstoricDetail(): JSX.Element {
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-ink text-sm">{ex.exerciseName}</h3>
                 <span className="text-xs text-ink2 font-mono" data-testid="detail-ex-1rm">
-                  1RM est: {formatKg(ex.peakOneRM)} kg
+                  {t('istoric.detail.exerciseOneRm', { kg: formatKg(ex.peakOneRM) })}
                 </span>
               </div>
               <div className="text-xs text-ink2 mb-2" data-testid="detail-ex-volume">
-                Volum: {formatKg(ex.totalVolume)} kg · {pluralRo(ex.sets.length, 'set', 'seturi')}
+                {t('istoric.detail.exerciseVolumeSets', {
+                  kg: formatKg(ex.totalVolume),
+                  setsLabel: formatSetsLabel(ex.sets.length),
+                })}
               </div>
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-xs text-ink2 border-b border-line">
-                    <th className="text-left py-1">Set</th>
-                    <th className="text-left py-1">Kg</th>
-                    <th className="text-left py-1">Reps</th>
-                    <th className="text-left py-1">Cum a fost</th>
+                    <th className="text-left py-1">{t('istoric.detail.table.set')}</th>
+                    <th className="text-left py-1">{t('istoric.detail.table.kg')}</th>
+                    <th className="text-left py-1">{t('istoric.detail.table.reps')}</th>
+                    <th className="text-left py-1">{t('istoric.detail.table.rating')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -202,7 +199,7 @@ export function IstoricDetail(): JSX.Element {
                       <td className="py-1">{idx + 1}{s.isPR ? ' PR' : ''}</td>
                       <td className="py-1">{s.kg}</td>
                       <td className="py-1">{s.reps}</td>
-                      <td className="py-1 capitalize">{s.rating}</td>
+                      <td className="py-1">{ratingLabel(s.rating)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -215,7 +212,7 @@ export function IstoricDetail(): JSX.Element {
           className="text-xs text-ink2 italic text-center"
           data-testid="istoric-detail-legacy"
         >
-          Detaliu per exercitiu indisponibil pentru sesiuni inregistrate inainte de actualizare.
+          {t('istoric.detail.legacyFallback')}
         </p>
       )}
     </section>

@@ -14,19 +14,17 @@ import { useNavigate } from 'react-router-dom';
 import { Award, ChevronRight } from 'lucide-react';
 import { getPRHistoryAll } from '../../../lib/prHistoryAggregate';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
-// Romanian month abbreviations no-diacritics. Matches sister Istoric.tsx +
-// IstoricDetail.tsx MONTHS_RO ('noi' nu 'nov') pentru cross-screen consistency
-// pe Istoric domain — D-LEGACY-064 + mockup parity.
-const MONTH_RO_SHORT = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'];
-
+// Wave E3 i18n: months pulled from months.short via t() so the format flips
+// EN/RO. RO bundle still ships "ian/feb/mai/noi" lower-case (D-LEGACY-064 +
+// mockup parity); EN bundle ships "Jan/Feb/May/Nov".
 function formatPrDate(ts: number): string {
   const d = new Date(ts);
   const day = d.getDate();
-  const monthIdx = d.getMonth();
-  const month = MONTH_RO_SHORT[monthIdx] ?? '';
+  const month = t(`months.short.${d.getMonth()}`);
   const year = d.getFullYear();
-  return `${day} ${month} ${year}`;
+  return t('prDate.format', { day, month, year });
 }
 
 export function PrWall(): JSX.Element {
@@ -45,14 +43,14 @@ export function PrWall(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="pr-wall">
       <SubHeader
-        title="Recorduri Personale"
+        title={t('istoric.prWallScreen.title')}
         onBack={() => navigate('/app/istoric')}
         testIdBack="pr-wall-back"
       />
 
       <div className="flex-1 overflow-y-auto px-5 py-4">
         <p className="text-sm text-ink2 mb-4 leading-relaxed">
-          Cronologic descrescator. Toate recordurile personale logate.
+          {t('istoric.prWallScreen.description')}
         </p>
 
         <div className="grid grid-cols-3 gap-2 mb-5" data-testid="pr-wall-stats">
@@ -60,19 +58,19 @@ export function PrWall(): JSX.Element {
             <p className="text-2xl font-bold text-ink font-mono" data-testid="pr-wall-stat-total">
               {prList.length}
             </p>
-            <p className="text-xs text-ink2 mt-0.5">Total PR</p>
+            <p className="text-xs text-ink2 mt-0.5">{t('istoric.prWallScreen.statTotal')}</p>
           </div>
           <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
             <p className="text-2xl font-bold text-ink font-mono" data-testid="pr-wall-stat-month">
               {thisMonthCount}
             </p>
-            <p className="text-xs text-ink2 mt-0.5">Luna asta</p>
+            <p className="text-xs text-ink2 mt-0.5">{t('istoric.prWallScreen.statMonth')}</p>
           </div>
           <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
             <p className="text-2xl font-bold text-ink font-mono" data-testid="pr-wall-stat-exercises">
               {distinctExercises}
             </p>
-            <p className="text-xs text-ink2 mt-0.5">Exercitii</p>
+            <p className="text-xs text-ink2 mt-0.5">{t('istoric.prWallScreen.statExercises')}</p>
           </div>
         </div>
 
@@ -92,10 +90,10 @@ export function PrWall(): JSX.Element {
               <Award className="w-7 h-7 text-brick" aria-hidden="true" />
             </div>
             <p className="text-base font-semibold text-ink mb-1">
-              Primul PR e la o sesiune distanta
+              {t('istoric.prWallScreen.emptyTitle')}
             </p>
             <p className="text-sm text-ink2 max-w-[280px]">
-              Depaseste un maxim si recordul apare aici cu data + greutatea.
+              {t('istoric.prWallScreen.emptyBody')}
             </p>
           </div>
         ) : (
@@ -112,7 +110,11 @@ export function PrWall(): JSX.Element {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-ink truncate">{pr.exerciseName}</p>
                   <p className="text-xs text-ink2 font-mono mt-0.5">
-                    {pr.kg} kg x {pr.reps} reps - {formatPrDate(pr.sessionTs)}
+                    {t('istoric.prWallScreen.rowLine', {
+                      kg: pr.kg,
+                      reps: pr.reps,
+                      date: formatPrDate(pr.sessionTs),
+                    })}
                   </p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-ink2 flex-shrink-0" strokeWidth={1.6} aria-hidden="true" />

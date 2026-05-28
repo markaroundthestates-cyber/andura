@@ -1,13 +1,16 @@
 // PARITY-MISSING-SCREENS Wave 2e — PR Wall (PAR-001) tests.
 // Per mockup andura-clasic.html L1241-1335 contract verify.
+// Wave E3 i18n: heading + empty-state + back aria flipped to EN-default.
+// RO opt-in covered in a dedicated block at the bottom.
 
 import type { JSX } from 'react';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { PrWall } from '../../../routes/screens/istoric/PrWall';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import type { LastSessionSummary } from '../../../stores/workoutStore';
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -52,21 +55,29 @@ function makeSessionWithPR(
 
 beforeEach(() => {
   useWorkoutStore.setState({ sessionsHistory: [] });
+  setLocale('en');
+  _resetI18nCache();
+  setLocale('en');
 });
 
-describe('PrWall — Recorduri Personale screen', () => {
-  it('renders heading "Recorduri Personale"', () => {
+afterEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
+});
+
+describe('PrWall — Personal Records screen (EN default)', () => {
+  it('renders heading "Personal Records"', () => {
     renderScreen();
-    expect(screen.getByRole('heading', { name: /Recorduri Personale/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Personal Records/i, level: 1 })).toBeInTheDocument();
   });
 
-  it('empty state when no PR records', () => {
+  it('empty state when no PR records (EN copy)', () => {
     renderScreen();
     expect(screen.getByTestId('pr-wall-empty')).toBeInTheDocument();
-    expect(screen.getByText(/Primul PR e la o sesiune distanta/i)).toBeInTheDocument();
+    expect(screen.getByText(/Your first PR is one session away/i)).toBeInTheDocument();
   });
 
-  it('renders 3-stat grid (Total PR / Luna asta / Exercitii) at zero', () => {
+  it('renders 3-stat grid (Total PR / This month / Exercises) at zero', () => {
     renderScreen();
     expect(screen.getByTestId('pr-wall-stat-total')).toHaveTextContent('0');
     expect(screen.getByTestId('pr-wall-stat-month')).toHaveTextContent('0');
@@ -74,12 +85,12 @@ describe('PrWall — Recorduri Personale screen', () => {
   });
 
   it('aggregates Total PR + distinct exercises from sessionsHistory', () => {
-    const t = Date.now();
+    const tNow = Date.now();
     useWorkoutStore.setState({
       sessionsHistory: [
-        makeSessionWithPR(t - 86400000 * 5, 'ex-1', 'Impins inclinat', 25, 10),
-        makeSessionWithPR(t - 86400000 * 10, 'ex-2', 'Genuflexiuni', 80, 8),
-        makeSessionWithPR(t - 86400000 * 15, 'ex-1', 'Impins inclinat', 22.5, 10),
+        makeSessionWithPR(tNow - 86400000 * 5, 'ex-1', 'Impins inclinat', 25, 10),
+        makeSessionWithPR(tNow - 86400000 * 10, 'ex-2', 'Genuflexiuni', 80, 8),
+        makeSessionWithPR(tNow - 86400000 * 15, 'ex-1', 'Impins inclinat', 22.5, 10),
       ],
     });
     renderScreen();
@@ -88,11 +99,11 @@ describe('PrWall — Recorduri Personale screen', () => {
   });
 
   it('renders PR rows reverse-chrono (newest first)', () => {
-    const t = Date.now();
+    const tNow = Date.now();
     useWorkoutStore.setState({
       sessionsHistory: [
-        makeSessionWithPR(t - 86400000 * 30, 'ex-old', 'Vechi', 50, 5),
-        makeSessionWithPR(t - 86400000 * 1, 'ex-new', 'Nou', 60, 6),
+        makeSessionWithPR(tNow - 86400000 * 30, 'ex-old', 'Vechi', 50, 5),
+        makeSessionWithPR(tNow - 86400000 * 1, 'ex-new', 'Nou', 60, 6),
       ],
     });
     renderScreen();
@@ -102,20 +113,34 @@ describe('PrWall — Recorduri Personale screen', () => {
     expect(rows[1]).toHaveTextContent('Vechi');
   });
 
-  it('back navigates la /app/istoric', () => {
+  it('back navigates la /app/istoric (uses pr-wall-back testid)', () => {
     renderScreen();
-    fireEvent.click(screen.getByRole('button', { name: /Inapoi/i }));
+    fireEvent.click(screen.getByTestId('pr-wall-back'));
     expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/istoric');
   });
 
   it('no diacritics in UI text', () => {
-    const t = Date.now();
+    const tNow = Date.now();
     useWorkoutStore.setState({
       sessionsHistory: [
-        makeSessionWithPR(t - 1000, 'ex-1', 'Genuflexiuni', 80, 8),
+        makeSessionWithPR(tNow - 1000, 'ex-1', 'Genuflexiuni', 80, 8),
       ],
     });
     const { container } = renderScreen();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+});
+
+describe('PrWall — RO locale opt-in', () => {
+  beforeEach(() => {
+    setLocale('ro');
+    _resetI18nCache();
+    setLocale('ro');
+  });
+
+  it('renders RO heading "Recorduri Personale" + RO empty copy', () => {
+    renderScreen();
+    expect(screen.getByRole('heading', { name: /Recorduri Personale/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByText(/Primul PR e la o sesiune distanta/i)).toBeInTheDocument();
   });
 });
