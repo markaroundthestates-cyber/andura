@@ -30,9 +30,19 @@
 // equivalent gating (signal invariants + wording anti-paternalism), LLM-judge
 // upgrade deferred to V2.
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { evaluate } from '../../../src/engine/bayesianNutrition/index.js';
 import { COACH_VOICE, coachPick } from '../../../src/react/lib/coachVoice';
+// Wave E4 — coachPick now resolves locale-aware pools from the i18n bundle;
+// these rule-based scenarios assert against the canonical RO `COACH_VOICE`
+// constant, so pin RO before each test. EN coverage of the picker is locked
+// separately by coachVoice.test.ts + i18nNoRoLeak.test.tsx.
+import { setLocale, _resetI18nCache } from '../../../src/i18n/index.js';
+beforeEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch {}
+  _resetI18nCache();
+  setLocale('ro');
+});
 import {
   personaGigelT0,
   personaMariusT2,

@@ -21,7 +21,11 @@ export function calculateFatigueScore() {
     .slice(0, 4);
 
   if (last4.length < 2) {
-    return { score: 0, label: 'DATE INSUFICIENTE', color: 'var(--text3)',
+    // Wave E4 — add semantic `key` so React/i18n can resolve a localized
+    // label + detail via coachEngine.fatigue.insufficient.*. The legacy
+    // RO `label`/`detail` strings stay for backward-compat with engine
+    // tests + any non-React consumer.
+    return { score: 0, key: 'INSUFFICIENT_DATA', label: 'DATE INSUFICIENTE', color: 'var(--text3)',
       detail: 'Completeaza 2+ sesiuni pentru fatigue score', recommend: 'none' };
   }
 

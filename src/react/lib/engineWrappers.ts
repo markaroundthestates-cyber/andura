@@ -71,6 +71,9 @@ import { useProgresStore } from '../stores/progresStore';
 // computeBMI alimenteaza si AUTO body-comp detection (BUG #5).
 import { clampKcalToHealthyFloor, computeBMI } from '../../engine/bodyComposition.js';
 import { useOnboardingStore } from '../stores/onboardingStore';
+// Wave E4 — locale-aware muscle-group labels for getCoachTodayQuote so the
+// "Pectorals recovered since yesterday" line surfaces in EN under EN locale.
+import { t as __t } from '../../i18n/index.js';
 // Smoke 2026-05-28 #16 — cuplare tinta-personala ↔ kcal: cand user a setat
 // targetWeight + targetDate in profil, deriveaza tinta de kcal direct din
 // deficit/surplus zilnic necesar (cap-uit la ±25%/±15% TDEE). Inlocuieste
@@ -89,6 +92,15 @@ import { captureException } from '../../util/sentry.js';
 
 export interface ReadinessOutput {
   score: number;
+  /**
+   * Wave E4 — semantic key from the engine (`PR_DAY` / `SOLID` / `NORMAL` /
+   * `MODERATE` / `LIGHT` / `REST` / `REST_RECOVER`). React consumers resolve
+   * the user-facing label via `t('coachEngine.readiness.labels.${key}')`.
+   * Optional for backward-compat with pre-Wave-E4 test fixtures + persisted
+   * snapshots that pre-date the key field. `label` keeps the engine's
+   * canonical RO copy as a fallback.
+   */
+  key?: string | null;
   label: string;
   color: string; // CSS var ref
   volumeMultiplier: number;
@@ -240,6 +252,7 @@ export function getReadiness(opts: { isInCut?: boolean } = {}): ReadinessOutput 
     if (!verdict || verdict.label == null) return null;
     return {
       score,
+      key: verdict.key ?? null,
       label: verdict.label,
       color: verdict.color,
       volumeMultiplier: verdict.volumeMultiplier,
@@ -1237,7 +1250,16 @@ export function getCoachRestReason(): CoachRestReason | null {
     const fatigued: string[] = [];
     for (const [group, state] of Object.entries(groupState)) {
       if (state === 'fatigued') {
-        const label = GROUP_LABELS_RO_BIG11[group] ?? group;
+        // Wave E4 — locale-aware label: prefer i18n bundle bucket
+        // (coachEngine.muscleGroups.${key}) so EN users see "Chest" /
+        // "Back" / etc.; fall back to canonical RO label when the bundle
+        // doesn't carry the key (defensive — engine emits Big 11 keys).
+        const i18nKey = `coachEngine.muscleGroups.${group}`;
+        const localized = __t(i18nKey);
+        const label =
+          localized && localized !== i18nKey
+            ? localized
+            : (GROUP_LABELS_RO_BIG11[group] ?? group);
         fatigued.push(label);
       }
     }
@@ -1344,7 +1366,15 @@ export function getCoachTodayQuote(): CoachTodayQuote | null {
       }
     }
     if (best === null) return null;
-    const label = GROUP_LABELS_RO_BIG11[best.group] ?? best.group;
+    // Wave E4 — surface a locale-aware label. Engine canonical bucket key
+    // (e.g. 'piept') resolves via coachEngine.muscleGroups.* per locale; the
+    // RO display label stays as fallback if the key is unknown to the bundle.
+    const i18nKey = `coachEngine.muscleGroups.${best.group}`;
+    const localized = __t(i18nKey);
+    const label =
+      localized && localized !== i18nKey
+        ? localized
+        : (GROUP_LABELS_RO_BIG11[best.group] ?? best.group);
     return { recoveredLabel: label, daysSince: best.days };
   } catch (e) {
     console.warn('[engineWrappers] getCoachTodayQuote failed:', e);

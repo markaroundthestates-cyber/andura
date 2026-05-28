@@ -365,7 +365,8 @@ describe('Antrenor home — F4 readiness verdict', () => {
       source: 'engine',
     });
     renderAntrenor();
-    expect(await screen.findByText(/poti incerca PR/i)).toBeInTheDocument();
+    // Wave E4 — suffix is locale-aware ("poti incerca PR" RO / "you can try a PR" EN).
+    expect(await screen.findByText(/poti incerca PR|you can try a PR/i)).toBeInTheDocument();
   });
 });
 
