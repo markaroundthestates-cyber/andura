@@ -22,15 +22,23 @@
 // once choice, not a daily read) is demoted near the bottom. Information content,
 // engine wires, i18n keys, and ALL testids unchanged — pure order + hierarchy.
 //
+// Pulse reskin (arc #5 2026-05-29, interfata-noua/screens-tabs.jsx:5-162): the
+// 5-zone structure is re-skinned to the Pulse card language (display header +
+// mono zone eyebrows + surface-elevated cards), the TREND zone gains the shared
+// Sparkline primitive, and a NET-NEW Big-11 MUSCLE RECOVERY ring grid is added
+// (the recovery engine existed but the tab never surfaced it). Engine wires,
+// i18n keys, and ALL prior testids unchanged — visual reskin + one new zone.
+//
 // Zone order top → bottom (read like a story: "what do I do today" first):
-//   1. AZI       — TDEEStrip kcal+protein HERO (count-up + depth) + Fatigue|BMR
-//                  2-col + BodyFat  ← daily actionable number, leads the screen
-//   2. TENDINTA  — ProjectionStrip + HeatMapWeekly (7-day weight chart)
-//   3. ACTIUNI   — AlertsBanner + log-weight CTA + last-weight card + weight-trend
-//                  CTA + body-data CTA + last-body card
-//   4. OBIECTIV  — ObiectivGoalCard (5 goal pills) + ObiectivCard (target + ETA)
-//                  ← set-once config, demoted below the daily reads
-//   5. LOG MANUAL — NutritionInline (kcal/protein editable chips — rarely tapped)
+//   1. AZI        — TDEEStrip kcal+protein HERO (count-up + depth) + Fatigue|BMR
+//                   2-col + BodyFat  ← daily actionable number, leads the screen
+//   2. TENDINTA   — Sparkline trend card + ProjectionStrip + HeatMapWeekly
+//   3. ACTIUNI    — AlertsBanner + log-weight CTA + last-weight card + weight-trend
+//                   CTA + body-data CTA + last-body card
+//   4. RECUPERARE — MuscleRecoveryGrid (Big-11 ring grid)  ← Pulse net-new zone
+//   5. OBIECTIV   — ObiectivGoalCard (5 goal pills) + ObiectivCard (target + ETA)
+//                   ← set-once config, demoted below the daily reads
+//   6. LOG MANUAL — NutritionInline (kcal/protein editable chips — rarely tapped)
 //
 // Test contract preserved: heading + tagline + all testids (cta-log-weight,
 // cta-body-data, last-weight-card, last-body-card, alerts-banner, alerte-azi-label,
@@ -38,7 +46,7 @@
 // Wrapping containers keep data-testid="progres-zone-*" for smoke selectors.
 
 import type { JSX } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Scale, Ruler, History, LineChart } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
@@ -50,9 +58,13 @@ import { FatigueStrip } from '../../../components/Progres/FatigueStrip';
 import { BMRStrip } from '../../../components/Progres/BMRStrip';
 import { BodyFatStrip } from '../../../components/Progres/BodyFatStrip';
 import { HeatMapWeekly } from '../../../components/Progres/HeatMapWeekly';
+import { MuscleRecoveryGrid } from '../../../components/Progres/MuscleRecoveryGrid';
 import { ObiectivCard } from '../../../components/Progres/ObiectivCard';
 import { ObiectivGoalCard } from '../../../components/Progres/ObiectivGoalCard';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
+import { Sparkline } from '../../../components/pulse/Sparkline';
+import { Kicker } from '../../../components/pulse/Kicker';
+import { Pill } from '../../../components/pulse/Pill';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 import type { CoachTodayOutput } from '../../../lib/coachDirectorAggregate';
 import { t } from '../../../../i18n/index.js';
@@ -65,7 +77,7 @@ function ZoneHeading({ children, testId }: { children: string; testId: string })
   return (
     <h2
       data-testid={testId}
-      className="text-[11px] font-semibold text-ink3 uppercase tracking-[0.08em] mb-3 mt-6 first:mt-0"
+      className="font-mono text-[11px] font-semibold text-ink3 uppercase tracking-[0.14em] mb-3 mt-6 first:mt-0"
     >
       {children}
     </h2>
@@ -90,12 +102,26 @@ export function Progres(): JSX.Element {
   const lastBody = bodyData[bodyData.length - 1];
   const alerts = coach?.alerts ?? [];
 
+  // Pulse TREND: feed the shared Sparkline primitive the full weight history
+  // mapped to its {day,kg} shape (interfata-noua/screens-tabs.jsx:63). Sparkline
+  // returns null on <2 points, so the card only renders the line once there's a
+  // trend to draw; the precise latest/delta numbers stay in HeatMapWeekly below.
+  const sparkData = useMemo(
+    () => weightLog.map((w) => ({ day: w.date, kg: w.kg })),
+    [weightLog],
+  );
+  const firstWeight = weightLog[0];
+  const trendDelta =
+    lastWeight && firstWeight && weightLog.length >= 2
+      ? +(lastWeight.kg - firstWeight.kg).toFixed(1)
+      : null;
+
   return (
     <section className="p-6 bg-paper min-h-screen" data-testid="progres-home">
-      {/* §F-pass4-fontweight-01 (LOW chat5 W17) — title font-weight 600 -> 700
-          mockup andura-clasic.html#L1700 (font-weight:700). */}
-      <h1 className="text-2xl font-bold text-ink mb-1">{t('tabs.progres.title')}</h1>
-      <p className="text-sm text-ink2 mb-2">{t('tabs.progres.subtitle')}</p>
+      {/* Pulse header (interfata-noua/screens-tabs.jsx:13-16): display wordmark +
+          italic serif tagline. Keeps the existing i18n keys + testid contract. */}
+      <h1 className="font-display text-3xl font-bold text-ink mb-0.5">{t('tabs.progres.title')}</h1>
+      <p className="font-serif italic text-sm text-ink2 mb-2">{t('tabs.progres.subtitle')}</p>
 
       {/* ── ZONE 1: AZI — today's calibrated targets, kcal HERO leads. ───────
           Daniel 2026-05-28 "kcal recomandate sus": the recommended kcal+protein
@@ -123,6 +149,27 @@ export function Progres(): JSX.Element {
           going?" — the natural next question after "what's my target today?". */}
       <div data-testid="progres-zone-tendinta" className="animate-card-rise delay-75">
         <ZoneHeading testId="progres-zone-tendinta-heading">{t('progres.zone.tendinta')}</ZoneHeading>
+        {/* Pulse TREND card (interfata-noua/screens-tabs.jsx:52-68) — the shared
+            Sparkline primitive draws the smooth weight line over the full log.
+            Renders only when there are >=2 points (Sparkline self-guards to null),
+            so a fresh user sees the precise HeatMapWeekly snapshot below instead
+            of an empty chart. The delta pill mirrors HeatMapWeekly's number. */}
+        {sparkData.length >= 2 && (
+          <div
+            data-testid="progres-trend-sparkline"
+            className="surface-elevated bg-paper2 border border-line rounded-3xl p-4 mb-4"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <Kicker color="var(--aqua)">{t('progres.weight.snapshotTitle')}</Kicker>
+              {trendDelta !== null && (
+                <Pill color={trendDelta <= 0 ? 'var(--volt)' : 'var(--ember)'}>
+                  {trendDelta > 0 ? '+' : ''}{trendDelta} kg
+                </Pill>
+              )}
+            </div>
+            <Sparkline data={sparkData} color="var(--aqua)" />
+          </div>
+        )}
         {/* Piesa 4 — Preconizare forward projection (traiectorie curenta). */}
         <ProjectionStrip />
         <HeatMapWeekly />
@@ -202,12 +249,22 @@ export function Progres(): JSX.Element {
         )}
       </div>
 
-      {/* ── ZONE 4: OBIECTIV — goal selector + target weight + ETA. ──────────
+      {/* ── ZONE 4: RECUPERARE — Big-11 muscle recovery ring grid. ───────────
+          Pulse net-new zone (interfata-noua/screens-tabs.jsx:86-100): the
+          recovery engine (getRecoveryByGroup) finally gets surfaced as a grid
+          of small rings, one per muscle group, colored by recovery state. The
+          grid self-hides when the engine returns nothing (T0 fresh user). */}
+      <div data-testid="progres-zone-recovery" className="animate-card-rise delay-225">
+        <ZoneHeading testId="progres-zone-recovery-heading">{t('progres.zone.recuperare')}</ZoneHeading>
+        <MuscleRecoveryGrid />
+      </div>
+
+      {/* ── ZONE 5: OBIECTIV — goal selector + target weight + ETA. ──────────
           Demoted below the daily reads (Daniel 2026-05-28): the goal type
           (Auto/Strength/…) and target weight are a set-once choice, not a daily
           glance — so they sit under the actionable kcal/trend/actions. Goal
           selector + ObiectivCard stay co-located ("both are your objective"). */}
-      <div data-testid="progres-zone-obiectiv" className="animate-card-rise delay-225">
+      <div data-testid="progres-zone-obiectiv" className="animate-card-rise delay-300">
         <ZoneHeading testId="progres-zone-obiectiv-heading">{t('progres.zone.obiectiv')}</ZoneHeading>
         {/* §obiectiv-relocate 2026-05-28 Daniel verbatim "muta aia cu Obiectiv de
             la Coach la progres ... alea de faze auto, forta slabire mentenanta
@@ -219,11 +276,11 @@ export function Progres(): JSX.Element {
         <ObiectivCard />
       </div>
 
-      {/* ── ZONE 5: LOG MANUAL — rarely tapped, defer to bottom. ────────────
+      {/* ── ZONE 6: LOG MANUAL — rarely tapped, defer to bottom. ────────────
           Manual kcal/protein log chips. The engine auto-targets above (AZI
           zone) are the primary surface; manual log is an optional calibration
           tap. Bottom placement = lowest priority in F-pattern scan. */}
-      <div data-testid="progres-zone-log" className="animate-card-rise delay-300">
+      <div data-testid="progres-zone-log" className="animate-card-rise delay-375">
         <ZoneHeading testId="progres-zone-log-heading">{t('progres.zone.logManual')}</ZoneHeading>
         <NutritionInline />
       </div>
