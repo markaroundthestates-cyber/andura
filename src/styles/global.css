@@ -401,14 +401,44 @@ html, body {
      PWA mobile-first: pe telefon viewport ≤480px = full-width preserve.
      Pe desktop browser = centered mobile column (430px = max iPhone Pro Max
      width) cu paper bg flanking. Subtle box-shadow visual phone-frame hint.
-     transform: translateZ(0) = creates containing block for descendant
-     `position: fixed` elements (BottomNav + SessionPill + 11 more fixed
-     components). Fara asta, fixed bottom-0 left-0 right-0 ramane viewport-
-     relative full-width chiar daca #root max-width 430px — break desktop
-     layout. CSS-only fix, NU touch 13 component files individual. */
+
+     NOTE 2026-05-28 — `transform: translateZ(0)` REMOVED (was creating a
+     containing block that broke `position: fixed` for BottomNav/SessionPill
+     on scroll — they pinned to #root bottom, not viewport, so they scrolled
+     off-screen on long pages). Daniel live-smoke bug: "bara de jos cu
+     antrenor/progres/istoric/cont dispare cand dai scroll". Fix: keep #root
+     a natural mobile column (no containing-block side effect) + give each
+     `position: fixed` column-anchored component its own desktop-centering
+     (max-width + left:50% + translateX). See `.app-fixed-column` utility
+     below (used by BottomNav/SessionPill/Toast/InstallPrompt/UpdatePrompt/
+     OfflineBanner). Modals stay `inset-0` viewport-wide (correct overlay
+     behavior). */
   max-width: 430px;
   margin-left: auto;
   margin-right: auto;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  transform: translateZ(0);
+}
+
+/* App-column constraint for `position: fixed` chrome (BottomNav, SessionPill,
+   Toasts, banners, prompts). On desktop the mobile-frame is 430px centered
+   in viewport; without this rule, a viewport-fixed element would span the
+   full window (looking detached from the column). With this rule, the
+   element stays anchored inside the column and aligned with content.
+   Mobile (≤430px viewport) — rule is a no-op (max-width caps at viewport,
+   translateX(-50%) re-centers, identical to left:0/right:0). */
+.app-fixed-column {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+}
+
+/* Variant: column-anchored but inset (12px left+right padding from column edge).
+   Used by SessionPill + Toasts + InstallPrompt where the original layout used
+   `left-3 right-3` margins. Re-creates that gutter as `width: calc(... - 24px)`
+   to preserve the floating-pill look. */
+.app-fixed-column--inset {
+  width: calc(100% - 1.5rem);
+  max-width: calc(430px - 1.5rem);
 }

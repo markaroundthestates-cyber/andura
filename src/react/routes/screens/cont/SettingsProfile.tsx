@@ -16,10 +16,6 @@ import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../../stores/onboardingStore';
 import type { Sex, Goal, Frequency, Experience, OnboardingData } from '../../../stores/onboardingStore';
-import { evaluateTargetRate, MAX_SAFE_KG_PER_WEEK } from '../../../lib/targetSafety';
-
-// Constanta display pentru text-ul UI cu o zecimala (NU import direct ca string).
-const MAX_SAFE_KG_PER_WEEK_DISPLAY = String(MAX_SAFE_KG_PER_WEEK);
 import { useProgresStore, latestBodyMeasurements } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { toast } from '../../../lib/toast';
@@ -114,27 +110,13 @@ export function SettingsProfile(): JSX.Element {
   const bfAuto = bfNavy ?? bfDeurenberg;
   const bfSource = bfNavy != null ? 'US Navy' : bfDeurenberg != null ? 'Estimat' : '';
 
-  // §F-pass2-settings-profile-04 — Tinte personale (mockup L2049-2052).
-  // Greutate tinta + luna tinta ("Pana in") → ETA realista la ritm sanatos.
-  // Smoke 2026-05-28 #16: PERSISTAT in onboardingStore (era doar form-state
-  // V1) ca sa influenteze tinta de kcal a coach-ului, NU doar notita profil.
-  const [targetWeight, setTargetWeight] = useState(
-    data.targetWeight != null ? String(data.targetWeight) : ''
-  );
-  const [targetMonth, setTargetMonth] = useState(data.targetDate ?? ''); // YYYY-MM
-  // BUG #8 safety — ETA derivata din greutate tinta + greutate curenta la un
-  // ritm sanatos (NU mai e un countdown de calendar care ignora cat ai de
-  // schimbat). Plus guard subponderal: tinta sub greutatea sanatoasa minima
-  // (BMI 18.5) → avertisment, NU proiectie spre o greutate periculoasa.
-  const targetEta = computeTargetEta(targetWeight, draft.weight ?? null, draft.height ?? null);
-  // Smoke 2026-05-28 #16 — verdict siguranta pe ritm + deadline. `unsafe`
-  // cand ritm cerut > 1.5kg/sapt (cap-ul fiziologic absolut); surfaceaza
-  // deadline-ul sigur sugerat. Anti-paternalism: NU blocam, doar surface.
-  const rateVerdict = evaluateTargetRate(
-    draft.weight ?? null,
-    targetWeight !== '' && Number.isFinite(Number(targetWeight)) ? Number(targetWeight) : null,
-    targetMonth !== '' ? targetMonth : null,
-  );
+  // §obiectiv-tinta 2026-05-28 — Daniel smoke #8 ("tot ce e la Obiectiv trebuie
+  // mutat la progres undeva"): "Tinte personale" (greutate tinta + pana in +
+  // ETA + safety verdict) RELOCATED to Progres tab as ObiectivCard. Persistence
+  // pe onboardingStore.targetWeight/targetDate (Smoke #16 — era doar form-state
+  // V1; acum influenteaza kcal-ul coach-ului via engineWrappers.getTargetKcalToday,
+  // NU doar notita profil). evaluateTargetRate + computeTargetEta utilizate in
+  // ObiectivCard pentru safety verdict (cap fiziologic 1.5kg/sapt).
 
   function update<K extends keyof OnboardingData>(key: K, value: OnboardingData[K]): void {
     setDraft((d) => ({ ...d, [key]: value }));
@@ -193,22 +175,10 @@ export function SettingsProfile(): JSX.Element {
     if (entry.waistCm !== undefined || entry.neckCm !== undefined) {
       addBodyDataEntry(entry);
     }
-    // Smoke 2026-05-28 #16 — persistam targetWeight + targetDate in onboarding-
-    // Store ca tinta sa influenteze kcal coach (engineWrappers.getTarget-
-    // KcalToday). Validam range targetWeight inainte de commit; targetDate
-    // empty = stergere tinta (null).
-    const tgtNum = targetWeight !== '' ? Number(targetWeight) : null;
-    if (tgtNum !== null && Number.isFinite(tgtNum)) {
-      const tgtCheck = validateOnboardingField('targetWeight', tgtNum);
-      if (!tgtCheck.ok) {
-        toast.show({ message: tgtCheck.reason, variant: 'warning' });
-        return;
-      }
-      setField('targetWeight', tgtNum);
-    } else if (targetWeight === '') {
-      setField('targetWeight', null);
-    }
-    setField('targetDate', targetMonth !== '' ? targetMonth : null);
+    // §obiectiv-tinta 2026-05-28 — targetWeight + targetDate sunt persistate
+    // direct in ObiectivCard (Progres tab) prin progresStore.setTargetObiectiv.
+    // Aici nu mai persistam nimic legat de tinta. engineWrappers.getTargetKcal-
+    // Today consuma progresStore.targetObiectiv (vezi integration commit).
     setSaved(true);
   }
 
@@ -376,70 +346,11 @@ export function SettingsProfile(): JSX.Element {
           Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori.
         </p>
 
-        {/* §F-pass2-settings-profile-04 + BUG #8 — Tinte personale (mockup L2049-
-            2052). Greutate tinta + "Pana in" month picker (deadline dorit). ETA
-            afisata = orizont REALIST la ritm sanatos din greutate tinta vs
-            curenta (NU countdown de calendar). Tinta subponderala → avertisment.
-            Local form state V1 — persistence Phase 7+ cand store extinde. */}
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Tinte personale
-        </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-1">
-          <LabelRow label="Greutate tinta (kg)">
-            <input
-              type="number"
-              min={30}
-              max={250}
-              step={0.1}
-              inputMode="decimal"
-              autoComplete="off"
-              value={targetWeight}
-              onChange={(e) => setTargetWeight(e.target.value)}
-              data-testid="profile-target-weight-input"
-              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
-            />
-          </LabelRow>
-          <LabelRow label="Pana in" isLast>
-            <input
-              type="month"
-              value={targetMonth}
-              onChange={(e) => setTargetMonth(e.target.value)}
-              data-testid="profile-target-month-input"
-              className="w-36 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-[13px]"
-            />
-          </LabelRow>
-        </div>
-        {targetEta?.kind === 'subhealthy' && (
-          <p
-            className="text-xs text-brick mb-4 px-1 leading-snug font-medium"
-            role="alert"
-            data-testid="profile-target-warning"
-          >
-            Tinta e sub greutatea sanatoasa (~{fmtKg(targetEta.minKg)} kg minim la inaltimea ta). Alege o tinta sanatoasa.
-          </p>
-        )}
-        {/* Smoke 2026-05-28 #16 — warning ritm imposibil cand deadline e
-            prea apropiat fata de tinta (Daniel 110→62kg in 4 zile accepta tacit
-            pana acum). Surfaceaza ritm cerut + deadline sigur sugerat. */}
-        {targetEta?.kind !== 'subhealthy' && rateVerdict?.kind === 'unsafe' && (
-          <p
-            className="text-xs text-brick mb-4 px-1 leading-snug font-medium"
-            role="alert"
-            data-testid="profile-target-rate-warning"
-          >
-            Tinta nerealista — ar necesita {fmtKg(rateVerdict.requiredKgPerWeek)} kg/saptamana
-            ({rateVerdict.direction === 'loss' ? 'pierdere' : 'castig'}), maxim sigur ~{MAX_SAFE_KG_PER_WEEK_DISPLAY} kg/saptamana.
-            Deadline realist: {rateVerdict.safeDeadlineDate}.
-          </p>
-        )}
-        {targetEta?.kind === 'eta' && rateVerdict?.kind !== 'unsafe' && (
-          <p
-            className="text-xs text-ink3 mb-4 px-1 leading-snug"
-            data-testid="profile-target-eta"
-          >
-            {targetEta.label}
-          </p>
-        )}
+        {/* §obiectiv-tinta 2026-05-28 (Daniel smoke #8) — "Tinte personale"
+            (greutate tinta + pana in + ETA + safety verdict ritm 1.5kg/sapt)
+            RELOCATED to Progres tab as ObiectivCard. Era ephemeral local form
+            state aici; acum persistat (Smoke #16) ca sa influenteze tinta de
+            kcal a coach-ului via engineWrappers.getTargetKcalToday. */}
 
         {/* §F-pass2-settings-profile-05 HIGH-BETA chat 4 Co-CTO decision: KEEP
             Antrenament section (Obiectiv + Frecventa + Experienta) onboarding
@@ -528,75 +439,8 @@ function todayIso(): string {
   return `${y}-${m}-${dd}`;
 }
 
-/** Format kg cu o zecimala (round-trip), aliniat cu ProjectionStrip. */
-function fmtKg(n: number): string {
-  return String(Math.round(n * 10) / 10);
-}
-
-// BUG #8 safety — ritm sanatos de schimbare a greutatii pentru ETA (kg/sapt).
-// Aliniat cu conventia engine-ului (sys.js weeksToKg): ~0.5 kg/sapt la slabire
-// (deficit realist), ~0.25 kg/sapt la crestere (lean gain). Asta face ca o
-// tinta realista sa arate un orizont realist — NU mai e un countdown de calendar
-// care ignora complet cat ai de schimbat (radacina BUG #8: "~1 luna" pentru -24 kg).
-const SAFE_LOSS_KG_PER_WEEK = 0.5;
-const SAFE_GAIN_KG_PER_WEEK = 0.25;
-
-/**
- * Rezultat ETA tinta — discriminated:
- *   - 'subhealthy': tinta sub greutatea sanatoasa minima (BMI 18.5) → avertisment
- *     + SUPRIMA proiectia (nu proiectam niciodata spre o greutate periculoasa).
- *   - 'eta': orizont realist la ritm sanatos pana la tinta.
- */
-type TargetEta =
-  | { kind: 'subhealthy'; minKg: number }
-  | { kind: 'eta'; label: string };
-
-/**
- * §F-pass2-settings-profile-04 + BUG #8 — ETA realista spre greutatea tinta.
- *
- * Inlocuieste vechiul countdown de calendar (care ignora greutatea tinta si
- * arata "~1 luna" si pentru -24 kg). Acum:
- *   1) Daca tinta < greutatea sanatoasa minima la inaltimea data (BMI 18.5) →
- *      avertisment subponderal, fara ETA (anti-paternalism: NU blocam tastarea,
- *      dar feedback-ul semnaleaza + nu proiectam spre o tinta periculoasa).
- *   2) Altfel proiectam timpul la un ritm SANATOS (0.5 kg/sapt slabire,
- *      0.25 kg/sapt crestere) → orizont realist in saptamani/luni.
- * Returns null cand lipsesc input-uri (tinta/greutate/inaltime) sau tinta ~=
- * greutatea curenta (nimic de proiectat).
- */
-function computeTargetEta(
-  targetWeightStr: string,
-  currentWeightKg: number | null,
-  heightCm: number | null,
-): TargetEta | null {
-  const target = Number(targetWeightStr);
-  if (!targetWeightStr || !Number.isFinite(target) || target <= 0) return null;
-
-  // Guard subponderal — tinta sub BMI 18.5 la inaltimea data. Are precedenta
-  // peste orice ETA (nu proiectam spre o greutate periculoasa).
-  const minKg = healthyFloorWeightKg(heightCm ?? NaN);
-  if (minKg !== null && target < minKg) {
-    return { kind: 'subhealthy', minKg };
-  }
-
-  // ETA realista — necesita greutatea curenta ca punct de plecare.
-  if (currentWeightKg === null || !Number.isFinite(currentWeightKg) || currentWeightKg <= 0) {
-    return null;
-  }
-  const deltaKg = target - currentWeightKg;
-  if (Math.abs(deltaKg) < 0.5) return { kind: 'eta', label: 'Esti deja la tinta' };
-
-  const ratePerWeek = deltaKg < 0 ? SAFE_LOSS_KG_PER_WEEK : SAFE_GAIN_KG_PER_WEEK;
-  const weeks = Math.ceil(Math.abs(deltaKg) / ratePerWeek);
-  return { kind: 'eta', label: `Estimat in ${etaHorizonLabel(weeks)} la un ritm sanatos` };
-}
-
-/** Orizont uman din saptamani: <8 sapt → "~N saptamani", altfel "~N luni". */
-function etaHorizonLabel(weeks: number): string {
-  if (weeks < 8) return `~${weeks} ${weeks === 1 ? 'saptamana' : 'saptamani'}`;
-  const months = Math.round(weeks / 4.345);
-  return `~${months} ${months === 1 ? 'luna' : 'luni'}`;
-}
+// §obiectiv-tinta 2026-05-28 — SAFE_*/computeTargetEta/etaHorizonLabel/fmtKg
+// MOVED to src/react/lib/targetEta.ts (shared with Progres > ObiectivCard).
 
 interface LabelRowProps {
   label: string;

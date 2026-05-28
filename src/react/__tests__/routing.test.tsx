@@ -4,7 +4,7 @@
 // router fetch lifecycle. Prod în router.tsx folosește createBrowserRouter.
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
@@ -123,10 +123,10 @@ describe('Routing — ProtectedRoute redirect', () => {
     expect(screen.getByText('Intra in cont')).toBeInTheDocument();
   });
 
-  it('renders Antrenor daca isAuthenticated + onboarding completed', () => {
+  it('renders Antrenor daca isAuthenticated + onboarding completed (EN default = "Coach")', () => {
     useAppStore.getState().setAuthenticated(true);
     renderAt('/app/antrenor');
-    expect(screen.getByRole('heading', { name: 'Antrenor', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Coach');
     useAppStore.getState().setAuthenticated(false);
   });
 
@@ -149,28 +149,37 @@ describe('Routing — BottomNav active tab', () => {
     useSettingsStore.setState({ acceptedDisclaimer: true });
   });
 
-  it('Antrenor tab activ la /app/antrenor', () => {
+  // §i18n 2026-05-28 — tab labels are now t('nav.tabs.*') keyed (EN default).
+  // Routes /app/{tab} stay Romanian (URL stability), only visible labels flip.
+  // Tab buttons live inside the nav landmark — scope `within(nav)` so we don't
+  // collide with content buttons that happen to match the label (e.g.
+  // ObiectivSelector "Auto — Coach-ul alege singur..." matches /Coach/i).
+  it('Antrenor tab activ la /app/antrenor (label = "Coach")', () => {
     renderAt('/app/antrenor');
-    const antrenorButton = screen.getByRole('button', { name: /Antrenor/i });
-    expect(antrenorButton).toHaveAttribute('aria-current', 'page');
+    const nav = screen.getByRole('navigation', { name: /Main navigation/i });
+    const btn = within(nav).getByRole('button', { name: /Coach/i });
+    expect(btn).toHaveAttribute('aria-current', 'page');
   });
 
-  it('Progres tab activ la /app/progres', () => {
+  it('Progres tab activ la /app/progres (label = "Progress")', () => {
     renderAt('/app/progres');
-    const progresButton = screen.getByRole('button', { name: /Progres/i });
-    expect(progresButton).toHaveAttribute('aria-current', 'page');
+    const nav = screen.getByRole('navigation', { name: /Main navigation/i });
+    const btn = within(nav).getByRole('button', { name: /Progress/i });
+    expect(btn).toHaveAttribute('aria-current', 'page');
   });
 
-  it('Istoric tab activ la /app/istoric', () => {
+  it('Istoric tab activ la /app/istoric (label = "History")', () => {
     renderAt('/app/istoric');
-    const istoricButton = screen.getByRole('button', { name: /Istoric/i });
-    expect(istoricButton).toHaveAttribute('aria-current', 'page');
+    const nav = screen.getByRole('navigation', { name: /Main navigation/i });
+    const btn = within(nav).getByRole('button', { name: /History/i });
+    expect(btn).toHaveAttribute('aria-current', 'page');
   });
 
-  it('Cont tab activ la /app/cont', () => {
+  it('Cont tab activ la /app/cont (label = "Account")', () => {
     renderAt('/app/cont');
-    const contButton = screen.getByRole('button', { name: /Cont/i });
-    expect(contButton).toHaveAttribute('aria-current', 'page');
+    const nav = screen.getByRole('navigation', { name: /Main navigation/i });
+    const btn = within(nav).getByRole('button', { name: /Account/i });
+    expect(btn).toHaveAttribute('aria-current', 'page');
   });
 });
 
@@ -263,13 +272,15 @@ describe('Routing — Phase 3 Antrenor nested routes integration', () => {
     // PAR-009: single h1 = SubHeader title 'Cum te simti?' verbatim mockup L879.
     // Body sub-heading 'Cum te simti azi?' regresat la h2.
     expect(screen.getByRole('heading', { name: /^Cum te simti\?$/i, level: 1 })).toBeInTheDocument();
-    const antrenorButton = screen.getByRole('button', { name: /Antrenor/i });
+    // §i18n 2026-05-28 — Antrenor tab label = "Coach" under EN default.
+    const nav = screen.getByRole('navigation', { name: /Main navigation/i });
+    const antrenorButton = within(nav).getByRole('button', { name: /Coach/i });
     expect(antrenorButton).toHaveAttribute('aria-current', 'page');
   });
 
-  it('Antrenor index render la /app/antrenor preserved post-nested', () => {
+  it('Antrenor index render la /app/antrenor preserved post-nested (EN default = "Coach")', () => {
     renderNested('/app/antrenor');
-    expect(screen.getByRole('heading', { name: 'Antrenor', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Coach');
     useAppStore.getState().setAuthenticated(false);
   });
 });

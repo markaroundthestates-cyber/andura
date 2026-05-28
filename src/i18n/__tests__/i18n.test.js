@@ -37,10 +37,10 @@ describe('t() happy path', () => {
     expect(result).toContain('{exercise}');
   });
 
-  it('returns EN string when locale=en (TODO_EN prefix preserved)', () => {
+  it('returns EN string when locale=en (clean English post 2026-05-28 paradigm flip)', () => {
     setLocale('en');
-    const result = t('common.ok');
-    expect(result).toContain('TODO_EN');
+    expect(t('common.ok')).toBe('OK');
+    expect(t('common.cancel')).toBe('Cancel');
   });
 });
 
@@ -121,35 +121,38 @@ describe('getCurrentLocale', () => {
     expect(getCurrentLocale()).toBe('en');
   });
 
-  it('returns "ro" default when no override + jsdom navigator unspecific', () => {
+  it('returns valid locale default when no override + jsdom navigator unspecific', () => {
     _resetI18nCache();
-    // jsdom navigator.language is typically en-US — but ro/en are both supported
-    // so result depends on env. Test that it returns a valid locale.
+    // jsdom navigator.language is typically en-US. Both en+ro are
+    // auto-detectable post 2026-05-28 (DEFAULT_LOCALE flipped to 'en').
     const locale = getCurrentLocale();
     expect(['ro', 'en']).toContain(locale);
   });
 
-  it('en-US browser auto-detects RO, NU en (anti TODO_EN leak)', () => {
-    // BUG #6 regression — navigator en-US NU trebuie sa auto-selecteze bundle-ul
-    // EN (placeholder TODO_EN neterminat). EN nu e auto-detectabil; doar alegere
-    // explicita user (localStorage). Fara fix, why-explanation + alte strings
-    // leak-au raw "TODO_EN: ..." pe orice browser englez.
+  it('en-US browser auto-detects EN (post 2026-05-28 paradigm flip — EN is default + translated)', () => {
+    // BUG #6 anti-TODO_EN-leak guard REMOVED 2026-05-28 — EN bundle is now
+    // fully translated (Daniel CEO directive: default EN, RO opt-in). Browser
+    // en-US should auto-pick EN (the new default-language match).
     const navSpy = vi.spyOn(navigator, 'language', 'get').mockReturnValue('en-US');
     _resetI18nCache();
-    expect(getCurrentLocale()).toBe('ro');
+    expect(getCurrentLocale()).toBe('en');
     navSpy.mockRestore();
   });
 
-  it('ro browser auto-detects RO', () => {
+  it('ro browser auto-detects RO (user preference respected over EN default)', () => {
     const navSpy = vi.spyOn(navigator, 'language', 'get').mockReturnValue('ro-RO');
     _resetI18nCache();
     expect(getCurrentLocale()).toBe('ro');
     navSpy.mockRestore();
   });
 
-  it('explicit en localStorage override still honored (post-Beta opt-in)', () => {
-    // Fix-ul exclude EN doar din AUTO-detect navigator; alegerea explicita
-    // (setLocale/localStorage) ramane valida pentru EN viitor.
+  it('explicit ro localStorage override still honored (RO opt-in from Cont > Limba)', () => {
+    localStorage.setItem('sf.locale', 'ro');
+    _resetI18nCache();
+    expect(getCurrentLocale()).toBe('ro');
+  });
+
+  it('explicit en localStorage override still honored', () => {
     localStorage.setItem('sf.locale', 'en');
     _resetI18nCache();
     expect(getCurrentLocale()).toBe('en');
@@ -187,9 +190,16 @@ describe('setLocale', () => {
 
   it('switching locale updates t() output', () => {
     setLocale('ro');
-    expect(t('common.ok')).toBe('OK');
+    expect(t('common.cancel')).toBe('Anuleaza');
     setLocale('en');
-    expect(t('common.ok')).toContain('TODO_EN');
+    expect(t('common.cancel')).toBe('Cancel');
+  });
+
+  it('syncs <html lang> attribute on setLocale (a11y + SEO cue)', () => {
+    setLocale('ro');
+    expect(document.documentElement.lang).toBe('ro');
+    setLocale('en');
+    expect(document.documentElement.lang).toBe('en');
   });
 });
 
@@ -231,12 +241,25 @@ describe('bundle integrity', () => {
     }
   });
 
-  it('all EN values start cu TODO_EN prefix (placeholder marker)', () => {
+  it('all EN values are strings (no leftover TODO_EN placeholders post 2026-05-28 flip)', () => {
     const en = _getBundle('en');
     setLocale('en');
     for (const path of flattenKeys(en)) {
       const result = t(path);
-      expect(result.startsWith('TODO_EN'), `Key "${path}" missing TODO_EN prefix in EN bundle`).toBe(true);
+      expect(typeof result).toBe('string');
+      expect(result).not.toBe(path); // resolved, NU fallback la key
+      expect(result.startsWith('TODO_EN'), `Key "${path}" still has TODO_EN placeholder — EN must be fully translated`).toBe(false);
+    }
+  });
+
+  it('RO strings have no diacritics (D-LEGACY-064 UI rule preserved)', () => {
+    const ro = _getBundle('ro');
+    setLocale('ro');
+    for (const path of flattenKeys(ro)) {
+      const result = t(path);
+      // Don't fail on _meta description (vault doc, allowed diacritics).
+      if (path.startsWith('_meta')) continue;
+      expect(result, `Key "${path}" has Romanian diacritics — D-LEGACY-064 UI rule violated`).not.toMatch(/[ăâîșțĂÂÎȘȚ]/);
     }
   });
 

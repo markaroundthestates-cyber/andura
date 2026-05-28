@@ -63,7 +63,7 @@ export function InstallPrompt(): JSX.Element | null {
     // so its (mostly transparent) footprint does NOT intercept taps on content
     // beneath (e.g. Istoric session rows). Only the visible card re-enables
     // pointer events. Mirrors the ToastViewport overlay idiom (Toast.tsx).
-    <div className="fixed bottom-20 left-3 right-3 z-40 pointer-events-none">
+    <div className="app-fixed-column app-fixed-column--inset fixed bottom-20 z-40 pointer-events-none">
       <div
         data-testid="install-prompt"
         role="region"

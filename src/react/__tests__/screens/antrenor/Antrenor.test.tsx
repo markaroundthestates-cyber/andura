@@ -75,9 +75,9 @@ describe('Antrenor home — base render', () => {
     vi.mocked(getFatigue).mockReturnValue(null);
   });
 
-  it('renders Antrenor heading', () => {
+  it('renders Antrenor heading (EN default post 2026-05-28 paradigm flip — "Coach")', () => {
     renderAntrenor();
-    expect(screen.getByRole('heading', { name: 'Antrenor', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Coach');
   });
 
   it('renders Incepe sesiunea CTA inside CoachTodayCard (no paused session)', () => {
@@ -452,10 +452,10 @@ describe('Antrenor home — HIGH-CODE-07 defense-in-depth promise catch', () => 
     vi.mocked(getCoachToday).mockRejectedValueOnce(new Error('engine pipeline boom'));
     renderAntrenor();
     await screen.findByTestId('antrenor-error-banner');
-    // CoachTodayCard renders cu coach=null fallback so its "Incepe sesiunea"
-    // button still appears (showWorkoutCard ternary falls la schedContext=workout
-    // when coach=null). Gigel proceeds via the standard workout-day CTA.
-    expect(screen.getByRole('heading', { name: 'Antrenor', level: 1 })).toBeInTheDocument();
+    // Heading "Coach" sub EN default (A3 i18n). Orphan "Incepe antrenament" CTA
+    // a fost eliminat (A1 #12 dedup); CoachTodayCard fallback la coach=null
+    // surface "Incepe sesiunea" pentru Gigel proceed.
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Coach');
     expect(screen.getByRole('button', { name: /Incepe sesiunea/i })).toBeInTheDocument();
   });
 

@@ -23,9 +23,11 @@ import { FatigueStrip } from '../../../components/Progres/FatigueStrip';
 import { BMRStrip } from '../../../components/Progres/BMRStrip';
 import { BodyFatStrip } from '../../../components/Progres/BodyFatStrip';
 import { HeatMapWeekly } from '../../../components/Progres/HeatMapWeekly';
+import { ObiectivCard } from '../../../components/Progres/ObiectivCard';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 import type { CoachTodayOutput } from '../../../lib/coachDirectorAggregate';
+import { t } from '../../../../i18n/index.js';
 
 export function Progres(): JSX.Element {
   const navigate = useNavigate();
@@ -49,8 +51,13 @@ export function Progres(): JSX.Element {
     <section className="p-6 bg-paper min-h-screen" data-testid="progres-home">
       {/* §F-pass4-fontweight-01 (LOW chat5 W17) — title font-weight 600 -> 700
           mockup andura-clasic.html#L1700 (font-weight:700). */}
-      <h1 className="text-2xl font-bold text-ink mb-1">Progres</h1>
-      <p className="text-sm text-ink2 mb-6">Body composition &middot; estimari calibrate.</p>
+      <h1 className="text-2xl font-bold text-ink mb-1">{t('tabs.progres.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('tabs.progres.subtitle')}</p>
+      {/* §obiectiv-tinta 2026-05-28 Daniel verbatim — Obiectiv tinta moved here
+          from Cont > Profil si tinte. Top placement: this is "where am I trying
+          to get to", primary context for everything else on the screen (TDEE
+          projection, weight trend, body comp). */}
+      <ObiectivCard />
       <TDEEStrip />
       {/* Piesa 4 — Preconizare forward projection (traiectorie curenta). */}
       <ProjectionStrip />

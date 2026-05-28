@@ -3,12 +3,18 @@
 // / Date si confidentialitate / Deconectare si Stergere / Ajutor). Sub-screens
 // Phase 6+ implementation (task_13 §3 hint Karpathy §4 simplicity).
 // Mockup verbatim copy preserved (andura-clasic.html#L1839+).
+//
+// §i18n 2026-05-28 — section + row labels routed through t('cont.sections.*')
+// + t('cont.rows.*'). Daniel CEO directive: default EN, RO opt-in from
+// Cont > Setari > Limba. Stable English ids on each row drive testid +
+// localStorage keys; only the visible label localizes.
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import type { GotoScreen } from '../../../lib/navigation';
 import { getUserProfileDisplay } from './userProfile';
+import { t } from '../../../../i18n/index.js';
 import {
   User,
   Bell,
@@ -30,57 +36,67 @@ import {
 
 interface ContRow {
   id: string;
-  label: string;
+  /** i18n key under `cont.rows.*` for the visible label. */
+  labelKey: string;
   Icon: typeof User;
   danger?: boolean;
   target?: GotoScreen;
 }
 
 interface ContSection {
-  title: string;
+  /** Stable English-id for testid + heading marker (kept stable across locales). */
+  id: 'cont' | 'general' | 'privacy' | 'danger' | 'help';
+  /** i18n key under `cont.sections.*` for the visible heading. */
+  titleKey: string;
   rows: ContRow[];
   danger?: boolean;
 }
 
-// Mockup verbatim copy andura-clasic.html#L1839-1888
+// Mockup verbatim copy andura-clasic.html#L1839-1888 (now i18n-keyed; the
+// English+Romanian labels live in src/i18n/{en,ro}.json under cont.*).
 const SECTIONS: readonly ContSection[] = [
   {
-    title: 'Cont',
+    id: 'cont',
+    titleKey: 'cont.sections.cont',
     rows: [
-      { id: 'profile', label: 'Profil si tinte', Icon: User, target: 'settings-profile' },
-      { id: 'notifications', label: 'Notificari', Icon: Bell, target: 'settings-notifications' },
-      { id: 'subscription', label: 'Abonament', Icon: Sparkles, target: 'settings-subscription' },
+      { id: 'profile', labelKey: 'cont.rows.profile', Icon: User, target: 'settings-profile' },
+      { id: 'notifications', labelKey: 'cont.rows.notifications', Icon: Bell, target: 'settings-notifications' },
+      { id: 'subscription', labelKey: 'cont.rows.subscription', Icon: Sparkles, target: 'settings-subscription' },
     ],
   },
   {
-    title: 'General',
+    id: 'general',
+    titleKey: 'cont.sections.general',
     rows: [
-      { id: 'appearance', label: 'Aspect', Icon: Palette, target: 'settings-appearance' },
-      { id: 'aparate-lipsa', label: 'Aparate lipsa', Icon: XOctagon, target: 'aparate-lipsa' },
-      { id: 'prefs', label: 'Setari', Icon: SlidersHorizontal, target: 'settings-prefs' },
+      { id: 'appearance', labelKey: 'cont.rows.appearance', Icon: Palette, target: 'settings-appearance' },
+      { id: 'aparate-lipsa', labelKey: 'cont.rows.aparateLipsa', Icon: XOctagon, target: 'aparate-lipsa' },
+      { id: 'prefs', labelKey: 'cont.rows.prefs', Icon: SlidersHorizontal, target: 'settings-prefs' },
     ],
   },
   {
-    title: 'Date si confidentialitate',
+    id: 'privacy',
+    titleKey: 'cont.sections.privacy',
     rows: [
-      { id: 'privacy', label: 'Politica de confidentialitate', Icon: ShieldCheck, target: 'settings-privacy' },
-      { id: 'terms', label: 'Termeni si conditii', Icon: FileText, target: 'settings-terms' },
-      { id: 'export', label: 'Descarca datele tale (JSON)', Icon: Download, target: 'settings-export' },
-      { id: 'import', label: 'Importa istoric (greutate + nutritie)', Icon: Upload, target: 'settings-import' },
+      { id: 'privacy', labelKey: 'cont.rows.privacy', Icon: ShieldCheck, target: 'settings-privacy' },
+      { id: 'terms', labelKey: 'cont.rows.terms', Icon: FileText, target: 'settings-terms' },
+      { id: 'export', labelKey: 'cont.rows.export', Icon: Download, target: 'settings-export' },
+      { id: 'import', labelKey: 'cont.rows.import', Icon: Upload, target: 'settings-import' },
     ],
   },
   {
-    title: 'Deconectare si Stergere',
+    id: 'danger',
+    titleKey: 'cont.sections.danger',
     danger: true,
-    rows: [{ id: 'danger', label: 'Deconectare si Stergere', Icon: AlertTriangle, danger: true, target: 'settings-danger' }],
+    rows: [{ id: 'danger', labelKey: 'cont.rows.danger', Icon: AlertTriangle, danger: true, target: 'settings-danger' }],
   },
   {
-    title: 'Ajutor',
+    id: 'help',
+    titleKey: 'cont.sections.help',
     rows: [
-      { id: 'support', label: 'Suport', Icon: LifeBuoy, target: 'settings-support' },
-      { id: 'ceva-nu-merge', label: 'Ceva nu merge', Icon: AlertOctagon, target: 'ceva-nu-merge' },
-      { id: 'about', label: 'Despre Andura', Icon: Info, target: 'settings-about' },
-      { id: 'faq', label: 'FAQ', Icon: HelpCircle, target: 'settings-faq' },
+      { id: 'support', labelKey: 'cont.rows.support', Icon: LifeBuoy, target: 'settings-support' },
+      { id: 'ceva-nu-merge', labelKey: 'cont.rows.cevaNuMerge', Icon: AlertOctagon, target: 'ceva-nu-merge' },
+      { id: 'about', labelKey: 'cont.rows.about', Icon: Info, target: 'settings-about' },
+      { id: 'faq', labelKey: 'cont.rows.faq', Icon: HelpCircle, target: 'settings-faq' },
     ],
   },
 ];
@@ -94,13 +110,13 @@ export function Cont(): JSX.Element {
   // name + email from id_token JWT claims (single source of truth post Magic
   // Link verify). Unauthenticated fallback preserves generic placeholders.
   const profile = getUserProfileDisplay();
-  const displayName = profile.name || 'Utilizator';
-  const displayEmail = profile.email || 'Profilul tau Andura';
+  const displayName = profile.name || t('cont.accountFallback');
+  const displayEmail = profile.email || t('cont.emailFallback');
   return (
     <section className="pt-4 px-5 pb-6 bg-paper min-h-screen" data-testid="cont-home">
       {/* §F-cont-08 (LOW chat5) — title font-weight 600 → 700 mockup
           andura-clasic.html#L1841 (font-weight:700). */}
-      <h1 className="text-2xl font-bold text-ink mb-4">Cont</h1>
+      <h1 className="text-2xl font-bold text-ink mb-4">{t('tabs.cont.title')}</h1>
 
       {/* Account card (header) — Phase 6+ wires user profile data real */}
       <div
@@ -122,7 +138,7 @@ export function Cont(): JSX.Element {
       </div>
 
       {SECTIONS.map((section) => (
-        <div key={section.title} className="mb-4" data-testid={`cont-section-${section.title.toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '')}`}>
+        <div key={section.id} className="mb-4" data-testid={`cont-section-${section.id}`}>
           {/* §F-cont-06 (LOW chat5 Wave 15) — section heading tokens align
               mockup .settings-section andura-clasic.html:2870 verbatim:
               font-size 11px + letter-spacing 0.08em + color var(--ink-3).
@@ -131,7 +147,7 @@ export function Cont(): JSX.Element {
           <p
             className={`text-[11px] uppercase tracking-[0.08em] font-semibold mb-2 ${section.danger ? 'text-brickdark' : 'text-ink3'}`}
           >
-            {section.title}
+            {t(section.titleKey)}
           </p>
           <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
             {section.rows.map((row, idx) => {
@@ -147,7 +163,7 @@ export function Cont(): JSX.Element {
                   className={`w-full flex items-center gap-3 px-4 py-3 text-left disabled:opacity-50 disabled:cursor-not-allowed ${!isLast ? 'border-b border-line' : ''} ${row.danger ? 'text-brickdark' : 'text-ink'}`}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-                  <span className="flex-1 text-sm">{row.label}</span>
+                  <span className="flex-1 text-sm">{t(row.labelKey)}</span>
                   <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
                 </button>
               );
@@ -156,7 +172,7 @@ export function Cont(): JSX.Element {
         </div>
       ))}
 
-      <p className="text-xs text-ink2 text-center mt-6">Andura v1.0.0</p>
+      <p className="text-xs text-ink2 text-center mt-6">{t('cont.version')}</p>
     </section>
   );
 }

@@ -35,6 +35,7 @@ import { useCoachStore } from '../../../stores/coachStore';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 import type { CoachTodayOutput } from '../../../lib/coachDirectorAggregate';
 import { gotoPath } from '../../../lib/navigation';
+import { t } from '../../../../i18n/index.js';
 import { ResumeSessionCard } from '../../../components/Antrenor/ResumeSessionCard';
 import { ReactivateCard } from '../../../components/Antrenor/ReactivateCard';
 import { CoachTodayCard } from '../../../components/Antrenor/CoachTodayCard';
@@ -168,7 +169,7 @@ export function Antrenor(): JSX.Element {
       </p>
       {/* §F-pass4-fontweight-01 (LOW chat5) — title font-weight 600 → 700 mockup
           andura-clasic.html#L734 (font-weight:700). */}
-      <h1 className="text-2xl font-bold text-ink mt-0.5">Antrenor</h1>
+      <h1 className="text-2xl font-bold text-ink mt-0.5">{t('tabs.antrenor.title')}</h1>
       {/* Serif subtitle per mockup andura-clasic.html#L735 (coach-quote). */}
       <p className="font-serif italic text-ink2 text-sm mb-4">
         Cine te ghideaza in sala.

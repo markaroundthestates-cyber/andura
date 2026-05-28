@@ -21,6 +21,7 @@ import { ToastViewport } from '../components/Toast';
 import { MedicalDisclaimerModal } from '../components/MedicalDisclaimerModal';
 import { useCoachStore } from '../stores/coachStore';
 import { useSettingsStore } from '../stores/settingsStore';
+import { t } from '../../i18n/index.js';
 
 // S3.D anti-misclick (Daniel verbatim 2026-05-13): in-session routes hide
 // BottomNav so Gigel doesn't accidentally exit mid-set. Pause/exit only via
@@ -55,7 +56,7 @@ export function Layout(): JSX.Element {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:bg-brick focus:text-paper focus:px-4 focus:py-2 focus:rounded focus:z-[100]"
       >
-        Sari la continut
+        {t('nav.skipToContent')}
       </a>
       <OfflineBanner />
       <UpdatePrompt />

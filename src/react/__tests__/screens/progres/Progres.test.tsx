@@ -45,9 +45,10 @@ beforeEach(() => {
 });
 
 describe('Progres landing', () => {
-  it('renders heading + tagline', () => {
+  it('renders heading + tagline (EN default post 2026-05-28 paradigm flip)', () => {
     renderProgres();
-    expect(screen.getByRole('heading', { name: /^Progres$/i, level: 1 })).toBeInTheDocument();
+    // Default locale flipped to EN — heading is "Progress" + tagline localized.
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Progress');
     expect(screen.getByText(/Body composition/i)).toBeInTheDocument();
   });
 

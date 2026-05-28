@@ -1,16 +1,19 @@
 // ══ SETTINGS PREFS — Phase 6 task_13 Cont Sub-Screen ═════════════════════
-// Units kg (lb disabled, post-Beta) + week start L/D + locale ro-RO fixed.
-// kg is the effective active unit (no weight display converts to lb yet), so
-// the lb option is shown-but-disabled with an honest note instead of pretending
-// a switch happened. Persist settingsStore.weekStart field.
+// Units kg (lb disabled, post-Beta) + week start L/D + LIVE language toggle
+// (EN default / RO opt-in, post 2026-05-28 paradigm flip — Daniel verbatim
+// "schimbam complet limba default in engleza si lasam romana ca optiune din
+// cont"). Language picker calls i18n.setLocale which persists to localStorage
+// and syncs <html lang>; reload-free swap requires t()-wired consumer screens.
 
 import type { JSX } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RotateCcw, ChevronRight, RefreshCcw, GitBranch } from 'lucide-react';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import type { WeekStart } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { getCurrentLocale, setLocale, t } from '../../../../i18n/index.js';
 
 const UNIT_OPTIONS: ReadonlyArray<{ value: 'kg' | 'lb'; label: string }> = [
   { value: 'kg', label: 'Kilograme (kg)' },
@@ -22,11 +25,31 @@ const WEEK_START_OPTIONS: ReadonlyArray<{ value: WeekStart; label: string }> = [
   { value: 'D', label: 'Duminica' },
 ];
 
+type Locale = 'en' | 'ro';
+const LANGUAGE_OPTIONS: ReadonlyArray<{ value: Locale; label: string }> = [
+  // Order matters: EN first as the post-2026-05-28 default (Daniel verbatim).
+  { value: 'en', label: 'English' },
+  { value: 'ro', label: 'Romana' },
+];
+
 export function SettingsPrefs(): JSX.Element {
   const navigate = useNavigate();
   const setUnitSystem = useSettingsStore((s) => s.setUnitSystem);
   const weekStart = useSettingsStore((s) => s.weekStart);
   const setWeekStart = useSettingsStore((s) => s.setWeekStart);
+
+  // §i18n 2026-05-28 — live language switch. setLocale() persists to
+  // localStorage (`sf.locale`), syncs `<html lang>`, and updates the cached
+  // locale so t() picks the new bundle on the next render. We mirror the
+  // chosen value into local React state so the UI flips immediately (without
+  // waiting for a full re-render cycle triggered by an external listener).
+  const [locale, setLocaleState] = useState<Locale>(() => getCurrentLocale() as Locale);
+
+  function handleLocaleChange(next: Locale): void {
+    if (next === locale) return;
+    setLocale(next);
+    setLocaleState(next);
+  }
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-prefs">
@@ -92,17 +115,36 @@ export function SettingsPrefs(): JSX.Element {
           })}
         </div>
 
+        {/* §i18n 2026-05-28 — LIVE language toggle (Daniel CEO directive
+            "schimbam complet limba default in engleza si lasam romana ca
+            optiune din cont"). EN = default post-flip; RO = opt-in. State is
+            persisted to localStorage via i18n.setLocale (`sf.locale`) +
+            syncs <html lang> for a11y/SEO. Selected row marked with • per
+            UNIT_OPTIONS / WEEK_START_OPTIONS pattern for visual consistency. */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Limba
+          Limba / Language
         </p>
-        <div className="bg-paper2 border border-line rounded-xl p-4 mb-4">
-          <div className="flex items-center justify-between text-sm text-ink">
-            <span>Romana (ro-RO)</span>
-            <span className="text-xs text-ink2">Implicit</span>
-          </div>
-          <p className="text-xs text-ink2 mt-2 leading-snug">
-            Engleza si alte limbi vor fi disponibile post-Beta.
-          </p>
+        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
+          {LANGUAGE_OPTIONS.map((opt, idx) => {
+            const selected = locale === opt.value;
+            const isLast = idx === LANGUAGE_OPTIONS.length - 1;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                data-testid={`language-${opt.value}`}
+                aria-pressed={selected}
+                onClick={() => handleLocaleChange(opt.value)}
+                className={`w-full flex items-center px-4 py-3 text-left ${isLast ? '' : 'border-b border-line'} ${selected ? 'text-brick font-semibold' : 'text-ink'}`}
+              >
+                <span className="flex-1 text-sm">{opt.label}</span>
+                {opt.value === 'en' && (
+                  <span className="text-xs text-ink3 mr-2">Default</span>
+                )}
+                {selected && <span aria-hidden="true">•</span>}
+              </button>
+            );
+          })}
         </div>
 
         {/* §B001+B002+B011 D047 Stage 3 — Avansat section drill-downs (mockup L2085-2096). */}

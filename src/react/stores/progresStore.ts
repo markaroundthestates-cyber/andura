@@ -24,9 +24,25 @@ export interface BodyDataEntry {
   thighCm?: number;
 }
 
+// §obiectiv-tinta 2026-05-28 — Daniel verbatim "tot ce e la Obiectiv, pe
+// toate themes trebuie mutat la progres undeva". Target weight + target month
+// were previously local form state in SettingsProfile (Cont) — values were
+// discarded between visits, which made them useless feedback for progress
+// tracking. Promoting to progresStore so the Obiectiv tinta surfaces on the
+// Progres tab (where it logically belongs alongside current weight + trend)
+// and survives across sessions.
+export interface TargetObiectiv {
+  /** Target weight in kg (kept as number — store-level validation: finite, >0). */
+  weightKg: number | null;
+  /** Target deadline as YYYY-MM (HTML <input type="month"> shape). */
+  month: string | null; // "" → null, never empty string
+}
+
 export interface ProgresState {
   weightLog: WeightEntry[];
   bodyData: BodyDataEntry[];
+  /** §obiectiv-tinta — user-set Obiectiv target. null on cold-start. */
+  targetObiectiv: TargetObiectiv;
 }
 
 /**
@@ -90,6 +106,9 @@ export function latestBodyMeasurements(
 export interface ProgresActions {
   addWeightEntry: (entry: Omit<WeightEntry, 'ts'>) => void;
   addBodyDataEntry: (entry: Omit<BodyDataEntry, 'ts'>) => void;
+  /** §obiectiv-tinta — partial update (either field independently). Pass
+   *  null to clear. weightKg coerced to number; non-finite → null. */
+  setTargetObiectiv: (patch: Partial<TargetObiectiv>) => void;
   // BUG #5 — seed weightLog din greutatea de onboarding (profile.weight) cand e
   // gol, ca timeline-ul "Greutate (7 zile)" sa porneasca de la greutatea reala a
   // user-ului (NU gol/disconnect). Idempotent: NU face nimic daca weightLog deja
@@ -99,11 +118,14 @@ export interface ProgresActions {
   reset: () => void;
 }
 
+const EMPTY_TARGET: TargetObiectiv = { weightKg: null, month: null };
+
 export const useProgresStore = create<ProgresState & ProgresActions>()(
   persist(
     (set) => ({
       weightLog: [],
       bodyData: [],
+      targetObiectiv: EMPTY_TARGET,
       // U-10 — upsert by date (aliniat cu nutritionStore.upsertEntry). Logare
       // de 2 ori in aceeasi zi suprascrie intrarea zilei in loc sa creeze un
       // rand duplicat (cantarire dimineata + seara → o singura valoare/zi).
@@ -122,6 +144,23 @@ export const useProgresStore = create<ProgresState & ProgresActions>()(
         set((s) => ({
           bodyData: [...s.bodyData, { ...entry, ts: Date.now() }],
         })),
+      // §obiectiv-tinta — partial patch; coerces invalid numbers to null
+      // (defense in depth — UI may still pass NaN through onChange noise).
+      setTargetObiectiv: (patch) =>
+        set((s) => {
+          const current = s.targetObiectiv;
+          const next: TargetObiectiv = { ...current };
+          if ('weightKg' in patch) {
+            const kg = patch.weightKg;
+            next.weightKg = typeof kg === 'number' && Number.isFinite(kg) && kg > 0 ? kg : null;
+          }
+          if ('month' in patch) {
+            const m = patch.month;
+            // Accept YYYY-MM shape only; empty string normalized to null.
+            next.month = typeof m === 'string' && /^\d{4}-\d{2}$/.test(m) ? m : null;
+          }
+          return { targetObiectiv: next };
+        }),
       // BUG #5 — seed o singura intrare din greutatea de onboarding cand
       // weightLog e gol. Idempotent (gol → seed; altfel no-op) ca sa NU
       // suprascriem loguri reale. Ignora kg invalid (NU fabricam o intrare gresita).
@@ -131,7 +170,7 @@ export const useProgresStore = create<ProgresState & ProgresActions>()(
           if (!Number.isFinite(kg) || kg <= 0 || !date) return s;
           return { weightLog: [{ kg, date, ts: Date.now() }] };
         }),
-      reset: () => set({ weightLog: [], bodyData: [] }),
+      reset: () => set({ weightLog: [], bodyData: [], targetObiectiv: EMPTY_TARGET }),
     }),
     {
       name: 'wv2-progres-store',
@@ -143,6 +182,7 @@ export const useProgresStore = create<ProgresState & ProgresActions>()(
       partialize: (state) => ({
         weightLog: state.weightLog,
         bodyData: state.bodyData,
+        targetObiectiv: state.targetObiectiv,
       }) as Partial<ProgresState & ProgresActions>,
     }
   )

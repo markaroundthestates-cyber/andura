@@ -3,25 +3,29 @@
 // derivat path prefix /app/{tab}/* — Co-CTO LOCK Phase 2 routing C hybrid.
 // Tailwind classes parity mockup andura-clasic.html bottom-nav block.
 // Persistent în Layout `<Outlet />` parent — NU re-renderează cross-tab.
+//
+// §i18n 2026-05-28 — labels routed through t('nav.tabs.*') so the bottom nav
+// flips immediately when Daniel toggles language in Cont > Setari > Limba.
+// Route ids stay Romanian (URL stability) — only the visible label localizes.
 
 import type { JSX } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Dumbbell, Activity, CalendarDays, User } from 'lucide-react';
 import { useSettingsStore } from '../stores/settingsStore';
+import { t } from '../../i18n/index.js';
 
 type Tab = 'antrenor' | 'progres' | 'istoric' | 'cont';
 
 interface TabConfig {
   id: Tab;
-  label: string;
   Icon: typeof Activity;
 }
 
 const TABS: readonly TabConfig[] = [
-  { id: 'antrenor', label: 'Antrenor', Icon: Dumbbell },
-  { id: 'progres', label: 'Progres', Icon: Activity },
-  { id: 'istoric', label: 'Istoric', Icon: CalendarDays },
-  { id: 'cont', label: 'Cont', Icon: User },
+  { id: 'antrenor', Icon: Dumbbell },
+  { id: 'progres', Icon: Activity },
+  { id: 'istoric', Icon: CalendarDays },
+  { id: 'cont', Icon: User },
 ];
 
 export function BottomNav(): JSX.Element {
@@ -36,13 +40,13 @@ export function BottomNav(): JSX.Element {
 
   return (
     <nav
-      className={`fixed bottom-0 left-0 right-0 bg-paper border-t border-line flex justify-around items-center gap-2 z-50 ${
+      className={`app-fixed-column fixed bottom-0 bg-paper border-t border-line flex justify-around items-center gap-2 z-50 ${
         compact ? 'h-12' : 'h-16'
       }`}
-      aria-label="Navigare principala"
+      aria-label={t('nav.ariaLabel')}
       data-nav-style={navStyle}
     >
-      {TABS.map(({ id, label, Icon }) => {
+      {TABS.map(({ id, Icon }) => {
         const active = isActive(id);
         return (
           <button
@@ -64,7 +68,7 @@ export function BottomNav(): JSX.Element {
               aria-hidden="true"
               className={`transition-transform ${active ? 'scale-110' : 'scale-100'}`}
             />
-            <span>{label}</span>
+            <span>{t(`nav.tabs.${id}`)}</span>
           </button>
         );
       })}

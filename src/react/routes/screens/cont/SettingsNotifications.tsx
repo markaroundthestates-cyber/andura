@@ -101,6 +101,13 @@ export function SettingsNotifications(): JSX.Element {
     setPermission(readPermission());
   }, []);
 
+  // §F-perceived-perf 2026-05-28 (Daniel verbatim "butonul de notificari merge
+  // cu un foarte mare delay") — pending state so the master toggle visibly
+  // reflects in-flight work (lazy Firebase SDK load + getToken + RTDB PUT can
+  // take 1-2s on first run). Without this the button looks frozen for that
+  // window. UI also guards against double-click while pending.
+  const [togglePending, setTogglePending] = useState(false);
+
   // §F-pass2-settings-notif-02 — per-event domain toggle state. localStorage
   // hydrate on mount, write on each toggle. Persisted in-ownership (not via
   // settingsStore — cross-cluster boundary).
@@ -122,40 +129,55 @@ export function SettingsNotifications(): JSX.Element {
   }
 
   async function handleToggle(): Promise<void> {
-    // Turning OFF → best-effort dezactivare push (sterge token local + RTDB)
-    // apoi opreste flag-ul store.
+    // Guard against re-entrancy while async work is in flight (double-click
+    // would otherwise queue a 2nd enable/disable on top of the first).
+    if (togglePending) return;
+
+    // §F-perceived-perf — Turning OFF goes fully OPTIMISTIC:
+    // flip the store flag IMMEDIATELY (UI responds in <16ms) then run the
+    // FCM teardown (lazy SDK + deleteToken + RTDB DELETE) in the background.
+    // Teardown is best-effort by design (existing disablePushNotifications
+    // swallows all errors silently) so there is nothing to roll back.
     if (enabled) {
-      await disablePushNotifications();
       toggleNotifications();
       void syncNotificationPrefs();
+      setTogglePending(true);
+      void disablePushNotifications().finally(() => setTogglePending(false));
       return;
     }
 
-    // Turning ON → delegheaza cererea de permisiune catre modulul push real
-    // (enablePushNotifications cere permisiunea INTERN — NU dubla request aici)
-    // + inregistreaza FCM token in RTDB. Mapeaza PushResult la UI state.
-    const result = await enablePushNotifications();
-    switch (result) {
-      case 'granted':
-        setPermission('granted');
-        toggleNotifications();
-        void syncNotificationPrefs();
-        break;
-      case 'denied':
-        // Pastreaza toggle OFF; warning denied existent se afiseaza.
-        setPermission('denied');
-        break;
-      case 'unsupported':
-        setPermission('unsupported');
-        break;
-      case 'no-account':
-        // Pastreaza toggle OFF + hint Gigel-friendly (vezi notif-no-account-warning).
-        setPermission('no-account');
-        break;
-      case 'error':
-        // Esec best-effort (config / network) → toggle ramane OFF, fara UI greoi.
-        console.warn('[notif] enablePushNotifications error');
-        break;
+    // Turning ON — cannot be optimistic because we MUST await
+    // Notification.requestPermission() (browser-level prompt) before flipping
+    // the flag. We surface a pending state so the toggle visibly reflects
+    // in-flight work (lazy SDK + getToken + RTDB PUT on first run). The store
+    // flag is set ONLY on 'granted' so the toggle position is never lying.
+    setTogglePending(true);
+    try {
+      const result = await enablePushNotifications();
+      switch (result) {
+        case 'granted':
+          setPermission('granted');
+          toggleNotifications();
+          void syncNotificationPrefs();
+          break;
+        case 'denied':
+          // Pastreaza toggle OFF; warning denied existent se afiseaza.
+          setPermission('denied');
+          break;
+        case 'unsupported':
+          setPermission('unsupported');
+          break;
+        case 'no-account':
+          // Pastreaza toggle OFF + hint Gigel-friendly (vezi notif-no-account-warning).
+          setPermission('no-account');
+          break;
+        case 'error':
+          // Esec best-effort (config / network) → toggle ramane OFF, fara UI greoi.
+          console.warn('[notif] enablePushNotifications error');
+          break;
+      }
+    } finally {
+      setTogglePending(false);
     }
   }
 
@@ -173,12 +195,24 @@ export function SettingsNotifications(): JSX.Element {
         </p>
 
         <div className="bg-paper2 border border-line rounded-xl p-4 mb-2 flex items-center justify-between">
-          <span className="text-sm text-ink">Notificari active</span>
+          <span className="text-sm text-ink">
+            Notificari active
+            {togglePending && (
+              <span
+                className="ml-2 text-xs text-ink2 italic"
+                data-testid="notif-master-pending"
+                aria-live="polite"
+              >
+                se aplica…
+              </span>
+            )}
+          </span>
           <Toggle
             checked={enabled}
             onToggle={() => { void handleToggle(); }}
             ariaLabel="Activeaza notificari"
             testId="notif-master-toggle"
+            disabled={togglePending}
           />
         </div>
 

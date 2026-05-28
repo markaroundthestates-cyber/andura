@@ -27,7 +27,7 @@ export function OfflineBanner(): JSX.Element | null {
         data-state="reconnected"
         role="status"
         aria-live="polite"
-        className="fixed top-0 left-0 right-0 z-50 bg-succ text-paper px-4 py-2 flex items-center justify-center gap-2 text-sm"
+        className="app-fixed-column fixed top-0 z-50 bg-succ text-paper px-4 py-2 flex items-center justify-center gap-2 text-sm"
       >
         <Wifi className="w-4 h-4" aria-hidden="true" />
         <span>Reconectat - sync reluat.</span>
@@ -42,7 +42,7 @@ export function OfflineBanner(): JSX.Element | null {
       data-state="offline"
       role="status"
       aria-live="polite"
-      className="fixed top-0 left-0 right-0 z-50 bg-ink2 text-paper px-4 py-2 flex items-center justify-center gap-2 text-sm"
+      className="app-fixed-column fixed top-0 z-50 bg-ink2 text-paper px-4 py-2 flex items-center justify-center gap-2 text-sm"
     >
       <WifiOff className="w-4 h-4" aria-hidden="true" />
       <span>Esti offline — datele se salveaza local. Sync reluat la conexiune.</span>

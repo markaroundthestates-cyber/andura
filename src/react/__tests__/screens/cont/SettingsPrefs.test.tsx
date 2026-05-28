@@ -6,6 +6,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { SettingsPrefs } from '../../../routes/screens/cont/SettingsPrefs';
 import { useSettingsStore } from '../../../stores/settingsStore';
+import { _resetI18nCache, setLocale, getCurrentLocale } from '../../../../i18n/index.js';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -27,6 +28,7 @@ function renderScreen() {
 beforeEach(() => {
   useSettingsStore.getState().reset();
   localStorage.clear();
+  _resetI18nCache();
 });
 
 describe('SettingsPrefs — render + interactions', () => {
@@ -65,10 +67,68 @@ describe('SettingsPrefs — render + interactions', () => {
     expect(useSettingsStore.getState().weekStart).toBe('D');
   });
 
-  it('locale section ro-RO display + post-Beta hint', () => {
-    renderScreen();
-    expect(screen.getByText(/Romana \(ro-RO\)/)).toBeInTheDocument();
-    expect(screen.getByText(/Engleza si alte limbi vor fi disponibile post-Beta/)).toBeInTheDocument();
+  // §i18n 2026-05-28 paradigm flip — language toggle is live (Daniel CEO
+  // directive). Replaces the static "Romana — Implicit" placeholder.
+  describe('Language toggle (EN default / RO opt-in)', () => {
+    it('renders heading "Limba / Language"', () => {
+      renderScreen();
+      expect(screen.getByText('Limba / Language')).toBeInTheDocument();
+    });
+
+    it('renders English + Romana options', () => {
+      renderScreen();
+      expect(screen.getByTestId('language-en')).toBeInTheDocument();
+      expect(screen.getByTestId('language-ro')).toBeInTheDocument();
+    });
+
+    it('English is the default selection (post 2026-05-28 paradigm flip)', () => {
+      _resetI18nCache();
+      // navigator.language varies in jsdom but EN is default fallback either way.
+      renderScreen();
+      const en = screen.getByTestId('language-en');
+      // EN may or may not be selected depending on navigator.language (jsdom
+      // is typically en-US). Either way, the EN row carries a "Default" badge.
+      expect(en.textContent).toMatch(/Default/);
+    });
+
+    it('clicking Romana persists ro to localStorage + flips selection', () => {
+      _resetI18nCache();
+      // Force EN starting state so RO click is a real change.
+      setLocale('en');
+      renderScreen();
+      fireEvent.click(screen.getByTestId('language-ro'));
+      expect(localStorage.getItem('sf.locale')).toBe('ro');
+      expect(screen.getByTestId('language-ro')).toHaveAttribute('aria-pressed', 'true');
+      expect(screen.getByTestId('language-en')).toHaveAttribute('aria-pressed', 'false');
+      expect(getCurrentLocale()).toBe('ro');
+    });
+
+    it('clicking English persists en + flips selection', () => {
+      _resetI18nCache();
+      setLocale('ro');
+      renderScreen();
+      fireEvent.click(screen.getByTestId('language-en'));
+      expect(localStorage.getItem('sf.locale')).toBe('en');
+      expect(screen.getByTestId('language-en')).toHaveAttribute('aria-pressed', 'true');
+      expect(getCurrentLocale()).toBe('en');
+    });
+
+    it('clicking the currently-selected option is a no-op (no churn)', () => {
+      _resetI18nCache();
+      setLocale('en');
+      renderScreen();
+      // Click EN while EN is already selected; localStorage stays 'en'.
+      fireEvent.click(screen.getByTestId('language-en'));
+      expect(localStorage.getItem('sf.locale')).toBe('en');
+    });
+
+    it('syncs <html lang> attribute on language change', () => {
+      _resetI18nCache();
+      setLocale('en');
+      renderScreen();
+      fireEvent.click(screen.getByTestId('language-ro'));
+      expect(document.documentElement.lang).toBe('ro');
+    });
   });
 
   it('back navigates la /app/cont', () => {
