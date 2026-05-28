@@ -26,6 +26,7 @@
 
 import type { JSX } from 'react';
 import { useEffect, useRef } from 'react';
+import { t } from '../../../i18n/index.js';
 
 export type ExitAction = 'continue' | 'pause' | 'discard' | 'finish-early';
 
@@ -99,10 +100,10 @@ export function ExitConfirmSheet({
           id="exit-sheet-title"
           className="text-base font-bold text-ink mb-2"
         >
-          Iesi din sesiune?
+          {t('exitSheet.title')}
         </h2>
         <p className="text-sm text-ink2 mb-4">
-          Ai facut {exIdx}/{totalExercises} exercitii. Cum continui?
+          {t('exitSheet.progressLine', { done: exIdx, total: totalExercises })}
         </p>
         <button
           ref={continueRef}
@@ -111,7 +112,7 @@ export function ExitConfirmSheet({
           data-testid="exit-continue"
           className="w-full py-3 bg-ink text-paper dark:bg-brick rounded-xl text-base font-semibold mb-2 transition-transform active:scale-[.97]"
         >
-          Continua sesiunea
+          {t('exitSheet.continueCta')}
         </button>
         <button
           type="button"
@@ -119,7 +120,7 @@ export function ExitConfirmSheet({
           data-testid="exit-pause"
           className="w-full py-3 bg-paper2 border border-lineStrong rounded-xl text-ink text-base font-semibold mb-2"
         >
-          Salveaza si reia mai tarziu
+          {t('exitSheet.pauseCta')}
         </button>
         <button
           type="button"
@@ -127,7 +128,7 @@ export function ExitConfirmSheet({
           data-testid="exit-finish-early"
           className="w-full py-3 bg-paper2 border border-lineStrong rounded-xl text-ink text-base font-semibold mb-2"
         >
-          Termina mai devreme
+          {t('exitSheet.finishEarlyCta')}
         </button>
         <button
           ref={discardRef}
@@ -136,7 +137,7 @@ export function ExitConfirmSheet({
           data-testid="exit-discard"
           className="w-full py-2 text-brick text-sm"
         >
-          Renunt la sesiune
+          {t('exitSheet.discardCta')}
         </button>
       </div>
     </div>

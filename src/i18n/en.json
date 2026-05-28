@@ -615,6 +615,15 @@
     "discard": "Discard"
   },
 
+  "exitSheet": {
+    "title": "Leave the session?",
+    "progressLine": "You've done {done}/{total} exercises. How do you want to continue?",
+    "continueCta": "Continue session",
+    "pauseCta": "Save and resume later",
+    "finishEarlyCta": "Finish early",
+    "discardCta": "Discard session"
+  },
+
   "aaFriction": {
     "title": "That's a big jump",
     "reasons": {
@@ -624,6 +633,18 @@
     },
     "acknowledgeCta": "I'll be careful — log it",
     "forceCta": "Force log anyway"
+  },
+
+  "perSetSafety": {
+    "title": "Hold up",
+    "body": "You picked up the pace beyond usual. Check your form and recover before the next set.",
+    "pauseCta": "Pause 30 sec",
+    "continueCta": "Continue anyway",
+    "reasons": {
+      "fast_sets": "Sets too fast",
+      "kg_jump": "Weight jumped suddenly",
+      "rep_spike": "Reps above usual"
+    }
   },
 
   "inactivity": {

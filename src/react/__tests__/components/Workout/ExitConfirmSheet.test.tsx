@@ -61,7 +61,9 @@ describe('ExitConfirmSheet - a11y modal contract (W4 chat 5 HIGH)', () => {
     expect(sheet).toHaveAttribute('aria-modal', 'true');
     expect(sheet).toHaveAttribute('aria-labelledby', 'exit-sheet-title');
     expect(document.getElementById('exit-sheet-title')).toHaveTextContent(
-      'Iesi din sesiune?',
+      // Wave E1 — EN default surfaces "Leave the session?"; RO opt-in branch
+      // would surface "Iesi din sesiune?" via the same key.
+      'Leave the session?',
     );
   });
 

@@ -615,6 +615,15 @@
     "discard": "Renunta"
   },
 
+  "exitSheet": {
+    "title": "Iesi din sesiune?",
+    "progressLine": "Ai facut {done}/{total} exercitii. Cum continui?",
+    "continueCta": "Continua sesiunea",
+    "pauseCta": "Salveaza si reia mai tarziu",
+    "finishEarlyCta": "Termina mai devreme",
+    "discardCta": "Renunt la sesiune"
+  },
+
   "aaFriction": {
     "title": "Asta e un salt mare",
     "reasons": {
@@ -624,6 +633,18 @@
     },
     "acknowledgeCta": "Am sa fiu atent — logheaza-l",
     "forceCta": "Forteaza logarea oricum"
+  },
+
+  "perSetSafety": {
+    "title": "Stai un pic",
+    "body": "Ai marit ritmul peste obisnuit. Verifica forma si recupereaza inainte de set urmator.",
+    "pauseCta": "Pauza 30 sec",
+    "continueCta": "Continui oricum",
+    "reasons": {
+      "fast_sets": "Set-uri prea rapide",
+      "kg_jump": "Greutate marita brusc",
+      "rep_spike": "Repetari peste obisnuit"
+    }
   },
 
   "inactivity": {

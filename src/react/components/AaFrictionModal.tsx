@@ -11,6 +11,7 @@ import type { JSX } from 'react';
 import { useEffect, useRef } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import type { AggressiveReason } from '../lib/aaFrictionDetect';
+import { t } from '../../i18n/index.js';
 
 interface AaFrictionModalProps {
   open: boolean;
@@ -19,17 +20,14 @@ interface AaFrictionModalProps {
   onForceContinue: () => void;
 }
 
-const COPY = {
-  title: 'Stai un pic',
-  body: 'Ai marit ritmul peste obisnuit. Verifica forma si recupereaza inainte de set urmator.',
-  buttonPause: 'Pauza 30 sec',
-  buttonContinue: 'Continui oricum',
-} as const;
-
-const REASON_LABEL: Record<AggressiveReason, string> = {
-  fast_sets: 'Set-uri prea rapide',
-  kg_jump: 'Greutate marita brusc',
-  rep_spike: 'Repetari peste obisnuit',
+// Labels resolved at render time via t() so the locale flip surfaces EN
+// copy under default (Daniel 2026-05-28 mandate) + RO when opt-in via
+// Cont > Setari > Limba. Key namespace: perSetSafety.* (this IS the
+// per-set safety acknowledge modal — LOCK 9 D-LEGACY-040).
+const REASON_KEY: Record<AggressiveReason, string> = {
+  fast_sets: 'perSetSafety.reasons.fast_sets',
+  kg_jump: 'perSetSafety.reasons.kg_jump',
+  rep_spike: 'perSetSafety.reasons.rep_spike',
 };
 
 export function AaFrictionModal({
@@ -92,11 +90,11 @@ export function AaFrictionModal({
             className="text-base font-bold text-ink"
             data-testid="aa-friction-title"
           >
-            {COPY.title}
+            {t('perSetSafety.title')}
           </h2>
         </div>
         <p className="text-sm text-ink2 mb-4" data-testid="aa-friction-body">
-          {COPY.body}
+          {t('perSetSafety.body')}
         </p>
         {reason && (
           <p
@@ -104,7 +102,7 @@ export function AaFrictionModal({
             data-testid="aa-friction-reason"
             data-reason={reason}
           >
-            {REASON_LABEL[reason]}
+            {t(REASON_KEY[reason])}
           </p>
         )}
         <button
@@ -114,7 +112,7 @@ export function AaFrictionModal({
           data-testid="aa-friction-pause"
           className="w-full py-3 bg-ink text-paper dark:bg-brick rounded-xl text-base font-semibold mb-2"
         >
-          {COPY.buttonPause}
+          {t('perSetSafety.pauseCta')}
         </button>
         <button
           ref={continueRef}
@@ -123,7 +121,7 @@ export function AaFrictionModal({
           data-testid="aa-friction-continue"
           className="w-full py-2 text-brick text-sm"
         >
-          {COPY.buttonContinue}
+          {t('perSetSafety.continueCta')}
         </button>
       </div>
     </div>
