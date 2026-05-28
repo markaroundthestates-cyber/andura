@@ -17,6 +17,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, History } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { pluralRo } from '../../../lib/pluralRo';
+import { Kicker } from '../../../components/pulse/Kicker';
 import { t, getCurrentLocale } from '../../../../i18n/index.js';
 
 // §F-istoric-08 — weekday + month via i18n bundle (Wave E3).
@@ -106,19 +107,17 @@ export function IstoricDetail(): JSX.Element {
           onClick={handleBack}
           aria-label={t('istoric.detail.backAria')}
           data-testid="istoric-detail-back"
-          className="p-2 rounded-full text-ink2"
+          className="p-2 rounded-full text-ink2 press-feedback"
         >
           <ArrowLeft className="w-5 h-5" aria-hidden="true" />
         </button>
-        <h1 className="text-2xl font-semibold text-ink">{session.title}</h1>
+        <h1 className="font-display text-2xl font-bold text-ink">{session.title}</h1>
       </header>
 
-      <div className="bg-paper2 border border-line rounded-xl p-4 mb-4">
-        <div className="flex items-center gap-3 mb-2">
-          <History className="w-5 h-5 text-ink2" aria-hidden="true" />
-          <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">
-            {t('istoric.detail.sessionKicker')}
-          </p>
+      <div className="bg-paper2 border border-line rounded-2xl p-4 mb-4">
+        <div className="flex items-center gap-2.5 mb-2">
+          <History className="w-4 h-4" style={{ color: 'var(--aqua)' }} aria-hidden="true" />
+          <Kicker color="var(--aqua)">{t('istoric.detail.sessionKicker')}</Kicker>
         </div>
         <p className="text-base text-ink" data-testid="istoric-detail-date">
           {formatDate(session.ts)} · {formatTime(session.ts)}
@@ -130,25 +129,25 @@ export function IstoricDetail(): JSX.Element {
 
       {(session.sets !== undefined || session.durationMin !== undefined || session.volumeKg !== undefined) && (
         <div
-          className="grid grid-cols-3 gap-2 mb-4"
+          className="grid grid-cols-3 gap-2.5 mb-4"
           data-testid="istoric-detail-stats-grid"
         >
           {session.sets !== undefined && (
-            <div className="p-3 bg-paper2 border border-line rounded-xl text-center" data-testid="detail-sets">
-              <p className="text-xs text-ink2 uppercase">{t('istoric.detail.stats.sets')}</p>
-              <p className="text-xl font-bold text-ink font-mono">{session.sets}</p>
+            <div className="p-3 bg-paper2 border border-line rounded-2xl text-center" data-testid="detail-sets">
+              <p className="font-mono text-[10px] tracking-wider text-ink3 uppercase">{t('istoric.detail.stats.sets')}</p>
+              <p className="font-display text-xl font-bold text-ink tabular-nums mt-1">{session.sets}</p>
             </div>
           )}
           {session.durationMin !== undefined && (
-            <div className="p-3 bg-paper2 border border-line rounded-xl text-center" data-testid="detail-duration">
-              <p className="text-xs text-ink2 uppercase">{t('istoric.detail.stats.minutes')}</p>
-              <p className="text-xl font-bold text-ink font-mono">{session.durationMin}</p>
+            <div className="p-3 bg-paper2 border border-line rounded-2xl text-center" data-testid="detail-duration">
+              <p className="font-mono text-[10px] tracking-wider text-ink3 uppercase">{t('istoric.detail.stats.minutes')}</p>
+              <p className="font-display text-xl font-bold text-ink tabular-nums mt-1">{session.durationMin}</p>
             </div>
           )}
           {session.volumeKg !== undefined && (
-            <div className="p-3 bg-paper2 border border-line rounded-xl text-center" data-testid="detail-volume">
-              <p className="text-xs text-ink2 uppercase">{t('istoric.detail.stats.tonnage')}</p>
-              <p className="text-xl font-bold text-ink font-mono">{formatKg(session.volumeKg)}</p>
+            <div className="p-3 bg-paper2 border border-line rounded-2xl text-center" data-testid="detail-volume">
+              <p className="font-mono text-[10px] tracking-wider text-ink3 uppercase">{t('istoric.detail.stats.tonnage')}</p>
+              <p className="font-display text-xl font-bold text-ink tabular-nums mt-1">{formatKg(session.volumeKg)}</p>
             </div>
           )}
         </div>
@@ -159,14 +158,14 @@ export function IstoricDetail(): JSX.Element {
          fără exercises field render fallback message. */}
       {session.exercises && session.exercises.length > 0 ? (
         <div data-testid="istoric-detail-breakdown">
-          <p className="text-xs text-ink2 uppercase tracking-wide font-semibold mb-2">
-            {t('istoric.detail.exercisesHeading')}
-          </p>
+          <div className="mb-2.5">
+            <Kicker>{t('istoric.detail.exercisesHeading')}</Kicker>
+          </div>
           {session.exercises.map((ex) => (
             <div
               key={ex.exerciseId}
               data-testid={`detail-ex-${ex.exerciseId}`}
-              className="bg-paper2 border border-line rounded-xl p-4 mb-3"
+              className="bg-paper2 border border-line rounded-2xl p-4 mb-3"
             >
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-ink text-sm">{ex.exerciseName}</h3>

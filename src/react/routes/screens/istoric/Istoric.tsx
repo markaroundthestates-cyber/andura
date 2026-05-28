@@ -12,12 +12,14 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { History, Flame, Trophy } from 'lucide-react';
+import { History, Flame, Trophy, type LucideIcon } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { getPRHistoryAll, getStreakStats } from '../../../lib/prHistoryAggregate';
 import { CalendarHeatmap } from '../../../components/Istoric/CalendarHeatmap';
 import { RatingsStrip90Day } from '../../../components/Istoric/RatingsStrip90Day';
 import { VirtualSessionList } from '../../../components/Istoric/VirtualSessionList';
+import { useCountUp } from '../../../hooks/useCountUp';
+import { Kicker } from '../../../components/pulse/Kicker';
 import { gotoPath } from '../../../lib/navigation';
 import { t } from '../../../../i18n/index.js';
 
@@ -53,64 +55,41 @@ export function Istoric(): JSX.Element {
       className="p-6 bg-paper min-h-screen"
       data-testid="istoric-home"
     >
-      {/* §F-pass4-fontweight-01 (LOW chat5 W17) — title font-weight 600 → 700
-          mockup andura-clasic.html#L1157 (font-weight:700). */}
-      <h1 className="text-2xl font-bold text-ink mb-6">{t('tabs.istoric.title')}</h1>
+      {/* Pulse reskin (2026-05-29 GROUP E) — display font wordmark heading. */}
+      <h1 className="font-display text-[30px] font-bold text-ink mb-4">{t('tabs.istoric.title')}</h1>
 
-      {/* Phase 6 task_23: streak stats summary.
-          Wave A4 polish (Daniel 2026-05-28) — match Antrenor StatsGrid look:
-          radial accent wash anchored top-left, card-rise entrance, stagger
-          across the trio. tabular-nums on the hero numbers for consistent
-          width. */}
+      {/* Phase 6 task_23: streak stats summary. Pulse reskin (GROUP E) — the
+          mockup tints each tile with its own accent (streak=volt, sessions=aqua,
+          records=ember) + animated count-up. Radial accent wash anchored top,
+          card-rise entrance staggered across the trio, tabular-nums hero number. */}
       <div
-        className="grid grid-cols-3 gap-2 mb-4"
+        className="grid grid-cols-3 gap-2.5 mb-4"
         data-testid="istoric-stats-grid"
       >
-        <div className="relative overflow-hidden bg-paper2 border border-line rounded-xl p-3 text-center animate-card-rise delay-0">
-          <span
-            aria-hidden="true"
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                'radial-gradient(circle at 0% 0%, color-mix(in oklab, var(--brick) 18%, transparent) 0%, transparent 60%)',
-            }}
-          />
-          <Flame className="relative w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
-          <p className="relative text-2xl font-bold text-ink font-mono tabular-nums" data-testid="stats-streak">
-            {stats.currentStreak}
-          </p>
-          <p className="relative text-xs text-ink2">{t('istoric.landing.statDaysStreak')}</p>
-        </div>
-        <div className="relative overflow-hidden bg-paper2 border border-line rounded-xl p-3 text-center animate-card-rise delay-75">
-          <span
-            aria-hidden="true"
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                'radial-gradient(circle at 0% 0%, color-mix(in oklab, var(--olive) 18%, transparent) 0%, transparent 60%)',
-            }}
-          />
-          <History className="relative w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
-          <p className="relative text-2xl font-bold text-ink font-mono tabular-nums" data-testid="stats-total">
-            {stats.totalSessions}
-          </p>
-          <p className="relative text-xs text-ink2">{t('istoric.landing.statTotalSessions')}</p>
-        </div>
-        <div className="relative overflow-hidden bg-paper2 border border-line rounded-xl p-3 text-center animate-card-rise delay-150">
-          <span
-            aria-hidden="true"
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                'radial-gradient(circle at 0% 0%, color-mix(in oklab, var(--warn) 18%, transparent) 0%, transparent 60%)',
-            }}
-          />
-          <Trophy className="relative w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
-          <p className="relative text-2xl font-bold text-ink font-mono tabular-nums" data-testid="stats-pr">
-            {stats.prCount}
-          </p>
-          <p className="relative text-xs text-ink2">{t('istoric.landing.statRecords')}</p>
-        </div>
+        <HistStat
+          icon={Flame}
+          color="var(--volt)"
+          value={stats.currentStreak}
+          label={t('istoric.landing.statDaysStreak')}
+          testId="stats-streak"
+          delayCls="delay-0"
+        />
+        <HistStat
+          icon={History}
+          color="var(--aqua)"
+          value={stats.totalSessions}
+          label={t('istoric.landing.statTotalSessions')}
+          testId="stats-total"
+          delayCls="delay-75"
+        />
+        <HistStat
+          icon={Trophy}
+          color="var(--ember)"
+          value={stats.prCount}
+          label={t('istoric.landing.statRecords')}
+          testId="stats-pr"
+          delayCls="delay-150"
+        />
       </div>
 
       {/* F-istoric-01 signature: month-navigable calendar heatmap */}
@@ -125,14 +104,14 @@ export function Istoric(): JSX.Element {
         <section className="mb-6" data-testid="istoric-pr-wall">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-base font-semibold text-ink flex items-center gap-2">
-              <Trophy className="w-4 h-4" aria-hidden="true" />
+              <Trophy className="w-4 h-4" style={{ color: 'var(--ember)' }} aria-hidden="true" />
               {t('istoric.landing.recordsHeading', { n: prHistory.length })}
             </h2>
             <button
               type="button"
               onClick={() => navigate(gotoPath('pr-wall'))}
               data-testid="istoric-pr-wall-see-all"
-              className="text-sm font-semibold text-brickdark"
+              className="text-sm font-semibold text-brickdark press-feedback"
             >
               {t('istoric.landing.seeAll')}
             </button>
@@ -142,10 +121,10 @@ export function Istoric(): JSX.Element {
               <li
                 key={`${pr.exerciseId}-${pr.sessionTs}-${idx}`}
                 data-testid={`pr-row-${idx}`}
-                className="flex justify-between items-center p-3 rounded-xl bg-paper2 border border-line"
+                className="flex justify-between items-center p-3 rounded-2xl bg-paper2 border border-line"
               >
                 <span className="text-sm font-medium text-ink">{pr.exerciseName}</span>
-                <span className="text-sm text-ink2">
+                <span className="font-mono text-[13px] text-ink2">
                   {t('istoric.landing.recordSummary', { kg: pr.kg, reps: pr.reps, oneRM: pr.oneRMEstimate })}
                 </span>
               </li>
@@ -154,7 +133,9 @@ export function Istoric(): JSX.Element {
         </section>
       )}
 
-      <h2 className="text-base font-semibold text-ink mb-2">{t('istoric.landing.sessionsHeading')}</h2>
+      <div className="mb-3">
+        <Kicker>{t('istoric.landing.sessionsHeading')}</Kicker>
+      </div>
       {sorted.length === 0 ? (
         /* UX polish 2026-05-28 — empty state lifted: accent-tinted icon
            halo (color-mix --brick) + heading line + softer body copy +
@@ -192,5 +173,44 @@ export function Istoric(): JSX.Element {
         />
       )}
     </section>
+  );
+}
+
+// Pulse stat tile (GROUP E reskin) — accent-tinted radial wash + colored icon +
+// animated count-up hero number + label. One per streak/sessions/records. The
+// count-up snaps to the final value under reduced motion / in tests (useCountUp).
+function HistStat({
+  icon: Icon,
+  color,
+  value,
+  label,
+  testId,
+  delayCls,
+}: {
+  icon: LucideIcon;
+  color: string;
+  value: number;
+  label: string;
+  testId: string;
+  delayCls: string;
+}): JSX.Element {
+  const display = useCountUp(value);
+  return (
+    <div
+      className={`relative overflow-hidden bg-paper2 border border-line rounded-xl px-2 py-4 text-center animate-card-rise ${delayCls}`}
+    >
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at 50% 0%, color-mix(in oklab, ${color} 16%, transparent) 0%, transparent 65%)`,
+        }}
+      />
+      <Icon className="relative w-[18px] h-[18px] mx-auto mb-1.5" style={{ color }} aria-hidden="true" />
+      <p className="relative font-display text-2xl font-bold text-ink tabular-nums" data-testid={testId}>
+        {display}
+      </p>
+      <p className="relative text-[11px] text-ink2 mt-0.5">{label}</p>
+    </div>
   );
 }

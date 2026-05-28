@@ -753,7 +753,11 @@
       "sessionsHeading": "Sesiuni",
       "emptyTitle": "Prima ta sesiune te asteapta",
       "emptyBody": "Termina un antrenament si apare aici cu toate detaliile.",
-      "recordSummary": "{kg} kg x {reps} (~{oneRM} kg 1RM)"
+      "recordSummary": "{kg} kg x {reps} (~{oneRM} kg 1RM)",
+      "prBadgeAria": "Record personal la aceasta sesiune",
+      "cardMinutes": "min",
+      "cardSets": "seturi",
+      "cardKg": "kg"
     },
 
     "detail": {

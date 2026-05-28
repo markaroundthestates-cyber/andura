@@ -18,6 +18,8 @@ import { useWorkoutStore } from '../../stores/workoutStore';
 import { deriveSessionRating } from '../../lib/sessionRating';
 import type { SessionRating } from '../../lib/sessionRating';
 import { pluralRo } from '../../lib/pluralRo';
+import { useCountUp } from '../../hooks/useCountUp';
+import { Kicker } from '../pulse/Kicker';
 import { t, getCurrentLocale } from '../../../i18n/index.js';
 
 // Wave E3 i18n: locale-aware session-count formatter. Under RO we preserve
@@ -83,9 +85,52 @@ export function computeBuckets(
   return { weeks, counts };
 }
 
+// Pulse reskin (GROUP E): one "feel" count column — big count-up number in the
+// state token color (volt/aqua/ember) + a felt-bar scaled to the busiest count.
+// Bar is decorative (aria-hidden); the number + label carry the meaning. The
+// count-up snaps to final under reduced motion / in tests (useCountUp). The
+// number keeps its `data-testid` so the existing assertions stay intact.
+function FeltCount({
+  label,
+  value,
+  max,
+  color,
+  testId,
+  ariaLabel,
+}: {
+  label: string;
+  value: number;
+  max: number;
+  color: string;
+  testId: string;
+  ariaLabel: string;
+}): JSX.Element {
+  const display = useCountUp(value);
+  const pct = max > 0 ? (value / max) * 100 : 0;
+  return (
+    <div className="text-center" role="group" aria-label={ariaLabel}>
+      <span
+        className="block font-display text-[26px] font-bold tabular-nums"
+        style={{ color }}
+        data-testid={testId}
+      >
+        {display}
+      </span>
+      <span className="block text-[12.5px] text-ink2 mt-0.5">{label}</span>
+      <div className="mt-2 h-1.5 rounded-full bg-paper overflow-hidden" aria-hidden="true">
+        <span
+          className="block h-full rounded-full transition-[width] duration-700"
+          style={{ width: `${pct}%`, background: color }}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function RatingsStrip90Day(): JSX.Element {
   const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
   const { weeks, counts } = computeBuckets(sessionsHistory);
+  const maxCount = Math.max(counts.usor, counts.potrivit, counts.greu, 1);
 
   return (
     <section
@@ -93,13 +138,12 @@ export function RatingsStrip90Day(): JSX.Element {
       aria-label={t('istoric.ratingsStrip.ariaLabel')}
       className="mb-4"
     >
-      <header className="flex items-center justify-between mb-2 mt-4">
-        <h3 className="text-sm uppercase tracking-wide font-semibold text-ink2">
-          {t('istoric.ratingsStrip.heading')}
-        </h3>
-        <span className="text-[11px] text-ink3 font-medium">{t('istoric.ratingsStrip.window')}</span>
-      </header>
-      <div className="bg-white dark:bg-paper2 border border-line rounded-2xl p-4">
+      <div className="bg-white dark:bg-paper2 border border-line rounded-2xl p-[18px]">
+        <div className="flex items-baseline justify-between mb-3.5">
+          <Kicker color="var(--aqua)">{t('istoric.ratingsStrip.heading')}</Kicker>
+          <span className="font-mono text-[10px] text-ink3">{t('istoric.ratingsStrip.window')}</span>
+        </div>
+
         <div className="flex items-end gap-1.5 h-16 mb-3.5" data-testid="rh-strip">
           {weeks.map((cells, idx) => (
             <div
@@ -121,42 +165,39 @@ export function RatingsStrip90Day(): JSX.Element {
           ))}
         </div>
 
-        <div className="grid grid-cols-3 gap-2.5 text-center">
-          <div role="group" aria-label={t('istoric.ratingsStrip.ariaGroupEasy', { count: formatSessionsCount(counts.usor) })}>
-            <span className="block text-xs text-ink3">{t('istoric.ratingsStrip.easy')}</span>
-            <span
-              className="block text-lg font-bold font-mono text-heatGreu"
-              data-testid="count-usor"
-            >
-              {counts.usor}
-            </span>
-          </div>
-          <div role="group" aria-label={t('istoric.ratingsStrip.ariaGroupRight', { count: formatSessionsCount(counts.potrivit) })}>
-            <span className="block text-xs text-ink3">{t('istoric.ratingsStrip.right')}</span>
-            <span
-              className="block text-lg font-bold font-mono text-ink"
-              data-testid="count-potrivit"
-            >
-              {counts.potrivit}
-            </span>
-          </div>
-          <div role="group" aria-label={t('istoric.ratingsStrip.ariaGroupHard', { count: formatSessionsCount(counts.greu) })}>
-            <span className="block text-xs text-ink3">{t('istoric.ratingsStrip.hard')}</span>
-            <span
-              className="block text-lg font-bold font-mono text-brick"
-              data-testid="count-greu"
-            >
-              {counts.greu}
-            </span>
-          </div>
+        <div className="grid grid-cols-3 gap-2.5">
+          <FeltCount
+            label={t('istoric.ratingsStrip.easy')}
+            value={counts.usor}
+            max={maxCount}
+            color="var(--volt)"
+            testId="count-usor"
+            ariaLabel={t('istoric.ratingsStrip.ariaGroupEasy', { count: formatSessionsCount(counts.usor) })}
+          />
+          <FeltCount
+            label={t('istoric.ratingsStrip.right')}
+            value={counts.potrivit}
+            max={maxCount}
+            color="var(--aqua)"
+            testId="count-potrivit"
+            ariaLabel={t('istoric.ratingsStrip.ariaGroupRight', { count: formatSessionsCount(counts.potrivit) })}
+          />
+          <FeltCount
+            label={t('istoric.ratingsStrip.hard')}
+            value={counts.greu}
+            max={maxCount}
+            color="var(--ember)"
+            testId="count-greu"
+            ariaLabel={t('istoric.ratingsStrip.ariaGroupHard', { count: formatSessionsCount(counts.greu) })}
+          />
         </div>
 
         <p
-          className="text-xs text-ink3 mt-3 leading-relaxed text-center"
+          className="text-[11.5px] text-ink3 mt-3.5 leading-relaxed text-center"
           data-testid="ratings-footer"
         >
           {t('istoric.ratingsStrip.footerLead')}{' '}
-          <b>{formatSessionsCount(counts.total)}</b> {t('istoric.ratingsStrip.footerCountSuffix')}
+          <b className="text-ink2">{formatSessionsCount(counts.total)}</b> {t('istoric.ratingsStrip.footerCountSuffix')}
         </p>
       </div>
     </section>
