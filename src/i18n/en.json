@@ -1,40 +1,143 @@
 {
   "_meta": {
     "locale": "en",
-    "version": 1,
-    "description": "EN bundle — placeholder cu TODO_EN markers + RO content fallback inline pentru context. Daniel completeaza manual via wording rewrite session. Acest fisier NU se editeaza de CC fara explicit Daniel approval (fitness terms culturale)."
+    "version": 2,
+    "description": "EN bundle — DEFAULT locale post 2026-05-28 paradigm flip (Daniel CEO directive). Clean fitness English: Workout / Reps / Sets / Body fat (industry-standard vocabulary, cf. Fitbod / Strong / Hevy). All values are user-facing — keep terse and Maria-65-readable (no jargon). New keys: add cu dotted-path nested structure (see `nav.tabs.*` as the canonical shell pattern). RO counterpart in ro.json — must mirror this structure verbatim (bundle integrity test enforces parity)."
   },
 
   "why": {
-    "title": "TODO_EN: ❓ De ce {exercise}?",
-    "dismiss": "TODO_EN: Am inteles",
-    "unavailable": "TODO_EN: Explicatia temporar indisponibila. Recomandarea ramane valida.",
+    "title": "❓ Why {exercise}?",
+    "dismiss": "Got it",
+    "unavailable": "The explanation is temporarily unavailable. The recommendation is still valid.",
     "categorical": {
-      "progression_up": "TODO_EN: Crestem greutatea la {exercise} pentru ca ai progresat constant in ultimele saptamani. Noua tinta e adaptata astfel incat sa mentinem ritmul, fara sa sacrificam forma.",
-      "progression_down": "TODO_EN: Reducem putin greutatea la {exercise} pentru a prioritiza tehnica. Uneori, un mic pas in spate e necesar pentru a debloca urmatorul salt in forta. Ramanem pe pozitii!",
-      "hold": "TODO_EN: Pastram greutatea la {exercise} astazi. Esti intr-o zona excelenta de consolidare, iar asta ne asigura ca baza e solida inainte de urmatoarea crestere.",
-      "recovery": "TODO_EN: Reducem volumul la {exercise} pentru ca semnele de oboseala sunt prezente. E mai inteligent sa te refaci azi, ca sa revii cu forte proaspete la antrenamentul urmator."
+      "progression_up": "We're increasing the weight on {exercise} because you've been progressing steadily over the past weeks. The new target is set so we keep the momentum without compromising your form.",
+      "progression_down": "We're easing the weight on {exercise} to prioritize technique. Sometimes a small step back is what unlocks the next jump in strength. We're holding the line.",
+      "hold": "We're holding the weight on {exercise} today. You're in a great consolidation zone — that makes sure the base is solid before the next bump.",
+      "recovery": "We're trimming volume on {exercise} because fatigue signals are present. It's smarter to recover today so you come back fresh next session."
     }
   },
 
   "modals": {
     "alternative": {
-      "title": "TODO_EN: Inlocuieste exercitiul"
+      "title": "Swap exercise"
     },
     "readiness": {
-      "title": "TODO_EN: Cum te simti azi?",
-      "subtitle": "TODO_EN: Raspunsul afecteaza recomandarile de azi"
+      "title": "How do you feel today?",
+      "subtitle": "Your answer shapes today's recommendations"
     },
     "skip": {
-      "title": "TODO_EN: De ce sari azi?"
+      "title": "Why skip today?"
     }
   },
 
   "common": {
-    "ok": "TODO_EN: OK",
-    "cancel": "TODO_EN: Anuleaza",
-    "close": "TODO_EN: Inchide",
-    "confirm": "TODO_EN: Confirma",
-    "loading": "TODO_EN: Se incarca..."
+    "ok": "OK",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "loading": "Loading…"
+  },
+
+  "nav": {
+    "tabs": {
+      "antrenor": "Coach",
+      "progres": "Progress",
+      "istoric": "History",
+      "cont": "Account"
+    },
+    "ariaLabel": "Main navigation",
+    "skipToContent": "Skip to content"
+  },
+
+  "tabs": {
+    "antrenor": {
+      "title": "Coach"
+    },
+    "progres": {
+      "title": "Progress",
+      "subtitle": "Body composition · calibrated estimates."
+    },
+    "istoric": {
+      "title": "History"
+    },
+    "cont": {
+      "title": "Account"
+    }
+  },
+
+  "obiectiv": {
+    "heading": "Goal",
+    "targetWeightLabel": "Target weight (kg)",
+    "targetMonthLabel": "By",
+    "etaSuffix": "at a healthy pace.",
+    "etaPrefix": "Estimated in",
+    "atTarget": "You're already at your goal.",
+    "subhealthyWarning": "This goal is below a healthy weight (~{minKg} kg minimum at your height). Pick a healthy target.",
+    "weeks_one": "~{n} week",
+    "weeks_other": "~{n} weeks",
+    "months_one": "~{n} month",
+    "months_other": "~{n} months"
+  },
+
+  "cont": {
+    "sections": {
+      "cont": "Account",
+      "general": "General",
+      "privacy": "Data & privacy",
+      "danger": "Logout & delete",
+      "help": "Help"
+    },
+    "rows": {
+      "profile": "Profile",
+      "notifications": "Notifications",
+      "subscription": "Subscription",
+      "appearance": "Appearance",
+      "aparateLipsa": "Missing equipment",
+      "prefs": "Settings",
+      "privacy": "Privacy policy",
+      "terms": "Terms of service",
+      "export": "Download your data (JSON)",
+      "import": "Import history (weight + nutrition)",
+      "danger": "Logout & delete",
+      "support": "Support",
+      "cevaNuMerge": "Report a problem",
+      "about": "About Andura",
+      "faq": "FAQ"
+    },
+    "accountFallback": "User",
+    "emailFallback": "Your Andura profile",
+    "version": "Andura v1.0.0"
+  },
+
+  "settings": {
+    "prefs": {
+      "title": "Settings",
+      "units": {
+        "heading": "Units",
+        "kg": "Kilograms (kg)",
+        "lb": "Pounds (lb)",
+        "note": "Kilograms only for now. Pounds will be available post-Beta."
+      },
+      "weekStart": {
+        "heading": "Week starts on",
+        "monday": "Monday",
+        "sunday": "Sunday"
+      },
+      "language": {
+        "heading": "Language",
+        "english": "English",
+        "romanian": "Romana",
+        "default": "Default"
+      },
+      "advanced": {
+        "heading": "Advanced",
+        "resetCoach": "Reset coach",
+        "resetCoachDesc": "Restart AI learning from scratch",
+        "redoOnboarding": "Redo onboarding",
+        "redoOnboardingDesc": "Re-run the initial setup",
+        "schimbaFaza": "Switch phase manually",
+        "schimbaFazaDesc": "Reset some calibrations"
+      }
+    }
   }
 }

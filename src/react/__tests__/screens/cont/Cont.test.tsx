@@ -25,9 +25,10 @@ beforeEach(() => {
 });
 
 describe('Cont landing — Phase 5 task_13', () => {
-  it('renders Cont heading', () => {
+  it('renders Cont heading (EN default post 2026-05-28 — "Account")', () => {
     renderCont();
-    expect(screen.getByRole('heading', { name: /^Cont$/i, level: 1 })).toBeInTheDocument();
+    // Default locale is EN — heading reads "Account".
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Account');
   });
 
   it('renders account card', () => {
@@ -62,13 +63,15 @@ describe('Cont landing — Phase 5 task_13', () => {
     expect(row).not.toBeDisabled();
   });
 
-  it('renders 5 sections mockup verbatim', () => {
+  it('renders 5 sections mockup verbatim (stable English ids post-i18n)', () => {
     renderCont();
+    // §i18n 2026-05-28 — section testids now stable English keys (independent
+    // of locale). Visible label localizes via t('cont.sections.*').
     expect(screen.getByTestId('cont-section-cont')).toBeInTheDocument();
     expect(screen.getByTestId('cont-section-general')).toBeInTheDocument();
-    expect(screen.getByTestId('cont-section-date-si-confidentialitate')).toBeInTheDocument();
-    expect(screen.getByTestId('cont-section-deconectare-si-stergere')).toBeInTheDocument();
-    expect(screen.getByTestId('cont-section-ajutor')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-section-privacy')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-section-danger')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-section-help')).toBeInTheDocument();
   });
 
   it('renders all 13 rows total per mockup', () => {

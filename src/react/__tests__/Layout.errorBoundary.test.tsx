@@ -52,7 +52,8 @@ describe('Layout — ErrorBoundary + Suspense wrap Outlet (Phase 6 task_20)', ()
 
   it('renders BottomNav persistent layout chrome', () => {
     renderAt('/app', <WorkingScreen />);
-    expect(screen.getByRole('navigation', { name: /Navigare principala/i })).toBeInTheDocument();
+    // §i18n 2026-05-28 — EN default → aria-label "Main navigation".
+    expect(screen.getByRole('navigation', { name: /Main navigation/i })).toBeInTheDocument();
   });
 
   it('main element + Suspense+ErrorBoundary structural wrap', () => {

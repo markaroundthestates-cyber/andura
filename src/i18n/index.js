@@ -2,20 +2,29 @@
 // Decoupled JSON bundles per ADR; runtime `t(key, vars)` helper cu fallback chain
 // + dotted-path key resolution + var interpolation `{name}` syntax.
 //
-// Locales supported v1: `ro` (default), `en` (placeholder cu TODO_EN markers
-// pentru Daniel translation work).
+// Locales supported v1: `en` (DEFAULT — 2026-05-28 paradigm flip), `ro` (opt-in
+// din Cont > Setari > Limba).
+//
+// Daniel directive 2026-05-28 verbatim: "Plot twist - nu imi plac sub nici o
+// forma denumirile in romana asa ca schimbam complet limba default in engleza
+// si lasam romana ca optiune din cont sa ramana limba romana pentru cine vrea".
+// Default locale flipped `ro` → `en`. EN bundle no longer carries TODO_EN
+// placeholders — strings are clean fitness English (industry-standard
+// vocabulary: Workout/Reps/Sets/Body fat etc.). RO bundle stays as-is for
+// users who opt in via the Cont language toggle. RO no-diacritics rule
+// (D-LEGACY-064) preserved — RO strings remain without diacritics.
 //
 // ── Public API ──────────────────────────────────────────────────────────────
 //
 //   t(key, vars?)        → translated string sau key fallback daca missing
-//   getCurrentLocale()   → 'ro' | 'en' (auto-detect: localStorage → navigator → 'ro')
-//   setLocale(locale)    → persist localStorage 'sf.locale'
+//   getCurrentLocale()   → 'ro' | 'en' (auto-detect: localStorage → navigator → 'en')
+//   setLocale(locale)    → persist localStorage 'sf.locale' + updates <html lang>
 //   _resetI18nCache()    → clear cache (testing only)
 //
 // ── Lookup chain ────────────────────────────────────────────────────────────
 //
 //   1. Bundle pentru locale curent
-//   2. Bundle pentru 'en' (default fallback)
+//   2. Bundle pentru 'en' (default fallback — was 'en' even pre-flip)
 //   3. Key string itself (last-resort, dev visibility)
 
 import roBundle from './ro.json';
@@ -27,15 +36,14 @@ const BUNDLES = Object.freeze({
 });
 
 const LOCALE_STORAGE_KEY = 'sf.locale';
-const DEFAULT_LOCALE = 'ro';
+const DEFAULT_LOCALE = 'en';
 const FALLBACK_LOCALE = 'en';
 
-// Locales auto-selectable din navigator.language. `en` e EXCLUS: bundle-ul EN
-// e placeholder neterminat (markeri `TODO_EN:`) post-Beta — Andura V1 e RO-only
-// (vezi SettingsPrefs "Romana — Implicit"). Un browser en-US NU trebuie sa
-// primeasca raw TODO_EN strings; doar `ro` se auto-detecteaza. Alegere explicita
-// user (setLocale → localStorage) ramane onorata pentru orice bundle suportat.
-const AUTO_DETECT_LOCALES = Object.freeze(['ro']);
+// Locales auto-selectable din navigator.language. Both supported now (was
+// `['ro']` only when EN bundle had TODO_EN placeholders — that anti-leak
+// guard is no longer needed since EN is translated). User explicit choice via
+// setLocale → localStorage takes precedence anyway.
+const AUTO_DETECT_LOCALES = Object.freeze(['en', 'ro']);
 
 /** @type {'ro' | 'en' | null} */
 let _cachedLocale = null;
@@ -114,6 +122,8 @@ export function getCurrentLocale() {
 
 /**
  * Set + persist user locale override. Validates against supported bundles.
+ * Also syncs `document.documentElement.lang` so a11y tools + SEO crawlers
+ * see the right language (browser/screen-reader pronunciation cue).
  *
  * @param {'ro' | 'en'} locale
  * @returns {boolean} true daca applied, false daca unsupported
@@ -127,7 +137,26 @@ export function setLocale(locale) {
     }
   } catch { /* ignore */ }
   _cachedLocale = locale;
+  // Sync <html lang> — best-effort; non-DOM env (SSR/jsdom no document) skipped.
+  try {
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.lang = locale;
+    }
+  } catch { /* ignore */ }
   return true;
+}
+
+/**
+ * Sync <html lang> with the current locale. Useful for app boot (call once
+ * after i18n module loads) so the initial HTML lang attribute reflects the
+ * persisted/detected choice without requiring an explicit setLocale call.
+ */
+export function syncHtmlLang() {
+  try {
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.lang = getCurrentLocale();
+    }
+  } catch { /* ignore */ }
 }
 
 /**

@@ -1,8 +1,8 @@
 {
   "_meta": {
     "locale": "ro",
-    "version": 1,
-    "description": "RO bundle — primary locale v1. Toate strings user-facing extracted progresiv din src/. Add new keys cu dotted-path nested structure (vezi `why.categorical.*` ca pattern)."
+    "version": 2,
+    "description": "RO bundle — opt-in locale post 2026-05-28 paradigm flip (Daniel CEO directive: default = EN, RO ramane optiune din Cont). RO no-diacritics rule (D-LEGACY-064) PRESERVED — toate string-urile aici sunt fara diacritice. Toate cheile mirror EN bundle (bundle integrity test enforces parity). Adauga chei noi cu dotted-path nested (vezi `nav.tabs.*` ca pattern canonic shell)."
   },
 
   "why": {
@@ -36,5 +36,108 @@
     "close": "Inchide",
     "confirm": "Confirma",
     "loading": "Se incarca..."
+  },
+
+  "nav": {
+    "tabs": {
+      "antrenor": "Antrenor",
+      "progres": "Progres",
+      "istoric": "Istoric",
+      "cont": "Cont"
+    },
+    "ariaLabel": "Navigare principala",
+    "skipToContent": "Sari la continut"
+  },
+
+  "tabs": {
+    "antrenor": {
+      "title": "Antrenor"
+    },
+    "progres": {
+      "title": "Progres",
+      "subtitle": "Body composition · estimari calibrate."
+    },
+    "istoric": {
+      "title": "Istoric"
+    },
+    "cont": {
+      "title": "Cont"
+    }
+  },
+
+  "obiectiv": {
+    "heading": "Obiectiv",
+    "targetWeightLabel": "Greutate tinta (kg)",
+    "targetMonthLabel": "Pana in",
+    "etaSuffix": "la un ritm sanatos.",
+    "etaPrefix": "Estimat in",
+    "atTarget": "Esti deja la tinta.",
+    "subhealthyWarning": "Tinta e sub greutatea sanatoasa (~{minKg} kg minim la inaltimea ta). Alege o tinta sanatoasa.",
+    "weeks_one": "~{n} saptamana",
+    "weeks_other": "~{n} saptamani",
+    "months_one": "~{n} luna",
+    "months_other": "~{n} luni"
+  },
+
+  "cont": {
+    "sections": {
+      "cont": "Cont",
+      "general": "General",
+      "privacy": "Date si confidentialitate",
+      "danger": "Deconectare si Stergere",
+      "help": "Ajutor"
+    },
+    "rows": {
+      "profile": "Profil si tinte",
+      "notifications": "Notificari",
+      "subscription": "Abonament",
+      "appearance": "Aspect",
+      "aparateLipsa": "Aparate lipsa",
+      "prefs": "Setari",
+      "privacy": "Politica de confidentialitate",
+      "terms": "Termeni si conditii",
+      "export": "Descarca datele tale (JSON)",
+      "import": "Importa istoric (greutate + nutritie)",
+      "danger": "Deconectare si Stergere",
+      "support": "Suport",
+      "cevaNuMerge": "Ceva nu merge",
+      "about": "Despre Andura",
+      "faq": "FAQ"
+    },
+    "accountFallback": "Utilizator",
+    "emailFallback": "Profilul tau Andura",
+    "version": "Andura v1.0.0"
+  },
+
+  "settings": {
+    "prefs": {
+      "title": "Setari",
+      "units": {
+        "heading": "Unitati",
+        "kg": "Kilograme (kg)",
+        "lb": "Pounds (lb)",
+        "note": "Momentan doar kilograme. Pounds vor fi disponibile post-Beta."
+      },
+      "weekStart": {
+        "heading": "Inceput saptamana",
+        "monday": "Luni",
+        "sunday": "Duminica"
+      },
+      "language": {
+        "heading": "Limba",
+        "english": "English",
+        "romanian": "Romana",
+        "default": "Implicit"
+      },
+      "advanced": {
+        "heading": "Avansat",
+        "resetCoach": "Reseteaza coach",
+        "resetCoachDesc": "Reporneste invatarea AI de la zero",
+        "redoOnboarding": "Refa onboarding",
+        "redoOnboardingDesc": "Reia configurarea initiala",
+        "schimbaFaza": "Schimba faza manual",
+        "schimbaFazaDesc": "Reseteaza unele calibrari"
+      }
+    }
   }
 }

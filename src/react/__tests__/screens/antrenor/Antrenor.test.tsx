@@ -75,9 +75,9 @@ describe('Antrenor home — base render', () => {
     vi.mocked(getFatigue).mockReturnValue(null);
   });
 
-  it('renders Antrenor heading', () => {
+  it('renders Antrenor heading (EN default post 2026-05-28 paradigm flip — "Coach")', () => {
     renderAntrenor();
-    expect(screen.getByRole('heading', { name: 'Antrenor', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Coach');
   });
 
   it('renders Incepe antrenament CTA by default (no paused session)', () => {
@@ -450,7 +450,8 @@ describe('Antrenor home — HIGH-CODE-07 defense-in-depth promise catch', () => 
     renderAntrenor();
     await screen.findByTestId('antrenor-error-banner');
     // CTA Incepe antrenament + heading still present so user can proceed.
-    expect(screen.getByRole('heading', { name: 'Antrenor', level: 1 })).toBeInTheDocument();
+    // Heading "Coach" under EN default.
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Coach');
     expect(screen.getByRole('button', { name: /Incepe antrenament/i })).toBeInTheDocument();
   });
 

@@ -12,6 +12,7 @@ import { applyInitialTheme, ThemeSync } from './react/lib/themeSync';
 import { applyInitialPalette, PaletteSync } from './react/lib/paletteSync';
 import { useSettingsStore } from './react/stores/settingsStore';
 import { runReactBoot } from './react/lib/reactBoot';
+import { syncHtmlLang } from './i18n/index.js';
 import './styles/global.css';
 
 // Apply persisted theme synchronously pre-mount to prevent FOUC flash.
@@ -19,6 +20,10 @@ applyInitialTheme();
 // Apply persisted palette (Luxury/Living Body override layer) pre-mount too —
 // same anti-FOUC reason; clasic/brain-coach clear the attr so theme owns them.
 applyInitialPalette();
+// §i18n 2026-05-28 — sync <html lang> with the persisted/detected locale at
+// boot so a11y tools + SEO see "en" by default (or "ro" if the user opted in
+// via Cont > Setari > Limba). Pre-mount so the initial HTML reflects choice.
+syncHtmlLang();
 
 // §SECURITY-HIGH-1-SENTRY-FIX (DIM 10 SECURITY-AUDIT-DEEPER chat 5) —
 // GDPR Art. 7 consent gate. Sentry init pornit DOAR daca user opt-in

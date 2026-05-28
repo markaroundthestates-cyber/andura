@@ -21,6 +21,24 @@ import { useProgresStore } from '../../stores/progresStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { getCurrentWeightKg } from '../../lib/userTdee';
 import { computeTargetEta, fmtKg } from '../../lib/targetEta';
+import { t } from '../../../i18n/index.js';
+
+/**
+ * §i18n 2026-05-28 — pluralized horizon label via t() keys. Uses CLDR-style
+ * "_one" / "_other" suffix per locale (English: 1 month/2 months; Romanian:
+ * 1 luna/2 luni). The pure `etaHorizonLabel` in lib/targetEta.ts still emits
+ * a Romanian default for legacy non-React callers (e.g. ad-hoc CDL strings);
+ * this React-side helper wraps it in i18n.
+ */
+function localizeEta(weeks: number): string {
+  if (weeks < 8) {
+    const key = weeks === 1 ? 'obiectiv.weeks_one' : 'obiectiv.weeks_other';
+    return t(key, { n: weeks });
+  }
+  const months = Math.round(weeks / 4.345);
+  const key = months === 1 ? 'obiectiv.months_one' : 'obiectiv.months_other';
+  return t(key, { n: months });
+}
 
 export function ObiectivCard(): JSX.Element {
   const target = useProgresStore((s) => s.targetObiectiv);
@@ -57,11 +75,11 @@ export function ObiectivCard(): JSX.Element {
         className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2 flex items-center gap-1.5"
       >
         <Target className="w-3.5 h-3.5" aria-hidden="true" />
-        Obiectiv
+        {t('obiectiv.heading')}
       </p>
       <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
         <label className="flex items-center justify-between px-4 py-3 border-b border-line">
-          <span className="text-sm text-ink">Greutate tinta (kg)</span>
+          <span className="text-sm text-ink">{t('obiectiv.targetWeightLabel')}</span>
           <input
             type="number"
             min={30}
@@ -77,7 +95,7 @@ export function ObiectivCard(): JSX.Element {
           />
         </label>
         <label className="flex items-center justify-between px-4 py-3">
-          <span className="text-sm text-ink">Pana in</span>
+          <span className="text-sm text-ink">{t('obiectiv.targetMonthLabel')}</span>
           <input
             type="month"
             value={target.month ?? ''}
@@ -93,7 +111,7 @@ export function ObiectivCard(): JSX.Element {
           role="alert"
           data-testid="obiectiv-warning"
         >
-          Tinta e sub greutatea sanatoasa (~{fmtKg(eta.minKg)} kg minim la inaltimea ta). Alege o tinta sanatoasa.
+          {t('obiectiv.subhealthyWarning', { minKg: fmtKg(eta.minKg) })}
         </p>
       )}
       {eta?.kind === 'at-target' && (
@@ -101,7 +119,7 @@ export function ObiectivCard(): JSX.Element {
           className="text-xs text-succ mt-2 px-1 leading-snug font-medium"
           data-testid="obiectiv-at-target"
         >
-          Esti deja la tinta.
+          {t('obiectiv.atTarget')}
         </p>
       )}
       {eta?.kind === 'eta' && (
@@ -109,7 +127,7 @@ export function ObiectivCard(): JSX.Element {
           className="text-xs text-ink3 mt-2 px-1 leading-snug"
           data-testid="obiectiv-eta"
         >
-          Estimat in {eta.label} la un ritm sanatos.
+          {t('obiectiv.etaPrefix')} {localizeEta(eta.weeks)} {t('obiectiv.etaSuffix')}
         </p>
       )}
     </section>

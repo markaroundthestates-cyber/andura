@@ -19,6 +19,7 @@ import { CalendarHeatmap } from '../../../components/Istoric/CalendarHeatmap';
 import { RatingsStrip90Day } from '../../../components/Istoric/RatingsStrip90Day';
 import { VirtualSessionList } from '../../../components/Istoric/VirtualSessionList';
 import { gotoPath } from '../../../lib/navigation';
+import { t } from '../../../../i18n/index.js';
 
 // §F-istoric-08 — Romanian weekday + month labels no-diacritics manual map.
 // Sunday-first index (Date.getDay() returns 0=Sunday). Mockup uses
@@ -77,7 +78,7 @@ export function Istoric(): JSX.Element {
     >
       {/* §F-pass4-fontweight-01 (LOW chat5 W17) — title font-weight 600 → 700
           mockup andura-clasic.html#L1157 (font-weight:700). */}
-      <h1 className="text-2xl font-bold text-ink mb-6">Istoric</h1>
+      <h1 className="text-2xl font-bold text-ink mb-6">{t('tabs.istoric.title')}</h1>
 
       {/* Phase 6 task_23: streak stats summary */}
       <div

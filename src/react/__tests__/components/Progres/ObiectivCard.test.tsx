@@ -9,6 +9,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { ObiectivCard } from '../../../components/Progres/ObiectivCard';
 import { useProgresStore } from '../../../stores/progresStore';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function renderCard() {
   return render(
@@ -19,6 +20,12 @@ function renderCard() {
 }
 
 beforeEach(() => {
+  // §i18n 2026-05-28 — pin locale to RO for these assertions so the existing
+  // RO-text matchers ("Obiectiv", "Tinta e sub greutatea sanatoasa", "~3 luni
+  // la un ritm sanatos") remain stable. EN-locale parity is enforced
+  // separately by the i18n bundle-integrity tests.
+  _resetI18nCache();
+  setLocale('ro');
   useProgresStore.getState().reset();
   useOnboardingStore.setState({
     data: {

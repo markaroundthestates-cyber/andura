@@ -48,11 +48,10 @@ describe('Istoric — empty state', () => {
     resetStore();
   });
 
-  it('renders heading + empty state cand sessionsHistory empty', () => {
+  it('renders heading + empty state cand sessionsHistory empty (EN default post 2026-05-28)', () => {
     renderIstoric();
-    expect(
-      screen.getByRole('heading', { name: /^Istoric$/i, level: 1 })
-    ).toBeInTheDocument();
+    // Default locale flipped to EN — heading is "History".
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('History');
     expect(screen.getByTestId('istoric-empty')).toBeInTheDocument();
     expect(screen.getByText(/Nu ai antrenamente inca/i)).toBeInTheDocument();
   });
