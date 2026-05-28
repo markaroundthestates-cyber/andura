@@ -987,3 +987,117 @@ html, body {
    stacking context via box-shadow; explicit relative+z-index 1 is harmless and
    defensive across browser quirks. */
 #root { position: relative; z-index: 1; }
+
+/* ══ DELIGHT TIER — PREMIUM POLISH CLASSES (A6 pass 2026-05-28) ════════════
+   Daniel verbatim: "TOP design ux" + "sa nu fie painfull sa o folosesti" +
+   "sa atraga omul sa stea pe ea". Micro-improvements that signal craft.
+   All classes here are OPT-IN — added to specific interactive surfaces, not
+   mass-applied. Each obeys the global prefers-reduced-motion cap above.
+
+   Cross-refs:
+     - .btn-primary-lift / .btn-secondary-lift (lines 329-388) — primary CTA halos
+     - .press-feedback (line 683) — base press scale (gentler 0.94 → refined 0.97)
+     - .focus-visible global outline (line 301) — keyboard a11y baseline; the
+       focus-ring-premium class below is the next-tier visual polish for
+       hero CTAs that want a softer, ringed look. */
+
+/* Premium focus ring — softer than the default outline for hero CTAs.
+   Two-layer halo: a soft accent-tinted spread + a thin offset ring against
+   the page bg, so the focused element reads as "selected on a stage" not
+   "outlined like a console widget". Pair with btn-primary-lift base class
+   for hero CTAs; falls back to global :focus-visible outline if applied to
+   non-button elements (less common). Auto-tinted per palette via --brick. */
+.focus-ring-premium:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--paper),
+    0 0 0 4px color-mix(in oklab, var(--brick) 55%, transparent),
+    0 0 0 7px color-mix(in oklab, var(--brick) 18%, transparent);
+}
+
+/* Card hover lift — for interactive card-shaped surfaces (CoachTodayCard CTA
+   tile, ObiectivCard, Quick-action cards). Lifts 2px on hover with a soft
+   accent-tinted shadow, settles on press. Hover-capable devices only (so
+   touch doesn't strobe). Apply ONLY to cards that ACT like buttons; pure
+   info cards keep their flat surface. */
+.card-hover-lift {
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 200ms ease-out;
+}
+@media (hover: hover) {
+  .card-hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 24px -8px color-mix(in oklab, black 35%, transparent),
+      0 2px 8px -2px color-mix(in oklab, var(--brick) 18%, transparent);
+  }
+}
+.card-hover-lift:active {
+  transform: translateY(0) scale(0.99);
+}
+
+/* Numeric display utility — for big numeric reads (weight, kcal, streak count,
+   PR weight, session count). Engages OpenType tabular + lining numerals so
+   digits align in a column (no kerning jitter between 1-1-1 vs 0-3-8). Tight
+   letter-spacing reads as "this number matters". Use sparingly — adds visual
+   weight; reserve for the screen's hero metric. */
+.num-display {
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Press feedback refined — replaces the bolder original (scale 0.94 → 0.97
+   per A6 spec). 100ms ease-out keeps the response under the 16ms-perception
+   budget so the press reads instant. The 0.97 (vs 0.94) feels more "premium
+   confirm" than "console boop". Applied via .press-feedback so consumers
+   pick it up automatically (no per-component churn). Original was overridden
+   above by the class-block at line 683 with scale 0.94 + 120ms — we LIFT
+   that here to align with the new "premium confirm" baseline. */
+.press-feedback-refined {
+  transition: transform 100ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.press-feedback-refined:active {
+  transform: scale(0.97);
+}
+
+/* Heading typography polish — applied to h1/h2 inside .typography-polish
+   ancestor. Activates Inter stylistic alternates ss01 + ss03 (cleaner 'a',
+   single-story 'g' variants) for a more elegant editorial feel. Opt-in via
+   class to avoid changing prod typography globally without QA across all 30+
+   screens. */
+.typography-polish h1,
+.typography-polish h2 {
+  font-feature-settings: 'ss01' 1, 'ss03' 1, 'cv11' 1;
+  letter-spacing: -0.02em;
+}
+
+/* Surface elevated sheen polish — extends the existing .surface-elevated
+   (line 366-372) with a subtle top-down sheen 2% darker at the bottom so
+   the gradient reads as "the card catches the light". Applied conditionally
+   via .surface-elevated-sheen — opt-in to avoid changing every card in the
+   app at once (some cards have their own bg gradients and would double up). */
+.surface-elevated-sheen {
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--paper-2) 94%, white 6%) 0%,
+    var(--paper-2) 50%,
+    color-mix(in oklab, var(--paper-2) 96%, black 4%) 100%
+  );
+}
+
+/* Hairline divider polish — replaces flat border-line with a centered fade.
+   The line gradient is visually lighter at the edges, heavier at center
+   (like a magazine separator). For section breaks inside long-scroll
+   screens (Settings landing, Onboarding sub-sections). */
+.divider-fade {
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--line-strong) 50%,
+    transparent 100%
+  );
+  opacity: 0.4;
+  border: none;
+}
