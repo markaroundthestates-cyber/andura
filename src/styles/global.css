@@ -836,11 +836,77 @@ html, body {
      (max-width + left:50% + translateX). See `.app-fixed-column` utility
      below (used by BottomNav/SessionPill/Toast/InstallPrompt/UpdatePrompt/
      OfflineBanner). Modals stay `inset-0` viewport-wide (correct overlay
-     behavior). */
+     behavior).
+
+     Phone-frame polish 2026-05-28 (Daniel "in browser vreau sa o faci mai
+     mica nu cat tot ecranul" + "sa atraga omul sa stea pe ea"): the column
+     already maxes at 430px, but on light Clasic the column bg = body bg =
+     cream → visually flush. The desktop @media block below lifts the column
+     OFF the page with: stronger shadow, rounded corners, hairline ring, and
+     a paper bg explicit so the body stage (tinted via body::before below)
+     surrounds it visibly. Mobile (≤480px) stays edge-to-edge — zero phone
+     frame, zero shadow, identical to current mobile look (PWA invariant). */
   max-width: 430px;
   margin-left: auto;
   margin-right: auto;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Desktop phone-frame stage (≥768px) — Daniel 2026-05-28 polish pass A6.
+   The phone column gets a luxury "device-on-stage" treatment so the desktop
+   visitor reads it as a PRODUCT, not a stretched web app. The visible cues:
+     1. The column bg = explicit var(--paper) so it separates against the
+        tinted body stage below (without this, light Clasic = column blends
+        flat with body).
+     2. A layered luxury shadow lifts the column off the page (ambient outer
+        depth + accent-tinted halo via --brick color-mix, palette-aware).
+     3. A 1px hairline ring (--line-strong color-mix) draws a soft device
+        boundary so the column edge reads as a defined surface even on
+        light themes.
+   NO margins / NO border-radius / NO overflow — the column extends full
+   viewport height so SubHeader sticky-top-0 + BottomNav fixed-bottom-0 stay
+   aligned with the column. The luxury read comes from shadow + ring + body
+   stage tint, NOT from physical chrome (which would create alignment issues
+   with the sticky/fixed chrome layers). */
+@media (min-width: 768px) {
+  #root {
+    background: var(--paper);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--line-strong) 40%, transparent),
+      0 24px 64px -20px color-mix(in oklab, black 50%, transparent),
+      0 10px 28px -10px color-mix(in oklab, var(--brick) 22%, transparent);
+  }
+}
+
+/* Desktop stage tint — light Clasic theme (≥768px). The body is tinted 3%
+   warmer than the column bg so the column reads as a card floating above
+   a soft surround. Without this, body=paper=#faf7f1 = column=#faf7f1 → flush.
+   Mobile (<768px) keeps body=paper flat (current behavior, PWA invariant). */
+@media (min-width: 768px) {
+  body {
+    background:
+      radial-gradient(ellipse at 50% 0%, color-mix(in oklab, var(--brick) 4%, var(--paper)) 0%, color-mix(in oklab, var(--ink) 6%, var(--paper)) 70%);
+    background-attachment: fixed;
+  }
+}
+
+/* Desktop stage tint — dark themes (≥768px) deepen the existing radial glow
+   so the column has more visible perimeter contrast vs the surround. The
+   :root rules above already set body bg for dark themes; here we lift the
+   intensity for desktop only. Mobile keeps the gentler glow. */
+@media (min-width: 768px) {
+  [data-theme="dark"] body {
+    background: radial-gradient(ellipse at 50% 0%, #221a40, #030308 70%);
+    background-attachment: fixed;
+  }
+  [data-palette="luxury"] body {
+    background: radial-gradient(ellipse at 50% 0%, #15191f, #010102 60%);
+    background-attachment: fixed;
+  }
+  [data-palette="living-body"] body {
+    background: radial-gradient(ellipse at 50% 40%, #131720, #000 80%);
+    background-attachment: fixed;
+  }
 }
 
 /* App-column constraint for `position: fixed` chrome (BottomNav, SessionPill,
