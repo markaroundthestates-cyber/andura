@@ -72,10 +72,20 @@ describe('Phone-frame stage — desktop #root chrome (≥768px)', () => {
     expect(block).toMatch(/color-mix\([^)]*--brick/);
   });
 
-  it('keeps the mobile-frame max-width:430px declared at the base #root rule', () => {
-    // Base #root rule (outside @media) must still cap at 430px so mobile
-    // viewport sees the natural mobile column without desktop chrome.
-    expect(globalCss).toMatch(/#root\s*\{[\s\S]*?max-width:\s*430px/);
+  it('narrows the desktop column to ~400px via --app-col-w override (Daniel 2026-05-28)', () => {
+    // Desktop @media #root overrides --app-col-w (430 mobile -> 400 desktop) so
+    // the column reads a touch smaller on big screens, "not phone-tiny". The
+    // fixed chrome reads the same var, so BottomNav stays aligned.
+    const block = findRootDesktopBlock();
+    expect(block).toMatch(/--app-col-w:\s*400px/);
+  });
+
+  it('caps the mobile-frame at 430px via --app-col-w var at the base #root rule', () => {
+    // Refactor 2026-05-28 (Daniel "pe desktop mai mic putin"): the base width
+    // moved to a --app-col-w var (430px on mobile) so the desktop @media can
+    // narrow it while #root + .app-fixed-column stay aligned off one source.
+    expect(globalCss).toMatch(/#root\s*\{[\s\S]*?--app-col-w:\s*430px/);
+    expect(globalCss).toMatch(/#root\s*\{[\s\S]*?max-width:\s*var\(--app-col-w\)/);
   });
 
   it('does NOT introduce border-radius on #root (would clip sticky SubHeader)', () => {
@@ -140,12 +150,13 @@ describe('Phone-frame stage — dark themes desktop deepening (≥768px)', () =>
 });
 
 describe('Phone-frame stage — mobile invariant (<768px)', () => {
-  it('app-fixed-column utility unchanged (BottomNav alignment preserved)', () => {
+  it('app-fixed-column tracks --app-col-w so BottomNav stays aligned', () => {
     // The .app-fixed-column rule centers viewport-fixed chrome at the column
-    // center using left:50%/translateX(-50%). It must remain untouched so
-    // BottomNav still aligns with the 430px column on both mobile and desktop.
+    // center using left:50%/translateX(-50%). It now reads the SAME --app-col-w
+    // var as #root, so BottomNav stays aligned with the column at any width
+    // (430 mobile / 400 desktop) — stronger than the old hardcoded 430px.
     expect(globalCss).toMatch(
-      /\.app-fixed-column \{[\s\S]*?left:\s*50%[\s\S]*?max-width:\s*430px/
+      /\.app-fixed-column \{[\s\S]*?left:\s*50%[\s\S]*?max-width:\s*var\(--app-col-w/
     );
   });
 
