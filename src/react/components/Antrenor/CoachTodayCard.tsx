@@ -133,7 +133,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
 
   return (
     <div
-      className="relative overflow-hidden bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick rounded-[18px] p-[18px] mb-2.5"
+      className="relative overflow-hidden bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick rounded-[18px] p-[18px] mb-2.5 animate-card-rise"
       role="region"
       aria-label="Coach-ul recomanda azi"
     >
@@ -147,6 +147,22 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
         style={{
           background:
             'radial-gradient(circle, rgba(200,65,46,0.35), transparent 70%)',
+        }}
+      />
+      {/* Wave A4 (2026-05-28) — dark-theme accent wash. The light-theme brick
+          gradient above hides on dark because rgba(200,65,46) red sits wrong on
+          mov/noir/earth surfaces; this companion overlay uses the active
+          --brick token via color-mix so each dark palette gets its OWN warm
+          accent (purple on Brain Coach, champagne on Luxury, gold on Living
+          Body). Same -30/-30 anchor + 140x140 footprint keeps the visual
+          composition consistent cross-theme. */}
+      <div
+        aria-hidden="true"
+        data-testid="coach-today-gradient-dark"
+        className="hidden dark:block absolute -top-[40px] -right-[40px] w-[180px] h-[180px] rounded-full pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(circle, color-mix(in oklab, var(--brick) 28%, transparent), transparent 70%)',
         }}
       />
       <div className="relative text-xs font-semibold tracking-wider uppercase text-brick">
