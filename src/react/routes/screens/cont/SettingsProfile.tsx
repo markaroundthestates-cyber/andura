@@ -23,7 +23,7 @@ import { SubHeader } from '../../../components/SubHeader';
 import { getUserProfileDisplay } from './userProfile';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
-import { estimateBF_Deurenberg, healthyFloorWeightKg } from '../../../../engine/bodyComposition.js';
+import { estimateBfDeurenbergCapped, healthyFloorWeightKg } from '../../../../engine/bodyComposition.js';
 
 // §B003/D-1b audit fix — Goal labels 6 mockup parity (mockup L863-869).
 const GOAL_LABELS: Record<Goal, string> = {
@@ -97,9 +97,11 @@ export function SettingsProfile(): JSX.Element {
   if (neck) bfArgs.neck_cm = Number(neck);
   if (waist) bfArgs.waist_cm = Number(waist);
   const bfNavy = estimateBF_USNavy(bfArgs);
-  // Two-tier — US-Navy cand talie+gat masurate (acurat), altfel Deurenberg
-  // (estimat populational din BMI/varsta/sex, mereu disponibil post-onboarding).
-  const bfDeurenberg = estimateBF_Deurenberg({
+  // Two-tier — US-Navy cand talie+gat masurate (acurat), altfel Deurenberg cu
+  // cap high-BMI (estimat populational din BMI/varsta/sex, mereu disponibil
+  // post-onboarding). Smoke 2026-05-28 #1: cap-ul `min(Deurenberg, BMI×0.85)`
+  // la BMI>=27 reduce bias-ul cunoscut al formulei la BMI mare.
+  const { bfPct: bfDeurenberg } = estimateBfDeurenbergCapped({
     weightKg: draft.weight ?? NaN,
     heightCm: draft.height ?? NaN,
     ageYears: draft.age ?? NaN,

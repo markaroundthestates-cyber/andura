@@ -7,7 +7,10 @@
 //
 // Two-tier mirror nutritionProjection.deriveCurrentBfPct + SettingsProfile:
 //   - ACURAT: US-Navy cand talie+gat masurate (progresStore.bodyData) + height/sex.
-//   - ESTIMAT: fallback Deurenberg (mereu disponibil post-onboarding Big6+height).
+//   - ESTIMAT: fallback Deurenberg cu cap high-BMI (mereu disponibil post-
+//     onboarding Big6+height). Smoke 2026-05-28 #1: cap-ul `min(Deurenberg,
+//     BMI×0.85)` aplicat la BMI>=27 (Deurenberg supraevalueaza la BMI mare).
+//     Aplicat numai pe surface UI — engine path neatins.
 // Stil aliniat BMRStrip ("Calorii baza" strip) — single number + caveat, NU bar.
 // Placeholder cand stats incomplete (T0 fresh user pre-onboarding).
 
@@ -16,7 +19,7 @@ import { Percent } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useProgresStore, latestBodyMeasurements } from '../../stores/progresStore';
 import { estimateBF_USNavy } from '../../../engine/usNavyBF.js';
-import { estimateBF_Deurenberg } from '../../../engine/bodyComposition.js';
+import { estimateBfDeurenbergCapped } from '../../../engine/bodyComposition.js';
 
 export function BodyFatStrip(): JSX.Element {
   const sex = useOnboardingStore((s) => s.data.sex);
@@ -48,14 +51,17 @@ export function BodyFatStrip(): JSX.Element {
     bfNavy = estimateBF_USNavy(args);
   }
 
-  // Tier 2 (ESTIMAT) — Deurenberg din onboarding (mereu disponibil post-onb).
-  const bfDeurenberg = estimateBF_Deurenberg({
+  // Tier 2 (ESTIMAT) — Deurenberg din onboarding cu cap high-BMI (mereu
+  // disponibil post-onb). Smoke 2026-05-28 #1: la BMI>=27 cap-ul `min(raw,
+  // BMI×0.85)` reduce bias-ul cunoscut al formulei Deurenberg.
+  const { bfPct: bfDeurenberg, capped } = estimateBfDeurenbergCapped({
     weightKg: weight ?? NaN,
     heightCm: height ?? NaN,
     ageYears: age ?? NaN,
     ...(sex ? { sex } : {}),
   });
   const bf = bfNavy ?? bfDeurenberg;
+  const isUsingDeurenberg = bfNavy == null && bfDeurenberg != null;
   const sourceLabel = bfNavy != null ? 'US Navy' : 'estimat';
 
   return (
@@ -70,12 +76,26 @@ export function BodyFatStrip(): JSX.Element {
           Grasime corporala
         </p>
         {bf != null ? (
-          <p className="text-xl font-bold text-ink font-mono" data-testid="bodyfat-value">
-            {bf}%{' '}
-            <span className="text-sm font-normal text-ink2 ml-2" data-testid="bodyfat-source">
-              {sourceLabel}
-            </span>
-          </p>
+          <>
+            <p className="text-xl font-bold text-ink font-mono" data-testid="bodyfat-value">
+              {bf}%{' '}
+              <span className="text-sm font-normal text-ink2 ml-2" data-testid="bodyfat-source">
+                {sourceLabel}
+              </span>
+            </p>
+            {/* Smoke 2026-05-28 #1 — la estimat (fara talie/gat masurate)
+                surface caveat + nudge la sursa precisa. La cap activat (BMI
+                mare) suplimentar onestitate: "aproximativ" in loc de tacut. */}
+            {isUsingDeurenberg && (
+              <p
+                className="text-xs text-ink3 mt-1 leading-snug"
+                data-testid="bodyfat-cta"
+              >
+                {capped ? 'Estimat aproximativ. ' : 'Estimat din BMI. '}
+                Adauga talie + gat in Profil pentru estimat precis (US Navy).
+              </p>
+            )}
+          </>
         ) : (
           <p className="text-sm text-ink2" data-testid="bodyfat-empty">
             Estimarea apare dupa ce completezi datele de profil.
