@@ -69,11 +69,20 @@ export function BMRStrip(): JSX.Element {
   return (
     <section
       data-testid="bmr-strip"
-      className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4"
+      className="relative overflow-hidden bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4 animate-card-rise"
       aria-label="Calorii baza BMR"
     >
-      <Flame className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
-      <div className="flex-1 min-w-0">
+      {/* Wave A4 (Daniel 2026-05-28) — brick radial wash for warmth + depth. */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(circle at 0% 50%, color-mix(in oklab, var(--brick) 14%, transparent) 0%, transparent 55%)',
+        }}
+      />
+      <Flame className="relative w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
+      <div className="relative flex-1 min-w-0">
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
           Calorii baza
         </p>
