@@ -292,6 +292,15 @@ export interface WorkoutState {
   // null = sesiune fara adaptare (intrare directa Antrenor → workout). Set de
   // WorkoutPreview.handleStart din location.state inainte de navigate workout.
   sessionContext: SessionContext | null;
+  // Daniel smoke 2026-05-28 (#2 + #6) — "Nu vreau" exhaustive cycle. Per-exIdx
+  // set of English canonical engine names the user has refused this session
+  // (the original + every prior swap). resolveRefusalSwap consults this so each
+  // candidate is offered ONCE before showing the "ai incercat tot" exhausted
+  // copy. Runtime-only (NOT persisted) — fresh slate every session, day-zero
+  // refusal history doesn't shape today's pool. Per-exIdx because the slot may
+  // legitimately be re-used across exercises (refusing Bench at exIdx=0 must not
+  // hide Bench from a future session that opens it at the same slot).
+  refusalTriedByEx: Record<number, string[]>;
 }
 
 // ── §44-C1 Discriminated Union — WorkoutMode FSM tag ────────────────────────
@@ -405,6 +414,15 @@ export interface WorkoutActions {
    */
   swapExercise: (exIdx: number) => void;
   /**
+   * Daniel smoke 2026-05-28 (#2 + #6) — append an engine name to the per-exIdx
+   * refusal-tried set so subsequent "Nu vreau" taps on the same slot skip names
+   * already proposed (no ping-pong, no repeats until pool exhausted). Idempotent
+   * — calling with an already-tried name is a no-op. Pure on store side; the
+   * pool query lives in src/engine/alternativeFinder.js findRefusalPool.
+   */
+  markRefusalTried: (exIdx: number, engineName: string) => void;
+
+  /**
    * Resets ACTIVE-session runtime state only — NOT cumulative history.
    *
    * Cleared: `exIdx`, `setIdx`, `phase`, `prHit`, `prData`, `history`,
@@ -441,6 +459,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       streak: 0,
       lastStreakDate: null,
       sessionContext: null,
+      refusalTriedByEx: {},
 
       startSession: (sessionStart) =>
         set({
@@ -451,6 +470,8 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           prHit: false,
           prData: null,
           history: {},
+          // Daniel smoke 2026-05-28 (#2 + #6) — fresh refusal slate per session.
+          refusalTriedByEx: {},
         }),
 
       // HIGH-CODE-05 fix: title preserved from caller (real workout name)
@@ -502,6 +523,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           prData: null,
           pausedSnapshot: null,
           sessionContext: null,
+          refusalTriedByEx: {},
         }),
 
       finishSession: (summary) =>
@@ -526,6 +548,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             setIdx: 0,
             history: {},
             sessionContext: null,
+            refusalTriedByEx: {},
           };
         }),
 
@@ -566,6 +589,22 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           };
         }),
 
+      // Daniel smoke 2026-05-28 (#2 + #6) — exhaustive "Nu vreau" pool tracking.
+      // Idempotent append per-exIdx (Set + spread to drop dupes, ordered preserved
+      // first-seen-first so the candidates pool ordering stays predictable).
+      markRefusalTried: (exIdx, engineName) =>
+        set((s) => {
+          if (typeof engineName !== 'string' || engineName.length === 0) return {};
+          const prior = s.refusalTriedByEx[exIdx] ?? [];
+          if (prior.includes(engineName)) return {};
+          return {
+            refusalTriedByEx: {
+              ...s.refusalTriedByEx,
+              [exIdx]: [...prior, engineName],
+            },
+          };
+        }),
+
       markPRHit: (data) => set({ prHit: true, prData: data ?? null }),
 
       setLastRating: (rating) => set({ lastRating: rating }),
@@ -600,6 +639,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           lastRating: null,
           pausedSnapshot: null,
           sessionContext: null,
+          refusalTriedByEx: {},
         }),
     }),
     {

@@ -105,6 +105,73 @@ function findBroadAlternatives(exerciseName, availableTypes) {
 }
 
 /**
+ * REFUSAL POOL — exhaustive ranked same-muscle pool for the "Nu vreau" path.
+ *
+ * Daniel smoke 2026-05-28: the prior refusal path returned `alternatives[0]` of
+ * the thin curated `equipment_alternatives` list (1-3 entries). Tap "Nu vreau"
+ * on Flat Bench -> got Incline Bench. Tap again -> swapped exercise's first alt
+ * -> often pinged back to Flat Bench. Two-element ping-pong. For tier-1 high-
+ * force lifts (Cheat Curl Barbell) whose 2 curated alts didn't both pass the
+ * tier-1 strict rule, the path dead-ended at `shouldSkip:true` -> the UI told
+ * the user "no alternative" on an exercise that has a whole sea of same-muscle
+ * variants in the 657-entry library. Both failures.
+ *
+ * Refusal semantics ≠ equipment semantics:
+ *   - Equipment busy/missing = hard blocker (can the user PERFORM this movement
+ *     right now?). Tier-1 strict makes sense — don't degrade heavy compound to
+ *     an isolation just because a machine is occupied.
+ *   - "Nu vreau" = taste decision (user doesn't WANT this one today). Ignore
+ *     equipment entirely + don't enforce tier-1 strict (user explicitly said no,
+ *     offering a lighter same-muscle alternative is honest UX, not paternalism).
+ *
+ * This builds the EXHAUSTIVE broad-library same-muscle pool the UI then cycles
+ * through one-at-a-time, tracking a per-session "tried" set so the user sees
+ * each candidate only once (no repeats until the pool is exhausted). When the
+ * pool runs out, the caller gets `poolExhausted: true` and shows Daniel's copy
+ * "ai incercat tot ce pot oferi pentru [muscle group]".
+ *
+ * Ranking: best-first by similarity to the original (same equipment_type +1,
+ * same force_demand +2, same tier +1) — so the FIRST proposal is the closest
+ * substitute; subsequent ones degrade gracefully toward lighter/different
+ * equipment / tier variants of the same muscle target.
+ *
+ * @param {string} exerciseName  English canonical engine name of the original
+ * @param {string[]} [triedNames=[]] English canonical names already refused this
+ *   session (the original + every prior swap; caller maintains the set in store)
+ * @returns {{ candidates: { name: string, similarity: number }[], muscleGroup: string }}
+ *   - candidates: ranked same-muscle pool minus `triedNames` (empty -> exhausted)
+ *   - muscleGroup: the original's muscle_target_primary (for the "ai incercat
+ *     tot pentru [muscleGroup]" exhaustion copy). 'unknown' when no metadata.
+ */
+export function findRefusalPool(exerciseName, triedNames = []) {
+  const meta = EXERCISE_METADATA[exerciseName];
+  if (!meta || meta.muscle_target_primary === 'unknown') {
+    return { candidates: [], muscleGroup: 'unknown' };
+  }
+  const muscleGroup = meta.muscle_target_primary;
+  const tried = new Set(triedNames);
+  // The original is implicit-tried (already swapped out) — make sure it never
+  // re-appears even when the caller forgets to include it in triedNames.
+  tried.add(exerciseName);
+
+  const candidates = [];
+  for (const [name, m] of Object.entries(EXERCISE_METADATA)) {
+    if (tried.has(name)) continue;
+    if (m.muscle_target_primary !== muscleGroup) continue;
+    // Refusal = preference. Equipment + tier-1 strict NOT enforced (the user
+    // chose to swap; we honor the choice with the closest available match
+    // and let the caller's UI gracefully exhaust the pool).
+    let similarity = 0;
+    if (m.equipment_type === meta.equipment_type) similarity += 1;
+    if (m.force_demand === meta.force_demand) similarity += 2;
+    if (m.tier === meta.tier) similarity += 1;
+    candidates.push({ name, similarity });
+  }
+  candidates.sort((a, b) => b.similarity - a.similarity);
+  return { candidates, muscleGroup };
+}
+
+/**
  * Resolve an exercise to itself or a substitute using the ordered fallback_cascade,
  * degrading to ranking-based findAlternatives when no cascade step is available.
  *

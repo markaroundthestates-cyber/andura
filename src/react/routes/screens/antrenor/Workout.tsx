@@ -91,6 +91,9 @@ export function Workout(): JSX.Element {
   const discardSession = useWorkoutStore((s) => s.discardSession);
   const markPRHit = useWorkoutStore((s) => s.markPRHit);
   const swapExercise = useWorkoutStore((s) => s.swapExercise);
+  // Daniel smoke 2026-05-28 (#2 + #6) — per-exIdx refusal-tried set + mutation.
+  const refusalTriedByEx = useWorkoutStore((s) => s.refusalTriedByEx);
+  const markRefusalTried = useWorkoutStore((s) => s.markRefusalTried);
 
   // Phase 6 task_02 Option C: async getTodayWorkout — 3-state useState pattern
   // per DECISIONS.md §D027 (null=loading, []=empty/rest day, [...]=session).
@@ -506,16 +509,44 @@ export function Workout(): JSX.Element {
   // alternative). Honest noAlt → toast tells the user to skip it (anti-
   // paternalism, never force an inferior movement). Replaces the old behavior
   // where the buttons navigated AWAY and the user never saw a named alternative.
+  //
+  // Daniel smoke 2026-05-28 (#2 + #6 + #3.2) — REFUSAL path now consumes a
+  // per-exIdx tried-set so each "Nu vreau" tap surfaces a DIFFERENT same-muscle
+  // candidate (no 2-element ping-pong). On exhaustion (every same-muscle option
+  // tried this session) the toast switches to "ai incercat tot pentru
+  // [muscleGroup]". Equipment paths unchanged (different semantic).
   const applySwap = useCallback(
     (engineName: string, kind: 'busy' | 'refusal'): void => {
       bumpActivity();
-      const res =
-        kind === 'busy'
-          ? resolveBusySwap(engineName, safeExIdx)
-          : resolveRefusalSwap(engineName, safeExIdx);
+      let res;
+      if (kind === 'busy') {
+        res = resolveBusySwap(engineName, safeExIdx);
+      } else {
+        // Refusal: build tried-set = the original we're about to swap out + all
+        // names previously refused at this slot. markRefusalTried below records
+        // the alternative we surface so the NEXT tap skips it. Daniel verbatim
+        // "nu sa dea doar 2 alternative" — pool walks the whole same-muscle
+        // library before exhausting.
+        const triedNames = [
+          engineName,
+          ...(refusalTriedByEx[safeExIdx] ?? []),
+        ];
+        res = resolveRefusalSwap(engineName, safeExIdx, triedNames);
+      }
       if (kind === 'refusal') {
         // Preserve the existing refusal counter (threshold → "permanent?" flow).
         incrementRefusal(engineName);
+        // Append the JUST-refused exercise to the per-exIdx tried-set so a
+        // subsequent "Nu vreau" tap doesn't re-offer it (idempotent on store).
+        markRefusalTried(safeExIdx, engineName);
+      }
+      if (kind === 'refusal' && res.poolExhausted) {
+        const groupLabel = res.muscleGroup ?? 'aceasta grupa';
+        toast.show({
+          message: `Ai incercat tot ce pot oferi pentru ${groupLabel}. Poti sari exercitiul sau schimba grupa din meniul de sus.`,
+          variant: 'info',
+        });
+        return;
       }
       if (!res.swapped || res.exercise === null) {
         toast.show({
@@ -532,6 +563,11 @@ export function Workout(): JSX.Element {
         return next;
       });
       swapExercise(safeExIdx);
+      // Refusal path: record the alternative we just surfaced so the NEXT
+      // "Nu vreau" tap on this slot skips it (Daniel exhaustive cycle).
+      if (kind === 'refusal' && typeof res.alternativeEngineName === 'string') {
+        markRefusalTried(safeExIdx, res.alternativeEngineName);
+      }
       toast.show({
         message:
           kind === 'busy'
@@ -540,7 +576,7 @@ export function Workout(): JSX.Element {
         variant: 'success',
       });
     },
-    [bumpActivity, safeExIdx, swapExercise]
+    [bumpActivity, safeExIdx, swapExercise, refusalTriedByEx, markRefusalTried]
   );
 
   const handleOcupat = useCallback((): void => {

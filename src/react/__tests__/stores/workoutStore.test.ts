@@ -25,6 +25,7 @@ function resetStore(): void {
     streak: 0,
     lastStreakDate: null,
     sessionContext: null,
+    refusalTriedByEx: {},
   });
   localStorage.clear();
 }
@@ -1078,5 +1079,50 @@ describe('workoutStore — swapExercise (WP-5 moat substitution safety)', () => 
     expect(s.streak).toBe(7);
     expect(s.lastSession?.title).toBe('X');
     expect(s.sessionsHistory).toHaveLength(1);
+  });
+});
+
+// Daniel smoke 2026-05-28 (#2 + #6) — per-exIdx refusal-tried set, runtime-only.
+describe('workoutStore — markRefusalTried (exhaustive Nu vreau cycle)', () => {
+  beforeEach(resetStore);
+
+  it('initial refusalTriedByEx is empty {}', () => {
+    expect(useWorkoutStore.getState().refusalTriedByEx).toEqual({});
+  });
+
+  it('appends per-exIdx idempotently (no dupe, order preserved)', () => {
+    const { markRefusalTried } = useWorkoutStore.getState();
+    markRefusalTried(0, 'Flat Barbell Bench');
+    markRefusalTried(0, 'Incline DB Press');
+    markRefusalTried(0, 'Flat Barbell Bench'); // dupe — no-op
+    const s = useWorkoutStore.getState().refusalTriedByEx;
+    expect(s[0]).toEqual(['Flat Barbell Bench', 'Incline DB Press']);
+  });
+
+  it('per-exIdx isolation — refusals at exIdx=0 do not leak to exIdx=2', () => {
+    const { markRefusalTried } = useWorkoutStore.getState();
+    markRefusalTried(0, 'Flat Barbell Bench');
+    markRefusalTried(2, 'Leg Press');
+    const s = useWorkoutStore.getState().refusalTriedByEx;
+    expect(s[0]).toEqual(['Flat Barbell Bench']);
+    expect(s[2]).toEqual(['Leg Press']);
+  });
+
+  it('empty / non-string engineName silently rejected (no crash, no spurious entry)', () => {
+    const { markRefusalTried } = useWorkoutStore.getState();
+    markRefusalTried(0, '');
+    expect(useWorkoutStore.getState().refusalTriedByEx[0]).toBeUndefined();
+  });
+
+  it('cleared by startSession / discardSession / finishSession / reset', () => {
+    const { markRefusalTried, startSession, discardSession } = useWorkoutStore.getState();
+    markRefusalTried(0, 'Flat Barbell Bench');
+    expect(useWorkoutStore.getState().refusalTriedByEx[0]).toBeDefined();
+    discardSession();
+    expect(useWorkoutStore.getState().refusalTriedByEx).toEqual({});
+
+    markRefusalTried(0, 'Flat Barbell Bench');
+    startSession(Date.now());
+    expect(useWorkoutStore.getState().refusalTriedByEx).toEqual({});
   });
 });

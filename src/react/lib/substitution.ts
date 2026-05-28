@@ -8,20 +8,23 @@
 // Two resolution paths (mirrors the engine alternativeFinder contract):
 //   - EQUIPMENT path (busy / missing): getFallbackCascade(name, availableTypes)
 //     — ordered fallback_cascade, degrading to ranking; honest {noAlt} when zero.
-//   - PREFERENCE path ("nu vreau"): findAlternatives(name) — ignores equipment
-//     (it is a taste decision, not a hard blocker); first ranked alternative.
+//   - PREFERENCE path ("nu vreau"): findRefusalPool(name, triedNames) — ignores
+//     equipment (taste decision) AND bypasses tier-1 strict, returning the FULL
+//     broad-library same-muscle ranking minus the per-exIdx tried-set so the UI
+//     cycles through every candidate ONCE before showing "ai incercat tot"
+//     (Daniel smoke 2026-05-28 #2 + #6 + #3.2 — exhaustive cycle, no ping-pong).
 //
 // Names are resolved through toExerciseDisplay (Romanian-first). The swapped
 // PlannedExercise re-uses the SAME DP / cold-start prescription path as the
 // initial plan so the alternative arrives with real targetKg/targetReps/rest.
 //
 // Cross-refs:
-//   - src/engine/alternativeFinder.js (findAlternatives + getFallbackCascade)
+//   - src/engine/alternativeFinder.js (findRefusalPool + getFallbackCascade)
 //   - src/engine/equipmentMap.js (availableCoarseTypes — coarse SoT)
 //   - 📥_inbox/wiring-audit-2026-05-26/P3-MOAT-DESIGN.md §5
 
 import {
-  findAlternatives,
+  findRefusalPool,
   getFallbackCascade,
 } from '../../engine/alternativeFinder.js';
 import { getExerciseMetadata } from '../../engine/exerciseLibrary.js';
@@ -45,6 +48,28 @@ export interface SwapResolution {
   originalName: string;
   /** Honest "no good alternative" flag — anti-paternalism, UI offers skip. */
   noAlt: boolean;
+  /**
+   * Daniel smoke 2026-05-28 (#2 + #6) — "Nu vreau" exhaustive cycle. True when
+   * the user has tried every same-muscle alternative we can offer this session
+   * (refusal path only — equipment paths never set this). UI surfaces "ai
+   * incercat tot ce pot oferi pentru [muscleGroup]" + offers skip / change
+   * group. Mutually exclusive with `swapped:true` (you can't be exhausted AND
+   * have a new candidate at the same time).
+   */
+  poolExhausted?: boolean;
+  /**
+   * Daniel smoke 2026-05-28 (#2 + #6) — RO display muscle group label used in
+   * the pool-exhausted copy ("ai incercat tot pentru BICEPS"). Set only on the
+   * refusal path; absent for equipment paths. Falls to '' when no metadata.
+   */
+  muscleGroup?: string;
+  /**
+   * Daniel smoke 2026-05-28 (#2 + #6) — English canonical engine name of the
+   * alternative (the caller appends this to the per-exIdx refusal-tried set so
+   * the NEXT "Nu vreau" tap skips it). Refusal path only. Empty when noAlt /
+   * poolExhausted.
+   */
+  alternativeEngineName?: string;
 }
 
 /**
@@ -95,31 +120,104 @@ export function resolveMissingSwap(engineName: string, exIdx: number): SwapResol
   return resolveCascade(engineName, available, exIdx, 'Aparat lipsa');
 }
 
+// Daniel smoke 2026-05-28 (#3.3 etc) — RO display labels for engine muscle
+// targets so the "ai incercat tot pentru [muscleGroup]" copy reads naturally.
+// Keys must match EXERCISE_METADATA muscle_target_primary values; misses fall
+// to the raw key as a defensive last-line baseline. NO_DIACRITICS_RULE.
+const MUSCLE_GROUP_RO: Readonly<Record<string, string>> = {
+  piept: 'piept',
+  spate: 'spate',
+  umeri: 'umeri',
+  biceps: 'biceps',
+  triceps: 'triceps',
+  antebrate: 'antebrate',
+  'picioare-quads': 'cvadriceps',
+  'picioare-hamstrings': 'hamstring',
+  'picioare-fesieri': 'fesieri',
+  'picioare-gambe': 'gambe',
+  fesieri: 'fesieri',
+  abdomen: 'abdomen',
+  oblici: 'oblici',
+  trapezi: 'trapezi',
+  cardio: 'cardio',
+  'corp-intreg': 'corp intreg',
+};
+
+function muscleGroupLabel(key: string): string {
+  return MUSCLE_GROUP_RO[key] ?? key.replace(/-/g, ' ');
+}
+
 /**
  * Resolve the PREFERENCE substitution for "Nu vreau" — the user does not want
- * this exercise (taste, not a hard blocker), so equipment is IGNORED. Returns
- * the first ranked alternative sharing the muscle target; honest noAlt when the
- * library offers no valid alternative (anti-paternalism — never force inferior).
+ * this exercise (taste, not a hard blocker), so equipment is IGNORED. Daniel
+ * smoke 2026-05-28 (#2 + #6 + #3.2) — returns an EXHAUSTIVE same-muscle pool
+ * cycled one-at-a-time across the session: the caller passes the per-exIdx
+ * `triedNames` (from workoutStore.refusalTriedByEx[exIdx]) and we return the
+ * first not-yet-tried candidate from the broad 657-library same-muscle ranking.
+ *
+ * When the pool runs out, returns `poolExhausted:true` + `muscleGroup` (RO
+ * label) so the UI can show "ai incercat tot ce pot oferi pentru [muscleGroup]"
+ * + offer skip / change group (anti-paternalism — we never force inferior).
+ *
+ * Tier-1 strict rule is NOT enforced here (unlike equipment paths): "Nu vreau"
+ * is a taste decision, not equipment failure, so e.g. Cheat Curl Barbell (tier
+ * 1) honestly opens onto every biceps variant — Daniel #3.2 (no alternatives
+ * surfaced on Flexii cu avant cu bara was caused by the strict rule kicking in
+ * when only 2 curated alts existed; the broad pool here bypasses it entirely
+ * because refusal != "you can't perform this", it's "you don't want this").
  *
  * @param engineName English canonical name of the current exercise
- * @param exIdx position in the session
+ * @param exIdx position in the session (for the swapped exercise id slug)
+ * @param triedNames English canonical names already refused this session (the
+ *   original + every prior swap); caller tracks via workoutStore. Defaults to
+ *   [] (cold first refusal) so callers / tests that don't track yet still work.
  */
-export function resolveRefusalSwap(engineName: string, exIdx: number): SwapResolution {
+export function resolveRefusalSwap(
+  engineName: string,
+  exIdx: number,
+  triedNames: readonly string[] = [],
+): SwapResolution {
   const originalName = toExerciseDisplay(engineName).name;
-  const { alternatives, shouldSkip } = findAlternatives(engineName) as {
-    alternatives: Array<{ name: string }>;
-    shouldSkip: boolean;
-  };
-  if (shouldSkip || alternatives.length === 0) {
-    return { exercise: null, swapped: false, alternativeName: '', originalName, noAlt: true };
+  const { candidates, muscleGroup } = findRefusalPool(
+    engineName,
+    triedNames as string[],
+  ) as { candidates: Array<{ name: string }>; muscleGroup: string };
+
+  // Honest noAlt — original has no metadata or muscle target is unknown
+  // (cannot build a same-muscle pool). Distinct from poolExhausted (we COULD
+  // never have offered anything).
+  if (muscleGroup === 'unknown') {
+    return {
+      exercise: null,
+      swapped: false,
+      alternativeName: '',
+      originalName,
+      noAlt: true,
+    };
   }
-  const altName = alternatives[0]!.name;
+
+  // Pool exhausted — every same-muscle alternative tried this session.
+  if (candidates.length === 0) {
+    return {
+      exercise: null,
+      swapped: false,
+      alternativeName: '',
+      originalName,
+      noAlt: false,
+      poolExhausted: true,
+      muscleGroup: muscleGroupLabel(muscleGroup),
+    };
+  }
+
+  const altName = candidates[0]!.name;
   return {
     exercise: buildSwappedExercise(altName, exIdx, 'Schimbat la cerere'),
     swapped: true,
     alternativeName: toExerciseDisplay(altName).name,
+    alternativeEngineName: altName,
     originalName,
     noAlt: false,
+    muscleGroup: muscleGroupLabel(muscleGroup),
   };
 }
 
