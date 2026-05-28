@@ -52,39 +52,19 @@ import { Calendar7Day } from '../../../components/Calendar7Day';
 const FOURTEEN_DAYS_MS = 14 * 86400000;
 
 // Header date line per mockup andura-clasic.html#L733 ("Joi, 7 mai · 18:30").
-// Manual RO weekday/month no-diacritics map (NU Intl.DateTimeFormat — locale
-// ICU emite diacritice Marti/Sambata violand D-LEGACY-064), mirror Istoric.tsx.
-const HEADER_WEEKDAYS_RO = [
-  'Duminica',
-  'Luni',
-  'Marti',
-  'Miercuri',
-  'Joi',
-  'Vineri',
-  'Sambata',
-] as const;
-const HEADER_MONTHS_RO = [
-  'ian',
-  'feb',
-  'mar',
-  'apr',
-  'mai',
-  'iun',
-  'iul',
-  'aug',
-  'sep',
-  'oct',
-  'noi',
-  'dec',
-] as const;
+// Locale-aware: weekday/month strings read from i18n bundle (RO no-diacritics
+// per D-LEGACY-064 in the RO branch; EN uses standard full+short month names).
+// Manual lookup, NU Intl.DateTimeFormat — ICU emits diacritics under RO locale
+// (Marti/Sambata), so we keep our own map.
 
 function formatHeaderDate(now: Date): string {
-  const weekday = HEADER_WEEKDAYS_RO[now.getDay()];
+  const weekday = t(`weekdays.full.${now.getDay()}`);
   const day = now.getDate();
-  const month = HEADER_MONTHS_RO[now.getMonth()];
+  const month = t(`months.short.${now.getMonth()}`);
   const hh = String(now.getHours()).padStart(2, '0');
   const mm = String(now.getMinutes()).padStart(2, '0');
-  return `${weekday}, ${day} ${month} · ${hh}:${mm}`;
+  const sep = t('antrenor.header.dateSeparator');
+  return `${weekday}, ${day} ${month} ${sep} ${hh}:${mm}`;
 }
 
 export function Antrenor(): JSX.Element {
@@ -161,7 +141,7 @@ export function Antrenor(): JSX.Element {
     <section
       className={`pt-4 px-5 pb-6 bg-paper persona-${persona}`}
       data-testid="antrenor-home"
-      aria-label="Antrenor home"
+      aria-label={t('antrenor.ariaLabel')}
     >
       {/* Header date line per mockup andura-clasic.html#L733. */}
       <p className="text-ink2 text-sm" data-testid="antrenor-header-date">
@@ -172,7 +152,7 @@ export function Antrenor(): JSX.Element {
       <h1 className="text-2xl font-bold text-ink mt-0.5">{t('tabs.antrenor.title')}</h1>
       {/* Serif subtitle per mockup andura-clasic.html#L735 (coach-quote). */}
       <p className="font-serif italic text-ink2 text-sm mb-4">
-        Cine te ghideaza in sala.
+        {t('antrenor.subtitle')}
       </p>
 
       {/* HIGH-CODE-07 defense-in-depth error banner (code-review v2 chat 5
@@ -193,7 +173,7 @@ export function Antrenor(): JSX.Element {
           }}
         >
           <p className="text-base text-ink">
-            Nu am putut incarca recomandarile coach-ului. Poti incepe sesiunea oricum.
+            {t('antrenor.errorBanner')}
           </p>
         </div>
       )}

@@ -80,20 +80,20 @@ describe('Antrenor home — base render', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Coach');
   });
 
-  it('renders Incepe sesiunea CTA inside CoachTodayCard (no paused session)', () => {
+  it('renders Start session CTA inside CoachTodayCard (no paused session) — EN default', () => {
     // Daniel smoke 2026-05-28: bottom "Incepe antrenament" duplicate CTA removed
-    // — CoachTodayCard's own "Incepe sesiunea" button is the single workout-day
-    // entry point (CoachRestCard owns rest-day equivalents).
+    // — CoachTodayCard's own start CTA is the single workout-day entry point.
+    // Wave C2 i18n: EN default → "Start session" (was RO "Incepe sesiunea").
     renderAntrenor();
-    expect(screen.getByRole('button', { name: /Incepe sesiunea/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Start session/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /^Incepe antrenament$/i })).not.toBeInTheDocument();
   });
 
-  it('renders CoachTodayCard cand schedContext=workout', () => {
+  it('renders CoachTodayCard cand schedContext=workout — EN fallback title', () => {
     renderAntrenor();
-    // MED-CODE-21 chat5 — generic non-claim fallback (no hardcoded
-    // muscle-group claim, no '&' per D-LEGACY-064).
-    expect(screen.getByText(/Antrenamentul de azi/i)).toBeInTheDocument();
+    // Wave C2 i18n: EN default → "Today's workout" fallback (was RO
+    // "Antrenamentul de azi"). MED-CODE-21 generic non-claim guard preserved.
+    expect(screen.getByText(/Today's workout/i)).toBeInTheDocument();
     expect(screen.queryByText(/Pull \(spate/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/&/)).not.toBeInTheDocument();
   });
@@ -118,9 +118,11 @@ describe('Antrenor home — base render', () => {
       source: 'engine',
     });
     renderAntrenor();
+    // workoutTitle comes from engine verbatim (still RO in mock fixture).
     expect(await screen.findByText(/Push \(piept si umeri\)/i)).toBeInTheDocument();
     expect(screen.getByText(/~ 52 min/i)).toBeInTheDocument();
-    expect(screen.getByText(/6 exercitii/i)).toBeInTheDocument();
+    // Wave C2: under EN default, "6 exercises" (was "6 exercitii").
+    expect(screen.getByText(/6 exercises/i)).toBeInTheDocument();
   });
 
   it('§A002 engine-driven isRestDay wins over schedContext fallback', async () => {
@@ -138,13 +140,14 @@ describe('Antrenor home — base render', () => {
       source: 'engine',
     });
     renderAntrenor();
-    expect(await screen.findByText(/Zi de recuperare activa/i)).toBeInTheDocument();
+    // Wave C2 i18n: EN default → "Active recovery day" (was "Zi de recuperare activa").
+    expect(await screen.findByText(/Active recovery day/i)).toBeInTheDocument();
   });
 
-  it('renders CoachRestCard cand schedContext=rest', () => {
+  it('renders CoachRestCard cand schedContext=rest — EN default', () => {
     useCoachStore.getState().setSchedContext('rest');
     renderAntrenor();
-    expect(screen.getByText(/Zi de recuperare activa/i)).toBeInTheDocument();
+    expect(screen.getByText(/Active recovery day/i)).toBeInTheDocument();
   });
 
   it('renders StatsGrid cu streak count', () => {
@@ -418,11 +421,12 @@ describe('Antrenor home — navigation', () => {
     vi.mocked(getFatigue).mockReturnValue(null);
   });
 
-  it('clicks CoachTodayCard Incepe sesiunea → navigates la /app/antrenor/energy-check', () => {
+  it('clicks CoachTodayCard Start session → navigates la /app/antrenor/energy-check — EN default', () => {
     // Post-D088 bottom "Incepe antrenament" dedup: CoachTodayCard's own button
     // is the workout-day entry. Single navigation contract — energy-check.
+    // Wave C2 i18n: EN default → "Start session" (was RO "Incepe sesiunea").
     renderAntrenor();
-    fireEvent.click(screen.getByRole('button', { name: /Incepe sesiunea/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Start session/i }));
     expect(screen.getByText('EnergyCheckStub')).toBeInTheDocument();
   });
 });
@@ -445,7 +449,8 @@ describe('Antrenor home — HIGH-CODE-07 defense-in-depth promise catch', () => 
     const banner = await screen.findByTestId('antrenor-error-banner');
     expect(banner).toBeInTheDocument();
     expect(banner).toHaveAttribute('role', 'alert');
-    expect(banner.textContent).toMatch(/Nu am putut incarca/i);
+    // Wave C2 i18n: EN default → "Couldn't load coach recommendations".
+    expect(banner.textContent).toMatch(/Couldn't load coach recommendations/i);
   });
 
   it('fallback baseline content still renders pe promise reject (Gigel proceed)', async () => {
@@ -454,9 +459,9 @@ describe('Antrenor home — HIGH-CODE-07 defense-in-depth promise catch', () => 
     await screen.findByTestId('antrenor-error-banner');
     // Heading "Coach" sub EN default (A3 i18n). Orphan "Incepe antrenament" CTA
     // a fost eliminat (A1 #12 dedup); CoachTodayCard fallback la coach=null
-    // surface "Incepe sesiunea" pentru Gigel proceed.
+    // surface "Start session" sub EN default (Wave C2 i18n).
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Coach');
-    expect(screen.getByRole('button', { name: /Incepe sesiunea/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Start session/i })).toBeInTheDocument();
   });
 
   it('no error banner on happy path (engine resolves)', async () => {

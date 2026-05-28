@@ -154,12 +154,19 @@
   },
 
   "coachRest": {
-    "ariaLabel": "Recomandare zi de odihna",
-    "kicker": "Zi de odihna",
-    "title": "Astazi e zi de odihna",
+    "ariaLabel": "Coach-ul recomanda azi - recuperare",
+    "kicker": "Coach-ul recomanda azi",
+    "title": "Zi de recuperare activa",
     "body": "Recuperarea e cand cresti. Plimba-te, intinde-te, hidrateaza-te.",
-    "lightSessionCta": "Sesiune usoara",
-    "overrideCta": "Vreau totusi antrenament"
+    "lightSessionCta": "Sesiune usoara mobilitate",
+    "overrideCta": "Vreau totusi antrenament",
+    "durationLabel": "~ {min} min mobilitate",
+    "optional": "optional",
+    "genericLine": "Astazi e zi de recuperare - corpul are nevoie de odihna.",
+    "musclesRecovering": "Muschii recupereaza",
+    "groupsRecovering": "{groups} inca recupereaza",
+    "readinessSuffix": " · readiness {score}/100",
+    "andJoiner": " si "
   },
 
   "workout": {

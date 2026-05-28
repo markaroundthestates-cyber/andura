@@ -154,12 +154,19 @@
   },
 
   "coachRest": {
-    "ariaLabel": "Rest day recommendation",
-    "kicker": "Rest day",
-    "title": "Today is a rest day",
+    "ariaLabel": "Coach recommendation today — recovery",
+    "kicker": "Today's recommendation",
+    "title": "Active recovery day",
     "body": "Recovery is when you grow. Walk, stretch, hydrate.",
-    "lightSessionCta": "Light session",
-    "overrideCta": "I still want to train"
+    "lightSessionCta": "Light mobility session",
+    "overrideCta": "I still want to train",
+    "durationLabel": "~ {min} min mobility",
+    "optional": "optional",
+    "genericLine": "Today is a recovery day — your body needs the rest.",
+    "musclesRecovering": "Muscles are still recovering",
+    "groupsRecovering": "{groups} still recovering",
+    "readinessSuffix": " · readiness {score}/100",
+    "andJoiner": " and "
   },
 
   "workout": {

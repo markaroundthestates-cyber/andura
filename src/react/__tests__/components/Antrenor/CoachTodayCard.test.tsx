@@ -37,14 +37,15 @@ describe('CoachTodayCard — MED-CODE-20 coachQuote refresh deps', () => {
     expect(quote.textContent).toBeTruthy();
   });
 
-  it('renders engine-driven recovered group cand getCoachTodayQuote returns data', () => {
+  it('renders engine-driven recovered group cand getCoachTodayQuote returns data — EN default', () => {
     vi.spyOn(engineWrappers, 'getCoachTodayQuote').mockReturnValue({
       recoveredLabel: 'Pectoralii',
       daysSince: 3,
     });
     renderCard();
+    // Wave C2 i18n: EN default → "{group} has recovered since 3 days — let's nail it."
     expect(
-      screen.getByText(/Pectoralii recupereaza din 3 zile/i),
+      screen.getByText(/Pectoralii has recovered since 3 days/i),
     ).toBeInTheDocument();
   });
 
@@ -100,8 +101,8 @@ describe('CoachTodayCard — MED-CODE-20 coachQuote refresh deps', () => {
       .mockReturnValue({ recoveredLabel: 'Spatele', daysSince: 2 });
 
     renderCard();
-    // Initial: fallback generic, NO "Spatele recupereaza".
-    expect(screen.queryByText(/Spatele recupereaza/i)).not.toBeInTheDocument();
+    // Initial: fallback generic, NO "Spatele recovered".
+    expect(screen.queryByText(/Spatele has recovered/i)).not.toBeInTheDocument();
 
     // Trigger sessionsHistory change → useMemo re-runs → engine returns
     // dynamic group → render text updates.
@@ -118,8 +119,9 @@ describe('CoachTodayCard — MED-CODE-20 coachQuote refresh deps', () => {
       });
     });
 
+    // Wave C2 i18n: EN default → "Spatele has recovered since 2 days".
     expect(
-      screen.getByText(/Spatele recupereaza din 2 zile/i),
+      screen.getByText(/Spatele has recovered since 2 days/i),
     ).toBeInTheDocument();
     // Verify spy called at least twice (mount + post-setState).
     expect(spy.mock.calls.length).toBeGreaterThanOrEqual(2);

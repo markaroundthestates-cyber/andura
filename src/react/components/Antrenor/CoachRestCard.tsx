@@ -21,6 +21,7 @@
 
 import type { JSX } from 'react';
 import type { CoachRestReason } from '../../lib/engineWrappers';
+import { t } from '../../../i18n/index.js';
 
 interface Props {
   onLightSession: () => void;
@@ -34,22 +35,22 @@ interface Props {
 /**
  * Compose coach line din restReason. Generic non-claim fallback cand null
  * (T0 fresh): NO muscle-group claim, NO fake readiness number - Bugatti
- * truth invariant per MED-FIX chat5. Output NO_DIACRITICS_RULE compliant
- * per Andura RO style.
+ * truth invariant per MED-FIX chat5. Locale-aware via i18n bundle (RO
+ * no-diacritics rule D-LEGACY-064 preserved on RO branch).
  */
 function composeCoachLine(restReason: CoachRestReason | null | undefined): string {
   if (!restReason) {
-    return 'Astazi e zi de recuperare - corpul are nevoie de odihna.';
+    return t('coachRest.genericLine');
   }
   const { fatiguedGroups, readinessScore } = restReason;
   const groupsPart =
     fatiguedGroups.length === 0
-      ? 'Muschii recupereaza'
-      : `${fatiguedGroups.join(' si ')} inca recupereaza`;
+      ? t('coachRest.musclesRecovering')
+      : t('coachRest.groupsRecovering', { groups: fatiguedGroups.join(t('coachRest.andJoiner')) });
   const readinessPart =
     readinessScore === null
       ? ''
-      : ` · readiness ${readinessScore}/100`;
+      : t('coachRest.readinessSuffix', { score: readinessScore });
   return `${groupsPart}${readinessPart}.`;
 }
 
@@ -68,32 +69,32 @@ export function CoachRestCard({
         borderColor: 'var(--status-neutral-border)',
       }}
       role="region"
-      aria-label="Coach-ul recomanda azi - recuperare"
+      aria-label={t('coachRest.ariaLabel')}
     >
       <div
         className="text-xs font-semibold tracking-wider uppercase"
         style={{ color: 'var(--status-neutral-text)' }}
       >
-        Coach-ul recomanda azi
+        {t('coachRest.kicker')}
       </div>
       <div className="text-xl font-bold mt-1 tracking-tight text-ink flex items-center gap-2.5">
-        Zi de recuperare activa
+        {t('coachRest.title')}
       </div>
       <div className="font-serif italic mt-1.5 leading-relaxed text-sm text-ink2">
         &bdquo;{coachLine}&rdquo;
       </div>
       <div className="flex gap-3.5 mt-3.5 text-sm text-ink2">
         <span className="flex items-center gap-1.5" data-testid="coach-rest-duration">
-          ~ {durationMinutes} min mobilitate
+          {t('coachRest.durationLabel', { min: durationMinutes })}
         </span>
-        <span className="flex items-center gap-1.5">optional</span>
+        <span className="flex items-center gap-1.5">{t('coachRest.optional')}</span>
       </div>
       <button
         type="button"
         onClick={onLightSession}
         className="w-full mt-3.5 bg-transparent text-ink border border-line rounded-md py-2.5 font-medium"
       >
-        Sesiune usoara mobilitate
+        {t('coachRest.lightSessionCta')}
       </button>
       <div className="text-center mt-2.5">
         <button
@@ -101,7 +102,7 @@ export function CoachRestCard({
           onClick={onOverride}
           className="text-ink2 text-sm underline underline-offset-2"
         >
-          Vreau totusi antrenament
+          {t('coachRest.overrideCta')}
         </button>
       </div>
     </div>
