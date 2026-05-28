@@ -51,11 +51,14 @@ describe('Calendar7Day — render', () => {
     expect(screen.getByTestId('calendar-day-6')).toHaveAttribute('data-day', 'Sun');
   });
 
-  it('training day cu background #3d7a4a (color token spec)', () => {
+  // ANDURA PULSE reskin (2026-05-29): the legacy heat-green (#3d7a4a) training
+  // fill is replaced by the Pulse accent token (--brick) with --on-accent text,
+  // matching the mockup's .sched-pill.on. Rest stays var(--paper-2).
+  it('training day fill uses the Pulse accent token (--brick)', () => {
     render(<Calendar7Day />);
     const dayL = screen.getByTestId('calendar-day-0'); // training
     expect(dayL).toHaveAttribute('data-kind', 'training');
-    expect(dayL.style.background).toContain('rgb(61, 122, 74)'); // #3d7a4a
+    expect(dayL.style.background).toContain('var(--brick)');
   });
 
   it('rest day cu background var(--paper-2)', () => {
@@ -65,24 +68,24 @@ describe('Calendar7Day — render', () => {
     expect(dayMa.style.background).toContain('var(--paper-2)');
   });
 
-  // task_01: wiki spec dual-state color SSOT (LOCKED vs EDIT)
-  it('LOCKED state training day uses #3d7a4a verde inchis + white text', () => {
+  // ANDURA PULSE reskin (2026-05-29): the prior dual-state heat-green color
+  // SSOT (LOCKED #3d7a4a vs EDIT --heat-usor) is unified to the single Pulse
+  // accent (--brick fill + --on-accent text) across both states — the mockup's
+  // .sched-pill.on does not change color in edit mode, only the row becomes
+  // tappable. Token-only (WCAG-tuned --on-accent keeps text legible on fill).
+  it('LOCKED state training day uses the Pulse accent fill + on-accent text', () => {
     render(<Calendar7Day />); // editMode false default
     const dayL = screen.getByTestId('calendar-day-0'); // training
-    expect(dayL.style.background).toContain('rgb(61, 122, 74)'); // #3d7a4a
-    expect(dayL.style.color).toBe('rgb(255, 255, 255)'); // #ffffff white
+    expect(dayL.style.background).toContain('var(--brick)');
+    expect(dayL.style.color).toBe('var(--on-accent)');
   });
 
-  // THEME-INVERSION fix (2026-05-27): edit-state fill/text tokenizat la
-  // --heat-usor / --heat-usor-text (paritate dark exista) ca sa nu inverseze
-  // pe tema mov. Verde-deschis (#d4e6cb light) + text verde-inchis pastrate
-  // semantic; valorile devin token refs.
-  it('EDIT state training day uses --heat-usor fill + --heat-usor-text', () => {
+  it('EDIT state training day keeps the same Pulse accent fill (no color flip)', () => {
     useScheduleStore.setState({ editMode: true });
     render(<Calendar7Day />);
     const dayL = screen.getByTestId('calendar-day-0'); // training
-    expect(dayL.style.background).toContain('var(--heat-usor)');
-    expect(dayL.style.color).toBe('var(--heat-usor-text)');
+    expect(dayL.style.background).toContain('var(--brick)');
+    expect(dayL.style.color).toBe('var(--on-accent)');
   });
 
   it('rest day color invariant cross-states (var(--paper-2) LOCKED + EDIT)', () => {

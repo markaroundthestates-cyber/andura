@@ -24,38 +24,47 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): JSX
   const minutesAgo = Math.max(1, Math.floor((Date.now() - snapshot.sessionStart) / 60000));
   return (
     <div
-      // §F-pass2-resume-02 — mockup L795 verbatim warm cream urgent-friendly
-      // tint #fdf6e8 (light) cu dark fallback paper2 (cream tint loses contrast
-      // pe dark surfaces). Tailwind arbitrary value preserves dark: prefix
-      // selector specificity superior la inline style.
-      className="bg-[#fdf6e8] dark:bg-paper2 border border-brick rounded-xl p-4 mb-4 cursor-pointer"
+      // ANDURA PULSE reskin (2026-05-29) — the paused-session recovery card is
+      // the most time-sensitive surface on the home, so it gets an elevated
+      // Pulse surface with a 1.5px brick accent border + brick glow corner.
+      // Token-only (no raw hex) so light + every dark theme reads native.
+      className="surface-elevated relative overflow-hidden bg-paper2 rounded-2xl p-4 mb-4 cursor-pointer"
+      style={{ border: '1.5px solid var(--brick)' }}
       role="region"
       aria-label="Reia sesiunea"
       onClick={onResume}
       data-testid="resume-session-card"
     >
-      <div className="flex items-center gap-3">
+      <div
+        aria-hidden="true"
+        className="absolute -top-[40px] -right-[40px] w-[140px] h-[140px] rounded-full pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(circle, color-mix(in oklab, var(--brick) 22%, transparent), transparent 70%)',
+        }}
+      />
+      <div className="relative flex items-center gap-3">
         <PlayCircle
           className="w-6 h-6 text-brick flex-shrink-0"
           aria-hidden="true"
           data-testid="resume-session-icon"
         />
         <div className="flex-1">
-          <div className="text-xs font-bold tracking-wider uppercase text-brick">Reia sesiunea</div>
-          <div className="font-bold text-ink mt-0.5">{snapshot.title}</div>
+          <div className="font-mono text-[11px] tracking-wider uppercase text-brick">Reia sesiunea</div>
+          <div className="font-display font-bold text-ink mt-0.5">{snapshot.title}</div>
           <div className="text-sm text-ink2 mt-0.5">
             Oprit la ex {snapshot.exIdx + 1} · acum {minutesAgo} min
           </div>
         </div>
       </div>
-      <div className="flex gap-2 mt-2.5 pt-2.5 border-t border-line">
+      <div className="relative flex gap-2 mt-2.5 pt-2.5 border-t border-line">
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
             onResume();
           }}
-          className="flex-1 bg-ink text-paper dark:bg-brick rounded-md px-3 py-2 text-sm font-semibold"
+          className="flex-1 bg-brick text-paper rounded-md px-3 py-2 text-sm font-semibold"
         >
           Reia
         </button>

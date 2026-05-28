@@ -24,7 +24,7 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): JSX.
   const daysAgo = Math.floor((Date.now() - lastSession.ts) / 86400000);
   return (
     <div
-      className="bg-paper border border-lineStrong rounded-xl p-4 mb-4"
+      className="surface-elevated bg-paper2 border border-lineStrong rounded-2xl p-4 mb-4"
       role="region"
       aria-label="Bun venit inapoi"
     >
@@ -34,7 +34,7 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): JSX.
           aria-hidden="true"
           data-testid="reactivate-icon"
         />
-        <div className="font-bold text-ink text-base">Bun venit inapoi</div>
+        <div className="font-display font-bold text-ink text-base">Bun venit inapoi</div>
       </div>
       <div className="text-sm text-ink2 leading-relaxed">
         N-am vorbit de <b>{daysAgo} zile</b>. Fara presiune - reluam usor, cu o sesiune
@@ -44,7 +44,7 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): JSX.
         <button
           type="button"
           onClick={onStart}
-          className="flex-1 bg-ink text-paper dark:bg-brick rounded-lg px-3 py-2.5 text-sm font-semibold"
+          className="flex-1 bg-brick text-paper rounded-lg px-3 py-2.5 text-sm font-semibold"
         >
           Incep usor
         </button>

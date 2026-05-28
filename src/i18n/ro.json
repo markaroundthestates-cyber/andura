@@ -170,6 +170,7 @@
     "ariaLabel": "Antrenor home",
     "subtitle": "Cine te ghideaza in sala.",
     "errorBanner": "Nu am putut incarca recomandarile coach-ului. Poti incepe sesiunea oricum.",
+    "primedForPr": "Pregatit de PR",
     "header": {
       "dateSeparator": "·"
     }
@@ -183,6 +184,11 @@
     "exercisesCount_one": "{n} exercitiu",
     "exercisesCount_other": "{n} exercitii",
     "durationLabel": "~ {min} min",
+    "intensity": {
+      "plus": "Intensitate mai mare",
+      "normal": "Incarcare standard",
+      "minus": "Incarcare mai usoara"
+    },
     "startCta": "Incepe sesiunea",
     "overrideCta": "Vrei altceva azi? →",
     "daysSince": {

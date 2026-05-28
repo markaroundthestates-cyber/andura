@@ -62,11 +62,15 @@ describe('ResumeSessionCard — render', () => {
     expect(onResume).not.toHaveBeenCalled();
   });
 
-  it('§F-pass2-resume-02 warm cream bg #fdf6e8 (mockup L795 light theme)', () => {
+  // ANDURA PULSE reskin (2026-05-29): the warm-cream #fdf6e8 surface is
+  // replaced by an elevated Pulse surface (surface-elevated + bg-paper2) with a
+  // 1.5px brick accent border (the most time-sensitive home card). Token-only.
+  it('§F-pass2-resume-02 Pulse elevated surface + brick accent border', () => {
     render(<ResumeSessionCard snapshot={makeSnapshot()} onResume={vi.fn()} onDiscard={vi.fn()} />);
     const root = screen.getByTestId('resume-session-card');
-    expect(root.className).toContain('bg-[#fdf6e8]');
-    expect(root.className).toContain('dark:bg-paper2');
+    expect(root.className).toContain('surface-elevated');
+    expect(root.className).toContain('bg-paper2');
+    expect(root.style.border).toContain('var(--brick)');
   });
 
   it('no diacritics in UI text', () => {

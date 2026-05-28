@@ -16,8 +16,8 @@ export function PRWallRecent({ records }: PRWallRecentProps): JSX.Element | null
   if (records.length === 0) return null;
   return (
     <section data-testid="pr-wall-recent" className="mb-4">
-      <h2 className="text-base font-semibold text-ink mb-2 flex items-center gap-2">
-        <Trophy className="w-4 h-4" aria-hidden="true" />
+      <h2 className="font-display text-base font-bold text-ink mb-2 flex items-center gap-2">
+        <Trophy className="w-4 h-4" style={{ color: 'var(--volt)' }} aria-hidden="true" />
         {t('istoric.prWall.title')}
       </h2>
       <ul className="flex flex-col gap-2">
@@ -25,7 +25,7 @@ export function PRWallRecent({ records }: PRWallRecentProps): JSX.Element | null
           <li
             key={`${pr.exerciseId}-${pr.sessionTs}-${idx}`}
             data-testid={`pr-record-${idx}`}
-            className="flex justify-between items-center p-3 rounded-xl bg-paper2 border border-line"
+            className="surface-elevated flex justify-between items-center p-3 rounded-xl bg-paper2 border border-line"
           >
             <span className="text-sm font-medium text-ink">{pr.exerciseName}</span>
             <span className="text-sm text-ink2">

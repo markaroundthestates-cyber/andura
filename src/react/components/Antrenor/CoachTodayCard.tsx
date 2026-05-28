@@ -32,29 +32,22 @@
 import type { JSX } from 'react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Layers } from 'lucide-react';
+import { Clock, Layers, Dumbbell } from 'lucide-react';
 import type { PlannedWorkoutOutput } from '../../lib/engineWrappers';
 import * as engineWrappers from '../../lib/engineWrappers';
 import { coachPick } from '../../lib/coachVoice';
 import { gotoPath } from '../../lib/navigation';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { Ripple } from '../Ripple';
+import { Kicker } from '../pulse/Kicker';
 import { haptic } from '../../lib/motion';
 import { t } from '../../../i18n/index.js';
 
-// §B037 audit fix (UI-REVIEW #2) — extract design tokens out of inline style
-// hex literals → CSS custom properties. Tailwind extend in `tailwind.config.js`
-// pentru future bg-coach-lora / text-coach-meta utility classes; pe loc CSS vars
-// inline preserve fallback. Quote color = "lora" (warm gold accent line), meta
-// color = "meta" (sub-text gray-warm).
-const COACH_LORA_COLOR = 'var(--coach-lora, #e8d9b8)';
-const COACH_META_COLOR = 'var(--coach-meta, #a8a09a)';
-// §F-pass2-coachtoday-04 — lagging extension mockup L747 color #f6c89a (warmer
-// gold accent vs lora primary; secondary weakness signal context).
-const COACH_LAGGING_COLOR = 'var(--coach-lagging, #f6c89a)';
-// §F-pass2-coachtoday-06 — override link mockup L754 color #c8b89a (muted
-// paper-tone hint subtle CTA "Vrei altceva azi?" → openScheduleOverride).
-const COACH_OVERRIDE_COLOR = 'var(--coach-override, #c8b89a)';
+// ANDURA PULSE reskin (2026-05-29) — the prior warm-gold inline color tokens
+// (lora/meta/lagging/override) are retired in favor of the Pulse palette
+// (volt/aqua/ember + ink tokens) applied inline below. The card itself is a
+// gradient surface defined by the scoped `.coach-today-card` rule in
+// src/styles/global.css.
 
 interface Props {
   onStart: () => void;
@@ -91,6 +84,12 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     : t('coachToday.fallbackTitle');
   const duration = workout?.estimatedDuration ?? 48;
   const exerciseCount = workout?.exerciseCount ?? 5;
+  // Pulse meta chip (mockup interfata-noua/screens-antrenor.jsx:50) — the
+  // mockup hard-coded "+15%"; the engine exposes a truthful 'plus'|'normal'|
+  // 'minus' intensityMod instead (no fabricated percentage — Bugatti truth).
+  // Default 'normal' when no plan is loaded (T0 fresh / loading).
+  const intensityMod = workout?.intensityMod ?? 'normal';
+  const intensityLabel = t(`coachToday.intensity.${intensityMod}`);
   // HIGH-CODE-03 chat5 — engine-driven quote replaces hardcoded muscle-group
   // claim. Composer returns null cand T0 fresh / no qualifying recovered
   // group → fallback safe generic non-claim line via coachPick('preview').
@@ -148,45 +147,40 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
 
   return (
     <div
-      className="relative overflow-hidden bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick rounded-[18px] p-[18px] mb-2.5 animate-card-rise"
+      className="relative overflow-hidden rounded-2xl p-[18px] mb-2.5 animate-card-rise border"
       role="region"
       aria-label={t('coachToday.ariaLabel')}
+      style={{
+        // Pulse coach card surface (mockup .coach-card screens-antrenor.jsx:113)
+        // — a soft top-down gradient on the elevated paper with a slightly
+        // stronger border. Token-only: paper2 → paper mix keeps every theme +
+        // dark mode native (no raw hex).
+        background:
+          'linear-gradient(165deg, var(--paper-2), color-mix(in oklab, var(--paper-2) 86%, #000))',
+        borderColor: 'var(--line-strong)',
+      }}
     >
-      {/* §F-pass2-coachtoday-07 (LOW chat5 Wave 10) — decorative radial brick
-         gradient mockup L742 verbatim. aria-hidden + presentation-only div,
-         dark-theme hidden (background swap negates warmth intent). */}
+      {/* Pulse volt glow corner (mockup interfata-noua/screens-antrenor.jsx:38
+          .coach-glow) — replaces the prior brick radial. aria-hidden decoration,
+          token-only volt via color-mix so every theme reads native. */}
       <div
         aria-hidden="true"
         data-testid="coach-today-gradient"
-        className="absolute -top-[30px] -right-[30px] w-[140px] h-[140px] rounded-full pointer-events-none dark:hidden"
+        className="absolute -top-[50px] -right-[50px] w-[180px] h-[180px] rounded-full pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle, rgba(200,65,46,0.35), transparent 70%)',
+            'radial-gradient(circle, color-mix(in oklab, var(--volt) 26%, transparent), transparent 68%)',
         }}
       />
-      {/* Wave A4 (2026-05-28) — dark-theme accent wash. The light-theme brick
-          gradient above hides on dark because rgba(200,65,46) red sits wrong on
-          mov/noir/earth surfaces; this companion overlay uses the active
-          --brick token via color-mix so each dark palette gets its OWN warm
-          accent (purple on Brain Coach, champagne on Luxury, gold on Living
-          Body). Same -30/-30 anchor + 140x140 footprint keeps the visual
-          composition consistent cross-theme. */}
-      <div
-        aria-hidden="true"
-        data-testid="coach-today-gradient-dark"
-        className="hidden dark:block absolute -top-[40px] -right-[40px] w-[180px] h-[180px] rounded-full pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(circle, color-mix(in oklab, var(--brick) 28%, transparent), transparent 70%)',
-        }}
-      />
-      <div className="relative text-xs font-semibold tracking-wider uppercase text-brick">
-        {t('coachToday.kicker')}
+      <div className="relative">
+        <Kicker color="var(--volt)">{t('coachToday.kicker')}</Kicker>
       </div>
-      <div className="relative text-xl font-bold mt-1 tracking-tight">{title}</div>
+      <div className="relative font-display text-xl font-bold mt-1.5 tracking-tight leading-tight text-ink">
+        {title}
+      </div>
       <div
-        className="relative font-serif italic mt-1.5 leading-relaxed text-sm"
-        style={{ color: COACH_LORA_COLOR }}
+        className="relative font-serif italic mt-2 leading-relaxed text-sm"
+        style={{ color: 'var(--volt)' }}
         data-testid="coach-today-quote"
       >
         &bdquo;{coachQuote}&rdquo;
@@ -194,13 +188,16 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
       {laggingSignal && (
         <div
           data-testid="coach-today-lagging"
-          className="relative font-serif italic mt-1.5 leading-relaxed text-xs pt-1.5 border-t border-dashed"
-          style={{ color: COACH_LAGGING_COLOR, borderColor: 'rgba(246,200,154,0.3)' }}
+          className="relative font-serif italic mt-2 leading-relaxed text-xs pt-2 border-t border-dashed"
+          style={{
+            color: 'var(--ember)',
+            borderColor: 'color-mix(in oklab, var(--ember) 35%, transparent)',
+          }}
         >
           &bdquo;{laggingSignal}&rdquo;
         </div>
       )}
-      <div className="relative flex gap-3.5 mt-3.5 text-sm" style={{ color: COACH_META_COLOR }}>
+      <div className="relative flex gap-3.5 mt-3.5 text-sm text-ink2">
         <span className="flex items-center gap-1.5">
           <Clock className="w-3.5 h-3.5" aria-hidden="true" />
           {t('coachToday.durationLabel', { min: duration })}
@@ -209,18 +206,25 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
           <Layers className="w-3.5 h-3.5" aria-hidden="true" />
           {t(exerciseCount === 1 ? 'coachToday.exercisesCount_one' : 'coachToday.exercisesCount_other', { n: exerciseCount })}
         </span>
+        <span className="flex items-center gap-1.5" data-testid="coach-today-intensity">
+          <Dumbbell className="w-3.5 h-3.5" aria-hidden="true" />
+          {intensityLabel}
+        </span>
       </div>
-      {/* Wave C3 (2026-05-28) — "Incepe sesiunea" is the day's ritual launch.
-          Ripple + haptic + press-feedback so the tap feels like a real
-          commitment. Layered the same way as set-confirm (the other ritual
-          tap), so the two anchor moments of a workout day feel paired. */}
+      {/* Wave C3 (2026-05-28) — the day's ritual launch. Ripple + haptic +
+          press-feedback so the tap feels like a real commitment. Pulse swaps
+          the flat brick fill for the volt→aqua gradient (the signature CTA). */}
       <button
         type="button"
         onClick={() => {
           haptic(12);
           onStart();
         }}
-        className="btn-primary-lift press-feedback relative overflow-hidden w-full mt-3.5 bg-brick text-paper rounded-md py-2.5 font-semibold"
+        className="btn-primary-lift press-feedback relative overflow-hidden w-full mt-4 rounded-md py-2.5 font-semibold flex items-center justify-center gap-2"
+        style={{
+          background: 'linear-gradient(120deg, var(--volt), var(--aqua))',
+          color: 'var(--on-accent)',
+        }}
       >
         <Ripple color="rgba(255,255,255,0.55)" />
         <span className="relative">{t('coachToday.startCta')}</span>
@@ -230,8 +234,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
           type="button"
           onClick={handleOverride}
           data-testid="coach-today-override"
-          className="text-sm underline underline-offset-2"
-          style={{ color: COACH_OVERRIDE_COLOR }}
+          className="text-sm underline underline-offset-2 text-ink3"
         >
           {t('coachToday.overrideCta')}
         </button>
