@@ -19,6 +19,7 @@ import { InstallPrompt } from '../components/InstallPrompt';
 import { OfflineBanner } from '../components/OfflineBanner';
 import { ToastViewport } from '../components/Toast';
 import { MedicalDisclaimerModal } from '../components/MedicalDisclaimerModal';
+import { BackgroundAurora } from '../components/BackgroundAurora';
 import { useCoachStore } from '../stores/coachStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { t } from '../../i18n/index.js';
@@ -50,6 +51,13 @@ export function Layout(): JSX.Element {
   const acceptDisclaimer = useSettingsStore((s) => s.acceptDisclaimer);
   return (
     <div className={`min-h-screen bg-paper text-ink flex flex-col persona-${persona}`}>
+      {/* Wave A4 (Daniel "in background vreau animatii" 2026-05-28) — ambient
+          aurora layer behind every authenticated route. 3 palette-aware blobs
+          drift very slowly via transform + scale; auto-collapse under
+          prefers-reduced-motion via the global * cap in global.css. fixed
+          inset-0 + z-index: -10 + pointer-events: none — zero hit-target
+          interference. */}
+      <BackgroundAurora />
       {/* §6-C2 audit fix — skip-to-content link WCAG 2.4.1 Bypass Blocks SC A.
           NO_DIACRITICS rule preserved ("continut" not "conținut"). */}
       <a
