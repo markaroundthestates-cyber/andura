@@ -54,6 +54,7 @@ vi.mock('../../../lib/engineWrappers', async () => {
 import { Workout } from '../../../routes/screens/antrenor/Workout';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { toast } from '../../../lib/toast';
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function renderWorkout() {
   return render(
@@ -86,11 +87,21 @@ beforeEach(() => {
     lastSession: null,
   });
   localStorage.clear();
+  // Fixture exercise names are RO ("inclinat cu bara", "Impins inclinat") and
+  // the swap toast asserts RO text — force RO locale so toExerciseDisplay
+  // returns RO names + Romanian toast strings match. Wave C2 i18n flipped
+  // DEFAULT_LOCALE to EN; tests that intentionally exercise RO behaviour
+  // opt in explicitly.
+  setLocale('ro');
+  _resetI18nCache();
+  setLocale('ro');
   toast.clear();
 });
 
 afterEach(() => {
   toast.clear();
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
 });
 
 describe('Workout in-session swap — "Aparat ocupat"', () => {

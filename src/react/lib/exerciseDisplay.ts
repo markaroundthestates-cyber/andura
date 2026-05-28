@@ -31,11 +31,61 @@
 // sessionBuilder.js EQUIP_MAP. NO_DIACRITICS_RULE (D-LEGACY-064).
 
 import { getExerciseMetadata } from '../../engine/exerciseLibrary.js';
+import { getCurrentLocale } from '../../i18n/index.js';
 
 export interface ExerciseDisplay {
   name: string;
   sub?: string;
 }
+
+// ── EN display map (Wave C2 i18n) ─────────────────────────────────────────
+// Under EN locale, the engine canonical key IS the EN name (Bench Press,
+// Lat Pulldown, Romanian Deadlift, etc.) — so for most exercises we just
+// echo the engine name. The few entries below carry an EN subtitle so the
+// row stays visually consistent with the RO display (which had `sub` for
+// equipment/setup hints). Industry-standard fitness vocabulary (Fitbod /
+// Strong / Hevy) — NO literal RO translations.
+const EXERCISE_DISPLAY_EN: Readonly<Record<string, ExerciseDisplay>> = {
+  // ── Push ────────────────────────────────────────────────────────────────
+  'Incline DB Press': { name: 'Incline DB Press', sub: 'Dumbbells · 30° bench' },
+  'Flat DB Press': { name: 'Flat DB Press', sub: 'Dumbbells · flat bench' },
+  'DB Shoulder Press': { name: 'DB Shoulder Press', sub: 'Seated, dumbbells' },
+  'Lateral Raises': { name: 'Lateral Raises', sub: 'Dumbbells' },
+  'Lateral Raises (cable)': { name: 'Lateral Raises', sub: 'Cable' },
+  'Incline DB Press pump': { name: 'Incline DB Press', sub: 'Dumbbells · pump sets' },
+  'Flat Barbell Bench': { name: 'Bench Press', sub: 'Barbell' },
+  'Pec Deck': { name: 'Pec Deck', sub: 'Machine fly' },
+  'Pec Deck / Cable Fly': { name: 'Chest Fly', sub: 'Pec deck / cable' },
+  'Cable Fly': { name: 'Cable Fly', sub: 'Cable' },
+  'Overhead Triceps': { name: 'Overhead Triceps Extension', sub: 'Cable' },
+  'Pushdown': { name: 'Triceps Pushdown', sub: 'Cable, close grip' },
+
+  // ── Pull ────────────────────────────────────────────────────────────────
+  'Lat Pulldown': { name: 'Lat Pulldown', sub: 'Cable machine' },
+  'Cable Row': { name: 'Cable Row', sub: 'Cable machine' },
+  'Chest-Supported Row': { name: 'Chest-Supported Row', sub: 'Machine' },
+  'Face Pulls': { name: 'Face Pull', sub: 'Cable' },
+  'Bayesian Curl': { name: 'Bayesian Curl', sub: 'Cable · behind body' },
+  'Incline DB Curl': { name: 'Incline DB Curl', sub: 'Incline bench' },
+  'Cable Curl': { name: 'Cable Curl', sub: 'Cable' },
+  'Preacher Curl': { name: 'Preacher Curl', sub: 'Preacher bench' },
+  'EZ-bar Preacher Curl': { name: 'EZ-Bar Preacher Curl', sub: 'Preacher bench' },
+  'DB Preacher Curl': { name: 'DB Preacher Curl', sub: 'Preacher bench' },
+  'Machine Preacher Curl': { name: 'Machine Preacher Curl', sub: 'Preacher machine' },
+  'Cable Preacher Curl': { name: 'Cable Preacher Curl', sub: 'Cable · preacher bench' },
+  'Cheat Curl Barbell': { name: 'Cheat Curl', sub: 'Barbell · momentum allowed' },
+  'Hammer Curl': { name: 'Hammer Curl', sub: 'Dumbbells · neutral grip' },
+  'Rear Delt Fly': { name: 'Rear Delt Fly', sub: 'Machine fly' },
+  'Rear Delt Cable': { name: 'Rear Delt Fly', sub: 'Cable' },
+
+  // ── Legs ──────────────────────────────────────────────────────────────────
+  'Leg Press': { name: 'Leg Press', sub: 'Machine' },
+  'Leg Extension': { name: 'Leg Extension', sub: 'Machine' },
+  'Leg Curl': { name: 'Leg Curl', sub: 'Machine' },
+  'Romanian Deadlift': { name: 'Romanian Deadlift', sub: 'Barbell' },
+  'Calf Raise': { name: 'Calf Raise', sub: 'Machine' },
+  'Calf Raises': { name: 'Calf Raise', sub: 'Machine' },
+};
 
 // English engine key → user-facing display name + optional equipment/setup sub.
 const EXERCISE_DISPLAY: Readonly<Record<string, ExerciseDisplay>> = {
@@ -94,17 +144,31 @@ const EXERCISE_DISPLAY: Readonly<Record<string, ExerciseDisplay>> = {
 };
 
 /**
- * Map an engine exercise name (English canonical key) to its Romanian display
- * form. Precedence (WP-6 naming-at-scale):
- *   1. EXERCISE_DISPLAY — the ~30 mockup-tuned curated names (source of truth
- *      for those, verbatim from andura-clasic.html DESIGN MASTER; also carries
- *      equipment/setup `sub`). Wins so Daniel-reviewed names stay intact.
- *   2. library `nameRo` — the 657-exercise compositional RO names (WP-6), so the
- *      remaining ~627 names render in Romanian instead of raw English keys.
- *   3. EN fallback — original string with NO subtitle, so the UI never shows an
- *      empty label for a truly unknown name.
+ * Map an engine exercise name (English canonical key) to its locale-appropriate
+ * display form. Precedence (WP-6 + Wave C2 i18n):
+ *
+ * EN locale (default post 2026-05-28 paradigm flip):
+ *   1. EXERCISE_DISPLAY_EN — ~30 curated EN names with industry-standard
+ *      fitness vocabulary (Fitbod/Strong/Hevy) + equipment subtitles.
+ *   2. library `nameEn` field — echoes the canonical engine key.
+ *   3. Engine name itself — already English (canonical), safe to render raw.
+ *
+ * RO locale (opt-in from Cont > Setari > Limba):
+ *   1. EXERCISE_DISPLAY — the ~30 mockup-tuned curated RO names (verbatim from
+ *      andura-clasic.html DESIGN MASTER; carries equipment/setup `sub`).
+ *   2. library `nameRo` — the 657-exercise compositional RO names (WP-6).
+ *   3. EN fallback — original string with NO subtitle when truly unknown.
  */
 export function toExerciseDisplay(engineName: string): ExerciseDisplay {
+  const locale = getCurrentLocale();
+  if (locale === 'en') {
+    const enCurated = EXERCISE_DISPLAY_EN[engineName];
+    if (enCurated) return enCurated;
+    const nameEn = getExerciseMetadata(engineName).nameEn;
+    if (nameEn) return { name: nameEn };
+    return { name: engineName };
+  }
+  // RO locale (opt-in)
   const mockup = EXERCISE_DISPLAY[engineName];
   if (mockup) return mockup;
   const nameRo = getExerciseMetadata(engineName).nameRo;
