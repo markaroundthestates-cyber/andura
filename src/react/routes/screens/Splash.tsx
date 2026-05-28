@@ -1,127 +1,129 @@
-// ══ SPLASH — Landing screen Phase 5 task_15 ══════════════════════════════
-// Wordmark + tagline + CTA primary. Routes la auth (anon) sau antrenor
-// (auth). Wording autonomous compose D024 LOCKED V1.
+// ══ SPLASH — Pulse auto-advancing landing ════════════════════════════════
+// Pulse arc reskin (2026-05-29, GROUP A / A1). The manual two-CTA landing was
+// replaced by Daniel's Pulse mockup (interfata-noua/screens-entry.jsx
+// SplashScreen ~25-52): an animated PulseMark logo + a volt->aqua gradient
+// "Andura" wordmark + the tagline + a 3-dot loader. It AUTO-ADVANCES after
+// ~2.6s and is tap-to-skip; on advance it routes via the EXISTING
+// isAuthenticated logic (-> /app/antrenor authenticated, else /auth).
 //
-// §F-splash-06 (LOW chat5 Wave 10) — padding asimetric mockup verbatim
-// 48/28/32 (pt-12 px-7 pb-8) per andura-clasic.html#L403 (mai mult top,
-// custom horizontal). Aliniaza ritmul vertical splash cu intentia mockup.
+// The mockup drops the splash-cta / splash-secondary buttons; the routing
+// reality they encoded (login default vs continue-when-authed) is preserved by
+// the auto-advance target. Returning users aren't forced to wait — a tap (or
+// keyboard Enter/Space) skips straight through. splash-trust-footer is kept.
 //
-// §F-splash-07 (MED chat5 Wave 16) — layout structure space-between cu 3
-// children sections mockup andura-clasic.html#L403-419 verbatim aliniat:
-// top spacer empty + brand wrapper (logo + wordmark + subtitle col gap-6)
-// + bottom CTAs+footer stack. justify-between distributes vertical space
-// → CTAs anchored at bottom (thumb-reach zone mobile UX best practice).
-// Prior: justify-center force user look-then-reach to mid-screen tap.
-//
-// §F-splash-08 (MED chat5 Wave 12) — wordmark Inter sans (NU Lora serif).
-// Mockup andura-clasic.html#L408 nu seteaza font-family (inherit body
-// Inter); prod avea font-serif override → Lora redenderat la h1. Sterg
-// font-serif → brand identity sans-serif aliniat mockup. Tracking-tight
-// + font-bold preserva fidelitatea Inter wordmark.
+// Token-only: the wordmark uses the shared .pulse-gradtext idiom (--grad-pulse
+// volt->aqua), text via tokens, zero raw hex. Motion (PulseMark draw/glow, the
+// dot float, the entrance) is foundation CSS, auto-gated by the global
+// prefers-reduced-motion block + [data-calm="1"].
 
 import type { JSX } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../stores/appStore';
-import { Ripple } from '../../components/Ripple';
+import { PulseMark } from '../../components/pulse/PulseMark';
 import { t } from '../../../i18n/index.js';
+
+// Auto-advance delay — matches the mockup's 2600ms (long enough for the logo
+// draw + wordmark rise to read, short enough to not feel like a wait).
+const ADVANCE_MS = 2600;
 
 export function Splash(): JSX.Element {
   const navigate = useNavigate();
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
 
+  // Guard so the auto-advance timer and a manual tap can't both fire navigate.
+  const advancedRef = useRef(false);
+  const advance = (): void => {
+    if (advancedRef.current) return;
+    advancedRef.current = true;
+    navigate(isAuthenticated ? '/app/antrenor' : '/auth');
+  };
+
+  useEffect(() => {
+    const id = window.setTimeout(advance, ADVANCE_MS);
+    return () => window.clearTimeout(id);
+    // advance closes over the current isAuthenticated; stable for the splash
+    // lifetime (auth flips only via navigation away). Empty deps = one timer.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <section
-      className="min-h-screen bg-paper text-ink flex flex-col items-center justify-between pt-12 px-7 pb-8 text-center"
+      onClick={advance}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          advance();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label={t('splash.appName')}
+      className="min-h-screen bg-paper text-ink flex flex-col items-center justify-center gap-3.5 px-7 text-center cursor-pointer"
       data-testid="splash"
     >
-      {/* §F-splash-07 — top spacer (mockup L404 empty div) enables
-          space-between distribution; brand block stays centered visually. */}
-      <div aria-hidden="true" />
-
-      {/* §F-splash-07 — brand block: logo + wordmark + subtitle column.
-          Mockup L405-411 gap:24px between logo-group and text-group.
-          Entrance (2026-05-27): logo scaleIn, wordmark + tagline fadeInUp with a
-          small stagger, CTAs fade last. Pure CSS on mount, auto-gated by the
-          global prefers-reduced-motion block.
-
-          UX polish 2026-05-28: logo gains an accent-tinted shadow that picks
-          up the active palette via color-mix(--brick), so the "A" mark feels
-          anchored to the brand color instead of floating disconnected. Subtle
-          (0 14px 40px -10px at 30% alpha) — no halo on dark themes, only a
-          soft warm presence. */}
-      <div className="flex flex-col items-center gap-7">
-        <div
-          className="animate-scale-in w-[72px] h-[72px] rounded-[22px] bg-ink text-paper flex items-center justify-center text-[32px] font-bold tracking-tight"
-          style={{
-            boxShadow:
-              '0 14px 40px -10px color-mix(in oklab, var(--brick) 30%, transparent), 0 2px 4px -1px color-mix(in oklab, var(--brick) 18%, transparent)',
-          }}
-        >
-          A
-        </div>
-        <div className="space-y-2.5">
-          <h1
-            className="animate-fade-in-up text-[44px] leading-[1.05] font-bold text-ink tracking-[-0.025em]"
-            style={{ animationDelay: '80ms' }}
-          >
-            Andura
-          </h1>
-          {/* Tagline = coach-quote per mockup andura-clasic.html#L409
-              (font-family Lora, font-style italic). Distinct de wordmark h1
-              (F-splash-08 ramane Inter sans). Polish 2026-05-28: tighter
-              line-height + ink2 stays warm; max-w nudged so the line break
-              feels intentional, not crammed. */}
-          <p
-            className="animate-fade-in-up font-serif italic text-lg leading-[1.45] text-ink2 max-w-[280px] mx-auto"
-            style={{ animationDelay: '140ms' }}
-          >
-            {t('splash.taglineLine1')}
-            <br />
-            {t('splash.taglineLine2')}
-          </p>
-        </div>
+      <div className="animate-scale-in">
+        <PulseMark size={96} />
       </div>
 
-      {/* §F-splash-07 — bottom stack: CTAs + footer. Mockup L412-418
-          width:100% column gap:12px. Footer below CTAs cu margin-top spacing. */}
-      <div
-        className="animate-fade-in-up w-full max-w-xs flex flex-col items-stretch gap-3"
-        style={{ animationDelay: '220ms' }}
+      {/* Gradient "Andura" wordmark — Space Grotesk display + volt->aqua
+          .pulse-gradtext. Wide tracking echoes the mockup's letter-spaced
+          wordmark. The brand name stays readable text for screen readers. */}
+      <h1
+        className="pulse-gradtext font-display animate-fade-in-up text-[42px] font-bold leading-none tracking-[0.12em]"
+        style={{ animationDelay: '120ms' }}
       >
-        <button
-          type="button"
-          onClick={() => navigate(isAuthenticated ? '/app/antrenor' : '/auth')}
-          data-testid="splash-cta"
-          className="btn-primary-lift press-feedback relative overflow-hidden w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
-        >
-          <Ripple color="rgba(255,255,255,0.5)" />
-          <span className="relative">{isAuthenticated ? t('splash.continueCta') : t('splash.loginCta')}</span>
-        </button>
-        {/* BUG #1 (CEO 2026-05-27) — "Creaza Cont" e o actiune primara pentru un
-            user nou; o legatura subliniata slaba e prea ascunsa. Buton secundar
-            proper (bordered, full-width), aliniat stilului secundar din Auth.tsx
-            (border lineStrong + bg-paper2 + rounded-14) pentru consistenta
-            cross-screen + prominenta corecta. UX polish 2026-05-28: btn-
-            secondary-lift adauga hover hairline-brick + press scale parity
-            cu primary, fara competa cu halo-ul primar. */}
-        {!isAuthenticated && (
-          <button
-            type="button"
-            onClick={() => navigate('/auth', { state: { mode: 'signup' } })}
-            data-testid="splash-secondary"
-            className="btn-secondary-lift press-feedback relative overflow-hidden w-full py-4 border border-lineStrong text-ink bg-paper2 rounded-[14px] text-base font-semibold"
-          >
-            <Ripple />
-            <span className="relative">{t('splash.signupCta')}</span>
-          </button>
-        )}
-        <p
-          className="mt-2 text-[11px] text-ink3 leading-relaxed"
-          data-testid="splash-trust-footer"
-        >
-          {t('splash.trustFooter')}
-        </p>
+        {t('splash.appName')}
+      </h1>
+
+      {/* Tagline — mono eyebrow per mockup tone. Reuses the existing two-line
+          splash tagline keys (i18n parity; no new strings). */}
+      <p
+        className="font-mono animate-fade-in-up text-[11px] tracking-[0.22em] uppercase text-ink3 leading-relaxed"
+        style={{ animationDelay: '200ms' }}
+      >
+        {t('splash.taglineLine1')} {t('splash.taglineLine2')}
+      </p>
+
+      {/* 3-dot loader — volt / aqua / ember floaters signalling the brief
+          auto-advance wait (mockup .splash-dots). Decorative. */}
+      <div
+        className="splash-dots flex gap-[7px] mt-5 animate-fade-in-up"
+        style={{ animationDelay: '320ms' }}
+        aria-hidden="true"
+      >
+        <i className="splash-dot" />
+        <i className="splash-dot" />
+        <i className="splash-dot" />
       </div>
+
+      <p
+        className="mt-6 text-[11px] text-ink3 leading-relaxed animate-fade-in-up"
+        style={{ animationDelay: '420ms' }}
+        data-testid="splash-trust-footer"
+      >
+        {t('splash.trustFooter')}
+      </p>
+
+      <style>{`
+        .splash-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 9999px;
+          background: var(--volt);
+          animation: splashDotFloat calc(1s / max(var(--motion), .35)) ease-in-out infinite;
+        }
+        .splash-dot:nth-child(2) { background: var(--aqua); animation-delay: .15s; }
+        .splash-dot:nth-child(3) { background: var(--ember); animation-delay: .3s; }
+        @keyframes splashDotFloat {
+          0%, 100% { transform: translateY(0); opacity: .55; }
+          50% { transform: translateY(-5px); opacity: 1; }
+        }
+        [data-calm="1"] .splash-dot { animation: none; opacity: .8; }
+        @media (prefers-reduced-motion: reduce) {
+          .splash-dot { animation: none; opacity: .8; }
+        }
+      `}</style>
     </section>
   );
 }

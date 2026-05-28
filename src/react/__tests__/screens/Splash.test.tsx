@@ -1,15 +1,18 @@
-// ══ SPLASH — entry CTA label + nav tests ═══════════════════════════════════
-// BUG #2 (CEO directive 2026-05-27) — the anon entry button must read an
-// obvious "Log In" (NOT vague "Incepe") and the secondary affordance must read
-// "Creaza Cont", routing to the account-creation path. Authenticated users keep
-// "Continua" → /app. MemoryRouter jsdom paradigm per D020.
+// ══ SPLASH — Pulse auto-advance + tap-to-skip nav tests ═══════════════════
+// Pulse arc reskin (GROUP A / A1, 2026-05-29): the two-CTA landing
+// (splash-cta / splash-secondary) was replaced by Daniel's auto-advancing
+// Pulse splash — animated PulseMark + gradient "Andura" wordmark + tagline +
+// dot loader. It advances on a ~2.6s timer AND on tap/keyboard, routing via the
+// EXISTING isAuthenticated logic (/app/antrenor authenticated, else /auth).
 //
-// Coverage focus: NO prior Splash.test.tsx existed. Locks the entry labels +
-// nav targets so a future drift back to the vague "Incepe" wording fails CI.
+// This file replaces the prior CTA-label/nav assertions (the buttons no longer
+// exist) with the new reality: auto-advance routing + tap-to-skip + the
+// authenticated branch. The brand wordmark + trust footer + no-diacritics
+// invariants are preserved. MemoryRouter jsdom paradigm per D020.
 
 import type { JSX } from 'react';
-import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Splash } from '../../routes/screens/Splash';
 import { useAppStore } from '../../stores/appStore';
@@ -18,17 +21,11 @@ import { useAppStore } from '../../stores/appStore';
 // is verified separately by src/i18n/__tests__/i18nNoRoLeak.test.tsx.
 import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../../i18n/index.js';
 
-// Probe component renders the path + serialized location.state of wherever a
-// nav lands, so a test can assert both the route and the passed state.mode.
+// Probe component renders the path a nav lands on so a test can assert the
+// auto-advance / tap-to-skip route target.
 function NavProbe(): JSX.Element {
   const location = useLocation();
-  return (
-    <div
-      data-testid="nav-probe"
-      data-path={location.pathname}
-      data-state={JSON.stringify(location.state ?? null)}
-    />
-  );
+  return <div data-testid="nav-probe" data-path={location.pathname} />;
 }
 
 function renderSplash(): ReturnType<typeof render> {
@@ -52,52 +49,81 @@ beforeEach(() => {
   useAppStore.getState().setAuthenticated(false);
 });
 
-describe('Splash — anonymous entry labels (BUG #2)', () => {
-  it('primary CTA reads "Log In" (NOT vague "Incepe") for an anon user', () => {
+afterEach(() => {
+  vi.useRealTimers();
+});
+
+describe('Splash — Pulse auto-advance routing', () => {
+  it('renders the animated brand mark + "Andura" wordmark', () => {
     renderSplash();
-    const cta = screen.getByTestId('splash-cta');
-    expect(cta.textContent).toBe('Log In');
-    expect(cta.textContent).not.toMatch(/Incepe/);
+    expect(screen.getByTestId('splash')).toBeInTheDocument();
+    expect(screen.getByTestId('pulse-mark')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Andura');
   });
 
-  it('secondary affordance reads "Creaza Cont"', () => {
+  it('keeps the trust footer', () => {
     renderSplash();
-    const secondary = screen.getByTestId('splash-secondary');
-    expect(secondary.textContent).toBe('Creaza Cont');
-    expect(secondary.textContent).not.toMatch(/Am deja cont/);
+    expect(screen.getByTestId('splash-trust-footer')).toBeInTheDocument();
   });
 
-  it('primary "Log In" routes to /auth (login default, no signup state)', () => {
+  it('auto-advances an anonymous user to /auth after the timer', () => {
+    vi.useFakeTimers();
     renderSplash();
-    fireEvent.click(screen.getByTestId('splash-cta'));
-    const probe = screen.getByTestId('nav-probe');
-    expect(probe).toHaveAttribute('data-path', '/auth');
-    expect(probe).toHaveAttribute('data-state', 'null');
+    // No nav yet before the timer fires.
+    expect(screen.queryByTestId('nav-probe')).not.toBeInTheDocument();
+    act(() => {
+      vi.advanceTimersByTime(2700);
+    });
+    expect(screen.getByTestId('nav-probe')).toHaveAttribute('data-path', '/auth');
   });
 
-  it('secondary "Creaza Cont" routes to /auth with state.mode "signup"', () => {
+  it('auto-advances an authenticated user to /app/antrenor after the timer', () => {
+    vi.useFakeTimers();
+    useAppStore.getState().setAuthenticated(true);
     renderSplash();
-    fireEvent.click(screen.getByTestId('splash-secondary'));
-    const probe = screen.getByTestId('nav-probe');
-    expect(probe).toHaveAttribute('data-path', '/auth');
-    expect(probe).toHaveAttribute('data-state', JSON.stringify({ mode: 'signup' }));
-  });
-
-  it('no diacritics in the entry CTA labels', () => {
-    const { container } = renderSplash();
-    expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+    act(() => {
+      vi.advanceTimersByTime(2700);
+    });
+    expect(screen.getByTestId('nav-probe')).toHaveAttribute('data-path', '/app/antrenor');
   });
 });
 
-describe('Splash — authenticated entry (unchanged)', () => {
-  it('CTA reads "Continua" + routes to /app/antrenor when authenticated', () => {
+describe('Splash — tap-to-skip', () => {
+  it('tapping the splash skips straight to /auth (anon)', () => {
+    renderSplash();
+    fireEvent.click(screen.getByTestId('splash'));
+    expect(screen.getByTestId('nav-probe')).toHaveAttribute('data-path', '/auth');
+  });
+
+  it('tapping the splash skips to /app/antrenor when authenticated', () => {
     useAppStore.getState().setAuthenticated(true);
     renderSplash();
-    const cta = screen.getByTestId('splash-cta');
-    expect(cta.textContent).toBe('Continua');
-    // Secondary "Creaza Cont" affordance is anon-only.
-    expect(screen.queryByTestId('splash-secondary')).not.toBeInTheDocument();
-    fireEvent.click(cta);
+    fireEvent.click(screen.getByTestId('splash'));
     expect(screen.getByTestId('nav-probe')).toHaveAttribute('data-path', '/app/antrenor');
+  });
+
+  it('Enter key skips the splash (keyboard accessibility)', () => {
+    renderSplash();
+    fireEvent.keyDown(screen.getByTestId('splash'), { key: 'Enter' });
+    expect(screen.getByTestId('nav-probe')).toHaveAttribute('data-path', '/auth');
+  });
+
+  it('a tap then the timer firing does NOT double-navigate', () => {
+    vi.useFakeTimers();
+    renderSplash();
+    fireEvent.click(screen.getByTestId('splash'));
+    const firstPath = screen.getByTestId('nav-probe').getAttribute('data-path');
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
+    // Still on the same single landing (the guard blocked the timer's nav).
+    expect(screen.getByTestId('nav-probe')).toHaveAttribute('data-path', firstPath as string);
+  });
+});
+
+describe('Splash — invariants', () => {
+  it('no diacritics in the splash copy', () => {
+    const { container } = renderSplash();
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 });

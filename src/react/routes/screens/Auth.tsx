@@ -4,6 +4,17 @@
 //   (resolved Phase 6+ "Phase 6+ real wire" comment; auth flow now functional)
 // React-side flow stays minimal (anti-paternalism + auth invariant: 0
 // password, only email magic link).
+//
+// Pulse arc reskin (2026-05-29, GROUP A / A2) — the card/field/divider + the
+// header now follow Daniel's Pulse mockup (interfata-noua/screens-entry.jsx
+// AuthScreen ~55-114): a centered animated PulseMark, a volt->aqua gradient
+// title, Pulse pill fields, a gradient primary CTA, mono "sau" dividers. ALL
+// the brain is preserved verbatim — sendMagicLink + buildGoogleSignInUrl
+// wiring; Google LOGIN-MODE-ONLY; the signup consent gate (legal); the webview
+// warning; the magic-link sent state; skip-auth test-drive + dev mock login.
+// The mockup's "Continue without account" anonymous path is NOT added (no
+// anonymous backend path exists); the real skip-auth "test drive" (Tier-0
+// local) is a separate, kept feature. Token-only styling, no raw hex.
 
 import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
@@ -12,6 +23,7 @@ import { Mail, FlaskConical, ExternalLink, ArrowLeft, X } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { sendMagicLink, buildGoogleSignInUrl } from '../../../auth.js';
 import { detectWebView, webViewLabel } from '../../lib/webviewDetect';
+import { PulseMark } from '../../components/pulse/PulseMark';
 import { t, tArray } from '../../../i18n/index.js';
 
 // §B005/D-2 audit fix — Google OAuth client ID from build-time env. Daniel
@@ -144,36 +156,39 @@ export function Auth(): JSX.Element {
           </div>
         )}
 
-        <h1 className="text-2xl font-bold text-ink mb-2 text-center">
-          {mode === 'signup' ? t('auth.signupTitle') : t('auth.loginTitle')}
+        {/* Pulse header — animated brand mark above a volt->aqua gradient title
+            (mockup AuthScreen logo + .gradtext heading). The PulseMark is
+            decorative; the heading carries the screen name for a11y. */}
+        <div className="flex justify-center mb-4 animate-scale-in">
+          <PulseMark size={60} />
+        </div>
+        <h1 className="pulse-gradtext font-display text-3xl font-bold mb-2 text-center">
+          {sent ? t('auth.sent.title') : mode === 'signup' ? t('auth.signupTitle') : t('auth.loginTitle')}
         </h1>
-        <p className="text-sm text-ink2 mb-6 text-center">
-          {mode === 'signup' ? t('auth.signupSubtitle') : t('auth.loginSubtitle')}
+        <p className="text-sm text-ink2 mb-6 text-center leading-relaxed">
+          {sent
+            ? t('auth.sent.openHint')
+            : mode === 'signup'
+              ? t('auth.signupSubtitle')
+              : t('auth.loginSubtitle')}
         </p>
 
         {sent ? (
-          /* §F-auth-10 (MED chat5 Wave 16) — Magic Link sent UI mockup
-              andura-clasic.html#L467-476 verbatim aliniat. 64x64 circle
-              paper-2 background + mail icon brick 28px (mockup L468-470).
-              Title "Verifica emailul" warm (vs prior terse "Link trimis").
-              Subtitle "Ti-am trimis linkul pe {email}. Deschide-l de pe
-              acest telefon." anchoreaza cross-device hint critic Magic Link
-              UX (Maria 65: deschide email pe alt device → link 404). Pastrez
-              expira-15-min info + Schimba-emailul back btn (prod-extra
-              utile NU in mockup demo). */
+          /* §F-auth-10 (MED chat5 Wave 16) — Magic Link sent UI. Pulse reskin:
+              the warm "Verifica emailul" title + the open-on-this-phone hint
+              are now carried by the gradient header above (mockup parity); the
+              card keeps the 64x64 mail icon + the cross-device anchor naming the
+              exact email (Maria 65: deschide email pe alt device → link 404) +
+              the first-timer signup note + the Schimba-emailul back btn. */
           <div
-            className="bg-paper2 border border-line rounded-2xl p-6 text-center"
+            className="surface-elevated bg-paper2 border border-line rounded-2xl p-6 text-center"
             data-testid="auth-sent"
           >
             <div className="w-16 h-16 rounded-full bg-paper mx-auto mb-3 flex items-center justify-center">
               <Mail className="w-7 h-7 text-brick" aria-hidden="true" />
             </div>
-            <p className="text-xl font-semibold text-ink mb-2">{t('auth.sent.title')}</p>
-            <p className="text-sm text-ink2 mb-1">
-              {t('auth.sent.bodyPrefix')} <strong className="text-ink">{email}</strong>{t('auth.sent.bodySuffix')}
-            </p>
             <p className="text-sm text-ink2 mb-4">
-              {t('auth.sent.openHint')}
+              {t('auth.sent.bodyPrefix')} <strong className="text-ink">{email}</strong>{t('auth.sent.bodySuffix')}
             </p>
             {mode === 'signup' && (
               <p
@@ -229,7 +244,7 @@ export function Auth(): JSX.Element {
                 aria-hidden="true"
               >
                 <div className="flex-1 h-px bg-line" />
-                <span className="text-xs text-ink3">{t('auth.dividerOr')}</span>
+                <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-ink3">{t('auth.dividerOr')}</span>
                 <div className="flex-1 h-px bg-line" />
               </div>
             )}
@@ -265,7 +280,7 @@ export function Auth(): JSX.Element {
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t('auth.emailPlaceholderRo')}
               data-testid="auth-email-input"
-              className="w-full p-4 mb-4 border border-lineStrong rounded-xl bg-paper2 text-base"
+              className="auth-pulse-field w-full p-4 mb-4 border border-lineStrong rounded-2xl bg-paper2 text-base text-ink outline-none transition-[border-color,box-shadow]"
             />
             {/* §F-auth-09 (LOW chat5) — CTA text "Trimite link" → "Trimite
                 link de intrare" mockup verbatim andura-clasic.html#L450 (full
@@ -372,7 +387,7 @@ export function Auth(): JSX.Element {
               aria-hidden="true"
             >
               <div className="flex-1 h-px bg-line" />
-              <span className="text-xs text-ink3">{t('auth.dividerOr')}</span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-ink3">{t('auth.dividerOr')}</span>
               <div className="flex-1 h-px bg-line" />
             </div>
 
@@ -452,6 +467,16 @@ export function Auth(): JSX.Element {
 
       {/* U-09 — modal inline legal accesibil pre-auth. */}
       <LegalModal doc={legalDoc} onClose={() => setLegalDoc(null)} />
+
+      {/* Pulse field focus — volt/aqua accent ring on the email input (mockup
+          .field:focus). Token-only (--volt + color-mix), motion-safe (the
+          transition is collapsed by the global reduced-motion cap). */}
+      <style>{`
+        .auth-pulse-field:focus {
+          border-color: var(--volt);
+          box-shadow: 0 0 0 3px color-mix(in oklab, var(--volt) 20%, transparent);
+        }
+      `}</style>
     </section>
   );
 }

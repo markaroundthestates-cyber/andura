@@ -1,7 +1,21 @@
-// ══ ONBOARDING — Big 6 Hard Typing 7-Step React Port ═════════════════════
+// ══ ONBOARDING — Big 6 Hard Typing 8-Step React Port ═════════════════════
 // Phase 5 task_14 — onboarding flow MVP cu Big 6 hard typing (varsta + sex
-// + obiectiv + frecventa + experienta + greutate). 7 steps mockup wv2
-// reference. Saves la onboardingStore.
+// + obiectiv + frecventa + experienta + greutate + inaltime + summary).
+//
+// Pulse arc reskin (2026-05-29, GROUP A / A3) — the 8 step bodies follow
+// Daniel's Pulse mockup (interfata-noua/screens-entry.jsx OnboardingScreen
+// ~117-262): a per-step aqua Kicker eyebrow, big-number inputs for age/kg/cm
+// (huge centered figure + unit + helper), a 2-tile sex picker, enriched choice
+// rows for goal/frequency/experience (accent-tinted selected state + check
+// affordance), and a summary review card. The brain is preserved verbatim:
+// useOnboardingStore setField/finalize/validateOnboardingField, the per-step
+// validation gate + Gigel-friendly toast, the finalize()+completed guard, the
+// weight-timeline seed (seedFromProfileIfEmpty), the `onboarding-step-N` +
+// per-control testids, and the round-dot progress (tests assert progress-dot-N
+// + data-active — kept, NOT swapped for the mockup's bar). The mockup's English
+// goal IDs map to the REAL RO store vocab (auto/forta/masa/slabire/mentenanta);
+// frequency stays the real 2-5 union (the mockup's 2-6 stepper exceeds the
+// store type). Token-only styling, no raw hex.
 
 import type { JSX } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -23,6 +37,7 @@ import {
 import { useOnboardingStore, validateOnboardingField } from '../../stores/onboardingStore';
 import type { OnboardingData, Frequency, Experience } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
+import { Kicker } from '../../components/pulse/Kicker';
 import { toast } from '../../lib/toast';
 import { t } from '../../../i18n/index.js';
 
@@ -142,13 +157,13 @@ export function Onboarding(): JSX.Element {
         </span>
       </div>
 
-      {/* MED — brick uppercase "Pasul N" kicker above the step heading per
-          mockup L502 (color #c8412e, uppercase, tracking-wide). Wave A5 polish
-          (Daniel "Top Grade" 2026-05-28) — the kicker leads the per-step
-          stagger so the eye lands on it first before the heading + question. */}
-      <p className="text-xs text-brick font-semibold uppercase tracking-wide mb-1 animate-fade-in-up delay-0">
-        {t('onboarding.stepKicker', { n: stepNum })}
-      </p>
+      {/* Pulse Kicker eyebrow — aqua mono "PASUL N" leads the per-step stagger
+          so the eye lands on it first before the heading (mockup OnboardingScreen
+          <Kicker color="var(--aqua)">STEP N</Kicker>). Reuses the existing
+          stepKicker key (i18n parity). */}
+      <div className="mb-1 animate-fade-in-up delay-0">
+        <Kicker color="var(--aqua)">{t('onboarding.stepKicker', { n: stepNum })}</Kicker>
+      </div>
 
       {/* Wave A5 — each step re-mounts under a key so the fade-in-up replays
           per navigation. Wrapping the active step lets the fade carry the
@@ -201,6 +216,96 @@ interface OptionStepProps<T extends string> {
   onChange: (v: T) => void;
 }
 
+/**
+ * Pulse big-number field (mockup BigNumberInput ~205-218): a huge centered
+ * figure on a volt-accent underline + a unit beside it + a helper line, with
+ * the error message replacing the helper when out-of-range. A thin presentation
+ * wrapper — all the brain (NaN guard, store commit, bounds, aria) is passed in
+ * by the calling step so age/kg/cm keep their exact testids + validation.
+ */
+interface BigNumberFieldProps extends NumericStepProps {
+  unit: string;
+  helper: string;
+  error: string | null;
+  inputId: string;
+  errorId: string;
+  testId: string;
+  ariaLabel: string;
+  placeholder: string;
+  min: number;
+  max: number;
+  step?: string;
+  inputMode: 'numeric' | 'decimal';
+  enterKeyHint: 'next' | 'done';
+}
+
+function BigNumberField({
+  value,
+  onChange,
+  unit,
+  helper,
+  error,
+  inputId,
+  errorId,
+  testId,
+  ariaLabel,
+  placeholder,
+  min,
+  max,
+  step,
+  inputMode,
+  enterKeyHint,
+}: BigNumberFieldProps): JSX.Element {
+  return (
+    <div className="flex flex-col items-center gap-3 pt-4">
+      <div className="flex items-baseline gap-2.5">
+        <input
+          id={inputId}
+          type="number"
+          value={value ?? ''}
+          // MED-A-3 fix CODE-REVIEW chat3: paste of non-numeric ("abc") yields
+          // truthy value + Number("abc")=NaN → NaN propagates to store. Guard
+          // with Number.isFinite before commit.
+          onChange={(e) => {
+            const v = e.target.value;
+            if (!v) return onChange(null);
+            const n = Number(v);
+            onChange(Number.isFinite(n) ? n : null);
+          }}
+          placeholder={placeholder}
+          min={min}
+          max={max}
+          step={step}
+          required
+          aria-required="true"
+          aria-invalid={error ? 'true' : undefined}
+          aria-describedby={error ? errorId : undefined}
+          inputMode={inputMode}
+          autoComplete="off"
+          enterKeyHint={enterKeyHint}
+          aria-label={ariaLabel}
+          data-testid={testId}
+          className="onb-bignum font-mono w-[150px] text-center bg-transparent border-0 border-b-2 border-[color:var(--volt)] text-ink text-[58px] font-bold leading-none outline-none pb-1 transition-colors"
+        />
+        <span className="font-display text-[22px] font-semibold text-ink2">{unit}</span>
+      </div>
+      {error ? (
+        <p
+          id={errorId}
+          role="alert"
+          data-testid={`${testId.replace('-input', '')}-error`}
+          className="text-sm text-danger text-center"
+        >
+          {error}
+        </p>
+      ) : (
+        <p className="text-xs text-ink3 text-center">{helper}</p>
+      )}
+      <style>{`.onb-bignum::-webkit-inner-spin-button,.onb-bignum::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}`}</style>
+    </div>
+  );
+}
+
 function Step1({ value, onChange }: NumericStepProps): JSX.Element {
   // A11Y HIGH chat5 — surface range validation pentru screen reader. Show
   // doar daca value e ne-null + out-of-range (NU initial empty). WCAG SC
@@ -212,46 +317,22 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
     <>
       <h1 id="onb-step1-heading" className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.1.title')}</h1>
       <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.1.desc')}</p>
-      <input
-        type="number"
-        value={value ?? ''}
-        // MED-A-3 fix CODE-REVIEW chat3: paste of non-numeric ("abc") yields
-        // truthy `e.target.value` + `Number("abc")=NaN` → NaN propagates to
-        // store, corrupting Big 6 + downstream engine math silently. Guard
-        // with Number.isFinite check before commit.
-        onChange={(e) => {
-          const v = e.target.value;
-          if (!v) return onChange(null);
-          const n = Number(v);
-          onChange(Number.isFinite(n) ? n : null);
-        }}
+      <BigNumberField
+        value={value}
+        onChange={onChange}
+        unit={t('onboarding.steps.1.unit')}
+        helper={t('onboarding.steps.1.helper')}
+        error={error}
+        inputId="onb-age"
+        errorId="onb-age-error"
+        testId="onb-age-input"
+        ariaLabel={t('onboarding.steps.1.ariaLabel')}
         placeholder={t('onboarding.steps.1.placeholder')}
         min={18}
         max={99}
-        required
-        aria-required="true"
-        aria-invalid={error ? 'true' : undefined}
-        aria-describedby={error ? 'onb-age-error' : undefined}
         inputMode="numeric"
-        autoComplete="off"
         enterKeyHint="next"
-        aria-label={t('onboarding.steps.1.ariaLabel')}
-        data-testid="onb-age-input"
-        className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono transition-colors focus:border-brick"
       />
-      {error ? (
-        <p
-          id="onb-age-error"
-          role="alert"
-          data-testid="onb-age-error"
-          className="mt-2 text-sm text-danger text-center"
-        >
-          {error}
-        </p>
-      ) : (
-        // MED — helper line per mockup L565 "Intre 16 si 99 ani".
-        <p className="mt-2 text-xs text-ink3 text-center">{t('onboarding.steps.1.helper')}</p>
-      )}
     </>
   );
 }
@@ -265,20 +346,29 @@ function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
           select state pe <button>. role=radiogroup necesita arrow-key
           handling + roving tabIndex (~200 LOC pentru 7 grupuri) = zero
           user benefit pre-Beta. Screen reader anunta "button, [label],
-          pressed/not pressed" perfect valid. */}
-      <div className="flex flex-col gap-3">
-        {(['m', 'f'] as const).map((v, idx) => (
-          <button
-            key={v}
-            type="button"
-            onClick={() => onChange(v)}
-            data-testid={`onb-sex-${v}`}
-            aria-pressed={value === v}
-            className={`press-feedback animate-fade-in-up p-4 rounded-xl border text-left transition-colors ${idx === 0 ? 'delay-150' : 'delay-225'} ${value === v ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
-          >
-            <span className="font-medium">{v === 'm' ? t('onboarding.options.sex.m') : t('onboarding.options.sex.f')}</span>
-          </button>
-        ))}
+          pressed/not pressed" perfect valid.
+          Pulse reskin — 2-tile grid (mockup .ob-tile): centered User glyph +
+          label, accent-tinted when selected. */}
+      <div className="grid grid-cols-2 gap-3">
+        {(['m', 'f'] as const).map((v, idx) => {
+          const selected = value === v;
+          return (
+            <button
+              key={v}
+              type="button"
+              onClick={() => onChange(v)}
+              data-testid={`onb-sex-${v}`}
+              aria-pressed={selected}
+              className={`press-feedback animate-fade-in-up flex flex-col items-center justify-center gap-2 py-7 px-3 rounded-2xl border transition-colors ${idx === 0 ? 'delay-150' : 'delay-225'} ${selected ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
+            >
+              <User
+                className={`w-8 h-8 ${selected ? 'text-paper' : 'text-ink2'}`}
+                aria-hidden="true"
+              />
+              <span className="font-display font-semibold">{v === 'm' ? t('onboarding.options.sex.m') : t('onboarding.options.sex.f')}</span>
+            </button>
+          );
+        })}
       </div>
     </>
   );
@@ -332,7 +422,7 @@ function Step3({ value, onChange }: OptionStepProps<GoalKey>): JSX.Element {
               onClick={() => onChange(key)}
               data-testid={`onb-goal-${key}`}
               aria-pressed={selected}
-              className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-xl border text-left transition-colors ${
+              className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-2xl border text-left transition-colors ${
                 selected
                   ? 'bg-brick text-paper border-brick option-selected-ring'
                   : isAuto
@@ -404,7 +494,7 @@ function Step4({ value, onChange }: OptionStepProps<Frequency>): JSX.Element {
               data-testid={`onb-freq-${v}`}
               aria-pressed={selected}
               aria-label={t('onboarding.steps.4.ariaLabelFmt', { n: v })}
-              className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-xl border text-left transition-colors ${selected ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
+              className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-2xl border text-left transition-colors ${selected ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
             >
               <span
                 className={`w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center font-bold font-mono ${selected ? 'bg-paper text-brick' : 'bg-paper text-ink2'}`}
@@ -450,7 +540,7 @@ function Step5({ value, onChange }: OptionStepProps<Experience>): JSX.Element {
               onClick={() => onChange(v)}
               data-testid={`onb-exp-${v}`}
               aria-pressed={selected}
-              className={`press-feedback animate-fade-in-up ${delayClass} p-4 rounded-xl border text-left transition-colors ${selected ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
+              className={`press-feedback animate-fade-in-up ${delayClass} p-4 rounded-2xl border text-left transition-colors ${selected ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
             >
               <span className="block font-medium">{t(labelKey)}</span>
               <span className={`block text-xs mt-0.5 ${selected ? 'text-paper' : 'text-ink3'}`}>
@@ -474,45 +564,23 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
     <>
       <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.6.title')}</h1>
       <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.6.desc')}</p>
-      <input
-        type="number"
-        value={value ?? ''}
-        // MED-A-3 fix CODE-REVIEW chat3: see Step1 commentary — NaN guard
-        // before commit la store. Number.isFinite(NaN) === false → null.
-        onChange={(e) => {
-          const v = e.target.value;
-          if (!v) return onChange(null);
-          const n = Number(v);
-          onChange(Number.isFinite(n) ? n : null);
-        }}
+      <BigNumberField
+        value={value}
+        onChange={onChange}
+        unit={t('onboarding.steps.6.unit')}
+        helper={t('onboarding.steps.6.helper')}
+        error={error}
+        inputId="onb-weight"
+        errorId="onb-weight-error"
+        testId="onb-weight-input"
+        ariaLabel={t('onboarding.steps.6.ariaLabel')}
         placeholder={t('onboarding.steps.6.placeholder')}
-        step="0.1"
         min={30}
         max={250}
-        required
-        aria-required="true"
-        aria-invalid={error ? 'true' : undefined}
-        aria-describedby={error ? 'onb-weight-error' : undefined}
+        step="0.1"
         inputMode="decimal"
-        autoComplete="off"
         enterKeyHint="done"
-        aria-label={t('onboarding.steps.6.ariaLabel')}
-        data-testid="onb-weight-input"
-        className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono transition-colors focus:border-brick"
       />
-      {error ? (
-        <p
-          id="onb-weight-error"
-          role="alert"
-          data-testid="onb-weight-error"
-          className="mt-2 text-sm text-danger text-center"
-        >
-          {error}
-        </p>
-      ) : (
-        // MED — helper line per mockup L647 pattern ("Intre N si N kg").
-        <p className="text-xs text-ink3 mt-2 text-center">{t('onboarding.steps.6.helper')}</p>
-      )}
     </>
   );
 }
@@ -532,45 +600,23 @@ function Step7Height({ value, onChange }: NumericStepProps): JSX.Element {
     <>
       <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.7.title')}</h1>
       <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.7.desc')}</p>
-      <input
-        type="number"
-        value={value ?? ''}
-        // MED-A-3 fix parity (see Step1/Step6) — NaN guard before commit la
-        // store. Number.isFinite(NaN) === false → null.
-        onChange={(e) => {
-          const v = e.target.value;
-          if (!v) return onChange(null);
-          const n = Number(v);
-          onChange(Number.isFinite(n) ? n : null);
-        }}
+      <BigNumberField
+        value={value}
+        onChange={onChange}
+        unit={t('onboarding.steps.7.unit')}
+        helper={t('onboarding.steps.7.helper')}
+        error={error}
+        inputId="onb-height"
+        errorId="onb-height-error"
+        testId="onb-height-input"
+        ariaLabel={t('onboarding.steps.7.ariaLabel')}
         placeholder={t('onboarding.steps.7.placeholder')}
-        step="1"
         min={120}
         max={230}
-        required
-        aria-required="true"
-        aria-invalid={error ? 'true' : undefined}
-        aria-describedby={error ? 'onb-height-error' : undefined}
+        step="1"
         inputMode="numeric"
-        autoComplete="off"
         enterKeyHint="next"
-        aria-label={t('onboarding.steps.7.ariaLabel')}
-        data-testid="onb-height-input"
-        className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono transition-colors focus:border-brick"
       />
-      {error ? (
-        <p
-          id="onb-height-error"
-          role="alert"
-          data-testid="onb-height-error"
-          className="mt-2 text-sm text-danger text-center"
-        >
-          {error}
-        </p>
-      ) : (
-        // MED — helper line per mockup L620 pattern ("Intre N si N cm").
-        <p className="text-xs text-ink3 mt-2 text-center">{t('onboarding.steps.7.helper')}</p>
-      )}
     </>
   );
 }
@@ -613,7 +659,7 @@ function Step8Summary({ data }: { data: OnboardingData }): JSX.Element {
       <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.8.title')}</h1>
       <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.8.desc')}</p>
       <div
-        className="surface-elevated bg-paper2 border border-line rounded-xl overflow-hidden"
+        className="surface-elevated bg-paper2 border border-line rounded-2xl overflow-hidden"
         data-testid="onb-summary"
       >
         {rows.map(({ Icon, label, value }, idx) => (
