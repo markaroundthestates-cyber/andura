@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#090b13" />
+  <title>Andura Pulse — interfata noua</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+:root{
+  --volt:#b6f23a;--volt-deep:#8fd218;--aqua:#4fd6e8;--aqua-deep:#2bb6cc;--ember:#ff7d52;--ember-deep:#f4571f;--violet:#a98bff;
+  --accent:var(--volt);--accent-deep:var(--volt-deep);
+  --grad-pulse:linear-gradient(135deg,var(--volt) 0%,var(--aqua) 100%);
+  --grad-ember:linear-gradient(135deg,var(--ember) 0%,var(--violet) 120%);
+  --motion:1;--radius:22px;--radius-sm:14px;--pad:20px;
+  --font-display:'Space Grotesk',system-ui,sans-serif;--font-body:'Manrope',system-ui,sans-serif;--font-mono:'Space Mono',ui-monospace,monospace;
+}
+:root,[data-theme="dark"]{
+  --bg:#090b13;--bg-2:#0d101c;--bg-grad:radial-gradient(120% 80% at 50% -10%,#131830 0%,#090b13 60%);
+  --surface:rgba(24,29,46,0.72);--surface-2:rgba(33,39,60,0.78);--surface-solid:#141826;
+  --line:rgba(255,255,255,0.085);--line-strong:rgba(255,255,255,0.17);
+  --ink:#f3f5fc;--ink-2:#a7adc4;--ink-3:#6a7088;
+  --glow:0 0 0 1px var(--line),0 18px 40px -18px rgba(0,0,0,0.8);
+  --shadow-card:0 1px 0 rgba(255,255,255,0.04) inset,0 24px 48px -28px rgba(0,0,0,0.85);
+  --on-accent:#0a0c14;--grain-opacity:0.05;
+}
+[data-theme="light"]{
+  --bg:#eef0f6;--bg-2:#ffffff;--bg-grad:radial-gradient(120% 80% at 50% -10%,#ffffff 0%,#e7eaf3 70%);
+  --surface:rgba(255,255,255,0.86);--surface-2:rgba(244,246,251,0.92);--surface-solid:#ffffff;
+  --line:rgba(12,16,30,0.09);--line-strong:rgba(12,16,30,0.16);
+  --ink:#12141f;--ink-2:#565d72;--ink-3:#8a90a5;--volt-deep:#6ba80a;
+  --glow:0 0 0 1px var(--line),0 18px 40px -22px rgba(40,50,90,0.28);
+  --shadow-card:0 1px 0 rgba(255,255,255,0.7) inset,0 22px 44px -30px rgba(40,50,90,0.35);
+  --on-accent:#0a0c14;--grain-opacity:0.025;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{font-family:var(--font-body);background:#05060a;color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow:hidden;}
+button{font:inherit;color:inherit;border:none;background:none;cursor:pointer;}
+input{font:inherit;}
+::selection{background:color-mix(in oklab,var(--accent) 40%,transparent);}
+.display{font-family:var(--font-display);letter-spacing:-0.02em;}
+.num{font-family:var(--font-display);font-variant-numeric:tabular-nums;letter-spacing:-0.02em;}
+.mono{font-family:var(--font-mono);}
+.label{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.16em;font-size:10px;color:var(--ink-3);}
+.card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-card);}
+.card-tight{border-radius:var(--radius-sm);}
+.tile-wash{position:absolute;inset:0;pointer-events:none;}
+.pr-ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;background:color-mix(in oklab,var(--ember) 14%,transparent);border:1px solid color-mix(in oklab,var(--ember) 30%,transparent);}
+.sheen::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,0.06),transparent 35%);pointer-events:none;}
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;font-family:var(--font-body);font-weight:700;transition:transform .12s ease,box-shadow .2s ease,filter .2s ease;}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--accent);color:var(--on-accent);padding:15px 22px;box-shadow:0 10px 30px -8px color-mix(in oklab,var(--accent) 60%,transparent);}
+.btn-primary:hover{filter:brightness(1.05);box-shadow:0 14px 38px -8px color-mix(in oklab,var(--accent) 70%,transparent);}
+.btn-grad{background:var(--grad-pulse);color:var(--on-accent);padding:15px 22px;box-shadow:0 12px 34px -10px color-mix(in oklab,var(--aqua) 55%,transparent);}
+.btn-ghost{background:var(--surface-2);color:var(--ink);padding:14px 20px;border:1px solid var(--line);}
+.btn-ghost:hover{background:color-mix(in oklab,var(--ink) 8%,var(--surface-2));}
+@keyframes aurora1{0%{transform:translate(0,0) scale(1) rotate(0deg);}50%{transform:translate(14vw,10vh) scale(1.18) rotate(40deg);}100%{transform:translate(0,0) scale(1) rotate(0deg);}}
+@keyframes aurora2{0%{transform:translate(0,0) scale(1) rotate(0deg);}50%{transform:translate(-16vw,-8vh) scale(1.22) rotate(-50deg);}100%{transform:translate(0,0) scale(1) rotate(0deg);}}
+@keyframes aurora3{0%{transform:translate(0,0) scale(1);}50%{transform:translate(10vw,-12vh) scale(1.3);}100%{transform:translate(0,0) scale(1);}}
+@keyframes cardRise{from{opacity:0;transform:translateY(calc(16px * var(--motion)));}to{opacity:1;transform:translateY(0);}}
+@keyframes pulseRing{0%{transform:scale(.82);opacity:.55;}70%{transform:scale(1.25);opacity:0;}100%{transform:scale(1.25);opacity:0;}}
+@keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.035);}}
+@keyframes flameFlicker{0%,100%{transform:scale(1) rotate(-2deg);opacity:1;}50%{transform:scale(1.14) rotate(3deg);opacity:.85;}}
+@keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+@keyframes popIn{0%{transform:scale(.6);opacity:0;}60%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;}}
+@keyframes confettiFall{0%{transform:translate3d(0,0,0) rotate(0deg);opacity:1;}100%{transform:translate3d(var(--cx),120vh,0) rotate(var(--cr));opacity:0;}}
+@keyframes screenIn{from{opacity:0;transform:translateY(calc(10px * var(--motion))) scale(.992);}to{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in oklab,var(--accent) 0%,transparent);}50%{box-shadow:0 0 28px 2px color-mix(in oklab,var(--accent) 45%,transparent);}}
+@keyframes barGrow{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+.anim-rise{animation:cardRise .6s cubic-bezier(.2,.8,.2,1) both;}
+.anim-screen{animation:screenIn .42s cubic-bezier(.2,.8,.2,1) both;}
+.anim-pop{animation:popIn .5s cubic-bezier(.2,1.2,.3,1) both;}
+.flame{animation:flameFlicker calc(1.6s / max(var(--motion),.35)) ease-in-out infinite;transform-origin:center bottom;}
+.floaty{animation:floaty calc(3.6s / max(var(--motion),.35)) ease-in-out infinite;}
+.breathe{animation:breathe calc(3.4s / max(var(--motion),.35)) ease-in-out infinite;}
+.d1{animation-delay:.06s;}.d2{animation-delay:.12s;}.d3{animation-delay:.18s;}.d4{animation-delay:.24s;}.d5{animation-delay:.30s;}.d6{animation-delay:.36s;}
+@keyframes shine{0%{transform:translateX(-130%) skewX(-18deg);}55%,100%{transform:translateX(260%) skewX(-18deg);}}
+@keyframes gradShift{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+@keyframes auraSpin{to{transform:rotate(360deg);}}
+@keyframes glowBreath{0%,100%{opacity:.45;}50%{opacity:1;}}
+.btn-grad::after,.btn-primary::after{content:"";position:absolute;top:0;bottom:0;left:0;width:38%;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);transform:translateX(-130%) skewX(-18deg);animation:shine calc(4.5s / max(var(--motion),.4)) ease-in-out infinite;}
+.gradtext{background:var(--grad-pulse);background-size:220% 220%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:gradShift calc(6s / max(var(--motion),.4)) ease-in-out infinite;}
+.orb-aura{position:absolute;width:182px;height:182px;border-radius:50%;pointer-events:none;background:conic-gradient(from 0deg,transparent 0deg,color-mix(in oklab,var(--aqua) 45%,transparent) 90deg,transparent 200deg);filter:blur(7px);animation:auraSpin calc(8s / max(var(--motion),.4)) linear infinite;opacity:.55;}
+.live-glow{animation:glowBreath calc(2.6s / max(var(--motion),.4)) ease-in-out infinite;}
+@keyframes auraSpinRev{to{transform:rotate(-360deg);}}
+@keyframes bgConic{to{transform:rotate(360deg);}}
+.orb-aura2{position:absolute;width:160px;height:160px;border-radius:50%;pointer-events:none;background:conic-gradient(from 180deg,transparent 0deg,color-mix(in oklab,var(--volt) 40%,transparent) 70deg,transparent 160deg);filter:blur(6px);animation:auraSpinRev calc(11s / max(var(--motion),.4)) linear infinite;opacity:.4;}
+.orb-core{position:absolute;width:118px;height:118px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,color-mix(in oklab,var(--aqua) 24%,transparent),transparent 70%);animation:glowBreath calc(3.6s / max(var(--motion),.4)) ease-in-out infinite;}
+.card::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,.05),transparent 30%);pointer-events:none;z-index:0;}
+.bnav-top{position:absolute;top:0;left:0;width:25%;display:flex;justify-content:center;transition:transform .36s cubic-bezier(.2,.9,.2,1);pointer-events:none;}
+.bnav-top i{width:30px;height:3px;border-radius:99px;background:var(--accent);box-shadow:0 0 12px var(--accent);}
+.press{transition:transform .12s ease;}
+.press:active{transform:scale(.96);}
+.scroll{overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.scroll::-webkit-scrollbar{width:0;height:0;}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+  .anim-rise,.anim-screen,.anim-pop,.splash-word,.splash-tag,.splash-dots,.splash-dots i{animation:none !important;opacity:1 !important;transform:none !important;}
+  .flame,.floaty,.breathe,.aurora-blob,.orb-pulse,.dot-load i{animation:none !important;}
+  .spark-line{stroke-dashoffset:0 !important;animation:none !important;}
+  .spark-area{opacity:1 !important;animation:none !important;}
+  .mg-track span,.ob-bar span,.prog-track span{transform:none !important;animation:none !important;}
+  .btn-grad::after,.btn-primary::after,.orb-aura,.orb-aura2,.orb-core,.live-glow{animation:none !important;}
+  .gradtext{animation:none !important;}
+}
+[data-calm="1"] .flame,[data-calm="1"] .floaty,[data-calm="1"] .breathe,[data-calm="1"] .aurora-blob,[data-calm="1"] .grain,[data-calm="1"] .orb-pulse{animation:none !important;}
+  </style>
+  <template id="__bundler_thumbnail">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#090b13"/>
+      <circle cx="50" cy="42" r="22" fill="none" stroke="#b6f23a" stroke-width="3"/>
+      <path d="M30 42 H40 L45 30 L53 56 L59 36 L63 46 H72" fill="none" stroke="#4fd6e8" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="50" y="80" font-family="monospace" font-size="9" fill="#a7adc4" text-anchor="middle" letter-spacing="2">ANDURA</text>
+    </svg>
+  </template>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="data.jsx"></script>
+  <script type="text/babel" src="bg.jsx"></script>
+  <script type="text/babel" src="ui.jsx"></script>
+  <script type="text/babel" src="screens-entry.jsx"></script>
+  <script type="text/babel" src="screens-antrenor.jsx"></script>
+  <script type="text/babel" src="screens-workout.jsx"></script>
+  <script type="text/babel" src="screens-tabs.jsx"></script>
+  <script type="text/babel" src="app.jsx"></script>
+</body>
+</html>
