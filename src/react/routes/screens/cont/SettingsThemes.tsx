@@ -77,6 +77,12 @@ function writePaletteTheme(t: PaletteTheme): void {
 export function SettingsThemes(): JSX.Element {
   const navigate = useNavigate();
   const [selected, setSelected] = useState<PaletteTheme>('brain-coach');
+  // Wave A4 (Daniel 2026-05-28) — theme-switch sweep confirmation. When the
+  // user picks a new palette, a brief diagonal gradient sweep across the
+  // screen makes the swap feel deliberate, not just a silent CSS var flip.
+  // sweepKey is incremented per pick to re-trigger the keyframe (animation-name
+  // is the same; React must remount the element so the run starts fresh).
+  const [sweepKey, setSweepKey] = useState<number>(0);
 
   useEffect(() => {
     setSelected(readPaletteTheme());
@@ -86,10 +92,32 @@ export function SettingsThemes(): JSX.Element {
     setSelected(t);
     writePaletteTheme(t);
     applyPalette(t); // live apply — sets/clears <html data-palette>
+    setSweepKey((k) => k + 1); // re-trigger sweep overlay
   }
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-themes">
+    <section
+      className="bg-paper min-h-screen flex flex-col relative overflow-hidden"
+      data-testid="settings-themes"
+    >
+      {/* Wave A4 (Daniel 2026-05-28) — theme-switch sweep overlay. One-shot
+          diagonal gradient that fades in→out 700ms once per pick. Sits above
+          the page content (z-40) but below any modal/sheet. pointer-events
+          none so the user can keep tapping mid-sweep. Color uses --brick via
+          color-mix so each palette sweeps in its OWN accent (mov on Brain
+          Coach, champagne on Luxury, gold on Living Body, brick on Clasic). */}
+      {sweepKey > 0 && (
+        <span
+          key={sweepKey}
+          aria-hidden="true"
+          data-testid="theme-sweep-overlay"
+          className="absolute inset-0 pointer-events-none z-40 animate-theme-sweep"
+          style={{
+            background:
+              'linear-gradient(105deg, transparent 0%, color-mix(in oklab, var(--brick) 22%, transparent) 50%, transparent 100%)',
+          }}
+        />
+      )}
       <SubHeader
         title="Teme"
         onBack={() => navigate(gotoPath('settings-appearance'))}
@@ -102,8 +130,11 @@ export function SettingsThemes(): JSX.Element {
         </p>
 
         <div className="grid grid-cols-2 gap-3" data-testid="settings-themes-grid">
-          {THEME_OPTIONS.map((opt) => {
+          {THEME_OPTIONS.map((opt, idx) => {
             const isSelected = selected === opt.id;
+            // Static array — Tailwind JIT scans classnames as literals; using
+            // a template would silently drop the utility from the build.
+            const delayClass = ['delay-0', 'delay-75', 'delay-150', 'delay-225'][idx] ?? 'delay-0';
             return (
               <button
                 key={opt.id}
@@ -111,9 +142,17 @@ export function SettingsThemes(): JSX.Element {
                 data-testid={`theme-palette-${opt.id}`}
                 aria-pressed={isSelected}
                 onClick={() => handlePick(opt.id)}
-                className={`relative flex flex-col items-stretch p-3 rounded-xl border ${
+                className={`relative flex flex-col items-stretch p-3 rounded-xl border transition-all duration-200 active:scale-[.97] animate-card-rise ${delayClass} ${
                   isSelected ? 'border-brick bg-paper2' : 'border-line bg-paper2'
                 }`}
+                style={
+                  isSelected
+                    ? {
+                        boxShadow:
+                          '0 0 0 1px color-mix(in oklab, var(--brick) 35%, transparent)',
+                      }
+                    : undefined
+                }
               >
                 <div
                   className={`w-full h-16 rounded-lg mb-2 ${opt.swatchClass}`}

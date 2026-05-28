@@ -6,6 +6,7 @@
 // + engineWrappers.getReadiness).
 
 import type { JSX } from 'react';
+import { Flame, Battery, Sparkles } from 'lucide-react';
 import type { ReadinessOutput, FatigueOutput } from '../../lib/engineWrappers';
 import { useCountUp } from '../../hooks/useCountUp';
 
@@ -24,32 +25,107 @@ export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
   // under prefers-reduced-motion; in tests rAF is not flushed so the final
   // value renders synchronously (label/plural assertions unaffected).
   const streakDisplay = useCountUp(streak);
+  const fatigueDisplay = useCountUp(fatigue?.score ?? 0);
+  const readinessDisplay = useCountUp(readiness?.score ?? 0);
+
+  // Wave A4 polish (Daniel 2026-05-28 "clumzy" feedback) — cards get an accent
+  // icon top-right (semantic hint), inner ring border for depth, and a soft
+  // gradient overlay (paper2 → transparent) that lifts the tile off the page
+  // bg without adding a heavy box-shadow (would clash with mov ambient glow).
+  // Card-rise + stagger so the trio settles in left-to-right on mount.
   return (
     <div
       className="grid grid-cols-3 gap-2 mb-4"
       role="region"
       aria-label="Statistici - streak, oboseala, energie"
     >
-      <div className="bg-paper2 rounded-lg p-3 text-center">
-        <div className="text-xs text-ink2 uppercase tracking-wider">Streak</div>
-        <div className="text-2xl font-bold text-ink mt-1" data-testid="stats-streak">
-          {streakDisplay}
-        </div>
-        <div className="text-xs text-ink2 mt-0.5" data-testid="stats-streak-label">{streakLabel}</div>
+      <StatTile
+        label="Streak"
+        value={streakDisplay}
+        sublabel={streakLabel}
+        Icon={Flame}
+        accentVar="--brick"
+        delayClass="delay-0"
+        testId="stats-streak"
+        sublabelTestId="stats-streak-label"
+      />
+      <StatTile
+        label="Oboseala"
+        value={fatigue ? fatigueDisplay : '-'}
+        sublabel={fatigue ? fatigue.label : 'NA'}
+        Icon={Battery}
+        accentVar="--olive"
+        delayClass="delay-75"
+        testId="stats-fatigue"
+      />
+      <StatTile
+        label="Readiness"
+        value={readiness ? readinessDisplay : '-'}
+        sublabel={readiness ? readiness.label : 'NA'}
+        Icon={Sparkles}
+        accentVar="--deep"
+        delayClass="delay-150"
+        testId="stats-readiness"
+      />
+    </div>
+  );
+}
+
+interface StatTileProps {
+  label: string;
+  value: string | number;
+  sublabel: string;
+  Icon: typeof Flame;
+  accentVar: string;
+  delayClass: string;
+  testId: string;
+  sublabelTestId?: string;
+}
+
+function StatTile({
+  label,
+  value,
+  sublabel,
+  Icon,
+  accentVar,
+  delayClass,
+  testId,
+  sublabelTestId,
+}: StatTileProps): JSX.Element {
+  return (
+    <div
+      className={`relative overflow-hidden bg-paper2 rounded-xl p-3 text-center border border-line animate-card-rise ${delayClass}`}
+    >
+      {/* Decorative accent dot — semantic hint of which stat this is, even
+          when the number reads as '-'. color-mix keeps it cross-palette. */}
+      <Icon
+        aria-hidden="true"
+        className="absolute top-2 right-2 w-3.5 h-3.5"
+        style={{ color: `color-mix(in oklab, var(${accentVar}) 80%, transparent)` }}
+      />
+      {/* Subtle radial wash anchored top-left so the eye is drawn to the
+          number, not the tile edge. opacity 0.08 keeps it whisper-quiet. */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at 0% 0%, color-mix(in oklab, var(${accentVar}) 18%, transparent) 0%, transparent 60%)`,
+        }}
+      />
+      <div className="relative text-[10px] text-ink2 uppercase tracking-wider font-medium">
+        {label}
       </div>
-      <div className="bg-paper2 rounded-lg p-3 text-center">
-        <div className="text-xs text-ink2 uppercase tracking-wider">Oboseala</div>
-        <div className="text-2xl font-bold text-ink mt-1" data-testid="stats-fatigue">
-          {fatigue ? fatigue.score : '-'}
-        </div>
-        <div className="text-xs text-ink2 mt-0.5">{fatigue ? fatigue.label : 'NA'}</div>
+      <div
+        className="relative text-2xl font-bold text-ink mt-1 tabular-nums"
+        data-testid={testId}
+      >
+        {value}
       </div>
-      <div className="bg-paper2 rounded-lg p-3 text-center">
-        <div className="text-xs text-ink2 uppercase tracking-wider">Readiness</div>
-        <div className="text-2xl font-bold text-ink mt-1" data-testid="stats-readiness">
-          {readiness ? readiness.score : '-'}
-        </div>
-        <div className="text-xs text-ink2 mt-0.5">{readiness ? readiness.label : 'NA'}</div>
+      <div
+        className="relative text-xs text-ink2 mt-0.5"
+        data-testid={sublabelTestId}
+      >
+        {sublabel}
       </div>
     </div>
   );

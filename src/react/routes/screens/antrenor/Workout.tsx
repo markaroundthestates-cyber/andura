@@ -44,6 +44,7 @@ import { detectAggressiveLoad, deriveThresholds } from '../../../lib/aaFrictionD
 import type { AggressiveReason } from '../../../lib/aaFrictionDetect';
 import { getEngineSignals } from '../../../lib/engineSignalsAggregate';
 import { InactivityPrompt } from '../../../components/Workout/InactivityPrompt';
+import { ExerciseMedia } from '../../../components/ExerciseMedia';
 import { DP } from '../../../../engine/dp.js';
 import { resolveBusySwap, resolveMissingSwap, resolveRefusalSwap } from '../../../lib/substitution';
 import { toast } from '../../../lib/toast';
@@ -873,6 +874,21 @@ export function Workout(): JSX.Element {
                 {currentExercise.sub}
               </p>
             )}
+          </div>
+
+          {/* Wave A4 (Daniel 2026-05-28 #11) — visual guidance for the current
+              movement. Gigel mid-set needs to SEE the movement, not just read
+              the Romanian name. ExerciseMedia 'card' variant is full-width
+              16:9; today it renders the muscle-group placeholder + "Imagine
+              in curand" honest copy (V2 asset sourcing decision Daniel-gated).
+              Once URLs land in exerciseMedia.ts, this single component swaps
+              to the live image/gif without code churn here. */}
+          <div className="mb-4 animate-fade-in-up">
+            <ExerciseMedia
+              engineName={currentExercise.engineName ?? currentExercise.name}
+              variant="card"
+              testId="workout-exercise-media"
+            />
           </div>
 
           {/* §F-workout-03 — in-workout substitution row (Daniel 2026-05-12

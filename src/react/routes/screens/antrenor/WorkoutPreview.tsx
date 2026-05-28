@@ -20,12 +20,13 @@
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Clock, Layers, TrendingUp, Flame, Dumbbell, Check } from 'lucide-react';
+import { Clock, Layers, TrendingUp, Flame, Check } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
 import type { PlannedWorkoutOutput } from '../../../lib/engineWrappers';
 import { recomposeWithBusyTypes } from '../../../lib/substitution';
+import { ExerciseMedia } from '../../../components/ExerciseMedia';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import type { IntensityMod } from './EnergyCheck';
 
@@ -290,6 +291,11 @@ export function WorkoutPreview(): JSX.Element {
           ? displayExercises.map((ex, i) => ({
               key: ex.id,
               name: ex.name,
+              // Engine canonical name passed to <ExerciseMedia> (image/gif
+              // lookup keyed on the English ID — same id used by PR/DP/library).
+              // Fallback to display name keeps the placeholder rendering valid
+              // even on pre-WP-5 fixtures that omit engineName.
+              engineName: ex.engineName ?? ex.name,
               // WP-5 moat: a swapped-in alternative surfaces the substitution
               // reason in the sub slot ("Inlocuit · {motiv}") so the user SEES
               // it was replaced; otherwise the normal equipment/setup sub.
@@ -300,6 +306,7 @@ export function WorkoutPreview(): JSX.Element {
           : FALLBACK_EXERCISES.map((ex, i) => ({
               key: `fallback-${i}`,
               name: ex.name,
+              engineName: ex.name,
               sub: undefined as string | undefined,
               detail: ex.detail,
               idx: i,
@@ -310,8 +317,24 @@ export function WorkoutPreview(): JSX.Element {
             className="flex items-center gap-3 p-3"
             data-testid="preview-exercise-row"
           >
-            <div className="w-8 h-8 rounded-lg bg-paper border border-line flex items-center justify-center font-mono font-bold text-ink2 text-sm flex-shrink-0">
-              {item.idx + 1}
+            {/* Wave A4 (Daniel 2026-05-28 #11) — visual guidance thumbnail
+                per row. ExerciseMedia auto-renders the muscle-group placeholder
+                today + a real image/gif once the asset is sourced (V2). The
+                numbered badge moves into the bottom-right of the tile so the
+                ordering remains glance-able without the tile losing its
+                visual anchor. */}
+            <div className="relative flex-shrink-0">
+              <ExerciseMedia
+                engineName={item.engineName}
+                variant="thumbnail"
+                testId={`preview-exercise-media-${item.idx}`}
+              />
+              <span
+                aria-hidden="true"
+                className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-paper border border-line flex items-center justify-center font-mono font-bold text-ink2 text-[10px]"
+              >
+                {item.idx + 1}
+              </span>
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-semibold text-ink truncate">{item.name}</div>
@@ -325,7 +348,6 @@ export function WorkoutPreview(): JSX.Element {
               )}
               <div className="text-xs text-ink3 font-mono mt-0.5">{item.detail}</div>
             </div>
-            <Dumbbell className="w-4 h-4 text-ink3 flex-shrink-0" aria-hidden="true" />
           </li>
         ))}
       </ul>

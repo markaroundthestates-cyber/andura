@@ -80,31 +80,59 @@ export function Istoric(): JSX.Element {
           mockup andura-clasic.html#L1157 (font-weight:700). */}
       <h1 className="text-2xl font-bold text-ink mb-6">{t('tabs.istoric.title')}</h1>
 
-      {/* Phase 6 task_23: streak stats summary */}
+      {/* Phase 6 task_23: streak stats summary.
+          Wave A4 polish (Daniel 2026-05-28) — match Antrenor StatsGrid look:
+          radial accent wash anchored top-left, card-rise entrance, stagger
+          across the trio. tabular-nums on the hero numbers for consistent
+          width. */}
       <div
         className="grid grid-cols-3 gap-2 mb-4"
         data-testid="istoric-stats-grid"
       >
-        <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
-          <Flame className="w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
-          <p className="text-2xl font-bold text-ink font-mono" data-testid="stats-streak">
+        <div className="relative overflow-hidden bg-paper2 border border-line rounded-xl p-3 text-center animate-card-rise delay-0">
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(circle at 0% 0%, color-mix(in oklab, var(--brick) 18%, transparent) 0%, transparent 60%)',
+            }}
+          />
+          <Flame className="relative w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
+          <p className="relative text-2xl font-bold text-ink font-mono tabular-nums" data-testid="stats-streak">
             {stats.currentStreak}
           </p>
-          <p className="text-xs text-ink2">Zile consecutive</p>
+          <p className="relative text-xs text-ink2">Zile consecutive</p>
         </div>
-        <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
-          <History className="w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
-          <p className="text-2xl font-bold text-ink font-mono" data-testid="stats-total">
+        <div className="relative overflow-hidden bg-paper2 border border-line rounded-xl p-3 text-center animate-card-rise delay-75">
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(circle at 0% 0%, color-mix(in oklab, var(--olive) 18%, transparent) 0%, transparent 60%)',
+            }}
+          />
+          <History className="relative w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
+          <p className="relative text-2xl font-bold text-ink font-mono tabular-nums" data-testid="stats-total">
             {stats.totalSessions}
           </p>
-          <p className="text-xs text-ink2">Sesiuni total</p>
+          <p className="relative text-xs text-ink2">Sesiuni total</p>
         </div>
-        <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
-          <Trophy className="w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
-          <p className="text-2xl font-bold text-ink font-mono" data-testid="stats-pr">
+        <div className="relative overflow-hidden bg-paper2 border border-line rounded-xl p-3 text-center animate-card-rise delay-150">
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(circle at 0% 0%, color-mix(in oklab, var(--warn) 18%, transparent) 0%, transparent 60%)',
+            }}
+          />
+          <Trophy className="relative w-4 h-4 text-brick mx-auto mb-1" aria-hidden="true" />
+          <p className="relative text-2xl font-bold text-ink font-mono tabular-nums" data-testid="stats-pr">
             {stats.prCount}
           </p>
-          <p className="text-xs text-ink2">Recorduri</p>
+          <p className="relative text-xs text-ink2">Recorduri</p>
         </div>
       </div>
 

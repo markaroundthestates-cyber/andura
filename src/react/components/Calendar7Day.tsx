@@ -59,7 +59,7 @@ export function Calendar7Day(): JSX.Element {
 
   return (
     <div
-      className="bg-paper border border-line rounded-xl p-3 mb-4"
+      className="bg-paper border border-line rounded-xl p-3 mb-4 animate-card-rise delay-75"
       data-testid="calendar-7day"
       data-edit-mode={editMode ? 'true' : 'false'}
     >
