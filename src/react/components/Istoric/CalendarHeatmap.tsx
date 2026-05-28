@@ -68,11 +68,16 @@ function aggregateDayRating(ratings: Array<SessionRating | null>): SessionRating
   return null;
 }
 
-function tierBgClass(tier: string): string {
-  if (tier === 'l1') return 'bg-heatUsor';
-  if (tier === 'l2') return 'bg-heatNormal';
-  if (tier === 'l3') return 'bg-heatGreu';
-  return 'bg-paper2'; // zi libera
+// Pulse reskin (2026-05-29 GROUP E): per-day session-state marks. The mockup
+// paints each logged day with a small glowing dot keyed to the session's
+// derived rating tier (easy=volt / normal=aqua / hard=ember). Tier is REAL
+// (deriveSessionRating → l1/l2/l3); zi-libera renders no dot. Returns a Pulse
+// color token (never raw hex) or null when there is no session that day.
+function tierDotColor(tier: string): string | null {
+  if (tier === 'l1') return 'var(--volt)';
+  if (tier === 'l2') return 'var(--aqua)';
+  if (tier === 'l3') return 'var(--ember)';
+  return null; // zi libera — no mark
 }
 
 export function CalendarHeatmap(): JSX.Element {
@@ -175,16 +180,23 @@ export function CalendarHeatmap(): JSX.Element {
           }
           const hasSession = sessionsByDate.has(cell.key ?? '');
           const tier = hasSession ? ratingToTierClass(cell.rating) : 'zi-libera';
-          const bg = tierBgClass(tier);
-          // Text color tuned for contrast: l1 light bg uses dark text;
-          // l2/l3 medium-dark green uses ink (11.57:1 / improvement vs mockup white 5.43:1 / 2.69:1).
-          let textCls = 'text-ink3';
-          if (tier === 'l1') textCls = 'text-heatUsorText'; // 7.92:1 AAA via --heat-usor-text token
-          else if (tier === 'l2' || tier === 'l3') textCls = 'text-ink font-semibold';
+          // Pulse reskin (GROUP E) — the mockup drops the filled-tier square in
+          // favour of a neutral cell + a glowing dot keyed to the session state.
+          // Logged days sit on the surface (bg-paper2); future/rest cells stay
+          // transparent. data-tier is preserved (real tier) so the engine + tests
+          // keep their truth source.
+          const dotColor = tierDotColor(tier);
           const isToday = cell.key === todayKey;
           const isFuture = cell.key !== null && cell.key > todayKey;
-          const todayCls = isToday ? 'ring-2 ring-brick' : '';
-          const futureCls = isFuture ? 'opacity-50' : '';
+          // Future cells stay transparent (nothing logged yet); past + rest days
+          // sit on the surface so the month reads as a filled grid.
+          const cellBg = isFuture ? 'bg-transparent' : 'bg-paper2';
+          const numCls = isFuture
+            ? 'text-ink3 opacity-50'
+            : isToday
+              ? 'text-brick font-bold'
+              : 'text-ink2';
+          const todayCls = isToday ? 'ring-2 ring-brick ring-inset' : '';
           // Wave A5 polish (Daniel "Top Grade" 2026-05-28) — cells with logged
           // sessions get a subtle hover lift (scale 1.06) so the past months
           // feel scrub-able. Future/empty cells stay still — the lift would
@@ -208,9 +220,16 @@ export function CalendarHeatmap(): JSX.Element {
               data-future={isFuture ? 'true' : undefined}
               aria-label={ariaLabel}
               aria-disabled={isFuture ? 'true' : undefined}
-              className={`aspect-square rounded-md flex items-center justify-center text-[11px] ${bg} ${textCls} ${todayCls} ${futureCls} ${hoverCls}`.trim()}
+              className={`relative aspect-square rounded-[10px] flex flex-col items-center justify-center gap-[3px] ${cellBg} ${todayCls} ${hoverCls}`.trim()}
             >
-              {cell.day}
+              <span className={`font-mono text-[12px] leading-none ${numCls}`}>{cell.day}</span>
+              {dotColor && (
+                <span
+                  aria-hidden="true"
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ background: dotColor, boxShadow: `0 0 8px ${dotColor}` }}
+                />
+              )}
             </div>
           );
         })}
@@ -225,31 +244,51 @@ export function CalendarHeatmap(): JSX.Element {
         {t('calendar.heatmap.monthAnnounce', { month: monthLabel, year: calY })}
       </div>
 
+      {/* Pulse reskin (GROUP E) — legend mirrors the cell marks: glowing dots in
+          the session-state tokens (easy=volt / normal=aqua / hard=ember). Recovery
+          + rest keep their real tokens (no Pulse glow — they are not logged
+          sessions). Order follows the mockup: easy → normal → hard → recovery →
+          rest. */}
       <div
-        className="flex items-center gap-3.5 flex-wrap"
+        className="flex items-center gap-3.5 flex-wrap pt-3.5 mt-3.5 border-t border-line"
         data-testid="cal-legend"
       >
-        <span className="flex items-center gap-1.5 text-[11px] text-ink3">
-          <span className="inline-block w-3 h-3 rounded-sm bg-heatGreu" aria-hidden="true" />
-          {t('calendar.heatmap.legend.hard')}
-        </span>
-        <span className="flex items-center gap-1.5 text-[11px] text-ink3">
-          <span className="inline-block w-3 h-3 rounded-sm bg-heatNormal" aria-hidden="true" />
-          {t('calendar.heatmap.legend.normal')}
-        </span>
-        <span className="flex items-center gap-1.5 text-[11px] text-ink3">
-          <span className="inline-block w-3 h-3 rounded-sm bg-heatUsor" aria-hidden="true" />
+        <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
+          <span
+            className="inline-block w-2.5 h-2.5 rounded-full"
+            style={{ background: 'var(--volt)', boxShadow: '0 0 6px var(--volt)' }}
+            aria-hidden="true"
+          />
           {t('calendar.heatmap.legend.easy')}
         </span>
-        <span className="flex items-center gap-1.5 text-[11px] text-ink3">
+        <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
           <span
-            className="inline-block w-3 h-3 rounded-sm bg-heatRecovery border border-heatRecoveryBorder"
+            className="inline-block w-2.5 h-2.5 rounded-full"
+            style={{ background: 'var(--aqua)', boxShadow: '0 0 6px var(--aqua)' }}
+            aria-hidden="true"
+          />
+          {t('calendar.heatmap.legend.normal')}
+        </span>
+        <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
+          <span
+            className="inline-block w-2.5 h-2.5 rounded-full"
+            style={{ background: 'var(--ember)', boxShadow: '0 0 6px var(--ember)' }}
+            aria-hidden="true"
+          />
+          {t('calendar.heatmap.legend.hard')}
+        </span>
+        <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
+          <span
+            className="inline-block w-2.5 h-2.5 rounded-full bg-heatRecovery border border-heatRecoveryBorder"
             aria-hidden="true"
           />
           {t('calendar.heatmap.legend.recovery')}
         </span>
-        <span className="flex items-center gap-1.5 text-[11px] text-ink3">
-          <span className="inline-block w-3 h-3 rounded-sm bg-paper2" aria-hidden="true" />
+        <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
+          <span
+            className="inline-block w-2.5 h-2.5 rounded-full bg-paper2 border border-lineStrong"
+            aria-hidden="true"
+          />
           {t('calendar.heatmap.legend.rest')}
         </span>
       </div>
