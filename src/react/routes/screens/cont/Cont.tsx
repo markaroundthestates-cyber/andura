@@ -120,7 +120,7 @@ export function Cont(): JSX.Element {
 
       {/* Account card (header) — Phase 6+ wires user profile data real */}
       <div
-        className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-3"
+        className="surface-elevated bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-3"
         data-testid="cont-account-card"
       >
         {/* §F-cont-07 (LOW chat5) — avatar dimensions 48x48 → 52x52 +
@@ -149,7 +149,7 @@ export function Cont(): JSX.Element {
           >
             {t(section.titleKey)}
           </p>
-          <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
+          <div className="surface-elevated bg-paper2 border border-line rounded-[14px] overflow-hidden">
             {section.rows.map((row, idx) => {
               const Icon = row.Icon;
               const isLast = idx === section.rows.length - 1;
