@@ -305,17 +305,55 @@
     "bodyFat": {
       "label": "Grasime corporala",
       "estimate": "~{pct}%",
-      "method": "Estimare US Navy"
+      "method": "Estimare US Navy",
+      "ariaLabel": "Grasime corporala estimata",
+      "sourceUsNavy": "US Navy",
+      "sourceEstimated": "estimat",
+      "captionApprox": "Estimat aproximativ. ",
+      "captionFromBmi": "Estimat din BMI. ",
+      "nudge": "Adauga talie + gat in Profil pentru estimat precis (US Navy).",
+      "emptyHint": "Estimarea apare dupa ce completezi datele de profil."
     },
     "bmr": {
       "label": "BMR",
       "value": "{kcal} kcal/zi",
-      "subtitle": "Energie in repaus"
+      "subtitle": "Energie in repaus",
+      "kcalSuffix": " kcal",
+      "ariaLabel": "Rata metabolica bazala",
+      "labelLong": "Calorii baza (BMR)",
+      "labelShort": "BMR",
+      "emptyHint": "Adauga inaltime in Profil ca sa vezi BMR-ul.",
+      "method": "Formula Mifflin-St Jeor"
+    },
+    "fatigue": {
+      "ariaLabel": "Stare oboseala",
+      "todayLabel": "Oboseala azi",
+      "emptyHint": "Nu ai destule sesiuni inca. Estimarea apare dupa 2+ sesiuni."
     },
     "tdee": {
       "label": "Energie zilnica",
       "value": "{kcal} kcal/zi",
-      "subtitle": "Mentinere"
+      "subtitle": "Mentinere",
+      "ariaLabel": "Target nutritie azi",
+      "phaseLabel": "Faza: {phase}",
+      "weekInMeso": "Sapt. {n} / mesociclu",
+      "todayVsTarget": "Azi vs tinta",
+      "targetToday": "Target azi",
+      "withTarget": "· tinta {kcal} ({delta})",
+      "withProtein": "· {g} g proteine",
+      "explainer": "Engine calculeaza auto. Loghezi optional pentru calibrare reala.",
+      "sources": {
+        "manual": "Setat manual",
+        "engineBn": "Estimare adaptiva",
+        "baseline": "Estimare initiala"
+      },
+      "phases": {
+        "auto": "Auto",
+        "cut": "Cut",
+        "bulk": "Bulk",
+        "maintenance": "Mentenanta",
+        "strength": "Forta"
+      }
     },
     "projection": {
       "label": "Proiectie",
@@ -327,7 +365,26 @@
       "current": "Greutate curenta",
       "logCta": "Logheaza greutatea",
       "deltaSince": "{delta} kg fata de saptamana trecuta",
-      "noEntries": "Nu ai logat greutatea inca."
+      "noEntries": "Nu ai logat greutatea inca.",
+      "snapshotAriaLabel": "Greutate ultimele 7 zile",
+      "snapshotTitle": "Greutate (7 zile)",
+      "snapshotEmpty": "Nu ai loguri inca. Snapshot-ul apare aici dupa prima cantarire.",
+      "snapshotHint": "Pentru analiza profunda → vezi Istoric › Greutate si BF",
+      "verifyValue": "Verifica valoarea",
+      "dayBarAriaLabel": "Ziua {n} greutate {kg} kg"
+    },
+    "logWeightToday": "Logheaza greutate azi",
+    "lastWeighIn": "Ultima cantarire",
+    "viewWeightTrend": "Vezi trend greutate",
+    "bodyMeasurements": "Masuratori corp",
+    "lastMeasurement": "Ultima masurare",
+    "alertsToday": "Alerte azi",
+    "measurements": {
+      "waist": "Talie",
+      "chest": "Piept",
+      "hips": "Sold",
+      "biceps": "Biceps",
+      "thigh": "Coapsa"
     }
   },
 

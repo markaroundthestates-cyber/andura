@@ -21,17 +21,18 @@ beforeEach(() => {
   localStorage.clear();
 });
 
-describe('HeatMapWeekly — weight snapshot 7-day mockup parity', () => {
-  it('renders heading "Greutate (7 zile)"', () => {
+describe('HeatMapWeekly — weight snapshot 7-day mockup parity (Wave C2 i18n EN default)', () => {
+  it('renders heading "Weight (7 days)" — EN default', () => {
     renderComponent();
-    expect(screen.getByText(/Greutate \(7 zile\)/i)).toBeInTheDocument();
+    // Wave C2 i18n: EN default → "Weight (7 days)" (was RO "Greutate (7 zile)").
+    expect(screen.getByText(/Weight \(7 days\)/i)).toBeInTheDocument();
   });
 
-  it('renders empty state cand weightLog empty', () => {
+  it('renders empty state cand weightLog empty — EN default', () => {
     renderComponent();
     expect(screen.getByTestId('weight-snapshot-empty')).toBeInTheDocument();
-    // Pass 10 canonical "Nu ai X inca" + anticipatory follow-up
-    expect(screen.getByText(/Nu ai loguri inca/i)).toBeInTheDocument();
+    // Wave C2 i18n: EN default → "No entries yet" (was RO "Nu ai loguri inca").
+    expect(screen.getByText(/No entries yet/i)).toBeInTheDocument();
   });
 
   it('hides bars chart cand weightLog empty', () => {
@@ -116,7 +117,8 @@ describe('HeatMapWeekly — weight snapshot 7-day mockup parity', () => {
     });
     renderComponent();
     expect(screen.queryByTestId('weight-snapshot-delta')).not.toBeInTheDocument();
-    expect(screen.getByTestId('weight-snapshot-delta-implausible')).toHaveTextContent(/Verifica valoarea/i);
+    // Wave C2 i18n: EN default → "Check the value" (was RO "Verifica valoarea").
+    expect(screen.getByTestId('weight-snapshot-delta-implausible')).toHaveTextContent(/Check the value/i);
   });
 
   it('arata delta normala (sub prag) ca trend colorat, NU nota neutra', () => {
@@ -188,15 +190,17 @@ describe('HeatMapWeekly — weight snapshot 7-day mockup parity', () => {
     expect(screen.queryByTestId('weight-snapshot-drill')).not.toBeInTheDocument();
   });
 
-  it('hint copy references Istoric > Greutate si BF', () => {
+  it('hint copy references History > Weight and BF — EN default', () => {
     renderComponent();
-    expect(screen.getByTestId('weight-snapshot-hint')).toHaveTextContent(/Istoric/i);
-    expect(screen.getByTestId('weight-snapshot-hint')).toHaveTextContent(/Greutate/i);
+    // Wave C2 i18n: EN default → "History › Weight and BF" (was RO "Istoric > Greutate si BF").
+    expect(screen.getByTestId('weight-snapshot-hint')).toHaveTextContent(/History/i);
+    expect(screen.getByTestId('weight-snapshot-hint')).toHaveTextContent(/Weight/i);
   });
 
-  it('container has aria-label', () => {
+  it('container has aria-label — EN default', () => {
     renderComponent();
-    expect(screen.getByLabelText(/Greutate ultimele 7 zile/i)).toBeInTheDocument();
+    // Wave C2 i18n: EN default → "Weight last 7 days" (was RO "Greutate ultimele 7 zile").
+    expect(screen.getByLabelText(/Weight last 7 days/i)).toBeInTheDocument();
   });
 
   it('no diacritics in UI', () => {

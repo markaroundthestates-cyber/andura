@@ -18,26 +18,30 @@ import type { NutritionTarget } from '../../lib/bayesianNutritionAggregate';
 import { readBayesianNutritionContext } from '../../lib/nutritionObservations';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useNutritionStore } from '../../stores/nutritionStore';
+import { t } from '../../../i18n/index.js';
 
 function todayIso(): string {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-const SOURCE_LABELS: Record<NutritionTarget['source'], string> = {
-  manual: 'Setat manual',
-  'engine-bn': 'Estimare adaptiva',
-  baseline: 'Estimare initiala',
-};
+// Source labels read locale-aware via t() at render time (Wave C2 i18n).
+function sourceLabel(source: NutritionTarget['source']): string {
+  if (source === 'manual') return t('progres.tdee.sources.manual');
+  if (source === 'engine-bn') return t('progres.tdee.sources.engineBn');
+  return t('progres.tdee.sources.baseline');
+}
 
 // §F-pass2-tdeestrip-01 — phase override labels (B001 SchimbaFazaConfirm wire).
 // Default "Auto" cand absent OR explicit AUTO (mockup L1706 verbatim "Faza: Auto").
-const PHASE_LABELS = {
-  AUTO: 'Auto',
-  CUT: 'Cut',
-  BULK: 'Bulk',
-  MAINTENANCE: 'Mentenanta',
-  STRENGTH: 'Forta',
+// Wave C2 i18n: labels read from bundle (RO Cut/Bulk/Mentenanta vs EN
+// Cut/Bulk/Maintenance).
+const PHASE_KEY_MAP = {
+  AUTO: 'progres.tdee.phases.auto',
+  CUT: 'progres.tdee.phases.cut',
+  BULK: 'progres.tdee.phases.bulk',
+  MAINTENANCE: 'progres.tdee.phases.maintenance',
+  STRENGTH: 'progres.tdee.phases.strength',
 } as const;
 
 const MESOCYCLE_WEEKS = 4; // Linear Block Periodization V1 — 4-week mesocycle clasic
@@ -56,10 +60,11 @@ function fmtNum(n: number): string {
 function getCurrentPhaseLabel(): string {
   try {
     const raw = JSON.parse(localStorage.getItem('phase-override') ?? 'null') as string | null;
-    if (!raw) return PHASE_LABELS.AUTO;
-    return (PHASE_LABELS as Record<string, string>)[raw] ?? PHASE_LABELS.AUTO;
+    if (!raw) return t(PHASE_KEY_MAP.AUTO);
+    const key = (PHASE_KEY_MAP as Record<string, string>)[raw];
+    return key ? t(key) : t(PHASE_KEY_MAP.AUTO);
   } catch {
-    return PHASE_LABELS.AUTO;
+    return t(PHASE_KEY_MAP.AUTO);
   }
 }
 
@@ -111,7 +116,7 @@ export function TDEEStrip(): JSX.Element {
     <section
       data-testid="tdee-strip"
       className="bg-paper2 border border-line rounded-2xl p-4 mb-4"
-      aria-label="Target nutritie azi"
+      aria-label={t('progres.tdee.ariaLabel')}
     >
       <div className="flex items-center justify-between mb-2.5" data-testid="tdee-faza-row">
         <span
@@ -133,17 +138,17 @@ export function TDEEStrip(): JSX.Element {
             className="w-1.5 h-1.5 rounded-full"
             style={{ background: 'var(--warn)' }}
           />
-          Faza: {phaseLabel}
+          {t('progres.tdee.phaseLabel', { phase: phaseLabel })}
         </span>
         <span className="text-xs text-ink2" data-testid="tdee-mesocycle-week">
-          Sapt. {weekInMeso} / mesociclu
+          {t('progres.tdee.weekInMeso', { n: weekInMeso })}
         </span>
       </div>
       <div className="flex items-center gap-4">
         <Flame className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
         <div className="flex-1 min-w-0">
           <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
-            {showComparison ? 'Azi vs tinta' : 'Target azi'}
+            {showComparison ? t('progres.tdee.todayVsTarget') : t('progres.tdee.targetToday')}
           </p>
           {showComparison ? (
             /* §F-pass2-tdeestrip-02 — intake logat vs tinta (mockup L1796).
@@ -154,20 +159,20 @@ export function TDEEStrip(): JSX.Element {
             >
               {fmtNum(loggedKcal)} kcal
               <span className="text-sm font-normal text-ink2 ml-2">
-                · tinta {fmtNum(target.kcalTarget)} ({deltaLabel})
+                {t('progres.tdee.withTarget', { kcal: fmtNum(target.kcalTarget), delta: deltaLabel })}
               </span>
             </p>
           ) : (
             <p className="text-xl font-bold text-ink font-mono">
               {target ? fmtNum(target.kcalTarget) : '—'} kcal
               <span className="text-sm font-normal text-ink2 ml-2">
-                · {target ? fmtNum(target.proteinTarget) : '—'} g proteine
+                {t('progres.tdee.withProtein', { g: target ? fmtNum(target.proteinTarget) : '—' })}
               </span>
             </p>
           )}
           {target && (
             <p className="text-xs text-ink2 mt-0.5" data-testid="tdee-source">
-              {SOURCE_LABELS[target.source]}
+              {sourceLabel(target.source)}
             </p>
           )}
         </div>
@@ -179,7 +184,7 @@ export function TDEEStrip(): JSX.Element {
         className="text-xs text-ink3 mt-2.5 leading-snug italic"
         data-testid="tdee-explainer"
       >
-        Engine calculeaza auto. Loghezi optional pentru calibrare reala.
+        {t('progres.tdee.explainer')}
       </p>
       {/* BUG #4 safety — cand user-ul e subponderal (BMI <= 18.5), tinta nu e
           deficit nici mentenanta, ci un surplus moderat de crestere lenta-sanatoasa.

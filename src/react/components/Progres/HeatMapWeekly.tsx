@@ -18,6 +18,7 @@
 
 import type { JSX } from 'react';
 import { useProgresStore } from '../../stores/progresStore';
+import { t } from '../../../i18n/index.js';
 
 interface WeightBar {
   kg: number;
@@ -78,12 +79,12 @@ export function HeatMapWeekly(): JSX.Element {
     <section
       data-testid="weight-snapshot-7day"
       className="bg-paper2 border border-line rounded-2xl p-4 mb-4"
-      aria-label="Greutate ultimele 7 zile"
+      aria-label={t('progres.weight.snapshotAriaLabel')}
     >
       <div className="flex items-baseline justify-between mb-2">
         <div>
           <p className="text-xs uppercase tracking-wide font-semibold text-ink2">
-            Greutate (7 zile)
+            {t('progres.weight.snapshotTitle')}
           </p>
           {latest ? (
             <p className="text-xl font-bold text-ink font-mono" data-testid="weight-snapshot-latest">
@@ -110,7 +111,7 @@ export function HeatMapWeekly(): JSX.Element {
             className="text-xs font-medium text-ink2"
             data-testid="weight-snapshot-delta-implausible"
           >
-            Verifica valoarea
+            {t('progres.weight.verifyValue')}
           </p>
         )}
       </div>
@@ -123,20 +124,20 @@ export function HeatMapWeekly(): JSX.Element {
               data-kg={b.kg}
               className="flex-1 bg-brick rounded-sm"
               style={{ height: `${b.heightPct}%` }}
-              aria-label={`Ziua ${idx + 1} greutate ${b.kg} kg`}
+              aria-label={t('progres.weight.dayBarAriaLabel', { n: idx + 1, kg: b.kg })}
             />
           ))}
         </div>
       ) : (
         <p className="text-xs text-ink2 mt-1" data-testid="weight-snapshot-empty">
-          Nu ai loguri inca. Snapshot-ul apare aici dupa prima cantarire.
+          {t('progres.weight.snapshotEmpty')}
         </p>
       )}
       <p
         data-testid="weight-snapshot-hint"
         className="text-xs text-ink2 mt-2"
       >
-        Pentru analiza profunda &rarr; vezi <span className="font-semibold">Istoric &rsaquo; Greutate si BF</span>
+        {t('progres.weight.snapshotHint')}
       </p>
     </section>
   );

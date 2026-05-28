@@ -116,7 +116,7 @@
     },
     "progres": {
       "title": "Progress",
-      "subtitle": "Body composition · calibrated estimates."
+      "subtitle": "Body composition. Calibrated estimates."
     },
     "istoric": {
       "title": "History"
@@ -305,17 +305,55 @@
     "bodyFat": {
       "label": "Body fat",
       "estimate": "~{pct}%",
-      "method": "US Navy estimate"
+      "method": "US Navy estimate",
+      "ariaLabel": "Estimated body fat",
+      "sourceUsNavy": "US Navy",
+      "sourceEstimated": "estimated",
+      "captionApprox": "Approximate estimate. ",
+      "captionFromBmi": "Estimated from BMI. ",
+      "nudge": "Add waist + neck in Profile for a precise estimate (US Navy).",
+      "emptyHint": "The estimate appears once you fill in profile data."
     },
     "bmr": {
       "label": "BMR",
       "value": "{kcal} kcal/day",
-      "subtitle": "At-rest energy"
+      "subtitle": "At-rest energy",
+      "kcalSuffix": " kcal",
+      "ariaLabel": "Basal metabolic rate",
+      "labelLong": "Base calories (BMR)",
+      "labelShort": "BMR",
+      "emptyHint": "Add height in Profile to see BMR.",
+      "method": "Mifflin-St Jeor formula"
+    },
+    "fatigue": {
+      "ariaLabel": "Fatigue state",
+      "todayLabel": "Fatigue today",
+      "emptyHint": "Not enough sessions yet. The estimate appears after 2+ sessions."
     },
     "tdee": {
       "label": "Daily energy",
       "value": "{kcal} kcal/day",
-      "subtitle": "Maintenance"
+      "subtitle": "Maintenance",
+      "ariaLabel": "Nutrition target today",
+      "phaseLabel": "Phase: {phase}",
+      "weekInMeso": "Week {n} / mesocycle",
+      "todayVsTarget": "Today vs target",
+      "targetToday": "Target today",
+      "withTarget": "· target {kcal} ({delta})",
+      "withProtein": "· {g} g protein",
+      "explainer": "The engine calculates automatically. Log optionally to calibrate.",
+      "sources": {
+        "manual": "Set manually",
+        "engineBn": "Adaptive estimate",
+        "baseline": "Initial estimate"
+      },
+      "phases": {
+        "auto": "Auto",
+        "cut": "Cut",
+        "bulk": "Bulk",
+        "maintenance": "Maintenance",
+        "strength": "Strength"
+      }
     },
     "projection": {
       "label": "Projection",
@@ -327,7 +365,26 @@
       "current": "Current weight",
       "logCta": "Log weight",
       "deltaSince": "{delta} kg since last week",
-      "noEntries": "No weight logged yet."
+      "noEntries": "No weight logged yet.",
+      "snapshotAriaLabel": "Weight last 7 days",
+      "snapshotTitle": "Weight (7 days)",
+      "snapshotEmpty": "No entries yet. The snapshot appears here after your first weigh-in.",
+      "snapshotHint": "For deep analysis → see History › Weight and BF",
+      "verifyValue": "Check the value",
+      "dayBarAriaLabel": "Day {n} weight {kg} kg"
+    },
+    "logWeightToday": "Log weight today",
+    "lastWeighIn": "Last weigh-in",
+    "viewWeightTrend": "View weight trend",
+    "bodyMeasurements": "Body measurements",
+    "lastMeasurement": "Last measurement",
+    "alertsToday": "Alerts today",
+    "measurements": {
+      "waist": "Waist",
+      "chest": "Chest",
+      "hips": "Hips",
+      "biceps": "Biceps",
+      "thigh": "Thigh"
     }
   },
 
