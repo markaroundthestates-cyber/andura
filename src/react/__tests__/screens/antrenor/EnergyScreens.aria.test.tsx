@@ -153,6 +153,7 @@ describe('ScheduleOverride — no role="list" + heading sufficient', () => {
     const { container } = renderScheduleOverride();
     const h1 = container.querySelector('h1');
     expect(h1).not.toBeNull();
-    expect(h1?.textContent).toMatch(/Schimbi planul de azi/);
+    // Locale-aware — RO bundle: "Schimbi planul de azi?" / EN default: "Change today's plan?".
+    expect(h1?.textContent).toMatch(/Schimbi planul de azi|Change today's plan/);
   });
 });

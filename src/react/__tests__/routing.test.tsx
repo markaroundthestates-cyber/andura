@@ -231,7 +231,7 @@ describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
     { path: '/app/antrenor/pain-button', Component: PainButton, heading: /Something hurts/i },
     { path: '/app/antrenor/equipment-swap', Component: EquipmentSwap, heading: /Schimba echipament/i },
     { path: '/app/antrenor/aparate-lipsa', Component: AparateLipsa, heading: /^Aparate lipsa$/i },
-    { path: '/app/antrenor/schedule-override', Component: ScheduleOverride, heading: /Schimbi planul de azi/i },
+    { path: '/app/antrenor/schedule-override', Component: ScheduleOverride, heading: /Schimbi planul de azi|Change today's plan/i },
     { path: '/app/antrenor/post-rpe', Component: PostRpe, heading: /How was your session/i },
     { path: '/app/antrenor/post-summary', Component: PostSummary, heading: /Session/i },
   ];

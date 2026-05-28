@@ -39,6 +39,7 @@ import { memo, useState } from 'react';
 import type { JSX } from 'react';
 import { X, MoreHorizontal, AlertCircle, SkipForward, Flag, Volume2, VolumeX, XCircle } from 'lucide-react';
 import { SessionElapsed } from './SessionElapsed';
+import { t } from '../../../i18n/index.js';
 
 interface SessionTimerProps {
   exerciseName: string;
@@ -128,7 +129,7 @@ function SessionTimerImpl({
           <button
             type="button"
             onClick={onExit}
-            aria-label="Iesi din sesiune"
+            aria-label={t('workout.timer.exitAriaLabel')}
             data-testid="workout-exit-trigger"
             className="p-2 rounded-full text-ink2 min-w-[44px] min-h-[44px] flex items-center justify-center"
           >
@@ -137,7 +138,7 @@ function SessionTimerImpl({
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            aria-label="Optiuni sesiune"
+            aria-label={t('workout.timer.menuAriaLabel')}
             data-testid="workout-menu-trigger"
             aria-haspopup="dialog"
             aria-expanded={menuOpen}
@@ -156,10 +157,18 @@ function SessionTimerImpl({
         >
           <div className="flex items-center justify-between text-[11px] text-ink2 uppercase tracking-wide font-medium mb-1.5">
             <span data-testid="workout-progress-sets">
-              {setsDone ?? 0}/{setsTotal} seturi
+              {(setsDone ?? 0) === 1 && (setsTotal as number) === 1
+                ? t('workout.progress.setsLabel_one', { done: setsDone ?? 0, total: setsTotal as number })
+                : t('workout.progress.setsLabel_other', { done: setsDone ?? 0, total: setsTotal as number })}
             </span>
             <span data-testid="workout-progress-ex">
-              {exerciseCount ?? exIdx + 1}/{exerciseTotal ?? totalExercises} exercitii
+              {(() => {
+                const done = exerciseCount ?? exIdx + 1;
+                const total = exerciseTotal ?? totalExercises;
+                return done === 1 && total === 1
+                  ? t('workout.progress.exercisesLabel_one', { done, total })
+                  : t('workout.progress.exercisesLabel_other', { done, total });
+              })()}
             </span>
           </div>
           <div className="h-1 bg-paper2 rounded-sm overflow-hidden">
@@ -182,11 +191,11 @@ function SessionTimerImpl({
             className="animate-slide-up bg-paper rounded-t-2xl p-4 w-full max-w-md"
             data-testid="workout-menu-sheet"
             role="dialog"
-            aria-label="Optiuni sesiune"
+            aria-label={t('workout.timer.menuAriaLabel')}
             onClick={(e) => e.stopPropagation()}
           >
             <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-3 px-2">
-              Optiuni sesiune
+              {t('workout.timer.menuHeading')}
             </p>
 
             <button
@@ -197,8 +206,8 @@ function SessionTimerImpl({
             >
               <AlertCircle className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
               <span className="flex-1">
-                <span className="block text-sm font-semibold">Ma doare ceva</span>
-                <span className="block text-xs text-ink2">Coach reduce intensitatea sau schimba exercitiul</span>
+                <span className="block text-sm font-semibold">{t('workout.timer.actions.pain')}</span>
+                <span className="block text-xs text-ink2">{t('workout.timer.actions.painDesc')}</span>
               </span>
             </button>
 
@@ -210,8 +219,8 @@ function SessionTimerImpl({
             >
               <SkipForward className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
               <span className="flex-1">
-                <span className="block text-sm font-semibold">Sari exercitiul curent</span>
-                <span className="block text-xs text-ink2">Treci la urmatorul, fara penalizare</span>
+                <span className="block text-sm font-semibold">{t('workout.timer.actions.skip')}</span>
+                <span className="block text-xs text-ink2">{t('workout.timer.actions.skipDesc')}</span>
               </span>
             </button>
 
@@ -223,8 +232,8 @@ function SessionTimerImpl({
             >
               <Flag className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
               <span className="flex-1">
-                <span className="block text-sm font-semibold">Termina mai devreme</span>
-                <span className="block text-xs text-ink2">Sesiunea partiala se inregistreaza, NU pierzi progresul</span>
+                <span className="block text-sm font-semibold">{t('workout.timer.actions.finishEarly')}</span>
+                <span className="block text-xs text-ink2">{t('workout.timer.actions.finishEarlyDesc')}</span>
               </span>
             </button>
 
@@ -246,9 +255,9 @@ function SessionTimerImpl({
                 )}
                 <span className="flex-1">
                   <span className="block text-sm font-semibold">
-                    {soundOn ? 'Sunet: pornit' : 'Sunet: oprit'}
+                    {soundOn ? t('workout.timer.actions.soundOn') : t('workout.timer.actions.soundOff')}
                   </span>
-                  <span className="block text-xs text-ink2">Vibratie + ding la finalul pauzei</span>
+                  <span className="block text-xs text-ink2">{t('workout.timer.actions.soundDesc')}</span>
                 </span>
               </button>
             )}
@@ -261,8 +270,8 @@ function SessionTimerImpl({
             >
               <XCircle className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
               <span className="flex-1">
-                <span className="block text-sm font-semibold">Anuleaza sesiunea</span>
-                <span className="block text-xs text-ink2">Pierzi progresul din sesiunea curenta</span>
+                <span className="block text-sm font-semibold">{t('workout.timer.actions.cancel')}</span>
+                <span className="block text-xs text-ink2">{t('workout.timer.actions.cancelDesc')}</span>
               </span>
             </button>
           </div>

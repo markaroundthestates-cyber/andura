@@ -23,22 +23,26 @@ import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 import type { IntensityMod } from './EnergyCheck';
 
 export type OverrideKind = 'easier' | 'harder' | 'different-muscle' | 'mobility' | 'cardio';
 
 interface OverrideOption {
   kind: OverrideKind;
-  label: string;
-  description: string;
+  labelKey: string;
+  descriptionKey: string;
 }
 
+// Label + description resolved via i18n at render time so EN/RO swap is
+// wire-only (NU rewrite OVERRIDE_OPTIONS) per Daniel 2026-05-28 EN-default
+// mandate.
 const OVERRIDE_OPTIONS: readonly OverrideOption[] = [
-  { kind: 'easier', label: 'Mai usor', description: 'Intensitate redusa -20%' },
-  { kind: 'harder', label: 'Mai greu', description: 'Intensitate crescuta +15%' },
-  { kind: 'different-muscle', label: 'Alta grupa', description: 'Schimba target azi' },
-  { kind: 'mobility', label: 'Mobilitate', description: 'Stretching + dynamic warm-up' },
-  { kind: 'cardio', label: 'Cardio doar', description: 'Sesiune cardio 25-40 min' },
+  { kind: 'easier',            labelKey: 'scheduleOverride.options.easierLabel',           descriptionKey: 'scheduleOverride.options.easierDescription' },
+  { kind: 'harder',            labelKey: 'scheduleOverride.options.harderLabel',           descriptionKey: 'scheduleOverride.options.harderDescription' },
+  { kind: 'different-muscle',  labelKey: 'scheduleOverride.options.differentMuscleLabel',  descriptionKey: 'scheduleOverride.options.differentMuscleDescription' },
+  { kind: 'mobility',          labelKey: 'scheduleOverride.options.mobilityLabel',         descriptionKey: 'scheduleOverride.options.mobilityDescription' },
+  { kind: 'cardio',            labelKey: 'scheduleOverride.options.cardioLabel',           descriptionKey: 'scheduleOverride.options.cardioDescription' },
 ];
 
 function intensityFor(kind: OverrideKind): IntensityMod {
@@ -63,14 +67,14 @@ export function ScheduleOverride(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="schedule-override">
       <SubHeader
-        title="Schimbi planul de azi?"
+        title={t('scheduleOverride.subHeaderTitle')}
         onBack={handleBack}
         testIdBack="schedule-override-back"
       />
       <div className="p-6 flex-1">
-      <h2 className="text-2xl font-bold text-ink mb-2">Vrei alt antrenament azi?</h2>
+      <h2 className="text-2xl font-bold text-ink mb-2">{t('scheduleOverride.heading')}</h2>
       <p className="text-base text-ink2 mb-6">
-        Coach respecta. Doar azi - maine reia planul.
+        {t('scheduleOverride.body')}
       </p>
       <div className="flex flex-col gap-3">
         {OVERRIDE_OPTIONS.map((opt) => (
@@ -81,8 +85,8 @@ export function ScheduleOverride(): JSX.Element {
             data-override-kind={opt.kind}
             className="flex flex-col items-start gap-1 p-4 rounded-xl border border-lineStrong bg-paper2 hover:bg-paper transition text-left"
           >
-            <span className="text-base font-medium text-ink">{opt.label}</span>
-            <span className="text-sm text-ink2">{opt.description}</span>
+            <span className="text-base font-medium text-ink">{t(opt.labelKey)}</span>
+            <span className="text-sm text-ink2">{t(opt.descriptionKey)}</span>
           </button>
         ))}
       </div>

@@ -211,7 +211,7 @@ describe('Workout — base render (phase=idle init → logging)', async () => {
     await renderWorkoutAndWait();
     expect(screen.getByTestId('workout-exit-trigger')).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: /Iesi din sesiune/i })
+      screen.getByRole('button', { name: /Iesi din sesiune|Leave the session/i })
     ).toBeInTheDocument();
   });
 });
@@ -773,12 +773,12 @@ describe('Workout — global progress bar wired (P-11)', async () => {
     // (mockup wv2 setIdx semantic), not a "logged" tally — so first frame
     // already reads "1/17" ("you are on set 1 of 17"), not "0/17".
     await renderWorkoutAndWait();
-    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('1/17 seturi');
+    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('1/17 sets');
   });
 
   it('exercitiu curent 1/5 la start', async () => {
     await renderWorkoutAndWait();
-    expect(screen.getByTestId('workout-progress-ex')).toHaveTextContent('1/5 exercitii');
+    expect(screen.getByTestId('workout-progress-ex')).toHaveTextContent('1/5 exercises');
   });
 
   it('setsDone stays 1/17 in rest after rating set 1 (set just done)', async () => {
@@ -786,7 +786,7 @@ describe('Workout — global progress bar wired (P-11)', async () => {
     // The bump to 2 happens on skip-pause / auto-advance (start of set 2).
     await renderWorkoutAndWait();
     logSet('Potrivit');
-    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('1/17 seturi');
+    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('1/17 sets');
   });
 
   it('setsDone bumps 1 -> 2 after sari pauza (skip-rest moves to set 2)', async () => {
@@ -796,7 +796,7 @@ describe('Workout — global progress bar wired (P-11)', async () => {
     await renderWorkoutAndWait();
     logSet('Potrivit');
     fireEvent.click(screen.getByTestId('rest-skip'));
-    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('2/17 seturi');
+    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('2/17 sets');
   });
 });
 

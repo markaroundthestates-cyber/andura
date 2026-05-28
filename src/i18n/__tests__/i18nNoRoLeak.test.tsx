@@ -130,6 +130,13 @@ import { ProgramChangeConfirm } from '../../react/routes/screens/antrenor/Progra
 import { StatsGrid } from '../../react/components/Antrenor/StatsGrid';
 import { FatigueStrip } from '../../react/components/Progres/FatigueStrip';
 import { ReadinessVerdict } from '../../react/components/Antrenor/ReadinessVerdict';
+// ── Wave F1 — Components + lingering screen leaks (chat 5 EN smoke) ──────────
+import { ObiectivGoalCard } from '../../react/components/Progres/ObiectivGoalCard';
+import { RestOverlay } from '../../react/components/Workout/RestOverlay';
+import { SessionTimer } from '../../react/components/Workout/SessionTimer';
+import { SubHeader } from '../../react/components/SubHeader';
+import { ExerciseMedia } from '../../react/components/ExerciseMedia';
+import { ScheduleOverride } from '../../react/routes/screens/antrenor/ScheduleOverride';
 
 // ── Forbidden tokens (RO-only signals) ──────────────────────────────────────
 //
@@ -335,22 +342,18 @@ const FORBIDDEN_RO_TOKENS = [
   'gambele',
   'recupereaza',
   // ── SPLASH + AUTH + ONBOARDING entry funnel (FINISH wave) ─────────────
-  // Splash hardcoded tokens that historically leaked under EN.
   'facut',
   'raman',
-  // Onboarding step kicker + progress + step titles + helpers.
   'pasul',
   'cati',
   'cantaresti',
   'inalt',
-  // Onboarding option labels + descriptors.
   'barbat',
   'femeie',
   'forta',
   'masa',
   'slabire',
   'mentenanta',
-  // Auth screen long bullets + chrome.
   'esti',
   'browser-ul',
   'deschizi',
@@ -373,6 +376,26 @@ const FORBIDDEN_RO_TOKENS = [
   'medicale',
   'siguranta',
   'sala',
+  // Wave F1 — Components + screen lingering leaks (chat 5 EN smoke)
+  'musculara',
+  'pastrezi',
+  'muschi',
+  'grasime',
+  'cresti',
+  'culturism',
+  'incalzire',
+  'pauza',
+  'sari',
+  'optiuni',
+  'sesiunea',
+  'planul',
+  'usor',
+  'greu',
+  'grupa',
+  'mobilitate',
+  'ales',
+  'activ',
+  'obiectiv',
 ];
 
 const RO_DIACRITICS = /[ăâîșțĂÂÎȘȚşţŞŢ]/;
@@ -1147,6 +1170,100 @@ describe('SPLASH+AUTH+ONB FINISH i18n — no RO leak under EN locale', () => {
     const { container } = renderOnboardingStep(7);
     fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '300' } });
     assertNoRoLeak('Onboarding step 7 range error', container.textContent ?? '');
+  });
+});
+
+// ── Wave F1 — Components + lingering screen leaks (chat 5 EN smoke) ─────────
+describe('Wave F1 i18n — components surface EN-clean under EN locale', () => {
+  it('ObiectivGoalCard renders without RO leak under EN', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <ObiectivGoalCard />
+      </MemoryRouter>,
+    );
+    assertNoRoLeak('ObiectivGoalCard', container.textContent ?? '');
+    // Sanity — picked badge, aria suffix, all 5 EN titles must be present.
+    const text = container.textContent ?? '';
+    expect(text).toMatch(/Auto/);
+    expect(text).toMatch(/Strength/);
+    expect(text).toMatch(/Muscle mass/);
+    expect(text).toMatch(/Lose fat/);
+    expect(text).toMatch(/Maintain/);
+    expect(text).toMatch(/Picked/);
+  });
+
+  it('RestOverlay renders Pauza/Sari pauza/recovering EN-clean under EN', () => {
+    const { container } = render(
+      <RestOverlay
+        countdownSec={60}
+        initialRestSec={90}
+        onSkip={() => {}}
+        currentExerciseName="Bench Press"
+      />,
+    );
+    const text = container.textContent ?? '';
+    assertNoRoLeak('RestOverlay', text);
+    expect(text).toContain('Rest');
+    expect(text).toContain('Skip rest');
+    expect(text).toContain('Bench Press is recovering');
+  });
+
+  it('SessionTimer progress bar + menu sheet EN-clean under EN', () => {
+    const { container, getByTestId } = render(
+      <SessionTimer
+        exerciseName="Bench Press"
+        exIdx={0}
+        totalExercises={5}
+        sessionStart={null}
+        onExit={() => {}}
+        onPain={() => {}}
+        onSkipExercise={() => {}}
+        onFinishEarly={() => {}}
+        onCancelSession={() => {}}
+        setsDone={1}
+        setsTotal={17}
+        exerciseCount={1}
+        exerciseTotal={5}
+      />,
+    );
+    assertNoRoLeak('SessionTimer header + progress', container.textContent ?? '');
+    // Open the menu sheet so the action rows are part of the render.
+    fireEvent.click(getByTestId('workout-menu-trigger'));
+    assertNoRoLeak('SessionTimer menu sheet', container.textContent ?? '');
+    const text = container.textContent ?? '';
+    expect(text).toContain('1/17 sets');
+    expect(text).toContain('1/5 exercises');
+    expect(text).toContain('Skip current exercise');
+    expect(text).toContain('Finish early');
+  });
+
+  it('SubHeader back button localizes aria-label to EN under EN', () => {
+    const { container, getByRole } = render(
+      <SubHeader title="Profile" onBack={() => {}} testIdBack="x-back" />,
+    );
+    assertNoRoLeak('SubHeader', container.textContent ?? '');
+    const btn = getByRole('button', { name: /Back/i });
+    expect(btn).toBeInTheDocument();
+  });
+
+  it('ExerciseMedia card placeholder EN-clean under EN', () => {
+    const { container } = render(
+      <ExerciseMedia engineName="lateral-raise" variant="card" />,
+    );
+    const text = container.textContent ?? '';
+    assertNoRoLeak('ExerciseMedia card', text);
+    expect(text).toContain('Image coming soon');
+  });
+
+  it('ScheduleOverride renders without RO leak under EN', () => {
+    const { container } = render(
+      withRouter('/app/antrenor/schedule-override', <ScheduleOverride />),
+    );
+    const text = container.textContent ?? '';
+    assertNoRoLeak('ScheduleOverride', text);
+    expect(text).toContain("Change today's plan?");
+    expect(text).toContain('Easier');
+    expect(text).toContain('Mobility');
   });
 });
 

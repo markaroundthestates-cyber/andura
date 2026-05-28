@@ -6,9 +6,19 @@
 // opens on tap, action callbacks fire + sheet closes, backdrop dismiss,
 // stopPropagation guard, sound icon swap soundOn true/false.
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { SessionTimer } from '../../../components/Workout/SessionTimer';
+// i18n locale pin — these specs assert RO copy (Optiuni sesiune, seturi,
+// exercitii, Iesi din sesiune). Force RO so the i18n indirection resolves
+// to the RO assertion targets. EN coverage is locked separately by
+// i18nNoRoLeak.test.tsx via Workout flow surfaces.
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
+beforeEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
+  setLocale('ro');
+});
 
 function renderTimer(overrides: Partial<Parameters<typeof SessionTimer>[0]> = {}) {
   const props = {
