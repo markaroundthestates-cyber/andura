@@ -1588,8 +1588,12 @@
   "splash": {
     "appName": "Andura",
     "tagline": "Your guide in the gym",
+    "taglineLine1": "Your personal trainer,",
+    "taglineLine2": "no noise.",
     "continueCta": "Continue",
-    "loginCta": "Log in"
+    "loginCta": "Log In",
+    "signupCta": "Create Account",
+    "trustFooter": "Made in Romania · Your data stays yours"
   },
 
   "auth": {
@@ -1600,7 +1604,208 @@
     "sentTitle": "Check your email",
     "sentBody": "We sent a sign-in link to {email}. Tap it to continue.",
     "errorInvalid": "Please enter a valid email address.",
-    "errorGeneric": "Couldn't send the link. Please try again."
+    "errorGeneric": "Couldn't send the link. Please try again.",
+    "backAriaLabel": "Back",
+    "loginTitle": "Sign in",
+    "signupTitle": "Create account",
+    "loginSubtitle": "We'll send you a sign-in link by email. No password.",
+    "signupSubtitle": "We'll send you a link to create your account. No password.",
+    "emailLabel": "Email (you'll get a link)",
+    "emailPlaceholderRo": "your.name@email.com",
+    "sendCtaLogin": "Send sign-in link",
+    "sendCtaSignup": "Create account",
+    "sendingLabel": "Sending…",
+    "googleCta": "Continue with Google",
+    "dividerOr": "or",
+    "mockLoginCta": "Mock login (dev only)",
+    "toSignupCta": "Create account",
+    "toLoginPrefix": "Already have an account?",
+    "toLoginAction": "Sign in",
+    "sent": {
+      "title": "Check your email",
+      "bodyPrefix": "We sent the link to",
+      "bodySuffix": ".",
+      "openHint": "Open it from this phone. The link expires in 15 min.",
+      "signupNote": "Your account is created when you open the link.",
+      "changeEmailCta": "Change email"
+    },
+    "consent": {
+      "labelPrefix": "I agree with the",
+      "termsLink": "Terms and Conditions",
+      "conjunction": "and",
+      "privacyLink": "Privacy Policy",
+      "labelSuffix": "."
+    },
+    "termsFooter": {
+      "prefix": "By continuing you accept the",
+      "terms": "Terms",
+      "conjunction": "and",
+      "privacy": "Privacy Policy",
+      "suffix": ". We don't use your data for ads."
+    },
+    "webview": {
+      "prefix": "You're in the",
+      "browserLabel": "browser.",
+      "hintPrefix": "The Magic Link works better if you open",
+      "appUrl": "andura.app",
+      "hintSuffix": "in Chrome (menu ··· > Open in Chrome)."
+    },
+    "skip": {
+      "cta": "Continue without an account",
+      "riskNote": "Data is saved only on this device. You risk losing it (phone reset, browser cache cleared, app reinstalled)."
+    },
+    "legal": {
+      "closeAriaLabel": "Close",
+      "fullTextLabel": "Full text:",
+      "fullTextLink": "andura.app/terms",
+      "gdprPrefix": "· GDPR questions:",
+      "gdprEmail": "privacy@andura.app",
+      "terms": {
+        "title": "Terms and conditions",
+        "intro": "Andura is a local-first training coach. By using the app you accept:",
+        "bullets": [
+          "Andura offers recommendations, NOT medical prescriptions.",
+          "You're responsible for your own safety in the gym.",
+          "Firebase backup is optional and encrypts data in transit (HTTPS).",
+          "Crash reporting is opt-in (off by default), with personal data stripped.",
+          "Andura is in free Beta; features may change until V1."
+        ]
+      },
+      "privacy": {
+        "title": "Privacy",
+        "intro": "Your data stays on your phone. You decide what leaves.",
+        "bullets": [
+          "We only collect profile + sessions + optional biometrics + Magic Link email.",
+          "Used to personalize workouts, locally on your phone.",
+          "ZERO ads, ZERO data sales, ZERO third-party trackers.",
+          "Access, export, deletion, rectification anytime from the Account screen."
+        ]
+      }
+    }
+  },
+
+  "onboarding": {
+    "progress": "{current} of {total}",
+    "stepKicker": "STEP {n}",
+    "backCta": "Back",
+    "continueCta": "Continue",
+    "finishCta": "Done",
+    "toast": {
+      "completeAge": "Complete your age.",
+      "completeOption": "Pick an option.",
+      "completeGoal": "Pick a goal.",
+      "completeFrequency": "Pick a frequency.",
+      "completeLevel": "Pick a level.",
+      "completeWeight": "Complete your weight.",
+      "completeHeight": "Complete your height.",
+      "completeAll": "Complete all steps before continuing."
+    },
+    "steps": {
+      "1": {
+        "title": "How old are you?",
+        "desc": "Helps us tune intensity and recovery.",
+        "ariaLabel": "Age in years",
+        "placeholder": "e.g. 32",
+        "helper": "Between 18 and 99 years",
+        "error": "Age between 18 and 99 years."
+      },
+      "2": {
+        "title": "Biological sex",
+        "desc": "Affects TDEE estimate and recovery rates."
+      },
+      "3": {
+        "title": "What do you want to achieve?",
+        "desc": "Pick one. You can change it later."
+      },
+      "4": {
+        "title": "How often do you train?",
+        "desc": "Days per week you can train.",
+        "ariaLabelFmt": "{n} sessions per week"
+      },
+      "5": {
+        "title": "How much experience do you have?",
+        "desc": "Calibrates starting volume and progression."
+      },
+      "6": {
+        "title": "How much do you weigh?",
+        "desc": "We calculate real volume + tonnage.",
+        "ariaLabel": "Weight in kilograms",
+        "placeholder": "e.g. 78",
+        "helper": "Between 30 and 250 kg",
+        "error": "Kg between 30 and 250."
+      },
+      "7": {
+        "title": "How tall are you?",
+        "desc": "Needed for the base calorie calculation (BMR).",
+        "ariaLabel": "Height in centimeters",
+        "placeholder": "e.g. 175",
+        "helper": "Between 120 and 230 cm",
+        "error": "Height between 120 and 230 cm."
+      },
+      "8": {
+        "title": "Check your data",
+        "desc": "You can come back anytime to change it."
+      }
+    },
+    "options": {
+      "sex": {
+        "m": "Male (M)",
+        "f": "Female (F)"
+      },
+      "goal": {
+        "auto": "Auto",
+        "autoBadge": "recommended",
+        "autoSubtitle": "The coach decides, adapts over time",
+        "forta": "Strength",
+        "fortaSubtitle": "Heavy weights, fewer reps",
+        "masa": "Build muscle",
+        "masaSubtitle": "Grow visible muscle",
+        "slabire": "Lose fat",
+        "slabireSubtitle": "Lose fat, keep muscle",
+        "mentenanta": "Maintenance",
+        "mentenantaSubtitle": "Keep your current shape"
+      },
+      "frequency": {
+        "2": "2 days",
+        "2Subtitle": "Minimum, ample recovery",
+        "3": "3 days",
+        "3Subtitle": "Start easy, ample recovery",
+        "4": "4 days",
+        "4Subtitle": "Balanced rhythm",
+        "5": "5 days",
+        "5Subtitle": "High volume, mind the recovery"
+      },
+      "experience": {
+        "incepator": "Beginner",
+        "incepatorSubtitle": "Less than a year of consistent training",
+        "intermediar": "Intermediate",
+        "intermediarSubtitle": "1-3 years, solid basic technique",
+        "avansat": "Advanced",
+        "avansatSubtitle": "3+ years, structured training"
+      }
+    },
+    "confirm": {
+      "empty": "-",
+      "fields": {
+        "age": "Age",
+        "sex": "Sex",
+        "goal": "Goal",
+        "frequency": "Frequency",
+        "experience": "Experience",
+        "weight": "Weight",
+        "height": "Height"
+      },
+      "values": {
+        "sexM": "Male",
+        "sexF": "Female",
+        "frequencyShort": "{n}/week",
+        "experienceIncepator": "Beginner",
+        "experienceIntermediar": "Intermediate",
+        "experienceAvansat": "Advanced",
+        "weightSuffix": "{kg} kg",
+        "heightSuffix": "{cm} cm"
+      }
+    }
   },
 
   "offline": {

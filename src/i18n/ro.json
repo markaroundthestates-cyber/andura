@@ -1588,8 +1588,12 @@
   "splash": {
     "appName": "Andura",
     "tagline": "Ghidul tau in sala",
+    "taglineLine1": "Antrenorul tau personal,",
+    "taglineLine2": "fara zgomot.",
     "continueCta": "Continua",
-    "loginCta": "Conecteaza-te"
+    "loginCta": "Log In",
+    "signupCta": "Creaza Cont",
+    "trustFooter": "Facut in Romania · Datele tale raman ale tale"
   },
 
   "auth": {
@@ -1600,7 +1604,208 @@
     "sentTitle": "Verifica-ti emailul",
     "sentBody": "Am trimis un link de conectare la {email}. Apasa-l ca sa continui.",
     "errorInvalid": "Introdu un email valid.",
-    "errorGeneric": "Nu am putut trimite linkul. Incearca din nou."
+    "errorGeneric": "Nu am putut trimite linkul. Reincearca.",
+    "backAriaLabel": "Inapoi",
+    "loginTitle": "Intra in cont",
+    "signupTitle": "Creeaza cont",
+    "loginSubtitle": "Iti trimitem un link de intrare pe email. Fara parola.",
+    "signupSubtitle": "Iti trimitem un link pe email pentru a-ti crea contul. Fara parola.",
+    "emailLabel": "Email (primesti un link)",
+    "emailPlaceholderRo": "numele.tau@email.ro",
+    "sendCtaLogin": "Trimite link de intrare",
+    "sendCtaSignup": "Creeaza cont",
+    "sendingLabel": "Se trimite…",
+    "googleCta": "Continua cu Google",
+    "dividerOr": "sau",
+    "mockLoginCta": "Mock login (dev only)",
+    "toSignupCta": "Creeaza cont",
+    "toLoginPrefix": "Ai deja cont?",
+    "toLoginAction": "Intra",
+    "sent": {
+      "title": "Verifica emailul",
+      "bodyPrefix": "Ti-am trimis linkul pe",
+      "bodySuffix": ".",
+      "openHint": "Deschide-l de pe acest telefon. Linkul expira in 15 min.",
+      "signupNote": "Contul se creeaza cand deschizi linkul.",
+      "changeEmailCta": "Schimba emailul"
+    },
+    "consent": {
+      "labelPrefix": "Sunt de acord cu",
+      "termsLink": "Termenii si Conditiile",
+      "conjunction": "si",
+      "privacyLink": "Politica de Confidentialitate",
+      "labelSuffix": "."
+    },
+    "termsFooter": {
+      "prefix": "Continuand accepti",
+      "terms": "Termenii",
+      "conjunction": "si",
+      "privacy": "Confidentialitatea",
+      "suffix": ". Nu folosim datele tale pentru reclame."
+    },
+    "webview": {
+      "prefix": "Esti in browser-ul",
+      "browserLabel": ".",
+      "hintPrefix": "Magic Link-ul functioneaza mai bine daca deschizi",
+      "appUrl": "andura.app",
+      "hintSuffix": "in Chrome (meniu ··· > Deschide in Chrome)."
+    },
+    "skip": {
+      "cta": "Continua fara cont",
+      "riskNote": "Datele se salveaza doar pe acest dispozitiv. Risti sa le pierzi (telefon resetat, browser cache sters, app reinstalat)."
+    },
+    "legal": {
+      "closeAriaLabel": "Inchide",
+      "fullTextLabel": "Textul complet:",
+      "fullTextLink": "andura.app/terms",
+      "gdprPrefix": "· intrebari GDPR:",
+      "gdprEmail": "privacy@andura.app",
+      "terms": {
+        "title": "Termeni si conditii",
+        "intro": "Andura este un coach de antrenament local-first. Folosind app accepti:",
+        "bullets": [
+          "Andura ofera recomandari, NU prescriptii medicale.",
+          "Esti responsabil de propria siguranta in sala.",
+          "Backup-ul Firebase e optional si cripteaza datele in transit (HTTPS).",
+          "Raportarea de erori e opt-in (implicit oprita), cu datele personale sterse.",
+          "Andura e in Beta gratuita; functii pot fi schimbate pana la V1."
+        ]
+      },
+      "privacy": {
+        "title": "Confidentialitate",
+        "intro": "Datele tale raman pe telefon. Tu controlezi ce iese de aici.",
+        "bullets": [
+          "Colectam doar profilul + sesiunile + biometrici opt-in + email Magic Link.",
+          "Folosite pentru personalizarea antrenamentelor, local pe telefon.",
+          "ZERO publicitate, ZERO vanzare date, ZERO third-party trackers.",
+          "Acces, export, stergere, rectificare oricand din ecranul Cont."
+        ]
+      }
+    }
+  },
+
+  "onboarding": {
+    "progress": "{current} din {total}",
+    "stepKicker": "PASUL {n}",
+    "backCta": "Inapoi",
+    "continueCta": "Continua",
+    "finishCta": "Gata",
+    "toast": {
+      "completeAge": "Completeaza varsta.",
+      "completeOption": "Alege o optiune.",
+      "completeGoal": "Alege un obiectiv.",
+      "completeFrequency": "Alege frecventa.",
+      "completeLevel": "Alege nivelul.",
+      "completeWeight": "Completeaza greutatea.",
+      "completeHeight": "Completeaza inaltimea.",
+      "completeAll": "Completeaza toti pasii inainte de a continua."
+    },
+    "steps": {
+      "1": {
+        "title": "Cati ani ai?",
+        "desc": "Ne ajuta sa adaptam intensitatea si recuperarea.",
+        "ariaLabel": "Varsta in ani",
+        "placeholder": "ex. 32",
+        "helper": "Intre 18 si 99 ani",
+        "error": "Varsta intre 18 si 99 ani."
+      },
+      "2": {
+        "title": "Sex biologic",
+        "desc": "Influenteaza estimarea TDEE si ratele de recuperare."
+      },
+      "3": {
+        "title": "Ce vrei sa obtii?",
+        "desc": "Alegi unul. Poti schimba mai tarziu."
+      },
+      "4": {
+        "title": "Cat de des te antrenezi?",
+        "desc": "Zile pe saptamana in care poti sa te antrenezi.",
+        "ariaLabelFmt": "{n} sesiuni pe saptamana"
+      },
+      "5": {
+        "title": "Cata experienta ai?",
+        "desc": "Calibram volumul si progresia de start."
+      },
+      "6": {
+        "title": "Cat cantaresti?",
+        "desc": "Calculam volum + tonaj real.",
+        "ariaLabel": "Greutate in kilograme",
+        "placeholder": "ex. 78",
+        "helper": "Intre 30 si 250 kg",
+        "error": "Kg intre 30 si 250."
+      },
+      "7": {
+        "title": "Cat esti de inalt?",
+        "desc": "Necesar pentru calculul caloriilor de baza (BMR).",
+        "ariaLabel": "Inaltime in centimetri",
+        "placeholder": "ex. 175",
+        "helper": "Intre 120 si 230 cm",
+        "error": "Inaltime intre 120 si 230 cm."
+      },
+      "8": {
+        "title": "Verifica datele",
+        "desc": "Poti reveni oricand sa schimbi."
+      }
+    },
+    "options": {
+      "sex": {
+        "m": "Barbat (M)",
+        "f": "Femeie (F)"
+      },
+      "goal": {
+        "auto": "Auto",
+        "autoBadge": "recomandat",
+        "autoSubtitle": "Coach-ul alege singur, se adapteaza in timp",
+        "forta": "Forta",
+        "fortaSubtitle": "Greutati mari, mai putine repetari",
+        "masa": "Masa musculara",
+        "masaSubtitle": "Cresti musculatura vizibil",
+        "slabire": "Slabire",
+        "slabireSubtitle": "Pierzi grasime, pastrezi muschi",
+        "mentenanta": "Mentenanta",
+        "mentenantaSubtitle": "Pastrezi forma actuala"
+      },
+      "frequency": {
+        "2": "2 zile",
+        "2Subtitle": "Minim, recuperare ampla",
+        "3": "3 zile",
+        "3Subtitle": "Incepem usor, recuperare ampla",
+        "4": "4 zile",
+        "4Subtitle": "Ritm echilibrat",
+        "5": "5 zile",
+        "5Subtitle": "Volum mare, atentie la recuperare"
+      },
+      "experience": {
+        "incepator": "Incepator",
+        "incepatorSubtitle": "Sub un an de antrenament constant",
+        "intermediar": "Intermediar",
+        "intermediarSubtitle": "1-3 ani, tehnica de baza solida",
+        "avansat": "Avansat",
+        "avansatSubtitle": "Peste 3 ani, antrenament structurat"
+      }
+    },
+    "confirm": {
+      "empty": "-",
+      "fields": {
+        "age": "Varsta",
+        "sex": "Sex",
+        "goal": "Obiectiv",
+        "frequency": "Frecventa",
+        "experience": "Experienta",
+        "weight": "Greutate",
+        "height": "Inaltime"
+      },
+      "values": {
+        "sexM": "Barbat",
+        "sexF": "Femeie",
+        "frequencyShort": "{n}/sapt",
+        "experienceIncepator": "Incepator",
+        "experienceIntermediar": "Intermediar",
+        "experienceAvansat": "Avansat",
+        "weightSuffix": "{kg} kg",
+        "heightSuffix": "{cm} cm"
+      }
+    }
   },
 
   "offline": {
