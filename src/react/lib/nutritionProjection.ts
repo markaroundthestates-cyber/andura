@@ -141,14 +141,14 @@ function round1(n: number): number {
 
 // ── I/O boundary (impure plumbing) ──────────────────────────────────────────
 
-import { useProgresStore } from '../stores/progresStore';
+import { useProgresStore, latestBodyMeasurements } from '../stores/progresStore';
 import { useNutritionStore } from '../stores/nutritionStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { readBayesianNutritionContext } from './nutritionObservations';
 import { readTdeeEstimateKcal } from './engineWrappers';
 import { getCurrentWeightKg } from './userTdee';
 import { estimateBF_USNavy } from '../../engine/usNavyBF.js';
-import { estimateBF_Deurenberg } from '../../engine/bodyComposition.js';
+import { estimateBfDeurenbergCapped } from '../../engine/bodyComposition.js';
 
 /** Orizont default proiectie — 28 zile (~4 saptamani), per Daniel verbatim. */
 export const DEFAULT_HORIZON_DAYS = 28;
@@ -207,27 +207,35 @@ export function deriveCurrentBfPct(): number | null {
   // era inghetata pe onboarding (audit CRIT split source-of-truth).
   const weight = getCurrentWeightKg();
   const bodyData = useProgresStore.getState().bodyData;
-  const last = bodyData[bodyData.length - 1];
+  // Smoke 2026-05-28 #15 — agregare per camp peste TOATE intrarile (NU doar
+  // ultima). Cand gat-ul a fost introdus din Cont si piept-ul din Progres,
+  // ultima intrare nu mai are gat → BF% cadea pe Deurenberg desi gat-ul tot
+  // exista in istoric. Same source of truth pentru ambele formulare.
+  const latest = latestBodyMeasurements(bodyData);
 
   // Tier 1 (ACURAT) — US-Navy cand exista masuratori (neck + waist).
-  if (last && last.neckCm !== undefined && last.waistCm !== undefined) {
+  if (latest.neckCm !== undefined && latest.waistCm !== undefined) {
     const args: { sex?: string; height_cm?: number; neck_cm?: number; waist_cm?: number; hip_cm?: number } = {};
     if (sex) args.sex = sex;
     if (height) args.height_cm = height;
-    args.neck_cm = last.neckCm;
-    args.waist_cm = last.waistCm;
-    if (last.hipsCm !== undefined) args.hip_cm = last.hipsCm;
+    args.neck_cm = latest.neckCm;
+    args.waist_cm = latest.waistCm;
+    if (latest.hipsCm !== undefined) args.hip_cm = latest.hipsCm;
     const navy = estimateBF_USNavy(args);
     if (navy != null) return navy;
   }
 
-  // Tier 2 (ESTIMAT) — Deurenberg din onboarding (mereu disponibil post-onb).
-  return estimateBF_Deurenberg({
+  // Tier 2 (ESTIMAT) — Deurenberg cu cap high-BMI (smoke 2026-05-28 #1).
+  // Cap-ul `min(raw, BMI×0.85)` la BMI>=27 reduce supraestimarea cunoscuta a
+  // formulei la useri supraponderali; UI-only (engine path neatins). Pastram
+  // doar valoarea (`bfPct`) — flag-ul `capped` e surface-uit in BodyFatStrip.
+  const capped = estimateBfDeurenbergCapped({
     weightKg: weight ?? NaN,
     heightCm: height ?? NaN,
     ageYears: age ?? NaN,
     ...(sex ? { sex } : {}),
   });
+  return capped.bfPct;
 }
 
 /**

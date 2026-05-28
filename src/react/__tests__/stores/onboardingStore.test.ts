@@ -198,6 +198,26 @@ describe('onboardingStore — validateOnboardingField range gate', () => {
     expect(validateOnboardingField('frequency', '3')).toEqual({ ok: true });
     expect(validateOnboardingField('experience', 'incepator')).toEqual({ ok: true });
   });
+
+  // Smoke 2026-05-28 #16 — targetWeight range gate (30-250 kg, mirror weight).
+  it('targetWeight accepts boundary min 30 + max 250', () => {
+    expect(validateOnboardingField('targetWeight', 30)).toEqual({ ok: true });
+    expect(validateOnboardingField('targetWeight', 250)).toEqual({ ok: true });
+  });
+
+  it('targetWeight rejects below min (10) cu mesaj Gigel', () => {
+    const r = validateOnboardingField('targetWeight', 10);
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.reason).toContain('30');
+      expect(r.reason).toContain('250');
+      expect(r.reason.toLowerCase()).toContain('greutate tinta');
+    }
+  });
+
+  it('targetWeight rejects above max (500)', () => {
+    expect(validateOnboardingField('targetWeight', 500).ok).toBe(false);
+  });
 });
 
 describe('onboardingStore — setField catastrophe rejection', () => {

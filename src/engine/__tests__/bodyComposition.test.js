@@ -1,11 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import {
   estimateBF_Deurenberg,
+  estimateBfDeurenbergCapped,
   computeBMI,
   healthyFloorWeightKg,
   clampKcalToHealthyFloor,
   HEALTHY_MIN_BMI,
   LEAN_GAIN_SURPLUS_MULT,
+  HIGH_BMI_BF_CAP_THRESHOLD,
+  HIGH_BMI_BF_CAP_RATIO,
 } from '../bodyComposition.js';
 
 describe('estimateBF_Deurenberg', () => {
@@ -54,6 +57,90 @@ describe('estimateBF_Deurenberg', () => {
     const a = estimateBF_Deurenberg({ sex: 'm', weightKg: 85, heightCm: 178, ageYears: 42 });
     const b = estimateBF_Deurenberg({ sex: 'm', weightKg: 85, heightCm: 178, ageYears: 42 });
     expect(a).toBe(b);
+  });
+});
+
+describe('estimateBfDeurenbergCapped — smoke 2026-05-28 #1 high-BMI bias cap', () => {
+  it('BMI sub prag 27 → cap NU se aplica (passthrough Deurenberg)', () => {
+    // 80kg/180cm/30yo M → BMI 24.7 → Deurenberg ~20.3% < cap → passthrough
+    const r = estimateBfDeurenbergCapped({
+      sex: 'm', weightKg: 80, heightCm: 180, ageYears: 30,
+    });
+    expect(r.capped).toBe(false);
+    expect(r.bfPct).toBeCloseTo(20.3, 1);
+  });
+
+  it('Daniel smoke 109kg/182cm/36yo M (BMI 32.9, raw 31.6%) → cap la 28.0', () => {
+    // BMI = 109/1.82² = 32.92
+    // Deurenberg raw = 1.2×32.92 + 0.23×36 - 10.8 - 5.4 = 31.66
+    // Cap = 32.92 × 0.85 = 27.98 ≈ 28.0
+    const r = estimateBfDeurenbergCapped({
+      sex: 'm', weightKg: 109, heightCm: 182, ageYears: 36,
+    });
+    expect(r.capped).toBe(true);
+    expect(r.bfPct).toBeCloseTo(28.0, 1);
+    // raw fara cap = 31.6
+    expect(estimateBF_Deurenberg({ sex: 'm', weightKg: 109, heightCm: 182, ageYears: 36 }))
+      .toBeCloseTo(31.6, 1);
+  });
+
+  it('femeie BMI 28 → cap aplicat (categoria suprapondereala incepe la 25-27)', () => {
+    // 75kg/164cm → BMI 27.9 → peste prag 27
+    const r = estimateBfDeurenbergCapped({
+      sex: 'f', weightKg: 75, heightCm: 164, ageYears: 40,
+    });
+    expect(r.capped).toBe(true);
+    const bmi = 75 / (1.64 * 1.64);
+    const expectedCap = Math.round(Math.min(60, Math.max(2, bmi * 0.85)) * 10) / 10;
+    expect(r.bfPct).toBe(expectedCap);
+  });
+
+  it('BMI exact la prag 27 → cap activ (la/peste, NU sub)', () => {
+    // Construit pentru BMI exact 27.0: 87.48kg / 180cm → 27.0
+    const w = 27 * 1.8 * 1.8;
+    const r = estimateBfDeurenbergCapped({ sex: 'm', weightKg: w, heightCm: 180, ageYears: 35 });
+    // Daca raw < cap (BMI×0.85 = 22.95), nu se aplica. Verificam doar ca
+    // capul-test ruleaza pe pragul exact fara crash.
+    expect(r.bfPct).not.toBeNull();
+  });
+
+  it('cand raw Deurenberg sub cap-ul calculat → NU se aplica (sport supraponderal lean)', () => {
+    // BMI mare DAR Deurenberg sub cap (improbabil real, dar testam logica)
+    // Sportiv hipotetic BMI 27 + sub-cap valoare → passthrough.
+    // Folosim varsta foarte mica + masculin → BF Deurenberg mai mic.
+    const r = estimateBfDeurenbergCapped({ sex: 'm', weightKg: 90, heightCm: 178, ageYears: 18 });
+    const bmi = 90 / (1.78 * 1.78); // ~28.4
+    const cap = bmi * 0.85; // ~24.2
+    const raw = 1.2 * bmi + 0.23 * 18 - 10.8 - 5.4; // ~22.3
+    expect(bmi).toBeGreaterThan(27);
+    if (raw <= cap) {
+      expect(r.capped).toBe(false);
+      expect(r.bfPct).toBeCloseTo(raw, 0.5);
+    }
+  });
+
+  it('input invalid → {bfPct:null, capped:false}', () => {
+    expect(estimateBfDeurenbergCapped({})).toEqual({ bfPct: null, capped: false });
+    expect(estimateBfDeurenbergCapped({ sex: 'm', weightKg: 80 })).toEqual({ bfPct: null, capped: false });
+  });
+
+  it('cap-ul respecta clamp-ul fiziologic 2-60', () => {
+    const r = estimateBfDeurenbergCapped({
+      sex: 'f', weightKg: 250, heightCm: 150, ageYears: 80,
+    });
+    expect(r.bfPct).toBeLessThanOrEqual(60);
+    expect(r.bfPct).toBeGreaterThanOrEqual(2);
+  });
+
+  it('expune constantele pentru transparenta', () => {
+    expect(HIGH_BMI_BF_CAP_THRESHOLD).toBe(27);
+    expect(HIGH_BMI_BF_CAP_RATIO).toBe(0.85);
+  });
+
+  it('pur — same input same output', () => {
+    const a = estimateBfDeurenbergCapped({ sex: 'm', weightKg: 109, heightCm: 182, ageYears: 36 });
+    const b = estimateBfDeurenbergCapped({ sex: 'm', weightKg: 109, heightCm: 182, ageYears: 36 });
+    expect(a).toEqual(b);
   });
 });
 

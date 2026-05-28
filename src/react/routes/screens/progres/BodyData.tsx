@@ -3,12 +3,13 @@
 // din spec §B — measurements list standard fitness app pattern).
 //
 // WORDING DISCIPLINE: Mockup verbatim absent pentru per-field labels.
-// Romanian terms used (talie / piept / sold / biceps / coapsa) standard
-// fitness vocabulary. Daniel CEO review pre-Beta wording confirm via §6
-// backlog. Anti-paternalism preserved — labels minimal, NU motivational.
+// Romanian terms used (talie / gat / piept / sold / biceps / coapsa)
+// standard fitness vocabulary.
 //
 // Validation: partial entries OK (NU all fields required per spec §B
-// "partial entry valid").
+// "partial entry valid"). Per-field bounds realiste (smoke 2026-05-28: app
+// accepta 250cm biceps absurd) — fiecare camp are min/max fiziologic + JS
+// clamp pe save + eroare RO la out-of-range.
 
 import type { JSX } from 'react';
 import { useState } from 'react';
@@ -25,23 +26,29 @@ function todayIso(): string {
   return `${y}-${m}-${dd}`;
 }
 
+type FieldKey = 'waistCm' | 'neckCm' | 'chestCm' | 'hipsCm' | 'bicepsCm' | 'thighCm';
+
 interface MeasureField {
-  key: 'waistCm' | 'chestCm' | 'hipsCm' | 'bicepsCm' | 'thighCm';
+  key: FieldKey;
   label: string;
+  // Bounds fiziologic realist (smoke 2026-05-28). Banda larga acopera
+  // populatia adulta normala + bodybuilder + supraponderal, dar respinge
+  // valori absurde (biceps 250cm = unit confusion, biceps 5cm = NU adult).
+  min: number;
+  max: number;
 }
 
-// PLACEHOLDER mockup absent: 5-field standard fitness measurements taxonomy.
-// Daniel CEO review pre-Beta wording confirm + final list (e.g. add neck/
-// forearm/calf?) per §6 backlog flag.
+// Bounds per camp — fiecare are banda fiziologic plauzibila pentru adult.
+// Smoke 2026-05-28: limita comuna 20-250 cm accepta biceps 250cm absurd
+// (record mondial documentat biceps ~63cm). Banda stransa per camp respinge.
 const MEASURE_FIELDS: readonly MeasureField[] = [
-  { key: 'waistCm', label: 'Talie' },
-  { key: 'chestCm', label: 'Piept' },
-  { key: 'hipsCm', label: 'Sold' },
-  { key: 'bicepsCm', label: 'Biceps' },
-  { key: 'thighCm', label: 'Coapsa' },
+  { key: 'waistCm', label: 'Talie', min: 50, max: 200 },
+  { key: 'neckCm', label: 'Gat', min: 25, max: 60 },
+  { key: 'chestCm', label: 'Piept', min: 60, max: 150 },
+  { key: 'hipsCm', label: 'Sold', min: 60, max: 200 },
+  { key: 'bicepsCm', label: 'Biceps', min: 20, max: 60 },
+  { key: 'thighCm', label: 'Coapsa', min: 30, max: 90 },
 ];
-
-type FieldKey = MeasureField['key'];
 
 export function BodyData(): JSX.Element {
   const navigate = useNavigate();
@@ -49,6 +56,7 @@ export function BodyData(): JSX.Element {
 
   const [values, setValues] = useState<Record<FieldKey, string>>({
     waistCm: '',
+    neckCm: '',
     chestCm: '',
     hipsCm: '',
     bicepsCm: '',
@@ -62,29 +70,40 @@ export function BodyData(): JSX.Element {
 
   // A11Y HIGH chat5 — surface range validation error per field pentru screen
   // reader Maria/Gigel. Partial entry OK (NU all required), deci error doar
-  // cand user typed value out-of-range 20-250 cm. WCAG SC 3.3.1 + 3.3.3.
-  function fieldError(key: FieldKey): string | null {
-    const v = values[key];
+  // cand user typed value out-of-range. Bounds per camp (smoke 2026-05-28).
+  // WCAG SC 3.3.1 + 3.3.3.
+  function fieldError(field: MeasureField): string | null {
+    const v = values[field.key];
     if (v === '') return null;
     const n = Number(v);
-    if (!Number.isFinite(n) || n < 20 || n > 250) {
-      return 'Valoare intre 20 si 250 cm.';
+    if (!Number.isFinite(n) || n < field.min || n > field.max) {
+      return `Valoare nerealista — verifica unitatea (cm). Banda ${field.min}-${field.max} cm.`;
     }
     return null;
   }
 
-  // Partial entry OK — save passes only filled numeric fields.
-  const hasAnyValue = Object.values(values).some((v) => v !== '' && Number(v) > 0);
+  // Partial entry OK — save passes only filled numeric fields in-bounds.
+  // Out-of-range field face save un no-op (alaturi de display-ul de eroare).
+  const hasAnyValidValue = MEASURE_FIELDS.some((f) => {
+    const v = values[f.key];
+    if (v === '') return false;
+    const n = Number(v);
+    return Number.isFinite(n) && n >= f.min && n <= f.max;
+  });
+  const hasAnyError = MEASURE_FIELDS.some((f) => fieldError(f) !== null);
 
   function handleSave(): void {
-    if (!hasAnyValue) return;
+    if (!hasAnyValidValue) return;
+    if (hasAnyError) return; // smoke 2026-05-28: NU salva out-of-range
     const entry: { date: string; [k: string]: number | string | undefined } = { date };
-    (Object.keys(values) as FieldKey[]).forEach((k) => {
-      const n = Number(values[k]);
-      if (values[k] !== '' && n > 0) {
-        entry[k] = n;
+    for (const f of MEASURE_FIELDS) {
+      const raw = values[f.key];
+      if (raw === '') continue;
+      const n = Number(raw);
+      if (Number.isFinite(n) && n >= f.min && n <= f.max) {
+        entry[f.key] = n;
       }
-    });
+    }
     addBodyDataEntry(entry as Parameters<typeof addBodyDataEntry>[0]);
     navigate(gotoPath('progres'));
   }
@@ -113,7 +132,7 @@ export function BodyData(): JSX.Element {
 
       <div className="flex flex-col gap-4 flex-1">
         {MEASURE_FIELDS.map((field) => {
-          const err = fieldError(field.key);
+          const err = fieldError(field);
           return (
             <div key={field.key}>
               <label
@@ -130,8 +149,8 @@ export function BodyData(): JSX.Element {
                 value={values[field.key]}
                 onChange={(e) => setField(field.key, e.target.value)}
                 step="0.1"
-                min={20}
-                max={250}
+                min={field.min}
+                max={field.max}
                 inputMode="decimal"
                 data-testid={`bd-${field.key}`}
                 className="w-full p-3 border border-lineStrong rounded-xl bg-paper2 text-base text-ink"
@@ -174,7 +193,7 @@ export function BodyData(): JSX.Element {
         <button
           type="button"
           onClick={handleSave}
-          disabled={!hasAnyValue}
+          disabled={!hasAnyValidValue || hasAnyError}
           data-testid="body-data-save"
           className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-50"
         >

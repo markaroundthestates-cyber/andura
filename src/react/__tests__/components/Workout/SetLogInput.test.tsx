@@ -86,10 +86,17 @@ describe('SetLogInput — §F-pass2-setloginput-01 tinta mode (pre-log)', () => 
     expect(screen.getByTestId('setlog-tinta')).toBeInTheDocument();
   });
 
-  it('hides editable inputs in tinta mode', () => {
+  it('NU expune testids editable kg-input/reps-input in tinta (NU same DOM ca editable)', () => {
     renderInput({ mode: 'tinta' });
     expect(screen.queryByTestId('kg-input')).not.toBeInTheDocument();
     expect(screen.queryByTestId('reps-input')).not.toBeInTheDocument();
+  });
+
+  // Smoke 2026-05-28 #4 — tinta acum are inputuri pentru confirmare obligatorie.
+  it('expune kg/reps inputs editable in tinta (smoke #4 confirmare obligatorie)', () => {
+    renderInput({ mode: 'tinta', kg: 22.5, reps: 10 });
+    expect(screen.getByTestId('setlog-tinta-kg-input')).toBeInTheDocument();
+    expect(screen.getByTestId('setlog-tinta-reps-input')).toBeInTheDocument();
   });
 
   it('displays tinta reps value verbatim', () => {
@@ -112,11 +119,58 @@ describe('SetLogInput — §F-pass2-setloginput-01 tinta mode (pre-log)', () => 
     expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('repetari');
   });
 
-  it('renders "Logheaza setul" CTA button', () => {
+  it('renders "Confirma setul" CTA button (smoke #4: confirmare obligatorie)', () => {
     renderInput({ mode: 'tinta' });
     const btn = screen.getByTestId('setlog-tinta-log-btn');
     expect(btn).toBeInTheDocument();
-    expect(btn).toHaveTextContent('Logheaza setul');
+    expect(btn).toHaveTextContent('Confirma setul');
+  });
+
+  it('renders "Cate ai facut?" label deasupra inputs (smoke #4)', () => {
+    renderInput({ mode: 'tinta' });
+    expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('Cate ai facut?');
+  });
+
+  it('tinta kg input pre-completat cu recomandarea', () => {
+    renderInput({ mode: 'tinta', kg: 22.5 });
+    const inp = screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement;
+    expect(inp.value).toBe('22.5');
+  });
+
+  it('tinta reps input pre-completat cu recomandarea', () => {
+    renderInput({ mode: 'tinta', reps: 10 });
+    const inp = screen.getByTestId('setlog-tinta-reps-input') as HTMLInputElement;
+    expect(inp.value).toBe('10');
+  });
+
+  it('tinta kg input pe 0 afiseaza placeholder gol (smoke #4: "022" fix)', () => {
+    renderInput({ mode: 'tinta', kg: 0 });
+    const inp = screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement;
+    expect(inp.value).toBe('');
+  });
+
+  it('tinta modificare kg fires onKgChange', () => {
+    const onKgChange = vi.fn();
+    renderInput({ mode: 'tinta', onKgChange });
+    fireEvent.change(screen.getByTestId('setlog-tinta-kg-input'), { target: { value: '25' } });
+    expect(onKgChange).toHaveBeenCalledWith(25);
+  });
+
+  it('tinta modificare reps fires onRepsChange', () => {
+    const onRepsChange = vi.fn();
+    renderInput({ mode: 'tinta', onRepsChange });
+    fireEvent.change(screen.getByTestId('setlog-tinta-reps-input'), { target: { value: '12' } });
+    expect(onRepsChange).toHaveBeenCalledWith(12);
+  });
+
+  it('tinta CTA disabled cand reps invalid (0/empty)', () => {
+    renderInput({ mode: 'tinta', reps: 0 });
+    expect(screen.getByTestId('setlog-tinta-log-btn')).toBeDisabled();
+  });
+
+  it('tinta CTA enabled cand reps >= 1', () => {
+    renderInput({ mode: 'tinta', reps: 1 });
+    expect(screen.getByTestId('setlog-tinta-log-btn')).not.toBeDisabled();
   });
 
   it('CTA tap fires onLog callback', () => {
@@ -261,5 +315,24 @@ describe('SetLogInput — A11Y HIGH chat5 editable mode aria attributes', () => 
   it('editable mode error text no diacritics', () => {
     const { container } = renderInput({ kg: 0, reps: 0 });
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+
+  // Smoke 2026-05-28 #4 — "022" fix: 0 NU se afiseaza ca "0" lipit; user
+  // poate sa scrie 22 direct fara sa stearga zero-ul.
+  it('editable kg input cu prop 0 afiseaza placeholder gol (smoke #4)', () => {
+    renderInput({ kg: 0, reps: 10 });
+    expect((screen.getByTestId('kg-input') as HTMLInputElement).value).toBe('');
+  });
+
+  it('editable reps input cu prop 0 afiseaza placeholder gol (smoke #4)', () => {
+    renderInput({ kg: 22.5, reps: 0 });
+    expect((screen.getByTestId('reps-input') as HTMLInputElement).value).toBe('');
+  });
+
+  it('editable kg input stergere → emite 0 (NU NaN)', () => {
+    const onKgChange = vi.fn();
+    renderInput({ onKgChange });
+    fireEvent.change(screen.getByTestId('kg-input'), { target: { value: '' } });
+    expect(onKgChange).toHaveBeenCalledWith(0);
   });
 });

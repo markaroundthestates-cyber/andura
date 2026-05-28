@@ -16,14 +16,18 @@ import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../../stores/onboardingStore';
 import type { Sex, Goal, Frequency, Experience, OnboardingData } from '../../../stores/onboardingStore';
-import { useProgresStore } from '../../../stores/progresStore';
+import { evaluateTargetRate, MAX_SAFE_KG_PER_WEEK } from '../../../lib/targetSafety';
+
+// Constanta display pentru text-ul UI cu o zecimala (NU import direct ca string).
+const MAX_SAFE_KG_PER_WEEK_DISPLAY = String(MAX_SAFE_KG_PER_WEEK);
+import { useProgresStore, latestBodyMeasurements } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
 import { getUserProfileDisplay } from './userProfile';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
-import { estimateBF_Deurenberg, healthyFloorWeightKg } from '../../../../engine/bodyComposition.js';
+import { estimateBfDeurenbergCapped, healthyFloorWeightKg } from '../../../../engine/bodyComposition.js';
 
 // §B003/D-1b audit fix — Goal labels 6 mockup parity (mockup L863-869).
 const GOAL_LABELS: Record<Goal, string> = {
@@ -65,7 +69,11 @@ export function SettingsProfile(): JSX.Element {
   // profil = app foloseste tot 110. Fix: upsert intrarea de azi in weightLog pe
   // save cand greutatea s-a schimbat, ca sursa canonica sa reflecte editarea.
   const addWeightEntry = useProgresStore((s) => s.addWeightEntry);
-  const lastBody = bodyData[bodyData.length - 1];
+  // Smoke 2026-05-28 #15 — agregam ultimele valori per camp peste TOT istoricul
+  // (NU doar ultima intrare): cand gat-ul a fost introdus aici si piept-ul in
+  // Progres → Masuratori, formularul Cont trebuie sa seedeze talie+gat din
+  // istoric, nu sa cada gol pentru ca ultima intrare (Progres) n-are gat.
+  const lastBody = latestBodyMeasurements(bodyData);
   // §F-cont-01 user-wire (HIGH-BETA chat 4) — read avatar initial din id_token
   // JWT claims. Cumulative cu Cont.tsx wire pentru parity across screens.
   const profile = getUserProfileDisplay();
@@ -93,9 +101,11 @@ export function SettingsProfile(): JSX.Element {
   if (neck) bfArgs.neck_cm = Number(neck);
   if (waist) bfArgs.waist_cm = Number(waist);
   const bfNavy = estimateBF_USNavy(bfArgs);
-  // Two-tier — US-Navy cand talie+gat masurate (acurat), altfel Deurenberg
-  // (estimat populational din BMI/varsta/sex, mereu disponibil post-onboarding).
-  const bfDeurenberg = estimateBF_Deurenberg({
+  // Two-tier — US-Navy cand talie+gat masurate (acurat), altfel Deurenberg cu
+  // cap high-BMI (estimat populational din BMI/varsta/sex, mereu disponibil
+  // post-onboarding). Smoke 2026-05-28 #1: cap-ul `min(Deurenberg, BMI×0.85)`
+  // la BMI>=27 reduce bias-ul cunoscut al formulei la BMI mare.
+  const { bfPct: bfDeurenberg } = estimateBfDeurenbergCapped({
     weightKg: draft.weight ?? NaN,
     heightCm: draft.height ?? NaN,
     ageYears: draft.age ?? NaN,
@@ -106,14 +116,25 @@ export function SettingsProfile(): JSX.Element {
 
   // §F-pass2-settings-profile-04 — Tinte personale (mockup L2049-2052).
   // Greutate tinta + luna tinta ("Pana in") → ETA realista la ritm sanatos.
-  // Local form state V1 (NU persistat — onboardingStore NU are aceste campuri).
-  const [targetWeight, setTargetWeight] = useState('');
-  const [targetMonth, setTargetMonth] = useState(''); // YYYY-MM din <input month>
+  // Smoke 2026-05-28 #16: PERSISTAT in onboardingStore (era doar form-state
+  // V1) ca sa influenteze tinta de kcal a coach-ului, NU doar notita profil.
+  const [targetWeight, setTargetWeight] = useState(
+    data.targetWeight != null ? String(data.targetWeight) : ''
+  );
+  const [targetMonth, setTargetMonth] = useState(data.targetDate ?? ''); // YYYY-MM
   // BUG #8 safety — ETA derivata din greutate tinta + greutate curenta la un
   // ritm sanatos (NU mai e un countdown de calendar care ignora cat ai de
   // schimbat). Plus guard subponderal: tinta sub greutatea sanatoasa minima
   // (BMI 18.5) → avertisment, NU proiectie spre o greutate periculoasa.
   const targetEta = computeTargetEta(targetWeight, draft.weight ?? null, draft.height ?? null);
+  // Smoke 2026-05-28 #16 — verdict siguranta pe ritm + deadline. `unsafe`
+  // cand ritm cerut > 1.5kg/sapt (cap-ul fiziologic absolut); surfaceaza
+  // deadline-ul sigur sugerat. Anti-paternalism: NU blocam, doar surface.
+  const rateVerdict = evaluateTargetRate(
+    draft.weight ?? null,
+    targetWeight !== '' && Number.isFinite(Number(targetWeight)) ? Number(targetWeight) : null,
+    targetMonth !== '' ? targetMonth : null,
+  );
 
   function update<K extends keyof OnboardingData>(key: K, value: OnboardingData[K]): void {
     setDraft((d) => ({ ...d, [key]: value }));
@@ -172,6 +193,22 @@ export function SettingsProfile(): JSX.Element {
     if (entry.waistCm !== undefined || entry.neckCm !== undefined) {
       addBodyDataEntry(entry);
     }
+    // Smoke 2026-05-28 #16 — persistam targetWeight + targetDate in onboarding-
+    // Store ca tinta sa influenteze kcal coach (engineWrappers.getTarget-
+    // KcalToday). Validam range targetWeight inainte de commit; targetDate
+    // empty = stergere tinta (null).
+    const tgtNum = targetWeight !== '' ? Number(targetWeight) : null;
+    if (tgtNum !== null && Number.isFinite(tgtNum)) {
+      const tgtCheck = validateOnboardingField('targetWeight', tgtNum);
+      if (!tgtCheck.ok) {
+        toast.show({ message: tgtCheck.reason, variant: 'warning' });
+        return;
+      }
+      setField('targetWeight', tgtNum);
+    } else if (targetWeight === '') {
+      setField('targetWeight', null);
+    }
+    setField('targetDate', targetMonth !== '' ? targetMonth : null);
     setSaved(true);
   }
 
@@ -381,7 +418,21 @@ export function SettingsProfile(): JSX.Element {
             Tinta e sub greutatea sanatoasa (~{fmtKg(targetEta.minKg)} kg minim la inaltimea ta). Alege o tinta sanatoasa.
           </p>
         )}
-        {targetEta?.kind === 'eta' && (
+        {/* Smoke 2026-05-28 #16 — warning ritm imposibil cand deadline e
+            prea apropiat fata de tinta (Daniel 110→62kg in 4 zile accepta tacit
+            pana acum). Surfaceaza ritm cerut + deadline sigur sugerat. */}
+        {targetEta?.kind !== 'subhealthy' && rateVerdict?.kind === 'unsafe' && (
+          <p
+            className="text-xs text-brick mb-4 px-1 leading-snug font-medium"
+            role="alert"
+            data-testid="profile-target-rate-warning"
+          >
+            Tinta nerealista — ar necesita {fmtKg(rateVerdict.requiredKgPerWeek)} kg/saptamana
+            ({rateVerdict.direction === 'loss' ? 'pierdere' : 'castig'}), maxim sigur ~{MAX_SAFE_KG_PER_WEEK_DISPLAY} kg/saptamana.
+            Deadline realist: {rateVerdict.safeDeadlineDate}.
+          </p>
+        )}
+        {targetEta?.kind === 'eta' && rateVerdict?.kind !== 'unsafe' && (
           <p
             className="text-xs text-ink3 mb-4 px-1 leading-snug"
             data-testid="profile-target-eta"

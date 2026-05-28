@@ -72,4 +72,41 @@ describe('BodyFatStrip', () => {
     const { container } = render(<BodyFatStrip />);
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
+
+  // Smoke 2026-05-28 #1 — CTA "adauga talie + gat" cand DOAR Deurenberg.
+  it('CTA "Adauga talie + gat" prezent cand fallback Deurenberg (fara masuratori)', () => {
+    render(<BodyFatStrip />);
+    const cta = screen.getByTestId('bodyfat-cta');
+    expect(cta.textContent).toMatch(/Adauga talie/);
+    expect(cta.textContent).toMatch(/US Navy/);
+  });
+
+  it('CTA absent cand US Navy (talie+gat masurate)', () => {
+    useProgresStore.getState().addBodyDataEntry({ date: '2026-05-27', waistCm: 85, neckCm: 38 });
+    render(<BodyFatStrip />);
+    expect(screen.queryByTestId('bodyfat-cta')).not.toBeInTheDocument();
+  });
+
+  it('caveat "Estimat aproximativ" cand cap-ul high-BMI a actionat (Daniel 109/182/36)', () => {
+    useOnboardingStore.setState({
+      data: { age: 36, sex: 'm', goal: 'slabire', frequency: '4', experience: 'intermediar', weight: 109, height: 182 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    render(<BodyFatStrip />);
+    const cta = screen.getByTestId('bodyfat-cta');
+    expect(cta.textContent).toMatch(/aproximativ/);
+    // Valoarea afisata e cap-ul (28%) NU raw-ul Deurenberg (31.6%)
+    const val = Number(screen.getByTestId('bodyfat-value').textContent?.replace(/[^\d.]/g, ''));
+    expect(val).toBeLessThan(31);
+    expect(val).toBeCloseTo(28, 0);
+  });
+
+  it('caveat "Estimat din BMI" cand cap-ul NU a actionat (BMI sub 27)', () => {
+    // 80kg/180cm: BMI 24.7, cap nu se aplica.
+    render(<BodyFatStrip />);
+    const cta = screen.getByTestId('bodyfat-cta');
+    expect(cta.textContent).toMatch(/Estimat din BMI/);
+    expect(cta.textContent).not.toMatch(/aproximativ/);
+  });
 });

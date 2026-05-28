@@ -71,6 +71,11 @@ import { useProgresStore } from '../stores/progresStore';
 // computeBMI alimenteaza si AUTO body-comp detection (BUG #5).
 import { clampKcalToHealthyFloor, computeBMI } from '../../engine/bodyComposition.js';
 import { useOnboardingStore } from '../stores/onboardingStore';
+// Smoke 2026-05-28 #16 — cuplare tinta-personala ↔ kcal: cand user a setat
+// targetWeight + targetDate in profil, deriveaza tinta de kcal direct din
+// deficit/surplus zilnic necesar (cap-uit la ±25%/±15% TDEE). Inlocuieste
+// multiplicator-ul de goal-onboarding cand tinta e setata explicit.
+import { computeTargetKcalOverride } from './targetSafety';
 // §48-H1 audit fix — adapter integrity instrumentation. Every catch path
 // emits Sentry alert with source='engine-adapter-fallback' tag + adapter
 // name extra. Risk addressed (§48.5): silent divergence when engine returns
@@ -636,20 +641,26 @@ function mapBNConfidence(c: unknown): number {
  */
 function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine {
   const tdee = readUserMaintenanceTDEE();
+  // Smoke 2026-05-28 #16 — tinta personala (targetWeight + targetDate) ia
+  // precedenta peste goal-multiplier cand e setata explicit. Phase override
+  // manual (SchimbaFaza) ramane prioritar peste tinta (user explicit pick).
+  const targetKcal = getTargetKcalToday(tdee);
   // Stats onboarding absente (cold start) → fallback flat 2640 ultim resort.
-  if (tdee === null && phaseKcal === null) return BASELINE_NUTRITION;
+  if (tdee === null && phaseKcal === null && targetKcal === null) return BASELINE_NUTRITION;
 
-  // kcal precedence: override manual faza (TDEE×mult) > goal onboarding
-  // (TDEE×goalMult) > mentenanta (TDEE real). goalMult null cand AUTO/absent.
+  // kcal precedence: override manual faza (TDEE×mult) > tinta personala
+  // (TDEE±deficit_zilnic) > goal onboarding (TDEE×goalMult) > mentenanta (TDEE real).
   const goalMult = getGoalKcalMultiplier();
   const baseTdee = tdee as number;
   const kcalFloor = readUserKcalFloor(); // sex-aware (femei 1000 / barbati 1200)
   const kcalTarget =
     phaseKcal !== null
       ? phaseKcal
-      : goalMult !== null
-        ? Math.max(Math.round(baseTdee * goalMult), kcalFloor)
-        : Math.max(Math.round(baseTdee), kcalFloor);
+      : targetKcal !== null
+        ? Math.max(targetKcal, kcalFloor)
+        : goalMult !== null
+          ? Math.max(Math.round(baseTdee * goalMult), kcalFloor)
+          : Math.max(Math.round(baseTdee), kcalFloor);
 
   const proteinTargetG =
     computeProteinTargetG(readUserWeightKg()) ?? BASELINE_NUTRITION.proteinTargetG;
@@ -725,6 +736,29 @@ function applyHealthyFloorGuardrail(kcal: number): { kcal: number; clamped: bool
   });
   return { kcal: r.kcal, clamped: r.clamped };
 }
+/**
+ * Smoke 2026-05-28 #16 — citeste tinta personala (targetWeight + targetDate)
+ * din onboardingStore si deriveaza kcal-ul tinta direct din deficit/surplus
+ * zilnic necesar pentru atingerea tintei pana la deadline. Cap-uit asimetric
+ * (-25% TDEE deficit / +15% TDEE surplus) ca deadline-uri absurde sa nu produca
+ * recomandari periculoase (Daniel example 110→62kg in 4 zile → cap automat la
+ * deficit 25% TDEE; floor LOCK8 1000f/1200b se aplica suplimentar in caller).
+ *
+ * Returns null cand user n-a setat tinta (mod default = goal-onboarding
+ * multiplier) sau stats absente (cold start). I/O boundary (citeste stores).
+ */
+function getTargetKcalToday(tdee: number | null): number | null {
+  const { targetWeight, targetDate } = useOnboardingStore.getState().data;
+  // targetWeight/targetDate optional pe interfata (backward-compat literal-uri
+  // de test) — tratam undefined si null la fel ca "nu setat".
+  const tgt = targetWeight ?? null;
+  const tgtDate = targetDate ?? null;
+  if (tgt === null || tgtDate === null) return null;
+  const currentWeight = getCurrentWeightKg();
+  const r = computeTargetKcalOverride(currentWeight, tgt, tgtDate, tdee);
+  return r ? r.kcalTarget : null;
+}
+
 function getPhaseOverrideKcalToday(): number | null {
   try {
     const phaseRaw = JSON.parse(localStorage.getItem('phase-override') ?? 'null') as
@@ -881,10 +915,20 @@ export async function getNutritionTargetsToday(
       goalMult !== null ? (mu as number) * goalMult : (mu as number);
     // sex-aware floor (femei 1000 / barbati 1200) — aliniat cu filtrul de observatii.
     const safeKcal = Math.max(adjustedMu, readUserKcalFloor());
-    // Precedence: override manual faza (B001 SchimbaFaza) > goal onboarding
-    // (deja aplicat in adjustedMu) > estimare Bayesiana de mentenanta. User
-    // explicit pick beats goal + Bayesian; engine continua sa invete din log.
-    const finalKcal = phaseKcal !== null ? phaseKcal : Math.round(safeKcal);
+    // Smoke 2026-05-28 #16 — tinta personala (targetWeight + targetDate) ia
+    // precedenta peste goal-multiplier cand e setata explicit (TDEE = posterior.mu,
+    // deci deficit/surplus zilnic derivat din real-TDEE Bayesian adaptiv).
+    const targetKcal = getTargetKcalToday(mu as number);
+    // Precedence: override manual faza (B001 SchimbaFaza) > tinta personala
+    // (smoke #16) > goal onboarding (deja aplicat in adjustedMu) > estimare
+    // Bayesiana de mentenanta. User explicit pick (faza > tinta) beats
+    // implicit (goal); engine continua sa invete din log.
+    const finalKcal =
+      phaseKcal !== null
+        ? phaseKcal
+        : targetKcal !== null
+          ? Math.max(targetKcal, readUserKcalFloor())
+          : Math.round(safeKcal);
     // BUG #4 safety — guardrail anti-subnutritie: user subponderal → ridica la
     // un surplus moderat de crestere (TDEE×1.08). Aplicat DUPA precedenta
     // (override faza / goal / Bayesian) ca sa prinda orice deficit, oricare sursa.

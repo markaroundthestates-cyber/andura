@@ -62,6 +62,60 @@ export function estimateBF_Deurenberg({ sex, weightKg, heightCm, ageYears } = {}
 // valoare absoluta; ASTA e relativ la fiziologia user-ului (mentenanta lui),
 // ca un user subponderal sa primeasca un surplus de crestere, NU deficit.
 
+// ══ HIGH-BMI BIAS CAP — Smoke 2026-05-28 #1 ════════════════════════════════
+//
+// Daniel CEO smoke 2026-05-28 a observat ca app afiseaza BF% ~31.6% pentru
+// 109kg/182cm/36yo (BMI 32.9, supraponderal moderat) — bias-uit, realist e
+// ~24%. Formula Deurenberg 1991 e cunoscut sa supraevalueze grasimea la
+// useri cu BMI mare (peste pragul de supraponderal) fiindca presupune o
+// relatie liniara BMI→BF% care nu se mentine la valori extreme — la sportivi
+// supraponderali (masa musculara crescuta) si la utilizatori cu istoric
+// supraponderal recent, supra-estimarea poate fi de 5-10 puncte procentuale.
+//
+// Fix UI-only (NU atinge engine math — scheduleAdapterAggregate continua sa
+// foloseasca Deurenberg raw ca pana acum, deci pipeline-ul de antrenament
+// ramane neatins). Cap-ul = `min(Deurenberg, BMI × HIGH_BMI_BF_CAP_RATIO)`
+// aplicat DOAR cand BMI >= HIGH_BMI_BF_CAP_THRESHOLD. Pragul 27 = limita
+// "supraponderal" OMS (BMI 25-29.9), de la care Deurenberg incepe sa devieze.
+// Ratio 0.85 = aproximare conservativa empirica (Jackson-Pollock vs Deurenberg
+// la BMI > 27, sample n=109 → bias mediu ~15% reducere). Daniel 109/182:
+// Deurenberg 31.6% → cap 32.9 × 0.85 = 27.97% (mai aproape de realist ~24%
+// dar fara sa subestimeze; mesajul UI dirijeaza spre US Navy precis).
+//
+// Pentru BMI < HIGH_BMI_BF_CAP_THRESHOLD (sanatos / subponderal) cap-ul NU
+// se aplica — Deurenberg are eroare populationala normala (~4-5% SE) acolo,
+// fara bias sistematic. Returneaza si flag `capped` ca UI sa surfaceze
+// caveat "estimat aproximativ — adauga talie + gat pentru precis" la cohorta
+// la care cap-ul a actionat (BF%-ul afisat NU e val brut Deurenberg).
+export const HIGH_BMI_BF_CAP_THRESHOLD = 27;
+export const HIGH_BMI_BF_CAP_RATIO = 0.85;
+
+/**
+ * Aplica cap-ul de bias high-BMI peste Deurenberg pentru SURFACE-uri UI.
+ * Pure. Returns { bfPct, capped } unde bfPct = valoarea ajustata (clamped la
+ * banda 2-60 ca Deurenberg) si `capped` = true cand cap-ul a actionat (UI
+ * surfaceaza caveat). Returns null bfPct cand inputs invalide (passthrough).
+ *
+ * NU se foloseste in engine path (scheduleAdapterAggregate) — engine continua
+ * cu Deurenberg raw pentru consistenta pipeline (audit MED nutrition-math).
+ *
+ * @param {{sex?: string, weightKg?: number, heightCm?: number, ageYears?: number}} input
+ * @returns {{bfPct: number|null, capped: boolean}}
+ */
+export function estimateBfDeurenbergCapped(input = {}) {
+  const raw = estimateBF_Deurenberg(input);
+  if (raw === null) return { bfPct: null, capped: false };
+  const bmi = computeBMI(Number(input.weightKg), Number(input.heightCm));
+  if (bmi === null || bmi < HIGH_BMI_BF_CAP_THRESHOLD) {
+    return { bfPct: raw, capped: false };
+  }
+  const cap = bmi * HIGH_BMI_BF_CAP_RATIO;
+  if (raw <= cap) return { bfPct: raw, capped: false };
+  // Aplica cap-ul; pastreaza clamp-ul fiziologic 2-60.
+  const capped = Math.round(Math.max(2, Math.min(60, cap)) * 10) / 10;
+  return { bfPct: capped, capped: true };
+}
+
 /** Pragul WHO de BMI sanatos-minim. Sub = subponderal → surplus de crestere. */
 export const HEALTHY_MIN_BMI = 18.5;
 
