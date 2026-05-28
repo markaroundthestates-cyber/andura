@@ -22,37 +22,39 @@ interface ThemeOption {
   id: PaletteTheme;
   nameKey: string;
   metaKey: string;
-  swatchClass: string;
 }
 
 // THEME-INVERSION fix (2026-05-27): "implicit" mutat de pe Clasic pe Brain
 // Coach — default real al app-ului e tema mov Brain Coach. Brand names are
 // locale-aware via i18n; the brand identifier ("Andura Brain Coach", etc.)
 // stays consistent across locales (kept as brand string in the bundles).
+//
+// PREVIEW-SCOPE fix (Daniel "preview la themes e buguit" 2026-05-28): each
+// card now wraps its swatch in a `data-preview-palette=<id>` scope so the
+// swatch renders with the TARGET palette's tokens, not the active palette.
+// Token catalog defined in global.css [data-preview-palette=...] blocks.
+// Bug before: Clasic swatch used semantic tokens (`--paper`, `--brick`) which
+// resolved to mov on a Brain Coach user — preview showed wrong colors.
 const THEME_OPTIONS: readonly ThemeOption[] = [
   {
     id: 'clasic',
     nameKey: 'settings.themes.options.clasic',
     metaKey: 'settings.themes.options.clasicMeta',
-    swatchClass: 'bg-gradient-to-br from-paper from-50% to-brick to-50%',
   },
   {
     id: 'living-body',
     nameKey: 'settings.themes.options.livingBody',
     metaKey: 'settings.themes.options.livingBodyMeta',
-    swatchClass: 'bg-gradient-to-br from-[#07090f] from-50% to-[#dbb182] to-50%',
   },
   {
     id: 'luxury',
     nameKey: 'settings.themes.options.luxury',
     metaKey: 'settings.themes.options.luxuryMeta',
-    swatchClass: 'bg-gradient-to-br from-[#050507] from-50% to-[#d4b483] to-50%',
   },
   {
     id: 'brain-coach',
     nameKey: 'settings.themes.options.brainCoach',
     metaKey: 'settings.themes.options.brainCoachMeta',
-    swatchClass: 'bg-gradient-to-br from-[#0a0c14] from-50% to-[#b596ff] to-50%',
   },
 ];
 
@@ -155,10 +157,35 @@ export function SettingsThemes(): JSX.Element {
                     : undefined
                 }
               >
+                {/* TRUE PREVIEW (Daniel polish 2026-05-28) — wraps the swatch
+                    in `data-preview-palette` scope so var(--paper)/var(--brick)/
+                    var(--ink)/var(--line-strong) resolve to the TARGET palette's
+                    tokens, not the active palette's. Bug before: tokens leaked
+                    the active palette into every preview. Now each swatch is a
+                    real mini-snapshot of its palette: surface + accent bar +
+                    headline dot — clearly readable as Clasic/Luxury/etc. */}
                 <div
-                  className={`w-full h-16 rounded-lg mb-2 ${opt.swatchClass}`}
+                  data-preview-palette={opt.id}
+                  data-testid={`theme-palette-${opt.id}-preview`}
+                  className="w-full h-16 rounded-lg mb-2 overflow-hidden border border-[var(--line-strong)] bg-[var(--paper)] relative"
                   aria-hidden="true"
-                />
+                >
+                  {/* Headline tone dot — top-left ink primary marker */}
+                  <span
+                    className="absolute top-2 left-2 w-2 h-2 rounded-full bg-[var(--ink)]"
+                    aria-hidden="true"
+                  />
+                  {/* Accent bar — brick token, bottom-aligned wide stripe */}
+                  <span
+                    className="absolute bottom-2 left-2 right-2 h-2 rounded-full bg-[var(--brick)]"
+                    aria-hidden="true"
+                  />
+                  {/* Small accent pill — top-right brick dot for richness */}
+                  <span
+                    className="absolute top-2 right-2 w-3 h-3 rounded-full bg-[var(--brick)] opacity-80"
+                    aria-hidden="true"
+                  />
+                </div>
                 <span className="text-sm font-semibold text-ink text-left">{t(opt.nameKey)}</span>
                 <span className="text-xs text-ink2 text-left mt-0.5">{t(opt.metaKey)}</span>
                 {isSelected && (

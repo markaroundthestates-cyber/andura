@@ -118,4 +118,42 @@ describe('SettingsThemes — Teme picker screen', () => {
     const { container } = renderScreen();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
+
+  // PREVIEW-SCOPE fix (Daniel "preview la themes e buguit" 2026-05-28).
+  // Each preview swatch must carry data-preview-palette=<id> so the scoped
+  // CSS tokens in global.css resolve to that palette regardless of which
+  // palette is currently ACTIVE on documentElement. Without this attribute
+  // the swatch leaks the live palette into the preview (clasic-on-mov bug).
+  it('each preview swatch carries data-preview-palette=<id> (TRUE mini-snapshot)', () => {
+    renderScreen();
+    expect(screen.getByTestId('theme-palette-clasic-preview'))
+      .toHaveAttribute('data-preview-palette', 'clasic');
+    expect(screen.getByTestId('theme-palette-living-body-preview'))
+      .toHaveAttribute('data-preview-palette', 'living-body');
+    expect(screen.getByTestId('theme-palette-luxury-preview'))
+      .toHaveAttribute('data-preview-palette', 'luxury');
+    expect(screen.getByTestId('theme-palette-brain-coach-preview'))
+      .toHaveAttribute('data-preview-palette', 'brain-coach');
+  });
+
+  // The scoped attribute must be present even when the ACTIVE palette is
+  // different — proves the preview is independent of the live theme (the
+  // original bug was the Clasic preview rendering mov on a Brain Coach user).
+  it('Clasic preview keeps clasic scope even when active palette is brain-coach (mov)', () => {
+    // Simulate active mov default
+    delete document.documentElement.dataset.palette;
+    renderScreen();
+    const clasicPreview = screen.getByTestId('theme-palette-clasic-preview');
+    expect(clasicPreview).toHaveAttribute('data-preview-palette', 'clasic');
+    // Sanity: surrounding active palette is NOT clasic
+    expect(document.documentElement.dataset.palette).toBeUndefined();
+  });
+
+  it('Clasic preview keeps clasic scope even when active palette is luxury', () => {
+    document.documentElement.dataset.palette = 'luxury';
+    renderScreen();
+    expect(screen.getByTestId('theme-palette-clasic-preview'))
+      .toHaveAttribute('data-preview-palette', 'clasic');
+    expect(document.documentElement.dataset.palette).toBe('luxury');
+  });
 });

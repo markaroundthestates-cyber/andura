@@ -227,6 +227,48 @@
     --coach-override: #b09a6a;        /* "Vrei altceva azi?" CTA — muted gold hint */
   }
 
+  /* ── THEME PREVIEW SCOPES (Daniel polish 2026-05-28) ─────────────────────
+     Bug observed: SettingsThemes preview swatches that referenced semantic
+     tokens (`--paper`, `--brick`) rendered in the CURRENT palette's colors
+     instead of their OWN target palette — so Clasic preview showed mov on
+     a Brain Coach user (Daniel: "preview la themes e buguit").
+
+     Fix architecture: scope each preview card to its OWN palette via a
+     scoped data attribute. The card's children resolve tokens from these
+     local definitions instead of the document-level palette tokens — so
+     each preview is a TRUE mini-snapshot regardless of the active palette.
+
+     Same token catalog as the live palette blocks (just the ones the swatch
+     uses), specificity 0,1,0 so existing rules don't override mid-tree. */
+  [data-preview-palette="clasic"] {
+    --paper: #faf7f1;
+    --paper-2: #f3ede1;
+    --ink: #1a1815;
+    --brick: #c8412e;
+    --line-strong: #9a8770;
+  }
+  [data-preview-palette="brain-coach"] {
+    --paper: #0a0c14;
+    --paper-2: #14171f;
+    --ink: #f5f0ff;
+    --brick: #b596ff;
+    --line-strong: #7867b6;
+  }
+  [data-preview-palette="luxury"] {
+    --paper: #050507;
+    --paper-2: #16161a;
+    --ink: #c8c5be;
+    --brick: #d4b483;
+    --line-strong: #9a8246;
+  }
+  [data-preview-palette="living-body"] {
+    --paper: #03050a;
+    --paper-2: #07090f;
+    --ink: #f0eadb;
+    --brick: #dbb182;
+    --line-strong: #9d8348;
+  }
+
   /* Living Body — warm dark earth + gold (mockup andura-living-body.html :root).
      paper=bg #03050a, surface=bg-2 #07090f, ink=ivory #f0eadb, accent=warm gold
      #d4a574. All four mockup base tokens already pass WCAG AA on both surfaces
