@@ -11,6 +11,16 @@
 // 'prompt' + this component drives the banner from the real vite-plugin-pwa
 // `registerSW({ onNeedRefresh })` callback, which fires when a new SW is waiting.
 //
+// §SW-UPDATE-CHECK 2026-05-28 (Daniel smoke installed PWA stale): browser
+// re-checks SW only on navigation OR every ~24h. For installed PWA opened from
+// home-screen icon, scope NEVER navigates → SW update check never fires →
+// onNeedRefresh never triggers → user sees stale forever (until reinstall).
+// Fix: capture `registration` via `onRegisteredSW(swUrl, r)` + force
+// `registration.update()` on:
+//   (a) visibilitychange → visible (user revine in tab/PWA)
+//   (b) every 30min while app open (`setInterval`)
+// Both check with browser cache headers; bail safely if registration missing.
+//
 // jsdom test environment: `virtual:pwa-register` is a Vite-injected virtual
 // module absent on disk, so the dynamic import rejects → caught → the no-op
 // fallback persists (banner never shows in tests, mount never throws).
@@ -27,6 +37,21 @@ export function UpdatePrompt(): JSX.Element | null {
 
   useEffect(() => {
     let cancelled = false;
+    let registration: ServiceWorkerRegistration | undefined;
+    let intervalId: ReturnType<typeof setInterval> | undefined;
+
+    function checkForUpdate(): void {
+      if (cancelled || !registration) return;
+      // registration.update() forces browser to bypass HTTP cache for sw.js +
+      // re-evaluate. If a new SW is found, install lifecycle fires + onNeedRefresh
+      // surfaces the banner. Silent no-op when nothing changed.
+      void registration.update().catch(() => { /* graceful — offline or 404 */ });
+    }
+
+    function handleVisibility(): void {
+      if (document.visibilityState === 'visible') checkForUpdate();
+    }
+
     // Dynamic import so jsdom/SSR (no virtual module) degrades gracefully —
     // registerType:'prompt' means Workbox waits for our explicit reload.
     import('virtual:pwa-register')
@@ -38,13 +63,31 @@ export function UpdatePrompt(): JSX.Element | null {
           onNeedRefresh() {
             if (!cancelled) setNeedRefresh(true);
           },
+          // Capture the registration so we can force update checks on
+          // visibility/focus + periodic interval (see §SW-UPDATE-CHECK).
+          onRegisteredSW(_swUrl, r) {
+            if (cancelled || !r) return;
+            registration = r;
+            // Periodic check while app is open — 30min covers active sessions
+            // without hammering the network. visibilitychange covers the
+            // home-screen-icon return path.
+            intervalId = setInterval(checkForUpdate, 30 * 60 * 1000);
+            document.addEventListener('visibilitychange', handleVisibility);
+            // Initial nudge in case the SW that registered moments ago is
+            // already stale relative to the latest deploy on the network.
+            checkForUpdate();
+          },
         });
         setUpdateSW(() => update);
       })
       .catch(() => {
         // Virtual module unavailable (test/SSR) — fallback no-op, banner hidden.
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      if (intervalId !== undefined) clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   if (!needRefresh) return null;
