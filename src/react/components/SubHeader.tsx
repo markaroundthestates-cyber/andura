@@ -34,6 +34,7 @@
 
 import type { JSX, ReactNode } from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { t } from '../../i18n/index.js';
 
 interface SubHeaderProps {
   title: string;
@@ -55,7 +56,7 @@ export function SubHeader({
       <button
         type="button"
         onClick={onBack}
-        aria-label="Inapoi"
+        aria-label={t('common.back')}
         data-testid={testIdBack}
         className="p-2 -ml-2 text-ink"
       >

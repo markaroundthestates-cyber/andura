@@ -33,6 +33,7 @@
 import type { JSX } from 'react';
 import { Dumbbell } from 'lucide-react';
 import { getExerciseMedia, getExerciseMediaAlt } from '../lib/exerciseMedia';
+import { t } from '../../i18n/index.js';
 
 export type ExerciseMediaVariant = 'thumbnail' | 'compact' | 'card';
 
@@ -99,7 +100,7 @@ export function ExerciseMedia({
         />
         {isCard && (
           <p className="relative mt-2 text-xs uppercase tracking-wider text-ink3 font-medium">
-            Imagine in curand
+            {t('common.imageSoon')}
           </p>
         )}
       </div>

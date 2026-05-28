@@ -83,7 +83,7 @@ describe('SettingsProfile — render', () => {
     expect(screen.getByTestId('settings-profile-initial').textContent).toBe('D');
   });
 
-  it('renders back button cu aria-label "Inapoi"', () => {
+  it('renders back button cu aria-label "Inapoi" (RO pinned by test)', () => {
     renderScreen();
     expect(screen.getByRole('button', { name: /Inapoi/i })).toBeInTheDocument();
   });

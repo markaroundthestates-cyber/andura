@@ -1,7 +1,8 @@
 // ══ SUB HEADER TESTS — Pass 3 P1 shared component ═════════════════════════
 // Verifies SubHeader contract: renders title as h1 level 1, back button has
-// aria-label "Inapoi" + data-testid + invokes onBack, supports rightAction
-// slot, danger flag applies text-brick title color.
+// localized aria-label ("Back" under default EN locale, "Inapoi" under RO) +
+// data-testid + invokes onBack, supports rightAction slot, danger flag applies
+// text-brick title color.
 
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -17,11 +18,11 @@ describe('SubHeader — shared sub-screen header', () => {
     ).toBeInTheDocument();
   });
 
-  it('back button has aria-label "Inapoi" + custom data-testid', () => {
+  it('back button has localized aria-label "Back" (EN default) + custom data-testid', () => {
     render(
       <SubHeader title="Test" onBack={() => {}} testIdBack="custom-back-id" />
     );
-    const btn = screen.getByRole('button', { name: /Inapoi/i });
+    const btn = screen.getByRole('button', { name: /Back/i });
     expect(btn).toBeInTheDocument();
     expect(btn).toHaveAttribute('data-testid', 'custom-back-id');
   });
@@ -29,7 +30,7 @@ describe('SubHeader — shared sub-screen header', () => {
   it('invokes onBack callback when back button clicked', () => {
     const onBack = vi.fn();
     render(<SubHeader title="Test" onBack={onBack} testIdBack="x-back" />);
-    fireEvent.click(screen.getByRole('button', { name: /Inapoi/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Back/i }));
     expect(onBack).toHaveBeenCalledTimes(1);
   });
 
