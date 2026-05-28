@@ -122,8 +122,16 @@ export function HeatMapWeekly(): JSX.Element {
               key={idx}
               data-testid={`weight-bar-${idx}`}
               data-kg={b.kg}
-              className="flex-1 bg-brick rounded-sm"
-              style={{ height: `${b.heightPct}%` }}
+              className="flex-1 rounded-sm"
+              style={{
+                height: `${b.heightPct}%`,
+                /* Wave A4 polish (Daniel "fa-o Top Grade" 2026-05-28) — soft
+                   brick-to-translucent gradient on each bar so the chart reads
+                   more delicate than a flat brick fill while keeping the
+                   accent token authority. var() ensures palette-aware. */
+                background:
+                  'linear-gradient(to top, color-mix(in oklab, var(--brick) 92%, transparent), color-mix(in oklab, var(--brick) 68%, transparent))',
+              }}
               aria-label={t('progres.weight.dayBarAriaLabel', { n: idx + 1, kg: b.kg })}
             />
           ))}
