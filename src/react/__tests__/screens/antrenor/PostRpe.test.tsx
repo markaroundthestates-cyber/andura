@@ -50,6 +50,14 @@ function renderPostRpe() {
   );
 }
 
+// Pulse select-then-Save (2026-05-29): a rating tap only SELECTS; the finalize
+// pipeline fires on Save. submit(name) reproduces a full user flow — pick the
+// rating, then confirm with Save.
+function submit(name: RegExp): void {
+  fireEvent.click(screen.getByRole('button', { name }));
+  fireEvent.click(screen.getByTestId('post-rpe-save'));
+}
+
 function seedSession(): void {
   useWorkoutStore.setState({
     exIdx: 0,
@@ -138,28 +146,38 @@ describe('PostRpe — submit pipeline', () => {
   // incrementStreak + navigate) post-await. Use waitFor pentru post-await
   // assertions. Per DECISIONS.md §D027.
 
-  it('Usoara click → setLastRating="usoara"', () => {
+  it('Usoara select + Save → setLastRating="usoara"', () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Easy/i }));
+    submit(/Easy/i);
     expect(useWorkoutStore.getState().lastRating).toBe('usoara');
   });
 
-  it('Normala click → setLastRating="normala"', () => {
+  it('Normala select + Save → setLastRating="normala"', () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     expect(useWorkoutStore.getState().lastRating).toBe('normala');
   });
 
-  it('Grea click → setLastRating="grea"', () => {
+  it('Grea select + Save → setLastRating="grea"', () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /^Hard/i }));
+    submit(/^Hard/i);
     expect(useWorkoutStore.getState().lastRating).toBe('grea');
+  });
+
+  // Select-then-Save guard: a rating tap alone does NOT finalize the session
+  // (only Save fires the pipeline). Click the rating WITHOUT pressing Save.
+  it('selecting a rating does NOT submit until Save is pressed', () => {
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    // Nothing finalized yet — lastRating still null, history intact.
+    expect(useWorkoutStore.getState().lastRating).toBeNull();
+    expect(Object.keys(useWorkoutStore.getState().history).length).toBeGreaterThan(0);
   });
 
   it('submit clears history via finishSession', async () => {
     renderPostRpe();
     expect(Object.keys(useWorkoutStore.getState().history).length).toBeGreaterThan(0);
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().history).toEqual({});
     });
@@ -171,7 +189,7 @@ describe('PostRpe — submit pipeline', () => {
     const yesterdayIso = new Date(Date.now() - 86_400_000).toLocaleDateString('sv');
     useWorkoutStore.setState({ streak: 5, lastStreakDate: yesterdayIso });
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().streak).toBe(6);
     });
@@ -182,7 +200,7 @@ describe('PostRpe — submit pipeline', () => {
     const todayIso = new Date().toLocaleDateString('sv');
     useWorkoutStore.setState({ streak: 5, lastStreakDate: todayIso });
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().lastSession).not.toBeNull();
     });
@@ -191,7 +209,7 @@ describe('PostRpe — submit pipeline', () => {
 
   it('submit sets lastSession cu title + meta + ts', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().lastSession).not.toBeNull();
     });
@@ -206,7 +224,7 @@ describe('PostRpe — submit pipeline', () => {
 
   it('summary meta volume computed correctly (3*22.5*10 + 22.5*8 + 17.5*8 + 17.5*8 = 1135)', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const meta = useWorkoutStore.getState().lastSession?.meta ?? '';
       expect(meta).toMatch(/910 kg/);
@@ -215,7 +233,7 @@ describe('PostRpe — submit pipeline', () => {
 
   it('summary meta duration ~30 min', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const meta = useWorkoutStore.getState().lastSession?.meta ?? '';
       expect(meta).toMatch(/30 min/);
@@ -224,7 +242,7 @@ describe('PostRpe — submit pipeline', () => {
 
   it('finishSession payload populates numeric sets field (task_10 §D)', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().lastSession?.sets).toBe(5);
     });
@@ -232,7 +250,7 @@ describe('PostRpe — submit pipeline', () => {
 
   it('finishSession payload populates numeric durationMin field', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().lastSession?.durationMin).toBe(30);
     });
@@ -240,7 +258,7 @@ describe('PostRpe — submit pipeline', () => {
 
   it('finishSession payload populates numeric volumeKg field', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().lastSession?.volumeKg).toBe(910);
     });
@@ -248,7 +266,7 @@ describe('PostRpe — submit pipeline', () => {
 
   it('task_03: finishSession payload populates exercises breakdown', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().lastSession?.exercises?.length).toBe(2);
     });
@@ -256,7 +274,7 @@ describe('PostRpe — submit pipeline', () => {
 
   it('task_03: exercises breakdown computes totalVolume per exercise', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const exercises = useWorkoutStore.getState().lastSession?.exercises;
       // exIdx 0: 22.5*10 + 22.5*10 + 22.5*8 = 450 + 180 = 630
@@ -268,7 +286,7 @@ describe('PostRpe — submit pipeline', () => {
 
   it('task_03: peakOneRM uses Epley max across sets', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const exercises = useWorkoutStore.getState().lastSession?.exercises;
       // Bench Press peak: 22.5kg × 10 reps = 22.5 * (1+10/30) = 30 kg 1RM
@@ -278,7 +296,7 @@ describe('PostRpe — submit pipeline', () => {
 
   it('navigates la /app/antrenor/post-summary after submit', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(screen.getByTestId('probe')).toHaveAttribute(
         'data-pathname',
@@ -289,7 +307,7 @@ describe('PostRpe — submit pipeline', () => {
 
   it('phase resets la idle (via finishSession)', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().phase).toBe('idle');
     });
@@ -323,7 +341,7 @@ describe('PostRpe — H2 midnight data loss + HIGH-CODE-06 truth', () => {
   it('SAVES the logged session even when getTodayWorkout returns null (H2 — no data loss)', async () => {
     vi.mocked(getTodayWorkout).mockResolvedValueOnce(null);
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().lastSession).not.toBeNull();
     });
@@ -339,7 +357,7 @@ describe('PostRpe — H2 midnight data loss + HIGH-CODE-06 truth', () => {
   it('uses honest neutral fallback title — never the fabricated muscle-group lie (EN default "Workout")', async () => {
     vi.mocked(getTodayWorkout).mockResolvedValueOnce(null);
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().lastSession).not.toBeNull();
     });
@@ -354,7 +372,7 @@ describe('PostRpe — H2 midnight data loss + HIGH-CODE-06 truth', () => {
   it('degrades exercise names to honest "Exercise N" when plan is null (EN default, no fabrication)', async () => {
     vi.mocked(getTodayWorkout).mockResolvedValueOnce(null);
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().lastSession).not.toBeNull();
     });
@@ -366,7 +384,7 @@ describe('PostRpe — H2 midnight data loss + HIGH-CODE-06 truth', () => {
   it('navigates to post-summary after saving a null-plan session', async () => {
     vi.mocked(getTodayWorkout).mockResolvedValueOnce(null);
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(screen.getByTestId('probe')).toHaveAttribute(
         'data-pathname',
@@ -388,7 +406,7 @@ describe('PostRpe — H2 midnight data loss + HIGH-CODE-06 truth', () => {
         </Routes>
       </MemoryRouter>
     );
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const items = toast.getSnapshot();
       expect(items.length).toBeGreaterThan(0);
@@ -421,7 +439,7 @@ describe('PostRpe — energy signal persistence (GAP #2: energyEmoji + energy)',
       sessionContext: { intensityMod: 'minus', painContext: null },
     });
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /^Hard/i }));
+    submit(/^Hard/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().lastSession).not.toBeNull();
     });
@@ -435,7 +453,7 @@ describe('PostRpe — energy signal persistence (GAP #2: energyEmoji + energy)',
       sessionContext: { intensityMod: 'plus', painContext: null },
     });
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Easy/i }));
+    submit(/Easy/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().lastSession).not.toBeNull();
     });
@@ -447,7 +465,7 @@ describe('PostRpe — energy signal persistence (GAP #2: energyEmoji + energy)',
   it('omits energy fields when no energy-check (sessionContext null, direct Antrenor entry)', async () => {
     useWorkoutStore.setState({ sessionContext: null });
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       expect(useWorkoutStore.getState().lastSession).not.toBeNull();
     });

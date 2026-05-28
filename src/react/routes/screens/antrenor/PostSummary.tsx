@@ -41,7 +41,7 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy } from 'lucide-react';
+import { Trophy, Check } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useCoachStore } from '../../../stores/coachStore';
 import { coachPick, type CoachVoiceEndSessionRating } from '../../../lib/coachVoice';
@@ -50,6 +50,7 @@ import { t } from '../../../../i18n/index.js';
 import { useCountUp } from '../../../hooks/useCountUp';
 import { ConfettiBurst } from '../../../components/ConfettiBurst';
 import { Ripple } from '../../../components/Ripple';
+import { Kicker } from '../../../components/pulse/Kicker';
 import type { SessionRating } from './PostRpe';
 
 // Taxonomy bridge: workoutStore.lastRating ('usoara/normala/grea') →
@@ -207,24 +208,40 @@ export function PostSummary(): JSX.Element {
       className="p-6 bg-paper min-h-screen flex flex-col"
       data-testid="post-summary"
     >
-      {/* §F-post-summary-01 closure framing — h1 mockup verbatim L1630. */}
-      <h1
-        className="text-2xl font-bold text-ink mb-1"
-        data-testid="summary-heading"
-      >
-        {t('postSummary.heading')}
-      </h1>
-      <p className="text-base text-ink2 mb-4" data-testid="summary-title">
-        {lastSession?.title ?? t('postSummary.fallbackTitle')}
-      </p>
-      {coachLine && (
-        <p
-          className="text-base text-ink2 italic font-serif mb-6"
-          data-testid="summary-coach-line"
+      {/* Pulse closure header (mockup interfata-noua/screens-workout.jsx:501-506)
+          — a glowing volt check badge centered above the h1 closure heading.
+          summary-heading keeps its testid + level-1 + verbatim copy ("Session
+          complete" already signals closure, so no redundant Kicker); the
+          workout title stays the subtitle (summary-title). */}
+      <div className="flex flex-col items-center text-center mb-6">
+        <div
+          className="w-[72px] h-[72px] rounded-full grid place-items-center mb-3 animate-scale-in"
+          style={{
+            background: 'var(--brick)',
+            boxShadow: '0 0 44px -6px var(--brick)',
+          }}
+          aria-hidden="true"
         >
-          „{coachLine}"
+          <Check className="w-8 h-8" style={{ color: 'var(--on-accent)' }} strokeWidth={2.6} />
+        </div>
+        <h1
+          className="font-display text-3xl font-bold text-ink mt-1 mb-1"
+          data-testid="summary-heading"
+        >
+          {t('postSummary.heading')}
+        </h1>
+        <p className="text-base text-ink2" data-testid="summary-title">
+          {lastSession?.title ?? t('postSummary.fallbackTitle')}
         </p>
-      )}
+        {coachLine && (
+          <p
+            className="text-base text-ink2 italic font-serif mt-2"
+            data-testid="summary-coach-line"
+          >
+            „{coachLine}"
+          </p>
+        )}
+      </div>
 
       {/* F11 PR banner. Phase 4 task_22: enriched display PR type label +
          deltaPct + 1RM estimate. Phase 4 task_10 baseline (exercise +
@@ -310,9 +327,13 @@ export function PostSummary(): JSX.Element {
          Phase 3 keyword-derived; Phase 5+ wires lastSession.exercises engine. */}
       {muscleGroups.length > 0 && (
         <div className="mb-6" data-testid="summary-muscles">
-          <p className="text-sm font-semibold text-ink2 uppercase tracking-wide mb-3">
-            {t('postSummary.muscleGroupsHeading')}
-          </p>
+          {/* Mockup renders per-muscle BARS, but the engine breakdown (per-group
+              set counts) is a Phase-5 TODO — deriveMuscleGroups yields labels +
+              a primary flag only. We keep the honest pills (no fabricated counts)
+              under a Pulse Kicker heading. */}
+          <div className="mb-3">
+            <Kicker>{t('postSummary.muscleGroupsHeading')}</Kicker>
+          </div>
           <div className="flex flex-wrap gap-2">
             {muscleGroups.map((m) => (
               <span

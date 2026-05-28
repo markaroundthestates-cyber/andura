@@ -35,6 +35,7 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { saveReadiness } from '../../../../engine/readiness.js';
@@ -101,29 +102,38 @@ export function EnergyCheck(): JSX.Element {
         testIdBack="energy-check-back"
       />
       <div className="p-6 flex-1">
-      <h2 className="text-2xl font-bold text-ink mb-2">{t('energyCheck.title')}</h2>
+      {/* Pulse reskin (mockup interfata-noua/screens-workout.jsx:38-50) — display
+          h1 promoted to a bolder title; body keeps the verbose "Cum te simti azi?"
+          for user familiarity (h2 semantic preserved per PAR-009 single-h1
+          SubHeader pattern + test contract level:2). */}
+      <h2 className="font-display text-2xl font-bold text-ink mb-2">{t('energyCheck.title')}</h2>
       <p className="text-base text-ink2 mb-6">
         {t('energyCheck.subtitle')}
       </p>
       <div className="flex flex-col gap-3">
-        {ENERGY_OPTIONS.map((opt) => (
+        {ENERGY_OPTIONS.map((opt, i) => (
           <button
             key={opt.level}
             type="button"
             onClick={() => handleSelect(opt)}
             data-energy-level={opt.level}
             data-intensity={opt.intensity}
-            className="energy-btn flex items-center gap-4 p-4 rounded-xl border border-lineStrong bg-paper2 hover:bg-paper transition text-left"
+            className="energy-btn flex items-center gap-4 p-4 rounded-[18px] border border-line bg-paper2 hover:border-lineStrong transition text-left animate-card-rise"
+            style={{ animationDelay: `${i * 0.05}s` }}
           >
+            {/* Glowing dot (mockup .energy-dot) — the per-state color drives a soft
+                bloom so adjacent energy levels read distinctly. Decorative
+                (aria-hidden); the label owns the accessible name. */}
             <span
-              className="w-5 h-5 rounded-full flex-shrink-0"
-              style={{ background: opt.color }}
+              className="w-4 h-4 rounded-full flex-shrink-0"
+              style={{ background: opt.color, boxShadow: `0 0 16px ${opt.color}` }}
               aria-hidden="true"
             />
-            <span className="flex flex-col">
-              <span className="text-base font-medium text-ink">{t(opt.labelKey)}</span>
+            <span className="flex flex-col flex-1 min-w-0">
+              <span className="font-display text-base font-semibold text-ink">{t(opt.labelKey)}</span>
               <span className="text-sm text-ink2">{t(opt.hintKey)}</span>
             </span>
+            <ChevronRight className="w-[18px] h-[18px] text-ink3 flex-shrink-0" aria-hidden="true" />
           </button>
         ))}
       </div>
