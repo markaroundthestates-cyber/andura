@@ -42,9 +42,17 @@ interface Props {
   streak: number;
   fatigue: FatigueOutput | null;
   readiness: ReadinessOutput | null;
+  /**
+   * Pulse Coach-home layout (2026-05-29) — readiness is promoted to the
+   * ReadinessOrb hero on the Antrenor screen, so the compact strip drops the
+   * readiness tile and shows only the two signals the orb does NOT carry
+   * (streak + fatigue). Default (false) keeps the full 3-cell grid so the
+   * standalone component contract + other surfaces stay intact.
+   */
+  compact?: boolean;
 }
 
-export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
+export function StatsGrid({ streak, fatigue, readiness, compact = false }: Props): JSX.Element {
   // §MED-CODE-23 — unit label below big number (2-line visual). Number rendered
   // separat, deci label = doar substantivul: "zi"/"day" la 1, "zile"/"days" altfel
   // (fara prefix "de" care apare la pluralRo 20+). Locale-aware via stats.streakUnit_*.
@@ -65,7 +73,7 @@ export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
   // Card-rise + stagger so the trio settles in left-to-right on mount.
   return (
     <div
-      className="grid grid-cols-3 gap-2 mb-4"
+      className={`grid ${compact ? 'grid-cols-2' : 'grid-cols-3'} gap-2 mb-4`}
       role="region"
       aria-label={t('stats.ariaLabel')}
     >
@@ -91,15 +99,17 @@ export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
         delayClass="delay-75"
         testId="stats-fatigue"
       />
-      <StatTile
-        label={t('stats.readiness')}
-        value={readiness ? readinessDisplay : '-'}
-        sublabel={localizedReadinessLabel(readiness)}
-        Icon={Sparkles}
-        accentVar="--deep"
-        delayClass="delay-150"
-        testId="stats-readiness"
-      />
+      {!compact && (
+        <StatTile
+          label={t('stats.readiness')}
+          value={readiness ? readinessDisplay : '-'}
+          sublabel={localizedReadinessLabel(readiness)}
+          Icon={Sparkles}
+          accentVar="--deep"
+          delayClass="delay-150"
+          testId="stats-readiness"
+        />
+      )}
     </div>
   );
 }

@@ -20,12 +20,19 @@ export function PRNotificationBanner({ prHit }: Props): JSX.Element | null {
   // auto-collapses to snap.
   return (
     <div
-      className="bg-brick text-paper rounded-lg p-3 mb-4 text-center animate-pop-in"
+      className="rounded-lg p-3 mb-4 text-center animate-pop-in"
       role="status"
       aria-live="polite"
       aria-label="PR detectat"
+      // Pulse reskin (2026-05-29) — the PR moment now lands on the signature
+      // volt→aqua gradient (the same celebratory accent as the Start CTA),
+      // token-only so every theme reads native.
+      style={{
+        background: 'linear-gradient(120deg, var(--volt), var(--aqua))',
+        color: 'var(--on-accent)',
+      }}
     >
-      <div className="font-bold text-sm uppercase tracking-wider">PR sesiunea trecuta</div>
+      <div className="font-display font-bold text-sm uppercase tracking-wider">PR sesiunea trecuta</div>
       <div className="text-xs mt-1 opacity-90">Felicitari - record nou.</div>
     </div>
   );

@@ -156,10 +156,16 @@ describe('Antrenor home — base render', () => {
     expect(screen.getByTestId('stats-streak')).toHaveTextContent('12');
   });
 
-  it('StatsGrid placeholder cand fatigue + readiness null', () => {
+  it('StatsGrid placeholder cand fatigue null (compact strip — readiness in orb hero)', () => {
+    // Pulse Coach-home (2026-05-29): readiness is promoted to the ReadinessOrb
+    // hero, so the compact strip drops the readiness tile (stats-readiness no
+    // longer rendered on this screen). Fatigue stays in the strip. With
+    // readiness null (default mock) the orb hero is also hidden, so neither
+    // stats-readiness nor the hero appears.
     renderAntrenor();
     expect(screen.getByTestId('stats-fatigue')).toHaveTextContent('-');
-    expect(screen.getByTestId('stats-readiness')).toHaveTextContent('-');
+    expect(screen.queryByTestId('stats-readiness')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('readiness-hero')).not.toBeInTheDocument();
   });
 });
 

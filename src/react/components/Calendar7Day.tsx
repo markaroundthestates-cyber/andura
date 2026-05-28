@@ -63,16 +63,20 @@ export function Calendar7Day(): JSX.Element {
     }
   }
 
+  // Monday-first "today" index (Mon=0 … Sun=6) for the aqua today marker
+  // (mockup interfata-noua/screens-antrenor.jsx:69 .sched-pill.today).
+  const todayIdx = (new Date().getDay() + 6) % 7;
+
   return (
     <div
-      className="bg-paper border border-line rounded-xl p-3 mb-4 animate-card-rise delay-75"
+      className="surface-elevated bg-paper2 border border-line rounded-2xl p-4 mb-4 animate-card-rise delay-75"
       data-testid="calendar-7day"
       data-edit-mode={editMode ? 'true' : 'false'}
     >
-      <div className="relative flex items-center justify-center mb-2">
+      <div className="relative flex items-center justify-center mb-3">
         <p
           data-testid="calendar-title"
-          className="text-base font-semibold text-ink text-center"
+          className="font-display text-base font-bold text-ink text-center"
         >
           {t('calendar.day7.title')}
         </p>
@@ -81,7 +85,8 @@ export function Calendar7Day(): JSX.Element {
           onClick={handleToggleEdit}
           data-testid="calendar-edit-toggle"
           aria-label={editMode ? t('calendar.day7.editAriaSave') : t('calendar.day7.editAriaEdit')}
-          className="absolute right-0 p-1.5 rounded-full text-ink2"
+          className="absolute right-0 w-9 h-9 grid place-items-center rounded-xl bg-paper2 border border-line transition-colors"
+          style={{ color: editMode ? 'var(--brick)' : 'var(--ink-3)' }}
         >
           {editMode ? (
             <Check className="w-4 h-4" aria-hidden="true" />
@@ -94,6 +99,7 @@ export function Calendar7Day(): JSX.Element {
         {days.map((kind, idx) => {
           const trainingDay = kind === 'training';
           const label = dayLabel(idx);
+          const isToday = idx === todayIdx;
           return (
             <button
               key={idx}
@@ -103,30 +109,29 @@ export function Calendar7Day(): JSX.Element {
               data-testid={`calendar-day-${idx}`}
               data-kind={kind}
               data-day={label}
+              data-today={isToday ? 'true' : undefined}
               aria-label={`${label} - ${trainingDay ? t('calendar.day7.kindTraining') : t('calendar.day7.kindRest')}`}
-              className="flex-1 py-2 rounded-lg text-xs font-semibold disabled:cursor-default transition-transform hover:scale-[1.02] enabled:hover:scale-[1.04]"
-              // Wiki spec calendar-feature-v1-spec.md §UX states 3 LOCKED
-              // post-S1.6: training LOCKED state = #3d7a4a verde inchis; EDIT
-              // state = verde deschis (signal "asta e programul, modifica").
-              // Rest neutral var(--paper-2) invariant cross-states.
-              // THEME-INVERSION fix (2026-05-27): edit-state era hardcodat
-              // #d4e6cb bg + var(--ink) text -> pe tema mov var(--ink) devine
-              // near-white => text alb pe verde-deschis = 1.18:1 ilizibil.
-              // Tokenizat la --heat-usor (#d4e6cb light / #2a4a30 dark) +
-              // --heat-usor-text (5.99:1 light / 6.43:1 dark) care au deja
-              // paritate dark. Locked (#3d7a4a verde inchis + white) ramane fix
-              // intentionat (verde inchis e dark surface in ambele teme).
+              className="flex-1 py-2.5 rounded-xl text-xs font-bold disabled:cursor-default transition-[background,color,box-shadow,transform] duration-150 hover:scale-[1.02] enabled:hover:scale-[1.04] active:scale-[0.94]"
+              // ANDURA PULSE reskin (2026-05-29) — the legacy heat-green pill is
+              // replaced by the Pulse accent (brick) with a soft volt glow on
+              // training days (mockup interfata-noua/screens-antrenor.jsx:84-103
+              // .sched-pill.on). Rest days stay the neutral elevated surface.
+              // Today gets an aqua focus outline (mockup .sched-pill.today). All
+              // colors are tokens (no raw hex) so every theme + dark mode reads
+              // native; the WCAG-tuned --on-accent keeps text legible on fill.
               style={{
-                background: trainingDay
-                  ? editMode
-                    ? 'var(--heat-usor)'
-                    : '#3d7a4a'
-                  : 'var(--paper-2)',
-                color: trainingDay
-                  ? editMode
-                    ? 'var(--heat-usor-text)'
-                    : '#ffffff'
-                  : 'var(--ink)',
+                background: trainingDay ? 'var(--brick)' : 'var(--paper-2)',
+                color: trainingDay ? 'var(--on-accent)' : 'var(--ink-3)',
+                border: trainingDay
+                  ? '1px solid var(--brick)'
+                  : '1px solid var(--line)',
+                boxShadow: trainingDay
+                  ? '0 0 18px -5px color-mix(in oklab, var(--brick) 75%, transparent)'
+                  : 'none',
+                outline: isToday
+                  ? '2px solid color-mix(in oklab, var(--aqua) 75%, transparent)'
+                  : undefined,
+                outlineOffset: isToday ? 2 : undefined,
               }}
             >
               {label}
@@ -146,7 +151,11 @@ export function Calendar7Day(): JSX.Element {
             type="button"
             onClick={handleSave}
             data-testid="calendar-save"
-            className="w-full mt-3 py-2 bg-brick text-paper rounded-lg text-sm font-semibold"
+            className="w-full mt-3 py-2.5 rounded-lg text-sm font-semibold"
+            style={{
+              background: 'linear-gradient(120deg, var(--volt), var(--aqua))',
+              color: 'var(--on-accent)',
+            }}
           >
             {t('calendar.day7.saveCta')}
           </button>

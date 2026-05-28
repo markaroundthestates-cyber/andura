@@ -29,12 +29,15 @@ export function ReadinessVerdict({ readiness }: Props): JSX.Element | null {
     : readiness.label;
   return (
     <div
-      className="text-sm text-ink2 mb-4 text-center"
+      className="text-sm text-ink2"
       role="status"
       aria-live="polite"
       aria-label={t('readinessVerdictWidget.ariaLabel')}
     >
-      <span className="font-semibold" style={{ color: readiness.color }}>
+      <span
+        className="font-display text-lg font-bold block"
+        style={{ color: readiness.color }}
+      >
         {resolvedLabel}
       </span>
       {' '}

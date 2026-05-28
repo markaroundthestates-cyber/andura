@@ -22,7 +22,7 @@ export function AlertsBanner({ alerts }: AlertsBannerProps): JSX.Element | null 
           data-severity={a.severity}
           role={a.severity === 'urgent' ? 'alert' : 'status'}
           aria-live={a.severity === 'urgent' ? 'assertive' : 'polite'}
-          className="flex items-start gap-2.5 p-3 rounded-xl border"
+          className="surface-elevated flex items-start gap-2.5 p-3 rounded-xl border"
           style={
             a.severity === 'urgent'
               ? { background: 'var(--status-danger-bg)', borderColor: 'var(--status-danger-border)' }

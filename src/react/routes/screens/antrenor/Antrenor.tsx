@@ -48,6 +48,11 @@ import { PatternsBanner } from '../../../components/Antrenor/PatternsBanner';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
 import { PRWallRecent } from '../../../components/Antrenor/PRWallRecent';
 import { Calendar7Day } from '../../../components/Calendar7Day';
+import { ReadinessOrb } from '../../../components/pulse/ReadinessOrb';
+import { PulseMark } from '../../../components/pulse/PulseMark';
+import { Kicker } from '../../../components/pulse/Kicker';
+import { Pill } from '../../../components/pulse/Pill';
+import { Zap } from 'lucide-react';
 
 const FOURTEEN_DAYS_MS = 14 * 86400000;
 
@@ -143,17 +148,26 @@ export function Antrenor(): JSX.Element {
       data-testid="antrenor-home"
       aria-label={t('antrenor.ariaLabel')}
     >
-      {/* Header date line per mockup andura-clasic.html#L733. */}
-      <p className="text-ink2 text-sm" data-testid="antrenor-header-date">
-        {formatHeaderDate(new Date())}
-      </p>
-      {/* §F-pass4-fontweight-01 (LOW chat5) — title font-weight 600 → 700 mockup
-          andura-clasic.html#L734 (font-weight:700). */}
-      <h1 className="text-2xl font-bold text-ink mt-0.5">{t('tabs.antrenor.title')}</h1>
-      {/* Serif subtitle per mockup andura-clasic.html#L735 (coach-quote). */}
-      <p className="font-serif italic text-ink2 text-sm mb-4">
-        {t('antrenor.subtitle')}
-      </p>
+      {/* Pulse header (mockup interfata-noua/screens-antrenor.jsx:11-20) — mono
+          date eyebrow, display title with the animated PulseMark to the right,
+          serif coach subtitle. Date keeps its testid + i18n formatter. */}
+      <div className="mb-4 animate-card-rise">
+        <p
+          className="font-mono text-[11px] tracking-wider text-ink3"
+          data-testid="antrenor-header-date"
+        >
+          {formatHeaderDate(new Date())}
+        </p>
+        <div className="flex items-center justify-between mt-0.5">
+          <h1 className="font-display text-3xl font-bold text-ink">
+            {t('tabs.antrenor.title')}
+          </h1>
+          <PulseMark size={34} />
+        </div>
+        <p className="font-serif italic text-ink2 text-sm mt-0.5">
+          {t('antrenor.subtitle')}
+        </p>
+      </div>
 
       {/* HIGH-CODE-07 defense-in-depth error banner (code-review v2 chat 5
           post-Wave 10) — visible only when getCoachToday promise rejects past
@@ -197,13 +211,42 @@ export function Antrenor(): JSX.Element {
       <PatternsBanner banners={coach?.patternsBanner ?? []} />
       <AlertsBanner alerts={coach?.alerts ?? []} />
 
-      {/* BUG #4 — StatsGrid (streak + fatigue + readiness) + ReadinessVerdict +
-          PRNotificationBanner sit near the TOP, above the coach card per mockup
-          andura-clasic.html#L761-795 (StatsGrid L763 → ReadinessVerdict L784 →
-          PRNotificationBanner L792 → coach card L801). Always-render snapshot
-          near top home. */}
-      <StatsGrid streak={streak} fatigue={fatigue} readiness={readiness} />
-      <ReadinessVerdict readiness={readiness} />
+      {/* Pulse readiness HERO (mockup interfata-noua/screens-antrenor.jsx:22-33)
+          — readiness is promoted from a flat StatsGrid cell to a big animated
+          ReadinessOrb. The orb carries the score; the verdict line (kept via
+          ReadinessVerdict for its role=status + score/100 + canPR contract) and
+          a "primed for a PR" pill sit beside it. Renders only when readiness is
+          known (T0 fresh / no log today → orb hidden, signals still shown by the
+          compact strip + verdict below). */}
+      {readiness && (
+        <div
+          className="surface-elevated relative overflow-hidden bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4 animate-card-rise delay-75"
+          data-testid="readiness-hero"
+        >
+          <ReadinessOrb
+            score={readiness.score}
+            label={t('stats.readiness')}
+            canPR={readiness.canPR}
+          />
+          <div className="flex-1 min-w-0">
+            <Kicker color="var(--aqua)">{t('readinessVerdictWidget.ariaLabel')}</Kicker>
+            <div className="mt-1.5">
+              <ReadinessVerdict readiness={readiness} />
+            </div>
+            {readiness.canPR && (
+              <Pill color="var(--volt)" solid>
+                <Zap className="w-3 h-3" aria-hidden="true" fill="currentColor" />
+                {t('antrenor.primedForPr')}
+              </Pill>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Compact signal strip — streak + fatigue (readiness now lives in the
+          orb hero above, so the strip drops that tile via `compact`). Mockup
+          keeps the body signals visible without duplicating readiness. */}
+      <StatsGrid streak={streak} fatigue={fatigue} readiness={readiness} compact />
       <PRNotificationBanner prHit={prHit} />
 
       {/* §A002 audit fix + §B018 extract: engine-driven isRestDay routing —

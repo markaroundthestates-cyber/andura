@@ -170,6 +170,7 @@
     "ariaLabel": "Coach home",
     "subtitle": "Your guide in the gym.",
     "errorBanner": "Couldn't load coach recommendations. You can start the session anyway.",
+    "primedForPr": "Primed for a PR",
     "header": {
       "dateSeparator": "·"
     }
@@ -183,6 +184,11 @@
     "exercisesCount_one": "{n} exercise",
     "exercisesCount_other": "{n} exercises",
     "durationLabel": "~ {min} min",
+    "intensity": {
+      "plus": "Higher intensity",
+      "normal": "Standard load",
+      "minus": "Lighter load"
+    },
     "startCta": "Start session",
     "overrideCta": "Want something else today? →",
     "daysSince": {
