@@ -80,17 +80,19 @@ describe('SettingsThemes — Teme picker screen', () => {
     expect(/se (va )?aplic\w* la lansare/i.test(container.textContent ?? '')).toBe(false);
   });
 
-  // LIVE-PALETTE — click an override palette sets <html data-palette> live.
-  it('click Luxury seteaza data-palette="luxury" pe documentElement', () => {
+  // ANDURA PULSE (2026-05-29) — override palettes retired. Clicking ANY option
+  // no longer sets <html data-palette> (one design system; the base theme owns
+  // the look). Persisted selection still writes localStorage for parity.
+  it('click Luxury NU mai seteaza data-palette (override retras → tema de baza)', () => {
     renderScreen();
     fireEvent.click(screen.getByTestId('theme-palette-luxury'));
-    expect(document.documentElement.dataset.palette).toBe('luxury');
+    expect(document.documentElement.dataset.palette).toBeUndefined();
   });
 
-  it('click Living Body seteaza data-palette="living-body" pe documentElement', () => {
+  it('click Living Body NU mai seteaza data-palette (override retras → tema de baza)', () => {
     renderScreen();
     fireEvent.click(screen.getByTestId('theme-palette-living-body'));
-    expect(document.documentElement.dataset.palette).toBe('living-body');
+    expect(document.documentElement.dataset.palette).toBeUndefined();
   });
 
   // Clasic + Brain Coach NU seteaza data-palette (base theme light/dark le detine).

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#c8412e" />
+  <meta name="theme-color" content="#090b13" />
   <meta name="description" content="Andura - coach AI personal pentru sala, facut in Romania. Antrenament cu cap." />
-  <meta name="color-scheme" content="light" />
+  <meta name="color-scheme" content="dark light" />
   <!-- §4-C3 + §4-C4 + §4-C27/28/29 + §4-C17/23 audit fix: defense-in-depth headers.
        GH Pages has no custom HTTP headers → meta http-equiv where applicable.
        'unsafe-inline' tolerated initial (Tailwind injects style) — Track 7 nonce migration. -->
@@ -64,14 +64,18 @@
     }(window.location))
   </script>
   <style>
-    /* §1-C1 audit fix: replace dark FOUC inline with cream warm light shell
-       matching Tailwind --paper token. App-level CSS hydrates via main.tsx. */
+    /* Andura Pulse FOUC shell (2026-05-29) — matches the DEFAULT Pulse-dark
+       --paper #090b13 / --ink #f3f5fc so the pre-hydration paint matches the
+       common case (dark is the CEO default; a persisted light-mode user
+       re-skins on hydrate via applyInitialTheme + global.css). Manrope/Inter
+       system fallback (Pulse fonts load via @fontsource @font-face in
+       global.css, font-display: swap). */
     html, body {
       margin: 0;
       padding: 0;
-      background: #faf7f1;
-      color: #1a1815;
-      font-family: 'Inter', system-ui, sans-serif;
+      background: #090b13;
+      color: #f3f5fc;
+      font-family: 'Manrope Variable', 'Inter', system-ui, sans-serif;
       min-height: 100vh;
     }
     #root {

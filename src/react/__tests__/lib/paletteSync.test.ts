@@ -1,7 +1,11 @@
-// paletteSync — data-palette override wiring (Luxury + Living Body) tests.
-// Mirrors the themeSync pattern: applyInitialPalette anti-FOUC + applyPalette
-// live + PaletteSync component. Override palettes set <html data-palette>;
-// clasic/brain-coach clear it so the base light/dark theme owns them.
+// paletteSync — data-palette wiring tests.
+// ANDURA PULSE (2026-05-29) — the override palettes (Luxury + Living Body) are
+// RETIRED. With one Pulse design system, NO palette sets <html data-palette>:
+// applyPalette CLEARS it for every id (the override CSS blocks are gone, so the
+// attribute would have no effect). The base :root (Pulse light) + [data-theme]
+// light↔dark toggle owns the look. A stored 'luxury'/'living-body' resolves to
+// the base theme gracefully (no error), so the picker + persisted values still
+// parse.
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
@@ -17,15 +21,17 @@ beforeEach(() => {
   delete document.documentElement.dataset.palette;
 });
 
-describe('applyPalette — sets/clears documentElement.data-palette', () => {
-  it('sets data-palette="luxury" for the luxury override', () => {
+describe('applyPalette — always clears documentElement.data-palette (Pulse, no overrides)', () => {
+  it('clears data-palette for luxury (override retired → base theme owns it)', () => {
+    document.documentElement.dataset.palette = 'luxury';
     applyPalette('luxury');
-    expect(document.documentElement.dataset.palette).toBe('luxury');
+    expect(document.documentElement.dataset.palette).toBeUndefined();
   });
 
-  it('sets data-palette="living-body" for the living-body override', () => {
+  it('clears data-palette for living-body (override retired → base theme owns it)', () => {
+    document.documentElement.dataset.palette = 'living-body';
     applyPalette('living-body');
-    expect(document.documentElement.dataset.palette).toBe('living-body');
+    expect(document.documentElement.dataset.palette).toBeUndefined();
   });
 
   it('clears data-palette for brain-coach (base theme owns it)', () => {
@@ -42,24 +48,26 @@ describe('applyPalette — sets/clears documentElement.data-palette', () => {
 });
 
 describe('applyInitialPalette — synchronous pre-mount read from localStorage', () => {
-  it('applies persisted luxury override', () => {
+  it('clears data-palette even for a persisted luxury (retired override)', () => {
+    document.documentElement.dataset.palette = 'luxury';
     localStorage.setItem(KEY, 'luxury');
-    applyInitialPalette();
-    expect(document.documentElement.dataset.palette).toBe('luxury');
-  });
-
-  it('applies persisted living-body override', () => {
-    localStorage.setItem(KEY, 'living-body');
-    applyInitialPalette();
-    expect(document.documentElement.dataset.palette).toBe('living-body');
-  });
-
-  it('defaults to brain-coach (no data-palette) when storage empty', () => {
     applyInitialPalette();
     expect(document.documentElement.dataset.palette).toBeUndefined();
   });
 
-  it('ignores a junk value and falls back to no override', () => {
+  it('clears data-palette even for a persisted living-body (retired override)', () => {
+    document.documentElement.dataset.palette = 'living-body';
+    localStorage.setItem(KEY, 'living-body');
+    applyInitialPalette();
+    expect(document.documentElement.dataset.palette).toBeUndefined();
+  });
+
+  it('leaves data-palette unset when storage empty', () => {
+    applyInitialPalette();
+    expect(document.documentElement.dataset.palette).toBeUndefined();
+  });
+
+  it('ignores a junk value (no override attribute set)', () => {
     localStorage.setItem(KEY, 'not-a-real-palette');
     applyInitialPalette();
     expect(document.documentElement.dataset.palette).toBeUndefined();
@@ -78,9 +86,10 @@ describe('PaletteSync component', () => {
     expect(PaletteSync()).toBeNull();
   });
 
-  it('applies the persisted palette as a side effect', () => {
+  it('clears any stale data-palette as a side effect', () => {
+    document.documentElement.dataset.palette = 'living-body';
     localStorage.setItem(KEY, 'living-body');
     PaletteSync();
-    expect(document.documentElement.dataset.palette).toBe('living-body');
+    expect(document.documentElement.dataset.palette).toBeUndefined();
   });
 });

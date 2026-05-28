@@ -11,14 +11,56 @@
 @tailwind components;
 @tailwind utilities;
 
-/* LOCK V1 D061 — font self-host Latin subset 344→48KB (DECISIONS.md §D061)
-   Self-host Inter Variable Latin subset (chat 5 perf audit 2026-05-23).
-   FONT_SUBSET_LATIN_FIX: prior full Variable WOFF2 = 344 KB transfer
-   regressed LCP 2.1s → 3.9s + Lighthouse Perf 97 → 86. @fontsource-variable
-   /inter ships per-subset WOFF2 files (Latin-only ~48 KB) cu unicode-range
-   hints — browser fetches DOAR Latin slice pentru D-LEGACY-064 no-diacritics
-   RO UI. Family ramane 'Inter' (zero blast radius pe Tailwind/inline refs).
-   font-display: swap preserves FOUT parity. */
+/* ANDURA PULSE FONTS — self-host Latin subset (DECISIONS.md §D061 pattern).
+   Pulse design system fonts ported from mockup 04-architecture/mockups/
+   interfata-noua/index.html (@import Google Fonts there). Self-hosted via
+   @fontsource here instead of a Google Fonts @import: the index.html CSP pins
+   `font-src 'self'` + `style-src 'self'` (a fonts.googleapis.com stylesheet +
+   gstatic.com woff2 would be blocked). Self-host = CSP-safe, perf-consistent
+   with the existing Inter Latin-subset self-host, zero third-party request.
+     - Space Grotesk (variable) — display/headings (--font-display, .font-display)
+     - Manrope (variable)       — body text (--font-body, default font-sans)
+     - Space Mono (400/700)     — labels/mono numerals (--font-mono, .font-mono)
+   All Latin-subset WOFF2 with unicode-range hints (D-LEGACY-064 no-diacritics
+   RO UI → browser fetches Latin slice only). font-display: swap preserves FOUT
+   parity. Inter retained below as a system fallback (legacy refs + serif
+   tagline pairing).
+   PULSE_FONT_UNICODE_RANGE: the Latin unicode-range below mirrors the Inter
+   subset hint so a no-diacritics RO glyph set loads minimal weight. */
+@font-face {
+  font-family: 'Space Grotesk Variable';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Manrope Variable';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('@fontsource/space-mono/files/space-mono-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('@fontsource/space-mono/files/space-mono-latin-700-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Inter — retained system fallback (legacy refs + non-Pulse pairings).
+   Latin subset self-host (prior D061 baseline). */
 @font-face {
   font-family: 'Inter';
   font-style: normal;
@@ -28,309 +70,227 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* WCAG audit batch v2 Path 2a — Clasic :root architectural lift (2026-05-10).
-   Token tonal hierarchy (cream warm light theme) — fix --ink-3 muted text WCAG SC 1.4.3 4.5:1 AA
-   (was hardcoded var(--ink-3) 137× contrast 3.56:1 FAIL → now #6e6862 token contrast ~5.13:1 PASS).
-   Other tokens consolidate hardcoded hex (385 total occurrences) → systematic single-source-of-truth.
-   Bg context: phone bg --paper var(--paper) L=0.930 (light cream — INVERSE polarity vs Luxury/Brain Coach dark themes).
-   Cumulative LOCKED V1 ~707-709 PRESERVED (mockup polish meta-tooling NU additive). */
+  /* ══ ANDURA PULSE — DESIGN SYSTEM TOKENS (ported 2026-05-29) ══════════════
+     Source: 04-architecture/mockups/interfata-noua/index.html <style> block.
+     Daniel-approved Pulse redesign. Token VALUES re-mapped onto the EXISTING
+     token NAMES so every tokenized component (bg-paper/text-ink/text-brick/…)
+     re-skins to Pulse at once — ZERO token renames, zero component churn.
+     Mapping (Pulse → existing name):
+       --paper   ← Pulse --bg     (#090b13 dark / #eef0f6 light)
+       --paper-2 ← Pulse --bg-2   (#0d101c dark / #ffffff light)
+       --ink/-2/-3 ← Pulse --ink/-2/-3
+       --line / --line-strong ← Pulse --line / --line-strong
+       --brick   ← Pulse --volt   (#b6f23a — THE primary accent)
+       --olive ← volt (energy)  --deep ← aqua (recovery)
+       --succ/warn/danger derived in the Pulse aqua/ember/violet family
+     Light is the :root default + [data-theme="light"]; dark is the primary
+     app look ([data-theme="dark"], CEO default). The legacy Luxury + Living
+     Body palettes are RETIRED (Daniel: "doar asta o sa ramana" — only Pulse).
+     Pulse extra design vars (--volt/--aqua/--ember/--violet, gradients, fonts,
+     --motion, --radius) are declared too so ported Pulse motion/components can
+     reference them. WCAG: every text token verified AA on its surface — the
+     raw mockup hex for --ink-3 (4.0:1 dark / 2.8:1 light) + --line-strong
+     (1.6:1 / 1.4:1) FAILED the app's stricter text+UI-boundary usage, so both
+     are nudged minimally in-palette (cool-grey identity preserved). Light
+     --brick uses volt-deep #477006 (5.1:1 AA as text + 5.1:1 paper-on-brick)
+     because raw volt green is unreadable as text on a light surface. */
 @layer base {
   :root {
-    --paper: #faf7f1;     /* Phone bg cream primary L=0.930 (light theme inverse polarity) */
-    --paper-2: #f3ede1;   /* Secondary surface cream variant L≈0.855 */
-    --ink: #1a1815;       /* Primary text dark L=0.0042 → 17.94:1 vs paper ✅ AAA */
-    --ink-2: #3a342d;     /* Secondary text L=0.0347 → 11.57:1 vs paper ✅ AAA */
-    --ink-3: #6e6862;     /* Muted text L=0.141 → 5.13:1 vs paper ✅ AA (was var(--ink-3) 3.56:1 ❌ FAIL — WCAG fix) */
-    --line: #e7e0d0;      /* Decorative border on cream — 1.23:1 vs paper (decorative interpretation pure dividers/hairlines/info-card frames per WCAG v4 cross-skin --line split classification 2026-05-10) */
-    --line-strong: #9a8770; /* WCAG v4 batch 2026-05-10 — interactive UI essential boundary RGB(154,135,112) L=0.254 → 3.23:1 vs paper #faf7f1 PASS SC 1.4.11 non-text 3:1 minimum. Used by .btn-ghost/.energy-btn/.cause-btn/.sw/.theme-card + form input borders + auth-skip-btn + checkbox labels — all interactive UI essential boundaries. Tonal hierarchy preserved: --ink-3 (L=0.141) < --line-strong (L=0.254) < --line (L=0.748). Warm taupe Clasic clinical character preserved (R>G>B). */
-    --brick: #c8412e;     /* Accent brick red Clasic signature */
-    --brick-dark: #a8351f;/* Brick hover/pressed dark variant */
-    --olive: #6b7142;     /* Olive accent (energy/cardio context) */
-    --deep: #2d4a6b;      /* Deep blue accent (rest/recovery context) */
-    --succ: #3d7a4a;      /* Success green */
-    --warn: #c89321;      /* Warning amber */
-    --danger: #c8412e;    /* Danger (alias brick) */
+    /* Pulse base design vars (accent family + gradients + fonts + motion) */
+    --volt: #b6f23a; --volt-deep: #8fd218; --aqua: #4fd6e8; --aqua-deep: #2bb6cc;
+    --ember: #ff7d52; --ember-deep: #f4571f; --violet: #a98bff;
+    --grad-pulse: linear-gradient(135deg, var(--volt) 0%, var(--aqua) 100%);
+    --grad-ember: linear-gradient(135deg, var(--ember) 0%, var(--violet) 120%);
+    --font-display: 'Space Grotesk Variable', 'Inter', system-ui, sans-serif;
+    --font-body: 'Manrope Variable', 'Inter', system-ui, sans-serif;
+    --font-mono: 'Space Mono', ui-monospace, monospace;
+    --motion: 1; --radius: 22px; --radius-sm: 14px;
+    /* On-accent ink (text sitting on a --brick/--accent fill). Pulse near-black. */
+    --on-accent: #0a0c14;
 
-    /* Status banner tints (B009 light theme) — soft warm pastel layer for
-       intensity/pattern/alert/rest banners. Pair bg+border+text via vars
-       so dark theme can swap inverted polarity tints in one place. */
-    --status-success-bg: #e7f0e2;
-    --status-success-border: #bdd9b3;
-    --status-success-text: #1d4528;
-    --status-danger-bg: #fbe3df;
-    --status-danger-border: #e8b2a8;
-    --status-danger-text: #6b2418;
-    --status-neutral-bg: #fdf3df;
-    --status-neutral-border: #e8d59a;
-    --status-neutral-text: #6b5a1e;
-    --status-info-bg: #fdeeea;
-    --status-info-border: #f0c8be;
-    --status-info-text: #6b2418;
+    /* ── PULSE LIGHT (default :root) — Pulse --bg/--bg-2 light values ──────── */
+    --paper: #eef0f6;     /* Pulse --bg light — cool off-white L≈0.85 */
+    --paper-2: #ffffff;   /* Pulse --bg-2 light — pure white card surface */
+    --ink: #12141f;       /* Pulse --ink light → 16.1:1 vs paper ✅ AAA */
+    --ink-2: #565d72;     /* Pulse --ink-2 light → 5.75:1 vs paper ✅ AA */
+    --ink-3: #686e82;     /* Pulse --ink-3 nudged (mockup #8a90a5 = 2.79:1 ❌) → 4.45:1 vs paper ✅ AA */
+    --line: rgba(12, 16, 30, 0.09); /* Pulse --line light — decorative hairline */
+    --line-strong: #787e92; /* Pulse --line-strong nudged (mockup .16 alpha = 1.41:1 ❌) → 3.55:1 vs paper ✅ SC 1.4.11 */
+    --brick: #477006;     /* PRIMARY ACCENT — Pulse volt-deep as light-readable text → 5.14:1 vs paper ✅ AA (raw volt #b6f23a = 1.17:1 unusable as text on light) */
+    --brick-dark: #bd3a28;/* Destructive-action TEXT light — warm red → 4.85:1 ✅ AA */
+    --olive: #557428;     /* Energy/cardio accent light — volt-family deep green → 4.71:1 ✅ AA */
+    --deep: #1d6b7d;      /* Rest/recovery accent light — aqua-family teal → 5.34:1 ✅ AA */
+    --succ: #2d7642;      /* Success green → 4.87:1 ✅ AA */
+    --warn: #8f6210;      /* Warning amber → 4.70:1 ✅ AA */
+    --danger: #bd3a28;    /* Danger red → 4.85:1 ✅ AA */
 
-    /* Modal/sheet backdrop overlays (B009 closure) — theme-aware alpha so
-       dark theme can dial up opacity for proper paper-bg separation. */
-    --overlay-strong: rgb(0 0 0 / 0.6);   /* blocking modals (AaFriction, Disclaimer) */
+    /* Status banner tints (B009) — Pulse light: cool neutrals; semantic
+       green/red kept. AA text 7-9:1 verified vs each tint bg. */
+    --status-success-bg: #e3f5ea;
+    --status-success-border: #b8e0c8;
+    --status-success-text: #1d5230;
+    --status-danger-bg: #fbe6e2;
+    --status-danger-border: #f0c4ba;
+    --status-danger-text: #8a2818;
+    --status-neutral-bg: #eef0f6;
+    --status-neutral-border: #c8cde0;
+    --status-neutral-text: #444a5e;
+    --status-info-bg: #e2f4f8;
+    --status-info-border: #b8e2ec;
+    --status-info-text: #0d4250;
+
+    /* Modal/sheet backdrop overlays (B009 closure) — theme-aware alpha. */
+    --overlay-strong: rgb(0 0 0 / 0.5);   /* blocking modals (AaFriction, Disclaimer) */
     --overlay-soft: rgb(0 0 0 / 0.3);     /* bottom sheets (ExitConfirmSheet) */
 
-    /* Istoric heatmap signature tokens — F-istoric-01 + F-istoric-03 (signature feature).
-       Semantic NOT decorative palette: heat-* = calendar tier scale, rating-* = 90-day
-       categorical bucket. Each used 2+ times across signature feature → Bugatti craft
-       justifies vault addition (vs hardcoded hex sprinkled across 2 components). */
-    --heat-usor: #d4e6cb;             /* L1 tier — usor sessions (light green) */
-    --heat-usor-text: #2f5b34;        /* L1 tier text — 7.92:1 AAA over heat-usor */
-    --heat-normal: #7fb185;           /* L2 tier — normal sessions (medium green) */
-    --heat-greu: #3d7a4a;             /* L3 tier — greu sessions (deep green) */
-    --heat-recovery: #f5ebd0;         /* Recovery tier reserved V2 deload flag */
-    --heat-recovery-border: #e6d49a;  /* Recovery tier border reserved V2 */
-    --rating-usor: #a4cfa9;           /* 90-day strip categorical green (distinct from heat-usor) */
+    /* Istoric heatmap signature tokens — F-istoric-01 + F-istoric-03.
+       Pulse light: green tier scale (usor lightest → greu deepest). */
+    --heat-usor: #d4ecdc;             /* L1 tier — usor sessions (light green) */
+    --heat-usor-text: #1d5230;        /* L1 tier text — 7.31:1 AAA over heat-usor */
+    --heat-normal: #74b58a;           /* L2 tier — normal sessions (medium green) */
+    --heat-greu: #2d7642;             /* L3 tier — greu sessions (deep green) */
+    --heat-recovery: #fbeedc;         /* Recovery tier reserved V2 deload flag */
+    --heat-recovery-border: #f0d8a8;  /* Recovery tier border reserved V2 */
+    --rating-usor: #9cd0ac;           /* 90-day strip categorical green (distinct from heat-usor) */
+
+    /* CoachTodayCard accent tokens (var(--coach-*) in CoachTodayCard.tsx).
+       Defined on the base Pulse themes now that the override palettes are
+       retired (the dark-cream inline fallbacks would be invisible on light).
+       Pulse light: teal quote + cool muted sub-text + amber lagging + muted
+       override hint. AA verified vs paper-2 #ffffff (lora 6.08:1, meta 5.07:1,
+       lagging 5.35:1, override 6.55:1). */
+    --coach-lora: #1d6b7d;            /* italic quote — Pulse aqua-deep teal */
+    --coach-meta: #686e82;            /* sub-meta (duration/count) — cool muted (= ink-3) */
+    --coach-lagging: #8f6210;         /* secondary weakness line — amber */
+    --coach-override: #565d72;        /* "Vrei altceva azi?" CTA — muted (= ink-2) */
   }
 
-  /* Dark theme — Brain Coach "mov" palette (CEO pick 2026-05-27), primary app
-     look from mockup andura-brain-coach.html. Token VALUES swapped to mov; NAMES
-     unchanged so tokenized components re-skin automatically. WCAG AA verified vs
-     paper #0a0c14 + paper-2 #14171f. Two tokens lifted off raw mockup hex for the
-     app's stricter usage: --ink-3 #7a73a0 (4.45:1 fails AA on cards) → #827bab;
-     --line-strong rgba 0.38 (~1.72:1, mockup hairline) → solid #6b5aa6 for SC
-     1.4.11 UI boundaries. Hierarchy ink>ink-2>ink-3>line-strong>line preserved. */
+  /* Dark theme — ANDURA PULSE dark (primary app look, CEO default 2026-05-27).
+     Pulse --bg/--bg-2/--ink-* values from mockup interfata-noua/index.html
+     :root,[data-theme="dark"]. NAMES unchanged so tokenized components re-skin.
+     WCAG AA verified vs paper #090b13 + paper-2 #0d101c + a representative
+     glass card surface (~#141826). Two tokens nudged off raw mockup hex for the
+     app's stricter usage: --ink-3 #6a7088 (3.61:1 on card, fails AA body) →
+     #82889e (5.02:1); --line-strong rgba(255,255,255,0.17) (~1.6:1 mockup
+     hairline) → solid #5c6278 (3.25:1) for SC 1.4.11 UI boundaries. Hierarchy
+     ink>ink-2>ink-3>line-strong>line preserved. Light --on-accent inherits
+     from :root (#0a0c14) — text-paper on a volt fill reads as near-black ink. */
   [data-theme="dark"] {
-    --paper: #0a0c14;      /* Phone bg near-black mov */
-    --paper-2: #14171f;    /* Secondary surface dark mov */
-    --ink: #f5f0ff;        /* Primary text mov → 17.47:1 ✅ AAA */
-    --ink-2: #ddd1f5;      /* Secondary text lavender → 13.49:1 ✅ AAA */
-    --ink-3: #827bab;      /* Muted text → 4.99:1 paper / 4.58:1 paper-2 ✅ AA */
-    --line: rgba(159,129,255,0.18); /* Decorative purple hairline — warmer + 12.5% more visible (mockup verbatim baseline) */
-    --line-strong: #7867b6;/* UI boundary → 3.96:1 / 3.62:1 ✅ SC 1.4.11 — lifted from #6b5aa6 for warmer hierarchy */
-    --brick: #b596ff;      /* PRIMARY ACCENT royal violet → 8.15:1 ✅ — warmer than prior #a584ff (6.83:1), reads "premium violet" not "tech blue" (Daniel UX polish 2026-05-28) */
-    --brick-dark: #ff8585; /* Destructive-action TEXT (text-brickdark only) — mov red, 8.32:1 ✅ (light #a8351f preserved; deep purple failed as text 2.57:1) */
-    --olive: #6ee08e;      /* Energy/cardio accent — mov green */
-    --deep: #5dd6e6;       /* Rest/recovery accent — mov cyan */
-    --succ: #6ee08e;       /* Success green (mov) → 11.82:1 ✅ */
-    --warn: #f5b87a;       /* Warning amber (mov) → 11.17:1 ✅ */
-    --danger: #ff8585;     /* Danger red (mov) → 8.32:1 ✅ */
+    --paper: #090b13;      /* Pulse --bg — phone bg near-black blue */
+    --paper-2: #0d101c;    /* Pulse --bg-2 — secondary surface dark */
+    --ink: #f3f5fc;        /* Pulse --ink → 18.0:1 ✅ AAA */
+    --ink-2: #a7adc4;      /* Pulse --ink-2 → 8.81:1 ✅ AAA */
+    --ink-3: #82889e;      /* Pulse --ink-3 nudged (mockup #6a7088 = 3.61:1 on card ❌) → 5.02:1 ✅ AA */
+    --line: rgba(255,255,255,0.085); /* Pulse --line — decorative white hairline */
+    --line-strong: #5c6278;/* Pulse --line-strong nudged (mockup .17 alpha = 1.6:1 ❌) → 3.25:1 ✅ SC 1.4.11 */
+    --brick: #b6f23a;      /* PRIMARY ACCENT — Pulse --volt → 14.74:1 ✅ AAA (the signature electric lime) */
+    --brick-dark: #ff8a6e; /* Destructive-action TEXT — Pulse ember-red → 8.53:1 ✅ AA */
+    --olive: #b6f23a;      /* Energy/cardio accent — volt (Pulse primary energy hue) → 14.74:1 ✅ */
+    --deep: #4fd6e8;       /* Rest/recovery accent — Pulse aqua → 11.34:1 ✅ */
+    --succ: #7be0a0;       /* Success green (Pulse family) → 12.17:1 ✅ */
+    --warn: #ffc24f;       /* Warning amber (Pulse family) → 12.24:1 ✅ */
+    --danger: #ff7d6a;     /* Danger red (Pulse ember-red) → 7.85:1 ✅ */
 
-    /* Status banner tints (B009 dark theme) — mov palette: success keeps green,
-       danger keeps red (semantic hue identity), neutral + info retinted purple
-       so they sit coherently on the mov-dark surface instead of clashing amber-
-       brown. AA text contrast (8-11:1) verified vs each tint bg. */
-    --status-success-bg: #163024;
-    --status-success-border: #285c3c;
-    --status-success-text: #b5e8c2;
-    --status-danger-bg: #2e1418;
-    --status-danger-border: #5c2630;
-    --status-danger-text: #ffb3b3;
-    --status-neutral-bg: #221d3a;
-    --status-neutral-border: #3b316d;
-    --status-neutral-text: #ddd1f5;
-    --status-info-bg: #1d1a30;
-    --status-info-border: #3b316d;
-    --status-info-text: #c4afff;
+    /* Status banner tints (B009 dark) — Pulse: success/danger keep semantic
+       green/red, neutral + info retinted cool-blue to sit on the Pulse-dark
+       surface. AA text contrast (8-11:1) verified vs each tint bg. */
+    --status-success-bg: #0e2a1c;
+    --status-success-border: #1f5238;
+    --status-success-text: #a8e8c0;
+    --status-danger-bg: #2e1410;
+    --status-danger-border: #5c2820;
+    --status-danger-text: #ff9580;
+    --status-neutral-bg: #1a2030;
+    --status-neutral-border: #333b52;
+    --status-neutral-text: #c4cae0;
+    --status-info-bg: #0e2030;
+    --status-info-border: #1f3b52;
+    --status-info-text: #8fd4e8;
 
-    /* Dark theme overlay: dial up alpha — paper-dark already low-luma, need
-       stronger backdrop to keep modal visually separated from page bg. */
-    --overlay-strong: rgb(0 0 0 / 0.75);
-    --overlay-soft: rgb(0 0 0 / 0.5);
-
-    /* §29-H1 audit fix — Istoric heatmap tokens dark-theme parity. Audit F S1
-       finding: 7 tokens declared only in :root, missing in [data-theme="dark"]
-       (heat tier hues + recovery + rating-usor + heat-usor-text from MED-A-1).
-       Dark variants: desaturated + slightly brighter greens to maintain visual
-       tier ordering (usor=lightest, greu=deepest) over paper-dark L=0.0042.
-       Text token --heat-usor-text recalculated for AA contrast over dark heat-usor.
-       Tonal hierarchy preserved: heat-usor (lightest) < heat-normal < heat-greu. */
-    --heat-usor: #2a4a30;             /* L1 tier dark — desaturated deep green L=0.054 */
-    --heat-usor-text: #b5d9be;        /* L1 tier text dark — 8.43:1 AAA over heat-usor dark */
-    --heat-normal: #4a7a55;           /* L2 tier dark — mid green L=0.158 */
-    --heat-greu: #6b9d72;             /* L3 tier dark — brighter green L=0.295 (inverse polarity: deeper=brighter on dark) */
-    --heat-recovery: #3a3322;         /* Recovery tier dark — muted amber-brown L=0.034 */
-    --heat-recovery-border: #5a4e30;  /* Recovery border dark — visible boundary 3:1 vs paper-dark */
-    --rating-usor: #5a9d68;           /* 90-day strip categorical green dark — distinct lighter than heat-usor dark */
-  }
-
-  /* ══ PALETTE OVERRIDE LAYER — themes #3 Luxury + #4 Living Body ════════════
-     Two extra named themes selectable in cont → Teme. Both DARK designs ported
-     verbatim from their mockups (04-architecture/mockups/andura-luxury.html +
-     andura-living-body.html :root). Wired live via paletteSync (data-palette
-     attr). Clasic + Brain Coach use NO data-palette → base :root / [data-theme]
-     light/dark toggle owns them as before (zero blast radius on those two).
-
-     CASCADE: these blocks sit AFTER [data-theme="dark"] with the SAME single-
-     attribute specificity (0,1,0). Source-order tiebreak means data-palette
-     wins regardless of the light/dark toggle value — so Luxury/Living Body
-     render their fixed dark look no matter what data-theme is set to. Each
-     block redefines the COMPLETE 32-token set [data-theme="dark"] defines
-     (surfaces, ink 1-3, line + line-strong, brick/brick-dark/olive/deep,
-     succ/warn/danger, 12 status tints, 2 overlays, 7 heatmap) so no token
-     falls back to the cream :root (which would invert/wash out the surface). */
-
-  /* Luxury — bleu/champagne chiaroscuro (mockup andura-luxury.html :root).
-     paper=noir #050507, surface=carbon-2 #16161a, ink=silver, accent=champagne.
-     WCAG AA verified vs paper + paper-2 (cards). Mockup hex lifted where the
-     app's stricter card usage needed it: --ink-3 #7d7a71 (4.21:1 on paper-2,
-     FAIL) → #928e84 (5.52:1); --line-strong #6e5a2a (2.71:1 on paper-2) →
-     #8a7338 (3.94:1, champagne R>G>B family preserved). olive/deep/succ/warn/
-     danger absent from the mockup → derived in-palette, all AA as text. */
-  [data-palette="luxury"] {
-    --paper: #050507;      /* noir — phone bg near-black */
-    --paper-2: #16161a;    /* carbon-2 — secondary surface */
-    --ink: #c8c5be;        /* silver — primary text → 11.82:1 / 10.47:1 ✅ AAA */
-    --ink-2: #8a877f;      /* silver-2 — secondary text → 5.68:1 / 5.03:1 ✅ AA */
-    --ink-3: #928e84;      /* muted text → 6.23:1 / 5.52:1 ✅ AA (mockup silver-3 #7d7a71 failed 4.21:1 on paper-2) */
-    --line: rgba(212,180,131,0.14); /* champagne decorative hairline — slightly warmer + visible than mockup baseline */
-    --line-strong: #9a8246;/* UI boundary → 5.05:1 / 4.46:1 ✅ SC 1.4.11 — lifted from #8a7338 for richer warm hierarchy */
-    --brick: #d4b483;      /* PRIMARY ACCENT cognac champagne → 10.33:1 / 9.16:1 ✅ — richer than prior #c9a663 (8.84:1), reads "platinum cognac" not "mustard" (Daniel UX polish 2026-05-28) */
-    --brick-dark: #e89a9a; /* destructive-action TEXT — warm red → 9.23:1 / 8.18:1 ✅ (champagne would read as brand, not danger) */
-    --olive: #a8b878;      /* energy/cardio accent — muted gold-green → 9.5:1 / 8.41:1 ✅ */
-    --deep: #86a8cc;       /* rest/recovery accent — bleu-bright steel → 8.23:1 / 7.29:1 ✅ */
-    --succ: #7ab88a;       /* success green → 8.78:1 / 7.78:1 ✅ */
-    --warn: #e0bd75;       /* warning amber — champagne-bright → 11.35:1 / 10.06:1 ✅ */
-    --danger: #e89a9a;     /* danger red → 9.23:1 / 8.18:1 ✅ */
-
-    /* Status banner tints — champagne/bleu neutrals; semantic green/red hues
-       kept for success/danger. AA text 8-10:1 verified vs each tint bg. */
-    --status-success-bg: #15241a;
-    --status-success-border: #2c4636;
-    --status-success-text: #9fd9b0;
-    --status-danger-bg: #241416;
-    --status-danger-border: #46262c;
-    --status-danger-text: #e89a9a;
-    --status-neutral-bg: #241e12;
-    --status-neutral-border: #46402a;
-    --status-neutral-text: #e0bd75;
-    --status-info-bg: #0f1c2e;
-    --status-info-border: #2a4366;
-    --status-info-text: #9fc4e8;
-
-    /* Overlays — noir bg low-luma, strong backdrop for modal separation. */
+    /* Dark overlay: dial up alpha — Pulse-dark already low-luma, need a
+       stronger backdrop to keep modals visually separated from page bg. */
     --overlay-strong: rgb(0 0 0 / 0.78);
-    --overlay-soft: rgb(0 0 0 / 0.5);
+    --overlay-soft: rgb(0 0 0 / 0.55);
 
-    /* Heatmap — green tier scale (usor lightest → greu deepest by hue, brighter
-       on dark per inverse polarity). usor-text AA over usor tile. recovery =
-       reserved V2 deload tint; border lifted to 3:1 for visible boundary. */
-    --heat-usor: #2a3a24;             /* L1 tier — deep desaturated green */
-    --heat-usor-text: #c2d9b0;        /* L1 text → 8.01:1 ✅ AAA over heat-usor */
-    --heat-normal: #4a6a40;           /* L2 tier — mid green */
-    --heat-greu: #7a9d68;             /* L3 tier — brighter sage (deepest=brightest on dark) */
-    --heat-recovery: #3a3322;         /* recovery tier — muted champagne-brown */
-    --heat-recovery-border: #6e5e3c;  /* recovery border → 3.23:1 vs paper ✅ */
-    --rating-usor: #6a9d72;           /* 90-day strip categorical green — lighter than heat-usor */
+    /* Istoric heatmap tokens — Pulse dark parity (7 tokens). Green tier scale,
+       inverse polarity (deeper tier = brighter on dark). usor-text AA over the
+       usor tile. Tonal hierarchy: heat-usor (lightest) < heat-normal < heat-greu. */
+    --heat-usor: #1c3a28;             /* L1 tier dark — desaturated deep green */
+    --heat-usor-text: #b8e0c2;        /* L1 tier text dark — 8.59:1 AAA over heat-usor dark */
+    --heat-normal: #3d7a55;           /* L2 tier dark — mid green */
+    --heat-greu: #6bc78e;             /* L3 tier dark — brighter green (deepest=brightest on dark) */
+    --heat-recovery: #2a2a18;         /* Recovery tier dark — muted olive-brown */
+    --heat-recovery-border: #4a4a28;  /* Recovery border dark — visible boundary 3:1 vs paper-dark */
+    --rating-usor: #5ab080;           /* 90-day strip categorical green dark — distinct lighter than heat-usor dark */
 
-    /* CoachTodayCard warm-accent tokens (var(--coach-*) in CoachTodayCard.tsx).
-       Undefined on :root + [data-theme="dark"] (cream fallback shows on mov =
-       pre-existing). Defined here in-palette so the cream hex fallbacks don't
-       sit on the champagne/noir surface once dark: fires for this palette.
-       AA verified vs --paper-2 #16161a: lora 9.4:1, meta 5.03:1, lagging
-       10.06:1, override 6.6:1. */
-    --coach-lora: #d4b87a;            /* italic quote — warm champagne */
-    --coach-meta: #8a877f;            /* sub-meta (duration/count) — silver-2 family */
-    --coach-lagging: #e0bd75;         /* secondary weakness line — brighter champagne */
-    --coach-override: #b09a6a;        /* "Vrei altceva azi?" CTA — muted gold hint */
+    /* CoachTodayCard accent tokens — Pulse dark. AA verified vs card #0d101c
+       (lora 12.29:1, meta 5.38:1, lagging 10.92:1, override 8.50:1). */
+    --coach-lora: #7fdfe8;            /* italic quote — Pulse aqua (bright on dark) */
+    --coach-meta: #82889e;            /* sub-meta (duration/count) — cool muted (= ink-3) */
+    --coach-lagging: #ffb38f;         /* secondary weakness line — Pulse ember-soft */
+    --coach-override: #a7adc4;        /* "Vrei altceva azi?" CTA — muted (= ink-2) */
   }
 
-  /* ── THEME PREVIEW SCOPES (Daniel polish 2026-05-28) ─────────────────────
-     Bug observed: SettingsThemes preview swatches that referenced semantic
-     tokens (`--paper`, `--brick`) rendered in the CURRENT palette's colors
-     instead of their OWN target palette — so Clasic preview showed mov on
-     a Brain Coach user (Daniel: "preview la themes e buguit").
-
-     Fix architecture: scope each preview card to its OWN palette via a
-     scoped data attribute. The card's children resolve tokens from these
-     local definitions instead of the document-level palette tokens — so
-     each preview is a TRUE mini-snapshot regardless of the active palette.
-
-     Same token catalog as the live palette blocks (just the ones the swatch
-     uses), specificity 0,1,0 so existing rules don't override mid-tree. */
-  [data-preview-palette="clasic"] {
-    --paper: #faf7f1;
-    --paper-2: #f3ede1;
-    --ink: #1a1815;
-    --brick: #c8412e;
-    --line-strong: #9a8770;
+  /* Light theme — Pulse light. The :root above is already the Pulse-light
+     default; this selector mirrors it so an explicit data-theme="light" (user
+     picked Light) resolves identically. Token VALUES intentionally equal :root.
+     (Kept as a distinct block for parity with themeSync, which always sets a
+     concrete data-theme attribute; without it a future :root override could
+     drift from the light look.) */
+  [data-theme="light"] {
+    --paper: #eef0f6;
+    --paper-2: #ffffff;
+    --ink: #12141f;
+    --ink-2: #565d72;
+    --ink-3: #686e82;
+    --line: rgba(12, 16, 30, 0.09);
+    --line-strong: #787e92;
+    --brick: #477006;
+    --brick-dark: #bd3a28;
+    --olive: #557428;
+    --deep: #1d6b7d;
+    --succ: #2d7642;
+    --warn: #8f6210;
+    --danger: #bd3a28;
+    --status-success-bg: #e3f5ea;
+    --status-success-border: #b8e0c8;
+    --status-success-text: #1d5230;
+    --status-danger-bg: #fbe6e2;
+    --status-danger-border: #f0c4ba;
+    --status-danger-text: #8a2818;
+    --status-neutral-bg: #eef0f6;
+    --status-neutral-border: #c8cde0;
+    --status-neutral-text: #444a5e;
+    --status-info-bg: #e2f4f8;
+    --status-info-border: #b8e2ec;
+    --status-info-text: #0d4250;
+    --overlay-strong: rgb(0 0 0 / 0.5);
+    --overlay-soft: rgb(0 0 0 / 0.3);
+    --heat-usor: #d4ecdc;
+    --heat-usor-text: #1d5230;
+    --heat-normal: #74b58a;
+    --heat-greu: #2d7642;
+    --heat-recovery: #fbeedc;
+    --heat-recovery-border: #f0d8a8;
+    --rating-usor: #9cd0ac;
+    --coach-lora: #1d6b7d;
+    --coach-meta: #686e82;
+    --coach-lagging: #8f6210;
+    --coach-override: #565d72;
   }
-  [data-preview-palette="brain-coach"] {
-    --paper: #0a0c14;
-    --paper-2: #14171f;
-    --ink: #f5f0ff;
-    --brick: #b596ff;
-    --line-strong: #7867b6;
-  }
-  [data-preview-palette="luxury"] {
-    --paper: #050507;
-    --paper-2: #16161a;
-    --ink: #c8c5be;
-    --brick: #d4b483;
-    --line-strong: #9a8246;
-  }
-  [data-preview-palette="living-body"] {
-    --paper: #03050a;
-    --paper-2: #07090f;
-    --ink: #f0eadb;
-    --brick: #dbb182;
-    --line-strong: #9d8348;
-  }
 
-  /* Living Body — warm dark earth + gold (mockup andura-living-body.html :root).
-     paper=bg #03050a, surface=bg-2 #07090f, ink=ivory #f0eadb, accent=warm gold
-     #d4a574. All four mockup base tokens already pass WCAG AA on both surfaces
-     (the mockup's own lift), ported verbatim. olive/deep/succ/warn/danger +
-     line-strong + status + heatmap absent from the mockup → derived in-palette
-     (warm earthy hues), all AA verified vs paper + paper-2. */
-  [data-palette="living-body"] {
-    --paper: #03050a;      /* bg — phone bg very dark warm earth */
-    --paper-2: #07090f;    /* bg-2 — secondary surface */
-    --ink: #f0eadb;        /* ivory — primary text → 16.99:1 / 16.58:1 ✅ AAA */
-    --ink-2: #b8b0a0;      /* secondary text → 9.47:1 / 9.25:1 ✅ AAA */
-    --ink-3: #8b8470;      /* muted text → 5.47:1 / 5.34:1 ✅ AA */
-    --line: rgba(219,177,130,0.14); /* gold decorative hairline — slightly warmer + visible than mockup baseline */
-    --line-strong: #9d8348;/* UI boundary → 5.00:1 / 4.86:1 ✅ SC 1.4.11 — lifted from #8a7038 for richer warm hierarchy */
-    --brick: #dbb182;      /* PRIMARY ACCENT amber-gold → 10.31:1 / 10.07:1 ✅ — richer than prior #d4a574 (9.16:1), warmer earth resonance (Daniel UX polish 2026-05-28) */
-    --brick-dark: #e89a9a; /* destructive-action TEXT — warm red → 9.24:1 / 9.02:1 ✅ */
-    --olive: #a6b478;      /* energy/cardio accent — warm sage → 9.15:1 / 8.93:1 ✅ */
-    --deep: #88b8b8;       /* rest/recovery accent — warm teal → 9.32:1 / 9.09:1 ✅ */
-    --succ: #82c092;       /* success green → 9.62:1 / 9.39:1 ✅ */
-    --warn: #e6c074;       /* warning amber — distinct from gold accent → 11.8:1 / 11.52:1 ✅ */
-    --danger: #e89a9a;     /* danger red → 9.24:1 / 9.02:1 ✅ */
-
-    /* Status banner tints — warm earth neutrals; semantic green/red kept.
-       AA text 8-10:1 verified vs each tint bg. */
-    --status-success-bg: #13241a;
-    --status-success-border: #2a4634;
-    --status-success-text: #9fd9b0;
-    --status-danger-bg: #241315;
-    --status-danger-border: #46252b;
-    --status-danger-text: #e89a9a;
-    --status-neutral-bg: #241d12;
-    --status-neutral-border: #463a26;
-    --status-neutral-text: #e6c074;
-    --status-info-bg: #10211f;
-    --status-info-border: #2c4642;
-    --status-info-text: #9fcfc8;
-
-    /* Overlays — very dark bg, strong backdrop for modal separation. */
-    --overlay-strong: rgb(0 0 0 / 0.78);
-    --overlay-soft: rgb(0 0 0 / 0.5);
-
-    /* Heatmap — green tier scale (inverse polarity: deeper=brighter on dark).
-       usor-text AA over usor tile. recovery = reserved V2 deload tint. */
-    --heat-usor: #283a28;             /* L1 tier — deep desaturated green */
-    --heat-usor-text: #c2d9b8;        /* L1 text → 8.06:1 ✅ AAA over heat-usor */
-    --heat-normal: #487a4f;           /* L2 tier — mid green */
-    --heat-greu: #74a36c;             /* L3 tier — brighter sage */
-    --heat-recovery: #3a3120;         /* recovery tier — muted gold-brown */
-    --heat-recovery-border: #6e5e38;  /* recovery border → 3.22:1 vs paper ✅ */
-    --rating-usor: #6a9d6e;           /* 90-day strip categorical green — lighter than heat-usor */
-
-    /* CoachTodayCard warm-accent tokens (var(--coach-*) in CoachTodayCard.tsx).
-       Undefined on :root + [data-theme="dark"] (cream fallback shows on mov =
-       pre-existing). Defined here in-palette so the cream hex fallbacks don't
-       sit on the warm-gold/earth surface once dark: fires for this palette.
-       AA verified vs --paper-2 #07090f: lora 8.94:1, meta 9.25:1, lagging
-       11.52:1, override 8.64:1. */
-    --coach-lora: #dbb182;            /* italic quote — warm amber-gold (= brick accent, polished 2026-05-28) */
-    --coach-meta: #b8b0a0;            /* sub-meta (duration/count) — warm muted (= ink-2) */
-    --coach-lagging: #e6c074;         /* secondary weakness line — brighter amber */
-    --coach-override: #c0a878;        /* "Vrei altceva azi?" CTA — muted gold hint */
-  }
+  /* ══ LEGACY PALETTES RETIRED — only Andura Pulse remains (2026-05-29) ════
+     Daniel: "doar asta o sa ramana" (only Pulse stays). The four prior named
+     palettes collapsed to ONE design system. The two OVERRIDE palettes that
+     lived here as [data-palette="luxury"] + [data-palette="living-body"]
+     token blocks (each a full 32-token dark set) + the four
+     [data-preview-palette=...] swatch-scope blocks + their body radial-glow
+     rules (further down) are REMOVED. paletteSync.ts no longer maps any id to
+     data-palette, so these selectors would never match — deleted to keep the
+     token layer a single source of truth (Pulse light :root + Pulse dark
+     [data-theme="dark"]). Accent-swap (volt/aqua/ember/violet) is a Phase 2
+     runtime picker — no token wiring exists for it yet (the mockup set --accent
+     directly; the app keys the primary accent off --brick). */
 
   /* LOCK V1 D056 — focus-visible global outline WCAG SC 2.4.7 (DECISIONS.md §D056)
      W4-AUDIT-DEEPER chat 5 CRIT a11y DIM 3 KEYBOARD — global focus-visible.
@@ -797,6 +757,82 @@
   .animate-aurora-1 { animation: andura-aurora-1 32s ease-in-out infinite; }
   .animate-aurora-2 { animation: andura-aurora-2 38s ease-in-out infinite; }
   .animate-aurora-3 { animation: andura-aurora-3 44s ease-in-out infinite; }
+
+  /* ══ PULSE MOTION LANGUAGE (ported from interfata-noua/index.html) ════════
+     Daniel-approved Pulse redesign. These ADD the Pulse-specific motion idioms
+     on top of the existing andura-* set (which stays — well-tested, tasteful):
+       - gradShift  → animated gradient on .pulse-gradtext / .btn-grad text
+       - shine      → diagonal light sweep across primary/grad buttons
+       - auraSpin   → conic aura ring behind hero orbs (.pulse-orb-aura)
+       - glowBreath → opacity pulse for "live" indicators (.pulse-live-glow)
+     Every animation duration is divided by a --motion intensity factor (0-10
+     → 0.0-1.0, applyTheme sets --motion = picker/10) so motion can be dialed
+     down globally; max(var(--motion),.4) floors the divisor so it never stalls.
+     All auto-collapse under prefers-reduced-motion via the global * cap below,
+     and a [data-calm="1"] escape (motion=0) hard-stops the loops too. */
+  @keyframes pulse-grad-shift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+  @keyframes pulse-shine { 0% { transform: translateX(-130%) skewX(-18deg); } 55%, 100% { transform: translateX(260%) skewX(-18deg); } }
+  @keyframes pulse-aura-spin { to { transform: rotate(360deg); } }
+  @keyframes pulse-glow-breath { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+  @keyframes pulse-ring { 0% { transform: scale(0.82); opacity: 0.55; } 70%, 100% { transform: scale(1.25); opacity: 0; } }
+
+  /* Animated gradient text/fill (volt→aqua). Pair with bg-clip:text for a
+     headline, or use .pulse-grad-bg for a filled element. */
+  .pulse-gradtext {
+    background: var(--grad-pulse);
+    background-size: 220% 220%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: pulse-grad-shift calc(6s / max(var(--motion), 0.4)) ease-in-out infinite;
+  }
+  .pulse-grad-bg {
+    background: var(--grad-pulse);
+    background-size: 220% 220%;
+    animation: pulse-grad-shift calc(6s / max(var(--motion), 0.4)) ease-in-out infinite;
+  }
+  /* Diagonal shine sweep — apply to a relative+overflow-hidden button; the
+     pseudo sweeps a translucent band across it. */
+  .pulse-shine { position: relative; overflow: hidden; }
+  .pulse-shine::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 38%;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    transform: translateX(-130%) skewX(-18deg);
+    animation: pulse-shine calc(4.5s / max(var(--motion), 0.4)) ease-in-out infinite;
+  }
+  /* Conic aura ring behind a hero orb (aqua), slow spin. */
+  .pulse-orb-aura {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    background: conic-gradient(from 0deg, transparent 0deg, color-mix(in oklab, var(--aqua) 45%, transparent) 90deg, transparent 200deg);
+    filter: blur(7px);
+    animation: pulse-aura-spin calc(8s / max(var(--motion), 0.4)) linear infinite;
+    opacity: 0.55;
+  }
+  .pulse-live-glow { animation: pulse-glow-breath calc(2.6s / max(var(--motion), 0.4)) ease-in-out infinite; }
+  .pulse-ring { animation: pulse-ring calc(2.4s / max(var(--motion), 0.4)) ease-out infinite; }
+
+  /* Calm escape — motion=0 (applyTheme sets data-calm="1") hard-stops the
+     looping Pulse idioms (the entrance andura-* one-shots are unaffected). */
+  [data-calm="1"] .pulse-gradtext,
+  [data-calm="1"] .pulse-grad-bg,
+  [data-calm="1"] .pulse-shine::after,
+  [data-calm="1"] .pulse-orb-aura,
+  [data-calm="1"] .pulse-live-glow,
+  [data-calm="1"] .pulse-ring,
+  [data-calm="1"] .animate-aurora-1,
+  [data-calm="1"] .animate-aurora-2,
+  [data-calm="1"] .animate-aurora-3 {
+    animation: none !important;
+  }
 }
 
 /* §6-C1 audit fix — prefers-reduced-motion vestibular safety (WCAG 2.3.3).
@@ -810,12 +846,14 @@
   }
 }
 
-/* Base resets parity mockup body/html — adapted for React app shell (NU phone scaffold mockup dark frame) */
+/* Base resets — Andura Pulse body shell. Default body font = Manrope (Pulse
+   --font-body) with Inter + system fallback. Display/mono assigned per element
+   via .font-display / .font-mono (Tailwind) → Space Grotesk / Space Mono. */
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--paper, #faf7f1);
-  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--paper, #eef0f6);
+  font-family: var(--font-body, 'Manrope Variable', 'Inter', system-ui, sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* §15-M4 audit fix — prevent Android Chrome pull-to-refresh reload mid-workout
@@ -824,58 +862,25 @@ html, body {
   overscroll-behavior: contain;
 }
 
-/* Brain Coach mov ambient — radial glow behind the app column (mockup
-   andura-brain-coach.html body bg). Scoped to dark so light theme keeps its
-   flat cream surface. fixed background-attachment keeps the glow anchored to
-   the top while content scrolls. */
+/* Pulse-dark ambient — radial glow behind the app column (mockup
+   interfata-noua/index.html --bg-grad: radial 120% 80% at 50% -10%, #131830 →
+   #090b13). Scoped to dark so light theme keeps its flat cool surface. fixed
+   background-attachment anchors the glow to the top while content scrolls.
+   (Legacy Luxury + Living Body body-glow rules retired with their palettes.) */
 [data-theme="dark"] body {
-  background: radial-gradient(ellipse at 50% 0%, #1a1530, #050608 70%);
-  background-attachment: fixed;
-}
-
-/* Luxury + Living Body ambient — each ports its mockup's body radial glow.
-   Same specificity (0,1,1) as the dark rule above; placed after so the palette
-   glow wins for any data-theme value (overrides the mov glow when both set). */
-[data-palette="luxury"] body {
-  background: radial-gradient(ellipse at 50% 0%, #0a0d12, #020203 60%);
-  background-attachment: fixed;
-}
-[data-palette="living-body"] body {
-  background: radial-gradient(ellipse at 50% 40%, #0a0d14, #000 80%);
+  background: radial-gradient(120% 80% at 50% -10%, #131830 0%, #090b13 60%);
   background-attachment: fixed;
 }
 
 #root {
   min-height: 100vh;
-  color: var(--ink, #1a1815);
-  /* Desktop framing — constrain to mobile-frame width on screens >480px.
-     PWA mobile-first: pe telefon viewport ≤480px = full-width preserve.
-     Pe desktop browser = centered mobile column (430px = max iPhone Pro Max
-     width) cu paper bg flanking. Subtle box-shadow visual phone-frame hint.
-
-     NOTE 2026-05-28 — `transform: translateZ(0)` REMOVED (was creating a
-     containing block that broke `position: fixed` for BottomNav/SessionPill
-     on scroll — they pinned to #root bottom, not viewport, so they scrolled
-     off-screen on long pages). Daniel live-smoke bug: "bara de jos cu
-     antrenor/progres/istoric/cont dispare cand dai scroll". Fix: keep #root
-     a natural mobile column (no containing-block side effect) + give each
-     `position: fixed` column-anchored component its own desktop-centering
-     (max-width + left:50% + translateX). See `.app-fixed-column` utility
-     below (used by BottomNav/SessionPill/Toast/InstallPrompt/UpdatePrompt/
-     OfflineBanner). Modals stay `inset-0` viewport-wide (correct overlay
-     behavior).
-
-     Phone-frame polish 2026-05-28 (Daniel "in browser vreau sa o faci mai
-     mica nu cat tot ecranul" + "sa atraga omul sa stea pe ea"): the column
-     already maxes at 430px, but on light Clasic the column bg = body bg =
-     cream → visually flush. The desktop @media block below lifts the column
-     OFF the page with: stronger shadow, rounded corners, hairline ring, and
-     a paper bg explicit so the body stage (tinted via body::before below)
-     surrounds it visibly. Mobile (≤480px) stays edge-to-edge — zero phone
-     frame, zero shadow, identical to current mobile look (PWA invariant). */
+  color: var(--ink, #12141f);
+  /* Mobile-first (≤767px) — edge-to-edge column, zero phone frame (PWA
+     invariant). The desktop bezel below is opt-in via @media >=768px only.
+     SubHeader sticky-top-0 sticks to the viewport scroll; BottomNav fixed-
+     bottom-0 pins to the viewport — both correct on a real phone. */
   /* Mobile-frame column width — single source so #root + the fixed chrome
-     (.app-fixed-column*) stay aligned. Desktop (>=768px) dials it down a bit
-     per Daniel 2026-05-28 ("pe desktop mai mic putin, nu cat un telefon"). */
+     (.app-fixed-column*) stay aligned. Desktop (>=768px) dials it down a bit. */
   --app-col-w: 430px;
   max-width: var(--app-col-w);
   margin-left: auto;
@@ -883,33 +888,91 @@ html, body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
-/* Desktop phone-frame stage (≥768px) — Daniel 2026-05-28 polish pass A6.
-   The phone column gets a luxury "device-on-stage" treatment so the desktop
-   visitor reads it as a PRODUCT, not a stretched web app. The visible cues:
-     1. The column bg = explicit var(--paper) so it separates against the
-        tinted body stage below (without this, light Clasic = column blends
-        flat with body).
-     2. A layered luxury shadow lifts the column off the page (ambient outer
-        depth + accent-tinted halo via --brick color-mix, palette-aware).
-     3. A 1px hairline ring (--line-strong color-mix) draws a soft device
-        boundary so the column edge reads as a defined surface even on
-        light themes.
-   NO margins / NO border-radius / NO overflow — the column extends full
-   viewport height so SubHeader sticky-top-0 + BottomNav fixed-bottom-0 stay
-   aligned with the column. The luxury read comes from shadow + ring + body
-   stage tint, NOT from physical chrome (which would create alignment issues
-   with the sticky/fixed chrome layers). */
+/* ══ DESKTOP PHONE BEZEL (≥768px) — Andura Pulse device frame ══════════════
+   Daniel-approved Pulse redesign ports the mockup PhoneFrame (app.jsx: bezel +
+   notch, 402×856, radius 52px, screen radius 42px). On desktop the app reads as
+   a real DEVICE ON A STAGE, not a stretched web column. Mobile (<768px) stays
+   edge-to-edge (PWA invariant) — this whole block is desktop-only.
+
+   SOLVING the sticky/fixed alignment that blocked a physical frame before
+   (prior NOTE: a containing block on #root made BottomNav/SessionPill pin to
+   #root and scroll off): here that is the DESIRED behavior. #root becomes the
+   device SCREEN — a fixed-size (var(--device-w/h)), centered, internally-
+   scrolling surface (overflow-y:auto). Giving it `transform: translateZ(0)`
+   makes #root the containing block for its `position: fixed` descendants, so:
+     - BottomNav (.app-fixed-column, fixed bottom-0) pins to the SCREEN bottom
+       and stays put while inner content scrolls ✓
+     - SubHeader (sticky top-0) sticks to the #root scroll container top ✓
+     - .app-fixed-column centering (left:50%/translateX) is overridden to span
+       the screen edge-to-edge (left/right:0) since #root IS the column now ✓
+   The bezel itself is drawn by #root::before (the dark frame ring + outer
+   shadow, sitting behind the screen via a larger inset) and the notch by
+   #root::after (pill on top of the screen). The screen clips its content with
+   border-radius + overflow-hidden so rounded corners read like glass. */
 @media (min-width: 768px) {
+  html, body {
+    /* Stage: center the device in the viewport, hide overflow so the bezel
+       shadow doesn't create scrollbars. */
+    height: 100%;
+    overflow: hidden;
+  }
+  body {
+    display: grid;
+    place-items: center;
+  }
   #root {
+    /* Device screen dimensions (mockup 402×856 inner). Scale down a touch on
+       short viewports so the whole device + bezel fits without clipping. */
+    --device-w: 402px;
+    --device-h: min(856px, calc(100vh - 48px));
+    --bezel: 11px;
+    --screen-radius: 42px;
+    --app-col-w: var(--device-w);
+    position: relative;
+    width: var(--device-w);
+    height: var(--device-h);
+    min-height: 0;
+    max-width: none;
+    margin: 0;
     background: var(--paper);
-    /* Desktop column a touch narrower than the 430px mobile frame (Daniel
-       2026-05-28 "pe desktop mai mic putin"). Not phone-tiny — just less wide
-       on big screens. Fixed chrome reads the same var, so it stays aligned. */
-    --app-col-w: 400px;
+    border-radius: var(--screen-radius);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    /* Establish a containing block for fixed descendants (BottomNav/chrome)
+       so they pin to the SCREEN, not the viewport. This is the deliberate
+       reversal of the 2026-05-28 removal — now #root IS the device, so the
+       chrome SHOULD pin to it. */
+    transform: translateZ(0);
+    /* Bezel ring (drawn via outline-like box-shadow spread) + outer depth +
+       accent halo. The dark ring spread = --bezel; the inset highlight gives
+       the metal edge sheen (mockup bezel gradient #23262f→#0a0b10). */
     box-shadow:
-      0 0 0 1px color-mix(in oklab, var(--line-strong) 40%, transparent),
-      0 24px 64px -20px color-mix(in oklab, black 50%, transparent),
-      0 10px 28px -10px color-mix(in oklab, var(--brick) 22%, transparent);
+      0 0 0 var(--bezel) #0a0b10,
+      0 0 0 calc(var(--bezel) + 2px) #000,
+      0 1px 1px rgba(255, 255, 255, 0.12) inset,
+      0 40px 90px -30px rgba(0, 0, 0, 0.9),
+      0 24px 64px -20px color-mix(in oklab, var(--brick) 18%, transparent);
+  }
+  #root::-webkit-scrollbar { width: 0; height: 0; }
+  /* Notch — pill on top of the screen (mockup .notch 120×30, speaker + cam).
+     #root has transform:translateZ(0) so it is the containing block for its
+     fixed descendants: a fixed pseudo at top:0/left:50% pins to the SCREEN
+     top-center (not the viewport) and stays put as inner content scrolls.
+     pointer-events:none so it never blocks taps on the chrome beneath it. */
+  #root::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 28px;
+    border-radius: 0 0 16px 16px;
+    background: #000;
+    z-index: 60;
+    pointer-events: none;
   }
 }
 
@@ -925,21 +988,14 @@ html, body {
   }
 }
 
-/* Desktop stage tint — dark themes (≥768px) deepen the existing radial glow
-   so the column has more visible perimeter contrast vs the surround. The
-   :root rules above already set body bg for dark themes; here we lift the
-   intensity for desktop only. Mobile keeps the gentler glow. */
+/* Desktop stage tint — Pulse-dark (≥768px) deepens the radial glow so the
+   column has more visible perimeter contrast vs the surround. The dark body
+   rule above already sets the base Pulse glow; here we lift the intensity for
+   desktop only. Mobile keeps the gentler glow. (Legacy palette desktop rules
+   retired with Luxury + Living Body.) */
 @media (min-width: 768px) {
   [data-theme="dark"] body {
-    background: radial-gradient(ellipse at 50% 0%, #221a40, #030308 70%);
-    background-attachment: fixed;
-  }
-  [data-palette="luxury"] body {
-    background: radial-gradient(ellipse at 50% 0%, #15191f, #010102 60%);
-    background-attachment: fixed;
-  }
-  [data-palette="living-body"] body {
-    background: radial-gradient(ellipse at 50% 40%, #131720, #000 80%);
+    background: radial-gradient(140% 100% at 50% -10%, #1a2147 0%, #05060c 65%);
     background-attachment: fixed;
   }
 }
@@ -968,14 +1024,39 @@ html, body {
   max-width: calc(var(--app-col-w, 430px) - 1.5rem);
 }
 
+/* Desktop bezel (≥768px) — #root is the device screen + the containing block
+   for these `position: fixed` chrome elements (it has transform:translateZ(0)),
+   so they already pin to the SCREEN, not the viewport. Anchor them edge-to-edge
+   across the screen (left/right:0, no translateX) so BottomNav + the inset pill
+   align to the device width without the viewport-centering math. The screen's
+   border-radius + overflow-hidden keeps the bottom nav corners inside the glass. */
+@media (min-width: 768px) {
+  .app-fixed-column {
+    left: 0;
+    right: 0;
+    transform: none;
+    max-width: none;
+    width: 100%;
+  }
+  .app-fixed-column--inset {
+    left: 0;
+    right: 0;
+    transform: none;
+    width: auto;
+    max-width: none;
+    margin-left: 0.75rem;
+    margin-right: 0.75rem;
+  }
+}
+
 /* ══ AMBIENT PARTICLES — per-theme background motes (Wave C3 motion pass) ═══
    Three diagonal points of light drifting very slowly across the app column.
    Pure CSS — single ::before/::after layer + a third box-shadow node. The
    particles sit BEHIND content (z-index: 0 on body::before, content sits on
    #root with stacking context). Opacity capped low (0.06-0.10) so they read
-   as a "live surface" not as foreground noise. Light theme (Clasic) skips
-   the particle layer — flat cream is the brand. Each dark theme uses a hue
-   pulled from its --brick accent so the motes auto-tint per palette.
+   as a "live surface" not as foreground noise. Pulse light theme skips the
+   particle layer — the flat cool surface is the brand. Pulse dark tints the
+   motes off the --brick (volt) accent.
 
    Vestibular safety: 32s cycle is well below the threshold for movement-
    triggered discomfort, and prefers-reduced-motion completely halts them
@@ -986,9 +1067,7 @@ html, body {
    third gradient with a different cycle offset so the cluster never reads
    as "two synced lights". On mobile (≤480px) the gradient stops are tighter
    so the motes don't sprawl off-column. */
-[data-theme="dark"] body::before,
-[data-palette="luxury"] body::before,
-[data-palette="living-body"] body::before {
+[data-theme="dark"] body::before {
   content: '';
   position: fixed;
   inset: 0;
@@ -1002,9 +1081,7 @@ html, body {
   opacity: 0.08;
   animation: andura-ambient-drift 32s ease-in-out infinite;
 }
-[data-theme="dark"] body::after,
-[data-palette="luxury"] body::after,
-[data-palette="living-body"] body::after {
+[data-theme="dark"] body::after {
   content: '';
   position: fixed;
   inset: 0;

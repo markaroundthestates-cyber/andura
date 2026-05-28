@@ -1,19 +1,20 @@
 // ══ PALETTE SYNC — palette picker ↔ documentElement.data-palette ══════════
 // Wires the cont → Teme palette selection (localStorage `wv2-palette-theme`)
-// to `<html data-palette>` so the override blocks in global.css can react.
-// Mirrors themeSync.ts.
+// to `<html data-palette>`. Mirrors themeSync.ts.
 //
-// Two of the four palettes are OVERRIDES with their own fixed dark look:
-//   - 'luxury'      → data-palette="luxury"
-//   - 'living-body' → data-palette="living-body"
-// The other two use NO data-palette so the base :root / [data-theme] light↔dark
-// toggle (themeSync) owns them:
-//   - 'clasic'      → attribute removed
-//   - 'brain-coach' → attribute removed (default)
+// ANDURA PULSE (2026-05-29) — the override palettes are RETIRED. The Pulse
+// redesign collapsed the four named palettes into ONE design system (Daniel:
+// "doar asta o sa ramana"). The [data-palette="luxury"|"living-body"] token
+// blocks in global.css are deleted, so setting data-palette would have NO
+// effect. applyPalette therefore CLEARS data-palette for every id; the base
+// :root (Pulse light) + [data-theme] light↔dark toggle (themeSync) own the
+// look. The PaletteTheme type + STORAGE_KEY are kept so the existing picker +
+// persisted selections keep parsing (a stored 'luxury' just resolves to the
+// base theme — graceful, no error). A future Phase 2 picker reduction can
+// drop the dead ids.
 //
 // Two entry points (parity themeSync):
-//   - `applyInitialPalette()` — synchronous pre-mount read from localStorage to
-//     prevent a palette flash on first paint (anti-FOUC).
+//   - `applyInitialPalette()` — synchronous pre-mount read from localStorage.
 //   - `<PaletteSync />` — re-applies on mount; live picker updates call
 //     `applyPalette(...)` directly (no store subscription — palette lives in
 //     plain localStorage, not the zustand settings store).
@@ -22,20 +23,15 @@ const STORAGE_KEY = 'wv2-palette-theme';
 
 export type PaletteTheme = 'clasic' | 'living-body' | 'luxury' | 'brain-coach';
 
-const OVERRIDE_PALETTES: ReadonlySet<PaletteTheme> = new Set(['luxury', 'living-body']);
-
 /**
- * Set (or clear) documentElement.data-palette for a palette id. Override
- * palettes get the attribute; clasic/brain-coach remove it so the base
- * light/dark theme applies. Exported so the picker can apply live on click.
+ * Clear documentElement.data-palette for any palette id. With the Pulse
+ * redesign no palette is an override (the override CSS blocks are retired),
+ * so the base :root / [data-theme] light↔dark theme always owns the look.
+ * Exported so the picker can apply live on click.
  */
-export function applyPalette(palette: PaletteTheme): void {
+export function applyPalette(_palette: PaletteTheme): void {
   if (typeof document === 'undefined') return;
-  if (OVERRIDE_PALETTES.has(palette)) {
-    document.documentElement.dataset.palette = palette;
-  } else {
-    delete document.documentElement.dataset.palette;
-  }
+  delete document.documentElement.dataset.palette;
 }
 
 function readPalette(): PaletteTheme {

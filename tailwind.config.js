@@ -10,29 +10,29 @@ export default {
     './src/**/*.{js,jsx,ts,tsx}',
     '!./src/_legacy-vanilla/**',
   ],
-  // dark: variant fires under the mov dark theme ([data-theme="dark"]) AND under
-  // the two OVERRIDE palettes (Luxury + Living Body), which are fixed-dark designs
-  // applied via <html data-palette> by paletteSync.ts WITHOUT setting data-theme.
-  // Without the palette selectors here, a LIGHT-mode user selecting a dark palette
-  // got the CSS token override (--paper -> noir etc.) but NOT the dark: utilities
-  // (~29 dark: usages across 13 components) -> light styling on a dark surface.
-  // Tailwind v3 'variant' array form: each format MUST contain '&' (validated in
-  // corePlugins darkMode), addVariant emits the utility under EACH selector (OR).
-  // :where() keeps specificity at 0,1,0 (parity with the prior 'selector' form).
+  // dark: variant fires under the Pulse dark theme ([data-theme="dark"]).
+  // ANDURA PULSE (2026-05-29) — the two OVERRIDE palettes (Luxury + Living
+  // Body) are RETIRED, so the prior [data-palette=...] dark: branches are
+  // dropped (they would never match — paletteSync no longer sets data-palette).
+  // Tailwind v3 'variant' array form kept (each format MUST contain '&',
+  // validated in corePlugins darkMode); :where() keeps specificity at 0,1,0
+  // (parity with the prior 'selector' form, no specificity regression).
   darkMode: [
     'variant',
-    [
-      '&:where([data-theme="dark"], [data-theme="dark"] *)',
-      '&:where([data-palette="luxury"], [data-palette="luxury"] *)',
-      '&:where([data-palette="living-body"], [data-palette="living-body"] *)',
-    ],
+    ['&:where([data-theme="dark"], [data-theme="dark"] *)'],
   ],
   theme: {
     extend: {
+      // Andura Pulse fonts (2026-05-29) — self-hosted @fontsource (CSP-safe,
+      // declared @font-face in src/styles/global.css). sans→Manrope (body),
+      // display→Space Grotesk (headings/numerals), mono→Space Mono (labels).
+      // Inter retained as system fallback. serif→Lora kept for the Splash
+      // tagline pairing (italic coach-quote, intentionally distinct).
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Manrope Variable', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Space Grotesk Variable', 'Inter', 'system-ui', 'sans-serif'],
         serif: ['Lora', 'Georgia', 'serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        mono: ['Space Mono', 'ui-monospace', 'monospace'],
       },
       colors: {
         paper: 'var(--paper)',
