@@ -510,6 +510,13 @@
     "bodyMeasurements": "Body measurements",
     "lastMeasurement": "Last measurement",
     "alertsToday": "Alerts today",
+    "zone": {
+      "obiectiv": "Goal",
+      "azi": "Today",
+      "tendinta": "Trend",
+      "actiuni": "Actions",
+      "logManual": "Manual log"
+    },
     "measurements": {
       "waist": "Waist",
       "chest": "Chest",

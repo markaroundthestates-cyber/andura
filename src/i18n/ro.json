@@ -510,6 +510,13 @@
     "bodyMeasurements": "Masuratori corp",
     "lastMeasurement": "Ultima masurare",
     "alertsToday": "Alerte azi",
+    "zone": {
+      "obiectiv": "Obiectiv",
+      "azi": "Azi",
+      "tendinta": "Tendinta",
+      "actiuni": "Actiuni",
+      "logManual": "Log manual"
+    },
     "measurements": {
       "waist": "Talie",
       "chest": "Piept",
