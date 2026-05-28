@@ -260,6 +260,53 @@ describe('SettingsNotifications — FCM push wiring (handleToggle)', () => {
     await waitFor(() => expect(useSettingsStore.getState().notificationsEnabled).toBe(false));
   });
 
+  // §F-perceived-perf 2026-05-28 — Daniel verbatim "butonul de notificari merge
+  // cu un foarte mare delay". OFF goes optimistic: store flag flips before
+  // disablePushNotifications resolves (no awaited teardown blocking UI).
+  it('toggle-off optimistic: store flag flips before disablePushNotifications resolves', async () => {
+    useSettingsStore.setState({ notificationsEnabled: true });
+    // Make disable hang so we can observe the optimistic flip BEFORE it
+    // resolves (true optimistic UI: store flag is OFF while teardown is still
+    // pending in the background).
+    let resolveDisable: () => void = () => {};
+    mockDisablePush.mockImplementationOnce(
+      () => new Promise<void>((res) => { resolveDisable = res; }),
+    );
+    renderScreen();
+    fireEvent.click(screen.getByTestId('notif-master-toggle'));
+    // Sync check: flag should be OFF right after click, NOT after disable
+    // resolves. (Previously: `await disablePushNotifications()` first, so
+    // flag stayed ON for the 1-2s teardown window — that's the lag bug.)
+    expect(useSettingsStore.getState().notificationsEnabled).toBe(false);
+    // Disable was called (background work in flight).
+    expect(mockDisablePush).toHaveBeenCalledTimes(1);
+    // Resolve so cleanup is clean.
+    resolveDisable();
+    await waitFor(() => expect(useSettingsStore.getState().notificationsEnabled).toBe(false));
+  });
+
+  // §F-perceived-perf — Pending state visible while ON path awaits FCM setup.
+  // Daniel's perception bug = button looked frozen. Pending indicator shows
+  // immediately, disappears when async finishes, and disables the toggle to
+  // prevent double-click queue.
+  it('toggle-on shows pending state while enablePushNotifications resolves', async () => {
+    useSettingsStore.setState({ notificationsEnabled: false });
+    let resolveEnable: (r: 'granted') => void = () => {};
+    mockEnablePush.mockImplementationOnce(
+      () => new Promise((res) => { resolveEnable = res; }),
+    );
+    renderScreen();
+    fireEvent.click(screen.getByTestId('notif-master-toggle'));
+    // Pending indicator visible while async work runs.
+    await waitFor(() => expect(screen.queryByTestId('notif-master-pending')).toBeInTheDocument());
+    // Toggle disabled to block double-click queueing.
+    expect(screen.getByTestId('notif-master-toggle')).toBeDisabled();
+    // Resolve enable; pending should clear.
+    resolveEnable('granted');
+    await waitFor(() => expect(screen.queryByTestId('notif-master-pending')).not.toBeInTheDocument());
+    expect(screen.getByTestId('notif-master-toggle')).not.toBeDisabled();
+  });
+
   it('schimbare frecventa declanseaza syncNotificationPrefs', () => {
     renderScreen();
     fireEvent.click(screen.getByTestId('notif-freq-saptamanal'));
