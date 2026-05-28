@@ -158,7 +158,7 @@ export function SetLogInput({
           onClick={onLog}
           disabled={!Number.isFinite(reps) || reps < 1}
           data-testid="setlog-tinta-log-btn"
-          className="w-full flex items-center justify-center gap-2 p-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px] transition-transform active:scale-[.97] disabled:opacity-50"
+          className="btn-primary-lift w-full flex items-center justify-center gap-2 p-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px] disabled:opacity-50"
         >
           <Check className="w-5 h-5" aria-hidden="true" />
           Confirma setul

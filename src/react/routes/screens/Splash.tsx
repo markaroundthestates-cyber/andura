@@ -76,7 +76,7 @@ export function Splash(): JSX.Element {
           type="button"
           onClick={() => navigate(isAuthenticated ? '/app/antrenor' : '/auth')}
           data-testid="splash-cta"
-          className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold transition-transform active:scale-[.97]"
+          className="btn-primary-lift w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
         >
           {isAuthenticated ? 'Continua' : 'Log In'}
         </button>
@@ -84,13 +84,15 @@ export function Splash(): JSX.Element {
             user nou; o legatura subliniata slaba e prea ascunsa. Buton secundar
             proper (bordered, full-width), aliniat stilului secundar din Auth.tsx
             (border lineStrong + bg-paper2 + rounded-14) pentru consistenta
-            cross-screen + prominenta corecta. */}
+            cross-screen + prominenta corecta. UX polish 2026-05-28: btn-
+            secondary-lift adauga hover hairline-brick + press scale parity
+            cu primary, fara competa cu halo-ul primar. */}
         {!isAuthenticated && (
           <button
             type="button"
             onClick={() => navigate('/auth', { state: { mode: 'signup' } })}
             data-testid="splash-secondary"
-            className="w-full py-4 border border-lineStrong text-ink bg-paper2 rounded-[14px] text-base font-semibold transition-transform active:scale-[.97]"
+            className="btn-secondary-lift w-full py-4 border border-lineStrong text-ink bg-paper2 rounded-[14px] text-base font-semibold"
           >
             Creaza Cont
           </button>

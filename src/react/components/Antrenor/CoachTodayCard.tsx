@@ -198,7 +198,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
       <button
         type="button"
         onClick={onStart}
-        className="relative w-full mt-3.5 bg-brick text-paper rounded-md py-2.5 font-semibold transition-transform active:scale-[.97]"
+        className="btn-primary-lift relative w-full mt-3.5 bg-brick text-paper rounded-md py-2.5 font-semibold"
       >
         Incepe sesiunea
       </button>

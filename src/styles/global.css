@@ -314,6 +314,60 @@
   .body-text { font-size: var(--body); }
   .small-text { font-size: var(--small); }
   .display-text { font-size: var(--display); letter-spacing: var(--tight); }
+
+  /* ── PRIMARY CTA ELEVATION (Daniel UX polish 2026-05-28) ──────────────────
+     Optional dimensionality layer for hero/primary CTAs (Splash "Log In",
+     CoachTodayCard "Incepe sesiunea", Auth "Trimite link/Creeaza cont").
+     Adds an accent-tinted soft shadow + a 1px inner highlight so the button
+     lifts off the surface without resorting to gradients (mockup stays flat).
+     Tokenized via color-mix(--brick) so each palette gets its OWN halo (mov
+     violet, cognac champagne, amber-gold, brick red) automatically.
+
+     Reduced-motion safe: transitions auto-collapse via the global media block
+     below (animation-duration 0.01ms cascade includes transition-duration).
+     Hover lift gated on hover-capable devices (no phantom lift on touch). */
+  .btn-primary-lift {
+    box-shadow:
+      0 1px 0 color-mix(in oklab, white 18%, transparent) inset,
+      0 8px 24px -6px color-mix(in oklab, var(--brick) 35%, transparent),
+      0 2px 6px -1px color-mix(in oklab, var(--brick) 22%, transparent);
+    transition: box-shadow 180ms ease-out, transform 180ms ease-out, filter 180ms ease-out;
+  }
+  .btn-primary-lift:active {
+    box-shadow:
+      0 1px 0 color-mix(in oklab, white 10%, transparent) inset,
+      0 2px 8px -2px color-mix(in oklab, var(--brick) 28%, transparent);
+    transform: scale(0.97);
+  }
+  @media (hover: hover) {
+    .btn-primary-lift:hover {
+      filter: brightness(1.06);
+      box-shadow:
+        0 1px 0 color-mix(in oklab, white 22%, transparent) inset,
+        0 12px 28px -6px color-mix(in oklab, var(--brick) 42%, transparent),
+        0 3px 8px -1px color-mix(in oklab, var(--brick) 26%, transparent);
+    }
+  }
+  .btn-primary-lift:disabled {
+    box-shadow: none;
+    filter: none;
+  }
+
+  /* Secondary CTA hairline — for "Creaza Cont" style outlined buttons. Adds
+     a subtle accent inner glow on hover to feel responsive without competing
+     with the primary CTA's halo. Pair with bg-paper2 + border-lineStrong. */
+  .btn-secondary-lift {
+    transition: background-color 180ms ease-out, border-color 180ms ease-out, transform 180ms ease-out;
+  }
+  .btn-secondary-lift:active {
+    transform: scale(0.97);
+  }
+  @media (hover: hover) {
+    .btn-secondary-lift:hover {
+      border-color: color-mix(in oklab, var(--brick) 60%, var(--line-strong));
+      background-color: color-mix(in oklab, var(--brick) 6%, var(--paper-2));
+    }
+  }
 }
 
 /* ══ MOTION — tasteful entrance keyframes (Daniel 2026-05-27/28) ═══════════

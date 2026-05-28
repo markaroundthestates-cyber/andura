@@ -158,7 +158,7 @@ export function Onboarding(): JSX.Element {
             type="button"
             onClick={back}
             data-testid="onb-back"
-            className="px-5 py-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-sm font-semibold"
+            className="btn-secondary-lift px-5 py-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-sm font-semibold"
           >
             Inapoi
           </button>
@@ -167,7 +167,7 @@ export function Onboarding(): JSX.Element {
           type="button"
           onClick={next}
           data-testid="onb-next"
-          className="flex-1 px-5 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
+          className="btn-primary-lift flex-1 px-5 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
         >
           {isLast ? 'Gata' : 'Continua'}
         </button>

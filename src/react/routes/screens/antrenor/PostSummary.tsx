@@ -382,7 +382,7 @@ export function PostSummary(): JSX.Element {
         type="button"
         onClick={handleFinish}
         data-testid="summary-finish"
-        className="mt-auto w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold transition-transform active:scale-[.97]"
+        className="btn-primary-lift mt-auto w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
       >
         Terminat
       </button>
