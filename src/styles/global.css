@@ -873,7 +873,11 @@ html, body {
      a paper bg explicit so the body stage (tinted via body::before below)
      surrounds it visibly. Mobile (≤480px) stays edge-to-edge — zero phone
      frame, zero shadow, identical to current mobile look (PWA invariant). */
-  max-width: 430px;
+  /* Mobile-frame column width — single source so #root + the fixed chrome
+     (.app-fixed-column*) stay aligned. Desktop (>=768px) dials it down a bit
+     per Daniel 2026-05-28 ("pe desktop mai mic putin, nu cat un telefon"). */
+  --app-col-w: 430px;
+  max-width: var(--app-col-w);
   margin-left: auto;
   margin-right: auto;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
@@ -898,6 +902,10 @@ html, body {
 @media (min-width: 768px) {
   #root {
     background: var(--paper);
+    /* Desktop column a touch narrower than the 430px mobile frame (Daniel
+       2026-05-28 "pe desktop mai mic putin"). Not phone-tiny — just less wide
+       on big screens. Fixed chrome reads the same var, so it stays aligned. */
+    --app-col-w: 400px;
     box-shadow:
       0 0 0 1px color-mix(in oklab, var(--line-strong) 40%, transparent),
       0 24px 64px -20px color-mix(in oklab, black 50%, transparent),
@@ -948,7 +956,7 @@ html, body {
   right: auto;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 430px;
+  max-width: var(--app-col-w, 430px);
 }
 
 /* Variant: column-anchored but inset (12px left+right padding from column edge).
@@ -957,7 +965,7 @@ html, body {
    to preserve the floating-pill look. */
 .app-fixed-column--inset {
   width: calc(100% - 1.5rem);
-  max-width: calc(430px - 1.5rem);
+  max-width: calc(var(--app-col-w, 430px) - 1.5rem);
 }
 
 /* ══ AMBIENT PARTICLES — per-theme background motes (Wave C3 motion pass) ═══

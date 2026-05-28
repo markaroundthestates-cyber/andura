@@ -9,6 +9,14 @@
 // count modulo 4 (4-week mesocycle convention; conservative defensive
 // fallback to "1" cand sessions empty). Per Karpathy SF - local read pure
 // pre-render, NO async wire pollution.
+//
+// HERO redesign (Daniel 2026-05-28 "Kcal recomandate trebuiau sa apara sus"):
+// the recommended kcal is the most actionable number on the Progres screen, so
+// it now reads as a HERO — big tabular num-display number with a count-up
+// entrance (useCountUp, a11y-safe snap under reduced-motion), a palette-aware
+// accent bloom behind it for depth (surface-elevated + radial color-mix(--brick)),
+// and protein + source demoted to quiet secondary context. Logic, i18n keys,
+// and all testids unchanged — presentation-only.
 
 import type { JSX } from 'react';
 import { useEffect, useState, useMemo } from 'react';
@@ -18,6 +26,7 @@ import type { NutritionTarget } from '../../lib/bayesianNutritionAggregate';
 import { readBayesianNutritionContext } from '../../lib/nutritionObservations';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useNutritionStore } from '../../stores/nutritionStore';
+import { useCountUp } from '../../hooks/useCountUp';
 import { t } from '../../../i18n/index.js';
 
 function todayIso(): string {
@@ -112,13 +121,33 @@ export function TDEEStrip(): JSX.Element {
   const kcalDelta = showComparison ? loggedKcal - target.kcalTarget : 0;
   const deltaLabel = kcalDelta >= 0 ? `+${fmtNum(kcalDelta)}` : `-${fmtNum(Math.abs(kcalDelta))}`;
 
+  // HERO count-up — the primary kcal number animates into view on load.
+  // a11y: useCountUp snaps straight to the final value under prefers-reduced-
+  // motion, and inits to the final value so SSR/tests show the real number.
+  // Primary value = logged intake when comparing, else the engine target;
+  // 0 pre-load (renders '—' until target resolves).
+  const kcalPrimary = showComparison ? (loggedKcal as number) : (target?.kcalTarget ?? 0);
+  const kcalAnimated = useCountUp(kcalPrimary);
+
   return (
     <section
       data-testid="tdee-strip"
-      className="bg-paper2 border border-line rounded-2xl p-4 mb-4"
+      className="surface-elevated relative overflow-hidden border border-line rounded-3xl p-5 mb-4"
       aria-label={t('progres.tdee.ariaLabel')}
     >
-      <div className="flex items-center justify-between mb-2.5" data-testid="tdee-faza-row">
+      {/* Decorative accent bloom behind the hero number — palette-aware via
+          color-mix(--brick), pointer-events none, purely cosmetic depth so the
+          number reads as "lit" rather than printed on a flat card. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-12 -right-10 w-44 h-44 rounded-full"
+        style={{
+          background:
+            'radial-gradient(circle, color-mix(in oklab, var(--brick) 24%, transparent) 0%, transparent 70%)',
+        }}
+      />
+
+      <div className="relative flex items-center justify-between mb-4" data-testid="tdee-faza-row">
         <span
           data-testid="tdee-faza-badge"
           className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide"
@@ -144,44 +173,54 @@ export function TDEEStrip(): JSX.Element {
           {t('progres.tdee.weekInMeso', { n: weekInMeso })}
         </span>
       </div>
-      <div className="flex items-center gap-4">
-        <Flame className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
-        <div className="flex-1 min-w-0">
-          <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
-            {showComparison ? t('progres.tdee.todayVsTarget') : t('progres.tdee.targetToday')}
-          </p>
-          {showComparison ? (
-            /* §F-pass2-tdeestrip-02 — intake logat vs tinta (mockup L1796).
-               "{logat} kcal · tinta {target} (delta)". */
-            <p
-              className="text-xl font-bold text-ink font-mono"
-              data-testid="tdee-current-vs-target"
-            >
-              {fmtNum(loggedKcal)} kcal
-              <span className="text-sm font-normal text-ink2 ml-2">
-                {t('progres.tdee.withTarget', { kcal: fmtNum(target.kcalTarget), delta: deltaLabel })}
+
+      {/* HERO — recommended kcal as the screen's primary read (Daniel 2026-05-28
+          "kcal recomandate sus"). Big tabular num-display + count-up + warm
+          flame accent; protein + source sit beneath as quiet context. */}
+      <div className="relative">
+        <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-ink2 mb-2 flex items-center gap-1.5">
+          <Flame className="w-3.5 h-3.5 text-brick" aria-hidden="true" />
+          {showComparison ? t('progres.tdee.todayVsTarget') : t('progres.tdee.targetToday')}
+        </p>
+
+        {showComparison ? (
+          <div data-testid="tdee-current-vs-target">
+            <div className="flex items-baseline gap-2">
+              <span className="num-display text-[3.4rem] leading-[0.95] font-bold text-ink">
+                {fmtNum(kcalAnimated)}
               </span>
+              <span className="text-lg font-semibold text-ink2">kcal</span>
+            </div>
+            <p className="text-sm text-ink2 mt-1.5">
+              {t('progres.tdee.withTarget', { kcal: fmtNum(target.kcalTarget), delta: deltaLabel })}
             </p>
-          ) : (
-            <p className="text-xl font-bold text-ink font-mono">
-              {target ? fmtNum(target.kcalTarget) : '—'} kcal
-              <span className="text-sm font-normal text-ink2 ml-2">
-                {t('progres.tdee.withProtein', { g: target ? fmtNum(target.proteinTarget) : '—' })}
-              </span>
-            </p>
-          )}
-          {target && (
-            <p className="text-xs text-ink2 mt-0.5" data-testid="tdee-source">
+          </div>
+        ) : (
+          <div className="flex items-baseline gap-2">
+            <span className="num-display text-[3.4rem] leading-[0.95] font-bold text-ink">
+              {target ? fmtNum(kcalAnimated) : '—'}
+            </span>
+            <span className="text-lg font-semibold text-ink2">kcal</span>
+          </div>
+        )}
+
+        {target && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3">
+            <span className="text-sm font-semibold text-ink">
+              {t('progres.tdee.withProtein', { g: fmtNum(target.proteinTarget) })}
+            </span>
+            <span className="text-xs text-ink3" data-testid="tdee-source">
               {sourceLabel(target.source)}
-            </p>
-          )}
-        </div>
+            </span>
+          </div>
+        )}
       </div>
+
       {/* §F-pass2-tdeestrip-03 (MED Wave 7 2026-05-23) — italic explainer copy
           per mockup L1713 verbatim. Sets user expectation: engine auto-calculates,
           logging optional for calibration. */}
       <p
-        className="text-xs text-ink3 mt-2.5 leading-snug italic"
+        className="text-xs text-ink3 mt-3 leading-snug italic relative"
         data-testid="tdee-explainer"
       >
         {t('progres.tdee.explainer')}
@@ -193,7 +232,7 @@ export function TDEEStrip(): JSX.Element {
           brand-ului de disclaimer (AlertCircle brick) — guardrail pe OUTPUT. */}
       {target?.healthyFloorClamped && (
         <p
-          className="text-xs text-brick mt-2.5 leading-snug flex items-start gap-1.5"
+          className="text-xs text-brick mt-2.5 leading-snug flex items-start gap-1.5 relative"
           role="status"
           data-testid="tdee-healthy-floor-msg"
         >

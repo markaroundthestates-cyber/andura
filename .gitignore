@@ -60,3 +60,19 @@ smoke-*.png
 
 # .planning/ — local agent planning artifacts
 .planning/
+
+# ── Root scratch / debug artifacts (Daniel cleanup 2026-05-28) ─────────────
+# CC debug sessions drop temp scripts + their output at vault root using a
+# .tmp_ / tmp_ convention — never source, regenerable. (128 such files cleaned
+# 2026-05-28; ignore added so they stop re-accumulating in `git status`.)
+.tmp_*
+/tmp_*
+# Design/debug screenshots captured at vault root (auto-generated). Real visual
+# test fixtures live under tests/**-snapshots/ and are NOT matched by this root
+# rule (it only matches root-level *.png).
+/*.png
+# Generated Lighthouse reports (parity with the other reports/* entries above).
+reports/lighthouse/
+# Agent worktree caches — recycled per agent run, local-only, never source.
+.claude/worktrees/
+.knowle/

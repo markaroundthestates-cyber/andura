@@ -16,19 +16,26 @@
 // heading each + animate-card-rise staggered entrance. Information content,
 // engine wires, and i18n keys unchanged — pure visual hierarchy + breathing.
 //
-// Zone order top → bottom (read like a story, not a dashboard dump):
-//   1. OBIECTIV  — ObiectivGoalCard (5 goal pills) + ObiectivCard (target weight + ETA)
-//   2. AZI       — TDEEStrip (kcal+protein target) + Fatigue|BMR 2-col + BodyFat
-//   3. TENDINTA  — ProjectionStrip + HeatMapWeekly (7-day weight chart)
-//   4. ACTIUNI   — AlertsBanner + log-weight CTA + last-weight card + weight-trend CTA
-//                  + body-data CTA + last-body card
+// Redesign reorder (Daniel 2026-05-28 "Kcal recomandate trebuiau sa apara sus
+// ... si overall mutat totul cat sa fie intuitiv"): the daily ACTIONABLE number
+// (kcal + protein target) now LEADS the screen as a hero; goal config (a set-
+// once choice, not a daily read) is demoted near the bottom. Information content,
+// engine wires, i18n keys, and ALL testids unchanged — pure order + hierarchy.
+//
+// Zone order top → bottom (read like a story: "what do I do today" first):
+//   1. AZI       — TDEEStrip kcal+protein HERO (count-up + depth) + Fatigue|BMR
+//                  2-col + BodyFat  ← daily actionable number, leads the screen
+//   2. TENDINTA  — ProjectionStrip + HeatMapWeekly (7-day weight chart)
+//   3. ACTIUNI   — AlertsBanner + log-weight CTA + last-weight card + weight-trend
+//                  CTA + body-data CTA + last-body card
+//   4. OBIECTIV  — ObiectivGoalCard (5 goal pills) + ObiectivCard (target + ETA)
+//                  ← set-once config, demoted below the daily reads
 //   5. LOG MANUAL — NutritionInline (kcal/protein editable chips — rarely tapped)
 //
 // Test contract preserved: heading + tagline + all testids (cta-log-weight,
 // cta-body-data, last-weight-card, last-body-card, alerts-banner, alerte-azi-label,
-// fatigue-bmr-grid) + ORDER (alerts-banner above cta-log-weight). Wrapping
-// containers add data-testid="progres-zone-*" for future smoke selectors but
-// don't intercept any existing assertion.
+// fatigue-bmr-grid) + ORDER (alerts-banner above cta-log-weight, intra-zone).
+// Wrapping containers keep data-testid="progres-zone-*" for smoke selectors.
 
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
@@ -90,28 +97,12 @@ export function Progres(): JSX.Element {
       <h1 className="text-2xl font-bold text-ink mb-1">{t('tabs.progres.title')}</h1>
       <p className="text-sm text-ink2 mb-2">{t('tabs.progres.subtitle')}</p>
 
-      {/* ── ZONE 1: OBIECTIV — goal selector + target weight + ETA. ─────────
-          Top placement: "where am I trying to get to" frames everything below
-          (today's kcal target, projection, weight trend, body comp). */}
-      <div data-testid="progres-zone-obiectiv" className="animate-card-rise delay-0">
-        <ZoneHeading testId="progres-zone-obiectiv-heading">{t('progres.zone.obiectiv')}</ZoneHeading>
-        {/* §obiectiv-relocate 2026-05-28 Daniel verbatim "muta aia cu Obiectiv de
-            la Coach la progres ... alea de faze auto, forta slabire mentenanta
-            longevitate". Goal selector lives here aproape de ObiectivCard (target-
-            weight + ETA) — ambele sunt "obiectivul tau", logical co-location. */}
-        <ObiectivGoalCard />
-        {/* §obiectiv-tinta 2026-05-28 Daniel verbatim — Obiectiv tinta moved here
-            from Cont > Profil si tinte. Top placement: this is "where am I trying
-            to get to", primary context for everything else on the screen (TDEE
-            projection, weight trend, body comp). */}
-        <ObiectivCard />
-      </div>
-
-      {/* ── ZONE 2: AZI — today's calibrated targets + signals. ─────────────
-          TDEE (kcal+protein target) sits big at top of the zone, then the
-          2-col Fatigue|BMR grid (mockup L1717 parity preserved), then BodyFat
-          estimate. Reads as "what's the state today" snapshot. */}
-      <div data-testid="progres-zone-azi" className="animate-card-rise delay-75">
+      {/* ── ZONE 1: AZI — today's calibrated targets, kcal HERO leads. ───────
+          Daniel 2026-05-28 "kcal recomandate sus": the recommended kcal+protein
+          is the single most actionable number on this screen, so it leads. The
+          TDEEStrip itself owns the hero treatment (big count-up number + depth);
+          then the 2-col Fatigue|BMR grid (mockup L1717 parity), then BodyFat. */}
+      <div data-testid="progres-zone-azi" className="animate-card-rise delay-0">
         <ZoneHeading testId="progres-zone-azi-heading">{t('progres.zone.azi')}</ZoneHeading>
         <TDEEStrip />
         {/* §F-pass2-fatiguestrip-02 (HIGH-EPSILON 2026-05-22) — 2-col grid
@@ -126,24 +117,24 @@ export function Progres(): JSX.Element {
         <BodyFatStrip />
       </div>
 
-      {/* ── ZONE 3: TENDINTA — direction over time. ─────────────────────────
+      {/* ── ZONE 2: TENDINTA — direction over time. ─────────────────────────
           Projection ("if you continue at this rate, in 3 weeks you'll be X")
           + 7-day weight snapshot chart. Together they answer "where am I
-          going?" — the natural next question after "where am I now?" (AZI). */}
-      <div data-testid="progres-zone-tendinta" className="animate-card-rise delay-150">
+          going?" — the natural next question after "what's my target today?". */}
+      <div data-testid="progres-zone-tendinta" className="animate-card-rise delay-75">
         <ZoneHeading testId="progres-zone-tendinta-heading">{t('progres.zone.tendinta')}</ZoneHeading>
         {/* Piesa 4 — Preconizare forward projection (traiectorie curenta). */}
         <ProjectionStrip />
         <HeatMapWeekly />
       </div>
 
-      {/* ── ZONE 4: ACTIUNI — alerts + log/measure CTAs + last-entry recap. ─
+      {/* ── ZONE 3: ACTIUNI — alerts + log/measure CTAs + last-entry recap. ─
           Alerts banner heads the zone (urgent items first). Then CTAs to log
           weight + view trend + open body measurements, each followed by its
           "last entry" recap card so the user gets context before deciding to
           re-log. Test contract preserved: alerts-banner is BEFORE cta-log-weight
           (document order assertion in Progres.test.tsx L161). */}
-      <div data-testid="progres-zone-actiuni" className="animate-card-rise delay-225">
+      <div data-testid="progres-zone-actiuni" className="animate-card-rise delay-150">
         <ZoneHeading testId="progres-zone-actiuni-heading">{t('progres.zone.actiuni')}</ZoneHeading>
         {alerts.length > 0 && (
           <p data-testid="alerte-azi-label" className="text-xs text-ink2 uppercase tracking-wide font-semibold mb-2">
@@ -209,6 +200,23 @@ export function Progres(): JSX.Element {
             </div>
           </div>
         )}
+      </div>
+
+      {/* ── ZONE 4: OBIECTIV — goal selector + target weight + ETA. ──────────
+          Demoted below the daily reads (Daniel 2026-05-28): the goal type
+          (Auto/Strength/…) and target weight are a set-once choice, not a daily
+          glance — so they sit under the actionable kcal/trend/actions. Goal
+          selector + ObiectivCard stay co-located ("both are your objective"). */}
+      <div data-testid="progres-zone-obiectiv" className="animate-card-rise delay-225">
+        <ZoneHeading testId="progres-zone-obiectiv-heading">{t('progres.zone.obiectiv')}</ZoneHeading>
+        {/* §obiectiv-relocate 2026-05-28 Daniel verbatim "muta aia cu Obiectiv de
+            la Coach la progres ... alea de faze auto, forta slabire mentenanta
+            longevitate". Goal selector lives here aproape de ObiectivCard (target-
+            weight + ETA) — ambele sunt "obiectivul tau", logical co-location. */}
+        <ObiectivGoalCard />
+        {/* §obiectiv-tinta 2026-05-28 Daniel verbatim — Obiectiv tinta moved here
+            from Cont > Profil si tinte. Co-located with the goal selector. */}
+        <ObiectivCard />
       </div>
 
       {/* ── ZONE 5: LOG MANUAL — rarely tapped, defer to bottom. ────────────
