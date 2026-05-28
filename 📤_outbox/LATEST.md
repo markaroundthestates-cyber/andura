@@ -1,86 +1,91 @@
-# AUTONOMOUS ARC #3 — WAVE C + D (LOCAL, ready for push)
+# AUTONOMOUS ARC #4 — WAVE E + F + SW UPDATE FIX (PUSHED LIVE)
 
-**Status:** Wave C 4 agenti Opus + Wave D integration LANDED **local**, **NEpushed** (Daniel-pre-aprobat trigger explicit la spawn — "fa push" implicit la Wave C launch).
-**Branch:** main local HEAD `637f508e` + size budget bump (CSS 12 KB + main 160 KB).
-**Tests:** **5211 verzi** + typecheck clean + build clean (90 PWA precache, 1434 KiB).
-**Model:** Opus 4.7 EXCLUSIVELY (manager + 4 agenti worktree).
+**Status:** **PUSHED LIVE post Wave F.** main local + origin/main sync. CI Wave D anterior `612c64de` deja LIVE verde (Security Review + CI + Deploy + QA + Checkly + npm audit 0 vulns); Wave E+F push deploys peste.
+**Tests:** **5279 verzi** + typecheck + build clean (90 PWA precache 1490 KiB).
+**Model:** Opus 4.7 EXCLUSIVELY (manager + 4 agenti Opus paraleli).
+**Mandate:** Daniel critic "nu sens smoke pe i18n incomplete" + SW stale installed PWA + finish autonom inainte de meeting layoffs.
 
 ---
-
-## Mandat Daniel (corectiv Wave A miss)
-
-Daniel critic verbatim: *"ai cam ignorat toate astea"* — la EN total cover, mutare Obiectiv (goal selector NU target weight), animatii GO WILD vizibile. Plus *"poti schimba si culorile"* + *"drop longevitate"*.
 
 ## Livrat
 
-### Wave C — 4 agenti Opus worktree paraleli
+### Wave E — 4 agenti Opus worktree paraleli (i18n DEEP FINISH true zero-leak)
 
-**C1 i18n DEEP** (6 commits / 5209 verzi pre-merge)
-- Antrenor home + CoachTodayCard + CoachRestCard + Workout in-session + EnergyCheck + Progres + 5 strips body comp (BodyFatStrip + FatigueStrip + HeatMapWeekly + TDEEStrip) wired prin `t()`
-- **Exercise library 657 EN** via `toExerciseDisplay` locale-aware + 30 EN-curated subtitles (clean fitness vocabulary Fitbod/Strong/Hevy)
-- **CI safety-net** `i18nNoRoLeak.test.tsx` — forbidden-token allow-list ~60 cuv RO, render-EN-locale + assert zero leak pe screens testati
-- **HONEST GAP:** PARTIAL — deferred WorkoutPreview / PostRpe / PostSummary / ALL modals (ExitConfirm/Alternative/Skip/PerSetSafety/AparatLipsa/PainButton/SetLogInput/SetRatingButtons) / BMRStrip / ProjectionStrip / NutritionInline / ObiectivCard / LogWeight / BodyData / WeightTimeline / Calendar / Istoric / IstoricDetail / PrWall / RatingsStrip90Day / VirtualSessionList / 17-of-20 Settings*.tsx / 5 Confirm screens / coach engine OUTPUT strings (whySummary/fatigue/ReadinessVerdict/coachVoice/recoveredLabel). **Wave E follow-up necesar pentru true zero-leak.**
+**E1 workout flow** (~100 keys) — `worktree-agent-a89259c930a83b817` / 5 commits
+- WorkoutPreview + PostRpe + PostSummary + ExitConfirmSheet + AaFrictionModal LOCK 9 + PainButton + SetLogInput + SetRatingButtons + AparatLipsaSheet
+- Spec deviation gestionata: AlternativeModal/SkipModal/PerSetSafetyModal nu exista — real targets = AaFrictionModal (per-set safety) + Workout action row (skip) + EquipmentSwap full-screen (deferred)
+- 11 noi cazuri in `i18nNoRoLeak.test.tsx`
 
-**C2 Obiectiv mutare + drop longevitate** (3 commits)
-- Goal selector mutat Cont > Profile > "Antrenament" → Progres tab `ObiectivGoalCard`. Frecventa + Experienta raman setup in Cont (NU goal, NU progress-tracking).
-- **Drop `longevitate` goal** — semantic duplicate cu `mentenanta`/`sanatate` (toate trei → MAINTENANCE phase, identic engine template RIR 2-3 + rep 8-12 + rest 60-120s). UI + engine + tests update + migration `onboardingStore` legacy `'longevitate'` → `'mentenanta'`.
-- Manager pickup stash@{0} cu engine work + 3 longevitate-test fixes (templates.test.js + trainingModifiers.test.js + volumeLandmarks.test.js).
+**E2 body comp** (71 keys) — `worktree-agent-aa0f4ef2203addd56` / 3 commits
+- BMRStrip + ProjectionStrip + NutritionInline + LogWeight + BodyData + WeightTimeline + WeightLogList
+- ObiectivCard verificat deja-wired din Wave C1 (NO duplicate work)
+- 9 noi cazuri leak-test + 17 noi forbidden tokens
 
-**C3 animatii GO WILD** (6 commits)
-- Daniel verbatim: *"go wild"*. Motion vocabulary **expandat 12 keyframes** (page-enter / ripple / confetti / success-burst / edge-flash / shake / breath / flame / ambient-drift / roll-in / hero-pop / check-draw)
-- NEW `Ripple.tsx` + `ConfettiBurst.tsx` + `lib/motion.ts` (haptic + edgeFlash + isCoarsePointer)
-- Page transitions Layout (animate-page-enter 320ms cubic-bezier) + modal coverage (AaFriction/AparatLipsa/Workout why-modal)
-- Workout: RestOverlay ring breath cadence 5s loop + SetLogInput Ripple + haptic(12) + press-feedback + PainButton haptic(10) + edgeFlash + region/intensity tiles press
-- PostSummary PR banner ConfettiBurst (14 theme-aware particles) + StatsGrid streak flame animation
-- Splash + CoachTodayCard hero CTAs + Ripple + press-feedback
-- Chrome banners: OfflineBanner + UpdatePrompt slide-down + InstallPrompt fade-in-up
-- Pure CSS (NU framer-motion +30 KB). Reduced-motion safe sempre via `prefers-reduced-motion: reduce`. Toate 4 teme verificate.
+**E3 calendar+istoric** (~120 keys) — `worktree-agent-a3a35c7c853d743cd` / 4 commits
+- Calendar7Day + CalendarHeatmap + Istoric + IstoricDetail + PrWall + PrWallRecent + RatingsStrip90Day + VirtualSessionList
+- Helpers NEW `formatSessionsCount` + `formatSetsLabel` locale-aware (pluralRo RO / _one/_other EN)
+- months.full + months.fullGenitive + weekdays.relativeShort + prDate.format
+- 12 noi cazuri leak-test + 32 RO month genitives tokens
 
-**C4 UX/colors Bugatti polish** (7 commits)
-- Daniel license: *"poti schimba culorile daca consideri mai catchy"*. **Palette tuned WCAG AA verified**:
-  - Brain Coach mov `#a584ff → #b596ff` (6.83 → **8.15:1**)
-  - Luxury cognac `#c9a663 → #d4b483` (8.84 → **10.33:1**)
-  - Living Body amber-gold `#d4a574 → #dbb182` (9.16 → **10.31:1**)
-  - Clasic untouched (mockup-master heritage)
-- Utilities NEW `.btn-primary-lift` + `.btn-secondary-lift` + `.surface-elevated` — `color-mix(in oklab, var(--brick) X%, transparent)` token-driven auto-tint per theme
-- Layered Splash + Auth + Onboarding + Antrenor (CoachToday + StatsGrid + ObiectivSelector) + Progres (ObiectivCard + WeightLogList + CTAs) + Istoric (empty + PrWall) + Cont (account + sections) + Workout (SetLogInput) + PostSummary + WorkoutPreview + BottomNav active pill
+**E4 settings+coach engine** — `worktree-agent-adeb02e118f0729c2` / 4 commits
+- **14 Settings sub-screens** (Profile + Notifications + Privacy + Export + Import + Themes + Danger + Appearance + Subscription + Support + About + Faq + Terms + Prefs)
+- **8 Confirm screens** (DeleteAccount + Logout + ResetData + RedoOnboarding + ResetCoach + SchimbaFaza + FinishEarly + ProgramChange)
+- **Coach engine OUTPUT refactor** — `readiness.js` + `fatigue.js` + `coachVoice.ts` + `engineWrappers.ts` emit semantic `key` field; React boundary (StatsGrid + ReadinessVerdict + FatigueStrip) localizes via `t()`
+- **NEW helper `tArray()`** in `src/i18n/index.js` pentru list leaves (FAQ items, policy bullets, terms bullets, coach voice pools)
+- 25+ noi cazuri leak-test + ~50 noi forbidden tokens
 
-### Wave D — Manager integration
+### SW Update Fix (Daniel smoke installed PWA stale)
 
-- Merge `--no-ff` C2 → C3 → C4 → C1 (least-overlap → most-overlap)
-- 5 conflicts rezolvate combinand motion + lift + i18n cumulativ (CoachTodayCard / SetLogInput / Splash / PostSummary / Workout transition screen)
-- Size budget bump main chunk 135 → 160 KB (justificat: +Ripple + ConfettiBurst + motion + ObiectivGoalCard + lift utilities + ~150 i18n keys; CSS 9.03/12 KB OK)
-- Build clean 90 PWA precache 1434 KiB
+**Bug:** PWA installed pe iconita home-screen → deschis → vede TOT versiunea veche. Trebuie reinstall via browser pentru update. Cauza: browser re-verifica SW doar pe navigation OR ~24h interval; icon = same scope, no navigation → `registration.update()` nu se cheama → `onNeedRefresh` nu se declanseaza.
+
+**Fix `52289184`:** capture `registration` via `vite-plugin-pwa onRegisteredSW(swUrl, r)` + force `registration.update()` pe:
+- (a) `visibilitychange` → visible (user revine in tab/PWA)
+- (b) `setInterval` 30min while app open
+- (c) initial nudge dupa SW register
+
+**Note onest:** TWA / Play Store **NU rezolva asta singur**. TWA = Chrome custom tab wrapper, inner content tot SW cached. Real fix = PWA SW update flow corect (acest fix).
+
+### Wave F — Manager integration
+
+- Merge `--no-ff` E2 → E3 → E1 → E4 (least-to-most overlap)
+- 2 conflicts rezolvate pe `i18nNoRoLeak.test.tsx` (bundles `en.json` + `ro.json` auto-merge clean — additive different namespaces per agent)
+- 'program' removed din forbidden tokens (cognate valid EN+RO, false-positive pe "Program change")
+- Main chunk size budget bump 160→175 KB (Wave E adauga ~400 keys + tArray + new components)
+- Final 5279 verzi (cumulative all C+E) + typecheck + build clean
 
 ---
 
-## Rămâne (Daniel-gated + Wave E follow-up)
+## CI Status
 
-1. **Push origin main** D090 — pre-aprobat la Wave C launch. Manager va push imediat post raport.
-2. **CI check post-push** via PAT (gh missing pe RC, folosim Node inline cu PAT din git credential manager)
-3. **Smoke live** post Deploy verde — verifica:
-   - Goal selector pe Progres tab (NU Cont)
-   - `longevitate` disparut din UI
-   - Animatii vizibile (page transitions + button ripple + confetti PR + flame streak + chrome slide-down + workout breath ring)
-   - Paletes catchy (mov mai vibrant, champagne mai cognac, amber-gold mai warm)
-   - **EN partial coverage** — vei vedea EN pe Antrenor home/Workout in-session/EnergyCheck/Progres + EN pe library 657 exercises; **DAR inca RO** pe WorkoutPreview/PostRpe/PostSummary/modals/Calendar/Istoric detail/17 Settings/coach engine output
-4. **Wave E follow-up** — i18n DEEP FINISH pentru true zero-RO-leak
+- **CI Wave D `612c64de`** LIVE deja (CI + Deploy + QA + Security Review TOATE verzi)
+- **npm audit:** 0 vulnerabilities (info/low/mod/high/crit toate 0)
+- **Track 7 Nightly Quality Monitor + Dependabot** active
+- **Checkly synthetic** + **Lighthouse** verzi
 
-## Deferred Daniel-decide
-- V2 ExerciseMedia sourcing (WGER vs ExRx vs custom vs Lottie) — pipeline gata
-- Direction-aware route slide (forward/back motion direction) — C3 deferred ca needs router history depth
-- Workout in-session PR confetti (acum doar PostSummary) — C3 deferred
-- Day-start hero overlay "Hai sa-i dam!" / "Let's go!" — C3 keyframe exists, no caller wired
-- Iconography stroke-width audit + Instrument Serif/Geist Mono fonts (D084 layout risk) — C4 deferred
-- Workout modals + goal selector active state visual upgrade — C4 deferred
-- Cleanup #19 date test Daniel (via Cont > Sterge contul UI existent)
+Wave E+F push trigger ulterior — CI/Deploy/Security worker re-runs auto.
+
+---
+
+## Rămâne Daniel-side post-meeting
+
+1. **Smoke iar pe `andura.app` live** post Deploy verde
+2. **EN total cover** — toggle Cont > Setari > Limba; vezi EN pe TOTUL acum (workout + body comp + calendar + istoric + settings + coach engine output + 657 exercises)
+3. **SW auto-update** — deschidere PWA pe iconata = check update fara reinstall
+4. **Goal selector** pe Progres tab (NU Cont)
+5. **`longevitate` disparut** — migration legacy → mentenanta auto
+6. **Animatii GO WILD** vizibile (page transitions + ConfettiBurst PR + flame streak + chrome banners + workout breath ring + button ripple)
+7. **Palette catchy** — mov mai vibrant / cognac mai deep / amber-gold mai warm / Clasic intact
+
+**Gate-uri Daniel deschise (decizia ta cand):** Beta GO + DMARC SendGrid + rotit cheia API Anthropic
+
+---
 
 ## Detalii complete
-- `📥_inbox/HANDOVER_2026-05-28_autonomous-arc-3-wave-c-d.md` — DE SCRIS narativ
-- `DECISIONS.md` §D090 (LOCKED V1)
+
+- `📥_inbox/HANDOVER_2026-05-28_autonomous-arcs-2-3-4-21-smoke-i18n-deep-anim-uxcolors-sw.md` — narrative pickup post-meeting
+- `DECISIONS.md` §D091 (LOCKED V1) + §D090 (Wave C+D) + §D089 (Wave A+B)
 - `CHAT_STATE.md` §0-§3 live continuity
-- Local Wave C+D commits: 4 merge `--no-ff` + 5 conflict resolves + size budget bump
 
 ---
 
-🦫 **Wave C+D COMPLET local. 5211 verzi + build clean. Push trigger urmeaza.**
+🦫 **Autonomous Arc #4 COMPLET + PUSHED LIVE. Smoke iar cand vrei.**
