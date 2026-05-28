@@ -24,6 +24,26 @@ export interface OnboardingData {
   experience: Experience | null;
   weight: number | null;
   height: number | null;
+  /**
+   * Greutate tinta (kg) — smoke 2026-05-28 #16. Persistat aici ca sa influenteze
+   * tinta de kcal (vezi engineWrappers.getNutritionTargetsToday: cand
+   * `targetWeight` + `targetDate` setate, kcal-ul tinta = TDEE − deficit/surplus
+   * necesar pentru atingerea tintei pana la deadline, capped la 25% TDEE).
+   * Editabil in Cont → Profil. Era doar form-state local V1 pana acum.
+   *
+   * OPTIONAL pe interfata pentru backward-compat: literal { age,...,height } in
+   * test setState calls + migrate de la v3 ramane valide fara explicit
+   * `targetWeight: null`. Default null aplicat la runtime via EMPTY + migrate
+   * spread `...EMPTY`.
+   */
+  targetWeight?: number | null;
+  /**
+   * Deadline tinta (YYYY-MM format month picker, sau YYYY-MM-DD). Cuplat cu
+   * `targetWeight` pentru calculul ETA realist + tinta de kcal. Null cand
+   * user nu a ales o tinta (mod default = goal onboarding multiplicator).
+   * OPTIONAL — vezi nota la `targetWeight`.
+   */
+  targetDate?: string | null;
 }
 
 /**
@@ -59,7 +79,11 @@ export const ONBOARDING_BOUNDS = {
   age: { min: 18, max: 99 },
   weight: { min: 30, max: 250 },
   height: { min: 120, max: 230 },
-} as const satisfies Record<'age' | 'weight' | 'height', { min: number; max: number }>;
+  // Smoke 2026-05-28 #16 — targetWeight foloseste aceeasi banda ca weight
+  // (Big6 fitness metric). Validare suplimentara separat: deadline + ritm
+  // sanatos (vezi targetSafety.ts).
+  targetWeight: { min: 30, max: 250 },
+} as const satisfies Record<'age' | 'weight' | 'height' | 'targetWeight', { min: number; max: number }>;
 
 /**
  * Two-tier validation strategy pentru §30-C1 fix:
@@ -82,11 +106,18 @@ export function isSafeOnboardingValue<K extends keyof OnboardingData>(
   value: OnboardingData[K],
 ): boolean {
   if (value === null) return true;
-  if (key === 'age' || key === 'weight' || key === 'height') {
+  if (key === 'age' || key === 'weight' || key === 'height' || key === 'targetWeight') {
     const n = value as number;
     // Reject NaN/Infinity/negative/zero — never typed naturally; indicates
     // paste of "abc" → NaN, or programmatic abuse. Engines NaN-propagate.
     if (!Number.isFinite(n) || n <= 0) return false;
+  }
+  if (key === 'targetDate') {
+    // YYYY-MM (month picker) sau YYYY-MM-DD acceptat. Defensive reject pe
+    // forme aiurea — empty string e tratat ca null la setField (caller).
+    const s = value as string;
+    if (typeof s !== 'string' || s.length === 0) return false;
+    if (!/^\d{4}-\d{2}(-\d{2})?$/.test(s)) return false;
   }
   return true;
 }
@@ -124,6 +155,15 @@ export function validateOnboardingField<K extends keyof OnboardingData>(
     }
   }
 
+  if (key === 'targetWeight') {
+    const n = value as number;
+    if (!Number.isFinite(n)) return { ok: false, reason: 'Greutate tinta invalida.' };
+    const { min, max } = ONBOARDING_BOUNDS.targetWeight;
+    if (n < min || n > max) {
+      return { ok: false, reason: `Greutate tinta intre ${min} si ${max} kg.` };
+    }
+  }
+
   return { ok: true };
 }
 
@@ -147,6 +187,9 @@ const EMPTY: OnboardingData = {
   experience: null,
   weight: null,
   height: null,
+  // Smoke 2026-05-28 #16 — tinta personala persistata (era doar form-state V1).
+  targetWeight: null,
+  targetDate: null,
 };
 
 /**
@@ -209,7 +252,10 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
       // users get `height: null` default without corrupting existing Big 6.
       // Existing user re-prompted for height doar daca redo onboarding; pana
       // atunci BMR foloseste fallback sex-avg (BMRStrip) → zero regresie.
-      version: 3,
+      // v4 (smoke #16 targetWeight + targetDate): tinta personala persistata
+      // pentru cuplare cu kcal recommendation. Migration spread `...EMPTY` →
+      // existing users get both fields null implicit (no breaking change).
+      version: 4,
       // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
       // fields (NU actions). Match appStore + scheduleStore + workoutStore
       // existing pattern. data + completed + completedAt persisted; actions
