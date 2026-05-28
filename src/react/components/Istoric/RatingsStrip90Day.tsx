@@ -18,6 +18,20 @@ import { useWorkoutStore } from '../../stores/workoutStore';
 import { deriveSessionRating } from '../../lib/sessionRating';
 import type { SessionRating } from '../../lib/sessionRating';
 import { pluralRo } from '../../lib/pluralRo';
+import { t, getCurrentLocale } from '../../../i18n/index.js';
+
+// Wave E3 i18n: locale-aware session-count formatter. Under RO we preserve
+// pluralRo's "de" rule (1 sesiune / 2 sesiuni / 20 de sesiuni). Under EN we
+// pick the singular/plural form via the istoric.ratingsStrip.sessions_*
+// keys with the {n} interpolation.
+function formatSessionsCount(n: number): string {
+  if (getCurrentLocale() === 'ro') {
+    return pluralRo(n, 'sesiune', 'sesiuni');
+  }
+  return n === 1
+    ? t('istoric.ratingsStrip.sessions_one', { n })
+    : t('istoric.ratingsStrip.sessions_other', { n });
+}
 
 const MS_PER_DAY = 86_400_000;
 const WEEKS = 13;
@@ -76,14 +90,14 @@ export function RatingsStrip90Day(): JSX.Element {
   return (
     <section
       data-testid="ratings-strip-90day"
-      aria-label="Cum au fost sesiunile in ultimele 90 zile"
+      aria-label={t('istoric.ratingsStrip.ariaLabel')}
       className="mb-4"
     >
       <header className="flex items-center justify-between mb-2 mt-4">
         <h3 className="text-sm uppercase tracking-wide font-semibold text-ink2">
-          Cum au fost sesiunile
+          {t('istoric.ratingsStrip.heading')}
         </h3>
-        <span className="text-[11px] text-ink3 font-medium">ultimele 90 zile</span>
+        <span className="text-[11px] text-ink3 font-medium">{t('istoric.ratingsStrip.window')}</span>
       </header>
       <div className="bg-white dark:bg-paper2 border border-line rounded-2xl p-4">
         <div className="flex items-end gap-1.5 h-16 mb-3.5" data-testid="rh-strip">
@@ -99,7 +113,7 @@ export function RatingsStrip90Day(): JSX.Element {
                   className={`block h-[7px] rounded-[2px] ${ratingBgClass(rating)}`}
                   data-testid={`rh-cell-${idx}-${ci}`}
                   data-rating={rating ?? 'unrated'}
-                  title={rating === null ? 'Fara rating' : undefined}
+                  title={rating === null ? t('istoric.ratingsStrip.unrated') : undefined}
                   aria-hidden="true"
                 />
               ))}
@@ -108,8 +122,8 @@ export function RatingsStrip90Day(): JSX.Element {
         </div>
 
         <div className="grid grid-cols-3 gap-2.5 text-center">
-          <div role="group" aria-label={`Usor ${pluralRo(counts.usor, 'sesiune', 'sesiuni')}`}>
-            <span className="block text-xs text-ink3">Usor</span>
+          <div role="group" aria-label={t('istoric.ratingsStrip.ariaGroupEasy', { count: formatSessionsCount(counts.usor) })}>
+            <span className="block text-xs text-ink3">{t('istoric.ratingsStrip.easy')}</span>
             <span
               className="block text-lg font-bold font-mono text-heatGreu"
               data-testid="count-usor"
@@ -117,8 +131,8 @@ export function RatingsStrip90Day(): JSX.Element {
               {counts.usor}
             </span>
           </div>
-          <div role="group" aria-label={`Potrivit ${pluralRo(counts.potrivit, 'sesiune', 'sesiuni')}`}>
-            <span className="block text-xs text-ink3">Potrivit</span>
+          <div role="group" aria-label={t('istoric.ratingsStrip.ariaGroupRight', { count: formatSessionsCount(counts.potrivit) })}>
+            <span className="block text-xs text-ink3">{t('istoric.ratingsStrip.right')}</span>
             <span
               className="block text-lg font-bold font-mono text-ink"
               data-testid="count-potrivit"
@@ -126,8 +140,8 @@ export function RatingsStrip90Day(): JSX.Element {
               {counts.potrivit}
             </span>
           </div>
-          <div role="group" aria-label={`Greu ${pluralRo(counts.greu, 'sesiune', 'sesiuni')}`}>
-            <span className="block text-xs text-ink3">Greu</span>
+          <div role="group" aria-label={t('istoric.ratingsStrip.ariaGroupHard', { count: formatSessionsCount(counts.greu) })}>
+            <span className="block text-xs text-ink3">{t('istoric.ratingsStrip.hard')}</span>
             <span
               className="block text-lg font-bold font-mono text-brick"
               data-testid="count-greu"
@@ -141,8 +155,8 @@ export function RatingsStrip90Day(): JSX.Element {
           className="text-xs text-ink3 mt-3 leading-relaxed text-center"
           data-testid="ratings-footer"
         >
-          Coach-ul foloseste evaluarile tale ca sa ajusteze intensitatea.{' '}
-          <b>{pluralRo(counts.total, 'sesiune', 'sesiuni')}</b> in ultimele 90 zile.
+          {t('istoric.ratingsStrip.footerLead')}{' '}
+          <b>{formatSessionsCount(counts.total)}</b> {t('istoric.ratingsStrip.footerCountSuffix')}
         </p>
       </div>
     </section>

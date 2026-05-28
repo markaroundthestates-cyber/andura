@@ -79,6 +79,15 @@
       "4": "Joi",
       "5": "Vin",
       "6": "Sam"
+    },
+    "relativeShort": {
+      "0": "duminica",
+      "1": "luni",
+      "2": "marti",
+      "3": "miercuri",
+      "4": "joi",
+      "5": "vineri",
+      "6": "sambata"
     }
   },
 
@@ -96,6 +105,34 @@
       "9": "oct",
       "10": "noi",
       "11": "dec"
+    },
+    "full": {
+      "0": "Ianuarie",
+      "1": "Februarie",
+      "2": "Martie",
+      "3": "Aprilie",
+      "4": "Mai",
+      "5": "Iunie",
+      "6": "Iulie",
+      "7": "August",
+      "8": "Septembrie",
+      "9": "Octombrie",
+      "10": "Noiembrie",
+      "11": "Decembrie"
+    },
+    "fullGenitive": {
+      "0": "ianuarie",
+      "1": "februarie",
+      "2": "martie",
+      "3": "aprilie",
+      "4": "mai",
+      "5": "iunie",
+      "6": "iulie",
+      "7": "august",
+      "8": "septembrie",
+      "9": "octombrie",
+      "10": "noiembrie",
+      "11": "decembrie"
     }
   },
 
@@ -522,14 +559,6 @@
       "exercises_other": "{n} exercitii",
       "volume": "{kg} kg volum"
     },
-    "detail": {
-      "title": "Detaliu sesiune",
-      "back": "Inapoi",
-      "duration": "Durata",
-      "volume": "Volum total",
-      "sets": "Total seturi",
-      "ratings": "Ratinguri seturi"
-    },
     "prWall": {
       "title": "Recorduri recente",
       "empty": "Niciun record personal inca — logheaza cateva sesiuni.",
@@ -544,6 +573,85 @@
       "easy": "Usor",
       "right": "Potrivit",
       "hard": "Greu"
+    },
+
+    "landing": {
+      "statDaysStreak": "Zile consecutive",
+      "statTotalSessions": "Sesiuni total",
+      "statRecords": "Recorduri",
+      "recordsHeading": "Recorduri ({n})",
+      "seeAll": "Vezi toate",
+      "sessionsHeading": "Sesiuni",
+      "emptyTitle": "Prima ta sesiune te asteapta",
+      "emptyBody": "Termina un antrenament si apare aici cu toate detaliile.",
+      "recordSummary": "{kg} kg x {reps} (~{oneRM} kg 1RM)"
+    },
+
+    "detail": {
+      "title": "Detaliu sesiune",
+      "back": "Inapoi",
+      "backToHistory": "Inapoi la Istoric",
+      "backAria": "Inapoi",
+      "missing": "Sesiunea nu a fost gasita.",
+      "sessionKicker": "Sesiune",
+      "stats": {
+        "sets": "Seturi",
+        "minutes": "Min",
+        "tonnage": "Tonaj kg"
+      },
+      "exercisesHeading": "Exercitii",
+      "exerciseOneRm": "1RM est: {kg} kg",
+      "exerciseVolumeSets": "Volum: {kg} kg · {setsLabel}",
+      "exerciseSets_one": "{n} set",
+      "exerciseSets_other": "{n} seturi",
+      "table": {
+        "set": "Set",
+        "kg": "Kg",
+        "reps": "Reps",
+        "rating": "Cum a fost"
+      },
+      "legacyFallback": "Detaliu per exercitiu indisponibil pentru sesiuni inregistrate inainte de actualizare.",
+      "ratingLabels": {
+        "usor": "Usor",
+        "potrivit": "Potrivit",
+        "greu": "Greu"
+      }
+    },
+
+    "prWallScreen": {
+      "title": "Recorduri Personale",
+      "description": "Cronologic descrescator. Toate recordurile personale logate.",
+      "statTotal": "Total PR",
+      "statMonth": "Luna asta",
+      "statExercises": "Exercitii",
+      "emptyTitle": "Primul PR e la o sesiune distanta",
+      "emptyBody": "Depaseste un maxim si recordul apare aici cu data + greutatea.",
+      "rowLine": "{kg} kg x {reps} reps - {date}"
+    },
+
+    "prDate": {
+      "format": "{day} {month} {year}"
+    },
+
+    "ratingsStrip": {
+      "heading": "Cum au fost sesiunile",
+      "window": "ultimele 90 zile",
+      "ariaLabel": "Cum au fost sesiunile in ultimele 90 zile",
+      "easy": "Usor",
+      "right": "Potrivit",
+      "hard": "Greu",
+      "unrated": "Fara rating",
+      "ariaGroupEasy": "Usor {count}",
+      "ariaGroupRight": "Potrivit {count}",
+      "ariaGroupHard": "Greu {count}",
+      "footerLead": "Coach-ul foloseste evaluarile tale ca sa ajusteze intensitatea.",
+      "footerCountSuffix": "in ultimele 90 zile.",
+      "sessions_one": "{n} sesiune",
+      "sessions_other": "{n} sesiuni"
+    },
+
+    "virtualList": {
+      "ariaLabel": "Lista istoric sesiuni"
     }
   },
 
@@ -599,6 +707,58 @@
     "ariaLabel": "Urmatoarele 7 zile",
     "today": "Azi",
     "restDayShort": "Pauza"
+  },
+
+  "calendar": {
+    "day7": {
+      "title": "Program de antrenament",
+      "editAriaEdit": "Editeaza",
+      "editAriaSave": "Salveaza",
+      "saveCta": "Salveaza",
+      "editHint": "Modifica zilele de antrenament in care esti disponibil.",
+      "dayLabels": {
+        "0": "L",
+        "1": "Ma",
+        "2": "Mi",
+        "3": "J",
+        "4": "V",
+        "5": "S",
+        "6": "D"
+      },
+      "kindTraining": "antrenament",
+      "kindRest": "odihna"
+    },
+    "heatmap": {
+      "ariaLabel": "Calendar antrenamente lunar",
+      "prevMonth": "Luna anterioara",
+      "nextMonth": "Luna urmatoare",
+      "monthAnnounce": "Calendarul afiseaza {month} {year}",
+      "dayLabels": {
+        "0": "L",
+        "1": "Ma",
+        "2": "Mi",
+        "3": "J",
+        "4": "V",
+        "5": "S",
+        "6": "D"
+      },
+      "cell": {
+        "rest": "zi libera",
+        "sessionLight": "antrenament usor",
+        "sessionFair": "antrenament potrivit",
+        "sessionHard": "antrenament greu",
+        "sessionPresent": "antrenament prezent",
+        "todaySuffix": " (azi)",
+        "futureSuffix": ", data viitoare"
+      },
+      "legend": {
+        "hard": "Greu",
+        "normal": "Normal",
+        "easy": "Usor",
+        "recovery": "Recuperare",
+        "rest": "Zi libera"
+      }
+    }
   },
 
   "exitConfirm": {

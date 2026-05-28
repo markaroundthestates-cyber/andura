@@ -21,40 +21,17 @@ import { VirtualSessionList } from '../../../components/Istoric/VirtualSessionLi
 import { gotoPath } from '../../../lib/navigation';
 import { t } from '../../../../i18n/index.js';
 
-// §F-istoric-08 — Romanian weekday + month labels no-diacritics manual map.
-// Sunday-first index (Date.getDay() returns 0=Sunday). Mockup uses
-// lowercase relative weekday (azi/marti/duminica) — preservam consistency
-// jos-case per mockup L2162-2178.
-const WEEKDAYS_RO = [
-  'duminica',
-  'luni',
-  'marti',
-  'miercuri',
-  'joi',
-  'vineri',
-  'sambata',
-] as const;
-
-const MONTHS_RO = [
-  'ian',
-  'feb',
-  'mar',
-  'apr',
-  'mai',
-  'iun',
-  'iul',
-  'aug',
-  'sep',
-  'oct',
-  'noi',
-  'dec',
-] as const;
-
+// §F-istoric-08 — weekday + month labels via i18n bundle.
+// Wave E3 (2026-05-28): pulled from weekdays.relativeShort + months.short so
+// the label flips locale per Daniel mandate. RO surfaces lower-case
+// "luni/marti" (mockup parity L2162-2178, no-diacritics per D-LEGACY-064).
+// EN surfaces "Mon/Tue".
 function formatDate(ts: number): string {
   const d = new Date(ts);
-  const weekday = WEEKDAYS_RO[d.getDay()];
+  const dow = d.getDay();
+  const weekday = t(`weekdays.relativeShort.${dow}`);
   const day = d.getDate();
-  const month = MONTHS_RO[d.getMonth()];
+  const month = t(`months.short.${d.getMonth()}`);
   return `${weekday} · ${day} ${month}`;
 }
 
@@ -102,7 +79,7 @@ export function Istoric(): JSX.Element {
           <p className="relative text-2xl font-bold text-ink font-mono tabular-nums" data-testid="stats-streak">
             {stats.currentStreak}
           </p>
-          <p className="relative text-xs text-ink2">Zile consecutive</p>
+          <p className="relative text-xs text-ink2">{t('istoric.landing.statDaysStreak')}</p>
         </div>
         <div className="relative overflow-hidden bg-paper2 border border-line rounded-xl p-3 text-center animate-card-rise delay-75">
           <span
@@ -117,7 +94,7 @@ export function Istoric(): JSX.Element {
           <p className="relative text-2xl font-bold text-ink font-mono tabular-nums" data-testid="stats-total">
             {stats.totalSessions}
           </p>
-          <p className="relative text-xs text-ink2">Sesiuni total</p>
+          <p className="relative text-xs text-ink2">{t('istoric.landing.statTotalSessions')}</p>
         </div>
         <div className="relative overflow-hidden bg-paper2 border border-line rounded-xl p-3 text-center animate-card-rise delay-150">
           <span
@@ -132,7 +109,7 @@ export function Istoric(): JSX.Element {
           <p className="relative text-2xl font-bold text-ink font-mono tabular-nums" data-testid="stats-pr">
             {stats.prCount}
           </p>
-          <p className="relative text-xs text-ink2">Recorduri</p>
+          <p className="relative text-xs text-ink2">{t('istoric.landing.statRecords')}</p>
         </div>
       </div>
 
@@ -149,7 +126,7 @@ export function Istoric(): JSX.Element {
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-base font-semibold text-ink flex items-center gap-2">
               <Trophy className="w-4 h-4" aria-hidden="true" />
-              Recorduri ({prHistory.length})
+              {t('istoric.landing.recordsHeading', { n: prHistory.length })}
             </h2>
             <button
               type="button"
@@ -157,7 +134,7 @@ export function Istoric(): JSX.Element {
               data-testid="istoric-pr-wall-see-all"
               className="text-sm font-semibold text-brickdark"
             >
-              Vezi toate
+              {t('istoric.landing.seeAll')}
             </button>
           </div>
           <ul className="flex flex-col gap-2">
@@ -169,7 +146,7 @@ export function Istoric(): JSX.Element {
               >
                 <span className="text-sm font-medium text-ink">{pr.exerciseName}</span>
                 <span className="text-sm text-ink2">
-                  {pr.kg} kg x {pr.reps} (~{pr.oneRMEstimate} kg 1RM)
+                  {t('istoric.landing.recordSummary', { kg: pr.kg, reps: pr.reps, oneRM: pr.oneRMEstimate })}
                 </span>
               </li>
             ))}
@@ -177,7 +154,7 @@ export function Istoric(): JSX.Element {
         </section>
       )}
 
-      <h2 className="text-base font-semibold text-ink mb-2">Sesiuni</h2>
+      <h2 className="text-base font-semibold text-ink mb-2">{t('istoric.landing.sessionsHeading')}</h2>
       {sorted.length === 0 ? (
         /* UX polish 2026-05-28 — empty state lifted: accent-tinted icon
            halo (color-mix --brick) + heading line + softer body copy +
@@ -197,10 +174,10 @@ export function Istoric(): JSX.Element {
             <History className="w-7 h-7 text-brick" aria-hidden="true" />
           </div>
           <p className="text-base font-semibold text-ink mb-1">
-            Prima ta sesiune te asteapta
+            {t('istoric.landing.emptyTitle')}
           </p>
           <p className="text-sm text-ink2 max-w-[280px]">
-            Termina un antrenament si apare aici cu toate detaliile.
+            {t('istoric.landing.emptyBody')}
           </p>
         </div>
       ) : (

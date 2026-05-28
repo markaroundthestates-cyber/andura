@@ -6,6 +6,7 @@
 import type { JSX } from 'react';
 import { Trophy } from 'lucide-react';
 import type { PRRecord } from '../../lib/prHistoryAggregate';
+import { t } from '../../../i18n/index.js';
 
 interface PRWallRecentProps {
   records: readonly PRRecord[];
@@ -17,7 +18,7 @@ export function PRWallRecent({ records }: PRWallRecentProps): JSX.Element | null
     <section data-testid="pr-wall-recent" className="mb-4">
       <h2 className="text-base font-semibold text-ink mb-2 flex items-center gap-2">
         <Trophy className="w-4 h-4" aria-hidden="true" />
-        Recorduri recente
+        {t('istoric.prWall.title')}
       </h2>
       <ul className="flex flex-col gap-2">
         {records.map((pr, idx) => (
@@ -28,7 +29,7 @@ export function PRWallRecent({ records }: PRWallRecentProps): JSX.Element | null
           >
             <span className="text-sm font-medium text-ink">{pr.exerciseName}</span>
             <span className="text-sm text-ink2">
-              {pr.kg} kg x {pr.reps} (~{pr.oneRMEstimate} kg 1RM)
+              {t('istoric.landing.recordSummary', { kg: pr.kg, reps: pr.reps, oneRM: pr.oneRMEstimate })}
             </span>
           </li>
         ))}

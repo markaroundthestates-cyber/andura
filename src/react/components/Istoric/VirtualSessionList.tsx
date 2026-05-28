@@ -16,6 +16,7 @@
 import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { History, ChevronRight } from 'lucide-react';
+import { t } from '../../../i18n/index.js';
 
 export interface SessionRow {
   title: string;
@@ -136,6 +137,7 @@ export function VirtualSessionList({
       ref={listRef}
       className="flex flex-col gap-2"
       role="list"
+      aria-label={t('istoric.virtualList.ariaLabel')}
       data-testid="istoric-list"
     >
       {padTop > 0 && (

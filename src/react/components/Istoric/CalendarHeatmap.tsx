@@ -21,27 +21,33 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSessionsByDate, localKey } from '../../lib/useSessionsByDate';
 import { deriveSessionRating } from '../../lib/sessionRating';
 import type { SessionRating } from '../../lib/sessionRating';
+import { t } from '../../../i18n/index.js';
 
-const CAL_MONTHS = [
-  'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie',
-  'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie',
-] as const;
+// Wave E3 i18n: month + day labels + cell semantics flow through t(). RO
+// bundle preserves the no-diacritics labels used in the mockup; EN bundle
+// surfaces calendar/standard English. Helpers below stay pure so the call
+// sites can keep their formatting templates.
 
-const DAY_LABELS = ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D'] as const;
+function monthFull(monthIdx: number): string {
+  return t(`months.full.${monthIdx}`);
+}
 
-const MONTHS_GENITIV = [
-  'ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie',
-  'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie',
-] as const;
+function monthGenitive(monthIdx: number): string {
+  return t(`months.fullGenitive.${monthIdx}`);
+}
 
-// Rating word for aria-label: aligns with mockup tier semantics (no diacritics
-// per D-LEGACY-064). null fallback "antrenament prezent" (no rating known).
+function dayLabel(idx: number): string {
+  return t(`calendar.heatmap.dayLabels.${idx}`);
+}
+
+// Rating word for aria-label: aligns with mockup tier semantics. Reads from
+// calendar.heatmap.cell.* — RO keeps "zi libera/antrenament usor/…" verbatim.
 function ratingWord(rating: SessionRating | null, hasSession: boolean): string {
-  if (!hasSession) return 'zi libera';
-  if (rating === 'usor') return 'antrenament usor';
-  if (rating === 'greu') return 'antrenament greu';
-  if (rating === 'potrivit') return 'antrenament potrivit';
-  return 'antrenament prezent';
+  if (!hasSession) return t('calendar.heatmap.cell.rest');
+  if (rating === 'usor') return t('calendar.heatmap.cell.sessionLight');
+  if (rating === 'greu') return t('calendar.heatmap.cell.sessionHard');
+  if (rating === 'potrivit') return t('calendar.heatmap.cell.sessionFair');
+  return t('calendar.heatmap.cell.sessionPresent');
 }
 
 // Maps derived rating to tier class. Null (no rating in legacy session) →
@@ -105,21 +111,23 @@ export function CalendarHeatmap(): JSX.Element {
     cells.push({ day: d, rating: sessions ? rating : null, key });
   }
 
+  const monthLabel = monthFull(calM);
+
   return (
     <section
       data-testid="calendar-heatmap"
-      aria-label="Calendar antrenamente lunar"
+      aria-label={t('calendar.heatmap.ariaLabel')}
       className="mb-4"
     >
       <div className="flex items-center justify-between mb-2.5">
         <h3 className="text-base font-semibold text-ink" data-testid="cal-month-label">
-          {CAL_MONTHS[calM]} {calY}
+          {monthLabel} {calY}
         </h3>
         <div className="flex gap-1.5">
           <button
             type="button"
             onClick={() => navMonth(-1)}
-            aria-label="Luna anterioara"
+            aria-label={t('calendar.heatmap.prevMonth')}
             data-testid="cal-prev"
             className="w-8 h-8 rounded-lg bg-paper2 flex items-center justify-center"
           >
@@ -128,7 +136,7 @@ export function CalendarHeatmap(): JSX.Element {
           <button
             type="button"
             onClick={() => navMonth(1)}
-            aria-label="Luna urmatoare"
+            aria-label={t('calendar.heatmap.nextMonth')}
             data-testid="cal-next"
             className="w-8 h-8 rounded-lg bg-paper2 flex items-center justify-center"
           >
@@ -138,12 +146,12 @@ export function CalendarHeatmap(): JSX.Element {
       </div>
 
       <div className="grid grid-cols-7 gap-1 mb-1.5">
-        {DAY_LABELS.map((lbl) => (
+        {[0, 1, 2, 3, 4, 5, 6].map((idx) => (
           <div
-            key={lbl}
+            key={idx}
             className="text-[10px] text-ink3 text-center py-1 font-semibold tracking-wider"
           >
-            {lbl}
+            {dayLabel(idx)}
           </div>
         ))}
       </div>
@@ -151,7 +159,7 @@ export function CalendarHeatmap(): JSX.Element {
       <div
         className="grid grid-cols-7 gap-1 mb-2.5"
         role="grid"
-        aria-label={`${CAL_MONTHS[calM]} ${calY}`}
+        aria-label={`${monthLabel} ${calY}`}
         data-testid="cal-grid"
       >
         {cells.map((cell, idx) => {
@@ -177,8 +185,12 @@ export function CalendarHeatmap(): JSX.Element {
           const isFuture = cell.key !== null && cell.key > todayKey;
           const todayCls = isToday ? 'ring-2 ring-brick' : '';
           const futureCls = isFuture ? 'opacity-50' : '';
-          const labelSuffix = isToday ? ' (azi)' : isFuture ? ', data viitoare' : '';
-          const ariaLabel = `${cell.day} ${MONTHS_GENITIV[calM]} ${calY}, ${ratingWord(cell.rating, hasSession)}${labelSuffix}`;
+          const labelSuffix = isToday
+            ? t('calendar.heatmap.cell.todaySuffix')
+            : isFuture
+              ? t('calendar.heatmap.cell.futureSuffix')
+              : '';
+          const ariaLabel = `${cell.day} ${monthGenitive(calM)} ${calY}, ${ratingWord(cell.rating, hasSession)}${labelSuffix}`;
           return (
             <div
               key={`day-${cell.day}`}
@@ -204,7 +216,7 @@ export function CalendarHeatmap(): JSX.Element {
         className="sr-only"
         data-testid="cal-month-announce"
       >
-        Calendarul afiseaza {CAL_MONTHS[calM]} {calY}
+        {t('calendar.heatmap.monthAnnounce', { month: monthLabel, year: calY })}
       </div>
 
       <div
@@ -213,26 +225,26 @@ export function CalendarHeatmap(): JSX.Element {
       >
         <span className="flex items-center gap-1.5 text-[11px] text-ink3">
           <span className="inline-block w-3 h-3 rounded-sm bg-heatGreu" aria-hidden="true" />
-          Greu
+          {t('calendar.heatmap.legend.hard')}
         </span>
         <span className="flex items-center gap-1.5 text-[11px] text-ink3">
           <span className="inline-block w-3 h-3 rounded-sm bg-heatNormal" aria-hidden="true" />
-          Normal
+          {t('calendar.heatmap.legend.normal')}
         </span>
         <span className="flex items-center gap-1.5 text-[11px] text-ink3">
           <span className="inline-block w-3 h-3 rounded-sm bg-heatUsor" aria-hidden="true" />
-          Usor
+          {t('calendar.heatmap.legend.easy')}
         </span>
         <span className="flex items-center gap-1.5 text-[11px] text-ink3">
           <span
             className="inline-block w-3 h-3 rounded-sm bg-heatRecovery border border-heatRecoveryBorder"
             aria-hidden="true"
           />
-          Recuperare
+          {t('calendar.heatmap.legend.recovery')}
         </span>
         <span className="flex items-center gap-1.5 text-[11px] text-ink3">
           <span className="inline-block w-3 h-3 rounded-sm bg-paper2" aria-hidden="true" />
-          Zi libera
+          {t('calendar.heatmap.legend.rest')}
         </span>
       </div>
     </section>

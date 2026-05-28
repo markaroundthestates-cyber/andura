@@ -25,8 +25,14 @@ import type { JSX } from 'react';
 import { useEffect } from 'react';
 import { Pencil, Check } from 'lucide-react';
 import { useScheduleStore, weekStartIso } from '../stores/scheduleStore';
+import { t } from '../../i18n/index.js';
 
-const DAY_LABELS = ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D'] as const;
+// Monday-first short day labels indexed 0..6. EN: "Mon"…"Sun"; RO: "L"…"D".
+// Wave E3 i18n: pulled from calendar.day7.dayLabels.* so the calendar speaks
+// the active locale (was hardcoded RO L/Ma/Mi pre-flip).
+function dayLabel(idx: number): string {
+  return t(`calendar.day7.dayLabels.${idx}`);
+}
 
 export function Calendar7Day(): JSX.Element {
   const days = useScheduleStore((s) => s.days);
@@ -68,13 +74,13 @@ export function Calendar7Day(): JSX.Element {
           data-testid="calendar-title"
           className="text-base font-semibold text-ink text-center"
         >
-          Program de antrenament
+          {t('calendar.day7.title')}
         </p>
         <button
           type="button"
           onClick={handleToggleEdit}
           data-testid="calendar-edit-toggle"
-          aria-label={editMode ? 'Salveaza' : 'Editeaza'}
+          aria-label={editMode ? t('calendar.day7.editAriaSave') : t('calendar.day7.editAriaEdit')}
           className="absolute right-0 p-1.5 rounded-full text-ink2"
         >
           {editMode ? (
@@ -87,6 +93,7 @@ export function Calendar7Day(): JSX.Element {
       <div className="flex gap-1.5">
         {days.map((kind, idx) => {
           const trainingDay = kind === 'training';
+          const label = dayLabel(idx);
           return (
             <button
               key={idx}
@@ -95,8 +102,8 @@ export function Calendar7Day(): JSX.Element {
               disabled={!editMode}
               data-testid={`calendar-day-${idx}`}
               data-kind={kind}
-              data-day={DAY_LABELS[idx]}
-              aria-label={`${DAY_LABELS[idx]} - ${trainingDay ? 'antrenament' : 'odihna'}`}
+              data-day={label}
+              aria-label={`${label} - ${trainingDay ? t('calendar.day7.kindTraining') : t('calendar.day7.kindRest')}`}
               className="flex-1 py-2 rounded-lg text-xs font-semibold disabled:cursor-default"
               // Wiki spec calendar-feature-v1-spec.md §UX states 3 LOCKED
               // post-S1.6: training LOCKED state = #3d7a4a verde inchis; EDIT
@@ -122,7 +129,7 @@ export function Calendar7Day(): JSX.Element {
                   : 'var(--ink)',
               }}
             >
-              {DAY_LABELS[idx]}
+              {label}
             </button>
           );
         })}
@@ -133,7 +140,7 @@ export function Calendar7Day(): JSX.Element {
             data-testid="calendar-edit-hint"
             className="mt-3 text-xs text-ink2 text-center"
           >
-            Modifica zilele de antrenament in care esti disponibil.
+            {t('calendar.day7.editHint')}
           </p>
           <button
             type="button"
@@ -141,7 +148,7 @@ export function Calendar7Day(): JSX.Element {
             data-testid="calendar-save"
             className="w-full mt-3 py-2 bg-brick text-paper rounded-lg text-sm font-semibold"
           >
-            Salveaza
+            {t('calendar.day7.saveCta')}
           </button>
         </>
       )}

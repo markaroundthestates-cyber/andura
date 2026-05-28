@@ -1,9 +1,14 @@
 // ══ CALENDAR 7-DAY TESTS — task_19 Phase 4 MVP ═══════════════════════════
+// Wave E3 i18n: assertions flipped to EN-default (Daniel mandate 2026-05-28).
+// data-day attribute reads from t('calendar.day7.dayLabels.*') — under EN
+// default locale that surfaces "Mon"/"Tue"/etc. RO labels still verified in
+// the dedicated RO-locale block at the bottom of the file.
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Calendar7Day } from '../../components/Calendar7Day';
 import { useScheduleStore, weekStartIso } from '../../stores/scheduleStore';
+import { setLocale, _resetI18nCache } from '../../../i18n/index.js';
 
 beforeEach(() => {
   // Phase 5 task_01 fix: seed cu current Monday (mount effect auto-resets
@@ -15,6 +20,16 @@ beforeEach(() => {
     editMode: false,
   });
   localStorage.clear();
+  // Force EN locale — the post-2026-05-28 default. RO-specific tests below
+  // flip explicitly via setLocale('ro').
+  setLocale('en');
+  _resetI18nCache();
+  setLocale('en');
+});
+
+afterEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
 });
 
 describe('Calendar7Day — render', () => {
@@ -25,15 +40,15 @@ describe('Calendar7Day — render', () => {
     }
   });
 
-  it('renders day labels in order L Ma Mi J V S D', () => {
+  it('renders day labels in Monday-first order (EN: Mon..Sun)', () => {
     render(<Calendar7Day />);
-    expect(screen.getByTestId('calendar-day-0')).toHaveAttribute('data-day', 'L');
-    expect(screen.getByTestId('calendar-day-1')).toHaveAttribute('data-day', 'Ma');
-    expect(screen.getByTestId('calendar-day-2')).toHaveAttribute('data-day', 'Mi');
-    expect(screen.getByTestId('calendar-day-3')).toHaveAttribute('data-day', 'J');
-    expect(screen.getByTestId('calendar-day-4')).toHaveAttribute('data-day', 'V');
-    expect(screen.getByTestId('calendar-day-5')).toHaveAttribute('data-day', 'S');
-    expect(screen.getByTestId('calendar-day-6')).toHaveAttribute('data-day', 'D');
+    expect(screen.getByTestId('calendar-day-0')).toHaveAttribute('data-day', 'Mon');
+    expect(screen.getByTestId('calendar-day-1')).toHaveAttribute('data-day', 'Tue');
+    expect(screen.getByTestId('calendar-day-2')).toHaveAttribute('data-day', 'Wed');
+    expect(screen.getByTestId('calendar-day-3')).toHaveAttribute('data-day', 'Thu');
+    expect(screen.getByTestId('calendar-day-4')).toHaveAttribute('data-day', 'Fri');
+    expect(screen.getByTestId('calendar-day-5')).toHaveAttribute('data-day', 'Sat');
+    expect(screen.getByTestId('calendar-day-6')).toHaveAttribute('data-day', 'Sun');
   });
 
   it('training day cu background #3d7a4a (color token spec)', () => {
@@ -131,13 +146,13 @@ describe('Calendar7Day — edit mode', () => {
     expect(screen.queryByTestId('calendar-edit-hint')).not.toBeInTheDocument();
   });
 
-  it('edit hint visible cand edit mode + mockup copy verbatim', () => {
+  it('edit hint visible cand edit mode (EN default copy)', () => {
     useScheduleStore.setState({ editMode: true });
     render(<Calendar7Day />);
     const hint = screen.getByTestId('calendar-edit-hint');
     expect(hint).toBeInTheDocument();
     expect(hint).toHaveTextContent(
-      'Modifica zilele de antrenament in care esti disponibil.'
+      'Toggle the days you can train this week.'
     );
   });
 
@@ -162,7 +177,44 @@ describe('Calendar7Day — D-LEGACY-064 no-diacritics + a11y', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.innerHTML)).toBe(false);
   });
 
-  it('edit toggle has dynamic aria-label per state', () => {
+  it('edit toggle has dynamic aria-label per state (EN default)', () => {
+    render(<Calendar7Day />);
+    expect(screen.getByTestId('calendar-edit-toggle')).toHaveAttribute(
+      'aria-label',
+      'Edit schedule'
+    );
+    fireEvent.click(screen.getByTestId('calendar-edit-toggle'));
+    expect(screen.getByTestId('calendar-edit-toggle')).toHaveAttribute(
+      'aria-label',
+      'Save schedule'
+    );
+  });
+});
+
+describe('Calendar7Day — RO locale opt-in (Cont > Setari > Limba)', () => {
+  beforeEach(() => {
+    setLocale('ro');
+    _resetI18nCache();
+    setLocale('ro');
+  });
+
+  it('renders RO day labels L Ma Mi J V S D under RO locale', () => {
+    render(<Calendar7Day />);
+    expect(screen.getByTestId('calendar-day-0')).toHaveAttribute('data-day', 'L');
+    expect(screen.getByTestId('calendar-day-1')).toHaveAttribute('data-day', 'Ma');
+    expect(screen.getByTestId('calendar-day-2')).toHaveAttribute('data-day', 'Mi');
+    expect(screen.getByTestId('calendar-day-6')).toHaveAttribute('data-day', 'D');
+  });
+
+  it('RO edit hint copy verbatim (mockup parity)', () => {
+    useScheduleStore.setState({ editMode: true });
+    render(<Calendar7Day />);
+    expect(screen.getByTestId('calendar-edit-hint')).toHaveTextContent(
+      'Modifica zilele de antrenament in care esti disponibil.'
+    );
+  });
+
+  it('RO edit toggle aria-label cycles Editeaza ↔ Salveaza', () => {
     render(<Calendar7Day />);
     expect(screen.getByTestId('calendar-edit-toggle')).toHaveAttribute(
       'aria-label',

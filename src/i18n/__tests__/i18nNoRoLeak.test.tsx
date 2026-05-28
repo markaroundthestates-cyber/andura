@@ -30,6 +30,9 @@ import { setLocale, _resetI18nCache } from '../index.js';
 import { useWorkoutStore } from '../../react/stores/workoutStore';
 import { useCoachStore } from '../../react/stores/coachStore';
 import { useOnboardingStore } from '../../react/stores/onboardingStore';
+import { useScheduleStore } from '../../react/stores/scheduleStore';
+import type { LastSessionSummary, SessionExerciseBreakdown } from '../../react/stores/workoutStore';
+import type { PRRecord } from '../../react/lib/prHistoryAggregate';
 
 // ── Mocks for async aggregates so screens render synchronously ──────────────
 vi.mock('../../react/lib/coachDirectorAggregate', () => ({
@@ -77,6 +80,15 @@ import { BodyData } from '../../react/routes/screens/progres/BodyData';
 import { WeightTimeline } from '../../react/routes/screens/progres/WeightTimeline';
 import { WeightLogList } from '../../react/routes/screens/progres/WeightLogList';
 import { useProgresStore } from '../../react/stores/progresStore';
+// ── Wave E3 — calendar + Istoric tab surfaces ────────────────────────────────
+import { Calendar7Day } from '../../react/components/Calendar7Day';
+import { CalendarHeatmap } from '../../react/components/Istoric/CalendarHeatmap';
+import { RatingsStrip90Day } from '../../react/components/Istoric/RatingsStrip90Day';
+import { VirtualSessionList } from '../../react/components/Istoric/VirtualSessionList';
+import { PRWallRecent } from '../../react/components/Antrenor/PRWallRecent';
+import { Istoric } from '../../react/routes/screens/istoric/Istoric';
+import { IstoricDetail } from '../../react/routes/screens/istoric/IstoricDetail';
+import { PrWall } from '../../react/routes/screens/istoric/PrWall';
 
 // ── Forbidden tokens (RO-only signals) ──────────────────────────────────────
 //
@@ -186,6 +198,40 @@ const FORBIDDEN_RO_TOKENS = [
   'pentru',
   'despre',
   'inapoi',
+  // Wave E3 — Calendar + Istoric tab vocabulary
+  'istoricul',
+  'recorduri',
+  'recordurile',
+  'sesiune',
+  'sesiuni',
+  'consecutive',
+  'asteapta',
+  'termina',
+  'modifica',
+  'luna',
+  'cronologic',
+  'descrescator',
+  'antrenamente',
+  'urmatoarea',
+  'anterioara',
+  'libera',
+  'detaliu',
+  'tonaj',
+  'volum',
+  'program',
+  'lipsa',
+  'odihna',
+  // Months (RO genitives that should never appear under EN)
+  'ianuarie',
+  'februarie',
+  'martie',
+  'aprilie',
+  'iunie',
+  'iulie',
+  'septembrie',
+  'octombrie',
+  'noiembrie',
+  'decembrie',
 ];
 
 const RO_DIACRITICS = /[ăâîșțĂÂÎȘȚşţŞŢ]/;
@@ -224,6 +270,53 @@ function withRouter(initialPath: string, children: JSX.Element): JSX.Element {
     </MemoryRouter>
   );
 }
+
+// Wave E3 fixtures for Istoric tab surfaces. Built minimal so the screens
+// hit both empty + populated branches without dragging RO copy from
+// fixtures that no longer matter (legacy-shape rows). Exercise names stay
+// EN-canonical (Bench Press / Squat) — engine convention.
+const WAVE_E3_EXERCISE: SessionExerciseBreakdown = {
+  exerciseId: 'bench-press',
+  exerciseName: 'Bench Press',
+  sets: [
+    { kg: 100, reps: 5, rating: 'usor', timestamp: Date.now() },
+    { kg: 100, reps: 5, rating: 'potrivit', timestamp: Date.now() },
+    { kg: 100, reps: 5, rating: 'greu', timestamp: Date.now(), isPR: true },
+  ],
+  totalVolume: 1500,
+  peakOneRM: 117,
+};
+
+const WAVE_E3_SESSION: LastSessionSummary = {
+  title: 'Push',
+  meta: '5 · 45 · 1200',
+  ts: Date.now() - 86400000,
+  sets: 5,
+  durationMin: 45,
+  volumeKg: 1500,
+  exercises: [WAVE_E3_EXERCISE],
+};
+
+const WAVE_E3_PR_RECORDS: readonly PRRecord[] = [
+  {
+    exerciseId: 'bench-press',
+    exerciseName: 'Bench Press',
+    kg: 100,
+    reps: 5,
+    oneRMEstimate: 117,
+    sessionTs: Date.now() - 86400000,
+    sessionTitle: 'Push',
+  },
+  {
+    exerciseId: 'squat',
+    exerciseName: 'Squat',
+    kg: 140,
+    reps: 5,
+    oneRMEstimate: 163,
+    sessionTs: Date.now() - 2 * 86400000,
+    sessionTitle: 'Legs',
+  },
+];
 
 function resetStores(): void {
   useWorkoutStore.setState({
@@ -442,6 +535,113 @@ describe('Wave C2 i18n — no RO leak under EN locale (Daniel mandate)', () => {
     });
     rerender(withRouter('/app/progres/weight-log-list', <WeightLogList />));
     assertNoRoLeak('WeightLogList seeded', container.textContent ?? '');
+  });
+});
+
+// ── Wave E3 — Calendar + Istoric tab surfaces ────────────────────────────
+describe('Wave E3 i18n — no RO leak on calendar + Istoric tab', () => {
+  it('Calendar7Day (Antrenor home schedule strip) — locked + edit modes', () => {
+    // Locked default.
+    const { container, rerender } = render(<Calendar7Day />);
+    assertNoRoLeak('Calendar7Day locked', container.textContent ?? '');
+    // Edit mode (surfaces hint + Save CTA). Mutate the schedule store
+    // in-place rather than re-render with a prop since the component reads
+    // from the zustand selector.
+    useScheduleStore.setState({ editMode: true });
+    rerender(<Calendar7Day />);
+    assertNoRoLeak('Calendar7Day edit', container.textContent ?? '');
+    useScheduleStore.setState({ editMode: false });
+  });
+
+  it('CalendarHeatmap (Istoric monthly grid) — empty + populated', () => {
+    // Empty.
+    const empty = render(<CalendarHeatmap />);
+    assertNoRoLeak('CalendarHeatmap empty', empty.container.textContent ?? '');
+    empty.unmount();
+    // Populated with a hard session today (forces ratingWord branch).
+    useWorkoutStore.setState({ sessionsHistory: [WAVE_E3_SESSION] });
+    const populated = render(<CalendarHeatmap />);
+    assertNoRoLeak('CalendarHeatmap populated', populated.container.textContent ?? '');
+  });
+
+  it('RatingsStrip90Day (Istoric 90-day strip) — empty + 3 sessions', () => {
+    const empty = render(<RatingsStrip90Day />);
+    assertNoRoLeak('RatingsStrip empty', empty.container.textContent ?? '');
+    empty.unmount();
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        WAVE_E3_SESSION,
+        { ...WAVE_E3_SESSION, ts: Date.now() - 10 * 86400000 },
+        { ...WAVE_E3_SESSION, ts: Date.now() - 30 * 86400000 },
+      ],
+    });
+    const populated = render(<RatingsStrip90Day />);
+    assertNoRoLeak('RatingsStrip populated', populated.container.textContent ?? '');
+  });
+
+  it('VirtualSessionList (Istoric session list) renders rows without RO leak', () => {
+    const sessions = [WAVE_E3_SESSION, { ...WAVE_E3_SESSION, ts: Date.now() - 86400000 * 2 }];
+    const { container } = render(
+      <VirtualSessionList
+        sorted={sessions}
+        sessionsHistory={sessions}
+        formatDate={(ts) => String(ts)}
+        onSelect={() => {}}
+      />,
+    );
+    assertNoRoLeak('VirtualSessionList', container.textContent ?? '');
+  });
+
+  it('PRWallRecent (Antrenor home top-3 slice) — populated', () => {
+    const { container } = render(<PRWallRecent records={WAVE_E3_PR_RECORDS} />);
+    assertNoRoLeak('PRWallRecent', container.textContent ?? '');
+  });
+
+  it('Istoric landing — empty state has no RO leak', () => {
+    useWorkoutStore.setState({ sessionsHistory: [] });
+    const { container } = render(withRouter('/app/istoric', <Istoric />));
+    assertNoRoLeak('Istoric empty', container.textContent ?? '');
+  });
+
+  it('Istoric landing — populated (sessions + PR wall + stats) has no RO leak', () => {
+    useWorkoutStore.setState({
+      sessionsHistory: [WAVE_E3_SESSION, { ...WAVE_E3_SESSION, ts: Date.now() - 86400000 * 3 }],
+      streak: 7,
+    });
+    const { container } = render(withRouter('/app/istoric', <Istoric />));
+    assertNoRoLeak('Istoric populated', container.textContent ?? '');
+  });
+
+  it('IstoricDetail — present session (per-exercise breakdown) has no RO leak', () => {
+    useWorkoutStore.setState({ sessionsHistory: [WAVE_E3_SESSION] });
+    const { container } = render(withRouter('/app/istoric/0', <IstoricDetail />));
+    assertNoRoLeak('IstoricDetail present', container.textContent ?? '');
+  });
+
+  it('IstoricDetail — missing session (404 branch) has no RO leak', () => {
+    useWorkoutStore.setState({ sessionsHistory: [] });
+    const { container } = render(withRouter('/app/istoric/999', <IstoricDetail />));
+    assertNoRoLeak('IstoricDetail missing', container.textContent ?? '');
+  });
+
+  it('IstoricDetail — legacy session (no exercises field) has no RO leak', () => {
+    useWorkoutStore.setState({
+      sessionsHistory: [{ title: 'Push', meta: '5 · 30 · 910', ts: Date.now() }],
+    });
+    const { container } = render(withRouter('/app/istoric/0', <IstoricDetail />));
+    assertNoRoLeak('IstoricDetail legacy', container.textContent ?? '');
+  });
+
+  it('PrWall (standalone screen) — empty has no RO leak', () => {
+    useWorkoutStore.setState({ sessionsHistory: [] });
+    const { container } = render(withRouter('/app/istoric/pr-wall', <PrWall />));
+    assertNoRoLeak('PrWall empty', container.textContent ?? '');
+  });
+
+  it('PrWall (standalone screen) — populated has no RO leak', () => {
+    useWorkoutStore.setState({ sessionsHistory: [WAVE_E3_SESSION] });
+    const { container } = render(withRouter('/app/istoric/pr-wall', <PrWall />));
+    assertNoRoLeak('PrWall populated', container.textContent ?? '');
   });
 });
 
