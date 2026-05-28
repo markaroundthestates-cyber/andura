@@ -38,6 +38,8 @@ import * as engineWrappers from '../../lib/engineWrappers';
 import { coachPick } from '../../lib/coachVoice';
 import { gotoPath } from '../../lib/navigation';
 import { useWorkoutStore } from '../../stores/workoutStore';
+import { Ripple } from '../Ripple';
+import { haptic } from '../../lib/motion';
 
 // §B037 audit fix (UI-REVIEW #2) — extract design tokens out of inline style
 // hex literals → CSS custom properties. Tailwind extend in `tailwind.config.js`
@@ -195,12 +197,20 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
           {exerciseCount} exercitii
         </span>
       </div>
+      {/* Wave C3 (2026-05-28) — "Incepe sesiunea" is the day's ritual launch.
+          Ripple + haptic + press-feedback so the tap feels like a real
+          commitment. Layered the same way as set-confirm (the other ritual
+          tap), so the two anchor moments of a workout day feel paired. */}
       <button
         type="button"
-        onClick={onStart}
-        className="relative w-full mt-3.5 bg-brick text-paper rounded-md py-2.5 font-semibold transition-transform active:scale-[.97]"
+        onClick={() => {
+          haptic(12);
+          onStart();
+        }}
+        className="press-feedback relative overflow-hidden w-full mt-3.5 bg-brick text-paper rounded-md py-2.5 font-semibold"
       >
-        Incepe sesiunea
+        <Ripple color="rgba(255,255,255,0.55)" />
+        <span className="relative">Incepe sesiunea</span>
       </button>
       <div className="relative text-center mt-2.5">
         <button

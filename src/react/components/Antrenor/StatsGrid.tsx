@@ -113,12 +113,15 @@ function StatTile({
         style={{ color: `color-mix(in oklab, var(${accentVar}) 80%, transparent)` }}
       />
       {/* Subtle radial wash anchored top-left so the eye is drawn to the
-          number, not the tile edge. opacity 0.08 keeps it whisper-quiet. */}
+          number, not the tile edge. opacity 0.08 keeps it whisper-quiet.
+          Wave C3 — drift the wash over a slow 22s cycle so the tile reads as
+          a "living surface" (peripheral motion, never foreground). The drift
+          collapses under reduced-motion via global * cap. */}
       <span
         aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none animate-ambient-drift"
         style={{
-          background: `radial-gradient(circle at 0% 0%, color-mix(in oklab, var(${accentVar}) 18%, transparent) 0%, transparent 60%)`,
+          backgroundImage: `radial-gradient(circle at 0% 0%, color-mix(in oklab, var(${accentVar}) 18%, transparent) 0%, transparent 60%)`,
         }}
       />
       <div className="relative text-[10px] text-ink2 uppercase tracking-wider font-medium">

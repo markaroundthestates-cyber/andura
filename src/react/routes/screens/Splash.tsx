@@ -22,6 +22,7 @@
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../stores/appStore';
+import { Ripple } from '../../components/Ripple';
 
 export function Splash(): JSX.Element {
   const navigate = useNavigate();
@@ -76,9 +77,10 @@ export function Splash(): JSX.Element {
           type="button"
           onClick={() => navigate(isAuthenticated ? '/app/antrenor' : '/auth')}
           data-testid="splash-cta"
-          className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold transition-transform active:scale-[.97]"
+          className="press-feedback relative overflow-hidden w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
         >
-          {isAuthenticated ? 'Continua' : 'Log In'}
+          <Ripple color="rgba(255,255,255,0.5)" />
+          <span className="relative">{isAuthenticated ? 'Continua' : 'Log In'}</span>
         </button>
         {/* BUG #1 (CEO 2026-05-27) — "Creaza Cont" e o actiune primara pentru un
             user nou; o legatura subliniata slaba e prea ascunsa. Buton secundar
@@ -90,9 +92,10 @@ export function Splash(): JSX.Element {
             type="button"
             onClick={() => navigate('/auth', { state: { mode: 'signup' } })}
             data-testid="splash-secondary"
-            className="w-full py-4 border border-lineStrong text-ink bg-paper2 rounded-[14px] text-base font-semibold transition-transform active:scale-[.97]"
+            className="press-feedback relative overflow-hidden w-full py-4 border border-lineStrong text-ink bg-paper2 rounded-[14px] text-base font-semibold"
           >
-            Creaza Cont
+            <Ripple />
+            <span className="relative">Creaza Cont</span>
           </button>
         )}
         <p
