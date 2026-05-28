@@ -665,11 +665,35 @@ export function Workout(): JSX.Element {
   // Past empty/loading guard — exercises is non-null array.
   const nextExercise = exercises[safeExIdx + 1];
 
-  // P-11 (LOW) — global progress (SessionTimer wv2-progress block, construit dar
-  // necablat). setsTotal = sum planned sets; setsDone = total seturi logate;
-  // exercise counter 1-indexed. Render-gated pe setsTotal>0 (component side).
+  // P-11 (LOW) — global progress (SessionTimer wv2-progress block). setsTotal =
+  // sum planned sets; setsDone = current ordinal advancing through the session.
+  //
+  // Daniel smoke 2026-05-28 verbatim "logheaza setul + sar pauza, counter sta
+  // la 1/17 in loc sa avanseze". The prior formula counted only LOGGED entries
+  // (Σ history[*].length) — that bumps on rating, then freezes through rest +
+  // skip-pause + the first half of the next set, advancing again only on the
+  // NEXT rating. Visually the counter feels stuck between rate → skip-pause
+  // even though you've clearly moved to the next set.
+  //
+  // Fix: align to the mockup `setIdx-1` flow that ALSO bumps when you start the
+  // next set. We add 1 to the logged count while the user is on a not-yet-rated
+  // set (phase=logging|idle|rating) and keep just the logged count during rest/
+  // transition (one set finished, waiting for the timer or the swap delay).
+  // Net effect through one set:
+  //   logging set 1 (history=0) -> ordinal 1   (you're on set 1)
+  //   rate set 1   (history=1, phase=rest)   -> ordinal 1 (set 1 done)
+  //   skip pause   (history=1, phase=logging) -> ordinal 2 (now on set 2)
+  //   rate set 2   (history=2, phase=rest)   -> ordinal 2 (set 2 done)
+  // The bar fills smoothly each transition (rating OR skip-pause), matching
+  // Daniel's intuition + mockup wv2 setIdx semantic.
   const setsTotal = exercises.reduce((acc, ex) => acc + ex.sets, 0);
-  const setsDone = Object.values(history).reduce((acc, sets) => acc + sets.length, 0);
+  const loggedSoFar = Object.values(history).reduce((acc, sets) => acc + sets.length, 0);
+  const isMidSet = phase === 'logging' || phase === 'idle' || phase === 'rating';
+  // Clamp to setsTotal so the +1 doesn't overshoot on the very last set the
+  // moment phase is still 'logging' but loggedSoFar already equals setsTotal-1
+  // (the +1 is the in-progress set itself — fine; the clamp guards rare double-
+  // count edges like a re-render race after the final navigate).
+  const setsDone = Math.min(setsTotal, loggedSoFar + (isMidSet ? 1 : 0));
 
   return (
     <section

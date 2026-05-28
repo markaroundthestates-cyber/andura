@@ -724,9 +724,12 @@ describe('Workout — global progress bar wired (P-11)', async () => {
     expect(screen.getByTestId('workout-progress-bar')).toBeInTheDocument();
   });
 
-  it('seturi cumulate 0/17 la start', async () => {
+  it('seturi cumulate 1/17 la start (ordinal: pe set 1)', async () => {
+    // Daniel smoke 2026-05-28: counter is the 1-indexed CURRENT-set ordinal
+    // (mockup wv2 setIdx semantic), not a "logged" tally — so first frame
+    // already reads "1/17" ("you are on set 1 of 17"), not "0/17".
     await renderWorkoutAndWait();
-    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('0/17 seturi');
+    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('1/17 seturi');
   });
 
   it('exercitiu curent 1/5 la start', async () => {
@@ -734,10 +737,22 @@ describe('Workout — global progress bar wired (P-11)', async () => {
     expect(screen.getByTestId('workout-progress-ex')).toHaveTextContent('1/5 exercitii');
   });
 
-  it('setsDone creste dupa logare set (0 → 1)', async () => {
+  it('setsDone stays 1/17 in rest after rating set 1 (set just done)', async () => {
+    // Ordinal semantic: rating set 1 enters rest -> ordinal=1 (set 1 done).
+    // The bump to 2 happens on skip-pause / auto-advance (start of set 2).
     await renderWorkoutAndWait();
-    logSet('Potrivit'); // logheaza primul set Bench Press
+    logSet('Potrivit');
     expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('1/17 seturi');
+  });
+
+  it('setsDone bumps 1 -> 2 after sari pauza (skip-rest moves to set 2)', async () => {
+    // Daniel smoke 2026-05-28 verbatim "logheaza setul + sar pauza, counter sta
+    // la 1/17 in loc sa avanseze" — sari pauza is the transition that advances
+    // the ordinal because the user has visibly moved to the next set.
+    await renderWorkoutAndWait();
+    logSet('Potrivit');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(screen.getByTestId('workout-progress-sets')).toHaveTextContent('2/17 seturi');
   });
 });
 
