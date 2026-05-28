@@ -19,7 +19,7 @@ import { InstallPrompt } from '../components/InstallPrompt';
 import { OfflineBanner } from '../components/OfflineBanner';
 import { ToastViewport } from '../components/Toast';
 import { MedicalDisclaimerModal } from '../components/MedicalDisclaimerModal';
-import { BackgroundAurora } from '../components/BackgroundAurora';
+import { AuroraBackground } from '../components/pulse/AuroraBackground';
 import { useCoachStore } from '../stores/coachStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { t } from '../../i18n/index.js';
@@ -50,14 +50,17 @@ export function Layout(): JSX.Element {
   const acceptedDisclaimer = useSettingsStore((s) => s.acceptedDisclaimer);
   const acceptDisclaimer = useSettingsStore((s) => s.acceptDisclaimer);
   return (
-    <div className={`min-h-screen bg-paper text-ink flex flex-col persona-${persona}`}>
-      {/* Wave A4 (Daniel "in background vreau animatii" 2026-05-28) — ambient
-          aurora layer behind every authenticated route. 3 palette-aware blobs
-          drift very slowly via transform + scale; auto-collapse under
-          prefers-reduced-motion via the global * cap in global.css. fixed
-          inset-0 + z-index: -10 + pointer-events: none — zero hit-target
-          interference. */}
-      <BackgroundAurora />
+    <div className={`relative min-h-screen bg-paper text-ink flex flex-col persona-${persona}`}>
+      {/* ANDURA PULSE (2026-05-29) — the living aurora backdrop sits behind
+          every authenticated route. position:absolute inset-0 z-0 +
+          pointer-events:none so it is CLIPPED inside the desktop phone bezel
+          (#root has overflow + border-radius + a transform containing block)
+          and never intercepts clicks. The shell is `relative` so the absolute
+          layer covers the full scroll height; all foreground chrome (main,
+          nav, banners) renders later in the DOM → stacks above z-0. Motion is
+          --motion-aware + auto-collapsed under prefers-reduced-motion +
+          [data-calm="1"]. Supersedes the prior BackgroundAurora (brick/olive). */}
+      <AuroraBackground />
       {/* §6-C2 audit fix — skip-to-content link WCAG 2.4.1 Bypass Blocks SC A.
           NO_DIACRITICS rule preserved ("continut" not "conținut"). */}
       <a
@@ -69,7 +72,10 @@ export function Layout(): JSX.Element {
       <OfflineBanner />
       <UpdatePrompt />
       {!inSession && <InstallPrompt />}
-      <main id="main-content" className={`flex-1 ${inSession ? 'pb-0' : 'pb-16'}`}>
+      {/* relative z-10 lifts routed content above the z-0 AuroraBackground —
+          a positioned z-0 layer otherwise paints over static siblings. The
+          fixed chrome (nav z-50, SessionPill, banners) already sits higher. */}
+      <main id="main-content" className={`relative z-10 flex-1 ${inSession ? 'pb-0' : 'pb-16'}`}>
         <ErrorBoundary>
           <Suspense fallback={<LoadingSkeleton testId="layout-suspense" />}>
             {/* Wave C3 (2026-05-28) — page transition uses animate-page-enter
