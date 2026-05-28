@@ -80,9 +80,13 @@ describe('Antrenor home — base render', () => {
     expect(screen.getByRole('heading', { name: 'Antrenor', level: 1 })).toBeInTheDocument();
   });
 
-  it('renders Incepe antrenament CTA by default (no paused session)', () => {
+  it('renders Incepe sesiunea CTA inside CoachTodayCard (no paused session)', () => {
+    // Daniel smoke 2026-05-28: bottom "Incepe antrenament" duplicate CTA removed
+    // — CoachTodayCard's own "Incepe sesiunea" button is the single workout-day
+    // entry point (CoachRestCard owns rest-day equivalents).
     renderAntrenor();
-    expect(screen.getByRole('button', { name: /Incepe antrenament/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Incepe sesiunea/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^Incepe antrenament$/i })).not.toBeInTheDocument();
   });
 
   it('renders CoachTodayCard cand schedContext=workout', () => {
@@ -181,7 +185,7 @@ describe('Antrenor home — resume session card', () => {
     expect(screen.getByRole('button', { name: /Renunta/i })).toBeInTheDocument();
   });
 
-  it('hides Incepe antrenament CTA cand pausedSnapshot exists', () => {
+  it('hides workout-start CTAs cand pausedSnapshot exists (Resume takes over)', () => {
     useWorkoutStore.setState({
       pausedSnapshot: {
         title: 'Push',
@@ -194,7 +198,10 @@ describe('Antrenor home — resume session card', () => {
       },
     });
     renderAntrenor();
-    expect(screen.queryByRole('button', { name: /Incepe antrenament/i })).not.toBeInTheDocument();
+    // Daniel smoke 2026-05-28: bottom "Incepe antrenament" duplicate removed
+    // post-D088. Resume card takes over and CoachTodayCard "Incepe sesiunea"
+    // is still rendered above — the dedup target is the orphan bottom CTA.
+    expect(screen.queryByRole('button', { name: /^Incepe antrenament$/i })).not.toBeInTheDocument();
   });
 
   it('clicks Reia → restores pausedSnapshot via store', () => {
@@ -411,13 +418,9 @@ describe('Antrenor home — navigation', () => {
     vi.mocked(getFatigue).mockReturnValue(null);
   });
 
-  it('clicks Incepe antrenament → navigates la /app/antrenor/energy-check', () => {
-    renderAntrenor();
-    fireEvent.click(screen.getByRole('button', { name: /Incepe antrenament/i }));
-    expect(screen.getByText('EnergyCheckStub')).toBeInTheDocument();
-  });
-
-  it('clicks CoachTodayCard Incepe sesiunea → navigates', () => {
+  it('clicks CoachTodayCard Incepe sesiunea → navigates la /app/antrenor/energy-check', () => {
+    // Post-D088 bottom "Incepe antrenament" dedup: CoachTodayCard's own button
+    // is the workout-day entry. Single navigation contract — energy-check.
     renderAntrenor();
     fireEvent.click(screen.getByRole('button', { name: /Incepe sesiunea/i }));
     expect(screen.getByText('EnergyCheckStub')).toBeInTheDocument();
@@ -449,9 +452,11 @@ describe('Antrenor home — HIGH-CODE-07 defense-in-depth promise catch', () => 
     vi.mocked(getCoachToday).mockRejectedValueOnce(new Error('engine pipeline boom'));
     renderAntrenor();
     await screen.findByTestId('antrenor-error-banner');
-    // CTA Incepe antrenament + heading still present so user can proceed.
+    // CoachTodayCard renders cu coach=null fallback so its "Incepe sesiunea"
+    // button still appears (showWorkoutCard ternary falls la schedContext=workout
+    // when coach=null). Gigel proceeds via the standard workout-day CTA.
     expect(screen.getByRole('heading', { name: 'Antrenor', level: 1 })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Incepe antrenament/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Incepe sesiunea/i })).toBeInTheDocument();
   });
 
   it('no error banner on happy path (engine resolves)', async () => {

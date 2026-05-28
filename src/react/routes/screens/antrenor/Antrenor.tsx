@@ -18,7 +18,8 @@
 //   9. Calendar7Day
 //  10. ObiectivSelector (6 obiective V1 LOCK)
 //  11. PRWallRecent (Phase 6 task_06 — top 3 din getPRHistoryAll)
-//  12. "Incepe antrenament" CTA → /app/antrenor/energy-check
+//  (Item 12 "Incepe antrenament" CTA removed 2026-05-28 — duplicate of
+//   CoachTodayCard "Incepe sesiunea" / CoachRestCard buttons, no extra signal.)
 //
 // Persona-aware CSS class wrapper per coachStore.persona.
 //
@@ -247,15 +248,12 @@ export function Antrenor(): JSX.Element {
 
       <PRWallRecent records={coach?.prWallRecent ?? []} />
 
-      {!pausedSnap && (
-        <button
-          type="button"
-          onClick={handleStart}
-          className="w-full bg-brick text-paper rounded-md py-3 font-semibold mt-2 transition-transform active:scale-[.97]"
-        >
-          Incepe antrenament
-        </button>
-      )}
+      {/* Daniel smoke 2026-05-28 verbatim "ala de incepe antrenament trebuie sa
+          dispara ca nu ii vad sensul" — bottom CTA was a redundant duplicate of
+          CoachTodayCard's "Incepe sesiunea" button (workout day) / CoachRestCard's
+          "Sesiune usoara" + "Vreau totusi antrenament" pair (rest day). Each
+          surface already owns its own start affordance in the right context;
+          this orphan button below PRWallRecent was visual noise. Removed. */}
     </section>
   );
 }
