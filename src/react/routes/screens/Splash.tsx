@@ -23,6 +23,7 @@ import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../stores/appStore';
 import { Ripple } from '../../components/Ripple';
+import { t } from '../../../i18n/index.js';
 
 export function Splash(): JSX.Element {
   const navigate = useNavigate();
@@ -74,9 +75,9 @@ export function Splash(): JSX.Element {
             className="animate-fade-in-up font-serif italic text-lg leading-[1.45] text-ink2 max-w-[280px] mx-auto"
             style={{ animationDelay: '140ms' }}
           >
-            Antrenorul tau personal,
+            {t('splash.taglineLine1')}
             <br />
-            fara zgomot.
+            {t('splash.taglineLine2')}
           </p>
         </div>
       </div>
@@ -94,7 +95,7 @@ export function Splash(): JSX.Element {
           className="btn-primary-lift press-feedback relative overflow-hidden w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
         >
           <Ripple color="rgba(255,255,255,0.5)" />
-          <span className="relative">{isAuthenticated ? 'Continua' : 'Log In'}</span>
+          <span className="relative">{isAuthenticated ? t('splash.continueCta') : t('splash.loginCta')}</span>
         </button>
         {/* BUG #1 (CEO 2026-05-27) — "Creaza Cont" e o actiune primara pentru un
             user nou; o legatura subliniata slaba e prea ascunsa. Buton secundar
@@ -111,14 +112,14 @@ export function Splash(): JSX.Element {
             className="btn-secondary-lift press-feedback relative overflow-hidden w-full py-4 border border-lineStrong text-ink bg-paper2 rounded-[14px] text-base font-semibold"
           >
             <Ripple />
-            <span className="relative">Creaza Cont</span>
+            <span className="relative">{t('splash.signupCta')}</span>
           </button>
         )}
         <p
           className="mt-2 text-[11px] text-ink3 leading-relaxed"
           data-testid="splash-trust-footer"
         >
-          Facut in Romania &middot; Datele tale raman ale tale
+          {t('splash.trustFooter')}
         </p>
       </div>
     </section>

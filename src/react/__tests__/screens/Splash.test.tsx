@@ -13,6 +13,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Splash } from '../../routes/screens/Splash';
 import { useAppStore } from '../../stores/appStore';
+// SPLASH+AUTH+ONB FINISH i18n — these specs were written against RO copy;
+// force RO locale so existing assertions keep their semantics. EN coverage
+// is verified separately by src/i18n/__tests__/i18nNoRoLeak.test.tsx.
+import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../../i18n/index.js';
 
 // Probe component renders the path + serialized location.state of wherever a
 // nav lands, so a test can assert both the route and the passed state.mode.
@@ -40,6 +44,9 @@ function renderSplash(): ReturnType<typeof render> {
 }
 
 beforeEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  __resetI18n();
+  __setLocale('ro');
   // appStore is a singleton across a test file — pin the auth flag per test so
   // the anon vs authenticated branch is deterministic.
   useAppStore.getState().setAuthenticated(false);
