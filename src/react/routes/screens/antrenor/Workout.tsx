@@ -1067,12 +1067,12 @@ export function Workout(): JSX.Element {
           summary. Backdrop tap or "Am inteles" closes. */}
       {whyText !== null && (
         <div
-          className="fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
+          className="animate-fade-in fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
           data-testid="why-modal-backdrop"
           onClick={() => setWhyText(null)}
         >
           <div
-            className="bg-paper rounded-t-2xl p-6 w-full max-w-md"
+            className="animate-slide-up bg-paper rounded-t-2xl p-6 w-full max-w-md"
             data-testid="why-modal"
             role="dialog"
             aria-modal="true"

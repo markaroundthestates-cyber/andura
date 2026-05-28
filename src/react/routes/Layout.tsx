@@ -64,10 +64,13 @@ export function Layout(): JSX.Element {
       <main id="main-content" className={`flex-1 ${inSession ? 'pb-0' : 'pb-16'}`}>
         <ErrorBoundary>
           <Suspense fallback={<LoadingSkeleton testId="layout-suspense" />}>
-            {/* Subtle screen entrance on route change. key={pathname} remounts
-                the wrapper so the fadeInUp replays per navigation. Animation is
-                transform/opacity only, auto-gated by prefers-reduced-motion. */}
-            <div key={pathname} className="animate-fade-in-up">
+            {/* Wave C3 (2026-05-28) — page transition uses animate-page-enter
+                (320ms cubic-bezier(0.16, 1, 0.3, 1), 6px slide-up). Slightly
+                gentler than fade-in-up (12px) so the bottom nav reads stable
+                while content settles. key={pathname} remounts the wrapper so
+                the animation replays per navigation. Auto-gated by
+                prefers-reduced-motion via global * cap. */}
+            <div key={pathname} className="animate-page-enter">
               <Outlet />
             </div>
           </Suspense>

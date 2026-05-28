@@ -75,11 +75,11 @@ export function AaFrictionModal({
   if (!open) return null;
   return (
     <div
-      className="fixed inset-0 bg-overlayStrong flex items-center justify-center z-[60] p-6"
+      className="animate-fade-in fixed inset-0 bg-overlayStrong flex items-center justify-center z-[60] p-6"
       data-testid="aa-friction-backdrop"
     >
       <div
-        className="bg-paper rounded-2xl p-6 w-full max-w-md"
+        className="animate-scale-in bg-paper rounded-2xl p-6 w-full max-w-md"
         data-testid="aa-friction-modal"
         role="dialog"
         aria-labelledby="aa-friction-title"
