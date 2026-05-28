@@ -238,17 +238,28 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
         set((s) => ({ data: { ...s.data, [key]: value } }));
       },
       finalize: () => {
-        // §30-C1 finalize gate — verify all Big 6 fields present + within
+        // §30-C1 finalize gate — verify all Big 7 fields present + within
         // bounds before marking onboarding complete. Refuses silently dacă any
         // field out-of-range (UI Continua gate already shown toast); engines
         // downstream see only valid `completed: true` snapshots.
         //
         // U-02 (CRIT) — click-through gol guard: validateOnboardingField trece
-        // `null` (short-circuit linia 90) → all-null Big 6 ar fi completat
+        // `null` (short-circuit linia 90) → all-null Big 7 ar fi completat
         // onboarding fals (engines primesc demografice null → NaN). Respinge
         // explicit orice field null INAINTE de range-check.
+        //
+        // BUG-onboarding-step8-gata 2026-05-28 (Daniel smoke): A2 #16 a adaugat
+        // `targetWeight` + `targetDate` ca OPTIONAL pe interfata (user le
+        // seteaza in Progres > ObiectivCard post-onboarding, NU in wizard).
+        // Iterarea Object.keys(data) le includea + null-check silently
+        // respingea finalize → butonul "Gata" pe Step 8 nu-l ducea pe user
+        // mai departe. Fix: enumerate explicit Big 7 required (skip optional
+        // targetWeight/targetDate).
+        const REQUIRED_FIELDS: Array<keyof OnboardingData> = [
+          'age', 'sex', 'goal', 'frequency', 'experience', 'weight', 'height',
+        ];
         const { data } = useOnboardingStore.getState();
-        for (const key of Object.keys(data) as Array<keyof OnboardingData>) {
+        for (const key of REQUIRED_FIELDS) {
           if (data[key] === null) return;
           const result = validateOnboardingField(key, data[key]);
           if (!result.ok) return;

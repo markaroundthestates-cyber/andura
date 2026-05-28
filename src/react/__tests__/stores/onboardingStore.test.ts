@@ -336,6 +336,30 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
     expect(useOnboardingStore.getState().completedAt).not.toBeNull();
   });
 
+  it('finalizes cu Big 7 + targetWeight/targetDate null (Daniel smoke step 8 Gata)', () => {
+    // BUG-onboarding-step8-gata 2026-05-28 — A2 #16 a adaugat targetWeight +
+    // targetDate ca OPTIONAL. Prior finalize iterare Object.keys(data) le
+    // includea + null-check silently respingea finalize → butonul "Gata"
+    // pe step 8 nu mergea (user blocat in onboarding). Fix enumerate explicit
+    // Big 7 required; targetWeight/targetDate ramane null = OK.
+    useOnboardingStore.setState({
+      data: {
+        age: 32,
+        sex: 'm',
+        goal: 'masa',
+        frequency: '4',
+        experience: 'intermediar',
+        weight: 80,
+        height: 180,
+        targetWeight: null,
+        targetDate: null,
+      },
+    });
+    useOnboardingStore.getState().finalize();
+    expect(useOnboardingStore.getState().completed).toBe(true);
+    expect(useOnboardingStore.getState().completedAt).not.toBeNull();
+  });
+
   it('finalizes cu boundary values (age 18 + weight 30 + height 120)', () => {
     // §obiectiv-drop-longevitate 2026-05-28 — folosim mentenanta (longevitate dropped).
     useOnboardingStore.setState({
