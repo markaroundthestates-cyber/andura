@@ -6,7 +6,23 @@
 //     null fallback path line 37)
 //   - getComputedReadinessScore returns number sau null (DB unavailable)
 
+export type ReadinessVerdictKey =
+  | 'PR_DAY'
+  | 'SOLID'
+  | 'NORMAL'
+  | 'MODERATE'
+  | 'LIGHT'
+  | 'REST'
+  | 'REST_RECOVER';
+
 export interface ReadinessVerdict {
+  /**
+   * Wave E4 — semantic key for i18n resolution
+   * (coachEngine.readiness.labels.*). Optional for backward-compat with
+   * pre-Wave-E4 test fixtures + persisted snapshots. Null when score itself
+   * is null.
+   */
+  key?: ReadinessVerdictKey | null;
   label: string | null;
   color: string;
   volumeMultiplier: number;

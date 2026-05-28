@@ -24,22 +24,21 @@ import { getUserProfileDisplay } from './userProfile';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
 import { estimateBfDeurenbergCapped } from '../../../../engine/bodyComposition.js';
+import { t } from '../../../../i18n/index.js';
 
 // §obiectiv-relocate 2026-05-28 — Goal selector relocated to Progres tab
 // (ObiectivGoalCard). GOAL_LABELS dropped din SettingsProfile (Frecventa +
 // Experienta raman aici — setup-once params, NU progress-tracking goal).
 
-const FREQUENCY_LABELS: Record<Frequency, string> = {
-  '2': '2x/sapt',
-  '3': '3x/sapt',
-  '4': '4x/sapt',
-  '5': '5x/sapt',
-};
+// Frequency labels resolved via t() per-locale (e.g. "3x/sapt" vs "3x/week").
+function frequencyLabel(f: Frequency): string {
+  return t('settings.profile.frequencyShort', { n: f });
+}
 
-const EXPERIENCE_LABELS: Record<Experience, string> = {
-  incepator: 'Incepator',
-  intermediar: 'Intermediar',
-  avansat: 'Avansat',
+const EXPERIENCE_LABEL_KEYS: Record<Experience, string> = {
+  incepator: 'settings.profile.experienceBeginner',
+  intermediar: 'settings.profile.experienceIntermediate',
+  avansat: 'settings.profile.experienceAdvanced',
 };
 
 export function SettingsProfile(): JSX.Element {
@@ -102,7 +101,12 @@ export function SettingsProfile(): JSX.Element {
     ...(draft.sex ? { sex: draft.sex } : {}),
   });
   const bfAuto = bfNavy ?? bfDeurenberg;
-  const bfSource = bfNavy != null ? 'US Navy' : bfDeurenberg != null ? 'Estimat' : '';
+  const bfSource =
+    bfNavy != null
+      ? t('settings.profile.bfSourceUsNavy')
+      : bfDeurenberg != null
+        ? t('settings.profile.bfSourceEstimated')
+        : '';
 
   // §obiectiv-tinta 2026-05-28 — Daniel smoke #8 ("tot ce e la Obiectiv trebuie
   // mutat la progres undeva"): "Tinte personale" (greutate tinta + pana in +
@@ -186,7 +190,7 @@ export function SettingsProfile(): JSX.Element {
       data-testid="settings-profile"
     >
       <SubHeader
-        title="Profil si tinte"
+        title={t('settings.profile.title')}
         onBack={handleBack}
         testIdBack="settings-profile-back"
       />
@@ -202,10 +206,10 @@ export function SettingsProfile(): JSX.Element {
         </div>
 
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Date personale
+          {t('settings.profile.sectionPersonal')}
         </p>
         <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
-          <LabelRow label="Varsta">
+          <LabelRow label={t('settings.profile.age')}>
             <input
               type="number"
               min={18}
@@ -218,7 +222,7 @@ export function SettingsProfile(): JSX.Element {
               className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
             />
           </LabelRow>
-          <LabelRow label="Greutate (kg)">
+          <LabelRow label={t('settings.profile.weight')}>
             <input
               type="number"
               min={30}
@@ -232,7 +236,7 @@ export function SettingsProfile(): JSX.Element {
               className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
             />
           </LabelRow>
-          <SelectRow label="Gen" htmlFor="profile-sex-select" isLast>
+          <SelectRow label={t('settings.profile.sex')} htmlFor="profile-sex-select" isLast>
             <select
               id="profile-sex-select"
               value={draft.sex ?? ''}
@@ -241,21 +245,19 @@ export function SettingsProfile(): JSX.Element {
               className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
             >
               <option value="">—</option>
-              <option value="m">Masculin</option>
-              <option value="f">Feminin</option>
+              <option value="m">{t('settings.profile.sexMale')}</option>
+              <option value="f">{t('settings.profile.sexFemale')}</option>
             </select>
           </SelectRow>
         </div>
 
         {/* §F-pass2-settings-profile-03 — Compozitie corporala (mockup L2034-2047).
-            Talie + Gat + Inaltime → BF% auto US Navy (engine usNavyBF.js) cu
-            override manual. Inaltime = draft.height (P-02 store, RE-U-01) —
-            aceeasi sursa care alimenteaza BMR; talie/gat = local V1. */}
+            Talie + Gat + Inaltime → BF% auto US Navy + manual override. */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Compozitie corporala
+          {t('settings.profile.sectionBody')}
         </p>
         <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-1">
-          <LabelRow label="Talie (cm)">
+          <LabelRow label={t('settings.profile.waist')}>
             <input
               type="number"
               min={50}
@@ -269,7 +271,7 @@ export function SettingsProfile(): JSX.Element {
               className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
             />
           </LabelRow>
-          <LabelRow label="Gat (cm)">
+          <LabelRow label={t('settings.profile.neck')}>
             <input
               type="number"
               min={25}
@@ -283,7 +285,7 @@ export function SettingsProfile(): JSX.Element {
               className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
             />
           </LabelRow>
-          <LabelRow label="Inaltime (cm)">
+          <LabelRow label={t('settings.profile.height')}>
             <input
               type="number"
               min={120}
@@ -298,7 +300,7 @@ export function SettingsProfile(): JSX.Element {
             />
           </LabelRow>
           <div className="flex items-center justify-between px-4 py-3 border-b border-line">
-            <span className="text-sm text-ink">BF % auto</span>
+            <span className="text-sm text-ink">{t('settings.profile.bfAuto')}</span>
             <span className="flex items-center gap-2">
               <span
                 className="font-mono text-sm font-semibold text-ink"
@@ -309,7 +311,7 @@ export function SettingsProfile(): JSX.Element {
               <span className="text-[11px] text-ink3" data-testid="profile-bf-source">{bfSource}</span>
             </span>
           </div>
-          <SelectRow label="Editez manual" htmlFor="profile-bf-manual" isLast>
+          <SelectRow label={t('settings.profile.bfManual')} htmlFor="profile-bf-manual" isLast>
             <span className="flex items-center gap-2">
               <input
                 id="profile-bf-manual"
@@ -337,7 +339,7 @@ export function SettingsProfile(): JSX.Element {
           </SelectRow>
         </div>
         <p className="text-xs text-ink3 mb-4 px-1 leading-snug">
-          Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori.
+          {t('settings.profile.bodyCompFooter')}
         </p>
 
         {/* §obiectiv-tinta 2026-05-28 (Daniel smoke #8) — "Tinte personale"
@@ -351,10 +353,10 @@ export function SettingsProfile(): JSX.Element {
             ObiectivGoalCard. Frecventa + Experienta raman aici — setup-once
             params, NU progress-tracking goal (clear separation). */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Antrenament
+          {t('settings.profile.sectionTraining')}
         </p>
         <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
-          <SelectRow label="Frecventa" htmlFor="profile-frequency-select">
+          <SelectRow label={t('settings.profile.frequency')} htmlFor="profile-frequency-select">
             <select
               id="profile-frequency-select"
               value={draft.frequency ?? ''}
@@ -363,12 +365,12 @@ export function SettingsProfile(): JSX.Element {
               className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
             >
               <option value="">—</option>
-              {(Object.keys(FREQUENCY_LABELS) as Array<keyof typeof FREQUENCY_LABELS>).map((f) => (
-                <option key={f} value={f}>{FREQUENCY_LABELS[f]}</option>
+              {(['2', '3', '4', '5'] as Frequency[]).map((f) => (
+                <option key={f} value={f}>{frequencyLabel(f)}</option>
               ))}
             </select>
           </SelectRow>
-          <SelectRow label="Experienta" htmlFor="profile-experience-select" isLast>
+          <SelectRow label={t('settings.profile.experience')} htmlFor="profile-experience-select" isLast>
             <select
               id="profile-experience-select"
               value={draft.experience ?? ''}
@@ -377,8 +379,8 @@ export function SettingsProfile(): JSX.Element {
               className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
             >
               <option value="">—</option>
-              {(Object.keys(EXPERIENCE_LABELS) as Array<keyof typeof EXPERIENCE_LABELS>).map((x) => (
-                <option key={x} value={x}>{EXPERIENCE_LABELS[x]}</option>
+              {(Object.keys(EXPERIENCE_LABEL_KEYS) as Experience[]).map((x) => (
+                <option key={x} value={x}>{t(EXPERIENCE_LABEL_KEYS[x])}</option>
               ))}
             </select>
           </SelectRow>
@@ -391,7 +393,7 @@ export function SettingsProfile(): JSX.Element {
           className="w-full mt-3 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2"
         >
           <Check className="w-4 h-4" aria-hidden="true" />
-          Confirma editare
+          {t('settings.profile.confirmEditCta')}
         </button>
 
         {saved && (
@@ -400,7 +402,7 @@ export function SettingsProfile(): JSX.Element {
             role="status"
             data-testid="settings-profile-saved"
           >
-            Profil salvat
+            {t('settings.profile.profileSavedStatus')}
           </p>
         )}
       </div>

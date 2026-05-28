@@ -51,22 +51,25 @@ export function getReadinessScore(readinessInput, kcalYesterday, protYesterday, 
  * Mirror semantics fatigue.js 'DATE INSUFICIENTE' gate (last4.length < 2).
  */
 export function getReadinessVerdict(score, { isInCut = false, hasHistory = true } = {}) {
-  if (score == null) return { label: null, color: 'var(--text3)', volumeMultiplier: 1.0, canPR: false };
+  if (score == null) return { key: null, label: null, color: 'var(--text3)', volumeMultiplier: 1.0, canPR: false };
+  // Wave E4 — semantic `key` lets the React boundary translate the verdict
+  // via i18n (coachEngine.readiness.labels.*). `label` keeps the canonical
+  // RO string for backward-compat with engine tests + non-React callers.
   if (isInCut) {
     // In CUT, PR-urile sunt rare — nu promovam 'Zi de PR'
-    if (score >= READINESS_PR)   return { label: 'Sesiune solida',    color: 'var(--green)',    volumeMultiplier: 1.0,  canPR: false };
-    if (score >= READINESS_HIGH) return { label: 'Sesiune normala',   color: 'var(--accent)',   volumeMultiplier: 1.0,  canPR: false };
-    if (score >= READINESS_MED)  return { label: 'Sesiune moderata',  color: 'var(--accent2)',  volumeMultiplier: 0.85, canPR: false };
-    if (score >= READINESS_LOW)  return { label: 'Sesiune usoara',    color: 'var(--accent3)',  volumeMultiplier: 0.7,  canPR: false };
-    return { label: 'Odihna',             color: 'var(--red)',      volumeMultiplier: 0,    canPR: false };
+    if (score >= READINESS_PR)   return { key: 'SOLID',    label: 'Sesiune solida',    color: 'var(--green)',    volumeMultiplier: 1.0,  canPR: false };
+    if (score >= READINESS_HIGH) return { key: 'NORMAL',   label: 'Sesiune normala',   color: 'var(--accent)',   volumeMultiplier: 1.0,  canPR: false };
+    if (score >= READINESS_MED)  return { key: 'MODERATE', label: 'Sesiune moderata',  color: 'var(--accent2)',  volumeMultiplier: 0.85, canPR: false };
+    if (score >= READINESS_LOW)  return { key: 'LIGHT',    label: 'Sesiune usoara',    color: 'var(--accent3)',  volumeMultiplier: 0.7,  canPR: false };
+    return { key: 'REST',           label: 'Odihna',             color: 'var(--red)',      volumeMultiplier: 0,    canPR: false };
   } else {
     // Phase normala / BULK — logica originala. PR-day DOAR cand exista istoric:
     // user fresh (hasHistory=false) primeste 'Sesiune normala', NU 'Zi de PR'.
-    if (score >= READINESS_PR && hasHistory) return { label: 'Zi de PR',          color: 'var(--green)',    volumeMultiplier: 1.1,  canPR: true  };
-    if (score >= READINESS_HIGH) return { label: 'Sesiune normala',   color: 'var(--accent)',   volumeMultiplier: 1.0,  canPR: false };
-    if (score >= READINESS_MED)  return { label: 'Sesiune moderata',  color: 'var(--accent2)',  volumeMultiplier: 0.85, canPR: false };
-    if (score >= READINESS_LOW)  return { label: 'Sesiune usoara',    color: 'var(--accent3)',  volumeMultiplier: 0.7,  canPR: false };
-    return { label: 'Odihneste-te',       color: 'var(--red)',      volumeMultiplier: 0,    canPR: false };
+    if (score >= READINESS_PR && hasHistory) return { key: 'PR_DAY', label: 'Zi de PR',          color: 'var(--green)',    volumeMultiplier: 1.1,  canPR: true  };
+    if (score >= READINESS_HIGH) return { key: 'NORMAL',   label: 'Sesiune normala',   color: 'var(--accent)',   volumeMultiplier: 1.0,  canPR: false };
+    if (score >= READINESS_MED)  return { key: 'MODERATE', label: 'Sesiune moderata',  color: 'var(--accent2)',  volumeMultiplier: 0.85, canPR: false };
+    if (score >= READINESS_LOW)  return { key: 'LIGHT',    label: 'Sesiune usoara',    color: 'var(--accent3)',  volumeMultiplier: 0.7,  canPR: false };
+    return { key: 'REST_RECOVER',   label: 'Odihneste-te',       color: 'var(--red)',      volumeMultiplier: 0,    canPR: false };
   }
 }
 

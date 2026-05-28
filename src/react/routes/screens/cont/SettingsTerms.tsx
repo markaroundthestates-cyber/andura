@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { FileText, AlertTriangle } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t, tArray } from '../../../../i18n/index.js';
 
 type ActiveDoc = 'tc' | 'medical';
 
@@ -16,10 +17,13 @@ export function SettingsTerms(): JSX.Element {
   const navigate = useNavigate();
   const [active, setActive] = useState<ActiveDoc>('tc');
 
+  const tcItems = tArray('settings.terms.tcItems');
+  const medicalItems = tArray('settings.terms.medicalItems');
+
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-terms">
       <SubHeader
-        title="Termeni si conditii"
+        title={t('settings.terms.title')}
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-terms-back"
       />
@@ -34,7 +38,7 @@ export function SettingsTerms(): JSX.Element {
           className={`flex-1 py-3 text-sm font-semibold flex items-center justify-center gap-1.5 ${active === 'tc' ? 'text-brick border-b-2 border-brick' : 'text-ink2'}`}
         >
           <FileText className="w-4 h-4" aria-hidden="true" />
-          Termeni
+          {t('settings.terms.tabTerms')}
         </button>
         <button
           type="button"
@@ -45,41 +49,23 @@ export function SettingsTerms(): JSX.Element {
           className={`flex-1 py-3 text-sm font-semibold flex items-center justify-center gap-1.5 ${active === 'medical' ? 'text-brick border-b-2 border-brick' : 'text-ink2'}`}
         >
           <AlertTriangle className="w-4 h-4" aria-hidden="true" />
-          Medical
+          {t('settings.terms.tabMedical')}
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-5">
         {active === 'tc' ? (
           <article data-testid="terms-tc-content" className="text-sm text-ink leading-relaxed">
-            <h2 className="text-base font-semibold mb-2">Termeni si conditii Andura</h2>
-            <p className="mb-3">
-              Andura este un coach de antrenament personal local-first. Toate
-              datele se stocheaza pe telefonul tau si pot fi exportate sau
-              sterse oricand din ecranul Cont.
-            </p>
-            <p className="mb-3">
-              Folosind Andura accepti urmatoarele puncte cheie:
-            </p>
+            <h2 className="text-base font-semibold mb-2">{t('settings.terms.tcHeading')}</h2>
+            <p className="mb-3">{t('settings.terms.tcIntro')}</p>
+            <p className="mb-3">{t('settings.terms.tcAcceptIntro')}</p>
             <ul className="list-disc pl-5 mb-3 space-y-1.5">
-              <li>Andura ofera recomandari, NU prescriptii medicale.</li>
-              <li>Esti responsabil de propria siguranta in sala.</li>
-              <li>
-                Backup-ul Firebase este optional (autentificare magic link) si
-                cripteaza datele in transit (HTTPS).
-              </li>
-              <li>
-                Raportarea de erori (crash-uri) este opt-in (implicit oprita),
-                cu datele personale sterse inainte de trimitere.
-              </li>
-              <li>
-                Andura este in Beta gratuita. Functionalitati pot fi schimbate
-                sau adaugate fara aviz prealabil pana la lansarea V1.
-              </li>
+              {tcItems.map((it, i) => (
+                <li key={i}>{it}</li>
+              ))}
             </ul>
             <p className="text-xs text-ink2 mt-4">
-              Versiune Beta &middot; Actualizat 2026-05-18. Tot textul
-              complet disponibil online la{' '}
+              {t('settings.terms.tcVersion')}{' '}
               <a
                 href="https://andura.app/terms"
                 target="_blank"
@@ -87,36 +73,23 @@ export function SettingsTerms(): JSX.Element {
                 className="underline text-brick"
                 data-testid="terms-tc-live-link"
               >
-                andura.app/terms
+                {t('settings.terms.tcLiveLinkLabel')}
               </a>
               .
             </p>
           </article>
         ) : (
           <article data-testid="terms-medical-content" className="text-sm text-ink leading-relaxed">
-            <h2 className="text-base font-semibold mb-2">Disclaimer medical</h2>
-            <p className="mb-3">
-              Andura este o aplicatie de fitness, NU un dispozitiv medical sau
-              un substitut pentru sfatul unui medic, kinetoterapeut sau
-              antrenor profesionist.
-            </p>
-            <p className="mb-3">
-              Consulta un medic inainte de a incepe orice program nou de
-              antrenament, mai ales daca:
-            </p>
+            <h2 className="text-base font-semibold mb-2">{t('settings.terms.medicalScreenHeading')}</h2>
+            <p className="mb-3">{t('settings.terms.medicalIntro')}</p>
+            <p className="mb-3">{t('settings.terms.medicalConsultIntro')}</p>
             <ul className="list-disc pl-5 mb-3 space-y-1.5">
-              <li>Ai o conditie medicala (cardiaca, respiratorie, musculo-scheletala).</li>
-              <li>Esti gravida sau alaptezi.</li>
-              <li>Ai durere persistenta sau leziuni recente.</li>
-              <li>Iei medicamente care influenteaza efortul fizic.</li>
+              {medicalItems.map((it, i) => (
+                <li key={i}>{it}</li>
+              ))}
             </ul>
-            <p className="mb-3">
-              In sala asculta-ti corpul. Daca simti durere ascutita, ameteala,
-              dificultati de respiratie — opreste sesiunea si cere ajutor.
-            </p>
-            <p className="text-xs text-ink2 mt-4">
-              Acceptat la onboarding. Acest text poate fi consultat oricand.
-            </p>
+            <p className="mb-3">{t('settings.terms.medicalListenBody')}</p>
+            <p className="text-xs text-ink2 mt-4">{t('settings.terms.medicalAccepted')}</p>
           </article>
         )}
       </div>

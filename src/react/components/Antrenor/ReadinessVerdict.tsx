@@ -6,6 +6,7 @@
 
 import type { JSX } from 'react';
 import type { ReadinessOutput } from '../../lib/engineWrappers';
+import { t } from '../../../i18n/index.js';
 
 interface Props {
   readiness: ReadinessOutput | null;
@@ -13,6 +14,19 @@ interface Props {
 
 export function ReadinessVerdict({ readiness }: Props): JSX.Element | null {
   if (!readiness) return null;
+  // Wave E4 — resolve the verdict label via the engine's semantic `key` so
+  // EN surfaces "Normal session" / "Light session" / etc. Fall back to the
+  // engine's RO label when the key is missing (defensive — engine guarantees
+  // a key in the post-Wave-E4 shape but old persisted shapes may not).
+  const i18nLabelKey = readiness.key
+    ? `coachEngine.readiness.labels.${readiness.key}`
+    : null;
+  const resolvedLabel = i18nLabelKey
+    ? (() => {
+        const v = t(i18nLabelKey);
+        return v && v !== i18nLabelKey ? v : readiness.label;
+      })()
+    : readiness.label;
   return (
     <div
       className="text-sm text-ink2 mb-4 text-center"
@@ -21,12 +35,12 @@ export function ReadinessVerdict({ readiness }: Props): JSX.Element | null {
       aria-label="Verdict readiness"
     >
       <span className="font-semibold" style={{ color: readiness.color }}>
-        {readiness.label}
+        {resolvedLabel}
       </span>
       {' '}
       <span className="text-ink2">
         ({readiness.score}/100
-        {readiness.canPR ? ' - poti incerca PR' : ''})
+        {readiness.canPR ? t('coachEngine.readiness.canPrSuffix') : ''})
       </span>
     </div>
   );

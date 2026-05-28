@@ -15,6 +15,7 @@ import { useScheduleStore } from '../../../stores/scheduleStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { USER_DATA_KEYS, CDL_KEYS } from '../../../../util/dataRegistry.js';
+import { t, tArray } from '../../../../i18n/index.js';
 
 // S-02 audit fix (AUDIT-3 §S-02 HIGH, GDPR Art. 20) — unprefixed legacy keys
 // written via src/db.js + engine wrappers are NOT wv2-* prefixed, so the
@@ -137,31 +138,29 @@ export function SettingsExport(): JSX.Element {
     }
   }
 
+  const contentItems = tArray('settings.export.contentItems');
+
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-export">
       <SubHeader
-        title="Descarca datele tale"
+        title={t('settings.export.title')}
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-export-back"
       />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink leading-relaxed mb-4">
-          Iei toate datele tale Andura intr-un fisier JSON pe care il poti
-          stoca local sau muta pe alt dispozitiv. Include profil + antrenamente
-          + nutritie + setari + calendar.
+          {t('settings.export.intro')}
         </p>
 
         <div className="bg-paper2 border border-line rounded-[14px] p-4 mb-4">
           <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-            Continut export
+            {t('settings.export.contentHeading')}
           </p>
           <ul className="text-sm text-ink space-y-1.5">
-            <li>• Profil si Big 6 (varsta, gen, obiectiv, frecventa, experienta, greutate)</li>
-            <li>• Istoric sesiuni (toate antrenamentele logate)</li>
-            <li>• Nutritie zilnica (kcal + proteine)</li>
-            <li>• Preferinte (tema, unitati, notificari)</li>
-            <li>• Calendar saptamanal (zile training/odihna)</li>
+            {contentItems.map((it, i) => (
+              <li key={i}>{`• ${it}`}</li>
+            ))}
           </ul>
         </div>
 
@@ -172,7 +171,7 @@ export function SettingsExport(): JSX.Element {
           className="w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2"
         >
           <Download className="w-4 h-4" aria-hidden="true" />
-          Descarca JSON
+          {t('settings.export.exportCta')}
         </button>
 
         {status === 'success' && (
@@ -181,7 +180,7 @@ export function SettingsExport(): JSX.Element {
             role="status"
             data-testid="settings-export-success"
           >
-            Fisier descarcat ({Math.ceil(size / 1024)} KB)
+            {t('settings.export.successHint', { kb: Math.ceil(size / 1024) })}
           </p>
         )}
         {status === 'error' && (
@@ -190,7 +189,7 @@ export function SettingsExport(): JSX.Element {
             role="alert"
             data-testid="settings-export-error"
           >
-            Eroare la export. Incearca din nou.
+            {t('settings.export.errorHint')}
           </p>
         )}
       </div>

@@ -21,13 +21,40 @@
 // rounded-[14px]. D015 LOCK V1 DESIGN MASTER authority preserved.
 
 import type { JSX } from 'react';
-import { getFatigue } from '../../lib/engineWrappers';
+import { getFatigue, type FatigueOutput } from '../../lib/engineWrappers';
 import { t } from '../../../i18n/index.js';
+
+/**
+ * Wave E4 — resolve the engine's verdict label + detail through i18n using
+ * the semantic `key` (HIGH_FATIGUE / MODERATE_FATIGUE / PEAK_FORM / NORMAL /
+ * INSUFFICIENT_DATA). Falls back to the engine's RO copy when the key is
+ * missing (defensive — engine guarantees a key post-Wave-E4 but partial mocks
+ * may not). Empty string `key` (older shape) also falls through.
+ */
+function localizedFatigue(f: FatigueOutput): { label: string; detail: string } {
+  const k = f.key && f.key.length > 0 ? f.key : null;
+  if (!k) return { label: f.label, detail: f.detail };
+  const labelKey =
+    k === 'INSUFFICIENT_DATA'
+      ? 'coachEngine.fatigue.insufficient.label'
+      : `coachEngine.fatigue.${k}.label`;
+  const detailKey =
+    k === 'INSUFFICIENT_DATA'
+      ? 'coachEngine.fatigue.insufficient.detail'
+      : `coachEngine.fatigue.${k}.detail`;
+  const label = t(labelKey);
+  const detail = t(detailKey);
+  return {
+    label: label && label !== labelKey ? label : f.label,
+    detail: detail && detail !== detailKey ? detail : f.detail,
+  };
+}
 
 export function FatigueStrip(): JSX.Element {
   const fatigue = getFatigue();
   // §F-pass2-fatiguestrip-01 — convert 0-100 engine score → 0-10 display.
   const scoreOutOfTen = fatigue ? Math.round(fatigue.score / 10) : null;
+  const localized = fatigue ? localizedFatigue(fatigue) : null;
 
   return (
     <section
@@ -39,7 +66,7 @@ export function FatigueStrip(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
           {t('progres.fatigue.todayLabel')}
         </p>
-        {fatigue ? (
+        {fatigue && localized ? (
           <>
             {/* §F-pass2-fatiguestrip-03 — value standalone mono mockup
                L1720; sub-label deplasat pe linie noua mockup L1721. */}
@@ -51,11 +78,11 @@ export function FatigueStrip(): JSX.Element {
               className="text-xs text-ink2 mt-0.5"
               data-testid="fatigue-sub-label"
             >
-              {fatigue.label}
+              {localized.label}
             </p>
-            {fatigue.detail && (
+            {localized.detail && (
               <p className="text-xs text-ink2 mt-0.5" data-testid="fatigue-detail">
-                {fatigue.detail}
+                {localized.detail}
               </p>
             )}
           </>

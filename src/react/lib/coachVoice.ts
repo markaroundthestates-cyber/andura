@@ -20,6 +20,12 @@
 //   - DECISIONS.md §D-LEGACY-052 Andura Suflet
 //   - DECISIONS.md §D-LEGACY-064 NO_DIACRITICS_RULE
 
+// Wave E4 — locale-aware pool resolution. The COACH_VOICE constant below is
+// the canonical RO source (mockup verbatim); coachPick prefers the per-locale
+// pool from the i18n bundle (coachEngine.voice.*) when present, falls back to
+// COACH_VOICE for engine-test compat + partial-mock setups.
+import { t as tFn, tArray } from '../../i18n/index.js';
+
 export const COACH_VOICE = {
   // before user logs set
   preset: [
@@ -164,11 +170,39 @@ export function coachPick(
   let pool: readonly string[] = [];
   let fallbackReason: 'unknown-category' | 'missing-endsession-rating' | 'empty-pool' | null = null;
 
+  // Wave E4 — locale-aware pool resolution. The i18n bundle ships parallel
+  // arrays per locale (coachEngine.voice.${category}); flat categories map
+  // 1:1, endSession ratings get suffixed (`endSessionUsor` / Potrivit / Greu).
+  // When the bundle has the pool we use it; otherwise we fall back to the
+  // canonical RO `COACH_VOICE` constant (preserves engine-test snapshots +
+  // any partial-mock test setup that doesn't re-init i18n).
+  function bundlePoolFor(
+    cat: CoachVoiceFlatCategory | 'endSession',
+    r?: CoachVoiceEndSessionRating
+  ): readonly string[] | null {
+    if (cat === 'endSession') {
+      if (!r) return null;
+      // Map only the known ratings — any unexpected value returns null so the
+      // outer fallback path (returns COACH_VOICE_SAFE_FALLBACK) fires instead
+      // of silently grabbing a different rating's pool.
+      const suffix =
+        r === 'usor' ? 'Usor'
+        : r === 'potrivit' ? 'Potrivit'
+        : r === 'greu' ? 'Greu'
+        : null;
+      if (suffix === null) return null;
+      const arr = tArray(`coachEngine.voice.endSession${suffix}`);
+      return arr.length > 0 ? arr : null;
+    }
+    const arr = tArray(`coachEngine.voice.${cat}`);
+    return arr.length > 0 ? arr : null;
+  }
+
   if (category === 'endSession') {
     if (!rating) {
       fallbackReason = 'missing-endsession-rating';
     } else {
-      pool = COACH_VOICE.endSession[rating] ?? [];
+      pool = bundlePoolFor('endSession', rating) ?? COACH_VOICE.endSession[rating] ?? [];
       if (pool.length === 0) fallbackReason = 'unknown-category';
     }
   } else if (
@@ -177,7 +211,7 @@ export function coachPick(
     category === 'rest' || category === 'transition' ||
     category === 'reflectie' || category === 'preview'
   ) {
-    pool = COACH_VOICE[category];
+    pool = bundlePoolFor(category) ?? COACH_VOICE[category];
     if (pool.length === 0) fallbackReason = 'empty-pool';
   } else {
     fallbackReason = 'unknown-category';
@@ -185,7 +219,13 @@ export function coachPick(
 
   if (fallbackReason !== null) {
     captureCoachPickFallback(fallbackReason, String(category), rating);
-    return COACH_VOICE_SAFE_FALLBACK;
+    // Resolve safe fallback through the bundle too so EN users get the EN
+    // copy ("Get ready to train.") instead of the canonical RO line.
+    const bundleSafe = (() => {
+      const v = tFn('coachEngine.voice.safeFallback');
+      return v && v !== 'coachEngine.voice.safeFallback' ? v : COACH_VOICE_SAFE_FALLBACK;
+    })();
+    return bundleSafe;
   }
 
   const idx =

@@ -13,6 +13,14 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { SettingsProfile } from '../../../routes/screens/cont/SettingsProfile';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 
+// Wave E4 i18n locale pin — these specs were written against RO copy;
+// force RO locale so existing assertions keep their semantics. EN coverage
+// is verified separately by src/i18n/__tests__/i18nNoRoLeak.test.tsx.
+import { beforeEach as __i18nBeforeEach } from 'vitest';
+import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../../../i18n/index.js';
+__i18nBeforeEach(() => { try { localStorage.removeItem('sf.locale'); } catch {} __resetI18n(); __setLocale('ro'); });
+
+
 function Stub(): JSX.Element {
   return <div data-testid="cont-stub" />;
 }
@@ -43,6 +51,10 @@ beforeEach(() => {
     completedAt: Date.now(),
   });
   localStorage.clear();
+  // Wave E4 — restore RO locale (cleared by storage flush above) so existing
+  // RO label assertions keep their semantics.
+  __resetI18n();
+  __setLocale('ro');
 });
 
 describe('SettingsProfile — LabelRow/SelectRow label binding (§6-M3 + §HIGH-1)', () => {
@@ -79,7 +91,7 @@ describe('SettingsProfile — LabelRow/SelectRow label binding (§6-M3 + §HIGH-
 
   it('Frecventa label binds to select element', () => {
     renderScreen();
-    const sel = screen.getByLabelText('Frecventa') as HTMLSelectElement;
+    const sel = screen.getByLabelText('Antrenamente pe saptamana') as HTMLSelectElement;
     expect(sel.tagName).toBe('SELECT');
     expect(sel.value).toBe('4');
   });
@@ -143,7 +155,7 @@ describe('SettingsProfile — LabelRow/SelectRow label binding (§6-M3 + §HIGH-
     // §obiectiv-relocate 2026-05-28 — Obiectiv pair removed (goal moved la Progres).
     const pairs: Array<{ label: string; id: string }> = [
       { label: 'Gen', id: 'profile-sex-select' },
-      { label: 'Frecventa', id: 'profile-frequency-select' },
+      { label: 'Antrenamente pe saptamana', id: 'profile-frequency-select' },
       { label: 'Experienta', id: 'profile-experience-select' },
     ];
     pairs.forEach(({ label, id }) => {

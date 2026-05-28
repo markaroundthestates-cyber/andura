@@ -10,6 +10,7 @@ import { useSettingsStore } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { Toggle } from '../../../components/Toggle';
+import { t, tArray } from '../../../../i18n/index.js';
 
 // Pass 9 polish — ToggleRow shell wraps shared <Toggle> per mockup parity
 // (.sw canonical L2973-2976). Toggle button extracted la components/Toggle.
@@ -45,10 +46,14 @@ export function SettingsPrivacy(): JSX.Element {
   const setDataExportConsent = useSettingsStore((s) => s.setDataExportConsent);
   const setTelemetryOptIn = useSettingsStore((s) => s.setTelemetryOptIn);
 
+  const collectItems = tArray('settings.privacy.policy.collectItems');
+  const useItems = tArray('settings.privacy.policy.useItems');
+  const rightsItems = tArray('settings.privacy.policy.rightsItems');
+
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-privacy">
       <SubHeader
-        title="Confidentialitate"
+        title={t('settings.privacy.title')}
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-privacy-back"
       />
@@ -57,31 +62,29 @@ export function SettingsPrivacy(): JSX.Element {
         <div className="flex items-center gap-2.5 mb-4">
           <ShieldCheck className="w-5 h-5 text-brick" aria-hidden="true" />
           <p className="text-sm text-ink2 leading-snug">
-            Datele tale raman pe telefon. Tu controlezi ce iese de aici.
+            {t('settings.privacy.headerSubtitle')}
           </p>
         </div>
 
         <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
           <ToggleRow
             testId="privacy-data-export-toggle"
-            title="Export date permis"
-            desc="Pot descarca datele mele oricand din ecranul Descarca date."
+            title={t('settings.privacy.exportToggleTitle')}
+            desc={t('settings.privacy.exportToggleDesc')}
             checked={dataExport}
             onToggle={() => setDataExportConsent(!dataExport)}
           />
           <ToggleRow
             testId="privacy-telemetry-toggle"
-            title="Raportare erori"
-            desc="Trimite automat rapoarte de eroare (crash-uri) ca sa reparam problemele. Implicit oprit."
+            title={t('settings.privacy.telemetryToggleTitle')}
+            desc={t('settings.privacy.telemetryToggleDesc')}
             checked={telemetry}
             onToggle={() => setTelemetryOptIn(!telemetry)}
           />
         </div>
 
         <p className="text-xs text-ink2 leading-snug">
-          Folosim Sentry doar pentru rapoarte de eroare, daca pornesti optiunea
-          de sus. Datele personale (email, identificatori) sunt sterse inainte
-          de trimitere. Nu colectam metrici de utilizare. Poti revoca oricand.
+          {t('settings.privacy.footerNote')}
         </p>
 
         {/* §A025 audit fix (NC§28-C1) — Privacy Policy live content GDPR. */}
@@ -89,77 +92,80 @@ export function SettingsPrivacy(): JSX.Element {
           data-testid="privacy-policy-content"
           className="mt-6 pt-5 border-t border-line text-sm text-ink leading-relaxed"
         >
-          <h2 className="text-base font-semibold mb-3">Politica de confidentialitate</h2>
+          <h2 className="text-base font-semibold mb-3">{t('settings.privacy.policy.title')}</h2>
 
-          <h3 className="text-sm font-semibold mt-3 mb-1.5">Ce date colectam</h3>
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">{t('settings.privacy.policy.collectHeading')}</h3>
           <ul className="list-disc pl-5 mb-3 space-y-1 text-sm text-ink2">
-            <li>Profil onboarding: varsta, gen, obiectiv, frecventa, experienta, greutate (Big 6)</li>
-            <li>Sesiuni antrenament: exercitii, seturi, kg, reps, durata, RPE</li>
-            <li>Indicatori biometrici opt-in: greutate corp, masuratori (talie, brate, picioare)</li>
-            <li>Email pentru Magic Link (autentificare optionala fara parola)</li>
+            {collectItems.map((it, i) => (
+              <li key={i}>{it}</li>
+            ))}
           </ul>
 
-          <h3 className="text-sm font-semibold mt-3 mb-1.5">Cum sunt folosite</h3>
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">{t('settings.privacy.policy.useHeading')}</h3>
           <ul className="list-disc pl-5 mb-3 space-y-1 text-sm text-ink2">
-            <li>Personalizare antrenamente (volum, intensitate, frecventa pe baza Big 6)</li>
-            <li>Engine recomandari (readiness, fatigue, PR detection — local pe telefon)</li>
-            <li>Backup optional Firebase RTDB (criptat in transit HTTPS) doar daca esti autentificat</li>
-            <li>ZERO publicitate · ZERO vanzare date · ZERO third-party trackers</li>
+            {useItems.map((it, i) => (
+              <li key={i}>{it}</li>
+            ))}
           </ul>
 
-          <h3 className="text-sm font-semibold mt-3 mb-1.5">Drepturile tale GDPR</h3>
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">{t('settings.privacy.policy.rightsHeading')}</h3>
           <ul className="list-disc pl-5 mb-3 space-y-1 text-sm text-ink2">
-            <li><strong>Acces + portabilitate:</strong> exporta toate datele JSON din Cont &gt; Descarca date</li>
-            <li><strong>Stergere:</strong> sterge tot din Cont &gt; Deconectare si stergere &gt; Sterge contul</li>
-            <li><strong>Rectificare:</strong> editeaza profilul direct in Cont &gt; Profil</li>
-            <li><strong>Opozitie:</strong> toggle raportare erori sus (default OFF)</li>
-            <li><strong>Limitare procesare:</strong> dezactiveaza backup Firebase (deconectare cont)</li>
+            {rightsItems.map((it, i) => (
+              <li key={i}>{it}</li>
+            ))}
           </ul>
 
-          <h3 className="text-sm font-semibold mt-3 mb-1.5">Stocare + retentie</h3>
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">{t('settings.privacy.policy.storageHeading')}</h3>
           <p className="text-sm text-ink2 mb-3">
-            Datele se stocheaza local-first pe telefonul tau (localStorage + IndexedDB).
-            Backup-ul Firebase RTDB (optional) pastreaza copie pana stergi contul.
-            ZERO copie pe servere terte. <strong>Stergerea de pe device =
-            imediata.</strong> Datele Firebase RTDB (daca esti autentificat)
-            se sterg automat la &quot;Sterge contul&quot; (best-effort GDPR Art. 17,
-            propagare server &lt;5 min). Probleme la stergere remote? Scrie la
-            <a href="mailto:privacy@andura.app" className="text-brick underline">{' '}privacy@andura.app</a>{' '}
-            (raspuns &lt;72h).
+            {/* Render the email as a real mailto anchor (not just an
+                interpolation token) so links auto-detect / mailto handoff
+                works on touch devices + tests can assert the link exists. */}
+            {t('settings.privacy.policy.storageBody', { email: '__EMAIL__' })
+              .split('__EMAIL__')
+              .flatMap((seg, i, arr) =>
+                i < arr.length - 1
+                  ? [
+                      seg,
+                      <a
+                        key={`storage-${i}`}
+                        href="mailto:privacy@andura.app"
+                        className="text-brick underline"
+                      >
+                        privacy@andura.app
+                      </a>,
+                    ]
+                  : [seg]
+              )}
           </p>
 
           {/* §28-H6 audit fix — Medical data Art. 9 special category boundary. */}
-          <h3 className="text-sm font-semibold mt-3 mb-1.5">Date sensibile (GDPR Art. 9)</h3>
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">{t('settings.privacy.policy.sensitiveHeading')}</h3>
+          <p className="text-sm text-ink2 mb-3">{t('settings.privacy.policy.sensitiveBody')}</p>
+
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">{t('settings.privacy.policy.subprocessorsHeading')}</h3>
+          <p className="text-sm text-ink2 mb-3">{t('settings.privacy.policy.subprocessorsBody')}</p>
+
+          <h3 className="text-sm font-semibold mt-3 mb-1.5">{t('settings.privacy.policy.contactHeading')}</h3>
           <p className="text-sm text-ink2 mb-3">
-            Andura este o aplicatie de <strong>fitness</strong>, NU un
-            dispozitiv medical. Datele de greutate corporala, masuratori sau
-            durere raportate prin Pain Button au caracter strict
-            <strong> sportiv</strong>, NU medical. Nu colectam diagnostice,
-            tratamente, retete sau alte categorii speciale GDPR Art. 9. Daca
-            ai conditii medicale, consulta intai medicul (vezi
-            <strong>{' '}Disclaimer medical</strong> in Termeni si conditii).
+            {t('settings.privacy.policy.contactBody', { email: '__EMAIL__' })
+              .split('__EMAIL__')
+              .flatMap((seg, i, arr) =>
+                i < arr.length - 1
+                  ? [
+                      seg,
+                      <a
+                        key={`contact-${i}`}
+                        href="mailto:privacy@andura.app"
+                        className="text-brick underline"
+                      >
+                        privacy@andura.app
+                      </a>,
+                    ]
+                  : [seg]
+              )}
           </p>
 
-          <h3 className="text-sm font-semibold mt-3 mb-1.5">Sub-procesatori</h3>
-          <p className="text-sm text-ink2 mb-3">
-            Pentru a oferi serviciul, folosim doi sub-procesatori:{' '}
-            <strong>Google Firebase</strong> (autentificare + backup RTDB,
-            regiune europe-west1 EU) si <strong>Sentry</strong> (raportare
-            erori app, opt-in, cu datele personale sterse). ZERO terti
-            analytics, ZERO advertising, ZERO data brokers.
-          </p>
-
-          <h3 className="text-sm font-semibold mt-3 mb-1.5">Contact + reclamatii</h3>
-          <p className="text-sm text-ink2 mb-3">
-            Pentru intrebari sau reclamatii GDPR: <a href="mailto:privacy@andura.app" className="text-brick underline">privacy@andura.app</a>.
-            Drept de reclamatie la Autoritatea Nationala de Supraveghere a
-            Prelucrarii Datelor cu Caracter Personal (ANSPDCP).
-          </p>
-
-          <p className="text-xs text-ink2 mt-4">
-            Versiune Beta · Actualizat 2026-05-22. Operator date: Andura PWA solo
-            developer Daniel. Date stocate UE (Firebase europe-west1).
-          </p>
+          <p className="text-xs text-ink2 mt-4">{t('settings.privacy.policy.version')}</p>
         </article>
       </div>
     </section>

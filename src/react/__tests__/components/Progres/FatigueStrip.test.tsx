@@ -13,9 +13,17 @@ vi.mock('../../../lib/engineWrappers', () => ({
 import { FatigueStrip } from '../../../components/Progres/FatigueStrip';
 import { getFatigue } from '../../../lib/engineWrappers';
 
+// Wave E4 — FatigueStrip resolves the verdict label/detail through i18n
+// using the engine's semantic `key`. EN remains the default; the verdict
+// assertions below match the EN copy from coachEngine.fatigue.${key}.label.
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
+
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(getFatigue).mockReturnValue(null);
+  try { localStorage.removeItem('sf.locale'); } catch {}
+  _resetI18nCache();
+  setLocale('en');
 });
 
 describe('FatigueStrip — Wave C2 i18n EN default', () => {
@@ -50,7 +58,8 @@ describe('FatigueStrip — Wave C2 i18n EN default', () => {
     const strip = screen.getByTestId('fatigue-strip');
     expect(strip.textContent).toMatch(/5\/10/);
     const subLabel = screen.getByTestId('fatigue-sub-label');
-    expect(subLabel.textContent).toBe('Pas mai conservator');
+    // Wave E4 — label resolved via i18n from key=MODERATE_FATIGUE (EN bundle).
+    expect(subLabel.textContent).toBe('A bit more conservative');
   });
 
   it('§F-pass2-fatiguestrip-03 sub-label paragraph separate de value (mockup L1721)', () => {
@@ -66,11 +75,12 @@ describe('FatigueStrip — Wave C2 i18n EN default', () => {
     render(<FatigueStrip />);
     const subLabel = screen.getByTestId('fatigue-sub-label');
     expect(subLabel.tagName).toBe('P');
-    expect(subLabel.textContent).toBe('Azi mergem mai bland');
+    // Wave E4 — label resolved via i18n from key=HIGH_FATIGUE (EN bundle).
+    expect(subLabel.textContent).toBe("We'll go lighter today");
     // Value paragraph SHOULD NOT contain label (split assertion).
     const valueText = subLabel.previousElementSibling?.textContent ?? '';
     expect(valueText).toMatch(/\/10$/);
-    expect(valueText).not.toContain('Azi mergem mai bland');
+    expect(valueText).not.toContain("We'll go lighter today");
   });
 
   it('renders detail cand fatigue.detail prezent', () => {
@@ -84,7 +94,8 @@ describe('FatigueStrip — Wave C2 i18n EN default', () => {
       detail: 'Sesiune fluenta azi.',
     });
     render(<FatigueStrip />);
-    expect(screen.getByTestId('fatigue-detail').textContent).toMatch(/Sesiune fluenta/);
+    // Wave E4 — detail resolved via i18n from key=MODERATE_FATIGUE (EN bundle).
+    expect(screen.getByTestId('fatigue-detail').textContent).toMatch(/hold the weights/i);
   });
 
   it('container data-testid present', () => {

@@ -16,6 +16,7 @@ import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import type { Goal } from '../../../stores/onboardingStore';
+import { t } from '../../../../i18n/index.js';
 
 interface PendingState {
   pendingGoal?: Goal;
@@ -56,7 +57,7 @@ export function ProgramChangeConfirm(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="program-change-confirm">
       <SubHeader
-        title="Schimba program"
+        title={t('confirm.programChange.title')}
         onBack={handleCancel}
         testIdBack="program-change-confirm-back"
       />
@@ -65,9 +66,9 @@ export function ProgramChangeConfirm(): JSX.Element {
         <div className="w-16 h-16 rounded-full bg-paper2 border border-line flex items-center justify-center mb-5">
           <RefreshCw className="w-7 h-7 text-ink" aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-semibold text-ink mb-3">Schimbi programul?</h2>
+        <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.programChange.heading')}</h2>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Coach-ul va regenera saptamana pe{' '}
+          {t('confirm.programChange.body1Prefix')}
           <b data-testid="program-change-confirm-name">{pendingLabel}</b>
           {pendingSub ? (
             <>
@@ -76,10 +77,10 @@ export function ProgramChangeConfirm(): JSX.Element {
               {')'}
             </>
           ) : null}
-          .
+          {t('confirm.programChange.body1Suffix')}
         </p>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Sesiunile deja facute raman in istoric.
+          {t('confirm.programChange.body2')}
         </p>
 
         <div className="w-full max-w-sm mt-8 flex flex-col gap-3">
@@ -89,7 +90,7 @@ export function ProgramChangeConfirm(): JSX.Element {
             data-testid="program-change-confirm-accept"
             className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
           >
-            Confirma schimbarea
+            {t('confirm.programChange.acceptCta')}
           </button>
           <button
             type="button"
@@ -97,7 +98,7 @@ export function ProgramChangeConfirm(): JSX.Element {
             data-testid="program-change-confirm-cancel"
             className="w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
           >
-            Anuleaza
+            {t('confirm.programChange.cancelCta')}
           </button>
         </div>
       </div>

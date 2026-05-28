@@ -14,6 +14,7 @@ import { useSettingsStore } from '../../../stores/settingsStore';
 import { useScheduleStore } from '../../../stores/scheduleStore';
 import { isAuthFresh, signOut as authSignOut, getAuthState, getIdToken } from '../../../../auth.js';
 import { gotoPath } from '../../../lib/navigation';
+import { t } from '../../../../i18n/index.js';
 
 // RE-S-01 audit fix — upper bound on the awaited cloud (RTDB) DELETE so a hung
 // network never traps the user on the delete screen. The local wipe + sign-out
@@ -122,7 +123,7 @@ export function DeleteAccountConfirm(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="delete-account-confirm">
       <SubHeader
-        title="Sterge contul"
+        title={t('confirm.deleteAccount.title')}
         onBack={handleCancel}
         testIdBack="delete-confirm-back"
         danger
@@ -132,13 +133,12 @@ export function DeleteAccountConfirm(): JSX.Element {
         <div className="w-16 h-16 rounded-full bg-brick/10 border border-brick/30 flex items-center justify-center mb-5">
           <Trash2 className="w-7 h-7 text-brick" aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-semibold text-ink mb-3">Atentie</h2>
+        <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.deleteAccount.heading')}</h2>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Toate datele tale (locale + remote) vor fi sterse imediat.
+          {t('confirm.deleteAccount.body1')}
         </p>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Aceasta actiune <strong>nu poate fi anulata</strong>. Nu vei mai
-          putea recupera datele dupa confirmare.
+          {t('confirm.deleteAccount.body2')}
         </p>
 
         <div className="w-full max-w-sm mt-8 flex flex-col gap-3">
@@ -148,7 +148,7 @@ export function DeleteAccountConfirm(): JSX.Element {
             data-testid="delete-confirm-accept"
             className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
           >
-            Sterge contul definitiv
+            {t('confirm.deleteAccount.acceptCta')}
           </button>
           <button
             type="button"
@@ -156,7 +156,7 @@ export function DeleteAccountConfirm(): JSX.Element {
             data-testid="delete-confirm-cancel"
             className="w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
           >
-            Anuleaza
+            {t('confirm.deleteAccount.cancelCta')}
           </button>
         </div>
       </div>

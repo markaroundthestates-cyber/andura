@@ -16,6 +16,7 @@ import { useScheduleStore } from '../../../stores/scheduleStore';
 import { useProgresStore } from '../../../stores/progresStore';
 import { clearUserDataKeys, clearUserIndexedDB, clearUserCloudData } from '../../../../util/dataReset.js';
 import { gotoPath } from '../../../lib/navigation';
+import { t } from '../../../../i18n/index.js';
 
 // A2 H-1 audit fix (data integrity + user trust) — the prior wipe cleared only
 // `wv2-*` Zustand stores; ALL engine data is written UNPREFIXED via src/db.js
@@ -66,7 +67,7 @@ export function ResetDataConfirm(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="reset-data-confirm">
       <SubHeader
-        title="Reseteaza datele"
+        title={t('confirm.resetData.title')}
         onBack={handleCancel}
         testIdBack="reset-confirm-back"
       />
@@ -75,13 +76,12 @@ export function ResetDataConfirm(): JSX.Element {
         <div className="w-16 h-16 rounded-full bg-paper2 border border-line flex items-center justify-center mb-5">
           <RotateCcw className="w-7 h-7 text-ink" aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-semibold text-ink mb-3">Resetezi toate datele?</h2>
+        <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.resetData.heading')}</h2>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Toate antrenamentele, evaluarile + masuratorile locale vor fi sterse.
+          {t('confirm.resetData.body1')}
         </p>
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Contul ramane activ. Aceasta actiune <strong>nu poate fi
-          anulata</strong>.
+          {t('confirm.resetData.body2')}
         </p>
 
         <div className="w-full max-w-sm mt-8 flex flex-col gap-3">
@@ -91,7 +91,7 @@ export function ResetDataConfirm(): JSX.Element {
             data-testid="reset-confirm-accept"
             className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
           >
-            Reseteaza datele
+            {t('confirm.resetData.acceptCta')}
           </button>
           <button
             type="button"
@@ -99,7 +99,7 @@ export function ResetDataConfirm(): JSX.Element {
             data-testid="reset-confirm-cancel"
             className="w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
           >
-            Anuleaza
+            {t('confirm.resetData.cancelCta')}
           </button>
         </div>
       </div>

@@ -9,6 +9,34 @@ import type { JSX } from 'react';
 import { Flame, Battery, Sparkles } from 'lucide-react';
 import type { ReadinessOutput, FatigueOutput } from '../../lib/engineWrappers';
 import { useCountUp } from '../../hooks/useCountUp';
+import { t } from '../../../i18n/index.js';
+
+/**
+ * Wave E4 — resolve fatigue / readiness labels from the engine's semantic
+ * `key` via i18n so EN surfaces "On track" / "PR day" etc. Falls back to the
+ * engine's canonical RO `label` if the key is unknown (defensive — engine
+ * guarantees a key in the post-Wave-E4 shape but partial mocks may not).
+ */
+function localizedFatigueLabel(f: FatigueOutput | null): string {
+  if (!f) return 'NA';
+  const i18nKey =
+    f.key === 'INSUFFICIENT_DATA'
+      ? 'coachEngine.fatigue.insufficient.label'
+      : f.key
+        ? `coachEngine.fatigue.${f.key}.label`
+        : null;
+  if (!i18nKey) return f.label;
+  const v = t(i18nKey);
+  return v && v !== i18nKey ? v : f.label;
+}
+
+function localizedReadinessLabel(r: ReadinessOutput | null): string {
+  if (!r) return 'NA';
+  const i18nKey = r.key ? `coachEngine.readiness.labels.${r.key}` : null;
+  if (!i18nKey) return r.label;
+  const v = t(i18nKey);
+  return v && v !== i18nKey ? v : r.label;
+}
 
 interface Props {
   streak: number;
@@ -55,7 +83,7 @@ export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
       <StatTile
         label="Oboseala"
         value={fatigue ? fatigueDisplay : '-'}
-        sublabel={fatigue ? fatigue.label : 'NA'}
+        sublabel={localizedFatigueLabel(fatigue)}
         Icon={Battery}
         accentVar="--olive"
         delayClass="delay-75"
@@ -64,7 +92,7 @@ export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
       <StatTile
         label="Readiness"
         value={readiness ? readinessDisplay : '-'}
-        sublabel={readiness ? readiness.label : 'NA'}
+        sublabel={localizedReadinessLabel(readiness)}
         Icon={Sparkles}
         accentVar="--deep"
         delayClass="delay-150"

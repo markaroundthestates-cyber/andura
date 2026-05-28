@@ -6,8 +6,16 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ResetCoachConfirm } from '../../../routes/screens/cont/ResetCoachConfirm';
 
+// Wave E4 i18n locale pin — these specs were written against RO copy;
+// force RO locale so existing assertions keep their semantics. EN coverage
+// is verified separately by src/i18n/__tests__/i18nNoRoLeak.test.tsx.
+import { beforeEach as __i18nBeforeEach } from 'vitest';
+import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../../../i18n/index.js';
+__i18nBeforeEach(() => { try { localStorage.removeItem('sf.locale'); } catch {} __resetI18n(); __setLocale('ro'); });
+
+
 beforeEach(() => {
-  localStorage.clear();
+  localStorage.clear(); __resetI18n(); __setLocale("ro");
 });
 
 function LocationProbe(): JSX.Element {

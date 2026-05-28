@@ -14,6 +14,14 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { SettingsPrivacy } from '../../../routes/screens/cont/SettingsPrivacy';
 import { useSettingsStore } from '../../../stores/settingsStore';
 
+// Wave E4 i18n locale pin — these specs were written against RO copy;
+// force RO locale so existing assertions keep their semantics. EN coverage
+// is verified separately by src/i18n/__tests__/i18nNoRoLeak.test.tsx.
+import { beforeEach as __i18nBeforeEach } from 'vitest';
+import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../../../i18n/index.js';
+__i18nBeforeEach(() => { try { localStorage.removeItem('sf.locale'); } catch {} __resetI18n(); __setLocale('ro'); });
+
+
 function Stub(): JSX.Element {
   return <div data-testid="cont-stub" />;
 }
@@ -31,7 +39,7 @@ function renderScreen() {
 
 beforeEach(() => {
   useSettingsStore.getState().reset();
-  localStorage.clear();
+  localStorage.clear(); __resetI18n(); __setLocale("ro"); // Wave E4 RO pin
 });
 
 describe('SettingsPrivacy — §28-H6 Art. 9 medical-data boundary section', () => {

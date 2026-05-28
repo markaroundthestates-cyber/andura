@@ -23,6 +23,7 @@ import { SubHeader } from '../../../components/SubHeader';
 import { Toggle } from '../../../components/Toggle';
 import { enablePushNotifications, disablePushNotifications } from '../../../lib/pushNotifications';
 import { syncNotificationPrefs } from '../../../lib/notificationPrefsSync';
+import { t } from '../../../../i18n/index.js';
 
 // 'no-account' = push CERE un cont (uid) ca antrenorul sa poata trimite
 // reminder-e server-side; anonim → hint Gigel-friendly.
@@ -33,35 +34,45 @@ function readPermission(): NotifPermission {
   return Notification.permission;
 }
 
-const DAY_LABELS = ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D'] as const;
-const FREQUENCY_OPTIONS: ReadonlyArray<{ value: NotificationFrequency; label: string }> = [
-  { value: 'zilnic', label: 'Zilnic' },
-  { value: 'saptamanal', label: 'Saptamanal' },
-  { value: 'off', label: 'Dezactivat' },
+// Locale-independent day initials for the picker (Monday-first weekly).
+// These are display glyphs only — the engine indexes by integer 0-6. Single-
+// char glyphs are unambiguous (no Romanian-specific letters), so we keep them
+// as constants without i18n; aria-labels go through t() (day name spoken).
+const DAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'] as const;
+const FREQUENCY_OPTIONS: ReadonlyArray<{ value: NotificationFrequency; labelKey: string }> = [
+  { value: 'zilnic', labelKey: 'settings.notifications.frequencyDaily' },
+  { value: 'saptamanal', labelKey: 'settings.notifications.frequencyWeekly' },
+  { value: 'off', labelKey: 'settings.notifications.frequencyOff' },
 ];
 
 // §F-pass2-settings-notif-02 — per-event domain toggles mockup parity.
 // Mockup andura-clasic.html L1948-1959 verbatim 5 toggles + 2 domain groups.
+// titles/descriptions live in i18n bundles (settings.notifications.events.*).
 interface NotifEvent {
   key: string;            // localStorage key suffix (wv2-notif-event-${key})
   testId: string;         // data-testid for tests
-  title: string;          // Mockup row title (bold)
-  desc: string;           // Mockup small-text description
+  titleKey: string;       // i18n key for title (bold)
+  descKey: string;        // i18n key for description
   defaultOn: boolean;     // Mockup default toggle state
 }
 const NOTIF_EVENTS_ANTRENAMENT: ReadonlyArray<NotifEvent> = [
   { key: 'session-reminder', testId: 'notif-event-session-reminder',
-    title: 'Reamintire sesiune', desc: 'Cu 30 min inainte de fereastra ta', defaultOn: true },
+    titleKey: 'settings.notifications.events.sessionReminderTitle',
+    descKey: 'settings.notifications.events.sessionReminderDesc', defaultOn: true },
   { key: 'rest-timer', testId: 'notif-event-rest-timer',
-    title: 'Pauza intre seturi', desc: 'Sunet scurt cand expira', defaultOn: true },
+    titleKey: 'settings.notifications.events.restTimerTitle',
+    descKey: 'settings.notifications.events.restTimerDesc', defaultOn: true },
   { key: 'session-missed', testId: 'notif-event-session-missed',
-    title: 'Sarit sedinta', desc: 'Intreaba cum te simti', defaultOn: false },
+    titleKey: 'settings.notifications.events.sessionMissedTitle',
+    descKey: 'settings.notifications.events.sessionMissedDesc', defaultOn: false },
 ];
 const NOTIF_EVENTS_COACHING: ReadonlyArray<NotifEvent> = [
   { key: 'daily-coach', testId: 'notif-event-daily-coach',
-    title: 'Mesaj zilnic de la antrenor', desc: '07:30 · text scurt', defaultOn: true },
+    titleKey: 'settings.notifications.events.dailyCoachTitle',
+    descKey: 'settings.notifications.events.dailyCoachDesc', defaultOn: true },
   { key: 'weekly-summary', testId: 'notif-event-weekly-summary',
-    title: 'Sumar saptamanal', desc: 'Duminica seara', defaultOn: true },
+    titleKey: 'settings.notifications.events.weeklySummaryTitle',
+    descKey: 'settings.notifications.events.weeklySummaryDesc', defaultOn: true },
 ];
 
 function readNotifEventEnabled(key: string, defaultOn: boolean): boolean {
@@ -184,33 +195,33 @@ export function SettingsNotifications(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-notifications">
       <SubHeader
-        title="Notificari"
+        title={t('settings.notifications.title')}
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-notifications-back"
       />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink2 mb-4 leading-snug">
-          Alegi cand sa primesti imboldiri. Nimic intruziv.
+          {t('settings.notifications.intro')}
         </p>
 
         <div className="bg-paper2 border border-line rounded-xl p-4 mb-2 flex items-center justify-between">
           <span className="text-sm text-ink">
-            Notificari active
+            {t('settings.notifications.masterToggleLabel')}
             {togglePending && (
               <span
                 className="ml-2 text-xs text-ink2 italic"
                 data-testid="notif-master-pending"
                 aria-live="polite"
               >
-                se aplica…
+                {t('settings.notifications.applyingHint')}
               </span>
             )}
           </span>
           <Toggle
             checked={enabled}
             onToggle={() => { void handleToggle(); }}
-            ariaLabel="Activeaza notificari"
+            ariaLabel={t('settings.notifications.masterToggleLabel')}
             testId="notif-master-toggle"
             disabled={togglePending}
           />
@@ -228,8 +239,7 @@ export function SettingsNotifications(): JSX.Element {
           >
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-ink" aria-hidden="true" />
             <p className="text-xs text-ink2 leading-relaxed">
-              Browser-ul blocheaza notificarile. Acceseaza setarile site-ului
-              (lacatel langa URL) si activeaza permisiunile.
+              {t('settings.notifications.permissionDenied')}
             </p>
           </div>
         )}
@@ -245,8 +255,7 @@ export function SettingsNotifications(): JSX.Element {
           >
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-ink" aria-hidden="true" />
             <p className="text-xs text-ink2 leading-relaxed">
-              Notificarile cer un cont, ca antrenorul sa iti poata trimite
-              reminder-e. Conecteaza-te ca sa le activezi.
+              {t('settings.notifications.permissionNoAccount')}
             </p>
           </div>
         )}
@@ -255,7 +264,7 @@ export function SettingsNotifications(): JSX.Element {
             data-testid="notif-unsupported-warning"
             className="text-xs text-ink2 mb-4 italic"
           >
-            Browser-ul nu suporta notificari push.
+            {t('settings.notifications.permissionUnsupported')}
           </p>
         )}
         <div className="mb-4" />{/* spacer keeping rhythm post permission warning */}
@@ -264,7 +273,7 @@ export function SettingsNotifications(): JSX.Element {
             toggle pattern. Day picker mai jos pastreaza role="group" +
             aria-labelledby (multi-select valid, NOT mutually exclusive). */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Frecventa
+          {t('settings.notifications.frequencyHeading')}
         </p>
         <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
           {FREQUENCY_OPTIONS.map((opt, idx) => (
@@ -277,14 +286,14 @@ export function SettingsNotifications(): JSX.Element {
               onClick={() => { setNotificationFrequency(opt.value); void syncNotificationPrefs(); }}
               className={`w-full flex items-center justify-between px-4 py-3 text-left text-sm ${idx < FREQUENCY_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${frequency === opt.value ? 'text-brick font-semibold' : 'text-ink'} disabled:opacity-50`}
             >
-              <span>{opt.label}</span>
+              <span>{t(opt.labelKey)}</span>
               {frequency === opt.value && <span aria-hidden="true">•</span>}
             </button>
           ))}
         </div>
 
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="notif-days-label">
-          Zile active
+          {t('settings.notifications.daysHeading')}
         </p>
         <div
           className="flex gap-1.5 mb-4"
@@ -294,10 +303,10 @@ export function SettingsNotifications(): JSX.Element {
         >
           {DAY_LABELS.map((label, idx) => (
             <button
-              key={label}
+              key={`day-${idx}`}
               type="button"
               aria-pressed={days[idx]}
-              aria-label={`Ziua ${label}`}
+              aria-label={t('settings.notifications.dayAria', { label })}
               data-testid={`notif-day-${idx}`}
               disabled={!enabled}
               onClick={() => { toggleNotificationDay(idx); void syncNotificationPrefs(); }}
@@ -309,7 +318,7 @@ export function SettingsNotifications(): JSX.Element {
         </div>
 
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Ora reminder
+          {t('settings.notifications.reminderTimeHeading')}
         </p>
         <div className="bg-paper2 border border-line rounded-xl p-4 mb-4">
           <input
@@ -317,17 +326,16 @@ export function SettingsNotifications(): JSX.Element {
             value={time}
             disabled={!enabled}
             onChange={(e) => { setNotificationTime(e.target.value || time); void syncNotificationPrefs(); }}
-            aria-label="Ora reminder zilnic"
+            aria-label={t('settings.notifications.reminderTimeAria')}
             data-testid="notif-time-input"
             className="w-full px-3 py-2 border border-lineStrong rounded-xl bg-paper text-ink font-mono text-base disabled:opacity-50"
           />
         </div>
 
         {/* §F-pass2-settings-notif-02 HIGH-BETA chat 4 — per-event domain
-            toggles mockup parity andura-clasic.html L1948-1959. KEEP global
-            controls above (Co-CTO functional value > strict mockup parity). */}
+            toggles mockup parity andura-clasic.html L1948-1959. */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Antrenament
+          {t('settings.notifications.trainingHeading')}
         </p>
         <div
           className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4"
@@ -346,7 +354,7 @@ export function SettingsNotifications(): JSX.Element {
         </div>
 
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Coaching
+          {t('settings.notifications.coachingHeading')}
         </p>
         <div
           className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4"
@@ -364,20 +372,18 @@ export function SettingsNotifications(): JSX.Element {
           ))}
         </div>
 
-        {/* §F-pass2-settings-notif-03 (MED Wave 7 2026-05-23) — Quiet hours
-            display per mockup L1961-1964 ("Ore de liniste" section + "Nu
-            deranja 22:00 — 07:00" info row). V1 read-only info, NU picker
-            interactive (mockup uses info-row pattern, not time-range picker). */}
+        {/* §F-pass2-settings-notif-03 — Quiet hours display per mockup
+            L1961-1964. V1 read-only info row (not interactive picker). */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Ore de liniste
+          {t('settings.notifications.quietHoursHeading')}
         </p>
         <div
           className="bg-paper2 border border-line rounded-xl px-4 py-3"
           data-testid="notif-quiet-hours"
         >
           <div className="flex items-center justify-between">
-            <span className="text-sm text-ink">Nu deranja</span>
-            <span className="text-sm text-ink2 font-mono">22:00 — 07:00</span>
+            <span className="text-sm text-ink">{t('settings.notifications.doNotDisturb')}</span>
+            <span className="text-sm text-ink2 font-mono">{t('settings.notifications.quietHoursRange')}</span>
           </div>
         </div>
       </div>
@@ -396,18 +402,19 @@ interface NotifEventRowProps {
 }
 
 function NotifEventRow({ event, checked, disabled, isLast, onToggle }: NotifEventRowProps): JSX.Element {
+  const title = t(event.titleKey);
   return (
     <div
       className={`flex items-start gap-3 px-4 py-3.5 ${isLast ? '' : 'border-b border-line'} ${disabled ? 'opacity-50' : ''}`}
     >
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-ink mb-0.5">{event.title}</p>
-        <p className="text-xs text-ink2 leading-snug">{event.desc}</p>
+        <p className="text-sm font-semibold text-ink mb-0.5">{title}</p>
+        <p className="text-xs text-ink2 leading-snug">{t(event.descKey)}</p>
       </div>
       <Toggle
         checked={checked}
         onToggle={onToggle}
-        ariaLabel={event.title}
+        ariaLabel={title}
         testId={event.testId}
         disabled={disabled}
       />

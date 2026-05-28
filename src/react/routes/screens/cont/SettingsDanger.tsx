@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { LogOut, RotateCcw, Trash2, AlertTriangle } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
 export function SettingsDanger(): JSX.Element {
   const navigate = useNavigate();
@@ -17,16 +18,14 @@ export function SettingsDanger(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-danger">
       <SubHeader
-        title="Deconectare si stergere"
+        title={t('settings.danger.title')}
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-danger-back"
       />
 
       <div className="flex-1 overflow-y-auto p-5">
         {/* §F-pass2-settings-danger-01 HIGH-BETA chat 4 — cream warning banner cu
-            alert-triangle + safety messaging. Mockup andura-clasic.html L2104-2107
-            verbatim copy: "Actiunile de mai jos afecteaza contul tau. Citeste cu
-            atentie pe pagina de confirmare inainte sa le executi." */}
+            alert-triangle + safety messaging. Mockup andura-clasic.html L2104-2107. */}
         <div
           data-testid="danger-warning-banner"
           role="status"
@@ -38,8 +37,7 @@ export function SettingsDanger(): JSX.Element {
         >
           <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-brick" aria-hidden="true" />
           <p className="text-sm text-ink2 leading-snug m-0">
-            Actiunile de mai jos afecteaza contul tau. Citeste cu atentie pe
-            pagina de confirmare inainte sa le executi.
+            {t('settings.danger.warningBanner')}
           </p>
         </div>
 
@@ -52,8 +50,8 @@ export function SettingsDanger(): JSX.Element {
           >
             <LogOut className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
             <div className="flex-1">
-              <p className="text-sm font-medium">Iesi din cont</p>
-              <p className="text-xs text-ink2">Datele raman pe telefon.</p>
+              <p className="text-sm font-medium">{t('settings.danger.logoutRowTitle')}</p>
+              <p className="text-xs text-ink2">{t('settings.danger.logoutRowSub')}</p>
             </div>
           </button>
 
@@ -65,8 +63,8 @@ export function SettingsDanger(): JSX.Element {
           >
             <RotateCcw className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
             <div className="flex-1">
-              <p className="text-sm font-medium">Reseteaza toate datele</p>
-              <p className="text-xs text-ink2">Sterge tot din telefon. Cont pastrat.</p>
+              <p className="text-sm font-medium">{t('settings.danger.resetRowTitle')}</p>
+              <p className="text-xs text-ink2">{t('settings.danger.resetRowSub')}</p>
             </div>
           </button>
 
@@ -78,25 +76,20 @@ export function SettingsDanger(): JSX.Element {
           >
             <Trash2 className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
             <div className="flex-1">
-              <p className="text-sm font-medium">Sterge contul</p>
+              <p className="text-sm font-medium">{t('settings.danger.deleteRowTitle')}</p>
               {/* U-06 audit fix (AUDIT-2 §U-06 HIGH) — removed the "30 zile
                   gratie pentru recuperare" sub-text: it was a false promise.
                   The React delete flow (DeleteAccountConfirm) does an immediate
-                  hard wipe; no soft-delete / grace period is wired (the 30-day
-                  schema in auth.js belongs to the retired vanilla path). Copy
-                  now matches reality = immediate irreversible deletion. */}
-              <p className="text-xs text-ink2">Datele + cont sterse permanent, imediat.</p>
+                  hard wipe. Copy matches reality = immediate irreversible deletion. */}
+              <p className="text-xs text-ink2">{t('settings.danger.deleteRowSub')}</p>
             </div>
           </button>
         </div>
 
         {/* U-07 audit fix (AUDIT-2 §U-07 MED) — removed internal decision ID
-            prefix "§B039/D-6 " that leaked into user-facing copy. Gigel saw a
-            cryptic internal reference; only the human GDPR explanation stays. */}
+            prefix "§B039/D-6 " that leaked into user-facing copy. */}
         <p className="text-xs text-ink2 leading-snug">
-          GDPR Art. 17: la &quot;Sterge contul&quot;, datele locale +
-          backup Firebase RTDB se sterg automat (best-effort, propagare
-          server &lt;5 min).
+          {t('settings.danger.gdprFooter')}
         </p>
       </div>
     </section>

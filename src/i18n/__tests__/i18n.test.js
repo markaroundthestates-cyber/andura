@@ -229,37 +229,57 @@ describe('bundle integrity', () => {
     expect(flattenKeys(ro)).toEqual(flattenKeys(en));
   });
 
-  it('all RO values are strings (no objects/arrays mixed)', () => {
+  /**
+   * Helper: read a leaf value at a dotted path directly from the bundle —
+   * needed because Wave E4 introduced string-array leaves (locale-aware pools
+   * for coach-voice / policy-list-items) that `t()` returns as null. The
+   * "all values are strings" invariant now allows leaves to be EITHER a
+   * non-empty string OR an array of non-empty strings.
+   */
+  function readLeaf(obj, path) {
+    const parts = path.split('.');
+    let cur = obj;
+    for (const part of parts) {
+      if (cur == null || typeof cur !== 'object') return undefined;
+      cur = cur[part];
+    }
+    return cur;
+  }
+
+  function isValidLeaf(v) {
+    if (typeof v === 'string') return v.length > 0;
+    if (Array.isArray(v)) return v.length > 0 && v.every((x) => typeof x === 'string' && x.length > 0);
+    return false;
+  }
+
+  it('all RO values are valid leaves (non-empty string OR array of non-empty strings)', () => {
     const ro = _getBundle('ro');
     for (const path of flattenKeys(ro)) {
-      // _resolve helper can't be imported direct — call t() instead
-      _resetI18nCache();
-      setLocale('ro');
-      const result = t(path);
-      expect(typeof result).toBe('string');
-      expect(result).not.toBe(path); // shouldn't fall through to key
+      const v = readLeaf(ro, path);
+      expect(isValidLeaf(v), `RO key "${path}" must be a non-empty string or array of strings`).toBe(true);
     }
   });
 
-  it('all EN values are strings (no leftover TODO_EN placeholders post 2026-05-28 flip)', () => {
+  it('all EN values are valid leaves (no leftover TODO_EN placeholders post 2026-05-28 flip)', () => {
     const en = _getBundle('en');
-    setLocale('en');
     for (const path of flattenKeys(en)) {
-      const result = t(path);
-      expect(typeof result).toBe('string');
-      expect(result).not.toBe(path); // resolved, NU fallback la key
-      expect(result.startsWith('TODO_EN'), `Key "${path}" still has TODO_EN placeholder — EN must be fully translated`).toBe(false);
+      const v = readLeaf(en, path);
+      expect(isValidLeaf(v), `EN key "${path}" must be a non-empty string or array of strings`).toBe(true);
+      const sample = typeof v === 'string' ? v : (Array.isArray(v) ? v[0] : '');
+      expect(typeof sample === 'string' && sample.startsWith('TODO_EN'), `Key "${path}" still has TODO_EN placeholder — EN must be fully translated`).toBe(false);
     }
   });
 
   it('RO strings have no diacritics (D-LEGACY-064 UI rule preserved)', () => {
     const ro = _getBundle('ro');
-    setLocale('ro');
     for (const path of flattenKeys(ro)) {
-      const result = t(path);
       // Don't fail on _meta description (vault doc, allowed diacritics).
       if (path.startsWith('_meta')) continue;
-      expect(result, `Key "${path}" has Romanian diacritics — D-LEGACY-064 UI rule violated`).not.toMatch(/[ăâîșțĂÂÎȘȚ]/);
+      const v = readLeaf(ro, path);
+      const samples = typeof v === 'string' ? [v] : Array.isArray(v) ? v : [];
+      for (const s of samples) {
+        expect(s, `Key "${path}" has Romanian diacritics — D-LEGACY-064 UI rule violated`).not.toMatch(/[ăâîșțĂÂÎȘȚ]/);
+      }
     }
   });
 

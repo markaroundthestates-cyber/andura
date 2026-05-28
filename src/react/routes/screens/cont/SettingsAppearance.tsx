@@ -13,16 +13,17 @@ import { useSettingsStore } from '../../../stores/settingsStore';
 import type { Theme } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
-const THEME_OPTIONS: ReadonlyArray<{ value: Theme; label: string; Icon: typeof Sun }> = [
-  { value: 'light', label: 'Luminos', Icon: Sun },
-  { value: 'dark', label: 'Intunecat', Icon: Moon },
-  { value: 'auto', label: 'Auto sistem', Icon: MonitorCog },
+const THEME_OPTIONS: ReadonlyArray<{ value: Theme; labelKey: string; Icon: typeof Sun }> = [
+  { value: 'light', labelKey: 'settings.appearance.themeLightLabel', Icon: Sun },
+  { value: 'dark', labelKey: 'settings.appearance.themeDarkLabel', Icon: Moon },
+  { value: 'auto', labelKey: 'settings.appearance.themeAutoLabel', Icon: MonitorCog },
 ];
 
-const NAV_STYLE_OPTIONS: ReadonlyArray<{ value: 'compact' | 'comfortable'; label: string }> = [
-  { value: 'comfortable', label: 'Spatios (recomandat)' },
-  { value: 'compact', label: 'Compact' },
+const NAV_STYLE_OPTIONS: ReadonlyArray<{ value: 'compact' | 'comfortable'; labelKey: string }> = [
+  { value: 'comfortable', labelKey: 'settings.appearance.navComfortable' },
+  { value: 'compact', labelKey: 'settings.appearance.navCompact' },
 ];
 
 export function SettingsAppearance(): JSX.Element {
@@ -35,21 +36,21 @@ export function SettingsAppearance(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-appearance">
       <SubHeader
-        title="Aspect"
+        title={t('settings.appearance.title')}
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-appearance-back"
       />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink2 mb-4 leading-snug">
-          Cum arata Andura pentru tine.
+          {t('settings.appearance.subtitle')}
         </p>
 
         {/* §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid
             toggle pattern. Vezi SchimbaFazaConfirm + Onboarding pentru
             rationale full. */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Tema
+          {t('settings.appearance.themeHeading')}
         </p>
         <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
           {THEME_OPTIONS.map((opt, idx) => {
@@ -65,7 +66,7 @@ export function SettingsAppearance(): JSX.Element {
                 className={`w-full flex items-center gap-3 px-4 py-3 text-left ${idx < THEME_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${selected ? 'text-brick font-semibold' : 'text-ink'}`}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-                <span className="flex-1 text-sm">{opt.label}</span>
+                <span className="flex-1 text-sm">{t(opt.labelKey)}</span>
                 {selected && <span aria-hidden="true">•</span>}
               </button>
             );
@@ -78,7 +79,7 @@ export function SettingsAppearance(): JSX.Element {
             omission este mockup drift, NU prod bug. Wire la useSettingsStore
             bottomNavStyle preserved. */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Bara de jos
+          {t('settings.appearance.navHeading')}
         </p>
         <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
           {NAV_STYLE_OPTIONS.map((opt, idx) => {
@@ -92,7 +93,7 @@ export function SettingsAppearance(): JSX.Element {
                 onClick={() => setBottomNavStyle(opt.value)}
                 className={`w-full flex items-center px-4 py-3 text-left ${idx < NAV_STYLE_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${selected ? 'text-brick font-semibold' : 'text-ink'}`}
               >
-                <span className="flex-1 text-sm">{opt.label}</span>
+                <span className="flex-1 text-sm">{t(opt.labelKey)}</span>
                 {selected && <span aria-hidden="true">•</span>}
               </button>
             );
@@ -101,7 +102,7 @@ export function SettingsAppearance(): JSX.Element {
 
         {/* PAR-002 Wave 2e — Themes palette picker drill-down. */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mt-4 mb-2">
-          Paleta
+          {t('settings.appearance.paletteHeading')}
         </p>
         <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
           <button
@@ -111,7 +112,7 @@ export function SettingsAppearance(): JSX.Element {
             className="w-full flex items-center gap-3 px-4 py-3 text-left text-ink"
           >
             <Palette className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-            <span className="flex-1 text-sm">Teme</span>
+            <span className="flex-1 text-sm">{t('settings.appearance.themesLink')}</span>
             <ChevronRight className="w-5 h-5 text-ink2" strokeWidth={1.6} aria-hidden="true" />
           </button>
         </div>

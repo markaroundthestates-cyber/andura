@@ -16,15 +16,16 @@ import { setPhaseOverride, getPhaseOverride } from '../../../../util/phaseOverri
 import { getAutoDetectedPhaseLabelRo } from '../../../lib/engineWrappers';
 import { SYS } from '../../../../engine/sys.js';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
 type PhaseOption = 'AUTO' | 'CUT' | 'MAINTENANCE' | 'BULK' | 'STRENGTH';
 
-const PHASE_OPTIONS: ReadonlyArray<{ value: PhaseOption; label: string; hint: string }> = [
-  { value: 'AUTO',        label: 'Auto-detect',  hint: 'Coach decide pe baza progresului' },
-  { value: 'CUT',         label: 'Cut',          hint: 'Deficit caloric (slabire grasime)' },
-  { value: 'MAINTENANCE', label: 'Mentinere',    hint: 'Greutate stabila, calibrare' },
-  { value: 'BULK',        label: 'Bulk',         hint: 'Surplus caloric (masa musculara)' },
-  { value: 'STRENGTH',    label: 'Forta',        hint: 'Usor surplus, focus performanta' },
+const PHASE_OPTIONS: ReadonlyArray<{ value: PhaseOption; labelKey: string; hintKey: string }> = [
+  { value: 'AUTO',        labelKey: 'confirm.schimbaFaza.options.autoLabel',        hintKey: 'confirm.schimbaFaza.options.autoHint' },
+  { value: 'CUT',         labelKey: 'confirm.schimbaFaza.options.cutLabel',         hintKey: 'confirm.schimbaFaza.options.cutHint' },
+  { value: 'MAINTENANCE', labelKey: 'confirm.schimbaFaza.options.maintenanceLabel', hintKey: 'confirm.schimbaFaza.options.maintenanceHint' },
+  { value: 'BULK',        labelKey: 'confirm.schimbaFaza.options.bulkLabel',        hintKey: 'confirm.schimbaFaza.options.bulkHint' },
+  { value: 'STRENGTH',    labelKey: 'confirm.schimbaFaza.options.strengthLabel',    hintKey: 'confirm.schimbaFaza.options.strengthHint' },
 ];
 
 export function SchimbaFazaConfirm(): JSX.Element {
@@ -32,9 +33,19 @@ export function SchimbaFazaConfirm(): JSX.Element {
   const initial: PhaseOption = (getPhaseOverride() as PhaseOption | null) ?? 'AUTO';
   const [selected, setSelected] = useState<PhaseOption>(initial);
   // Problem 2 (UI surface) — afiseaza faza AUTO-detectata din weight trend pe
-  // optiunea Auto-detect ("Coach decide ... → Mentinere/Cut/Bulk recomandat").
-  // Cold-start (fara istoric greutate) → 'Mentinere'.
-  const autoDetectedLabel = getAutoDetectedPhaseLabelRo();
+  // optiunea Auto-detect. Engine returns the canonical RO label ('Cut' / 'Bulk' /
+  // 'Mentinere'); we translate via the coachEngine.autoPhase bundle so EN
+  // shows 'Cut'/'Bulk'/'Maintenance'. Cold-start (fara istoric) → MAINTENANCE.
+  const autoDetectedRo = getAutoDetectedPhaseLabelRo();
+  const PHASE_RO_TO_KEY: Record<string, string> = {
+    'Cut': 'coachEngine.autoPhase.CUT',
+    'Bulk': 'coachEngine.autoPhase.BULK',
+    'Mentinere': 'coachEngine.autoPhase.MAINTENANCE',
+  };
+  const autoDetectedLabel =
+    PHASE_RO_TO_KEY[autoDetectedRo]
+      ? t(PHASE_RO_TO_KEY[autoDetectedRo])
+      : autoDetectedRo;
 
   function handleConfirm(): void {
     const tdee = typeof SYS?.estimateTDEE === 'function' ? SYS.estimateTDEE() : 2000;
@@ -49,7 +60,7 @@ export function SchimbaFazaConfirm(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="schimba-faza-confirm">
       <SubHeader
-        title="Schimba faza manual"
+        title={t('confirm.schimbaFaza.title')}
         onBack={handleCancel}
         testIdBack="schimba-faza-confirm-back"
       />
@@ -58,17 +69,13 @@ export function SchimbaFazaConfirm(): JSX.Element {
         <div className="w-16 h-16 rounded-full bg-paper2 border border-line flex items-center justify-center mb-5">
           <GitBranch className="w-7 h-7 text-ink" aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-semibold text-ink mb-3">Atentie</h2>
-        {/* Body paragraphs split per mockup andura-clasic.html L2146-2147
-            verbatim — restored "Aceasta reseteaza unele calibrari. Continui?"
-            warning lost in prior copy + merged "Datele istorice raman intacte."
-            into second paragraph cu coach recalibrare. */}
+        <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.schimbaFaza.heading')}</h2>
+        {/* Body paragraphs split per mockup andura-clasic.html L2146-2147. */}
         <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          Schimbi faza activa manual? Aceasta reseteaza unele calibrari. Continui?
+          {t('confirm.schimbaFaza.body1')}
         </p>
         <p className="text-sm text-ink2 leading-relaxed mb-6 max-w-sm">
-          Coach-ul va recalibra TDEE, volum si progresie pe baza noii faze.
-          Datele istorice raman intacte.
+          {t('confirm.schimbaFaza.body2')}
         </p>
 
         {/* §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid
@@ -79,6 +86,10 @@ export function SchimbaFazaConfirm(): JSX.Element {
         <div className="w-full max-w-sm bg-paper2 border border-line rounded-[14px] overflow-hidden">
           {PHASE_OPTIONS.map((opt, idx) => {
             const isSelected = selected === opt.value;
+            const hint =
+              opt.value === 'AUTO'
+                ? t('confirm.schimbaFaza.options.autoHintWithNow', { label: autoDetectedLabel })
+                : t(opt.hintKey);
             return (
               <button
                 key={opt.value}
@@ -92,13 +103,9 @@ export function SchimbaFazaConfirm(): JSX.Element {
               >
                 <div className="flex-1">
                   <p className={`text-sm ${isSelected ? 'font-semibold' : 'font-medium'}`}>
-                    {opt.label}
+                    {t(opt.labelKey)}
                   </p>
-                  <p className="text-xs text-ink2 mt-0.5">
-                    {opt.value === 'AUTO'
-                      ? `${opt.hint} - acum: ${autoDetectedLabel} (recomandat)`
-                      : opt.hint}
-                  </p>
+                  <p className="text-xs text-ink2 mt-0.5">{hint}</p>
                 </div>
                 {isSelected && <span aria-hidden="true">•</span>}
               </button>
@@ -113,7 +120,7 @@ export function SchimbaFazaConfirm(): JSX.Element {
             data-testid="schimba-faza-confirm-accept"
             className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
           >
-            Confirma
+            {t('confirm.schimbaFaza.acceptCta')}
           </button>
           <button
             type="button"
@@ -121,7 +128,7 @@ export function SchimbaFazaConfirm(): JSX.Element {
             data-testid="schimba-faza-confirm-cancel"
             className="w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
           >
-            Anuleaza
+            {t('confirm.schimbaFaza.cancelCta')}
           </button>
         </div>
       </div>

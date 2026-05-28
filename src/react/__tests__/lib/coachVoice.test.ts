@@ -1,8 +1,19 @@
 // ══ COACH VOICE TESTS — Lookup Library + coachPick() Selector ════════════
 // Per spec task_03 §4 B — deterministic seed + diacritics rule.
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { coachPick, COACH_VOICE, COACH_VOICE_SAFE_FALLBACK } from '../../lib/coachVoice';
+
+// Wave E4 — coachPick now prefers per-locale pools from the i18n bundle;
+// tests here assert against the canonical RO COACH_VOICE constant, so pin
+// RO before each test. EN coverage is verified separately by
+// src/i18n/__tests__/i18nNoRoLeak.test.tsx.
+import { setLocale, _resetI18nCache } from '../../../i18n/index.js';
+beforeEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch {}
+  _resetI18nCache();
+  setLocale('ro');
+});
 
 describe('COACH_VOICE library shape', () => {
   it('preset bucket non-empty', () => {
