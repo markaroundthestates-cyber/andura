@@ -14,7 +14,7 @@
 import type { JSX } from 'react';
 import { Percent } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
-import { useProgresStore } from '../../stores/progresStore';
+import { useProgresStore, latestBodyMeasurements } from '../../stores/progresStore';
 import { estimateBF_USNavy } from '../../../engine/usNavyBF.js';
 import { estimateBF_Deurenberg } from '../../../engine/bodyComposition.js';
 
@@ -24,7 +24,10 @@ export function BodyFatStrip(): JSX.Element {
   const age = useOnboardingStore((s) => s.data.age);
   const height = useOnboardingStore((s) => s.data.height);
   const bodyData = useProgresStore((s) => s.bodyData);
-  const last = bodyData[bodyData.length - 1];
+  // Smoke 2026-05-28 #15 — agregare per camp peste TOATE intrarile. Un user
+  // care a introdus gat in Cont apoi piept in Progres tot vede BF% US Navy
+  // (gat-ul nu se pierde pentru ca intrarea ulterioara n-are gat). SSOT.
+  const latest = latestBodyMeasurements(bodyData);
   // Sursa canonica de greutate curenta: ultima greutate LOGATA > onboarding.
   // BF% Deurenberg foloseste greutatea reala curenta (era inghetata pe
   // onboarding, audit CRIT split source-of-truth) → logarea misca bf% estimat.
@@ -35,13 +38,13 @@ export function BodyFatStrip(): JSX.Element {
   // fields (exactOptionalPropertyTypes); engine returneaza null daca lipseste
   // ceva SAU masuratorile sunt in afara benzii fiziologice (plauzibilitate).
   let bfNavy: number | null = null;
-  if (last?.waistCm != null && last?.neckCm != null) {
+  if (latest.waistCm != null && latest.neckCm != null) {
     const args: { sex?: string; height_cm?: number; neck_cm?: number; waist_cm?: number; hip_cm?: number } = {};
     if (sex) args.sex = sex;
     if (height) args.height_cm = height;
-    args.neck_cm = last.neckCm;
-    args.waist_cm = last.waistCm;
-    if (last.hipsCm != null) args.hip_cm = last.hipsCm;
+    args.neck_cm = latest.neckCm;
+    args.waist_cm = latest.waistCm;
+    if (latest.hipsCm != null) args.hip_cm = latest.hipsCm;
     bfNavy = estimateBF_USNavy(args);
   }
 

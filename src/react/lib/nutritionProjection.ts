@@ -141,7 +141,7 @@ function round1(n: number): number {
 
 // ── I/O boundary (impure plumbing) ──────────────────────────────────────────
 
-import { useProgresStore } from '../stores/progresStore';
+import { useProgresStore, latestBodyMeasurements } from '../stores/progresStore';
 import { useNutritionStore } from '../stores/nutritionStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { readBayesianNutritionContext } from './nutritionObservations';
@@ -207,16 +207,20 @@ export function deriveCurrentBfPct(): number | null {
   // era inghetata pe onboarding (audit CRIT split source-of-truth).
   const weight = getCurrentWeightKg();
   const bodyData = useProgresStore.getState().bodyData;
-  const last = bodyData[bodyData.length - 1];
+  // Smoke 2026-05-28 #15 — agregare per camp peste TOATE intrarile (NU doar
+  // ultima). Cand gat-ul a fost introdus din Cont si piept-ul din Progres,
+  // ultima intrare nu mai are gat → BF% cadea pe Deurenberg desi gat-ul tot
+  // exista in istoric. Same source of truth pentru ambele formulare.
+  const latest = latestBodyMeasurements(bodyData);
 
   // Tier 1 (ACURAT) — US-Navy cand exista masuratori (neck + waist).
-  if (last && last.neckCm !== undefined && last.waistCm !== undefined) {
+  if (latest.neckCm !== undefined && latest.waistCm !== undefined) {
     const args: { sex?: string; height_cm?: number; neck_cm?: number; waist_cm?: number; hip_cm?: number } = {};
     if (sex) args.sex = sex;
     if (height) args.height_cm = height;
-    args.neck_cm = last.neckCm;
-    args.waist_cm = last.waistCm;
-    if (last.hipsCm !== undefined) args.hip_cm = last.hipsCm;
+    args.neck_cm = latest.neckCm;
+    args.waist_cm = latest.waistCm;
+    if (latest.hipsCm !== undefined) args.hip_cm = latest.hipsCm;
     const navy = estimateBF_USNavy(args);
     if (navy != null) return navy;
   }

@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../../stores/onboardingStore';
 import type { Sex, Goal, Frequency, Experience, OnboardingData } from '../../../stores/onboardingStore';
-import { useProgresStore } from '../../../stores/progresStore';
+import { useProgresStore, latestBodyMeasurements } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
@@ -65,7 +65,11 @@ export function SettingsProfile(): JSX.Element {
   // profil = app foloseste tot 110. Fix: upsert intrarea de azi in weightLog pe
   // save cand greutatea s-a schimbat, ca sursa canonica sa reflecte editarea.
   const addWeightEntry = useProgresStore((s) => s.addWeightEntry);
-  const lastBody = bodyData[bodyData.length - 1];
+  // Smoke 2026-05-28 #15 — agregam ultimele valori per camp peste TOT istoricul
+  // (NU doar ultima intrare): cand gat-ul a fost introdus aici si piept-ul in
+  // Progres → Masuratori, formularul Cont trebuie sa seedeze talie+gat din
+  // istoric, nu sa cada gol pentru ca ultima intrare (Progres) n-are gat.
+  const lastBody = latestBodyMeasurements(bodyData);
   // §F-cont-01 user-wire (HIGH-BETA chat 4) — read avatar initial din id_token
   // JWT claims. Cumulative cu Cont.tsx wire pentru parity across screens.
   const profile = getUserProfileDisplay();

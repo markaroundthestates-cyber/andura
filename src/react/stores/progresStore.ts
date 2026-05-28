@@ -29,6 +29,64 @@ export interface ProgresState {
   bodyData: BodyDataEntry[];
 }
 
+/**
+ * Smoke 2026-05-28 #15 — sursa unica de masuratori curente.
+ *
+ * Pana acum BF% / SettingsProfile / BodyFatStrip citeau DOAR ultima intrare din
+ * bodyData (`bodyData[length-1]`). Dar Progres → Masuratori si Cont → Profil
+ * scriu in acelasi array, fiecare cu PROPRIA SELECTIE de campuri:
+ *   - Cont scrie talie + gat (date pentru US Navy BF%)
+ *   - Progres scrie talie + gat + piept + sold + biceps + coapsa
+ * Cand un user introduce gat in Cont apoi piept in Progres, ultima intrare nu
+ * mai are gat → BF% cade pe Deurenberg (estimat populational) desi gat-ul tot
+ * exista in istoric. Aceeasi sursa logica = aceeasi sursa fizica de adevar.
+ *
+ * Aceasta functie pura agrega ultimele valori per camp din ISTORICUL complet
+ * (fiecare camp ia cea mai recenta intrare in care e prezent — sortat dupa
+ * `date` cu fallback pe `ts` cand date e gol), astfel BF% / formularul
+ * SettingsProfile vad mereu cea mai recenta valoare pentru fiecare camp,
+ * indiferent din care ecran a fost completata.
+ */
+export interface LatestBodyMeasurements {
+  date?: string;
+  waistCm?: number;
+  neckCm?: number;
+  chestCm?: number;
+  hipsCm?: number;
+  bicepsCm?: number;
+  thighCm?: number;
+}
+
+const BODY_FIELDS = ['waistCm', 'neckCm', 'chestCm', 'hipsCm', 'bicepsCm', 'thighCm'] as const;
+type BodyField = (typeof BODY_FIELDS)[number];
+
+export function latestBodyMeasurements(
+  entries: readonly BodyDataEntry[]
+): LatestBodyMeasurements {
+  if (!entries || entries.length === 0) return {};
+  // Sortare pe date (ISO YYYY-MM-DD, sortabil lex) cu fallback ts. Stabil:
+  // cand date egale, intrarea cu ts mai mare castiga (cantarire mai noua azi).
+  const sorted = [...entries].sort((a, b) => {
+    const dateCmp = (a.date ?? '').localeCompare(b.date ?? '');
+    if (dateCmp !== 0) return dateCmp;
+    return (a.ts ?? 0) - (b.ts ?? 0);
+  });
+  const result: LatestBodyMeasurements = {};
+  // Iteram crescator si suprascriem — la final pastram cea mai recenta valoare
+  // numerica per camp. Skip campuri non-numerice (defense in depth).
+  for (const e of sorted) {
+    for (const k of BODY_FIELDS) {
+      const v = e[k as BodyField];
+      if (Number.isFinite(v) && (v as number) > 0) {
+        (result as Record<BodyField, number>)[k as BodyField] = v as number;
+      }
+    }
+    // Pastram cea mai recenta data (cea cu cel putin un camp completat).
+    if (e.date) result.date = e.date;
+  }
+  return result;
+}
+
 export interface ProgresActions {
   addWeightEntry: (entry: Omit<WeightEntry, 'ts'>) => void;
   addBodyDataEntry: (entry: Omit<BodyDataEntry, 'ts'>) => void;
