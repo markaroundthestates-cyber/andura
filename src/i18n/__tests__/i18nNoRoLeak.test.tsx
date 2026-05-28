@@ -67,6 +67,17 @@ import { EnergyCheck } from '../../react/routes/screens/antrenor/EnergyCheck';
 import { Cont } from '../../react/routes/screens/cont/Cont';
 import { CoachRestCard } from '../../react/components/Antrenor/CoachRestCard';
 import { CoachTodayCard } from '../../react/components/Antrenor/CoachTodayCard';
+// Wave E1 cluster 5 — extend the contract test to the workout flow screens
+// wired through t() in clusters 1-4 (zero RO leak under EN default).
+import { WorkoutPreview } from '../../react/routes/screens/antrenor/WorkoutPreview';
+import { PostRpe } from '../../react/routes/screens/antrenor/PostRpe';
+import { PostSummary } from '../../react/routes/screens/antrenor/PostSummary';
+import { PainButton } from '../../react/routes/screens/antrenor/PainButton';
+import { ExitConfirmSheet } from '../../react/components/Workout/ExitConfirmSheet';
+import { AaFrictionModal } from '../../react/components/AaFrictionModal';
+import { AparatLipsaSheet } from '../../react/components/Workout/AparatLipsaSheet';
+import { SetLogInput } from '../../react/components/Workout/SetLogInput';
+import { SetRatingButtons } from '../../react/components/Workout/SetRatingButtons';
 
 // ── Forbidden tokens (RO-only signals) ──────────────────────────────────────
 //
@@ -278,6 +289,142 @@ describe('Wave C2 i18n — no RO leak under EN locale (Daniel mandate)', () => {
     await Promise.resolve();
     const card = screen.getByRole('region');
     assertNoRoLeak('CoachTodayCard', card.textContent ?? '');
+  });
+});
+
+// ── Wave E1 cluster 5 — workout flow screens (zero RO leak under EN) ─────────
+//
+// Cover the workout-side surfaces wired through t() in clusters 1-4:
+// WorkoutPreview / AparatLipsaSheet / PostRpe / PostSummary / ExitConfirmSheet
+// / AaFrictionModal / PainButton / SetLogInput / SetRatingButtons. Each one
+// is rendered under setLocale('en') and the rendered text is asserted to
+// carry zero diacritics + zero forbidden RO token (allow-list above).
+describe('Wave E1 i18n — no RO leak under EN locale (workout flow)', () => {
+  it('WorkoutPreview fallback renders without RO leak under EN', async () => {
+    const { container } = render(withRouter('/app/antrenor/workout-preview', <WorkoutPreview />));
+    await Promise.resolve();
+    await Promise.resolve();
+    assertNoRoLeak('WorkoutPreview fallback', container.textContent ?? '');
+  });
+
+  it('PostRpe renders without RO leak under EN', () => {
+    const { container } = render(withRouter('/app/antrenor/post-rpe', <PostRpe />));
+    assertNoRoLeak('PostRpe', container.textContent ?? '');
+  });
+
+  it('PostSummary renders without RO leak under EN', () => {
+    // Seed a lastSession so the summary surfaces its full chrome (PR banner +
+    // streak + muscles inferred from a Push session title). Push title is
+    // engine-canonical English so it stays under both locales; the rendered
+    // chrome around it must still be EN under the default locale.
+    useWorkoutStore.setState({
+      lastSession: {
+        title: 'Push (chest and shoulders)',
+        meta: '5 sets · 52 min · 12 450 kg',
+        ts: Date.now(),
+        sets: 5,
+        durationMin: 52,
+        volumeKg: 12450,
+      },
+      lastRating: 'normala',
+      streak: 3,
+    });
+    const { container } = render(withRouter('/app/antrenor/post-summary', <PostSummary />));
+    assertNoRoLeak('PostSummary', container.textContent ?? '');
+  });
+
+  it('PainButton renders without RO leak under EN', () => {
+    const { container } = render(withRouter('/app/antrenor/pain-button', <PainButton />));
+    assertNoRoLeak('PainButton', container.textContent ?? '');
+  });
+
+  it('ExitConfirmSheet renders without RO leak under EN', () => {
+    const { container } = render(
+      <ExitConfirmSheet open={true} exIdx={2} totalExercises={5} onChoose={() => {}} />,
+    );
+    assertNoRoLeak('ExitConfirmSheet', container.textContent ?? '');
+  });
+
+  it('AaFrictionModal (per-set safety) renders without RO leak under EN', () => {
+    const { container } = render(
+      <AaFrictionModal
+        open={true}
+        reason="kg_jump"
+        onAcknowledge={() => {}}
+        onForceContinue={() => {}}
+      />,
+    );
+    assertNoRoLeak('AaFrictionModal (per-set safety)', container.textContent ?? '');
+  });
+
+  it('AparatLipsaSheet renders without RO leak under EN', () => {
+    // Note: equipment item labels (Banca inclinata, Gantere, etc.) come from
+    // a separate EQUIPMENT_ITEMS list inside the component and are NOT yet
+    // localized (item labels are a Cont surface separately tracked). The
+    // shell chrome (title/subtitle/save/close) IS localized, so we assert
+    // against the shell text only — extract from the testid'd elements that
+    // are wired through t().
+    const { container } = render(
+      <AparatLipsaSheet open={true} onConfirm={() => {}} onClose={() => {}} />,
+    );
+    const sheet = container.querySelector('[data-testid="aparat-lipsa-sheet"]');
+    // Strip out the equipment-item labels (label spans) so we test only the
+    // wired chrome. The item labels' RO copy is tracked separately by the
+    // existing Cont AparateLipsa screen tests.
+    const labels = sheet?.querySelectorAll('label') ?? [];
+    const labelTexts = new Set<string>();
+    for (const lbl of Array.from(labels)) labelTexts.add(lbl.textContent ?? '');
+    let chromeText = sheet?.textContent ?? '';
+    for (const lt of labelTexts) chromeText = chromeText.replace(lt, '');
+    assertNoRoLeak('AparatLipsaSheet chrome', chromeText);
+  });
+
+  it('SetLogInput tinta mode renders without RO leak under EN', () => {
+    const { container } = render(
+      <SetLogInput
+        kg={22.5}
+        reps={10}
+        onKgChange={() => {}}
+        onRepsChange={() => {}}
+        mode="tinta"
+        onLog={() => {}}
+      />,
+    );
+    assertNoRoLeak('SetLogInput tinta', container.textContent ?? '');
+  });
+
+  it('SetLogInput post-log mode renders without RO leak under EN', () => {
+    const { container } = render(
+      <SetLogInput
+        kg={22.5}
+        reps={10}
+        onKgChange={() => {}}
+        onRepsChange={() => {}}
+        mode="post-log"
+        onEdit={() => {}}
+      />,
+    );
+    assertNoRoLeak('SetLogInput post-log', container.textContent ?? '');
+  });
+
+  it('SetLogInput editable mode (with errors) renders without RO leak under EN', () => {
+    // Force the error branch (kg=0, reps=0) so both inline error messages
+    // surface — guards the EN error copy explicitly.
+    const { container } = render(
+      <SetLogInput
+        kg={0}
+        reps={0}
+        onKgChange={() => {}}
+        onRepsChange={() => {}}
+        mode="editable"
+      />,
+    );
+    assertNoRoLeak('SetLogInput editable error', container.textContent ?? '');
+  });
+
+  it('SetRatingButtons renders without RO leak under EN', () => {
+    const { container } = render(<SetRatingButtons onRate={() => {}} />);
+    assertNoRoLeak('SetRatingButtons', container.textContent ?? '');
   });
 });
 
