@@ -191,6 +191,7 @@
       "next": "Next:"
     },
     "swap": {
+      "exhaustedFallbackGroup": "this muscle group",
       "exhaustedPool": "You've tried everything I can offer for {group}. You can skip this exercise or change the muscle group from the menu above.",
       "noAlternative": "I don't have a good alternative for {name}. You can skip this exercise.",
       "swappedBusy": "Replaced {original} with {alt} — same muscle",
@@ -226,8 +227,21 @@
   },
 
   "energyCheck": {
-    "title": "How's your energy today?",
-    "subtitle": "Your answer shapes today's recommendations.",
+    "subHeaderTitle": "How do you feel?",
+    "title": "How do you feel today?",
+    "subtitle": "The coach adjusts intensity based on your energy.",
+    "levels": {
+      "excellent": "Excellent",
+      "excellentHint": "Coach bumps intensity +15%",
+      "good": "Good",
+      "goodHint": "Solid energy, full session",
+      "normal": "Normal",
+      "normalHint": "Standard session, baseline",
+      "weak": "Drained",
+      "weakHint": "Coach trims volume a bit",
+      "tired": "Exhausted",
+      "tiredHint": "Coach cuts the session right away"
+    },
     "options": {
       "low": "Low",
       "ok": "OK",

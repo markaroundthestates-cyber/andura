@@ -202,7 +202,8 @@ describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
   const stubs = [
     // task_05 rewrite: EnergyCheck real heading; EnergyCause + WorkoutPreview
     // still placeholder until subsequent task_05 commits.
-    { path: '/app/antrenor/energy-check', Component: EnergyCheck, heading: /^Cum te simti\?$/i },
+    // Wave C2 i18n: EN default → "How do you feel?" (was RO "Cum te simti?").
+    { path: '/app/antrenor/energy-check', Component: EnergyCheck, heading: /^How do you feel\?$/i },
     { path: '/app/antrenor/energy-cause', Component: EnergyCause, heading: /Ce e mai greu azi/i },
     { path: '/app/antrenor/workout-preview', Component: WorkoutPreview, heading: /Push/i },
     { path: '/app/antrenor/workout', Component: Workout, heading: /Bench Press/i },
@@ -269,9 +270,9 @@ describe('Routing — Phase 3 Antrenor nested routes integration', () => {
 
   it('renders EnergyCheck cu Layout (bottom nav) la /app/antrenor/energy-check', () => {
     renderNested('/app/antrenor/energy-check');
-    // PAR-009: single h1 = SubHeader title 'Cum te simti?' verbatim mockup L879.
-    // Body sub-heading 'Cum te simti azi?' regresat la h2.
-    expect(screen.getByRole('heading', { name: /^Cum te simti\?$/i, level: 1 })).toBeInTheDocument();
+    // PAR-009: single h1 = SubHeader title verbatim mockup L879.
+    // Wave C2 i18n: EN default → "How do you feel?" (was RO "Cum te simti?").
+    expect(screen.getByRole('heading', { name: /^How do you feel\?$/i, level: 1 })).toBeInTheDocument();
     // §i18n 2026-05-28 — Antrenor tab label = "Coach" under EN default.
     const nav = screen.getByRole('navigation', { name: /Main navigation/i });
     const antrenorButton = within(nav).getByRole('button', { name: /Coach/i });

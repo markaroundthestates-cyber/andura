@@ -94,7 +94,8 @@ describe('EnergyCheck — no role="list" + heading sufficient', () => {
     const h1 = container.querySelector('h1');
     expect(h1).not.toBeNull();
     // Single h1 = SubHeader title verbatim mockup L879.
-    expect(h1?.textContent).toMatch(/^Cum te simti\?$/);
+    // Wave C2 i18n: EN default → "How do you feel?" (was RO "Cum te simti?").
+    expect(h1?.textContent).toMatch(/^How do you feel\?$/);
   });
 });
 

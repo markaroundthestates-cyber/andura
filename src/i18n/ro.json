@@ -191,6 +191,7 @@
       "next": "Urmatorul:"
     },
     "swap": {
+      "exhaustedFallbackGroup": "aceasta grupa",
       "exhaustedPool": "Ai incercat tot ce pot oferi pentru {group}. Poti sari exercitiul sau schimba grupa din meniul de sus.",
       "noAlternative": "Nu am o alternativa buna pentru {name}. Poti sari exercitiul.",
       "swappedBusy": "Inlocuit {original} cu {alt} — acelasi muschi",
@@ -226,8 +227,21 @@
   },
 
   "energyCheck": {
-    "title": "Cum ti-e energia azi?",
-    "subtitle": "Raspunsul afecteaza recomandarile de azi.",
+    "subHeaderTitle": "Cum te simti?",
+    "title": "Cum te simti azi?",
+    "subtitle": "Coach-ul ajusteaza intensitatea pe baza energiei tale.",
+    "levels": {
+      "excellent": "Excelent",
+      "excellentHint": "Coach urca intensitatea +15%",
+      "good": "Bine",
+      "goodHint": "Energie buna, sesiune completa",
+      "normal": "Normal",
+      "normalHint": "Sesiune standard, baseline",
+      "weak": "Slabit",
+      "weakHint": "Coach reduce volumul putin",
+      "tired": "Obosit",
+      "tiredHint": "Coach reduce sesiunea imediat"
+    },
     "options": {
       "low": "Joasa",
       "ok": "OK",

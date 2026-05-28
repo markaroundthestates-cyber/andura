@@ -514,12 +514,13 @@ describe('Workout — empty state (task_17 §B WV2_FALLBACK retired)', async () 
     resetStore();
   });
 
-  it('renders empty state cand getTodayWorkout returns null', async () => {
+  it('renders empty state cand getTodayWorkout returns null — EN default', async () => {
     vi.mocked(getTodayWorkout).mockResolvedValueOnce(null);
     await renderWorkoutAndWait();
     expect(screen.getByTestId('workout')).toHaveAttribute('data-phase', 'empty');
+    // Wave C2 i18n: EN default → "Today is a rest day".
     expect(
-      screen.getByRole('heading', { name: /Astazi e zi de odihna/i, level: 1 })
+      screen.getByRole('heading', { name: /Today is a rest day/i, level: 1 })
     ).toBeInTheDocument();
     expect(screen.getByTestId('workout-empty-back')).toBeInTheDocument();
   });
@@ -545,15 +546,16 @@ describe('Workout — in-workout substitution row (F-workout-03)', async () => {
     resetStore();
   });
 
-  it('renders three action buttons in logging phase (Ocupat + Lipsa + Nu vreau)', async () => {
+  it('renders three action buttons in logging phase (Busy + Missing + Skip) — EN default', async () => {
     // Daniel smoke 2026-05-28 #17 — third button "Aparat lipsa" added. Labels
     // compressed for the 3-column row (full names live in aria-label / sheet
-    // titles). Mockup parity preserved at the testid level.
+    // titles). Mockup parity preserved at the testid level. Wave C2 i18n: EN
+    // default → Busy / Missing / Skip (was RO Ocupat / Lipsa / Nu vreau).
     await renderWorkoutAndWait();
     expect(screen.getByTestId('wv2-ex-actions')).toBeInTheDocument();
-    expect(screen.getByTestId('wv2-ex-action-ocupat')).toHaveTextContent('Ocupat');
-    expect(screen.getByTestId('wv2-ex-action-lipsa')).toHaveTextContent('Lipsa');
-    expect(screen.getByTestId('wv2-ex-action-nuvreau')).toHaveTextContent('Nu vreau');
+    expect(screen.getByTestId('wv2-ex-action-ocupat')).toHaveTextContent('Busy');
+    expect(screen.getByTestId('wv2-ex-action-lipsa')).toHaveTextContent('Missing');
+    expect(screen.getByTestId('wv2-ex-action-nuvreau')).toHaveTextContent('Skip');
   });
 
   it('"Ocupat" navigates la equipment-swap when no engineName (defensive fallback)', async () => {
@@ -605,12 +607,13 @@ describe('Workout — why-exercise help button (F-workout-05)', async () => {
     resetStore();
   });
 
-  it('renders help-circle trigger next to exercise name', async () => {
+  it('renders help-circle trigger next to exercise name — EN default', async () => {
     await renderWorkoutAndWait();
     expect(screen.getByTestId('wv2-exname')).toHaveTextContent('Bench Press');
+    // Wave C2 i18n: EN default → "Why this exercise?" (was RO "De ce acest exercitiu?").
     expect(screen.getByTestId('wv2-why-trigger')).toHaveAttribute(
       'aria-label',
-      'De ce acest exercitiu?'
+      'Why this exercise?'
     );
   });
 
@@ -631,7 +634,8 @@ describe('Workout — why-exercise help button (F-workout-05)', async () => {
     expect(screen.getByTestId('why-modal-text')).toHaveTextContent(
       'zona de consolidare'
     );
-    expect(screen.getByTestId('why-modal')).toHaveTextContent('De ce Bench Press?');
+    // Wave C2 i18n: EN default → "Why Bench Press?" (was RO "De ce Bench Press?").
+    expect(screen.getByTestId('why-modal')).toHaveTextContent('Why Bench Press?');
   });
 
   it('"Am inteles" closes modal', async () => {
@@ -677,12 +681,13 @@ describe('Workout — why-exercise help button (F-workout-05)', async () => {
     expect(screen.queryByTestId('why-modal')).not.toBeInTheDocument();
   });
 
-  it('engine null → why.unavailable fallback copy', async () => {
+  it('engine null → why.unavailable fallback copy — EN default', async () => {
     vi.mocked(getWhyExerciseSummary).mockReturnValueOnce(null);
     await renderWorkoutAndWait();
     fireEvent.click(screen.getByTestId('wv2-why-trigger'));
+    // Wave C2 i18n: EN default → "The explanation is temporarily unavailable".
     expect(screen.getByTestId('why-modal-text')).toHaveTextContent(
-      /Explicatia e temporar indisponibila/
+      /The explanation is temporarily unavailable/
     );
   });
 

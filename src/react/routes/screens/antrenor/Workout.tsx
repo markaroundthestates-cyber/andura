@@ -49,6 +49,7 @@ import { DP } from '../../../../engine/dp.js';
 import { resolveBusySwap, resolveMissingSwap, resolveRefusalSwap } from '../../../lib/substitution';
 import { toast } from '../../../lib/toast';
 import { incrementRefusal } from '../../../../engine/schedule/scheduleAdapter.js';
+import { t } from '../../../../i18n/index.js';
 
 const INACTIVITY_THRESHOLD_MIN = 7; // Mockup wv2 verbatim L4401
 const INACTIVITY_CHECK_INTERVAL_MS = 30_000; // Mockup wv2 verbatim L4404
@@ -563,16 +564,16 @@ export function Workout(): JSX.Element {
         markRefusalTried(safeExIdx, engineName);
       }
       if (kind === 'refusal' && res.poolExhausted) {
-        const groupLabel = res.muscleGroup ?? 'aceasta grupa';
+        const groupLabel = res.muscleGroup ?? t('workout.swap.exhaustedFallbackGroup');
         toast.show({
-          message: `Ai incercat tot ce pot oferi pentru ${groupLabel}. Poti sari exercitiul sau schimba grupa din meniul de sus.`,
+          message: t('workout.swap.exhaustedPool', { group: groupLabel }),
           variant: 'info',
         });
         return;
       }
       if (!res.swapped || res.exercise === null) {
         toast.show({
-          message: `Nu am o alternativa buna pentru ${res.originalName}. Poti sari exercitiul.`,
+          message: t('workout.swap.noAlternative', { name: res.originalName }),
           variant: 'info',
         });
         return;
@@ -593,8 +594,8 @@ export function Workout(): JSX.Element {
       toast.show({
         message:
           kind === 'busy'
-            ? `Inlocuit ${res.originalName} cu ${res.alternativeName} — acelasi muschi`
-            : `Inlocuit ${res.originalName} cu ${res.alternativeName}`,
+            ? t('workout.swap.swappedBusy', { original: res.originalName, alt: res.alternativeName })
+            : t('workout.swap.swappedRefusal', { original: res.originalName, alt: res.alternativeName }),
         variant: 'success',
       });
     },
@@ -622,12 +623,12 @@ export function Workout(): JSX.Element {
       if (!res.swapped || res.exercise === null) {
         if (res.noAlt) {
           toast.show({
-            message: `Lista a fost salvata. Nu am o alternativa pentru ${res.originalName}. Poti sari exercitiul.`,
+            message: t('workout.swap.missingNoAlt', { name: res.originalName }),
             variant: 'info',
           });
         } else {
           toast.show({
-            message: 'Lista a fost salvata. Sesiunea continua nemodificata.',
+            message: t('workout.swap.missingPreserved'),
             variant: 'success',
           });
         }
@@ -642,7 +643,7 @@ export function Workout(): JSX.Element {
       });
       swapExercise(safeExIdx);
       toast.show({
-        message: `Inlocuit ${res.originalName} cu ${res.alternativeName} — aparatul lipsa.`,
+        message: t('workout.swap.swappedMissing', { original: res.originalName, alt: res.alternativeName }),
         variant: 'success',
       });
     },
@@ -693,7 +694,7 @@ export function Workout(): JSX.Element {
       recommendationKg: targetKg,
       lastWeightKg,
     });
-    setWhyText(summary ?? 'Explicatia e temporar indisponibila. Recomandarea ramane valida.');
+    setWhyText(summary ?? t('why.unavailable'));
   }
 
   // useCallback: passed to memoized SessionTimer (onCancelSession) + ExitConfirmSheet
@@ -749,7 +750,7 @@ export function Workout(): JSX.Element {
         data-phase="loading"
       >
         <p className="text-sm text-ink2" data-testid="workout-loading">
-          Se incarca antrenamentul...
+          {t('workout.loading')}
         </p>
       </section>
     );
@@ -767,10 +768,10 @@ export function Workout(): JSX.Element {
         data-phase="empty"
       >
         <h1 className="text-2xl font-bold text-ink mb-2">
-          Astazi e zi de odihna
+          {t('workout.empty.title')}
         </h1>
         <p className="text-sm text-ink2 mb-6" data-testid="workout-empty-body">
-          Nu ai antrenament programat azi. Foloseste calendarul de mai sus daca vrei sa schimbi programul.
+          {t('workout.empty.body')}
         </p>
         <button
           type="button"
@@ -778,7 +779,7 @@ export function Workout(): JSX.Element {
           data-testid="workout-empty-back"
           className="px-6 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
         >
-          Inapoi
+          {t('workout.empty.backCta')}
         </button>
       </section>
     );
@@ -852,14 +853,14 @@ export function Workout(): JSX.Element {
               openWhyExercise). Surfaces whyEngine categorical explainer. */}
           <div className="mb-4" data-testid="wv2-exname">
             <p className="text-xs uppercase tracking-wide font-medium text-ink2 mb-1">
-              Exercitiul curent
+              {t('workout.currentExercise')}
             </p>
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-semibold text-ink">{currentExercise.name}</h2>
               <button
                 type="button"
                 onClick={handleOpenWhy}
-                aria-label="De ce acest exercitiu?"
+                aria-label={t('workout.whyAriaLabel')}
                 data-testid="wv2-why-trigger"
                 className="w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-full bg-paper2 border border-lineStrong text-ink2"
               >
@@ -910,7 +911,7 @@ export function Workout(): JSX.Element {
               className="flex items-center justify-center gap-1.5 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
             >
               <Users className="w-4 h-4" aria-hidden="true" />
-              Ocupat
+              {t('workout.actions.busy')}
             </button>
             <button
               type="button"
@@ -919,7 +920,7 @@ export function Workout(): JSX.Element {
               className="flex items-center justify-center gap-1.5 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
             >
               <PackageX className="w-4 h-4" aria-hidden="true" />
-              Lipsa
+              {t('workout.actions.missing')}
             </button>
             <button
               type="button"
@@ -928,12 +929,12 @@ export function Workout(): JSX.Element {
               className="flex items-center justify-center gap-1.5 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
             >
               <Hand className="w-4 h-4" aria-hidden="true" />
-              Nu vreau
+              {t('workout.actions.refuse')}
             </button>
           </div>
 
           <p className="text-sm text-ink2 mb-2">
-            Set {currentSetIdx + 1}/{currentExercise.sets}
+            {t('workout.setLabel', { current: currentSetIdx + 1, total: currentExercise.sets })}
           </p>
 
           {/* Fix #2 — in-session RPE auto-correction notice. DP.checkInSessionAdjust
@@ -958,9 +959,9 @@ export function Workout(): JSX.Element {
                 className="flex justify-between p-2 text-ink2 text-sm"
                 data-testid={`set-history-${i}`}
               >
-                <span>Set {i + 1}</span>
+                <span>{t('workout.setLabel', { current: i + 1, total: currentExercise.sets })}</span>
                 <span>
-                  {h.kg} kg x {h.reps} reps - {h.rating}
+                  {h.kg} {t('common.kg')} x {h.reps} {t('common.reps')} - {h.rating}
                 </span>
               </div>
             ))}
@@ -1016,9 +1017,9 @@ export function Workout(): JSX.Element {
           className="fixed inset-0 bg-paper flex flex-col items-center justify-center z-40"
           data-testid="transition-screen"
           role="status"
-          aria-label="Urmatorul exercitiu"
+          aria-label={t('workout.transition.ariaLabel')}
         >
-          <p className="text-2xl font-semibold text-ink mb-2">Urmatorul:</p>
+          <p className="text-2xl font-semibold text-ink mb-2">{t('workout.transition.next')}</p>
           <p className="text-base text-ink2" data-testid="transition-next-name">
             {nextExercise?.name ?? '—'}
           </p>
@@ -1076,11 +1077,11 @@ export function Workout(): JSX.Element {
             data-testid="why-modal"
             role="dialog"
             aria-modal="true"
-            aria-label="De ce acest exercitiu?"
+            aria-label={t('workout.whyAriaLabel')}
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-base font-semibold text-ink mb-3">
-              De ce {currentExercise.name}?
+              {t('workout.whyTitle', { exercise: currentExercise.name })}
             </h2>
             <p className="text-sm text-ink2 leading-relaxed mb-5" data-testid="why-modal-text">
               {whyText}
@@ -1092,7 +1093,7 @@ export function Workout(): JSX.Element {
               data-testid="why-modal-dismiss"
               className="w-full p-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px]"
             >
-              Am inteles
+              {t('workout.whyDismiss')}
             </button>
           </div>
         </div>
