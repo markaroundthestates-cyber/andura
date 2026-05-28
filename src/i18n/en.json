@@ -1013,7 +1013,8 @@
     },
     "accountFallback": "User",
     "emailFallback": "Your Andura profile",
-    "version": "Andura v1.0.0"
+    "version": "Andura v1.0.0",
+    "versionTagline": "Training with brain."
   },
 
   "settings": {

@@ -1013,7 +1013,8 @@
     },
     "accountFallback": "Utilizator",
     "emailFallback": "Profilul tau Andura",
-    "version": "Andura v1.0.0"
+    "version": "Andura v1.0.0",
+    "versionTagline": "Antrenament cu cap."
   },
 
   "settings": {

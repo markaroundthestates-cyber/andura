@@ -118,18 +118,33 @@ export function Cont(): JSX.Element {
           andura-clasic.html#L1841 (font-weight:700). */}
       <h1 className="text-2xl font-bold text-ink mb-4">{t('tabs.cont.title')}</h1>
 
-      {/* Account card (header) — Phase 6+ wires user profile data real */}
+      {/* Account card (header) — Phase 6+ wires user profile data real
+          Wave A5 polish (Daniel "Top Grade" 2026-05-28) — gradient avatar
+          (brick -> olive radial via color-mix) so the chip reads warm-premium
+          rather than flat brick. Inner highlight + soft outer ring on the
+          avatar give it a subtle "polished pebble" feel. Card itself gets
+          animate-card-rise on mount so the profile lands first. */}
       <div
-        className="surface-elevated bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-3"
+        className="surface-elevated bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-3 animate-card-rise"
         data-testid="cont-account-card"
       >
         {/* §F-cont-07 (LOW chat5) — avatar dimensions 48x48 → 52x52 +
-            text 20px → 22px mockup andura-clasic.html#L1845 (font-size:22). */}
+            text 20px → 22px mockup andura-clasic.html#L1845 (font-size:22).
+            Wave A5 — gradient bg with color-mix so each palette tints itself:
+            Clasic = brick warm red, mov = royal violet, Luxury = champagne,
+            Living Body = amber-gold. Inset white highlight (8% top) +
+            outer ring (2px paper2 + 1px line) sells the dimensional pebble. */}
         <div
-          className="w-[52px] h-[52px] rounded-full bg-brick text-paper flex items-center justify-center text-[22px] font-semibold"
+          className="w-[52px] h-[52px] rounded-full text-paper flex items-center justify-center text-[22px] font-semibold relative overflow-hidden"
           data-testid="cont-account-initial"
+          style={{
+            background:
+              'radial-gradient(circle at 30% 25%, color-mix(in oklab, var(--brick) 92%, white 8%), color-mix(in oklab, var(--brick) 70%, var(--olive) 30%) 65%, color-mix(in oklab, var(--brick) 88%, black 12%))',
+            boxShadow:
+              'inset 0 1px 0 color-mix(in oklab, white 22%, transparent), 0 2px 8px -2px color-mix(in oklab, var(--brick) 30%, transparent)',
+          }}
         >
-          {profile.initial}
+          <span className="relative">{profile.initial}</span>
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-ink" data-testid="cont-account-name">{displayName}</p>
@@ -172,7 +187,19 @@ export function Cont(): JSX.Element {
         </div>
       ))}
 
-      <p className="text-xs text-ink2 text-center mt-6">{t('cont.version')}</p>
+      {/* Wave A5 polish (Daniel "Top Grade" 2026-05-28) — version footer pairs
+          terse "Andura v1.0.0" with a soft serif Lora tagline below ("Training
+          with brain." / "Antrenament cu cap."). Two-line stack reads as a
+          quiet brand signature rather than a flat version stamp. */}
+      <div className="text-center mt-6 mb-2">
+        <p className="text-xs text-ink2" data-testid="cont-version">{t('cont.version')}</p>
+        <p
+          className="font-serif italic text-xs text-ink3 mt-1"
+          data-testid="cont-version-tagline"
+        >
+          {t('cont.versionTagline')}
+        </p>
+      </div>
     </section>
   );
 }
