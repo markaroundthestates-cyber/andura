@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
+import { t } from '../../../../i18n/index.js';
 
 function todayIso(): string {
   const d = new Date();
@@ -30,7 +31,8 @@ type FieldKey = 'waistCm' | 'neckCm' | 'chestCm' | 'hipsCm' | 'bicepsCm' | 'thig
 
 interface MeasureField {
   key: FieldKey;
-  label: string;
+  /** i18n key suffix under `progres.bodyData.fields.*` for the field label. */
+  labelKey: 'waist' | 'neck' | 'chest' | 'hips' | 'biceps' | 'thigh';
   // Bounds fiziologic realist (smoke 2026-05-28). Banda larga acopera
   // populatia adulta normala + bodybuilder + supraponderal, dar respinge
   // valori absurde (biceps 250cm = unit confusion, biceps 5cm = NU adult).
@@ -42,12 +44,12 @@ interface MeasureField {
 // Smoke 2026-05-28: limita comuna 20-250 cm accepta biceps 250cm absurd
 // (record mondial documentat biceps ~63cm). Banda stransa per camp respinge.
 const MEASURE_FIELDS: readonly MeasureField[] = [
-  { key: 'waistCm', label: 'Talie', min: 50, max: 200 },
-  { key: 'neckCm', label: 'Gat', min: 25, max: 60 },
-  { key: 'chestCm', label: 'Piept', min: 60, max: 150 },
-  { key: 'hipsCm', label: 'Sold', min: 60, max: 200 },
-  { key: 'bicepsCm', label: 'Biceps', min: 20, max: 60 },
-  { key: 'thighCm', label: 'Coapsa', min: 30, max: 90 },
+  { key: 'waistCm', labelKey: 'waist', min: 50, max: 200 },
+  { key: 'neckCm', labelKey: 'neck', min: 25, max: 60 },
+  { key: 'chestCm', labelKey: 'chest', min: 60, max: 150 },
+  { key: 'hipsCm', labelKey: 'hips', min: 60, max: 200 },
+  { key: 'bicepsCm', labelKey: 'biceps', min: 20, max: 60 },
+  { key: 'thighCm', labelKey: 'thigh', min: 30, max: 90 },
 ];
 
 export function BodyData(): JSX.Element {
@@ -77,7 +79,7 @@ export function BodyData(): JSX.Element {
     if (v === '') return null;
     const n = Number(v);
     if (!Number.isFinite(n) || n < field.min || n > field.max) {
-      return `Valoare nerealista — verifica unitatea (cm). Banda ${field.min}-${field.max} cm.`;
+      return t('progres.bodyData.rangeError', { min: field.min, max: field.max });
     }
     return null;
   }
@@ -121,13 +123,13 @@ export function BodyData(): JSX.Element {
         <button
           type="button"
           onClick={handleCancel}
-          aria-label="Inapoi"
+          aria-label={t('progres.bodyData.backAriaLabel')}
           data-testid="body-data-back"
           className="p-2 rounded-full text-ink2"
         >
           <ArrowLeft className="w-5 h-5" aria-hidden="true" />
         </button>
-        <h1 className="text-2xl font-bold text-ink">Masuratori corp</h1>
+        <h1 className="text-2xl font-bold text-ink">{t('progres.bodyData.title')}</h1>
       </header>
 
       <div className="flex flex-col gap-4 flex-1">
@@ -139,7 +141,7 @@ export function BodyData(): JSX.Element {
                 htmlFor={`bd-${field.key}`}
                 className="text-sm text-ink2 font-medium block mb-1"
               >
-                {field.label} (cm)
+                {t(`progres.bodyData.fields.${field.labelKey}`)} (cm)
               </label>
               <input
                 id={`bd-${field.key}`}
@@ -174,7 +176,7 @@ export function BodyData(): JSX.Element {
             htmlFor="bd-date"
             className="text-sm text-ink2 font-medium block mb-1"
           >
-            Data
+            {t('progres.bodyData.dateLabel')}
           </label>
           <input
             id="bd-date"
@@ -197,7 +199,7 @@ export function BodyData(): JSX.Element {
           data-testid="body-data-save"
           className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-50"
         >
-          Salveaza
+          {t('progres.bodyData.saveCta')}
         </button>
         <button
           type="button"
@@ -205,7 +207,7 @@ export function BodyData(): JSX.Element {
           data-testid="body-data-cancel"
           className="w-full py-3 text-ink2 text-sm"
         >
-          Anuleaza
+          {t('progres.bodyData.cancelCta')}
         </button>
       </div>
     </section>
