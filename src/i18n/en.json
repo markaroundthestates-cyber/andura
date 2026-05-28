@@ -1,8 +1,8 @@
 {
   "_meta": {
     "locale": "en",
-    "version": 2,
-    "description": "EN bundle — DEFAULT locale post 2026-05-28 paradigm flip (Daniel CEO directive). Clean fitness English: Workout / Reps / Sets / Body fat (industry-standard vocabulary, cf. Fitbod / Strong / Hevy). All values are user-facing — keep terse and Maria-65-readable (no jargon). New keys: add cu dotted-path nested structure (see `nav.tabs.*` as the canonical shell pattern). RO counterpart in ro.json — must mirror this structure verbatim (bundle integrity test enforces parity)."
+    "version": 3,
+    "description": "EN bundle — DEFAULT locale post 2026-05-28 paradigm flip (Daniel CEO directive). Clean fitness English: Workout / Reps / Sets / Body fat (industry-standard vocabulary, cf. Fitbod / Strong / Hevy). All values are user-facing — keep terse and Maria-65-readable (no jargon). Wave C2 (i18n EN-zero-leak): adds antrenor.* / workout.* / preview.* / energy.* / postRpe.* / postSummary.* / progres.* / istoric.* / coach.* / settings.* sub-trees so every screen surfaces clean EN with zero Romanian leak. RO counterpart in ro.json — must mirror this structure verbatim (bundle integrity test enforces parity)."
   },
 
   "why": {
@@ -35,7 +35,68 @@
     "cancel": "Cancel",
     "close": "Close",
     "confirm": "Confirm",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "back": "Back",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "yes": "Yes",
+    "no": "No",
+    "continue": "Continue",
+    "skip": "Skip",
+    "next": "Next",
+    "previous": "Previous",
+    "done": "Done",
+    "min": "min",
+    "sec": "sec",
+    "kg": "kg",
+    "reps": "reps",
+    "sets": "sets",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "thisWeek": "This week",
+    "lastWeek": "Last week",
+    "daysAgo_one": "{n} day ago",
+    "daysAgo_other": "{n} days ago"
+  },
+
+  "weekdays": {
+    "full": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    },
+    "short": {
+      "0": "Sun",
+      "1": "Mon",
+      "2": "Tue",
+      "3": "Wed",
+      "4": "Thu",
+      "5": "Fri",
+      "6": "Sat"
+    }
+  },
+
+  "months": {
+    "short": {
+      "0": "Jan",
+      "1": "Feb",
+      "2": "Mar",
+      "3": "Apr",
+      "4": "May",
+      "5": "Jun",
+      "6": "Jul",
+      "7": "Aug",
+      "8": "Sep",
+      "9": "Oct",
+      "10": "Nov",
+      "11": "Dec"
+    }
   },
 
   "nav": {
@@ -65,6 +126,204 @@
     }
   },
 
+  "antrenor": {
+    "ariaLabel": "Coach home",
+    "subtitle": "Your guide in the gym.",
+    "errorBanner": "Couldn't load coach recommendations. You can start the session anyway.",
+    "header": {
+      "dateSeparator": "·"
+    }
+  },
+
+  "coachToday": {
+    "ariaLabel": "Coach recommendation for today",
+    "kicker": "Today's recommendation",
+    "fallbackTitle": "Today's workout",
+    "exercisesCount_one": "{n} exercise",
+    "exercisesCount_other": "{n} exercises",
+    "durationLabel": "~ {min} min",
+    "startCta": "Start session",
+    "overrideCta": "Want something else today? →",
+    "daysSince": {
+      "yesterday": "yesterday",
+      "daysFmt": "{n} days",
+      "lastWeek": "last week"
+    },
+    "recoveredQuote": "{group} has recovered since {when} — let's nail it.",
+    "fallbackQuote": "Today is your day. Show up — your future self will thank you."
+  },
+
+  "coachRest": {
+    "ariaLabel": "Rest day recommendation",
+    "kicker": "Rest day",
+    "title": "Today is a rest day",
+    "body": "Recovery is when you grow. Walk, stretch, hydrate.",
+    "lightSessionCta": "Light session",
+    "overrideCta": "I still want to train"
+  },
+
+  "workout": {
+    "loading": "Loading workout…",
+    "empty": {
+      "title": "Today is a rest day",
+      "body": "No workout scheduled today. Use the calendar above if you want to change the plan.",
+      "backCta": "Back"
+    },
+    "currentExercise": "Current exercise",
+    "whyAriaLabel": "Why this exercise?",
+    "whyTitle": "Why {exercise}?",
+    "whyDismiss": "Got it",
+    "actions": {
+      "busy": "Busy",
+      "missing": "Missing",
+      "refuse": "Skip"
+    },
+    "setLabel": "Set {current}/{total}",
+    "transition": {
+      "ariaLabel": "Next exercise",
+      "next": "Next:"
+    },
+    "swap": {
+      "exhaustedPool": "You've tried everything I can offer for {group}. You can skip this exercise or change the muscle group from the menu above.",
+      "noAlternative": "I don't have a good alternative for {name}. You can skip this exercise.",
+      "swappedBusy": "Replaced {original} with {alt} — same muscle",
+      "swappedRefusal": "Replaced {original} with {alt}",
+      "missingNoAlt": "Saved. I don't have an alternative for {name}. You can skip this exercise.",
+      "missingPreserved": "Saved. The session continues unchanged.",
+      "swappedMissing": "Replaced {original} with {alt} — missing equipment."
+    },
+    "exit": {
+      "title": "Leave the session?",
+      "subtitle": "Pick how you want to handle the progress so far.",
+      "continue": "Keep going",
+      "pause": "Pause (resume later)",
+      "finishEarly": "Finish early",
+      "discard": "Discard progress"
+    },
+    "preview": {
+      "title": "Your workout",
+      "loading": "Building today's plan…",
+      "exercises_one": "{n} exercise",
+      "exercises_other": "{n} exercises",
+      "estimatedDuration": "~ {min} min",
+      "volumeKg": "~ {kg} kg total volume",
+      "startCta": "Start",
+      "intensity": {
+        "minus": "Light day (-20%)",
+        "plus": "Strong day (+15%)",
+        "normal": "Normal day"
+      },
+      "noPlan": "No workout planned today.",
+      "engineError": "Couldn't build the workout plan. Please try again in a moment."
+    }
+  },
+
+  "energyCheck": {
+    "title": "How's your energy today?",
+    "subtitle": "Your answer shapes today's recommendations.",
+    "options": {
+      "low": "Low",
+      "ok": "OK",
+      "high": "Charged"
+    },
+    "submitCta": "Continue",
+    "skipCta": "Skip — I'll guess",
+    "lowFollowupTitle": "What's draining you?",
+    "lowFollowupSubtitle": "Pick one — helps me adapt today.",
+    "causes": {
+      "sleep": "Slept poorly",
+      "stress": "Stress",
+      "soreness": "Sore",
+      "illness": "Sick",
+      "other": "Other"
+    }
+  },
+
+  "readinessVerdict": {
+    "label": "Readiness",
+    "fatigue": "Fatigue",
+    "high": "High — go for it",
+    "moderate": "Moderate — steady",
+    "low": "Low — be smart"
+  },
+
+  "postRpe": {
+    "title": "How was the session overall?",
+    "subtitle": "One tap — calibrates the next workout.",
+    "options": {
+      "easy": "Easy",
+      "right": "Just right",
+      "hard": "Hard"
+    },
+    "noteLabel": "Anything to remember? (optional)",
+    "submitCta": "Save"
+  },
+
+  "postSummary": {
+    "title": "Great session.",
+    "subtitle": "Here's the recap.",
+    "stats": {
+      "duration": "Duration",
+      "volume": "Volume",
+      "sets": "Sets",
+      "exercises": "Exercises",
+      "prHit": "Personal record!",
+      "topSet": "Top set"
+    },
+    "prBanner": "+{deltaKg} kg on {exercise} — new PR!",
+    "doneCta": "Done",
+    "shareCta": "Share"
+  },
+
+  "progres": {
+    "heading": "Progress",
+    "subtitle": "Body composition · calibrated estimates.",
+    "logWeightCta": "Log weight",
+    "history": "History",
+    "noData": "Log your weight to see progress.",
+    "bodyFat": {
+      "label": "Body fat",
+      "estimate": "~{pct}%",
+      "method": "US Navy estimate"
+    },
+    "bmr": {
+      "label": "BMR",
+      "value": "{kcal} kcal/day",
+      "subtitle": "At-rest energy"
+    },
+    "tdee": {
+      "label": "Daily energy",
+      "value": "{kcal} kcal/day",
+      "subtitle": "Maintenance"
+    },
+    "projection": {
+      "label": "Projection",
+      "weekly": "{rate} kg/week",
+      "monthly": "~{kg} kg in a month",
+      "noTarget": "Set a goal to see the projection."
+    },
+    "weight": {
+      "current": "Current weight",
+      "logCta": "Log weight",
+      "deltaSince": "{delta} kg since last week",
+      "noEntries": "No weight logged yet."
+    }
+  },
+
+  "objective": {
+    "heading": "Goal",
+    "noGoal": "No goal set",
+    "setGoalCta": "Set a goal",
+    "options": {
+      "masa": "Build muscle",
+      "slabire": "Lose fat",
+      "forta": "Get stronger",
+      "definire": "Get lean",
+      "sanatate": "Stay healthy",
+      "explozivitate": "Explosive power"
+    }
+  },
+
   "obiectiv": {
     "heading": "Goal",
     "targetWeightLabel": "Target weight (kg)",
@@ -80,6 +339,144 @@
     "weeks_other": "~{n} weeks",
     "months_one": "~{n} month",
     "months_other": "~{n} months"
+  },
+
+  "istoric": {
+    "heading": "History",
+    "empty": "No sessions logged yet.",
+    "calendar": {
+      "ariaLabel": "Training calendar",
+      "noWorkout": "No workout"
+    },
+    "session": {
+      "detailsCta": "Details",
+      "duration": "{min} min",
+      "exercises_one": "{n} exercise",
+      "exercises_other": "{n} exercises",
+      "volume": "{kg} kg volume"
+    },
+    "detail": {
+      "title": "Session detail",
+      "back": "Back",
+      "duration": "Duration",
+      "volume": "Total volume",
+      "sets": "Total sets",
+      "ratings": "Set ratings"
+    },
+    "prWall": {
+      "title": "Recent PRs",
+      "empty": "No personal records yet — log a few sessions.",
+      "recordLine": "{exercise}: {kg} kg × {reps}"
+    },
+    "weightLog": {
+      "title": "Weight log",
+      "empty": "No weight entries yet."
+    },
+    "ratings": {
+      "title": "Last 90 days",
+      "easy": "Easy",
+      "right": "Just right",
+      "hard": "Hard"
+    }
+  },
+
+  "stats": {
+    "streak": "Streak",
+    "streakValue_one": "{n} day",
+    "streakValue_other": "{n} days",
+    "fatigue": "Fatigue",
+    "readiness": "Readiness",
+    "noData": "—"
+  },
+
+  "alerts": {
+    "title": "Heads up",
+    "muscleOveruse": "{group} is logging high volume — consider a lighter day.",
+    "stalling": "Progress on {exercise} has stalled — let's mix it up.",
+    "lowAdherence": "You've missed a few sessions — let's get back on track."
+  },
+
+  "patterns": {
+    "stagnation": "Stagnation on {exercise}",
+    "lowAdherence": "Low adherence this week"
+  },
+
+  "nutrition": {
+    "title": "Nutrition today",
+    "kcal": "{kcal} kcal",
+    "protein": "{g} g protein",
+    "logCta": "Log meal",
+    "targetSuffix": "/ {target}"
+  },
+
+  "reactivate": {
+    "title": "Welcome back",
+    "body": "It's been a while. Want to start with a light session?",
+    "startCta": "Start light",
+    "dismissCta": "Not now"
+  },
+
+  "resumeSession": {
+    "title": "Resume your session",
+    "body": "You paused {when}. Continue where you left off?",
+    "resumeCta": "Resume",
+    "discardCta": "Discard"
+  },
+
+  "prNotification": {
+    "title": "New personal record!",
+    "body": "Tap to see the recap."
+  },
+
+  "calendar7Day": {
+    "ariaLabel": "Next 7 days",
+    "today": "Today",
+    "restDayShort": "Rest"
+  },
+
+  "exitConfirm": {
+    "title": "Leave the session?",
+    "body": "What do you want to do with the progress so far?",
+    "continue": "Keep going",
+    "pause": "Pause",
+    "finishEarly": "Finish early",
+    "discard": "Discard"
+  },
+
+  "aaFriction": {
+    "title": "That's a big jump",
+    "reasons": {
+      "weight_spike": "The weight jumped a lot vs your recent sets.",
+      "volume_spike": "Total volume jumped sharply.",
+      "rate_spike": "You're loading faster than your usual pace."
+    },
+    "acknowledgeCta": "I'll be careful — log it",
+    "forceCta": "Force log anyway"
+  },
+
+  "inactivity": {
+    "title": "Still there?",
+    "body": "We haven't seen activity for a while. Want to continue or save and exit?",
+    "continueCta": "Continue",
+    "saveExitCta": "Save and exit"
+  },
+
+  "aparatLipsa": {
+    "title": "What's missing today?",
+    "subtitle": "Tap what's not available — I'll adapt.",
+    "saveCta": "Save",
+    "items": {
+      "barbell": "Barbell",
+      "smith": "Smith machine",
+      "dumbbell": "Dumbbells",
+      "cable": "Cable machine",
+      "machine": "Selectorized machines",
+      "rack": "Squat rack",
+      "preacher": "Preacher bench",
+      "bench": "Bench",
+      "leg_press": "Leg press",
+      "leg_curl": "Leg curl"
+    }
   },
 
   "cont": {
@@ -141,6 +538,162 @@
         "schimbaFaza": "Switch phase manually",
         "schimbaFazaDesc": "Reset some calibrations"
       }
+    },
+    "profile": {
+      "title": "Profile",
+      "name": "Name",
+      "email": "Email",
+      "age": "Age",
+      "sex": "Sex",
+      "height": "Height (cm)",
+      "weight": "Current weight (kg)",
+      "experience": "Experience",
+      "frequency": "Workouts per week",
+      "goal": "Goal",
+      "saveCta": "Save",
+      "savedToast": "Saved"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Pick when Andura should ping you.",
+      "remindersHeading": "Workout reminders",
+      "remindersBody": "Daily nudge based on your training plan.",
+      "prHeading": "PR celebrations",
+      "prBody": "Get notified when you hit a new personal record.",
+      "weeklyHeading": "Weekly recap",
+      "weeklyBody": "Sunday summary of your week."
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "intro": "Andura is built privacy-first.",
+      "dataHeading": "What we store",
+      "dataBody": "Your training data lives on your device. We sync only what you choose to back up.",
+      "thirdPartyHeading": "Third parties",
+      "thirdPartyBody": "We use Firebase for auth and storage. No ads, no analytics tracking."
+    },
+    "terms": {
+      "title": "Terms of service",
+      "intro": "By using Andura, you agree to these terms.",
+      "medicalHeading": "Medical disclaimer",
+      "medicalBody": "Andura is not a substitute for medical advice. Consult a doctor before starting a new training program."
+    },
+    "export": {
+      "title": "Download your data",
+      "body": "Get a JSON file with everything you've logged.",
+      "exportCta": "Download (JSON)"
+    },
+    "import": {
+      "title": "Import history",
+      "body": "Upload a JSON file with weight + nutrition entries to backfill.",
+      "importCta": "Choose file",
+      "successToast": "Imported {n} entries.",
+      "errorToast": "Couldn't read that file."
+    },
+    "appearance": {
+      "title": "Appearance",
+      "themeHeading": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "themes": {
+      "title": "Themes",
+      "current": "Current",
+      "preview": "Preview"
+    },
+    "subscription": {
+      "title": "Subscription",
+      "freeBetaHeading": "Free during Beta",
+      "freeBetaBody": "Andura is free for all Beta users. Pricing will be announced post-launch."
+    },
+    "support": {
+      "title": "Support",
+      "body": "Need help? Reach us at support@andura.app.",
+      "emailCta": "Email support"
+    },
+    "about": {
+      "title": "About Andura",
+      "body": "Andura is a Romanian-built fitness coach. Solo bootstrap, plan x20, two-to-three-year horizon.",
+      "versionLabel": "Version",
+      "buildLabel": "Build"
+    },
+    "faq": {
+      "title": "FAQ",
+      "intro": "Common questions."
+    },
+    "danger": {
+      "title": "Logout & delete",
+      "logoutHeading": "Log out",
+      "logoutBody": "Sign out on this device. Your data stays.",
+      "logoutCta": "Log out",
+      "resetHeading": "Reset data",
+      "resetBody": "Erase local training data on this device. Cloud backup unchanged.",
+      "resetCta": "Reset",
+      "deleteHeading": "Delete account",
+      "deleteBody": "Permanently delete your account and all data. This can't be undone.",
+      "deleteCta": "Delete account"
+    },
+    "confirms": {
+      "logoutTitle": "Log out?",
+      "logoutBody": "You'll need to sign in again.",
+      "logoutConfirm": "Log out",
+      "deleteTitle": "Delete account?",
+      "deleteBody": "All your data will be permanently deleted. Type DELETE to confirm.",
+      "deleteConfirm": "Delete forever",
+      "deletePlaceholder": "Type DELETE",
+      "resetTitle": "Reset data?",
+      "resetBody": "Local training data will be erased on this device.",
+      "resetConfirm": "Reset",
+      "resetCoachTitle": "Reset coach?",
+      "resetCoachBody": "The AI will restart learning from scratch.",
+      "resetCoachConfirm": "Reset coach",
+      "redoOnboardingTitle": "Redo onboarding?",
+      "redoOnboardingBody": "You'll go through the initial setup again.",
+      "redoOnboardingConfirm": "Redo",
+      "schimbaFazaTitle": "Switch phase?",
+      "schimbaFazaBody": "Some calibrations will reset.",
+      "schimbaFazaConfirm": "Switch"
+    },
+    "cevaNuMerge": {
+      "title": "Report a problem",
+      "subtitle": "What's not working?",
+      "messageLabel": "Tell us what happened",
+      "messagePlaceholder": "Describe the issue…",
+      "submitCta": "Send"
     }
+  },
+
+  "splash": {
+    "appName": "Andura",
+    "tagline": "Your guide in the gym",
+    "continueCta": "Continue",
+    "loginCta": "Log in"
+  },
+
+  "auth": {
+    "title": "Welcome",
+    "subtitle": "Enter your email to receive a sign-in link.",
+    "emailPlaceholder": "you@example.com",
+    "sendCta": "Send sign-in link",
+    "sentTitle": "Check your email",
+    "sentBody": "We sent a sign-in link to {email}. Tap it to continue.",
+    "errorInvalid": "Please enter a valid email address.",
+    "errorGeneric": "Couldn't send the link. Please try again."
+  },
+
+  "offline": {
+    "banner": "You're offline. Some features won't work until you're back online."
+  },
+
+  "install": {
+    "prompt": "Install Andura for the full experience.",
+    "installCta": "Install",
+    "dismissCta": "Not now"
+  },
+
+  "update": {
+    "prompt": "A new version is available.",
+    "updateCta": "Update now",
+    "dismissCta": "Later"
   }
 }
