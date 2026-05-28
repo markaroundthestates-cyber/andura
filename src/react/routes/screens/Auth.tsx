@@ -12,6 +12,7 @@ import { Mail, FlaskConical, ExternalLink, ArrowLeft, X } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { sendMagicLink, buildGoogleSignInUrl } from '../../../auth.js';
 import { detectWebView, webViewLabel } from '../../lib/webviewDetect';
+import { t, tArray } from '../../../i18n/index.js';
 
 // §B005/D-2 audit fix — Google OAuth client ID from build-time env. Daniel
 // configures via GitHub Secrets + Google Cloud Console OAuth provider enable.
@@ -117,7 +118,7 @@ export function Auth(): JSX.Element {
       <button
         type="button"
         onClick={() => navigate('/')}
-        aria-label="Inapoi"
+        aria-label={t('auth.backAriaLabel')}
         data-testid="auth-back-splash"
         className="absolute top-4 left-4 p-2 text-ink2"
       >
@@ -136,20 +137,18 @@ export function Auth(): JSX.Element {
           >
             <ExternalLink className="w-4 h-4 mt-0.5 flex-shrink-0 text-ink" aria-hidden="true" />
             <p className="text-xs text-ink2 leading-relaxed">
-              Esti in browser-ul {webViewLabel(webViewSource)}. Magic Link-ul
-              functioneaza mai bine daca deschizi <strong>andura.app</strong> in
-              Chrome (meniu &middot;&middot;&middot; &gt; Deschide in Chrome).
+              {t('auth.webview.prefix')} {webViewLabel(webViewSource)}{t('auth.webview.browserLabel')}{' '}
+              {t('auth.webview.hintPrefix')} <strong>{t('auth.webview.appUrl')}</strong>{' '}
+              {t('auth.webview.hintSuffix')}
             </p>
           </div>
         )}
 
         <h1 className="text-2xl font-bold text-ink mb-2 text-center">
-          {mode === 'signup' ? 'Creeaza cont' : 'Intra in cont'}
+          {mode === 'signup' ? t('auth.signupTitle') : t('auth.loginTitle')}
         </h1>
         <p className="text-sm text-ink2 mb-6 text-center">
-          {mode === 'signup'
-            ? 'Iti trimitem un link pe email pentru a-ti crea contul. Fara parola.'
-            : 'Iti trimitem un link de intrare pe email. Fara parola.'}
+          {mode === 'signup' ? t('auth.signupSubtitle') : t('auth.loginSubtitle')}
         </p>
 
         {sent ? (
@@ -169,19 +168,19 @@ export function Auth(): JSX.Element {
             <div className="w-16 h-16 rounded-full bg-paper mx-auto mb-3 flex items-center justify-center">
               <Mail className="w-7 h-7 text-brick" aria-hidden="true" />
             </div>
-            <p className="text-xl font-semibold text-ink mb-2">Verifica emailul</p>
+            <p className="text-xl font-semibold text-ink mb-2">{t('auth.sent.title')}</p>
             <p className="text-sm text-ink2 mb-1">
-              Ti-am trimis linkul pe <strong className="text-ink">{email}</strong>.
+              {t('auth.sent.bodyPrefix')} <strong className="text-ink">{email}</strong>{t('auth.sent.bodySuffix')}
             </p>
             <p className="text-sm text-ink2 mb-4">
-              Deschide-l de pe acest telefon. Linkul expira in 15 min.
+              {t('auth.sent.openHint')}
             </p>
             {mode === 'signup' && (
               <p
                 className="text-xs text-ink3 mb-4"
                 data-testid="auth-sent-signup-note"
               >
-                Contul se creeaza cand deschizi linkul.
+                {t('auth.sent.signupNote')}
               </p>
             )}
             <button
@@ -190,7 +189,7 @@ export function Auth(): JSX.Element {
               data-testid="auth-back"
               className="text-sm text-ink2 underline"
             >
-              Schimba emailul
+              {t('auth.sent.changeEmailCta')}
             </button>
           </div>
         ) : (
@@ -217,7 +216,7 @@ export function Auth(): JSX.Element {
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                 </svg>
-                Continua cu Google
+                {t('auth.googleCta')}
               </button>
             )}
 
@@ -230,7 +229,7 @@ export function Auth(): JSX.Element {
                 aria-hidden="true"
               >
                 <div className="flex-1 h-px bg-line" />
-                <span className="text-xs text-ink3">sau</span>
+                <span className="text-xs text-ink3">{t('auth.dividerOr')}</span>
                 <div className="flex-1 h-px bg-line" />
               </div>
             )}
@@ -246,7 +245,7 @@ export function Auth(): JSX.Element {
               htmlFor="auth-email"
               className="block text-sm text-ink2 font-medium mb-2"
             >
-              Email (primesti un link)
+              {t('auth.emailLabel')}
             </label>
             {/* §6-C3 audit fix — autoComplete="email" enables browser/password-manager
                 autofill (Maria 65 typing relief; 1Password/Bitwarden Magic Link suggest).
@@ -264,7 +263,7 @@ export function Auth(): JSX.Element {
               inputMode="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="numele.tau@email.ro"
+              placeholder={t('auth.emailPlaceholderRo')}
               data-testid="auth-email-input"
               className="w-full p-4 mb-4 border border-lineStrong rounded-xl bg-paper2 text-base"
             />
@@ -290,23 +289,23 @@ export function Auth(): JSX.Element {
                   className="mt-0.5 w-4 h-4 flex-shrink-0 accent-brick"
                 />
                 <label htmlFor="auth-consent" className="text-xs text-ink2 leading-relaxed">
-                  Sunt de acord cu{' '}
+                  {t('auth.consent.labelPrefix')}{' '}
                   <Link
                     to="/terms"
                     data-testid="auth-consent-terms-link"
                     className="underline text-brick"
                   >
-                    Termenii si Conditiile
+                    {t('auth.consent.termsLink')}
                   </Link>{' '}
-                  si{' '}
+                  {t('auth.consent.conjunction')}{' '}
                   <Link
                     to="/privacy"
                     data-testid="auth-consent-privacy-link"
                     className="underline text-brick"
                   >
-                    Politica de Confidentialitate
+                    {t('auth.consent.privacyLink')}
                   </Link>
-                  .
+                  {t('auth.consent.labelSuffix')}
                 </label>
               </div>
             )}
@@ -322,10 +321,10 @@ export function Auth(): JSX.Element {
               }
             >
               {sending
-                ? 'Se trimite…'
+                ? t('auth.sendingLabel')
                 : mode === 'signup'
-                  ? 'Creeaza cont'
-                  : 'Trimite link de intrare'}
+                  ? t('auth.sendCtaSignup')
+                  : t('auth.sendCtaLogin')}
             </button>
             {error && (
               <p
@@ -334,7 +333,7 @@ export function Auth(): JSX.Element {
                 data-testid="auth-error"
                 role="alert"
               >
-                Nu am putut trimite linkul. Reincearca.
+                {t('auth.errorGeneric')}
               </p>
             )}
 
@@ -348,7 +347,7 @@ export function Auth(): JSX.Element {
                 data-testid="auth-to-signup"
                 className="btn-secondary-lift w-full mt-3 py-3 border border-lineStrong rounded-[14px] text-base font-semibold text-ink bg-paper2"
               >
-                Creeaza cont
+                {t('auth.toSignupCta')}
               </button>
             ) : (
               <button
@@ -357,7 +356,7 @@ export function Auth(): JSX.Element {
                 data-testid="auth-to-login"
                 className="w-full mt-3 py-2 text-sm text-ink2 text-center"
               >
-                Ai deja cont? <span className="underline text-brick">Intra</span>
+                {t('auth.toLoginPrefix')} <span className="underline text-brick">{t('auth.toLoginAction')}</span>
               </button>
             )}
 
@@ -373,7 +372,7 @@ export function Auth(): JSX.Element {
               aria-hidden="true"
             >
               <div className="flex-1 h-px bg-line" />
-              <span className="text-xs text-ink3">sau</span>
+              <span className="text-xs text-ink3">{t('auth.dividerOr')}</span>
               <div className="flex-1 h-px bg-line" />
             </div>
 
@@ -385,7 +384,7 @@ export function Auth(): JSX.Element {
               className="w-full mt-3 py-3 border border-lineStrong rounded-xl text-sm text-ink2 flex items-center justify-center gap-2"
             >
               <FlaskConical className="w-4 h-4" aria-hidden="true" />
-              Continua fara cont
+              {t('auth.skip.cta')}
             </button>
             {/* §F-auth-04 sub-gap (MED chat5 Wave 16) — Skip-auth risk-note
                 mockup andura-clasic.html#L462-464 verbatim. Anchoreaza
@@ -398,8 +397,7 @@ export function Auth(): JSX.Element {
               className="mt-2 text-xs text-ink3 leading-relaxed text-center"
               data-testid="auth-skip-risk-note"
             >
-              Datele se salveaza doar pe acest dispozitiv. Risti sa le pierzi
-              (telefon resetat, browser cache sters, app reinstalat).
+              {t('auth.skip.riskNote')}
             </p>
 
             {showMockLogin && (
@@ -409,7 +407,7 @@ export function Auth(): JSX.Element {
                 data-testid="auth-mock"
                 className="w-full mt-3 py-2 text-ink2 text-xs underline"
               >
-                Mock login (dev only)
+                {t('auth.mockLoginCta')}
               </button>
             )}
               </>
@@ -429,25 +427,25 @@ export function Auth(): JSX.Element {
           className="mt-6 text-xs text-ink3 text-center leading-relaxed"
           data-testid="auth-terms-footer"
         >
-          Continuand accepti{' '}
+          {t('auth.termsFooter.prefix')}{' '}
           <button
             type="button"
             onClick={() => setLegalDoc('terms')}
             data-testid="auth-terms-link"
             className="underline"
           >
-            Termenii
+            {t('auth.termsFooter.terms')}
           </button>{' '}
-          si{' '}
+          {t('auth.termsFooter.conjunction')}{' '}
           <button
             type="button"
             onClick={() => setLegalDoc('privacy')}
             data-testid="auth-privacy-link"
             className="underline"
           >
-            Confidentialitatea
+            {t('auth.termsFooter.privacy')}
           </button>
-          . Nu folosim datele tale pentru reclame.
+          {t('auth.termsFooter.suffix')}
         </p>
         )}
       </div>
@@ -506,13 +504,13 @@ function LegalModal({
       >
         <div className="flex items-center justify-between mb-4">
           <h2 id="auth-legal-title" className="text-base font-bold text-ink">
-            {isTerms ? 'Termeni si conditii' : 'Confidentialitate'}
+            {isTerms ? t('auth.legal.terms.title') : t('auth.legal.privacy.title')}
           </h2>
           <button
             ref={closeRef}
             type="button"
             onClick={onClose}
-            aria-label="Inchide"
+            aria-label={t('auth.legal.closeAriaLabel')}
             data-testid="auth-legal-close"
             className="p-1 text-ink2"
           >
@@ -522,29 +520,26 @@ function LegalModal({
 
         {isTerms ? (
           <div className="text-sm text-ink2 space-y-2.5">
-            <p>Andura este un coach de antrenament local-first. Folosind app accepti:</p>
+            <p>{t('auth.legal.terms.intro')}</p>
             <ul className="list-disc pl-5 space-y-1.5">
-              <li>Andura ofera recomandari, NU prescriptii medicale.</li>
-              <li>Esti responsabil de propria siguranta in sala.</li>
-              <li>Backup-ul Firebase e optional si cripteaza datele in transit (HTTPS).</li>
-              <li>Raportarea de erori e opt-in (implicit oprita), cu datele personale sterse.</li>
-              <li>Andura e in Beta gratuita; functii pot fi schimbate pana la V1.</li>
+              {tArray('auth.legal.terms.bullets').map((line, i) => (
+                <li key={i}>{line}</li>
+              ))}
             </ul>
           </div>
         ) : (
           <div className="text-sm text-ink2 space-y-2.5">
-            <p>Datele tale raman pe telefon. Tu controlezi ce iese de aici.</p>
+            <p>{t('auth.legal.privacy.intro')}</p>
             <ul className="list-disc pl-5 space-y-1.5">
-              <li>Colectam doar profilul + sesiunile + biometrici opt-in + email Magic Link.</li>
-              <li>Folosite pentru personalizarea antrenamentelor, local pe telefon.</li>
-              <li>ZERO publicitate, ZERO vanzare date, ZERO third-party trackers.</li>
-              <li>Acces, export, stergere, rectificare oricand din ecranul Cont.</li>
+              {tArray('auth.legal.privacy.bullets').map((line, i) => (
+                <li key={i}>{line}</li>
+              ))}
             </ul>
           </div>
         )}
 
         <p className="text-xs text-ink2 mt-4">
-          Textul complet:{' '}
+          {t('auth.legal.fullTextLabel')}{' '}
           <a
             href="https://andura.app/terms"
             target="_blank"
@@ -552,13 +547,13 @@ function LegalModal({
             data-testid="auth-legal-live-link"
             className="underline text-brick"
           >
-            andura.app/terms
+            {t('auth.legal.fullTextLink')}
           </a>
           {!isTerms && (
             <>
-              {' '}&middot; intrebari GDPR:{' '}
+              {' '}{t('auth.legal.gdprPrefix')}{' '}
               <a href="mailto:privacy@andura.app" className="underline text-brick">
-                privacy@andura.app
+                {t('auth.legal.gdprEmail')}
               </a>
             </>
           )}

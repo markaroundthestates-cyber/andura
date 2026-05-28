@@ -14,6 +14,10 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { Auth } from '../../routes/screens/Auth';
+// SPLASH+AUTH+ONB FINISH i18n — these specs were written against RO copy;
+// force RO locale so existing assertions keep their semantics. EN coverage
+// is verified separately by src/i18n/__tests__/i18nNoRoLeak.test.tsx.
+import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../../i18n/index.js';
 
 // Mock auth module — Magic Link send + Google OAuth URL builder.
 vi.mock('../../../auth.js', () => ({
@@ -43,6 +47,9 @@ function setUserAgent(ua: string): void {
 }
 
 beforeEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  __resetI18n();
+  __setLocale('ro');
   // jsdom default UA contains 'jsdom' — not matched by any WebView regex.
   // Tests that need banner-absent state rely on the standard UA.
 });
