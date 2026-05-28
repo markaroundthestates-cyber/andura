@@ -4,6 +4,10 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { Onboarding } from '../../routes/screens/Onboarding';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
+// SPLASH+AUTH+ONB FINISH i18n — these specs were written against RO copy;
+// force RO locale so existing assertions keep their semantics. EN coverage
+// is verified separately by src/i18n/__tests__/i18nNoRoLeak.test.tsx.
+import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../../i18n/index.js';
 
 function renderAt(step: number) {
   return render(
@@ -24,6 +28,8 @@ beforeEach(() => {
   });
   useProgresStore.setState({ weightLog: [], bodyData: [] });
   localStorage.clear();
+  __resetI18n();
+  __setLocale('ro');
 });
 
 describe('Onboarding — Big 6 hard typing', () => {

@@ -68,6 +68,11 @@ vi.mock('../../react/lib/engineWrappers', async () => {
 import { Antrenor } from '../../react/routes/screens/antrenor/Antrenor';
 import { EnergyCheck } from '../../react/routes/screens/antrenor/EnergyCheck';
 import { Cont } from '../../react/routes/screens/cont/Cont';
+// ── SPLASH+AUTH+ONB FINISH — entry funnel surfaces (Splash + Auth + Onboarding) ─
+import { Splash } from '../../react/routes/screens/Splash';
+import { Auth } from '../../react/routes/screens/Auth';
+import { Onboarding } from '../../react/routes/screens/Onboarding';
+import { useAppStore } from '../../react/stores/appStore';
 import { CoachRestCard } from '../../react/components/Antrenor/CoachRestCard';
 import { CoachTodayCard } from '../../react/components/Antrenor/CoachTodayCard';
 // ── Wave E2 — body comp + Progres deep coverage ─────────────────────────────
@@ -329,6 +334,45 @@ const FORBIDDEN_RO_TOKENS = [
   'fesele',
   'gambele',
   'recupereaza',
+  // ── SPLASH + AUTH + ONBOARDING entry funnel (FINISH wave) ─────────────
+  // Splash hardcoded tokens that historically leaked under EN.
+  'facut',
+  'raman',
+  // Onboarding step kicker + progress + step titles + helpers.
+  'pasul',
+  'cati',
+  'cantaresti',
+  'inalt',
+  // Onboarding option labels + descriptors.
+  'barbat',
+  'femeie',
+  'forta',
+  'masa',
+  'slabire',
+  'mentenanta',
+  // Auth screen long bullets + chrome.
+  'esti',
+  'browser-ul',
+  'deschizi',
+  'trimite',
+  'creeaza',
+  'creaza',
+  'intra',
+  'verifica',
+  'emailul',
+  'linkul',
+  'expira',
+  'continuand',
+  'accepti',
+  'termenii',
+  'reclame',
+  'pierzi',
+  'telefon',
+  'resetat',
+  'prescriptii',
+  'medicale',
+  'siguranta',
+  'sala',
 ];
 
 const RO_DIACRITICS = /[ăâîșțĂÂÎȘȚşţŞŢ]/;
@@ -987,6 +1031,122 @@ describe('Wave E4 i18n — Coach engine output is locale-aware under EN locale',
     expect(text).toMatch(/Fatigue today/);
     expect(text).toMatch(/Not enough sessions yet/);
     assertNoRoLeak('FatigueStrip empty', text);
+  });
+});
+
+// ── SPLASH + AUTH + ONBOARDING entry funnel (FINISH wave) ─────────────────
+// Manager smoke 2026-05-28 caught these surfaces still 100% hardcoded RO
+// despite "Wave E+F i18n DEEP zero RO leak" claim. Lock them down here.
+describe('SPLASH+AUTH+ONB FINISH i18n — no RO leak under EN locale', () => {
+  it('Splash anonymous mode (Log In + Creaza Cont CTAs + footer) renders EN-clean', () => {
+    useAppStore.getState().setAuthenticated(false);
+    const { container } = render(withRouter('/', <Splash />));
+    assertNoRoLeak('Splash anon', container.textContent ?? '');
+  });
+
+  it('Splash authenticated mode (Continua CTA + footer) renders EN-clean', () => {
+    useAppStore.getState().setAuthenticated(true);
+    const { container } = render(withRouter('/', <Splash />));
+    assertNoRoLeak('Splash authenticated', container.textContent ?? '');
+    useAppStore.getState().setAuthenticated(false);
+  });
+
+  it('Auth login mode (default) renders EN-clean — heading + send CTA + footer', () => {
+    const { container } = render(withRouter('/auth', <Auth />));
+    assertNoRoLeak('Auth login default', container.textContent ?? '');
+  });
+
+  it('Auth signup mode renders EN-clean — heading + send CTA + consent label', () => {
+    const { container } = render(
+      <MemoryRouter initialEntries={[{ pathname: '/auth', state: { mode: 'signup' } }]}>
+        <Routes>
+          <Route path="/auth" element={<Auth />} />
+        </Routes>
+      </MemoryRouter>
+    );
+    assertNoRoLeak('Auth signup', container.textContent ?? '');
+  });
+
+  it('Auth WebView banner copy is EN-clean (Facebook IAB example)', () => {
+    const orig = navigator.userAgent;
+    try {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 [FB_IAB/FB4A;FBAV/443.0.0.30.111;]',
+        configurable: true,
+        writable: true,
+      });
+      const { container } = render(withRouter('/auth', <Auth />));
+      assertNoRoLeak('Auth WebView banner', container.textContent ?? '');
+    } finally {
+      Object.defineProperty(navigator, 'userAgent', { value: orig, configurable: true, writable: true });
+    }
+  });
+
+  it('Auth sent state (after Magic Link sent) renders EN-clean', async () => {
+    const { container } = render(withRouter('/auth', <Auth />));
+    fireEvent.change(screen.getByTestId('auth-email-input'), {
+      target: { value: 'gigel@example.com' },
+    });
+    fireEvent.click(screen.getByTestId('auth-send'));
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+    assertNoRoLeak('Auth sent', container.textContent ?? '');
+  });
+
+  it('Auth legal modal — Terms doc renders EN-clean (intro + bullets + footer)', () => {
+    const { container } = render(withRouter('/auth', <Auth />));
+    fireEvent.click(screen.getByTestId('auth-terms-link'));
+    assertNoRoLeak('Auth legal terms modal', container.textContent ?? '');
+  });
+
+  it('Auth legal modal — Privacy doc renders EN-clean (intro + bullets + GDPR contact)', () => {
+    const { container } = render(withRouter('/auth', <Auth />));
+    fireEvent.click(screen.getByTestId('auth-privacy-link'));
+    assertNoRoLeak('Auth legal privacy modal', container.textContent ?? '');
+  });
+
+  // Onboarding uses useParams<{ step: string }>(); we need a router pattern
+  // with the `:step` param wildcard so all 8 steps actually surface step-N
+  // copy (NOT the step 1 fallback when the param is undefined).
+  function renderOnboardingStep(step: number): ReturnType<typeof render> {
+    return render(
+      <MemoryRouter initialEntries={[`/onboarding/${step}`]}>
+        <Routes>
+          <Route path="/onboarding/:step" element={<Onboarding />} />
+          <Route path="*" element={<div data-testid="probe" />} />
+        </Routes>
+      </MemoryRouter>
+    );
+  }
+
+  it.each([1, 2, 3, 4, 5, 6, 7, 8] as const)('Onboarding step %i renders EN-clean (title + helper + options)', (step) => {
+    // Seed full data for Step 8 (summary) so option values surface.
+    useOnboardingStore.setState({
+      data: { age: 32, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 78, height: 175 },
+      completed: false,
+      completedAt: null,
+    });
+    const { container } = renderOnboardingStep(step);
+    assertNoRoLeak(`Onboarding step ${step}`, container.textContent ?? '');
+  });
+
+  it('Onboarding step 1 with out-of-range value surfaces EN error helper', () => {
+    const { container } = renderOnboardingStep(1);
+    fireEvent.change(screen.getByTestId('onb-age-input'), { target: { value: '10' } });
+    assertNoRoLeak('Onboarding step 1 range error', container.textContent ?? '');
+  });
+
+  it('Onboarding step 6 with out-of-range weight surfaces EN error helper', () => {
+    const { container } = renderOnboardingStep(6);
+    fireEvent.change(screen.getByTestId('onb-weight-input'), { target: { value: '20' } });
+    assertNoRoLeak('Onboarding step 6 range error', container.textContent ?? '');
+  });
+
+  it('Onboarding step 7 with out-of-range height surfaces EN error helper', () => {
+    const { container } = renderOnboardingStep(7);
+    fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '300' } });
+    assertNoRoLeak('Onboarding step 7 range error', container.textContent ?? '');
   });
 });
 

@@ -15,6 +15,9 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { Onboarding } from '../../routes/screens/Onboarding';
 import { useOnboardingStore } from '../../stores/onboardingStore';
+// SPLASH+AUTH+ONB FINISH i18n — these aria-label assertions match RO copy;
+// pin RO locale.
+import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../../i18n/index.js';
 
 function renderAt(step: number): ReturnType<typeof render> {
   return render(
@@ -34,6 +37,8 @@ beforeEach(() => {
     completedAt: null,
   });
   localStorage.clear();
+  __resetI18n();
+  __setLocale('ro');
 });
 
 describe('Onboarding Step 2 (sex) — toggle button semantic', () => {

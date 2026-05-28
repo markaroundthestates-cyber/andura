@@ -3,7 +3,7 @@
 // router) pentru izolare fără Node 25 undici AbortSignal mismatch în data
 // router fetch lifecycle. Prod în router.tsx folosește createBrowserRouter.
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
@@ -59,6 +59,21 @@ import { Cont } from '../routes/screens/cont/Cont';
 import { useAppStore } from '../stores/appStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { useSettingsStore } from '../stores/settingsStore';
+// SPLASH+AUTH+ONB FINISH i18n — Auth/Onboarding assertions below were
+// written against RO copy; provide a helper to pin RO locale per-test.
+// Top-level afterEach restores DEFAULT (EN) locale so later describe blocks
+// that depend on EN-default tab labels + EnergyCheck etc. are not polluted
+// by RO state leaking through localStorage `sf.locale`.
+import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../i18n/index.js';
+function __pinRoLocale(): void {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  __resetI18n();
+  __setLocale('ro');
+}
+afterEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  __resetI18n();
+});
 
 function renderAt(initialPath: string) {
   return render(
@@ -88,6 +103,7 @@ function renderAt(initialPath: string) {
 
 describe('Routing — top-level screens', () => {
   beforeEach(() => {
+    __pinRoLocale();
     useAppStore.getState().setAuthenticated(false);
   });
 
@@ -114,6 +130,7 @@ describe('Routing — top-level screens', () => {
 
 describe('Routing — ProtectedRoute redirect', () => {
   beforeEach(() => {
+    __pinRoLocale();
     useAppStore.getState().setAuthenticated(false);
     useOnboardingStore.setState({ completed: true, completedAt: Date.now() });
   });
@@ -125,6 +142,9 @@ describe('Routing — ProtectedRoute redirect', () => {
 
   it('renders Antrenor daca isAuthenticated + onboarding completed (EN default = "Coach")', () => {
     useAppStore.getState().setAuthenticated(true);
+    // Antrenor is EN-default check — flip back to default (RO pin came from outer beforeEach).
+    __resetI18n();
+    try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
     renderAt('/app/antrenor');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Coach');
     useAppStore.getState().setAuthenticated(false);

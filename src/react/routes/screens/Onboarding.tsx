@@ -24,6 +24,7 @@ import { useOnboardingStore, validateOnboardingField } from '../../stores/onboar
 import type { OnboardingData, Frequency, Experience } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
 import { toast } from '../../lib/toast';
+import { t } from '../../../i18n/index.js';
 
 /** Local ISO YYYY-MM-DD (date-only) — mirror LogWeight.todayIso (date-tz local). */
 function todayIso(): string {
@@ -60,19 +61,19 @@ export function Onboarding(): JSX.Element {
   // are guard propriu (store) ca safety net defense-in-depth.
   function validateCurrentStep(): { ok: true } | { ok: false; reason: string } {
     if (stepNum === 1) {
-      if (data.age === null) return { ok: false, reason: 'Completeaza varsta.' };
+      if (data.age === null) return { ok: false, reason: t('onboarding.toast.completeAge') };
       return validateOnboardingField('age', data.age);
     }
-    if (stepNum === 2 && data.sex === null) return { ok: false, reason: 'Alege o optiune.' };
-    if (stepNum === 3 && data.goal === null) return { ok: false, reason: 'Alege un obiectiv.' };
-    if (stepNum === 4 && data.frequency === null) return { ok: false, reason: 'Alege frecventa.' };
-    if (stepNum === 5 && data.experience === null) return { ok: false, reason: 'Alege nivelul.' };
+    if (stepNum === 2 && data.sex === null) return { ok: false, reason: t('onboarding.toast.completeOption') };
+    if (stepNum === 3 && data.goal === null) return { ok: false, reason: t('onboarding.toast.completeGoal') };
+    if (stepNum === 4 && data.frequency === null) return { ok: false, reason: t('onboarding.toast.completeFrequency') };
+    if (stepNum === 5 && data.experience === null) return { ok: false, reason: t('onboarding.toast.completeLevel') };
     if (stepNum === 6) {
-      if (data.weight === null) return { ok: false, reason: 'Completeaza greutatea.' };
+      if (data.weight === null) return { ok: false, reason: t('onboarding.toast.completeWeight') };
       return validateOnboardingField('weight', data.weight);
     }
     if (stepNum === 7) {
-      if (data.height === null) return { ok: false, reason: 'Completeaza inaltimea.' };
+      if (data.height === null) return { ok: false, reason: t('onboarding.toast.completeHeight') };
       return validateOnboardingField('height', data.height);
     }
     return { ok: true };
@@ -100,7 +101,7 @@ export function Onboarding(): JSX.Element {
         }
         navigate('/app/antrenor');
       } else {
-        toast.show({ message: 'Completeaza toti pasii inainte de a continua.', variant: 'warning' });
+        toast.show({ message: t('onboarding.toast.completeAll'), variant: 'warning' });
       }
     } else {
       navigate(`/onboarding/${stepNum + 1}`);
@@ -137,7 +138,7 @@ export function Onboarding(): JSX.Element {
           ))}
         </div>
         <span className="text-xs text-ink3 font-medium">
-          {stepNum} din {TOTAL_STEPS}
+          {t('onboarding.progress', { current: stepNum, total: TOTAL_STEPS })}
         </span>
       </div>
 
@@ -146,7 +147,7 @@ export function Onboarding(): JSX.Element {
           (Daniel "Top Grade" 2026-05-28) — the kicker leads the per-step
           stagger so the eye lands on it first before the heading + question. */}
       <p className="text-xs text-brick font-semibold uppercase tracking-wide mb-1 animate-fade-in-up delay-0">
-        Pasul {stepNum}
+        {t('onboarding.stepKicker', { n: stepNum })}
       </p>
 
       {/* Wave A5 — each step re-mounts under a key so the fade-in-up replays
@@ -174,7 +175,7 @@ export function Onboarding(): JSX.Element {
             data-testid="onb-back"
             className="btn-secondary-lift px-5 py-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-sm font-semibold"
           >
-            Inapoi
+            {t('onboarding.backCta')}
           </button>
         )}
         <button
@@ -183,7 +184,7 @@ export function Onboarding(): JSX.Element {
           data-testid="onb-next"
           className={`btn-primary-lift press-feedback flex-1 px-5 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold${isLast ? ' option-selected-ring' : ''}`}
         >
-          {isLast ? 'Gata' : 'Continua'}
+          {isLast ? t('onboarding.finishCta') : t('onboarding.continueCta')}
         </button>
       </div>
     </section>
@@ -205,12 +206,12 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
   // doar daca value e ne-null + out-of-range (NU initial empty). WCAG SC
   // 3.3.1 + 3.3.3.
   const error = value !== null && (value < 18 || value > 99)
-    ? 'Varsta intre 18 si 99 ani.'
+    ? t('onboarding.steps.1.error')
     : null;
   return (
     <>
-      <h1 id="onb-step1-heading" className="text-2xl font-bold text-ink mb-2">Cati ani ai?</h1>
-      <p className="text-sm text-ink2 mb-6">Ne ajuta sa adaptam intensitatea si recuperarea.</p>
+      <h1 id="onb-step1-heading" className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.1.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.1.desc')}</p>
       <input
         type="number"
         value={value ?? ''}
@@ -224,7 +225,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
           const n = Number(v);
           onChange(Number.isFinite(n) ? n : null);
         }}
-        placeholder="ex. 32"
+        placeholder={t('onboarding.steps.1.placeholder')}
         min={18}
         max={99}
         required
@@ -234,7 +235,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         inputMode="numeric"
         autoComplete="off"
         enterKeyHint="next"
-        aria-label="Varsta in ani"
+        aria-label={t('onboarding.steps.1.ariaLabel')}
         data-testid="onb-age-input"
         className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono transition-colors focus:border-brick"
       />
@@ -249,7 +250,7 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
         </p>
       ) : (
         // MED — helper line per mockup L565 "Intre 16 si 99 ani".
-        <p className="mt-2 text-xs text-ink3 text-center">Intre 18 si 99 ani</p>
+        <p className="mt-2 text-xs text-ink3 text-center">{t('onboarding.steps.1.helper')}</p>
       )}
     </>
   );
@@ -258,8 +259,8 @@ function Step1({ value, onChange }: NumericStepProps): JSX.Element {
 function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">Sex biologic</h1>
-      <p className="text-sm text-ink2 mb-6">Influenteaza estimarea TDEE si ratele de recuperare.</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.2.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.2.desc')}</p>
       {/* §6-M3 revert per Karpathy SF — aria-pressed valid pattern toggle
           select state pe <button>. role=radiogroup necesita arrow-key
           handling + roving tabIndex (~200 LOC pentru 7 grupuri) = zero
@@ -275,7 +276,7 @@ function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
             aria-pressed={value === v}
             className={`press-feedback animate-fade-in-up p-4 rounded-xl border text-left transition-colors ${idx === 0 ? 'delay-150' : 'delay-225'} ${value === v ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
           >
-            <span className="font-medium">{v === 'm' ? 'Barbat (M)' : 'Femeie (F)'}</span>
+            <span className="font-medium">{v === 'm' ? t('onboarding.options.sex.m') : t('onboarding.options.sex.f')}</span>
           </button>
         ))}
       </div>
@@ -289,36 +290,34 @@ function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
 // 'definire'). Mentenanta + Auto = NEW (D-1b).
 type GoalKey = 'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta';
 
-const GOAL_LABELS: Record<GoalKey, string> = {
-  auto: 'Auto',
-  forta: 'Forta',
-  masa: 'Masa musculara',
-  slabire: 'Slabire',
-  mentenanta: 'Mentenanta',
-};
+function goalLabel(key: GoalKey): string {
+  return t(`onboarding.options.goal.${key}`);
+}
 
 // HIGH chat6 — enriched goal rows per mockup L507-531: lucide icon + grey
 // descriptive subtitle pe fiecare optiune. Auto pre-recomandat (brick border
 // + "recomandat" badge + check affordance) restored din mockup parity strip.
+// Subtitle is resolved via t() at render time (locale switching) instead of
+// being baked into a static module-level constant.
 const GOAL_OPTIONS: Array<{
   key: GoalKey;
   Icon: typeof Sparkles;
-  subtitle: string;
+  subtitleKey: string;
 }> = [
-  { key: 'auto', Icon: Sparkles, subtitle: 'Coach-ul alege singur, se adapteaza in timp' },
-  { key: 'forta', Icon: Dumbbell, subtitle: 'Greutati mari, mai putine repetari' },
-  { key: 'masa', Icon: Flame, subtitle: 'Cresti musculatura vizibil' },
-  { key: 'slabire', Icon: TrendingDown, subtitle: 'Pierzi grasime, pastrezi muschi' },
-  { key: 'mentenanta', Icon: ShieldCheck, subtitle: 'Pastrezi forma actuala' },
+  { key: 'auto', Icon: Sparkles, subtitleKey: 'onboarding.options.goal.autoSubtitle' },
+  { key: 'forta', Icon: Dumbbell, subtitleKey: 'onboarding.options.goal.fortaSubtitle' },
+  { key: 'masa', Icon: Flame, subtitleKey: 'onboarding.options.goal.masaSubtitle' },
+  { key: 'slabire', Icon: TrendingDown, subtitleKey: 'onboarding.options.goal.slabireSubtitle' },
+  { key: 'mentenanta', Icon: ShieldCheck, subtitleKey: 'onboarding.options.goal.mentenantaSubtitle' },
 ];
 
 function Step3({ value, onChange }: OptionStepProps<GoalKey>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">Ce vrei sa obtii?</h1>
-      <p className="text-sm text-ink2 mb-6">Alegi unul. Poti schimba mai tarziu.</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.3.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.3.desc')}</p>
       <div className="flex flex-col gap-3">
-        {GOAL_OPTIONS.map(({ key, Icon, subtitle }, idx) => {
+        {GOAL_OPTIONS.map(({ key, Icon, subtitleKey }, idx) => {
           const selected = value === key;
           // "Auto" recomandat: brick border cand neselectat inca (idle hint),
           // brick fill cand selectat (consistent cu restul optiunilor).
@@ -347,18 +346,18 @@ function Step3({ value, onChange }: OptionStepProps<GoalKey>): JSX.Element {
               />
               <span className="flex-1">
                 <span className="block font-medium">
-                  {GOAL_LABELS[key]}
+                  {goalLabel(key)}
                   {isAuto && (
                     <span
                       className={`ml-2 text-xs font-semibold ${selected ? 'text-paper' : 'text-brick'}`}
                       data-testid="onb-goal-auto-badge"
                     >
-                      recomandat
+                      {t('onboarding.options.goal.autoBadge')}
                     </span>
                   )}
                 </span>
                 <span className={`block text-xs mt-0.5 ${selected ? 'text-paper' : 'text-ink3'}`}>
-                  {subtitle}
+                  {t(subtitleKey)}
                 </span>
               </span>
               {selected && (
@@ -379,22 +378,22 @@ function Step3({ value, onChange }: OptionStepProps<GoalKey>): JSX.Element {
 // bubble + label + grey subtitle (recuperare guidance). Option set 2/3/4/5
 // preserved (testids + aria-labels invariant), converted din grid → vertical
 // stack-row pattern matching mockup.
-const FREQ_OPTIONS: Array<{ value: Frequency; label: string; subtitle: string }> = [
-  { value: '2', label: '2 zile', subtitle: 'Minim, recuperare ampla' },
-  { value: '3', label: '3 zile', subtitle: 'Incepem usor, recuperare ampla' },
-  { value: '4', label: '4 zile', subtitle: 'Ritm echilibrat' },
-  { value: '5', label: '5 zile', subtitle: 'Volum mare, atentie la recuperare' },
+const FREQ_OPTIONS: ReadonlyArray<{ value: Frequency; labelKey: string; subtitleKey: string }> = [
+  { value: '2', labelKey: 'onboarding.options.frequency.2', subtitleKey: 'onboarding.options.frequency.2Subtitle' },
+  { value: '3', labelKey: 'onboarding.options.frequency.3', subtitleKey: 'onboarding.options.frequency.3Subtitle' },
+  { value: '4', labelKey: 'onboarding.options.frequency.4', subtitleKey: 'onboarding.options.frequency.4Subtitle' },
+  { value: '5', labelKey: 'onboarding.options.frequency.5', subtitleKey: 'onboarding.options.frequency.5Subtitle' },
 ];
 
 function Step4({ value, onChange }: OptionStepProps<Frequency>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">Cat de des te antrenezi?</h1>
-      <p className="text-sm text-ink2 mb-6">Zile pe saptamana in care poti sa te antrenezi.</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.4.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.4.desc')}</p>
       {/* aria-label pe fiecare buton numeric pastrat (Screen readers anunta
           numeric value semantic "3 sesiuni pe saptamana" nu doar "3"). */}
       <div className="flex flex-col gap-3">
-        {FREQ_OPTIONS.map(({ value: v, label, subtitle }, idx) => {
+        {FREQ_OPTIONS.map(({ value: v, labelKey, subtitleKey }, idx) => {
           const selected = value === v;
           const delayClass = ['delay-150', 'delay-225', 'delay-300', 'delay-375'][idx] ?? 'delay-375';
           return (
@@ -404,7 +403,7 @@ function Step4({ value, onChange }: OptionStepProps<Frequency>): JSX.Element {
               onClick={() => onChange(v)}
               data-testid={`onb-freq-${v}`}
               aria-pressed={selected}
-              aria-label={`${v} sesiuni pe saptamana`}
+              aria-label={t('onboarding.steps.4.ariaLabelFmt', { n: v })}
               className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-xl border text-left transition-colors ${selected ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
             >
               <span
@@ -414,9 +413,9 @@ function Step4({ value, onChange }: OptionStepProps<Frequency>): JSX.Element {
                 {v}
               </span>
               <span className="flex-1">
-                <span className="block font-medium">{label}</span>
+                <span className="block font-medium">{t(labelKey)}</span>
                 <span className={`block text-xs mt-0.5 ${selected ? 'text-paper' : 'text-ink3'}`}>
-                  {subtitle}
+                  {t(subtitleKey)}
                 </span>
               </span>
             </button>
@@ -429,19 +428,19 @@ function Step4({ value, onChange }: OptionStepProps<Frequency>): JSX.Element {
 
 // HIGH chat6 — enriched experience rows: label + grey descriptive subtitle
 // matching goal/frequency enriched pattern (mockup stack-row convention).
-const EXP_OPTIONS: Array<{ value: Experience; label: string; subtitle: string }> = [
-  { value: 'incepator', label: 'Incepator', subtitle: 'Sub un an de antrenament constant' },
-  { value: 'intermediar', label: 'Intermediar', subtitle: '1-3 ani, tehnica de baza solida' },
-  { value: 'avansat', label: 'Avansat', subtitle: 'Peste 3 ani, antrenament structurat' },
+const EXP_OPTIONS: ReadonlyArray<{ value: Experience; labelKey: string; subtitleKey: string }> = [
+  { value: 'incepator', labelKey: 'onboarding.options.experience.incepator', subtitleKey: 'onboarding.options.experience.incepatorSubtitle' },
+  { value: 'intermediar', labelKey: 'onboarding.options.experience.intermediar', subtitleKey: 'onboarding.options.experience.intermediarSubtitle' },
+  { value: 'avansat', labelKey: 'onboarding.options.experience.avansat', subtitleKey: 'onboarding.options.experience.avansatSubtitle' },
 ];
 
 function Step5({ value, onChange }: OptionStepProps<Experience>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">Cata experienta ai?</h1>
-      <p className="text-sm text-ink2 mb-6">Calibram volumul si progresia de start.</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.5.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.5.desc')}</p>
       <div className="flex flex-col gap-3">
-        {EXP_OPTIONS.map(({ value: v, label, subtitle }, idx) => {
+        {EXP_OPTIONS.map(({ value: v, labelKey, subtitleKey }, idx) => {
           const selected = value === v;
           const delayClass = ['delay-150', 'delay-225', 'delay-300'][idx] ?? 'delay-300';
           return (
@@ -453,9 +452,9 @@ function Step5({ value, onChange }: OptionStepProps<Experience>): JSX.Element {
               aria-pressed={selected}
               className={`press-feedback animate-fade-in-up ${delayClass} p-4 rounded-xl border text-left transition-colors ${selected ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
             >
-              <span className="block font-medium">{label}</span>
+              <span className="block font-medium">{t(labelKey)}</span>
               <span className={`block text-xs mt-0.5 ${selected ? 'text-paper' : 'text-ink3'}`}>
-                {subtitle}
+                {t(subtitleKey)}
               </span>
             </button>
           );
@@ -469,12 +468,12 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
   // A11Y HIGH chat5 — surface range validation pentru screen reader. Show
   // doar daca value e ne-null + out-of-range. WCAG SC 3.3.1 + 3.3.3.
   const error = value !== null && (value < 30 || value > 250)
-    ? 'Kg intre 30 si 250.'
+    ? t('onboarding.steps.6.error')
     : null;
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">Cat cantaresti?</h1>
-      <p className="text-sm text-ink2 mb-6">Calculam volum + tonaj real.</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.6.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.6.desc')}</p>
       <input
         type="number"
         value={value ?? ''}
@@ -486,7 +485,7 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
           const n = Number(v);
           onChange(Number.isFinite(n) ? n : null);
         }}
-        placeholder="ex. 78"
+        placeholder={t('onboarding.steps.6.placeholder')}
         step="0.1"
         min={30}
         max={250}
@@ -497,7 +496,7 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
         inputMode="decimal"
         autoComplete="off"
         enterKeyHint="done"
-        aria-label="Greutate in kilograme"
+        aria-label={t('onboarding.steps.6.ariaLabel')}
         data-testid="onb-weight-input"
         className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono transition-colors focus:border-brick"
       />
@@ -512,7 +511,7 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
         </p>
       ) : (
         // MED — helper line per mockup L647 pattern ("Intre N si N kg").
-        <p className="text-xs text-ink3 mt-2 text-center">Intre 30 si 250 kg</p>
+        <p className="text-xs text-ink3 mt-2 text-center">{t('onboarding.steps.6.helper')}</p>
       )}
     </>
   );
@@ -527,12 +526,12 @@ function Step7Height({ value, onChange }: NumericStepProps): JSX.Element {
   // A11Y HIGH chat5 parity — surface range validation pentru screen reader.
   // Show doar daca value e ne-null + out-of-range. WCAG SC 3.3.1 + 3.3.3.
   const error = value !== null && (value < 120 || value > 230)
-    ? 'Inaltime intre 120 si 230 cm.'
+    ? t('onboarding.steps.7.error')
     : null;
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">Cat esti de inalt?</h1>
-      <p className="text-sm text-ink2 mb-6">Necesar pentru calculul caloriilor de baza (BMR).</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.7.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.7.desc')}</p>
       <input
         type="number"
         value={value ?? ''}
@@ -544,7 +543,7 @@ function Step7Height({ value, onChange }: NumericStepProps): JSX.Element {
           const n = Number(v);
           onChange(Number.isFinite(n) ? n : null);
         }}
-        placeholder="ex. 175"
+        placeholder={t('onboarding.steps.7.placeholder')}
         step="1"
         min={120}
         max={230}
@@ -555,7 +554,7 @@ function Step7Height({ value, onChange }: NumericStepProps): JSX.Element {
         inputMode="numeric"
         autoComplete="off"
         enterKeyHint="next"
-        aria-label="Inaltime in centimetri"
+        aria-label={t('onboarding.steps.7.ariaLabel')}
         data-testid="onb-height-input"
         className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 font-mono transition-colors focus:border-brick"
       />
@@ -570,7 +569,7 @@ function Step7Height({ value, onChange }: NumericStepProps): JSX.Element {
         </p>
       ) : (
         // MED — helper line per mockup L620 pattern ("Intre N si N cm").
-        <p className="text-xs text-ink3 mt-2 text-center">Intre 120 si 230 cm</p>
+        <p className="text-xs text-ink3 mt-2 text-center">{t('onboarding.steps.7.helper')}</p>
       )}
     </>
   );
@@ -580,22 +579,39 @@ function Step8Summary({ data }: { data: OnboardingData }): JSX.Element {
   // Wave A5 polish (Daniel "Top Grade" 2026-05-28) — each summary row gets a
   // lucide icon (Calendar/User/Target/Activity/Award/Scale/Ruler) for visual
   // affordance + a clean two-column hierarchy (icon+label left, value right).
-  // The summary card uses surface-elevated for subtle dimensionality so the
-  // final confirm screen reads as "this is your plan, finalize it" rather
-  // than a flat data dump.
-  const rows: Array<{ Icon: typeof Calendar; label: string; value: string }> = [
-    { Icon: Calendar, label: 'Varsta', value: data.age !== null ? `${data.age} ani` : '-' },
-    { Icon: User, label: 'Sex', value: data.sex === 'm' ? 'Barbat' : data.sex === 'f' ? 'Femeie' : '-' },
-    { Icon: Target, label: 'Obiectiv', value: data.goal ? GOAL_LABELS[data.goal] : '-' },
-    { Icon: Activity, label: 'Frecventa', value: data.frequency ? `${data.frequency}/sapt` : '-' },
-    { Icon: Award, label: 'Experienta', value: data.experience ? data.experience.charAt(0).toUpperCase() + data.experience.slice(1) : '-' },
-    { Icon: Scale, label: 'Greutate', value: data.weight !== null ? `${data.weight} kg` : '-' },
-    { Icon: Ruler, label: 'Inaltime', value: data.height !== null ? `${data.height} cm` : '-' },
+  // i18n DEEP (A1) — all field labels + values resolve via t(); locale switch
+  // is live (no re-mount required) since t() is called at render time.
+  const empty = t('onboarding.confirm.empty');
+  const sexValue =
+    data.sex === 'm' ? t('onboarding.confirm.values.sexM')
+    : data.sex === 'f' ? t('onboarding.confirm.values.sexF')
+    : empty;
+  const goalValue = data.goal ? goalLabel(data.goal) : empty;
+  const frequencyValue = data.frequency
+    ? t('onboarding.confirm.values.frequencyShort', { n: data.frequency })
+    : empty;
+  const experienceValue = data.experience
+    ? t(`onboarding.confirm.values.experience${data.experience.charAt(0).toUpperCase() + data.experience.slice(1)}`)
+    : empty;
+  const weightValue = data.weight
+    ? t('onboarding.confirm.values.weightSuffix', { kg: data.weight })
+    : empty;
+  const heightValue = data.height
+    ? t('onboarding.confirm.values.heightSuffix', { cm: data.height })
+    : empty;
+  const rows: Array<{ Icon: typeof Calendar; label: string; value: string | number }> = [
+    { Icon: Calendar, label: t('onboarding.confirm.fields.age'), value: data.age ?? empty },
+    { Icon: User, label: t('onboarding.confirm.fields.sex'), value: sexValue },
+    { Icon: Target, label: t('onboarding.confirm.fields.goal'), value: goalValue },
+    { Icon: Activity, label: t('onboarding.confirm.fields.frequency'), value: frequencyValue },
+    { Icon: Award, label: t('onboarding.confirm.fields.experience'), value: experienceValue },
+    { Icon: Scale, label: t('onboarding.confirm.fields.weight'), value: weightValue },
+    { Icon: Ruler, label: t('onboarding.confirm.fields.height'), value: heightValue },
   ];
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">Verifica datele</h1>
-      <p className="text-sm text-ink2 mb-6">Poti reveni oricand sa schimbi.</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.8.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.8.desc')}</p>
       <div
         className="surface-elevated bg-paper2 border border-line rounded-xl overflow-hidden"
         data-testid="onb-summary"
