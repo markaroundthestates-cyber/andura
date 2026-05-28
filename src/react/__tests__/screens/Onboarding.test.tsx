@@ -52,12 +52,15 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(useOnboardingStore.getState().data.sex).toBe('m');
   });
 
-  it('step 3 goal options 6 choices (mockup L863-869 parity)', () => {
+  it('step 3 goal options 5 choices (post-D080 longevitate drop)', () => {
     renderAt(3);
-    // §B003/D-1b audit fix — extended 4→6: auto + forta + masa + slabire + mentenanta + longevitate.
-    ['auto', 'forta', 'masa', 'slabire', 'mentenanta', 'longevitate'].forEach((g) => {
+    // §B003/D-1b + §obiectiv-drop-longevitate 2026-05-28 — 5 obiective:
+    // auto + forta + masa + slabire + mentenanta (longevitate dropped 2026-05-28,
+    // semantic duplicate of mentenanta — ambele MAINTENANCE phase).
+    ['auto', 'forta', 'masa', 'slabire', 'mentenanta'].forEach((g) => {
       expect(screen.getByTestId(`onb-goal-${g}`)).toBeInTheDocument();
     });
+    expect(screen.queryByTestId('onb-goal-longevitate')).not.toBeInTheDocument();
   });
 
   it('step 4 frequency 4 choices (2/3/4/5 per saptamana)', () => {

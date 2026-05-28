@@ -116,12 +116,9 @@ describe('engineWrappers — goal-driven kcal delta (tier none / per-user mainte
     expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
   });
 
-  it('goal "longevitate" == maintenance (no delta)', async () => {
-    setUser('longevitate');
-    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
-    const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(MAINTENANCE);
-  });
+  // §obiectiv-drop-longevitate 2026-05-28 — 'longevitate' Goal dropped (semantic
+  // duplicate of mentenanta — ambele MAINTENANCE). Test for legacy persisted-
+  // value migration handled in onboardingStore.test.ts migrateLegacyGoal suite.
 });
 
 describe('engineWrappers — precedence: manual phase override > onboarding goal', () => {

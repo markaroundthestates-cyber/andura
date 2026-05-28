@@ -11,7 +11,6 @@ import {
   Flame,
   TrendingDown,
   ShieldCheck,
-  HeartPulse,
   Check,
 } from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../stores/onboardingStore';
@@ -269,10 +268,11 @@ function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
   );
 }
 
-// §B003/D-1b audit fix — Goal labels 6 values per mockup andura-clasic.html
-// L507-531. Auto = default (engine alege singur). Slabire (was 'definire'),
-// Longevitate (was 'sanatate'). Mentenanta + Auto = NEW.
-type GoalKey = 'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta' | 'longevitate';
+// §B003/D-1b + §obiectiv-drop-longevitate 2026-05-28 — Goal labels 5 values
+// (post-D080 longevitate dropped, semantic duplicate of mentenanta — ambele
+// MAINTENANCE phase). Auto = default (engine alege singur). Slabire (was
+// 'definire'). Mentenanta + Auto = NEW (D-1b).
+type GoalKey = 'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta';
 
 const GOAL_LABELS: Record<GoalKey, string> = {
   auto: 'Auto',
@@ -280,7 +280,6 @@ const GOAL_LABELS: Record<GoalKey, string> = {
   masa: 'Masa musculara',
   slabire: 'Slabire',
   mentenanta: 'Mentenanta',
-  longevitate: 'Longevitate / Sanatate',
 };
 
 // HIGH chat6 — enriched goal rows per mockup L507-531: lucide icon + grey
@@ -296,7 +295,6 @@ const GOAL_OPTIONS: Array<{
   { key: 'masa', Icon: Flame, subtitle: 'Cresti musculatura vizibil' },
   { key: 'slabire', Icon: TrendingDown, subtitle: 'Pierzi grasime, pastrezi muschi' },
   { key: 'mentenanta', Icon: ShieldCheck, subtitle: 'Pastrezi forma actuala' },
-  { key: 'longevitate', Icon: HeartPulse, subtitle: 'Fit pe termen lung, fara efort extrem' },
 ];
 
 function Step3({ value, onChange }: OptionStepProps<GoalKey>): JSX.Element {

@@ -788,8 +788,10 @@ function getPhaseOverrideKcalToday(): number | null {
  * reutilizand PHASE_MULTIPLIERS (single source of truth, ZERO magic numbers
  * duplicate). Mirror semantics goalPhaseForGoal (scheduleAdapterAggregate.ts)
  * care drive faza workout: slabire→CUT / masa→BULK / forta→STRENGTH /
- * mentenanta+longevitate→MAINTENANCE. 'auto'/null → null (NU aplica delta;
- * cold-start = mentenanta, engine auto-detecteaza din progres in timp).
+ * mentenanta→MAINTENANCE. 'auto'/null → null (NU aplica delta; cold-start =
+ * mentenanta, engine auto-detecteaza din progres in timp). §obiectiv-drop-
+ * longevitate 2026-05-28: 'longevitate' Goal dropped (semantic dup), legacy
+ * persisted users migrated → 'mentenanta' via onboardingStore v4→v5.
  *
  * Folosit DOAR cand NU exista override manual de faza (SchimbaFaza). Astfel
  * un user fresh care a ales "slabire" la onboarding vede deficit imediat,
@@ -814,7 +816,8 @@ function getGoalKcalMultiplier(): number | null {
       phaseKey = 'STRENGTH';
       break;
     case 'mentenanta':
-    case 'longevitate':
+      // §obiectiv-drop-longevitate 2026-05-28 — 'longevitate' case dropped;
+      // legacy persisted users migrated → 'mentenanta' via onboardingStore v4→v5.
       phaseKey = 'MAINTENANCE';
       break;
     case 'auto':

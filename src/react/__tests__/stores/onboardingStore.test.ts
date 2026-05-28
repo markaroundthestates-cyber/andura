@@ -14,6 +14,7 @@ import {
   useOnboardingStore,
   validateOnboardingField,
   isSafeOnboardingValue,
+  migrateLegacyGoal,
   ONBOARDING_BOUNDS,
 } from '../../stores/onboardingStore';
 
@@ -336,11 +337,12 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
   });
 
   it('finalizes cu boundary values (age 18 + weight 30 + height 120)', () => {
+    // §obiectiv-drop-longevitate 2026-05-28 — folosim mentenanta (longevitate dropped).
     useOnboardingStore.setState({
       data: {
         age: 18,
         sex: 'f',
-        goal: 'longevitate',
+        goal: 'mentenanta',
         frequency: '2',
         experience: 'incepator',
         weight: 30,
@@ -441,6 +443,32 @@ describe('onboardingStore — finalize gate (engine boundary)', () => {
     });
     useOnboardingStore.getState().finalize();
     expect(useOnboardingStore.getState().completed).toBe(false);
+  });
+});
+
+describe('onboardingStore — migrateLegacyGoal §obiectiv-drop-longevitate v5', () => {
+  it('legacy "definire" → "slabire" (D-1b)', () => {
+    expect(migrateLegacyGoal('definire')).toBe('slabire');
+  });
+  it('legacy "sanatate" → "mentenanta" (D-1b chain through D080)', () => {
+    // D-1b had sanatate → longevitate; D080 chains through → mentenanta.
+    expect(migrateLegacyGoal('sanatate')).toBe('mentenanta');
+  });
+  it('legacy "longevitate" → "mentenanta" (D080 dropped — semantic dup)', () => {
+    expect(migrateLegacyGoal('longevitate')).toBe('mentenanta');
+  });
+  it('current valid Goal values pass through unchanged', () => {
+    expect(migrateLegacyGoal('auto')).toBe('auto');
+    expect(migrateLegacyGoal('forta')).toBe('forta');
+    expect(migrateLegacyGoal('masa')).toBe('masa');
+    expect(migrateLegacyGoal('slabire')).toBe('slabire');
+    expect(migrateLegacyGoal('mentenanta')).toBe('mentenanta');
+  });
+  it('unknown / non-string → null (defensive)', () => {
+    expect(migrateLegacyGoal('unknown')).toBeNull();
+    expect(migrateLegacyGoal(null)).toBeNull();
+    expect(migrateLegacyGoal(undefined)).toBeNull();
+    expect(migrateLegacyGoal(42)).toBeNull();
   });
 });
 

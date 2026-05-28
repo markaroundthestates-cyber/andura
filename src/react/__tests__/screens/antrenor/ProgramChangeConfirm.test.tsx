@@ -84,7 +84,8 @@ describe('ProgramChangeConfirm — PAR-003 drill-down', () => {
   });
 
   it('Anuleaza = NU setField + navigate back /app/antrenor', () => {
-    renderScreen({ pendingGoal: 'longevitate', pendingLabel: 'Longevitate / Sanatate' });
+    // §obiectiv-drop-longevitate 2026-05-28 — longevitate dropped; folosim slabire.
+    renderScreen({ pendingGoal: 'slabire', pendingLabel: 'Slabire' });
     fireEvent.click(screen.getByTestId('program-change-confirm-cancel'));
     expect(useOnboardingStore.getState().data.goal).toBeNull();
     expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/antrenor');

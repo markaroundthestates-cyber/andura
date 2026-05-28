@@ -23,7 +23,7 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Dumbbell, Flame, TrendingDown, ShieldCheck, HeartPulse } from 'lucide-react';
+import { Sparkles, Dumbbell, Flame, TrendingDown, ShieldCheck } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import type { Goal } from '../../stores/onboardingStore';
@@ -36,14 +36,16 @@ interface ObiectivOption {
   Icon: LucideIcon;
 }
 
-// Mockup L864-869 verbatim labels + sub-copy + lucide icons.
+// Mockup L864-868 verbatim labels + sub-copy + lucide icons. 5 obiective
+// post-D080 longevitate drop (semantic duplicate cu mentenanta — ambele
+// MAINTENANCE engine phase, identice template parameters). Persisted users
+// cu goal='longevitate' migrated → 'mentenanta' via onboardingStore v4→v5.
 const OPTIONS: readonly ObiectivOption[] = [
-  { id: 'auto',        title: 'Auto',                   sub: 'Coach-ul alege singur, se adapteaza in timp', Icon: Sparkles },
-  { id: 'forta',       title: 'Forta',                  sub: 'Greutati mari, mai putine repetari',           Icon: Dumbbell },
-  { id: 'masa',        title: 'Masa musculara',         sub: 'Cresti musculatura vizibil',                   Icon: Flame },
-  { id: 'slabire',     title: 'Slabire',                sub: 'Pierzi grasime, pastrezi muschi',              Icon: TrendingDown },
-  { id: 'mentenanta',  title: 'Mentenanta',             sub: 'Pastrezi forma actuala',                       Icon: ShieldCheck },
-  { id: 'longevitate', title: 'Longevitate / Sanatate', sub: 'Fit pe termen lung, fara efort extrem',        Icon: HeartPulse },
+  { id: 'auto',        title: 'Auto',           sub: 'Coach-ul alege singur, se adapteaza in timp', Icon: Sparkles },
+  { id: 'forta',       title: 'Forta',          sub: 'Greutati mari, mai putine repetari',           Icon: Dumbbell },
+  { id: 'masa',        title: 'Masa musculara', sub: 'Cresti musculatura vizibil',                   Icon: Flame },
+  { id: 'slabire',     title: 'Slabire',        sub: 'Pierzi grasime, pastrezi muschi',              Icon: TrendingDown },
+  { id: 'mentenanta',  title: 'Mentenanta',     sub: 'Pastrezi forma actuala',                       Icon: ShieldCheck },
 ];
 
 export function ObiectivGoalCard(): JSX.Element {

@@ -394,7 +394,8 @@ function goalPhaseForGoal(goal: unknown): 'BULK' | 'CUT' | 'MAINTAIN' | undefine
     case 'slabire':
       return 'CUT';
     case 'mentenanta':
-    case 'longevitate':
+      // §obiectiv-drop-longevitate 2026-05-28 — 'longevitate' dropped (semantic
+      // dup of mentenanta); legacy persisted users migrated via onboardingStore.
       return 'MAINTAIN';
     default:
       return undefined; // 'auto' / null → engine auto-detect

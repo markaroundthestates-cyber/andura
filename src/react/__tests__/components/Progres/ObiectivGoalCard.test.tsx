@@ -58,19 +58,19 @@ function resetStore(): void {
   localStorage.clear();
 }
 
-describe('ObiectivGoalCard — 6 obiective render', () => {
+describe('ObiectivGoalCard — 5 obiective render (post-D080)', () => {
   beforeEach(resetStore);
 
-  it('renders all 6 obiective rows cu labels mockup verbatim', () => {
+  it('renders all 5 obiective rows (post-longevitate drop)', () => {
     renderCard();
     expect(screen.getByTestId('obiectiv-row-auto')).toBeInTheDocument();
     expect(screen.getByTestId('obiectiv-row-forta')).toBeInTheDocument();
     expect(screen.getByTestId('obiectiv-row-masa')).toBeInTheDocument();
     expect(screen.getByTestId('obiectiv-row-slabire')).toBeInTheDocument();
     expect(screen.getByTestId('obiectiv-row-mentenanta')).toBeInTheDocument();
-    expect(screen.getByTestId('obiectiv-row-longevitate')).toBeInTheDocument();
+    // §obiectiv-drop-longevitate — longevitate gone, semantic dup of mentenanta.
+    expect(screen.queryByTestId('obiectiv-row-longevitate')).not.toBeInTheDocument();
     expect(screen.getByText('Masa musculara')).toBeInTheDocument();
-    expect(screen.getByText('Longevitate / Sanatate')).toBeInTheDocument();
     expect(screen.getByText('Mentenanta')).toBeInTheDocument();
   });
 
