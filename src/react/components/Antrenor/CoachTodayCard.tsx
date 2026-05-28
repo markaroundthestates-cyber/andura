@@ -207,7 +207,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
           haptic(12);
           onStart();
         }}
-        className="press-feedback relative overflow-hidden w-full mt-3.5 bg-brick text-paper rounded-md py-2.5 font-semibold"
+        className="btn-primary-lift press-feedback relative overflow-hidden w-full mt-3.5 bg-brick text-paper rounded-md py-2.5 font-semibold"
       >
         <Ripple color="rgba(255,255,255,0.55)" />
         <span className="relative">Incepe sesiunea</span>

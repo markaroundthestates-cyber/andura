@@ -209,7 +209,7 @@ export function Auth(): JSX.Element {
                 type="button"
                 onClick={handleGoogleSignIn}
                 data-testid="auth-google"
-                className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2"
+                className="btn-primary-lift w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2"
               >
                 <svg className="w-[18px] h-[18px] bg-white rounded-full p-0.5" viewBox="0 0 24 24" aria-hidden="true">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -317,8 +317,8 @@ export function Auth(): JSX.Element {
               data-testid="auth-send"
               className={
                 showGoogle && mode === 'login'
-                  ? 'w-full py-3 border border-lineStrong rounded-[14px] text-base font-semibold text-ink bg-paper2 disabled:opacity-50'
-                  : 'w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-50'
+                  ? 'btn-secondary-lift w-full py-3 border border-lineStrong rounded-[14px] text-base font-semibold text-ink bg-paper2 disabled:opacity-50'
+                  : 'btn-primary-lift w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-50'
               }
             >
               {sending
@@ -346,7 +346,7 @@ export function Auth(): JSX.Element {
                 type="button"
                 onClick={() => { setMode('signup'); setError(null); }}
                 data-testid="auth-to-signup"
-                className="w-full mt-3 py-3 border border-lineStrong rounded-[14px] text-base font-semibold text-ink bg-paper2"
+                className="btn-secondary-lift w-full mt-3 py-3 border border-lineStrong rounded-[14px] text-base font-semibold text-ink bg-paper2"
               >
                 Creeaza cont
               </button>

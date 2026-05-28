@@ -179,13 +179,28 @@ export function Istoric(): JSX.Element {
 
       <h2 className="text-base font-semibold text-ink mb-2">Sesiuni</h2>
       {sorted.length === 0 ? (
+        /* UX polish 2026-05-28 — empty state lifted: accent-tinted icon
+           halo (color-mix --brick) + heading line + softer body copy +
+           tasteful card-rise on mount. Reads as "we've got space waiting
+           for your first session" rather than a flat error message. */
         <div
-          className="flex flex-col items-center justify-center py-12 text-center"
+          className="flex flex-col items-center justify-center py-12 text-center animate-card-rise"
           data-testid="istoric-empty"
         >
-          <History className="w-12 h-12 text-ink2 mb-3" aria-hidden="true" />
-          <p className="text-base text-ink2">
-            Nu ai antrenamente inca. Prima sesiune apare aici dupa ce o termini.
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+            style={{
+              background:
+                'radial-gradient(circle, color-mix(in oklab, var(--brick) 18%, transparent), transparent 70%)',
+            }}
+          >
+            <History className="w-7 h-7 text-brick" aria-hidden="true" />
+          </div>
+          <p className="text-base font-semibold text-ink mb-1">
+            Prima ta sesiune te asteapta
+          </p>
+          <p className="text-sm text-ink2 max-w-[280px]">
+            Termina un antrenament si apare aici cu toate detaliile.
           </p>
         </div>
       ) : (

@@ -98,9 +98,9 @@
     --ink: #f5f0ff;        /* Primary text mov → 17.47:1 ✅ AAA */
     --ink-2: #ddd1f5;      /* Secondary text lavender → 13.49:1 ✅ AAA */
     --ink-3: #827bab;      /* Muted text → 4.99:1 paper / 4.58:1 paper-2 ✅ AA */
-    --line: rgba(139,109,255,0.16); /* Decorative purple hairline (mockup verbatim) */
-    --line-strong: #6b5aa6;/* UI boundary → 3.38:1 / 3.10:1 ✅ SC 1.4.11 */
-    --brick: #a584ff;      /* PRIMARY ACCENT purple → 6.83:1 ✅ */
+    --line: rgba(159,129,255,0.18); /* Decorative purple hairline — warmer + 12.5% more visible (mockup verbatim baseline) */
+    --line-strong: #7867b6;/* UI boundary → 3.96:1 / 3.62:1 ✅ SC 1.4.11 — lifted from #6b5aa6 for warmer hierarchy */
+    --brick: #b596ff;      /* PRIMARY ACCENT royal violet → 8.15:1 ✅ — warmer than prior #a584ff (6.83:1), reads "premium violet" not "tech blue" (Daniel UX polish 2026-05-28) */
     --brick-dark: #ff8585; /* Destructive-action TEXT (text-brickdark only) — mov red, 8.32:1 ✅ (light #a8351f preserved; deep purple failed as text 2.57:1) */
     --olive: #6ee08e;      /* Energy/cardio accent — mov green */
     --deep: #5dd6e6;       /* Rest/recovery accent — mov cyan */
@@ -175,9 +175,9 @@
     --ink: #c8c5be;        /* silver — primary text → 11.82:1 / 10.47:1 ✅ AAA */
     --ink-2: #8a877f;      /* silver-2 — secondary text → 5.68:1 / 5.03:1 ✅ AA */
     --ink-3: #928e84;      /* muted text → 6.23:1 / 5.52:1 ✅ AA (mockup silver-3 #7d7a71 failed 4.21:1 on paper-2) */
-    --line: rgba(201,166,99,0.12); /* champagne decorative hairline (mockup verbatim) */
-    --line-strong: #8a7338;/* UI boundary → 4.45:1 / 3.94:1 ✅ SC 1.4.11 (mockup #6e5a2a failed 2.71:1 on paper-2; champagne tonal family R>G>B preserved) */
-    --brick: #c9a663;      /* PRIMARY ACCENT champagne → 8.84:1 / 7.83:1 ✅ */
+    --line: rgba(212,180,131,0.14); /* champagne decorative hairline — slightly warmer + visible than mockup baseline */
+    --line-strong: #9a8246;/* UI boundary → 5.05:1 / 4.46:1 ✅ SC 1.4.11 — lifted from #8a7338 for richer warm hierarchy */
+    --brick: #d4b483;      /* PRIMARY ACCENT cognac champagne → 10.33:1 / 9.16:1 ✅ — richer than prior #c9a663 (8.84:1), reads "platinum cognac" not "mustard" (Daniel UX polish 2026-05-28) */
     --brick-dark: #e89a9a; /* destructive-action TEXT — warm red → 9.23:1 / 8.18:1 ✅ (champagne would read as brand, not danger) */
     --olive: #a8b878;      /* energy/cardio accent — muted gold-green → 9.5:1 / 8.41:1 ✅ */
     --deep: #86a8cc;       /* rest/recovery accent — bleu-bright steel → 8.23:1 / 7.29:1 ✅ */
@@ -239,9 +239,9 @@
     --ink: #f0eadb;        /* ivory — primary text → 16.99:1 / 16.58:1 ✅ AAA */
     --ink-2: #b8b0a0;      /* secondary text → 9.47:1 / 9.25:1 ✅ AAA */
     --ink-3: #8b8470;      /* muted text → 5.47:1 / 5.34:1 ✅ AA */
-    --line: rgba(212,165,116,0.12); /* gold decorative hairline (mockup card border verbatim) */
-    --line-strong: #8a7038;/* UI boundary → 4.33:1 / 4.22:1 ✅ SC 1.4.11 (warm gold-brown, derived) */
-    --brick: #d4a574;      /* PRIMARY ACCENT warm gold → 9.16:1 / 8.94:1 ✅ */
+    --line: rgba(219,177,130,0.14); /* gold decorative hairline — slightly warmer + visible than mockup baseline */
+    --line-strong: #9d8348;/* UI boundary → 5.00:1 / 4.86:1 ✅ SC 1.4.11 — lifted from #8a7038 for richer warm hierarchy */
+    --brick: #dbb182;      /* PRIMARY ACCENT amber-gold → 10.31:1 / 10.07:1 ✅ — richer than prior #d4a574 (9.16:1), warmer earth resonance (Daniel UX polish 2026-05-28) */
     --brick-dark: #e89a9a; /* destructive-action TEXT — warm red → 9.24:1 / 9.02:1 ✅ */
     --olive: #a6b478;      /* energy/cardio accent — warm sage → 9.15:1 / 8.93:1 ✅ */
     --deep: #88b8b8;       /* rest/recovery accent — warm teal → 9.32:1 / 9.09:1 ✅ */
@@ -284,7 +284,7 @@
        sit on the warm-gold/earth surface once dark: fires for this palette.
        AA verified vs --paper-2 #07090f: lora 8.94:1, meta 9.25:1, lagging
        11.52:1, override 8.64:1. */
-    --coach-lora: #d4a574;            /* italic quote — warm gold (= brick accent) */
+    --coach-lora: #dbb182;            /* italic quote — warm amber-gold (= brick accent, polished 2026-05-28) */
     --coach-meta: #b8b0a0;            /* sub-meta (duration/count) — warm muted (= ink-2) */
     --coach-lagging: #e6c074;         /* secondary weakness line — brighter amber */
     --coach-override: #c0a878;        /* "Vrei altceva azi?" CTA — muted gold hint */
@@ -314,6 +314,78 @@
   .body-text { font-size: var(--body); }
   .small-text { font-size: var(--small); }
   .display-text { font-size: var(--display); letter-spacing: var(--tight); }
+
+  /* ── PRIMARY CTA ELEVATION (Daniel UX polish 2026-05-28) ──────────────────
+     Optional dimensionality layer for hero/primary CTAs (Splash "Log In",
+     CoachTodayCard "Incepe sesiunea", Auth "Trimite link/Creeaza cont").
+     Adds an accent-tinted soft shadow + a 1px inner highlight so the button
+     lifts off the surface without resorting to gradients (mockup stays flat).
+     Tokenized via color-mix(--brick) so each palette gets its OWN halo (mov
+     violet, cognac champagne, amber-gold, brick red) automatically.
+
+     Reduced-motion safe: transitions auto-collapse via the global media block
+     below (animation-duration 0.01ms cascade includes transition-duration).
+     Hover lift gated on hover-capable devices (no phantom lift on touch). */
+  .btn-primary-lift {
+    box-shadow:
+      0 1px 0 color-mix(in oklab, white 18%, transparent) inset,
+      0 8px 24px -6px color-mix(in oklab, var(--brick) 35%, transparent),
+      0 2px 6px -1px color-mix(in oklab, var(--brick) 22%, transparent);
+    transition: box-shadow 180ms ease-out, transform 180ms ease-out, filter 180ms ease-out;
+  }
+  .btn-primary-lift:active {
+    box-shadow:
+      0 1px 0 color-mix(in oklab, white 10%, transparent) inset,
+      0 2px 8px -2px color-mix(in oklab, var(--brick) 28%, transparent);
+    transform: scale(0.97);
+  }
+  @media (hover: hover) {
+    .btn-primary-lift:hover {
+      filter: brightness(1.06);
+      box-shadow:
+        0 1px 0 color-mix(in oklab, white 22%, transparent) inset,
+        0 12px 28px -6px color-mix(in oklab, var(--brick) 42%, transparent),
+        0 3px 8px -1px color-mix(in oklab, var(--brick) 26%, transparent);
+    }
+  }
+  .btn-primary-lift:disabled {
+    box-shadow: none;
+    filter: none;
+  }
+
+  /* ── ELEVATED CARD SURFACE (Daniel UX polish 2026-05-28) ─────────────────
+     Optional dimensionality for hero cards (CoachTodayCard, ObiectivCard,
+     stat tile containers) — a barely-perceptible top-to-bottom gradient that
+     lifts the card off the page bg without resorting to box-shadow (would
+     clash with the mov ambient glow). Tokenized via color-mix(--paper-2):
+       top edge: paper-2 + 4% accent  (the card "catches" the page light)
+       bottom edge: paper-2            (settles into the page)
+     On Clasic (light cream) the gradient direction inverts implicitly via
+     color-mix(--paper-2, accent) which lifts the cream slightly warmer
+     without going muddy. */
+  .surface-elevated {
+    background-image: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--paper-2) 92%, var(--brick) 8%) 0%,
+      var(--paper-2) 50%
+    );
+  }
+
+  /* Secondary CTA hairline — for "Creaza Cont" style outlined buttons. Adds
+     a subtle accent inner glow on hover to feel responsive without competing
+     with the primary CTA's halo. Pair with bg-paper2 + border-lineStrong. */
+  .btn-secondary-lift {
+    transition: background-color 180ms ease-out, border-color 180ms ease-out, transform 180ms ease-out;
+  }
+  .btn-secondary-lift:active {
+    transform: scale(0.97);
+  }
+  @media (hover: hover) {
+    .btn-secondary-lift:hover {
+      border-color: color-mix(in oklab, var(--brick) 60%, var(--line-strong));
+      background-color: color-mix(in oklab, var(--brick) 6%, var(--paper-2));
+    }
+  }
 }
 
 /* ══ MOTION — tasteful entrance keyframes (Daniel 2026-05-27/28) ═══════════

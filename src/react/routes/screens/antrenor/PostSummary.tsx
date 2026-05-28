@@ -393,7 +393,7 @@ export function PostSummary(): JSX.Element {
         type="button"
         onClick={handleFinish}
         data-testid="summary-finish"
-        className="press-feedback relative overflow-hidden mt-auto w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+        className="btn-primary-lift press-feedback relative overflow-hidden mt-auto w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
       >
         <Ripple color="rgba(255,255,255,0.5)" />
         <span className="relative">Terminat</span>

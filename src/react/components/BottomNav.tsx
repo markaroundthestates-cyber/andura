@@ -45,6 +45,14 @@ export function BottomNav(): JSX.Element {
       }`}
       aria-label={t('nav.ariaLabel')}
       data-nav-style={navStyle}
+      style={{
+        // UX polish 2026-05-28 — soft elevation above bottom-nav on dark
+        // themes so it visually separates from page content (border alone is
+        // very subtle on dark surfaces). Color-mix on --paper keeps light
+        // theme essentially transparent (cream surface = already visible).
+        boxShadow:
+          '0 -12px 24px -12px color-mix(in oklab, var(--paper) 70%, black), 0 -1px 0 var(--line)',
+      }}
     >
       {TABS.map(({ id, Icon }) => {
         const active = isActive(id);
@@ -56,7 +64,7 @@ export function BottomNav(): JSX.Element {
             className={`relative flex ${
               compact ? 'flex-row gap-1.5' : 'flex-col gap-1'
             } items-center justify-center flex-1 h-full text-xs font-medium transition-colors active:scale-[.96] ${
-              active ? 'text-brick' : 'text-ink2'
+              active ? 'text-brick font-semibold' : 'text-ink2'
             }`}
             aria-current={active ? 'page' : undefined}
           >
@@ -66,7 +74,10 @@ export function BottomNav(): JSX.Element {
                 top brick hairline anchors which tab is active (subtle but
                 always visible — Daniel's "I tap, I see something change"
                 expectation). aria-hidden — pure decoration; aria-current owns
-                the semantic. */}
+                the semantic.
+                Polish 2026-05-28 — pill alpha lifted 12 -> 16% so the active
+                tab reads more confidently on dark themes (Daniel "clumzy"
+                feedback) without competing with hero CTA halos. */}
             <span
               aria-hidden="true"
               className={`absolute inset-x-2 inset-y-1 rounded-xl transition-all duration-200 ease-out ${
@@ -78,13 +89,13 @@ export function BottomNav(): JSX.Element {
                 // current brick token for browsers without color-mix support
                 // (Chromium 111+/Safari 16.2+ covers modern PWAs).
                 background:
-                  'color-mix(in oklab, var(--brick) 12%, transparent)',
+                  'color-mix(in oklab, var(--brick) 16%, transparent)',
               }}
             />
             <span
               aria-hidden="true"
               className={`absolute top-0 left-1/2 -translate-x-1/2 h-[2px] rounded-b-full bg-brick transition-all duration-300 ease-out ${
-                active ? 'w-8 opacity-100' : 'w-0 opacity-0'
+                active ? 'w-10 opacity-100' : 'w-0 opacity-0'
               }`}
             />
             {/* Active tab icon pops slightly (scale-110) for a subtle motion

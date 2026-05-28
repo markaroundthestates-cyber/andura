@@ -34,7 +34,7 @@ describe('WeightLogList — Loguri greutate screen', () => {
   it('empty state when no weight entries', () => {
     renderScreen();
     expect(screen.getByTestId('weight-log-empty')).toBeInTheDocument();
-    expect(screen.getByText(/Nu ai inregistrari de greutate inca/)).toBeInTheDocument();
+    expect(screen.getByText(/Prima cantarire deschide trend-ul/i)).toBeInTheDocument();
   });
 
   it('renders weight entries reverse-chrono (newest first)', () => {

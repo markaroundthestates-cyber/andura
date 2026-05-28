@@ -63,7 +63,7 @@ describe('PrWall — Recorduri Personale screen', () => {
   it('empty state when no PR records', () => {
     renderScreen();
     expect(screen.getByTestId('pr-wall-empty')).toBeInTheDocument();
-    expect(screen.getByText(/Nu ai recorduri inca/i)).toBeInTheDocument();
+    expect(screen.getByText(/Primul PR e la o sesiune distanta/i)).toBeInTheDocument();
   });
 
   it('renders 3-stat grid (Total PR / Luna asta / Exercitii) at zero', () => {

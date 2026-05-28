@@ -41,23 +41,37 @@ export function Splash(): JSX.Element {
           Mockup L405-411 gap:24px between logo-group and text-group.
           Entrance (2026-05-27): logo scaleIn, wordmark + tagline fadeInUp with a
           small stagger, CTAs fade last. Pure CSS on mount, auto-gated by the
-          global prefers-reduced-motion block. */}
-      <div className="flex flex-col items-center gap-6">
-        <div className="animate-scale-in w-[72px] h-[72px] rounded-[22px] bg-ink text-paper flex items-center justify-center text-[32px] font-bold tracking-tight">
+          global prefers-reduced-motion block.
+
+          UX polish 2026-05-28: logo gains an accent-tinted shadow that picks
+          up the active palette via color-mix(--brick), so the "A" mark feels
+          anchored to the brand color instead of floating disconnected. Subtle
+          (0 14px 40px -10px at 30% alpha) — no halo on dark themes, only a
+          soft warm presence. */}
+      <div className="flex flex-col items-center gap-7">
+        <div
+          className="animate-scale-in w-[72px] h-[72px] rounded-[22px] bg-ink text-paper flex items-center justify-center text-[32px] font-bold tracking-tight"
+          style={{
+            boxShadow:
+              '0 14px 40px -10px color-mix(in oklab, var(--brick) 30%, transparent), 0 2px 4px -1px color-mix(in oklab, var(--brick) 18%, transparent)',
+          }}
+        >
           A
         </div>
-        <div>
+        <div className="space-y-2.5">
           <h1
-            className="animate-fade-in-up text-[42px] font-bold text-ink mb-2 tracking-tight"
+            className="animate-fade-in-up text-[44px] leading-[1.05] font-bold text-ink tracking-[-0.025em]"
             style={{ animationDelay: '80ms' }}
           >
             Andura
           </h1>
           {/* Tagline = coach-quote per mockup andura-clasic.html#L409
               (font-family Lora, font-style italic). Distinct de wordmark h1
-              (F-splash-08 ramane Inter sans). */}
+              (F-splash-08 ramane Inter sans). Polish 2026-05-28: tighter
+              line-height + ink2 stays warm; max-w nudged so the line break
+              feels intentional, not crammed. */}
           <p
-            className="animate-fade-in-up font-serif italic text-lg text-ink2 max-w-xs"
+            className="animate-fade-in-up font-serif italic text-lg leading-[1.45] text-ink2 max-w-[280px] mx-auto"
             style={{ animationDelay: '140ms' }}
           >
             Antrenorul tau personal,
@@ -77,7 +91,7 @@ export function Splash(): JSX.Element {
           type="button"
           onClick={() => navigate(isAuthenticated ? '/app/antrenor' : '/auth')}
           data-testid="splash-cta"
-          className="press-feedback relative overflow-hidden w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+          className="btn-primary-lift press-feedback relative overflow-hidden w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
         >
           <Ripple color="rgba(255,255,255,0.5)" />
           <span className="relative">{isAuthenticated ? 'Continua' : 'Log In'}</span>
@@ -86,13 +100,15 @@ export function Splash(): JSX.Element {
             user nou; o legatura subliniata slaba e prea ascunsa. Buton secundar
             proper (bordered, full-width), aliniat stilului secundar din Auth.tsx
             (border lineStrong + bg-paper2 + rounded-14) pentru consistenta
-            cross-screen + prominenta corecta. */}
+            cross-screen + prominenta corecta. UX polish 2026-05-28: btn-
+            secondary-lift adauga hover hairline-brick + press scale parity
+            cu primary, fara competa cu halo-ul primar. */}
         {!isAuthenticated && (
           <button
             type="button"
             onClick={() => navigate('/auth', { state: { mode: 'signup' } })}
             data-testid="splash-secondary"
-            className="press-feedback relative overflow-hidden w-full py-4 border border-lineStrong text-ink bg-paper2 rounded-[14px] text-base font-semibold"
+            className="btn-secondary-lift press-feedback relative overflow-hidden w-full py-4 border border-lineStrong text-ink bg-paper2 rounded-[14px] text-base font-semibold"
           >
             <Ripple />
             <span className="relative">Creaza Cont</span>

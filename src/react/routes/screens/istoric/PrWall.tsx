@@ -77,13 +77,25 @@ export function PrWall(): JSX.Element {
         </div>
 
         {prList.length === 0 ? (
+          /* UX polish 2026-05-28 — accent halo + heading + softer body copy. */
           <div
-            className="flex flex-col items-center justify-center py-12 text-center"
+            className="flex flex-col items-center justify-center py-12 text-center animate-card-rise"
             data-testid="pr-wall-empty"
           >
-            <Award className="w-12 h-12 text-ink2 mb-3" aria-hidden="true" />
-            <p className="text-sm text-ink2 max-w-xs">
-              Nu ai recorduri inca. Primul tau PR apare aici dupa o sesiune in care depasesti un maxim.
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+              style={{
+                background:
+                  'radial-gradient(circle, color-mix(in oklab, var(--brick) 18%, transparent), transparent 70%)',
+              }}
+            >
+              <Award className="w-7 h-7 text-brick" aria-hidden="true" />
+            </div>
+            <p className="text-base font-semibold text-ink mb-1">
+              Primul PR e la o sesiune distanta
+            </p>
+            <p className="text-sm text-ink2 max-w-[280px]">
+              Depaseste un maxim si recordul apare aici cu data + greutatea.
             </p>
           </div>
         ) : (

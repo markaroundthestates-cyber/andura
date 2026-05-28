@@ -169,7 +169,7 @@ export function SetLogInput({
           }}
           disabled={!Number.isFinite(reps) || reps < 1}
           data-testid="setlog-tinta-log-btn"
-          className="press-feedback relative overflow-hidden w-full flex items-center justify-center gap-2 p-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px] disabled:opacity-50"
+          className="btn-primary-lift press-feedback relative overflow-hidden w-full flex items-center justify-center gap-2 p-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px] disabled:opacity-50"
         >
           <Ripple color="rgba(255,255,255,0.55)" />
           <Check className="w-5 h-5 relative" aria-hidden="true" />
