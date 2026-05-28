@@ -4,10 +4,17 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { NutritionInline } from '../../components/NutritionInline';
 import { useNutritionStore } from '../../stores/nutritionStore';
+import { setLocale, _resetI18nCache } from '../../../i18n/index.js';
 
 beforeEach(() => {
-  useNutritionStore.setState({ dailyLog: [] });
+  // Wave E2 i18n wire — pin RO locale so the existing mockup-verbatim RO
+  // assertions ("Nutritie · azi", "Editeaza kcal", "Salveaza modificarile",
+  // "Auto din engine", "Logat manual") remain stable. EN-locale parity is
+  // covered separately by the bundle integrity tests + i18nNoRoLeak.
   localStorage.clear();
+  useNutritionStore.setState({ dailyLog: [] });
+  _resetI18nCache();
+  setLocale('ro');
 });
 
 describe('NutritionInline — render mockup verbatim', () => {

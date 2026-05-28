@@ -385,6 +385,95 @@
       "hips": "Sold",
       "biceps": "Biceps",
       "thigh": "Coapsa"
+    },
+    "logWeight": {
+      "title": "Logheaza greutate",
+      "backAriaLabel": "Inapoi",
+      "kgLabel": "Greutate (kg) *",
+      "kgPlaceholder": "ex. 78.5",
+      "dateLabel": "Data *",
+      "helper": "Inregistrarea este salvata local. Vei vedea evolutia in Greutate si BF.",
+      "saveCta": "Salveaza",
+      "cancelCta": "Anuleaza",
+      "kgError": "Kg intre 30 si 250.",
+      "dateError": "Data necesara."
+    },
+    "bodyData": {
+      "title": "Masuratori corp",
+      "backAriaLabel": "Inapoi",
+      "dateLabel": "Data",
+      "saveCta": "Salveaza",
+      "cancelCta": "Anuleaza",
+      "rangeError": "Valoare nerealista — verifica unitatea (cm). Banda {min}-{max} cm.",
+      "fields": {
+        "waist": "Talie",
+        "neck": "Gat",
+        "chest": "Piept",
+        "hips": "Sold",
+        "biceps": "Biceps",
+        "thigh": "Coapsa"
+      }
+    },
+    "weightTimeline": {
+      "title": "Greutate",
+      "backAriaLabel": "Inapoi",
+      "ranges": {
+        "30": "30 zile",
+        "60": "60",
+        "90": "90",
+        "all": "Tot"
+      },
+      "rangeLabelAll": "tot istoricul",
+      "rangeLabelDays": "ultimele {n} zile",
+      "kpiHeading": "Greutate",
+      "kpiEmpty": "Nu ai loguri in interval inca.",
+      "trendHeading": "Trend",
+      "chartEmpty": "Nu ai loguri inca. Trendul apare aici dupa ce inregistrezi greutati.",
+      "chartAriaLabel": "Trend greutate",
+      "logsCta": "Loguri recente",
+      "entries_one": "{n} inregistrare",
+      "entries_other": "{n} inregistrari"
+    },
+    "weightLogList": {
+      "title": "Loguri greutate",
+      "backAriaLabel": "Inapoi",
+      "intro": "Toate inregistrarile de greutate din istoricul tau.",
+      "emptyTitle": "Prima cantarire deschide trend-ul",
+      "emptyBody": "Logheaza din ecranul Progres si vezi panta + ETA-ul actualizat instant."
+    }
+  },
+
+  "bodyComp": {
+    "bmrStrip": {
+      "ariaLabel": "Calorii baza BMR",
+      "label": "Calorii baza",
+      "valueSuffix": "kcal/zi",
+      "emptyHint": "Nu ai profilul complet inca. Estimarea apare dupa ce completezi datele."
+    },
+    "projectionStrip": {
+      "ariaLabel": "Preconizare greutate",
+      "label": "Preconizare",
+      "weeksLabel": "~{n} saptamani",
+      "emptyHint": "Logheaza cateva zile de mese ca sa preconizez unde ajungi.",
+      "maintain": "Daca continui asa, te mentii in jur de {kg} kg.",
+      "projectedLine": "Daca continui asa, in {weeks} ajungi la",
+      "weightSuffix": "{kg} kg",
+      "projectedBfSuffix": "(~{pct}% grasime)",
+      "disclaimer": "Estimare la ritmul curent, nu o promisiune."
+    },
+    "nutritionInline": {
+      "sectionHeading": "Nutritie · azi",
+      "kcalLabel": "Kcal",
+      "proteinLabel": "Proteine (g)",
+      "editKcalAriaLabel": "Editeaza kcal",
+      "editProteinAriaLabel": "Editeaza proteine",
+      "kcalInputAriaLabel": "Kcal",
+      "proteinInputAriaLabel": "Proteine (g)",
+      "saveCta": "Salveaza modificarile",
+      "helperTop": "Auto target din engine. Apasa pencil daca vrei sa loghezi manual.",
+      "helperBottom": "Auto target engine + manual log optional. Engine calibreaza din date reale.",
+      "autoFromEngine": "Auto din engine",
+      "manualLogged": "Logat manual"
     }
   },
 
