@@ -23,7 +23,7 @@ import { SubHeader } from '../../../components/SubHeader';
 import { getUserProfileDisplay } from './userProfile';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
-import { estimateBfDeurenbergCapped, healthyFloorWeightKg } from '../../../../engine/bodyComposition.js';
+import { estimateBfDeurenbergCapped } from '../../../../engine/bodyComposition.js';
 
 // §B003/D-1b audit fix — Goal labels 6 mockup parity (mockup L863-869).
 const GOAL_LABELS: Record<Goal, string> = {

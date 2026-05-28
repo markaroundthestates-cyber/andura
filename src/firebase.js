@@ -172,19 +172,6 @@ async function fbGet(path) {
   } catch { return null; }
 }
 
-/** @param {string} path @param {unknown} data */
-async function fbSet(path, data) {
-  try {
-    const url = await _buildUrl(path);
-    const r = await _fbFetch(url, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-      headers: { 'Content-Type': 'application/json' }
-    });
-    return r.ok;
-  } catch { return false; }
-}
-
 // FCM-sync audit fix — RTDB REST PATCH (multi-path update). Unlike PUT (which
 // REPLACES the whole node, deleting any child not in the payload), PATCH updates
 // ONLY the provided child keys and leaves sibling subtrees intact. Used by

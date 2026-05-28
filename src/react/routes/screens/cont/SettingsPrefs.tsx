@@ -13,7 +13,7 @@ import { useSettingsStore } from '../../../stores/settingsStore';
 import type { WeekStart } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
-import { getCurrentLocale, setLocale, t } from '../../../../i18n/index.js';
+import { getCurrentLocale, setLocale } from '../../../../i18n/index.js';
 
 const UNIT_OPTIONS: ReadonlyArray<{ value: 'kg' | 'lb'; label: string }> = [
   { value: 'kg', label: 'Kilograme (kg)' },
