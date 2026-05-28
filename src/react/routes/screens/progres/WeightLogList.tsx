@@ -48,13 +48,27 @@ export function WeightLogList(): JSX.Element {
         </p>
 
         {sorted.length === 0 ? (
+          /* UX polish 2026-05-28 — accent-tinted icon halo + heading + softer
+             body copy, parity Istoric empty state. Two-line voice instead of
+             flat single sentence. */
           <div
-            className="flex flex-col items-center justify-center py-12 text-center"
+            className="flex flex-col items-center justify-center py-12 text-center animate-card-rise"
             data-testid="weight-log-empty"
           >
-            <Scale className="w-12 h-12 text-ink2 mb-3" aria-hidden="true" />
-            <p className="text-sm text-ink2 max-w-xs">
-              Nu ai inregistrari de greutate inca. Logheaza prima ta cantarire din ecranul Progres.
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+              style={{
+                background:
+                  'radial-gradient(circle, color-mix(in oklab, var(--brick) 18%, transparent), transparent 70%)',
+              }}
+            >
+              <Scale className="w-7 h-7 text-brick" aria-hidden="true" />
+            </div>
+            <p className="text-base font-semibold text-ink mb-1">
+              Prima cantarire deschide trend-ul
+            </p>
+            <p className="text-sm text-ink2 max-w-[280px]">
+              Logheaza din ecranul Progres si vezi panta + ETA-ul actualizat instant.
             </p>
           </div>
         ) : (

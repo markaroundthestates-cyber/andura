@@ -53,7 +53,7 @@ describe('Istoric — empty state', () => {
     // Default locale flipped to EN — heading is "History".
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('History');
     expect(screen.getByTestId('istoric-empty')).toBeInTheDocument();
-    expect(screen.getByText(/Nu ai antrenamente inca/i)).toBeInTheDocument();
+    expect(screen.getByText(/Prima ta sesiune te asteapta/i)).toBeInTheDocument();
   });
 
   it('NU renders list cand empty', () => {
