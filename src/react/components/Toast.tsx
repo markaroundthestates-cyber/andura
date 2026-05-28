@@ -111,7 +111,7 @@ export function ToastViewport(): JSX.Element | null {
   return (
     <div
       data-testid="toast-viewport"
-      className="fixed bottom-20 left-0 right-0 z-50 flex flex-col items-center gap-2 px-4 pointer-events-none"
+      className="app-fixed-column fixed bottom-20 z-50 flex flex-col items-center gap-2 px-4 pointer-events-none"
     >
       {mirrored.map((item) => (
         <ToastCard key={item.id} item={item} />
