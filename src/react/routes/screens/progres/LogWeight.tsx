@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
+import { t } from '../../../../i18n/index.js';
 
 function todayIso(): string {
   const d = new Date();
@@ -40,9 +41,9 @@ export function LogWeight(): JSX.Element {
   // empty initial state, NU pe valid input). WCAG SC 3.3.1 + 3.3.3.
   const kgError =
     kg !== '' && (!Number.isFinite(kgNum) || kgNum < 30 || kgNum > 250)
-      ? 'Kg intre 30 si 250.'
+      ? t('progres.logWeight.kgError')
       : null;
-  const dateError = date === '' ? 'Data necesara.' : null;
+  const dateError = date === '' ? t('progres.logWeight.dateError') : null;
 
   function handleSave(): void {
     if (!valid) return;
@@ -63,13 +64,13 @@ export function LogWeight(): JSX.Element {
         <button
           type="button"
           onClick={handleCancel}
-          aria-label="Inapoi"
+          aria-label={t('progres.logWeight.backAriaLabel')}
           data-testid="log-weight-back"
           className="p-2 rounded-full text-ink2"
         >
           <ArrowLeft className="w-5 h-5" aria-hidden="true" />
         </button>
-        <h1 className="text-2xl font-semibold text-ink">Logheaza greutate</h1>
+        <h1 className="text-2xl font-semibold text-ink">{t('progres.logWeight.title')}</h1>
       </header>
 
       <div className="flex flex-col gap-5 flex-1">
@@ -78,7 +79,7 @@ export function LogWeight(): JSX.Element {
             htmlFor="weight-kg"
             className="text-sm text-ink2 font-medium block mb-2"
           >
-            Greutate (kg) *
+            {t('progres.logWeight.kgLabel')}
           </label>
           <input
             id="weight-kg"
@@ -89,7 +90,7 @@ export function LogWeight(): JSX.Element {
             aria-describedby={kgError ? 'weight-kg-error' : undefined}
             value={kg}
             onChange={(e) => setKg(e.target.value)}
-            placeholder="ex. 78.5"
+            placeholder={t('progres.logWeight.kgPlaceholder')}
             step="0.1"
             min={30}
             max={250}
@@ -114,7 +115,7 @@ export function LogWeight(): JSX.Element {
             htmlFor="weight-date"
             className="text-sm text-ink2 font-medium block mb-2"
           >
-            Data *
+            {t('progres.logWeight.dateLabel')}
           </label>
           <input
             id="weight-date"
@@ -143,7 +144,7 @@ export function LogWeight(): JSX.Element {
         </div>
 
         <p className="text-sm text-ink2 leading-relaxed">
-          Inregistrarea este salvata local. Vei vedea evolutia in Greutate si BF.
+          {t('progres.logWeight.helper')}
         </p>
 
         <div className="flex-1" />
@@ -155,7 +156,7 @@ export function LogWeight(): JSX.Element {
           data-testid="weight-save"
           className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-50"
         >
-          Salveaza
+          {t('progres.logWeight.saveCta')}
         </button>
         <button
           type="button"
@@ -163,7 +164,7 @@ export function LogWeight(): JSX.Element {
           data-testid="weight-cancel"
           className="w-full py-3 text-ink2 text-sm"
         >
-          Anuleaza
+          {t('progres.logWeight.cancelCta')}
         </button>
       </div>
     </section>

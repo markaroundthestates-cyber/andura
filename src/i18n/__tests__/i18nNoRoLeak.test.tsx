@@ -24,7 +24,7 @@
 
 import type { JSX } from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { setLocale, _resetI18nCache } from '../index.js';
 import { useWorkoutStore } from '../../react/stores/workoutStore';
@@ -67,6 +67,16 @@ import { EnergyCheck } from '../../react/routes/screens/antrenor/EnergyCheck';
 import { Cont } from '../../react/routes/screens/cont/Cont';
 import { CoachRestCard } from '../../react/components/Antrenor/CoachRestCard';
 import { CoachTodayCard } from '../../react/components/Antrenor/CoachTodayCard';
+// ── Wave E2 — body comp + Progres deep coverage ─────────────────────────────
+import { BMRStrip } from '../../react/components/Progres/BMRStrip';
+import { ProjectionStrip } from '../../react/components/Progres/ProjectionStrip';
+import { NutritionInline } from '../../react/components/NutritionInline';
+import { ObiectivCard } from '../../react/components/Progres/ObiectivCard';
+import { LogWeight } from '../../react/routes/screens/progres/LogWeight';
+import { BodyData } from '../../react/routes/screens/progres/BodyData';
+import { WeightTimeline } from '../../react/routes/screens/progres/WeightTimeline';
+import { WeightLogList } from '../../react/routes/screens/progres/WeightLogList';
+import { useProgresStore } from '../../react/stores/progresStore';
 
 // ── Forbidden tokens (RO-only signals) ──────────────────────────────────────
 //
@@ -93,6 +103,7 @@ const FORBIDDEN_RO_TOKENS = [
   'logat',
   'salveaza',
   'sterge',
+  'editeaza',
   'inchide',
   'continua',
   'anuleaza',
@@ -102,6 +113,7 @@ const FORBIDDEN_RO_TOKENS = [
   'importa',
   'inlocuit',
   'recupereaza',
+  'preconizez',
   // Nouns
   'sesiunea',
   'sesiunii',
@@ -133,6 +145,32 @@ const FORBIDDEN_RO_TOKENS = [
   'notificari',
   'confidentialitate',
   'deconectare',
+  // Wave E2 body comp + progres tokens
+  'calorii',
+  'cantarire',
+  'inregistrare',
+  'inregistrari',
+  'inregistrarea',
+  'inregistrarile',
+  'masuratori',
+  'masurare',
+  'masuratorile',
+  'preconizare',
+  'proiectie',
+  'proteine',
+  'mese',
+  'loguri',
+  'evolutia',
+  'istoricul',
+  'panta',
+  'ritmul',
+  'estimare',
+  'estimarea',
+  'talie',
+  'coapsa',
+  'piept',
+  'sold',
+  // 'biceps', 'Kcal', 'BMR' are international/cognates — keep out
   // Adjectives / connectives
   'usoara',
   'usor',
@@ -211,6 +249,9 @@ function resetStores(): void {
     completed: true,
     completedAt: Date.now(),
   });
+  // Wave E2 — Progres / body comp coverage. Both empty (exercise BMR/projection
+  // empty branches) and seeded variants exercised below. Default empty here.
+  useProgresStore.setState({ weightLog: [], bodyData: [] });
 }
 
 beforeEach(() => {
@@ -278,6 +319,129 @@ describe('Wave C2 i18n — no RO leak under EN locale (Daniel mandate)', () => {
     await Promise.resolve();
     const card = screen.getByRole('region');
     assertNoRoLeak('CoachTodayCard', card.textContent ?? '');
+  });
+
+  // ── Wave E2 — body comp + Progres deep coverage ────────────────────────
+  // Render each leaf component / route screen under EN locale and confirm
+  // no Romanian-only token surfaces. Both empty + seeded variants exercised
+  // where they expose different copy branches (BMRStrip null vs computed,
+  // WeightLogList empty vs list, etc).
+
+  it('BMRStrip computed-branch renders without RO leak under EN', () => {
+    // Seeded onboarding (set in resetStores) → BMR > 0 → label+value branch.
+    const { container } = render(<BMRStrip />);
+    assertNoRoLeak('BMRStrip computed', container.textContent ?? '');
+  });
+
+  it('BMRStrip empty-branch renders without RO leak under EN', () => {
+    // Wipe onboarding so BMR resolves to null → emptyHint branch surfaces.
+    useOnboardingStore.setState({
+      data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: null, height: null },
+      completed: false,
+      completedAt: null,
+    });
+    const { container } = render(<BMRStrip />);
+    assertNoRoLeak('BMRStrip empty', container.textContent ?? '');
+  });
+
+  it('ProjectionStrip empty-branch renders without RO leak under EN', async () => {
+    // No nutrition log → readNutritionProjection resolves to null →
+    // emptyHint branch ("Log a few days of meals…").
+    const { container } = render(<ProjectionStrip />);
+    // Wait for the async effect to settle (setLoaded(true) before render).
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+    assertNoRoLeak('ProjectionStrip empty', container.textContent ?? '');
+  });
+
+  it('NutritionInline renders without RO leak under EN (default + edit mode)', () => {
+    const { container } = render(<NutritionInline />);
+    assertNoRoLeak('NutritionInline default', container.textContent ?? '');
+    // Toggle edit on both chips → exposes Save CTA copy.
+    fireEvent.click(screen.getByTestId('nutri-kcal-edit'));
+    fireEvent.click(screen.getByTestId('nutri-protein-edit'));
+    assertNoRoLeak('NutritionInline edit mode', container.textContent ?? '');
+  });
+
+  it('ObiectivCard renders without RO leak under EN (incl. warning + ETA)', () => {
+    // Subhealthy target → warning branch ("This goal is below…").
+    useProgresStore.setState({
+      weightLog: [],
+      bodyData: [],
+      targetObiectiv: { weightKg: 31, month: null },
+    });
+    const { container, rerender } = render(
+      <MemoryRouter>
+        <ObiectivCard />
+      </MemoryRouter>,
+    );
+    assertNoRoLeak('ObiectivCard subhealthy', container.textContent ?? '');
+    // Realistic target → ETA branch ("Estimated in ~N months at a healthy pace.").
+    useProgresStore.setState({
+      weightLog: [],
+      bodyData: [],
+      targetObiectiv: { weightKg: 72, month: null },
+    });
+    rerender(
+      <MemoryRouter>
+        <ObiectivCard />
+      </MemoryRouter>,
+    );
+    assertNoRoLeak('ObiectivCard ETA', container.textContent ?? '');
+  });
+
+  it('LogWeight screen renders without RO leak under EN (incl. validation error)', () => {
+    const { container } = render(withRouter('/app/progres/log-weight', <LogWeight />));
+    assertNoRoLeak('LogWeight default', container.textContent ?? '');
+    // Type out-of-range kg → error message surfaces.
+    fireEvent.change(screen.getByTestId('weight-kg-input'), { target: { value: '20' } });
+    assertNoRoLeak('LogWeight kg-range error', container.textContent ?? '');
+    // Clear date → date-required error surfaces.
+    fireEvent.change(screen.getByTestId('weight-date-input'), { target: { value: '' } });
+    assertNoRoLeak('LogWeight date-required error', container.textContent ?? '');
+  });
+
+  it('BodyData screen renders without RO leak under EN (incl. range error)', () => {
+    const { container } = render(withRouter('/app/progres/body-data', <BodyData />));
+    assertNoRoLeak('BodyData default', container.textContent ?? '');
+    // Type out-of-range biceps → range error message surfaces.
+    fireEvent.change(screen.getByTestId('bd-bicepsCm'), { target: { value: '250' } });
+    assertNoRoLeak('BodyData range error', container.textContent ?? '');
+  });
+
+  it('WeightTimeline renders without RO leak under EN (empty + seeded)', () => {
+    // Empty branch first.
+    const { container, rerender } = render(
+      withRouter('/app/progres/weight-timeline', <WeightTimeline />),
+    );
+    assertNoRoLeak('WeightTimeline empty', container.textContent ?? '');
+    // Seed with entries → KPI + trend branches surface.
+    useProgresStore.setState({
+      weightLog: [
+        { kg: 80, date: '2026-05-01', ts: Date.now() - 14 * 86_400_000 },
+        { kg: 79, date: '2026-05-15', ts: Date.now() },
+      ],
+      bodyData: [],
+    });
+    rerender(withRouter('/app/progres/weight-timeline', <WeightTimeline />));
+    assertNoRoLeak('WeightTimeline seeded', container.textContent ?? '');
+  });
+
+  it('WeightLogList renders without RO leak under EN (empty + seeded)', () => {
+    const { container, rerender } = render(
+      withRouter('/app/progres/weight-log-list', <WeightLogList />),
+    );
+    assertNoRoLeak('WeightLogList empty', container.textContent ?? '');
+    useProgresStore.setState({
+      weightLog: [
+        { kg: 78.5, date: '2026-05-10', ts: Date.now() - 5 * 86_400_000 },
+        { kg: 78.2, date: '2026-05-15', ts: Date.now() },
+      ],
+      bodyData: [],
+    });
+    rerender(withRouter('/app/progres/weight-log-list', <WeightLogList />));
+    assertNoRoLeak('WeightLogList seeded', container.textContent ?? '');
   });
 });
 

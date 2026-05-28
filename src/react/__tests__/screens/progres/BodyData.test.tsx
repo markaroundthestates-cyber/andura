@@ -8,6 +8,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { BodyData } from '../../../routes/screens/progres/BodyData';
 import { useProgresStore } from '../../../stores/progresStore';
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -26,8 +27,13 @@ function renderBodyData() {
 }
 
 beforeEach(() => {
-  useProgresStore.setState({ weightLog: [], bodyData: [] });
+  // Wave E2 i18n wire — pin RO so existing mockup-verbatim RO assertions
+  // ("Masuratori corp", "Talie", "Gat", "Salveaza", "Anuleaza", per-field
+  // range error) remain stable. EN parity covered by i18nNoRoLeak.
   localStorage.clear();
+  useProgresStore.setState({ weightLog: [], bodyData: [] });
+  _resetI18nCache();
+  setLocale('ro');
 });
 
 describe('BodyData — render', () => {

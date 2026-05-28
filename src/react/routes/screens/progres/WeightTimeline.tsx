@@ -14,20 +14,20 @@ import { List, ChevronRight } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
 type RangeKey = '30' | '60' | '90' | 'all';
 
 interface RangeTab {
   key: RangeKey;
-  label: string;
   days: number | null; // null = all
 }
 
 const RANGES: readonly RangeTab[] = [
-  { key: '30', label: '30 zile', days: 30 },
-  { key: '60', label: '60', days: 60 },
-  { key: '90', label: '90', days: 90 },
-  { key: 'all', label: 'Tot', days: null },
+  { key: '30', days: 30 },
+  { key: '60', days: 60 },
+  { key: '90', days: 90 },
+  { key: 'all', days: null },
 ];
 
 const MS_PER_DAY = 86_400_000;
@@ -99,12 +99,14 @@ export function WeightTimeline(): JSX.Element {
   );
 
   const rangeLabel =
-    range === 'all' ? 'tot istoricul' : `ultimele ${range} zile`;
+    range === 'all'
+      ? t('progres.weightTimeline.rangeLabelAll')
+      : t('progres.weightTimeline.rangeLabelDays', { n: range });
 
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="weight-timeline">
       <SubHeader
-        title="Greutate"
+        title={t('progres.weightTimeline.title')}
         onBack={() => navigate(gotoPath('progres'))}
         testIdBack="weight-timeline-back"
       />
@@ -130,7 +132,7 @@ export function WeightTimeline(): JSX.Element {
                   active ? 'bg-paper text-ink' : 'text-ink2'
                 }`}
               >
-                {r.label}
+                {t(`progres.weightTimeline.ranges.${r.key}`)}
               </button>
             );
           })}
@@ -142,11 +144,11 @@ export function WeightTimeline(): JSX.Element {
           data-testid="weight-timeline-kpi"
         >
           <p className="text-xs uppercase tracking-wide font-semibold text-ink2">
-            Greutate
+            {t('progres.weightTimeline.kpiHeading')}
           </p>
           {latest === undefined ? (
             <p className="text-sm text-ink2 mt-2" data-testid="weight-timeline-kpi-empty">
-              Nu ai loguri in interval inca.
+              {t('progres.weightTimeline.kpiEmpty')}
             </p>
           ) : (
             <>
@@ -176,7 +178,7 @@ export function WeightTimeline(): JSX.Element {
           data-testid="weight-timeline-chart-card"
         >
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-semibold text-ink">Trend</p>
+            <p className="text-sm font-semibold text-ink">{t('progres.weightTimeline.trendHeading')}</p>
             <p className="text-xs text-ink2" data-testid="weight-timeline-range-label">
               {rangeLabel}
             </p>
@@ -186,7 +188,7 @@ export function WeightTimeline(): JSX.Element {
               className="text-sm text-ink2 text-center py-8"
               data-testid="weight-timeline-chart-empty"
             >
-              Nu ai loguri inca. Trendul apare aici dupa ce inregistrezi greutati.
+              {t('progres.weightTimeline.chartEmpty')}
             </p>
           ) : (
             <svg
@@ -194,7 +196,7 @@ export function WeightTimeline(): JSX.Element {
               className="w-full h-auto block"
               data-testid="weight-timeline-chart-svg"
               role="img"
-              aria-label="Trend greutate"
+              aria-label={t('progres.weightTimeline.chartAriaLabel')}
             >
               <line x1="0" y1={chartH / 4} x2={chartW} y2={chartH / 4} stroke="var(--line)" strokeWidth="1" />
               <line x1="0" y1={chartH / 2} x2={chartW} y2={chartH / 2} stroke="var(--line)" strokeWidth="1" />
@@ -233,9 +235,14 @@ export function WeightTimeline(): JSX.Element {
           className="w-full flex items-center gap-3 p-4 bg-paper2 border border-lineStrong rounded-xl text-left"
         >
           <List className="w-5 h-5 text-ink2 flex-shrink-0" aria-hidden="true" />
-          <span className="flex-1 text-sm font-semibold text-ink">Loguri recente</span>
+          <span className="flex-1 text-sm font-semibold text-ink">{t('progres.weightTimeline.logsCta')}</span>
           <span className="text-xs text-ink2 mr-1 font-mono">
-            {weightLog.length} {weightLog.length === 1 ? 'inregistrare' : 'inregistrari'}
+            {t(
+              weightLog.length === 1
+                ? 'progres.weightTimeline.entries_one'
+                : 'progres.weightTimeline.entries_other',
+              { n: weightLog.length },
+            )}
           </span>
           <ChevronRight className="w-5 h-5 text-ink2 flex-shrink-0" strokeWidth={1.6} aria-hidden="true" />
         </button>

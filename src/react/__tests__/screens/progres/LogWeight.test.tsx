@@ -6,6 +6,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { LogWeight } from '../../../routes/screens/progres/LogWeight';
 import { useProgresStore } from '../../../stores/progresStore';
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -24,8 +25,14 @@ function renderLogWeight() {
 }
 
 beforeEach(() => {
-  useProgresStore.setState({ weightLog: [], bodyData: [] });
+  // Wave E2 i18n wire — pin RO locale so the existing mockup-verbatim RO
+  // assertions ("Logheaza greutate", "Greutate (kg)", "Salveaza", "Anuleaza",
+  // "Inregistrarea este salvata local") remain stable. EN parity covered by
+  // i18nNoRoLeak contract test.
   localStorage.clear();
+  useProgresStore.setState({ weightLog: [], bodyData: [] });
+  _resetI18nCache();
+  setLocale('ro');
 });
 
 describe('LogWeight — render', () => {

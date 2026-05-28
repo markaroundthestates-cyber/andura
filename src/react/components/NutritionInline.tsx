@@ -26,6 +26,7 @@ import { useNutritionStore } from '../stores/nutritionStore';
 import { getNutritionTargetTodayReal } from '../lib/bayesianNutritionAggregate';
 import type { NutritionTarget } from '../lib/bayesianNutritionAggregate';
 import { readBayesianNutritionContext } from '../lib/nutritionObservations';
+import { t } from '../../i18n/index.js';
 
 // Phase 6 task_04 baseline preserved sync render fallback (engine async
 // resolve replaces these on mount). Mockup verbatim wv2 L1812/L1825.
@@ -112,19 +113,19 @@ export function NutritionInline(): JSX.Element {
   return (
     <div data-testid="nutrition-inline">
       <p className="text-xs font-semibold text-ink2 uppercase tracking-wide mt-4 mb-2">
-        Nutritie · azi
+        {t('bodyComp.nutritionInline.sectionHeading')}
       </p>
       <div className="bg-paper2 border border-line rounded-2xl p-3.5 mb-2.5">
         <div className="flex gap-2.5 mb-2.5">
           <div className="flex-1" data-testid="nutri-kcal-chip">
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-ink2 uppercase tracking-wide font-semibold">
-                Kcal
+                {t('bodyComp.nutritionInline.kcalLabel')}
               </span>
               <button
                 type="button"
                 onClick={startKcalEdit}
-                aria-label="Editeaza kcal"
+                aria-label={t('bodyComp.nutritionInline.editKcalAriaLabel')}
                 data-testid="nutri-kcal-edit"
                 className="p-1 text-ink2"
                 disabled={kcalEdit}
@@ -140,7 +141,7 @@ export function NutritionInline(): JSX.Element {
                 min={0}
                 max={9999}
                 inputMode="numeric"
-                aria-label="Kcal"
+                aria-label={t('bodyComp.nutritionInline.kcalInputAriaLabel')}
                 data-testid="nutri-kcal-input"
                 className="w-full p-2 border border-lineStrong rounded-xl bg-paper text-base font-mono"
               />
@@ -156,18 +157,18 @@ export function NutritionInline(): JSX.Element {
               className="text-xs text-ink2 mt-1.5 block"
               data-testid="nutri-kcal-source"
             >
-              {kcalIsManual ? 'Logat manual' : 'Auto din engine'}
+              {kcalIsManual ? t('bodyComp.nutritionInline.manualLogged') : t('bodyComp.nutritionInline.autoFromEngine')}
             </span>
           </div>
           <div className="flex-1" data-testid="nutri-protein-chip">
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-ink2 uppercase tracking-wide font-semibold">
-                Proteine (g)
+                {t('bodyComp.nutritionInline.proteinLabel')}
               </span>
               <button
                 type="button"
                 onClick={startProteinEdit}
-                aria-label="Editeaza proteine"
+                aria-label={t('bodyComp.nutritionInline.editProteinAriaLabel')}
                 data-testid="nutri-protein-edit"
                 className="p-1 text-ink2"
                 disabled={proteinEdit}
@@ -183,7 +184,7 @@ export function NutritionInline(): JSX.Element {
                 min={0}
                 max={500}
                 inputMode="numeric"
-                aria-label="Proteine (g)"
+                aria-label={t('bodyComp.nutritionInline.proteinInputAriaLabel')}
                 data-testid="nutri-protein-input"
                 className="w-full p-2 border border-lineStrong rounded-xl bg-paper text-base font-mono"
               />
@@ -199,7 +200,7 @@ export function NutritionInline(): JSX.Element {
               className="text-xs text-ink2 mt-1.5 block"
               data-testid="nutri-protein-source"
             >
-              {proteinIsManual ? 'Logat manual' : 'Auto din engine'}
+              {proteinIsManual ? t('bodyComp.nutritionInline.manualLogged') : t('bodyComp.nutritionInline.autoFromEngine')}
             </span>
           </div>
         </div>
@@ -211,15 +212,15 @@ export function NutritionInline(): JSX.Element {
             className="w-full py-2 bg-brick text-paper rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5"
           >
             <Check className="w-4 h-4" aria-hidden="true" />
-            Salveaza modificarile
+            {t('bodyComp.nutritionInline.saveCta')}
           </button>
         )}
         <p className="text-xs text-ink2 mt-2 leading-snug">
-          Auto target din engine. Apasa pencil daca vrei sa loghezi manual.
+          {t('bodyComp.nutritionInline.helperTop')}
         </p>
       </div>
       <p className="text-xs text-ink2 text-center leading-relaxed">
-        Auto target engine + manual log optional. Engine calibreaza din date reale.
+        {t('bodyComp.nutritionInline.helperBottom')}
       </p>
     </div>
   );

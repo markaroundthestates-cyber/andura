@@ -385,6 +385,95 @@
       "hips": "Hips",
       "biceps": "Biceps",
       "thigh": "Thigh"
+    },
+    "logWeight": {
+      "title": "Log weight",
+      "backAriaLabel": "Back",
+      "kgLabel": "Weight (kg) *",
+      "kgPlaceholder": "e.g. 78.5",
+      "dateLabel": "Date *",
+      "helper": "The entry is saved on your device. You'll see the trend in Weight and BF.",
+      "saveCta": "Save",
+      "cancelCta": "Cancel",
+      "kgError": "Kg between 30 and 250.",
+      "dateError": "Date required."
+    },
+    "bodyData": {
+      "title": "Body measurements",
+      "backAriaLabel": "Back",
+      "dateLabel": "Date",
+      "saveCta": "Save",
+      "cancelCta": "Cancel",
+      "rangeError": "Unrealistic value — check the unit (cm). Range {min}-{max} cm.",
+      "fields": {
+        "waist": "Waist",
+        "neck": "Neck",
+        "chest": "Chest",
+        "hips": "Hips",
+        "biceps": "Biceps",
+        "thigh": "Thigh"
+      }
+    },
+    "weightTimeline": {
+      "title": "Weight",
+      "backAriaLabel": "Back",
+      "ranges": {
+        "30": "30 days",
+        "60": "60",
+        "90": "90",
+        "all": "All"
+      },
+      "rangeLabelAll": "all history",
+      "rangeLabelDays": "last {n} days",
+      "kpiHeading": "Weight",
+      "kpiEmpty": "No logs in this range yet.",
+      "trendHeading": "Trend",
+      "chartEmpty": "No logs yet. The trend appears here after you record weights.",
+      "chartAriaLabel": "Weight trend",
+      "logsCta": "Recent logs",
+      "entries_one": "{n} entry",
+      "entries_other": "{n} entries"
+    },
+    "weightLogList": {
+      "title": "Weight logs",
+      "backAriaLabel": "Back",
+      "intro": "All weight entries from your history.",
+      "emptyTitle": "Your first weigh-in unlocks the trend",
+      "emptyBody": "Log from the Progress screen and watch the slope plus updated ETA instantly."
+    }
+  },
+
+  "bodyComp": {
+    "bmrStrip": {
+      "ariaLabel": "Base calories BMR",
+      "label": "Base calories",
+      "valueSuffix": "kcal/day",
+      "emptyHint": "Your profile isn't complete yet. The estimate appears once you fill in the data."
+    },
+    "projectionStrip": {
+      "ariaLabel": "Weight projection",
+      "label": "Projection",
+      "weeksLabel": "~{n} weeks",
+      "emptyHint": "Log a few days of meals so I can project where you're headed.",
+      "maintain": "If you keep this up, you'll stay around {kg} kg.",
+      "projectedLine": "If you keep this up, in {weeks} you'll reach",
+      "weightSuffix": "{kg} kg",
+      "projectedBfSuffix": "(~{pct}% body fat)",
+      "disclaimer": "Estimate at the current pace, not a promise."
+    },
+    "nutritionInline": {
+      "sectionHeading": "Nutrition · today",
+      "kcalLabel": "Kcal",
+      "proteinLabel": "Protein (g)",
+      "editKcalAriaLabel": "Edit kcal",
+      "editProteinAriaLabel": "Edit protein",
+      "kcalInputAriaLabel": "Kcal",
+      "proteinInputAriaLabel": "Protein (g)",
+      "saveCta": "Save changes",
+      "helperTop": "Auto target from the engine. Tap pencil if you want to log manually.",
+      "helperBottom": "Auto target engine + manual log optional. The engine calibrates from real data.",
+      "autoFromEngine": "Auto from engine",
+      "manualLogged": "Logged manually"
     }
   },
 

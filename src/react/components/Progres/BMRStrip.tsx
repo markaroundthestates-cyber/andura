@@ -22,6 +22,7 @@ import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
 import type { Sex } from '../../stores/onboardingStore';
 import { useCountUp } from '../../hooks/useCountUp';
+import { t } from '../../../i18n/index.js';
 
 // Romanian population height averages (INS data ~2020). BMR fallback DOAR
 // pentru useri pre-v3 cu height null (onboarded inainte de P-02). Heuristic
@@ -70,7 +71,7 @@ export function BMRStrip(): JSX.Element {
     <section
       data-testid="bmr-strip"
       className="relative overflow-hidden bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4 animate-card-rise"
-      aria-label="Calorii baza BMR"
+      aria-label={t('bodyComp.bmrStrip.ariaLabel')}
     >
       {/* Wave A4 (Daniel 2026-05-28) — brick radial wash for warmth + depth. */}
       <span
@@ -84,16 +85,16 @@ export function BMRStrip(): JSX.Element {
       <Flame className="relative w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
       <div className="relative flex-1 min-w-0">
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
-          Calorii baza
+          {t('bodyComp.bmrStrip.label')}
         </p>
         {bmr !== null ? (
           <p className="text-xl font-bold text-ink font-mono" data-testid="bmr-value">
             {bmrDisplay.toLocaleString('ro-RO').replace(/,/g, ' ')}{' '}
-            <span className="text-sm font-normal text-ink2 ml-2">kcal/zi</span>
+            <span className="text-sm font-normal text-ink2 ml-2">{t('bodyComp.bmrStrip.valueSuffix')}</span>
           </p>
         ) : (
           <p className="text-sm text-ink2" data-testid="bmr-empty">
-            Nu ai profilul complet inca. Estimarea apare dupa ce completezi datele.
+            {t('bodyComp.bmrStrip.emptyHint')}
           </p>
         )}
       </div>

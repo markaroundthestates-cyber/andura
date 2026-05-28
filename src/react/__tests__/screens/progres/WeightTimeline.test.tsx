@@ -7,6 +7,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { WeightTimeline } from '../../../routes/screens/progres/WeightTimeline';
 import { useProgresStore } from '../../../stores/progresStore';
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -26,7 +27,13 @@ function renderScreen() {
 }
 
 beforeEach(() => {
+  // Wave E2 i18n wire — pin RO so existing mockup-verbatim RO assertions
+  // ("Greutate", "30 zile", "Loguri recente", "ultimele N zile") stay
+  // stable. EN parity covered by i18nNoRoLeak contract test.
+  try { localStorage.clear(); } catch { /* noop */ }
   useProgresStore.setState({ weightLog: [], bodyData: [] });
+  _resetI18nCache();
+  setLocale('ro');
 });
 
 describe('WeightTimeline — Greutate trend screen', () => {

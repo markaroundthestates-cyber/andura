@@ -14,6 +14,7 @@ import { TrendingUp } from 'lucide-react';
 import { readNutritionProjection, DEFAULT_HORIZON_DAYS } from '../../lib/nutritionProjection';
 import type { ProjectionResult } from '../../lib/nutritionProjection';
 import { useNutritionStore } from '../../stores/nutritionStore';
+import { t } from '../../../i18n/index.js';
 
 function fmtKg(n: number): string {
   return n.toLocaleString('ro-RO', { maximumFractionDigits: 1 }).replace(/,/g, ' ');
@@ -21,7 +22,7 @@ function fmtKg(n: number): string {
 
 function horizonWeeksLabel(days: number): string {
   const weeks = Math.round(days / 7);
-  return `~${weeks} saptamani`;
+  return t('bodyComp.projectionStrip.weeksLabel', { n: weeks });
 }
 
 export function ProjectionStrip(): JSX.Element | null {
@@ -52,15 +53,15 @@ export function ProjectionStrip(): JSX.Element | null {
       <section
         data-testid="projection-strip-empty"
         className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4"
-        aria-label="Preconizare greutate"
+        aria-label={t('bodyComp.projectionStrip.ariaLabel')}
       >
         <TrendingUp className="w-6 h-6 text-ink2 flex-shrink-0" aria-hidden="true" />
         <div className="flex-1 min-w-0">
           <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
-            Preconizare
+            {t('bodyComp.projectionStrip.label')}
           </p>
           <p className="text-sm text-ink2">
-            Logheaza cateva zile de mese ca sa preconizez unde ajungi.
+            {t('bodyComp.projectionStrip.emptyHint')}
           </p>
         </div>
       </section>
@@ -75,15 +76,15 @@ export function ProjectionStrip(): JSX.Element | null {
       <section
         data-testid="projection-strip"
         className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4"
-        aria-label="Preconizare greutate"
+        aria-label={t('bodyComp.projectionStrip.ariaLabel')}
       >
         <TrendingUp className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
         <div className="flex-1 min-w-0">
           <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
-            Preconizare
+            {t('bodyComp.projectionStrip.label')}
           </p>
           <p className="text-base font-semibold text-ink" data-testid="projection-maintain">
-            Daca continui asa, te mentii in jur de {fmtKg(proj.projectedWeightKg)} kg.
+            {t('bodyComp.projectionStrip.maintain', { kg: fmtKg(proj.projectedWeightKg) })}
           </p>
         </div>
       </section>
@@ -94,26 +95,26 @@ export function ProjectionStrip(): JSX.Element | null {
     <section
       data-testid="projection-strip"
       className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4"
-      aria-label="Preconizare greutate"
+      aria-label={t('bodyComp.projectionStrip.ariaLabel')}
     >
       <TrendingUp className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
-          Preconizare
+          {t('bodyComp.projectionStrip.label')}
         </p>
         <p className="text-base font-semibold text-ink" data-testid="projection-line">
-          Daca continui asa, in {weeks} ajungi la{' '}
-          <span className="font-mono">~{fmtKg(proj.projectedWeightKg)} kg</span>
+          {t('bodyComp.projectionStrip.projectedLine', { weeks })}{' '}
+          <span className="font-mono">~{t('bodyComp.projectionStrip.weightSuffix', { kg: fmtKg(proj.projectedWeightKg) })}</span>
           {proj.projectedBfPct !== null && (
             <>
               {' '}
-              <span className="font-mono">(~{fmtKg(proj.projectedBfPct)}% grasime)</span>
+              <span className="font-mono">{t('bodyComp.projectionStrip.projectedBfSuffix', { pct: fmtKg(proj.projectedBfPct) })}</span>
             </>
           )}
           .
         </p>
         <p className="text-xs text-ink3 mt-0.5 italic" data-testid="projection-disclaimer">
-          Estimare la ritmul curent, nu o promisiune.
+          {t('bodyComp.projectionStrip.disclaimer')}
         </p>
       </div>
     </section>

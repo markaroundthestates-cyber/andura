@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { WeightLogList } from '../../../routes/screens/progres/WeightLogList';
 import { useProgresStore } from '../../../stores/progresStore';
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -22,7 +23,13 @@ function renderScreen() {
 }
 
 beforeEach(() => {
+  // Wave E2 i18n wire — pin RO so existing mockup-verbatim RO assertions
+  // ("Loguri greutate", "Prima cantarire deschide trend-ul", "X mai" date
+  // format) remain stable. EN parity covered by i18nNoRoLeak contract test.
+  try { localStorage.clear(); } catch { /* noop */ }
   useProgresStore.setState({ weightLog: [], bodyData: [] });
+  _resetI18nCache();
+  setLocale('ro');
 });
 
 describe('WeightLogList — Loguri greutate screen', () => {

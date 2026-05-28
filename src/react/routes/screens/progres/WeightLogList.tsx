@@ -9,14 +9,17 @@ import { Scale } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t, getCurrentLocale } from '../../../../i18n/index.js';
 
-// Romanian month abbreviations no-diacritics. Matches Istoric.tsx +
-// IstoricDetail.tsx MONTHS_RO ('noi' nu 'nov') pentru cross-screen consistency
-// — D-LEGACY-064 + mockup parity convention.
+// Month abbreviations per locale. RO no-diacritics matches Istoric.tsx +
+// IstoricDetail.tsx ('noi' nu 'nov') pentru cross-screen consistency —
+// D-LEGACY-064 + mockup parity convention. EN uses standard fitness short
+// month names (parity with months.short in en.json).
 const MONTH_RO_SHORT = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec'];
+const MONTH_EN_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-function formatDateRO(iso: string): string {
-  // iso: "2026-05-21" → "21 mai"
+function formatDate(iso: string): string {
+  // iso: "2026-05-21" → "21 mai" (RO) / "21 May" (EN)
   const parts = iso.split('-');
   const y = parts[0];
   const m = parts[1];
@@ -24,7 +27,8 @@ function formatDateRO(iso: string): string {
   if (!y || !m || !d) return iso;
   const monthIdx = Number(m) - 1;
   if (monthIdx < 0 || monthIdx > 11) return iso;
-  const monthLabel = MONTH_RO_SHORT[monthIdx];
+  const months = getCurrentLocale() === 'en' ? MONTH_EN_SHORT : MONTH_RO_SHORT;
+  const monthLabel = months[monthIdx];
   return `${Number(d)} ${monthLabel}`;
 }
 
@@ -37,14 +41,14 @@ export function WeightLogList(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="weight-log-list">
       <SubHeader
-        title="Loguri greutate"
+        title={t('progres.weightLogList.title')}
         onBack={() => navigate(gotoPath('progres'))}
         testIdBack="weight-log-list-back"
       />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-xs text-ink2 mb-4 leading-relaxed">
-          Toate inregistrarile de greutate din istoricul tau.
+          {t('progres.weightLogList.intro')}
         </p>
 
         {sorted.length === 0 ? (
@@ -65,10 +69,10 @@ export function WeightLogList(): JSX.Element {
               <Scale className="w-7 h-7 text-brick" aria-hidden="true" />
             </div>
             <p className="text-base font-semibold text-ink mb-1">
-              Prima cantarire deschide trend-ul
+              {t('progres.weightLogList.emptyTitle')}
             </p>
             <p className="text-sm text-ink2 max-w-[280px]">
-              Logheaza din ecranul Progres si vezi panta + ETA-ul actualizat instant.
+              {t('progres.weightLogList.emptyBody')}
             </p>
           </div>
         ) : (
@@ -81,7 +85,7 @@ export function WeightLogList(): JSX.Element {
                   idx < sorted.length - 1 ? 'border-b border-line' : ''
                 }`}
               >
-                <span className="text-sm font-medium text-ink">{formatDateRO(entry.date)}</span>
+                <span className="text-sm font-medium text-ink">{formatDate(entry.date)}</span>
                 <span className="text-sm text-ink2 font-mono">
                   {entry.kg.toFixed(1)} kg
                 </span>
