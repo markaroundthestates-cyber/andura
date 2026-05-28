@@ -76,7 +76,19 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
   // to ALL users regardless of actual plan) + D-LEGACY-064 violation (& vs
   // 'si'). Same pattern ca HIGH-CODE-03 quote engine-wire (Wave 9 74650a5f) —
   // here render-only fallback so generic copy suffices.
-  const title = workout?.workoutTitle ?? t('coachToday.fallbackTitle');
+  //
+  // i18n bridge — the engine adapter (scheduleAdapterAggregate) seeds
+  // workoutTitle with the RO sentinel 'Antrenament azi' when the plan has no
+  // real title (scheduleAdapter.js#508). Treat that sentinel as null on the
+  // React side so the locale-aware fallback fires; otherwise the RO string
+  // leaks under EN locale (live smoke 2026-05-28).
+  const engineFallbackSentinel = t('coachToday.engineFallbackTitle');
+  const rawWorkoutTitle = workout?.workoutTitle;
+  const isEngineFallback =
+    rawWorkoutTitle === 'Antrenament azi' || rawWorkoutTitle === engineFallbackSentinel;
+  const title = rawWorkoutTitle && !isEngineFallback
+    ? rawWorkoutTitle
+    : t('coachToday.fallbackTitle');
   const duration = workout?.estimatedDuration ?? 48;
   const exerciseCount = workout?.exerciseCount ?? 5;
   // HIGH-CODE-03 chat5 — engine-driven quote replaces hardcoded muscle-group

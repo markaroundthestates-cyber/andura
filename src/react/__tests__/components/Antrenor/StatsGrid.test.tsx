@@ -2,9 +2,18 @@
 // Label = doar substantivul: "zi" la 1, "zile" altfel (numarul e separat,
 // deci fara prefix "de" — sub-label curat la orice streak).
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { StatsGrid } from '../../../components/Antrenor/StatsGrid';
+// i18n locale pin — these specs assert RO copy ("zi"/"zile" singular/plural).
+// Force RO so the i18n indirection (stats.streakUnit_*) resolves to the RO
+// assertion targets. EN coverage is locked separately by i18nNoRoLeak.
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
+beforeEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
+  setLocale('ro');
+});
 
 describe('StatsGrid — Romanian streak/zile plural (pluralRo helper reuse)', () => {
   it('streak=1 → label "zi" (singular)', () => {

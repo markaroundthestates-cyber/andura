@@ -18,7 +18,7 @@ import { t } from '../../../i18n/index.js';
  * guarantees a key in the post-Wave-E4 shape but partial mocks may not).
  */
 function localizedFatigueLabel(f: FatigueOutput | null): string {
-  if (!f) return 'NA';
+  if (!f) return t('stats.naFallback');
   const i18nKey =
     f.key === 'INSUFFICIENT_DATA'
       ? 'coachEngine.fatigue.insufficient.label'
@@ -31,7 +31,7 @@ function localizedFatigueLabel(f: FatigueOutput | null): string {
 }
 
 function localizedReadinessLabel(r: ReadinessOutput | null): string {
-  if (!r) return 'NA';
+  if (!r) return t('stats.naFallback');
   const i18nKey = r.key ? `coachEngine.readiness.labels.${r.key}` : null;
   if (!i18nKey) return r.label;
   const v = t(i18nKey);
@@ -46,9 +46,11 @@ interface Props {
 
 export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
   // §MED-CODE-23 — unit label below big number (2-line visual). Number rendered
-  // separat, deci label = doar substantivul: "zi" la 1, "zile" altfel (fara
-  // prefix "de" care apare la pluralRo 20+).
-  const streakLabel = streak === 1 ? 'zi' : 'zile';
+  // separat, deci label = doar substantivul: "zi"/"day" la 1, "zile"/"days" altfel
+  // (fara prefix "de" care apare la pluralRo 20+). Locale-aware via stats.streakUnit_*.
+  const streakLabel = streak === 1
+    ? t('stats.streakUnit_one')
+    : t('stats.streakUnit_other');
   // Tasteful count-up on the streak hero number (2026-05-27). Snaps to final
   // under prefers-reduced-motion; in tests rAF is not flushed so the final
   // value renders synchronously (label/plural assertions unaffected).
@@ -65,10 +67,10 @@ export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
     <div
       className="grid grid-cols-3 gap-2 mb-4"
       role="region"
-      aria-label="Statistici - streak, oboseala, energie"
+      aria-label={t('stats.ariaLabel')}
     >
       <StatTile
-        label="Streak"
+        label={t('stats.streak')}
         value={streakDisplay}
         sublabel={streakLabel}
         Icon={Flame}
@@ -81,7 +83,7 @@ export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
         iconAnimClass={streak >= 1 ? 'animate-flame' : undefined}
       />
       <StatTile
-        label="Oboseala"
+        label={t('stats.fatigue')}
         value={fatigue ? fatigueDisplay : '-'}
         sublabel={localizedFatigueLabel(fatigue)}
         Icon={Battery}
@@ -90,7 +92,7 @@ export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
         testId="stats-fatigue"
       />
       <StatTile
-        label="Readiness"
+        label={t('stats.readiness')}
         value={readiness ? readinessDisplay : '-'}
         sublabel={localizedReadinessLabel(readiness)}
         Icon={Sparkles}

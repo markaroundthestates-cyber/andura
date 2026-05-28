@@ -179,6 +179,7 @@
     "ariaLabel": "Coach recommendation for today",
     "kicker": "Today's recommendation",
     "fallbackTitle": "Today's workout",
+    "engineFallbackTitle": "Today's workout",
     "exercisesCount_one": "{n} exercise",
     "exercisesCount_other": "{n} exercises",
     "durationLabel": "~ {min} min",
@@ -218,6 +219,30 @@
 
   "workout": {
     "loading": "Loading workout…",
+    "progress": {
+      "setsLabel_one": "{done}/{total} set",
+      "setsLabel_other": "{done}/{total} sets",
+      "exercisesLabel_one": "{done}/{total} exercise",
+      "exercisesLabel_other": "{done}/{total} exercises"
+    },
+    "timer": {
+      "exitAriaLabel": "Leave the session",
+      "menuAriaLabel": "Session options",
+      "menuHeading": "Session options",
+      "actions": {
+        "pain": "Something hurts",
+        "painDesc": "Coach reduces intensity or swaps the exercise",
+        "skip": "Skip current exercise",
+        "skipDesc": "Move to the next one, no penalty",
+        "finishEarly": "Finish early",
+        "finishEarlyDesc": "The partial session is saved, you don't lose progress",
+        "soundOn": "Sound: on",
+        "soundOff": "Sound: off",
+        "soundDesc": "Vibration + ding at end of rest",
+        "cancel": "Cancel session",
+        "cancelDesc": "You lose progress from the current session"
+      }
+    },
     "empty": {
       "title": "Today is a rest day",
       "body": "No workout scheduled today. Use the calendar above if you want to change the plan.",
@@ -282,6 +307,7 @@
       },
       "errorBanner": "Couldn't load today's session. Showing you a demo session.",
       "warmupAriaLabel": "Warm-up today",
+      "warmupLine": "Warm-up ~{min} min",
       "exercisesHeading": "Exercises",
       "swappedPrefix": "Swapped · {reason}",
       "exerciseDetail": "{sets} sets - {kg} kg - {reps} reps",
@@ -301,6 +327,24 @@
       "subtitle": "Check the equipment you don't have. The coach avoids those exercises and removes them from the list in Account.",
       "saveCta": "Save",
       "closeCta": "Close"
+    }
+  },
+
+  "scheduleOverride": {
+    "subHeaderTitle": "Change today's plan?",
+    "heading": "Want a different workout today?",
+    "body": "Coach respects that. Today only — the plan resumes tomorrow.",
+    "options": {
+      "easierLabel": "Easier",
+      "easierDescription": "Intensity reduced -20%",
+      "harderLabel": "Harder",
+      "harderDescription": "Intensity raised +15%",
+      "differentMuscleLabel": "Different group",
+      "differentMuscleDescription": "Change today's target",
+      "mobilityLabel": "Mobility",
+      "mobilityDescription": "Stretching + dynamic warm-up",
+      "cardioLabel": "Cardio only",
+      "cardioDescription": "Cardio session 25-40 min"
     }
   },
 
@@ -786,7 +830,15 @@
     "streakValue_other": "{n} days",
     "fatigue": "Fatigue",
     "readiness": "Readiness",
-    "noData": "—"
+    "noData": "—",
+    "ariaLabel": "Stats - streak, fatigue, energy",
+    "streakUnit_one": "day",
+    "streakUnit_other": "days",
+    "naFallback": "NA"
+  },
+
+  "readinessVerdictWidget": {
+    "ariaLabel": "Readiness verdict"
   },
 
   "alerts": {

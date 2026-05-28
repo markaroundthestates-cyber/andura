@@ -179,6 +179,7 @@
     "ariaLabel": "Coach-ul recomanda azi",
     "kicker": "Coach-ul recomanda azi",
     "fallbackTitle": "Antrenamentul de azi",
+    "engineFallbackTitle": "Antrenament azi",
     "exercisesCount_one": "{n} exercitiu",
     "exercisesCount_other": "{n} exercitii",
     "durationLabel": "~ {min} min",
@@ -218,6 +219,30 @@
 
   "workout": {
     "loading": "Se incarca antrenamentul...",
+    "progress": {
+      "setsLabel_one": "{done}/{total} set",
+      "setsLabel_other": "{done}/{total} seturi",
+      "exercisesLabel_one": "{done}/{total} exercitiu",
+      "exercisesLabel_other": "{done}/{total} exercitii"
+    },
+    "timer": {
+      "exitAriaLabel": "Iesi din sesiune",
+      "menuAriaLabel": "Optiuni sesiune",
+      "menuHeading": "Optiuni sesiune",
+      "actions": {
+        "pain": "Ma doare ceva",
+        "painDesc": "Coach reduce intensitatea sau schimba exercitiul",
+        "skip": "Sari exercitiul curent",
+        "skipDesc": "Treci la urmatorul, fara penalizare",
+        "finishEarly": "Termina mai devreme",
+        "finishEarlyDesc": "Sesiunea partiala se inregistreaza, NU pierzi progresul",
+        "soundOn": "Sunet: pornit",
+        "soundOff": "Sunet: oprit",
+        "soundDesc": "Vibratie + ding la finalul pauzei",
+        "cancel": "Anuleaza sesiunea",
+        "cancelDesc": "Pierzi progresul din sesiunea curenta"
+      }
+    },
     "empty": {
       "title": "Astazi e zi de odihna",
       "body": "Nu ai antrenament programat azi. Foloseste calendarul de mai sus daca vrei sa schimbi programul.",
@@ -282,6 +307,7 @@
       },
       "errorBanner": "Nu am putut incarca sesiunea de azi. Iti aratam o sesiune demo.",
       "warmupAriaLabel": "Incalzire azi",
+      "warmupLine": "Incalzire ~{min} min",
       "exercisesHeading": "Exercitii",
       "swappedPrefix": "Inlocuit · {reason}",
       "exerciseDetail": "{sets} seturi - {kg} kg - {reps} reps",
@@ -301,6 +327,24 @@
       "subtitle": "Bifeaza aparatele pe care nu le ai. Coach-ul evita exercitiile lor si le scoate din lista din Cont.",
       "saveCta": "Salveaza",
       "closeCta": "Inchide"
+    }
+  },
+
+  "scheduleOverride": {
+    "subHeaderTitle": "Schimbi planul de azi?",
+    "heading": "Vrei alt antrenament azi?",
+    "body": "Coach respecta. Doar azi - maine reia planul.",
+    "options": {
+      "easierLabel": "Mai usor",
+      "easierDescription": "Intensitate redusa -20%",
+      "harderLabel": "Mai greu",
+      "harderDescription": "Intensitate crescuta +15%",
+      "differentMuscleLabel": "Alta grupa",
+      "differentMuscleDescription": "Schimba target azi",
+      "mobilityLabel": "Mobilitate",
+      "mobilityDescription": "Stretching + dynamic warm-up",
+      "cardioLabel": "Cardio doar",
+      "cardioDescription": "Sesiune cardio 25-40 min"
     }
   },
 
@@ -786,7 +830,15 @@
     "streakValue_other": "{n} zile",
     "fatigue": "Oboseala",
     "readiness": "Forma",
-    "noData": "—"
+    "noData": "—",
+    "ariaLabel": "Statistici - streak, oboseala, energie",
+    "streakUnit_one": "zi",
+    "streakUnit_other": "zile",
+    "naFallback": "NA"
+  },
+
+  "readinessVerdictWidget": {
+    "ariaLabel": "Verdict readiness"
   },
 
   "alerts": {

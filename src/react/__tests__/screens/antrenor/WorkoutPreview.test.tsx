@@ -332,7 +332,8 @@ describe('WorkoutPreview — warmup row (T3)', () => {
     await waitFor(() => {
       const row = screen.getByTestId('preview-warmup-row');
       expect(row).toBeInTheDocument();
-      expect(row.textContent).toMatch(/Incalzire\s*~?8\s*min/i);
+      // Locale-aware — RO bundle: "Incalzire ~8 min" / EN default: "Warm-up ~8 min".
+      expect(row.textContent).toMatch(/(Incalzire|Warm-up)\s*~?8\s*min/i);
     });
   });
 

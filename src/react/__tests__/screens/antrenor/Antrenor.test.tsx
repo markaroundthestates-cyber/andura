@@ -333,7 +333,7 @@ describe('Antrenor home — F4 readiness verdict', () => {
       source: 'engine',
     });
     renderAntrenor();
-    const verdict = await screen.findByRole('status', { name: /Verdict readiness/i });
+    const verdict = await screen.findByRole('status', { name: /Verdict readiness|Readiness verdict/i });
     expect(verdict).toBeInTheDocument();
     expect(verdict).toHaveTextContent('Zi de PR');
     expect(verdict).toHaveTextContent('85/100');
@@ -343,7 +343,7 @@ describe('Antrenor home — F4 readiness verdict', () => {
     renderAntrenor();
     // Default mock returns readiness=null; loading state renders empty stats
     await new Promise(resolve => setTimeout(resolve, 0));
-    expect(screen.queryByRole('status', { name: /Verdict readiness/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('status', { name: /Verdict readiness|Readiness verdict/i })).not.toBeInTheDocument();
   });
 
   it('shows poti incerca PR hint cand canPR=true', async () => {

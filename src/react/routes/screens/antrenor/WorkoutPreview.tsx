@@ -153,7 +153,18 @@ export function WorkoutPreview(): JSX.Element {
       });
     return () => { cancelled = true; };
   }, []);
-  const title = workout?.workoutTitle ?? t('workout.preview.fallbackTitle');
+  // i18n bridge — same engine fallback sentinel handling as CoachTodayCard.
+  // scheduleAdapter.js#508 seeds workoutTitle with the RO sentinel
+  // 'Antrenament azi' when the plan has no real title; treat both that and
+  // the locale-aware engineFallbackTitle as "no real title", so the
+  // locale-aware preview fallback fires (avoids RO leak under EN locale).
+  const engineFallbackSentinel = t('coachToday.engineFallbackTitle');
+  const rawWorkoutTitle = workout?.workoutTitle;
+  const isEngineFallback =
+    rawWorkoutTitle === 'Antrenament azi' || rawWorkoutTitle === engineFallbackSentinel;
+  const title = rawWorkoutTitle && !isEngineFallback
+    ? rawWorkoutTitle
+    : t('workout.preview.fallbackTitle');
   // Banner stays the self-report transparency signal (user said "Excelent" →
   // "Coach urca intensitatea"). The duration/volume PRESCRIPTION, however, now
   // tracks the ENGINE intensityMod baseline (deload output) — C3. The blunt
@@ -282,7 +293,14 @@ export function WorkoutPreview(): JSX.Element {
         >
           <Flame className="w-4 h-4 text-brick flex-shrink-0" aria-hidden="true" />
           <span className="coach-quote font-serif italic text-ink2 text-sm flex-1 leading-relaxed">
-            {workout.warmup.line}
+            {/* Engine emits warmup.line as RO native "Incalzire ~X min" via
+                src/engine/warmup/constants.js. Synthesize from durationMin
+                via the locale-aware warmupLine key so EN locale renders
+                "Warm-up ~X min" instead of the RO leak. Falls back to the
+                raw line when durationMin is missing (defensive). */}
+            {workout.warmup.durationMin > 0
+              ? t('workout.preview.warmupLine', { min: workout.warmup.durationMin })
+              : workout.warmup.line}
           </span>
         </div>
       )}
