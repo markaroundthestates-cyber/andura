@@ -133,10 +133,27 @@ interface StatCellProps {
 }
 
 function StatCell({ label, value, testId }: StatCellProps): JSX.Element {
+  // Wave A4 (Daniel 2026-05-28) — post-summary stat tiles inherit the same
+  // polished look as Antrenor StatsGrid / Istoric stats: relative wrapper +
+  // accent radial wash + card-rise entrance. Stagger across the 4-cell grid
+  // applied by parent via delay-* utilities passed through className (deferred
+  // — current parent uses Tailwind utility-only call, leave stagger off here
+  // and let the screen-level animate-fade-in-up parent handle entrance).
   return (
-    <div className="p-4 rounded-xl bg-paper2 border border-line" data-testid={testId}>
-      <p className="text-sm text-ink2 mb-1">{label}</p>
-      <p className="text-base font-semibold text-ink">{value}</p>
+    <div
+      className="relative overflow-hidden p-4 rounded-xl bg-paper2 border border-line animate-card-rise"
+      data-testid={testId}
+    >
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(circle at 0% 0%, color-mix(in oklab, var(--brick) 14%, transparent) 0%, transparent 60%)',
+        }}
+      />
+      <p className="relative text-sm text-ink2 mb-1">{label}</p>
+      <p className="relative text-base font-semibold text-ink tabular-nums">{value}</p>
     </div>
   );
 }
@@ -211,13 +228,13 @@ export function PostSummary(): JSX.Element {
          absent) — Daniel CEO review pre-Beta. */}
       {prHit && (
         <div
-          className="flex flex-col gap-2 p-4 mb-4 rounded-xl bg-succ/10 border border-succ"
+          className="flex flex-col gap-2 p-4 mb-4 rounded-xl bg-succ/10 border border-succ animate-card-rise animate-glow-pulse"
           data-testid="summary-pr-banner"
           role="status"
           aria-label="PR nou detectat"
         >
           <div className="flex items-center gap-3">
-            <Trophy className="w-6 h-6 text-succ flex-shrink-0" aria-hidden="true" />
+            <Trophy className="w-6 h-6 text-succ flex-shrink-0 animate-scale-in" aria-hidden="true" />
             <div className="flex-1 min-w-0">
               <p className="text-base font-semibold text-succ">PR nou!</p>
               <p className="text-sm text-ink2" data-testid="summary-pr-detail">

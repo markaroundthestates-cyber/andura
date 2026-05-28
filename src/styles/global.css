@@ -362,12 +362,13 @@
     100% { background-position: 200% 0; }
   }
   /* Wave A4 — soft glow pulse: signals a positive moment (PR hit, set logged).
-     box-shadow color uses currentColor so we can place the class on any
-     accent-tinted element and the glow follows the surrounding hue.
+     box-shadow uses color-mix(var(--succ) ...) so the celebratory halo
+     adopts the success green automatically cross-palette (mov-green,
+     champagne-green, gold-green all derive from each theme's --succ token).
      Iterates 2x then stops — celebratory, not nagging. */
   @keyframes andura-glow-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(165, 132, 255, 0); }
-    50% { box-shadow: 0 0 0 6px rgba(165, 132, 255, 0.22); }
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--succ) 0%, transparent); }
+    50% { box-shadow: 0 0 0 8px color-mix(in oklab, var(--succ) 28%, transparent); }
   }
   /* Wave A4 — theme-switch sweep: a quick diagonal pass when the user picks
      a new palette. Overlay element only; fades out cleanly after one pass. */
