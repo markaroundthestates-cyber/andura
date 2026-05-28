@@ -1,9 +1,11 @@
-// Cluster 2 — 5 Templates Primary + Mode Overlay + RECOMP Sub-Phase per
-// ADR 026 §9.2.2 verbatim.
+// Cluster 2 — 4 Templates Primary + Mode Overlay + RECOMP Sub-Phase per
+// ADR 026 §9.2.2 verbatim. §obiectiv-drop-longevitate 2026-05-28: 'longevitate'
+// template dropped (semantic dup of sanatate_generala — ambele MAINTAIN
+// lifestyle integration).
 //
-// 5 templates V1 (NU 8 — misnumber legacy §26 rezolvat ADR 024 §2.1 Q1 LOCKED).
-// Algorithmic generation runtime ~25 base config × persona modifiers ×
-// goal modifiers — NU 180 hardcoded combinations per ADR 024 §2.2 Q2 LOCKED.
+// 4 templates V1 post-D080. Algorithmic generation runtime ~25 base config ×
+// persona modifiers × goal modifiers — NU 180 hardcoded combinations per
+// ADR 024 §2.2 Q2 LOCKED.
 //
 // Pure functions — no side effects, no state reads.
 
@@ -16,8 +18,12 @@ import {
 
 /**
  * Resolve template id from goal id per §9.2.2 + ADR 024 §1.2 enumerare verbatim.
+ * §obiectiv-drop-longevitate 2026-05-28: 'longevitate' goal entry dropped;
+ * legacy goalId 'longevitate' string falls through la tonifiere_definire
+ * default (defensive — UI Goal type deja shrinks 6→5 + onboardingStore
+ * migrateLegacyGoal mapeaza persisted 'longevitate'→'mentenanta' la load).
  *
- * @param {string} goalId - 'forta' | 'hipertrofie' | 'recompozitie' | 'longevitate' | 'sanatate'
+ * @param {string} goalId - 'forta' | 'hipertrofie' | 'recompozitie' | 'sanatate' | 'slabire'
  * @returns {string}
  */
 export function resolveTemplateId(goalId) {

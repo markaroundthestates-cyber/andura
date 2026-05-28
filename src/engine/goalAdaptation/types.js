@@ -13,9 +13,10 @@
  */
 
 /**
- * 5 templates V1 enumerare verbatim §9.2.2 Cluster 2.
+ * 4 templates V1 post §obiectiv-drop-longevitate 2026-05-28 (longevitate
+ * template dropped, semantic dup of sanatate_generala — ambele MAINTAIN).
  *
- * @typedef {'forta_dezvoltare'|'tonifiere_definire'|'slabire'|'longevitate'|'sanatate_generala'} TemplateId
+ * @typedef {'forta_dezvoltare'|'tonifiere_definire'|'slabire'|'sanatate_generala'} TemplateId
  */
 
 /**

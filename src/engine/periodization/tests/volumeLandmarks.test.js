@@ -57,9 +57,13 @@ describe('resolveGoalId — §9.4 goal modifiers (case + diacritic insensitive)'
     expect(resolveGoalId({ goal: 'Recompozitie' })).toBe('recompozitie');
     expect(resolveGoalId({ goal: 'recomp' })).toBe('recompozitie');
   });
-  it('longevitate', () => {
-    expect(resolveGoalId({ goal: 'Longevitate' })).toBe('longevitate');
-    expect(resolveGoalId({ goal: 'longevity' })).toBe('longevitate');
+  // §obiectiv-drop-longevitate 2026-05-28 — `longevitate` goal DROPPED
+  // (duplicate semantic cu mentenanta/sanatate). resolveGoalId pe 'longevitate'
+  // string-uri vechi → fallback la default (hipertrofie). Migration UI
+  // converteste legacy persistat la 'mentenanta' la next read (onboardingStore).
+  it('longevitate (DROPPED) → fallback hipertrofie default', () => {
+    expect(resolveGoalId({ goal: 'Longevitate' })).toBe('hipertrofie');
+    expect(resolveGoalId({ goal: 'longevity' })).toBe('hipertrofie');
   });
   it('sanatate diacritic-insensitive', () => {
     expect(resolveGoalId({ goal: 'Sanatate Generala' })).toBe('sanatate');
@@ -311,7 +315,8 @@ describe('Constants integrity check — frozen + spec values', () => {
     expect(GOAL_MODIFIERS.forta).toBe(0.70);
     expect(GOAL_MODIFIERS.recompozitie).toBe(0.85);
     expect(GOAL_MODIFIERS.slabire).toBe(0.90);
-    expect(GOAL_MODIFIERS.longevitate).toBe(0.60);
+    // §obiectiv-drop-longevitate 2026-05-28 — longevitate DROPPED (duplicate semantic).
+    expect(GOAL_MODIFIERS.longevitate).toBeUndefined();
     expect(GOAL_MODIFIERS.sanatate).toBe(0.50);
     expect(Object.isFrozen(GOAL_MODIFIERS)).toBe(true);
   });

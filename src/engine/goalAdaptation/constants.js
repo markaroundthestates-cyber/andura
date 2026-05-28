@@ -10,14 +10,20 @@
 // static per ADR 018 §2 deterministic contract.
 
 /**
- * 5 templates V1 enumerare verbatim §9.2 Cluster 2 (NU 8 — misnumber legacy
- * §26 rezolvat in favor enumerare ADR 024 §2.1 Q1 LOCKED).
+ * 4 templates V1 post §obiectiv-drop-longevitate 2026-05-28 — 'longevitate'
+ * template dropped (semantic duplicate cu sanatate_generala — ambele MAINTAIN
+ * phase, lifestyle integration; UI Goal 'longevitate' deja dropped la D080).
+ *
+ * Originally 5 templates per §9.2 Cluster 2 enumerare; longevitate template
+ * unreferenced post-D080 (legacy persisted Goal users migrated → mentenanta
+ * → sanatate_generala fallback via resolveTemplateId default tonifiere
+ * fallback NU mai e relevant — Goal 'mentenanta' nu mapeaza la longevitate
+ * template oricum).
  *
  * @type {Readonly<{
  *   forta_dezvoltare: 'forta_dezvoltare',
  *   tonifiere_definire: 'tonifiere_definire',
  *   slabire: 'slabire',
- *   longevitate: 'longevitate',
  *   sanatate_generala: 'sanatate_generala',
  * }>}
  */
@@ -25,13 +31,15 @@ export const TEMPLATE_IDS = Object.freeze({
   forta_dezvoltare:    'forta_dezvoltare',
   tonifiere_definire:  'tonifiere_definire',
   slabire:             'slabire',
-  longevitate:         'longevitate',
   sanatate_generala:   'sanatate_generala',
 });
 
 /**
  * Goal id → template id mapping (Goal Adaptation derives template from goal
  * choice). Per ADR 024 §1.2 Q1 LOCKED enumerare verbatim.
+ * §obiectiv-drop-longevitate 2026-05-28: 'longevitate' goal entry dropped
+ * (UI Goal 'longevitate' dropped — semantic dup cu mentenanta; engine surface
+ * preservation NU justificata cand UI dovedeste duplicat).
  *
  * @type {Readonly<Object<string, string>>}
  */
@@ -40,7 +48,6 @@ export const GOAL_TO_TEMPLATE = Object.freeze({
   hipertrofie:  TEMPLATE_IDS.tonifiere_definire,
   recompozitie: TEMPLATE_IDS.tonifiere_definire,
   slabire:      TEMPLATE_IDS.slabire,
-  longevitate:  TEMPLATE_IDS.longevitate,
   sanatate:     TEMPLATE_IDS.sanatate_generala,
 });
 
@@ -139,7 +146,8 @@ export const RECOMP_THRESHOLDS = Object.freeze({
 
 /**
  * Tabel base training modifiers per template × phase verbatim §9.2.4 Cluster 4:
- * RIR + rep range integer pairs per template (5 templates × phase context).
+ * RIR + rep range integer pairs per template (4 templates × phase context
+ * post §obiectiv-drop-longevitate 2026-05-28 — longevitate dropped).
  *
  * Phase modifiers applied multiplicative post-base table (Mode overlay separate).
  *
@@ -147,7 +155,6 @@ export const RECOMP_THRESHOLDS = Object.freeze({
  * - Forta & Dezvoltare:   RIR 1-3, rep 3-8
  * - Tonifiere & Definire: RIR 0-2, rep 8-12
  * - Slabire:              RIR 1-2, rep 10-15
- * - Longevitate:          RIR 2-3, rep 8-12
  * - Sanatate Generala:    RIR 2-3, rep 8-12
  *
  * @type {Readonly<Object<string, {rir: [number, number], rep: [number, number]}>>}
@@ -156,13 +163,13 @@ export const TEMPLATE_BASE_MODIFIERS = Object.freeze({
   forta_dezvoltare:    Object.freeze({ rir: Object.freeze([1, 3]), rep: Object.freeze([3, 8])  }),
   tonifiere_definire:  Object.freeze({ rir: Object.freeze([0, 2]), rep: Object.freeze([8, 12]) }),
   slabire:             Object.freeze({ rir: Object.freeze([1, 2]), rep: Object.freeze([10, 15]) }),
-  longevitate:         Object.freeze({ rir: Object.freeze([2, 3]), rep: Object.freeze([8, 12]) }),
   sanatate_generala:   Object.freeze({ rir: Object.freeze([2, 3]), rep: Object.freeze([8, 12]) }),
 });
 
 /**
  * Rest time seconds per template (compound-heavy = longer rest, hibrid =
  * shorter). Verbatim §1.2 enumerare ADR 024 + Cluster 4 §9.2.4 inferred per-template.
+ * §obiectiv-drop-longevitate 2026-05-28: longevitate template dropped.
  *
  * @type {Readonly<Object<string, [number, number]>>}
  */
@@ -170,7 +177,6 @@ export const TEMPLATE_REST_SECONDS = Object.freeze({
   forta_dezvoltare:    Object.freeze([120, 240]), // 2-4 min compound focus
   tonifiere_definire:  Object.freeze([60, 120]),  // 1-2 min hibrid
   slabire:             Object.freeze([45, 90]),   // 0.75-1.5 min cut-focus + conditioning
-  longevitate:         Object.freeze([60, 120]),  // 1-2 min sustainable
   sanatate_generala:   Object.freeze([60, 120]),  // 1-2 min lifestyle
 });
 

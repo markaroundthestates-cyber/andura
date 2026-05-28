@@ -81,7 +81,9 @@ export const GOAL_MODIFIERS = Object.freeze({
   forta:        0.70, // lower volume / higher intensity per Forta template ADR 024 §1.2
   recompozitie: 0.85, // intermediate volume CUT-aware
   slabire:      0.90, // volume-preserving deficit (retain muscle in cut, slight recovery cut)
-  longevitate:  0.60, // sustainable load mobility emphasis ADR 024 §1.2
+  // §obiectiv-drop-longevitate 2026-05-28 — longevitate DROPPED (semantic dup
+  // sanatate; ambele MAINTENANCE phase identic). Legacy goal-strings → fallback
+  // hipertrofie default (resolveGoalId).
   sanatate:     0.50, // lifestyle integration controlled intensity ADR 024 §1.2
 });
 
