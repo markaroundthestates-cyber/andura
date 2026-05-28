@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Globe } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
 const APP_VERSION = 'v1.0.0';
 const APP_BUILD = '2026.05.22';
@@ -17,7 +18,7 @@ export function SettingsAbout(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-about">
       <SubHeader
-        title="Despre Andura"
+        title={t('settings.about.title')}
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-about-back"
       />
@@ -27,11 +28,10 @@ export function SettingsAbout(): JSX.Element {
           A
         </div>
         <h2 className="font-serif text-2xl font-semibold text-ink mb-4 leading-snug">
-          Antrenament cu cap. Facut in Romania.
+          {t('settings.about.tagline')}
         </h2>
         <p className="text-sm text-ink2 leading-relaxed mb-6 max-w-xs mx-auto">
-          Andura te ajuta sa te antrenezi cu intentie — nu mai mult, ci mai bine.
-          Coach-ul invata din feedback-ul tau si adapteaza fiecare sesiune.
+          {t('settings.about.intro')}
         </p>
 
         <a
@@ -46,25 +46,25 @@ export function SettingsAbout(): JSX.Element {
 
         <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden text-left">
           <div className="flex justify-between items-center px-4 py-3 border-b border-line">
-            <span className="text-sm text-ink2">Versiune</span>
+            <span className="text-sm text-ink2">{t('settings.about.versionLabel')}</span>
             <span className="text-sm text-ink font-medium font-mono" data-testid="about-version">
               {APP_VERSION}
             </span>
           </div>
           <div className="flex justify-between items-center px-4 py-3 border-b border-line">
-            <span className="text-sm text-ink2">Build</span>
+            <span className="text-sm text-ink2">{t('settings.about.buildLabel')}</span>
             <span className="text-sm text-ink font-medium font-mono" data-testid="about-build">
               {APP_BUILD}
             </span>
           </div>
           <div className="flex justify-between items-center px-4 py-3">
-            <span className="text-sm text-ink2">Echipa</span>
-            <span className="text-sm text-ink font-medium">Daniel si echipa</span>
+            <span className="text-sm text-ink2">{t('settings.about.teamLabel')}</span>
+            <span className="text-sm text-ink font-medium">{t('settings.about.teamValue')}</span>
           </div>
         </div>
 
         <p className="text-xs text-ink3 mt-6 leading-relaxed">
-          Cu multumiri tuturor utilizatorilor beta care au ajutat la slefuirea aplicatiei.
+          {t('settings.about.thanks')}
         </p>
       </div>
     </section>

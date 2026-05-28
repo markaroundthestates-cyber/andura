@@ -8,6 +8,14 @@ import { SettingsPrefs } from '../../../routes/screens/cont/SettingsPrefs';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { _resetI18nCache, setLocale, getCurrentLocale } from '../../../../i18n/index.js';
 
+// Wave E4 i18n locale pin — these specs were written against RO copy;
+// force RO locale so existing assertions keep their semantics. EN coverage
+// is verified separately by src/i18n/__tests__/i18nNoRoLeak.test.tsx.
+import { beforeEach as __i18nBeforeEach } from 'vitest';
+import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../../../i18n/index.js';
+__i18nBeforeEach(() => { try { localStorage.removeItem('sf.locale'); } catch {} __resetI18n(); __setLocale('ro'); });
+
+
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
   return <div data-testid="probe" data-pathname={loc.pathname} />;
@@ -29,6 +37,9 @@ beforeEach(() => {
   useSettingsStore.getState().reset();
   localStorage.clear();
   _resetI18nCache();
+  // Wave E4 — restore RO locale after the cache reset so heading/note
+  // assertions written against RO copy keep their semantics.
+  setLocale('ro');
 });
 
 describe('SettingsPrefs — render + interactions', () => {
@@ -87,8 +98,9 @@ describe('SettingsPrefs — render + interactions', () => {
       renderScreen();
       const en = screen.getByTestId('language-en');
       // EN may or may not be selected depending on navigator.language (jsdom
-      // is typically en-US). Either way, the EN row carries a "Default" badge.
-      expect(en.textContent).toMatch(/Default/);
+      // is typically en-US). Either way, the EN row carries the default badge
+      // (rendered EN "Default" or RO "Implicit" depending on active locale).
+      expect(en.textContent).toMatch(/Default|Implicit/);
     });
 
     it('clicking Romana persists ro to localStorage + flips selection', () => {

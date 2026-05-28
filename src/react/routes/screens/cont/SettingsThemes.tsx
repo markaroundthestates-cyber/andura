@@ -16,41 +16,42 @@ import { Check } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { applyPalette, type PaletteTheme } from '../../../lib/paletteSync';
+import { t } from '../../../../i18n/index.js';
 
 interface ThemeOption {
   id: PaletteTheme;
-  name: string;
-  meta: string;
+  nameKey: string;
+  metaKey: string;
   swatchClass: string;
 }
 
 // THEME-INVERSION fix (2026-05-27): "implicit" mutat de pe Clasic pe Brain
-// Coach — default real al app-ului e tema mov Brain Coach (CEO pick 2026-05-27,
-// settingsStore DEFAULTS.theme='dark' + themeSync applyInitialTheme). Eticheta
-// veche "Cremos - implicit" pe Clasic era stale (Clasic = optional acum).
+// Coach — default real al app-ului e tema mov Brain Coach. Brand names are
+// locale-aware via i18n; the brand identifier ("Andura Brain Coach", etc.)
+// stays consistent across locales (kept as brand string in the bundles).
 const THEME_OPTIONS: readonly ThemeOption[] = [
   {
     id: 'clasic',
-    name: 'Andura Clasic',
-    meta: 'Cremos luminos',
+    nameKey: 'settings.themes.options.clasic',
+    metaKey: 'settings.themes.options.clasicMeta',
     swatchClass: 'bg-gradient-to-br from-paper from-50% to-brick to-50%',
   },
   {
     id: 'living-body',
-    name: 'Andura Living Body',
-    meta: 'Navy si auriu cald',
+    nameKey: 'settings.themes.options.livingBody',
+    metaKey: 'settings.themes.options.livingBodyMeta',
     swatchClass: 'bg-gradient-to-br from-[#07090f] from-50% to-[#dbb182] to-50%',
   },
   {
     id: 'luxury',
-    name: 'Andura Luxury',
-    meta: 'Noir si champagne',
+    nameKey: 'settings.themes.options.luxury',
+    metaKey: 'settings.themes.options.luxuryMeta',
     swatchClass: 'bg-gradient-to-br from-[#050507] from-50% to-[#d4b483] to-50%',
   },
   {
     id: 'brain-coach',
-    name: 'Andura Brain Coach',
-    meta: 'Mov AI - implicit',
+    nameKey: 'settings.themes.options.brainCoach',
+    metaKey: 'settings.themes.options.brainCoachMeta',
     swatchClass: 'bg-gradient-to-br from-[#0a0c14] from-50% to-[#b596ff] to-50%',
   },
 ];
@@ -119,14 +120,14 @@ export function SettingsThemes(): JSX.Element {
         />
       )}
       <SubHeader
-        title="Teme"
+        title={t('settings.themes.title')}
         onBack={() => navigate(gotoPath('settings-appearance'))}
         testIdBack="settings-themes-back"
       />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink2 mb-4 leading-snug">
-          Alege paleta preferata. Se aplica pe loc.
+          {t('settings.themes.subtitle')}
         </p>
 
         <div className="grid grid-cols-2 gap-3" data-testid="settings-themes-grid">
@@ -158,8 +159,8 @@ export function SettingsThemes(): JSX.Element {
                   className={`w-full h-16 rounded-lg mb-2 ${opt.swatchClass}`}
                   aria-hidden="true"
                 />
-                <span className="text-sm font-semibold text-ink text-left">{opt.name}</span>
-                <span className="text-xs text-ink2 text-left mt-0.5">{opt.meta}</span>
+                <span className="text-sm font-semibold text-ink text-left">{t(opt.nameKey)}</span>
+                <span className="text-xs text-ink2 text-left mt-0.5">{t(opt.metaKey)}</span>
                 {isSelected && (
                   <span
                     className="absolute top-2 right-2 w-6 h-6 rounded-full bg-brick text-paper flex items-center justify-center"
@@ -174,7 +175,7 @@ export function SettingsThemes(): JSX.Element {
         </div>
 
         <p className="text-xs text-ink2 text-center mt-5 leading-relaxed">
-          Paletele se schimba instant. Brain Coach e implicit.
+          {t('settings.themes.footer')}
         </p>
       </div>
     </section>

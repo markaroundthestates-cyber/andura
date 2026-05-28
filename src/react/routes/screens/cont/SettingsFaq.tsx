@@ -9,59 +9,43 @@ import { useNavigate } from 'react-router-dom';
 import { HelpCircle, ChevronRight, ChevronDown } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
 interface FaqItem {
-  q: string;
-  a: string;
+  qKey: string;
+  aKey: string;
 }
 
 interface FaqSection {
-  title: string;
+  titleKey: string;
+  sectionId: string; // stable id for openId tracking across locales
   items: FaqItem[];
 }
 
 const FAQ: ReadonlyArray<FaqSection> = [
   {
-    title: 'Antrenament',
+    sectionId: 'training',
+    titleKey: 'settings.faq.sections.training',
     items: [
-      {
-        q: 'Cum schimb programul?',
-        a: 'Mergi la Antrenor > tap pe pencil pe cardul Saptamana > selecteaza zile training si rest > Salveaza. Coach-ul recalibreaza automatic.',
-      },
-      {
-        q: 'Pot sa sar peste o sesiune?',
-        a: 'Da. Tap pe X in timpul sesiunii > Renunt la sesiune. Coach-ul nu te penalizeaza si ajusteaza recomandarile saptamanal pe baza adherentei reale.',
-      },
-      {
-        q: 'Cum se calculeaza progresul?',
-        a: 'Coach-ul foloseste seturi logate (kg + reps + RPE) + greutate corp + readiness score. Pattern recognition local pe telefon, fara cloud upload obligatoriu.',
-      },
+      { qKey: 'settings.faq.items.trainingChangeProgram', aKey: 'settings.faq.items.trainingChangeProgramA' },
+      { qKey: 'settings.faq.items.trainingSkipSession', aKey: 'settings.faq.items.trainingSkipSessionA' },
+      { qKey: 'settings.faq.items.trainingProgress', aKey: 'settings.faq.items.trainingProgressA' },
     ],
   },
   {
-    title: 'Cont si date',
+    sectionId: 'account',
+    titleKey: 'settings.faq.sections.account',
     items: [
-      {
-        q: 'Cum recuperez parola?',
-        a: 'Andura foloseste Magic Link (fara parola). Pe ecranul Autentificare introdu email-ul > primesti link unic in inbox > tap-il pe acelasi telefon.',
-      },
-      {
-        q: 'Pot folosi pe mai multe telefoane?',
-        a: 'Da, daca esti autentificat cu cont (Magic Link sau Google). Backup automat in Firebase europe-west1 (UE). Modul test drive (fara cont) ramane Tier 0 local pe telefonul curent.',
-      },
-      {
-        q: 'Unde sunt salvate datele mele?',
-        a: 'Local-first pe telefon (localStorage Tier 0 + IndexedDB Tier 1). Backup optional Firebase RTDB criptat in transit. Nu colectam metrici de utilizare; raportarea de erori e opt-in, cu datele personale sterse.',
-      },
+      { qKey: 'settings.faq.items.accountPassword', aKey: 'settings.faq.items.accountPasswordA' },
+      { qKey: 'settings.faq.items.accountMultiPhone', aKey: 'settings.faq.items.accountMultiPhoneA' },
+      { qKey: 'settings.faq.items.accountDataLocation', aKey: 'settings.faq.items.accountDataLocationA' },
     ],
   },
   {
-    title: 'Notificari',
+    sectionId: 'notifications',
+    titleKey: 'settings.faq.sections.notifications',
     items: [
-      {
-        q: 'De ce nu primesc notificari?',
-        a: 'Verifica Cont > Notificari > toggle activ + zile selectate + ora reminder. PWA notifications cer permisiune browser/OS — accepta la prompt initial. Daca ai refuzat, reseteaza din setarile telefonului.',
-      },
+      { qKey: 'settings.faq.items.notificationsMissing', aKey: 'settings.faq.items.notificationsMissingA' },
     ],
   },
 ];
@@ -77,24 +61,24 @@ export function SettingsFaq(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-faq">
       <SubHeader
-        title="FAQ"
+        title={t('settings.faq.title')}
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-faq-back"
       />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink2 mb-4 leading-relaxed">
-          Raspunsuri scurte la intrebarile pe care le primim cel mai des.
+          {t('settings.faq.header')}
         </p>
 
         {FAQ.map((section) => (
-          <div key={section.title} className="mb-4">
+          <div key={section.sectionId} className="mb-4">
             <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-              {section.title}
+              {t(section.titleKey)}
             </p>
             <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
               {section.items.map((item, idx) => {
-                const id = `${section.title}-${idx}`;
+                const id = `${section.sectionId}-${idx}`;
                 const open = openId === id;
                 return (
                   <div key={id} className={idx < section.items.length - 1 ? 'border-b border-line' : ''}>
@@ -106,7 +90,7 @@ export function SettingsFaq(): JSX.Element {
                       className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink"
                     >
                       <HelpCircle className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-                      <span className="flex-1 text-sm font-medium">{item.q}</span>
+                      <span className="flex-1 text-sm font-medium">{t(item.qKey)}</span>
                       {open ? (
                         <ChevronDown className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
                       ) : (
@@ -115,7 +99,7 @@ export function SettingsFaq(): JSX.Element {
                     </button>
                     {open && (
                       <div className="px-4 pb-3 -mt-1">
-                        <p className="text-sm text-ink2 leading-relaxed">{item.a}</p>
+                        <p className="text-sm text-ink2 leading-relaxed">{t(item.aKey)}</p>
                       </div>
                     )}
                   </div>
@@ -126,13 +110,13 @@ export function SettingsFaq(): JSX.Element {
         ))}
 
         <p className="text-xs text-ink3 text-center mt-6 leading-relaxed">
-          Nu gasesti raspuns? Scrie-ne din{' '}
+          {t('settings.faq.footerHint')}{' '}
           <button
             type="button"
             onClick={() => navigate(gotoPath('settings-support'))}
             className="text-brick font-medium underline underline-offset-2"
           >
-            Suport
+            {t('settings.faq.footerCtaLabel')}
           </button>
           .
         </p>

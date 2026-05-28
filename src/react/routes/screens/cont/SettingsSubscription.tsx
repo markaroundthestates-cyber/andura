@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { Sparkles, Gift } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
 export function SettingsSubscription(): JSX.Element {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export function SettingsSubscription(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-subscription">
       <SubHeader
-        title="Abonament"
+        title={t('settings.subscription.title')}
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-subscription-back"
       />
@@ -30,10 +31,9 @@ export function SettingsSubscription(): JSX.Element {
         >
           <Sparkles className="w-9 h-9 text-brick" aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-bold text-ink mb-2">In curand</h2>
+        <h2 className="text-2xl font-bold text-ink mb-2">{t('settings.subscription.comingSoonTitle')}</h2>
         <p className="text-sm text-ink2 mb-6 leading-relaxed max-w-xs">
-          Lucram la planuri de abonament transparente. Pana atunci, totul e
-          gratuit pentru utilizatorii beta.
+          {t('settings.subscription.comingSoonBody')}
         </p>
 
         <div
@@ -42,8 +42,8 @@ export function SettingsSubscription(): JSX.Element {
         >
           <Gift className="w-5 h-5 text-brick flex-shrink-0" aria-hidden="true" />
           <div className="flex-1 text-left">
-            <p className="font-semibold text-ink">Beta gratuit</p>
-            <p className="text-xs text-ink2">Acces complet · fara card</p>
+            <p className="font-semibold text-ink">{t('settings.subscription.freeBetaTitle')}</p>
+            <p className="text-xs text-ink2">{t('settings.subscription.freeBetaSubtitle')}</p>
           </div>
         </div>
 
@@ -54,7 +54,7 @@ export function SettingsSubscription(): JSX.Element {
           className="text-sm text-brickdark font-semibold underline disabled:no-underline"
           disabled={notified}
         >
-          {notified ? 'Te anuntam cand e gata' : 'Anunta-ma cand e gata'}
+          {notified ? t('settings.subscription.notifiedCta') : t('settings.subscription.notifyCta')}
         </button>
       </div>
     </section>

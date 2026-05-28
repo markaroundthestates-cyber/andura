@@ -167,6 +167,39 @@ export function _resetI18nCache() {
 }
 
 /**
+ * Resolve a dotted-path key whose VALUE is an array of strings (e.g. the
+ * coach-voice pools). Mirror lookup chain of `t()`: current locale → fallback
+ * → []. Defensive: filters non-string entries silently. Used by `coachVoice`
+ * pickers and any other consumer that needs locale-aware random pools.
+ *
+ * @param {string} key - dotted path (e.g., `'coachEngine.voice.preset'`)
+ * @returns {string[]} array of strings (empty when missing / non-array)
+ */
+export function tArray(key) {
+  if (typeof key !== 'string' || key.length === 0) return [];
+  const locale = getCurrentLocale();
+  const bundles = /** @type {Record<string, any>} */ (BUNDLES);
+  const found = _resolveArray(bundles[locale], key)
+    ?? _resolveArray(bundles[FALLBACK_LOCALE], key)
+    ?? null;
+  if (!Array.isArray(found)) return [];
+  return found.filter((/** @type {unknown} */ x) => typeof x === 'string');
+}
+
+/** @param {unknown} obj @param {string} path */
+function _resolveArray(obj, path) {
+  if (!obj || typeof obj !== 'object' || typeof path !== 'string') return null;
+  const parts = path.split('.');
+  /** @type {any} */
+  let cur = obj;
+  for (const part of parts) {
+    if (cur == null || typeof cur !== 'object') return null;
+    cur = cur[part];
+  }
+  return Array.isArray(cur) ? cur : null;
+}
+
+/**
  * Get loaded bundle (testing + introspection only).
  *
  * @param {'ro' | 'en'} locale

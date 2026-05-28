@@ -8,9 +8,9 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, MessageSquare, ChevronRight } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
 const SUPPORT_EMAIL = 'support@andura.app';
-const SUPPORT_WHATSAPP_HOURS = 'L-V · 09:00-18:00';
 
 export function SettingsSupport(): JSX.Element {
   const navigate = useNavigate();
@@ -18,19 +18,18 @@ export function SettingsSupport(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-support">
       <SubHeader
-        title="Suport"
+        title={t('settings.support.title')}
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-support-back"
       />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink2 mb-4 leading-relaxed">
-          Raspundem la mesaje in maxim 24 de ore lucratoare. Suntem o echipa
-          mica, dar atenti.
+          {t('settings.support.intro')}
         </p>
 
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Contacteaza-ne
+          {t('settings.support.contactHeading')}
         </p>
         <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
           <a
@@ -40,7 +39,7 @@ export function SettingsSupport(): JSX.Element {
           >
             <Mail className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium">Email</p>
+              <p className="text-sm font-medium">{t('settings.support.emailLabel')}</p>
               <p className="text-xs text-ink2 truncate">{SUPPORT_EMAIL}</p>
             </div>
             <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
@@ -51,26 +50,26 @@ export function SettingsSupport(): JSX.Element {
           >
             <MessageSquare className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-ink">WhatsApp</p>
-              <p className="text-xs">{SUPPORT_WHATSAPP_HOURS}</p>
+              <p className="text-sm font-medium text-ink">{t('settings.support.whatsappLabel')}</p>
+              <p className="text-xs">{t('settings.support.whatsappHours')}</p>
             </div>
-            <span className="text-xs text-ink3 italic">post-Beta</span>
+            <span className="text-xs text-ink3 italic">{t('settings.support.postBetaLabel')}</span>
           </div>
         </div>
 
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          Trimite-ne un mesaj
+          {t('settings.support.messageHeading')}
         </p>
         <div className="bg-paper2 border border-line rounded-[14px] p-4">
           <p className="text-xs text-ink2 mb-3 leading-relaxed">
-            Bug, idee, feedback — scrie liber. Ajunge direct la noi.
+            {t('settings.support.messageHint')}
           </p>
           <a
-            href={`mailto:${SUPPORT_EMAIL}?subject=Andura%20feedback&body=Descrie%20problema%20sau%20ideea%20ta...`}
+            href={`mailto:${SUPPORT_EMAIL}?subject=Andura%20feedback&body=`}
             data-testid="support-feedback-mailto"
             className="w-full block py-3 bg-brick text-paper rounded-[14px] text-base font-semibold text-center"
           >
-            Deschide email
+            {t('settings.support.openEmailCta')}
           </a>
         </div>
       </div>

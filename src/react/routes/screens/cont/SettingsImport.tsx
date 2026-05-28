@@ -20,6 +20,7 @@ import {
   type ParseResult,
 } from '../../../lib/historyImportParser';
 import { applyHistoryImport } from '../../../lib/historyImportStore';
+import { t, tArray } from '../../../../i18n/index.js';
 
 type Phase = 'idle' | 'preview' | 'done' | 'error';
 
@@ -52,29 +53,29 @@ export function SettingsImport(): JSX.Element {
     setPhase('done');
   }
 
+  const whatItems = tArray('settings.import.whatItems');
+
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-import">
       <SubHeader
-        title="Importa istoric"
+        title={t('settings.import.title')}
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-import-back"
       />
 
       <div className="flex-1 overflow-y-auto p-5">
         <p className="text-sm text-ink leading-relaxed mb-4">
-          Ai deja un istoric de greutate si calorii dintr-o alta aplicatie? Il
-          poti importa dintr-un fisier CSV. Coach foloseste istoricul ca sa
-          calibreze tinta ta de calorii mult mai repede.
+          {t('settings.import.intro')}
         </p>
 
         <div className="bg-paper2 border border-line rounded-[14px] p-4 mb-4">
           <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-            Ce poti importa
+            {t('settings.import.whatHeading')}
           </p>
           <ul className="text-sm text-ink space-y-1.5">
-            <li>• Istoric greutate (data + kg)</li>
-            <li>• Istoric nutritie zilnica (data + calorii + proteine)</li>
-            <li>• Poti selecta ambele fisiere CSV deodata</li>
+            {whatItems.map((it, i) => (
+              <li key={i}>{`• ${it}`}</li>
+            ))}
           </ul>
         </div>
 
@@ -85,7 +86,7 @@ export function SettingsImport(): JSX.Element {
               data-testid="settings-import-trigger"
             >
               <Upload className="w-4 h-4" aria-hidden="true" />
-              Alege fisier CSV
+              {t('settings.import.importCta')}
               <input
                 type="file"
                 accept=".csv,text/csv"
@@ -101,8 +102,7 @@ export function SettingsImport(): JSX.Element {
                 role="alert"
                 data-testid="settings-import-error"
               >
-                Nu am gasit date de importat in fisier. Verifica sa fie un export
-                CSV cu coloana Data + calorii sau greutate.
+                {t('settings.import.noDataError')}
               </p>
             )}
           </>
@@ -113,13 +113,13 @@ export function SettingsImport(): JSX.Element {
             <div className="bg-paper2 border border-line rounded-[14px] p-4 mb-4">
               <p className="text-sm text-ink space-y-1">
                 <span className="block" data-testid="settings-import-summary-weight">
-                  {preview.weightEntries.length} zile greutate
+                  {t('settings.import.preview.weightDays', { n: preview.weightEntries.length })}
                 </span>
                 <span className="block" data-testid="settings-import-summary-nutrition">
-                  {preview.dailyEntries.length} zile nutritie
+                  {t('settings.import.preview.nutritionDays', { n: preview.dailyEntries.length })}
                 </span>
                 <span className="block text-ink2" data-testid="settings-import-summary-skipped">
-                  {preview.skipped.length} randuri sarite
+                  {t('settings.import.preview.skippedRows', { n: preview.skipped.length })}
                 </span>
               </p>
             </div>
@@ -129,7 +129,7 @@ export function SettingsImport(): JSX.Element {
               data-testid="settings-import-confirm"
               className="w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
             >
-              Importa datele
+              {t('settings.import.preview.confirmCta')}
             </button>
             <button
               type="button"
@@ -137,7 +137,7 @@ export function SettingsImport(): JSX.Element {
               data-testid="settings-import-cancel"
               className="w-full py-3 mt-2 text-ink2 rounded-[14px] text-sm"
             >
-              Anuleaza
+              {t('settings.import.preview.cancelCta')}
             </button>
           </div>
         )}
@@ -145,9 +145,10 @@ export function SettingsImport(): JSX.Element {
         {phase === 'done' && preview != null && (
           <div className="text-center" data-testid="settings-import-done">
             <p className="text-sm text-ink" role="status">
-              Gata. Am importat {preview.weightEntries.length} zile greutate si{' '}
-              {preview.dailyEntries.length} zile nutritie. Coach foloseste deja
-              datele pentru calibrare.
+              {t('settings.import.doneMessage', {
+                weightN: preview.weightEntries.length,
+                nutritionN: preview.dailyEntries.length,
+              })}
             </p>
             <button
               type="button"
@@ -155,7 +156,7 @@ export function SettingsImport(): JSX.Element {
               data-testid="settings-import-done-back"
               className="w-full py-3 mt-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
             >
-              Inapoi la Cont
+              {t('settings.import.doneBackCta')}
             </button>
           </div>
         )}

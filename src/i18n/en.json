@@ -618,18 +618,36 @@
       }
     },
     "profile": {
-      "title": "Profile",
+      "title": "Profile and targets",
       "name": "Name",
       "email": "Email",
       "age": "Age",
       "sex": "Sex",
+      "sexMale": "Male",
+      "sexFemale": "Female",
       "height": "Height (cm)",
-      "weight": "Current weight (kg)",
+      "weight": "Weight (kg)",
       "experience": "Experience",
+      "experienceBeginner": "Beginner",
+      "experienceIntermediate": "Intermediate",
+      "experienceAdvanced": "Advanced",
       "frequency": "Workouts per week",
+      "frequencyShort": "{n}x/week",
       "goal": "Goal",
       "saveCta": "Save",
-      "savedToast": "Saved"
+      "savedToast": "Saved",
+      "confirmEditCta": "Confirm changes",
+      "profileSavedStatus": "Profile saved",
+      "sectionPersonal": "Personal info",
+      "sectionBody": "Body composition",
+      "sectionTraining": "Training",
+      "waist": "Waist (cm)",
+      "neck": "Neck (cm)",
+      "bfAuto": "BF % auto",
+      "bfManual": "I'll set it myself",
+      "bfSourceUsNavy": "US Navy",
+      "bfSourceEstimated": "Estimated",
+      "bodyCompFooter": "Calculated automatically (US Navy: waist + neck + height + sex) or set by you. Falls back to a demographic estimate when measurements are missing."
     },
     "notifications": {
       "title": "Notifications",
@@ -639,68 +657,257 @@
       "prHeading": "PR celebrations",
       "prBody": "Get notified when you hit a new personal record.",
       "weeklyHeading": "Weekly recap",
-      "weeklyBody": "Sunday summary of your week."
+      "weeklyBody": "Sunday summary of your week.",
+      "intro": "Pick the nudges you want. Nothing intrusive.",
+      "masterToggleLabel": "Notifications on",
+      "applyingHint": "applying...",
+      "permissionDenied": "Your browser is blocking notifications. Open the site settings (the padlock next to the URL) and allow them.",
+      "permissionNoAccount": "Notifications need an account so the coach can send reminders. Sign in to enable them.",
+      "permissionUnsupported": "Your browser doesn't support push notifications.",
+      "frequencyHeading": "Frequency",
+      "frequencyDaily": "Daily",
+      "frequencyWeekly": "Weekly",
+      "frequencyOff": "Off",
+      "daysHeading": "Active days",
+      "dayAria": "Day {label}",
+      "reminderTimeHeading": "Reminder time",
+      "reminderTimeAria": "Daily reminder time",
+      "trainingHeading": "Training",
+      "coachingHeading": "Coaching",
+      "quietHoursHeading": "Quiet hours",
+      "doNotDisturb": "Do not disturb",
+      "quietHoursRange": "22:00 — 07:00",
+      "events": {
+        "sessionReminderTitle": "Session reminder",
+        "sessionReminderDesc": "30 min before your training window",
+        "restTimerTitle": "Rest between sets",
+        "restTimerDesc": "Short beep when it ends",
+        "sessionMissedTitle": "Missed session",
+        "sessionMissedDesc": "Asks how you're doing",
+        "dailyCoachTitle": "Daily message from the coach",
+        "dailyCoachDesc": "07:30 - short text",
+        "weeklySummaryTitle": "Weekly summary",
+        "weeklySummaryDesc": "Sunday evening"
+      }
     },
     "privacy": {
-      "title": "Privacy policy",
+      "title": "Privacy",
       "intro": "Andura is built privacy-first.",
       "dataHeading": "What we store",
       "dataBody": "Your training data lives on your device. We sync only what you choose to back up.",
       "thirdPartyHeading": "Third parties",
-      "thirdPartyBody": "We use Firebase for auth and storage. No ads, no analytics tracking."
+      "thirdPartyBody": "We use Firebase for auth and storage. No ads, no analytics tracking.",
+      "headerSubtitle": "Your data stays on your phone. You decide what leaves.",
+      "exportToggleTitle": "Allow data export",
+      "exportToggleDesc": "I can download my data anytime from the Download data screen.",
+      "telemetryToggleTitle": "Crash reporting",
+      "telemetryToggleDesc": "Automatically send crash reports so we can fix issues. Off by default.",
+      "footerNote": "We use Sentry only for crash reports, and only if you opt in. Personal data (email, identifiers) is stripped before sending. We don't collect usage metrics. You can revoke anytime.",
+      "policy": {
+        "title": "Privacy policy",
+        "collectHeading": "What we collect",
+        "collectItems": [
+          "Onboarding profile: age, sex, goal, frequency, experience, weight (Big 6)",
+          "Training sessions: exercises, sets, kg, reps, duration, RPE",
+          "Optional biometric inputs: body weight, measurements (waist, arms, legs)",
+          "Email for the Magic Link (optional passwordless sign-in)"
+        ],
+        "useHeading": "How it's used",
+        "useItems": [
+          "Personalizing workouts (volume, intensity, frequency based on Big 6)",
+          "Recommendation engine (readiness, fatigue, PR detection - on your phone)",
+          "Optional Firebase RTDB backup (encrypted in transit over HTTPS) only if you're signed in",
+          "ZERO ads, ZERO data sales, ZERO third-party trackers"
+        ],
+        "rightsHeading": "Your GDPR rights",
+        "rightsItems": [
+          "Access + portability: export all your data as JSON from Account > Download data",
+          "Erasure: clear everything from Account > Logout and delete > Delete account",
+          "Rectification: edit your profile directly in Account > Profile",
+          "Objection: crash reporting toggle above (off by default)",
+          "Restricted processing: disable the Firebase backup (sign out)"
+        ],
+        "storageHeading": "Storage + retention",
+        "storageBody": "Data is stored locally on your device (localStorage + IndexedDB). The optional Firebase RTDB backup keeps a copy until you delete the account. ZERO copies on third-party servers. Device deletion is immediate. Firebase RTDB data (if you're signed in) is wiped automatically on \"Delete account\" (best-effort GDPR Art. 17, server propagation <5 min). Problems with remote deletion? Write to {email} (reply <72h).",
+        "sensitiveHeading": "Sensitive data (GDPR Art. 9)",
+        "sensitiveBody": "Andura is a fitness app, NOT a medical device. Body weight, measurements, or pain reported via the Pain Button are strictly sporting data, NOT medical. We don't collect diagnoses, treatments, prescriptions, or other GDPR Art. 9 special categories. If you have medical conditions, see your doctor first (see Medical disclaimer in Terms of service).",
+        "subprocessorsHeading": "Sub-processors",
+        "subprocessorsBody": "To run the service we use two sub-processors: Google Firebase (auth + RTDB backup, EU europe-west1 region) and Sentry (app error reporting, opt-in, with personal data stripped). ZERO third-party analytics, ZERO advertising, ZERO data brokers.",
+        "contactHeading": "Contact + complaints",
+        "contactBody": "For GDPR questions or complaints: {email}. You also have the right to file a complaint with your national data protection authority.",
+        "version": "Beta version - updated 2026-05-22. Data controller: Andura PWA, solo developer Daniel. Data stored in the EU (Firebase europe-west1)."
+      }
     },
     "terms": {
       "title": "Terms of service",
       "intro": "By using Andura, you agree to these terms.",
       "medicalHeading": "Medical disclaimer",
-      "medicalBody": "Andura is not a substitute for medical advice. Consult a doctor before starting a new training program."
+      "medicalBody": "Andura is not a substitute for medical advice. Consult a doctor before starting a new training program.",
+      "tabTerms": "Terms",
+      "tabMedical": "Medical",
+      "tcHeading": "Andura terms of service",
+      "tcIntro": "Andura is a local-first personal training coach. All data is stored on your phone and can be exported or deleted anytime from the Account screen.",
+      "tcAcceptIntro": "By using Andura you agree to these key points:",
+      "tcItems": [
+        "Andura offers recommendations, NOT medical prescriptions.",
+        "You're responsible for your own safety in the gym.",
+        "The Firebase backup is optional (Magic Link sign-in) and encrypts data in transit (HTTPS).",
+        "Crash reporting is opt-in (off by default), with personal data stripped before sending.",
+        "Andura is in free Beta. Features may change or be added without notice until V1 launch."
+      ],
+      "tcVersion": "Beta version - updated 2026-05-18. Full text available online at",
+      "tcLiveLinkLabel": "andura.app/terms",
+      "medicalScreenHeading": "Medical disclaimer",
+      "medicalIntro": "Andura is a fitness app, NOT a medical device or a substitute for advice from a doctor, physiotherapist, or professional coach.",
+      "medicalConsultIntro": "See a doctor before starting any new training program, especially if you:",
+      "medicalItems": [
+        "Have a medical condition (cardiac, respiratory, musculoskeletal).",
+        "Are pregnant or breastfeeding.",
+        "Have persistent pain or recent injuries.",
+        "Take medication that affects physical effort."
+      ],
+      "medicalListenBody": "In the gym, listen to your body. If you feel sharp pain, dizziness, or breathing problems - stop the session and ask for help.",
+      "medicalAccepted": "Accepted at onboarding. You can read this text anytime."
     },
     "export": {
       "title": "Download your data",
       "body": "Get a JSON file with everything you've logged.",
-      "exportCta": "Download (JSON)"
+      "exportCta": "Download (JSON)",
+      "intro": "Take all your Andura data in a single JSON file you can store locally or move to another device. Includes profile + workouts + nutrition + settings + calendar.",
+      "contentHeading": "What's included",
+      "contentItems": [
+        "Profile and Big 6 (age, sex, goal, frequency, experience, weight)",
+        "Session history (all logged workouts)",
+        "Daily nutrition (kcal + protein)",
+        "Preferences (theme, units, notifications)",
+        "Weekly calendar (training/rest days)"
+      ],
+      "successHint": "File downloaded ({kb} KB)",
+      "errorHint": "Export failed. Please try again."
     },
     "import": {
       "title": "Import history",
       "body": "Upload a JSON file with weight + nutrition entries to backfill.",
-      "importCta": "Choose file",
+      "importCta": "Choose CSV file",
       "successToast": "Imported {n} entries.",
-      "errorToast": "Couldn't read that file."
+      "errorToast": "Couldn't read that file.",
+      "intro": "Already have a weight and calorie history from another app? You can import it from a CSV file. The coach uses the history to calibrate your calorie target much faster.",
+      "whatHeading": "What you can import",
+      "whatItems": [
+        "Weight history (date + kg)",
+        "Daily nutrition history (date + calories + protein)",
+        "You can select both CSV files at once"
+      ],
+      "noDataError": "Couldn't find any data to import in the file. Check that it's a CSV export with a Date column plus calories or weight.",
+      "preview": {
+        "weightDays": "{n} weight days",
+        "nutritionDays": "{n} nutrition days",
+        "skippedRows": "{n} rows skipped",
+        "confirmCta": "Import the data",
+        "cancelCta": "Cancel"
+      },
+      "doneMessage": "Done. Imported {weightN} weight days and {nutritionN} nutrition days. The coach is already using the data for calibration.",
+      "doneBackCta": "Back to Account"
     },
     "appearance": {
       "title": "Appearance",
       "themeHeading": "Theme",
       "light": "Light",
       "dark": "Dark",
-      "system": "System"
+      "system": "System",
+      "subtitle": "How Andura looks for you.",
+      "themeLightLabel": "Light",
+      "themeDarkLabel": "Dark",
+      "themeAutoLabel": "Auto (system)",
+      "navHeading": "Bottom bar",
+      "navComfortable": "Comfortable (recommended)",
+      "navCompact": "Compact",
+      "paletteHeading": "Palette",
+      "themesLink": "Themes"
     },
     "themes": {
       "title": "Themes",
       "current": "Current",
-      "preview": "Preview"
+      "preview": "Preview",
+      "subtitle": "Pick your favorite palette. Applied instantly.",
+      "footer": "Palettes switch instantly. Brain Coach is the default.",
+      "options": {
+        "clasic": "Andura Clasic",
+        "clasicMeta": "Cream and light",
+        "livingBody": "Andura Living Body",
+        "livingBodyMeta": "Navy and warm gold",
+        "luxury": "Andura Luxury",
+        "luxuryMeta": "Noir and champagne",
+        "brainCoach": "Andura Brain Coach",
+        "brainCoachMeta": "AI purple - default"
+      }
     },
     "subscription": {
       "title": "Subscription",
       "freeBetaHeading": "Free during Beta",
-      "freeBetaBody": "Andura is free for all Beta users. Pricing will be announced post-launch."
+      "freeBetaBody": "Andura is free for all Beta users. Pricing will be announced post-launch.",
+      "comingSoonTitle": "Coming soon",
+      "comingSoonBody": "We're working on clear subscription plans. Until then, everything is free for Beta users.",
+      "freeBetaTitle": "Free Beta",
+      "freeBetaSubtitle": "Full access - no card needed",
+      "notifyCta": "Notify me when it's ready",
+      "notifiedCta": "We'll let you know when it's ready"
     },
     "support": {
       "title": "Support",
       "body": "Need help? Reach us at support@andura.app.",
-      "emailCta": "Email support"
+      "emailCta": "Email support",
+      "intro": "We reply to messages within 24 working hours. Small but attentive team.",
+      "contactHeading": "Contact us",
+      "emailLabel": "Email",
+      "whatsappLabel": "WhatsApp",
+      "whatsappHours": "Mon-Fri - 09:00-18:00",
+      "postBetaLabel": "post-Beta",
+      "messageHeading": "Send us a message",
+      "messageHint": "Bug, idea, feedback - write freely. It comes straight to us.",
+      "openEmailCta": "Open email"
     },
     "about": {
       "title": "About Andura",
       "body": "Andura is a Romanian-built fitness coach. Solo bootstrap, plan x20, two-to-three-year horizon.",
       "versionLabel": "Version",
-      "buildLabel": "Build"
+      "buildLabel": "Build",
+      "tagline": "Train with intention. Built in Romania.",
+      "intro": "Andura helps you train with intent - not more, but better. The coach learns from your feedback and adapts every session.",
+      "teamLabel": "Team",
+      "teamValue": "Daniel and team",
+      "thanks": "With thanks to all the beta testers who helped polish the app."
     },
     "faq": {
       "title": "FAQ",
-      "intro": "Common questions."
+      "intro": "Common questions.",
+      "header": "Short answers to the questions we get most often.",
+      "footerHint": "Can't find an answer? Write to us from",
+      "footerCtaLabel": "Support",
+      "sections": {
+        "training": "Training",
+        "account": "Account and data",
+        "notifications": "Notifications"
+      },
+      "items": {
+        "trainingChangeProgram": "How do I change my program?",
+        "trainingChangeProgramA": "Go to Coach > tap the pencil on the Week card > pick training and rest days > Save. The coach recalibrates automatically.",
+        "trainingSkipSession": "Can I skip a session?",
+        "trainingSkipSessionA": "Yes. Tap the X during the session > Skip session. The coach doesn't penalize you and adjusts weekly recommendations based on your real adherence.",
+        "trainingProgress": "How is progress calculated?",
+        "trainingProgressA": "The coach uses logged sets (kg + reps + RPE) + body weight + readiness score. Pattern recognition runs on your phone, no mandatory cloud upload.",
+        "accountPassword": "How do I recover my password?",
+        "accountPasswordA": "Andura uses Magic Link (no password). On the Sign-in screen enter your email > you'll get a unique link in your inbox > tap it on the same phone.",
+        "accountMultiPhone": "Can I use it on multiple phones?",
+        "accountMultiPhoneA": "Yes, if you're signed in with an account (Magic Link or Google). Automatic backup in Firebase europe-west1 (EU). Test-drive mode (no account) stays Tier 0 local on the current phone.",
+        "accountDataLocation": "Where is my data stored?",
+        "accountDataLocationA": "Local-first on your phone (localStorage Tier 0 + IndexedDB Tier 1). Optional Firebase RTDB backup, encrypted in transit. We don't collect usage metrics; crash reporting is opt-in with personal data stripped.",
+        "notificationsMissing": "Why am I not getting notifications?",
+        "notificationsMissingA": "Check Account > Notifications > toggle on + days selected + reminder time. PWA notifications need a browser/OS permission - accept the initial prompt. If you refused, reset it from your phone settings."
+      }
     },
     "danger": {
-      "title": "Logout & delete",
+      "title": "Logout and delete",
       "logoutHeading": "Log out",
       "logoutBody": "Sign out on this device. Your data stays.",
       "logoutCta": "Log out",
@@ -709,7 +916,15 @@
       "resetCta": "Reset",
       "deleteHeading": "Delete account",
       "deleteBody": "Permanently delete your account and all data. This can't be undone.",
-      "deleteCta": "Delete account"
+      "deleteCta": "Delete account",
+      "warningBanner": "The actions below affect your account. Read the confirmation page carefully before running them.",
+      "logoutRowTitle": "Sign out",
+      "logoutRowSub": "Your data stays on the phone.",
+      "resetRowTitle": "Reset all data",
+      "resetRowSub": "Erase everything on this phone. Account kept.",
+      "deleteRowTitle": "Delete account",
+      "deleteRowSub": "Account + data deleted permanently, immediately.",
+      "gdprFooter": "GDPR Art. 17: on \"Delete account,\" local data + the Firebase RTDB backup are erased automatically (best-effort, server propagation <5 min)."
     },
     "confirms": {
       "logoutTitle": "Log out?",
@@ -738,6 +953,205 @@
       "messageLabel": "Tell us what happened",
       "messagePlaceholder": "Describe the issue…",
       "submitCta": "Send"
+    }
+  },
+
+  "confirm": {
+    "commonAttention": "Heads up",
+    "commonAcceptCta": "Confirm",
+    "commonCancelCta": "Cancel",
+    "logout": {
+      "title": "Sign out",
+      "heading": "Sign out?",
+      "body1": "Your account and logged workouts (including records) stay safely saved and come back when you sign in with the same email.",
+      "body2": "For your safety on a shared device, the displayed history, the weight chart, and your streak are cleared from this phone on sign-out.",
+      "acceptCta": "Confirm",
+      "cancelCta": "Cancel"
+    },
+    "deleteAccount": {
+      "title": "Delete account",
+      "heading": "Heads up",
+      "body1": "All your data (local + remote) will be erased immediately.",
+      "body2": "This action cannot be undone. You won't be able to recover the data after confirming.",
+      "acceptCta": "Delete account permanently",
+      "cancelCta": "Cancel"
+    },
+    "resetData": {
+      "title": "Reset data",
+      "heading": "Reset all data?",
+      "body1": "All workouts, ratings, and local measurements will be erased.",
+      "body2": "Your account stays active. This action cannot be undone.",
+      "acceptCta": "Reset data",
+      "cancelCta": "Cancel"
+    },
+    "redoOnboarding": {
+      "title": "Redo onboarding",
+      "heading": "Heads up",
+      "body1": "You'll redo the initial setup - goals, experience level, availability.",
+      "body2": "Your current profile is kept, but old answers will be overwritten. Reversible if you finish onboarding again.",
+      "acceptCta": "Confirm",
+      "cancelCta": "Cancel"
+    },
+    "resetCoach": {
+      "title": "Reset coach",
+      "heading": "Heads up",
+      "body1": "This will erase the AI progress learned about you and restart the coach from scratch.",
+      "body2": "Your training data stays intact. Irreversible.",
+      "acceptCta": "Confirm",
+      "cancelCta": "Cancel"
+    },
+    "schimbaFaza": {
+      "title": "Switch phase manually",
+      "heading": "Heads up",
+      "body1": "Switching the active phase manually? This will reset some calibrations. Continue?",
+      "body2": "The coach will recalibrate TDEE, volume, and progression based on the new phase. Historical data stays intact.",
+      "acceptCta": "Confirm",
+      "cancelCta": "Cancel",
+      "options": {
+        "autoLabel": "Auto-detect",
+        "autoHint": "Coach decides based on progress",
+        "autoHintWithNow": "Coach decides based on progress - now: {label} (recommended)",
+        "cutLabel": "Cut",
+        "cutHint": "Caloric deficit (fat loss)",
+        "maintenanceLabel": "Maintenance",
+        "maintenanceHint": "Stable weight, calibration",
+        "bulkLabel": "Bulk",
+        "bulkHint": "Caloric surplus (muscle gain)",
+        "strengthLabel": "Strength",
+        "strengthHint": "Slight surplus, performance focus"
+      }
+    },
+    "finishEarly": {
+      "title": "Finish early",
+      "heading": "Finish the session now?",
+      "body1": "The partial session is saved. The coach uses what you've logged so far - you don't lose progress.",
+      "body2": "The recorded sets stay in the history. The coach adjusts the week based on what you did.",
+      "acceptCta": "Finish now",
+      "cancelCta": "Continue session"
+    },
+    "programChange": {
+      "title": "Change program",
+      "heading": "Change program?",
+      "body1Prefix": "The coach will regenerate the week as ",
+      "body1Suffix": ".",
+      "body2": "Completed sessions stay in the history.",
+      "acceptCta": "Confirm change",
+      "cancelCta": "Cancel"
+    }
+  },
+
+  "coachEngine": {
+    "fatigue": {
+      "insufficient": {
+        "label": "Not enough data",
+        "detail": "Log 2+ sessions to see your fatigue score"
+      },
+      "HIGH_FATIGUE": {
+        "label": "We'll go lighter today",
+        "detail": "There've been a few heavy sessions recently. Volume is set more conservatively for a full recovery."
+      },
+      "MODERATE_FATIGUE": {
+        "label": "A bit more conservative",
+        "detail": "Today we hold the weights and focus on technique and control."
+      },
+      "PEAK_FORM": {
+        "label": "We're in good shape",
+        "detail": "Recovery is complete. We've got the energy to push the bar today."
+      },
+      "NORMAL": {
+        "label": "On track",
+        "detail": "Healthy rhythm. Let's go with today's plan."
+      }
+    },
+    "readiness": {
+      "labels": {
+        "PR_DAY": "PR day",
+        "SOLID": "Solid session",
+        "NORMAL": "Normal session",
+        "MODERATE": "Moderate session",
+        "LIGHT": "Light session",
+        "REST": "Rest",
+        "REST_RECOVER": "Rest up"
+      },
+      "canPrSuffix": " - you can try a PR"
+    },
+    "autoPhase": {
+      "CUT": "Cut",
+      "BULK": "Bulk",
+      "MAINTENANCE": "Maintenance"
+    },
+    "muscleGroups": {
+      "piept": "Chest",
+      "spate": "Back",
+      "umeri": "Shoulders",
+      "biceps": "Biceps",
+      "triceps": "Triceps",
+      "antebrate": "Forearms",
+      "core": "Core",
+      "picioare-quads": "Quads",
+      "picioare-hamstrings": "Hamstrings",
+      "fese": "Glutes",
+      "gambe": "Calves"
+    },
+    "voice": {
+      "preset": [
+        "Let's go, you've got the rhythm.",
+        "Same tempo as last time - you're locked in.",
+        "Focus on controlling the descent.",
+        "This set is going well - one deep breath before you start.",
+        "Hold the form, the rest follows."
+      ],
+      "postUsor": [
+        "Too easy - we'll add a touch on the next one.",
+        "If you have more in the tank, push 1-2 extra reps on the next set.",
+        "Nice - the coach raises the bar a bit."
+      ],
+      "postPotrivit": [
+        "That's what we want - you're right on track.",
+        "Good, you're moving well. Same approach.",
+        "Just right - solid prediction. Keep it up."
+      ],
+      "postGreu": [
+        "OK, we'll pull back a notch on the next one.",
+        "Hard set - we hold the same weight, no pushing.",
+        "Noted. The coach adjusts on its own."
+      ],
+      "rest": [
+        "Good recovery now, breathe deep.",
+        "Sip some water, drop the shoulders.",
+        "That set was solid - same effort on the next.",
+        "Short break, that's enough.",
+        "No rush, recovery matters."
+      ],
+      "transition": [
+        "Chest done, on to shoulders!",
+        "Nice - first one in the bag.",
+        "Clean. Moving on.",
+        "That's it. One more exercise and you're halfway."
+      ],
+      "endSessionUsor": [
+        "Moving well - see you Thursday with more pep.",
+        "Clean session. Tomorrow we go up a notch."
+      ],
+      "endSessionPotrivit": [
+        "Moving well, see you Thursday!",
+        "Nice. Staying on track."
+      ],
+      "endSessionGreu": [
+        "Moving well - it was a hard one today, tomorrow we recover.",
+        "Noted. You gave it all - that's what matters."
+      ],
+      "reflectie": [
+        "Today's session moved you closer to your monthly target - keep going.",
+        "12 days in a row. Consistency beats intensity.",
+        "Good rhythm. Tomorrow rest, Thursday we come back."
+      ],
+      "preview": [
+        "We know what's on for today - let's do it clean.",
+        "Listen to your body; we'll adjust on the fly if anything comes up.",
+        "Form first, weight second."
+      ],
+      "safeFallback": "Get ready to train."
     }
   },
 
