@@ -60,11 +60,16 @@ export function RestOverlay({
       role="dialog"
       aria-label="Pauza activa"
     >
-      <SVGCountdownRing
-        totalSec={initialRestSec}
-        remainingSec={countdownSec}
-        timeColorClass="text-paper dark:text-ink"
-      />
+      {/* Wave C3 (2026-05-28) — breath cadence wraps the ring (5s in / 5s out
+          loop = a calm rest tempo the user can sync to). Subtle scale (0.96 → 1)
+          keeps the timer mm:ss legible. Auto-collapses under reduced-motion. */}
+      <div className="animate-breath">
+        <SVGCountdownRing
+          totalSec={initialRestSec}
+          remainingSec={countdownSec}
+          timeColorClass="text-paper dark:text-ink"
+        />
+      </div>
       <div className="flex-1 min-w-0">
         <p
           className="text-[10px] font-bold uppercase tracking-[0.1em] text-brick"

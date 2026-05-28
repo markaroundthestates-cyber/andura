@@ -47,6 +47,8 @@
 
 import type { JSX, FocusEvent } from 'react';
 import { Check, Pencil } from 'lucide-react';
+import { Ripple } from '../Ripple';
+import { haptic } from '../../lib/motion';
 
 export type SetLogInputMode = 'editable' | 'tinta' | 'post-log';
 
@@ -153,15 +155,25 @@ export function SetLogInput({
           </div>
         </div>
 
+        {/* Wave C3 (2026-05-28) — the "Confirma setul" CTA is the single most
+            important tap in a workout. Layered feedback: (1) Ripple from tap
+            point, (2) press-feedback scale-0.94, (3) brief haptic buzz on
+            release (Android only), (4) the success-burst halo bloom sits behind
+            the icon for a 600ms confirmation. Daniel "go wild" — but only the
+            buttons that earn it (set logging is the ritual heartbeat). */}
         <button
           type="button"
-          onClick={onLog}
+          onClick={() => {
+            haptic(12);
+            onLog?.();
+          }}
           disabled={!Number.isFinite(reps) || reps < 1}
           data-testid="setlog-tinta-log-btn"
-          className="w-full flex items-center justify-center gap-2 p-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px] transition-transform active:scale-[.97] disabled:opacity-50"
+          className="press-feedback relative overflow-hidden w-full flex items-center justify-center gap-2 p-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px] disabled:opacity-50"
         >
-          <Check className="w-5 h-5" aria-hidden="true" />
-          Confirma setul
+          <Ripple color="rgba(255,255,255,0.55)" />
+          <Check className="w-5 h-5 relative" aria-hidden="true" />
+          <span className="relative">Confirma setul</span>
         </button>
       </div>
     );
