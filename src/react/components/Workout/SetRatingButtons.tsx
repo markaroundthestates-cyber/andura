@@ -1,4 +1,4 @@
-// SET RATING BUTTONS - Workout 3-Button Rating Component
+// SET RATING BUTTONS - Workout "feel" card (Pulse reskin)
 // Phase 4 task_12 §A extract din Workout.tsx rating buttons (~lines 213-237
 // prior). Pure presentational - 3 buttons RO (Usor / Potrivit / Greu) cu
 // data-rating attribute preserved.
@@ -7,19 +7,22 @@
 // action + getPRDelta wire + markPRHit + state machine transition la rest/
 // transition/post-rpe). onRate callback dispatches rating la parent.
 //
-// data-testid + data-rating preserved verbatim pentru Workout.test.tsx 38
-// baseline tests preserve.
+// data-testid + data-rating preserved verbatim pentru Workout.test.tsx
+// baseline (data-rating usor/potrivit/greu + accessible name Easy/Just
+// right/Hard via /^Easy$/i regex). The reskin swaps ONLY the visual shell;
+// the onRate(rating) contract + accessible names are untouched.
 //
-// Mockup parity (andura-clasic.html L1493-1511 wv2-rating-row traffic-light
-// dot + label pattern). Emoji is aria-hidden decorative - preserves
-// existing accessible name "Usor"/"Potrivit"/"Greu" for Workout.test
-// ^Usor$ exact-match regex assertions.
-//
-// §F-pass2-setrating-02 (LOW chat5) — heading swap "Cum a fost setul?" →
-// "Cum a fost?" mockup verbatim andura-clasic.html#L1493 (brevity per
-// Daniel reglaj 2026-05-12 §coach-rating-row).
+// PULSE RESKIN (Andura Pulse arc 2026-05-29, mockup interfata-noua/
+// screens-workout.jsx:271-285 "feel" card): the flat traffic-light row
+// becomes the mockup's big-button feel card — a "HOW DID IT FEEL?" eyebrow
+// over three large token-tinted buttons (Easy=--volt, Right=--aqua,
+// Hard=--ember). Each button presses (active:scale) + lights its accent on
+// touch. Single tap calibrates the next set (the coach engine reads the
+// rating). Token-only styling (var(--volt|--aqua|--ember)); no raw hex.
+// The colored dot stays as a small aria-hidden status mark above the label.
 
-import type { JSX } from 'react';
+import type { CSSProperties, JSX } from 'react';
+import { Kicker } from '../pulse/Kicker';
 import { t } from '../../../i18n/index.js';
 
 type SetRating = 'usor' | 'potrivit' | 'greu';
@@ -30,44 +33,54 @@ interface SetRatingButtonsProps {
 
 interface RatingMeta {
   rating: SetRating;
-  emoji: string;
+  accent: string; // CSS var token — volt (easy) / aqua (right) / ember (hard)
   labelKey: string;
 }
 
-const GREEN = '\u{1F7E2}';
-const YELLOW = '\u{1F7E1}';
-const RED = '\u{1F534}';
-
 // Labels resolved at render time via t() so the locale flip surfaces EN
 // copy under default + RO opt-in. Rating IDs stay the canonical engine
-// keys (usor/potrivit/greu) consumed by the workoutStore + history.
+// keys (usor/potrivit/greu) consumed by the workoutStore + history. Accent
+// tokens map the mockup's feel-card colors: Easy=volt, Right=aqua, Hard=ember.
 const RATING_META: readonly RatingMeta[] = [
-  { rating: 'usor', emoji: GREEN, labelKey: 'setRating.options.usor' },
-  { rating: 'potrivit', emoji: YELLOW, labelKey: 'setRating.options.potrivit' },
-  { rating: 'greu', emoji: RED, labelKey: 'setRating.options.greu' },
+  { rating: 'usor', accent: 'var(--volt)', labelKey: 'setRating.options.usor' },
+  { rating: 'potrivit', accent: 'var(--aqua)', labelKey: 'setRating.options.potrivit' },
+  { rating: 'greu', accent: 'var(--ember)', labelKey: 'setRating.options.greu' },
 ];
 
 export function SetRatingButtons({ onRate }: SetRatingButtonsProps): JSX.Element {
   return (
-    <>
-      <p className="text-base text-ink mb-3">{t('setRating.prompt')}</p>
+    <div
+      className="surface-elevated animate-fade-in-up bg-paper2 border border-line rounded-2xl p-4 mb-2"
+      data-testid="setrating-feel-card"
+    >
+      <div className="text-center mb-3">
+        <Kicker>{t('setRating.prompt')}</Kicker>
+      </div>
       {/* No role="list": children are <button>s (not valid role="listitem"),
-          which makes a screen reader announce an empty list. The "Cum a fost?"
-          heading already labels the group (parity §6-M3 EnergyScreens revert). */}
-      <div className="flex gap-3">
+          which makes a screen reader announce an empty list. The Kicker
+          heading labels the group (parity §6-M3 EnergyScreens revert). */}
+      <div className="flex gap-2.5">
         {RATING_META.map((opt) => (
           <button
             key={opt.rating}
             type="button"
             onClick={() => onRate(opt.rating)}
             data-rating={opt.rating}
-            className="flex-1 flex flex-col items-center gap-1 py-3 bg-paper2 border border-lineStrong rounded-xl text-ink"
+            className="feel-btn flex-1 flex flex-col items-center gap-1.5 py-4 bg-paper border rounded-2xl text-ink transition-transform active:scale-[.94] min-h-[44px]"
+            style={{ '--feel-accent': opt.accent, borderColor: 'var(--line)' } as CSSProperties}
           >
-            <span className="text-xl" aria-hidden="true">{opt.emoji}</span>
-            <span>{t(opt.labelKey)}</span>
+            <span
+              aria-hidden="true"
+              className="w-2.5 h-2.5 rounded-full"
+              style={{ background: opt.accent }}
+            />
+            <span className="font-display font-bold text-base" style={{ color: opt.accent }}>
+              {t(opt.labelKey)}
+            </span>
           </button>
         ))}
       </div>
-    </>
+      <style>{`.feel-btn:active{border-color:var(--feel-accent);box-shadow:0 0 22px -6px var(--feel-accent);}`}</style>
+    </div>
   );
 }

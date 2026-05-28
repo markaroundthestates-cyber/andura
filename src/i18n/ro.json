@@ -255,6 +255,12 @@
       "backCta": "Inapoi"
     },
     "currentExercise": "Exercitiul curent",
+    "liveVolumeLabel": "kg ridicate",
+    "prFlash": {
+      "ariaLabel": "Record personal nou",
+      "title": "Record nou!",
+      "detail": "{exercise} · +{deltaKg} kg"
+    },
     "whyAriaLabel": "De ce acest exercitiu?",
     "whyTitle": "De ce {exercise}?",
     "whyDismiss": "Am inteles",
@@ -1032,7 +1038,11 @@
     "confirmSetCta": "Confirma setul",
     "youDidLabel": "Tu ai facut",
     "youDidRepsWith": "repetari cu",
-    "editAriaLabel": "Editeaza"
+    "editAriaLabel": "Editeaza",
+    "kgDecrease": "Scade greutatea",
+    "kgIncrease": "Creste greutatea",
+    "repsDecrease": "Scade repetarile",
+    "repsIncrease": "Creste repetarile"
   },
 
   "setRating": {

@@ -255,6 +255,12 @@
       "backCta": "Back"
     },
     "currentExercise": "Current exercise",
+    "liveVolumeLabel": "kg lifted",
+    "prFlash": {
+      "ariaLabel": "New personal record",
+      "title": "New record!",
+      "detail": "{exercise} · +{deltaKg} kg"
+    },
     "whyAriaLabel": "Why this exercise?",
     "whyTitle": "Why {exercise}?",
     "whyDismiss": "Got it",
@@ -1032,7 +1038,11 @@
     "confirmSetCta": "Confirm set",
     "youDidLabel": "You did",
     "youDidRepsWith": "reps with",
-    "editAriaLabel": "Edit"
+    "editAriaLabel": "Edit",
+    "kgDecrease": "Decrease weight",
+    "kgIncrease": "Increase weight",
+    "repsDecrease": "Decrease reps",
+    "repsIncrease": "Increase reps"
   },
 
   "setRating": {
