@@ -639,6 +639,22 @@
 
   "obiectiv": {
     "heading": "Obiectiv",
+    "goalCardAriaLabel": "Obiectiv antrenament",
+    "alesBadge": "Ales",
+    "activeSuffix": " · activ",
+    "optionAriaTemplate": "{title} — {sub}",
+    "options": {
+      "autoTitle": "Auto",
+      "autoSub": "Coach-ul alege singur, se adapteaza in timp",
+      "fortaTitle": "Forta",
+      "fortaSub": "Greutati mari, mai putine repetari",
+      "masaTitle": "Masa musculara",
+      "masaSub": "Cresti musculatura vizibil",
+      "slabireTitle": "Slabire",
+      "slabireSub": "Pierzi grasime, pastrezi muschi",
+      "mentenantaTitle": "Mentenanta",
+      "mentenantaSub": "Pastrezi forma actuala"
+    },
     "targetWeightLabel": "Greutate tinta (kg)",
     "targetMonthLabel": "Pana in",
     "etaSuffix": "la un ritm sanatos.",

@@ -9,6 +9,16 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ObiectivGoalCard } from '../../../components/Progres/ObiectivGoalCard';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
+// i18n locale pin — these specs assert RO copy (Masa musculara, Mentenanta,
+// "Pierzi grasime, pastrezi muschi"). Force RO so the i18n indirection
+// resolves to the RO assertion targets. EN coverage is locked separately
+// by i18nNoRoLeak.test.tsx.
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
+beforeEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
+  setLocale('ro');
+});
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();

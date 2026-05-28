@@ -639,6 +639,22 @@
 
   "obiectiv": {
     "heading": "Goal",
+    "goalCardAriaLabel": "Training goal",
+    "alesBadge": "Picked",
+    "activeSuffix": " · active",
+    "optionAriaTemplate": "{title} — {sub}",
+    "options": {
+      "autoTitle": "Auto",
+      "autoSub": "The coach picks for you and adapts over time",
+      "fortaTitle": "Strength",
+      "fortaSub": "Heavy weights, fewer reps",
+      "masaTitle": "Muscle mass",
+      "masaSub": "Build visible muscle",
+      "slabireTitle": "Lose fat",
+      "slabireSub": "Drop fat, keep muscle",
+      "mentenantaTitle": "Maintain",
+      "mentenantaSub": "Keep your current shape"
+    },
     "targetWeightLabel": "Target weight (kg)",
     "targetMonthLabel": "By",
     "etaSuffix": "at a healthy pace.",
