@@ -20,7 +20,7 @@
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Clock, Layers, TrendingUp, Flame, Check } from 'lucide-react';
+import { Clock, Layers, TrendingUp, Flame, Check, Zap } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
@@ -28,6 +28,7 @@ import type { PlannedWorkoutOutput } from '../../../lib/engineWrappers';
 import { recomposeWithBusyTypes } from '../../../lib/substitution';
 import { ExerciseMedia } from '../../../components/ExerciseMedia';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { Kicker } from '../../../components/pulse/Kicker';
 import { t } from '../../../../i18n/index.js';
 import type { IntensityMod } from './EnergyCheck';
 
@@ -43,31 +44,23 @@ interface WorkoutPreviewLocationState {
 }
 
 interface IntensityBanner {
-  bg: string;
-  border: string;
+  /** Pulse accent token tinted for bg/border/icon (mockup banner color ramp). */
+  accent: string;
   msg: string;
 }
 
+// Pulse intensity ramp (mockup interfata-noua/screens-workout.jsx:67-71): the
+// banner is tinted by the self-report — volt (charged) for a stronger session,
+// aqua for baseline, ember when the coach is easing off. Token-only so every
+// theme + the WCAG Pulse palette read native; bg/border derive via color-mix.
 function bannerFor(intensityMod: IntensityMod): IntensityBanner {
   if (intensityMod === 'plus') {
-    return {
-      bg: 'var(--status-success-bg)',
-      border: 'var(--status-success-border)',
-      msg: t('workout.preview.intensityBanner.plus'),
-    };
+    return { accent: 'var(--volt)', msg: t('workout.preview.intensityBanner.plus') };
   }
   if (intensityMod === 'minus') {
-    return {
-      bg: 'var(--status-danger-bg)',
-      border: 'var(--status-danger-border)',
-      msg: t('workout.preview.intensityBanner.minus'),
-    };
+    return { accent: 'var(--ember)', msg: t('workout.preview.intensityBanner.minus') };
   }
-  return {
-    bg: 'var(--status-neutral-bg)',
-    border: 'var(--status-neutral-border)',
-    msg: t('workout.preview.intensityBanner.normal'),
-  };
+  return { accent: 'var(--aqua)', msg: t('workout.preview.intensityBanner.normal') };
 }
 
 function durationFor(intensityMod: IntensityMod): number {
@@ -239,32 +232,19 @@ export function WorkoutPreview(): JSX.Element {
           </p>
         </div>
       )}
+      {/* Pulse hero (mockup interfata-noua/screens-workout.jsx:76-82) — Kicker
+          eyebrow + display title + inline meta row (replaces the prior dark
+          inverted card). preview-hero keeps its region role + testids; the
+          duration/count/volume chips keep their individual testids. */}
       <div
-        className="preview-intensity-banner p-3 rounded-xl border mb-4"
-        data-intensity={intensityMod}
-        role="status"
-        aria-live="polite"
-        aria-label={t('workout.preview.intensityBanner.ariaLabel')}
-        style={{ background: banner.bg, borderColor: banner.border }}
-      >
-        <p className="text-base font-medium text-ink">{banner.msg}</p>
-      </div>
-      <div
-        className="bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick rounded-2xl p-4 mb-4"
         data-testid="preview-hero"
         role="region"
         aria-label={t('workout.preview.ariaLabel')}
+        className="mb-4 animate-card-rise"
       >
-        {/* a11y contrast: on bg-ink (light theme dark card) text-paper2 ~15:1.
-            THEME-INVERSION fix (2026-05-27): card era light pe tema mov (bg-ink
-            inversa) -> mirror CoachTodayCard dark:bg-paper2 ca sa ramana dark.
-            Copiii primesc dark:text-ink/dark:text-ink2 (12-16:1 pe #14171f)
-            altfel text-paper2 ar fi dark-on-dark invizibil. */}
-        <div className="text-xs font-semibold tracking-wider uppercase text-paper2 dark:text-ink2">
-          {t('workout.preview.todaysSessionKicker')}
-        </div>
-        <h1 className="text-xl font-bold mt-1 tracking-tight text-paper dark:text-ink">{title}</h1>
-        <div className="flex gap-3.5 mt-2 text-sm text-paper2 dark:text-ink2">
+        <Kicker color="var(--volt)">{t('workout.preview.todaysSessionKicker')}</Kicker>
+        <h1 className="font-display text-2xl font-bold mt-1.5 tracking-tight text-ink leading-tight">{title}</h1>
+        <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-2.5 text-sm text-ink2">
           <span className="flex items-center gap-1.5" data-testid="preview-duration">
             <Clock className="w-3.5 h-3.5" aria-hidden="true" />
             ~ {duration} min
@@ -279,6 +259,29 @@ export function WorkoutPreview(): JSX.Element {
           </span>
         </div>
       </div>
+      {/* Intensity banner — Pulse tinted card with a Zap glyph (mockup
+          interfata-noua/screens-workout.jsx:83-87). bg/border derive from the
+          per-intensity accent via color-mix so each state reads distinctly.
+          Stays the self-report transparency signal; role=status preserved. */}
+      <div
+        className="preview-intensity-banner flex items-start gap-3 p-3.5 rounded-2xl border mb-4 animate-card-rise delay-75"
+        data-intensity={intensityMod}
+        role="status"
+        aria-live="polite"
+        aria-label={t('workout.preview.intensityBanner.ariaLabel')}
+        style={{
+          background: `color-mix(in oklab, ${banner.accent} 12%, var(--paper2))`,
+          borderColor: `color-mix(in oklab, ${banner.accent} 35%, transparent)`,
+        }}
+      >
+        <Zap
+          className="w-[18px] h-[18px] flex-shrink-0 mt-0.5"
+          style={{ color: banner.accent }}
+          fill="currentColor"
+          aria-hidden="true"
+        />
+        <p className="text-sm leading-relaxed text-ink">{banner.msg}</p>
+      </div>
       {/* F-workout-preview/T3 — Warmup row. Mockup andura-clasic.html#L935-939
           FIX 1 (2026-05-11) adaptive per main lift + recovery state. Renders
           ONLY cand engine emits warmup blueprint (workout.warmup != null).
@@ -286,7 +289,7 @@ export function WorkoutPreview(): JSX.Element {
           +rounded+border+bg-paper2 + italic-Lora coach-quote font. */}
       {workout?.warmup && (
         <div
-          className="flex items-center gap-2.5 p-3 rounded-xl border border-line bg-paper2 mb-4"
+          className="flex items-center gap-2.5 p-3 rounded-2xl border border-line bg-paper2 mb-4 animate-card-rise delay-100"
           data-testid="preview-warmup-row"
           role="region"
           aria-label={t('workout.preview.warmupAriaLabel')}
@@ -310,11 +313,11 @@ export function WorkoutPreview(): JSX.Element {
           empty array (defensive — getTodayWorkout returns null for
           rest/halt; this guards sessionBuilder edge case 0 exercises).
           Each row: numbered badge + name + detail (sets/reps) + dumbbell icon. */}
-      <div className="settings-section text-xs uppercase tracking-wider text-ink3 font-semibold mb-2">
-        {t('workout.preview.exercisesHeading')}
+      <div className="mb-2.5">
+        <Kicker>{t('workout.preview.exercisesHeading')}</Kicker>
       </div>
       <ul
-        className="rounded-xl bg-paper2 border border-line divide-y divide-line mb-4"
+        className="rounded-2xl bg-paper2 border border-line divide-y divide-line mb-4"
         data-testid="preview-exercise-list"
       >
         {(displayExercises && displayExercises.length > 0
@@ -362,9 +365,15 @@ export function WorkoutPreview(): JSX.Element {
                 variant="thumbnail"
                 testId={`preview-exercise-media-${item.idx}`}
               />
+              {/* Pulse accent-tinted number badge (mockup .ex-num) — anchored to
+                  the thumbnail bottom-right so ordering stays glance-able. */}
               <span
                 aria-hidden="true"
-                className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-paper border border-line flex items-center justify-center font-mono font-bold text-ink2 text-[10px]"
+                className="absolute -bottom-1 -right-1 w-5 h-5 rounded-lg border border-paper flex items-center justify-center font-mono font-bold text-[10px]"
+                style={{
+                  background: 'color-mix(in oklab, var(--brick) 16%, var(--paper))',
+                  color: 'var(--brick)',
+                }}
               >
                 {item.idx + 1}
               </span>

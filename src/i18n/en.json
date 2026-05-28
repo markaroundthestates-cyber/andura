@@ -406,6 +406,7 @@
     },
     "noteLabel": "Anything to remember? (optional)",
     "submitCta": "Save",
+    "kicker": "One question",
     "heading": "How was your session?",
     "intro": "Your answer calibrates tomorrow's session. Just one question.",
     "footer": "Your answer is the only input we can't infer on our own. Thank you.",

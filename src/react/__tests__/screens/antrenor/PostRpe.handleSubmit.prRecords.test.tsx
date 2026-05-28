@@ -55,6 +55,13 @@ function renderPostRpe() {
   );
 }
 
+// Pulse select-then-Save (2026-05-29): pick the rating, then confirm with Save
+// — the finalize pipeline only fires on Save.
+function submit(name: RegExp): void {
+  fireEvent.click(screen.getByRole('button', { name }));
+  fireEvent.click(screen.getByTestId('post-rpe-save'));
+}
+
 function seedSession(): void {
   useWorkoutStore.setState({
     exIdx: 0,
@@ -87,7 +94,7 @@ describe('PostRpe — pr-records writeback (CRIT #3)', () => {
 
   it('writes pr-records to DB after submit', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const prs = DB.get<PRRecordEntry[]>('pr-records');
       expect(prs).not.toBeNull();
@@ -97,7 +104,7 @@ describe('PostRpe — pr-records writeback (CRIT #3)', () => {
 
   it('pr-records contains entry per exercise', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const prs = DB.get<PRRecordEntry[]>('pr-records');
       expect(prs!.length).toBeGreaterThanOrEqual(2);
@@ -109,7 +116,7 @@ describe('PostRpe — pr-records writeback (CRIT #3)', () => {
 
   it('pr-records entry shape: { ex, kg, reps, date, ts, score }', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const prs = DB.get<PRRecordEntry[]>('pr-records');
       const benchPR = prs!.find((p) => p.ex === 'Bench Press');
@@ -138,7 +145,7 @@ describe('PostRpe — pr-records writeback (CRIT #3)', () => {
     DB.set('logs', [olderLog]);
 
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const prs = DB.get<PRRecordEntry[]>('pr-records');
       const benchPR = prs!.find((p) => p.ex === 'Bench Press');
@@ -164,7 +171,7 @@ describe('PostRpe — pr-records writeback (CRIT #3)', () => {
     DB.set('logs', [olderLog]);
 
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const prs = DB.get<PRRecordEntry[]>('pr-records');
       const benchPR = prs!.find((p) => p.ex === 'Bench Press');
@@ -182,7 +189,7 @@ describe('PostRpe — isPR per-set flag wire (MED #8)', () => {
 
   it('exercises[].sets[].isPR populated on submit (first ever session)', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       // First session ever — detectPR returns null (no prior history). So
       // isPR should be absent/false on all sets.
@@ -209,7 +216,7 @@ describe('PostRpe — isPR per-set flag wire (MED #8)', () => {
     DB.set('logs', [olderLog]);
 
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const exs = useWorkoutStore.getState().lastSession?.exercises;
       const benchEx = exs!.find((e) => e.exerciseName === 'Bench Press');
@@ -233,7 +240,7 @@ describe('PostRpe — isPR per-set flag wire (MED #8)', () => {
     DB.set('logs', [olderLog]);
 
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const logs = DB.get<LogEntry[]>('logs');
       const newBenchLog = logs!.find(
@@ -251,7 +258,7 @@ describe('PostRpe — MMI Engine #9 activatable post writeback', () => {
 
   it('after submit DB.get(pr-records) returns non-empty array (MMI input)', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       // MMI Engine #9 buildSilentMmiContext requires prRecords.length > 0
       // (returns null otherwise → no cap applied → returning user starts
@@ -264,7 +271,7 @@ describe('PostRpe — MMI Engine #9 activatable post writeback', () => {
 
   it('pr-records[].kg is queryable per exercise name (MMI peak lookup)', async () => {
     renderPostRpe();
-    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    submit(/Just right/i);
     await waitFor(() => {
       const prs = DB.get<PRRecordEntry[]>('pr-records');
       const benchPR = prs!.find((p) => p.ex === 'Bench Press');

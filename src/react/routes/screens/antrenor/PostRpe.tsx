@@ -25,7 +25,9 @@
 //   - mockup andura-clasic.html submitPostRpeV2()
 
 import type { JSX } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Check } from 'lucide-react';
 import { useWorkoutStore, energyLightForIntensityMod } from '../../../stores/workoutStore';
 import type {
   SessionExerciseBreakdown,
@@ -39,28 +41,27 @@ import {
 } from '../../../lib/prRecordsWriteback';
 import { DB } from '../../../../db.js';
 import { toast } from '../../../lib/toast';
+import { Kicker } from '../../../components/pulse/Kicker';
 import { t } from '../../../../i18n/index.js';
 
 export type SessionRating = 'usoara' | 'normala' | 'grea';
-
-const GREEN = '\u{1F7E2}';
-const YELLOW = '\u{1F7E1}';
-const RED = '\u{1F534}';
 
 // Labels + descriptions resolved at render time via t() so the locale flip
 // surfaces EN copy under default + RO copy when the user opts in via
 // Cont > Setari > Limba (Daniel 2026-05-28 mandate).
 interface RatingMeta {
   rating: SessionRating;
-  emoji: string;
   labelKey: string;
   descriptionKey: string;
+  // Pulse accent token per feel (mockup interfata-noua/screens-workout.jsx:463-465):
+  // easy=volt (had more), right=aqua (balanced), hard=ember (to the limit).
+  accent: string;
 }
 
 const RATING_META: readonly RatingMeta[] = [
-  { rating: 'usoara', emoji: GREEN,  labelKey: 'postRpe.ratings.easyLabel',  descriptionKey: 'postRpe.ratings.easyDescription' },
-  { rating: 'normala', emoji: YELLOW, labelKey: 'postRpe.ratings.rightLabel', descriptionKey: 'postRpe.ratings.rightDescription' },
-  { rating: 'grea', emoji: RED,    labelKey: 'postRpe.ratings.hardLabel',  descriptionKey: 'postRpe.ratings.hardDescription' },
+  { rating: 'usoara', labelKey: 'postRpe.ratings.easyLabel',  descriptionKey: 'postRpe.ratings.easyDescription', accent: 'var(--volt)' },
+  { rating: 'normala', labelKey: 'postRpe.ratings.rightLabel', descriptionKey: 'postRpe.ratings.rightDescription', accent: 'var(--aqua)' },
+  { rating: 'grea', labelKey: 'postRpe.ratings.hardLabel',  descriptionKey: 'postRpe.ratings.hardDescription', accent: 'var(--ember)' },
 ];
 
 function formatKg(kg: number): string {
@@ -75,6 +76,12 @@ export function PostRpe(): JSX.Element {
   const setLastRating = useWorkoutStore((s) => s.setLastRating);
   const finishSession = useWorkoutStore((s) => s.finishSession);
   const incrementStreak = useWorkoutStore((s) => s.incrementStreak);
+
+  // Select-then-Save (mockup interfata-noua/screens-workout.jsx:461-483) — the
+  // user picks a feel, then confirms with Save. Two taps on a finalize screen
+  // guards against an accidental tap silently ending the session. The Save
+  // button calls handleSubmit(pick) — the full finalize pipeline is unchanged.
+  const [pick, setPick] = useState<SessionRating | null>(null);
 
   async function handleSubmit(rating: SessionRating): Promise<void> {
     setLastRating(rating);
@@ -189,8 +196,12 @@ export function PostRpe(): JSX.Element {
   }
 
   return (
-    <section className="p-6 bg-paper" data-testid="post-rpe">
-      <h1 className="text-2xl font-bold text-ink mb-2">{t('postRpe.heading')}</h1>
+    <section className="p-6 bg-paper min-h-screen flex flex-col" data-testid="post-rpe">
+      {/* Pulse reskin (mockup interfata-noua/screens-workout.jsx:467-483) —
+          Kicker eyebrow + display h1; coach intro keeps its serif italic +
+          testid. */}
+      <Kicker color="var(--aqua)">{t('postRpe.kicker')}</Kicker>
+      <h1 className="font-display text-2xl font-bold text-ink mt-2 mb-2">{t('postRpe.heading')}</h1>
       {/* §F-post-rpe-01 (HIGH chat5 Wave 15) — coach quote Lora italic mockup
           andura-clasic.html#L1596 verbatim. Product personality signal Andura
           Suflet (D-LEGACY-052) — engine-transparent framing ("calibreaza
@@ -203,24 +214,71 @@ export function PostRpe(): JSX.Element {
       </p>
       {/* No role="list": children are <button>s (not valid role="listitem"),
           which makes a screen reader announce an empty list. The "Cum a fost
-          sesiunea?" heading already labels the group (parity §6-M3 revert). */}
-      <div className="flex flex-col gap-3">
-        {RATING_META.map((opt) => (
-          <button
-            key={opt.rating}
-            type="button"
-            onClick={() => { void handleSubmit(opt.rating); }}
-            data-rating={opt.rating}
-            className="flex items-center gap-4 p-4 rounded-xl border border-lineStrong bg-paper2 hover:bg-paper transition text-left"
-          >
-            <span className="text-3xl" aria-hidden="true">{opt.emoji}</span>
-            <span className="flex flex-col items-start gap-1">
-              <span className="text-base font-medium text-ink">{t(opt.labelKey)}</span>
-              <span className="text-sm text-ink2">{t(opt.descriptionKey)}</span>
-            </span>
-          </button>
-        ))}
+          sesiunea?" heading already labels the group (parity §6-M3 revert).
+          Select-then-Save: a tap sets pick (aria-pressed), the radio circle
+          fills with the feel accent; finalize fires only on Save. */}
+      <div className="flex flex-col gap-3 flex-1">
+        {RATING_META.map((opt) => {
+          const selected = pick === opt.rating;
+          return (
+            <button
+              key={opt.rating}
+              type="button"
+              onClick={() => setPick(opt.rating)}
+              data-rating={opt.rating}
+              aria-pressed={selected}
+              className="flex items-center gap-4 p-5 rounded-[18px] border bg-paper2 transition text-left animate-card-rise"
+              style={{
+                borderColor: selected ? opt.accent : 'var(--line)',
+                borderWidth: 1.5,
+                background: selected
+                  ? `color-mix(in oklab, ${opt.accent} 9%, var(--paper2))`
+                  : undefined,
+                boxShadow: selected
+                  ? `0 0 28px -8px color-mix(in oklab, ${opt.accent} 60%, transparent)`
+                  : undefined,
+              }}
+            >
+              <span className="flex flex-col items-start gap-1 flex-1 min-w-0">
+                <span
+                  className="font-display text-lg font-bold"
+                  style={{ color: selected ? opt.accent : 'var(--ink)' }}
+                >
+                  {t(opt.labelKey)}
+                </span>
+                <span className="text-sm text-ink2">{t(opt.descriptionKey)}</span>
+              </span>
+              {/* Radio check circle (mockup .rpe-check) — fills with the feel
+                  accent when selected. Decorative; aria-pressed on the button
+                  carries selection to assistive tech. */}
+              <span
+                className="w-7 h-7 rounded-full border flex items-center justify-center flex-shrink-0 transition"
+                style={{
+                  borderColor: selected ? opt.accent : 'var(--line-strong)',
+                  background: selected ? opt.accent : 'transparent',
+                }}
+                aria-hidden="true"
+              >
+                {selected && (
+                  <Check className="w-4 h-4" style={{ color: 'var(--on-accent)' }} strokeWidth={2.6} />
+                )}
+              </span>
+            </button>
+          );
+        })}
       </div>
+      {/* Save (mockup .btn-grad gated on pick) — finalize pipeline fires once
+          here. Disabled until a feel is picked (opacity + pointer guard +
+          disabled attr for assistive tech). */}
+      <button
+        type="button"
+        onClick={() => { if (pick) void handleSubmit(pick); }}
+        disabled={pick === null}
+        data-testid="post-rpe-save"
+        className="btn-primary-lift w-full py-4 mt-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-45 disabled:pointer-events-none"
+      >
+        {t('postRpe.submitCta')}
+      </button>
       {/* §F-post-rpe-04 (MED chat5 Wave 15) — footer gratitude + explainer
           mockup andura-clasic.html#L1624 verbatim. Andura Suflet warmth
           (D-LEGACY-052) — recunoaste valoarea contribution Gigel/Marius
