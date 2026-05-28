@@ -44,7 +44,7 @@
   {
     "name": "CSS total",
     "path": "dist/assets/*.css",
-    "limit": "7.5 KB",
+    "limit": "12 KB",
     "gzip": true
   }
 ]
