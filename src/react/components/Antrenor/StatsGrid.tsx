@@ -48,6 +48,9 @@ export function StatsGrid({ streak, fatigue, readiness }: Props): JSX.Element {
         delayClass="delay-0"
         testId="stats-streak"
         sublabelTestId="stats-streak-label"
+        // Wave C3 — flame flickers on streak >= 1 (active streak); silent at 0
+        // so an empty-state tile reads calm, not nagging.
+        iconAnimClass={streak >= 1 ? 'animate-flame' : undefined}
       />
       <StatTile
         label="Oboseala"
@@ -80,6 +83,9 @@ interface StatTileProps {
   delayClass: string;
   testId: string;
   sublabelTestId?: string;
+  /** Wave C3 — opt-in for an idle micro-animation on the corner icon (e.g.
+   *  flame flicker on the streak tile). Other tiles stay still. */
+  iconAnimClass?: string | undefined;
 }
 
 function StatTile({
@@ -91,16 +97,19 @@ function StatTile({
   delayClass,
   testId,
   sublabelTestId,
+  iconAnimClass,
 }: StatTileProps): JSX.Element {
   return (
     <div
       className={`relative overflow-hidden bg-paper2 rounded-xl p-3 text-center border border-line animate-card-rise ${delayClass}`}
     >
       {/* Decorative accent dot — semantic hint of which stat this is, even
-          when the number reads as '-'. color-mix keeps it cross-palette. */}
+          when the number reads as '-'. color-mix keeps it cross-palette.
+          Wave C3 — optional iconAnimClass applies a tile-specific idle motion
+          (e.g. flame flicker on streak). Default = static. */}
       <Icon
         aria-hidden="true"
-        className="absolute top-2 right-2 w-3.5 h-3.5"
+        className={`absolute top-2 right-2 w-3.5 h-3.5${iconAnimClass ? ` ${iconAnimClass}` : ''}`}
         style={{ color: `color-mix(in oklab, var(${accentVar}) 80%, transparent)` }}
       />
       {/* Subtle radial wash anchored top-left so the eye is drawn to the
