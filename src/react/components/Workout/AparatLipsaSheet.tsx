@@ -125,12 +125,12 @@ export function AparatLipsaSheet({
 
   return (
     <div
-      className="fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
+      className="animate-fade-in fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
       data-testid="aparat-lipsa-sheet-backdrop"
       onClick={onClose}
     >
       <div
-        className="bg-paper rounded-t-2xl p-5 w-full max-w-md max-h-[80vh] overflow-y-auto"
+        className="animate-slide-up bg-paper rounded-t-2xl p-5 w-full max-w-md max-h-[80vh] overflow-y-auto"
         data-testid="aparat-lipsa-sheet"
         role="dialog"
         aria-modal="true"

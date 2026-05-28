@@ -48,6 +48,8 @@ import { coachPick, type CoachVoiceEndSessionRating } from '../../../lib/coachVo
 import { pluralRo } from '../../../lib/pluralRo';
 import { gotoPath } from '../../../lib/navigation';
 import { useCountUp } from '../../../hooks/useCountUp';
+import { ConfettiBurst } from '../../../components/ConfettiBurst';
+import { Ripple } from '../../../components/Ripple';
 import type { SessionRating } from './PostRpe';
 
 // Taxonomy bridge: workoutStore.lastRating ('usoara/normala/grea') →
@@ -228,11 +230,17 @@ export function PostSummary(): JSX.Element {
          absent) — Daniel CEO review pre-Beta. */}
       {prHit && (
         <div
-          className="flex flex-col gap-2 p-4 mb-4 rounded-xl bg-succ/10 border border-succ animate-card-rise animate-glow-pulse"
+          className="relative flex flex-col gap-2 p-4 mb-4 rounded-xl bg-succ/10 border border-succ animate-card-rise animate-glow-pulse"
           data-testid="summary-pr-banner"
           role="status"
           aria-label="PR nou detectat"
         >
+          {/* Wave C3 (2026-05-28) — celebratory confetti burst on PR moments.
+              Theme-aware (brick/succ/warn/deep tokens) so it tints mov/champagne/
+              gold per palette. Sits at banner center; absolute-positioned + pointer-
+              events: none so the underlying content is fully interactive. Auto-
+              cleans after 1s. Mount-keyed by prHit=true so it plays once. */}
+          <ConfettiBurst />
           <div className="flex items-center gap-3">
             <Trophy className="w-6 h-6 text-succ flex-shrink-0 animate-scale-in" aria-hidden="true" />
             <div className="flex-1 min-w-0">
@@ -371,7 +379,10 @@ export function PostSummary(): JSX.Element {
         className="flex items-center gap-2 mb-6 text-base text-ink"
         data-testid="summary-streak"
       >
-        <span aria-hidden="true" className="text-xl">🔥</span>
+        {/* Wave C3 (2026-05-28) — flame emoji flickers (2s loop rotation+scale)
+            so the streak feels alive without ever leaving its inline footprint.
+            Auto-collapses under reduced-motion. */}
+        <span aria-hidden="true" className="animate-flame text-xl">🔥</span>
         <span className="font-semibold">
           {pluralRo(streak, 'zi consecutiva', 'zile consecutive')}
         </span>
@@ -382,9 +393,10 @@ export function PostSummary(): JSX.Element {
         type="button"
         onClick={handleFinish}
         data-testid="summary-finish"
-        className="mt-auto w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold transition-transform active:scale-[.97]"
+        className="press-feedback relative overflow-hidden mt-auto w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
       >
-        Terminat
+        <Ripple color="rgba(255,255,255,0.5)" />
+        <span className="relative">Terminat</span>
       </button>
     </section>
   );

@@ -69,7 +69,7 @@ export function InstallPrompt(): JSX.Element | null {
         role="region"
         aria-live="polite"
         aria-label="Instaleaza Andura"
-        className="pointer-events-auto bg-paper2 border border-line rounded-xl p-3 flex items-center gap-3 shadow-lg"
+        className="animate-fade-in-up pointer-events-auto bg-paper2 border border-line rounded-xl p-3 flex items-center gap-3 shadow-lg"
       >
         <div className="w-10 h-10 rounded-lg bg-brick/10 flex items-center justify-center flex-shrink-0">
           <Download className="w-5 h-5 text-brick" aria-hidden="true" />

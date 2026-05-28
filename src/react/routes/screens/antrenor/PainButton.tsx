@@ -40,8 +40,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
+import { Ripple } from '../../../components/Ripple';
 import { DB } from '../../../../db.js';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { edgeFlash, haptic } from '../../../lib/motion';
 
 export type BodyRegion =
   | 'gat'
@@ -149,6 +151,13 @@ export function PainButton(): JSX.Element {
     // §43-H2: persist pain to append-only CDL so Recovery Engine adapts future
     // sessions (not just this one via location.state).
     persistPainCdl(region, intensity);
+    // Wave C3 (2026-05-28) — tactile + visual confirmation that the pain report
+    // was registered. Soft haptic buzz (10ms — Material "subtle confirm"), then
+    // a brief brick-tinted edge flash so the user feels "they heard me" without
+    // the pop being startling. Both helpers no-op on desktop / under
+    // prefers-reduced-motion (vestibular safety, Maria 65).
+    haptic(10);
+    edgeFlash('var(--brick)');
     // §F-pain-button-02 reassurance toast — verbatim mockup L1017-1019.
     toast.show({
       message: 'Siguranta e pe primul loc. Am ajustat restul sesiunii.',
@@ -204,8 +213,8 @@ export function PainButton(): JSX.Element {
               aria-pressed={selected}
               className={
                 selected
-                  ? 'p-3 rounded-xl border bg-brick text-paper border-brick'
-                  : 'p-3 rounded-xl border bg-paper2 border-lineStrong text-ink'
+                  ? 'press-feedback p-3 rounded-xl border bg-brick text-paper border-brick'
+                  : 'press-feedback p-3 rounded-xl border bg-paper2 border-lineStrong text-ink'
               }
             >
               <span className="text-sm font-medium">{r.label}</span>
@@ -228,8 +237,8 @@ export function PainButton(): JSX.Element {
                 aria-pressed={selected}
                 className={
                   selected
-                    ? 'flex-1 py-3 rounded-xl border bg-brick text-paper border-brick'
-                    : 'flex-1 py-3 rounded-xl border bg-paper2 border-lineStrong text-ink'
+                    ? 'press-feedback flex-1 py-3 rounded-xl border bg-brick text-paper border-brick'
+                    : 'press-feedback flex-1 py-3 rounded-xl border bg-paper2 border-lineStrong text-ink'
                 }
               >
                 <span className="text-base font-medium">{INTENSITY_LABELS[lvl]}</span>
@@ -244,9 +253,10 @@ export function PainButton(): JSX.Element {
         onClick={handleContinue}
         disabled={continueDisabled}
         data-testid="pain-continue"
-        className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-50"
+        className="press-feedback relative overflow-hidden w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-50"
       >
-        Continui adaptat
+        <Ripple color="rgba(255,255,255,0.5)" />
+        <span className="relative">Continui adaptat</span>
       </button>
       <button
         type="button"

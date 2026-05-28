@@ -1010,19 +1010,29 @@ export function Workout(): JSX.Element {
         />
       )}
 
-      {/* Transition phase */}
+      {/* Transition phase — Wave C3 (2026-05-28): each line rolls/fades in with
+          a small stagger so the next-exercise reveal feels intentional, not a
+          static splash. The screen-level backdrop fades in, then the label,
+          name, and coach line cascade. Auto-collapses under reduced motion. */}
       {phase === 'transition' && (
         <div
-          className="fixed inset-0 bg-paper flex flex-col items-center justify-center z-40"
+          className="animate-fade-in fixed inset-0 bg-paper flex flex-col items-center justify-center z-40"
           data-testid="transition-screen"
           role="status"
           aria-label="Urmatorul exercitiu"
         >
-          <p className="text-2xl font-semibold text-ink mb-2">Urmatorul:</p>
-          <p className="text-base text-ink2" data-testid="transition-next-name">
+          <p className="animate-fade-in-up text-2xl font-semibold text-ink mb-2">Urmatorul:</p>
+          <p
+            className="animate-roll-in text-base text-ink2"
+            data-testid="transition-next-name"
+            style={{ animationDelay: '120ms' }}
+          >
             {nextExercise?.name ?? '—'}
           </p>
-          <p className="text-sm text-ink2 mt-4 italic font-serif">
+          <p
+            className="animate-fade-in-up text-sm text-ink2 mt-4 italic font-serif"
+            style={{ animationDelay: '240ms' }}
+          >
             „{coachPick('transition', undefined, 0)}"
           </p>
         </div>
@@ -1067,12 +1077,12 @@ export function Workout(): JSX.Element {
           summary. Backdrop tap or "Am inteles" closes. */}
       {whyText !== null && (
         <div
-          className="fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
+          className="animate-fade-in fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
           data-testid="why-modal-backdrop"
           onClick={() => setWhyText(null)}
         >
           <div
-            className="bg-paper rounded-t-2xl p-6 w-full max-w-md"
+            className="animate-slide-up bg-paper rounded-t-2xl p-6 w-full max-w-md"
             data-testid="why-modal"
             role="dialog"
             aria-modal="true"

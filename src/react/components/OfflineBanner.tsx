@@ -21,15 +21,18 @@ export function OfflineBanner(): JSX.Element | null {
 
   if (status === 'reconnected') {
     // §36-M6 transient feedback — confirm reconnect (~3s via hook timer).
+    // Wave C3 — slides down from top (260ms cubic-bezier), success green
+    // surface reads "we're back" the moment it lands. Icon scale-in for
+    // a tiny confirmation pop.
     return (
       <div
         data-testid="offline-banner"
         data-state="reconnected"
         role="status"
         aria-live="polite"
-        className="app-fixed-column fixed top-0 z-50 bg-succ text-paper px-4 py-2 flex items-center justify-center gap-2 text-sm"
+        className="animate-slide-down app-fixed-column fixed top-0 z-50 bg-succ text-paper px-4 py-2 flex items-center justify-center gap-2 text-sm"
       >
-        <Wifi className="w-4 h-4" aria-hidden="true" />
+        <Wifi className="w-4 h-4 animate-scale-in" aria-hidden="true" />
         <span>Reconectat - sync reluat.</span>
       </div>
     );
@@ -42,7 +45,7 @@ export function OfflineBanner(): JSX.Element | null {
       data-state="offline"
       role="status"
       aria-live="polite"
-      className="app-fixed-column fixed top-0 z-50 bg-ink2 text-paper px-4 py-2 flex items-center justify-center gap-2 text-sm"
+      className="animate-slide-down app-fixed-column fixed top-0 z-50 bg-ink2 text-paper px-4 py-2 flex items-center justify-center gap-2 text-sm"
     >
       <WifiOff className="w-4 h-4" aria-hidden="true" />
       <span>Esti offline — datele se salveaza local. Sync reluat la conexiune.</span>
