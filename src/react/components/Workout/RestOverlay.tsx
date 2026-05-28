@@ -37,6 +37,7 @@
 import type { JSX } from 'react';
 import { SkipForward } from 'lucide-react';
 import { SVGCountdownRing } from './SVGCountdownRing';
+import { t } from '../../../i18n/index.js';
 
 interface RestOverlayProps {
   countdownSec: number;
@@ -58,7 +59,7 @@ export function RestOverlay({
       className="animate-scale-in fixed left-3.5 right-3.5 bottom-[78px] z-40 flex items-center gap-3.5 rounded-[18px] px-4 py-3.5 shadow-[0_8px_24px_rgba(0,0,0,0.22)] bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick"
       data-testid="rest-overlay"
       role="dialog"
-      aria-label="Pauza activa"
+      aria-label={t('restOverlay.ariaLabel')}
     >
       {/* Wave C3 (2026-05-28) — breath cadence wraps the ring (5s in / 5s out
           loop = a calm rest tempo the user can sync to). Subtle scale (0.96 → 1)
@@ -74,14 +75,14 @@ export function RestOverlay({
         <p
           className="text-[10px] font-bold uppercase tracking-[0.1em] text-brick"
         >
-          Pauza
+          {t('restOverlay.kicker')}
         </p>
         {currentExerciseName && (
           <p
             className="font-serif italic text-[13px] leading-snug mt-0.5 text-paper dark:text-ink"
             data-testid="rest-context-line"
           >
-            {currentExerciseName} recupereaza
+            {t('restOverlay.recovering', { name: currentExerciseName })}
           </p>
         )}
       </div>
@@ -96,7 +97,7 @@ export function RestOverlay({
         }}
       >
         <SkipForward className="w-3.5 h-3.5" aria-hidden="true" />
-        Sari pauza
+        {t('restOverlay.skipCta')}
       </button>
     </div>
   );

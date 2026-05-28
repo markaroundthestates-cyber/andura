@@ -6,9 +6,18 @@
 // component-in-isolation contract: prop forwarding, conditional render
 // pentru optional currentExerciseName, role/aria preservation.
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { RestOverlay } from '../../../components/Workout/RestOverlay';
+// i18n locale pin — these specs assert RO copy (kicker / cue / skip CTA /
+// aria-label). Force RO so the i18n indirection resolves to the assertion
+// targets. EN coverage is verified separately by i18nNoRoLeak.test.tsx.
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
+beforeEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
+  setLocale('ro');
+});
 
 describe('RestOverlay - baseline render', () => {
   it('renders root dialog cu data-testid + role + aria-label', () => {

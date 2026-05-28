@@ -193,6 +193,13 @@
     "fallbackQuote": "Astazi e ziua ta. Vino la sala — sinea ta viitoare iti va multumi."
   },
 
+  "restOverlay": {
+    "ariaLabel": "Pauza activa",
+    "kicker": "Pauza",
+    "recovering": "{name} recupereaza",
+    "skipCta": "Sari pauza"
+  },
+
   "coachRest": {
     "ariaLabel": "Coach-ul recomanda azi - recuperare",
     "kicker": "Coach-ul recomanda azi",

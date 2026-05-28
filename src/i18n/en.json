@@ -193,6 +193,13 @@
     "fallbackQuote": "Today is your day. Show up — your future self will thank you."
   },
 
+  "restOverlay": {
+    "ariaLabel": "Active rest",
+    "kicker": "Rest",
+    "recovering": "{name} is recovering",
+    "skipCta": "Skip rest"
+  },
+
   "coachRest": {
     "ariaLabel": "Coach recommendation today — recovery",
     "kicker": "Today's recommendation",
