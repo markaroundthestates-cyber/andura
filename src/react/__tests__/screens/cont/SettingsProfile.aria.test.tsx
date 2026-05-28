@@ -70,11 +70,11 @@ describe('SettingsProfile — LabelRow/SelectRow label binding (§6-M3 + §HIGH-
     expect(sel.value).toBe('m');
   });
 
-  it('Obiectiv label binds to select element', () => {
+  // §obiectiv-relocate 2026-05-28 — Obiectiv select removed from SettingsProfile
+  // (relocated la Progres > ObiectivGoalCard). Frecventa + Experienta raman.
+  it('Obiectiv select NOT rendered in SettingsProfile (relocated)', () => {
     renderScreen();
-    const sel = screen.getByLabelText('Obiectiv') as HTMLSelectElement;
-    expect(sel.tagName).toBe('SELECT');
-    expect(sel.value).toBe('masa');
+    expect(screen.queryByLabelText('Obiectiv')).toBeNull();
   });
 
   it('Frecventa label binds to select element', () => {
@@ -113,9 +113,10 @@ describe('SettingsProfile — LabelRow/SelectRow label binding (§6-M3 + §HIGH-
 
   it('SelectRow uses sibling htmlFor/id binding — no LABEL ancestor for selects (§HIGH-1)', () => {
     renderScreen();
+    // §obiectiv-relocate 2026-05-28 — profile-goal-select removed (goal moved
+    // la Progres > ObiectivGoalCard). 3 selects raman: sex + frequency + experience.
     const selectIds = [
       'profile-sex-select',
-      'profile-goal-select',
       'profile-frequency-select',
       'profile-experience-select',
     ];
@@ -137,11 +138,11 @@ describe('SettingsProfile — LabelRow/SelectRow label binding (§6-M3 + §HIGH-
     });
   });
 
-  it('SelectRow label htmlFor matches select id for all 4 selects (§HIGH-1)', () => {
+  it('SelectRow label htmlFor matches select id for all 3 selects (§HIGH-1)', () => {
     renderScreen();
+    // §obiectiv-relocate 2026-05-28 — Obiectiv pair removed (goal moved la Progres).
     const pairs: Array<{ label: string; id: string }> = [
       { label: 'Gen', id: 'profile-sex-select' },
-      { label: 'Obiectiv', id: 'profile-goal-select' },
       { label: 'Frecventa', id: 'profile-frequency-select' },
       { label: 'Experienta', id: 'profile-experience-select' },
     ];

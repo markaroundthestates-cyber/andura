@@ -96,9 +96,11 @@ describe('SettingsProfile — render', () => {
     expect(screen.getByTestId('profile-sex-select')).toHaveValue('m');
   });
 
-  it('renders goal select cu initial value din store', () => {
+  // §obiectiv-relocate 2026-05-28 — goal select moved to Progres > ObiectivGoalCard.
+  // Frecventa + Experienta raman aici (setup-once params, NU progress-tracking).
+  it('does NOT render goal select (relocated to Progres tab)', () => {
     renderScreen();
-    expect(screen.getByTestId('profile-goal-select')).toHaveValue('masa');
+    expect(screen.queryByTestId('profile-goal-select')).not.toBeInTheDocument();
   });
 
   it('renders frequency select cu initial value din store', () => {
@@ -152,12 +154,14 @@ describe('SettingsProfile — interactions', () => {
     expect(useOnboardingStore.getState().data.sex).toBe('f');
   });
 
-  it('changing goal propagates pe save', () => {
-    // §B003/D-1b — use new 'slabire' value (was 'definire' pre-mockup parity).
+  // §obiectiv-relocate 2026-05-28 — goal change tested via ObiectivGoalCard
+  // (Progres tab) instead of SettingsProfile. Frecventa change propagation
+  // covered below.
+  it('changing frequency propagates pe save', () => {
     renderScreen();
-    fireEvent.change(screen.getByTestId('profile-goal-select'), { target: { value: 'slabire' } });
+    fireEvent.change(screen.getByTestId('profile-frequency-select'), { target: { value: '3' } });
     fireEvent.click(screen.getByTestId('settings-profile-save'));
-    expect(useOnboardingStore.getState().data.goal).toBe('slabire');
+    expect(useOnboardingStore.getState().data.frequency).toBe('3');
   });
 });
 
@@ -364,14 +368,16 @@ describe('SettingsProfile — weight continuity (onboarding -> profil edit autor
     expect(tdee as number).toBeGreaterThan(bmrAt50 as number);
   });
 
-  it('edit doar pe goal (NU greutate) NU scrie un weigh-in fantoma in weightLog', () => {
+  it('edit doar pe non-weight field (NU greutate) NU scrie un weigh-in fantoma in weightLog', () => {
+    // §obiectiv-relocate 2026-05-28 — goal moved la Progres; folosim experienta
+    // (alt non-weight field din SettingsProfile) pentru aceeasi invariant test.
     renderScreen();
     const before = useProgresStore.getState().weightLog.length;
-    fireEvent.change(screen.getByTestId('profile-goal-select'), { target: { value: 'slabire' } });
+    fireEvent.change(screen.getByTestId('profile-experience-select'), { target: { value: 'avansat' } });
     fireEvent.click(screen.getByTestId('settings-profile-save'));
     // Greutatea neschimbata (tot 110) → NU adaugam o intrare noua in timeline.
     expect(useProgresStore.getState().weightLog.length).toBe(before);
-    expect(useOnboardingStore.getState().data.goal).toBe('slabire');
+    expect(useOnboardingStore.getState().data.experience).toBe('avansat');
     expect(getCurrentWeightKg()).toBe(110);
   });
 

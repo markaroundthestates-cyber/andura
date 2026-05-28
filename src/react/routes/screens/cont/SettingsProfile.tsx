@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../../stores/onboardingStore';
-import type { Sex, Goal, Frequency, Experience, OnboardingData } from '../../../stores/onboardingStore';
+import type { Sex, Frequency, Experience, OnboardingData } from '../../../stores/onboardingStore';
 import { useProgresStore, latestBodyMeasurements } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { toast } from '../../../lib/toast';
@@ -25,15 +25,9 @@ import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
 import { estimateBfDeurenbergCapped } from '../../../../engine/bodyComposition.js';
 
-// §B003/D-1b audit fix — Goal labels 6 mockup parity (mockup L863-869).
-const GOAL_LABELS: Record<Goal, string> = {
-  auto: 'Auto',
-  forta: 'Forta',
-  masa: 'Masa',
-  slabire: 'Slabire',
-  mentenanta: 'Mentenanta',
-  longevitate: 'Longevitate',
-};
+// §obiectiv-relocate 2026-05-28 — Goal selector relocated to Progres tab
+// (ObiectivGoalCard). GOAL_LABELS dropped din SettingsProfile (Frecventa +
+// Experienta raman aici — setup-once params, NU progress-tracking goal).
 
 const FREQUENCY_LABELS: Record<Frequency, string> = {
   '2': '2x/sapt',
@@ -352,30 +346,14 @@ export function SettingsProfile(): JSX.Element {
             state aici; acum persistat (Smoke #16) ca sa influenteze tinta de
             kcal a coach-ului via engineWrappers.getTargetKcalToday. */}
 
-        {/* §F-pass2-settings-profile-05 HIGH-BETA chat 4 Co-CTO decision: KEEP
-            Antrenament section (Obiectiv + Frecventa + Experienta) onboarding
-            fields surface in profile edit — value > strict mockup parity. User
-            can change goal/frequency/experience post-onboarding without redoing
-            full onboarding flow. Mockup omission is mockup drift, NU prod bug. */}
+        {/* §obiectiv-relocate 2026-05-28 Daniel verbatim "muta aia cu Obiectiv
+            de la Coach la progres". Obiectiv (goal pick) relocated la Progres >
+            ObiectivGoalCard. Frecventa + Experienta raman aici — setup-once
+            params, NU progress-tracking goal (clear separation). */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           Antrenament
         </p>
         <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
-          <SelectRow label="Obiectiv" htmlFor="profile-goal-select">
-            <select
-              id="profile-goal-select"
-              value={draft.goal ?? ''}
-              onChange={(e) => update('goal', (e.target.value || null) as Goal | null)}
-              data-testid="profile-goal-select"
-              className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
-            >
-              <option value="">—</option>
-              {/* §3-M1 audit fix — Array<keyof typeof X_LABELS> more accurate than X[] */}
-              {(Object.keys(GOAL_LABELS) as Array<keyof typeof GOAL_LABELS>).map((g) => (
-                <option key={g} value={g}>{GOAL_LABELS[g]}</option>
-              ))}
-            </select>
-          </SelectRow>
           <SelectRow label="Frecventa" htmlFor="profile-frequency-select">
             <select
               id="profile-frequency-select"
