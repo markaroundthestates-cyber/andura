@@ -635,6 +635,64 @@
     "forceCta": "Force log anyway"
   },
 
+  "painButton": {
+    "subHeaderTitle": "Something hurts",
+    "heading": "Where does it hurt?",
+    "subtitle": "Coach avoids exercises that aggravate the area.",
+    "intensityPrompt": "How bad is it?",
+    "intensityLabels": {
+      "1": "Mild",
+      "2": "Moderate",
+      "3": "Severe"
+    },
+    "regions": {
+      "gat": "Neck",
+      "umar-stang": "Left shoulder",
+      "umar-drept": "Right shoulder",
+      "piept": "Chest",
+      "spate": "Back",
+      "lombar": "Lower back",
+      "cot-stang": "Left elbow",
+      "cot-drept": "Right elbow",
+      "incheietura-stanga": "Left wrist",
+      "incheietura-dreapta": "Right wrist",
+      "sold": "Hip",
+      "genunchi-stang": "Left knee",
+      "genunchi-drept": "Right knee",
+      "glezna-stanga": "Left ankle",
+      "glezna-dreapta": "Right ankle"
+    },
+    "continueCta": "Continue adapted",
+    "exitCta": "Save and exit",
+    "medicalCue": "If none fits, stop the session and consult a doctor.",
+    "reassureToast": "Safety comes first. We've adjusted the rest of the session."
+  },
+
+  "setLog": {
+    "targetLabel": "Target",
+    "targetReps": "reps",
+    "askDoneLabel": "How many did you do?",
+    "kgLabel": "kg",
+    "repsLabel": "Reps",
+    "kgLabelRequired": "kg *",
+    "repsLabelRequired": "Reps *",
+    "kgError": "Kg between 1 and 500.",
+    "repsError": "Reps between 1 and 100.",
+    "confirmSetCta": "Confirm set",
+    "youDidLabel": "You did",
+    "youDidRepsWith": "reps with",
+    "editAriaLabel": "Edit"
+  },
+
+  "setRating": {
+    "prompt": "How was it?",
+    "options": {
+      "usor": "Easy",
+      "potrivit": "Just right",
+      "greu": "Hard"
+    }
+  },
+
   "perSetSafety": {
     "title": "Hold up",
     "body": "You picked up the pace beyond usual. Check your form and recover before the next set.",
