@@ -705,6 +705,33 @@
     animation: andura-check-draw 380ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
   }
 
+  /* Pop-in — small confirmation badges, streak numbers, PR markers. Slight
+     overshoot (1.0 → 1.05 → 1) so the element lands with intent without going
+     gaudy. 380ms total, single pass. Auto-collapses under reduced-motion via
+     the global * cap. Pair with .animate-card-rise + .delay-N for hero stat
+     numbers, or apply standalone to a small badge that just appeared. */
+  @keyframes andura-pop-in {
+    0% { opacity: 0; transform: scale(0.6); }
+    60% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .animate-pop-in {
+    animation: andura-pop-in 380ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* Onboarding option-selected ring — a tinted glow + offset around the
+     selected option pill. Tokenized via color-mix(--brick) so each palette
+     gets its OWN ring tint automatically (mov violet, cognac champagne,
+     amber-gold, brick red). Layered with box-shadow so it sits over the
+     surface without affecting layout. Pair with a brick fill on the option
+     button so the selected state reads "committed" rather than just
+     "highlighted". */
+  .option-selected-ring {
+    box-shadow:
+      0 0 0 3px color-mix(in oklab, var(--brick) 28%, transparent),
+      0 6px 14px -4px color-mix(in oklab, var(--brick) 32%, transparent);
+  }
+
   /* Stagger utilities — apply to children of a list to cascade their entrance
      (use with .animate-card-rise or .animate-fade-in-up). 75ms steps keep the
      stack feeling fluid; capped at 6 children before the cascade becomes
