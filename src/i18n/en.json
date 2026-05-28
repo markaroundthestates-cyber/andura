@@ -222,7 +222,38 @@
         "normal": "Normal day"
       },
       "noPlan": "No workout planned today.",
-      "engineError": "Couldn't build the workout plan. Please try again in a moment."
+      "engineError": "Couldn't build the workout plan. Please try again in a moment.",
+      "ariaLabel": "Today's session",
+      "todaysSessionKicker": "Today's session",
+      "fallbackTitle": "Push (chest and shoulders)",
+      "exercisesCount": "{n} exercises",
+      "intensityBanner": {
+        "ariaLabel": "Session intensity",
+        "plus": "Coach is bumping intensity +15%. Heavier by one dumbbell, 1 rep extra.",
+        "minus": "Coach is trimming intensity -20%. Lighter today, focus on form.",
+        "normal": "Normal session - baseline. Coach adjusts during the session if anything comes up."
+      },
+      "errorBanner": "Couldn't load today's session. Showing you a demo session.",
+      "warmupAriaLabel": "Warm-up today",
+      "exercisesHeading": "Exercises",
+      "swappedPrefix": "Swapped · {reason}",
+      "exerciseDetail": "{sets} sets - {kg} kg - {reps} reps",
+      "exerciseTimedDetail": "{sets} sets - {seconds} sec",
+      "closingNote": "The coach adjusts during the session if anything comes up: pain, fatigue, hard set. You don't need to know everything up front.",
+      "confirmStartCta": "Confirm, let's start",
+      "fallbackExercises": {
+        "inclineDbPress": "Incline dumbbell press",
+        "seatedMilitaryPress": "Seated military press",
+        "lateralRaise": "Lateral raises",
+        "tricepCableExtension": "Tricep cable extensions",
+        "plank": "Plank"
+      }
+    },
+    "aparatLipsaSheet": {
+      "title": "Missing equipment",
+      "subtitle": "Check the equipment you don't have. The coach avoids those exercises and removes them from the list in Account.",
+      "saveCta": "Save",
+      "closeCta": "Close"
     }
   },
 

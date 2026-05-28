@@ -35,6 +35,7 @@ import {
   getMissingEquipment,
   setMissingEquipment,
 } from '../../../engine/schedule/scheduleAdapter.js';
+import { t } from '../../../i18n/index.js';
 
 // Daniel smoke 2026-05-28 #17 — keep the 10-item list in ONE place. Mirrors
 // AparateLipsa.tsx EQUIPMENT_ITEMS verbatim (Slice 1.7 LOCKED naming order
@@ -134,13 +135,12 @@ export function AparatLipsaSheet({
         data-testid="aparat-lipsa-sheet"
         role="dialog"
         aria-modal="true"
-        aria-label="Aparat lipsa"
+        aria-label={t('workout.aparatLipsaSheet.title')}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-base font-semibold text-ink mb-1">Aparat lipsa</h2>
+        <h2 className="text-base font-semibold text-ink mb-1">{t('workout.aparatLipsaSheet.title')}</h2>
         <p className="text-sm text-ink2 mb-4">
-          Bifeaza aparatele pe care nu le ai. Coach-ul evita exercitiile lor
-          si le scoate din lista din Cont.
+          {t('workout.aparatLipsaSheet.subtitle')}
         </p>
         <div className="flex flex-col gap-2 mb-4">
           {APARAT_LIPSA_ITEMS.map((item, idx) => {
@@ -176,7 +176,7 @@ export function AparatLipsaSheet({
           data-testid="aparat-lipsa-sheet-save"
           className="w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px]"
         >
-          Salveaza
+          {t('workout.aparatLipsaSheet.saveCta')}
         </button>
         <button
           type="button"
@@ -184,7 +184,7 @@ export function AparatLipsaSheet({
           data-testid="aparat-lipsa-sheet-close"
           className="w-full mt-2 py-2.5 text-ink2 text-sm"
         >
-          Inchide
+          {t('workout.aparatLipsaSheet.closeCta')}
         </button>
       </div>
     </div>

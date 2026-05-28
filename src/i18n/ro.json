@@ -222,7 +222,38 @@
         "normal": "Zi normala"
       },
       "noPlan": "Nu ai antrenament programat azi.",
-      "engineError": "Nu am putut construi planul. Incearca din nou peste o clipa."
+      "engineError": "Nu am putut construi planul. Incearca din nou peste o clipa.",
+      "ariaLabel": "Sesiunea de azi",
+      "todaysSessionKicker": "Sesiunea de azi",
+      "fallbackTitle": "Push (piept si umeri)",
+      "exercisesCount": "{n} exercitii",
+      "intensityBanner": {
+        "ariaLabel": "Intensitate sesiune",
+        "plus": "Coach urca intensitatea +15%. Mai grele cu o haltera, 1 rep in plus.",
+        "minus": "Coach reduce intensitatea -20%. Mai usor azi, focus pe forma.",
+        "normal": "Sesiune normala - baseline. Coach ajusteaza in timpul sesiunii daca apare ceva."
+      },
+      "errorBanner": "Nu am putut incarca sesiunea de azi. Iti aratam o sesiune demo.",
+      "warmupAriaLabel": "Incalzire azi",
+      "exercisesHeading": "Exercitii",
+      "swappedPrefix": "Inlocuit · {reason}",
+      "exerciseDetail": "{sets} seturi - {kg} kg - {reps} reps",
+      "exerciseTimedDetail": "{sets} seturi - {seconds} sec",
+      "closingNote": "Coach-ul ajusteaza in timpul sesiunii daca apare ceva: durere, oboseala, set greu. Nu trebuie sa stii dinainte tot.",
+      "confirmStartCta": "Confirma, incep",
+      "fallbackExercises": {
+        "inclineDbPress": "Impins inclinat cu gantere",
+        "seatedMilitaryPress": "Impins militar sezand",
+        "lateralRaise": "Ridicari laterale",
+        "tricepCableExtension": "Extensii triceps la cablu",
+        "plank": "Plansa abdominala"
+      }
+    },
+    "aparatLipsaSheet": {
+      "title": "Aparat lipsa",
+      "subtitle": "Bifeaza aparatele pe care nu le ai. Coach-ul evita exercitiile lor si le scoate din lista din Cont.",
+      "saveCta": "Salveaza",
+      "closeCta": "Inchide"
     }
   },
 

@@ -58,13 +58,14 @@ describe('WorkoutPreview — base render', () => {
   it('renders Start antrenament CTA', () => {
     // §F-workout-preview-05 (HIGH chat5 Wave 15) — CTA mockup verbatim
     // "Confirma, incep" + Check icon (confirmation framing andura-clasic.html#L993).
+    // Wave E1 — under EN default locale this surfaces as "Confirm, let's start".
     renderPreview();
-    expect(screen.getByRole('button', { name: /Confirma, incep/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Confirm, let's start/i })).toBeInTheDocument();
   });
 
   it('renders intensity banner cu role=status', () => {
     renderPreview();
-    expect(screen.getByRole('status', { name: /Intensitate sesiune/i })).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: /Session intensity/i })).toBeInTheDocument();
   });
 
   it('renders coach quote line', () => {
@@ -78,28 +79,28 @@ describe('WorkoutPreview — base render', () => {
 describe('WorkoutPreview — intensity banner variants', () => {
   it('renders banner +15% cand intensityMod=plus', () => {
     renderPreview({ intensityMod: 'plus' });
-    const banner = screen.getByRole('status', { name: /Intensitate sesiune/i });
+    const banner = screen.getByRole('status', { name: /Session intensity/i });
     expect(banner).toHaveAttribute('data-intensity', 'plus');
     expect(banner.textContent).toMatch(/\+15%/);
   });
 
   it('renders banner -20% cand intensityMod=minus', () => {
     renderPreview({ intensityMod: 'minus' });
-    const banner = screen.getByRole('status', { name: /Intensitate sesiune/i });
+    const banner = screen.getByRole('status', { name: /Session intensity/i });
     expect(banner).toHaveAttribute('data-intensity', 'minus');
     expect(banner.textContent).toMatch(/-20%/);
   });
 
   it('renders banner baseline cand intensityMod=normal', () => {
     renderPreview({ intensityMod: 'normal' });
-    const banner = screen.getByRole('status', { name: /Intensitate sesiune/i });
+    const banner = screen.getByRole('status', { name: /Session intensity/i });
     expect(banner).toHaveAttribute('data-intensity', 'normal');
     expect(banner.textContent).toMatch(/baseline/i);
   });
 
   it('defaults la normal cand state empty', () => {
     renderPreview();
-    const banner = screen.getByRole('status', { name: /Intensitate sesiune/i });
+    const banner = screen.getByRole('status', { name: /Session intensity/i });
     expect(banner).toHaveAttribute('data-intensity', 'normal');
   });
 });
@@ -201,7 +202,7 @@ describe('WorkoutPreview — navigation', () => {
   it('Start antrenament navigates la /app/antrenor/workout', () => {
     // §F-workout-preview-05 — CTA "Confirma, incep" mockup verbatim.
     renderPreview({ intensityMod: 'normal' });
-    fireEvent.click(screen.getByRole('button', { name: /Confirma, incep/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Confirm, let's start/i }));
     expect(screen.getByTestId('probe')).toHaveAttribute(
       'data-pathname',
       '/app/antrenor/workout'
@@ -212,7 +213,7 @@ describe('WorkoutPreview — navigation', () => {
   // se pierde la navigate fara state). Workout.tsx il citeste de acolo.
   it('Start persista intensityMod minus in workoutStore', () => {
     renderPreview({ intensityMod: 'minus' });
-    fireEvent.click(screen.getByRole('button', { name: /Confirma, incep/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Confirm, let's start/i }));
     expect(useWorkoutStore.getState().sessionContext?.intensityMod).toBe('minus');
   });
 
@@ -222,7 +223,7 @@ describe('WorkoutPreview — navigation', () => {
       intensityMod: 'minus',
       painContext: { region: 'umar-stang', intensity: 3 },
     });
-    fireEvent.click(screen.getByRole('button', { name: /Confirma, incep/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Confirm, let's start/i }));
     expect(useWorkoutStore.getState().sessionContext?.painContext).toEqual({
       region: 'umar-stang',
       intensity: 3,
@@ -268,17 +269,17 @@ describe('WorkoutPreview — hero card (T2)', () => {
     mockedGetTodayWorkout.mockResolvedValue(null);
   });
 
-  it('renders hero card with eyebrow "Sesiunea de azi"', () => {
+  it('renders hero card with eyebrow "Today\'s session"', () => {
     renderPreview();
     const hero = screen.getByTestId('preview-hero');
     expect(hero).toBeInTheDocument();
-    expect(hero.textContent).toMatch(/Sesiunea de azi/i);
+    expect(hero.textContent).toMatch(/Today's session/i);
   });
 
-  it('hero exposes role=region with aria-label "Sesiunea de azi"', () => {
+  it('hero exposes role=region with aria-label "Today\'s session"', () => {
     renderPreview();
     expect(
-      screen.getByRole('region', { name: /Sesiunea de azi/i }),
+      screen.getByRole('region', { name: /Today's session/i }),
     ).toBeInTheDocument();
   });
 
@@ -289,16 +290,16 @@ describe('WorkoutPreview — hero card (T2)', () => {
     expect(screen.getByTestId('preview-volume')).toBeInTheDocument();
   });
 
-  it('exercise-count chip renders fallback 5 exercitii cand workout null', () => {
+  it('exercise-count chip renders fallback 5 exercises cand workout null', () => {
     renderPreview();
-    expect(screen.getByTestId('preview-exercise-count').textContent).toMatch(/5\s*exercitii/i);
+    expect(screen.getByTestId('preview-exercise-count').textContent).toMatch(/5\s*exercises/i);
   });
 
   it('exercise-count chip wires engine workout.exerciseCount', async () => {
     mockedGetTodayWorkout.mockResolvedValue(makeWorkout({ exerciseCount: 7 }));
     renderPreview();
     await waitFor(() => {
-      expect(screen.getByTestId('preview-exercise-count').textContent).toMatch(/7\s*exercitii/i);
+      expect(screen.getByTestId('preview-exercise-count').textContent).toMatch(/7\s*exercises/i);
     });
   });
 });
@@ -335,12 +336,12 @@ describe('WorkoutPreview — warmup row (T3)', () => {
     });
   });
 
-  it('warmup row exposes role=region with aria-label "Incalzire azi"', async () => {
+  it('warmup row exposes role=region with aria-label "Warm-up today"', async () => {
     mockedGetTodayWorkout.mockResolvedValue(makeWorkout());
     renderPreview();
     await waitFor(() => {
       expect(
-        screen.getByRole('region', { name: /Incalzire azi/i }),
+        screen.getByRole('region', { name: /Warm-up today/i }),
       ).toBeInTheDocument();
     });
   });
@@ -379,12 +380,12 @@ describe('WorkoutPreview — FALLBACK guard (loading + error + empty)', () => {
       const banner = screen.getByTestId('preview-error-banner');
       expect(banner).toBeInTheDocument();
       expect(banner).toHaveAttribute('role', 'alert');
-      expect(banner.textContent).toMatch(/Nu am putut incarca/i);
+      expect(banner.textContent).toMatch(/Couldn't load today's session/i);
     });
     // Fallback content still renders so Gigel can proceed
     expect(screen.getAllByTestId('preview-exercise-row')).toHaveLength(5);
     expect(
-      screen.getByRole('button', { name: /Confirma, incep/i }),
+      screen.getByRole('button', { name: /Confirm, let's start/i }),
     ).toBeInTheDocument();
   });
 
@@ -409,10 +410,10 @@ describe('WorkoutPreview — exercise list (T4)', () => {
     expect(rows).toHaveLength(5);
   });
 
-  it('fallback row 1 shows mockup-parity "Impins inclinat cu gantere"', () => {
+  it('fallback row 1 shows mockup-parity incline DB press (EN default)', () => {
     renderPreview();
     const list = screen.getByTestId('preview-exercise-list');
-    expect(list.textContent).toMatch(/Impins inclinat cu gantere/i);
+    expect(list.textContent).toMatch(/Incline dumbbell press/i);
   });
 
   it('renders engine exercises cand workout.exercises non-empty (3 rows)', async () => {
@@ -430,7 +431,8 @@ describe('WorkoutPreview — exercise list (T4)', () => {
     await waitFor(() => {
       const list = screen.getByTestId('preview-exercise-list');
       expect(list.textContent).toMatch(/Trageri verticale/i);
-      expect(list.textContent).toMatch(/4\s*seturi/i);
+      // Wave E1 — detail line surfaces EN "sets" under default locale.
+      expect(list.textContent).toMatch(/4\s*sets/i);
       expect(list.textContent).toMatch(/60\s*kg/i);
     });
   });
