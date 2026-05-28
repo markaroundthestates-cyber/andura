@@ -39,19 +39,19 @@ const THEME_OPTIONS: readonly ThemeOption[] = [
     id: 'living-body',
     name: 'Andura Living Body',
     meta: 'Navy si auriu cald',
-    swatchClass: 'bg-gradient-to-br from-[#07090f] from-50% to-[#d4a574] to-50%',
+    swatchClass: 'bg-gradient-to-br from-[#07090f] from-50% to-[#dbb182] to-50%',
   },
   {
     id: 'luxury',
     name: 'Andura Luxury',
-    meta: 'Bleu si champagne',
-    swatchClass: 'bg-gradient-to-br from-[#0a1a3f] from-50% to-[#c9a55c] to-50%',
+    meta: 'Noir si champagne',
+    swatchClass: 'bg-gradient-to-br from-[#050507] from-50% to-[#d4b483] to-50%',
   },
   {
     id: 'brain-coach',
     name: 'Andura Brain Coach',
     meta: 'Mov AI - implicit',
-    swatchClass: 'bg-gradient-to-br from-[#8b6dff] from-50% to-[#5dd6e6] to-50%',
+    swatchClass: 'bg-gradient-to-br from-[#0a0c14] from-50% to-[#b596ff] to-50%',
   },
 ];
 
