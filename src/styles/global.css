@@ -124,6 +124,15 @@
     --warn: #8f6210;      /* Warning amber → 4.70:1 ✅ AA */
     --danger: #bd3a28;    /* Danger red → 4.85:1 ✅ AA */
 
+    /* ── PULSE GLASS SURFACES + DEPTH (light) — verbatim mockup [data-theme=light]. */
+    --surface: rgba(255, 255, 255, 0.86);
+    --surface-2: rgba(244, 246, 251, 0.92);
+    --surface-solid: #ffffff;
+    --bg-grad: radial-gradient(120% 80% at 50% -10%, #ffffff 0%, #e7eaf3 70%);
+    --shadow-card: 0 1px 0 rgba(255,255,255,0.7) inset, 0 22px 44px -30px rgba(40,50,90,0.35);
+    --glow: 0 0 0 1px var(--line), 0 18px 40px -22px rgba(40,50,90,0.28);
+    --grain-opacity: 0.025;
+
     /* Status banner tints (B009) — Pulse light: cool neutrals; semantic
        green/red kept. AA text 7-9:1 verified vs each tint bg. */
     --status-success-bg: #e3f5ea;
@@ -191,6 +200,21 @@
     --warn: #ffc24f;       /* Warning amber (Pulse family) → 12.24:1 ✅ */
     --danger: #ff7d6a;     /* Danger red (Pulse ember-red) → 7.85:1 ✅ */
 
+    /* ── PULSE GLASS SURFACES + DEPTH (1:1 parity port 2026-05-29) ──────────
+       Verbatim from mockup interfata-noua/index.html :root,[data-theme=dark].
+       THE missing piece of the first reskin: cards were solid bg-paper-2; the
+       mockup floats translucent glass over the living aurora. --surface is the
+       card fill (.pulse-card), --bg-grad the page wash, --shadow-card/--glow the
+       depth. Pulse motion/radius vars too so ported components resolve. */
+    --surface: rgba(24, 29, 46, 0.72);   /* glass card fill — aurora shows through */
+    --surface-2: rgba(33, 39, 60, 0.78); /* elevated/nested glass */
+    --surface-solid: #141826;            /* opaque fallback (no-backdrop contexts) */
+    --bg-grad: radial-gradient(120% 80% at 50% -10%, #131830 0%, #090b13 60%);
+    --shadow-card: 0 1px 0 rgba(255,255,255,0.04) inset, 0 24px 48px -28px rgba(0,0,0,0.85);
+    --glow: 0 0 0 1px var(--line), 0 18px 40px -18px rgba(0,0,0,0.8);
+    --grain-opacity: 0.05;
+    --radius: 22px; --radius-sm: 14px;
+
     /* Status banner tints (B009 dark) — Pulse: success/danger keep semantic
        green/red, neutral + info retinted cool-blue to sit on the Pulse-dark
        surface. AA text contrast (8-11:1) verified vs each tint bg. */
@@ -252,6 +276,13 @@
     --succ: #2d7642;
     --warn: #8f6210;
     --danger: #bd3a28;
+    --surface: rgba(255, 255, 255, 0.86);
+    --surface-2: rgba(244, 246, 251, 0.92);
+    --surface-solid: #ffffff;
+    --bg-grad: radial-gradient(120% 80% at 50% -10%, #ffffff 0%, #e7eaf3 70%);
+    --shadow-card: 0 1px 0 rgba(255,255,255,0.7) inset, 0 22px 44px -30px rgba(40,50,90,0.35);
+    --glow: 0 0 0 1px var(--line), 0 18px 40px -22px rgba(40,50,90,0.28);
+    --grain-opacity: 0.025;
     --status-success-bg: #e3f5ea;
     --status-success-border: #b8e0c8;
     --status-success-text: #1d5230;
@@ -370,6 +401,51 @@
       to bottom,
       color-mix(in oklab, var(--paper-2) 92%, var(--brick) 8%) 0%,
       var(--paper-2) 50%
+    );
+  }
+
+  /* ── PULSE GLASS CARD (1:1 parity 2026-05-29) ────────────────────────────
+     The mockup's signature surface (interfata-noua/index.html .card): a
+     translucent glass fill over the living aurora + a hairline + soft depth
+     shadow + a top sheen highlight (::before). This is what makes the Pulse
+     cards float; the first reskin used solid bg-paper-2 (flat). Per-tab agents
+     migrate `bg-paper2 border border-line rounded-*` containers → `pulse-card`.
+       - .pulse-card        radius 22px hero/section cards
+       - .pulse-card-tight  radius 14px nested/stat tiles
+       - .pulse-card-glow   adds a corner accent wash (::after); pair with an
+                            inline --wash color, defaults to aqua. */
+  .pulse-card {
+    position: relative;
+    background: var(--surface);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+  }
+  .pulse-card-tight { border-radius: var(--radius-sm); }
+  .pulse-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 30%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  /* Card content sits above the sheen + wash pseudo-layers. */
+  .pulse-card > * { position: relative; z-index: 1; }
+  .pulse-card-glow::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(
+      circle at 82% 6%,
+      color-mix(in oklab, var(--wash, var(--deep)) 22%, transparent),
+      transparent 64%
     );
   }
 
