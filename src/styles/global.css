@@ -1210,6 +1210,52 @@ html, body {
   max-width: calc(var(--app-col-w, 430px) - 1.5rem);
 }
 
+/* ══ BOTTOM-CHROME CLEARANCE (2026-05-30) — keep CTAs above fixed chrome ════
+   Bug (deep smoke V2, desktop phone-frame): a bottom "Confirm" CTA was
+   intercepted/hidden by the fixed BottomNav AND the floating InstallPrompt
+   banner (`fixed bottom-20`, pointer-events-auto card) overlapping it.
+   Root cause: scroll content had only its own small padding (e.g. settings
+   inner scroller `p-5`) — not enough to clear the 64px nav, and ZERO room for
+   the install banner that floats just above the nav.
+
+   Fix: one shared clearance token applied to BOTH scroll families so EVERY
+   screen's content ends above the chrome:
+     - main-tab screens scroll via .app-scroll/viewport (Layout <main>),
+     - sub-screens/settings/confirms have their own `flex-1 overflow-y-auto`
+       inner scroller inside a `min-h-screen` section.
+   --app-bottom-chrome = nav height (64px) + breathing room + safe-area inset.
+   When the install banner is visible, InstallPrompt sets
+   data-install-prompt="1" on <html>, which adds the banner's height so the
+   CTA also clears it; once dismissed/absent the extra room collapses (no
+   permanent dead gap). Both selectors below resolve to the same token so
+   there is never double-padding. */
+:root {
+  /* 64px BottomNav + 24px breathing + bottom safe-area (notch phones). */
+  --app-bottom-chrome: calc(
+    64px + 1.5rem + env(safe-area-inset-bottom, 0px)
+  );
+}
+/* Install banner shown → reserve its ~80px height + gap on top of the nav. */
+html[data-install-prompt="1"] {
+  --app-bottom-chrome: calc(
+    64px + 80px + 1.5rem + env(safe-area-inset-bottom, 0px)
+  );
+}
+/* Main-tab content scrolls inside <main> (.app-scroll / viewport). Layout
+   applies `.app-content-pad` on <main> when the nav is shown (not in-session,
+   where pb-0 + hidden nav is correct) so the floating banner is accounted for
+   too. */
+.app-content-pad {
+  padding-bottom: var(--app-bottom-chrome);
+}
+/* Sub-screens own an inner `flex-1 overflow-y-auto` scroller inside a
+   `min-h-screen` section — <main>'s padding never reaches their bottom CTA.
+   Pad the inner scroller itself so its last CTA clears the chrome. Scoped to
+   .app-scroll so only routed app screens are affected (not modals/toasts). */
+.app-scroll section > .overflow-y-auto {
+  padding-bottom: var(--app-bottom-chrome);
+}
+
 /* Desktop bezel (≥768px) — #root is the device screen + the containing block
    for these `position: fixed` chrome elements (it has transform:translateZ(0)),
    so they already pin to the SCREEN, not the viewport. Anchor them edge-to-edge
