@@ -1,0 +1,148 @@
+// ══ storeSync — wv2 hydrate no-clobber integration (08.050/051) ═════════════
+// Exercises hydrateStoresFromCloud against the REAL Zustand stores + a stubbed
+// RTDB GET. Proves the new-device recovery case (empty local pulls cloud) AND
+// the no-clobber case (local edits survive a stale remote), end to end through
+// the per-store merge wiring.
+
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { AUTH_STORAGE_KEYS } from '../../../auth.js';
+import { hydrateStoresFromCloud, __resetStoreSyncForTest } from '../../lib/storeSync';
+import { useWorkoutStore } from '../../stores/workoutStore';
+import { useProgresStore } from '../../stores/progresStore';
+import { useNutritionStore } from '../../stores/nutritionStore';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+
+const UID = 'storesync-uid-1';
+
+function seedAuth(): void {
+  localStorage.setItem(AUTH_STORAGE_KEYS.uid, UID);
+  localStorage.setItem(AUTH_STORAGE_KEYS.idToken, 'fake-id-token');
+  localStorage.setItem(AUTH_STORAGE_KEYS.expiry, String(Date.now() + 60 * 60 * 1000));
+}
+
+/** Stub fetch to return per-node RTDB envelopes for GET users/{uid}/wv2/<node>. */
+function stubFetch(nodes: Record<string, unknown>): void {
+  vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+    const method = (init?.method || 'GET').toUpperCase();
+    if (method !== 'GET') return { ok: true, json: async () => ({}) } as Response;
+    for (const [node, payload] of Object.entries(nodes)) {
+      if (url.includes(`users/${UID}/wv2/${node}`)) {
+        return { ok: true, json: async () => payload } as Response;
+      }
+    }
+    return { ok: true, json: async () => null } as Response;
+  }));
+}
+
+beforeEach(() => {
+  localStorage.clear();
+  __resetStoreSyncForTest();
+  useWorkoutStore.getState().reset();
+  useWorkoutStore.setState({ sessionsHistory: [], lastSession: null, streak: 0, lastStreakDate: null });
+  useProgresStore.getState().reset();
+  useNutritionStore.getState().reset();
+  useOnboardingStore.getState().reset();
+  vi.spyOn(console, 'log').mockImplementation(() => {});
+  vi.spyOn(console, 'warn').mockImplementation(() => {});
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+});
+
+describe('hydrateStoresFromCloud — new-device recovery (empty local)', () => {
+  it('pulls remote session history + weight log + nutrition when local is empty', async () => {
+    seedAuth();
+    stubFetch({
+      workout: { data: { sessionsHistory: [{ title: 'Push', meta: '', ts: 1000 }], streak: 5, lastStreakDate: '2026-05-25' }, updatedAt: 1000 },
+      progres: { data: { weightLog: [{ kg: 81, date: '2026-05-20', ts: 900 }], bodyData: [], targetObiectiv: { weightKg: 75, month: '2026-09' } }, updatedAt: 1000 },
+      nutrition: { data: { dailyLog: [{ dateISO: '2026-05-20', kcal: 2400, protein: 150, ts: 900 }] }, updatedAt: 1000 },
+    });
+
+    await hydrateStoresFromCloud();
+
+    expect(useWorkoutStore.getState().sessionsHistory.map((s) => s.ts)).toEqual([1000]);
+    expect(useWorkoutStore.getState().streak).toBe(5);
+    expect(useWorkoutStore.getState().lastStreakDate).toBe('2026-05-25');
+    expect(useProgresStore.getState().weightLog).toHaveLength(1);
+    expect(useProgresStore.getState().targetObiectiv.weightKg).toBe(75);
+    expect(useNutritionStore.getState().dailyLog).toHaveLength(1);
+  });
+});
+
+describe('hydrateStoresFromCloud — NO CLOBBER (local edits survive)', () => {
+  it('local session NOT dropped; remote-only sessions added (union by ts)', async () => {
+    seedAuth();
+    useWorkoutStore.setState({
+      sessionsHistory: [{ title: 'LocalPull', meta: '', ts: 2000 }],
+      streak: 8,
+    });
+    stubFetch({
+      workout: { data: { sessionsHistory: [{ title: 'RemoteOld', meta: '', ts: 1000 }, { title: 'SHOULD-NOT-WIN', meta: '', ts: 2000 }], streak: 3 }, updatedAt: 500 },
+    });
+
+    await hydrateStoresFromCloud();
+
+    const hist = useWorkoutStore.getState().sessionsHistory;
+    expect(hist.map((s) => s.ts).sort()).toEqual([1000, 2000]);
+    // Local ts=2000 wins the collision.
+    expect(hist.find((s) => s.ts === 2000)?.title).toBe('LocalPull');
+    // Remote-only ts=1000 added.
+    expect(hist.find((s) => s.ts === 1000)?.title).toBe('RemoteOld');
+    // Streak never regresses — max(8,3)=8.
+    expect(useWorkoutStore.getState().streak).toBe(8);
+  });
+
+  it('local weight entry for a date NOT overwritten by a stale remote value', async () => {
+    seedAuth();
+    useProgresStore.getState().addWeightEntry({ kg: 80, date: '2026-05-25' });
+    stubFetch({
+      progres: { data: { weightLog: [{ kg: 99, date: '2026-05-25', ts: 1 }, { kg: 81, date: '2026-05-20', ts: 1 }], bodyData: [] }, updatedAt: 1 },
+    });
+
+    await hydrateStoresFromCloud();
+
+    const log = useProgresStore.getState().weightLog;
+    expect(log.find((e) => e.date === '2026-05-25')?.kg).toBe(80); // local wins
+    expect(log.find((e) => e.date === '2026-05-20')?.kg).toBe(81); // remote added
+  });
+
+  it('a completed local onboarding profile is NOT reset by an older remote', async () => {
+    seedAuth();
+    useOnboardingStore.setState({
+      data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 80, height: 180, targetWeight: null, targetDate: null },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    stubFetch({
+      onboarding: { data: { data: { age: 99, sex: 'f', goal: 'slabire', frequency: '2', experience: 'incepator', weight: 60, height: 160 }, completed: true, completedAt: 1 }, updatedAt: 1 },
+    });
+
+    await hydrateStoresFromCloud();
+
+    // Newer local profile preserved.
+    expect(useOnboardingStore.getState().data.age).toBe(30);
+    expect(useOnboardingStore.getState().completed).toBe(true);
+  });
+
+  it('does nothing destructive when remote node is absent (empty cloud)', async () => {
+    seedAuth();
+    useNutritionStore.getState().setDailyKcal('2026-05-25', 2000);
+    stubFetch({}); // no nodes → all GET return null
+
+    await hydrateStoresFromCloud();
+
+    expect(useNutritionStore.getState().dailyLog.find((e) => e.dateISO === '2026-05-25')?.kcal).toBe(2000);
+  });
+
+  it('no-op when unauthenticated (null user path → no fetch result applied)', async () => {
+    // No seedAuth — getUserPath() null.
+    useNutritionStore.getState().setDailyKcal('2026-05-25', 1500);
+    stubFetch({ nutrition: { data: { dailyLog: [{ dateISO: '2026-05-25', kcal: 9999, protein: null, ts: 1 }] }, updatedAt: 9 } });
+
+    await hydrateStoresFromCloud();
+
+    expect(useNutritionStore.getState().dailyLog.find((e) => e.dateISO === '2026-05-25')?.kcal).toBe(1500);
+  });
+});

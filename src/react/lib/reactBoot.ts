@@ -52,6 +52,7 @@ import { getAuthState, restoreSession } from '../../auth.js';
 import { runAuthPathMigration } from '../../migrations/2026-05-02-auth-path-migration.js';
 import { enforceDataOwner } from '../../util/dataReset.js';
 import { useAppStore } from '../stores/appStore';
+import { hydrateStoresFromCloud, startStoreSyncSubscriptions } from './storeSync';
 
 // Module-level idempotency guards. React 18 StrictMode double-invokes effects
 // in dev, and main.tsx + a returning-user path could both reach boot — these
@@ -102,6 +103,14 @@ export async function runReactBoot(): Promise<void> {
   // 3. Tier 0 → Tier 1 rotation (ADR 020 initial pass + hourly timer).
   await startTierRotation();
   exposeForceRotationHelper();
+
+  // 3b. Wire the wv2 Zustand store-sync push subscriptions (08.050/051). Each
+  //    user-DATA store (workout/progres/onboarding/nutrition/schedule/settings)
+  //    debounced-PATCHes its node under users/{uid}/wv2/* on change. Started
+  //    auth-INDEPENDENT — the underlying PATCH short-circuits on a null user
+  //    path, so anonymous edits no-op the network until login. Pre-fix these
+  //    stores were localStorage-only → data loss on reinstall / new device.
+  startStoreSyncSubscriptions();
 
   // 4. Restore-on-boot session rehydration. The idToken expires ~1h; the
   //    refresh token is long-lived. Refresh proactively from the stored refresh
@@ -187,6 +196,16 @@ export async function runPostAuthSync(): Promise<void> {
       // Restore from cloud + push merged local back (local-always-wins merge,
       // so this can only ADD missing remote data — never clobbers newer local).
       await initFirebaseSync();
+      // 08.050/051 — hydrate the wv2 Zustand stores from their RTDB nodes with
+      // the same no-clobber merge (union arrays / max scalars / LWW profile).
+      // Pre-fix these never round-tripped to the cloud at all. Awaited so the
+      // restored history is in place before the user starts interacting; own
+      // try/catch inside hydrate keeps a per-store GET failure non-fatal.
+      try {
+        await hydrateStoresFromCloud();
+      } catch (err) {
+        console.warn('[Sync] wv2 store hydrate failed:', err);
+      }
       _postAuthDoneForUid = uid;
     } catch (err) {
       console.warn('[Sync] post-auth Firebase sync failed:', err);

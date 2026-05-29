@@ -209,6 +209,31 @@ export async function buildAuthUrl(fullPath) {
   return _buildUrl(fullPath);
 }
 
+// ── wv2 store-sync helpers (08.050/051) ──────────────────────────────────────
+// The Zustand wv2-* stores (weight/session history, onboarding profile, goals,
+// nutrition) live ONLY in localStorage — they never reached RTDB, so a logged-in
+// user lost everything on reinstall / cache-clear / new device. These two thin
+// wrappers expose the existing auth-aware GET/PATCH primitives so storeSync.ts
+// can push + restore those stores WITHOUT touching the flat SYNC_KEYS path above
+// (Tier-0 contract is unchanged). PATCH (not PUT) so each store writes only its
+// own child node under `users/{uid}/wv2/<store>` and never clobbers siblings
+// (SYNC_KEYS, fcmTokens, notificationPrefs). Both honor the suppress flag +
+// graceful null/false return contract (no throw, no toast spam).
+/** @param {string} relPath child path under `users/{uid}` (e.g. 'wv2/workout') */
+export async function fbGetUserChild(relPath) {
+  const userPath = getUserPath();
+  if (!userPath) return null;
+  return fbGet(`${userPath}/${relPath}`);
+}
+
+/** @param {string} relPath @param {Record<string, unknown>} data */
+export async function fbPatchUserChild(relPath, data) {
+  if (window._suppressFirebaseSync) return false;
+  const userPath = getUserPath();
+  if (!userPath) return false;
+  return fbPatch(`${userPath}/${relPath}`, data);
+}
+
 /** @param {ReadonlyArray<string>|null|undefined} keys */
 export async function clearFirebaseKeys(keys) {
   if (!keys || keys.length === 0) return;
