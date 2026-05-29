@@ -1418,6 +1418,50 @@ html, body {
   animation: andura-body-region-glow 2.4s ease-in-out infinite;
 }
 
+/* ── Photoreal body map ────────────────────────────────────────────────────
+   A real grey-anatomy render (public/body/<sex>-<view>.webp) with a colored
+   recovery glow blended on top per Big-11 muscle. The glow uses mix-blend-mode:
+   screen so the body's own muscle shading shows THROUGH the light (the ref-*
+   heatmap look Daniel wants), softly blurred so it reads as a lit muscle belly,
+   not a flat patch. The base image is rounded + framed to sit in a pulse-card. */
+.body-photo {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 50% 22%, color-mix(in oklab, var(--paper) 88%, #000 12%) 0%, #07090b 100%);
+  /* Subtle inner vignette frame — premium dark stage for the render. */
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--line) 40%, transparent);
+}
+.body-photo__base {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* Lift the grey render slightly so muscle detail survives the dark stage. */
+  filter: brightness(1.04) contrast(1.02);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.body-photo__glow {
+  position: absolute;
+  /* left/top are the glow CENTER (component sets %); pull back by half size. */
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  /* Soft radial blob of the recovery color, fading to transparent at the edge.
+     screen blend keeps the underlying muscle shading visible through the light. */
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--glow-color) 85%, transparent) 0%,
+    color-mix(in oklab, var(--glow-color) 45%, transparent) 45%,
+    transparent 78%
+  );
+  mix-blend-mode: screen;
+  filter: blur(5px);
+}
+
 /* Fata / Spate view toggle — small segmented control above the figure.
    Pulse styling: dark inset track, volt-accented active segment. Pointer/focus
    states obey the global focus ring. No motion that needs reduced-motion gating

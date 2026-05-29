@@ -1,12 +1,11 @@
-// ══ MUSCLE BODY MAP — anatomical recovery figure (Big-11) ════════════════════
-// Daniel's brief (v2 polish): a PREMIUM, near-photoreal dark-mode anatomy
-// visualization where each muscle group glows by recovery state
-// (fatigued → ember-red, partial → gold, recovered → volt). v1 was a flat-fill
-// front-only figure; v2 raises FIDELITY (per-region radial gradients = muscle-
-// belly depth, fascia separation lines, layered outer glow) and COVERAGE
-// (sex-specific male/female figures + a Fata/Spate toggle so the posterior chain
-// — spate / fese / picioare-hamstrings — is finally painted on a body, not only
-// in the legend). NOT a gorilla, NOT a stickman, NOT circles.
+// ══ MUSCLE BODY MAP — photoreal recovery body (Big-11) ════════════════════════
+// Daniel's brief: a PREMIUM, photoreal dark-mode anatomy visualization where each
+// muscle group glows by recovery state (fatigued → ember-red, partial → gold,
+// recovered → volt). The base is now a real grey-anatomy RENDER (Daniel's own
+// 4 images: male/female × front/back, optimized to WebP), and over it we paint a
+// soft colored GLOW per Big-11 muscle, mix-blend-mode: screen, so the body's own
+// muscle shading shows through the light. v1/v2 were a hand-drawn SVG figure; that
+// figure is KEPT as a graceful fallback if the image fails to load (onError).
 //
 // DATA CONTRACT (unchanged — drop-in, matched 1:1 with MuscleRecoveryGrid):
 //   useMuscleRecoveryGroups() → { group, label, state }[] where state is the
@@ -15,52 +14,55 @@
 //     piept · spate · umeri · biceps · triceps · antebrate · core ·
 //     picioare-quads · picioare-hamstrings · fese · gambe
 //   Same hook, same discrete states, same color ramp, same a11y labels, same
-//   reduced-motion gating, same cold/empty state. ONLY fidelity + coverage rise.
+//   reduced-motion gating, same cold/empty state. SAME exported API.
 //
-// SEX: male/female front+back path sets, chosen from the SAME source the BF/Navy
-// strip uses (onboardingStore data.sex 'm' | 'f'); null → male as a neutral
-// default (matches BMR sex-avg fallback elsewhere). Proportions are natural
-// (male: broader shoulders; female: waist taper + wider hips), never exaggerated.
+// SEX: male/female base, chosen from the SAME source the BF/Navy strip uses
+// (onboardingStore data.sex 'm' | 'f'); null → male as a neutral default (matches
+// the BMR sex-avg fallback elsewhere).
 //
-// COLOR never the sole carrier of meaning: every drawn region has a paired
-// accessible label, plus the legend + the per-group readout (color-blind safe,
-// WCAG 1.4.1). The readout still carries EVERY Big-11 group regardless of view.
+// COLOR never the sole carrier of meaning: every glow has a paired accessible
+// label, plus the legend + the per-group readout (color-blind safe, WCAG 1.4.1).
+// The readout still carries EVERY Big-11 group regardless of view.
 //
 // MOTION: a soft glow pulse on stressed regions. The keyframe is named so the
 // global prefers-reduced-motion block in global.css collapses it; we ALSO guard
 // inline (animation only attached when motion is allowed) for belt-and-braces.
 //
 // EMPTY / COLD STATE: a fresh user (no sessions) yields all-'recovered' from the
-// engine. We additionally detect the cold case (no real training data) and render
-// the figure DIMMED/neutral with an explicit empty note — no recovery claim.
+// engine. We detect the cold case and render the body DIMMED/neutral with an
+// explicit empty note — no recovery claim, no colored glow.
 
-import type { JSX } from 'react';
+import type { CSSProperties, JSX } from 'react';
 import { useMemo, useState } from 'react';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useMuscleRecoveryGroups } from './MuscleRecoveryGrid';
-import { getBodyFigure, type Sex, type View } from './muscleBodyAnatomy';
+import {
+  getBodyFigure,
+  getBodyImageSrc,
+  getGlowRegions,
+  type Sex,
+  type View,
+} from './muscleBodyAnatomy';
 import type { RecoveryState } from '../../../engine/muscleRecovery.js';
 import { t } from '../../../i18n/index.js';
 
-// ── State → color token (red→orange→yellow→green spectrum, Pulse palette) ──────
+// ── State → color token (red→orange→green spectrum, Pulse palette) ─────────────
 // recovered = volt (electric lime/green), partial = gold (amber/yellow),
-// fatigued = ember-red. The intermediate orange lives in the gradient + glow.
+// fatigued = ember-red.
 const STATE_COLOR: Record<RecoveryState, string> = {
   recovered: 'var(--volt)',
   partial: 'var(--gold)',
   fatigued: 'var(--ember-red)',
 };
 
-// Neutral/cold figure tint (no recovery data) — muted line color, no claim.
+// Neutral/cold tint (no recovery data) — muted line color, no claim.
 const NEUTRAL_FILL = 'var(--line)';
 
-// Legend order = severity ramp red→green so the gradient reads left→right.
+// Legend order = severity ramp red→green so the gradient reads top→bottom.
 const LEGEND_ORDER: RecoveryState[] = ['fatigued', 'partial', 'recovered'];
 
-// Stable SVG gradient id per state (inner highlight → outer state color). One
-// set lives in <defs>; regions reference them so the fill reads as a lit muscle
-// belly rather than a flat patch (the v1 → v2 fidelity lift).
+// ── SVG fallback fidelity ids (only used if the image fails to load) ───────────
 const GRAD_ID: Record<RecoveryState, string> = {
   recovered: 'andura-bodymap-grad-recovered',
   partial: 'andura-bodymap-grad-partial',
@@ -68,6 +70,10 @@ const GRAD_ID: Record<RecoveryState, string> = {
 };
 const NEUTRAL_GRAD_ID = 'andura-bodymap-grad-neutral';
 const GLOW_FILTER_ID = 'andura-bodymap-glow';
+
+// Rendered body box (CSS px). 2:3 aspect matches the 640×960 source renders.
+const BOX_W = 150;
+const BOX_H = 225;
 
 // Reduced-motion gate. The glow keyframe is ALSO collapsed by the global
 // prefers-reduced-motion block in global.css; this is the belt-and-braces JS
@@ -91,8 +97,12 @@ export function MuscleBodyMap(): JSX.Element | null {
   // Fata / Spate — UI-local only (persist nothing). Default front.
   const [view, setView] = useState<View>('front');
 
+  // Photoreal base image failed to load → fall back to the hand-drawn SVG figure
+  // so the centerpiece NEVER breaks (offline cold-cache, decode error, etc.).
+  const [imgFailed, setImgFailed] = useState(false);
+
   // Cold state: no real session data → the engine reports everything as
-  // 'recovered' by baseline, which would paint a fully-green figure that
+  // 'recovered' by baseline, which would paint a fully-green body that
   // OVER-claims recovery for someone who never trained. Detect the empty case
   // and render neutral instead (data honesty — Pulse blueprint flag).
   const isCold = !Array.isArray(sessionsHistory) || sessionsHistory.length === 0;
@@ -104,7 +114,6 @@ export function MuscleBodyMap(): JSX.Element | null {
     return map;
   }, [groups]);
 
-  const figure = getBodyFigure(sex, view);
   const reduceMotion = prefersReducedMotion();
 
   // Engine returned nothing (threw / empty taxonomy) → render nothing so a bare
@@ -119,6 +128,12 @@ export function MuscleBodyMap(): JSX.Element | null {
       ? t('progres.recovery.bodyMap.figureAltBack')
       : t('progres.recovery.bodyMap.figureAlt');
 
+  const labelFor = (group: string): string =>
+    groups.find((g) => g.group === group)?.label ?? group;
+
+  const glows = getGlowRegions(view);
+  const imageSrc = getBodyImageSrc(sex, view);
+
   return (
     <section
       data-testid="muscle-body-map"
@@ -126,10 +141,11 @@ export function MuscleBodyMap(): JSX.Element | null {
       data-cold={isCold ? 'true' : 'false'}
       data-sex={sex}
       data-view={view}
+      data-render={imgFailed ? 'svg' : 'photo'}
       aria-label={t('progres.recovery.bodyMap.ariaLabel')}
     >
       <div className="flex items-start gap-4">
-        {/* ── Figure column (toggle + SVG) ──────────────────────────────────── */}
+        {/* ── Figure column (toggle + photoreal body / SVG fallback) ──────────── */}
         <div className="shrink-0 flex flex-col items-center gap-2">
           {/* Fata / Spate segmented toggle. */}
           <div
@@ -158,101 +174,76 @@ export function MuscleBodyMap(): JSX.Element | null {
             </button>
           </div>
 
-          <svg
-            width={140}
-            height={340}
-            viewBox="0 0 140 340"
-            role="img"
-            aria-label={figureAlt}
-            data-testid="body-map-figure"
-            style={{ opacity: isCold ? 0.55 : 1 }}
-          >
-            {/* ── Fidelity defs: per-state belly gradients + layered glow ────── */}
-            <defs>
-              {/* Inner highlight → outer state color: reads as a lit muscle belly
-                  with depth, not a flat fill. Same ramp for every state, tinted. */}
-              {(['recovered', 'partial', 'fatigued'] as RecoveryState[]).map((state) => (
-                <radialGradient
-                  key={state}
-                  id={GRAD_ID[state]}
-                  cx="42%"
-                  cy="34%"
-                  r="78%"
-                >
-                  <stop
-                    offset="0%"
-                    stopColor={`color-mix(in oklab, ${STATE_COLOR[state]} 92%, #fff 8%)`}
-                  />
-                  <stop offset="58%" stopColor={STATE_COLOR[state]} />
-                  <stop
-                    offset="100%"
-                    stopColor={`color-mix(in oklab, ${STATE_COLOR[state]} 62%, #000 38%)`}
-                  />
-                </radialGradient>
-              ))}
-              {/* Neutral / cold belly — muted, no recovery claim. */}
-              <radialGradient id={NEUTRAL_GRAD_ID} cx="42%" cy="34%" r="78%">
-                <stop
-                  offset="0%"
-                  stopColor={`color-mix(in oklab, ${NEUTRAL_FILL} 70%, #fff 6%)`}
-                />
-                <stop offset="100%" stopColor={`color-mix(in oklab, ${NEUTRAL_FILL} 55%, #000 45%)`} />
-              </radialGradient>
-              {/* Refined outer glow — soft, premium halo around stressed regions. */}
-              <filter id={GLOW_FILTER_ID} x="-40%" y="-40%" width="180%" height="180%">
-                <feGaussianBlur stdDeviation="2.4" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-
-            {/* Neutral body silhouette base with a subtle vertical depth shade. */}
-            <path
-              d={figure.silhouette}
-              fill="color-mix(in oklab, var(--line) 70%, transparent)"
-              stroke="var(--line)"
-              strokeWidth={1}
-              data-testid="body-map-silhouette"
+          {imgFailed ? (
+            <SvgFallbackFigure
+              sex={sex}
+              view={view}
+              isCold={isCold}
+              reduceMotion={reduceMotion}
+              stateByGroup={stateByGroup}
+              figureAlt={figureAlt}
+              labelFor={labelFor}
+              regionAria={regionAria}
             />
-
-            {/* Colored muscle regions. */}
-            {figure.regions.map((region, i) => {
-              const state = stateByGroup[region.group];
-              const drawCold = isCold || state === undefined;
-              const fill = drawCold ? `url(#${NEUTRAL_GRAD_ID})` : `url(#${GRAD_ID[state]})`;
-              const groupLabel =
-                groups.find((g) => g.group === region.group)?.label ?? region.group;
-              // Glow + pulse only for stressed states in a live (non-cold) figure,
-              // and only when motion is allowed.
-              const stressed =
-                !drawCold && !reduceMotion && (state === 'fatigued' || state === 'partial');
-              return (
-                <path
-                  key={`${region.group}-${i}`}
-                  d={region.path}
-                  fill={fill}
-                  // Fascia / muscle-separation line — a hairline of the state color
-                  // around each belly so adjacent regions read as distinct muscles.
-                  stroke={
-                    drawCold
-                      ? 'color-mix(in oklab, var(--line) 80%, transparent)'
-                      : `color-mix(in oklab, ${STATE_COLOR[state]} 55%, #000 45%)`
-                  }
-                  strokeWidth={0.6}
-                  data-testid={`body-region-${region.group}`}
-                  data-recovery-state={drawCold ? 'neutral' : state}
-                  role="img"
-                  aria-label={drawCold ? groupLabel : regionAria(groupLabel, state)}
-                  className={stressed ? 'body-map-region--stressed' : undefined}
-                  style={{
-                    filter: drawCold ? 'none' : `url(#${GLOW_FILTER_ID})`,
-                  }}
-                />
-              );
-            })}
-          </svg>
+          ) : (
+            <div
+              className="body-photo"
+              data-testid="body-map-figure"
+              role="img"
+              aria-label={figureAlt}
+              style={
+                {
+                  width: BOX_W,
+                  height: BOX_H,
+                  opacity: isCold ? 0.55 : 1,
+                } as CSSProperties
+              }
+            >
+              {/* Photoreal grey-anatomy base render (sex + view). */}
+              <img
+                className="body-photo__base"
+                src={imageSrc}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                data-testid="body-map-image"
+                onError={() => setImgFailed(true)}
+              />
+              {/* Colored recovery glow per Big-11 group, blended onto the body. */}
+              {glows.map((glow, i) => {
+                const state = stateByGroup[glow.group];
+                const drawCold = isCold || state === undefined;
+                const color = drawCold ? NEUTRAL_FILL : STATE_COLOR[state];
+                const stressed =
+                  !drawCold && !reduceMotion && (state === 'fatigued' || state === 'partial');
+                const d = glow.r * 2 * 100; // diameter as % of box width
+                return (
+                  <span
+                    key={`${glow.group}-${i}`}
+                    className={`body-photo__glow${stressed ? ' body-map-region--stressed' : ''}`}
+                    data-testid={`body-region-${glow.group}`}
+                    data-recovery-state={drawCold ? 'neutral' : state}
+                    role="img"
+                    aria-label={
+                      drawCold ? labelFor(glow.group) : regionAria(labelFor(glow.group), state)
+                    }
+                    style={
+                      {
+                        left: `${glow.cx * 100}%`,
+                        top: `${glow.cy * 100}%`,
+                        // r is a fraction of WIDTH → size both axes off width so
+                        // the blob stays circular regardless of the 2:3 box.
+                        width: `${d}%`,
+                        height: `${(d * BOX_W) / BOX_H}%`,
+                        '--glow-color': color,
+                        opacity: drawCold ? 0.4 : 1,
+                      } as CSSProperties
+                    }
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* ── Legend + per-group readout ──────────────────────────────────── */}
@@ -275,12 +266,10 @@ export function MuscleBodyMap(): JSX.Element | null {
           </ul>
           {/* Per-group readout — carries EVERY group regardless of the active
               view so no state is color-only or hidden. The data-on-view flag
-              marks which groups the current figure actually paints. */}
+              marks which groups the current body actually paints. */}
           <ul className="flex flex-col gap-1" data-testid="body-map-readout">
             {groups.map(({ group, label, state }) => {
-              // Is this group painted on the figure currently shown? Used only as
-              // a data flag (no group is ever hidden from the readout itself).
-              const paintedGroups = new Set(figure.regions.map((r) => r.group));
+              const paintedGroups = new Set(glows.map((g) => g.group));
               const onView = paintedGroups.has(group);
               return (
                 <li
@@ -313,5 +302,107 @@ export function MuscleBodyMap(): JSX.Element | null {
         </div>
       </div>
     </section>
+  );
+}
+
+// ── SVG FALLBACK FIGURE ────────────────────────────────────────────────────────
+// Rendered only when the photoreal base image fails to load. This is the prior
+// hand-drawn anatomy figure (per-state belly gradients + soft glow) so the
+// centerpiece degrades gracefully instead of vanishing. Same testids as the photo
+// path (body-map-figure, body-region-<group>) so a11y + readout stay consistent.
+interface FallbackProps {
+  sex: Sex;
+  view: View;
+  isCold: boolean;
+  reduceMotion: boolean;
+  stateByGroup: Record<string, RecoveryState>;
+  figureAlt: string;
+  labelFor: (group: string) => string;
+  regionAria: (label: string, state: RecoveryState) => string;
+}
+
+function SvgFallbackFigure({
+  sex,
+  view,
+  isCold,
+  reduceMotion,
+  stateByGroup,
+  figureAlt,
+  labelFor,
+  regionAria,
+}: FallbackProps): JSX.Element {
+  const figure = getBodyFigure(sex, view);
+  return (
+    <svg
+      width={140}
+      height={340}
+      viewBox="0 0 140 340"
+      role="img"
+      aria-label={figureAlt}
+      data-testid="body-map-figure"
+      style={{ opacity: isCold ? 0.55 : 1 }}
+    >
+      <defs>
+        {(['recovered', 'partial', 'fatigued'] as RecoveryState[]).map((state) => (
+          <radialGradient key={state} id={GRAD_ID[state]} cx="42%" cy="34%" r="78%">
+            <stop
+              offset="0%"
+              stopColor={`color-mix(in oklab, ${STATE_COLOR[state]} 92%, #fff 8%)`}
+            />
+            <stop offset="58%" stopColor={STATE_COLOR[state]} />
+            <stop
+              offset="100%"
+              stopColor={`color-mix(in oklab, ${STATE_COLOR[state]} 62%, #000 38%)`}
+            />
+          </radialGradient>
+        ))}
+        <radialGradient id={NEUTRAL_GRAD_ID} cx="42%" cy="34%" r="78%">
+          <stop offset="0%" stopColor={`color-mix(in oklab, ${NEUTRAL_FILL} 70%, #fff 6%)`} />
+          <stop offset="100%" stopColor={`color-mix(in oklab, ${NEUTRAL_FILL} 55%, #000 45%)`} />
+        </radialGradient>
+        <filter id={GLOW_FILTER_ID} x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="2.4" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      <path
+        d={figure.silhouette}
+        fill="color-mix(in oklab, var(--line) 70%, transparent)"
+        stroke="var(--line)"
+        strokeWidth={1}
+        data-testid="body-map-silhouette"
+      />
+
+      {figure.regions.map((region, i) => {
+        const state = stateByGroup[region.group];
+        const drawCold = isCold || state === undefined;
+        const fill = drawCold ? `url(#${NEUTRAL_GRAD_ID})` : `url(#${GRAD_ID[state]})`;
+        const stressed =
+          !drawCold && !reduceMotion && (state === 'fatigued' || state === 'partial');
+        return (
+          <path
+            key={`${region.group}-${i}`}
+            d={region.path}
+            fill={fill}
+            stroke={
+              drawCold
+                ? 'color-mix(in oklab, var(--line) 80%, transparent)'
+                : `color-mix(in oklab, ${STATE_COLOR[state]} 55%, #000 45%)`
+            }
+            strokeWidth={0.6}
+            data-testid={`body-region-${region.group}`}
+            data-recovery-state={drawCold ? 'neutral' : state}
+            role="img"
+            aria-label={drawCold ? labelFor(region.group) : regionAria(labelFor(region.group), state)}
+            className={stressed ? 'body-map-region--stressed' : undefined}
+            style={{ filter: drawCold ? 'none' : `url(#${GLOW_FILTER_ID})` }}
+          />
+        );
+      })}
+    </svg>
   );
 }
