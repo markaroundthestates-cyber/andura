@@ -120,6 +120,49 @@ describe('SettingsExport — render + download flow', () => {
     blobSpy.mockRestore();
   });
 
+  it('GDPR Art. 20 — export includes archived sessions store (overflow sessions)', async () => {
+    // workoutStore archiveaza overflow sessions in dexieMigration sessions store
+    // inainte de slice. Exportul trebuie sa le includa, altfel datele retinute
+    // local sunt incomplete in export.
+    vi.doMock('../../../lib/dexieMigration', () => ({
+      getArchivedSessions: vi.fn(async () => [
+        { ts: 100, archivedAt: 200, kg: 1234 },
+      ]),
+    }));
+    const { SettingsExport: FreshExport } = await import('../../../routes/screens/cont/SettingsExport');
+
+    let captured = '';
+    const RealBlob = globalThis.Blob;
+    const blobSpy = vi
+      .spyOn(globalThis, 'Blob')
+      .mockImplementation((parts) => {
+        captured = Array.isArray(parts) ? parts.join('') : String(parts);
+        return new RealBlob(parts as BlobPart[]);
+      });
+    Object.defineProperty(URL, 'createObjectURL', { value: vi.fn(() => 'blob:mock'), configurable: true });
+    Object.defineProperty(URL, 'revokeObjectURL', { value: vi.fn(), configurable: true });
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {}); // jsdom no-nav
+
+    render(
+      <MemoryRouter initialEntries={['/app/cont/settings-export']}>
+        <Routes>
+          <Route path="/app/cont/settings-export" element={<FreshExport />} />
+          <Route path="/app/cont" element={<LocationProbe />} />
+        </Routes>
+      </MemoryRouter>
+    );
+    fireEvent.click(screen.getByTestId('settings-export-trigger'));
+    await waitFor(() => expect(screen.getByTestId('settings-export-success')).toBeInTheDocument());
+
+    const payload = JSON.parse(captured);
+    expect(payload.tier1.archivedSessions).toBeDefined();
+    expect(payload.tier1.archivedSessions).toHaveLength(1);
+    expect(payload.tier1.archivedSessions[0].kg).toBe(1234);
+    blobSpy.mockRestore();
+    vi.doUnmock('../../../lib/dexieMigration');
+    vi.resetModules();
+  });
+
   it('S-02 — export does NOT include firebase auth tokens', async () => {
     localStorage.setItem('firebase-id-token', 'secret-jwt');
     localStorage.setItem('firebase-refresh-token', 'secret-refresh');
