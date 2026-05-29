@@ -207,6 +207,43 @@ describe('PostRpe — submit pipeline', () => {
     expect(useWorkoutStore.getState().streak).toBe(5);
   });
 
+  // [15.022] In-flight submit latch — handleSubmit is async (awaits
+  // getTodayWorkout). A fast double-tap on Save must NOT run the finalize
+  // pipeline twice (else: duplicate sessionsHistory entry + double streak).
+  it('double-tap Save increments streak only ONCE (in-flight latch)', async () => {
+    const yesterdayIso = new Date(Date.now() - 86_400_000).toLocaleDateString('sv');
+    useWorkoutStore.setState({ streak: 5, lastStreakDate: yesterdayIso });
+    renderPostRpe();
+    // Pick a feel, then hammer Save twice before the async pipeline resolves.
+    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    const save = screen.getByTestId('post-rpe-save');
+    fireEvent.click(save);
+    fireEvent.click(save);
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().streak).toBe(6);
+    });
+    // Settle any second-tap microtask; streak must remain 6 (not 7).
+    await Promise.resolve();
+    expect(useWorkoutStore.getState().streak).toBe(6);
+  });
+
+  it('double-tap Save runs the finalize pipeline ONCE (getTodayWorkout called 1x)', async () => {
+    vi.mocked(getTodayWorkout).mockClear();
+    renderPostRpe();
+    fireEvent.click(screen.getByRole('button', { name: /Just right/i }));
+    const save = screen.getByTestId('post-rpe-save');
+    fireEvent.click(save);
+    fireEvent.click(save);
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession).not.toBeNull();
+    });
+    await Promise.resolve();
+    // The async pipeline (which awaits getTodayWorkout) ran exactly once — the
+    // second tap was dropped by the in-flight latch. Without the latch the
+    // second tap would re-enter before navigate and call it twice.
+    expect(vi.mocked(getTodayWorkout)).toHaveBeenCalledTimes(1);
+  });
+
   it('submit sets lastSession cu title + meta + ts', async () => {
     renderPostRpe();
     submit(/Just right/i);
