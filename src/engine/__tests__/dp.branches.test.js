@@ -420,6 +420,73 @@ describe('getInitialRecommendation', () => {
     expect(r.confidence).toBe(0.4);
     expect(r.isInitial).toBe(true);
   });
+
+  // ── cold-start fallback scales by PROFILE (anti equipment-floor bug) ────────
+  // The bug: a 110kg trained user was offered Flat DB Press at the dumbbell
+  // floor (the fallback returned the equipment minimum, ignoring bodyweight).
+  // Fix: when ctx carries bodyweight/sex/experience, the no-data fallback scales
+  // by the profile (bodyweight x movement-pattern fraction x sex x experience),
+  // snapped to the equipment stack and clamped >= equipment min.
+
+  it('heavy trained user gets a realistic Flat DB Press start, well above equipment min', () => {
+    // 110kg male intermediate, no logs, no similar log → profile-scaled fallback.
+    const r = getInitialRecommendation('Flat DB Press', {
+      recentLogs: [],
+      bodyweightKg: 110,
+      sex: 'm',
+      experience: 'intermediate',
+    });
+    expect(r.confidence).toBe(0.4);
+    expect(r.isInitial).toBe(true);
+    // Dumbbell floor is 7kg; the buggy value was ~7-10. A 110kg lifter must get
+    // a clearly heavier, still-conservative start.
+    expect(r.kg).toBeGreaterThanOrEqual(20);
+    expect(r.kg).toBe(r.weight);
+    // Snapped to a real dumbbell value (set: 7,8,9,10,12.5,15,17.5,20,22.5,25,...).
+    expect(r.kg).toBe(25);
+  });
+
+  it('light beginner stays conservative (floored at the population prior, never below equipment min)', () => {
+    // 55kg female beginner, no logs → scaled start is small; floor keeps it at
+    // the conservative prior, never dropping below the equipment minimum.
+    const r = getInitialRecommendation('Lateral Raises', {
+      recentLogs: [],
+      bodyweightKg: 55,
+      sex: 'f',
+      experience: 'beginner',
+    });
+    expect(r.isInitial).toBe(true);
+    const minKg = 7; // dumbbell floor
+    expect(r.kg).toBeGreaterThanOrEqual(minKg);
+    // Lateral Raises stays light for a light beginner (NOT pushed up absurdly).
+    expect(r.kg).toBeLessThanOrEqual(10);
+  });
+
+  it('heavy user beats light user on the same exercise (monotonic in bodyweight)', () => {
+    const heavy = getInitialRecommendation('Leg Press', {
+      recentLogs: [], bodyweightKg: 110, sex: 'm', experience: 'intermediate',
+    });
+    const light = getInitialRecommendation('Leg Press', {
+      recentLogs: [], bodyweightKg: 60, sex: 'f', experience: 'beginner',
+    });
+    expect(heavy.kg).toBeGreaterThan(light.kg);
+  });
+
+  it('no bodyweight in ctx → legacy equipment-min fallback unchanged', () => {
+    // Back-compat: without a profile the fallback is byte-identical to before.
+    const withBw = getInitialRecommendation('Cable Curl', { recentLogs: [] });
+    const noCtx = getInitialRecommendation('Cable Curl', null);
+    expect(withBw.kg).toBe(noCtx.kg); // both = _minWeightForExercise('Cable Curl')
+    expect(withBw.confidence).toBe(0.4);
+  });
+
+  it('clamp holds — fallback never drops below the equipment minimum', () => {
+    // A tiny bodyweight must still respect the equipment floor (cannot underflow).
+    const r = getInitialRecommendation('Leg Press', {
+      recentLogs: [], bodyweightKg: 35, sex: 'f', experience: 'beginner',
+    });
+    expect(r.kg).toBeGreaterThanOrEqual(20); // leg_press_plates floor
+  });
 });
 
 // ── §07.198-204 — injectable clock pins the AUTO/TARGET_DATE CUT branch ───────

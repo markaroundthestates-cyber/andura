@@ -4,6 +4,7 @@ import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../const
 import { roundToEquipmentWeight, getPrevWeight } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier } from './exerciseMapping.js';
 import { now as clockNow } from './clock.js';
+import { suggestStartWeight } from './coldStartGuidelines.js';
 
 export const DP = {
   // Rep ranges per exercise
@@ -432,7 +433,7 @@ export const DP = {
 
 /**
  * @param {string} exerciseName
- * @param {{ recentLogs?: Array<any> } | null | undefined} ctx
+ * @param {{ recentLogs?: Array<any>, bodyweightKg?: number | null, sex?: string | null, experience?: string | null } | null | undefined} ctx
  */
 export function getInitialRecommendation(exerciseName, ctx) {
   const recentLogs = (ctx && ctx.recentLogs) || [];
@@ -474,11 +475,32 @@ export function getInitialRecommendation(exerciseName, ctx) {
     }
   }
 
-  // Fallback — greutate minima conservativa pe echipament
-  const minKg = _minWeightForExercise(exerciseName);
+  // Fallback — no exact log, no similar-exercise log. Scale the starting weight
+  // by the user's PROFILE (bodyweight + sex + experience) instead of returning
+  // the bare equipment floor. The flat-floor fallback gave EVERY user (including
+  // a 110kg trained lifter) the equipment minimum — the cold-start "Flat DB
+  // Press 10kg" bug. suggestStartWeight applies a conservative per-movement
+  // bodyweight coefficient (RIR + AaFriction recalibrate after the first set),
+  // floored at the population prior, then we snap to the equipment stack (which
+  // enforces the never-below-floor / never-absurd clamp).
+  const bw = ctx && Number(ctx.bodyweightKg);
+  const hasBw = !!bw && Number.isFinite(bw) && bw > 0;
+  let fallbackKg;
+  if (hasBw) {
+    const experience = (ctx && typeof ctx.experience === 'string' && ctx.experience) || 'beginner';
+    const scaled = suggestStartWeight(exerciseName, experience, {
+      bodyweightKg: bw,
+      sex: ctx ? ctx.sex : undefined,
+    });
+    // Snap to a real equipment value, then never below the equipment minimum.
+    fallbackKg = Math.max(roundToEquipmentWeight(scaled, exerciseName), _minWeightForExercise(exerciseName));
+  } else {
+    // No bodyweight available → legacy conservative equipment minimum (unchanged).
+    fallbackKg = _minWeightForExercise(exerciseName);
+  }
   return {
-    kg: minKg,
-    weight: minKg,
+    kg: fallbackKg,
+    weight: fallbackKg,
     repsTarget: 10,
     reps: 10,
     sets: 3,
