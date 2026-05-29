@@ -60,10 +60,12 @@ export interface ProgresState {
  *
  * Pana acum BF% / SettingsProfile / BodyFatStrip citeau DOAR ultima intrare din
  * bodyData (`bodyData[length-1]`). Dar Progres → Masuratori si Cont → Profil
- * scriu in acelasi array, fiecare cu PROPRIA SELECTIE de campuri:
- *   - Cont scrie talie + gat (date pentru US Navy BF%)
- *   - Progres scrie talie + gat + piept + sold + biceps + coapsa
- * Cand un user introduce gat in Cont apoi piept in Progres, ultima intrare nu
+ * scriu in acelasi array, fiecare cu PROPRIA SELECTIE de campuri (vezi
+ * BODY_FIELDS — circumferinte talie/gat/sold + pliuri cutanate; circumferintele
+ * piept/biceps/coapsa au fost eliminate ca noise per §progress-v2):
+ *   - Cont scrie talie + gat (date pentru US Navy BF% barbati)
+ *   - Progres scrie talie + gat + sold + pliuri cutanate (Jackson-Pollock)
+ * Cand un user introduce gat in Cont apoi pliuri in Progres, ultima intrare nu
  * mai are gat → BF% cade pe Deurenberg (estimat populational) desi gat-ul tot
  * exista in istoric. Aceeasi sursa logica = aceeasi sursa fizica de adevar.
  *
