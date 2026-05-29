@@ -143,7 +143,7 @@ export function CalendarHeatmap(): JSX.Element {
             onClick={() => navMonth(-1)}
             aria-label={t('calendar.heatmap.prevMonth')}
             data-testid="cal-prev"
-            className="w-[30px] h-[30px] rounded-[9px] border border-line flex items-center justify-center press-feedback"
+            className="relative w-[30px] h-[30px] rounded-[9px] border border-line flex items-center justify-center press-feedback before:absolute before:-inset-[7px] before:content-['']"
             style={{ background: 'var(--surface-2)' }}
           >
             <ChevronLeft className="w-3.5 h-3.5 text-ink" aria-hidden="true" />
@@ -153,7 +153,7 @@ export function CalendarHeatmap(): JSX.Element {
             onClick={() => navMonth(1)}
             aria-label={t('calendar.heatmap.nextMonth')}
             data-testid="cal-next"
-            className="w-[30px] h-[30px] rounded-[9px] border border-line flex items-center justify-center press-feedback"
+            className="relative w-[30px] h-[30px] rounded-[9px] border border-line flex items-center justify-center press-feedback before:absolute before:-inset-[7px] before:content-['']"
             style={{ background: 'var(--surface-2)' }}
           >
             <ChevronRight className="w-3.5 h-3.5 text-ink" aria-hidden="true" />

@@ -127,7 +127,7 @@ export function NutritionInline(): JSX.Element {
                 onClick={startKcalEdit}
                 aria-label={t('bodyComp.nutritionInline.editKcalAriaLabel')}
                 data-testid="nutri-kcal-edit"
-                className="p-1 text-ink2"
+                className="relative p-1 text-ink2 before:absolute before:-inset-[11px] before:content-['']"
                 disabled={kcalEdit}
               >
                 <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
@@ -170,7 +170,7 @@ export function NutritionInline(): JSX.Element {
                 onClick={startProteinEdit}
                 aria-label={t('bodyComp.nutritionInline.editProteinAriaLabel')}
                 data-testid="nutri-protein-edit"
-                className="p-1 text-ink2"
+                className="relative p-1 text-ink2 before:absolute before:-inset-[11px] before:content-['']"
                 disabled={proteinEdit}
               >
                 <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
@@ -209,7 +209,7 @@ export function NutritionInline(): JSX.Element {
             type="button"
             onClick={saveBoth}
             data-testid="nutri-save"
-            className="w-full py-2 bg-brick text-paper rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5"
+            className="w-full min-h-[44px] py-2 bg-brick text-paper rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5"
           >
             <Check className="w-4 h-4" aria-hidden="true" />
             {t('bodyComp.nutritionInline.saveCta')}

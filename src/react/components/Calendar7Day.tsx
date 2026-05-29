@@ -85,7 +85,7 @@ export function Calendar7Day(): JSX.Element {
           onClick={handleToggleEdit}
           data-testid="calendar-edit-toggle"
           aria-label={editMode ? t('calendar.day7.editAriaSave') : t('calendar.day7.editAriaEdit')}
-          className="absolute right-0 w-9 h-9 grid place-items-center rounded-xl transition-colors"
+          className="absolute right-0 w-9 h-9 grid place-items-center rounded-xl transition-colors before:absolute before:-inset-1 before:content-['']"
           style={{
             color: editMode ? 'var(--accent)' : 'var(--ink-3)',
             background: 'var(--surface-2)',
@@ -115,7 +115,7 @@ export function Calendar7Day(): JSX.Element {
               data-day={label}
               data-today={isToday ? 'true' : undefined}
               aria-label={`${label} - ${trainingDay ? t('calendar.day7.kindTraining') : t('calendar.day7.kindRest')}`}
-              className="flex-1 py-2.5 rounded-xl text-xs font-bold disabled:cursor-default transition-[background,color,box-shadow,transform] duration-150 hover:scale-[1.02] enabled:hover:scale-[1.04] active:scale-[0.94]"
+              className="flex-1 min-h-[44px] py-2.5 rounded-xl text-xs font-bold disabled:cursor-default transition-[background,color,box-shadow,transform] duration-150 hover:scale-[1.02] enabled:hover:scale-[1.04] active:scale-[0.94]"
               // ANDURA PULSE reskin (2026-05-29) — the legacy heat-green pill is
               // replaced by the Pulse accent (brick) with a soft volt glow on
               // training days (mockup interfata-noua/screens-antrenor.jsx:84-103
