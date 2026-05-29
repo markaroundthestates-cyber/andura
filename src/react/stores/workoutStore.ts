@@ -676,15 +676,33 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       name: 'wv2-workout-store',
       storage: createJSONStorage(() => localStorage),
       // Persist selective: pausedSnapshot + lastSession + sessionsHistory +
-      // streak + lastStreakDate (NU sessionStart/sessionContext runtime-only).
+      // streak + lastStreakDate (NU sessionContext/refusalTriedByEx runtime-only).
       // Phase 4 task_21 adds history pentru Istoric tab persistent browse.
       // U-05: lastStreakDate persistat ca day-boundary sa supravietuiasca reload.
+      //
+      // 08.063 fix — IN-PROGRESS LIVE SESSION persisted (sessionStart + exIdx +
+      // setIdx + phase + history + prHit + prData). Pre-fix doar pausedSnapshot
+      // supravietuia reload; o sesiune ACTIVA (user logand seturi live) pierdea
+      // TACIT toate seturile + pozitia la un reload accidental (swipe-refresh
+      // mobil, crash tab, OS kill PWA). Acum reload-ul REIA sesiunea: la mount
+      // Workout.tsx vede getCurrentMode === 'active' (sessionStart != null) si NU
+      // re-porneste — continua exact de unde a ramas cu seturile logate intacte.
+      // sessionContext/refusalTriedByEx raman runtime-only (hint-uri de adaptare,
+      // NU date introduse de user — pierderea lor la reload nu pierde seturi).
       partialize: (state) => ({
         pausedSnapshot: state.pausedSnapshot,
         lastSession: state.lastSession,
         sessionsHistory: state.sessionsHistory,
         streak: state.streak,
         lastStreakDate: state.lastStreakDate,
+        // In-progress live session — resume on reload (no silent set loss).
+        sessionStart: state.sessionStart,
+        exIdx: state.exIdx,
+        setIdx: state.setIdx,
+        phase: state.phase,
+        history: state.history,
+        prHit: state.prHit,
+        prData: state.prData,
       }) as Partial<WorkoutState & WorkoutActions>,
     }
   )
