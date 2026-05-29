@@ -124,13 +124,13 @@ export function Calendar7Day(): JSX.Element {
               // colors are tokens (no raw hex) so every theme + dark mode reads
               // native; the WCAG-tuned --on-accent keeps text legible on fill.
               style={{
-                background: trainingDay ? 'var(--accent)' : 'var(--surface-2)',
+                background: trainingDay ? 'var(--brick)' : 'var(--surface-2)',
                 color: trainingDay ? 'var(--on-accent)' : 'var(--ink-3)',
                 border: trainingDay
-                  ? '1px solid var(--accent)'
+                  ? '1px solid var(--brick)'
                   : '1px solid var(--line)',
                 boxShadow: trainingDay
-                  ? '0 0 18px -5px color-mix(in oklab, var(--accent) 75%, transparent)'
+                  ? '0 0 18px -5px color-mix(in oklab, var(--brick) 75%, transparent)'
                   : 'none',
                 outline: isToday
                   ? '2px solid color-mix(in oklab, var(--aqua) 75%, transparent)'
