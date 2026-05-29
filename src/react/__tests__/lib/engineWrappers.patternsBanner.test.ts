@@ -2,7 +2,8 @@
 // Pure-function engines wire (detectGlobalStagnation + getAdherenceScore)
 // NU CoachDirector.buildSession heavyweight side-effects pollution.
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { setLocale, _resetI18nCache } from '../../../i18n/index.js';
 
 vi.mock('../../../engine/stagnationDetector.js', () => ({
   detectGlobalStagnation: vi.fn(() => ({ maxStagnationWeeks: 0, byExercise: {} })),
@@ -22,6 +23,11 @@ import { useWorkoutStore } from '../../stores/workoutStore';
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // The banner text now resolves via t(); these specs assert the RO wording,
+  // so pin RO locale (default locale is EN post 2026-05-28).
+  setLocale('ro');
+  _resetI18nCache();
+  setLocale('ro');
   vi.mocked(detectGlobalStagnation).mockReturnValue({ maxStagnationWeeks: 0, byExercise: {} });
   vi.mocked(getAdherenceScore).mockReturnValue({ score: 75, color: 'var(--accent)', label: 'OK' });
   // Seed 3 dummy sessions to pass LOW_ADHERENCE gate. Tests that target the
@@ -33,6 +39,11 @@ beforeEach(() => {
       { ts: 3, title: 's3', meta: '' },
     ],
   });
+});
+
+afterEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
 });
 
 describe('engineWrappers — getPatternsBanner Option B composer', () => {

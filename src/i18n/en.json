@@ -198,7 +198,8 @@
       "lastWeek": "last week"
     },
     "recoveredQuote": "{group} has recovered since {when} — let's nail it.",
-    "fallbackQuote": "Today is your day. Show up — your future self will thank you."
+    "fallbackQuote": "Today is your day. Show up — your future self will thank you.",
+    "laggingSignal": "{group} undervolume {weeks} wks — focus on it today."
   },
 
   "restOverlay": {

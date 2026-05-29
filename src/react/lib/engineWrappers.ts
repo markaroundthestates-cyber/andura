@@ -1107,7 +1107,9 @@ export function getPatternsBanner(): PatternBanner[] {
       banners.push({
         id: 'STAGNATION',
         severity: 'warn',
-        text: `Stagnare ${stag.maxStagnationWeeks} saptamani. Coach ajusteaza intensitatea.`,
+        // i18n render boundary: resolve to localized copy via t() (engine-side
+        // stagnationDetector stays locale-agnostic — it returns a week count).
+        text: __t('patterns.stagnationWeeks', { weeks: stag.maxStagnationWeeks }),
       });
     }
   } catch (e) {
@@ -1133,7 +1135,7 @@ export function getPatternsBanner(): PatternBanner[] {
         banners.push({
           id: 'LOW_ADHERENCE',
           severity: 'info',
-          text: 'Adherenta scazuta saptamana asta. Reia ritmul cu o sesiune scurta.',
+          text: __t('patterns.lowAdherenceFull'),
         });
       }
     }
@@ -1308,8 +1310,16 @@ export function getLaggingSignal(): string | null {
     if (!weakGroups || weakGroups.length === 0) return null;
     const topWeak = weakGroups[0];
     if (topWeak === undefined) return null;
-    const label = GROUP_LABELS_RO_BIG11[topWeak] ?? topWeak;
-    return `${label} sub-volum ${STAGNATION_WEEKS_THRESHOLD} sapt - focus azi pe sesiune.`;
+    // i18n render boundary: resolve a locale-aware muscle label (engine bucket
+    // key → coachEngine.muscleGroups.* per locale, RO label as fallback) then
+    // build the line via t() — never hardcoded RO copy (leaked under EN).
+    const i18nKey = `coachEngine.muscleGroups.${topWeak}`;
+    const localized = __t(i18nKey);
+    const label =
+      localized && localized !== i18nKey
+        ? localized
+        : (GROUP_LABELS_RO_BIG11[topWeak] ?? topWeak);
+    return __t('coachToday.laggingSignal', { group: label, weeks: STAGNATION_WEEKS_THRESHOLD });
   } catch (e) {
     console.warn('[engineWrappers] getLaggingSignal failed:', e);
     captureException(e, {

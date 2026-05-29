@@ -198,7 +198,8 @@
       "lastWeek": "saptamana trecuta"
     },
     "recoveredQuote": "{group} recupereaza din {when} - hai sa o facem curat.",
-    "fallbackQuote": "Astazi e ziua ta. Vino la sala — sinea ta viitoare iti va multumi."
+    "fallbackQuote": "Astazi e ziua ta. Vino la sala — sinea ta viitoare iti va multumi.",
+    "laggingSignal": "{group} sub-volum {weeks} sapt - focus azi pe sesiune."
   },
 
   "restOverlay": {
