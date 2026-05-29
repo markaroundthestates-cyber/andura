@@ -3,7 +3,9 @@ import {
   checkProteinDeficit, checkSleepDebt,
   checkTrainingStreak, checkKcalDeficit, checkInactivity,
   checkHydration, runProactiveChecks,
+  checkPROpportunity, checkRecoveryGroups,
 } from '../proactiveEngine.js';
+import { READINESS_PR } from '../readiness.js';
 
 const today = new Date().toLocaleDateString('sv');
 const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('sv');
@@ -151,5 +153,54 @@ describe('runProactiveChecks', () => {
     for (let i = 1; i < alerts.length; i++) {
       expect(severityOrder[alerts[i - 1].severity]).toBeLessThanOrEqual(severityOrder[alerts[i].severity]);
     }
+  });
+});
+
+// §07.198-204 — staleness/window branches are now pinnable via injected nowMs
+// (defaults to real clock). A FIXED epoch decouples these tests from the wall
+// clock so "days ago" thresholds are deterministic regardless of when CI runs.
+describe('proactiveEngine injectable clock (§07.198-204)', () => {
+  const NOW = Date.parse('2026-03-15T12:00:00Z'); // pinned reference instant
+  const DAY = 86400000;
+
+  it('checkInactivity: deterministic across the >=4d threshold with injected nowMs', () => {
+    const logs3 = [{ ex: 'Bench', ts: NOW - 3 * DAY }];
+    const logs5 = [{ ex: 'Bench', ts: NOW - 5 * DAY }];
+    expect(checkInactivity(logs3, NOW)).toBeNull();           // 3 days < 4 → no alert
+    const alert = checkInactivity(logs5, NOW);                 // 5 days >= 4 → alert
+    expect(alert).not.toBeNull();
+    expect(alert.daysSinceLast).toBe(5);
+  });
+
+  it('checkPROpportunity: 14d recency boundary pinned via injected nowMs', () => {
+    // NOTE: the "today" readiness lookup uses db.js tod() (real clock, not
+    // injectable here), so key on the real today. The 14d PR window IS the
+    // injectable branch under test — anchor it on NOW.
+    const todayKey = new Date().toLocaleDateString('sv');
+    const readiness = { [todayKey]: READINESS_PR + 5 };
+    // PR 20 days ago (relative to NOW) → outside 14d window → opportunity surfaced.
+    const oldPR = [{ isPR: true, ts: NOW - 20 * DAY }];
+    expect(checkPROpportunity(readiness, oldPR, NOW)).not.toBeNull();
+    // PR 5 days ago (relative to NOW) → inside 14d window → suppressed.
+    const recentPR = [{ isPR: true, ts: NOW - 5 * DAY }];
+    expect(checkPROpportunity(readiness, recentPR, NOW)).toBeNull();
+  });
+
+  it('checkRecoveryGroups: >5d undertrained detection pinned via injected nowMs', () => {
+    const muscleExercises = { chest: ['Bench'] };
+    const stale = [{ ex: 'Bench', ts: NOW - 6 * DAY }];   // 6 days → undertrained
+    const fresh = [{ ex: 'Bench', ts: NOW - 2 * DAY }];   // 2 days → fine
+    expect(checkRecoveryGroups(stale, {}, muscleExercises, NOW)).not.toBeNull();
+    expect(checkRecoveryGroups(fresh, {}, muscleExercises, NOW)).toBeNull();
+  });
+
+  it('runProactiveChecks threads ctx.nowMs into clock-reading checks', () => {
+    const ctx = {
+      logs: [{ ex: 'Bench', ts: NOW - 5 * DAY }],
+      nowMs: NOW,
+    };
+    const alerts = runProactiveChecks(ctx);
+    // 5-day gap → inactivity alert present deterministically.
+    expect(alerts.some(a => a.type === 'inactivity')).toBe(true);
   });
 });

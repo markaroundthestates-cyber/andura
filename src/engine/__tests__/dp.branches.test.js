@@ -421,3 +421,56 @@ describe('getInitialRecommendation', () => {
     expect(r.isInitial).toBe(true);
   });
 });
+
+// ── §07.198-204 — injectable clock pins the AUTO/TARGET_DATE CUT branch ───────
+//
+// TARGET_DATE = 2026-07-20 (src/constants.js). With phase-override='AUTO' the
+// CUT decision is `now < TARGET_DATE`. Before this fix it read `new Date()`
+// inline, so the AUTO branch could not be pinned. _isInCut(phaseOverride, nowMs)
+// defaults to the real clock when nowMs omitted (production byte-identical) and
+// accepts an injected epoch ms for deterministic tests.
+//
+// Discriminator: 'Lateral Raises' range [12,15] (isolation) → CUT caps to
+// [10,10]; non-CUT stays [12,15]. So getRepsRange reveals the branch taken.
+describe('DP injectable clock — AUTO/TARGET_DATE CUT branch (§07.198-204)', () => {
+  const TARGET_MS = new Date('2026-07-20').getTime();
+  const BEFORE = TARGET_MS - 86400000; // 1 day before → in-cut under AUTO
+  const AFTER = TARGET_MS + 86400000;  // 1 day after  → not-in-cut under AUTO
+
+  beforeEach(() => { store['phase-override'] = 'AUTO'; });
+
+  it('_isInCut: AUTO + now before TARGET_DATE → true; after → false', () => {
+    expect(DP._isInCut('AUTO', BEFORE)).toBe(true);
+    expect(DP._isInCut('AUTO', AFTER)).toBe(false);
+  });
+
+  it('_isInCut: explicit CUT is true and BULK is false regardless of clock', () => {
+    expect(DP._isInCut('CUT', AFTER)).toBe(true);
+    expect(DP._isInCut('BULK', BEFORE)).toBe(false);
+  });
+
+  it('getRepsRange respects injected nowMs on AUTO (cap before, raw after)', () => {
+    expect(DP.getRepsRange('Lateral Raises', BEFORE)).toEqual([10, 10]); // in-cut cap
+    expect(DP.getRepsRange('Lateral Raises', AFTER)).toEqual([12, 15]);  // not-in-cut
+  });
+
+  it('getRepsRange omitting nowMs defaults to real clock (no throw, valid range)', () => {
+    const r = DP.getRepsRange('Lateral Raises');
+    expect(Array.isArray(r)).toBe(true);
+    expect(r.length).toBe(2);
+  });
+
+  it('_recommendRaw on AUTO uses injected clock for the cut-aware rep target', () => {
+    store['logs'] = [
+      log('Lateral Raises', 12, 12, 7),
+      log('Lateral Raises', 12, 12, 7),
+      log('Lateral Raises', 12, 12, 7),
+    ];
+    // In-cut (BEFORE) caps the isolation range to [10,10]; not-in-cut (AFTER)
+    // keeps [12,15]. The default-maintain repsTarget is min(rMax, lastReps+1),
+    // so the cut branch yields a strictly lower-or-equal target than the bulk one.
+    const cut = DP._recommendRaw('Lateral Raises', BEFORE);
+    const bulk = DP._recommendRaw('Lateral Raises', AFTER);
+    expect(cut.repsTarget).toBeLessThanOrEqual(bulk.repsTarget);
+  });
+});

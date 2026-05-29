@@ -8,6 +8,8 @@ import { filterKcalFloorObservations } from '../../../src/engine/bayesianNutriti
 import {
   KCAL_FLOOR_DAILY_MIN,
   KCAL_FLOOR_CITATION_SOURCE,
+  KCAL_FLOOR_BY_SEX,
+  resolveKcalFloorForSex,
 } from '../../../src/engine/bayesianNutrition/constants.js';
 
 // Arbitrary observation generators — covers schema variants.
@@ -134,5 +136,85 @@ describe('filterKcalFloorObservations — LOCK 8 invariants', () => {
     expect(r.filtered.length).toBe(2);
     expect(r.excludedCount).toBe(1);
     expect(r.filtered.map((o: any) => o.kcalDaily)).toEqual([1200, 1201]);
+  });
+});
+
+// §15.005 — female floor 1000 (CEO-locked Daniel 2026-05-26, deliberate; distinct
+// from men's/default 1200). Prior fuzz coverage above swept ONLY the default 1200
+// floor; the sex=female 1000 floor had only hardcoded-example unit tests. Sweep it.
+describe('filterKcalFloorObservations — female floor 1000 invariants (§15.005)', () => {
+  const FEMALE_FLOOR = KCAL_FLOOR_BY_SEX.f; // 1000
+
+  it('female floor resolves to exactly 1000', () => {
+    expect(FEMALE_FLOOR).toBe(1000);
+    expect(resolveKcalFloorForSex('f')).toBe(1000);
+  });
+
+  it('female floor 1000 is never breached: all kept obs have kcalDaily >= 1000', () => {
+    fc.assert(
+      fc.property(fc.array(obsArbitrary, { maxLength: 200 }), (obs) => {
+        const r = filterKcalFloorObservations(obs, FEMALE_FLOOR);
+        return r.floorMin === 1000 && r.filtered.every((o: { kcalDaily?: number }) => {
+          if (o.kcalDaily == null) return true;
+          if (!Number.isFinite(o.kcalDaily)) return true;
+          return o.kcalDaily >= 1000;
+        });
+      }),
+      { numRuns: 500 },
+    );
+  });
+
+  it('female sweep: excludedCount equals count of obs with kcalDaily strict-less-than 1000', () => {
+    fc.assert(
+      fc.property(fc.array(obsWithKcal, { maxLength: 200 }), (obs) => {
+        const r = filterKcalFloorObservations(obs, FEMALE_FLOOR);
+        const expectedExcluded = obs.filter(
+          (o: { kcalDaily?: number }) => Number.isFinite(o.kcalDaily) && (o.kcalDaily as number) < 1000,
+        ).length;
+        return r.excludedCount === expectedExcluded;
+      }),
+      { numRuns: 500 },
+    );
+  });
+
+  it('female floor boundary: 1000 included, 999 excluded, 1001 included (>= semantics)', () => {
+    const r = filterKcalFloorObservations(
+      [
+        { weightDelta: 0.1, kcalDaily: 1000 },
+        { weightDelta: 0.2, kcalDaily: 999 },
+        { weightDelta: 0.3, kcalDaily: 1001 },
+      ],
+      FEMALE_FLOOR,
+    );
+    expect(r.filtered.length).toBe(2);
+    expect(r.excludedCount).toBe(1);
+    expect(r.filtered.map((o: any) => o.kcalDaily)).toEqual([1000, 1001]);
+  });
+
+  it('1000..1199 band: kept under female 1000 floor, excluded under default 1200', () => {
+    fc.assert(
+      fc.property(
+        fc.array(
+          fc.record({
+            weightDelta: fc.double({ min: -2, max: 2, noNaN: true, noDefaultInfinity: true }),
+            kcalDaily: fc.integer({ min: 1000, max: 1199 }),
+          }),
+          { minLength: 1, maxLength: 100 },
+        ),
+        (obs) => {
+          const female = filterKcalFloorObservations(obs, FEMALE_FLOOR);
+          const def = filterKcalFloorObservations(obs);
+          // Every obs in [1000,1199] survives the female floor...
+          return (
+            female.excludedCount === 0 &&
+            female.filtered.length === obs.length &&
+            // ...but is excluded by the default 1200 floor.
+            def.excludedCount === obs.length &&
+            def.filtered.length === 0
+          );
+        },
+      ),
+      { numRuns: 300 },
+    );
   });
 });

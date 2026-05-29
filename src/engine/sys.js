@@ -2,6 +2,7 @@
 import { DB } from '../db.js';
 import { TARGET_DATE, KCAL_TARGET } from '../constants.js';
 import { getUserConfig } from '../config/user.js';
+import { now as clockNow } from './clock.js';
 
 export const SYS = {
   get HEIGHT() { return getUserConfig().bio.height; },
@@ -264,14 +265,18 @@ export const SYS = {
    * @param {string} exName
    * @param {number} setNumber
    * @param {number} totalSets
+   * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
    */
-  getTechniques(exName, setNumber, totalSets) {
+  getTechniques(exName, setNumber, totalSets, nowMs) {
     const phase = this.getPhase();
     const techniques = [];
     const isIsolation = ['Lateral Raises','Rear Delt Fly','Cable Curl','Preacher Curl','Overhead Triceps','Pushdown','Leg Extension','Leg Curl','Calf Raises','Face Pulls'].includes(exName);
 
-    // Drop sets — NOT in CUT (deficit); recomandat in BULK/STRENGTH
-    const isEffectivelyCut = phase === 'CUT' || (phase === 'AUTO' && new Date() < TARGET_DATE);
+    // Drop sets — NOT in CUT (deficit); recomandat in BULK/STRENGTH.
+    // §07.198-204: nowMs defaults to real clock (Date.now) → byte-identical to
+    // prior inline `new Date() < TARGET_DATE`; injected only for deterministic tests.
+    const ms = nowMs == null ? clockNow() : nowMs;
+    const isEffectivelyCut = phase === 'CUT' || (phase === 'AUTO' && ms < TARGET_DATE.getTime());
     if (isIsolation && setNumber === totalSets && !isEffectivelyCut) {
       techniques.push({icon:'🔻', label:'DROP SET', desc:'−30% greutate pe ultimul set · Mergem pana nu mai putem'});
     }

@@ -134,4 +134,21 @@ describe('readiness — DB-backed helpers', () => {
     expect(score).toBeGreaterThanOrEqual(10);
     expect(score).toBeLessThanOrEqual(100);
   });
+
+  // §07.198-204 — the "yesterday" nutrition lookup now accepts an injected nowMs
+  // (defaults to real clock). today's readiness still uses db.js tod(); nowMs
+  // controls only which yesterday-dated kcals/prots row feeds the score.
+  it('getComputedReadinessScore: injected nowMs selects the yesterday nutrition row', () => {
+    saveReadiness(5); // today's readiness must exist (keyed by real tod())
+    const NOW = Date.parse('2026-03-15T12:00:00Z');
+    const yKey = new Date(NOW - 86400000).toLocaleDateString('sv'); // 2026-03-14
+    const otherKey = new Date(NOW - 5 * 86400000).toLocaleDateString('sv');
+    // Put nutrition ONLY on the nowMs-yesterday date; an unrelated date must be ignored.
+    localStorage.setItem('kcals', JSON.stringify({ [yKey]: 2000, [otherKey]: 9999 }));
+    localStorage.setItem('prots', JSON.stringify({ [yKey]: 180, [otherKey]: 999 }));
+    const score = getComputedReadinessScore(2000, 180, NOW);
+    expect(score).not.toBeNull();
+    expect(score).toBeGreaterThanOrEqual(10);
+    expect(score).toBeLessThanOrEqual(100);
+  });
 });

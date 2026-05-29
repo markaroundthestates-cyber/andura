@@ -214,3 +214,35 @@ describe('computeAdherence — CDL pure', () => {
     expect(result.score).toBe(38);
   });
 });
+
+// §07.198-204 — getAdherenceScore (day-of-week) and computeAdherence (staleness
+// cutoff) now accept an injected nowMs (defaults to real clock). nowMs replaces
+// the need for vi.setSystemTime to pin the day-of-week branch, and lets us assert
+// computeAdherence's cutoff date deterministically.
+describe('adherence injectable clock (§07.198-204)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    mockReadActiveForDate.mockReturnValue(null);
+    mockReadAllActive.mockReturnValue([]);
+  });
+
+  it('getAdherenceScore: injected nowMs pins day-of-week without fake timers', () => {
+    // 2026-04-28 is a Tuesday; PROG index for that weekday should be a workout
+    // day. Inject the instant directly (no vi.setSystemTime needed).
+    const TUESDAY = new Date(2026, 3, 28, 12, 0, 0).getTime();
+    const day = new Date(TUESDAY).toLocaleDateString('sv');
+    setLogs([{ date: day, ex: 'Bench Press', w: 80, reps: '8', baseline: false, ts: 1, session: 1 }]);
+    const { score } = getAdherenceScore(TUESDAY);
+    expect(typeof score).toBe('number');
+  });
+
+  it('computeAdherence: cutoff date is derived from injected nowMs (windowDays back)', () => {
+    let capturedPredicate = null;
+    mockReadAllActive.mockImplementation((pred) => { capturedPredicate = pred; return []; });
+    const NOW = Date.parse('2026-03-15T12:00:00Z');
+    computeAdherence({ windowDays: 30, nowMs: NOW });
+    // cutoff = NOW - 30d = 2026-02-13. Entries on/after that date pass.
+    expect(capturedPredicate({ date: '2026-02-13', synthetic: false, outcome: {} })).toBe(true);
+    expect(capturedPredicate({ date: '2026-02-12', synthetic: false, outcome: {} })).toBe(false);
+  });
+});

@@ -2,10 +2,18 @@
 import { DB, tod } from '../db.js';
 import { PROG } from '../constants.js';
 import * as coachDecisionLog from '../util/coachDecisionLog.js';
+import { nowDate as clockNowDate } from './clock.js';
 
-export function getAdherenceScore() {
+// §07.198-204: nowMs/now params below DEFAULT to the real clock (clock.js),
+// so production is byte-identical to the prior inline `new Date()`. Injection
+// exists solely to pin the day-of-week / staleness-cutoff branches in tests.
+
+/**
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
+ */
+export function getAdherenceScore(nowMs) {
   const today = tod();
-  const dayOfWeek = new Date().getDay(); // 0=Sun, 1=Mon ... 6=Sat
+  const dayOfWeek = (nowMs == null ? clockNowDate() : new Date(nowMs)).getDay(); // 0=Sun, 1=Mon ... 6=Sat
 
   /** @type {Record<string, number>} */
   const kcals = /** @type {any} */ (DB.get('kcals')) || {};
@@ -81,6 +89,7 @@ export function getAdherenceScore() {
  *
  * @param {object} opts
  * @param {number} [opts.windowDays=30]
+ * @param {number} [opts.nowMs] Injected epoch ms; defaults to real clock.
  * @returns {{
  *   score: number|null,
  *   proposed: number,
@@ -90,8 +99,8 @@ export function getAdherenceScore() {
  *   deviated: number
  * }}
  */
-export function computeAdherence({ windowDays = 30 } = {}) {
-  const cutoffDate = new Date();
+export function computeAdherence({ windowDays = 30, nowMs } = {}) {
+  const cutoffDate = nowMs == null ? clockNowDate() : new Date(nowMs);
   cutoffDate.setDate(cutoffDate.getDate() - windowDays);
   const cutoffStr = cutoffDate.toISOString().slice(0, 10);
 

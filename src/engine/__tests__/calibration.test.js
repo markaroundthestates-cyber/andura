@@ -252,3 +252,62 @@ describe('applyRollingWindow', () => {
     expect(result.length).toBe(0);
   });
 });
+
+// §07.198-204 — staleness / inactivity-decay / recalibration-due / rolling
+// window now accept an injected nowMs (ctx.nowMs for detectCalibrationLevel,
+// trailing arg elsewhere) defaulting to the real clock. A FIXED reference
+// instant decouples these from the wall clock so the day/hour thresholds are
+// deterministic regardless of when CI runs.
+describe('calibration injectable clock (§07.198-204)', () => {
+  const NOW = Date.parse('2026-03-15T12:00:00Z');
+  const DAY = 86400000;
+
+  // Build a log dated `daysAgo` relative to the fixed NOW (not the real clock).
+  function logAt(daysAgo, sessionId) {
+    const d = new Date(NOW - daysAgo * DAY);
+    return {
+      date: d.toISOString().slice(0, 10),
+      timestamp: d.toISOString(),
+      ex: 'Lat Pulldown',
+      w: 30,
+      reps: 8,
+      session: `s-${sessionId}`,
+    };
+  }
+
+  it('detectCalibrationLevel: COLD_START when first log < 7d ago (pinned nowMs)', () => {
+    const ctx = { allLogs: [logAt(3, 0), logAt(2, 1), logAt(1, 2)], nowMs: NOW };
+    expect(detectCalibrationLevel(ctx)).toBe(CALIBRATION_LEVELS.COLD_START);
+  });
+
+  it('detectCalibrationLevel: stale last log triggers inactivity decay vs fresh (pinned nowMs)', () => {
+    // 12 sessions spanning ~189-200d ago: enough age+count for a high base tier,
+    // but the newest non-baseline log is 189d stale → ADR 012 decay drops it.
+    const stale = [];
+    for (let i = 0; i < 12; i++) stale.push(logAt(200 - i, i)); // newest = 189d ago
+    // Same history but with one fresh (today) log → no decay applied.
+    const fresh = [...stale, logAt(0, 'recent')];
+    const decayedLevel = detectCalibrationLevel({ allLogs: stale, nowMs: NOW });
+    const freshLevel = detectCalibrationLevel({ allLogs: fresh, nowMs: NOW });
+    // Decay never RAISES a tier, and the stale set lands strictly below the
+    // fresh set here (different object identity proves the date branch ran).
+    expect(decayedLevel).not.toBe(freshLevel);
+    expect(decayedLevel).not.toBe(CALIBRATION_LEVELS.OPTIMIZED);
+  });
+
+  it('shouldRecalibrate: daily tier due at >=20h since last run (pinned nowMs)', () => {
+    const level = { recalibrationFrequency: 'daily' };
+    const last21h = new Date(NOW - 21 * 3600 * 1000).toISOString();
+    const last10h = new Date(NOW - 10 * 3600 * 1000).toISOString();
+    expect(shouldRecalibrate(level, last21h, NOW)).toBe(true);
+    expect(shouldRecalibrate(level, last10h, NOW)).toBe(false);
+  });
+
+  it('applyRollingWindow: 6-month cutoff pinned via injected nowMs', () => {
+    const within = logAt(170, 'w'); // < 180d
+    const outside = logAt(200, 'o'); // > 180d
+    const result = applyRollingWindow([within, outside], CALIBRATION_LEVELS.OPTIMIZED, NOW);
+    expect(result.length).toBe(1);
+    expect(result[0].session).toBe('s-w');
+  });
+});
