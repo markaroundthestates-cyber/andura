@@ -74,10 +74,20 @@ export function Onboarding(): JSX.Element {
   // inainte de Continua (sex/goal/frecventa/experienta null → blocat). Fara
   // asta Gigel trecea 6 pasi fara input → finalize cu Big 6 null. finalize
   // are guard propriu (store) ca safety net defense-in-depth.
+  // Resolve the store's semantic validation outcome (messageKey + params) to
+  // localized copy at the React boundary via t() — the store emits keys, never
+  // Romanian prose (i18n leak fix audit 09 store-evading).
+  function resolveFieldCheck(
+    check: ReturnType<typeof validateOnboardingField>,
+  ): { ok: true } | { ok: false; reason: string } {
+    if (check.ok) return { ok: true };
+    return { ok: false, reason: t(check.messageKey, check.params) };
+  }
+
   function validateCurrentStep(): { ok: true } | { ok: false; reason: string } {
     if (stepNum === 1) {
       if (data.age === null) return { ok: false, reason: t('onboarding.toast.completeAge') };
-      return validateOnboardingField('age', data.age);
+      return resolveFieldCheck(validateOnboardingField('age', data.age));
     }
     if (stepNum === 2 && data.sex === null) return { ok: false, reason: t('onboarding.toast.completeOption') };
     if (stepNum === 3 && data.goal === null) return { ok: false, reason: t('onboarding.toast.completeGoal') };
@@ -85,11 +95,11 @@ export function Onboarding(): JSX.Element {
     if (stepNum === 5 && data.experience === null) return { ok: false, reason: t('onboarding.toast.completeLevel') };
     if (stepNum === 6) {
       if (data.weight === null) return { ok: false, reason: t('onboarding.toast.completeWeight') };
-      return validateOnboardingField('weight', data.weight);
+      return resolveFieldCheck(validateOnboardingField('weight', data.weight));
     }
     if (stepNum === 7) {
       if (data.height === null) return { ok: false, reason: t('onboarding.toast.completeHeight') };
-      return validateOnboardingField('height', data.height);
+      return resolveFieldCheck(validateOnboardingField('height', data.height));
     }
     return { ok: true };
   }

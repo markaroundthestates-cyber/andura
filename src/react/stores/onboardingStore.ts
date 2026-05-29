@@ -128,45 +128,57 @@ export function isSafeOnboardingValue<K extends keyof OnboardingData>(
   return true;
 }
 
+/**
+ * §i18n leak fix (audit 09 store-evading) — the validation outcome is NOT
+ * Romanian prose. The store emits a semantic i18n key (`messageKey`) + numeric
+ * `params` ({min,max}); the React boundary resolves it via `t()` so EN/RO both
+ * render localized copy. Mirrors the engine-emits-key pattern (proactiveEngine
+ * `messageKey`/`messageParams`, engineWrappers banner keys). Keys live in
+ * en.json + ro.json under `onboarding.validation.*`.
+ */
+export type FieldValidation =
+  | { ok: true }
+  | { ok: false; messageKey: string; params?: Record<string, number> };
+
 export function validateOnboardingField<K extends keyof OnboardingData>(
   key: K,
   value: OnboardingData[K],
-): { ok: true } | { ok: false; reason: string } {
+): FieldValidation {
   if (value === null) return { ok: true };
 
   if (key === 'age') {
     const n = value as number;
-    if (!Number.isFinite(n)) return { ok: false, reason: 'Varsta invalida.' };
+    if (!Number.isFinite(n)) return { ok: false, messageKey: 'onboarding.validation.ageInvalid' };
     const { min, max } = ONBOARDING_BOUNDS.age;
     if (n < min || n > max) {
-      return { ok: false, reason: `Varsta intre ${min} si ${max} ani.` };
+      return { ok: false, messageKey: 'onboarding.validation.ageRange', params: { min, max } };
     }
   }
 
   if (key === 'weight') {
     const n = value as number;
-    if (!Number.isFinite(n)) return { ok: false, reason: 'Greutate invalida.' };
+    if (!Number.isFinite(n)) return { ok: false, messageKey: 'onboarding.validation.weightInvalid' };
     const { min, max } = ONBOARDING_BOUNDS.weight;
     if (n < min || n > max) {
-      return { ok: false, reason: `Greutate intre ${min} si ${max} kg.` };
+      return { ok: false, messageKey: 'onboarding.validation.weightRange', params: { min, max } };
     }
   }
 
   if (key === 'height') {
     const n = value as number;
-    if (!Number.isFinite(n)) return { ok: false, reason: 'Inaltime invalida.' };
+    if (!Number.isFinite(n)) return { ok: false, messageKey: 'onboarding.validation.heightInvalid' };
     const { min, max } = ONBOARDING_BOUNDS.height;
     if (n < min || n > max) {
-      return { ok: false, reason: `Inaltime intre ${min} si ${max} cm.` };
+      return { ok: false, messageKey: 'onboarding.validation.heightRange', params: { min, max } };
     }
   }
 
   if (key === 'targetWeight') {
     const n = value as number;
-    if (!Number.isFinite(n)) return { ok: false, reason: 'Greutate tinta invalida.' };
+    if (!Number.isFinite(n)) return { ok: false, messageKey: 'onboarding.validation.targetWeightInvalid' };
     const { min, max } = ONBOARDING_BOUNDS.targetWeight;
     if (n < min || n > max) {
-      return { ok: false, reason: `Greutate tinta intre ${min} si ${max} kg.` };
+      return { ok: false, messageKey: 'onboarding.validation.targetWeightRange', params: { min, max } };
     }
   }
 
