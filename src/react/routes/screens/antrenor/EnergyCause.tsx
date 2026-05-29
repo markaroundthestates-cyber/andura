@@ -116,7 +116,7 @@ export function EnergyCause(): JSX.Element {
               type="button"
               onClick={() => handleSelect(label)}
               data-cause={label}
-              className="cause-btn flex items-center gap-3 p-4 rounded-2xl border border-line bg-paper2 text-ink hover:bg-paper transition text-left"
+              className="cause-btn pulse-card flex items-center gap-3 p-4 text-ink hover:bg-paper transition text-left"
             >
               <Icon className="w-4 h-4 text-brick flex-shrink-0" aria-hidden="true" />
               <span className="text-sm font-medium">{label}</span>

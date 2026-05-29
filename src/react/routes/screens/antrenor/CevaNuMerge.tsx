@@ -83,7 +83,7 @@ export function CevaNuMerge(): JSX.Element {
                 type="button"
                 onClick={() => handleSelect(opt)}
                 data-problem-kind={opt.kind}
-                className="flex items-center gap-4 p-4 rounded-xl border border-lineStrong bg-paper2 hover:bg-paper transition"
+                className="pulse-card pulse-card-tight flex items-center gap-4 p-4 hover:bg-paper transition"
               >
                 <Icon className="w-5 h-5 text-ink2" aria-hidden="true" />
                 <span className="text-base font-medium text-ink">{opt.label}</span>

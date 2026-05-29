@@ -211,7 +211,7 @@ export function PainButton(): JSX.Element {
               className={
                 selected
                   ? 'press-feedback p-3 rounded-2xl border bg-brick text-paper border-brick'
-                  : 'press-feedback p-3 rounded-2xl border bg-paper2 border-line text-ink'
+                  : 'press-feedback pulse-card p-3 text-ink'
               }
             >
               <span className="text-sm font-medium">{t(`painButton.regions.${id}`)}</span>
@@ -235,7 +235,7 @@ export function PainButton(): JSX.Element {
                 className={
                   selected
                     ? 'press-feedback flex-1 py-3 rounded-2xl border bg-brick text-paper border-brick'
-                    : 'press-feedback flex-1 py-3 rounded-2xl border bg-paper2 border-line text-ink'
+                    : 'press-feedback pulse-card flex-1 py-3 text-ink'
                 }
               >
                 <span className="text-base font-medium">{intensityLabel(lvl)}</span>
@@ -250,7 +250,7 @@ export function PainButton(): JSX.Element {
         onClick={handleContinue}
         disabled={continueDisabled}
         data-testid="pain-continue"
-        className="press-feedback relative overflow-hidden w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-50"
+        className="press-feedback pulse-grad-bg pulse-shine relative overflow-hidden w-full py-4 text-paper rounded-[14px] text-base font-semibold disabled:opacity-50"
       >
         <Ripple color="rgba(255,255,255,0.5)" />
         <span className="relative">{t('painButton.continueCta')}</span>

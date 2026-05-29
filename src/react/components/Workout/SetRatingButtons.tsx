@@ -50,7 +50,7 @@ const RATING_META: readonly RatingMeta[] = [
 export function SetRatingButtons({ onRate }: SetRatingButtonsProps): JSX.Element {
   return (
     <div
-      className="surface-elevated animate-fade-in-up bg-paper2 border border-line rounded-2xl p-4 mb-2"
+      className="pulse-card pulse-shine animate-fade-in-up p-4 mb-2"
       data-testid="setrating-feel-card"
     >
       <div className="text-center mb-3">

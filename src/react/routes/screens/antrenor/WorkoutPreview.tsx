@@ -270,7 +270,7 @@ export function WorkoutPreview(): JSX.Element {
         aria-live="polite"
         aria-label={t('workout.preview.intensityBanner.ariaLabel')}
         style={{
-          background: `color-mix(in oklab, ${banner.accent} 12%, var(--paper2))`,
+          background: `color-mix(in oklab, ${banner.accent} 12%, var(--surface))`,
           borderColor: `color-mix(in oklab, ${banner.accent} 35%, transparent)`,
         }}
       >
@@ -289,7 +289,7 @@ export function WorkoutPreview(): JSX.Element {
           +rounded+border+bg-paper2 + italic-Lora coach-quote font. */}
       {workout?.warmup && (
         <div
-          className="flex items-center gap-2.5 p-3 rounded-2xl border border-line bg-paper2 mb-4 animate-card-rise delay-100"
+          className="pulse-card flex items-center gap-2.5 p-3 mb-4 animate-card-rise delay-100"
           data-testid="preview-warmup-row"
           role="region"
           aria-label={t('workout.preview.warmupAriaLabel')}
@@ -317,7 +317,7 @@ export function WorkoutPreview(): JSX.Element {
         <Kicker>{t('workout.preview.exercisesHeading')}</Kicker>
       </div>
       <ul
-        className="rounded-2xl bg-paper2 border border-line divide-y divide-line mb-4"
+        className="pulse-card divide-y divide-line overflow-hidden mb-4"
         data-testid="preview-exercise-list"
       >
         {(displayExercises && displayExercises.length > 0
@@ -421,7 +421,7 @@ export function WorkoutPreview(): JSX.Element {
         type="button"
         onClick={handleStart}
         data-testid="preview-start-cta"
-        className="btn-primary-lift w-full flex items-center justify-center gap-2 py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+        className="btn-primary-lift pulse-grad-bg pulse-shine w-full flex items-center justify-center gap-2 py-4 text-paper rounded-[14px] text-base font-semibold"
       >
         <Check className="w-5 h-5" aria-hidden="true" />
         {t('workout.preview.confirmStartCta')}

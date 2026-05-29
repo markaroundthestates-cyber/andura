@@ -120,7 +120,7 @@ export function AparateLipsa(): JSX.Element {
               className={
                 selected
                   ? 'flex items-center gap-3 p-3 rounded-xl border bg-brick/10 border-brick text-ink cursor-pointer'
-                  : 'flex items-center gap-3 p-3 rounded-xl border bg-paper2 border-lineStrong text-ink cursor-pointer'
+                  : 'pulse-card pulse-card-tight flex items-center gap-3 p-3 text-ink cursor-pointer'
               }
             >
               <input
@@ -144,7 +144,7 @@ export function AparateLipsa(): JSX.Element {
         type="button"
         onClick={handleSave}
         data-testid="aparate-save"
-        className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+        className="w-full py-4 pulse-grad-bg pulse-shine text-paper rounded-[14px] text-base font-semibold"
       >
         Salveaza setarea
       </button>

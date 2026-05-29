@@ -63,7 +63,7 @@ export function ProgramChangeConfirm(): JSX.Element {
       />
 
       <div className="flex-1 overflow-y-auto pt-2 px-6 pb-6 flex flex-col items-center text-center">
-        <div className="w-16 h-16 rounded-full bg-paper2 border border-line flex items-center justify-center mb-5">
+        <div className="pulse-card w-16 h-16 !rounded-full flex items-center justify-center mb-5">
           <RefreshCw className="w-7 h-7 text-ink" aria-hidden="true" />
         </div>
         <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.programChange.heading')}</h2>
@@ -88,7 +88,7 @@ export function ProgramChangeConfirm(): JSX.Element {
             type="button"
             onClick={handleConfirm}
             data-testid="program-change-confirm-accept"
-            className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+            className="w-full py-4 pulse-grad-bg pulse-shine text-paper rounded-[14px] text-base font-semibold"
           >
             {t('confirm.programChange.acceptCta')}
           </button>

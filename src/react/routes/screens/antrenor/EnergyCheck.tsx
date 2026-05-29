@@ -118,7 +118,7 @@ export function EnergyCheck(): JSX.Element {
             onClick={() => handleSelect(opt)}
             data-energy-level={opt.level}
             data-intensity={opt.intensity}
-            className="energy-btn flex items-center gap-4 p-4 rounded-[18px] border border-line bg-paper2 hover:border-lineStrong transition text-left animate-card-rise"
+            className="energy-btn pulse-card flex items-center gap-4 p-4 hover:border-lineStrong transition text-left animate-card-rise"
             style={{ animationDelay: `${i * 0.05}s` }}
           >
             {/* Glowing dot (mockup .energy-dot) — the per-state color drives a soft

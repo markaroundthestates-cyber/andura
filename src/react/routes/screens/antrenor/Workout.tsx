@@ -805,7 +805,7 @@ export function Workout(): JSX.Element {
           type="button"
           onClick={() => navigate(gotoPath('antrenor'))}
           data-testid="workout-empty-back"
-          className="px-6 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
+          className="px-6 py-3 pulse-grad-bg pulse-shine text-paper rounded-[14px] text-base font-semibold"
         >
           {t('workout.empty.backCta')}
         </button>
@@ -957,7 +957,7 @@ export function Workout(): JSX.Element {
               type="button"
               onClick={handleOcupat}
               data-testid="wv2-ex-action-ocupat"
-              className="flex items-center justify-center gap-1.5 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
+              className="pulse-card pulse-card-tight flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-ink2 min-h-[44px]"
             >
               <Users className="w-4 h-4" aria-hidden="true" />
               {t('workout.actions.busy')}
@@ -966,7 +966,7 @@ export function Workout(): JSX.Element {
               type="button"
               onClick={handleOpenAparatLipsa}
               data-testid="wv2-ex-action-lipsa"
-              className="flex items-center justify-center gap-1.5 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
+              className="pulse-card pulse-card-tight flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-ink2 min-h-[44px]"
             >
               <PackageX className="w-4 h-4" aria-hidden="true" />
               {t('workout.actions.missing')}
@@ -975,7 +975,7 @@ export function Workout(): JSX.Element {
               type="button"
               onClick={handleNuVreau}
               data-testid="wv2-ex-action-nuvreau"
-              className="flex items-center justify-center gap-1.5 py-2.5 bg-paper2 border border-lineStrong rounded-xl text-sm font-medium text-ink2 min-h-[44px]"
+              className="pulse-card pulse-card-tight flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-ink2 min-h-[44px]"
             >
               <Hand className="w-4 h-4" aria-hidden="true" />
               {t('workout.actions.refuse')}
@@ -996,7 +996,7 @@ export function Workout(): JSX.Element {
               data-testid="insession-adjust-notice"
               role="status"
               style={{
-                background: 'color-mix(in oklab, var(--volt) 11%, var(--paper2))',
+                background: 'color-mix(in oklab, var(--volt) 11%, var(--surface))',
                 border: '1px solid color-mix(in oklab, var(--volt) 32%, transparent)',
               }}
             >
@@ -1173,7 +1173,7 @@ export function Workout(): JSX.Element {
               type="button"
               onClick={() => setWhyText(null)}
               data-testid="why-modal-dismiss"
-              className="w-full p-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px]"
+              className="w-full p-3 pulse-grad-bg pulse-shine text-paper rounded-[14px] text-base font-semibold min-h-[44px]"
             >
               {t('workout.whyDismiss')}
             </button>

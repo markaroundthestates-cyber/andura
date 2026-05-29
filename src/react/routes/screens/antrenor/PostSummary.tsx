@@ -147,7 +147,7 @@ function StatCell({ label, value, testId }: StatCellProps): JSX.Element {
   // and let the screen-level animate-fade-in-up parent handle entrance).
   return (
     <div
-      className="relative overflow-hidden p-4 rounded-xl bg-paper2 border border-line animate-card-rise"
+      className="pulse-card pulse-card-tight relative overflow-hidden p-4 animate-card-rise"
       data-testid={testId}
     >
       <span
@@ -364,7 +364,7 @@ export function PostSummary(): JSX.Element {
          honest (lastRating + per-set rating sunt calitative, NU RPE 1-10). */}
       {persona === 'marius' && (
         <div
-          className="p-4 mb-6 rounded-xl bg-paper2 border border-line"
+          className="pulse-card p-4 mb-6"
           data-testid="summary-marius-detail"
         >
           <p className="text-sm font-semibold text-ink2 uppercase tracking-wide mb-3">
@@ -423,7 +423,7 @@ export function PostSummary(): JSX.Element {
         type="button"
         onClick={handleFinish}
         data-testid="summary-finish"
-        className="btn-primary-lift press-feedback relative overflow-hidden mt-auto w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+        className="btn-primary-lift press-feedback pulse-grad-bg pulse-shine relative overflow-hidden mt-auto w-full py-4 text-paper rounded-[14px] text-base font-semibold"
       >
         <Ripple color="rgba(255,255,255,0.5)" />
         <span className="relative">{t('postSummary.finishCta')}</span>

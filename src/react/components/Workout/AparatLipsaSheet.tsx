@@ -151,7 +151,7 @@ export function AparatLipsaSheet({
                 className={
                   selected
                     ? 'flex items-center gap-3 p-3 rounded-xl border bg-brick/10 border-brick text-ink cursor-pointer'
-                    : 'flex items-center gap-3 p-3 rounded-xl border bg-paper2 border-lineStrong text-ink cursor-pointer'
+                    : 'pulse-card pulse-card-tight flex items-center gap-3 p-3 text-ink cursor-pointer'
                 }
               >
                 <input
@@ -174,7 +174,7 @@ export function AparatLipsaSheet({
           type="button"
           onClick={handleSave}
           data-testid="aparat-lipsa-sheet-save"
-          className="w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px]"
+          className="w-full py-3 pulse-grad-bg pulse-shine text-paper rounded-[14px] text-base font-semibold min-h-[44px]"
         >
           {t('workout.aparatLipsaSheet.saveCta')}
         </button>

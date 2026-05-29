@@ -227,12 +227,12 @@ export function PostRpe(): JSX.Element {
               onClick={() => setPick(opt.rating)}
               data-rating={opt.rating}
               aria-pressed={selected}
-              className="flex items-center gap-4 p-5 rounded-[18px] border bg-paper2 transition text-left animate-card-rise"
+              className="pulse-card flex items-center gap-4 p-5 transition text-left animate-card-rise"
               style={{
                 borderColor: selected ? opt.accent : 'var(--line)',
                 borderWidth: 1.5,
                 background: selected
-                  ? `color-mix(in oklab, ${opt.accent} 9%, var(--paper2))`
+                  ? `color-mix(in oklab, ${opt.accent} 9%, var(--surface))`
                   : undefined,
                 boxShadow: selected
                   ? `0 0 28px -8px color-mix(in oklab, ${opt.accent} 60%, transparent)`
@@ -275,7 +275,7 @@ export function PostRpe(): JSX.Element {
         onClick={() => { if (pick) void handleSubmit(pick); }}
         disabled={pick === null}
         data-testid="post-rpe-save"
-        className="btn-primary-lift w-full py-4 mt-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-45 disabled:pointer-events-none"
+        className="btn-primary-lift pulse-grad-bg pulse-shine w-full py-4 mt-4 text-paper rounded-[14px] text-base font-semibold disabled:opacity-45 disabled:pointer-events-none"
       >
         {t('postRpe.submitCta')}
       </button>

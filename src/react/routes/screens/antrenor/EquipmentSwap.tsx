@@ -147,7 +147,7 @@ export function EquipmentSwap(): JSX.Element {
                 className={
                   isBusy
                     ? 'flex items-center justify-between p-4 rounded-2xl border bg-brick/10 border-brick transition'
-                    : 'flex items-center justify-between p-4 rounded-2xl border bg-paper2 border-line transition'
+                    : 'pulse-card flex items-center justify-between p-4 transition'
                 }
               >
                 <span className="text-base font-medium text-ink">{e.name}</span>
@@ -186,7 +186,7 @@ export function EquipmentSwap(): JSX.Element {
         type="button"
         onClick={handleContinue}
         data-testid="equipment-continue"
-        className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+        className="w-full py-4 pulse-grad-bg pulse-shine text-paper rounded-[14px] text-base font-semibold"
       >
         Continui adaptat
       </button>
