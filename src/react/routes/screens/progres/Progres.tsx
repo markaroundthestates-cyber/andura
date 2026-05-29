@@ -58,7 +58,7 @@ import { FatigueStrip } from '../../../components/Progres/FatigueStrip';
 import { BMRStrip } from '../../../components/Progres/BMRStrip';
 import { BodyFatStrip } from '../../../components/Progres/BodyFatStrip';
 import { HeatMapWeekly } from '../../../components/Progres/HeatMapWeekly';
-import { MuscleRecoveryGrid } from '../../../components/Progres/MuscleRecoveryGrid';
+import { MuscleRecoveryGrid, useMuscleRecoveryGroups } from '../../../components/Progres/MuscleRecoveryGrid';
 import { ObiectivCard } from '../../../components/Progres/ObiectivCard';
 import { ObiectivGoalCard } from '../../../components/Progres/ObiectivGoalCard';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
@@ -101,6 +101,11 @@ export function Progres(): JSX.Element {
   const lastWeight = weightLog[weightLog.length - 1];
   const lastBody = bodyData[bodyData.length - 1];
   const alerts = coach?.alerts ?? [];
+  // Gate the RECUPERARE zone (heading + grid) on the recovery engine actually
+  // returning groups — a fresh T0 user (no logged sets) otherwise sees a lone
+  // eyebrow over empty space, since the grid self-hides but the heading didn't
+  // (03.048). Same selector the grid uses → single source of truth.
+  const recoveryGroups = useMuscleRecoveryGroups();
 
   // Pulse TREND: feed the shared Sparkline primitive the full weight history
   // mapped to its {day,kg} shape (interfata-noua/screens-tabs.jsx:63). Sparkline
@@ -255,10 +260,12 @@ export function Progres(): JSX.Element {
           recovery engine (getRecoveryByGroup) finally gets surfaced as a grid
           of small rings, one per muscle group, colored by recovery state. The
           grid self-hides when the engine returns nothing (T0 fresh user). */}
-      <div data-testid="progres-zone-recovery" className="animate-card-rise delay-225">
-        <ZoneHeading testId="progres-zone-recovery-heading">{t('progres.zone.recuperare')}</ZoneHeading>
-        <MuscleRecoveryGrid />
-      </div>
+      {recoveryGroups.length > 0 && (
+        <div data-testid="progres-zone-recovery" className="animate-card-rise delay-225">
+          <ZoneHeading testId="progres-zone-recovery-heading">{t('progres.zone.recuperare')}</ZoneHeading>
+          <MuscleRecoveryGrid />
+        </div>
+      )}
 
       {/* ── ZONE 5: OBIECTIV — goal selector + target weight + ETA. ──────────
           Demoted below the daily reads (Daniel 2026-05-28): the goal type
