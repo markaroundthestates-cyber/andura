@@ -10,9 +10,8 @@
 //
 // Motion safety: the line-draw (stroke-dashoffset) + area fade are one-shot
 // entrance animations; the dot has no loop. The global prefers-reduced-motion
-// block collapses the entrance to instant (final state), and a [data-calm="1"]
-// hard-stop is declared so motion=0 also lands on the final frame. No infinite
-// loops → vestibular-safe by construction.
+// block collapses the entrance to instant (final state) — the authoritative
+// motion-safety mechanism. No infinite loops → vestibular-safe by construction.
 //
 // A11y: decorative chart (aria-hidden) — the surrounding card copy (delta /
 // projection numbers) carries the readable trend. Guards empty/single-point
@@ -123,8 +122,6 @@ export function Sparkline({
         .spark-area { opacity: 0; animation: sparkFade 1s .5s forwards; }
         @keyframes sparkDash { to { stroke-dashoffset: 0; } }
         @keyframes sparkFade { to { opacity: 1; } }
-        [data-calm="1"] .spark-line { animation: none; stroke-dashoffset: 0; }
-        [data-calm="1"] .spark-area { animation: none; opacity: 1; }
       `}</style>
     </svg>
   );

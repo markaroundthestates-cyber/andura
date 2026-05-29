@@ -25,9 +25,9 @@ vi.mock('../../../auth.js', () => ({
   buildGoogleSignInUrl: vi.fn(() => 'https://accounts.google.com/oauth?stub'),
 }));
 
-function renderAuth(): ReturnType<typeof render> {
+function renderAuth(entry = '/auth'): ReturnType<typeof render> {
   return render(
-    <MemoryRouter initialEntries={['/auth']}>
+    <MemoryRouter initialEntries={[entry]}>
       <Routes>
         <Route path="/auth" element={<Auth />} />
         <Route path="/onboarding/:step" element={<div data-testid="onb-route" />} />
@@ -369,5 +369,31 @@ describe('Auth — A11Y HIGH chat5 form aria attributes', () => {
     expect(errMsg).toHaveAttribute('role', 'alert');
     // restore default behavior pentru next tests
     sendMagicLink.mockResolvedValue({ ok: true });
+  });
+});
+
+describe('Auth — 01.051 surfaces ?error verify-failure', () => {
+  it('shows the verify-failed message when ?error is present', () => {
+    renderAuth('/auth?error=verify_failed');
+    const errMsg = screen.getByTestId('auth-error');
+    expect(errMsg).toBeInTheDocument();
+    expect(errMsg).toHaveTextContent(/nu a functionat/i);
+    const input = screen.getByTestId('auth-email-input');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('aria-describedby', 'auth-email-error');
+  });
+
+  it('does NOT show an error when ?error is absent', () => {
+    renderAuth('/auth');
+    expect(screen.queryByTestId('auth-error')).not.toBeInTheDocument();
+  });
+
+  it('clears the verify error once the user edits the email', () => {
+    renderAuth('/auth?error=expired');
+    expect(screen.getByTestId('auth-error')).toBeInTheDocument();
+    fireEvent.change(screen.getByTestId('auth-email-input'), {
+      target: { value: 'a@b.co' },
+    });
+    expect(screen.queryByTestId('auth-error')).not.toBeInTheDocument();
   });
 });

@@ -14,12 +14,13 @@
 // Token-only: the wordmark uses the shared .pulse-gradtext idiom (--grad-pulse
 // volt->aqua), text via tokens, zero raw hex. Motion (PulseMark draw/glow, the
 // dot float, the entrance) is foundation CSS, auto-gated by the global
-// prefers-reduced-motion block + [data-calm="1"].
+// prefers-reduced-motion block.
 
 import type { JSX } from 'react';
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../stores/appStore';
+import { isAuthenticated as readAuthFromStorage } from '../../../auth.js';
 import { PulseMark } from '../../components/pulse/PulseMark';
 import { t } from '../../../i18n/index.js';
 
@@ -29,21 +30,31 @@ const ADVANCE_MS = 2600;
 
 export function Splash(): JSX.Element {
   const navigate = useNavigate();
-  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  // §01.009 audit fix — a returning user's session is the stored Firebase
+  // token (firebase-id-token etc.), NOT appStore.isAuthenticated: that flag is
+  // session-scope (not persisted — appStore.partialize keeps only isSkipAuth)
+  // and starts false on a cold reload, before ProtectedRoute's storage-sync
+  // runs. Splash sits ABOVE ProtectedRoute, so checking the flag alone sends a
+  // logged-in returner to /auth. Read the real token (same source-of-truth as
+  // ProtectedRoute) so a valid session lands in the app; isSkipAuth keeps the
+  // test-drive returner in too.
+  const isSkipAuth = useAppStore((s) => s.isSkipAuth);
+  const hasSession = readAuthFromStorage() || isSkipAuth;
 
   // Guard so the auto-advance timer and a manual tap can't both fire navigate.
   const advancedRef = useRef(false);
   const advance = (): void => {
     if (advancedRef.current) return;
     advancedRef.current = true;
-    navigate(isAuthenticated ? '/app/antrenor' : '/auth');
+    navigate(hasSession ? '/app/antrenor' : '/auth');
   };
 
   useEffect(() => {
     const id = window.setTimeout(advance, ADVANCE_MS);
     return () => window.clearTimeout(id);
-    // advance closes over the current isAuthenticated; stable for the splash
-    // lifetime (auth flips only via navigation away). Empty deps = one timer.
+    // advance closes over hasSession (read once at mount); stable for the
+    // splash lifetime — auth flips only via navigation away. Empty deps = one
+    // timer.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -119,7 +130,6 @@ export function Splash(): JSX.Element {
           0%, 100% { transform: translateY(0); opacity: .55; }
           50% { transform: translateY(-5px); opacity: 1; }
         }
-        [data-calm="1"] .splash-dot { animation: none; opacity: .8; }
         @media (prefers-reduced-motion: reduce) {
           .splash-dot { animation: none; opacity: .8; }
         }

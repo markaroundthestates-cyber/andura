@@ -47,6 +47,14 @@ export function Auth(): JSX.Element {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // §01.051 audit fix — AuthCallback redirects verify-failures to
+  // /auth?error=<reason>. Read it once on mount so the failure is surfaced
+  // (a generic, non-technical message — the raw reason can be a Firebase
+  // http_400 / oobCode string Gigel can't parse). Cleared once the user
+  // edits the email (sendMagicLink path) so it doesn't linger.
+  const verifyFailed =
+    new URLSearchParams(location.search).get('error') !== null;
+  const [showVerifyError, setShowVerifyError] = useState(verifyFailed);
   // Daniel-directed redesign 2026-05-26 — doua cai conventionale pe acelasi
   // ecran: Login (default, primar) + Creeaza cont (sub-vedere mode state, NU
   // ruta separata). Ambele cai apeleaza ACELASI sendMagicLink (Firebase
@@ -232,12 +240,12 @@ export function Auth(): JSX.Element {
               type="email"
               required
               aria-required="true"
-              aria-invalid={error ? 'true' : undefined}
-              aria-describedby={error ? 'auth-email-error' : undefined}
+              aria-invalid={error || showVerifyError ? 'true' : undefined}
+              aria-describedby={error || showVerifyError ? 'auth-email-error' : undefined}
               autoComplete="email"
               inputMode="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => { setEmail(e.target.value); setShowVerifyError(false); }}
               placeholder={t('auth.emailPlaceholderRo')}
               data-testid="auth-email-input"
               className="auth-pulse-field w-full p-4 mb-4 border border-lineStrong rounded-2xl bg-paper2 text-base text-ink outline-none transition-[border-color,box-shadow]"
@@ -335,14 +343,14 @@ export function Auth(): JSX.Element {
                 </button>
               </>
             )}
-            {error && (
+            {(error || showVerifyError) && (
               <p
                 id="auth-email-error"
                 className="mt-3 text-sm text-danger text-center"
                 data-testid="auth-error"
                 role="alert"
               >
-                {t('auth.errorGeneric')}
+                {showVerifyError ? t('auth.errorVerify') : t('auth.errorGeneric')}
               </p>
             )}
 

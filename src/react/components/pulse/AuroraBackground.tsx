@@ -27,7 +27,7 @@
 // Motion safety: blob drifts + conic spin divide their durations by
 // max(var(--motion), .25) so the global motion scalar dials them down; the
 // global prefers-reduced-motion block in global.css collapses them to a single
-// frame, and a [data-calm="1"] hard-stop (motion=0) is declared here too.
+// frame (the authoritative motion-safety mechanism).
 // Light-theme variants soften opacity + swap blend mode (multiply vs screen).
 //
 // Performance budget (Maria 65 phone): 3 blurred blobs + 1 conic + grain +
@@ -110,10 +110,6 @@ export function AuroraBackground(): JSX.Element {
           50% { transform: translate(-5%, 7%) scale(1.15); }
         }
         @keyframes pulseAuroraConic { to { transform: translate(-50%, -50%) rotate(360deg); } }
-        [data-calm="1"] .pulse-aurora-blob,
-        [data-calm="1"] .pulse-aurora-depth {
-          animation: none !important;
-        }
         @media (prefers-reduced-motion: reduce) {
           .pulse-aurora-blob, .pulse-aurora-depth { animation: none !important; }
         }
