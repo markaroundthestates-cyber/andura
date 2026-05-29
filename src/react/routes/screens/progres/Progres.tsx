@@ -34,14 +34,15 @@
 //                   2-col + BodyFat  ← daily actionable number, leads the screen
 //   2. TENDINTA   — Sparkline trend card + ProjectionStrip + HeatMapWeekly
 //   3. ACTIUNI    — AlertsBanner + log-weight CTA + last-weight card + weight-trend
-//                   CTA + body-data CTA + last-body card
+//                   CTA  (§progress-v2: body-measurements entry consolidated in
+//                   Cont > Profil — body-data CTA + last-body card removed)
 //   4. RECUPERARE — MuscleRecoveryGrid (Big-11 ring grid)  ← Pulse net-new zone
 //   5. OBIECTIV   — ObiectivGoalCard (5 goal pills) + ObiectivCard (target + ETA)
 //                   ← set-once config, demoted below the daily reads
 //   6. LOG MANUAL — NutritionInline (kcal/protein editable chips — rarely tapped)
 //
 // Test contract preserved: heading + tagline + all testids (cta-log-weight,
-// cta-body-data, last-weight-card, last-body-card, alerts-banner, alerte-azi-label,
+// last-weight-card, alerts-banner, alerte-azi-label,
 // fatigue-bmr-grid) + ORDER (alerts-banner above cta-log-weight, intra-zone).
 // Wrapping containers keep data-testid="progres-zone-*" for smoke selectors.
 
