@@ -419,6 +419,42 @@ describe('SettingsProfile — U-12 Big 6 range gate on save (AUDIT-2 §U-12 HIGH
   });
 });
 
+// ══ i18n leak fix (audit 09 store-evading) — validation toast LOCALIZED ═══════
+// The store emits a semantic key (+ {min,max} params), resolved via t() at the
+// SettingsProfile save boundary. Pre-fix the store emitted hardcoded Romanian,
+// so the toast leaked RO under EN. These specs prove the rendered toast text is
+// correct in BOTH locales for each numeric Big-6 field.
+describe('SettingsProfile — validation toast is localized (EN + RO) per field', () => {
+  const cases: Array<{ testid: string; bad: string; en: RegExp; ro: RegExp }> = [
+    { testid: 'profile-age-input', bad: '8', en: /Age must be between 18 and 99 years\./, ro: /Varsta intre 18 si 99 ani\./ },
+    { testid: 'profile-weight-input', bad: '999', en: /Weight must be between 30 and 250 kg\./, ro: /Greutate intre 30 si 250 kg\./ },
+    { testid: 'profile-height-input', bad: '300', en: /Height must be between 120 and 230 cm\./, ro: /Inaltime intre 120 si 230 cm\./ },
+  ];
+
+  function lastWarning(): string {
+    const items = toast.getSnapshot().filter((t) => t.variant === 'warning');
+    return String(items[items.length - 1]?.message ?? '');
+  }
+
+  for (const c of cases) {
+    it(`${c.testid} renders EN toast under EN locale`, () => {
+      __setLocale('en');
+      renderScreen();
+      fireEvent.change(screen.getByTestId(c.testid), { target: { value: c.bad } });
+      fireEvent.click(screen.getByTestId('settings-profile-save'));
+      expect(lastWarning()).toMatch(c.en);
+    });
+
+    it(`${c.testid} renders RO toast under RO locale`, () => {
+      __setLocale('ro');
+      renderScreen();
+      fireEvent.change(screen.getByTestId(c.testid), { target: { value: c.bad } });
+      fireEvent.click(screen.getByTestId('settings-profile-save'));
+      expect(lastWarning()).toMatch(c.ro);
+    });
+  }
+});
+
 describe('SettingsProfile — weight continuity (onboarding -> profil edit autoritar)', () => {
   // BUG (Daniel live): onboarding 110 kg, apoi profil 50 kg → app trebuie sa
   // foloseasca 50 PESTE TOT (TDEE/BMR/BF%/proteine/Antrenor/Progres). Radacina:

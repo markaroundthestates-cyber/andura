@@ -187,14 +187,16 @@ export function SettingsProfile(): JSX.Element {
     // so paste age=8 / weight=999 reached engines via the edit path. Validate
     // age + weight here (numeric Big 6 fields with bounds) and surface a
     // Gigel-friendly toast on out-of-range, aborting the save.
+    // Store emits a semantic key (+ {min,max} params); resolve to localized copy
+    // via t() here at the React boundary (i18n leak fix audit 09 store-evading).
     const ageCheck = validateOnboardingField('age', draft.age);
     if (!ageCheck.ok) {
-      toast.show({ message: ageCheck.reason, variant: 'warning' });
+      toast.show({ message: t(ageCheck.messageKey, ageCheck.params), variant: 'warning' });
       return;
     }
     const weightCheck = validateOnboardingField('weight', draft.weight);
     if (!weightCheck.ok) {
-      toast.show({ message: weightCheck.reason, variant: 'warning' });
+      toast.show({ message: t(weightCheck.messageKey, weightCheck.params), variant: 'warning' });
       return;
     }
     // RE-U-01 — inaltimea e acum editabila (draft.height, P-02 store). Aplica
@@ -202,7 +204,7 @@ export function SettingsProfile(): JSX.Element {
     // o inaltime out-of-range din edit-path, ca §U-12 pentru Big 6).
     const heightCheck = validateOnboardingField('height', draft.height);
     if (!heightCheck.ok) {
-      toast.show({ message: heightCheck.reason, variant: 'warning' });
+      toast.show({ message: t(heightCheck.messageKey, heightCheck.params), variant: 'warning' });
       return;
     }
     // §weight-continuity — captureaza greutatea canonica curenta INAINTE de

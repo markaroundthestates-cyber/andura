@@ -1889,6 +1889,16 @@
       "completeHeight": "Completeaza inaltimea.",
       "completeAll": "Completeaza toti pasii inainte de a continua."
     },
+    "validation": {
+      "ageInvalid": "Varsta invalida.",
+      "ageRange": "Varsta intre {min} si {max} ani.",
+      "weightInvalid": "Greutate invalida.",
+      "weightRange": "Greutate intre {min} si {max} kg.",
+      "heightInvalid": "Inaltime invalida.",
+      "heightRange": "Inaltime intre {min} si {max} cm.",
+      "targetWeightInvalid": "Greutate tinta invalida.",
+      "targetWeightRange": "Greutate tinta intre {min} si {max} kg."
+    },
     "steps": {
       "1": {
         "title": "Cati ani ai?",

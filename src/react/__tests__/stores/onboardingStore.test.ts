@@ -124,13 +124,13 @@ describe('onboardingStore — validateOnboardingField range gate', () => {
     expect(validateOnboardingField('age', 99)).toEqual({ ok: true });
   });
 
-  it('rejects age below min (8) cu Gigel-friendly reason', () => {
+  it('rejects age below min (8) cu semantic key + range params', () => {
     const result = validateOnboardingField('age', 8);
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.reason).toContain('18');
-      expect(result.reason).toContain('99');
-      expect(result.reason.toLowerCase()).toContain('varsta');
+      // Store emits a key + params, NOT Romanian prose (i18n leak fix audit 09).
+      expect(result.messageKey).toBe('onboarding.validation.ageRange');
+      expect(result.params).toEqual({ min: 18, max: 99 });
     }
   });
 
@@ -152,13 +152,12 @@ describe('onboardingStore — validateOnboardingField range gate', () => {
     expect(validateOnboardingField('weight', 250)).toEqual({ ok: true });
   });
 
-  it('rejects weight below min (10) cu Gigel-friendly reason', () => {
+  it('rejects weight below min (10) cu semantic key + range params', () => {
     const result = validateOnboardingField('weight', 10);
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.reason).toContain('30');
-      expect(result.reason).toContain('250');
-      expect(result.reason.toLowerCase()).toContain('greutate');
+      expect(result.messageKey).toBe('onboarding.validation.weightRange');
+      expect(result.params).toEqual({ min: 30, max: 250 });
     }
   });
 
@@ -167,10 +166,10 @@ describe('onboardingStore — validateOnboardingField range gate', () => {
     expect(result.ok).toBe(false);
   });
 
-  it('rejects NaN with invalid-value reason', () => {
+  it('rejects NaN with invalid-value key', () => {
     const ageRes = validateOnboardingField('age', NaN);
     expect(ageRes.ok).toBe(false);
-    if (!ageRes.ok) expect(ageRes.reason.toLowerCase()).toContain('invalida');
+    if (!ageRes.ok) expect(ageRes.messageKey).toBe('onboarding.validation.ageInvalid');
   });
 
   // P-02 — height range gate (120-230 cm) cu reason Gigel-friendly.
@@ -179,13 +178,12 @@ describe('onboardingStore — validateOnboardingField range gate', () => {
     expect(validateOnboardingField('height', 230)).toEqual({ ok: true });
   });
 
-  it('rejects height below min (100) cu reason', () => {
+  it('rejects height below min (100) cu semantic key + range params', () => {
     const result = validateOnboardingField('height', 100);
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.reason).toContain('120');
-      expect(result.reason).toContain('230');
-      expect(result.reason.toLowerCase()).toContain('inaltime');
+      expect(result.messageKey).toBe('onboarding.validation.heightRange');
+      expect(result.params).toEqual({ min: 120, max: 230 });
     }
   });
 
@@ -206,13 +204,12 @@ describe('onboardingStore — validateOnboardingField range gate', () => {
     expect(validateOnboardingField('targetWeight', 250)).toEqual({ ok: true });
   });
 
-  it('targetWeight rejects below min (10) cu mesaj Gigel', () => {
+  it('targetWeight rejects below min (10) cu semantic key + range params', () => {
     const r = validateOnboardingField('targetWeight', 10);
     expect(r.ok).toBe(false);
     if (!r.ok) {
-      expect(r.reason).toContain('30');
-      expect(r.reason).toContain('250');
-      expect(r.reason.toLowerCase()).toContain('greutate tinta');
+      expect(r.messageKey).toBe('onboarding.validation.targetWeightRange');
+      expect(r.params).toEqual({ min: 30, max: 250 });
     }
   });
 

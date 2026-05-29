@@ -1889,6 +1889,16 @@
       "completeHeight": "Complete your height.",
       "completeAll": "Complete all steps before continuing."
     },
+    "validation": {
+      "ageInvalid": "Invalid age.",
+      "ageRange": "Age must be between {min} and {max} years.",
+      "weightInvalid": "Invalid weight.",
+      "weightRange": "Weight must be between {min} and {max} kg.",
+      "heightInvalid": "Invalid height.",
+      "heightRange": "Height must be between {min} and {max} cm.",
+      "targetWeightInvalid": "Invalid target weight.",
+      "targetWeightRange": "Target weight must be between {min} and {max} kg."
+    },
     "steps": {
       "1": {
         "title": "How old are you?",

@@ -199,6 +199,9 @@ const RO_LEAK_TOKENS = [
   'redirectionam', 'creste', 'mentine', 'consecutive', 'musculare', 'neantronate',
   'stagnare', 'aderenta', 'adherenta', 'usoara', 'usor', 'scurta', 'intensitatea',
   'ritmul', 'prioritizeaza', 'verifica', 'caloriile', 'inainte',
+  // onboardingStore validation leaks (audit 09 store-evading): the .ts store
+  // emitted RO validation prose ('Varsta invalida.', 'Inaltime intre ...').
+  'varsta', 'invalida', 'inaltime', 'tinta', 'ani',
 ];
 const RO_LEAK_REGEX = new RegExp(
   `\\b(${RO_LEAK_TOKENS.join('|')})\\b`,
@@ -370,5 +373,65 @@ describe('i18n leak harness — en.json values are RO-leak-free on every screen'
       );
     }
     expect(leaks).toEqual([]);
+  });
+});
+
+// ── (D) RO literals in any src/react/**/*.ts store/lib source ────────────────
+//
+// Closes the same gap as (B) but for the WHOLE non-.tsx React tree, not just two
+// enumerated banner files. The .tsx-only AST gate (top of file) globs only
+// `src/react/**/*.tsx`, so a store/lib `.ts` file (onboardingStore.ts, a lib
+// composer, …) could emit RO copy that reaches the DOM via a caller — exactly
+// the onboardingStore.ts validation leak (audit 09 store-evading): RO
+// validation prose ('Varsta invalida.', `Inaltime intre ${min}...`) handed to
+// `toast.show({message})` at the Onboarding/SettingsProfile render boundary.
+// Stores/libs MUST emit a semantic i18n key resolved via t() at the React
+// boundary — ZERO Romanian copy in .ts source. jsxOnly:false so plain code
+// literals are scanned; isRoProse gates to multi-word RO/non-path literals, so
+// keys ('onboarding.validation.ageRange'), enum slugs ('usor') and import/route
+// paths never trip it.
+//
+// CARRIED-FORWARD DEBT (TS_LEAK_KNOWN): this scan surfaced pre-existing RO copy
+// in OTHER .ts sources beyond the onboardingStore fix that introduced it. Those
+// are real leaks of the SAME class but owned by separate FIX work — quarantined
+// here (file + literal substring) so this gate goes green now AND permanently
+// guards the onboardingStore validation class (+ any NEW .ts leak). Each entry
+// is a known-RO literal; shrink this list as those files are keyed. Adding a
+// row is a conscious admission of debt, NOT a way to silence a fresh leak —
+// new RO copy in a store/lib must become a t() key, never a new row.
+const TS_LEAK_KNOWN: ReadonlyArray<{ file: string; includes: string; why: string }> = [
+  // coachVoice COACH_VOICE = canonical RO fallback pool (per-locale bundle
+  // preferred via coachPick; const stays RO for engine-test compat).
+  { file: 'src/react/lib/coachVoice.ts', includes: '', why: 'COACH_VOICE canonical RO fallback pool — keyed via coachEngine.voice.* bundle' },
+  // historyImportParser skipped-row `reason` copy (CSV import results UI).
+  { file: 'src/react/lib/historyImportParser.ts', includes: '', why: 'CSV import skip-reason copy — pending key migration' },
+  // scheduleAdapterAggregate workout-title fallback rendered in WorkoutPreview.
+  { file: 'src/react/lib/scheduleAdapterAggregate.ts', includes: 'Antrenament azi', why: 'workout-title fallback — pending key migration' },
+  // workoutStore paused-session title marker rendered in Workout.
+  { file: 'src/react/stores/workoutStore.ts', includes: '(sesiune nedefinita)', why: 'paused-session title marker — pending key migration' },
+];
+function isKnownTsLeak(file: string, text: string): boolean {
+  return TS_LEAK_KNOWN.some((k) => k.file === file && (k.includes === '' || text.includes(k.includes)));
+}
+describe('i18n leak harness — src/react store/lib (.ts) sources carry no RO copy', () => {
+  it('no Romanian copy hides in a src/react/**/*.ts (non-.tsx) source literal', () => {
+    const files = gitFiles('src/react/**/*.ts')
+      .filter((f) => !f.split('/').includes('__tests__') && !f.endsWith('.d.ts'));
+    expect(files.length).toBeGreaterThan(5); // sanity: the .ts tree was found
+
+    const hits: LeakHit[] = [];
+    for (const rel of files) {
+      hits.push(...scanSourceRoLiterals(resolve(REPO_ROOT, rel.split('/').join(sep)), rel, false)
+        .filter((h) => !isKnownTsLeak(h.file, h.text)));
+    }
+    if (hits.length > 0) {
+      const report = hits.map((h) => `  ${h.file}:${h.line} "${h.text}"`).join('\n');
+      throw new Error(
+        `Found ${hits.length} Romanian string literal(s) in a src/react .ts store/lib source ` +
+          `(scanner-evading — the .tsx-only AST gate never reads .ts). Emit a semantic i18n ` +
+          `key (resolve via t() at the React render boundary), never localized copy:\n${report}`,
+      );
+    }
+    expect(hits).toEqual([]);
   });
 });
