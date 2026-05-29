@@ -53,6 +53,7 @@ import { runAuthPathMigration } from '../../migrations/2026-05-02-auth-path-migr
 import { enforceDataOwner } from '../../util/dataReset.js';
 import { useAppStore } from '../stores/appStore';
 import { hydrateStoresFromCloud, startStoreSyncSubscriptions } from './storeSync';
+import { migrateAnonymousToAuth } from '../../storage/migrateAnonymousToAuth.js';
 
 // Module-level idempotency guards. React 18 StrictMode double-invokes effects
 // in dev, and main.tsx + a returning-user path could both reach boot — these
@@ -180,10 +181,25 @@ export async function runPostAuthSync(): Promise<void> {
       // Without this, the local-always-wins merge below would push A's stale local
       // data up to B's cloud. No-op for the same user / first login. Best-effort
       // (own try/catch) so a wipe failure never blocks or aborts the sync.
+      let dataSwitch = false;
       try {
-        await enforceDataOwner(uid);
+        dataSwitch = await enforceDataOwner(uid);
       } catch (err) {
         console.warn('[Auth] data-owner guard threw:', err);
+      }
+      // 08.047 — anon → auth IndexedDB Tier-1 handover. When a user trained
+      // anonymously then signed up on THIS device (not an account switch), the
+      // rotated logs/CDL/patterns live in `andura_anonymous_<deviceId>` and
+      // become orphaned once getNamespace() flips to `andura_<uid>`. Merge them
+      // into the auth namespace (union by id, dest-wins, never-delete). Idempotent
+      // per-uid flag; best-effort + non-fatal. Skip on an account switch — the
+      // anonymous archive does not belong to the newly-authed different user.
+      if (!dataSwitch) {
+        try {
+          await migrateAnonymousToAuth(uid);
+        } catch (err) {
+          console.warn('[Auth] anon→auth IDB migration threw:', err);
+        }
       }
       // Path migration FIRST so the subsequent restore reads from the
       // canonical users/{uid} node (not the legacy users/daniel literal).
