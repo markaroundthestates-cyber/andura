@@ -222,6 +222,37 @@ describe('SettingsProfile — Compozitie corporala (§F-pass2-settings-profile-0
     expect(override.disabled).toBe(false);
   });
 
+  // §08.038 — manual BF% override consum pe save (era discarded). Scrie
+  // `bf-override` (Tier-0 SYNC_KEY citit de sys.getBF + BodyFatStrip).
+  it('BF% override persista in bf-override pe save cand bifa ON + valoare valida', async () => {
+    const { DB } = await import('../../../../db.js');
+    renderScreen();
+    fireEvent.click(screen.getByTestId('profile-bf-manual'));
+    fireEvent.change(screen.getByTestId('profile-bf-override'), { target: { value: '18.5' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(DB.get('bf-override')).toBe(18.5);
+  });
+
+  it('BF% override sters din bf-override pe save cand bifa OFF (revine la auto)', async () => {
+    const { DB } = await import('../../../../db.js');
+    DB.set('bf-override', 22); // override pre-existent
+    renderScreen();
+    // bifa porneste ON (seed din bf-override) — o dezactivam.
+    expect((screen.getByTestId('profile-bf-manual') as HTMLInputElement).checked).toBe(true);
+    fireEvent.click(screen.getByTestId('profile-bf-manual'));
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(DB.get('bf-override')).toBeNull();
+  });
+
+  it('BF% override invalid (peste banda) cu bifa ON NU scrie un override stricat', async () => {
+    const { DB } = await import('../../../../db.js');
+    renderScreen();
+    fireEvent.click(screen.getByTestId('profile-bf-manual'));
+    fireEvent.change(screen.getByTestId('profile-bf-override'), { target: { value: '99' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(DB.get('bf-override')).toBeNull(); // revine la auto, NU 99
+  });
+
   // RE-U-01 — inaltimea = single source (onboardingStore.data.height, P-02), NU
   // stare locala separata. Campul porneste din store + persista la save → BMR
   // (BMRStrip) reflecta valoarea editata aici.

@@ -21,6 +21,7 @@ import { useProgresStore, latestBodyMeasurements } from '../../stores/progresSto
 import { estimateBF_USNavy } from '../../../engine/usNavyBF.js';
 import { estimateBfDeurenbergCapped } from '../../../engine/bodyComposition.js';
 import { getCurrentWeightKg } from '../../lib/userTdee';
+import { DB } from '../../../db.js';
 import { t } from '../../../i18n/index.js';
 
 export function BodyFatStrip(): JSX.Element {
@@ -64,9 +65,22 @@ export function BodyFatStrip(): JSX.Element {
     ageYears: age ?? NaN,
     ...(sex ? { sex } : {}),
   });
-  const bf = bfNavy ?? bfDeurenberg;
-  const isUsingDeurenberg = bfNavy == null && bfDeurenberg != null;
-  const sourceLabel = bfNavy != null ? t('progres.bodyFat.sourceUsNavy') : t('progres.bodyFat.sourceEstimated');
+  // §08.038 — manual BF% override (Cont > Profil) wins over auto US-Navy/
+  // Deurenberg, mirroring sys.getBF() which prioritizes `bf-override` over every
+  // calculation. Without this the override the user sets in Profil never showed
+  // on its primary surface (this strip). Read on render — a remount on tab
+  // navigation back from Profil picks up the freshly-saved value.
+  const bfOverrideRaw = DB.get('bf-override');
+  const bfOverride = bfOverrideRaw != null ? Number(bfOverrideRaw) : null;
+  const hasOverride = bfOverride != null && Number.isFinite(bfOverride);
+  const bfAuto = bfNavy ?? bfDeurenberg;
+  const bf = hasOverride ? bfOverride : bfAuto;
+  const isUsingDeurenberg = !hasOverride && bfNavy == null && bfDeurenberg != null;
+  const sourceLabel = hasOverride
+    ? t('progres.bodyFat.sourceManual')
+    : bfNavy != null
+      ? t('progres.bodyFat.sourceUsNavy')
+      : t('progres.bodyFat.sourceEstimated');
 
   return (
     <section

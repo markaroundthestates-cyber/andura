@@ -11,6 +11,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { DB, todTs } from '../../db.js';
+import { archiveSession } from '../lib/dexieMigration';
 
 export type WorkoutPhase = 'logging' | 'rating' | 'rest' | 'transition' | 'idle';
 
@@ -185,8 +186,14 @@ const RATING_TO_RPE: Readonly<Record<'usor' | 'potrivit' | 'greu', number>> = {
 // pierdere istoric. Cap 500 = ~1.4 ani uz zilnic full-detail, peste fereastra
 // 90-zile a oricarui consumer (RatingsStrip90Day/PRWallRecent/CoachTodayCard).
 // Newest-tail (la fel ca append existent) → slice(-MAX) pastreaza recente.
-// NB: arhiva Tier1 IDB (audit) ar cere object-store nou + migrare schema =
-// disproportionat acestui fix; cap-ul singur rezolva riscul de quota.
+//
+// 08.040 fix — pana acum slice(-MAX) ARUNCA TACIT cea mai veche sesiune cand
+// se depaseste cap-ul (ANDURA never-delete violation pe orizont 2-3 ani). Acum
+// overflow-ul (sesiunile cele mai vechi care ar cadea afara) e ARHIVAT in Tier-1
+// IDB (`archiveSession` din dexieMigration.ts, acelasi pattern ca rotatia CDL)
+// INAINTE de slice, deci raman recuperabile via `getArchivedSessions` — zero
+// pierdere silentioasa. Fire-and-forget + fail-silent (jsdom fara IndexedDB
+// → no-op): arhivarea nu blocheaza + nu arunca pe path-ul de finish session.
 export const SESSIONS_HISTORY_MAX = 500;
 
 export function buildLogEntriesFromSummary(
@@ -239,6 +246,25 @@ export function persistSessionLogs(
     // Soft-fail — storage quota / SSR jsdom edge. Engine adapters tolerate
     // missing logs (return 'DATE INSUFICIENTE' baseline). Preserves zero-
     // throw render contract Zustand action boundary.
+  }
+}
+
+// 08.040 — archive the sessions that a SESSIONS_HISTORY_MAX cap would otherwise
+// drop, into the Tier-1 IDB archive (same never-delete pattern as CDL rotation).
+// `nextHistory` is the about-to-be-persisted list BEFORE the slice; we archive
+// exactly the oldest (head) overflow that slice(-MAX) would discard. Pure on the
+// store side — the archive write is fire-and-forget + fail-silent (no IndexedDB
+// in jsdom → archiveSession no-ops). Exported for test determinism.
+export function archiveOverflowSessions(
+  nextHistory: readonly LastSessionSummary[],
+  max: number = SESSIONS_HISTORY_MAX,
+): void {
+  if (nextHistory.length <= max) return;
+  const overflow = nextHistory.slice(0, nextHistory.length - max); // oldest head
+  for (const s of overflow) {
+    // Fire-and-forget — never block / throw on the finish path. archiveSession
+    // already swallows its own errors.
+    void archiveSession(s);
   }
 }
 
@@ -535,15 +561,19 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           // synchronously; localStorage write is sync). Soft-fail inside
           // persistSessionLogs preserves zero-throw render contract.
           persistSessionLogs(summary, s.sessionStart);
+          // U-11 (MED): rolling cap SESSIONS_HISTORY_MAX — slice ultimele N
+          // (newest-tail) ca persist sa nu depaseasca quota localStorage.
+          // 08.040: archiveaza overflow-ul (sesiunile vechi care ar cadea afara)
+          // in Tier-1 IDB INAINTE de slice — zero pierdere silentioasa.
+          const nextHistory = [...s.sessionsHistory, summary];
+          archiveOverflowSessions(nextHistory);
           return {
             phase: 'idle' as WorkoutPhase,
             sessionStart: null,
             lastSession: summary,
             // Phase 4 task_21: append la sessionsHistory cumulative list
             // pentru Istoric tab. Newest tail (reverse-chrono UI iter pe display).
-            // U-11 (MED): rolling cap SESSIONS_HISTORY_MAX — slice ultimele N
-            // (newest-tail) ca persist sa nu depaseasca quota localStorage.
-            sessionsHistory: [...s.sessionsHistory, summary].slice(-SESSIONS_HISTORY_MAX),
+            sessionsHistory: nextHistory.slice(-SESSIONS_HISTORY_MAX),
             exIdx: 0,
             setIdx: 0,
             history: {},
@@ -646,15 +676,33 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       name: 'wv2-workout-store',
       storage: createJSONStorage(() => localStorage),
       // Persist selective: pausedSnapshot + lastSession + sessionsHistory +
-      // streak + lastStreakDate (NU sessionStart/sessionContext runtime-only).
+      // streak + lastStreakDate (NU sessionContext/refusalTriedByEx runtime-only).
       // Phase 4 task_21 adds history pentru Istoric tab persistent browse.
       // U-05: lastStreakDate persistat ca day-boundary sa supravietuiasca reload.
+      //
+      // 08.063 fix — IN-PROGRESS LIVE SESSION persisted (sessionStart + exIdx +
+      // setIdx + phase + history + prHit + prData). Pre-fix doar pausedSnapshot
+      // supravietuia reload; o sesiune ACTIVA (user logand seturi live) pierdea
+      // TACIT toate seturile + pozitia la un reload accidental (swipe-refresh
+      // mobil, crash tab, OS kill PWA). Acum reload-ul REIA sesiunea: la mount
+      // Workout.tsx vede getCurrentMode === 'active' (sessionStart != null) si NU
+      // re-porneste — continua exact de unde a ramas cu seturile logate intacte.
+      // sessionContext/refusalTriedByEx raman runtime-only (hint-uri de adaptare,
+      // NU date introduse de user — pierderea lor la reload nu pierde seturi).
       partialize: (state) => ({
         pausedSnapshot: state.pausedSnapshot,
         lastSession: state.lastSession,
         sessionsHistory: state.sessionsHistory,
         streak: state.streak,
         lastStreakDate: state.lastStreakDate,
+        // In-progress live session — resume on reload (no silent set loss).
+        sessionStart: state.sessionStart,
+        exIdx: state.exIdx,
+        setIdx: state.setIdx,
+        phase: state.phase,
+        history: state.history,
+        prHit: state.prHit,
+        prData: state.prData,
       }) as Partial<WorkoutState & WorkoutActions>,
     }
   )

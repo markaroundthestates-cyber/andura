@@ -28,6 +28,7 @@ function bfValue(): number {
 }
 
 beforeEach(() => {
+  localStorage.clear();
   useProgresStore.getState().reset();
   useOnboardingStore.setState({
     data: {
@@ -93,5 +94,19 @@ describe('BodyFatStrip — weight source unification', () => {
     const bfFromEdit = Number((all[all.length - 1]?.textContent ?? '').replace(/[^\d.]/g, ''));
 
     expect(bfFromEdit).toBeGreaterThan(bfFromOnboarding);
+  });
+});
+
+describe('BodyFatStrip — manual BF% override wins (08.038)', () => {
+  it('shows the bf-override value over the auto estimate', async () => {
+    const { DB } = await import('../../../../db.js');
+    render(<BodyFatStrip />);
+    const auto = bfValue();
+    DB.set('bf-override', 12.3); // user-set manual override
+    render(<BodyFatStrip />);
+    const all = screen.getAllByTestId('bodyfat-value');
+    const overridden = Number((all[all.length - 1]?.textContent ?? '').replace(/[^\d.]/g, ''));
+    expect(overridden).toBe(12.3);
+    expect(overridden).not.toBe(auto);
   });
 });

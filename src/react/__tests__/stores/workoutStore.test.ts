@@ -905,12 +905,19 @@ describe('workoutStore — persist middleware partialize', () => {
     expect(parsed.state.streak).toBe(1);
   });
 
-  it('persist write OMITS sessionStart (runtime-only)', async () => {
-    useWorkoutStore.getState().startSession(Date.now());
+  // 08.063 — sessionStart now PERSISTS so a mid-workout reload resumes the live
+  // session (previously runtime-only → all logged sets lost on accidental
+  // reload). sessionContext/refusalTriedByEx remain runtime-only (see below).
+  it('persist write CONTAINS sessionStart (live-session resume 08.063)', async () => {
+    const ts = Date.now();
+    useWorkoutStore.getState().startSession(ts);
+    useWorkoutStore.getState().logSet(0, { kg: 80, reps: 8, rating: 'potrivit' });
     await new Promise((r) => setTimeout(r, 20));
     const raw = localStorage.getItem('wv2-workout-store');
     const parsed = JSON.parse(raw!);
-    expect(parsed.state.sessionStart).toBeUndefined();
+    expect(parsed.state.sessionStart).toBe(ts);
+    // The logged set survives the persist (resume keeps user-entered sets).
+    expect(parsed.state.history['0']).toHaveLength(1);
   });
 
   it('persist write contains lastSession dupa finishSession', async () => {

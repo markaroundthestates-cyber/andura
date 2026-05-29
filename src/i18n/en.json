@@ -507,6 +507,7 @@
       "ariaLabel": "Estimated body fat",
       "sourceUsNavy": "US Navy",
       "sourceEstimated": "estimated",
+      "sourceManual": "manual",
       "captionApprox": "Approximate estimate. ",
       "captionFromBmi": "Estimated from BMI. ",
       "nudge": "Add waist + neck in Profile for a precise estimate (US Navy).",
