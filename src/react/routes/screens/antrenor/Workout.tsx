@@ -52,6 +52,7 @@ import { Brain } from 'lucide-react';
 import { DP } from '../../../../engine/dp.js';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { resolveBusySwap, resolveMissingSwap, resolveRefusalSwap } from '../../../lib/substitution';
+import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../lib/scheduleAdapterAggregate';
 import { toast } from '../../../lib/toast';
 import { incrementRefusal } from '../../../../engine/schedule/scheduleAdapter.js';
 import { t } from '../../../../i18n/index.js';
@@ -124,7 +125,15 @@ export function Workout(): JSX.Element {
     getTodayWorkout().then((planned) => {
       if (!cancelled) {
         setExercises(planned?.exercises ?? []);
-        setWorkoutTitle(planned?.workoutTitle ?? '');
+        // Resolve the non-localized engine fallback sentinel to the locale-aware
+        // "today's workout" title (was the RO 'Antrenament azi' verbatim before);
+        // a real engine title passes through untouched.
+        const rawTitle = planned?.workoutTitle;
+        setWorkoutTitle(
+          rawTitle && rawTitle !== ENGINE_WORKOUT_TITLE_FALLBACK
+            ? rawTitle
+            : t('coachToday.engineFallbackTitle'),
+        );
         setEngineIntensityMod(planned?.intensityMod ?? 'normal');
       }
     });

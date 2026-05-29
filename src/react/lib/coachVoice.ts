@@ -20,85 +20,63 @@
 //   - DECISIONS.md §D-LEGACY-052 Andura Suflet
 //   - DECISIONS.md §D-LEGACY-064 NO_DIACRITICS_RULE
 
-// Wave E4 — locale-aware pool resolution. The COACH_VOICE constant below is
-// the canonical RO source (mockup verbatim); coachPick prefers the per-locale
-// pool from the i18n bundle (coachEngine.voice.*) when present, falls back to
+// Wave E4 — locale-aware pool resolution. coachPick prefers the per-locale pool
+// from the i18n bundle (coachEngine.voice.*) when present, falls back to
 // COACH_VOICE for engine-test compat + partial-mock setups.
+//
+// i18n leak fix (2026-05-30) — COACH_VOICE no longer inlines the Romanian pools
+// (that was a store/lib RO leak quarantined in TS_LEAK_KNOWN). It is DERIVED
+// from the canonical RO bundle (ro.json coachEngine.voice.*), so this source
+// carries ZERO localized copy while the const stays the canonical RO fallback
+// pool the engine-test suites assert against (ro.json IS the canonical RO).
 import { t as tFn, tArray } from '../../i18n/index.js';
+import roBundle from '../../i18n/ro.json';
+
+// ── Canonical RO voice pools, sourced from ro.json (NU inline RO copy) ───────
+interface RoVoicePools {
+  preset: string[];
+  postUsor: string[];
+  postPotrivit: string[];
+  postGreu: string[];
+  rest: string[];
+  transition: string[];
+  endSessionUsor: string[];
+  endSessionPotrivit: string[];
+  endSessionGreu: string[];
+  reflectie: string[];
+  preview: string[];
+  safeFallback: string;
+}
+const RO_VOICE = (roBundle as unknown as { coachEngine: { voice: RoVoicePools } })
+  .coachEngine.voice;
 
 export const COACH_VOICE = {
   // before user logs set
-  preset: [
-    'Hai pe el, ai prins ritmul.',
-    'Acelasi tempo ca data trecuta - esti bun.',
-    'Concentreaza-te pe controlul coborarii.',
-    'Setul asta merge bine - respira adanc inainte.',
-    'Pastreaza forma, restul vine.',
-  ],
+  preset: RO_VOICE.preset,
   // user rated 🟢 Usor
-  postUsor: [
-    'Era prea usor - adaugam putin la urmatorul.',
-    'Daca ai inca in rezerva, urca-te 1-2 reps in plus la urmator.',
-    'Bun - coach-ul urca pragul putin.',
-  ],
+  postUsor: RO_VOICE.postUsor,
   // 🟡 Potrivit
-  postPotrivit: [
-    'Asta vrem - esti exact pe traiectorie.',
-    'Bun, mergi bine. Continuam la fel.',
-    'Potrivit = predictie buna. Pastreaza.',
-  ],
+  postPotrivit: RO_VOICE.postPotrivit,
   // 🔴 Greu
-  postGreu: [
-    'OK, retragem putin la urmator.',
-    'Greu - pastram aceeasi greutate, nu fortam.',
-    'Notat. Coach-ul ajusteaza singur.',
-  ],
+  postGreu: RO_VOICE.postGreu,
   // during pauza
-  rest: [
-    'Recuperare buna acum, respira adanc.',
-    'Bea o gura de apa, relaxeaza umerii.',
-    'Setul asta a fost solid - same effort la urmator.',
-    'Pauza scurta, e suficient.',
-    'Nu te grabi, recuperarea conteaza.',
-  ],
+  rest: RO_VOICE.rest,
   // transition phase între exerciții — exercise complete, urmatorul incoming.
   // Phase 4 task_10 §C: rename endExercise → transition (LOCKED Opțiune 1)
-  // pentru semantic clarity. Mockup comment line 52 confirma intent verbatim
-  // "exercise complete, transition". Smallest blast radius (2 consumers
-  // updated: Workout.tsx + coachVoice.test.ts).
-  transition: [
-    'Piept gata, hai pe umeri!',
-    'Bun - primul check.',
-    'Curat. Trecem mai departe.',
-    'Asta a fost. Inca un exercitiu si esti la jumate.',
-  ],
-  // post-session by rating (keys match mockup wv2 per-set rating taxonomy)
+  // pentru semantic clarity.
+  transition: RO_VOICE.transition,
+  // post-session by rating (keys match mockup wv2 per-set rating taxonomy).
+  // Bundle stores them flat (endSessionUsor/Potrivit/Greu); re-nest here so the
+  // COACH_VOICE.endSession[rating] shape the consumers/tests rely on is kept.
   endSession: {
-    usor: [
-      'Mergi bine, te astept joi mai vioi.',
-      'Sesiune curata. Maine urcam putin.',
-    ],
-    potrivit: [
-      'Mergi bine, te astept joi!',
-      'Bun. Continuam pe traiectorie.',
-    ],
-    greu: [
-      'Mergi bine - azi a fost greu, maine recuperam.',
-      'Notat. Ai dat tot, asta conteaza.',
-    ],
+    usor: RO_VOICE.endSessionUsor,
+    potrivit: RO_VOICE.endSessionPotrivit,
+    greu: RO_VOICE.endSessionGreu,
   },
   // shown on Antrenor idle post-session
-  reflectie: [
-    'Sesiunea de azi te-a apropiat de tinta lunii - mergi bine.',
-    '12 zile consecutive. Constanta bate intensitatea.',
-    'Bun ritm. Maine pauza, joi revenim.',
-  ],
+  reflectie: RO_VOICE.reflectie,
   // shown on workout-preview pre-session (task_05 §C)
-  preview: [
-    'Stim ce avem azi - hai sa o facem curat.',
-    'Asculta-ti corpul; ajustam pe parcurs daca apare ceva.',
-    'Forma intai, greutatea dupa.',
-  ],
+  preview: RO_VOICE.preview,
 } as const;
 
 export type CoachVoiceFlatCategory =
@@ -114,10 +92,11 @@ export type CoachVoiceEndSessionRating = 'usor' | 'potrivit' | 'greu';
  * separately la fallback path pentru observability (engine-adapter-fallback
  * precedent §48-H1).
  *
- * Wording chosen pre-action neutral (NO outcome claim "ai prins ritmul" /
- * "esti bun") safe across all phases (idle/rest/transition/postRPE/preview).
+ * Wording chosen pre-action neutral (NO outcome claim) safe across all phases
+ * (idle/rest/transition/postRPE/preview). Sourced from ro.json (canonical RO
+ * fallback) so this source carries no inline Romanian copy (i18n leak fix).
  */
-export const COACH_VOICE_SAFE_FALLBACK = 'Pregateste-te de antrenament.';
+export const COACH_VOICE_SAFE_FALLBACK = RO_VOICE.safeFallback;
 
 /**
  * Lazy Sentry capture — defers @sentry/browser import, no test-time impact

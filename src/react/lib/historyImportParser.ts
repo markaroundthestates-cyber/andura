@@ -40,8 +40,21 @@ export interface ParsedDailyEntry {
 /** Un rand sarit + motiv (transparenta import — userul vede cate randuri sarite). */
 export interface SkippedRow {
   line: number; // 1-based index in fisier (header = 1)
-  reason: string;
+  // SEMANTIC i18n key (NU copy localizat) — parser-ul e pur si nu poate emite
+  // copy localizat fara sa scurga RO in sursa. Render boundary-ul (daca
+  // afiseaza motivele) rezolva cheia via t('settings.import.skip.*'). Azi UI-ul
+  // arata doar `skipped.length`, deci cheia nu e inca randata.
+  reason: SkipReasonKey;
 }
+
+/** Cheile motivelor de sarire — rezolvate via t('settings.import.skip.<key>'). */
+export type SkipReasonKey =
+  | 'missingDateColumn'
+  | 'noDataColumn'
+  | 'invalidDate'
+  | 'noNutrition'
+  | 'invalidWeight'
+  | 'weightOutOfRange';
 
 export interface ParseResult {
   weightEntries: ParsedWeightEntry[];
@@ -132,7 +145,7 @@ export function parseHistoryImportCSV(text: string): ParseResult {
   const unitsIdx = headers.findIndex((h) => h.includes('unit'));
 
   if (dateIdx === -1) {
-    return { ...empty, skipped: [{ line: 1, reason: 'Lipseste coloana Date' }] };
+    return { ...empty, skipped: [{ line: 1, reason: 'missingDateColumn' }] };
   }
 
   // Detectie forma: nutritie daca exista coloana de calorii; altfel greutate
@@ -141,7 +154,7 @@ export function parseHistoryImportCSV(text: string): ParseResult {
     kcalIdx !== -1 ? 'nutrition' : weightIdx !== -1 ? 'weight' : 'unknown';
 
   if (detected === 'unknown') {
-    return { ...empty, skipped: [{ line: 1, reason: 'Nu am gasit coloana de calorii sau greutate' }] };
+    return { ...empty, skipped: [{ line: 1, reason: 'noDataColumn' }] };
   }
 
   const weightEntries: ParsedWeightEntry[] = [];
@@ -166,7 +179,7 @@ export function parseHistoryImportCSV(text: string): ParseResult {
 
     const date = normalizeDate(parts[dateIdx] ?? '');
     if (date == null) {
-      skipped.push({ line: lineNo, reason: 'Data invalida sau lipsa' });
+      skipped.push({ line: lineNo, reason: 'invalidDate' });
       continue;
     }
 
@@ -176,7 +189,7 @@ export function parseHistoryImportCSV(text: string): ParseResult {
       const kcal = Number.isFinite(kcalNum) && kcalNum > 0 ? Math.round(kcalNum) : null;
       const protein = Number.isFinite(protNum) && protNum >= 0 ? Math.round(protNum) : null;
       if (kcal == null && protein == null) {
-        skipped.push({ line: lineNo, reason: 'Fara kcal sau proteine valide' });
+        skipped.push({ line: lineNo, reason: 'noNutrition' });
         continue;
       }
       dailyEntries.push({ dateISO: date, kcal, protein });
@@ -184,7 +197,7 @@ export function parseHistoryImportCSV(text: string): ParseResult {
       // weight form
       const val = weightIdx !== -1 ? parseNum(parts[weightIdx]) : NaN;
       if (!Number.isFinite(val) || val <= 0) {
-        skipped.push({ line: lineNo, reason: 'Greutate invalida' });
+        skipped.push({ line: lineNo, reason: 'invalidWeight' });
         continue;
       }
       const unit = unitsIdx !== -1 ? (parts[unitsIdx] ?? '').toLowerCase() : '';
@@ -208,7 +221,7 @@ export function parseHistoryImportCSV(text: string): ParseResult {
       const kg = isLb ? w.val * LB_TO_KG : w.val;
       // Plauzibilitate post-conversie (mirror legacy v>30 && v<300).
       if (kg <= 30 || kg >= 300) {
-        skipped.push({ line: w.line, reason: 'Greutate in afara intervalului plauzibil' });
+        skipped.push({ line: w.line, reason: 'weightOutOfRange' });
         continue;
       }
       weightEntries.push({ date: w.date, kg: Math.round(kg * 10) / 10 });

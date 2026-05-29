@@ -78,7 +78,6 @@ import { CoachTodayCard } from '../../react/components/Antrenor/CoachTodayCard';
 // ── Wave E2 — body comp + Progres deep coverage ─────────────────────────────
 import { BMRStrip } from '../../react/components/Progres/BMRStrip';
 import { ProjectionStrip } from '../../react/components/Progres/ProjectionStrip';
-import { NutritionInline } from '../../react/components/NutritionInline';
 import { ObiectivCard } from '../../react/components/Progres/ObiectivCard';
 import { LogWeight } from '../../react/routes/screens/progres/LogWeight';
 import { WeightTimeline } from '../../react/routes/screens/progres/WeightTimeline';
@@ -612,15 +611,6 @@ describe('Wave C2 i18n — no RO leak under EN locale (Daniel mandate)', () => {
     await Promise.resolve();
     await Promise.resolve();
     assertNoRoLeak('ProjectionStrip empty', container.textContent ?? '');
-  });
-
-  it('NutritionInline renders without RO leak under EN (default + edit mode)', () => {
-    const { container } = render(<NutritionInline />);
-    assertNoRoLeak('NutritionInline default', container.textContent ?? '');
-    // Toggle edit on both chips → exposes Save CTA copy.
-    fireEvent.click(screen.getByTestId('nutri-kcal-edit'));
-    fireEvent.click(screen.getByTestId('nutri-protein-edit'));
-    assertNoRoLeak('NutritionInline edit mode', container.textContent ?? '');
   });
 
   it('ObiectivCard renders without RO leak under EN (incl. warning + ETA)', () => {

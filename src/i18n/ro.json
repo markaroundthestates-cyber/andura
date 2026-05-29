@@ -919,7 +919,8 @@
     "body": "Ai pus pe pauza {when}. Continui de unde ai ramas?",
     "metaLine": "Oprit la ex {n} · acum {min} min",
     "resumeCta": "Reia",
-    "discardCta": "Renunta"
+    "discardCta": "Renunta",
+    "untitledMarker": "Sesiune fara nume"
   },
 
   "prNotification": {
@@ -1435,6 +1436,14 @@
         "skippedRows": "{n} randuri sarite",
         "confirmCta": "Importa datele",
         "cancelCta": "Anuleaza"
+      },
+      "skip": {
+        "missingDateColumn": "Lipseste coloana Date",
+        "noDataColumn": "Nu am gasit coloana de calorii sau greutate",
+        "invalidDate": "Data invalida sau lipsa",
+        "noNutrition": "Fara kcal sau proteine valide",
+        "invalidWeight": "Greutate invalida",
+        "weightOutOfRange": "Greutate in afara intervalului plauzibil"
       },
       "doneMessage": "Gata. Am importat {weightN} zile greutate si {nutritionN} zile nutritie. Coach foloseste deja datele pentru calibrare.",
       "doneBackCta": "Inapoi la Cont"

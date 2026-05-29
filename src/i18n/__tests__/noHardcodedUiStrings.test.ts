@@ -391,25 +391,15 @@ describe('i18n leak harness — en.json values are RO-leak-free on every screen'
 // keys ('onboarding.validation.ageRange'), enum slugs ('usor') and import/route
 // paths never trip it.
 //
-// CARRIED-FORWARD DEBT (TS_LEAK_KNOWN): this scan surfaced pre-existing RO copy
-// in OTHER .ts sources beyond the onboardingStore fix that introduced it. Those
-// are real leaks of the SAME class but owned by separate FIX work — quarantined
-// here (file + literal substring) so this gate goes green now AND permanently
-// guards the onboardingStore validation class (+ any NEW .ts leak). Each entry
-// is a known-RO literal; shrink this list as those files are keyed. Adding a
-// row is a conscious admission of debt, NOT a way to silence a fresh leak —
-// new RO copy in a store/lib must become a t() key, never a new row.
-const TS_LEAK_KNOWN: ReadonlyArray<{ file: string; includes: string; why: string }> = [
-  // coachVoice COACH_VOICE = canonical RO fallback pool (per-locale bundle
-  // preferred via coachPick; const stays RO for engine-test compat).
-  { file: 'src/react/lib/coachVoice.ts', includes: '', why: 'COACH_VOICE canonical RO fallback pool — keyed via coachEngine.voice.* bundle' },
-  // historyImportParser skipped-row `reason` copy (CSV import results UI).
-  { file: 'src/react/lib/historyImportParser.ts', includes: '', why: 'CSV import skip-reason copy — pending key migration' },
-  // scheduleAdapterAggregate workout-title fallback rendered in WorkoutPreview.
-  { file: 'src/react/lib/scheduleAdapterAggregate.ts', includes: 'Antrenament azi', why: 'workout-title fallback — pending key migration' },
-  // workoutStore paused-session title marker rendered in Workout.
-  { file: 'src/react/stores/workoutStore.ts', includes: '(sesiune nedefinita)', why: 'paused-session title marker — pending key migration' },
-];
+// CARRIED-FORWARD DEBT (TS_LEAK_KNOWN): this scan once surfaced pre-existing RO
+// copy in OTHER .ts sources (coachVoice / historyImportParser /
+// scheduleAdapterAggregate / workoutStore). All have since been keyed (engines &
+// composers emit semantic keys resolved via t() at the render boundary, and
+// coachVoice derives its canonical RO pool from ro.json), so the allowlist is
+// now EMPTY — the gate guards the whole .ts store/lib tree for real. Adding a
+// row is a conscious admission of debt, NOT a way to silence a fresh leak — new
+// RO copy in a store/lib must become a t() key, never a new row.
+const TS_LEAK_KNOWN: ReadonlyArray<{ file: string; includes: string; why: string }> = [];
 function isKnownTsLeak(file: string, text: string): boolean {
   return TS_LEAK_KNOWN.some((k) => k.file === file && (k.includes === '' || text.includes(k.includes)));
 }

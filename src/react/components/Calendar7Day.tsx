@@ -87,7 +87,7 @@ export function Calendar7Day(): JSX.Element {
           aria-label={editMode ? t('calendar.day7.editAriaSave') : t('calendar.day7.editAriaEdit')}
           className="absolute right-0 w-9 h-9 grid place-items-center rounded-xl transition-colors before:absolute before:-inset-1 before:content-['']"
           style={{
-            color: editMode ? 'var(--accent)' : 'var(--ink-3)',
+            color: editMode ? 'var(--brick)' : 'var(--ink-3)',
             background: 'var(--surface-2)',
             border: '1px solid var(--line)',
           }}

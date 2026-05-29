@@ -8,6 +8,7 @@ import {
   diffCalendarDays,
   nextStreak,
   SESSIONS_HISTORY_MAX,
+  PAUSED_SESSION_UNTITLED,
 } from '../../stores/workoutStore';
 import type { WorkoutMode, LastSessionSummary } from '../../stores/workoutStore';
 
@@ -107,17 +108,17 @@ describe('workoutStore — lifecycle actions', () => {
     expect(useWorkoutStore.getState().pausedSnapshot?.title).not.toBe('Push');
   });
 
-  it('pauseSession empty title → explicit marker (sesiune nedefinita) NU Push lie', () => {
+  it('pauseSession empty title → untitled sentinel marker NU Push lie', () => {
     useWorkoutStore.getState().startSession(Date.now());
     useWorkoutStore.getState().pauseSession('');
-    expect(useWorkoutStore.getState().pausedSnapshot?.title).toBe('(sesiune nedefinita)');
+    expect(useWorkoutStore.getState().pausedSnapshot?.title).toBe(PAUSED_SESSION_UNTITLED);
     expect(useWorkoutStore.getState().pausedSnapshot?.title).not.toBe('Push');
   });
 
-  it('pauseSession whitespace-only title → explicit marker (sesiune nedefinita)', () => {
+  it('pauseSession whitespace-only title → untitled sentinel marker', () => {
     useWorkoutStore.getState().startSession(Date.now());
     useWorkoutStore.getState().pauseSession('   ');
-    expect(useWorkoutStore.getState().pausedSnapshot?.title).toBe('(sesiune nedefinita)');
+    expect(useWorkoutStore.getState().pausedSnapshot?.title).toBe(PAUSED_SESSION_UNTITLED);
   });
 
   it('resumeSession restores from pausedSnapshot', () => {

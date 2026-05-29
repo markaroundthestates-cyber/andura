@@ -52,7 +52,9 @@ describe('parseHistoryImportCSV — nutrition form', () => {
     expect(r.dailyEntries).toHaveLength(1);
     expect(r.dailyEntries[0]!.dateISO).toBe('2026-05-04');
     expect(r.skipped.length).toBe(2);
-    expect(r.skipped[0]!.reason).toMatch(/data/i);
+    // reason is now a semantic i18n key (resolved via t() at the render
+    // boundary), not localized copy — an invalid-date row keys 'invalidDate'.
+    expect(r.skipped[0]!.reason).toBe('invalidDate');
   });
 
   it('fara coloana kcal sau weight → unknown (nu putem detecta forma)', () => {
@@ -101,7 +103,8 @@ describe('parseHistoryImportCSV — edge cases', () => {
   it('fara coloana Date → skip cu motiv', () => {
     const r = parseHistoryImportCSV('Calories,Protein\n2000,100');
     expect(r.detected).toBe('unknown');
-    expect(r.skipped[0]!.reason).toMatch(/Date/);
+    // Missing Date column → semantic key 'missingDateColumn' (NU localized copy).
+    expect(r.skipped[0]!.reason).toBe('missingDateColumn');
   });
 
   it('campuri citate cu virgule interne respectate', () => {

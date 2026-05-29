@@ -919,7 +919,8 @@
     "body": "You paused {when}. Continue where you left off?",
     "metaLine": "Stopped at ex {n} · {min} min ago",
     "resumeCta": "Resume",
-    "discardCta": "Discard"
+    "discardCta": "Discard",
+    "untitledMarker": "Untitled session"
   },
 
   "prNotification": {
@@ -1435,6 +1436,14 @@
         "skippedRows": "{n} rows skipped",
         "confirmCta": "Import the data",
         "cancelCta": "Cancel"
+      },
+      "skip": {
+        "missingDateColumn": "Missing Date column",
+        "noDataColumn": "No calories or weight column found",
+        "invalidDate": "Invalid or missing date",
+        "noNutrition": "No valid calories or protein",
+        "invalidWeight": "Invalid weight",
+        "weightOutOfRange": "Weight outside the plausible range"
       },
       "doneMessage": "Done. Imported {weightN} weight days and {nutritionN} nutrition days. The coach is already using the data for calibration.",
       "doneBackCta": "Back to Account"
