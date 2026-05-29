@@ -26,7 +26,7 @@
 import type { JSX } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Hand, HelpCircle, PackageX } from 'lucide-react';
+import { Users, Hand, HelpCircle, PackageX, Check } from 'lucide-react';
 import { AparatLipsaSheet } from '../../../components/Workout/AparatLipsaSheet';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
@@ -1013,20 +1013,43 @@ export function Workout(): JSX.Element {
             </div>
           )}
 
-          {/* Set history previous */}
-          <div className="mb-4" data-testid="set-history">
-            {(history[safeExIdx] ?? []).map((h, i) => (
-              <div
-                key={i}
-                className="flex justify-between p-2 text-ink2 text-sm"
-                data-testid={`set-history-${i}`}
-              >
-                <span>{t('workout.setLabel', { current: i + 1, total: currentExercise.sets })}</span>
-                <span>
-                  {h.kg} {t('common.kg')} x {h.reps} {t('common.reps')} - {h.rating}
-                </span>
-              </div>
-            ))}
+          {/* Set history previous — re-skinned to the mockup .set-chip glowing
+              done/active/pending progress row (interfata-noua/screens-workout.jsx
+              L254-260). One chip per planned set: logged sets = filled volt +
+              check (kg x reps x rating preserved as title/aria-label so the data
+              is not lost), the current set glows (active), the rest are muted
+              pending numbers. Logic + per-set testids (set-history-{i}) kept. */}
+          <div
+            className="mb-4 flex flex-wrap gap-2"
+            data-testid="set-history"
+          >
+            {Array.from({ length: currentExercise.sets }, (_, i) => {
+              const logged = (history[safeExIdx] ?? [])[i];
+              const isDone = logged !== undefined;
+              const isActive = !isDone && i === currentSetIdx;
+              const detail = isDone
+                ? `${logged.kg} ${t('common.kg')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
+                : undefined;
+              return (
+                <div
+                  key={i}
+                  className={`set-chip${isDone ? ' set-chip-done' : ''}${isActive ? ' set-chip-active' : ''}`}
+                  data-testid={isDone ? `set-history-${i}` : undefined}
+                  title={detail}
+                  aria-label={
+                    detail
+                      ? `${t('workout.setLabel', { current: i + 1, total: currentExercise.sets })}: ${detail}`
+                      : t('workout.setLabel', { current: i + 1, total: currentExercise.sets })
+                  }
+                >
+                  {isDone ? (
+                    <Check className="w-3.5 h-3.5" aria-hidden="true" strokeWidth={2.6} />
+                  ) : (
+                    <span aria-hidden="true">{i + 1}</span>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* §F-pass2-setloginput-02 — mockup wv2 two-step (andura-clasic.html

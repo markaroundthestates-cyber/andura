@@ -472,6 +472,35 @@
       background-color: color-mix(in oklab, var(--brick) 6%, var(--paper-2));
     }
   }
+
+  /* SET CHIPS — live per-set progress row (mockup interfata-noua/
+     screens-workout.jsx .set-chip). One square chip per planned set:
+     done = filled volt + check, active = current set glowing volt border,
+     pending = muted surface. Mockup uses --accent (= --volt in this build)
+     + --on-accent. [11.324] */
+  .set-chip {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink-3);
+    transition: 250ms;
+  }
+  .set-chip-active {
+    border-color: var(--volt);
+    color: var(--volt);
+    box-shadow: 0 0 16px -4px color-mix(in oklab, var(--volt) 60%, transparent);
+  }
+  .set-chip-done {
+    background: var(--volt);
+    border-color: var(--volt);
+    color: var(--on-accent);
+  }
 }
 
 /* ══ MOTION — tasteful entrance keyframes (Daniel 2026-05-27/28) ═══════════
