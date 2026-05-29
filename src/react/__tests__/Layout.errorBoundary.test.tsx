@@ -3,7 +3,8 @@
 import type { JSX } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter, Routes, Route, Link } from 'react-router-dom';
 import { Layout } from '../routes/Layout';
 import { useAppStore } from '../stores/appStore';
 import { useSettingsStore } from '../stores/settingsStore';
@@ -74,5 +75,45 @@ describe('Layout — ErrorBoundary + Suspense wrap Outlet (Phase 6 task_20)', ()
     const nav = container.querySelector('nav[aria-label]');
     expect(nav).toBeInTheDocument();
     expect(scroll?.contains(nav as Node)).toBe(false);
+  });
+});
+
+describe('Layout — scroll reset on navigation (bottom-of-tab carry-over fix)', () => {
+  it('resets .app-scroll container scrollTop + window on pathname change', async () => {
+    // 2026-05-30 — .app-scroll persists across tab changes (lives outside
+    // <Routes>); a tab scrolled to the bottom otherwise keeps the new tab
+    // pinned at the bottom. Assert both surfaces land at top on nav.
+    const user = userEvent.setup();
+    const winScroll = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+
+    const { container } = render(
+      <MemoryRouter initialEntries={['/app/a']}>
+        <Routes>
+          <Route path="/app" element={<Layout />}>
+            <Route
+              path="a"
+              element={
+                <Link to="/app/b" data-testid="go-b">
+                  go b
+                </Link>
+              }
+            />
+            <Route path="b" element={<p data-testid="screen-b">B</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const scroll = container.querySelector('.app-scroll') as HTMLElement;
+    // Simulate a user who scrolled the container to the bottom on tab A.
+    scroll.scrollTop = 500;
+    winScroll.mockClear();
+
+    await user.click(screen.getByTestId('go-b'));
+
+    expect(screen.getByTestId('screen-b')).toBeInTheDocument();
+    expect(scroll.scrollTop).toBe(0);
+    expect(winScroll).toHaveBeenCalledWith(0, 0);
+    winScroll.mockRestore();
   });
 });

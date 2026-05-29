@@ -7,8 +7,8 @@
 // 7+ wires lazy() per route — current pattern eager-load preserved cu
 // Suspense boundary ready pentru incremental migration).
 
-import type { JSX } from 'react';
-import { Suspense } from 'react';
+import type { JSX, RefObject } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { BottomNav } from '../components/BottomNav';
 import { SessionPill } from '../components/SessionPill';
@@ -34,6 +34,22 @@ const IN_SESSION_ROUTES: ReadonlySet<string> = new Set([
   '/app/antrenor/post-summary',
 ]);
 
+// SCROLL-TO-TOP-ON-NAV FIX (2026-05-30) — the .app-scroll wrapper lives
+// OUTSIDE <Routes>, so it persists across tab changes and its scrollTop is
+// never reset on navigation: a tab scrolled to the bottom keeps the new tab
+// pinned at the bottom (Daniel: clear in Account, likely all tabs). Reset BOTH
+// surfaces on every real pathname change — the .app-scroll container (desktop,
+// where overflow lives) AND window/document (mobile, where the viewport
+// scrolls). Keyed on pathname only, so in-page scroll within a tab is never
+// reset and intentional scroll-into-view inside a screen is untouched.
+function useScrollResetOnNav(scrollRef: RefObject<HTMLDivElement | null>): void {
+  const pathname = useLocation().pathname;
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    window.scrollTo(0, 0);
+  }, [pathname, scrollRef]);
+}
+
 export function Layout(): JSX.Element {
   // §1-H3 audit fix: hoist persona wrapper from Antrenor.tsx → Layout.tsx so all
   // 4 tabs + nested sub-screens inherit persona-aware text scaling (Maria 65
@@ -49,6 +65,8 @@ export function Layout(): JSX.Element {
   // (partialize) so it does not reappear each load.
   const acceptedDisclaimer = useSettingsStore((s) => s.acceptedDisclaimer);
   const acceptDisclaimer = useSettingsStore((s) => s.acceptDisclaimer);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useScrollResetOnNav(scrollRef);
   return (
     <div className={`relative min-h-screen bg-paper text-ink flex flex-col persona-${persona}`}>
       {/* ANDURA PULSE (2026-05-29) — the living aurora backdrop sits behind
@@ -83,7 +101,7 @@ export function Layout(): JSX.Element {
           #root has no transform/height/overflow there, so .app-scroll grows
           with content and the page scrolls on the viewport as before, BottomNav
           fixed to the viewport. flex-1 lets it fill the shell column. */}
-      <div className="app-scroll flex-1 flex flex-col">
+      <div ref={scrollRef} className="app-scroll flex-1 flex flex-col">
         {/* relative z-10 lifts routed content above the z-0 AuroraBackground —
             a positioned z-0 layer otherwise paints over static siblings. The
             fixed chrome (nav z-50, SessionPill, banners) already sits higher. */}
