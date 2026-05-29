@@ -299,7 +299,7 @@ export function Auth(): JSX.Element {
               onClick={() => { void handleSend(); }}
               disabled={!isValidEmail(email) || sending || consentRequiredUnmet}
               data-testid="auth-send"
-              className="btn-primary-lift pulse-grad-bg pulse-shine w-full py-4 rounded-[14px] text-base font-semibold disabled:opacity-50"
+              className="btn-primary-lift btn-grad w-full py-4 text-base font-semibold disabled:opacity-50"
               style={{ color: 'var(--on-accent)' }}
             >
               {sending

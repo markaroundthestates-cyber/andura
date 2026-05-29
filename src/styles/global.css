@@ -473,6 +473,38 @@
     }
   }
 
+  /* ── ENTRY GRADIENT PILL CTA (1:1 parity 2026-05-29) ─────────────────────
+     The mockup's primary entry CTA (interfata-noua/index.html .btn-grad,
+     used by AuthScreen + Onboarding next, screens-entry.jsx L75/95/161): a
+     volt->aqua gradient on a full 999px pill with the diagonal shine sweep.
+     The first reskin pinned rounded-[14px] per call-site (off-mockup) and the
+     Onboarding next CTA was a solid bg-brick. This shared class bundles the
+     mockup idiom (radius + gradient + shine) so every entry CTA inherits the
+     pill from ONE place (11.113/127/313/326/354). The animated gradient fill
+     + shine reuse the existing .pulse-grad-bg / .pulse-shine machinery.
+     btn-primary-lift halo still composes on top. */
+  .btn-grad {
+    border-radius: 999px;
+    color: var(--on-accent);
+    background: var(--grad-pulse);
+    background-size: 220% 220%;
+    position: relative;
+    overflow: hidden;
+    animation: pulse-grad-shift calc(6s / max(var(--motion), 0.4)) ease-in-out infinite;
+  }
+  .btn-grad::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 38%;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    transform: translateX(-130%) skewX(-18deg);
+    animation: pulse-shine calc(4.5s / max(var(--motion), 0.4)) ease-in-out infinite;
+  }
+
   /* SET CHIPS — live per-set progress row (mockup interfata-noua/
      screens-workout.jsx .set-chip). One square chip per planned set:
      done = filled volt + check, active = current set glowing volt border,
