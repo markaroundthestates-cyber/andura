@@ -1,25 +1,22 @@
 // ══ SETTINGS APPEARANCE — Phase 6 task_12 Cont Sub-Screen ════════════════
 // Mockup verbatim source: andura-clasic.html#screen-settings-appearance.
-// Theme selector (light/dark/auto) + bottom nav style (compact/comfortable).
-// Theme switch read/write settingsStore.theme. CSS runtime swap APLICAT live
-// via themeSync.ts (ThemeSync component + applyInitialTheme) — seteaza
-// <html data-theme>, iar global.css [data-theme="dark"] re-skin tokens.
-// Default = dark (tema mov Brain Coach, CEO pick 2026-05-27).
+//
+// [05.061] consolidation 2026-05-29 (Pulse arc #5) — the theme (light/dark/
+// auto) controls here were a STALE DUPLICATE of the inline LIVE Appearance
+// card now living in Cont.tsx (accent picker + Dark/Light toggle, the single
+// canonical surface per D095 — the old multi-palette "themes" system was
+// dropped). To avoid a duplicate appearance UI, this screen no longer renders
+// the theme picker; it is now the canonical home for the one control the
+// inline Cont card does NOT carry: the bottom-nav density (Comfortable /
+// Compact). Wired to useSettingsStore.bottomNavStyle (unchanged). The screen
+// is also re-skinned to the Pulse glass card language (.pulse-card).
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sun, Moon, MonitorCog } from 'lucide-react';
 import { useSettingsStore } from '../../../stores/settingsStore';
-import type { Theme } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { t } from '../../../../i18n/index.js';
-
-const THEME_OPTIONS: ReadonlyArray<{ value: Theme; labelKey: string; Icon: typeof Sun }> = [
-  { value: 'light', labelKey: 'settings.appearance.themeLightLabel', Icon: Sun },
-  { value: 'dark', labelKey: 'settings.appearance.themeDarkLabel', Icon: Moon },
-  { value: 'auto', labelKey: 'settings.appearance.themeAutoLabel', Icon: MonitorCog },
-];
 
 const NAV_STYLE_OPTIONS: ReadonlyArray<{ value: 'compact' | 'comfortable'; labelKey: string }> = [
   { value: 'comfortable', labelKey: 'settings.appearance.navComfortable' },
@@ -28,8 +25,6 @@ const NAV_STYLE_OPTIONS: ReadonlyArray<{ value: 'compact' | 'comfortable'; label
 
 export function SettingsAppearance(): JSX.Element {
   const navigate = useNavigate();
-  const theme = useSettingsStore((s) => s.theme);
-  const setTheme = useSettingsStore((s) => s.setTheme);
   const navStyle = useSettingsStore((s) => s.bottomNavStyle);
   const setBottomNavStyle = useSettingsStore((s) => s.setBottomNavStyle);
 
@@ -46,42 +41,17 @@ export function SettingsAppearance(): JSX.Element {
           {t('settings.appearance.subtitle')}
         </p>
 
-        {/* §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid
-            toggle pattern. Vezi SchimbaFazaConfirm + Onboarding pentru
-            rationale full. */}
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          {t('settings.appearance.themeHeading')}
-        </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
-          {THEME_OPTIONS.map((opt, idx) => {
-            const Icon = opt.Icon;
-            const selected = theme === opt.value;
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                data-testid={`theme-${opt.value}`}
-                aria-pressed={selected}
-                onClick={() => setTheme(opt.value)}
-                className={`w-full flex items-center gap-3 px-4 py-3 text-left ${idx < THEME_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${selected ? 'text-brick font-semibold' : 'text-ink'}`}
-              >
-                <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-                <span className="flex-1 text-sm">{t(opt.labelKey)}</span>
-                {selected && <span aria-hidden="true">•</span>}
-              </button>
-            );
-          })}
-        </div>
-
         {/* §F-pass2-settings-appearance-02 HIGH-BETA chat 4 Co-CTO decision: KEEP
             "Bara de jos" section (Spatios/Compact) — useful UX option pentru
             Maria 65 (Spatios default) vs Marius (Compact preference). Mockup
             omission este mockup drift, NU prod bug. Wire la useSettingsStore
-            bottomNavStyle preserved. */}
+            bottomNavStyle preserved. [05.061] — accent + Dark/Light live inline
+            in Cont (canonical); this is the lone control unique to this screen.
+            §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid toggle. */}
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           {t('settings.appearance.navHeading')}
         </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
+        <div className="pulse-card pulse-card-tight overflow-hidden">
           {NAV_STYLE_OPTIONS.map((opt, idx) => {
             const selected = navStyle === opt.value;
             return (
