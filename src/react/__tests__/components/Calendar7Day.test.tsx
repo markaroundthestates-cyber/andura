@@ -52,13 +52,15 @@ describe('Calendar7Day — render', () => {
   });
 
   // ANDURA PULSE glass parity (2026-05-29): the training fill uses the Pulse
-  // accent token (--accent) with --on-accent text, matching the mockup's
-  // .sched-pill.on. Rest stays on the glass --surface-2 token.
-  it('training day fill uses the Pulse accent token (--accent)', () => {
+  // accent token (--brick) with --on-accent text, matching the mockup's
+  // .sched-pill.on. Rest stays on the glass --surface-2 token. NOTE: --accent
+  // is mockup-only + UNDEFINED in the React build (app keys accent off --brick,
+  // global.css L323) → the pill rendered no fill until switched to --brick.
+  it('training day fill uses the Pulse accent token (--brick)', () => {
     render(<Calendar7Day />);
     const dayL = screen.getByTestId('calendar-day-0'); // training
     expect(dayL).toHaveAttribute('data-kind', 'training');
-    expect(dayL.style.background).toContain('var(--accent)');
+    expect(dayL.style.background).toContain('var(--brick)');
   });
 
   it('rest day cu background var(--surface-2)', () => {
@@ -69,14 +71,14 @@ describe('Calendar7Day — render', () => {
   });
 
   // ANDURA PULSE glass parity (2026-05-29): the dual-state color SSOT is
-  // unified to the single Pulse accent (--accent fill + --on-accent text)
+  // unified to the single Pulse accent (--brick fill + --on-accent text)
   // across both states — the mockup's .sched-pill.on does not change color in
   // edit mode, only the row becomes tappable. Token-only (WCAG-tuned
   // --on-accent keeps text legible on fill).
   it('LOCKED state training day uses the Pulse accent fill + on-accent text', () => {
     render(<Calendar7Day />); // editMode false default
     const dayL = screen.getByTestId('calendar-day-0'); // training
-    expect(dayL.style.background).toContain('var(--accent)');
+    expect(dayL.style.background).toContain('var(--brick)');
     expect(dayL.style.color).toBe('var(--on-accent)');
   });
 
@@ -84,7 +86,7 @@ describe('Calendar7Day — render', () => {
     useScheduleStore.setState({ editMode: true });
     render(<Calendar7Day />);
     const dayL = screen.getByTestId('calendar-day-0'); // training
-    expect(dayL.style.background).toContain('var(--accent)');
+    expect(dayL.style.background).toContain('var(--brick)');
     expect(dayL.style.color).toBe('var(--on-accent)');
   });
 

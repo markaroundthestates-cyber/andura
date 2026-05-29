@@ -156,7 +156,8 @@ export function CalendarHeatmap(): JSX.Element {
         {[0, 1, 2, 3, 4, 5, 6].map((idx) => (
           <div
             key={idx}
-            className="text-[10px] text-ink3 text-center py-1 font-semibold tracking-wider"
+            className="text-[10px] text-center py-1 font-semibold tracking-wider"
+            style={{ color: 'var(--aqua)' }}
           >
             {dayLabel(idx)}
           </div>
@@ -259,7 +260,7 @@ export function CalendarHeatmap(): JSX.Element {
       >
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
           <span
-            className="inline-block w-2.5 h-2.5 rounded-full"
+            className="inline-block w-2.5 h-2.5 rounded-[3px]"
             style={{ background: 'var(--volt)', boxShadow: '0 0 6px var(--volt)' }}
             aria-hidden="true"
           />
@@ -267,7 +268,7 @@ export function CalendarHeatmap(): JSX.Element {
         </span>
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
           <span
-            className="inline-block w-2.5 h-2.5 rounded-full"
+            className="inline-block w-2.5 h-2.5 rounded-[3px]"
             style={{ background: 'var(--aqua)', boxShadow: '0 0 6px var(--aqua)' }}
             aria-hidden="true"
           />
@@ -275,7 +276,7 @@ export function CalendarHeatmap(): JSX.Element {
         </span>
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
           <span
-            className="inline-block w-2.5 h-2.5 rounded-full"
+            className="inline-block w-2.5 h-2.5 rounded-[3px]"
             style={{ background: 'var(--ember)', boxShadow: '0 0 6px var(--ember)' }}
             aria-hidden="true"
           />
@@ -283,14 +284,15 @@ export function CalendarHeatmap(): JSX.Element {
         </span>
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
           <span
-            className="inline-block w-2.5 h-2.5 rounded-full bg-heatRecovery border border-heatRecoveryBorder"
+            className="inline-block w-2.5 h-2.5 rounded-[3px]"
+            style={{ background: 'var(--violet)', boxShadow: '0 0 6px var(--violet)' }}
             aria-hidden="true"
           />
           {t('calendar.heatmap.legend.recovery')}
         </span>
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
           <span
-            className="inline-block w-2.5 h-2.5 rounded-full bg-paper2 border border-lineStrong"
+            className="inline-block w-2.5 h-2.5 rounded-[3px] bg-paper2 border border-lineStrong"
             aria-hidden="true"
           />
           {t('calendar.heatmap.legend.rest')}

@@ -62,3 +62,30 @@ describe('VirtualSessionList — long list (windowed)', () => {
     expect(onSelect).toHaveBeenCalledWith(0);
   });
 });
+
+describe('VirtualSessionList — same-ts collision (stable identity)', () => {
+  it('deschide sesiunea corecta cand doua sesiuni au acelasi ts', () => {
+    // Doua sesiuni cu ACELASI ts → findIndex(s.ts===ts) returna mereu prima
+    // (originalIdx gresit). Sorted = copie [...history].sort(stable) deci
+    // pastreaza referintele de obiect; indexOf rezolva fiecare distinct.
+    const a: SessionRow = { title: 'Sesiune A', meta: '1 set', ts: 1_700_000_000_000 };
+    const b: SessionRow = { title: 'Sesiune B', meta: '2 seturi', ts: 1_700_000_000_000 };
+    const history = [a, b];
+    const sorted = [...history].sort((x, y) => y.ts - x.ts);
+    const onSelect = vi.fn();
+    render(
+      <VirtualSessionList
+        sorted={sorted}
+        sessionsHistory={history}
+        formatDate={(ts) => String(ts)}
+        onSelect={onSelect}
+      />
+    );
+    // Rand 0 = primul din sorted (= a, originalIdx 0).
+    fireEvent.click(screen.getByTestId('istoric-session-0'));
+    expect(onSelect).toHaveBeenLastCalledWith(0);
+    // Rand 1 = al doilea din sorted (= b, originalIdx 1) — NU 0.
+    fireEvent.click(screen.getByTestId('istoric-session-1'));
+    expect(onSelect).toHaveBeenLastCalledWith(1);
+  });
+});

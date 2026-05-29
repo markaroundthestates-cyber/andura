@@ -226,8 +226,12 @@ export function VirtualSessionList({
       )}
       {sorted.slice(start, end).map((session, sliceIdx) => {
         const idx = start + sliceIdx;
-        // Index original in sessionsHistory pentru detail navigate (neschimbat).
-        const originalIdx = sessionsHistory.findIndex((s) => s.ts === session.ts);
+        // Index original in sessionsHistory pentru detail navigate. `sorted` e
+        // [...sessionsHistory].sort(), deci fiecare element e ACEEASI referinta
+        // de obiect ca in sessionsHistory → indexOf (identitate) rezolva corect
+        // chiar daca doua sesiuni au acelasi `ts` (findIndex pe ts deschidea
+        // sesiunea gresita la coliziune de timestamp).
+        const originalIdx = sessionsHistory.indexOf(session);
         return (
           <SessionCard
             key={`${session.ts}-${idx}`}
