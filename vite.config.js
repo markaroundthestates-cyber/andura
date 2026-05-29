@@ -132,14 +132,9 @@ export default defineConfig({
               },
             },
           },
-          {
-            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-cache',
-              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
-            },
-          },
+          // §13.034 audit fix — DEAD Google Fonts CacheFirst route removed.
+          // Fonts are self-hosted (D061) + CSP is font-src 'self' with zero
+          // fonts.googleapis/gstatic refs in src, so this route never matched.
           // §S-13 audit fix (AUDIT-3) — runtime cache for the two chunks that
           // globIgnores keeps OUT of the precache: index-*.js (Sentry) +
           // vendor-data-*.js (Dexie). They are excluded from install precache
