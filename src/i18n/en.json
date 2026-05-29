@@ -594,6 +594,13 @@
         "recovered": "Fresh",
         "partial": "Easing",
         "fatigued": "Loaded"
+      },
+      "bodyMap": {
+        "ariaLabel": "Muscle recovery body map",
+        "figureAlt": "Front-view body figure, muscle groups colored by recovery",
+        "regionLabel": "{group}: {state}",
+        "empty": "No recovery data yet — train to see your map",
+        "legendTitle": "Recovery"
       }
     },
     "measurements": {
