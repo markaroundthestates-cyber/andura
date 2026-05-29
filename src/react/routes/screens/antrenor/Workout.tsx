@@ -494,11 +494,15 @@ export function Workout(): JSX.Element {
       vitalityScore: signals.vitalityScore,
       adherenceScore: signals.adherenceScore,
     });
+    // 06.AA.010 — thread the engine's adapted recommendation (targetKg, the
+    // readiness/tier-gated value used to pre-fill kgInput) into the friction
+    // check so an over-recommendation overshoot fires even with NO set history
+    // (first set, fresh install). Was previously never passed → silent gap.
     const check = detectAggressiveLoad(samples, {
       kg: kgInput,
       reps: repsInput,
       timestamp: Date.now(),
-    }, thresholds);
+    }, thresholds, targetKg);
     if (check.trigger && check.reason) {
       setAaReason(check.reason);
       setAaPendingRating(rating);

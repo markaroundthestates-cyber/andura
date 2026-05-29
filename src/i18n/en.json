@@ -1066,7 +1066,8 @@
     "reasons": {
       "fast_sets": "Sets too fast",
       "kg_jump": "Weight jumped suddenly",
-      "rep_spike": "Reps above usual"
+      "rep_spike": "Reps above usual",
+      "over_recommendation": "Way above the recommended load"
     }
   },
 
