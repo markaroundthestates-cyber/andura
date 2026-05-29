@@ -1101,6 +1101,72 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
       'kg_jump'
     );
   });
+
+  // 06.AA.010 INTEGRATION — the live-drive guard Daniel reported missing. The
+  // pure detector unit test (aaFrictionDetect.test.ts) was green, but the live
+  // path (type a load far above the rec on the FIRST set, no history, pick a
+  // rating) had never been driven end-to-end through the rendered screen. This
+  // walks the EXACT real-user path: tinta kg input -> type 200 -> Confirma setul
+  // -> rating tap -> assert the modal OPENS with over_recommendation AND the set
+  // is NOT yet committed (the safety must block logging, not be cosmetic).
+  //
+  // Fixture: a single-exercise workout whose FIRST exercise rec = 10 kg (the
+  // exact target Daniel drove). 200 kg is 20x the rec — well past the 40% ratio.
+  const REC_10_FIXTURE = {
+    ...PHASE_5_FIXTURE,
+    exercises: [
+      { id: 'bicep-curl', name: 'Bicep Curl', sets: 4, targetReps: 12, targetKg: 10, restSec: 60 },
+    ],
+  };
+
+  it('LIVE DRIVE: typed 200 kg on first set (rec 10) opens modal over_recommendation, set NOT committed', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(REC_10_FIXTURE);
+    await renderWorkoutAndWait();
+    // Sanity: the tinta opened at the 10 kg rec (engine rec reached the input).
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('10 kg');
+
+    // REAL user path — type 200 into the tinta kg input (onChange commits to
+    // kgInput immediately, no blur/enter needed), keep reps, Confirma setul.
+    fireEvent.change(screen.getByTestId('setlog-tinta-kg-input'), {
+      target: { value: '200' },
+    });
+    fireEvent.change(screen.getByTestId('setlog-tinta-reps-input'), {
+      target: { value: '20' },
+    });
+    fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
+    // Post-log reveals the rating row — pick one (this is the call that runs
+    // handleLogSet -> detectAggressiveLoad).
+    fireEvent.click(screen.getByRole('button', { name: EN_RATING_LABEL.Potrivit }));
+
+    // Modal MUST open with the over_recommendation reason.
+    expect(screen.getByTestId('aa-friction-modal')).toBeInTheDocument();
+    expect(screen.getByTestId('aa-friction-reason')).toHaveAttribute(
+      'data-reason',
+      'over_recommendation'
+    );
+    // Set NOT committed — the safety blocks logging until the user chooses.
+    expect(useWorkoutStore.getState().history[0]?.length ?? 0).toBe(0);
+    expect(useWorkoutStore.getState().phase).toBe('logging');
+  });
+
+  it('LIVE DRIVE: modal BLOCKS the set — only logs after the user resolves it', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(REC_10_FIXTURE);
+    await renderWorkoutAndWait();
+    fireEvent.change(screen.getByTestId('setlog-tinta-kg-input'), {
+      target: { value: '200' },
+    });
+    fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
+    fireEvent.click(screen.getByRole('button', { name: EN_RATING_LABEL.Potrivit }));
+    expect(screen.getByTestId('aa-friction-modal')).toBeInTheDocument();
+    // Still blocked.
+    expect(useWorkoutStore.getState().history[0]?.length ?? 0).toBe(0);
+    // User overrides via "Continui oricum" → NOW the set commits + advances.
+    fireEvent.click(screen.getByTestId('aa-friction-continue'));
+    expect(screen.queryByTestId('aa-friction-modal')).not.toBeInTheDocument();
+    expect(useWorkoutStore.getState().history[0]?.length).toBe(1);
+    expect(useWorkoutStore.getState().history[0]?.[0]?.kg).toBe(200);
+    expect(useWorkoutStore.getState().phase).toBe('rest');
+  });
 });
 
 // ── FIX #2: in-session RPE auto-correction (DP.checkInSessionAdjust) ────────
