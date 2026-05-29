@@ -342,8 +342,12 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
     expect(lat!.targetReps).toBe(11);
   });
 
-  it('cold-start (no logs) uses suggestStartWeight scaled by experience', async () => {
-    // No logs → cold-start path. Intermediate Lat Pulldown prior = 30 * 1.0.
+  it('cold-start (no logs) uses suggestStartWeight scaled by experience + bodyweight', async () => {
+    // No logs → cold-start path. The composer now threads the user's bodyweight
+    // (75kg) + sex into suggestStartWeight, so Lat Pulldown intermediate scales
+    // by the bodyweight model (75 * 0.62 * 1.0 * 1.0 = 46.5 → 47), NOT the bare
+    // 70kg-reference prior (30). This is the cold-start fix: a heavier user gets
+    // a heavier, still-conservative start.
     useOnboardingStore.setState({
       data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 75, height: 175 },
       completed: true,
@@ -353,8 +357,10 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
     expect(out).not.toBeNull();
     const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
     expect(lat).toBeDefined();
-    expect(lat!.targetKg).toBe(suggestStartWeight('Lat Pulldown', 'intermediate'));
-    expect(lat!.targetKg).toBe(30);
+    expect(lat!.targetKg).toBe(
+      suggestStartWeight('Lat Pulldown', 'intermediate', { bodyweightKg: 75, sex: 'm' }),
+    );
+    expect(lat!.targetKg).toBe(47);
   });
 
   it('experience RO->EN scaling: avansat (advanced 1.3x) beats incepator (beginner 0.7x)', async () => {
@@ -376,11 +382,16 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
 
     expect(begLat).toBeDefined();
     expect(advLat).toBeDefined();
-    // beginner 30*0.7=21, advanced 30*1.3=39 — RO strings mapped to EN buckets,
-    // NOT silently falling to the x1.0 default (which would tie them).
+    // Bodyweight-scaled (75kg, male): beginner 75*0.62*0.7=32.55→33, advanced
+    // 75*0.62*1.3=60.45→60 — RO strings mapped to EN buckets, NOT silently
+    // falling to the x1.0 default (which would tie them).
     expect(advLat!.targetKg).toBeGreaterThan(begLat!.targetKg);
-    expect(begLat!.targetKg).toBe(suggestStartWeight('Lat Pulldown', 'beginner'));
-    expect(advLat!.targetKg).toBe(suggestStartWeight('Lat Pulldown', 'advanced'));
+    expect(begLat!.targetKg).toBe(
+      suggestStartWeight('Lat Pulldown', 'beginner', { bodyweightKg: 75, sex: 'm' }),
+    );
+    expect(advLat!.targetKg).toBe(
+      suggestStartWeight('Lat Pulldown', 'advanced', { bodyweightKg: 75, sex: 'm' }),
+    );
   });
 
   it('preserves Romanian display name + sub while wiring engine weight', async () => {

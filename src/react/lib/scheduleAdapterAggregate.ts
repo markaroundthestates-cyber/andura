@@ -641,6 +641,7 @@ function toPlannedExercise(
   experienceEn: string,
   readinessScore: number | null,
   restRange: readonly [number, number] | null,
+  coldStartProfile: { bodyweightKg: number | null; sex: string | null } | null = null,
 ): PlannedExercise {
   const slug = engineEx.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   const display = toExerciseDisplay(engineEx.name);
@@ -657,13 +658,18 @@ function toPlannedExercise(
   const targetReps =
     rec && typeof rec.repsTarget === 'number' ? rec.repsTarget : 10;
   // With history → DP weight (double-progression). Cold start → population
-  // prior scaled by experience (DP INIT default 20/10 is too coarse for a new
-  // user; suggestStartWeight is per-exercise calibrated).
+  // prior scaled by experience AND bodyweight/sex when a profile is supplied
+  // (DP INIT default 20/10 is too coarse for a new user; suggestStartWeight is
+  // per-exercise calibrated and now bodyweight-aware so a heavy trained user
+  // does not start at the equipment floor).
+  const csProfile = coldStartProfile
+    ? { bodyweightKg: coldStartProfile.bodyweightKg, sex: coldStartProfile.sex }
+    : undefined;
   const targetKg = hasHistory
     ? rec && typeof rec.kg === 'number'
       ? rec.kg
-      : suggestStartWeight(engineEx.name, experienceEn)
-    : suggestStartWeight(engineEx.name, experienceEn);
+      : suggestStartWeight(engineEx.name, experienceEn, csProfile)
+    : suggestStartWeight(engineEx.name, experienceEn, csProfile);
   return {
     id: `${slug}-${idx}`,
     name: display.name,
@@ -706,12 +712,19 @@ export function buildSwappedExercise(
     useOnboardingStore.getState().data.experience,
   );
   const readinessScore = readinessScoreForUser();
+  // Same cold-start profile the main composer threads, so a swapped-in
+  // alternative with no history is prescribed consistently (bodyweight-scaled).
+  const coldStartProfile = {
+    bodyweightKg: getCurrentWeightKg(),
+    sex: useOnboardingStore.getState().data.sex,
+  };
   const planned = toPlannedExercise(
     { name: engineName, sets: 3 },
     idx,
     experienceEn,
     readinessScore,
     null,
+    coldStartProfile,
   );
   return { ...planned, swapReason };
 }
@@ -788,6 +801,15 @@ export async function composePlannedWorkoutToday(
     const experienceEn = experienceToEngine(
       useOnboardingStore.getState().data.experience,
     );
+    // Cold-start profile — bodyweight (canonical: last logged > onboarding) +
+    // sex. Threaded into suggestStartWeight so a new HEAVY/trained user starts at
+    // a realistic load instead of the equipment floor (the "Flat DB Press 10kg
+    // for a 110kg user" bug). Only the no-history path consumes this; the DP
+    // double-progression path (logs present) is untouched.
+    const coldStartProfile = {
+      bodyweightKg: getCurrentWeightKg(),
+      sex: useOnboardingStore.getState().data.sex,
+    };
     // Fix #1 — live readiness read ONCE here, threaded into every exercise's
     // DP.getSmartRecommendation. Null when no energy-check logged today (engine
     // skips the gate). Same source the readiness card + "why" explainer use.
@@ -798,7 +820,7 @@ export async function composePlannedWorkoutToday(
     const restRange =
       Array.isArray(restRangeRaw) && restRangeRaw.length >= 2 ? restRangeRaw : null;
     const exercises = (plan.exercises ?? []).map((ex, idx) =>
-      toPlannedExercise(ex, idx, experienceEn, readinessScore, restRange),
+      toPlannedExercise(ex, idx, experienceEn, readinessScore, restRange, coldStartProfile),
     );
     // Deload engine emits intensity_modifier object always (IDLE state =
     // {rir_increment:0, intensity_pct_decrement:0}). 'minus' only when
