@@ -592,6 +592,13 @@
         "recovered": "Odihnit",
         "partial": "In curs",
         "fatigued": "Solicitat"
+      },
+      "bodyMap": {
+        "ariaLabel": "Harta corporala a recuperarii musculare",
+        "figureAlt": "Silueta vazuta din fata, grupe musculare colorate dupa recuperare",
+        "regionLabel": "{group}: {state}",
+        "empty": "Inca nu exista date de recuperare — antreneaza-te ca sa vezi harta",
+        "legendTitle": "Recuperare"
       }
     },
     "measurements": {

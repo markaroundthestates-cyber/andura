@@ -1399,3 +1399,21 @@ html, body {
   opacity: 0.4;
   border: none;
 }
+
+/* ══ MUSCLE BODY MAP — stressed-region glow pulse ═════════════════════════════
+   The recovery body figure (MuscleBodyMap.tsx) gives fatigued/partial muscle
+   regions a soft breathing glow so the "needs recovery" groups draw the eye —
+   the recovered (green) regions stay calm. opacity-only keyframe (GPU-friendly,
+   no layout/paint thrash). The component already attaches the per-state
+   drop-shadow inline; this only animates that glow's intensity.
+
+   Vestibular safety: the global prefers-reduced-motion block above collapses
+   this animation to ~0ms automatically, and MuscleBodyMap also withholds the
+   class under reduced motion as a belt-and-braces guard. */
+@keyframes andura-body-region-glow {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.72; }
+}
+.body-map-region--stressed {
+  animation: andura-body-region-glow 2.4s ease-in-out infinite;
+}
