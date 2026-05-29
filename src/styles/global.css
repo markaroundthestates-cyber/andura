@@ -1417,3 +1417,38 @@ html, body {
 .body-map-region--stressed {
   animation: andura-body-region-glow 2.4s ease-in-out infinite;
 }
+
+/* Fata / Spate view toggle — small segmented control above the figure.
+   Pulse styling: dark inset track, volt-accented active segment. Pointer/focus
+   states obey the global focus ring. No motion that needs reduced-motion gating
+   (a 120ms color/transform tween only, which the global block caps anyway). */
+.body-map-toggle {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--paper) 70%, #000 30%);
+  border: 1px solid color-mix(in oklab, var(--line) 60%, transparent);
+  gap: 2px;
+}
+.body-map-toggle__btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--ink3);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+.body-map-toggle__btn[aria-pressed='true'] {
+  color: #0b0f0a;
+  background: var(--volt);
+  box-shadow: 0 0 12px -3px color-mix(in oklab, var(--volt) 70%, transparent);
+}
+.body-map-toggle__btn:hover:not([aria-pressed='true']) {
+  color: var(--ink2);
+}
