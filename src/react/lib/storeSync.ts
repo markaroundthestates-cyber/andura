@@ -82,7 +82,14 @@ const SYNCED: SyncedStore[] = [
       const d = (remote?.data ?? {}) as Partial<ReturnType<typeof useWorkoutStore.getState>>;
       if (d == null || typeof d !== 'object') return;
       const local = useWorkoutStore.getState();
-      const sessionsHistory = mergeArrayUnion(local.sessionsHistory, d.sessionsHistory, 'ts');
+      // Coerce ts non-finit (record cloud malformat / schema veche / cross-device)
+      // la 0 INAINTE de merge: pastreaza inregistrarea (zero pierdere date) dar
+      // evita NaN sa otraveasca sortarea reverse-chrono din Istoric (b.ts - a.ts)
+      // + UI formatDate degradeaza la em-dash in loc de cheia i18n literala.
+      const mergedSessions = mergeArrayUnion(local.sessionsHistory, d.sessionsHistory, 'ts');
+      const sessionsHistory = mergedSessions.map((s) =>
+        Number.isFinite(s?.ts) ? s : { ...s, ts: 0 },
+      );
       const streak = mergeMaxScalar(local.streak, d.streak);
       const lastStreakDate = mergeMaxIsoDate(local.lastStreakDate, d.lastStreakDate);
       // lastSession LWW by its own ts (the finish timestamp).
