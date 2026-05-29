@@ -508,6 +508,7 @@
       "method": "US Navy estimate",
       "ariaLabel": "Estimated body fat",
       "sourceUsNavy": "US Navy",
+      "sourceSkinfold": "Skinfold",
       "sourceEstimated": "estimated",
       "sourceManual": "manual",
       "captionApprox": "Approximate estimate. ",

@@ -148,6 +148,7 @@ import { readBayesianNutritionContext } from './nutritionObservations';
 import { readTdeeEstimateKcal } from './engineWrappers';
 import { getCurrentWeightKg } from './userTdee';
 import { estimateBF_USNavy } from '../../engine/usNavyBF.js';
+import { estimateBF_skinfold3 } from '../../engine/skinfoldBF.js';
 import { estimateBfDeurenbergCapped } from '../../engine/bodyComposition.js';
 
 /** Orizont default proiectie — 28 zile (~4 saptamani), per Daniel verbatim. */
@@ -212,6 +213,30 @@ export function deriveCurrentBfPct(): number | null {
   // ultima intrare nu mai are gat → BF% cadea pe Deurenberg desi gat-ul tot
   // exista in istoric. Same source of truth pentru ambele formulare.
   const latest = latestBodyMeasurements(bodyData);
+
+  // §progress-v2 — Tier 0.5 (MAI ACURAT) — skinfold J-P 3-site cand caliper
+  // (mm). Engine alege site-urile dupa sex; necesita varsta. Prioritate peste
+  // US Navy cand produce o valoare.
+  {
+    const sfArgs: {
+      sex?: string;
+      age?: number;
+      chest_mm?: number;
+      abdomen_mm?: number;
+      thigh_mm?: number;
+      triceps_mm?: number;
+      suprailiac_mm?: number;
+    } = {};
+    if (sex) sfArgs.sex = sex;
+    if (age) sfArgs.age = age;
+    if (latest.chestSkinfoldMm !== undefined) sfArgs.chest_mm = latest.chestSkinfoldMm;
+    if (latest.abdomenSkinfoldMm !== undefined) sfArgs.abdomen_mm = latest.abdomenSkinfoldMm;
+    if (latest.thighSkinfoldMm !== undefined) sfArgs.thigh_mm = latest.thighSkinfoldMm;
+    if (latest.tricepsSkinfoldMm !== undefined) sfArgs.triceps_mm = latest.tricepsSkinfoldMm;
+    if (latest.suprailiacSkinfoldMm !== undefined) sfArgs.suprailiac_mm = latest.suprailiacSkinfoldMm;
+    const skinfold = estimateBF_skinfold3(sfArgs);
+    if (skinfold != null) return skinfold;
+  }
 
   // Tier 1 (ACURAT) — US-Navy cand exista masuratori (neck + waist).
   if (latest.neckCm !== undefined && latest.waistCm !== undefined) {
