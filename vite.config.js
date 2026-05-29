@@ -51,8 +51,11 @@ export default defineConfig({
         name: 'Andura',
         short_name: 'Andura',
         description: 'Coach AI personal pentru sala — facut in Romania',
-        theme_color: '#c8412e',
-        background_color: '#faf7f1',
+        // Pulse-dark palette (D094) — match index.html theme-color #090b13 +
+        // global.css --paper dark token (Pulse --bg phone near-black blue).
+        // Installed Android splash + status bar render Pulse, not old terracotta.
+        theme_color: '#090b13',
+        background_color: '#090b13',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
