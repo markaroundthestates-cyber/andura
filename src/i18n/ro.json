@@ -1749,7 +1749,7 @@
     "errorInvalid": "Introdu un email valid.",
     "errorGeneric": "Nu am putut trimite linkul. Reincearca.",
     "backAriaLabel": "Inapoi",
-    "loginTitle": "Intra in cont",
+    "loginTitle": "Bine ai revenit",
     "signupTitle": "Creeaza cont",
     "loginSubtitle": "Iti trimitem un link de intrare pe email. Fara parola.",
     "signupSubtitle": "Iti trimitem un link pe email pentru a-ti crea contul. Fara parola.",
@@ -1761,7 +1761,7 @@
     "googleCta": "Continua cu Google",
     "dividerOr": "sau",
     "mockLoginCta": "Mock login (dev only)",
-    "toSignupCta": "Creeaza cont",
+    "toSignupCta": "Nu ai cont? Creeaza unul",
     "toLoginPrefix": "Ai deja cont?",
     "toLoginAction": "Intra",
     "sent": {

@@ -127,15 +127,14 @@ describe('Auth — no diacritics in WebView banner copy', () => {
   });
 });
 
-describe('Auth — P-01 button hierarchy (Google primary)', () => {
-  // Test env: VITE_GOOGLE_OAUTH_CLIENT_ID unset → showGoogle false. In this
-  // graceful-degradation state email-send must stay PRIMARY (brick) so the
-  // screen is not left without a primary CTA. (Google-present path = Google
-  // btn-brick first child per JSX; env const frozen at module load, not
-  // toggleable in-test without refactor.)
-  it('email-send is primary brick CTA when Google hidden (graceful degradation)', () => {
+describe('Auth — Pulse button hierarchy (email magic-link primary)', () => {
+  // Pulse parity 2026-05-29 — per Daniel mockup interfata-noua AuthScreen, the
+  // email magic-link "Send sign-in link" is the PRIMARY CTA (gradient volt->aqua
+  // fill), Google is a ghost SECONDARY below. Supersedes the older P-01
+  // Google-primary brick hierarchy.
+  it('email-send is the gradient primary CTA', () => {
     renderAuth();
-    expect(screen.getByTestId('auth-send').className).toMatch(/bg-brick/);
+    expect(screen.getByTestId('auth-send').className).toMatch(/pulse-grad-bg/);
   });
 
   it('email input precedes skip button in DOM order', () => {
@@ -222,17 +221,17 @@ describe('Auth — U-09 legal docs accessible pre-auth (inline modal)', () => {
 });
 
 describe('Auth — Daniel-directed login/signup modes', () => {
-  it('default view is LOGIN: heading "Intra in cont" + send CTA "Trimite link de intrare"', () => {
+  it('default view is LOGIN: heading "Bine ai revenit" + send CTA "Trimite link de intrare"', () => {
     renderAuth();
-    expect(screen.getByRole('heading', { name: /Intra in cont/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Bine ai revenit/i })).toBeInTheDocument();
     expect(screen.getByTestId('auth-send').textContent).toMatch(/Trimite link de intrare/i);
   });
 
-  it('login shows a "Creeaza cont" switch button below the send CTA', () => {
+  it('login shows a "Creeaza unul" switch link below the send CTA', () => {
     renderAuth();
     const toSignup = screen.getByTestId('auth-to-signup');
     expect(toSignup).toBeInTheDocument();
-    expect(toSignup.textContent).toMatch(/Creeaza cont/i);
+    expect(toSignup.textContent).toMatch(/Creeaza unul/i);
     const send = screen.getByTestId('auth-send');
     expect(send.compareDocumentPosition(toSignup) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
@@ -251,7 +250,7 @@ describe('Auth — Daniel-directed login/signup modes', () => {
     expect(toLogin).toBeInTheDocument();
     expect(toLogin.textContent).toMatch(/Ai deja cont/i);
     fireEvent.click(toLogin);
-    expect(screen.getByRole('heading', { name: /Intra in cont/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Bine ai revenit/i })).toBeInTheDocument();
   });
 
   it('signup HIDES skip-auth + implicit-consent footer (login-only paths)', () => {
@@ -280,7 +279,7 @@ describe('Auth — Daniel-directed login/signup modes', () => {
   it('defaults to LOGIN mode when navigated to /auth without state', () => {
     // Splash "Log In" + direct /auth visit carry no state → login default.
     renderAuth();
-    expect(screen.getByRole('heading', { name: /Intra in cont/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Bine ai revenit/i })).toBeInTheDocument();
   });
 });
 

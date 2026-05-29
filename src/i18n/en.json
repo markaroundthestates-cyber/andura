@@ -1749,7 +1749,7 @@
     "errorInvalid": "Please enter a valid email address.",
     "errorGeneric": "Couldn't send the link. Please try again.",
     "backAriaLabel": "Back",
-    "loginTitle": "Sign in",
+    "loginTitle": "Welcome back",
     "signupTitle": "Create account",
     "loginSubtitle": "We'll send you a sign-in link by email. No password.",
     "signupSubtitle": "We'll send you a link to create your account. No password.",
@@ -1761,7 +1761,7 @@
     "googleCta": "Continue with Google",
     "dividerOr": "or",
     "mockLoginCta": "Mock login (dev only)",
-    "toSignupCta": "Create account",
+    "toSignupCta": "No account? Create one",
     "toLoginPrefix": "Already have an account?",
     "toLoginAction": "Sign in",
     "sent": {
