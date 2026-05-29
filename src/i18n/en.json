@@ -544,6 +544,14 @@
       "withTarget": "· target {kcal} ({delta})",
       "withProtein": "· {g} g protein",
       "explainer": "The engine calculates automatically. Log optionally to calibrate.",
+      "editKcalAriaLabel": "Edit kcal logged today",
+      "editProteinAriaLabel": "Edit protein logged today",
+      "kcalInputAriaLabel": "Kcal logged today",
+      "proteinInputAriaLabel": "Protein logged today (g)",
+      "saveCta": "Save",
+      "proteinLabel": "Protein",
+      "loggedNote": "Noted - your target sharpens as you log more about yourself.",
+      "fatigueEaseNote": "High fatigue + a deficit: target eased {kcal} kcal toward maintenance to protect recovery.",
       "sources": {
         "manual": "Set manually",
         "engineBn": "Adaptive estimate",
@@ -573,7 +581,9 @@
       "snapshotEmpty": "No entries yet. The snapshot appears here after your first weigh-in.",
       "snapshotHint": "For deep analysis → see History › Weight and BF",
       "verifyValue": "Check the value",
-      "dayBarAriaLabel": "Day {n} weight {kg} kg"
+      "dayBarAriaLabel": "Day {n} weight {kg} kg",
+      "trendTitle": "Weight & BF trend",
+      "trendAriaLabel": "Weight and body fat trend over time"
     },
     "logWeightToday": "Log weight today",
     "lastWeighIn": "Last weigh-in",
@@ -585,6 +595,7 @@
       "tendinta": "Trend",
       "actiuni": "Actions",
       "recuperare": "Muscle recovery",
+      "compozitie": "Body composition",
       "logManual": "Manual log"
     },
     "recovery": {

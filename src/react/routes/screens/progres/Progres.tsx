@@ -23,28 +23,31 @@
 // engine wires, i18n keys, and ALL testids unchanged — pure order + hierarchy.
 //
 // Pulse reskin (arc #5 2026-05-29, interfata-noua/screens-tabs.jsx:5-162): the
-// 5-zone structure is re-skinned to the Pulse card language (display header +
-// mono zone eyebrows + surface-elevated cards), the TREND zone gains the shared
-// Sparkline primitive, and a NET-NEW Big-11 MUSCLE RECOVERY ring grid is added
-// (the recovery engine existed but the tab never surfaced it). Engine wires,
-// i18n keys, and ALL prior testids unchanged — visual reskin + one new zone.
+// zone structure is re-skinned to the Pulse card language (display header +
+// mono zone eyebrows + surface-elevated cards).
 //
-// Zone order top → bottom (read like a story: "what do I do today" first):
-//   1. AZI        — TDEEStrip kcal+protein HERO (count-up + depth) + Fatigue|BMR
-//                   2-col + BodyFat  ← daily actionable number, leads the screen
-//   2. TENDINTA   — Sparkline trend card + ProjectionStrip + HeatMapWeekly
-//   3. ACTIUNI    — AlertsBanner + log-weight CTA + last-weight card + weight-trend
-//                   CTA  (§progress-v2: body-measurements entry consolidated in
-//                   Cont > Profil — body-data CTA + last-body card removed)
-//   4. RECUPERARE — MuscleRecoveryGrid (Big-11 ring grid)  ← Pulse net-new zone
-//   5. OBIECTIV   — ObiectivGoalCard (5 goal pills) + ObiectivCard (target + ETA)
-//                   ← set-once config, demoted below the daily reads
-//   6. LOG MANUAL — NutritionInline (kcal/protein editable chips — rarely tapped)
+// PROGRESS REDESIGN (Daniel locked, 2026-05-30 — supersedes the old mockup for
+// this tab). New top → bottom story, "what's my target today" first, "where am
+// I trending" last:
+//   1. AZI        — TDEEStrip is now the ONE merged "Target Today" hero: kcal +
+//                   protein EDITABLE for the day (= logging consumed intake, feeds
+//                   the same Bayesian context that calibrates TDEE) + honest
+//                   "sharpens as you log" microcopy + Fatigue on the right + base
+//                   calories (BMR) folded in small. The separate NutritionInline,
+//                   FatigueStrip, and BMRStrip panels are MERGED INTO it. Fatigue
+//                   → kcal: a capped recovery-protective deficit ease, labeled.
+//   2. OBIECTIV   — ObiectivCard (Target Weight + ETA) moved UP, fast-visible,
+//                   right under Target Today; ObiectivGoalCard (5 goal pills) sits
+//                   with it (both are "your objective").
+//   3. RECUPERARE — MuscleBodyMap (anatomical body figure) REPLACES the old
+//                   MuscleRecoveryGrid circles (same useMuscleRecoveryGroups data).
+//   4. COMPOZITIE — body-composition group: BodyFat + Projection + Weight (7 days).
+//   5. ACTIUNI    — AlertsBanner + log-weight CTA + last-weight card + timeline CTA.
+//   6. TENDINTA   — "Weight & BF trend" Sparkline card, moved to the BOTTOM.
 //
-// Test contract preserved: heading + tagline + all testids (cta-log-weight,
-// last-weight-card, alerts-banner, alerte-azi-label,
-// fatigue-bmr-grid) + ORDER (alerts-banner above cta-log-weight, intra-zone).
-// Wrapping containers keep data-testid="progres-zone-*" for smoke selectors.
+// Engine wires + i18n keys + ALL prior testids preserved (cta-log-weight,
+// last-weight-card, alerts-banner, alerte-azi-label, tdee-strip, nutri-* edit
+// chips). Wrapping containers keep data-testid="progres-zone-*" for smoke.
 
 import type { JSX } from 'react';
 import { useEffect, useMemo, useState } from 'react';
@@ -52,14 +55,12 @@ import { useNavigate } from 'react-router-dom';
 import { Scale, History, LineChart } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
-import { NutritionInline } from '../../../components/NutritionInline';
 import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
 import { ProjectionStrip } from '../../../components/Progres/ProjectionStrip';
-import { FatigueStrip } from '../../../components/Progres/FatigueStrip';
-import { BMRStrip } from '../../../components/Progres/BMRStrip';
 import { BodyFatStrip } from '../../../components/Progres/BodyFatStrip';
 import { HeatMapWeekly } from '../../../components/Progres/HeatMapWeekly';
-import { MuscleRecoveryGrid, useMuscleRecoveryGroups } from '../../../components/Progres/MuscleRecoveryGrid';
+import { useMuscleRecoveryGroups } from '../../../components/Progres/MuscleRecoveryGrid';
+import { MuscleBodyMap } from '../../../components/Progres/MuscleBodyMap';
 import { ObiectivCard } from '../../../components/Progres/ObiectivCard';
 import { ObiectivGoalCard } from '../../../components/Progres/ObiectivGoalCard';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
@@ -127,66 +128,54 @@ export function Progres(): JSX.Element {
       <h1 className="font-display text-3xl font-bold text-ink mb-0.5">{t('tabs.progres.title')}</h1>
       <p className="font-serif italic text-sm text-ink2 mb-2">{t('tabs.progres.subtitle')}</p>
 
-      {/* ── ZONE 1: AZI — today's calibrated targets, kcal HERO leads. ───────
-          Daniel 2026-05-28 "kcal recomandate sus": the recommended kcal+protein
-          is the single most actionable number on this screen, so it leads. The
-          TDEEStrip itself owns the hero treatment (big count-up number + depth);
-          then the 2-col Fatigue|BMR grid (mockup L1717 parity), then BodyFat. */}
+      {/* ── ZONE 1: AZI — the ONE merged "Target Today" hero. ───────────────
+          TDEEStrip now owns: editable kcal + protein for the day (= logging
+          consumed intake, feeds the Bayesian engine), honest "sharpens as you
+          log" microcopy, Fatigue today on the right, base calories (BMR) folded
+          in small, and the recovery-protective fatigue→kcal ease (labeled). The
+          old separate NutritionInline / FatigueStrip / BMRStrip panels are gone. */}
       <div data-testid="progres-zone-azi" className="animate-card-rise delay-0">
         <ZoneHeading testId="progres-zone-azi-heading">{t('progres.zone.azi')}</ZoneHeading>
         <TDEEStrip />
-        {/* §F-pass2-fatiguestrip-02 (HIGH-EPSILON 2026-05-22) — 2-col grid
-            Oboseala + Calorii baza BMR per mockup L1717. Daniel LOCKED V1
-            "single number NU visual bar" preserved per-strip layout. */}
-        <div className="grid grid-cols-2 gap-2" data-testid="fatigue-bmr-grid">
-          <FatigueStrip />
-          <BMRStrip />
-        </div>
-        {/* BUG #12b — bf% estimat surfat pe Progres (pana acum doar in
-            SettingsProfile). Two-tier US-Navy/Deurenberg cu caveat "estimat". */}
-        <BodyFatStrip />
       </div>
 
-      {/* ── ZONE 2: TENDINTA — direction over time. ─────────────────────────
-          Projection ("if you continue at this rate, in 3 weeks you'll be X")
-          + 7-day weight snapshot chart. Together they answer "where am I
-          going?" — the natural next question after "what's my target today?". */}
-      <div data-testid="progres-zone-tendinta" className="animate-card-rise delay-75">
-        <ZoneHeading testId="progres-zone-tendinta-heading">{t('progres.zone.tendinta')}</ZoneHeading>
-        {/* Pulse TREND card (interfata-noua/screens-tabs.jsx:52-68) — the shared
-            Sparkline primitive draws the smooth weight line over the full log.
-            Renders only when there are >=2 points (Sparkline self-guards to null),
-            so a fresh user sees the precise HeatMapWeekly snapshot below instead
-            of an empty chart. The delta pill mirrors HeatMapWeekly's number. */}
-        {sparkData.length >= 2 && (
-          <div
-            data-testid="progres-trend-sparkline"
-            className="pulse-card pulse-card-glow p-4 mb-4"
-            style={{ ['--wash' as string]: 'var(--aqua)' }}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <Kicker color="var(--aqua)">{t('progres.weight.snapshotTitle')}</Kicker>
-              {trendDelta !== null && (
-                <Pill color={trendDelta <= 0 ? 'var(--volt)' : 'var(--ember)'}>
-                  {trendDelta > 0 ? '+' : ''}{trendDelta} kg
-                </Pill>
-              )}
-            </div>
-            <Sparkline data={sparkData} color="var(--aqua)" />
-          </div>
-        )}
+      {/* ── ZONE 2: OBIECTIV — Target Weight moved UP, fast-visible. ─────────
+          Right under Target Today: the goal selector (5 phase pills) + the
+          target-weight + ETA card. Both are "your objective", co-located. */}
+      <div data-testid="progres-zone-obiectiv" className="animate-card-rise delay-75">
+        <ZoneHeading testId="progres-zone-obiectiv-heading">{t('progres.zone.obiectiv')}</ZoneHeading>
+        <ObiectivCard />
+        <ObiectivGoalCard />
+      </div>
+
+      {/* ── ZONE 3: RECUPERARE — anatomical muscle recovery body map. ────────
+          MuscleBodyMap REPLACES the old recovery-ring circles (MuscleRecoveryGrid).
+          Same useMuscleRecoveryGroups data; the map self-hides when the engine
+          returns nothing (T0 fresh user), so the heading is gated the same way. */}
+      {recoveryGroups.length > 0 && (
+        <div data-testid="progres-zone-recovery" className="animate-card-rise delay-150">
+          <ZoneHeading testId="progres-zone-recovery-heading">{t('progres.zone.recuperare')}</ZoneHeading>
+          <MuscleBodyMap />
+        </div>
+      )}
+
+      {/* ── ZONE 4: COMPOZITIE — body-composition group. ────────────────────
+          Body fat + forward projection + 7-day weight snapshot grouped together:
+          "what's my composition + where is the current pace taking it". */}
+      <div data-testid="progres-zone-compozitie" className="animate-card-rise delay-225">
+        <ZoneHeading testId="progres-zone-compozitie-heading">{t('progres.zone.compozitie')}</ZoneHeading>
+        {/* BUG #12b — bf% estimat surfat pe Progres. Two-tier US-Navy/Deurenberg. */}
+        <BodyFatStrip />
         {/* Piesa 4 — Preconizare forward projection (traiectorie curenta). */}
         <ProjectionStrip />
         <HeatMapWeekly />
       </div>
 
-      {/* ── ZONE 3: ACTIUNI — alerts + log/measure CTAs + last-entry recap. ─
+      {/* ── ZONE 5: ACTIUNI — alerts + log/measure CTAs + last-entry recap. ─
           Alerts banner heads the zone (urgent items first). Then CTAs to log
-          weight + view trend + open body measurements, each followed by its
-          "last entry" recap card so the user gets context before deciding to
-          re-log. Test contract preserved: alerts-banner is BEFORE cta-log-weight
-          (document order assertion in Progres.test.tsx L161). */}
-      <div data-testid="progres-zone-actiuni" className="animate-card-rise delay-150">
+          weight + view trend, each followed by its "last entry" recap. Test
+          contract preserved: alerts-banner is BEFORE cta-log-weight. */}
+      <div data-testid="progres-zone-actiuni" className="animate-card-rise delay-300">
         <ZoneHeading testId="progres-zone-actiuni-heading">{t('progres.zone.actiuni')}</ZoneHeading>
         {alerts.length > 0 && (
           <p data-testid="alerte-azi-label" className="text-xs text-ink2 uppercase tracking-wide font-semibold mb-2">
@@ -236,43 +225,31 @@ export function Progres(): JSX.Element {
             piept/biceps/coapsa = noise muscular, NU grasime) a fost eliminat. */}
       </div>
 
-      {/* ── ZONE 4: RECUPERARE — Big-11 muscle recovery ring grid. ───────────
-          Pulse net-new zone (interfata-noua/screens-tabs.jsx:86-100): the
-          recovery engine (getRecoveryByGroup) finally gets surfaced as a grid
-          of small rings, one per muscle group, colored by recovery state. The
-          grid self-hides when the engine returns nothing (T0 fresh user). */}
-      {recoveryGroups.length > 0 && (
-        <div data-testid="progres-zone-recovery" className="animate-card-rise delay-225">
-          <ZoneHeading testId="progres-zone-recovery-heading">{t('progres.zone.recuperare')}</ZoneHeading>
-          <MuscleRecoveryGrid />
+      {/* ── ZONE 6: TENDINTA — "Weight & BF trend", moved to the BOTTOM. ─────
+          The long-range trend line (weight + BF over time) is the deepest read
+          — answers "where am I going overall" — so it closes the screen. Renders
+          only with >=2 weight points (Sparkline self-guards to null). */}
+      {sparkData.length >= 2 && (
+        <div data-testid="progres-zone-tendinta" className="animate-card-rise delay-375">
+          <ZoneHeading testId="progres-zone-tendinta-heading">{t('progres.zone.tendinta')}</ZoneHeading>
+          <div
+            data-testid="progres-trend-sparkline"
+            className="pulse-card pulse-card-glow p-4 mb-4"
+            style={{ ['--wash' as string]: 'var(--aqua)' }}
+            aria-label={t('progres.weight.trendAriaLabel')}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <Kicker color="var(--aqua)">{t('progres.weight.trendTitle')}</Kicker>
+              {trendDelta !== null && (
+                <Pill color={trendDelta <= 0 ? 'var(--volt)' : 'var(--ember)'}>
+                  {trendDelta > 0 ? '+' : ''}{trendDelta} kg
+                </Pill>
+              )}
+            </div>
+            <Sparkline data={sparkData} color="var(--aqua)" />
+          </div>
         </div>
       )}
-
-      {/* ── ZONE 5: OBIECTIV — goal selector + target weight + ETA. ──────────
-          Demoted below the daily reads (Daniel 2026-05-28): the goal type
-          (Auto/Strength/…) and target weight are a set-once choice, not a daily
-          glance — so they sit under the actionable kcal/trend/actions. Goal
-          selector + ObiectivCard stay co-located ("both are your objective"). */}
-      <div data-testid="progres-zone-obiectiv" className="animate-card-rise delay-300">
-        <ZoneHeading testId="progres-zone-obiectiv-heading">{t('progres.zone.obiectiv')}</ZoneHeading>
-        {/* §obiectiv-relocate 2026-05-28 Daniel verbatim "muta aia cu Obiectiv de
-            la Coach la progres ... alea de faze auto, forta slabire mentenanta
-            longevitate". Goal selector lives here aproape de ObiectivCard (target-
-            weight + ETA) — ambele sunt "obiectivul tau", logical co-location. */}
-        <ObiectivGoalCard />
-        {/* §obiectiv-tinta 2026-05-28 Daniel verbatim — Obiectiv tinta moved here
-            from Cont > Profil si tinte. Co-located with the goal selector. */}
-        <ObiectivCard />
-      </div>
-
-      {/* ── ZONE 6: LOG MANUAL — rarely tapped, defer to bottom. ────────────
-          Manual kcal/protein log chips. The engine auto-targets above (AZI
-          zone) are the primary surface; manual log is an optional calibration
-          tap. Bottom placement = lowest priority in F-pattern scan. */}
-      <div data-testid="progres-zone-log" className="animate-card-rise delay-375">
-        <ZoneHeading testId="progres-zone-log-heading">{t('progres.zone.logManual')}</ZoneHeading>
-        <NutritionInline />
-      </div>
     </section>
   );
 }

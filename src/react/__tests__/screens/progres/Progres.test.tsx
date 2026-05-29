@@ -20,17 +20,20 @@ vi.mock('../../../lib/coachDirectorAggregate', () => ({
 
 import { Progres } from '../../../routes/screens/progres/Progres';
 import { useProgresStore } from '../../../stores/progresStore';
+import { useNutritionStore } from '../../../stores/nutritionStore';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 
-// MuscleRecoveryGrid returns null (and the parent zone gates its heading) only
-// when the recovery selector yields zero groups — i.e. the engine throws or the
-// taxonomy is empty. Mock the selector to exercise both branches of the 03.048
-// gate without coupling to engine internals.
+// The recovery zone (heading + body map) gates on the recovery selector
+// yielding groups — i.e. the engine throws or the taxonomy is empty hides it.
+// Mock the selector to exercise both branches of the 03.048 gate without
+// coupling to engine internals. MuscleBodyMap (the post-redesign replacement
+// for the old MuscleRecoveryGrid circles) consumes this SAME hook, so the gate
+// + the map share one source of truth.
 vi.mock('../../../components/Progres/MuscleRecoveryGrid', () => ({
   useMuscleRecoveryGroups: vi.fn(() => []),
   MuscleRecoveryGrid: vi.fn(() => null),
 }));
-import { useMuscleRecoveryGroups, MuscleRecoveryGrid } from '../../../components/Progres/MuscleRecoveryGrid';
+import { useMuscleRecoveryGroups } from '../../../components/Progres/MuscleRecoveryGrid';
 
 type RecoveryGroups = ReturnType<typeof useMuscleRecoveryGroups>;
 
@@ -52,6 +55,7 @@ function renderProgres() {
 
 beforeEach(() => {
   useProgresStore.setState({ weightLog: [], bodyData: [] });
+  useNutritionStore.getState().reset();
   vi.mocked(useMuscleRecoveryGroups).mockReturnValue([] as RecoveryGroups);
   localStorage.clear();
 });
@@ -60,8 +64,11 @@ describe('Progres landing', () => {
   it('renders heading + tagline (EN default post 2026-05-28 paradigm flip)', () => {
     renderProgres();
     // Default locale flipped to EN — heading is "Progress" + tagline localized.
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Progress');
-    expect(screen.getByText(/Body composition/i)).toBeInTheDocument();
+    const h1 = screen.getByRole('heading', { level: 1 });
+    expect(h1.textContent).toBe('Progress');
+    // Tagline is the <p> right after the h1 (scoped — "Body composition" now
+    // also appears as a zone heading after the redesign).
+    expect(h1.nextElementSibling?.textContent ?? '').toMatch(/Body composition/i);
   });
 
   it('renders Log weight CTA', () => {
@@ -110,16 +117,69 @@ describe('Progres — RECUPERARE zone gating (03.048)', () => {
     expect(screen.queryByTestId('progres-zone-recovery')).not.toBeInTheDocument();
   });
 
-  it('shows the recovery zone heading when groups exist', () => {
+  it('shows the recovery zone + renders MuscleBodyMap (not the old grid) when groups exist', () => {
     vi.mocked(useMuscleRecoveryGroups).mockReturnValue([
       { group: 'piept', label: 'Piept', state: 'recovered' },
     ] as RecoveryGroups);
-    vi.mocked(MuscleRecoveryGrid).mockReturnValue(
-      <div data-testid="muscle-recovery-grid" /> as never,
-    );
     renderProgres();
     expect(screen.getByTestId('progres-zone-recovery-heading')).toBeInTheDocument();
     expect(screen.getByTestId('progres-zone-recovery')).toBeInTheDocument();
+    // The anatomical body map replaces the old recovery circles.
+    expect(screen.getByTestId('muscle-body-map')).toBeInTheDocument();
+    expect(screen.queryByTestId('muscle-recovery-grid')).not.toBeInTheDocument();
+  });
+});
+
+describe('Progres — redesign layout (2026-05-30 locked)', () => {
+  it('renders a SINGLE merged Target-Today nutrition panel (no separate NutritionInline)', () => {
+    renderProgres();
+    // The combined hero owns the editable kcal/protein chips now.
+    expect(screen.getByTestId('tdee-strip')).toBeInTheDocument();
+    expect(screen.getByTestId('nutri-kcal-edit')).toBeInTheDocument();
+    expect(screen.getByTestId('nutri-protein-edit')).toBeInTheDocument();
+    // The old standalone manual-log panel is gone.
+    expect(screen.queryByTestId('nutrition-inline')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('progres-zone-log')).not.toBeInTheDocument();
+  });
+
+  it('folds Fatigue + base calories (BMR) into the Target-Today panel', () => {
+    renderProgres();
+    const hero = screen.getByTestId('tdee-strip');
+    expect(hero.querySelector('[data-testid="fatigue-strip"]')).toBeTruthy();
+    expect(hero.querySelector('[data-testid="bmr-strip"]')).toBeTruthy();
+    // No separate top-level fatigue/BMR 2-col grid anymore.
+    expect(screen.queryByTestId('fatigue-bmr-grid')).not.toBeInTheDocument();
+  });
+
+  it('places Target Weight (objective) directly under Target Today', () => {
+    renderProgres();
+    const azi = screen.getByTestId('progres-zone-azi');
+    const obiectiv = screen.getByTestId('progres-zone-obiectiv');
+    expect(azi.compareDocumentPosition(obiectiv) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // ObiectivCard (target weight + ETA) is present in that zone.
+    expect(obiectiv.querySelector('[data-testid="obiectiv-card"]')).toBeTruthy();
+  });
+
+  it('moves the Weight & BF trend to the BOTTOM (after actions)', () => {
+    useProgresStore.setState({
+      weightLog: [
+        { kg: 80, date: '2026-05-10', ts: 1 },
+        { kg: 79, date: '2026-05-17', ts: 2 },
+      ],
+    });
+    renderProgres();
+    const actiuni = screen.getByTestId('progres-zone-actiuni');
+    const tendinta = screen.getByTestId('progres-zone-tendinta');
+    expect(actiuni.compareDocumentPosition(tendinta) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('shows the honest "sharpens as you log" microcopy after logging today', async () => {
+    renderProgres();
+    fireEvent.click(screen.getByTestId('nutri-kcal-edit'));
+    fireEvent.change(screen.getByTestId('nutri-kcal-input'), { target: { value: '2100' } });
+    fireEvent.click(screen.getByTestId('nutri-save'));
+    expect(await screen.findByTestId('tdee-logged-note')).toBeInTheDocument();
+    expect(screen.getByTestId('tdee-logged-note').textContent ?? '').toMatch(/sharpens/i);
   });
 });
 
