@@ -122,7 +122,7 @@ export function CalendarHeatmap(): JSX.Element {
     <section
       data-testid="calendar-heatmap"
       aria-label={t('calendar.heatmap.ariaLabel')}
-      className="mb-4"
+      className="pulse-card p-4 mb-4 animate-card-rise delay-150"
     >
       <div className="flex items-center justify-between mb-2.5">
         <h3 className="text-base font-semibold text-ink" data-testid="cal-month-label">
@@ -134,7 +134,8 @@ export function CalendarHeatmap(): JSX.Element {
             onClick={() => navMonth(-1)}
             aria-label={t('calendar.heatmap.prevMonth')}
             data-testid="cal-prev"
-            className="w-8 h-8 rounded-lg bg-paper2 flex items-center justify-center"
+            className="w-[30px] h-[30px] rounded-[9px] border border-line flex items-center justify-center press-feedback"
+            style={{ background: 'var(--surface-2)' }}
           >
             <ChevronLeft className="w-3.5 h-3.5 text-ink" aria-hidden="true" />
           </button>
@@ -143,7 +144,8 @@ export function CalendarHeatmap(): JSX.Element {
             onClick={() => navMonth(1)}
             aria-label={t('calendar.heatmap.nextMonth')}
             data-testid="cal-next"
-            className="w-8 h-8 rounded-lg bg-paper2 flex items-center justify-center"
+            className="w-[30px] h-[30px] rounded-[9px] border border-line flex items-center justify-center press-feedback"
+            style={{ background: 'var(--surface-2)' }}
           >
             <ChevronRight className="w-3.5 h-3.5 text-ink" aria-hidden="true" />
           </button>
@@ -189,8 +191,9 @@ export function CalendarHeatmap(): JSX.Element {
           const isToday = cell.key === todayKey;
           const isFuture = cell.key !== null && cell.key > todayKey;
           // Future cells stay transparent (nothing logged yet); past + rest days
-          // sit on the surface so the month reads as a filled grid.
-          const cellBg = isFuture ? 'bg-transparent' : 'bg-paper2';
+          // sit on the nested glass surface (--surface-2) so the month reads as a
+          // filled grid inside the glass card (mockup .cal-day parity).
+          const cellBg = isFuture ? undefined : 'var(--surface-2)';
           const numCls = isFuture
             ? 'text-ink3 opacity-50'
             : isToday
@@ -220,7 +223,8 @@ export function CalendarHeatmap(): JSX.Element {
               data-future={isFuture ? 'true' : undefined}
               aria-label={ariaLabel}
               aria-disabled={isFuture ? 'true' : undefined}
-              className={`relative aspect-square rounded-[10px] flex flex-col items-center justify-center gap-[3px] ${cellBg} ${todayCls} ${hoverCls}`.trim()}
+              className={`relative aspect-square rounded-[10px] flex flex-col items-center justify-center gap-[3px] ${todayCls} ${hoverCls}`.trim()}
+              style={cellBg ? { background: cellBg } : undefined}
             >
               <span className={`font-mono text-[12px] leading-none ${numCls}`}>{cell.day}</span>
               {dotColor && (

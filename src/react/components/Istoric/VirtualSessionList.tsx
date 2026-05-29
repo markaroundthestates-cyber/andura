@@ -102,7 +102,7 @@ function SessionCard({
         onClick={() => onSelect(originalIdx)}
         data-testid={`istoric-session-${idx}`}
         data-session-idx={originalIdx}
-        className="w-full text-left p-4 bg-paper2 border border-line rounded-2xl press-feedback transition-transform hover:scale-[1.01] hover:border-lineStrong"
+        className="pulse-card-tight w-full text-left p-4 press-feedback transition-transform hover:scale-[1.01]"
       >
         <div className="flex items-start justify-between gap-2.5">
           <div className="flex-1 min-w-0">

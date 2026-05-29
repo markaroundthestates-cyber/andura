@@ -121,7 +121,7 @@ export function Istoric(): JSX.Element {
               <li
                 key={`${pr.exerciseId}-${pr.sessionTs}-${idx}`}
                 data-testid={`pr-row-${idx}`}
-                className="flex justify-between items-center p-3 rounded-2xl bg-paper2 border border-line"
+                className="pulse-card-tight flex justify-between items-center p-3"
               >
                 <span className="text-sm font-medium text-ink">{pr.exerciseName}</span>
                 <span className="font-mono text-[13px] text-ink2">
@@ -197,7 +197,7 @@ function HistStat({
   const display = useCountUp(value);
   return (
     <div
-      className={`relative overflow-hidden bg-paper2 border border-line rounded-xl px-2 py-4 text-center animate-card-rise ${delayCls}`}
+      className={`pulse-card-tight relative overflow-hidden px-2 py-4 text-center animate-card-rise ${delayCls}`}
     >
       <span
         aria-hidden="true"

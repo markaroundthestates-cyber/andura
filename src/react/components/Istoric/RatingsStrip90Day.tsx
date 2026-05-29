@@ -117,7 +117,7 @@ function FeltCount({
         {display}
       </span>
       <span className="block text-[12.5px] text-ink2 mt-0.5">{label}</span>
-      <div className="mt-2 h-1.5 rounded-full bg-paper overflow-hidden" aria-hidden="true">
+      <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--surface-2)' }} aria-hidden="true">
         <span
           className="block h-full rounded-full transition-[width] duration-700"
           style={{ width: `${pct}%`, background: color }}
@@ -138,7 +138,7 @@ export function RatingsStrip90Day(): JSX.Element {
       aria-label={t('istoric.ratingsStrip.ariaLabel')}
       className="mb-4"
     >
-      <div className="bg-white dark:bg-paper2 border border-line rounded-2xl p-[18px]">
+      <div className="pulse-card p-[18px] animate-card-rise delay-300">
         <div className="flex items-baseline justify-between mb-3.5">
           <Kicker color="var(--aqua)">{t('istoric.ratingsStrip.heading')}</Kicker>
           <span className="font-mono text-[10px] text-ink3">{t('istoric.ratingsStrip.window')}</span>

@@ -54,19 +54,19 @@ export function PrWall(): JSX.Element {
         </p>
 
         <div className="grid grid-cols-3 gap-2 mb-5" data-testid="pr-wall-stats">
-          <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
+          <div className="pulse-card-tight p-3 text-center">
             <p className="text-2xl font-bold text-ink font-mono" data-testid="pr-wall-stat-total">
               {prList.length}
             </p>
             <p className="text-xs text-ink2 mt-0.5">{t('istoric.prWallScreen.statTotal')}</p>
           </div>
-          <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
+          <div className="pulse-card-tight p-3 text-center">
             <p className="text-2xl font-bold text-ink font-mono" data-testid="pr-wall-stat-month">
               {thisMonthCount}
             </p>
             <p className="text-xs text-ink2 mt-0.5">{t('istoric.prWallScreen.statMonth')}</p>
           </div>
-          <div className="bg-paper2 border border-line rounded-xl p-3 text-center">
+          <div className="pulse-card-tight p-3 text-center">
             <p className="text-2xl font-bold text-ink font-mono" data-testid="pr-wall-stat-exercises">
               {distinctExercises}
             </p>
@@ -102,9 +102,9 @@ export function PrWall(): JSX.Element {
               <li
                 key={`${pr.exerciseId}-${pr.sessionTs}-${idx}`}
                 data-testid={`pr-wall-row-${idx}`}
-                className="flex items-center gap-3 p-3 bg-paper2 border border-line rounded-xl"
+                className="pulse-card-tight flex items-center gap-3 p-3"
               >
-                <div className="w-10 h-10 rounded-xl bg-paper border border-line flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl border border-line flex items-center justify-center flex-shrink-0" style={{ background: 'var(--surface-2)' }}>
                   <Award className="w-5 h-5 text-brick" aria-hidden="true" />
                 </div>
                 <div className="flex-1 min-w-0">

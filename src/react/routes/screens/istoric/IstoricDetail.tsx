@@ -114,7 +114,7 @@ export function IstoricDetail(): JSX.Element {
         <h1 className="font-display text-2xl font-bold text-ink">{session.title}</h1>
       </header>
 
-      <div className="bg-paper2 border border-line rounded-2xl p-4 mb-4">
+      <div className="pulse-card p-4 mb-4">
         <div className="flex items-center gap-2.5 mb-2">
           <History className="w-4 h-4" style={{ color: 'var(--aqua)' }} aria-hidden="true" />
           <Kicker color="var(--aqua)">{t('istoric.detail.sessionKicker')}</Kicker>
@@ -133,19 +133,19 @@ export function IstoricDetail(): JSX.Element {
           data-testid="istoric-detail-stats-grid"
         >
           {session.sets !== undefined && (
-            <div className="p-3 bg-paper2 border border-line rounded-2xl text-center" data-testid="detail-sets">
+            <div className="pulse-card-tight p-3 text-center" data-testid="detail-sets">
               <p className="font-mono text-[10px] tracking-wider text-ink3 uppercase">{t('istoric.detail.stats.sets')}</p>
               <p className="font-display text-xl font-bold text-ink tabular-nums mt-1">{session.sets}</p>
             </div>
           )}
           {session.durationMin !== undefined && (
-            <div className="p-3 bg-paper2 border border-line rounded-2xl text-center" data-testid="detail-duration">
+            <div className="pulse-card-tight p-3 text-center" data-testid="detail-duration">
               <p className="font-mono text-[10px] tracking-wider text-ink3 uppercase">{t('istoric.detail.stats.minutes')}</p>
               <p className="font-display text-xl font-bold text-ink tabular-nums mt-1">{session.durationMin}</p>
             </div>
           )}
           {session.volumeKg !== undefined && (
-            <div className="p-3 bg-paper2 border border-line rounded-2xl text-center" data-testid="detail-volume">
+            <div className="pulse-card-tight p-3 text-center" data-testid="detail-volume">
               <p className="font-mono text-[10px] tracking-wider text-ink3 uppercase">{t('istoric.detail.stats.tonnage')}</p>
               <p className="font-display text-xl font-bold text-ink tabular-nums mt-1">{formatKg(session.volumeKg)}</p>
             </div>
@@ -165,7 +165,7 @@ export function IstoricDetail(): JSX.Element {
             <div
               key={ex.exerciseId}
               data-testid={`detail-ex-${ex.exerciseId}`}
-              className="bg-paper2 border border-line rounded-2xl p-4 mb-3"
+              className="pulse-card p-4 mb-3"
             >
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-ink text-sm">{ex.exerciseName}</h3>
