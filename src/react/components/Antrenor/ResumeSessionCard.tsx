@@ -29,7 +29,7 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): JSX
       // the most time-sensitive surface on the home, so it gets an elevated
       // Pulse surface with a 1.5px brick accent border + brick glow corner.
       // Token-only (no raw hex) so light + every dark theme reads native.
-      className="surface-elevated relative overflow-hidden bg-paper2 rounded-2xl p-4 mb-4 cursor-pointer"
+      className="pulse-card overflow-hidden p-4 mb-4 cursor-pointer"
       style={{ border: '1.5px solid var(--brick)' }}
       role="region"
       aria-label={t('resumeSession.title')}

@@ -22,11 +22,11 @@ export function PatternsBanner({ banners }: PatternsBannerProps): JSX.Element | 
           data-severity={b.severity}
           role="status"
           aria-live="polite"
-          className="surface-elevated flex items-start gap-2.5 p-3 rounded-xl border"
+          className="flex items-start gap-2.5 p-3 rounded-xl border"
           style={
             b.severity === 'warn'
               ? { background: 'var(--status-neutral-bg)', borderColor: 'var(--status-neutral-border)' }
-              : { background: 'var(--paper-2)', borderColor: 'var(--line)' }
+              : { background: 'var(--surface-2)', borderColor: 'var(--line)' }
           }
         >
           {b.severity === 'warn' ? (

@@ -68,14 +68,14 @@ describe('ResumeSessionCard — render', () => {
     expect(onResume).not.toHaveBeenCalled();
   });
 
-  // ANDURA PULSE reskin (2026-05-29): the warm-cream #fdf6e8 surface is
-  // replaced by an elevated Pulse surface (surface-elevated + bg-paper2) with a
-  // 1.5px brick accent border (the most time-sensitive home card). Token-only.
-  it('§F-pass2-resume-02 Pulse elevated surface + brick accent border', () => {
+  // ANDURA PULSE glass parity (2026-05-29): the surface is the translucent
+  // .pulse-card glass primitive (fill + backdrop-blur + depth shadow + sheen),
+  // keeping the 1.5px brick accent border (the most time-sensitive home card).
+  // Token-only.
+  it('§F-pass2-resume-02 Pulse glass surface + brick accent border', () => {
     render(<ResumeSessionCard snapshot={makeSnapshot()} onResume={vi.fn()} onDiscard={vi.fn()} />);
     const root = screen.getByTestId('resume-session-card');
-    expect(root.className).toContain('surface-elevated');
-    expect(root.className).toContain('bg-paper2');
+    expect(root.className).toContain('pulse-card');
     expect(root.style.border).toContain('var(--brick)');
   });
 

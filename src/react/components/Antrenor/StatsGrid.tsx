@@ -141,7 +141,7 @@ function StatTile({
 }: StatTileProps): JSX.Element {
   return (
     <div
-      className={`surface-elevated relative overflow-hidden bg-paper2 rounded-xl p-3 text-center border border-line animate-card-rise ${delayClass}`}
+      className={`pulse-card-tight pulse-card relative overflow-hidden p-3 text-center animate-card-rise ${delayClass}`}
     >
       {/* Decorative accent dot — semantic hint of which stat this is, even
           when the number reads as '-'. color-mix keeps it cross-palette.

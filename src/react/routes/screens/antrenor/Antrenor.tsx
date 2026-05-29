@@ -220,8 +220,9 @@ export function Antrenor(): JSX.Element {
           compact strip + verdict below). */}
       {readiness && (
         <div
-          className="surface-elevated relative overflow-hidden bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4 animate-card-rise delay-75"
+          className="pulse-card pulse-card-glow overflow-hidden p-4 mb-4 flex items-center gap-4 animate-card-rise delay-75"
           data-testid="readiness-hero"
+          style={{ ['--wash' as string]: 'var(--aqua)' }}
         >
           <ReadinessOrb
             score={readiness.score}

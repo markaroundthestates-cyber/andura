@@ -22,13 +22,13 @@ export function AlertsBanner({ alerts }: AlertsBannerProps): JSX.Element | null 
           data-severity={a.severity}
           role={a.severity === 'urgent' ? 'alert' : 'status'}
           aria-live={a.severity === 'urgent' ? 'assertive' : 'polite'}
-          className="surface-elevated flex items-start gap-2.5 p-3 rounded-xl border"
+          className="flex items-start gap-2.5 p-3 rounded-xl border"
           style={
             a.severity === 'urgent'
               ? { background: 'var(--status-danger-bg)', borderColor: 'var(--status-danger-border)' }
               : a.severity === 'warn'
               ? { background: 'var(--status-neutral-bg)', borderColor: 'var(--status-neutral-border)' }
-              : { background: 'var(--paper-2)', borderColor: 'var(--line)' }
+              : { background: 'var(--surface-2)', borderColor: 'var(--line)' }
           }
         >
           {a.severity === 'urgent' || a.severity === 'warn' ? (

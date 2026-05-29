@@ -69,7 +69,7 @@ export function Calendar7Day(): JSX.Element {
 
   return (
     <div
-      className="surface-elevated bg-paper2 border border-line rounded-2xl p-4 mb-4 animate-card-rise delay-75"
+      className="pulse-card p-4 mb-4 animate-card-rise delay-75"
       data-testid="calendar-7day"
       data-edit-mode={editMode ? 'true' : 'false'}
     >
@@ -85,8 +85,12 @@ export function Calendar7Day(): JSX.Element {
           onClick={handleToggleEdit}
           data-testid="calendar-edit-toggle"
           aria-label={editMode ? t('calendar.day7.editAriaSave') : t('calendar.day7.editAriaEdit')}
-          className="absolute right-0 w-9 h-9 grid place-items-center rounded-xl bg-paper2 border border-line transition-colors"
-          style={{ color: editMode ? 'var(--brick)' : 'var(--ink-3)' }}
+          className="absolute right-0 w-9 h-9 grid place-items-center rounded-xl transition-colors"
+          style={{
+            color: editMode ? 'var(--accent)' : 'var(--ink-3)',
+            background: 'var(--surface-2)',
+            border: '1px solid var(--line)',
+          }}
         >
           {editMode ? (
             <Check className="w-4 h-4" aria-hidden="true" />
@@ -120,13 +124,13 @@ export function Calendar7Day(): JSX.Element {
               // colors are tokens (no raw hex) so every theme + dark mode reads
               // native; the WCAG-tuned --on-accent keeps text legible on fill.
               style={{
-                background: trainingDay ? 'var(--brick)' : 'var(--paper-2)',
+                background: trainingDay ? 'var(--accent)' : 'var(--surface-2)',
                 color: trainingDay ? 'var(--on-accent)' : 'var(--ink-3)',
                 border: trainingDay
-                  ? '1px solid var(--brick)'
+                  ? '1px solid var(--accent)'
                   : '1px solid var(--line)',
                 boxShadow: trainingDay
-                  ? '0 0 18px -5px color-mix(in oklab, var(--brick) 75%, transparent)'
+                  ? '0 0 18px -5px color-mix(in oklab, var(--accent) 75%, transparent)'
                   : 'none',
                 outline: isToday
                   ? '2px solid color-mix(in oklab, var(--aqua) 75%, transparent)'

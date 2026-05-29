@@ -70,13 +70,13 @@ describe('ReactivateCard — render', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 
-  it('§F-pass2-reactivate-02 border-lineStrong (warm taupe) mockup L812', () => {
+  it('§F-pass2-reactivate-02 Pulse glass surface + line-strong border mockup L812', () => {
     const { container } = render(
       <ReactivateCard lastSession={makeLastSession()} onStart={vi.fn()} onDismiss={vi.fn()} />,
     );
-    const card = container.querySelector('[role="region"][aria-label="Welcome back"]');
+    const card = container.querySelector<HTMLElement>('[role="region"][aria-label="Welcome back"]');
     expect(card).not.toBeNull();
-    expect(card?.className).toMatch(/border-lineStrong/);
-    expect(card?.className).not.toMatch(/\bborder-line\b/);
+    expect(card?.className).toMatch(/pulse-card/);
+    expect(card?.style.borderColor).toContain('var(--line-strong)');
   });
 });

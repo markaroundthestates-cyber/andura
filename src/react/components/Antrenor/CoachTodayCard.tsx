@@ -32,7 +32,7 @@
 import type { JSX } from 'react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Layers, Dumbbell } from 'lucide-react';
+import { Clock, Layers, Dumbbell, ArrowRight } from 'lucide-react';
 import type { PlannedWorkoutOutput } from '../../lib/engineWrappers';
 import * as engineWrappers from '../../lib/engineWrappers';
 import { coachPick } from '../../lib/coachVoice';
@@ -147,18 +147,10 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
 
   return (
     <div
-      className="relative overflow-hidden rounded-2xl p-[18px] mb-2.5 animate-card-rise border"
+      className="pulse-card pulse-card-glow overflow-hidden p-[18px] mb-2.5 animate-card-rise"
       role="region"
       aria-label={t('coachToday.ariaLabel')}
-      style={{
-        // Pulse coach card surface (mockup .coach-card screens-antrenor.jsx:113)
-        // — a soft top-down gradient on the elevated paper with a slightly
-        // stronger border. Token-only: paper2 → paper mix keeps every theme +
-        // dark mode native (no raw hex).
-        background:
-          'linear-gradient(165deg, var(--paper-2), color-mix(in oklab, var(--paper-2) 86%, #000))',
-        borderColor: 'var(--line-strong)',
-      }}
+      style={{ ['--wash' as string]: 'var(--volt)' }}
     >
       {/* Pulse volt glow corner (mockup interfata-noua/screens-antrenor.jsx:38
           .coach-glow) — replaces the prior brick radial. aria-hidden decoration,
@@ -220,14 +212,12 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
           haptic(12);
           onStart();
         }}
-        className="btn-primary-lift press-feedback relative overflow-hidden w-full mt-4 rounded-md py-2.5 font-semibold flex items-center justify-center gap-2"
-        style={{
-          background: 'linear-gradient(120deg, var(--volt), var(--aqua))',
-          color: 'var(--on-accent)',
-        }}
+        className="btn-primary-lift press-feedback pulse-grad-bg pulse-shine relative overflow-hidden w-full mt-4 rounded-md py-2.5 font-semibold flex items-center justify-center gap-2"
+        style={{ color: 'var(--on-accent)' }}
       >
         <Ripple color="rgba(255,255,255,0.55)" />
         <span className="relative">{t('coachToday.startCta')}</span>
+        <ArrowRight className="relative w-[18px] h-[18px]" aria-hidden="true" />
       </button>
       <div className="relative text-center mt-2.5">
         <button

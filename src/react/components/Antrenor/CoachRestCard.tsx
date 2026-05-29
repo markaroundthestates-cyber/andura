@@ -63,11 +63,8 @@ export function CoachRestCard({
   const coachLine = composeCoachLine(restReason ?? null);
   return (
     <div
-      className="rounded-[18px] p-[18px] mb-2.5 border"
-      style={{
-        background: 'var(--status-neutral-bg)',
-        borderColor: 'var(--status-neutral-border)',
-      }}
+      className="pulse-card pulse-card-glow p-[18px] mb-2.5"
+      style={{ ['--wash' as string]: 'var(--aqua)' }}
       role="region"
       aria-label={t('coachRest.ariaLabel')}
     >

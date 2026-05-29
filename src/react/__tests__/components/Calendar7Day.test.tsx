@@ -51,32 +51,32 @@ describe('Calendar7Day — render', () => {
     expect(screen.getByTestId('calendar-day-6')).toHaveAttribute('data-day', 'Sun');
   });
 
-  // ANDURA PULSE reskin (2026-05-29): the legacy heat-green (#3d7a4a) training
-  // fill is replaced by the Pulse accent token (--brick) with --on-accent text,
-  // matching the mockup's .sched-pill.on. Rest stays var(--paper-2).
-  it('training day fill uses the Pulse accent token (--brick)', () => {
+  // ANDURA PULSE glass parity (2026-05-29): the training fill uses the Pulse
+  // accent token (--accent) with --on-accent text, matching the mockup's
+  // .sched-pill.on. Rest stays on the glass --surface-2 token.
+  it('training day fill uses the Pulse accent token (--accent)', () => {
     render(<Calendar7Day />);
     const dayL = screen.getByTestId('calendar-day-0'); // training
     expect(dayL).toHaveAttribute('data-kind', 'training');
-    expect(dayL.style.background).toContain('var(--brick)');
+    expect(dayL.style.background).toContain('var(--accent)');
   });
 
-  it('rest day cu background var(--paper-2)', () => {
+  it('rest day cu background var(--surface-2)', () => {
     render(<Calendar7Day />);
     const dayMa = screen.getByTestId('calendar-day-1'); // rest
     expect(dayMa).toHaveAttribute('data-kind', 'rest');
-    expect(dayMa.style.background).toContain('var(--paper-2)');
+    expect(dayMa.style.background).toContain('var(--surface-2)');
   });
 
-  // ANDURA PULSE reskin (2026-05-29): the prior dual-state heat-green color
-  // SSOT (LOCKED #3d7a4a vs EDIT --heat-usor) is unified to the single Pulse
-  // accent (--brick fill + --on-accent text) across both states — the mockup's
-  // .sched-pill.on does not change color in edit mode, only the row becomes
-  // tappable. Token-only (WCAG-tuned --on-accent keeps text legible on fill).
+  // ANDURA PULSE glass parity (2026-05-29): the dual-state color SSOT is
+  // unified to the single Pulse accent (--accent fill + --on-accent text)
+  // across both states — the mockup's .sched-pill.on does not change color in
+  // edit mode, only the row becomes tappable. Token-only (WCAG-tuned
+  // --on-accent keeps text legible on fill).
   it('LOCKED state training day uses the Pulse accent fill + on-accent text', () => {
     render(<Calendar7Day />); // editMode false default
     const dayL = screen.getByTestId('calendar-day-0'); // training
-    expect(dayL.style.background).toContain('var(--brick)');
+    expect(dayL.style.background).toContain('var(--accent)');
     expect(dayL.style.color).toBe('var(--on-accent)');
   });
 
@@ -84,16 +84,16 @@ describe('Calendar7Day — render', () => {
     useScheduleStore.setState({ editMode: true });
     render(<Calendar7Day />);
     const dayL = screen.getByTestId('calendar-day-0'); // training
-    expect(dayL.style.background).toContain('var(--brick)');
+    expect(dayL.style.background).toContain('var(--accent)');
     expect(dayL.style.color).toBe('var(--on-accent)');
   });
 
-  it('rest day color invariant cross-states (var(--paper-2) LOCKED + EDIT)', () => {
+  it('rest day color invariant cross-states (var(--surface-2) LOCKED + EDIT)', () => {
     const { rerender } = render(<Calendar7Day />); // editMode false
-    expect(screen.getByTestId('calendar-day-1').style.background).toContain('var(--paper-2)');
+    expect(screen.getByTestId('calendar-day-1').style.background).toContain('var(--surface-2)');
     useScheduleStore.setState({ editMode: true });
     rerender(<Calendar7Day />);
-    expect(screen.getByTestId('calendar-day-1').style.background).toContain('var(--paper-2)');
+    expect(screen.getByTestId('calendar-day-1').style.background).toContain('var(--surface-2)');
   });
 
   it('locked default state — day buttons disabled', () => {

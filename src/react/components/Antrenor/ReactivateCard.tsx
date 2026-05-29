@@ -25,7 +25,8 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): JSX.
   const daysAgo = Math.floor((Date.now() - lastSession.ts) / 86400000);
   return (
     <div
-      className="surface-elevated bg-paper2 border border-lineStrong rounded-2xl p-4 mb-4"
+      className="pulse-card p-4 mb-4"
+      style={{ borderColor: 'var(--line-strong)' }}
       role="region"
       aria-label={t('reactivate.title')}
     >

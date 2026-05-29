@@ -25,7 +25,7 @@ export function PRWallRecent({ records }: PRWallRecentProps): JSX.Element | null
           <li
             key={`${pr.exerciseId}-${pr.sessionTs}-${idx}`}
             data-testid={`pr-record-${idx}`}
-            className="surface-elevated flex justify-between items-center p-3 rounded-xl bg-paper2 border border-line"
+            className="pulse-card pulse-card-tight flex justify-between items-center p-3"
           >
             <span className="text-sm font-medium text-ink">{pr.exerciseName}</span>
             <span className="text-sm text-ink2">
