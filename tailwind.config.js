@@ -26,12 +26,18 @@ export default {
       // Andura Pulse fonts (2026-05-29) — self-hosted @fontsource (CSP-safe,
       // declared @font-face in src/styles/global.css). sans→Manrope (body),
       // display→Space Grotesk (headings/numerals), mono→Space Mono (labels).
-      // Inter retained as system fallback. serif→Lora kept for the Splash
-      // tagline pairing (italic coach-quote, intentionally distinct).
+      // Inter retained as system fallback.
+      // Parity (2026-05-29): serif→Space Grotesk. The mockup SSOT
+      // (interfata-noua/) renders all coach quotes/subtitles in italic
+      // var(--font-display) = Space Grotesk (e.g. screens-tabs.jsx:15), and
+      // Lora was never self-hosted (no @font-face), so font-serif italic
+      // silently fell back to Georgia — off-mockup. Remapping at the token
+      // level propagates Space Grotesk italic to every font-serif quote/
+      // subtitle/display call-site without per-component edits.
       fontFamily: {
         sans: ['Manrope Variable', 'Inter', 'system-ui', 'sans-serif'],
         display: ['Space Grotesk Variable', 'Inter', 'system-ui', 'sans-serif'],
-        serif: ['Lora', 'Georgia', 'serif'],
+        serif: ['Space Grotesk Variable', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['Space Mono', 'ui-monospace', 'monospace'],
       },
       colors: {
