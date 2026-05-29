@@ -108,7 +108,13 @@ export default defineConfig({
         ],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/.*\.firebaseio\.com\/.*$/,
+            // §13.032 audit fix — the REAL RTDB host is *.firebasedatabase.app
+            // (src/firebase.js:33 FIREBASE_URL + index.html dns-prefetch/CSP),
+            // NOT the legacy *.firebaseio.com. The old pattern never matched, so
+            // this NetworkFirst cache + the BackgroundSync queue below were dead.
+            // Match both hosts (CSP connect-src whitelists both) so the cache +
+            // offline write-replay actually engage against the live database.
+            urlPattern: /^https:\/\/.*\.(firebasedatabase\.app|firebaseio\.com)\/.*$/,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'firebase-cache',
