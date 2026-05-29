@@ -29,7 +29,12 @@ import { t } from '../../../../i18n/index.js';
 // "luni/marti" (mockup parity L2162-2178, no-diacritics per D-LEGACY-064).
 // EN surfaces "Mon/Tue".
 function formatDate(ts: number): string {
+  // Guard: ts lipsa / NaN / Invalid Date → em-dash, NU cheia i18n literala
+  // ("weekdays.relativeShort.NaN") sau "NaN". Inregistrarile fara ts numeric
+  // pot intra via sync cloud (storeMerge nu coerce ts) — degrade silentios.
+  if (!Number.isFinite(ts)) return '—';
   const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return '—';
   const dow = d.getDay();
   const weekday = t(`weekdays.relativeShort.${dow}`);
   const day = d.getDate();

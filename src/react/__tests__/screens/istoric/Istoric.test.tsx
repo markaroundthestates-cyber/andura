@@ -108,6 +108,62 @@ describe('Istoric — populated list', () => {
   });
 });
 
+// Bug live (History tab, Daniel 2026-05-29): inregistrari fara ts numeric
+// (cloud malformat / schema veche) faceau formatDate sa afiseze cheia i18n
+// literala "weekdays.relativeShort.NaN · NaN months.short.NaN". Guard-ul din
+// Istoric.tsx formatDate degradeaza la em-dash; o sesiune normala afiseaza
+// data localizata corecta.
+describe('Istoric — formatDate guard (ts lipsa / invalid)', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('sesiune cu ts undefined → em-dash, NU cheia i18n literala / NaN', () => {
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        // ts lipsa cu totul (cast pentru a simula record malformat din sync)
+        { title: 'Push', meta: '5 seturi · 45 min · 9 800 kg' } as unknown as {
+          title: string;
+          meta: string;
+          ts: number;
+        },
+      ],
+    });
+    renderIstoric();
+    const card = screen.getByTestId('istoric-session-0');
+    expect(card.textContent).not.toMatch(/relativeShort/);
+    expect(card.textContent).not.toMatch(/months\.short/);
+    expect(card.textContent).not.toMatch(/NaN/);
+    expect(card.textContent).toMatch(/—/);
+  });
+
+  it('sesiune cu ts NaN / invalid → em-dash, NU cheia / NaN', () => {
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        { title: 'Pull', meta: '6 seturi · 50 min · 10 200 kg', ts: NaN },
+      ],
+    });
+    renderIstoric();
+    const card = screen.getByTestId('istoric-session-0');
+    expect(card.textContent).not.toMatch(/relativeShort|months\.short|NaN/);
+    expect(card.textContent).toMatch(/—/);
+  });
+
+  it('sesiune normala (ts valid) → data localizata corecta (EN)', () => {
+    // ts 1700000000000 = nov 2023 → EN "<Wkdy> · <D> Nov" (weekday/ziua depind
+    // de TZ runner; verificam formatul localizat real, NU NaN / cheia literala).
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        { title: 'Legs', meta: '7 seturi · 55 min · 14 500 kg', ts: 1700000000000 },
+      ],
+    });
+    renderIstoric();
+    const card = screen.getByTestId('istoric-session-0');
+    expect(card.textContent).toMatch(/(Sun|Mon|Tue|Wed|Thu|Fri|Sat) · \d{1,2} Nov/);
+    expect(card.textContent).not.toMatch(/NaN|relativeShort|months\.short|—/);
+  });
+});
+
 describe('IstoricDetail — render', () => {
   beforeEach(() => {
     resetStore();
