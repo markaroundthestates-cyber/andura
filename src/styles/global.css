@@ -448,6 +448,14 @@
       transparent 64%
     );
   }
+  /* No-backdrop-filter fallback (a11y audit 2026-05-29). Text on the translucent
+     --surface already clears WCAG AA without blur (verified composite), but on a
+     browser lacking backdrop-filter the sharp aurora behind a card can compete
+     with text — so go fully opaque via --surface-solid. Also retires the
+     otherwise-unused --surface-solid token. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .pulse-card { background: var(--surface-solid); }
+  }
 
   /* Secondary CTA hairline — for "Creaza Cont" style outlined buttons. Adds
      a subtle accent inner glow on hover to feel responsive without competing

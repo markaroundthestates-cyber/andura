@@ -133,19 +133,19 @@ export function IstoricDetail(): JSX.Element {
           data-testid="istoric-detail-stats-grid"
         >
           {session.sets !== undefined && (
-            <div className="pulse-card-tight p-3 text-center" data-testid="detail-sets">
+            <div className="pulse-card pulse-card-tight p-3 text-center" data-testid="detail-sets">
               <p className="font-mono text-[10px] tracking-wider text-ink3 uppercase">{t('istoric.detail.stats.sets')}</p>
               <p className="font-display text-xl font-bold text-ink tabular-nums mt-1">{session.sets}</p>
             </div>
           )}
           {session.durationMin !== undefined && (
-            <div className="pulse-card-tight p-3 text-center" data-testid="detail-duration">
+            <div className="pulse-card pulse-card-tight p-3 text-center" data-testid="detail-duration">
               <p className="font-mono text-[10px] tracking-wider text-ink3 uppercase">{t('istoric.detail.stats.minutes')}</p>
               <p className="font-display text-xl font-bold text-ink tabular-nums mt-1">{session.durationMin}</p>
             </div>
           )}
           {session.volumeKg !== undefined && (
-            <div className="pulse-card-tight p-3 text-center" data-testid="detail-volume">
+            <div className="pulse-card pulse-card-tight p-3 text-center" data-testid="detail-volume">
               <p className="font-mono text-[10px] tracking-wider text-ink3 uppercase">{t('istoric.detail.stats.tonnage')}</p>
               <p className="font-display text-xl font-bold text-ink tabular-nums mt-1">{formatKg(session.volumeKg)}</p>
             </div>
