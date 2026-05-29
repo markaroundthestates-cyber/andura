@@ -359,10 +359,18 @@ function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
               onClick={() => onChange(v)}
               data-testid={`onb-sex-${v}`}
               aria-pressed={selected}
-              className={`press-feedback animate-fade-in-up flex flex-col items-center justify-center gap-2 py-7 px-3 rounded-2xl border transition-colors ${idx === 0 ? 'delay-150' : 'delay-225'} ${selected ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
+              className={`press-feedback animate-fade-in-up relative flex flex-col items-center justify-center gap-2 py-7 px-3 rounded-2xl border text-ink transition-colors ${idx === 0 ? 'delay-150' : 'delay-225'} ${selected ? 'ob-row-selected option-selected-ring' : 'bg-paper2 border-lineStrong'}`}
             >
+              {/* mockup .ob-check.on — circular brick check badge, corner-pinned
+                  on the tile (the row variant trails inline). */}
+              <span
+                className={`ob-check absolute top-3 right-3 ${selected ? 'ob-check-on' : ''}`}
+                aria-hidden="true"
+              >
+                {selected && <Check className="w-3.5 h-3.5" strokeWidth={2.6} />}
+              </span>
               <User
-                className={`w-8 h-8 ${selected ? 'text-paper' : 'text-ink2'}`}
+                className={`w-8 h-8 ${selected ? 'text-brick' : 'text-ink2'}`}
                 aria-hidden="true"
               />
               <span className="font-display font-semibold">{v === 'm' ? t('onboarding.options.sex.m') : t('onboarding.options.sex.f')}</span>
@@ -496,19 +504,27 @@ function Step4({ value, onChange }: OptionStepProps<Frequency>): JSX.Element {
               data-testid={`onb-freq-${v}`}
               aria-pressed={selected}
               aria-label={t('onboarding.steps.4.ariaLabelFmt', { n: v })}
-              className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-2xl border text-left transition-colors ${selected ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
+              className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-2xl border text-ink text-left transition-colors ${selected ? 'ob-row-selected option-selected-ring' : 'bg-paper2 border-lineStrong'}`}
             >
               <span
-                className={`w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center font-bold font-mono ${selected ? 'bg-paper text-brick' : 'bg-paper text-ink2'}`}
+                className={`w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center font-bold font-mono bg-paper ${selected ? 'text-brick' : 'text-ink2'}`}
                 aria-hidden="true"
               >
                 {v}
               </span>
               <span className="flex-1">
                 <span className="block font-medium">{t(labelKey)}</span>
-                <span className={`block text-xs mt-0.5 ${selected ? 'text-paper' : 'text-ink3'}`}>
+                <span className="block text-xs mt-0.5 text-ink3">
                   {t(subtitleKey)}
                 </span>
+              </span>
+              {/* mockup .ob-check.on — circular brick check badge. Reserve the
+                  slot so rows don't shift on select. */}
+              <span
+                className={`ob-check ${selected ? 'ob-check-on' : ''}`}
+                aria-hidden="true"
+              >
+                {selected && <Check className="w-3.5 h-3.5" strokeWidth={2.6} />}
               </span>
             </button>
           );
@@ -542,11 +558,21 @@ function Step5({ value, onChange }: OptionStepProps<Experience>): JSX.Element {
               onClick={() => onChange(v)}
               data-testid={`onb-exp-${v}`}
               aria-pressed={selected}
-              className={`press-feedback animate-fade-in-up ${delayClass} p-4 rounded-2xl border text-left transition-colors ${selected ? 'bg-brick text-paper border-brick option-selected-ring' : 'bg-paper2 border-lineStrong text-ink'}`}
+              className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-2xl border text-ink text-left transition-colors ${selected ? 'ob-row-selected option-selected-ring' : 'bg-paper2 border-lineStrong'}`}
             >
-              <span className="block font-medium">{t(labelKey)}</span>
-              <span className={`block text-xs mt-0.5 ${selected ? 'text-paper' : 'text-ink3'}`}>
-                {t(subtitleKey)}
+              <span className="flex-1">
+                <span className="block font-medium">{t(labelKey)}</span>
+                <span className="block text-xs mt-0.5 text-ink3">
+                  {t(subtitleKey)}
+                </span>
+              </span>
+              {/* mockup .ob-check.on — circular brick check badge. Reserve the
+                  slot so rows don't shift on select. */}
+              <span
+                className={`ob-check ${selected ? 'ob-check-on' : ''}`}
+                aria-hidden="true"
+              >
+                {selected && <Check className="w-3.5 h-3.5" strokeWidth={2.6} />}
               </span>
             </button>
           );
