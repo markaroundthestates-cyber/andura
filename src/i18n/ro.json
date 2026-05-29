@@ -544,6 +544,14 @@
       "withTarget": "· tinta {kcal} ({delta})",
       "withProtein": "· {g} g proteine",
       "explainer": "Engine calculeaza auto. Loghezi optional pentru calibrare reala.",
+      "editKcalAriaLabel": "Editeaza kcal logate azi",
+      "editProteinAriaLabel": "Editeaza proteine logate azi",
+      "kcalInputAriaLabel": "Kcal logate azi",
+      "proteinInputAriaLabel": "Proteine logate azi (g)",
+      "saveCta": "Salveaza",
+      "proteinLabel": "Proteine",
+      "loggedNote": "Am notat. Tinta se ajusteaza pe masura ce loghezi.",
+      "fatigueEaseNote": "Oboseala mare + deficit: tinta urcata cu {kcal} kcal spre mentenanta ca sa protejam recuperarea.",
       "sources": {
         "manual": "Setat manual",
         "engineBn": "Estimare adaptiva",
@@ -573,7 +581,9 @@
       "snapshotEmpty": "Nu ai loguri inca. Snapshot-ul apare aici dupa prima cantarire.",
       "snapshotHint": "Pentru analiza profunda → vezi Istoric › Greutate si BF",
       "verifyValue": "Verifica valoarea",
-      "dayBarAriaLabel": "Ziua {n} greutate {kg} kg"
+      "dayBarAriaLabel": "Ziua {n} greutate {kg} kg",
+      "trendTitle": "Evolutie greutate si BF",
+      "trendAriaLabel": "Evolutia greutatii si a grasimii in timp"
     },
     "logWeightToday": "Logheaza greutate azi",
     "lastWeighIn": "Ultima cantarire",
@@ -585,6 +595,7 @@
       "tendinta": "Tendinta",
       "actiuni": "Actiuni",
       "recuperare": "Recuperare musculara",
+      "compozitie": "Compozitie corporala",
       "logManual": "Log manual"
     },
     "recovery": {
