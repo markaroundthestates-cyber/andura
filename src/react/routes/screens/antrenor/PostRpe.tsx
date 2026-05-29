@@ -25,7 +25,7 @@
 //   - mockup andura-clasic.html submitPostRpeV2()
 
 import type { JSX } from 'react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { useWorkoutStore, energyLightForIntensityMod } from '../../../stores/workoutStore';
@@ -83,7 +83,18 @@ export function PostRpe(): JSX.Element {
   // button calls handleSubmit(pick) — the full finalize pipeline is unchanged.
   const [pick, setPick] = useState<SessionRating | null>(null);
 
+  // [15.022] In-flight submit latch. handleSubmit is async (awaits
+  // getTodayWorkout) so a fast double-tap could re-enter before navigate and
+  // call finishSession + incrementStreak twice → duplicate sessionsHistory
+  // entry + double streak. A useRef (not state) latches synchronously on the
+  // first tap, before any await, so the second tap is dropped. Reset only on
+  // the early-return path (user can retry); the success path unmounts on
+  // navigate so no reset is needed.
+  const submittingRef = useRef(false);
+
   async function handleSubmit(rating: SessionRating): Promise<void> {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setLastRating(rating);
 
     const entries = Object.values(history).flat();
@@ -108,6 +119,7 @@ export function PostRpe(): JSX.Element {
     // rejected (nothing to save) — that is the legitimate empty case.
     const planned = await getTodayWorkout();
     if (setsDone === 0) {
+      submittingRef.current = false; // nothing persisted — allow a retry
       toast.show({
         message: t('postRpe.noSetsToast'),
         variant: 'error',

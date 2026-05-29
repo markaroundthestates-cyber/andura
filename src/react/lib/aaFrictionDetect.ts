@@ -18,17 +18,26 @@
 const DEFAULT_FAST_SETS_INTERVAL_MS = 30_000;
 const DEFAULT_KG_JUMP_THRESHOLD = 0.20;
 const DEFAULT_REP_SPIKE_THRESHOLD = 0.50;
+// 06.AA.010 — over-recommendation safety ratio. The engine recommends a load
+// (targetKg); entering a load >= rec * (1 + ratio) is a hard safety flag that
+// fires INDEPENDENT of set history (first set, fresh install — no baseline
+// needed). 0.40 = 40% over rec. A 50kg vs 10kg rec (5x) trips this instantly.
+// Deliberately laxer than kg_jump (history-based) because the rec already bakes
+// in readiness/tier — a modest overshoot is normal; a large one is not.
+const DEFAULT_OVER_RECOMMENDATION_RATIO = 0.40;
 
 export interface AaFrictionThresholds {
   fastSetsIntervalMs: number;
   kgJumpThreshold: number; // decimal (0.20 = 20%)
   repSpikeThreshold: number; // decimal (0.50 = 50%)
+  overRecommendationRatio: number; // decimal (0.40 = 40% over engine rec)
 }
 
 export const DEFAULT_THRESHOLDS: Readonly<AaFrictionThresholds> = {
   fastSetsIntervalMs: DEFAULT_FAST_SETS_INTERVAL_MS,
   kgJumpThreshold: DEFAULT_KG_JUMP_THRESHOLD,
   repSpikeThreshold: DEFAULT_REP_SPIKE_THRESHOLD,
+  overRecommendationRatio: DEFAULT_OVER_RECOMMENDATION_RATIO,
 };
 
 /**
@@ -59,10 +68,14 @@ export function deriveThresholds(opts: {
     fastSetsIntervalMs: DEFAULT_FAST_SETS_INTERVAL_MS,
     kgJumpThreshold: Math.round(kgJumpThreshold * 100) / 100,
     repSpikeThreshold: Math.round(repSpikeThreshold * 100) / 100,
+    // over-recommendation ratio is a fixed hard-safety floor — NOT relaxed by
+    // vitality/adherence. A large overshoot vs the engine rec is dangerous
+    // regardless of recovery state.
+    overRecommendationRatio: DEFAULT_OVER_RECOMMENDATION_RATIO,
   };
 }
 
-export type AggressiveReason = 'fast_sets' | 'kg_jump' | 'rep_spike';
+export type AggressiveReason = 'fast_sets' | 'kg_jump' | 'rep_spike' | 'over_recommendation';
 
 export interface AggressiveLoadCheck {
   trigger: boolean;
@@ -81,20 +94,47 @@ export interface SetSample {
  * boolean cu reason cand triggered.
  *
  * Priority order check (return first match):
+ *   0. over_recommendation: newSet.kg vs engine rec (targetKg) > 40% over.
+ *      Fires EVEN cand history empty (06.AA.010 — first set / fresh install
+ *      has no baseline, but the engine rec IS a baseline). Highest priority:
+ *      a large overshoot vs the rec is the most direct danger signal.
  *   1. fast_sets: ≥2 sets logged < 30sec interval (last in history vs newSet)
  *   2. kg_jump: newSet.kg vs last in history > 20% increase
  *   3. rep_spike: newSet.reps vs last in history > 50% increase
  *
- * NU trigger cand history empty (first set per exercise — no baseline).
+ * History-based checks (1-3) NU trigger cand history empty (first set per
+ * exercise — no baseline). over_recommendation (0) does NOT need history.
  */
 export function detectAggressiveLoad(
   setHistory: readonly SetSample[],
   newSet: SetSample,
   thresholds: AaFrictionThresholds = DEFAULT_THRESHOLDS,
+  targetKg?: number,
 ): AggressiveLoadCheck {
+  const last = setHistory.length > 0 ? setHistory[setHistory.length - 1] : undefined;
+
+  // 0. over_recommendation — entered load far above the engine rec. Runs
+  // BEFORE the empty-history guard so it fires on the very first set (the
+  // 50kg-vs-10kg-rec danger Daniel confirmed). Guard targetKg > 0 (no rec /
+  // bodyweight exercise → skip, no baseline to compare).
+  //
+  // Suppression: if the user's OWN set history is already at/above this load,
+  // they are established here — their history is the stronger baseline and
+  // the (possibly stale/low) rec must NOT nag. kg_jump (check 2) still catches
+  // a sudden jump vs that history. (06.AA.010 matrix: prior 48-50, log 50,
+  // rec 10 → no friction; no-history, log 50, rec 10 → friction.)
+  if (targetKg !== undefined && targetKg > 0 && newSet.kg > 0) {
+    const establishedAtLoad = last !== undefined && last.kg >= newSet.kg;
+    if (!establishedAtLoad) {
+      const overRatio = (newSet.kg - targetKg) / targetKg;
+      if (overRatio > thresholds.overRecommendationRatio) {
+        return { trigger: true, reason: 'over_recommendation' };
+      }
+    }
+  }
+
   if (setHistory.length === 0) return { trigger: false };
 
-  const last = setHistory[setHistory.length - 1];
   if (last === undefined) return { trigger: false };
 
   // 1. fast_sets — insufficient recovery between sets.

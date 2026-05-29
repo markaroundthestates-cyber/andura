@@ -1066,7 +1066,8 @@
     "reasons": {
       "fast_sets": "Set-uri prea rapide",
       "kg_jump": "Greutate marita brusc",
-      "rep_spike": "Repetari peste obisnuit"
+      "rep_spike": "Repetari peste obisnuit",
+      "over_recommendation": "Mult peste greutatea recomandata"
     }
   },
 

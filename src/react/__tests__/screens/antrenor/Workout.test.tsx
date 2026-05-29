@@ -298,11 +298,16 @@ describe('Workout — state machine logging → rest', async () => {
     expect(useWorkoutStore.getState().phase).toBe('logging');
   });
 
-  it('set history renders previous sets in log zone', async () => {
+  it('set history renders previous sets as done set-chips (kg/reps/rating preserved in accessible label)', async () => {
     await renderWorkoutAndWait();
     logSet('Usor');
     fireEvent.click(screen.getByTestId('rest-skip'));
-    expect(screen.getByTestId('set-history-0')).toHaveTextContent(/22.5 kg x 10 reps - usor/);
+    // [11.324] re-skin: the logged set is a glowing .set-chip-done (check icon),
+    // the kg x reps x rating detail moved to aria-label/title so the data is
+    // not lost. testid set-history-0 still marks the logged chip.
+    const chip = screen.getByTestId('set-history-0');
+    expect(chip.className).toContain('set-chip-done');
+    expect(chip).toHaveAttribute('aria-label', expect.stringMatching(/22.5 kg x 10 reps - usor/));
   });
 
   it('set counter advances "Set 2/4" after first set logged', async () => {

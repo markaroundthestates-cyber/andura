@@ -28,6 +28,7 @@ const REASON_KEY: Record<AggressiveReason, string> = {
   fast_sets: 'perSetSafety.reasons.fast_sets',
   kg_jump: 'perSetSafety.reasons.kg_jump',
   rep_spike: 'perSetSafety.reasons.rep_spike',
+  over_recommendation: 'perSetSafety.reasons.over_recommendation',
 };
 
 export function AaFrictionModal({

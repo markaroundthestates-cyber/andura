@@ -38,6 +38,7 @@ import {
   getMissingEquipment,
   setMissingEquipment,
 } from '../../../../engine/schedule/scheduleAdapter.js';
+import { translateMissingToCoarse } from '../../../../engine/equipmentMap.js';
 
 interface EquipmentItem {
   /** Stable persistence/engine id (wv2-missing-equipment); label localized
@@ -87,8 +88,19 @@ export function AparateLipsa(): JSX.Element {
     // urmatoarea compunere a antrenamentului (exclude/substituie exercitiile).
     setMissingEquipment(Array.from(missing));
     if (from === 'workout') {
+      // 06.AD.025 — immediate hand-off. WorkoutPreview consumes
+      // `equipmentContext.busyCoarseTypes` (NOT a raw `missingEquipment` list,
+      // which it never read → dead state). Map the just-selected picker IDs to
+      // their coarse equipment_type(s) so the previewed session re-skins the
+      // affected rows NOW (recomposeWithBusyTypes), matching the EquipmentSwap
+      // hand-off shape. The persisted setMissingEquipment above still feeds
+      // getDailyWorkout for subsequent sessions.
       navigate(gotoPath('workout-preview'), {
-        state: { missingEquipment: Array.from(missing) },
+        state: {
+          equipmentContext: {
+            busyCoarseTypes: translateMissingToCoarse(Array.from(missing)),
+          },
+        },
       });
     } else {
       navigate(gotoPath('cont'));

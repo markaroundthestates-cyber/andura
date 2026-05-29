@@ -129,23 +129,27 @@ describe('AparateLipsa — navigation flow (A2 H-4 origin-aware)', () => {
     expect(probe).toHaveAttribute('data-pathname', '/app/cont');
   });
 
-  it('workout flow entry (from: workout): Save goes la workout-preview cu ids', () => {
+  // 06.AD.025 — the workout hand-off now forwards equipmentContext.busyCoarseTypes
+  // (the channel WorkoutPreview actually reads), NOT a dead raw-ids list. The
+  // selected picker IDs are mapped to coarse equipment_type(s).
+  it('workout flow entry (from: workout): Save goes la workout-preview cu busyCoarseTypes', () => {
     renderLipsa({ from: 'workout' });
-    fireEvent.click(screen.getByLabelText('Bara halterelor'));
-    fireEvent.click(screen.getByLabelText('Leg press'));
+    fireEvent.click(screen.getByLabelText('Bara halterelor')); // → barbell
+    fireEvent.click(screen.getByLabelText('Leg press')); // → machine
     fireEvent.click(screen.getByTestId('aparate-save'));
     const probe = screen.getByTestId('probe');
     expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
-    expect(probe.textContent).toContain('bara-halterelor');
-    expect(probe.textContent).toContain('leg-press');
+    expect(probe.textContent).toContain('busyCoarseTypes');
+    expect(probe.textContent).toContain('barbell');
+    expect(probe.textContent).toContain('machine');
   });
 
-  it('workout flow Save cu zero selections propagates empty array', () => {
+  it('workout flow Save cu zero selections propagates empty busyCoarseTypes array', () => {
     renderLipsa({ from: 'workout' });
     fireEvent.click(screen.getByTestId('aparate-save'));
     const probe = screen.getByTestId('probe');
     expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
-    expect(probe.textContent).toContain('"missingEquipment":[]');
+    expect(probe.textContent).toContain('"busyCoarseTypes":[]');
   });
 });
 

@@ -472,6 +472,35 @@
       background-color: color-mix(in oklab, var(--brick) 6%, var(--paper-2));
     }
   }
+
+  /* SET CHIPS — live per-set progress row (mockup interfata-noua/
+     screens-workout.jsx .set-chip). One square chip per planned set:
+     done = filled volt + check, active = current set glowing volt border,
+     pending = muted surface. Mockup uses --accent (= --volt in this build)
+     + --on-accent. [11.324] */
+  .set-chip {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink-3);
+    transition: 250ms;
+  }
+  .set-chip-active {
+    border-color: var(--volt);
+    color: var(--volt);
+    box-shadow: 0 0 16px -4px color-mix(in oklab, var(--volt) 60%, transparent);
+  }
+  .set-chip-done {
+    background: var(--volt);
+    border-color: var(--volt);
+    color: var(--on-accent);
+  }
 }
 
 /* ══ MOTION — tasteful entrance keyframes (Daniel 2026-05-27/28) ═══════════
@@ -774,6 +803,30 @@
     box-shadow:
       0 0 0 3px color-mix(in oklab, var(--brick) 28%, transparent),
       0 6px 14px -4px color-mix(in oklab, var(--brick) 32%, transparent);
+  }
+
+  /* OB-ROW selected idiom — mockup interfata-noua/screens-entry.jsx .ob-row.on:
+     a tint + accent border + circular accent check, NOT a solid fill. Keeps the
+     row text ink-colored (legible, calmer than inverted paper-on-fill). --brick
+     is this build's onboarding selection accent (mockup --accent). [11.122] */
+  .ob-row-selected {
+    background: color-mix(in oklab, var(--brick) 9%, var(--paper-2));
+    border-color: var(--brick);
+  }
+  .ob-check {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line-strong);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    transition: 200ms;
+  }
+  .ob-check-on {
+    background: var(--brick);
+    border-color: var(--brick);
+    color: var(--paper);
   }
 
   /* Stagger utilities — apply to children of a list to cascade their entrance
