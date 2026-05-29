@@ -7,7 +7,7 @@
 //   - DECISIONS.md sectionD-LEGACY-040 LOCK 9 anti-aggressive loading safety
 //   - mockup andura-clasic.html line 105-127 .session-pill style precedent
 
-import type { JSX } from 'react';
+import type { CSSProperties, JSX } from 'react';
 import { useEffect, useRef } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import type { AggressiveReason } from '../lib/aaFrictionDetect';
@@ -77,7 +77,8 @@ export function AaFrictionModal({
       data-testid="aa-friction-backdrop"
     >
       <div
-        className="animate-scale-in bg-paper rounded-2xl p-6 w-full max-w-md"
+        className="animate-scale-in pulse-card pulse-card-glow p-6 w-full max-w-md"
+        style={{ '--wash': 'var(--ember)' } as CSSProperties}
         data-testid="aa-friction-modal"
         role="dialog"
         aria-labelledby="aa-friction-title"
