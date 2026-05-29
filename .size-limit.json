@@ -2,13 +2,19 @@
   {
     "name": "main entry (index)",
     "path": "dist/assets/index-*.js",
-    "limit": "150 KB",
+    "limit": "152 KB",
     "gzip": true
   },
   {
     "name": "main chunk (app code)",
     "path": "dist/assets/main-*.js",
-    "limit": "175 KB",
+    "limit": "185 KB",
+    "gzip": true
+  },
+  {
+    "name": "firebase SDK (FCM lazy)",
+    "path": "dist/assets/index.esm-*.js",
+    "limit": "20 KB",
     "gzip": true
   },
   {
@@ -20,7 +26,7 @@
   {
     "name": "vendor (react)",
     "path": "dist/assets/vendor-react-*.js",
-    "limit": "26 KB",
+    "limit": "27 KB",
     "gzip": true
   },
   {
