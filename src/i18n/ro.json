@@ -1066,7 +1066,14 @@
     "kgDecrease": "Scade greutatea",
     "kgIncrease": "Creste greutatea",
     "repsDecrease": "Scade repetarile",
-    "repsIncrease": "Creste repetarile"
+    "repsIncrease": "Creste repetarile",
+    "bodyweightLabel": "Greutatea corpului",
+    "addedWeightLabel": "Greutate adaugata (optional)",
+    "addedWeightHint": "Centura / gantera. Lasa 0 pentru doar greutatea corpului.",
+    "bodyweightTargetReps": "repetari cu greutatea corpului",
+    "addedWeightDecrease": "Scade greutatea adaugata",
+    "addedWeightIncrease": "Creste greutatea adaugata",
+    "youDidBodyweight": "repetari cu greutatea corpului"
   },
 
   "setRating": {

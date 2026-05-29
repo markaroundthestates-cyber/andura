@@ -25,6 +25,7 @@ import { toExerciseDisplay } from './exerciseDisplay';
 import { DP } from '../../engine/dp.js';
 import { getComputedReadinessScore, getTodayReadiness } from '../../engine/readiness.js';
 import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
+import { isBodyweightExercise, bodyweightFraction, effectiveLoadKg } from '../../engine/bodyweightLoad.js';
 import { DB } from '../../db.js';
 import { PAIN_REGION_GROUP_MAP } from '../../engine/muscleRecoveryConstants.js';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
@@ -665,11 +666,24 @@ function toPlannedExercise(
   const csProfile = coldStartProfile
     ? { bodyweightKg: coldStartProfile.bodyweightKg, sex: coldStartProfile.sex }
     : undefined;
-  const targetKg = hasHistory
-    ? rec && typeof rec.kg === 'number'
+  // Bodyweight model: for a bodyweight movement the prescribed kg is NOT a
+  // barbell-style target — the load is the user's own bodyweight. targetKg
+  // therefore carries the ADDED weight (belt/dumbbell), defaulting to 0 (pure
+  // bodyweight). We do NOT run suggestStartWeight (population priors are tuned
+  // for external loads) — a bodyweight "start" is bodyweight reps. With history,
+  // the DP recommendation kg IS the added weight (the user logged effective
+  // load — see logSet — but the recommendation tracks the same axis), so we
+  // keep it; cold-start added = 0.
+  const isBw = isBodyweightExercise(engineEx.name);
+  const targetKg = isBw
+    ? hasHistory && rec && typeof rec.kg === 'number'
       ? rec.kg
-      : suggestStartWeight(engineEx.name, experienceEn, csProfile)
-    : suggestStartWeight(engineEx.name, experienceEn, csProfile);
+      : 0
+    : hasHistory
+      ? rec && typeof rec.kg === 'number'
+        ? rec.kg
+        : suggestStartWeight(engineEx.name, experienceEn, csProfile)
+      : suggestStartWeight(engineEx.name, experienceEn, csProfile);
   return {
     id: `${slug}-${idx}`,
     name: display.name,
@@ -682,6 +696,9 @@ function toPlannedExercise(
     // Fix #4 — rest from the engine rest range (compound=MAX / isolation=MIN),
     // NOT the prior hardcoded 90 for every exercise.
     restSec: resolveRestSec(engineEx.name, restRange),
+    // Bodyweight flag + fraction so the UI + volume/PR math resolve the
+    // effective load (bodyweight x fraction + targetKg added).
+    ...(isBw ? { isBodyweight: true, bwFraction: bodyweightFraction(engineEx.name) } : {}),
   };
 }
 
@@ -742,14 +759,29 @@ const SET_WORK_SEC = 40;
  * Pure. Rotunjit la kg.
  */
 export function computePlannedVolumeKg(
-  exercises: ReadonlyArray<{ sets: number; targetReps: number; targetKg: number }>,
+  exercises: ReadonlyArray<{
+    sets: number;
+    targetReps: number;
+    targetKg: number;
+    isBodyweight?: boolean;
+    bwFraction?: number;
+  }>,
+  bodyweightKg: number | null = null,
 ): number | null {
   if (!Array.isArray(exercises) || exercises.length === 0) return null;
+  const bw = Number(bodyweightKg);
+  const hasBw = Number.isFinite(bw) && bw > 0;
   let total = 0;
   for (const ex of exercises) {
     const sets = Number(ex.sets);
     const reps = Number(ex.targetReps);
-    const kg = Number(ex.targetKg);
+    const added = Number(ex.targetKg);
+    // Bodyweight: effective load = bodyweight x fraction + added. Loaded: kg as
+    // entered. A pure-bodyweight set (added 0) now contributes REAL tonnage
+    // (bodyweight x reps x sets) instead of 0 — the old bug under-counted it.
+    const kg = ex.isBodyweight
+      ? (hasBw ? bw * (Number(ex.bwFraction) || 0) : 0) + (Number.isFinite(added) ? added : 0)
+      : added;
     if (Number.isFinite(sets) && Number.isFinite(reps) && Number.isFinite(kg)) {
       total += sets * reps * kg;
     }
@@ -845,7 +877,7 @@ export async function composePlannedWorkoutToday(
     // (scheduleAdapter.js volumeKg:0 → WorkoutPreview arata "0 kg" via `0 ?? fb`).
     // Sumam aici (React-side) unde targetKg/targetReps deja reale per exercitiu
     // (DP / cold-start). null cand nu avem exercitii → fallback WorkoutPreview.
-    const volumeKg = computePlannedVolumeKg(exercises);
+    const volumeKg = computePlannedVolumeKg(exercises, coldStartProfile.bodyweightKg);
     // Durata estimata REAL din volumul de seturi + odihna (vs hardcode 50 engine):
     // per set ~ timp sub tensiune/tranzitie + restSec. null cand fara exercitii.
     const estimatedDuration = computeEstimatedDurationMin(exercises, warmup?.durationMin ?? 0);

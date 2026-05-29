@@ -1066,7 +1066,14 @@
     "kgDecrease": "Decrease weight",
     "kgIncrease": "Increase weight",
     "repsDecrease": "Decrease reps",
-    "repsIncrease": "Increase reps"
+    "repsIncrease": "Increase reps",
+    "bodyweightLabel": "Bodyweight",
+    "addedWeightLabel": "Added weight (optional)",
+    "addedWeightHint": "Belt / dumbbell. Leave 0 for pure bodyweight.",
+    "bodyweightTargetReps": "bodyweight reps",
+    "addedWeightDecrease": "Decrease added weight",
+    "addedWeightIncrease": "Increase added weight",
+    "youDidBodyweight": "bodyweight reps"
   },
 
   "setRating": {
