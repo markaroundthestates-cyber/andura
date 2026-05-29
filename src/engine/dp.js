@@ -3,6 +3,7 @@ import { DB } from '../db.js';
 import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../constants.js';
 import { roundToEquipmentWeight, getPrevWeight } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier } from './exerciseMapping.js';
+import { now as clockNow } from './clock.js';
 
 export const DP = {
   // Rep ranges per exercise
@@ -172,19 +173,35 @@ export const DP = {
 
   // MAIN RECOMMENDATION FUNCTION
   /** @param {string} ex */
-  recommend(ex) {
-    const result = this._recommendRaw(ex);
+  recommend(ex, nowMs) {
+    const result = this._recommendRaw(ex, nowMs);
     // Rotunjeste kg la step-ul echipamentului (helcometre din 4, cabluri din 2.5, DB din 2)
     if (result && result.kg) result.kg = this.roundToStep(result.kg, ex);
     return result;
   },
 
-  /** @param {string} ex */
-  _recommendRaw(ex) {
+  // CUT decision — shared injectable-clock helper. `nowMs` DEFAULTS to the real
+  // clock (Date.now), so production is byte-identical to the prior inline
+  // `new Date() < TARGET_DATE`. Tests pass nowMs to pin the AUTO/target-date branch.
+  /**
+   * @param {string} phaseOverride 'CUT' | 'BULK' | 'AUTO' | ...
+   * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
+   * @returns {boolean}
+   */
+  _isInCut(phaseOverride, nowMs) {
+    const ms = nowMs == null ? clockNow() : nowMs;
+    return phaseOverride === 'CUT' || (phaseOverride === 'AUTO' && ms < TARGET_DATE.getTime());
+  },
+
+  /**
+   * @param {string} ex
+   * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
+   */
+  _recommendRaw(ex, nowMs) {
     const state = this.getState(ex);
     const inc = this.getIncrement(ex);
     const phaseOverride = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
-    const isInCut = phaseOverride === 'CUT' || (phaseOverride === 'AUTO' && new Date() < TARGET_DATE);
+    const isInCut = this._isInCut(phaseOverride, nowMs);
     const range = this.getPhaseAwareRepRange(ex, isInCut);
     const rMin = range[0] ?? 8;
     const rMax = range[1] ?? 12;
@@ -287,8 +304,7 @@ export const DP = {
     if (isStagnant && typeof extraSets === 'number' && extraSets >= 1) {
       // Drop set nu in CUT — in deficit mentii greutatea, straight sets cu executie perfecta
       const phaseOverride = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
-      const isInCut = phaseOverride === 'CUT' ||
-        (phaseOverride === 'AUTO' && new Date() < TARGET_DATE);
+      const isInCut = this._isInCut(phaseOverride, nowMs);
       if (isInCut) {
         return {
           kg: lastW, repsTarget: rMax, rir: 2,
@@ -326,12 +342,13 @@ export const DP = {
    * @param {string} ex
    * @param {number[]} recentRPEs
    * @param {number[]} recentReps
+   * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
    */
-  checkInSessionAdjust(ex, recentRPEs, recentReps) {
+  checkInSessionAdjust(ex, recentRPEs, recentReps, nowMs) {
     const dpState = this.getState(ex);
     const inc = this.getIncrement(ex);
     const phOv = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
-    const inCut = phOv === 'CUT' || (phOv === 'AUTO' && new Date() < TARGET_DATE);
+    const inCut = this._isInCut(phOv, nowMs);
     const range = this.getPhaseAwareRepRange(ex, inCut);
     const rMax = range[1] ?? 12;
 
@@ -355,10 +372,13 @@ export const DP = {
   },
 
   // Returns phase-aware rep range for ex.
-  /** @param {string} ex */
-  getRepsRange(ex) {
+  /**
+   * @param {string} ex
+   * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
+   */
+  getRepsRange(ex, nowMs) {
     const phOv = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
-    const inCut = phOv === 'CUT' || (phOv === 'AUTO' && new Date() < TARGET_DATE);
+    const inCut = this._isInCut(phOv, nowMs);
     return this.getPhaseAwareRepRange(ex, inCut);
   },
 
@@ -374,9 +394,10 @@ export const DP = {
    * @param {string} ex
    * @param {number | null} readinessScore
    * @param {any} _muscleState
+   * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
    */
-  getSmartRecommendation(ex, readinessScore, _muscleState) {
-    const base = this.recommend(ex);
+  getSmartRecommendation(ex, readinessScore, _muscleState, nowMs) {
+    const base = this.recommend(ex, nowMs);
     /** @type {Record<string, any>} */
     let result = { ...base };
     result.intensityLabel = this.getIntensityLabel(result.rir ?? 2);
@@ -392,7 +413,7 @@ export const DP = {
 
     // Rep range instead of fixed — phase-aware (CUT caps isolation to 10)
     const phOv2 = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
-    const inCut2 = phOv2 === 'CUT' || (phOv2 === 'AUTO' && new Date() < TARGET_DATE);
+    const inCut2 = this._isInCut(phOv2, nowMs);
     const range = this.getPhaseAwareRepRange(ex, inCut2);
     const [rMin, rMax] = range;
     const rMinSafe = rMin ?? 8;
