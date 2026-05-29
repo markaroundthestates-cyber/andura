@@ -16,10 +16,18 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Splash } from '../../routes/screens/Splash';
 import { useAppStore } from '../../stores/appStore';
+import { isAuthenticated as readAuthFromStorage } from '../../../auth.js';
 // SPLASH+AUTH+ONB FINISH i18n — these specs were written against RO copy;
 // force RO locale so existing assertions keep their semantics. EN coverage
 // is verified separately by src/i18n/__tests__/i18nNoRoLeak.test.tsx.
 import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../../i18n/index.js';
+
+// §01.009 — Splash routes on the REAL stored session (firebase-* token via
+// auth.js isAuthenticated), not the session-scope appStore flag. Mock the
+// token reader so the returning-user branch is deterministic.
+vi.mock('../../../auth.js', () => ({
+  isAuthenticated: vi.fn(() => false),
+}));
 
 // Probe component renders the path a nav lands on so a test can assert the
 // auto-advance / tap-to-skip route target.
@@ -44,9 +52,12 @@ beforeEach(() => {
   try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
   __resetI18n();
   __setLocale('ro');
-  // appStore is a singleton across a test file — pin the auth flag per test so
-  // the anon vs authenticated branch is deterministic.
+  // appStore is a singleton across a test file — pin the skip-auth flag + the
+  // stored-token reader per test so the anon vs returning branch is
+  // deterministic.
   useAppStore.getState().setAuthenticated(false);
+  useAppStore.getState().setSkipAuth(false);
+  vi.mocked(readAuthFromStorage).mockReturnValue(false);
 });
 
 afterEach(() => {
@@ -77,9 +88,19 @@ describe('Splash — Pulse auto-advance routing', () => {
     expect(screen.getByTestId('nav-probe')).toHaveAttribute('data-path', '/auth');
   });
 
-  it('auto-advances an authenticated user to /app/antrenor after the timer', () => {
+  it('auto-advances a returning authenticated user (stored token) to /app/antrenor after the timer', () => {
     vi.useFakeTimers();
-    useAppStore.getState().setAuthenticated(true);
+    vi.mocked(readAuthFromStorage).mockReturnValue(true);
+    renderSplash();
+    act(() => {
+      vi.advanceTimersByTime(2700);
+    });
+    expect(screen.getByTestId('nav-probe')).toHaveAttribute('data-path', '/app/antrenor');
+  });
+
+  it('auto-advances a returning test-drive user (isSkipAuth) to /app/antrenor', () => {
+    vi.useFakeTimers();
+    useAppStore.getState().setSkipAuth(true);
     renderSplash();
     act(() => {
       vi.advanceTimersByTime(2700);
@@ -95,8 +116,8 @@ describe('Splash — tap-to-skip', () => {
     expect(screen.getByTestId('nav-probe')).toHaveAttribute('data-path', '/auth');
   });
 
-  it('tapping the splash skips to /app/antrenor when authenticated', () => {
-    useAppStore.getState().setAuthenticated(true);
+  it('tapping the splash skips to /app/antrenor when a stored token exists', () => {
+    vi.mocked(readAuthFromStorage).mockReturnValue(true);
     renderSplash();
     fireEvent.click(screen.getByTestId('splash'));
     expect(screen.getByTestId('nav-probe')).toHaveAttribute('data-path', '/app/antrenor');
