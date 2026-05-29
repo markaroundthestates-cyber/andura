@@ -1765,6 +1765,7 @@
     "sentBody": "We sent a sign-in link to {email}. Tap it to continue.",
     "errorInvalid": "Please enter a valid email address.",
     "errorGeneric": "Couldn't send the link. Please try again.",
+    "errorVerify": "That sign-in link didn't work. It may have expired or already been used. Send a new one.",
     "backAriaLabel": "Back",
     "loginTitle": "Welcome back",
     "signupTitle": "Create account",

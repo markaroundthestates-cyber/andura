@@ -1765,6 +1765,7 @@
     "sentBody": "Am trimis un link de conectare la {email}. Apasa-l ca sa continui.",
     "errorInvalid": "Introdu un email valid.",
     "errorGeneric": "Nu am putut trimite linkul. Reincearca.",
+    "errorVerify": "Linkul de intrare nu a functionat. Poate a expirat sau a fost deja folosit. Trimite unul nou.",
     "backAriaLabel": "Inapoi",
     "loginTitle": "Bine ai revenit",
     "signupTitle": "Creeaza cont",
