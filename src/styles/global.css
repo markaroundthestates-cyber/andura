@@ -1094,10 +1094,13 @@ html, body {
     margin: 0;
     background: var(--paper);
     border-radius: var(--screen-radius);
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    /* #root is the DEVICE SCREEN: it clips its rounded corners (overflow:hidden)
+       and is the containing block for fixed chrome (BottomNav/SessionPill) via
+       transform:translateZ(0) — but it is NOT the scroll surface. The inner
+       .app-scroll wrapper scrolls; #root stays put so the "fixed" BottomNav
+       pins to the screen bottom instead of scrolling off with content
+       (desktop BottomNav freeze fix). */
+    overflow: hidden;
     /* Establish a containing block for fixed descendants (BottomNav/chrome)
        so they pin to the SCREEN, not the viewport. This is the deliberate
        reversal of the 2026-05-28 removal — now #root IS the device, so the
@@ -1113,7 +1116,24 @@ html, body {
       0 40px 90px -30px rgba(0, 0, 0, 0.9),
       0 24px 64px -20px color-mix(in oklab, var(--brick) 18%, transparent);
   }
-  #root::-webkit-scrollbar { width: 0; height: 0; }
+  /* The shell <div> (#root's only child) must fill the fixed-height screen so
+     its flex child .app-scroll resolves a bounded height to scroll within
+     (min-h-screen would otherwise overflow the device). */
+  #root > * {
+    min-height: 0;
+    height: 100%;
+  }
+  /* The scroll surface: fills the screen, scrolls internally. SubHeader
+     (sticky top-0) sticks to THIS container's top. The fixed BottomNav is a
+     sibling of .app-scroll (not inside it), so it does not scroll with this. */
+  .app-scroll {
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .app-scroll::-webkit-scrollbar { width: 0; height: 0; }
   /* Notch — pill on top of the screen (mockup .notch 120×30, speaker + cam).
      #root has transform:translateZ(0) so it is the containing block for its
      fixed descendants: a fixed pseudo at top:0/left:50% pins to the SCREEN

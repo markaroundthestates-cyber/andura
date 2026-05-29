@@ -33,8 +33,12 @@ const globalCss = readFileSync(
 function findRootBezelBlock(): string {
   // Match from the @media open through the #root rule's closing brace. The
   // #root rule contains the --device-w var. Non-greedy to the first `}` that
-  // closes the #root rule (its declarations have no nested braces).
-  const re = /@media \(min-width: 768px\) \{\s*html, body \{[\s\S]*?#root \{[\s\S]*?--device-w[\s\S]*?\}\s*#root::-webkit-scrollbar/;
+  // closes the #root rule (its declarations have no nested braces). The rule
+  // following the #root device rule is the `#root > *` shell-fill rule (the
+  // 2026-05-29 nav-freeze fix introduced an inner .app-scroll surface and moved
+  // the scroll overflow off #root, so the prior #root::-webkit-scrollbar anchor
+  // no longer follows #root directly).
+  const re = /@media \(min-width: 768px\) \{\s*html, body \{[\s\S]*?#root \{[\s\S]*?--device-w[\s\S]*?--brick[^}]*\}/;
   const match = globalCss.match(re);
   if (!match) throw new Error('Desktop #root bezel block not found');
   return match[0];
@@ -61,8 +65,22 @@ describe('Phone bezel — desktop #root device screen (>=768px)', () => {
     const block = findRootBezelBlock();
     expect(block).toMatch(/border-radius:\s*var\(--screen-radius\)/);
     expect(block).toMatch(/--screen-radius:\s*42px/);
-    // Internal scroll so content scrolls inside the screen, chrome stays put.
-    expect(block).toMatch(/overflow-y:\s*auto/);
+    // #root clips its rounded corners with overflow:hidden. The scroll surface
+    // is the inner .app-scroll wrapper (asserted below), NOT #root — the
+    // 2026-05-29 nav-freeze fix moved overflow off #root so the fixed BottomNav
+    // (containing block = #root) pins to the screen instead of scrolling away.
+    expect(block).toMatch(/overflow:\s*hidden/);
+    // #root must NOT carry the scroll overflow anymore.
+    expect(block).not.toMatch(/overflow-y:\s*auto/);
+  });
+
+  it('moves the scroll overflow onto an inner .app-scroll surface (nav-freeze fix)', () => {
+    // The fixed BottomNav scrolled off the screen on desktop because #root was
+    // BOTH the containing block (transform) AND the scroll container
+    // (overflow-y:auto). The scroll now lives on .app-scroll inside #root.
+    expect(globalCss).toMatch(
+      /\.app-scroll \{[\s\S]*?overflow-y:\s*auto[\s\S]*?\}/
+    );
   });
 
   it('establishes a containing block (transform) so fixed chrome pins to the SCREEN', () => {
