@@ -122,6 +122,7 @@ export function HeatMapWeekly(): JSX.Element {
               key={idx}
               data-testid={`weight-bar-${idx}`}
               data-kg={b.kg}
+              role="img"
               className="flex-1 rounded-sm"
               style={{
                 height: `${b.heightPct}%`,

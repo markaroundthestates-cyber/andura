@@ -285,7 +285,7 @@ export function Cont(): JSX.Element {
               data-testid={`cont-theme-${opt.value}`}
               aria-pressed={opt.active}
               onClick={() => setTheme(opt.value)}
-              className={`flex-1 py-2.5 rounded-[11px] text-sm font-semibold transition-colors ${
+              className={`flex-1 min-h-[44px] py-2.5 rounded-[11px] text-sm font-semibold transition-colors ${
                 opt.active ? 'bg-brick text-paper' : 'text-ink2'
               }`}
             >

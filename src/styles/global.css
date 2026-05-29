@@ -117,7 +117,7 @@
     --paper-2: #ffffff;   /* Pulse --bg-2 light — pure white card surface */
     --ink: #12141f;       /* Pulse --ink light → 16.1:1 vs paper ✅ AAA */
     --ink-2: #565d72;     /* Pulse --ink-2 light → 5.75:1 vs paper ✅ AA */
-    --ink-3: #686e82;     /* Pulse --ink-3 nudged (mockup #8a90a5 = 2.79:1 ❌) → 4.45:1 vs paper ✅ AA */
+    --ink-3: #5f6479;     /* Pulse --ink-3 darkened (was #686e82 = 4.45:1, just under AA for 11px mono captions) → 5.14:1 vs paper ✅ AA. Cool-grey identity preserved; stays lighter than --ink-2 (5.75:1) so the ink hierarchy holds. */
     --line: rgba(12, 16, 30, 0.09); /* Pulse --line light — decorative hairline */
     --line-strong: #787e92; /* Pulse --line-strong nudged (mockup .16 alpha = 1.41:1 ❌) → 3.55:1 vs paper ✅ SC 1.4.11 */
     --brick: #477006;     /* PRIMARY ACCENT — Pulse volt-deep as light-readable text → 5.14:1 vs paper ✅ AA (raw volt #b6f23a = 1.17:1 unusable as text on light) */
@@ -270,7 +270,7 @@
     --paper-2: #ffffff;
     --ink: #12141f;
     --ink-2: #565d72;
-    --ink-3: #686e82;
+    --ink-3: #5f6479;     /* mirror :root light — darkened to 5.14:1 vs paper ✅ AA (was #686e82 = 4.45:1) */
     --line: rgba(12, 16, 30, 0.09);
     --line-strong: #787e92;
     --brick: #477006;
@@ -1046,6 +1046,14 @@ html, body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
+/* a11y (2026-05-29) — CalendarHeatmap ARIA grid > row > gridcell. The week
+   role="row" wrapper uses display:contents so its gridcell children remain
+   direct items of the parent grid-cols-7 grid (layout unchanged) while the row
+   semantics satisfy the ARIA grid contract (axe: no gridcell-without-row). */
+.cal-week {
+  display: contents;
+}
+
 /* ══ DESKTOP PHONE BEZEL (≥768px) — Andura Pulse device frame ══════════════
    Daniel-approved Pulse redesign ports the mockup PhoneFrame (app.jsx: bezel +
    notch, 402×856, radius 52px, screen radius 42px). On desktop the app reads as
@@ -1094,10 +1102,13 @@ html, body {
     margin: 0;
     background: var(--paper);
     border-radius: var(--screen-radius);
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    /* #root is the DEVICE SCREEN: it clips its rounded corners (overflow:hidden)
+       and is the containing block for fixed chrome (BottomNav/SessionPill) via
+       transform:translateZ(0) — but it is NOT the scroll surface. The inner
+       .app-scroll wrapper scrolls; #root stays put so the "fixed" BottomNav
+       pins to the screen bottom instead of scrolling off with content
+       (desktop BottomNav freeze fix). */
+    overflow: hidden;
     /* Establish a containing block for fixed descendants (BottomNav/chrome)
        so they pin to the SCREEN, not the viewport. This is the deliberate
        reversal of the 2026-05-28 removal — now #root IS the device, so the
@@ -1113,7 +1124,24 @@ html, body {
       0 40px 90px -30px rgba(0, 0, 0, 0.9),
       0 24px 64px -20px color-mix(in oklab, var(--brick) 18%, transparent);
   }
-  #root::-webkit-scrollbar { width: 0; height: 0; }
+  /* The shell <div> (#root's only child) must fill the fixed-height screen so
+     its flex child .app-scroll resolves a bounded height to scroll within
+     (min-h-screen would otherwise overflow the device). */
+  #root > * {
+    min-height: 0;
+    height: 100%;
+  }
+  /* The scroll surface: fills the screen, scrolls internally. SubHeader
+     (sticky top-0) sticks to THIS container's top. The fixed BottomNav is a
+     sibling of .app-scroll (not inside it), so it does not scroll with this. */
+  .app-scroll {
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .app-scroll::-webkit-scrollbar { width: 0; height: 0; }
   /* Notch — pill on top of the screen (mockup .notch 120×30, speaker + cam).
      #root has transform:translateZ(0) so it is the containing block for its
      fixed descendants: a fixed pseudo at top:0/left:50% pins to the SCREEN

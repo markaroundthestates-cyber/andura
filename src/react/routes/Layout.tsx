@@ -72,24 +72,37 @@ export function Layout(): JSX.Element {
       <OfflineBanner />
       <UpdatePrompt />
       {!inSession && <InstallPrompt />}
-      {/* relative z-10 lifts routed content above the z-0 AuroraBackground —
-          a positioned z-0 layer otherwise paints over static siblings. The
-          fixed chrome (nav z-50, SessionPill, banners) already sits higher. */}
-      <main id="main-content" className={`relative z-10 flex-1 ${inSession ? 'pb-0' : 'pb-16'}`}>
-        <ErrorBoundary>
-          <Suspense fallback={<LoadingSkeleton testId="layout-suspense" />}>
-            {/* Wave C3 (2026-05-28) — page transition uses animate-page-enter
-                (320ms cubic-bezier(0.16, 1, 0.3, 1), 6px slide-up). Slightly
-                gentler than fade-in-up (12px) so the bottom nav reads stable
-                while content settles. key={pathname} remounts the wrapper so
-                the animation replays per navigation. Auto-gated by
-                prefers-reduced-motion via global * cap. */}
-            <div key={pathname} className="animate-page-enter">
-              <Outlet />
-            </div>
-          </Suspense>
-        </ErrorBoundary>
-      </main>
+      {/* DESKTOP BOTTOM-NAV FREEZE FIX (2026-05-29) — .app-scroll is the inner
+          scroll surface. On desktop (>=768px) the scroll overflow lives HERE,
+          not on #root, so the `position: fixed` BottomNav/SessionPill (which
+          resolve their containing block to #root via translateZ(0)) pin to the
+          device screen instead of scrolling 1:1 with content. #root keeps the
+          transform (containing block) + overflow:hidden (clips rounded corners)
+          but no longer scrolls. SubHeader (sticky top-0) sticks to this
+          wrapper's top. On mobile (<768px) this is a transparent passthrough —
+          #root has no transform/height/overflow there, so .app-scroll grows
+          with content and the page scrolls on the viewport as before, BottomNav
+          fixed to the viewport. flex-1 lets it fill the shell column. */}
+      <div className="app-scroll flex-1 flex flex-col">
+        {/* relative z-10 lifts routed content above the z-0 AuroraBackground —
+            a positioned z-0 layer otherwise paints over static siblings. The
+            fixed chrome (nav z-50, SessionPill, banners) already sits higher. */}
+        <main id="main-content" className={`relative z-10 flex-1 ${inSession ? 'pb-0' : 'pb-16'}`}>
+          <ErrorBoundary>
+            <Suspense fallback={<LoadingSkeleton testId="layout-suspense" />}>
+              {/* Wave C3 (2026-05-28) — page transition uses animate-page-enter
+                  (320ms cubic-bezier(0.16, 1, 0.3, 1), 6px slide-up). Slightly
+                  gentler than fade-in-up (12px) so the bottom nav reads stable
+                  while content settles. key={pathname} remounts the wrapper so
+                  the animation replays per navigation. Auto-gated by
+                  prefers-reduced-motion via global * cap. */}
+              <div key={pathname} className="animate-page-enter">
+                <Outlet />
+              </div>
+            </Suspense>
+          </ErrorBoundary>
+        </main>
+      </div>
       <SessionPill />
       {!inSession && <BottomNav />}
       <ToastViewport />

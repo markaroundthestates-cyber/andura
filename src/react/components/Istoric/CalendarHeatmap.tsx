@@ -116,6 +116,15 @@ export function CalendarHeatmap(): JSX.Element {
     cells.push({ day: d, rating: sessions ? rating : null, key });
   }
 
+  // a11y (2026-05-29) — ARIA grid pattern requires grid > row > gridcell. The
+  // flat cell list is chunked into weeks of 7 so each week becomes a role="row".
+  // The row wrappers use display:contents (CSS below) so the parent CSS grid
+  // (grid-cols-7) still lays the cells out unchanged — purely a semantics layer.
+  const weeks: Array<typeof cells> = [];
+  for (let i = 0; i < cells.length; i += 7) {
+    weeks.push(cells.slice(i, i + 7));
+  }
+
   const monthLabel = monthFull(calM);
 
   return (
@@ -134,7 +143,7 @@ export function CalendarHeatmap(): JSX.Element {
             onClick={() => navMonth(-1)}
             aria-label={t('calendar.heatmap.prevMonth')}
             data-testid="cal-prev"
-            className="w-[30px] h-[30px] rounded-[9px] border border-line flex items-center justify-center press-feedback"
+            className="relative w-[30px] h-[30px] rounded-[9px] border border-line flex items-center justify-center press-feedback before:absolute before:-inset-[7px] before:content-['']"
             style={{ background: 'var(--surface-2)' }}
           >
             <ChevronLeft className="w-3.5 h-3.5 text-ink" aria-hidden="true" />
@@ -144,7 +153,7 @@ export function CalendarHeatmap(): JSX.Element {
             onClick={() => navMonth(1)}
             aria-label={t('calendar.heatmap.nextMonth')}
             data-testid="cal-next"
-            className="w-[30px] h-[30px] rounded-[9px] border border-line flex items-center justify-center press-feedback"
+            className="relative w-[30px] h-[30px] rounded-[9px] border border-line flex items-center justify-center press-feedback before:absolute before:-inset-[7px] before:content-['']"
             style={{ background: 'var(--surface-2)' }}
           >
             <ChevronRight className="w-3.5 h-3.5 text-ink" aria-hidden="true" />
@@ -170,7 +179,13 @@ export function CalendarHeatmap(): JSX.Element {
         aria-label={`${monthLabel} ${calY}`}
         data-testid="cal-grid"
       >
-        {cells.map((cell, idx) => {
+        {weeks.map((week, weekIdx) => (
+          // role="row" wrapper (ARIA grid > row > gridcell). display:contents
+          // (cal-week class) keeps the cells as direct items of the parent
+          // grid-cols-7 grid so the visual layout is unchanged.
+          <div key={`week-${weekIdx}`} role="row" className="cal-week">
+            {week.map((cell, cellIdx) => {
+          const idx = weekIdx * 7 + cellIdx;
           if (cell.day === null) {
             return (
               <div
@@ -237,7 +252,9 @@ export function CalendarHeatmap(): JSX.Element {
               )}
             </div>
           );
-        })}
+            })}
+          </div>
+        ))}
       </div>
 
       <div

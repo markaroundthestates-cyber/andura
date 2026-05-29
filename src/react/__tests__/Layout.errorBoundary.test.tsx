@@ -60,4 +60,19 @@ describe('Layout — ErrorBoundary + Suspense wrap Outlet (Phase 6 task_20)', ()
     const { container } = renderAt('/app', <WorkingScreen />);
     expect(container.querySelector('main')).toBeInTheDocument();
   });
+
+  it('wraps routed content in an .app-scroll surface (desktop nav freeze fix)', () => {
+    // 2026-05-29 — the scroll overflow lives on .app-scroll, NOT on #root, so
+    // the fixed BottomNav (containing block = #root via translateZ) pins to the
+    // device screen on desktop instead of scrolling 1:1 with content. The
+    // <main> must sit inside .app-scroll; BottomNav must sit OUTSIDE it so it
+    // does not scroll with the content.
+    const { container } = renderAt('/app', <WorkingScreen />);
+    const scroll = container.querySelector('.app-scroll');
+    expect(scroll).toBeInTheDocument();
+    expect(scroll?.querySelector('main')).toBeInTheDocument();
+    const nav = container.querySelector('nav[aria-label]');
+    expect(nav).toBeInTheDocument();
+    expect(scroll?.contains(nav as Node)).toBe(false);
+  });
 });
