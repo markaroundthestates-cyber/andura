@@ -968,7 +968,7 @@ describe('Workout — inactivity watch (task_15 §A)', async () => {
       vi.advanceTimersByTime(8 * 60 * 1000); // 8 min > 7 threshold
     });
     expect(screen.getByTestId('inactivity-prompt')).toBeInTheDocument();
-    expect(screen.getByTestId('inactivity-prompt-title')).toHaveTextContent('Esti acolo?');
+    expect(screen.getByTestId('inactivity-prompt-title')).toHaveTextContent('Still there?');
   });
 
   it('Continui click bumps activity + hides prompt', async () => {
@@ -1006,13 +1006,13 @@ describe('Workout — inactivity watch (task_15 §A)', async () => {
     expect(screen.queryByTestId('inactivity-prompt')).not.toBeInTheDocument();
   });
 
-  it('mockup verbatim body copy preserved (no diacritics)', async () => {
+  it('body copy localized under EN default (no diacritics)', async () => {
     await renderWorkoutAndWait();
     act(() => {
       vi.advanceTimersByTime(8 * 60 * 1000);
     });
     const body = screen.getByTestId('inactivity-prompt-body');
-    expect(body.textContent).toMatch(/N-am vazut activitate de 7 min/);
+    expect(body.textContent).toMatch(/haven't seen activity/i);
     expect(/[ăâîșțĂÂÎȘȚ]/.test(body.textContent ?? '')).toBe(false);
   });
 });

@@ -24,9 +24,9 @@ describe('Terms page /terms', () => {
   it('renders with heading + key terms content', () => {
     renderAt('/terms');
     expect(screen.getByTestId('terms-page')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toMatch(/Termeni si conditii/i);
-    expect(screen.getByText(/NU prescriptii medicale/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/Beta gratuita/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toMatch(/Terms and conditions/i);
+    expect(screen.getByText(/NOT medical prescriptions/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Free Beta/i).length).toBeGreaterThan(0);
   });
 
   it('has a back affordance', () => {
@@ -44,9 +44,9 @@ describe('Privacy page /privacy', () => {
   it('renders with heading + key privacy content', () => {
     renderAt('/privacy');
     expect(screen.getByTestId('privacy-page')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toMatch(/confidentialitate/i);
-    expect(screen.getByText(/Datele tale raman pe telefon/i)).toBeInTheDocument();
-    expect(screen.getByText(/ZERO publicitate/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toMatch(/Privacy policy/i);
+    expect(screen.getByText(/Your data stays on your phone/i)).toBeInTheDocument();
+    expect(screen.getByText(/ZERO advertising/i)).toBeInTheDocument();
     expect(screen.getByText(/GDPR/i)).toBeInTheDocument();
   });
 

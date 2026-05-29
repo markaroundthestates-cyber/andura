@@ -108,7 +108,7 @@ describe('SessionPill — conditional render', () => {
     const pill = screen.getByTestId('session-pill');
     expect(pill).toBeInTheDocument();
     expect(pill).toHaveAttribute('data-state', 'paused');
-    expect(pill.textContent).toMatch(/Reia sesiunea/i);
+    expect(pill.textContent).toMatch(/Resume current session/i);
   });
 
   it('data-state=active cand sessionStart set', () => {
@@ -150,11 +150,11 @@ describe('SessionPill — content render', () => {
     });
   });
 
-  it('aria-label="Reia sesiunea curenta" preserved (mockup verbatim)', () => {
+  it('aria-label localized to "Resume current session" under EN default', () => {
     useWorkoutStore.setState({ phase: 'logging', sessionStart: Date.now() });
     renderPill('/app/antrenor');
     expect(
-      screen.getByRole('button', { name: /Reia sesiunea curenta/i })
+      screen.getByRole('button', { name: /Resume current session/i })
     ).toBeInTheDocument();
   });
 });

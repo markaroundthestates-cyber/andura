@@ -131,11 +131,11 @@ describe('TDEEStrip — Wave C2 i18n EN default', () => {
     const msg = screen.getByTestId('tdee-healthy-floor-msg');
     // BUG #4: mesaj de crestere (NU "mentenanta"/"mai jos"); surplus, nu deficit;
     // nota blanda de medic pastrata.
-    expect(msg.textContent).toMatch(/sub greutatea sanatoasa/);
-    expect(msg.textContent).toMatch(/crestem/);
+    expect(msg.textContent).toMatch(/below a healthy weight/);
+    expect(msg.textContent).toMatch(/grow gradually/);
     expect(msg.textContent).toMatch(/surplus/);
-    expect(msg.textContent).toMatch(/medic/);
-    expect(msg.textContent).not.toMatch(/mentenanta/);
+    expect(msg.textContent).toMatch(/doctor/);
+    expect(msg.textContent).not.toMatch(/maintenance/i);
     // RO no-diacritics (D-LEGACY-064).
     expect(/[ăâîșțĂÂÎȘȚ]/.test(msg.textContent ?? '')).toBe(false);
   });

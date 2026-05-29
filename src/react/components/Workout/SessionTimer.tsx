@@ -121,7 +121,7 @@ function SessionTimerImpl({
             {centerLabel}
           </h1>
           <p className="text-sm text-ink2" data-testid="workout-progress">
-            Ex {exIdx + 1}/{totalExercises}{' '}
+            {t('workoutHeader.exerciseProgress', { n: exIdx + 1, total: totalExercises })}{' '}
             <SessionElapsed startedAt={sessionStart} />
           </p>
         </div>

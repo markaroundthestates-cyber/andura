@@ -46,7 +46,7 @@ describe('Layout — ErrorBoundary + Suspense wrap Outlet (Phase 6 task_20)', ()
   it('ErrorBoundary catches downstream throw + renders fallback UI', () => {
     const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     renderAt('/app', <Bomb />);
-    expect(screen.getByText(/Ceva nu a mers/i)).toBeInTheDocument();
+    expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
     errSpy.mockRestore();
   });
 

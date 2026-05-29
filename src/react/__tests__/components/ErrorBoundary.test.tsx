@@ -36,7 +36,7 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>,
     );
     expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
-    expect(screen.getByText(/Ceva nu a mers/i)).toBeInTheDocument();
+    expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
   });
 
   it('reset button toggles hasError state false', () => {
@@ -106,6 +106,6 @@ describe('LoadingSkeleton', () => {
     render(<LoadingSkeleton />);
     const sk = screen.getByTestId('loading-skeleton');
     expect(sk).toHaveAttribute('aria-busy', 'true');
-    expect(sk).toHaveAttribute('aria-label', 'Se incarca');
+    expect(sk).toHaveAttribute('aria-label', 'Loading');
   });
 });

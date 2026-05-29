@@ -7,6 +7,7 @@
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { t } from '../../../i18n/index.js';
 
 export function Privacy(): JSX.Element {
   const navigate = useNavigate();
@@ -28,58 +29,51 @@ export function Privacy(): JSX.Element {
         <button
           type="button"
           onClick={handleBack}
-          aria-label="Inapoi"
+          aria-label={t('legalPage.back')}
           data-testid="privacy-back"
           className="flex items-center gap-2 text-sm text-ink2 mb-6"
         >
           <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-          Inapoi
+          {t('legalPage.back')}
         </button>
 
         <h1 className="text-2xl font-bold text-ink mb-2">
-          Politica de confidentialitate
+          {t('legalPage.privacyTitle')}
         </h1>
         <p className="text-xs text-ink2 mb-6">
-          Versiune Beta &middot; Actualizat 2026-05-26
+          {t('legalPage.versionLine')}
         </p>
 
         <article className="text-sm text-ink leading-relaxed space-y-4">
           <p>
-            Datele tale raman pe telefon. Tu controlezi ce iese de aici. Andura
-            este local-first: profilul si sesiunile se salveaza pe dispozitivul
-            tau.
+            {t('legalPage.privacyIntro')}
           </p>
 
           <div>
-            <h2 className="text-base font-semibold mb-1.5">Ce colectam</h2>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyCollectHeading')}</h2>
             <p className="text-ink2">
-              Colectam doar profilul tau, sesiunile de antrenament, biometricii
-              opt-in si emailul folosit la magic link. Aceste date sunt folosite
-              pentru personalizarea antrenamentelor, local pe telefon.
+              {t('legalPage.privacyCollectBody')}
             </p>
           </div>
 
           <div>
-            <h2 className="text-base font-semibold mb-1.5">Ce NU facem</h2>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyNotDoHeading')}</h2>
             <p className="text-ink2">
-              ZERO publicitate. ZERO vanzare de date. ZERO trackere third-party.
-              Nu folosim datele tale pentru reclame.
+              {t('legalPage.privacyNotDoBody')}
             </p>
           </div>
 
           <div>
-            <h2 className="text-base font-semibold mb-1.5">Drepturile tale (GDPR)</h2>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyRightsHeading')}</h2>
             <p className="text-ink2">
-              Ai dreptul de acces, export, stergere si rectificare a datelor
-              oricand din ecranul Cont. Backup-ul Firebase este optional si
-              cripteaza datele in transit prin HTTPS.
+              {t('legalPage.privacyRightsBody')}
             </p>
           </div>
 
           <div>
-            <h2 className="text-base font-semibold mb-1.5">Contact</h2>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyContactHeading')}</h2>
             <p className="text-ink2">
-              Pentru intrebari legate de confidentialitate scrie la{' '}
+              {t('legalPage.privacyContactBody')}{' '}
               <a
                 href="mailto:privacy@andura.app"
                 className="underline text-brick"

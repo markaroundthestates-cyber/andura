@@ -4,6 +4,7 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { t } from '../../../i18n/index.js';
 
 export function NotFound(): JSX.Element {
   const navigate = useNavigate();
@@ -15,10 +16,10 @@ export function NotFound(): JSX.Element {
     >
       <div className="max-w-md mx-auto p-6 text-center">
         <h1 className="text-2xl font-bold text-ink mb-2">
-          Pagina nu a fost gasita
+          {t('notFound.title')}
         </h1>
         <p className="text-sm text-ink2 mb-6">
-          Linkul pe care l-ai accesat nu exista sau a fost mutat.
+          {t('notFound.body')}
         </p>
         <button
           type="button"
@@ -26,7 +27,7 @@ export function NotFound(): JSX.Element {
           data-testid="not-found-home"
           className="text-sm text-brick underline"
         >
-          Inapoi acasa
+          {t('notFound.homeCta')}
         </button>
       </div>
     </section>

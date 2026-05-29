@@ -13,7 +13,7 @@ describe('MedicalDisclaimerModal — LOCK 4', () => {
   it('renders modal + title + body + acknowledge button cand open', () => {
     render(<MedicalDisclaimerModal open={true} onAcknowledge={vi.fn()} />);
     expect(screen.getByTestId('disclaimer-modal')).toBeInTheDocument();
-    expect(screen.getByTestId('disclaimer-title')).toHaveTextContent('Inainte sa incepem');
+    expect(screen.getByTestId('disclaimer-title')).toHaveTextContent('Before we begin');
     expect(screen.getByTestId('disclaimer-acknowledge')).toBeInTheDocument();
   });
 

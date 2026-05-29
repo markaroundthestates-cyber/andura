@@ -6,6 +6,7 @@
 import type { JSX } from 'react';
 import { useEffect, useRef } from 'react';
 import { AlertCircle } from 'lucide-react';
+import { t } from '../../i18n/index.js';
 
 // RE-U-02 — U-01 a promovat acest modal la gate obligatoriu mereu-montat in
 // Layout (open=!acceptedDisclaimer, fara onCancel). Sister ExitConfirmSheet are
@@ -84,26 +85,15 @@ export function MedicalDisclaimerModal({
             className="text-base font-bold text-ink"
             data-testid="disclaimer-title"
           >
-            Inainte sa incepem
+            {t('medicalDisclaimer.title')}
           </h2>
         </div>
 
         <div className="text-sm text-ink2 space-y-3 mb-6">
-          <p>
-            Andura este un coach AI. Recomandarile sunt informative, nu
-            substitut pentru sfat medical.
-          </p>
-          <p>
-            Daca ai conditii medicale, accidentari recente sau dureri persistente,
-            consulta-ti medicul inainte de a incepe un program de antrenament.
-          </p>
-          <p>
-            La orice durere ascutita sau senzatie anormala, opreste-te imediat si
-            verifica cu un specialist.
-          </p>
-          <p className="text-xs italic">
-            Continuand confirmi ca ai luat la cunostinta aceste informatii.
-          </p>
+          <p>{t('medicalDisclaimer.p1')}</p>
+          <p>{t('medicalDisclaimer.p2')}</p>
+          <p>{t('medicalDisclaimer.p3')}</p>
+          <p className="text-xs italic">{t('medicalDisclaimer.p4')}</p>
         </div>
 
         <button
@@ -113,7 +103,7 @@ export function MedicalDisclaimerModal({
           data-testid="disclaimer-acknowledge"
           className="w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold mb-2 transition-transform active:scale-[.97]"
         >
-          Am inteles, continui
+          {t('medicalDisclaimer.acknowledgeCta')}
         </button>
         {onCancel && (
           <button
@@ -123,7 +113,7 @@ export function MedicalDisclaimerModal({
             data-testid="disclaimer-cancel"
             className="w-full py-2 text-ink2 text-sm"
           >
-            Inapoi
+            {t('medicalDisclaimer.backCta')}
           </button>
         )}
       </div>

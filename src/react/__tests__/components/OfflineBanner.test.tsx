@@ -22,7 +22,7 @@ describe('OfflineBanner — §13-M3 + §36-M5/M6 network status banner', () => {
     setOffline(true);
     render(<OfflineBanner />);
     expect(screen.getByTestId('offline-banner')).toBeInTheDocument();
-    expect(screen.getByText(/Esti offline/i)).toBeInTheDocument();
+    expect(screen.getByText(/You're offline/i)).toBeInTheDocument();
   });
 
   it('shows banner when offline event fires', () => {
@@ -78,7 +78,7 @@ describe('OfflineBanner — §36-M6 reconnect transient feedback', () => {
     });
     const banner = screen.getByTestId('offline-banner');
     expect(banner).toHaveAttribute('data-state', 'reconnected');
-    expect(banner.textContent).toMatch(/Reconectat/i);
+    expect(banner.textContent).toMatch(/Reconnected/i);
 
     // After 3s flash → banner hidden
     act(() => {

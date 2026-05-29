@@ -21,6 +21,7 @@ import { useWorkoutStore, getCurrentMode } from '../stores/workoutStore';
 import { getTodayWorkout } from '../lib/engineWrappers';
 import type { PlannedWorkoutOutput } from '../lib/engineWrappers';
 import { gotoPath } from '../lib/navigation';
+import { t } from '../../i18n/index.js';
 
 const WORKOUT_PATH = gotoPath('workout');
 
@@ -106,11 +107,11 @@ export function SessionPill(): JSX.Element | null {
   // Phase 4 demo: derive workout title + exercise name din planned aggregate.
   // Fallback "Sesiune" cand engine returns null or still loading.
   const currentExerciseName =
-    planned?.exercises[Math.min(exIdx, (planned?.exercises.length ?? 1) - 1)]?.name ?? 'Sesiune';
+    planned?.exercises[Math.min(exIdx, (planned?.exercises.length ?? 1) - 1)]?.name ?? t('sessionPill.sessionFallback');
 
   const label = paused
-    ? 'Reia sesiunea curenta'
-    : `${currentExerciseName} · ${elapsedMin} min`;
+    ? t('sessionPill.ariaLabel')
+    : t('sessionPill.liveLabel', { exercise: currentExerciseName, min: elapsedMin });
 
   function handleTap(): void {
     navigate(WORKOUT_PATH);
@@ -122,7 +123,7 @@ export function SessionPill(): JSX.Element | null {
       onClick={handleTap}
       data-testid="session-pill"
       data-state={active ? 'active' : 'paused'}
-      aria-label="Reia sesiunea curenta"
+      aria-label={t('sessionPill.ariaLabel')}
       className="app-fixed-column app-fixed-column--inset fixed bottom-[80px] z-[55] flex items-center gap-2.5 px-4 py-2.5 bg-brick text-paper rounded-full text-sm font-semibold shadow-lg"
     >
       <Play className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />

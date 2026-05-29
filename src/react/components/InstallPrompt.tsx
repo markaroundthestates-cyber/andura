@@ -10,6 +10,7 @@
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { Download, X } from 'lucide-react';
+import { t } from '../../i18n/index.js';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -68,15 +69,15 @@ export function InstallPrompt(): JSX.Element | null {
         data-testid="install-prompt"
         role="region"
         aria-live="polite"
-        aria-label="Instaleaza Andura"
+        aria-label={t('install.ariaLabel')}
         className="animate-fade-in-up pointer-events-auto bg-paper2 border border-line rounded-xl p-3 flex items-center gap-3 shadow-lg"
       >
         <div className="w-10 h-10 rounded-lg bg-brick/10 flex items-center justify-center flex-shrink-0">
           <Download className="w-5 h-5 text-brick" aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-ink">Instaleaza Andura</p>
-          <p className="text-xs text-ink2">Acces rapid din ecranul de start.</p>
+          <p className="text-sm font-semibold text-ink">{t('install.title')}</p>
+          <p className="text-xs text-ink2">{t('install.subtitle')}</p>
         </div>
         <button
           type="button"
@@ -84,13 +85,13 @@ export function InstallPrompt(): JSX.Element | null {
           data-testid="install-prompt-accept"
           className="px-3 py-2 bg-brick text-paper rounded-lg text-xs font-semibold"
         >
-          Instaleaza
+          {t('install.installCta')}
         </button>
         <button
           type="button"
           onClick={handleDismiss}
           data-testid="install-prompt-dismiss"
-          aria-label="Inchide"
+          aria-label={t('install.dismissAria')}
           className="p-2 text-ink2"
         >
           <X className="w-4 h-4" aria-hidden="true" />

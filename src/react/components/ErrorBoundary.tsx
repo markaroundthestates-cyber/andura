@@ -7,6 +7,7 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
 import { captureException } from '../../util/sentry.js';
+import { t } from '../../i18n/index.js';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -57,10 +58,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           role="alert"
         >
           <h1 className="text-xl font-semibold text-ink mb-2">
-            {this.props.fallbackTitle ?? 'Ceva nu a mers'}
+            {this.props.fallbackTitle ?? t('errorBoundary.title')}
           </h1>
           <p className="text-sm text-ink2 mb-6 max-w-xs">
-            S-a produs o eroare neasteptata. Poti incerca din nou sau reincarca pagina.
+            {t('errorBoundary.body')}
           </p>
           <div className="flex gap-3 flex-wrap justify-center">
             <button
@@ -69,7 +70,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               data-testid="error-reset"
               className="px-5 py-3 bg-brick text-paper rounded-[14px] text-sm font-semibold"
             >
-              Incearca din nou
+              {t('errorBoundary.retryCta')}
             </button>
             <button
               type="button"
@@ -77,7 +78,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               data-testid="error-reload"
               className="px-5 py-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-sm font-semibold"
             >
-              Reincarca
+              {t('errorBoundary.reloadCta')}
             </button>
           </div>
         </section>

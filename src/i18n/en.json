@@ -1961,7 +1961,96 @@
   "install": {
     "prompt": "Install Andura for the full experience.",
     "installCta": "Install",
-    "dismissCta": "Not now"
+    "dismissCta": "Not now",
+    "title": "Install Andura",
+    "subtitle": "Quick access from your home screen.",
+    "ariaLabel": "Install Andura",
+    "dismissAria": "Close"
+  },
+
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "body": "An unexpected error occurred. You can try again or reload the page.",
+    "retryCta": "Try again",
+    "reloadCta": "Reload"
+  },
+
+  "notFound": {
+    "title": "Page not found",
+    "body": "The link you followed doesn't exist or has been moved.",
+    "homeCta": "Back home"
+  },
+
+  "offlineBanner": {
+    "reconnected": "Reconnected - sync resumed.",
+    "offline": "You're offline — data is saved locally. Sync resumes when reconnected."
+  },
+
+  "updatePrompt": {
+    "ariaLabel": "New version available",
+    "title": "New version",
+    "body": "Update for the latest fixes.",
+    "updateCta": "Update"
+  },
+
+  "toast": {
+    "dismissAria": "Close notification"
+  },
+
+  "loadingSkeleton": {
+    "ariaLabel": "Loading"
+  },
+
+  "sessionPill": {
+    "ariaLabel": "Resume current session",
+    "sessionFallback": "Session",
+    "liveLabel": "{exercise} · {min} min"
+  },
+
+  "workoutHeader": {
+    "exerciseProgress": "Ex {n}/{total}"
+  },
+
+  "tdeeStrip": {
+    "healthyFloorMsg": "You're below a healthy weight — let's grow gradually and healthily. Today's target has a small surplus, not a deficit. If you're losing weight unintentionally, it's worth a word with a doctor."
+  },
+
+  "medicalDisclaimer": {
+    "title": "Before we begin",
+    "p1": "Andura is an AI coach. The recommendations are informational, not a substitute for medical advice.",
+    "p2": "If you have medical conditions, recent injuries or persistent pain, consult your doctor before starting a training program.",
+    "p3": "At any sharp pain or abnormal sensation, stop immediately and check with a specialist.",
+    "p4": "By continuing you confirm that you have read this information.",
+    "acknowledgeCta": "Got it, continue",
+    "backCta": "Back"
+  },
+
+  "legalPage": {
+    "back": "Back",
+    "versionLine": "Beta version · Updated 2026-05-26",
+    "privacyTitle": "Privacy policy",
+    "privacyIntro": "Your data stays on your phone. You control what leaves it. Andura is local-first: your profile and sessions are saved on your device.",
+    "privacyCollectHeading": "What we collect",
+    "privacyCollectBody": "We only collect your profile, training sessions, opt-in biometrics and the email used for the magic link. This data is used to personalize workouts, locally on your phone.",
+    "privacyNotDoHeading": "What we DON'T do",
+    "privacyNotDoBody": "ZERO advertising. ZERO data sales. ZERO third-party trackers. We don't use your data for ads.",
+    "privacyRightsHeading": "Your rights (GDPR)",
+    "privacyRightsBody": "You have the right to access, export, delete and rectify your data anytime from the Account screen. Firebase backup is optional and encrypts data in transit over HTTPS.",
+    "privacyContactHeading": "Contact",
+    "privacyContactBody": "For privacy questions write to",
+    "termsTitle": "Terms and conditions",
+    "termsIntro": "Andura is a local-first personal training coach. All data is stored on your phone and can be exported or deleted anytime from the Account screen. By using Andura you accept the following key points:",
+    "termsRecsHeading": "Recommendations, not prescriptions",
+    "termsRecsBody": "Andura provides training recommendations, NOT medical prescriptions. It is not a medical device or a substitute for the advice of a doctor, physiotherapist or professional trainer.",
+    "termsResponsibilityHeading": "Your responsibility",
+    "termsResponsibilityBody": "You are responsible for your own safety at the gym. Consult a doctor before starting any new training program. If you feel sharp pain, dizziness or breathing difficulty, stop the session.",
+    "termsBackupHeading": "Backup and security",
+    "termsBackupBody": "Firebase backup is optional (magic-link authentication, no password) and encrypts data in transit over HTTPS.",
+    "termsErrorsHeading": "Error reporting",
+    "termsErrorsBody": "Error reporting (crashes) is opt-in (off by default) and uses Sentry, with personal data stripped before sending. We don't collect usage metrics. You can turn it on or off anytime.",
+    "termsBetaHeading": "Free Beta",
+    "termsBetaBody": "Andura is in free Beta. Features may be changed or added without prior notice until the V1 launch.",
+    "termsQuestions": "Questions:"
   },
 
   "update": {

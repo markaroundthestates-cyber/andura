@@ -28,7 +28,7 @@ describe('InstallPrompt — PWA installable banner', () => {
       dispatchBeforeInstall();
     });
     expect(screen.getByTestId('install-prompt')).toBeInTheDocument();
-    expect(screen.getByText(/Instaleaza Andura/i)).toBeInTheDocument();
+    expect(screen.getByText(/Install Andura/i)).toBeInTheDocument();
   });
 
   it('dismiss button hides banner + persists localStorage flag', () => {

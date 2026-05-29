@@ -9,6 +9,7 @@
 // users see the static tile (one shimmer pass settles to mid).
 
 import type { JSX } from 'react';
+import { t } from '../../i18n/index.js';
 
 interface LoadingSkeletonProps {
   /** Optional pulse line count (default 3). */
@@ -26,7 +27,7 @@ export function LoadingSkeleton({
       className="min-h-screen bg-paper p-6"
       data-testid={testId}
       aria-busy="true"
-      aria-label="Se incarca"
+      aria-label={t('loadingSkeleton.ariaLabel')}
     >
       <div className="h-7 w-32 bg-paper2 rounded-md animate-shimmer mb-6" />
       <div className="space-y-3">

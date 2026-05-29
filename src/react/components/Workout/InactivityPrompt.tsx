@@ -16,6 +16,7 @@
 
 import type { JSX } from 'react';
 import { Clock } from 'lucide-react';
+import { t } from '../../../i18n/index.js';
 
 interface InactivityPromptProps {
   open: boolean;
@@ -43,11 +44,11 @@ export function InactivityPrompt({
           className="font-bold text-ink"
           data-testid="inactivity-prompt-title"
         >
-          Esti acolo?
+          {t('inactivity.title')}
         </div>
       </div>
       <div className="text-sm text-ink2 leading-snug mb-2.5" data-testid="inactivity-prompt-body">
-        N-am vazut activitate de 7 min. Daca ai facut o pauza mai lunga, e OK - continuam de unde am ramas.
+        {t('inactivity.body')}
       </div>
       <div className="flex gap-2">
         <button
@@ -56,7 +57,7 @@ export function InactivityPrompt({
           data-testid="inactivity-continue"
           className="flex-1 bg-ink text-paper dark:bg-brick border-0 rounded-lg py-2.5 text-sm font-semibold"
         >
-          Continui
+          {t('inactivity.continueCta')}
         </button>
         <button
           type="button"
@@ -64,7 +65,7 @@ export function InactivityPrompt({
           data-testid="inactivity-save-exit"
           className="bg-transparent border border-lineStrong text-ink2 rounded-lg py-2.5 px-3.5 text-sm font-medium"
         >
-          Salveaza si iesi
+          {t('inactivity.saveExitCta')}
         </button>
       </div>
     </div>

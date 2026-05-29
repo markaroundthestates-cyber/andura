@@ -21,6 +21,7 @@ import type { JSX } from 'react';
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { AlertCircle, AlertTriangle, CheckCircle2, Info, X } from 'lucide-react';
 import { toast, type ToastItem, type ToastVariant } from '../lib/toast';
+import { t } from '../../i18n/index.js';
 
 function variantIcon(variant: ToastVariant): JSX.Element {
   switch (variant) {
@@ -77,7 +78,7 @@ function ToastCard({ item }: ToastCardProps): JSX.Element {
           type="button"
           onClick={() => toast.dismiss(item.id)}
           data-testid={`toast-${item.id}-dismiss`}
-          aria-label="Inchide notificare"
+          aria-label={t('toast.dismissAria')}
           className="p-1 -mr-1 text-ink2 hover:text-ink"
         >
           <X className="w-4 h-4" aria-hidden="true" />

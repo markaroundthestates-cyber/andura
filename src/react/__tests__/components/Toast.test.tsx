@@ -97,7 +97,7 @@ describe('ToastViewport - §32-H1', () => {
     act(() => {
       toast.show({ message: 'msg', variant: 'info' });
     });
-    const btn = screen.getByRole('button', { name: /inchide notificare/i });
+    const btn = screen.getByRole('button', { name: /close notification/i });
     expect(btn.getAttribute('aria-label') ?? '').not.toMatch(/[ăâîșțĂÂÎȘȚ]/);
   });
 });

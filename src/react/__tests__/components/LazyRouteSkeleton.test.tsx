@@ -57,6 +57,6 @@ describe('LazyRoute Suspense fallback — canonical LoadingSkeleton unify', () =
     );
     const fb = screen.getByTestId('lazy-route-fallback');
     expect(fb).toHaveAttribute('aria-busy', 'true');
-    expect(fb).toHaveAttribute('aria-label', 'Se incarca');
+    expect(fb).toHaveAttribute('aria-label', 'Loading');
   });
 });

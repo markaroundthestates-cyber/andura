@@ -220,9 +220,7 @@ export function TDEEStrip(): JSX.Element {
         >
           <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" aria-hidden="true" />
           <span>
-            Esti sub greutatea sanatoasa — hai sa crestem treptat, sanatos.
-            Tinta de azi are un mic surplus, nu deficit. Daca slabesti fara sa vrei,
-            merita o vorba cu un medic.
+            {t('tdeeStrip.healthyFloorMsg')}
           </span>
         </p>
       )}

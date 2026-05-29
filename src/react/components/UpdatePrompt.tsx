@@ -29,6 +29,7 @@
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
+import { t } from '../../i18n/index.js';
 
 export function UpdatePrompt(): JSX.Element | null {
   const [needRefresh, setNeedRefresh] = useState(false);
@@ -96,14 +97,14 @@ export function UpdatePrompt(): JSX.Element | null {
     <div
       role="status"
       aria-live="polite"
-      aria-label="Versiune noua disponibila"
+      aria-label={t('updatePrompt.ariaLabel')}
       data-testid="update-prompt"
       className="animate-slide-down app-fixed-column app-fixed-column--inset fixed top-2 z-50 bg-paper2 border border-line rounded-xl shadow-lg p-3 flex items-center gap-3"
     >
       <RefreshCw className="w-4 h-4 text-brick flex-shrink-0" aria-hidden="true" />
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-ink">Versiune noua</p>
-        <p className="text-xs text-ink2">Actualizeaza pentru ultimele fix-uri.</p>
+        <p className="text-sm font-semibold text-ink">{t('updatePrompt.title')}</p>
+        <p className="text-xs text-ink2">{t('updatePrompt.body')}</p>
       </div>
       <button
         type="button"
@@ -111,7 +112,7 @@ export function UpdatePrompt(): JSX.Element | null {
         data-testid="update-prompt-cta"
         className="px-3 py-1.5 bg-brick text-paper rounded-lg text-xs font-semibold"
       >
-        Actualizeaza
+        {t('updatePrompt.updateCta')}
       </button>
     </div>
   );

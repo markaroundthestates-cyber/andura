@@ -13,6 +13,7 @@
 import type { JSX } from 'react';
 import { WifiOff, Wifi } from 'lucide-react';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
+import { t } from '../../i18n/index.js';
 
 export function OfflineBanner(): JSX.Element | null {
   const status = useNetworkStatus();
@@ -33,7 +34,7 @@ export function OfflineBanner(): JSX.Element | null {
         className="animate-slide-down app-fixed-column fixed top-0 z-50 bg-succ text-paper px-4 py-2 flex items-center justify-center gap-2 text-sm"
       >
         <Wifi className="w-4 h-4 animate-scale-in" aria-hidden="true" />
-        <span>Reconectat - sync reluat.</span>
+        <span>{t('offlineBanner.reconnected')}</span>
       </div>
     );
   }
@@ -48,7 +49,7 @@ export function OfflineBanner(): JSX.Element | null {
       className="animate-slide-down app-fixed-column fixed top-0 z-50 bg-ink2 text-paper px-4 py-2 flex items-center justify-center gap-2 text-sm"
     >
       <WifiOff className="w-4 h-4" aria-hidden="true" />
-      <span>Esti offline — datele se salveaza local. Sync reluat la conexiune.</span>
+      <span>{t('offlineBanner.offline')}</span>
     </div>
   );
 }

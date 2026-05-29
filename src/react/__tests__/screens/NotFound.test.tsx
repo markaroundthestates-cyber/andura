@@ -22,7 +22,7 @@ describe('NotFound page (catch-all 404)', () => {
   it('renders on an unknown path', () => {
     renderAt('/path-care-nu-exista');
     expect(screen.getByTestId('not-found-page')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toMatch(/Pagina nu a fost gasita/i);
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toMatch(/Page not found/i);
   });
 
   it('navigates home via the link', async () => {
