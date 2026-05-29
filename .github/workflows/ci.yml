@@ -112,6 +112,14 @@ jobs:
         run: npm run lint
         continue-on-error: true
 
+      # i18n HARD GATE — full-tree AST scan that fails the build on any
+      # hardcoded user-facing string (JSX text / prose attribute not wrapped in
+      # t()). Run BEFORE the full suite so a string regression fails fast +
+      # surfaces as a named check. Also included in `npm run test:run` below
+      # (matches the vitest glob) — this step just makes the gate explicit.
+      - name: i18n no-hardcoded-strings scan (vitest)
+        run: npx vitest run src/i18n/__tests__/noHardcodedUiStrings.test.ts
+
       - name: Unit Tests (vitest)
         run: npm run test:run
 
