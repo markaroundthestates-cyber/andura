@@ -113,6 +113,21 @@ describe('PrWall — Personal Records screen (EN default)', () => {
     expect(rows[1]).toHaveTextContent('Vechi');
   });
 
+  it('row date renders a real formatted date, not the i18n key', () => {
+    // 2024-03-15 12:00 local — day 15, month index 2 (Mar), year 2024.
+    const ts = new Date(2024, 2, 15, 12, 0, 0).getTime();
+    useWorkoutStore.setState({
+      sessionsHistory: [makeSessionWithPR(ts, 'ex-1', 'Impins', 40, 5)],
+    });
+    renderScreen();
+    const row = screen.getByTestId('pr-wall-row-0');
+    // Regression guard: literal key leaked when format lived under wrong namespace.
+    expect(row).not.toHaveTextContent('prDate.format');
+    expect(row).not.toHaveTextContent('istoric.prDate.format');
+    // EN format "{day} {month} {year}" with months.short[2] = "Mar".
+    expect(row).toHaveTextContent(/15 Mar 2024/);
+  });
+
   it('back navigates la /app/istoric (uses pr-wall-back testid)', () => {
     renderScreen();
     fireEvent.click(screen.getByTestId('pr-wall-back'));

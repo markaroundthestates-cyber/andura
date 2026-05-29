@@ -24,7 +24,7 @@ function formatPrDate(ts: number): string {
   const day = d.getDate();
   const month = t(`months.short.${d.getMonth()}`);
   const year = d.getFullYear();
-  return t('prDate.format', { day, month, year });
+  return t('istoric.prDate.format', { day, month, year });
 }
 
 export function PrWall(): JSX.Element {
