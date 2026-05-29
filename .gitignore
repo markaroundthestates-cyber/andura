@@ -76,3 +76,7 @@ reports/lighthouse/
 # Agent worktree caches — recycled per agent run, local-only, never source.
 .claude/worktrees/
 .knowle/
+
+# heavy source renders (optimized webp shipped instead)
+public/body/*.png
+public/body/JPG/
