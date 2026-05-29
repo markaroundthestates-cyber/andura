@@ -169,3 +169,87 @@ export function getBodyFigure(sex: Sex, view: View): BodyFigure {
   if (sex === 'f') return view === 'back' ? FEMALE_BACK : FEMALE_FRONT;
   return view === 'back' ? MALE_BACK : MALE_FRONT;
 }
+
+// ══ PHOTOREAL GLOW REGIONS ════════════════════════════════════════════════════
+// The shipped body map is a photoreal grey-anatomy IMAGE (public/body/<sex>-<view>
+// .webp) with a colored recovery GLOW painted on top per Big-11 group. Each glow
+// is a soft radial blob centered on that muscle, placed with NORMALIZED (0-1)
+// coordinates read off the ref-*.jpg color guides — { cx, cy } is the glow center
+// as a fraction of the image box (x left→right, y top→bottom), r is its radius as
+// a fraction of the box WIDTH. Bilateral muscles get two blobs (left + right).
+//
+// Coordinates were calibrated against the 4 neutral renders + the ref color maps:
+// arms hang at the sides, shoulders ≈0.27 down, chest ≈0.30, core ≈0.40, glutes
+// ≈0.50 (back), quads/hams ≈0.62, calves ≈0.82. Same body pose for both sexes
+// (the renders share framing), so one coordinate set per VIEW serves both.
+
+export interface GlowRegion {
+  group: string;
+  /** Glow center X as a fraction of the image box (0 = left, 1 = right). */
+  cx: number;
+  /** Glow center Y as a fraction of the image box (0 = top, 1 = bottom). */
+  cy: number;
+  /** Glow radius as a fraction of the image box WIDTH. */
+  r: number;
+}
+
+// Image-space body landmarks (the renders are framed near-identically per view).
+const FRONT_GLOWS: GlowRegion[] = [
+  // SHOULDERS — deltoid caps, outer top of torso.
+  { group: 'umeri', cx: 0.315, cy: 0.285, r: 0.075 },
+  { group: 'umeri', cx: 0.685, cy: 0.285, r: 0.075 },
+  // CHEST — two pectoral masses below the clavicle.
+  { group: 'piept', cx: 0.42, cy: 0.305, r: 0.095 },
+  { group: 'piept', cx: 0.58, cy: 0.305, r: 0.095 },
+  // BICEPS — front upper arm.
+  { group: 'biceps', cx: 0.285, cy: 0.355, r: 0.06 },
+  { group: 'biceps', cx: 0.715, cy: 0.355, r: 0.06 },
+  // TRICEPS — outer/back upper-arm edge (slightly outboard of biceps).
+  { group: 'triceps', cx: 0.245, cy: 0.36, r: 0.05 },
+  { group: 'triceps', cx: 0.755, cy: 0.36, r: 0.05 },
+  // FOREARMS — lower arm.
+  { group: 'antebrate', cx: 0.265, cy: 0.46, r: 0.06 },
+  { group: 'antebrate', cx: 0.735, cy: 0.46, r: 0.06 },
+  // CORE / ABS — central column.
+  { group: 'core', cx: 0.5, cy: 0.41, r: 0.1 },
+  // QUADS — front of thighs.
+  { group: 'picioare-quads', cx: 0.42, cy: 0.62, r: 0.085 },
+  { group: 'picioare-quads', cx: 0.58, cy: 0.62, r: 0.085 },
+  // CALVES — lower legs.
+  { group: 'gambe', cx: 0.435, cy: 0.84, r: 0.055 },
+  { group: 'gambe', cx: 0.565, cy: 0.84, r: 0.055 },
+];
+
+const BACK_GLOWS: GlowRegion[] = [
+  // UPPER BACK / LATS — broad V across the upper torso.
+  { group: 'spate', cx: 0.5, cy: 0.32, r: 0.13 },
+  // SHOULDERS — rear deltoid caps.
+  { group: 'umeri', cx: 0.315, cy: 0.285, r: 0.075 },
+  { group: 'umeri', cx: 0.685, cy: 0.285, r: 0.075 },
+  // TRICEPS — back of upper arm (dominant from behind).
+  { group: 'triceps', cx: 0.255, cy: 0.37, r: 0.06 },
+  { group: 'triceps', cx: 0.745, cy: 0.37, r: 0.06 },
+  // FOREARMS — lower arm (rear).
+  { group: 'antebrate', cx: 0.265, cy: 0.46, r: 0.06 },
+  { group: 'antebrate', cx: 0.735, cy: 0.46, r: 0.06 },
+  // GLUTES — two rounded masses below the lower back.
+  { group: 'fese', cx: 0.44, cy: 0.505, r: 0.085 },
+  { group: 'fese', cx: 0.56, cy: 0.505, r: 0.085 },
+  // HAMSTRINGS — back of thighs.
+  { group: 'picioare-hamstrings', cx: 0.43, cy: 0.65, r: 0.085 },
+  { group: 'picioare-hamstrings', cx: 0.57, cy: 0.65, r: 0.085 },
+  // CALVES — rear lower legs.
+  { group: 'gambe', cx: 0.43, cy: 0.83, r: 0.065 },
+  { group: 'gambe', cx: 0.57, cy: 0.83, r: 0.065 },
+];
+
+/** Public path to the photoreal neutral base for a sex + view. */
+export function getBodyImageSrc(sex: Sex, view: View): string {
+  const s = sex === 'f' ? 'female' : 'male';
+  return `/body/${s}-${view}.webp`;
+}
+
+/** Normalized glow placement for a given view (shared across sexes — same pose). */
+export function getGlowRegions(view: View): GlowRegion[] {
+  return view === 'back' ? BACK_GLOWS : FRONT_GLOWS;
+}
