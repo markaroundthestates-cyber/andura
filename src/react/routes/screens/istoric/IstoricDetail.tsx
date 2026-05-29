@@ -25,7 +25,10 @@ import { t, getCurrentLocale } from '../../../../i18n/index.js';
 // alongside the Istoric list. RO bundle preserves "luni/marti" lower-case
 // mockup parity (D-LEGACY-064); EN bundle ships "Mon · 7 May".
 function formatDate(ts: number): string {
+  // Guard: ts lipsa / NaN / Invalid Date → em-dash (vezi Istoric.tsx formatDate).
+  if (!Number.isFinite(ts)) return '—';
   const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return '—';
   const weekday = t(`weekdays.relativeShort.${d.getDay()}`);
   const day = d.getDate();
   const month = t(`months.short.${d.getMonth()}`);

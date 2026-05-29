@@ -63,6 +63,9 @@ const FOURTEEN_DAYS_MS = 14 * 86400000;
 // (Marti/Sambata), so we keep our own map.
 
 function formatHeaderDate(now: Date): string {
+  // Defensive guard (call site always passes new Date() — live clock, never
+  // persisted ts — dar pastram simetria cu formatDate-urile din Istoric).
+  if (Number.isNaN(now.getTime())) return '—';
   const weekday = t(`weekdays.full.${now.getDay()}`);
   const day = now.getDate();
   const month = t(`months.short.${now.getMonth()}`);

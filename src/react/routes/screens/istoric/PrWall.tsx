@@ -20,7 +20,10 @@ import { t } from '../../../../i18n/index.js';
 // EN/RO. RO bundle still ships "ian/feb/mai/noi" lower-case (D-LEGACY-064 +
 // mockup parity); EN bundle ships "Jan/Feb/May/Nov".
 function formatPrDate(ts: number): string {
+  // Guard: ts lipsa / NaN / Invalid Date → em-dash (vezi Istoric.tsx formatDate).
+  if (!Number.isFinite(ts)) return '—';
   const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return '—';
   const day = d.getDate();
   const month = t(`months.short.${d.getMonth()}`);
   const year = d.getFullYear();
