@@ -1260,6 +1260,7 @@
       "bfManual": "I'll set it myself",
       "bfSourceUsNavy": "US Navy",
       "bfSourceEstimated": "Estimated",
+      "bfHint": "Fill in neck, waist and height for a US Navy estimate. Until then we show a demographic estimate.",
       "bodyCompFooter": "Calculated automatically (US Navy: waist + neck + height + sex) or set by you. Falls back to a demographic estimate when measurements are missing."
     },
     "notifications": {

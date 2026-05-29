@@ -1260,6 +1260,7 @@
       "bfManual": "Editez manual",
       "bfSourceUsNavy": "US Navy",
       "bfSourceEstimated": "Estimat",
+      "bfHint": "Completeaza gat, talie si inaltime pentru estimarea US Navy. Pana atunci aratam o estimare demografica.",
       "bodyCompFooter": "Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori."
     },
     "notifications": {
