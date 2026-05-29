@@ -50,8 +50,8 @@ export type GotoScreen =
   | 'finish-early-confirm'
   // PARITY-CONFIRM-MODALS Wave 2f — program change drill-down (PAR-003)
   | 'program-change-confirm'
-  // PARITY-MISSING-SCREENS Wave 2e — 3 NEW screens (PAR-001/002/004)
-  | 'pr-wall' | 'settings-themes' | 'weight-timeline';
+  // PARITY-MISSING-SCREENS Wave 2e — NEW screens (PAR-001/004)
+  | 'pr-wall' | 'weight-timeline';
 
 /**
  * Map mockup screen name la React Router path.
@@ -109,8 +109,7 @@ export function gotoPath(screen: GotoScreen): string {
     screen === 'settings-terms' || screen === 'settings-export' ||
     screen === 'settings-import' ||
     screen === 'settings-danger' || screen === 'settings-about' ||
-    screen === 'settings-support' || screen === 'settings-faq' ||
-    screen === 'settings-themes'
+    screen === 'settings-support' || screen === 'settings-faq'
   ) {
     return `/app/cont/${screen}`;
   }

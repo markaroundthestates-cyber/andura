@@ -4,6 +4,9 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 export type Theme = 'light' | 'dark' | 'auto';
+// Pulse accent picker (Cont > Appearance). Swaps the primary accent (--brick)
+// at runtime among the four Pulse hues. 'volt' = the default app accent.
+export type Accent = 'volt' | 'aqua' | 'ember' | 'violet';
 export type NotificationFrequency = 'zilnic' | 'saptamanal' | 'off';
 export type WeekStart = 'L' | 'D'; // L=Luni (Mon), D=Duminica (Sun)
 
@@ -12,6 +15,7 @@ export type WeekDayFlags = readonly [boolean, boolean, boolean, boolean, boolean
 
 interface SettingsState {
   theme: Theme;
+  accent: Accent;
   notificationsEnabled: boolean;
   notificationFrequency: NotificationFrequency;
   notificationDays: WeekDayFlags; // active days
@@ -27,6 +31,7 @@ interface SettingsState {
 
 interface SettingsActions {
   setTheme: (t: Theme) => void;
+  setAccent: (a: Accent) => void;
   toggleNotifications: () => void;
   setNotificationFrequency: (f: NotificationFrequency) => void;
   toggleNotificationDay: (dayIdx: number) => void;
@@ -44,6 +49,8 @@ const DEFAULTS: SettingsState = {
   // Default = Brain Coach mov dark look (CEO pick 2026-05-27). Light cream
   // theme stays available via the Aspect toggle (setTheme).
   theme: 'dark',
+  // Pulse primary accent — default Volt (the signature electric lime / --brick).
+  accent: 'volt',
   notificationsEnabled: true,
   notificationFrequency: 'zilnic',
   notificationDays: [true, true, true, true, true, false, false], // L-V active
@@ -62,6 +69,7 @@ export const useSettingsStore = create<SettingsState & SettingsActions>()(
     (set) => ({
       ...DEFAULTS,
       setTheme: (theme) => set({ theme }),
+      setAccent: (accent) => set({ accent }),
       toggleNotifications: () =>
         set((s) => ({ notificationsEnabled: !s.notificationsEnabled })),
       setNotificationFrequency: (notificationFrequency) => set({ notificationFrequency }),
@@ -91,6 +99,7 @@ export const useSettingsStore = create<SettingsState & SettingsActions>()(
       // excluded pentru defense-in-depth.
       partialize: (state) => ({
         theme: state.theme,
+        accent: state.accent,
         notificationsEnabled: state.notificationsEnabled,
         notificationFrequency: state.notificationFrequency,
         notificationDays: state.notificationDays,

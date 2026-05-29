@@ -8,7 +8,7 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sun, Moon, MonitorCog, Palette, ChevronRight } from 'lucide-react';
+import { Sun, Moon, MonitorCog } from 'lucide-react';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import type { Theme } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
@@ -98,23 +98,6 @@ export function SettingsAppearance(): JSX.Element {
               </button>
             );
           })}
-        </div>
-
-        {/* PAR-002 Wave 2e — Themes palette picker drill-down. */}
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mt-4 mb-2">
-          {t('settings.appearance.paletteHeading')}
-        </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
-          <button
-            type="button"
-            data-testid="settings-themes-link"
-            onClick={() => navigate(gotoPath('settings-themes'))}
-            className="w-full flex items-center gap-3 px-4 py-3 text-left text-ink"
-          >
-            <Palette className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-            <span className="flex-1 text-sm">{t('settings.appearance.themesLink')}</span>
-            <ChevronRight className="w-5 h-5 text-ink2" strokeWidth={1.6} aria-hidden="true" />
-          </button>
         </div>
       </div>
     </section>

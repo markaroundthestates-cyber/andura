@@ -1122,7 +1122,10 @@
     "appearance": {
       "heading": "Aspect",
       "accentLabel": "Culoare accent",
-      "accentName": "Volt",
+      "accentVolt": "Volt",
+      "accentAqua": "Aqua",
+      "accentEmber": "Ember",
+      "accentViolet": "Violet",
       "modeLabel": "Mod",
       "modeDark": "Intunecat",
       "modeLight": "Luminos"
@@ -1367,26 +1370,7 @@
       "themeAutoLabel": "Auto sistem",
       "navHeading": "Bara de jos",
       "navComfortable": "Spatios (recomandat)",
-      "navCompact": "Compact",
-      "paletteHeading": "Paleta",
-      "themesLink": "Teme"
-    },
-    "themes": {
-      "title": "Teme",
-      "current": "Curent",
-      "preview": "Previzualizare",
-      "subtitle": "Alege paleta preferata. Se aplica pe loc.",
-      "footer": "Paletele se schimba instant. Brain Coach e implicit.",
-      "options": {
-        "clasic": "Andura Clasic",
-        "clasicMeta": "Cremos luminos",
-        "livingBody": "Andura Living Body",
-        "livingBodyMeta": "Navy si auriu cald",
-        "luxury": "Andura Luxury",
-        "luxuryMeta": "Noir si champagne",
-        "brainCoach": "Andura Brain Coach",
-        "brainCoachMeta": "Mov AI - implicit"
-      }
+      "navCompact": "Compact"
     },
     "subscription": {
       "title": "Abonament",

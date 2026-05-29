@@ -92,8 +92,6 @@ const SettingsDanger = lazy(() => import('./screens/cont/SettingsDanger').then((
 const SettingsAbout = lazy(() => import('./screens/cont/SettingsAbout').then((m) => ({ default: m.SettingsAbout })));
 const SettingsSupport = lazy(() => import('./screens/cont/SettingsSupport').then((m) => ({ default: m.SettingsSupport })));
 const SettingsFaq = lazy(() => import('./screens/cont/SettingsFaq').then((m) => ({ default: m.SettingsFaq })));
-// PARITY-MISSING-SCREENS Wave 2e — Themes palette picker (PAR-002)
-const SettingsThemes = lazy(() => import('./screens/cont/SettingsThemes').then((m) => ({ default: m.SettingsThemes })));
 // §D047 RIP-OUT drill-down screens — A003 ConfirmModal replacement (Stage 1 NEW screens)
 const LogoutConfirm = lazy(() => import('./screens/cont/LogoutConfirm').then((m) => ({ default: m.LogoutConfirm })));
 const DeleteAccountConfirm = lazy(() => import('./screens/cont/DeleteAccountConfirm').then((m) => ({ default: m.DeleteAccountConfirm })));
@@ -210,8 +208,6 @@ export const router = createBrowserRouter([
           { path: 'settings-about', element: <LazyRoute><SettingsAbout /></LazyRoute> },
           { path: 'settings-support', element: <LazyRoute><SettingsSupport /></LazyRoute> },
           { path: 'settings-faq', element: <LazyRoute><SettingsFaq /></LazyRoute> },
-          // PARITY-MISSING-SCREENS Wave 2e — Themes palette picker (PAR-002)
-          { path: 'settings-themes', element: <LazyRoute><SettingsThemes /></LazyRoute> },
           // §D047 RIP-OUT drill-down screens — A003 ConfirmModal migrate Stage 1
           { path: 'logout-confirm', element: <LazyRoute><LogoutConfirm /></LazyRoute> },
           { path: 'delete-account-confirm', element: <LazyRoute><DeleteAccountConfirm /></LazyRoute> },

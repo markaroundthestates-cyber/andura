@@ -23,6 +23,60 @@ const STORAGE_KEY = 'wv2-palette-theme';
 
 export type PaletteTheme = 'clasic' | 'living-body' | 'luxury' | 'brain-coach';
 
+// ── PULSE ACCENT PICKER (2026-05-29) ──────────────────────────────────────
+// The retired multi-palette system is replaced by a single Pulse accent
+// picker (Cont > Appearance): the user swaps the PRIMARY accent (--brick) at
+// runtime among the four Pulse hues. The app keys every accent off --brick
+// (global.css), so overriding --brick on documentElement re-tints the whole
+// app live. Persisted in the settings store ('wv2-settings-store'.accent);
+// applied pre-mount here (anti-FOUC) + re-applied by PaletteSync on mount.
+// 'volt' = the theme default (no override needed) — clears any stale override.
+import type { Accent } from '../stores/settingsStore';
+
+const SETTINGS_KEY = 'wv2-settings-store';
+
+// Raw Pulse hues (mockup index.html <style>). Volt is the theme default so it
+// clears the override; the others set --brick on documentElement.
+const ACCENT_HEX: Record<Exclude<Accent, 'volt'>, string> = {
+  aqua: '#4fd6e8',
+  ember: '#ff7d52',
+  violet: '#a98bff',
+};
+
+/**
+ * Override the primary accent (--brick) on documentElement. 'volt' (default)
+ * clears the override so the base [data-theme] token owns the look. Exported
+ * so the Appearance picker can apply live on click.
+ */
+export function applyAccent(accent: Accent): void {
+  if (typeof document === 'undefined') return;
+  const el = document.documentElement;
+  if (accent === 'volt') {
+    el.style.removeProperty('--brick');
+    return;
+  }
+  el.style.setProperty('--brick', ACCENT_HEX[accent]);
+}
+
+function readAccent(): Accent {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as { state?: { accent?: Accent } };
+      const a = parsed.state?.accent;
+      if (a === 'volt' || a === 'aqua' || a === 'ember' || a === 'violet') return a;
+    }
+  } catch {
+    /* localStorage unavailable / parse failure → default accent */
+  }
+  return 'volt';
+}
+
+/** Read the persisted accent + apply BEFORE React mounts (anti-FOUC). */
+export function applyInitialAccent(): void {
+  applyAccent(readAccent());
+}
+
 /**
  * Clear documentElement.data-palette for any palette id. With the Pulse
  * redesign no palette is an override (the override CSS blocks are retired),
@@ -54,6 +108,8 @@ function readPalette(): PaletteTheme {
  */
 export function applyInitialPalette(): void {
   applyPalette(readPalette());
+  // Pulse accent picker — apply the persisted primary accent pre-mount too.
+  applyInitialAccent();
 }
 
 /**
@@ -63,5 +119,6 @@ export function applyInitialPalette(): void {
  */
 export function PaletteSync(): null {
   applyPalette(readPalette());
+  applyAccent(readAccent());
   return null;
 }

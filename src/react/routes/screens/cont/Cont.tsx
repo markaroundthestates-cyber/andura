@@ -9,19 +9,19 @@
 // localStorage keys; only the visible label localizes.
 //
 // Pulse reskin (arc #5 2026-05-29, interfata-noua/screens-tabs.jsx:316-404):
-// the screen is re-skinned to the Pulse card language — display wordmark +
-// mono zone eyebrows + surface-elevated cards. Additions matching Daniel's
-// mockup: (1) the profile header gains a streak Pill (useWorkoutStore.streak);
-// (2) Appearance is PULLED UP into an inline LIVE card with a Dark/Light toggle
-// wired to the real settingsStore (the same theme mechanism SettingsAppearance
-// drives — applied via ThemeSync <html data-theme>, persisted in
-// 'wv2-settings-store'), NOT ephemeral state. The accent swatch is shown as a
-// fixed "Volt" indicator: the Pulse foundation retired multi-palette and the
-// runtime accent-swap picker is DEFERRED, so no accent-swap mechanism is
-// invented here. Engine/store wires, the SECTIONS map + every row `target`
-// navigation (incl. the danger row → settings-danger → logout-confirm /
-// delete-account-confirm confirm-screen gating), the JWT profile wiring, and
-// ALL testids are unchanged — visual reskin + the inline Appearance card.
+// the screen is re-skinned to the Pulse glass card language (.pulse-card) —
+// display wordmark + mono zone eyebrows. Composition matching Daniel's mockup:
+// (1) the profile header is a gradient-pebble avatar card (--grad-pulse + aqua
+// glow) + streak Pill (useWorkoutStore.streak); (2) Appearance is an inline
+// LIVE card with the Pulse ACCENT picker (4 swatches Volt/Aqua/Ember/Violet
+// wired to settingsStore.accent — applied app-wide via paletteSync.applyAccent
+// as a --brick override on documentElement) + a Dark/Light toggle wired to
+// settingsStore.theme. Both persist in 'wv2-settings-store' (NOT ephemeral
+// state). Daniel dropped the old multi-palette "themes" system (SettingsThemes
+// retired) — accent + Dark/Light are the only appearance controls. Engine/store
+// wires, the SECTIONS map + every row `target` navigation (incl. the danger
+// row → settings-danger → logout-confirm / delete-account-confirm confirm-
+// screen gating), the JWT profile wiring, and ALL testids are unchanged.
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -30,6 +30,8 @@ import type { GotoScreen } from '../../../lib/navigation';
 import { getUserProfileDisplay } from './userProfile';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useSettingsStore } from '../../../stores/settingsStore';
+import type { Accent } from '../../../stores/settingsStore';
+import { applyAccent } from '../../../lib/paletteSync';
 import { Pill } from '../../../components/pulse/Pill';
 import { t } from '../../../../i18n/index.js';
 import {
@@ -166,6 +168,27 @@ export function Cont(): JSX.Element {
     { value: 'light' as const, labelKey: 'cont.appearance.modeLight', active: isLight },
   ];
 
+  // Pulse ACCENT picker (interfata-noua/screens-tabs.jsx:344-355) — swaps the
+  // primary accent (--brick) at runtime among the four Pulse hues. Wired to
+  // the REAL settingsStore.accent (persisted under 'wv2-settings-store') +
+  // applied app-wide via paletteSync.applyAccent (documentElement --brick
+  // override; PaletteSync re-applies on every mount, anti-FOUC pre-mount in
+  // main.tsx). Default Volt = the theme default (no override). Daniel dropped
+  // the old multi-palette "themes" system — this accent + Dark/Light are the
+  // only appearance controls.
+  const accent = useSettingsStore((s) => s.accent);
+  const setAccent = useSettingsStore((s) => s.setAccent);
+  const pickAccent = (a: Accent): void => {
+    setAccent(a);
+    applyAccent(a);
+  };
+  const ACCENT_OPTIONS = [
+    { value: 'volt' as const, hex: 'var(--volt)', labelKey: 'cont.appearance.accentVolt' },
+    { value: 'aqua' as const, hex: 'var(--aqua)', labelKey: 'cont.appearance.accentAqua' },
+    { value: 'ember' as const, hex: 'var(--ember)', labelKey: 'cont.appearance.accentEmber' },
+    { value: 'violet' as const, hex: 'var(--violet)', labelKey: 'cont.appearance.accentViolet' },
+  ];
+
   return (
     <section className="pt-4 px-5 pb-6 bg-paper min-h-screen" data-testid="cont-home">
       {/* Pulse header (interfata-noua/screens-tabs.jsx:331) — display wordmark.
@@ -177,21 +200,19 @@ export function Cont(): JSX.Element {
           reads warm-premium rather than flat brick. Pulse reskin adds the
           streak Pill on the right (interfata-noua/screens-tabs.jsx:334-341). */}
       <div
-        className="surface-elevated bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-3 animate-card-rise"
+        className="pulse-card pulse-shine p-[18px] mb-4 flex items-center gap-3.5 animate-card-rise delay-75"
         data-testid="cont-account-card"
       >
-        {/* §F-cont-07 (LOW chat5) — avatar 52x52 + text 22px mockup L1845.
-            Wave A5 — gradient bg with color-mix so each palette tints itself.
-            Inset white highlight (8% top) + outer ring sell the dimensional
-            pebble. */}
+        {/* Avatar — Pulse gradient pebble (interfata-noua/screens-tabs.jsx:335
+            `.avatar`): volt→aqua --grad-pulse fill + aqua glow halo, 54x54,
+            22px display initial in --on-accent ink. */}
         <div
-          className="w-[52px] h-[52px] rounded-full text-paper flex items-center justify-center text-[22px] font-semibold relative overflow-hidden"
+          className="w-[54px] h-[54px] rounded-full font-display flex items-center justify-center text-[22px] font-bold relative overflow-hidden"
           data-testid="cont-account-initial"
           style={{
-            background:
-              'radial-gradient(circle at 30% 25%, color-mix(in oklab, var(--brick) 92%, white 8%), color-mix(in oklab, var(--brick) 70%, var(--olive) 30%) 65%, color-mix(in oklab, var(--brick) 88%, black 12%))',
-            boxShadow:
-              'inset 0 1px 0 color-mix(in oklab, white 22%, transparent), 0 2px 8px -2px color-mix(in oklab, var(--brick) 30%, transparent)',
+            background: 'var(--grad-pulse)',
+            boxShadow: '0 0 26px -6px var(--aqua)',
+            color: 'var(--on-accent)',
           }}
         >
           <span className="relative">{profile.initial}</span>
@@ -207,27 +228,47 @@ export function Cont(): JSX.Element {
       </div>
 
       {/* APPEARANCE — inline LIVE card (interfata-noua/screens-tabs.jsx:343-363).
-          Accent shown as a fixed "Volt" indicator (foundation retired multi-
-          palette; runtime accent-swap DEFERRED — no swap mechanism). The
-          Dark/Light toggle wires to the real settingsStore.theme. */}
+          Accent picker (4 Pulse swatches Volt/Aqua/Ember/Violet) wired to the
+          real settingsStore.accent (persisted; applied app-wide via
+          paletteSync.applyAccent — documentElement --brick override). The
+          Dark/Light toggle wires to settingsStore.theme. Daniel dropped the
+          old multi-palette "themes" system: accent + Dark/Light are the only
+          appearance controls now. */}
       <ZoneHeading>{t('cont.appearance.heading')}</ZoneHeading>
-      <div className="surface-elevated bg-paper2 border border-line rounded-2xl p-4 animate-card-rise" data-testid="cont-appearance-card">
-        {/* Accent — fixed Volt swatch (no picker: accent-swap deferred). */}
+      <div className="pulse-card p-4 animate-card-rise" data-testid="cont-appearance-card">
+        {/* Accent — 4 swatches, selected gets a glow halo + check (mockup .acc-sw). */}
         <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-ink3 mb-3">
           {t('cont.appearance.accentLabel')}
         </p>
-        <div className="flex items-center gap-3" data-testid="cont-appearance-accent">
-          <span
-            className="w-[42px] h-[42px] rounded-full grid place-items-center"
-            style={{
-              background: 'var(--volt)',
-              boxShadow: '0 0 18px -2px var(--volt)',
-            }}
-            aria-hidden="true"
-          >
-            <Check className="w-4 h-4" strokeWidth={2.8} style={{ color: 'var(--on-accent)' }} aria-hidden="true" />
-          </span>
-          <span className="font-mono text-xs text-ink2 uppercase tracking-wide">{t('cont.appearance.accentName')}</span>
+        <div className="flex gap-3" role="group" aria-label={t('cont.appearance.accentLabel')} data-testid="cont-appearance-accent">
+          {ACCENT_OPTIONS.map((opt) => {
+            const active = accent === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                data-testid={`cont-accent-${opt.value}`}
+                aria-pressed={active}
+                aria-label={t(opt.labelKey)}
+                onClick={() => pickAccent(opt.value)}
+                className="flex flex-col items-center flex-1 press-feedback"
+              >
+                <span
+                  className="w-[42px] h-[42px] rounded-full grid place-items-center transition-transform duration-200"
+                  style={{
+                    background: opt.hex,
+                    boxShadow: active ? `0 0 18px -2px ${opt.hex}` : 'none',
+                    transform: active ? 'scale(1.06)' : 'none',
+                  }}
+                >
+                  {active && (
+                    <Check className="w-[15px] h-[15px]" strokeWidth={2.8} style={{ color: 'var(--on-accent)' }} aria-hidden="true" />
+                  )}
+                </span>
+                <span className="font-mono text-[9.5px] text-ink3 uppercase tracking-wide mt-1.5">{t(opt.labelKey)}</span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="h-px bg-line my-4" />
@@ -260,7 +301,7 @@ export function Cont(): JSX.Element {
               (mono 11px tracking-[0.14em] ink3). Danger sections keep the
               brick highlight invariant. */}
           <ZoneHeading danger={section.danger ?? false}>{t(section.titleKey)}</ZoneHeading>
-          <div className="surface-elevated bg-paper2 border border-line rounded-2xl overflow-hidden animate-card-rise">
+          <div className="pulse-card p-1 overflow-hidden animate-card-rise">
             {section.rows.map((row, idx) => {
               const Icon = row.Icon;
               const isLast = idx === section.rows.length - 1;

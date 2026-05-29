@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Cont } from '../../../routes/screens/cont/Cont';
+import { useSettingsStore } from '../../../stores/settingsStore';
 
 // Minimal JWT helper for tests — base64url-encoded payload only (signature
 // segments are ignored by the display-only decoder in userProfile.ts).
@@ -22,6 +23,8 @@ function renderCont() {
 
 beforeEach(() => {
   localStorage.clear();
+  useSettingsStore.getState().reset();
+  document.documentElement.style.removeProperty('--brick');
 });
 
 describe('Cont landing — Phase 5 task_13', () => {
@@ -101,5 +104,39 @@ describe('Cont landing — Phase 5 task_13', () => {
   it('version footer "Andura v1.0.0" present', () => {
     renderCont();
     expect(screen.getByText(/Andura v1\.0\.0/i)).toBeInTheDocument();
+  });
+});
+
+// Pulse accent picker (replaces the retired multi-palette "themes" system).
+describe('Cont — appearance accent picker (Pulse)', () => {
+  it('renders 4 accent swatches Volt/Aqua/Ember/Violet', () => {
+    renderCont();
+    expect(screen.getByTestId('cont-accent-volt')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-accent-aqua')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-accent-ember')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-accent-violet')).toBeInTheDocument();
+  });
+
+  it('default accent = Volt (pressed) when store fresh', () => {
+    renderCont();
+    expect(screen.getByTestId('cont-accent-volt')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('cont-accent-aqua')).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('click swatch updates store + applies --brick override on documentElement', () => {
+    renderCont();
+    fireEvent.click(screen.getByTestId('cont-accent-aqua'));
+    expect(useSettingsStore.getState().accent).toBe('aqua');
+    expect(screen.getByTestId('cont-accent-aqua')).toHaveAttribute('aria-pressed', 'true');
+    expect(document.documentElement.style.getPropertyValue('--brick')).toBe('#4fd6e8');
+  });
+
+  it('picking Volt clears the --brick override (theme default owns it)', () => {
+    renderCont();
+    fireEvent.click(screen.getByTestId('cont-accent-ember'));
+    expect(document.documentElement.style.getPropertyValue('--brick')).toBe('#ff7d52');
+    fireEvent.click(screen.getByTestId('cont-accent-volt'));
+    expect(useSettingsStore.getState().accent).toBe('volt');
+    expect(document.documentElement.style.getPropertyValue('--brick')).toBe('');
   });
 });

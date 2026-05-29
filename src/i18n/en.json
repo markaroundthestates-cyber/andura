@@ -1122,7 +1122,10 @@
     "appearance": {
       "heading": "Appearance",
       "accentLabel": "Accent color",
-      "accentName": "Volt",
+      "accentVolt": "Volt",
+      "accentAqua": "Aqua",
+      "accentEmber": "Ember",
+      "accentViolet": "Violet",
       "modeLabel": "Mode",
       "modeDark": "Dark",
       "modeLight": "Light"
@@ -1367,26 +1370,7 @@
       "themeAutoLabel": "Auto (system)",
       "navHeading": "Bottom bar",
       "navComfortable": "Comfortable (recommended)",
-      "navCompact": "Compact",
-      "paletteHeading": "Palette",
-      "themesLink": "Themes"
-    },
-    "themes": {
-      "title": "Themes",
-      "current": "Current",
-      "preview": "Preview",
-      "subtitle": "Pick your favorite palette. Applied instantly.",
-      "footer": "Palettes switch instantly. Brain Coach is the default.",
-      "options": {
-        "clasic": "Andura Clasic",
-        "clasicMeta": "Cream and light",
-        "livingBody": "Andura Living Body",
-        "livingBodyMeta": "Navy and warm gold",
-        "luxury": "Andura Luxury",
-        "luxuryMeta": "Noir and champagne",
-        "brainCoach": "Andura Brain Coach",
-        "brainCoachMeta": "AI purple - default"
-      }
+      "navCompact": "Compact"
     },
     "subscription": {
       "title": "Subscription",

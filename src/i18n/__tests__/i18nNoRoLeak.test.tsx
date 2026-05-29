@@ -118,7 +118,6 @@ import { SettingsProfile } from '../../react/routes/screens/cont/SettingsProfile
 import { SettingsSubscription } from '../../react/routes/screens/cont/SettingsSubscription';
 import { SettingsSupport } from '../../react/routes/screens/cont/SettingsSupport';
 import { SettingsTerms } from '../../react/routes/screens/cont/SettingsTerms';
-import { SettingsThemes } from '../../react/routes/screens/cont/SettingsThemes';
 import { DeleteAccountConfirm } from '../../react/routes/screens/cont/DeleteAccountConfirm';
 import { LogoutConfirm } from '../../react/routes/screens/cont/LogoutConfirm';
 import { RedoOnboardingConfirm } from '../../react/routes/screens/cont/RedoOnboardingConfirm';
@@ -967,7 +966,6 @@ describe('Wave E4 i18n — Settings sub-screens render EN-clean under EN locale'
     ['SettingsSubscription',  '/app/cont/settings-subscription',  <SettingsSubscription />],
     ['SettingsSupport',       '/app/cont/settings-support',       <SettingsSupport />],
     ['SettingsTerms',         '/app/cont/settings-terms',         <SettingsTerms />],
-    ['SettingsThemes',        '/app/cont/settings-themes',        <SettingsThemes />],
   ] as const)('%s renders without RO leak under EN locale', (name, path, element) => {
     const container = renderSubscreen(path, element);
     assertNoRoLeak(name, container.textContent ?? '');
