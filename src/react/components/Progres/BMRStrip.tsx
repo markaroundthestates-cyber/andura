@@ -73,19 +73,20 @@ export function BMRStrip(): JSX.Element {
   return (
     <section
       data-testid="bmr-strip"
-      className="pulse-card pulse-card-tight overflow-hidden p-4 mb-4 flex items-center gap-4 animate-card-rise"
+      className="pulse-card pulse-card-tight pulse-card-glow overflow-hidden p-4 mb-4 flex items-center gap-4 animate-card-rise"
+      style={{ ['--wash' as string]: 'var(--volt)' }}
       aria-label={t('bodyComp.bmrStrip.ariaLabel')}
     >
-      {/* Wave A4 (Daniel 2026-05-28) — brick radial wash for warmth + depth. */}
-      <span
+      {/* Pulse MiniStat parity (11.403, interfata-noua/screens-tabs.jsx:43,126):
+          BMR is the "Base calories" MiniStat — volt corner tile-wash (via the
+          shared .pulse-card-glow ::after + inline --wash) + a volt-tinted icon.
+          Replaces the prior bespoke brick wash span. volt is a CSS var, not a
+          Tailwind color, so the icon hue is applied inline. */}
+      <Flame
+        className="relative w-6 h-6 flex-shrink-0"
+        style={{ color: 'var(--volt)' }}
         aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(circle at 0% 50%, color-mix(in oklab, var(--brick) 14%, transparent) 0%, transparent 55%)',
-        }}
       />
-      <Flame className="relative w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
       <div className="relative flex-1 min-w-0">
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
           {t('bodyComp.bmrStrip.label')}
