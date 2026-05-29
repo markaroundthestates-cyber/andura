@@ -118,6 +118,11 @@ export function SettingsProfile(): JSX.Element {
       : bfDeurenberg != null
         ? t('settings.profile.bfSourceEstimated')
         : '';
+  // §bf-hint smoke #1 — US Navy cere gat + talie + inaltime (+ sex) ca sa
+  // calculeze; daca user-ul completeaza doar unul, bfNavy ramane null si BF%
+  // nu se schimba vizibil (Gigel crede ca e bug). Arata un hint inline cat
+  // timp masuratorile US-Navy sunt incomplete (NU pe override manual).
+  const bfNavyIncomplete = !bfManual && bfNavy == null && (!neck || !waist || !draft.height);
 
   // §obiectiv-tinta 2026-05-28 — Daniel smoke #8 ("tot ce e la Obiectiv trebuie
   // mutat la progres undeva"): "Tinte personale" (greutate tinta + pana in +
@@ -365,6 +370,14 @@ export function SettingsProfile(): JSX.Element {
             </span>
           </SelectRow>
         </div>
+        {bfNavyIncomplete && (
+          <p
+            className="text-xs text-ink2 mb-1 px-1 leading-snug"
+            data-testid="profile-bf-hint"
+          >
+            {t('settings.profile.bfHint')}
+          </p>
+        )}
         <p className="text-xs text-ink3 mb-4 px-1 leading-snug">
           {t('settings.profile.bodyCompFooter')}
         </p>
