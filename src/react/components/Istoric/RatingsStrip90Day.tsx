@@ -131,6 +131,33 @@ export function RatingsStrip90Day(): JSX.Element {
   const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
   const { weeks, counts } = computeBuckets(sessionsHistory);
   const maxCount = Math.max(counts.usor, counts.potrivit, counts.greu, 1);
+  // §04.051 — honest empty state. With zero sessions in the 90-day window the
+  // strip used to render empty bars + 0/0/0 counts, which reads as "broken"
+  // (Gigel filter). Instead show a plain "nothing yet" card — no fabricated
+  // data, just the heading + a one-line nudge. Empty = no rated AND no unrated
+  // session landed in the window.
+  const isEmpty = counts.total === 0 && counts.unrated === 0;
+
+  if (isEmpty) {
+    return (
+      <section
+        data-testid="ratings-strip-90day"
+        aria-label={t('istoric.ratingsStrip.ariaLabel')}
+        className="mb-4"
+      >
+        <div className="pulse-card p-[18px] animate-card-rise delay-300" data-testid="ratings-empty">
+          <div className="flex items-baseline justify-between mb-3.5">
+            <Kicker color="var(--aqua)">{t('istoric.ratingsStrip.heading')}</Kicker>
+            <span className="font-mono text-[10px] text-ink3">{t('istoric.ratingsStrip.window')}</span>
+          </div>
+          <p className="text-sm font-semibold text-ink">{t('istoric.ratingsStrip.emptyTitle')}</p>
+          <p className="text-[12.5px] text-ink2 mt-1 leading-relaxed">
+            {t('istoric.ratingsStrip.emptyHint')}
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section

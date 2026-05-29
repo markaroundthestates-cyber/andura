@@ -67,10 +67,19 @@ export function FatigueStrip(): JSX.Element {
   return (
     <section
       data-testid="fatigue-strip"
-      className="pulse-card pulse-card-tight p-4 mb-4 flex items-center gap-4 animate-card-rise"
+      className="pulse-card pulse-card-tight pulse-card-glow overflow-hidden p-4 mb-4 flex items-center gap-4 animate-card-rise"
+      style={{ ['--wash' as string]: 'var(--aqua)' }}
       aria-label={t('progres.fatigue.ariaLabel')}
     >
-      <Activity className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
+      {/* Pulse MiniStat parity (11.403, interfata-noua/screens-tabs.jsx:42,126):
+          the Fatigue tile carries an aqua corner tile-wash + an aqua-tinted icon
+          (was a flat brick icon-prefix with no wash). aqua is a CSS var, not a
+          Tailwind color, so the icon hue is applied inline. */}
+      <Activity
+        className="w-6 h-6 flex-shrink-0"
+        style={{ color: 'var(--aqua)' }}
+        aria-hidden="true"
+      />
       <div className="flex-1 min-w-0">
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
           {t('progres.fatigue.todayLabel')}

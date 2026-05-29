@@ -25,7 +25,9 @@
 
 import type { JSX } from 'react';
 import { useEffect, useState, useMemo } from 'react';
-import { Flame, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
+import { Pill } from '../pulse/Pill';
+import { Kicker } from '../pulse/Kicker';
 import { getNutritionTargetTodayReal } from '../../lib/bayesianNutritionAggregate';
 import type { NutritionTarget } from '../../lib/bayesianNutritionAggregate';
 import { readBayesianNutritionContext } from '../../lib/nutritionObservations';
@@ -134,26 +136,13 @@ export function TDEEStrip(): JSX.Element {
     >
 
       <div className="relative flex items-center justify-between mb-4" data-testid="tdee-faza-row">
-        <span
-          data-testid="tdee-faza-badge"
-          className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide"
-          // THEME-INVERSION fix (2026-05-27): erau hardcodate bg #f0e8d8 + text
-          // #7a6938 (singura suprafata light fully-hardcoded din src/react) ->
-          // blob cremos pe tema mov + doar 4.41:1 in ambele. Tokenizat la
-          // --status-neutral-* care re-skin per tema: light text 6.14:1, dark
-          // 11.12:1, ambele >=4.5 AA.
-          style={{
-            background: 'var(--status-neutral-bg)',
-            color: 'var(--status-neutral-text)',
-            border: '1px solid var(--status-neutral-border)',
-          }}
-        >
-          <span
-            aria-hidden="true"
-            className="w-1.5 h-1.5 rounded-full"
-            style={{ background: 'var(--warn)' }}
-          />
-          {t('progres.tdee.phaseLabel', { phase: phaseLabel })}
+        {/* PHASE badge — mockup parity (11.402, interfata-noua/screens-tabs.jsx:26):
+            an ember Pill, not the prior neutral-grey chip. Wrapped to preserve the
+            tdee-faza-badge testid contract (the Pill primitive owns its own). */}
+        <span data-testid="tdee-faza-badge">
+          <Pill color="var(--ember)">
+            {t('progres.tdee.phaseLabel', { phase: phaseLabel })}
+          </Pill>
         </span>
         <span className="text-xs text-ink2" data-testid="tdee-mesocycle-week">
           {t('progres.tdee.weekInMeso', { n: weekInMeso })}
@@ -164,10 +153,13 @@ export function TDEEStrip(): JSX.Element {
           "kcal recomandate sus"). Big tabular num-display + warm flame accent;
           protein + source sit beneath as quiet context. */}
       <div className="relative">
-        <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-ink2 mb-2 flex items-center gap-1.5">
-          <Flame className="w-3.5 h-3.5 text-brick" aria-hidden="true" />
-          {showComparison ? t('progres.tdee.todayVsTarget') : t('progres.tdee.targetToday')}
-        </p>
+        {/* Eyebrow — mockup parity (11.402, interfata-noua/screens-tabs.jsx:24):
+            an aqua Kicker, not the prior brick Flame + grey label. */}
+        <div className="mb-2">
+          <Kicker color="var(--aqua)">
+            {showComparison ? t('progres.tdee.todayVsTarget') : t('progres.tdee.targetToday')}
+          </Kicker>
+        </div>
 
         {showComparison ? (
           <div data-testid="tdee-current-vs-target">

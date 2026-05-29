@@ -620,6 +620,7 @@
       "saveCta": "Save",
       "cancelCta": "Cancel",
       "rangeError": "Unrealistic value — check the unit (cm). Range {min}-{max} cm.",
+      "fieldLabel": "{field} (cm)",
       "fields": {
         "waist": "Waist",
         "neck": "Neck",
@@ -844,6 +845,8 @@
       "ariaGroupHard": "Hard {count}",
       "footerLead": "The coach uses your ratings to adjust intensity.",
       "footerCountSuffix": "in the last 90 days.",
+      "emptyTitle": "Nothing yet",
+      "emptyHint": "Rate your sessions and this fills in over the last 90 days.",
       "sessions_one": "{n} session",
       "sessions_other": "{n} sessions"
     },

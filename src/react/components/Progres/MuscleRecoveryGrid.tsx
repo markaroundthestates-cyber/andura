@@ -100,10 +100,19 @@ function groupLabel(group: string): string {
   return GROUP_LABELS_RO_BIG11[group] ?? group;
 }
 
-export function MuscleRecoveryGrid(): JSX.Element | null {
-  const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
+interface RecoveryGroup {
+  group: string;
+  label: string;
+  state: RecoveryState;
+}
 
-  const groups = useMemo(() => {
+// Shared selector — derives the per-group recovery rows from the session
+// history. Exported so the Progres parent can gate the RECUPERARE zone
+// heading on the SAME emptiness check the grid uses, instead of mounting a
+// lone eyebrow over empty space (03.048) for a fresh T0 user.
+export function useMuscleRecoveryGroups(): RecoveryGroup[] {
+  const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
+  return useMemo(() => {
     try {
       const logs = flattenSessionsToLogs(sessionsHistory);
       const state = getRecoveryByGroup(logs, readPainCdl());
@@ -116,6 +125,10 @@ export function MuscleRecoveryGrid(): JSX.Element | null {
       return [];
     }
   }, [sessionsHistory]);
+}
+
+export function MuscleRecoveryGrid(): JSX.Element | null {
+  const groups = useMuscleRecoveryGroups();
 
   // No groups (engine threw / empty taxonomy) → render nothing so the zone
   // heading isn't left dangling above an empty card.

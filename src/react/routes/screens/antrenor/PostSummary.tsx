@@ -250,7 +250,15 @@ export function PostSummary(): JSX.Element {
          absent) — Daniel CEO review pre-Beta. */}
       {prHit && (
         <div
-          className="relative flex flex-col gap-2 p-4 mb-4 rounded-xl bg-succ/10 border border-succ animate-card-rise animate-glow-pulse"
+          // PR celebration color — mockup parity (11.351, interfata-noua/
+          // screens-workout.jsx:444-454 PrFlash): ember, not succ green. ember
+          // is a CSS var (not a Tailwind color), so the tinted fill + border are
+          // applied inline via color-mix, matching the mockup's PR badge.
+          className="relative flex flex-col gap-2 p-4 mb-4 rounded-xl border animate-card-rise animate-glow-pulse"
+          style={{
+            background: 'color-mix(in oklab, var(--ember) 10%, transparent)',
+            borderColor: 'color-mix(in oklab, var(--ember) 45%, transparent)',
+          }}
           data-testid="summary-pr-banner"
           role="status"
           aria-label={t('postSummary.prBannerAriaLabel')}
@@ -262,9 +270,13 @@ export function PostSummary(): JSX.Element {
               cleans after 1s. Mount-keyed by prHit=true so it plays once. */}
           <ConfettiBurst />
           <div className="flex items-center gap-3">
-            <Trophy className="w-6 h-6 text-succ flex-shrink-0 animate-scale-in" aria-hidden="true" />
+            <Trophy
+              className="w-6 h-6 flex-shrink-0 animate-scale-in"
+              style={{ color: 'var(--ember)' }}
+              aria-hidden="true"
+            />
             <div className="flex-1 min-w-0">
-              <p className="text-base font-semibold text-succ">{t('postSummary.prNew')}</p>
+              <p className="text-base font-semibold" style={{ color: 'var(--ember)' }}>{t('postSummary.prNew')}</p>
               <p className="text-sm text-ink2" data-testid="summary-pr-detail">
                 {prData
                   ? t('postSummary.prSummaryDetail', {
@@ -281,7 +293,11 @@ export function PostSummary(): JSX.Element {
           {prData && (
             <div className="flex flex-wrap gap-2 mt-1" data-testid="summary-pr-enrichment">
               <span
-                className="text-xs px-2 py-1 bg-succ/20 text-succ rounded-md font-semibold"
+                className="text-xs px-2 py-1 rounded-md font-semibold"
+                style={{
+                  background: 'color-mix(in oklab, var(--ember) 18%, transparent)',
+                  color: 'var(--ember)',
+                }}
                 data-testid="summary-pr-type-label"
                 data-pr-type={prData.type}
               >

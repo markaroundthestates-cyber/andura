@@ -22,6 +22,18 @@ import { Progres } from '../../../routes/screens/progres/Progres';
 import { useProgresStore } from '../../../stores/progresStore';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 
+// MuscleRecoveryGrid returns null (and the parent zone gates its heading) only
+// when the recovery selector yields zero groups — i.e. the engine throws or the
+// taxonomy is empty. Mock the selector to exercise both branches of the 03.048
+// gate without coupling to engine internals.
+vi.mock('../../../components/Progres/MuscleRecoveryGrid', () => ({
+  useMuscleRecoveryGroups: vi.fn(() => []),
+  MuscleRecoveryGrid: vi.fn(() => null),
+}));
+import { useMuscleRecoveryGroups, MuscleRecoveryGrid } from '../../../components/Progres/MuscleRecoveryGrid';
+
+type RecoveryGroups = ReturnType<typeof useMuscleRecoveryGroups>;
+
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
   return <div data-testid="probe" data-pathname={loc.pathname} />;
@@ -41,6 +53,7 @@ function renderProgres() {
 
 beforeEach(() => {
   useProgresStore.setState({ weightLog: [], bodyData: [] });
+  vi.mocked(useMuscleRecoveryGroups).mockReturnValue([] as RecoveryGroups);
   localStorage.clear();
 });
 
@@ -89,6 +102,28 @@ describe('Progres landing', () => {
     // Wave C2 i18n: EN default → "Waist 85" (was RO "Talie 85"); "Biceps" same.
     expect(screen.getByTestId('last-body-card')).toHaveTextContent('Waist 85');
     expect(screen.getByTestId('last-body-card')).toHaveTextContent('Biceps 35');
+  });
+});
+
+describe('Progres — RECUPERARE zone gating (03.048)', () => {
+  it('hides the recovery zone heading when the recovery selector yields no groups', () => {
+    vi.mocked(useMuscleRecoveryGroups).mockReturnValue([] as RecoveryGroups);
+    renderProgres();
+    // No lone eyebrow over empty space: heading + zone both absent.
+    expect(screen.queryByTestId('progres-zone-recovery-heading')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('progres-zone-recovery')).not.toBeInTheDocument();
+  });
+
+  it('shows the recovery zone heading when groups exist', () => {
+    vi.mocked(useMuscleRecoveryGroups).mockReturnValue([
+      { group: 'piept', label: 'Piept', state: 'recovered' },
+    ] as RecoveryGroups);
+    vi.mocked(MuscleRecoveryGrid).mockReturnValue(
+      <div data-testid="muscle-recovery-grid" /> as never,
+    );
+    renderProgres();
+    expect(screen.getByTestId('progres-zone-recovery-heading')).toBeInTheDocument();
+    expect(screen.getByTestId('progres-zone-recovery')).toBeInTheDocument();
   });
 });
 

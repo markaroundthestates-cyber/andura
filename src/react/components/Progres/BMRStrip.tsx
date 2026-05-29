@@ -21,6 +21,7 @@ import { Flame } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
 import type { Sex } from '../../stores/onboardingStore';
+import { getCurrentWeightKg } from '../../lib/userTdee';
 import { useCountUp } from '../../hooks/useCountUp';
 import { t } from '../../../i18n/index.js';
 
@@ -53,14 +54,16 @@ function computeMifflinStJeorBMR(
 
 export function BMRStrip(): JSX.Element {
   const sex = useOnboardingStore((s) => s.data.sex);
-  const onboardingWeight = useOnboardingStore((s) => s.data.weight);
   const age = useOnboardingStore((s) => s.data.age);
   const height = useOnboardingStore((s) => s.data.height);
-  // Sursa canonica de greutate curenta: ultima greutate LOGATA > onboarding.
-  // Subscriptie reactiva la weightLog → logarea unei greutati recalculeaza BMR
-  // (era inghetat pe onboarding, audit CRIT split source-of-truth).
-  const weightLog = useProgresStore((s) => s.weightLog);
-  const weight = weightLog[weightLog.length - 1]?.kg ?? onboardingWeight;
+  // Sursa canonica UNICA de greutate curenta: getCurrentWeightKg (ultima
+  // greutate LOGATA dupa DATA > onboarding) — aceeasi sursa pe care o folosesc
+  // TDEE/BodyFatStrip. Era un read pozitional `weightLog[length-1]` (ultima
+  // POZITIE in array, NU cea mai recenta DATA) → o cantarire back-dated afisa
+  // greutatea gresita in BMR (split source-of-truth, audit 03.030).
+  // Subscribe la weightLog ca strip-ul sa re-randeze cand se logheaza/editeaza.
+  useProgresStore((s) => s.weightLog);
+  const weight = getCurrentWeightKg();
   const bmr = computeMifflinStJeorBMR(sex, weight, age, height);
   // Count-up the BMR hero number (2026-05-27). Hook called unconditionally
   // (rules of hooks); 0 fallback when bmr null — only rendered in the bmr!==null
@@ -70,19 +73,20 @@ export function BMRStrip(): JSX.Element {
   return (
     <section
       data-testid="bmr-strip"
-      className="pulse-card pulse-card-tight overflow-hidden p-4 mb-4 flex items-center gap-4 animate-card-rise"
+      className="pulse-card pulse-card-tight pulse-card-glow overflow-hidden p-4 mb-4 flex items-center gap-4 animate-card-rise"
+      style={{ ['--wash' as string]: 'var(--volt)' }}
       aria-label={t('bodyComp.bmrStrip.ariaLabel')}
     >
-      {/* Wave A4 (Daniel 2026-05-28) — brick radial wash for warmth + depth. */}
-      <span
+      {/* Pulse MiniStat parity (11.403, interfata-noua/screens-tabs.jsx:43,126):
+          BMR is the "Base calories" MiniStat — volt corner tile-wash (via the
+          shared .pulse-card-glow ::after + inline --wash) + a volt-tinted icon.
+          Replaces the prior bespoke brick wash span. volt is a CSS var, not a
+          Tailwind color, so the icon hue is applied inline. */}
+      <Flame
+        className="relative w-6 h-6 flex-shrink-0"
+        style={{ color: 'var(--volt)' }}
         aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(circle at 0% 50%, color-mix(in oklab, var(--brick) 14%, transparent) 0%, transparent 55%)',
-        }}
       />
-      <Flame className="relative w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
       <div className="relative flex-1 min-w-0">
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
           {t('bodyComp.bmrStrip.label')}

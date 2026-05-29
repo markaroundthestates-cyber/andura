@@ -620,6 +620,7 @@
       "saveCta": "Salveaza",
       "cancelCta": "Anuleaza",
       "rangeError": "Valoare nerealista — verifica unitatea (cm). Banda {min}-{max} cm.",
+      "fieldLabel": "{field} (cm)",
       "fields": {
         "waist": "Talie",
         "neck": "Gat",
@@ -844,6 +845,8 @@
       "ariaGroupHard": "Greu {count}",
       "footerLead": "Coach-ul foloseste evaluarile tale ca sa ajusteze intensitatea.",
       "footerCountSuffix": "in ultimele 90 zile.",
+      "emptyTitle": "Nimic inca",
+      "emptyHint": "Evalueaza-ti sesiunile si se completeaza aici peste ultimele 90 zile.",
       "sessions_one": "{n} sesiune",
       "sessions_other": "{n} sesiuni"
     },
