@@ -214,6 +214,86 @@ describe('SettingsProfile — Compozitie corporala (§F-pass2-settings-profile-0
     expect(last?.neckCm).toBe(38);
   });
 
+  // §progress-v2 — sold (US Navy female) afisat doar pentru femei.
+  it('sold input ascuns pentru barbati (sex m din store)', () => {
+    renderScreen();
+    expect(screen.queryByTestId('profile-hip-input')).not.toBeInTheDocument();
+  });
+
+  it('sold input afisat pentru femei', () => {
+    useOnboardingStore.getState().setField('sex', 'f');
+    renderScreen();
+    expect(screen.getByTestId('profile-hip-input')).toBeInTheDocument();
+  });
+
+  it('femeie: talie+gat+sold persista in bodyData pe save', async () => {
+    const { useProgresStore } = await import('../../../stores/progresStore');
+    useProgresStore.getState().reset();
+    useOnboardingStore.getState().setField('sex', 'f');
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-waist-input'), { target: { value: '72' } });
+    fireEvent.change(screen.getByTestId('profile-neck-input'), { target: { value: '32' } });
+    fireEvent.change(screen.getByTestId('profile-hip-input'), { target: { value: '96' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    const last = useProgresStore.getState().bodyData.at(-1);
+    expect(last?.waistCm).toBe(72);
+    expect(last?.neckCm).toBe(32);
+    expect(last?.hipsCm).toBe(96);
+  });
+
+  // §progress-v2 — skinfold avansat optional: collapsed default, toggle reveals.
+  it('panoul skinfold e ascuns default + dezvaluit de toggle (men sites)', () => {
+    renderScreen();
+    expect(screen.queryByTestId('profile-skinfold-panel')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('profile-skinfold-toggle'));
+    expect(screen.getByTestId('profile-skinfold-panel')).toBeInTheDocument();
+    // sex 'm' din beforeEach → site-uri piept/abdomen/coapsa.
+    expect(screen.getByTestId('profile-skinfold-chest')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-skinfold-abdomen')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-skinfold-thigh')).toBeInTheDocument();
+    expect(screen.queryByTestId('profile-skinfold-triceps')).not.toBeInTheDocument();
+  });
+
+  it('femeie: panoul skinfold arata site-urile triceps/suprailiac/coapsa', () => {
+    useOnboardingStore.getState().setField('sex', 'f');
+    renderScreen();
+    fireEvent.click(screen.getByTestId('profile-skinfold-toggle'));
+    expect(screen.getByTestId('profile-skinfold-triceps')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-skinfold-suprailiac')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-skinfold-thigh')).toBeInTheDocument();
+    expect(screen.queryByTestId('profile-skinfold-chest')).not.toBeInTheDocument();
+  });
+
+  it('skinfold prezent -> BF% sursa "Pliuri" (J-P overrides US Navy)', () => {
+    renderScreen();
+    // US Navy complet (talie+gat+inaltime, sex m din store).
+    fireEvent.change(screen.getByTestId('profile-waist-input'), { target: { value: '85' } });
+    fireEvent.change(screen.getByTestId('profile-neck-input'), { target: { value: '38' } });
+    fireEvent.change(screen.getByTestId('profile-height-input'), { target: { value: '180' } });
+    expect(screen.getByTestId('profile-bf-source').textContent).toBe('US Navy');
+    // Adauga skinfold valid → sursa devine Pliuri (mai acurat).
+    fireEvent.click(screen.getByTestId('profile-skinfold-toggle'));
+    fireEvent.change(screen.getByTestId('profile-skinfold-chest'), { target: { value: '12' } });
+    fireEvent.change(screen.getByTestId('profile-skinfold-abdomen'), { target: { value: '20' } });
+    fireEvent.change(screen.getByTestId('profile-skinfold-thigh'), { target: { value: '14' } });
+    expect(screen.getByTestId('profile-bf-source').textContent).toBe('Pliuri');
+  });
+
+  it('skinfold sites persista in bodyData pe save (men)', async () => {
+    const { useProgresStore } = await import('../../../stores/progresStore');
+    useProgresStore.getState().reset();
+    renderScreen();
+    fireEvent.click(screen.getByTestId('profile-skinfold-toggle'));
+    fireEvent.change(screen.getByTestId('profile-skinfold-chest'), { target: { value: '12' } });
+    fireEvent.change(screen.getByTestId('profile-skinfold-abdomen'), { target: { value: '20' } });
+    fireEvent.change(screen.getByTestId('profile-skinfold-thigh'), { target: { value: '14' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    const last = useProgresStore.getState().bodyData.at(-1);
+    expect(last?.chestSkinfoldMm).toBe(12);
+    expect(last?.abdomenSkinfoldMm).toBe(20);
+    expect(last?.thighSkinfoldMm).toBe(14);
+  });
+
   it('BF% manual override input disabled pana la check', () => {
     renderScreen();
     const override = screen.getByTestId('profile-bf-override') as HTMLInputElement;

@@ -1250,8 +1250,18 @@
       "bfManual": "Editez manual",
       "bfSourceUsNavy": "US Navy",
       "bfSourceEstimated": "Estimat",
+      "bfSourceSkinfold": "Pliuri",
+      "hip": "Sold (cm)",
       "bfHint": "Completeaza gat, talie si inaltime pentru estimarea US Navy. Pana atunci aratam o estimare demografica.",
-      "bodyCompFooter": "Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori."
+      "bodyCompFooter": "Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori.",
+      "skinfoldHeading": "Pliuri cutanate (avansat, optional)",
+      "skinfoldToggle": "Masor cu caliper",
+      "skinfoldHint": "Optional. Cu caliper (mm) folosim metoda Jackson-Pollock 3 puncte, mai acurata decat banda. Lasa-l oprit daca nu ai caliper.",
+      "skinfoldChest": "Piept (mm)",
+      "skinfoldAbdomen": "Abdomen (mm)",
+      "skinfoldThigh": "Coapsa (mm)",
+      "skinfoldTriceps": "Triceps (mm)",
+      "skinfoldSuprailiac": "Suprailiac (mm)"
     },
     "notifications": {
       "title": "Notificari",

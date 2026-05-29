@@ -1250,8 +1250,18 @@
       "bfManual": "I'll set it myself",
       "bfSourceUsNavy": "US Navy",
       "bfSourceEstimated": "Estimated",
+      "bfSourceSkinfold": "Skinfold",
+      "hip": "Hip (cm)",
       "bfHint": "Fill in neck, waist and height for a US Navy estimate. Until then we show a demographic estimate.",
-      "bodyCompFooter": "Calculated automatically (US Navy: waist + neck + height + sex) or set by you. Falls back to a demographic estimate when measurements are missing."
+      "bodyCompFooter": "Calculated automatically (US Navy: waist + neck + height + sex) or set by you. Falls back to a demographic estimate when measurements are missing.",
+      "skinfoldHeading": "Skinfolds (advanced, optional)",
+      "skinfoldToggle": "I measure with a caliper",
+      "skinfoldHint": "Optional. With a caliper (mm) we use the Jackson-Pollock 3-site method, more accurate than tape. Leave it off if you don't have one.",
+      "skinfoldChest": "Chest (mm)",
+      "skinfoldAbdomen": "Abdomen (mm)",
+      "skinfoldThigh": "Thigh (mm)",
+      "skinfoldTriceps": "Triceps (mm)",
+      "skinfoldSuprailiac": "Suprailiac (mm)"
     },
     "notifications": {
       "title": "Notifications",
