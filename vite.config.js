@@ -51,8 +51,11 @@ export default defineConfig({
         name: 'Andura',
         short_name: 'Andura',
         description: 'Coach AI personal pentru sala — facut in Romania',
-        theme_color: '#c8412e',
-        background_color: '#faf7f1',
+        // Pulse-dark palette (D094) — match index.html theme-color #090b13 +
+        // global.css --paper dark token (Pulse --bg phone near-black blue).
+        // Installed Android splash + status bar render Pulse, not old terracotta.
+        theme_color: '#090b13',
+        background_color: '#090b13',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
@@ -105,7 +108,13 @@ export default defineConfig({
         ],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/.*\.firebaseio\.com\/.*$/,
+            // §13.032 audit fix — the REAL RTDB host is *.firebasedatabase.app
+            // (src/firebase.js:33 FIREBASE_URL + index.html dns-prefetch/CSP),
+            // NOT the legacy *.firebaseio.com. The old pattern never matched, so
+            // this NetworkFirst cache + the BackgroundSync queue below were dead.
+            // Match both hosts (CSP connect-src whitelists both) so the cache +
+            // offline write-replay actually engage against the live database.
+            urlPattern: /^https:\/\/.*\.(firebasedatabase\.app|firebaseio\.com)\/.*$/,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'firebase-cache',
@@ -123,14 +132,9 @@ export default defineConfig({
               },
             },
           },
-          {
-            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-cache',
-              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
-            },
-          },
+          // §13.034 audit fix — DEAD Google Fonts CacheFirst route removed.
+          // Fonts are self-hosted (D061) + CSP is font-src 'self' with zero
+          // fonts.googleapis/gstatic refs in src, so this route never matched.
           // §S-13 audit fix (AUDIT-3) — runtime cache for the two chunks that
           // globIgnores keeps OUT of the precache: index-*.js (Sentry) +
           // vendor-data-*.js (Dexie). They are excluded from install precache
