@@ -49,7 +49,9 @@ describe('RatingsStrip90Day — render basics (EN default)', () => {
     expect(screen.getAllByText(/last 90 days/i).length).toBeGreaterThan(0);
   });
 
-  it('renders 13 rh-col columns', () => {
+  it('renders 13 rh-col columns when sessions exist', () => {
+    // Seed a session so the data strip (not the empty state) renders.
+    useWorkoutStore.setState({ sessionsHistory: [makeSession(5, 'potrivit')] });
     render(<RatingsStrip90Day />);
     for (let i = 0; i < 13; i++) {
       expect(screen.getByTestId(`rh-col-${i}`)).toBeInTheDocument();
@@ -63,11 +65,26 @@ describe('RatingsStrip90Day — render basics (EN default)', () => {
 });
 
 describe('RatingsStrip90Day — empty + aggregate (EN default)', () => {
-  it('empty sessions → all counts 0 + footer "0 sessions"', () => {
+  it('no sessions in window → honest empty-state card (no fabricated 0/0/0 strip) [04.051]', () => {
     render(<RatingsStrip90Day />);
+    // The empty state replaces the bars + count columns + footer with a plain
+    // "nothing yet" card — no fake data, no 0/0/0 that reads as broken.
+    expect(screen.getByTestId('ratings-empty')).toBeInTheDocument();
+    expect(screen.getByText(/Nothing yet/i)).toBeInTheDocument();
+    expect(screen.queryByTestId('count-usor')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('ratings-footer')).not.toBeInTheDocument();
+    // Heading + section testid still present (consistent surface).
+    expect(screen.getByTestId('ratings-strip-90day')).toBeInTheDocument();
+    expect(screen.getByText(/How your sessions felt/i)).toBeInTheDocument();
+  });
+
+  it('unrated-only sessions still render the strip (not the empty state)', () => {
+    // A logged-but-unrated session is real activity — show the strip, not the
+    // empty card (the unrated cell paints + footer shows 0 rated honestly).
+    useWorkoutStore.setState({ sessionsHistory: [{ title: '', meta: '', ts: Date.now() - 5 * MS_PER_DAY, exercises: [] }] });
+    render(<RatingsStrip90Day />);
+    expect(screen.queryByTestId('ratings-empty')).not.toBeInTheDocument();
     expect(screen.getByTestId('count-usor').textContent).toBe('0');
-    expect(screen.getByTestId('count-potrivit').textContent).toBe('0');
-    expect(screen.getByTestId('count-greu').textContent).toBe('0');
     expect(screen.getByTestId('ratings-footer').textContent).toContain('0 sessions');
   });
 
