@@ -450,7 +450,7 @@ export function SettingsProfile(): JSX.Element {
   );
 }
 
-/** Data locala YYYY-MM-DD pentru intrarea bodyData (aliniat cu BodyData.tsx). */
+/** Data locala YYYY-MM-DD pentru intrarea bodyData (progresStore). */
 function todayIso(): string {
   const d = new Date();
   const y = d.getFullYear();

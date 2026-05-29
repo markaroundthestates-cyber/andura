@@ -577,8 +577,6 @@
     "logWeightToday": "Logheaza greutate azi",
     "lastWeighIn": "Ultima cantarire",
     "viewWeightTrend": "Vezi trend greutate",
-    "bodyMeasurements": "Masuratori corp",
-    "lastMeasurement": "Ultima masurare",
     "alertsToday": "Alerte azi",
     "zone": {
       "obiectiv": "Obiectiv",
@@ -603,13 +601,6 @@
         "legendTitle": "Recuperare"
       }
     },
-    "measurements": {
-      "waist": "Talie",
-      "chest": "Piept",
-      "hips": "Sold",
-      "biceps": "Biceps",
-      "thigh": "Coapsa"
-    },
     "logWeight": {
       "title": "Logheaza greutate",
       "backAriaLabel": "Inapoi",
@@ -621,23 +612,6 @@
       "cancelCta": "Anuleaza",
       "kgError": "Kg intre 30 si 250.",
       "dateError": "Data necesara."
-    },
-    "bodyData": {
-      "title": "Masuratori corp",
-      "backAriaLabel": "Inapoi",
-      "dateLabel": "Data",
-      "saveCta": "Salveaza",
-      "cancelCta": "Anuleaza",
-      "rangeError": "Valoare nerealista — verifica unitatea (cm). Banda {min}-{max} cm.",
-      "fieldLabel": "{field} (cm)",
-      "fields": {
-        "waist": "Talie",
-        "neck": "Gat",
-        "chest": "Piept",
-        "hips": "Sold",
-        "biceps": "Biceps",
-        "thigh": "Coapsa"
-      }
     },
     "weightTimeline": {
       "title": "Greutate",

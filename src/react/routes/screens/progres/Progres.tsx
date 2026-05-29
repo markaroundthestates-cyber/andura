@@ -48,7 +48,7 @@
 import type { JSX } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Scale, Ruler, History, LineChart } from 'lucide-react';
+import { Scale, History, LineChart } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { NutritionInline } from '../../../components/NutritionInline';
@@ -87,7 +87,6 @@ function ZoneHeading({ children, testId }: { children: string; testId: string })
 export function Progres(): JSX.Element {
   const navigate = useNavigate();
   const weightLog = useProgresStore((s) => s.weightLog);
-  const bodyData = useProgresStore((s) => s.bodyData);
 
   const [coach, setCoach] = useState<CoachTodayOutput | null>(null);
   useEffect(() => {
@@ -99,7 +98,6 @@ export function Progres(): JSX.Element {
   }, []);
 
   const lastWeight = weightLog[weightLog.length - 1];
-  const lastBody = bodyData[bodyData.length - 1];
   const alerts = coach?.alerts ?? [];
   // Gate the RECUPERARE zone (heading + grid) on the recovery engine actually
   // returning groups — a fresh T0 user (no logged sets) otherwise sees a lone
@@ -231,28 +229,10 @@ export function Progres(): JSX.Element {
             {t('progres.viewWeightTrend')}
           </button>
         )}
-        <button
-          type="button"
-          onClick={() => navigate(gotoPath('body-data'))}
-          data-testid="cta-body-data"
-          className="btn-secondary-lift w-full flex items-center gap-3 p-4 mb-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-base font-semibold"
-        >
-          <Ruler className="w-5 h-5" aria-hidden="true" />
-          {t('progres.bodyMeasurements')}
-        </button>
-        {lastBody && (
-          <div className="pulse-card pulse-card-tight p-4 mb-4" data-testid="last-body-card">
-            <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">{t('progres.lastMeasurement')}</p>
-            <p className="text-sm text-ink2 mt-1">{lastBody.date}</p>
-            <div className="text-sm text-ink mt-1 flex flex-wrap gap-3">
-              {lastBody.waistCm !== undefined && <span>{t('progres.measurements.waist')} {lastBody.waistCm} cm</span>}
-              {lastBody.chestCm !== undefined && <span>{t('progres.measurements.chest')} {lastBody.chestCm} cm</span>}
-              {lastBody.hipsCm !== undefined && <span>{t('progres.measurements.hips')} {lastBody.hipsCm} cm</span>}
-              {lastBody.bicepsCm !== undefined && <span>{t('progres.measurements.biceps')} {lastBody.bicepsCm} cm</span>}
-              {lastBody.thighCm !== undefined && <span>{t('progres.measurements.thigh')} {lastBody.thighCm} cm</span>}
-            </div>
-          </div>
-        )}
+        {/* §progress-v2 — masuratorile corporale (talie/gat/sold) care alimenteaza
+            BF% s-au consolidat in Cont > Profil (alaturi de greutate + BF auto/
+            skinfold). Ecranul dedicat "Masuratori corp" (circumferinte
+            piept/biceps/coapsa = noise muscular, NU grasime) a fost eliminat. */}
       </div>
 
       {/* ── ZONE 4: RECUPERARE — Big-11 muscle recovery ring grid. ───────────

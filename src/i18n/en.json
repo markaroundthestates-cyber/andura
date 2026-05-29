@@ -577,8 +577,6 @@
     "logWeightToday": "Log weight today",
     "lastWeighIn": "Last weigh-in",
     "viewWeightTrend": "View weight trend",
-    "bodyMeasurements": "Body measurements",
-    "lastMeasurement": "Last measurement",
     "alertsToday": "Alerts today",
     "zone": {
       "obiectiv": "Goal",
@@ -603,13 +601,6 @@
         "legendTitle": "Recovery"
       }
     },
-    "measurements": {
-      "waist": "Waist",
-      "chest": "Chest",
-      "hips": "Hips",
-      "biceps": "Biceps",
-      "thigh": "Thigh"
-    },
     "logWeight": {
       "title": "Log weight",
       "backAriaLabel": "Back",
@@ -621,23 +612,6 @@
       "cancelCta": "Cancel",
       "kgError": "Kg between 30 and 250.",
       "dateError": "Date required."
-    },
-    "bodyData": {
-      "title": "Body measurements",
-      "backAriaLabel": "Back",
-      "dateLabel": "Date",
-      "saveCta": "Save",
-      "cancelCta": "Cancel",
-      "rangeError": "Unrealistic value — check the unit (cm). Range {min}-{max} cm.",
-      "fieldLabel": "{field} (cm)",
-      "fields": {
-        "waist": "Waist",
-        "neck": "Neck",
-        "chest": "Chest",
-        "hips": "Hips",
-        "biceps": "Biceps",
-        "thigh": "Thigh"
-      }
     },
     "weightTimeline": {
       "title": "Weight",

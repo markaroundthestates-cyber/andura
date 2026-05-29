@@ -15,13 +15,23 @@ export interface WeightEntry {
 export interface BodyDataEntry {
   date: string;
   ts: number;
-  // Optional measurement fields (cm) — partial entries supported.
+  // §progress-v2 — only circumferences that FEED BF estimation are kept:
+  // talie + gat (US Navy men) + sold (US Navy women). Chest/biceps/thigh
+  // CIRCUMFERINTE au fost eliminate (masoara muschi, NU grasime = noise).
+  // Valorile vechi stocate sunt ignorate gratios (latestBodyMeasurements
+  // itereaza doar BODY_FIELDS curent — campurile sterse raman in JSON dar
+  // nu mai sunt citite). Partial entries supported.
   waistCm?: number;
   neckCm?: number;
-  chestCm?: number;
   hipsCm?: number;
-  bicepsCm?: number;
-  thighCm?: number;
+  // Optional skinfold caliper sites (mm) — Jackson-Pollock 3-site. Men:
+  // chest/abdomen/thigh; Women: triceps/suprailiac/thigh. Cand prezente,
+  // BF% foloseste J-P (mai acurat) peste US Navy (vezi BodyFatStrip).
+  chestSkinfoldMm?: number;
+  abdomenSkinfoldMm?: number;
+  thighSkinfoldMm?: number;
+  tricepsSkinfoldMm?: number;
+  suprailiacSkinfoldMm?: number;
 }
 
 // §obiectiv-tinta 2026-05-28 — Daniel verbatim "tot ce e la Obiectiv, pe
@@ -67,13 +77,24 @@ export interface LatestBodyMeasurements {
   date?: string;
   waistCm?: number;
   neckCm?: number;
-  chestCm?: number;
   hipsCm?: number;
-  bicepsCm?: number;
-  thighCm?: number;
+  chestSkinfoldMm?: number;
+  abdomenSkinfoldMm?: number;
+  thighSkinfoldMm?: number;
+  tricepsSkinfoldMm?: number;
+  suprailiacSkinfoldMm?: number;
 }
 
-const BODY_FIELDS = ['waistCm', 'neckCm', 'chestCm', 'hipsCm', 'bicepsCm', 'thighCm'] as const;
+const BODY_FIELDS = [
+  'waistCm',
+  'neckCm',
+  'hipsCm',
+  'chestSkinfoldMm',
+  'abdomenSkinfoldMm',
+  'thighSkinfoldMm',
+  'tricepsSkinfoldMm',
+  'suprailiacSkinfoldMm',
+] as const;
 type BodyField = (typeof BODY_FIELDS)[number];
 
 export function latestBodyMeasurements(
