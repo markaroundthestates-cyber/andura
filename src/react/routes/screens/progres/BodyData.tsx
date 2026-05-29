@@ -141,7 +141,9 @@ export function BodyData(): JSX.Element {
                 htmlFor={`bd-${field.key}`}
                 className="text-sm text-ink2 font-medium block mb-1"
               >
-                {t(`progres.bodyData.fields.${field.labelKey}`)} (cm)
+                {t('progres.bodyData.fieldLabel', {
+                  field: t(`progres.bodyData.fields.${field.labelKey}`),
+                })}
               </label>
               <input
                 id={`bd-${field.key}`}
