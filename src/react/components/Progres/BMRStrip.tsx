@@ -21,6 +21,7 @@ import { Flame } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
 import type { Sex } from '../../stores/onboardingStore';
+import { getCurrentWeightKg } from '../../lib/userTdee';
 import { useCountUp } from '../../hooks/useCountUp';
 import { t } from '../../../i18n/index.js';
 
@@ -53,14 +54,16 @@ function computeMifflinStJeorBMR(
 
 export function BMRStrip(): JSX.Element {
   const sex = useOnboardingStore((s) => s.data.sex);
-  const onboardingWeight = useOnboardingStore((s) => s.data.weight);
   const age = useOnboardingStore((s) => s.data.age);
   const height = useOnboardingStore((s) => s.data.height);
-  // Sursa canonica de greutate curenta: ultima greutate LOGATA > onboarding.
-  // Subscriptie reactiva la weightLog → logarea unei greutati recalculeaza BMR
-  // (era inghetat pe onboarding, audit CRIT split source-of-truth).
-  const weightLog = useProgresStore((s) => s.weightLog);
-  const weight = weightLog[weightLog.length - 1]?.kg ?? onboardingWeight;
+  // Sursa canonica UNICA de greutate curenta: getCurrentWeightKg (ultima
+  // greutate LOGATA dupa DATA > onboarding) — aceeasi sursa pe care o folosesc
+  // TDEE/BodyFatStrip. Era un read pozitional `weightLog[length-1]` (ultima
+  // POZITIE in array, NU cea mai recenta DATA) → o cantarire back-dated afisa
+  // greutatea gresita in BMR (split source-of-truth, audit 03.030).
+  // Subscribe la weightLog ca strip-ul sa re-randeze cand se logheaza/editeaza.
+  useProgresStore((s) => s.weightLog);
+  const weight = getCurrentWeightKg();
   const bmr = computeMifflinStJeorBMR(sex, weight, age, height);
   // Count-up the BMR hero number (2026-05-27). Hook called unconditionally
   // (rules of hooks); 0 fallback when bmr null — only rendered in the bmr!==null
