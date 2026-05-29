@@ -325,6 +325,8 @@
       "exercisesHeading": "Exercises",
       "swappedPrefix": "Swapped · {reason}",
       "exerciseDetail": "{sets} sets - {kg} kg - {reps} reps",
+      "exerciseDetailBodyweight": "{sets} sets - bodyweight - {reps} reps",
+      "exerciseDetailBodyweightAdded": "{sets} sets - bodyweight +{kg} kg - {reps} reps",
       "exerciseTimedDetail": "{sets} sets - {seconds} sec",
       "closingNote": "The coach adjusts during the session if anything comes up: pain, fatigue, hard set. You don't need to know everything up front.",
       "confirmStartCta": "Confirm, let's start",
@@ -1066,7 +1068,14 @@
     "kgDecrease": "Decrease weight",
     "kgIncrease": "Increase weight",
     "repsDecrease": "Decrease reps",
-    "repsIncrease": "Increase reps"
+    "repsIncrease": "Increase reps",
+    "bodyweightLabel": "Bodyweight",
+    "addedWeightLabel": "Added weight (optional)",
+    "addedWeightHint": "Belt / dumbbell. Leave 0 for pure bodyweight.",
+    "bodyweightTargetReps": "bodyweight reps",
+    "addedWeightDecrease": "Decrease added weight",
+    "addedWeightIncrease": "Increase added weight",
+    "youDidBodyweight": "bodyweight reps"
   },
 
   "setRating": {

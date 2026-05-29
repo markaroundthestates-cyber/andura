@@ -50,6 +50,7 @@ import { Kicker } from '../../../components/pulse/Kicker';
 import { useCountUp } from '../../../hooks/useCountUp';
 import { Brain } from 'lucide-react';
 import { DP } from '../../../../engine/dp.js';
+import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { resolveBusySwap, resolveMissingSwap, resolveRefusalSwap } from '../../../lib/substitution';
 import { toast } from '../../../lib/toast';
 import { incrementRefusal } from '../../../../engine/schedule/scheduleAdapter.js';
@@ -162,8 +163,15 @@ export function Workout(): JSX.Element {
     sessionContext?.painContext !== null && sessionContext?.painContext !== undefined
       ? 'minus'
       : engineIntensityMod;
+  // For a BODYWEIGHT exercise, targetKg is the ADDED weight (default 0). The
+  // deload ±% modifier applies to EXTERNAL load — scaling a 0-added bodyweight
+  // target does nothing, and we don't want to inflate/deflate a small added
+  // weight by 20% (a deload on bodyweight = fewer reps, an engine concern). So
+  // bodyweight exercises keep their added weight unchanged here.
   const targetKg =
-    intensityMod === 'minus'
+    currentExercise.isBodyweight
+      ? currentExercise.targetKg
+      : intensityMod === 'minus'
       ? Math.round(currentExercise.targetKg * 0.8 * 2) / 2
       : intensityMod === 'plus'
       ? Math.round(currentExercise.targetKg * 1.15 * 2) / 2
@@ -392,12 +400,37 @@ export function Workout(): JSX.Element {
   const liveVolumeDisplay = useCountUp(Math.round(liveVolumeKg));
 
   function performLogSet(rating: SetRating): void {
-    logSet(safeExIdx, { kg: kgInput, reps: repsInput, rating });
+    // Bodyweight model: kgInput is the ADDED weight (belt/dumbbell, default 0).
+    // The TRAINING load that PR/volume/progression must use is the EFFECTIVE
+    // load = bodyweight x fraction + added. We persist `kg` = effective so every
+    // downstream consumer (PR engine, session volume, DP logs) is correct with
+    // zero per-consumer change; `addedKg` preserves what the user entered for
+    // honest display. Loaded exercises: effective == kgInput (unchanged).
+    const effKg = currentExercise.isBodyweight
+      ? Math.max(
+          0,
+          Math.round(
+            ((Number(getCurrentWeightKg()) > 0
+              ? Number(getCurrentWeightKg()) * (currentExercise.bwFraction ?? 0)
+              : 0) +
+              (Number.isFinite(kgInput) ? kgInput : 0)) * 2,
+          ) / 2,
+        )
+      : kgInput;
+    logSet(safeExIdx, {
+      kg: effKg,
+      reps: repsInput,
+      rating,
+      ...(currentExercise.isBodyweight ? { addedKg: kgInput } : {}),
+    });
 
     // Phase 4 task_10: PR detection wire — call engineWrappers.getPRDelta
     // post logSet. Compose history for engine (per-exercise flat list cu
     // baseline + previous sets). markPRHit propagates flag + prData la
     // PostSummary F11 banner (Trophy lucide + exercise name + deltaKg).
+    // PR is detected against the EFFECTIVE load (h.kg already effective), so a
+    // pure-bodyweight rep PR (added 0) now fires instead of being killed by the
+    // detectPR w<=0 guard.
     const exerciseName = currentExercise.name;
     const exerciseHistory =
       history[safeExIdx]?.map((h) => ({
@@ -407,7 +440,7 @@ export function Workout(): JSX.Element {
       })) ?? [];
     const delta = getPRDelta(
       exerciseName,
-      { w: kgInput, reps: repsInput },
+      { w: effKg, reps: repsInput },
       exerciseHistory
     );
     if (delta) {
@@ -436,7 +469,11 @@ export function Workout(): JSX.Element {
     // in-session map (greu->10 so 2x-hard fires the DOWN path). The engine reads
     // prior-session lastW from DB — when the user has no history it returns
     // {adjust:false} and we no-op (honest: nothing to recalibrate against).
-    if (!isLastSetOfExercise) {
+    // Bodyweight: the DP in-session "drop to X kg" recalibration is about
+    // EXTERNAL load — it doesn't translate to a bodyweight movement (where the
+    // adjustment is fewer reps). Skip the weight pre-fill + notice for BW so we
+    // never tell a user doing 0-added push-ups to "switch to 50 kg".
+    if (!isLastSetOfExercise && !currentExercise.isBodyweight) {
       const ratedSets = [...(history[safeExIdx] ?? []), { kg: kgInput, reps: repsInput, rating }];
       const recentRPEs = ratedSets.map((s) => INSESSION_RATING_TO_RPE[s.rating]);
       const recentReps = ratedSets.map((s) => s.reps);
@@ -1027,8 +1064,14 @@ export function Workout(): JSX.Element {
               const logged = (history[safeExIdx] ?? [])[i];
               const isDone = logged !== undefined;
               const isActive = !isDone && i === currentSetIdx;
+              // Bodyweight: surface the ENTERED added weight (0 = bodyweight),
+              // not the effective load stored in kg. Loaded: kg as before.
               const detail = isDone
-                ? `${logged.kg} ${t('common.kg')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
+                ? currentExercise.isBodyweight
+                  ? (logged.addedKg ?? 0) > 0
+                    ? `+${logged.addedKg} ${t('common.kg')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
+                    : `${t('setLog.bodyweightLabel')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
+                  : `${logged.kg} ${t('common.kg')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
                 : undefined;
               return (
                 <div
@@ -1059,6 +1102,7 @@ export function Workout(): JSX.Element {
           <SetLogInput
             kg={kgInput}
             reps={repsInput}
+            isBodyweight={currentExercise.isBodyweight ?? false}
             mode={editing ? 'editable' : setLogged ? 'post-log' : 'tinta'}
             onLog={() => {
               bumpActivity();

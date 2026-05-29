@@ -161,8 +161,21 @@ export interface PlannedExercise {
   swapReason?: string;
   sets: number;
   targetReps: number;
+  // For LOADED exercises: the external kg on the bar/stack (the load).
+  // For BODYWEIGHT exercises: the ADDED weight (belt/dumbbell; default 0 =
+  // pure bodyweight, negative = assisted). The TRAINING load used by
+  // volume/PR/progression is the EFFECTIVE load (bodyweight x fraction +
+  // targetKg) — see isBodyweight / bwFraction below. The UI shows a bodyweight
+  // pill + an optional "+ added" input instead of a barbell-style kg target.
   targetKg: number;
   restSec: number;
+  // Bodyweight model (bodyweightLoad.js). When true, targetKg is ADDED weight,
+  // not the full load — consumers must resolve effective load via the fraction.
+  isBodyweight?: boolean;
+  // Fraction of bodyweight this movement loads (pull-up/dip 1.0, push-up 0.65,
+  // core/plank 0). Present only when isBodyweight. Effective load =
+  // userBodyweightKg x bwFraction + targetKg(added).
+  bwFraction?: number;
 }
 
 export interface PlannedWorkoutOutput {

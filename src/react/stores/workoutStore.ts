@@ -50,9 +50,19 @@ export interface SessionContext {
 }
 
 export interface ExerciseHistoryEntry {
+  // For LOADED exercises: the external kg the user lifted.
+  // For BODYWEIGHT exercises: the EFFECTIVE load (bodyweight x fraction +
+  // addedKg) so PR/volume/progression math (which all read `kg`) are correct
+  // without per-consumer changes. The user-entered ADDED weight is preserved
+  // separately in `addedKg` for honest display ("+ X kg").
   kg: number;
   reps: number;
   rating: 'usor' | 'potrivit' | 'greu';
+  // Bodyweight exercises only: the added belt/dumbbell weight the user entered
+  // (0 = pure bodyweight, negative = assisted). Absent for loaded exercises
+  // (their `kg` already IS the entered load). Display-only; the training load
+  // is `kg` (effective).
+  addedKg?: number;
   // Phase 4 task_14: timestamp pentru aaFrictionDetect fast_sets pattern.
   // Optional pentru backward compat — logSet action auto-set Date.now()
   // dacă call site nu provides.

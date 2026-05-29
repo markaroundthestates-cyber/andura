@@ -106,6 +106,11 @@ interface SetLogInputProps {
   mode?: SetLogInputMode;
   onLog?: () => void; // 'tinta' mode CTA
   onEdit?: () => void; // 'post-log' mode pencil tap
+  // Bodyweight model (bodyweightLoad.js) — when true, `kg` is the ADDED weight
+  // (belt/dumbbell, default 0), NOT a barbell-style target. The target shows
+  // "X reps cu greutatea corpului" and the kg field becomes an optional
+  // "+ added weight" input (min 0). Default false = legacy loaded behavior.
+  isBodyweight?: boolean;
 }
 
 export function SetLogInput({
@@ -116,6 +121,7 @@ export function SetLogInput({
   mode = 'editable',
   onLog,
   onEdit,
+  isBodyweight = false,
 }: SetLogInputProps): JSX.Element {
   // Smoke 2026-05-28 #4 — display number sau gol cand value=0/NaN. Inputul
   // "0" lipit nu putea fi sters (Daniel: "trebuie sa pun 022"). Acum gol →
@@ -148,13 +154,23 @@ export function SetLogInput({
           >
             {reps}
           </span>
-          <span className="text-sm text-ink2">{t('setLog.targetReps')}</span>
-          <span
-            className="text-3xl font-semibold text-ink ml-2"
-            data-testid="setlog-tinta-kg"
-          >
-            {kg} kg
-          </span>
+          {/* Bodyweight: target is reps "cu greutatea corpului", NO barbell-
+              style kg target. Loaded: "reps + Y kg" as before. */}
+          {isBodyweight ? (
+            <span className="text-sm text-ink2" data-testid="setlog-tinta-bw">
+              {t('setLog.bodyweightTargetReps')}
+            </span>
+          ) : (
+            <>
+              <span className="text-sm text-ink2">{t('setLog.targetReps')}</span>
+              <span
+                className="text-3xl font-semibold text-ink ml-2"
+                data-testid="setlog-tinta-kg"
+              >
+                {kg} kg
+              </span>
+            </>
+          )}
         </div>
 
         <p className="text-xs uppercase tracking-wide font-medium text-ink2 mb-2 mt-3">
@@ -163,7 +179,7 @@ export function SetLogInput({
         <div className="flex gap-3 mb-4">
           <div className="flex-1">
             <label className="text-sm text-ink2 block mb-1" htmlFor="setlog-tinta-kg-input">
-              {t('setLog.kgLabel')}
+              {isBodyweight ? t('setLog.addedWeightLabel') : t('setLog.kgLabel')}
             </label>
             {/* Pulse ± dial flanks the free-type input (Maria 65 types; the dial
                 is the thumb-friendly add). Both feed the same onKgChange. */}
@@ -264,8 +280,21 @@ export function SetLogInput({
         <div className="flex items-center gap-2">
           <p className="flex-1 text-base text-ink" data-testid="setlog-postlog-text">
             <span className="text-3xl font-semibold">{reps}</span>
-            <span className="text-sm text-ink2 mx-2">{t('setLog.youDidRepsWith')}</span>
-            <span className="text-3xl font-semibold">{kg} kg</span>
+            {/* Bodyweight: "X reps cu greutatea corpului (+ Y kg)" — Y omitted
+                when 0 (pure bodyweight). Loaded: "X reps cu Y kg" as before. */}
+            {isBodyweight ? (
+              <>
+                <span className="text-sm text-ink2 mx-2">{t('setLog.youDidBodyweight')}</span>
+                {Number.isFinite(kg) && kg > 0 && (
+                  <span className="text-3xl font-semibold">+{kg} kg</span>
+                )}
+              </>
+            ) : (
+              <>
+                <span className="text-sm text-ink2 mx-2">{t('setLog.youDidRepsWith')}</span>
+                <span className="text-3xl font-semibold">{kg} kg</span>
+              </>
+            )}
           </p>
           <button
             type="button"
@@ -289,8 +318,10 @@ export function SetLogInput({
   // (gym sanity max bench world record ~325kg), reps 1-100. Show error
   // doar cand value out-of-range typed (NU initial 0 default). WCAG SC
   // 3.3.1 + SC 3.3.3.
+  // Bodyweight: kg is ADDED weight, valid from 0 (pure bodyweight) up. Loaded:
+  // 1-500 gym sanity range (the a11y error spec).
   const kgError =
-    !Number.isFinite(kg) || kg < 1 || kg > 500
+    !Number.isFinite(kg) || kg < (isBodyweight ? 0 : 1) || kg > 500
       ? t('setLog.kgError')
       : null;
   const repsError =
@@ -301,25 +332,25 @@ export function SetLogInput({
     <div className="flex gap-3 mb-6">
       <div className="flex-1">
         <label className="text-sm text-ink2 block mb-1" htmlFor="kg-input">
-          {t('setLog.kgLabelRequired')}
+          {isBodyweight ? t('setLog.addedWeightLabel') : t('setLog.kgLabelRequired')}
         </label>
         {/* Pulse ± dial flanks the free-type input — additive, never replaces
-            typing. Editable bounds kg 1-500 (a11y error spec). */}
+            typing. Editable bounds kg 1-500 loaded / 0-500 bodyweight added. */}
         <div className="flex items-center gap-2">
           <DialButton
             dir="down"
-            onPress={() => onKgChange(stepValue(kg, -0.5, 1, 500))}
-            ariaLabel={t('setLog.kgDecrease')}
+            onPress={() => onKgChange(stepValue(kg, -0.5, isBodyweight ? 0 : 1, 500))}
+            ariaLabel={isBodyweight ? t('setLog.addedWeightDecrease') : t('setLog.kgDecrease')}
             testId="kg-minus"
           />
           <input
             id="kg-input"
             type="number"
-            required
-            aria-required="true"
+            required={!isBodyweight}
+            aria-required={isBodyweight ? undefined : 'true'}
             aria-invalid={kgError ? 'true' : undefined}
             aria-describedby={kgError ? 'kg-input-error' : undefined}
-            min={1}
+            min={isBodyweight ? 0 : 1}
             max={500}
             value={kgDisplay}
             onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
@@ -329,8 +360,8 @@ export function SetLogInput({
           />
           <DialButton
             dir="up"
-            onPress={() => onKgChange(stepValue(kg, 0.5, 1, 500))}
-            ariaLabel={t('setLog.kgIncrease')}
+            onPress={() => onKgChange(stepValue(kg, 0.5, isBodyweight ? 0 : 1, 500))}
+            ariaLabel={isBodyweight ? t('setLog.addedWeightIncrease') : t('setLog.kgIncrease')}
             testId="kg-plus"
           />
         </div>
