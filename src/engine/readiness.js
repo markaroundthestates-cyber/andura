@@ -1,5 +1,6 @@
 import { DB, tod, todDate } from '../db.js';
 import { KCAL_TARGET, PROT_TARGET } from '../constants.js';
+import { nowDate as clockNowDate } from './clock.js';
 
 export const READINESS_PR   = 85;
 export const READINESS_HIGH = 70;
@@ -93,16 +94,18 @@ export function getTodayReadiness() {
  *   cade pe KCAL_TARGET flat (engine isolation + cold-start fara onboarding).
  * @param {number | null} [targetProt] tinta de proteine per-user (g/kg × greutate)
  *   — threaded de la React. Cand absent/null cade pe PROT_TARGET flat.
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
  *
  * Audit HIGH: tinta flat 2000/180 penaliza nedrept un user mic care mananca
  * corect (Maria tinta 1400, mananca 1400 → ratio 0.7 vs flat 2000 → -20 puncte
  * gresit). Acum ratio-ul de adecvare nutritionala se calculeaza fata de tinta
  * REALA per-user (aceeasi sursa pe care o foloseste wrapper-ul de nutritie).
  */
-export function getComputedReadinessScore(targetKcal, targetProt) {
+export function getComputedReadinessScore(targetKcal, targetProt, nowMs) {
   const r = getTodayReadiness();
   if (r == null) return null;
-  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  // §07.198-204: nowMs defaults to real clock → production byte-identical.
+  const yesterday = nowMs == null ? clockNowDate() : new Date(nowMs); yesterday.setDate(yesterday.getDate()-1);
   const yDate = todDate(yesterday);
   /** @type {Record<string, number>} */
   const kcals = /** @type {any} */ (DB.get('kcals')) || {};

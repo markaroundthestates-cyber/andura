@@ -1,4 +1,10 @@
 import { MS_PER_DAY } from '../constants.js';
+import { now as clockNow } from './clock.js';
+
+// §07.198-204: nowMs params below DEFAULT to the real clock (clock.js) so
+// production is byte-identical to the prior inline Date.now(). Injection exists
+// solely to pin the staleness / inactivity-decay / recalibration-due branches
+// in tests.
 // ══ CALIBRATION TIERS — User maturity levels for engine feature gating ═══════
 // 6 tiers from cold start (day 0) to optimized (180+ days).
 // Engines only run when enabled for the current tier — prevents false positives
@@ -151,7 +157,7 @@ export function _applyInactivityDecay(currentLevel, daysSinceLastSession) {
 
 /**
  * @typedef {{ session?: string|number, date?: string|number, ts?: number, baseline?: boolean, [k: string]: unknown }} CalibLog
- * @typedef {{ allLogs?: CalibLog[], allSessions?: unknown[], [k: string]: unknown }} CalibCtx
+ * @typedef {{ allLogs?: CalibLog[], allSessions?: unknown[], nowMs?: number, [k: string]: unknown }} CalibCtx
  *
  * Detect calibration level from log history.
  * Uses unique session count (by session ID or date) and first-session age.
@@ -163,6 +169,7 @@ export function _applyInactivityDecay(currentLevel, daysSinceLastSession) {
 export function detectCalibrationLevel(ctx) {
   /** @type {CalibLog[]} */
   const allLogs = ctx.allLogs ?? [];
+  const nowMs = ctx.nowMs == null ? clockNow() : ctx.nowMs;
 
   // Count unique sessions — a session = unique session timestamp or workout date
   const sessionKeys = new Set();
@@ -186,8 +193,8 @@ export function detectCalibrationLevel(ctx) {
     .filter(/** @returns {d is Date} */ (d) => Boolean(d));
   const firstDate = dates.length > 0
     ? new Date(Math.min(...dates.map(d => d.getTime())))
-    : new Date();
-  const daysSinceFirst = (Date.now() - firstDate.getTime()) / (1000 * 60 * 60 * 24);
+    : new Date(nowMs);
+  const daysSinceFirst = (nowMs - firstDate.getTime()) / (1000 * 60 * 60 * 24);
 
   if (daysSinceFirst < 7 || sessionsCount < 3)         return CALIBRATION_LEVELS.COLD_START;
 
@@ -213,7 +220,7 @@ export function detectCalibrationLevel(ctx) {
     .filter(/** @returns {d is Date} */ (d) => Boolean(d));
   if (nonBaselineDates.length > 0) {
     const lastDate = new Date(Math.max(...nonBaselineDates.map(d => d.getTime())));
-    const daysSince = Math.floor((Date.now() - lastDate.getTime()) / MS_PER_DAY);
+    const daysSince = Math.floor((nowMs - lastDate.getTime()) / MS_PER_DAY);
     levelName = _applyInactivityDecay(levelName, daysSince);
   }
 
@@ -227,12 +234,14 @@ export function detectCalibrationLevel(ctx) {
  *
  * @param {{ recalibrationFrequency?: string }} level
  * @param {string|number|Date|null|undefined} lastRecalibration
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
  * @returns {boolean}
  */
-export function shouldRecalibrate(level, lastRecalibration) {
+export function shouldRecalibrate(level, lastRecalibration, nowMs) {
   if (!lastRecalibration) return true;
 
-  const hoursSince = (Date.now() - new Date(lastRecalibration).getTime()) / (1000 * 60 * 60);
+  const ms = nowMs == null ? clockNow() : nowMs;
+  const hoursSince = (ms - new Date(lastRecalibration).getTime()) / (1000 * 60 * 60);
 
   switch (level.recalibrationFrequency) {
     case 'per_session':        return false;           // triggered after session, not time-based
@@ -256,11 +265,13 @@ export const contextSelectionEnabled = false;
  *
  * @param {CalibLog[]} logs
  * @param {{ rollingWindowMonths?: number }} level
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
  * @returns {CalibLog[]}
  */
-export function applyRollingWindow(logs, level) {
+export function applyRollingWindow(logs, level, nowMs) {
   if (!level.rollingWindowMonths) return logs;
-  const cutoff = Date.now() - level.rollingWindowMonths * 30 * MS_PER_DAY;
+  const ms = nowMs == null ? clockNow() : nowMs;
+  const cutoff = ms - level.rollingWindowMonths * 30 * MS_PER_DAY;
   return logs.filter(log => {
     const raw = log.date || log.ts;
     const d = raw ? new Date(raw) : null;

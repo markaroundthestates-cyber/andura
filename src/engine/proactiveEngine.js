@@ -8,6 +8,23 @@
 import { KCAL_TARGET } from '../constants.js';
 import { tod, todDate, todTs } from '../db.js';
 import { READINESS_PR, READINESS_MED } from './readiness.js';
+import { now as clockNow } from './clock.js';
+
+// §07.198-204: each check accepts an optional trailing `nowMs` that DEFAULTS to
+// the real clock (clock.js → Date.now). Production callers pass nothing, so the
+// computed windows ("last N days", staleness) are byte-identical to the prior
+// inline `new Date()` / `Date.now()`. Injection exists only to make the
+// date-dependent branches deterministically testable. NOTE: checks that anchor
+// on db.js tod()/todDate() ("today") still read the db.js clock for that anchor.
+
+/**
+ * Resolve a Date from optional injected epoch ms, defaulting to the real clock.
+ * @param {number} [nowMs]
+ * @returns {Date}
+ */
+function _nowDate(nowMs) {
+  return nowMs == null ? new Date(clockNow()) : new Date(nowMs);
+}
 
 /** @typedef {Record<string, number>} DateMap */
 /** @typedef {Record<string, number | {score?: number} | null>} ReadinessMap */
@@ -22,11 +39,12 @@ import { READINESS_PR, READINESS_MED } from './readiness.js';
 /**
  * @param {DateMap | null | undefined} prots
  * @param {number | null | undefined} bodyweightKg
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
  */
-export function checkProteinDeficit(prots, bodyweightKg) {
+export function checkProteinDeficit(prots, bodyweightKg, nowMs) {
   if (!prots || !bodyweightKg) return null;
   const last3 = Array.from({ length: 3 }, (_, i) => {
-    const d = new Date();
+    const d = _nowDate(nowMs);
     d.setDate(d.getDate() - i);
     return todDate(d);
   });
@@ -51,11 +69,14 @@ export function checkProteinDeficit(prots, bodyweightKg) {
  * Check 2: Sleep debt proxy — readiness trend descrescator.
  * 3+ zile consecutive cu readiness < 60.
  */
-/** @param {ReadinessMap | null | undefined} readiness */
-export function checkSleepDebt(readiness) {
+/**
+ * @param {ReadinessMap | null | undefined} readiness
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
+ */
+export function checkSleepDebt(readiness, nowMs) {
   if (!readiness) return null;
   const last5 = Array.from({ length: 5 }, (_, i) => {
-    const d = new Date();
+    const d = _nowDate(nowMs);
     d.setDate(d.getDate() - i);
     return todDate(d);
   });
@@ -86,8 +107,9 @@ export function checkSleepDebt(readiness) {
 /**
  * @param {ReadinessMap | null | undefined} readiness
  * @param {Array<{baseline?: boolean, ex?: string, ts?: number, isPR?: boolean}> | null | undefined} logs
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
  */
-export function checkPROpportunity(readiness, logs) {
+export function checkPROpportunity(readiness, logs, nowMs) {
   if (!readiness || !logs) return null;
   const today = tod();
   const todayScore = (() => {
@@ -97,7 +119,7 @@ export function checkPROpportunity(readiness, logs) {
   if (!todayScore || todayScore < READINESS_PR) return null;
 
   // Check last PR
-  const twoWeeksAgo = Date.now() - 14 * 24 * 3600 * 1000;
+  const twoWeeksAgo = (nowMs == null ? clockNow() : nowMs) - 14 * 24 * 3600 * 1000;
   const recentPR = logs.some((l) => l.isPR && (l.ts ?? 0) > twoWeeksAgo);
   if (!recentPR) {
     return {
@@ -119,12 +141,13 @@ export function checkPROpportunity(readiness, logs) {
  * @param {PaLog | null | undefined} logs
  * @param {Record<string, any> | null | undefined} muscleState
  * @param {Record<string, string[]> | null | undefined} muscleExercises
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
  */
-export function checkRecoveryGroups(logs, muscleState, muscleExercises) {
+export function checkRecoveryGroups(logs, muscleState, muscleExercises, nowMs) {
   if (!logs || logs.length === 0) return null;
   if (!muscleExercises) return null;
 
-  const now = Date.now();
+  const now = nowMs == null ? clockNow() : nowMs;
   /** @type {Record<string, number>} */
   const daysSinceLast = {};
 
@@ -157,8 +180,11 @@ export function checkRecoveryGroups(logs, muscleState, muscleExercises) {
 /**
  * Check 5: Streak de antrenament — motivational.
  */
-/** @param {PaLog | null | undefined} logs */
-export function checkTrainingStreak(logs) {
+/**
+ * @param {PaLog | null | undefined} logs
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
+ */
+export function checkTrainingStreak(logs, nowMs) {
   if (!logs || logs.length === 0) return null;
   const days = new Set(
     logs.map((l) => {
@@ -167,7 +193,7 @@ export function checkTrainingStreak(logs) {
     }).filter(Boolean)
   );
   let streak = 0;
-  const today = new Date();
+  const today = _nowDate(nowMs);
   for (let i = 0; ; i++) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
@@ -192,11 +218,12 @@ export function checkTrainingStreak(logs) {
 /**
  * @param {DateMap | null | undefined} kcals
  * @param {number | null | undefined} currentKcalTarget
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
  */
-export function checkKcalDeficit(kcals, currentKcalTarget) {
+export function checkKcalDeficit(kcals, currentKcalTarget, nowMs) {
   if (!kcals || !currentKcalTarget) return null;
   const last3 = Array.from({ length: 3 }, (_, i) => {
-    const d = new Date();
+    const d = _nowDate(nowMs);
     d.setDate(d.getDate() - i);
     return todDate(d);
   });
@@ -218,11 +245,15 @@ export function checkKcalDeficit(kcals, currentKcalTarget) {
 /**
  * Check 7: Sesiune planificata dar ore de varf depasite.
  */
-/** @param {Record<number, number> | null | undefined} peakHours */
-export function checkPeakHours(peakHours) {
+/**
+ * @param {Record<number, number> | null | undefined} peakHours
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
+ */
+export function checkPeakHours(peakHours, nowMs) {
   if (!peakHours || Object.keys(peakHours).length === 0) return null;
-  const hour = new Date().getHours();
-  const today = new Date().getDay(); // 0-6
+  const _d = _nowDate(nowMs);
+  const hour = _d.getHours();
+  const today = _d.getDay(); // 0-6
   const peakStart = peakHours[today];
   if (peakStart !== undefined && hour > peakStart + 2) {
     return {
@@ -241,11 +272,12 @@ export function checkPeakHours(peakHours) {
 /**
  * @param {DateMap | null | undefined} weights
  * @param {boolean | null | undefined} isInCut
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
  */
-export function checkWeightTrend(weights, isInCut) {
+export function checkWeightTrend(weights, isInCut, nowMs) {
   if (!isInCut || !weights) return null;
   const last7 = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date();
+    const d = _nowDate(nowMs);
     d.setDate(d.getDate() - i);
     return todDate(d);
   });
@@ -270,13 +302,16 @@ export function checkWeightTrend(weights, isInCut) {
 /**
  * Check 9: Nu s-a antrenat 4+ zile.
  */
-/** @param {PaLog | null | undefined} logs */
-export function checkInactivity(logs) {
+/**
+ * @param {PaLog | null | undefined} logs
+ * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
+ */
+export function checkInactivity(logs, nowMs) {
   if (!logs || logs.length === 0) return null;
   const lastTs = Math.max(...logs.map((l) => l.ts ?? 0).filter(Boolean));
   // No usable ts (empty filter → Math.max() === -Infinity) → cannot compute.
   if (!Number.isFinite(lastTs) || lastTs <= 0) return null;
-  const daysSinceLast = (Date.now() - lastTs) / (24 * 3600 * 1000);
+  const daysSinceLast = ((nowMs == null ? clockNow() : nowMs) - lastTs) / (24 * 3600 * 1000);
   if (daysSinceLast >= 4) {
     return {
       type: 'inactivity',
@@ -320,22 +355,24 @@ export function runProactiveChecks(ctx) {
   const {
     prots, weights, kcals, waters, readiness, logs,
     muscleState, isInCut, peakHours,
-    user,
+    user, nowMs,
   } = safe;
 
   const bodyweightKg = user?.weight ?? weights?.[tod()] ?? null;
   const currentKcalTarget = user?.kcalTarget ?? null;
 
+  // §07.198-204: ctx.nowMs (optional) is threaded into every clock-reading check;
+  // omitted in production → each check falls back to the real clock (byte-identical).
   const checks = [
-    checkProteinDeficit(prots, bodyweightKg),
-    checkSleepDebt(readiness),
-    checkPROpportunity(readiness, logs),
-    checkRecoveryGroups(logs, muscleState, safe.muscleExercises),
-    checkTrainingStreak(logs),
-    checkKcalDeficit(kcals, currentKcalTarget),
-    checkPeakHours(peakHours),
-    checkWeightTrend(weights, isInCut),
-    checkInactivity(logs),
+    checkProteinDeficit(prots, bodyweightKg, nowMs),
+    checkSleepDebt(readiness, nowMs),
+    checkPROpportunity(readiness, logs, nowMs),
+    checkRecoveryGroups(logs, muscleState, safe.muscleExercises, nowMs),
+    checkTrainingStreak(logs, nowMs),
+    checkKcalDeficit(kcals, currentKcalTarget, nowMs),
+    checkPeakHours(peakHours, nowMs),
+    checkWeightTrend(weights, isInCut, nowMs),
+    checkInactivity(logs, nowMs),
     checkHydration(waters),
   ];
 
