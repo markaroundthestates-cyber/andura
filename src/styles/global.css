@@ -1046,6 +1046,14 @@ html, body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
+/* a11y (2026-05-29) — CalendarHeatmap ARIA grid > row > gridcell. The week
+   role="row" wrapper uses display:contents so its gridcell children remain
+   direct items of the parent grid-cols-7 grid (layout unchanged) while the row
+   semantics satisfy the ARIA grid contract (axe: no gridcell-without-row). */
+.cal-week {
+  display: contents;
+}
+
 /* ══ DESKTOP PHONE BEZEL (≥768px) — Andura Pulse device frame ══════════════
    Daniel-approved Pulse redesign ports the mockup PhoneFrame (app.jsx: bezel +
    notch, 402×856, radius 52px, screen radius 42px). On desktop the app reads as
