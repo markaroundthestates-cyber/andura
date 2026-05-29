@@ -213,36 +213,47 @@ export function Antrenor(): JSX.Element {
 
       {/* Pulse readiness HERO (mockup interfata-noua/screens-antrenor.jsx:22-33)
           — readiness is promoted from a flat StatsGrid cell to a big animated
-          ReadinessOrb. The orb carries the score; the verdict line (kept via
-          ReadinessVerdict for its role=status + score/100 + canPR contract) and
-          a "primed for a PR" pill sit beside it. Renders only when readiness is
-          known (T0 fresh / no log today → orb hidden, signals still shown by the
-          compact strip + verdict below). */}
-      {readiness && (
-        <div
-          className="pulse-card pulse-card-glow overflow-hidden p-4 mb-4 flex items-center gap-4 animate-card-rise delay-75"
-          data-testid="readiness-hero"
-          style={{ ['--wash' as string]: 'var(--aqua)' }}
-        >
-          <ReadinessOrb
-            score={readiness.score}
-            label={t('stats.readiness')}
-            canPR={readiness.canPR}
-          />
-          <div className="flex-1 min-w-0">
-            <Kicker color="var(--aqua)">{t('readinessVerdictWidget.ariaLabel')}</Kicker>
-            <div className="mt-1.5">
-              <ReadinessVerdict readiness={readiness} />
-            </div>
-            {readiness.canPR && (
-              <Pill color="var(--volt)" solid>
-                <Zap className="w-3 h-3" aria-hidden="true" fill="currentColor" />
-                {t('antrenor.primedForPr')}
-              </Pill>
-            )}
-          </div>
+          ReadinessOrb. The orb is the living hero and is ALWAYS present (Daniel
+          CEO LOCKED 2026-05-29). When readiness is known: orb carries the real
+          score + the ReadinessVerdict line (role=status + score/100 + canPR
+          contract) + a "primed for a PR" pill. When readiness is unknown (T0
+          fresh / no log → engine refuses a verdict, honesty invariant): the orb
+          breathes in placeholder mode (em-dash, ring 0, dimmed) with a microcopy
+          line inviting the first log — NEVER a fabricated number, no PR pill. */}
+      <div
+        className="pulse-card pulse-card-glow overflow-hidden p-4 mb-4 flex items-center gap-4 animate-card-rise delay-75"
+        data-testid="readiness-hero"
+        style={{ ['--wash' as string]: 'var(--aqua)' }}
+      >
+        <ReadinessOrb
+          score={readiness ? readiness.score : null}
+          label={t('stats.readiness')}
+          canPR={readiness?.canPR ?? false}
+        />
+        <div className="flex-1 min-w-0">
+          <Kicker color="var(--aqua)">{t('readinessVerdictWidget.ariaLabel')}</Kicker>
+          {readiness ? (
+            <>
+              <div className="mt-1.5">
+                <ReadinessVerdict readiness={readiness} />
+              </div>
+              {readiness.canPR && (
+                <Pill color="var(--volt)" solid>
+                  <Zap className="w-3 h-3" aria-hidden="true" fill="currentColor" />
+                  {t('antrenor.primedForPr')}
+                </Pill>
+              )}
+            </>
+          ) : (
+            <p
+              className="font-serif italic text-ink2 text-sm mt-1.5"
+              data-testid="readiness-empty-microcopy"
+            >
+              {t('antrenor.readinessEmpty')}
+            </p>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Compact signal strip — streak + fatigue (readiness now lives in the
           orb hero above, so the strip drops that tile via `compact`). Mockup

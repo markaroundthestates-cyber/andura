@@ -171,6 +171,7 @@
     "subtitle": "Cine te ghideaza in sala.",
     "errorBanner": "Nu am putut incarca recomandarile coach-ului. Poti incepe sesiunea oricum.",
     "primedForPr": "Pregatit de PR",
+    "readinessEmpty": "Logheaza prima sesiune ca sa-ti trezesti readiness-ul.",
     "header": {
       "dateSeparator": "·"
     }

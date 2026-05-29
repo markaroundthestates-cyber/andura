@@ -38,6 +38,22 @@ describe('Pulse ReadinessOrb — render + props', () => {
     expect(screen.getByTestId('readiness-orb')).toHaveAttribute('data-can-pr', 'false');
   });
 
+  it('placeholder mode (score=null): em-dash, data-empty, neutral canPR — honest empty state', () => {
+    // Honesty invariant (Daniel CEO LOCKED 2026-05-29): no readiness history →
+    // the engine refuses a verdict, so the orb shows "—" (NOT 0, NOT a number),
+    // flags data-empty, and forces neutral canPR even if canPR is passed true.
+    render(<ReadinessOrb score={null} label="readiness" canPR />);
+    expect(screen.getByTestId('readiness-orb-score')).toHaveTextContent('—');
+    expect(screen.getByTestId('readiness-orb')).toHaveAttribute('data-empty', 'true');
+    expect(screen.getByTestId('readiness-orb')).toHaveAttribute('data-can-pr', 'false');
+    expect(screen.getByTestId('readiness-orb-label')).toHaveTextContent('readiness');
+  });
+
+  it('placeholder mode keeps the breathing orb-core layer (living hero stays present)', () => {
+    const { container } = render(<ReadinessOrb score={null} label="readiness" />);
+    expect(container.querySelector('.orb-core')).toBeInTheDocument();
+  });
+
   it('decoration layers are aria-hidden (score/label remain readable)', () => {
     const { container } = render(<ReadinessOrb score={80} label="readiness" />);
     // Every span.orb-* layer is decorative.

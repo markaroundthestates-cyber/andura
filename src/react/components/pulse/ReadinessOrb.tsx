@@ -29,11 +29,14 @@ import { useCountUp } from '../../hooks/useCountUp';
 import { Ring } from './Ring';
 
 interface ReadinessOrbProps {
-  /** Readiness score 0-100 (drives both ring fill + count-up). */
-  score?: number;
+  /** Readiness score 0-100 (drives both ring fill + count-up). `null`/absent →
+   *  honest empty state (em-dash, ring 0, neutral aqua, dimmed) — the engine
+   *  refuses a readiness verdict without history, so we NEVER fabricate a
+   *  number. The orb still breathes (it is the living hero). */
+  score?: number | null;
   /** Localized center label (e.g. "readiness"). Required so no English leaks. */
   label?: string;
-  /** When true, tints the halo toward volt (PR-primed cue). */
+  /** When true, tints the halo toward volt (PR-primed cue). Ignored when empty. */
   canPR?: boolean;
 }
 
@@ -42,12 +45,18 @@ export function ReadinessOrb({
   label = '',
   canPR = false,
 }: ReadinessOrbProps): JSX.Element {
+  // Honest empty state: no real readiness yet → no number. The orb stays
+  // present + breathing (living hero), but shows an em-dash, ring at 0,
+  // neutral aqua pulse (NOT the volt PR cue), and slightly reduced opacity.
+  const isEmpty = score === null || score === undefined;
   // Real count-up (rounded int) — animates once per score change, snaps under
-  // reduced motion. Clamp the ring fill to a valid 0-100 percentage.
-  const display = useCountUp(score);
-  const pct = Math.min(100, Math.max(0, score));
+  // reduced motion. Clamp the ring fill to a valid 0-100 percentage. When empty,
+  // count up from a fixed 0 so the hook stays unconditional (rules-of-hooks).
+  const display = useCountUp(isEmpty ? 0 : score);
+  const pct = isEmpty ? 0 : Math.min(100, Math.max(0, score));
   // PR-primed → lean the brighter pulse ring toward volt (the "charged" cue).
-  const pulseColor = canPR ? 'var(--volt)' : 'var(--aqua)';
+  // Empty state forces neutral aqua (no fabricated PR signal).
+  const pulseColor = !isEmpty && canPR ? 'var(--volt)' : 'var(--aqua)';
 
   return (
     <div
@@ -57,9 +66,11 @@ export function ReadinessOrb({
         placeItems: 'center',
         width: 168,
         height: 168,
+        opacity: isEmpty ? 0.7 : 1,
       }}
       data-testid="readiness-orb"
-      data-can-pr={canPR ? 'true' : 'false'}
+      data-can-pr={!isEmpty && canPR ? 'true' : 'false'}
+      data-empty={isEmpty ? 'true' : 'false'}
     >
       {/* Decorative living layers: breathing core + counter-rotating auras +
           two staggered halo pulse rings. All aria-hidden. */}
@@ -75,7 +86,7 @@ export function ReadinessOrb({
             style={{ fontSize: 52, fontWeight: 700, lineHeight: 1 }}
             data-testid="readiness-orb-score"
           >
-            {display}
+            {isEmpty ? '—' : display}
           </div>
           {label && (
             <div

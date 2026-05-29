@@ -159,13 +159,13 @@ describe('Antrenor home — base render', () => {
   it('StatsGrid placeholder cand fatigue null (compact strip — readiness in orb hero)', () => {
     // Pulse Coach-home (2026-05-29): readiness is promoted to the ReadinessOrb
     // hero, so the compact strip drops the readiness tile (stats-readiness no
-    // longer rendered on this screen). Fatigue stays in the strip. With
-    // readiness null (default mock) the orb hero is also hidden, so neither
-    // stats-readiness nor the hero appears.
+    // longer rendered on this screen). Fatigue stays in the strip. The orb hero
+    // is now ALWAYS present (Daniel CEO LOCKED) — with readiness null it shows
+    // the honest placeholder (asserted in the readiness-hero describe block).
     renderAntrenor();
     expect(screen.getByTestId('stats-fatigue')).toHaveTextContent('-');
     expect(screen.queryByTestId('stats-readiness')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('readiness-hero')).not.toBeInTheDocument();
+    expect(screen.getByTestId('readiness-hero')).toBeInTheDocument();
   });
 });
 
@@ -351,6 +351,58 @@ describe('Antrenor home — F4 readiness verdict', () => {
     // Default mock returns readiness=null; loading state renders empty stats
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(screen.queryByRole('status', { name: /Verdict readiness|Readiness verdict/i })).not.toBeInTheDocument();
+  });
+
+  it('no-data → readiness orb present in placeholder mode (em-dash, microcopy, no PR pill)', async () => {
+    // Honesty invariant (Daniel CEO LOCKED 2026-05-29): the breathing orb is the
+    // ALWAYS-present hero, but with no readiness history the engine refuses a
+    // verdict, so the orb shows an em-dash "—" (NOT 0, NOT a fabricated number)
+    // + a microcopy line inviting the first log, and NO "primed for a PR" pill.
+    renderAntrenor();
+    // Default mock returns readiness=null; flush the async aggregate microtask.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const hero = screen.getByTestId('readiness-hero');
+    expect(hero).toBeInTheDocument();
+    const orb = screen.getByTestId('readiness-orb');
+    expect(orb).toHaveAttribute('data-empty', 'true');
+    expect(orb).toHaveAttribute('data-can-pr', 'false');
+    expect(screen.getByTestId('readiness-orb-score')).toHaveTextContent('—');
+    expect(screen.getByTestId('readiness-empty-microcopy')).toBeInTheDocument();
+    // No fabricated readiness verdict + no PR pill in the empty state.
+    expect(screen.queryByRole('status', { name: /Verdict readiness|Readiness verdict/i })).not.toBeInTheDocument();
+    expect(screen.queryByText(/poti incerca PR|you can try a PR|Primed for a PR|Pregatit de PR/i)).not.toBeInTheDocument();
+  });
+
+  it('with-data → orb shows real score + verdict (no placeholder)', async () => {
+    vi.mocked(getCoachToday).mockResolvedValueOnce({
+      readiness: {
+        score: 85,
+        label: 'Zi de PR',
+        color: 'var(--green)',
+        volumeMultiplier: 1.1,
+        canPR: true,
+      },
+      fatigue: null,
+      plannedWorkout: null,
+      isRestDay: true,
+      patternsBanner: [],
+      prWallRecent: [],
+      alerts: [],
+      restReason: null,
+      source: 'engine',
+    });
+    renderAntrenor();
+    const verdict = await screen.findByRole('status', { name: /Verdict readiness|Readiness verdict/i });
+    expect(verdict).toHaveTextContent('85/100');
+    const orb = screen.getByTestId('readiness-orb');
+    // Real-score mode: not empty, no em-dash, no placeholder microcopy. (The orb
+    // count-up digits tween 0→85 via rAF in a live browser; jsdom never flushes
+    // rAF on the post-async value change, so we assert the orb is in score-mode
+    // via data-empty + the absence of the "—" placeholder rather than digits.)
+    expect(orb).toHaveAttribute('data-empty', 'false');
+    expect(orb).toHaveAttribute('data-can-pr', 'true');
+    expect(screen.getByTestId('readiness-orb-score')).not.toHaveTextContent('—');
+    expect(screen.queryByTestId('readiness-empty-microcopy')).not.toBeInTheDocument();
   });
 
   it('shows poti incerca PR hint cand canPR=true', async () => {

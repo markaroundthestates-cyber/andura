@@ -171,6 +171,7 @@
     "subtitle": "Your guide in the gym.",
     "errorBanner": "Couldn't load coach recommendations. You can start the session anyway.",
     "primedForPr": "Primed for a PR",
+    "readinessEmpty": "Log your first session to wake your readiness.",
     "header": {
       "dateSeparator": "·"
     }
