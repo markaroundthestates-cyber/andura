@@ -105,7 +105,7 @@ export function Layout(): JSX.Element {
         {/* relative z-10 lifts routed content above the z-0 AuroraBackground —
             a positioned z-0 layer otherwise paints over static siblings. The
             fixed chrome (nav z-50, SessionPill, banners) already sits higher. */}
-        <main id="main-content" className={`relative z-10 flex-1 ${inSession ? 'pb-0' : 'pb-16'}`}>
+        <main id="main-content" className={`relative z-10 flex-1 ${inSession ? 'pb-0' : 'app-content-pad'}`}>
           <ErrorBoundary>
             <Suspense fallback={<LoadingSkeleton testId="layout-suspense" />}>
               {/* Wave C3 (2026-05-28) — page transition uses animate-page-enter

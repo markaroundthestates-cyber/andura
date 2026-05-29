@@ -38,6 +38,21 @@ export function InstallPrompt(): JSX.Element | null {
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
+  // Banner floats `fixed bottom-20` ABOVE the BottomNav. While it is visible,
+  // flag <html> so global.css bumps --app-bottom-chrome by the banner height —
+  // every screen's bottom CTA then clears BOTH nav AND banner (deep-smoke V2
+  // desktop phone-frame fix). Cleared when hidden/unmounted so no dead gap.
+  const visible = !dismissed && deferredEvent !== null;
+  useEffect(() => {
+    const root = document.documentElement;
+    if (visible) {
+      root.setAttribute('data-install-prompt', '1');
+    } else {
+      root.removeAttribute('data-install-prompt');
+    }
+    return () => root.removeAttribute('data-install-prompt');
+  }, [visible]);
+
   async function handleInstall(): Promise<void> {
     if (!deferredEvent) return;
     await deferredEvent.prompt();
@@ -57,7 +72,7 @@ export function InstallPrompt(): JSX.Element | null {
     setDeferredEvent(null);
   }
 
-  if (dismissed || !deferredEvent) return null;
+  if (!visible) return null;
 
   return (
     // E2E-01: outer fixed layer spans left-3/right-3 but is pointer-events-none

@@ -68,6 +68,21 @@ describe('InstallPrompt — PWA installable banner', () => {
     expect(promptFn).toHaveBeenCalled();
   });
 
+  it('flags <html> data-install-prompt while banner visible so content clears it', () => {
+    const { unmount } = render(<InstallPrompt />);
+    expect(document.documentElement.hasAttribute('data-install-prompt')).toBe(false);
+    act(() => {
+      dispatchBeforeInstall();
+    });
+    // Visible → flag set (global.css bumps --app-bottom-chrome by banner height
+    // so bottom CTAs clear BOTH nav AND banner).
+    expect(document.documentElement.getAttribute('data-install-prompt')).toBe('1');
+    fireEvent.click(screen.getByTestId('install-prompt-dismiss'));
+    expect(document.documentElement.hasAttribute('data-install-prompt')).toBe(false);
+    unmount();
+    expect(document.documentElement.hasAttribute('data-install-prompt')).toBe(false);
+  });
+
   it('no diacritics in UI text', () => {
     render(<InstallPrompt />);
     act(() => {
