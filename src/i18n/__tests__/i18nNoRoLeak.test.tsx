@@ -81,7 +81,6 @@ import { ProjectionStrip } from '../../react/components/Progres/ProjectionStrip'
 import { NutritionInline } from '../../react/components/NutritionInline';
 import { ObiectivCard } from '../../react/components/Progres/ObiectivCard';
 import { LogWeight } from '../../react/routes/screens/progres/LogWeight';
-import { BodyData } from '../../react/routes/screens/progres/BodyData';
 import { WeightTimeline } from '../../react/routes/screens/progres/WeightTimeline';
 import { WeightLogList } from '../../react/routes/screens/progres/WeightLogList';
 import { useProgresStore } from '../../react/stores/progresStore';
@@ -660,14 +659,6 @@ describe('Wave C2 i18n — no RO leak under EN locale (Daniel mandate)', () => {
     // Clear date → date-required error surfaces.
     fireEvent.change(screen.getByTestId('weight-date-input'), { target: { value: '' } });
     assertNoRoLeak('LogWeight date-required error', container.textContent ?? '');
-  });
-
-  it('BodyData screen renders without RO leak under EN (incl. range error)', () => {
-    const { container } = render(withRouter('/app/progres/body-data', <BodyData />));
-    assertNoRoLeak('BodyData default', container.textContent ?? '');
-    // Type out-of-range biceps → range error message surfaces.
-    fireEvent.change(screen.getByTestId('bd-bicepsCm'), { target: { value: '250' } });
-    assertNoRoLeak('BodyData range error', container.textContent ?? '');
   });
 
   it('WeightTimeline renders without RO leak under EN (empty + seeded)', () => {

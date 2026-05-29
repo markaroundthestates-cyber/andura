@@ -508,6 +508,7 @@
       "method": "US Navy estimate",
       "ariaLabel": "Estimated body fat",
       "sourceUsNavy": "US Navy",
+      "sourceSkinfold": "Skinfold",
       "sourceEstimated": "estimated",
       "sourceManual": "manual",
       "captionApprox": "Approximate estimate. ",
@@ -577,8 +578,6 @@
     "logWeightToday": "Log weight today",
     "lastWeighIn": "Last weigh-in",
     "viewWeightTrend": "View weight trend",
-    "bodyMeasurements": "Body measurements",
-    "lastMeasurement": "Last measurement",
     "alertsToday": "Alerts today",
     "zone": {
       "obiectiv": "Goal",
@@ -607,13 +606,6 @@
         "viewToggleAriaLabel": "Toggle front / back view"
       }
     },
-    "measurements": {
-      "waist": "Waist",
-      "chest": "Chest",
-      "hips": "Hips",
-      "biceps": "Biceps",
-      "thigh": "Thigh"
-    },
     "logWeight": {
       "title": "Log weight",
       "backAriaLabel": "Back",
@@ -625,23 +617,6 @@
       "cancelCta": "Cancel",
       "kgError": "Kg between 30 and 250.",
       "dateError": "Date required."
-    },
-    "bodyData": {
-      "title": "Body measurements",
-      "backAriaLabel": "Back",
-      "dateLabel": "Date",
-      "saveCta": "Save",
-      "cancelCta": "Cancel",
-      "rangeError": "Unrealistic value — check the unit (cm). Range {min}-{max} cm.",
-      "fieldLabel": "{field} (cm)",
-      "fields": {
-        "waist": "Waist",
-        "neck": "Neck",
-        "chest": "Chest",
-        "hips": "Hips",
-        "biceps": "Biceps",
-        "thigh": "Thigh"
-      }
     },
     "weightTimeline": {
       "title": "Weight",
@@ -1280,8 +1255,18 @@
       "bfManual": "I'll set it myself",
       "bfSourceUsNavy": "US Navy",
       "bfSourceEstimated": "Estimated",
+      "bfSourceSkinfold": "Skinfold",
+      "hip": "Hip (cm)",
       "bfHint": "Fill in neck, waist and height for a US Navy estimate. Until then we show a demographic estimate.",
-      "bodyCompFooter": "Calculated automatically (US Navy: waist + neck + height + sex) or set by you. Falls back to a demographic estimate when measurements are missing."
+      "bodyCompFooter": "Calculated automatically (US Navy: waist + neck + height + sex) or set by you. Falls back to a demographic estimate when measurements are missing.",
+      "skinfoldHeading": "Skinfolds (advanced, optional)",
+      "skinfoldToggle": "I measure with a caliper",
+      "skinfoldHint": "Optional. With a caliper (mm) we use the Jackson-Pollock 3-site method, more accurate than tape. Leave it off if you don't have one.",
+      "skinfoldChest": "Chest (mm)",
+      "skinfoldAbdomen": "Abdomen (mm)",
+      "skinfoldThigh": "Thigh (mm)",
+      "skinfoldTriceps": "Triceps (mm)",
+      "skinfoldSuprailiac": "Suprailiac (mm)"
     },
     "notifications": {
       "title": "Notifications",

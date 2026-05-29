@@ -19,6 +19,7 @@ import { Percent } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useProgresStore, latestBodyMeasurements } from '../../stores/progresStore';
 import { estimateBF_USNavy } from '../../../engine/usNavyBF.js';
+import { estimateBF_skinfold3 } from '../../../engine/skinfoldBF.js';
 import { estimateBfDeurenbergCapped } from '../../../engine/bodyComposition.js';
 import { getCurrentWeightKg } from '../../lib/userTdee';
 import { DB } from '../../../db.js';
@@ -56,6 +57,27 @@ export function BodyFatStrip(): JSX.Element {
     bfNavy = estimateBF_USNavy(args);
   }
 
+  // §progress-v2 — Tier 0.5 (MAI ACURAT) — skinfold J-P 3-site cand toate cele 3
+  // site-uri masurate cu caliper (mm). Engine alege site-urile dupa sex. Cand
+  // produce o valoare, are prioritate peste US Navy. Necesita varsta (in formula).
+  const sfArgs: {
+    sex?: string;
+    age?: number;
+    chest_mm?: number;
+    abdomen_mm?: number;
+    thigh_mm?: number;
+    triceps_mm?: number;
+    suprailiac_mm?: number;
+  } = {};
+  if (sex) sfArgs.sex = sex;
+  if (age) sfArgs.age = age;
+  if (latest.chestSkinfoldMm != null) sfArgs.chest_mm = latest.chestSkinfoldMm;
+  if (latest.abdomenSkinfoldMm != null) sfArgs.abdomen_mm = latest.abdomenSkinfoldMm;
+  if (latest.thighSkinfoldMm != null) sfArgs.thigh_mm = latest.thighSkinfoldMm;
+  if (latest.tricepsSkinfoldMm != null) sfArgs.triceps_mm = latest.tricepsSkinfoldMm;
+  if (latest.suprailiacSkinfoldMm != null) sfArgs.suprailiac_mm = latest.suprailiacSkinfoldMm;
+  const bfSkinfold = estimateBF_skinfold3(sfArgs);
+
   // Tier 2 (ESTIMAT) — Deurenberg din onboarding cu cap high-BMI (mereu
   // disponibil post-onb). Smoke 2026-05-28 #1: la BMI>=27 cap-ul `min(raw,
   // BMI×0.85)` reduce bias-ul cunoscut al formulei Deurenberg.
@@ -73,14 +95,18 @@ export function BodyFatStrip(): JSX.Element {
   const bfOverrideRaw = DB.get('bf-override');
   const bfOverride = bfOverrideRaw != null ? Number(bfOverrideRaw) : null;
   const hasOverride = bfOverride != null && Number.isFinite(bfOverride);
-  const bfAuto = bfNavy ?? bfDeurenberg;
+  // Priority auto: skinfold (most accurate) > US Navy > Deurenberg.
+  const bfAuto = bfSkinfold ?? bfNavy ?? bfDeurenberg;
   const bf = hasOverride ? bfOverride : bfAuto;
-  const isUsingDeurenberg = !hasOverride && bfNavy == null && bfDeurenberg != null;
+  const isUsingDeurenberg =
+    !hasOverride && bfSkinfold == null && bfNavy == null && bfDeurenberg != null;
   const sourceLabel = hasOverride
     ? t('progres.bodyFat.sourceManual')
-    : bfNavy != null
-      ? t('progres.bodyFat.sourceUsNavy')
-      : t('progres.bodyFat.sourceEstimated');
+    : bfSkinfold != null
+      ? t('progres.bodyFat.sourceSkinfold')
+      : bfNavy != null
+        ? t('progres.bodyFat.sourceUsNavy')
+        : t('progres.bodyFat.sourceEstimated');
 
   return (
     <section

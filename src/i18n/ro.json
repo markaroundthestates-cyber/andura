@@ -508,6 +508,7 @@
       "method": "Estimare US Navy",
       "ariaLabel": "Grasime corporala estimata",
       "sourceUsNavy": "US Navy",
+      "sourceSkinfold": "Pliuri",
       "sourceEstimated": "estimat",
       "sourceManual": "manual",
       "captionApprox": "Estimat aproximativ. ",
@@ -577,8 +578,6 @@
     "logWeightToday": "Logheaza greutate azi",
     "lastWeighIn": "Ultima cantarire",
     "viewWeightTrend": "Vezi trend greutate",
-    "bodyMeasurements": "Masuratori corp",
-    "lastMeasurement": "Ultima masurare",
     "alertsToday": "Alerte azi",
     "zone": {
       "obiectiv": "Obiectiv",
@@ -607,13 +606,6 @@
         "viewToggleAriaLabel": "Comuta vedere fata / spate"
       }
     },
-    "measurements": {
-      "waist": "Talie",
-      "chest": "Piept",
-      "hips": "Sold",
-      "biceps": "Biceps",
-      "thigh": "Coapsa"
-    },
     "logWeight": {
       "title": "Logheaza greutate",
       "backAriaLabel": "Inapoi",
@@ -625,23 +617,6 @@
       "cancelCta": "Anuleaza",
       "kgError": "Kg intre 30 si 250.",
       "dateError": "Data necesara."
-    },
-    "bodyData": {
-      "title": "Masuratori corp",
-      "backAriaLabel": "Inapoi",
-      "dateLabel": "Data",
-      "saveCta": "Salveaza",
-      "cancelCta": "Anuleaza",
-      "rangeError": "Valoare nerealista — verifica unitatea (cm). Banda {min}-{max} cm.",
-      "fieldLabel": "{field} (cm)",
-      "fields": {
-        "waist": "Talie",
-        "neck": "Gat",
-        "chest": "Piept",
-        "hips": "Sold",
-        "biceps": "Biceps",
-        "thigh": "Coapsa"
-      }
     },
     "weightTimeline": {
       "title": "Greutate",
@@ -1280,8 +1255,18 @@
       "bfManual": "Editez manual",
       "bfSourceUsNavy": "US Navy",
       "bfSourceEstimated": "Estimat",
+      "bfSourceSkinfold": "Pliuri",
+      "hip": "Sold (cm)",
       "bfHint": "Completeaza gat, talie si inaltime pentru estimarea US Navy. Pana atunci aratam o estimare demografica.",
-      "bodyCompFooter": "Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori."
+      "bodyCompFooter": "Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori.",
+      "skinfoldHeading": "Pliuri cutanate (avansat, optional)",
+      "skinfoldToggle": "Masor cu caliper",
+      "skinfoldHint": "Optional. Cu caliper (mm) folosim metoda Jackson-Pollock 3 puncte, mai acurata decat banda. Lasa-l oprit daca nu ai caliper.",
+      "skinfoldChest": "Piept (mm)",
+      "skinfoldAbdomen": "Abdomen (mm)",
+      "skinfoldThigh": "Coapsa (mm)",
+      "skinfoldTriceps": "Triceps (mm)",
+      "skinfoldSuprailiac": "Suprailiac (mm)"
     },
     "notifications": {
       "title": "Notificari",

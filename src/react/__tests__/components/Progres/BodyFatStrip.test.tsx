@@ -43,6 +43,23 @@ describe('BodyFatStrip — Wave C2 i18n EN default', () => {
     expect(screen.getByTestId('bodyfat-source').textContent).toMatch(/US Navy/);
   });
 
+  // §progress-v2 — skinfold J-P (mai acurat) overrides US Navy.
+  it('arata sursa "Skinfold" cand skinfold caliper sites masurate (overrides Navy)', () => {
+    // Navy complet + skinfold complet → skinfold castiga (sex m: piept/abdomen/coapsa).
+    useProgresStore.getState().addBodyDataEntry({
+      date: '2026-05-27',
+      waistCm: 85,
+      neckCm: 38,
+      chestSkinfoldMm: 12,
+      abdomenSkinfoldMm: 20,
+      thighSkinfoldMm: 14,
+    });
+    render(<BodyFatStrip />);
+    expect(screen.getByTestId('bodyfat-source').textContent).toMatch(/Skinfold/);
+    // CTA-ul "Add waist + neck" (fallback Deurenberg) absent — avem sursa acurata.
+    expect(screen.queryByTestId('bodyfat-cta')).not.toBeInTheDocument();
+  });
+
   it('BUG #12a: gat imposibil (22cm) NU umfla — cade pe Deurenberg estimated', () => {
     // talie 75 / gat 22 ar fi dat 20.2% US-Navy (umflat); acum US-Navy → null,
     // deci sursa = estimated (Deurenberg) iar valoarea reflecta profilul slab.

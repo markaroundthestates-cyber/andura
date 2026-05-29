@@ -45,7 +45,6 @@ function renderProgres() {
       <Routes>
         <Route path="/app/progres" element={<Progres />} />
         <Route path="/app/progres/log-weight" element={<LocationProbe />} />
-        <Route path="/app/progres/body-data" element={<LocationProbe />} />
       </Routes>
     </MemoryRouter>
   );
@@ -65,10 +64,9 @@ describe('Progres landing', () => {
     expect(screen.getByText(/Body composition/i)).toBeInTheDocument();
   });
 
-  it('renders Log weight CTA + Body data CTA', () => {
+  it('renders Log weight CTA', () => {
     renderProgres();
     expect(screen.getByTestId('cta-log-weight')).toBeInTheDocument();
-    expect(screen.getByTestId('cta-body-data')).toBeInTheDocument();
   });
 
   it('Log weight CTA tap navigates /app/progres/log-weight', () => {
@@ -77,10 +75,11 @@ describe('Progres landing', () => {
     expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/progres/log-weight');
   });
 
-  it('Body data CTA tap navigates /app/progres/body-data', () => {
+  // §progress-v2 — body-data CTA + last-body-card eliminate: masuratorile BF
+  // (talie/gat/sold) s-au consolidat in Cont > Profil.
+  it('no longer renders the body-data CTA (consolidated into Profile)', () => {
     renderProgres();
-    fireEvent.click(screen.getByTestId('cta-body-data'));
-    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/progres/body-data');
+    expect(screen.queryByTestId('cta-body-data')).not.toBeInTheDocument();
   });
 
   it('hides last-weight-card cand weightLog empty', () => {
@@ -95,13 +94,10 @@ describe('Progres landing', () => {
     expect(screen.getByTestId('last-weight-card')).toHaveTextContent('78.5 kg');
   });
 
-  it('shows last-body-card cand bodyData entry present', () => {
-    useProgresStore.setState({ bodyData: [{ date: '2026-05-17', ts: Date.now(), waistCm: 85, bicepsCm: 35 }] });
+  it('no longer renders last-body-card (consolidated into Profile)', () => {
+    useProgresStore.setState({ bodyData: [{ date: '2026-05-17', ts: Date.now(), waistCm: 85 }] });
     renderProgres();
-    expect(screen.getByTestId('last-body-card')).toBeInTheDocument();
-    // Wave C2 i18n: EN default → "Waist 85" (was RO "Talie 85"); "Biceps" same.
-    expect(screen.getByTestId('last-body-card')).toHaveTextContent('Waist 85');
-    expect(screen.getByTestId('last-body-card')).toHaveTextContent('Biceps 35');
+    expect(screen.queryByTestId('last-body-card')).not.toBeInTheDocument();
   });
 });
 

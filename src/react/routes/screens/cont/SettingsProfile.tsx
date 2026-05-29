@@ -24,6 +24,7 @@ import { SubHeader } from '../../../components/SubHeader';
 import { getUserProfileDisplay } from './userProfile';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
+import { estimateBF_skinfold3 } from '../../../../engine/skinfoldBF.js';
 import { estimateBfDeurenbergCapped } from '../../../../engine/bodyComposition.js';
 import { t } from '../../../../i18n/index.js';
 
@@ -79,6 +80,24 @@ export function SettingsProfile(): JSX.Element {
   // — aceeasi sursa care alimenteaza BMR. BF% US Navy ia inaltimea din draft.
   const [waist, setWaist] = useState(lastBody?.waistCm != null ? String(lastBody.waistCm) : '');
   const [neck, setNeck] = useState(lastBody?.neckCm != null ? String(lastBody.neckCm) : '');
+  // §progress-v2 — sold (cm) intra in US Navy DOAR pentru femei (formula necesita
+  // talie + sold − gat). Input afisat doar cand sex='f'. Persistat in bodyData.
+  const [hip, setHip] = useState(lastBody?.hipsCm != null ? String(lastBody.hipsCm) : '');
+  // §progress-v2 skinfold (avansat, optional) — caliper sites (mm), J-P 3 puncte.
+  // Men: piept/abdomen/coapsa; Women: triceps/suprailiac/coapsa. Cand toate cele
+  // 3 site-uri valide → BF foloseste J-P (mai acurat) peste US Navy (vezi BF wire).
+  const [skinfoldOn, setSkinfoldOn] = useState<boolean>(() =>
+    lastBody?.chestSkinfoldMm != null ||
+    lastBody?.abdomenSkinfoldMm != null ||
+    lastBody?.thighSkinfoldMm != null ||
+    lastBody?.tricepsSkinfoldMm != null ||
+    lastBody?.suprailiacSkinfoldMm != null
+  );
+  const [sfChest, setSfChest] = useState(lastBody?.chestSkinfoldMm != null ? String(lastBody.chestSkinfoldMm) : '');
+  const [sfAbdomen, setSfAbdomen] = useState(lastBody?.abdomenSkinfoldMm != null ? String(lastBody.abdomenSkinfoldMm) : '');
+  const [sfThigh, setSfThigh] = useState(lastBody?.thighSkinfoldMm != null ? String(lastBody.thighSkinfoldMm) : '');
+  const [sfTriceps, setSfTriceps] = useState(lastBody?.tricepsSkinfoldMm != null ? String(lastBody.tricepsSkinfoldMm) : '');
+  const [sfSuprailiac, setSfSuprailiac] = useState(lastBody?.suprailiacSkinfoldMm != null ? String(lastBody.suprailiacSkinfoldMm) : '');
   // §08.038 — manual BF% override. Pre-fix bfManual/bfOverride era useState pur
   // ARUNCAT la Save (override-ul nu avea NICIUN efect — Gigel bifa, scria 18%,
   // salva, si app tot folosea estimarea). Acum seedeaza din `bf-override`
@@ -95,34 +114,58 @@ export function SettingsProfile(): JSX.Element {
   // Build engine arg omitting empty fields (exactOptionalPropertyTypes — NU
   // pasa undefined explicit). Engine returns null daca lipseste vreun camp.
   // Inaltimea vine din draft.height (single source, P-02) — nu din stare locala.
-  const bfArgs: { sex?: string; height_cm?: number; neck_cm?: number; waist_cm?: number } = {};
+  const bfArgs: { sex?: string; height_cm?: number; neck_cm?: number; waist_cm?: number; hip_cm?: number } = {};
   if (draft.sex) bfArgs.sex = draft.sex;
   if (draft.height) bfArgs.height_cm = draft.height;
   if (neck) bfArgs.neck_cm = Number(neck);
   if (waist) bfArgs.waist_cm = Number(waist);
+  // §progress-v2 — sold doar pentru femei (US Navy female necesita sold).
+  if (hip) bfArgs.hip_cm = Number(hip);
   const bfNavy = estimateBF_USNavy(bfArgs);
-  // Two-tier — US-Navy cand talie+gat masurate (acurat), altfel Deurenberg cu
-  // cap high-BMI (estimat populational din BMI/varsta/sex, mereu disponibil
-  // post-onboarding). Smoke 2026-05-28 #1: cap-ul `min(Deurenberg, BMI×0.85)`
-  // la BMI>=27 reduce bias-ul cunoscut al formulei la BMI mare.
+  // §progress-v2 — skinfold J-P (mai acurat) cand toate cele 3 site-uri prezente.
+  // Site-urile depind de sex; engine alege singur. Necesita varsta (intra in formula).
+  const sfArgs: {
+    sex?: string;
+    age?: number;
+    chest_mm?: number;
+    abdomen_mm?: number;
+    thigh_mm?: number;
+    triceps_mm?: number;
+    suprailiac_mm?: number;
+  } = {};
+  if (draft.sex) sfArgs.sex = draft.sex;
+  if (draft.age) sfArgs.age = draft.age;
+  if (sfChest) sfArgs.chest_mm = Number(sfChest);
+  if (sfAbdomen) sfArgs.abdomen_mm = Number(sfAbdomen);
+  if (sfThigh) sfArgs.thigh_mm = Number(sfThigh);
+  if (sfTriceps) sfArgs.triceps_mm = Number(sfTriceps);
+  if (sfSuprailiac) sfArgs.suprailiac_mm = Number(sfSuprailiac);
+  const bfSkinfold = skinfoldOn ? estimateBF_skinfold3(sfArgs) : null;
+  // Tier — Deurenberg cu cap high-BMI (estimat populational din BMI/varsta/sex,
+  // mereu disponibil post-onboarding). Smoke 2026-05-28 #1: cap-ul `min(Deurenberg,
+  // BMI×0.85)` la BMI>=27 reduce bias-ul cunoscut al formulei la BMI mare.
   const { bfPct: bfDeurenberg } = estimateBfDeurenbergCapped({
     weightKg: draft.weight ?? NaN,
     heightCm: draft.height ?? NaN,
     ageYears: draft.age ?? NaN,
     ...(draft.sex ? { sex: draft.sex } : {}),
   });
-  const bfAuto = bfNavy ?? bfDeurenberg;
+  // Priority auto: skinfold (most accurate) > US Navy > Deurenberg.
+  const bfAuto = bfSkinfold ?? bfNavy ?? bfDeurenberg;
   const bfSource =
-    bfNavy != null
-      ? t('settings.profile.bfSourceUsNavy')
-      : bfDeurenberg != null
-        ? t('settings.profile.bfSourceEstimated')
-        : '';
+    bfSkinfold != null
+      ? t('settings.profile.bfSourceSkinfold')
+      : bfNavy != null
+        ? t('settings.profile.bfSourceUsNavy')
+        : bfDeurenberg != null
+          ? t('settings.profile.bfSourceEstimated')
+          : '';
   // §bf-hint smoke #1 — US Navy cere gat + talie + inaltime (+ sex) ca sa
   // calculeze; daca user-ul completeaza doar unul, bfNavy ramane null si BF%
   // nu se schimba vizibil (Gigel crede ca e bug). Arata un hint inline cat
   // timp masuratorile US-Navy sunt incomplete (NU pe override manual).
-  const bfNavyIncomplete = !bfManual && bfNavy == null && (!neck || !waist || !draft.height);
+  const bfNavyIncomplete =
+    !bfManual && bfSkinfold == null && bfNavy == null && (!neck || !waist || !draft.height);
 
   // §obiectiv-tinta 2026-05-28 — Daniel smoke #8 ("tot ce e la Obiectiv trebuie
   // mutat la progres undeva"): "Tinte personale" (greutate tinta + pana in +
@@ -181,12 +224,39 @@ export function SettingsProfile(): JSX.Element {
     // §two-tier-bf A2 MED fix — talie/gat NU mai sunt discarded: persist in
     // progresStore.bodyData (sursa US-Navy din nutritionProjection). Scriem o
     // intrare doar cand exista cel putin o masuratoare numerica valida.
-    const waistNum = waist ? Number(waist) : NaN;
-    const neckNum = neck ? Number(neck) : NaN;
-    const entry: { date: string; waistCm?: number; neckCm?: number } = { date: todayIso() };
-    if (Number.isFinite(waistNum) && waistNum > 0) entry.waistCm = waistNum;
-    if (Number.isFinite(neckNum) && neckNum > 0) entry.neckCm = neckNum;
-    if (entry.waistCm !== undefined || entry.neckCm !== undefined) {
+    const entry: {
+      date: string;
+      waistCm?: number;
+      neckCm?: number;
+      hipsCm?: number;
+      chestSkinfoldMm?: number;
+      abdomenSkinfoldMm?: number;
+      thighSkinfoldMm?: number;
+      tricepsSkinfoldMm?: number;
+      suprailiacSkinfoldMm?: number;
+    } = { date: todayIso() };
+    const putNum = (raw: string, set: (n: number) => void): void => {
+      if (!raw) return;
+      const n = Number(raw);
+      if (Number.isFinite(n) && n > 0) set(n);
+    };
+    putNum(waist, (n) => { entry.waistCm = n; });
+    putNum(neck, (n) => { entry.neckCm = n; });
+    // §progress-v2 — sold persistat doar pentru femei (singura formula care-l cere).
+    if (draft.sex === 'f') putNum(hip, (n) => { entry.hipsCm = n; });
+    // §progress-v2 skinfold — persist doar cand toggle ON. Site-uri per sex
+    // (men piept/abdomen, women triceps/suprailiac); coapsa comuna ambelor.
+    if (skinfoldOn) {
+      if (draft.sex === 'f') {
+        putNum(sfTriceps, (n) => { entry.tricepsSkinfoldMm = n; });
+        putNum(sfSuprailiac, (n) => { entry.suprailiacSkinfoldMm = n; });
+      } else {
+        putNum(sfChest, (n) => { entry.chestSkinfoldMm = n; });
+        putNum(sfAbdomen, (n) => { entry.abdomenSkinfoldMm = n; });
+      }
+      putNum(sfThigh, (n) => { entry.thighSkinfoldMm = n; });
+    }
+    if (Object.keys(entry).length > 1) {
       addBodyDataEntry(entry);
     }
     // §08.038 — manual BF% override consum pe save (era discarded). Cand bifa e
@@ -317,6 +387,24 @@ export function SettingsProfile(): JSX.Element {
               className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
             />
           </LabelRow>
+          {/* §progress-v2 — sold intra in US Navy DOAR pentru femei. Input afisat
+              conditionat ca sa nu deruteze barbatii (formula lor nu-l foloseste). */}
+          {draft.sex === 'f' && (
+            <LabelRow label={t('settings.profile.hip')}>
+              <input
+                type="number"
+                min={50}
+                max={200}
+                step={0.5}
+                inputMode="decimal"
+                autoComplete="off"
+                value={hip}
+                onChange={(e) => setHip(e.target.value)}
+                data-testid="profile-hip-input"
+                className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+              />
+            </LabelRow>
+          )}
           <LabelRow label={t('settings.profile.height')}>
             <input
               type="number"
@@ -380,6 +468,112 @@ export function SettingsProfile(): JSX.Element {
         )}
         <p className="text-xs text-ink3 mb-4 px-1 leading-snug">
           {t('settings.profile.bodyCompFooter')}
+        </p>
+
+        {/* §progress-v2 — Pliuri cutanate (avansat, optional). Secundar/collapsed
+            ca sa NU fie in fata user-ului obisnuit (Gigel n-are caliper): doar un
+            toggle; inputurile per-sex apar cand e bifat. Cand cele 3 site-uri sunt
+            valide, BF% foloseste J-P (mai acurat) peste US Navy. */}
+        <SelectRow
+          label={t('settings.profile.skinfoldToggle')}
+          htmlFor="profile-skinfold-toggle"
+          isLast
+        >
+          <input
+            id="profile-skinfold-toggle"
+            type="checkbox"
+            checked={skinfoldOn}
+            onChange={(e) => setSkinfoldOn(e.target.checked)}
+            data-testid="profile-skinfold-toggle"
+            className="w-[18px] h-[18px] accent-brick"
+          />
+        </SelectRow>
+        {skinfoldOn && (
+          <div
+            className="pulse-card pulse-card-tight overflow-hidden mb-1 mt-1"
+            data-testid="profile-skinfold-panel"
+          >
+            {draft.sex === 'f' ? (
+              <>
+                <LabelRow label={t('settings.profile.skinfoldTriceps')}>
+                  <input
+                    type="number"
+                    min={2}
+                    max={60}
+                    step={0.5}
+                    inputMode="decimal"
+                    autoComplete="off"
+                    value={sfTriceps}
+                    onChange={(e) => setSfTriceps(e.target.value)}
+                    data-testid="profile-skinfold-triceps"
+                    className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+                  />
+                </LabelRow>
+                <LabelRow label={t('settings.profile.skinfoldSuprailiac')}>
+                  <input
+                    type="number"
+                    min={2}
+                    max={60}
+                    step={0.5}
+                    inputMode="decimal"
+                    autoComplete="off"
+                    value={sfSuprailiac}
+                    onChange={(e) => setSfSuprailiac(e.target.value)}
+                    data-testid="profile-skinfold-suprailiac"
+                    className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+                  />
+                </LabelRow>
+              </>
+            ) : (
+              <>
+                <LabelRow label={t('settings.profile.skinfoldChest')}>
+                  <input
+                    type="number"
+                    min={2}
+                    max={60}
+                    step={0.5}
+                    inputMode="decimal"
+                    autoComplete="off"
+                    value={sfChest}
+                    onChange={(e) => setSfChest(e.target.value)}
+                    data-testid="profile-skinfold-chest"
+                    className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+                  />
+                </LabelRow>
+                <LabelRow label={t('settings.profile.skinfoldAbdomen')}>
+                  <input
+                    type="number"
+                    min={2}
+                    max={60}
+                    step={0.5}
+                    inputMode="decimal"
+                    autoComplete="off"
+                    value={sfAbdomen}
+                    onChange={(e) => setSfAbdomen(e.target.value)}
+                    data-testid="profile-skinfold-abdomen"
+                    className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+                  />
+                </LabelRow>
+              </>
+            )}
+            <LabelRow label={t('settings.profile.skinfoldThigh')} isLast>
+              <input
+                type="number"
+                min={2}
+                max={60}
+                step={0.5}
+                inputMode="decimal"
+                autoComplete="off"
+                value={sfThigh}
+                onChange={(e) => setSfThigh(e.target.value)}
+                data-testid="profile-skinfold-thigh"
+                className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+              />
+            </LabelRow>
+          </div>
+        )}
+        <p className="text-xs text-ink3 mb-4 px-1 leading-snug">
+          {t('settings.profile.skinfoldHint')}
         </p>
 
         {/* §obiectiv-tinta 2026-05-28 (Daniel smoke #8) — "Tinte personale"
@@ -450,7 +644,7 @@ export function SettingsProfile(): JSX.Element {
   );
 }
 
-/** Data locala YYYY-MM-DD pentru intrarea bodyData (aliniat cu BodyData.tsx). */
+/** Data locala YYYY-MM-DD pentru intrarea bodyData (progresStore). */
 function todayIso(): string {
   const d = new Date();
   const y = d.getFullYear();

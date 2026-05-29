@@ -18,6 +18,7 @@ import {
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
 import { estimateBF_USNavy } from '../../../engine/usNavyBF.js';
+import { estimateBF_skinfold3 } from '../../../engine/skinfoldBF.js';
 import { estimateBF_Deurenberg } from '../../../engine/bodyComposition.js';
 
 describe('projectTrajectory — deficit → loss', () => {
@@ -252,6 +253,28 @@ describe('deriveCurrentBfPct — two-tier (US-Navy / Deurenberg / null)', () => 
     useProgresStore.getState().addBodyDataEntry({ date: '2026-05-26', waistCm: 85 });
     const bf = deriveCurrentBfPct();
     expect(bf).toBe(estimateBF_Deurenberg({ sex: 'm', weightKg: 80, heightCm: 180, ageYears: 30 }));
+  });
+
+  // §progress-v2 — skinfold J-P (most accurate) overrides US-Navy.
+  it('skinfold sites present → J-P tier (overrides US-Navy)', () => {
+    const { setField } = useOnboardingStore.getState();
+    setField('sex', 'm');
+    setField('weight', 80);
+    setField('height', 180);
+    setField('age', 30);
+    useProgresStore.getState().addBodyDataEntry({
+      date: '2026-05-26',
+      neckCm: 38,
+      waistCm: 85, // US-Navy complete too
+      chestSkinfoldMm: 12,
+      abdomenSkinfoldMm: 20,
+      thighSkinfoldMm: 14,
+    });
+    const bf = deriveCurrentBfPct();
+    const jp = estimateBF_skinfold3({ sex: 'm', age: 30, chest_mm: 12, abdomen_mm: 20, thigh_mm: 14 });
+    expect(bf).toBe(jp);
+    // J-P differs from US-Navy → confirms skinfold tier chosen over Navy.
+    expect(bf).not.toBe(estimateBF_USNavy({ sex: 'm', height_cm: 180, neck_cm: 38, waist_cm: 85 }));
   });
 });
 
