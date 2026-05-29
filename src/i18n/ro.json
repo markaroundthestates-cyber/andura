@@ -598,9 +598,13 @@
       "bodyMap": {
         "ariaLabel": "Harta corporala a recuperarii musculare",
         "figureAlt": "Silueta vazuta din fata, grupe musculare colorate dupa recuperare",
+        "figureAltBack": "Silueta vazuta din spate, grupe musculare colorate dupa recuperare",
         "regionLabel": "{group}: {state}",
         "empty": "Inca nu exista date de recuperare — antreneaza-te ca sa vezi harta",
-        "legendTitle": "Recuperare"
+        "legendTitle": "Recuperare",
+        "viewFront": "Fata",
+        "viewBack": "Spate",
+        "viewToggleAriaLabel": "Comuta vedere fata / spate"
       }
     },
     "measurements": {

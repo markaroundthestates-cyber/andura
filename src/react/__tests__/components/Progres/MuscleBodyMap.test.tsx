@@ -6,10 +6,15 @@
 // back to a neutral/dimmed cold state with no fabricated recovery.
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, fireEvent } from '@testing-library/react';
 import { MuscleBodyMap } from '../../../components/Progres/MuscleBodyMap';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { BIG11_GROUPS } from '../../../../engine/muscleRecovery.js';
+
+function setSex(sex: 'm' | 'f' | null): void {
+  useOnboardingStore.setState((s) => ({ data: { ...s.data, sex } }));
+}
 
 const NOW = Date.now();
 const HOUR = 3_600_000;
@@ -61,6 +66,7 @@ function mockMatchMedia(reduced: boolean): void {
 
 beforeEach(() => {
   setSessions([]);
+  setSex('m');
   localStorage.clear();
   mockMatchMedia(false);
 });
@@ -98,8 +104,8 @@ describe('MuscleBodyMap', () => {
     const region = regions[0]!;
     const state = region.getAttribute('data-recovery-state');
     expect(['partial', 'fatigued']).toContain(state);
-    // Color is applied (volt/gold/ember token), never empty.
-    expect(region.getAttribute('fill')).toMatch(/var\(--/);
+    // A state gradient fill is applied (premium belly gradient), never empty.
+    expect(region.getAttribute('fill')).toMatch(/^url\(#andura-bodymap-grad-/);
   });
 
   it('each drawn region has an accessible label pairing group + state (not color-only)', () => {
@@ -163,5 +169,116 @@ describe('MuscleBodyMap', () => {
     setSessions(HEAVY_CHEST);
     const { container } = render(<MuscleBodyMap />);
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+
+  // ── v2: sex-specific figures ──────────────────────────────────────────────
+  it('renders the male figure for a male user', () => {
+    setSex('m');
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    expect(screen.getByTestId('muscle-body-map')).toHaveAttribute('data-sex', 'm');
+  });
+
+  it('renders the female figure for a female user', () => {
+    setSex('f');
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    expect(screen.getByTestId('muscle-body-map')).toHaveAttribute('data-sex', 'f');
+  });
+
+  it('male and female figures use different silhouette geometry', () => {
+    setSex('m');
+    setSessions(HEAVY_CHEST);
+    const { unmount } = render(<MuscleBodyMap />);
+    const maleD = screen.getByTestId('body-map-silhouette').getAttribute('d');
+    unmount();
+    setSex('f');
+    render(<MuscleBodyMap />);
+    const femaleD = screen.getByTestId('body-map-silhouette').getAttribute('d');
+    expect(maleD).toBeTruthy();
+    expect(femaleD).toBeTruthy();
+    expect(maleD).not.toEqual(femaleD);
+  });
+
+  it('null sex falls back to the male figure (neutral default)', () => {
+    setSex(null);
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    expect(screen.getByTestId('muscle-body-map')).toHaveAttribute('data-sex', 'm');
+  });
+
+  // ── v2: front + back views ────────────────────────────────────────────────
+  it('defaults to the front view; the front figure does NOT paint back-only groups', () => {
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    expect(screen.getByTestId('muscle-body-map')).toHaveAttribute('data-view', 'front');
+    // Front view: spate / fese / hamstrings have NO drawn region on the body.
+    expect(screen.queryByTestId('body-region-spate')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('body-region-fese')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('body-region-picioare-hamstrings')).not.toBeInTheDocument();
+    // Front-only groups ARE painted.
+    expect(screen.getAllByTestId('body-region-piept').length).toBeGreaterThan(0);
+  });
+
+  it('the back view paints spate, fese, and hamstrings on the figure', () => {
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    fireEvent.click(screen.getByTestId('body-map-view-back'));
+    expect(screen.getByTestId('muscle-body-map')).toHaveAttribute('data-view', 'back');
+    expect(screen.getAllByTestId('body-region-spate').length).toBeGreaterThan(0);
+    expect(screen.getAllByTestId('body-region-fese').length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByTestId('body-region-picioare-hamstrings').length,
+    ).toBeGreaterThan(0);
+  });
+
+  it('the view toggle switches back to front', () => {
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    fireEvent.click(screen.getByTestId('body-map-view-back'));
+    expect(screen.getByTestId('muscle-body-map')).toHaveAttribute('data-view', 'back');
+    fireEvent.click(screen.getByTestId('body-map-view-front'));
+    expect(screen.getByTestId('muscle-body-map')).toHaveAttribute('data-view', 'front');
+    expect(screen.queryByTestId('body-region-spate')).not.toBeInTheDocument();
+  });
+
+  it('the active toggle segment carries aria-pressed for a11y', () => {
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    expect(screen.getByTestId('body-map-view-front')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('body-map-view-back')).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(screen.getByTestId('body-map-view-back'));
+    expect(screen.getByTestId('body-map-view-back')).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('the back-view figure exposes a distinct aria-label (a11y both views)', () => {
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    const frontAlt = screen.getByTestId('body-map-figure').getAttribute('aria-label');
+    fireEvent.click(screen.getByTestId('body-map-view-back'));
+    const backAlt = screen.getByTestId('body-map-figure').getAttribute('aria-label');
+    expect(frontAlt).toBeTruthy();
+    expect(backAlt).toBeTruthy();
+    expect(frontAlt).not.toEqual(backAlt);
+  });
+
+  it('back-view regions also carry accessible group+state labels', () => {
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    fireEvent.click(screen.getByTestId('body-map-view-back'));
+    const spate = screen.getAllByTestId('body-region-spate')[0]!;
+    const label = spate.getAttribute('aria-label') ?? '';
+    expect(label.length).toBeGreaterThan(0);
+    expect(label).toMatch(/:/);
+  });
+
+  it('cold state stays neutral in the back view too (no fabricated recovery)', () => {
+    setSessions([]);
+    render(<MuscleBodyMap />);
+    fireEvent.click(screen.getByTestId('body-map-view-back'));
+    expect(screen.getByTestId('muscle-body-map')).toHaveAttribute('data-cold', 'true');
+    const spate = screen.getAllByTestId('body-region-spate')[0]!;
+    expect(spate).toHaveAttribute('data-recovery-state', 'neutral');
+    expect(document.querySelectorAll('.body-map-region--stressed').length).toBe(0);
   });
 });
