@@ -37,7 +37,7 @@ export function SettingsSubscription(): JSX.Element {
         </p>
 
         <div
-          className="w-full bg-paper2 border border-line rounded-2xl p-4 flex items-center gap-3 mb-5"
+          className="w-full pulse-card pulse-card-tight p-4 flex items-center gap-3 mb-5"
           data-testid="subscription-beta-card"
         >
           <Gift className="w-5 h-5 text-brick flex-shrink-0" aria-hidden="true" />

@@ -31,7 +31,7 @@ export function SettingsSupport(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           {t('settings.support.contactHeading')}
         </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
+        <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
           <a
             href={`mailto:${SUPPORT_EMAIL}`}
             data-testid="support-email"
@@ -60,14 +60,14 @@ export function SettingsSupport(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           {t('settings.support.messageHeading')}
         </p>
-        <div className="bg-paper2 border border-line rounded-[14px] p-4">
+        <div className="pulse-card pulse-card-tight p-4">
           <p className="text-xs text-ink2 mb-3 leading-relaxed">
             {t('settings.support.messageHint')}
           </p>
           <a
             href={`mailto:${SUPPORT_EMAIL}?subject=Andura%20feedback&body=`}
             data-testid="support-feedback-mailto"
-            className="w-full block py-3 bg-brick text-paper rounded-[14px] text-base font-semibold text-center"
+            className="btn-primary-lift press-feedback w-full block py-3 bg-brick text-paper rounded-[14px] text-base font-semibold text-center"
           >
             {t('settings.support.openEmailCta')}
           </a>

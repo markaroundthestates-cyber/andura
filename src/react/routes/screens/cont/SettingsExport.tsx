@@ -153,7 +153,7 @@ export function SettingsExport(): JSX.Element {
           {t('settings.export.intro')}
         </p>
 
-        <div className="bg-paper2 border border-line rounded-[14px] p-4 mb-4">
+        <div className="pulse-card pulse-card-tight p-4 mb-4">
           <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
             {t('settings.export.contentHeading')}
           </p>
@@ -168,7 +168,7 @@ export function SettingsExport(): JSX.Element {
           type="button"
           onClick={() => { void handleExport(); }}
           data-testid="settings-export-trigger"
-          className="w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2"
+          className="btn-primary-lift press-feedback w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2"
         >
           <Download className="w-4 h-4" aria-hidden="true" />
           {t('settings.export.exportCta')}

@@ -66,7 +66,7 @@ export function SettingsPrefs(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           {t('settings.prefs.units.heading')}
         </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
+        <div className="pulse-card pulse-card-tight overflow-hidden">
           {UNIT_OPTIONS.map((opt, idx) => {
             // Honest V1: app shows weights in kg everywhere; lb conversion is
             // post-Beta. kg is the effective active unit regardless of any
@@ -96,7 +96,7 @@ export function SettingsPrefs(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           {t('settings.prefs.weekStart.heading')}
         </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
+        <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
           {WEEK_START_OPTIONS.map((opt, idx) => {
             const selected = weekStart === opt.value;
             return (
@@ -124,7 +124,7 @@ export function SettingsPrefs(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           {t('settings.prefs.language.heading')} / Language
         </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
+        <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
           {LANGUAGE_OPTIONS.map((opt, idx) => {
             const selected = locale === opt.value;
             const isLast = idx === LANGUAGE_OPTIONS.length - 1;
@@ -151,7 +151,7 @@ export function SettingsPrefs(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           {t('settings.prefs.advanced.heading')}
         </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
+        <div className="pulse-card pulse-card-tight overflow-hidden">
           <button
             type="button"
             onClick={() => navigate(gotoPath('reset-coach-confirm'))}

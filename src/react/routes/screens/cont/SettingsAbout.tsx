@@ -44,7 +44,7 @@ export function SettingsAbout(): JSX.Element {
           andura.app
         </a>
 
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden text-left">
+        <div className="pulse-card pulse-card-tight overflow-hidden text-left">
           <div className="flex justify-between items-center px-4 py-3 border-b border-line">
             <span className="text-sm text-ink2">{t('settings.about.versionLabel')}</span>
             <span className="text-sm text-ink font-medium font-mono" data-testid="about-version">
