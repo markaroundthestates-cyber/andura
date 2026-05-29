@@ -46,6 +46,10 @@ interface ExportPayload {
     cdl: unknown[];
     logs: unknown[];
     appliedPatterns: unknown[];
+    // GDPR Art. 20 — overflow sessions archived via dexieMigration sessions
+    // store (workoutStore drops >cap din sessionsHistory dupa archiveSession).
+    // Fara asta exportul omite sesiuni vechi inca retinute local.
+    archivedSessions: unknown[];
   };
 }
 
@@ -72,15 +76,17 @@ function collectTier0Keys(): Record<string, string | null> {
 }
 
 async function collectTier1(): Promise<ExportPayload['tier1']> {
-  const empty = { cdl: [], logs: [], appliedPatterns: [] };
+  const empty = { cdl: [], logs: [], appliedPatterns: [], archivedSessions: [] };
   try {
     const dbModule = await import('../../../../storage/db.js');
-    const [cdl, logs, appliedPatterns] = await Promise.all([
+    const dexieModule = await import('../../../lib/dexieMigration');
+    const [cdl, logs, appliedPatterns, archivedSessions] = await Promise.all([
       dbModule.tier1All(dbModule.STORES.CDL_TIER1).catch(() => []),
       dbModule.tier1All(dbModule.STORES.LOGS_TIER1).catch(() => []),
       dbModule.tier1All(dbModule.STORES.APPLIED_PATTERNS_TIER1).catch(() => []),
+      dexieModule.getArchivedSessions().catch(() => []),
     ]);
-    return { cdl, logs, appliedPatterns };
+    return { cdl, logs, appliedPatterns, archivedSessions };
   } catch {
     return empty;
   }

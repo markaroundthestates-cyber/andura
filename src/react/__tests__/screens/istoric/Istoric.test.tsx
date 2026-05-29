@@ -70,6 +70,17 @@ describe('Istoric — empty state', () => {
     renderIstoric();
     expect(screen.queryByTestId('istoric-list')).not.toBeInTheDocument();
   });
+
+  // axe heading-order (moderate) — calendar month label era h3 direct sub
+  // page h1 (skip h2). Trebuie h2 ca sa nu sara nivelul.
+  it('no heading-order skip — calendar month label is h2 under page h1', () => {
+    renderIstoric();
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('History');
+    const calLabel = screen.getByTestId('cal-month-label');
+    expect(calLabel.tagName).toBe('H2');
+    // zero h3 imediat sub h1 fara h2 intermediar
+    expect(screen.queryAllByRole('heading', { level: 3 })).toHaveLength(0);
+  });
 });
 
 describe('Istoric — populated list', () => {
