@@ -20,11 +20,11 @@ import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useProgresStore, latestBodyMeasurements } from '../../stores/progresStore';
 import { estimateBF_USNavy } from '../../../engine/usNavyBF.js';
 import { estimateBfDeurenbergCapped } from '../../../engine/bodyComposition.js';
+import { getCurrentWeightKg } from '../../lib/userTdee';
 import { t } from '../../../i18n/index.js';
 
 export function BodyFatStrip(): JSX.Element {
   const sex = useOnboardingStore((s) => s.data.sex);
-  const onboardingWeight = useOnboardingStore((s) => s.data.weight);
   const age = useOnboardingStore((s) => s.data.age);
   const height = useOnboardingStore((s) => s.data.height);
   const bodyData = useProgresStore((s) => s.bodyData);
@@ -32,11 +32,14 @@ export function BodyFatStrip(): JSX.Element {
   // care a introdus gat in Cont apoi piept in Progres tot vede BF% US Navy
   // (gat-ul nu se pierde pentru ca intrarea ulterioara n-are gat). SSOT.
   const latest = latestBodyMeasurements(bodyData);
-  // Sursa canonica de greutate curenta: ultima greutate LOGATA > onboarding.
-  // BF% Deurenberg foloseste greutatea reala curenta (era inghetata pe
-  // onboarding, audit CRIT split source-of-truth) → logarea misca bf% estimat.
-  const weightLog = useProgresStore((s) => s.weightLog);
-  const weight = weightLog[weightLog.length - 1]?.kg ?? onboardingWeight;
+  // Sursa canonica UNICA de greutate curenta: getCurrentWeightKg (ultima
+  // greutate LOGATA dupa DATA > onboarding) — aceeasi sursa pe care o folosesc
+  // TDEE/BMR/proteine. Era un read ad-hoc `weightLog[length-1]` (ultima POZITIE
+  // in array, NU cea mai recenta DATA) → o cantarire back-dated sau o editare de
+  // greutate in profil nu mutau bf% (split source-of-truth, audit CRIT).
+  // Subscribe la weightLog ca strip-ul sa re-randeze cand se logheaza/editeaza.
+  useProgresStore((s) => s.weightLog);
+  const weight = getCurrentWeightKg();
 
   // Tier 1 (ACURAT) — US-Navy cand talie+gat masurate. Build arg omitting empty
   // fields (exactOptionalPropertyTypes); engine returneaza null daca lipseste
