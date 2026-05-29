@@ -134,9 +134,9 @@ export function CalendarHeatmap(): JSX.Element {
       className="pulse-card p-4 mb-4 animate-card-rise delay-150"
     >
       <div className="flex items-center justify-between mb-2.5">
-        <h3 className="text-base font-semibold text-ink" data-testid="cal-month-label">
+        <h2 className="text-base font-semibold text-ink" data-testid="cal-month-label">
           {monthLabel} {calY}
-        </h3>
+        </h2>
         <div className="flex gap-1.5">
           <button
             type="button"
