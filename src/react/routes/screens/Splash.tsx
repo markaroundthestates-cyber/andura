@@ -14,7 +14,7 @@
 // Token-only: the wordmark uses the shared .pulse-gradtext idiom (--grad-pulse
 // volt->aqua), text via tokens, zero raw hex. Motion (PulseMark draw/glow, the
 // dot float, the entrance) is foundation CSS, auto-gated by the global
-// prefers-reduced-motion block + [data-calm="1"].
+// prefers-reduced-motion block.
 
 import type { JSX } from 'react';
 import { useEffect, useRef } from 'react';
@@ -119,7 +119,6 @@ export function Splash(): JSX.Element {
           0%, 100% { transform: translateY(0); opacity: .55; }
           50% { transform: translateY(-5px); opacity: 1; }
         }
-        [data-calm="1"] .splash-dot { animation: none; opacity: .8; }
         @media (prefers-reduced-motion: reduce) {
           .splash-dot { animation: none; opacity: .8; }
         }

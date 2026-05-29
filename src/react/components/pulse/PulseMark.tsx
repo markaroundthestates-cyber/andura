@@ -8,7 +8,7 @@
 //
 // Motion safety: a gentle, optional draw/glow-breath loop driven by
 // max(var(--motion), .3); collapsed by the global prefers-reduced-motion block
-// and hard-stopped under [data-calm="1"]. `animated={false}` renders the
+// (the authoritative motion-safety mechanism). `animated={false}` renders the
 // static mark (e.g. a tiny header logo) with zero motion.
 //
 // A11y: purely decorative (aria-hidden); the wordmark text beside it carries
@@ -83,7 +83,6 @@ export function PulseMark({ size = 64, animated = true }: PulseMarkProps): JSX.E
           0%, 100% { filter: drop-shadow(0 0 5px color-mix(in oklab, var(--aqua) 45%, transparent)); }
           50% { filter: drop-shadow(0 0 9px color-mix(in oklab, var(--volt) 65%, transparent)); }
         }
-        [data-calm="1"] .pulse-mark-wave { animation: none; stroke-dashoffset: 0; }
         @media (prefers-reduced-motion: reduce) {
           .pulse-mark-wave { animation: none; stroke-dashoffset: 0; }
         }

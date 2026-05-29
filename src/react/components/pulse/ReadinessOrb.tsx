@@ -15,8 +15,8 @@
 //
 // Motion safety: every looping animation divides its duration by
 // max(var(--motion), .3) so the global motion scalar dials it down; the
-// global prefers-reduced-motion block collapses them, and a [data-calm="1"]
-// hard-stop is declared in the scoped <style>. Token-only colors (volt/aqua).
+// global prefers-reduced-motion block collapses them (the authoritative
+// motion-safety mechanism). Token-only colors (volt/aqua).
 //
 // A11y: the orb decoration layers are aria-hidden; the score + label are real
 // text. `canPR` only flips a cosmetic accent (no semantic-only signal).
@@ -134,12 +134,6 @@ export function ReadinessOrb({
         @keyframes orbSpin { to { transform: rotate(360deg); } }
         @keyframes orbSpinRev { to { transform: rotate(-360deg); } }
         @keyframes orbPulseRing { 0% { transform: scale(.82); opacity: .55; } 70%, 100% { transform: scale(1.18); opacity: 0; } }
-        [data-calm="1"] .orb-core,
-        [data-calm="1"] .orb-aura,
-        [data-calm="1"] .orb-aura2,
-        [data-calm="1"] .orb-pulse {
-          animation: none !important;
-        }
         @media (prefers-reduced-motion: reduce) {
           .orb-core, .orb-aura, .orb-aura2, .orb-pulse {
             animation: none !important;

@@ -74,9 +74,10 @@ describe('Pulse Sparkline — render + geometry', () => {
     expect(d).not.toContain('NaN');
   });
 
-  it('motion-safety: scoped style hard-stops the draw under calm', () => {
+  it('motion-safety: entrance draw is a one-shot (forwards) — vestibular-safe', () => {
     const { container } = render(<Sparkline data={DATA} />);
     const style = container.querySelector('style')?.textContent ?? '';
-    expect(style).toContain('[data-calm="1"]');
+    expect(style).toContain('sparkDash 1.4s');
+    expect(style).toContain('forwards');
   });
 });

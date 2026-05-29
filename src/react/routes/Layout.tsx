@@ -58,8 +58,8 @@ export function Layout(): JSX.Element {
           and never intercepts clicks. The shell is `relative` so the absolute
           layer covers the full scroll height; all foreground chrome (main,
           nav, banners) renders later in the DOM → stacks above z-0. Motion is
-          --motion-aware + auto-collapsed under prefers-reduced-motion +
-          [data-calm="1"]. Supersedes the prior BackgroundAurora (brick/olive). */}
+          --motion-aware + auto-collapsed under prefers-reduced-motion.
+          Supersedes the prior BackgroundAurora (brick/olive). */}
       <AuroraBackground />
       {/* §6-C2 audit fix — skip-to-content link WCAG 2.4.1 Bypass Blocks SC A.
           NO_DIACRITICS rule preserved ("continut" not "conținut"). */}

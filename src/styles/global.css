@@ -902,11 +902,10 @@
        - shine      → diagonal light sweep across primary/grad buttons
        - auraSpin   → conic aura ring behind hero orbs (.pulse-orb-aura)
        - glowBreath → opacity pulse for "live" indicators (.pulse-live-glow)
-     Every animation duration is divided by a --motion intensity factor (0-10
-     → 0.0-1.0, applyTheme sets --motion = picker/10) so motion can be dialed
-     down globally; max(var(--motion),.4) floors the divisor so it never stalls.
-     All auto-collapse under prefers-reduced-motion via the global * cap below,
-     and a [data-calm="1"] escape (motion=0) hard-stops the loops too. */
+     Every animation duration is divided by the --motion intensity scalar
+     (fixed at 1 in :root); max(var(--motion),.4) floors the divisor so it
+     never stalls. All auto-collapse under prefers-reduced-motion via the
+     global * cap below — the authoritative motion-safety mechanism. */
   @keyframes pulse-grad-shift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
   @keyframes pulse-shine { 0% { transform: translateX(-130%) skewX(-18deg); } 55%, 100% { transform: translateX(260%) skewX(-18deg); } }
   @keyframes pulse-aura-spin { to { transform: rotate(360deg); } }
@@ -956,20 +955,6 @@
   }
   .pulse-live-glow { animation: pulse-glow-breath calc(2.6s / max(var(--motion), 0.4)) ease-in-out infinite; }
   .pulse-ring { animation: pulse-ring calc(2.4s / max(var(--motion), 0.4)) ease-out infinite; }
-
-  /* Calm escape — motion=0 (applyTheme sets data-calm="1") hard-stops the
-     looping Pulse idioms (the entrance andura-* one-shots are unaffected). */
-  [data-calm="1"] .pulse-gradtext,
-  [data-calm="1"] .pulse-grad-bg,
-  [data-calm="1"] .pulse-shine::after,
-  [data-calm="1"] .pulse-orb-aura,
-  [data-calm="1"] .pulse-live-glow,
-  [data-calm="1"] .pulse-ring,
-  [data-calm="1"] .animate-aurora-1,
-  [data-calm="1"] .animate-aurora-2,
-  [data-calm="1"] .animate-aurora-3 {
-    animation: none !important;
-  }
 }
 
 /* §6-C1 audit fix — prefers-reduced-motion vestibular safety (WCAG 2.3.3).

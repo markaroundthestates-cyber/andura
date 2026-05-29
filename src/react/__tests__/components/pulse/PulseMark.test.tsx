@@ -35,10 +35,9 @@ describe('Pulse PulseMark — render + variants', () => {
     expect(screen.getByTestId('pulse-mark-wave')).not.toHaveClass('pulse-mark-wave');
   });
 
-  it('motion-safety: scoped style declares calm + reduced-motion hard-stops', () => {
+  it('motion-safety: scoped style declares reduced-motion hard-stops', () => {
     const { container } = render(<PulseMark />);
     const style = container.querySelector('style')?.textContent ?? '';
-    expect(style).toContain('[data-calm="1"]');
     expect(style).toContain('prefers-reduced-motion: reduce');
     expect(style).toContain('max(var(--motion)');
   });

@@ -47,11 +47,10 @@ describe('Pulse AuroraBackground — render + layering', () => {
     expect(style).toContain('[data-theme="light"]');
   });
 
-  it('motion-safety: --motion-aware durations + calm + reduced-motion hard-stops', () => {
+  it('motion-safety: --motion-aware durations + reduced-motion hard-stops', () => {
     const { container } = render(<AuroraBackground />);
     const style = container.querySelector('style')?.textContent ?? '';
     expect(style).toContain('max(var(--motion)');
-    expect(style).toContain('[data-calm="1"]');
     expect(style).toContain('prefers-reduced-motion: reduce');
   });
 });
