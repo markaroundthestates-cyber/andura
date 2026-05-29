@@ -34,6 +34,7 @@ import type {
   LogEntry,
 } from '../../../stores/workoutStore';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
+import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../lib/scheduleAdapterAggregate';
 import { gotoPath } from '../../../lib/navigation';
 import {
   enrichExercisesWithPR,
@@ -127,8 +128,11 @@ export function PostRpe(): JSX.Element {
       navigate(gotoPath('antrenor'));
       return;
     }
+    const rawTitle = planned?.workoutTitle;
     const title =
-      planned !== null && planned.workoutTitle ? planned.workoutTitle : t('postRpe.fallbackTitle');
+      rawTitle && rawTitle !== ENGINE_WORKOUT_TITLE_FALLBACK
+        ? rawTitle
+        : t('postRpe.fallbackTitle');
     // Locale-aware sets phrase: RO uses pluralRo grammar (1 set / 4 seturi);
     // EN uses the simple "{n} set(s)" form (1 set / 4 sets). Both flow into
     // postRpe.metaTemplate "{sets} · {minutes} min · {kg} kg".

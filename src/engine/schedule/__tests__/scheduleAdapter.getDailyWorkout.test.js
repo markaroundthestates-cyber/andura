@@ -138,10 +138,11 @@ describe('scheduleAdapter — getDailyWorkout pipeline consumer', () => {
     expect(plan.specializationTarget === null || typeof plan.specializationTarget === 'string').toBe(true);
   });
 
-  it('workoutTitle defaults to "Antrenament azi"', async () => {
+  it('workoutTitle defaults to the non-localized engine fallback sentinel', async () => {
     const plan = await getDailyWorkout(buildUserState(), TUESDAY_2026_05_19);
     expect(plan).not.toBeNull();
-    expect(plan.workoutTitle).toBe('Antrenament azi');
+    // Sentinel, NOT Romanian copy — render boundaries resolve it via t().
+    expect(plan.workoutTitle).toBe('__engine_workout_title_fallback__');
   });
 
   it('sessionType derives from day-of-week deterministically', async () => {

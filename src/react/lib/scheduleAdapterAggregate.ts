@@ -566,6 +566,12 @@ export function buildUserStateForPipeline(): {
   };
 }
 
+// Engine workout-title fallback SENTINEL — a non-localized machine marker the
+// adapter emits when the pipeline produces no real title. The render boundaries
+// (CoachTodayCard / WorkoutPreview) detect it and substitute the locale-aware
+// fallback via t(); the source NEVER carries Romanian copy (i18n leak harness).
+export const ENGINE_WORKOUT_TITLE_FALLBACK = '__engine_workout_title_fallback__';
+
 // DP.getSmartRecommendation return slice we read for the planned target (kg +
 // repsTarget). DP emits a richer object (status/statusLabel/repsRange/...) but
 // the planner only needs the prescriptive numbers. `kg` already rounded to the
@@ -882,7 +888,7 @@ export async function composePlannedWorkoutToday(
     // per set ~ timp sub tensiune/tranzitie + restSec. null cand fara exercitii.
     const estimatedDuration = computeEstimatedDurationMin(exercises, warmup?.durationMin ?? 0);
     return {
-      workoutTitle: plan.workoutTitle ?? 'Antrenament azi',
+      workoutTitle: plan.workoutTitle ?? ENGINE_WORKOUT_TITLE_FALLBACK,
       exerciseCount: exercises.length,
       // Real-or-fallback: cand computul da null (fara exercitii), cade pe valoarea
       // engine (?? 50 / ?? 0 in WorkoutPreview). NU mai forteaza 0/50 hardcodat.

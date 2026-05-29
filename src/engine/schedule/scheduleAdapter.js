@@ -505,6 +505,12 @@ export async function getDailyWorkout(userState, now = new Date()) {
     deloadState: blueprints.deload?.deload_state ?? 'IDLE',
     estimatedDurationMin: 50,
     volumeKg: 0,
-    workoutTitle: 'Antrenament azi',
+    // Non-localized fallback SENTINEL (NOT user copy). The React render
+    // boundaries (CoachTodayCard / WorkoutPreview / Workout / PostRpe) detect it
+    // and substitute a locale-aware title via t() — engines never emit localized
+    // Romanian copy. Value mirrors ENGINE_WORKOUT_TITLE_FALLBACK in
+    // src/react/lib/scheduleAdapterAggregate.ts (engine→React import is a
+    // layering violation, so the literal is duplicated with this cross-ref).
+    workoutTitle: '__engine_workout_title_fallback__',
   };
 }

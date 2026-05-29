@@ -15,6 +15,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   composePlannedWorkoutToday,
   buildUserStateForPipeline,
+  ENGINE_WORKOUT_TITLE_FALLBACK,
 } from '../../lib/scheduleAdapterAggregate';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
@@ -109,10 +110,12 @@ describe('scheduleAdapterAggregate — composePlannedWorkoutToday real wire asyn
     }
   });
 
-  it('workoutTitle defaults to "Antrenament azi" (NO_DIACRITICS_RULE)', async () => {
+  it('workoutTitle defaults to the engine fallback sentinel (NO RO leak in source)', async () => {
     const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
     expect(out).not.toBeNull();
-    expect(out!.workoutTitle).toBe('Antrenament azi');
+    expect(out!.workoutTitle).toBe(ENGINE_WORKOUT_TITLE_FALLBACK);
+    // Sentinel is a non-localized machine marker — render boundaries resolve it
+    // to a locale-aware title via t(); the source never carries Romanian copy.
     expect(/[ăâîșțĂÂÎȘȚ]/.test(out!.workoutTitle)).toBe(false);
   });
 
@@ -260,7 +263,7 @@ describe('scheduleAdapterAggregate — falsy-coercion nullish coalesce LOW-CODE-
     expect(out!.workoutTitle).toBe('Antrenament Push');
   });
 
-  it('falls back to "Antrenament azi" when engine workoutTitle null (NU empty string coerce)', async () => {
+  it('falls back to the engine fallback sentinel when engine workoutTitle null (NU empty string coerce)', async () => {
     const mod = await import('../../../engine/schedule/scheduleAdapter.js');
     vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
       ...STUB_PLAN_BASE,
@@ -272,7 +275,7 @@ describe('scheduleAdapterAggregate — falsy-coercion nullish coalesce LOW-CODE-
     });
     const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
     expect(out).not.toBeNull();
-    expect(out!.workoutTitle).toBe('Antrenament azi');
+    expect(out!.workoutTitle).toBe(ENGINE_WORKOUT_TITLE_FALLBACK);
   });
 
   it('falls back to 50 when engine estimatedDurationMin null/undefined (NU 0 coerce)', async () => {
