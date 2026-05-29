@@ -3,7 +3,7 @@
 // MemoryRouter jsdom paradigm per D020 (NU createBrowserRouter).
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 // Phase 6 task_06 Option B: Antrenor now consumes coachDirectorAggregate
@@ -33,6 +33,7 @@ vi.mock('../../../lib/engineWrappers', () => ({
 import { Antrenor } from '../../../routes/screens/antrenor/Antrenor';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useCoachStore } from '../../../stores/coachStore';
+import { useScheduleStore, type WeekDays } from '../../../stores/scheduleStore';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 import { getReadiness, getFatigue } from '../../../lib/engineWrappers';
 
@@ -53,6 +54,10 @@ function resetStores(): void {
     schedContext: 'workout',
     persona: 'gigica',
     reactivateDismissed: false,
+  });
+  useScheduleStore.setState({
+    days: ['training', 'rest', 'training', 'rest', 'training', 'training', 'rest'] as const satisfies WeekDays,
+    editMode: false,
   });
   localStorage.clear();
 }
@@ -556,5 +561,74 @@ describe('Antrenor home — Romanian no-diacritics rule (D-LEGACY-064)', () => {
     const { container } = renderAntrenor();
     const text = container.textContent ?? '';
     expect(/[ăâîșțĂÂÎȘȚ]/.test(text)).toBe(false);
+  });
+});
+
+describe('Antrenor home — Smoke #6 schedule reactivity', () => {
+  beforeEach(() => {
+    resetStores();
+    vi.mocked(getReadiness).mockReturnValue(null);
+    vi.mocked(getFatigue).mockReturnValue(null);
+  });
+
+  // Repro: schedule has today as a training day → coach recommends "Start
+  // session". The user edits the week and removes today's workout. The Coach
+  // screen must drop the Start session card reactively (no tab switch). Pre-fix
+  // the aggregate was fetched once on mount (useEffect []), so it stayed stale
+  // until a remount. The fix re-runs getCoachToday when scheduleStore changes.
+  it('removing today\'s workout drops the Start session card without a remount', async () => {
+    // 1st aggregate fetch (mount): today IS a training day → workout card.
+    vi.mocked(getCoachToday).mockResolvedValueOnce({
+      readiness: null,
+      fatigue: null,
+      plannedWorkout: {
+        workoutTitle: 'Push (piept si umeri)',
+        exerciseCount: 6,
+        estimatedDuration: 52,
+        intensityMod: 'normal',
+        exercises: [],
+        volumeKg: 0,
+      },
+      isRestDay: false,
+      patternsBanner: [],
+      prWallRecent: [],
+      alerts: [],
+      restReason: null,
+      source: 'engine',
+    });
+    // 2nd aggregate fetch (after schedule edit): today removed → rest day.
+    vi.mocked(getCoachToday).mockResolvedValueOnce({
+      readiness: null,
+      fatigue: null,
+      plannedWorkout: null,
+      isRestDay: true,
+      patternsBanner: [],
+      prWallRecent: [],
+      alerts: [],
+      restReason: null,
+      source: 'engine',
+    });
+
+    renderAntrenor();
+    // Start session CTA present while today is a training day.
+    expect(await screen.findByRole('button', { name: /Start session/i })).toBeInTheDocument();
+
+    // Edit the week: flip every day to rest (removes today's workout) + save.
+    // This mutates the SAME scheduleStore the on-screen Calendar7Day editor
+    // drives, with no navigation / remount of the Antrenor screen.
+    act(() => {
+      useScheduleStore.setState({
+        days: ['rest', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'] as const satisfies WeekDays,
+        editMode: false,
+      });
+    });
+
+    // Reactive: Start session card gone, rest card surfaced — no tab switch.
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: /Start session/i })).not.toBeInTheDocument();
+    });
+    expect(screen.getByText(/Active recovery day/i)).toBeInTheDocument();
+    // Confirm the aggregate was re-derived (mount + post-edit).
+    expect(vi.mocked(getCoachToday).mock.calls.length).toBeGreaterThanOrEqual(2);
   });
 });

@@ -33,6 +33,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import { useCoachStore } from '../../../stores/coachStore';
+import { useScheduleStore } from '../../../stores/scheduleStore';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 import type { CoachTodayOutput } from '../../../lib/coachDirectorAggregate';
 import { gotoPath } from '../../../lib/navigation';
@@ -97,6 +98,17 @@ export function Antrenor(): JSX.Element {
   const persona = useCoachStore((s) => s.persona);
   const reactivateDismissed = useCoachStore((s) => s.reactivateDismissed);
   const dismissReactivate = useCoachStore((s) => s.dismissReactivate);
+  // Smoke #6 schedule-reactivity — coach aggregate (isRestDay / plannedWorkout)
+  // derives from the weekly schedule (scheduleAdapter.getCalendarOverride). The
+  // week editor lives on THIS screen (Calendar7Day → toggleDay → saveWeekly),
+  // so when the user removes today's training day the aggregate is stale until a
+  // remount (tab switch). Subscribe to the reactive schedule signals — days +
+  // editMode — and re-run getCoachToday on change so removing today's workout
+  // immediately swaps CoachTodayCard → CoachRestCard (no tab switch). saveWeekly
+  // commits localStorage then flips editMode:false; depending on editMode means
+  // the re-fetch fires after the commit, reading the fresh override.
+  const scheduleDays = useScheduleStore((s) => s.days);
+  const scheduleEditMode = useScheduleStore((s) => s.editMode);
 
   // Phase 6 task_06: single source coach aggregate consume async pipeline.
   // Per DECISIONS.md §D027 Option C cascade + Option B composer pure-function
@@ -122,7 +134,9 @@ export function Antrenor(): JSX.Element {
         if (!cancelled) setCoachError(true);
       });
     return () => { cancelled = true; };
-  }, []);
+    // scheduleDays/scheduleEditMode deps: re-derive the coach aggregate when the
+    // weekly schedule changes (Smoke #6 — remove today's workout reflects live).
+  }, [scheduleDays, scheduleEditMode]);
 
   const readiness = coach?.readiness ?? null;
   const fatigue = coach?.fatigue ?? null;
