@@ -165,3 +165,210 @@ describe('i18n — no hardcoded user-facing strings in src/react/**/*.tsx', () =
     expect(offenders).toEqual([]);
   });
 });
+
+// ══ SCANNER-EVADING RO LEAK HARNESS (audit 09.044/09.200/09.205/09.904/15.042)
+//
+// The AST gate above only sees DIRECT JSX text + prose-attribute STRING
+// LITERALS. Three real leak classes evade it:
+//   1. RO string literals inside a JSX EXPRESSION (a ternary branch like
+//      `{error ? 'Eroare...' : 'Te conectam...'}`) — a JsxExpression, not
+//      JsxText (audit 09.044 AuthCallback).
+//   2. RO copy emitted from a NON-.tsx source (an engine `.js` or a `.ts`
+//      composer) that surfaces through a banner at render — never touched by
+//      the .tsx-only scan (audit 09.200 proactiveEngine, 09.205 engineWrappers).
+//   3. an RO string accidentally committed into the EN bundle VALUES, leaking
+//      Romanian under EN on whatever screen reads that key.
+//
+// These three scans close each class. They key off a high-confidence RO signal
+// (diacritic OR an RO-only word) on STRING/TEMPLATE literals — so an EN literal
+// (`'Save'`) never trips them; only Romanian copy does.
+
+const RO_DIACRITICS = /[ăâîșțĂÂÎȘȚşţŞŢ]/;
+
+// RO-only words — high-frequency in our copy, never produced by a native EN
+// writer, never a cognate/unit/proper-noun. A single whole-word hit on a source
+// or bundle literal = a real Romanian leak. (Compact on purpose; mirrors the
+// signal philosophy of i18nNoRoLeak.test.tsx.)
+const RO_LEAK_TOKENS = [
+  'zile', 'ziua', 'saptamana', 'saptamani', 'luni', 'luna',
+  'antrenament', 'antrenamentul', 'antrenamente', 'antrenat', 'antreneaza', 'antrenor',
+  'sesiune', 'sesiunea', 'sesiuni', 'exercitiu', 'exercitii', 'seturi', 'repetari',
+  'greutate', 'greutatea', 'oboseala', 'recuperare', 'recupereaza', 'odihna',
+  'proteina', 'proteine', 'hidratare', 'calorii', 'somnul', 'somn',
+  'asteapta', 'reincepe', 'incepe', 'continua', 'verificare', 'conectam',
+  'redirectionam', 'creste', 'mentine', 'consecutive', 'musculare', 'neantronate',
+  'stagnare', 'aderenta', 'adherenta', 'usoara', 'usor', 'scurta', 'intensitatea',
+  'ritmul', 'prioritizeaza', 'verifica', 'caloriile', 'inainte',
+];
+const RO_LEAK_REGEX = new RegExp(
+  `\\b(${RO_LEAK_TOKENS.join('|')})\\b`,
+  'i',
+);
+
+/** True when a literal carries a Romanian signal (diacritic or RO-only word). */
+function hasRoSignal(s: string): boolean {
+  return RO_DIACRITICS.test(s) || RO_LEAK_REGEX.test(s);
+}
+
+interface LeakHit {
+  readonly file: string;
+  readonly line: number;
+  readonly text: string;
+}
+
+/**
+ * A literal carries USER-FACING Romanian prose (vs. a code identifier that
+ * merely contains an RO substring — a route path `/app/antrenor`, an import
+ * specifier `./screens/antrenor/X`, a rating-enum value `'usor'`, a testid
+ * `count-usor`). Discriminator: an RO signal AND a whitespace (multi-word
+ * phrase) AND no path-like slash. The four AuthCallback ternary leaks + every
+ * proactiveEngine template + the patterns/lagging lines all qualify; the code
+ * identifiers above never do.
+ */
+function isRoProse(text: string): boolean {
+  if (!hasRoSignal(text)) return false;
+  if (!/\s/.test(text)) return false;       // single word → enum/slug, not a phrase
+  if (text.includes('/')) return false;     // path / import specifier
+  return true;
+}
+
+function collectLiteral(node: ts.Node, text: string, sf: ts.SourceFile, rel: string, out: LeakHit[]): void {
+  if (!isRoProse(text)) return;
+  const { line } = sf.getLineAndCharacterOfPosition(node.getStart(sf));
+  out.push({ file: rel, line: line + 1, text: text.replace(/\s+/g, ' ').trim().slice(0, 80) });
+}
+
+/**
+ * Walk a source file's STRING + TEMPLATE literals (ordinary strings,
+ * no-substitution templates, and the static head/spans of substitution
+ * templates `\`Stagnare ${n} saptamani\``) and flag RO prose. .tsx/.ts/.js all
+ * parse as TSX. `jsxOnly` restricts hits to literals lexically inside a JSX
+ * element/fragment subtree — used by the broad .tsx scan so a Romanian SENTINEL
+ * comparison (`x === 'Antrenament azi'`) or a navigate() arg in plain code is
+ * not flagged, only copy that actually renders (e.g. a `{cond ? 'RO' : 'RO'}`
+ * JSX-expression ternary).
+ */
+function scanSourceRoLiterals(absPath: string, relPath: string, jsxOnly: boolean): LeakHit[] {
+  const code = readFileSync(absPath, 'utf8');
+  const sf = ts.createSourceFile(absPath, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const hits: LeakHit[] = [];
+
+  function flag(node: ts.Node, text: string): void {
+    collectLiteral(node, text, sf, relPath, hits);
+  }
+
+  function walk(node: ts.Node, inJsx: boolean): void {
+    const nowInJsx = inJsx
+      || ts.isJsxElement(node) || ts.isJsxFragment(node) || ts.isJsxSelfClosingElement(node);
+    if (!jsxOnly || nowInJsx) {
+      if (ts.isStringLiteral(node)) {
+        flag(node, node.text);
+      } else if (ts.isNoSubstitutionTemplateLiteral(node)) {
+        flag(node, node.text);
+      } else if (ts.isTemplateExpression(node)) {
+        flag(node.head, node.head.text);
+        for (const span of node.templateSpans) flag(span.literal, span.literal.text);
+      }
+    }
+    ts.forEachChild(node, (c) => walk(c, nowInJsx));
+  }
+  walk(sf, false);
+  return hits;
+}
+
+function gitFiles(glob: string): string[] {
+  return execSync(`git ls-files "${glob}"`, { cwd: REPO_ROOT, encoding: 'utf8' })
+    .split('\n')
+    .map((f) => f.trim())
+    .filter(Boolean);
+}
+
+// ── (A) RO literals inside .tsx (incl. JSX expression ternaries) ─────────────
+//
+// Catches audit 09.044: the AuthCallback ternary RO branches the AST text-scan
+// can't see. Scope = the whole .tsx tree, but it ONLY trips on Romanian copy —
+// EN literals in expressions are ignored, so it is false-positive-safe.
+describe('i18n leak harness — no RO string literals in src/react/**/*.tsx (incl. JSX expressions)', () => {
+  it('no Romanian copy hides in a .tsx string/template literal', () => {
+    const files = gitFiles('src/react/**/*.tsx')
+      .filter((f) => !f.split('/').includes('__tests__'));
+    expect(files.length).toBeGreaterThan(50);
+
+    const hits: LeakHit[] = [];
+    for (const rel of files) {
+      hits.push(...scanSourceRoLiterals(resolve(REPO_ROOT, rel.split('/').join(sep)), rel, true));
+    }
+    if (hits.length > 0) {
+      const report = hits.map((h) => `  ${h.file}:${h.line} "${h.text}"`).join('\n');
+      throw new Error(
+        `Found ${hits.length} Romanian string literal(s) in .tsx source (scanner-evading, ` +
+          `e.g. a JSX ternary branch). Replace with t('key') + add EN/RO bundle entries:\n${report}`,
+      );
+    }
+    expect(hits).toEqual([]);
+  });
+});
+
+// ── (B) RO literals in the banner-feeding engine + composer sources ──────────
+//
+// Catches audit 09.200 (proactiveEngine.js `message` templates) + 09.205
+// (engineWrappers.ts banner text). These files compose user-facing banner copy
+// outside the .tsx tree, so the AST gate never reads them. They must emit a
+// semantic key resolved by t() at the render boundary — ZERO RO copy in source.
+const BANNER_SOURCE_FILES = [
+  'src/engine/proactiveEngine.js',
+  'src/react/lib/engineWrappers.ts',
+];
+describe('i18n leak harness — banner-feeding sources carry no RO copy', () => {
+  it('proactiveEngine + engineWrappers emit keys, not Romanian strings', () => {
+    const hits: LeakHit[] = [];
+    for (const rel of BANNER_SOURCE_FILES) {
+      hits.push(...scanSourceRoLiterals(resolve(REPO_ROOT, rel.split('/').join(sep)), rel, false));
+    }
+    if (hits.length > 0) {
+      const report = hits.map((h) => `  ${h.file}:${h.line} "${h.text}"`).join('\n');
+      throw new Error(
+        `Found ${hits.length} Romanian string literal(s) in a banner-feeding source. ` +
+          `Engines/composers must emit a semantic i18n key (resolve via t() at the React ` +
+          `render boundary), never localized copy:\n${report}`,
+      );
+    }
+    expect(hits).toEqual([]);
+  });
+});
+
+// ── (C) en.json VALUES carry no RO leak (every screen, not enumerated) ───────
+//
+// The EN bundle is the single source of EN copy. A Romanian string committed
+// into ANY value leaks RO under EN on whatever screen reads that key — and the
+// rendered-screen leak test only covers screens someone REMEMBERED to add. This
+// walks the WHOLE bundle so no screen can slip through.
+function flattenBundle(obj: unknown, prefix: string, out: Array<{ key: string; value: string }>): void {
+  if (obj == null || typeof obj !== 'object') return;
+  for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+    if (k === '_meta') continue; // bundle metadata, not user-facing copy
+    const key = prefix ? `${prefix}.${k}` : k;
+    if (typeof v === 'string') out.push({ key, value: v });
+    else if (Array.isArray(v)) v.forEach((e, i) => { if (typeof e === 'string') out.push({ key: `${key}[${i}]`, value: e }); else flattenBundle(e, `${key}[${i}]`, out); });
+    else if (v && typeof v === 'object') flattenBundle(v, key, out);
+  }
+}
+describe('i18n leak harness — en.json values are RO-leak-free on every screen', () => {
+  it('no EN bundle value contains a diacritic or RO-only word', () => {
+    const enPath = resolve(REPO_ROOT, 'src', 'i18n', 'en.json');
+    const en = JSON.parse(readFileSync(enPath, 'utf8'));
+    const entries: Array<{ key: string; value: string }> = [];
+    flattenBundle(en, '', entries);
+    expect(entries.length).toBeGreaterThan(500); // sanity: the bundle was read
+
+    const leaks = entries.filter((e) => hasRoSignal(e.value));
+    if (leaks.length > 0) {
+      const report = leaks.map((l) => `  ${l.key} = "${l.value.slice(0, 80)}"`).join('\n');
+      throw new Error(
+        `Found ${leaks.length} Romanian value(s) in the EN bundle (en.json). The EN bundle ` +
+          `must hold clean English — move the Romanian copy to ro.json:\n${report}`,
+      );
+    }
+    expect(leaks).toEqual([]);
+  });
+});

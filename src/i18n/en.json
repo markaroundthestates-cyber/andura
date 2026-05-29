@@ -198,7 +198,8 @@
       "lastWeek": "last week"
     },
     "recoveredQuote": "{group} has recovered since {when} — let's nail it.",
-    "fallbackQuote": "Today is your day. Show up — your future self will thank you."
+    "fallbackQuote": "Today is your day. Show up — your future self will thank you.",
+    "laggingSignal": "{group} undervolume {weeks} wks — focus on it today."
   },
 
   "restOverlay": {
@@ -877,7 +878,22 @@
 
   "patterns": {
     "stagnation": "Stagnation on {exercise}",
-    "lowAdherence": "Low adherence this week"
+    "lowAdherence": "Low adherence this week",
+    "stagnationWeeks": "Stagnation for {weeks} weeks. Coach is adjusting the intensity.",
+    "lowAdherenceFull": "Low adherence this week. Get back in rhythm with a short session."
+  },
+
+  "proactive": {
+    "proteinDeficit": "Average protein over the last {days} days: {avg}g. Target: {target}g. Increase your intake.",
+    "sleepDebt": "Readiness below {threshold} for {days} days in a row. Prioritize sleep.",
+    "prOpportunity": "Readiness at {score} — a good day for a PR. You haven't set a PR in 14 days.",
+    "undertrainedGroups": "Muscle groups untrained 5+ days: {groups}.",
+    "trainingStreak": "{streak} days of training in a row! Keep the rhythm going.",
+    "kcalTooLow": "Average kcal over the last {days} days: {avg}. Below {target} kcal — risk of muscle loss.",
+    "pastPeakHours": "You've passed your peak hours ({start}:00-{end}:00). Train anyway — every session counts.",
+    "weightIncreasingInCut": "Weight went up by {delta}kg during a CUT. Check your calories.",
+    "inactivity": "You haven't trained for {days} days. Start back with an easy session.",
+    "lowHydration": "Hydration today: {ml}ml. Target: {target}ml. Drink water before training."
   },
 
   "nutrition": {
@@ -1826,6 +1842,13 @@
         ]
       }
     }
+  },
+
+  "authCallback": {
+    "verifyingTitle": "Signing you in...",
+    "verifyingBody": "Just a second.",
+    "errorTitle": "Verification error",
+    "errorBody": "Redirecting you to login."
   },
 
   "onboarding": {

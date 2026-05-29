@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../stores/appStore';
 import { verifyMagicLink, parseMagicLinkUrl, getPendingEmail, signInWithGoogleIdToken, AUTH_STORAGE_KEYS } from '../../../auth.js';
 import { runPostAuthSync } from '../../lib/reactBoot';
+import { t } from '../../../i18n/index.js';
 
 // §B005/D-2 audit fix — Google OAuth fragment parse helper. Google returns
 // `#id_token=<jwt>&access_token=...&...` în URL hash post-redirect.
@@ -112,10 +113,10 @@ export function AuthCallback(): JSX.Element {
           screen reader (altfel schimbarea de text e silentioasa). */}
       <div role="status" aria-live="polite">
         <p className="text-base font-semibold text-ink mb-1">
-          {error ? 'Eroare la verificare' : 'Te conectam...'}
+          {error ? t('authCallback.errorTitle') : t('authCallback.verifyingTitle')}
         </p>
         <p className="text-sm text-ink2">
-          {error ? 'Te redirectionam catre login.' : 'Asteapta o secunda.'}
+          {error ? t('authCallback.errorBody') : t('authCallback.verifyingBody')}
         </p>
       </div>
     </section>
