@@ -70,7 +70,7 @@ export function BMRStrip(): JSX.Element {
   return (
     <section
       data-testid="bmr-strip"
-      className="relative overflow-hidden bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4 animate-card-rise"
+      className="pulse-card pulse-card-tight overflow-hidden p-4 mb-4 flex items-center gap-4 animate-card-rise"
       aria-label={t('bodyComp.bmrStrip.ariaLabel')}
     >
       {/* Wave A4 (Daniel 2026-05-28) — brick radial wash for warmth + depth. */}

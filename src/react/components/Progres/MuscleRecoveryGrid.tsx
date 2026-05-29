@@ -124,7 +124,7 @@ export function MuscleRecoveryGrid(): JSX.Element | null {
   return (
     <section
       data-testid="muscle-recovery-grid"
-      className="surface-elevated bg-paper2 border border-line rounded-3xl p-4 mb-4"
+      className="pulse-card p-4 mb-4"
       aria-label={t('progres.recovery.ariaLabel')}
     >
       <div className="grid grid-cols-4 gap-x-1.5 gap-y-3.5">

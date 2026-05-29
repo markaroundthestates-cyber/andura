@@ -52,7 +52,7 @@ export function ProjectionStrip(): JSX.Element | null {
     return (
       <section
         data-testid="projection-strip-empty"
-        className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4"
+        className="pulse-card pulse-card-tight p-4 mb-4 flex items-center gap-4"
         aria-label={t('bodyComp.projectionStrip.ariaLabel')}
       >
         <TrendingUp className="w-6 h-6 text-ink2 flex-shrink-0" aria-hidden="true" />
@@ -75,7 +75,7 @@ export function ProjectionStrip(): JSX.Element | null {
     return (
       <section
         data-testid="projection-strip"
-        className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4"
+        className="pulse-card pulse-card-tight p-4 mb-4 flex items-center gap-4"
         aria-label={t('bodyComp.projectionStrip.ariaLabel')}
       >
         <TrendingUp className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
@@ -94,7 +94,7 @@ export function ProjectionStrip(): JSX.Element | null {
   return (
     <section
       data-testid="projection-strip"
-      className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4"
+      className="pulse-card pulse-card-tight p-4 mb-4 flex items-center gap-4"
       aria-label={t('bodyComp.projectionStrip.ariaLabel')}
     >
       <TrendingUp className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />

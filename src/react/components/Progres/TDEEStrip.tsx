@@ -12,12 +12,16 @@
 //
 // HERO redesign (Daniel 2026-05-28 "Kcal recomandate trebuiau sa apara sus"):
 // the recommended kcal is the most actionable number on the Progres screen, so
-// it now reads as a HERO — big tabular num-display number on a surface-elevated
-// card with a palette-aware accent bloom behind it for depth; protein + source
+// it now reads as a HERO — big tabular num-display number; protein + source
 // demoted to quiet secondary context. (Count-up was tried + dropped: on an
 // async-resolved value it starts at 0 and only tweens via rAF, which reads as
 // a flash on every load and breaks under no-rAF test envs.) Logic, i18n keys,
 // and all testids unchanged — presentation-only.
+//
+// Pulse 1:1 parity (2026-05-29, interfata-noua/screens-tabs.jsx:21-39): the
+// hero migrates to the glass card language (.pulse-card) with the mockup's aqua
+// radial wash via .pulse-card-glow + inline --wash; the prior bespoke brick
+// bloom div is retired in favor of the shared glow pseudo-layer.
 
 import type { JSX } from 'react';
 import { useEffect, useState, useMemo } from 'react';
@@ -124,20 +128,10 @@ export function TDEEStrip(): JSX.Element {
   return (
     <section
       data-testid="tdee-strip"
-      className="surface-elevated relative overflow-hidden border border-line rounded-3xl p-5 mb-4"
+      className="pulse-card pulse-card-glow overflow-hidden p-5 mb-4"
+      style={{ ['--wash' as string]: 'var(--aqua)' }}
       aria-label={t('progres.tdee.ariaLabel')}
     >
-      {/* Decorative accent bloom behind the hero number — palette-aware via
-          color-mix(--brick), pointer-events none, purely cosmetic depth so the
-          number reads as "lit" rather than printed on a flat card. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-12 -right-10 w-44 h-44 rounded-full"
-        style={{
-          background:
-            'radial-gradient(circle, color-mix(in oklab, var(--brick) 24%, transparent) 0%, transparent 70%)',
-        }}
-      />
 
       <div className="relative flex items-center justify-between mb-4" data-testid="tdee-faza-row">
         <span

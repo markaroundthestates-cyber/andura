@@ -115,7 +115,7 @@ export function NutritionInline(): JSX.Element {
       <p className="text-xs font-semibold text-ink2 uppercase tracking-wide mt-4 mb-2">
         {t('bodyComp.nutritionInline.sectionHeading')}
       </p>
-      <div className="bg-paper2 border border-line rounded-2xl p-3.5 mb-2.5">
+      <div className="pulse-card pulse-card-tight p-3.5 mb-2.5">
         <div className="flex gap-2.5 mb-2.5">
           <div className="flex-1" data-testid="nutri-kcal-chip">
             <div className="flex items-center justify-between mb-1">

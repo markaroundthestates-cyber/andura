@@ -83,7 +83,7 @@ export function ObiectivGoalCard(): JSX.Element {
       <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
         {t('obiectiv.heading')}
       </p>
-      <div className="surface-elevated bg-paper2 border border-line rounded-[14px] overflow-hidden">
+      <div className="pulse-card overflow-hidden">
         {OPTIONS.map((opt, i) => {
           const selected = activeGoal === opt.id;
           const isLast = i === OPTIONS.length - 1;

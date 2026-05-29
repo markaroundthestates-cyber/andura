@@ -112,8 +112,10 @@ describe('FatigueStrip — Wave C2 i18n EN default', () => {
   // pins (zero icons, bg-white, rounded-[14px]) were tied to the now-retired
   // andura-clasic.html DESIGN MASTER. Pulse is the single design system, so the
   // strip matches its grid siblings BMRStrip/BodyFatStrip: an Activity icon
-  // prefix on a token surface (bg-paper2 border-line rounded-2xl). These two
+  // prefix on the Pulse glass tile (pulse-card pulse-card-tight). These two
   // styling-contract tests are superseded to assert the Pulse reality.
+  // Pulse 1:1 parity (2026-05-29) — the flat token surface
+  // (bg-paper2/border-line/rounded-2xl) is migrated to the glass tile classes.
   it('PULSE — renders an Activity lucide icon prefix (matches BMRStrip/BodyFatStrip)', () => {
     vi.mocked(getFatigue).mockReturnValueOnce({
       score: 45,
@@ -130,12 +132,11 @@ describe('FatigueStrip — Wave C2 i18n EN default', () => {
     expect(lucideSvgs.length).toBe(1);
   });
 
-  it('PULSE — token surface (bg-paper2 + border-line + rounded-2xl), not retired bg-white', () => {
+  it('PULSE — glass tile (pulse-card + pulse-card-tight), not retired bg-white', () => {
     render(<FatigueStrip />);
     const strip = screen.getByTestId('fatigue-strip');
-    expect(strip.className).toContain('bg-paper2');
-    expect(strip.className).toContain('border-line');
-    expect(strip.className).toContain('rounded-2xl');
+    expect(strip.className).toContain('pulse-card');
+    expect(strip.className).toContain('pulse-card-tight');
     // Anti-regression: retired DESIGN MASTER literals gone.
     expect(strip.className).not.toContain('bg-white');
     expect(strip.className).not.toContain('rounded-[14px]');

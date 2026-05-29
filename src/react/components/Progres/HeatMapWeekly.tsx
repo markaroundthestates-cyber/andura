@@ -78,7 +78,7 @@ export function HeatMapWeekly(): JSX.Element {
   return (
     <section
       data-testid="weight-snapshot-7day"
-      className="bg-paper2 border border-line rounded-2xl p-4 mb-4"
+      className="pulse-card p-4 mb-4"
       aria-label={t('progres.weight.snapshotAriaLabel')}
     >
       <div className="flex items-baseline justify-between mb-2">

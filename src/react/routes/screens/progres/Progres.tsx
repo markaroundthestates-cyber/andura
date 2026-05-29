@@ -157,7 +157,8 @@ export function Progres(): JSX.Element {
         {sparkData.length >= 2 && (
           <div
             data-testid="progres-trend-sparkline"
-            className="surface-elevated bg-paper2 border border-line rounded-3xl p-4 mb-4"
+            className="pulse-card pulse-card-glow p-4 mb-4"
+            style={{ ['--wash' as string]: 'var(--aqua)' }}
           >
             <div className="flex items-center justify-between mb-2">
               <Kicker color="var(--aqua)">{t('progres.weight.snapshotTitle')}</Kicker>
@@ -203,7 +204,7 @@ export function Progres(): JSX.Element {
             type="button"
             onClick={() => navigate(gotoPath('weight-log-list'))}
             data-testid="last-weight-card"
-            className="w-full text-left p-4 mb-4 bg-paper2 border border-line rounded-xl flex items-center gap-3"
+            className="pulse-card pulse-card-tight w-full text-left p-4 mb-4 flex items-center gap-3"
           >
             <div className="flex-1 min-w-0">
               <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">{t('progres.lastWeighIn')}</p>
@@ -235,7 +236,7 @@ export function Progres(): JSX.Element {
           {t('progres.bodyMeasurements')}
         </button>
         {lastBody && (
-          <div className="p-4 mb-4 bg-paper2 border border-line rounded-xl" data-testid="last-body-card">
+          <div className="pulse-card pulse-card-tight p-4 mb-4" data-testid="last-body-card">
             <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">{t('progres.lastMeasurement')}</p>
             <p className="text-sm text-ink2 mt-1">{lastBody.date}</p>
             <div className="text-sm text-ink mt-1 flex flex-wrap gap-3">

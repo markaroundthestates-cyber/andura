@@ -82,7 +82,7 @@ export function ObiectivCard(): JSX.Element {
         <Target className="w-3.5 h-3.5" aria-hidden="true" />
         {t('obiectiv.heading')}
       </p>
-      <div className="surface-elevated bg-paper2 border border-line rounded-[14px] overflow-hidden">
+      <div className="pulse-card overflow-hidden">
         <label className="flex items-center justify-between px-4 py-3 border-b border-line">
           <span className="text-sm text-ink">{t('obiectiv.targetWeightLabel')}</span>
           <input

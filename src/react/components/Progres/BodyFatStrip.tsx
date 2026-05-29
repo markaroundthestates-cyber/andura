@@ -68,7 +68,7 @@ export function BodyFatStrip(): JSX.Element {
   return (
     <section
       data-testid="bodyfat-strip"
-      className="bg-paper2 border border-line rounded-2xl p-4 mb-4 flex items-center gap-4"
+      className="pulse-card pulse-card-tight p-4 mb-4 flex items-center gap-4"
       aria-label={t('progres.bodyFat.ariaLabel')}
     >
       <Percent className="w-6 h-6 text-brick flex-shrink-0" aria-hidden="true" />
