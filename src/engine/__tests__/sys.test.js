@@ -274,6 +274,43 @@ describe('SYS — getTechniques', () => {
     const techs = SYS.getTechniques('Lat Pulldown', 1, 4);
     expect(techs.some(t => t.label === 'PAUZA 1 SEC')).toBe(true);
   });
+
+  // §07.198-204 — the CUT decision at sys.js:274 reads the clock for the
+  // `phase === 'AUTO' && now < TARGET_DATE` sub-branch. nowMs is now injectable
+  // and defaults to the real clock (production byte-identical). NOTE: in
+  // production getPhase() never returns 'AUTO' (it always resolves to a concrete
+  // phase), so this sub-branch is reached only when phase is forced to 'AUTO';
+  // we stub getPhase to pin the date-dependent path deterministically.
+  // TARGET_DATE = 2026-07-20 (src/constants.js).
+  describe('AUTO date branch (injected clock)', () => {
+    const TARGET_MS = new Date('2026-07-20').getTime();
+
+    it('AUTO + now before TARGET_DATE → effectively CUT → drop set suppressed', () => {
+      const spy = vi.spyOn(SYS, 'getPhase').mockReturnValue('AUTO');
+      try {
+        const techs = SYS.getTechniques('Cable Curl', 3, 3, TARGET_MS - 86400000);
+        expect(techs.some(t => t.label === 'DROP SET')).toBe(false);
+      } finally {
+        spy.mockRestore();
+      }
+    });
+
+    it('AUTO + now after TARGET_DATE → not cut → drop set offered', () => {
+      const spy = vi.spyOn(SYS, 'getPhase').mockReturnValue('AUTO');
+      try {
+        const techs = SYS.getTechniques('Cable Curl', 3, 3, TARGET_MS + 86400000);
+        expect(techs.some(t => t.label === 'DROP SET')).toBe(true);
+      } finally {
+        spy.mockRestore();
+      }
+    });
+
+    it('omitting nowMs defaults to real clock (no throw, returns array)', () => {
+      mockStorage['phase-override'] = 'BULK';
+      const techs = SYS.getTechniques('Cable Curl', 3, 3);
+      expect(Array.isArray(techs)).toBe(true);
+    });
+  });
 });
 
 describe('SYS — getCheckpoints / getTimeline', () => {
