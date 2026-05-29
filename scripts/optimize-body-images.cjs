@@ -13,15 +13,16 @@
 const path = require('node:path');
 const sharp = require('sharp');
 
-const DIR = path.join(__dirname, '..', 'public', 'body');
+const SRC_DIR = path.join(__dirname, '..', 'assets-source', 'body'); // tracked source jpgs (not shipped)
+const OUT_DIR = path.join(__dirname, '..', 'public', 'body'); // only the .webp ship
 const BASES = ['male-front', 'male-back', 'female-front', 'female-back'];
 const WIDTH = 640; // 2× the ~140px CSS render box → crisp on retina, still tiny.
 const QUALITY = 80;
 
 async function run() {
   for (const name of BASES) {
-    const src = path.join(DIR, `${name}.jpg`);
-    const out = path.join(DIR, `${name}.webp`);
+    const src = path.join(SRC_DIR, `${name}.jpg`);
+    const out = path.join(OUT_DIR, `${name}.webp`);
     const info = await sharp(src)
       .resize({ width: WIDTH, withoutEnlargement: true })
       .webp({ quality: QUALITY, effort: 6 })
