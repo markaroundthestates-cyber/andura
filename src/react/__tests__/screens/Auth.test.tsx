@@ -134,7 +134,9 @@ describe('Auth — Pulse button hierarchy (email magic-link primary)', () => {
   // Google-primary brick hierarchy.
   it('email-send is the gradient primary CTA', () => {
     renderAuth();
-    expect(screen.getByTestId('auth-send').className).toMatch(/pulse-grad-bg/);
+    // btn-grad = shared mockup gradient-pill idiom (volt->aqua fill + 999px
+    // radius + shine); supersedes the prior pulse-grad-bg + rounded-[14px] combo.
+    expect(screen.getByTestId('auth-send').className).toMatch(/btn-grad/);
   });
 
   it('email input precedes skip button in DOM order', () => {

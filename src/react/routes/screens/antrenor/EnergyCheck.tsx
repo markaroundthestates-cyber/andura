@@ -61,16 +61,16 @@ interface EnergyOption {
   readiness: 1 | 2 | 3 | 4 | 5;
 }
 
-// 5-step distinct color ramp green -> lime -> yellow -> orange -> red so
-// adjacent states read differently (prior emoji bucketed bine+normal yellow,
-// slabit+obosit red -> indistinguishable). Anchored pe palette tokens succ/
-// warn/danger; lime + orange interpolate steps 2/4 warm-consistent.
+// 5-step Pulse energy ramp volt -> aqua -> gold -> ember -> ember-red, 1:1 with
+// the mockup (interfata-noua/data.jsx energy[]: excellent=volt, good=aqua,
+// normal=gold, low=ember, tired=ember-red). Adjacent states read distinctly and
+// every hue is a palette token (no raw hex). Dots are decorative (aria-hidden).
 const ENERGY_OPTIONS: readonly EnergyOption[] = [
-  { level: 'excelent', color: 'var(--succ)', labelKey: 'energyCheck.levels.excellent', hintKey: 'energyCheck.levels.excellentHint', intensity: 'plus', readiness: 5 },
-  { level: 'bine', color: '#6b9e3f', labelKey: 'energyCheck.levels.good', hintKey: 'energyCheck.levels.goodHint', intensity: 'normal', readiness: 4 },
-  { level: 'normal', color: 'var(--warn)', labelKey: 'energyCheck.levels.normal', hintKey: 'energyCheck.levels.normalHint', intensity: 'normal', readiness: 3 },
-  { level: 'slabit', color: '#d4702a', labelKey: 'energyCheck.levels.weak', hintKey: 'energyCheck.levels.weakHint', intensity: 'minus', readiness: 2 },
-  { level: 'obosit', color: 'var(--danger)', labelKey: 'energyCheck.levels.tired', hintKey: 'energyCheck.levels.tiredHint', intensity: 'minus', readiness: 1 },
+  { level: 'excelent', color: 'var(--volt)', labelKey: 'energyCheck.levels.excellent', hintKey: 'energyCheck.levels.excellentHint', intensity: 'plus', readiness: 5 },
+  { level: 'bine', color: 'var(--aqua)', labelKey: 'energyCheck.levels.good', hintKey: 'energyCheck.levels.goodHint', intensity: 'normal', readiness: 4 },
+  { level: 'normal', color: 'var(--gold)', labelKey: 'energyCheck.levels.normal', hintKey: 'energyCheck.levels.normalHint', intensity: 'normal', readiness: 3 },
+  { level: 'slabit', color: 'var(--ember)', labelKey: 'energyCheck.levels.weak', hintKey: 'energyCheck.levels.weakHint', intensity: 'minus', readiness: 2 },
+  { level: 'obosit', color: 'var(--ember-red)', labelKey: 'energyCheck.levels.tired', hintKey: 'energyCheck.levels.tiredHint', intensity: 'minus', readiness: 1 },
 ];
 
 export function EnergyCheck(): JSX.Element {

@@ -197,7 +197,7 @@ export function Onboarding(): JSX.Element {
           type="button"
           onClick={next}
           data-testid="onb-next"
-          className={`btn-primary-lift press-feedback flex-1 px-5 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold${isLast ? ' option-selected-ring' : ''}`}
+          className={`btn-primary-lift btn-grad press-feedback flex-1 px-5 py-3 text-base font-semibold${isLast ? ' option-selected-ring' : ''}`}
         >
           {isLast ? t('onboarding.finishCta') : t('onboarding.continueCta')}
         </button>
