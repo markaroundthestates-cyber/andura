@@ -36,8 +36,8 @@ const EXPERIENCE_MULTIPLIER = { beginner: 0.7, intermediate: 1.0, advanced: 1.3 
 // clamped to the exercise's valid equipment range by the caller's
 // roundToEquipmentWeight snap (never below the equipment floor, never absurd).
 
-// Reference bodyweight the BASE_WEIGHTS priors were tuned around (kg).
-const REFERENCE_BW_KG = 70;
+// BASE_WEIGHTS priors above are tuned around a ~70kg reference lifter; the
+// bodyweight model below scales away from that reference, floored at the prior.
 
 // Working weight as a FRACTION of bodyweight, per movement pattern, for a
 // reference INTERMEDIATE MALE. These are deliberately conservative cold-start
