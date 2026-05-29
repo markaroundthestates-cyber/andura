@@ -27,10 +27,12 @@ import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 // taxonomy is empty. Mock the selector to exercise both branches of the 03.048
 // gate without coupling to engine internals.
 vi.mock('../../../components/Progres/MuscleRecoveryGrid', () => ({
-  useMuscleRecoveryGroups: vi.fn(() => [] as unknown[]),
+  useMuscleRecoveryGroups: vi.fn(() => []),
   MuscleRecoveryGrid: vi.fn(() => null),
 }));
 import { useMuscleRecoveryGroups, MuscleRecoveryGrid } from '../../../components/Progres/MuscleRecoveryGrid';
+
+type RecoveryGroups = ReturnType<typeof useMuscleRecoveryGroups>;
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -51,7 +53,7 @@ function renderProgres() {
 
 beforeEach(() => {
   useProgresStore.setState({ weightLog: [], bodyData: [] });
-  vi.mocked(useMuscleRecoveryGroups).mockReturnValue([] as unknown[]);
+  vi.mocked(useMuscleRecoveryGroups).mockReturnValue([] as RecoveryGroups);
   localStorage.clear();
 });
 
@@ -105,7 +107,7 @@ describe('Progres landing', () => {
 
 describe('Progres — RECUPERARE zone gating (03.048)', () => {
   it('hides the recovery zone heading when the recovery selector yields no groups', () => {
-    vi.mocked(useMuscleRecoveryGroups).mockReturnValue([] as unknown[]);
+    vi.mocked(useMuscleRecoveryGroups).mockReturnValue([] as RecoveryGroups);
     renderProgres();
     // No lone eyebrow over empty space: heading + zone both absent.
     expect(screen.queryByTestId('progres-zone-recovery-heading')).not.toBeInTheDocument();
@@ -115,7 +117,7 @@ describe('Progres — RECUPERARE zone gating (03.048)', () => {
   it('shows the recovery zone heading when groups exist', () => {
     vi.mocked(useMuscleRecoveryGroups).mockReturnValue([
       { group: 'piept', label: 'Piept', state: 'recovered' },
-    ] as unknown[]);
+    ] as RecoveryGroups);
     vi.mocked(MuscleRecoveryGrid).mockReturnValue(
       <div data-testid="muscle-recovery-grid" /> as never,
     );
