@@ -65,71 +65,79 @@ export function SchimbaFazaConfirm(): JSX.Element {
         testIdBack="schimba-faza-confirm-back"
       />
 
+      {/* Pulse reskin (arc #5 2026-05-29) — flat disc + bg-paper2 panels → Pulse
+          glass cards (header content card + the phase selector). Logic / i18n /
+          testids / aria-pressed toggle pattern unchanged. */}
       <div className="flex-1 overflow-y-auto pt-2 px-6 pb-6 flex flex-col items-center text-center">
-        <div className="w-16 h-16 rounded-full bg-paper2 border border-line flex items-center justify-center mb-5">
-          <GitBranch className="w-7 h-7 text-ink" aria-hidden="true" />
-        </div>
-        <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.schimbaFaza.heading')}</h2>
-        {/* Body paragraphs split per mockup andura-clasic.html L2146-2147. */}
-        <p className="text-sm text-ink2 leading-relaxed mb-2 max-w-sm">
-          {t('confirm.schimbaFaza.body1')}
-        </p>
-        <p className="text-sm text-ink2 leading-relaxed mb-6 max-w-sm">
-          {t('confirm.schimbaFaza.body2')}
-        </p>
-
-        {/* §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid
-            pattern toggle select state. role=radiogroup necesita arrow-key
-            handling + roving tabIndex (~200 LOC pentru 7 grupuri) = zero
-            user benefit pre-Beta. Screen reader anunta "button, [label],
-            pressed/not pressed" perfect valid pentru toggle. */}
-        <div className="w-full max-w-sm bg-paper2 border border-line rounded-[14px] overflow-hidden">
-          {PHASE_OPTIONS.map((opt, idx) => {
-            const isSelected = selected === opt.value;
-            const hint =
-              opt.value === 'AUTO'
-                ? t('confirm.schimbaFaza.options.autoHintWithNow', { label: autoDetectedLabel })
-                : t(opt.hintKey);
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                aria-pressed={isSelected}
-                data-testid={`phase-${opt.value.toLowerCase()}`}
-                onClick={() => setSelected(opt.value)}
-                className={`w-full flex items-center px-4 py-3 text-left ${
-                  idx < PHASE_OPTIONS.length - 1 ? 'border-b border-line' : ''
-                } ${isSelected ? 'text-brick' : 'text-ink'}`}
-              >
-                <div className="flex-1">
-                  <p className={`text-sm ${isSelected ? 'font-semibold' : 'font-medium'}`}>
-                    {t(opt.labelKey)}
-                  </p>
-                  <p className="text-xs text-ink2 mt-0.5">{hint}</p>
-                </div>
-                {isSelected && <span aria-hidden="true">•</span>}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="w-full max-w-sm mt-8 flex flex-col gap-3">
-          <button
-            type="button"
-            onClick={handleConfirm}
-            data-testid="schimba-faza-confirm-accept"
-            className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+        <div className="pulse-card pulse-card-glow w-full max-w-sm mt-2 p-6 flex flex-col items-center animate-card-rise">
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mb-5"
+            style={{ background: 'var(--surface)', boxShadow: '0 0 24px -8px var(--aqua)' }}
           >
-            {t('confirm.schimbaFaza.acceptCta')}
-          </button>
-          <button
-            type="button"
-            onClick={handleCancel}
-            data-testid="schimba-faza-confirm-cancel"
-            className="w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
-          >
-            {t('confirm.schimbaFaza.cancelCta')}
-          </button>
+            <GitBranch className="w-7 h-7 text-ink" aria-hidden="true" />
+          </div>
+          <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.schimbaFaza.heading')}</h2>
+          {/* Body paragraphs split per mockup andura-clasic.html L2146-2147. */}
+          <p className="text-sm text-ink2 leading-relaxed mb-2">
+            {t('confirm.schimbaFaza.body1')}
+          </p>
+          <p className="text-sm text-ink2 leading-relaxed mb-6">
+            {t('confirm.schimbaFaza.body2')}
+          </p>
+
+          {/* §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid
+              pattern toggle select state. role=radiogroup necesita arrow-key
+              handling + roving tabIndex (~200 LOC pentru 7 grupuri) = zero
+              user benefit pre-Beta. Screen reader anunta "button, [label],
+              pressed/not pressed" perfect valid pentru toggle. */}
+          <div className="w-full pulse-card pulse-card-tight overflow-hidden">
+            {PHASE_OPTIONS.map((opt, idx) => {
+              const isSelected = selected === opt.value;
+              const hint =
+                opt.value === 'AUTO'
+                  ? t('confirm.schimbaFaza.options.autoHintWithNow', { label: autoDetectedLabel })
+                  : t(opt.hintKey);
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  aria-pressed={isSelected}
+                  data-testid={`phase-${opt.value.toLowerCase()}`}
+                  onClick={() => setSelected(opt.value)}
+                  className={`w-full flex items-center px-4 py-3 text-left ${
+                    idx < PHASE_OPTIONS.length - 1 ? 'border-b border-line' : ''
+                  } ${isSelected ? 'text-brick' : 'text-ink'}`}
+                >
+                  <div className="flex-1">
+                    <p className={`text-sm ${isSelected ? 'font-semibold' : 'font-medium'}`}>
+                      {t(opt.labelKey)}
+                    </p>
+                    <p className="text-xs text-ink2 mt-0.5">{hint}</p>
+                  </div>
+                  {isSelected && <span aria-hidden="true">•</span>}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="w-full mt-8 flex flex-col gap-3">
+            <button
+              type="button"
+              onClick={handleConfirm}
+              data-testid="schimba-faza-confirm-accept"
+              className="btn-primary-lift press-feedback w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+            >
+              {t('confirm.schimbaFaza.acceptCta')}
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              data-testid="schimba-faza-confirm-cancel"
+              className="btn-secondary-lift press-feedback w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
+            >
+              {t('confirm.schimbaFaza.cancelCta')}
+            </button>
+          </div>
         </div>
       </div>
     </section>

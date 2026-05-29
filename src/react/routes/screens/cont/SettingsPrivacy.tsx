@@ -66,7 +66,7 @@ export function SettingsPrivacy(): JSX.Element {
           </p>
         </div>
 
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
+        <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
           <ToggleRow
             testId="privacy-data-export-toggle"
             title={t('settings.privacy.exportToggleTitle')}

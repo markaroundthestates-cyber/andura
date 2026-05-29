@@ -76,7 +76,7 @@ export function SettingsFaq(): JSX.Element {
             <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
               {t(section.titleKey)}
             </p>
-            <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
+            <div className="pulse-card pulse-card-tight overflow-hidden">
               {section.items.map((item, idx) => {
                 const id = `${section.sectionId}-${idx}`;
                 const open = openId === id;

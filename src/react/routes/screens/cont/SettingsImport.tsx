@@ -68,7 +68,7 @@ export function SettingsImport(): JSX.Element {
           {t('settings.import.intro')}
         </p>
 
-        <div className="bg-paper2 border border-line rounded-[14px] p-4 mb-4">
+        <div className="pulse-card pulse-card-tight p-4 mb-4">
           <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
             {t('settings.import.whatHeading')}
           </p>
@@ -82,7 +82,7 @@ export function SettingsImport(): JSX.Element {
         {(phase === 'idle' || phase === 'error') && (
           <>
             <label
-              className="w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2 cursor-pointer"
+              className="btn-primary-lift press-feedback w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2 cursor-pointer"
               data-testid="settings-import-trigger"
             >
               <Upload className="w-4 h-4" aria-hidden="true" />
@@ -110,7 +110,7 @@ export function SettingsImport(): JSX.Element {
 
         {phase === 'preview' && preview != null && (
           <div data-testid="settings-import-preview">
-            <div className="bg-paper2 border border-line rounded-[14px] p-4 mb-4">
+            <div className="pulse-card pulse-card-tight p-4 mb-4">
               <p className="text-sm text-ink space-y-1">
                 <span className="block" data-testid="settings-import-summary-weight">
                   {t('settings.import.preview.weightDays', { n: preview.weightEntries.length })}
@@ -127,7 +127,7 @@ export function SettingsImport(): JSX.Element {
               type="button"
               onClick={handleConfirm}
               data-testid="settings-import-confirm"
-              className="w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
+              className="btn-primary-lift press-feedback w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
             >
               {t('settings.import.preview.confirmCta')}
             </button>

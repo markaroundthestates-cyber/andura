@@ -205,7 +205,7 @@ export function SettingsNotifications(): JSX.Element {
           {t('settings.notifications.intro')}
         </p>
 
-        <div className="bg-paper2 border border-line rounded-xl p-4 mb-2 flex items-center justify-between">
+        <div className="pulse-card pulse-card-tight p-4 mb-2 flex items-center justify-between">
           <span className="text-sm text-ink">
             {t('settings.notifications.masterToggleLabel')}
             {togglePending && (
@@ -275,7 +275,7 @@ export function SettingsNotifications(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           {t('settings.notifications.frequencyHeading')}
         </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
+        <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
           {FREQUENCY_OPTIONS.map((opt, idx) => (
             <button
               key={opt.value}
@@ -320,7 +320,7 @@ export function SettingsNotifications(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           {t('settings.notifications.reminderTimeHeading')}
         </p>
-        <div className="bg-paper2 border border-line rounded-xl p-4 mb-4">
+        <div className="pulse-card pulse-card-tight p-4 mb-4">
           <input
             type="time"
             value={time}
@@ -338,7 +338,7 @@ export function SettingsNotifications(): JSX.Element {
           {t('settings.notifications.trainingHeading')}
         </p>
         <div
-          className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4"
+          className="pulse-card pulse-card-tight overflow-hidden mb-4"
           data-testid="notif-events-antrenament"
         >
           {NOTIF_EVENTS_ANTRENAMENT.map((ev, idx) => (
@@ -357,7 +357,7 @@ export function SettingsNotifications(): JSX.Element {
           {t('settings.notifications.coachingHeading')}
         </p>
         <div
-          className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4"
+          className="pulse-card pulse-card-tight overflow-hidden mb-4"
           data-testid="notif-events-coaching"
         >
           {NOTIF_EVENTS_COACHING.map((ev, idx) => (
@@ -378,7 +378,7 @@ export function SettingsNotifications(): JSX.Element {
           {t('settings.notifications.quietHoursHeading')}
         </p>
         <div
-          className="bg-paper2 border border-line rounded-xl px-4 py-3"
+          className="pulse-card pulse-card-tight px-4 py-3"
           data-testid="notif-quiet-hours"
         >
           <div className="flex items-center justify-between">

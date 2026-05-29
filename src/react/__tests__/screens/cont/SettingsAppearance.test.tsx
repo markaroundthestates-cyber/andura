@@ -42,18 +42,11 @@ describe('SettingsAppearance — render + interactions', () => {
     expect(screen.getByRole('heading', { name: 'Aspect', level: 1 })).toBeInTheDocument();
   });
 
-  it('renders 3 theme options + default dark selected', () => {
-    renderScreen();
-    expect(screen.getByTestId('theme-dark')).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByTestId('theme-light')).toHaveAttribute('aria-pressed', 'false');
-    expect(screen.getByTestId('theme-auto')).toHaveAttribute('aria-pressed', 'false');
-  });
-
-  it('theme click → store updated', () => {
-    renderScreen();
-    fireEvent.click(screen.getByTestId('theme-light'));
-    expect(useSettingsStore.getState().theme).toBe('light');
-  });
+  // [05.061] consolidation 2026-05-29 — the theme (light/dark/auto) picker was
+  // a stale duplicate of the inline LIVE Appearance card in Cont.tsx (accent +
+  // Dark/Light, canonical per D095) and was removed here. SettingsAppearance is
+  // now the canonical home for the lone control the inline card lacks: bottom-
+  // nav density. Theme coverage lives in Cont.test.tsx (inline card).
 
   it('renders 2 nav style options + default comfortable selected', () => {
     renderScreen();

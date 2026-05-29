@@ -235,7 +235,7 @@ export function SettingsProfile(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           {t('settings.profile.sectionPersonal')}
         </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
+        <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
           <LabelRow label={t('settings.profile.age')}>
             <input
               type="number"
@@ -283,7 +283,7 @@ export function SettingsProfile(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           {t('settings.profile.sectionBody')}
         </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-1">
+        <div className="pulse-card pulse-card-tight overflow-hidden mb-1">
           <LabelRow label={t('settings.profile.waist')}>
             <input
               type="number"
@@ -382,7 +382,7 @@ export function SettingsProfile(): JSX.Element {
         <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
           {t('settings.profile.sectionTraining')}
         </p>
-        <div className="bg-paper2 border border-line rounded-[14px] overflow-hidden mb-4">
+        <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
           <SelectRow label={t('settings.profile.frequency')} htmlFor="profile-frequency-select">
             <select
               id="profile-frequency-select"
@@ -417,7 +417,7 @@ export function SettingsProfile(): JSX.Element {
           type="button"
           onClick={handleSave}
           data-testid="settings-profile-save"
-          className="w-full mt-3 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2"
+          className="btn-primary-lift press-feedback w-full mt-3 py-3 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2"
         >
           <Check className="w-4 h-4" aria-hidden="true" />
           {t('settings.profile.confirmEditCta')}
