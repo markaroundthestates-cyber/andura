@@ -1077,21 +1077,63 @@
   },
 
   "aparatLipsa": {
-    "title": "What's missing today?",
-    "subtitle": "Tap what's not available — I'll adapt.",
-    "saveCta": "Save",
+    "subHeaderTitle": "Missing equipment",
+    "intro": "Check the equipment you <strong>don't have</strong>. The coach picks alternatives and won't suggest them again.",
+    "intro2": "You can come back any time to remove items from the list if you get the equipment.",
+    "learnNote": "The coach learns from your choices. If several machines are missing, it suggests bodyweight sessions or alternatives.",
+    "saveCta": "Save the setting"
+  },
+
+  "equipmentList": {
     "items": {
-      "barbell": "Barbell",
-      "smith": "Smith machine",
-      "dumbbell": "Dumbbells",
-      "cable": "Cable machine",
-      "machine": "Selectorized machines",
-      "rack": "Squat rack",
-      "preacher": "Preacher bench",
-      "bench": "Bench",
-      "leg_press": "Leg press",
-      "leg_curl": "Leg curl"
+      "banca-inclinata": "Incline bench",
+      "banca-plana": "Flat bench",
+      "bara-halterelor": "Barbell",
+      "gantere": "Dumbbells",
+      "aparat-cablu": "Cable machine / pulley",
+      "power-rack": "Power rack / Smith machine",
+      "leg-press": "Leg press",
+      "aparat-extensii": "Leg extension / leg curl machine",
+      "aparat-tractiuni": "Pull-up machine / fixed bar",
+      "banda-elastica": "Resistance band"
     }
+  },
+
+  "energyCause": {
+    "subHeaderTitle": "What's hardest today?",
+    "body": "Pick one. The coach uses your answer to adapt the session.",
+    "skipCta": "Skip",
+    "causes": {
+      "sleep": "Slept little",
+      "food": "Ate little",
+      "stress": "Mental stress",
+      "training": "Hard workout yesterday",
+      "illness": "Sick or a cold",
+      "other": "Something else"
+    }
+  },
+
+  "cevaNuMerge": {
+    "subHeaderTitle": "What's wrong?",
+    "body": "Tell me what's up and I'll adjust the session.",
+    "options": {
+      "pain": "Something hurts",
+      "equipmentBusy": "Machines are busy",
+      "equipmentMissing": "Equipment missing",
+      "override": "I want a different workout",
+      "cancel": "Skip today"
+    }
+  },
+
+  "equipmentSwap": {
+    "subHeaderTitle": "Swap equipment",
+    "heading": "Machines busy?",
+    "body": "Mark what's busy. I'll show you what to do instead.",
+    "statusBusy": "Busy",
+    "statusFree": "Free",
+    "swapPreviewPrefix": "you'll do",
+    "swapPreviewSuffix": "instead of {original}",
+    "continueCta": "Continue adapted"
   },
 
   "cont": {

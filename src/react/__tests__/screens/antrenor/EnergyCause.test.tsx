@@ -2,10 +2,19 @@
 // MemoryRouter jsdom paradigm per D020.
 
 import type { JSX } from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { EnergyCause } from '../../../routes/screens/antrenor/EnergyCause';
+// i18n locale pin — these specs assert RO copy (Ce e mai greu azi / Sari peste
+// / Alege una / etc). Force RO so the i18n indirection resolves to the RO
+// assertion targets. EN coverage is locked separately by i18nNoRoLeak.test.tsx.
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
+beforeEach(() => {
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
+  setLocale('ro');
+});
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();

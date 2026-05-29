@@ -1077,21 +1077,63 @@
   },
 
   "aparatLipsa": {
-    "title": "Ce lipseste azi?",
-    "subtitle": "Apasa ce nu e disponibil — adaptez.",
-    "saveCta": "Salveaza",
+    "subHeaderTitle": "Aparate lipsa",
+    "intro": "Bifeaza aparatele pe care <strong>nu le ai</strong>. Coach-ul va alege exercitii alternative si nu le va propune in viitor.",
+    "intro2": "Poti reveni oricand sa scoti din lista daca ai acum aparatul.",
+    "learnNote": "Coach-ul invata din selectiile tale. Daca lipsesc mai multe aparate, propune sesiuni bodyweight sau cu alternative.",
+    "saveCta": "Salveaza setarea"
+  },
+
+  "equipmentList": {
     "items": {
-      "barbell": "Bara",
-      "smith": "Smith",
-      "dumbbell": "Gantere",
-      "cable": "Cablu",
-      "machine": "Aparate selectorizate",
-      "rack": "Rack genuflexiuni",
-      "preacher": "Banca preacher",
-      "bench": "Banca",
-      "leg_press": "Presa picioare",
-      "leg_curl": "Leg curl"
+      "banca-inclinata": "Banca inclinata",
+      "banca-plana": "Banca plana",
+      "bara-halterelor": "Bara halterelor",
+      "gantere": "Gantere",
+      "aparat-cablu": "Aparat cablu / scripete",
+      "power-rack": "Power rack / Smith machine",
+      "leg-press": "Leg press",
+      "aparat-extensii": "Aparat extensii / curls picioare",
+      "aparat-tractiuni": "Aparat tractiuni / bara fixa",
+      "banda-elastica": "Banda elastica"
     }
+  },
+
+  "energyCause": {
+    "subHeaderTitle": "Ce e mai greu azi?",
+    "body": "Alege una. Coach-ul foloseste raspunsul ca sa adapteze sesiunea.",
+    "skipCta": "Sari peste",
+    "causes": {
+      "sleep": "Dormit putin",
+      "food": "Mancat putin",
+      "stress": "Stres mental",
+      "training": "Antrenament greu ieri",
+      "illness": "Boala sau racit",
+      "other": "Altceva"
+    }
+  },
+
+  "cevaNuMerge": {
+    "subHeaderTitle": "Ce nu merge?",
+    "body": "Spune-mi ce e si ajustez sesiunea.",
+    "options": {
+      "pain": "Ma doare ceva",
+      "equipmentBusy": "Aparate ocupate",
+      "equipmentMissing": "Aparat lipsa",
+      "override": "Vreau alt antrenament",
+      "cancel": "Renunt azi"
+    }
+  },
+
+  "equipmentSwap": {
+    "subHeaderTitle": "Schimba echipament",
+    "heading": "Aparate ocupate?",
+    "body": "Marcheaza ce e ocupat. Iti arat ce faci in loc.",
+    "statusBusy": "Ocupat",
+    "statusFree": "Liber",
+    "swapPreviewPrefix": "vei face",
+    "swapPreviewSuffix": "in loc de {original}",
+    "continueCta": "Continui adaptat"
   },
 
   "cont": {

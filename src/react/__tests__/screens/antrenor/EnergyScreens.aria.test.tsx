@@ -114,7 +114,8 @@ describe('EnergyCause — no role="list" + heading sufficient', () => {
     const { container } = renderEnergyCause();
     const h1 = container.querySelector('h1');
     expect(h1).not.toBeNull();
-    expect(h1?.textContent).toMatch(/Ce e mai greu azi/);
+    // Locale-aware — RO bundle: "Ce e mai greu azi?" / EN default: "What's hardest today?".
+    expect(h1?.textContent).toMatch(/Ce e mai greu azi|What's hardest today/);
   });
 });
 
@@ -134,7 +135,8 @@ describe('CevaNuMerge — no role="list" + heading sufficient', () => {
     const { container } = renderCevaNuMerge();
     const h1 = container.querySelector('h1');
     expect(h1).not.toBeNull();
-    expect(h1?.textContent).toMatch(/Ce nu merge/);
+    // Locale-aware — RO bundle: "Ce nu merge?" / EN default: "What's wrong?".
+    expect(h1?.textContent).toMatch(/Ce nu merge|What's wrong/);
   });
 });
 

@@ -28,23 +28,25 @@ import { useNavigate } from 'react-router-dom';
 import { Activity, Users, PackageX, Shuffle, CircleX } from 'lucide-react';
 import { gotoPath, type GotoScreen } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 
 export type ProblemKind = 'pain' | 'equipment-busy' | 'equipment-missing' | 'override' | 'cancel';
 
 interface ProblemOption {
   kind: ProblemKind;
-  label: string;
+  /** i18n key under cevaNuMerge.options.* — label localized at render. */
+  labelKey: string;
   Icon: typeof Activity;
   target: GotoScreen;
 }
 
 const PROBLEM_OPTIONS: readonly ProblemOption[] = [
-  { kind: 'pain', label: 'Ma doare ceva', Icon: Activity, target: 'pain-button' },
-  { kind: 'equipment-busy', label: 'Aparate ocupate', Icon: Users, target: 'equipment-swap' },
-  { kind: 'equipment-missing', label: 'Aparat lipsa', Icon: PackageX, target: 'aparate-lipsa' },
-  { kind: 'override', label: 'Vreau alt antrenament', Icon: Shuffle, target: 'schedule-override' },
+  { kind: 'pain', labelKey: 'cevaNuMerge.options.pain', Icon: Activity, target: 'pain-button' },
+  { kind: 'equipment-busy', labelKey: 'cevaNuMerge.options.equipmentBusy', Icon: Users, target: 'equipment-swap' },
+  { kind: 'equipment-missing', labelKey: 'cevaNuMerge.options.equipmentMissing', Icon: PackageX, target: 'aparate-lipsa' },
+  { kind: 'override', labelKey: 'cevaNuMerge.options.override', Icon: Shuffle, target: 'schedule-override' },
   // Phase 4+ will route la confirm-finish-early (D-LEGACY-061 anti-paternalism).
-  { kind: 'cancel', label: 'Renunt azi', Icon: CircleX, target: 'antrenor' },
+  { kind: 'cancel', labelKey: 'cevaNuMerge.options.cancel', Icon: CircleX, target: 'antrenor' },
 ];
 
 export function CevaNuMerge(): JSX.Element {
@@ -68,12 +70,12 @@ export function CevaNuMerge(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="ceva-nu-merge">
       <SubHeader
-        title="Ce nu merge?"
+        title={t('cevaNuMerge.subHeaderTitle')}
         onBack={handleBack}
         testIdBack="ceva-nu-merge-back"
       />
       <div className="p-6 flex-1">
-        <p className="text-base text-ink2 mb-6">Spune-mi ce e si ajustez sesiunea.</p>
+        <p className="text-base text-ink2 mb-6">{t('cevaNuMerge.body')}</p>
         <div className="flex flex-col gap-3">
           {PROBLEM_OPTIONS.map((opt) => {
             const Icon = opt.Icon;
@@ -86,7 +88,7 @@ export function CevaNuMerge(): JSX.Element {
                 className="pulse-card pulse-card-tight flex items-center gap-4 p-4 hover:bg-paper transition"
               >
                 <Icon className="w-5 h-5 text-ink2" aria-hidden="true" />
-                <span className="text-base font-medium text-ink">{opt.label}</span>
+                <span className="text-base font-medium text-ink">{t(opt.labelKey)}</span>
               </button>
             );
           })}

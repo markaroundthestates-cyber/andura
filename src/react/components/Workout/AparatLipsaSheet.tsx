@@ -44,21 +44,22 @@ import { t } from '../../../i18n/index.js';
 // E2E tests on aparate-lipsa-save / wv2-missing-equipment persistence catch
 // it instantly (the localStorage shape is the single technical SoT).
 export interface EquipmentItem {
+  /** Stable persistence/engine id (wv2-missing-equipment); label localized
+   *  at render via equipmentList.items.{id} (shared SoT with AparateLipsa). */
   id: string;
-  label: string;
 }
 
 export const APARAT_LIPSA_ITEMS: readonly EquipmentItem[] = [
-  { id: 'banca-inclinata', label: 'Banca inclinata' },
-  { id: 'banca-plana', label: 'Banca plana' },
-  { id: 'bara-halterelor', label: 'Bara halterelor' },
-  { id: 'gantere', label: 'Gantere' },
-  { id: 'aparat-cablu', label: 'Aparat cablu / scripete' },
-  { id: 'power-rack', label: 'Power rack / Smith machine' },
-  { id: 'leg-press', label: 'Leg press' },
-  { id: 'aparat-extensii', label: 'Aparat extensii / curls picioare' },
-  { id: 'aparat-tractiuni', label: 'Aparat tractiuni / bara fixa' },
-  { id: 'banda-elastica', label: 'Banda elastica' },
+  { id: 'banca-inclinata' },
+  { id: 'banca-plana' },
+  { id: 'bara-halterelor' },
+  { id: 'gantere' },
+  { id: 'aparat-cablu' },
+  { id: 'power-rack' },
+  { id: 'leg-press' },
+  { id: 'aparat-extensii' },
+  { id: 'aparat-tractiuni' },
+  { id: 'banda-elastica' },
 ];
 
 interface AparatLipsaSheetProps {
@@ -145,6 +146,7 @@ export function AparatLipsaSheet({
         <div className="flex flex-col gap-2 mb-4">
           {APARAT_LIPSA_ITEMS.map((item, idx) => {
             const selected = missing.has(item.id);
+            const label = t(`equipmentList.items.${item.id}`);
             return (
               <label
                 key={item.id}
@@ -160,11 +162,11 @@ export function AparatLipsaSheet({
                   onChange={() => toggle(item.id)}
                   data-item={item.id}
                   data-testid={`aparat-lipsa-sheet-item-${item.id}`}
-                  aria-label={item.label}
+                  aria-label={label}
                   ref={idx === 0 ? null : undefined}
                   className="w-5 h-5 accent-brick"
                 />
-                <span className="text-sm font-medium">{item.label}</span>
+                <span className="text-sm font-medium">{label}</span>
               </label>
             );
           })}

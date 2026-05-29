@@ -99,6 +99,10 @@ import { WorkoutPreview } from '../../react/routes/screens/antrenor/WorkoutPrevi
 import { PostRpe } from '../../react/routes/screens/antrenor/PostRpe';
 import { PostSummary } from '../../react/routes/screens/antrenor/PostSummary';
 import { PainButton } from '../../react/routes/screens/antrenor/PainButton';
+import { EnergyCause } from '../../react/routes/screens/antrenor/EnergyCause';
+import { CevaNuMerge } from '../../react/routes/screens/antrenor/CevaNuMerge';
+import { EquipmentSwap } from '../../react/routes/screens/antrenor/EquipmentSwap';
+import { AparateLipsa } from '../../react/routes/screens/antrenor/AparateLipsa';
 import { ExitConfirmSheet } from '../../react/components/Workout/ExitConfirmSheet';
 import { AaFrictionModal } from '../../react/components/AaFrictionModal';
 import { AparatLipsaSheet } from '../../react/components/Workout/AparatLipsaSheet';
@@ -854,6 +858,48 @@ describe('Wave E1 i18n — no RO leak under EN locale (workout flow)', () => {
     assertNoRoLeak('PainButton', container.textContent ?? '');
   });
 
+  it('EnergyCause renders without RO leak under EN', () => {
+    const { container } = render(withRouter('/app/antrenor/energy-cause', <EnergyCause />));
+    const text = container.textContent ?? '';
+    assertNoRoLeak('EnergyCause', text);
+    expect(text).toContain("What's hardest today?");
+    expect(text).toContain('Slept little');
+    expect(text).toContain('Skip');
+  });
+
+  it('CevaNuMerge renders without RO leak under EN', () => {
+    const { container } = render(withRouter('/app/antrenor/ceva-nu-merge', <CevaNuMerge />));
+    const text = container.textContent ?? '';
+    assertNoRoLeak('CevaNuMerge', text);
+    expect(text).toContain("What's wrong?");
+    expect(text).toContain('Machines are busy');
+    expect(text).toContain('Equipment missing');
+  });
+
+  it('EquipmentSwap renders without RO leak under EN (incl. busy status + swap preview)', () => {
+    const { container } = render(withRouter('/app/antrenor/equipment-swap', <EquipmentSwap />));
+    assertNoRoLeak('EquipmentSwap default', container.textContent ?? '');
+    // Mark a station busy → "Busy" status + (when a session exists) swap-preview
+    // row chrome surface. Engine session is null in this harness so the preview
+    // list may be empty, but the Busy/Free toggle copy must still be EN-clean.
+    fireEvent.click(screen.getByTestId('equipment-swap')
+      .querySelector('[data-equipment-id="bench"]') as HTMLElement);
+    const text = container.textContent ?? '';
+    assertNoRoLeak('EquipmentSwap busy', text);
+    expect(text).toContain('Busy');
+    expect(text).toContain('Continue adapted');
+  });
+
+  it('AparateLipsa screen renders without RO leak under EN (incl. equipment item labels)', () => {
+    const { container } = render(withRouter('/app/antrenor/aparate-lipsa', <AparateLipsa />));
+    const text = container.textContent ?? '';
+    assertNoRoLeak('AparateLipsa', text);
+    // Equipment item labels are now localized (equipmentList.items.*) — assert
+    // a couple surface in EN, not the prior RO ("Banca inclinata" → "Incline bench").
+    expect(text).toContain('Incline bench');
+    expect(text).toContain('Save the setting');
+  });
+
   it('ExitConfirmSheet renders without RO leak under EN', () => {
     const { container } = render(
       <ExitConfirmSheet open={true} exIdx={2} totalExercises={5} onChoose={() => {}} />,
@@ -873,26 +919,17 @@ describe('Wave E1 i18n — no RO leak under EN locale (workout flow)', () => {
     assertNoRoLeak('AaFrictionModal (per-set safety)', container.textContent ?? '');
   });
 
-  it('AparatLipsaSheet renders without RO leak under EN', () => {
-    // Note: equipment item labels (Banca inclinata, Gantere, etc.) come from
-    // a separate EQUIPMENT_ITEMS list inside the component and are NOT yet
-    // localized (item labels are a Cont surface separately tracked). The
-    // shell chrome (title/subtitle/save/close) IS localized, so we assert
-    // against the shell text only — extract from the testid'd elements that
-    // are wired through t().
+  it('AparatLipsaSheet renders without RO leak under EN (chrome + item labels)', () => {
+    // Item labels are now localized too (equipmentList.items.* shared SoT with
+    // AparateLipsa) — assert the FULL sheet text is EN-clean, no longer
+    // stripping the label spans.
     const { container } = render(
       <AparatLipsaSheet open={true} onConfirm={() => {}} onClose={() => {}} />,
     );
     const sheet = container.querySelector('[data-testid="aparat-lipsa-sheet"]');
-    // Strip out the equipment-item labels (label spans) so we test only the
-    // wired chrome. The item labels' RO copy is tracked separately by the
-    // existing Cont AparateLipsa screen tests.
-    const labels = sheet?.querySelectorAll('label') ?? [];
-    const labelTexts = new Set<string>();
-    for (const lbl of Array.from(labels)) labelTexts.add(lbl.textContent ?? '');
-    let chromeText = sheet?.textContent ?? '';
-    for (const lt of labelTexts) chromeText = chromeText.replace(lt, '');
-    assertNoRoLeak('AparatLipsaSheet chrome', chromeText);
+    const text = sheet?.textContent ?? '';
+    assertNoRoLeak('AparatLipsaSheet', text);
+    expect(text).toContain('Incline bench');
   });
 
   it('SetLogInput tinta mode renders without RO leak under EN', () => {

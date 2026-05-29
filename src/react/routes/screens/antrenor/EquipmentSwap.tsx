@@ -23,6 +23,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 import { getTodayWorkout } from '../../../lib/engineWrappers';
 import type { PlannedExercise } from '../../../lib/engineWrappers';
 import { recomposeWithBusyTypes } from '../../../lib/substitution';
@@ -119,14 +120,14 @@ export function EquipmentSwap(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="equipment-swap">
       <SubHeader
-        title="Schimba echipament"
+        title={t('equipmentSwap.subHeaderTitle')}
         onBack={handleBack}
         testIdBack="equipment-swap-back"
       />
       <div className="p-6 flex-1 animate-card-rise">
-      <h2 className="font-display text-2xl font-bold text-ink tracking-tight mb-2">Aparate ocupate?</h2>
+      <h2 className="font-display text-2xl font-bold text-ink tracking-tight mb-2">{t('equipmentSwap.heading')}</h2>
       <p className="text-base text-ink2 mb-6">
-        Marcheaza ce e ocupat. Iti arat ce faci in loc.
+        {t('equipmentSwap.body')}
       </p>
       {/* No role="list": children are <button>s (not valid role="listitem"),
           which makes a screen reader announce an empty list. The "Aparate
@@ -158,7 +159,7 @@ export function EquipmentSwap(): JSX.Element {
                       : 'text-sm font-semibold text-ink2'
                   }
                 >
-                  {isBusy ? 'Ocupat' : 'Liber'}
+                  {isBusy ? t('equipmentSwap.statusBusy') : t('equipmentSwap.statusFree')}
                 </span>
               </button>
               {/* WP-5 moat — inline NAMED alternative under the busy item. The
@@ -172,8 +173,9 @@ export function EquipmentSwap(): JSX.Element {
                       className="text-sm text-ink2 py-0.5"
                       data-testid="swap-preview-row"
                     >
-                      vei face <span className="font-medium text-ink">{s.alternative}</span>{' '}
-                      in loc de {s.original}
+                      {t('equipmentSwap.swapPreviewPrefix')}{' '}
+                      <span className="font-medium text-ink">{s.alternative}</span>{' '}
+                      {t('equipmentSwap.swapPreviewSuffix', { original: s.original })}
                     </li>
                   ))}
                 </ul>
@@ -188,7 +190,7 @@ export function EquipmentSwap(): JSX.Element {
         data-testid="equipment-continue"
         className="w-full py-4 pulse-grad-bg pulse-shine text-paper rounded-[14px] text-base font-semibold"
       >
-        Continui adaptat
+        {t('equipmentSwap.continueCta')}
       </button>
       </div>
     </section>

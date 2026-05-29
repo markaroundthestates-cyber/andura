@@ -65,8 +65,8 @@ describe('EquipmentSwap inline named preview', () => {
       expect(screen.getByTestId('swap-preview-bench')).toBeInTheDocument();
     });
     const row = screen.getAllByTestId('swap-preview-row')[0]!;
-    expect(row.textContent).toContain('vei face');
-    expect(row.textContent).toContain('in loc de inclinat cu bara');
+    expect(row.textContent).toContain('you\'ll do');
+    expect(row.textContent).toContain('instead of inclinat cu bara');
   });
 
   it('Continue forwards busy coarse types so the preview recomposes', async () => {

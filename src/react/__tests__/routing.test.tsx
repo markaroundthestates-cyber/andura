@@ -224,13 +224,13 @@ describe('Routing — Phase 3 Antrenor sub-screen stubs render', () => {
     // still placeholder until subsequent task_05 commits.
     // Wave C2 i18n: EN default → "How do you feel?" (was RO "Cum te simti?").
     { path: '/app/antrenor/energy-check', Component: EnergyCheck, heading: /^How do you feel\?$/i },
-    { path: '/app/antrenor/energy-cause', Component: EnergyCause, heading: /Ce e mai greu azi/i },
+    { path: '/app/antrenor/energy-cause', Component: EnergyCause, heading: /What.s hardest today/i },
     { path: '/app/antrenor/workout-preview', Component: WorkoutPreview, heading: /Push/i },
     { path: '/app/antrenor/workout', Component: Workout, heading: /Bench Press/i },
-    { path: '/app/antrenor/ceva-nu-merge', Component: CevaNuMerge, heading: /Ce nu merge/i },
+    { path: '/app/antrenor/ceva-nu-merge', Component: CevaNuMerge, heading: /What.s wrong/i },
     { path: '/app/antrenor/pain-button', Component: PainButton, heading: /Something hurts/i },
-    { path: '/app/antrenor/equipment-swap', Component: EquipmentSwap, heading: /Schimba echipament/i },
-    { path: '/app/antrenor/aparate-lipsa', Component: AparateLipsa, heading: /^Aparate lipsa$/i },
+    { path: '/app/antrenor/equipment-swap', Component: EquipmentSwap, heading: /Swap equipment|Machines busy/i },
+    { path: '/app/antrenor/aparate-lipsa', Component: AparateLipsa, heading: /Missing equipment/i },
     { path: '/app/antrenor/schedule-override', Component: ScheduleOverride, heading: /Schimbi planul de azi|Change today's plan/i },
     { path: '/app/antrenor/post-rpe', Component: PostRpe, heading: /How was your session/i },
     { path: '/app/antrenor/post-summary', Component: PostSummary, heading: /Session/i },

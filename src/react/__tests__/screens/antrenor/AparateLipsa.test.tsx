@@ -10,9 +10,16 @@ import {
   getMissingEquipment,
   setMissingEquipment,
 } from '../../../../engine/schedule/scheduleAdapter.js';
+// i18n locale pin — these specs assert RO equipment labels (Banca inclinata /
+// Gantere / etc) + RO chrome. Force RO so the i18n indirection resolves to the
+// RO assertion targets. EN coverage is locked separately by
+// i18nNoRoLeak.test.tsx. setLocale AFTER clear (it persists to localStorage).
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 beforeEach(() => {
   localStorage.clear();
+  _resetI18nCache();
+  setLocale('ro');
 });
 
 function LocationProbe(): JSX.Element {

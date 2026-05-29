@@ -33,28 +33,31 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 import {
   getMissingEquipment,
   setMissingEquipment,
 } from '../../../../engine/schedule/scheduleAdapter.js';
 
 interface EquipmentItem {
+  /** Stable persistence/engine id (wv2-missing-equipment); label localized
+   *  at render via equipmentList.items.{id}. */
   id: string;
-  label: string;
 }
 
-// Slice 1.7 LOCKED naming order verbatim per mockup L1056-1097.
+// Slice 1.7 LOCKED naming order verbatim per mockup L1056-1097. Labels flow
+// through i18n (equipmentList.items.*) so the locale flip surfaces EN/RO.
 const EQUIPMENT_ITEMS: readonly EquipmentItem[] = [
-  { id: 'banca-inclinata', label: 'Banca inclinata' },
-  { id: 'banca-plana', label: 'Banca plana' },
-  { id: 'bara-halterelor', label: 'Bara halterelor' },
-  { id: 'gantere', label: 'Gantere' },
-  { id: 'aparat-cablu', label: 'Aparat cablu / scripete' },
-  { id: 'power-rack', label: 'Power rack / Smith machine' },
-  { id: 'leg-press', label: 'Leg press' },
-  { id: 'aparat-extensii', label: 'Aparat extensii / curls picioare' },
-  { id: 'aparat-tractiuni', label: 'Aparat tractiuni / bara fixa' },
-  { id: 'banda-elastica', label: 'Banda elastica' },
+  { id: 'banca-inclinata' },
+  { id: 'banca-plana' },
+  { id: 'bara-halterelor' },
+  { id: 'gantere' },
+  { id: 'aparat-cablu' },
+  { id: 'power-rack' },
+  { id: 'leg-press' },
+  { id: 'aparat-extensii' },
+  { id: 'aparat-tractiuni' },
+  { id: 'banda-elastica' },
 ];
 
 export function AparateLipsa(): JSX.Element {
@@ -99,21 +102,22 @@ export function AparateLipsa(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="aparate-lipsa">
       <SubHeader
-        title="Aparate lipsa"
+        title={t('aparatLipsa.subHeaderTitle')}
         onBack={handleBack}
         testIdBack="aparate-lipsa-back"
       />
       <div className="p-6 flex-1">
-      <p className="text-base text-ink2 mb-3">
-        Bifeaza aparatele pe care <strong>nu le ai</strong>. Coach-ul va
-        alege exercitii alternative si nu le va propune in viitor.
-      </p>
+      <p
+        className="text-base text-ink2 mb-3"
+        dangerouslySetInnerHTML={{ __html: t('aparatLipsa.intro') }}
+      />
       <p className="text-sm text-ink3 mb-6">
-        Poti reveni oricand sa scoti din lista daca ai acum aparatul.
+        {t('aparatLipsa.intro2')}
       </p>
       <div className="flex flex-col gap-2 mb-6">
         {EQUIPMENT_ITEMS.map((item) => {
           const selected = missing.has(item.id);
+          const label = t(`equipmentList.items.${item.id}`);
           return (
             <label
               key={item.id}
@@ -128,17 +132,16 @@ export function AparateLipsa(): JSX.Element {
                 checked={selected}
                 onChange={() => toggle(item.id)}
                 data-item={item.id}
-                aria-label={item.label}
+                aria-label={label}
                 className="w-5 h-5 accent-brick"
               />
-              <span className="text-sm font-medium">{item.label}</span>
+              <span className="text-sm font-medium">{label}</span>
             </label>
           );
         })}
       </div>
       <p className="text-sm text-ink3 italic font-serif mb-6 leading-relaxed">
-        Coach-ul invata din selectiile tale. Daca lipsesc mai multe aparate,
-        propune sesiuni bodyweight sau cu alternative.
+        {t('aparatLipsa.learnNote')}
       </p>
       <button
         type="button"
@@ -146,7 +149,7 @@ export function AparateLipsa(): JSX.Element {
         data-testid="aparate-save"
         className="w-full py-4 pulse-grad-bg pulse-shine text-paper rounded-[14px] text-base font-semibold"
       >
-        Salveaza setarea
+        {t('aparatLipsa.saveCta')}
       </button>
       </div>
     </section>

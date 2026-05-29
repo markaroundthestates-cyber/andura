@@ -55,20 +55,25 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { t } from '../../../../i18n/index.js';
 import type { EnergyLevel, IntensityMod } from './EnergyCheck';
 
 interface CauseOption {
-  label: string;
+  /** i18n key under energyCause.causes.* — label localized at render. */
+  labelKey: string;
+  /** Stable canonical RO label propagated as the `cause` context (engine/state
+   *  read side stays language-stable; only the display flows through i18n). */
+  cause: string;
   Icon: LucideIcon;
 }
 
 const CAUSE_OPTIONS: readonly CauseOption[] = [
-  { label: 'Dormit putin', Icon: Moon },
-  { label: 'Mancat putin', Icon: Utensils },
-  { label: 'Stres mental', Icon: Wind },
-  { label: 'Antrenament greu ieri', Icon: Dumbbell },
-  { label: 'Boala sau racit', Icon: Thermometer },
-  { label: 'Altceva', Icon: MoreHorizontal },
+  { labelKey: 'energyCause.causes.sleep', cause: 'Dormit putin', Icon: Moon },
+  { labelKey: 'energyCause.causes.food', cause: 'Mancat putin', Icon: Utensils },
+  { labelKey: 'energyCause.causes.stress', cause: 'Stres mental', Icon: Wind },
+  { labelKey: 'energyCause.causes.training', cause: 'Antrenament greu ieri', Icon: Dumbbell },
+  { labelKey: 'energyCause.causes.illness', cause: 'Boala sau racit', Icon: Thermometer },
+  { labelKey: 'energyCause.causes.other', cause: 'Altceva', Icon: MoreHorizontal },
 ];
 
 interface EnergyCauseLocationState {
@@ -101,25 +106,25 @@ export function EnergyCause(): JSX.Element {
   return (
     <section className="bg-paper min-h-screen flex flex-col" data-testid="energy-cause">
       <SubHeader
-        title="Ce e mai greu azi?"
+        title={t('energyCause.subHeaderTitle')}
         onBack={handleBack}
         testIdBack="energy-cause-back"
       />
       <div className="p-6 flex-1 animate-card-rise">
         <p className="text-base text-ink2 mb-6">
-          Alege una. Coach-ul foloseste raspunsul ca sa adapteze sesiunea.
+          {t('energyCause.body')}
         </p>
         <div className="flex flex-col gap-2.5">
-          {CAUSE_OPTIONS.map(({ label, Icon }) => (
+          {CAUSE_OPTIONS.map(({ labelKey, cause, Icon }) => (
             <button
-              key={label}
+              key={cause}
               type="button"
-              onClick={() => handleSelect(label)}
-              data-cause={label}
+              onClick={() => handleSelect(cause)}
+              data-cause={cause}
               className="cause-btn pulse-card flex items-center gap-3 p-4 text-ink hover:bg-paper transition text-left"
             >
               <Icon className="w-4 h-4 text-brick flex-shrink-0" aria-hidden="true" />
-              <span className="text-sm font-medium">{label}</span>
+              <span className="text-sm font-medium">{t(labelKey)}</span>
             </button>
           ))}
         </div>
@@ -129,7 +134,7 @@ export function EnergyCause(): JSX.Element {
           data-testid="energy-cause-skip"
           className="w-full mt-6 py-3 text-ink2 text-sm"
         >
-          Sari peste
+          {t('energyCause.skipCta')}
         </button>
       </div>
     </section>
