@@ -877,7 +877,22 @@
 
   "patterns": {
     "stagnation": "Stagnare la {exercise}",
-    "lowAdherence": "Aderenta scazuta saptamana asta"
+    "lowAdherence": "Aderenta scazuta saptamana asta",
+    "stagnationWeeks": "Stagnare {weeks} saptamani. Coach ajusteaza intensitatea.",
+    "lowAdherenceFull": "Adherenta scazuta saptamana asta. Reia ritmul cu o sesiune scurta."
+  },
+
+  "proactive": {
+    "proteinDeficit": "Proteina medie ultimele {days} zile: {avg}g. Tinta: {target}g. Creste aportul.",
+    "sleepDebt": "Readiness sub {threshold} pentru {days} zile consecutive. Prioritizeaza somnul.",
+    "prOpportunity": "Readiness la {score} — zi buna pentru un PR. Nu ai mai setat niciun PR in 14 zile.",
+    "undertrainedGroups": "Grupe musculare neantronate 5+ zile: {groups}.",
+    "trainingStreak": "{streak} zile consecutive de antrenament! Mentine ritmul.",
+    "kcalTooLow": "Kcal medii ultimele {days} zile: {avg}. Sub {target} kcal — risc de masa musculara.",
+    "pastPeakHours": "Ati depasit orele de varf ({start}:00-{end}:00). Totusi antreneaza-te — orice sesiune conteaza.",
+    "weightIncreasingInCut": "Greutatea a crescut cu {delta}kg in CUT. Verifica caloriile.",
+    "inactivity": "Nu ai antrenat de {days} zile. Reincepe cu o sesiune usoara.",
+    "lowHydration": "Hidratare azi: {ml}ml. Tinta: {target}ml. Bea apa inainte de antrenament."
   },
 
   "nutrition": {

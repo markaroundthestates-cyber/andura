@@ -1184,7 +1184,13 @@ export function getProactiveAlerts(ctx: Record<string, unknown> = {}): Proactive
     if (!Array.isArray(raw)) return [];
     return raw.map((alert, idx) => ({
       id: `${alert?.type ?? 'unknown'}_${idx}`,
-      text: alert?.message ?? '',
+      // i18n render boundary: the engine emits a semantic messageKey + params
+      // (locale-agnostic). Resolve to localized copy here via t(). Legacy
+      // `message` fallback kept for defensive parity (engine-internal callers /
+      // older mocks that still pass raw text).
+      text: alert?.messageKey
+        ? __t(alert.messageKey, alert.messageParams ?? {})
+        : (alert?.message ?? ''),
       severity: SEVERITY_MAP[alert?.severity] ?? DEFAULT_PROACTIVE_ALERT_SEVERITY,
     }));
   } catch (e) {

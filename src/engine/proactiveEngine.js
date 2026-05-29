@@ -1,5 +1,10 @@
 // ══ PROACTIVE ENGINE — 10 verificari proactive ════════════════════════════
 // Returneaza alerte actionabile pentru user (proteina, somn, PR, recuperare etc.)
+//
+// i18n boundary: the engine stays locale-agnostic — each check emits a stable
+// semantic `messageKey` (proactive.*) + `messageParams` (numbers/strings only,
+// NO localized copy). Text is resolved via t() at the React render boundary
+// (engineWrappers.getProactiveAlerts). Mirrors the PrFlash key-emit pattern.
 import { KCAL_TARGET } from '../constants.js';
 import { tod, todDate, todTs } from '../db.js';
 import { READINESS_PR, READINESS_MED } from './readiness.js';
@@ -33,7 +38,8 @@ export function checkProteinDeficit(prots, bodyweightKg) {
     return {
       type: 'protein_deficit',
       severity: 'warning',
-      message: `Proteina medie ultimele ${values.length} zile: ${Math.round(avgProt)}g. Tinta: ${Math.round(target)}g. Creste aportul.`,
+      messageKey: 'proactive.proteinDeficit',
+      messageParams: { days: values.length, avg: Math.round(avgProt), target: Math.round(target) },
       avgProtein: Math.round(avgProt),
       target: Math.round(target),
     };
@@ -66,7 +72,8 @@ export function checkSleepDebt(readiness) {
     return {
       type: 'sleep_debt',
       severity: 'warning',
-      message: `Readiness sub ${READINESS_MED} pentru ${values.slice(0, 3).length} zile consecutive. Prioritizeaza somnul.`,
+      messageKey: 'proactive.sleepDebt',
+      messageParams: { threshold: READINESS_MED, days: values.slice(0, 3).length },
       values: values.slice(0, 3),
     };
   }
@@ -96,7 +103,8 @@ export function checkPROpportunity(readiness, logs) {
     return {
       type: 'pr_opportunity',
       severity: 'info',
-      message: `Readiness la ${todayScore} — zi buna pentru un PR. Nu ai mai setat niciun PR in 14 zile.`,
+      messageKey: 'proactive.prOpportunity',
+      messageParams: { score: todayScore },
       readinessScore: todayScore,
     };
   }
@@ -138,7 +146,8 @@ export function checkRecoveryGroups(logs, muscleState, muscleExercises) {
     return {
       type: 'undertrained_groups',
       severity: 'info',
-      message: `Grupe musculare neantronate 5+ zile: ${undertrained.join(', ')}.`,
+      messageKey: 'proactive.undertrainedGroups',
+      messageParams: { groups: undertrained.join(', ') },
       groups: undertrained,
     };
   }
@@ -169,7 +178,8 @@ export function checkTrainingStreak(logs) {
     return {
       type: 'training_streak',
       severity: 'success',
-      message: `${streak} zile consecutive de antrenament! Mentine ritmul.`,
+      messageKey: 'proactive.trainingStreak',
+      messageParams: { streak },
       streak,
     };
   }
@@ -197,7 +207,8 @@ export function checkKcalDeficit(kcals, currentKcalTarget) {
     return {
       type: 'kcal_too_low',
       severity: 'warning',
-      message: `Kcal medii ultimele ${values.length} zile: ${Math.round(avgKcal)}. Sub ${KCAL_TARGET} kcal — risc de masa musculara.`,
+      messageKey: 'proactive.kcalTooLow',
+      messageParams: { days: values.length, avg: Math.round(avgKcal), target: KCAL_TARGET },
       avgKcal: Math.round(avgKcal),
     };
   }
@@ -217,7 +228,8 @@ export function checkPeakHours(peakHours) {
     return {
       type: 'past_peak_hours',
       severity: 'info',
-      message: `Ati depasit orele de varf (${peakStart}:00–${peakStart + 2}:00). Totusi antreneaza-te — orice sesiune conteaza.`,
+      messageKey: 'proactive.pastPeakHours',
+      messageParams: { start: peakStart, end: peakStart + 2 },
     };
   }
   return null;
@@ -247,7 +259,8 @@ export function checkWeightTrend(weights, isInCut) {
     return {
       type: 'weight_increasing_in_cut',
       severity: 'warning',
-      message: `Greutatea a crescut cu ${(avgNew - avgOld).toFixed(1)}kg in CUT. Verifica caloriile.`,
+      messageKey: 'proactive.weightIncreasingInCut',
+      messageParams: { delta: (avgNew - avgOld).toFixed(1) },
       trend: +(avgNew - avgOld).toFixed(2),
     };
   }
@@ -268,7 +281,8 @@ export function checkInactivity(logs) {
     return {
       type: 'inactivity',
       severity: 'warning',
-      message: `Nu ai antrenat de ${Math.floor(daysSinceLast)} zile. Reincepe cu o sesiune usoara.`,
+      messageKey: 'proactive.inactivity',
+      messageParams: { days: Math.floor(daysSinceLast) },
       daysSinceLast: Math.floor(daysSinceLast),
     };
   }
@@ -287,7 +301,8 @@ export function checkHydration(waters) {
     return {
       type: 'low_hydration',
       severity: 'info',
-      message: `Hidratare azi: ${Number(todayWater)}ml. Tinta: 2000ml. Bea apa inainte de antrenament.`,
+      messageKey: 'proactive.lowHydration',
+      messageParams: { ml: Number(todayWater), target: 2000 },
       ml: Number(todayWater),
     };
   }
