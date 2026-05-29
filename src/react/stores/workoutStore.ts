@@ -15,6 +15,12 @@ import { archiveSession } from '../lib/dexieMigration';
 
 export type WorkoutPhase = 'logging' | 'rating' | 'rest' | 'transition' | 'idle';
 
+// Non-localized paused-session title SENTINEL (NOT user copy). Persisted on the
+// pausedSnapshot when pauseSession receives an empty/whitespace title; the
+// render boundary (ResumeSessionCard) detects it and substitutes a locale-aware
+// label via t() — the store never persists Romanian copy (i18n leak harness).
+export const PAUSED_SESSION_UNTITLED = '__paused_session_untitled__';
+
 // U-03 (HIGH) — session intensity/pain context carried preview → workout.
 // EnergyCheck/EnergyCause/PainButton/ScheduleOverride selectau intensityMod
 // 'plus'/'minus' + painContext, propagat doar via location.state efemer →
@@ -401,7 +407,7 @@ export interface WorkoutActions {
   // hardcoded 'Push' lie. Maria 65 antreneaza picioare → pauzeaza → resume
   // → vede 'Push' was Bugatti truth violation. Caller (Workout.tsx) reads
   // getTodayWorkout().workoutTitle and passes here. Empty string fallback
-  // explicit marker '(sesiune nedefinita)' NU silent pretend.
+  // non-localized marker PAUSED_SESSION_UNTITLED NU silent pretend.
   pauseSession: (title: string) => void;
   resumeSession: () => void;
   /**
@@ -511,12 +517,13 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         }),
 
       // HIGH-CODE-05 fix: title preserved from caller (real workout name)
-      // NU hardcoded 'Push' lie. Empty/whitespace title → explicit marker
-      // '(sesiune nedefinita)' (Bugatti truth — NU silent fallback la 'Push').
+      // NU hardcoded 'Push' lie. Empty/whitespace title → non-localized marker
+      // PAUSED_SESSION_UNTITLED (Bugatti truth — NU silent fallback la 'Push';
+      // ResumeSessionCard resolves it to locale-aware copy via t()).
       // Caller (Workout.tsx) reads getTodayWorkout().workoutTitle.
       pauseSession: (title) =>
         set((s) => {
-          const safeTitle = title.trim() === '' ? '(sesiune nedefinita)' : title;
+          const safeTitle = title.trim() === '' ? PAUSED_SESSION_UNTITLED : title;
           return {
             pausedSnapshot: s.sessionStart
               ? {

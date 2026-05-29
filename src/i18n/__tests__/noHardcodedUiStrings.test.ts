@@ -405,8 +405,6 @@ const TS_LEAK_KNOWN: ReadonlyArray<{ file: string; includes: string; why: string
   { file: 'src/react/lib/coachVoice.ts', includes: '', why: 'COACH_VOICE canonical RO fallback pool — keyed via coachEngine.voice.* bundle' },
   // historyImportParser skipped-row `reason` copy (CSV import results UI).
   { file: 'src/react/lib/historyImportParser.ts', includes: '', why: 'CSV import skip-reason copy — pending key migration' },
-  // workoutStore paused-session title marker rendered in Workout.
-  { file: 'src/react/stores/workoutStore.ts', includes: '(sesiune nedefinita)', why: 'paused-session title marker — pending key migration' },
 ];
 function isKnownTsLeak(file: string, text: string): boolean {
   return TS_LEAK_KNOWN.some((k) => k.file === file && (k.includes === '' || text.includes(k.includes)));

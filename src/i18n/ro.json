@@ -919,7 +919,8 @@
     "body": "Ai pus pe pauza {when}. Continui de unde ai ramas?",
     "metaLine": "Oprit la ex {n} · acum {min} min",
     "resumeCta": "Reia",
-    "discardCta": "Renunta"
+    "discardCta": "Renunta",
+    "untitledMarker": "Sesiune fara nume"
   },
 
   "prNotification": {

@@ -13,6 +13,7 @@
 import type { JSX } from 'react';
 import { PlayCircle } from 'lucide-react';
 import type { PausedSession } from '../../stores/workoutStore';
+import { PAUSED_SESSION_UNTITLED } from '../../stores/workoutStore';
 import { t } from '../../../i18n/index.js';
 
 interface Props {
@@ -23,6 +24,10 @@ interface Props {
 
 export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): JSX.Element {
   const minutesAgo = Math.max(1, Math.floor((Date.now() - snapshot.sessionStart) / 60000));
+  // The store persists a non-localized sentinel when the paused session had no
+  // title; resolve it to locale-aware copy here (store never holds RO copy).
+  const displayTitle =
+    snapshot.title === PAUSED_SESSION_UNTITLED ? t('resumeSession.untitledMarker') : snapshot.title;
   return (
     <div
       // ANDURA PULSE reskin (2026-05-29) — the paused-session recovery card is
@@ -52,7 +57,7 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): JSX
         />
         <div className="flex-1">
           <div className="font-mono text-[11px] tracking-wider uppercase text-brick">{t('resumeSession.title')}</div>
-          <div className="font-display font-bold text-ink mt-0.5">{snapshot.title}</div>
+          <div className="font-display font-bold text-ink mt-0.5">{displayTitle}</div>
           <div className="text-sm text-ink2 mt-0.5">
             {t('resumeSession.metaLine', { n: snapshot.exIdx + 1, min: minutesAgo })}
           </div>

@@ -919,7 +919,8 @@
     "body": "You paused {when}. Continue where you left off?",
     "metaLine": "Stopped at ex {n} · {min} min ago",
     "resumeCta": "Resume",
-    "discardCta": "Discard"
+    "discardCta": "Discard",
+    "untitledMarker": "Untitled session"
   },
 
   "prNotification": {
