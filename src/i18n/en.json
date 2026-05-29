@@ -1827,6 +1827,13 @@
     }
   },
 
+  "authCallback": {
+    "verifyingTitle": "Signing you in...",
+    "verifyingBody": "Just a second.",
+    "errorTitle": "Verification error",
+    "errorBody": "Redirecting you to login."
+  },
+
   "onboarding": {
     "progress": "{current} of {total}",
     "stepKicker": "STEP {n}",

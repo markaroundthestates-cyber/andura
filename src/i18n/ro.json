@@ -1827,6 +1827,13 @@
     }
   },
 
+  "authCallback": {
+    "verifyingTitle": "Te conectam...",
+    "verifyingBody": "Asteapta o secunda.",
+    "errorTitle": "Eroare la verificare",
+    "errorBody": "Te redirectionam catre login."
+  },
+
   "onboarding": {
     "progress": "{current} din {total}",
     "stepKicker": "PASUL {n}",

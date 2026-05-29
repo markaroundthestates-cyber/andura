@@ -17,6 +17,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthCallback } from '../../routes/screens/AuthCallback';
 import { useAppStore } from '../../stores/appStore';
+import { setLocale, _resetI18nCache } from '../../../i18n/index.js';
 
 // ── Auth module mock ─────────────────────────────────────────────────────
 // Preserve AUTH_STORAGE_KEYS real values (component reads them for
@@ -87,6 +88,11 @@ const ORIGINAL_LOCATION = window.location;
 beforeEach(() => {
   useAppStore.getState().setAuthenticated(false);
   localStorage.clear();
+  // Copy assertions below check the RO wording — pin RO locale so t() resolves
+  // the authCallback.* keys to Romanian (default locale is EN post 2026-05-28).
+  setLocale('ro');
+  _resetI18nCache();
+  setLocale('ro');
   // history.replaceState spy reset
   vi.spyOn(window.history, 'replaceState');
 });
@@ -97,6 +103,8 @@ afterEach(() => {
     configurable: true,
     writable: true,
   });
+  try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
+  _resetI18nCache();
   vi.restoreAllMocks();
 });
 
