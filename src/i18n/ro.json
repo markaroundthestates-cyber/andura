@@ -506,6 +506,7 @@
       "ariaLabel": "Grasime corporala estimata",
       "sourceUsNavy": "US Navy",
       "sourceEstimated": "estimat",
+      "sourceManual": "manual",
       "captionApprox": "Estimat aproximativ. ",
       "captionFromBmi": "Estimat din BMI. ",
       "nudge": "Adauga talie + gat in Profil pentru estimat precis (US Navy).",

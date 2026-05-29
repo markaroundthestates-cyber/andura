@@ -17,6 +17,7 @@ import { Check } from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../../stores/onboardingStore';
 import type { Sex, Frequency, Experience, OnboardingData } from '../../../stores/onboardingStore';
 import { useProgresStore, latestBodyMeasurements } from '../../../stores/progresStore';
+import { DB } from '../../../../db.js';
 import { gotoPath } from '../../../lib/navigation';
 import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
@@ -78,8 +79,18 @@ export function SettingsProfile(): JSX.Element {
   // — aceeasi sursa care alimenteaza BMR. BF% US Navy ia inaltimea din draft.
   const [waist, setWaist] = useState(lastBody?.waistCm != null ? String(lastBody.waistCm) : '');
   const [neck, setNeck] = useState(lastBody?.neckCm != null ? String(lastBody.neckCm) : '');
-  const [bfManual, setBfManual] = useState(false);
-  const [bfOverride, setBfOverride] = useState('');
+  // §08.038 — manual BF% override. Pre-fix bfManual/bfOverride era useState pur
+  // ARUNCAT la Save (override-ul nu avea NICIUN efect — Gigel bifa, scria 18%,
+  // salva, si app tot folosea estimarea). Acum seedeaza din `bf-override`
+  // (Tier-0 SYNC_KEY existent, citit de sys.getBF() care "wins everything") ca
+  // sa fie round-trip editabil, si se consuma pe save (vezi handleSave) +
+  // downstream (BodyFatStrip respecta acelasi override). seed o singura data la
+  // mount (lazy initializer) — NU re-seed la fiecare render.
+  const [bfManual, setBfManual] = useState<boolean>(() => DB.get('bf-override') != null);
+  const [bfOverride, setBfOverride] = useState<string>(() => {
+    const v = DB.get('bf-override');
+    return v != null ? String(v) : '';
+  });
 
   // Build engine arg omitting empty fields (exactOptionalPropertyTypes — NU
   // pasa undefined explicit). Engine returns null daca lipseste vreun camp.
@@ -172,6 +183,22 @@ export function SettingsProfile(): JSX.Element {
     if (Number.isFinite(neckNum) && neckNum > 0) entry.neckCm = neckNum;
     if (entry.waistCm !== undefined || entry.neckCm !== undefined) {
       addBodyDataEntry(entry);
+    }
+    // §08.038 — manual BF% override consum pe save (era discarded). Cand bifa e
+    // ON + valoare valida (3-60%, banda input), scrie `bf-override` (Tier-0
+    // SYNC_KEY → sincronizat cloud + citit de sys.getBF() care il prioritizeaza
+    // peste orice calcul + de BodyFatStrip). Cand bifa e OFF, sterge override-ul
+    // (revine la auto US-Navy/Deurenberg). Valoare invalida cu bifa ON →
+    // pastreaza auto (NU scrie un override stricat). NU blocheaza save-ul.
+    if (bfManual) {
+      const ov = Number(bfOverride);
+      if (Number.isFinite(ov) && ov >= 3 && ov <= 60) {
+        DB.set('bf-override', ov);
+      } else {
+        DB.set('bf-override', null);
+      }
+    } else {
+      DB.set('bf-override', null);
     }
     // §obiectiv-tinta 2026-05-28 — targetWeight + targetDate sunt persistate
     // direct in ObiectivCard (Progres tab) prin progresStore.setTargetObiectiv.
