@@ -422,16 +422,16 @@ function Step3({ value, onChange }: OptionStepProps<GoalKey>): JSX.Element {
               onClick={() => onChange(key)}
               data-testid={`onb-goal-${key}`}
               aria-pressed={selected}
-              className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-2xl border text-left transition-colors ${
+              className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-2xl border text-ink text-left transition-colors ${
                 selected
-                  ? 'bg-brick text-paper border-brick option-selected-ring'
+                  ? 'ob-row-selected option-selected-ring'
                   : isAuto
-                    ? 'bg-paper2 border-2 border-brick text-ink'
-                    : 'bg-paper2 border-lineStrong text-ink'
+                    ? 'bg-paper2 border-2 border-brick'
+                    : 'bg-paper2 border-lineStrong'
               }`}
             >
               <Icon
-                className={`w-5 h-5 flex-shrink-0 ${selected ? 'text-paper' : isAuto ? 'text-brick' : 'text-ink2'}`}
+                className={`w-5 h-5 flex-shrink-0 ${selected || isAuto ? 'text-brick' : 'text-ink2'}`}
                 aria-hidden="true"
               />
               <span className="flex-1">
@@ -439,23 +439,25 @@ function Step3({ value, onChange }: OptionStepProps<GoalKey>): JSX.Element {
                   {goalLabel(key)}
                   {isAuto && (
                     <span
-                      className={`ml-2 text-xs font-semibold ${selected ? 'text-paper' : 'text-brick'}`}
+                      className="ml-2 text-xs font-semibold text-brick"
                       data-testid="onb-goal-auto-badge"
                     >
                       {t('onboarding.options.goal.autoBadge')}
                     </span>
                   )}
                 </span>
-                <span className={`block text-xs mt-0.5 ${selected ? 'text-paper' : 'text-ink3'}`}>
+                <span className="block text-xs mt-0.5 text-ink3">
                   {t(subtitleKey)}
                 </span>
               </span>
-              {selected && (
-                <Check
-                  className="w-5 h-5 flex-shrink-0 text-paper"
-                  aria-hidden="true"
-                />
-              )}
+              {/* mockup .ob-check.on — circular brick check badge (not a bare
+                  icon on a solid fill). Reserve the slot so rows don't shift. */}
+              <span
+                className={`ob-check ${selected ? 'ob-check-on' : ''}`}
+                aria-hidden="true"
+              >
+                {selected && <Check className="w-3.5 h-3.5" strokeWidth={2.6} />}
+              </span>
             </button>
           );
         })}

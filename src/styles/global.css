@@ -805,6 +805,30 @@
       0 6px 14px -4px color-mix(in oklab, var(--brick) 32%, transparent);
   }
 
+  /* OB-ROW selected idiom — mockup interfata-noua/screens-entry.jsx .ob-row.on:
+     a tint + accent border + circular accent check, NOT a solid fill. Keeps the
+     row text ink-colored (legible, calmer than inverted paper-on-fill). --brick
+     is this build's onboarding selection accent (mockup --accent). [11.122] */
+  .ob-row-selected {
+    background: color-mix(in oklab, var(--brick) 9%, var(--paper-2));
+    border-color: var(--brick);
+  }
+  .ob-check {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line-strong);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    transition: 200ms;
+  }
+  .ob-check-on {
+    background: var(--brick);
+    border-color: var(--brick);
+    color: var(--paper);
+  }
+
   /* Stagger utilities — apply to children of a list to cascade their entrance
      (use with .animate-card-rise or .animate-fade-in-up). 75ms steps keep the
      stack feeling fluid; capped at 6 children before the cascade becomes
