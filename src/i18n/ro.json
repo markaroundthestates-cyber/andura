@@ -325,6 +325,8 @@
       "exercisesHeading": "Exercitii",
       "swappedPrefix": "Inlocuit · {reason}",
       "exerciseDetail": "{sets} seturi - {kg} kg - {reps} reps",
+      "exerciseDetailBodyweight": "{sets} seturi - greutatea corpului - {reps} reps",
+      "exerciseDetailBodyweightAdded": "{sets} seturi - greutatea corpului +{kg} kg - {reps} reps",
       "exerciseTimedDetail": "{sets} seturi - {seconds} sec",
       "closingNote": "Coach-ul ajusteaza in timpul sesiunii daca apare ceva: durere, oboseala, set greu. Nu trebuie sa stii dinainte tot.",
       "confirmStartCta": "Confirma, incep",

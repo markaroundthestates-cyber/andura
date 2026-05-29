@@ -333,7 +333,13 @@ export function WorkoutPreview(): JSX.Element {
               // reason in the sub slot ("Inlocuit · {motiv}") so the user SEES
               // it was replaced; otherwise the normal equipment/setup sub.
               sub: ex.swapReason ? t('workout.preview.swappedPrefix', { reason: ex.swapReason }) : ex.sub,
-              detail: t('workout.preview.exerciseDetail', { sets: ex.sets, kg: ex.targetKg, reps: ex.targetReps }),
+              // Bodyweight: show "greutatea corpului" instead of "0 kg" (the
+              // symptom Daniel flagged); append "+X kg" only when added > 0.
+              detail: ex.isBodyweight
+                ? ex.targetKg > 0
+                  ? t('workout.preview.exerciseDetailBodyweightAdded', { sets: ex.sets, kg: ex.targetKg, reps: ex.targetReps })
+                  : t('workout.preview.exerciseDetailBodyweight', { sets: ex.sets, reps: ex.targetReps })
+                : t('workout.preview.exerciseDetail', { sets: ex.sets, kg: ex.targetKg, reps: ex.targetReps }),
               idx: i,
             }))
           : FALLBACK_EXERCISES.map((ex, i) => {

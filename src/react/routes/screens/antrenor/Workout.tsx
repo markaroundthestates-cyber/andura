@@ -1064,8 +1064,14 @@ export function Workout(): JSX.Element {
               const logged = (history[safeExIdx] ?? [])[i];
               const isDone = logged !== undefined;
               const isActive = !isDone && i === currentSetIdx;
+              // Bodyweight: surface the ENTERED added weight (0 = bodyweight),
+              // not the effective load stored in kg. Loaded: kg as before.
               const detail = isDone
-                ? `${logged.kg} ${t('common.kg')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
+                ? currentExercise.isBodyweight
+                  ? (logged.addedKg ?? 0) > 0
+                    ? `+${logged.addedKg} ${t('common.kg')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
+                    : `${t('setLog.bodyweightLabel')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
+                  : `${logged.kg} ${t('common.kg')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
                 : undefined;
               return (
                 <div
