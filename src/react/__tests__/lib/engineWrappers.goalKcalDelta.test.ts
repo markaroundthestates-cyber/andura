@@ -121,8 +121,9 @@ describe('engineWrappers — precedence: manual phase override > onboarding goal
     localStorage.setItem('phase-override', JSON.stringify('BULK'));
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    // Manual override path keeps the multiplier-snapshot (×1.08) — SURPLUS.
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 1.08));
+    // Single-path sizing (audit MED 2): override BULK sized by the SAME coherent
+    // function AUTO uses → +12% surplus (NOT the legacy ×1.08 multiplier-snapshot).
+    expect(r.kcalTarget).toBe(bulkKcal(MAINTENANCE));
     expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
   });
 
@@ -131,7 +132,8 @@ describe('engineWrappers — precedence: manual phase override > onboarding goal
     localStorage.setItem('phase-override', JSON.stringify('CUT'));
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+    // Coherent CUT = -20% deficit, identical to an AUTO-resolved CUT (no 54-kcal gap).
+    expect(r.kcalTarget).toBe(cutKcal(MAINTENANCE));
     expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
   });
 });
@@ -163,13 +165,14 @@ describe('engineWrappers — override-vs-target reconciliation (stale override l
   });
 
   it('non-contradicting override is STILL honored (CUT override + LOSE target)', async () => {
-    // A CUT override that AGREES with a LOSE target keeps the multiplier-snapshot.
+    // A CUT override that AGREES with a LOSE target is honored + sized coherently
+    // (audit MED 2): -20% deficit, identical to the AUTO-resolved CUT for this user.
     setUser('auto');
     localStorage.setItem('phase-override', JSON.stringify('CUT'));
     useProgresStore.getState().setTargetObiectiv({ weightKg: 90 });
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+    expect(r.kcalTarget).toBe(cutKcal(MAINTENANCE));
     expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
   });
 });
@@ -194,11 +197,14 @@ describe('engineWrappers — recency: fresher same-day edit beats earlier snapsh
     expect(r.kcalTarget).not.toBe(9999);
   });
 
-  it('no fresher edit → the same-day snapshot still wins (recency unchanged)', async () => {
+  it('no fresher edit → the same-day snapshot phase is honored (sized coherently)', async () => {
     setUser('slabire');
     localStorage.setItem('phase-override', JSON.stringify('CUT'));
     const todayISO = new Date().toLocaleDateString('sv');
-    // Snapshot ts NEWER than any weigh-in → snapshot remains authoritative.
+    // Snapshot ts NEWER than any weigh-in → the snapshot gate is honored (NOT
+    // recomputed off a fresher weight). Audit MED 2: the magnitude is sized by the
+    // SAME coherent function AUTO uses, so the stored snapshot kcal (2050, legacy
+    // ×0.82) no longer drives display — the coherent -20% deficit does.
     addWeighIn(110, 0);
     const snapshotTs = Date.now() + 60 * 60 * 1000; // 1h in the future vs weigh-in
     localStorage.setItem(
@@ -207,7 +213,7 @@ describe('engineWrappers — recency: fresher same-day edit beats earlier snapsh
     );
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(2050);
+    expect(r.kcalTarget).toBe(cutKcal(MAINTENANCE));
   });
 });
 
@@ -259,8 +265,9 @@ describe('engineWrappers — goal sizing applies to adaptive Bayesian TDEE (post
       }),
     );
     const r = await getNutritionTargetsToday({});
-    // Override BULK derives from REAL per-user maintenance × 1.08 (NU posterior.mu).
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 1.08));
+    // Override BULK sizes off REAL per-user maintenance (NU posterior.mu), via the
+    // coherent path → +12% surplus (audit MED 2: single-path, NOT legacy ×1.08).
+    expect(r.kcalTarget).toBe(bulkKcal(MAINTENANCE));
     expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
   });
 
@@ -342,8 +349,9 @@ describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp)'
     const maint = maintenanceFor(82);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    // Override CUT (multiplier-snapshot 0.82) bate AUTO BULK.
-    expect(r.kcalTarget).toBe(Math.round(maint * 0.82));
+    // Override CUT bate AUTO BULK; sized coherently (-20%), identical to an
+    // AUTO-resolved CUT on the same maintenance (audit MED 2: no 54-kcal gap).
+    expect(r.kcalTarget).toBe(cutKcal(maint));
   });
 
   it('AUTO trend scadere aplica CUT pe posterior.mu adaptiv', async () => {
@@ -358,5 +366,46 @@ describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp)'
     );
     const r = await getNutritionTargetsToday({});
     expect(r.kcalTarget).toBe(cutKcal(3000));
+  });
+});
+
+// Audit MED 2 regression (Daniel repro 2026-05-31, live andura.app): the SAME
+// profile showed 2173 kcal on AUTO (which resolves to CUT) but 2227 kcal on an
+// explicit "lose fat" / CUT pick — a 54-kcal gap because the two surfaces sized
+// CUT through DIFFERENT constants (AUTO −20% of TDEE vs explicit ×0.82). They must
+// be IDENTICAL: same resolved phase → same kcal, regardless of how the user got
+// there. This locks the single-path invariant so the gap can never reappear.
+describe('engineWrappers — AUTO-resolved phase == explicit phase pick (no dual-path gap)', () => {
+  it('AUTO→CUT kcal === explicit CUT override kcal (Daniel 2173 vs 2227 repro)', async () => {
+    // Same overweight profile (110kg male, BMI 32.5). AUTO resolves to CUT from
+    // body-comp; an explicit CUT pick must land on the EXACT same number.
+    setUser('auto');
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const auto = await getNutritionTargetsToday({});
+
+    setUser('auto');
+    localStorage.setItem('phase-override', JSON.stringify('CUT'));
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const explicit = await getNutritionTargetsToday({});
+
+    expect(explicit.kcalTarget).toBe(auto.kcalTarget);
+    expect(explicit.kcalTarget).toBe(cutKcal(MAINTENANCE)); // both −20%, no 54-kcal gap
+  });
+
+  it('AUTO→BULK kcal === explicit BULK override kcal (mirror)', async () => {
+    // GAIN target → AUTO resolves BULK; explicit BULK must match exactly.
+    setUser('auto');
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 130 });
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const auto = await getNutritionTargetsToday({});
+
+    setUser('auto');
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 130 });
+    localStorage.setItem('phase-override', JSON.stringify('BULK'));
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const explicit = await getNutritionTargetsToday({});
+
+    expect(explicit.kcalTarget).toBe(auto.kcalTarget);
+    expect(explicit.kcalTarget).toBe(bulkKcal(MAINTENANCE));
   });
 });

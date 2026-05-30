@@ -11,14 +11,19 @@ import { DB, tod } from '../db.js';
 /** @typedef {'AUTO' | 'CUT' | 'MAINTENANCE' | 'BULK' | 'STRENGTH'} PhaseOverride */
 
 /**
- * TDEE-based kcal target lookup per phase (matches plan.js legacy mapping).
+ * TDEE-based kcal target lookup per phase. Snapshot magnitudes match the coherent
+ * sizing model (goalPhaseModel sizeKcalForPhase default %-of-TDEE shifts) so an
+ * explicit phase snapshot equals the AUTO-resolved number for the same phase
+ * (audit MED 2, 2026-05-31): CUT -20%, BULK +12%, STRENGTH +5%, MAINTENANCE 0.
+ * Supersedes the legacy plan.js x0.82 / x1.08 mapping (which sat 54 kcal apart
+ * from the AUTO path's -20% deficit for the same CUT phase).
  * @param {number} tdee
  * @returns {Record<string, number>}
  */
 function kcalMapForTdee(tdee) {
   return {
-    CUT: Math.round(tdee * 0.82),
-    BULK: Math.round(tdee * 1.08),
+    CUT: Math.round(tdee * 0.8),
+    BULK: Math.round(tdee * 1.12),
     MAINTENANCE: tdee,
     STRENGTH: Math.round(tdee * 1.05),
   };

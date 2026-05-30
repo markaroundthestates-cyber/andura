@@ -258,10 +258,11 @@ describe('engineWrappers — per-user nutrition base (Piesa 1)', () => {
     localStorage.setItem('phase-override', JSON.stringify('BULK'));
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    // Forward model, 0 sessions: 2205 BMR × 1.25 NEAT = 2756 TDEE × 1.08 BULK ≈ 2976.
-    // BULK is a surplus over the per-user maintenance, NOT the flat 2640.
+    // Forward model, 0 sessions: 2205 BMR × 1.25 NEAT = 2756 TDEE × 1.12 BULK ≈ 3087.
+    // Coherent sizing (audit MED 2): explicit BULK = +12% surplus, identical to an
+    // AUTO-resolved BULK. Surplus over per-user maintenance, NOT the flat 2640.
     const maintenance = Math.round(2205 * NEAT_BASE);
-    expect(r.kcalTarget).toBe(Math.round(maintenance * 1.08));
+    expect(r.kcalTarget).toBe(Math.round(maintenance * 1.12));
     expect(r.kcalTarget).toBeGreaterThan(maintenance);
     expect(r.kcalTarget).not.toBe(2640);
   });
@@ -300,9 +301,9 @@ describe('engineWrappers — per-user nutrition base (Piesa 1)', () => {
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
 
-    // Base is the PLANNED-fed maintenance, not sedentary; BULK 1.08 over it.
-    expect(r.kcalTarget).toBe(Math.round(blendedBase * 1.08));
-    expect(r.kcalTarget).toBeGreaterThan(Math.round(sedentaryBase * 1.08));
+    // Base is the PLANNED-fed maintenance, not sedentary; coherent BULK +12% over it.
+    expect(r.kcalTarget).toBe(Math.round(blendedBase * 1.12));
+    expect(r.kcalTarget).toBeGreaterThan(Math.round(sedentaryBase * 1.12));
   });
 
   // CLAIM (d) — BUG #4: Maria 40kg/155cm e SUBPONDERALA (BMI 16.6), deci

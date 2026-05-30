@@ -9,18 +9,19 @@ describe('setPhaseOverride', () => {
   it('persists CUT phase + phase-change-date + phase-log entry', () => {
     const result = setPhaseOverride('CUT', 2500);
     expect(result.phase).toBe('CUT');
-    expect(result.kcalTarget).toBe(Math.round(2500 * 0.82)); // 2050
+    // Coherent sizing (audit MED 2): CUT snapshot = TDEE -20% (matches AUTO path).
+    expect(result.kcalTarget).toBe(Math.round(2500 * 0.8)); // 2000
     expect(result.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 
     expect(JSON.parse(localStorage.getItem('phase-override') || 'null')).toBe('CUT');
     const log = JSON.parse(localStorage.getItem('phase-log') || '[]');
     expect(log).toHaveLength(1);
-    expect(log[0]).toMatchObject({ phase: 'CUT', kcalTarget: 2050 });
+    expect(log[0]).toMatchObject({ phase: 'CUT', kcalTarget: 2000 });
   });
 
-  it('persists BULK phase with +8% kcal', () => {
+  it('persists BULK phase with +12% kcal (coherent with AUTO)', () => {
     const result = setPhaseOverride('BULK', 2500);
-    expect(result.kcalTarget).toBe(Math.round(2500 * 1.08)); // 2700
+    expect(result.kcalTarget).toBe(Math.round(2500 * 1.12)); // 2800
   });
 
   it('persists MAINTENANCE phase at 100% TDEE', () => {

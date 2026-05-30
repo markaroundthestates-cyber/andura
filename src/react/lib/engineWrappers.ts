@@ -780,13 +780,16 @@ function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine 
  */
 /**
  * Read user manual phase override (B001 SchimbaFazaConfirm). Returns null
- * when AUTO or absent. When present, derive kcalTarget from current TDEE
- * estimate + phase multiplier (CUT 0.82 / BULK 1.08 / STRENGTH 1.05 /
- * MAINTENANCE 1.00). Persists across days — separate from per-day phase-log.
+ * when AUTO or absent. When present, derive kcalTarget via the SAME coherent
+ * sizing AUTO uses (resolveActivePhase → sizeKcalForPhase) so an explicit phase
+ * pick and an AUTO-resolved phase yield ONE number (audit MED 2, 2026-05-31).
+ * Persists across days — separate from per-day phase-log.
  *
  * Surfaces visible feedback "you picked CUT → reduced kcal target today"
  * without waiting for Bayesian inference observation accumulation.
  */
+// Valid manual-override tokens (membership check only — the kcal MAGNITUDE is
+// sized coherently via sizeKcalForPhase, NOT these keys; see getPhaseOverrideKcalToday).
 const PHASE_MULTIPLIERS: Record<string, number> = {
   CUT: 0.82,
   BULK: 1.08,
@@ -988,24 +991,29 @@ function getPhaseOverrideKcalToday(): number | null {
     }>;
     const todayEntry = phaseLog.find((e) => e.date === todayISO);
     const kcalFloor = readUserKcalFloor(); // sex-aware (femei 1000 / barbati 1200)
+    // SINGLE-PATH sizing (audit MED 2, 2026-05-31): the displayed override kcal is
+    // sized by the SAME coherent path AUTO uses (resolveActivePhase →
+    // sizeKcalForPhase), NOT a divergent flat multiplier. Previously explicit CUT
+    // used ×0.82 while AUTO-resolved CUT used −20% (×0.80) — same phase, 54 kcal
+    // apart (Daniel repro 2173 AUTO vs 2227 explicit). The snapshot is now a
+    // ts-recency GATE only; its stored kcal no longer drives the magnitude.
+    const baseTdee = readUserMaintenanceTDEE() ?? BASELINE_NUTRITION.kcalTarget;
+    const coherent = getCoherentKcalToday(baseTdee);
+    const sizedKcal =
+      coherent !== null ? coherent.kcal : Math.max(Math.round(baseTdee), kcalFloor);
     if (todayEntry) {
-      // Recency: a FRESHER same-day target/weight edit must outrank the snapshot
-      // (mid-day edit, not the morning's stale number). The snapshot carries a ms
-      // `ts` (setPhaseOverride); compare to the latest weigh-in ts. When a weigh-in
-      // is newer, return null so the coherent path recomputes off the fresh weight.
-      // Older snapshots without `ts` keep the prior snapshot-wins behavior.
+      // Recency: a FRESHER same-day weigh-in (ts) outranks the morning snapshot →
+      // return null so the coherent path recomputes off the fresh weight. Older
+      // snapshots without `ts` keep the prior snapshot-wins behavior.
       const snapTs = todayEntry.ts;
       const latestWeighInTs = useProgresStore
         .getState()
         .weightLog.reduce((m, e) => (Number.isFinite(e.ts) && e.ts > m ? e.ts : m), 0);
       if (typeof snapTs === 'number' && latestWeighInTs > snapTs) return null;
-      return Math.max(todayEntry.kcalTarget, kcalFloor);
+      return Math.max(sizedKcal, kcalFloor); // snapshot phase honored, sized coherently
     }
-    // Piesa 1 fix — derive from REAL per-user maintenance TDEE × multiplier
-    // (user picked phase earlier, days later → still apply override). Fallback
-    // la baza flat 2640 DOAR cand stats onboarding absente (cold start).
-    const baseKcal = readUserMaintenanceTDEE() ?? BASELINE_NUTRITION.kcalTarget;
-    return Math.max(Math.round(baseKcal * multiplier), kcalFloor);
+    // No snapshot (override picked earlier) → size coherently off per-user maintenance.
+    return Math.max(sizedKcal, kcalFloor);
   } catch {
     return null;
   }
