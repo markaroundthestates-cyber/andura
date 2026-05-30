@@ -25,7 +25,7 @@ import { toExerciseDisplay } from './exerciseDisplay';
 import { DP } from '../../engine/dp.js';
 import { getComputedReadinessScore, getTodayReadiness } from '../../engine/readiness.js';
 import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
-import { isBodyweightExercise, bodyweightFraction, effectiveLoadKg } from '../../engine/bodyweightLoad.js';
+import { isBodyweightExercise, bodyweightFraction } from '../../engine/bodyweightLoad.js';
 import { DB } from '../../db.js';
 import { PAIN_REGION_GROUP_MAP } from '../../engine/muscleRecoveryConstants.js';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';

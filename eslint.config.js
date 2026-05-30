@@ -64,6 +64,7 @@ export default [
   {
     ignores: [
       'dist/**',
+      'dist-dev/**',
       'node_modules/**',
       '99-archive/**',
       '04-architecture/mockups/**',
