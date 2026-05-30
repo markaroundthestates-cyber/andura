@@ -29,7 +29,7 @@ import type { LucideIcon } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import type { Goal } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
-import { getCurrentWeightKg } from '../../lib/userTdee';
+import { getCurrentWeightKg, readUserMaintenanceTDEE } from '../../lib/userTdee';
 import { targetDirection, isGoalEnabled } from '../../lib/goalPhaseModel';
 import type { TargetDirection } from '../../lib/goalPhaseModel';
 import { setPhaseOverride } from '../../../util/phaseOverride.js';
@@ -89,7 +89,11 @@ export function ObiectivGoalCard(): JSX.Element {
   useEffect(() => {
     if (!selectedDisabled || direction === null) return;
     setField('goal', 'auto');
-    const tdee = typeof SYS?.estimateTDEE === 'function' ? SYS.estimateTDEE() : 2000;
+    // Per-user TDEE snapshot (coherent with AUTO / getPhaseOverrideKcalToday);
+    // legacy SYS.estimateTDEE (capped 3500) only as cold-start fallback.
+    const tdee =
+      readUserMaintenanceTDEE() ??
+      (typeof SYS?.estimateTDEE === 'function' ? SYS.estimateTDEE() : 2000);
     setPhaseOverride('AUTO', tdee);
     setSwitchNote(t(SWITCH_NOTE_KEY[direction]));
   }, [selectedDisabled, direction, setField]);

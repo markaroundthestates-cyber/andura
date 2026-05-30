@@ -204,4 +204,34 @@ describe('sizeKcalForPhase — %-of-TDEE adaptive, sign forced by phase', () => 
     const r = sizeKcalForPhase({ maintenanceTdee: 1500, kcalFloor: 1000, phase: 'CUT', currentKg: 60, targetKg: 50, daysRemaining: 7 });
     expect(r.kcalTarget).toBeGreaterThanOrEqual(1000);
   });
+
+  // ── Extreme bodyweight invariant (250kg male repro 2026-05-30) ──────────────
+  // Founder live repro at the max input bound (250kg/230cm): masa (3722) landed
+  // BELOW auto (3900) and below maintenance because the phase snapshot used the
+  // legacy SYS.estimateTDEE (hardcoded 111kg config, capped 3500) while AUTO used
+  // the real per-user TDEE. Asserting the pure invariant: for ANY single TDEE,
+  // BULK > MAINTENANCE > CUT and the BULK surplus is never below maintenance.
+  it('INVARIANT — 250kg male maintenance ~4741: BULK > maintenance > CUT', () => {
+    // Mifflin BMR 250kg/230cm/30yr male = 3793; × NEAT 1.25, 0 sessions = ~4741.
+    const tdee = 4741;
+    const cut = sizeKcalForPhase({ maintenanceTdee: tdee, kcalFloor: FLOOR, phase: 'CUT', currentKg: 250, targetKg: null, daysRemaining: null });
+    const maint = sizeKcalForPhase({ maintenanceTdee: tdee, kcalFloor: FLOOR, phase: 'MAINTENANCE', currentKg: 250, targetKg: null, daysRemaining: null });
+    const bulk = sizeKcalForPhase({ maintenanceTdee: tdee, kcalFloor: FLOOR, phase: 'BULK', currentKg: 250, targetKg: null, daysRemaining: null });
+    expect(maint.kcalTarget).toBe(tdee);
+    // BULK is a SURPLUS — strictly above maintenance (the founder's masa < auto bug).
+    expect(bulk.kcalTarget).toBeGreaterThan(maint.kcalTarget);
+    // CUT is a deficit — strictly below maintenance.
+    expect(cut.kcalTarget).toBeLessThan(maint.kcalTarget);
+    // Full ordering BULK > MAINTENANCE > CUT.
+    expect(bulk.kcalTarget).toBeGreaterThan(cut.kcalTarget);
+  });
+
+  it('INVARIANT — BULK never below maintenance across a TDEE sweep', () => {
+    // No %-cap or rate-cap can ever turn a surplus into a value <= maintenance.
+    for (const tdee of [1300, 2000, 2800, 3793, 4741, 6000]) {
+      const maint = sizeKcalForPhase({ maintenanceTdee: tdee, kcalFloor: FLOOR, phase: 'MAINTENANCE', currentKg: 250, targetKg: null, daysRemaining: null });
+      const bulk = sizeKcalForPhase({ maintenanceTdee: tdee, kcalFloor: FLOOR, phase: 'BULK', currentKg: 250, targetKg: null, daysRemaining: null });
+      expect(bulk.kcalTarget).toBeGreaterThanOrEqual(maint.kcalTarget);
+    }
+  });
 });

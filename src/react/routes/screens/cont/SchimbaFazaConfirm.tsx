@@ -14,6 +14,7 @@ import { GitBranch } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { setPhaseOverride, getPhaseOverride } from '../../../../util/phaseOverride.js';
 import { getAutoDetectedPhaseLabelRo } from '../../../lib/engineWrappers';
+import { readUserMaintenanceTDEE } from '../../../lib/userTdee';
 import { SYS } from '../../../../engine/sys.js';
 import { SubHeader } from '../../../components/SubHeader';
 import { t } from '../../../../i18n/index.js';
@@ -48,7 +49,15 @@ export function SchimbaFazaConfirm(): JSX.Element {
       : autoDetectedRo;
 
   function handleConfirm(): void {
-    const tdee = typeof SYS?.estimateTDEE === 'function' ? SYS.estimateTDEE() : 2000;
+    // Snapshot the per-user maintenance TDEE (readUserMaintenanceTDEE, the SAME
+    // source AUTO / getPhaseOverrideKcalToday use) so the phase-log kcal scales
+    // with the real profile and stays coherent (BULK > maintenance > CUT). The
+    // legacy SYS.estimateTDEE is a hardcoded-config fallback capped at 3500 kcal
+    // — at extreme bodyweights it produced a BULK snapshot BELOW AUTO (250kg
+    // repro). Cold-start (no onboarding) → null → keep the legacy fallback.
+    const tdee =
+      readUserMaintenanceTDEE() ??
+      (typeof SYS?.estimateTDEE === 'function' ? SYS.estimateTDEE() : 2000);
     setPhaseOverride(selected, tdee);
     navigate(gotoPath('settings-prefs'));
   }

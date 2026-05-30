@@ -17,6 +17,7 @@ import { SubHeader } from '../../../components/SubHeader';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import type { Goal } from '../../../stores/onboardingStore';
 import { phaseForGoal } from '../../../lib/goalPhaseModel';
+import { readUserMaintenanceTDEE } from '../../../lib/userTdee';
 import { setPhaseOverride } from '../../../../util/phaseOverride.js';
 import { SYS } from '../../../../engine/sys.js';
 import { t } from '../../../../i18n/index.js';
@@ -53,7 +54,11 @@ export function ProgramChangeConfirm(): JSX.Element {
       // TDEEStrip "PHASE" badge reflects the active phase instead of staying
       // stale on AUTO. phaseForGoal maps masa→BULK / slabire→CUT / forta→
       // STRENGTH / mentenanta→MAINTENANCE / auto→AUTO (clears the override).
-      const tdee = typeof SYS?.estimateTDEE === 'function' ? SYS.estimateTDEE() : 2000;
+      // Per-user TDEE snapshot (coherent with AUTO / getPhaseOverrideKcalToday);
+      // legacy SYS.estimateTDEE (capped 3500) only as cold-start fallback.
+      const tdee =
+        readUserMaintenanceTDEE() ??
+        (typeof SYS?.estimateTDEE === 'function' ? SYS.estimateTDEE() : 2000);
       setPhaseOverride(phaseForGoal(pendingGoal), tdee);
     }
     navigate(gotoPath(returnTo));
