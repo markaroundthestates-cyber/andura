@@ -68,15 +68,14 @@ const INACTIVITY_CHECK_INTERVAL_MS = 30_000; // Mockup wv2 verbatim L4404
 
 type SetRating = ExerciseHistoryEntry['rating'];
 
-// Fix #2 — in-session coarse rating → RPE for DP.checkInSessionAdjust.
+// In-session coarse rating → RPE for DP.checkInSessionAdjust (responsive per-set
+// autoregulation, Daniel 2026-05-30 rewrite).
 // DISTINCT from workoutStore.RATING_TO_RPE (usor 6.5 / potrivit 7.5 / greu 8.5):
-// that map calibrates the PERSISTED fatigue/dp history, where greu deliberately
-// caps at 8.5 so a SINGLE honest hard set never trips dp's RPE>=9 cliff. Here
-// the decision is the LIVE in-session correction "TWO consecutive heaviest-rating
-// sets -> this is too heavy NOW, drop the next set", which is exactly what
-// checkInSessionAdjust gates on 2x RPE 10. So greu (the hardest rating the UI
-// offers) maps to 10 for THIS decision only — not persisted. usor stays 6.5 so
-// the engine's 2x-easy UP path can still fire.
+// that map calibrates the PERSISTED fatigue/dp history. Here the decision is the
+// LIVE per-set correction "this set was greu/potrivit/usor -> adjust the NEXT
+// set's target now" — phase-aware (weight in STRENGTH, reps in masa). greu maps
+// to 10 (the engine eases at RPE>=9.5), usor to 6.5 (the engine nudges up at
+// <=6.5), potrivit to 7.5 (hold, with a small late-set taper). Not persisted.
 const INSESSION_RATING_TO_RPE: Readonly<Record<SetRating, number>> = {
   usor: 6.5,
   potrivit: 7.5,
@@ -235,9 +234,9 @@ export function Workout(): JSX.Element {
   // new missing list now blocks its equipment.
   const [aparatLipsaSheetOpen, setAparatLipsaSheetOpen] = useState(false);
   // Fix #2 — in-session RPE auto-correction notice (DP.checkInSessionAdjust).
-  // Null = no adjustment surfaced; string = the engine's honest RO message
-  // (e.g. "Greutatea este prea mare · Trecem la 50 kg pentru urmatorul set").
-  // Shown in the log zone for the NEXT set; cleared when the user logs/advances.
+  // Null = no adjustment surfaced; string = the engine's honest localized message
+  // (e.g. "Ai dat greu - coboram la 8 reps pe setul urmator", or a weight twin in
+  // STRENGTH phase). Shown in the log zone for the NEXT set; cleared on advance.
   const [adjustNotice, setAdjustNotice] = useState<string | null>(null);
   // Pulse arc 2026-05-29 (blueprint C3-c) — mid-session PR celebration. Set at
   // the EXISTING getPRDelta/markPRHit moment in performLogSet (we do NOT add a
@@ -488,16 +487,29 @@ export function Workout(): JSX.Element {
       const ratedSets = [...(history[safeExIdx] ?? []), { kg: kgInput, reps: repsInput, rating }];
       const recentRPEs = ratedSets.map((s) => INSESSION_RATING_TO_RPE[s.rating]);
       const recentReps = ratedSets.map((s) => s.reps);
-      const adjust = DP.checkInSessionAdjust(exerciseName, recentRPEs, recentReps) as {
+      // Pass the RECOMMENDATION for the set just logged (targetKg/targetReps) +
+      // the NEXT set index so the engine can measure performance deviation and
+      // apply the fatigue taper. The engine decides phase-aware whether to move
+      // weight (newKg) or reps (newReps, weight held = holdKg).
+      const adjust = DP.checkInSessionAdjust(exerciseName, recentRPEs, recentReps, {
+        recKg: targetKg,
+        recReps: currentExercise.targetReps,
+        loggedKg: effKg, // the load the user ACTUALLY logged this set
+        setIdx: currentSetIdx + 1,
+      }) as {
         adjust: boolean;
         dir?: 'down' | 'up';
         newKg?: number;
+        newReps?: number;
+        holdKg?: number;
         msg?: string;
       };
-      if (adjust.adjust && typeof adjust.newKg === 'number') {
-        // Pre-fill the next set's weight with the engine's corrected kg + surface
-        // the engine's honest RO message (NU a silent change).
-        setKgInput(adjust.newKg);
+      if (adjust.adjust) {
+        // Pre-fill the next set's target with the engine's correction + surface
+        // the honest message (NU a silent change). Weight autoregulation moves
+        // kgInput; rep autoregulation moves repsInput (and holds the weight).
+        if (typeof adjust.newKg === 'number') setKgInput(adjust.newKg);
+        if (typeof adjust.newReps === 'number') setRepsInput(adjust.newReps);
         setAdjustNotice(adjust.msg ?? null);
       } else {
         setAdjustNotice(null);
@@ -1044,10 +1056,10 @@ export function Workout(): JSX.Element {
             {t('workout.setLabel', { current: currentSetIdx + 1, total: currentExercise.sets })}
           </p>
 
-          {/* Fix #2 — in-session RPE auto-correction notice. DP.checkInSessionAdjust
-              dropped/bumped the next set's weight after 2 consecutive hardest/easiest
-              sets; surfaced honestly (engine RO message) so the change is never silent.
-              role="status" so a screen reader announces the recalibration. */}
+          {/* In-session responsive autoregulation notice. DP.checkInSessionAdjust
+              eased/raised the NEXT set's target (reps in masa, weight in STRENGTH)
+              from THIS set's rating + performance vs target; surfaced honestly so the
+              change is never silent. role="status" announces the recalibration. */}
           {adjustNotice !== null && (
             <div
               className="animate-fade-in-up mb-3 flex items-start gap-2.5 p-3 rounded-2xl font-serif italic text-sm text-ink"

@@ -1169,13 +1169,14 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
   });
 });
 
-// ── FIX #2: in-session RPE auto-correction (DP.checkInSessionAdjust) ────────
-// The engine function (2x hardest sets -> drop next set / 2x easiest + max reps
-// -> bump) existed + was tested but was NEVER wired into the screen. These
-// tests prove the wire end-to-end against the REAL DP engine (only engineWrappers
-// is mocked, NOT dp.js): logging two consecutive Greu sets drops the next set's
-// weight per the engine's logic AND surfaces the engine's honest message.
-describe('Workout — FIX #2 in-session RPE auto-correction wire', () => {
+// ── In-session RESPONSIVE autoregulation wire (DP.checkInSessionAdjust) ──────
+// Daniel rewrite 2026-05-30: the engine now reacts to EACH set (not 2-consecutive)
+// and is phase-aware. The test phase defaults to AUTO (no phase-override set) =
+// masa-like → REPS autoregulation: a single Greu eases the NEXT set's rep target
+// (10→8 for Bench Press) holding the weight, and surfaces the honest message.
+// These tests prove the wire end-to-end against the REAL DP engine (only
+// engineWrappers is mocked, NOT dp.js).
+describe('Workout — in-session responsive autoregulation wire', () => {
   beforeEach(() => {
     resetStore();
   });
@@ -1199,37 +1200,32 @@ describe('Workout — FIX #2 in-session RPE auto-correction wire', () => {
     });
   }
 
-  it('two consecutive Greu sets drop the next set weight + surface the engine notice', async () => {
+  it('a single Greu set eases the NEXT set rep target (masa phase) + surfaces the notice', async () => {
     await renderWorkoutAndWait();
     seedBenchHistory();
-    // No notice before any hard streak.
+    // No notice before any rated set.
     expect(screen.queryByTestId('insession-adjust-notice')).not.toBeInTheDocument();
 
-    // Set 1 Greu → only 1 hard set → engine does NOT adjust yet.
-    logSet('Greu');
-    fireEvent.click(screen.getByTestId('rest-skip'));
-    expect(screen.queryByTestId('insession-adjust-notice')).not.toBeInTheDocument();
-    backdateFirstSet();
-
-    // Set 2 Greu → 2x RPE 10 → engine drops next set to getPrevWeight(60) = 55.
+    // Set 1 Greu → AUTO/masa phase → engine drops the NEXT set's rep target
+    // 10→8 (modest −2) and HOLDS the weight at the fixture target (22.5 kg).
     logSet('Greu');
     fireEvent.click(screen.getByTestId('rest-skip'));
     const notice = screen.getByTestId('insession-adjust-notice');
     expect(notice).toBeInTheDocument();
-    expect(notice.textContent ?? '').toMatch(/55 kg/);
-    expect(notice.textContent ?? '').toMatch(/prea mare/i); // honest "too heavy" wording
-    // The next set's target weight is pre-filled with the dropped kg (55), NOT
-    // the original 22.5 default — the correction reached the prescription.
-    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('55 kg');
+    expect(notice.textContent ?? '').toMatch(/8 reps/); // honest "easing reps" wording
+    // The next set's rep target reflects the eased value; the weight is unchanged.
+    expect(screen.getByTestId('setlog-tinta-reps')).toHaveTextContent('8');
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
   });
 
-  it('does NOT adjust on a single Greu set (engine needs 2 consecutive)', async () => {
+  it('a single Potrivit set holds the target (no adjust, no notice) early in the exercise', async () => {
     await renderWorkoutAndWait();
     seedBenchHistory();
-    logSet('Greu');
+    logSet('Potrivit');
     fireEvent.click(screen.getByTestId('rest-skip'));
     expect(screen.queryByTestId('insession-adjust-notice')).not.toBeInTheDocument();
-    // The target stays at the fixture default (no drop).
+    // Target stays at the fixture default — potrivit holds.
+    expect(screen.getByTestId('setlog-tinta-reps')).toHaveTextContent('10');
     expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
   });
 

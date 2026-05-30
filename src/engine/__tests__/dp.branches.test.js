@@ -352,36 +352,104 @@ describe('DP.getSmartRecommendation — readiness boundary', () => {
   });
 });
 
-// ── checkInSessionAdjust — up path requires reps >= rMax ──────────────────────
+// ── checkInSessionAdjust — masa (BULK) phase = per-set REPS autoregulation ─────
+// Rewrite 2026-05-30: respond to EACH set. BULK is masa-like → adjust reps, hold
+// weight. Cable Row range [8,12] (BULK not capped), rMax=12, rMin=8.
 
-describe('DP.checkInSessionAdjust — up path boundary', () => {
+describe('DP.checkInSessionAdjust — BULK reps autoregulation', () => {
   beforeEach(() => {
     store['phase-override'] = 'BULK';
     store['logs'] = [log('Cable Row', 56, 12, 7)];
   });
 
-  it('does NOT up when both sets easy but reps below rMax', () => {
-    // Cable Row rMax=12; reps 11 → no up
-    const r = DP.checkInSessionAdjust('Cable Row', [6, 6], [11, 11]);
+  it('usor at target nudges reps UP one, weight HELD (masa moves reps not kg)', () => {
+    const r = DP.checkInSessionAdjust('Cable Row', [6.5], [10], { recKg: 56, recReps: 10, setIdx: 0 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('up');
+    expect(r.newReps).toBe(11);
+    expect(r.holdKg).toBe(56);
+    expect(r.newKg).toBeUndefined();
+  });
+
+  it('usor caps the rep nudge at rMax (12)', () => {
+    const r = DP.checkInSessionAdjust('Cable Row', [6.5], [12], { recKg: 56, recReps: 12, setIdx: 0 });
+    // already at rMax → no further up.
     expect(r.adjust).toBe(false);
   });
 
-  it('ups when both sets easy AND max reps reach rMax', () => {
-    const r = DP.checkInSessionAdjust('Cable Row', [6, 6], [12, 12]);
-    expect(r.adjust).toBe(true);
-    expect(r.dir).toBe('up');
-    expect(r.newKg).toBeGreaterThan(56);
-  });
-
-  it('RPE 6.5 is the easy boundary (inclusive)', () => {
-    const r = DP.checkInSessionAdjust('Cable Row', [6.5, 6.5], [12, 12]);
-    expect(r.adjust).toBe(true);
-    expect(r.dir).toBe('up');
-  });
-
-  it('RPE 7 is NOT easy → no up adjust', () => {
-    const r = DP.checkInSessionAdjust('Cable Row', [7, 7], [12, 12]);
+  it('RPE 7 (potrivit) early set is NOT easy → holds', () => {
+    const r = DP.checkInSessionAdjust('Cable Row', [7], [12], { recKg: 56, recReps: 12, setIdx: 1 });
     expect(r.adjust).toBe(false);
+  });
+
+  it('single greu eases reps modestly (−2), weight held', () => {
+    const r = DP.checkInSessionAdjust('Cable Row', [10], [10], { recKg: 56, recReps: 10, setIdx: 0 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
+    expect(r.newReps).toBe(8);
+    expect(r.holdKg).toBe(56);
+  });
+
+  it('under-performance that felt hard eases the rep target', () => {
+    // rec 12×56=672; logged 6×56=336 (0.5×) at greu(10) → ease.
+    const r = DP.checkInSessionAdjust('Cable Row', [10], [6], { recKg: 56, recReps: 12, setIdx: 0 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
+    expect(r.newReps).toBeLessThan(12);
+  });
+});
+
+// ── checkInSessionAdjust — over-performance ramps AND persists via DP ─────────
+// Daniel key requirement 2026-05-30: if the user logs FAR above the recommendation
+// (e.g. 20×40 vs rec 10×20, or 4×60 strength-style), the recommendation was too
+// low → ramp the next-set target toward the demonstrated capacity AND have it feed
+// the existing DP progression so the NEXT session starts higher (never fabricate —
+// the higher target gets LOGGED, and the next session's recommend() reads it).
+
+describe('DP.checkInSessionAdjust — over-performance ramps + persists', () => {
+  it('STRENGTH: logged 20×40 vs rec 10×20 ramps the next-set weight up smoothly', () => {
+    store['phase-override'] = 'STRENGTH';
+    store['logs'] = [log('Cable Row', 40, 20, 7)]; // lastW=40 (what they just lifted)
+    // rec 10×20=200, logged 20×40=800 (4×) → ramp. Heavy-low-reps? 40 >= 20×1.3=26
+    // → yes, strength-style: weight moves up, rep range down. SMOOTH (not to 40 in
+    // one set — one+ step above the recommendation).
+    const r = DP.checkInSessionAdjust('Cable Row', [7.5], [20], { recKg: 20, recReps: 10, loggedKg: 40 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('up');
+    expect(r.newKg).toBeGreaterThan(20); // ramped above the too-low recommendation
+    expect(r.newKg).toBeLessThanOrEqual(40); // never overshoots the demonstrated load
+    expect(r.newReps).toBeLessThan(10); // strength-style → rep range down
+  });
+
+  it('persists: a logged over-performance set lifts the NEXT session recommend()', () => {
+    store['phase-override'] = 'BULK';
+    // Session 1: user was recommended ~20 kg but actually logged 40 kg (the
+    // autoregulation ramped the live target; the user logged the higher set).
+    store['logs'] = [log('Cable Row', 40, 12, 7)];
+    // Next session: recommend() reads the persisted 40 kg log — it does NOT
+    // restart at the old 20. The higher demonstrated capacity carried forward.
+    const rec = DP.recommend('Cable Row');
+    expect(rec.kg).toBeGreaterThanOrEqual(40); // progression fed from the logged set
+  });
+
+  it('masa: light-high-reps over-performance raises the rep target (weight held)', () => {
+    store['phase-override'] = 'BULK';
+    store['logs'] = [log('Cable Row', 56, 12, 7)];
+    // rec 8×56=448, logged 13×56=728 (~1.6×), usor → reps ramp up, weight held.
+    const r = DP.checkInSessionAdjust('Cable Row', [6.5], [13], { recKg: 56, recReps: 8, loggedKg: 56 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('up');
+    expect(r.newReps).toBeGreaterThan(8);
+    expect(r.holdKg).toBe(56); // masa holds weight, moves reps
+  });
+
+  it('magnitudes stay MODEST — a single set never swings the target wildly', () => {
+    store['phase-override'] = 'BULK';
+    store['logs'] = [log('Cable Row', 56, 10, 7)];
+    const r = DP.checkInSessionAdjust('Cable Row', [10], [10], { recKg: 56, recReps: 10, loggedKg: 56 });
+    // greu eases reps by at most 2 — not a collapse to rMin in one set.
+    expect(r.adjust).toBe(true);
+    expect(10 - (r.newReps ?? 10)).toBeLessThanOrEqual(2);
   });
 });
 
