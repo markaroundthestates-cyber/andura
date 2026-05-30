@@ -6,6 +6,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { LogoutConfirm } from '../../../routes/screens/cont/LogoutConfirm';
 import { useAppStore } from '../../../stores/appStore';
+import { useAerobicStore } from '../../../stores/aerobicStore';
+import { useCoachStore } from '../../../stores/coachStore';
 
 // Wave E4 i18n locale pin — these specs were written against RO copy;
 // force RO locale so existing assertions keep their semantics. EN coverage
@@ -84,6 +86,16 @@ describe('LogoutConfirm — D047 drill-down', () => {
     expect(localStorage.getItem('weights')).toBeNull();
     expect(localStorage.getItem('wv2-workout-store')).toBeNull();
     expect(localStorage.getItem('data-owner-uid')).toBeNull();
+  });
+
+  it('XCUT-2 confirm resets aerobicStore + coachStore in memory (shared-device leak)', () => {
+    useAerobicStore.setState({ sessions: [{ date: '2026-05-30', type: 'zumba', minutes: 40, kcal: 260, ts: 7 }], lastDuration: 40 });
+    useCoachStore.setState({ reactivateDismissed: true, persona: 'marius' });
+    renderScreen();
+    fireEvent.click(screen.getByTestId('logout-confirm-accept'));
+    expect(useAerobicStore.getState().sessions).toEqual([]);
+    expect(useCoachStore.getState().reactivateDismissed).toBe(false);
+    expect(useCoachStore.getState().persona).toBe('gigica');
   });
 
   it('U-14 confirm resets isSkipAuth so skip-auth user truly exits', () => {

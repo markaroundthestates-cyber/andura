@@ -15,6 +15,8 @@ import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { useScheduleStore } from '../../../stores/scheduleStore';
 import { useProgresStore } from '../../../stores/progresStore';
+import { useAerobicStore } from '../../../stores/aerobicStore';
+import { useCoachStore } from '../../../stores/coachStore';
 import { signOut as authSignOut } from '../../../../auth.js';
 import { wipeUserDataOnLogout } from '../../../../util/dataReset.js';
 import { gotoPath } from '../../../lib/navigation';
@@ -40,6 +42,11 @@ function wipeLocalUserDataOnLogout(): void {
     useSettingsStore.getState().reset();
     useScheduleStore.getState().resetWeekly();
     useProgresStore.getState().reset();
+    // XCUT-2 — aerobicStore + coachStore were added AFTER this wipe was built;
+    // omitting them left the prior user's aerobic classes + coach win-back state
+    // in memory on this shared device (pure-SPA logout, no reload) until refresh.
+    useAerobicStore.getState().reset();
+    useCoachStore.setState({ schedContext: 'workout', persona: 'gigica', reactivateDismissed: false });
     // 2. Authoritative localStorage + IndexedDB wipe (cloud untouched).
     void wipeUserDataOnLogout();
   } catch {

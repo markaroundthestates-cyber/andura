@@ -12,6 +12,8 @@ import { useNutritionStore } from '../../../stores/nutritionStore';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { useScheduleStore } from '../../../stores/scheduleStore';
+import { useAerobicStore } from '../../../stores/aerobicStore';
+import { useCoachStore } from '../../../stores/coachStore';
 import { isAuthFresh, signOut as authSignOut, getAuthState, getIdToken } from '../../../../auth.js';
 import { gotoPath } from '../../../lib/navigation';
 import { t } from '../../../../i18n/index.js';
@@ -32,6 +34,11 @@ function wipeAllLocalData(): void {
     useOnboardingStore.getState().reset();
     useSettingsStore.getState().reset();
     useScheduleStore.getState().resetWeekly();
+    // XCUT-2 — aerobicStore + coachStore added AFTER this wipe was built; reset
+    // them in memory too so a pure-SPA delete (no reload) leaves nothing of the
+    // prior user's aerobic classes / coach win-back state on this shared device.
+    useAerobicStore.getState().reset();
+    useCoachStore.setState({ schedContext: 'workout', persona: 'gigica', reactivateDismissed: false });
     // S-01 audit fix (AUDIT-3 §S-01 CRIT, GDPR Art. 17) — account delete must
     // erase ALL local data. The prior wv2-* prefix loop left ~38 unprefixed
     // legacy keys on device (logs/weights/coach-decisions/pr-records/pain-cdl/

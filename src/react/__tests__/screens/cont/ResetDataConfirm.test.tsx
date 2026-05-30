@@ -5,6 +5,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ResetDataConfirm } from '../../../routes/screens/cont/ResetDataConfirm';
+import { useAerobicStore } from '../../../stores/aerobicStore';
+import { useCoachStore } from '../../../stores/coachStore';
 
 // Wave E4 i18n locale pin — these specs were written against RO copy;
 // force RO locale so existing assertions keep their semantics. EN coverage
@@ -102,6 +104,19 @@ describe('ResetDataConfirm — D047 drill-down', () => {
     expect(localStorage.getItem('active-theme')).toBe('dark');
     // ...but training data is gone.
     expect(localStorage.getItem('logs')).toBeNull();
+  });
+
+  // XCUT-2 — aerobicStore + coachStore were omitted from the in-memory reset, so
+  // on a shared device (pure-SPA, no reload) the next user saw the prior user's
+  // aerobic classes + coach win-back state until a manual refresh.
+  it('confirm resets aerobicStore + coachStore IN MEMORY (shared-device leak)', () => {
+    useAerobicStore.setState({ sessions: [{ date: '2026-05-30', type: 'zumba', minutes: 30, kcal: 200, ts: 1 }], lastDuration: 30 });
+    useCoachStore.setState({ reactivateDismissed: true, persona: 'marius' });
+    renderScreen();
+    fireEvent.click(screen.getByTestId('reset-confirm-accept'));
+    expect(useAerobicStore.getState().sessions).toEqual([]);
+    expect(useCoachStore.getState().reactivateDismissed).toBe(false);
+    expect(useCoachStore.getState().persona).toBe('gigica');
   });
 
   it('cancel navigates back settings-danger', () => {

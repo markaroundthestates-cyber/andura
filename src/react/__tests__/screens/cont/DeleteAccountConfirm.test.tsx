@@ -6,6 +6,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { DeleteAccountConfirm } from '../../../routes/screens/cont/DeleteAccountConfirm';
 import { wipeUserDB } from '../../../../storage/db.js';
+import { useAerobicStore } from '../../../stores/aerobicStore';
+import { useCoachStore } from '../../../stores/coachStore';
 
 // Wave E4 i18n locale pin — these specs were written against RO copy;
 // force RO locale so existing assertions keep their semantics. EN coverage
@@ -142,6 +144,19 @@ describe('DeleteAccountConfirm — D047 drill-down', () => {
       (k) => k !== 'wv2-app-store' && k !== '__suppressFirebaseSyncUntil'
     );
     expect(residual).toEqual([]);
+  });
+
+  it('XCUT-2 — confirm resets aerobicStore + coachStore in memory', async () => {
+    useAerobicStore.setState({ sessions: [{ date: '2026-05-30', type: 'step', minutes: 35, kcal: 240, ts: 9 }], lastDuration: 35 });
+    useCoachStore.setState({ reactivateDismissed: true, persona: 'marius' });
+    renderScreen();
+    fireEvent.click(screen.getByTestId('delete-confirm-accept'));
+    await waitFor(() => {
+      expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/auth');
+    });
+    expect(useAerobicStore.getState().sessions).toEqual([]);
+    expect(useCoachStore.getState().reactivateDismissed).toBe(false);
+    expect(useCoachStore.getState().persona).toBe('gigica');
   });
 
   it('A016 — confirm cu auth NU fresh forces re-auth redirect', () => {
