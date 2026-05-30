@@ -121,6 +121,37 @@ describe('clearUserCloudData — XCUT-1 wv2 subtree', () => {
     vi.doUnmock('../../firebase.js');
     vi.resetModules();
   });
+
+  // Cloud-resurrection trust gap — clearUserCloudData must REPORT the outcome
+  // instead of swallowing it. A silent cloud-wipe failure leaves the local copy
+  // gone while the remote survives, so the next boot resurrects the data.
+  it('returns {ok:true} when the cloud delete succeeds', async () => {
+    const clearFirebaseKeys = vi.fn(async () => {});
+    vi.doMock('../../firebase.js', () => ({ clearFirebaseKeys, SYNC_KEYS: ['logs'] }));
+    vi.resetModules();
+    const { clearUserCloudData: freshClear } = await import('../dataReset.js');
+
+    const result = await freshClear();
+
+    expect(result).toEqual({ ok: true });
+    vi.doUnmock('../../firebase.js');
+    vi.resetModules();
+  });
+
+  it('returns {ok:false, error} when the cloud delete rejects (never throws)', async () => {
+    const boom = new Error('network down');
+    const clearFirebaseKeys = vi.fn(async () => { throw boom; });
+    vi.doMock('../../firebase.js', () => ({ clearFirebaseKeys, SYNC_KEYS: ['logs'] }));
+    vi.resetModules();
+    const { clearUserCloudData: freshClear } = await import('../dataReset.js');
+
+    const result = await freshClear();
+
+    expect(result.ok).toBe(false);
+    expect(result.error).toBe(boom);
+    vi.doUnmock('../../firebase.js');
+    vi.resetModules();
+  });
 });
 
 // ── H1 shared-device PII leak — logout wipe ──────────────────────────────────

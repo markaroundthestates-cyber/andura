@@ -1671,7 +1671,8 @@
       "body1": "All workouts, ratings, and local measurements will be erased.",
       "body2": "Your account stays active. This action cannot be undone.",
       "acceptCta": "Reset data",
-      "cancelCta": "Cancel"
+      "cancelCta": "Cancel",
+      "cloudFailed": "Your local data was cleared. We could not delete the cloud copy (check your connection). Try again for a full reset."
     },
     "redoOnboarding": {
       "title": "Redo onboarding",

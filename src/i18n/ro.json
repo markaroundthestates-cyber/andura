@@ -1671,7 +1671,8 @@
       "body1": "Toate antrenamentele, evaluarile + masuratorile locale vor fi sterse.",
       "body2": "Contul ramane activ. Aceasta actiune nu poate fi anulata.",
       "acceptCta": "Reseteaza datele",
-      "cancelCta": "Anuleaza"
+      "cancelCta": "Anuleaza",
+      "cloudFailed": "Datele locale au fost sterse. Nu am putut sterge copia din cloud (verifica conexiunea). Reincearca pentru un reset complet."
     },
     "redoOnboarding": {
       "title": "Refa onboarding",

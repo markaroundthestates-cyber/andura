@@ -18,6 +18,7 @@ import { useAerobicStore } from '../../../stores/aerobicStore';
 import { useCoachStore } from '../../../stores/coachStore';
 import { clearUserDataKeys, clearUserIndexedDB, clearUserCloudData } from '../../../../util/dataReset.js';
 import { gotoPath } from '../../../lib/navigation';
+import { toast } from '../../../lib/toast';
 import { t } from '../../../../i18n/index.js';
 
 // A2 H-1 audit fix (data integrity + user trust) — the prior wipe cleared only
@@ -50,10 +51,6 @@ function wipeAllLocalData(): void {
     clearUserDataKeys();
     // 3. IndexedDB Tier 1 (archived logs / CDL / patterns) — best-effort async.
     void clearUserIndexedDB();
-    // 4. Tier 2 cloud (Firebase RTDB) — DELETE the synced data keys so a
-    //    logged-in reset doesn't merge-resurrect from remote on next boot.
-    //    No-op for anonymous (no userPath). Best-effort async, non-fatal.
-    void clearUserCloudData();
   } catch (e) {
     if (import.meta.env.DEV) console.warn('[ResetDataConfirm] wipe failed:', e);
   }
@@ -63,7 +60,24 @@ export function ResetDataConfirm(): JSX.Element {
   const navigate = useNavigate();
 
   function handleConfirm(): void {
+    // Local wipe (Tier 0 + Tier 1) is UNCONDITIONAL and runs FIRST. Navigation
+    // stays synchronous (success UX unchanged — same as today).
     wipeAllLocalData();
+    // 4. Tier 2 cloud (Firebase RTDB) — DELETE the synced data keys so a
+    //    logged-in reset doesn't merge-resurrect from remote on next boot.
+    //    No-op for anonymous (no userPath). Best-effort + non-fatal, but the
+    //    outcome is now REPORTED instead of swallowed: a silent cloud-wipe
+    //    failure would leave the local copy gone while the remote survives, and
+    //    the next boot's sync/hydrate would RESURRECT it — contradicting "nu
+    //    poate fi anulata". On failure we surface a toast (global viewport, so
+    //    it persists across the navigate) telling the user the local data IS
+    //    cleared but the cloud copy was not, so they can retry. Success path
+    //    shows nothing extra.
+    void clearUserCloudData().then((cloud) => {
+      if (!cloud.ok) {
+        toast.show({ message: t('confirm.resetData.cloudFailed'), variant: 'error' });
+      }
+    });
     navigate('/');
   }
 

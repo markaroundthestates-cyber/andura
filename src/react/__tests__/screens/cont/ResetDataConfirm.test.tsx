@@ -1,12 +1,14 @@
 // D047 RIP-OUT — ResetDataConfirm drill-down tests.
 
 import type { JSX } from 'react';
-import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ResetDataConfirm } from '../../../routes/screens/cont/ResetDataConfirm';
 import { useAerobicStore } from '../../../stores/aerobicStore';
 import { useCoachStore } from '../../../stores/coachStore';
+import { toast } from '../../../lib/toast';
+import * as dataReset from '../../../../util/dataReset.js';
 
 // Wave E4 i18n locale pin — these specs were written against RO copy;
 // force RO locale so existing assertions keep their semantics. EN coverage
@@ -134,5 +136,44 @@ describe('ResetDataConfirm — D047 drill-down', () => {
   it('no diacritics in UI text', () => {
     const { container } = renderScreen();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+});
+
+// Cloud-resurrection trust gap — if the Tier 2 cloud wipe fails, the user MUST
+// be told (local data is gone but the cloud copy survives and would resurrect on
+// the next boot). On success NOTHING extra is surfaced.
+describe('ResetDataConfirm — cloud-wipe failure surfaced', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    toast.clear();
+  });
+
+  it('surfaces the failure message when the cloud wipe fails {ok:false}', async () => {
+    vi.spyOn(dataReset, 'clearUserCloudData').mockResolvedValue({ ok: false, error: new Error('net') });
+    const showSpy = vi.spyOn(toast, 'show');
+    renderScreen();
+
+    fireEvent.click(screen.getByTestId('reset-confirm-accept'));
+
+    await waitFor(() => expect(showSpy).toHaveBeenCalledTimes(1));
+    const arg = showSpy.mock.calls[0]![0];
+    expect(arg.variant).toBe('error');
+    expect(String(arg.message)).toMatch(/Datele locale au fost sterse/i);
+    expect(String(arg.message)).toMatch(/Reincearca/i);
+    // no diacritics in the surfaced message
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(String(arg.message))).toBe(false);
+  });
+
+  it('surfaces NOTHING extra when the cloud wipe succeeds {ok:true}', async () => {
+    vi.spyOn(dataReset, 'clearUserCloudData').mockResolvedValue({ ok: true });
+    const showSpy = vi.spyOn(toast, 'show');
+    renderScreen();
+
+    fireEvent.click(screen.getByTestId('reset-confirm-accept'));
+
+    // Navigation still happens on the success path...
+    await waitFor(() => expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/'));
+    // ...and no toast is shown.
+    expect(showSpy).not.toHaveBeenCalled();
   });
 });

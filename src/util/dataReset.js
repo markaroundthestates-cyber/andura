@@ -106,17 +106,24 @@ export async function clearUserIndexedDB() {
  * notificationPrefs). Anonymous users have no `userPath` → `clearFirebaseKeys`
  * no-ops cleanly. RESET path ONLY — logout deliberately keeps cloud data for
  * re-login. Best-effort + non-fatal: a network failure must never block the local
- * reset that already succeeded.
+ * reset that already succeeded — but it MUST be REPORTED, not swallowed: if the
+ * cloud wipe fails the local copy is gone while the remote survives, so the next
+ * boot's syncFromFirebase / hydrateStoresFromCloud RESURRECTS the data, breaking
+ * the "nu poate fi anulata" promise. Caller surfaces `{ok:false}` to the user so
+ * they can retry, instead of a silent data resurrection.
  *
- * @returns {Promise<void>}
+ * @returns {Promise<{ ok: boolean, error?: unknown }>} ok=true wiped; ok=false failed.
  */
 export async function clearUserCloudData() {
   try {
     const fb = await import('../firebase.js');
     const { SYNCED_WV2_NODES } = await import('../react/lib/storeSync');
     await fb.clearFirebaseKeys([...fb.SYNC_KEYS, ...SYNCED_WV2_NODES]);
-  } catch {
-    // Firebase module / network unavailable — non-fatal; local reset still stands.
+    return { ok: true };
+  } catch (error) {
+    // Firebase module / network unavailable — non-fatal (never blocks the local
+    // reset) but REPORTED so the caller can warn the user vs silent resurrection.
+    return { ok: false, error };
   }
 }
 
