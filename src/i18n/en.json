@@ -268,7 +268,8 @@
       "overPerformWeight": "You beat the target - moving up to {kg} kg on the next set",
       "overPerformReps": "You beat the target - moving up to {reps} reps on the next set",
       "underWeight": "That was too heavy - dropping to {kg} kg on the next set",
-      "underReps": "That was too heavy - dropping to {reps} reps on the next set"
+      "underReps": "That was too heavy - dropping to {reps} reps on the next set",
+      "baselineNote": "First session - building your baseline. Recommendations start adapting from your next session."
     },
     "sessionTitle": {
       "PUSH": "Push (chest and shoulders)",

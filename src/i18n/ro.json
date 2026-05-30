@@ -268,7 +268,8 @@
       "overPerformWeight": "Ai depasit recomandarea - urcam la {kg} kg pe setul urmator",
       "overPerformReps": "Ai depasit recomandarea - urcam la {reps} reps pe setul urmator",
       "underWeight": "A fost prea greu - coboram la {kg} kg pe setul urmator",
-      "underReps": "A fost prea greu - coboram la {reps} reps pe setul urmator"
+      "underReps": "A fost prea greu - coboram la {reps} reps pe setul urmator",
+      "baselineNote": "Prima sesiune - iti construiesc baseline-ul. Recomandarile se adapteaza de la sesiunea urmatoare."
     },
     "sessionTitle": {
       "PUSH": "Push (piept si umeri)",

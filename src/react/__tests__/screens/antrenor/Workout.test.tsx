@@ -1241,6 +1241,51 @@ describe('Workout — in-session responsive autoregulation wire', () => {
   });
 });
 
+// ── First-session "building your baseline" note ──────────────────────────────
+// Daniel 2026-05-30: on a brand-new user's first-ever session there is NO prior
+// history, so the per-set autoregulation correctly does nothing (lastW === 0 →
+// checkInSessionAdjust returns {adjust:false}). The UI must EXPLAIN that instead
+// of leaving the user wondering why the targets are not adapting. The note shows
+// ONLY in the no-history case (NOT every set forever) and steps aside once a real
+// adjust notice surfaces (which requires history). Real DP engine, no mocking.
+describe('Workout — first-session baseline note', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  function seedBenchHistory(): void {
+    DB.set('logs', [
+      { ex: 'Bench Press', w: 60, reps: 8, set: 1, ts: Date.now() - 1000 },
+      { ex: 'Bench Press', w: 60, reps: 8, set: 1, ts: Date.now() - 2000 },
+    ]);
+  }
+
+  it('shows the baseline note on the first session (no history for the exercise)', async () => {
+    await renderWorkoutAndWait();
+    // No seeded logs → DP.getState('Bench Press').lastW = 0 → noExerciseHistory.
+    const note = screen.getByTestId('baseline-note');
+    expect(note).toBeInTheDocument();
+    expect(note.textContent ?? '').toMatch(/baseline/i);
+  });
+
+  it('does NOT show the baseline note once the exercise has history', async () => {
+    seedBenchHistory();
+    await renderWorkoutAndWait();
+    expect(screen.queryByTestId('baseline-note')).not.toBeInTheDocument();
+  });
+
+  it('hides the baseline note once a real adjust notice surfaces', async () => {
+    seedBenchHistory();
+    await renderWorkoutAndWait();
+    // History present → no baseline note; a Greu set surfaces the adjust notice.
+    expect(screen.queryByTestId('baseline-note')).not.toBeInTheDocument();
+    logSet('Greu');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(screen.getByTestId('insession-adjust-notice')).toBeInTheDocument();
+    expect(screen.queryByTestId('baseline-note')).not.toBeInTheDocument();
+  });
+});
+
 // ── Shared current-recommended-load: autoreg + AaFriction read ONE source ────
 // Audit fix 2026-05-30. Previously autoregulation RAISED the next set's target
 // by writing kgInput, but the AaFriction over_recommendation check re-evaluated

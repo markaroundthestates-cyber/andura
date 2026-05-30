@@ -152,6 +152,17 @@ export function Workout(): JSX.Element {
   const currentExercise: PlannedExercise = (hasWorkout && exercises !== null
     ? exercises[safeExIdx]
     : undefined) ?? defaultExercise;
+  // First-session baseline note: when there is NO prior history for this
+  // exercise (DP.getState lastW === 0 — the exact condition under which
+  // checkInSessionAdjust returns {adjust:false}), the per-set autoregulation
+  // has nothing to adapt from. Surface a brief, non-technical note so the user
+  // understands why the targets are not adapting yet, instead of leaving them
+  // wondering. Loaded exercises only (bodyweight has its own rep-based flow).
+  const noExerciseHistory =
+    hasWorkout &&
+    !currentExercise.isBodyweight &&
+    currentExercise.name !== '' &&
+    DP.getState(currentExercise.name).lastW === 0;
   // Apply the ENGINE intensityMod baseline (deload output) to target kg. This
   // is the COARSE deload-state modifier (±%), distinct from readiness: as of
   // the wiring fix, today's readiness already shapes the per-exercise targetKg
@@ -1117,6 +1128,30 @@ export function Workout(): JSX.Element {
                 style={{ color: 'var(--volt-deep)' }}
               />
               <span>{adjustNotice}</span>
+            </div>
+          )}
+
+          {/* First-session baseline note. No prior history for this exercise →
+              per-set autoregulation has nothing to adapt from (checkInSessionAdjust
+              returns {adjust:false}), so we explain WHY the targets are not adapting
+              yet instead of leaving the user wondering. Shown only in the no-history
+              case (NOT every set forever); hidden once an adjust notice surfaces. */}
+          {noExerciseHistory && adjustNotice === null && (
+            <div
+              className="animate-fade-in-up mb-3 flex items-start gap-2.5 p-3 rounded-2xl font-serif italic text-sm text-ink"
+              data-testid="baseline-note"
+              role="status"
+              style={{
+                background: 'color-mix(in oklab, var(--volt) 11%, var(--surface))',
+                border: '1px solid color-mix(in oklab, var(--volt) 32%, transparent)',
+              }}
+            >
+              <Brain
+                className="w-4 h-4 flex-shrink-0 mt-0.5"
+                aria-hidden="true"
+                style={{ color: 'var(--volt-deep)' }}
+              />
+              <span>{t('workout.adjust.baselineNote')}</span>
             </div>
           )}
 
