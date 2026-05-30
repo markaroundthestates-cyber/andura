@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Play, ChevronRight } from 'lucide-react';
 import { useWorkoutStore, getCurrentMode } from '../stores/workoutStore';
+import { useOnboardingStore } from '../stores/onboardingStore';
 import { getTodayWorkout } from '../lib/engineWrappers';
 import type { PlannedWorkoutOutput } from '../lib/engineWrappers';
 import { gotoPath } from '../lib/navigation';
@@ -38,6 +39,11 @@ export function SessionPill(): JSX.Element | null {
   const sessionStart = useWorkoutStore((s) => s.sessionStart);
   const pausedSnapshot = useWorkoutStore((s) => s.pausedSnapshot);
   const lastSession = useWorkoutStore((s) => s.lastSession);
+  // Aerobic mode-gate (Daniel spec 2026-05-30) — a PURE aerobic user must never
+  // see a gym "resume workout" pill (it taps straight into the gym workout
+  // flow). Read before any conditional return (Rules of Hooks). 'gym' + 'both'
+  // keep the pill — gate is strictly === 'aerobic'.
+  const trainingType = useOnboardingStore((s) => s.data.trainingType ?? 'gym');
   const mode = getCurrentMode({
     phase,
     sessionStart,
@@ -77,6 +83,9 @@ export function SessionPill(): JSX.Element | null {
     });
     return () => { cancelled = true; };
   }, []);
+
+  // Aerobic mode-gate — never surface the gym resume pill for a pure aerobic user.
+  if (trainingType === 'aerobic') return null;
 
   // Anti-duplicate route guard.
   if (location.pathname === WORKOUT_PATH) return null;

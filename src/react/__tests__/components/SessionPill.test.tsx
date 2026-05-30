@@ -29,6 +29,7 @@ vi.mock('../../lib/engineWrappers', () => ({
 
 import { SessionPill } from '../../components/SessionPill';
 import { useWorkoutStore } from '../../stores/workoutStore';
+import { useOnboardingStore } from '../../stores/onboardingStore';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -115,6 +116,29 @@ describe('SessionPill — conditional render', () => {
     useWorkoutStore.setState({ phase: 'logging', sessionStart: Date.now() });
     renderPill('/app/cont');
     expect(screen.getByTestId('session-pill')).toHaveAttribute('data-state', 'active');
+  });
+});
+
+describe('SessionPill — aerobic mode-gate', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+  afterEach(() => {
+    useOnboardingStore.getState().setField('trainingType', 'gym');
+  });
+
+  it('NU render pentru user pure aerobic (active session)', () => {
+    useWorkoutStore.setState({ phase: 'logging', sessionStart: Date.now() });
+    useOnboardingStore.getState().setField('trainingType', 'aerobic');
+    renderPill('/app/progres');
+    expect(screen.queryByTestId('session-pill')).not.toBeInTheDocument();
+  });
+
+  it('render pentru user both (gym access pastrat)', () => {
+    useWorkoutStore.setState({ phase: 'logging', sessionStart: Date.now() });
+    useOnboardingStore.getState().setField('trainingType', 'both');
+    renderPill('/app/progres');
+    expect(screen.getByTestId('session-pill')).toBeInTheDocument();
   });
 });
 

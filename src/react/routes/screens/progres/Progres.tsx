@@ -57,6 +57,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Scale, LineChart } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
+import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { gotoPath } from '../../../lib/navigation';
 import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
 import { ProjectionStrip } from '../../../components/Progres/ProjectionStrip';
@@ -110,6 +111,15 @@ export function Progres(): JSX.Element {
   // (03.048). Same selector the grid uses → single source of truth.
   const recoveryGroups = useMuscleRecoveryGroups();
 
+  // Aerobic mode-gate (Daniel spec 2026-05-30) — the muscle-recovery body map is
+  // a gym-specific progression surface (per-muscle set recovery). A PURE aerobic
+  // user has no gym sets, so hide it outright rather than relying on the empty-
+  // data coincidence. Generic zones (target/nutrition, objective, composition,
+  // weight trend) stay visible for everyone. 'gym' + 'both' keep the zone — gate
+  // is strictly === 'aerobic'. Hook read above the return (Rules of Hooks).
+  const trainingType = useOnboardingStore((s) => s.data.trainingType ?? 'gym');
+  const showRecoveryZone = trainingType !== 'aerobic' && recoveryGroups.length > 0;
+
   // Pulse TREND: feed the shared Sparkline primitive the full weight history
   // mapped to its {day,kg} shape (interfata-noua/screens-tabs.jsx:63). Sparkline
   // returns null on <2 points, so the card only renders the line once there's a
@@ -149,7 +159,7 @@ export function Progres(): JSX.Element {
           recovery-ring circles (MuscleRecoveryGrid). Same useMuscleRecoveryGroups
           data; the map self-hides when the engine returns nothing (T0 fresh
           user), so the heading is gated the same way. */}
-      {recoveryGroups.length > 0 && (
+      {showRecoveryZone && (
         <div data-testid="progres-zone-recovery" className="animate-card-rise delay-75">
           <ZoneHeading testId="progres-zone-recovery-heading">{t('progres.zone.recuperare')}</ZoneHeading>
           <MuscleBodyMap />

@@ -20,8 +20,9 @@
 
 import { lazy, Suspense } from 'react';
 import type { JSX, ReactNode } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
+import { useOnboardingStore } from '../stores/onboardingStore';
 import { Layout } from './Layout';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -130,6 +131,20 @@ function TopLevelRoute({ children }: { children: ReactNode }): JSX.Element {
   );
 }
 
+/**
+ * Aerobic mode-gate (Daniel spec 2026-05-30) — the gym workout flow must never
+ * be reachable by a PURE aerobic user. The route is registered unconditionally,
+ * so a deep-link (bookmark / history / PWA shortcut) to /app/antrenor/workout
+ * would cold-start a FABRICATED gym session for someone who never picked gym.
+ * Redirect aerobic-only users back to the antrenor hub. 'gym' + 'both' keep full
+ * access (gate is strictly === 'aerobic'). Same selector pattern as Antrenor.tsx.
+ */
+function GymOnlyRoute({ children }: { children: ReactNode }): JSX.Element {
+  const trainingType = useOnboardingStore((s) => s.data.trainingType ?? 'gym');
+  if (trainingType === 'aerobic') return <Navigate to="/app/antrenor" replace />;
+  return <>{children}</>;
+}
+
 export const router = createBrowserRouter([
   { path: '/', element: <TopLevelRoute><Splash /></TopLevelRoute> },
   { path: '/auth', element: <TopLevelRoute><Auth /></TopLevelRoute> },
@@ -155,7 +170,7 @@ export const router = createBrowserRouter([
           { path: 'energy-check', element: <LazyRoute><EnergyCheck /></LazyRoute> },
           { path: 'energy-cause', element: <LazyRoute><EnergyCause /></LazyRoute> },
           { path: 'workout-preview', element: <LazyRoute><WorkoutPreview /></LazyRoute> },
-          { path: 'workout', element: <LazyRoute><Workout /></LazyRoute> },
+          { path: 'workout', element: <GymOnlyRoute><LazyRoute><Workout /></LazyRoute></GymOnlyRoute> },
           { path: 'ceva-nu-merge', element: <LazyRoute><CevaNuMerge /></LazyRoute> },
           { path: 'pain-button', element: <LazyRoute><PainButton /></LazyRoute> },
           { path: 'equipment-swap', element: <LazyRoute><EquipmentSwap /></LazyRoute> },
