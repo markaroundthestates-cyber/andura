@@ -83,6 +83,20 @@ export const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs',
   'tombstones',      // tombstones — Memory Paradox hotfix (Batch B Task 2): localStorage soft-delete tracking (per ADR_MULTI_TENANT_AUTH_v1 + future T&B Faza 1+2)
 ];
 
+// RTDB key sanitizer — Firebase Realtime Database forbids `. $ # [ ] /` in node
+// keys (any path/PATCH-body key containing one returns 400 Bad Request). The
+// localStorage key `sf.userConfig` carries a dot, so EVERY remote op on it
+// (PATCH write, GET read, DELETE) 400'd — its bio/targetKg/equipment config
+// never synced to the cloud and the reset DELETE threw the visible console
+// error. Map the localStorage key → a valid REMOTE node name CONSISTENTLY at
+// every push/pull/delete site so it round-trips. The localStorage key itself is
+// unchanged (only the cloud node name is sanitized). No migration needed: the
+// dotted node never wrote successfully, so there is no prior remote data.
+/** @param {string} localKey @returns {string} */
+export function fbKey(localKey) {
+  return localKey.replace(/[.$#[\]/]/g, '_');
+}
+
 function getDeviceId() {
   let id = localStorage.getItem('device-id');
   if (!id) { id = 'dev-' + Math.random().toString(36).slice(2,10); localStorage.setItem('device-id', id); }
@@ -241,7 +255,12 @@ export async function clearFirebaseKeys(keys) {
   if (!userPath) return;
   const results = await Promise.allSettled(
     keys.map(async (/** @type {string} */ key) => {
-      const ok = await fbRemove(`${userPath}/${key}`);
+      // Sanitize per segment so the remote node name matches the push/pull side
+      // (e.g. `sf.userConfig` → `sf_userConfig`, fixing the reset DELETE 400)
+      // while preserving legitimate `/` separators in wv2 child paths
+      // (`wv2/workout` stays a real subtree path, never collapsed to `wv2_workout`).
+      const remoteKey = key.split('/').map(fbKey).join('/');
+      const ok = await fbRemove(`${userPath}/${remoteKey}`);
       if (ok) console.log(`[Firebase] Removed key: ${key}`);
       else console.warn(`[Firebase] Failed to remove key: ${key}`);
       return ok;
@@ -275,7 +294,9 @@ export async function syncToFirebase() {
     SYNC_KEYS.forEach(k => {
       const v = DB.get(k);
       if (v == null) return;
-      payload[k] = v;
+      // Remote node name must be a valid RTDB key (sanitize forbidden chars,
+      // e.g. the dot in `sf.userConfig`). localStorage key `k` stays as-is.
+      payload[fbKey(k)] = v;
     });
     payload['_device'] = getDeviceId();
     payload['_ts'] = Date.now();
@@ -328,21 +349,24 @@ export async function syncFromFirebase() {
 
     suppressInvalidations(() => {
       SYNC_KEYS.forEach(k => {
-        if (remote[k] == null) return;
+        // Read from the sanitized remote node name (matches the push side), but
+        // keep writing to the original localStorage key `k`.
+        const rk = fbKey(k);
+        if (remote[rk] == null) return;
         const local = DB.get(k);
-        if (local == null) { DB.set(k, remote[k]); return; }
+        if (local == null) { DB.set(k, remote[rk]); return; }
 
         // Merge objects (weights, kcals, prots, etc.).
         // Strategy: union of remote + local, with local taking priority on conflicts.
         // KNOWN LIMITATION: if the same date was edited on two devices, local always wins
         // regardless of which edit was more recent. Proper last-write-wins requires
         // per-entry timestamps — deferred until multi-device use becomes a real concern.
-        if (typeof remote[k] === 'object' && !Array.isArray(remote[k])) {
-          DB.set(k, Object.assign({}, remote[k], local));
-        } else if (Array.isArray(remote[k])) {
+        if (typeof remote[rk] === 'object' && !Array.isArray(remote[rk])) {
+          DB.set(k, Object.assign({}, remote[rk], local));
+        } else if (Array.isArray(remote[rk])) {
           // For arrays (logs), merge by timestamp uniqueness
           const localArr = Array.isArray(local) ? local : [];
-          const remoteArr = remote[k];
+          const remoteArr = remote[rk];
           const tsSet = new Set(localArr.map(e => e.ts));
           const merged = [...localArr];
           remoteArr.forEach(e => { if (!tsSet.has(e.ts)) merged.push(e); });
@@ -366,7 +390,10 @@ export async function syncFromFirebase() {
 
     // Warn about unknown remote keys so schema drift is visible
     const remoteKeys = Object.keys(remote).filter(k => !k.startsWith('_'));
-    const unknownKeys = remoteKeys.filter(k => !SYNC_KEYS.includes(k));
+    // Compare against sanitized SYNC_KEYS — remote node names use fbKey() (e.g.
+    // `sf_userConfig`), so a raw SYNC_KEYS membership check would mis-flag them.
+    const syncRemoteKeys = SYNC_KEYS.map(fbKey);
+    const unknownKeys = remoteKeys.filter(k => !syncRemoteKeys.includes(k));
     if (unknownKeys.length) console.warn('[Firebase] unknown remote keys (schema drift?):', unknownKeys);
     return true;
   } catch (e) { console.warn('Firebase load failed:', e); return false; }
