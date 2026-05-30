@@ -26,7 +26,7 @@
 import type { JSX } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Hand, HelpCircle, PackageX, Check } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 import { AparatLipsaSheet } from '../../../components/Workout/AparatLipsaSheet';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
@@ -45,10 +45,14 @@ import type { AggressiveReason } from '../../../lib/aaFrictionDetect';
 import { getEngineSignals } from '../../../lib/engineSignalsAggregate';
 import { InactivityPrompt } from '../../../components/Workout/InactivityPrompt';
 import { PrFlash } from '../../../components/Workout/PrFlash';
+import { TransitionScreen } from '../../../components/Workout/TransitionScreen';
+import { WhyExerciseModal } from '../../../components/Workout/WhyExerciseModal';
+import { SetHistoryChips } from '../../../components/Workout/SetHistoryChips';
+import { ExerciseActionsRow } from '../../../components/Workout/ExerciseActionsRow';
+import { CoachNote } from '../../../components/Workout/CoachNote';
 import { ExerciseMedia } from '../../../components/ExerciseMedia';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { useCountUp } from '../../../hooks/useCountUp';
-import { Brain } from 'lucide-react';
 import { DP } from '../../../../engine/dp.js';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { resolveBusySwap, resolveMissingSwap, resolveRefusalSwap } from '../../../lib/substitution';
@@ -1074,35 +1078,11 @@ export function Workout(): JSX.Element {
               and recomposes the current exercise via resolveMissingSwap when
               the new list blocks its equipment. Three-column layout — labels
               kept short ("Lipsa") so the row stays single-line on Gigel's phone. */}
-          <div className="grid grid-cols-3 gap-2 mb-4" data-testid="wv2-ex-actions">
-            <button
-              type="button"
-              onClick={handleOcupat}
-              data-testid="wv2-ex-action-ocupat"
-              className="pulse-card pulse-card-tight flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-ink2 min-h-[44px]"
-            >
-              <Users className="w-4 h-4" aria-hidden="true" />
-              {t('workout.actions.busy')}
-            </button>
-            <button
-              type="button"
-              onClick={handleOpenAparatLipsa}
-              data-testid="wv2-ex-action-lipsa"
-              className="pulse-card pulse-card-tight flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-ink2 min-h-[44px]"
-            >
-              <PackageX className="w-4 h-4" aria-hidden="true" />
-              {t('workout.actions.missing')}
-            </button>
-            <button
-              type="button"
-              onClick={handleNuVreau}
-              data-testid="wv2-ex-action-nuvreau"
-              className="pulse-card pulse-card-tight flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-ink2 min-h-[44px]"
-            >
-              <Hand className="w-4 h-4" aria-hidden="true" />
-              {t('workout.actions.refuse')}
-            </button>
-          </div>
+          <ExerciseActionsRow
+            onOcupat={handleOcupat}
+            onLipsa={handleOpenAparatLipsa}
+            onNuVreau={handleNuVreau}
+          />
 
           <p className="text-sm text-ink2 mb-2">
             {t('workout.setLabel', { current: currentSetIdx + 1, total: currentExercise.sets })}
@@ -1113,22 +1093,7 @@ export function Workout(): JSX.Element {
               from THIS set's rating + performance vs target; surfaced honestly so the
               change is never silent. role="status" announces the recalibration. */}
           {adjustNotice !== null && (
-            <div
-              className="animate-fade-in-up mb-3 flex items-start gap-2.5 p-3 rounded-2xl font-serif italic text-sm text-ink"
-              data-testid="insession-adjust-notice"
-              role="status"
-              style={{
-                background: 'color-mix(in oklab, var(--volt) 11%, var(--surface))',
-                border: '1px solid color-mix(in oklab, var(--volt) 32%, transparent)',
-              }}
-            >
-              <Brain
-                className="w-4 h-4 flex-shrink-0 mt-0.5"
-                aria-hidden="true"
-                style={{ color: 'var(--volt-deep)' }}
-              />
-              <span>{adjustNotice}</span>
-            </div>
+            <CoachNote testId="insession-adjust-notice" message={adjustNotice} />
           )}
 
           {/* First-session baseline note. No prior history for this exercise →
@@ -1137,22 +1102,7 @@ export function Workout(): JSX.Element {
               yet instead of leaving the user wondering. Shown only in the no-history
               case (NOT every set forever); hidden once an adjust notice surfaces. */}
           {noExerciseHistory && adjustNotice === null && (
-            <div
-              className="animate-fade-in-up mb-3 flex items-start gap-2.5 p-3 rounded-2xl font-serif italic text-sm text-ink"
-              data-testid="baseline-note"
-              role="status"
-              style={{
-                background: 'color-mix(in oklab, var(--volt) 11%, var(--surface))',
-                border: '1px solid color-mix(in oklab, var(--volt) 32%, transparent)',
-              }}
-            >
-              <Brain
-                className="w-4 h-4 flex-shrink-0 mt-0.5"
-                aria-hidden="true"
-                style={{ color: 'var(--volt-deep)' }}
-              />
-              <span>{t('workout.adjust.baselineNote')}</span>
-            </div>
+            <CoachNote testId="baseline-note" message={t('workout.adjust.baselineNote')} />
           )}
 
           {/* Set history previous — re-skinned to the mockup .set-chip glowing
@@ -1161,44 +1111,12 @@ export function Workout(): JSX.Element {
               check (kg x reps x rating preserved as title/aria-label so the data
               is not lost), the current set glows (active), the rest are muted
               pending numbers. Logic + per-set testids (set-history-{i}) kept. */}
-          <div
-            className="mb-4 flex flex-wrap gap-2"
-            data-testid="set-history"
-          >
-            {Array.from({ length: currentExercise.sets }, (_, i) => {
-              const logged = (history[safeExIdx] ?? [])[i];
-              const isDone = logged !== undefined;
-              const isActive = !isDone && i === currentSetIdx;
-              // Bodyweight: surface the ENTERED added weight (0 = bodyweight),
-              // not the effective load stored in kg. Loaded: kg as before.
-              const detail = isDone
-                ? currentExercise.isBodyweight
-                  ? (logged.addedKg ?? 0) > 0
-                    ? `+${logged.addedKg} ${t('common.kg')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
-                    : `${t('setLog.bodyweightLabel')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
-                  : `${logged.kg} ${t('common.kg')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
-                : undefined;
-              return (
-                <div
-                  key={i}
-                  className={`set-chip${isDone ? ' set-chip-done' : ''}${isActive ? ' set-chip-active' : ''}`}
-                  data-testid={isDone ? `set-history-${i}` : undefined}
-                  title={detail}
-                  aria-label={
-                    detail
-                      ? `${t('workout.setLabel', { current: i + 1, total: currentExercise.sets })}: ${detail}`
-                      : t('workout.setLabel', { current: i + 1, total: currentExercise.sets })
-                  }
-                >
-                  {isDone ? (
-                    <Check className="w-3.5 h-3.5" aria-hidden="true" strokeWidth={2.6} />
-                  ) : (
-                    <span aria-hidden="true">{i + 1}</span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          <SetHistoryChips
+            totalSets={currentExercise.sets}
+            loggedSets={history[safeExIdx] ?? []}
+            currentSetIdx={currentSetIdx}
+            isBodyweight={currentExercise.isBodyweight ?? false}
+          />
 
           {/* §F-pass2-setloginput-02 — mockup wv2 two-step (andura-clasic.html
               #L1463-1485). Pre-log `tinta` (target + Logheaza CTA) → post-log
@@ -1252,27 +1170,10 @@ export function Workout(): JSX.Element {
           static splash. The screen-level backdrop fades in, then the label,
           name, and coach line cascade. Auto-collapses under reduced motion. */}
       {phase === 'transition' && (
-        <div
-          className="animate-fade-in fixed inset-0 bg-paper flex flex-col items-center justify-center z-40"
-          data-testid="transition-screen"
-          role="status"
-          aria-label={t('workout.transition.ariaLabel')}
-        >
-          <p className="animate-fade-in-up text-2xl font-semibold text-ink mb-2">{t('workout.transition.next')}</p>
-          <p
-            className="animate-roll-in text-base text-ink2"
-            data-testid="transition-next-name"
-            style={{ animationDelay: '120ms' }}
-          >
-            {nextExercise?.name ?? '—'}
-          </p>
-          <p
-            className="animate-fade-in-up text-sm text-ink2 mt-4 italic font-serif"
-            style={{ animationDelay: '240ms' }}
-          >
-            „{coachPick('transition', undefined, 0)}"
-          </p>
-        </div>
+        <TransitionScreen
+          nextExerciseName={nextExercise?.name}
+          coachLine={coachPick('transition', undefined, 0)}
+        />
       )}
 
       <ExitConfirmSheet
@@ -1327,36 +1228,12 @@ export function Workout(): JSX.Element {
           andura-clasic.html#L1449 openWhyExercise → whyEngine categorical
           summary. Backdrop tap or "Am inteles" closes. */}
       {whyText !== null && (
-        <div
-          className="animate-fade-in fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
-          data-testid="why-modal-backdrop"
-          onClick={() => setWhyText(null)}
-        >
-          <div
-            className="animate-slide-up bg-paper rounded-t-2xl p-6 w-full max-w-md"
-            data-testid="why-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-label={t('workout.whyAriaLabel')}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-base font-semibold text-ink mb-3">
-              {t('workout.whyTitle', { exercise: currentExercise.name })}
-            </h2>
-            <p className="text-sm text-ink2 leading-relaxed mb-5" data-testid="why-modal-text">
-              {whyText}
-            </p>
-            <button
-              ref={whyDismissRef}
-              type="button"
-              onClick={() => setWhyText(null)}
-              data-testid="why-modal-dismiss"
-              className="w-full p-3 pulse-grad-bg pulse-shine text-paper rounded-[14px] text-base font-semibold min-h-[44px]"
-            >
-              {t('workout.whyDismiss')}
-            </button>
-          </div>
-        </div>
+        <WhyExerciseModal
+          whyText={whyText}
+          exerciseName={currentExercise.name}
+          dismissRef={whyDismissRef}
+          onClose={() => setWhyText(null)}
+        />
       )}
     </section>
   );
