@@ -571,6 +571,7 @@
       "proteinLabel": "Protein",
       "loggedNote": "Noted - your target sharpens as you log more about yourself.",
       "fatigueEaseNote": "High fatigue + a deficit: target eased {kcal} kcal toward maintenance to protect recovery.",
+      "aerobicAddNote": "Aerobic class today: +{kcal} kcal added to your target, so you can eat a bit more.",
       "sources": {
         "manual": "Set manually",
         "engineBn": "Adaptive estimate",
