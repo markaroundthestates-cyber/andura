@@ -31,7 +31,7 @@ import { AparatLipsaSheet } from '../../../components/Workout/AparatLipsaSheet';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
-import { getTodayWorkout, getPRDelta, getWhyExerciseSummary } from '../../../lib/engineWrappers';
+import { getTodayWorkout, getPRDelta, getWhyExerciseSummary, resolveSessionTitle } from '../../../lib/engineWrappers';
 import type { PlannedExercise, PlannedWorkoutOutput } from '../../../lib/engineWrappers';
 import { gotoPath } from '../../../lib/navigation';
 import { SessionTimer } from '../../../components/Workout/SessionTimer';
@@ -126,14 +126,15 @@ export function Workout(): JSX.Element {
     getTodayWorkout().then((planned) => {
       if (!cancelled) {
         setExercises(planned?.exercises ?? []);
-        // Resolve the non-localized engine fallback sentinel to the locale-aware
-        // "today's workout" title (was the RO 'Antrenament azi' verbatim before);
-        // a real engine title passes through untouched.
+        // No real engine title (sentinel) → derive the localized title from the
+        // engine SESSION TYPE (PUSH/PULL/...), so a paused PULL session reads
+        // "Pull" in ResumeSessionCard instead of a generic label (and never the
+        // old hardcoded "Push" lie). A real engine title passes through untouched.
         const rawTitle = planned?.workoutTitle;
         setWorkoutTitle(
           rawTitle && rawTitle !== ENGINE_WORKOUT_TITLE_FALLBACK
             ? rawTitle
-            : t('coachToday.engineFallbackTitle'),
+            : resolveSessionTitle(planned?.sessionType),
         );
         setEngineIntensityMod(planned?.intensityMod ?? 'normal');
       }

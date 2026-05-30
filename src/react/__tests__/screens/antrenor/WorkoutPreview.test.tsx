@@ -16,6 +16,18 @@ vi.mock('../../../lib/engineWrappers', () => ({
   getFatigue: vi.fn(() => null),
   getPRDelta: vi.fn(() => null),
   getTodayWorkout: vi.fn(async () => null),
+  // Session-type → localized title (real semantics): known types map to their
+  // label, unknown/absent → generic fallback (NU un "Push" fabricat).
+  resolveSessionTitle: vi.fn((sessionType?: string | null) => {
+    const map: Record<string, string> = {
+      PUSH: 'Push (piept si umeri)',
+      PULL: 'Pull (spate si biceps)',
+      UPPER_PICIOARE: 'Picioare',
+      UMERI_BRATE: 'Umeri si brate',
+      FULL_UPPER: 'Trunchi complet',
+    };
+    return (sessionType && map[sessionType]) || 'Antrenamentul tau';
+  }),
 }));
 
 import { WorkoutPreview } from '../../../routes/screens/antrenor/WorkoutPreview';
@@ -48,11 +60,34 @@ function renderPreview(
 }
 
 describe('WorkoutPreview — base render', () => {
-  it('renders fallback heading "Push (piept si umeri)" cand engine returns null', () => {
+  it('renders the generic fallback heading (NU "Push") cand engine returns null', () => {
+    // Honest fix — with no plan there is no sessionType, so the title is the
+    // generic localized fallback, NOT a fabricated "Push" label.
     renderPreview();
     expect(
-      screen.getByRole('heading', { name: /Push/i, level: 1 })
+      screen.getByRole('heading', { name: /Antrenamentul tau/i, level: 1 })
     ).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /Push/i, level: 1 })).toBeNull();
+  });
+
+  it('renders a PULL session title (NU "Push") when the engine plans a PULL day', async () => {
+    // Daniel live bug: a PULL day showed "Push" because the engine never emitted
+    // a per-day title and the boundary fell to a hardcoded Push copy. Now the
+    // sessionType drives the title.
+    vi.mocked(engineWrappers.getTodayWorkout).mockResolvedValue({
+      workoutTitle: '__engine_workout_title_fallback__',
+      sessionType: 'PULL',
+      exerciseCount: 4,
+      estimatedDuration: 45,
+      intensityMod: 'normal',
+      exercises: [],
+      volumeKg: 1000,
+    } as PlannedWorkoutOutput);
+    renderPreview();
+    expect(
+      await screen.findByRole('heading', { name: /Pull/i, level: 1 })
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /Push/i, level: 1 })).toBeNull();
   });
 
   it('renders Start antrenament CTA', () => {

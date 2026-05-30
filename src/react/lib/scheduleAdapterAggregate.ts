@@ -889,6 +889,11 @@ export async function composePlannedWorkoutToday(
     const estimatedDuration = computeEstimatedDurationMin(exercises, warmup?.durationMin ?? 0);
     return {
       workoutTitle: plan.workoutTitle ?? ENGINE_WORKOUT_TITLE_FALLBACK,
+      // Thread the engine's day-of-week session type so the render boundaries
+      // can show a real per-day title (PUSH/PULL/...) instead of a hardcoded
+      // "Push" fallback. Spread-conditional (exactOptionalPropertyTypes) — omit
+      // cand engine nu emite sessionType.
+      ...(typeof plan.sessionType === 'string' ? { sessionType: plan.sessionType } : {}),
       exerciseCount: exercises.length,
       // Real-or-fallback: cand computul da null (fara exercitii), cade pe valoarea
       // engine (?? 50 / ?? 0 in WorkoutPreview). NU mai forteaza 0/50 hardcodat.

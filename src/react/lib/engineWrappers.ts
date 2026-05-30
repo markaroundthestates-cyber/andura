@@ -180,6 +180,13 @@ export interface PlannedExercise {
 
 export interface PlannedWorkoutOutput {
   workoutTitle: string;
+  // Engine session-type tag (PUSH / PULL / UPPER_PICIOARE / UMERI_BRATE /
+  // FULL_UPPER), derived day-of-week by getDailyWorkout (DAY_TO_SESSION_TYPE).
+  // The render boundaries map it to a localized session title — fixing the
+  // "Push" label that showed on every day because the engine never emitted a
+  // real per-day title (workoutTitle was always the sentinel → boundaries fell
+  // to a HARDCODED "Push" copy). Optional for backward-compat with fixtures.
+  sessionType?: string;
   exerciseCount: number;
   estimatedDuration: number; // minutes
   intensityMod: 'plus' | 'normal' | 'minus';
@@ -191,6 +198,34 @@ export interface PlannedWorkoutOutput {
   // entire output; never reaches this field). Consumer WorkoutPreview renders
   // warmup row only when non-null per mockup andura-clasic.html#L935 FIX 1.
   warmup?: { line: string; durationMin: number } | null;
+}
+
+// Whitelisted engine session-type tags (DAY_TO_SESSION_TYPE in scheduleAdapter).
+// Each maps to a workout.sessionTitle.* i18n key; anything else → generic
+// fallback. Keeps the title HONEST per-day instead of the old hardcoded "Push".
+const SESSION_TYPE_KEYS = new Set([
+  'PUSH',
+  'PULL',
+  'UPPER_PICIOARE',
+  'UMERI_BRATE',
+  'FULL_UPPER',
+]);
+
+/**
+ * Localized per-day workout title from the engine session-type tag.
+ *
+ * Bugatti truth fix — the engine never emitted a real per-day workoutTitle
+ * (always the fallback sentinel), so every render boundary fell to a HARDCODED
+ * "Push (piept si umeri)" copy → a PULL day still showed "Push". Now the engine
+ * threads its real sessionType (PUSH/PULL/...); this resolves it to the matching
+ * localized title. Unknown/absent sessionType → generic localized fallback (NU
+ * a fabricated Push label).
+ */
+export function resolveSessionTitle(sessionType: string | null | undefined): string {
+  if (typeof sessionType === 'string' && SESSION_TYPE_KEYS.has(sessionType)) {
+    return __t(`workout.sessionTitle.${sessionType}`);
+  }
+  return __t('workout.sessionTitle.fallback');
 }
 
 // ── Shared helpers ───────────────────────────────────────────────────────

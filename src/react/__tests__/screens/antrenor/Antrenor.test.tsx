@@ -28,6 +28,9 @@ vi.mock('../../../lib/engineWrappers', () => ({
   getFatigue: vi.fn(),
   getPRDelta: vi.fn(() => null),
   getTodayWorkout: vi.fn(async () => null),
+  resolveSessionTitle: vi.fn((sessionType?: string | null) =>
+    sessionType === 'PULL' ? 'Pull (spate si biceps)' : 'Your workout',
+  ),
 }));
 
 import { Antrenor } from '../../../routes/screens/antrenor/Antrenor';
