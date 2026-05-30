@@ -220,6 +220,24 @@ describe('Auth — U-09 legal docs accessible pre-auth (inline modal)', () => {
     fireEvent.click(screen.getByTestId('auth-legal-backdrop'));
     expect(screen.queryByTestId('auth-legal-modal')).not.toBeInTheDocument();
   });
+
+  it('SC 2.4.3: Tab is trapped — Shift-Tab from the first element wraps to the last', () => {
+    renderAuth();
+    fireEvent.click(screen.getByTestId('auth-terms-link'));
+    const modal = screen.getByTestId('auth-legal-modal');
+    const close = screen.getByTestId('auth-legal-close');
+    // On open, focus lands on the close button (first focusable).
+    expect(close).toHaveFocus();
+    const focusables = modal.querySelectorAll('a[href], button:not([disabled])');
+    const last = focusables[focusables.length - 1] as HTMLElement;
+    expect(last).not.toBe(close);
+    // Shift-Tab at the first element wraps to the last (trap, no page escape).
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(last).toHaveFocus();
+    // Tab at the last element wraps back to the first.
+    fireEvent.keyDown(document, { key: 'Tab' });
+    expect(close).toHaveFocus();
+  });
 });
 
 describe('Auth — Daniel-directed login/signup modes', () => {

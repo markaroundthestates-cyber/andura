@@ -120,6 +120,17 @@ describe('AerobicCoach — class logging', () => {
     expect(screen.getByTestId('aerobic-logger')).toBeInTheDocument();
   });
 
+  it('SC 2.4.3: focus moves into the logger on open + returns to the CTA on close', () => {
+    renderAerobicCoach();
+    fireEvent.click(screen.getByTestId('aerobic-log-cta'));
+    // Focus-in: the logger heading region receives focus (not deep in the form).
+    const logger = screen.getByTestId('aerobic-logger');
+    expect(logger.querySelector('[tabindex="-1"]')).toHaveFocus();
+    // Close via Cancel → focus restored to the trigger CTA (remounted).
+    fireEvent.click(screen.getByTestId('aerobic-logger-cancel'));
+    expect(screen.getByTestId('aerobic-log-cta')).toHaveFocus();
+  });
+
   it('logs a class: kcal computed (MET x weight x hrs) + persisted', () => {
     renderAerobicCoach();
     fireEvent.click(screen.getByTestId('aerobic-log-cta'));

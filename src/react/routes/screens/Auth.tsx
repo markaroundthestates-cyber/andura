@@ -495,6 +495,7 @@ function LegalModal({
   onClose: () => void;
 }): JSX.Element | null {
   const closeRef = useRef<HTMLButtonElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -505,6 +506,27 @@ function LegalModal({
       if (e.key === 'Escape') {
         e.preventDefault();
         onClose();
+        return;
+      }
+      // SC 2.4.3 — hard focus trap: Tab/Shift-Tab cycle within the dialog
+      // (close button + the live/GDPR links). Wraps first<->last so focus
+      // never escapes to the page behind the modal.
+      if (e.key !== 'Tab') return;
+      const root = dialogRef.current;
+      if (!root) return;
+      const focusable = root.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled])',
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!first || !last) return;
+      const active = document.activeElement;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
       }
     }
     document.addEventListener('keydown', onKey);
@@ -523,6 +545,7 @@ function LegalModal({
       onClick={onClose}
     >
       <div
+        ref={dialogRef}
         className="bg-paper rounded-2xl p-6 w-full max-w-md max-h-[80vh] overflow-y-auto"
         data-testid="auth-legal-modal"
         role="dialog"
