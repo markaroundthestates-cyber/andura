@@ -152,6 +152,23 @@ describe('clearUserCloudData — XCUT-1 wv2 subtree', () => {
     vi.doUnmock('../../firebase.js');
     vi.resetModules();
   });
+
+  // DELETE-failure path (the gap the old tests missed): clearFirebaseKeys does NOT
+  // throw on a swallowed per-key fbRemove false — it reports {succeeded < total}.
+  // A real 500/timeout must surface {ok:false} so the cloud copy doesn't resurrect.
+  it('returns {ok:false} when some keys fail to delete (succeeded < total, no throw)', async () => {
+    const clearFirebaseKeys = vi.fn(async (keys) => ({ succeeded: 1, total: keys.length }));
+    vi.doMock('../../firebase.js', () => ({ clearFirebaseKeys, SYNC_KEYS: ['logs', 'weights'] }));
+    vi.resetModules();
+    const { clearUserCloudData: freshClear } = await import('../dataReset.js');
+
+    const result = await freshClear();
+
+    expect(result.ok).toBe(false);
+    expect(result.error).toMatch(/incomplete/);
+    vi.doUnmock('../../firebase.js');
+    vi.resetModules();
+  });
 });
 
 // ── H1 shared-device PII leak — logout wipe ──────────────────────────────────

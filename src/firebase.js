@@ -267,11 +267,17 @@ export async function fbPatchUserChild(relPath, data) {
   return fbPatch(`${userPath}/${relPath}`, data);
 }
 
-/** @param {ReadonlyArray<string>|null|undefined} keys */
+/**
+ * @param {ReadonlyArray<string>|null|undefined} keys
+ * @returns {Promise<{ succeeded: number, total: number }>} per-key DELETE outcome
+ *   so the caller can detect a PARTIAL failure (succeeded < total) instead of a
+ *   swallowed `fbRemove` false → silent cloud resurrection. No-op paths report a
+ *   fully-succeeded zero-key result.
+ */
 export async function clearFirebaseKeys(keys) {
-  if (!keys || keys.length === 0) return;
+  if (!keys || keys.length === 0) return { succeeded: 0, total: 0 };
   const userPath = getUserPath();
-  if (!userPath) return;
+  if (!userPath) return { succeeded: 0, total: 0 };
   const results = await Promise.allSettled(
     keys.map(async (/** @type {string} */ key) => {
       // Sanitize per segment so the remote node name matches the push/pull side
@@ -287,6 +293,7 @@ export async function clearFirebaseKeys(keys) {
   );
   const succeeded = results.filter(r => r.status === 'fulfilled' && r.value).length;
   console.log(`[Firebase] clearFirebaseKeys: ${succeeded}/${keys.length} removed`);
+  return { succeeded, total: keys.length };
 }
 
 export async function syncToFirebase() {
