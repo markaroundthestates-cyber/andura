@@ -81,3 +81,12 @@ reports/lighthouse/
 # Source jpgs live tracked in assets-source/body/ (re-optimize via scripts/optimize-body-images.cjs);
 # the heavy original PNGs are kept local-only.
 assets-source/body/*.png
+
+# local agent/tool scratch (never shipped, never committed)
+dist-dev/
+.playwright-mcp/
+.reverify-*
+*.tsbuildinfo
+bodymap-preview*.png
+_sec11_chunk.md
+append_sec11.*
