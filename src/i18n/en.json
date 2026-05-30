@@ -744,7 +744,13 @@
     "weeks_one": "~{n} week",
     "weeks_other": "~{n} weeks",
     "months_one": "~{n} month",
-    "months_other": "~{n} months"
+    "months_other": "~{n} months",
+    "gating": {
+      "disabledHint": "Doesn't match your target weight",
+      "switchedToAutoLose": "You chose to lose weight — you can't bulk or maintain. Switched to Auto (Cut).",
+      "switchedToAutoGain": "You chose to gain weight — you can't lose fat or maintain. Switched to Auto (Bulk).",
+      "switchedToAutoMaintain": "You chose to maintain — you can't lose fat or bulk. Switched to Auto."
+    }
   },
 
   "istoric": {
