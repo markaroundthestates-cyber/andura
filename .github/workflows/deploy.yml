@@ -117,7 +117,10 @@ jobs:
       - run: npm run build
         env:
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
-          VITE_FIREBASE_RTDB_URL: ${{ secrets.VITE_FIREBASE_RTDB_URL }}
+          # NOTE: the GitHub secret is named VITE_FIREBASE_RTDB_UR (missing the
+          # trailing 'L' — typo at creation, rename not supported). We map it to
+          # the correct build env var VITE_FIREBASE_RTDB_URL that the code reads.
+          VITE_FIREBASE_RTDB_URL: ${{ secrets.VITE_FIREBASE_RTDB_UR }}
           # FCM web push (Agent A) — Firebase web config + VAPID key for getToken.
           # apiKey/projectId/senderId/appId are public web config (NOT secrets per
           # Firebase docs); VAPID is the web-push public key. Build succeeds if any
