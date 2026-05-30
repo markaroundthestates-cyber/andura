@@ -142,11 +142,15 @@ describe('Progres — redesign layout (2026-05-30 locked)', () => {
     expect(screen.queryByTestId('progres-zone-log')).not.toBeInTheDocument();
   });
 
-  it('folds Fatigue + base calories (BMR) into the Target-Today panel', () => {
+  it('folds Fatigue into the Target-Today panel and drops the standalone Base Calories (BMR) panel', () => {
     renderProgres();
     const hero = screen.getByTestId('tdee-strip');
     expect(hero.querySelector('[data-testid="fatigue-strip"]')).toBeTruthy();
-    expect(hero.querySelector('[data-testid="bmr-strip"]')).toBeTruthy();
+    // Progress redesign (Daniel 2026-05-30): the standalone Base Calories (BMR)
+    // panel was struck out as redundant (the hero already says "Adaptive
+    // estimate"), so it is no longer rendered anywhere on the Progress screen.
+    expect(screen.queryByTestId('bmr-strip')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('tdee-base-calories')).not.toBeInTheDocument();
     // No separate top-level fatigue/BMR 2-col grid anymore.
     expect(screen.queryByTestId('fatigue-bmr-grid')).not.toBeInTheDocument();
   });
