@@ -32,27 +32,30 @@
 //   1. AZI        — TDEEStrip is now the ONE merged "Target Today" hero: kcal +
 //                   protein EDITABLE for the day (= logging consumed intake, feeds
 //                   the same Bayesian context that calibrates TDEE) + honest
-//                   "sharpens as you log" microcopy + Fatigue on the right + base
-//                   calories (BMR) folded in small. The separate NutritionInline,
-//                   FatigueStrip, and BMRStrip panels are MERGED INTO it. Fatigue
-//                   → kcal: a capped recovery-protective deficit ease, labeled.
-//   2. OBIECTIV   — ObiectivCard (Target Weight + ETA) moved UP, fast-visible,
-//                   right under Target Today; ObiectivGoalCard (5 goal pills) sits
-//                   with it (both are "your objective").
-//   3. RECUPERARE — MuscleBodyMap (anatomical body figure) REPLACES the old
-//                   MuscleRecoveryGrid circles (same useMuscleRecoveryGroups data).
+//                   "sharpens as you log" microcopy + Fatigue on the right. The
+//                   separate NutritionInline + FatigueStrip panels are MERGED INTO
+//                   it. Fatigue → kcal: a capped recovery-protective deficit ease,
+//                   labeled. (The Base-calories/BMR panel was struck out 2026-05-30.)
+//   2. RECUPERARE — Daniel 2026-05-30 arrow UP: the body-model recovery section is
+//                   moved HIGH, right under Target Today, prominent before the
+//                   objective + composition detail. MuscleBodyMap (anatomical body
+//                   figure) REPLACES the old MuscleRecoveryGrid circles (same
+//                   useMuscleRecoveryGroups data).
+//   3. OBIECTIV   — ObiectivCard (Target Weight + ETA) fast-visible near the top;
+//                   ObiectivGoalCard (5 goal pills) sits with it (both "objective").
 //   4. COMPOZITIE — body-composition group: BodyFat + Projection + Weight (7 days).
-//   5. ACTIUNI    — AlertsBanner + log-weight CTA + last-weight card + timeline CTA.
+//   5. ACTIUNI    — AlertsBanner + log-weight CTA + timeline CTA. (The
+//                   "Last weigh-in" recap card was struck out 2026-05-30.)
 //   6. TENDINTA   — "Weight & BF trend" Sparkline card, moved to the BOTTOM.
 //
-// Engine wires + i18n keys + ALL prior testids preserved (cta-log-weight,
-// last-weight-card, alerts-banner, alerte-azi-label, tdee-strip, nutri-* edit
-// chips). Wrapping containers keep data-testid="progres-zone-*" for smoke.
+// Engine wires + i18n keys + prior testids preserved (cta-log-weight,
+// alerts-banner, alerte-azi-label, tdee-strip, nutri-* edit chips). Wrapping
+// containers keep data-testid="progres-zone-*" for smoke.
 
 import type { JSX } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Scale, History, LineChart } from 'lucide-react';
+import { Scale, LineChart } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
@@ -139,25 +142,28 @@ export function Progres(): JSX.Element {
         <TDEEStrip />
       </div>
 
-      {/* ── ZONE 2: OBIECTIV — Target Weight moved UP, fast-visible. ─────────
-          Right under Target Today: the goal selector (5 phase pills) + the
-          target-weight + ETA card. Both are "your objective", co-located. */}
-      <div data-testid="progres-zone-obiectiv" className="animate-card-rise delay-75">
-        <ZoneHeading testId="progres-zone-obiectiv-heading">{t('progres.zone.obiectiv')}</ZoneHeading>
-        <ObiectivCard />
-        <ObiectivGoalCard />
-      </div>
-
-      {/* ── ZONE 3: RECUPERARE — anatomical muscle recovery body map. ────────
-          MuscleBodyMap REPLACES the old recovery-ring circles (MuscleRecoveryGrid).
-          Same useMuscleRecoveryGroups data; the map self-hides when the engine
-          returns nothing (T0 fresh user), so the heading is gated the same way. */}
+      {/* ── ZONE 2: RECUPERARE — anatomical muscle recovery body map. ────────
+          Daniel 2026-05-30 arrow UP: the body-model recovery section is moved
+          HIGH, right under Target Today, so it reads prominently before the
+          objective + composition detail. MuscleBodyMap REPLACES the old
+          recovery-ring circles (MuscleRecoveryGrid). Same useMuscleRecoveryGroups
+          data; the map self-hides when the engine returns nothing (T0 fresh
+          user), so the heading is gated the same way. */}
       {recoveryGroups.length > 0 && (
-        <div data-testid="progres-zone-recovery" className="animate-card-rise delay-150">
+        <div data-testid="progres-zone-recovery" className="animate-card-rise delay-75">
           <ZoneHeading testId="progres-zone-recovery-heading">{t('progres.zone.recuperare')}</ZoneHeading>
           <MuscleBodyMap />
         </div>
       )}
+
+      {/* ── ZONE 3: OBIECTIV — Target Weight, fast-visible near the top. ─────
+          The goal selector (5 phase pills) + the target-weight + ETA card. Both
+          are "your objective", co-located. */}
+      <div data-testid="progres-zone-obiectiv" className="animate-card-rise delay-150">
+        <ZoneHeading testId="progres-zone-obiectiv-heading">{t('progres.zone.obiectiv')}</ZoneHeading>
+        <ObiectivCard />
+        <ObiectivGoalCard />
+      </div>
 
       {/* ── ZONE 4: COMPOZITIE — body-composition group. ────────────────────
           Body fat + forward projection + 7-day weight snapshot grouped together:
@@ -192,21 +198,9 @@ export function Progres(): JSX.Element {
           <Scale className="w-5 h-5" aria-hidden="true" />
           {t('progres.logWeightToday')}
         </button>
-        {lastWeight && (
-          <button
-            type="button"
-            onClick={() => navigate(gotoPath('weight-log-list'))}
-            data-testid="last-weight-card"
-            className="pulse-card pulse-card-tight w-full text-left p-4 mb-4 flex items-center gap-3"
-          >
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-ink2 uppercase tracking-wide font-semibold">{t('progres.lastWeighIn')}</p>
-              <p className="text-2xl font-bold text-ink mt-1 font-mono">{lastWeight.kg} kg</p>
-              <p className="text-sm text-ink2">{lastWeight.date}</p>
-            </div>
-            <History className="w-5 h-5 text-ink2 flex-shrink-0" aria-hidden="true" />
-          </button>
-        )}
+        {/* Progress redesign (Daniel 2026-05-30): the "Last weigh-in" recap card
+            was struck out — the log-weight CTA above + the trend zone below
+            already cover "what + where". Only the CTAs remain in ACTIUNI. */}
         {/* PAR-004 Wave 2e — Weight Timeline drill-down (chart view). */}
         {lastWeight && (
           <button

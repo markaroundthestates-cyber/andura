@@ -83,7 +83,9 @@ describe('FatigueStrip — Wave C2 i18n EN default', () => {
     expect(valueText).not.toContain("We'll go lighter today");
   });
 
-  it('renders detail cand fatigue.detail prezent', () => {
+  // Progress redesign (Daniel 2026-05-30) — the verbose `.detail` prose was
+  // struck out; the tile renders only the compact score + one-word label now.
+  it('no longer renders the verbose fatigue detail prose', () => {
     vi.mocked(getFatigue).mockReturnValueOnce({
       score: 30,
       key: 'MODERATE_FATIGUE',
@@ -94,8 +96,9 @@ describe('FatigueStrip — Wave C2 i18n EN default', () => {
       detail: 'Sesiune fluenta azi.',
     });
     render(<FatigueStrip />);
-    // Wave E4 — detail resolved via i18n from key=MODERATE_FATIGUE (EN bundle).
-    expect(screen.getByTestId('fatigue-detail').textContent).toMatch(/hold the weights/i);
+    expect(screen.queryByTestId('fatigue-detail')).not.toBeInTheDocument();
+    // The compact label still renders.
+    expect(screen.getByTestId('fatigue-sub-label')).toBeInTheDocument();
   });
 
   it('container data-testid present', () => {

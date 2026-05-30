@@ -25,8 +25,9 @@
 //     window — the honest "loggedNote" microcopy reflects that (NOT a guaranteed
 //     next-day flip). Next day reverts to the auto target.
 //   - The separate bottom "Nutrition today" panel (NutritionInline) + standalone
-//     Fatigue + Base-calories panels are MERGED IN: Fatigue lives on the right,
-//     base calories (BMR) folds in small at the bottom.
+//     Fatigue panel are MERGED IN: Fatigue lives on the right. (The Base-calories
+//     / BMR panel was struck out 2026-05-30 as redundant — the hero already reads
+//     as an "Adaptive estimate" — so it is no longer rendered here.)
 //   - Fatigue → kcal: a recovery-protective deficit ease (easeDeficitForFatigue)
 //     nudges the DISPLAYED auto target up toward maintenance ONLY under sustained
 //     HIGH_FATIGUE + an active deficit. It never fakes a TDEE change, never lowers
@@ -38,7 +39,6 @@ import { AlertCircle, Pencil, Check } from 'lucide-react';
 import { Pill } from '../pulse/Pill';
 import { Kicker } from '../pulse/Kicker';
 import { FatigueStrip } from './FatigueStrip';
-import { BMRStrip } from './BMRStrip';
 import { getNutritionTargetTodayReal } from '../../lib/bayesianNutritionAggregate';
 import type { NutritionTarget } from '../../lib/bayesianNutritionAggregate';
 import { readBayesianNutritionContext } from '../../lib/nutritionObservations';
@@ -339,7 +339,10 @@ export function TDEEStrip(): JSX.Element {
       )}
 
       {/* §F-pass2-tdeestrip-03 — italic explainer copy. Engine auto-calculates,
-          logging optional for calibration. */}
+          logging optional for calibration. Progress redesign (Daniel 2026-05-30):
+          this "Adaptive estimate" line now closes the card — the standalone Base
+          Calories (BMR) panel was struck out as redundant, removing the dead gap
+          that sat below it. */}
       <p
         className="text-xs text-ink3 mt-3 leading-snug italic relative"
         data-testid="tdee-explainer"
@@ -358,11 +361,6 @@ export function TDEEStrip(): JSX.Element {
           <span>{t('tdeeStrip.healthyFloorMsg')}</span>
         </p>
       )}
-
-      {/* Base calories (BMR) folded in small — the standalone panel is removed. */}
-      <div className="mt-4 pt-3 border-t border-line" data-testid="tdee-base-calories">
-        <BMRStrip />
-      </div>
     </section>
   );
 }

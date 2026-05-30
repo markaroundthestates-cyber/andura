@@ -89,16 +89,15 @@ describe('Progres landing', () => {
     expect(screen.queryByTestId('cta-body-data')).not.toBeInTheDocument();
   });
 
-  it('hides last-weight-card cand weightLog empty', () => {
-    renderProgres();
-    expect(screen.queryByTestId('last-weight-card')).not.toBeInTheDocument();
-  });
-
-  it('shows last-weight-card cand entry present', () => {
+  // Progress redesign (Daniel 2026-05-30): the "Last weigh-in" recap card was
+  // struck out of the ACTIUNI zone — only the log-weight CTA remains. It must
+  // not render whether or not a weigh-in exists.
+  it('no longer renders the last-weight-card recap (struck out 2026-05-30)', () => {
     useProgresStore.setState({ weightLog: [{ kg: 78.5, date: '2026-05-17', ts: Date.now() }] });
     renderProgres();
-    expect(screen.getByTestId('last-weight-card')).toBeInTheDocument();
-    expect(screen.getByTestId('last-weight-card')).toHaveTextContent('78.5 kg');
+    expect(screen.queryByTestId('last-weight-card')).not.toBeInTheDocument();
+    // The log-weight CTA stays.
+    expect(screen.getByTestId('cta-log-weight')).toBeInTheDocument();
   });
 
   it('no longer renders last-body-card (consolidated into Profile)', () => {
@@ -142,22 +141,44 @@ describe('Progres — redesign layout (2026-05-30 locked)', () => {
     expect(screen.queryByTestId('progres-zone-log')).not.toBeInTheDocument();
   });
 
-  it('folds Fatigue + base calories (BMR) into the Target-Today panel', () => {
+  it('folds Fatigue into the Target-Today panel and drops the standalone Base Calories (BMR) panel', () => {
     renderProgres();
     const hero = screen.getByTestId('tdee-strip');
     expect(hero.querySelector('[data-testid="fatigue-strip"]')).toBeTruthy();
-    expect(hero.querySelector('[data-testid="bmr-strip"]')).toBeTruthy();
+    // Progress redesign (Daniel 2026-05-30): the standalone Base Calories (BMR)
+    // panel was struck out as redundant (the hero already says "Adaptive
+    // estimate"), so it is no longer rendered anywhere on the Progress screen.
+    expect(screen.queryByTestId('bmr-strip')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('tdee-base-calories')).not.toBeInTheDocument();
     // No separate top-level fatigue/BMR 2-col grid anymore.
     expect(screen.queryByTestId('fatigue-bmr-grid')).not.toBeInTheDocument();
   });
 
-  it('places Target Weight (objective) directly under Target Today', () => {
+  it('places Target Weight (objective) near the top, after Target Today', () => {
     renderProgres();
     const azi = screen.getByTestId('progres-zone-azi');
     const obiectiv = screen.getByTestId('progres-zone-obiectiv');
     expect(azi.compareDocumentPosition(obiectiv) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     // ObiectivCard (target weight + ETA) is present in that zone.
     expect(obiectiv.querySelector('[data-testid="obiectiv-card"]')).toBeTruthy();
+  });
+
+  // Daniel 2026-05-30 arrow UP: the muscle-recovery body-model zone is moved HIGH
+  // — right under Target Today and ABOVE the objective + composition zones.
+  it('moves the Muscle Recovery (body-model) zone UP — above Objective and Composition', () => {
+    vi.mocked(useMuscleRecoveryGroups).mockReturnValue([
+      { group: 'piept', label: 'Piept', state: 'recovered' },
+    ] as RecoveryGroups);
+    renderProgres();
+    const azi = screen.getByTestId('progres-zone-azi');
+    const recovery = screen.getByTestId('progres-zone-recovery');
+    const obiectiv = screen.getByTestId('progres-zone-obiectiv');
+    const compozitie = screen.getByTestId('progres-zone-compozitie');
+    // Recovery sits right after AZI...
+    expect(azi.compareDocumentPosition(recovery) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // ...and BEFORE both Objective and Composition.
+    expect(recovery.compareDocumentPosition(obiectiv) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(recovery.compareDocumentPosition(compozitie) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it('moves the Weight & BF trend to the BOTTOM (after actions)', () => {

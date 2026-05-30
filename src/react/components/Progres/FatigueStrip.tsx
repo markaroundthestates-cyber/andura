@@ -33,28 +33,26 @@ import { getFatigue, type FatigueOutput } from '../../lib/engineWrappers';
 import { t } from '../../../i18n/index.js';
 
 /**
- * Wave E4 — resolve the engine's verdict label + detail through i18n using
- * the semantic `key` (HIGH_FATIGUE / MODERATE_FATIGUE / PEAK_FORM / NORMAL /
+ * Wave E4 — resolve the engine's verdict label through i18n using the semantic
+ * `key` (HIGH_FATIGUE / MODERATE_FATIGUE / PEAK_FORM / NORMAL /
  * INSUFFICIENT_DATA). Falls back to the engine's RO copy when the key is
  * missing (defensive — engine guarantees a key post-Wave-E4 but partial mocks
  * may not). Empty string `key` (older shape) also falls through.
+ *
+ * Progress redesign (Daniel 2026-05-30): the verbose `.detail` prose paragraph
+ * was struck out — the compact score + the one-word `label` are all the Fatigue
+ * tile shows now, so only the label is resolved here.
  */
-function localizedFatigue(f: FatigueOutput): { label: string; detail: string } {
+function localizedFatigue(f: FatigueOutput): { label: string } {
   const k = f.key && f.key.length > 0 ? f.key : null;
-  if (!k) return { label: f.label, detail: f.detail };
+  if (!k) return { label: f.label };
   const labelKey =
     k === 'INSUFFICIENT_DATA'
       ? 'coachEngine.fatigue.insufficient.label'
       : `coachEngine.fatigue.${k}.label`;
-  const detailKey =
-    k === 'INSUFFICIENT_DATA'
-      ? 'coachEngine.fatigue.insufficient.detail'
-      : `coachEngine.fatigue.${k}.detail`;
   const label = t(labelKey);
-  const detail = t(detailKey);
   return {
     label: label && label !== labelKey ? label : f.label,
-    detail: detail && detail !== detailKey ? detail : f.detail,
   };
 }
 
@@ -98,11 +96,6 @@ export function FatigueStrip(): JSX.Element {
             >
               {localized.label}
             </p>
-            {localized.detail && (
-              <p className="text-xs text-ink2 mt-0.5" data-testid="fatigue-detail">
-                {localized.detail}
-              </p>
-            )}
           </>
         ) : (
           <p className="text-sm text-ink2" data-testid="fatigue-empty">
