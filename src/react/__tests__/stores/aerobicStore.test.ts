@@ -20,7 +20,7 @@ import {
 } from '../../stores/aerobicStore';
 
 function resetStore(): void {
-  useAerobicStore.setState({ sessions: [], lastDuration: DEFAULT_AEROBIC_MINUTES });
+  useAerobicStore.setState({ sessions: [], lastDuration: DEFAULT_AEROBIC_MINUTES, subjectiveByDate: {} });
   localStorage.clear();
 }
 
@@ -130,5 +130,20 @@ describe('aerobicKcalForDate — sums a day (feeds nutrition ease)', () => {
     expect(aerobicKcalForDate(sessions, '2026-05-30')).toBe(550);
     expect(aerobicKcalForDate(sessions, '2026-05-29')).toBe(400);
     expect(aerobicKcalForDate(sessions, '2026-05-28')).toBe(0);
+  });
+});
+
+describe('aerobicStore — subjective readiness (self-report)', () => {
+  beforeEach(resetStore);
+
+  it('records readiness per date', () => {
+    useAerobicStore.getState().setSubjectiveReadiness('2026-05-30', 'tired');
+    expect(useAerobicStore.getState().subjectiveByDate['2026-05-30']).toBe('tired');
+  });
+
+  it('rejects an invalid value silently', () => {
+    // @ts-expect-error — guard against a bad value at the boundary.
+    useAerobicStore.getState().setSubjectiveReadiness('2026-05-30', 'bogus');
+    expect(useAerobicStore.getState().subjectiveByDate['2026-05-30']).toBeUndefined();
   });
 });

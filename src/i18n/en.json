@@ -174,6 +174,38 @@
     "readinessEmpty": "Log your first session to wake your readiness.",
     "header": {
       "dateSeparator": "·"
+    },
+    "aerobic": {
+      "ariaLabel": "Aerobic coach home",
+      "kicker": "Aerobic classes",
+      "subtitle": "Your aerobic-class companion.",
+      "weekKicker": "Classes this week",
+      "weekCount": "{count} classes",
+      "weekCountTarget": "{count} / {target} classes",
+      "logCta": "Log a class",
+      "loggerKicker": "Log a class",
+      "typeLabel": "Class type",
+      "durationLabel": "Duration (min)",
+      "durationAriaLabel": "Class duration in minutes",
+      "kcalPreview": "≈ {kcal} kcal",
+      "kcalUnknown": "Add your weight to estimate calories.",
+      "saveCta": "Save class",
+      "cancelCta": "Cancel",
+      "types": {
+        "aerobic": "Aerobic",
+        "step": "Step",
+        "zumba": "Zumba / Dance",
+        "spinning": "Spinning / Bike",
+        "alta": "Other class"
+      },
+      "readinessKicker": "How you feel",
+      "readinessQuestion": "How do you feel today?",
+      "readiness": {
+        "rested": "Rested",
+        "normal": "Normal",
+        "tired": "Tired"
+      },
+      "readinessTiredNote": "Take it easy today. We'll keep your nutrition a touch gentler."
     }
   },
 

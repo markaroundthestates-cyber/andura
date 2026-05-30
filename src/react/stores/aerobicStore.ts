@@ -65,6 +65,15 @@ export interface AerobicSession {
 }
 
 /**
+ * Simplified SUBJECTIVE readiness (Daniel spec 2026-05-30) — pure self-report
+ * for the aerobic Coach: "Cum te simti azi?" → rested / normal / tired. NO
+ * engine computation (no sets-based orb). Persisted per local-ISO date so it
+ * resets each day. 'tired' may lightly inform nutrition (reuse fatigue-deficit-
+ * ease spirit) but stays minimal.
+ */
+export type SubjectiveReadiness = 'rested' | 'normal' | 'tired';
+
+/**
  * kcal for one aerobic class — standard MET equation:
  *   kcal = MET × weightKg × (minutes / 60)
  * Pure. Returns null when inputs are missing/invalid (caller hides the number
@@ -135,6 +144,12 @@ interface AerobicState {
   sessions: AerobicSession[];
   /** Last-used class duration (min) — pre-fills the logger next time. */
   lastDuration: number;
+  /**
+   * Simplified subjective readiness keyed by local-ISO date (self-report only).
+   * A map so it naturally resets per day — today's read returns undefined until
+   * the user taps a chip.
+   */
+  subjectiveByDate: Record<string, SubjectiveReadiness>;
 }
 
 interface AerobicActions {
@@ -147,12 +162,15 @@ interface AerobicActions {
   logClass: (input: { date: string; type: AerobicClassType; minutes: number; weightKg: number | null }) => void;
   /** Persist the last-used duration without logging (live edit memory). */
   setLastDuration: (minutes: number) => void;
+  /** Record the self-reported readiness for a date (pure self-report). */
+  setSubjectiveReadiness: (date: string, value: SubjectiveReadiness) => void;
   reset: () => void;
 }
 
 const DEFAULTS: AerobicState = {
   sessions: [],
   lastDuration: DEFAULT_AEROBIC_MINUTES,
+  subjectiveByDate: {},
 };
 
 export const useAerobicStore = create<AerobicState & AerobicActions>()(
@@ -178,6 +196,10 @@ export const useAerobicStore = create<AerobicState & AerobicActions>()(
         }
         set({ lastDuration: minutes });
       },
+      setSubjectiveReadiness: (date, value) => {
+        if (value !== 'rested' && value !== 'normal' && value !== 'tired') return;
+        set((s) => ({ subjectiveByDate: { ...s.subjectiveByDate, [date]: value } }));
+      },
       reset: () => set({ ...DEFAULTS }),
     }),
     {
@@ -188,6 +210,7 @@ export const useAerobicStore = create<AerobicState & AerobicActions>()(
       partialize: (state) => ({
         sessions: state.sessions,
         lastDuration: state.lastDuration,
+        subjectiveByDate: state.subjectiveByDate,
       }) as Partial<AerobicState & AerobicActions>,
     },
   ),

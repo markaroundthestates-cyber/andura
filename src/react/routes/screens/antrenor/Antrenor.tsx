@@ -34,6 +34,9 @@ import { useNavigate } from 'react-router-dom';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import { useCoachStore } from '../../../stores/coachStore';
 import { useScheduleStore } from '../../../stores/scheduleStore';
+import { useOnboardingStore } from '../../../stores/onboardingStore';
+import { AerobicCoach } from '../../../components/Antrenor/AerobicCoach';
+import { BothModeAerobicCard } from '../../../components/Antrenor/BothModeAerobicCard';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 import type { CoachTodayOutput } from '../../../lib/coachDirectorAggregate';
 import { gotoPath } from '../../../lib/navigation';
@@ -78,6 +81,12 @@ function formatHeaderDate(now: Date): string {
 
 export function Antrenor(): JSX.Element {
   const navigate = useNavigate();
+  // Mode-gating (Daniel spec 2026-05-30) — trainingType drives the whole tab.
+  // Read it here but gate at the JSX return (NOT an early return) so the gym
+  // hooks below still run unconditionally (Rules of Hooks). 'aerobic' → the
+  // class-only AerobicCoach dashboard; 'gym'/'both' → the gym layout, with
+  // 'both' also showing an aerobic-class log card. Default 'gym' (legacy).
+  const trainingType = useOnboardingStore((s) => s.data.trainingType ?? 'gym');
   // §44-C1 — derive tagged WorkoutModeView inline (subscribe primitives, compute
   // in render). pausedSnap gates ResumeSessionCard + showReactivate + CTA hide.
   const phase = useWorkoutStore((s) => s.phase);
@@ -158,6 +167,11 @@ export function Antrenor(): JSX.Element {
   const handleReactivateStart = (): void => {
     navigate(gotoPath('energy-check'));
   };
+
+  // Aerobic mode — class-only dashboard (all gym hooks above still ran).
+  if (trainingType === 'aerobic') {
+    return <AerobicCoach />;
+  }
 
   return (
     <section
@@ -292,6 +306,11 @@ export function Antrenor(): JSX.Element {
       )}
 
       <Calendar7Day />
+
+      {/* 'both' mode (Daniel spec 2026-05-30) — gym PLUS the ability to log an
+          aerobic class. The card opens the same logger as the aerobic-only
+          dashboard; gym workouts above stay fully intact. */}
+      {trainingType === 'both' && <BothModeAerobicCard />}
 
       {/* §obiectiv-relocate 2026-05-28 Daniel verbatim "muta aia cu Obiectiv de
           la Coach la progres". ObiectivSelector decommissioned din Antrenor —
