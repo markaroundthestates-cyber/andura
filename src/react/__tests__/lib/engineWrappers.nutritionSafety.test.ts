@@ -28,7 +28,11 @@ function setOnboarding(data: Partial<{
 
 beforeEach(() => {
   localStorage.clear();
-  useProgresStore.setState({ weightLog: [], bodyData: [] });
+  useProgresStore.setState({
+    weightLog: [],
+    bodyData: [],
+    targetObiectiv: { weightKg: null, month: null },
+  } as never);
   useWorkoutStore.setState({ sessionsHistory: [] } as never);
 });
 
@@ -73,6 +77,46 @@ describe('BUG #4 — getNutritionTargetsToday underweight-must-gain guardrail', 
     const masa = await getNutritionTargetsToday();
     expect(masa.healthyFloorClamped).toBe(true);
     expect(masa.kcalTarget).toBeGreaterThan(maintenanceTdee); // surplus, nu deficit
+  });
+});
+
+describe('L7 — safetyLimited surfacing (base target rate-capped / floored)', () => {
+  it('femeie mica + cut → tinta clampata la floor → safetyLimited floored', async () => {
+    // 48kg/158cm femeie 70 ani (BMI 19.2, NU subponderal) + slabire (CUT).
+    // Mentenanta mica (~1239) → deficitul de 20% coboara sub floor-ul de 1000 →
+    // clampat la floor. NU subponderal → guardrail-ul de crestere NU se aplica,
+    // deci semnalul floored ajunge la UI (NU contradice mesajul de sustinere).
+    setOnboarding({
+      sex: 'f', weight: 48, height: 158, age: 70,
+      frequency: '1', experience: 'incepator', goal: 'slabire',
+    });
+    const t = await getNutritionTargetsToday();
+    expect(t.healthyFloorClamped).toBe(false); // NU subponderal — fara override de crestere
+    expect(t.safetyLimited).toBe('floored');
+  });
+
+  it('barbat greu + tinta agresiva cu deadline scurt → ritm plafonat → safetyLimited capped', async () => {
+    // 150kg barbat (mentenanta mare → cut ramane mult peste 1200, NU floored) cu
+    // tinta 90kg intr-o luna → deficitul cerut depaseste capul de ritm → capped.
+    setOnboarding({ sex: 'm', weight: 150, height: 185, goal: 'slabire' });
+    const now = new Date();
+    const targetMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    useProgresStore.setState({
+      targetObiectiv: { weightKg: 90, month: targetMonth },
+      weightLog: [],
+      bodyData: [],
+    } as never);
+    const t = await getNutritionTargetsToday();
+    expect(t.healthyFloorClamped).toBe(false);
+    expect(t.safetyLimited).toBe('capped');
+  });
+
+  it('profil normal (80kg/180cm barbat slabire, fara deadline) → NICIUN semnal de siguranta', async () => {
+    // 20% deficit pe o mentenanta normala ramane peste floor + fara deadline =
+    // ritmul default (NU capat). Nici floored, nici capped.
+    setOnboarding({ sex: 'm', weight: 80, height: 180, goal: 'slabire' });
+    const t = await getNutritionTargetsToday();
+    expect(t.safetyLimited).toBeUndefined();
   });
 });
 

@@ -24,6 +24,10 @@ export interface NutritionTarget {
   // BUG #4 safety — true cand kcal-ul a fost ridicat la un surplus de crestere
   // fiindca user-ul e subponderal (BMI <= 18.5). UI arata mesajul de sustinere.
   healthyFloorClamped?: boolean;
+  // L7 safety surfacing — tinta de baza a fost LIMITATA de siguranta la profile
+  // extreme: 'floored' = clampata la floor-ul sex-aware, 'capped' = ritm plafonat.
+  // UI arata o nota scurta care explica DE CE tinta e la acea valoare.
+  safetyLimited?: 'floored' | 'capped';
 }
 
 /**
@@ -61,5 +65,6 @@ export async function getNutritionTargetTodayReal(
     source: engineTargets.source === 'engine' ? 'engine-bn' : 'baseline',
     confidence: engineTargets.confidence,
     healthyFloorClamped: engineTargets.healthyFloorClamped ?? false,
+    ...(engineTargets.safetyLimited ? { safetyLimited: engineTargets.safetyLimited } : {}),
   };
 }

@@ -606,6 +606,8 @@
       "fatigueEaseNote": "Oboseala mare + deficit: tinta urcata cu {kcal} kcal spre mentenanta ca sa protejam recuperarea.",
       "aerobicAddNote": "Clasa aerobic azi: +{kcal} kcal adaugate la tinta, deci poti manca un pic mai mult.",
       "addOnsClampedNote": "Plafonat la mentenanta: antrenamentul de azi nu adauga kcal peste necesar.",
+      "safetyFloorNote": "Minim sigur atins — nu coboram sub acest prag.",
+      "safetyCapNote": "Limitat pentru siguranta — ritm sustenabil.",
       "sources": {
         "manual": "Setat manual",
         "engineBn": "Estimare adaptiva",

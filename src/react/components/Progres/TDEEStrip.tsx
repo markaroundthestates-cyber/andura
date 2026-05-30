@@ -444,6 +444,23 @@ export function TDEEStrip(): JSX.Element {
           <span>{t('tdeeStrip.healthyFloorMsg')}</span>
         </p>
       )}
+
+      {/* L7 — base-target safety limit note. Surfaced when the auto target was
+          rate-capped or clamped to the sex floor at an extreme profile, so the
+          user understands WHY the number landed there. Distinct from the add-on
+          "addOnsClampedNote" (that is about ease/aerobic add-ons over maintenance,
+          not the base target) and suppressed under a manual log (the shown number
+          is then the user's intake, not the limited target). */}
+      {!kcalIsManual && target?.safetyLimited && (
+        <p
+          className="text-xs text-ink2 mt-2 leading-snug relative"
+          data-testid="tdee-safety-limit-note"
+        >
+          {target.safetyLimited === 'floored'
+            ? t('progres.tdee.safetyFloorNote')
+            : t('progres.tdee.safetyCapNote')}
+        </p>
+      )}
     </section>
   );
 }

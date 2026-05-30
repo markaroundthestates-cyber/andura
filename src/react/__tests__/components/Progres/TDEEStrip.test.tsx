@@ -145,6 +145,65 @@ describe('TDEEStrip — Wave C2 i18n EN default', () => {
     // RO no-diacritics (D-LEGACY-064).
     expect(/[ăâîșțĂÂÎȘȚ]/.test(msg.textContent ?? '')).toBe(false);
   });
+
+  // L7 safety surfacing — base target rate-capped / floored at extreme profiles.
+  it('L7: NU arata nota de siguranta cand safetyLimited absent', async () => {
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-strip')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('tdee-safety-limit-note')).not.toBeInTheDocument();
+  });
+
+  it('L7: arata nota de floor cand safetyLimited floored', async () => {
+    vi.mocked(getNutritionTargetTodayReal).mockResolvedValueOnce({
+      kcalTarget: 1000,
+      proteinTarget: 90,
+      source: 'engine-bn',
+      confidence: 0.5,
+      safetyLimited: 'floored',
+    });
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-safety-limit-note')).toBeInTheDocument();
+    });
+    const note = screen.getByTestId('tdee-safety-limit-note');
+    expect(note.textContent).toMatch(/Safe minimum reached/);
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(note.textContent ?? '')).toBe(false);
+  });
+
+  it('L7: arata nota de cap cand safetyLimited capped', async () => {
+    vi.mocked(getNutritionTargetTodayReal).mockResolvedValueOnce({
+      kcalTarget: 2900,
+      proteinTarget: 200,
+      source: 'engine-bn',
+      confidence: 0.5,
+      safetyLimited: 'capped',
+    });
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-safety-limit-note')).toBeInTheDocument();
+    });
+    const note = screen.getByTestId('tdee-safety-limit-note');
+    expect(note.textContent).toMatch(/Limited for safety/);
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(note.textContent ?? '')).toBe(false);
+  });
+
+  it('L7: nota suprimata cand user-ul a logat manual kcal azi (numarul afisat e intake-ul)', async () => {
+    vi.mocked(getNutritionTargetTodayReal).mockResolvedValueOnce({
+      kcalTarget: 1000,
+      proteinTarget: 90,
+      source: 'engine-bn',
+      confidence: 0.5,
+      safetyLimited: 'floored',
+    });
+    useNutritionStore.getState().setDailyKcal(todayIso(), 1800);
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-strip')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('tdee-safety-limit-note')).not.toBeInTheDocument();
+  });
 });
 
 // Aerobic-class kcal → nutrition (Daniel spec 2026-05-30). A logged class

@@ -606,6 +606,8 @@
       "fatigueEaseNote": "High fatigue + a deficit: target eased {kcal} kcal toward maintenance to protect recovery.",
       "aerobicAddNote": "Aerobic class today: +{kcal} kcal added to your target, so you can eat a bit more.",
       "addOnsClampedNote": "Capped at maintenance: today's training does not add kcal above what you need.",
+      "safetyFloorNote": "Safe minimum reached — we won't go below this.",
+      "safetyCapNote": "Limited for safety — a sustainable pace.",
       "sources": {
         "manual": "Set manually",
         "engineBn": "Adaptive estimate",

@@ -664,6 +664,13 @@ export interface NutritionTargetsEngine {
   // BUG #4 safety — true cand recomandarea a fost ridicata la un surplus de
   // crestere fiindca user-ul e subponderal (BMI <= 18.5). UI arata mesajul de sustinere.
   healthyFloorClamped?: boolean;
+  // L7 safety surfacing — la profile extreme tinta de baza a fost LIMITATA de
+  // siguranta: 'floored' = clampata la floor-ul sex-aware (1200 m / 1000 f),
+  // 'capped' = ritmul a fost plafonat (max 1.5kg/sapt pierdere, 0.5kg crestere).
+  // UI (TDEEStrip) arata o nota scurta care explica DE CE tinta e la acea valoare.
+  // Distinct de healthyFloorClamped (subponderal) si de add-on clamp (plafonare
+  // add-on peste mentenanta) — aici e despre tinta de baza, NU add-on-uri.
+  safetyLimited?: 'floored' | 'capped';
 }
 
 const BASELINE_NUTRITION: NutritionTargetsEngine = {
@@ -718,9 +725,9 @@ function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine 
   // + sex floor (it reads `phase-override` itself), so it SUPERSEDES the old
   // `targetKcal > goalMult` precedence that let a below-current target weight
   // (a deficit) discard a BULK goal's surplus (Daniel repro masa+target90).
-  const coherentKcal = getCoherentKcalToday(tdee);
+  const coherent = getCoherentKcalToday(tdee);
   // Stats onboarding absente (cold start) → fallback flat 2640 ultim resort.
-  if (tdee === null && phaseKcal === null && coherentKcal === null) return BASELINE_NUTRITION;
+  if (tdee === null && phaseKcal === null && coherent === null) return BASELINE_NUTRITION;
 
   const baseTdee = tdee as number;
   const kcalFloor = readUserKcalFloor(); // sex-aware (femei 1000 / barbati 1200)
@@ -729,9 +736,12 @@ function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine 
   const kcalTarget =
     phaseKcal !== null
       ? phaseKcal
-      : coherentKcal !== null
-        ? coherentKcal
+      : coherent !== null
+        ? coherent.kcal
         : Math.max(Math.round(baseTdee), kcalFloor);
+  // L7 — surface the base-target safety limit, but ONLY when the coherent sizing
+  // is the value we actually show (a manual phase-override snapshot supersedes it).
+  const safetyLimited = phaseKcal === null ? resolveSafetyLimited(coherent) : undefined;
 
   const proteinTargetG =
     computeProteinTargetG(readUserWeightKg()) ?? BASELINE_NUTRITION.proteinTargetG;
@@ -750,6 +760,9 @@ function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine 
     source: tdee !== null || phaseKcal !== null ? 'engine' : 'baseline',
     confidence: 0,
     healthyFloorClamped: guarded.clamped,
+    // When the subponderal guardrail RAISED the target, it was not held down by
+    // a safety floor/cap — suppress the limit note so the two never contradict.
+    ...(!guarded.clamped && safetyLimited ? { safetyLimited } : {}),
   };
 }
 
@@ -906,8 +919,33 @@ export function resolveActivePhase(): PhaseToken | null {
  * SURPLUS (the Daniel repro is fixed — a below-current target can never flip a
  * BULK goal into a deficit). Returns null when no maintenance estimate (caller
  * cold-start fallback). I/O boundary.
+ *
+ * Returns the kcal target PLUS the two safety signals from sizeKcalForPhase
+ * (rateCapped = a cap reduced the shift, floored = the sex floor clamped the
+ * result) so the display layer can surface a "limitat pentru siguranta" note
+ * explaining WHY an extreme-profile target landed where it did. Returns null
+ * when there is no directional signal (caller falls back to maintenance).
  */
-function getCoherentKcalToday(tdee: number | null): number | null {
+interface CoherentKcalResult {
+  kcal: number;
+  rateCapped: boolean;
+  floored: boolean;
+}
+
+/**
+ * Map the coherent-sizing safety flags to the single display signal. Floor wins
+ * over cap when both fire — hitting the hard minimum is the stronger statement
+ * (the deeper safety boundary) than a rate cap. null when nothing was limited.
+ */
+function resolveSafetyLimited(
+  r: CoherentKcalResult | null,
+): 'floored' | 'capped' | undefined {
+  if (!r) return undefined;
+  if (r.floored) return 'floored';
+  if (r.rateCapped) return 'capped';
+  return undefined;
+}
+function getCoherentKcalToday(tdee: number | null): CoherentKcalResult | null {
   if (tdee === null || !Number.isFinite(tdee) || tdee <= 0) return null;
   const phase = resolveActivePhase();
   // No directional signal (cold-start, no goal, no target) → plain maintenance.
@@ -923,7 +961,7 @@ function getCoherentKcalToday(tdee: number | null): number | null {
     daysRemaining: days,
     kcalFloor: readUserKcalFloor(),
   });
-  return r.kcalTarget;
+  return { kcal: r.kcalTarget, rateCapped: r.rateCapped, floored: r.floored };
 }
 
 function getPhaseOverrideKcalToday(): number | null {
@@ -1055,15 +1093,18 @@ export async function getNutritionTargetsToday(
     // the Bayesian posterior) using the goal/phase direction + rate-capped target
     // magnitude. The phase sign is forced (BULK=surplus, CUT=deficit), so a
     // below-current target weight can no longer flip a masa goal into a deficit.
-    const coherentKcal = getCoherentKcalToday(mu as number);
+    const coherent = getCoherentKcalToday(mu as number);
     // Precedence: manual phase override snapshot (B001 SchimbaFaza phase-log) >
     // coherent goal/target/AUTO sizing > adaptive maintenance (mu, floored).
     const finalKcal =
       phaseKcal !== null
         ? phaseKcal
-        : coherentKcal !== null
-          ? coherentKcal
+        : coherent !== null
+          ? coherent.kcal
           : Math.max(Math.round(mu as number), readUserKcalFloor());
+    // L7 — surface the base-target safety limit only when coherent sizing is the
+    // shown value (a manual phase-override snapshot supersedes it).
+    const safetyLimited = phaseKcal === null ? resolveSafetyLimited(coherent) : undefined;
     // BUG #4 safety — guardrail anti-subnutritie: user subponderal → ridica la
     // un surplus moderat de crestere (TDEE×1.08). Aplicat DUPA precedenta
     // (override faza / goal / Bayesian) ca sa prinda orice deficit, oricare sursa.
@@ -1080,6 +1121,9 @@ export async function getNutritionTargetsToday(
       source: 'engine',
       confidence: mapBNConfidence(result.confidence),
       healthyFloorClamped: guarded.clamped,
+      // Suppress when the subponderal guardrail raised the target (not held down
+      // by a floor/cap) so the limit note never contradicts the support message.
+      ...(!guarded.clamped && safetyLimited ? { safetyLimited } : {}),
     };
   } catch (e) {
     console.warn('[engineWrappers] getNutritionTargetsToday failed:', e);
