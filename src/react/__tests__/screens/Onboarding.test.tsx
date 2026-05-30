@@ -58,8 +58,23 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(useOnboardingStore.getState().data.sex).toBe('m');
   });
 
-  it('step 3 goal options 5 choices (post-D080 longevitate drop)', () => {
+  // Step 3 = training type (Daniel spec 2026-05-30). Default gym pre-selected.
+  it('step 3 training type 3 choices (gym/aerobic/both), gym default selected', () => {
     renderAt(3);
+    ['gym', 'aerobic', 'both'].forEach((tt) => {
+      expect(screen.getByTestId(`onb-training-${tt}`)).toBeInTheDocument();
+    });
+    expect(screen.getByTestId('onb-training-gym')).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('step 3 selecting aerobic persists trainingType', () => {
+    renderAt(3);
+    fireEvent.click(screen.getByTestId('onb-training-aerobic'));
+    expect(useOnboardingStore.getState().data.trainingType).toBe('aerobic');
+  });
+
+  it('step 4 goal options 5 choices (post-D080 longevitate drop)', () => {
+    renderAt(4);
     // §B003/D-1b + §obiectiv-drop-longevitate 2026-05-28 — 5 obiective:
     // auto + forta + masa + slabire + mentenanta (longevitate dropped 2026-05-28,
     // semantic duplicate of mentenanta — ambele MAINTENANCE phase).
@@ -69,49 +84,49 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(screen.queryByTestId('onb-goal-longevitate')).not.toBeInTheDocument();
   });
 
-  it('step 4 frequency 4 choices (2/3/4/5 per saptamana)', () => {
-    renderAt(4);
+  it('step 5 frequency 4 choices (2/3/4/5 per saptamana)', () => {
+    renderAt(5);
     ['2', '3', '4', '5'].forEach((f) => {
       expect(screen.getByTestId(`onb-freq-${f}`)).toBeInTheDocument();
     });
   });
 
-  it('step 5 experience 3 choices', () => {
-    renderAt(5);
+  it('step 6 experience 3 choices', () => {
+    renderAt(6);
     ['incepator', 'intermediar', 'avansat'].forEach((e) => {
       expect(screen.getByTestId(`onb-exp-${e}`)).toBeInTheDocument();
     });
   });
 
-  it('step 6 weight input persist', () => {
-    renderAt(6);
+  it('step 7 weight input persist', () => {
+    renderAt(7);
     fireEvent.change(screen.getByTestId('onb-weight-input'), { target: { value: '78' } });
     expect(useOnboardingStore.getState().data.weight).toBe(78);
   });
 
   // P-02 — inaltime step (mockup #screen-onb-inaltime). Fitness metric pentru
   // BMR Mifflin-St Jeor. Persist + range gate mirror weight step.
-  it('step 7 height input persist', () => {
-    renderAt(7);
+  it('step 8 height input persist', () => {
+    renderAt(8);
     fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '175' } });
     expect(useOnboardingStore.getState().data.height).toBe(175);
   });
 
-  it('step 7 cleared height input persists null (not 0)', () => {
+  it('step 8 cleared height input persists null (not 0)', () => {
     useOnboardingStore.setState({
       data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: null, height: 175 },
       completed: false,
       completedAt: null,
     });
-    renderAt(7);
+    renderAt(8);
     fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '' } });
     expect(useOnboardingStore.getState().data.height).toBeNull();
   });
 
-  it('step 7 fara inaltime blocheaza Continua (stay on step 7)', () => {
-    renderAt(7);
+  it('step 8 fara inaltime blocheaza Continua (stay on step 8)', () => {
+    renderAt(8);
     fireEvent.click(screen.getByTestId('onb-next'));
-    expect(screen.getByTestId('onboarding-step-7')).toBeInTheDocument();
+    expect(screen.getByTestId('onboarding-step-8')).toBeInTheDocument();
   });
 
   // §LOW-1 REVIEW-chat3 fresh-eyes — empty input must clear to null,
@@ -128,13 +143,13 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(useOnboardingStore.getState().data.age).toBeNull();
   });
 
-  it('step 6 cleared weight input persists null (not 0)', () => {
+  it('step 7 cleared weight input persists null (not 0)', () => {
     useOnboardingStore.setState({
       data: { age: null, sex: null, goal: null, frequency: null, experience: null, weight: 78, height: null },
       completed: false,
       completedAt: null,
     });
-    renderAt(6);
+    renderAt(7);
     fireEvent.change(screen.getByTestId('onb-weight-input'), { target: { value: '' } });
     expect(useOnboardingStore.getState().data.weight).toBeNull();
   });
@@ -149,7 +164,7 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(useOnboardingStore.getState().data.age).toBeNull();
   });
 
-  it('step 8 summary cu data finalized', () => {
+  it('step 9 summary cu data finalized', () => {
     useOnboardingStore.setState({
       data: {
         age: 32, sex: 'm', goal: 'masa', frequency: '3',
@@ -158,7 +173,7 @@ describe('Onboarding — Big 6 hard typing', () => {
       completed: false,
       completedAt: null,
     });
-    renderAt(8);
+    renderAt(9);
     const summary = screen.getByTestId('onb-summary');
     expect(summary.textContent).toMatch(/32/);
     expect(summary.textContent).toMatch(/Barbat/);
@@ -167,7 +182,7 @@ describe('Onboarding — Big 6 hard typing', () => {
     expect(summary.textContent).toMatch(/175 cm/);
   });
 
-  it('step 8 Gata navigates antrenor + finalizes (Big 6 + height valid)', () => {
+  it('step 9 Gata navigates antrenor + finalizes (Big 6 + height valid)', () => {
     // U-02 (CRIT) — finalize cere toate campurile complet (incl. height P-02).
     useOnboardingStore.setState({
       data: {
@@ -177,7 +192,7 @@ describe('Onboarding — Big 6 hard typing', () => {
       completed: false,
       completedAt: null,
     });
-    renderAt(8);
+    renderAt(9);
     fireEvent.click(screen.getByTestId('onb-next'));
     expect(useOnboardingStore.getState().completed).toBe(true);
     expect(screen.getByTestId('antrenor')).toBeInTheDocument();
@@ -196,7 +211,7 @@ describe('Onboarding — Big 6 hard typing', () => {
       completedAt: null,
     });
     expect(useProgresStore.getState().weightLog).toHaveLength(0);
-    renderAt(8);
+    renderAt(9);
     fireEvent.click(screen.getByTestId('onb-next'));
     const log = useProgresStore.getState().weightLog;
     expect(log).toHaveLength(1);
@@ -217,7 +232,7 @@ describe('Onboarding — Big 6 hard typing', () => {
       weightLog: [{ kg: 108, date: '2026-05-20', ts: Date.now() }],
       bodyData: [],
     });
-    renderAt(8);
+    renderAt(9);
     fireEvent.click(screen.getByTestId('onb-next'));
     const log = useProgresStore.getState().weightLog;
     expect(log).toHaveLength(1);
@@ -225,8 +240,8 @@ describe('Onboarding — Big 6 hard typing', () => {
   });
 
   // U-02 (CRIT) — click-through gol (toate null) NU completeaza onboarding.
-  it('step 8 Gata cu campuri null NU finalizeaza (no click-through gol)', () => {
-    renderAt(8);
+  it('step 9 Gata cu campuri null NU finalizeaza (no click-through gol)', () => {
+    renderAt(9);
     fireEvent.click(screen.getByTestId('onb-next'));
     expect(useOnboardingStore.getState().completed).toBe(false);
     expect(screen.queryByTestId('antrenor')).not.toBeInTheDocument();
@@ -305,22 +320,22 @@ describe('Onboarding — A11Y HIGH chat5 form aria attributes', () => {
     expect(screen.getByTestId('onb-age-error').textContent).toMatch(/18 si 99/);
   });
 
-  it('step 6 weight input has aria-required + required', () => {
-    renderAt(6);
+  it('step 7 weight input has aria-required + required', () => {
+    renderAt(7);
     const input = screen.getByTestId('onb-weight-input');
     expect(input).toHaveAttribute('aria-required', 'true');
     expect(input).toHaveAttribute('required');
   });
 
-  it('step 6 weight input NO aria-invalid pe valid 78', () => {
-    renderAt(6);
+  it('step 7 weight input NO aria-invalid pe valid 78', () => {
+    renderAt(7);
     fireEvent.change(screen.getByTestId('onb-weight-input'), { target: { value: '78' } });
     expect(screen.getByTestId('onb-weight-input')).not.toHaveAttribute('aria-invalid');
     expect(screen.queryByTestId('onb-weight-error')).not.toBeInTheDocument();
   });
 
-  it('step 6 weight input aria-invalid + error cand value < 30', () => {
-    renderAt(6);
+  it('step 7 weight input aria-invalid + error cand value < 30', () => {
+    renderAt(7);
     fireEvent.change(screen.getByTestId('onb-weight-input'), { target: { value: '20' } });
     const input = screen.getByTestId('onb-weight-input');
     expect(input).toHaveAttribute('aria-invalid', 'true');
@@ -331,30 +346,30 @@ describe('Onboarding — A11Y HIGH chat5 form aria attributes', () => {
     expect(err.textContent).toMatch(/Kg intre 30 si 250/);
   });
 
-  it('step 6 weight input aria-invalid cand value > 250', () => {
-    renderAt(6);
+  it('step 7 weight input aria-invalid cand value > 250', () => {
+    renderAt(7);
     fireEvent.change(screen.getByTestId('onb-weight-input'), { target: { value: '300' } });
     expect(screen.getByTestId('onb-weight-input')).toHaveAttribute('aria-invalid', 'true');
     expect(screen.getByTestId('onb-weight-error').textContent).toMatch(/30 si 250/);
   });
 
   // P-02 — height step aria parity (mirror weight step WCAG 3.3.1 + 3.3.3).
-  it('step 7 height input has aria-required + required', () => {
-    renderAt(7);
+  it('step 8 height input has aria-required + required', () => {
+    renderAt(8);
     const input = screen.getByTestId('onb-height-input');
     expect(input).toHaveAttribute('aria-required', 'true');
     expect(input).toHaveAttribute('required');
   });
 
-  it('step 7 height input NO aria-invalid pe valid 175', () => {
-    renderAt(7);
+  it('step 8 height input NO aria-invalid pe valid 175', () => {
+    renderAt(8);
     fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '175' } });
     expect(screen.getByTestId('onb-height-input')).not.toHaveAttribute('aria-invalid');
     expect(screen.queryByTestId('onb-height-error')).not.toBeInTheDocument();
   });
 
-  it('step 7 height input aria-invalid + error cand value < 120', () => {
-    renderAt(7);
+  it('step 8 height input aria-invalid + error cand value < 120', () => {
+    renderAt(8);
     fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '100' } });
     const input = screen.getByTestId('onb-height-input');
     expect(input).toHaveAttribute('aria-invalid', 'true');
@@ -364,8 +379,8 @@ describe('Onboarding — A11Y HIGH chat5 form aria attributes', () => {
     expect(err.textContent).toMatch(/Inaltime intre 120 si 230/);
   });
 
-  it('step 7 height input aria-invalid cand value > 230', () => {
-    renderAt(7);
+  it('step 8 height input aria-invalid cand value > 230', () => {
+    renderAt(8);
     fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '250' } });
     expect(screen.getByTestId('onb-height-input')).toHaveAttribute('aria-invalid', 'true');
     expect(screen.getByTestId('onb-height-error').textContent).toMatch(/120 si 230/);

@@ -56,9 +56,21 @@ describe('Onboarding Step 2 (sex) — toggle button semantic', () => {
   });
 });
 
-describe('Onboarding Step 3 (goal) — toggle button semantic', () => {
-  it('clicking "masa" sets aria-pressed=true exclusively', () => {
+// Step 3 = training type (Daniel spec 2026-05-30). Goal shifts to step 4.
+describe('Onboarding Step 3 (training type) — toggle button semantic', () => {
+  it('default gym pre-selected; clicking "aerobic" flips aria-pressed exclusively', () => {
     renderAt(3);
+    expect(screen.getByTestId('onb-training-gym')).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(screen.getByTestId('onb-training-aerobic'));
+    expect(screen.getByTestId('onb-training-aerobic')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('onb-training-gym')).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByTestId('onb-training-both')).toHaveAttribute('aria-pressed', 'false');
+  });
+});
+
+describe('Onboarding Step 4 (goal) — toggle button semantic', () => {
+  it('clicking "masa" sets aria-pressed=true exclusively', () => {
+    renderAt(4);
     fireEvent.click(screen.getByTestId('onb-goal-masa'));
     expect(screen.getByTestId('onb-goal-masa')).toHaveAttribute('aria-pressed', 'true');
     // All others must remain false.
@@ -69,9 +81,9 @@ describe('Onboarding Step 3 (goal) — toggle button semantic', () => {
   });
 });
 
-describe('Onboarding Step 4 (frequency) — toggle button semantic', () => {
+describe('Onboarding Step 5 (frequency) — toggle button semantic', () => {
   it('all 4 frequency options have aria-label with sesiuni count', () => {
-    renderAt(4);
+    renderAt(5);
     // §6-M3 audit fix added per-button aria-label so screen readers announce
     // numeric value as "3 sesiuni pe saptamana" (not just "3").
     expect(screen.getByTestId('onb-freq-3')).toHaveAttribute(
@@ -85,15 +97,15 @@ describe('Onboarding Step 4 (frequency) — toggle button semantic', () => {
   });
 
   it('aria-pressed flips after click', () => {
-    renderAt(4);
+    renderAt(5);
     fireEvent.click(screen.getByTestId('onb-freq-4'));
     expect(screen.getByTestId('onb-freq-4')).toHaveAttribute('aria-pressed', 'true');
   });
 });
 
-describe('Onboarding Step 5 (experience) — toggle button semantic', () => {
+describe('Onboarding Step 6 (experience) — toggle button semantic', () => {
   it('clicking "intermediar" sets aria-pressed=true exclusively', () => {
-    renderAt(5);
+    renderAt(6);
     fireEvent.click(screen.getByTestId('onb-exp-intermediar'));
     expect(screen.getByTestId('onb-exp-intermediar')).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByTestId('onb-exp-incepator')).toHaveAttribute('aria-pressed', 'false');
@@ -101,14 +113,14 @@ describe('Onboarding Step 5 (experience) — toggle button semantic', () => {
   });
 });
 
-describe('Onboarding Step 1 + 6 — numeric inputs have aria-label', () => {
+describe('Onboarding Step 1 + 7 — numeric inputs have aria-label', () => {
   it('Step 1 age input has aria-label "Varsta in ani"', () => {
     renderAt(1);
     expect(screen.getByTestId('onb-age-input')).toHaveAttribute('aria-label', 'Varsta in ani');
   });
 
-  it('Step 6 weight input has aria-label "Greutate in kilograme"', () => {
-    renderAt(6);
+  it('Step 7 weight input has aria-label "Greutate in kilograme"', () => {
+    renderAt(7);
     expect(screen.getByTestId('onb-weight-input')).toHaveAttribute(
       'aria-label',
       'Greutate in kilograme'

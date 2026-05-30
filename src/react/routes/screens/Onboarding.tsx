@@ -33,9 +33,12 @@ import {
   Award,
   Scale,
   Ruler,
+  Dumbbell as DumbbellIcon,
+  HeartPulse,
+  Layers,
 } from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../stores/onboardingStore';
-import type { OnboardingData, Frequency, Experience } from '../../stores/onboardingStore';
+import type { OnboardingData, Frequency, Experience, TrainingType } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
 import { Kicker } from '../../components/pulse/Kicker';
 import { toast } from '../../lib/toast';
@@ -50,9 +53,12 @@ function todayIso(): string {
   return `${y}-${m}-${dd}`;
 }
 
-const TOTAL_STEPS = 8;
+// Daniel spec 2026-05-30 — training-type step inserted at position 3 (after
+// sex, before goal): it GATES the whole experience so it belongs early. Total
+// steps 8 → 9 (goal/freq/exp/weight/height/summary each shift +1).
+const TOTAL_STEPS = 9;
 
-type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export function Onboarding(): JSX.Element {
   const { step } = useParams<{ step: string }>();
@@ -90,14 +96,19 @@ export function Onboarding(): JSX.Element {
       return resolveFieldCheck(validateOnboardingField('age', data.age));
     }
     if (stepNum === 2 && data.sex === null) return { ok: false, reason: t('onboarding.toast.completeOption') };
-    if (stepNum === 3 && data.goal === null) return { ok: false, reason: t('onboarding.toast.completeGoal') };
-    if (stepNum === 4 && data.frequency === null) return { ok: false, reason: t('onboarding.toast.completeFrequency') };
-    if (stepNum === 5 && data.experience === null) return { ok: false, reason: t('onboarding.toast.completeLevel') };
-    if (stepNum === 6) {
+    // Step 3 (NEW) — training type. Default 'gym' is always present (EMPTY seed),
+    // so the gate never blocks; the explicit choice still commits via the tiles.
+    if (stepNum === 3 && (data.trainingType ?? null) === null) {
+      return { ok: false, reason: t('onboarding.toast.completeTrainingType') };
+    }
+    if (stepNum === 4 && data.goal === null) return { ok: false, reason: t('onboarding.toast.completeGoal') };
+    if (stepNum === 5 && data.frequency === null) return { ok: false, reason: t('onboarding.toast.completeFrequency') };
+    if (stepNum === 6 && data.experience === null) return { ok: false, reason: t('onboarding.toast.completeLevel') };
+    if (stepNum === 7) {
       if (data.weight === null) return { ok: false, reason: t('onboarding.toast.completeWeight') };
       return resolveFieldCheck(validateOnboardingField('weight', data.weight));
     }
-    if (stepNum === 7) {
+    if (stepNum === 8) {
       if (data.height === null) return { ok: false, reason: t('onboarding.toast.completeHeight') };
       return resolveFieldCheck(validateOnboardingField('height', data.height));
     }
@@ -182,12 +193,13 @@ export function Onboarding(): JSX.Element {
       <div key={`onb-step-${stepNum}`} className="animate-fade-in-up delay-75">
         {stepNum === 1 && <Step1 value={data.age} onChange={(v) => setField('age', v)} />}
         {stepNum === 2 && <Step2 value={data.sex} onChange={(v) => setField('sex', v)} />}
-        {stepNum === 3 && <Step3 value={data.goal} onChange={(v) => setField('goal', v)} />}
-        {stepNum === 4 && <Step4 value={data.frequency} onChange={(v) => setField('frequency', v)} />}
-        {stepNum === 5 && <Step5 value={data.experience} onChange={(v) => setField('experience', v)} />}
-        {stepNum === 6 && <Step6 value={data.weight} onChange={(v) => setField('weight', v)} />}
-        {stepNum === 7 && <Step7Height value={data.height} onChange={(v) => setField('height', v)} />}
-        {stepNum === 8 && <Step8Summary data={data} />}
+        {stepNum === 3 && <StepTrainingType value={data.trainingType ?? 'gym'} onChange={(v) => setField('trainingType', v)} />}
+        {stepNum === 4 && <Step3 value={data.goal} onChange={(v) => setField('goal', v)} />}
+        {stepNum === 5 && <Step4 value={data.frequency} onChange={(v) => setField('frequency', v)} />}
+        {stepNum === 6 && <Step5 value={data.experience} onChange={(v) => setField('experience', v)} />}
+        {stepNum === 7 && <Step6 value={data.weight} onChange={(v) => setField('weight', v)} />}
+        {stepNum === 8 && <Step7Height value={data.height} onChange={(v) => setField('height', v)} />}
+        {stepNum === 9 && <Step8Summary data={data} />}
       </div>
 
       <div className="flex-1" />
@@ -392,6 +404,61 @@ function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): JSX.Element {
   );
 }
 
+// Daniel spec 2026-05-30 — training-type step (Step 3). Gates gym vs aerobic
+// vs both. Enriched rows mirror the goal/frequency pattern (icon + subtitle +
+// check affordance). Default 'gym' pre-selected (EMPTY seed) so a user who just
+// taps Continua keeps the original gym experience.
+const TRAINING_TYPE_OPTIONS: ReadonlyArray<{
+  value: TrainingType;
+  Icon: typeof Sparkles;
+  labelKey: string;
+  subtitleKey: string;
+}> = [
+  { value: 'gym', Icon: DumbbellIcon, labelKey: 'onboarding.options.trainingType.gym', subtitleKey: 'onboarding.options.trainingType.gymSubtitle' },
+  { value: 'aerobic', Icon: HeartPulse, labelKey: 'onboarding.options.trainingType.aerobic', subtitleKey: 'onboarding.options.trainingType.aerobicSubtitle' },
+  { value: 'both', Icon: Layers, labelKey: 'onboarding.options.trainingType.both', subtitleKey: 'onboarding.options.trainingType.bothSubtitle' },
+];
+
+function StepTrainingType({ value, onChange }: OptionStepProps<TrainingType>): JSX.Element {
+  return (
+    <>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.3.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.3.desc')}</p>
+      <div className="flex flex-col gap-3">
+        {TRAINING_TYPE_OPTIONS.map(({ value: v, Icon, labelKey, subtitleKey }, idx) => {
+          const selected = value === v;
+          const delayClass = ['delay-150', 'delay-225', 'delay-300'][idx] ?? 'delay-300';
+          return (
+            <button
+              key={v}
+              type="button"
+              onClick={() => onChange(v)}
+              data-testid={`onb-training-${v}`}
+              aria-pressed={selected}
+              className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-2xl border text-ink text-left transition-colors ${selected ? 'ob-row-selected option-selected-ring' : 'bg-paper2 border-lineStrong'}`}
+            >
+              <Icon
+                className={`w-5 h-5 flex-shrink-0 ${selected ? 'text-brick' : 'text-ink2'}`}
+                aria-hidden="true"
+              />
+              <span className="flex-1">
+                <span className="block font-medium">{t(labelKey)}</span>
+                <span className="block text-xs mt-0.5 text-ink3">{t(subtitleKey)}</span>
+              </span>
+              <span
+                className={`ob-check ${selected ? 'ob-check-on' : ''}`}
+                aria-hidden="true"
+              >
+                {selected && <Check className="w-3.5 h-3.5" strokeWidth={2.6} />}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
 // §B003/D-1b + §obiectiv-drop-longevitate 2026-05-28 — Goal labels 5 values
 // (post-D080 longevitate dropped, semantic duplicate of mentenanta — ambele
 // MAINTENANCE phase). Auto = default (engine alege singur). Slabire (was
@@ -422,8 +489,8 @@ const GOAL_OPTIONS: Array<{
 function Step3({ value, onChange }: OptionStepProps<GoalKey>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.3.title')}</h1>
-      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.3.desc')}</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.4.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.4.desc')}</p>
       <div className="flex flex-col gap-3">
         {GOAL_OPTIONS.map(({ key, Icon, subtitleKey }, idx) => {
           const selected = value === key;
@@ -498,8 +565,8 @@ const FREQ_OPTIONS: ReadonlyArray<{ value: Frequency; labelKey: string; subtitle
 function Step4({ value, onChange }: OptionStepProps<Frequency>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.4.title')}</h1>
-      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.4.desc')}</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.5.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.5.desc')}</p>
       {/* aria-label pe fiecare buton numeric pastrat (Screen readers anunta
           numeric value semantic "3 sesiuni pe saptamana" nu doar "3"). */}
       <div className="flex flex-col gap-3">
@@ -513,7 +580,7 @@ function Step4({ value, onChange }: OptionStepProps<Frequency>): JSX.Element {
               onClick={() => onChange(v)}
               data-testid={`onb-freq-${v}`}
               aria-pressed={selected}
-              aria-label={t('onboarding.steps.4.ariaLabelFmt', { n: v })}
+              aria-label={t('onboarding.steps.5.ariaLabelFmt', { n: v })}
               className={`press-feedback animate-fade-in-up ${delayClass} flex items-center gap-3 p-4 rounded-2xl border text-ink text-left transition-colors ${selected ? 'ob-row-selected option-selected-ring' : 'bg-paper2 border-lineStrong'}`}
             >
               <span
@@ -555,8 +622,8 @@ const EXP_OPTIONS: ReadonlyArray<{ value: Experience; labelKey: string; subtitle
 function Step5({ value, onChange }: OptionStepProps<Experience>): JSX.Element {
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.5.title')}</h1>
-      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.5.desc')}</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.6.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.6.desc')}</p>
       <div className="flex flex-col gap-3">
         {EXP_OPTIONS.map(({ value: v, labelKey, subtitleKey }, idx) => {
           const selected = value === v;
@@ -596,23 +663,23 @@ function Step6({ value, onChange }: NumericStepProps): JSX.Element {
   // A11Y HIGH chat5 — surface range validation pentru screen reader. Show
   // doar daca value e ne-null + out-of-range. WCAG SC 3.3.1 + 3.3.3.
   const error = value !== null && (value < 30 || value > 250)
-    ? t('onboarding.steps.6.error')
+    ? t('onboarding.steps.7.error')
     : null;
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.6.title')}</h1>
-      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.6.desc')}</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.7.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.7.desc')}</p>
       <BigNumberField
         value={value}
         onChange={onChange}
-        unit={t('onboarding.steps.6.unit')}
-        helper={t('onboarding.steps.6.helper')}
+        unit={t('onboarding.steps.7.unit')}
+        helper={t('onboarding.steps.7.helper')}
         error={error}
         inputId="onb-weight"
         errorId="onb-weight-error"
         testId="onb-weight-input"
-        ariaLabel={t('onboarding.steps.6.ariaLabel')}
-        placeholder={t('onboarding.steps.6.placeholder')}
+        ariaLabel={t('onboarding.steps.7.ariaLabel')}
+        placeholder={t('onboarding.steps.7.placeholder')}
         min={30}
         max={250}
         step="0.1"
@@ -632,23 +699,23 @@ function Step7Height({ value, onChange }: NumericStepProps): JSX.Element {
   // A11Y HIGH chat5 parity — surface range validation pentru screen reader.
   // Show doar daca value e ne-null + out-of-range. WCAG SC 3.3.1 + 3.3.3.
   const error = value !== null && (value < 120 || value > 230)
-    ? t('onboarding.steps.7.error')
+    ? t('onboarding.steps.8.error')
     : null;
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.7.title')}</h1>
-      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.7.desc')}</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.8.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.8.desc')}</p>
       <BigNumberField
         value={value}
         onChange={onChange}
-        unit={t('onboarding.steps.7.unit')}
-        helper={t('onboarding.steps.7.helper')}
+        unit={t('onboarding.steps.8.unit')}
+        helper={t('onboarding.steps.8.helper')}
         error={error}
         inputId="onb-height"
         errorId="onb-height-error"
         testId="onb-height-input"
-        ariaLabel={t('onboarding.steps.7.ariaLabel')}
-        placeholder={t('onboarding.steps.7.placeholder')}
+        ariaLabel={t('onboarding.steps.8.ariaLabel')}
+        placeholder={t('onboarding.steps.8.placeholder')}
         min={120}
         max={230}
         step="1"
@@ -670,6 +737,10 @@ function Step8Summary({ data }: { data: OnboardingData }): JSX.Element {
     data.sex === 'm' ? t('onboarding.confirm.values.sexM')
     : data.sex === 'f' ? t('onboarding.confirm.values.sexF')
     : empty;
+  const trainingTypeValue =
+    (data.trainingType ?? 'gym') === 'aerobic' ? t('onboarding.confirm.values.trainingTypeAerobic')
+    : (data.trainingType ?? 'gym') === 'both' ? t('onboarding.confirm.values.trainingTypeBoth')
+    : t('onboarding.confirm.values.trainingTypeGym');
   const goalValue = data.goal ? goalLabel(data.goal) : empty;
   const frequencyValue = data.frequency
     ? t('onboarding.confirm.values.frequencyShort', { n: data.frequency })
@@ -686,6 +757,7 @@ function Step8Summary({ data }: { data: OnboardingData }): JSX.Element {
   const rows: Array<{ Icon: typeof Calendar; label: string; value: string | number }> = [
     { Icon: Calendar, label: t('onboarding.confirm.fields.age'), value: data.age ?? empty },
     { Icon: User, label: t('onboarding.confirm.fields.sex'), value: sexValue },
+    { Icon: HeartPulse, label: t('onboarding.confirm.fields.trainingType'), value: trainingTypeValue },
     { Icon: Target, label: t('onboarding.confirm.fields.goal'), value: goalValue },
     { Icon: Activity, label: t('onboarding.confirm.fields.frequency'), value: frequencyValue },
     { Icon: Award, label: t('onboarding.confirm.fields.experience'), value: experienceValue },
@@ -694,8 +766,8 @@ function Step8Summary({ data }: { data: OnboardingData }): JSX.Element {
   ];
   return (
     <>
-      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.8.title')}</h1>
-      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.8.desc')}</p>
+      <h1 className="text-2xl font-bold text-ink mb-2">{t('onboarding.steps.9.title')}</h1>
+      <p className="text-sm text-ink2 mb-6">{t('onboarding.steps.9.desc')}</p>
       <div
         className="surface-elevated bg-paper2 border border-line rounded-2xl overflow-hidden"
         data-testid="onb-summary"

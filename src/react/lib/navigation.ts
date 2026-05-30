@@ -25,7 +25,7 @@
 export type GotoScreen =
   // Top-level
   | 'splash' | 'auth' | 'auth-reactivate'
-  | 'onb-1' | 'onb-2' | 'onb-3' | 'onb-4' | 'onb-5' | 'onb-6' | 'onb-7' | 'onb-8'
+  | 'onb-1' | 'onb-2' | 'onb-3' | 'onb-4' | 'onb-5' | 'onb-6' | 'onb-7' | 'onb-8' | 'onb-9'
   // Tab roots
   | 'antrenor' | 'progres' | 'istoric' | 'cont'
   // Phase 3 Antrenor sub-screens
@@ -66,7 +66,7 @@ export function gotoPath(screen: GotoScreen): string {
   if (
     screen === 'onb-1' || screen === 'onb-2' || screen === 'onb-3' ||
     screen === 'onb-4' || screen === 'onb-5' || screen === 'onb-6' ||
-    screen === 'onb-7' || screen === 'onb-8'
+    screen === 'onb-7' || screen === 'onb-8' || screen === 'onb-9'
   ) {
     const step = screen.slice(4);
     return `/onboarding/${step}`;
