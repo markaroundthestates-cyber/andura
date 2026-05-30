@@ -55,6 +55,7 @@ import { resolveBusySwap, resolveMissingSwap, resolveRefusalSwap } from '../../.
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../lib/scheduleAdapterAggregate';
 import { toast } from '../../../lib/toast';
 import { incrementRefusal } from '../../../../engine/schedule/scheduleAdapter.js';
+import { clearTodayReadiness } from '../../../../engine/readiness.js';
 import { t } from '../../../../i18n/index.js';
 
 const INACTIVITY_THRESHOLD_MIN = 7; // Mockup wv2 verbatim L4401
@@ -796,6 +797,12 @@ export function Workout(): JSX.Element {
       navigate(gotoPath('finish-early-confirm'));
       return;
     }
+    // Bugatti truth — un workout pornit-apoi-anulat NU lasa date. EnergyCheck a
+    // persistat raspunsul de energie (saveReadiness) la intrarea in flow; discard
+    // sterge si acel semnal de readiness de azi, altfel Coach-ul ar afisa un scor
+    // de readiness fabricat (ex. 85) desi nu exista nicio sesiune reala. Doar o
+    // sesiune COMPLETATA (finishSession) lasa semnal de readiness.
+    clearTodayReadiness();
     discardSession();
     navigate(gotoPath('antrenor'));
   }, [pauseSession, workoutTitle, navigate, discardSession]);
