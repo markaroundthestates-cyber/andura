@@ -23,7 +23,7 @@
 // keys required.
 //
 import { DB } from './db.js';
-import { toast } from './ui/ui.js';
+import { toast } from './ui/toast.js';
 import { COACH_RELEVANT_KEYS } from './util/dataRegistry.js';
 import { getAuthState, getIdToken } from './auth.js';
 
