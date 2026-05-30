@@ -170,6 +170,19 @@ describe('SettingsProfile — interactions', () => {
     fireEvent.click(screen.getByTestId('settings-profile-save'));
     expect(useOnboardingStore.getState().data.frequency).toBe('3');
   });
+
+  // Training type toggle (Daniel spec 2026-05-30) — change gym/aerobic/both later.
+  it('renders training type select cu default gym (legacy store fara trainingType)', () => {
+    renderScreen();
+    expect(screen.getByTestId('profile-training-type-select')).toHaveValue('gym');
+  });
+
+  it('changing training type to aerobic propagates pe save', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-training-type-select'), { target: { value: 'aerobic' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(useOnboardingStore.getState().data.trainingType).toBe('aerobic');
+  });
 });
 
 describe('SettingsProfile — Compozitie corporala (§F-pass2-settings-profile-03)', () => {

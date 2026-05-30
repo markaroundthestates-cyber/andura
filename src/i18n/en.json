@@ -1278,6 +1278,7 @@
       "experienceAdvanced": "Advanced",
       "frequency": "Workouts per week",
       "frequencyShort": "{n}x/week",
+      "trainingType": "What you do",
       "goal": "Goal",
       "saveCta": "Save",
       "savedToast": "Saved",

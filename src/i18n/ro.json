@@ -1278,6 +1278,7 @@
       "experienceAdvanced": "Avansat",
       "frequency": "Antrenamente pe saptamana",
       "frequencyShort": "{n}x/sapt",
+      "trainingType": "Ce faci",
       "goal": "Obiectiv",
       "saveCta": "Salveaza",
       "savedToast": "Salvat",
