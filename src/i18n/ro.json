@@ -1464,11 +1464,12 @@
       "title": "Descarca datele tale",
       "body": "Primesti un fisier JSON cu tot ce ai logat.",
       "exportCta": "Descarca (JSON)",
-      "intro": "Iei toate datele tale Andura intr-un fisier JSON pe care il poti stoca local sau muta pe alt dispozitiv. Include profil + antrenamente + nutritie + setari + calendar.",
+      "intro": "Iei toate datele tale Andura intr-un fisier JSON pe care il poti stoca local sau muta pe alt dispozitiv. Include profil + antrenamente + clase aerobice + nutritie + setari + calendar.",
       "contentHeading": "Continut export",
       "contentItems": [
         "Profil si Big 6 (varsta, gen, obiectiv, frecventa, experienta, greutate)",
         "Istoric sesiuni (toate antrenamentele logate)",
+        "Clase aerobice (toate clasele logate)",
         "Nutritie zilnica (kcal + proteine)",
         "Preferinte (tema, unitati, notificari)",
         "Calendar saptamanal (zile training/odihna)"

@@ -41,10 +41,11 @@ describe('SettingsExport — render + download flow', () => {
     expect(screen.getByRole('heading', { name: /Descarca datele tale/i, level: 1 })).toBeInTheDocument();
   });
 
-  it('renders content list cu 5 categorii export', () => {
+  it('renders content list cu 6 categorii export', () => {
     renderScreen();
     expect(screen.getByText(/Profil si Big 6/)).toBeInTheDocument();
     expect(screen.getByText(/Istoric sesiuni/)).toBeInTheDocument();
+    expect(screen.getByText(/Clase aerobice/)).toBeInTheDocument();
     expect(screen.getByText(/Nutritie zilnica/)).toBeInTheDocument();
     expect(screen.getByText(/Preferinte/)).toBeInTheDocument();
     expect(screen.getByText(/Calendar saptamanal/)).toBeInTheDocument();
@@ -117,6 +118,39 @@ describe('SettingsExport — render + download flow', () => {
     expect(payload.tier0Keys['pain-cdl']).toBeDefined();
     expect(payload.tier0Keys['cdl-patterns']).toBeDefined();
     expect(payload.tier0Keys['applied-patterns']).toBeDefined();
+    blobSpy.mockRestore();
+  });
+
+  it('XCUT-3 — export includes typed aerobic slot (logged classes)', async () => {
+    // aerobicStore was added after the typed export shape; a future persist-key /
+    // sweep change must not silently drop a logged-aerobic-class user's classes.
+    localStorage.setItem(
+      'wv2-aerobic-store',
+      JSON.stringify({ state: { sessions: [{ date: '2026-05-30', type: 'spinning', minutes: 45, kcal: 350, ts: 42 }], lastDuration: 45, subjectiveByDate: {} }, version: 1 }),
+    );
+
+    let captured = '';
+    const RealBlob = globalThis.Blob;
+    const blobSpy = vi
+      .spyOn(globalThis, 'Blob')
+      .mockImplementation((parts) => {
+        captured = Array.isArray(parts) ? parts.join('') : String(parts);
+        return new RealBlob(parts as BlobPart[]);
+      });
+    Object.defineProperty(URL, 'createObjectURL', { value: vi.fn(() => 'blob:mock'), configurable: true });
+    Object.defineProperty(URL, 'revokeObjectURL', { value: vi.fn(), configurable: true });
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {}); // jsdom no-nav
+
+    renderScreen();
+    fireEvent.click(screen.getByTestId('settings-export-trigger'));
+    await waitFor(() => expect(screen.getByTestId('settings-export-success')).toBeInTheDocument());
+
+    const payload = JSON.parse(captured);
+    // Typed slot present...
+    expect(payload.stores.aerobic).toBeDefined();
+    expect(Array.isArray(payload.stores.aerobic.sessions)).toBe(true);
+    // ...and the raw wv2 key still carried in the tier0 sweep (defence-in-depth).
+    expect(payload.tier0Keys['wv2-aerobic-store']).toBeDefined();
     blobSpy.mockRestore();
   });
 

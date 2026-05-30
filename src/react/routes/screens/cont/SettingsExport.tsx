@@ -12,6 +12,7 @@ import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useNutritionStore } from '../../../stores/nutritionStore';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { useScheduleStore } from '../../../stores/scheduleStore';
+import { useAerobicStore } from '../../../stores/aerobicStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { USER_DATA_KEYS, CDL_KEYS } from '../../../../util/dataRegistry.js';
@@ -38,6 +39,11 @@ interface ExportPayload {
     nutrition: ReturnType<typeof useNutritionStore.getState>;
     settings: ReturnType<typeof useSettingsStore.getState>;
     schedule: ReturnType<typeof useScheduleStore.getState>;
+    // XCUT-3 — aerobicStore was added AFTER this typed shape; its data IS already
+    // in the export via the wv2-* tier0Keys sweep, but a typed slot makes the
+    // GDPR-completeness explicit + testable (a future persist-key/sweep change
+    // can't silently drop a logged-aerobic-class user's classes from the export).
+    aerobic: ReturnType<typeof useAerobicStore.getState>;
   };
   tier0Keys: Record<string, string | null>;
   // §28-M4 GDPR Art. 20 — Tier 1 IDB stores (cdl/logs/applied_patterns
@@ -103,6 +109,7 @@ async function buildExportPayload(): Promise<ExportPayload> {
       nutrition: useNutritionStore.getState(),
       settings: useSettingsStore.getState(),
       schedule: useScheduleStore.getState(),
+      aerobic: useAerobicStore.getState(),
     },
     tier0Keys: collectTier0Keys(),
     tier1,

@@ -1464,11 +1464,12 @@
       "title": "Download your data",
       "body": "Get a JSON file with everything you've logged.",
       "exportCta": "Download (JSON)",
-      "intro": "Take all your Andura data in a single JSON file you can store locally or move to another device. Includes profile + workouts + nutrition + settings + calendar.",
+      "intro": "Take all your Andura data in a single JSON file you can store locally or move to another device. Includes profile + workouts + aerobic classes + nutrition + settings + calendar.",
       "contentHeading": "What's included",
       "contentItems": [
         "Profile and Big 6 (age, sex, goal, frequency, experience, weight)",
         "Session history (all logged workouts)",
+        "Aerobic classes (all logged classes)",
         "Daily nutrition (kcal + protein)",
         "Preferences (theme, units, notifications)",
         "Weekly calendar (training/rest days)"
