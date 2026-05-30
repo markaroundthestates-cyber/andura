@@ -227,6 +227,17 @@
 
   "workout": {
     "loading": "Loading workout…",
+    "adjust": {
+      "greuWeight": "That was hard - dropping to {kg} kg on the next set",
+      "greuReps": "That was hard - dropping to {reps} reps on the next set",
+      "usorWeight": "That felt easy - moving up to {kg} kg on the next set",
+      "usorReps": "That felt easy - moving up to {reps} reps on the next set",
+      "taperReps": "Fatigue is building - aiming for {reps} reps on the next set",
+      "overPerformWeight": "You beat the target - moving up to {kg} kg on the next set",
+      "overPerformReps": "You beat the target - moving up to {reps} reps on the next set",
+      "underWeight": "That was too heavy - dropping to {kg} kg on the next set",
+      "underReps": "That was too heavy - dropping to {reps} reps on the next set"
+    },
     "sessionTitle": {
       "PUSH": "Push (chest and shoulders)",
       "PULL": "Pull (back and biceps)",

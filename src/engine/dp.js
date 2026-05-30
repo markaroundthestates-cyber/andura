@@ -5,6 +5,7 @@ import { roundToEquipmentWeight, getPrevWeight } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier } from './exerciseMapping.js';
 import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
+import { t } from '../i18n/index.js';
 
 export const DP = {
   // Rep ranges per exercise
@@ -338,35 +339,175 @@ export const DP = {
     };
   }, // end _recommendRaw
 
-  // In-session RPE correction: if 2 sets RPE 10 → drop weight now
+  // ── In-session RESPONSIVE autoregulation (per-set) ──────────────────────────
+  // Daniel bug 2026-05-30: the old version only moved WEIGHT and only when the
+  // last TWO RPEs were both ≥10 (or both ≤6.5 + reps maxed) — so a single "greu"
+  // did nothing, "potrivit" never adapted, and the rep target stayed a static
+  // 4×10 "all the way, nu conteaza ca sunt exhausted". This rewrite reacts to
+  // EACH logged set from THREE signals:
+  //   (a) the rating (greu/potrivit/usor → RPE),
+  //   (b) the ACTUAL logged load+reps vs the recommended target (deviation),
+  //   (c) accumulated fatigue (set position — later sets allow a small taper).
+  // PHASE-AWARE: STRENGTH autoregulates WEIGHT; MASA/hypertrophy (BULK/CUT/AUTO)
+  // autoregulates REPS (hold weight); MAINTENANCE is mild. The over-/under-
+  // performance signal is persisted via the normal log history (the next session's
+  // getState reads it) so a too-low recommendation lifts the NEXT session too —
+  // we never fabricate, we just feed the existing DP progression.
+  //
+  // This is the POST-confirm learning layer. It does NOT replace the AaFriction
+  // over-recommendation SAFETY guard (which still asks "sure?" on an unsafe jump
+  // BEFORE the set), nor the kcal floors, nor the never-fabricate DP invariants.
   /**
    * @param {string} ex
-   * @param {number[]} recentRPEs
-   * @param {number[]} recentReps
-   * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
+   * @param {number[]} recentRPEs RPE per logged set (last = most recent).
+   * @param {number[]} recentReps reps per logged set (last = most recent).
+   * @param {{ recKg?: number, recReps?: number, loggedKg?: number, setIdx?: number, nowMs?: number } | number} [opts]
+   *   Optional context: recKg/recReps = what was RECOMMENDED for the set just
+   *   logged; loggedKg = the load the user ACTUALLY logged for that set (defaults
+   *   to the DP history lastW when omitted); setIdx = 0-based position of the NEXT
+   *   set (fatigue). A bare number is accepted as legacy `nowMs` for back-compat.
    */
-  checkInSessionAdjust(ex, recentRPEs, recentReps, nowMs) {
+  checkInSessionAdjust(ex, recentRPEs, recentReps, opts) {
+    const ctx = (typeof opts === 'number' || opts == null) ? { nowMs: opts } : opts;
+    const nowMs = ctx.nowMs;
     const dpState = this.getState(ex);
     const inc = this.getIncrement(ex);
     const phOv = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
     const inCut = this._isInCut(phOv, nowMs);
     const range = this.getPhaseAwareRepRange(ex, inCut);
+    const rMin = range[0] ?? 8;
     const rMax = range[1] ?? 12;
 
-    // No history yet — can't adjust
+    // No history yet — nothing to recalibrate against.
     if (!dpState.lastW) return { adjust: false };
+    // Need at least one rated set to respond to.
+    if (!recentRPEs || !recentRPEs.length) return { adjust: false };
 
-    // Prea greu: 2× RPE 10 → scade imediat
-    if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every((r) => r >= 10)) {
-      const newKg = getPrevWeight(dpState.lastW, ex);
-      return { adjust: true, dir: 'down', newKg, msg: `Greutatea este prea mare · Trecem la ${newKg} kg pentru urmatorul set` };
+    const lastRPE = /** @type {number} */ (recentRPEs[recentRPEs.length - 1]);
+    const loggedReps = (recentReps && recentReps.length)
+      ? /** @type {number} */ (recentReps[recentReps.length - 1]) : null;
+    // The load the user ACTUALLY logged for the set just rated. Prefer the
+    // explicit value from the caller (the UI's logged kg); fall back to the DP
+    // history lastW only when not provided (legacy callers / engine-only tests).
+    const loggedKg = (Number.isFinite(Number(ctx.loggedKg)) && Number(ctx.loggedKg) > 0)
+      ? Number(ctx.loggedKg) : dpState.lastW;
+
+    // STRENGTH phase autoregulates WEIGHT; everything else (BULK/CUT/AUTO masa-
+    // like) autoregulates REPS. MAINTENANCE flagged for milder magnitudes.
+    const isStrength = phOv === 'STRENGTH';
+    const isMaint = phOv === 'MAINTENANCE';
+
+    // ── (b) Performance deviation: did the user demonstrate FAR more/less than
+    // we recommended? Compare against the set's recommendation when provided.
+    const recKg = Number(ctx.recKg);
+    const recReps = Number(ctx.recReps);
+    const haveRec = Number.isFinite(recKg) && recKg > 0 && Number.isFinite(recReps) && recReps > 0;
+    if (haveRec && loggedReps != null && loggedReps > 0) {
+      const recVol = recKg * recReps;
+      const loggedVol = loggedKg * loggedReps;
+      const volRatio = loggedVol / recVol;
+      // FAR over (≥1.5× the recommended set volume) AND not a near-failure rating
+      // → the recommendation was too low. Ramp the next set toward the demonstrated
+      // capacity. Heavy-low-reps (chose strength: loggedKg well above recKg) moves
+      // the WEIGHT toward what they lifted + lowers the rep target; light-high-reps
+      // adds reps (or weight in strength phase).
+      if (volRatio >= 1.5 && lastRPE < 9.5) {
+        const heavyLowReps = loggedKg >= recKg * 1.3;
+        if (isStrength || heavyLowReps) {
+          // Move target weight toward the demonstrated load — but SMOOTH: one
+          // step up from the recommendation toward what they actually lifted
+          // (never jump straight to loggedKg in a single set).
+          const aimed = Math.min(loggedKg, this.roundToStep(recKg + inc * 2, ex));
+          const newKg = this.roundToStep(Math.max(aimed, recKg + inc), ex);
+          const newReps = heavyLowReps ? Math.max(rMin, Math.round(recReps * 0.85)) : recReps;
+          if (newKg > recKg) {
+            return {
+              adjust: true, dir: 'up', newKg, newReps,
+              msg: t('workout.adjust.overPerformWeight', { kg: newKg }),
+            };
+          }
+        } else {
+          // Hypertrophy/masa over-performance → raise the REP target toward what
+          // they hit, one smooth step (cap at rMax + a little headroom).
+          const newReps = Math.min(rMax + 2, Math.max(recReps + 1, Math.min(loggedReps, recReps + 2)));
+          if (newReps > recReps) {
+            return {
+              adjust: true, dir: 'up', newReps, holdKg: recKg,
+              msg: t('workout.adjust.overPerformReps', { reps: newReps }),
+            };
+          }
+        }
+      }
+      // FAR under (≤0.6× recommended volume) AND it felt hard → ease the next set.
+      if (volRatio <= 0.6 && lastRPE >= 8) {
+        if (isStrength) {
+          const newKg = getPrevWeight(loggedKg, ex);
+          if (newKg < loggedKg) {
+            return { adjust: true, dir: 'down', newKg, msg: t('workout.adjust.underWeight', { kg: newKg }) };
+          }
+        } else {
+          const newReps = Math.max(rMin, (loggedReps ?? recReps) - 1);
+          if (newReps < recReps) {
+            return { adjust: true, dir: 'down', newReps, holdKg: recKg, msg: t('workout.adjust.underReps', { reps: newReps }) };
+          }
+        }
+      }
     }
-    // Prea usor: 2× Easy (RPE ≤6.5) si reps > rMax → creste imediat
-    if (recentRPEs.length >= 2 && recentRPEs.slice(0,2).every((r) => r <= 6.5)) {
-      const lastReps = recentReps && recentReps.length ? Math.max(...recentReps.slice(0,2)) : 0;
-      if (lastReps >= rMax) {
-        const newKg = this.roundToStep(dpState.lastW + inc, ex);
-        return { adjust: true, dir: 'up', newKg, msg: `Doua seturi prea usoare · Urcam la ${newKg} kg pentru urmatorul set` };
+
+    // ── (a) Rating-driven per-set autoregulation (single set, responsive). ──────
+    // RPE thresholds map from the in-session coarse ratings (usor≈6.5, potrivit≈7.5,
+    // greu≈10 in the UI map): greu → ease, usor → hold/nudge up, potrivit → hold.
+    const baseReps = haveRec ? recReps : (loggedReps ?? rMin);
+    const baseKg = haveRec ? recKg : loggedKg;
+    // Fatigue taper (c): later sets (setIdx ≥ 2) naturally allow one fewer rep.
+    const setIdx = Number(ctx.setIdx);
+    const lateSet = Number.isFinite(setIdx) && setIdx >= 2;
+
+    // GREU (single hard set) → ease the NEXT set MODESTLY.
+    if (lastRPE >= 9.5) {
+      if (isStrength) {
+        const newKg = getPrevWeight(baseKg, ex);
+        if (newKg < baseKg) {
+          return { adjust: true, dir: 'down', newKg, msg: t('workout.adjust.greuWeight', { kg: newKg }) };
+        }
+        return { adjust: false };
+      }
+      // masa/maintenance → drop the rep target (−1 maint / −2 hypertrophy), floored.
+      const drop = isMaint ? 1 : 2;
+      const newReps = Math.max(rMin, baseReps - drop);
+      if (newReps < baseReps) {
+        return { adjust: true, dir: 'down', newReps, holdKg: baseKg, msg: t('workout.adjust.greuReps', { reps: newReps }) };
+      }
+      return { adjust: false };
+    }
+
+    // USOR (clearly easy, 2+ in reserve) → nudge UP modestly. Hold otherwise.
+    if (lastRPE <= 6.5) {
+      // Only nudge up when the user actually completed (≥) the rep target — an
+      // easy rating on sub-target reps is a wash, hold.
+      const hitTarget = loggedReps == null || loggedReps >= baseReps;
+      if (hitTarget && !lateSet) {
+        if (isStrength) {
+          const newKg = this.roundToStep(baseKg + inc, ex);
+          if (newKg > baseKg) {
+            return { adjust: true, dir: 'up', newKg, msg: t('workout.adjust.usorWeight', { kg: newKg }) };
+          }
+        } else {
+          const newReps = Math.min(rMax, baseReps + 1);
+          if (newReps > baseReps) {
+            return { adjust: true, dir: 'up', newReps, holdKg: baseKg, msg: t('workout.adjust.usorReps', { reps: newReps }) };
+          }
+        }
+      }
+      return { adjust: false };
+    }
+
+    // POTRIVIT → hold, with a small natural taper on LATE sets only (−1 rep in
+    // hypertrophy, weight unchanged — fatigue accumulation, not a correction).
+    if (lateSet && !isStrength) {
+      const newReps = Math.max(rMin, baseReps - 1);
+      if (newReps < baseReps) {
+        return { adjust: true, dir: 'down', newReps, holdKg: baseKg, msg: t('workout.adjust.taperReps', { reps: newReps }) };
       }
     }
     return { adjust: false };

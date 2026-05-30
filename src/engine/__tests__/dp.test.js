@@ -120,9 +120,12 @@ describe('DP._recommendRaw — CUT phase progression', () => {
   });
 });
 
-// ── checkInSessionAdjust — RPE 4-tap thresholds (TASK #AA-FIX) ───────────────
+// ── checkInSessionAdjust — responsive per-set autoregulation ─────────────────
+// Daniel rewrite 2026-05-30: react to EACH set (not 2-consecutive). The DB mock
+// in this file returns phase-override='CUT' → REPS autoregulation (masa-like, not
+// STRENGTH). Lat Pulldown CUT range caps to [8,10] (rMax 12>10, isolation).
 
-describe('DP.checkInSessionAdjust — RPE 4-tap thresholds', () => {
+describe('DP.checkInSessionAdjust — per-set reps autoregulation (CUT/masa phase)', () => {
   beforeEach(() => {
     DP.getState = vi.fn(() => ({ lastW: 60 }));
   });
@@ -131,49 +134,98 @@ describe('DP.checkInSessionAdjust — RPE 4-tap thresholds', () => {
     DP.getState = DP.getState.mockRestore?.() || DP.getState;
   });
 
-  it('drops weight on 2× Very Hard (RPE 10)', () => {
-    const result = DP.checkInSessionAdjust('Lat Pulldown', [10, 10], [8, 8]);
-    expect(result.adjust).toBe(true);
-    expect(result.dir).toBe('down');
+  it('single greu eases the NEXT set reps (−2 in hypertrophy, weight held)', () => {
+    // recReps 10 → greu drops to 8 (floored at rMin 8). Weight held = recKg.
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [10], [8], { recKg: 60, recReps: 10 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
+    expect(r.newReps).toBe(8);
+    expect(r.holdKg).toBe(60);
+    expect(r.newKg).toBeUndefined(); // masa phase moves reps, NOT weight
   });
 
-  it('does NOT drop weight on 2× Hard (RPE 9)', () => {
-    const result = DP.checkInSessionAdjust('Lat Pulldown', [9, 9], [8, 8]);
-    expect(result.adjust).toBe(false);
+  it('single greu adjustment is MODEST (≤2 reps, never a big jump)', () => {
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [10], [9], { recKg: 60, recReps: 10 });
+    expect(r.adjust).toBe(true);
+    expect(10 - (r.newReps ?? 10)).toBeLessThanOrEqual(2);
   });
 
-  it('drops weight on mixed [10, 10] regardless of reps', () => {
-    const result = DP.checkInSessionAdjust('Lat Pulldown', [10, 10], [5, 5]);
-    expect(result.adjust).toBe(true);
-    expect(result.dir).toBe('down');
+  it('potrivit holds (no adjust) on an early set', () => {
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [7.5], [10], { recKg: 60, recReps: 10, setIdx: 1 });
+    expect(r.adjust).toBe(false);
   });
 
-  it('ups weight on 2× Easy (RPE 6.5) with max reps', () => {
-    // Lat Pulldown CUT range = [8, 12], rMax=12
-    const result = DP.checkInSessionAdjust('Lat Pulldown', [6.5, 6.5], [12, 12]);
-    expect(result.adjust).toBe(true);
-    expect(result.dir).toBe('up');
+  it('potrivit applies a small late-set taper (−1 rep) on later sets', () => {
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [7.5], [10], { recKg: 60, recReps: 10, setIdx: 3 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
+    expect(r.newReps).toBe(9);
   });
 
-  it('does NOT up weight on 2× Easy (RPE 6.5) with sub-max reps', () => {
-    const result = DP.checkInSessionAdjust('Lat Pulldown', [6.5, 6.5], [8, 8]);
-    expect(result.adjust).toBe(false);
+  it('usor at target nudges reps UP one (capped at rMax)', () => {
+    // CUT range capped [8,10]; rec 9 → up to 10 (rMax).
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [6.5], [9], { recKg: 60, recReps: 9, setIdx: 0 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('up');
+    expect(r.newReps).toBe(10);
   });
 
-  it('returns no adjust on mixed Hard/Very Hard (9, 10)', () => {
-    const result = DP.checkInSessionAdjust('Lat Pulldown', [9, 10], [8, 8]);
-    expect(result.adjust).toBe(false);
+  it('usor on a LATE set holds (fatigue — no late up-nudge)', () => {
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [6.5], [9], { recKg: 60, recReps: 9, setIdx: 3 });
+    expect(r.adjust).toBe(false);
   });
 
-  it('returns no adjust with fewer than 2 RPE readings', () => {
-    const result = DP.checkInSessionAdjust('Lat Pulldown', [10], [8]);
-    expect(result.adjust).toBe(false);
+  it('over-performance (logged volume ≫ rec) ramps the target up', () => {
+    // rec 10×60 = 600; logged 12×60 well over but capped — use a clearer case:
+    // rec 8×60=480; logged 12×60=720 (1.5×), usor → reps ramp up.
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [6.5], [12], { recKg: 60, recReps: 8 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('up');
+    expect(r.newReps).toBeGreaterThan(8);
+  });
+
+  it('returns no adjust with no rated set', () => {
+    expect(DP.checkInSessionAdjust('Lat Pulldown', [], []).adjust).toBe(false);
   });
 
   it('returns no adjust when no history (lastW = 0 / falsy)', () => {
     DP.getState = vi.fn(() => ({ lastW: 0 }));
-    const result = DP.checkInSessionAdjust('Lat Pulldown', [10, 10], [8, 8]);
-    expect(result.adjust).toBe(false);
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [10], [8], { recKg: 60, recReps: 10 });
+    expect(r.adjust).toBe(false);
+  });
+});
+
+// ── checkInSessionAdjust — STRENGTH phase moves WEIGHT ───────────────────────
+describe('DP.checkInSessionAdjust — STRENGTH phase weight autoregulation', () => {
+  afterEach(() => {
+    DP.getState = DP.getState.mockRestore?.() || DP.getState;
+  });
+
+  it('single greu drops one weight step in STRENGTH', async () => {
+    const { DB } = await import('../../db.js');
+    DB.get.mockImplementation((k) => (k === 'phase-override' ? 'STRENGTH' : k === 'logs' ? [] : null));
+    DP.getState = vi.fn(() => ({ lastW: 60 }));
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [10], [8], { recKg: 60, recReps: 8 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
+    expect(typeof r.newKg).toBe('number');
+    expect(r.newKg).toBeLessThan(60);
+    expect(r.newReps).toBeUndefined();
+    DB.get.mockImplementation((k) => (k === 'phase-override' ? 'CUT' : k === 'logs' ? [] : null));
+  });
+
+  it('heavy-low-reps over-performance (4×60 vs rec 10×20) moves weight toward demonstrated load', async () => {
+    const { DB } = await import('../../db.js');
+    DB.get.mockImplementation((k) => (k === 'phase-override' ? 'STRENGTH' : k === 'logs' ? [] : null));
+    // Logged 4 reps @ 60kg = 240 vol vs rec 10×20=200 → 1.2×... bump rec so it
+    // crosses the 1.5× deviation gate: rec 10×20=200, logged 4×80=320 (1.6×).
+    DP.getState = vi.fn(() => ({ lastW: 80 }));
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [7.5], [4], { recKg: 20, recReps: 10 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('up');
+    expect(r.newKg).toBeGreaterThan(20); // ramped toward the demonstrated weight
+    expect(r.newReps).toBeLessThan(10); // strength-style → rep range down
+    DB.get.mockImplementation((k) => (k === 'phase-override' ? 'CUT' : k === 'logs' ? [] : null));
   });
 });
 
