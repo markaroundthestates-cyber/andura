@@ -309,6 +309,15 @@ export async function syncFromFirebase() {
     const remote = await fbGet(userPath);
     if (!remote) return false;
 
+    // Defensive: a well-formed user-doc is a plain object keyed by SYNC_KEYS +
+    // metadata. A corrupted/hostile remote scalar or array must NOT reach the
+    // merge below (Object.keys / remote[k] on a string would silently poison
+    // local state). Reject non-plain-object payloads and bail out cleanly.
+    if (typeof remote !== 'object' || Array.isArray(remote)) {
+      console.warn('[Firebase] malformed remote doc (not a plain object) — skipping restore:', typeof remote);
+      return false;
+    }
+
     // §25-M2 — tolerant schema-version read: absent → treat as v1 (legacy doc
     // predating the field). Newer-than-client = forward-compat warn only (we
     // still merge known SYNC_KEYS; unknown keys handled by drift warn below).

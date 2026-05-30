@@ -62,4 +62,19 @@ describe('firebase — §25-M2 user-doc schema version', () => {
     const ok = await syncFromFirebase();
     expect(ok).toBe(true);
   });
+
+  // L-4 defensive parse — a corrupted/hostile remote scalar or array must NOT
+  // reach the merge path (Object.keys / remote[k] on a string poisons local
+  // state). Guard rejects non-plain-object payloads and bails cleanly.
+  it('syncFromFirebase rejects a malformed scalar remote doc (string)', async () => {
+    fetchMock.mockResolvedValue(new Response(JSON.stringify('not-an-object'), { status: 200 }));
+    const ok = await syncFromFirebase();
+    expect(ok).toBe(false);
+  });
+
+  it('syncFromFirebase rejects a malformed array remote doc', async () => {
+    fetchMock.mockResolvedValue(new Response(JSON.stringify([1, 2, 3]), { status: 200 }));
+    const ok = await syncFromFirebase();
+    expect(ok).toBe(false);
+  });
 });
