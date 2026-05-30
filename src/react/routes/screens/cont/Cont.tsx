@@ -144,8 +144,27 @@ export function Cont(): JSX.Element {
   // name + email from id_token JWT claims (single source of truth post Magic
   // Link verify). Unauthenticated fallback preserves generic placeholders.
   const profile = getUserProfileDisplay();
-  const displayName = profile.name || t('cont.accountFallback');
-  const displayEmail = profile.email || t('cont.emailFallback');
+  // §F-cont (live-smoke 2026-05-29) — the Magic Link path has no `name` claim,
+  // so userProfile falls `name` back to the email local-part. Rendering that
+  // local-part as the NAME and the full email as the SUBTITLE shows the same
+  // email twice ("maziludanielconstantin90" + "maziludanielconstanti..."). A
+  // real display name exists only when the JWT `name` claim differs from the
+  // email local-part. With a real name → name line + email subtitle; without
+  // one → show the email ONCE as the primary line, no duplicate subtitle.
+  // Skip-auth (no email) keeps the friendly fallback name + tagline subtitle.
+  const emailLocalPart = profile.email.split('@')[0] ?? '';
+  const hasRealName = profile.name.length > 0 && profile.name !== emailLocalPart;
+  const primaryLine = hasRealName
+    ? profile.name
+    : profile.email || t('cont.accountFallback');
+  // Subtitle only when it adds info: the email under a real name, or the
+  // generic tagline in the skip-auth (no email) fallback. Suppressed when the
+  // primary line is already the email (anti-duplicate).
+  const subtitle = hasRealName
+    ? profile.email
+    : profile.email
+      ? ''
+      : t('cont.emailFallback');
 
   // Pulse profile streak Pill (interfata-noua/screens-tabs.jsx:340) — the
   // mockup shows a flame day-streak chip beside the avatar. Reuses the real
@@ -218,8 +237,10 @@ export function Cont(): JSX.Element {
           <span className="relative">{profile.initial}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-display font-bold text-ink" data-testid="cont-account-name">{displayName}</p>
-          <p className="text-sm text-ink2 truncate" data-testid="cont-account-email">{displayEmail}</p>
+          <p className="font-display font-bold text-ink truncate" data-testid="cont-account-name">{primaryLine}</p>
+          {subtitle && (
+            <p className="text-sm text-ink2 truncate" data-testid="cont-account-email">{subtitle}</p>
+          )}
         </div>
         <Pill color="var(--volt)">
           <Flame className="w-3 h-3" aria-hidden="true" />
