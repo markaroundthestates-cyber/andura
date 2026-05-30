@@ -9,6 +9,7 @@
 // continues even if migrations or rotation fail. Errors land in Sentry via
 // the underlying modules + console diagnostics for dev visibility.
 
+import { logger } from './util/logger.js';
 import { runMigrations } from './migrations/index.js';
 
 // DEXIE-EAGER-ON-BOOT perf-infra — tieringEngine.js statically imports Dexie
@@ -29,14 +30,14 @@ export async function runBootMigrations() {
   try {
     const result = await runMigrations();
     if (result?.totalEntriesMigrated > 0) {
-      console.log(`[Migrations] ${result.totalEntriesMigrated} entries migrated`);
+      logger.debug(`[Migrations] ${result.totalEntriesMigrated} entries migrated`);
     }
     if (result?.errors?.length > 0) {
-      console.warn('[Migrations] Errors:', result.errors);
+      logger.warn('[Migrations] Errors:', result.errors);
     }
     return result;
   } catch (err) {
-    console.error('[Migrations] Failed:', err);
+    logger.error('[Migrations] Failed:', err);
     // Continue boot — non-blocking per ADR 018 §4 graceful degradation
     return null;
   }
@@ -56,11 +57,11 @@ export async function startTierRotation(opts) {
     const result = await initAutoBackup(opts);
     const rotated = result?.initial?.rotated;
     if (rotated > 0) {
-      console.log(`[Storage] Rotated ${rotated} entries Tier 0 → Tier 1 (initial pass)`);
+      logger.debug(`[Storage] Rotated ${rotated} entries Tier 0 → Tier 1 (initial pass)`);
     }
     return result;
   } catch (err) {
-    console.error('[Storage] initAutoBackup failed:', err);
+    logger.error('[Storage] initAutoBackup failed:', err);
     // Continue boot — non-blocking
     return null;
   }
@@ -78,7 +79,7 @@ export function exposeForceRotationHelper() {
     // Lazy import keeps Dexie off the cold-start critical path (see header).
     const { rotateOnce } = await import('./storage/tieringEngine.js');
     const result = await rotateOnce();
-    console.log('[Storage] Forced rotation result:', result);
+    logger.debug('[Storage] Forced rotation result:', result);
     return result;
   };
 }

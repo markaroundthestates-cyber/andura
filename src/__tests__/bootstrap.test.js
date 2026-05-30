@@ -23,21 +23,22 @@ import { runBootMigrations, startTierRotation, exposeForceRotationHelper } from 
 import { runMigrations } from '../migrations/index.js';
 import { initAutoBackup, rotateOnce } from '../storage/tieringEngine.js';
 
-let consoleLogSpy;
+// logger.debug routes through console.debug (env-gated logger, util/logger.js).
+let consoleDebugSpy;
 let consoleWarnSpy;
 let consoleErrorSpy;
 
 beforeEach(() => {
   vi.clearAllMocks();
-  consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+  consoleDebugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
   consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
   consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-   
+
   delete globalThis.window?.__forceRotation;
 });
 
 afterEach(() => {
-  consoleLogSpy.mockRestore();
+  consoleDebugSpy.mockRestore();
   consoleWarnSpy.mockRestore();
   consoleErrorSpy.mockRestore();
 });
@@ -58,7 +59,7 @@ describe('runBootMigrations', () => {
   it('logs summary when entries migrated', async () => {
     runMigrations.mockResolvedValue({ migrationsRun: 1, totalEntriesMigrated: 7, perMigration: [], errors: [] });
     await runBootMigrations();
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('7 entries migrated'));
+    expect(consoleDebugSpy).toHaveBeenCalledWith(expect.stringContaining('7 entries migrated'));
   });
 
   it('warns on errors but still returns result', async () => {
@@ -83,7 +84,7 @@ describe('runBootMigrations', () => {
     runMigrations.mockResolvedValue(null);
     const result = await runBootMigrations();
     expect(result).toBeNull();
-    expect(consoleLogSpy).not.toHaveBeenCalled();
+    expect(consoleDebugSpy).not.toHaveBeenCalled();
     expect(consoleWarnSpy).not.toHaveBeenCalled();
   });
 });
@@ -111,7 +112,7 @@ describe('startTierRotation', () => {
   it('logs summary when initial rotation rotated entries', async () => {
     initAutoBackup.mockResolvedValue({ initial: { rotated: 3, perKey: [], errors: [] } });
     await startTierRotation();
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Rotated 3 entries'));
+    expect(consoleDebugSpy).toHaveBeenCalledWith(expect.stringContaining('Rotated 3 entries'));
   });
 
   it('continues on throw (graceful degradation)', async () => {
@@ -143,7 +144,7 @@ describe('exposeForceRotationHelper', () => {
 
     expect(rotateOnce).toHaveBeenCalledOnce();
     expect(result).toBe(expected);
-    expect(consoleLogSpy).toHaveBeenCalledWith('[Storage] Forced rotation result:', expected);
+    expect(consoleDebugSpy).toHaveBeenCalledWith('[Storage] Forced rotation result:', expected);
   });
 
   it('idempotent — re-calling overwrites existing helper', () => {

@@ -5,6 +5,7 @@
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2 } from 'lucide-react';
+import { logger } from '../../../../util/logger.js';
 import { useAppStore } from '../../../stores/appStore';
 import { SubHeader } from '../../../components/SubHeader';
 import { useWorkoutStore } from '../../../stores/workoutStore';
@@ -53,7 +54,7 @@ function wipeAllLocalData(): void {
     // recreate users/{uid} and the next boot's syncFromFirebase short-circuits.
     localStorage.setItem('__suppressFirebaseSyncUntil', String(Date.now() + 10000));
   } catch (e) {
-    if (import.meta.env.DEV) console.warn('[DeleteAccountConfirm] wipe failed:', e);
+    logger.warn('[DeleteAccountConfirm] wipe failed:', e);
   }
 }
 
@@ -63,7 +64,7 @@ async function wipeRemoteData(uid: string): Promise<void> {
     const dbModule = await import('../../../../storage/db.js');
     await dbModule.wipeUserDB(uid);
   } catch (e) {
-    if (import.meta.env.DEV) console.warn('[DeleteAccountConfirm] Tier 1 IDB wipe failed:', e);
+    logger.warn('[DeleteAccountConfirm] Tier 1 IDB wipe failed:', e);
   }
 
   const rtdbUrl = (import.meta as ImportMeta & { env?: { VITE_FIREBASE_RTDB_URL?: string } })
@@ -75,7 +76,7 @@ async function wipeRemoteData(uid: string): Promise<void> {
     const url = `${rtdbUrl.replace(/\/$/, '')}/users/${encodeURIComponent(uid)}.json?auth=${encodeURIComponent(idToken)}`;
     await fetch(url, { method: 'DELETE' });
   } catch (e) {
-    if (import.meta.env.DEV) console.warn('[DeleteAccountConfirm] Tier 2 RTDB DELETE failed:', e);
+    logger.warn('[DeleteAccountConfirm] Tier 2 RTDB DELETE failed:', e);
   }
 }
 

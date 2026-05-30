@@ -27,6 +27,7 @@
 //   2. Bundle pentru 'en' (default fallback — was 'en' even pre-flip)
 //   3. Key string itself (last-resort, dev visibility)
 
+import { logger } from '../util/logger.js';
 import roBundle from './ro.json';
 import enBundle from './en.json';
 
@@ -70,7 +71,7 @@ export function t(key, vars = {}) {
 
   if (found == null) {
     if (typeof process !== 'undefined' && process?.env?.NODE_ENV !== 'production') {
-      console.warn(`[i18n] Missing key: ${key}`);
+      logger.warn(`[i18n] Missing key: ${key}`);
     }
     return key;
   }

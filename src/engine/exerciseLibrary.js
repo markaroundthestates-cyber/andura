@@ -18,6 +18,7 @@
 //     (undefined → engine fallback v1 findAlternatives ranking-based, ADR v2 §3 graceful degradation).
 // Cross-ref: ADR_SMART_ROUTING_EQUIPMENT_v2.md LOCK V2 + v1 LOCKED V1 (ranking-based fallback).
 
+import { logger } from '../util/logger.js';
 import exercisesData from './exercises.json';
 import { validateLibrary } from './exerciseSchema';
 
@@ -37,7 +38,7 @@ export const EXERCISE_METADATA = exercisesData;
     if (import.meta.env && import.meta.env.DEV) {
       throw new Error(summary);
     } else {
-      console.error(summary);
+      logger.error(summary);
     }
   }
 }

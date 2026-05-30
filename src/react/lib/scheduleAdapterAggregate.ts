@@ -15,6 +15,7 @@
 // React consumers (SessionPill / Workout / WorkoutPreview / PostRpe /
 // coachDirectorAggregate).
 
+import { logger } from '../../util/logger.js';
 import { getDailyWorkout } from '../../engine/schedule/scheduleAdapter.js';
 import { useWorkoutStore } from '../stores/workoutStore';
 import type { LastSessionSummary } from '../stores/workoutStore';
@@ -904,7 +905,7 @@ export async function composePlannedWorkoutToday(
       warmup,
     };
   } catch (e) {
-    console.warn('[scheduleAdapterAggregate] composePlannedWorkoutToday failed:', e);
+    logger.warn('[scheduleAdapterAggregate] composePlannedWorkoutToday failed:', e);
     return null;
   }
 }

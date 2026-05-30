@@ -11,6 +11,7 @@
 // Idempotency: 4h window + significant context change rules.
 
 import { DB } from '../db.js';
+import { logger } from './logger.js';
 
 /**
  * @typedef {{ readinessScore?: number, weakGroups?: string[], calibrationLevel?: string|null, isInCut?: boolean|null, predictionToday?: { isHighRisk?: boolean } | null, [k: string]: unknown }} CdlContext
@@ -211,7 +212,7 @@ export function populateOutcome(date, outcome) {
     throw new Error('No active CDL entry for date ' + date);
   }
   if (target.outcome != null) {
-    console.warn('[CDL] populateOutcome: outcome already set for entry', target.id);
+    logger.warn('[CDL] populateOutcome: outcome already set for entry', target.id);
     throw new Error('Outcome already populated for entry ' + target.id + ' (immutability)');
   }
 

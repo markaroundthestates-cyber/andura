@@ -16,6 +16,7 @@
 import { useEffect, useState, type JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
+import { logger } from '../../../../util/logger.js';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import type { NotificationFrequency } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
@@ -184,7 +185,7 @@ export function SettingsNotifications(): JSX.Element {
           break;
         case 'error':
           // Esec best-effort (config / network) → toggle ramane OFF, fara UI greoi.
-          console.warn('[notif] enablePushNotifications error');
+          logger.warn('[notif] enablePushNotifications error');
           break;
       }
     } finally {

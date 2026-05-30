@@ -63,7 +63,7 @@ const mockStartTierRotation = vi.mocked(startTierRotation);
 const mockMigrateLogsUtcToLocal = vi.mocked(migrateLogsUtcToLocal);
 const mockEnforceDataOwner = vi.mocked(enforceDataOwner);
 
-let consoleLogSpy: ReturnType<typeof vi.spyOn>;
+let consoleDebugSpy: ReturnType<typeof vi.spyOn>;
 let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
 let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
@@ -82,13 +82,13 @@ beforeEach(() => {
   mockRunAuthPathMigration.mockResolvedValue({ status: 'no-source' } as never);
   mockRestoreSession.mockResolvedValue(false);
   mockEnforceDataOwner.mockResolvedValue(false);
-  consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+  consoleDebugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
   consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
   consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 });
 
 afterEach(() => {
-  consoleLogSpy.mockRestore();
+  consoleDebugSpy.mockRestore();
   consoleWarnSpy.mockRestore();
   consoleErrorSpy.mockRestore();
 });
@@ -140,7 +140,7 @@ describe('runReactBoot — boot orchestration', () => {
   it('logs when UTC migration actually modified data', async () => {
     mockMigrateLogsUtcToLocal.mockReturnValue({ skipped: false, logsModified: 3 } as never);
     await runReactBoot();
-    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('local timezone'));
+    expect(consoleDebugSpy).toHaveBeenCalledWith(expect.stringContaining('local timezone'));
   });
 
   it('does NOT trigger cloud sync when unauthenticated', async () => {

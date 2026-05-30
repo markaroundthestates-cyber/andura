@@ -19,6 +19,7 @@
 // (src/engine/readiness.d.ts / fatigue.d.ts / prEngine.d.ts). TS rezolva
 // .d.ts înainte de .js inference; @ts-expect-error directives no longer
 // needed.
+import { logger } from '../../util/logger.js';
 import { getReadinessVerdict, getComputedReadinessScore } from '../../engine/readiness.js';
 import { calculateFatigueScore } from '../../engine/fatigue.js';
 import { detectPR } from '../../engine/prEngine.js';
@@ -317,7 +318,7 @@ export function getReadiness(opts: { isInCut?: boolean } = {}): ReadinessOutput 
       canPR: verdict.canPR,
     };
   } catch (e) {
-    console.warn('[engineWrappers] getReadiness failed:', e);
+    logger.warn('[engineWrappers] getReadiness failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getReadiness' },
     });
@@ -351,7 +352,7 @@ export function getFatigue(): FatigueOutput | null {
       detail: raw.detail,
     };
   } catch (e) {
-    console.warn('[engineWrappers] getFatigue failed:', e);
+    logger.warn('[engineWrappers] getFatigue failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getFatigue' },
     });
@@ -403,7 +404,7 @@ export function getPRDelta(
       oneRMEstimate: estimateOneRM(raw.kg, raw.reps),
     };
   } catch (e) {
-    console.warn('[engineWrappers] getPRDelta failed:', e);
+    logger.warn('[engineWrappers] getPRDelta failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getPRDelta' },
       extra: { exercise },
@@ -443,7 +444,7 @@ export function getWhyExerciseSummary(input: WhyExerciseInput): string | null {
     const summary = whySummary(exercise, ctx);
     return typeof summary === 'string' && summary.length > 0 ? summary : null;
   } catch (e) {
-    console.warn('[engineWrappers] getWhyExerciseSummary failed:', e);
+    logger.warn('[engineWrappers] getWhyExerciseSummary failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getWhyExerciseSummary' },
       extra: { exercise: input.name },
@@ -575,7 +576,7 @@ function buildSilentMmiContext(): MmiSilentContext | null {
       peakPrePauseKgPerExercise,
     };
   } catch (e) {
-    console.warn('[engineWrappers] buildSilentMmiContext failed:', e);
+    logger.warn('[engineWrappers] buildSilentMmiContext failed:', e);
     return null;
   }
 }
@@ -628,7 +629,7 @@ export async function getTodayWorkout(): Promise<PlannedWorkoutOutput | null> {
     if (planned === null) return null;
     return applyMmiCapToWorkout(planned);
   } catch (e) {
-    console.warn('[engineWrappers] getTodayWorkout failed:', e);
+    logger.warn('[engineWrappers] getTodayWorkout failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getTodayWorkout' },
     });
@@ -1134,7 +1135,7 @@ export async function getNutritionTargetsToday(
       ...(!guarded.clamped && safetyLimited ? { safetyLimited } : {}),
     };
   } catch (e) {
-    console.warn('[engineWrappers] getNutritionTargetsToday failed:', e);
+    logger.warn('[engineWrappers] getNutritionTargetsToday failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getNutritionTargetsToday' },
     });
@@ -1165,7 +1166,7 @@ export async function readTdeeEstimateKcal(
       return mu as number;
     }
   } catch (e) {
-    console.warn('[engineWrappers] readTdeeEstimateKcal failed:', e);
+    logger.warn('[engineWrappers] readTdeeEstimateKcal failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'readTdeeEstimateKcal' },
     });
@@ -1213,7 +1214,7 @@ export function getAdherenceOutput(): AdherenceOutput {
     const safeScore = Math.max(0, Math.min(100, rawScore));
     return { score: safeScore, source: 'engine' };
   } catch (e) {
-    console.warn('[engineWrappers] getAdherenceOutput failed:', e);
+    logger.warn('[engineWrappers] getAdherenceOutput failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getAdherenceOutput' },
     });
@@ -1287,7 +1288,7 @@ export function getPatternsBanner(): PatternBanner[] {
       });
     }
   } catch (e) {
-    console.warn('[engineWrappers] getPatternsBanner STAGNATION failed:', e);
+    logger.warn('[engineWrappers] getPatternsBanner STAGNATION failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getPatternsBanner', pattern: 'STAGNATION' },
     });
@@ -1314,7 +1315,7 @@ export function getPatternsBanner(): PatternBanner[] {
       }
     }
   } catch (e) {
-    console.warn('[engineWrappers] getPatternsBanner LOW_ADHERENCE failed:', e);
+    logger.warn('[engineWrappers] getPatternsBanner LOW_ADHERENCE failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getPatternsBanner', pattern: 'LOW_ADHERENCE' },
     });
@@ -1370,7 +1371,7 @@ export function getProactiveAlerts(ctx: Record<string, unknown> = {}): Proactive
       severity: SEVERITY_MAP[alert?.severity] ?? DEFAULT_PROACTIVE_ALERT_SEVERITY,
     }));
   } catch (e) {
-    console.warn('[engineWrappers] getProactiveAlerts failed:', e);
+    logger.warn('[engineWrappers] getProactiveAlerts failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getProactiveAlerts' },
     });
@@ -1449,7 +1450,7 @@ export function getCoachRestReason(): CoachRestReason | null {
     if (readiness === null && topFatigued.length === 0) return null;
     return { fatiguedGroups: topFatigued, readinessScore: readiness };
   } catch (e) {
-    console.warn('[engineWrappers] getCoachRestReason failed:', e);
+    logger.warn('[engineWrappers] getCoachRestReason failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getCoachRestReason' },
     });
@@ -1495,7 +1496,7 @@ export function getLaggingSignal(): string | null {
         : (GROUP_LABELS_RO_BIG11[topWeak] ?? topWeak);
     return __t('coachToday.laggingSignal', { group: label, weeks: STAGNATION_WEEKS_THRESHOLD });
   } catch (e) {
-    console.warn('[engineWrappers] getLaggingSignal failed:', e);
+    logger.warn('[engineWrappers] getLaggingSignal failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getLaggingSignal' },
     });
@@ -1567,7 +1568,7 @@ export function getCoachTodayQuote(): CoachTodayQuote | null {
         : (GROUP_LABELS_RO_BIG11[best.group] ?? best.group);
     return { recoveredLabel: label, daysSince: best.days };
   } catch (e) {
-    console.warn('[engineWrappers] getCoachTodayQuote failed:', e);
+    logger.warn('[engineWrappers] getCoachTodayQuote failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getCoachTodayQuote' },
     });

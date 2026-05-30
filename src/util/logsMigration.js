@@ -3,6 +3,7 @@
 // Triggered once on first load post-deploy via migration flag.
 
 import { DB, todTs } from '../db.js';
+import { logger } from './logger.js';
 
 /** @typedef {{ ts?: number, date?: string, [k: string]: unknown }} LogEntry */
 
@@ -60,7 +61,7 @@ export function migrateLogsUtcToLocal() {
 
   localStorage.setItem(MIGRATION_FLAG, 'done');
 
-  console.log('[Migration UTC→Local]', {
+  logger.debug('[Migration UTC→Local]', {
     logsModified: modified,
     cdlModified,
     totalLogs: logs.length,

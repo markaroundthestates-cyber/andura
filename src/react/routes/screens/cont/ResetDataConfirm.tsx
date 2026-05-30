@@ -7,6 +7,7 @@
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
+import { logger } from '../../../../util/logger.js';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { SubHeader } from '../../../components/SubHeader';
 import { useNutritionStore } from '../../../stores/nutritionStore';
@@ -52,7 +53,7 @@ function wipeAllLocalData(): void {
     // 3. IndexedDB Tier 1 (archived logs / CDL / patterns) — best-effort async.
     void clearUserIndexedDB();
   } catch (e) {
-    if (import.meta.env.DEV) console.warn('[ResetDataConfirm] wipe failed:', e);
+    logger.warn('[ResetDataConfirm] wipe failed:', e);
   }
 }
 

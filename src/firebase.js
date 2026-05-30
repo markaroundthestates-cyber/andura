@@ -24,6 +24,7 @@
 //
 import { DB } from './db.js';
 import { toast } from './ui/toast.js';
+import { logger } from './util/logger.js';
 import { COACH_RELEVANT_KEYS } from './util/dataRegistry.js';
 import { getAuthState, getIdToken } from './auth.js';
 
@@ -286,13 +287,13 @@ export async function clearFirebaseKeys(keys) {
       // (`wv2/workout` stays a real subtree path, never collapsed to `wv2_workout`).
       const remoteKey = key.split('/').map(fbKey).join('/');
       const ok = await fbRemove(`${userPath}/${remoteKey}`);
-      if (ok) console.log(`[Firebase] Removed key: ${key}`);
-      else console.warn(`[Firebase] Failed to remove key: ${key}`);
+      if (ok) logger.debug(`[Firebase] Removed key: ${key}`);
+      else logger.warn(`[Firebase] Failed to remove key: ${key}`);
       return ok;
     })
   );
   const succeeded = results.filter(r => r.status === 'fulfilled' && r.value).length;
-  console.log(`[Firebase] clearFirebaseKeys: ${succeeded}/${keys.length} removed`);
+  logger.debug(`[Firebase] clearFirebaseKeys: ${succeeded}/${keys.length} removed`);
   return { succeeded, total: keys.length };
 }
 
@@ -306,13 +307,13 @@ export async function syncToFirebase() {
   // any in-flight armed push (delete path + fullReset defense-in-depth) without
   // touching normal sync behavior (flag falsy in normal operation).
   if (window._suppressFirebaseSync) {
-    console.log('[Firebase] Sync suppressed, skipping push');
+    logger.debug('[Firebase] Sync suppressed, skipping push');
     return false;
   }
   try {
     const userPath = getUserPath();
     if (!userPath) {
-      console.log('[Firebase] syncToFirebase: no auth + no fallback, skipping');
+      logger.debug('[Firebase] syncToFirebase: no auth + no fallback, skipping');
       return false;
     }
     /** @type {Record<string, unknown>} */
@@ -334,23 +335,23 @@ export async function syncToFirebase() {
     // next ordinary log, killing push delivery; PATCH preserves them.
     const ok = await fbPatch(userPath, payload);
     return ok;
-  } catch (e) { console.warn('Firebase sync failed:', e); return false; }
+  } catch (e) { logger.warn('Firebase sync failed:', e); return false; }
 }
 
 export async function syncFromFirebase() {
   if (window._suppressFirebaseSync) {
-    console.log('[Firebase] Sync suppressed, skipping restore');
+    logger.debug('[Firebase] Sync suppressed, skipping restore');
     return false;
   }
   const suppressUntil = localStorage.getItem('__suppressFirebaseSyncUntil');
   if (suppressUntil && Date.now() < Number(suppressUntil)) {
-    console.log('[Firebase] Sync suppressed post-reset until', new Date(Number(suppressUntil)).toISOString());
+    logger.debug('[Firebase] Sync suppressed post-reset until', new Date(Number(suppressUntil)).toISOString());
     return false;
   }
   try {
     const userPath = getUserPath();
     if (!userPath) {
-      console.log('[Firebase] syncFromFirebase: no auth + no fallback, skipping');
+      logger.debug('[Firebase] syncFromFirebase: no auth + no fallback, skipping');
       return false;
     }
     const remote = await fbGet(userPath);
@@ -361,7 +362,7 @@ export async function syncFromFirebase() {
     // merge below (Object.keys / remote[k] on a string would silently poison
     // local state). Reject non-plain-object payloads and bail out cleanly.
     if (typeof remote !== 'object' || Array.isArray(remote)) {
-      console.warn('[Firebase] malformed remote doc (not a plain object) — skipping restore:', typeof remote);
+      logger.warn('[Firebase] malformed remote doc (not a plain object) — skipping restore:', typeof remote);
       return false;
     }
 
@@ -370,7 +371,7 @@ export async function syncFromFirebase() {
     // still merge known SYNC_KEYS; unknown keys handled by drift warn below).
     const remoteSchema = typeof remote['_schemaVersion'] === 'number' ? remote['_schemaVersion'] : 1;
     if (remoteSchema > USER_DOC_SCHEMA_VERSION) {
-      console.warn(`[Firebase] remote doc schema v${remoteSchema} newer than client v${USER_DOC_SCHEMA_VERSION} — merging known keys only`);
+      logger.warn(`[Firebase] remote doc schema v${remoteSchema} newer than client v${USER_DOC_SCHEMA_VERSION} — merging known keys only`);
     }
 
     suppressInvalidations(() => {
@@ -411,7 +412,7 @@ export async function syncFromFirebase() {
       applyTombstoneFilterToAll();
     } catch (e) {
       // Tombstones module is optional during transition — non-fatal.
-      console.warn('[Firebase] tombstone filter skipped:', e instanceof Error ? e.message : e);
+      logger.warn('[Firebase] tombstone filter skipped:', e instanceof Error ? e.message : e);
     }
 
     // Warn about unknown remote keys so schema drift is visible
@@ -420,9 +421,9 @@ export async function syncFromFirebase() {
     // `sf_userConfig`), so a raw SYNC_KEYS membership check would mis-flag them.
     const syncRemoteKeys = SYNC_KEYS.map(fbKey);
     const unknownKeys = remoteKeys.filter(k => !syncRemoteKeys.includes(k));
-    if (unknownKeys.length) console.warn('[Firebase] unknown remote keys (schema drift?):', unknownKeys);
+    if (unknownKeys.length) logger.warn('[Firebase] unknown remote keys (schema drift?):', unknownKeys);
     return true;
-  } catch (e) { console.warn('Firebase load failed:', e); return false; }
+  } catch (e) { logger.warn('Firebase load failed:', e); return false; }
 }
 
 /** @type {ReturnType<typeof setTimeout> | null} */

@@ -7,6 +7,7 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
 import { captureException } from '../../util/sentry.js';
+import { logger } from '../../util/logger.js';
 import { t } from '../../i18n/index.js';
 
 interface ErrorBoundaryProps {
@@ -32,7 +33,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   override componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // §13-C1 audit fix — surface to Sentry (production observability) +
     // preserve console for dev. Sentry no-ops on localhost (sentry.js gate).
-    console.error('[ErrorBoundary] caught render error:', error, errorInfo);
+    logger.error('[ErrorBoundary] caught render error:', error, errorInfo);
     captureException(error, {
       tags: { source: 'react-error-boundary' },
       extra: { componentStack: errorInfo.componentStack },

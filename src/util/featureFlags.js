@@ -11,6 +11,8 @@
 //   2. Per-user hash bucketing: hash(userId + flagId) % 100 < rollout * 100
 //   3. Flag default boolean (false daca flag necunoscut)
 
+import { logger } from './logger.js';
+
 /**
  * @typedef {object} FlagDefinition
  * @property {number} rollout - 0..1; fraction of users for whom the flag is on
@@ -311,12 +313,12 @@ export function readDevFlags() {
   try {
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-      console.warn(`[FeatureFlags] ${DEV_FLAGS_KEY} is not a plain object — ignoring`);
+      logger.warn(`[FeatureFlags] ${DEV_FLAGS_KEY} is not a plain object — ignoring`);
       return null;
     }
     return parsed;
   } catch {
-    console.warn(`[FeatureFlags] ${DEV_FLAGS_KEY} is not valid JSON — ignoring`);
+    logger.warn(`[FeatureFlags] ${DEV_FLAGS_KEY} is not valid JSON — ignoring`);
     return null;
   }
 }

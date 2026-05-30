@@ -45,6 +45,7 @@
 // All steps are non-blocking: each catches its own errors (or is wrapped here)
 // so a failure in one never aborts boot or loses unrelated data.
 
+import { logger } from '../../util/logger.js';
 import { runBootMigrations, startTierRotation, exposeForceRotationHelper } from '../../bootstrap.js';
 import { migrateLogsUtcToLocal } from '../../util/logsMigration.js';
 import { initFirebaseSync } from '../../firebase.js';
@@ -91,10 +92,10 @@ export async function runReactBoot(): Promise<void> {
   try {
     const migrationResult = migrateLogsUtcToLocal();
     if (!migrationResult?.skipped) {
-      console.log('[Migration] Logs/CDL date format updated to local timezone');
+      logger.debug('[Migration] Logs/CDL date format updated to local timezone');
     }
   } catch (err) {
-    console.error('[Migration] UTC→Local failed:', err);
+    logger.error('[Migration] UTC→Local failed:', err);
     // Continue boot — non-blocking per ADR 018 §4 graceful degradation.
   }
 
@@ -124,7 +125,7 @@ export async function runReactBoot(): Promise<void> {
   try {
     await restoreSession();
   } catch (err) {
-    console.warn('[Auth] boot session restore failed:', err);
+    logger.warn('[Auth] boot session restore failed:', err);
     // Non-fatal — getIdToken() will lazily refresh on the next data call.
   }
 
@@ -185,7 +186,7 @@ export async function runPostAuthSync(): Promise<void> {
       try {
         dataSwitch = await enforceDataOwner(uid);
       } catch (err) {
-        console.warn('[Auth] data-owner guard threw:', err);
+        logger.warn('[Auth] data-owner guard threw:', err);
       }
       // 08.047 — anon → auth IndexedDB Tier-1 handover. When a user trained
       // anonymously then signed up on THIS device (not an account switch), the
@@ -198,7 +199,7 @@ export async function runPostAuthSync(): Promise<void> {
         try {
           await migrateAnonymousToAuth(uid);
         } catch (err) {
-          console.warn('[Auth] anon→auth IDB migration threw:', err);
+          logger.warn('[Auth] anon→auth IDB migration threw:', err);
         }
       }
       // Path migration FIRST so the subsequent restore reads from the
@@ -207,7 +208,7 @@ export async function runPostAuthSync(): Promise<void> {
       try {
         await runAuthPathMigration();
       } catch (err) {
-        console.warn('[Auth] post-auth path migration threw:', err);
+        logger.warn('[Auth] post-auth path migration threw:', err);
       }
       // Restore from cloud + push merged local back (local-always-wins merge,
       // so this can only ADD missing remote data — never clobbers newer local).
@@ -220,11 +221,11 @@ export async function runPostAuthSync(): Promise<void> {
       try {
         await hydrateStoresFromCloud();
       } catch (err) {
-        console.warn('[Sync] wv2 store hydrate failed:', err);
+        logger.warn('[Sync] wv2 store hydrate failed:', err);
       }
       _postAuthDoneForUid = uid;
     } catch (err) {
-      console.warn('[Sync] post-auth Firebase sync failed:', err);
+      logger.warn('[Sync] post-auth Firebase sync failed:', err);
       // Leave _postAuthDoneForUid unset for this uid so a later trigger (next
       // boot) can retry.
     } finally {

@@ -7,6 +7,7 @@ import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Download } from 'lucide-react';
+import { logger } from '../../../../util/logger.js';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useNutritionStore } from '../../../stores/nutritionStore';
@@ -128,7 +129,7 @@ function triggerDownload(filename: string, content: string): void {
     document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
   } catch (e) {
-    console.warn('[SettingsExport] download failed:', e);
+    logger.warn('[SettingsExport] download failed:', e);
     throw e;
   }
 }
