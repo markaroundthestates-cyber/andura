@@ -121,9 +121,18 @@ export const DP = {
    * @param {number} [n]
    */
   getLogs(ex, n=10) {
-    /** @type {Array<{ex?: string, w?: number, reps?: number | string, rpe?: number}>} */
+    /** @type {Array<{ex?: string, w?: number, reps?: number | string, rpe?: number, ts?: number}>} */
     const logs = /** @type {any} */ (DB.get('logs')) || [];
-    return logs.filter((l) => l.ex === ex && l.w).slice(0, n);
+    // Order-independent: sort by timestamp DESC (newest first) so logs[0] is
+    // genuinely the latest and slice(0,3) is the latest 3 regardless of how the
+    // DB stored them (writers prepend newest-first, but the firebase remote
+    // union + legacy IDB-handover merges don't guarantee it). Entries missing
+    // `ts` (legacy logs) fall back to 0 → sort to the end; stable sort keeps
+    // their relative insertion order. Sort a copy — never mutate the DB array.
+    return logs
+      .filter((l) => l.ex === ex && l.w)
+      .sort((a, b) => (b.ts || 0) - (a.ts || 0))
+      .slice(0, n);
   },
 
   // Get progression state for exercise

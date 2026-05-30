@@ -61,6 +61,35 @@ describe('DP.getLogs', () => {
   it('returns empty array when DB has no logs', () => {
     expect(DP.getLogs('Anything')).toEqual([]);
   });
+
+  // ── Order-independence regression (external audit HIGH 2026-05-30) ───────────
+  // DP must NOT depend on the DB log array being accidentally newest-first.
+  // The firebase remote-union + legacy IDB-handover merges can leave logs in
+  // any order; getLogs sorts by ts DESC so logs[0] is the true latest and
+  // slice(0,3) is the true latest 3. These would FAIL on the old unsorted code.
+  it('returns logs newest-first by ts regardless of DB storage order', () => {
+    // Stored SCRAMBLED (newest NOT at index 0): middle, oldest, newest.
+    store['logs'] = [
+      { ex: 'Cable Row', w: 50, reps: 10, rpe: 7, ts: 2000 }, // middle
+      { ex: 'Cable Row', w: 40, reps: 10, rpe: 7, ts: 1000 }, // oldest
+      { ex: 'Cable Row', w: 60, reps: 12, rpe: 8, ts: 3000 }, // newest
+    ];
+    const out = DP.getLogs('Cable Row');
+    // ts-sorted truth: newest (60) → middle (50) → oldest (40).
+    expect(out.map((l) => l.w)).toEqual([60, 50, 40]);
+    expect(out[0].ts).toBe(3000); // logs[0] is the genuine latest
+  });
+
+  it('sorts logs missing ts to the end (legacy entries), newest-first otherwise', () => {
+    store['logs'] = [
+      { ex: 'Lat Pulldown', w: 64, reps: 10, rpe: 7 },          // legacy, no ts
+      { ex: 'Lat Pulldown', w: 60, reps: 10, rpe: 7, ts: 5000 }, // newest with ts
+      { ex: 'Lat Pulldown', w: 56, reps: 10, rpe: 7, ts: 4000 }, // older with ts
+    ];
+    const out = DP.getLogs('Lat Pulldown');
+    // ts-bearing newest-first, then the no-ts entry (ts→0) last.
+    expect(out.map((l) => l.w)).toEqual([60, 56, 64]);
+  });
 });
 
 // ── getState — INIT, stagnation, atTopReps, string-reps parsing ──────────────
@@ -128,6 +157,43 @@ describe('DP.getState', () => {
     store['logs'] = [log('Cable Row', 56, 10, 7)];
     store['ex-extra-sets-Cable Row'] = 1;
     expect(DP.getState('Cable Row').extraSets).toBe(1);
+  });
+
+  // ── Order-independence regression (external audit HIGH 2026-05-30) ───────────
+  // getState/stagnation/recommend must match the TIME-sorted truth even when the
+  // DB array is NOT newest-first. Old unsorted code read logs[0] as "last" and
+  // logs.slice(0,3) as "recent 3" by raw position → these would mis-fire.
+  it('reads lastW from the genuinely-latest log when DB order is scrambled', () => {
+    // Newest (ts 3000, 60kg) stored in the MIDDLE, not at index 0.
+    store['logs'] = [
+      { ex: 'Cable Row', w: 52, reps: 10, rpe: 7, ts: 2000 },
+      { ex: 'Cable Row', w: 60, reps: 12, rpe: 8, ts: 3000 }, // genuine latest
+      { ex: 'Cable Row', w: 48, reps: 10, rpe: 7, ts: 1000 },
+    ];
+    const s = DP.getState('Cable Row');
+    expect(s.lastW).toBe(60);
+    expect(s.lastReps).toBe(12);
+    expect(s.lastRPE).toBe(8);
+  });
+
+  it('detects false stagnation correctly on scrambled order (newest weight differs)', () => {
+    // Time truth newest-first: 60 (latest) / 56 / 56 → NOT stagnant (top weight
+    // changed). Stored scrambled so the two 56s sit at the front — old code
+    // would read [56,56,...] and falsely flag stagnation + hold weight.
+    store['logs'] = [
+      { ex: 'Cable Row', w: 56, reps: 10, rpe: 7, ts: 2000 },
+      { ex: 'Cable Row', w: 56, reps: 10, rpe: 7, ts: 1000 },
+      { ex: 'Cable Row', w: 60, reps: 10, rpe: 7, ts: 3000 }, // genuine latest
+    ];
+    expect(DP.getState('Cable Row').isStagnant).toBe(false);
+
+    // Genuine stagnation: latest 3 by ts all 56 → flagged even when scrambled.
+    store['logs'] = [
+      { ex: 'Cable Row', w: 56, reps: 10, rpe: 7, ts: 1000 },
+      { ex: 'Cable Row', w: 56, reps: 10, rpe: 7, ts: 3000 },
+      { ex: 'Cable Row', w: 56, reps: 10, rpe: 7, ts: 2000 },
+    ];
+    expect(DP.getState('Cable Row').isStagnant).toBe(true);
   });
 });
 
