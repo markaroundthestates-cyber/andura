@@ -124,6 +124,12 @@
     --brick-dark: #bd3a28;/* Destructive-action TEXT light — warm red → 4.85:1 ✅ AA */
     --olive: #557428;     /* Energy/cardio accent light — volt-family deep green → 4.71:1 ✅ AA */
     --deep: #1d6b7d;      /* Rest/recovery accent light — aqua-family teal → 5.34:1 ✅ AA */
+    /* Text-path accent inks — the bright --aqua/--ember are wash/glow/border ONLY
+       (1.5:1 / 2.2:1 as text on light paper = AA FAIL). These darkened in-hue
+       variants are AA as TEXT on light surfaces (paper #eef0f6, white card #fff,
+       and the 16% ghost-Pill tint). Bright --aqua/--ember stay unchanged. */
+    --aqua-ink: #176577;  /* aqua text-path light → 5.82:1 paper / 5.41:1 ghost tint ✅ AA */
+    --ember-ink: #a83817; /* ember text-path light → 5.68:1 paper / 5.00:1 ghost tint ✅ AA */
     --succ: #2d7642;      /* Success green → 4.87:1 ✅ AA */
     --warn: #8f6210;      /* Warning amber → 4.70:1 ✅ AA */
     --danger: #bd3a28;    /* Danger red → 4.85:1 ✅ AA */
@@ -200,6 +206,11 @@
     --brick-dark: #ff8a6e; /* Destructive-action TEXT — Pulse ember-red → 8.53:1 ✅ AA */
     --olive: #b6f23a;      /* Energy/cardio accent — volt (Pulse primary energy hue) → 14.74:1 ✅ */
     --deep: #4fd6e8;       /* Rest/recovery accent — Pulse aqua → 11.34:1 ✅ */
+    /* Text-path accent inks — dark theme keeps the bright Pulse hues (they pass
+       AA as text on dark paper: aqua 11.34:1, ember 7.77:1). Same names as the
+       light block so Kicker/Pill text resolves correctly in BOTH themes. */
+    --aqua-ink: #4fd6e8;   /* aqua text-path dark → 11.34:1 paper / 8.49:1 ghost tint ✅ */
+    --ember-ink: #ff7d52;  /* ember text-path dark → 7.77:1 paper / 6.30:1 ghost tint ✅ */
     --succ: #7be0a0;       /* Success green (Pulse family) → 12.17:1 ✅ */
     --warn: #ffc24f;       /* Warning amber (Pulse family) → 12.24:1 ✅ */
     --danger: #ff7d6a;     /* Danger red (Pulse ember-red) → 7.85:1 ✅ */

@@ -16,7 +16,7 @@
 // intentionally hidden in this mode.
 
 import type { JSX } from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { HeartPulse, Plus, Check, Activity } from 'lucide-react';
 import { Kicker } from '../pulse/Kicker';
 import { Pill } from '../pulse/Pill';
@@ -55,6 +55,15 @@ export function AerobicCoach(): JSX.Element {
   const frequency = useOnboardingStore((s) => s.data.frequency);
 
   const [loggerOpen, setLoggerOpen] = useState(false);
+  // SC 2.4.3 — when the inline logger closes, return focus to the CTA that
+  // opened it (the CTA unmounts while the logger is open, so we re-focus it
+  // after it remounts). prevOpen guards against firing on the initial render.
+  const logCtaRef = useRef<HTMLButtonElement | null>(null);
+  const prevOpenRef = useRef(false);
+  useEffect(() => {
+    if (prevOpenRef.current && !loggerOpen) logCtaRef.current?.focus();
+    prevOpenRef.current = loggerOpen;
+  }, [loggerOpen]);
 
   const classesThisWeek = countClassesThisWeek(sessions, new Date());
   // Weekly target = the onboarding training frequency (sessions/week). Null when
@@ -70,7 +79,7 @@ export function AerobicCoach(): JSX.Element {
     >
       {/* Pulse header — mono eyebrow + display title + animated mark. */}
       <div className="mb-4 animate-card-rise">
-        <Kicker color="var(--aqua)">{t('antrenor.aerobic.kicker')}</Kicker>
+        <Kicker color="var(--aqua-ink)">{t('antrenor.aerobic.kicker')}</Kicker>
         <div className="flex items-center justify-between mt-0.5">
           <h1 className="font-display text-3xl font-bold text-ink">
             {t('tabs.antrenor.title')}
@@ -95,7 +104,7 @@ export function AerobicCoach(): JSX.Element {
           <Activity className="w-7 h-7" style={{ color: 'var(--aqua-deep)' }} />
         </span>
         <div className="flex-1 min-w-0">
-          <Kicker color="var(--aqua)">{t('antrenor.aerobic.weekKicker')}</Kicker>
+          <Kicker color="var(--aqua-ink)">{t('antrenor.aerobic.weekKicker')}</Kicker>
           <p className="num-display text-3xl font-bold text-ink mt-1" data-testid="aerobic-week-val">
             {weeklyTarget != null
               ? t('antrenor.aerobic.weekCountTarget', { count: classesThisWeek, target: weeklyTarget })
@@ -109,6 +118,7 @@ export function AerobicCoach(): JSX.Element {
         <ClassLogger dateISO={dateISO} onDone={() => setLoggerOpen(false)} />
       ) : (
         <button
+          ref={logCtaRef}
           type="button"
           onClick={() => setLoggerOpen(true)}
           data-testid="aerobic-log-cta"
@@ -126,7 +136,7 @@ export function AerobicCoach(): JSX.Element {
       >
         <div className="flex items-center gap-2 mb-3">
           <HeartPulse className="w-4 h-4" style={{ color: 'var(--aqua-deep)' }} aria-hidden="true" />
-          <Kicker color="var(--aqua)">{t('antrenor.aerobic.readinessKicker')}</Kicker>
+          <Kicker color="var(--aqua-ink)">{t('antrenor.aerobic.readinessKicker')}</Kicker>
         </div>
         <p className="text-sm text-ink2 mb-3">{t('antrenor.aerobic.readinessQuestion')}</p>
         <div className="grid grid-cols-3 gap-2">
@@ -170,6 +180,14 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
   const lastDuration = useAerobicStore((s) => s.lastDuration);
   const logClass = useAerobicStore((s) => s.logClass);
 
+  // SC 2.4.3 — move focus into the revealed logger on open (lands on the
+  // heading, not deep in the form, so it is not disruptive). The parent
+  // restores focus to the trigger CTA on close.
+  const headingRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
+
   const [type, setType] = useState<AerobicClassType>('aerobic');
   // Duration memory — seed from the last-used duration (the store remembers it).
   const [minutesDraft, setMinutesDraft] = useState<string>(String(lastDuration));
@@ -192,7 +210,9 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
       className="pulse-card pulse-card-tight overflow-hidden p-4 mb-4 animate-card-rise"
       data-testid="aerobic-logger"
     >
-      <Kicker color="var(--aqua)">{t('antrenor.aerobic.loggerKicker')}</Kicker>
+      <div ref={headingRef} tabIndex={-1} className="outline-none">
+        <Kicker color="var(--aqua-ink)">{t('antrenor.aerobic.loggerKicker')}</Kicker>
+      </div>
 
       {/* Class type picker. */}
       <p className="text-xs text-ink2 mt-3 mb-2">{t('antrenor.aerobic.typeLabel')}</p>
@@ -237,7 +257,7 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
       {/* Live kcal preview. */}
       <div className="mt-3" data-testid="aerobic-kcal-preview">
         {kcalPreview != null ? (
-          <Pill color="var(--aqua)">
+          <Pill color="var(--aqua-ink)">
             {t('antrenor.aerobic.kcalPreview', { kcal: kcalPreview })}
           </Pill>
         ) : (

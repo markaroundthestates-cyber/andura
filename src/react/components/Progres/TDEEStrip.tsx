@@ -253,7 +253,7 @@ export function TDEEStrip(): JSX.Element {
     >
       <div className="relative flex items-center justify-between mb-4" data-testid="tdee-faza-row">
         <span data-testid="tdee-faza-badge">
-          <Pill color="var(--ember)">
+          <Pill color="var(--ember-ink)">
             {t('progres.tdee.phaseLabel', { phase: phaseLabel })}
           </Pill>
         </span>
@@ -267,7 +267,7 @@ export function TDEEStrip(): JSX.Element {
         {/* ── LEFT: editable kcal hero + protein ──────────────────────────── */}
         <div className="flex-1 min-w-0">
           <div className="mb-2 flex items-center gap-2">
-            <Kicker color="var(--aqua)">
+            <Kicker color="var(--aqua-ink)">
               {showComparison ? t('progres.tdee.todayVsTarget') : t('progres.tdee.targetToday')}
             </Kicker>
             <button
@@ -400,7 +400,7 @@ export function TDEEStrip(): JSX.Element {
           {ease.eased && (
             <p
               className="text-xs mt-2 leading-snug"
-              style={{ color: 'var(--ember)' }}
+              style={{ color: 'var(--ember-ink)' }}
               data-testid="tdee-fatigue-ease-note"
             >
               {t('progres.tdee.fatigueEaseNote', { kcal: fmtNum(ease.addedKcal) })}

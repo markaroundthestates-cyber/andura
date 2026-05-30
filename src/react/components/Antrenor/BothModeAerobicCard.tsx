@@ -7,7 +7,7 @@
 // dashboard (reused, not duplicated).
 
 import type { JSX } from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Plus, HeartPulse } from 'lucide-react';
 import { Kicker } from '../pulse/Kicker';
 import { ClassLogger } from './AerobicCoach';
@@ -24,6 +24,15 @@ export function BothModeAerobicCard(): JSX.Element {
   const sessions = useAerobicStore((s) => s.sessions);
   const frequency = useOnboardingStore((s) => s.data.frequency);
   const [loggerOpen, setLoggerOpen] = useState(false);
+  // SC 2.4.3 — restore focus to the trigger CTA when the inline logger closes
+  // (the CTA unmounts while open, so re-focus it after it remounts). prevOpen
+  // guards the initial render.
+  const logCtaRef = useRef<HTMLButtonElement | null>(null);
+  const prevOpenRef = useRef(false);
+  useEffect(() => {
+    if (prevOpenRef.current && !loggerOpen) logCtaRef.current?.focus();
+    prevOpenRef.current = loggerOpen;
+  }, [loggerOpen]);
 
   const classesThisWeek = countClassesThisWeek(sessions, new Date());
   const weeklyTarget = frequency != null ? Number(frequency) : null;
@@ -36,7 +45,7 @@ export function BothModeAerobicCard(): JSX.Element {
       <div className="flex items-center justify-between gap-3 mb-2">
         <div className="flex items-center gap-2 min-w-0">
           <HeartPulse className="w-4 h-4" style={{ color: 'var(--aqua-deep)' }} aria-hidden="true" />
-          <Kicker color="var(--aqua)">{t('antrenor.aerobic.weekKicker')}</Kicker>
+          <Kicker color="var(--aqua-ink)">{t('antrenor.aerobic.weekKicker')}</Kicker>
         </div>
         <span className="text-sm font-semibold text-ink" data-testid="both-aerobic-week-val">
           {weeklyTarget != null
@@ -49,6 +58,7 @@ export function BothModeAerobicCard(): JSX.Element {
         <ClassLogger dateISO={todayIso()} onDone={() => setLoggerOpen(false)} />
       ) : (
         <button
+          ref={logCtaRef}
           type="button"
           onClick={() => setLoggerOpen(true)}
           data-testid="both-aerobic-log-cta"
