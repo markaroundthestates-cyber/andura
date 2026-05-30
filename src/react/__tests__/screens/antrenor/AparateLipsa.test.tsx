@@ -74,6 +74,19 @@ describe('AparateLipsa — render', () => {
     expect(screen.getByTestId('aparate-save')).toBeInTheDocument();
   });
 
+  // L-1 security — intro bold fragment is a real JSX <strong>, NOT
+  // dangerouslySetInnerHTML (removes the latent stored-XSS sink).
+  it('renders intro with bold "nu le ai" fragment via real <strong> (no innerHTML)', () => {
+    const { container } = renderLipsa();
+    const strong = container.querySelector('strong');
+    expect(strong).not.toBeNull();
+    expect(strong?.textContent).toBe('nu le ai');
+    const intro = container.querySelector('p.text-base.text-ink2');
+    expect(intro?.textContent).toBe(
+      'Bifeaza aparatele pe care nu le ai. Coach-ul va alege exercitii alternative si nu le va propune in viitor.'
+    );
+  });
+
   it('default toate items NU sunt checked', () => {
     renderLipsa();
     const checkboxes = screen.getAllByRole('checkbox');

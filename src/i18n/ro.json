@@ -1172,7 +1172,9 @@
 
   "aparatLipsa": {
     "subHeaderTitle": "Aparate lipsa",
-    "intro": "Bifeaza aparatele pe care <strong>nu le ai</strong>. Coach-ul va alege exercitii alternative si nu le va propune in viitor.",
+    "introPre": "Bifeaza aparatele pe care ",
+    "introBold": "nu le ai",
+    "introPost": ". Coach-ul va alege exercitii alternative si nu le va propune in viitor.",
     "intro2": "Poti reveni oricand sa scoti din lista daca ai acum aparatul.",
     "learnNote": "Coach-ul invata din selectiile tale. Daca lipsesc mai multe aparate, propune sesiuni bodyweight sau cu alternative.",
     "saveCta": "Salveaza setarea"

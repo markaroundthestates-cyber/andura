@@ -119,10 +119,11 @@ export function AparateLipsa(): JSX.Element {
         testIdBack="aparate-lipsa-back"
       />
       <div className="p-6 flex-1">
-      <p
-        className="text-base text-ink2 mb-3"
-        dangerouslySetInnerHTML={{ __html: t('aparatLipsa.intro') }}
-      />
+      <p className="text-base text-ink2 mb-3">
+        {t('aparatLipsa.introPre')}
+        <strong>{t('aparatLipsa.introBold')}</strong>
+        {t('aparatLipsa.introPost')}
+      </p>
       <p className="text-sm text-ink3 mb-6">
         {t('aparatLipsa.intro2')}
       </p>

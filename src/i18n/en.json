@@ -1172,7 +1172,9 @@
 
   "aparatLipsa": {
     "subHeaderTitle": "Missing equipment",
-    "intro": "Check the equipment you <strong>don't have</strong>. The coach picks alternatives and won't suggest them again.",
+    "introPre": "Check the equipment you ",
+    "introBold": "don't have",
+    "introPost": ". The coach picks alternatives and won't suggest them again.",
     "intro2": "You can come back any time to remove items from the list if you get the equipment.",
     "learnNote": "The coach learns from your choices. If several machines are missing, it suggests bodyweight sessions or alternatives.",
     "saveCta": "Save the setting"
