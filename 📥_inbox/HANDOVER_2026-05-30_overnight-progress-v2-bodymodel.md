@@ -50,4 +50,22 @@ Ai zis "push cand nu mai avem bug-uri SI confidence 100% real". Suntem la **~91%
 - `📤_outbox/audit-run-2026-05-29/` — SMOKE-V2-RESULTS + SECTION-*-REAUDIT + FINAL-REVERIFY
 - `public/body/*.webp` (shipped) + `assets-source/body/` (sursa) + `scripts/optimize-body-images.cjs`
 
+---
+
+## UPDATE DIMINEATA (2026-05-30, Daniel awake → PUSHED LIVE)
+
+Daniel s-a trezit, a zis "push pe live am zis" → **PUSHAT** (`c6cf8135..bcd15df7`, 117 commits). Apoi a verificat Actions + a facut smoke live pe telefon. Doua runde:
+
+**Runda 1 — CI fix (Actions era rosu):** am gresit zicand "Actions verde" dedus din Deploy (workflow SEPARAT). De fapt **Validate (typecheck+unit+build) picase exit 255** + Stryker exit 1. Cauza Validate: `effectiveLoadKg` import nefolosit in `scheduleAdapterAggregate.ts` pe care `tsc --noEmit` (noUnusedLocals) il trata ca EROARE; local trecuse din cache incremental tsc, CI fresh l-a prins. **Reparat** (scos importul + `dist-dev/` la eslintignore), re-pushat `951fcda3`. **Stryker = ne-blocant by design** (`continue-on-error:true`, comentariu "NU gating, monitoring only") — nu rupe build/deploy, nu l-am atins. Lectie salvata: NU declar "Actions verde" fara sa-l vad; verific cei 4 pasi CI fresh (sterg .tsbuildinfo).
+
+**Runda 2 — 6 fix-uri din smoke-ul live Daniel (red marks pe poze)** → PUSHAT `951fcda3..ade4a938` (11 commits), verificat REAL pre-push (typecheck/lint/build/unit fresh = curat, 5561 verzi):
+1. **BUG PRIORITAR — cancel lasa date:** `EnergyCheck` salva readiness instant la alegerea energiei (Normal=3 → scor 85), iar `discardSession` curata store-ul workout dar NU cheia separata `DB('readiness')`. Fix: `clearTodayReadiness()` in calea de discard → **start→cancel readuce readiness la "—", zero date.** Doar `finishSession` mai pastreaza semnalul. (Asta era de ce vedeai 85 desi n-ai logat nimic.)
+2. **Progress polish:** scos textul lung de la Fatigue Today (doar scor), scos panoul standalone "Base Calories" (+gol inchis), scos "Last weigh-in", **mutat body-model-ul SUS** (ordine: AZI → RECUPERARE → OBIECTIV → COMPOZITIE → ACTIUNI → TENDINTA).
+3. **Titlu PULL:** engine emitea sentinel → React cadea pe hardcoded "Push"; acum titlul deriva din `sessionType` real (PULL zice Pull).
+4. **2 mici:** SessionPill ridicat deasupra InstallPrompt (butonul X tappable), account header arata email-ul O singura data (nu de 2 ori).
+
+**CONT FRESH pt sala (Daniel):** acum ca bug-ul de cancel e reparat → dai o data **Account → "Deconectare si Stergere" → "Reseteaza datele"** (sterge datele locale de antrenament) → cont fresh, si RAMANE fresh (test+cancel nu mai lasa nimic). Daca esti logat, reset-ul pastreaza backup-ul cloud; pt truly-fresh logat foloseste "Sterge contul".
+
+**Verificare deploy:** dupa push, un agent asteapta propagarea + smoke live andura.app (consola curata + markerii noului build pe Progress + cancel→readiness-empty live). gh nu-i pe PATH + repo privat → NU pot citi eu Actions; daca runul Validate `ade4a938` e tot rosu, paste si repar.
+
 — Co-CTO
