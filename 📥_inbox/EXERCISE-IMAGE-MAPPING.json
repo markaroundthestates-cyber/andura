@@ -1,0 +1,1358 @@
+{
+  "_meta": {
+    "source": "src/engine/exerciseLibrary.js EXERCISE_METADATA",
+    "total_exercises": 657,
+    "distinct_images": 302,
+    "grids": 76,
+    "cell_order": [
+      "TL",
+      "TR",
+      "BL",
+      "BR"
+    ],
+    "note": "657 exercises collapse to distinct images by visual distinctness; grids batch 4 images each into one 2x2 generated image. Manager splits each generated grid image into 4 files named by the slugs in grids[].cells (TL,TR,BL,BR)."
+  },
+  "exerciseToSlug": {
+    "DB Shoulder Press": "ohp-db",
+    "Incline DB Press": "press-db-incline",
+    "Flat DB Press": "press-db-flat",
+    "Flat Barbell Bench": "bench-barbell-flat",
+    "Lat Pulldown": "lat-pulldown",
+    "Cable Row": "row-cable",
+    "Chest-Supported Row": "row-chest-supported",
+    "Romanian Deadlift": "rdl-barbell",
+    "Leg Press": "leg-press",
+    "Lateral Raises": "lateral-raise-db",
+    "Lateral Raises (cable)": "lateral-raise-cable",
+    "Rear Delt Fly": "rear-delt-machine",
+    "Rear Delt Cable": "rear-delt-cable",
+    "Pec Deck / Cable Fly": "fly-pec-deck",
+    "Cable Fly": "fly-cable-mid",
+    "Incline DB Curl": "incline-curl-db",
+    "Bayesian Curl": "bayesian-curl",
+    "Cable Curl": "cable-curl-bar",
+    "Preacher Curl": "preacher-curl-machine",
+    "Hammer Curl": "hammer-curl-db",
+    "Overhead Triceps": "triceps-overhead-cable",
+    "Pushdown": "triceps-pushdown",
+    "Leg Curl": "leg-curl-lying",
+    "Leg Extension": "leg-extension",
+    "Face Pulls": "face-pull-cable",
+    "Calf Raises": "calf-standing",
+    "Incline Barbell Bench": "bench-barbell-incline",
+    "Decline Barbell Bench": "bench-barbell-decline",
+    "Close-Grip Bench Press": "cgbp",
+    "Wide-Grip Bench Press": "bench-barbell-flat",
+    "Paused Bench Press": "bench-barbell-flat",
+    "Board Press": "bench-board",
+    "Floor Press Barbell": "floor-press-barbell",
+    "Reverse-Grip Bench Press": "bench-barbell-flat",
+    "Decline DB Press": "press-db-decline",
+    "Neutral Grip DB Press": "press-db-flat",
+    "Single-Arm DB Press": "press-db-single",
+    "Low-Incline DB Press": "press-db-incline",
+    "High-Incline DB Press": "press-db-incline",
+    "Floor Press DB": "floor-press-db",
+    "DB Squeeze Press": "press-db-flat",
+    "Incline DB Press 45": "press-db-incline",
+    "Alternating DB Press": "press-db-flat",
+    "Larsen Press DB": "press-db-flat",
+    "Smith Machine Bench": "bench-smith-flat",
+    "Smith Incline Bench": "bench-smith-incline",
+    "Smith Decline Bench": "bench-smith-decline",
+    "Flat Chest Press Machine": "press-machine-flat",
+    "Incline Chest Press Machine": "press-machine-incline",
+    "Decline Chest Press Machine": "press-machine-decline",
+    "Hammer Press Machine": "press-machine-flat",
+    "Hammer Incline Press": "press-machine-incline",
+    "Hammer Decline Press": "press-machine-decline",
+    "Single-Arm Chest Press Machine": "press-machine-flat",
+    "Converging Chest Press": "press-machine-flat",
+    "Pec Deck Rear": "rear-delt-machine",
+    "Pec Deck Plate-Loaded": "fly-pec-deck",
+    "Cable Chest Press": "press-cable-flat",
+    "Cable Incline Press": "press-cable-incline",
+    "Cable Crossover High-to-Low": "fly-cable-high",
+    "Cable Fly Low-to-High": "fly-cable-low",
+    "Cable Fly Mid": "fly-cable-mid",
+    "Single-Arm Cable Fly": "fly-cable-mid",
+    "Incline Cable Fly": "fly-cable-incline",
+    "Decline Cable Fly": "fly-cable-decline",
+    "Kneeling Cable Crossover": "fly-cable-mid",
+    "Cable Crossover Standing": "fly-cable-mid",
+    "Cable Pec Deck": "fly-pec-deck-cable",
+    "Cable Squeeze Press": "fly-cable-mid",
+    "DB Fly": "fly-db-flat",
+    "Incline DB Fly": "fly-db-incline",
+    "Decline DB Fly": "fly-db-decline",
+    "Floor DB Fly": "fly-db-floor",
+    "Single-Arm DB Fly": "fly-db-flat",
+    "DB Pullover": "pullover-db",
+    "Dip": "dip-chest",
+    "Dip Bodyweight": "dip-chest",
+    "Assisted Dip Machine": "dip-assisted",
+    "Bench Dip": "bench-dip",
+    "Weighted Dip": "dip-chest",
+    "Band-Assisted Dip": "dip-assisted",
+    "Bench Dip Feet-on-Floor": "bench-dip",
+    "Bench Dip Knees-Bent": "bench-dip",
+    "Push-up": "pushup-standard",
+    "Knee Push-up": "pushup-knee",
+    "Wall Push-up": "pushup-wall",
+    "Wall Push-up Incline": "pushup-wall",
+    "Diamond Push-up": "diamond-pushup",
+    "Knee Diamond Push-up": "diamond-pushup-knee",
+    "Wide Push-up": "pushup-wide",
+    "Knee Wide Push-up": "pushup-wide",
+    "Decline Push-up": "pushup-decline",
+    "Knee Decline Push-up": "pushup-decline",
+    "Incline Push-up": "pushup-incline",
+    "Pike Push-up": "pike-pushup",
+    "Wall Pike Push-up": "wall-pike-pushup",
+    "Plyometric Push-up": "pushup-plyo",
+    "Clap Push-up": "pushup-plyo",
+    "Archer Push-up": "pushup-archer",
+    "Single-Arm Push-up Assisted": "pushup-onearm",
+    "Knee Single-Arm Push-up": "pushup-onearm",
+    "Spoto Press": "bench-barbell-flat",
+    "Slow Push-up": "pushup-standard",
+    "Pin Press": "bench-barbell-pin",
+    "Smith Pin Press": "bench-smith-pin",
+    "Smith Floor Press": "floor-press-smith",
+    "Chest Press Machine Partial": "press-machine-flat",
+    "Chest Press Machine Lockout": "press-machine-flat",
+    "Smith Machine Bench Paused": "bench-smith-flat",
+    "Chest Press Machine Slow": "press-machine-flat",
+    "Smith Wide-Grip Bench": "bench-smith-flat",
+    "Chest Press Machine Wide": "press-machine-flat",
+    "Smith Close-Grip Bench": "cgbp-smith",
+    "Triceps Press Machine": "triceps-press-machine",
+    "Smith Reverse-Grip Bench": "bench-smith-flat",
+    "Cable Pullover": "pullover-cable",
+    "Pull-up": "pullup",
+    "Wide-Grip Pull-up": "pullup",
+    "Close-Grip Pull-up": "pullup",
+    "Neutral-Grip Pull-up": "pullup",
+    "Weighted Pull-up": "pullup",
+    "Plyometric Pull-up": "pullup",
+    "Archer Pull-up": "pullup",
+    "One-Arm Pull-up Progression": "pullup",
+    "Chest-to-Bar Pull-up": "pullup",
+    "Sternum Pull-up": "pullup",
+    "Dead-Hang Pull-up": "pullup",
+    "Band-Assisted Pull-up": "pullup-assisted",
+    "Chin-up": "chinup",
+    "Weighted Chin-up": "chinup",
+    "Paused Chin-up": "chinup",
+    "Close-Grip Chin-up": "chinup",
+    "Archer Chin-up": "chinup",
+    "One-Arm Chin-up Progression": "chinup",
+    "L-Sit Chin-up": "chinup-lsit",
+    "Wide-Grip Lat Pulldown": "lat-pulldown",
+    "Close-Grip Lat Pulldown": "lat-pulldown",
+    "Neutral-Grip Lat Pulldown": "lat-pulldown",
+    "V-Bar Lat Pulldown": "lat-pulldown",
+    "Lat Pulldown Underhand": "lat-pulldown",
+    "Close-Grip Lat Pulldown Underhand": "lat-pulldown",
+    "Single-Arm Lat Pulldown": "pulldown-single",
+    "Single-Arm Lat Pulldown Underhand": "pulldown-single",
+    "Hammer Strength Lat Pulldown": "pulldown-machine",
+    "Straight-Arm Lat Pulldown": "straight-arm-pulldown",
+    "Barbell Row": "row-barbell",
+    "Yates Row": "row-barbell",
+    "T-Bar Row": "row-tbar",
+    "Pendlay Row": "row-pendlay",
+    "Paused Barbell Row": "row-barbell",
+    "Snatch-Grip Barbell Row": "row-barbell",
+    "Meadows Row": "row-landmine",
+    "Landmine T-Bar Row": "row-landmine",
+    "DB Row": "row-db",
+    "Chest-Supported DB Row": "row-chest-supported-db",
+    "DB Row Underhand": "row-db",
+    "Kroc Row": "row-db",
+    "DB Row Heavy": "row-db",
+    "Cable Row Slow": "row-cable",
+    "Wide-Grip Cable Row": "row-cable",
+    "Close-Grip Cable Row": "row-cable",
+    "V-Bar Cable Row": "row-cable",
+    "Cable Row Underhand": "row-cable",
+    "Close-Grip Cable Row Underhand": "row-cable",
+    "Single-Arm Cable Row": "row-cable",
+    "High Cable Row": "row-cable-high",
+    "Kneeling Cable Row": "row-cable",
+    "Hammer Strength Row": "row-machine",
+    "Hammer Strength Iso-Lateral High Row": "row-machine",
+    "Hammer Strength Iso-Lateral Low Row": "row-machine",
+    "Hammer Strength Iso-Lateral Mid Row": "row-machine",
+    "Hammer Strength Chest-Supported Row": "row-chest-supported",
+    "T-Bar Row Machine": "row-tbar",
+    "Smith Machine Row": "row-smith",
+    "Chest-Supported Row Wide": "row-chest-supported",
+    "Face Pull Bench": "face-pull-cable",
+    "Kneeling Face Pull": "face-pull-cable",
+    "Band Face Pull": "face-pull-band",
+    "Rope Face Pull": "face-pull-cable",
+    "Single-Arm Face Pull": "face-pull-cable",
+    "EZ Bar Pullover": "pullover-barbell",
+    "Machine Pullover": "pullover-machine",
+    "BB Shrug": "shrug-barbell",
+    "DB Shrug": "shrug-db",
+    "Trap Bar Shrug": "shrug-trap-bar",
+    "Cable Shrug": "shrug-cable",
+    "Machine Shrug": "shrug-machine",
+    "Smith Machine Shrug": "shrug-machine",
+    "Behind-Back BB Shrug": "shrug-barbell",
+    "Plate Shrug": "shrug-db",
+    "Roman Chair Back Extension": "back-extension",
+    "45° Hyperextension": "back-extension",
+    "GHD Back Extension": "back-extension",
+    "Weighted Hyperextension": "back-extension",
+    "Reverse Hyperextension": "back-extension",
+    "BB Good Morning": "good-morning",
+    "Banded Good Morning": "good-morning-band",
+    "Seated Good Morning": "good-morning-seated",
+    "Single-Leg RDL": "rdl-single-leg",
+    "Single-Leg RDL Bodyweight": "rdl-single-leg",
+    "Inverted Row Bar": "inverted-row",
+    "Inverted Row Bar Wide": "inverted-row",
+    "Inverted Row Bar Close": "inverted-row",
+    "Inverted Row Bar Neutral": "inverted-row",
+    "Inverted Row Bar Underhand": "inverted-row",
+    "Inverted Row Bar Close Underhand": "inverted-row",
+    "Inverted Row Bar Slow": "inverted-row",
+    "Inverted Row Table Low": "inverted-row",
+    "Superman": "superman",
+    "Prone Y Raise": "prone-raise",
+    "Prone T Raise": "prone-raise",
+    "Scapular Pull-up": "scapular-pullup",
+    "Rack Pull": "rack-pull",
+    "Conventional Deadlift": "deadlift-conventional",
+    "OHP": "ohp-barbell",
+    "Push Press": "push-press-barbell",
+    "Behind-the-Neck Press": "ohp-barbell-behind-neck",
+    "Pin OHP": "ohp-barbell",
+    "Paused OHP": "ohp-barbell",
+    "Z Press": "z-press-barbell",
+    "Bradford Press": "bradford-press-barbell",
+    "Klokov Press": "ohp-barbell",
+    "Snatch-Grip Push Press": "push-press-barbell",
+    "Seated DB Press": "ohp-db",
+    "Standing DB Press": "ohp-db",
+    "Single-Arm DB Press Shoulder": "ohp-db-single",
+    "Arnold Press": "arnold-press-db",
+    "Neutral Grip DB Shoulder Press": "ohp-db",
+    "Cuban Press": "cuban-press-db",
+    "Bradford Press DB": "bradford-press-db",
+    "Z Press DB": "z-press-db",
+    "Half-Kneeling DB Press": "ohp-db-single",
+    "Alternating DB Press Shoulder": "ohp-db",
+    "Smith OHP": "ohp-smith",
+    "Smith OHP Seated": "ohp-smith",
+    "Smith Behind-Neck Press": "ohp-smith-behind-neck",
+    "Hammer Strength OHP": "ohp-machine",
+    "Hammer Strength Lateral": "lateral-raise-machine",
+    "Machine Shoulder Press": "ohp-machine",
+    "Machine Shoulder Press Neutral": "ohp-machine",
+    "Machine Shoulder Press Slow": "ohp-machine",
+    "Single-Arm Machine Shoulder Press": "ohp-machine",
+    "Converging Shoulder Press": "ohp-machine",
+    "DB Lateral Raise": "lateral-raise-db",
+    "Cable Lateral Raise": "lateral-raise-cable",
+    "Machine Lateral Raise": "lateral-raise-machine",
+    "Seated DB Lateral": "lateral-raise-db",
+    "Leaning Lateral Raise": "lateral-raise-db",
+    "21s Lateral": "lateral-raise-db",
+    "Y Raise": "scaption-db",
+    "Iron Cross": "lateral-raise-cable",
+    "Lu Raise": "scaption-db",
+    "Partial Lateral": "lateral-raise-db",
+    "Behind-the-Back Cable Lateral": "lateral-raise-cable",
+    "Lateral Raise Drop Set": "lateral-raise-db",
+    "DB Front Raise": "front-raise-db",
+    "Cable Front Raise": "front-raise-cable",
+    "Barbell Front Raise": "front-raise-barbell",
+    "Plate Front Raise": "front-raise-plate",
+    "Machine Front Raise": "front-raise-machine",
+    "Single-Arm Front Raise": "front-raise-db",
+    "Alternating Front Raise": "front-raise-db",
+    "Incline Front Raise": "front-raise-db",
+    "Lying Front Raise": "front-raise-db",
+    "Hammer Curl Front Raise": "front-raise-db",
+    "Reverse Pec Deck": "rear-delt-machine",
+    "Bent-Over DB Lateral": "rear-delt-db",
+    "Cable Rear Delt Fly": "rear-delt-cable",
+    "Face Pull": "face-pull-cable",
+    "Single-Arm Rear Delt": "rear-delt-cable",
+    "Seated Rear Delt": "rear-delt-db",
+    "Lying Rear Delt": "rear-delt-db",
+    "Standing Cable Rear Delt": "rear-delt-cable",
+    "Machine Rear Delt": "rear-delt-machine",
+    "Band Pull-Apart": "band-pull-apart",
+    "Reverse Cable Crossover": "rear-delt-cable",
+    "DB Rear Delt Fly": "rear-delt-db",
+    "Scapular Shrug Overhead": "scaption-db",
+    "Y-T-W Raise": "scaption-db",
+    "Scaption": "scaption-db",
+    "Landmine Shoulder Press": "landmine-press",
+    "Landmine 180": "landmine-180",
+    "Single-Arm Landmine Press": "landmine-press",
+    "Half-Kneeling Landmine Press": "landmine-press",
+    "Bottoms-Up Press KB": "kb-press",
+    "Handstand Push-up": "handstand-pushup",
+    "Wall-Supported Handstand Push-up": "handstand-pushup",
+    "Behind-the-Neck Push Press": "push-press-behind-neck",
+    "Slow Pike Push-up": "pike-pushup",
+    "Half-Press": "ohp-barbell",
+    "Single-Arm OHP": "ohp-barbell-single",
+    "Y Raise Prone": "scaption-db",
+    "External Rotation Cable": "rotator-cuff-cable",
+    "Internal Rotation Cable": "rotator-cuff-cable",
+    "Clean and Press": "clean-and-press",
+    "Barbell Back Squat (High Bar)": "squat-back",
+    "Barbell Back Squat (Low Bar)": "squat-back",
+    "Front Squat": "squat-front",
+    "Pause Squat": "squat-back",
+    "Tempo Squat": "squat-back",
+    "Box Squat": "squat-box",
+    "Zercher Squat": "squat-zercher",
+    "Overhead Squat": "squat-overhead",
+    "Pin Squat": "squat-back",
+    "Safety Bar Squat": "squat-back",
+    "Smith Machine Squat": "squat-smith",
+    "Smith Front Squat": "squat-smith-front",
+    "Hack Squat Machine": "hack-squat",
+    "Reverse Hack Squat": "hack-squat-reverse",
+    "Belt Squat": "belt-squat",
+    "Pendulum Squat": "pendulum-squat",
+    "Goblet Squat": "goblet-squat",
+    "DB Squat": "db-squat",
+    "DB Sumo Squat": "db-sumo-squat",
+    "Bulgarian Split Squat": "bulgarian-split-squat",
+    "DB Pistol Squat Assisted": "pistol-squat-assisted",
+    "45-Degree Leg Press": "leg-press",
+    "Horizontal Leg Press": "leg-press",
+    "Leg Press Single-Leg": "leg-press-single",
+    "Narrow-Stance Leg Press": "leg-press",
+    "Wide-Stance Leg Press": "leg-press",
+    "DB Lunge": "lunge-db",
+    "Walking Lunge": "lunge-walking",
+    "Reverse Lunge": "lunge-reverse",
+    "Lateral Lunge": "lunge-lateral",
+    "Curtsy Lunge": "lunge-curtsy",
+    "Barbell Lunge": "lunge-barbell",
+    "Deficit Reverse Lunge": "lunge-reverse",
+    "Leg Extension Single-Leg": "leg-extension-single",
+    "Tempo Leg Extension": "leg-extension",
+    "Cable Leg Extension": "leg-extension-cable",
+    "Sissy Squat Machine": "sissy-squat-machine",
+    "Band Leg Extension": "leg-extension-band",
+    "Leg Extension Drop Set": "leg-extension",
+    "Sissy Squat Bodyweight": "sissy-squat",
+    "DB Step-up": "step-up-db",
+    "Barbell Step-up": "step-up-barbell",
+    "Pistol Squat": "pistol-squat",
+    "Wall Sit Static": "wall-sit",
+    "Bodyweight Squat": "bodyweight-squat",
+    "Stiff-Leg Deadlift": "rdl-barbell",
+    "Snatch-Grip RDL": "rdl-barbell",
+    "Deficit RDL": "rdl-barbell",
+    "Sumo RDL": "rdl-barbell",
+    "Block RDL": "rdl-barbell",
+    "Pause RDL": "rdl-barbell",
+    "B-Stance RDL": "rdl-barbell",
+    "Smith RDL": "rdl-smith",
+    "Hyperextension Machine": "back-extension",
+    "Reverse Hyper": "back-extension",
+    "Glute-Ham Raise": "ghr",
+    "Natural Glute-Ham Raise": "ghr",
+    "Trap Bar Deadlift": "deadlift-trap-bar",
+    "DB Romanian Deadlift": "rdl-db",
+    "DB Single-Leg RDL": "rdl-single-leg",
+    "DB B-Stance RDL": "rdl-db",
+    "DB Stiff-Leg Deadlift": "rdl-db",
+    "Kettlebell Swing": "kb-swing",
+    "Tempo DB Romanian Deadlift": "rdl-db",
+    "Seated Leg Curl": "leg-curl-seated",
+    "Standing Leg Curl": "leg-curl-standing",
+    "Leg Curl Single-Leg": "leg-curl-lying",
+    "Tempo Leg Curl": "leg-curl-lying",
+    "Cable Leg Curl": "leg-curl-cable",
+    "Band Leg Curl": "leg-curl-band",
+    "Barbell Good Morning": "good-morning",
+    "Smith Good Morning": "good-morning",
+    "Zercher Good Morning": "good-morning",
+    "Nordic Hamstring Curl": "nordic-curl",
+    "Nordic Hamstring Curl Assisted": "nordic-curl",
+    "Eccentric Nordic Curl": "nordic-curl",
+    "Slider Hamstring Curl": "nordic-curl",
+    "Razor Curl": "nordic-curl",
+    "Inverse Curl": "nordic-curl",
+    "Hip Thrust": "hip-thrust-barbell",
+    "Single-Leg Hip Thrust": "hip-thrust-single",
+    "Hyperextension Bodyweight": "back-extension",
+    "Reverse Hyper Bodyweight": "back-extension",
+    "Cable Pull-Through": "pull-through-cable",
+    "Banded Pull-Through": "pull-through-band",
+    "Wall Hip Hinge": "wall-hip-hinge",
+    "Pause Hip Thrust": "hip-thrust-barbell",
+    "Tempo Hip Thrust": "hip-thrust-barbell",
+    "Deficit Hip Thrust": "hip-thrust-barbell",
+    "Banded Hip Thrust": "hip-thrust-barbell",
+    "Hip Thrust Foot-Elevated": "hip-thrust-barbell",
+    "B-Stance Hip Thrust": "hip-thrust-barbell",
+    "Pin Hip Thrust": "hip-thrust-barbell",
+    "Block Hip Thrust": "hip-thrust-barbell",
+    "Smith Hip Thrust": "hip-thrust-smith",
+    "Glute Drive Machine": "hip-thrust-machine",
+    "Belt Squat Hip Thrust": "hip-thrust-machine",
+    "Single-Leg Smith Hip Thrust": "hip-thrust-smith",
+    "Smith B-Stance Hip Thrust": "hip-thrust-smith",
+    "Plate-Loaded Hip Thrust Machine": "hip-thrust-machine",
+    "DB Hip Thrust": "hip-thrust-db",
+    "Barbell Glute Bridge": "glute-bridge-barbell",
+    "DB Glute Bridge": "glute-bridge-db",
+    "Plate Glute Bridge": "glute-bridge-db",
+    "Frog Pump": "frog-pump",
+    "Banded Glute Bridge": "glute-bridge-band",
+    "Frog Pump DB": "frog-pump",
+    "Cable Glute Kickback": "glute-kickback-cable",
+    "Glute Kickback Machine": "glute-kickback-machine",
+    "Standing Cable Hip Abduction": "hip-abduction-cable",
+    "Hip Abduction Machine": "hip-abduction-machine",
+    "Cable Hip Extension": "glute-kickback-cable",
+    "Single-Arm Cable Glute Kickback": "glute-kickback-cable",
+    "Sumo Deadlift": "sumo-deadlift",
+    "DB Sumo Deadlift": "sumo-deadlift-db",
+    "Romanian Sumo Deadlift": "sumo-deadlift",
+    "Smith Sumo Deadlift": "sumo-deadlift-smith",
+    "Banded Sumo Deadlift": "sumo-deadlift-band",
+    "Glute-Focus Step-up": "step-up-db",
+    "Glute Walking Lunge": "lunge-walking",
+    "Reverse Lunge Glute-Focus": "lunge-reverse",
+    "Cossack Squat": "cossack-squat",
+    "Single-Leg Glute Bridge": "glute-bridge-single",
+    "Glute Bridge Bodyweight": "glute-bridge",
+    "Single-Leg Glute Bridge Foot-Elevated": "glute-bridge-single",
+    "Glute Bridge Bodyweight Single-Leg": "glute-bridge-single",
+    "Glute Bridge March": "glute-bridge",
+    "Quadruped Hip Extension": "donkey-kick",
+    "Donkey Kick": "donkey-kick",
+    "Fire Hydrant": "fire-hydrant",
+    "Hip Thrust 1.5 Rep": "hip-thrust-barbell",
+    "Marching Glute Bridge": "glute-bridge",
+    "Banded Clamshell": "clamshell",
+    "Standing Calf Raise Machine": "calf-standing",
+    "Smith Standing Calf Raise": "calf-standing",
+    "Leg Press Calf Raise": "calf-leg-press",
+    "Hack Squat Calf Raise": "calf-hack",
+    "Standing Single-Leg Calf Raise": "calf-standing",
+    "Standing DB Calf Raise": "calf-standing-db",
+    "Standing Barbell Calf Raise": "calf-standing-barbell",
+    "Seated Calf Raise Machine": "calf-seated",
+    "Seated DB Calf Raise": "calf-seated-db",
+    "Seated BB Calf Raise": "calf-seated-barbell",
+    "Seated Plate Calf Raise": "calf-seated-db",
+    "Seated Single-Leg Calf Raise": "calf-seated",
+    "Smith Seated Calf Raise": "calf-seated",
+    "Donkey Calf Raise": "calf-donkey",
+    "Smith Donkey Calf Raise": "calf-donkey",
+    "Banded Donkey Calf Raise": "calf-donkey",
+    "Single-Leg Donkey Calf Raise": "calf-donkey",
+    "Bodyweight Donkey Calf Raise": "calf-donkey",
+    "Eccentric Slow Calf Raise": "calf-standing",
+    "Tibialis Raise": "tibialis-raise",
+    "Standing Tibialis Raise": "tibialis-raise",
+    "Reverse Calf Raise": "tibialis-raise",
+    "Cable Tibialis Raise": "tibialis-cable",
+    "Banded Tibialis Raise": "tibialis-band",
+    "DB Tibialis Raise": "tibialis-db",
+    "Calf Raise Bodyweight": "calf-standing-bodyweight",
+    "Single-Leg Calf Raise Bodyweight": "calf-standing-bodyweight",
+    "Stair Calf Raise": "calf-standing-bodyweight",
+    "Single-Leg Stair Calf Raise": "calf-standing-bodyweight",
+    "Cable Calf Raise": "calf-standing",
+    "Plate-Loaded Calf Raise": "calf-standing",
+    "Wall Calf Raise": "calf-standing-bodyweight",
+    "Barbell Curl Standing": "barbell-curl",
+    "Barbell Curl Wide Grip": "barbell-curl",
+    "Barbell Curl Narrow Grip": "barbell-curl",
+    "Drag Curl Barbell": "barbell-curl",
+    "EZ-bar Curl Standing": "barbell-curl",
+    "EZ-bar Curl Wide": "barbell-curl",
+    "EZ-bar Curl Narrow": "barbell-curl",
+    "EZ-bar Preacher Curl": "preacher-curl-barbell",
+    "Spider Curl Barbell": "spider-curl-barbell",
+    "Spider Curl EZ-bar": "spider-curl-barbell",
+    "21s Curl Barbell": "barbell-curl",
+    "Cheat Curl Barbell": "barbell-curl",
+    "Barbell Concentration Curl Seated": "concentration-curl-barbell",
+    "Barbell Curl Strict Wall Support": "barbell-curl",
+    "DB Curl Standing": "db-curl",
+    "DB Curl Standing Alternate": "db-curl",
+    "DB Curl Seated Alternate": "db-curl",
+    "DB Hammer Curl Standing": "hammer-curl-db",
+    "DB Hammer Curl Seated": "hammer-curl-db",
+    "DB Cross-Body Hammer": "hammer-curl-crossbody",
+    "DB Incline Curl Alternate": "incline-curl-db",
+    "DB Spider Curl": "spider-curl-db",
+    "DB Preacher Curl": "preacher-curl-db",
+    "DB Zottman Curl": "zottman-curl",
+    "Drag Curl DB": "db-curl",
+    "DB Concentration Curl Standing": "concentration-curl-db",
+    "DB Concentration Curl Kneeling": "concentration-curl-db",
+    "DB 21s Alternate": "db-curl",
+    "Cable Curl Standing Straight Bar": "cable-curl-bar",
+    "Cable Curl Standing Rope": "cable-curl-bar",
+    "Cable Curl Standing EZ-bar Attachment": "cable-curl-bar",
+    "Cable Curl Single-Arm": "cable-curl-single",
+    "Cable Curl Seated Behind Body": "cable-curl-bar",
+    "Cable Hammer Curl Rope": "hammer-curl-cable",
+    "Cable Drag Curl": "cable-curl-bar",
+    "Cable Curl Lying on Bench": "cable-curl-lying",
+    "Machine Preacher Curl": "preacher-curl-machine",
+    "Machine Seated Curl": "machine-curl",
+    "Cable Curl Cross-Body Single": "cable-curl-single",
+    "Cable Concentration Curl": "concentration-curl-cable",
+    "Chin-Up Underhand Strict": "chinup",
+    "Chin-Up Underhand Close Grip": "chinup",
+    "Chin-Up Neutral Grip": "chinup",
+    "Chin-Up Negatives Eccentric Only": "chinup",
+    "Chin-Up Assisted Band": "pullup-assisted",
+    "Chin-Up Assisted Machine": "pullup-assisted",
+    "Inverted Row Underhand": "inverted-row",
+    "Towel Chin-Up": "chinup",
+    "L-sit Chin-Up": "chinup-lsit",
+    "Commando Pull-Up": "pullup-commando",
+    "Lying Triceps Extension Barbell": "skullcrusher-barbell",
+    "Lying Triceps Extension EZ-bar": "skullcrusher-barbell",
+    "Decline Triceps Extension Barbell": "skullcrusher-barbell",
+    "Seated Overhead Triceps Extension Barbell": "triceps-overhead-barbell",
+    "Seated Overhead Triceps Extension EZ-bar": "triceps-overhead-barbell",
+    "Standing Overhead Triceps Extension EZ-bar": "triceps-overhead-barbell",
+    "JM Press": "jm-press",
+    "Cable Triceps Pushdown Straight Bar": "triceps-pushdown",
+    "Cable Triceps Pushdown V-bar": "triceps-pushdown",
+    "Cable Triceps Pushdown Rope": "triceps-pushdown",
+    "Cable Triceps Pushdown Reverse Grip": "triceps-pushdown",
+    "Cable Overhead Triceps Extension Rope": "triceps-overhead-cable",
+    "Cable Overhead Triceps Extension EZ-bar": "triceps-overhead-cable",
+    "Cable Triceps Kickback Rope": "triceps-kickback-cable",
+    "Cable Crossover Triceps Extension": "triceps-overhead-cable",
+    "Cable Triceps Pushdown Single-Arm": "triceps-pushdown",
+    "DB Lying Triceps Extension": "skullcrusher-db",
+    "DB Lying Triceps Extension Cross-Body": "skullcrusher-db",
+    "DB Overhead Triceps Extension Two-Hand": "triceps-overhead-db",
+    "DB Overhead Triceps Extension Single-Arm Seated": "triceps-overhead-db",
+    "DB Overhead Triceps Extension Single-Arm Standing": "triceps-overhead-db",
+    "DB Kickback Standing": "triceps-kickback-db",
+    "DB Kickback Bench Support": "triceps-kickback-db",
+    "DB Tate Press": "skullcrusher-db",
+    "DB Floor Press Close-Grip": "skullcrusher-db",
+    "DB Single-Arm Overhead Triceps Extension Kneeling": "triceps-overhead-db",
+    "DB Triceps Extension Lying Cross-Body Single-Arm": "skullcrusher-db",
+    "Triceps Dip Parallel Bars": "triceps-dip",
+    "Triceps Dip Weighted": "triceps-dip",
+    "Triceps Dip Machine": "triceps-dip-machine",
+    "Cable Single-Arm Overhead Triceps Extension": "triceps-overhead-cable",
+    "Wrist Curl Barbell Seated Palms-Up": "wrist-curl-barbell",
+    "Wrist Curl Barbell Seated Palms-Down": "wrist-curl-barbell",
+    "Wrist Curl DB Seated Palms-Up": "wrist-curl-db",
+    "Wrist Curl DB Seated Palms-Down": "wrist-curl-db",
+    "Wrist Curl Barbell Standing Behind Back": "wrist-curl-barbell",
+    "Reverse Wrist Curl Barbell Seated": "reverse-wrist-curl-barbell",
+    "Reverse Wrist Curl DB Seated": "reverse-wrist-curl-db",
+    "Reverse Wrist Curl Cable": "reverse-wrist-curl-cable",
+    "Cable Wrist Curl": "wrist-curl-cable",
+    "Wrist Roller": "wrist-roller",
+    "Plate Pinch Hold": "plate-pinch",
+    "Farmer's Walk DB": "farmers-walk",
+    "Farmer's Walk Trap Bar": "farmers-walk",
+    "Farmer's Walk Kettlebell": "farmers-walk",
+    "Towel Hang": "dead-hang",
+    "Dead Hang": "dead-hang",
+    "Bar Hang Single-Arm": "dead-hang",
+    "Captains of Crush Gripper": "gripper",
+    "Reverse Curl Barbell": "reverse-curl-barbell",
+    "Reverse Curl EZ-bar": "reverse-curl-barbell",
+    "Reverse Curl Cable": "reverse-curl-cable",
+    "Reverse Curl DB": "reverse-curl-db",
+    "Pinwheel Curl DB": "pinwheel-curl",
+    "Suitcase Carry DB": "farmers-walk",
+    "Plate Curl": "plate-curl",
+    "Sledgehammer Levering": "sledgehammer",
+    "Hammer Strength Incline Press": "press-machine-incline",
+    "Hammer Strength Decline Press": "press-machine-decline",
+    "Hammer Strength Flat Press": "press-machine-flat",
+    "Hammer Strength Iso-Lateral Bench Press": "press-machine-flat",
+    "Smith Split Squat": "split-squat-smith",
+    "Smith Bulgarian Split Squat": "split-squat-smith",
+    "Smith Bent-Over Row": "row-smith",
+    "Smith Reverse Lunge": "lunge-reverse",
+    "Smith Inverted Row": "inverted-row",
+    "Vertical Hack Squat": "hack-squat",
+    "Cable Triceps Kickback Single-Arm": "triceps-kickback-cable",
+    "Cable Preacher Curl": "preacher-curl-cable",
+    "Reverse-Grip Preacher Curl": "reverse-curl-barbell",
+    "Spider Curl Cable": "spider-curl-cable",
+    "Trap Bar Row": "row-trap-bar",
+    "Trap Bar RDL": "deadlift-trap-bar",
+    "Kettlebell Goblet Squat": "goblet-squat",
+    "Kettlebell Single-Arm Press": "kb-press",
+    "Kettlebell Single-Arm Row": "row-db",
+    "Kettlebell Romanian Deadlift": "rdl-db",
+    "Kettlebell Front Rack Carry": "farmers-walk",
+    "SSB Squat": "squat-back",
+    "SSB Good Morning": "good-morning",
+    "SSB Lunge": "lunge-barbell",
+    "Cambered Bar Squat": "squat-back",
+    "Cambered Bar RDL": "rdl-barbell",
+    "Power Clean": "power-clean",
+    "Hang Clean": "power-clean",
+    "Push Jerk": "push-press-barbell",
+    "Fat Grip Hold": "fat-grip-hold",
+    "Fat Grip Barbell Curl": "fat-grip-hold",
+    "Hammer Holds": "fat-grip-hold",
+    "Wrist Extension Cable Standing": "reverse-wrist-curl-cable",
+    "Plank": "plank",
+    "Side Plank": "side-plank",
+    "Plank with Shoulder Tap": "plank-dynamic",
+    "Plank to Push-up": "plank-dynamic",
+    "Side Plank Dip": "side-plank",
+    "Plank with Reach": "plank-dynamic",
+    "Copenhagen Plank": "copenhagen-plank",
+    "Scapular Plank": "plank-dynamic",
+    "Pallof Press Cable Standing": "pallof-cable",
+    "Pallof Press Half-Kneeling": "pallof-cable",
+    "Pallof Press Band": "pallof-band",
+    "Cable Woodchop High-to-Low": "woodchop-cable",
+    "Cable Woodchop Low-to-High": "woodchop-cable",
+    "Med Ball Woodchop": "woodchop-medball",
+    "Dead Bug": "dead-bug",
+    "Dead Bug with Resistance Band": "dead-bug",
+    "Bird Dog": "bird-dog",
+    "Bird Dog with Resistance Band": "bird-dog",
+    "Hollow Body Hold": "hollow-hold",
+    "Hollow Body Rock": "hollow-hold",
+    "Reverse Crunch": "reverse-crunch",
+    "Reverse Crunch Decline Bench": "reverse-crunch",
+    "Stability Ball Stir the Pot": "ab-rollout",
+    "Ab Wheel Rollout": "ab-rollout",
+    "Barbell Rollout": "rollout-barbell",
+    "Stability Ball Rollout": "ab-rollout",
+    "Hanging Leg Raise": "hanging-leg-raise",
+    "Hanging Knee Raise": "hanging-leg-raise",
+    "Captains Chair Knee Raise": "captains-chair-raise",
+    "Captains Chair Leg Raise": "captains-chair-raise",
+    "Toes-to-Bar": "hanging-leg-raise",
+    "L-Sit Hold Parallel Bars": "l-sit",
+    "L-Sit Hold Floor": "l-sit",
+    "Cable Russian Twist": "russian-twist",
+    "Cable Side Bend": "side-bend",
+    "Med Ball Slam": "medball-slam",
+    "Med Ball Russian Twist": "russian-twist",
+    "Decline Sit-up": "situp-bench",
+    "Bench Sit-up": "situp-bench",
+    "Weighted Sit-up": "situp-weighted",
+    "Roman Chair Sit-up": "situp-bench",
+    "Cable Crunch Kneeling": "cable-crunch",
+    "Cable Crunch Standing": "cable-crunch",
+    "V-Up": "v-up",
+    "Heel Tap": "heel-tap",
+    "Bicycle Crunch": "bicycle-crunch",
+    "Stability Ball Crunch": "ball-crunch",
+    "Stability Ball Pike": "ball-pike",
+    "Plate Crunch": "plate-crunch",
+    "Plate Russian Twist": "russian-twist",
+    "Plate Side Bend": "side-bend",
+    "Garhammer Raise": "hanging-leg-raise",
+    "Front Rack Carry Barbell": "loaded-carry",
+    "Overhead Carry DB": "loaded-carry",
+    "Dragon Flag": "dragon-flag",
+    "Windshield Wiper": "windshield-wiper",
+    "Body Saw Plank": "body-saw"
+  },
+  "grids": [
+    {
+      "grid": 1,
+      "cells": [
+        "press-db-incline",
+        "press-db-flat",
+        "bench-barbell-flat",
+        "fly-pec-deck"
+      ]
+    },
+    {
+      "grid": 2,
+      "cells": [
+        "fly-cable-mid",
+        "bench-barbell-incline",
+        "bench-barbell-decline",
+        "bench-board"
+      ]
+    },
+    {
+      "grid": 3,
+      "cells": [
+        "floor-press-barbell",
+        "press-db-decline",
+        "press-db-single",
+        "floor-press-db"
+      ]
+    },
+    {
+      "grid": 4,
+      "cells": [
+        "bench-smith-flat",
+        "bench-smith-incline",
+        "bench-smith-decline",
+        "press-machine-flat"
+      ]
+    },
+    {
+      "grid": 5,
+      "cells": [
+        "press-machine-incline",
+        "press-machine-decline",
+        "press-cable-flat",
+        "press-cable-incline"
+      ]
+    },
+    {
+      "grid": 6,
+      "cells": [
+        "fly-cable-high",
+        "fly-cable-low",
+        "fly-cable-incline",
+        "fly-cable-decline"
+      ]
+    },
+    {
+      "grid": 7,
+      "cells": [
+        "fly-pec-deck-cable",
+        "fly-db-flat",
+        "fly-db-incline",
+        "fly-db-decline"
+      ]
+    },
+    {
+      "grid": 8,
+      "cells": [
+        "fly-db-floor",
+        "pullover-db",
+        "dip-chest",
+        "dip-assisted"
+      ]
+    },
+    {
+      "grid": 9,
+      "cells": [
+        "pushup-standard",
+        "pushup-knee",
+        "pushup-wall",
+        "pushup-wide"
+      ]
+    },
+    {
+      "grid": 10,
+      "cells": [
+        "pushup-decline",
+        "pushup-incline",
+        "pushup-plyo",
+        "pushup-archer"
+      ]
+    },
+    {
+      "grid": 11,
+      "cells": [
+        "pushup-onearm",
+        "bench-barbell-pin",
+        "bench-smith-pin",
+        "floor-press-smith"
+      ]
+    },
+    {
+      "grid": 12,
+      "cells": [
+        "pullover-cable",
+        "pullover-barbell",
+        "lat-pulldown",
+        "row-cable"
+      ]
+    },
+    {
+      "grid": 13,
+      "cells": [
+        "row-chest-supported",
+        "pullup",
+        "pullup-assisted",
+        "chinup"
+      ]
+    },
+    {
+      "grid": 14,
+      "cells": [
+        "chinup-lsit",
+        "pulldown-single",
+        "pulldown-machine",
+        "straight-arm-pulldown"
+      ]
+    },
+    {
+      "grid": 15,
+      "cells": [
+        "row-barbell",
+        "row-tbar",
+        "row-pendlay",
+        "row-landmine"
+      ]
+    },
+    {
+      "grid": 16,
+      "cells": [
+        "row-db",
+        "row-chest-supported-db",
+        "row-cable-high",
+        "row-machine"
+      ]
+    },
+    {
+      "grid": 17,
+      "cells": [
+        "row-smith",
+        "pullover-machine",
+        "shrug-barbell",
+        "shrug-db"
+      ]
+    },
+    {
+      "grid": 18,
+      "cells": [
+        "shrug-trap-bar",
+        "shrug-cable",
+        "shrug-machine",
+        "back-extension"
+      ]
+    },
+    {
+      "grid": 19,
+      "cells": [
+        "good-morning",
+        "good-morning-band",
+        "good-morning-seated",
+        "rdl-single-leg"
+      ]
+    },
+    {
+      "grid": 20,
+      "cells": [
+        "inverted-row",
+        "superman",
+        "prone-raise",
+        "scapular-pullup"
+      ]
+    },
+    {
+      "grid": 21,
+      "cells": [
+        "rack-pull",
+        "pullup-commando",
+        "row-trap-bar",
+        "power-clean"
+      ]
+    },
+    {
+      "grid": 22,
+      "cells": [
+        "ohp-db",
+        "lateral-raise-db",
+        "lateral-raise-cable",
+        "rear-delt-machine"
+      ]
+    },
+    {
+      "grid": 23,
+      "cells": [
+        "rear-delt-cable",
+        "face-pull-cable",
+        "pike-pushup",
+        "wall-pike-pushup"
+      ]
+    },
+    {
+      "grid": 24,
+      "cells": [
+        "face-pull-band",
+        "ohp-barbell",
+        "push-press-barbell",
+        "ohp-barbell-behind-neck"
+      ]
+    },
+    {
+      "grid": 25,
+      "cells": [
+        "z-press-barbell",
+        "bradford-press-barbell",
+        "ohp-db-single",
+        "arnold-press-db"
+      ]
+    },
+    {
+      "grid": 26,
+      "cells": [
+        "cuban-press-db",
+        "bradford-press-db",
+        "z-press-db",
+        "ohp-smith"
+      ]
+    },
+    {
+      "grid": 27,
+      "cells": [
+        "ohp-smith-behind-neck",
+        "ohp-machine",
+        "lateral-raise-machine",
+        "scaption-db"
+      ]
+    },
+    {
+      "grid": 28,
+      "cells": [
+        "front-raise-db",
+        "front-raise-cable",
+        "front-raise-barbell",
+        "front-raise-plate"
+      ]
+    },
+    {
+      "grid": 29,
+      "cells": [
+        "front-raise-machine",
+        "rear-delt-db",
+        "band-pull-apart",
+        "landmine-press"
+      ]
+    },
+    {
+      "grid": 30,
+      "cells": [
+        "landmine-180",
+        "kb-press",
+        "handstand-pushup",
+        "push-press-behind-neck"
+      ]
+    },
+    {
+      "grid": 31,
+      "cells": [
+        "ohp-barbell-single",
+        "rotator-cuff-cable",
+        "clean-and-press",
+        "incline-curl-db"
+      ]
+    },
+    {
+      "grid": 32,
+      "cells": [
+        "bayesian-curl",
+        "cable-curl-bar",
+        "preacher-curl-machine",
+        "hammer-curl-db"
+      ]
+    },
+    {
+      "grid": 33,
+      "cells": [
+        "barbell-curl",
+        "preacher-curl-barbell",
+        "spider-curl-barbell",
+        "concentration-curl-barbell"
+      ]
+    },
+    {
+      "grid": 34,
+      "cells": [
+        "db-curl",
+        "hammer-curl-crossbody",
+        "spider-curl-db",
+        "preacher-curl-db"
+      ]
+    },
+    {
+      "grid": 35,
+      "cells": [
+        "zottman-curl",
+        "concentration-curl-db",
+        "cable-curl-single",
+        "hammer-curl-cable"
+      ]
+    },
+    {
+      "grid": 36,
+      "cells": [
+        "cable-curl-lying",
+        "machine-curl",
+        "concentration-curl-cable",
+        "preacher-curl-cable"
+      ]
+    },
+    {
+      "grid": 37,
+      "cells": [
+        "spider-curl-cable",
+        "triceps-overhead-cable",
+        "triceps-pushdown",
+        "cgbp"
+      ]
+    },
+    {
+      "grid": 38,
+      "cells": [
+        "bench-dip",
+        "diamond-pushup",
+        "diamond-pushup-knee",
+        "cgbp-smith"
+      ]
+    },
+    {
+      "grid": 39,
+      "cells": [
+        "triceps-press-machine",
+        "skullcrusher-barbell",
+        "triceps-overhead-barbell",
+        "jm-press"
+      ]
+    },
+    {
+      "grid": 40,
+      "cells": [
+        "triceps-kickback-cable",
+        "skullcrusher-db",
+        "triceps-overhead-db",
+        "triceps-kickback-db"
+      ]
+    },
+    {
+      "grid": 41,
+      "cells": [
+        "triceps-dip",
+        "triceps-dip-machine",
+        "wrist-curl-barbell",
+        "wrist-curl-db"
+      ]
+    },
+    {
+      "grid": 42,
+      "cells": [
+        "reverse-wrist-curl-barbell",
+        "reverse-wrist-curl-db",
+        "reverse-wrist-curl-cable",
+        "wrist-curl-cable"
+      ]
+    },
+    {
+      "grid": 43,
+      "cells": [
+        "wrist-roller",
+        "plate-pinch",
+        "farmers-walk",
+        "dead-hang"
+      ]
+    },
+    {
+      "grid": 44,
+      "cells": [
+        "gripper",
+        "reverse-curl-barbell",
+        "reverse-curl-cable",
+        "reverse-curl-db"
+      ]
+    },
+    {
+      "grid": 45,
+      "cells": [
+        "pinwheel-curl",
+        "plate-curl",
+        "sledgehammer",
+        "fat-grip-hold"
+      ]
+    },
+    {
+      "grid": 46,
+      "cells": [
+        "leg-press",
+        "leg-extension",
+        "squat-back",
+        "squat-front"
+      ]
+    },
+    {
+      "grid": 47,
+      "cells": [
+        "squat-box",
+        "squat-zercher",
+        "squat-overhead",
+        "squat-smith"
+      ]
+    },
+    {
+      "grid": 48,
+      "cells": [
+        "squat-smith-front",
+        "hack-squat",
+        "hack-squat-reverse",
+        "belt-squat"
+      ]
+    },
+    {
+      "grid": 49,
+      "cells": [
+        "pendulum-squat",
+        "goblet-squat",
+        "db-squat",
+        "db-sumo-squat"
+      ]
+    },
+    {
+      "grid": 50,
+      "cells": [
+        "bulgarian-split-squat",
+        "pistol-squat-assisted",
+        "leg-press-single",
+        "lunge-db"
+      ]
+    },
+    {
+      "grid": 51,
+      "cells": [
+        "lunge-walking",
+        "lunge-reverse",
+        "lunge-lateral",
+        "lunge-curtsy"
+      ]
+    },
+    {
+      "grid": 52,
+      "cells": [
+        "lunge-barbell",
+        "leg-extension-single",
+        "leg-extension-cable",
+        "sissy-squat-machine"
+      ]
+    },
+    {
+      "grid": 53,
+      "cells": [
+        "leg-extension-band",
+        "sissy-squat",
+        "step-up-db",
+        "step-up-barbell"
+      ]
+    },
+    {
+      "grid": 54,
+      "cells": [
+        "pistol-squat",
+        "wall-sit",
+        "bodyweight-squat",
+        "split-squat-smith"
+      ]
+    },
+    {
+      "grid": 55,
+      "cells": [
+        "rdl-barbell",
+        "leg-curl-lying",
+        "deadlift-conventional",
+        "rdl-smith"
+      ]
+    },
+    {
+      "grid": 56,
+      "cells": [
+        "ghr",
+        "deadlift-trap-bar",
+        "rdl-db",
+        "kb-swing"
+      ]
+    },
+    {
+      "grid": 57,
+      "cells": [
+        "leg-curl-seated",
+        "leg-curl-standing",
+        "leg-curl-cable",
+        "leg-curl-band"
+      ]
+    },
+    {
+      "grid": 58,
+      "cells": [
+        "nordic-curl",
+        "wall-hip-hinge",
+        "hip-thrust-barbell",
+        "hip-thrust-single"
+      ]
+    },
+    {
+      "grid": 59,
+      "cells": [
+        "pull-through-cable",
+        "pull-through-band",
+        "hip-thrust-smith",
+        "hip-thrust-machine"
+      ]
+    },
+    {
+      "grid": 60,
+      "cells": [
+        "hip-thrust-db",
+        "glute-bridge-barbell",
+        "glute-bridge-db",
+        "frog-pump"
+      ]
+    },
+    {
+      "grid": 61,
+      "cells": [
+        "glute-bridge-band",
+        "glute-kickback-cable",
+        "glute-kickback-machine",
+        "hip-abduction-cable"
+      ]
+    },
+    {
+      "grid": 62,
+      "cells": [
+        "hip-abduction-machine",
+        "sumo-deadlift",
+        "sumo-deadlift-db",
+        "sumo-deadlift-smith"
+      ]
+    },
+    {
+      "grid": 63,
+      "cells": [
+        "sumo-deadlift-band",
+        "cossack-squat",
+        "glute-bridge-single",
+        "glute-bridge"
+      ]
+    },
+    {
+      "grid": 64,
+      "cells": [
+        "donkey-kick",
+        "fire-hydrant",
+        "clamshell",
+        "calf-standing"
+      ]
+    },
+    {
+      "grid": 65,
+      "cells": [
+        "calf-leg-press",
+        "calf-hack",
+        "calf-standing-db",
+        "calf-standing-barbell"
+      ]
+    },
+    {
+      "grid": 66,
+      "cells": [
+        "calf-seated",
+        "calf-seated-db",
+        "calf-seated-barbell",
+        "calf-donkey"
+      ]
+    },
+    {
+      "grid": 67,
+      "cells": [
+        "tibialis-raise",
+        "tibialis-cable",
+        "tibialis-band",
+        "tibialis-db"
+      ]
+    },
+    {
+      "grid": 68,
+      "cells": [
+        "calf-standing-bodyweight",
+        "plank",
+        "side-plank",
+        "plank-dynamic"
+      ]
+    },
+    {
+      "grid": 69,
+      "cells": [
+        "copenhagen-plank",
+        "pallof-cable",
+        "pallof-band",
+        "woodchop-cable"
+      ]
+    },
+    {
+      "grid": 70,
+      "cells": [
+        "woodchop-medball",
+        "dead-bug",
+        "bird-dog",
+        "hollow-hold"
+      ]
+    },
+    {
+      "grid": 71,
+      "cells": [
+        "reverse-crunch",
+        "ab-rollout",
+        "rollout-barbell",
+        "hanging-leg-raise"
+      ]
+    },
+    {
+      "grid": 72,
+      "cells": [
+        "captains-chair-raise",
+        "l-sit",
+        "russian-twist",
+        "side-bend"
+      ]
+    },
+    {
+      "grid": 73,
+      "cells": [
+        "medball-slam",
+        "situp-bench",
+        "situp-weighted",
+        "cable-crunch"
+      ]
+    },
+    {
+      "grid": 74,
+      "cells": [
+        "v-up",
+        "heel-tap",
+        "bicycle-crunch",
+        "ball-crunch"
+      ]
+    },
+    {
+      "grid": 75,
+      "cells": [
+        "ball-pike",
+        "plate-crunch",
+        "loaded-carry",
+        "dragon-flag"
+      ]
+    },
+    {
+      "grid": 76,
+      "cells": [
+        "windshield-wiper",
+        "body-saw"
+      ]
+    }
+  ]
+}
