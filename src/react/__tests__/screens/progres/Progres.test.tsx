@@ -154,13 +154,31 @@ describe('Progres — redesign layout (2026-05-30 locked)', () => {
     expect(screen.queryByTestId('fatigue-bmr-grid')).not.toBeInTheDocument();
   });
 
-  it('places Target Weight (objective) directly under Target Today', () => {
+  it('places Target Weight (objective) near the top, after Target Today', () => {
     renderProgres();
     const azi = screen.getByTestId('progres-zone-azi');
     const obiectiv = screen.getByTestId('progres-zone-obiectiv');
     expect(azi.compareDocumentPosition(obiectiv) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     // ObiectivCard (target weight + ETA) is present in that zone.
     expect(obiectiv.querySelector('[data-testid="obiectiv-card"]')).toBeTruthy();
+  });
+
+  // Daniel 2026-05-30 arrow UP: the muscle-recovery body-model zone is moved HIGH
+  // — right under Target Today and ABOVE the objective + composition zones.
+  it('moves the Muscle Recovery (body-model) zone UP — above Objective and Composition', () => {
+    vi.mocked(useMuscleRecoveryGroups).mockReturnValue([
+      { group: 'piept', label: 'Piept', state: 'recovered' },
+    ] as RecoveryGroups);
+    renderProgres();
+    const azi = screen.getByTestId('progres-zone-azi');
+    const recovery = screen.getByTestId('progres-zone-recovery');
+    const obiectiv = screen.getByTestId('progres-zone-obiectiv');
+    const compozitie = screen.getByTestId('progres-zone-compozitie');
+    // Recovery sits right after AZI...
+    expect(azi.compareDocumentPosition(recovery) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // ...and BEFORE both Objective and Composition.
+    expect(recovery.compareDocumentPosition(obiectiv) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(recovery.compareDocumentPosition(compozitie) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it('moves the Weight & BF trend to the BOTTOM (after actions)', () => {

@@ -32,15 +32,17 @@
 //   1. AZI        — TDEEStrip is now the ONE merged "Target Today" hero: kcal +
 //                   protein EDITABLE for the day (= logging consumed intake, feeds
 //                   the same Bayesian context that calibrates TDEE) + honest
-//                   "sharpens as you log" microcopy + Fatigue on the right + base
-//                   calories (BMR) folded in small. The separate NutritionInline,
-//                   FatigueStrip, and BMRStrip panels are MERGED INTO it. Fatigue
-//                   → kcal: a capped recovery-protective deficit ease, labeled.
-//   2. OBIECTIV   — ObiectivCard (Target Weight + ETA) moved UP, fast-visible,
-//                   right under Target Today; ObiectivGoalCard (5 goal pills) sits
-//                   with it (both are "your objective").
-//   3. RECUPERARE — MuscleBodyMap (anatomical body figure) REPLACES the old
-//                   MuscleRecoveryGrid circles (same useMuscleRecoveryGroups data).
+//                   "sharpens as you log" microcopy + Fatigue on the right. The
+//                   separate NutritionInline + FatigueStrip panels are MERGED INTO
+//                   it. Fatigue → kcal: a capped recovery-protective deficit ease,
+//                   labeled. (The Base-calories/BMR panel was struck out 2026-05-30.)
+//   2. RECUPERARE — Daniel 2026-05-30 arrow UP: the body-model recovery section is
+//                   moved HIGH, right under Target Today, prominent before the
+//                   objective + composition detail. MuscleBodyMap (anatomical body
+//                   figure) REPLACES the old MuscleRecoveryGrid circles (same
+//                   useMuscleRecoveryGroups data).
+//   3. OBIECTIV   — ObiectivCard (Target Weight + ETA) fast-visible near the top;
+//                   ObiectivGoalCard (5 goal pills) sits with it (both "objective").
 //   4. COMPOZITIE — body-composition group: BodyFat + Projection + Weight (7 days).
 //   5. ACTIUNI    — AlertsBanner + log-weight CTA + timeline CTA. (The
 //                   "Last weigh-in" recap card was struck out 2026-05-30.)
@@ -140,25 +142,28 @@ export function Progres(): JSX.Element {
         <TDEEStrip />
       </div>
 
-      {/* ── ZONE 2: OBIECTIV — Target Weight moved UP, fast-visible. ─────────
-          Right under Target Today: the goal selector (5 phase pills) + the
-          target-weight + ETA card. Both are "your objective", co-located. */}
-      <div data-testid="progres-zone-obiectiv" className="animate-card-rise delay-75">
-        <ZoneHeading testId="progres-zone-obiectiv-heading">{t('progres.zone.obiectiv')}</ZoneHeading>
-        <ObiectivCard />
-        <ObiectivGoalCard />
-      </div>
-
-      {/* ── ZONE 3: RECUPERARE — anatomical muscle recovery body map. ────────
-          MuscleBodyMap REPLACES the old recovery-ring circles (MuscleRecoveryGrid).
-          Same useMuscleRecoveryGroups data; the map self-hides when the engine
-          returns nothing (T0 fresh user), so the heading is gated the same way. */}
+      {/* ── ZONE 2: RECUPERARE — anatomical muscle recovery body map. ────────
+          Daniel 2026-05-30 arrow UP: the body-model recovery section is moved
+          HIGH, right under Target Today, so it reads prominently before the
+          objective + composition detail. MuscleBodyMap REPLACES the old
+          recovery-ring circles (MuscleRecoveryGrid). Same useMuscleRecoveryGroups
+          data; the map self-hides when the engine returns nothing (T0 fresh
+          user), so the heading is gated the same way. */}
       {recoveryGroups.length > 0 && (
-        <div data-testid="progres-zone-recovery" className="animate-card-rise delay-150">
+        <div data-testid="progres-zone-recovery" className="animate-card-rise delay-75">
           <ZoneHeading testId="progres-zone-recovery-heading">{t('progres.zone.recuperare')}</ZoneHeading>
           <MuscleBodyMap />
         </div>
       )}
+
+      {/* ── ZONE 3: OBIECTIV — Target Weight, fast-visible near the top. ─────
+          The goal selector (5 phase pills) + the target-weight + ETA card. Both
+          are "your objective", co-located. */}
+      <div data-testid="progres-zone-obiectiv" className="animate-card-rise delay-150">
+        <ZoneHeading testId="progres-zone-obiectiv-heading">{t('progres.zone.obiectiv')}</ZoneHeading>
+        <ObiectivCard />
+        <ObiectivGoalCard />
+      </div>
 
       {/* ── ZONE 4: COMPOZITIE — body-composition group. ────────────────────
           Body fat + forward projection + 7-day weight snapshot grouped together:
