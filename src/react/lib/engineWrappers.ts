@@ -74,11 +74,19 @@ import { useOnboardingStore } from '../stores/onboardingStore';
 // Wave E4 — locale-aware muscle-group labels for getCoachTodayQuote so the
 // "Pectorals recovered since yesterday" line surfaces in EN under EN locale.
 import { t as __t } from '../../i18n/index.js';
-// Smoke 2026-05-28 #16 — cuplare tinta-personala ↔ kcal: cand user a setat
-// targetWeight + targetDate in profil, deriveaza tinta de kcal direct din
-// deficit/surplus zilnic necesar (cap-uit la ±25%/±15% TDEE). Inlocuieste
-// multiplicator-ul de goal-onboarding cand tinta e setata explicit.
-import { computeTargetKcalOverride } from './targetSafety';
+// daysUntilTarget feeds the coherence-model rate-cap sizing (deadline → days).
+import { daysUntilTarget } from './targetSafety';
+// Coherence model 2026-05-30 (Daniel repro masa+target90 → 2200 deficit). The
+// goal/phase DIRECTION is authoritative; the target weight only sizes the
+// magnitude WITHIN that direction (rate-capped). Replaces the old precedence
+// where a below-current target weight (a deficit) outranked + discarded a BULK
+// goal's surplus. sizeKcalForPhase forces the sign from the phase.
+import {
+  targetDirection,
+  phaseForGoal,
+  sizeKcalForPhase,
+  type PhaseToken,
+} from './goalPhaseModel';
 // §48-H1 audit fix — adapter integrity instrumentation. Every catch path
 // emits Sentry alert with source='engine-adapter-fallback' tag + adapter
 // name extra. Risk addressed (§48.5): silent divergence when engine returns
@@ -702,26 +710,26 @@ function mapBNConfidence(c: unknown): number {
  */
 function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine {
   const tdee = readUserMaintenanceTDEE();
-  // Smoke 2026-05-28 #16 — tinta personala (targetWeight + targetDate) ia
-  // precedenta peste goal-multiplier cand e setata explicit. Phase override
-  // manual (SchimbaFaza) ramane prioritar peste tinta (user explicit pick).
-  const targetKcal = getTargetKcalToday(tdee);
+  // Coherence model 2026-05-30 — the goal/phase DIRECTION is authoritative; the
+  // target weight only sizes the magnitude within that direction (rate-capped).
+  // getCoherentKcalToday already folds in goal + AUTO derivation + target sizing
+  // + sex floor (it reads `phase-override` itself), so it SUPERSEDES the old
+  // `targetKcal > goalMult` precedence that let a below-current target weight
+  // (a deficit) discard a BULK goal's surplus (Daniel repro masa+target90).
+  const coherentKcal = getCoherentKcalToday(tdee);
   // Stats onboarding absente (cold start) → fallback flat 2640 ultim resort.
-  if (tdee === null && phaseKcal === null && targetKcal === null) return BASELINE_NUTRITION;
+  if (tdee === null && phaseKcal === null && coherentKcal === null) return BASELINE_NUTRITION;
 
-  // kcal precedence: override manual faza (TDEE×mult) > tinta personala
-  // (TDEE±deficit_zilnic) > goal onboarding (TDEE×goalMult) > mentenanta (TDEE real).
-  const goalMult = getGoalKcalMultiplier();
   const baseTdee = tdee as number;
   const kcalFloor = readUserKcalFloor(); // sex-aware (femei 1000 / barbati 1200)
+  // Precedence: manual phase override snapshot (phase-log kcal, deterministic at
+  // change-time) > coherent goal/target/AUTO sizing > maintenance (TDEE real).
   const kcalTarget =
     phaseKcal !== null
       ? phaseKcal
-      : targetKcal !== null
-        ? Math.max(targetKcal, kcalFloor)
-        : goalMult !== null
-          ? Math.max(Math.round(baseTdee * goalMult), kcalFloor)
-          : Math.max(Math.round(baseTdee), kcalFloor);
+      : coherentKcal !== null
+        ? coherentKcal
+        : Math.max(Math.round(baseTdee), kcalFloor);
 
   const proteinTargetG =
     computeProteinTargetG(readUserWeightKg()) ?? BASELINE_NUTRITION.proteinTargetG;
@@ -798,23 +806,81 @@ function applyHealthyFloorGuardrail(kcal: number): { kcal: number; clamped: bool
   return { kcal: r.kcal, clamped: r.clamped };
 }
 /**
- * Smoke 2026-05-28 #16 — citeste tinta personala (greutate + deadline luna)
- * din progresStore.targetObiectiv (SSOT post integration #8 + #16, scrisa de
- * Progres > ObiectivCard) si deriveaza kcal-ul tinta direct din deficit/surplus
- * zilnic necesar pentru atingerea tintei pana la deadline. Cap-uit asimetric
- * (-25% TDEE deficit / +15% TDEE surplus) ca deadline-uri absurde sa nu produca
- * recomandari periculoase (Daniel example 110→62kg in 4 zile → cap automat la
- * deficit 25% TDEE; floor LOCK8 1000f/1200b se aplica suplimentar in caller).
+ * Resolve the ACTIVE phase token, coherence-model precedence (2026-05-30):
+ *   1. manual phase override (B001 SchimbaFaza) when set + not AUTO — the user
+ *      explicitly picked a phase; honor it.
+ *   2. else the onboarding goal's phase (phaseForGoal). 'auto'/null → AUTO.
+ *   3. AUTO resolves to the real phase, signal precedence:
+ *      a. target-weight direction (the user's explicit master intent): LOSE→CUT,
+ *         GAIN→BULK. A MAINTAIN-band target falls through.
+ *      b. the established Engine #2 detector (detectAutoPhaseKey): weight-trend
+ *         (what the body actually does over time) with a sex-aware body-comp
+ *         fallback (BMI + BF%). Always yields a phase (cold-start → MAINTENANCE).
  *
- * Returns null cand user n-a setat tinta (mod default = goal-onboarding
- * multiplier) sau stats absente (cold start). I/O boundary (citeste stores).
+ *   The pure deriveAutoPhase() in goalPhaseModel (men BF>15→CUT / <12→BUILD,
+ *   women BF>25/22) is the literal spec model used for the gating/derivation
+ *   contract + its own unit tests; the engine wiring REUSES the established
+ *   detector here so the well-tested AUTO body-comp behavior is not regressed.
+ * Pure-ish I/O boundary (reads localStorage + stores). Defensive → AUTO.
  */
-function getTargetKcalToday(tdee: number | null): number | null {
+function resolveActivePhase(): PhaseToken | null {
+  try {
+    const raw = JSON.parse(localStorage.getItem('phase-override') ?? 'null') as string | null;
+    if (raw && raw !== 'AUTO' && PHASE_MULTIPLIERS[raw] !== undefined) {
+      return raw as PhaseToken;
+    }
+  } catch {
+    /* fall through to goal-derived */
+  }
+  const goal = readOnboardingGoal();
+  // Cold-start, no onboarding goal AND no target → no directional signal at all;
+  // return null so the caller falls back to plain maintenance (no fabricated
+  // deficit/surplus). A target set without a goal still drives direction below.
+  const { weightKg } = useProgresStore.getState().targetObiectiv;
+  const dir = targetDirection(getCurrentWeightKg(), weightKg);
+  if ((goal === null || goal === undefined) && dir === null) return null;
+
+  const token = phaseForGoal(goal as Parameters<typeof phaseForGoal>[0]);
+  if (token !== 'AUTO') return token;
+
+  // AUTO — (a) target direction is the explicit master signal.
+  if (dir === 'LOSE') return 'CUT';
+  if (dir === 'GAIN') return 'BULK';
+
+  // (b) established Engine #2 detector (weight-trend + sex-aware body-comp).
+  const trendKey = detectAutoPhaseKey();
+  return trendKey === 'CUT' || trendKey === 'BULK' || trendKey === 'STRENGTH'
+    ? (trendKey as PhaseToken)
+    : 'MAINTENANCE';
+}
+
+/**
+ * Coherence-model kcal (2026-05-30) — the ONE function that makes goal + target
+ * weight + phase + kcal coherent. The active phase sets the SIGN (CUT=deficit,
+ * BULK=surplus, MAINTENANCE≈0, STRENGTH≈slight surplus); the target weight +
+ * deadline only size the MAGNITUDE within that direction, rate-capped (1.5kg/wk
+ * loss, 0.5kg/wk gain) + sex-floored. So masa + target-90 from 110 now yields a
+ * SURPLUS (the Daniel repro is fixed — a below-current target can never flip a
+ * BULK goal into a deficit). Returns null when no maintenance estimate (caller
+ * cold-start fallback). I/O boundary.
+ */
+function getCoherentKcalToday(tdee: number | null): number | null {
+  if (tdee === null || !Number.isFinite(tdee) || tdee <= 0) return null;
+  const phase = resolveActivePhase();
+  // No directional signal (cold-start, no goal, no target) → plain maintenance.
+  if (phase === null) return null;
   const { weightKg, month } = useProgresStore.getState().targetObiectiv;
-  if (weightKg === null || month === null) return null;
   const currentWeight = getCurrentWeightKg();
-  const r = computeTargetKcalOverride(currentWeight, weightKg, month, tdee);
-  return r ? r.kcalTarget : null;
+  const days = month ? daysUntilTarget(month) : null;
+  const r = sizeKcalForPhase({
+    phase,
+    maintenanceTdee: tdee,
+    currentKg: currentWeight,
+    targetKg: weightKg,
+    daysRemaining: days,
+    kcalFloor: readUserKcalFloor(),
+  });
+  return r.kcalTarget;
 }
 
 function getPhaseOverrideKcalToday(): number | null {
@@ -842,55 +908,6 @@ function getPhaseOverrideKcalToday(): number | null {
   } catch {
     return null;
   }
-}
-
-/**
- * Goal-driven kcal phase delta — onboarding goal (RO vocab) → multiplicator,
- * reutilizand PHASE_MULTIPLIERS (single source of truth, ZERO magic numbers
- * duplicate). Mirror semantics goalPhaseForGoal (scheduleAdapterAggregate.ts)
- * care drive faza workout: slabire→CUT / masa→BULK / forta→STRENGTH /
- * mentenanta→MAINTENANCE. 'auto'/null → null (NU aplica delta; cold-start =
- * mentenanta, engine auto-detecteaza din progres in timp). §obiectiv-drop-
- * longevitate 2026-05-28: 'longevitate' Goal dropped (semantic dup), legacy
- * persisted users migrated → 'mentenanta' via onboardingStore v4→v5.
- *
- * Folosit DOAR cand NU exista override manual de faza (SchimbaFaza). Astfel
- * un user fresh care a ales "slabire" la onboarding vede deficit imediat,
- * fara sa deschida ecranul ascuns SchimbaFaza. Returns null cand goal absent.
- *
- * Problem 2 + BUG #5 — 'auto' NU mai returneaza null (mentenanta flat tacuta).
- * Ruleaza detectAutoPhaseKey (Engine #2): weight-trend prioritar (CUT cand scade
- * / BULK cand creste), iar cand trend-ul e flat/cold-start cade pe compozitia
- * corporala (BMI/bf%) — un user nou supraponderal primeste CUT, NU mentenanta.
- * Driven de detector, NU hardcodat la mentenanta.
- */
-function getGoalKcalMultiplier(): number | null {
-  let phaseKey: string | null;
-  switch (readOnboardingGoal()) {
-    case 'slabire':
-      phaseKey = 'CUT';
-      break;
-    case 'masa':
-      phaseKey = 'BULK';
-      break;
-    case 'forta':
-      phaseKey = 'STRENGTH';
-      break;
-    case 'mentenanta':
-      // §obiectiv-drop-longevitate 2026-05-28 — 'longevitate' case dropped;
-      // legacy persisted users migrated → 'mentenanta' via onboardingStore v4→v5.
-      phaseKey = 'MAINTENANCE';
-      break;
-    case 'auto':
-      // AUTO driven de detector: weight trend (prioritar) + body-comp (BMI/bf%
-      // cand trend-ul e flat/cold-start) → CUT / BULK / MAINTENANCE (BUG #5).
-      phaseKey = detectAutoPhaseKey();
-      break;
-    default:
-      // goal null (cold-start fara onboarding) → ZERO goal-delta (mentenanta).
-      return null;
-  }
-  return PHASE_MULTIPLIERS[phaseKey] ?? null;
 }
 
 /**
@@ -971,25 +988,19 @@ export async function getNutritionTargetsToday(
     // observatii, NU Kalman — inert V1). Goal-delta se aplica pe ACEASTA estimare
     // cand NU exista override manual, ca un user care invata (TDEE adaptiv) sa
     // primeasca tot deficit/surplus per goal onboarding.
-    const goalMult = getGoalKcalMultiplier();
-    const adjustedMu =
-      goalMult !== null ? (mu as number) * goalMult : (mu as number);
-    // sex-aware floor (femei 1000 / barbati 1200) — aliniat cu filtrul de observatii.
-    const safeKcal = Math.max(adjustedMu, readUserKcalFloor());
-    // Smoke 2026-05-28 #16 — tinta personala (targetWeight + targetDate) ia
-    // precedenta peste goal-multiplier cand e setata explicit (TDEE = posterior.mu,
-    // deci deficit/surplus zilnic derivat din real-TDEE Bayesian adaptiv).
-    const targetKcal = getTargetKcalToday(mu as number);
-    // Precedence: override manual faza (B001 SchimbaFaza) > tinta personala
-    // (smoke #16) > goal onboarding (deja aplicat in adjustedMu) > estimare
-    // Bayesiana de mentenanta. User explicit pick (faza > tinta) beats
-    // implicit (goal); engine continua sa invete din log.
+    // Coherence model 2026-05-30 — size kcal off the ADAPTIVE maintenance (mu,
+    // the Bayesian posterior) using the goal/phase direction + rate-capped target
+    // magnitude. The phase sign is forced (BULK=surplus, CUT=deficit), so a
+    // below-current target weight can no longer flip a masa goal into a deficit.
+    const coherentKcal = getCoherentKcalToday(mu as number);
+    // Precedence: manual phase override snapshot (B001 SchimbaFaza phase-log) >
+    // coherent goal/target/AUTO sizing > adaptive maintenance (mu, floored).
     const finalKcal =
       phaseKcal !== null
         ? phaseKcal
-        : targetKcal !== null
-          ? Math.max(targetKcal, readUserKcalFloor())
-          : Math.round(safeKcal);
+        : coherentKcal !== null
+          ? coherentKcal
+          : Math.max(Math.round(mu as number), readUserKcalFloor());
     // BUG #4 safety — guardrail anti-subnutritie: user subponderal → ridica la
     // un surplus moderat de crestere (TDEE×1.08). Aplicat DUPA precedenta
     // (override faza / goal / Bayesian) ca sa prinda orice deficit, oricare sursa.

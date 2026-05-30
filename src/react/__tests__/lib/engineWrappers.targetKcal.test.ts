@@ -1,10 +1,12 @@
-// ══ ENGINE WRAPPERS — targetWeight/targetDate ↔ kcal coupling (smoke #16) ═══
-// Daniel CEO smoke 2026-05-28 #16: greutatea-tinta + deadline trebuie sa
-// influenteze tinta de kcal a coach-ului (nu doar "notita in profil"). Aceste
-// teste verifica wire-ul: cand user-ul a setat targetObiectiv (weightKg+month)
-// in progresStore (via Progres > ObiectivCard post integration #8 + #16),
-// getNutritionTargetsToday produce kcal-ul tinta derivat din deficit/surplus
-// zilnic necesar, capped la -25%/+15% TDEE.
+// ══ ENGINE WRAPPERS — coherent goal/phase/target ↔ kcal sizing ═══════════════
+// Coherence model 2026-05-30 (supersedes smoke #16 -25%/+15% cap model). The
+// goal/phase DIRECTION is authoritative — it forces the kcal SIGN (CUT=deficit,
+// BULK=surplus). The target weight + deadline only size the MAGNITUDE within
+// that direction, rate-capped (1.5 kg/wk loss, 0.5 kg/wk gain), sex-floored.
+//
+// This fixes the Daniel repro: masa (BULK) + a below-current target weight used
+// to surface a 2200 DEFICIT (the target-weight override outranked + discarded
+// the BULK surplus). Now a BULK goal ALWAYS yields a surplus above maintenance.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
@@ -18,110 +20,102 @@ import { evaluate as evaluateBN } from '../../../engine/bayesianNutrition/index.
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
 import { createMockBNResult } from '../../../test-utils/createMockContext';
+import type { Goal } from '../../stores/onboardingStore';
 
 beforeEach(() => {
   vi.clearAllMocks();
   useOnboardingStore.getState().reset();
   useProgresStore.getState().reset();
+  localStorage.clear();
 });
 
-function setUserStats(overrides: { weight?: number; targetWeight?: number | null; targetDate?: string | null } = {}) {
+function mockTdee(mu: number) {
+  vi.mocked(evaluateBN).mockResolvedValueOnce(
+    createMockBNResult({
+      confidence: 'medium',
+      meta: { nutrition_inference_metadata: { posterior: { mu } } },
+    }),
+  );
+}
+
+function setUserStats(
+  overrides: {
+    goal?: Goal;
+    weight?: number;
+    targetWeight?: number | null;
+    targetDate?: string | null;
+  } = {},
+) {
   const s = useOnboardingStore.getState();
   s.setField('age', 36);
   s.setField('sex', 'm');
-  s.setField('goal', 'slabire'); // CUT goal
+  s.setField('goal', overrides.goal ?? 'slabire');
   s.setField('frequency', '4');
   s.setField('experience', 'intermediar');
   s.setField('weight', overrides.weight ?? 110);
   s.setField('height', 182);
-  // §obiectiv-tinta integration — tinta personala (weightKg + month) sta in
-  // progresStore.targetObiectiv (SSOT post #8 + #16), NU in onboardingStore.
   const setTarget = useProgresStore.getState().setTargetObiectiv;
   if (overrides.targetWeight !== undefined) setTarget({ weightKg: overrides.targetWeight });
   if (overrides.targetDate !== undefined) setTarget({ month: overrides.targetDate });
 }
 
-describe('engineWrappers — smoke #16 target ↔ kcal coupling', () => {
-  it('fara tinta setata → goalMult-ul de onboarding aplicat ca pana acum (NU regresie)', async () => {
-    setUserStats();
-    vi.mocked(evaluateBN).mockResolvedValueOnce(
-      createMockBNResult({
-        confidence: 'medium',
-        meta: { nutrition_inference_metadata: { posterior: { mu: 2800 } } },
-      }),
-    );
+function isoInDays(days: number): string {
+  return new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
+
+describe('engineWrappers — coherent goal/phase ↔ kcal sizing', () => {
+  it('slabire (CUT) fara tinta → deficit la ritm implicit 0.5 kg/sapt (TDEE 2800 → 2250)', async () => {
+    setUserStats({ goal: 'slabire' });
+    mockTdee(2800);
     const r = await getNutritionTargetsToday({});
-    // slabire goal → 2800 × 0.82 = 2296
-    expect(r.kcalTarget).toBeCloseTo(2296, 0);
+    // CUT default 0.5 kg/wk → 0.5*7700/7 = 550/zi deficit → 2800 - 550 = 2250
+    expect(r.kcalTarget).toBeCloseTo(2250, 0);
     expect(r.source).toBe('engine');
   });
 
-  it('Daniel smoke 110→62kg in 4 zile + TDEE 2800 → cap automat la -25% (kcal 2100)', async () => {
-    // Set deadline ~4 zile in viitor de la "azi"
-    const future = new Date(Date.now() + 4 * 24 * 60 * 60 * 1000);
-    const futureIso = future.toISOString().slice(0, 10);
-    setUserStats({ weight: 110, targetWeight: 62, targetDate: futureIso });
-    vi.mocked(evaluateBN).mockResolvedValueOnce(
-      createMockBNResult({
-        confidence: 'medium',
-        meta: { nutrition_inference_metadata: { posterior: { mu: 2800 } } },
-      }),
-    );
+  it('Daniel smoke 110→62kg in 4 zile (slabire) → rate-cap 1.5 kg/sapt, apoi floor 1200', async () => {
+    setUserStats({ goal: 'slabire', weight: 110, targetWeight: 62, targetDate: isoInDays(4) });
+    mockTdee(2800);
     const r = await getNutritionTargetsToday({});
-    // cap la -25% × 2800 = -700, kcalTarget = 2800 - 700 = 2100
-    expect(r.kcalTarget).toBeCloseTo(2100, 0);
-    // tinta personala ia precedenta peste goal-multiplier (slabire 0.82 = 2296)
-    expect(r.kcalTarget).not.toBeCloseTo(2296, 0);
+    // 48kg/4zile cere ~84 kg/sapt → cap 1.5 kg/sapt → 1650/zi deficit → 2800 -
+    // 1650 = 1150, sub floor 1200 → floored la 1200. NU recomandare periculoasa.
+    expect(r.kcalTarget).toBe(1200);
   });
 
-  it('tinta sustenabila 110→105kg in 10 sapt + TDEE 2800 → deficit ~550 kcal/zi (NU capped)', async () => {
-    const future = new Date(Date.now() + 70 * 24 * 60 * 60 * 1000);
-    const futureIso = future.toISOString().slice(0, 10);
-    setUserStats({ weight: 110, targetWeight: 105, targetDate: futureIso });
-    vi.mocked(evaluateBN).mockResolvedValueOnce(
-      createMockBNResult({
-        confidence: 'medium',
-        meta: { nutrition_inference_metadata: { posterior: { mu: 2800 } } },
-      }),
-    );
+  it('tinta sustenabila 110→105 in 10 sapt (slabire) → deficit ~550 kcal/zi (NU capped)', async () => {
+    setUserStats({ goal: 'slabire', weight: 110, targetWeight: 105, targetDate: isoInDays(70) });
+    mockTdee(2800);
     const r = await getNutritionTargetsToday({});
-    // 5kg × 7700 / 70 zile = 550 kcal/zi deficit → 2800 - 550 = 2250
+    // 5kg × 7700 / 70 = 550/zi → 2800 - 550 = 2250
     expect(r.kcalTarget).toBeCloseTo(2250, 0);
   });
 
-  it('tinta de masa (gain) + deadline corect → surplus aplicat, NU goalMult slabire', async () => {
-    // sex/age/etc identice (slabire goal in onboarding); tinta = masa
-    setUserStats({ weight: 70 });
-    const future = new Date(Date.now() + 16 * 7 * 24 * 60 * 60 * 1000);
-    const futureIso = future.toISOString().slice(0, 10);
-    useProgresStore.getState().setTargetObiectiv({ weightKg: 74, month: futureIso });
-    vi.mocked(evaluateBN).mockResolvedValueOnce(
-      createMockBNResult({
-        confidence: 'medium',
-        meta: { nutrition_inference_metadata: { posterior: { mu: 2400 } } },
-      }),
-    );
+  it('REPRO masa (BULK) + target sub greutatea curenta → SURPLUS, NU deficit 2200', async () => {
+    // Daniel repro: goal masa, current 110, target 90 (<110), TDEE ~2400.
+    // Vechiul model: target-override (90<110 deficit) ar fi dat ~2200. Acum BULK
+    // forteaza semnul → surplus. Tinta de masa NU mai produce niciodata deficit.
+    setUserStats({ goal: 'masa', weight: 110, targetWeight: 90, targetDate: isoInDays(112) });
+    mockTdee(2400);
     const r = await getNutritionTargetsToday({});
-    // 4kg × 7700 / 112 zile = 275 kcal/zi surplus → 2400 + 275 = 2675
+    expect(r.kcalTarget).toBeGreaterThan(2400); // surplus, nu deficit (era ~2200)
+    // BULK forteaza semnul +; tinta 90<110 cere ~1.25 kg/sapt (>cap 0.5) → rate-cap
+    // la +0.5 kg/sapt → +550/zi → 2400 + 550 = 2950. NICIODATA un deficit.
+    expect(r.kcalTarget).toBeCloseTo(2950, 0);
+  });
+
+  it('masa (BULK) cu tinta de crestere coerenta + deadline → surplus rate-capped', async () => {
+    // 70→74 in 16 sapt = 0.25 kg/sapt (sub cap 0.5) → +275/zi → 2400 + 275 = 2675
+    setUserStats({ goal: 'masa', weight: 70, targetWeight: 74, targetDate: isoInDays(16 * 7) });
+    mockTdee(2400);
+    const r = await getNutritionTargetsToday({});
     expect(r.kcalTarget).toBeCloseTo(2675, 0);
-    // NU goalMult slabire (2400 × 0.82 = 1968)
     expect(r.kcalTarget).toBeGreaterThan(2400);
   });
 
-  it('floor sex-aware se aplica suplimentar peste cap-ul tinta (femei 1000 / barbati 1200)', async () => {
-    // Tinta agresiva masculin care ar duce sub 1200 dupa cap... improbabil, dar
-    // verificam ca floor-ul ramane invariant LOCK8.
-    setUserStats({ weight: 50 });
-    useProgresStore.getState().setTargetObiectiv({ weightKg: 40, month: '2026-06-04' });
-    vi.mocked(evaluateBN).mockResolvedValueOnce(
-      createMockBNResult({
-        confidence: 'medium',
-        meta: { nutrition_inference_metadata: { posterior: { mu: 1500 } } },
-      }),
-    );
+  it('floor sex-aware ramane invariant LOCK8 (barbati 1200)', async () => {
+    setUserStats({ goal: 'slabire', weight: 50, targetWeight: 40, targetDate: isoInDays(5) });
+    mockTdee(1500);
     const r = await getNutritionTargetsToday({});
-    // Indiferent de target, floor-ul 1200 e respectat (clampKcalToHealthyFloor
-    // poate ridica suplimentar daca user subponderal, dar minim absolut 1200).
     expect(r.kcalTarget).toBeGreaterThanOrEqual(1200);
   });
 });
