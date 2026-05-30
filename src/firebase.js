@@ -27,10 +27,29 @@ import { toast } from './ui/ui.js';
 import { COACH_RELEVANT_KEYS } from './util/dataRegistry.js';
 import { getAuthState, getIdToken } from './auth.js';
 
-// §4-H4 audit fix — env-var with hardcoded fallback (preserves single-env Pre-Beta
-// while enabling staging/prod env split Phase 7+ without source change).
-export const FIREBASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_FIREBASE_RTDB_URL)
-  || 'https://fittracker-c34e8-default-rtdb.europe-west1.firebasedatabase.app';
+// §4-H4 audit fix — env-var (build-time inject via deploy.yml secret
+// VITE_FIREBASE_RTDB_URL). The prior hardcoded PROD RTDB fallback was REMOVED:
+// any build WITHOUT the env var (dev/preview/local) silently hit PRODUCTION user
+// data — zero dev/prod separation, prod-pollution risk. The deploy workflow
+// already injects this secret at build time (.github/workflows/deploy.yml), so
+// requiring it does not break the live deploy; misconfigured builds now fail
+// LOUD instead of silently reading/writing prod.
+export const FIREBASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_FIREBASE_RTDB_URL) || '';
+
+// §B011-style audit fix — startup assert: fail fast if VITE_FIREBASE_RTDB_URL is
+// missing. Mirrors the FIREBASE_API_KEY placeholder guard in auth.js (D040
+// lesson: silent fallback masked broken Magic Link for weeks; here a silent PROD
+// fallback masked the dev/prod data-separation gap). PROD build missing the var
+// throws at boot (deploy must inject the secret); DEV build warns loud so local
+// dev knows to set VITE_FIREBASE_RTDB_URL in .env.local before any Firebase op.
+if (!FIREBASE_URL) {
+  const isProd = typeof import.meta !== 'undefined' && import.meta.env?.PROD === true;
+  const msg = '[firebase] VITE_FIREBASE_RTDB_URL is not set — Firebase sync disabled. Set the VITE_FIREBASE_RTDB_URL build env var (deploy.yml secret) or add it to .env.local for local dev. The hardcoded PROD fallback was removed to prevent dev/preview builds silently hitting production data.';
+  if (isProd) {
+    throw new Error(msg);
+  }
+  if (typeof console !== 'undefined') console.warn(msg);
+}
 
 // Legacy literal — preserved as migration source for Daniel's pre-Beta
 // account ONLY. Per §AMENDMENT 2026-05-04.4 + §56.4.1, post-auth Daniel,
