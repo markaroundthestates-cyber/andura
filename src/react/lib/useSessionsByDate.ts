@@ -14,6 +14,7 @@
 import { useMemo } from 'react';
 import { useWorkoutStore } from '../stores/workoutStore';
 import type { LastSessionSummary } from '../stores/workoutStore';
+import { useAerobicStore } from '../stores/aerobicStore';
 
 export function localKey(ts: number): string {
   const d = new Date(ts);
@@ -37,4 +38,24 @@ export function useSessionsByDate(year: number, month0: number): Map<string, Las
     }
     return map;
   }, [sessionsHistory, year, month0]);
+}
+
+// ══ useAerobicDatesByMonth — aerobic-class day overlay (2026-05-30) ════════
+// A SEPARATE visual layer for the calendar: the set of local-ISO dates in the
+// (year, month0) window that have at least one logged aerobic class. Aerobic
+// sessions live in aerobicStore.sessions (already keyed by `date` YYYY-MM-DD —
+// no ts→localKey conversion needed) and carry NO sets/volume/PR, so they MUST
+// NOT enter gym aggregates (useSessionsByDate above). This hook keeps them
+// fully isolated — the heatmap merges the two only at paint time.
+export function useAerobicDatesByMonth(year: number, month0: number): Set<string> {
+  const aerobicSessions = useAerobicStore((s) => s.sessions);
+  return useMemo(() => {
+    const set = new Set<string>();
+    const prefix = `${year}-${String(month0 + 1).padStart(2, '0')}`;
+    for (const s of aerobicSessions) {
+      if (s == null || typeof s.date !== 'string') continue;
+      if (s.date.startsWith(prefix)) set.add(s.date);
+    }
+    return set;
+  }, [aerobicSessions, year, month0]);
 }

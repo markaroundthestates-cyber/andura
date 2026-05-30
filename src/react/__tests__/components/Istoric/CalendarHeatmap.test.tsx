@@ -7,7 +7,13 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CalendarHeatmap } from '../../../components/Istoric/CalendarHeatmap';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { useAerobicStore } from '../../../stores/aerobicStore';
+import type { AerobicSession } from '../../../stores/aerobicStore';
 import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
+
+function aerobicOn(date: string): AerobicSession {
+  return { date, type: 'aerobic', minutes: 50, kcal: 300, ts: Date.now() };
+}
 
 const CAL_MONTHS_EN = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -16,6 +22,7 @@ const CAL_MONTHS_EN = [
 
 beforeEach(() => {
   useWorkoutStore.setState({ sessionsHistory: [] });
+  useAerobicStore.setState({ sessions: [] });
   setLocale('en');
   _resetI18nCache();
   setLocale('en');
@@ -152,6 +159,92 @@ describe('CalendarHeatmap — RO locale opt-in', () => {
     render(<CalendarHeatmap />);
     const cell = screen.getByTestId('cal-cell-15');
     expect(cell.getAttribute('aria-label')).toContain('antrenament greu');
+  });
+});
+
+describe('CalendarHeatmap — aerobic-class overlay (2026-05-30)', () => {
+  it('aerobic-only day shows aerobic marker + aria-label, no gym tier', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 15, 10));
+    // Aerobic-only user: empty gym history, one aerobic class on the 12th.
+    useWorkoutStore.setState({ sessionsHistory: [] });
+    useAerobicStore.setState({ sessions: [aerobicOn('2026-05-12')] });
+    render(<CalendarHeatmap />);
+    const cell = screen.getByTestId('cal-cell-12');
+    expect(cell.getAttribute('data-aerobic')).toBe('true');
+    // No gym session that day → zi-libera tier (no gym dot).
+    expect(cell.getAttribute('data-tier')).toBe('zi-libera');
+    expect(screen.getByTestId('cal-aerobic-12')).toBeInTheDocument();
+    expect(screen.queryByTestId('cal-dot-12')).not.toBeInTheDocument();
+    expect(cell.getAttribute('aria-label')).toContain('aerobic class');
+  });
+
+  it('both day (gym + aerobic) shows BOTH the gym dot and the aerobic marker', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 15, 10));
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        {
+          title: 'Push',
+          meta: '',
+          ts: new Date(2026, 4, 12, 10).getTime(),
+          exercises: [
+            {
+              exerciseId: 'bench',
+              exerciseName: 'Bench',
+              sets: [{ kg: 100, reps: 5, rating: 'greu', timestamp: 0 }],
+              totalVolume: 500,
+              peakOneRM: 100,
+            },
+          ],
+        },
+      ],
+    });
+    useAerobicStore.setState({ sessions: [aerobicOn('2026-05-12')] });
+    render(<CalendarHeatmap />);
+    const cell = screen.getByTestId('cal-cell-12');
+    expect(cell.getAttribute('data-aerobic')).toBe('true');
+    expect(cell.getAttribute('data-tier')).toBe('l3'); // gym hard preserved
+    expect(screen.getByTestId('cal-dot-12')).toBeInTheDocument();
+    expect(screen.getByTestId('cal-aerobic-12')).toBeInTheDocument();
+  });
+
+  it('gym-only user is unaffected — no aerobic marker, no data-aerobic', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 15, 10));
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        {
+          title: 'Push',
+          meta: '',
+          ts: new Date(2026, 4, 12, 10).getTime(),
+          exercises: [
+            {
+              exerciseId: 'bench',
+              exerciseName: 'Bench',
+              sets: [{ kg: 100, reps: 5, rating: 'greu', timestamp: 0 }],
+              totalVolume: 500,
+              peakOneRM: 100,
+            },
+          ],
+        },
+      ],
+    });
+    useAerobicStore.setState({ sessions: [] });
+    render(<CalendarHeatmap />);
+    const cell = screen.getByTestId('cal-cell-12');
+    expect(cell.getAttribute('data-aerobic')).toBeNull();
+    expect(screen.queryByTestId('cal-aerobic-12')).not.toBeInTheDocument();
+    expect(screen.getByTestId('cal-dot-12')).toBeInTheDocument();
+  });
+
+  it('renders Sala + Aerobic source legend entries', () => {
+    setLocale('ro');
+    _resetI18nCache();
+    setLocale('ro');
+    render(<CalendarHeatmap />);
+    expect(screen.getByTestId('cal-legend-gym').textContent).toContain('Sala');
+    expect(screen.getByTestId('cal-legend-aerobic').textContent).toContain('Aerobic');
   });
 });
 

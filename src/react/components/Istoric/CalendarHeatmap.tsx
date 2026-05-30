@@ -18,7 +18,7 @@
 
 import { useState, type JSX } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useSessionsByDate, localKey } from '../../lib/useSessionsByDate';
+import { useSessionsByDate, useAerobicDatesByMonth, localKey } from '../../lib/useSessionsByDate';
 import { deriveSessionRating } from '../../lib/sessionRating';
 import type { SessionRating } from '../../lib/sessionRating';
 import { t } from '../../../i18n/index.js';
@@ -85,6 +85,11 @@ export function CalendarHeatmap(): JSX.Element {
   const [calY, setCalY] = useState(today.getFullYear());
   const [calM, setCalM] = useState(today.getMonth()); // 0-indexed
   const sessionsByDate = useSessionsByDate(calY, calM);
+  // Aerobic-class overlay (2026-05-30) — a SEPARATE visual layer. Aerobic
+  // classes (aerobicStore.sessions) have no sets/volume/PR, so they never enter
+  // the gym tier paint above; they only add an aqua ring marker on their day so
+  // a 'both'/aerobic-only user sees their training instead of an empty cell.
+  const aerobicDates = useAerobicDatesByMonth(calY, calM);
   const todayKey = localKey(today.getTime());
 
   const navMonth = (delta: -1 | 1): void => {
@@ -197,6 +202,9 @@ export function CalendarHeatmap(): JSX.Element {
             );
           }
           const hasSession = sessionsByDate.has(cell.key ?? '');
+          // Aerobic-class day overlay — distinct aqua ring, independent of the
+          // gym tier dot. A 'both' day shows BOTH (gym dot + aqua ring).
+          const hasAerobic = cell.key !== null && aerobicDates.has(cell.key);
           const tier = hasSession ? ratingToTierClass(cell.rating) : 'zi-libera';
           // Pulse reskin (GROUP E) — the mockup drops the filled-tier square in
           // favour of a neutral cell + a glowing dot keyed to the session state.
@@ -221,19 +229,23 @@ export function CalendarHeatmap(): JSX.Element {
           // feel scrub-able. Future/empty cells stay still — the lift would
           // suggest interactivity that's not there. transform-only keeps the
           // grid stable (no layout shift); reduced-motion auto-collapses.
-          const hoverCls = hasSession && !isFuture ? 'transition-transform hover:scale-110' : '';
+          const hoverCls = (hasSession || hasAerobic) && !isFuture ? 'transition-transform hover:scale-110' : '';
           const labelSuffix = isToday
             ? t('calendar.heatmap.cell.todaySuffix')
             : isFuture
               ? t('calendar.heatmap.cell.futureSuffix')
               : '';
-          const ariaLabel = `${cell.day} ${monthGenitive(calM)} ${calY}, ${ratingWord(cell.rating, hasSession)}${labelSuffix}`;
+          // Aerobic-class info appended to the gym aria-label (additive — the
+          // gym rating word stays first so screen readers read both layers).
+          const aerobicWord = hasAerobic ? `, ${t('calendar.heatmap.cell.aerobic')}` : '';
+          const ariaLabel = `${cell.day} ${monthGenitive(calM)} ${calY}, ${ratingWord(cell.rating, hasSession)}${aerobicWord}${labelSuffix}`;
           return (
             <div
               key={`day-${cell.day}`}
               role="gridcell"
               data-testid={`cal-cell-${cell.day}`}
               data-tier={tier}
+              data-aerobic={hasAerobic ? 'true' : undefined}
               data-date={cell.key}
               data-today={isToday ? 'true' : undefined}
               data-future={isFuture ? 'true' : undefined}
@@ -243,12 +255,26 @@ export function CalendarHeatmap(): JSX.Element {
               style={cellBg ? { background: cellBg } : undefined}
             >
               <span className={`font-mono text-[12px] leading-none ${numCls}`}>{cell.day}</span>
-              {dotColor && (
-                <span
-                  aria-hidden="true"
-                  className="w-1.5 h-1.5 rounded-full"
-                  style={{ background: dotColor, boxShadow: `0 0 8px ${dotColor}` }}
-                />
+              {(dotColor || hasAerobic) && (
+                <span className="flex items-center gap-[3px]" aria-hidden="true">
+                  {dotColor && (
+                    <span
+                      data-testid={`cal-dot-${cell.day}`}
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ background: dotColor, boxShadow: `0 0 8px ${dotColor}` }}
+                    />
+                  )}
+                  {hasAerobic && (
+                    // Aerobic-class marker — hollow aqua ring (vs the solid gym
+                    // intensity dot) so a 'both' day reads as two distinct marks
+                    // and aqua never collides with the gym-normal solid dot.
+                    <span
+                      data-testid={`cal-aerobic-${cell.day}`}
+                      className="w-1.5 h-1.5 rounded-full border-[1.5px] bg-transparent"
+                      style={{ borderColor: 'var(--aqua)', boxShadow: '0 0 6px var(--aqua)' }}
+                    />
+                  )}
+                </span>
               )}
             </div>
           );
@@ -275,6 +301,25 @@ export function CalendarHeatmap(): JSX.Element {
         className="flex items-center gap-3.5 flex-wrap pt-3.5 mt-3.5 border-t border-line"
         data-testid="cal-legend"
       >
+        {/* Source legend (2026-05-30) — gym (solid intensity dot) vs aerobic
+            class (hollow aqua ring). Self-explains the two day-marker shapes so
+            a 'both'-mode user reads the calendar correctly. */}
+        <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2" data-testid="cal-legend-gym">
+          <span
+            className="inline-block w-2.5 h-2.5 rounded-full"
+            style={{ background: 'var(--volt)', boxShadow: '0 0 6px var(--volt)' }}
+            aria-hidden="true"
+          />
+          {t('calendar.heatmap.legend.gym')}
+        </span>
+        <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2" data-testid="cal-legend-aerobic">
+          <span
+            className="inline-block w-2.5 h-2.5 rounded-full border-[1.5px] bg-transparent"
+            style={{ borderColor: 'var(--aqua)', boxShadow: '0 0 6px var(--aqua)' }}
+            aria-hidden="true"
+          />
+          {t('calendar.heatmap.legend.aerobic')}
+        </span>
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
           <span
             className="inline-block w-2.5 h-2.5 rounded-[3px]"

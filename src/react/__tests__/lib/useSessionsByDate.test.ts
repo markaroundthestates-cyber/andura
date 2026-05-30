@@ -3,16 +3,23 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useSessionsByDate, localKey } from '../../lib/useSessionsByDate';
+import { useSessionsByDate, useAerobicDatesByMonth, localKey } from '../../lib/useSessionsByDate';
 import { useWorkoutStore } from '../../stores/workoutStore';
+import { useAerobicStore } from '../../stores/aerobicStore';
 import type { LastSessionSummary } from '../../stores/workoutStore';
+import type { AerobicSession } from '../../stores/aerobicStore';
 
 function makeSession(ts: number, title = 'T'): LastSessionSummary {
   return { title, meta: '', ts, exercises: [] };
 }
 
+function makeAerobic(date: string): AerobicSession {
+  return { date, type: 'aerobic', minutes: 50, kcal: 300, ts: Date.now() };
+}
+
 beforeEach(() => {
   useWorkoutStore.setState({ sessionsHistory: [] });
+  useAerobicStore.setState({ sessions: [] });
 });
 
 describe('localKey', () => {
@@ -92,5 +99,37 @@ describe('useSessionsByDate', () => {
     });
     const { result } = renderHook(() => useSessionsByDate(2026, 4));
     expect(result.current.get('2026-05-12')).toHaveLength(3);
+  });
+});
+
+describe('useAerobicDatesByMonth', () => {
+  it('returns empty set when no aerobic classes in month', () => {
+    const { result } = renderHook(() => useAerobicDatesByMonth(2026, 4));
+    expect(result.current.size).toBe(0);
+  });
+
+  it('collects aerobic class dates for (year, month0) only', () => {
+    useAerobicStore.setState({
+      sessions: [
+        makeAerobic('2026-05-05'),
+        makeAerobic('2026-05-20'),
+        makeAerobic('2026-06-01'), // excluded (next month)
+        makeAerobic('2025-05-05'), // excluded (prev year)
+      ],
+    });
+    const { result } = renderHook(() => useAerobicDatesByMonth(2026, 4));
+    expect(result.current.size).toBe(2);
+    expect(result.current.has('2026-05-05')).toBe(true);
+    expect(result.current.has('2026-05-20')).toBe(true);
+    expect(result.current.has('2026-06-01')).toBe(false);
+  });
+
+  it('dedupes multiple classes same day into one date entry', () => {
+    useAerobicStore.setState({
+      sessions: [makeAerobic('2026-05-10'), makeAerobic('2026-05-10')],
+    });
+    const { result } = renderHook(() => useAerobicDatesByMonth(2026, 4));
+    expect(result.current.size).toBe(1);
+    expect(result.current.has('2026-05-10')).toBe(true);
   });
 });

@@ -1033,10 +1033,13 @@
         "sessionFair": "fair session",
         "sessionHard": "hard session",
         "sessionPresent": "session logged",
+        "aerobic": "aerobic class",
         "todaySuffix": " (today)",
         "futureSuffix": ", upcoming date"
       },
       "legend": {
+        "gym": "Gym",
+        "aerobic": "Aerobic",
         "hard": "Hard",
         "normal": "Normal",
         "easy": "Easy",

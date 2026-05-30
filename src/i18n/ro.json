@@ -1033,10 +1033,13 @@
         "sessionFair": "antrenament potrivit",
         "sessionHard": "antrenament greu",
         "sessionPresent": "antrenament prezent",
+        "aerobic": "clasa aerobic",
         "todaySuffix": " (azi)",
         "futureSuffix": ", data viitoare"
       },
       "legend": {
+        "gym": "Sala",
+        "aerobic": "Aerobic",
         "hard": "Greu",
         "normal": "Normal",
         "easy": "Usor",
