@@ -9,6 +9,7 @@ import {
   mergeMaxScalar,
   mergeMaxIsoDate,
   mergeLastWriteWins,
+  mergeObjectUnion,
 } from '../../lib/storeMerge';
 
 describe('mergeArrayUnion — id-keyed union, no entry dropped', () => {
@@ -92,6 +93,35 @@ describe('mergeMaxScalar — streak never regresses', () => {
   });
   it('both absent → 0', () => {
     expect(mergeMaxScalar(null, undefined)).toBe(0);
+  });
+});
+
+describe('mergeObjectUnion — keyed map union, no key dropped', () => {
+  it('keeps every key from both sides', () => {
+    const local = { '2026-05-25': 'rested' };
+    const remote = { '2026-05-24': 'tired' };
+    expect(mergeObjectUnion(local, remote, 100, 200)).toEqual({
+      '2026-05-25': 'rested',
+      '2026-05-24': 'tired',
+    });
+  });
+  it('remote-only key always pulled down', () => {
+    expect(mergeObjectUnion({}, { '2026-05-24': 'normal' }, 100, 50)).toEqual({ '2026-05-24': 'normal' });
+  });
+  it('local-only key never dropped when remote empty', () => {
+    expect(mergeObjectUnion({ '2026-05-25': 'tired' }, {}, 100, 200)).toEqual({ '2026-05-25': 'tired' });
+    expect(mergeObjectUnion({ '2026-05-25': 'tired' }, null, 0, 999)).toEqual({ '2026-05-25': 'tired' });
+  });
+  it('collision: newer remote wins that key', () => {
+    const out = mergeObjectUnion({ '2026-05-25': 'rested' }, { '2026-05-25': 'tired' }, 100, 200);
+    expect(out['2026-05-25']).toBe('tired');
+  });
+  it('collision: local wins when remote older or undated (never clobber)', () => {
+    expect(mergeObjectUnion({ d: 'rested' }, { d: 'tired' }, 300, 100).d).toBe('rested');
+    expect(mergeObjectUnion({ d: 'rested' }, { d: 'tired' }, null, null).d).toBe('rested');
+  });
+  it('null/undefined sides → empty map', () => {
+    expect(mergeObjectUnion(null, undefined, 0, 0)).toEqual({});
   });
 });
 

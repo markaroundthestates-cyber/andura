@@ -205,13 +205,27 @@ export const useAerobicStore = create<AerobicState & AerobicActions>()(
     {
       name: 'wv2-aerobic-store',
       storage: createJSONStorage(() => localStorage),
-      version: 0,
+      version: 1,
       // Blueprint consistency — partialize only data fields (NOT actions).
       partialize: (state) => ({
         sessions: state.sessions,
         lastDuration: state.lastDuration,
         subjectiveByDate: state.subjectiveByDate,
       }) as Partial<AerobicState & AerobicActions>,
+      // Migration hook (established for future schema changes — mirror the wv2
+      // store pattern). v0 → v1 is a safe no-op: keep every persisted data field,
+      // backfill only fields a v0 snapshot lacks from DEFAULTS (zero local wipe).
+      migrate: (persistedState: unknown, _version: number): AerobicState => {
+        const s = (persistedState ?? {}) as Partial<AerobicState>;
+        return {
+          sessions: Array.isArray(s.sessions) ? s.sessions : DEFAULTS.sessions,
+          lastDuration: typeof s.lastDuration === 'number' ? s.lastDuration : DEFAULTS.lastDuration,
+          subjectiveByDate:
+            s.subjectiveByDate && typeof s.subjectiveByDate === 'object'
+              ? s.subjectiveByDate
+              : DEFAULTS.subjectiveByDate,
+        };
+      },
     },
   ),
 );

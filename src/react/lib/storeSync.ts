@@ -29,6 +29,7 @@ import {
   mergeMaxScalar,
   mergeMaxIsoDate,
   mergeLastWriteWins,
+  mergeObjectUnion,
 } from './storeMerge';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { useProgresStore } from '../stores/progresStore';
@@ -36,6 +37,7 @@ import { useOnboardingStore } from '../stores/onboardingStore';
 import { useNutritionStore } from '../stores/nutritionStore';
 import { useScheduleStore } from '../stores/scheduleStore';
 import { useSettingsStore } from '../stores/settingsStore';
+import { useAerobicStore } from '../stores/aerobicStore';
 
 // Debounce window for the push subscription. Matches firebase.js DB.set 3s
 // coalesce so a burst of edits (logging a workout set-by-set) produces one PATCH.
@@ -180,6 +182,46 @@ const SYNCED: SyncedStore[] = [
       const local = useNutritionStore.getState();
       const dailyLog = mergeArrayUnion(local.dailyLog, d.dailyLog, 'dateISO');
       useNutritionStore.setState({ dailyLog });
+    },
+  },
+  // ── aerobicStore: sessions (array, id=ts — never drop a logged class),
+  //    lastDuration (scalar, LWW by envelope updatedAt), subjectiveByDate (keyed
+  //    object-map per local-ISO date, object-union LWW by envelope updatedAt).
+  //    Aerobic-only users (the explicit persona) lost ALL data on reinstall
+  //    before this — same wv2 data-loss the sync layer was built to prevent.
+  {
+    node: 'aerobic',
+    store: useAerobicStore as unknown as SyncedStore['store'],
+    select: (s) => {
+      const st = s as ReturnType<typeof useAerobicStore.getState>;
+      return {
+        sessions: st.sessions,
+        lastDuration: st.lastDuration,
+        subjectiveByDate: st.subjectiveByDate,
+      };
+    },
+    apply: (remote) => {
+      const d = (remote?.data ?? {}) as Partial<ReturnType<typeof useAerobicStore.getState>>;
+      if (d == null || typeof d !== 'object') return;
+      const local = useAerobicStore.getState();
+      // sessions union by ts — every logged class kept (no double-count drop).
+      const sessions = mergeArrayUnion(local.sessions, d.sessions, 'ts');
+      // lastDuration LWW by the envelope updatedAt (a single pre-fill scalar).
+      const lastDuration = mergeLastWriteWins(
+        local.lastDuration,
+        d.lastDuration,
+        Date.now() - 1, // local treated as recent; remote wins only when newer
+        remote?.updatedAt,
+      );
+      // subjectiveByDate is a keyed map (date → readiness) — object-union keeps
+      // every day's self-report from both devices, collisions LWW by envelope.
+      const subjectiveByDate = mergeObjectUnion(
+        local.subjectiveByDate,
+        d.subjectiveByDate,
+        Date.now() - 1,
+        remote?.updatedAt,
+      );
+      useAerobicStore.setState({ sessions, lastDuration, subjectiveByDate });
     },
   },
   // ── scheduleStore: current-week training/rest days (LWW by envelope updatedAt;

@@ -15,6 +15,8 @@
 //     by a stable id (ts, id, date, or dateISO), deduped, BOTH sides kept.
 //   - scalars like `streak` → take the max (never regress a streak on restore).
 //   - profile / bodyData scalars / goals → last-write-wins by `updatedAt`.
+//   - keyed object-maps (subjectiveByDate) → union key-by-key, both sides kept,
+//     collisions resolved last-write-wins by the envelope `updatedAt`.
 
 /**
  * Identity-key strategy for an array. The natural dedup key differs per store:
@@ -117,6 +119,35 @@ export function mergeLastWriteWins<T>(
   const l = typeof localUpdatedAt === 'number' && Number.isFinite(localUpdatedAt) ? localUpdatedAt : 0;
   const r = typeof remoteUpdatedAt === 'number' && Number.isFinite(remoteUpdatedAt) ? remoteUpdatedAt : 0;
   return r > l ? remote : local;
+}
+
+/**
+ * Union two keyed object-maps (Record) key-by-key, keeping EVERY key from both
+ * sides (ANDURA never-delete — a key present only locally or only remotely is
+ * always kept). Used for per-date maps like aerobicStore.subjectiveByDate where
+ * each key is an independent day's value. There is no per-key timestamp, so a
+ * key present on both sides is resolved last-write-wins by the envelope: when
+ * the remote envelope is strictly newer the REMOTE value wins that key, else the
+ * LOCAL value is preserved (never clobber a local value with an older/undated
+ * remote). `localUpdatedAt` / `remoteUpdatedAt` are epoch ms; absent → 0.
+ */
+export function mergeObjectUnion<V>(
+  local: Record<string, V> | undefined | null,
+  remote: Record<string, V> | undefined | null,
+  localUpdatedAt: number | undefined | null,
+  remoteUpdatedAt: number | undefined | null,
+): Record<string, V> {
+  const localObj = local && typeof local === 'object' ? local : {};
+  const remoteObj = remote && typeof remote === 'object' ? remote : {};
+  const l = typeof localUpdatedAt === 'number' && Number.isFinite(localUpdatedAt) ? localUpdatedAt : 0;
+  const r = typeof remoteUpdatedAt === 'number' && Number.isFinite(remoteUpdatedAt) ? remoteUpdatedAt : 0;
+  const remoteWins = r > l;
+  const out: Record<string, V> = { ...localObj };
+  for (const [k, v] of Object.entries(remoteObj)) {
+    // Remote-only key always added; collision resolved by envelope LWW.
+    if (!(k in out) || remoteWins) out[k] = v;
+  }
+  return out;
 }
 
 /** Pick the most recent ISO day-key string (YYYY-MM-DD lexicographically sortable).

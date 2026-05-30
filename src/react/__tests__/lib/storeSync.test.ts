@@ -11,6 +11,7 @@ import { useWorkoutStore } from '../../stores/workoutStore';
 import { useProgresStore } from '../../stores/progresStore';
 import { useNutritionStore } from '../../stores/nutritionStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
+import { useAerobicStore } from '../../stores/aerobicStore';
 
 const UID = 'storesync-uid-1';
 
@@ -42,6 +43,7 @@ beforeEach(() => {
   useProgresStore.getState().reset();
   useNutritionStore.getState().reset();
   useOnboardingStore.getState().reset();
+  useAerobicStore.getState().reset();
   vi.spyOn(console, 'log').mockImplementation(() => {});
   vi.spyOn(console, 'warn').mockImplementation(() => {});
 });
@@ -134,6 +136,46 @@ describe('hydrateStoresFromCloud — NO CLOBBER (local edits survive)', () => {
     await hydrateStoresFromCloud();
 
     expect(useNutritionStore.getState().dailyLog.find((e) => e.dateISO === '2026-05-25')?.kcal).toBe(2000);
+  });
+
+  it('aerobic: two devices logging different classes union; subjectiveByDate from both kept', async () => {
+    seedAuth();
+    // This device logged a local class + a self-report for one day.
+    useAerobicStore.setState({
+      sessions: [{ date: '2026-05-30', type: 'zumba', minutes: 50, kcal: 300, ts: 2000 }],
+      lastDuration: 60,
+      subjectiveByDate: { '2026-05-30': 'rested' },
+    });
+    // Remote (other device) has a DIFFERENT class + a self-report for a DIFFERENT day,
+    // plus a colliding session ts that must NOT win over local.
+    stubFetch({
+      aerobic: {
+        data: {
+          sessions: [
+            { date: '2026-05-29', type: 'step', minutes: 45, kcal: 280, ts: 1000 },
+            { date: '2026-05-30', type: 'spinning', minutes: 99, kcal: 999, ts: 2000 },
+          ],
+          lastDuration: 30,
+          subjectiveByDate: { '2026-05-29': 'tired' },
+        },
+        updatedAt: 1,
+      },
+    });
+
+    await hydrateStoresFromCloud();
+
+    const st = useAerobicStore.getState();
+    // Union by ts — both distinct classes kept, no class dropped.
+    expect(st.sessions.map((s) => s.ts).sort()).toEqual([1000, 2000]);
+    // Local ts=2000 wins the collision (zumba, not spinning).
+    expect(st.sessions.find((s) => s.ts === 2000)?.type).toBe('zumba');
+    // Remote-only class pulled down.
+    expect(st.sessions.find((s) => s.ts === 1000)?.type).toBe('step');
+    // subjectiveByDate object-union — both days present.
+    expect(st.subjectiveByDate['2026-05-30']).toBe('rested');
+    expect(st.subjectiveByDate['2026-05-29']).toBe('tired');
+    // lastDuration LWW: local recent beats older remote envelope.
+    expect(st.lastDuration).toBe(60);
   });
 
   it('no-op when unauthenticated (null user path → no fetch result applied)', async () => {
