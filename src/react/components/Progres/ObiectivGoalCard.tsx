@@ -23,7 +23,7 @@
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Dumbbell, Flame, TrendingDown, ShieldCheck } from 'lucide-react';
+import { Sparkles, Dumbbell, Flame, TrendingDown, ShieldCheck, Check } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import type { Goal } from '../../stores/onboardingStore';
@@ -98,12 +98,12 @@ export function ObiectivGoalCard(): JSX.Element {
               data-program={opt.id}
               aria-pressed={selected}
               aria-label={t('obiectiv.optionAriaTemplate', { title, sub })}
-              className={`w-full flex items-center gap-3 px-4 py-3 min-h-[44px] text-left ${
+              className={`w-full flex items-center gap-3 px-4 py-3 min-h-[44px] text-left text-ink ${
                 isLast ? '' : 'border-b border-line'
-              } ${selected ? 'bg-brick text-paper' : 'bg-paper2 text-ink'}`}
+              } ${selected ? 'ob-row-selected' : 'bg-paper2'}`}
             >
               <opt.Icon
-                className={`w-5 h-5 flex-shrink-0 ${selected ? 'text-paper' : 'text-ink2'}`}
+                className={`w-5 h-5 flex-shrink-0 ${selected ? 'text-brick' : 'text-ink2'}`}
                 aria-hidden="true"
               />
               <span className="flex-1 min-w-0">
@@ -111,16 +111,19 @@ export function ObiectivGoalCard(): JSX.Element {
                   {title}
                   {selected && opt.id === 'auto' && t('obiectiv.activeSuffix')}
                 </span>
-                <span className={`block text-xs leading-tight mt-0.5 ${selected ? 'text-paper opacity-80' : 'text-ink3'}`}>
+                <span className="block text-xs leading-tight mt-0.5 text-ink3">
                   {sub}
                 </span>
               </span>
               {selected && (
                 <span
-                  className="text-[10px] font-bold tracking-wider uppercase px-1.5 py-0.5 rounded bg-paper text-brick flex-shrink-0"
+                  className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider uppercase text-brick flex-shrink-0"
                   data-testid={`obiectiv-ales-${opt.id}`}
                 >
                   {t('obiectiv.alesBadge')}
+                  <span className="ob-check ob-check-on" aria-hidden="true">
+                    <Check className="w-3.5 h-3.5" strokeWidth={2.6} />
+                  </span>
                 </span>
               )}
             </button>
