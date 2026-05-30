@@ -227,6 +227,14 @@
 
   "workout": {
     "loading": "Loading workout…",
+    "sessionTitle": {
+      "PUSH": "Push (chest and shoulders)",
+      "PULL": "Pull (back and biceps)",
+      "UPPER_PICIOARE": "Legs",
+      "UMERI_BRATE": "Shoulders and arms",
+      "FULL_UPPER": "Full upper",
+      "fallback": "Your workout"
+    },
     "progress": {
       "setsLabel_one": "{done}/{total} set",
       "setsLabel_other": "{done}/{total} sets",

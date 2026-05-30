@@ -23,7 +23,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Clock, Layers, TrendingUp, Flame, Check, Zap } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { coachPick } from '../../../lib/coachVoice';
-import { getTodayWorkout } from '../../../lib/engineWrappers';
+import { getTodayWorkout, resolveSessionTitle } from '../../../lib/engineWrappers';
 import type { PlannedWorkoutOutput } from '../../../lib/engineWrappers';
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../lib/scheduleAdapterAggregate';
 import { recomposeWithBusyTypes } from '../../../lib/substitution';
@@ -158,9 +158,13 @@ export function WorkoutPreview(): JSX.Element {
     rawWorkoutTitle === ENGINE_WORKOUT_TITLE_FALLBACK ||
     rawWorkoutTitle === 'Antrenament azi' ||
     rawWorkoutTitle === engineFallbackSentinel;
+  // When the engine has no real per-plan title (the sentinel), derive the
+  // localized title from the engine SESSION TYPE (PUSH/PULL/...) instead of the
+  // old hardcoded "Push (piept si umeri)" copy that showed on every day. A real
+  // engine title still passes through untouched.
   const title = rawWorkoutTitle && !isEngineFallback
     ? rawWorkoutTitle
-    : t('workout.preview.fallbackTitle');
+    : resolveSessionTitle(workout?.sessionType);
   // Banner stays the self-report transparency signal (user said "Excelent" →
   // "Coach urca intensitatea"). The duration/volume PRESCRIPTION, however, now
   // tracks the ENGINE intensityMod baseline (deload output) — C3. The blunt

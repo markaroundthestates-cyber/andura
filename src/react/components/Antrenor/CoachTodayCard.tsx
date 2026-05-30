@@ -83,9 +83,17 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     rawWorkoutTitle === ENGINE_WORKOUT_TITLE_FALLBACK ||
     rawWorkoutTitle === 'Antrenament azi' ||
     rawWorkoutTitle === engineFallbackSentinel;
+  // No real engine title (sentinel) → derive the localized title from the engine
+  // SESSION TYPE (PUSH/PULL/...) so a PULL day reads "Pull", not a hardcoded
+  // "Push". Only when a real sessionType is present; otherwise keep the existing
+  // generic coachToday fallback (T0 fresh / loading / no plan). chained ?.
+  // tolerates partial engineWrappers mocks in sibling tests.
+  const sessionType = workout?.sessionType;
   const title = rawWorkoutTitle && !isEngineFallback
     ? rawWorkoutTitle
-    : t('coachToday.fallbackTitle');
+    : sessionType
+      ? engineWrappers.resolveSessionTitle?.(sessionType) ?? t('coachToday.fallbackTitle')
+      : t('coachToday.fallbackTitle');
   const duration = workout?.estimatedDuration ?? 48;
   const exerciseCount = workout?.exerciseCount ?? 5;
   // Pulse meta chip (mockup interfata-noua/screens-antrenor.jsx:50) — the

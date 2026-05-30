@@ -31,7 +31,7 @@ import { AparatLipsaSheet } from '../../../components/Workout/AparatLipsaSheet';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
-import { getTodayWorkout, getPRDelta, getWhyExerciseSummary } from '../../../lib/engineWrappers';
+import { getTodayWorkout, getPRDelta, getWhyExerciseSummary, resolveSessionTitle } from '../../../lib/engineWrappers';
 import type { PlannedExercise, PlannedWorkoutOutput } from '../../../lib/engineWrappers';
 import { gotoPath } from '../../../lib/navigation';
 import { SessionTimer } from '../../../components/Workout/SessionTimer';
@@ -55,6 +55,7 @@ import { resolveBusySwap, resolveMissingSwap, resolveRefusalSwap } from '../../.
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../lib/scheduleAdapterAggregate';
 import { toast } from '../../../lib/toast';
 import { incrementRefusal } from '../../../../engine/schedule/scheduleAdapter.js';
+import { clearTodayReadiness } from '../../../../engine/readiness.js';
 import { t } from '../../../../i18n/index.js';
 
 const INACTIVITY_THRESHOLD_MIN = 7; // Mockup wv2 verbatim L4401
@@ -125,14 +126,15 @@ export function Workout(): JSX.Element {
     getTodayWorkout().then((planned) => {
       if (!cancelled) {
         setExercises(planned?.exercises ?? []);
-        // Resolve the non-localized engine fallback sentinel to the locale-aware
-        // "today's workout" title (was the RO 'Antrenament azi' verbatim before);
-        // a real engine title passes through untouched.
+        // No real engine title (sentinel) → derive the localized title from the
+        // engine SESSION TYPE (PUSH/PULL/...), so a paused PULL session reads
+        // "Pull" in ResumeSessionCard instead of a generic label (and never the
+        // old hardcoded "Push" lie). A real engine title passes through untouched.
         const rawTitle = planned?.workoutTitle;
         setWorkoutTitle(
           rawTitle && rawTitle !== ENGINE_WORKOUT_TITLE_FALLBACK
             ? rawTitle
-            : t('coachToday.engineFallbackTitle'),
+            : resolveSessionTitle(planned?.sessionType),
         );
         setEngineIntensityMod(planned?.intensityMod ?? 'normal');
       }
@@ -796,6 +798,12 @@ export function Workout(): JSX.Element {
       navigate(gotoPath('finish-early-confirm'));
       return;
     }
+    // Bugatti truth — un workout pornit-apoi-anulat NU lasa date. EnergyCheck a
+    // persistat raspunsul de energie (saveReadiness) la intrarea in flow; discard
+    // sterge si acel semnal de readiness de azi, altfel Coach-ul ar afisa un scor
+    // de readiness fabricat (ex. 85) desi nu exista nicio sesiune reala. Doar o
+    // sesiune COMPLETATA (finishSession) lasa semnal de readiness.
+    clearTodayReadiness();
     discardSession();
     navigate(gotoPath('antrenor'));
   }, [pauseSession, workoutTitle, navigate, discardSession]);

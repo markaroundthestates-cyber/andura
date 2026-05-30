@@ -51,6 +51,7 @@ export function getReadinessVerdict(
 
 export function saveReadiness(value: number): void;
 export function getTodayReadiness(): number | null;
+export function clearTodayReadiness(): void;
 export function getComputedReadinessScore(
   targetKcal?: number | null,
   targetProt?: number | null

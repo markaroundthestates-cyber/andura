@@ -227,6 +227,14 @@
 
   "workout": {
     "loading": "Se incarca antrenamentul...",
+    "sessionTitle": {
+      "PUSH": "Push (piept si umeri)",
+      "PULL": "Pull (spate si biceps)",
+      "UPPER_PICIOARE": "Picioare",
+      "UMERI_BRATE": "Umeri si brate",
+      "FULL_UPPER": "Trunchi complet",
+      "fallback": "Antrenamentul tau"
+    },
     "progress": {
       "setsLabel_one": "{done}/{total} set",
       "setsLabel_other": "{done}/{total} seturi",

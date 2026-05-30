@@ -89,6 +89,24 @@ export function getTodayReadiness() {
 }
 
 /**
+ * Sterge raspunsul de readiness (energy-check) de AZI.
+ *
+ * Necesar pentru calea de anulare a unei sesiuni (start workout -> energy-check
+ * scrie readiness via saveReadiness -> user RENUNTA). Un workout pornit-apoi-
+ * anulat NU trebuie sa lase date: fara asta, getComputedReadinessScore citea in
+ * continuare raspunsul efemer si Coach-ul afisa un scor fabricat (ex. "normal"
+ * = 3 -> 85) desi user-ul nu are nicio sesiune reala. Doar o sesiune COMPLETATA
+ * (finishSession) trebuie sa lase semnal de readiness. No-op cand nu exista azi.
+ */
+export function clearTodayReadiness() {
+  /** @type {Record<string, number>} */
+  const all = /** @type {any} */ (DB.get('readiness')) || {};
+  if (!(tod() in all)) return;
+  delete all[tod()];
+  DB.set('readiness', all);
+}
+
+/**
  * @param {number | null} [targetKcal] tinta de kcal per-user (mentenanta reala) —
  *   threaded de la React boundary (readUserMaintenanceTDEE). Cand absent/null
  *   cade pe KCAL_TARGET flat (engine isolation + cold-start fara onboarding).

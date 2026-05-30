@@ -9,6 +9,7 @@ import {
   saveReadiness,
   getTodayReadiness,
   getComputedReadinessScore,
+  clearTodayReadiness,
 } from '../readiness.js';
 import { tod } from '../../db.js';
 
@@ -150,5 +151,41 @@ describe('readiness — DB-backed helpers', () => {
     expect(score).not.toBeNull();
     expect(score).toBeGreaterThanOrEqual(10);
     expect(score).toBeLessThanOrEqual(100);
+  });
+});
+
+describe('readiness — clearTodayReadiness (start-then-cancel zero-data)', () => {
+  beforeEach(() => localStorage.clear());
+
+  // Daniel live bug: pornesti un workout (energy-check scrie readiness via
+  // saveReadiness) apoi RENUNTI → Coach afisa un scor de readiness fabricat
+  // ("normal" = 3 → getReadinessScore = 85) desi nu exista nicio sesiune reala.
+  // clearTodayReadiness sterge raspunsul efemer pe calea de anulare → empty.
+  it('clears todays readiness so getComputedReadinessScore returns null after cancel', () => {
+    // "normal" energy-check answer = readiness 3 → score 85 (root cause repro).
+    saveReadiness(3);
+    expect(getComputedReadinessScore()).toBe(85);
+    // Cancel path wipes the ephemeral answer.
+    clearTodayReadiness();
+    expect(getTodayReadiness()).toBeNull();
+    expect(getComputedReadinessScore()).toBeNull();
+  });
+
+  it('is a no-op when there is no readiness today (fresh account)', () => {
+    expect(getTodayReadiness()).toBeNull();
+    clearTodayReadiness();
+    expect(getTodayReadiness()).toBeNull();
+  });
+
+  it('does not touch readiness saved on OTHER days (only today)', () => {
+    saveReadiness(4);
+    const otherKey = '2000-01-01';
+    const all = JSON.parse(localStorage.getItem('readiness'));
+    all[otherKey] = 5;
+    localStorage.setItem('readiness', JSON.stringify(all));
+    clearTodayReadiness();
+    const after = JSON.parse(localStorage.getItem('readiness'));
+    expect(after[otherKey]).toBe(5); // historical day preserved
+    expect(getTodayReadiness()).toBeNull(); // today cleared
   });
 });
