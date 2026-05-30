@@ -1,5 +1,5 @@
 // A2 H-1 audit fix — authoritative reset key-clearing tests.
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   clearUserDataKeys,
   RESET_LEGACY_KEYS,
@@ -86,6 +86,40 @@ describe('clearUserDataKeys', () => {
     clearUserDataKeys();
     expect(localStorage.getItem(DATA_OWNER_UID_KEY)).toBe('uid-A');
     expect(localStorage.getItem('logs')).toBeNull();
+  });
+});
+
+// ── XCUT-1 reset cloud-clear — RESET must delete the wv2 cloud subtree ────────
+// The store-sync wv2-* subtree (aerobic + workout/progres/onboarding/nutrition/
+// schedule/settings) was added AFTER clearUserCloudData was built, so a logged-in
+// reset deleted only the flat SYNC_KEYS and `hydrateStoresFromCloud` resurrected
+// the rest on the next boot. clearUserCloudData must now DELETE the wv2 nodes too.
+describe('clearUserCloudData — XCUT-1 wv2 subtree', () => {
+  it('deletes the flat SYNC_KEYS AND the wv2 store-sync nodes', async () => {
+    const clearFirebaseKeys = vi.fn(async () => {});
+    vi.doMock('../../firebase.js', () => ({
+      clearFirebaseKeys,
+      SYNC_KEYS: ['logs', 'weights'],
+    }));
+    // Re-import so the mocked firebase.js is the one the function resolves.
+    vi.resetModules();
+    const { clearUserCloudData: freshClear } = await import('../dataReset.js');
+    const { SYNCED_WV2_NODES } = await import('../../react/lib/storeSync');
+
+    await freshClear();
+
+    expect(clearFirebaseKeys).toHaveBeenCalledTimes(1);
+    const passedKeys = clearFirebaseKeys.mock.calls[0][0];
+    // Flat keys preserved...
+    expect(passedKeys).toEqual(expect.arrayContaining(['logs', 'weights']));
+    // ...and EVERY wv2 node (incl. the new aerobic node) is deleted.
+    for (const node of SYNCED_WV2_NODES) {
+      expect(passedKeys).toContain(node);
+    }
+    expect(passedKeys).toContain('wv2/aerobic');
+
+    vi.doUnmock('../../firebase.js');
+    vi.resetModules();
   });
 });
 

@@ -93,21 +93,28 @@ export async function clearUserIndexedDB() {
 }
 
 /**
- * Clear the user's Tier 2 (Firebase RTDB) synced data for the SYNC_KEYS the local
- * reset just wiped. Without this, a logged-in reset leaves the cloud copy intact
- * and `syncFromFirebase` MERGES it back into local on the next boot — old
- * logs/pr-records/weights resurrect, so "nu poate fi anulata" would be a lie for
- * synced users too. Per-key RTDB DELETE via `clearFirebaseKeys` (vs a whole-tree
- * DELETE) intentionally preserves any non-data subtree. Anonymous users have no
- * `userPath` → `clearFirebaseKeys` no-ops cleanly. Best-effort + non-fatal: a
- * network failure must never block the local reset that already succeeded.
+ * Clear the user's Tier 2 (Firebase RTDB) synced data the local reset just wiped:
+ * the flat `SYNC_KEYS` nodes AND the `users/{uid}/wv2/*` store-sync subtree
+ * (aerobic + workout/progres/onboarding/nutrition/schedule/settings). Without
+ * this, a logged-in reset leaves the cloud copy intact and the next boot MERGES
+ * it back into local — old logs/pr-records/weights resurrect via `syncFromFirebase`
+ * and the whole wv2 layer resurrects via `hydrateStoresFromCloud`, so "nu poate fi
+ * anulata" would be a lie for synced users. The wv2 node list comes from the
+ * storeSync `SYNCED_WV2_NODES` SSOT (NOT a hardcoded divergent list — a new
+ * synced store flows in automatically). Per-key RTDB DELETE via `clearFirebaseKeys`
+ * (vs a whole-tree DELETE) intentionally preserves any non-data subtree (fcmTokens,
+ * notificationPrefs). Anonymous users have no `userPath` → `clearFirebaseKeys`
+ * no-ops cleanly. RESET path ONLY — logout deliberately keeps cloud data for
+ * re-login. Best-effort + non-fatal: a network failure must never block the local
+ * reset that already succeeded.
  *
  * @returns {Promise<void>}
  */
 export async function clearUserCloudData() {
   try {
     const fb = await import('../firebase.js');
-    await fb.clearFirebaseKeys(fb.SYNC_KEYS);
+    const { SYNCED_WV2_NODES } = await import('../react/lib/storeSync');
+    await fb.clearFirebaseKeys([...fb.SYNC_KEYS, ...SYNCED_WV2_NODES]);
   } catch {
     // Firebase module / network unavailable — non-fatal; local reset still stands.
   }

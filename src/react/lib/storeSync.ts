@@ -279,6 +279,15 @@ const SYNCED: SyncedStore[] = [
   },
 ];
 
+// Canonical list of the wv2 child nodes under `users/{uid}/wv2/` — the single
+// source of truth for which store-sync subtrees exist. Derived from the SYNCED
+// registry so a new synced store automatically flows into every consumer (e.g.
+// the RESET cloud-clear path in dataReset.js, which DELETEs each wv2 node so a
+// logged-in reset truly clears cloud state and `hydrateStoresFromCloud` cannot
+// resurrect it on the next boot). Kept as `wv2/<node>` relative paths to match
+// the PATCH/GET callers above + clearFirebaseKeys' `users/{uid}/<key>` contract.
+export const SYNCED_WV2_NODES: readonly string[] = SYNCED.map((s) => `wv2/${s.node}`);
+
 // settingsStore has no per-field updatedAt; track the last local write time so
 // hydrate can LWW. 0 on cold boot (default prefs) → remote envelope wins.
 let _localPrefsUpdatedAt = 0;
