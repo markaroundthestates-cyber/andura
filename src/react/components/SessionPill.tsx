@@ -124,7 +124,7 @@ export function SessionPill(): JSX.Element | null {
       data-testid="session-pill"
       data-state={active ? 'active' : 'paused'}
       aria-label={t('sessionPill.ariaLabel')}
-      className="app-fixed-column app-fixed-column--inset fixed bottom-[80px] z-[55] flex items-center gap-2.5 px-4 py-2.5 bg-brick text-paper rounded-full text-sm font-semibold shadow-lg"
+      className="session-pill app-fixed-column app-fixed-column--inset fixed bottom-[80px] z-[55] flex items-center gap-2.5 px-4 py-2.5 bg-brick text-paper rounded-full text-sm font-semibold shadow-lg"
     >
       <Play className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
       <span className="flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-left">

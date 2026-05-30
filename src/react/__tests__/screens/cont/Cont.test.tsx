@@ -52,12 +52,16 @@ describe('Cont landing — Phase 5 task_13', () => {
     expect(screen.getByTestId('cont-account-email').textContent).toBe('daniel@andura.app');
   });
 
-  it('§F-cont-02 name fallback la email prefix daca JWT name absent (Magic Link path)', () => {
+  it('§F-cont-02 Magic Link path (no JWT name) shows email ONCE, no duplicate subtitle', () => {
+    // Live-smoke fix 2026-05-29: without a real name claim the header used to
+    // show the email local-part as the name AND the full email as the subtitle
+    // (same email twice). Now the email renders once as the primary line and
+    // the redundant subtitle is suppressed.
     localStorage.setItem('firebase-id-token', fakeJwt({ email: 'maria@example.com' }));
     renderCont();
     expect(screen.getByTestId('cont-account-initial').textContent).toBe('M');
-    expect(screen.getByTestId('cont-account-name').textContent).toBe('maria');
-    expect(screen.getByTestId('cont-account-email').textContent).toBe('maria@example.com');
+    expect(screen.getByTestId('cont-account-name').textContent).toBe('maria@example.com');
+    expect(screen.queryByTestId('cont-account-email')).toBeNull();
   });
 
   it('§F-cont-05 "Aparate lipsa" row in General section is enabled cu target aparate-lipsa', () => {
