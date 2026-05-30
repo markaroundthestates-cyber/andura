@@ -9,6 +9,18 @@
 // adapters. React caller responsible pentru side-effect ordering (e.g. invoke
 // din useEffect or store action, NU în render body).
 //
+// HYGIENE SPLIT (2026-05-31, barrel re-export, zero behavior change): the
+// cohesive non-adapter code-groups were relocated to sibling modules and are
+// re-exported here so the public API is IDENTICAL (every existing
+// `import { X } from '.../engineWrappers'` still resolves):
+//   - engineWrappers.types     — simplified React-consumption output types
+//   - engineWrappers.nutrition  — goal/phase/target kcal coherence math + AUTO
+//                                 phase detection (resolveActivePhase etc.)
+//   - engineWrappers.mmi        — MMI silent auto-cap (applyMmiCapToWorkout)
+// The instrumented engine ADAPTERS (try/catch + Sentry captureException) stay
+// in THIS file — the anti-drift gate (assert_all_adapters_instrumented) scans
+// this file's text for adapter instrumentation.
+//
 // Cross-refs:
 //   - DECISIONS.md §D-LEGACY-017 Bayesian Nutrition Inference
 //   - DECISIONS.md §D-LEGACY-027 Engine Energy Adjustment
@@ -26,11 +38,6 @@ import { detectPR } from '../../engine/prEngine.js';
 import { whySummary } from '../../engine/whyEngine.js';
 import { evaluate as evaluateBN } from '../../engine/bayesianNutrition/index.js';
 import type { BayesianNutritionContext } from '../../engine/bayesianNutrition/index';
-// Audit MED — sex-aware kcal floor (Daniel CEO directive 2026-05-26: minim
-// ABSOLUT femei 1000 / barbati 1200). RECOMMENDED target se clampeaza la acest
-// floor per-sex (constants.js:293-311 rol (a)), NU la 1200 flat — aliniaza calea
-// de recomandare cu intentia LOCKED + filtrul de observatii (resolveKcalFloorForSex).
-import { resolveKcalFloorForSex } from '../../engine/bayesianNutrition/constants.js';
 import { detectGlobalStagnation } from '../../engine/stagnationDetector.js';
 import { getAdherenceScore } from '../../engine/adherence.js';
 import { runProactiveChecks } from '../../engine/proactiveEngine.js';
@@ -40,56 +47,19 @@ import {
   GROUP_LABELS_RO_BIG11,
 } from '../../engine/muscleRecovery.js';
 import { detectWeakGroups } from '../../engine/weaknessDetector.js';
-import {
-  applyMuscleMemoryUpgrade,
-  readMmiState,
-  computeWeeksSinceResume,
-} from '../../engine/muscleMemoryAdapter.js';
-import { DB, tod } from '../../db.js';
-import { DP } from '../../engine/dp.js';
+import { DB } from '../../db.js';
 import { useWorkoutStore } from '../stores/workoutStore';
-import { composePlannedWorkoutToday, estimateBfFraction } from './scheduleAdapterAggregate';
+import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
 // Piesa 1 nutrition-brain fix — real per-user maintenance TDEE base (omoara
 // baza flat 2640). Multiplicatorul de faza se aplica pe TDEE-ul real per-user.
 import {
   readUserMaintenanceTDEE,
   readUserWeightKg,
-  getCurrentWeightKg,
   computeProteinTargetG,
-  readOnboardingGoal,
 } from './userTdee';
-// Problem 2 — AUTO phase auto-detection din weight trend (goal 'auto' onboarding
-// → engine recomanda faza, NU mentenanta flat). Cold-start onest: fara istoric
-// greutate → MAINTAIN (×1.0). PHASES enum + detector pure din Engine #2.
-import {
-  detectAutoPhaseFromWeightTrend,
-  detectAutoPhaseFromBodyComp,
-} from '../../engine/goalAdaptation/phaseAutoDetection.js';
-import { useProgresStore } from '../stores/progresStore';
-// BUG #13 + BUG #4 safety — guardrail anti-subnutritie pe OUTPUT-ul de kcal:
-// cand user-ul e deja subponderal (BMI <= 18.5) NU servim deficit nici mentenanta,
-// ci un surplus moderat de crestere (clampKcalToHealthyFloor ridica la TDEE×1.08).
-// computeBMI alimenteaza si AUTO body-comp detection (BUG #5).
-import { clampKcalToHealthyFloor, computeBMI } from '../../engine/bodyComposition.js';
-import { useOnboardingStore } from '../stores/onboardingStore';
 // Wave E4 — locale-aware muscle-group labels for getCoachTodayQuote so the
 // "Pectorals recovered since yesterday" line surfaces in EN under EN locale.
 import { t as __t } from '../../i18n/index.js';
-// daysUntilTarget feeds the coherence-model rate-cap sizing (deadline → days).
-import { daysUntilTarget } from './targetSafety';
-// Coherence model 2026-05-30 (Daniel repro masa+target90 → 2200 deficit). The
-// goal/phase DIRECTION is authoritative; the target weight only sizes the
-// magnitude WITHIN that direction (rate-capped). Replaces the old precedence
-// where a below-current target weight (a deficit) outranked + discarded a BULK
-// goal's surplus. sizeKcalForPhase forces the sign from the phase.
-import {
-  targetDirection,
-  phaseForGoal,
-  enabledGoalsForDirection,
-  sizeKcalForPhase,
-  type PhaseToken,
-} from './goalPhaseModel';
-import type { Goal } from '../stores/onboardingStore';
 // §48-H1 audit fix — adapter integrity instrumentation. Every catch path
 // emits Sentry alert with source='engine-adapter-fallback' tag + adapter
 // name extra. Risk addressed (§48.5): silent divergence when engine returns
@@ -99,119 +69,60 @@ import type { Goal } from '../stores/onboardingStore';
 // wire (ErrorBoundary precedent) + ADR-ENGINE-MATH-LOCKED-VALUES §1-§5.
 import { captureException } from '../../util/sentry.js';
 
-// ── Output types simplified pentru React consumption ─────────────────────
+// ── Hygiene-split sibling modules (re-exported below for barrel API) ──────
+import { applyMmiCapToWorkout } from './engineWrappers.mmi';
+import {
+  BASELINE_NUTRITION,
+  readUserKcalFloor,
+  mapBNConfidence,
+  buildPerUserBaseline,
+  applyHealthyFloorGuardrail,
+  getCoherentKcalToday,
+  resolveSafetyLimited,
+  getPhaseOverrideKcalToday,
+} from './engineWrappers.nutrition';
+import type {
+  ReadinessOutput,
+  FatigueOutput,
+  PRSet,
+  PRHistoryEntry,
+  PRDelta,
+  PlannedWorkoutOutput,
+  WhyExerciseInput,
+  NutritionTargetsEngine,
+  AdherenceOutput,
+  PatternBanner,
+  ProactiveAlert,
+  ProactiveAlertSeverity,
+  CoachRestReason,
+  CoachTodayQuote,
+} from './engineWrappers.types';
 
-export interface ReadinessOutput {
-  score: number;
-  /**
-   * Wave E4 — semantic key from the engine (`PR_DAY` / `SOLID` / `NORMAL` /
-   * `MODERATE` / `LIGHT` / `REST` / `REST_RECOVER`). React consumers resolve
-   * the user-facing label via `t('coachEngine.readiness.labels.${key}')`.
-   * Optional for backward-compat with pre-Wave-E4 test fixtures + persisted
-   * snapshots that pre-date the key field. `label` keeps the engine's
-   * canonical RO copy as a fallback.
-   */
-  key?: string | null;
-  label: string;
-  color: string; // CSS var ref
-  volumeMultiplier: number;
-  canPR: boolean;
-}
+// Barrel re-exports — preserve IDENTICAL public API after the hygiene split.
+// Types:
+export type {
+  ReadinessOutput,
+  FatigueOutput,
+  PRSet,
+  PRHistoryEntry,
+  PRDelta,
+  PlannedExercise,
+  PlannedWorkoutOutput,
+  WhyExerciseInput,
+  NutritionTargetsEngine,
+  AdherenceOutput,
+  PatternBanner,
+  ProactiveAlert,
+  ProactiveAlertSeverity,
+  CoachRestReason,
+  CoachTodayQuote,
+} from './engineWrappers.types';
+// Nutrition / kcal coherence + AUTO phase (public surface):
+export { resolveActivePhase, getAutoDetectedPhaseLabelRo } from './engineWrappers.nutrition';
+// MMI silent auto-cap:
+export { applyMmiCapToWorkout } from './engineWrappers.mmi';
 
-export interface FatigueOutput {
-  score: number; // 0-100
-  key: 'HIGH_FATIGUE' | 'MODERATE_FATIGUE' | 'PEAK_FORM' | 'NORMAL' | string;
-  label: string;
-  icon: string;
-  color: string;
-  recommend: 'deload' | 'reduce' | 'push' | 'normal' | 'none' | string;
-  detail: string;
-}
-
-export interface PRSet {
-  w: number;
-  reps: number;
-}
-
-export interface PRHistoryEntry {
-  ex?: string;
-  w?: number;
-  reps?: number;
-  baseline?: boolean;
-}
-
-export interface PRDelta {
-  type: 'weight' | 'reps' | 'volume';
-  kg: number;
-  reps: number;
-  prevBest: PRHistoryEntry | null;
-  // Phase 4 task_18: enriched fields pentru PostSummary banner visual
-  // extension Phase 5+ (task_22 dependency).
-  deltaKg: number; // newKg - prevBest.w (0 cand prevBest null = first ever set)
-  deltaPct: number; // (newKg - prev) / prev * 100 (0 cand prevBest null)
-  oneRMEstimate: number; // Epley estimate: kg * (1 + reps/30)
-}
-
-export interface PlannedExercise {
-  id: string;
-  name: string;
-  // English canonical engine name (PR records, library lookups, DP keys). The
-  // `name` field is the Romanian display form; `engineName` is the identity used
-  // by substitution (findAlternatives/getFallbackCascade), DP, and the exercise
-  // library. Set at the scheduleAdapterAggregate boundary. Optional for backward
-  // compat with any pre-WP-5 fixture that omits it (callers fall back to a
-  // best-effort lookup or skip substitution honestly).
-  engineName?: string;
-  // Romanian display subtitle (equipment/setup, e.g. "Cu gantere · banc 30°").
-  // Optional — applied at the scheduleAdapterAggregate boundary via
-  // exerciseDisplay.toExerciseDisplay; absent for unknown engine names.
-  sub?: string;
-  // WP-5 moat substitution marker: when this exercise was swapped in for another
-  // (equipment busy / missing / refused), this is the short reason shown in the
-  // `sub` slot (WorkoutPreview "Inlocuit · {motiv}"). Absent on un-swapped rows.
-  swapReason?: string;
-  sets: number;
-  targetReps: number;
-  // For LOADED exercises: the external kg on the bar/stack (the load).
-  // For BODYWEIGHT exercises: the ADDED weight (belt/dumbbell; default 0 =
-  // pure bodyweight, negative = assisted). The TRAINING load used by
-  // volume/PR/progression is the EFFECTIVE load (bodyweight x fraction +
-  // targetKg) — see isBodyweight / bwFraction below. The UI shows a bodyweight
-  // pill + an optional "+ added" input instead of a barbell-style kg target.
-  targetKg: number;
-  restSec: number;
-  // Bodyweight model (bodyweightLoad.js). When true, targetKg is ADDED weight,
-  // not the full load — consumers must resolve effective load via the fraction.
-  isBodyweight?: boolean;
-  // Fraction of bodyweight this movement loads (pull-up/dip 1.0, push-up 0.65,
-  // core/plank 0). Present only when isBodyweight. Effective load =
-  // userBodyweightKg x bwFraction + targetKg(added).
-  bwFraction?: number;
-}
-
-export interface PlannedWorkoutOutput {
-  workoutTitle: string;
-  // Engine session-type tag (PUSH / PULL / UPPER_PICIOARE / UMERI_BRATE /
-  // FULL_UPPER), derived day-of-week by getDailyWorkout (DAY_TO_SESSION_TYPE).
-  // The render boundaries map it to a localized session title — fixing the
-  // "Push" label that showed on every day because the engine never emitted a
-  // real per-day title (workoutTitle was always the sentinel → boundaries fell
-  // to a HARDCODED "Push" copy). Optional for backward-compat with fixtures.
-  sessionType?: string;
-  exerciseCount: number;
-  estimatedDuration: number; // minutes
-  intensityMod: 'plus' | 'normal' | 'minus';
-  exercises: PlannedExercise[]; // Phase 4 task_10 — rich aggregate Workout/WorkoutPreview consume
-  volumeKg: number; // Phase 4 task_10 — estimated total tonnage planned
-  // F-workout-preview/T1 — Engine Warm-up §9.7 blueprint surface (duration_min +
-  // ui_label "Incalzire ~X min"). Null cand engine emits insufficient ctx OR
-  // warmup blueprint absent (rest day / pipeline halt → composer returns null
-  // entire output; never reaches this field). Consumer WorkoutPreview renders
-  // warmup row only when non-null per mockup andura-clasic.html#L935 FIX 1.
-  warmup?: { line: string; durationMin: number } | null;
-}
-
-// Whitelisted engine session-type tags (DAY_TO_SESSION_TYPE in scheduleAdapter).
+// ── Whitelisted engine session-type tags (DAY_TO_SESSION_TYPE) ───────────
 // Each maps to a workout.sessionTitle.* i18n key; anything else → generic
 // fallback. Keeps the title HONEST per-day instead of the old hardcoded "Push".
 const SESSION_TYPE_KEYS = new Set([
@@ -424,12 +335,6 @@ export function getPRDelta(
 // lastWeight (progression direction). Returns null cand engine throws — caller
 // renders the why.unavailable i18n fallback.
 
-export interface WhyExerciseInput {
-  name: string;
-  recommendationKg: number;
-  lastWeightKg?: number | null;
-}
-
 export function getWhyExerciseSummary(input: WhyExerciseInput): string | null {
   try {
     const score = getUserReadinessScore();
@@ -451,158 +356,6 @@ export function getWhyExerciseSummary(input: WhyExerciseInput): string | null {
     });
     return null;
   }
-}
-
-// ── MMI Silent Auto-Cap (LOCK 10 ADR-033 React production wire) ──────────
-//
-// Per ENGINE-DEEPER-AUDIT chat 5 HIGH finding: MMI applyMuscleMemoryUpgrade
-// + tests LANDED (Engine #9 LOCK 10) dar production wire vanilla orphan
-// (src/main.js:259-305 post-D028 retired entry). Returning users 6+ months
-// (Marius post-pause / Maria 65 long pause) primeau baseline weights ZERO
-// re-resume cap protection in React production.
-//
-// SILENT auto-cap design (UI prompt DEFERRED Iter urmator Daniel CEO UX):
-// Adapter contract requires `userChoice === 'accepted'` to apply (opt-in
-// per §32.3 spec). Silent wire synthesizes `userChoice: 'accepted'` when
-// pauseMonths >= 6 AND user has not explicitly refused via prior prompt.
-// `userChoice === 'refused'` respected → baseline preserved (anti-paternalism).
-//
-// Cap buckets per ADR-033 §32.1 verbatim:
-//   6-12mo  → 0.80x startMultiplier + 1.25x boost first 3 weeks
-//   12-24mo → 0.70x startMultiplier + 1.10x boost first 3 weeks
-//   24+mo   → 0.60x startMultiplier + 1.00x boost (start proaspat)
-//
-// Peak source: pr-records[].kg per exercise (max weight pre-pause). When
-// exercise has no PR record → baseline preserved (no fabricated peak).
-//
-// NOTE: extractSessionDates + computePauseDuration helpers inlined below
-// pentru minimal dep chain. Importing din src/engine/coachContext.js pulls
-// heavyweight transitive chain (scheduleAdapter + patternLearning +
-// autoAggressionDetection) that breaks vi.mock isolation în
-// engineWrappers.sentry.test.ts. Pure semantics preserved verbatim per
-// src/engine/coachContext.js:173-209 LANDED 2026-05-02 (ADR 026 §9).
-
-function extractSessionDatesLocal(logs: ReadonlyArray<{ date?: string }>): string[] {
-  if (!Array.isArray(logs)) return [];
-  const set = new Set<string>();
-  for (const l of logs) {
-    if (l && typeof l.date === 'string') set.add(l.date);
-  }
-  return Array.from(set).sort();
-}
-
-function computePauseDurationLocal(
-  sessionDates: ReadonlyArray<string>,
-  currentDate: string,
-): { daysSincePause: number; pauseMonths: number } {
-  if (!Array.isArray(sessionDates) || sessionDates.length === 0) {
-    return { daysSincePause: 0, pauseMonths: 0 };
-  }
-  if (typeof currentDate !== 'string' || !currentDate) {
-    return { daysSincePause: 0, pauseMonths: 0 };
-  }
-  let latest = '';
-  for (const d of sessionDates) {
-    if (typeof d === 'string' && d > latest) latest = d;
-  }
-  if (!latest) return { daysSincePause: 0, pauseMonths: 0 };
-  const lastTime = new Date(latest).getTime();
-  const currentTime = new Date(currentDate).getTime();
-  if (!Number.isFinite(lastTime) || !Number.isFinite(currentTime)) {
-    return { daysSincePause: 0, pauseMonths: 0 };
-  }
-  if (currentTime <= lastTime) return { daysSincePause: 0, pauseMonths: 0 };
-  const days = Math.floor((currentTime - lastTime) / (1000 * 60 * 60 * 24));
-  return { daysSincePause: days, pauseMonths: days / 30.44 };
-}
-
-interface MmiSilentContext {
-  // Always 'accepted' din buildSilentMmiContext path — silent auto-opt-in
-  // synthesizes accepted (refused returns null earlier; pre-prompt null
-  // also synthesizes accepted). Matches muscleMemoryAdapter JSDoc shape
-  // `userChoice?: string` (TS string supertype compat).
-  userChoice: 'accepted';
-  pauseMonths: number;
-  weeksSinceResume: number;
-  peakPrePauseKgPerExercise: Record<string, number>;
-}
-
-/**
- * Build MMI context for silent auto-cap. Reads DB.logs + DB.pr-records +
- * DB.mmi-state. Returns null when no cap should apply (insufficient pause,
- * user refused, no PR baseline). Silent auto-opt-in: pauseMonths >= 6 AND
- * userChoice !== 'refused' → synthesizes 'accepted' for adapter call.
- *
- * Defensive: any DB read failure → null fallback (graceful degrade to
- * baseline pipeline).
- */
-function buildSilentMmiContext(): MmiSilentContext | null {
-  try {
-    const logs = (DB.get('logs') as Array<{ date?: string }> | null) ?? [];
-    if (!Array.isArray(logs) || logs.length === 0) return null;
-    const sessionDates = extractSessionDatesLocal(logs);
-    const { pauseMonths } = computePauseDurationLocal(sessionDates, tod());
-    if (typeof pauseMonths !== 'number' || pauseMonths < 6) return null;
-
-    const mmiState = readMmiState(DB) as
-      | { userChoice?: string; resumeStartDate?: string }
-      | null;
-    const userChoice = mmiState?.userChoice ?? null;
-    // Respect explicit refuse per §32.3 — user opted out, baseline pipeline wins.
-    if (userChoice === 'refused') return null;
-
-    const prRecords = (DB.get('pr-records') as Array<{ ex?: string; kg?: number }> | null) ?? [];
-    if (!Array.isArray(prRecords) || prRecords.length === 0) return null;
-    const peakPrePauseKgPerExercise: Record<string, number> = {};
-    for (const r of prRecords) {
-      if (r && typeof r.ex === 'string' && typeof r.kg === 'number' && r.kg > 0) {
-        // Keep max per exercise (defensive — pr-records may have multiple entries per ex).
-        if (!peakPrePauseKgPerExercise[r.ex] || r.kg > peakPrePauseKgPerExercise[r.ex]!) {
-          peakPrePauseKgPerExercise[r.ex] = r.kg;
-        }
-      }
-    }
-    if (Object.keys(peakPrePauseKgPerExercise).length === 0) return null;
-
-    const weeksSinceResume = computeWeeksSinceResume(mmiState?.resumeStartDate ?? null, tod());
-
-    return {
-      // Silent auto-opt-in: synthesize 'accepted' when pause >= 6mo + NOT refused.
-      // UI prompt deferred (Iter urmator) — when surfaced, user can override
-      // via 'refused' which this context respects (early return above).
-      userChoice: 'accepted',
-      pauseMonths,
-      weeksSinceResume,
-      peakPrePauseKgPerExercise,
-    };
-  } catch (e) {
-    logger.warn('[engineWrappers] buildSilentMmiContext failed:', e);
-    return null;
-  }
-}
-
-/**
- * Apply silent MMI cap to each planned exercise targetKg via
- * applyMuscleMemoryUpgrade adapter. Returns workout with capped weights
- * when MMI context active, otherwise returns workout unchanged.
- *
- * Per-exercise: when pr-records lacks peak for exercise → adapter returns
- * recommendation unchanged (no fabricated cap). Preserves all other fields
- * (id, name, sets, targetReps, restSec) via spread.
- */
-export function applyMmiCapToWorkout(workout: PlannedWorkoutOutput): PlannedWorkoutOutput {
-  const mmiContext = buildSilentMmiContext();
-  if (!mmiContext) return workout;
-  const cappedExercises = workout.exercises.map((ex) => {
-    const recommendation = { kg: ex.targetKg };
-    const capped = applyMuscleMemoryUpgrade(recommendation, ex.name, mmiContext, DP) as {
-      kg: number;
-      _muscleMemoryApplied?: boolean;
-    };
-    if (!capped || typeof capped.kg !== 'number') return ex;
-    return { ...ex, targetKg: capped.kg };
-  });
-  return { ...workout, exercises: cappedExercises };
 }
 
 /**
@@ -654,427 +407,9 @@ export async function getTodayWorkout(): Promise<PlannedWorkoutOutput | null> {
 // (index.js:344 livreaza posterior.mu, NU kalmanState.mu). Kalman = INERT V1.
 // Calibrarea lenta de fond traieste in nutritionObservations (cantarul →
 // observatii energy-balance → conjugateUpdate), NU in Kalman.
-
-export interface NutritionTargetsEngine {
-  kcalTarget: number;
-  proteinTargetG: number;
-  fatG: number;
-  carbsG: number;
-  source: 'engine' | 'baseline';
-  confidence: number; // 0-1
-  // BUG #4 safety — true cand recomandarea a fost ridicata la un surplus de
-  // crestere fiindca user-ul e subponderal (BMI <= 18.5). UI arata mesajul de sustinere.
-  healthyFloorClamped?: boolean;
-  // L7 safety surfacing — la profile extreme tinta de baza a fost LIMITATA de
-  // siguranta: 'floored' = clampata la floor-ul sex-aware (1200 m / 1000 f),
-  // 'capped' = ritmul a fost plafonat (max 1.5kg/sapt pierdere, 0.5kg crestere).
-  // UI (TDEEStrip) arata o nota scurta care explica DE CE tinta e la acea valoare.
-  // Distinct de healthyFloorClamped (subponderal) si de add-on clamp (plafonare
-  // add-on peste mentenanta) — aici e despre tinta de baza, NU add-on-uri.
-  safetyLimited?: 'floored' | 'capped';
-}
-
-const BASELINE_NUTRITION: NutritionTargetsEngine = {
-  kcalTarget: 2640,    // mockup verbatim L1812
-  proteinTargetG: 180, // mockup verbatim L1825
-  fatG: 70,
-  carbsG: 280,
-  source: 'baseline',
-  confidence: 0,
-};
-
-/**
- * Audit MED — floor-ul de kcal per-user pe sex (CEO directive 2026-05-26: femei
- * 1000 / barbati 1200, minim ABSOLUT). Citeste sexul din onboarding la I/O
- * boundary, deleaga la resolveKcalFloorForSex (fallback 1200 KCAL_FLOOR_DAILY_MIN
- * cand sex absent). Aliniaza calea de RECOMANDARE cu filtrul de observatii
- * (acelasi floor per-sex). Inlocuieste const-ul local flat KCAL_FLOOR_DAILY_MIN
- * 1200 (LOCK 8) — floor-ul absolut traieste acum canonic in bayesianNutrition/
- * constants.js (resolveKcalFloorForSex fallback), single source.
- */
-function readUserKcalFloor(): number {
-  return resolveKcalFloorForSex(useOnboardingStore.getState().data.sex);
-}
-
-function mapBNConfidence(c: unknown): number {
-  if (c === 'high') return 1;
-  if (c === 'medium') return 0.5;
-  return 0.2;
-}
-
-/**
- * Piesa 1 nutrition-brain fix — per-user nutrition baseline cand engine NU emite
- * estimare (tier 'none' T0 fresh / posterior.mu absent / engine throws).
- *
- * Omoara baza flat 2640: kcalTarget = TDEE-ul REAL per-user (mentenanta) cand
- * override de faza absent, sau TDEE × multiplicator de faza cand override
- * prezent. proteinTarget = g/kg × greutate per-user. Maria 40kg mentenanta →
- * ~1300-1500; Marius 110kg/2m bulk → ~3500-4000.
- *
- * Pure I/O-boundary read (onboardingStore) + delegare la userTdee pure helpers.
- * Fallback la BASELINE_NUTRITION flat DOAR cand stats onboarding absente
- * (cold start fara onboarding) — ultim resort, NU default.
- *
- * @param phaseKcal kcal-ul derivat din override-ul de faza (deja TDEE-real ×
- *   multiplicator via getPhaseOverrideKcalToday), sau null cand AUTO/absent.
- */
-function buildPerUserBaseline(phaseKcal: number | null): NutritionTargetsEngine {
-  const tdee = readUserMaintenanceTDEE();
-  // Coherence model 2026-05-30 — the goal/phase DIRECTION is authoritative; the
-  // target weight only sizes the magnitude within that direction (rate-capped).
-  // getCoherentKcalToday already folds in goal + AUTO derivation + target sizing
-  // + sex floor (it reads `phase-override` itself), so it SUPERSEDES the old
-  // `targetKcal > goalMult` precedence that let a below-current target weight
-  // (a deficit) discard a BULK goal's surplus (Daniel repro masa+target90).
-  const coherent = getCoherentKcalToday(tdee);
-  // Stats onboarding absente (cold start) → fallback flat 2640 ultim resort.
-  if (tdee === null && phaseKcal === null && coherent === null) return BASELINE_NUTRITION;
-
-  const baseTdee = tdee as number;
-  const kcalFloor = readUserKcalFloor(); // sex-aware (femei 1000 / barbati 1200)
-  // Precedence: manual phase override snapshot (phase-log kcal, deterministic at
-  // change-time) > coherent goal/target/AUTO sizing > maintenance (TDEE real).
-  const kcalTarget =
-    phaseKcal !== null
-      ? phaseKcal
-      : coherent !== null
-        ? coherent.kcal
-        : Math.max(Math.round(baseTdee), kcalFloor);
-  // L7 — surface the base-target safety limit, but ONLY when the coherent sizing
-  // is the value we actually show (a manual phase-override snapshot supersedes it).
-  const safetyLimited = phaseKcal === null ? resolveSafetyLimited(coherent) : undefined;
-
-  const proteinTargetG =
-    computeProteinTargetG(readUserWeightKg()) ?? BASELINE_NUTRITION.proteinTargetG;
-
-  // BUG #13 safety — acelasi guardrail si pe calea baseline per-user (ex: user
-  // fresh subponderal care a ales "slabire" la onboarding → goalMult CUT 0.82).
-  const guarded = applyHealthyFloorGuardrail(kcalTarget);
-
-  return {
-    kcalTarget: guarded.kcal,
-    proteinTargetG,
-    fatG: BASELINE_NUTRITION.fatG,
-    carbsG: BASELINE_NUTRITION.carbsG,
-    // 'engine' cand am o estimare derivata real (TDEE per-user sau override
-    // faza); 'baseline' doar cand cadem pe flat 2640 (cold start).
-    source: tdee !== null || phaseKcal !== null ? 'engine' : 'baseline',
-    confidence: 0,
-    healthyFloorClamped: guarded.clamped,
-    // When the subponderal guardrail RAISED the target, it was not held down by
-    // a safety floor/cap — suppress the limit note so the two never contradict.
-    ...(!guarded.clamped && safetyLimited ? { safetyLimited } : {}),
-  };
-}
-
-/**
- * Real wire Bayesian Nutrition Engine adaptive TDEE per posterior-ul BAYESIAN
- * conjugat (conjugateUpdate din observatiile energy-balance) — NU Kalman (inert
- * V1, vezi nota header). LOCK 8 floor invariant preserved (Math.max guard) per
- * DECISIONS §D-LEGACY-041 observation filter NU adjustment.
- *
- * Engine emits doar kcal estimate (posterior.mu); protein/fat/carbs targets
- * V1 = baseline preserved (engine domain NU acoperă macro split).
- *
- * Returns baseline fallback dacă engine throws sau tier 'none' (T0 fresh
- * user pre-observation).
- */
-/**
- * Read user manual phase override (B001 SchimbaFazaConfirm). Returns null
- * when AUTO or absent. When present, derive kcalTarget via the SAME coherent
- * sizing AUTO uses (resolveActivePhase → sizeKcalForPhase) so an explicit phase
- * pick and an AUTO-resolved phase yield ONE number (audit MED 2, 2026-05-31).
- * Persists across days — separate from per-day phase-log.
- *
- * Surfaces visible feedback "you picked CUT → reduced kcal target today"
- * without waiting for Bayesian inference observation accumulation.
- */
-// Valid manual-override tokens (membership check only — the kcal MAGNITUDE is
-// sized coherently via sizeKcalForPhase, NOT these keys; see getPhaseOverrideKcalToday).
-const PHASE_MULTIPLIERS: Record<string, number> = {
-  CUT: 0.82,
-  BULK: 1.08,
-  MAINTENANCE: 1.0,
-  STRENGTH: 1.05,
-};
-
-/**
- * BUG #13 + BUG #4 safety chokepoint — aplica guardrail-ul anti-subnutritie pe
- * kcal-ul final. Cand user-ul e deja subponderal (BMI <= 18.5), ridica kcal-ul
- * la un surplus moderat de crestere (TDEE×1.08) daca recomandarea e sub el —
- * subponderalul trebuie sa CREASCA spre o greutate sanatoasa, NU sa stea in
- * deficit/mentenanta. Citeste greutate/inaltime (onboardingStore) + mentenanta
- * reala (readUserMaintenanceTDEE) la I/O boundary, deleaga la pura
- * clampKcalToHealthyFloor.
- *
- * Returns kcal-ul (posibil ridicat) + `clamped` (UI safety message). Cand lipsesc
- * stats (cold start) → passthrough (pura returneaza clamped=false).
- */
-function applyHealthyFloorGuardrail(kcal: number): { kcal: number; clamped: boolean } {
-  const { height } = useOnboardingStore.getState().data;
-  // Canonical greutate curenta (ultima logata > onboarding) pentru BMI — audit
-  // CRIT: logarea unei greutati misca detectia de subponderal + tinta de kcal.
-  const weight = getCurrentWeightKg();
-  const maintenanceKcal = readUserMaintenanceTDEE();
-  const r = clampKcalToHealthyFloor({
-    kcalRecommendation: kcal,
-    maintenanceKcal: maintenanceKcal ?? NaN,
-    weightKg: weight,
-    heightCm: height,
-  });
-  return { kcal: r.kcal, clamped: r.clamped };
-}
-/**
- * Resolve the ACTIVE phase token, coherence-model precedence (2026-05-30):
- *   1. manual phase override (B001 SchimbaFaza) when set + not AUTO — the user
- *      explicitly picked a phase; honor it UNLESS it contradicts the target-weight
- *      direction (a BULK/STRENGTH override under a LOSE target, or a CUT override
- *      under a GAIN target). A stale override must not outrank a fresher, clearly
- *      contradicting target: treat it invalid (enabledGoalsForDirection) and fall
- *      through to the coherent goal/AUTO resolution below — the same reconciliation
- *      the goal-vs-target path already applies (override-vs-target parity).
- *   2. else the onboarding goal's phase (phaseForGoal). 'auto'/null → AUTO.
- *   3. AUTO resolves to the real phase, signal precedence:
- *      a. target-weight direction (the user's explicit master intent): LOSE→CUT,
- *         GAIN→BULK. A MAINTAIN-band target falls through.
- *      b. the established Engine #2 detector (detectAutoPhaseKey): weight-trend
- *         (what the body actually does over time) with a sex-aware body-comp
- *         fallback (BMI + BF%). Always yields a phase (cold-start → MAINTENANCE).
- *
- *   The pure deriveAutoPhase() in goalPhaseModel (men BF>15→CUT / <12→BUILD,
- *   women BF>25/22) is the literal spec model used for the gating/derivation
- *   contract + its own unit tests; the engine wiring REUSES the established
- *   detector here so the well-tested AUTO body-comp behavior is not regressed.
- * Pure-ish I/O boundary (reads localStorage + stores). Defensive → AUTO.
- */
-// Phase token → its equivalent onboarding goal (inverse of phaseForGoal), so a
-// manual override can be tested against the SAME gating set the goal card uses.
-const PHASE_TOKEN_TO_GOAL: Record<string, Goal> = {
-  CUT: 'slabire',
-  BULK: 'masa',
-  STRENGTH: 'forta',
-  MAINTENANCE: 'mentenanta',
-};
-
-/**
- * True when a manual phase override is coherent with the target-weight direction
- * (reuses enabledGoalsForDirection — the goal-card gating set). No direction (no
- * target / MAINTAIN-band) → nothing to contradict, override stays valid. AUTO is
- * never reconciled here (handled before this). Pure.
- */
-function isPhaseTokenEnabledForDirection(
-  token: PhaseToken,
-  dir: ReturnType<typeof targetDirection>,
-): boolean {
-  if (dir === null) return true;
-  const goal = PHASE_TOKEN_TO_GOAL[token];
-  if (goal === undefined) return true;
-  return enabledGoalsForDirection(dir).has(goal);
-}
-
-export function resolveActivePhase(): PhaseToken | null {
-  // Target-weight direction (master intent) — needed up front so a manual
-  // override can be reconciled against it before it is honored.
-  const { weightKg } = useProgresStore.getState().targetObiectiv;
-  const dir = targetDirection(getCurrentWeightKg(), weightKg);
-  try {
-    const raw = JSON.parse(localStorage.getItem('phase-override') ?? 'null') as string | null;
-    if (raw && raw !== 'AUTO' && PHASE_MULTIPLIERS[raw] !== undefined) {
-      // Override-vs-target reconciliation (parity with goal-vs-target below): a
-      // manual phase that contradicts a clear target direction (e.g. a BULK
-      // override while target < current) is treated as INVALID via the same
-      // gating set the goal card uses, and we fall through to the coherent
-      // goal/AUTO resolution. A non-contradicting override is honored.
-      if (!isPhaseTokenEnabledForDirection(raw as PhaseToken, dir)) {
-        /* contradicting override → drop, fall through to goal-derived */
-      } else {
-        return raw as PhaseToken;
-      }
-    }
-  } catch {
-    /* fall through to goal-derived */
-  }
-  const goal = readOnboardingGoal();
-  // Cold-start, no onboarding goal AND no target → no directional signal at all;
-  // return null so the caller falls back to plain maintenance (no fabricated
-  // deficit/surplus). A target set without a goal still drives direction below.
-  if ((goal === null || goal === undefined) && dir === null) return null;
-
-  const token = phaseForGoal(goal as Parameters<typeof phaseForGoal>[0]);
-  if (token !== 'AUTO') return token;
-
-  // AUTO — (a) target direction is the explicit master signal.
-  if (dir === 'LOSE') return 'CUT';
-  if (dir === 'GAIN') return 'BULK';
-
-  // (b) established Engine #2 detector (weight-trend + sex-aware body-comp).
-  const trendKey = detectAutoPhaseKey();
-  return trendKey === 'CUT' || trendKey === 'BULK' || trendKey === 'STRENGTH'
-    ? (trendKey as PhaseToken)
-    : 'MAINTENANCE';
-}
-
-/**
- * Coherence-model kcal (2026-05-30) — the ONE function that makes goal + target
- * weight + phase + kcal coherent. The active phase sets the SIGN (CUT=deficit,
- * BULK=surplus, MAINTENANCE≈0, STRENGTH≈slight surplus); the target weight +
- * deadline only size the MAGNITUDE within that direction, rate-capped (1.5kg/wk
- * loss, 0.5kg/wk gain) + sex-floored. So masa + target-90 from 110 now yields a
- * SURPLUS (the Daniel repro is fixed — a below-current target can never flip a
- * BULK goal into a deficit). Returns null when no maintenance estimate (caller
- * cold-start fallback). I/O boundary.
- *
- * Returns the kcal target PLUS the two safety signals from sizeKcalForPhase
- * (rateCapped = a cap reduced the shift, floored = the sex floor clamped the
- * result) so the display layer can surface a "limitat pentru siguranta" note
- * explaining WHY an extreme-profile target landed where it did. Returns null
- * when there is no directional signal (caller falls back to maintenance).
- */
-interface CoherentKcalResult {
-  kcal: number;
-  rateCapped: boolean;
-  floored: boolean;
-}
-
-/**
- * Map the coherent-sizing safety flags to the single display signal. Floor wins
- * over cap when both fire — hitting the hard minimum is the stronger statement
- * (the deeper safety boundary) than a rate cap. null when nothing was limited.
- */
-function resolveSafetyLimited(
-  r: CoherentKcalResult | null,
-): 'floored' | 'capped' | undefined {
-  if (!r) return undefined;
-  if (r.floored) return 'floored';
-  if (r.rateCapped) return 'capped';
-  return undefined;
-}
-function getCoherentKcalToday(tdee: number | null): CoherentKcalResult | null {
-  if (tdee === null || !Number.isFinite(tdee) || tdee <= 0) return null;
-  const phase = resolveActivePhase();
-  // No directional signal (cold-start, no goal, no target) → plain maintenance.
-  if (phase === null) return null;
-  const { weightKg, month } = useProgresStore.getState().targetObiectiv;
-  const currentWeight = getCurrentWeightKg();
-  const days = month ? daysUntilTarget(month) : null;
-  const r = sizeKcalForPhase({
-    phase,
-    maintenanceTdee: tdee,
-    currentKg: currentWeight,
-    targetKg: weightKg,
-    daysRemaining: days,
-    kcalFloor: readUserKcalFloor(),
-  });
-  return { kcal: r.kcalTarget, rateCapped: r.rateCapped, floored: r.floored };
-}
-
-function getPhaseOverrideKcalToday(): number | null {
-  try {
-    const phaseRaw = JSON.parse(localStorage.getItem('phase-override') ?? 'null') as
-      | string
-      | null;
-    if (!phaseRaw || phaseRaw === 'AUTO') return null;
-    const multiplier = PHASE_MULTIPLIERS[phaseRaw];
-    if (multiplier === undefined) return null;
-    // Override-vs-target reconciliation (parity with resolveActivePhase): a manual
-    // override that contradicts a clear target direction is NOT honored here — return
-    // null so the precedence in getNutritionTargetsToday falls through to the coherent
-    // path (which reconciles the override to the actual direction). Anti-stale.
-    const { weightKg } = useProgresStore.getState().targetObiectiv;
-    const dir = targetDirection(getCurrentWeightKg(), weightKg);
-    if (!isPhaseTokenEnabledForDirection(phaseRaw as PhaseToken, dir)) return null;
-    // Try today's phase-log entry first (snapshot at change-time, deterministic)
-    const todayISO = new Date().toLocaleDateString('sv');
-    const phaseLog = JSON.parse(localStorage.getItem('phase-log') ?? '[]') as Array<{
-      date: string;
-      kcalTarget: number;
-      ts?: number;
-    }>;
-    const todayEntry = phaseLog.find((e) => e.date === todayISO);
-    const kcalFloor = readUserKcalFloor(); // sex-aware (femei 1000 / barbati 1200)
-    // SINGLE-PATH sizing (audit MED 2, 2026-05-31): the displayed override kcal is
-    // sized by the SAME coherent path AUTO uses (resolveActivePhase →
-    // sizeKcalForPhase), NOT a divergent flat multiplier. Previously explicit CUT
-    // used ×0.82 while AUTO-resolved CUT used −20% (×0.80) — same phase, 54 kcal
-    // apart (Daniel repro 2173 AUTO vs 2227 explicit). The snapshot is now a
-    // ts-recency GATE only; its stored kcal no longer drives the magnitude.
-    const baseTdee = readUserMaintenanceTDEE() ?? BASELINE_NUTRITION.kcalTarget;
-    const coherent = getCoherentKcalToday(baseTdee);
-    const sizedKcal =
-      coherent !== null ? coherent.kcal : Math.max(Math.round(baseTdee), kcalFloor);
-    if (todayEntry) {
-      // Recency: a FRESHER same-day weigh-in (ts) outranks the morning snapshot →
-      // return null so the coherent path recomputes off the fresh weight. Older
-      // snapshots without `ts` keep the prior snapshot-wins behavior.
-      const snapTs = todayEntry.ts;
-      const latestWeighInTs = useProgresStore
-        .getState()
-        .weightLog.reduce((m, e) => (Number.isFinite(e.ts) && e.ts > m ? e.ts : m), 0);
-      if (typeof snapTs === 'number' && latestWeighInTs > snapTs) return null;
-      return Math.max(sizedKcal, kcalFloor); // snapshot phase honored, sized coherently
-    }
-    // No snapshot (override picked earlier) → size coherently off per-user maintenance.
-    return Math.max(sizedKcal, kcalFloor);
-  } catch {
-    return null;
-  }
-}
-
-/**
- * AUTO phase key — combina DOUA semnale pure (Engine #2):
- *   1. weight-trend (detectAutoPhaseFromWeightTrend): ce face corpul de fapt in
- *      timp. Are PRIORITATE cand exista un trend directional clar (CUT/BULK) —
- *      o pierdere/crestere consistenta sustine faza respectiva.
- *   2. body-comp (detectAutoPhaseFromBodyComp): BMI + bf% din onboarding. Decide
- *      cand weight-trend e MAINTAIN (cold-start / span scurt / platou) — asa un
- *      user NOU supraponderal (110kg/1.84m, BMI 32.5, fara istoric) primeste CUT
- *      in loc de mentenanta tacuta (BUG #5).
- *
- * Mapeaza PHASES engine → cheile PHASE_MULTIPLIERS ('MAINTAIN' → 'MAINTENANCE').
- * Defensive: throw → 'MAINTENANCE'. Pure-ish I/O boundary (citeste stores).
- */
-function detectAutoPhaseKey(): string {
-  try {
-    const phaseToKey = (phase: string): string =>
-      phase === 'CUT' ? 'CUT' : phase === 'BULK' ? 'BULK' : 'MAINTENANCE';
-
-    // 1. weight-trend prioritar cand are semnal directional (CUT/BULK).
-    const weightLog = useProgresStore.getState().weightLog;
-    const trend = detectAutoPhaseFromWeightTrend(weightLog);
-    if (trend.phase === 'CUT' || trend.phase === 'BULK') {
-      return phaseToKey(trend.phase);
-    }
-
-    // 2. weight-trend MAINTAIN (cold-start/flat) → decide din compozitia corporala.
-    // Canonical greutate curenta (ultima logata > onboarding) — audit CRIT.
-    const { sex, height, age } = useOnboardingStore.getState().data;
-    const weight = getCurrentWeightKg();
-    const bfFraction = estimateBfFraction({ weight, height, age, sex });
-    const bmi = computeBMI(Number(weight), Number(height));
-    const bodyComp = detectAutoPhaseFromBodyComp({
-      bfPctFraction: bfFraction ?? null,
-      bmi,
-      ...(sex ? { sex } : {}),
-    });
-    return phaseToKey(bodyComp.phase);
-  } catch {
-    return 'MAINTENANCE';
-  }
-}
-
-/**
- * Problem 2 + BUG #5 (UI surface) — eticheta RO a fazei AUTO-detectate (weight
- * trend + body-comp), pentru SchimbaFaza ("Auto → Mentinere/Cut/Bulk recomandat").
- * Cold-start fara stats → 'Mentinere'. Reuse detectAutoPhaseKey (single source).
- */
-const AUTO_PHASE_LABELS_RO: Record<string, string> = {
-  CUT: 'Cut',
-  BULK: 'Bulk',
-  MAINTENANCE: 'Mentinere',
-};
-export function getAutoDetectedPhaseLabelRo(): string {
-  return AUTO_PHASE_LABELS_RO[detectAutoPhaseKey()] ?? 'Mentinere';
-}
+//
+// The goal/phase/target kcal coherence math + AUTO phase detection used by the
+// adapters below live in engineWrappers.nutrition (hygiene split 2026-05-31).
 
 export async function getNutritionTargetsToday(
   userState?: BayesianNutritionContext,
@@ -1186,11 +521,6 @@ export async function readTdeeEstimateKcal(
 // - Score combination: +25 kcal logged + +25 protein>=150 + +30 workout
 //   compliance (CDL primary / logs fallback) + +20 weight logged.
 
-export interface AdherenceOutput {
-  score: number; // 0-100 clamped invariant
-  source: 'engine' | 'baseline';
-}
-
 const BASELINE_ADHERENCE_OUTPUT: AdherenceOutput = {
   score: 50,
   source: 'baseline',
@@ -1230,12 +560,6 @@ export function getAdherenceOutput(): AdherenceOutput {
 // (CDL write + Sentry capture + Auto-backup). Anti-recurrence task_05 §1:
 // CoachDirector class method este `.buildSession(sessionType)` NU `.run`,
 // return shape NU emite top-level `{patternsBanner, prWallRecent, alerts}`.
-
-export interface PatternBanner {
-  id: 'LOW_ADHERENCE' | 'STAGNATION';
-  severity: 'info' | 'warn';
-  text: string; // RO wording NO_DIACRITICS_RULE
-}
 
 /**
  * MED-CODE-24 fix: shared stagnation business rule constant.
@@ -1326,14 +650,6 @@ export function getPatternsBanner(): PatternBanner[] {
 
 // ── Proactive Alerts wrapper ────────────────────────────────────────────
 
-export type ProactiveAlertSeverity = 'info' | 'warn' | 'urgent';
-
-export interface ProactiveAlert {
-  id: string;
-  text: string;
-  severity: ProactiveAlertSeverity;
-}
-
 // LOW-CODE-13 fix — typed SEVERITY_MAP + named DEFAULT centralize magic
 // constants previously scattered (inline `'info'` literal in lookup fallback).
 // Engine severity strings ('warning' | 'info' | 'success') → UI 3-tier
@@ -1385,11 +701,6 @@ export function getProactiveAlerts(ctx: Record<string, unknown> = {}): Proactive
 // recupereaza" la engine-driven via muscleRecovery.getRecoveryByGroup +
 // readiness score. Fallback null cand zero data (T0 fresh) → CoachRestCard
 // renders generic recovery message.
-
-export interface CoachRestReason {
-  fatiguedGroups: string[]; // RO display labels (e.g. ["Pieptul", "Quadricepsul"])
-  readinessScore: number | null; // 0-100, null cand readiness NU logged
-}
 
 const MAX_FATIGUED_GROUPS_DISPLAY = 2; // top-2 most fatigued shown in coach line
 
@@ -1523,11 +834,6 @@ export function getLaggingSignal(): string | null {
 //   - 1 day = "ieri"
 //   - 2-6 days = "${N} zile"
 //   - 7+ days = "saptamana trecuta"
-
-export interface CoachTodayQuote {
-  recoveredLabel: string; // RO display label (e.g., "Pectoralii", "Spatele")
-  daysSince: number; // 1..N days since last trained
-}
 
 const COACH_TODAY_QUOTE_MAX_DAYS = 14; // beyond this, group not "recently trained"
 
