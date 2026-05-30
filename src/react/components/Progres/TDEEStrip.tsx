@@ -43,8 +43,10 @@ import { getNutritionTargetTodayReal } from '../../lib/bayesianNutritionAggregat
 import type { NutritionTarget } from '../../lib/bayesianNutritionAggregate';
 import { readBayesianNutritionContext } from '../../lib/nutritionObservations';
 import { easeDeficitForFatigue } from '../../lib/fatigueDeficitEase';
+import { guardDisplayTarget } from '../../lib/displayTargetGuard';
 import { getFatigue } from '../../lib/engineWrappers';
 import { readUserMaintenanceTDEE } from '../../lib/userTdee';
+import { useProgresStore } from '../../stores/progresStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useNutritionStore } from '../../stores/nutritionStore';
 import { useAerobicStore, aerobicKcalForDate } from '../../stores/aerobicStore';
@@ -114,7 +116,14 @@ export function TDEEStrip(): JSX.Element {
   const setDailyProtein = useNutritionStore((s) => s.setDailyProtein);
   const loggedKcal = entry?.kcal ?? null;
 
-  const phaseLabel = useMemo(() => getCurrentPhaseLabel(), []);
+  // The PHASE badge must reflect the LIVE phase: the gating model auto-switches
+  // the phase (ObiectivGoalCard re-sets phase-override to AUTO when a target
+  // change disables the picked goal). Subscribe to the same store inputs that
+  // drive that switch — that re-renders the component — and read the label fresh
+  // each render (cheap localStorage read), instead of useMemo([]) frozen at mount.
+  useProgresStore((s) => s.targetObiectiv);
+  useProgresStore((s) => s.weightLog);
+  const phaseLabel = getCurrentPhaseLabel();
   const weekInMeso = useMemo(
     () => computeWeekInMesocycle(sessionsHistory.length, 3),
     [sessionsHistory.length],
@@ -165,14 +174,30 @@ export function TDEEStrip(): JSX.Element {
     target != null && target.source !== 'manual' && aerobicKcalToday > 0
       ? aerobicKcalToday
       : 0;
-  // The kcal we DISPLAY as the auto target (post-ease + aerobic add-on).
-  const displayAutoKcal = target ? ease.easedKcal + aerobicAdd : null;
+  // The kcal we DISPLAY as the auto target (post-ease + aerobic add-on), then
+  // RE-GUARDED: the ease + add-on bypass the engine's floor/ceiling, so the
+  // single display guard re-applies hard floor (sex) + healthy floor (BMI<=18.5)
+  // + maintenance ceiling (deficit phases) to the FINAL sum. baseAutoKcal drives
+  // the deficit/surplus classification (engine base at/below maintenance = cut).
+  const displayAutoKcal =
+    target && baseAutoKcal != null
+      ? guardDisplayTarget(ease.easedKcal + aerobicAdd, baseAutoKcal, maintenanceKcal).kcal
+      : null;
 
   // §F-pass2-tdeestrip-02 — current-vs-tinta comparison. Doar cand exista intake
   // logat manual AND tinta e engine/baseline genuina (source 'manual' = echo).
+  // Base = the GUARDED ENGINE target WITHOUT the auto add-ons (ease + aerobic):
+  // a partial manual log (kcal only) is "logged" to the strip but "not manual"
+  // to the engine, so comparing the logged intake against an add-on-INFLATED
+  // target made the deficit/surplus delta wrong by the add-on size. The user ate
+  // a number — compare it against the plain guarded target they were given.
+  const comparisonBase =
+    target && baseAutoKcal != null
+      ? guardDisplayTarget(baseAutoKcal, baseAutoKcal, maintenanceKcal).kcal
+      : null;
   const showComparison =
-    loggedKcal != null && target != null && target.source !== 'manual' && displayAutoKcal != null;
-  const kcalDelta = showComparison ? (loggedKcal as number) - (displayAutoKcal as number) : 0;
+    loggedKcal != null && target != null && target.source !== 'manual' && comparisonBase != null;
+  const kcalDelta = showComparison ? (loggedKcal as number) - (comparisonBase as number) : 0;
   const deltaLabel = kcalDelta >= 0 ? `+${fmtNum(kcalDelta)}` : `-${fmtNum(Math.abs(kcalDelta))}`;
 
   // What the editable chips show: a logged value when present, else the auto.
@@ -265,7 +290,7 @@ export function TDEEStrip(): JSX.Element {
                 <span className="text-lg font-semibold text-ink2">{' '}kcal</span>
               </p>
               <p className="text-sm text-ink2 mt-1.5">
-                {t('progres.tdee.withTarget', { kcal: fmtNum(displayAutoKcal as number), delta: deltaLabel })}
+                {t('progres.tdee.withTarget', { kcal: fmtNum(comparisonBase as number), delta: deltaLabel })}
               </p>
             </div>
           ) : (
