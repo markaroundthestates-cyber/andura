@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../../stores/onboardingStore';
-import type { Sex, Frequency, Experience, TrainingType, OnboardingData } from '../../../stores/onboardingStore';
+import type { OnboardingData } from '../../../stores/onboardingStore';
 import { useProgresStore, latestBodyMeasurements } from '../../../stores/progresStore';
 import { DB } from '../../../../db.js';
 import { gotoPath } from '../../../lib/navigation';
@@ -27,21 +27,15 @@ import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
 import { estimateBF_skinfold3 } from '../../../../engine/skinfoldBF.js';
 import { estimateBfDeurenbergCapped } from '../../../../engine/bodyComposition.js';
 import { t } from '../../../../i18n/index.js';
+import { PersonalSection } from './settingsProfile/PersonalSection';
+import { BodyCompSection } from './settingsProfile/BodyCompSection';
+import { SkinfoldSection } from './settingsProfile/SkinfoldSection';
+import { TrainingSection } from './settingsProfile/TrainingSection';
 
 // §obiectiv-relocate 2026-05-28 — Goal selector relocated to Progres tab
 // (ObiectivGoalCard). GOAL_LABELS dropped din SettingsProfile (Frecventa +
 // Experienta raman aici — setup-once params, NU progress-tracking goal).
-
-// Frequency labels resolved via t() per-locale (e.g. "3x/sapt" vs "3x/week").
-function frequencyLabel(f: Frequency): string {
-  return t('settings.profile.frequencyShort', { n: f });
-}
-
-const EXPERIENCE_LABEL_KEYS: Record<Experience, string> = {
-  incepator: 'settings.profile.experienceBeginner',
-  intermediar: 'settings.profile.experienceIntermediate',
-  avansat: 'settings.profile.experienceAdvanced',
-};
+// frequencyLabel + EXPERIENCE_LABEL_KEYS moved to settingsProfile/TrainingSection.
 
 export function SettingsProfile(): JSX.Element {
   const navigate = useNavigate();
@@ -309,274 +303,41 @@ export function SettingsProfile(): JSX.Element {
           </div>
         </div>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          {t('settings.profile.sectionPersonal')}
-        </p>
-        <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
-          <LabelRow label={t('settings.profile.age')}>
-            <input
-              type="number"
-              min={18}
-              max={99}
-              inputMode="numeric"
-              autoComplete="off"
-              value={draft.age ?? ''}
-              onChange={(e) => update('age', e.target.value ? Number(e.target.value) : null)}
-              data-testid="profile-age-input"
-              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
-            />
-          </LabelRow>
-          <LabelRow label={t('settings.profile.weight')}>
-            <input
-              type="number"
-              min={30}
-              max={250}
-              step={0.1}
-              inputMode="decimal"
-              autoComplete="off"
-              value={draft.weight ?? ''}
-              onChange={(e) => update('weight', e.target.value ? Number(e.target.value) : null)}
-              data-testid="profile-weight-input"
-              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
-            />
-          </LabelRow>
-          <SelectRow label={t('settings.profile.sex')} htmlFor="profile-sex-select" isLast>
-            <select
-              id="profile-sex-select"
-              value={draft.sex ?? ''}
-              onChange={(e) => update('sex', (e.target.value || null) as Sex | null)}
-              data-testid="profile-sex-select"
-              className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
-            >
-              <option value="">—</option>
-              <option value="m">{t('settings.profile.sexMale')}</option>
-              <option value="f">{t('settings.profile.sexFemale')}</option>
-            </select>
-          </SelectRow>
-        </div>
+        <PersonalSection draft={draft} update={update} />
 
-        {/* §F-pass2-settings-profile-03 — Compozitie corporala (mockup L2034-2047).
-            Talie + Gat + Inaltime → BF% auto US Navy + manual override. */}
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          {t('settings.profile.sectionBody')}
-        </p>
-        <div className="pulse-card pulse-card-tight overflow-hidden mb-1">
-          <LabelRow label={t('settings.profile.waist')}>
-            <input
-              type="number"
-              min={50}
-              max={200}
-              step={0.5}
-              inputMode="decimal"
-              autoComplete="off"
-              value={waist}
-              onChange={(e) => setWaist(e.target.value)}
-              data-testid="profile-waist-input"
-              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
-            />
-          </LabelRow>
-          <LabelRow label={t('settings.profile.neck')}>
-            <input
-              type="number"
-              min={25}
-              max={60}
-              step={0.5}
-              inputMode="decimal"
-              autoComplete="off"
-              value={neck}
-              onChange={(e) => setNeck(e.target.value)}
-              data-testid="profile-neck-input"
-              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
-            />
-          </LabelRow>
-          {/* §progress-v2 — sold intra in US Navy DOAR pentru femei. Input afisat
-              conditionat ca sa nu deruteze barbatii (formula lor nu-l foloseste). */}
-          {draft.sex === 'f' && (
-            <LabelRow label={t('settings.profile.hip')}>
-              <input
-                type="number"
-                min={50}
-                max={200}
-                step={0.5}
-                inputMode="decimal"
-                autoComplete="off"
-                value={hip}
-                onChange={(e) => setHip(e.target.value)}
-                data-testid="profile-hip-input"
-                className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
-              />
-            </LabelRow>
-          )}
-          <LabelRow label={t('settings.profile.height')}>
-            <input
-              type="number"
-              min={120}
-              max={230}
-              step={0.5}
-              inputMode="decimal"
-              autoComplete="off"
-              value={draft.height ?? ''}
-              onChange={(e) => update('height', e.target.value ? Number(e.target.value) : null)}
-              data-testid="profile-height-input"
-              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
-            />
-          </LabelRow>
-          <div className="flex items-center justify-between px-4 py-3 border-b border-line">
-            <span className="text-sm text-ink">{t('settings.profile.bfAuto')}</span>
-            <span className="flex items-center gap-2">
-              <span
-                className="font-mono text-sm font-semibold text-ink"
-                data-testid="profile-bf-auto"
-              >
-                {bfAuto != null ? `${bfAuto}%` : '—'}
-              </span>
-              <span className="text-[11px] text-ink3" data-testid="profile-bf-source">{bfSource}</span>
-            </span>
-          </div>
-          <SelectRow label={t('settings.profile.bfManual')} htmlFor="profile-bf-manual" isLast>
-            <span className="flex items-center gap-2">
-              <input
-                id="profile-bf-manual"
-                type="checkbox"
-                checked={bfManual}
-                onChange={(e) => setBfManual(e.target.checked)}
-                data-testid="profile-bf-manual"
-                className="w-[18px] h-[18px] accent-brick"
-              />
-              <input
-                type="number"
-                min={3}
-                max={60}
-                step={0.1}
-                inputMode="decimal"
-                autoComplete="off"
-                disabled={!bfManual}
-                placeholder="—"
-                value={bfOverride}
-                onChange={(e) => setBfOverride(e.target.value)}
-                data-testid="profile-bf-override"
-                className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper2 text-ink3 font-mono text-sm disabled:opacity-60"
-              />
-            </span>
-          </SelectRow>
-        </div>
-        {bfNavyIncomplete && (
-          <p
-            className="text-xs text-ink2 mb-1 px-1 leading-snug"
-            data-testid="profile-bf-hint"
-          >
-            {t('settings.profile.bfHint')}
-          </p>
-        )}
-        <p className="text-xs text-ink3 mb-4 px-1 leading-snug">
-          {t('settings.profile.bodyCompFooter')}
-        </p>
+        <BodyCompSection
+          draft={draft}
+          update={update}
+          waist={waist}
+          setWaist={setWaist}
+          neck={neck}
+          setNeck={setNeck}
+          hip={hip}
+          setHip={setHip}
+          bfAuto={bfAuto}
+          bfSource={bfSource}
+          bfManual={bfManual}
+          setBfManual={setBfManual}
+          bfOverride={bfOverride}
+          setBfOverride={setBfOverride}
+          bfNavyIncomplete={bfNavyIncomplete}
+        />
 
-        {/* §progress-v2 — Pliuri cutanate (avansat, optional). Secundar/collapsed
-            ca sa NU fie in fata user-ului obisnuit (Gigel n-are caliper): doar un
-            toggle; inputurile per-sex apar cand e bifat. Cand cele 3 site-uri sunt
-            valide, BF% foloseste J-P (mai acurat) peste US Navy. */}
-        <SelectRow
-          label={t('settings.profile.skinfoldToggle')}
-          htmlFor="profile-skinfold-toggle"
-          isLast
-        >
-          <input
-            id="profile-skinfold-toggle"
-            type="checkbox"
-            checked={skinfoldOn}
-            onChange={(e) => setSkinfoldOn(e.target.checked)}
-            data-testid="profile-skinfold-toggle"
-            className="w-[18px] h-[18px] accent-brick"
-          />
-        </SelectRow>
-        {skinfoldOn && (
-          <div
-            className="pulse-card pulse-card-tight overflow-hidden mb-1 mt-1"
-            data-testid="profile-skinfold-panel"
-          >
-            {draft.sex === 'f' ? (
-              <>
-                <LabelRow label={t('settings.profile.skinfoldTriceps')}>
-                  <input
-                    type="number"
-                    min={2}
-                    max={60}
-                    step={0.5}
-                    inputMode="decimal"
-                    autoComplete="off"
-                    value={sfTriceps}
-                    onChange={(e) => setSfTriceps(e.target.value)}
-                    data-testid="profile-skinfold-triceps"
-                    className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
-                  />
-                </LabelRow>
-                <LabelRow label={t('settings.profile.skinfoldSuprailiac')}>
-                  <input
-                    type="number"
-                    min={2}
-                    max={60}
-                    step={0.5}
-                    inputMode="decimal"
-                    autoComplete="off"
-                    value={sfSuprailiac}
-                    onChange={(e) => setSfSuprailiac(e.target.value)}
-                    data-testid="profile-skinfold-suprailiac"
-                    className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
-                  />
-                </LabelRow>
-              </>
-            ) : (
-              <>
-                <LabelRow label={t('settings.profile.skinfoldChest')}>
-                  <input
-                    type="number"
-                    min={2}
-                    max={60}
-                    step={0.5}
-                    inputMode="decimal"
-                    autoComplete="off"
-                    value={sfChest}
-                    onChange={(e) => setSfChest(e.target.value)}
-                    data-testid="profile-skinfold-chest"
-                    className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
-                  />
-                </LabelRow>
-                <LabelRow label={t('settings.profile.skinfoldAbdomen')}>
-                  <input
-                    type="number"
-                    min={2}
-                    max={60}
-                    step={0.5}
-                    inputMode="decimal"
-                    autoComplete="off"
-                    value={sfAbdomen}
-                    onChange={(e) => setSfAbdomen(e.target.value)}
-                    data-testid="profile-skinfold-abdomen"
-                    className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
-                  />
-                </LabelRow>
-              </>
-            )}
-            <LabelRow label={t('settings.profile.skinfoldThigh')} isLast>
-              <input
-                type="number"
-                min={2}
-                max={60}
-                step={0.5}
-                inputMode="decimal"
-                autoComplete="off"
-                value={sfThigh}
-                onChange={(e) => setSfThigh(e.target.value)}
-                data-testid="profile-skinfold-thigh"
-                className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
-              />
-            </LabelRow>
-          </div>
-        )}
-        <p className="text-xs text-ink3 mb-4 px-1 leading-snug">
-          {t('settings.profile.skinfoldHint')}
-        </p>
+        <SkinfoldSection
+          draft={draft}
+          skinfoldOn={skinfoldOn}
+          setSkinfoldOn={setSkinfoldOn}
+          sfChest={sfChest}
+          setSfChest={setSfChest}
+          sfAbdomen={sfAbdomen}
+          setSfAbdomen={setSfAbdomen}
+          sfThigh={sfThigh}
+          setSfThigh={setSfThigh}
+          sfTriceps={sfTriceps}
+          setSfTriceps={setSfTriceps}
+          sfSuprailiac={sfSuprailiac}
+          setSfSuprailiac={setSfSuprailiac}
+        />
 
         {/* §obiectiv-tinta 2026-05-28 (Daniel smoke #8) — "Tinte personale"
             (greutate tinta + pana in + ETA + safety verdict ritm 1.5kg/sapt)
@@ -584,60 +345,7 @@ export function SettingsProfile(): JSX.Element {
             state aici; acum persistat (Smoke #16) ca sa influenteze tinta de
             kcal a coach-ului via engineWrappers.getTargetKcalToday. */}
 
-        {/* §obiectiv-relocate 2026-05-28 Daniel verbatim "muta aia cu Obiectiv
-            de la Coach la progres". Obiectiv (goal pick) relocated la Progres >
-            ObiectivGoalCard. Frecventa + Experienta raman aici — setup-once
-            params, NU progress-tracking goal (clear separation). */}
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          {t('settings.profile.sectionTraining')}
-        </p>
-        <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
-          {/* Training type toggle (Daniel spec 2026-05-30) — change gym/aerobic/
-              both later. Reuses the onboarding option labels. Skip-auth safe:
-              writes onboardingStore.data (local, per-UID), same path as the rest
-              of this form. */}
-          <SelectRow label={t('settings.profile.trainingType')} htmlFor="profile-training-type-select">
-            <select
-              id="profile-training-type-select"
-              value={draft.trainingType ?? 'gym'}
-              onChange={(e) => update('trainingType', e.target.value as TrainingType)}
-              data-testid="profile-training-type-select"
-              className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
-            >
-              <option value="gym">{t('onboarding.options.trainingType.gym')}</option>
-              <option value="aerobic">{t('onboarding.options.trainingType.aerobic')}</option>
-              <option value="both">{t('onboarding.options.trainingType.both')}</option>
-            </select>
-          </SelectRow>
-          <SelectRow label={t('settings.profile.frequency')} htmlFor="profile-frequency-select">
-            <select
-              id="profile-frequency-select"
-              value={draft.frequency ?? ''}
-              onChange={(e) => update('frequency', (e.target.value || null) as Frequency | null)}
-              data-testid="profile-frequency-select"
-              className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
-            >
-              <option value="">—</option>
-              {(['2', '3', '4', '5'] as Frequency[]).map((f) => (
-                <option key={f} value={f}>{frequencyLabel(f)}</option>
-              ))}
-            </select>
-          </SelectRow>
-          <SelectRow label={t('settings.profile.experience')} htmlFor="profile-experience-select" isLast>
-            <select
-              id="profile-experience-select"
-              value={draft.experience ?? ''}
-              onChange={(e) => update('experience', (e.target.value || null) as Experience | null)}
-              data-testid="profile-experience-select"
-              className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
-            >
-              <option value="">—</option>
-              {(Object.keys(EXPERIENCE_LABEL_KEYS) as Experience[]).map((x) => (
-                <option key={x} value={x}>{t(EXPERIENCE_LABEL_KEYS[x])}</option>
-              ))}
-            </select>
-          </SelectRow>
-        </div>
+        <TrainingSection draft={draft} update={update} />
 
         <button
           type="button"
@@ -674,52 +382,5 @@ function todayIso(): string {
 
 // §obiectiv-tinta 2026-05-28 — SAFE_*/computeTargetEta/etaHorizonLabel/fmtKg
 // MOVED to src/react/lib/targetEta.ts (shared with Progres > ObiectivCard).
-
-interface LabelRowProps {
-  label: string;
-  isLast?: boolean;
-  children: JSX.Element;
-}
-
-function LabelRow({ label, isLast, children }: LabelRowProps): JSX.Element {
-  // §6-M3 audit fix — implicit <label> wrap for INPUT children (WCAG 1.3.1 +
-  // 4.1.2). Wrapping <label> binds the row text to the input without needing
-  // htmlFor/id pair. Safe for <input> because label click focuses the input
-  // (no double-dispatch concerns on Android Chrome).
-  return (
-    <label
-      className={`flex items-center justify-between px-4 py-3 ${
-        isLast ? '' : 'border-b border-line'
-      }`}
-    >
-      <span className="text-sm text-ink">{label}</span>
-      {children}
-    </label>
-  );
-}
-
-interface SelectRowProps {
-  label: string;
-  htmlFor: string;
-  isLast?: boolean;
-  children: JSX.Element;
-}
-
-function SelectRow({ label, htmlFor, isLast, children }: SelectRowProps): JSX.Element {
-  // §HIGH-1 audit fix (REVIEW-chat3-fresh-eyes) — explicit htmlFor/id binding
-  // pentru SELECT children. NU folosim <label> wrap pentru selects deoarece pe
-  // Android Chrome label click se poate re-dispatch la primul labelable
-  // descendant — pe rand <select> poate cauza native dropdown sa pulseze
-  // open/close (double-toggle). Sibling pattern <label htmlFor> + <select id>
-  // pastreaza accessible name (WCAG 1.3.1 + 4.1.2) fara nesting risc.
-  return (
-    <div
-      className={`flex items-center justify-between px-4 py-3 ${
-        isLast ? '' : 'border-b border-line'
-      }`}
-    >
-      <label htmlFor={htmlFor} className="text-sm text-ink">{label}</label>
-      {children}
-    </div>
-  );
-}
+// LabelRow + SelectRow MOVED to settingsProfile/rows.tsx (shared with the
+// extracted field sections — hygiene split, zero behavior change).
