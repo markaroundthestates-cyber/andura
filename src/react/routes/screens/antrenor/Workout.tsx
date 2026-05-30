@@ -193,6 +193,20 @@ export function Workout(): JSX.Element {
 
   const [kgInput, setKgInput] = useState<number>(targetKg);
   const [repsInput, setRepsInput] = useState<number>(currentExercise.targetReps);
+  // Audit fix (shared current-recommended-load) — autoregulation and the
+  // AaFriction over-recommendation check must read/write ONE recommended load,
+  // not drift between `kgInput` (autoreg writes) and the stale per-exercise
+  // `targetKg` (friction read). recKg/recReps START at the per-exercise target
+  // and get bumped by in-session autoregulation; AaFriction evaluates the
+  // user's entered load against THIS value (not the original target), and the
+  // engine's own up-ramp computes from THIS value (no stale baseline overshoot).
+  const [recKg, setRecKg] = useState<number>(targetKg);
+  const [recReps, setRecReps] = useState<number>(currentExercise.targetReps);
+  // Audit fix (input-guard) — true once the user manually edits the kg/reps for
+  // the current set. Autoregulation pre-fills the NEXT set only when the field
+  // is still at its untouched recommended default; a user-typed value is never
+  // clobbered. Reset per set (effect keyed on safeExIdx + currentSetIdx).
+  const [inputDirty, setInputDirty] = useState(false);
   // Perf isolation: the per-second elapsed clock no longer lives here (it drove
   // a whole-subtree re-render once a second). It now lives in the
   // <SessionElapsed> leaf inside SessionTimer, fed the raw sessionStart.
@@ -340,6 +354,10 @@ export function Workout(): JSX.Element {
   useEffect(() => {
     setKgInput(targetKg);
     setRepsInput(currentExercise.targetReps);
+    // Shared current-recommended-load resets to the per-exercise target on
+    // exercise change — in-session autoreg bumps it from here within the set run.
+    setRecKg(targetKg);
+    setRecReps(currentExercise.targetReps);
     setAdjustNotice(null);
   }, [safeExIdx, targetKg, currentExercise.targetReps]);
 
@@ -349,6 +367,9 @@ export function Workout(): JSX.Element {
   useEffect(() => {
     setSetLogged(false);
     setEditing(false);
+    // New set starts at its untouched recommended default — autoreg may pre-fill
+    // it; the user-touched guard clears so the next manual edit re-arms it.
+    setInputDirty(false);
   }, [safeExIdx, currentSetIdx]);
 
   // Phase 4 task_15 §A: inactivity watch — interval 30s checks idle minutes
@@ -492,8 +513,13 @@ export function Workout(): JSX.Element {
       // apply the fatigue taper. The engine decides phase-aware whether to move
       // weight (newKg) or reps (newReps, weight held = holdKg).
       const adjust = DP.checkInSessionAdjust(exerciseName, recentRPEs, recentReps, {
-        recKg: targetKg,
-        recReps: currentExercise.targetReps,
+        // Shared current-recommended-load: feed the engine the LIVE rec (recKg/
+        // recReps), not the stale per-exercise target — so a prior in-session
+        // bump is the baseline for the next bump (the up-ramp never computes
+        // from a stale value). recKg/recReps start at the target on exercise
+        // change, so set 1 still uses the target.
+        recKg,
+        recReps,
         loggedKg: effKg, // the load the user ACTUALLY logged this set
         setIdx: currentSetIdx + 1,
       }) as {
@@ -505,11 +531,22 @@ export function Workout(): JSX.Element {
         msg?: string;
       };
       if (adjust.adjust) {
-        // Pre-fill the next set's target with the engine's correction + surface
-        // the honest message (NU a silent change). Weight autoregulation moves
+        // Update the SHARED current-recommended-load first — this is the single
+        // source of truth that the next set's AaFriction over-recommendation
+        // check evaluates against (so the friction boundary moves with the
+        // autoreg-raised rec, never the stale target). This always tracks the
+        // engine's correction.
+        if (typeof adjust.newKg === 'number') setRecKg(adjust.newKg);
+        if (typeof adjust.newReps === 'number') setRecReps(adjust.newReps);
+        // Pre-fill the next set's input with the engine's correction + surface
+        // the honest message (NU a silent change) — but ONLY when the user has
+        // not manually typed their own next-set value (inputDirty). A user edit
+        // is intent; autoreg must not clobber it. Weight autoregulation moves
         // kgInput; rep autoregulation moves repsInput (and holds the weight).
-        if (typeof adjust.newKg === 'number') setKgInput(adjust.newKg);
-        if (typeof adjust.newReps === 'number') setRepsInput(adjust.newReps);
+        if (!inputDirty) {
+          if (typeof adjust.newKg === 'number') setKgInput(adjust.newKg);
+          if (typeof adjust.newReps === 'number') setRepsInput(adjust.newReps);
+        }
         setAdjustNotice(adjust.msg ?? null);
       } else {
         setAdjustNotice(null);
@@ -554,15 +591,19 @@ export function Workout(): JSX.Element {
       vitalityScore: signals.vitalityScore,
       adherenceScore: signals.adherenceScore,
     });
-    // 06.AA.010 — thread the engine's adapted recommendation (targetKg, the
-    // readiness/tier-gated value used to pre-fill kgInput) into the friction
+    // 06.AA.010 — thread the engine's adapted recommendation into the friction
     // check so an over-recommendation overshoot fires even with NO set history
     // (first set, fresh install). Was previously never passed → silent gap.
+    // Audit fix (shared current-recommended-load): pass `recKg` (the SHARED rec
+    // that in-session autoregulation bumps), NOT the stale per-exercise
+    // `targetKg`. On set 1 recKg === targetKg, so first-set behaviour is
+    // unchanged; on later sets the friction boundary tracks the autoreg-raised
+    // rec instead of drifting from it.
     const check = detectAggressiveLoad(samples, {
       kg: kgInput,
       reps: repsInput,
       timestamp: Date.now(),
-    }, thresholds, targetKg);
+    }, thresholds, recKg);
     if (check.trigger && check.reason) {
       setAaReason(check.reason);
       setAaPendingRating(rating);
@@ -1143,10 +1184,12 @@ export function Workout(): JSX.Element {
             }}
             onKgChange={(n) => {
               bumpActivity();
+              setInputDirty(true);
               setKgInput(n);
             }}
             onRepsChange={(n) => {
               bumpActivity();
+              setInputDirty(true);
               setRepsInput(n);
             }}
           />

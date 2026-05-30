@@ -1240,3 +1240,105 @@ describe('Workout — in-session responsive autoregulation wire', () => {
     expect(screen.queryByTestId('insession-adjust-notice')).not.toBeInTheDocument();
   });
 });
+
+// ── Shared current-recommended-load: autoreg + AaFriction read ONE source ────
+// Audit fix 2026-05-30. Previously autoregulation RAISED the next set's target
+// by writing kgInput, but the AaFriction over_recommendation check re-evaluated
+// the next set against the STALE per-exercise targetKg (drift). And autoreg
+// pre-filled kgInput UNCONDITIONALLY, clobbering a value the user had already
+// typed for the next set. These two tests prove the shared rec + the input
+// guard end-to-end against the REAL DP engine (STRENGTH phase = WEIGHT autoreg).
+describe('Workout — shared current-recommended-load (autoreg + AaFriction)', () => {
+  const STRENGTH_REC_50_FIXTURE = {
+    ...PHASE_5_FIXTURE,
+    exercises: [
+      // Single STRENGTH-phase exercise, rec 50 kg. 40% over-rec boundary = 70 kg.
+      { id: 'bench-press', name: 'Bench Press', sets: 4, targetReps: 5, targetKg: 50, restSec: 90 },
+    ],
+  };
+
+  beforeEach(() => {
+    resetStore();
+    // STRENGTH phase → checkInSessionAdjust autoregulates WEIGHT (newKg).
+    DB.set('phase-override', 'STRENGTH');
+    // Prior persisted history gives DP a lastW so it recalibrates (else adjust:false).
+    DB.set('logs', [
+      { ex: 'Bench Press', w: 50, reps: 5, set: 1, ts: Date.now() - 2000 },
+    ]);
+  });
+
+  afterEach(() => {
+    // Do not leak the phase-override into the AUTO-phase suites above/below.
+    DB.set('phase-override', 'AUTO');
+    DB.set('logs', []);
+  });
+
+  // Backdate the logged set so logging the NEXT set doesn't trip the separate
+  // fast_sets aaFriction guard (<30s between sets). Isolates over_recommendation.
+  function backdateSets(): void {
+    const sets = useWorkoutStore.getState().history[0] ?? [];
+    useWorkoutStore.setState({
+      history: { 0: sets.map((s) => ({ ...s, timestamp: Date.now() - 60_000 })) },
+    });
+  }
+
+  it('AaFriction evaluates the NEXT set against the autoreg-RAISED rec, not the stale target', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(STRENGTH_REC_50_FIXTURE);
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('50 kg');
+
+    // Set 1: over-perform — log 75 kg (well above the 50 rec) at a non-failure
+    // rating so the engine ramps the next set's WEIGHT UP (real DP: rec 50 →
+    // newKg 55, a smooth +1 increment-step toward the demonstrated load).
+    fireEvent.change(screen.getByTestId('setlog-tinta-kg-input'), { target: { value: '75' } });
+    fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
+    fireEvent.click(screen.getByRole('button', { name: EN_RATING_LABEL.Potrivit }));
+    // 75 vs rec 50 = +50% > 40% → the over_recommendation modal fires on set 1.
+    // Force-continue (the user insists) so the set commits + autoreg runs.
+    expect(screen.getByTestId('aa-friction-modal')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('aa-friction-continue'));
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    backdateSets();
+
+    // Autoreg raised the SHARED rec from 50 → 55 for set 2 (surfaced in the
+    // notice; the tinta target itself is not auto-bumped because the user typed
+    // their own set-1 value, but the shared recKg the friction check reads IS
+    // raised). New over-rec boundary = 55*1.4 = 77; old (stale) boundary = 70.
+    expect((screen.getByTestId('insession-adjust-notice').textContent ?? '')).toMatch(/55 kg/);
+
+    // Set 2: log 76 kg — OVER the OLD 50-rec boundary (70) but UNDER the new
+    // raised-rec boundary (77), and ABOVE set 1's 75 kg so the established-at-
+    // load suppression does NOT mask the check. With the bug (stale targetKg=50)
+    // this trips over_recommendation; with the fix (shared recKg=55) it must NOT.
+    fireEvent.change(screen.getByTestId('setlog-tinta-kg-input'), { target: { value: '76' } });
+    fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
+    fireEvent.click(screen.getByRole('button', { name: EN_RATING_LABEL.Potrivit }));
+
+    // No modal — the friction boundary moved WITH the autoreg-raised rec.
+    expect(screen.queryByTestId('aa-friction-modal')).not.toBeInTheDocument();
+    // The set committed (proof it was not blocked).
+    expect(useWorkoutStore.getState().history[0]?.length).toBe(2);
+  });
+
+  it('autoreg does NOT clobber a kg the user has manually typed for the next set', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(STRENGTH_REC_50_FIXTURE);
+    await renderWorkoutAndWait();
+
+    // Set 1: over-perform so autoreg WOULD raise the next set's kgInput.
+    fireEvent.change(screen.getByTestId('setlog-tinta-kg-input'), { target: { value: '75' } });
+    fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
+    // The user manually edits the kg DURING this set (dirty signal). The clobber
+    // guard keys off "did the user manually edit this set's input", which the
+    // 75 above already set — assert against the chosen value surviving autoreg.
+    fireEvent.click(screen.getByRole('button', { name: EN_RATING_LABEL.Potrivit }));
+    expect(screen.getByTestId('aa-friction-modal')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('aa-friction-continue'));
+    fireEvent.click(screen.getByTestId('rest-skip'));
+
+    // The user manually typed their own load for set 1 (75) → autoreg must NOT
+    // overwrite the next set's input. The tinta keeps the user's 75, NOT the
+    // engine's raised value. (The shared rec still tracks the engine internally,
+    // proven by the sibling test; this asserts the INPUT is not clobbered.)
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('75 kg');
+  });
+});
