@@ -66,7 +66,7 @@ const RATING_META: readonly RatingMeta[] = [
 ];
 
 function formatKg(kg: number): string {
-  return kg.toLocaleString('ro-RO').replace(/,/g, ' ').replace(/\./g, ' ');
+  return kg.toLocaleString('ro-RO').replace(/\./g, ' ').replace(/,/g, '.');
 }
 
 export function PostRpe(): JSX.Element {

@@ -62,7 +62,7 @@ function formatTime(ts: number): string {
 // RO thousands separator (space) — mirror PostSummary formatKg pentru
 // cross-screen numeric consistency (12 450 kg, NU 12450kg).
 function formatKg(kg: number): string {
-  return kg.toLocaleString('ro-RO').replace(/,/g, ' ').replace(/\./g, ' ');
+  return kg.toLocaleString('ro-RO').replace(/\./g, ' ').replace(/,/g, '.');
 }
 
 export function IstoricDetail(): JSX.Element {

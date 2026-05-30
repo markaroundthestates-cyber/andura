@@ -81,7 +81,7 @@ function parseMeta(meta: string | undefined): ParsedMeta {
 }
 
 function formatKg(kg: number): string {
-  return kg.toLocaleString('ro-RO').replace(/,/g, ' ').replace(/\./g, ' ');
+  return kg.toLocaleString('ro-RO').replace(/\./g, ' ').replace(/,/g, '.');
 }
 
 // §F-post-summary-03 muscle group derivation. Phase 3 keyword-match din

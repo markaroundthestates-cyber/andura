@@ -250,7 +250,7 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
                 { kg: 22.5, reps: 10, rating: 'potrivit', timestamp: Date.now() },
               ],
               totalVolume: 450,
-              peakOneRM: 30,
+              peakOneRM: 20.4,
             },
           ],
         },
@@ -260,7 +260,10 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
     expect(screen.getByTestId('istoric-detail-breakdown')).toBeInTheDocument();
     expect(screen.getByTestId('detail-ex-bench-press')).toBeInTheDocument();
     expect(screen.getByTestId('detail-ex-volume').textContent).toMatch(/450 kg/);
-    expect(screen.getByTestId('detail-ex-1rm').textContent).toMatch(/30 kg/);
+    // Decimal 1RM must keep its decimal separator (regression: ro-RO formatKg
+    // once turned the decimal comma into a space, rendering "20 4 kg").
+    expect(screen.getByTestId('detail-ex-1rm').textContent).toMatch(/20\.4 kg/);
+    expect(screen.getByTestId('detail-ex-1rm').textContent).not.toMatch(/20 4/);
     expect(screen.getByTestId('detail-set-bench-press-0').textContent).toMatch(/22\.5/);
     // Rating column under EN default surfaces "Right" (ratingLabels.potrivit -> Right).
     expect(screen.getByTestId('detail-set-bench-press-1').textContent).toMatch(/Right/);
