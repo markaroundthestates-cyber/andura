@@ -1241,6 +1241,15 @@ html[data-install-prompt="1"] {
     64px + 80px + 1.5rem + env(safe-area-inset-bottom, 0px)
   );
 }
+/* SessionPill defaults to bottom:80px (Tailwind bottom-[80px]) — the same
+   offset the install banner floats at, so the resume pill lands ON TOP of the
+   banner and covers its X close button. When the banner is visible, lift the
+   pill above it (banner offset 80px + ~80px banner height + 12px gap) so BOTH
+   the install-close button and the pill stay tappable, stacked one above the
+   other. Collapses back to bottom:80px when no banner. */
+html[data-install-prompt="1"] .session-pill {
+  bottom: 172px;
+}
 /* Main-tab content scrolls inside <main> (.app-scroll / viewport). Layout
    applies `.app-content-pad` on <main> when the nav is shown (not in-session,
    where pb-0 + hidden nav is correct) so the floating banner is accounted for
