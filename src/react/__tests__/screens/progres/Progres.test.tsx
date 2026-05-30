@@ -89,16 +89,15 @@ describe('Progres landing', () => {
     expect(screen.queryByTestId('cta-body-data')).not.toBeInTheDocument();
   });
 
-  it('hides last-weight-card cand weightLog empty', () => {
-    renderProgres();
-    expect(screen.queryByTestId('last-weight-card')).not.toBeInTheDocument();
-  });
-
-  it('shows last-weight-card cand entry present', () => {
+  // Progress redesign (Daniel 2026-05-30): the "Last weigh-in" recap card was
+  // struck out of the ACTIUNI zone — only the log-weight CTA remains. It must
+  // not render whether or not a weigh-in exists.
+  it('no longer renders the last-weight-card recap (struck out 2026-05-30)', () => {
     useProgresStore.setState({ weightLog: [{ kg: 78.5, date: '2026-05-17', ts: Date.now() }] });
     renderProgres();
-    expect(screen.getByTestId('last-weight-card')).toBeInTheDocument();
-    expect(screen.getByTestId('last-weight-card')).toHaveTextContent('78.5 kg');
+    expect(screen.queryByTestId('last-weight-card')).not.toBeInTheDocument();
+    // The log-weight CTA stays.
+    expect(screen.getByTestId('cta-log-weight')).toBeInTheDocument();
   });
 
   it('no longer renders last-body-card (consolidated into Profile)', () => {
