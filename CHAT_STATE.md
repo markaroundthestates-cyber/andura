@@ -1,43 +1,40 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-29 (Daniel birou + RC acasa). **Pickup: Pulse 1:1 parity arc COMPLET + quality-gate verde pe main; 9 commits ahead origin NU pushed (D031). Next = Daniel push trigger → deploy live.**
-**Topic active:** Andura Pulse 1:1 parity — tot UI-ul adus la mockup-ul hand-built `04-architecture/mockups/interfata-noua/` (glass real, NU doar token-swap). Themes scoase de tot (Daniel "am renuntat expres la themes").
+**Last updated:** 2026-05-31 noapte (acasă, overnight autonom). **Pickup: bug-fix + igienă file-split arc COMPLET + PUSHED LIVE; main == origin; audit GO + smoke 4 taburi curat. Daniel doarme.**
+**Topic active:** post-feature consolidare pre-Beta — bug-uri reale reparate + arcul de igienă "nu vreau mlaștină" (split fișiere mari) + prompt-uri poze-exerciții. Pulse redesign deja live (2026-05-29), themes retrase expres.
 
 ---
 
-## §0 De ce a pornit (2026-05-29)
-Daniel a deschis live `andura.app` si a vazut UX-ul VECHI ("ai facut-o sa arate ca varianta veche?"). Root cause dovedit: **service-worker PWA servea build-ul vechi din cache** (workbox-precache); deploy-ul real era Pulse corect (clear SW → dark + volt-green + PulseMark render perfect). Apoi Daniel a trimis poze mockup vs live → diferenta reala = **cardurile erau FLAT/solide** (primul reskin a mapat doar culori pe tokenii vechi, NU a portat suprafata glassy `--surface`). Daniel: mockup-ul = legea, redesign intentionat (login/workout/progress/themes-out). Goal LOCKED: **paritate 1:1 totala pe 5 taburi**.
+## §0 De ce a pornit
+Daniel a raportat live "auto îmi dă 2.173 și lose fat 2.227" + frustrare pe prompt-urile de generare poze (împins pe gantere ieșea identic). Apoi a plecat la somn cu mandat: "continua autonom + push live + smoke + audituri + deep smokes + harness + Claude Chrome + subagents". Mai devreme ceruse arcul de igienă pre-Beta (split fișiere mari înainte de Beta).
 
-## §1 Ce s-a livrat (toate pe main, NU pushed)
-- **Foundation glass** (`ef831591`): tokeni `--surface`/`-2`/`-solid` + `--bg-grad`/`--shadow-card`/`--glow` (verbatim mockup) + `.pulse-card`/`-tight`/`-glow` (glass fill + backdrop-blur + sheen + corner-wash) in `src/styles/global.css`. Aurora era DEJA fidela (`components/pulse/AuroraBackground.tsx`) — neatinsa.
-- **5 taburi → glass** via 5 agenti Opus worktree (file-disjoint), cherry-pick pe main:
-  - History (`744b0620`), Account (`7d39435c`), Progress (`a8e7d650`), Coach (`4638bb82`), Workout (`29786bbc`).
-  - Account: **themes scoase** (SettingsThemes + ruta + i18n + paleta multi-theme STERSE) + **accent picker Volt/Aqua/Ember/Violet + Dark/Light** (persistat settingsStore.accent, swap `--brick` runtime, validat). Coach: blocul negru gol rezolvat (era card flat fara suprafata).
-- **Audit-fix** (`653cc191`): 9 tile-uri Istoric/PrWall/IstoricDetail aveau `pulse-card-tight` BARE (radius-only, fara fill) → adaugat `pulse-card`; + fallback `@supports not (backdrop-filter)` la `--surface-solid`.
+## §1 Ce s-a livrat (toate pe main, PUSHED LIVE)
+- **Fix nutriție AUTO==explicit** (`ee1d931`): 3 site-uri de kcal-sizing drift-uite (×0.80 vs ×0.82) → unificate pe `sizeKcalForPhase`. AUTO-CUT 2173 == lose-fat 2173 acum. Test nou pin.
+- **Fix cloud-wipe DELETE silent-success** (`aedd6c33`): `clearFirebaseKeys` raportează succeeded/total → reset eșuat → toast eroare (gata resurrection). Bonus: logger nou salvează `logger.error` în prod (esbuild `drop:['console']` îl arunca → erorile lipseau din Sentry).
+- **Arc igienă file-split COMPLET** (behavior-preserving barrel/component, zero consumer edits): engineWrappers 1578→883, scheduleAdapterAggregate 911→44 barrel, workoutStore 726→305, Onboarding 790→230, SettingsProfile 725→386, Workout.tsx 1364→1240 (hook/effect/timer/FSM rămân în părinte) + logger env-gated + exerciseLibrary split + dead-code.
+- **Exercise-image grid prompts** rescrise: SIDE VIEW + postură explicită (flat/incline/decline diferențiate) + rack hard-rule, 76 grids (`EXERCISE-IMAGE-GRIDS.md` + mapping 657-slug).
 
-## §2 Quality gate (autonom, Daniel "fa audituri/smokes/security ca eu n-am timp") — TOT VERDE
-- **Smoke vizual live (preview local + dummy Firebase key)**: Account (accent swap functional verificat #volt→#aqua→#ember), Progress, Coach, History, Workout flow (energy→preview→live, engine genereaza workout real, ± dial OK). Toate glass, zero crash.
-- **Security review (agent Opus)**: CLEAN — guard-uri rute intacte, accent picker fara XSS (enum→hex hardcodat + readAccent validat), fara secrets/sinks, consent/terms i18n neatinse.
-- **a11y/contrast (agent Opus)**: text AA pe glass ambele teme, focus/aria swatches OK, reduced-motion OK. No blocker. (Fix LOW backdrop-fallback aplicat.)
-- **Code review (agent Opus)**: 1 MED (bare pulse-card-tight) → FIXAT + re-verificat vizual (PrWall tiles au glass acum). Themes teardown + accent picker corecte + testate.
-- **Baseline**: typecheck clean, build clean, **5388 teste verzi / 297 files**.
+## §2 Quality gate (autonom — TOT VERDE)
+- **Fresh-eyes total audit post-refactor: GO, 0 findings.** Split-uri verificate clean (hook-counts identice părinte 53==53/15==15), barrels complete, fără cicluri; logger.error confirmat în `dist` real.
+- **5730 teste verzi** + typecheck clean + size main <192KB.
+- **Deep smoke live** (Playwright andura.app): 4 taburi antrenor/progres/istoric/cont → 0 console errors/warnings fiecare.
 
-## §3 Note tehnice importante
-- **White-screen pe preview local = pre-existent D040**: `auth.js:36` arunca `throw` in build PROD cu cheia Firebase placeholder. Deploy-ul real injecteaza `VITE_FIREBASE_API_KEY` → monteaza. Pentru smoke local: `VITE_FIREBASE_API_KEY=<dummy> npm run build`.
-- **Worktree stale-base trap**: agentii worktree au pornit de pe baza veche (`4b200a39`, pre-foundation). Fix: instructiune `git merge main --no-edit` + verify `git grep pulse-card global.css` la STEP 0 in fiecare prompt agent. History s-a auto-vindecat; ceilalti re-dispatchati.
-- **SW cache**: la smoke pe live, clear SW + caches mandatory ca sa vezi build nou (nu PWA-cached).
+## §3 Note tehnice
+- storeSync goal-updatedAt (HIGH review) investigat = **NU-bug**: merge intenționat local-biased (`storeSync.ts:132-138`), fresh goal edit nu poate fi clobber-uit de cloud stale.
+- `.js→.ts` migration (135 fișiere) din plan = LĂSAT intenționat (churn mare/valoare modestă → incremental cu ochiul Daniel, nu orb overnight).
+- Pattern manager: agenți Opus worktree-izolați (STEP 0 `git merge main`), eu cherry-pick serial + push + smoke. Max ~4-5 concurent respectat.
 
-## §4 Ce ramane (Daniel-side)
-- **PUSH** `git push origin main` (9 commits ahead) → GH Actions deploy → live Pulse parity. NU pushed (D031 invariant — trigger Daniel).
-- **SSOT pending scribe**: DECISIONS.md D095 (Pulse 1:1 parity + themes retired LOCKED V1) + PRIMER §5 micro-append — de facut la handover (anti-overreach: NU mid-flight).
-- Gate-uri vechi inca deschise: Beta GO, rotat cheia API Anthropic D088, DMARC SendGrid, cleanup worktrees/.tmp + screenshot-uri verify (`v-*.png` untracked root).
-- Polish minor optional (a11y MED guardrail `--line-strong` pe glass; SessionTimer header chrome vs mockup; 2 secondary CTA rows Progres) — non-blocant.
+## §4 Ce rămâne (Daniel-side, în coadă — nimic blocant)
+- **Generează pozele-exerciții** (manual next/grid) → apoi eu webp + lazy-load (#62). Regenerează Grid 1 primul, confirmăm pattern-ul.
+- **Rotit cheia API Anthropic** ("revert mâine").
+- Gate-uri știute: Beta GO + OAuth Firebase console + DMARC SendGrid.
+- Cleanup local opțional: worktrees vechi + scratch `_tmp_*.cjs` root.
 
 ## §5 Cross-refs
-- `📥_inbox/pulse-parity-2026-05-29/PARITY-SPEC.md` — spec-ul partajat agenti
-- `04-architecture/mockups/interfata-noua/` — mockup hand-built Daniel (sursa adevarului)
-- main HEAD `653cc191` (audit-fix), arc = `ef831591..653cc191`
+- Handover narrativ: `📥_inbox/HANDOVER_2026-05-31_overnight-bugfix-hygiene-arc.md`
+- PRIMER §5 block 2026-05-31 + DECISIONS §D096 (ultimul; arc = execuție sub D077, nu decizie nouă)
+- `📥_inbox/EXERCISE-IMAGE-GRIDS.md` (prompts) + `EXERCISE-IMAGE-MAPPING.json` (split auto)
 
 ---
 
-🦦 **Pulse 1:1 parity COMPLET + gate verde. Astept push-ul Daniel. Daniel: 21 1-on-1 mutual agreements in ziua aia.**
+🦦 **Bug-fix + igienă arc complet + live + verde. Daniel doarme. Dimineață: regenerează Grid 1, confirmăm pozele, restul e gata.**
