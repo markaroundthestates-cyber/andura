@@ -16,6 +16,9 @@ import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import type { Goal } from '../../../stores/onboardingStore';
+import { phaseForGoal } from '../../../lib/goalPhaseModel';
+import { setPhaseOverride } from '../../../../util/phaseOverride.js';
+import { SYS } from '../../../../engine/sys.js';
 import { t } from '../../../../i18n/index.js';
 
 interface PendingState {
@@ -46,6 +49,12 @@ export function ProgramChangeConfirm(): JSX.Element {
   function handleConfirm(): void {
     if (pendingGoal) {
       setField('goal', pendingGoal);
+      // Fix A 2026-05-30 — committing a goal must SYNC the phase-override so the
+      // TDEEStrip "PHASE" badge reflects the active phase instead of staying
+      // stale on AUTO. phaseForGoal maps masa→BULK / slabire→CUT / forta→
+      // STRENGTH / mentenanta→MAINTENANCE / auto→AUTO (clears the override).
+      const tdee = typeof SYS?.estimateTDEE === 'function' ? SYS.estimateTDEE() : 2000;
+      setPhaseOverride(phaseForGoal(pendingGoal), tdee);
     }
     navigate(gotoPath(returnTo));
   }
