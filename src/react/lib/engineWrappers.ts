@@ -84,9 +84,11 @@ import { daysUntilTarget } from './targetSafety';
 import {
   targetDirection,
   phaseForGoal,
+  enabledGoalsForDirection,
   sizeKcalForPhase,
   type PhaseToken,
 } from './goalPhaseModel';
+import type { Goal } from '../stores/onboardingStore';
 // §48-H1 audit fix — adapter integrity instrumentation. Every catch path
 // emits Sentry alert with source='engine-adapter-fallback' tag + adapter
 // name extra. Risk addressed (§48.5): silent divergence when engine returns
@@ -808,7 +810,12 @@ function applyHealthyFloorGuardrail(kcal: number): { kcal: number; clamped: bool
 /**
  * Resolve the ACTIVE phase token, coherence-model precedence (2026-05-30):
  *   1. manual phase override (B001 SchimbaFaza) when set + not AUTO — the user
- *      explicitly picked a phase; honor it.
+ *      explicitly picked a phase; honor it UNLESS it contradicts the target-weight
+ *      direction (a BULK/STRENGTH override under a LOSE target, or a CUT override
+ *      under a GAIN target). A stale override must not outrank a fresher, clearly
+ *      contradicting target: treat it invalid (enabledGoalsForDirection) and fall
+ *      through to the coherent goal/AUTO resolution below — the same reconciliation
+ *      the goal-vs-target path already applies (override-vs-target parity).
  *   2. else the onboarding goal's phase (phaseForGoal). 'auto'/null → AUTO.
  *   3. AUTO resolves to the real phase, signal precedence:
  *      a. target-weight direction (the user's explicit master intent): LOSE→CUT,
@@ -823,11 +830,49 @@ function applyHealthyFloorGuardrail(kcal: number): { kcal: number; clamped: bool
  *   detector here so the well-tested AUTO body-comp behavior is not regressed.
  * Pure-ish I/O boundary (reads localStorage + stores). Defensive → AUTO.
  */
+// Phase token → its equivalent onboarding goal (inverse of phaseForGoal), so a
+// manual override can be tested against the SAME gating set the goal card uses.
+const PHASE_TOKEN_TO_GOAL: Record<string, Goal> = {
+  CUT: 'slabire',
+  BULK: 'masa',
+  STRENGTH: 'forta',
+  MAINTENANCE: 'mentenanta',
+};
+
+/**
+ * True when a manual phase override is coherent with the target-weight direction
+ * (reuses enabledGoalsForDirection — the goal-card gating set). No direction (no
+ * target / MAINTAIN-band) → nothing to contradict, override stays valid. AUTO is
+ * never reconciled here (handled before this). Pure.
+ */
+function isPhaseTokenEnabledForDirection(
+  token: PhaseToken,
+  dir: ReturnType<typeof targetDirection>,
+): boolean {
+  if (dir === null) return true;
+  const goal = PHASE_TOKEN_TO_GOAL[token];
+  if (goal === undefined) return true;
+  return enabledGoalsForDirection(dir).has(goal);
+}
+
 function resolveActivePhase(): PhaseToken | null {
+  // Target-weight direction (master intent) — needed up front so a manual
+  // override can be reconciled against it before it is honored.
+  const { weightKg } = useProgresStore.getState().targetObiectiv;
+  const dir = targetDirection(getCurrentWeightKg(), weightKg);
   try {
     const raw = JSON.parse(localStorage.getItem('phase-override') ?? 'null') as string | null;
     if (raw && raw !== 'AUTO' && PHASE_MULTIPLIERS[raw] !== undefined) {
-      return raw as PhaseToken;
+      // Override-vs-target reconciliation (parity with goal-vs-target below): a
+      // manual phase that contradicts a clear target direction (e.g. a BULK
+      // override while target < current) is treated as INVALID via the same
+      // gating set the goal card uses, and we fall through to the coherent
+      // goal/AUTO resolution. A non-contradicting override is honored.
+      if (!isPhaseTokenEnabledForDirection(raw as PhaseToken, dir)) {
+        /* contradicting override → drop, fall through to goal-derived */
+      } else {
+        return raw as PhaseToken;
+      }
     }
   } catch {
     /* fall through to goal-derived */
@@ -836,8 +881,6 @@ function resolveActivePhase(): PhaseToken | null {
   // Cold-start, no onboarding goal AND no target → no directional signal at all;
   // return null so the caller falls back to plain maintenance (no fabricated
   // deficit/surplus). A target set without a goal still drives direction below.
-  const { weightKg } = useProgresStore.getState().targetObiectiv;
-  const dir = targetDirection(getCurrentWeightKg(), weightKg);
   if ((goal === null || goal === undefined) && dir === null) return null;
 
   const token = phaseForGoal(goal as Parameters<typeof phaseForGoal>[0]);
@@ -891,15 +934,35 @@ function getPhaseOverrideKcalToday(): number | null {
     if (!phaseRaw || phaseRaw === 'AUTO') return null;
     const multiplier = PHASE_MULTIPLIERS[phaseRaw];
     if (multiplier === undefined) return null;
+    // Override-vs-target reconciliation (parity with resolveActivePhase): a manual
+    // override that contradicts a clear target direction is NOT honored here — return
+    // null so the precedence in getNutritionTargetsToday falls through to the coherent
+    // path (which reconciles the override to the actual direction). Anti-stale.
+    const { weightKg } = useProgresStore.getState().targetObiectiv;
+    const dir = targetDirection(getCurrentWeightKg(), weightKg);
+    if (!isPhaseTokenEnabledForDirection(phaseRaw as PhaseToken, dir)) return null;
     // Try today's phase-log entry first (snapshot at change-time, deterministic)
     const todayISO = new Date().toLocaleDateString('sv');
     const phaseLog = JSON.parse(localStorage.getItem('phase-log') ?? '[]') as Array<{
       date: string;
       kcalTarget: number;
+      ts?: number;
     }>;
     const todayEntry = phaseLog.find((e) => e.date === todayISO);
     const kcalFloor = readUserKcalFloor(); // sex-aware (femei 1000 / barbati 1200)
-    if (todayEntry) return Math.max(todayEntry.kcalTarget, kcalFloor);
+    if (todayEntry) {
+      // Recency: a FRESHER same-day target/weight edit must outrank the snapshot
+      // (mid-day edit, not the morning's stale number). The snapshot carries a ms
+      // `ts` (setPhaseOverride); compare to the latest weigh-in ts. When a weigh-in
+      // is newer, return null so the coherent path recomputes off the fresh weight.
+      // Older snapshots without `ts` keep the prior snapshot-wins behavior.
+      const snapTs = todayEntry.ts;
+      const latestWeighInTs = useProgresStore
+        .getState()
+        .weightLog.reduce((m, e) => (Number.isFinite(e.ts) && e.ts > m ? e.ts : m), 0);
+      if (typeof snapTs === 'number' && latestWeighInTs > snapTs) return null;
+      return Math.max(todayEntry.kcalTarget, kcalFloor);
+    }
     // Piesa 1 fix — derive from REAL per-user maintenance TDEE × multiplier
     // (user picked phase earlier, days later → still apply override). Fallback
     // la baza flat 2640 DOAR cand stats onboarding absente (cold start).

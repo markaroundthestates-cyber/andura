@@ -136,6 +136,81 @@ describe('engineWrappers — precedence: manual phase override > onboarding goal
   });
 });
 
+describe('engineWrappers — override-vs-target reconciliation (stale override loses)', () => {
+  it('BULK override + target 20kg BELOW current → deficit, NOT surplus', async () => {
+    // User set a BULK override earlier, then a target weight clearly LOSING (90 < 110).
+    // The contradicting override must be dropped + reconciled to the actual direction
+    // (goal AUTO resolves LOSE → CUT). No deadline → default %-of-TDEE deficit.
+    setUser('auto'); // weight 110 (onboarding) — current weight; goal AUTO follows the target
+    localStorage.setItem('phase-override', JSON.stringify('BULK'));
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 90 });
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(cutKcal(MAINTENANCE));
+    expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
+  });
+
+  it('CUT override + target 20kg ABOVE current → surplus, NOT deficit', async () => {
+    // Mirror: a CUT override under a clearly GAINING target (130 > 110) is dropped +
+    // reconciled to GAIN → BULK (default %-of-TDEE surplus).
+    setUser('auto'); // weight 110 — current weight; goal AUTO follows the target
+    localStorage.setItem('phase-override', JSON.stringify('CUT'));
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 130 });
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(bulkKcal(MAINTENANCE));
+    expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
+  });
+
+  it('non-contradicting override is STILL honored (CUT override + LOSE target)', async () => {
+    // A CUT override that AGREES with a LOSE target keeps the multiplier-snapshot.
+    setUser('auto');
+    localStorage.setItem('phase-override', JSON.stringify('CUT'));
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 90 });
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+    expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
+  });
+});
+
+describe('engineWrappers — recency: fresher same-day edit beats earlier snapshot', () => {
+  it('a noon weigh-in (newer ts) outranks the morning phase-log snapshot', async () => {
+    // Morning: a CUT phase-log snapshot at a STALE kcal + an old ts.
+    setUser('slabire');
+    localStorage.setItem('phase-override', JSON.stringify('CUT'));
+    const todayISO = new Date().toLocaleDateString('sv');
+    const morningTs = Date.now() - 6 * 60 * 60 * 1000; // ~6h ago
+    localStorage.setItem(
+      'phase-log',
+      JSON.stringify([{ date: todayISO, phase: 'CUT', kcalTarget: 9999, ts: morningTs }]),
+    );
+    // Noon: a fresher weigh-in (ts newer than the snapshot) → snapshot is stale, the
+    // coherent path recomputes off the current phase/weight (default 20% deficit).
+    addWeighIn(110, 0); // ts = Date.now() > morningTs
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(cutKcal(MAINTENANCE));
+    expect(r.kcalTarget).not.toBe(9999);
+  });
+
+  it('no fresher edit → the same-day snapshot still wins (recency unchanged)', async () => {
+    setUser('slabire');
+    localStorage.setItem('phase-override', JSON.stringify('CUT'));
+    const todayISO = new Date().toLocaleDateString('sv');
+    // Snapshot ts NEWER than any weigh-in → snapshot remains authoritative.
+    addWeighIn(110, 0);
+    const snapshotTs = Date.now() + 60 * 60 * 1000; // 1h in the future vs weigh-in
+    localStorage.setItem(
+      'phase-log',
+      JSON.stringify([{ date: todayISO, phase: 'CUT', kcalTarget: 2050, ts: snapshotTs }]),
+    );
+    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
+    const r = await getNutritionTargetsToday({});
+    expect(r.kcalTarget).toBe(2050);
+  });
+});
+
 describe('engineWrappers — goal sizing applies to adaptive Bayesian TDEE (posterior.mu)', () => {
   it('goal "slabire" → deficit % implicit pe posterior.mu', async () => {
     setUser('slabire');

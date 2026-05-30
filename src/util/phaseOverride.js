@@ -32,14 +32,19 @@ function kcalMapForTdee(tdee) {
  */
 export function setPhaseOverride(phase, tdee) {
   const today = tod();
+  // ms timestamp of the snapshot — recency signal so a FRESHER same-day
+  // target/weight edit (weightLog ts) can outrank a stale morning snapshot
+  // (engineWrappers getPhaseOverrideKcalToday). Day-only `date` cannot order
+  // intra-day. Back-compat: older entries lack `ts` → snapshot wins as before.
+  const ts = Date.now();
   if (phase === 'AUTO') {
     DB.set('phase-change-date', today);
     DB.set('phase-override', null);
-    const phaseLogs = /** @type {Array<{date: string, phase: string, kcalTarget: number}>} */ (
+    const phaseLogs = /** @type {Array<{date: string, phase: string, kcalTarget: number, ts?: number}>} */ (
       DB.get('phase-log') || []
     );
     const filtered = phaseLogs.filter((e) => e.date !== today);
-    filtered.push({ date: today, phase: 'AUTO', kcalTarget: Math.round(tdee) });
+    filtered.push({ date: today, phase: 'AUTO', kcalTarget: Math.round(tdee), ts });
     DB.set('phase-log', filtered);
     return { phase: 'AUTO', kcalTarget: Math.round(tdee), date: today };
   }
@@ -48,11 +53,11 @@ export function setPhaseOverride(phase, tdee) {
   DB.set('phase-override', phase);
   const kcalMap = kcalMapForTdee(tdee);
   const kcalTarget = kcalMap[phase] ?? Math.round(tdee);
-  const phaseLogs = /** @type {Array<{date: string, phase: string, kcalTarget: number}>} */ (
+  const phaseLogs = /** @type {Array<{date: string, phase: string, kcalTarget: number, ts?: number}>} */ (
     DB.get('phase-log') || []
   );
   const filtered = phaseLogs.filter((e) => e.date !== today);
-  filtered.push({ date: today, phase, kcalTarget });
+  filtered.push({ date: today, phase, kcalTarget, ts });
   DB.set('phase-log', filtered);
   return { phase, kcalTarget, date: today };
 }
