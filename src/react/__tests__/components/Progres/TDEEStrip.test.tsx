@@ -4,6 +4,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
 import { useNutritionStore } from '../../../stores/nutritionStore';
 import { useAerobicStore } from '../../../stores/aerobicStore';
+import { useOnboardingStore } from '../../../stores/onboardingStore';
+import { useProgresStore } from '../../../stores/progresStore';
+import { useWorkoutStore } from '../../../stores/workoutStore';
+import { readUserMaintenanceTDEE } from '../../../lib/userTdee';
 import { getNutritionTargetTodayReal } from '../../../lib/bayesianNutritionAggregate';
 
 vi.mock('../../../lib/bayesianNutritionAggregate', () => ({
@@ -182,5 +186,134 @@ describe('TDEEStrip — aerobic class kcal add-on', () => {
     });
     // 2640 + 250 = 2890 > base 2640 (strictly higher — add-on never reduces).
     expect(screen.getByTestId('tdee-strip').textContent).toMatch(/2\.890\s*kcal/);
+  });
+});
+
+// Annotation parity (audit fix 2026-05-30) — the badge label + add-on notes must
+// describe the RECONCILED + GUARDED final number, never the raw pre-reconcile /
+// pre-guard values. Real-store wiring (NU mock engineWrappers) so the SAME
+// reconciliation + guard the kcal path uses drives the annotations.
+function setOnboarding(data: Partial<{
+  age: number; sex: 'm' | 'f'; goal: string; weight: number; height: number;
+}>): void {
+  useOnboardingStore.setState({
+    data: {
+      age: 30, sex: 'm', goal: 'auto', frequency: '3',
+      experience: 'intermediar', weight: 80, height: 180,
+      ...data,
+    } as never,
+    completed: true,
+    completedAt: Date.now(),
+  });
+}
+
+describe('TDEEStrip — phase badge reflects RESOLVED phase (override-vs-target)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    useOnboardingStore.setState({
+      data: { age: 30, sex: 'm', goal: 'auto', frequency: '3',
+        experience: 'intermediar', weight: 80, height: 180 } as never,
+      completed: false, completedAt: null,
+    });
+    useProgresStore.setState({ weightLog: [], bodyData: [], targetObiectiv: { weightKg: null, month: null } } as never);
+    useWorkoutStore.setState({ sessionsHistory: [] } as never);
+  });
+
+  it('drops a BULK override that contradicts a LOSE target → badge shows resolved Cut, not Bulk', async () => {
+    // Current 80kg, target 70kg → LOSE. A manual BULK override contradicts that
+    // direction, so resolveActivePhase drops it → resolves to CUT. The badge must
+    // never show "Bulk" next to a deficit-coherent number.
+    localStorage.setItem('phase-override', JSON.stringify('BULK'));
+    setOnboarding({ weight: 80, height: 180 });
+    useProgresStore.setState({
+      weightLog: [{ date: todayIso(), kg: 80, ts: Date.now() }],
+      targetObiectiv: { weightKg: 70, month: null },
+    } as never);
+    render(<TDEEStrip />);
+    const badge = screen.getByTestId('tdee-faza-badge');
+    expect(badge.textContent).toMatch(/Cut/);
+    expect(badge.textContent).not.toMatch(/Bulk/);
+  });
+
+  it('honors a non-contradicting CUT override under a LOSE target → badge shows Cut', async () => {
+    localStorage.setItem('phase-override', JSON.stringify('CUT'));
+    setOnboarding({ weight: 80, height: 180 });
+    useProgresStore.setState({
+      weightLog: [{ date: todayIso(), kg: 80, ts: Date.now() }],
+      targetObiectiv: { weightKg: 70, month: null },
+    } as never);
+    render(<TDEEStrip />);
+    expect(screen.getByTestId('tdee-faza-badge').textContent).toMatch(/Cut/);
+  });
+});
+
+describe('TDEEStrip — add-on notes never claim clamped-away kcal', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    useProgresStore.setState({ weightLog: [], bodyData: [], targetObiectiv: { weightKg: null, month: null } } as never);
+    useWorkoutStore.setState({ sessionsHistory: [] } as never);
+  });
+
+  it('CUT day + big aerobic class clamped at maintenance → honest single note, NOT the +kcal add-on note', async () => {
+    // Healthy 80kg/180cm male → real maintenance. CUT base below maintenance, then
+    // a big class burn pushes the summed display above maintenance → the guard
+    // clamps it back to maintenance. The per-add-on "+kcal" note would over-promise
+    // kcal that was clamped away, so the honest clamped note shows instead.
+    setOnboarding({ weight: 80, height: 180, goal: 'slabire' });
+    useProgresStore.setState({
+      weightLog: [{ date: todayIso(), kg: 80, ts: Date.now() }],
+      targetObiectiv: { weightKg: null, month: null },
+    } as never);
+    const maintenance = readUserMaintenanceTDEE() as number;
+    const cutBase = maintenance - 400; // a real deficit base
+    vi.mocked(getNutritionTargetTodayReal).mockResolvedValueOnce({
+      kcalTarget: cutBase,
+      proteinTarget: 160,
+      source: 'engine-bn',
+      confidence: 0.5,
+    });
+    // A big 700-kcal class → cutBase + 700 > maintenance → ceiling clamps.
+    useAerobicStore.setState({
+      sessions: [{ date: todayIso(), type: 'spinning', minutes: 60, kcal: 700, ts: Date.now() }],
+      lastDuration: 60,
+    });
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-addons-clamped-note')).toBeInTheDocument();
+    });
+    // The over-promising per-add-on note must NOT render when clamped.
+    expect(screen.queryByTestId('tdee-aerobic-add-note')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('tdee-fatigue-ease-note')).not.toBeInTheDocument();
+    // Displayed number is clamped to maintenance — the +700 is NOT in it.
+    expect(screen.getByTestId('tdee-strip').textContent).not.toMatch(/700/);
+    // No diacritics (D-LEGACY-064).
+    const note = screen.getByTestId('tdee-addons-clamped-note');
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(note.textContent ?? '')).toBe(false);
+  });
+
+  it('CUT day + small class staying below maintenance → real add-on note (not clamped)', async () => {
+    setOnboarding({ weight: 80, height: 180, goal: 'slabire' });
+    useProgresStore.setState({
+      weightLog: [{ date: todayIso(), kg: 80, ts: Date.now() }],
+      targetObiectiv: { weightKg: null, month: null },
+    } as never);
+    const maintenance = readUserMaintenanceTDEE() as number;
+    const cutBase = maintenance - 400;
+    vi.mocked(getNutritionTargetTodayReal).mockResolvedValueOnce({
+      kcalTarget: cutBase,
+      proteinTarget: 160,
+      source: 'engine-bn',
+      confidence: 0.5,
+    });
+    // A small 150-kcal class → cutBase + 150 stays below maintenance → no clamp.
+    useAerobicStore.setState({
+      sessions: [{ date: todayIso(), type: 'aerobic', minutes: 20, kcal: 150, ts: Date.now() }],
+      lastDuration: 20,
+    });
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-aerobic-add-note')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('tdee-addons-clamped-note')).not.toBeInTheDocument();
   });
 });

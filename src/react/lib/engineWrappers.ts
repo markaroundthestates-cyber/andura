@@ -855,7 +855,7 @@ function isPhaseTokenEnabledForDirection(
   return enabledGoalsForDirection(dir).has(goal);
 }
 
-function resolveActivePhase(): PhaseToken | null {
+export function resolveActivePhase(): PhaseToken | null {
   // Target-weight direction (master intent) — needed up front so a manual
   // override can be reconciled against it before it is honored.
   const { weightKg } = useProgresStore.getState().targetObiectiv;

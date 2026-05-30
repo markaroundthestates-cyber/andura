@@ -604,6 +604,7 @@
       "loggedNote": "Am notat. Tinta se ajusteaza pe masura ce loghezi.",
       "fatigueEaseNote": "Oboseala mare + deficit: tinta urcata cu {kcal} kcal spre mentenanta ca sa protejam recuperarea.",
       "aerobicAddNote": "Clasa aerobic azi: +{kcal} kcal adaugate la tinta, deci poti manca un pic mai mult.",
+      "addOnsClampedNote": "Plafonat la mentenanta: antrenamentul de azi nu adauga kcal peste necesar.",
       "sources": {
         "manual": "Setat manual",
         "engineBn": "Estimare adaptiva",

@@ -44,7 +44,7 @@ import type { NutritionTarget } from '../../lib/bayesianNutritionAggregate';
 import { readBayesianNutritionContext } from '../../lib/nutritionObservations';
 import { easeDeficitForFatigue } from '../../lib/fatigueDeficitEase';
 import { guardDisplayTarget } from '../../lib/displayTargetGuard';
-import { getFatigue } from '../../lib/engineWrappers';
+import { getFatigue, resolveActivePhase } from '../../lib/engineWrappers';
 import { readUserMaintenanceTDEE } from '../../lib/userTdee';
 import { useProgresStore } from '../../stores/progresStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
@@ -81,14 +81,18 @@ function fmtNum(n: number): string {
 }
 
 /**
- * Read user phase override from localStorage (B001 SchimbaFazaConfirm
- * persist). Returns 'Auto' fallback cand absent / unknown value.
+ * RESOLVED phase label for the badge. Reuses resolveActivePhase (engineWrappers)
+ * — the SAME override-vs-target reconciliation the kcal path applies (commit
+ * 56dcf7ef): a manual phase-override that contradicts a clear LOSE/GAIN target
+ * direction is DROPPED → falls through to the coherent phase. So the badge can
+ * never show "Bulk" next to a correctly-computed deficit number. null (no
+ * directional signal, cold-start) → Auto. Defensive → Auto.
  */
 function getCurrentPhaseLabel(): string {
   try {
-    const raw = JSON.parse(localStorage.getItem('phase-override') ?? 'null') as string | null;
-    if (!raw) return t(PHASE_KEY_MAP.AUTO);
-    const key = (PHASE_KEY_MAP as Record<string, string>)[raw];
+    const phase = resolveActivePhase();
+    if (!phase) return t(PHASE_KEY_MAP.AUTO);
+    const key = (PHASE_KEY_MAP as Record<string, string>)[phase];
     return key ? t(key) : t(PHASE_KEY_MAP.AUTO);
   } catch {
     return t(PHASE_KEY_MAP.AUTO);
@@ -179,10 +183,17 @@ export function TDEEStrip(): JSX.Element {
   // single display guard re-applies hard floor (sex) + healthy floor (BMI<=18.5)
   // + maintenance ceiling (deficit phases) to the FINAL sum. baseAutoKcal drives
   // the deficit/surplus classification (engine base at/below maintenance = cut).
-  const displayAutoKcal =
+  const guardedDisplay =
     target && baseAutoKcal != null
-      ? guardDisplayTarget(ease.easedKcal + aerobicAdd, baseAutoKcal, maintenanceKcal).kcal
+      ? guardDisplayTarget(ease.easedKcal + aerobicAdd, baseAutoKcal, maintenanceKcal)
       : null;
+  const displayAutoKcal = guardedDisplay?.kcal ?? null;
+  // The maintenance ceiling clamped the summed cut/maintenance-day target back
+  // DOWN — the fatigue ease + aerobic add-on did NOT survive into the displayed
+  // number. The per-add-on breakdown notes ("+150" / "+400") would over-promise
+  // kcal that was clamped away, so when this fires we suppress that breakdown and
+  // show one honest line instead (the notes must never claim kcal not displayed).
+  const addOnsClamped = guardedDisplay?.ceilingClamped ?? false;
 
   // §F-pass2-tdeestrip-02 — current-vs-tinta comparison. Doar cand exista intake
   // logat manual AND tinta e engine/baseline genuina (source 'manual' = echo).
@@ -369,27 +380,45 @@ export function TDEEStrip(): JSX.Element {
         </p>
       )}
 
-      {/* Fatigue → kcal ease note — only when the recovery-protective ease fired. */}
-      {ease.eased && (
-        <p
-          className="text-xs mt-2 leading-snug"
-          style={{ color: 'var(--ember)' }}
-          data-testid="tdee-fatigue-ease-note"
-        >
-          {t('progres.tdee.fatigueEaseNote', { kcal: fmtNum(ease.addedKcal) })}
-        </p>
-      )}
+      {/* Add-on notes vs the maintenance ceiling. When the ceiling clamped the
+          summed cut/maintenance-day target back down, the fatigue ease + aerobic
+          add-on did NOT survive into the displayed number — so we replace the
+          per-add-on breakdown with ONE honest line (never claim kcal that isn't
+          in the number). Otherwise the add-ons are real → show the breakdown. */}
+      {addOnsClamped ? (
+        (ease.eased || aerobicAdd > 0) && (
+          <p
+            className="text-xs mt-2 leading-snug text-ink2"
+            data-testid="tdee-addons-clamped-note"
+          >
+            {t('progres.tdee.addOnsClampedNote')}
+          </p>
+        )
+      ) : (
+        <>
+          {/* Fatigue → kcal ease note — only when the recovery-protective ease fired. */}
+          {ease.eased && (
+            <p
+              className="text-xs mt-2 leading-snug"
+              style={{ color: 'var(--ember)' }}
+              data-testid="tdee-fatigue-ease-note"
+            >
+              {t('progres.tdee.fatigueEaseNote', { kcal: fmtNum(ease.addedKcal) })}
+            </p>
+          )}
 
-      {/* Aerobic-class kcal add-on note — only when a class is logged today and
-          it raised the displayed target (honest, explicit attribution). */}
-      {aerobicAdd > 0 && (
-        <p
-          className="text-xs mt-2 leading-snug"
-          style={{ color: 'var(--aqua-deep)' }}
-          data-testid="tdee-aerobic-add-note"
-        >
-          {t('progres.tdee.aerobicAddNote', { kcal: fmtNum(aerobicAdd) })}
-        </p>
+          {/* Aerobic-class kcal add-on note — only when a class is logged today and
+              it raised the displayed target (honest, explicit attribution). */}
+          {aerobicAdd > 0 && (
+            <p
+              className="text-xs mt-2 leading-snug"
+              style={{ color: 'var(--aqua-deep)' }}
+              data-testid="tdee-aerobic-add-note"
+            >
+              {t('progres.tdee.aerobicAddNote', { kcal: fmtNum(aerobicAdd) })}
+            </p>
+          )}
+        </>
       )}
 
       {/* §F-pass2-tdeestrip-03 — italic explainer copy. Engine auto-calculates,
