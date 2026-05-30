@@ -108,11 +108,14 @@ describe('Sentry adapter coverage anti-drift gate (D063 LOCK V1)', () => {
     //      back to log-only state, conservative baseline — NU engine-adapter-fallback)
     //   - `detectAutoPhaseKey`: progresStore read / pure detector failure →
     //      'MAINTENANCE' (faza neutra onesta cold-start, NU engine-adapter-fallback)
+    //   - `resolveActivePhase`: localStorage JSON parse failure → goal-derived
+    //      phase fallback (silent override absent, coherent pipeline preserved)
     const PRIVATE_HELPERS_NO_SENTRY = [
       'buildSilentMmiContext',
       'getPhaseOverrideKcalToday',
       'readPainCdl',
       'detectAutoPhaseKey',
+      'resolveActivePhase',
     ];
 
     const lines = source.split(/\r?\n/);

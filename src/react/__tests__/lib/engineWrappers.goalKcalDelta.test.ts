@@ -1,13 +1,14 @@
-// Goal-driven nutrition kcal delta — onboarding goal produce deficit/surplus.
+// Goal-driven nutrition kcal — coherence model 2026-05-30.
 //
-// Bug fix: un user care alege "slabire" (cut) la onboarding vedea mereu
-// kcal-ul de mentenanta (~3191) fiindca pipeline-ul de nutritie NU citea
-// goal-ul. Fix-ul: goal onboarding → multiplicator kcal (reuse
-// PHASE_MULTIPLIERS) cand NU exista override manual de faza (SchimbaFaza).
+// The onboarding goal maps to a phase (phaseForGoal), the phase sets the kcal
+// SIGN, and (absent a target weight/deadline) a sane DEFAULT weekly rate sizes
+// the magnitude: CUT −0.5 kg/wk, BULK +0.25 kg/wk, STRENGTH +5%, MAINTENANCE 0.
+// This supersedes the old fixed multipliers (×0.82 / ×1.08 / ×1.05) for the
+// no-target case — the direction is the same, the magnitude is now rate-based.
 //
-// Precedence verificat aici: override manual faza > goal onboarding >
-// mentenanta. Acopera atat path-ul tier 'none' (mentenanta per-user) cat si
-// path-ul cu posterior.mu (TDEE adaptiv Kalman) — ambele primesc goal-delta.
+// Precedence verified: manual phase override (SchimbaFaza, multiplier-snapshot)
+// > goal/AUTO coherent sizing > maintenance. Covers tier 'none' (per-user
+// maintenance) and the posterior.mu (adaptive Bayesian) path.
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
@@ -22,8 +23,8 @@ import { createMockBNResult } from '../../../test-utils/createMockContext';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import type { Goal } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
+import { KCAL_PER_KG } from '../../lib/goalPhaseModel';
 
-// User din bug report: barbat, 110kg, 184cm, 35 ani. Mentenanta TDEE ~3191.
 const USER = { sex: 'm' as const, weight: 110, height: 184, age: 35 };
 
 function setUser(goal: Goal | null): void {
@@ -35,17 +36,12 @@ function setUser(goal: Goal | null): void {
   if (goal !== null) s.setField('goal', goal);
 }
 
-// Maintenance TDEE pentru USER — forward physical model (2026-05-27 redesign):
-// TDEE = BMR × NEAT_BASE(1.25) + (sessionsThisWeek × 300)/7. No sessions logged
-// in these tests → activity term = 0 → TDEE = BMR × 1.25.
-// BMR = 10·110 + 6.25·184 - 5·35 + 5 = 1100 + 1150 - 175 + 5 = 2080
-// TDEE = round(2080 × 1.25) = 2600.
+// TDEE = BMR × 1.25 (no sessions). BMR = 10·110 + 6.25·184 − 5·35 + 5 = 2080.
 const MAINTENANCE = 2600;
+// Default weekly-rate shifts (kg/wk → kcal/day): CUT 0.5, BULK 0.25.
+const CUT_SHIFT = Math.round((0.5 * KCAL_PER_KG) / 7); // 550
+const BULK_SHIFT = Math.round((0.25 * KCAL_PER_KG) / 7); // 275
 
-// AUDIT CRIT (greutate canonica): cand exista cantariri logate, greutatea CURENTA
-// = ultima logata (NU onboarding). Mentenanta pentru o greutate curenta data
-// (height/age USER fix, zero sesiuni): TDEE = round(BMR × 1.25). Helper pentru
-// testele cu trend, unde ultima cantarire devine greutatea curenta a forward-model.
 function maintenanceFor(currentWeightKg: number): number {
   const bmr = 10 * currentWeightKg + 6.25 * USER.height - 5 * USER.age + 5;
   return Math.round(bmr * 1.25);
@@ -66,59 +62,50 @@ afterEach(() => {
 
 const DAY = 1000 * 60 * 60 * 24;
 function addWeighIn(kg: number, daysAgo: number): void {
-  // progresStore.addWeightEntry stampeaza ts=Date.now(); pentru trend istoric
-  // controlat setam direct prin setState (test-only, ocoleste upsert-by-date).
   const ts = Date.now() - daysAgo * DAY;
   const date = new Date(ts).toISOString().slice(0, 10);
   useProgresStore.setState((s) => ({ weightLog: [...s.weightLog, { kg, date, ts }] }));
 }
 
-describe('engineWrappers — goal-driven kcal delta (tier none / per-user maintenance)', () => {
-  it('goal "mentenanta" == maintenance TDEE (no delta)', async () => {
+describe('engineWrappers — goal-driven kcal (tier none / per-user maintenance)', () => {
+  it('goal "mentenanta" == maintenance TDEE (no shift)', async () => {
     setUser('mentenanta');
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
     expect(r.kcalTarget).toBe(MAINTENANCE);
   });
 
-  it('goal "auto" supraponderal (BMI 32.5) → CUT din body-comp (BUG #5)', async () => {
-    // USER e 110kg/184cm = BMI 32.5 supraponderal. Fara istoric de greutate,
-    // weight-trend e flat → AUTO cade pe body-comp → CUT (NU mai mentenanta
-    // tacuta). Asta e exact bug-ul raportat: "Auto da 2788 dar ar trebui CUT".
+  it('goal "auto" supraponderal (BMI 32.5) → CUT din body-comp', async () => {
     setUser('auto');
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+    expect(r.kcalTarget).toBe(MAINTENANCE - CUT_SHIFT);
     expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
   });
 
-  it('goal "slabire" gives target meaningfully BELOW maintenance (~0.82x CUT)', async () => {
+  it('goal "slabire" → deficit la ritm implicit (sub mentenanta)', async () => {
     setUser('slabire');
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+    expect(r.kcalTarget).toBe(MAINTENANCE - CUT_SHIFT);
     expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
   });
 
-  it('goal "masa" gives target ABOVE maintenance (~1.08x BULK)', async () => {
+  it('goal "masa" → surplus la ritm implicit (peste mentenanta)', async () => {
     setUser('masa');
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 1.08));
+    expect(r.kcalTarget).toBe(MAINTENANCE + BULK_SHIFT);
     expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
   });
 
-  it('goal "forta" gives slight surplus (~1.05x STRENGTH)', async () => {
+  it('goal "forta" → surplus usor (+5% STRENGTH)', async () => {
     setUser('forta');
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
     expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 1.05));
     expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
   });
-
-  // §obiectiv-drop-longevitate 2026-05-28 — 'longevitate' Goal dropped (semantic
-  // duplicate of mentenanta — ambele MAINTENANCE). Test for legacy persisted-
-  // value migration handled in onboardingStore.test.ts migrateLegacyGoal suite.
 });
 
 describe('engineWrappers — precedence: manual phase override > onboarding goal', () => {
@@ -127,7 +114,7 @@ describe('engineWrappers — precedence: manual phase override > onboarding goal
     localStorage.setItem('phase-override', JSON.stringify('BULK'));
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    // BULK 1.08 pe TDEE real — SURPLUS, NU deficit, desi goal e slabire.
+    // Manual override path keeps the multiplier-snapshot (×1.08) — SURPLUS.
     expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 1.08));
     expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
   });
@@ -142,8 +129,8 @@ describe('engineWrappers — precedence: manual phase override > onboarding goal
   });
 });
 
-describe('engineWrappers — goal-delta applies to adaptive Bayesian TDEE (posterior.mu)', () => {
-  it('goal "slabire" applies CUT 0.82 to learning user posterior.mu', async () => {
+describe('engineWrappers — goal sizing applies to adaptive Bayesian TDEE (posterior.mu)', () => {
+  it('goal "slabire" → deficit ritm implicit pe posterior.mu', async () => {
     setUser('slabire');
     vi.mocked(evaluateBN).mockResolvedValueOnce(
       createMockBNResult({
@@ -152,11 +139,11 @@ describe('engineWrappers — goal-delta applies to adaptive Bayesian TDEE (poste
       }),
     );
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(3000 * 0.82));
+    expect(r.kcalTarget).toBe(3000 - CUT_SHIFT);
     expect(r.source).toBe('engine');
   });
 
-  it('goal "masa" applies BULK 1.08 to posterior.mu', async () => {
+  it('goal "masa" → surplus ritm implicit pe posterior.mu', async () => {
     setUser('masa');
     vi.mocked(evaluateBN).mockResolvedValueOnce(
       createMockBNResult({
@@ -165,12 +152,10 @@ describe('engineWrappers — goal-delta applies to adaptive Bayesian TDEE (poste
       }),
     );
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(3000 * 1.08));
+    expect(r.kcalTarget).toBe(3000 + BULK_SHIFT);
   });
 
-  it('goal "auto" supraponderal aplica CUT din body-comp pe posterior.mu (BUG #5)', async () => {
-    // USER supraponderal (BMI 32.5) fara weight-trend → body-comp CUT 0.82,
-    // aplicat pe TDEE-ul adaptiv Kalman (posterior.mu). NU mai lasa mu neatins.
+  it('goal "auto" supraponderal → CUT din body-comp pe posterior.mu', async () => {
     setUser('auto');
     vi.mocked(evaluateBN).mockResolvedValueOnce(
       createMockBNResult({
@@ -179,10 +164,10 @@ describe('engineWrappers — goal-delta applies to adaptive Bayesian TDEE (poste
       }),
     );
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(3000 * 0.82));
+    expect(r.kcalTarget).toBe(3000 - CUT_SHIFT);
   });
 
-  it('manual override BULK wins over goal-delta even on posterior.mu path', async () => {
+  it('manual override BULK wins over goal even on posterior.mu path', async () => {
     setUser('slabire');
     localStorage.setItem('phase-override', JSON.stringify('BULK'));
     vi.mocked(evaluateBN).mockResolvedValueOnce(
@@ -192,8 +177,7 @@ describe('engineWrappers — goal-delta applies to adaptive Bayesian TDEE (poste
       }),
     );
     const r = await getNutritionTargetsToday({});
-    // Override BULK deriva din TDEE real per-user (NU posterior.mu), via
-    // getPhaseOverrideKcalToday → readUserMaintenanceTDEE × 1.08.
+    // Override BULK derives from REAL per-user maintenance × 1.08 (NU posterior.mu).
     expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 1.08));
     expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
   });
@@ -207,26 +191,21 @@ describe('engineWrappers — goal-delta applies to adaptive Bayesian TDEE (poste
       }),
     );
     const r = await getNutritionTargetsToday({});
-    // 1400 × 0.82 = 1148 < 1200 → floored la 1200.
+    // 1400 − 550 = 850 < 1200 → floored la 1200.
     expect(r.kcalTarget).toBe(1200);
   });
 });
 
-describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp BUG #5)', () => {
-  it('AUTO cold-start supraponderal (zero cantariri) → CUT din body-comp (BUG #5)', async () => {
-    // Fara cantariri, weight-trend e insuficient → body-comp decide. USER e
-    // supraponderal (BMI 32.5) → CUT. Inainte era MAINTAIN tacut (bug-ul).
+describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp)', () => {
+  it('AUTO cold-start supraponderal → CUT din body-comp', async () => {
     setUser('auto');
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(MAINTENANCE * 0.82));
+    expect(r.kcalTarget).toBe(MAINTENANCE - CUT_SHIFT);
     expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
   });
 
   it('AUTO cold-start greutate sanatoasa → MAINTAIN (body-comp NU forteaza CUT)', async () => {
-    // Contra-proba BUG #5: un user AUTO la greutate sanatoasa (75kg/180cm =
-    // BMI 23.1, fara cantariri) ramane la MENTENANTA — body-comp da CUT DOAR
-    // la supraponderal/bf-mare, NU blanket. Mentenanta = BMR×1.25 (no sessions).
     useOnboardingStore.getState().reset();
     const s = useOnboardingStore.getState();
     s.setField('sex', 'm');
@@ -234,64 +213,42 @@ describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp B
     s.setField('height', 180);
     s.setField('age', 30);
     s.setField('goal', 'auto');
-    // BMR = 10·75 + 6.25·180 - 5·30 + 5 = 750 + 1125 - 150 + 5 = 1730; ×1.25 = 2163.
+    // BMR = 10·75 + 6.25·180 − 5·30 + 5 = 1730; ×1.25 = 2163. MAINTAIN → no shift.
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
     expect(r.kcalTarget).toBe(2163);
   });
 
-  it('AUTO cu weight trend SCADERE → CUT delta (sub mentenanta)', async () => {
+  it('AUTO cu weight trend SCADERE → CUT (sub mentenanta)', async () => {
     setUser('auto');
-    addWeighIn(84, 28); // acum 28 zile
-    addWeighIn(82, 0); // azi → -2kg / 4 sapt
-    // Greutate canonica curenta = ultima logata (82) → mentenanta din 82.
+    addWeighIn(84, 28);
+    addWeighIn(82, 0); // -2kg / 4 sapt
     const maint = maintenanceFor(82);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(maint * 0.82));
+    expect(r.kcalTarget).toBe(maint - CUT_SHIFT);
     expect(r.kcalTarget).toBeLessThan(maint);
   });
 
-  it('AUTO cu weight trend CRESTERE → BULK delta (peste mentenanta)', async () => {
+  it('AUTO cu weight trend CRESTERE → BULK (peste mentenanta)', async () => {
     setUser('auto');
     addWeighIn(80, 28);
     addWeighIn(82, 0); // +2kg / 4 sapt
-    // Greutate canonica curenta = ultima logata (82) → mentenanta din 82.
     const maint = maintenanceFor(82);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(maint * 1.08));
+    expect(r.kcalTarget).toBe(maint + BULK_SHIFT);
     expect(r.kcalTarget).toBeGreaterThan(maint);
   });
 
-  it('AUTO platou supraponderal (trend flat) → CUT din body-comp (BUG #5)', async () => {
-    // Weight-trend flat (sub prag) → NU semnal directional → body-comp decide.
-    // Greutate canonica curenta = ultima logata. Pentru body-comp CUT trebuie ca
-    // greutatea CURENTA sa fie supraponderala (110kg/184cm = BMI 32.5) — un user
-    // gras la platou ARE nevoie de deficit. Logam la 110 (flat) ca semnalul
-    // canonic curent sa fie supraponderal (audit CRIT: body-comp vede greutatea
-    // logata, NU onboarding-ul inghetat).
+  it('AUTO platou supraponderal (trend flat) → CUT din body-comp', async () => {
     setUser('auto');
     addWeighIn(110.0, 28);
-    addWeighIn(110.1, 0); // zgomot, sub prag 0.1 kg/sapt
+    addWeighIn(110.1, 0);
     const maint = maintenanceFor(110.1);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(maint * 0.82));
-    expect(r.kcalTarget).toBeLessThan(maint);
-  });
-
-  it('AUTO span scurt supraponderal (< 14 zile) → CUT din body-comp (BUG #5)', async () => {
-    // Span prea scurt pentru un trend de incredere → body-comp decide. Greutate
-    // canonica curenta supraponderala (110kg/184cm = BMI 32.5) → CUT (audit CRIT:
-    // body-comp vede greutatea logata curenta).
-    setUser('auto');
-    addWeighIn(112, 5);
-    addWeighIn(110, 0); // span 5 zile, prea scurt → body-comp decide
-    const maint = maintenanceFor(110);
-    vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
-    const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(maint * 0.82));
+    expect(r.kcalTarget).toBe(maint - CUT_SHIFT);
     expect(r.kcalTarget).toBeLessThan(maint);
   });
 
@@ -300,15 +257,14 @@ describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp B
     addWeighIn(80, 28);
     addWeighIn(82, 0); // AUTO ar detecta BULK
     localStorage.setItem('phase-override', JSON.stringify('CUT'));
-    // Override CUT deriva din mentenanta reala per-user (greutate canonica = 82).
     const maint = maintenanceFor(82);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    // Override CUT (0.82) bate AUTO BULK.
+    // Override CUT (multiplier-snapshot 0.82) bate AUTO BULK.
     expect(r.kcalTarget).toBe(Math.round(maint * 0.82));
   });
 
-  it('AUTO trend scadere aplica CUT pe posterior.mu adaptiv (user care invata)', async () => {
+  it('AUTO trend scadere aplica CUT pe posterior.mu adaptiv', async () => {
     setUser('auto');
     addWeighIn(84, 28);
     addWeighIn(82, 0);
@@ -319,6 +275,6 @@ describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp B
       }),
     );
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(Math.round(3000 * 0.82));
+    expect(r.kcalTarget).toBe(3000 - CUT_SHIFT);
   });
 });

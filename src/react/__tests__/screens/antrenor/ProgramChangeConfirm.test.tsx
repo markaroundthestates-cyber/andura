@@ -118,3 +118,46 @@ describe('ProgramChangeConfirm — PAR-003 drill-down', () => {
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
 });
+
+// Fix A 2026-05-30 — committing a goal must SYNC the phase-override so the
+// TDEEStrip "PHASE" badge reflects the active phase instead of staying on AUTO.
+describe('ProgramChangeConfirm — Fix A phase-override sync on commit', () => {
+  beforeEach(resetStore);
+
+  function committedPhase(): unknown {
+    return JSON.parse(localStorage.getItem('phase-override') ?? 'null');
+  }
+
+  it('masa commit → phase-override BULK (badge no longer stale on AUTO)', () => {
+    renderScreen({ pendingGoal: 'masa', pendingLabel: 'Masa musculara' });
+    fireEvent.click(screen.getByTestId('program-change-confirm-accept'));
+    expect(useOnboardingStore.getState().data.goal).toBe('masa');
+    expect(committedPhase()).toBe('BULK');
+  });
+
+  it('slabire commit → phase-override CUT', () => {
+    renderScreen({ pendingGoal: 'slabire', pendingLabel: 'Slabire' });
+    fireEvent.click(screen.getByTestId('program-change-confirm-accept'));
+    expect(committedPhase()).toBe('CUT');
+  });
+
+  it('forta commit → phase-override STRENGTH', () => {
+    renderScreen({ pendingGoal: 'forta', pendingLabel: 'Forta' });
+    fireEvent.click(screen.getByTestId('program-change-confirm-accept'));
+    expect(committedPhase()).toBe('STRENGTH');
+  });
+
+  it('auto commit → phase-override cleared (null = AUTO)', () => {
+    localStorage.setItem('phase-override', JSON.stringify('BULK')); // stale prior
+    renderScreen({ pendingGoal: 'auto', pendingLabel: 'Auto' });
+    fireEvent.click(screen.getByTestId('program-change-confirm-accept'));
+    expect(committedPhase()).toBeNull();
+  });
+
+  it('cancel does NOT touch phase-override', () => {
+    localStorage.setItem('phase-override', JSON.stringify('CUT'));
+    renderScreen({ pendingGoal: 'masa', pendingLabel: 'Masa musculara' });
+    fireEvent.click(screen.getByTestId('program-change-confirm-cancel'));
+    expect(committedPhase()).toBe('CUT');
+  });
+});

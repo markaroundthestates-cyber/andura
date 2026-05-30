@@ -744,7 +744,13 @@
     "weeks_one": "~{n} saptamana",
     "weeks_other": "~{n} saptamani",
     "months_one": "~{n} luna",
-    "months_other": "~{n} luni"
+    "months_other": "~{n} luni",
+    "gating": {
+      "disabledHint": "Nu se potriveste cu greutatea tinta",
+      "switchedToAutoLose": "Ai ales sa slabesti — nu mai poti pune masa sau mentenanta. Esti pe Auto (Cut).",
+      "switchedToAutoGain": "Ai ales sa cresti in greutate — nu mai poti slabi sau mentenanta. Esti pe Auto (Bulk).",
+      "switchedToAutoMaintain": "Ai ales mentenanta — nu mai poti slabi sau pune masa. Esti pe Auto."
+    }
   },
 
   "istoric": {
