@@ -2,7 +2,9 @@
 // Coherence model 2026-05-30 (supersedes smoke #16 -25%/+15% cap model). The
 // goal/phase DIRECTION is authoritative — it forces the kcal SIGN (CUT=deficit,
 // BULK=surplus). The target weight + deadline only size the MAGNITUDE within
-// that direction, rate-capped (1.5 kg/wk loss, 0.5 kg/wk gain), sex-floored.
+// that direction, as a %-of-TDEE (default 20% cut / 12% bulk; capped 25% / 15%)
+// ADDITIONALLY clamped by the kg/wk caps (1.5 loss / 0.5 gain), sex-floored.
+// (Daniel LOCK 2026-05-30 — supersedes the interim fixed kg/wk rate model.)
 //
 // This fixes the Daniel repro: masa (BULK) + a below-current target weight used
 // to surface a 2200 DEFICIT (the target-weight override outranked + discarded
@@ -64,29 +66,29 @@ function isoInDays(days: number): string {
 }
 
 describe('engineWrappers — coherent goal/phase ↔ kcal sizing', () => {
-  it('slabire (CUT) fara tinta → deficit la ritm implicit 0.5 kg/sapt (TDEE 2800 → 2250)', async () => {
+  it('slabire (CUT) fara tinta → deficit la 20% din TDEE (2800 → 2240)', async () => {
     setUserStats({ goal: 'slabire' });
     mockTdee(2800);
     const r = await getNutritionTargetsToday({});
-    // CUT default 0.5 kg/wk → 0.5*7700/7 = 550/zi deficit → 2800 - 550 = 2250
-    expect(r.kcalTarget).toBeCloseTo(2250, 0);
+    // CUT default 20% din TDEE → 0.20*2800 = 560/zi deficit → 2800 - 560 = 2240
+    expect(r.kcalTarget).toBeCloseTo(2240, 0);
     expect(r.source).toBe('engine');
   });
 
-  it('Daniel smoke 110→62kg in 4 zile (slabire) → rate-cap 1.5 kg/sapt, apoi floor 1200', async () => {
+  it('Daniel smoke 110→62kg in 4 zile (slabire) → cap 25% din TDEE (2800 → 2100)', async () => {
     setUserStats({ goal: 'slabire', weight: 110, targetWeight: 62, targetDate: isoInDays(4) });
     mockTdee(2800);
     const r = await getNutritionTargetsToday({});
-    // 48kg/4zile cere ~84 kg/sapt → cap 1.5 kg/sapt → 1650/zi deficit → 2800 -
-    // 1650 = 1150, sub floor 1200 → floored la 1200. NU recomandare periculoasa.
-    expect(r.kcalTarget).toBe(1200);
+    // 48kg/4zile cere deficit imposibil → cap min(25%*2800=700, 1.5kg/wk=1650)=700
+    // → 2800 - 700 = 2100 (peste floor). % bindeaza inaintea kg/sapt. Sustenabil.
+    expect(r.kcalTarget).toBe(2100);
   });
 
   it('tinta sustenabila 110→105 in 10 sapt (slabire) → deficit ~550 kcal/zi (NU capped)', async () => {
     setUserStats({ goal: 'slabire', weight: 110, targetWeight: 105, targetDate: isoInDays(70) });
     mockTdee(2800);
     const r = await getNutritionTargetsToday({});
-    // 5kg × 7700 / 70 = 550/zi → 2800 - 550 = 2250
+    // 5kg × 7700 / 70 = 550/zi < cap 700 → NU capped → 2800 - 550 = 2250
     expect(r.kcalTarget).toBeCloseTo(2250, 0);
   });
 
@@ -98,13 +100,13 @@ describe('engineWrappers — coherent goal/phase ↔ kcal sizing', () => {
     mockTdee(2400);
     const r = await getNutritionTargetsToday({});
     expect(r.kcalTarget).toBeGreaterThan(2400); // surplus, nu deficit (era ~2200)
-    // BULK forteaza semnul +; tinta 90<110 cere ~1.25 kg/sapt (>cap 0.5) → rate-cap
-    // la +0.5 kg/sapt → +550/zi → 2400 + 550 = 2950. NICIODATA un deficit.
-    expect(r.kcalTarget).toBeCloseTo(2950, 0);
+    // BULK forteaza semnul +; 20kg/112 zile cere ~1375/zi (>cap) → cap min(15%*2400=
+    // 360, 0.5kg/wk=550)=360 → +360/zi → 2400 + 360 = 2760. NICIODATA un deficit.
+    expect(r.kcalTarget).toBeCloseTo(2760, 0);
   });
 
-  it('masa (BULK) cu tinta de crestere coerenta + deadline → surplus rate-capped', async () => {
-    // 70→74 in 16 sapt = 0.25 kg/sapt (sub cap 0.5) → +275/zi → 2400 + 275 = 2675
+  it('masa (BULK) cu tinta de crestere coerenta + deadline → surplus % capped', async () => {
+    // 70→74 in 16 sapt → 4kg*7700/112 = 275/zi < cap 360 → +275/zi → 2400+275 = 2675
     setUserStats({ goal: 'masa', weight: 70, targetWeight: 74, targetDate: isoInDays(16 * 7) });
     mockTdee(2400);
     const r = await getNutritionTargetsToday({});

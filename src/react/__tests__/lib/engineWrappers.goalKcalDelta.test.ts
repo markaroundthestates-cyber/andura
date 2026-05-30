@@ -1,10 +1,12 @@
 // Goal-driven nutrition kcal — coherence model 2026-05-30.
 //
 // The onboarding goal maps to a phase (phaseForGoal), the phase sets the kcal
-// SIGN, and (absent a target weight/deadline) a sane DEFAULT weekly rate sizes
-// the magnitude: CUT −0.5 kg/wk, BULK +0.25 kg/wk, STRENGTH +5%, MAINTENANCE 0.
-// This supersedes the old fixed multipliers (×0.82 / ×1.08 / ×1.05) for the
-// no-target case — the direction is the same, the magnitude is now rate-based.
+// SIGN, and (absent a target weight/deadline) a DEFAULT %-of-TDEE shift sizes
+// the magnitude (Daniel LOCK 2026-05-30): CUT −20% of TDEE, BULK +12%,
+// STRENGTH +5%, MAINTENANCE 0. The % is ADAPTIVE — it scales with the user's own
+// maintenance, so a 110kg male is never floored at 1200 (20% of 2600 = 520 →
+// 2080, not the hard floor). This supersedes both the old fixed multipliers
+// (×0.82 / ×1.08) AND the interim fixed kg/week rate (−0.5 / +0.25 kg/wk).
 //
 // Precedence verified: manual phase override (SchimbaFaza, multiplier-snapshot)
 // > goal/AUTO coherent sizing > maintenance. Covers tier 'none' (per-user
@@ -23,7 +25,10 @@ import { createMockBNResult } from '../../../test-utils/createMockContext';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import type { Goal } from '../../stores/onboardingStore';
 import { useProgresStore } from '../../stores/progresStore';
-import { KCAL_PER_KG } from '../../lib/goalPhaseModel';
+import {
+  CUT_DEFICIT_FRACTION_DEFAULT,
+  BULK_SURPLUS_FRACTION_DEFAULT,
+} from '../../lib/goalPhaseModel';
 
 const USER = { sex: 'm' as const, weight: 110, height: 184, age: 35 };
 
@@ -38,9 +43,11 @@ function setUser(goal: Goal | null): void {
 
 // TDEE = BMR × 1.25 (no sessions). BMR = 10·110 + 6.25·184 − 5·35 + 5 = 2080.
 const MAINTENANCE = 2600;
-// Default weekly-rate shifts (kg/wk → kcal/day): CUT 0.5, BULK 0.25.
-const CUT_SHIFT = Math.round((0.5 * KCAL_PER_KG) / 7); // 550
-const BULK_SHIFT = Math.round((0.25 * KCAL_PER_KG) / 7); // 275
+// Default %-of-TDEE deficit/surplus (no target weight): CUT 20%, BULK 12%. The
+// shift is ADAPTIVE — sized off whatever maintenance base the path feeds in
+// (per-user TDEE on the tier-none path, posterior.mu on the adaptive path).
+const cutKcal = (base: number): number => Math.round(base * (1 - CUT_DEFICIT_FRACTION_DEFAULT));
+const bulkKcal = (base: number): number => Math.round(base * (1 + BULK_SURPLUS_FRACTION_DEFAULT));
 
 function maintenanceFor(currentWeightKg: number): number {
   const bmr = 10 * currentWeightKg + 6.25 * USER.height - 5 * USER.age + 5;
@@ -79,23 +86,23 @@ describe('engineWrappers — goal-driven kcal (tier none / per-user maintenance)
     setUser('auto');
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(MAINTENANCE - CUT_SHIFT);
+    expect(r.kcalTarget).toBe(cutKcal(MAINTENANCE));
     expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
   });
 
-  it('goal "slabire" → deficit la ritm implicit (sub mentenanta)', async () => {
+  it('goal "slabire" → deficit la % implicit (sub mentenanta)', async () => {
     setUser('slabire');
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(MAINTENANCE - CUT_SHIFT);
+    expect(r.kcalTarget).toBe(cutKcal(MAINTENANCE));
     expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
   });
 
-  it('goal "masa" → surplus la ritm implicit (peste mentenanta)', async () => {
+  it('goal "masa" → surplus la % implicit (peste mentenanta)', async () => {
     setUser('masa');
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(MAINTENANCE + BULK_SHIFT);
+    expect(r.kcalTarget).toBe(bulkKcal(MAINTENANCE));
     expect(r.kcalTarget).toBeGreaterThan(MAINTENANCE);
   });
 
@@ -130,7 +137,7 @@ describe('engineWrappers — precedence: manual phase override > onboarding goal
 });
 
 describe('engineWrappers — goal sizing applies to adaptive Bayesian TDEE (posterior.mu)', () => {
-  it('goal "slabire" → deficit ritm implicit pe posterior.mu', async () => {
+  it('goal "slabire" → deficit % implicit pe posterior.mu', async () => {
     setUser('slabire');
     vi.mocked(evaluateBN).mockResolvedValueOnce(
       createMockBNResult({
@@ -139,11 +146,11 @@ describe('engineWrappers — goal sizing applies to adaptive Bayesian TDEE (post
       }),
     );
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(3000 - CUT_SHIFT);
+    expect(r.kcalTarget).toBe(cutKcal(3000)); // 3000 × 0.80 = 2400
     expect(r.source).toBe('engine');
   });
 
-  it('goal "masa" → surplus ritm implicit pe posterior.mu', async () => {
+  it('goal "masa" → surplus % implicit pe posterior.mu', async () => {
     setUser('masa');
     vi.mocked(evaluateBN).mockResolvedValueOnce(
       createMockBNResult({
@@ -152,7 +159,7 @@ describe('engineWrappers — goal sizing applies to adaptive Bayesian TDEE (post
       }),
     );
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(3000 + BULK_SHIFT);
+    expect(r.kcalTarget).toBe(bulkKcal(3000)); // 3000 × 1.12 = 3360
   });
 
   it('goal "auto" supraponderal → CUT din body-comp pe posterior.mu', async () => {
@@ -164,7 +171,7 @@ describe('engineWrappers — goal sizing applies to adaptive Bayesian TDEE (post
       }),
     );
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(3000 - CUT_SHIFT);
+    expect(r.kcalTarget).toBe(cutKcal(3000));
   });
 
   it('manual override BULK wins over goal even on posterior.mu path', async () => {
@@ -191,7 +198,7 @@ describe('engineWrappers — goal sizing applies to adaptive Bayesian TDEE (post
       }),
     );
     const r = await getNutritionTargetsToday({});
-    // 1400 − 550 = 850 < 1200 → floored la 1200.
+    // 1400 × 0.80 = 1120 < 1200 → floored la 1200 (hard floor barbati).
     expect(r.kcalTarget).toBe(1200);
   });
 });
@@ -201,7 +208,7 @@ describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp)'
     setUser('auto');
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(MAINTENANCE - CUT_SHIFT);
+    expect(r.kcalTarget).toBe(cutKcal(MAINTENANCE));
     expect(r.kcalTarget).toBeLessThan(MAINTENANCE);
   });
 
@@ -226,7 +233,7 @@ describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp)'
     const maint = maintenanceFor(82);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(maint - CUT_SHIFT);
+    expect(r.kcalTarget).toBe(cutKcal(maint));
     expect(r.kcalTarget).toBeLessThan(maint);
   });
 
@@ -237,7 +244,7 @@ describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp)'
     const maint = maintenanceFor(82);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(maint + BULK_SHIFT);
+    expect(r.kcalTarget).toBe(bulkKcal(maint));
     expect(r.kcalTarget).toBeGreaterThan(maint);
   });
 
@@ -248,7 +255,7 @@ describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp)'
     const maint = maintenanceFor(110.1);
     vi.mocked(evaluateBN).mockResolvedValueOnce(createMockBNResult({ tier: 'none', meta: {} }));
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(maint - CUT_SHIFT);
+    expect(r.kcalTarget).toBe(cutKcal(maint));
     expect(r.kcalTarget).toBeLessThan(maint);
   });
 
@@ -275,6 +282,6 @@ describe('engineWrappers — AUTO auto-detects phase (weight trend + body-comp)'
       }),
     );
     const r = await getNutritionTargetsToday({});
-    expect(r.kcalTarget).toBe(3000 - CUT_SHIFT);
+    expect(r.kcalTarget).toBe(cutKcal(3000));
   });
 });
