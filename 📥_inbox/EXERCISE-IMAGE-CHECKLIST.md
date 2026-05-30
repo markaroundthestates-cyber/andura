@@ -1,0 +1,680 @@
+# Lista exercitii pentru poze (2 per exercitiu — start + end)
+
+> 657 exercitii. Bifeaza pe masura ce generezi cele 2 poze/exercitiu. Grupate pe equipment_type.
+> Naming sugerat: `{exercise-slug}-1.webp` / `-2.webp`. Load remote lazy (NU bundle) — vezi handover.
+
+## band (18)
+
+- [ ] Band Face Pull
+- [ ] Band Leg Curl
+- [ ] Band Leg Extension
+- [ ] Band Pull-Apart
+- [ ] Band-Assisted Pull-up
+- [ ] Banded Clamshell
+- [ ] Banded Donkey Calf Raise
+- [ ] Banded Glute Bridge
+- [ ] Banded Good Morning
+- [ ] Banded Hip Thrust
+- [ ] Banded Pull-Through
+- [ ] Banded Sumo Deadlift
+- [ ] Banded Tibialis Raise
+- [ ] Bird Dog with Resistance Band
+- [ ] Chin-Up Assisted Band
+- [ ] Dead Bug with Resistance Band
+- [ ] Nordic Hamstring Curl Assisted
+- [ ] Pallof Press Band
+
+## barbell (126)
+
+- [ ] 21s Curl Barbell
+- [ ] B-Stance Hip Thrust
+- [ ] B-Stance RDL
+- [ ] BB Good Morning
+- [ ] BB Shrug
+- [ ] Barbell Back Squat (High Bar)
+- [ ] Barbell Back Squat (Low Bar)
+- [ ] Barbell Concentration Curl Seated
+- [ ] Barbell Curl Narrow Grip
+- [ ] Barbell Curl Standing
+- [ ] Barbell Curl Strict Wall Support
+- [ ] Barbell Curl Wide Grip
+- [ ] Barbell Front Raise
+- [ ] Barbell Glute Bridge
+- [ ] Barbell Good Morning
+- [ ] Barbell Lunge
+- [ ] Barbell Rollout
+- [ ] Barbell Row
+- [ ] Barbell Step-up
+- [ ] Behind-Back BB Shrug
+- [ ] Behind-the-Neck Press
+- [ ] Behind-the-Neck Push Press
+- [ ] Block Hip Thrust
+- [ ] Block RDL
+- [ ] Board Press
+- [ ] Box Squat
+- [ ] Bradford Press
+- [ ] Cambered Bar RDL
+- [ ] Cambered Bar Squat
+- [ ] Cheat Curl Barbell
+- [ ] Clean and Press
+- [ ] Close-Grip Bench Press
+- [ ] Conventional Deadlift
+- [ ] Decline Barbell Bench
+- [ ] Decline Triceps Extension Barbell
+- [ ] Deficit Hip Thrust
+- [ ] Deficit RDL
+- [ ] Drag Curl Barbell
+- [ ] EZ Bar Pullover
+- [ ] EZ-bar Curl Narrow
+- [ ] EZ-bar Curl Standing
+- [ ] EZ-bar Curl Wide
+- [ ] EZ-bar Preacher Curl
+- [ ] Farmer's Walk Trap Bar
+- [ ] Fat Grip Barbell Curl
+- [ ] Fat Grip Hold
+- [ ] Flat Barbell Bench
+- [ ] Floor Press Barbell
+- [ ] Front Rack Carry Barbell
+- [ ] Front Squat
+- [ ] Half-Kneeling Landmine Press
+- [ ] Half-Press
+- [ ] Hang Clean
+- [ ] Hip Thrust
+- [ ] Hip Thrust 1.5 Rep
+- [ ] Hip Thrust Foot-Elevated
+- [ ] Incline Barbell Bench
+- [ ] JM Press
+- [ ] Klokov Press
+- [ ] Landmine 180
+- [ ] Landmine Shoulder Press
+- [ ] Landmine T-Bar Row
+- [ ] Lying Triceps Extension Barbell
+- [ ] Lying Triceps Extension EZ-bar
+- [ ] Meadows Row
+- [ ] OHP
+- [ ] Overhead Squat
+- [ ] Pause Hip Thrust
+- [ ] Pause RDL
+- [ ] Pause Squat
+- [ ] Paused Barbell Row
+- [ ] Paused Bench Press
+- [ ] Paused OHP
+- [ ] Pendlay Row
+- [ ] Pin Hip Thrust
+- [ ] Pin OHP
+- [ ] Pin Press
+- [ ] Pin Squat
+- [ ] Plate Shrug
+- [ ] Power Clean
+- [ ] Push Jerk
+- [ ] Push Press
+- [ ] Rack Pull
+- [ ] Reverse Curl Barbell
+- [ ] Reverse Curl EZ-bar
+- [ ] Reverse Wrist Curl Barbell Seated
+- [ ] Reverse-Grip Bench Press
+- [ ] Reverse-Grip Preacher Curl
+- [ ] Romanian Deadlift
+- [ ] Romanian Sumo Deadlift
+- [ ] SSB Good Morning
+- [ ] SSB Lunge
+- [ ] SSB Squat
+- [ ] Safety Bar Squat
+- [ ] Seated BB Calf Raise
+- [ ] Seated Good Morning
+- [ ] Seated Overhead Triceps Extension Barbell
+- [ ] Seated Overhead Triceps Extension EZ-bar
+- [ ] Single-Arm Landmine Press
+- [ ] Single-Arm OHP
+- [ ] Single-Leg Hip Thrust
+- [ ] Snatch-Grip Barbell Row
+- [ ] Snatch-Grip Push Press
+- [ ] Snatch-Grip RDL
+- [ ] Spider Curl Barbell
+- [ ] Spider Curl EZ-bar
+- [ ] Spoto Press
+- [ ] Standing Barbell Calf Raise
+- [ ] Standing Overhead Triceps Extension EZ-bar
+- [ ] Stiff-Leg Deadlift
+- [ ] Sumo Deadlift
+- [ ] Sumo RDL
+- [ ] Tempo Hip Thrust
+- [ ] Tempo Squat
+- [ ] Trap Bar Deadlift
+- [ ] Trap Bar RDL
+- [ ] Trap Bar Row
+- [ ] Trap Bar Shrug
+- [ ] Wide-Grip Bench Press
+- [ ] Wrist Curl Barbell Seated Palms-Down
+- [ ] Wrist Curl Barbell Seated Palms-Up
+- [ ] Wrist Curl Barbell Standing Behind Back
+- [ ] Yates Row
+- [ ] Z Press
+- [ ] Zercher Good Morning
+- [ ] Zercher Squat
+
+## bodyweight (131)
+
+- [ ] Archer Chin-up
+- [ ] Archer Pull-up
+- [ ] Archer Push-up
+- [ ] Band-Assisted Dip
+- [ ] Bar Hang Single-Arm
+- [ ] Bench Dip
+- [ ] Bench Dip Feet-on-Floor
+- [ ] Bench Dip Knees-Bent
+- [ ] Bicycle Crunch
+- [ ] Bird Dog
+- [ ] Body Saw Plank
+- [ ] Bodyweight Donkey Calf Raise
+- [ ] Bodyweight Squat
+- [ ] Calf Raise Bodyweight
+- [ ] Chest-to-Bar Pull-up
+- [ ] Chin-Up Negatives Eccentric Only
+- [ ] Chin-Up Neutral Grip
+- [ ] Chin-Up Underhand Close Grip
+- [ ] Chin-Up Underhand Strict
+- [ ] Chin-up
+- [ ] Clap Push-up
+- [ ] Close-Grip Chin-up
+- [ ] Close-Grip Pull-up
+- [ ] Commando Pull-Up
+- [ ] Copenhagen Plank
+- [ ] Cossack Squat
+- [ ] Dead Bug
+- [ ] Dead Hang
+- [ ] Dead-Hang Pull-up
+- [ ] Decline Push-up
+- [ ] Diamond Push-up
+- [ ] Dip
+- [ ] Dip Bodyweight
+- [ ] Donkey Kick
+- [ ] Dragon Flag
+- [ ] Eccentric Nordic Curl
+- [ ] Fire Hydrant
+- [ ] Frog Pump
+- [ ] Garhammer Raise
+- [ ] Glute Bridge Bodyweight
+- [ ] Glute Bridge Bodyweight Single-Leg
+- [ ] Glute Bridge March
+- [ ] Handstand Push-up
+- [ ] Hanging Knee Raise
+- [ ] Hanging Leg Raise
+- [ ] Heel Tap
+- [ ] Hollow Body Hold
+- [ ] Hollow Body Rock
+- [ ] Hyperextension Bodyweight
+- [ ] Incline Push-up
+- [ ] Inverse Curl
+- [ ] Inverted Row Bar
+- [ ] Inverted Row Bar Close
+- [ ] Inverted Row Bar Close Underhand
+- [ ] Inverted Row Bar Neutral
+- [ ] Inverted Row Bar Slow
+- [ ] Inverted Row Bar Underhand
+- [ ] Inverted Row Bar Wide
+- [ ] Inverted Row Table Low
+- [ ] Inverted Row Underhand
+- [ ] Knee Decline Push-up
+- [ ] Knee Diamond Push-up
+- [ ] Knee Push-up
+- [ ] Knee Single-Arm Push-up
+- [ ] Knee Wide Push-up
+- [ ] L-Sit Chin-up
+- [ ] L-Sit Hold Floor
+- [ ] L-Sit Hold Parallel Bars
+- [ ] L-sit Chin-Up
+- [ ] Marching Glute Bridge
+- [ ] Natural Glute-Ham Raise
+- [ ] Neutral-Grip Pull-up
+- [ ] Nordic Hamstring Curl
+- [ ] One-Arm Chin-up Progression
+- [ ] One-Arm Pull-up Progression
+- [ ] Paused Chin-up
+- [ ] Pike Push-up
+- [ ] Pistol Squat
+- [ ] Plank
+- [ ] Plank to Push-up
+- [ ] Plank with Reach
+- [ ] Plank with Shoulder Tap
+- [ ] Plyometric Pull-up
+- [ ] Plyometric Push-up
+- [ ] Prone T Raise
+- [ ] Prone Y Raise
+- [ ] Pull-up
+- [ ] Push-up
+- [ ] Quadruped Hip Extension
+- [ ] Razor Curl
+- [ ] Reverse Calf Raise
+- [ ] Reverse Crunch
+- [ ] Reverse Hyper Bodyweight
+- [ ] Scapular Plank
+- [ ] Scapular Pull-up
+- [ ] Side Plank
+- [ ] Side Plank Dip
+- [ ] Single-Arm Push-up Assisted
+- [ ] Single-Leg Calf Raise Bodyweight
+- [ ] Single-Leg Glute Bridge
+- [ ] Single-Leg Glute Bridge Foot-Elevated
+- [ ] Single-Leg RDL Bodyweight
+- [ ] Single-Leg Stair Calf Raise
+- [ ] Sissy Squat Bodyweight
+- [ ] Slider Hamstring Curl
+- [ ] Slow Pike Push-up
+- [ ] Slow Push-up
+- [ ] Stair Calf Raise
+- [ ] Standing Tibialis Raise
+- [ ] Sternum Pull-up
+- [ ] Superman
+- [ ] Tibialis Raise
+- [ ] Toes-to-Bar
+- [ ] Towel Chin-Up
+- [ ] Towel Hang
+- [ ] Triceps Dip Parallel Bars
+- [ ] Triceps Dip Weighted
+- [ ] V-Up
+- [ ] Wall Calf Raise
+- [ ] Wall Hip Hinge
+- [ ] Wall Pike Push-up
+- [ ] Wall Push-up
+- [ ] Wall Push-up Incline
+- [ ] Wall Sit Static
+- [ ] Wall-Supported Handstand Push-up
+- [ ] Weighted Chin-up
+- [ ] Weighted Dip
+- [ ] Weighted Pull-up
+- [ ] Wide Push-up
+- [ ] Wide-Grip Pull-up
+- [ ] Windshield Wiper
+
+## cable (101)
+
+- [ ] Bayesian Curl
+- [ ] Behind-the-Back Cable Lateral
+- [ ] Cable Calf Raise
+- [ ] Cable Chest Press
+- [ ] Cable Concentration Curl
+- [ ] Cable Crossover High-to-Low
+- [ ] Cable Crossover Standing
+- [ ] Cable Crossover Triceps Extension
+- [ ] Cable Crunch Kneeling
+- [ ] Cable Crunch Standing
+- [ ] Cable Curl
+- [ ] Cable Curl Cross-Body Single
+- [ ] Cable Curl Lying on Bench
+- [ ] Cable Curl Seated Behind Body
+- [ ] Cable Curl Single-Arm
+- [ ] Cable Curl Standing EZ-bar Attachment
+- [ ] Cable Curl Standing Rope
+- [ ] Cable Curl Standing Straight Bar
+- [ ] Cable Drag Curl
+- [ ] Cable Fly
+- [ ] Cable Fly Low-to-High
+- [ ] Cable Fly Mid
+- [ ] Cable Front Raise
+- [ ] Cable Glute Kickback
+- [ ] Cable Hammer Curl Rope
+- [ ] Cable Hip Extension
+- [ ] Cable Incline Press
+- [ ] Cable Lateral Raise
+- [ ] Cable Leg Curl
+- [ ] Cable Leg Extension
+- [ ] Cable Overhead Triceps Extension EZ-bar
+- [ ] Cable Overhead Triceps Extension Rope
+- [ ] Cable Pec Deck
+- [ ] Cable Preacher Curl
+- [ ] Cable Pull-Through
+- [ ] Cable Pullover
+- [ ] Cable Rear Delt Fly
+- [ ] Cable Row
+- [ ] Cable Row Slow
+- [ ] Cable Row Underhand
+- [ ] Cable Russian Twist
+- [ ] Cable Shrug
+- [ ] Cable Side Bend
+- [ ] Cable Single-Arm Overhead Triceps Extension
+- [ ] Cable Squeeze Press
+- [ ] Cable Tibialis Raise
+- [ ] Cable Triceps Kickback Rope
+- [ ] Cable Triceps Kickback Single-Arm
+- [ ] Cable Triceps Pushdown Reverse Grip
+- [ ] Cable Triceps Pushdown Rope
+- [ ] Cable Triceps Pushdown Single-Arm
+- [ ] Cable Triceps Pushdown Straight Bar
+- [ ] Cable Triceps Pushdown V-bar
+- [ ] Cable Woodchop High-to-Low
+- [ ] Cable Woodchop Low-to-High
+- [ ] Cable Wrist Curl
+- [ ] Close-Grip Cable Row
+- [ ] Close-Grip Cable Row Underhand
+- [ ] Close-Grip Lat Pulldown
+- [ ] Close-Grip Lat Pulldown Underhand
+- [ ] Decline Cable Fly
+- [ ] External Rotation Cable
+- [ ] Face Pull
+- [ ] Face Pull Bench
+- [ ] Face Pulls
+- [ ] High Cable Row
+- [ ] Incline Cable Fly
+- [ ] Internal Rotation Cable
+- [ ] Iron Cross
+- [ ] Kneeling Cable Crossover
+- [ ] Kneeling Cable Row
+- [ ] Kneeling Face Pull
+- [ ] Lat Pulldown
+- [ ] Lat Pulldown Underhand
+- [ ] Lateral Raises (cable)
+- [ ] Neutral-Grip Lat Pulldown
+- [ ] Overhead Triceps
+- [ ] Pallof Press Cable Standing
+- [ ] Pallof Press Half-Kneeling
+- [ ] Pushdown
+- [ ] Rear Delt Cable
+- [ ] Reverse Cable Crossover
+- [ ] Reverse Curl Cable
+- [ ] Reverse Wrist Curl Cable
+- [ ] Rope Face Pull
+- [ ] Single-Arm Cable Fly
+- [ ] Single-Arm Cable Glute Kickback
+- [ ] Single-Arm Cable Row
+- [ ] Single-Arm Face Pull
+- [ ] Single-Arm Lat Pulldown
+- [ ] Single-Arm Lat Pulldown Underhand
+- [ ] Single-Arm Rear Delt
+- [ ] Spider Curl Cable
+- [ ] Standing Cable Hip Abduction
+- [ ] Standing Cable Rear Delt
+- [ ] Straight-Arm Lat Pulldown
+- [ ] V-Bar Cable Row
+- [ ] V-Bar Lat Pulldown
+- [ ] Wide-Grip Cable Row
+- [ ] Wide-Grip Lat Pulldown
+- [ ] Wrist Extension Cable Standing
+
+## dumbbell (135)
+
+- [ ] 21s Lateral
+- [ ] Alternating DB Press
+- [ ] Alternating DB Press Shoulder
+- [ ] Alternating Front Raise
+- [ ] Arnold Press
+- [ ] Bent-Over DB Lateral
+- [ ] Bottoms-Up Press KB
+- [ ] Bradford Press DB
+- [ ] Bulgarian Split Squat
+- [ ] Chest-Supported DB Row
+- [ ] Cuban Press
+- [ ] Curtsy Lunge
+- [ ] DB 21s Alternate
+- [ ] DB B-Stance RDL
+- [ ] DB Concentration Curl Kneeling
+- [ ] DB Concentration Curl Standing
+- [ ] DB Cross-Body Hammer
+- [ ] DB Curl Seated Alternate
+- [ ] DB Curl Standing
+- [ ] DB Curl Standing Alternate
+- [ ] DB Floor Press Close-Grip
+- [ ] DB Fly
+- [ ] DB Front Raise
+- [ ] DB Glute Bridge
+- [ ] DB Hammer Curl Seated
+- [ ] DB Hammer Curl Standing
+- [ ] DB Hip Thrust
+- [ ] DB Incline Curl Alternate
+- [ ] DB Kickback Bench Support
+- [ ] DB Kickback Standing
+- [ ] DB Lateral Raise
+- [ ] DB Lunge
+- [ ] DB Lying Triceps Extension
+- [ ] DB Lying Triceps Extension Cross-Body
+- [ ] DB Overhead Triceps Extension Single-Arm Seated
+- [ ] DB Overhead Triceps Extension Single-Arm Standing
+- [ ] DB Overhead Triceps Extension Two-Hand
+- [ ] DB Pistol Squat Assisted
+- [ ] DB Preacher Curl
+- [ ] DB Pullover
+- [ ] DB Rear Delt Fly
+- [ ] DB Romanian Deadlift
+- [ ] DB Row
+- [ ] DB Row Heavy
+- [ ] DB Row Underhand
+- [ ] DB Shoulder Press
+- [ ] DB Shrug
+- [ ] DB Single-Arm Overhead Triceps Extension Kneeling
+- [ ] DB Single-Leg RDL
+- [ ] DB Spider Curl
+- [ ] DB Squat
+- [ ] DB Squeeze Press
+- [ ] DB Step-up
+- [ ] DB Stiff-Leg Deadlift
+- [ ] DB Sumo Deadlift
+- [ ] DB Sumo Squat
+- [ ] DB Tate Press
+- [ ] DB Tibialis Raise
+- [ ] DB Triceps Extension Lying Cross-Body Single-Arm
+- [ ] DB Zottman Curl
+- [ ] Decline DB Fly
+- [ ] Decline DB Press
+- [ ] Deficit Reverse Lunge
+- [ ] Drag Curl DB
+- [ ] Farmer's Walk DB
+- [ ] Farmer's Walk Kettlebell
+- [ ] Flat DB Press
+- [ ] Floor DB Fly
+- [ ] Floor Press DB
+- [ ] Frog Pump DB
+- [ ] Glute Walking Lunge
+- [ ] Glute-Focus Step-up
+- [ ] Goblet Squat
+- [ ] Half-Kneeling DB Press
+- [ ] Hammer Curl
+- [ ] Hammer Curl Front Raise
+- [ ] Hammer Holds
+- [ ] High-Incline DB Press
+- [ ] Incline DB Curl
+- [ ] Incline DB Fly
+- [ ] Incline DB Press
+- [ ] Incline DB Press 45
+- [ ] Incline Front Raise
+- [ ] Kettlebell Swing
+- [ ] Kroc Row
+- [ ] Larsen Press DB
+- [ ] Lateral Lunge
+- [ ] Lateral Raise Drop Set
+- [ ] Lateral Raises
+- [ ] Leaning Lateral Raise
+- [ ] Low-Incline DB Press
+- [ ] Lu Raise
+- [ ] Lying Front Raise
+- [ ] Lying Rear Delt
+- [ ] Med Ball Russian Twist
+- [ ] Med Ball Slam
+- [ ] Med Ball Woodchop
+- [ ] Neutral Grip DB Press
+- [ ] Neutral Grip DB Shoulder Press
+- [ ] Overhead Carry DB
+- [ ] Partial Lateral
+- [ ] Pinwheel Curl DB
+- [ ] Plate Crunch
+- [ ] Plate Front Raise
+- [ ] Plate Glute Bridge
+- [ ] Plate Russian Twist
+- [ ] Plate Side Bend
+- [ ] Reverse Curl DB
+- [ ] Reverse Lunge
+- [ ] Reverse Lunge Glute-Focus
+- [ ] Reverse Wrist Curl DB Seated
+- [ ] Scaption
+- [ ] Scapular Shrug Overhead
+- [ ] Seated DB Calf Raise
+- [ ] Seated DB Lateral
+- [ ] Seated DB Press
+- [ ] Seated Plate Calf Raise
+- [ ] Seated Rear Delt
+- [ ] Single-Arm DB Fly
+- [ ] Single-Arm DB Press
+- [ ] Single-Arm DB Press Shoulder
+- [ ] Single-Arm Front Raise
+- [ ] Single-Leg RDL
+- [ ] Standing DB Calf Raise
+- [ ] Standing DB Press
+- [ ] Suitcase Carry DB
+- [ ] Tempo DB Romanian Deadlift
+- [ ] Walking Lunge
+- [ ] Weighted Sit-up
+- [ ] Wrist Curl DB Seated Palms-Down
+- [ ] Wrist Curl DB Seated Palms-Up
+- [ ] Y Raise
+- [ ] Y Raise Prone
+- [ ] Y-T-W Raise
+- [ ] Z Press DB
+
+## machine (146)
+
+- [ ] 45-Degree Leg Press
+- [ ] 45° Hyperextension
+- [ ] Ab Wheel Rollout
+- [ ] Assisted Dip Machine
+- [ ] Belt Squat
+- [ ] Belt Squat Hip Thrust
+- [ ] Bench Sit-up
+- [ ] Calf Raises
+- [ ] Captains Chair Knee Raise
+- [ ] Captains Chair Leg Raise
+- [ ] Captains of Crush Gripper
+- [ ] Chest Press Machine Lockout
+- [ ] Chest Press Machine Partial
+- [ ] Chest Press Machine Slow
+- [ ] Chest Press Machine Wide
+- [ ] Chest-Supported Row
+- [ ] Chest-Supported Row Wide
+- [ ] Chin-Up Assisted Machine
+- [ ] Converging Chest Press
+- [ ] Converging Shoulder Press
+- [ ] Decline Chest Press Machine
+- [ ] Decline Sit-up
+- [ ] Donkey Calf Raise
+- [ ] Eccentric Slow Calf Raise
+- [ ] Flat Chest Press Machine
+- [ ] GHD Back Extension
+- [ ] Glute Drive Machine
+- [ ] Glute Kickback Machine
+- [ ] Glute-Ham Raise
+- [ ] Hack Squat Calf Raise
+- [ ] Hack Squat Machine
+- [ ] Hammer Decline Press
+- [ ] Hammer Incline Press
+- [ ] Hammer Press Machine
+- [ ] Hammer Strength Chest-Supported Row
+- [ ] Hammer Strength Decline Press
+- [ ] Hammer Strength Flat Press
+- [ ] Hammer Strength Incline Press
+- [ ] Hammer Strength Iso-Lateral Bench Press
+- [ ] Hammer Strength Iso-Lateral High Row
+- [ ] Hammer Strength Iso-Lateral Low Row
+- [ ] Hammer Strength Iso-Lateral Mid Row
+- [ ] Hammer Strength Lat Pulldown
+- [ ] Hammer Strength Lateral
+- [ ] Hammer Strength OHP
+- [ ] Hammer Strength Row
+- [ ] Hip Abduction Machine
+- [ ] Horizontal Leg Press
+- [ ] Hyperextension Machine
+- [ ] Incline Chest Press Machine
+- [ ] Kettlebell Front Rack Carry
+- [ ] Kettlebell Goblet Squat
+- [ ] Kettlebell Romanian Deadlift
+- [ ] Kettlebell Single-Arm Press
+- [ ] Kettlebell Single-Arm Row
+- [ ] Leg Curl
+- [ ] Leg Curl Single-Leg
+- [ ] Leg Extension
+- [ ] Leg Extension Drop Set
+- [ ] Leg Extension Single-Leg
+- [ ] Leg Press
+- [ ] Leg Press Calf Raise
+- [ ] Leg Press Single-Leg
+- [ ] Machine Front Raise
+- [ ] Machine Lateral Raise
+- [ ] Machine Preacher Curl
+- [ ] Machine Pullover
+- [ ] Machine Rear Delt
+- [ ] Machine Seated Curl
+- [ ] Machine Shoulder Press
+- [ ] Machine Shoulder Press Neutral
+- [ ] Machine Shoulder Press Slow
+- [ ] Machine Shrug
+- [ ] Narrow-Stance Leg Press
+- [ ] Pec Deck / Cable Fly
+- [ ] Pec Deck Plate-Loaded
+- [ ] Pec Deck Rear
+- [ ] Pendulum Squat
+- [ ] Plate Curl
+- [ ] Plate Pinch Hold
+- [ ] Plate-Loaded Calf Raise
+- [ ] Plate-Loaded Hip Thrust Machine
+- [ ] Preacher Curl
+- [ ] Rear Delt Fly
+- [ ] Reverse Crunch Decline Bench
+- [ ] Reverse Hack Squat
+- [ ] Reverse Hyper
+- [ ] Reverse Hyperextension
+- [ ] Reverse Pec Deck
+- [ ] Roman Chair Back Extension
+- [ ] Roman Chair Sit-up
+- [ ] Seated Calf Raise Machine
+- [ ] Seated Leg Curl
+- [ ] Seated Single-Leg Calf Raise
+- [ ] Single-Arm Chest Press Machine
+- [ ] Single-Arm Machine Shoulder Press
+- [ ] Single-Leg Donkey Calf Raise
+- [ ] Single-Leg Smith Hip Thrust
+- [ ] Sissy Squat Machine
+- [ ] Sledgehammer Levering
+- [ ] Smith B-Stance Hip Thrust
+- [ ] Smith Behind-Neck Press
+- [ ] Smith Bent-Over Row
+- [ ] Smith Bulgarian Split Squat
+- [ ] Smith Close-Grip Bench
+- [ ] Smith Decline Bench
+- [ ] Smith Donkey Calf Raise
+- [ ] Smith Floor Press
+- [ ] Smith Front Squat
+- [ ] Smith Good Morning
+- [ ] Smith Hip Thrust
+- [ ] Smith Incline Bench
+- [ ] Smith Inverted Row
+- [ ] Smith Machine Bench
+- [ ] Smith Machine Bench Paused
+- [ ] Smith Machine Row
+- [ ] Smith Machine Shrug
+- [ ] Smith Machine Squat
+- [ ] Smith OHP
+- [ ] Smith OHP Seated
+- [ ] Smith Pin Press
+- [ ] Smith RDL
+- [ ] Smith Reverse Lunge
+- [ ] Smith Reverse-Grip Bench
+- [ ] Smith Seated Calf Raise
+- [ ] Smith Split Squat
+- [ ] Smith Standing Calf Raise
+- [ ] Smith Sumo Deadlift
+- [ ] Smith Wide-Grip Bench
+- [ ] Stability Ball Crunch
+- [ ] Stability Ball Pike
+- [ ] Stability Ball Rollout
+- [ ] Stability Ball Stir the Pot
+- [ ] Standing Calf Raise Machine
+- [ ] Standing Leg Curl
+- [ ] Standing Single-Leg Calf Raise
+- [ ] T-Bar Row
+- [ ] T-Bar Row Machine
+- [ ] Tempo Leg Curl
+- [ ] Tempo Leg Extension
+- [ ] Triceps Dip Machine
+- [ ] Triceps Press Machine
+- [ ] Vertical Hack Squat
+- [ ] Weighted Hyperextension
+- [ ] Wide-Stance Leg Press
+- [ ] Wrist Roller
+
