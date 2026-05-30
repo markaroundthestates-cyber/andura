@@ -13,7 +13,10 @@ import {
   MAINTAIN_BAND_KG,
   KCAL_PER_KG,
   MAX_LOSS_KG_PER_WEEK,
-  MAX_GAIN_KG_PER_WEEK,
+  CUT_DEFICIT_FRACTION_DEFAULT,
+  CUT_DEFICIT_FRACTION_MAX,
+  BULK_SURPLUS_FRACTION_DEFAULT,
+  STRENGTH_SURPLUS_FRACTION,
 } from '../../lib/goalPhaseModel';
 
 describe('targetDirection — master intent from target vs current weight', () => {
@@ -110,7 +113,7 @@ describe('deriveAutoPhase — target-driven + BF-driven sex-aware', () => {
   });
 });
 
-describe('sizeKcalForPhase — rate-capped, sign forced by phase', () => {
+describe('sizeKcalForPhase — %-of-TDEE adaptive, sign forced by phase', () => {
   const FLOOR = 1200;
   const base = { maintenanceTdee: 2800, kcalFloor: FLOOR };
 
@@ -122,50 +125,79 @@ describe('sizeKcalForPhase — rate-capped, sign forced by phase', () => {
 
   it('STRENGTH → slight surplus (+5%)', () => {
     const r = sizeKcalForPhase({ ...base, phase: 'STRENGTH', currentKg: 100, targetKg: null, daysRemaining: null });
-    expect(r.kcalTarget).toBe(Math.round(2800 * 1.05));
+    expect(r.kcalTarget).toBe(Math.round(2800 * (1 + STRENGTH_SURPLUS_FRACTION)));
   });
 
-  it('CUT no target → default 0.5 kg/wk deficit', () => {
+  it('CUT no target → default 20% of TDEE deficit', () => {
     const r = sizeKcalForPhase({ ...base, phase: 'CUT', currentKg: null, targetKg: null, daysRemaining: null });
-    expect(r.kcalTarget).toBe(2800 - Math.round((0.5 * KCAL_PER_KG) / 7));
+    expect(r.kcalTarget).toBe(Math.round(2800 * (1 - CUT_DEFICIT_FRACTION_DEFAULT)));
     expect(r.rateCapped).toBe(false);
   });
 
-  it('BULK no target → default 0.25 kg/wk surplus', () => {
+  it('BULK no target → default 12% of TDEE surplus', () => {
     const r = sizeKcalForPhase({ ...base, phase: 'BULK', currentKg: null, targetKg: null, daysRemaining: null });
-    expect(r.kcalTarget).toBe(2800 + Math.round((0.25 * KCAL_PER_KG) / 7));
+    expect(r.kcalTarget).toBe(Math.round(2800 * (1 + BULK_SURPLUS_FRACTION_DEFAULT)));
   });
 
-  it('aggressive loss target clamps to 1.5 kg/wk cap', () => {
-    // 110→62 in 4 days ≈ 84 kg/wk → cap 1.5 → -1650/day → 2800-1650=1150 < floor.
+  // ── Daniel worked checks 2026-05-30 (the bug + the new contract) ────────────
+  it('WORKED — 110kg male, TDEE ~2500, LOSE, no date → ~2000 (NOT 1200)', () => {
+    // 20% of 2500 = 500 deficit → 2000. The whole point: never floored here.
+    const r = sizeKcalForPhase({ maintenanceTdee: 2500, kcalFloor: FLOOR, phase: 'CUT', currentKg: 110, targetKg: 90, daysRemaining: null });
+    expect(r.kcalTarget).toBe(2000);
+    expect(r.dailyShift).toBe(-500);
+    expect(r.floored).toBe(false);
+  });
+
+  it('WORKED — small user TDEE 1500, LOSE, no date → 1200 (at floor, ok)', () => {
+    // 20% of 1500 = 300 → 1200 == floor.
+    const r = sizeKcalForPhase({ maintenanceTdee: 1500, kcalFloor: FLOOR, phase: 'CUT', currentKg: 60, targetKg: 50, daysRemaining: null });
+    expect(r.kcalTarget).toBe(1200);
+    expect(r.dailyShift).toBe(-300);
+    // 1500-300 = 1200 == floor exactly: lands ON the floor, not clamped below it.
+  });
+
+  it('WORKED — BULK 110kg, TDEE 2500, no date → 12% surplus → ~2800', () => {
+    const r = sizeKcalForPhase({ maintenanceTdee: 2500, kcalFloor: FLOOR, phase: 'BULK', currentKg: 110, targetKg: 120, daysRemaining: null });
+    expect(r.kcalTarget).toBe(Math.round(2500 * 1.12)); // 2800
+    expect(r.dailyShift).toBe(300);
+  });
+
+  it('aggressive loss date clamps to the 25% / 1.5kg-week caps', () => {
+    // 110→62 in 4 days → required ~92,000/day → clamped to min(25%TDEE, 1.5kg/wk).
     const r = sizeKcalForPhase({ ...base, phase: 'CUT', currentKg: 110, targetKg: 62, daysRemaining: 4 });
     expect(r.rateCapped).toBe(true);
-    expect(r.floored).toBe(true);
-    expect(r.kcalTarget).toBe(FLOOR);
-    const expectedCapDailyAbs = (MAX_LOSS_KG_PER_WEEK * KCAL_PER_KG) / 7;
-    expect(Math.abs(r.dailyShift)).toBeCloseTo(Math.round(expectedCapDailyAbs), 0);
+    // Binding cap = min(2800*0.25=700, 1.5*7700/7=1650) = 700 (% binds here).
+    expect(Math.abs(r.dailyShift)).toBe(Math.round(2800 * CUT_DEFICIT_FRACTION_MAX));
+    expect(r.kcalTarget).toBe(2800 - Math.round(2800 * CUT_DEFICIT_FRACTION_MAX));
   });
 
-  it('aggressive gain target clamps to 0.5 kg/wk cap', () => {
-    // 70→90 in 4 weeks = 5 kg/wk → cap 0.5 → +550/day surplus.
+  it('kg/week cap binds for a very-high-TDEE user (absolute-rate guard)', () => {
+    // TDEE 8000: 25% = 2000/day, but 1.5kg/wk = 1650/day → kg/week cap binds.
+    const r = sizeKcalForPhase({ maintenanceTdee: 8000, kcalFloor: FLOOR, phase: 'CUT', currentKg: 200, targetKg: 100, daysRemaining: 7 });
+    expect(r.rateCapped).toBe(true);
+    expect(Math.abs(r.dailyShift)).toBe(Math.round((MAX_LOSS_KG_PER_WEEK * KCAL_PER_KG) / 7));
+  });
+
+  it('aggressive gain date clamps (15% / 0.5kg-week caps)', () => {
+    // 70→90 in 4 weeks = 5 kg/wk → cap. min(2800*0.15=420, 0.5kg/wk=550)=420.
     const r = sizeKcalForPhase({ ...base, phase: 'BULK', currentKg: 70, targetKg: 90, daysRemaining: 28 });
     expect(r.rateCapped).toBe(true);
-    expect(r.dailyShift).toBe(Math.round((MAX_GAIN_KG_PER_WEEK * KCAL_PER_KG) / 7));
+    expect(r.dailyShift).toBe(Math.round(2800 * 0.15));
     expect(r.kcalTarget).toBeGreaterThan(2800);
   });
 
   it('REPRO — BULK with a BELOW-current target never flips to a deficit', () => {
-    // masa + target 90 from 110 over 16wk → BULK forces SURPLUS, rate-capped.
+    // masa + target 90 from 110 over 16wk → BULK forces SURPLUS (default %).
     const r = sizeKcalForPhase({ maintenanceTdee: 2400, kcalFloor: FLOOR, phase: 'BULK', currentKg: 110, targetKg: 90, daysRemaining: 112 });
     expect(r.dailyShift).toBeGreaterThan(0);
     expect(r.kcalTarget).toBeGreaterThan(2400);
   });
 
-  it('sustainable loss target uses the required rate (not capped)', () => {
-    // 5 kg over 10 weeks = 0.5 kg/wk (== cap edge, not over) → -550/day.
+  it('gentle loss date under both caps uses the date-required rate', () => {
+    // 5 kg over 10 weeks → required ≈ 550/day < min(25%*2800=700, 1650) → not capped.
     const r = sizeKcalForPhase({ ...base, phase: 'CUT', currentKg: 110, targetKg: 105, daysRemaining: 70 });
     expect(r.rateCapped).toBe(false);
-    expect(r.kcalTarget).toBe(2800 - Math.round((5 / 10 * KCAL_PER_KG) / 7));
+    expect(r.kcalTarget).toBe(2800 - Math.round((5 * KCAL_PER_KG) / 70));
   });
 
   it('floor holds — never below the sex-aware floor', () => {

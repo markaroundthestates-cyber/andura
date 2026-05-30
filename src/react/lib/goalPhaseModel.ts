@@ -18,10 +18,11 @@
 //      else BF-driven (sex-aware) from the body-fat estimate.
 //   4. phaseForGoal maps the committed goal → the phase-override token (so the
 //      badge reflects the active phase, never stale).
-//   5. Rate-capped kcal: maintenance TDEE + a directional shift sized to reach
-//      the target by the deadline, CAPPED at 1.5 kg/wk loss / 0.5 kg/wk gain,
-//      floored sex-aware. The phase direction sets the sign — a BULK goal is
-//      ALWAYS a surplus above maintenance (bug B can no longer happen).
+//   5. %-of-TDEE kcal: maintenance TDEE + a directional shift sized as a PERCENT
+//      of the user's own maintenance (adaptive — scales with the person), then
+//      ADDITIONALLY capped at 1.5 kg/wk loss / 0.5 kg/wk gain, floored sex-aware.
+//      The phase direction sets the sign — a BULK goal is ALWAYS a surplus above
+//      maintenance (bug B can no longer happen).
 
 import type { Goal } from '../stores/onboardingStore';
 
@@ -144,21 +145,36 @@ export function deriveAutoPhase({ direction, bfFraction, sex }: AutoPhaseInputs)
   return 'MAINTENANCE';
 }
 
-// ── Rate-capped kcal sizing ──────────────────────────────────────────────────
+// ── %-of-TDEE kcal sizing ────────────────────────────────────────────────────
 // Body-fat caloric density (kcal/kg) — classic 1kg fat ≈ 7700 kcal. Re-exported
 // here so the sizing math is self-contained (targetSafety holds the same const).
 export const KCAL_PER_KG = 7700;
 // Direction-asymmetric weekly rate caps (kg/week). Loss can be faster than gain:
 // a faster gain is just fat, a faster loss erodes muscle but the body tolerates
-// a larger deficit than it can use a surplus.
+// a larger deficit than it can use a surplus. These are a SECONDARY cap on top of
+// the % model (so a very high-TDEE person doesn't get an absurd absolute rate).
 export const MAX_LOSS_KG_PER_WEEK = 1.5;
 export const MAX_GAIN_KG_PER_WEEK = 0.5;
+
+// Adaptive deficit/surplus as a FRACTION of the user's own maintenance TDEE
+// (Daniel LOCK 2026-05-30). This scales with the person — a 110kg male (TDEE
+// ~2500) cutting at 20% loses 500 kcal/day → ~2000 kcal (NOT floored at 1200),
+// while a 1500-TDEE user cutting at 20% loses 300 → 1200 (at the floor, ok). A
+// FIXED kg/week rate would floor the big person and be impossible for the small.
+//   CUT  default 20% deficit, capped 25% max.
+//   BULK default 12% surplus, capped 15% max.
+//   STRENGTH ~maintenance: very slight +5% surplus (capped 5%).
+export const CUT_DEFICIT_FRACTION_DEFAULT = 0.20;
+export const CUT_DEFICIT_FRACTION_MAX = 0.25;
+export const BULK_SURPLUS_FRACTION_DEFAULT = 0.12;
+export const BULK_SURPLUS_FRACTION_MAX = 0.15;
+export const STRENGTH_SURPLUS_FRACTION = 0.05;
 
 export interface KcalSizingResult {
   kcalTarget: number;
   /** Daily shift vs maintenance (negative = deficit, positive = surplus). */
   dailyShift: number;
-  /** True when the weekly-rate cap reduced the shift (deadline too aggressive). */
+  /** True when a cap (the % cap OR the kg/week cap) reduced the shift. */
   rateCapped: boolean;
   /** True when the sex-aware kcal floor clamped the result. */
   floored: boolean;
@@ -177,17 +193,25 @@ export interface KcalSizingInputs {
 }
 
 /**
- * kcal = maintenance + a directional shift sized to reach the target by the
- * deadline, CAPPED to the weekly-rate limit, then floored. The PHASE direction
- * sets the sign — so a BULK goal is ALWAYS a surplus above maintenance and a CUT
- * is ALWAYS a deficit, regardless of how the raw target-math would land (bug B).
+ * kcal = maintenance + a directional shift sized as a PERCENT of the user's own
+ * maintenance TDEE (adaptive — scales with the person), then ADDITIONALLY capped
+ * to the weekly-rate limit, then floored. The PHASE direction sets the sign — so
+ * a BULK goal is ALWAYS a surplus above maintenance and a CUT is ALWAYS a deficit,
+ * regardless of how the raw target-math would land (bug B).
+ *
+ * Why % not a fixed kg/week rate (Daniel LOCK 2026-05-30): a fixed rate floors a
+ * big person (110kg male would get the 1200 hard floor) and is impossible for a
+ * small one (a 1500-TDEE user can't take a 1650 deficit). 20% of TDEE keeps the
+ * 110kg male at ~2000 and the small user at ~1200 (their floor), both sane.
  *
  * Sizing logic:
- *   - CUT / BULK with a real target + deadline → shift = Δkg×7700/days, but the
- *     |Δkg|/weeks rate is clamped to the cap, and the sign is forced by phase
- *     (a CUT can never surface a surplus even if target>current, and vice-versa).
- *   - CUT / BULK without a target/deadline → a sane default rate shift toward the
- *     phase direction (0.5kg/wk cut, 0.25kg/wk bulk) so the goal still bites.
+ *   - CUT / BULK without a target/deadline → DEFAULT % shift (20% deficit /
+ *     12% surplus) so the chosen phase bites at a sustainable, adaptive rate.
+ *   - CUT / BULK with a real target + deadline → size the shift to hit the target
+ *     by the date, but clamp to BOTH the % cap (25% deficit / 15% surplus) AND
+ *     the kg/week cap (1.5 loss / 0.5 gain). If the date is impossible within the
+ *     caps, use the binding cap (never exceed). Sign forced by phase (a CUT can
+ *     never surface a surplus even if target>current, and vice-versa).
  *   - MAINTENANCE → maintenance (shift 0). STRENGTH → slight surplus (+5%).
  *   - AUTO must NOT reach here unresolved — treated as MAINTENANCE defensively.
  * Pure.
@@ -206,12 +230,21 @@ export function sizeKcalForPhase(input: KcalSizingInputs): KcalSizingResult {
     return finalize(tdee, 0, false, kcalFloor);
   }
   if (phase === 'STRENGTH') {
-    return finalize(tdee, tdee * 0.05, false, kcalFloor);
+    return finalize(tdee, tdee * STRENGTH_SURPLUS_FRACTION, false, kcalFloor);
   }
 
   // CUT or BULK — directional. Sign forced by phase.
   const sign = phase === 'CUT' ? -1 : 1;
-  const cap = phase === 'CUT' ? MAX_LOSS_KG_PER_WEEK : MAX_GAIN_KG_PER_WEEK;
+  const fractionDefault =
+    phase === 'CUT' ? CUT_DEFICIT_FRACTION_DEFAULT : BULK_SURPLUS_FRACTION_DEFAULT;
+  const fractionMax = phase === 'CUT' ? CUT_DEFICIT_FRACTION_MAX : BULK_SURPLUS_FRACTION_MAX;
+  const kgPerWeekCap = phase === 'CUT' ? MAX_LOSS_KG_PER_WEEK : MAX_GAIN_KG_PER_WEEK;
+
+  // Absolute kcal/day ceilings from BOTH caps — the binding one is whichever is
+  // smaller for THIS user (the % cap usually binds; the kg/week cap protects
+  // very-high-TDEE users from an absurd absolute rate).
+  const maxAbsShiftPct = tdee * fractionMax;
+  const maxAbsShiftRate = (kgPerWeekCap * KCAL_PER_KG) / 7;
 
   const cur = Number(currentKg);
   const tgt = Number(targetKg);
@@ -220,35 +253,26 @@ export function sizeKcalForPhase(input: KcalSizingInputs): KcalSizingResult {
     Number.isFinite(cur) && cur > 0 && Number.isFinite(tgt) && tgt > 0 &&
     Number.isFinite(days) && days > 0;
 
-  let kgPerWeek: number;
+  let absShift: number;
   let rateCapped = false;
   if (haveTarget) {
-    // Magnitude required to reach the target by the deadline (always positive;
-    // the phase sign drives direction — a CUT toward a HIGHER target still cuts
-    // at the default rate, never flips to a surplus).
-    const weeks = days / 7;
-    const requiredAbs = Math.abs(tgt - cur) / weeks;
-    if (requiredAbs > cap) {
-      kgPerWeek = cap;
-      rateCapped = true;
-    } else if (requiredAbs <= 0) {
-      // Target equals current under a directional phase → default rate nudge.
-      kgPerWeek = defaultRate(phase);
+    // Size the deficit/surplus to hit the target by the deadline (kcal/day), then
+    // clamp to BOTH caps. The phase sign drives direction — a CUT toward a HIGHER
+    // target still cuts at the default %, never flips to a surplus.
+    const requiredAbs = (Math.abs(tgt - cur) * KCAL_PER_KG) / days;
+    if (requiredAbs <= 0) {
+      // Target equals current under a directional phase → default % nudge.
+      absShift = tdee * fractionDefault;
     } else {
-      kgPerWeek = requiredAbs;
+      absShift = Math.min(requiredAbs, maxAbsShiftPct, maxAbsShiftRate);
+      rateCapped = requiredAbs > absShift;
     }
   } else {
-    // No target/deadline → sane default rate so the chosen phase still bites.
-    kgPerWeek = defaultRate(phase);
+    // No target/deadline → default % shift so the chosen phase still bites.
+    absShift = tdee * fractionDefault;
   }
 
-  const dailyShift = sign * (kgPerWeek * KCAL_PER_KG) / 7;
-  return finalize(tdee, dailyShift, rateCapped, kcalFloor);
-}
-
-/** Default weekly rate when no target/deadline drives the sizing. */
-function defaultRate(phase: PhaseToken): number {
-  return phase === 'CUT' ? 0.5 : 0.25;
+  return finalize(tdee, sign * absShift, rateCapped, kcalFloor);
 }
 
 function finalize(

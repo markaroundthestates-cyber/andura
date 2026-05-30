@@ -107,9 +107,9 @@ describe('nutrition pipeline realwire — onboarding goal → kcal delta (NO eng
     const ctx = readBayesianNutritionContext();
     const r = await getNutritionTargetsToday(ctx);
     expect(r.source).toBe('engine'); // real engine produced the number, not fallback
-    // CUT default rate 0.5 kg/wk → -550/zi off the adapted estimate (NU multiplier).
+    // CUT default 20% deficit off the adapted estimate (NU multiplier, NU fixed rate).
     expect(r.kcalTarget).toBeLessThan(ADAPTED_MU);
-    expect(r.kcalTarget).toBeCloseTo(ADAPTED_MU - Math.round((0.5 * 7700) / 7), -1);
+    expect(r.kcalTarget).toBeCloseTo(Math.round(ADAPTED_MU * 0.8), -1);
   });
 
   it('bulk goal → target meaningfully ABOVE the adapted maintenance estimate', async () => {
@@ -118,9 +118,9 @@ describe('nutrition pipeline realwire — onboarding goal → kcal delta (NO eng
     const ctx = readBayesianNutritionContext();
     const r = await getNutritionTargetsToday(ctx);
     expect(r.source).toBe('engine');
-    // BULK default rate 0.25 kg/wk → +275/zi off the adapted estimate (NU multiplier).
+    // BULK default 12% surplus off the adapted estimate (NU multiplier, NU fixed rate).
     expect(r.kcalTarget).toBeGreaterThan(ADAPTED_MU);
-    expect(r.kcalTarget).toBeCloseTo(ADAPTED_MU + Math.round((0.25 * 7700) / 7), -1);
+    expect(r.kcalTarget).toBeCloseTo(Math.round(ADAPTED_MU * 1.12), -1);
   });
 
   it('different goals → different targets (cut < maintenance < bulk) through one real pipeline', async () => {
