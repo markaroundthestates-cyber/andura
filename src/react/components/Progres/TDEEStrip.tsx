@@ -47,6 +47,7 @@ import { getFatigue } from '../../lib/engineWrappers';
 import { readUserMaintenanceTDEE } from '../../lib/userTdee';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useNutritionStore } from '../../stores/nutritionStore';
+import { useAerobicStore, aerobicKcalForDate } from '../../stores/aerobicStore';
 import { t } from '../../../i18n/index.js';
 
 function todayIso(): string {
@@ -148,8 +149,24 @@ export function TDEEStrip(): JSX.Element {
     baseAutoKcal != null && target != null && target.source !== 'manual'
       ? easeDeficitForFatigue(baseAutoKcal, maintenanceKcal, fatigueKey)
       : { easedKcal: baseAutoKcal ?? 0, addedKcal: 0, eased: false };
-  // The kcal we DISPLAY as the auto target (post-ease).
-  const displayAutoKcal = target ? ease.easedKcal : null;
+
+  // ── Aerobic-class kcal → today's activity expenditure ────────────────────
+  // A logged aerobic class is energy the weight-trend Bayesian TDEE does NOT
+  // capture for THIS day (the engine calibrates slowly over a window, off the
+  // scale). So on a class day we add today's logged aerobic kcal to the
+  // DISPLAYED target as an explicit, labeled activity add-on: the user can eat
+  // a bit more / the deficit eases. It is honest (no double-count vs the
+  // weight-trend estimate — it's an on-top add, clearly attributed) and only
+  // ADDS, so the sex kcal floor (already baked into the engine target) holds.
+  // Applied to a genuine auto target only (a manual log already reflects intent).
+  const aerobicSessions = useAerobicStore((s) => s.sessions);
+  const aerobicKcalToday = aerobicKcalForDate(aerobicSessions, dateISO);
+  const aerobicAdd =
+    target != null && target.source !== 'manual' && aerobicKcalToday > 0
+      ? aerobicKcalToday
+      : 0;
+  // The kcal we DISPLAY as the auto target (post-ease + aerobic add-on).
+  const displayAutoKcal = target ? ease.easedKcal + aerobicAdd : null;
 
   // §F-pass2-tdeestrip-02 — current-vs-tinta comparison. Doar cand exista intake
   // logat manual AND tinta e engine/baseline genuina (source 'manual' = echo).
@@ -335,6 +352,18 @@ export function TDEEStrip(): JSX.Element {
           data-testid="tdee-fatigue-ease-note"
         >
           {t('progres.tdee.fatigueEaseNote', { kcal: fmtNum(ease.addedKcal) })}
+        </p>
+      )}
+
+      {/* Aerobic-class kcal add-on note — only when a class is logged today and
+          it raised the displayed target (honest, explicit attribution). */}
+      {aerobicAdd > 0 && (
+        <p
+          className="text-xs mt-2 leading-snug"
+          style={{ color: 'var(--aqua-deep)' }}
+          data-testid="tdee-aerobic-add-note"
+        >
+          {t('progres.tdee.aerobicAddNote', { kcal: fmtNum(aerobicAdd) })}
         </p>
       )}
 

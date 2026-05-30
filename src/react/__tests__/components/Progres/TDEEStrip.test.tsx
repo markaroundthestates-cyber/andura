@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
 import { useNutritionStore } from '../../../stores/nutritionStore';
+import { useAerobicStore } from '../../../stores/aerobicStore';
 import { getNutritionTargetTodayReal } from '../../../lib/bayesianNutritionAggregate';
 
 vi.mock('../../../lib/bayesianNutritionAggregate', () => ({
@@ -22,6 +23,7 @@ function todayIso(): string {
 beforeEach(() => {
   vi.clearAllMocks();
   useNutritionStore.getState().reset();
+  useAerobicStore.setState({ sessions: [], lastDuration: 50 });
 });
 
 describe('TDEEStrip — Wave C2 i18n EN default', () => {
@@ -138,5 +140,47 @@ describe('TDEEStrip — Wave C2 i18n EN default', () => {
     expect(msg.textContent).not.toMatch(/maintenance/i);
     // RO no-diacritics (D-LEGACY-064).
     expect(/[ăâîșțĂÂÎȘȚ]/.test(msg.textContent ?? '')).toBe(false);
+  });
+});
+
+// Aerobic-class kcal → nutrition (Daniel spec 2026-05-30). A logged class
+// today raises the displayed auto target by that kcal (explicit add-on note),
+// so the user can eat a bit more. No add when no class logged.
+describe('TDEEStrip — aerobic class kcal add-on', () => {
+  it('no aerobic note when no class logged today', async () => {
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-source')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('tdee-aerobic-add-note')).not.toBeInTheDocument();
+  });
+
+  it('a class logged today raises the displayed target + shows the add-on note', async () => {
+    // 300 kcal class today → target 2640 + 300 = 2940 displayed.
+    useAerobicStore.setState({
+      sessions: [{ date: todayIso(), type: 'spinning', minutes: 50, kcal: 300, ts: Date.now() }],
+      lastDuration: 50,
+    });
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-aerobic-add-note')).toBeInTheDocument();
+    });
+    // Displayed auto kcal hero = 2640 + 300 = 2940.
+    expect(screen.getByTestId('tdee-strip').textContent).toMatch(/2\.940\s*kcal/);
+    // Note attributes the +300 explicitly.
+    expect(screen.getByTestId('tdee-aerobic-add-note').textContent).toMatch(/300/);
+  });
+
+  it('aerobic add-on only ADDS — never lowers the target (floors hold)', async () => {
+    useAerobicStore.setState({
+      sessions: [{ date: todayIso(), type: 'aerobic', minutes: 50, kcal: 250, ts: Date.now() }],
+      lastDuration: 50,
+    });
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-aerobic-add-note')).toBeInTheDocument();
+    });
+    // 2640 + 250 = 2890 > base 2640 (strictly higher — add-on never reduces).
+    expect(screen.getByTestId('tdee-strip').textContent).toMatch(/2\.890\s*kcal/);
   });
 });

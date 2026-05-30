@@ -119,12 +119,12 @@ describe('Routing — top-level screens', () => {
 
   it('renders Onboarding step la /onboarding/3', () => {
     renderAt('/onboarding/3');
-    // Phase 5 task_14: Onboarding refactored with Big 6 hard typing — step 3
-    // renders goal selection cu "Ce vrei sa obtii?" heading. P-02: 8 pasi
-    // (inaltime step 7, summary step 8). Progress indicator (chat6) = brick
-    // "Pasul N" kicker + "N din TOTAL" counter (split din linia unica veche).
+    // Step 3 = training-type picker (Daniel spec 2026-05-30) "Ce faci la
+    // antrenament?". 9 pasi total (training-type inserted at 3 — goal/freq/exp/
+    // weight/height/summary shift +1; weight step 7, height step 8, summary 9).
+    // Progress indicator (chat6) = brick "Pasul N" kicker + "N din TOTAL" counter.
     expect(screen.getByText(/Pasul 3/i)).toBeInTheDocument();
-    expect(screen.getByText(/3 din 8/i)).toBeInTheDocument();
+    expect(screen.getByText(/3 din 9/i)).toBeInTheDocument();
   });
 });
 
@@ -155,7 +155,7 @@ describe('Routing — ProtectedRoute redirect', () => {
     useOnboardingStore.setState({ completed: false, completedAt: null });
     renderAt('/app/antrenor');
     expect(screen.getByText(/Pasul 1/i)).toBeInTheDocument();
-    expect(screen.getByText(/1 din 8/i)).toBeInTheDocument();
+    expect(screen.getByText(/1 din 9/i)).toBeInTheDocument();
     useAppStore.getState().setAuthenticated(false);
   });
 });

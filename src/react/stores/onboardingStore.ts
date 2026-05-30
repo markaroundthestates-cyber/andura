@@ -21,6 +21,14 @@ export type Goal = 'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta';
 export type LegacyGoal = 'definire' | 'sanatate' | 'longevitate';
 export type Frequency = '2' | '3' | '4' | '5';
 export type Experience = 'incepator' | 'intermediar' | 'avansat';
+/**
+ * Training type (Daniel spec 2026-05-30) — gates the whole experience. Many
+ * women train ONLY aerobic classes (no gym/weights); some do both. 'gym' is the
+ * legacy default (migration-safe: every pre-v6 user gets 'gym', the original
+ * gym-only experience). 'aerobic' = class-only (simplified Coach + class logger);
+ * 'both' = gym workouts PLUS aerobic class logging.
+ */
+export type TrainingType = 'gym' | 'aerobic' | 'both';
 
 export interface OnboardingData {
   age: number | null;
@@ -30,6 +38,19 @@ export interface OnboardingData {
   experience: Experience | null;
   weight: number | null;
   height: number | null;
+  /**
+   * Training type (Daniel spec 2026-05-30) — gates gym vs aerobic-class vs both
+   * experience. Default 'gym' (legacy/migration-safe — pre-v6 users keep the
+   * original gym-only flow). Set in onboarding (early step, after sex) +
+   * editable later in Cont > Profil.
+   *
+   * OPTIONAL on the interface (mirror targetWeight/targetDate): existing
+   * `{ age,...,height }` literal setState calls in tests + v3/v4/v5 migrate
+   * stay valid without an explicit `trainingType`. EMPTY seeds 'gym' at runtime
+   * and the v6 migrate spreads `...EMPTY` first, so every real read resolves to
+   * a concrete value; consumers still defensively read with `?? 'gym'`.
+   */
+  trainingType?: TrainingType;
   /**
    * Greutate tinta (kg) — smoke 2026-05-28 #16. Persistat aici ca sa influenteze
    * tinta de kcal (vezi engineWrappers.getNutritionTargetsToday: cand
@@ -205,6 +226,9 @@ const EMPTY: OnboardingData = {
   experience: null,
   weight: null,
   height: null,
+  // Daniel spec 2026-05-30 — training type gates the experience. Default 'gym'
+  // (the original gym-only flow) so legacy + migrated users are unchanged.
+  trainingType: 'gym',
   // Smoke 2026-05-28 #16 — tinta personala persistata (era doar form-state V1).
   targetWeight: null,
   targetDate: null,
@@ -296,7 +320,10 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
       // persisted goal='longevitate' migrated → 'mentenanta' via migrateLegacy-
       // Goal in v5 branch. Zero data loss, semantic continuity (ambele
       // MAINTENANCE phase deja).
-      version: 5,
+      // v6 (training-type 2026-05-30): trainingType added. Both migrate branches
+      // spread `...EMPTY` first → every pre-v6 user gets trainingType: 'gym'
+      // (the original gym-only experience), zero behavior change for them.
+      version: 6,
       // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
       // fields (NU actions). Match appStore + scheduleStore + workoutStore
       // existing pattern. data + completed + completedAt persisted; actions

@@ -508,3 +508,41 @@ describe('onboardingStore — reset clears bounds state', () => {
     expect(s.completedAt).toBeNull();
   });
 });
+
+// Training type (Daniel spec 2026-05-30) — gates gym vs aerobic vs both.
+describe('onboardingStore — trainingType', () => {
+  beforeEach(() => {
+    useOnboardingStore.getState().reset();
+    localStorage.clear();
+  });
+
+  it('defaults to gym (legacy/migration-safe)', () => {
+    expect(useOnboardingStore.getState().data.trainingType).toBe('gym');
+  });
+
+  it('setField stores aerobic + both', () => {
+    useOnboardingStore.getState().setField('trainingType', 'aerobic');
+    expect(useOnboardingStore.getState().data.trainingType).toBe('aerobic');
+    useOnboardingStore.getState().setField('trainingType', 'both');
+    expect(useOnboardingStore.getState().data.trainingType).toBe('both');
+  });
+
+  it('reset restores gym default', () => {
+    useOnboardingStore.getState().setField('trainingType', 'aerobic');
+    useOnboardingStore.getState().reset();
+    expect(useOnboardingStore.getState().data.trainingType).toBe('gym');
+  });
+
+  it('finalize ignores trainingType (always gym-safe, NOT a required Big 7 field)', () => {
+    useOnboardingStore.setState({
+      data: {
+        age: 28, sex: 'f', goal: 'slabire', frequency: '3',
+        experience: 'incepator', weight: 62, height: 165,
+        // no trainingType → EMPTY default 'gym' already seeded by reset above;
+        // finalize must still complete (trainingType is not a required field).
+      },
+    });
+    useOnboardingStore.getState().finalize();
+    expect(useOnboardingStore.getState().completed).toBe(true);
+  });
+});

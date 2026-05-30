@@ -174,6 +174,38 @@
     "readinessEmpty": "Log your first session to wake your readiness.",
     "header": {
       "dateSeparator": "·"
+    },
+    "aerobic": {
+      "ariaLabel": "Aerobic coach home",
+      "kicker": "Aerobic classes",
+      "subtitle": "Your aerobic-class companion.",
+      "weekKicker": "Classes this week",
+      "weekCount": "{count} classes",
+      "weekCountTarget": "{count} / {target} classes",
+      "logCta": "Log a class",
+      "loggerKicker": "Log a class",
+      "typeLabel": "Class type",
+      "durationLabel": "Duration (min)",
+      "durationAriaLabel": "Class duration in minutes",
+      "kcalPreview": "≈ {kcal} kcal",
+      "kcalUnknown": "Add your weight to estimate calories.",
+      "saveCta": "Save class",
+      "cancelCta": "Cancel",
+      "types": {
+        "aerobic": "Aerobic",
+        "step": "Step",
+        "zumba": "Zumba / Dance",
+        "spinning": "Spinning / Bike",
+        "alta": "Other class"
+      },
+      "readinessKicker": "How you feel",
+      "readinessQuestion": "How do you feel today?",
+      "readiness": {
+        "rested": "Rested",
+        "normal": "Normal",
+        "tired": "Tired"
+      },
+      "readinessTiredNote": "Take it easy today. We'll keep your nutrition a touch gentler."
     }
   },
 
@@ -571,6 +603,7 @@
       "proteinLabel": "Protein",
       "loggedNote": "Noted - your target sharpens as you log more about yourself.",
       "fatigueEaseNote": "High fatigue + a deficit: target eased {kcal} kcal toward maintenance to protect recovery.",
+      "aerobicAddNote": "Aerobic class today: +{kcal} kcal added to your target, so you can eat a bit more.",
       "sources": {
         "manual": "Set manually",
         "engineBn": "Adaptive estimate",
@@ -1278,6 +1311,7 @@
       "experienceAdvanced": "Advanced",
       "frequency": "Workouts per week",
       "frequencyShort": "{n}x/week",
+      "trainingType": "What you do",
       "goal": "Goal",
       "saveCta": "Save",
       "savedToast": "Saved",
@@ -1916,6 +1950,7 @@
     "toast": {
       "completeAge": "Complete your age.",
       "completeOption": "Pick an option.",
+      "completeTrainingType": "Pick what you do.",
       "completeGoal": "Pick a goal.",
       "completeFrequency": "Pick a frequency.",
       "completeLevel": "Pick a level.",
@@ -1948,19 +1983,23 @@
         "desc": "Affects TDEE estimate and recovery rates."
       },
       "3": {
+        "title": "What do you do?",
+        "desc": "We tailor the whole app to it. You can change it later."
+      },
+      "4": {
         "title": "What do you want to achieve?",
         "desc": "Pick one. You can change it later."
       },
-      "4": {
+      "5": {
         "title": "How often do you train?",
         "desc": "Days per week you can train.",
         "ariaLabelFmt": "{n} sessions per week"
       },
-      "5": {
+      "6": {
         "title": "How much experience do you have?",
         "desc": "Calibrates starting volume and progression."
       },
-      "6": {
+      "7": {
         "title": "How much do you weigh?",
         "desc": "We calculate real volume + tonnage.",
         "ariaLabel": "Weight in kilograms",
@@ -1969,7 +2008,7 @@
         "unit": "kg",
         "error": "Kg between 30 and 250."
       },
-      "7": {
+      "8": {
         "title": "How tall are you?",
         "desc": "Needed for the base calorie calculation (BMR).",
         "ariaLabel": "Height in centimeters",
@@ -1978,7 +2017,7 @@
         "unit": "cm",
         "error": "Height between 120 and 230 cm."
       },
-      "8": {
+      "9": {
         "title": "Check your data",
         "desc": "You can come back anytime to change it."
       }
@@ -1987,6 +2026,14 @@
       "sex": {
         "m": "Male (M)",
         "f": "Female (F)"
+      },
+      "trainingType": {
+        "gym": "Gym",
+        "gymSubtitle": "Weights and machines, structured workouts",
+        "aerobic": "Aerobic classes",
+        "aerobicSubtitle": "Aerobics, step, zumba, spinning",
+        "both": "Both",
+        "bothSubtitle": "Gym plus aerobic classes"
       },
       "goal": {
         "auto": "Auto",
@@ -2025,6 +2072,7 @@
       "fields": {
         "age": "Age",
         "sex": "Sex",
+        "trainingType": "Training",
         "goal": "Goal",
         "frequency": "Frequency",
         "experience": "Experience",
@@ -2034,6 +2082,9 @@
       "values": {
         "sexM": "Male",
         "sexF": "Female",
+        "trainingTypeGym": "Gym",
+        "trainingTypeAerobic": "Aerobic classes",
+        "trainingTypeBoth": "Both",
         "frequencyShort": "{n}/week",
         "experienceIncepator": "Beginner",
         "experienceIntermediar": "Intermediate",

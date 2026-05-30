@@ -1146,8 +1146,9 @@ describe('SPLASH+AUTH+ONB FINISH i18n — no RO leak under EN locale', () => {
   });
 
   // Onboarding uses useParams<{ step: string }>(); we need a router pattern
-  // with the `:step` param wildcard so all 8 steps actually surface step-N
-  // copy (NOT the step 1 fallback when the param is undefined).
+  // with the `:step` param wildcard so all 9 steps actually surface step-N
+  // copy (NOT the step 1 fallback when the param is undefined). Step 3 = the
+  // training-type picker (Daniel spec 2026-05-30); weight/height shift to 7/8.
   function renderOnboardingStep(step: number): ReturnType<typeof render> {
     return render(
       <MemoryRouter initialEntries={[`/onboarding/${step}`]}>
@@ -1159,8 +1160,8 @@ describe('SPLASH+AUTH+ONB FINISH i18n — no RO leak under EN locale', () => {
     );
   }
 
-  it.each([1, 2, 3, 4, 5, 6, 7, 8] as const)('Onboarding step %i renders EN-clean (title + helper + options)', (step) => {
-    // Seed full data for Step 8 (summary) so option values surface.
+  it.each([1, 2, 3, 4, 5, 6, 7, 8, 9] as const)('Onboarding step %i renders EN-clean (title + helper + options)', (step) => {
+    // Seed full data for Step 9 (summary) so option values surface.
     useOnboardingStore.setState({
       data: { age: 32, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 78, height: 175 },
       completed: false,
@@ -1176,16 +1177,16 @@ describe('SPLASH+AUTH+ONB FINISH i18n — no RO leak under EN locale', () => {
     assertNoRoLeak('Onboarding step 1 range error', container.textContent ?? '');
   });
 
-  it('Onboarding step 6 with out-of-range weight surfaces EN error helper', () => {
-    const { container } = renderOnboardingStep(6);
+  it('Onboarding step 7 with out-of-range weight surfaces EN error helper', () => {
+    const { container } = renderOnboardingStep(7);
     fireEvent.change(screen.getByTestId('onb-weight-input'), { target: { value: '20' } });
-    assertNoRoLeak('Onboarding step 6 range error', container.textContent ?? '');
+    assertNoRoLeak('Onboarding step 7 range error', container.textContent ?? '');
   });
 
-  it('Onboarding step 7 with out-of-range height surfaces EN error helper', () => {
-    const { container } = renderOnboardingStep(7);
+  it('Onboarding step 8 with out-of-range height surfaces EN error helper', () => {
+    const { container } = renderOnboardingStep(8);
     fireEvent.change(screen.getByTestId('onb-height-input'), { target: { value: '300' } });
-    assertNoRoLeak('Onboarding step 7 range error', container.textContent ?? '');
+    assertNoRoLeak('Onboarding step 8 range error', container.textContent ?? '');
   });
 });
 

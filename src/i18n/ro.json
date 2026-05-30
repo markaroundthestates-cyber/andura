@@ -174,6 +174,38 @@
     "readinessEmpty": "Logheaza prima sesiune ca sa-ti trezesti readiness-ul.",
     "header": {
       "dateSeparator": "·"
+    },
+    "aerobic": {
+      "ariaLabel": "Antrenor aerobic home",
+      "kicker": "Clase aerobic",
+      "subtitle": "Insotitorul tau de clase aerobic.",
+      "weekKicker": "Clase saptamana asta",
+      "weekCount": "{count} clase",
+      "weekCountTarget": "{count} / {target} clase",
+      "logCta": "Logheaza o clasa",
+      "loggerKicker": "Logheaza o clasa",
+      "typeLabel": "Tip clasa",
+      "durationLabel": "Durata (min)",
+      "durationAriaLabel": "Durata clasei in minute",
+      "kcalPreview": "≈ {kcal} kcal",
+      "kcalUnknown": "Adauga-ti greutatea ca sa estimam caloriile.",
+      "saveCta": "Salveaza clasa",
+      "cancelCta": "Anuleaza",
+      "types": {
+        "aerobic": "Aerobic",
+        "step": "Step",
+        "zumba": "Zumba / Dans",
+        "spinning": "Spinning / Bicicleta",
+        "alta": "Alta clasa"
+      },
+      "readinessKicker": "Cum te simti",
+      "readinessQuestion": "Cum te simti azi?",
+      "readiness": {
+        "rested": "Odihnita",
+        "normal": "Normal",
+        "tired": "Obosita"
+      },
+      "readinessTiredNote": "Ia-o usor azi. Tinem nutritia un pic mai bland."
     }
   },
 
@@ -571,6 +603,7 @@
       "proteinLabel": "Proteine",
       "loggedNote": "Am notat. Tinta se ajusteaza pe masura ce loghezi.",
       "fatigueEaseNote": "Oboseala mare + deficit: tinta urcata cu {kcal} kcal spre mentenanta ca sa protejam recuperarea.",
+      "aerobicAddNote": "Clasa aerobic azi: +{kcal} kcal adaugate la tinta, deci poti manca un pic mai mult.",
       "sources": {
         "manual": "Setat manual",
         "engineBn": "Estimare adaptiva",
@@ -1278,6 +1311,7 @@
       "experienceAdvanced": "Avansat",
       "frequency": "Antrenamente pe saptamana",
       "frequencyShort": "{n}x/sapt",
+      "trainingType": "Ce faci",
       "goal": "Obiectiv",
       "saveCta": "Salveaza",
       "savedToast": "Salvat",
@@ -1916,6 +1950,7 @@
     "toast": {
       "completeAge": "Completeaza varsta.",
       "completeOption": "Alege o optiune.",
+      "completeTrainingType": "Alege ce faci.",
       "completeGoal": "Alege un obiectiv.",
       "completeFrequency": "Alege frecventa.",
       "completeLevel": "Alege nivelul.",
@@ -1948,19 +1983,23 @@
         "desc": "Influenteaza estimarea TDEE si ratele de recuperare."
       },
       "3": {
+        "title": "Ce faci la antrenament?",
+        "desc": "Adaptam toata aplicatia dupa asta. Poti schimba mai tarziu."
+      },
+      "4": {
         "title": "Ce vrei sa obtii?",
         "desc": "Alegi unul. Poti schimba mai tarziu."
       },
-      "4": {
+      "5": {
         "title": "Cat de des te antrenezi?",
         "desc": "Zile pe saptamana in care poti sa te antrenezi.",
         "ariaLabelFmt": "{n} sesiuni pe saptamana"
       },
-      "5": {
+      "6": {
         "title": "Cata experienta ai?",
         "desc": "Calibram volumul si progresia de start."
       },
-      "6": {
+      "7": {
         "title": "Cat cantaresti?",
         "desc": "Calculam volum + tonaj real.",
         "ariaLabel": "Greutate in kilograme",
@@ -1969,7 +2008,7 @@
         "unit": "kg",
         "error": "Kg intre 30 si 250."
       },
-      "7": {
+      "8": {
         "title": "Cat esti de inalt?",
         "desc": "Necesar pentru calculul caloriilor de baza (BMR).",
         "ariaLabel": "Inaltime in centimetri",
@@ -1978,7 +2017,7 @@
         "unit": "cm",
         "error": "Inaltime intre 120 si 230 cm."
       },
-      "8": {
+      "9": {
         "title": "Verifica datele",
         "desc": "Poti reveni oricand sa schimbi."
       }
@@ -1987,6 +2026,14 @@
       "sex": {
         "m": "Barbat (M)",
         "f": "Femeie (F)"
+      },
+      "trainingType": {
+        "gym": "Sala",
+        "gymSubtitle": "Greutati si aparate, antrenamente structurate",
+        "aerobic": "Clase aerobic",
+        "aerobicSubtitle": "Aerobic, step, zumba, spinning",
+        "both": "Ambele",
+        "bothSubtitle": "Sala plus clase aerobic"
       },
       "goal": {
         "auto": "Auto",
@@ -2025,6 +2072,7 @@
       "fields": {
         "age": "Varsta",
         "sex": "Sex",
+        "trainingType": "Antrenament",
         "goal": "Obiectiv",
         "frequency": "Frecventa",
         "experience": "Experienta",
@@ -2034,6 +2082,9 @@
       "values": {
         "sexM": "Barbat",
         "sexF": "Femeie",
+        "trainingTypeGym": "Sala",
+        "trainingTypeAerobic": "Clase aerobic",
+        "trainingTypeBoth": "Ambele",
         "frequencyShort": "{n}/sapt",
         "experienceIncepator": "Incepator",
         "experienceIntermediar": "Intermediar",

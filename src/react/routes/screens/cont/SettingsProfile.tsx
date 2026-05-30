@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { useOnboardingStore, validateOnboardingField } from '../../../stores/onboardingStore';
-import type { Sex, Frequency, Experience, OnboardingData } from '../../../stores/onboardingStore';
+import type { Sex, Frequency, Experience, TrainingType, OnboardingData } from '../../../stores/onboardingStore';
 import { useProgresStore, latestBodyMeasurements } from '../../../stores/progresStore';
 import { DB } from '../../../../db.js';
 import { gotoPath } from '../../../lib/navigation';
@@ -592,6 +592,23 @@ export function SettingsProfile(): JSX.Element {
           {t('settings.profile.sectionTraining')}
         </p>
         <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
+          {/* Training type toggle (Daniel spec 2026-05-30) — change gym/aerobic/
+              both later. Reuses the onboarding option labels. Skip-auth safe:
+              writes onboardingStore.data (local, per-UID), same path as the rest
+              of this form. */}
+          <SelectRow label={t('settings.profile.trainingType')} htmlFor="profile-training-type-select">
+            <select
+              id="profile-training-type-select"
+              value={draft.trainingType ?? 'gym'}
+              onChange={(e) => update('trainingType', e.target.value as TrainingType)}
+              data-testid="profile-training-type-select"
+              className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
+            >
+              <option value="gym">{t('onboarding.options.trainingType.gym')}</option>
+              <option value="aerobic">{t('onboarding.options.trainingType.aerobic')}</option>
+              <option value="both">{t('onboarding.options.trainingType.both')}</option>
+            </select>
+          </SelectRow>
           <SelectRow label={t('settings.profile.frequency')} htmlFor="profile-frequency-select">
             <select
               id="profile-frequency-select"
