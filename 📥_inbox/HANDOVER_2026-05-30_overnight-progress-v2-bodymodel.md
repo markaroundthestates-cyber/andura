@@ -69,3 +69,17 @@ Daniel s-a trezit, a zis "push pe live am zis" → **PUSHAT** (`c6cf8135..bcd15d
 **Verificare deploy:** dupa push, un agent asteapta propagarea + smoke live andura.app (consola curata + markerii noului build pe Progress + cancel→readiness-empty live). gh nu-i pe PATH + repo privat → NU pot citi eu Actions; daca runul Validate `ade4a938` e tot rosu, paste si repar.
 
 — Co-CTO
+
+---
+
+## UPDATE 2 — goal/phase gating model (Daniel live la sala → PUSHED `c39bd1d9`)
+
+Daniel a prins la sala: pe "Muscle mass" + target weight 90kg (de la 110) → recomanda ~2200 kcal (DEFICIT, gresit pt masa) + badge-ul "PHASE: AUTO" ramanea stale. Plus phases buggy in general. **Root (diagnosticat):** (A) `ProgramChangeConfirm` seta doar `goal`, niciodata `phase-override` → badge stale; (B) in precedenta kcal, target-weight (90<110→deficit) OUTRANK-uia + arunca multiplicatorul de masa → 2200.
+
+Daniel a gandit + LOCKED un model coerent (gating, NU warning): **target weight gateaza fazele selectabile** — LOSE→{Auto, Cut/Lose-fat}; MAINTAIN→{Auto, Maintain, Strength}; GAIN→{Auto, Muscle-mass, Strength}; restul gri+neselectabile; schimbi tinta → auto-switch pe Auto + prompt. Asa **contradictia e imposibila din UI** (nu poti alege masa cand vrei sa slabesti). **AUTO = core** (deriva faza din directia tintei, sau BF sex-aware cand n-ai tinta: B>15%cut/<12%build, F>25%/<22%). **kcal plafonat:** dimensionat sa ajungi la tinta pana la data, dar cap ≤1.5kg/sapt slabit / ≤0.5kg/sapt pus, floors 1200B/1000F intacte. Faza forteaza semnul (cut=deficit, build=surplus). **2200 reparat:** masa+target-90 acum → ~2950 surplus. Files: `goalPhaseModel.ts` (nou), `engineWrappers.ts`, `ObiectivGoalCard.tsx`, `ProgramChangeConfirm.tsx`, i18n. **5599 verzi**, verificat real (typecheck/lint/build fresh). **PUSHED** `548240e5..c39bd1d9`.
+
+**Tradeoff minor deschis (decizia Daniel, ne-blocant):** pragurile BF din gating (15B/25F) sunt in contractul de derivare, dar pipeline-ul real de kcal reutilizeaza detectorul Engine #2 existent (25%) ca sa nu-l regresez — pt cazul condus-de-tinta nu conteaza; swap de o linie daca Daniel vrea pragurile stricte si in pipeline.
+
+**Lectie CI (importanta):** NU declar "Actions verde" dedus din Deploy (workflow separat). Validate = typecheck+unit+build; tsc incremental local poate masca ce CI fresh prinde (am sters .tsbuildinfo + rulez cei 4 pasi fresh inainte de fiecare push). Stryker nightly = ne-blocant (continue-on-error). gh indisponibil + repo privat = NU pot citi Actions direct.
+
+— Co-CTO
