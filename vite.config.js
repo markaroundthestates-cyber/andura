@@ -68,7 +68,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,webp}'],
         // LOCK V1 D060 — PWA quadruple optimization §3 SW precache excludes (DECISIONS.md §D060)
         // Perf chat 5 HIGH ROI #3 (ROUTE_LAZY_LOAD_INVESTIGATION) — exclude
         // Sentry chunk din precache install. Sentry lazy import pe opt-in
