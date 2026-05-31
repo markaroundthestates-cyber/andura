@@ -43,9 +43,11 @@ beforeEach(() => {
 });
 
 describe('ObiectivCard — render + interactions', () => {
-  it('renders heading "Obiectiv"', () => {
+  it('is labelled "Obiectiv" for assistive tech (no visible duplicate heading)', () => {
+    // Fix A: the internal "Obiectiv" header was removed (the Progres zone
+    // eyebrow already says it). The card keeps an accessible name via aria-label.
     renderCard();
-    expect(screen.getByText('Obiectiv')).toBeInTheDocument();
+    expect(screen.getByLabelText('Obiectiv')).toBeInTheDocument();
   });
 
   it('renders greutate tinta + pana in inputs', () => {

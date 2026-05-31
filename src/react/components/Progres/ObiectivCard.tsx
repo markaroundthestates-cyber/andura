@@ -16,7 +16,6 @@
 // Persistence: progresStore.setTargetObiectiv (zustand persist localStorage).
 
 import type { JSX } from 'react';
-import { Target } from 'lucide-react';
 import { useProgresStore } from '../../stores/progresStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { getCurrentWeightKg } from '../../lib/userTdee';
@@ -73,15 +72,8 @@ export function ObiectivCard(): JSX.Element {
     <section
       className="mb-5"
       data-testid="obiectiv-card"
-      aria-labelledby="obiectiv-card-heading"
+      aria-label={t('obiectiv.heading')}
     >
-      <p
-        id="obiectiv-card-heading"
-        className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2 flex items-center gap-1.5"
-      >
-        <Target className="w-3.5 h-3.5" aria-hidden="true" />
-        {t('obiectiv.heading')}
-      </p>
       <div className="pulse-card overflow-hidden">
         <label className="flex items-center justify-between px-4 py-3 border-b border-line">
           <span className="text-sm text-ink">{t('obiectiv.targetWeightLabel')}</span>
