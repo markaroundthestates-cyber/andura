@@ -47,7 +47,9 @@ describe('Privacy page /privacy', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toMatch(/Privacy policy/i);
     expect(screen.getByText(/Your data stays on your phone/i)).toBeInTheDocument();
     expect(screen.getByText(/ZERO advertising/i)).toBeInTheDocument();
-    expect(screen.getByText(/GDPR/i)).toBeInTheDocument();
+    // GDPR now appears in multiple sections (legal basis + your rights) after
+    // the full GDPR expansion, so assert at least one match rather than exactly one.
+    expect(screen.getAllByText(/GDPR/i).length).toBeGreaterThan(0);
   });
 
   it('has a back affordance', () => {

@@ -52,6 +52,20 @@ export function Terms(): JSX.Element {
           </p>
 
           <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.termsEligibilityHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.termsEligibilityBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.termsServiceHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.termsServiceBody')}
+            </p>
+          </div>
+
+          <div>
             <h2 className="text-base font-semibold mb-1.5">{t('legalPage.termsRecsHeading')}</h2>
             <p className="text-ink2">
               {t('legalPage.termsRecsBody')}
@@ -83,6 +97,48 @@ export function Terms(): JSX.Element {
             <h2 className="text-base font-semibold mb-1.5">{t('legalPage.termsBetaHeading')}</h2>
             <p className="text-ink2">
               {t('legalPage.termsBetaBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.termsWarrantyHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.termsWarrantyBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.termsLiabilityHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.termsLiabilityBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.termsIpHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.termsIpBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.termsTerminationHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.termsTerminationBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.termsLawHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.termsLawBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.termsChangesHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.termsChangesBody')}
             </p>
           </div>
 

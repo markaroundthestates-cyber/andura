@@ -50,9 +50,44 @@ export function Privacy(): JSX.Element {
           </p>
 
           <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyControllerHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.privacyControllerBody')}
+            </p>
+          </div>
+
+          <div>
             <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyCollectHeading')}</h2>
             <p className="text-ink2">
               {t('legalPage.privacyCollectBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyBasisHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.privacyBasisBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyStorageHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.privacyStorageBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyProcessorsHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.privacyProcessorsBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyRetentionHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.privacyRetentionBody')}
             </p>
           </div>
 
@@ -64,9 +99,37 @@ export function Privacy(): JSX.Element {
           </div>
 
           <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyCookiesHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.privacyCookiesBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyChildrenHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.privacyChildrenBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacySecurityHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.privacySecurityBody')}
+            </p>
+          </div>
+
+          <div>
             <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyRightsHeading')}</h2>
             <p className="text-ink2">
               {t('legalPage.privacyRightsBody')}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-1.5">{t('legalPage.privacyChangesHeading')}</h2>
+            <p className="text-ink2">
+              {t('legalPage.privacyChangesBody')}
             </p>
           </div>
 
