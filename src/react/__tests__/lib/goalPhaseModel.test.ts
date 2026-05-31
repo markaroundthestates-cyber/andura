@@ -12,9 +12,7 @@ import {
   sizeKcalForPhase,
   MAINTAIN_BAND_KG,
   KCAL_PER_KG,
-  MAX_LOSS_KG_PER_WEEK,
   CUT_DEFICIT_FRACTION_DEFAULT,
-  CUT_DEFICIT_FRACTION_MAX,
   BULK_SURPLUS_FRACTION_DEFAULT,
   STRENGTH_SURPLUS_FRACTION,
 } from '../../lib/goalPhaseModel';
@@ -162,28 +160,35 @@ describe('sizeKcalForPhase — %-of-TDEE adaptive, sign forced by phase', () => 
     expect(r.dailyShift).toBe(300);
   });
 
-  it('aggressive loss date clamps to the 25% / 1.5kg-week caps', () => {
-    // 110→62 in 4 days → required ~92,000/day → clamped to min(25%TDEE, 1.5kg/wk).
+  // CEO LOCK 2026-05-31 — the rate caps (25% / 1.5kg-wk loss, 15% / 0.5kg-wk gain)
+  // were REMOVED. An aggressive goal+deadline drives the deficit/surplus directly;
+  // the sex kcal floor is the SOLE limit. These were the old "capped" cases —
+  // updated to assert the new floor-only behavior (rateCapped never fires).
+  it('aggressive loss date is NOT rate-capped — drives to the floor', () => {
+    // 110→62 in 4 days → required ~92,000/day deficit. No rate cap → the shift
+    // drives the target far below the floor, so it lands EXACTLY at the floor.
     const r = sizeKcalForPhase({ ...base, phase: 'CUT', currentKg: 110, targetKg: 62, daysRemaining: 4 });
-    expect(r.rateCapped).toBe(true);
-    // Binding cap = min(2800*0.25=700, 1.5*7700/7=1650) = 700 (% binds here).
-    expect(Math.abs(r.dailyShift)).toBe(Math.round(2800 * CUT_DEFICIT_FRACTION_MAX));
-    expect(r.kcalTarget).toBe(2800 - Math.round(2800 * CUT_DEFICIT_FRACTION_MAX));
+    expect(r.rateCapped).toBe(false);
+    expect(r.floored).toBe(true);
+    expect(r.kcalTarget).toBe(FLOOR);
   });
 
-  it('kg/week cap binds for a very-high-TDEE user (absolute-rate guard)', () => {
-    // TDEE 8000: 25% = 2000/day, but 1.5kg/wk = 1650/day → kg/week cap binds.
+  it('aggressive loss for a very-high-TDEE user stays above the floor (no cap)', () => {
+    // TDEE 8000, 200→100 in 7 days → required ~110,000/day → floored. No kg/week cap.
     const r = sizeKcalForPhase({ maintenanceTdee: 8000, kcalFloor: FLOOR, phase: 'CUT', currentKg: 200, targetKg: 100, daysRemaining: 7 });
-    expect(r.rateCapped).toBe(true);
-    expect(Math.abs(r.dailyShift)).toBe(Math.round((MAX_LOSS_KG_PER_WEEK * KCAL_PER_KG) / 7));
+    expect(r.rateCapped).toBe(false);
+    expect(r.floored).toBe(true);
+    expect(r.kcalTarget).toBe(FLOOR);
   });
 
-  it('aggressive gain date clamps (15% / 0.5kg-week caps)', () => {
-    // 70→90 in 4 weeks = 5 kg/wk → cap. min(2800*0.15=420, 0.5kg/wk=550)=420.
+  it('aggressive gain date is NOT rate-capped — surplus drives directly', () => {
+    // 70→90 in 4 weeks = 5 kg/wk → required 20*7700/28 = 5500/day surplus, applied
+    // directly (no 15% / 0.5kg-wk cap). Target = 2800 + 5500 = 8300.
+    const required = Math.round((20 * KCAL_PER_KG) / 28);
     const r = sizeKcalForPhase({ ...base, phase: 'BULK', currentKg: 70, targetKg: 90, daysRemaining: 28 });
-    expect(r.rateCapped).toBe(true);
-    expect(r.dailyShift).toBe(Math.round(2800 * 0.15));
-    expect(r.kcalTarget).toBeGreaterThan(2800);
+    expect(r.rateCapped).toBe(false);
+    expect(r.dailyShift).toBe(required);
+    expect(r.kcalTarget).toBe(2800 + required);
   });
 
   it('REPRO — BULK with a BELOW-current target never flips to a deficit', () => {
@@ -193,8 +198,8 @@ describe('sizeKcalForPhase — %-of-TDEE adaptive, sign forced by phase', () => 
     expect(r.kcalTarget).toBeGreaterThan(2400);
   });
 
-  it('gentle loss date under both caps uses the date-required rate', () => {
-    // 5 kg over 10 weeks → required ≈ 550/day < min(25%*2800=700, 1650) → not capped.
+  it('loss date uses the date-required rate (drives the deficit directly)', () => {
+    // 5 kg over 10 weeks → required ≈ 550/day deficit → 2800 - 550 (above floor).
     const r = sizeKcalForPhase({ ...base, phase: 'CUT', currentKg: 110, targetKg: 105, daysRemaining: 70 });
     expect(r.rateCapped).toBe(false);
     expect(r.kcalTarget).toBe(2800 - Math.round((5 * KCAL_PER_KG) / 70));
@@ -203,6 +208,53 @@ describe('sizeKcalForPhase — %-of-TDEE adaptive, sign forced by phase', () => 
   it('floor holds — never below the sex-aware floor', () => {
     const r = sizeKcalForPhase({ maintenanceTdee: 1500, kcalFloor: 1000, phase: 'CUT', currentKg: 60, targetKg: 50, daysRemaining: 7 });
     expect(r.kcalTarget).toBeGreaterThanOrEqual(1000);
+  });
+
+  // ── CEO LOCK 2026-05-31 — sex floor is the SOLE safety limit ────────────────
+  // The recommendation is goal+deadline-driven and as aggressive as the goal
+  // demands. The ONLY clamp is the sex kcal floor (women 1000 / men 1200). These
+  // assert the two founder repro cases land EXACTLY at the floor (the goal would
+  // require eating below the safe minimum, so we limit UP to it).
+  it('CASE A — woman aggressive deadline → floored to 1000 exactly', () => {
+    // F 160/78 → 60kg by ~Aug (≈92 days): required ~1506/day deficit on a ~1542
+    // maintenance → far below 1000 → floored to the female minimum.
+    const r = sizeKcalForPhase({ maintenanceTdee: 1542, kcalFloor: 1000, phase: 'CUT', currentKg: 78, targetKg: 60, daysRemaining: 92 });
+    expect(r.kcalTarget).toBe(1000);
+    expect(r.floored).toBe(true);
+    expect(r.rateCapped).toBe(false);
+  });
+
+  it('CASE B — man aggressive deadline → floored to 1200 exactly', () => {
+    // M 181/108 → 90kg by ~Aug (≈92 days): required ~1506/day deficit on a ~2400
+    // maintenance → below 1200 → floored to the male minimum.
+    const r = sizeKcalForPhase({ maintenanceTdee: 2400, kcalFloor: 1200, phase: 'CUT', currentKg: 108, targetKg: 90, daysRemaining: 92 });
+    expect(r.kcalTarget).toBe(1200);
+    expect(r.floored).toBe(true);
+    expect(r.rateCapped).toBe(false);
+  });
+
+  it('BULLETPROOF — never below the sex floor for ANY aggressive input', () => {
+    // Sweep extreme deadlines / weights / TDEE — the output must always be >= the
+    // floor (women 1000 / men 1200). The floor is the sole, inviolable limit.
+    for (const floor of [1000, 1200]) {
+      for (const tdee of [900, 1300, 2000, 4741]) {
+        for (const days of [1, 3, 7, 30]) {
+          for (const [cur, tgt] of [[78, 50], [250, 60], [60, 40]] as const) {
+            const r = sizeKcalForPhase({ maintenanceTdee: tdee, kcalFloor: floor, phase: 'CUT', currentKg: cur, targetKg: tgt, daysRemaining: days });
+            expect(r.kcalTarget).toBeGreaterThanOrEqual(floor);
+          }
+        }
+      }
+    }
+  });
+
+  it('BULLETPROOF — degrades to the safe band on invalid floor/shift input', () => {
+    // An invalid floor (NaN / <=0) must NOT let the output fall below the safe
+    // band — it degrades to the conservative male minimum (1200), never lower.
+    const rNaN = sizeKcalForPhase({ maintenanceTdee: 1500, kcalFloor: Number.NaN, phase: 'CUT', currentKg: 78, targetKg: 50, daysRemaining: 3 });
+    expect(rNaN.kcalTarget).toBeGreaterThanOrEqual(1200);
+    const rZero = sizeKcalForPhase({ maintenanceTdee: 1500, kcalFloor: 0, phase: 'CUT', currentKg: 78, targetKg: 50, daysRemaining: 3 });
+    expect(rZero.kcalTarget).toBeGreaterThanOrEqual(1200);
   });
 
   // ── Extreme bodyweight invariant (250kg male repro 2026-05-30) ──────────────

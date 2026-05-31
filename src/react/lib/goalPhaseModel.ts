@@ -18,11 +18,13 @@
 //      else BF-driven (sex-aware) from the body-fat estimate.
 //   4. phaseForGoal maps the committed goal → the phase-override token (so the
 //      badge reflects the active phase, never stale).
-//   5. %-of-TDEE kcal: maintenance TDEE + a directional shift sized as a PERCENT
-//      of the user's own maintenance (adaptive — scales with the person), then
-//      ADDITIONALLY capped at 1.5 kg/wk loss / 0.5 kg/wk gain, floored sex-aware.
-//      The phase direction sets the sign — a BULK goal is ALWAYS a surplus above
-//      maintenance (bug B can no longer happen).
+//   5. kcal sizing: a target+deadline drives the deficit/surplus DIRECTLY (as
+//      aggressive as the goal demands — CEO LOCK 2026-05-31); no target → a
+//      default %-of-maintenance shift so the phase still bites. The result is then
+//      floored sex-aware (women 1000 / men 1200) — the SOLE safety limit (the
+//      intermediate 25% / 1.5kg-wk rate caps were removed). The phase direction
+//      sets the sign — a BULK goal is ALWAYS a surplus above maintenance (bug B
+//      can no longer happen).
 
 import type { Goal } from '../stores/onboardingStore';
 
@@ -149,34 +151,40 @@ export function deriveAutoPhase({ direction, bfFraction, sex }: AutoPhaseInputs)
 // Body-fat caloric density (kcal/kg) — classic 1kg fat ≈ 7700 kcal. Re-exported
 // here so the sizing math is self-contained (targetSafety holds the same const).
 export const KCAL_PER_KG = 7700;
-// Direction-asymmetric weekly rate caps (kg/week). Loss can be faster than gain:
-// a faster gain is just fat, a faster loss erodes muscle but the body tolerates
-// a larger deficit than it can use a surplus. These are a SECONDARY cap on top of
-// the % model (so a very high-TDEE person doesn't get an absurd absolute rate).
-export const MAX_LOSS_KG_PER_WEEK = 1.5;
-export const MAX_GAIN_KG_PER_WEEK = 0.5;
 
-// Adaptive deficit/surplus as a FRACTION of the user's own maintenance TDEE
-// (Daniel LOCK 2026-05-30). This scales with the person — a 110kg male (TDEE
-// ~2500) cutting at 20% loses 500 kcal/day → ~2000 kcal (NOT floored at 1200),
-// while a 1500-TDEE user cutting at 20% loses 300 → 1200 (at the floor, ok). A
-// FIXED kg/week rate would floor the big person and be impossible for the small.
-//   CUT  default 20% deficit, capped 25% max.
-//   BULK default 12% surplus, capped 15% max.
-//   STRENGTH ~maintenance: very slight +5% surplus (capped 5%).
+// Default deficit/surplus as a FRACTION of the user's own maintenance TDEE, used
+// ONLY when there is NO target+deadline (a phase still needs a sane rate to bite
+// without a goal). This scales with the person — a 110kg male (TDEE ~2500) cutting
+// at 20% loses 500 kcal/day → ~2000 kcal, while a 1500-TDEE user cutting at 20%
+// loses 300 → 1200 (at the floor, ok).
+//
+// CEO DECISION 2026-05-31 (LOCKED) — when a target+deadline IS set, the deficit/
+// surplus is GOAL-DRIVEN and as aggressive as the goal demands: the deadline
+// `requiredAbs` shift drives the target DIRECTLY. The old intermediate caps (25%
+// deficit + 1.5kg/wk loss / 15% surplus + 0.5kg/wk gain) are REMOVED — they capped
+// aggressiveness above the safe minimum and made the app useless for users with
+// ambitious goals. The ONLY remaining safety limit is the sex kcal floor (women
+// 1000 / men 1200), applied LAST in finalize — never go below it, never cap above
+// it. The defaults below survive only as the no-target fallback rate.
+//   CUT  default 20% deficit (no-target only).
+//   BULK default 12% surplus (no-target only).
+//   STRENGTH ~maintenance: very slight +5% surplus.
 export const CUT_DEFICIT_FRACTION_DEFAULT = 0.20;
-export const CUT_DEFICIT_FRACTION_MAX = 0.25;
 export const BULK_SURPLUS_FRACTION_DEFAULT = 0.12;
-export const BULK_SURPLUS_FRACTION_MAX = 0.15;
 export const STRENGTH_SURPLUS_FRACTION = 0.05;
 
 export interface KcalSizingResult {
   kcalTarget: number;
   /** Daily shift vs maintenance (negative = deficit, positive = surplus). */
   dailyShift: number;
-  /** True when a cap (the % cap OR the kg/week cap) reduced the shift. */
+  /**
+   * Retained for the display-signal contract (resolveSafetyLimited). The
+   * intermediate rate caps were removed (CEO LOCK 2026-05-31) — an aggressive
+   * goal+deadline now drives the deficit/surplus directly, so this is always
+   * false. The sex kcal floor (see `floored`) is the sole safety limit.
+   */
   rateCapped: boolean;
-  /** True when the sex-aware kcal floor clamped the result. */
+  /** True when the sex-aware kcal floor clamped the result UP. The SOLE limit. */
   floored: boolean;
 }
 
@@ -193,25 +201,25 @@ export interface KcalSizingInputs {
 }
 
 /**
- * kcal = maintenance + a directional shift sized as a PERCENT of the user's own
- * maintenance TDEE (adaptive — scales with the person), then ADDITIONALLY capped
- * to the weekly-rate limit, then floored. The PHASE direction sets the sign — so
- * a BULK goal is ALWAYS a surplus above maintenance and a CUT is ALWAYS a deficit,
- * regardless of how the raw target-math would land (bug B).
+ * kcal = maintenance + a directional shift, then floored sex-aware. The PHASE
+ * direction sets the sign — so a BULK goal is ALWAYS a surplus above maintenance
+ * and a CUT is ALWAYS a deficit, regardless of how the raw target-math would land
+ * (bug B).
  *
- * Why % not a fixed kg/week rate (Daniel LOCK 2026-05-30): a fixed rate floors a
- * big person (110kg male would get the 1200 hard floor) and is impossible for a
- * small one (a 1500-TDEE user can't take a 1650 deficit). 20% of TDEE keeps the
- * 110kg male at ~2000 and the small user at ~1200 (their floor), both sane.
+ * CEO DECISION 2026-05-31 (LOCKED) — the recommendation is goal+deadline-driven
+ * and as aggressive as the goal demands. The SOLE safety limit is the sex kcal
+ * floor (women 1000 / men 1200), applied LAST in finalize. The old intermediate
+ * rate caps (25% deficit / 1.5kg-wk loss, 15% surplus / 0.5kg-wk gain) are
+ * REMOVED — above the floor we do NOT cap aggressiveness.
  *
  * Sizing logic:
+ *   - CUT / BULK with a real target + deadline → the shift required to hit the
+ *     target by the date drives the deficit/surplus DIRECTLY (no rate cap). The
+ *     floor in finalize catches anything that would land below the safe minimum.
+ *     Sign forced by phase (a CUT can never surface a surplus even if
+ *     target>current, and vice-versa).
  *   - CUT / BULK without a target/deadline → DEFAULT % shift (20% deficit /
- *     12% surplus) so the chosen phase bites at a sustainable, adaptive rate.
- *   - CUT / BULK with a real target + deadline → size the shift to hit the target
- *     by the date, but clamp to BOTH the % cap (25% deficit / 15% surplus) AND
- *     the kg/week cap (1.5 loss / 0.5 gain). If the date is impossible within the
- *     caps, use the binding cap (never exceed). Sign forced by phase (a CUT can
- *     never surface a surplus even if target>current, and vice-versa).
+ *     12% surplus) so the chosen phase still bites at a sane adaptive rate.
  *   - MAINTENANCE → maintenance (shift 0). STRENGTH → slight surplus (+5%).
  *   - AUTO must NOT reach here unresolved — treated as MAINTENANCE defensively.
  * Pure.
@@ -237,14 +245,6 @@ export function sizeKcalForPhase(input: KcalSizingInputs): KcalSizingResult {
   const sign = phase === 'CUT' ? -1 : 1;
   const fractionDefault =
     phase === 'CUT' ? CUT_DEFICIT_FRACTION_DEFAULT : BULK_SURPLUS_FRACTION_DEFAULT;
-  const fractionMax = phase === 'CUT' ? CUT_DEFICIT_FRACTION_MAX : BULK_SURPLUS_FRACTION_MAX;
-  const kgPerWeekCap = phase === 'CUT' ? MAX_LOSS_KG_PER_WEEK : MAX_GAIN_KG_PER_WEEK;
-
-  // Absolute kcal/day ceilings from BOTH caps — the binding one is whichever is
-  // smaller for THIS user (the % cap usually binds; the kg/week cap protects
-  // very-high-TDEE users from an absurd absolute rate).
-  const maxAbsShiftPct = tdee * fractionMax;
-  const maxAbsShiftRate = (kgPerWeekCap * KCAL_PER_KG) / 7;
 
   const cur = Number(currentKg);
   const tgt = Number(targetKg);
@@ -254,26 +254,29 @@ export function sizeKcalForPhase(input: KcalSizingInputs): KcalSizingResult {
     Number.isFinite(days) && days > 0;
 
   let absShift: number;
-  let rateCapped = false;
   if (haveTarget) {
-    // Size the deficit/surplus to hit the target by the deadline (kcal/day), then
-    // clamp to BOTH caps. The phase sign drives direction — a CUT toward a HIGHER
-    // target still cuts at the default %, never flips to a surplus.
+    // CEO LOCK 2026-05-31 — the deficit/surplus required to hit the target by the
+    // deadline drives the shift DIRECTLY, as aggressive as the goal demands. No
+    // rate cap above the floor (the sex floor in finalize is the sole limit). The
+    // phase sign drives direction — a CUT toward a HIGHER target still cuts at the
+    // default %, never flips to a surplus.
     const requiredAbs = (Math.abs(tgt - cur) * KCAL_PER_KG) / days;
-    if (requiredAbs <= 0) {
-      // Target equals current under a directional phase → default % nudge.
-      absShift = tdee * fractionDefault;
-    } else {
-      absShift = Math.min(requiredAbs, maxAbsShiftPct, maxAbsShiftRate);
-      rateCapped = requiredAbs > absShift;
-    }
+    // Target equals current under a directional phase → default % nudge.
+    absShift = requiredAbs > 0 ? requiredAbs : tdee * fractionDefault;
   } else {
     // No target/deadline → default % shift so the chosen phase still bites.
     absShift = tdee * fractionDefault;
   }
 
-  return finalize(tdee, sign * absShift, rateCapped, kcalFloor);
+  // rateCapped is always false now (rate caps removed) — kept for the display
+  // signal contract; the sex floor (floored, in finalize) is the only limit.
+  return finalize(tdee, sign * absShift, false, kcalFloor);
 }
+
+// Conservative fallback floor when the caller passes an invalid one (NaN/<=0) —
+// the higher male minimum, so a missing-sex edge can never drop below the safe
+// band. The sex-aware caller (readUserKcalFloor) supplies 1000/1200 normally.
+const SAFE_FALLBACK_FLOOR = 1200;
 
 function finalize(
   tdee: number,
@@ -281,11 +284,17 @@ function finalize(
   rateCapped: boolean,
   kcalFloor: number,
 ): KcalSizingResult {
-  const raw = Math.round(tdee + dailyShift);
-  const kcalTarget = Math.max(raw, kcalFloor);
+  // CEO LOCK 2026-05-31 — the sex kcal floor is the SOLE safety limit and must be
+  // bulletproof: it is mathematically impossible to output below it for ANY input.
+  // A non-finite/non-positive shift or floor degrades to the safe band, never below.
+  const floor =
+    Number.isFinite(kcalFloor) && kcalFloor > 0 ? kcalFloor : SAFE_FALLBACK_FLOOR;
+  const shift = Number.isFinite(dailyShift) ? dailyShift : 0;
+  const raw = Math.round((Number.isFinite(tdee) ? tdee : 0) + shift);
+  const kcalTarget = Math.max(raw, floor);
   return {
     kcalTarget,
-    dailyShift: Math.round(dailyShift),
+    dailyShift: Math.round(shift),
     rateCapped,
     floored: kcalTarget !== raw,
   };

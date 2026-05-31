@@ -95,12 +95,13 @@ describe('L7 — safetyLimited surfacing (base target rate-capped / floored)', (
     expect(t.safetyLimited).toBe('floored');
   });
 
-  it('barbat greu + tinta agresiva cu deadline scurt → ritm plafonat → safetyLimited capped', async () => {
-    // 150kg barbat (mentenanta mare → cut ramane mult peste 1200, NU floored) cu
-    // tinta 90kg (60kg) in ~2 luni → ritmul cerut depaseste capul → capped.
-    // Deadline = ~2 luni in viitor (NU luna curenta): determinist independent
-    // de data rularii. Un deadline ~0 zile (rulare la sfarsit de luna) ar da
-    // un cap neactionabil (undefined), deci fixam o fereastra viitoare stabila.
+  it('barbat greu + tinta agresiva cu deadline scurt → floored la minimul sigur (CEO LOCK 2026-05-31, fara cap de ritm)', async () => {
+    // 150kg barbat cu tinta 90kg (60kg) in ~2 luni → deficitul cerut e enorm
+    // (~7700/zi). CEO LOCK 2026-05-31: capurile intermediare de ritm (25% / 1.5kg
+    // sapt) sunt SCOASE — recomandarea e cat mai agresiva, singura limita e floor-ul
+    // pe sex (barbati 1200). Deci tinta coboara la floor → safetyLimited 'floored'
+    // (NU 'capped' — semnalul 'capped' nu mai exista). Deadline ~2 luni in viitor
+    // (NU luna curenta): determinist independent de data rularii.
     setOnboarding({ sex: 'm', weight: 150, height: 185, goal: 'slabire' });
     const now = new Date();
     const target = new Date(now.getFullYear(), now.getMonth() + 2, 1);
@@ -112,7 +113,8 @@ describe('L7 — safetyLimited surfacing (base target rate-capped / floored)', (
     } as never);
     const t = await getNutritionTargetsToday();
     expect(t.healthyFloorClamped).toBe(false);
-    expect(t.safetyLimited).toBe('capped');
+    expect(t.safetyLimited).toBe('floored');
+    expect(t.kcalTarget).toBe(1200); // floor barbat — limita unica de siguranta
   });
 
   it('profil normal (80kg/180cm barbat slabire, fara deadline) → NICIUN semnal de siguranta', async () => {

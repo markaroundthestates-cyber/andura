@@ -1,14 +1,18 @@
 // ══ ENGINE WRAPPERS — coherent goal/phase/target ↔ kcal sizing ═══════════════
-// Coherence model 2026-05-30 (supersedes smoke #16 -25%/+15% cap model). The
-// goal/phase DIRECTION is authoritative — it forces the kcal SIGN (CUT=deficit,
-// BULK=surplus). The target weight + deadline only size the MAGNITUDE within
-// that direction, as a %-of-TDEE (default 20% cut / 12% bulk; capped 25% / 15%)
-// ADDITIONALLY clamped by the kg/wk caps (1.5 loss / 0.5 gain), sex-floored.
-// (Daniel LOCK 2026-05-30 — supersedes the interim fixed kg/wk rate model.)
+// Coherence model 2026-05-30 — the goal/phase DIRECTION is authoritative: it
+// forces the kcal SIGN (CUT=deficit, BULK=surplus). The target weight + deadline
+// size the MAGNITUDE within that direction.
 //
-// This fixes the Daniel repro: masa (BULK) + a below-current target weight used
-// to surface a 2200 DEFICIT (the target-weight override outranked + discarded
-// the BULK surplus). Now a BULK goal ALWAYS yields a surplus above maintenance.
+// CEO LOCK 2026-05-31 — the recommendation is goal+deadline-driven and as
+// aggressive as the goal demands. The intermediate rate caps (25% deficit / 1.5kg
+// -wk loss, 15% surplus / 0.5kg-wk gain) are REMOVED — the deadline `requiredAbs`
+// shift drives the target DIRECTLY. The SOLE safety limit is the sex kcal floor
+// (women 1000 / men 1200), applied last. So an aggressive deadline now floors at
+// the safe minimum instead of capping at a sustainable rate.
+//
+// This still fixes the Daniel repro: masa (BULK) + a below-current target weight
+// used to surface a 2200 DEFICIT. A BULK goal ALWAYS yields a surplus above
+// maintenance (the phase forces the sign).
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
@@ -75,13 +79,14 @@ describe('engineWrappers — coherent goal/phase ↔ kcal sizing', () => {
     expect(r.source).toBe('engine');
   });
 
-  it('Daniel smoke 110→62kg in 4 zile (slabire) → cap 25% din TDEE (2800 → 2100)', async () => {
+  it('Daniel smoke 110→62kg in 4 zile (slabire) → floored la minimul sigur (CEO LOCK 2026-05-31, fara cap de ritm)', async () => {
     setUserStats({ goal: 'slabire', weight: 110, targetWeight: 62, targetDate: isoInDays(4) });
     mockTdee(2800);
     const r = await getNutritionTargetsToday({});
-    // 48kg/4zile cere deficit imposibil → cap min(25%*2800=700, 1.5kg/wk=1650)=700
-    // → 2800 - 700 = 2100 (peste floor). % bindeaza inaintea kg/sapt. Sustenabil.
-    expect(r.kcalTarget).toBe(2100);
+    // 48kg/4zile cere un deficit enorm (~92.000/zi). CEO LOCK 2026-05-31: capurile
+    // de ritm sunt scoase — deficitul conduce direct, singura limita e floor-ul pe
+    // sex (barbati 1200). Deci tinta coboara la 1200 (NU plafonata la 2100).
+    expect(r.kcalTarget).toBe(1200);
   });
 
   it('tinta sustenabila 110→105 in 10 sapt (slabire) → deficit ~550 kcal/zi (NU capped)', async () => {
@@ -100,9 +105,10 @@ describe('engineWrappers — coherent goal/phase ↔ kcal sizing', () => {
     mockTdee(2400);
     const r = await getNutritionTargetsToday({});
     expect(r.kcalTarget).toBeGreaterThan(2400); // surplus, nu deficit (era ~2200)
-    // BULK forteaza semnul +; 20kg/112 zile cere ~1375/zi (>cap) → cap min(15%*2400=
-    // 360, 0.5kg/wk=550)=360 → +360/zi → 2400 + 360 = 2760. NICIODATA un deficit.
-    expect(r.kcalTarget).toBeCloseTo(2760, 0);
+    // BULK forteaza semnul +; 20kg/112 zile cere ~1375/zi surplus. CEO LOCK
+    // 2026-05-31: capurile de ritm scoase → surplus-ul conduce direct → 2400 +
+    // round(20*7700/112) = 2400 + 1375 = 3775. NICIODATA un deficit.
+    expect(r.kcalTarget).toBe(2400 + Math.round((20 * 7700) / 112));
   });
 
   it('masa (BULK) cu tinta de crestere coerenta + deadline → surplus % capped', async () => {
