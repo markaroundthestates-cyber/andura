@@ -33,9 +33,9 @@ const FCM_CONFIG = {
   // Non-secret, fittracker-c34e8 public web config.
   projectId: 'fittracker-c34e8',
   authDomain: 'fittracker-c34e8.firebaseapp.com',
-  apiKey: 'PLACEHOLDER_WEB_API_KEY',
-  messagingSenderId: 'PLACEHOLDER_SENDER_ID',
-  appId: 'PLACEHOLDER_APP_ID',
+  apiKey: 'AIzaSyBWR2oUpRufoonolADRhvax8XEolMywc-s',
+  messagingSenderId: '764041960509',
+  appId: '1:764041960509:web:28b9a4e6d304d87a1f1e54',
 };
 
 // Guard: cat timp config-ul are inca placeholdere, initializeApp +
