@@ -1,6 +1,6 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-31 noapte (acasă, overnight autonom). **Pickup: bug-fix + igienă file-split arc COMPLET + PUSHED LIVE; main == origin; audit GO + smoke 4 taburi curat. Daniel doarme.**
+**Last updated:** 2026-05-31 (recovery: chat crapat fara handover). **Pickup: chat anterior a crăpat mid-flight fără handover — treaba lui aterizase în git dar SSOT rămăsese stale. 3 commit-uri (`0d235cf9` nutriție test date-deterministic + `d5724ec3` schedule frecvență, deja pe origin; `60bd1fe3` legal Privacy+T&C pushed acum). Harness 15/15 + smoke 4 profile PASS. main == origin din nou.**
 **Topic active:** post-feature consolidare pre-Beta — bug-uri reale reparate + arcul de igienă "nu vreau mlaștină" (split fișiere mari) + prompt-uri poze-exerciții. Pulse redesign deja live (2026-05-29), themes retrase expres.
 
 ---
@@ -35,6 +35,15 @@ Daniel a raportat live "auto îmi dă 2.173 și lose fat 2.227" + frustrare pe p
 - PRIMER §5 block 2026-05-31 + DECISIONS §D096 (ultimul; arc = execuție sub D077, nu decizie nouă)
 - `📥_inbox/EXERCISE-IMAGE-GRIDS.md` (prompts) + `EXERCISE-IMAGE-MAPPING.json` (split auto)
 
+## §6 Recovery — chat crăpat fără handover (2026-05-31)
+Un chat anterior a crăpat mid-flight înainte de §F3.8. Treaba lui aterizase în git, dar SSOT rămăsese stale (zicea "main == origin" — fals). Ce livrase:
+- **Harness numeric 15/15 PASS** (efemer) — invariante BULK>MAINT>CUT, floor-uri 1000F/1200M, AUTO==explicit, zero NaN, workout-uri reale din lib-657, guard underweight, 250kg fără inversiune.
+- **Smoke live Playwright 4 profile** (efemer) — Maria 65 / Marius 28 / aerobic-only F24 / AUTO M45, toate PASS vizual+date+consolă, 0 erori.
+- `d5724ec3` **fix schedule** — DEFAULT_WEEK hardcoda 4 zile, ignora frecvența onboarding (Gigel: Maria 3x/săpt vedea 4). Deja pe origin.
+- `0d235cf9` **fix test nutrition fragil-la-dată** — targetObiectiv.month pe luna curentă → la sfârșit de lună înroșea CI; mutat pe lună viitoare → deterministic. Deja pe origin.
+- `60bd1fe3` **legal GDPR** — Privacy + T&C (Privacy.tsx/Terms.tsx + i18n en/ro + LegalPages.test.tsx). Pushed acum.
+- Nimic pierdut în afară de narativa în sine. Arc = execuție sub D077/D096, NU decizie nouă (DECISIONS netins). Cross-ref: `📥_inbox/HANDOVER_2026-05-31_crashed-chat-recovery.md`.
+
 ---
 
-🦦 **Bug-fix + igienă arc complet + live + verde. Daniel doarme. Dimineață: regenerează Grid 1, confirmăm pozele, restul e gata.**
+🦦 **Chat crăpat recuperat: 3 commit-uri în git (legal pushed acum), harness 15/15 + smoke 4 profile verde. main == origin. Singurul lucru pierdut a fost povestea — acum e la loc.**
