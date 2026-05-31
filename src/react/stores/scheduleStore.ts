@@ -8,6 +8,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { useOnboardingStore } from './onboardingStore';
 
 export type DayKind = 'training' | 'rest';
 
@@ -36,6 +37,25 @@ const DEFAULT_WEEK = [
   'training', 'rest', 'training', 'rest', 'training', 'training', 'rest',
 ] as const satisfies WeekDays;
 
+// Default-ul saptamanal derivat din raspunsul onboarding `frequency`: exact N
+// zile de training, spatiate pe saptamana (Mon..Sun). Fix bug: inainte
+// DEFAULT_WEEK era 4 zile hardcodat indiferent de frequency, deci user cu 2/3/5
+// vedea tot 4 zile. null/necunoscut (onboarding incomplet) → fallback DEFAULT_WEEK.
+export function defaultWeekForFrequency(freq: string | null): WeekDays {
+  switch (freq) {
+    case '2': // L, J
+      return ['training', 'rest', 'rest', 'training', 'rest', 'rest', 'rest'] satisfies WeekDays;
+    case '3': // L, Mi, V
+      return ['training', 'rest', 'training', 'rest', 'training', 'rest', 'rest'] satisfies WeekDays;
+    case '4': // L, Ma, J, V
+      return ['training', 'training', 'rest', 'training', 'training', 'rest', 'rest'] satisfies WeekDays;
+    case '5': // L, Ma, Mi, V, S
+      return ['training', 'training', 'training', 'rest', 'training', 'training', 'rest'] satisfies WeekDays;
+    default:
+      return DEFAULT_WEEK;
+  }
+}
+
 export interface ScheduleState {
   weekStartISO: string;
   days: WeekDays;
@@ -53,7 +73,10 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
   persist(
     (set, get) => ({
       weekStartISO: weekStartIso(),
-      days: DEFAULT_WEEK,
+      // Default derivat din frequency onboarding. Pentru un user care revine,
+      // `persist` rehydrateaza DUPA acest initializer si suprascrie `days` cu
+      // programul salvat/editat — deci schedule-ul editat ramane castigator.
+      days: defaultWeekForFrequency(useOnboardingStore.getState().data.frequency),
       editMode: false,
       setEditMode: (mode) => set({ editMode: mode }),
       toggleDay: (idx) =>
@@ -144,9 +167,11 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
         set({ editMode: false });
       },
       resetWeekly: (newWeekStartISO) =>
+        // Reset saptamanal foloseste acelasi default derivat din frequency
+        // (NU 4 hardcodat), deci frecventa aleasa persista de la o saptamana la alta.
         set({
           weekStartISO: newWeekStartISO ?? weekStartIso(),
-          days: DEFAULT_WEEK,
+          days: defaultWeekForFrequency(useOnboardingStore.getState().data.frequency),
           editMode: false,
         }),
     }),

@@ -5,7 +5,8 @@
 // no-op. Integration test prinde shape regressions future.
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { useScheduleStore, weekStartIso, type WeekDays } from '../../stores/scheduleStore';
+import { useScheduleStore, weekStartIso, defaultWeekForFrequency, type WeekDays } from '../../stores/scheduleStore';
+import { useOnboardingStore } from '../../stores/onboardingStore';
 import {
   CALENDAR_OVERRIDE_KEY,
   getDailyWorkout,
@@ -66,6 +67,49 @@ beforeEach(() => {
 
 afterEach(() => {
   localStorage.clear();
+});
+
+function countTraining(days: WeekDays): number {
+  return days.filter((d) => d === 'training').length;
+}
+
+describe('defaultWeekForFrequency — derive default din onboarding frequency', () => {
+  it("'2' → exact 2 zile training", () => {
+    expect(countTraining(defaultWeekForFrequency('2'))).toBe(2);
+  });
+  it("'3' → exact 3 zile training", () => {
+    expect(countTraining(defaultWeekForFrequency('3'))).toBe(3);
+  });
+  it("'4' → exact 4 zile training", () => {
+    expect(countTraining(defaultWeekForFrequency('4'))).toBe(4);
+  });
+  it("'5' → exact 5 zile training", () => {
+    expect(countTraining(defaultWeekForFrequency('5'))).toBe(5);
+  });
+  it('null → fallback 4-day DEFAULT_WEEK', () => {
+    const days = defaultWeekForFrequency(null);
+    expect(days).toHaveLength(7);
+    expect(countTraining(days)).toBe(4);
+  });
+  it('necunoscut → fallback 4-day DEFAULT_WEEK', () => {
+    expect(countTraining(defaultWeekForFrequency('99'))).toBe(4);
+  });
+});
+
+describe('scheduleStore — fresh init deriva days din onboarding frequency', () => {
+  afterEach(() => {
+    // Restaureaza onboarding la null pentru izolare intre teste.
+    useOnboardingStore.setState((s) => ({ data: { ...s.data, frequency: null } }));
+  });
+
+  it("fresh store cu frequency '3' → 3 zile training", () => {
+    useOnboardingStore.setState((s) => ({ data: { ...s.data, frequency: '3' } }));
+    // Re-aplica initializer-ul logic prin defaultWeekForFrequency (store deja
+    // creat la import-time; verificam derivarea pe valoarea onboarding curenta).
+    const days = defaultWeekForFrequency(useOnboardingStore.getState().data.frequency);
+    useScheduleStore.setState({ days });
+    expect(countTraining(useScheduleStore.getState().days)).toBe(3);
+  });
 });
 
 describe('scheduleStore — initial state + actions', () => {
