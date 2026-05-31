@@ -125,8 +125,12 @@ export function TDEEStrip(): JSX.Element {
   // change disables the picked goal). Subscribe to the same store inputs that
   // drive that switch — that re-renders the component — and read the label fresh
   // each render (cheap localStorage read), instead of useMemo([]) frozen at mount.
-  useProgresStore((s) => s.targetObiectiv);
-  useProgresStore((s) => s.weightLog);
+  // These same inputs are ALSO reactive deps of the kcal-target fetch below (the
+  // target is goal+deadline+weight-driven): editing the goal weight, deadline, or
+  // logging a new weight must recompute the recommended kcal LIVE (freeze fix
+  // 2026-05-31). The captured values drive the useEffect dep array.
+  const targetObiectiv = useProgresStore((s) => s.targetObiectiv);
+  const weightLog = useProgresStore((s) => s.weightLog);
   const phaseLabel = getCurrentPhaseLabel();
   const weekInMeso = useMemo(
     () => computeWeekInMesocycle(sessionsHistory.length, 3),
@@ -139,6 +143,24 @@ export function TDEEStrip(): JSX.Element {
   const [kcalDraft, setKcalDraft] = useState('');
   const [proteinDraft, setProteinDraft] = useState('');
 
+  // Recompute trigger for the localStorage-backed inputs the target also depends
+  // on but that do NOT live in a store (phase-override from SchimbaFaza, bf-
+  // override from SettingsProfile). Those edits happen on OTHER screens; on
+  // returning to Progres (focus / tab visible) we bump this nonce so the target
+  // re-fetches with the fresh override. The store-backed inputs (goal weight,
+  // deadline, weight log) are reactive deps directly. (Freeze fix 2026-05-31.)
+  const [recomputeNonce, setRecomputeNonce] = useState(0);
+  useEffect(() => {
+    const bump = (): void => setRecomputeNonce((n) => n + 1);
+    const onVisible = (): void => { if (document.visibilityState === 'visible') bump(); };
+    window.addEventListener('focus', bump);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      window.removeEventListener('focus', bump);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     // Piesa 2 — ctx din weightLog + dailyLog + onboarding → engine adapteaza
@@ -148,7 +170,19 @@ export function TDEEStrip(): JSX.Element {
       if (!cancelled) setTarget(tg);
     });
     return () => { cancelled = true; };
-  }, [dateISO, entry?.kcal, entry?.protein]);
+    // Freeze fix 2026-05-31 — the recommended kcal is goal+deadline+weight-driven,
+    // so it MUST recompute when any of those change: goal weight + deadline
+    // (targetObiectiv), current weight (weightLog), the daily log echo, and the
+    // off-screen localStorage overrides (recomputeNonce on focus/visibility).
+  }, [
+    dateISO,
+    entry?.kcal,
+    entry?.protein,
+    targetObiectiv.weightKg,
+    targetObiectiv.month,
+    weightLog,
+    recomputeNonce,
+  ]);
 
   // ── Fatigue → kcal recovery-protective ease ─────────────────────────────
   // Apply only to a genuine engine/baseline auto target (source !== 'manual':

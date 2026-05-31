@@ -168,7 +168,10 @@ describe('TDEEStrip — Wave C2 i18n EN default', () => {
       expect(screen.getByTestId('tdee-safety-limit-note')).toBeInTheDocument();
     });
     const note = screen.getByTestId('tdee-safety-limit-note');
-    expect(note.textContent).toMatch(/Safe minimum reached/);
+    // CEO LOCK 2026-05-31 — reframed honest floor note: limited to the safe
+    // minimum + the goal may not be fully met at this rate.
+    expect(note.textContent).toMatch(/Target limited to the safe minimum/);
+    expect(note.textContent).toMatch(/may not be fully reached/);
     expect(/[ăâîșțĂÂÎȘȚ]/.test(note.textContent ?? '')).toBe(false);
   });
 
@@ -187,6 +190,44 @@ describe('TDEEStrip — Wave C2 i18n EN default', () => {
     const note = screen.getByTestId('tdee-safety-limit-note');
     expect(note.textContent).toMatch(/Limited for safety/);
     expect(/[ăâîșțĂÂÎȘȚ]/.test(note.textContent ?? '')).toBe(false);
+  });
+
+  // Freeze fix (CEO LOCK 2026-05-31) — the recommended kcal is goal+deadline+
+  // weight-driven, so editing the goal weight / deadline / logging a new weight
+  // MUST recompute the target live (the useEffect dep array now includes those
+  // store inputs). Asserts the async target fetch re-fires on each such change.
+  it('FREEZE FIX: recomputeaza tinta cand se schimba tinta-greutate (goal weight)', async () => {
+    useProgresStore.setState({
+      weightLog: [], bodyData: [], targetObiectiv: { weightKg: null, month: null },
+    } as never);
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(getNutritionTargetTodayReal).toHaveBeenCalled();
+    });
+    const callsAfterMount = vi.mocked(getNutritionTargetTodayReal).mock.calls.length;
+    // Edit the goal weight → the strip is subscribed to targetObiectiv → re-render
+    // → the dep array (targetObiectiv.weightKg) changed → the fetch re-runs.
+    useProgresStore.setState({ targetObiectiv: { weightKg: 60, month: '2026-08' } } as never);
+    await waitFor(() => {
+      expect(vi.mocked(getNutritionTargetTodayReal).mock.calls.length).toBeGreaterThan(callsAfterMount);
+    });
+  });
+
+  it('FREEZE FIX: recomputeaza tinta cand se logheaza o greutate noua (weightLog)', async () => {
+    useProgresStore.setState({
+      weightLog: [], bodyData: [], targetObiectiv: { weightKg: 60, month: '2026-08' },
+    } as never);
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(getNutritionTargetTodayReal).toHaveBeenCalled();
+    });
+    const callsAfterMount = vi.mocked(getNutritionTargetTodayReal).mock.calls.length;
+    useProgresStore.setState({
+      weightLog: [{ date: todayIso(), kg: 77, ts: Date.now() }],
+    } as never);
+    await waitFor(() => {
+      expect(vi.mocked(getNutritionTargetTodayReal).mock.calls.length).toBeGreaterThan(callsAfterMount);
+    });
   });
 
   it('L7: nota suprimata cand user-ul a logat manual kcal azi (numarul afisat e intake-ul)', async () => {
