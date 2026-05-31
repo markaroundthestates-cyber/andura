@@ -266,6 +266,30 @@ describe('runPostAuthSync — restore on login', () => {
     expect(initFirebaseSync).toHaveBeenCalledTimes(2);
   });
 
+  it('logout-restore — andura:signedout clears the per-uid done flag so the SAME user re-restores on re-login', async () => {
+    // Existing user logs in + syncs (sets done-flag for their uid).
+    mockGetAuthState.mockReturnValue({ uid: 'uid-same', idToken: 't', expiry: Date.now() + 1e6 } as never);
+    await runPostAuthSync();
+    expect(initFirebaseSync).toHaveBeenCalledOnce();
+
+    // Without a logout, a repeat is correctly deduped (no redundant restore).
+    await runPostAuthSync();
+    expect(initFirebaseSync).toHaveBeenCalledOnce();
+
+    // Pure-SPA logout (LogoutConfirm → auth.js signOut) dispatches andura:signedout
+    // + wipes the local stores (incl. onboarding.completed → false), all in the same
+    // page load. The re-login as the SAME uid MUST re-run the cloud restore to bring
+    // back the onboarding-complete flag — otherwise the user is wrongly sent through
+    // onboarding again. The signedout listener clears the done-flag so this works.
+    window.dispatchEvent(new Event('andura:signedout'));
+
+    mockGetAuthState.mockReturnValue({ uid: 'uid-same', idToken: 't2', expiry: Date.now() + 1e6 } as never);
+    await runPostAuthSync();
+    // Restore re-ran for the same uid (was skipped pre-fix → onboarding flag lost).
+    expect(initFirebaseSync).toHaveBeenCalledTimes(2);
+    expect(runAuthPathMigration).toHaveBeenCalledTimes(2);
+  });
+
   it('survives a path-migration throw + still attempts restore', async () => {
     mockGetAuthState.mockReturnValue({ uid: 'u-4', idToken: 't', expiry: Date.now() + 1e6 } as never);
     mockRunAuthPathMigration.mockRejectedValue(new Error('migrate boom'));

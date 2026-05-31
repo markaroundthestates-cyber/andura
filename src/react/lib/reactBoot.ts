@@ -71,6 +71,22 @@ let _postAuthInFlight: Promise<void> | null = null;
 // still dedups. null = no successful sync yet this page load.
 let _postAuthDoneForUid: string | null = null;
 
+// Logout-restore fix — clear the per-uid sync-done guard on every sign-out.
+// Both LogoutConfirm + DeleteAccountConfirm sign out via pure SPA (no page
+// reload), so the module-level `_postAuthDoneForUid` survives a logout. Without
+// this, a user who logs out then logs back in as the SAME uid in the same page
+// load would hit `if (_postAuthDoneForUid === uid) return` in runPostAuthSync
+// and skip the cloud restore entirely — leaving the onboarding-complete flag +
+// profile (wiped locally by LogoutConfirm's store resets) unrestored, forcing a
+// returning user back through onboarding. Resetting the guard here makes the
+// re-login re-run hydrateStoresFromCloud, which sticky-restores `completed`
+// (see storeSync onboarding apply). A different uid was never deduped anyway.
+if (typeof window !== 'undefined') {
+  window.addEventListener('andura:signedout', () => {
+    _postAuthDoneForUid = null;
+  });
+}
+
 /**
  * Auth-independent boot orchestration. Idempotent — only the first call does
  * work; subsequent calls return the same settled promise. Mirrors the
