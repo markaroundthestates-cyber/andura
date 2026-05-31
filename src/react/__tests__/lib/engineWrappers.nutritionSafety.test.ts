@@ -97,10 +97,14 @@ describe('L7 — safetyLimited surfacing (base target rate-capped / floored)', (
 
   it('barbat greu + tinta agresiva cu deadline scurt → ritm plafonat → safetyLimited capped', async () => {
     // 150kg barbat (mentenanta mare → cut ramane mult peste 1200, NU floored) cu
-    // tinta 90kg intr-o luna → deficitul cerut depaseste capul de ritm → capped.
+    // tinta 90kg (60kg) in ~2 luni → ritmul cerut depaseste capul → capped.
+    // Deadline = ~2 luni in viitor (NU luna curenta): determinist independent
+    // de data rularii. Un deadline ~0 zile (rulare la sfarsit de luna) ar da
+    // un cap neactionabil (undefined), deci fixam o fereastra viitoare stabila.
     setOnboarding({ sex: 'm', weight: 150, height: 185, goal: 'slabire' });
     const now = new Date();
-    const targetMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const target = new Date(now.getFullYear(), now.getMonth() + 2, 1);
+    const targetMonth = `${target.getFullYear()}-${String(target.getMonth() + 1).padStart(2, '0')}`;
     useProgresStore.setState({
       targetObiectiv: { weightKg: 90, month: targetMonth },
       weightLog: [],
