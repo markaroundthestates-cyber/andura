@@ -23,6 +23,15 @@ export type ForceDemand = 'low' | 'medium' | 'high';
 
 export type Tier = 1 | 2 | 3;
 
+/**
+ * Movement SKILL/difficulty — distinct from `tier` (force/compound level) and
+ * `force_demand` (load demand). Gates whether a user is capable of the movement
+ * pattern itself: a beginner can squat heavy (high force, T1) but cannot do a
+ * one-arm push-up (advanced skill). Optional: absent entries default to
+ * 'beginner' (safest — offer rather than wrongly exclude a basic move).
+ */
+export type SkillLevel = 'beginner' | 'intermediate' | 'advanced';
+
 export type CascadeStepType =
   | 'easier_machine'
   | 'assisted_variant'
@@ -49,6 +58,11 @@ export interface ExerciseMetadata {
   tier: Tier;
   muscle_target_primary: string;
   muscle_target_secondary: string[];
+  /**
+   * Movement skill ceiling for capability gating (sessionBuilder skillCeiling).
+   * Optional: undefined → treated as 'beginner' by the consumer (safe default).
+   */
+  skill_level?: SkillLevel;
   /** optional cascade ordered list per ADR v2 LOCK V2 §2.1 (undefined → engine fallback v1) */
   fallback_cascade?: CascadeStep[];
 }
@@ -67,6 +81,8 @@ const EQUIPMENT_TYPES: ReadonlySet<string> = new Set([
 const FORCE_DEMANDS: ReadonlySet<string> = new Set(['low', 'medium', 'high']);
 
 const TIERS: ReadonlySet<number> = new Set([1, 2, 3]);
+
+const SKILL_LEVELS: ReadonlySet<string> = new Set(['beginner', 'intermediate', 'advanced']);
 
 const CASCADE_STEP_TYPES: ReadonlySet<string> = new Set([
   'easier_machine',
@@ -115,6 +131,9 @@ export function validateExercise(name: string, entry: unknown): string[] {
   }
   if (e.nameEn !== undefined && typeof e.nameEn !== 'string') {
     errors.push(`"${name}": nameEn must be a string when present`);
+  }
+  if (e.skill_level !== undefined && !SKILL_LEVELS.has(e.skill_level as string)) {
+    errors.push(`"${name}": invalid skill_level "${String(e.skill_level)}"`);
   }
   if (e.fallback_cascade !== undefined) {
     if (!Array.isArray(e.fallback_cascade)) {

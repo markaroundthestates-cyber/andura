@@ -116,6 +116,41 @@ function tierCeiling(profileTier) {
   }
 }
 
+// Numeric rank for movement skill (parallel to library `tier`). Higher = harder
+// movement pattern. Used by skillCeiling + the poolForGroup skill gate.
+const SKILL_RANK = { beginner: 0, intermediate: 1, advanced: 2 };
+
+/**
+ * Skill ceiling per profile tier — capability gate so a beginner is NEVER
+ * prescribed an advanced movement (one-arm push-up, pistol, archer, etc.).
+ * Mirrors the tier/experience semantics (tierForExperience: beginner→T0,
+ * intermediate→T1, advanced→T2): T0 → beginner-only, T1 → up to intermediate,
+ * T2+ → advanced allowed. null/unknown → conservative beginner-only.
+ * @param {string|null|undefined} profileTier - 'T0' | 'T1' | 'T2' | null
+ * @returns {number} highest SKILL_RANK allowed
+ */
+function skillCeiling(profileTier) {
+  switch (profileTier) {
+    case 'T0': return SKILL_RANK.beginner;     // beginner: only beginner movements
+    case 'T1': return SKILL_RANK.intermediate; // intermediate: up to intermediate
+    case 'T2': return SKILL_RANK.advanced;     // advanced: all skill levels
+    default:   return SKILL_RANK.beginner;     // unknown -> conservative beginner-only
+  }
+}
+
+/**
+ * Movement skill rank for a library entry. Missing skill_level defaults to
+ * beginner (safe: offer rather than wrongly exclude a basic move).
+ * @param {{skill_level?: string}} meta
+ * @returns {number}
+ */
+function skillRankOf(meta) {
+  const lvl = meta?.skill_level;
+  return (lvl != null && lvl in SKILL_RANK)
+    ? /** @type {Record<string, number>} */ (SKILL_RANK)[lvl]
+    : SKILL_RANK.beginner;
+}
+
 /**
  * Whether a library entry is selectable under the available equipment.
  * Coarse equipment_type must be available; bodyweight is always allowed.
@@ -136,15 +171,17 @@ function equipmentOk(meta, available) {
  * @param {string} group - Big-11 canonical RO group
  * @param {Set<string>} available - coarse equipment types available
  * @param {number} maxTier - highest tier allowed
+ * @param {number} maxSkill - highest SKILL_RANK allowed (capability gate)
  * @param {Set<string>} prNames - names that carry PR history (preferred anchors)
  * @param {number} seed
  * @returns {Array<{name: string, meta: object}>}
  */
-function poolForGroup(group, available, maxTier, prNames, seed) {
+function poolForGroup(group, available, maxTier, maxSkill, prNames, seed) {
   const pool = [];
   for (const [name, meta] of Object.entries(EXERCISE_METADATA)) {
     if (meta.muscle_target_primary !== group) continue;
     if (meta.tier > maxTier) continue;
+    if (skillRankOf(meta) > maxSkill) continue; // capability gate: never above skill ceiling
     if (!equipmentOk(meta, available)) continue;
     pool.push({ name, meta });
   }
@@ -202,13 +239,14 @@ export function buildSession(sessionType, ctx) {
     SESSION_TYPE_MUSCLE_TARGETS['FULL_UPPER'];
   const available = new Set(ctx?.equipment?.available ?? []);
   const maxTier = tierCeiling(ctx?.profileTier);
+  const maxSkill = skillCeiling(ctx?.profileTier);
   const prNames = new Set(ctx?.prNames ?? []);
   const seed = hashString(String(ctx?.seed ?? ''));
 
   // Pools per target group (ordered: PR-anchored -> anchor -> new, seeded-stable).
   const pools = targets.map((g) => ({
     group: g,
-    pool: poolForGroup(g, available, maxTier, prNames, seed),
+    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed),
   }));
 
   // Weakness bias: when the Specialization engine flags a weak Big-11 group
