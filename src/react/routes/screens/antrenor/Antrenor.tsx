@@ -45,7 +45,6 @@ import { ResumeSessionCard } from '../../../components/Antrenor/ResumeSessionCar
 import { ReactivateCard } from '../../../components/Antrenor/ReactivateCard';
 import { CoachTodayCard } from '../../../components/Antrenor/CoachTodayCard';
 import { CoachRestCard } from '../../../components/Antrenor/CoachRestCard';
-import { StatsGrid } from '../../../components/Antrenor/StatsGrid';
 import { ReadinessVerdict } from '../../../components/Antrenor/ReadinessVerdict';
 import { PRNotificationBanner } from '../../../components/Antrenor/PRNotificationBanner';
 import { PatternsBanner } from '../../../components/Antrenor/PatternsBanner';
@@ -94,7 +93,6 @@ export function Antrenor(): JSX.Element {
   const sessionStart = useWorkoutStore((s) => s.sessionStart);
   const pausedSnapshot = useWorkoutStore((s) => s.pausedSnapshot);
   const lastSession = useWorkoutStore((s) => s.lastSession);
-  const streak = useWorkoutStore((s) => s.streak);
   const prHit = useWorkoutStore((s) => s.prHit);
   const resumeSession = useWorkoutStore((s) => s.resumeSession);
   const discardSession = useWorkoutStore((s) => s.discardSession);
@@ -148,7 +146,6 @@ export function Antrenor(): JSX.Element {
   }, [scheduleDays, scheduleEditMode]);
 
   const readiness = coach?.readiness ?? null;
-  const fatigue = coach?.fatigue ?? null;
 
   const showReactivate =
     lastSession !== null &&
@@ -286,10 +283,9 @@ export function Antrenor(): JSX.Element {
         </div>
       </div>
 
-      {/* Compact signal strip — streak + fatigue (readiness now lives in the
-          orb hero above, so the strip drops that tile via `compact`). Mockup
-          keeps the body signals visible without duplicating readiness. */}
-      <StatsGrid streak={streak} fatigue={fatigue} readiness={readiness} compact />
+      {/* Streak + fatigue signal strip removed 2026-05-31 (Daniel verbatim
+          "scoate ala de streak de acolo si de fatigue"). Readiness stays in the
+          orb hero above; body signals no longer surfaced on the Coach home. */}
       <PRNotificationBanner prHit={prHit} />
 
       {/* §A002 audit fix + §B018 extract: engine-driven isRestDay routing —

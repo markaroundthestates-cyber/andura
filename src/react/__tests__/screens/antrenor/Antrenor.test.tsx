@@ -158,20 +158,14 @@ describe('Antrenor home — base render', () => {
     expect(screen.getByText(/Active recovery day/i)).toBeInTheDocument();
   });
 
-  it('renders StatsGrid cu streak count', () => {
+  it('no longer renders the streak/fatigue strip (Daniel 2026-05-31 removal); readiness stays in the orb hero', () => {
+    // Daniel verbatim "scoate ala de streak de acolo si de fatigue" — the compact
+    // StatsGrid strip (streak + fatigue tiles) was removed from the Coach home.
+    // Readiness remains promoted to the always-present ReadinessOrb hero.
     useWorkoutStore.setState({ streak: 12 });
     renderAntrenor();
-    expect(screen.getByTestId('stats-streak')).toHaveTextContent('12');
-  });
-
-  it('StatsGrid placeholder cand fatigue null (compact strip — readiness in orb hero)', () => {
-    // Pulse Coach-home (2026-05-29): readiness is promoted to the ReadinessOrb
-    // hero, so the compact strip drops the readiness tile (stats-readiness no
-    // longer rendered on this screen). Fatigue stays in the strip. The orb hero
-    // is now ALWAYS present (Daniel CEO LOCKED) — with readiness null it shows
-    // the honest placeholder (asserted in the readiness-hero describe block).
-    renderAntrenor();
-    expect(screen.getByTestId('stats-fatigue')).toHaveTextContent('-');
+    expect(screen.queryByTestId('stats-streak')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('stats-fatigue')).not.toBeInTheDocument();
     expect(screen.queryByTestId('stats-readiness')).not.toBeInTheDocument();
     expect(screen.getByTestId('readiness-hero')).toBeInTheDocument();
   });
