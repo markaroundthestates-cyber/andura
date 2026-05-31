@@ -44,6 +44,14 @@ export function BodyCompSection({
   setBfOverride,
   bfNavyIncomplete,
 }: BodyCompSectionProps): JSX.Element {
+  // BF override out-of-range feedback (2026-05-31) — the save path accepts only
+  // 3-60% and previously DROPPED an out-of-range value silently (90 → cleared,
+  // no feedback). Surface it inline so the user sees the rejection. Only when
+  // manual is ON + a non-empty value that parses outside the band.
+  const bfOv = Number(bfOverride);
+  const bfOutOfRange =
+    bfManual && bfOverride.trim() !== '' && Number.isFinite(bfOv) && (bfOv < 3 || bfOv > 60);
+
   return (
     <>
       {/* §F-pass2-settings-profile-03 — Compozitie corporala (mockup L2034-2047).
@@ -145,12 +153,24 @@ export function BodyCompSection({
               placeholder="—"
               value={bfOverride}
               onChange={(e) => setBfOverride(e.target.value)}
+              aria-invalid={bfOutOfRange || undefined}
               data-testid="profile-bf-override"
-              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper2 text-ink3 font-mono text-sm disabled:opacity-60"
+              className={`w-20 px-2.5 py-1.5 text-right border rounded-xl bg-paper2 text-ink3 font-mono text-sm disabled:opacity-60 ${
+                bfOutOfRange ? 'border-brick' : 'border-lineStrong'
+              }`}
             />
           </span>
         </SelectRow>
       </div>
+      {bfOutOfRange && (
+        <p
+          className="text-xs text-brick mb-1 px-1 leading-snug"
+          role="status"
+          data-testid="profile-bf-range-error"
+        >
+          {t('settings.profile.bfRangeError')}
+        </p>
+      )}
       {bfNavyIncomplete && (
         <p
           className="text-xs text-ink2 mb-1 px-1 leading-snug"

@@ -606,7 +606,7 @@
       "fatigueEaseNote": "High fatigue + a deficit: target eased {kcal} kcal toward maintenance to protect recovery.",
       "aerobicAddNote": "Aerobic class today: +{kcal} kcal added to your target, so you can eat a bit more.",
       "addOnsClampedNote": "Capped at maintenance: today's training does not add kcal above what you need.",
-      "safetyFloorNote": "Safe minimum reached — we won't go below this.",
+      "safetyFloorNote": "Target limited to the safe minimum — we won't recommend below this. At this rate your goal may not be fully reached by the deadline.",
       "safetyCapNote": "Limited for safety — a sustainable pace.",
       "sources": {
         "manual": "Set manually",
@@ -1338,6 +1338,7 @@
       "bfSourceSkinfold": "Skinfold",
       "hip": "Hip (cm)",
       "bfHint": "Fill in neck, waist and height for a US Navy estimate. Until then we show a demographic estimate.",
+      "bfRangeError": "Value is outside the 3-60% range. It won't be saved until you fix it.",
       "bodyCompFooter": "Calculated automatically (US Navy: waist + neck + height + sex) or set by you. Falls back to a demographic estimate when measurements are missing.",
       "skinfoldHeading": "Skinfolds (advanced, optional)",
       "skinfoldToggle": "I measure with a caliper",

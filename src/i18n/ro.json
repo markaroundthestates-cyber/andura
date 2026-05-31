@@ -606,7 +606,7 @@
       "fatigueEaseNote": "Oboseala mare + deficit: tinta urcata cu {kcal} kcal spre mentenanta ca sa protejam recuperarea.",
       "aerobicAddNote": "Clasa aerobic azi: +{kcal} kcal adaugate la tinta, deci poti manca un pic mai mult.",
       "addOnsClampedNote": "Plafonat la mentenanta: antrenamentul de azi nu adauga kcal peste necesar.",
-      "safetyFloorNote": "Minim sigur atins — nu coboram sub acest prag.",
+      "safetyFloorNote": "Tinta a fost limitata la minimul sigur — nu recomandam sub acest prag. La acest ritm, obiectivul s-ar putea sa nu fie atins complet pana la termen.",
       "safetyCapNote": "Limitat pentru siguranta — ritm sustenabil.",
       "sources": {
         "manual": "Setat manual",
@@ -1338,6 +1338,7 @@
       "bfSourceSkinfold": "Pliuri",
       "hip": "Sold (cm)",
       "bfHint": "Completeaza gat, talie si inaltime pentru estimarea US Navy. Pana atunci aratam o estimare demografica.",
+      "bfRangeError": "Valoare in afara intervalului 3-60%. Nu va fi salvata pana nu o corectezi.",
       "bodyCompFooter": "Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori.",
       "skinfoldHeading": "Pliuri cutanate (avansat, optional)",
       "skinfoldToggle": "Masor cu caliper",

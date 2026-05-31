@@ -346,6 +346,28 @@ describe('SettingsProfile — Compozitie corporala (§F-pass2-settings-profile-0
     expect(DB.get('bf-override')).toBeNull(); // revine la auto, NU 99
   });
 
+  // BF range feedback (2026-05-31) — o valoare in afara intervalului 3-60% (ex: 90)
+  // era acceptata-apoi-dropata in tacere. Acum apare un mesaj inline VIZIBIL +
+  // border rosu pe input, in loc de drop silentios.
+  it('BF% override in afara intervalului (90) → mesaj inline vizibil + aria-invalid', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('profile-bf-manual'));
+    fireEvent.change(screen.getByTestId('profile-bf-override'), { target: { value: '90' } });
+    const err = screen.getByTestId('profile-bf-range-error');
+    expect(err).toBeInTheDocument();
+    expect(err.textContent).toMatch(/3-60/);
+    expect((screen.getByTestId('profile-bf-override') as HTMLInputElement).getAttribute('aria-invalid')).toBe('true');
+    // Fara diacritice (D-LEGACY-064).
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(err.textContent ?? '')).toBe(false);
+  });
+
+  it('BF% override valid (18.5) → fara mesaj de eroare', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('profile-bf-manual'));
+    fireEvent.change(screen.getByTestId('profile-bf-override'), { target: { value: '18.5' } });
+    expect(screen.queryByTestId('profile-bf-range-error')).not.toBeInTheDocument();
+  });
+
   // RE-U-01 — inaltimea = single source (onboardingStore.data.height, P-02), NU
   // stare locala separata. Campul porneste din store + persista la save → BMR
   // (BMRStrip) reflecta valoarea editata aici.
