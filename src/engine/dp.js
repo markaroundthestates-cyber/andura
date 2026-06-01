@@ -3,6 +3,7 @@ import { DB } from '../db.js';
 import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../constants.js';
 import { roundToEquipmentWeight, getPrevWeight } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier } from './exerciseMapping.js';
+import { getExerciseMetadata } from './exerciseLibrary.js';
 import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { t } from '../i18n/index.js';
@@ -115,6 +116,99 @@ export const DP = {
     return steps[ex] || (COMPOUND_EX.includes(ex) ? 2.5 : 2.5);
   },
 
+  // ── Per-session BUCKETED bias (Bug 4) ───────────────────────────────────────
+  // Daniel: at set 1 we only estimate; once one exercise is logged we already
+  // have actual kg + reps + rating, so the STARTING recommendation of the NEXT
+  // exercise this session should be calibrated. But what we learn on a
+  // compound/large-muscle lift must NOT leak onto a biceps curl — so the bias is
+  // keyed by a coarse bucket: (compound|isolation) x (large|small) x force_demand.
+  // The bias is a small multiplier (kg) bounded to a conservative band; it lives
+  // only for the current session (DB key cleared by the app at session start —
+  // we never persist a stale bias across sessions here).
+
+  // Large = piept/spate/picioare/umeri (+ fese); small = biceps/triceps/abdomen
+  // (+ antebrate/gambe). Compound vs isolation = COMPOUND_EX membership.
+  /** @param {string} ex @returns {string} bucket key */
+  _exerciseBucket(ex) {
+    const kind = COMPOUND_EX.includes(ex) ? 'compound' : 'isolation';
+    const meta = getExerciseMetadata(ex);
+    const m = (meta && meta.muscle_target_primary) || 'unknown';
+    const LARGE = ['piept', 'spate', 'picioare', 'umeri', 'fese'];
+    // muscle_target_primary uses prefixes like 'picioare-quads' → match by prefix.
+    const isLarge = LARGE.some((g) => m === g || m.indexOf(g) === 0);
+    const size = isLarge ? 'large' : 'small';
+    const force = (meta && meta.force_demand) || 'medium';
+    return `${kind}:${size}:${force}`;
+  },
+
+  // Per-session bias is meant to live ONLY for the current session. The app
+  // owns session lifecycle, so rather than depend on an external "session start"
+  // clear, the bias self-expires by wall clock: a stored bias older than
+  // SESSION_BIAS_TTL_MS (4h — comfortably longer than any single session, short
+  // enough that the NEXT day's session starts clean) is treated as absent. This
+  // keeps the whole feature self-contained in the engine with no stale carry-over.
+  SESSION_BIAS_TTL_MS: 4 * 3600 * 1000,
+
+  /** @param {number} [nowMs] @returns {Record<string, {kgFactor:number, n:number}>} */
+  _getSessionBias(nowMs) {
+    const raw = /** @type {any} */ (DB.get('session-bias'));
+    if (!raw || typeof raw !== 'object') return {};
+    const ms = nowMs == null ? clockNow() : nowMs;
+    if (Number.isFinite(raw.ts) && (ms - raw.ts) > this.SESSION_BIAS_TTL_MS) return {};
+    const { ts: _ts, ...buckets } = raw;
+    return buckets;
+  },
+
+  // Apply the current bucket's learned kg multiplier to a STARTING estimate.
+  // Conservative: clamped to [0.8, 1.25] so a single odd set never produces a
+  // wild start; returns the input unchanged when no bias is known for the bucket.
+  /** @param {string} ex @param {number} kg @param {number} [nowMs] */
+  _applySessionBias(ex, kg, nowMs) {
+    if (!kg || !Number.isFinite(kg)) return kg;
+    const bias = this._getSessionBias(nowMs);
+    const entry = bias[this._exerciseBucket(ex)];
+    if (!entry || !Number.isFinite(entry.kgFactor)) return kg;
+    const f = Math.max(0.8, Math.min(1.25, entry.kgFactor));
+    return kg * f;
+  },
+
+  // Learn from one logged set: how far the user's ACTUAL load deviated from what
+  // we recommended (loggedKg / recKg) blends into the bucket's running factor.
+  // Small step (EMA-style, weight 0.4) so the bias converges fast in the first
+  // session without oscillating. Only records when we have both a recommendation
+  // and a real logged load. The rating nudges the factor a touch (greu → ease the
+  // bucket down, usor → up) so subsequent exercises start kinder/bolder honestly.
+  /**
+   * @param {string} ex
+   * @param {{recKg?:number, loggedKg?:number, lastRPE?:number, nowMs?:number}} obs
+   */
+  _recordSessionBias(ex, obs) {
+    const recKg = Number(obs.recKg);
+    const loggedKg = Number(obs.loggedKg);
+    if (!Number.isFinite(recKg) || recKg <= 0) return;
+    if (!Number.isFinite(loggedKg) || loggedKg <= 0) return;
+    // Per-observation deviation, clamped so an extreme single set can't dominate.
+    let dev = loggedKg / recKg;
+    dev = Math.max(0.7, Math.min(1.4, dev));
+    // Rating nudge: a hard set (≥9.5) shades the bucket down ~5%, an easy set
+    // (≤6.5) shades it up ~5% — small, honest, on top of the load deviation.
+    const rpe = Number(obs.lastRPE);
+    if (Number.isFinite(rpe)) {
+      if (rpe >= 9.5) dev *= 0.95;
+      else if (rpe <= 6.5) dev *= 1.05;
+    }
+    const nowMs = Number.isFinite(Number(obs.nowMs)) ? Number(obs.nowMs) : clockNow();
+    const bias = this._getSessionBias(nowMs);
+    const key = this._exerciseBucket(ex);
+    const prev = bias[key];
+    const prevFactor = (prev && Number.isFinite(prev.kgFactor)) ? prev.kgFactor : 1;
+    const n = (prev && Number.isFinite(prev.n)) ? prev.n : 0;
+    // EMA toward the new observation (alpha 0.4) → fast but smooth convergence.
+    const next = prevFactor + 0.4 * (dev - prevFactor);
+    bias[key] = { kgFactor: Math.max(0.8, Math.min(1.25, next)), n: n + 1 };
+    DB.set('session-bias', { ...bias, ts: nowMs });
+  },
+
   // Get last N logs for exercise
   /**
    * @param {string} ex
@@ -223,7 +317,12 @@ export const DP = {
 
     // No history → start conservative
     if (!state.logs.length) {
-      const defaultKg = COMPOUND_EX.includes(ex) ? 20 : 10;
+      // Apply the learned per-session bucket bias to the STARTING estimate, then
+      // snap to a real equipment value (the bare 20/10 floor is not on every
+      // stack — e.g. pec_deck starts at 18). recommend()'s final gate snaps too,
+      // but snapping here keeps progressionNote text and the returned kg aligned.
+      const baseDefault = COMPOUND_EX.includes(ex) ? 20 : 10;
+      const defaultKg = roundToEquipmentWeight(this._applySessionBias(ex, baseDefault, nowMs), ex);
       return {
         kg: defaultKg, repsTarget: rMin, rir: 3,
         status: 'INIT', statusColor: 'var(--text2)',
@@ -287,7 +386,11 @@ export const DP = {
 
     // Stage 2: INCREASE — reached top reps, add weight
     if (atTopReps && lastRPE <= 8) {
-      const newKg = Math.round((lastW + inc) * 2) / 2;
+      // Snap the bumped weight to the equipment stack at source so the
+      // progressionNote text ("56 kg → 60 kg") matches what the user can load
+      // (his machines have 27/32, never 26). recommend() re-snaps as the final
+      // gate; this keeps the displayed note honest.
+      const newKg = roundToEquipmentWeight(lastW + inc, ex);
       return {
         kg: newKg, repsTarget: rMin, rir: 3,
         status: 'INCREASE',
@@ -387,8 +490,6 @@ export const DP = {
     const rMin = range[0] ?? 8;
     const rMax = range[1] ?? 12;
 
-    // No history yet — nothing to recalibrate against.
-    if (!dpState.lastW) return { adjust: false };
     // Need at least one rated set to respond to.
     if (!recentRPEs || !recentRPEs.length) return { adjust: false };
 
@@ -400,6 +501,26 @@ export const DP = {
     // history lastW only when not provided (legacy callers / engine-only tests).
     const loggedKg = (Number.isFinite(Number(ctx.loggedKg)) && Number(ctx.loggedKg) > 0)
       ? Number(ctx.loggedKg) : dpState.lastW;
+
+    // Calibrate intra-session even on a FIRST-EVER session (Bug 4): the old gate
+    // bailed whenever there was no prior DP history (!dpState.lastW), so a brand
+    // new user's first session never adapted no matter how the sets went. We can
+    // calibrate as soon as we have a real load to reason about THIS session —
+    // either prior history (dpState.lastW) OR the load the user just logged.
+    // Without either, there is genuinely nothing to recalibrate against.
+    if (!dpState.lastW && !(Number.isFinite(loggedKg) && loggedKg > 0)) {
+      return { adjust: false };
+    }
+
+    // Learn the per-session BUCKETED bias from this set so the STARTING
+    // recommendation of subsequent exercises in the same bucket is calibrated
+    // (load deviation + rating). Bucketed → a compound/large lift never biases a
+    // biceps curl. Recorded once per rated set; reading happens in _recommendRaw.
+    // _recordSessionBias self-guards on a valid recKg, so this is a no-op when
+    // the caller did not pass a recommendation.
+    if (Number.isFinite(loggedKg) && loggedKg > 0) {
+      this._recordSessionBias(ex, { recKg: Number(ctx.recKg), loggedKg, lastRPE, nowMs });
+    }
 
     // STRENGTH phase autoregulates WEIGHT; everything else (BULK/CUT/AUTO masa-
     // like) autoregulates REPS. MAINTENANCE flagged for milder magnitudes.
