@@ -89,7 +89,7 @@ export function CoachRestCard({
       <button
         type="button"
         onClick={onLightSession}
-        className="w-full mt-3.5 bg-transparent text-ink border border-line rounded-md py-2.5 font-medium"
+        className="w-full mt-3.5 bg-transparent text-ink border border-line rounded-full py-2.5 font-medium"
       >
         {t('coachRest.lightSessionCta')}
       </button>

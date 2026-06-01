@@ -291,7 +291,7 @@ export function PostRpe(): JSX.Element {
         onClick={() => { if (pick) void handleSubmit(pick); }}
         disabled={pick === null}
         data-testid="post-rpe-save"
-        className="btn-primary-lift pulse-grad-bg pulse-shine w-full py-4 mt-4 text-paper rounded-[14px] text-base font-semibold disabled:opacity-45 disabled:pointer-events-none"
+        className="btn-primary-lift pulse-grad-bg pulse-shine w-full py-4 mt-4 text-paper rounded-full text-base font-semibold disabled:opacity-45 disabled:pointer-events-none"
       >
         {t('postRpe.submitCta')}
       </button>

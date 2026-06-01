@@ -434,7 +434,7 @@ export function WorkoutPreview(): JSX.Element {
         type="button"
         onClick={handleStart}
         data-testid="preview-start-cta"
-        className="btn-primary-lift pulse-grad-bg pulse-shine w-full flex items-center justify-center gap-2 py-4 text-paper rounded-[14px] text-base font-semibold"
+        className="btn-primary-lift pulse-grad-bg pulse-shine w-full flex items-center justify-center gap-2 py-4 text-paper rounded-full text-base font-semibold"
       >
         <Check className="w-5 h-5" aria-hidden="true" />
         {t('workout.preview.confirmStartCta')}

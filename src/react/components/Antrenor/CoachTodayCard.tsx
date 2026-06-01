@@ -224,7 +224,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
           haptic(12);
           onStart();
         }}
-        className="btn-primary-lift press-feedback pulse-grad-bg pulse-shine relative overflow-hidden w-full mt-4 rounded-md py-2.5 font-semibold flex items-center justify-center gap-2"
+        className="btn-primary-lift press-feedback pulse-grad-bg pulse-shine relative overflow-hidden w-full mt-4 rounded-full py-[15px] font-semibold flex items-center justify-center gap-2"
         style={{ color: 'var(--on-accent)' }}
       >
         <Ripple color="rgba(255,255,255,0.55)" />
