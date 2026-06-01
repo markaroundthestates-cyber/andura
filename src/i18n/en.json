@@ -1043,6 +1043,19 @@
       "kindTraining": "training",
       "kindRest": "rest"
     },
+    "dayPreview": {
+      "title": "{day} - {kind}",
+      "trainingKind": "Workout",
+      "restKind": "Rest day",
+      "ariaLabel": "Workout preview for the selected day",
+      "exercisesHeading": "Proposed exercises",
+      "metaCount": "{n} exercises",
+      "metaDuration": "~ {min} min",
+      "restBody": "Rest day. The coach proposes no workout today - recovery is part of the plan.",
+      "emptyBody": "The coach can't propose a workout for this day yet. The schedule is computed from your current state - come back after logging a few more sessions.",
+      "liveNote": "The list is recomputed from your current state (recovery, progress) every time you open it.",
+      "closeCta": "Close"
+    },
     "heatmap": {
       "ariaLabel": "Monthly training calendar",
       "prevMonth": "Previous month",

@@ -98,11 +98,16 @@ describe('Calendar7Day — render', () => {
     expect(screen.getByTestId('calendar-day-1').style.background).toContain('var(--surface-2)');
   });
 
-  it('locked default state — day buttons disabled', () => {
+  // Non-edit ("locked") state no longer DISABLES the day buttons — a tap now
+  // opens the read-only preview sheet for that day (proposed exercises). The
+  // calendar still reports data-edit-mode="false"; the schedule store's toggleDay
+  // remains guarded (it no-ops outside edit mode — see "locked state — toggleDay
+  // NU flips" below), so the days are NOT mutated by a non-edit tap.
+  it('locked default state — day buttons enabled (tap opens preview, not toggle)', () => {
     render(<Calendar7Day />);
     expect(screen.getByTestId('calendar-7day')).toHaveAttribute('data-edit-mode', 'false');
     for (let i = 0; i < 7; i++) {
-      expect(screen.getByTestId(`calendar-day-${i}`)).toBeDisabled();
+      expect(screen.getByTestId(`calendar-day-${i}`)).not.toBeDisabled();
     }
   });
 });

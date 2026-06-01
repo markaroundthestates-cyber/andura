@@ -1043,6 +1043,19 @@
       "kindTraining": "antrenament",
       "kindRest": "odihna"
     },
+    "dayPreview": {
+      "title": "{day} - {kind}",
+      "trainingKind": "Antrenament",
+      "restKind": "Zi de odihna",
+      "ariaLabel": "Previzualizare antrenament pentru ziua selectata",
+      "exercisesHeading": "Exercitii propuse",
+      "metaCount": "{n} exercitii",
+      "metaDuration": "~ {min} min",
+      "restBody": "Zi de odihna. Coach-ul nu propune antrenament azi - recuperarea face parte din plan.",
+      "emptyBody": "Coach-ul nu poate propune inca un antrenament pentru ziua asta. Programul se calculeaza din starea ta curenta - revino dupa ce mai logezi cateva sesiuni.",
+      "liveNote": "Lista se recalculeaza din starea curenta (recuperare, progres) de fiecare data cand o deschizi.",
+      "closeCta": "Inchide"
+    },
     "heatmap": {
       "ariaLabel": "Calendar antrenamente lunar",
       "prevMonth": "Luna anterioara",

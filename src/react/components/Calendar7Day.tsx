@@ -22,9 +22,10 @@
 // Cross-refs: DECISIONS.md §D-LEGACY-076 Calendar V1 ephemeral
 
 import type { JSX } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Pencil, Check } from 'lucide-react';
 import { useScheduleStore, weekStartIso } from '../stores/scheduleStore';
+import { ScheduleDayPreviewSheet } from './Calendar/ScheduleDayPreviewSheet';
 import { t } from '../../i18n/index.js';
 
 // Monday-first short day labels indexed 0..6. EN: "Mon"…"Sun"; RO: "L"…"D".
@@ -42,6 +43,10 @@ export function Calendar7Day(): JSX.Element {
   const toggleDay = useScheduleStore((s) => s.toggleDay);
   const saveWeekly = useScheduleStore((s) => s.saveWeekly);
   const resetWeekly = useScheduleStore((s) => s.resetWeekly);
+
+  // Read-only preview sheet — opened when a day is tapped OUTSIDE edit mode.
+  // null = closed. In edit mode the tap toggles the day instead (unchanged).
+  const [previewDay, setPreviewDay] = useState<number | null>(null);
 
   // Monday auto-reset cand new week.
   useEffect(() => {
@@ -63,11 +68,23 @@ export function Calendar7Day(): JSX.Element {
     }
   }
 
+  // Day tap routing. Edit mode → toggle the day active/rest (UNCHANGED). Non-edit
+  // mode → open the read-only preview sheet for that day (proposed exercises from
+  // the live engine). Idx is the Monday-first weekday index 0..6.
+  function handleDayTap(idx: number): void {
+    if (editMode) {
+      toggleDay(idx);
+    } else {
+      setPreviewDay(idx);
+    }
+  }
+
   // Monday-first "today" index (Mon=0 … Sun=6) for the aqua today marker
   // (mockup interfata-noua/screens-antrenor.jsx:69 .sched-pill.today).
   const todayIdx = (new Date().getDay() + 6) % 7;
 
   return (
+    <>
     <div
       className="pulse-card p-4 mb-4 animate-card-rise delay-75"
       data-testid="calendar-7day"
@@ -108,12 +125,14 @@ export function Calendar7Day(): JSX.Element {
             <button
               key={idx}
               type="button"
-              onClick={() => toggleDay(idx)}
-              disabled={!editMode}
+              onClick={() => handleDayTap(idx)}
               data-testid={`calendar-day-${idx}`}
               data-kind={kind}
               data-day={label}
               data-today={isToday ? 'true' : undefined}
+              // Non-edit tap opens a read-only preview of that day's proposed
+              // session; edit tap toggles the day. aria-label reflects the active
+              // affordance (preview vs toggle) so screen readers announce intent.
               aria-label={`${label} - ${trainingDay ? t('calendar.day7.kindTraining') : t('calendar.day7.kindRest')}`}
               className="flex-1 min-h-[44px] py-2.5 rounded-xl text-xs font-bold disabled:cursor-default transition-[background,color,box-shadow,transform] duration-150 hover:scale-[1.02] enabled:hover:scale-[1.04] active:scale-[0.94]"
               // ANDURA PULSE reskin (2026-05-29) — the legacy heat-green pill is
@@ -166,5 +185,17 @@ export function Calendar7Day(): JSX.Element {
         </>
       )}
     </div>
+    {/* Read-only day preview — proposed exercises from the live engine for the
+        tapped day. Opens only outside edit mode (handleDayTap). dayKind comes
+        from the live schedule (days[idx]) so a rest day renders the rest state
+        without invoking the engine. */}
+    <ScheduleDayPreviewSheet
+      open={previewDay !== null}
+      dayIdx={previewDay}
+      dayKind={previewDay !== null ? days[previewDay] ?? 'rest' : 'rest'}
+      dayLabel={previewDay !== null ? dayLabel(previewDay) : ''}
+      onClose={() => setPreviewDay(null)}
+    />
+    </>
   );
 }

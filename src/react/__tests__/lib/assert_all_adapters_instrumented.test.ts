@@ -48,9 +48,13 @@ const REQUIRED_ADAPTERS = [
   // §F-workout-05 — why-exercise explainer adapter (whyEngine wrap) added
   // post-D063; instrumented identically (captureException + source tag).
   'getWhyExerciseSummary',
+  // Schedule day-preview adapter — same pipeline as getTodayWorkout but for a
+  // specific weekday (composePlannedWorkoutToday with an injected Date).
+  // Instrumented identically (captureException + source tag).
+  'getWorkoutForDay',
 ] as const;
 
-const EXPECTED_CAPTURE_EXCEPTION_SITES = 14; // 11 Big-11 + getPatternsBanner extra sub-path + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare)
+const EXPECTED_CAPTURE_EXCEPTION_SITES = 15; // 11 Big-11 + getPatternsBanner extra sub-path + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare) + getWorkoutForDay (schedule day-preview)
 
 describe('Sentry adapter coverage anti-drift gate (D063 LOCK V1)', () => {
   const source = readFileSync(ENGINE_WRAPPERS_PATH, 'utf-8');

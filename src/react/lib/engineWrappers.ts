@@ -390,6 +390,51 @@ export async function getTodayWorkout(): Promise<PlannedWorkoutOutput | null> {
   }
 }
 
+/**
+ * Build a Date anchored to a given Monday-first weekday index (0=Mon … 6=Sun)
+ * within the CURRENT week. `dayIdx === todayIdx` returns `now` unchanged so the
+ * preview for today uses the live clock (identical to getTodayWorkout). Other
+ * indices shift the date to the matching day of this week — the same week the
+ * calendar override is committed for, so a rest/training override resolves
+ * correctly (getCalendarOverride matches on weekStartIso). Pure.
+ */
+export function dateForWeekdayIndex(dayIdx: number, now: Date = new Date()): Date {
+  const todayIdx = (now.getDay() + 6) % 7; // JS Sun=0 → Monday-first Mon=0
+  const target = new Date(now);
+  target.setDate(target.getDate() + (dayIdx - todayIdx));
+  return target;
+}
+
+/**
+ * Planned workout for a SPECIFIC weekday of the current week (schedule preview).
+ * Reuses the exact same pipeline as getTodayWorkout via composePlannedWorkoutToday
+ * with an injected Date for that day — so the proposed exercises reflect the live
+ * engine state (recovery / readiness / progression / session type for that day).
+ *
+ * The engine derives the day-of-week session type + rest-day override + selection
+ * seed from the injected Date (scheduleAdapter.getDailyWorkout). Returns null when
+ * the day is a rest day (override) OR the pipeline halts OR the engine throws —
+ * the caller renders an honest rest/empty state (NEVER a fabricated session).
+ *
+ * Read-only: this is a preview, so the MMI cap (which is a SILENT mutation of the
+ * returned plan, identical pure transform) is applied for parity with the real
+ * workout the user would start that day.
+ */
+export async function getWorkoutForDay(dayIdx: number): Promise<PlannedWorkoutOutput | null> {
+  try {
+    const planned = await composePlannedWorkoutToday(dateForWeekdayIndex(dayIdx));
+    if (planned === null) return null;
+    return applyMmiCapToWorkout(planned);
+  } catch (e) {
+    logger.warn('[engineWrappers] getWorkoutForDay failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getWorkoutForDay' },
+      extra: { dayIdx },
+    });
+    return null;
+  }
+}
+
 // ── Bayesian Nutrition wrapper (Phase 6 task_03) ────────────────────────
 //
 // Anti-recurrence engine API verify (sketch corrected inline per Daniel
