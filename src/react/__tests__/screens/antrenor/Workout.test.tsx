@@ -216,6 +216,40 @@ describe('Workout — base render (phase=idle init → logging)', async () => {
   });
 });
 
+// Design ADDENDUM 1 — exercise demo accordion. Collapsed by default (toggle row
+// only, demo panel absent); a tap expands the ExerciseMedia placeholder BENEATH
+// the row + flips aria-expanded; a second tap collapses it. Presentation-only.
+describe('Workout — exercise demo accordion (design ADDENDUM 1)', async () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('renders the demo toggle collapsed by default (aria-expanded=false, panel absent)', async () => {
+    await renderWorkoutAndWait();
+    const toggle = screen.getByTestId('workout-demo-toggle');
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('workout-demo-panel')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('workout-exercise-media-placeholder')).not.toBeInTheDocument();
+  });
+
+  it('opens the demo panel on tap + flips aria-expanded to true', async () => {
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('workout-demo-toggle'));
+    expect(screen.getByTestId('workout-demo-toggle')).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('workout-demo-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('workout-exercise-media-placeholder')).toBeInTheDocument();
+  });
+
+  it('collapses again on a second tap (panel removed, aria-expanded back to false)', async () => {
+    await renderWorkoutAndWait();
+    const toggle = screen.getByTestId('workout-demo-toggle');
+    fireEvent.click(toggle);
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('workout-demo-panel')).not.toBeInTheDocument();
+  });
+});
+
 // C3 — target kg modulated by the ENGINE intensityMod baseline (deload output),
 // NOT the EnergyCheck self-report. Once readiness is persisted (C2) the
 // self-report already shapes the prescription via the readiness read-side;

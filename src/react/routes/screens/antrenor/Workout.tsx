@@ -29,7 +29,7 @@
 import type { JSX } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, Play, ChevronDown } from 'lucide-react';
 import { AparatLipsaSheet } from '../../../components/Workout/AparatLipsaSheet';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
@@ -293,6 +293,12 @@ export function Workout(): JSX.Element {
   // positive kg delta the mockup PrFlash shows. The PostSummary PR banner stays
   // the durable record — this is the in-the-moment hit only.
   const [prFlash, setPrFlash] = useState<{ exercise: string; deltaKg: number } | null>(null);
+  // Design ADDENDUM 1 — exercise demo accordion open/close (presentation-only).
+  // The demo media is no longer a static card; it lives behind a pulse-card row
+  // (play icon + eyebrow + secondary line + chevron) that slides the placeholder
+  // open BENEATH it on tap. Collapsed by default so the log zone stays compact;
+  // the user expands only when they want to see the movement.
+  const [demoOpen, setDemoOpen] = useState(false);
   // U-04 (MED) — why-modal focus management (auto-focus + Escape + restore +
   // trap), paritate cu ExitConfirmSheet sister pattern. whyDismissRef = singurul
   // buton ("Am inteles") → Tab trap pe el insusi.
@@ -1108,19 +1114,55 @@ export function Workout(): JSX.Element {
             )}
           </div>
 
-          {/* Wave A4 (Daniel 2026-05-28 #11) — visual guidance for the current
-              movement. Gigel mid-set needs to SEE the movement, not just read
-              the Romanian name. ExerciseMedia 'card' variant is full-width
-              16:9; today it renders the muscle-group placeholder + "Imagine
-              in curand" honest copy (V2 asset sourcing decision Daniel-gated).
-              Once URLs land in exerciseMedia.ts, this single component swaps
-              to the live image/gif without code churn here. */}
-          <div className="mb-4 animate-fade-in-up">
-            <ExerciseMedia
-              engineName={currentExercise.engineName ?? currentExercise.name}
-              variant="card"
-              testId="workout-exercise-media"
-            />
+          {/* Design ADDENDUM 1 — exercise demo accordion. Collapsed = a pulse-card
+              ROW (play icon + "EXERCISE DEMO" mono eyebrow + "Tap to watch the
+              form" secondary line + a chevron that rotates 180deg on open).
+              Expanded = the ExerciseMedia 'card' placeholder slides open BENEATH
+              the row. Gigel mid-set sees the movement only when he wants it; the
+              log zone stays compact otherwise.
+
+              Wave A4 (Daniel 2026-05-28 #11) — ExerciseMedia is unchanged: the
+              'card' variant is full-width 16:9 and today renders the muscle-
+              group placeholder + "Imagine in curand" honest copy. Once URLs land
+              in exerciseMedia.ts, the live image/gif swaps in without churn. */}
+          <div className="mb-4 pulse-card overflow-hidden animate-fade-in-up">
+            <button
+              type="button"
+              onClick={() => setDemoOpen((v) => !v)}
+              aria-expanded={demoOpen}
+              data-testid="workout-demo-toggle"
+              className="w-full flex items-center gap-3 p-3 text-left transition-transform active:scale-[.99]"
+            >
+              <span
+                aria-hidden="true"
+                className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full"
+                style={{
+                  color: 'var(--volt)',
+                  background: 'color-mix(in oklab, var(--volt) 14%, transparent)',
+                  border: '1px solid color-mix(in oklab, var(--volt) 36%, transparent)',
+                }}
+              >
+                <Play className="w-4 h-4" fill="currentColor" aria-hidden="true" />
+              </span>
+              <span className="flex-1 min-w-0">
+                <Kicker color="var(--volt)">{t('workout.demo.eyebrow')}</Kicker>
+                <span className="block text-sm text-ink2 mt-0.5">{t('workout.demo.tapToWatch')}</span>
+              </span>
+              <ChevronDown
+                aria-hidden="true"
+                strokeWidth={1.8}
+                className={`w-5 h-5 flex-shrink-0 text-ink2 transition-transform duration-300 ${demoOpen ? 'rotate-180' : ''}`}
+              />
+            </button>
+            {demoOpen && (
+              <div className="px-3 pb-3 animate-fade-in-up" data-testid="workout-demo-panel">
+                <ExerciseMedia
+                  engineName={currentExercise.engineName ?? currentExercise.name}
+                  variant="card"
+                  testId="workout-exercise-media"
+                />
+              </div>
+            )}
           </div>
 
           {/* §F-workout-03 — in-workout substitution row (Daniel 2026-05-12

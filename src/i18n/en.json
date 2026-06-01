@@ -310,6 +310,10 @@
     },
     "currentExercise": "Current exercise",
     "liveVolumeLabel": "kg lifted",
+    "demo": {
+      "eyebrow": "Exercise demo",
+      "tapToWatch": "Tap to watch the form"
+    },
     "prFlash": {
       "ariaLabel": "New personal record",
       "title": "New record!",

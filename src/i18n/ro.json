@@ -310,6 +310,10 @@
     },
     "currentExercise": "Exercitiul curent",
     "liveVolumeLabel": "kg ridicate",
+    "demo": {
+      "eyebrow": "Demo exercitiu",
+      "tapToWatch": "Apasa pentru forma corecta"
+    },
     "prFlash": {
       "ariaLabel": "Record personal nou",
       "title": "Record nou!",
