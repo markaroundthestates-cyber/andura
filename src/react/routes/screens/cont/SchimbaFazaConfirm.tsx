@@ -67,7 +67,7 @@ export function SchimbaFazaConfirm(): JSX.Element {
   }
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="schimba-faza-confirm">
+    <section className="min-h-screen flex flex-col" data-testid="schimba-faza-confirm">
       <SubHeader
         title={t('confirm.schimbaFaza.title')}
         onBack={handleCancel}
@@ -85,7 +85,7 @@ export function SchimbaFazaConfirm(): JSX.Element {
           >
             <GitBranch className="w-7 h-7 text-ink" aria-hidden="true" />
           </div>
-          <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.schimbaFaza.heading')}</h2>
+          <h2 className="font-display text-2xl font-semibold text-ink mb-3">{t('confirm.schimbaFaza.heading')}</h2>
           {/* Body paragraphs split per mockup andura-clasic.html L2146-2147. */}
           <p className="text-sm text-ink2 leading-relaxed mb-2">
             {t('confirm.schimbaFaza.body1')}
@@ -134,7 +134,7 @@ export function SchimbaFazaConfirm(): JSX.Element {
               type="button"
               onClick={handleConfirm}
               data-testid="schimba-faza-confirm-accept"
-              className="btn-primary-lift press-feedback w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+              className="btn-grad press-feedback w-full py-4 rounded-full text-base font-semibold"
             >
               {t('confirm.schimbaFaza.acceptCta')}
             </button>
@@ -142,7 +142,8 @@ export function SchimbaFazaConfirm(): JSX.Element {
               type="button"
               onClick={handleCancel}
               data-testid="schimba-faza-confirm-cancel"
-              className="btn-secondary-lift press-feedback w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
+              className="press-feedback w-full py-4 border border-line rounded-full text-base font-medium text-ink"
+              style={{ background: 'var(--surface-2)' }}
             >
               {t('confirm.schimbaFaza.cancelCta')}
             </button>

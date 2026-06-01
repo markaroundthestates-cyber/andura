@@ -27,7 +27,7 @@ export function RedoOnboardingConfirm(): JSX.Element {
   }
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="redo-onboarding-confirm">
+    <section className="min-h-screen flex flex-col" data-testid="redo-onboarding-confirm">
       <SubHeader
         title={t('confirm.redoOnboarding.title')}
         onBack={handleCancel}
@@ -44,7 +44,7 @@ export function RedoOnboardingConfirm(): JSX.Element {
           >
             <RotateCcw className="w-7 h-7 text-ink" aria-hidden="true" />
           </div>
-          <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.redoOnboarding.heading')}</h2>
+          <h2 className="font-display text-2xl font-semibold text-ink mb-3">{t('confirm.redoOnboarding.heading')}</h2>
           <p className="text-sm text-ink2 leading-relaxed mb-2">
             {t('confirm.redoOnboarding.body1')}
           </p>
@@ -57,7 +57,7 @@ export function RedoOnboardingConfirm(): JSX.Element {
               type="button"
               onClick={handleConfirm}
               data-testid="redo-onboarding-confirm-accept"
-              className="btn-primary-lift press-feedback w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+              className="btn-grad press-feedback w-full py-4 rounded-full text-base font-semibold"
             >
               {t('confirm.redoOnboarding.acceptCta')}
             </button>
@@ -65,7 +65,8 @@ export function RedoOnboardingConfirm(): JSX.Element {
               type="button"
               onClick={handleCancel}
               data-testid="redo-onboarding-confirm-cancel"
-              className="btn-secondary-lift press-feedback w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
+              className="press-feedback w-full py-4 border border-line rounded-full text-base font-medium text-ink"
+              style={{ background: 'var(--surface-2)' }}
             >
               {t('confirm.redoOnboarding.cancelCta')}
             </button>

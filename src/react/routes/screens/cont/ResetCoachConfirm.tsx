@@ -28,7 +28,7 @@ export function ResetCoachConfirm(): JSX.Element {
   }
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="reset-coach-confirm">
+    <section className="min-h-screen flex flex-col" data-testid="reset-coach-confirm">
       <SubHeader
         title={t('confirm.resetCoach.title')}
         onBack={handleCancel}
@@ -45,7 +45,7 @@ export function ResetCoachConfirm(): JSX.Element {
           >
             <RefreshCcw className="w-7 h-7 text-ink" aria-hidden="true" />
           </div>
-          <h2 className="text-2xl font-semibold text-ink mb-3">{t('confirm.resetCoach.heading')}</h2>
+          <h2 className="font-display text-2xl font-semibold text-ink mb-3">{t('confirm.resetCoach.heading')}</h2>
           <p className="text-sm text-ink2 leading-relaxed mb-2">
             {t('confirm.resetCoach.body1')}
           </p>
@@ -58,7 +58,7 @@ export function ResetCoachConfirm(): JSX.Element {
               type="button"
               onClick={handleConfirm}
               data-testid="reset-coach-confirm-accept"
-              className="btn-primary-lift press-feedback w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+              className="press-feedback w-full py-4 bg-danger text-white rounded-full text-base font-semibold"
             >
               {t('confirm.resetCoach.acceptCta')}
             </button>
@@ -66,7 +66,8 @@ export function ResetCoachConfirm(): JSX.Element {
               type="button"
               onClick={handleCancel}
               data-testid="reset-coach-confirm-cancel"
-              className="btn-secondary-lift press-feedback w-full py-4 border border-lineStrong rounded-[14px] text-base font-medium text-ink2"
+              className="press-feedback w-full py-4 border border-line rounded-full text-base font-medium text-ink"
+              style={{ background: 'var(--surface-2)' }}
             >
               {t('confirm.resetCoach.cancelCta')}
             </button>
