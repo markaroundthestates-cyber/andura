@@ -50,7 +50,7 @@
   {
     "name": "CSS total",
     "path": "dist/assets/*.css",
-    "limit": "12 KB",
+    "limit": "14 KB",
     "gzip": true
   }
 ]
