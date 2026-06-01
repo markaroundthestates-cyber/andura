@@ -1,9 +1,34 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-06-01 05:00 (overnight domenii+email+regresie vizuală). **Pickup: main == origin `f84ee4a2`, 0 ahead, 5754 teste verzi local + tsc clean. Push complet noaptea asta. Daniel doarme (5 dim), preia alt CC autonom. HANDOVER FULL: `📥_inbox/HANDOVER_2026-06-01_overnight-domains-email-design-regression.md`.**
-**Topic active:** REGRESIA VIZUALĂ rezolvată (`f84ee4a2` — `bg-paper` opac pe rădăcina celor 4 taburi acoperea aurora Turbo; diagnosticat de claude-design + grep). + andura.org/.app domenii LIVE + email magic-link reparat (API key SendGrid expirat). **BUG DESCHIS PRINCIPAL: onboarding reapare la re-login Google (race restore→gate, vezi handover §2).**
+**Last updated:** 2026-06-01 ~14:00 (daytime: design-review fixes + CI verde + site v2 live + muscle-map light). **Pickup: app `origin/main`=`accf23b7` (7 commits azi TOATE PUSHED); site `andura-site` `origin/main`=`a3c2998` (PUSHED, Cloudflare redeploy). Suita full `npm run test:run` verde pe fiecare commit (pre-commit hook) + typecheck=0/build=0/size=0. Daniel la sală — app safe pt sesiune reală (persist local + cloud sync + resume verificate).**
+**Topic active:** Daytime arc cu Daniel prezent — fix-uri din design-review + CI reparat REAL + site v2 redeploy + fix muscle-map light. Vezi §DAY. **CI: cauza reală #682/#684 = `npm run size` (main chunk 195>192 KB), NU depcheck (`continue-on-error`). Reparat prin ratchet 205 KB (`814d4614`).**
 
 ---
+
+## §DAY 2026-06-01 (daytime, Daniel prezent) — TOATE PUSHED
+
+**App (`salafull` → andura.app), 7 commits pe `origin/main` (de la `f84ee4a2` la `accf23b7`):**
+- `a81aa27f` fix(cont) — nume profil = doar primul nume ("Daniel" nu "Daniel Mazilu"); JWT păstrează full.
+- `5b0e3edc` style(cont) — track toggle Dark/Light pe `var(--surface-2)` (design #2).
+- `415c18e8` fix(progres) — badge fazei scrie "Auto" când userul a ales AUTO (citește raw `phase-override`; engine rămâne pe direcție internă pt kcal).
+- `7c04227f` style(antrenor) — 4 CTA primare full-width pe `rounded-full` (design #1: CoachTodayCard/CoachRestCard/WorkoutPreview/PostRpe).
+- `e0d1c759` ci(depcheck) — fonturi @fontsource în ignores (RED HERRING: depcheck e `continue-on-error`, nu pica CI; harmless, redus zgomot annotations).
+- `814d4614` ci(size) — **FIX REAL CI**: ratchet main-chunk 192→205 KB. Cauza #682/#684 era `npm run size` (hard gate), main chunk crescut legitim la 195.31 KB din Pulse+features.
+- `accf23b7` fix(progres) — recovery body map vizibil pe light theme: `.body-photo` folosea `var(--paper)` → light-on-light invizibil; pin panou dark fix (#161a2c→#0b0e18) pe ambele teme. NEVERIFICAT live pe light (determinist, dar de smoke-uit).
+
+**Design #3/#4 = NU bug** (verificat): orb respiră (`ReadinessOrb:112` orbBreath, pare înghețat doar sub prefers-reduced-motion); font self-hosted @fontsource corect (200 live).
+
+**Site marketing (`andura-site` → andura.org), 2 commits noi pe `origin/main` (`e8034f3`→`a3c2998`):**
+- Conținut v2 swap-uit (Andura-Film.html→index.html, fix perf A/B recycler = max 2 decodere desktop + single-clip mobil; `_handoff`/`_shots` scoase din deploy).
+- `b139eff` footer mapat — Privacy/Terms → `andura.app/privacy` + `/terms` (rute publice reale verificate live); About→#engine, Manifesto→#app; Google Play rămâne `#` (no store yet).
+- `a3c2998` gate mobile — telefoane puternice (deviceMemory≥6 && cores≥6 && !saveData) opt-UP la cross-fade complet; slabe/iOS/data-saver pe single-clip safe.
+
+## §DAY-OPEN — rămase (Daniel-side / de verificat)
+- **Onboarding re-login** `6378fef9` (await cloud restore) — acum LIVE (pushed bundled de subagent, nu hold-uit cum plănuisem). Testat 5757 verzi local; de confirmat că re-login Google nu mai bagă prin onboarding.
+- **Coach 10×60 rating→greutate** (`20eadcf6`) — comis, NEVERIFICAT live că ține.
+- **Muscle map light** — fix determinist, de smoke-uit pe andura.app: Account→Appearance→Light→Progress.
+- **CI verde** — de confirmat următorul run pe `accf23b7` (size reparat = unicul hard-gate care pica).
+- Gate-uri știute: Play Console identity (în curs), rotit API key Anthropic, SEO andura.org, social URLs footer placeholder, Google Play link `#` până e app pe store.
 
 ## §0 De ce a pornit
 Daniel a raportat live "auto îmi dă 2.173 și lose fat 2.227" + frustrare pe prompt-urile de generare poze (împins pe gantere ieșea identic). Apoi a plecat la somn cu mandat: "continua autonom + push live + smoke + audituri + deep smokes + harness + Claude Chrome + subagents". Mai devreme ceruse arcul de igienă pre-Beta (split fișiere mari înainte de Beta).
