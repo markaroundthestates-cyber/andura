@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { buildSession, prioritizeWeakGroups } from '../sessionBuilder.js';
+import { buildSession, prioritizeWeakGroups, movementKey } from '../sessionBuilder.js';
 import { getExerciseMetadata } from '../exerciseLibrary.js';
 
 // Coarse equipment types (library equipment_type vocabulary).
@@ -320,5 +320,65 @@ describe('buildSession — skill capability gate', () => {
       }
     }
     expect(found).toBe(true); // T2 demonstrably unlocks at least one advanced pick
+  });
+});
+
+// ── BUG 5 — movement-aware dedup (no two same-movement variants per plan) ──
+// Root cause: the builder deduped by EXACT NAME, so two chest-fly variants
+// (different names, same movement) could co-exist (user got a chest fly twice).
+describe('movementKey — movement-pattern identity', () => {
+  it('collapses chest-fly variants onto the same movement key', () => {
+    const cable = movementKey('Cable Fly', getExerciseMetadata('Cable Fly'));
+    const db = movementKey('DB Fly', getExerciseMetadata('DB Fly'));
+    const incline = movementKey('Incline DB Fly', getExerciseMetadata('Incline DB Fly'));
+    expect(cable).toBe(db);
+    expect(cable).toBe(incline);
+  });
+
+  it('keeps DIFFERENT movements on the same muscle distinct (fly vs press)', () => {
+    const fly = movementKey('Cable Fly', getExerciseMetadata('Cable Fly'));
+    const press = movementKey('Flat DB Press', getExerciseMetadata('Flat DB Press'));
+    expect(fly).not.toBe(press);
+  });
+
+  it('does NOT collapse Lat Pulldown with a generic Pull (specific token wins)', () => {
+    const pulldown = movementKey('Lat Pulldown', getExerciseMetadata('Lat Pulldown'));
+    expect(pulldown).toContain('pulldown');
+  });
+
+  it('unrecognized name falls back to a name-unique key (no over-dedup)', () => {
+    const a = movementKey('Zzz Mystery Move', { muscle_target_primary: 'piept' });
+    const b = movementKey('Qqq Mystery Move', { muscle_target_primary: 'piept' });
+    expect(a).not.toBe(b);
+  });
+});
+
+describe('buildSession — BUG 5 movement dedup', () => {
+  const TYPES = ['PUSH', 'PULL', 'LEGS', 'UMERI_BRATE', 'UPPER_PICIOARE', 'FULL_UPPER'];
+
+  it('never selects two exercises of the same movement (all types, many seeds)', () => {
+    for (const type of TYPES) {
+      for (let s = 0; s < 60; s++) {
+        const session = buildSession(type, ctx({ seed: `bug5|${type}|${s}` }));
+        const keys = session.exercises.map(
+          (e) => movementKey(e.name, getExerciseMetadata(e.name)),
+        );
+        expect(new Set(keys).size).toBe(keys.length);
+      }
+    }
+  });
+
+  it('never selects two distinct CHEST-fly variants in one PUSH plan', () => {
+    // Scoped to the chest (piept) muscle: a chest fly + a rear-delt fly (umeri)
+    // are legitimately DIFFERENT movements, so we count only same-muscle flyes.
+    for (let s = 0; s < 60; s++) {
+      const session = buildSession('PUSH', ctx({ seed: `bug5-fly|${s}` }));
+      const chestFlyes = session.exercises.filter(
+        (e) =>
+          /fly/i.test(e.name) &&
+          getExerciseMetadata(e.name).muscle_target_primary === 'piept',
+      );
+      expect(chestFlyes.length).toBeLessThanOrEqual(1);
+    }
   });
 });

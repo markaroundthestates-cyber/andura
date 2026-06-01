@@ -750,7 +750,14 @@ export function Workout(): JSX.Element {
       bumpActivity();
       let res;
       if (kind === 'busy') {
-        res = resolveBusySwap(engineName, safeExIdx);
+        // BUG 5 — exclude every OTHER session exercise (already-completed
+        // earlier + still-pending later) so a busy-swap never returns a movement
+        // that exists elsewhere in the session (the "chest fly twice" bug).
+        const otherNames = (exercises ?? [])
+          .filter((_, i) => i !== safeExIdx)
+          .map((ex) => ex.engineName ?? ex.name)
+          .filter((n): n is string => typeof n === 'string' && n.length > 0);
+        res = resolveBusySwap(engineName, safeExIdx, otherNames);
       } else {
         // Refusal: build tried-set = the original we're about to swap out + all
         // names previously refused at this slot. markRefusalTried below records
@@ -806,7 +813,7 @@ export function Workout(): JSX.Element {
         variant: 'success',
       });
     },
-    [bumpActivity, safeExIdx, swapExercise, refusalTriedByEx, markRefusalTried]
+    [bumpActivity, safeExIdx, swapExercise, refusalTriedByEx, markRefusalTried, exercises]
   );
 
   // Daniel smoke 2026-05-28 #17 — in-session aparat-lipsa save flow. The sheet
@@ -822,7 +829,13 @@ export function Workout(): JSX.Element {
       bumpActivity();
       const engineName = currentExercise.engineName;
       if (typeof engineName !== 'string' || engineName.length === 0) return;
-      const res = resolveMissingSwap(engineName, safeExIdx);
+      // BUG 5 — exclude every other session exercise so the missing-equipment
+      // swap never duplicates a movement that exists elsewhere in the session.
+      const otherNames = (exercises ?? [])
+        .filter((_, i) => i !== safeExIdx)
+        .map((ex) => ex.engineName ?? ex.name)
+        .filter((n): n is string => typeof n === 'string' && n.length > 0);
+      const res = resolveMissingSwap(engineName, safeExIdx, otherNames);
       // resolveMissingSwap returns swapped=false when the original is still
       // performable with the new missing list (no equipment overlap). Honest
       // noAlt when the user has marked so much missing that nothing works —
@@ -854,7 +867,7 @@ export function Workout(): JSX.Element {
         variant: 'success',
       });
     },
-    [bumpActivity, currentExercise.engineName, safeExIdx, swapExercise]
+    [bumpActivity, currentExercise.engineName, safeExIdx, swapExercise, exercises]
   );
 
   const handleOpenAparatLipsa = useCallback((): void => {

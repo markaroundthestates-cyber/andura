@@ -28,6 +28,7 @@ import {
   getFallbackCascade,
 } from '../../engine/alternativeFinder.js';
 import { getExerciseMetadata } from '../../engine/exerciseLibrary.js';
+import { movementKey } from '../../engine/sessionBuilder.js';
 import {
   availableCoarseTypes,
   COARSE_EQUIPMENT_TYPES,
@@ -99,12 +100,23 @@ export function availableTypesExcludingBusy(busyEngineName: string): string[] {
  * alternative performable without the busy machine's coarse type; degrades to
  * ranking; honest noAlt when nothing fits.
  *
+ * BUG 5 — `excludeNames` are the still-PENDING (not-yet-completed) exercises in
+ * the session: a swap result that duplicates one of them (same name OR same
+ * movement) is rejected in favor of the next candidate, so the cascade can never
+ * hand back a movement that already lives later in the plan. Optional with a safe
+ * default ([]) so existing callers keep working unchanged.
+ *
  * @param engineName English canonical name of the current exercise
  * @param exIdx position in the session (for the swapped exercise id slug)
+ * @param excludeNames English canonical names already present / pending elsewhere
  */
-export function resolveBusySwap(engineName: string, exIdx: number): SwapResolution {
+export function resolveBusySwap(
+  engineName: string,
+  exIdx: number,
+  excludeNames: readonly string[] = [],
+): SwapResolution {
   const available = availableTypesExcludingBusy(engineName);
-  return resolveCascade(engineName, available, exIdx, 'Aparat ocupat');
+  return resolveCascade(engineName, available, exIdx, 'Aparat ocupat', excludeNames);
 }
 
 /**
@@ -115,9 +127,13 @@ export function resolveBusySwap(engineName: string, exIdx: number): SwapResoluti
  * @param engineName English canonical name of the current exercise
  * @param exIdx position in the session
  */
-export function resolveMissingSwap(engineName: string, exIdx: number): SwapResolution {
+export function resolveMissingSwap(
+  engineName: string,
+  exIdx: number,
+  excludeNames: readonly string[] = [],
+): SwapResolution {
   const available = availableCoarseTypes(getMissingEquipment());
-  return resolveCascade(engineName, available, exIdx, 'Aparat lipsa');
+  return resolveCascade(engineName, available, exIdx, 'Aparat lipsa', excludeNames);
 }
 
 // Daniel smoke 2026-05-28 (#3.3 etc) — RO display labels for engine muscle
@@ -222,17 +238,34 @@ export function resolveRefusalSwap(
 }
 
 /**
+ * Movement key for an engine name (BUG 5) — single source of truth in
+ * sessionBuilder so the swap layer dedups movements the SAME way the session
+ * builder does. Unknown metadata falls back to a name-unique key.
+ */
+function movementKeyOf(engineName: string): string {
+  return movementKey(engineName, getExerciseMetadata(engineName) ?? {});
+}
+
+/**
  * Shared cascade resolver: run getFallbackCascade and shape the result into a
  * SwapResolution. muscle_group_compose (a 1-2 exercise cascade step) is handled
  * by surfacing the FIRST exercise of the bundle as the swap (the simplest UX
  * that keeps one row = one exercise); the 2-for-1 detail is deferred (flagged in
  * the WP-5 report). noAlt → honest skip.
+ *
+ * BUG 5 — `excludeNames` are the still-pending (not-yet-completed) session
+ * exercises. The cascade pick is REJECTED when it duplicates one of them by name
+ * OR by movement (so a busy-swap of a chest fly can't hand back another chest
+ * fly that is already planned later). On collision we fall forward to the broad
+ * ranked same-muscle pool (findRefusalPool) and take the first candidate that is
+ * both performable with availableTypes and movement-distinct from the excludes.
  */
 function resolveCascade(
   engineName: string,
   availableTypes: string[],
   exIdx: number,
   reason: string,
+  excludeNames: readonly string[] = [],
 ): SwapResolution {
   const originalName = toExerciseDisplay(engineName).name;
   const res = getFallbackCascade(engineName, availableTypes) as {
@@ -249,10 +282,38 @@ function resolveCascade(
     return { exercise: null, swapped: false, alternativeName: '', originalName, noAlt: true };
   }
   // muscle_group_compose returns `exercises` (1-2); surface the first as the swap.
-  const altName = res.exercise ?? (Array.isArray(res.exercises) ? res.exercises[0] : undefined);
+  let altName = res.exercise ?? (Array.isArray(res.exercises) ? res.exercises[0] : undefined);
   if (typeof altName !== 'string' || altName.length === 0) {
     return { exercise: null, swapped: false, alternativeName: '', originalName, noAlt: true };
   }
+
+  // BUG 5 — reject a swap that would duplicate a still-pending exercise (name or
+  // movement). Build the forbidden movement-key set from the excludes, then if
+  // the cascade pick collides, walk the broad ranked same-muscle pool for the
+  // first performable, movement-distinct candidate.
+  const excludedNameSet = new Set(excludeNames);
+  const excludedMovementSet = new Set(excludeNames.map(movementKeyOf));
+  const collides = (name: string): boolean =>
+    excludedNameSet.has(name) || excludedMovementSet.has(movementKeyOf(name));
+
+  if (collides(altName)) {
+    const available = new Set(availableTypes);
+    const performable = (name: string): boolean => {
+      const type = getExerciseMetadata(name)?.equipment_type;
+      return type === 'bodyweight' || (typeof type === 'string' && available.has(type));
+    };
+    const { candidates } = findRefusalPool(engineName, [...excludeNames]) as {
+      candidates: Array<{ name: string }>;
+    };
+    const next = candidates.find((c) => performable(c.name) && !collides(c.name));
+    if (!next) {
+      // Every performable same-muscle alternative duplicates a pending movement —
+      // honest skip rather than re-offering a movement already in the plan.
+      return { exercise: null, swapped: false, alternativeName: '', originalName, noAlt: true };
+    }
+    altName = next.name;
+  }
+
   return {
     exercise: buildSwappedExercise(altName, exIdx, reason),
     swapped: true,

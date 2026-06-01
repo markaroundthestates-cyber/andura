@@ -11,6 +11,8 @@ import {
   recomposeWithBusyTypes,
   availableTypesExcludingBusy,
 } from '../../lib/substitution';
+import { movementKey } from '../../../engine/sessionBuilder.js';
+import { getExerciseMetadata } from '../../../engine/exerciseLibrary.js';
 import type { PlannedExercise } from '../../lib/engineWrappers';
 
 beforeEach(() => {
@@ -37,6 +39,37 @@ describe('resolveBusySwap — equipment cascade produces a NAMED alternative', (
     const avail = availableTypesExcludingBusy('Incline Barbell Bench'); // barbell
     expect(avail).not.toContain('barbell');
     expect(avail).toContain('bodyweight'); // bodyweight always retained
+  });
+});
+
+// ── BUG 5 — a busy-swap never returns a movement already pending elsewhere ──
+// Root cause: the cascade picked the alternative for THAT exercise alone, blind
+// to the rest of the session, so it could hand back a chest-fly variant whose
+// movement already lives later in the plan (user got a chest fly twice).
+describe('resolveBusySwap — BUG 5 excludeNames (movement-aware)', () => {
+  const mk = (name: string) => movementKey(name, getExerciseMetadata(name));
+
+  it('without excludes, a busy chest fly resolves to ANOTHER fly (the bug)', () => {
+    const res = resolveBusySwap('Cable Fly', 0);
+    expect(res.swapped).toBe(true);
+    // Documents the pre-fix collision surface: the natural cascade pick is itself
+    // a chest-fly movement (same movementKey as the original).
+    expect(mk(res.exercise!.engineName as string)).toBe(mk('Cable Fly'));
+  });
+
+  it('with the other fly variants excluded, the swap is a DIFFERENT movement', () => {
+    const otherFlyes = [
+      'DB Fly', 'Incline DB Fly', 'Decline DB Fly', 'Pec Deck / Cable Fly',
+      'Cable Fly Mid', 'Incline Cable Fly', 'Single-Arm Cable Fly',
+      'Cable Fly Low-to-High', 'Decline Cable Fly', 'Cable Pec Deck',
+      'Floor DB Fly', 'Single-Arm DB Fly',
+    ];
+    const res = resolveBusySwap('Cable Fly', 0, otherFlyes);
+    expect(res.swapped).toBe(true);
+    const altKey = mk(res.exercise!.engineName as string);
+    // The result is NOT a fly movement, and collides with none of the excludes.
+    expect(altKey).not.toBe(mk('Cable Fly'));
+    for (const ex of otherFlyes) expect(altKey).not.toBe(mk(ex));
   });
 });
 

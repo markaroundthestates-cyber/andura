@@ -208,6 +208,71 @@ function seededKey(name, seed) {
   return hashString(`${seed}:${name}`);
 }
 
+// BUG 5 fix — movement-pattern tokens. The library has NO explicit "movement
+// family" field, so the same physical movement appears under many distinct names
+// (e.g. "Cable Fly", "Pec Deck", "Incline DB Fly", "DB Fly" — all chest flyes).
+// Deduping a session by EXACT NAME let two same-movement variants co-exist (the
+// reported "chest fly twice" bug). We derive a coarse movement token from the
+// name and treat (muscle_target_primary + token) as the movement identity.
+//
+// Order matters: the most specific token is matched first (e.g. "pulldown"/
+// "pushdown" before the generic "pull"/"push", "leg curl" before "curl") so a Lat
+// Pulldown is NOT collapsed with a Pull-up. Matching is WORD-BOUNDARY (not bare
+// substring) so "row" does NOT falsely match inside "narrow" — that earlier bug
+// mis-classified "Barbell Curl Narrow Grip" as a row. CONSERVATIVE by design: a
+// name matching NO token gets a per-name unique key (falls back to exact-name
+// dedup), so unrecognized movements are never wrongly collapsed.
+// Each entry = [pattern, canonicalToken]. Distinct patterns that are the SAME
+// physical movement share a canonical token so they collapse together (e.g.
+// "pec deck", "pec", and "fly" are all the chest-fly movement). Listed
+// most-specific-first so e.g. "leg curl" wins over the generic "curl", and
+// "pec deck" / "rear delt" are resolved before the bare "deck"/"delt" never
+// appear alone.
+const MOVEMENT_TOKEN_DEFS = [
+  ['pec deck', 'fly'], ['good morning', 'good-morning'], ['hip thrust', 'hip-thrust'],
+  ['split squat', 'squat'], ['leg press', 'leg-press'], ['leg extension', 'leg-extension'],
+  ['leg curl', 'leg-curl'], ['lateral raise', 'lateral-raise'], ['front raise', 'front-raise'],
+  ['rear delt', 'rear-delt'], ['face pull', 'face-pull'], ['pulldown', 'pulldown'],
+  ['pushdown', 'pushdown'], ['pullover', 'pullover'], ['pull-up', 'pull-up'],
+  ['pullup', 'pull-up'], ['chin-up', 'chin-up'], ['chinup', 'chin-up'],
+  ['deadlift', 'deadlift'], ['romanian', 'deadlift'], ['rdl', 'deadlift'],
+  ['kickback', 'kickback'], ['skull', 'skull'], ['crunch', 'crunch'],
+  ['shrug', 'shrug'], ['lateral', 'lateral-raise'], ['squat', 'squat'],
+  ['lunge', 'lunge'], ['calf', 'calf'], ['press', 'press'], ['dip', 'dip'],
+  ['fly', 'fly'], ['pec', 'fly'], ['row', 'row'], ['curl', 'curl'],
+  ['extension', 'extension'], ['raise', 'raise'], ['pull', 'pull'],
+];
+
+// Precompiled word-boundary matchers. \b is unreliable around hyphens (pull-up),
+// so we anchor each pattern on a non-letter boundary (start/end or any char that
+// is not a-z) on both sides. Patterns are already lowercased.
+const MOVEMENT_TOKEN_RES = MOVEMENT_TOKEN_DEFS.map(([pattern, token]) => ({
+  token,
+  re: new RegExp(`(?:^|[^a-z])${pattern.replace(/[-]/g, '[-\\s]')}(?:$|[^a-z])`),
+}));
+
+/**
+ * Coarse movement-pattern key for an exercise: muscle_target_primary + the first
+ * matching movement token in the name (word-boundary match, most-specific first).
+ * Two entries sharing this key are treated as the SAME movement for in-session
+ * dedup.
+ *
+ * Names with no recognized token fall back to a name-unique key (`<group>::<name>`)
+ * so they remain distinct — conservative: never collapse what we can't classify.
+ *
+ * @param {string} name - engine/library exercise name
+ * @param {{muscle_target_primary?: string}} meta
+ * @returns {string}
+ */
+export function movementKey(name, meta) {
+  const group = meta?.muscle_target_primary ?? 'unknown';
+  const lower = String(name).toLowerCase();
+  for (const { token, re } of MOVEMENT_TOKEN_RES) {
+    if (re.test(lower)) return `${group}::${token}`;
+  }
+  return `${group}::name:${lower}`;
+}
+
 /**
  * Build a session exercise list for the given session type.
  *
@@ -261,16 +326,42 @@ export function buildSession(sessionType, ctx) {
 
   const chosen = [];
   const chosenNames = new Set();
+  // BUG 5 — dedup by MOVEMENT (muscle + movement token), not exact name, so two
+  // same-movement variants (e.g. two chest flyes under different names) can never
+  // both land in one plan. chosenNames stays as the exact-name guard underneath.
+  const chosenMovements = new Set();
+  const isTaken = (e) =>
+    chosenNames.has(e.name) || chosenMovements.has(movementKey(e.name, e.meta));
+  const take = (e, sets) => {
+    chosen.push({ name: e.name, sets });
+    chosenNames.add(e.name);
+    chosenMovements.add(movementKey(e.name, e.meta));
+  };
 
   // Phase 1 — T1 compound anchors on the PRIMARY group(s), up to MAX_T1.
   // Walk primary groups in order, taking the top T1 entry from each until MAX_T1.
+  //
+  // BUG 5 interaction with continuity-ranking: a T1 compound must NOT claim a
+  // movement slot that a MORE-PREFERRED (PR-history rank 0 or known-anchor rank 1)
+  // variant of the SAME movement would later want — otherwise dedup would drop the
+  // user's familiar lift (e.g. T1 Cheat Curl Barbell stealing the biceps::curl
+  // slot from the anchored Bayesian Curl / the logged Cable Curl). So we skip a T1
+  // candidate when a strictly-higher-preference (lower rank) same-movement entry
+  // exists in the pool; that preferred variant takes the slot in Phase 2.
   let t1Count = 0;
   for (const { pool } of pools) {
     if (t1Count >= MAX_T1) break;
-    const t1 = pool.find((e) => e.meta.tier === 1 && !chosenNames.has(e.name));
+    const t1 = pool.find((e) => {
+      if (e.meta.tier !== 1 || isTaken(e)) return false;
+      const mk = movementKey(e.name, e.meta);
+      const myRank = rank(e.name, prNames);
+      const preferredSameMovement = pool.some(
+        (o) => movementKey(o.name, o.meta) === mk && rank(o.name, prNames) < myRank,
+      );
+      return !preferredSameMovement;
+    });
     if (t1) {
-      chosen.push({ name: t1.name, sets: DEFAULT_SETS });
-      chosenNames.add(t1.name);
+      take(t1, DEFAULT_SETS);
       t1Count++;
     }
   }
@@ -282,10 +373,9 @@ export function buildSession(sessionType, ctx) {
     progressed = false;
     for (const { pool } of pools) {
       if (chosen.length >= SESSION_SIZE) break;
-      const next = pool.find((e) => !chosenNames.has(e.name));
+      const next = pool.find((e) => !isTaken(e));
       if (next) {
-        chosen.push({ name: next.name, sets: DEFAULT_SETS });
-        chosenNames.add(next.name);
+        take(next, DEFAULT_SETS);
         progressed = true;
       }
     }
