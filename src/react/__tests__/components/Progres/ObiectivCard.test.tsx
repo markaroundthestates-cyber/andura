@@ -105,14 +105,34 @@ describe('ObiectivCard — ETA wiring (BUG #8 safe-rate)', () => {
     expect(txt).not.toMatch(/~1 luna/);
   });
 
-  it('BUG #8 — tinta subponderala (sub BMI 18.5) → avertisment + suprima ETA', () => {
+  it('BUG #8 — tinta subponderala (banda BMI 17-18.5) → avertisment + suprima ETA', () => {
+    // 54kg/175cm → BMI 17.6 (sub 18.5 sanatos DAR peste floor-ul HARD 17 = 52.1kg)
+    // → trece clamp-ul, persista, dar afiseaza warning subhealthy + suprima ETA.
     renderCard();
-    fireEvent.change(screen.getByTestId('obiectiv-target-weight-input'), { target: { value: '31' } });
+    fireEvent.change(screen.getByTestId('obiectiv-target-weight-input'), { target: { value: '54' } });
     const warn = screen.getByTestId('obiectiv-warning');
     expect(warn.textContent).toMatch(/Tinta e sub greutatea sanatoasa/);
     expect(warn.textContent).toMatch(/~56\.7 kg minim/);
     expect(warn.textContent).toMatch(/Alege o tinta sanatoasa/);
     expect(screen.queryByTestId('obiectiv-eta')).toBeNull();
+  });
+
+  it('§obiectiv-floor 2026-06-01 — tinta letala (sub BMI 17) → clamp la floor + warning + NU persista valoarea letala', () => {
+    // 31kg/175cm → BMI 10.1, letal. Floor BMI 17 la 175cm = 17×1.75² = 52.1kg.
+    // Clamp: store primeste 52.1 (NU 31), warning vizibil, valoarea letala respinsa.
+    renderCard();
+    fireEvent.change(screen.getByTestId('obiectiv-target-weight-input'), { target: { value: '31' } });
+    expect(useProgresStore.getState().targetObiectiv.weightKg).toBe(52.1);
+    const warn = screen.getByTestId('obiectiv-clamped-warning');
+    expect(warn.textContent).toMatch(/31 kg e periculoasa/);
+    expect(warn.textContent).toMatch(/52\.1 kg/);
+  });
+
+  it('§obiectiv-floor 2026-06-01 — tinta normala (peste floor) → persista intacta, fara clamp warning', () => {
+    renderCard();
+    fireEvent.change(screen.getByTestId('obiectiv-target-weight-input'), { target: { value: '75' } });
+    expect(useProgresStore.getState().targetObiectiv.weightKg).toBe(75);
+    expect(screen.queryByTestId('obiectiv-clamped-warning')).toBeNull();
   });
 
   it('tinta ~= greutatea curenta → "Esti deja la tinta"', () => {

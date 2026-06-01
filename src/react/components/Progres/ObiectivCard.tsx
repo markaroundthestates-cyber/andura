@@ -19,11 +19,13 @@
 // Persistence: progresStore.setTargetObiectiv (zustand persist localStorage).
 
 import type { JSX } from 'react';
+import { useState } from 'react';
 import { useProgresStore } from '../../stores/progresStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { getCurrentWeightKg } from '../../lib/userTdee';
 import { computeTargetEta, fmtKg } from '../../lib/targetEta';
 import { evaluateTargetRate, MAX_SAFE_KG_PER_WEEK } from '../../lib/targetSafety';
+import { dangerousFloorWeightKg } from '../../../engine/bodyComposition.js';
 import { t } from '../../../i18n/index.js';
 
 /**
@@ -50,6 +52,10 @@ export function ObiectivCard(): JSX.Element {
   // §weight-continuity — canonical current weight = latest log > onboarding
   // seed (cross-screen consistency with SettingsProfile, NutritionInline etc).
   const currentWeightKg = getCurrentWeightKg();
+  // §obiectiv-floor 2026-06-01 — kg-ul clamp-uit la floor-ul fiziologic (BMI 17)
+  // declanseaza un mesaj vizibil. Local UI state (NU persistat): semnaleaza ca
+  // valoarea introdusa a fost respinsa/ridicata, fara sa salvam o tinta letala.
+  const [clampedFromKg, setClampedFromKg] = useState<number | null>(null);
 
   const eta = computeTargetEta(target.weightKg, currentWeightKg, height ?? null);
   // §obiectiv-tinta integration (Smoke #16) — surface verdict cand ritm-ul
@@ -66,11 +72,29 @@ export function ObiectivCard(): JSX.Element {
 
   function handleWeightChange(value: string): void {
     if (value === '') {
+      setClampedFromKg(null);
       setTarget({ weightKg: null });
       return;
     }
     const n = Number(value);
-    setTarget({ weightKg: Number.isFinite(n) && n > 0 ? n : null });
+    if (!Number.isFinite(n) || n <= 0) {
+      setClampedFromKg(null);
+      setTarget({ weightKg: null });
+      return;
+    }
+    // §obiectiv-floor — floor HARD fiziologic (BMI 17 la inaltimea user-ului).
+    // O tinta sub el (ex: 20kg/160cm = BMI 7.8, letal) NU se salveaza ca atare —
+    // o ridicam (clamp) la floor + afisam warning. Banda 17-18.5 trece (doar
+    // subhealthy warning, vezi mai jos). Fara inaltime → nu putem calcula floor,
+    // accept valoarea (defense-in-depth ramane in alta parte).
+    const floorKg = dangerousFloorWeightKg(height ?? NaN);
+    if (floorKg !== null && n < floorKg) {
+      setClampedFromKg(n);
+      setTarget({ weightKg: floorKg });
+      return;
+    }
+    setClampedFromKg(null);
+    setTarget({ weightKg: n });
   }
 
   function handleDeadlineChange(value: string): void {
@@ -114,6 +138,18 @@ export function ObiectivCard(): JSX.Element {
           />
         </label>
       </div>
+      {clampedFromKg !== null && (
+        <p
+          className="text-xs text-brick mt-2 px-1 leading-snug font-medium"
+          role="alert"
+          data-testid="obiectiv-clamped-warning"
+        >
+          {t('obiectiv.targetClampedWarning', {
+            entered: fmtKg(clampedFromKg),
+            floor: fmtKg(target.weightKg ?? 0),
+          })}
+        </p>
+      )}
       {eta?.kind === 'subhealthy' && (
         <p
           className="text-xs text-brick mt-2 px-1 leading-snug font-medium"
