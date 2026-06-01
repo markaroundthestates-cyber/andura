@@ -899,7 +899,7 @@ export function Workout(): JSX.Element {
   if (exercises === null) {
     return (
       <section
-        className="bg-paper min-h-screen p-6 flex flex-col items-center justify-center text-center"
+        className="min-h-screen p-6 flex flex-col items-center justify-center text-center"
         data-testid="workout"
         data-phase="loading"
       >
@@ -917,7 +917,7 @@ export function Workout(): JSX.Element {
   if (!hasWorkout) {
     return (
       <section
-        className="bg-paper min-h-screen p-6 flex flex-col items-center justify-center text-center"
+        className="min-h-screen p-6 flex flex-col items-center justify-center text-center"
         data-testid="workout"
         data-phase="empty"
       >
@@ -974,7 +974,7 @@ export function Workout(): JSX.Element {
 
   return (
     <section
-      className="bg-paper min-h-screen relative"
+      className="min-h-screen relative"
       data-testid="workout"
       data-phase={phase}
     >
@@ -1027,17 +1027,20 @@ export function Workout(): JSX.Element {
               help-circle (mockup andura-clasic.html#L1447-1451 wv2-exname →
               openWhyExercise). Surfaces whyEngine categorical explainer. */}
           <div className="mb-4" data-testid="wv2-exname">
-            <p className="text-xs uppercase tracking-wide font-medium text-ink2 mb-1">
-              {t('workout.currentExercise')}
-            </p>
-            <div className="flex items-center gap-2">
+            <Kicker color="var(--aqua)">{t('workout.currentExercise')}</Kicker>
+            <div className="flex items-center gap-2 mt-1">
               <h2 className="font-display text-2xl font-bold text-ink">{currentExercise.name}</h2>
               <button
                 type="button"
                 onClick={handleOpenWhy}
                 aria-label={t('workout.whyAriaLabel')}
                 data-testid="wv2-why-trigger"
-                className="w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-full bg-paper2 border border-lineStrong text-ink2"
+                className="w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-full"
+                style={{
+                  color: 'var(--aqua)',
+                  background: 'color-mix(in oklab, var(--aqua) 16%, transparent)',
+                  border: '1px solid color-mix(in oklab, var(--aqua) 40%, transparent)',
+                }}
               >
                 <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
               </button>

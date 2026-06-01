@@ -85,7 +85,11 @@ function DialButton({ dir, onPress, ariaLabel, testId }: DialButtonProps): JSX.E
       }}
       aria-label={ariaLabel}
       data-testid={testId}
-      className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-paper border border-lineStrong text-ink transition-transform active:scale-[.92]"
+      className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-[10px] text-ink transition-transform active:scale-[.92]"
+      style={{
+        background: 'var(--surface)',
+        border: '1px solid var(--line)',
+      }}
     >
       {dir === 'down' ? (
         <Minus className="w-4 h-4" aria-hidden="true" />
@@ -143,13 +147,13 @@ export function SetLogInput({
     // valorile, apoi tap). Valoarea logata = ce e in inputuri la tap,
     // pasata prin onKgChange/onRepsChange in store-ul parintelui.
     return (
-      <div className="mb-6" data-testid="setlog-tinta">
-        <p className="text-xs uppercase tracking-wide font-medium text-ink2 mb-2">
+      <div className="pulse-card p-[18px] mb-6" data-testid="setlog-tinta">
+        <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-center" style={{ color: 'var(--aqua)' }}>
           {t('setLog.targetLabel')}
         </p>
-        <div className="flex items-baseline gap-2 mb-4" data-testid="setlog-tinta-target-display">
+        <div className="flex items-baseline justify-center gap-2 mt-2 mb-4" data-testid="setlog-tinta-target-display">
           <span
-            className="text-3xl font-semibold text-ink"
+            className="font-display text-3xl font-bold text-ink"
             data-testid="setlog-tinta-reps"
           >
             {reps}
@@ -164,7 +168,7 @@ export function SetLogInput({
             <>
               <span className="text-sm text-ink2">{t('setLog.targetReps')}</span>
               <span
-                className="text-3xl font-semibold text-ink ml-2"
+                className="font-display text-3xl font-bold text-ink ml-2"
                 data-testid="setlog-tinta-kg"
               >
                 {kg} kg
@@ -173,17 +177,25 @@ export function SetLogInput({
           )}
         </div>
 
-        <p className="text-xs uppercase tracking-wide font-medium text-ink2 mb-2 mt-3">
+        <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 mb-2 text-center">
           {t('setLog.askDoneLabel')}
         </p>
+        {/* Pulse NumDial pair (mockup interfata-noua/screens-workout.jsx NumDial)
+            — each control is a --surface-2 tile: mono Kicker label on top, big
+            − / value / + row, unit below. The free-type <input> is PRESERVED as
+            the big center value (Maria 65 types); the ± dials are the thumb add. */}
         <div className="flex gap-3 mb-4">
-          <div className="flex-1">
-            <label className="text-sm text-ink2 block mb-1" htmlFor="setlog-tinta-kg-input">
+          <div
+            className="flex-1 text-center rounded-2xl p-3"
+            style={{ background: 'var(--surface-2)', border: '1px solid var(--line)' }}
+          >
+            <label
+              className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 block"
+              htmlFor="setlog-tinta-kg-input"
+            >
               {isBodyweight ? t('setLog.addedWeightLabel') : t('setLog.kgLabel')}
             </label>
-            {/* Pulse ± dial flanks the free-type input (Maria 65 types; the dial
-                is the thumb-friendly add). Both feed the same onKgChange. */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between gap-2 mt-2">
               <DialButton
                 dir="down"
                 onPress={() => onKgChange(stepValue(kg, -0.5, 0, 500))}
@@ -201,7 +213,7 @@ export function SetLogInput({
                 onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
                 onFocus={handleFocus}
                 data-testid="setlog-tinta-kg-input"
-                className="w-full min-w-0 p-3 border border-lineStrong rounded-xl bg-paper2 text-ink text-center"
+                className="w-full min-w-0 bg-transparent border-none p-0 font-display text-[28px] font-bold text-ink text-center focus:outline-none"
               />
               <DialButton
                 dir="up"
@@ -211,11 +223,17 @@ export function SetLogInput({
               />
             </div>
           </div>
-          <div className="flex-1">
-            <label className="text-sm text-ink2 block mb-1" htmlFor="setlog-tinta-reps-input">
+          <div
+            className="flex-1 text-center rounded-2xl p-3"
+            style={{ background: 'var(--surface-2)', border: '1px solid var(--line)' }}
+          >
+            <label
+              className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 block"
+              htmlFor="setlog-tinta-reps-input"
+            >
               {t('setLog.repsLabel')}
             </label>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between gap-2 mt-2">
               <DialButton
                 dir="down"
                 onPress={() => onRepsChange(stepValue(reps, -1, 0, 100))}
@@ -233,7 +251,7 @@ export function SetLogInput({
                 onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
                 onFocus={handleFocus}
                 data-testid="setlog-tinta-reps-input"
-                className="w-full min-w-0 p-3 border border-lineStrong rounded-xl bg-paper2 text-ink text-center"
+                className="w-full min-w-0 bg-transparent border-none p-0 font-display text-[28px] font-bold text-ink text-center focus:outline-none"
               />
               <DialButton
                 dir="up"
@@ -259,7 +277,7 @@ export function SetLogInput({
           }}
           disabled={!Number.isFinite(reps) || reps < 1}
           data-testid="setlog-tinta-log-btn"
-          className="btn-primary-lift press-feedback relative overflow-hidden w-full flex items-center justify-center gap-2 p-3 bg-brick text-paper rounded-[14px] text-base font-semibold min-h-[44px] disabled:opacity-50"
+          className="btn-primary-lift btn-grad press-feedback relative overflow-hidden w-full flex items-center justify-center gap-2 p-3 rounded-full text-base font-semibold min-h-[44px] disabled:opacity-50"
         >
           <Ripple color="rgba(255,255,255,0.55)" />
           <Check className="w-5 h-5 relative" aria-hidden="true" />
@@ -273,26 +291,26 @@ export function SetLogInput({
   // Mockup verbatim #L1384-1390 (wv2-postlog).
   if (mode === 'post-log') {
     return (
-      <div className="mb-6" data-testid="setlog-postlog">
-        <p className="text-xs uppercase tracking-wide font-medium text-ink2 mb-2">
+      <div className="pulse-card p-[18px] mb-6" data-testid="setlog-postlog">
+        <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 mb-2">
           {t('setLog.youDidLabel')}
         </p>
         <div className="flex items-center gap-2">
           <p className="flex-1 text-base text-ink" data-testid="setlog-postlog-text">
-            <span className="text-3xl font-semibold">{reps}</span>
+            <span className="font-display text-3xl font-bold">{reps}</span>
             {/* Bodyweight: "X reps cu greutatea corpului (+ Y kg)" — Y omitted
                 when 0 (pure bodyweight). Loaded: "X reps cu Y kg" as before. */}
             {isBodyweight ? (
               <>
                 <span className="text-sm text-ink2 mx-2">{t('setLog.youDidBodyweight')}</span>
                 {Number.isFinite(kg) && kg > 0 && (
-                  <span className="text-3xl font-semibold">+{kg} kg</span>
+                  <span className="font-display text-3xl font-bold">+{kg} kg</span>
                 )}
               </>
             ) : (
               <>
                 <span className="text-sm text-ink2 mx-2">{t('setLog.youDidRepsWith')}</span>
-                <span className="text-3xl font-semibold">{kg} kg</span>
+                <span className="font-display text-3xl font-bold">{kg} kg</span>
               </>
             )}
           </p>
@@ -331,39 +349,46 @@ export function SetLogInput({
   return (
     <div className="flex gap-3 mb-6">
       <div className="flex-1">
-        <label className="text-sm text-ink2 block mb-1" htmlFor="kg-input">
-          {isBodyweight ? t('setLog.addedWeightLabel') : t('setLog.kgLabelRequired')}
-        </label>
-        {/* Pulse ± dial flanks the free-type input — additive, never replaces
-            typing. Editable bounds kg 1-500 loaded / 0-500 bodyweight added. */}
-        <div className="flex items-center gap-2">
-          <DialButton
-            dir="down"
-            onPress={() => onKgChange(stepValue(kg, -0.5, isBodyweight ? 0 : 1, 500))}
-            ariaLabel={isBodyweight ? t('setLog.addedWeightDecrease') : t('setLog.kgDecrease')}
-            testId="kg-minus"
-          />
-          <input
-            id="kg-input"
-            type="number"
-            required={!isBodyweight}
-            aria-required={isBodyweight ? undefined : 'true'}
-            aria-invalid={kgError ? 'true' : undefined}
-            aria-describedby={kgError ? 'kg-input-error' : undefined}
-            min={isBodyweight ? 0 : 1}
-            max={500}
-            value={kgDisplay}
-            onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
-            onFocus={handleFocus}
-            data-testid="kg-input"
-            className="w-full min-w-0 p-3 border border-lineStrong rounded-xl bg-paper2 text-center"
-          />
-          <DialButton
-            dir="up"
-            onPress={() => onKgChange(stepValue(kg, 0.5, isBodyweight ? 0 : 1, 500))}
-            ariaLabel={isBodyweight ? t('setLog.addedWeightIncrease') : t('setLog.kgIncrease')}
-            testId="kg-plus"
-          />
+        {/* Pulse NumDial tile (mockup screens-workout.jsx NumDial): mono Kicker
+            label, big − / value / + row on a --surface-2 tile. The free-type
+            <input> is PRESERVED as the big center value; the ± dials are the
+            thumb add. Editable bounds kg 1-500 loaded / 0-500 bodyweight. */}
+        <div
+          className="text-center rounded-2xl p-3"
+          style={{ background: 'var(--surface-2)', border: '1px solid var(--line)' }}
+        >
+          <label className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 block" htmlFor="kg-input">
+            {isBodyweight ? t('setLog.addedWeightLabel') : t('setLog.kgLabelRequired')}
+          </label>
+          <div className="flex items-center justify-between gap-2 mt-2">
+            <DialButton
+              dir="down"
+              onPress={() => onKgChange(stepValue(kg, -0.5, isBodyweight ? 0 : 1, 500))}
+              ariaLabel={isBodyweight ? t('setLog.addedWeightDecrease') : t('setLog.kgDecrease')}
+              testId="kg-minus"
+            />
+            <input
+              id="kg-input"
+              type="number"
+              required={!isBodyweight}
+              aria-required={isBodyweight ? undefined : 'true'}
+              aria-invalid={kgError ? 'true' : undefined}
+              aria-describedby={kgError ? 'kg-input-error' : undefined}
+              min={isBodyweight ? 0 : 1}
+              max={500}
+              value={kgDisplay}
+              onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
+              onFocus={handleFocus}
+              data-testid="kg-input"
+              className="w-full min-w-0 bg-transparent border-none p-0 font-display text-[28px] font-bold text-ink text-center focus:outline-none"
+            />
+            <DialButton
+              dir="up"
+              onPress={() => onKgChange(stepValue(kg, 0.5, isBodyweight ? 0 : 1, 500))}
+              ariaLabel={isBodyweight ? t('setLog.addedWeightIncrease') : t('setLog.kgIncrease')}
+              testId="kg-plus"
+            />
+          </div>
         </div>
         {kgError && (
           <p
@@ -377,37 +402,42 @@ export function SetLogInput({
         )}
       </div>
       <div className="flex-1">
-        <label className="text-sm text-ink2 block mb-1" htmlFor="reps-input">
-          {t('setLog.repsLabelRequired')}
-        </label>
-        <div className="flex items-center gap-2">
-          <DialButton
-            dir="down"
-            onPress={() => onRepsChange(stepValue(reps, -1, 1, 100))}
-            ariaLabel={t('setLog.repsDecrease')}
-            testId="reps-minus"
-          />
-          <input
-            id="reps-input"
-            type="number"
-            required
-            aria-required="true"
-            aria-invalid={repsError ? 'true' : undefined}
-            aria-describedby={repsError ? 'reps-input-error' : undefined}
-            min={1}
-            max={100}
-            value={repsDisplay}
-            onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
-            onFocus={handleFocus}
-            data-testid="reps-input"
-            className="w-full min-w-0 p-3 border border-lineStrong rounded-xl bg-paper2 text-center"
-          />
-          <DialButton
-            dir="up"
-            onPress={() => onRepsChange(stepValue(reps, 1, 1, 100))}
-            ariaLabel={t('setLog.repsIncrease')}
-            testId="reps-plus"
-          />
+        <div
+          className="text-center rounded-2xl p-3"
+          style={{ background: 'var(--surface-2)', border: '1px solid var(--line)' }}
+        >
+          <label className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 block" htmlFor="reps-input">
+            {t('setLog.repsLabelRequired')}
+          </label>
+          <div className="flex items-center justify-between gap-2 mt-2">
+            <DialButton
+              dir="down"
+              onPress={() => onRepsChange(stepValue(reps, -1, 1, 100))}
+              ariaLabel={t('setLog.repsDecrease')}
+              testId="reps-minus"
+            />
+            <input
+              id="reps-input"
+              type="number"
+              required
+              aria-required="true"
+              aria-invalid={repsError ? 'true' : undefined}
+              aria-describedby={repsError ? 'reps-input-error' : undefined}
+              min={1}
+              max={100}
+              value={repsDisplay}
+              onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
+              onFocus={handleFocus}
+              data-testid="reps-input"
+              className="w-full min-w-0 bg-transparent border-none p-0 font-display text-[28px] font-bold text-ink text-center focus:outline-none"
+            />
+            <DialButton
+              dir="up"
+              onPress={() => onRepsChange(stepValue(reps, 1, 1, 100))}
+              ariaLabel={t('setLog.repsIncrease')}
+              testId="reps-plus"
+            />
+          </div>
         </div>
         {repsError && (
           <p
