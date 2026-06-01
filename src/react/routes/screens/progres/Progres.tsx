@@ -135,7 +135,7 @@ export function Progres(): JSX.Element {
       : null;
 
   return (
-    <section className="p-6 bg-paper min-h-screen" data-testid="progres-home">
+    <section className="p-6 min-h-screen" data-testid="progres-home">
       {/* Pulse header (interfata-noua/screens-tabs.jsx:13-16): display wordmark +
           italic serif tagline. Keeps the existing i18n keys + testid contract. */}
       <h1 className="font-display text-3xl font-bold text-ink mb-0.5">{t('tabs.progres.title')}</h1>

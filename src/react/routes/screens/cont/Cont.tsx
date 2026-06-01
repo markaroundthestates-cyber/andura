@@ -209,7 +209,7 @@ export function Cont(): JSX.Element {
   ];
 
   return (
-    <section className="pt-4 px-5 pb-6 bg-paper min-h-screen" data-testid="cont-home">
+    <section className="pt-4 px-5 pb-6 min-h-screen" data-testid="cont-home">
       {/* Pulse header (interfata-noua/screens-tabs.jsx:331) — display wordmark.
           Keeps the existing i18n key + heading role contract. */}
       <h1 className="font-display text-2xl font-bold text-ink mb-4">{t('tabs.cont.title')}</h1>

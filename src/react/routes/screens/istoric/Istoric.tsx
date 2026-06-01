@@ -57,7 +57,7 @@ export function Istoric(): JSX.Element {
 
   return (
     <section
-      className="p-6 bg-paper min-h-screen"
+      className="p-6 min-h-screen"
       data-testid="istoric-home"
     >
       {/* Pulse reskin (2026-05-29 GROUP E) — display font wordmark heading. */}
