@@ -259,6 +259,53 @@ describe('SetLogInput — §F-pass2-setloginput-02 post-log mode (readonly + edi
   });
 });
 
+// CLIP FIX (2026-06-02) — native number-input spinner arrows stole horizontal
+// room inside the narrow centered NumDial tiles, clipping multi-digit values
+// (a 25 kg target showed only "2"). Fix hides the spinners via a `numdial-input`
+// class + scoped <style> reset so 2-4 digit values render fully. jsdom can't
+// render pseudo-element spinners, so we assert the structural guarantees: the
+// reset class is present on the inputs, the spin-reset <style> ships, and a
+// multi-digit value sits in the input value verbatim (not truncated).
+describe('SetLogInput — multi-digit clip fix (spinner reset)', () => {
+  it('editable kg input carries numdial-input class (spinner reset target)', () => {
+    renderInput();
+    expect(screen.getByTestId('kg-input').className).toMatch(/numdial-input/);
+  });
+
+  it('editable reps input carries numdial-input class', () => {
+    renderInput();
+    expect(screen.getByTestId('reps-input').className).toMatch(/numdial-input/);
+  });
+
+  it('editable mode ships spinner-reset <style> hiding webkit spin buttons', () => {
+    const { container } = renderInput();
+    const style = container.querySelector('style');
+    expect(style).not.toBeNull();
+    expect(style?.textContent).toMatch(/-webkit-inner-spin-button/);
+    expect(style?.textContent).toMatch(/-webkit-appearance:\s*none/);
+  });
+
+  it('editable kg input renders a 2-digit value (25) in full, not clipped', () => {
+    renderInput({ kg: 25, reps: 8 });
+    // The whole "25" is the input value — the spinner-clip bug truncated the
+    // visible digits to "2"; the reset keeps all digits in the centered field.
+    expect((screen.getByTestId('kg-input') as HTMLInputElement).value).toBe('25');
+  });
+
+  it('editable kg input renders a 3-digit value (100) in full', () => {
+    renderInput({ kg: 100, reps: 8 });
+    expect((screen.getByTestId('kg-input') as HTMLInputElement).value).toBe('100');
+  });
+
+  it('tinta kg/reps inputs carry numdial-input class + ship spinner reset', () => {
+    const { container } = renderInput({ mode: 'tinta', kg: 25, reps: 8 });
+    expect(screen.getByTestId('setlog-tinta-kg-input').className).toMatch(/numdial-input/);
+    expect(screen.getByTestId('setlog-tinta-reps-input').className).toMatch(/numdial-input/);
+    expect(container.querySelector('style')?.textContent).toMatch(/-webkit-inner-spin-button/);
+    expect((screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement).value).toBe('25');
+  });
+});
+
 describe('SetLogInput — A11Y HIGH chat5 editable mode aria attributes', () => {
   it('kg input has aria-required + required', () => {
     renderInput();

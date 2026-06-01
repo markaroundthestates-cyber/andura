@@ -53,6 +53,17 @@ import { t } from '../../../i18n/index.js';
 
 export type SetLogInputMode = 'editable' | 'tinta' | 'post-log';
 
+// CLIP FIX (2026-06-02): native <input type="number"> renders WebKit spinner
+// arrows inside the box. The NumDial inputs are narrow centered tiles (flanked
+// by ± buttons), so the spinner stole horizontal room and clipped multi-digit
+// values — a target of 25 kg showed only "2". Hide the spinners (same precedent
+// as onboarding BigNumberField .onb-bignum) so 2-4 digit values render fully
+// centered. `-moz-appearance:textfield` covers Firefox; the ± dials remain the
+// stepper affordance. CSS-only — no behavior / testid change.
+const NUMDIAL_SPIN_RESET = (
+  <style>{`.numdial-input::-webkit-inner-spin-button,.numdial-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}.numdial-input{-moz-appearance:textfield;}`}</style>
+);
+
 // PULSE RESKIN (Andura Pulse arc 2026-05-29, mockup interfata-noua/
 // screens-workout.jsx NumDial :390-403) — ± stepper buttons that flank the
 // type-input. Daniel "Maria 65 types" → the free-type <input> is PRESERVED
@@ -213,7 +224,7 @@ export function SetLogInput({
                 onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
                 onFocus={handleFocus}
                 data-testid="setlog-tinta-kg-input"
-                className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+                className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
               />
               <DialButton
                 dir="up"
@@ -251,7 +262,7 @@ export function SetLogInput({
                 onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
                 onFocus={handleFocus}
                 data-testid="setlog-tinta-reps-input"
-                className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+                className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
               />
               <DialButton
                 dir="up"
@@ -283,6 +294,7 @@ export function SetLogInput({
           <Check className="w-5 h-5 relative" aria-hidden="true" />
           <span className="relative">{t('setLog.confirmSetCta')}</span>
         </button>
+        {NUMDIAL_SPIN_RESET}
       </div>
     );
   }
@@ -380,7 +392,7 @@ export function SetLogInput({
               onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
               onFocus={handleFocus}
               data-testid="kg-input"
-              className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
             />
             <DialButton
               dir="up"
@@ -429,7 +441,7 @@ export function SetLogInput({
               onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
               onFocus={handleFocus}
               data-testid="reps-input"
-              className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
             />
             <DialButton
               dir="up"
@@ -450,6 +462,7 @@ export function SetLogInput({
           </p>
         )}
       </div>
+      {NUMDIAL_SPIN_RESET}
     </div>
   );
 }
