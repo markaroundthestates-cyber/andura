@@ -59,3 +59,16 @@ export function daysSinceGroup(logs: LogEntry[], group: string, now?: number): n
 export function getLaggingMuscles(
   profile: { logs?: LogEntry[]; lookbackDays?: number; now?: number } | null | undefined
 ): LaggingMuscle[];
+
+// Aerobic-class recovery contribution (light, fast-clear cardio touch — caps at
+// 'partial'/Easing, never 'fatigued'). Per src/engine/muscleRecovery.js.
+export const AEROBIC_GROUP_GRADIENT: Record<string, Record<string, number>>;
+export function getAerobicRecoveryContribution(
+  sessions: Array<{ type?: string; ts?: number; date?: string }>,
+  now?: number
+): Record<string, RecoveryState>;
+export function mergeAerobicRecovery(
+  resistanceState: Record<string, RecoveryState>,
+  aerobicSessions: Array<{ type?: string; ts?: number; date?: string }>,
+  now?: number
+): Record<string, RecoveryState>;
