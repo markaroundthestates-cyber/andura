@@ -360,10 +360,10 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
     expect(out).not.toBeNull();
     const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
     expect(lat).toBeDefined();
-    expect(lat!.targetKg).toBe(
-      suggestStartWeight('Lat Pulldown', 'intermediate', { bodyweightKg: 75, sex: 'm' }),
-    );
-    expect(lat!.targetKg).toBe(47);
+    // suggestStartWeight 46.5→47 (bodyweight-scaled), now SNAPPED to the Lat
+    // Pulldown equipment stack (bailib, 5kg steps: 45/50) → 45. Smoke 2026-06-01:
+    // the cold-start plan weight must be a load the machine can actually be set to.
+    expect(lat!.targetKg).toBe(45);
   });
 
   it('experience RO->EN scaling: avansat (advanced 1.3x) beats incepator (beginner 0.7x)', async () => {
@@ -389,9 +389,9 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
     // 75*0.62*1.3=60.45→60 — RO strings mapped to EN buckets, NOT silently
     // falling to the x1.0 default (which would tie them).
     expect(advLat!.targetKg).toBeGreaterThan(begLat!.targetKg);
-    expect(begLat!.targetKg).toBe(
-      suggestStartWeight('Lat Pulldown', 'beginner', { bodyweightKg: 75, sex: 'm' }),
-    );
+    // beginner 32.55→33 raw, SNAPPED to the bailib stack → 35 (advanced 60 is
+    // already on the stack). Relative order (advanced > beginner) preserved.
+    expect(begLat!.targetKg).toBe(35);
     expect(advLat!.targetKg).toBe(
       suggestStartWeight('Lat Pulldown', 'advanced', { bodyweightKg: 75, sex: 'm' }),
     );
