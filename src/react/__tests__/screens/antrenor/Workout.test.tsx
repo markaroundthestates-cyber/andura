@@ -1070,7 +1070,7 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
     expect(useWorkoutStore.getState().phase).toBe('rest');
   });
 
-  it('Pauza 30s → performLogSet + override restCountdown la 30', async () => {
+  it('Pauza +30s → performLogSet + extinde restCountdown la restSec+30', async () => {
     await renderWorkoutAndWait();
     logSet('Usor');
     fireEvent.click(screen.getByTestId('rest-skip'));
@@ -1078,8 +1078,9 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
     fireEvent.click(screen.getByTestId('aa-friction-pause'));
     expect(useWorkoutStore.getState().history[0]?.length).toBe(2);
     expect(useWorkoutStore.getState().phase).toBe('rest');
-    // Override rest countdown la 30s (vs 90s default Bench Press restSec)
-    expect(screen.getByTestId('rest-countdown')).toHaveTextContent('0:30');
+    // Ai mers mai greu ca de obicei → pauza normala A EXERCITIULUI + 30s extra
+    // (NU 30s flat). Bench Press restSec=90 → 90+30 = 120s = 2:00.
+    expect(screen.getByTestId('rest-countdown')).toHaveTextContent('2:00');
   });
 
   it('triggers modal pe kg_jump pattern (> 20% increase)', async () => {

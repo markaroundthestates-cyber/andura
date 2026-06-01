@@ -643,13 +643,14 @@ export function Workout(): JSX.Element {
       performLogSet(aaPendingRating);
       setAaPendingRating(null);
       setAaReason(null);
-      // Phase 4 task_14 §C: Pauza 30s override = post-logSet force rest
-      // countdown 30s (NU normal restSec din exercise). State machine
-      // performLogSet deja a setat phase=rest pentru intermediate sets;
-      // override countdown la 30s here. Last set of exercise scenarios
-      // (transition / post-rpe navigate) NU touch rest — no-op.
-      setRestCountdown(30);
-      setRestInitialSec(30);
+      // Phase 4 task_14 §C: "Pauza +30s" = ai mers mai greu decat de obicei →
+      // recuperare normala A EXERCITIULUI + 30s extra (NU 30s flat care
+      // inlocuieste pauza). performLogSet deja a setat phase=rest pentru
+      // intermediate sets; override countdown la restSec+30 here. Last set of
+      // exercise scenarios (transition / post-rpe navigate) NU touch rest — no-op.
+      const extendedRest = currentExercise.restSec + 30;
+      setRestCountdown(extendedRest);
+      setRestInitialSec(extendedRest);
     }
   }
 
