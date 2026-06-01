@@ -14,12 +14,22 @@ import { CoachTodayCard } from '../../../components/Antrenor/CoachTodayCard';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import * as engineWrappers from '../../../lib/engineWrappers';
 
-function renderCard() {
+function renderCard(onStart: () => void = () => {}) {
   return render(
     <MemoryRouter>
-      <CoachTodayCard onStart={() => {}} workout={null} />
+      <CoachTodayCard onStart={onStart} workout={null} />
     </MemoryRouter>,
   );
+}
+
+// A logged-today session fixture (ts = now → todTs matches today's local key).
+function todaySessionFixture(ts: number = Date.now()) {
+  return {
+    title: 'Push',
+    meta: '5 seturi · 52 min · 12 450 kg',
+    ts,
+    exercises: [],
+  };
 }
 
 describe('CoachTodayCard — MED-CODE-20 coachQuote refresh deps', () => {
@@ -125,5 +135,73 @@ describe('CoachTodayCard — MED-CODE-20 coachQuote refresh deps', () => {
     ).toBeInTheDocument();
     // Verify spy called at least twice (mount + post-setState).
     expect(spy.mock.calls.length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+// START-side double-session guard (counterpart to the PostRpe finish-side
+// confirm shipped dc9400d6). A session logged TODAY replaces the start CTA
+// with a "Session logged" control; the only way to a 2nd session today is the
+// explicit "Add a second session" opt-in.
+describe('CoachTodayCard — session-logged-today start guard', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(engineWrappers, 'getCoachTodayQuote').mockReturnValue(null);
+    useWorkoutStore.setState({ sessionsHistory: [], deletedSessionTs: [] });
+  });
+
+  it('no session today → normal Start CTA shows, no logged state', () => {
+    renderCard();
+    expect(screen.getByText('Start session')).toBeInTheDocument();
+    expect(screen.queryByTestId('coach-session-logged')).not.toBeInTheDocument();
+  });
+
+  it('session logged today → start CTA replaced by "Session logged"', () => {
+    useWorkoutStore.setState({ sessionsHistory: [todaySessionFixture()] });
+    renderCard();
+    expect(screen.getByTestId('coach-session-logged')).toBeInTheDocument();
+    // Normal start button + override link are gone.
+    expect(screen.queryByText('Start session')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('coach-today-override')).not.toBeInTheDocument();
+  });
+
+  it('tapping "Session logged" reveals delete + add-second options', () => {
+    useWorkoutStore.setState({ sessionsHistory: [todaySessionFixture()] });
+    renderCard();
+    // Options hidden until the logged state is tapped.
+    expect(screen.queryByTestId('coach-session-delete')).not.toBeInTheDocument();
+    act(() => {
+      screen.getByTestId('coach-session-logged').click();
+    });
+    expect(screen.getByTestId('coach-session-delete')).toBeInTheDocument();
+    expect(screen.getByTestId('coach-session-add-second')).toBeInTheDocument();
+  });
+
+  it('delete removes today\'s session and reverts to the normal Start CTA', () => {
+    const ts = Date.now();
+    useWorkoutStore.setState({ sessionsHistory: [todaySessionFixture(ts)] });
+    renderCard();
+    act(() => {
+      screen.getByTestId('coach-session-logged').click();
+    });
+    act(() => {
+      screen.getByTestId('coach-session-delete').click();
+    });
+    // Store no longer has the session; CTA reverts.
+    expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(0);
+    expect(screen.getByText('Start session')).toBeInTheDocument();
+    expect(screen.queryByTestId('coach-session-logged')).not.toBeInTheDocument();
+  });
+
+  it('add-second calls onStart (enters the normal start flow)', () => {
+    useWorkoutStore.setState({ sessionsHistory: [todaySessionFixture()] });
+    const onStart = vi.fn();
+    renderCard(onStart);
+    act(() => {
+      screen.getByTestId('coach-session-logged').click();
+    });
+    act(() => {
+      screen.getByTestId('coach-session-add-second').click();
+    });
+    expect(onStart).toHaveBeenCalledTimes(1);
   });
 });

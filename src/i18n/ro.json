@@ -233,6 +233,9 @@
       "minus": "Incarcare mai usoara"
     },
     "startCta": "Incepe sesiunea",
+    "sessionLogged": "Sesiune logata azi",
+    "deleteSessionToday": "Sterge sesiunea de azi",
+    "addSecondToday": "Adauga o a doua sesiune azi",
     "overrideCta": "Vrei altceva azi? →",
     "daysSince": {
       "yesterday": "ieri",

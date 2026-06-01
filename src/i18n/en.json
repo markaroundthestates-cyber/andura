@@ -233,6 +233,9 @@
       "minus": "Lighter load"
     },
     "startCta": "Start session",
+    "sessionLogged": "Session logged",
+    "deleteSessionToday": "Delete session for today",
+    "addSecondToday": "Add a second session for today",
     "overrideCta": "Want something else today? →",
     "daysSince": {
       "yesterday": "yesterday",

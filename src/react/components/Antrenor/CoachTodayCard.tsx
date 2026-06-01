@@ -30,9 +30,10 @@
 // la border-radius).
 
 import type { JSX } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Layers, Dumbbell, ArrowRight } from 'lucide-react';
+import { Clock, Layers, Dumbbell, ArrowRight, CheckCircle2, Trash2, Plus } from 'lucide-react';
+import { todTs } from '../../../db.js';
 import type { PlannedWorkoutOutput } from '../../lib/engineWrappers';
 import * as engineWrappers from '../../lib/engineWrappers';
 import { coachPick } from '../../lib/coachVoice';
@@ -153,6 +154,30 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     }
   }, []);
 
+  // START-side double-session guard (counterpart to the PostRpe finish-side
+  // confirm shipped dc9400d6). When a gym session is already logged TODAY we
+  // must NOT show the normal "Start session" button — an accidental tap would
+  // start/log a second session. Mirror the exact today-detection PostRpe uses
+  // (todTs(s.ts) === todTs(now), tz-safe local day-key) so the two surfaces
+  // agree. We keep the FIRST matching today session's ts for the delete action.
+  const todaySession = useMemo(
+    () =>
+      sessionsHistory.find(
+        (s) => Number.isFinite(s.ts) && todTs(s.ts) === todTs(Date.now()),
+      ) ?? null,
+    [sessionsHistory],
+  );
+  const deleteSession = useWorkoutStore((s) => s.deleteSession);
+  // Two-tap reveal: tapping "Session logged" opens the delete / add-second
+  // choice inline (no separate route — matches the lightweight reveal pattern
+  // used elsewhere). Add-second is the ONLY path to a 2nd session today.
+  const [revealOptions, setRevealOptions] = useState(false);
+
+  const handleDeleteToday = (): void => {
+    if (todaySession) deleteSession(todaySession.ts);
+    setRevealOptions(false);
+  };
+
   const handleOverride = (): void => {
     navigate(gotoPath('schedule-override'));
   };
@@ -215,32 +240,91 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
           {intensityLabel}
         </span>
       </div>
-      {/* Wave C3 (2026-05-28) — the day's ritual launch. Ripple + haptic +
-          press-feedback so the tap feels like a real commitment. Pulse swaps
-          the flat brick fill for the volt→aqua gradient (the signature CTA). */}
-      <button
-        type="button"
-        onClick={() => {
-          haptic(12);
-          onStart();
-        }}
-        className="btn-primary-lift press-feedback pulse-grad-bg pulse-shine relative overflow-hidden w-full mt-4 rounded-full py-[15px] font-semibold flex items-center justify-center gap-2"
-        style={{ color: 'var(--on-accent)' }}
-      >
-        <Ripple color="rgba(255,255,255,0.55)" />
-        <span className="relative">{t('coachToday.startCta')}</span>
-        <ArrowRight className="relative w-[18px] h-[18px]" aria-hidden="true" />
-      </button>
-      <div className="relative text-center mt-2.5">
-        <button
-          type="button"
-          onClick={handleOverride}
-          data-testid="coach-today-override"
-          className="text-sm underline underline-offset-2 text-ink3"
-        >
-          {t('coachToday.overrideCta')}
-        </button>
-      </div>
+      {todaySession ? (
+        /* A gym session is already logged TODAY → the normal start CTA is
+           replaced by a "Session logged" state. Tapping it reveals two
+           explicit choices: delete today's session (reverts to the normal
+           CTA) or opt in to a genuine second session today. */
+        <div className="relative mt-4">
+          <button
+            type="button"
+            onClick={() => {
+              haptic(12);
+              setRevealOptions((v) => !v);
+            }}
+            data-testid="coach-session-logged"
+            aria-expanded={revealOptions}
+            className="press-feedback w-full rounded-full py-[15px] font-semibold flex items-center justify-center gap-2 border"
+            style={{
+              color: 'var(--volt)',
+              borderColor: 'color-mix(in oklab, var(--volt) 45%, transparent)',
+              background: 'color-mix(in oklab, var(--volt) 10%, transparent)',
+            }}
+          >
+            <CheckCircle2 className="w-[18px] h-[18px]" aria-hidden="true" />
+            <span>{t('coachToday.sessionLogged')}</span>
+          </button>
+          {revealOptions && (
+            <div className="flex flex-col gap-2.5 mt-2.5">
+              <button
+                type="button"
+                onClick={handleDeleteToday}
+                data-testid="coach-session-delete"
+                className="press-feedback w-full rounded-full py-3 font-semibold text-sm flex items-center justify-center gap-2 border"
+                style={{
+                  color: 'var(--ember)',
+                  borderColor: 'color-mix(in oklab, var(--ember) 45%, transparent)',
+                }}
+              >
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
+                {t('coachToday.deleteSessionToday')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  haptic(12);
+                  onStart();
+                }}
+                data-testid="coach-session-add-second"
+                className="press-feedback w-full rounded-full py-3 font-semibold text-sm flex items-center justify-center gap-2 border text-ink2"
+                style={{ borderColor: 'var(--line-strong)' }}
+              >
+                <Plus className="w-4 h-4" aria-hidden="true" />
+                {t('coachToday.addSecondToday')}
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {/* Wave C3 (2026-05-28) — the day's ritual launch. Ripple + haptic +
+              press-feedback so the tap feels like a real commitment. Pulse swaps
+              the flat brick fill for the volt→aqua gradient (the signature CTA). */}
+          <button
+            type="button"
+            onClick={() => {
+              haptic(12);
+              onStart();
+            }}
+            className="btn-primary-lift press-feedback pulse-grad-bg pulse-shine relative overflow-hidden w-full mt-4 rounded-full py-[15px] font-semibold flex items-center justify-center gap-2"
+            style={{ color: 'var(--on-accent)' }}
+          >
+            <Ripple color="rgba(255,255,255,0.55)" />
+            <span className="relative">{t('coachToday.startCta')}</span>
+            <ArrowRight className="relative w-[18px] h-[18px]" aria-hidden="true" />
+          </button>
+          <div className="relative text-center mt-2.5">
+            <button
+              type="button"
+              onClick={handleOverride}
+              data-testid="coach-today-override"
+              className="text-sm underline underline-offset-2 text-ink3"
+            >
+              {t('coachToday.overrideCta')}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
