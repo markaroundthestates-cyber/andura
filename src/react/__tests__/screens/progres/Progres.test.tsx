@@ -141,10 +141,13 @@ describe('Progres — redesign layout (2026-05-30 locked)', () => {
     expect(screen.queryByTestId('progres-zone-log')).not.toBeInTheDocument();
   });
 
-  it('folds Fatigue into the Target-Today panel and drops the standalone Base Calories (BMR) panel', () => {
+  it('removes Fatigue from the Target-Today panel (stable hero) and drops the standalone Base Calories (BMR) panel', () => {
     renderProgres();
     const hero = screen.getByTestId('tdee-strip');
-    expect(hero.querySelector('[data-testid="fatigue-strip"]')).toBeTruthy();
+    // STABLE hero (CEO lock 2026-06-01): the Fatigue strip no longer lives in the
+    // Target-Today card — the kcal hero is full-width and fatigue relocates to the
+    // Muscle Recovery panel. So it must NOT render inside the hero card.
+    expect(hero.querySelector('[data-testid="fatigue-strip"]')).toBeNull();
     // Progress redesign (Daniel 2026-05-30): the standalone Base Calories (BMR)
     // panel was struck out as redundant (the hero already says "Adaptive
     // estimate"), so it is no longer rendered anywhere on the Progress screen.

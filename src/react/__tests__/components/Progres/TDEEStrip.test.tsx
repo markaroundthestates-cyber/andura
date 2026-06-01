@@ -103,14 +103,13 @@ describe('TDEEStrip — Wave C2 i18n EN default', () => {
     expect(screen.getByTestId('tdee-current-vs-target').textContent).toMatch(/\(-140\)/);
   });
 
-  it('§F-pass2-tdeestrip-03 italic explainer copy present (mockup L1713) — EN default', () => {
+  it('§F-pass2-tdeestrip-03 explainer copy present — stable goal-based intake — EN default', () => {
     render(<TDEEStrip />);
     const explainer = screen.getByTestId('tdee-explainer');
     expect(explainer).toBeInTheDocument();
-    // Wave C2 i18n: EN default → "The engine calculates automatically" + "Log optionally to calibrate."
-    expect(explainer.textContent).toMatch(/engine calculates automatically/i);
-    expect(explainer.textContent).toMatch(/Log optionally to calibrate/i);
-    expect(explainer.className).toMatch(/italic/);
+    // STABLE hero redesign (CEO lock 2026-06-01): explainer reads as the
+    // recommended daily intake to reach the goal (no "calibrate" jargon).
+    expect(explainer.textContent).toMatch(/Recommended daily intake to reach your goal/i);
   });
 
   // BUG #4 safety — mesaj cand kcal-ul a fost ridicat la surplus (subponderal).
@@ -247,52 +246,49 @@ describe('TDEEStrip — Wave C2 i18n EN default', () => {
   });
 });
 
-// Aerobic-class kcal → nutrition (Daniel spec 2026-05-30). A logged class
-// today raises the displayed auto target by that kcal (explicit add-on note),
-// so the user can eat a bit more. No add when no class logged.
-describe('TDEEStrip — aerobic class kcal add-on', () => {
-  it('no aerobic note when no class logged today', async () => {
+// STABLE hero (CEO lock 2026-06-01) — the aerobic class no longer ADDS to the
+// hero. The hero stays the stable engine target; a logged class shows ONLY as an
+// info line below it ("kcal burned — closer to your goal"). No add-on, no clamp.
+describe('TDEEStrip — aerobic class info line (does NOT move the hero)', () => {
+  it('no aerobic info line when no class logged today', async () => {
     render(<TDEEStrip />);
     await waitFor(() => {
       expect(screen.getByTestId('tdee-source')).toBeInTheDocument();
     });
-    expect(screen.queryByTestId('tdee-aerobic-add-note')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('tdee-aerobic-info')).not.toBeInTheDocument();
   });
 
-  it('a class logged today raises the displayed target + shows the add-on note', async () => {
-    // 300 kcal class today → target 2640 + 300 = 2940 displayed.
+  it('hero equals the engine target — UNCHANGED by a logged aerobic class', async () => {
+    // 300 kcal class today. Pre-redesign this raised the hero to 2940; now the
+    // hero MUST stay the stable engine target 2640.
     useAerobicStore.setState({
       sessions: [{ date: todayIso(), type: 'spinning', minutes: 50, kcal: 300, ts: Date.now() }],
       lastDuration: 50,
     });
     render(<TDEEStrip />);
     await waitFor(() => {
-      expect(screen.getByTestId('tdee-aerobic-add-note')).toBeInTheDocument();
+      expect(screen.getByTestId('tdee-aerobic-info')).toBeInTheDocument();
     });
-    // Displayed auto kcal hero = 2640 + 300 = 2940.
-    expect(screen.getByTestId('tdee-strip').textContent).toMatch(/2\.940\s*kcal/);
-    // Note attributes the +300 explicitly.
-    expect(screen.getByTestId('tdee-aerobic-add-note').textContent).toMatch(/300/);
+    // Hero = stable engine target 2640 (NOT 2640 + 300).
+    expect(screen.getByTestId('tdee-strip').textContent).toMatch(/2\.640\s*kcal/);
+    expect(screen.getByTestId('tdee-strip').textContent).not.toMatch(/2\.940/);
   });
 
-  it('aerobic add-on only ADDS — never lowers the target (floors hold)', async () => {
+  it('the activity info line shows when a class is logged (attributes the burn)', async () => {
     useAerobicStore.setState({
       sessions: [{ date: todayIso(), type: 'aerobic', minutes: 50, kcal: 250, ts: Date.now() }],
       lastDuration: 50,
     });
     render(<TDEEStrip />);
     await waitFor(() => {
-      expect(screen.getByTestId('tdee-aerobic-add-note')).toBeInTheDocument();
+      expect(screen.getByTestId('tdee-aerobic-info')).toBeInTheDocument();
     });
-    // 2640 + 250 = 2890 > base 2640 (strictly higher — add-on never reduces).
-    expect(screen.getByTestId('tdee-strip').textContent).toMatch(/2\.890\s*kcal/);
+    // Info line attributes the 250 kcal burned; hero stays the stable 2640.
+    expect(screen.getByTestId('tdee-aerobic-info').textContent).toMatch(/250/);
+    expect(screen.getByTestId('tdee-strip').textContent).toMatch(/2\.640\s*kcal/);
   });
 });
 
-// Annotation parity (audit fix 2026-05-30) — the badge label + add-on notes must
-// describe the RECONCILED + GUARDED final number, never the raw pre-reconcile /
-// pre-guard values. Real-store wiring (NU mock engineWrappers) so the SAME
-// reconciliation + guard the kcal path uses drives the annotations.
 function setOnboarding(data: Partial<{
   age: number; sex: 'm' | 'f'; goal: string; weight: number; height: number;
 }>): void {
@@ -347,18 +343,18 @@ describe('TDEEStrip — phase badge reflects RESOLVED phase (override-vs-target)
   });
 });
 
-describe('TDEEStrip — add-on notes never claim clamped-away kcal', () => {
+// STABLE hero (CEO lock 2026-06-01) — no more add-ons means no more "clamp"
+// interplay. Even a big aerobic class on a CUT day leaves the hero as the stable
+// engine target; the info line attributes the burn without touching the number,
+// and the old "Capped at maintenance" note no longer exists.
+describe('TDEEStrip — no add-on clamp (stable hero on a CUT day)', () => {
   beforeEach(() => {
     localStorage.clear();
     useProgresStore.setState({ weightLog: [], bodyData: [], targetObiectiv: { weightKg: null, month: null } } as never);
     useWorkoutStore.setState({ sessionsHistory: [] } as never);
   });
 
-  it('CUT day + big aerobic class clamped at maintenance → honest single note, NOT the +kcal add-on note', async () => {
-    // Healthy 80kg/180cm male → real maintenance. CUT base below maintenance, then
-    // a big class burn pushes the summed display above maintenance → the guard
-    // clamps it back to maintenance. The per-add-on "+kcal" note would over-promise
-    // kcal that was clamped away, so the honest clamped note shows instead.
+  it('CUT day + big aerobic class → hero stays the engine target, info line attributes the burn, no clamped note', async () => {
     setOnboarding({ weight: 80, height: 180, goal: 'slabire' });
     useProgresStore.setState({
       weightLog: [{ date: todayIso(), kg: 80, ts: Date.now() }],
@@ -372,48 +368,23 @@ describe('TDEEStrip — add-on notes never claim clamped-away kcal', () => {
       source: 'engine-bn',
       confidence: 0.5,
     });
-    // A big 700-kcal class → cutBase + 700 > maintenance → ceiling clamps.
+    // A big 700-kcal class — pre-redesign this clamped at maintenance; now it
+    // does NOT touch the hero at all.
     useAerobicStore.setState({
       sessions: [{ date: todayIso(), type: 'spinning', minutes: 60, kcal: 700, ts: Date.now() }],
       lastDuration: 60,
     });
     render(<TDEEStrip />);
     await waitFor(() => {
-      expect(screen.getByTestId('tdee-addons-clamped-note')).toBeInTheDocument();
+      expect(screen.getByTestId('tdee-aerobic-info')).toBeInTheDocument();
     });
-    // The over-promising per-add-on note must NOT render when clamped.
+    // Hero = the stable engine target (cutBase), NOT inflated by the +700 burn.
+    expect(screen.getByTestId('tdee-strip').textContent).toMatch(new RegExp(`${cutBase.toLocaleString('ro-RO').replace(/,/g, '.')}\\s*kcal`));
+    // The retired add-on / clamped notes no longer exist.
+    expect(screen.queryByTestId('tdee-addons-clamped-note')).not.toBeInTheDocument();
     expect(screen.queryByTestId('tdee-aerobic-add-note')).not.toBeInTheDocument();
     expect(screen.queryByTestId('tdee-fatigue-ease-note')).not.toBeInTheDocument();
-    // Displayed number is clamped to maintenance — the +700 is NOT in it.
-    expect(screen.getByTestId('tdee-strip').textContent).not.toMatch(/700/);
-    // No diacritics (D-LEGACY-064).
-    const note = screen.getByTestId('tdee-addons-clamped-note');
-    expect(/[ăâîșțĂÂÎȘȚ]/.test(note.textContent ?? '')).toBe(false);
-  });
-
-  it('CUT day + small class staying below maintenance → real add-on note (not clamped)', async () => {
-    setOnboarding({ weight: 80, height: 180, goal: 'slabire' });
-    useProgresStore.setState({
-      weightLog: [{ date: todayIso(), kg: 80, ts: Date.now() }],
-      targetObiectiv: { weightKg: null, month: null },
-    } as never);
-    const maintenance = readUserMaintenanceTDEE() as number;
-    const cutBase = maintenance - 400;
-    vi.mocked(getNutritionTargetTodayReal).mockResolvedValueOnce({
-      kcalTarget: cutBase,
-      proteinTarget: 160,
-      source: 'engine-bn',
-      confidence: 0.5,
-    });
-    // A small 150-kcal class → cutBase + 150 stays below maintenance → no clamp.
-    useAerobicStore.setState({
-      sessions: [{ date: todayIso(), type: 'aerobic', minutes: 20, kcal: 150, ts: Date.now() }],
-      lastDuration: 20,
-    });
-    render(<TDEEStrip />);
-    await waitFor(() => {
-      expect(screen.getByTestId('tdee-aerobic-add-note')).toBeInTheDocument();
-    });
-    expect(screen.queryByTestId('tdee-addons-clamped-note')).not.toBeInTheDocument();
+    // The info line attributes the 700 kcal burned.
+    expect(screen.getByTestId('tdee-aerobic-info').textContent).toMatch(/700/);
   });
 });

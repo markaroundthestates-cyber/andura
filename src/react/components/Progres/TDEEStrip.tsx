@@ -25,26 +25,27 @@
 //     window — the honest "loggedNote" microcopy reflects that (NOT a guaranteed
 //     next-day flip). Next day reverts to the auto target.
 //   - The separate bottom "Nutrition today" panel (NutritionInline) + standalone
-//     Fatigue panel are MERGED IN: Fatigue lives on the right. (The Base-calories
-//     / BMR panel was struck out 2026-05-30 as redundant — the hero already reads
-//     as an "Adaptive estimate" — so it is no longer rendered here.)
-//   - Fatigue → kcal: a recovery-protective deficit ease (easeDeficitForFatigue)
-//     nudges the DISPLAYED auto target up toward maintenance ONLY under sustained
-//     HIGH_FATIGUE + an active deficit. It never fakes a TDEE change, never lowers
-//     the target, is capped, and is labeled transparently (fatigueEaseNote).
+//     Fatigue panel were merged in earlier. (The Base-calories / BMR panel was
+//     struck out 2026-05-30 as redundant — the hero already reads as an "Adaptive
+//     estimate" — so it is no longer rendered here.)
+//
+// STABLE HERO redesign (Daniel + CEO locked 2026-06-01): the hero kcal must be a
+// STABLE goal-based recommended intake — it does NOT move with activity or
+// fatigue. So the aerobic add-on and the fatigue deficit-ease no longer change
+// the hero, and the Fatigue panel is removed from this card (relocated to Muscle
+// Recovery). Today's aerobic burn shows as an INFO line below the hero (it does
+// not add to the number). The engine target's safety-limit "floored" note stays.
 
 import type { JSX } from 'react';
 import { useEffect, useState, useMemo } from 'react';
 import { AlertCircle, Pencil, Check } from 'lucide-react';
 import { Pill } from '../pulse/Pill';
 import { Kicker } from '../pulse/Kicker';
-import { FatigueStrip } from './FatigueStrip';
 import { getNutritionTargetTodayReal } from '../../lib/bayesianNutritionAggregate';
 import type { NutritionTarget } from '../../lib/bayesianNutritionAggregate';
 import { readBayesianNutritionContext } from '../../lib/nutritionObservations';
-import { easeDeficitForFatigue } from '../../lib/fatigueDeficitEase';
 import { guardDisplayTarget } from '../../lib/displayTargetGuard';
-import { getFatigue, resolveActivePhase } from '../../lib/engineWrappers';
+import { resolveActivePhase } from '../../lib/engineWrappers';
 import { readUserMaintenanceTDEE } from '../../lib/userTdee';
 import { useProgresStore } from '../../stores/progresStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
@@ -194,62 +195,35 @@ export function TDEEStrip(): JSX.Element {
     recomputeNonce,
   ]);
 
-  // ── Fatigue → kcal recovery-protective ease ─────────────────────────────
-  // Apply only to a genuine engine/baseline auto target (source !== 'manual':
-  // a manual log already reflects the user's intent, don't nudge it). The ease
-  // is transparent + capped + never below maintenance (helper guarantees).
-  const fatigue = getFatigue();
-  const fatigueKey = fatigue?.key ?? null;
+  // ── STABLE hero = the goal-based recommended intake ──────────────────────
+  // The hero is the engine target, floored (guardDisplayTarget applies the hard
+  // sex floor + healthy BMI floor). It does NOT move with activity or fatigue —
+  // it is the stable daily allowance the user reads as their target. The aerobic
+  // add-on and the fatigue deficit-ease were removed (CEO lock 2026-06-01) so the
+  // number stays put day-to-day.
   const maintenanceKcal = readUserMaintenanceTDEE();
   const baseAutoKcal = target?.kcalTarget ?? null;
-  const ease =
-    baseAutoKcal != null && target != null && target.source !== 'manual'
-      ? easeDeficitForFatigue(baseAutoKcal, maintenanceKcal, fatigueKey)
-      : { easedKcal: baseAutoKcal ?? 0, addedKcal: 0, eased: false };
-
-  // ── Aerobic-class kcal → today's activity expenditure ────────────────────
-  // A logged aerobic class is energy the weight-trend Bayesian TDEE does NOT
-  // capture for THIS day (the engine calibrates slowly over a window, off the
-  // scale). So on a class day we add today's logged aerobic kcal to the
-  // DISPLAYED target as an explicit, labeled activity add-on: the user can eat
-  // a bit more / the deficit eases. It is honest (no double-count vs the
-  // weight-trend estimate — it's an on-top add, clearly attributed) and only
-  // ADDS, so the sex kcal floor (already baked into the engine target) holds.
-  // Applied to a genuine auto target only (a manual log already reflects intent).
-  const aerobicSessions = useAerobicStore((s) => s.sessions);
-  const aerobicKcalToday = aerobicKcalForDate(aerobicSessions, dateISO);
-  const aerobicAdd =
-    target != null && target.source !== 'manual' && aerobicKcalToday > 0
-      ? aerobicKcalToday
-      : 0;
-  // The kcal we DISPLAY as the auto target (post-ease + aerobic add-on), then
-  // RE-GUARDED: the ease + add-on bypass the engine's floor/ceiling, so the
-  // single display guard re-applies hard floor (sex) + healthy floor (BMI<=18.5)
-  // + maintenance ceiling (deficit phases) to the FINAL sum. baseAutoKcal drives
-  // the deficit/surplus classification (engine base at/below maintenance = cut).
-  const guardedDisplay =
-    target && baseAutoKcal != null
-      ? guardDisplayTarget(ease.easedKcal + aerobicAdd, baseAutoKcal, maintenanceKcal)
-      : null;
-  const displayAutoKcal = guardedDisplay?.kcal ?? null;
-  // The maintenance ceiling clamped the summed cut/maintenance-day target back
-  // DOWN — the fatigue ease + aerobic add-on did NOT survive into the displayed
-  // number. The per-add-on breakdown notes ("+150" / "+400") would over-promise
-  // kcal that was clamped away, so when this fires we suppress that breakdown and
-  // show one honest line instead (the notes must never claim kcal not displayed).
-  const addOnsClamped = guardedDisplay?.ceilingClamped ?? false;
-
-  // §F-pass2-tdeestrip-02 — current-vs-tinta comparison. Doar cand exista intake
-  // logat manual AND tinta e engine/baseline genuina (source 'manual' = echo).
-  // Base = the GUARDED ENGINE target WITHOUT the auto add-ons (ease + aerobic):
-  // a partial manual log (kcal only) is "logged" to the strip but "not manual"
-  // to the engine, so comparing the logged intake against an add-on-INFLATED
-  // target made the deficit/surplus delta wrong by the add-on size. The user ate
-  // a number — compare it against the plain guarded target they were given.
-  const comparisonBase =
+  const displayAutoKcal =
     target && baseAutoKcal != null
       ? guardDisplayTarget(baseAutoKcal, baseAutoKcal, maintenanceKcal).kcal
       : null;
+
+  // ── Aerobic-class kcal → today's activity INFO line ──────────────────────
+  // A logged aerobic class is energy burned today. It is shown as an INFO line
+  // below the hero (only when a class is logged today) — it does NOT add to the
+  // hero number. Applied to a genuine auto target only (a manual log already
+  // reflects the user's intent).
+  const aerobicSessions = useAerobicStore((s) => s.sessions);
+  const aerobicKcalToday = aerobicKcalForDate(aerobicSessions, dateISO);
+  const aerobicInfo =
+    target != null && target.source !== 'manual' && aerobicKcalToday > 0
+      ? aerobicKcalToday
+      : 0;
+
+  // §F-pass2-tdeestrip-02 — current-vs-tinta comparison. Doar cand exista intake
+  // logat manual AND tinta e engine/baseline genuina (source 'manual' = echo).
+  // Base = the same stable guarded engine target the hero shows.
+  const comparisonBase = displayAutoKcal;
   const showComparison =
     loggedKcal != null && target != null && target.source !== 'manual' && comparisonBase != null;
   const kcalDelta = showComparison ? (loggedKcal as number) - (comparisonBase as number) : 0;
@@ -306,10 +280,10 @@ export function TDEEStrip(): JSX.Element {
         </span>
       </div>
 
-      {/* Two columns: HERO target (left) + Fatigue today (right). */}
-      <div className="relative flex items-start gap-4">
-        {/* ── LEFT: editable kcal hero + protein ──────────────────────────── */}
-        <div className="flex-1 min-w-0">
+      {/* Full-width HERO target (stable goal-based recommended intake). */}
+      <div className="relative">
+        {/* ── Editable kcal hero + protein ────────────────────────────────── */}
+        <div className="min-w-0">
           <div className="mb-2 flex items-center gap-2">
             <Kicker color="var(--aqua-ink)">
               {showComparison ? t('progres.tdee.todayVsTarget') : t('progres.tdee.targetToday')}
@@ -405,12 +379,41 @@ export function TDEEStrip(): JSX.Element {
             </button>
           )}
         </div>
-
-        {/* ── RIGHT: Fatigue today ────────────────────────────────────────── */}
-        <div className="w-[42%] max-w-[180px] shrink-0">
-          <FatigueStrip />
-        </div>
       </div>
+
+      {/* Explainer under the hero — what this number is (stable, goal-based). */}
+      <p
+        className="text-xs text-ink3 mt-3 leading-snug relative"
+        data-testid="tdee-explainer"
+      >
+        {t('progres.tdee.explainer')}
+      </p>
+
+      {/* Aerobic-class INFO line — only when a class is logged today. It does NOT
+          add to the hero; it reassures the user today's burn moved them closer. */}
+      {aerobicInfo > 0 && (
+        <p
+          className="text-xs mt-2 leading-snug"
+          style={{ color: 'var(--aqua-deep)' }}
+          data-testid="tdee-aerobic-info"
+        >
+          {t('progres.tdee.aerobicInfo', { kcal: fmtNum(aerobicInfo) })}
+        </p>
+      )}
+
+      {/* Log CTA — prompts the user to log today's intake. Hidden once they have
+          logged (the after-log "sharpens" note then replaces it). Explains that
+          NOT logging is fine: the coach assumes the target was hit and calibrates
+          from the weight trend. */}
+      {!hasLoggedToday && (
+        <p
+          className="text-xs mt-3 leading-snug"
+          style={{ color: 'var(--aqua-deep)' }}
+          data-testid="tdee-log-cta"
+        >
+          {t('progres.tdee.logCta')}
+        </p>
+      )}
 
       {/* Honest microcopy — appears once the user has logged today. Logging
           sharpens the engine over a window (NOT a guaranteed next-day flip). */}
@@ -423,59 +426,6 @@ export function TDEEStrip(): JSX.Element {
           {t('progres.tdee.loggedNote')}
         </p>
       )}
-
-      {/* Add-on notes vs the maintenance ceiling. When the ceiling clamped the
-          summed cut/maintenance-day target back down, the fatigue ease + aerobic
-          add-on did NOT survive into the displayed number — so we replace the
-          per-add-on breakdown with ONE honest line (never claim kcal that isn't
-          in the number). Otherwise the add-ons are real → show the breakdown. */}
-      {addOnsClamped ? (
-        (ease.eased || aerobicAdd > 0) && (
-          <p
-            className="text-xs mt-2 leading-snug text-ink2"
-            data-testid="tdee-addons-clamped-note"
-          >
-            {t('progres.tdee.addOnsClampedNote')}
-          </p>
-        )
-      ) : (
-        <>
-          {/* Fatigue → kcal ease note — only when the recovery-protective ease fired. */}
-          {ease.eased && (
-            <p
-              className="text-xs mt-2 leading-snug"
-              style={{ color: 'var(--ember-ink)' }}
-              data-testid="tdee-fatigue-ease-note"
-            >
-              {t('progres.tdee.fatigueEaseNote', { kcal: fmtNum(ease.addedKcal) })}
-            </p>
-          )}
-
-          {/* Aerobic-class kcal add-on note — only when a class is logged today and
-              it raised the displayed target (honest, explicit attribution). */}
-          {aerobicAdd > 0 && (
-            <p
-              className="text-xs mt-2 leading-snug"
-              style={{ color: 'var(--aqua-deep)' }}
-              data-testid="tdee-aerobic-add-note"
-            >
-              {t('progres.tdee.aerobicAddNote', { kcal: fmtNum(aerobicAdd) })}
-            </p>
-          )}
-        </>
-      )}
-
-      {/* §F-pass2-tdeestrip-03 — italic explainer copy. Engine auto-calculates,
-          logging optional for calibration. Progress redesign (Daniel 2026-05-30):
-          this "Adaptive estimate" line now closes the card — the standalone Base
-          Calories (BMR) panel was struck out as redundant, removing the dead gap
-          that sat below it. */}
-      <p
-        className="text-xs text-ink3 mt-3 leading-snug italic relative"
-        data-testid="tdee-explainer"
-      >
-        {t('progres.tdee.explainer')}
-      </p>
 
       {/* BUG #4 safety — subponderal support message (TDEE×1.08 surplus). */}
       {target?.healthyFloorClamped && (
