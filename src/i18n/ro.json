@@ -1666,10 +1666,18 @@
     "deleteAccount": {
       "title": "Sterge contul",
       "heading": "Atentie",
-      "body1": "Toate datele tale (locale + remote) vor fi sterse imediat.",
-      "body2": "Aceasta actiune nu poate fi anulata. Nu vei mai putea recupera datele dupa confirmare.",
-      "acceptCta": "Sterge contul definitiv",
+      "body1": "Datele tale de pe acest dispozitiv sunt sterse imediat si esti deconectat.",
+      "body2": "Copia din cloud este pastrata 30 de zile. Conecteaza-te din nou in 30 de zile ca sa iti recuperezi contul, altfel este sters definitiv.",
+      "acceptCta": "Sterge contul",
       "cancelCta": "Anuleaza"
+    },
+    "restoreAccount": {
+      "title": "Cont programat pentru stergere",
+      "heading": "Bine ai revenit",
+      "body": "Ai cerut stergerea acestui cont. Datele tale sunt inca aici. Recupereaza-l acum sau sterge-l definitiv.",
+      "bodyExpired": "Perioada de 30 de zile pentru recuperarea acestui cont a trecut, asa ca poate fi doar sters acum.",
+      "restoreCta": "Recupereaza contul",
+      "deleteNowCta": "Sterge acum"
     },
     "resetData": {
       "title": "Reseteaza datele",

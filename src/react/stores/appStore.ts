@@ -26,11 +26,20 @@ export interface AppState {
   isAuthenticated: boolean;
   /** §B006/D-2 Slice 1.x — Skip-auth "test drive" mode (Maria 65 friction-low) */
   isSkipAuth: boolean;
+  /**
+   * §56.5.2 soft-delete — set by runPostAuthSync when a fresh (< 30d) account
+   * deletion marker is found on sign-in. Drives the RESTORE choice screen
+   * (Restore account vs Delete now). Holds the marker's requestedAt (epoch ms),
+   * or its `expired` flag when the 30-day grace has elapsed (purge pending).
+   * null = no pending deletion (normal sign-in). Session-scope (NOT persisted).
+   */
+  pendingDeletionRestore: { requestedAt: number; expired: boolean } | null;
   /** Mutators */
   setPersona: (p: Persona) => void;
   setInitialized: (v: boolean) => void;
   setAuthenticated: (v: boolean) => void;
   setSkipAuth: (v: boolean) => void;
+  setPendingDeletionRestore: (v: { requestedAt: number; expired: boolean } | null) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -40,10 +49,12 @@ export const useAppStore = create<AppState>()(
       initialized: false,
       isAuthenticated: false,
       isSkipAuth: false,
+      pendingDeletionRestore: null,
       setPersona: (persona) => set({ persona }),
       setInitialized: (initialized) => set({ initialized }),
       setAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
       setSkipAuth: (isSkipAuth) => set({ isSkipAuth }),
+      setPendingDeletionRestore: (pendingDeletionRestore) => set({ pendingDeletionRestore }),
     }),
     {
       name: 'wv2-app-store',

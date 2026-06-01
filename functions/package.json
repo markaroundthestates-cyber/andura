@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "node --test",
-    "lint": "node -c index.js && node -c scheduler.test.js"
+    "lint": "node -c index.js && node -c scheduler.js && node -c scheduler.test.js && node -c deletionGrace.js && node -c deletionGrace.test.js"
   },
   "dependencies": {
     "firebase-admin": "^13.10.0",

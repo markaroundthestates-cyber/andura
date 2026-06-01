@@ -1,6 +1,16 @@
 // ══ DELETE ACCOUNT CONFIRM — D047 RIP-OUT drill-down screen ════════════
 // Per mockup andura-clasic.html #screen-confirm-delete L2325-2338.
-// §A016 freshness gate + §A007 token clear + §B039 GDPR Tier 1+2 wipe preserved.
+// §A016 freshness gate + §A007 token clear preserved.
+//
+// §56.5.2 soft-delete (30-day grace) — this screen NO LONGER wipes the cloud
+// (Tier 2 RTDB) immediately. It writes a `users/{uid}/account/deletionRequestedAt`
+// marker (epoch ms), then wipes LOCAL (Tier 0 localStorage + Tier 1 IndexedDB)
+// + signs out. The cloud copy is retained for a 30-day restore window: on the
+// next sign-in the user is offered Restore vs Delete-now (see accountDeletion.ts
+// + reactBoot runPostAuthSync + RestoreAccount screen). A scheduled Cloud
+// Function (functions/deletionGrace.js) hard-purges any marker >= 30 days old.
+// This keeps the device cleared right away (shared-device hygiene) while making
+// the privacy-policy "30-day grace" claim accurate.
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -15,16 +25,17 @@ import { useSettingsStore } from '../../../stores/settingsStore';
 import { useScheduleStore } from '../../../stores/scheduleStore';
 import { useAerobicStore } from '../../../stores/aerobicStore';
 import { useCoachStore } from '../../../stores/coachStore';
-import { isAuthFresh, signOut as authSignOut, getAuthState, getIdToken } from '../../../../auth.js';
+import { isAuthFresh, signOut as authSignOut, getAuthState } from '../../../../auth.js';
+import { markAccountForDeletion } from '../../../lib/accountDeletion';
 import { gotoPath } from '../../../lib/navigation';
 import { t } from '../../../../i18n/index.js';
 
-// RE-S-01 audit fix — upper bound on the awaited cloud (RTDB) DELETE so a hung
-// network never traps the user on the delete screen. The local wipe + sign-out
-// + navigation still proceed after this window even if the DELETE has not
-// resolved (a stale-but-valid token also authorizes the server-side DELETE for
-// up to ~1h, so the erasure still lands once connectivity returns).
-const REMOTE_WIPE_TIMEOUT_MS = 8000;
+// §56.5.2 — upper bound on the awaited cloud marker WRITE so a hung network
+// never traps the user on the delete screen. The local wipe + sign-out +
+// navigation still proceed after this window even if the PATCH has not resolved
+// (a stale-but-valid token re-authorizes the marker write for up to ~1h, and the
+// grace function is a backstop, so the soft-delete still lands on reconnect).
+const REMOTE_MARK_TIMEOUT_MS = 8000;
 
 function wipeAllLocalData(): void {
   try {
@@ -58,25 +69,17 @@ function wipeAllLocalData(): void {
   }
 }
 
-async function wipeRemoteData(uid: string): Promise<void> {
-  // §B039/D-6 — Tier 1 IDB + Tier 2 RTDB DELETE per ADR 002.
+async function wipeLocalDeviceDB(uid: string): Promise<void> {
+  // §56.5.2 — Tier 1 IndexedDB is LOCAL device data; clearing it on soft-delete
+  // keeps the device wiped right away (shared-device hygiene). The Tier 2 RTDB
+  // node is NOT deleted here — it is retained for the 30-day restore window and
+  // only the deletion marker is written (see handleConfirm). The scheduled
+  // grace function performs the eventual hard cloud purge.
   try {
     const dbModule = await import('../../../../storage/db.js');
     await dbModule.wipeUserDB(uid);
   } catch (e) {
     logger.warn('[DeleteAccountConfirm] Tier 1 IDB wipe failed:', e);
-  }
-
-  const rtdbUrl = (import.meta as ImportMeta & { env?: { VITE_FIREBASE_RTDB_URL?: string } })
-    .env?.VITE_FIREBASE_RTDB_URL;
-  if (!rtdbUrl) return;
-  try {
-    const idToken = await getIdToken();
-    if (!idToken) return;
-    const url = `${rtdbUrl.replace(/\/$/, '')}/users/${encodeURIComponent(uid)}.json?auth=${encodeURIComponent(idToken)}`;
-    await fetch(url, { method: 'DELETE' });
-  } catch (e) {
-    logger.warn('[DeleteAccountConfirm] Tier 2 RTDB DELETE failed:', e);
   }
 }
 
@@ -92,32 +95,35 @@ export function DeleteAccountConfirm(): JSX.Element {
       navigate('/auth?reason=reauth_required_for_delete');
       return;
     }
-    // §B039/D-6 — GDPR Art. 17 strict erasure Tier 0 + Tier 1 + Tier 2.
-    // RE-S-01 audit fix (REAUDIT-3 CRIT, GDPR Art. 17 + S-07 data-resurrection):
-    // the Tier 2 (RTDB) DELETE inside wipeRemoteData calls getIdToken(), which
-    // reads getAuthState() → null once authSignOut() has cleared the tokens.
-    // Previously authSignOut() ran synchronously while wipeRemoteData was still
-    // a pending microtask (`void`), so getIdToken returned null and the cloud
-    // DELETE never fired — the user's full RTDB backup survived "Sterge contul
-    // definitiv" and S-07 restore-on-login resurrected it on the next device.
-    // Fix: AWAIT wipeRemoteData() to completion (cloud DELETE issued with a
-    // still-valid token) BEFORE authSignOut() clears the tokens. A timeout
-    // fallback guarantees a hung network can't trap the user on this screen.
+    // §56.5.2 soft-delete (30-day grace) — write the cloud deletion MARKER +
+    // wipe LOCAL (Tier 0 + Tier 1); the cloud node is RETAINED for restore.
     //
-    // RE-S-02 audit fix (REAUDIT-3 MED) — every other destructive wipe flow
-    // (dataCleanup.js fullReset/resetTestData/resetButKeepRealLogs) sets the
-    // sync-suppression flag before clearing; the delete path did not. Set it
-    // up-front so the firebase.js DB.set override (firebase.js:359) does not
-    // schedule a 3s debounced syncToFirebase during the store resets — closing
-    // the stale-empty-push window that RE-S-01's reorder would otherwise reopen.
-    window._suppressFirebaseSync = true;
+    // Token-ordering (RE-S-01 lesson): the marker PATCH (markAccountForDeletion
+    // → fbPatchUserChild → getIdToken) reads getAuthState(), which returns null
+    // once authSignOut() has cleared the tokens. So we AWAIT the marker write +
+    // the Tier 1 IDB wipe (both issued with a still-valid token) BEFORE
+    // authSignOut(). A timeout fallback guarantees a hung network can't trap the
+    // user on this screen — a stale-but-valid token re-authorizes the PATCH for
+    // ~1h on a later boot, and the grace function backstops the purge regardless.
+    //
+    // Suppress ORDER (vs RE-S-02): fbPatchUserChild early-returns when
+    // window._suppressFirebaseSync is set, so the suppress flag is raised only
+    // AFTER the marker write has been issued — otherwise the marker would never
+    // reach the cloud. We still suppress before the LOCAL wipe so the DB.set 3s
+    // debounce (firebase.js) cannot schedule a stale syncToFirebase during the
+    // store resets, and re-assert the persisted __suppressFirebaseSyncUntil guard
+    // inside wipeAllLocalData (set after localStorage.clear()).
     const authState = getAuthState();
     if (authState?.uid) {
       await Promise.race([
-        wipeRemoteData(authState.uid),
-        new Promise<void>((resolve) => setTimeout(resolve, REMOTE_WIPE_TIMEOUT_MS)),
+        (async () => {
+          await markAccountForDeletion();
+          await wipeLocalDeviceDB(authState.uid);
+        })(),
+        new Promise<void>((resolve) => setTimeout(resolve, REMOTE_MARK_TIMEOUT_MS)),
       ]);
     }
+    window._suppressFirebaseSync = true;
     wipeAllLocalData();
     authSignOut();
     setAuthenticated(false);

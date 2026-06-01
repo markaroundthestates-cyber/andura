@@ -10,7 +10,7 @@
 
 import type { JSX, ReactNode } from 'react';
 import { useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAppStore } from '../stores/appStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { isAuthenticated as readAuthFromStorage } from '../../auth.js';
@@ -23,10 +23,16 @@ export function ProtectedRoute({ children }: Props): JSX.Element {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const isSkipAuth = useAppStore((s) => s.isSkipAuth);
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
+  // §56.5.2 soft-delete — a cold-booting returning user whose account is
+  // pending deletion (marker found by runPostAuthSync) must land on the RESTORE
+  // choice screen, not the app. Set asynchronously after boot's fire-and-forget
+  // sync resolves, so the gate re-evaluates reactively when the flag flips.
+  const pendingDeletionRestore = useAppStore((s) => s.pendingDeletionRestore);
   // §A015 audit fix (NC§31-H1..H4) — T0 hard typing gate: redirect /onboarding/1
   // dacă user authenticated dar onboarding NU completed. Prevents engine T0
   // baseline pollution + skip-onboarding bypass attempts.
   const onboardingCompleted = useOnboardingStore((s) => s.completed);
+  const location = useLocation();
 
   // §7-C3 audit fix — reactive auth state sync ADDITIVE only:
   // 1. On mount: if storage has valid auth (Magic Link landed prior session),
@@ -73,6 +79,12 @@ export function ProtectedRoute({ children }: Props): JSX.Element {
   const passesAuthGate = isAuthenticated || isSkipAuth || readAuthFromStorage();
   if (!passesAuthGate) {
     return <Navigate to="/auth" replace />;
+  }
+  // §56.5.2 soft-delete — pending deletion intercepts the app before onboarding:
+  // route to the RESTORE choice screen. Guard against a self-redirect loop (the
+  // restore screen itself lives under /app/cont/restore-account).
+  if (pendingDeletionRestore && location.pathname !== '/app/cont/restore-account') {
+    return <Navigate to="/app/cont/restore-account" replace />;
   }
   if (!onboardingCompleted) {
     return <Navigate to="/onboarding/1" replace />;

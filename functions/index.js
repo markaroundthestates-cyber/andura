@@ -20,6 +20,8 @@ const {
   WEEKLY_SUMMARY,
 } = require('./scheduler');
 
+const { selectExpiredUids } = require('./deletionGrace');
+
 admin.initializeApp();
 
 // FCM error codes that mean the token is permanently dead -> delete it.
@@ -112,5 +114,80 @@ exports.scheduledPushNotifications = onSchedule(
       dueDaily,
       dueWeekly,
     });
+  }
+);
+
+// ── §56.5.2 account-deletion 30-day grace purge ──────────────────────────────
+// Daily backstop for the client soft-delete. Scans users/*/account/
+// deletionRequestedAt and HARD-deletes any user whose marker is >= 30 days old:
+//   1. DELETE the RTDB node users/{uid} (the retained backup).
+//   2. admin.auth().deleteUser(uid) (the Firebase Auth account).
+// Idempotent, logged, defensive: selectExpiredUids skips any user without an
+// aged, well-formed marker, so a user is NEVER purged without one. Per-uid
+// errors are isolated (Promise.allSettled) so one failure never blocks the rest;
+// a still-present marker is simply retried on the next daily run.
+
+// FCM-style: cron at 03:15 Europe/Bucharest daily (off-peak; the schedule
+// string accepts App Engine cron syntax). Single Cloud Scheduler job.
+const DELETION_PURGE_SCHEDULE = 'every day 03:15';
+
+/**
+ * Hard-delete one user (RTDB node + Auth account). Auth deletion tolerates an
+ * already-removed account (user-not-found) so a partially-completed prior run
+ * re-converges cleanly. Returns true on full success.
+ * @param {string} uid
+ * @returns {Promise<boolean>}
+ */
+async function purgeUser(uid) {
+  await admin.database().ref(`users/${uid}`).remove();
+  try {
+    await admin.auth().deleteUser(uid);
+  } catch (err) {
+    // Idempotent: a prior run (or a manual delete) may have already removed the
+    // Auth record. Anything else re-throws so the marker survives for a retry.
+    if (err && err.code === 'auth/user-not-found') {
+      logger.info('deletion-grace: auth user already gone', { uid });
+    } else {
+      throw err;
+    }
+  }
+  return true;
+}
+
+exports.scheduledAccountDeletionPurge = onSchedule(
+  {
+    schedule: DELETION_PURGE_SCHEDULE,
+    timeZone: 'Europe/Bucharest',
+    region: 'europe-west1',
+    retryCount: 0,
+  },
+  async () => {
+    const now = Date.now();
+    const snap = await admin.database().ref('users').once('value');
+    const users = snap.val();
+    const expired = selectExpiredUids(users, now);
+    if (!expired.length) {
+      logger.info('deletion-grace: nothing due', {
+        scanned: users ? Object.keys(users).length : 0,
+      });
+      return;
+    }
+
+    const results = await Promise.allSettled(expired.map((uid) => purgeUser(uid)));
+    let purged = 0;
+    let failed = 0;
+    results.forEach((r, i) => {
+      if (r.status === 'fulfilled') {
+        purged++;
+        logger.info('deletion-grace: purged', { uid: expired[i] });
+      } else {
+        failed++;
+        logger.error('deletion-grace: purge failed (will retry next run)', {
+          uid: expired[i],
+          error: r.reason && r.reason.message ? r.reason.message : String(r.reason),
+        });
+      }
+    });
+    logger.info('deletion-grace tick done', { due: expired.length, purged, failed });
   }
 );

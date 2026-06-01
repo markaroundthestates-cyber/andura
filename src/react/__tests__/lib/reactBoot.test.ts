@@ -38,6 +38,13 @@ vi.mock('../../../auth.js', () => ({
 vi.mock('../../../util/dataReset.js', () => ({
   enforceDataOwner: vi.fn(async () => false),
 }));
+// §56.5.2 soft-delete — mock the deletion-marker read so runPostAuthSync's
+// pre-restore check resolves to "no pending deletion" (normal sign-in) without a
+// real network round-trip. A returning marker is covered separately in
+// reactBoot.deletionGrace.test.ts.
+vi.mock('../../lib/accountDeletion', () => ({
+  readDeletionMarker: vi.fn(async () => null),
+}));
 
 import {
   runReactBoot,
@@ -154,9 +161,9 @@ describe('runReactBoot — boot orchestration', () => {
   it('triggers cloud sync for a returning authenticated user (token persisted)', async () => {
     mockGetAuthState.mockReturnValue({ uid: 'u-returning', idToken: 't', expiry: Date.now() + 1e6 } as never);
     await runReactBoot();
-    // Fire-and-forget — let the microtask settle, then assert.
-    await Promise.resolve();
-    await Promise.resolve();
+    // Fire-and-forget — drain the microtask queue (the soft-delete marker check
+    // adds one awaited hop before restore), then assert.
+    for (let i = 0; i < 5; i++) await Promise.resolve();
     expect(initFirebaseSync).toHaveBeenCalledOnce();
   });
 
@@ -178,8 +185,7 @@ describe('runReactBoot — boot orchestration', () => {
     mockRestoreSession.mockRejectedValue(new Error('restore boom'));
     mockGetAuthState.mockReturnValue({ uid: 'u-returning', idToken: 't', expiry: Date.now() + 1e6 } as never);
     await runReactBoot();
-    await Promise.resolve();
-    await Promise.resolve();
+    for (let i = 0; i < 5; i++) await Promise.resolve();
     // Boot does not abort — sync still proceeds for the (stale-but-present) session.
     expect(initFirebaseSync).toHaveBeenCalledOnce();
     expect(consoleWarnSpy).toHaveBeenCalledWith('[Auth] boot session restore failed:', expect.any(Error));

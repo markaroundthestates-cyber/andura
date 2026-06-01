@@ -55,6 +55,7 @@ import { enforceDataOwner } from '../../util/dataReset.js';
 import { useAppStore } from '../stores/appStore';
 import { hydrateStoresFromCloud, startStoreSyncSubscriptions } from './storeSync';
 import { migrateAnonymousToAuth } from '../../storage/migrateAnonymousToAuth.js';
+import { readDeletionMarker } from './accountDeletion';
 
 // Module-level idempotency guards. React 18 StrictMode double-invokes effects
 // in dev, and main.tsx + a returning-user path could both reach boot — these
@@ -192,6 +193,33 @@ export async function runPostAuthSync(): Promise<void> {
 
   _postAuthInFlight = (async () => {
     try {
+      // §56.5.2 soft-delete grace — BEFORE any cloud restore, check whether this
+      // account has a pending deletion marker. A soft-deleted account must NOT
+      // silently hydrate its (retained) cloud backup into a fresh session; the
+      // user has to make an explicit choice first. A fresh (< 30d) marker sets
+      // the appStore flag that drives the RESTORE choice screen and we bail out
+      // of the sync (no restore, no hydrate). A marker absent / malformed /
+      // network-failed read returns null → normal sign-in continues unchanged.
+      // An expired (>= 30d) marker still surfaces the screen (Delete-now only)
+      // so a returning user is never silently let back into a purge-pending
+      // account before the scheduled function has run.
+      try {
+        const marker = await readDeletionMarker();
+        if (marker) {
+          useAppStore.getState().setPendingDeletionRestore({
+            requestedAt: marker.requestedAt,
+            expired: marker.expired,
+          });
+          _postAuthDoneForUid = uid;
+          return;
+        }
+        // No marker → clear any stale flag from a prior in-session account.
+        useAppStore.getState().setPendingDeletionRestore(null);
+      } catch (err) {
+        logger.warn('[Auth] deletion-marker check threw:', err);
+        // Non-fatal — fall through to normal sync (fail-open: never trap a user
+        // out of their account because a marker read failed).
+      }
       // H1 shared-device fix — account-switch guard. BEFORE any cloud sync, purge
       // a DIFFERENT prior user's local data if this uid does not own it (e.g. user
       // B opened a magic link on user A's still-authed browser without a logout).

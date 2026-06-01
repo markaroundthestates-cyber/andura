@@ -1666,10 +1666,18 @@
     "deleteAccount": {
       "title": "Delete account",
       "heading": "Heads up",
-      "body1": "All your data (local + remote) will be erased immediately.",
-      "body2": "This action cannot be undone. You won't be able to recover the data after confirming.",
-      "acceptCta": "Delete account permanently",
+      "body1": "Your data on this device is erased right away and you are signed out.",
+      "body2": "Your cloud backup is kept for 30 days. Sign back in within 30 days to restore your account, or it is permanently deleted.",
+      "acceptCta": "Delete account",
       "cancelCta": "Cancel"
+    },
+    "restoreAccount": {
+      "title": "Account scheduled for deletion",
+      "heading": "Welcome back",
+      "body": "You asked to delete this account. Your data is still here. Restore it now, or delete it for good.",
+      "bodyExpired": "The 30-day restore window for this account has passed, so it can only be deleted now.",
+      "restoreCta": "Restore account",
+      "deleteNowCta": "Delete now"
     },
     "resetData": {
       "title": "Reset data",

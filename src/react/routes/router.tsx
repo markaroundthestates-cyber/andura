@@ -95,6 +95,8 @@ const SettingsFaq = lazy(() => import('./screens/cont/SettingsFaq').then((m) => 
 // §D047 RIP-OUT drill-down screens — A003 ConfirmModal replacement (Stage 1 NEW screens)
 const LogoutConfirm = lazy(() => import('./screens/cont/LogoutConfirm').then((m) => ({ default: m.LogoutConfirm })));
 const DeleteAccountConfirm = lazy(() => import('./screens/cont/DeleteAccountConfirm').then((m) => ({ default: m.DeleteAccountConfirm })));
+// §56.5.2 soft-delete — 30-day grace restore-vs-delete-now choice on sign-in.
+const RestoreAccount = lazy(() => import('./screens/cont/RestoreAccount').then((m) => ({ default: m.RestoreAccount })));
 const ResetDataConfirm = lazy(() => import('./screens/cont/ResetDataConfirm').then((m) => ({ default: m.ResetDataConfirm })));
 // §B002 D047 Stage 3 — Avansat section drill-downs
 const RedoOnboardingConfirm = lazy(() => import('./screens/cont/RedoOnboardingConfirm').then((m) => ({ default: m.RedoOnboardingConfirm })));
@@ -224,6 +226,9 @@ export const router = createBrowserRouter([
           // §D047 RIP-OUT drill-down screens — A003 ConfirmModal migrate Stage 1
           { path: 'logout-confirm', element: <LazyRoute><LogoutConfirm /></LazyRoute> },
           { path: 'delete-account-confirm', element: <LazyRoute><DeleteAccountConfirm /></LazyRoute> },
+          // §56.5.2 soft-delete — restore-vs-delete-now (set by runPostAuthSync;
+          // ProtectedRoute redirects here when pendingDeletionRestore is set).
+          { path: 'restore-account', element: <LazyRoute><RestoreAccount /></LazyRoute> },
           { path: 'reset-data-confirm', element: <LazyRoute><ResetDataConfirm /></LazyRoute> },
           // §B002 D047 Stage 3 — Avansat section drill-downs
           { path: 'redo-onboarding-confirm', element: <LazyRoute><RedoOnboardingConfirm /></LazyRoute> },

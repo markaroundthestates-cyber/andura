@@ -13,6 +13,18 @@ import { verifyMagicLink, parseMagicLinkUrl, getPendingEmail, signInWithGoogleId
 import { runPostAuthSync } from '../../lib/reactBoot';
 import { t } from '../../../i18n/index.js';
 
+// §56.5.2 soft-delete — post-restore landing target. When the cloud sync found
+// a pending deletion marker (runPostAuthSync set appStore.pendingDeletionRestore)
+// the user must choose Restore vs Delete-now BEFORE entering the app, so route
+// to the restore screen instead of the home tab. Read inside the click handler
+// (not via a hook) so the just-settled sync state is observed.
+const APP_HOME = '/app/antrenor';
+const RESTORE_ROUTE = '/app/cont/restore-account';
+
+function postAuthLanding(): string {
+  return useAppStore.getState().pendingDeletionRestore ? RESTORE_ROUTE : APP_HOME;
+}
+
 // §B005/D-2 audit fix — Google OAuth fragment parse helper. Google returns
 // `#id_token=<jwt>&access_token=...&...` în URL hash post-redirect.
 function parseGoogleIdToken(hash: string): string | null {
@@ -73,7 +85,7 @@ export function AuthCallback(): JSX.Element {
           // on freshly-wiped local state + re-routed the user through onboarding.
           await awaitRestoreOrTimeout();
           if (cancelled) return;
-          navigate('/app/antrenor', { replace: true });
+          navigate(postAuthLanding(), { replace: true });
           return;
         }
         setError(result.error || 'google_verify_failed');
@@ -107,7 +119,7 @@ export function AuthCallback(): JSX.Element {
         // awaitRestoreOrTimeout rationale) — prevents the re-login onboarding loop.
         await awaitRestoreOrTimeout();
         if (cancelled) return;
-        navigate('/app/antrenor', { replace: true });
+        navigate(postAuthLanding(), { replace: true });
       } else {
         // §AuthCallback-FIX code-review MEDIUM: clear pendingEmail on verify-fail
         // (anti-stale-leak shared-device scenario — failed verify means oobCode
