@@ -195,11 +195,14 @@ export function MuscleBodyMap(): JSX.Element | null {
                 {
                   width: BOX_W,
                   height: BOX_H,
-                  opacity: isCold ? 0.55 : 1,
                 } as CSSProperties
               }
             >
-              {/* Photoreal grey-anatomy base render (sex + view). */}
+              {/* Photoreal grey-anatomy base render (sex + view). The cold-state
+                  dim lives HERE on the body image, NOT on the container — pinning
+                  it to the container also dimmed the fixed dark plate, which let
+                  a light-theme card bleed through and wash the whole map out
+                  (Daniel live 2026-06-01). The plate now stays solid on both themes. */}
               <img
                 className="body-photo__base"
                 src={imageSrc}
@@ -207,6 +210,7 @@ export function MuscleBodyMap(): JSX.Element | null {
                 aria-hidden="true"
                 draggable={false}
                 data-testid="body-map-image"
+                style={{ opacity: isCold ? 0.55 : 1 }}
                 onError={() => setImgFailed(true)}
               />
               {/* Colored recovery glow per Big-11 group, blended onto the body. */}

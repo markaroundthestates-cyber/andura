@@ -177,8 +177,10 @@ describe('MuscleBodyMap', () => {
     render(<MuscleBodyMap />);
     const card = screen.getByTestId('muscle-body-map');
     expect(card).toHaveAttribute('data-cold', 'true');
-    // Body dimmed.
-    expect(screen.getByTestId('body-map-figure')).toHaveStyle({ opacity: '0.55' });
+    // Body dimmed — the cold-state dim is on the body IMAGE, not the container
+    // (the container holds the fixed dark plate, which must stay solid so a
+    // light-theme card can't bleed through and wash the map out).
+    expect(screen.getByTestId('body-map-image')).toHaveStyle({ opacity: '0.55' });
     // Empty note present.
     expect(screen.getByTestId('body-map-empty')).toBeInTheDocument();
     // Regions are neutral — NOT painted as 'recovered' (no green over-claim).
