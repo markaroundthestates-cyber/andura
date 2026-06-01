@@ -302,7 +302,7 @@ export function Cont(): JSX.Element {
         <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-ink3 mb-3">
           {t('cont.appearance.modeLabel')}
         </p>
-        <div className="flex gap-1.5 bg-paper rounded-[14px] p-1" role="group" aria-label={t('cont.appearance.modeLabel')}>
+        <div className="flex gap-1.5 rounded-[14px] p-1" style={{ background: 'var(--surface-2)' }} role="group" aria-label={t('cont.appearance.modeLabel')}>
           {MODE_OPTIONS.map((opt) => (
             <button
               key={opt.value}
