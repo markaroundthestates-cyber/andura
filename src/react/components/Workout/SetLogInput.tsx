@@ -153,7 +153,7 @@ export function SetLogInput({
         </p>
         <div className="flex items-baseline justify-center gap-2 mt-2 mb-4" data-testid="setlog-tinta-target-display">
           <span
-            className="font-display text-3xl font-bold text-ink"
+            className="font-display text-2xl font-bold text-ink"
             data-testid="setlog-tinta-reps"
           >
             {reps}
@@ -168,7 +168,7 @@ export function SetLogInput({
             <>
               <span className="text-sm text-ink2">{t('setLog.targetReps')}</span>
               <span
-                className="font-display text-3xl font-bold text-ink ml-2"
+                className="font-display text-2xl font-bold text-ink ml-2"
                 data-testid="setlog-tinta-kg"
               >
                 {kg} kg
@@ -213,7 +213,7 @@ export function SetLogInput({
                 onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
                 onFocus={handleFocus}
                 data-testid="setlog-tinta-kg-input"
-                className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[28px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+                className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
               />
               <DialButton
                 dir="up"
@@ -251,7 +251,7 @@ export function SetLogInput({
                 onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
                 onFocus={handleFocus}
                 data-testid="setlog-tinta-reps-input"
-                className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[28px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+                className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
               />
               <DialButton
                 dir="up"
@@ -380,7 +380,7 @@ export function SetLogInput({
               onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
               onFocus={handleFocus}
               data-testid="kg-input"
-              className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[28px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+              className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
             />
             <DialButton
               dir="up"
@@ -429,7 +429,7 @@ export function SetLogInput({
               onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
               onFocus={handleFocus}
               data-testid="reps-input"
-              className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[28px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+              className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
             />
             <DialButton
               dir="up"

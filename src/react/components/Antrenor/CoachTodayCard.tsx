@@ -187,7 +187,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
         style={{ color: 'var(--volt)' }}
         data-testid="coach-today-quote"
       >
-        &bdquo;{coachQuote}&rdquo;
+        &ldquo;{coachQuote}&rdquo;
       </div>
       {laggingSignal && (
         <div
@@ -198,7 +198,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
             borderColor: 'color-mix(in oklab, var(--ember) 35%, transparent)',
           }}
         >
-          &bdquo;{laggingSignal}&rdquo;
+          &ldquo;{laggingSignal}&rdquo;
         </div>
       )}
       <div className="relative flex gap-3.5 mt-3.5 text-sm text-ink2">

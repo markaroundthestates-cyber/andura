@@ -78,7 +78,7 @@ export function CoachRestCard({
         {t('coachRest.title')}
       </div>
       <div className="font-serif italic mt-1.5 leading-relaxed text-sm text-ink2">
-        &bdquo;{coachLine}&rdquo;
+        &ldquo;{coachLine}&rdquo;
       </div>
       <div className="flex gap-3.5 mt-3.5 text-sm text-ink2">
         <span className="flex items-center gap-1.5" data-testid="coach-rest-duration">
