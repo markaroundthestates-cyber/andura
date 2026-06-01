@@ -1523,8 +1523,13 @@ nav[data-nav-style]::before {
   position: relative;
   border-radius: 14px;
   overflow: hidden;
+  /* Daniel 2026-06-01 — FIXED dark presentation panel on BOTH themes. The body
+     renders are white anatomy on black (dark-mode art); a theme-driven --paper
+     backdrop went light-on-light (body invisible) on light theme. Pin a dark
+     stage regardless of theme so the body stays visible; overlays + legend
+     (outside this panel, theme-driven --ink) are unaffected. */
   background:
-    radial-gradient(120% 90% at 50% 22%, color-mix(in oklab, var(--paper) 88%, #000 12%) 0%, #07090b 100%);
+    radial-gradient(120% 90% at 50% 18%, #161a2c 0%, #0b0e18 70%);
   /* Subtle inner vignette frame — premium dark stage for the render. */
   box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--line) 40%, transparent);
 }
