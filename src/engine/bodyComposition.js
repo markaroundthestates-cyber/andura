@@ -82,13 +82,26 @@ export function estimateBF_Deurenberg({ sex, weightKg, heightCm, ageYears } = {}
 // Deurenberg 31.6% → cap 32.9 × 0.85 = 27.97% (mai aproape de realist ~24%
 // dar fara sa subestimeze; mesajul UI dirijeaza spre US Navy precis).
 //
+// SEX-AWARE FIX (smoke 2026-06-01 — sotia lui Daniel 79kg/160cm/F):
+// Ratio-ul 0.85 a fost calibrat pe UN caz MASCULIN (109/182). La barbati
+// supraponderali-musculosi Deurenberg chiar supra-estimeaza, deci cap-ul e
+// corect acolo si il PASTRAM la 0.85. La FEMEI insa Deurenberg NU
+// supra-estimeaza la BMI mare (termenul −10.8·S=0 nu scade nimic — formula e
+// deja calibrata aproape de adevar populational pentru femei). Deurenberg
+// femei e ~1.2-1.33×BMI la adulti, deci ORICE ratio sub-unitar (inclusiv
+// 0.85) ar taia o estimare corecta: 79/160/F → Deurenberg ~40.8% (DEXA tipic
+// 40-45% la BMI 31 femeie) era taiat la 30.9×0.85 = 26.2%, o sub-estimare de
+// ~14 puncte care facea o femeie obeza sa para normala. Solutie: la femei NU
+// aplicam cap-ul deloc (returnam Deurenberg raw, ramane clamped fiziologic
+// 2-60). Doar barbatii peste prag primesc cap-ul calibrat.
+//
 // Pentru BMI < HIGH_BMI_BF_CAP_THRESHOLD (sanatos / subponderal) cap-ul NU
 // se aplica — Deurenberg are eroare populationala normala (~4-5% SE) acolo,
 // fara bias sistematic. Returneaza si flag `capped` ca UI sa surfaceze
 // caveat "estimat aproximativ — adauga talie + gat pentru precis" la cohorta
 // la care cap-ul a actionat (BF%-ul afisat NU e val brut Deurenberg).
 export const HIGH_BMI_BF_CAP_THRESHOLD = 27;
-export const HIGH_BMI_BF_CAP_RATIO = 0.85;
+export const HIGH_BMI_BF_CAP_RATIO = 0.85; // barbati (calibrat 109/182); femei = fara cap
 
 /**
  * Aplica cap-ul de bias high-BMI peste Deurenberg pentru SURFACE-uri UI.
@@ -109,6 +122,15 @@ export function estimateBfDeurenbergCapped(input = {}) {
   if (bmi === null || bmi < HIGH_BMI_BF_CAP_THRESHOLD) {
     return { bfPct: raw, capped: false };
   }
+  // Cap sex-aware: doar barbatii (Deurenberg supra-estimeaza la BMI mare).
+  // La femei Deurenberg nu supra-estimeaza → NU cap-uim (raw passthrough).
+  // estimateBF_Deurenberg trateaza orice non-male ca femeie; aliniem cap-ul:
+  // doar 'm'/'male' explicit primeste cap, restul = fara cap (anti sub-clip).
+  const sexLower = typeof input.sex === 'string' ? input.sex.toLowerCase() : '';
+  const isMale = sexLower === 'm' || sexLower === 'male';
+  if (!isMale) {
+    return { bfPct: raw, capped: false };
+  }
   const cap = bmi * HIGH_BMI_BF_CAP_RATIO;
   if (raw <= cap) return { bfPct: raw, capped: false };
   // Aplica cap-ul; pastreaza clamp-ul fiziologic 2-60.
@@ -118,6 +140,27 @@ export function estimateBfDeurenbergCapped(input = {}) {
 
 /** Pragul WHO de BMI sanatos-minim. Sub = subponderal → surplus de crestere. */
 export const HEALTHY_MIN_BMI = 18.5;
+
+// Pragul de BMI sub care o greutate-tinta e periculoasa (NU doar subponderala).
+// WHO: BMI < 16 = subnutritie severa; 16-17 = subnutritie moderata. Folosim 17
+// ca floor HARD pe greutatea tinta — sub el respingem/clamp-uim (ex: 20kg/160cm
+// = BMI 7.8, letal). Banda 17-18.5 ramane permisa (doar warning subhealthy),
+// peste 18.5 e sanatos. Distinct de HEALTHY_MIN_BMI (18.5 = warning, NU blocaj).
+export const MIN_SANE_TARGET_BMI = 17;
+
+/**
+ * Greutatea (kg) minima sanatoasa-acceptabila pentru o tinta la o inaltime data
+ * (BMI = MIN_SANE_TARGET_BMI). Sub aceasta valoare o tinta e periculoasa si se
+ * clamp-uieste. Pure. Returns null cand inaltimea invalida.
+ *
+ * @param {number} heightCm
+ * @returns {number|null} greutate la BMI 17 (1 zecimala) sau null
+ */
+export function dangerousFloorWeightKg(heightCm) {
+  if (!Number.isFinite(heightCm) || heightCm <= 0) return null;
+  const heightM = heightCm / 100;
+  return Math.round(MIN_SANE_TARGET_BMI * heightM * heightM * 10) / 10;
+}
 
 // Multiplicatorul de surplus pentru crestere lenta-sanatoasa la subponderali —
 // identic cu BULK conservativ (TDEE_MULTIPLIERS.BULK_CONSERVATIVE 1.08) pe care

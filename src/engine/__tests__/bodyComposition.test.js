@@ -84,15 +84,31 @@ describe('estimateBfDeurenbergCapped — smoke 2026-05-28 #1 high-BMI bias cap',
       .toBeCloseTo(31.6, 1);
   });
 
-  it('femeie BMI 28 → cap aplicat (categoria suprapondereala incepe la 25-27)', () => {
-    // 75kg/164cm → BMI 27.9 → peste prag 27
+  it('femeie BMI 28 supraponderala → cap NU se aplica (sex-aware: doar barbati)', () => {
+    // 75kg/164cm → BMI 27.9 (peste prag 27) DAR femeie → fara cap, raw Deurenberg.
+    // SEX-AWARE FIX 2026-06-01: la femei Deurenberg nu supra-estimeaza la BMI mare.
     const r = estimateBfDeurenbergCapped({
       sex: 'f', weightKg: 75, heightCm: 164, ageYears: 40,
     });
-    expect(r.capped).toBe(true);
-    const bmi = 75 / (1.64 * 1.64);
-    const expectedCap = Math.round(Math.min(60, Math.max(2, bmi * 0.85)) * 10) / 10;
-    expect(r.bfPct).toBe(expectedCap);
+    expect(r.capped).toBe(false);
+    const raw = estimateBF_Deurenberg({ sex: 'f', weightKg: 75, heightCm: 164, ageYears: 40 });
+    expect(r.bfPct).toBe(raw);
+  });
+
+  it('femeie obeza 79kg/160cm/40yo (BMI 30.9) → BF ~40-41% NU ~26% (bug smoke 2026-06-01)', () => {
+    // BMI = 79/1.60² = 30.86
+    // Deurenberg raw F = 1.2×30.86 + 0.23×40 - 5.4 = 40.83 → ~40.8%
+    // BUG vechi (cap sex-blind 0.85): 30.86×0.85 = 26.2% (femeie obeza parea normala).
+    // FIX: femei = fara cap → ~40.8%, in banda fiziologica 38-42% asteptata.
+    const r = estimateBfDeurenbergCapped({
+      sex: 'f', weightKg: 79, heightCm: 160, ageYears: 40,
+    });
+    expect(r.capped).toBe(false);
+    expect(r.bfPct).toBeGreaterThanOrEqual(38);
+    expect(r.bfPct).toBeLessThanOrEqual(42);
+    expect(r.bfPct).toBeCloseTo(40.8, 1);
+    // NU mai e taiat la ~26% (regresia pe care o prevenim).
+    expect(r.bfPct).toBeGreaterThan(30);
   });
 
   it('BMI exact la prag 27 → cap activ (la/peste, NU sub)', () => {
