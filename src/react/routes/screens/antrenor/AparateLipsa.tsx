@@ -31,6 +31,7 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Check } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { t } from '../../../../i18n/index.js';
@@ -112,14 +113,19 @@ export function AparateLipsa(): JSX.Element {
   }
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="aparate-lipsa">
+    <section className="min-h-screen flex flex-col" data-testid="aparate-lipsa">
       <SubHeader
         title={t('aparatLipsa.subHeaderTitle')}
         onBack={handleBack}
         testIdBack="aparate-lipsa-back"
       />
-      <div className="p-6 flex-1">
-      <p className="text-base text-ink2 mb-3">
+      {/* Pulse reskin (ADDENDUM 7 2026-06-01) — aurora-transparent root (no
+          bg-paper fill); the body scroll area pads its bottom by
+          --app-bottom-chrome (64px nav + breathing + safe-area) so the last
+          equipment row + the serif "the coach learns…" note clear the floating
+          BottomNav instead of hiding under it (mockup 21 cut-off bug). */}
+      <div className="p-6 flex-1 pb-[var(--app-bottom-chrome)]">
+      <p className="text-base text-ink2 mb-3 font-display">
         {t('aparatLipsa.introPre')}
         <strong>{t('aparatLipsa.introBold')}</strong>
         {t('aparatLipsa.introPost')}
@@ -136,19 +142,47 @@ export function AparateLipsa(): JSX.Element {
               key={item.id}
               className={
                 selected
-                  ? 'flex items-center gap-3 p-3 rounded-xl border bg-brick/10 border-brick text-ink cursor-pointer'
-                  : 'pulse-card pulse-card-tight flex items-center gap-3 p-3 text-ink cursor-pointer'
+                  ? 'pulse-card pulse-card-tight flex items-center gap-3 p-3.5 cursor-pointer transition-colors'
+                  : 'pulse-card pulse-card-tight flex items-center gap-3 p-3.5 text-ink cursor-pointer transition-colors'
+              }
+              style={
+                selected
+                  ? {
+                      background: 'color-mix(in oklab, var(--brick) 16%, var(--surface))',
+                      borderColor: 'color-mix(in oklab, var(--brick) 55%, var(--line-strong))',
+                    }
+                  : undefined
               }
             >
+              {/* Pulse checkbox (PULSE-RULES §6) — the real <input> stays the
+                  a11y/test target but is visually hidden; the styled 22px
+                  rounded-square box renders the state. Unchecked = --line-strong
+                  border; checked = --brick (volt by default) fill + dark check. */}
               <input
                 type="checkbox"
                 checked={selected}
                 onChange={() => toggle(item.id)}
                 data-item={item.id}
                 aria-label={label}
-                className="w-5 h-5 accent-brick"
+                className="sr-only peer"
               />
-              <span className="text-sm font-medium">{label}</span>
+              <span
+                aria-hidden="true"
+                className="w-[22px] h-[22px] rounded-[7px] grid place-items-center flex-shrink-0 border transition-colors"
+                style={{
+                  borderColor: selected ? 'transparent' : 'var(--line-strong)',
+                  background: selected ? 'var(--brick)' : 'transparent',
+                }}
+              >
+                {selected && (
+                  <Check
+                    className="w-[15px] h-[15px]"
+                    strokeWidth={3}
+                    style={{ color: 'var(--on-accent)' }}
+                  />
+                )}
+              </span>
+              <span className={`text-sm font-semibold ${selected ? 'text-ink' : 'text-ink2'}`}>{label}</span>
             </label>
           );
         })}
@@ -160,7 +194,7 @@ export function AparateLipsa(): JSX.Element {
         type="button"
         onClick={handleSave}
         data-testid="aparate-save"
-        className="w-full py-4 pulse-grad-bg pulse-shine text-paper rounded-[14px] text-base font-semibold"
+        className="btn-grad pulse-shine w-full py-4 text-base font-bold"
       >
         {t('aparatLipsa.saveCta')}
       </button>
