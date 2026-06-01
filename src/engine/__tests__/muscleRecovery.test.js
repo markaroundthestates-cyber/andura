@@ -208,10 +208,37 @@ describe('Big 11 canonical V1 anatomical taxonomy', () => {
     expect(GROUP_HEAD_MAP_BIG11.umeri).toEqual(['delt_front', 'delt_mid', 'delt_rear', 'rear_delt_trap']);
   });
 
-  it('antebrate + core empty-heads behave as recovered (no muscleMap heads V1)', () => {
+  it('antebrate empty-heads behaves as recovered (no muscleMap heads V1)', () => {
     const state = getRecoveryByGroup([]);
     expect(state.antebrate).toBe('recovered');
+  });
+
+  it('core reads recovered with no logs (synthetic head, no baseline stress)', () => {
+    const state = getRecoveryByGroup([]);
     expect(state.core).toBe('recovered');
+  });
+
+  it('core is LOADED after a heavy compound day (squat/hinge/OHP/row brace core)', () => {
+    // Loaded compounds now carry a `core` secondary token; a recent heavy
+    // session must lift the Core group off 'recovered' (was [] -> recovered
+    // forever before, misleading the body map). Multiple compounds at high RPE
+    // stack the core stabilization load past the partial threshold.
+    const logs = [
+      { ex: 'Leg Press', w: 200, reps: 8, rpe: 9, ts: hoursAgo(2) },
+      { ex: 'Romanian Deadlift', w: 100, reps: 8, rpe: 9, ts: hoursAgo(2) },
+      { ex: 'DB Shoulder Press', w: 24, reps: 8, rpe: 9, ts: hoursAgo(2) },
+      { ex: 'Cable Row', w: 60, reps: 8, rpe: 9, ts: hoursAgo(2) },
+    ];
+    const state = getRecoveryByGroup(logs);
+    expect(['partial', 'fatigued']).toContain(state.core);
+  });
+
+  it('core recovers as the stress decays away (recovered 5+ days later)', () => {
+    const logs = [
+      { ex: 'Leg Press', w: 200, reps: 8, rpe: 9, ts: daysAgo(6) },
+      { ex: 'Romanian Deadlift', w: 100, reps: 8, rpe: 9, ts: daysAgo(6) },
+    ];
+    expect(getRecoveryByGroup(logs).core).toBe('recovered');
   });
 
   it('antebrate daysSinceGroup returns null (empty heads V1)', () => {

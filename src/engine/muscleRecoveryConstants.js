@@ -15,7 +15,17 @@
 /**
  * GROUP_HEAD_MAP_BIG11 — Big 11 canonical V1 → muscle head IDs from muscleMap.js
  * Note: `antebrate` empty (no forearm heads in muscleMap.js V1) — placeholder
- * for downstream model expansion. Same pattern as existing `core`.
+ * for downstream model expansion.
+ *
+ * `core` maps to the synthetic `core` head. There is no dedicated bench in
+ * MUSCLE_HEADS for it (the head decays via getMuscleState's default 48h rate);
+ * the head is fed by the `core` SECONDARY token on the loaded compounds in
+ * muscleMap.EXERCISE_MUSCLES (squat/hinge/OHP/row patterns where the trunk
+ * braces isometrically). Before this, `core` was [] so the Recovery body map's
+ * Core group read 'recovered' forever even after a heavy compound day —
+ * misleading. NOT mirrored into muscleGroupMap.BIG11_TO_HEADS: that module
+ * reconciles the LIBRARY vocabulary (no `core` head modelled there) and is a
+ * separate concern from the recovery aggregation here.
  */
 export const GROUP_HEAD_MAP_BIG11 = {
   piept:                  ['chest_upper', 'chest_mid', 'chest_lower'],
@@ -24,7 +34,7 @@ export const GROUP_HEAD_MAP_BIG11 = {
   biceps:                 ['bi_long', 'bi_short'],
   triceps:                ['tri_long', 'tri_lateral', 'tri_medial'],
   antebrate:              [],
-  core:                   [],
+  core:                   ['core'],
   'picioare-quads':       ['quad'],
   'picioare-hamstrings':  ['hamstring'],
   fese:                   ['glute'],
