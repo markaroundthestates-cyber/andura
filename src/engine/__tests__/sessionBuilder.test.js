@@ -10,6 +10,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildSession, prioritizeWeakGroups, movementKey } from '../sessionBuilder.js';
 import { getExerciseMetadata } from '../exerciseLibrary.js';
+import { roundToEquipmentWeight } from '../../config/weights.js';
 
 // Coarse equipment types (library equipment_type vocabulary).
 const allEquip = ['barbell', 'dumbbell', 'machine', 'cable', 'band'];
@@ -350,6 +351,36 @@ describe('movementKey — movement-pattern identity', () => {
     const a = movementKey('Zzz Mystery Move', { muscle_target_primary: 'piept' });
     const b = movementKey('Qqq Mystery Move', { muscle_target_primary: 'piept' });
     expect(a).not.toBe(b);
+  });
+
+  it('keeps incline press distinct from flat press (audit HG-01 — flat+incline pairing)', () => {
+    const incline = movementKey('Incline DB Press', { muscle_target_primary: 'piept' });
+    const flat = movementKey('Flat DB Press', { muscle_target_primary: 'piept' });
+    expect(incline).not.toBe(flat);
+    expect(incline).toBe('piept::incline-press');
+    expect(flat).toBe('piept::press');
+  });
+
+  it('incline qualifier is scoped to press only — an incline curl stays a curl', () => {
+    const inclineCurl = movementKey('Incline DB Curl', { muscle_target_primary: 'biceps' });
+    const hammerCurl = movementKey('Hammer Curl', { muscle_target_primary: 'biceps' });
+    expect(inclineCurl).toContain('curl');
+    expect(inclineCurl).not.toContain('press');
+    expect(inclineCurl).toBe(hammerCurl);
+  });
+
+  it('iso-lateral ROW keys as a row, not a lateral-raise (audit MD-01)', () => {
+    const key = movementKey('Hammer Strength Iso-Lateral High Row', { muscle_target_primary: 'spate' });
+    expect(key).toBe('spate::row');
+  });
+});
+
+describe('equipment snapping — barbell stack (audit CR-01)', () => {
+  it('Flat Barbell Bench snaps onto the barbell stack, not capped at 80kg', () => {
+    // Pre-fix this fell back to bailib_stack (max 80) and silently capped a
+    // 100kg bench at 80. The barbell stack carries 100 exactly.
+    expect(roundToEquipmentWeight(100, 'Flat Barbell Bench')).toBe(100);
+    expect(roundToEquipmentWeight(95, 'Flat Barbell Bench')).toBe(95);
   });
 });
 

@@ -237,9 +237,9 @@ const MOVEMENT_TOKEN_DEFS = [
   ['pullup', 'pull-up'], ['chin-up', 'chin-up'], ['chinup', 'chin-up'],
   ['deadlift', 'deadlift'], ['romanian', 'deadlift'], ['rdl', 'deadlift'],
   ['kickback', 'kickback'], ['skull', 'skull'], ['crunch', 'crunch'],
-  ['shrug', 'shrug'], ['lateral', 'lateral-raise'], ['squat', 'squat'],
+  ['shrug', 'shrug'], ['row', 'row'], ['lateral', 'lateral-raise'], ['squat', 'squat'],
   ['lunge', 'lunge'], ['calf', 'calf'], ['press', 'press'], ['dip', 'dip'],
-  ['fly', 'fly'], ['pec', 'fly'], ['row', 'row'], ['curl', 'curl'],
+  ['fly', 'fly'], ['pec', 'fly'], ['curl', 'curl'],
   ['extension', 'extension'], ['raise', 'raise'], ['pull', 'pull'],
 ];
 
@@ -268,7 +268,16 @@ export function movementKey(name, meta) {
   const group = meta?.muscle_target_primary ?? 'unknown';
   const lower = String(name).toLowerCase();
   for (const { token, re } of MOVEMENT_TOKEN_RES) {
-    if (re.test(lower)) return `${group}::${token}`;
+    if (re.test(lower)) {
+      // Press angle is a distinct stimulus: incline/decline presses must NOT
+      // collapse with the flat press, so a PUSH day can still pair flat+incline
+      // (audit HG-01). Scoped to the press token, so an "incline curl" still
+      // keys as a curl, not a press.
+      if (token === 'press' && /(?:^|[^a-z])(incline|decline)(?:$|[^a-z])/.test(lower)) {
+        return `${group}::${lower.includes('decline') ? 'decline' : 'incline'}-press`;
+      }
+      return `${group}::${token}`;
+    }
   }
   return `${group}::name:${lower}`;
 }

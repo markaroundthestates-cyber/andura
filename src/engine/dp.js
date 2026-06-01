@@ -154,7 +154,10 @@ export const DP = {
     const raw = /** @type {any} */ (DB.get('session-bias'));
     if (!raw || typeof raw !== 'object') return {};
     const ms = nowMs == null ? clockNow() : nowMs;
-    if (Number.isFinite(raw.ts) && (ms - raw.ts) > this.SESSION_BIAS_TTL_MS) return {};
+    // Fail closed: a missing/non-finite ts (legacy or partial write) is treated
+    // as expired, NOT live-forever (audit MD-02 — the TTL is the safety net for
+    // exactly the case where the app's session-start clear failed).
+    if (!Number.isFinite(raw.ts) || (ms - raw.ts) > this.SESSION_BIAS_TTL_MS) return {};
     const { ts: _ts, ...buckets } = raw;
     return buckets;
   },

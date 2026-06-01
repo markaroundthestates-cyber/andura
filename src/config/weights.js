@@ -19,6 +19,11 @@ export const EQUIPMENT_WEIGHTS = {
 
   // Gantere fixe cu etichete galbene — incremente 1kg mic, 2.5kg mare
   'dumbbell': [7, 8, 9, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 47.5, 50],
+
+  // Bara olimpica + discuri (bench/press cu bara) — bara ~20kg, increment 2.5kg
+  // pana la 70, apoi pasi de 5/10kg. (CR-01: fara asta Flat Barbell Bench cadea
+  // pe bailib_stack si capa orice bench >80kg la 80.)
+  'barbell_plates': [20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 47.5, 50, 52.5, 55, 57.5, 60, 62.5, 65, 67.5, 70, 75, 80, 85, 90, 95, 100, 105, 110, 120, 130, 140, 150, 160, 170, 180],
 };
 
 // Mapare exercitiu → tipul de echipament din sala
@@ -43,6 +48,7 @@ export const EXERCISE_EQUIPMENT_MAP = {
   'Incline DB Press pump': 'dumbbell',
   'DB Shoulder Press':     'dumbbell',
   'Flat DB Press':         'dumbbell',
+  'Flat Barbell Bench':    'barbell_plates',
   'Lateral Raises':        'dumbbell',
   'Incline DB Curl':       'dumbbell',
   'Hammer Curl':           'dumbbell',
