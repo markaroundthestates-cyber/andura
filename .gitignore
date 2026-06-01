@@ -130,3 +130,8 @@ public/body/test/
 /PROMPT_CC_HYGIENE.md
 /PROMPT_CC_INGEST_HANDOVER.md
 /VAULT_RULES.md
+
+# Claude Code local tooling/config — skills, agents, local settings, runtime locks.
+# Personal dev tooling, not app code; stays local (CC reads it on disk), backed up in
+# Andura-Backup. Untracked from the app repo 2026-06-01.
+/.claude/

@@ -1,7 +1,0 @@
-{
-  "disableAllHooks": true,
-  "statusLine": {
-    "type": "command",
-    "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"C:\\Users\\Daniel\\.claude\\statusline.sh\""
-  }
-}
