@@ -3,6 +3,13 @@
 // (L1969-1988). Beta gratuit info display + paywall placeholder post-Beta.
 // UI shell V1 — ZERO upgrade flow live (Phase 7+ subscription tier real
 // wire when IAP flows defined post-Beta launch).
+//
+// ADDENDUM 5 (Pulse arc #5 2026-06-01) — the "Notify me when it's ready" link
+// used `text-brickdark` (= --brick-dark, the ember-RED reserved for destructive
+// actions). On a non-destructive link that read as an old-theme red leak; it is
+// now the Pulse aqua link color (var(--aqua)). The Sparkles/Gift icons stay
+// `text-brick` — that resolves to volt (the accent), not red, matching the
+// mockup's volt-green glyphs.
 
 import type { JSX } from 'react';
 import { useState } from 'react';
@@ -51,7 +58,8 @@ export function SettingsSubscription(): JSX.Element {
           type="button"
           onClick={() => setNotified(true)}
           data-testid="subscription-notify-cta"
-          className="text-sm text-brickdark font-semibold underline disabled:no-underline"
+          className="text-sm font-semibold underline disabled:no-underline"
+          style={{ color: 'var(--aqua)' }}
           disabled={notified}
         >
           {notified ? t('settings.subscription.notifiedCta') : t('settings.subscription.notifyCta')}
