@@ -213,7 +213,7 @@ export function SetLogInput({
                 onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
                 onFocus={handleFocus}
                 data-testid="setlog-tinta-kg-input"
-                className="w-full min-w-0 bg-transparent border-none p-0 font-display text-[28px] font-bold text-ink text-center focus:outline-none"
+                className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[28px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
               />
               <DialButton
                 dir="up"
@@ -251,7 +251,7 @@ export function SetLogInput({
                 onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
                 onFocus={handleFocus}
                 data-testid="setlog-tinta-reps-input"
-                className="w-full min-w-0 bg-transparent border-none p-0 font-display text-[28px] font-bold text-ink text-center focus:outline-none"
+                className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[28px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
               />
               <DialButton
                 dir="up"
@@ -380,7 +380,7 @@ export function SetLogInput({
               onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
               onFocus={handleFocus}
               data-testid="kg-input"
-              className="w-full min-w-0 bg-transparent border-none p-0 font-display text-[28px] font-bold text-ink text-center focus:outline-none"
+              className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[28px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
             />
             <DialButton
               dir="up"
@@ -429,7 +429,7 @@ export function SetLogInput({
               onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
               onFocus={handleFocus}
               data-testid="reps-input"
-              className="w-full min-w-0 bg-transparent border-none p-0 font-display text-[28px] font-bold text-ink text-center focus:outline-none"
+              className="w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[28px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
             />
             <DialButton
               dir="up"
