@@ -1,7 +1,8 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
 **Last updated:** 2026-06-01 ~14:00 (daytime: design-review fixes + CI verde + site v2 live + muscle-map light). **Pickup: app `origin/main`=`accf23b7` (7 commits azi TOATE PUSHED); site `andura-site` `origin/main`=`a3c2998` (PUSHED, Cloudflare redeploy). Suita full `npm run test:run` verde pe fiecare commit (pre-commit hook) + typecheck=0/build=0/size=0. Daniel la sală — app safe pt sesiune reală (persist local + cloud sync + resume verificate).**
-**Topic active:** Daytime arc cu Daniel prezent — fix-uri din design-review + CI reparat REAL + site v2 redeploy + fix muscle-map light. Vezi §DAY. **CI: cauza reală #682/#684 = `npm run size` (main chunk 195>192 KB), NU depcheck (`continue-on-error`). Reparat prin ratchet 205 KB (`814d4614`).**
+**Topic active:** Daytime arc cu Daniel prezent — fix-uri din design-review + CI reparat REAL + site v2 redeploy + fix muscle-map light + **program autonom (audit+smoke+harness+cleanup) cât Daniel la sală**. Vezi §DAY. **CI: cauza reală #682/#684 = `npm run size` (main chunk 195>192 KB), NU depcheck (`continue-on-error`). Reparat prin ratchet 205 KB (`814d4614`).**
+**Program autonom 2026-06-01 (3 agenți Opus + smoke live):** Audit 0-BLOCKER/0-HIGH/2-MED/4-LOW · Harness 7/7 PASS · Split-plan (auth.js LOW, Workout.tsx/Auth.tsx MED) · vault curățat (~50 scratch + .gitignore). **HANDOVER FULL: `📥_inbox/HANDOVER_2026-06-01_daytime-autonomous-audit-program.md`. Rapoarte: `📤_outbox/audit-2026-06-01/{CODE-AUDIT,HARNESS,SPLIT-PLAN}.md`.** 2 MED firebase sync = pentru când Daniel prezent (NU atins autonom).
 
 ---
 
