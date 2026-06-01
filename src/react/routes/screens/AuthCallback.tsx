@@ -21,6 +21,31 @@ function parseGoogleIdToken(hash: string): string | null {
   return params.get('id_token');
 }
 
+// Onboarding-gate race fix — AWAIT the cloud restore before navigating into the
+// app. Pre-fix `void runPostAuthSync()` was fire-and-forget, so a returning user
+// (local wiped on logout) hit ProtectedRoute's `completed === false` gate BEFORE
+// the async restore flipped it true → bounced back through onboarding every
+// re-login. Awaiting hydrateStoresFromCloud (inside runPostAuthSync) lands the
+// sticky-restored `completed` flag before the gate evaluates. Capped by a timeout
+// so a slow/offline cloud GET can never trap the user on the spinner: on timeout
+// we navigate anyway (ProtectedRoute then routes by whatever state restored so
+// far — a genuinely new user with no cloud profile still correctly sees
+// onboarding; the next boot retries the sync since the per-uid done-flag stays
+// unset on failure). runPostAuthSync owns its own try/catch and never throws.
+const RESTORE_GATE_TIMEOUT_MS = 6000;
+
+async function awaitRestoreOrTimeout(): Promise<void> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<void>((resolve) => {
+    timer = setTimeout(resolve, RESTORE_GATE_TIMEOUT_MS);
+  });
+  try {
+    await Promise.race([runPostAuthSync(), timeout]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 export function AuthCallback(): JSX.Element {
   const navigate = useNavigate();
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
@@ -42,10 +67,12 @@ export function AuthCallback(): JSX.Element {
           window.history.replaceState(null, '', window.location.pathname);
           setAuthenticated(true);
           // §S-07 audit fix — fresh login on a (possibly new) device: pull the
-          // user's RTDB backup + run the legacy path migration. Fire-and-forget
-          // (restore is additive, local-always-wins merge — see reactBoot.ts) so
-          // the user lands on the app immediately while sync runs in background.
-          void runPostAuthSync();
+          // user's RTDB backup + run the legacy path migration. AWAITED (capped)
+          // so a returning user's restored onboarding-`completed` flag is in place
+          // BEFORE ProtectedRoute's gate evaluates — without this the gate fired
+          // on freshly-wiped local state + re-routed the user through onboarding.
+          await awaitRestoreOrTimeout();
+          if (cancelled) return;
           navigate('/app/antrenor', { replace: true });
           return;
         }
@@ -75,8 +102,11 @@ export function AuthCallback(): JSX.Element {
         window.history.replaceState(null, '', window.location.pathname);
         setAuthenticated(true);
         // §S-07 audit fix — see Google path above. Pull cloud backup + path
-        // migration post Magic Link verify, fire-and-forget.
-        void runPostAuthSync();
+        // migration post Magic Link verify. AWAITED (capped) so the restored
+        // onboarding-`completed` flag lands before ProtectedRoute's gate (see
+        // awaitRestoreOrTimeout rationale) — prevents the re-login onboarding loop.
+        await awaitRestoreOrTimeout();
+        if (cancelled) return;
         navigate('/app/antrenor', { replace: true });
       } else {
         // §AuthCallback-FIX code-review MEDIUM: clear pendingEmail on verify-fail
