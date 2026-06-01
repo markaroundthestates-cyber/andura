@@ -710,7 +710,8 @@
       "backAriaLabel": "Back",
       "intro": "All weight entries from your history.",
       "emptyTitle": "Your first weigh-in unlocks the trend",
-      "emptyBody": "Log from the Progress screen and watch the slope plus updated ETA instantly."
+      "emptyBody": "Log from the Progress screen and watch the slope plus updated ETA instantly.",
+      "distinctNote": "Different from the trend chart - this is the raw list."
     }
   },
 

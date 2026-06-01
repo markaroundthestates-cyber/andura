@@ -14,6 +14,8 @@ import { List, ChevronRight } from 'lucide-react';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { Kicker } from '../../../components/pulse/Kicker';
+import { Pill } from '../../../components/pulse/Pill';
 import { t } from '../../../../i18n/index.js';
 
 type RangeKey = '30' | '60' | '90' | 'all';
@@ -103,8 +105,21 @@ export function WeightTimeline(): JSX.Element {
       ? t('progres.weightTimeline.rangeLabelAll')
       : t('progres.weightTimeline.rangeLabelDays', { n: range });
 
+  // Pulse aqua chart — gradient area path under the line. Trace the points, then
+  // close down to the chart floor + back to the first x to form the filled region
+  // (same idiom as the pulse Sparkline area), so the trend reads as the glowing
+  // aqua line + soft gradient fill from the mockup (L154-160).
+  const areaPath =
+    chart.points.length > 1
+      ? chart.points
+          .map((p, i) => `${i ? 'L' : 'M'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
+          .join(' ') +
+        ` L${chart.points[chart.points.length - 1]!.x.toFixed(1)} ${chartH}` +
+        ` L${chart.points[0]!.x.toFixed(1)} ${chartH} Z`
+      : '';
+
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="weight-timeline">
+    <section className="min-h-screen flex flex-col" data-testid="weight-timeline">
       <SubHeader
         title={t('progres.weightTimeline.title')}
         onBack={() => navigate(gotoPath('progres'))}
@@ -112,9 +127,9 @@ export function WeightTimeline(): JSX.Element {
       />
 
       <div className="flex-1 overflow-y-auto p-5">
-        {/* Range tabs */}
+        {/* Range segment — Pulse pill group, active fills with --volt. */}
         <div
-          className="flex gap-1 p-1 bg-paper2 border border-line rounded-xl mb-4"
+          className="flex gap-1 p-1 rounded-full border border-line bg-[var(--surface-2)] mb-4"
           role="tablist"
           data-testid="weight-timeline-range-tabs"
         >
@@ -128,9 +143,10 @@ export function WeightTimeline(): JSX.Element {
                 aria-selected={active}
                 data-testid={`weight-timeline-range-${r.key}`}
                 onClick={() => setRange(r.key)}
-                className={`flex-1 py-2 rounded-lg text-xs font-semibold ${
-                  active ? 'bg-paper text-ink' : 'text-ink2'
+                className={`flex-1 py-2 rounded-full text-xs font-semibold font-mono transition-colors ${
+                  active ? 'text-[var(--on-accent)]' : 'text-ink2'
                 }`}
+                style={active ? { background: 'var(--volt)' } : undefined}
               >
                 {t(`progres.weightTimeline.ranges.${r.key}`)}
               </button>
@@ -138,30 +154,29 @@ export function WeightTimeline(): JSX.Element {
           })}
         </div>
 
-        {/* KPI card */}
+        {/* KPI card — hero current weight, font-display tabular-nums. */}
         <div
-          className="bg-paper2 border border-line rounded-xl p-4 mb-4"
+          className="pulse-card pulse-card-glow p-4 mb-4"
+          style={{ ['--wash' as string]: 'var(--aqua)' }}
           data-testid="weight-timeline-kpi"
         >
-          <p className="text-xs uppercase tracking-wide font-semibold text-ink2">
-            {t('progres.weightTimeline.kpiHeading')}
-          </p>
+          <Kicker color="var(--aqua)">{t('progres.weightTimeline.kpiHeading')}</Kicker>
           {latest === undefined ? (
             <p className="text-sm text-ink2 mt-2" data-testid="weight-timeline-kpi-empty">
               {t('progres.weightTimeline.kpiEmpty')}
             </p>
           ) : (
             <>
-              <p className="text-2xl font-bold text-ink mt-1 font-mono" data-testid="weight-timeline-kpi-value">
+              <p className="font-display text-4xl font-bold text-ink mt-1.5 tabular-nums" data-testid="weight-timeline-kpi-value">
                 {latest.kg.toFixed(1)}{' '}
-                <span className="text-sm text-ink2 font-normal">kg</span>
+                <span className="text-base text-ink2 font-normal">kg</span>
               </p>
               {delta !== null && (
                 <p
-                  className="text-xs mt-1 font-mono"
+                  className="text-xs mt-2 font-mono tabular-nums"
                   data-testid="weight-timeline-kpi-delta"
                 >
-                  <span className={delta < 0 ? 'text-brick' : 'text-ink2'}>
+                  <span className={delta < 0 ? 'text-[var(--volt)]' : 'text-ink2'}>
                     {delta > 0 ? '+' : ''}
                     {delta.toFixed(1)} kg
                   </span>
@@ -172,16 +187,15 @@ export function WeightTimeline(): JSX.Element {
           )}
         </div>
 
-        {/* Trend chart */}
+        {/* Trend chart — Pulse aqua line + gradient fill + glow. */}
         <div
-          className="bg-paper2 border border-line rounded-xl p-4 mb-4"
+          className="pulse-card p-4 mb-4"
           data-testid="weight-timeline-chart-card"
         >
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-semibold text-ink">{t('progres.weightTimeline.trendHeading')}</p>
-            <p className="text-xs text-ink2" data-testid="weight-timeline-range-label">
-              {rangeLabel}
-            </p>
+            <p className="font-display text-sm font-bold text-ink">{t('progres.weightTimeline.trendHeading')}</p>
+            <Kicker color="var(--aqua)">{rangeLabel}</Kicker>
+            <span className="sr-only" data-testid="weight-timeline-range-label">{rangeLabel}</span>
           </div>
           {filtered.length === 0 ? (
             <p
@@ -198,17 +212,25 @@ export function WeightTimeline(): JSX.Element {
               role="img"
               aria-label={t('progres.weightTimeline.chartAriaLabel')}
             >
+              <defs>
+                <linearGradient id="weight-timeline-area" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="var(--aqua)" stopOpacity="0.26" />
+                  <stop offset="100%" stopColor="var(--aqua)" stopOpacity="0" />
+                </linearGradient>
+              </defs>
               <line x1="0" y1={chartH / 4} x2={chartW} y2={chartH / 4} stroke="var(--line)" strokeWidth="1" />
               <line x1="0" y1={chartH / 2} x2={chartW} y2={chartH / 2} stroke="var(--line)" strokeWidth="1" />
               <line x1="0" y1={(3 * chartH) / 4} x2={chartW} y2={(3 * chartH) / 4} stroke="var(--line)" strokeWidth="1" />
+              {areaPath !== '' && <path d={areaPath} fill="url(#weight-timeline-area)" />}
               {chart.points.length > 1 && (
                 <polyline
                   fill="none"
-                  stroke="var(--brick)"
+                  stroke="var(--aqua)"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   points={chart.polyline}
+                  style={{ filter: 'drop-shadow(0 0 5px color-mix(in oklab, var(--aqua) 55%, transparent))' }}
                 />
               )}
               {chart.points.map((p, idx) => (
@@ -216,9 +238,9 @@ export function WeightTimeline(): JSX.Element {
                   key={`${p.date}-${idx}`}
                   cx={p.x}
                   cy={p.y}
-                  r={idx === chart.points.length - 1 ? 6 : 4}
-                  fill="var(--brick)"
-                  stroke={idx === chart.points.length - 1 ? 'white' : undefined}
+                  r={idx === chart.points.length - 1 ? 5.5 : 4}
+                  fill="var(--aqua)"
+                  stroke={idx === chart.points.length - 1 ? 'var(--paper)' : undefined}
                   strokeWidth={idx === chart.points.length - 1 ? 2 : undefined}
                   data-testid={`weight-timeline-chart-dot-${idx}`}
                 />
@@ -232,7 +254,7 @@ export function WeightTimeline(): JSX.Element {
           type="button"
           onClick={() => navigate(gotoPath('weight-log-list'))}
           data-testid="weight-timeline-logs-cta"
-          className="w-full flex items-center gap-3 p-4 bg-paper2 border border-lineStrong rounded-xl text-left"
+          className="pulse-card pulse-card-tight btn-secondary-lift w-full flex items-center gap-3 p-4 text-left"
         >
           <List className="w-5 h-5 text-ink2 flex-shrink-0" aria-hidden="true" />
           <span className="flex-1 text-sm font-semibold text-ink">{t('progres.weightTimeline.logsCta')}</span>

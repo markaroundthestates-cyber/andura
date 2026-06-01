@@ -710,7 +710,8 @@
       "backAriaLabel": "Inapoi",
       "intro": "Toate inregistrarile de greutate din istoricul tau.",
       "emptyTitle": "Prima cantarire deschide trend-ul",
-      "emptyBody": "Logheaza din ecranul Progres si vezi panta + ETA-ul actualizat instant."
+      "emptyBody": "Logheaza din ecranul Progres si vezi panta + ETA-ul actualizat instant.",
+      "distinctNote": "Diferit de graficul de trend - aceasta e lista bruta."
     }
   },
 

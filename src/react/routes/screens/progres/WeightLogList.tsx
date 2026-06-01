@@ -39,7 +39,7 @@ export function WeightLogList(): JSX.Element {
   const sorted = [...weightLog].sort((a, b) => b.ts - a.ts);
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="weight-log-list">
+    <section className="min-h-screen flex flex-col" data-testid="weight-log-list">
       <SubHeader
         title={t('progres.weightLogList.title')}
         onBack={() => navigate(gotoPath('progres'))}
@@ -76,22 +76,32 @@ export function WeightLogList(): JSX.Element {
             </p>
           </div>
         ) : (
-          <ul className="bg-paper2 border border-line rounded-[14px] overflow-hidden">
-            {sorted.map((entry, idx) => (
-              <li
-                key={`${entry.date}-${entry.ts}`}
-                data-testid={`weight-log-row-${idx}`}
-                className={`flex justify-between items-center px-4 py-3 ${
-                  idx < sorted.length - 1 ? 'border-b border-line' : ''
-                }`}
-              >
-                <span className="text-sm font-medium text-ink">{formatDate(entry.date)}</span>
-                <span className="text-sm text-ink2 font-mono">
-                  {entry.kg.toFixed(1)} kg
-                </span>
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="pulse-card pulse-card-tight overflow-hidden">
+              {sorted.map((entry, idx) => (
+                <li
+                  key={`${entry.date}-${entry.ts}`}
+                  data-testid={`weight-log-row-${idx}`}
+                  className={`flex justify-between items-center px-4 py-3.5 ${
+                    idx < sorted.length - 1 ? 'border-b border-line' : ''
+                  }`}
+                >
+                  <span className="text-sm font-medium text-ink">{formatDate(entry.date)}</span>
+                  {/* Latest weigh-in reads in aqua (mockup L808); older rows mute. */}
+                  <span
+                    className={`text-sm font-mono tabular-nums ${idx === 0 ? 'text-[var(--aqua-ink)]' : 'text-ink2'}`}
+                  >
+                    {entry.kg.toFixed(1)} kg
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {/* Distinct-from-trend footnote (mockup L814) — this is the raw list,
+                WeightTimeline is the chart. */}
+            <p className="text-[11px] text-ink3 mt-3.5 text-center">
+              {t('progres.weightLogList.distinctNote')}
+            </p>
+          </>
         )}
       </div>
     </section>

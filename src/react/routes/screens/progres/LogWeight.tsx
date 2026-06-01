@@ -57,7 +57,7 @@ export function LogWeight(): JSX.Element {
 
   return (
     <section
-      className="p-6 bg-paper min-h-screen flex flex-col"
+      className="p-6 min-h-screen flex flex-col"
       data-testid="log-weight"
     >
       <header className="flex items-center gap-3 mb-6">
@@ -70,7 +70,7 @@ export function LogWeight(): JSX.Element {
         >
           <ArrowLeft className="w-5 h-5" aria-hidden="true" />
         </button>
-        <h1 className="text-2xl font-semibold text-ink">{t('progres.logWeight.title')}</h1>
+        <h1 className="font-display text-2xl font-bold text-ink">{t('progres.logWeight.title')}</h1>
       </header>
 
       <div className="flex flex-col gap-5 flex-1">
@@ -81,23 +81,32 @@ export function LogWeight(): JSX.Element {
           >
             {t('progres.logWeight.kgLabel')}
           </label>
-          <input
-            id="weight-kg"
-            type="number"
-            required
-            aria-required="true"
-            aria-invalid={kgError ? 'true' : undefined}
-            aria-describedby={kgError ? 'weight-kg-error' : undefined}
-            value={kg}
-            onChange={(e) => setKg(e.target.value)}
-            placeholder={t('progres.logWeight.kgPlaceholder')}
-            step="0.1"
-            min={30}
-            max={250}
-            inputMode="decimal"
-            data-testid="weight-kg-input"
-            className="w-full p-4 border border-lineStrong rounded-[14px] text-2xl font-semibold text-center bg-paper2 text-ink font-mono"
-          />
+          {/* Pulse hero input — the big display weight value lives in a floating
+              pulse-card; the field itself sits on the elevated --surface-2 glass
+              with text-ink so it reads on BOTH dark and light (no hardcoded light
+              surface). Unit label below as a mono kicker (mockup L116-119). */}
+          <div className="pulse-card px-4 py-5 text-center">
+            <input
+              id="weight-kg"
+              type="number"
+              required
+              aria-required="true"
+              aria-invalid={kgError ? 'true' : undefined}
+              aria-describedby={kgError ? 'weight-kg-error' : undefined}
+              value={kg}
+              onChange={(e) => setKg(e.target.value)}
+              placeholder={t('progres.logWeight.kgPlaceholder')}
+              step="0.1"
+              min={30}
+              max={250}
+              inputMode="decimal"
+              data-testid="weight-kg-input"
+              className="w-full bg-transparent border-none outline-none text-center font-display text-5xl font-bold text-ink placeholder:text-ink3"
+            />
+            <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink2 mt-1.5">
+              kg
+            </div>
+          </div>
           {kgError && (
             <p
               id="weight-kg-error"
@@ -129,7 +138,7 @@ export function LogWeight(): JSX.Element {
             // U-15 — max=azi blocheaza logare pe data viitoare.
             max={todayIso()}
             data-testid="weight-date-input"
-            className="w-full p-3 border border-lineStrong rounded-xl bg-paper2 text-base text-ink"
+            className="w-full p-3 rounded-xl border border-line bg-[var(--surface-2)] text-base text-ink"
           />
           {dateError && (
             <p
@@ -154,7 +163,7 @@ export function LogWeight(): JSX.Element {
           onClick={handleSave}
           disabled={!valid}
           data-testid="weight-save"
-          className="w-full py-4 bg-brick text-paper rounded-[14px] text-base font-semibold disabled:opacity-50"
+          className="btn-primary-lift btn-grad w-full py-4 rounded-full text-base font-semibold disabled:opacity-50"
         >
           {t('progres.logWeight.saveCta')}
         </button>
@@ -162,7 +171,7 @@ export function LogWeight(): JSX.Element {
           type="button"
           onClick={handleCancel}
           data-testid="weight-cancel"
-          className="w-full py-3 text-ink2 text-sm"
+          className="w-full py-3 text-ink3 text-sm"
         >
           {t('progres.logWeight.cancelCta')}
         </button>
