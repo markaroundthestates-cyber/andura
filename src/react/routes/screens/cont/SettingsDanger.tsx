@@ -16,7 +16,7 @@ export function SettingsDanger(): JSX.Element {
   const navigate = useNavigate();
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-danger">
+    <section className="min-h-screen flex flex-col" data-testid="settings-danger">
       <SubHeader
         title={t('settings.danger.title')}
         onBack={() => navigate(gotoPath('cont'))}
@@ -31,12 +31,16 @@ export function SettingsDanger(): JSX.Element {
           role="status"
           className="flex items-start gap-3 p-3.5 rounded-2xl border mb-4"
           style={{
-            background: 'var(--status-danger-bg, #fbe3df)',
-            borderColor: 'var(--status-danger-border, #e8b2a8)',
+            background: 'var(--status-danger-bg)',
+            borderColor: 'var(--status-danger-border)',
           }}
         >
-          <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-brick" aria-hidden="true" />
-          <p className="text-sm text-ink2 leading-snug m-0">
+          <AlertTriangle
+            className="w-5 h-5 flex-shrink-0 mt-0.5"
+            style={{ color: 'var(--status-danger-text)' }}
+            aria-hidden="true"
+          />
+          <p className="text-sm leading-snug m-0" style={{ color: 'var(--status-danger-text)' }}>
             {t('settings.danger.warningBanner')}
           </p>
         </div>
@@ -72,7 +76,7 @@ export function SettingsDanger(): JSX.Element {
             type="button"
             onClick={() => navigate(gotoPath('delete-account-confirm'))}
             data-testid="danger-delete"
-            className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-brick"
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-brickdark"
           >
             <Trash2 className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
             <div className="flex-1">

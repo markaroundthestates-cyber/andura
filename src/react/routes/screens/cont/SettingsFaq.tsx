@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { HelpCircle, ChevronRight, ChevronDown } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { Kicker } from '../../../components/pulse/Kicker';
 import { t } from '../../../../i18n/index.js';
 
 interface FaqItem {
@@ -59,7 +60,7 @@ export function SettingsFaq(): JSX.Element {
   }
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-faq">
+    <section className="min-h-screen flex flex-col" data-testid="settings-faq">
       <SubHeader
         title={t('settings.faq.title')}
         onBack={() => navigate(gotoPath('cont'))}
@@ -73,9 +74,9 @@ export function SettingsFaq(): JSX.Element {
 
         {FAQ.map((section) => (
           <div key={section.sectionId} className="mb-4">
-            <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-              {t(section.titleKey)}
-            </p>
+            <div className="mb-2">
+              <Kicker color="var(--ink-3)">{t(section.titleKey)}</Kicker>
+            </div>
             <div className="pulse-card pulse-card-tight overflow-hidden">
               {section.items.map((item, idx) => {
                 const id = `${section.sectionId}-${idx}`;

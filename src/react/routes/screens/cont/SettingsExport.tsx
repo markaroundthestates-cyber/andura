@@ -16,6 +16,7 @@ import { useScheduleStore } from '../../../stores/scheduleStore';
 import { useAerobicStore } from '../../../stores/aerobicStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { Kicker } from '../../../components/pulse/Kicker';
 import { USER_DATA_KEYS, CDL_KEYS } from '../../../../util/dataRegistry.js';
 import { t, tArray } from '../../../../i18n/index.js';
 
@@ -155,7 +156,7 @@ export function SettingsExport(): JSX.Element {
   const contentItems = tArray('settings.export.contentItems');
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-export">
+    <section className="min-h-screen flex flex-col" data-testid="settings-export">
       <SubHeader
         title={t('settings.export.title')}
         onBack={() => navigate(gotoPath('cont'))}
@@ -168,10 +169,8 @@ export function SettingsExport(): JSX.Element {
         </p>
 
         <div className="pulse-card pulse-card-tight p-4 mb-4">
-          <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-            {t('settings.export.contentHeading')}
-          </p>
-          <ul className="text-sm text-ink space-y-1.5">
+          <Kicker color="var(--ink-3)">{t('settings.export.contentHeading')}</Kicker>
+          <ul className="text-sm text-ink space-y-1.5 mt-2">
             {contentItems.map((it, i) => (
               <li key={i}>{`• ${it}`}</li>
             ))}
@@ -182,7 +181,7 @@ export function SettingsExport(): JSX.Element {
           type="button"
           onClick={() => { void handleExport(); }}
           data-testid="settings-export-trigger"
-          className="btn-primary-lift press-feedback w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2"
+          className="btn-primary-lift btn-grad press-feedback w-full py-3 rounded-full text-base font-semibold flex items-center justify-center gap-2"
         >
           <Download className="w-4 h-4" aria-hidden="true" />
           {t('settings.export.exportCta')}

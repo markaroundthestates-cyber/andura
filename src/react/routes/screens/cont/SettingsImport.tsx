@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { Upload } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { Kicker } from '../../../components/pulse/Kicker';
 import {
   parseHistoryImportFiles,
   type ParseResult,
@@ -56,7 +57,7 @@ export function SettingsImport(): JSX.Element {
   const whatItems = tArray('settings.import.whatItems');
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-import">
+    <section className="min-h-screen flex flex-col" data-testid="settings-import">
       <SubHeader
         title={t('settings.import.title')}
         onBack={() => navigate(gotoPath('cont'))}
@@ -69,10 +70,8 @@ export function SettingsImport(): JSX.Element {
         </p>
 
         <div className="pulse-card pulse-card-tight p-4 mb-4">
-          <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-            {t('settings.import.whatHeading')}
-          </p>
-          <ul className="text-sm text-ink space-y-1.5">
+          <Kicker color="var(--ink-3)">{t('settings.import.whatHeading')}</Kicker>
+          <ul className="text-sm text-ink space-y-1.5 mt-2">
             {whatItems.map((it, i) => (
               <li key={i}>{`• ${it}`}</li>
             ))}
@@ -82,7 +81,7 @@ export function SettingsImport(): JSX.Element {
         {(phase === 'idle' || phase === 'error') && (
           <>
             <label
-              className="btn-primary-lift press-feedback w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold flex items-center justify-center gap-2 cursor-pointer"
+              className="btn-primary-lift btn-grad press-feedback w-full py-3 rounded-full text-base font-semibold flex items-center justify-center gap-2 cursor-pointer"
               data-testid="settings-import-trigger"
             >
               <Upload className="w-4 h-4" aria-hidden="true" />
@@ -127,7 +126,7 @@ export function SettingsImport(): JSX.Element {
               type="button"
               onClick={handleConfirm}
               data-testid="settings-import-confirm"
-              className="btn-primary-lift press-feedback w-full py-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
+              className="btn-primary-lift btn-grad press-feedback w-full py-3 rounded-full text-base font-semibold"
             >
               {t('settings.import.preview.confirmCta')}
             </button>
@@ -154,7 +153,7 @@ export function SettingsImport(): JSX.Element {
               type="button"
               onClick={() => navigate(gotoPath('cont'))}
               data-testid="settings-import-done-back"
-              className="w-full py-3 mt-4 bg-brick text-paper rounded-[14px] text-base font-semibold"
+              className="btn-primary-lift btn-grad press-feedback w-full py-3 mt-4 rounded-full text-base font-semibold"
             >
               {t('settings.import.doneBackCta')}
             </button>

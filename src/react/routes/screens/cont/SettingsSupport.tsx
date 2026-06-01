@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, MessageSquare, ChevronRight } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { Kicker } from '../../../components/pulse/Kicker';
 import { t } from '../../../../i18n/index.js';
 
 const SUPPORT_EMAIL = 'support@andura.app';
@@ -16,7 +17,7 @@ export function SettingsSupport(): JSX.Element {
   const navigate = useNavigate();
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-support">
+    <section className="min-h-screen flex flex-col" data-testid="settings-support">
       <SubHeader
         title={t('settings.support.title')}
         onBack={() => navigate(gotoPath('cont'))}
@@ -28,9 +29,9 @@ export function SettingsSupport(): JSX.Element {
           {t('settings.support.intro')}
         </p>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          {t('settings.support.contactHeading')}
-        </p>
+        <div className="mb-2">
+          <Kicker color="var(--ink-3)">{t('settings.support.contactHeading')}</Kicker>
+        </div>
         <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
           <a
             href={`mailto:${SUPPORT_EMAIL}`}
@@ -57,9 +58,9 @@ export function SettingsSupport(): JSX.Element {
           </div>
         </div>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-          {t('settings.support.messageHeading')}
-        </p>
+        <div className="mb-2">
+          <Kicker color="var(--ink-3)">{t('settings.support.messageHeading')}</Kicker>
+        </div>
         <div className="pulse-card pulse-card-tight p-4">
           <p className="text-xs text-ink2 mb-3 leading-relaxed">
             {t('settings.support.messageHint')}
@@ -67,7 +68,7 @@ export function SettingsSupport(): JSX.Element {
           <a
             href={`mailto:${SUPPORT_EMAIL}?subject=Andura%20feedback&body=`}
             data-testid="support-feedback-mailto"
-            className="btn-primary-lift press-feedback w-full block py-3 bg-brick text-paper rounded-[14px] text-base font-semibold text-center"
+            className="btn-primary-lift btn-grad press-feedback w-full block py-3 rounded-full text-base font-semibold text-center"
           >
             {t('settings.support.openEmailCta')}
           </a>
