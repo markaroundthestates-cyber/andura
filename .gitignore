@@ -105,3 +105,28 @@ append_sec11.*
 # Never ship + never commit (kept local; final webp go into app assets, not here).
 assets-source/exercise-grids/
 public/body/test/
+
+# ── Obsidian vault / planning brain — LOCAL-ONLY (2026-06-01 Daniel) ───────────
+# The whole vault (decisions, handovers, inbox/outbox, architecture, archives,
+# Obsidian config) lives local + is mirrored to the PRIVATE Andura-Backup repo.
+# The app repo (andura → andura.app) stays app-only. Untracked here so it stops
+# polluting GitHub (~1609 files removed 2026-06-01). Files stay on disk.
+/📤_outbox/
+/📥_inbox/
+/99-archive/
+/01-vision/
+/03-decisions/
+/04-architecture/
+/07-meta/
+/08-workflows/
+/reports/
+/simulations/
+/.obsidian/
+/Excalidraw/
+/ANDURA_PRIMER.md
+/CHAT_STATE.md
+/DECISIONS.md
+/DIFF_FLAGS.md
+/PROMPT_CC_HYGIENE.md
+/PROMPT_CC_INGEST_HANDOVER.md
+/VAULT_RULES.md
