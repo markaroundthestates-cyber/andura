@@ -7,9 +7,12 @@
 // ExitConfirmSheet / SessionPill).
 //
 // State machine transitions:
-//   logging → (logSet) → rest (cand NU last set) sau transition (cand last
-//   set of exercise) sau navigate post-rpe (cand last set of last exercise)
-//   rest → (countdown end or skip) → logging
+//   logging → (logSet) → rest (intermediate set) sau rest-then-transition (last
+//   set of an exercise — Bug 1: the inter-exercise rest is now a REAL, skip-able
+//   rest = the just-finished exercise's restSec) sau navigate post-rpe (last set
+//   of last exercise — NO trailing rest)
+//   rest (intermediate)      → (countdown end or skip) → logging (same exercise)
+//   rest (inter-exercise)    → (countdown end or skip) → transition → advance
 //   transition → (1.5s delay) → logging (next exercise)
 //
 // Wake lock: navigator.wakeLock.request('screen') on mount, release on unmount
@@ -55,6 +58,7 @@ import { Kicker } from '../../../components/pulse/Kicker';
 import { useCountUp } from '../../../hooks/useCountUp';
 import { DP } from '../../../../engine/dp.js';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
+import { roundToEquipmentWeight } from '../../../../config/weights.js';
 import { resolveBusySwap, resolveMissingSwap, resolveRefusalSwap } from '../../../lib/substitution';
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../lib/scheduleAdapterAggregate';
 import { toast } from '../../../lib/toast';
@@ -193,13 +197,21 @@ export function Workout(): JSX.Element {
   // target does nothing, and we don't want to inflate/deflate a small added
   // weight by 20% (a deload on bodyweight = fewer reps, an engine concern). So
   // bodyweight exercises keep their added weight unchanged here.
+  // Snap fix (Daniel 2026-06-01) — the intensityMod ±% branches do LOCAL
+  // arithmetic on the engine target, which lands on 0.5 increments the machine
+  // can't be set to (e.g. 22.5 * 1.15 = 25.875 → 26 kg, but the dumbbells are
+  // 25 / 27.5 — never 26). Snap the locally-computed deload/overload weight to
+  // the exercise's real equipment grid via roundToEquipmentWeight. The 'normal'
+  // and bodyweight branches pass the engine target straight through (already
+  // equipment-snapped upstream by DP.recommend / getSmartRecommendation) — left
+  // untouched per the engine-owns-snapping contract.
   const targetKg =
     currentExercise.isBodyweight
       ? currentExercise.targetKg
       : intensityMod === 'minus'
-      ? Math.round(currentExercise.targetKg * 0.8 * 2) / 2
+      ? roundToEquipmentWeight(currentExercise.targetKg * 0.8, currentExercise.name)
       : intensityMod === 'plus'
-      ? Math.round(currentExercise.targetKg * 1.15 * 2) / 2
+      ? roundToEquipmentWeight(currentExercise.targetKg * 1.15, currentExercise.name)
       : currentExercise.targetKg;
   const currentSetIdx = hasWorkout ? history[safeExIdx]?.length ?? 0 : 0;
   const isLastSetOfExercise =
@@ -226,6 +238,14 @@ export function Workout(): JSX.Element {
   // a whole-subtree re-render once a second). It now lives in the
   // <SessionElapsed> leaf inside SessionTimer, fed the raw sessionStart.
   const [restCountdown, setRestCountdown] = useState(0);
+  // Bug 1 — inter-exercise rest. The LAST set of an exercise now also earns a
+  // real, skip-able rest (the just-finished exercise's restSec), instead of
+  // jumping straight to the transition splash. This ref marks that the rest
+  // currently running is an INTER-EXERCISE rest: when it ends (countdown 0) or
+  // the user skips, the screen must run the transition + advanceExercise()
+  // flow rather than returning to logging on the SAME exercise. A ref (not
+  // state) so the countdown effect reads the live value without re-subscribing.
+  const pendingAdvanceRef = useRef(false);
   // F-pass2-restoverlay-01 — initial rest total seconds at moment rest phase
   // entered (drives SVGCountdownRing progress ratio). Reset alongside
   // setRestCountdown so ring shows full track at rest entry.
@@ -300,21 +320,40 @@ export function Workout(): JSX.Element {
   // subtree once a second; it is now confined to the leaf rendered by the
   // memoized SessionTimer.
 
-  // Rest countdown — auto-advance la logging când reaches 0.
+  // Bug 1 — run the next-exercise reveal then advance. The transition splash
+  // (TransitionScreen, next exercise name + coach line) is preserved; after its
+  // brief delay advanceExercise() moves to the next exercise (and resets phase
+  // to logging). Used by BOTH the inter-exercise rest end and the rest-skip.
+  // pendingAdvanceRef cleared first so it can never double-fire advanceExercise.
+  const runTransitionToNext = useCallback((): void => {
+    pendingAdvanceRef.current = false;
+    setPhase('transition');
+    window.setTimeout(() => {
+      advanceExercise();
+    }, 1500);
+  }, [setPhase, advanceExercise]);
+
+  // Rest countdown — when it reaches 0, either advance to the next exercise (an
+  // inter-exercise rest, pendingAdvanceRef) or return to logging on the same
+  // exercise (an intermediate-set rest).
   useEffect(() => {
     if (phase !== 'rest') return;
     const interval = setInterval(() => {
       setRestCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          setPhase('logging');
+          if (pendingAdvanceRef.current) {
+            runTransitionToNext();
+          } else {
+            setPhase('logging');
+          }
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [phase, setPhase]);
+  }, [phase, setPhase, runTransitionToNext]);
 
   // Wake lock acquire on mount + release on unmount — fail silent.
   // Phase 4 task_15 §B: visibilitychange re-acquire pattern. Browser tab
@@ -570,15 +609,21 @@ export function Workout(): JSX.Element {
 
     if (isLastSetOfExercise) {
       if (isLastExercise) {
+        // Session done — straight to post-rpe, NO trailing rest (no-op preserved).
         navigate(gotoPath('post-rpe'));
         return;
       }
-      setPhase('transition');
-      window.setTimeout(() => {
-        advanceExercise();
-      }, 1500);
+      // Bug 1 — the LAST set of a (non-final) exercise now earns a real,
+      // skip-able rest first (the just-finished exercise's restSec), then the
+      // transition reveal + advance. Mark pendingAdvanceRef so the rest end (or
+      // rest skip) runs runTransitionToNext instead of returning to logging.
+      pendingAdvanceRef.current = true;
+      setRestCountdown(currentExercise.restSec);
+      setRestInitialSec(currentExercise.restSec);
+      setPhase('rest');
       return;
     }
+    pendingAdvanceRef.current = false;
     setRestCountdown(currentExercise.restSec);
     setRestInitialSec(currentExercise.restSec);
     setPhase('rest');
@@ -657,6 +702,13 @@ export function Workout(): JSX.Element {
   function handleSkipRest(): void {
     bumpActivity();
     setRestCountdown(0);
+    // Bug 1 — skipping an INTER-EXERCISE rest must still reveal + advance to the
+    // next exercise (not return to logging on the finished one). Intermediate-set
+    // skip behaves as before (back to logging).
+    if (pendingAdvanceRef.current) {
+      runTransitionToNext();
+      return;
+    }
     setPhase('logging');
   }
 
@@ -1091,6 +1143,20 @@ export function Workout(): JSX.Element {
           <p className="text-sm text-ink2 mb-2">
             {t('workout.setLabel', { current: currentSetIdx + 1, total: currentExercise.sets })}
           </p>
+
+          {/* Bug 2 — "Up next" hint on the LAST set of the current exercise (and
+              not the final exercise of the session). Lets the user walk to the
+              next machine before finishing this set. Gated so it shows only when
+              there is a real next exercise to name. */}
+          {isLastSetOfExercise && !isLastExercise && nextExercise && (
+            <p
+              className="text-xs font-medium mb-2"
+              style={{ color: 'var(--aqua)' }}
+              data-testid="workout-up-next"
+            >
+              {t('workout.upNext', { name: nextExercise.name })}
+            </p>
+          )}
 
           {/* In-session responsive autoregulation notice. DP.checkInSessionAdjust
               eased/raised the NEXT set's target (reps in masa, weight in STRENGTH)

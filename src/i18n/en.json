@@ -324,6 +324,7 @@
       "refuse": "Skip"
     },
     "setLabel": "Set {current}/{total}",
+    "upNext": "Up next: {name}",
     "transition": {
       "ariaLabel": "Next exercise",
       "next": "Next:"

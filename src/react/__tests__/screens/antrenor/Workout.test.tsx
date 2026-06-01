@@ -226,17 +226,20 @@ describe('Workout — engine intensity applied to target (C3)', async () => {
     resetStore();
   });
 
-  it('engine intensityMod minus reduce target kg -20% (22.5 → 18)', async () => {
+  it('engine intensityMod minus reduce target kg -20% + snap echipament (22.5 → 18 → 20)', async () => {
     vi.mocked(getTodayWorkout).mockResolvedValueOnce({ ...PHASE_5_FIXTURE, intensityMod: 'minus' });
     await renderWorkoutAndWait();
-    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('18 kg');
+    // 22.5 * 0.8 = 18 → snap pe bailib_stack default (Bench Press necartografiat)
+    // = cea mai apropiata treapta reala = 20 (nu 18, masina nu poate fi setata la 18).
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('20 kg');
   });
 
-  it('engine intensityMod plus creste target kg +15% (22.5 → 26)', async () => {
+  it('engine intensityMod plus creste target kg +15% + snap echipament (22.5 → 25.875 → 25)', async () => {
     vi.mocked(getTodayWorkout).mockResolvedValueOnce({ ...PHASE_5_FIXTURE, intensityMod: 'plus' });
     await renderWorkoutAndWait();
-    // 22.5 * 1.15 = 25.875 → round 0.5 = 26
-    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('26 kg');
+    // 22.5 * 1.15 = 25.875 → snap pe bailib_stack default = 25 (cea mai apropiata
+    // treapta reala; 26 nu exista pe niciun aparat).
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('25 kg');
   });
 
   it('engine intensityMod normal pastreaza target kg neschimbat (22.5)', async () => {
@@ -364,7 +367,9 @@ describe('Workout — state machine transition + advance exercise', async () => 
     });
   };
 
-  it('logging last set of exercise (4 of 4 Bench Press) → transition phase', async () => {
+  it('logging last set of exercise (4 of 4 Bench Press) → inter-exercise rest', async () => {
+    // Bug 1 — the LAST set of an exercise now earns a real, skip-able rest first
+    // (the just-finished exercise's restSec), NOT a jump straight to transition.
     await renderWorkoutAndWait();
     // Log 4 sets: rest skips between + > 30s gap pentru aaFriction bypass.
     // §F-pass2-setloginput-02 — each set: Logheaza → rate (logSet helper).
@@ -375,11 +380,26 @@ describe('Workout — state machine transition + advance exercise', async () => 
         advanceBeyondFastSetsWindow();
       }
     }
-    expect(useWorkoutStore.getState().phase).toBe('transition');
-    expect(screen.getByTestId('transition-screen')).toBeInTheDocument();
+    // After the last set: inter-exercise rest (skip-able), not transition yet.
+    expect(useWorkoutStore.getState().phase).toBe('rest');
+    expect(screen.getByTestId('rest-overlay')).toBeInTheDocument();
   });
 
-  it('transition phase shows next exercise name', async () => {
+  it('inter-exercise rest countdown starts at the finished exercise restSec (Bench Press 90s = 1:30)', async () => {
+    // Bug 1 — the inter-exercise rest reuses the RestOverlay with the just-
+    // finished exercise's restSec (Bench Press = 90s).
+    await renderWorkoutAndWait();
+    for (let i = 0; i < 4; i++) {
+      logSet('Potrivit');
+      if (i < 3) {
+        fireEvent.click(screen.getByTestId('rest-skip'));
+        advanceBeyondFastSetsWindow();
+      }
+    }
+    expect(screen.getByTestId('rest-countdown')).toHaveTextContent('1:30');
+  });
+
+  it('skipping the inter-exercise rest → transition phase shows next exercise name', async () => {
     await renderWorkoutAndWait();
     for (let i = 0; i < 4; i++) {
       logSet('Usor');
@@ -388,10 +408,13 @@ describe('Workout — state machine transition + advance exercise', async () => 
         advanceBeyondFastSetsWindow();
       }
     }
+    // Skip the inter-exercise rest → transition reveal preserved.
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(useWorkoutStore.getState().phase).toBe('transition');
     expect(screen.getByTestId('transition-next-name')).toHaveTextContent('Overhead Press');
   });
 
-  it('transition advances exIdx after 1.5s', async () => {
+  it('inter-exercise rest end (countdown 0) → transition → advances exIdx after 1.5s', async () => {
     await renderWorkoutAndWait();
     for (let i = 0; i < 4; i++) {
       logSet('Usor');
@@ -401,9 +424,38 @@ describe('Workout — state machine transition + advance exercise', async () => 
       }
     }
     expect(useWorkoutStore.getState().exIdx).toBe(0);
+    // Let the inter-exercise rest (90s) elapse → enters transition. Advance
+    // exactly to the rest end (90s) so the transition's own 1.5s timer (just
+    // scheduled, due at ~91.5s) is NOT also consumed in the same window.
+    act(() => {
+      vi.advanceTimersByTime(90000);
+    });
+    expect(useWorkoutStore.getState().phase).toBe('transition');
+    expect(useWorkoutStore.getState().exIdx).toBe(0);
+    // Transition 1.5s delay → advanceExercise.
     act(() => {
       vi.advanceTimersByTime(1500);
     });
+    expect(useWorkoutStore.getState().exIdx).toBe(1);
+    expect(useWorkoutStore.getState().phase).toBe('logging');
+  });
+
+  it('skipping the inter-exercise rest then transition 1.5s advances exIdx (no double-fire)', async () => {
+    await renderWorkoutAndWait();
+    for (let i = 0; i < 4; i++) {
+      logSet('Usor');
+      if (i < 3) {
+        fireEvent.click(screen.getByTestId('rest-skip'));
+        advanceBeyondFastSetsWindow();
+      }
+    }
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(useWorkoutStore.getState().phase).toBe('transition');
+    expect(useWorkoutStore.getState().exIdx).toBe(0);
+    act(() => {
+      vi.advanceTimersByTime(1500);
+    });
+    // Advances exactly once (exIdx 0 → 1), never skips a whole exercise.
     expect(useWorkoutStore.getState().exIdx).toBe(1);
     expect(useWorkoutStore.getState().phase).toBe('logging');
   });
@@ -437,6 +489,60 @@ describe('Workout — finish last set of last exercise navigates post-rpe', asyn
       'data-pathname',
       '/app/antrenor/post-rpe'
     );
+  });
+});
+
+// Bug 2 — "Up next" hint on the LAST set of a (non-final) exercise so the user
+// can walk to the next machine before finishing. Gated isLastSetOfExercise &&
+// !isLastExercise && nextExercise.
+describe('Workout — up-next hint on last set (Bug 2)', async () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('NU shows the hint on an intermediate set (set 1/4)', async () => {
+    await renderWorkoutAndWait();
+    expect(screen.queryByTestId('workout-up-next')).not.toBeInTheDocument();
+  });
+
+  it('shows "Urmeaza: {next}" on the last set of a non-final exercise', async () => {
+    // Seed exIdx 0 (Bench Press, 4 sets) with 3 sets logged → on set 4/4 = last
+    // set of the exercise; next exercise = Overhead Press.
+    useWorkoutStore.setState({
+      exIdx: 0,
+      phase: 'logging',
+      history: {
+        0: [
+          { kg: 22.5, reps: 10, rating: 'potrivit' },
+          { kg: 22.5, reps: 10, rating: 'potrivit' },
+          { kg: 22.5, reps: 10, rating: 'potrivit' },
+        ],
+      },
+      sessionStart: Date.now() - 1000,
+    });
+    await renderWorkoutAndWait();
+    const hint = screen.getByTestId('workout-up-next');
+    expect(hint).toBeInTheDocument();
+    // EN default → "Up next: Overhead Press" (RO → "Urmeaza: ...").
+    expect(hint.textContent ?? '').toMatch(/Overhead Press/);
+  });
+
+  it('NU shows the hint on the last set of the LAST exercise', async () => {
+    // exIdx 4 (Tricep Pushdown, last exercise, 3 sets) with 2 logged → set 3/3
+    // is the last set of the LAST exercise → no next, no hint.
+    useWorkoutStore.setState({
+      exIdx: 4,
+      phase: 'logging',
+      history: {
+        4: [
+          { kg: 25, reps: 12, rating: 'potrivit' },
+          { kg: 25, reps: 12, rating: 'potrivit' },
+        ],
+      },
+      sessionStart: Date.now() - 1000,
+    });
+    await renderWorkoutAndWait();
+    expect(screen.queryByTestId('workout-up-next')).not.toBeInTheDocument();
   });
 });
 
@@ -664,13 +770,13 @@ describe('Workout — why-exercise help button (F-workout-05)', async () => {
   // RE-C3 — why-modal recommendationKg = targetKg ADAPTAT pe engine intensityMod
   // (deload), NU baseline. Pe deload minus, Bench Press 22.5 → 18 (-20%) —
   // explainerul consistent cu tinta din SetLogInput (kgInput).
-  it('why-modal primeste targetKg adaptat pe engine deload minus (22.5 → 18)', async () => {
+  it('why-modal primeste targetKg adaptat pe engine deload minus + snap (22.5 → 20)', async () => {
     vi.mocked(getTodayWorkout).mockResolvedValueOnce({ ...PHASE_5_FIXTURE, intensityMod: 'minus' });
     await renderWorkoutAndWait();
     fireEvent.click(screen.getByTestId('wv2-why-trigger'));
     expect(getWhyExerciseSummary).toHaveBeenCalledWith({
       name: 'Bench Press',
-      recommendationKg: 18,
+      recommendationKg: 20,
       lastWeightKg: null,
     });
   });

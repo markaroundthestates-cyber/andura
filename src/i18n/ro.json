@@ -324,6 +324,7 @@
       "refuse": "Nu vreau"
     },
     "setLabel": "Set {current}/{total}",
+    "upNext": "Urmeaza: {name}",
     "transition": {
       "ariaLabel": "Urmatorul exercitiu",
       "next": "Urmatorul:"
