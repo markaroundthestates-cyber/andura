@@ -15,7 +15,6 @@ import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { Kicker } from '../../../components/pulse/Kicker';
-import { Pill } from '../../../components/pulse/Pill';
 import { t } from '../../../../i18n/index.js';
 
 type RangeKey = '30' | '60' | '90' | 'all';
