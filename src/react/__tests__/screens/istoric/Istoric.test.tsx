@@ -339,6 +339,40 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
   });
 });
 
+describe('IstoricDetail — delete a mislogged session', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('two-tap delete removes the session + records a tombstone + navigates back', () => {
+    const ts = 1717000000000;
+    useWorkoutStore.setState({
+      sessionsHistory: [{ title: 'Push', meta: '5 seturi · 45 min · 9 800 kg', ts }],
+    });
+    renderIstoric('/app/istoric/0');
+    // First tap reveals confirm; session still present.
+    fireEvent.click(screen.getByTestId('istoric-detail-delete-cta'));
+    expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(1);
+    // Confirm deletes + tombstones + routes back to /app/istoric.
+    fireEvent.click(screen.getByTestId('istoric-detail-delete-accept'));
+    expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(0);
+    expect(useWorkoutStore.getState().deletedSessionTs).toContain(ts);
+    // Routed back to the Istoric list (now empty).
+    expect(screen.getByTestId('istoric-home')).toBeInTheDocument();
+  });
+
+  it('cancel keeps the session', () => {
+    const ts = 1717000000001;
+    useWorkoutStore.setState({
+      sessionsHistory: [{ title: 'Pull', meta: '4 seturi · 40 min · 8 000 kg', ts }],
+    });
+    renderIstoric('/app/istoric/0');
+    fireEvent.click(screen.getByTestId('istoric-detail-delete-cta'));
+    fireEvent.click(screen.getByTestId('istoric-detail-delete-cancel'));
+    expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(1);
+  });
+});
+
 describe('Istoric — D-LEGACY-064 no-diacritics', () => {
   beforeEach(() => {
     resetStore();

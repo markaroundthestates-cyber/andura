@@ -40,7 +40,7 @@ import {
   enrichExercisesWithPR,
   refreshPRRecordsFromLogs,
 } from '../../../lib/prRecordsWriteback';
-import { DB } from '../../../../db.js';
+import { DB, todTs } from '../../../../db.js';
 import { toast } from '../../../lib/toast';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { t } from '../../../../i18n/index.js';
@@ -74,9 +74,18 @@ export function PostRpe(): JSX.Element {
   const history = useWorkoutStore((s) => s.history);
   const sessionStart = useWorkoutStore((s) => s.sessionStart);
   const sessionContext = useWorkoutStore((s) => s.sessionContext);
+  const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
   const setLastRating = useWorkoutStore((s) => s.setLastRating);
   const finishSession = useWorkoutStore((s) => s.finishSession);
   const incrementStreak = useWorkoutStore((s) => s.incrementStreak);
+
+  // Double-workout-per-day guard (Daniel's wife mislogged). When a workout is
+  // already logged today, Save shows an explicit "log another?" confirm before
+  // finishing (not a hard block — a genuine second workout is one more tap).
+  const [confirmAnother, setConfirmAnother] = useState(false);
+  const loggedToday = sessionsHistory.some(
+    (s) => Number.isFinite(s.ts) && todTs(s.ts) === todTs(Date.now()),
+  );
 
   // Select-then-Save (mockup interfata-noua/screens-workout.jsx:461-483) — the
   // user picks a feel, then confirms with Save. Two taps on a finalize screen
@@ -126,6 +135,16 @@ export function PostRpe(): JSX.Element {
         variant: 'error',
       });
       navigate(gotoPath('antrenor'));
+      return;
+    }
+
+    // Double-workout-per-day explicit confirm: a workout is already logged today
+    // and the user hasn't confirmed a second one yet → reveal the confirm panel
+    // and bail (release the submit latch so the confirm tap can re-enter). The
+    // real session data the user logged is untouched — this only defers the save.
+    if (loggedToday && !confirmAnother) {
+      submittingRef.current = false;
+      setConfirmAnother(true);
       return;
     }
     const rawTitle = planned?.workoutTitle;
@@ -283,18 +302,49 @@ export function PostRpe(): JSX.Element {
           );
         })}
       </div>
+      {/* Double-workout-per-day confirm — explicit "log another?" (not a block). */}
+      {confirmAnother && (
+        <div
+          className="mt-4 p-4 rounded-2xl bg-paper2 border border-lineStrong"
+          data-testid="post-rpe-already-logged"
+        >
+          <p className="text-base font-semibold text-ink">{t('postRpe.alreadyLoggedTitle')}</p>
+          <p className="text-sm text-ink2 mt-1">{t('postRpe.alreadyLoggedBody')}</p>
+          <div className="flex gap-3 mt-3">
+            <button
+              type="button"
+              onClick={() => setConfirmAnother(false)}
+              data-testid="post-rpe-already-logged-no"
+              className="btn-secondary-lift flex-1 px-4 py-3 bg-paper border border-lineStrong text-ink rounded-xl text-sm font-semibold"
+            >
+              {t('postRpe.alreadyLoggedNo')}
+            </button>
+            <button
+              type="button"
+              onClick={() => { if (pick) void handleSubmit(pick); }}
+              data-testid="post-rpe-already-logged-yes"
+              className="btn-primary-lift pulse-grad-bg flex-1 px-4 py-3 text-paper rounded-xl text-sm font-semibold"
+            >
+              {t('postRpe.alreadyLoggedYes')}
+            </button>
+          </div>
+        </div>
+      )}
       {/* Save (mockup .btn-grad gated on pick) — finalize pipeline fires once
           here. Disabled until a feel is picked (opacity + pointer guard +
-          disabled attr for assistive tech). */}
-      <button
-        type="button"
-        onClick={() => { if (pick) void handleSubmit(pick); }}
-        disabled={pick === null}
-        data-testid="post-rpe-save"
-        className="btn-primary-lift pulse-grad-bg pulse-shine w-full py-4 mt-4 text-paper rounded-full text-base font-semibold disabled:opacity-45 disabled:pointer-events-none"
-      >
-        {t('postRpe.submitCta')}
-      </button>
+          disabled attr for assistive tech). When the double-log confirm is
+          showing, the primary Save hides — the user answers the confirm. */}
+      {!confirmAnother && (
+        <button
+          type="button"
+          onClick={() => { if (pick) void handleSubmit(pick); }}
+          disabled={pick === null}
+          data-testid="post-rpe-save"
+          className="btn-primary-lift pulse-grad-bg pulse-shine w-full py-4 mt-4 text-paper rounded-full text-base font-semibold disabled:opacity-45 disabled:pointer-events-none"
+        >
+          {t('postRpe.submitCta')}
+        </button>
+      )}
       {/* §F-post-rpe-04 (MED chat5 Wave 15) — footer gratitude + explainer
           mockup andura-clasic.html#L1624 verbatim. Andura Suflet warmth
           (D-LEGACY-052) — recunoaste valoarea contribution Gigel/Marius

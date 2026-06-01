@@ -80,6 +80,10 @@ function seedSession(): void {
     pausedSnapshot: null,
     lastSession: null,
     streak: 5,
+    // Fresh history per test — otherwise a prior test's finishSession leaves a
+    // same-day entry that trips the double-workout-per-day confirm gate.
+    sessionsHistory: [],
+    deletedSessionTs: [],
   });
   localStorage.clear();
 }
@@ -510,5 +514,39 @@ describe('PostRpe — energy signal persistence (GAP #2: energyEmoji + energy)',
     // NU fabricate green when absent — engines see no-signal baseline.
     expect('energyEmoji' in saved).toBe(false);
     expect('energy' in saved).toBe(false);
+  });
+});
+
+describe('PostRpe — double-workout-per-day confirm', () => {
+  beforeEach(() => {
+    seedSession();
+  });
+
+  it('asks before saving a SECOND workout the same day, then saves on confirm', async () => {
+    // A workout already logged today (same calendar day as now).
+    useWorkoutStore.setState({
+      sessionsHistory: [{ title: 'Earlier', meta: '', ts: Date.now() - 60000 }],
+    });
+    renderPostRpe();
+    submit(/Just right/i);
+    // Confirm panel appears; the new session is NOT saved yet.
+    await waitFor(() => {
+      expect(screen.getByTestId('post-rpe-already-logged')).toBeInTheDocument();
+    });
+    expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(1);
+    // Confirm "log another" → the second session is saved.
+    fireEvent.click(screen.getByTestId('post-rpe-already-logged-yes'));
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(2);
+    });
+  });
+
+  it('the first workout of the day saves without a confirm', async () => {
+    renderPostRpe(); // seedSession set sessionsHistory: []
+    submit(/Just right/i);
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession).not.toBeNull();
+    });
+    expect(screen.queryByTestId('post-rpe-already-logged')).not.toBeInTheDocument();
   });
 });

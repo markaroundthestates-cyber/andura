@@ -13,8 +13,9 @@
 // <mon>" pentru cititor casnic; numeric DD.MM.YYYY retras (jargon-numeric).
 
 import type { JSX } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, History } from 'lucide-react';
+import { ArrowLeft, History, Trash2 } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { pluralRo } from '../../../lib/pluralRo';
 import { Kicker } from '../../../components/pulse/Kicker';
@@ -69,6 +70,12 @@ export function IstoricDetail(): JSX.Element {
   const navigate = useNavigate();
   const { sessionId } = useParams<{ sessionId: string }>();
   const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
+  const deleteSession = useWorkoutStore((s) => s.deleteSession);
+
+  // Two-tap inline delete confirm (mislogged workout removal). First tap reveals
+  // a "Delete / Keep" confirm row; this guards against an accidental delete
+  // without spinning up a separate route (surgical, matches inline aerobic UX).
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const idx = sessionId !== undefined ? Number(sessionId) : -1;
   const session =
@@ -77,6 +84,11 @@ export function IstoricDetail(): JSX.Element {
       : null;
 
   function handleBack(): void {
+    navigate('/app/istoric');
+  }
+
+  function handleDelete(): void {
+    if (session) deleteSession(session.ts);
     navigate('/app/istoric');
   }
 
@@ -217,6 +229,46 @@ export function IstoricDetail(): JSX.Element {
           {t('istoric.detail.legacyFallback')}
         </p>
       )}
+
+      {/* Delete this session (mislogged workout) — two-tap inline confirm. */}
+      <div className="mt-8" data-testid="istoric-detail-delete">
+        {confirmDelete ? (
+          <div className="pulse-card pulse-card-tight p-4 flex flex-col gap-3">
+            <p className="text-sm text-ink text-center" data-testid="istoric-detail-delete-question">
+              {t('istoric.detail.deleteConfirmQuestion')}
+            </p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(false)}
+                data-testid="istoric-detail-delete-cancel"
+                className="btn-secondary-lift flex-1 px-4 py-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-sm font-semibold"
+              >
+                {t('istoric.detail.deleteConfirmNo')}
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                data-testid="istoric-detail-delete-accept"
+                className="press-feedback flex-1 px-4 py-3 bg-brick text-paper rounded-xl text-sm font-semibold flex items-center justify-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
+                {t('istoric.detail.deleteConfirmYes')}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setConfirmDelete(true)}
+            data-testid="istoric-detail-delete-cta"
+            className="press-feedback w-full px-4 py-3 text-sm font-semibold text-brickdark flex items-center justify-center gap-2"
+          >
+            <Trash2 className="w-4 h-4" aria-hidden="true" />
+            {t('istoric.detail.deleteCta')}
+          </button>
+        )}
+      </div>
     </section>
   );
 }
