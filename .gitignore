@@ -67,10 +67,20 @@ smoke-*.png
 # 2026-05-28; ignore added so they stop re-accumulating in `git status`.)
 .tmp_*
 /tmp_*
+# Same convention, leading-underscore variant (_tmp_*) + the .tmp-imgwork/ scratch
+# dir + assorted verify logs / pid files. (Daniel cleanup 2026-06-01: ~50 such
+# files removed; patterns added so they stop re-accumulating in `git status`.)
+/_tmp_*
+.tmp-imgwork/
+*verify*.log
+vitest_full.log
+.smoke-pid
+.verify.log
 # Design/debug screenshots captured at vault root (auto-generated). Real visual
 # test fixtures live under tests/**-snapshots/ and are NOT matched by this root
-# rule (it only matches root-level *.png).
+# rule (it only matches root-level *.png / *.jpeg).
 /*.png
+/*.jpeg
 # Generated Lighthouse reports (parity with the other reports/* entries above).
 reports/lighthouse/
 # Agent worktree caches — recycled per agent run, local-only, never source.
@@ -90,3 +100,8 @@ dist-dev/
 bodymap-preview*.png
 _sec11_chunk.md
 append_sec11.*
+
+# Exercise-grid image pipeline scratch — input grids + intermediate splits.
+# Never ship + never commit (kept local; final webp go into app assets, not here).
+assets-source/exercise-grids/
+public/body/test/
