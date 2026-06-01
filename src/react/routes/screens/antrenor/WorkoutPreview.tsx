@@ -411,7 +411,7 @@ export function WorkoutPreview(): JSX.Element {
           className="coach-quote text-base text-ink2 italic font-serif mb-6"
           data-testid="preview-coach-line"
         >
-          “{coachLine}"
+          “{coachLine}”
         </p>
       )}
       {/* §F-workout-preview-04 (MED chat5 Wave 14) — closing italic note

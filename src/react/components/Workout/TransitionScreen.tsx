@@ -39,7 +39,7 @@ export function TransitionScreen({
         className="animate-fade-in-up text-sm text-ink2 mt-4 italic font-serif"
         style={{ animationDelay: '240ms' }}
       >
-        “{coachLine}"
+        “{coachLine}”
       </p>
     </div>
   );
