@@ -226,7 +226,7 @@ export function PostRpe(): JSX.Element {
         className="coach-quote text-base text-ink2 italic font-serif mb-6 leading-relaxed"
         data-testid="post-rpe-intro"
       >
-        „{t('postRpe.intro')}"
+        “{t('postRpe.intro')}"
       </p>
       {/* No role="list": children are <button>s (not valid role="listitem"),
           which makes a screen reader announce an empty list. The "Cum a fost

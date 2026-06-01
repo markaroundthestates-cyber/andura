@@ -238,7 +238,7 @@ export function PostSummary(): JSX.Element {
             className="text-base text-ink2 italic font-serif mt-2"
             data-testid="summary-coach-line"
           >
-            „{coachLine}"
+            “{coachLine}"
           </p>
         )}
       </div>
