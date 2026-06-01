@@ -21,50 +21,63 @@ export function SettingsTerms(): JSX.Element {
   const medicalItems = tArray('settings.terms.medicalItems');
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-terms">
+    <section className="min-h-screen flex flex-col" data-testid="settings-terms">
       <SubHeader
         title={t('settings.terms.title')}
         onBack={() => navigate(gotoPath('cont'))}
         testIdBack="settings-terms-back"
       />
 
-      <div className="flex border-b border-line bg-paper sticky top-[57px] z-10">
-        <button
-          type="button"
-          data-testid="terms-tab-tc"
-          role="tab"
-          aria-selected={active === 'tc'}
-          onClick={() => setActive('tc')}
-          className={`flex-1 py-3 text-sm font-semibold flex items-center justify-center gap-1.5 ${active === 'tc' ? 'text-brick border-b-2 border-brick' : 'text-ink2'}`}
+      {/* Pulse segmented control (interfata-noua/ .seg) — --surface-2 track,
+          active half = volt fill + on-accent ink (NOT a brick underline). */}
+      <div className="px-5 pt-4 pb-2 sticky top-[57px] z-10">
+        <div
+          className="flex gap-1 rounded-[14px] p-1 border border-line"
+          style={{ background: 'var(--surface-2)' }}
+          role="tablist"
         >
-          <FileText className="w-4 h-4" aria-hidden="true" />
-          {t('settings.terms.tabTerms')}
-        </button>
-        <button
-          type="button"
-          data-testid="terms-tab-medical"
-          role="tab"
-          aria-selected={active === 'medical'}
-          onClick={() => setActive('medical')}
-          className={`flex-1 py-3 text-sm font-semibold flex items-center justify-center gap-1.5 ${active === 'medical' ? 'text-brick border-b-2 border-brick' : 'text-ink2'}`}
-        >
-          <AlertTriangle className="w-4 h-4" aria-hidden="true" />
-          {t('settings.terms.tabMedical')}
-        </button>
+          <button
+            type="button"
+            data-testid="terms-tab-tc"
+            role="tab"
+            aria-selected={active === 'tc'}
+            onClick={() => setActive('tc')}
+            className={`flex-1 min-h-[40px] py-2 rounded-[11px] text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors ${active === 'tc' ? '' : 'text-ink2'}`}
+            style={active === 'tc' ? { background: 'var(--volt)', color: 'var(--on-accent)' } : undefined}
+          >
+            <FileText className="w-4 h-4" aria-hidden="true" />
+            {t('settings.terms.tabTerms')}
+          </button>
+          <button
+            type="button"
+            data-testid="terms-tab-medical"
+            role="tab"
+            aria-selected={active === 'medical'}
+            onClick={() => setActive('medical')}
+            className={`flex-1 min-h-[40px] py-2 rounded-[11px] text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors ${active === 'medical' ? '' : 'text-ink2'}`}
+            style={active === 'medical' ? { background: 'var(--volt)', color: 'var(--on-accent)' } : undefined}
+          >
+            <AlertTriangle className="w-4 h-4" aria-hidden="true" />
+            {t('settings.terms.tabMedical')}
+          </button>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5">
+      <div className="flex-1 overflow-y-auto px-5 pb-5">
         {active === 'tc' ? (
-          <article data-testid="terms-tc-content" className="text-sm text-ink leading-relaxed">
-            <h2 className="text-base font-semibold mb-2">{t('settings.terms.tcHeading')}</h2>
+          <article data-testid="terms-tc-content" className="pulse-card p-[18px] text-sm text-ink2 leading-relaxed">
+            <h2 className="font-display text-base font-bold text-ink mb-2">{t('settings.terms.tcHeading')}</h2>
             <p className="mb-3">{t('settings.terms.tcIntro')}</p>
             <p className="mb-3">{t('settings.terms.tcAcceptIntro')}</p>
-            <ul className="list-disc pl-5 mb-3 space-y-1.5">
+            <ul className="space-y-2 mb-3">
               {tcItems.map((it, i) => (
-                <li key={i}>{it}</li>
+                <li key={i} className="flex gap-2.5">
+                  <span className="text-brick" aria-hidden="true">&bull;</span>
+                  <span>{it}</span>
+                </li>
               ))}
             </ul>
-            <p className="text-xs text-ink2 mt-4">
+            <p className="text-xs text-ink3 mt-4">
               {t('settings.terms.tcVersion')}{' '}
               <a
                 href="https://andura.app/terms"
@@ -79,17 +92,20 @@ export function SettingsTerms(): JSX.Element {
             </p>
           </article>
         ) : (
-          <article data-testid="terms-medical-content" className="text-sm text-ink leading-relaxed">
-            <h2 className="text-base font-semibold mb-2">{t('settings.terms.medicalScreenHeading')}</h2>
+          <article data-testid="terms-medical-content" className="pulse-card p-[18px] text-sm text-ink2 leading-relaxed">
+            <h2 className="font-display text-base font-bold text-ink mb-2">{t('settings.terms.medicalScreenHeading')}</h2>
             <p className="mb-3">{t('settings.terms.medicalIntro')}</p>
             <p className="mb-3">{t('settings.terms.medicalConsultIntro')}</p>
-            <ul className="list-disc pl-5 mb-3 space-y-1.5">
+            <ul className="space-y-2 mb-3">
               {medicalItems.map((it, i) => (
-                <li key={i}>{it}</li>
+                <li key={i} className="flex gap-2.5">
+                  <span className="text-brick" aria-hidden="true">&bull;</span>
+                  <span>{it}</span>
+                </li>
               ))}
             </ul>
             <p className="mb-3">{t('settings.terms.medicalListenBody')}</p>
-            <p className="text-xs text-ink2 mt-4">{t('settings.terms.medicalAccepted')}</p>
+            <p className="text-xs text-ink3 mt-4">{t('settings.terms.medicalAccepted')}</p>
           </article>
         )}
       </div>

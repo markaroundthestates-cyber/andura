@@ -6,6 +6,7 @@
 import type { JSX } from 'react';
 import type { Frequency, Experience, TrainingType, OnboardingData } from '../../../../stores/onboardingStore';
 import { t } from '../../../../../i18n/index.js';
+import { Kicker } from '../../../../components/pulse/Kicker';
 import { SelectRow } from './rows';
 
 // Frequency labels resolved via t() per-locale (e.g. "3x/sapt" vs "3x/week").
@@ -31,10 +32,8 @@ export function TrainingSection({ draft, update }: TrainingSectionProps): JSX.El
           de la Coach la progres". Obiectiv (goal pick) relocated la Progres >
           ObiectivGoalCard. Frecventa + Experienta raman aici — setup-once
           params, NU progress-tracking goal (clear separation). */}
-      <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-        {t('settings.profile.sectionTraining')}
-      </p>
-      <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
+      <Kicker>{t('settings.profile.sectionTraining')}</Kicker>
+      <div className="pulse-card pulse-card-tight overflow-hidden mb-4 mt-2">
         {/* Training type toggle (Daniel spec 2026-05-30) — change gym/aerobic/
             both later. Reuses the onboarding option labels. Skip-auth safe:
             writes onboardingStore.data (local, per-UID), same path as the rest
@@ -45,7 +44,7 @@ export function TrainingSection({ draft, update }: TrainingSectionProps): JSX.El
             value={draft.trainingType ?? 'gym'}
             onChange={(e) => update('trainingType', e.target.value as TrainingType)}
             data-testid="profile-training-type-select"
-            className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
+            className="pulse-field px-2.5 py-1.5 rounded-xl text-sm"
           >
             <option value="gym">{t('onboarding.options.trainingType.gym')}</option>
             <option value="aerobic">{t('onboarding.options.trainingType.aerobic')}</option>
@@ -58,7 +57,7 @@ export function TrainingSection({ draft, update }: TrainingSectionProps): JSX.El
             value={draft.frequency ?? ''}
             onChange={(e) => update('frequency', (e.target.value || null) as Frequency | null)}
             data-testid="profile-frequency-select"
-            className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
+            className="pulse-field px-2.5 py-1.5 rounded-xl text-sm"
           >
             <option value="">—</option>
             {(['2', '3', '4', '5'] as Frequency[]).map((f) => (
@@ -72,7 +71,7 @@ export function TrainingSection({ draft, update }: TrainingSectionProps): JSX.El
             value={draft.experience ?? ''}
             onChange={(e) => update('experience', (e.target.value || null) as Experience | null)}
             data-testid="profile-experience-select"
-            className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
+            className="pulse-field px-2.5 py-1.5 rounded-xl text-sm"
           >
             <option value="">—</option>
             {(Object.keys(EXPERIENCE_LABEL_KEYS) as Experience[]).map((x) => (

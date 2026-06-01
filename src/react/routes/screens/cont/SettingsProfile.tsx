@@ -284,7 +284,7 @@ export function SettingsProfile(): JSX.Element {
 
   return (
     <section
-      className="bg-paper min-h-screen flex flex-col"
+      className="min-h-screen flex flex-col"
       data-testid="settings-profile"
     >
       <SubHeader
@@ -295,11 +295,19 @@ export function SettingsProfile(): JSX.Element {
 
       <div className="flex-1 overflow-y-auto p-5">
         <div className="flex flex-col items-center gap-2.5 pt-2 pb-5">
+          {/* Avatar — Pulse gradient pebble (interfata-noua/screens-tabs.jsx
+              `.avatar`, matched to Cont.tsx): volt->aqua --grad-pulse fill +
+              aqua glow halo, display initial in --on-accent ink. */}
           <div
-            className="w-20 h-20 rounded-full bg-brick text-paper flex items-center justify-center text-3xl font-semibold"
+            className="w-20 h-20 rounded-full font-display flex items-center justify-center text-3xl font-bold relative overflow-hidden"
             data-testid="settings-profile-initial"
+            style={{
+              background: 'var(--grad-pulse)',
+              boxShadow: '0 0 28px -6px var(--aqua)',
+              color: 'var(--on-accent)',
+            }}
           >
-            {profile.initial}
+            <span className="relative">{profile.initial}</span>
           </div>
         </div>
 

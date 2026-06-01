@@ -6,6 +6,7 @@
 import type { JSX } from 'react';
 import type { Sex, OnboardingData } from '../../../../stores/onboardingStore';
 import { t } from '../../../../../i18n/index.js';
+import { Kicker } from '../../../../components/pulse/Kicker';
 import { LabelRow, SelectRow } from './rows';
 
 interface PersonalSectionProps {
@@ -16,10 +17,8 @@ interface PersonalSectionProps {
 export function PersonalSection({ draft, update }: PersonalSectionProps): JSX.Element {
   return (
     <>
-      <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-        {t('settings.profile.sectionPersonal')}
-      </p>
-      <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
+      <Kicker>{t('settings.profile.sectionPersonal')}</Kicker>
+      <div className="pulse-card pulse-card-tight overflow-hidden mb-4 mt-2">
         <LabelRow label={t('settings.profile.age')}>
           <input
             type="number"
@@ -30,7 +29,7 @@ export function PersonalSection({ draft, update }: PersonalSectionProps): JSX.El
             value={draft.age ?? ''}
             onChange={(e) => update('age', e.target.value ? Number(e.target.value) : null)}
             data-testid="profile-age-input"
-            className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+            className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
           />
         </LabelRow>
         <LabelRow label={t('settings.profile.weight')}>
@@ -44,7 +43,7 @@ export function PersonalSection({ draft, update }: PersonalSectionProps): JSX.El
             value={draft.weight ?? ''}
             onChange={(e) => update('weight', e.target.value ? Number(e.target.value) : null)}
             data-testid="profile-weight-input"
-            className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+            className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
           />
         </LabelRow>
         <SelectRow label={t('settings.profile.sex')} htmlFor="profile-sex-select" isLast>
@@ -53,7 +52,7 @@ export function PersonalSection({ draft, update }: PersonalSectionProps): JSX.El
             value={draft.sex ?? ''}
             onChange={(e) => update('sex', (e.target.value || null) as Sex | null)}
             data-testid="profile-sex-select"
-            className="px-2.5 py-1.5 border border-lineStrong rounded-xl bg-paper text-ink text-sm"
+            className="pulse-field px-2.5 py-1.5 rounded-xl text-sm"
           >
             <option value="">—</option>
             <option value="m">{t('settings.profile.sexMale')}</option>

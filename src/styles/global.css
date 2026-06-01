@@ -520,6 +520,30 @@
     animation: pulse-shine calc(4.5s / max(var(--motion), 0.4)) ease-in-out infinite;
   }
 
+  /* ── PULSE FIELD — text/number/select input (mockup interfata-noua/ .field)
+     ────────────────────────────────────────────────────────────────────────
+     The Pulse input idiom: elevated --surface-2 glass fill, hairline --line
+     border, value rendered in the display face, and a volt focus ring. Used
+     by SettingsProfile field rows (cont/SettingsProfile.tsx + its child
+     sections) so every input inherits the look from ONE place. Replaces the
+     prior flat bg-paper/paper2 + font-mono inputs. */
+  .pulse-field {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-family: var(--font-display, 'Space Grotesk Variable', system-ui, sans-serif);
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+  }
+  .pulse-field:focus,
+  .pulse-field:focus-visible {
+    outline: none;
+    border-color: var(--volt);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--volt) 40%, transparent);
+  }
+  .pulse-field:disabled {
+    opacity: 0.6;
+  }
+
   /* SET CHIPS — live per-set progress row (mockup interfata-noua/
      screens-workout.jsx .set-chip). One square chip per planned set:
      done = filled volt + check, active = current set glowing volt border,

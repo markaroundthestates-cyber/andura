@@ -7,6 +7,8 @@
 import type { JSX } from 'react';
 import type { OnboardingData } from '../../../../stores/onboardingStore';
 import { t } from '../../../../../i18n/index.js';
+import { Kicker } from '../../../../components/pulse/Kicker';
+import { Pill } from '../../../../components/pulse/Pill';
 import { LabelRow, SelectRow } from './rows';
 
 interface BodyCompSectionProps {
@@ -56,10 +58,8 @@ export function BodyCompSection({
     <>
       {/* §F-pass2-settings-profile-03 — Compozitie corporala (mockup L2034-2047).
           Talie + Gat + Inaltime → BF% auto US Navy + manual override. */}
-      <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-        {t('settings.profile.sectionBody')}
-      </p>
-      <div className="pulse-card pulse-card-tight overflow-hidden mb-1">
+      <Kicker>{t('settings.profile.sectionBody')}</Kicker>
+      <div className="pulse-card pulse-card-tight overflow-hidden mb-1 mt-2">
         <LabelRow label={t('settings.profile.waist')}>
           <input
             type="number"
@@ -71,7 +71,7 @@ export function BodyCompSection({
             value={waist}
             onChange={(e) => setWaist(e.target.value)}
             data-testid="profile-waist-input"
-            className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+            className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
           />
         </LabelRow>
         <LabelRow label={t('settings.profile.neck')}>
@@ -85,7 +85,7 @@ export function BodyCompSection({
             value={neck}
             onChange={(e) => setNeck(e.target.value)}
             data-testid="profile-neck-input"
-            className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+            className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
           />
         </LabelRow>
         {/* §progress-v2 — sold intra in US Navy DOAR pentru femei. Input afisat
@@ -102,7 +102,7 @@ export function BodyCompSection({
               value={hip}
               onChange={(e) => setHip(e.target.value)}
               data-testid="profile-hip-input"
-              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+              className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
             />
           </LabelRow>
         )}
@@ -117,19 +117,21 @@ export function BodyCompSection({
             value={draft.height ?? ''}
             onChange={(e) => update('height', e.target.value ? Number(e.target.value) : null)}
             data-testid="profile-height-input"
-            className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+            className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
           />
         </LabelRow>
         <div className="flex items-center justify-between px-4 py-3 border-b border-line">
           <span className="text-sm text-ink">{t('settings.profile.bfAuto')}</span>
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2.5">
             <span
-              className="font-mono text-sm font-semibold text-ink"
+              className="font-display text-lg font-bold text-ink"
               data-testid="profile-bf-auto"
             >
               {bfAuto != null ? `${bfAuto}%` : '—'}
             </span>
-            <span className="text-[11px] text-ink3" data-testid="profile-bf-source">{bfSource}</span>
+            <Pill color="var(--ink-3)">
+              <span data-testid="profile-bf-source">{bfSource}</span>
+            </Pill>
           </span>
         </div>
         <SelectRow label={t('settings.profile.bfManual')} htmlFor="profile-bf-manual" isLast>
@@ -155,8 +157,8 @@ export function BodyCompSection({
               onChange={(e) => setBfOverride(e.target.value)}
               aria-invalid={bfOutOfRange || undefined}
               data-testid="profile-bf-override"
-              className={`w-20 px-2.5 py-1.5 text-right border rounded-xl bg-paper2 text-ink3 font-mono text-sm disabled:opacity-60 ${
-                bfOutOfRange ? 'border-brick' : 'border-lineStrong'
+              className={`pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm ${
+                bfOutOfRange ? '!border-brick' : ''
               }`}
             />
           </span>

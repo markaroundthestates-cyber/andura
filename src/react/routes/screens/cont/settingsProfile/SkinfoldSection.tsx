@@ -77,7 +77,7 @@ export function SkinfoldSection({
                   value={sfTriceps}
                   onChange={(e) => setSfTriceps(e.target.value)}
                   data-testid="profile-skinfold-triceps"
-                  className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+                  className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
                 />
               </LabelRow>
               <LabelRow label={t('settings.profile.skinfoldSuprailiac')}>
@@ -91,7 +91,7 @@ export function SkinfoldSection({
                   value={sfSuprailiac}
                   onChange={(e) => setSfSuprailiac(e.target.value)}
                   data-testid="profile-skinfold-suprailiac"
-                  className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+                  className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
                 />
               </LabelRow>
             </>
@@ -108,7 +108,7 @@ export function SkinfoldSection({
                   value={sfChest}
                   onChange={(e) => setSfChest(e.target.value)}
                   data-testid="profile-skinfold-chest"
-                  className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+                  className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
                 />
               </LabelRow>
               <LabelRow label={t('settings.profile.skinfoldAbdomen')}>
@@ -122,7 +122,7 @@ export function SkinfoldSection({
                   value={sfAbdomen}
                   onChange={(e) => setSfAbdomen(e.target.value)}
                   data-testid="profile-skinfold-abdomen"
-                  className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+                  className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
                 />
               </LabelRow>
             </>
@@ -138,7 +138,7 @@ export function SkinfoldSection({
               value={sfThigh}
               onChange={(e) => setSfThigh(e.target.value)}
               data-testid="profile-skinfold-thigh"
-              className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"
+              className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
             />
           </LabelRow>
         </div>
