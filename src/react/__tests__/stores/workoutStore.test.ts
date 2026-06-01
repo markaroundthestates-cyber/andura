@@ -27,9 +27,13 @@ function resetStore(): void {
     lastStreakDate: null,
     sessionContext: null,
     refusalTriedByEx: {},
+    sessionsHistory: [],
+    deletedSessionTs: [],
   });
   localStorage.clear();
 }
+
+const SESSION = (ts: number, title = 'Push'): LastSessionSummary => ({ title, meta: '', ts });
 
 describe('workoutStore — initial state', () => {
   beforeEach(resetStore);
@@ -1132,5 +1136,42 @@ describe('workoutStore — markRefusalTried (exhaustive Nu vreau cycle)', () => 
     markRefusalTried(0, 'Flat Barbell Bench');
     startSession(Date.now());
     expect(useWorkoutStore.getState().refusalTriedByEx).toEqual({});
+  });
+});
+
+describe('workoutStore — deleteSession (delete a mislogged workout)', () => {
+  beforeEach(resetStore);
+
+  it('removes the session by ts and records a tombstone', () => {
+    useWorkoutStore.setState({ sessionsHistory: [SESSION(1000), SESSION(2000)] });
+    useWorkoutStore.getState().deleteSession(1000);
+    const hist = useWorkoutStore.getState().sessionsHistory;
+    expect(hist.map((s) => s.ts)).toEqual([2000]);
+    expect(useWorkoutStore.getState().deletedSessionTs).toContain(1000);
+  });
+
+  it('clears lastSession only when it IS the deleted session', () => {
+    useWorkoutStore.setState({ sessionsHistory: [SESSION(1000)], lastSession: SESSION(1000) });
+    useWorkoutStore.getState().deleteSession(1000);
+    expect(useWorkoutStore.getState().lastSession).toBeNull();
+  });
+
+  it('leaves lastSession intact when a DIFFERENT session is deleted', () => {
+    useWorkoutStore.setState({ sessionsHistory: [SESSION(1000), SESSION(2000)], lastSession: SESSION(2000) });
+    useWorkoutStore.getState().deleteSession(1000);
+    expect(useWorkoutStore.getState().lastSession?.ts).toBe(2000);
+  });
+
+  it('does NOT rewind the streak on delete (forward-only counter)', () => {
+    useWorkoutStore.setState({ sessionsHistory: [SESSION(1000)], streak: 7 });
+    useWorkoutStore.getState().deleteSession(1000);
+    expect(useWorkoutStore.getState().streak).toBe(7);
+  });
+
+  it('is a safe no-op for an absent ts', () => {
+    useWorkoutStore.setState({ sessionsHistory: [SESSION(1000)] });
+    useWorkoutStore.getState().deleteSession(999999);
+    expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(1);
+    expect(useWorkoutStore.getState().deletedSessionTs).toHaveLength(0);
   });
 });

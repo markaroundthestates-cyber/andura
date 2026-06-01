@@ -20,7 +20,7 @@ import {
 } from '../../stores/aerobicStore';
 
 function resetStore(): void {
-  useAerobicStore.setState({ sessions: [], lastDuration: DEFAULT_AEROBIC_MINUTES, subjectiveByDate: {} });
+  useAerobicStore.setState({ sessions: [], lastDuration: DEFAULT_AEROBIC_MINUTES, subjectiveByDate: {}, deletedTs: [] });
   localStorage.clear();
 }
 
@@ -130,6 +130,40 @@ describe('aerobicKcalForDate — sums a day (feeds nutrition ease)', () => {
     expect(aerobicKcalForDate(sessions, '2026-05-30')).toBe(550);
     expect(aerobicKcalForDate(sessions, '2026-05-29')).toBe(400);
     expect(aerobicKcalForDate(sessions, '2026-05-28')).toBe(0);
+  });
+});
+
+describe('aerobicStore — removeSession (delete a mislogged class)', () => {
+  beforeEach(resetStore);
+
+  it('removes the class by ts and records a tombstone', () => {
+    useAerobicStore.getState().logClass({ date: '2026-05-30', type: 'spinning', minutes: 50, weightKg: 70 });
+    const ts = useAerobicStore.getState().sessions[0]!.ts;
+    useAerobicStore.getState().removeSession(ts);
+    expect(useAerobicStore.getState().sessions).toHaveLength(0);
+    expect(useAerobicStore.getState().deletedTs).toContain(ts);
+  });
+
+  it('decrements the weekly count when a class is deleted', () => {
+    const now = new Date();
+    // Seed two distinct sessions (explicit ts — logClass uses Date.now() which
+    // can collide within the same ms on a fast machine).
+    useAerobicStore.setState({
+      sessions: [
+        { date: iso(now), type: 'aerobic', minutes: 50, kcal: 300, ts: 1000 },
+        { date: iso(now), type: 'step', minutes: 40, kcal: 280, ts: 2000 },
+      ],
+    });
+    expect(countClassesThisWeek(useAerobicStore.getState().sessions, now)).toBe(2);
+    useAerobicStore.getState().removeSession(1000);
+    expect(countClassesThisWeek(useAerobicStore.getState().sessions, now)).toBe(1);
+  });
+
+  it('is a safe no-op for an absent ts (no tombstone, no change)', () => {
+    useAerobicStore.getState().logClass({ date: '2026-05-30', type: 'aerobic', minutes: 50, weightKg: 60 });
+    useAerobicStore.getState().removeSession(999999);
+    expect(useAerobicStore.getState().sessions).toHaveLength(1);
+    expect(useAerobicStore.getState().deletedTs).toHaveLength(0);
   });
 });
 

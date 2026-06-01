@@ -78,30 +78,42 @@ const SYNCED: SyncedStore[] = [
         streak: st.streak,
         lastStreakDate: st.lastStreakDate,
         lastSession: st.lastSession,
+        deletedSessionTs: st.deletedSessionTs,
       };
     },
     apply: (remote) => {
       const d = (remote?.data ?? {}) as Partial<ReturnType<typeof useWorkoutStore.getState>>;
       if (d == null || typeof d !== 'object') return;
       const local = useWorkoutStore.getState();
+      // Tombstones union both sides (a deletion on EITHER device must win — never
+      // resurrect a session the user removed elsewhere). Applied to the merged
+      // history below so a deleted session stays gone post-hydrate.
+      const localDeleted = Array.isArray(local.deletedSessionTs) ? local.deletedSessionTs : [];
+      const remoteDeleted = Array.isArray(d.deletedSessionTs) ? d.deletedSessionTs : [];
+      const deletedSessionTs = Array.from(new Set([...localDeleted, ...remoteDeleted]));
+      const deletedSet = new Set(deletedSessionTs);
       // Coerce ts non-finit (record cloud malformat / schema veche / cross-device)
       // la 0 INAINTE de merge: pastreaza inregistrarea (zero pierdere date) dar
       // evita NaN sa otraveasca sortarea reverse-chrono din Istoric (b.ts - a.ts)
       // + UI formatDate degradeaza la em-dash in loc de cheia i18n literala.
-      const mergedSessions = mergeArrayUnion(local.sessionsHistory, d.sessionsHistory, 'ts');
+      const mergedSessions = mergeArrayUnion(local.sessionsHistory, d.sessionsHistory, 'ts')
+        .filter((s) => !deletedSet.has(s?.ts));
       const sessionsHistory = mergedSessions.map((s) =>
         Number.isFinite(s?.ts) ? s : { ...s, ts: 0 },
       );
       const streak = mergeMaxScalar(local.streak, d.streak);
       const lastStreakDate = mergeMaxIsoDate(local.lastStreakDate, d.lastStreakDate);
-      // lastSession LWW by its own ts (the finish timestamp).
-      const lastSession = mergeLastWriteWins(
+      // lastSession LWW by its own ts (the finish timestamp) — but never restore a
+      // tombstoned session as the post-summary surface.
+      const mergedLastSession = mergeLastWriteWins(
         local.lastSession,
         d.lastSession,
         local.lastSession?.ts,
         d.lastSession?.ts,
       );
-      useWorkoutStore.setState({ sessionsHistory, streak, lastStreakDate, lastSession });
+      const lastSession =
+        mergedLastSession && deletedSet.has(mergedLastSession.ts) ? null : mergedLastSession;
+      useWorkoutStore.setState({ sessionsHistory, streak, lastStreakDate, lastSession, deletedSessionTs });
     },
   },
   // ── progresStore: weightLog (array, id=date/ts), bodyData (array, id=ts),
@@ -198,14 +210,25 @@ const SYNCED: SyncedStore[] = [
         sessions: st.sessions,
         lastDuration: st.lastDuration,
         subjectiveByDate: st.subjectiveByDate,
+        deletedTs: st.deletedTs,
       };
     },
     apply: (remote) => {
       const d = (remote?.data ?? {}) as Partial<ReturnType<typeof useAerobicStore.getState>>;
       if (d == null || typeof d !== 'object') return;
       const local = useAerobicStore.getState();
-      // sessions union by ts — every logged class kept (no double-count drop).
-      const sessions = mergeArrayUnion(local.sessions, d.sessions, 'ts');
+      // Tombstones union both sides (a deletion on EITHER device must win — never
+      // resurrect a class the user removed on another device). Filter the merged
+      // sessions through it so a deleted class stays gone post-hydrate.
+      const localDeleted = Array.isArray(local.deletedTs) ? local.deletedTs : [];
+      const remoteDeleted = Array.isArray(d.deletedTs) ? d.deletedTs : [];
+      const deletedTs = Array.from(new Set([...localDeleted, ...remoteDeleted]));
+      const deletedSet = new Set(deletedTs);
+      // sessions union by ts — every logged class kept (no double-count drop) —
+      // then tombstoned ts removed.
+      const sessions = mergeArrayUnion(local.sessions, d.sessions, 'ts').filter(
+        (sess) => !deletedSet.has(sess?.ts),
+      );
       // lastDuration LWW by the envelope updatedAt (a single pre-fill scalar).
       const lastDuration = mergeLastWriteWins(
         local.lastDuration,
@@ -221,7 +244,7 @@ const SYNCED: SyncedStore[] = [
         Date.now() - 1,
         remote?.updatedAt,
       );
-      useAerobicStore.setState({ sessions, lastDuration, subjectiveByDate });
+      useAerobicStore.setState({ sessions, lastDuration, subjectiveByDate, deletedTs });
     },
   },
   // ── scheduleStore: current-week training/rest days (LWW by envelope updatedAt;

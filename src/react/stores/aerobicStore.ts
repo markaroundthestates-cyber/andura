@@ -91,6 +91,21 @@ export function computeAerobicKcal(
   return Math.round(met * weightKg * (minutes / 60));
 }
 
+/**
+ * Every class logged on a given local-ISO date, newest-first (stable by ts).
+ * Pure. Powers the "today's classes" list with per-entry delete + the
+ * double-log-per-day confirm (a non-empty result for today means one is logged).
+ */
+export function aerobicSessionsForDate(
+  sessions: ReadonlyArray<AerobicSession>,
+  dateISO: string,
+): AerobicSession[] {
+  if (!Array.isArray(sessions) || sessions.length === 0) return [];
+  return sessions
+    .filter((s) => s != null && s.date === dateISO)
+    .sort((a, b) => (b?.ts ?? 0) - (a?.ts ?? 0));
+}
+
 /** ISO week-start (Monday) YYYY-MM-DD for a date. Mirror userTdee.weekStartIso. */
 function weekStartIso(date: Date): string {
   if (!(date instanceof Date) || isNaN(date.getTime())) return '';
@@ -150,6 +165,17 @@ interface AerobicState {
    * the user taps a chip.
    */
   subjectiveByDate: Record<string, SubjectiveReadiness>;
+  /**
+   * Tombstones — the `ts` of every session the user explicitly DELETED. A logged
+   * class can be mislogged (Daniel's wife: 2 aerobic classes by accident, no way
+   * to remove). Plain local removal was not enough: the cloud sync merges by
+   * UNION (mergeArrayUnion never drops a remote entry), so a deleted class would
+   * RESURRECT on the next hydrate. The tombstone is the positive record of the
+   * deletion — it is synced too and re-applied on merge so the class stays gone
+   * on every device (ANDURA never-delete-without-record: we don't silently drop,
+   * we keep proof of the user's intent).
+   */
+  deletedTs: number[];
 }
 
 interface AerobicActions {
@@ -160,6 +186,15 @@ interface AerobicActions {
    * → kcal stored 0 (still counts as a class; nutrition ease just adds nothing).
    */
   logClass: (input: { date: string; type: AerobicClassType; minutes: number; weightKg: number | null }) => void;
+  /**
+   * Delete a logged class by its `ts`. Removes it from `sessions` AND records a
+   * tombstone (`deletedTs`) so the cloud sync cannot resurrect it on the next
+   * hydrate (the union merge re-applies tombstones — see storeSync aerobic.apply).
+   * Idempotent: deleting an absent/already-deleted ts is a safe no-op. Derived
+   * counters (weekly count, today's nutrition kcal) recompute from `sessions`, so
+   * dropping the entry decrements them automatically — nothing else to clear.
+   */
+  removeSession: (ts: number) => void;
   /** Persist the last-used duration without logging (live edit memory). */
   setLastDuration: (minutes: number) => void;
   /** Record the self-reported readiness for a date (pure self-report). */
@@ -171,6 +206,7 @@ const DEFAULTS: AerobicState = {
   sessions: [],
   lastDuration: DEFAULT_AEROBIC_MINUTES,
   subjectiveByDate: {},
+  deletedTs: [],
 };
 
 export const useAerobicStore = create<AerobicState & AerobicActions>()(
@@ -190,6 +226,18 @@ export const useAerobicStore = create<AerobicState & AerobicActions>()(
           lastDuration: minutes,
         }));
       },
+      removeSession: (ts) => {
+        if (!Number.isFinite(ts)) return;
+        set((s) => {
+          if (!s.sessions.some((sess) => sess.ts === ts)) return {};
+          return {
+            sessions: s.sessions.filter((sess) => sess.ts !== ts),
+            // Record the deletion so a cloud hydrate can't resurrect it (union
+            // merge re-applies tombstones). Dedupe defensively.
+            deletedTs: s.deletedTs.includes(ts) ? s.deletedTs : [...s.deletedTs, ts],
+          };
+        });
+      },
       setLastDuration: (minutes) => {
         if (!Number.isFinite(minutes) || minutes < AEROBIC_MINUTES_MIN || minutes > AEROBIC_MINUTES_MAX) {
           return;
@@ -205,16 +253,19 @@ export const useAerobicStore = create<AerobicState & AerobicActions>()(
     {
       name: 'wv2-aerobic-store',
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      // v2 (delete a logged class 2026-06-01): adds `deletedTs` tombstones so a
+      // mislogged class can be removed AND stay removed across cloud sync.
+      version: 2,
       // Blueprint consistency — partialize only data fields (NOT actions).
       partialize: (state) => ({
         sessions: state.sessions,
         lastDuration: state.lastDuration,
         subjectiveByDate: state.subjectiveByDate,
+        deletedTs: state.deletedTs,
       }) as Partial<AerobicState & AerobicActions>,
-      // Migration hook (established for future schema changes — mirror the wv2
-      // store pattern). v0 → v1 is a safe no-op: keep every persisted data field,
-      // backfill only fields a v0 snapshot lacks from DEFAULTS (zero local wipe).
+      // Migration hook (mirror the wv2 store pattern). v0/v1 → v2 is a safe
+      // backfill: keep every persisted data field, default `deletedTs` to [] for
+      // pre-v2 snapshots (zero local wipe).
       migrate: (persistedState: unknown, _version: number): AerobicState => {
         const s = (persistedState ?? {}) as Partial<AerobicState>;
         return {
@@ -224,6 +275,7 @@ export const useAerobicStore = create<AerobicState & AerobicActions>()(
             s.subjectiveByDate && typeof s.subjectiveByDate === 'object'
               ? s.subjectiveByDate
               : DEFAULTS.subjectiveByDate,
+          deletedTs: Array.isArray(s.deletedTs) ? s.deletedTs : DEFAULTS.deletedTs,
         };
       },
     },

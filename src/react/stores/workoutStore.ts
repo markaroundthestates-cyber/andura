@@ -81,6 +81,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       lastStreakDate: null,
       sessionContext: null,
       refusalTriedByEx: {},
+      deletedSessionTs: [],
 
       startSession: (sessionStart) =>
         set({
@@ -215,6 +216,24 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           };
         }),
 
+      // Delete a logged session (mislogged workout) by its ts. Removes it from
+      // sessionsHistory + records a tombstone so cloud sync can't resurrect it.
+      // lastSession cleared only when it IS the deleted one (no stale post-summary
+      // surface). streak intentionally NOT rewound (see WorkoutActions.deleteSession
+      // doc — forward-only day-boundary counter, not derived from history).
+      deleteSession: (ts) =>
+        set((s) => {
+          if (!Number.isFinite(ts)) return {};
+          if (!s.sessionsHistory.some((sess) => sess.ts === ts)) return {};
+          return {
+            sessionsHistory: s.sessionsHistory.filter((sess) => sess.ts !== ts),
+            deletedSessionTs: s.deletedSessionTs.includes(ts)
+              ? s.deletedSessionTs
+              : [...s.deletedSessionTs, ts],
+            ...(s.lastSession?.ts === ts ? { lastSession: null } : {}),
+          };
+        }),
+
       // Daniel smoke 2026-05-28 (#2 + #6) — exhaustive "Nu vreau" pool tracking.
       // Idempotent append per-exIdx (Set + spread to drop dupes, ordered preserved
       // first-seen-first so the candidates pool ordering stays predictable).
@@ -291,6 +310,9 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         sessionsHistory: state.sessionsHistory,
         streak: state.streak,
         lastStreakDate: state.lastStreakDate,
+        // Tombstones for deleted sessions — must persist so a deleted workout
+        // stays gone across reload + cloud hydrate (storeSync re-applies them).
+        deletedSessionTs: state.deletedSessionTs,
         // In-progress live session — resume on reload (no silent set loss).
         sessionStart: state.sessionStart,
         exIdx: state.exIdx,

@@ -162,6 +162,13 @@ export interface WorkoutState {
   // null = sesiune fara adaptare (intrare directa Antrenor → workout). Set de
   // WorkoutPreview.handleStart din location.state inainte de navigate workout.
   sessionContext: SessionContext | null;
+  // Tombstones — the `ts` of every logged session the user explicitly DELETED
+  // from Istoric (mislogged workout, Daniel's wife). Plain removal from
+  // sessionsHistory is not enough: the cloud sync merges by UNION (mergeArrayUnion
+  // never drops a remote entry), so a deleted session would RESURRECT on the next
+  // hydrate. The tombstone is the positive record of the deletion — synced + re-
+  // applied on merge so it stays gone on every device (never-delete-without-record).
+  deletedSessionTs: number[];
   // Daniel smoke 2026-05-28 (#2 + #6) — "Nu vreau" exhaustive cycle. Per-exIdx
   // set of English canonical engine names the user has refused this session
   // (the original + every prior swap). resolveRefusalSwap consults this so each
@@ -283,6 +290,23 @@ export interface WorkoutActions {
    * A swap on a NOT-yet-started exercise (no sets logged) is a no-op on history.
    */
   swapExercise: (exIdx: number) => void;
+  /**
+   * Delete a logged session from `sessionsHistory` by its `ts` (mislogged
+   * workout — per-entry remove from Istoric). Records a tombstone
+   * (`deletedSessionTs`) so the cloud sync cannot resurrect it on hydrate (the
+   * union merge re-applies tombstones — see storeSync workout.apply). Idempotent
+   * — deleting an absent/already-deleted ts is a safe no-op.
+   *
+   * Derived counters: `streak`/`lastStreakDate` are NOT recomputed here. Streak
+   * is a forward-only day-boundary counter (incrementStreak), not a function of
+   * sessionsHistory — silently rewinding it on an arbitrary mid-history delete
+   * would be guesswork and could corrupt a legitimately-earned streak. We delete
+   * only the session record the user pointed at; the streak stays as earned.
+   * `lastSession` (the post-summary surface) is cleared only when it IS the
+   * deleted session, so the "finished" surface doesn't keep showing a workout
+   * the user just removed.
+   */
+  deleteSession: (ts: number) => void;
   /**
    * Daniel smoke 2026-05-28 (#2 + #6) — append an engine name to the per-exIdx
    * refusal-tried set so subsequent "Nu vreau" taps on the same slot skip names

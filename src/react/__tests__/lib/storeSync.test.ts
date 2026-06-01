@@ -178,6 +178,74 @@ describe('hydrateStoresFromCloud — NO CLOBBER (local edits survive)', () => {
     expect(st.lastDuration).toBe(60);
   });
 
+  it('aerobic: a DELETED class stays gone after hydrate (tombstone wins over remote union)', async () => {
+    seedAuth();
+    // This device logged then DELETED the class ts=2000 (tombstone recorded).
+    useAerobicStore.setState({
+      sessions: [],
+      lastDuration: 50,
+      subjectiveByDate: {},
+      deletedTs: [2000],
+    });
+    // Remote still carries the deleted class (logged before the delete synced).
+    stubFetch({
+      aerobic: {
+        data: {
+          sessions: [{ date: '2026-05-30', type: 'spinning', minutes: 50, kcal: 300, ts: 2000 }],
+          lastDuration: 50,
+          subjectiveByDate: {},
+        },
+        updatedAt: 1,
+      },
+    });
+
+    await hydrateStoresFromCloud();
+
+    const st = useAerobicStore.getState();
+    // The tombstoned class must NOT resurrect.
+    expect(st.sessions.find((s) => s.ts === 2000)).toBeUndefined();
+    expect(st.sessions).toHaveLength(0);
+    expect(st.deletedTs).toContain(2000);
+  });
+
+  it('aerobic: a remote-device deletion (remote tombstone) removes a local class on hydrate', async () => {
+    seedAuth();
+    // Local still has the class; the OTHER device deleted it (remote tombstone).
+    useAerobicStore.setState({
+      sessions: [{ date: '2026-05-30', type: 'zumba', minutes: 50, kcal: 300, ts: 3000 }],
+      lastDuration: 50,
+      subjectiveByDate: {},
+      deletedTs: [],
+    });
+    stubFetch({
+      aerobic: { data: { sessions: [], lastDuration: 50, subjectiveByDate: {}, deletedTs: [3000] }, updatedAt: 1 },
+    });
+
+    await hydrateStoresFromCloud();
+
+    const st = useAerobicStore.getState();
+    expect(st.sessions.find((s) => s.ts === 3000)).toBeUndefined();
+    expect(st.deletedTs).toContain(3000);
+  });
+
+  it('workout: a DELETED session stays gone after hydrate (tombstone wins)', async () => {
+    seedAuth();
+    useWorkoutStore.setState({
+      sessionsHistory: [],
+      lastSession: null,
+      deletedSessionTs: [1234],
+    });
+    stubFetch({
+      workout: { data: { sessionsHistory: [{ title: 'Mislog', meta: '', ts: 1234 }], deletedSessionTs: [] }, updatedAt: 1 },
+    });
+
+    await hydrateStoresFromCloud();
+
+    const hist = useWorkoutStore.getState().sessionsHistory;
+    expect(hist.find((s) => s.ts === 1234)).toBeUndefined();
+    expect(useWorkoutStore.getState().deletedSessionTs).toContain(1234);
+  });
+
   it('no-op when unauthenticated (null user path → no fetch result applied)', async () => {
     // No seedAuth — getUserPath() null.
     useNutritionStore.getState().setDailyKcal('2026-05-25', 1500);
