@@ -435,15 +435,33 @@ export function PostSummary(): JSX.Element {
         <span className="text-ink2">{t('postSummary.streakLine')}</span>
       </p>
 
-      <button
-        type="button"
-        onClick={handleFinish}
-        data-testid="summary-finish"
-        className="btn-primary-lift press-feedback pulse-grad-bg pulse-shine relative overflow-hidden mt-auto w-full py-4 text-paper rounded-[14px] text-base font-semibold"
+      {/* Sticky footer CTA (2026-06-02) — the closure content (PR banner +
+          stats + muscle pills + Marius detail + streak) can run taller than the
+          viewport, pushing the primary "Done" below the fold so the user had to
+          scroll to finish. Pin the CTA to the bottom of the scroll surface
+          (.app-scroll on desktop, the viewport on mobile) so it is ALWAYS
+          reachable without scrolling; the content scrolls above it. BottomNav is
+          hidden on in-session routes (Layout IN_SESSION_ROUTES), so there is no
+          nav to overlap — but we still reserve env(safe-area-inset-bottom) so
+          the button clears the home indicator on notch phones (PWA). mt-auto
+          stays so on short content the footer still rests at the column bottom.
+          Negative inset + padding span the footer edge-to-edge under the section
+          p-6 so the paper backdrop fully masks content scrolling beneath it. */}
+      <div
+        className="sticky bottom-0 mt-auto -mx-6 -mb-6 px-6 pt-3 bg-paper"
+        style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}
+        data-testid="summary-finish-footer"
       >
-        <Ripple color="rgba(255,255,255,0.5)" />
-        <span className="relative">{t('postSummary.finishCta')}</span>
-      </button>
+        <button
+          type="button"
+          onClick={handleFinish}
+          data-testid="summary-finish"
+          className="btn-primary-lift press-feedback pulse-grad-bg pulse-shine relative overflow-hidden w-full py-4 text-paper rounded-[14px] text-base font-semibold"
+        >
+          <Ripple color="rgba(255,255,255,0.5)" />
+          <span className="relative">{t('postSummary.finishCta')}</span>
+        </button>
+      </div>
     </section>
   );
 }

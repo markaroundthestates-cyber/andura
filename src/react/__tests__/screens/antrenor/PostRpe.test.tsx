@@ -138,6 +138,18 @@ describe('PostRpe — render', () => {
       /the only input we can't infer/i
     );
   });
+
+  it('Save CTA lives in a sticky bottom footer (reachable without scrolling)', () => {
+    renderPostRpe();
+    const footer = screen.getByTestId('post-rpe-footer-actions');
+    expect(footer).toBeInTheDocument();
+    // Sticky-to-the-scroll-surface bottom so the primary Save stays in view
+    // above the scrolling rating cards (no nav on in-session routes to overlap).
+    expect(footer.className).toMatch(/\bsticky\b/);
+    expect(footer.className).toMatch(/\bbottom-0\b/);
+    // The primary Save button is rendered INSIDE the sticky footer container.
+    expect(footer.querySelector('[data-testid="post-rpe-save"]')).not.toBeNull();
+  });
 });
 
 describe('PostRpe — submit pipeline', () => {

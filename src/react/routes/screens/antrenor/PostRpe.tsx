@@ -302,6 +302,23 @@ export function PostRpe(): JSX.Element {
           );
         })}
       </div>
+      {/* Sticky footer action group (2026-06-02) — the rating list + intro +
+          gratitude footer can run taller than the viewport, pushing the primary
+          "Save" below the fold so the user had to scroll to finalize. Pin the
+          whole action area (Save / double-log confirm / gratitude line) to the
+          bottom of the scroll surface (.app-scroll on desktop, the viewport on
+          mobile) so the primary CTA is ALWAYS reachable without scrolling; the
+          rating cards scroll above it. BottomNav is hidden on in-session routes
+          (Layout IN_SESSION_ROUTES) so there is no nav to overlap — but we still
+          reserve env(safe-area-inset-bottom) so the CTA clears the home
+          indicator on notch phones (PWA). Negative inset + padding span the
+          footer edge-to-edge under the section p-6 so the paper backdrop fully
+          masks content scrolling beneath it. */}
+      <div
+        className="sticky bottom-0 -mx-6 -mb-6 px-6 pt-3 bg-paper"
+        style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}
+        data-testid="post-rpe-footer-actions"
+      >
       {/* Double-workout-per-day confirm — explicit "log another?" (not a block). */}
       {confirmAnother && (
         <div
@@ -350,11 +367,12 @@ export function PostRpe(): JSX.Element {
           (D-LEGACY-052) — recunoaste valoarea contribution Gigel/Marius
           fara paternalism. Pozitionat post-rating ca anchor recognition. */}
       <p
-        className="mt-6 text-xs text-ink3 text-center leading-relaxed"
+        className="mt-4 text-xs text-ink3 text-center leading-relaxed"
         data-testid="post-rpe-footer"
       >
         {t('postRpe.footer')}
       </p>
+      </div>
     </section>
   );
 }

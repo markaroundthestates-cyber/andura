@@ -87,6 +87,18 @@ describe('PostSummary — render base', () => {
     expect(screen.getByTestId('summary-finish')).toHaveTextContent(/Done/i);
   });
 
+  it('finish CTA lives in a sticky bottom footer (reachable without scrolling)', () => {
+    renderSummary();
+    const footer = screen.getByTestId('summary-finish-footer');
+    expect(footer).toBeInTheDocument();
+    // Sticky-to-the-scroll-surface bottom so the CTA stays in view above the
+    // scrolling closure content (no nav on in-session routes to overlap).
+    expect(footer.className).toMatch(/\bsticky\b/);
+    expect(footer.className).toMatch(/\bbottom-0\b/);
+    // The Continue/Done button is rendered INSIDE the sticky footer container.
+    expect(footer.querySelector('[data-testid="summary-finish"]')).not.toBeNull();
+  });
+
   it('§F-post-summary-06 stats grid order Duration/Sets logged/Total volume/Est. kcal', () => {
     renderSummary();
     const grid = screen.getByTestId('summary-stats-grid');
