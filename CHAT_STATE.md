@@ -1,7 +1,7 @@
 # CHAT_STATE.md — Live Claude Chat Continuity
 
-**Last updated:** 2026-05-31 (recovery: chat crapat fara handover). **Pickup: chat anterior a crăpat mid-flight fără handover — treaba lui aterizase în git dar SSOT rămăsese stale. 3 commit-uri (`0d235cf9` nutriție test date-deterministic + `d5724ec3` schedule frecvență, deja pe origin; `60bd1fe3` legal Privacy+T&C pushed acum). Harness 15/15 + smoke 4 profile PASS. main == origin din nou.**
-**Topic active:** post-feature consolidare pre-Beta — bug-uri reale reparate + arcul de igienă "nu vreau mlaștină" (split fișiere mari) + prompt-uri poze-exerciții. Pulse redesign deja live (2026-05-29), themes retrase expres.
+**Last updated:** 2026-06-01 05:00 (overnight domenii+email+regresie vizuală). **Pickup: main == origin `f84ee4a2`, 0 ahead, 5754 teste verzi local + tsc clean. Push complet noaptea asta. Daniel doarme (5 dim), preia alt CC autonom. HANDOVER FULL: `📥_inbox/HANDOVER_2026-06-01_overnight-domains-email-design-regression.md`.**
+**Topic active:** REGRESIA VIZUALĂ rezolvată (`f84ee4a2` — `bg-paper` opac pe rădăcina celor 4 taburi acoperea aurora Turbo; diagnosticat de claude-design + grep). + andura.org/.app domenii LIVE + email magic-link reparat (API key SendGrid expirat). **BUG DESCHIS PRINCIPAL: onboarding reapare la re-login Google (race restore→gate, vezi handover §2).**
 
 ---
 
