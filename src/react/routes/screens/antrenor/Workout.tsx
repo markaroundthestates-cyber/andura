@@ -209,9 +209,9 @@ export function Workout(): JSX.Element {
     currentExercise.isBodyweight
       ? currentExercise.targetKg
       : intensityMod === 'minus'
-      ? roundToEquipmentWeight(currentExercise.targetKg * 0.8, currentExercise.name)
+      ? roundToEquipmentWeight(currentExercise.targetKg * 0.8, currentExercise.engineName ?? currentExercise.name)
       : intensityMod === 'plus'
-      ? roundToEquipmentWeight(currentExercise.targetKg * 1.15, currentExercise.name)
+      ? roundToEquipmentWeight(currentExercise.targetKg * 1.15, currentExercise.engineName ?? currentExercise.name)
       : currentExercise.targetKg;
   const currentSetIdx = hasWorkout ? history[safeExIdx]?.length ?? 0 : 0;
   const isLastSetOfExercise =
@@ -299,6 +299,11 @@ export function Workout(): JSX.Element {
   // open BENEATH it on tap. Collapsed by default so the log zone stays compact;
   // the user expands only when they want to see the movement.
   const [demoOpen, setDemoOpen] = useState(false);
+  // Collapse the demo accordion when the exercise changes — otherwise it
+  // persisted expanded onto the next movement (audit MED-01).
+  useEffect(() => {
+    setDemoOpen(false);
+  }, [safeExIdx]);
   // U-04 (MED) — why-modal focus management (auto-focus + Escape + restore +
   // trap), paritate cu ExitConfirmSheet sister pattern. whyDismissRef = singurul
   // buton ("Am inteles") → Tab trap pe el insusi.
@@ -1206,7 +1211,7 @@ export function Workout(): JSX.Element {
           {isLastSetOfExercise && !isLastExercise && nextExercise && (
             <p
               className="text-xs font-medium mb-2"
-              style={{ color: 'var(--aqua)' }}
+              style={{ color: 'var(--aqua-ink)' }}
               data-testid="workout-up-next"
             >
               {t('workout.upNext', { name: nextExercise.name })}
