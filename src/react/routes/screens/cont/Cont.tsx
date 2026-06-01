@@ -154,8 +154,12 @@ export function Cont(): JSX.Element {
   // Skip-auth (no email) keeps the friendly fallback name + tagline subtitle.
   const emailLocalPart = profile.email.split('@')[0] ?? '';
   const hasRealName = profile.name.length > 0 && profile.name !== emailLocalPart;
+  // Daniel 2026-06-01: show only the FIRST name in the profile header ("Daniel",
+  // not "Daniel Mazilu"). Google OAuth supplies the full display name; we keep the
+  // full name as the JWT source of truth but render only the leading token.
+  const firstName = profile.name.split(' ')[0] || profile.name;
   const primaryLine = hasRealName
-    ? profile.name
+    ? firstName
     : profile.email || t('cont.accountFallback');
   // Subtitle only when it adds info: the email under a real name, or the
   // generic tagline in the skip-auth (no email) fallback. Suppressed when the
