@@ -84,6 +84,127 @@ export function getRecoveryByGroup(logs, painEntries, now = Date.now()) {
   return groupState;
 }
 
+// ══ AEROBIC → RECOVERY (light, fast-recovery cardio touch) ════════════════
+// Aerobic CLASSES (aerobicStore) load muscles too, but cardio fatigue is NOT
+// resistance fatigue: it is a light, broad, fast-recovering touch. So an aerobic
+// session may EASE a group (recovered -> partial / "Easing") but NEVER drives it
+// deep "Loaded"/fatigued, and it clears fast (~24h window) instead of the 48-96h
+// resistance recovery. The body map should reflect "you moved that yesterday"
+// without crying deep fatigue.
+//
+// Per-class muscle gradient (real aerobic movement: marching, jacks, knee lifts,
+// grapevine, lunges, butt kicks, burpees / mountain climbers):
+//   core dominant (every move) · legs heavy · upper light · arms light isometric.
+//   NOTHING is fully untouched. Spinning is the exception — legs + core dominant,
+//   minimal upper. Values are 0..1 RELATIVE intensity per Big-11 group.
+/** @type {Record<string, Record<string, number>>} */
+export const AEROBIC_GROUP_GRADIENT = {
+  // General studio aerobics / step / zumba / "alta" share the full-body gradient.
+  aerobic: {
+    core: 1.0,
+    'picioare-quads': 0.8, fese: 0.8, 'picioare-hamstrings': 0.7, gambe: 0.7,
+    umeri: 0.35, piept: 0.3, triceps: 0.3, spate: 0.3,
+    biceps: 0.2, antebrate: 0.2,
+  },
+  step: {
+    core: 1.0,
+    'picioare-quads': 0.9, fese: 0.85, 'picioare-hamstrings': 0.7, gambe: 0.8,
+    umeri: 0.3, piept: 0.25, triceps: 0.25, spate: 0.3,
+    biceps: 0.2, antebrate: 0.2,
+  },
+  zumba: {
+    core: 1.0,
+    'picioare-quads': 0.8, fese: 0.8, 'picioare-hamstrings': 0.65, gambe: 0.7,
+    umeri: 0.4, piept: 0.3, triceps: 0.3, spate: 0.35,
+    biceps: 0.25, antebrate: 0.2,
+  },
+  // Spinning: legs + core dominant, minimal upper (still nothing fully zero —
+  // the torso braces, the arms hold the bars).
+  spinning: {
+    core: 0.9,
+    'picioare-quads': 1.0, fese: 0.85, 'picioare-hamstrings': 0.8, gambe: 0.7,
+    umeri: 0.15, piept: 0.15, triceps: 0.15, spate: 0.2,
+    biceps: 0.15, antebrate: 0.15,
+  },
+  // Generic "other class" — same broad full-body gradient as aerobic.
+  alta: {
+    core: 1.0,
+    'picioare-quads': 0.8, fese: 0.8, 'picioare-hamstrings': 0.7, gambe: 0.7,
+    umeri: 0.35, piept: 0.3, triceps: 0.3, spate: 0.3,
+    biceps: 0.2, antebrate: 0.2,
+  },
+};
+
+// Cardio clears fast — a 24h light-touch window. Beyond it an aerobic session no
+// longer eases any group (a single rest day fully resets the cardio touch).
+const AEROBIC_RECOVERY_WINDOW_HOURS = 24;
+// A group whose decayed aerobic load clears this bar reads "Easing" (partial).
+// Tuned so a same-day / recent class eases its dominant groups (core + legs)
+// while the light upper-body touch stays mostly below the bar — honest: cardio
+// barely taxes the upper body.
+const AEROBIC_EASE_THRESHOLD = 0.35;
+
+/**
+ * Per-group "Easing" contribution from recent aerobic CLASSES. Pure. Returns a
+ * partial map: only groups the recent cardio actually eased appear (value
+ * 'partial'); everything else is omitted (caller treats absent as no aerobic
+ * touch). Cardio is capped at 'partial' by design — it never reports 'fatigued'.
+ *
+ * @param {Array<{type?: string, ts?: number, date?: string}>} sessions — aerobicStore sessions
+ * @param {number} [now] — reference timestamp (default Date.now); inject for tests
+ * @returns {{[group:string]: 'partial'}}
+ */
+export function getAerobicRecoveryContribution(sessions, now = Date.now()) {
+  /** @type {{[group:string]: number}} */
+  const load = {};
+  if (!Array.isArray(sessions)) return {};
+  const windowMs = AEROBIC_RECOVERY_WINDOW_HOURS * 60 * 60 * 1000;
+  for (const s of sessions) {
+    if (!s || typeof s.type !== 'string') continue;
+    const gradient = AEROBIC_GROUP_GRADIENT[s.type];
+    if (!gradient) continue;
+    const ts = typeof s.ts === 'number' ? s.ts : (s.date ? new Date(`${s.date}T12:00:00`).getTime() : 0);
+    if (!ts) continue;
+    const hoursAgo = (now - ts) / (60 * 60 * 1000);
+    if (hoursAgo < 0 || hoursAgo > AEROBIC_RECOVERY_WINDOW_HOURS) continue;
+    // Linear fade across the 24h window (light + fast: a class eases most right
+    // after, and is gone by the next day).
+    const decay = 1 - (now - ts) / windowMs;
+    for (const [group, weight] of Object.entries(gradient)) {
+      load[group] = (load[group] ?? 0) + weight * decay;
+    }
+  }
+  /** @type {{[group:string]: 'partial'}} */
+  const out = {};
+  for (const [group, value] of Object.entries(load)) {
+    if (value >= AEROBIC_EASE_THRESHOLD) out[group] = 'partial';
+  }
+  return out;
+}
+
+/**
+ * Merge the aerobic "Easing" contribution into a resistance recovery-state map
+ * (from getRecoveryByGroup). Cardio only RAISES a 'recovered' group to 'partial'
+ * — it never deepens an already-stressed group and never reaches 'fatigued'. So
+ * a muscle the user lifted heavy stays 'fatigued'/'partial' from the weights;
+ * one only touched by cardio shows 'partial' (Easing). Returns a NEW map.
+ *
+ * @param {{[group:string]: 'recovered'|'partial'|'fatigued'}} resistanceState
+ * @param {Array<{type?: string, ts?: number, date?: string}>} aerobicSessions
+ * @param {number} [now]
+ * @returns {{[group:string]: 'recovered'|'partial'|'fatigued'}}
+ */
+export function mergeAerobicRecovery(resistanceState, aerobicSessions, now = Date.now()) {
+  const aerobic = getAerobicRecoveryContribution(aerobicSessions, now);
+  /** @type {{[group:string]: 'recovered'|'partial'|'fatigued'}} */
+  const merged = { ...resistanceState };
+  for (const [group, state] of Object.entries(aerobic)) {
+    // Only lift a recovered group up to partial — never lower a stressed one.
+    if ((merged[group] ?? 'recovered') === 'recovered') merged[group] = state;
+  }
+  return merged;
+}
+
 /**
  * Escalate group recovery states from recent pain CDL entries (in place).
  * now is an injectable reference timestamp (default Date.now — same

@@ -27,8 +27,10 @@
 import type { JSX } from 'react';
 import { useMemo } from 'react';
 import { useWorkoutStore } from '../../stores/workoutStore';
+import { useAerobicStore } from '../../stores/aerobicStore';
 import {
   getRecoveryByGroup,
+  mergeAerobicRecovery,
   GROUP_LABELS_RO_BIG11,
   type RecoveryState,
   type PainCdlEntry,
@@ -112,10 +114,16 @@ interface RecoveryGroup {
 // lone eyebrow over empty space (03.048) for a fresh T0 user.
 export function useMuscleRecoveryGroups(): RecoveryGroup[] {
   const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
+  // Aerobic classes add a LIGHT, fast-recovery touch (cardio != resistance
+  // fatigue): they ease a fresh group up to "Easing" (partial) but never drive
+  // it deep "Loaded"/fatigued. mergeAerobicRecovery only raises 'recovered'
+  // groups — a muscle the user lifted heavy keeps its weights-derived state.
+  const aerobicSessions = useAerobicStore((s) => s.sessions);
   return useMemo(() => {
     try {
       const logs = flattenSessionsToLogs(sessionsHistory);
-      const state = getRecoveryByGroup(logs, readPainCdl());
+      const resistanceState = getRecoveryByGroup(logs, readPainCdl());
+      const state = mergeAerobicRecovery(resistanceState, aerobicSessions);
       return Object.entries(state).map(([group, st]) => ({
         group,
         label: groupLabel(group),
@@ -124,7 +132,7 @@ export function useMuscleRecoveryGroups(): RecoveryGroup[] {
     } catch {
       return [];
     }
-  }, [sessionsHistory]);
+  }, [sessionsHistory, aerobicSessions]);
 }
 
 export function MuscleRecoveryGrid(): JSX.Element | null {
