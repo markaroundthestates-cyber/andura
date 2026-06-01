@@ -28,13 +28,19 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 // conservative). 'alta' = a generic "other class" fallback.
 export type AerobicClassType = 'aerobic' | 'step' | 'zumba' | 'spinning' | 'alta';
 
-/** MET per class type. Conservative mid-band Compendium values. */
+/**
+ * MET per class type. Real-world calibrated CONSERVATIVE values (down from the
+ * old Compendium mid-band 6.5/7.5/6.5/8.5/6.0). Anchor: a hard 1h incline
+ * treadmill walk at 108kg burns ~600 kcal, so a casual general aerobic CLASS
+ * must land LOWER per-kg than that. We err low — an honest under-estimate beats
+ * an inflated kcal the user eats back.
+ */
 export const AEROBIC_MET: Record<AerobicClassType, number> = {
-  aerobic: 6.5,
-  step: 7.5,
-  zumba: 6.5,
-  spinning: 8.5,
-  alta: 6.0,
+  aerobic: 5.0,
+  step: 6.0,
+  zumba: 5.5,
+  spinning: 7.0,
+  alta: 4.5,
 };
 
 /** Ordered list of class types for the UI picker (stable order). */

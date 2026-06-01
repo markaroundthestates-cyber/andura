@@ -30,12 +30,12 @@ function iso(d: Date): string {
 }
 
 describe('aerobicStore — MET table', () => {
-  it('bakes conservative mid-band MET per class type', () => {
-    expect(AEROBIC_MET.aerobic).toBe(6.5);
-    expect(AEROBIC_MET.step).toBe(7.5);
-    expect(AEROBIC_MET.zumba).toBe(6.5);
-    expect(AEROBIC_MET.spinning).toBe(8.5);
-    expect(AEROBIC_MET.alta).toBe(6.0);
+  it('bakes real-world calibrated conservative MET per class type', () => {
+    expect(AEROBIC_MET.aerobic).toBe(5.0);
+    expect(AEROBIC_MET.step).toBe(6.0);
+    expect(AEROBIC_MET.zumba).toBe(5.5);
+    expect(AEROBIC_MET.spinning).toBe(7.0);
+    expect(AEROBIC_MET.alta).toBe(4.5);
   });
 
   it('lists all 5 class types for the picker', () => {
@@ -44,16 +44,16 @@ describe('aerobicStore — MET table', () => {
 });
 
 describe('computeAerobicKcal — MET × weight × (min/60)', () => {
-  it('spinning 8.5 MET, 70kg, 50min = round(8.5*70*50/60) = 496', () => {
-    expect(computeAerobicKcal('spinning', 70, 50)).toBe(496);
+  it('spinning 7.0 MET, 70kg, 50min = round(7.0*70*50/60) = 408', () => {
+    expect(computeAerobicKcal('spinning', 70, 50)).toBe(408);
   });
 
-  it('aerobic 6.5 MET, 60kg, 60min = 390', () => {
-    expect(computeAerobicKcal('aerobic', 60, 60)).toBe(390);
+  it('aerobic 5.0 MET, 60kg, 60min = 300', () => {
+    expect(computeAerobicKcal('aerobic', 60, 60)).toBe(300);
   });
 
-  it('step 7.5 MET, 65kg, 45min = round(7.5*65*45/60) = 366', () => {
-    expect(computeAerobicKcal('step', 65, 45)).toBe(366);
+  it('step 6.0 MET, 65kg, 45min = round(6.0*65*45/60) = 293', () => {
+    expect(computeAerobicKcal('step', 65, 45)).toBe(293);
   });
 
   it('returns null when weight missing/invalid', () => {
@@ -75,7 +75,7 @@ describe('aerobicStore — logClass', () => {
     useAerobicStore.getState().logClass({ date: '2026-05-30', type: 'spinning', minutes: 50, weightKg: 70 });
     const { sessions } = useAerobicStore.getState();
     expect(sessions).toHaveLength(1);
-    expect(sessions[0]).toMatchObject({ date: '2026-05-30', type: 'spinning', minutes: 50, kcal: 496 });
+    expect(sessions[0]).toMatchObject({ date: '2026-05-30', type: 'spinning', minutes: 50, kcal: 408 });
   });
 
   it('remembers the last-used duration (editable memory)', () => {

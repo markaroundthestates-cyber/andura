@@ -134,12 +134,12 @@ describe('AerobicCoach — class logging', () => {
   it('logs a class: kcal computed (MET x weight x hrs) + persisted', () => {
     renderAerobicCoach();
     fireEvent.click(screen.getByTestId('aerobic-log-cta'));
-    // Spinning (8.5 MET), weight 60kg, 50 min → round(8.5*60*50/60) = 425.
+    // Spinning (7.0 MET), weight 60kg, 50 min → round(7.0*60*50/60) = 350.
     fireEvent.click(screen.getByTestId('aerobic-type-spinning'));
     fireEvent.click(screen.getByTestId('aerobic-logger-save'));
     const { sessions } = useAerobicStore.getState();
     expect(sessions).toHaveLength(1);
-    expect(sessions[0]).toMatchObject({ type: 'spinning', minutes: 50, kcal: 425 });
+    expect(sessions[0]).toMatchObject({ type: 'spinning', minutes: 50, kcal: 350 });
   });
 
   it('duration memory: last-used duration pre-fills next time', () => {
