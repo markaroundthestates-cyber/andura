@@ -546,8 +546,14 @@ export const DP = {
    * @param {number | null} readinessScore
    * @param {any} _muscleState
    * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
+   * @param {('usoara'|'normala'|'grea'|null)} [sessionRating] Post-session
+   *   subjective rating from the LAST session (workoutStore.lastRating). An
+   *   honest coach must NOT blindly push when the user said the session was hard:
+   *   'grea' demotes an INCREASE day to a HOLD (same mechanism as low readiness).
+   *   'usoara'/'normala'/null leave the normal double-progression untouched.
+   *   Optional trailing param — existing callers are byte-identical.
    */
-  getSmartRecommendation(ex, readinessScore, _muscleState, nowMs) {
+  getSmartRecommendation(ex, readinessScore, _muscleState, nowMs, sessionRating) {
     const base = this.recommend(ex, nowMs);
     /** @type {Record<string, any>} */
     let result = { ...base };
@@ -560,6 +566,18 @@ export const DP = {
       result.statusLabel = '🟡 Consolidam reps';
       result.statusColor = 'var(--accent)';
       result.progressionNote = `Recuperare incompleta · Mentinem ${result.kg} kg azi`;
+    }
+
+    // Post-session rating gate (Daniel bug 2026-05-31): the user rated the LAST
+    // session 'grea' — do NOT push a weight increase this session. Hold the load
+    // (back to lastW) and keep reps, exactly like the low-readiness gate above.
+    // Only demotes an INCREASE; HOLD/CONSOLIDATE/SCALE-BACK are already non-pushing.
+    if (sessionRating === 'grea' && result.status === 'INCREASE') {
+      result.kg = this.getState(ex).lastW;
+      result.status = 'CONSOLIDATE';
+      result.statusLabel = '🟡 Consolidam reps';
+      result.statusColor = 'var(--accent)';
+      result.progressionNote = `Ultima sesiune a fost grea · Mentinem ${result.kg} kg azi`;
     }
 
     // Rep range instead of fixed — phase-aware (CUT caps isolation to 10)

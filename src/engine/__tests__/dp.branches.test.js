@@ -675,3 +675,56 @@ describe('DP injectable clock — AUTO/TARGET_DATE CUT branch (§07.198-204)', (
     expect(cut.repsTarget).toBeLessThanOrEqual(bulk.repsTarget);
   });
 });
+
+// ── getSmartRecommendation — post-session rating gate (Daniel bug 2026-05-31) ─
+// Founder repro: 10x60 rated "grea", next session STILL 10x60 — the subjective
+// post-session rating was stored (workoutStore.lastRating) but never wired into
+// the prescription. An honest coach must NOT blindly push when the user said it
+// was hard. 'grea' demotes an INCREASE day to a HOLD; 'usoara'/'normala'/null
+// leave the normal double-progression intact (still progresses).
+
+describe('DP.getSmartRecommendation — post-session rating gate', () => {
+  beforeEach(() => {
+    store = {};
+    store['phase-override'] = 'BULK';
+    // INCREASE-producing history: top reps (12 == rMax), easy per-set RPE.
+    store['logs'] = [
+      log('Cable Row', 56, 12, 7), log('Cable Row', 56, 12, 7), log('Cable Row', 56, 12, 7),
+    ];
+  });
+
+  it('without a rating → progresses (INCREASE, weight up) — control', () => {
+    const r = DP.getSmartRecommendation('Cable Row', null, null);
+    expect(r.status).toBe('INCREASE');
+    expect(r.kg).toBeGreaterThan(56);
+  });
+
+  it("'grea' on an INCREASE day → HOLDS weight (does not push)", () => {
+    const r = DP.getSmartRecommendation('Cable Row', null, null, undefined, 'grea');
+    expect(r.status).toBe('CONSOLIDATE');
+    expect(r.kg).toBe(56); // held at lastW, not increased
+  });
+
+  it("'usoara' → still progresses (INCREASE, weight up)", () => {
+    const r = DP.getSmartRecommendation('Cable Row', null, null, undefined, 'usoara');
+    expect(r.status).toBe('INCREASE');
+    expect(r.kg).toBeGreaterThan(56);
+  });
+
+  it("'normala' → still progresses (INCREASE, weight up)", () => {
+    const r = DP.getSmartRecommendation('Cable Row', null, null, undefined, 'normala');
+    expect(r.status).toBe('INCREASE');
+    expect(r.kg).toBeGreaterThan(56);
+  });
+
+  it("'grea' does NOT fabricate a push on a non-INCREASE day (CONSOLIDATE stays a hold)", () => {
+    // lastReps below rMax → CONSOLIDATE (hold weight) regardless of rating.
+    store['logs'] = [log('Cable Row', 56, 9, 8)];
+    const r = DP.getSmartRecommendation('Cable Row', null, null, undefined, 'grea');
+    // The rating gate only ever demotes an INCREASE; on a non-INCREASE day it must
+    // never RAISE the load. (kg snaps to the equipment stack, so assert the
+    // invariant "not increased above the logged load", not an exact value.)
+    expect(r.status).not.toBe('INCREASE');
+    expect(r.kg).toBeLessThanOrEqual(56);
+  });
+});

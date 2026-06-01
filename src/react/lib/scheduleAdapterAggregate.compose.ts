@@ -10,6 +10,7 @@
 import { logger } from '../../util/logger.js';
 import { getDailyWorkout } from '../../engine/schedule/scheduleAdapter.js';
 import { useOnboardingStore } from '../stores/onboardingStore';
+import { useWorkoutStore } from '../stores/workoutStore';
 import { COMPOUND_EX } from '../../constants.js';
 import type { PlannedExercise, PlannedWorkoutOutput } from './engineWrappers';
 import { toExerciseDisplay } from './exerciseDisplay';
@@ -44,6 +45,20 @@ interface DpRecommendation {
 // Fix #4 — default rest fallback (the prior hardcode) used only when the engine
 // emits no rest range (empty user / goalAdaptation blueprint absent).
 const DEFAULT_REST_SEC = 90;
+
+// Post-session subjective rating of the LAST finished session, persisted by the
+// workout store (PostRpe → setLastRating). Read via getState() (safe outside
+// React). Null when no session has been rated yet (cold start). Mirrors the
+// readinessScoreForUser() idiom — this layer reads persisted store state directly
+// so the prescription consumes the post-session 'grea' signal (Daniel bug
+// 2026-05-31: rating was stored but never wired into the next weight).
+function readLastSessionRating(): 'usoara' | 'normala' | 'grea' | null {
+  try {
+    return useWorkoutStore.getState().lastRating ?? null;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Resolve a per-exercise rest in seconds from the engine's goal-adaptation rest
@@ -113,10 +128,18 @@ function toPlannedExercise(
   // getSmartRecommendation wraps DP.recommend + applies the readiness gate
   // (holds weight on INCREASE days when readinessScore < 60). This is the
   // cycle-4 fix completion: the prescribed kg now consumes today's readiness.
+  // Post-session rating from the LAST finished session (workoutStore.lastRating):
+  // an honest coach must not blindly push when the user said it was hard. Passed
+  // into getSmartRecommendation, which demotes an INCREASE day to a HOLD on 'grea'
+  // (per-set 'greu' already blocks the increase via logs.rpe; this closes the
+  // post-session signal that was previously stored but never wired into load).
+  const sessionRating = readLastSessionRating();
   const rec = DP.getSmartRecommendation(
     engineEx.name,
     readinessScore,
     null,
+    undefined,
+    sessionRating,
   ) as DpRecommendation | null;
   const hasHistory = DP.getLogs(engineEx.name, 1).length > 0;
   const targetReps =

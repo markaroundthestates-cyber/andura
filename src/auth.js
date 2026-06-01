@@ -599,7 +599,7 @@ function _removeItem(k) {
  * Magic Link verify SAU Google OAuth signin.
  */
 export const USER_DISABLED_COPY
-  = 'Acest cont este dezactivat si programat pentru stergere definitiva. Daca te-ai razgandit si vrei sa il reactivezi, trimite un e-mail la suport@andura.app in termenul de 30 de zile de la solicitare.';
+  = 'Acest cont este dezactivat si programat pentru stergere definitiva. Daca te-ai razgandit si vrei sa il reactivezi, trimite un e-mail la support@andura.app in termenul de 30 de zile de la solicitare.';
 
 /**
  * Returns true if the auth REST error string indicates USER_DISABLED.

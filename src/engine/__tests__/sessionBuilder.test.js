@@ -255,3 +255,70 @@ describe('prioritizeWeakGroups — weakness ordering', () => {
     expect(result).toHaveLength(exercises.length);
   });
 });
+
+// ── Skill-level capability gate (Daniel bug 2026-05-31) ──────────────────────
+// A beginner must NEVER be prescribed an advanced movement (one-arm push-up,
+// pistol, archer, nordic, weighted calisthenics, single-leg lower body, etc.).
+// poolForGroup now rejects entries above skillCeiling(profileTier):
+//   T0 -> beginner only · T1 -> up to intermediate · T2+ -> advanced allowed.
+
+describe('buildSession — skill capability gate', () => {
+  const TYPES = ['PUSH', 'PULL', 'LEGS', 'UMERI_BRATE', 'UPPER_PICIOARE', 'FULL_UPPER'];
+
+  it('T0 beginner NEVER receives an advanced movement (all session types, many seeds)', () => {
+    for (const type of TYPES) {
+      for (let s = 0; s < 12; s++) {
+        const session = buildSession(type, ctx({ profileTier: 'T0', seed: `t0|${type}|${s}` }));
+        for (const ex of session.exercises) {
+          const lvl = getExerciseMetadata(ex.name).skill_level ?? 'beginner';
+          expect(lvl).toBe('beginner');
+        }
+      }
+    }
+  });
+
+  it('null/unknown tier is conservative (beginner-only, no advanced)', () => {
+    for (const type of TYPES) {
+      const session = buildSession(type, ctx({ profileTier: null, seed: `null|${type}` }));
+      for (const ex of session.exercises) {
+        const lvl = getExerciseMetadata(ex.name).skill_level ?? 'beginner';
+        expect(lvl).toBe('beginner');
+      }
+    }
+  });
+
+  it('T1 intermediate may reach intermediate but NEVER advanced', () => {
+    for (const type of TYPES) {
+      for (let s = 0; s < 12; s++) {
+        const session = buildSession(type, ctx({ profileTier: 'T1', seed: `t1|${type}|${s}` }));
+        for (const ex of session.exercises) {
+          const lvl = getExerciseMetadata(ex.name).skill_level ?? 'beginner';
+          expect(lvl).not.toBe('advanced');
+        }
+      }
+    }
+  });
+
+  it('T2 advanced CAN include an advanced movement that T0 is denied (same seed)', () => {
+    // Constrain the pool so advanced entries become observable: bodyweight-only
+    // thins anchor/isolation candidates, surfacing advanced calisthenics for T2
+    // where T0 stays capped at beginner. Scan types+seeds for one witness.
+    let found = false;
+    outer: for (const type of TYPES) {
+      for (let s = 0; s < 30; s++) {
+        const seed = `cap|${type}|${s}`;
+        const adv = buildSession(type, ctx({ available: [], profileTier: 'T2', seed }));
+        const beg = buildSession(type, ctx({ available: [], profileTier: 'T0', seed }));
+        const advHasAdvanced = adv.exercises.some(
+          (e) => getExerciseMetadata(e.name).skill_level === 'advanced',
+        );
+        const begHasAdvanced = beg.exercises.some(
+          (e) => getExerciseMetadata(e.name).skill_level === 'advanced',
+        );
+        expect(begHasAdvanced).toBe(false); // the guarantee: T0 NEVER advanced
+        if (advHasAdvanced) { found = true; break outer; }
+      }
+    }
+    expect(found).toBe(true); // T2 demonstrably unlocks at least one advanced pick
+  });
+});
