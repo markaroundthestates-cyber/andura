@@ -81,14 +81,14 @@ describe('Cont landing — Phase 5 task_13', () => {
     expect(screen.getByTestId('cont-section-help')).toBeInTheDocument();
   });
 
-  it('renders all 13 rows total per mockup', () => {
+  it('renders all 12 rows total per mockup', () => {
     renderCont();
     const rows = [
       'profile', 'notifications', 'subscription',
       'appearance', 'aparate-lipsa', 'prefs',
       'privacy', 'terms', 'export',
       'danger',
-      'support', 'ceva-nu-merge', 'about', 'faq',
+      'support', 'about', 'faq',
     ];
     rows.forEach((id) => {
       expect(screen.getByTestId(`cont-row-${id}`)).toBeInTheDocument();

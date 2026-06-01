@@ -47,7 +47,6 @@ import {
   Upload,
   AlertTriangle,
   LifeBuoy,
-  AlertOctagon,
   Info,
   HelpCircle,
   ChevronRight,
@@ -115,7 +114,6 @@ const SECTIONS: readonly ContSection[] = [
     titleKey: 'cont.sections.help',
     rows: [
       { id: 'support', labelKey: 'cont.rows.support', Icon: LifeBuoy, target: 'settings-support' },
-      { id: 'ceva-nu-merge', labelKey: 'cont.rows.cevaNuMerge', Icon: AlertOctagon, target: 'ceva-nu-merge' },
       { id: 'about', labelKey: 'cont.rows.about', Icon: Info, target: 'settings-about' },
       { id: 'faq', labelKey: 'cont.rows.faq', Icon: HelpCircle, target: 'settings-faq' },
     ],
