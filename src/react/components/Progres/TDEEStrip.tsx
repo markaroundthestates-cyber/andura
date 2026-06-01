@@ -90,6 +90,16 @@ function fmtNum(n: number): string {
  */
 function getCurrentPhaseLabel(): string {
   try {
+    // Daniel 2026-06-01: when the USER picked AUTO (or never overrode), the badge
+    // must read "Auto" — even though the engine resolves AUTO to a directional
+    // phase (CUT/BULK) internally for kcal sizing. Read the RAW override first; an
+    // AUTO/absent pick short-circuits to Auto. Only an EXPLICIT non-AUTO pick falls
+    // through to resolveActivePhase (keeps the contradiction-reconciliation so the
+    // badge never shows "Bulk" beside a correctly-computed deficit number).
+    const rawOverride = JSON.parse(localStorage.getItem('phase-override') ?? 'null') as
+      | string
+      | null;
+    if (!rawOverride || rawOverride === 'AUTO') return t(PHASE_KEY_MAP.AUTO);
     const phase = resolveActivePhase();
     if (!phase) return t(PHASE_KEY_MAP.AUTO);
     const key = (PHASE_KEY_MAP as Record<string, string>)[phase];
