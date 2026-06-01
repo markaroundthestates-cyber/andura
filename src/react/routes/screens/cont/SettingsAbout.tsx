@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Globe } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { PulseMark } from '../../../components/pulse/PulseMark';
 import { t } from '../../../../i18n/index.js';
 
 const APP_VERSION = 'v1.0.0';
@@ -16,7 +17,7 @@ export function SettingsAbout(): JSX.Element {
   const navigate = useNavigate();
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-about">
+    <section className="min-h-screen flex flex-col" data-testid="settings-about">
       <SubHeader
         title={t('settings.about.title')}
         onBack={() => navigate(gotoPath('cont'))}
@@ -24,10 +25,19 @@ export function SettingsAbout(): JSX.Element {
       />
 
       <div className="flex-1 overflow-y-auto px-6 py-6 text-center">
-        <div className="w-20 h-20 rounded-2xl bg-ink text-paper flex items-center justify-center text-3xl font-bold mx-auto mb-5 tracking-tight">
-          A
+        {/* Pulse mark tile (mockup 11-cont-SettingsAbout.png) — the brand
+            waveform on a dark --surface-solid tile with a hairline --line
+            border, replacing the foreign white "A" square. */}
+        <div
+          className="w-20 h-20 rounded-2xl grid place-items-center mx-auto mb-5"
+          style={{
+            background: 'var(--surface-solid)',
+            border: '1px solid var(--line)',
+          }}
+        >
+          <PulseMark size={52} />
         </div>
-        <h2 className="font-serif text-2xl font-semibold text-ink mb-4 leading-snug">
+        <h2 className="font-display text-2xl font-bold text-ink mb-4 leading-snug">
           {t('settings.about.tagline')}
         </h2>
         <p className="text-sm text-ink2 leading-relaxed mb-6 max-w-xs mx-auto">
