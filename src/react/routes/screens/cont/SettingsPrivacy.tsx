@@ -51,7 +51,7 @@ export function SettingsPrivacy(): JSX.Element {
   const rightsItems = tArray('settings.privacy.policy.rightsItems');
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-privacy">
+    <section className="min-h-screen flex flex-col" data-testid="settings-privacy">
       <SubHeader
         title={t('settings.privacy.title')}
         onBack={() => navigate(gotoPath('cont'))}

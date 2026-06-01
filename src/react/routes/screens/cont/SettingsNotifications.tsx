@@ -194,7 +194,7 @@ export function SettingsNotifications(): JSX.Element {
   }
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-notifications">
+    <section className="min-h-screen flex flex-col" data-testid="settings-notifications">
       <SubHeader
         title={t('settings.notifications.title')}
         onBack={() => navigate(gotoPath('cont'))}
@@ -273,7 +273,7 @@ export function SettingsNotifications(): JSX.Element {
         {/* §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid
             toggle pattern. Day picker mai jos pastreaza role="group" +
             aria-labelledby (multi-select valid, NOT mutually exclusive). */}
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-ink3 mb-3">
           {t('settings.notifications.frequencyHeading')}
         </p>
         <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
@@ -293,7 +293,7 @@ export function SettingsNotifications(): JSX.Element {
           ))}
         </div>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2" id="notif-days-label">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-ink3 mb-3" id="notif-days-label">
           {t('settings.notifications.daysHeading')}
         </p>
         <div
@@ -311,14 +311,15 @@ export function SettingsNotifications(): JSX.Element {
               data-testid={`notif-day-${idx}`}
               disabled={!enabled}
               onClick={() => { toggleNotificationDay(idx); void syncNotificationPrefs(); }}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold border disabled:opacity-50 ${days[idx] ? 'bg-brick text-paper border-brick' : 'bg-paper2 text-ink2 border-line'}`}
+              className={`flex-1 py-2 rounded-full text-sm font-semibold border disabled:opacity-50 ${days[idx] ? 'border-transparent text-[var(--on-accent)]' : 'text-ink2 border-line'}`}
+              style={days[idx] ? { background: 'var(--grad-pulse)' } : { background: 'var(--surface-2)' }}
             >
               {label}
             </button>
           ))}
         </div>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-ink3 mb-3">
           {t('settings.notifications.reminderTimeHeading')}
         </p>
         <div className="pulse-card pulse-card-tight p-4 mb-4">
@@ -329,13 +330,13 @@ export function SettingsNotifications(): JSX.Element {
             onChange={(e) => { setNotificationTime(e.target.value || time); void syncNotificationPrefs(); }}
             aria-label={t('settings.notifications.reminderTimeAria')}
             data-testid="notif-time-input"
-            className="w-full px-3 py-2 border border-lineStrong rounded-xl bg-paper text-ink font-mono text-base disabled:opacity-50"
+            className="pulse-field w-full px-3 py-2 rounded-xl text-ink font-mono text-base disabled:opacity-50"
           />
         </div>
 
         {/* §F-pass2-settings-notif-02 HIGH-BETA chat 4 — per-event domain
             toggles mockup parity andura-clasic.html L1948-1959. */}
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-ink3 mb-3">
           {t('settings.notifications.trainingHeading')}
         </p>
         <div
@@ -354,7 +355,7 @@ export function SettingsNotifications(): JSX.Element {
           ))}
         </div>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-ink3 mb-3">
           {t('settings.notifications.coachingHeading')}
         </p>
         <div
@@ -375,7 +376,7 @@ export function SettingsNotifications(): JSX.Element {
 
         {/* §F-pass2-settings-notif-03 — Quiet hours display per mockup
             L1961-1964. V1 read-only info row (not interactive picker). */}
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-ink3 mb-3">
           {t('settings.notifications.quietHoursHeading')}
         </p>
         <div

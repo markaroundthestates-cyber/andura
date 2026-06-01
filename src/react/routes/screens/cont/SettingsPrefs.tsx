@@ -52,7 +52,7 @@ export function SettingsPrefs(): JSX.Element {
   }
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-prefs">
+    <section className="min-h-screen flex flex-col" data-testid="settings-prefs">
       <SubHeader
         title={t('settings.prefs.title')}
         onBack={() => navigate(gotoPath('cont'))}
@@ -63,11 +63,16 @@ export function SettingsPrefs(): JSX.Element {
         {/* §6-M3 revert per Karpathy SF — aria-pressed pe <button> valid
             toggle pattern. Vezi SchimbaFazaConfirm + Onboarding pentru
             rationale full. */}
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-ink3 mb-3">
           {t('settings.prefs.units.heading')}
         </p>
-        <div className="pulse-card pulse-card-tight overflow-hidden">
-          {UNIT_OPTIONS.map((opt, idx) => {
+        <div
+          className="flex gap-1.5 rounded-[14px] p-1"
+          style={{ background: 'var(--surface-2)' }}
+          role="group"
+          aria-label={t('settings.prefs.units.heading')}
+        >
+          {UNIT_OPTIONS.map((opt) => {
             // Honest V1: app shows weights in kg everywhere; lb conversion is
             // post-Beta. kg is the effective active unit regardless of any
             // legacy persisted value; lb is disabled (no false "switched" state).
@@ -81,10 +86,10 @@ export function SettingsPrefs(): JSX.Element {
                 aria-pressed={selected}
                 disabled={disabled}
                 onClick={() => !disabled && setUnitSystem(opt.value)}
-                className={`w-full flex items-center px-4 py-3 text-left ${idx < UNIT_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${disabled ? 'text-ink2 opacity-60 cursor-not-allowed' : selected ? 'text-brick font-semibold' : 'text-ink'}`}
+                className={`flex-1 min-h-[44px] py-2.5 rounded-[11px] text-sm font-semibold transition-colors ${disabled ? 'text-ink2 opacity-60 cursor-not-allowed' : selected ? '' : 'text-ink2'}`}
+                style={selected ? { background: 'var(--grad-pulse)', color: 'var(--on-accent)' } : undefined}
               >
-                <span className="flex-1 text-sm">{t(opt.labelKey)}</span>
-                {selected && <span aria-hidden="true">•</span>}
+                {t(opt.labelKey)}
               </button>
             );
           })}
@@ -93,11 +98,16 @@ export function SettingsPrefs(): JSX.Element {
           {t('settings.prefs.units.note')}
         </p>
 
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-ink3 mb-3">
           {t('settings.prefs.weekStart.heading')}
         </p>
-        <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
-          {WEEK_START_OPTIONS.map((opt, idx) => {
+        <div
+          className="flex gap-1.5 rounded-[14px] p-1 mb-4"
+          style={{ background: 'var(--surface-2)' }}
+          role="group"
+          aria-label={t('settings.prefs.weekStart.heading')}
+        >
+          {WEEK_START_OPTIONS.map((opt) => {
             const selected = weekStart === opt.value;
             return (
               <button
@@ -106,10 +116,10 @@ export function SettingsPrefs(): JSX.Element {
                 data-testid={`week-start-${opt.value}`}
                 aria-pressed={selected}
                 onClick={() => setWeekStart(opt.value)}
-                className={`w-full flex items-center px-4 py-3 text-left ${idx < WEEK_START_OPTIONS.length - 1 ? 'border-b border-line' : ''} ${selected ? 'text-brick font-semibold' : 'text-ink'}`}
+                className={`flex-1 min-h-[44px] py-2.5 rounded-[11px] text-sm font-semibold transition-colors ${selected ? '' : 'text-ink2'}`}
+                style={selected ? { background: 'var(--grad-pulse)', color: 'var(--on-accent)' } : undefined}
               >
-                <span className="flex-1 text-sm">{t(opt.labelKey)}</span>
-                {selected && <span aria-hidden="true">•</span>}
+                {t(opt.labelKey)}
               </button>
             );
           })}
@@ -121,13 +131,17 @@ export function SettingsPrefs(): JSX.Element {
             persisted to localStorage via i18n.setLocale (`sf.locale`) +
             syncs <html lang> for a11y/SEO. Selected row marked with • per
             UNIT_OPTIONS / WEEK_START_OPTIONS pattern for visual consistency. */}
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-ink3 mb-3">
           {t('settings.prefs.language.heading')} / Language
         </p>
-        <div className="pulse-card pulse-card-tight overflow-hidden mb-4">
-          {LANGUAGE_OPTIONS.map((opt, idx) => {
+        <div
+          className="flex gap-1.5 rounded-[14px] p-1 mb-4"
+          style={{ background: 'var(--surface-2)' }}
+          role="group"
+          aria-label={`${t('settings.prefs.language.heading')} / Language`}
+        >
+          {LANGUAGE_OPTIONS.map((opt) => {
             const selected = locale === opt.value;
-            const isLast = idx === LANGUAGE_OPTIONS.length - 1;
             return (
               <button
                 key={opt.value}
@@ -135,20 +149,20 @@ export function SettingsPrefs(): JSX.Element {
                 data-testid={`language-${opt.value}`}
                 aria-pressed={selected}
                 onClick={() => handleLocaleChange(opt.value)}
-                className={`w-full flex items-center px-4 py-3 text-left ${isLast ? '' : 'border-b border-line'} ${selected ? 'text-brick font-semibold' : 'text-ink'}`}
+                className={`flex-1 min-h-[44px] py-2 rounded-[11px] text-sm font-semibold flex flex-col items-center justify-center leading-tight transition-colors ${selected ? '' : 'text-ink2'}`}
+                style={selected ? { background: 'var(--grad-pulse)', color: 'var(--on-accent)' } : undefined}
               >
-                <span className="flex-1 text-sm">{t(opt.labelKey)}</span>
+                <span>{t(opt.labelKey)}</span>
                 {opt.value === 'en' && (
-                  <span className="text-xs text-ink3 mr-2">{t('settings.prefs.language.default')}</span>
+                  <span className="font-mono text-[9px] uppercase tracking-wide opacity-70">{t('settings.prefs.language.default')}</span>
                 )}
-                {selected && <span aria-hidden="true">•</span>}
               </button>
             );
           })}
         </div>
 
         {/* §B001+B002+B011 D047 Stage 3 — Avansat section drill-downs (mockup L2085-2096). */}
-        <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-ink3 mb-3">
           {t('settings.prefs.advanced.heading')}
         </p>
         <div className="pulse-card pulse-card-tight overflow-hidden">

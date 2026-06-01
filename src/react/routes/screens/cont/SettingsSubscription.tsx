@@ -24,7 +24,7 @@ export function SettingsSubscription(): JSX.Element {
   const [notified, setNotified] = useState(false);
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="settings-subscription">
+    <section className="min-h-screen flex flex-col" data-testid="settings-subscription">
       <SubHeader
         title={t('settings.subscription.title')}
         onBack={() => navigate(gotoPath('cont'))}
