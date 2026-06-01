@@ -677,6 +677,7 @@
     },
     "recovery": {
       "ariaLabel": "Recuperare musculara pe grupe",
+      "fatigueLine": "Oboseala {score}/10 · {word}",
       "state": {
         "recovered": "Odihnit",
         "partial": "In curs",

@@ -677,6 +677,7 @@
     },
     "recovery": {
       "ariaLabel": "Muscle recovery by group",
+      "fatigueLine": "Fatigue {score}/10 · {word}",
       "state": {
         "recovered": "Fresh",
         "partial": "Easing",

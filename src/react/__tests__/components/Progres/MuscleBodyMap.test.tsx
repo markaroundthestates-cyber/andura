@@ -8,7 +8,16 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, within, fireEvent } from '@testing-library/react';
+
+// getFatigue drives the panel-header fatigue line (concern D). Mock it so the
+// cold default is the not-enough-data state (the line must be SUPPRESSED), and
+// override per-test for the with-data case. Default null = no fatigue tile.
+vi.mock('../../../lib/engineWrappers', () => ({
+  getFatigue: vi.fn(() => null),
+}));
+
 import { MuscleBodyMap } from '../../../components/Progres/MuscleBodyMap';
+import { getFatigue } from '../../../lib/engineWrappers';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { BIG11_GROUPS } from '../../../../engine/muscleRecovery.js';
@@ -70,6 +79,7 @@ beforeEach(() => {
   setSex('m');
   localStorage.clear();
   mockMatchMedia(false);
+  vi.mocked(getFatigue).mockReturnValue(null);
 });
 
 afterEach(() => {
@@ -325,5 +335,65 @@ describe('MuscleBodyMap', () => {
     const region = screen.getAllByTestId('body-region-piept')[0]!;
     const label = region.getAttribute('aria-label') ?? '';
     expect(label).toMatch(/:/);
+  });
+
+  // ── panel-header fatigue score (concern D) ────────────────────────────────
+  it('suppresses the fatigue line at cold-start (not-enough-data → no line)', () => {
+    // getFatigue() null (mock default) — never show "0/10" or a placeholder.
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    expect(screen.queryByTestId('recovery-fatigue-line')).not.toBeInTheDocument();
+  });
+
+  it('suppresses the fatigue line on the INSUFFICIENT_DATA engine state', () => {
+    vi.mocked(getFatigue).mockReturnValue({
+      score: 0,
+      key: 'INSUFFICIENT_DATA',
+      label: 'DATE INSUFICIENTE',
+      icon: '',
+      color: '',
+      recommend: 'none',
+      detail: '',
+    });
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    expect(screen.queryByTestId('recovery-fatigue-line')).not.toBeInTheDocument();
+  });
+
+  it('shows the fatigue line beside the legend once there is real data', () => {
+    vi.mocked(getFatigue).mockReturnValue({
+      score: 75, // → 8/10 → "Loaded"/Solicitat (legend vocabulary)
+      key: 'HIGH_FATIGUE',
+      label: 'Azi mergem mai bland',
+      icon: '',
+      color: '',
+      recommend: 'deload',
+      detail: '',
+    });
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    const line = screen.getByTestId('recovery-fatigue-line');
+    expect(line).toBeInTheDocument();
+    // Score out of 10 + a legend-vocabulary word (default EN locale: Loaded).
+    expect(line.textContent).toMatch(/8\/10/);
+    expect(line.textContent).toMatch(/Loaded/);
+    // Never the raw "0/10" placeholder.
+    expect(line.textContent).not.toMatch(/0\/10/);
+  });
+
+  it('the fatigue word reuses the recovery legend vocabulary (low score → Fresh)', () => {
+    vi.mocked(getFatigue).mockReturnValue({
+      score: 10, // → 1/10 → "Fresh" (legend vocabulary, default EN locale)
+      key: 'NORMAL',
+      label: 'Pe drum bun',
+      icon: '',
+      color: '',
+      recommend: 'normal',
+      detail: '',
+    });
+    setSessions(HEAVY_CHEST);
+    render(<MuscleBodyMap />);
+    expect(screen.getByTestId('recovery-fatigue-line').textContent).toMatch(/1\/10/);
+    expect(screen.getByTestId('recovery-fatigue-line').textContent).toMatch(/Fresh/);
   });
 });

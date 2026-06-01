@@ -45,6 +45,7 @@ import {
   type View,
 } from './muscleBodyAnatomy';
 import type { RecoveryState } from '../../../engine/muscleRecovery.js';
+import { getFatigue } from '../../lib/engineWrappers';
 import { t } from '../../../i18n/index.js';
 
 // ── State → color token (red→orange→green spectrum, Pulse palette) ─────────────
@@ -61,6 +62,16 @@ const NEUTRAL_FILL = 'var(--line)';
 
 // Legend order = severity ramp red→green so the gradient reads top→bottom.
 const LEGEND_ORDER: RecoveryState[] = ['fatigued', 'partial', 'recovered'];
+
+// Map the overall fatigue score (0-10, higher = more fatigued) to the SAME
+// legend vocabulary the recovery states use (recovered=Fresh, partial=Easing,
+// fatigued=Loaded) so the header word reads consistently with the body legend.
+// A fresh body = "Fresh"; a depleted one = "Loaded".
+function fatigueWord(scoreOutOfTen: number): RecoveryState {
+  if (scoreOutOfTen >= 7) return 'fatigued';
+  if (scoreOutOfTen >= 4) return 'partial';
+  return 'recovered';
+}
 
 // ── SVG fallback fidelity ids (only used if the image fails to load) ───────────
 const GRAD_ID: Record<RecoveryState, string> = {
@@ -133,6 +144,20 @@ export function MuscleBodyMap(): JSX.Element | null {
 
   const glows = getGlowRegions(view);
   const imageSrc = getBodyImageSrc(sex, view);
+
+  // Overall fatigue score in the panel header (position 2, beside the legend).
+  // CRITICAL data honesty: render the line ONLY when there is REAL fatigue data.
+  // getFatigue() returns key 'INSUFFICIENT_DATA' (score 0) before 2+ sessions —
+  // we SUPPRESS the line entirely in that case (never show "0/10" or a
+  // not-enough-data string). The word reuses the recovery legend vocabulary.
+  const fatigue = getFatigue();
+  const fatigueLine =
+    fatigue && fatigue.key !== 'INSUFFICIENT_DATA'
+      ? {
+          score: Math.round(fatigue.score / 10),
+          word: t(`progres.recovery.state.${fatigueWord(Math.round(fatigue.score / 10))}`),
+        }
+      : null;
 
   return (
     <section
@@ -252,8 +277,24 @@ export function MuscleBodyMap(): JSX.Element | null {
 
         {/* ── Legend + per-group readout ──────────────────────────────────── */}
         <div className="flex-1 min-w-0">
-          <div className="text-[10px] uppercase tracking-wide text-ink3 font-semibold mb-2">
-            {t('progres.recovery.bodyMap.legendTitle')}
+          {/* Header row: RECOVERY legend title (left) + overall fatigue score
+              (position 2, right). The fatigue line is suppressed entirely until
+              there is real data — no "0/10", no not-enough-data placeholder. */}
+          <div className="flex items-baseline justify-between gap-2 mb-2">
+            <div className="text-[10px] uppercase tracking-wide text-ink3 font-semibold">
+              {t('progres.recovery.bodyMap.legendTitle')}
+            </div>
+            {fatigueLine && (
+              <div
+                className="text-[10px] text-ink2 font-semibold shrink-0"
+                data-testid="recovery-fatigue-line"
+              >
+                {t('progres.recovery.fatigueLine', {
+                  score: String(fatigueLine.score),
+                  word: fatigueLine.word,
+                })}
+              </div>
+            )}
           </div>
           {/* Color → meaning legend (red→green ramp). */}
           <ul className="flex flex-col gap-1.5 mb-3" data-testid="body-map-legend">
