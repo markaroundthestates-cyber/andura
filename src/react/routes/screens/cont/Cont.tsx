@@ -12,16 +12,18 @@
 // the screen is re-skinned to the Pulse glass card language (.pulse-card) —
 // display wordmark + mono zone eyebrows. Composition matching Daniel's mockup:
 // (1) the profile header is a gradient-pebble avatar card (--grad-pulse + aqua
-// glow) + streak Pill (useWorkoutStore.streak); (2) Appearance is an inline
-// LIVE card with the Pulse ACCENT picker (4 swatches Volt/Aqua/Ember/Violet
-// wired to settingsStore.accent — applied app-wide via paletteSync.applyAccent
-// as a --brick override on documentElement) + a Dark/Light toggle wired to
-// settingsStore.theme. Both persist in 'wv2-settings-store' (NOT ephemeral
-// state). Daniel dropped the old multi-palette "themes" system (SettingsThemes
-// retired) — accent + Dark/Light are the only appearance controls. Engine/store
-// wires, the SECTIONS map + every row `target` navigation (incl. the danger
-// row → settings-danger → logout-confirm / delete-account-confirm confirm-
-// screen gating), the JWT profile wiring, and ALL testids are unchanged.
+// glow) + streak Pill (useWorkoutStore.streak); (2) Appearance is a tappable
+// row (under General) that opens the SettingsAppearance sub-screen.
+//
+// ADDENDUM 4 (arc #5 2026-06-01) — the Account home used to render the FULL
+// expanded ACCENT + Dark/Light block inline AND an "Appearance" row, a visible
+// duplicate. The expanded block (accent picker + mode toggle) MOVED into
+// SettingsAppearance.tsx; the Account home now keeps only the clean row list
+// (the "Appearance" row opens the sub-screen one tap deeper). Render-move only:
+// the accent/mode state + handlers + testids live unchanged on the sub-screen.
+// Engine/store wires, the SECTIONS map + every row `target` navigation (incl.
+// the danger row → settings-danger → logout-confirm / delete-account-confirm
+// confirm-screen gating), the JWT profile wiring are unchanged.
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -29,9 +31,6 @@ import { gotoPath } from '../../../lib/navigation';
 import type { GotoScreen } from '../../../lib/navigation';
 import { getUserProfileDisplay } from './userProfile';
 import { useWorkoutStore } from '../../../stores/workoutStore';
-import { useSettingsStore } from '../../../stores/settingsStore';
-import type { Accent } from '../../../stores/settingsStore';
-import { applyAccent } from '../../../lib/paletteSync';
 import { Pill } from '../../../components/pulse/Pill';
 import { t } from '../../../../i18n/index.js';
 import {
@@ -51,7 +50,6 @@ import {
   HelpCircle,
   ChevronRight,
   Flame,
-  Check,
 } from 'lucide-react';
 
 interface ContRow {
@@ -174,42 +172,6 @@ export function Cont(): JSX.Element {
   const streak = useWorkoutStore((s) => s.streak);
   const streakUnit = streak === 1 ? t('stats.streakUnit_one') : t('stats.streakUnit_other');
 
-  // Inline LIVE Appearance card (interfata-noua/screens-tabs.jsx:343-363) —
-  // Dark/Light toggle wired to the REAL theme store (useSettingsStore.theme +
-  // setTheme), the same mechanism SettingsAppearance drives. ThemeSync applies
-  // it to <html data-theme> and zustand `persist` saves it under
-  // 'wv2-settings-store' — so the pick survives reload + applies app-wide
-  // (NOT ephemeral useState). `auto` (system) shows Dark as the active half
-  // (the default mov dark look); the binary toggle commits 'dark' / 'light'.
-  const theme = useSettingsStore((s) => s.theme);
-  const setTheme = useSettingsStore((s) => s.setTheme);
-  const isLight = theme === 'light';
-  const MODE_OPTIONS = [
-    { value: 'dark' as const, labelKey: 'cont.appearance.modeDark', active: !isLight },
-    { value: 'light' as const, labelKey: 'cont.appearance.modeLight', active: isLight },
-  ];
-
-  // Pulse ACCENT picker (interfata-noua/screens-tabs.jsx:344-355) — swaps the
-  // primary accent (--brick) at runtime among the four Pulse hues. Wired to
-  // the REAL settingsStore.accent (persisted under 'wv2-settings-store') +
-  // applied app-wide via paletteSync.applyAccent (documentElement --brick
-  // override; PaletteSync re-applies on every mount, anti-FOUC pre-mount in
-  // main.tsx). Default Volt = the theme default (no override). Daniel dropped
-  // the old multi-palette "themes" system — this accent + Dark/Light are the
-  // only appearance controls.
-  const accent = useSettingsStore((s) => s.accent);
-  const setAccent = useSettingsStore((s) => s.setAccent);
-  const pickAccent = (a: Accent): void => {
-    setAccent(a);
-    applyAccent(a);
-  };
-  const ACCENT_OPTIONS = [
-    { value: 'volt' as const, hex: 'var(--volt)', labelKey: 'cont.appearance.accentVolt' },
-    { value: 'aqua' as const, hex: 'var(--aqua)', labelKey: 'cont.appearance.accentAqua' },
-    { value: 'ember' as const, hex: 'var(--ember)', labelKey: 'cont.appearance.accentEmber' },
-    { value: 'violet' as const, hex: 'var(--violet)', labelKey: 'cont.appearance.accentViolet' },
-  ];
-
   return (
     <section className="pt-4 px-5 pb-6 min-h-screen" data-testid="cont-home">
       {/* Pulse header (interfata-noua/screens-tabs.jsx:331) — display wordmark.
@@ -248,74 +210,6 @@ export function Cont(): JSX.Element {
           <Flame className="w-3 h-3" aria-hidden="true" />
           {streak} {streakUnit}
         </Pill>
-      </div>
-
-      {/* APPEARANCE — inline LIVE card (interfata-noua/screens-tabs.jsx:343-363).
-          Accent picker (4 Pulse swatches Volt/Aqua/Ember/Violet) wired to the
-          real settingsStore.accent (persisted; applied app-wide via
-          paletteSync.applyAccent — documentElement --brick override). The
-          Dark/Light toggle wires to settingsStore.theme. Daniel dropped the
-          old multi-palette "themes" system: accent + Dark/Light are the only
-          appearance controls now. */}
-      <ZoneHeading>{t('cont.appearance.heading')}</ZoneHeading>
-      <div className="pulse-card p-4 animate-card-rise" data-testid="cont-appearance-card">
-        {/* Accent — 4 swatches, selected gets a glow halo + check (mockup .acc-sw). */}
-        <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-ink3 mb-3">
-          {t('cont.appearance.accentLabel')}
-        </p>
-        <div className="flex gap-3" role="group" aria-label={t('cont.appearance.accentLabel')} data-testid="cont-appearance-accent">
-          {ACCENT_OPTIONS.map((opt) => {
-            const active = accent === opt.value;
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                data-testid={`cont-accent-${opt.value}`}
-                aria-pressed={active}
-                aria-label={t(opt.labelKey)}
-                onClick={() => pickAccent(opt.value)}
-                className="flex flex-col items-center flex-1 press-feedback"
-              >
-                <span
-                  className="w-[42px] h-[42px] rounded-full grid place-items-center transition-transform duration-200"
-                  style={{
-                    background: opt.hex,
-                    boxShadow: active ? `0 0 18px -2px ${opt.hex}` : 'none',
-                    transform: active ? 'scale(1.06)' : 'none',
-                  }}
-                >
-                  {active && (
-                    <Check className="w-[15px] h-[15px]" strokeWidth={2.8} style={{ color: 'var(--on-accent)' }} aria-hidden="true" />
-                  )}
-                </span>
-                <span className="font-mono text-[9.5px] text-ink3 uppercase tracking-wide mt-1.5">{t(opt.labelKey)}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="h-px bg-line my-4" />
-
-        {/* Mode — Dark/Light segmented toggle wired to the real theme store. */}
-        <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-ink3 mb-3">
-          {t('cont.appearance.modeLabel')}
-        </p>
-        <div className="flex gap-1.5 rounded-[14px] p-1" style={{ background: 'var(--surface-2)' }} role="group" aria-label={t('cont.appearance.modeLabel')}>
-          {MODE_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              data-testid={`cont-theme-${opt.value}`}
-              aria-pressed={opt.active}
-              onClick={() => setTheme(opt.value)}
-              className={`flex-1 min-h-[44px] py-2.5 rounded-[11px] text-sm font-semibold transition-colors ${
-                opt.active ? 'bg-brick text-paper' : 'text-ink2'
-              }`}
-            >
-              {t(opt.labelKey)}
-            </button>
-          ))}
-        </div>
       </div>
 
       {SECTIONS.map((section) => (

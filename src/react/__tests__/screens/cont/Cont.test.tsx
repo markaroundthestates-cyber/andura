@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Cont } from '../../../routes/screens/cont/Cont';
 import { useSettingsStore } from '../../../stores/settingsStore';
@@ -109,38 +109,19 @@ describe('Cont landing — Phase 5 task_13', () => {
     renderCont();
     expect(screen.getByText(/Andura v1\.0\.0/i)).toBeInTheDocument();
   });
-});
 
-// Pulse accent picker (replaces the retired multi-palette "themes" system).
-describe('Cont — appearance accent picker (Pulse)', () => {
-  it('renders 4 accent swatches Volt/Aqua/Ember/Violet', () => {
+  // ADDENDUM 4 (2026-06-01) — the expanded accent + Dark/Light block was
+  // removed from the Account home (it duplicated the "Appearance" row). The
+  // Account home now keeps ONLY the tappable row; the controls live one tap
+  // deeper in SettingsAppearance. Coverage for the moved controls is in
+  // SettingsAppearance.test.tsx.
+  it('does NOT render the inline appearance block (moved to SettingsAppearance)', () => {
     renderCont();
-    expect(screen.getByTestId('cont-accent-volt')).toBeInTheDocument();
-    expect(screen.getByTestId('cont-accent-aqua')).toBeInTheDocument();
-    expect(screen.getByTestId('cont-accent-ember')).toBeInTheDocument();
-    expect(screen.getByTestId('cont-accent-violet')).toBeInTheDocument();
-  });
-
-  it('default accent = Volt (pressed) when store fresh', () => {
-    renderCont();
-    expect(screen.getByTestId('cont-accent-volt')).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByTestId('cont-accent-aqua')).toHaveAttribute('aria-pressed', 'false');
-  });
-
-  it('click swatch updates store + applies --brick override on documentElement', () => {
-    renderCont();
-    fireEvent.click(screen.getByTestId('cont-accent-aqua'));
-    expect(useSettingsStore.getState().accent).toBe('aqua');
-    expect(screen.getByTestId('cont-accent-aqua')).toHaveAttribute('aria-pressed', 'true');
-    expect(document.documentElement.style.getPropertyValue('--brick')).toBe('#4fd6e8');
-  });
-
-  it('picking Volt clears the --brick override (theme default owns it)', () => {
-    renderCont();
-    fireEvent.click(screen.getByTestId('cont-accent-ember'));
-    expect(document.documentElement.style.getPropertyValue('--brick')).toBe('#ff7d52');
-    fireEvent.click(screen.getByTestId('cont-accent-volt'));
-    expect(useSettingsStore.getState().accent).toBe('volt');
-    expect(document.documentElement.style.getPropertyValue('--brick')).toBe('');
+    expect(screen.queryByTestId('cont-appearance-card')).toBeNull();
+    expect(screen.queryByTestId('cont-appearance-accent')).toBeNull();
+    expect(screen.queryByTestId('cont-accent-volt')).toBeNull();
+    expect(screen.queryByTestId('cont-theme-dark')).toBeNull();
+    // The tappable Appearance row remains (opens the sub-screen).
+    expect(screen.getByTestId('cont-row-appearance')).toBeInTheDocument();
   });
 });

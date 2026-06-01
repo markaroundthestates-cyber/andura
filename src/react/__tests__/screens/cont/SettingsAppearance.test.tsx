@@ -34,6 +34,7 @@ function renderScreen() {
 beforeEach(() => {
   useSettingsStore.getState().reset();
   localStorage.clear(); __resetI18n(); __setLocale("ro"); // Wave E4 RO pin
+  document.documentElement.style.removeProperty('--brick');
 });
 
 describe('SettingsAppearance — render + interactions', () => {
@@ -69,5 +70,57 @@ describe('SettingsAppearance — render + interactions', () => {
   it('no diacritics in UI text', () => {
     const { container } = renderScreen();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+});
+
+// ADDENDUM 4 (2026-06-01) — accent picker + Dark/Light mode MOVED here from the
+// inline Cont card (the Account home no longer duplicates them). Testids
+// preserved verbatim (cont-accent-*, cont-theme-*). Render-move, not behavior
+// change: the same settingsStore wires drive the controls.
+describe('SettingsAppearance — accent picker (moved from Cont)', () => {
+  it('renders 4 accent swatches Volt/Aqua/Ember/Violet', () => {
+    renderScreen();
+    expect(screen.getByTestId('cont-accent-volt')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-accent-aqua')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-accent-ember')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-accent-violet')).toBeInTheDocument();
+  });
+
+  it('default accent = Volt (pressed) when store fresh', () => {
+    renderScreen();
+    expect(screen.getByTestId('cont-accent-volt')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('cont-accent-aqua')).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('click swatch updates store + applies --brick override on documentElement', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('cont-accent-aqua'));
+    expect(useSettingsStore.getState().accent).toBe('aqua');
+    expect(screen.getByTestId('cont-accent-aqua')).toHaveAttribute('aria-pressed', 'true');
+    expect(document.documentElement.style.getPropertyValue('--brick')).toBe('#4fd6e8');
+  });
+
+  it('picking Volt clears the --brick override (theme default owns it)', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('cont-accent-ember'));
+    expect(document.documentElement.style.getPropertyValue('--brick')).toBe('#ff7d52');
+    fireEvent.click(screen.getByTestId('cont-accent-volt'));
+    expect(useSettingsStore.getState().accent).toBe('volt');
+    expect(document.documentElement.style.getPropertyValue('--brick')).toBe('');
+  });
+});
+
+describe('SettingsAppearance — Dark/Light mode (moved from Cont)', () => {
+  it('renders Dark/Light toggle; Dark active by default (auto/dark)', () => {
+    renderScreen();
+    expect(screen.getByTestId('cont-theme-dark')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('cont-theme-light')).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('clicking Light updates the theme store', () => {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('cont-theme-light'));
+    expect(useSettingsStore.getState().theme).toBe('light');
+    expect(screen.getByTestId('cont-theme-light')).toHaveAttribute('aria-pressed', 'true');
   });
 });
