@@ -24,7 +24,7 @@
 import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Dumbbell, Flame, TrendingDown, ShieldCheck, Check } from 'lucide-react';
+import { Sparkles, Dumbbell, Flame, TrendingDown, ShieldCheck } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import type { Goal } from '../../stores/onboardingStore';
@@ -127,10 +127,16 @@ export function ObiectivGoalCard(): JSX.Element {
       <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
         {t('obiectiv.heading')}
       </p>
-      <div className="pulse-card overflow-hidden">
-        {OPTIONS.map((opt, i) => {
+      {/* Compact 5-tile selector (Daniel mockup goals-compact.png 2026-06-01):
+          5 EQUAL tiles in one row (grid-cols-5), each centered icon + short
+          label; selected = volt border + volt tint (ob-row-selected) + volt
+          glow + a mono "PICKED" caption. The per-goal sub-copy (opt.subKey)
+          no longer renders inside a tile (no room) but stays in OPTIONS for the
+          aria-label + the program-change-confirm pendingSub. Behavior, OPTIONS,
+          pick(), gating + every data-testid unchanged — layout/styling only. */}
+      <div className="grid grid-cols-5 gap-2">
+        {OPTIONS.map((opt) => {
           const selected = activeGoal === opt.id;
-          const isLast = i === OPTIONS.length - 1;
           const title = t(opt.titleKey);
           const sub = t(opt.subKey);
           // §gating — contradicting phases for the target direction are disabled:
@@ -150,9 +156,14 @@ export function ObiectivGoalCard(): JSX.Element {
               aria-disabled={disabled || undefined}
               title={disabled ? t('obiectiv.gating.disabledHint') : undefined}
               aria-label={t('obiectiv.optionAriaTemplate', { title, sub })}
-              className={`w-full flex items-center gap-3 px-4 py-3 min-h-[44px] text-left text-ink ${
-                isLast ? '' : 'border-b border-line'
-              } ${selected ? 'ob-row-selected' : 'bg-paper2'} ${
+              style={
+                selected
+                  ? { boxShadow: '0 0 16px -4px color-mix(in oklab, var(--brick) 60%, transparent)' }
+                  : { background: 'var(--surface-2)' }
+              }
+              className={`pulse-card-tight flex flex-col items-center justify-center gap-1.5 px-1.5 py-3 min-h-[76px] text-center text-ink border ${
+                selected ? 'ob-row-selected' : 'border-line'
+              } ${
                 disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : ''
               }`}
             >
@@ -160,24 +171,16 @@ export function ObiectivGoalCard(): JSX.Element {
                 className={`w-5 h-5 flex-shrink-0 ${selected ? 'text-brick' : 'text-ink2'}`}
                 aria-hidden="true"
               />
-              <span className="flex-1 min-w-0">
-                <span className="block font-semibold text-sm leading-tight">
-                  {title}
-                  {selected && opt.id === 'auto' && t('obiectiv.activeSuffix')}
-                </span>
-                <span className="block text-xs leading-tight mt-0.5 text-ink3">
-                  {sub}
-                </span>
+              <span className="block font-semibold text-[11px] leading-tight">
+                {title}
+                {selected && opt.id === 'auto' && t('obiectiv.activeSuffix')}
               </span>
               {selected && (
                 <span
-                  className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider uppercase text-brick flex-shrink-0"
+                  className="font-mono text-[9px] font-bold tracking-wider uppercase text-brick"
                   data-testid={`obiectiv-ales-${opt.id}`}
                 >
                   {t('obiectiv.alesBadge')}
-                  <span className="ob-check ob-check-on" aria-hidden="true">
-                    <Check className="w-3.5 h-3.5" strokeWidth={2.6} />
-                  </span>
                 </span>
               )}
             </button>
