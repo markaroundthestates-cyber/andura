@@ -61,7 +61,16 @@ export function ProtectedRoute({ children }: Props): JSX.Element {
 
   // §B006/D-2 audit fix — Skip-auth mode bypasses Magic Link gate (Maria 65
   // test drive paradigm Slice 1.x). Onboarding still mandatory for engine T0.
-  const passesAuthGate = isAuthenticated || isSkipAuth;
+  //
+  // §AUTH-COLD-LOAD fix — appStore boots isAuthenticated:false on every reload
+  // (only isSkipAuth is persisted) si bridge-ul storage→store traieste intr-un
+  // useEffect care ruleaza DUPA primul render. Pe cold load deep-link la o ruta
+  // protejata (PWA/TWA fresh open, hard reload /app/...) un user CU token valid
+  // persistat ar fi gresit redirectat la /auth + OAuth. Citim sincron token-ul
+  // din storage in gate (readAuthFromStorage = isAuthenticated() din auth.js,
+  // verifica firebase-id-token + firebase-uid prezent) ca un token valid sa
+  // conteze de la primul render. App-ul revalideaza/refreshes token-ul downstream.
+  const passesAuthGate = isAuthenticated || isSkipAuth || readAuthFromStorage();
   if (!passesAuthGate) {
     return <Navigate to="/auth" replace />;
   }
