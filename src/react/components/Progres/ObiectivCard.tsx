@@ -8,7 +8,10 @@
 //
 // Surfaces:
 //   - Greutate tinta input (kg) — number, 30-250 range like SettingsProfile.
-//   - Pana in input (YYYY-MM) — HTML month picker (deadline desired).
+//   - Pana in input (YYYY-MM-DD) — HTML date picker (deadline desired, full
+//     day precision per Daniel feedback 2026-06-01 "vreau sa aleg si ziua").
+//     Legacy YYYY-MM values (month-only) hydrate by defaulting to day 01 so
+//     the native date input shows a value instead of going blank.
 //   - Realistic ETA derived from current weight + target + height at a safe
 //     rate (0.5 kg/sapt loss / 0.25 kg/sapt gain via lib/targetEta).
 //   - Subponderal guard: target below BMI 18.5 floor → warning, NO projection.
@@ -54,6 +57,13 @@ export function ObiectivCard(): JSX.Element {
   // accepta YYYY-MM (daysUntilTarget interpreteaza ca ultima zi a lunii).
   const rateVerdict = evaluateTargetRate(currentWeightKg, target.weightKg, target.month);
 
+  // HTML <input type="date"> only renders its value when given a full YYYY-MM-DD.
+  // A legacy month-only stored deadline (YYYY-MM) would show blank, so default
+  // it to the first day of that month for display. Pure presentation — the
+  // stored value is left untouched until the user actually changes it.
+  const deadlineInputValue =
+    target.month && /^\d{4}-\d{2}$/.test(target.month) ? `${target.month}-01` : target.month ?? '';
+
   function handleWeightChange(value: string): void {
     if (value === '') {
       setTarget({ weightKg: null });
@@ -63,8 +73,10 @@ export function ObiectivCard(): JSX.Element {
     setTarget({ weightKg: Number.isFinite(n) && n > 0 ? n : null });
   }
 
-  function handleMonthChange(value: string): void {
-    // HTML <input type="month"> returns YYYY-MM or "". Empty → clear.
+  function handleDeadlineChange(value: string): void {
+    // HTML <input type="date"> returns YYYY-MM-DD or "". Empty → clear. The
+    // full date flows straight through to the store + daysUntilTarget consumers
+    // (both already accept YYYY-MM-DD with day-level precision).
     setTarget({ month: value === '' ? null : value });
   }
 
@@ -94,9 +106,9 @@ export function ObiectivCard(): JSX.Element {
         <label className="flex items-center justify-between px-4 py-3">
           <span className="text-sm text-ink">{t('obiectiv.targetMonthLabel')}</span>
           <input
-            type="month"
-            value={target.month ?? ''}
-            onChange={(e) => handleMonthChange(e.target.value)}
+            type="date"
+            value={deadlineInputValue}
+            onChange={(e) => handleDeadlineChange(e.target.value)}
             data-testid="obiectiv-target-month-input"
             className="w-36 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-[13px]"
           />

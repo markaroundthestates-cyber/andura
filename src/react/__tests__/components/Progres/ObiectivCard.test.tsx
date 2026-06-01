@@ -68,10 +68,12 @@ describe('ObiectivCard — render + interactions', () => {
     expect(useProgresStore.getState().targetObiectiv.weightKg).toBe(75);
   });
 
-  it('pana in change persists to progresStore', () => {
+  it('pana in change persists full date (day-level) to progresStore', () => {
+    // Daniel 2026-06-01 — deadline picker now <input type="date">; the user can
+    // pick the DAY, not just month/year. The full YYYY-MM-DD is stored verbatim.
     renderCard();
-    fireEvent.change(screen.getByTestId('obiectiv-target-month-input'), { target: { value: '2026-09' } });
-    expect(useProgresStore.getState().targetObiectiv.month).toBe('2026-09');
+    fireEvent.change(screen.getByTestId('obiectiv-target-month-input'), { target: { value: '2026-09-15' } });
+    expect(useProgresStore.getState().targetObiectiv.month).toBe('2026-09-15');
   });
 
   it('cleared greutate tinta (empty) sets store back to null', () => {
@@ -130,11 +132,20 @@ describe('ObiectivCard — ETA wiring (BUG #8 safe-rate)', () => {
 });
 
 describe('ObiectivCard — persistence round-trip (store hydrate)', () => {
-  it('renders persisted target on mount', () => {
-    useProgresStore.getState().setTargetObiectiv({ weightKg: 75, month: '2026-09' });
+  it('renders persisted full-date target on mount', () => {
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 75, month: '2026-09-15' });
     renderCard();
     expect((screen.getByTestId('obiectiv-target-weight-input') as HTMLInputElement).value).toBe('75');
-    expect((screen.getByTestId('obiectiv-target-month-input') as HTMLInputElement).value).toBe('2026-09');
+    expect((screen.getByTestId('obiectiv-target-month-input') as HTMLInputElement).value).toBe('2026-09-15');
+  });
+
+  it('hydrates legacy month-only (YYYY-MM) deadline by defaulting to day 01', () => {
+    // Pre-existing stored goals saved before the date picker landed only have
+    // YYYY-MM. <input type="date"> needs a full date to render a value, so we
+    // default the day to 01 for display (stored value untouched until edited).
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 75, month: '2026-09' });
+    renderCard();
+    expect((screen.getByTestId('obiectiv-target-month-input') as HTMLInputElement).value).toBe('2026-09-01');
   });
 });
 
