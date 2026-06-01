@@ -181,7 +181,17 @@
       "subtitle": "Insotitorul tau de clase aerobic.",
       "weekKicker": "Clase saptamana asta",
       "weekCount": "{count} clase",
-      "weekCountTarget": "{count} / {target} clase",
+      "weekCountTarget": "{count} din {target} (tinta)",
+      "todayKicker": "Clasele de azi",
+      "todayItem": "{type} · {minutes} min",
+      "deleteAria": "Sterge aceasta clasa",
+      "deleteConfirmQuestion": "Stergi aceasta clasa?",
+      "deleteConfirmYes": "Sterge",
+      "deleteConfirmNo": "Pastreaza",
+      "alreadyLoggedTitle": "Ai logat deja o clasa azi",
+      "alreadyLoggedBody": "Mai logezi una?",
+      "alreadyLoggedYes": "Mai logheaza una",
+      "alreadyLoggedNo": "Renunta",
       "logCta": "Logheaza o clasa",
       "loggerKicker": "Logheaza o clasa",
       "typeLabel": "Tip clasa",
@@ -488,7 +498,11 @@
     "noSetsToast": "Sesiunea nu contine niciun set. Nu a fost salvata in Istoric.",
     "fallbackTitle": "Antrenament",
     "fallbackExerciseName": "Exercitiu {n}",
-    "metaTemplate": "{sets} · {minutes} min · {kg} kg"
+    "metaTemplate": "{sets} · {minutes} min · {kg} kg",
+    "alreadyLoggedTitle": "Ai logat deja un antrenament azi",
+    "alreadyLoggedBody": "Mai logezi unul?",
+    "alreadyLoggedYes": "Mai logheaza unul",
+    "alreadyLoggedNo": "Renunta"
   },
 
   "postSummary": {
@@ -882,7 +896,11 @@
         "usor": "Usor",
         "potrivit": "Potrivit",
         "greu": "Greu"
-      }
+      },
+      "deleteCta": "Sterge aceasta sesiune",
+      "deleteConfirmQuestion": "Stergi aceasta sesiune? Actiunea nu poate fi anulata.",
+      "deleteConfirmYes": "Sterge",
+      "deleteConfirmNo": "Pastreaza"
     },
 
     "prWallScreen": {

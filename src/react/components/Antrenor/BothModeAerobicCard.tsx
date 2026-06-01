@@ -10,7 +10,7 @@ import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { Plus, HeartPulse } from 'lucide-react';
 import { Kicker } from '../pulse/Kicker';
-import { ClassLogger } from './AerobicCoach';
+import { ClassLogger, TodayClassList } from './AerobicCoach';
 import { useAerobicStore, countClassesThisWeek } from '../../stores/aerobicStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { t } from '../../../i18n/index.js';
@@ -68,6 +68,11 @@ export function BothModeAerobicCard(): JSX.Element {
           {t('antrenor.aerobic.logCta')}
         </button>
       )}
+
+      {/* Today's logged classes — per-entry delete (shared with aerobic-only). */}
+      <div className="mt-3">
+        <TodayClassList dateISO={todayIso()} />
+      </div>
     </div>
   );
 }

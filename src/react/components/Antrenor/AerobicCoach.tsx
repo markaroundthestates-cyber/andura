@@ -17,7 +17,7 @@
 
 import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { HeartPulse, Plus, Check, Activity } from 'lucide-react';
+import { HeartPulse, Plus, Check, Activity, Trash2 } from 'lucide-react';
 import { Kicker } from '../pulse/Kicker';
 import { Pill } from '../pulse/Pill';
 import { PulseMark } from '../pulse/PulseMark';
@@ -26,6 +26,7 @@ import {
   useAerobicStore,
   countClassesThisWeek,
   computeAerobicKcal,
+  aerobicSessionsForDate,
   AEROBIC_CLASS_TYPES,
   AEROBIC_MINUTES_MIN,
   AEROBIC_MINUTES_MAX,
@@ -129,6 +130,9 @@ export function AerobicCoach(): JSX.Element {
         </button>
       )}
 
+      {/* Today's logged classes — per-entry delete (mislogged-class removal). */}
+      <TodayClassList dateISO={dateISO} />
+
       {/* Simplified SUBJECTIVE readiness — pure self-report, NO engine. */}
       <div
         className="pulse-card pulse-card-tight overflow-hidden p-4 mb-4 animate-card-rise delay-150"
@@ -171,14 +175,98 @@ export function AerobicCoach(): JSX.Element {
 }
 
 /**
+ * Today's logged classes with per-entry delete (mislogged-class removal —
+ * Daniel's wife logged 2 aerobic classes by accident with no way to remove
+ * them). Each row carries a two-tap delete (tap trash → "Sigur?" confirm/cancel)
+ * so an accidental tap can't silently wipe a logged class. Renders nothing when
+ * no class is logged today. Exported so 'both' mode reuses the same list.
+ */
+export function TodayClassList({ dateISO }: { dateISO: string }): JSX.Element | null {
+  const sessions = useAerobicStore((s) => s.sessions);
+  const removeSession = useAerobicStore((s) => s.removeSession);
+  const [confirmTs, setConfirmTs] = useState<number | null>(null);
+
+  const today = aerobicSessionsForDate(sessions, dateISO);
+  if (today.length === 0) return null;
+
+  return (
+    <div
+      className="pulse-card pulse-card-tight overflow-hidden p-4 mb-4 animate-card-rise"
+      data-testid="aerobic-today-list"
+    >
+      <div className="flex items-center gap-2 mb-3">
+        <Activity className="w-4 h-4" style={{ color: 'var(--aqua-deep)' }} aria-hidden="true" />
+        <Kicker color="var(--aqua-ink)">{t('antrenor.aerobic.todayKicker')}</Kicker>
+      </div>
+      <ul className="flex flex-col gap-2">
+        {today.map((s) => (
+          <li
+            key={s.ts}
+            data-testid={`aerobic-today-item-${s.ts}`}
+            className="flex items-center justify-between gap-3 p-3 rounded-xl bg-paper2 border border-lineStrong"
+          >
+            <span className="text-sm text-ink min-w-0">
+              {t('antrenor.aerobic.todayItem', {
+                type: t(`antrenor.aerobic.types.${s.type}`),
+                minutes: s.minutes,
+              })}
+            </span>
+            {confirmTs === s.ts ? (
+              <span className="flex items-center gap-2 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setConfirmTs(null)}
+                  data-testid={`aerobic-delete-cancel-${s.ts}`}
+                  className="press-feedback px-3 py-1.5 rounded-lg bg-paper border border-lineStrong text-ink text-xs font-semibold"
+                >
+                  {t('antrenor.aerobic.deleteConfirmNo')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    removeSession(s.ts);
+                    setConfirmTs(null);
+                  }}
+                  data-testid={`aerobic-delete-accept-${s.ts}`}
+                  className="press-feedback px-3 py-1.5 rounded-lg bg-brick text-paper text-xs font-semibold"
+                >
+                  {t('antrenor.aerobic.deleteConfirmYes')}
+                </button>
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setConfirmTs(s.ts)}
+                data-testid={`aerobic-delete-${s.ts}`}
+                aria-label={t('antrenor.aerobic.deleteAria')}
+                className="press-feedback p-2 rounded-lg text-ink2 flex-shrink-0"
+              >
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/**
  * Inline class logger — pick a TYPE (baked-in MET) + DURATION (editable WITH
  * MEMORY: pre-filled from the last-used duration, persisted on save). kcal is
  * computed live (MET × weight × hrs) and shown before commit. Exported for
  * reuse by BothModeAerobicCard ('both' mode shares the same logger).
+ *
+ * Double-log-per-day guard (Daniel's wife mislogged): when a class is already
+ * logged today, Save first asks "You already logged a class today — log
+ * another?" (explicit confirm, not a hard block) so an accidental second log is
+ * caught while a genuine second class is still one tap away.
  */
 export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () => void }): JSX.Element {
   const lastDuration = useAerobicStore((s) => s.lastDuration);
   const logClass = useAerobicStore((s) => s.logClass);
+  const sessions = useAerobicStore((s) => s.sessions);
+  const [confirmAnother, setConfirmAnother] = useState(false);
 
   // SC 2.4.3 — move focus into the revealed logger on open (lands on the
   // heading, not deep in the form, so it is not disruptive). The parent
@@ -198,11 +286,24 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
   const weightKg = getCurrentWeightKg();
   const kcalPreview = minutesValid ? computeAerobicKcal(type, weightKg, minutes) : null;
 
-  function handleSave(): void {
-    if (!minutesValid) return;
+  // A class already logged today → Save first asks to confirm a second log.
+  const alreadyLoggedToday = aerobicSessionsForDate(sessions, dateISO).length > 0;
+
+  function commit(): void {
     // logClass persists the session + remembers the duration (memory).
     logClass({ date: dateISO, type, minutes, weightKg });
     onDone();
+  }
+
+  function handleSave(): void {
+    if (!minutesValid) return;
+    // Explicit double-log confirm (not a hard block): an accidental second log
+    // is caught, a genuine second class is one more tap.
+    if (alreadyLoggedToday && !confirmAnother) {
+      setConfirmAnother(true);
+      return;
+    }
+    commit();
   }
 
   return (
@@ -264,6 +365,35 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
           <span className="text-xs text-ink3">{t('antrenor.aerobic.kcalUnknown')}</span>
         )}
       </div>
+
+      {/* Double-log-per-day confirm — explicit "log another?" (not a hard block). */}
+      {confirmAnother && (
+        <div
+          className="mt-4 p-3 rounded-xl bg-paper2 border border-lineStrong"
+          data-testid="aerobic-already-logged"
+        >
+          <p className="text-sm font-semibold text-ink">{t('antrenor.aerobic.alreadyLoggedTitle')}</p>
+          <p className="text-xs text-ink2 mt-1">{t('antrenor.aerobic.alreadyLoggedBody')}</p>
+          <div className="flex gap-3 mt-3">
+            <button
+              type="button"
+              onClick={() => setConfirmAnother(false)}
+              data-testid="aerobic-already-logged-no"
+              className="btn-secondary-lift flex-1 px-4 py-2.5 bg-paper border border-lineStrong text-ink rounded-xl text-sm font-semibold"
+            >
+              {t('antrenor.aerobic.alreadyLoggedNo')}
+            </button>
+            <button
+              type="button"
+              onClick={commit}
+              data-testid="aerobic-already-logged-yes"
+              className="btn-primary-lift btn-grad press-feedback flex-1 px-4 py-2.5 text-sm font-semibold"
+            >
+              {t('antrenor.aerobic.alreadyLoggedYes')}
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="flex gap-3 mt-4">
         <button

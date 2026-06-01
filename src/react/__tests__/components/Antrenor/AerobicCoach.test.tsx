@@ -62,7 +62,7 @@ function renderAerobicCoach() {
 }
 
 beforeEach(() => {
-  useAerobicStore.setState({ sessions: [], lastDuration: 50, subjectiveByDate: {} });
+  useAerobicStore.setState({ sessions: [], lastDuration: 50, subjectiveByDate: {}, deletedTs: [] });
   useOnboardingStore.setState({
     data: {
       age: 30, sex: 'f', goal: 'slabire', frequency: '3',
@@ -163,7 +163,73 @@ describe('AerobicCoach — classes this week vs frequency target', () => {
       subjectiveByDate: {},
     });
     renderAerobicCoach();
-    expect(screen.getByTestId('aerobic-week-val').textContent).toMatch(/1 \/ 3/);
+    // Copy clarified 2026-06-01 (Bug 3): "1 of 3 target" — explicit weekly
+    // target, not "1/3" which a user read as "out of 7 days".
+    expect(screen.getByTestId('aerobic-week-val').textContent).toMatch(/1 of 3/);
+  });
+});
+
+describe('AerobicCoach — delete a mislogged class', () => {
+  it("lists today's classes and deletes one (two-tap confirm)", () => {
+    const ts = Date.now();
+    useAerobicStore.setState({
+      sessions: [{ date: todayIso(), type: 'spinning', minutes: 50, kcal: 300, ts }],
+      lastDuration: 50,
+      subjectiveByDate: {},
+      deletedTs: [],
+    });
+    renderAerobicCoach();
+    expect(screen.getByTestId('aerobic-today-list')).toBeInTheDocument();
+    // First tap reveals confirm; class still present.
+    fireEvent.click(screen.getByTestId(`aerobic-delete-${ts}`));
+    expect(useAerobicStore.getState().sessions).toHaveLength(1);
+    // Confirm tap deletes + records the tombstone.
+    fireEvent.click(screen.getByTestId(`aerobic-delete-accept-${ts}`));
+    expect(useAerobicStore.getState().sessions).toHaveLength(0);
+    expect(useAerobicStore.getState().deletedTs).toContain(ts);
+  });
+
+  it('cancel keeps the class', () => {
+    const ts = Date.now();
+    useAerobicStore.setState({
+      sessions: [{ date: todayIso(), type: 'zumba', minutes: 50, kcal: 300, ts }],
+      lastDuration: 50,
+      subjectiveByDate: {},
+      deletedTs: [],
+    });
+    renderAerobicCoach();
+    fireEvent.click(screen.getByTestId(`aerobic-delete-${ts}`));
+    fireEvent.click(screen.getByTestId(`aerobic-delete-cancel-${ts}`));
+    expect(useAerobicStore.getState().sessions).toHaveLength(1);
+  });
+});
+
+describe('AerobicCoach — double-log-per-day confirm', () => {
+  it('asks before logging a second class the same day, then logs on confirm', () => {
+    const ts = Date.now() - 1000;
+    useAerobicStore.setState({
+      sessions: [{ date: todayIso(), type: 'aerobic', minutes: 50, kcal: 300, ts }],
+      lastDuration: 50,
+      subjectiveByDate: {},
+      deletedTs: [],
+    });
+    renderAerobicCoach();
+    fireEvent.click(screen.getByTestId('aerobic-log-cta'));
+    // Save once → confirm panel appears, NO second session yet.
+    fireEvent.click(screen.getByTestId('aerobic-logger-save'));
+    expect(screen.getByTestId('aerobic-already-logged')).toBeInTheDocument();
+    expect(useAerobicStore.getState().sessions).toHaveLength(1);
+    // Confirm "log another" → second session committed.
+    fireEvent.click(screen.getByTestId('aerobic-already-logged-yes'));
+    expect(useAerobicStore.getState().sessions).toHaveLength(2);
+  });
+
+  it('first class of the day logs without a confirm', () => {
+    renderAerobicCoach();
+    fireEvent.click(screen.getByTestId('aerobic-log-cta'));
+    fireEvent.click(screen.getByTestId('aerobic-logger-save'));
+    expect(screen.queryByTestId('aerobic-already-logged')).not.toBeInTheDocument();
+    expect(useAerobicStore.getState().sessions).toHaveLength(1);
   });
 });
 

@@ -181,7 +181,17 @@
       "subtitle": "Your aerobic-class companion.",
       "weekKicker": "Classes this week",
       "weekCount": "{count} classes",
-      "weekCountTarget": "{count} / {target} classes",
+      "weekCountTarget": "{count} of {target} target",
+      "todayKicker": "Today's classes",
+      "todayItem": "{type} · {minutes} min",
+      "deleteAria": "Delete this class",
+      "deleteConfirmQuestion": "Delete this class?",
+      "deleteConfirmYes": "Delete",
+      "deleteConfirmNo": "Keep",
+      "alreadyLoggedTitle": "You already logged a class today",
+      "alreadyLoggedBody": "Log another one?",
+      "alreadyLoggedYes": "Log another",
+      "alreadyLoggedNo": "Cancel",
       "logCta": "Log a class",
       "loggerKicker": "Log a class",
       "typeLabel": "Class type",
@@ -488,7 +498,11 @@
     "noSetsToast": "The session has no sets logged. It wasn't saved to History.",
     "fallbackTitle": "Workout",
     "fallbackExerciseName": "Exercise {n}",
-    "metaTemplate": "{sets} · {minutes} min · {kg} kg"
+    "metaTemplate": "{sets} · {minutes} min · {kg} kg",
+    "alreadyLoggedTitle": "You already logged a workout today",
+    "alreadyLoggedBody": "Log another one?",
+    "alreadyLoggedYes": "Log another",
+    "alreadyLoggedNo": "Cancel"
   },
 
   "postSummary": {
@@ -882,7 +896,11 @@
         "usor": "Easy",
         "potrivit": "Right",
         "greu": "Hard"
-      }
+      },
+      "deleteCta": "Delete this session",
+      "deleteConfirmQuestion": "Delete this session? This can't be undone.",
+      "deleteConfirmYes": "Delete",
+      "deleteConfirmNo": "Keep"
     },
 
     "prWallScreen": {
