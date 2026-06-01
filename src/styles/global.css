@@ -1268,6 +1268,35 @@ html[data-install-prompt="1"] .session-pill {
 .app-content-pad {
   padding-bottom: var(--app-bottom-chrome);
 }
+
+/* ══ BOTTOM-NAV BRIDGE FADE (2026-06-01) — kill the empty dark band ═════════
+   Bug (founder, side-by-side): a flat dark strip sat between the last page
+   content and the BottomNav. Root cause: .app-content-pad reserves
+   --app-bottom-chrome (nav 64px + 24px breathing) so content stops ~24px above
+   the nav, while the nav's own background fade (linear-gradient transparent →
+   --paper 38%) lives ONLY inside its 64px box — so the breathing gap above the
+   nav showed bare page with a hard top edge, reading as an empty rectangle.
+   The mockup (interfata-noua) has no such band: the surface fades continuously
+   into the nav. Fix: a pointer-events-none ::before on the nav that extends the
+   fade UPWARD into that gap (transparent at the top → --paper at the nav top),
+   so content appears to flow right up to the nav with no hard band. Purely
+   visual — does NOT touch the clearance tokens (CTAs still clear the chrome).
+   Scoped to the routed app nav via [data-nav-style]; sits behind the nav's own
+   children (z-index:-1 relative to the nav's content, which is z-50 in the
+   shell). Collapses under the same fixed-bottom anchoring on mobile + desktop
+   bezel. */
+nav[data-nav-style]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 2.25rem;
+  background: linear-gradient(180deg, transparent, var(--paper));
+  pointer-events: none;
+  z-index: -1;
+}
+
 /* Sub-screens own an inner `flex-1 overflow-y-auto` scroller inside a
    `min-h-screen` section — <main>'s padding never reaches their bottom CTA.
    Pad the inner scroller itself so its last CTA clears the chrome. Scoped to
