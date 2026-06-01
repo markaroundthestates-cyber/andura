@@ -114,12 +114,25 @@ export function AuroraBackground(): JSX.Element {
         .t-grain { position: absolute; inset: 0; opacity: .07; pointer-events: none;
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 
-        /* ── READABILITY SCRIM — keeps text crisp over the motion ── */
+        /* ── READABILITY SCRIM — keeps text crisp over the motion ──
+           The mockup (interfata-noua/bg.jsx) has NO paper scrim on dark — only an
+           edge vignette + grain — so the green aurora reads vividly in the gaps
+           between the translucent glass cards. The prior Turbo scrim washed
+           --paper (near-black #090b13) center-out up to 38%, which crushed the
+           blobs to a flat near-black field (founder bug 2026-06). On dark we now
+           keep ONLY a faint outer paper feather (transparent core, light fade at
+           the very edges) so the aurora stays visible while card text — which
+           rides on its own translucent --surface fill (.pulse-card) — stays
+           readable. Light theme keeps the stronger paper wash (bright base, blobs
+           use multiply, text contrast needs the lift). */
         .t-scrim { position: absolute; inset: 0; pointer-events: none;
-          background: radial-gradient(135% 105% at 50% 38%, transparent 0%, color-mix(in oklab, var(--paper) 22%, transparent) 62%, color-mix(in oklab, var(--paper) 38%, transparent) 100%); }
+          background: radial-gradient(140% 110% at 50% 40%, transparent 72%, color-mix(in oklab, var(--paper) 26%, transparent) 100%); }
         [data-theme="light"] .t-scrim { background: radial-gradient(135% 105% at 50% 38%, color-mix(in oklab, var(--paper) 25%, transparent), color-mix(in oklab, var(--paper) 45%, transparent)); }
+        /* Edge vignette — mockup parity (transparent 55% → black .45 at the
+           corners). Frames the aurora + anchors the device screen without
+           darkening the center where the green needs to breathe. */
         .t-vignette { position: absolute; inset: 0; pointer-events: none;
-          background: radial-gradient(120% 90% at 50% 35%, transparent 48%, rgba(0,0,0,.5) 100%); }
+          background: radial-gradient(120% 90% at 50% 35%, transparent 55%, rgba(0,0,0,.45) 100%); }
         [data-theme="light"] .t-vignette { background: radial-gradient(120% 90% at 50% 35%, transparent 60%, rgba(40,50,90,.10) 100%); }
 
         /* motion-safety — the authoritative collapse */
