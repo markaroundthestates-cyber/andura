@@ -19,6 +19,7 @@
 // Cross-ref: ADR_SMART_ROUTING_EQUIPMENT_v2.md LOCK V2 + v1 LOCKED V1 (ranking-based fallback).
 
 import { logger } from '../util/logger.js';
+import { IS_DEV } from '../util/env';
 import exercisesData from './exercises.json';
 import { validateLibrary } from './exerciseSchema';
 
@@ -35,7 +36,9 @@ export const EXERCISE_METADATA = exercisesData;
   if (errors.length > 0) {
     const summary = `exerciseLibrary: ${errors.length} validation error(s):\n` +
       errors.slice(0, 20).join('\n');
-    if (import.meta.env && import.meta.env.DEV) {
+    // Dev: fail-loud (throw). Prod: fail-safe (log). IS_DEV comes from the
+    // per-bundler env shim (./env) — no literal `import.meta` in the RN graph.
+    if (IS_DEV) {
       throw new Error(summary);
     } else {
       logger.error(summary);

@@ -13,18 +13,13 @@
 //   - warn          → la fel, tacut doar in prod.
 //   - error         → INTOTDEAUNA. Trebuie sa ajunga la observabilitate prod.
 //
-// Gate = "NU productie" (import.meta.env.PROD !== true), nu "DEV === true": asa
-// dev-server SI vitest emit diagnostice, doar `vite build` le suprima. import.meta.env
-// e definit de Vite; sub node pur poate lipsi — optional chaining + fallback sigur
-// (default cand e necunoscut: emite, NU ascunde diagnostice).
+// Gate = "NU productie" (IS_PROD === false), nu "DEV === true": asa dev-server SI
+// vitest emit diagnostice, doar `vite build` le suprima. Flag-ul vine din ./env
+// (shim per-bundler): Vite/Vitest citesc import.meta.env acolo, RN foloseste
+// `__DEV__` via env.web.js/env.native.js — fara `import.meta` in graful RN.
+import { IS_PROD } from './env';
 
-const isDev = (() => {
-  try {
-    return import.meta.env?.PROD !== true;
-  } catch {
-    return true;
-  }
-})();
+const isDev = !IS_PROD;
 
 // Referinta indirecta — esbuild drop-ul tinteste identificatorul global `console`,
 // nu `globalThis.console`. Captura aici supravietuieste minify-ului prod.

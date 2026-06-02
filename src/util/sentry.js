@@ -6,8 +6,10 @@
 // §4-H5 + §1-C2 — Sentry DSN migrated to VITE_SENTRY_DSN env var (build-time injection).
 // console.log debug stripped (production console drop via vite esbuild §1-C2).
 
+import { VITE_ENV } from './env';
+
 const DEFAULT_SENTRY_DSN = 'https://dcbb183e8d98e95c6cd8b2c3c49b2427@o4511269200068608.ingest.de.sentry.io/4511269203869776';
-const SENTRY_DSN = import.meta.env?.VITE_SENTRY_DSN || DEFAULT_SENTRY_DSN;
+const SENTRY_DSN = VITE_ENV.VITE_SENTRY_DSN || DEFAULT_SENTRY_DSN;
 
 let _initialized = false;
 /** @type {typeof import('@sentry/browser') | null} */
@@ -17,7 +19,7 @@ export async function initSentry() {
   const hostname = location.hostname;
   const isProduction = hostname !== 'localhost'
     && !hostname.includes('127.0.0.1')
-    && import.meta.env?.MODE !== 'test';
+    && VITE_ENV.MODE !== 'test';
 
   if (!isProduction) return;
   if (_initialized) return;
@@ -27,7 +29,7 @@ export async function initSentry() {
     _Sentry.init({
       dsn: SENTRY_DSN,
       environment: 'production',
-      release: `andura@${import.meta.env?.VITE_APP_VERSION ?? '2.0.0'}`,
+      release: `andura@${VITE_ENV.VITE_APP_VERSION ?? '2.0.0'}`,
       tracesSampleRate: 0.1,
       beforeSend(event) {
         const msg = event.exception?.values?.[0]?.value ?? '';
