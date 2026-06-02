@@ -11,6 +11,16 @@ jest.mock('expo-router', () => ({
   router: { push: jest.fn(), replace: jest.fn(), back: jest.fn(), canGoBack: () => false },
   usePathname: () => '/app/antrenor',
   useLocalSearchParams: () => ({}),
+  // The aerobic dashboard renders AerobicCoach → W4's TDEEStrip, which bumps a
+  // recompute nonce via useFocusEffect. Run the callback once inside an effect
+  // (matches the progres test mock) so the focus-recompute fires without a
+  // setState-during-render warning.
+  useFocusEffect: (cb: () => void) => {
+    const { useEffect } = require('react');
+    useEffect(() => {
+      cb();
+    }, []);
+  },
 }));
 
 import { router } from 'expo-router';

@@ -47,7 +47,7 @@ function resetStores(trainingType: 'gym' | 'aerobic' | 'both' = 'gym'): void {
     sessionTimeBudgetMin: null,
   });
   useOnboardingStore.setState((s) => ({ data: { ...s.data, trainingType } }));
-  useCoachStore.setState({ persona: 'gigel' });
+  useCoachStore.setState({ persona: 'gigica' });
 }
 
 describe('Workout — gym gate (W3b)', () => {
