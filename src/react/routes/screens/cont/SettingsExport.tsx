@@ -14,6 +14,7 @@ import { useNutritionStore } from '../../../stores/nutritionStore';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { useScheduleStore } from '../../../stores/scheduleStore';
 import { useAerobicStore } from '../../../stores/aerobicStore';
+import { kv } from '../../../../storage/kv';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { Kicker } from '../../../components/pulse/Kicker';
@@ -64,21 +65,24 @@ interface ExportPayload {
 function collectTier0Keys(): Record<string, string | null> {
   const keys: Record<string, string | null> = {};
   try {
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('wv2-')) {
-        keys[key] = localStorage.getItem(key);
+    // kv.keys() enumerates the Tier-0 keyspace on every platform (localStorage
+    // walk on web/Vitest, MMKV getAllKeys() on native) so the export captures
+    // wv2-* on native too — raw `localStorage` returned nothing there (RN has no
+    // such global), silently dropping all Tier-0 data from the export.
+    for (const key of kv.keys()) {
+      if (key.startsWith('wv2-')) {
+        keys[key] = kv.getItem(key);
       }
     }
     // S-02 — also pull canonical unprefixed legacy data keys (coach-decisions,
     // flat logs, pr-records, pain-cdl, cdl-patterns, ...) so "toate datele tale"
     // is true. Only present keys are included (null skipped).
     for (const key of LEGACY_DATA_KEYS) {
-      const val = localStorage.getItem(key);
+      const val = kv.getItem(key);
       if (val !== null) keys[key] = val;
     }
   } catch {
-    // localStorage unavailable — return empty
+    // storage unavailable — return empty
   }
   return keys;
 }

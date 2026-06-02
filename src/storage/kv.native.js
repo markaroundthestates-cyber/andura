@@ -20,7 +20,7 @@ import { storage } from './mmkv.native.js';
  * key; the Web Storage contract (and Zustand's `createJSONStorage`) expects
  * `null`, so absence is normalized to `null`.
  *
- * @type {{ getItem: (name: string) => string | null, setItem: (name: string, value: string) => void, removeItem: (name: string) => void }}
+ * @type {{ getItem: (name: string) => string | null, setItem: (name: string, value: string) => void, removeItem: (name: string) => void, keys: () => string[] }}
  */
 export const kv = {
   getItem(name) {
@@ -32,5 +32,13 @@ export const kv = {
   },
   removeItem(name) {
     storage.delete(name);
+  },
+  /**
+   * Enumerate every stored key — MMKV `getAllKeys()` (the RN parallel of the web
+   * `localStorage.length`/`key(i)` walk). Used by export + reset flows.
+   * @returns {string[]}
+   */
+  keys() {
+    return storage.getAllKeys();
   },
 };

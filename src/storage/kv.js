@@ -30,7 +30,7 @@
  * storage-disabled contexts from throwing — identical to the per-call try/catch
  * the previous `() => localStorage` callsites relied on downstream.
  *
- * @type {{ getItem: (name: string) => string | null, setItem: (name: string, value: string) => void, removeItem: (name: string) => void }}
+ * @type {{ getItem: (name: string) => string | null, setItem: (name: string, value: string) => void, removeItem: (name: string) => void, keys: () => string[] }}
  */
 export const kv = {
   getItem(name) {
@@ -52,6 +52,24 @@ export const kv = {
       if (typeof localStorage !== 'undefined') localStorage.removeItem(name);
     } catch {
       /* disabled — silent */
+    }
+  },
+  /**
+   * Enumerate every stored key (the localStorage `length`/`key(i)` walk).
+   * Used by export + reset flows; native variant uses MMKV `getAllKeys()`.
+   * @returns {string[]}
+   */
+  keys() {
+    try {
+      if (typeof localStorage === 'undefined') return [];
+      const out = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k !== null) out.push(k);
+      }
+      return out;
+    } catch {
+      return [];
     }
   },
 };
