@@ -85,6 +85,18 @@ describe('SessionPill — conditional render', () => {
     expect(screen.queryByTestId('session-pill')).not.toBeInTheDocument();
   });
 
+  it('NU render pe post-rpe (overlap cu Continue — Daniel 2026-06-02)', () => {
+    useWorkoutStore.setState({ phase: 'logging', sessionStart: Date.now() });
+    renderPill('/app/antrenor/post-rpe');
+    expect(screen.queryByTestId('session-pill')).not.toBeInTheDocument();
+  });
+
+  it('NU render pe post-summary (overlap cu CTA completion flow)', () => {
+    useWorkoutStore.setState({ phase: 'logging', sessionStart: Date.now() });
+    renderPill('/app/antrenor/post-summary');
+    expect(screen.queryByTestId('session-pill')).not.toBeInTheDocument();
+  });
+
   it('renders pe alt tab (progres / istoric / cont) cand active session', () => {
     useWorkoutStore.setState({ phase: 'logging', sessionStart: Date.now() });
     renderPill('/app/progres');

@@ -25,6 +25,13 @@ import { gotoPath } from '../lib/navigation';
 import { t } from '../../i18n/index.js';
 
 const WORKOUT_PATH = gotoPath('workout');
+// The pill is a "resume your session" affordance for the TABS — it must not show
+// on the workout-completion flow screens (PostRpe "How was your session" /
+// PostSummary), which carry their own sticky Continue/Save CTA. The session is
+// still non-idle during rating, so without this guard the pill rendered fixed at
+// the bottom and OVERLAPPED the Continue button (Daniel 2026-06-02 screenshot).
+const POST_RPE_PATH = gotoPath('post-rpe');
+const POST_SUMMARY_PATH = gotoPath('post-summary');
 
 export function SessionPill(): JSX.Element | null {
   const location = useLocation();
@@ -87,8 +94,15 @@ export function SessionPill(): JSX.Element | null {
   // Aerobic mode-gate — never surface the gym resume pill for a pure aerobic user.
   if (trainingType === 'aerobic') return null;
 
-  // Anti-duplicate route guard.
-  if (location.pathname === WORKOUT_PATH) return null;
+  // Anti-duplicate + completion-flow route guard (no pill on workout, post-rpe,
+  // post-summary — the latter two own a sticky CTA the pill would overlap).
+  if (
+    location.pathname === WORKOUT_PATH ||
+    location.pathname === POST_RPE_PATH ||
+    location.pathname === POST_SUMMARY_PATH
+  ) {
+    return null;
+  }
 
   // §44-C1 exhaustive switch on tagged mode — render only for active/resting
   // (live session pill) sau paused (resume hatch). idle + finished → null.
