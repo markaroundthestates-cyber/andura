@@ -28,7 +28,12 @@ import {
 } from '../../coach/orchestrator/adapters/index.js';
 import { buildSession } from '../sessionBuilder.js';
 import { availableCoarseTypes } from '../equipmentMap.js';
-import { CLUSTER_BIG6_TO_BIG11_WEIGHT, BIG11_RO_TO_EN_MAP } from '../periodization/constants.js';
+import {
+  CLUSTER_BIG6_TO_BIG11_WEIGHT,
+  BIG11_RO_TO_EN_MAP,
+  ISRAETEL_BASELINES,
+} from '../periodization/constants.js';
+import { getLaggingMuscles } from '../muscleRecovery.js';
 import {
   toCanonicalRO,
   applyRecoveryStateRedistribution,
@@ -562,6 +567,71 @@ function toCanonicalEN(roMap) {
   return out;
 }
 
+// ── M2: weakness AMPLIFIES real volume toward MRV (D-weakness-amplify 2026-06-02) ──
+// A lagging/weak group should get genuinely MORE volume (extra sets + likely an
+// extra exercise) on its FRESH training days — not just front-of-session
+// reordering (M0 positioning) — pushed UP toward its Israetel MRV ceiling.
+//
+// AMPLIFY_TOWARD_MRV = the fraction of the gap (current → MRV) we close. 0.50
+// rationale: half-way to the absolute recoverable max is a decisive, felt bump
+// (e.g. chest 14→18/wk under marius/hipertrofie) WITHOUT pinning the group at
+// MRV (which Israetel reserves as a short overreach ceiling, not a steady-state
+// target). It is a single tunable constant, NOT a per-group multiplier zoo.
+// MRV is the HARD cap — the amplified value is clamped to it and NEVER exceeds.
+const AMPLIFY_TOWARD_MRV = 0.50;
+
+/**
+ * Resolve the lagging Big-11 RO groups for the plan from the SAME persisted
+ * sessions M1 flattens (userState.recentSessions → recovery LogEntry rows). The
+ * recovery engine's getLaggingMuscles is pure: the adapter builds the { logs,
+ * now } profile (reusing flattenSessionsToRecoveryLogs) and reads the result.
+ * Returns most-lagging-first RO group ids (matching the weakGroups vocabulary).
+ * Empty when there is no lagging signal (graceful degradation, ADR 025). Pure.
+ *
+ * @param {Array} recoveryLogs - flattened recovery LogEntry rows ({ex, ts, w})
+ * @param {number} now - reference timestamp threaded for determinism
+ * @returns {string[]} Big-11 RO group ids, most-lagging first
+ */
+function laggingGroupsFromLogs(recoveryLogs, now) {
+  const lagging = getLaggingMuscles({ logs: recoveryLogs, now });
+  return lagging.map((l) => l.group);
+}
+
+/**
+ * Amplify a weak group's weekly volume toward its Israetel MRV ceiling. The
+ * budget is EN-keyed (chest/back/...) but weak groups arrive Big-11 RO
+ * (specialization target / lagging) — the same vocabulary buildSession's
+ * weakGroups uses — so each RO group is bridged to EN (BIG11_RO_TO_EN_MAP) to
+ * look up its budget entry + MRV (ISRAETEL_BASELINES, EN-keyed).
+ *
+ * For each weak group: target = current + (MRV - current) × AMPLIFY_TOWARD_MRV,
+ * clamped to MRV (HARD cap — never exceeds, never lowers a group already above
+ * MRV). The larger entry flows through buildSession (which exempts weak groups
+ * from the per-group slot cap) → more sets + possibly an extra exercise on the
+ * weak group. Returns a NEW map. No weak groups → the map is returned unchanged
+ * (graceful degradation, ADR 025). Pure.
+ *
+ * @param {Object<string, number>|null|undefined} volumeMapEN - Big-11 EN budget
+ * @param {string[]} weakGroupsRO - Big-11 RO weak/lagging group ids
+ * @returns {Object<string, number>|null} amplified EN-keyed budget (null passes through)
+ */
+function applyWeaknessAmplification(volumeMapEN, weakGroupsRO) {
+  if (!volumeMapEN || typeof volumeMapEN !== 'object') return volumeMapEN ?? null;
+  if (!Array.isArray(weakGroupsRO) || weakGroupsRO.length === 0) return { ...volumeMapEN };
+  const out = { ...volumeMapEN };
+  for (const roGroup of weakGroupsRO) {
+    const enKey = BIG11_RO_TO_EN_MAP[roGroup] ?? roGroup;
+    const current = out[enKey];
+    const mrv = ISRAETEL_BASELINES[enKey]?.MRV;
+    if (typeof current !== 'number' || !Number.isFinite(current) || current <= 0) continue;
+    if (typeof mrv !== 'number' || !Number.isFinite(mrv)) continue;
+    if (current >= mrv) continue; // already at/above ceiling — never lower it
+    const amplified = current + (mrv - current) * AMPLIFY_TOWARD_MRV;
+    out[enKey] = Math.min(mrv, amplified); // HARD MRV cap — never exceed
+  }
+  return out;
+}
+
 /**
  * Apply muscle-recovery redistribution to the EN-keyed periodization volume
  * budget. The budget is EN-keyed (chest/back/...) but the recovery math is
@@ -694,15 +764,35 @@ export async function getDailyWorkout(userState, now = new Date()) {
   // EASES fresh groups, never deepens — resistance recovery is the M1 core).
   const baseVolumeTargets = blueprints.periodization?.volume_target_pct ?? null;
   const recoveryLogs = flattenSessionsToRecoveryLogs(userState?.recentSessions);
+
+  // ── M2: weakness amplifies REAL volume toward MRV (the substance, not just
+  // reordering). Weak groups are layered, graceful (ADR 025):
+  //   1. the Specialization 4-gate target (when it fires), then
+  //   2. the always-available lagging signal (getLaggingMuscles) from the SAME
+  //      flattened sessions M1 uses — so amplification still works when the
+  //      4-gate doesn't fire. De-duped, most-lagging-first after the spec target.
+  // No weak signal at all → weakGroups empty → amplification + reordering are
+  // both no-ops → plan identical to the M1 chassis.
+  const laggingGroups = laggingGroupsFromLogs(recoveryLogs, date.getTime());
+  const weakGroups = [...new Set(
+    [specializationTarget, ...laggingGroups].filter((g) => typeof g === 'string' && g.length > 0),
+  )];
+
+  // CRITICAL ORDERING (M2 ↔ M1): amplify the WEEKLY budget FIRST, then M1's
+  // recovery redistribution cuts TODAY's budget on top. Net: a group that is
+  // BOTH weak AND fatigued today is still cut today (recovery wins for TODAY —
+  // we never amplify a fried muscle today); the amplification expresses on its
+  // FRESH days when recovery is a no-op for that group.
+  const amplifiedTargets = applyWeaknessAmplification(baseVolumeTargets, weakGroups);
   const volumeTargets = applyRecoveryToVolumeBudget(
-    baseVolumeTargets,
+    amplifiedTargets,
     recoveryLogs,
     date.getTime(),
   );
 
   const sessionCtx = {
     equipment: { available: availableCoarse },
-    weakGroups: specializationTarget ? [specializationTarget] : [],
+    weakGroups,
     profileTier: userState?.profileTier ?? null,
     prNames: Array.isArray(userState?.prNames) ? userState.prNames : [],
     seed,
