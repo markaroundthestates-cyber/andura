@@ -88,16 +88,24 @@ describe('frequencyToSplit — focus-aware split reshaping', () => {
     }
   });
 
-  it('v-taper @ 4 days: Upper/Lower/Upper/Lower → Upper/Push/Pull/Lower (one leg day)', () => {
+  it('v-taper @ 4 days: Upper/Lower/Upper/Lower → Push/Pull/Upper/Lower (spaced, one leg day)', () => {
     const balanced = frequencyToSplit(4, 'balanced');
     expect(balanced).toEqual(['upper', 'lower', 'upper', 'lower']);
     const vtaper = frequencyToSplit(4, 'v-taper');
-    // The FIRST lower slot becomes a focus-region cluster (push), the second
-    // lower slot is retained → exactly ONE leg day (lower) survives.
-    expect(vtaper).toEqual(['upper', 'push', 'upper', 'lower']);
+    // Recovery-SPACED template: the push muscles (chest/shoulders/triceps) must
+    // NOT land on consecutive training days. push(Mon)→pull(Tue)→upper(Thu, 72h
+    // after push)→lower(Fri). The old slot-swap gave ['upper','push',...] = UPPER
+    // then PUSH back-to-back → fried second session (the 27-min thin-session bug).
+    expect(vtaper).toEqual(['push', 'pull', 'upper', 'lower']);
     const legDays = vtaper.filter((c) => c === 'lower' || c === 'legs').length;
     expect(legDays).toBe(1);
     expect(legDays).toBeLessThan(balanced.filter((c) => c === 'lower' || c === 'legs').length);
+    // No two ADJACENT days both train the push muscles (push + upper overlap on
+    // chest/shoulders/triceps; consecutive = fried). Guards against regression.
+    const HITS_PUSH = new Set(['push', 'upper', 'full']);
+    for (let i = 1; i < vtaper.length; i++) {
+      expect(HITS_PUSH.has(vtaper[i]) && HITS_PUSH.has(vtaper[i - 1])).toBe(false);
+    }
   });
 
   it('v-taper @ 5 days reshapes a lower slot, always retains ≥1 leg day', () => {

@@ -413,13 +413,28 @@ const FREQUENCY_SPLITS = Object.freeze({
 // A focus preset that DE-EMPHASIZES the lower body should also reshape the WEEK:
 // remove ~1 lower/legs cluster and reallocate that day to the focus region
 // (upper-biased push/pull). E.g. v-taper @ 4 days: the balanced template
-// ['upper','lower','upper','lower'] (TWO leg days) → ['upper','push','pull','lower']
-// (ONE leg day; the freed day becomes shoulder/back-biased push+pull work). The
-// emphasized region thus gains ≥1 cluster. `balanced` → the templates UNCHANGED
-// (byte-identical). The reshape is purely a slot SWAP within the same N-day
-// template (length + day count preserved) — it only changes WHICH clusters fill
-// the freed lower slots, biased to the focus.
+// ['upper','lower','upper','lower'] (TWO leg days) → ['push','pull','upper','lower']
+// (ONE leg day; the freed day becomes focus-region work). The emphasized region
+// thus gains ≥1 cluster. `balanced` → the templates UNCHANGED (byte-identical).
+//
+// CRITICAL — recovery SPACING (fix 2026-06-02): a naive slot-swap (replace the
+// first leg day with push) yields ['upper','push','upper','lower'] = UPPER then
+// PUSH on consecutive training days. Both hammer chest/shoulders/triceps, so the
+// same muscles are trained two days running → the second session lands fried
+// (recovery cut + bite collapse it to ~2 sets/exercise — the "27-min" thin-session
+// bug). The reshape therefore prefers a purpose-built SPACED template
+// (FOCUS_LOWER_DEEMPH_SPLITS) that keeps each muscle's hits ≥48-72h apart, and
+// only falls back to the slot-swap for day-counts without a spaced template.
 const LOWER_CLUSTERS = Object.freeze(['lower', 'legs']);
+
+// Recovery-SPACED templates for lower-de-emphasis presets (v-taper), keyed by
+// training-day count. Each trades ONE leg day for focus-region work AND orders
+// the week so the push muscles (piept/umeri/triceps) never train on back-to-back
+// active days. 4 days L/Ma/J/V: push(Mon)→pull(Tue, spate/biceps fresh)→upper(Thu,
+// 72h after push)→lower(Fri). Day-counts absent here fall back to the slot-swap.
+const FOCUS_LOWER_DEEMPH_SPLITS = Object.freeze({
+  4: Object.freeze(['push', 'pull', 'upper', 'lower']),
+});
 
 /**
  * Reshape an ordered cluster template for a focus preset that de-emphasizes the
@@ -449,6 +464,11 @@ function reshapeSplitForFocus(split, preset) {
   }
   // Need ≥2 lower slots to free one (always retain ≥1 leg day).
   if (lowerIdxs.length < 2) return split;
+  // Prefer a recovery-SPACED template for this day-count (keeps the push muscles
+  // off back-to-back days; see FOCUS_LOWER_DEEMPH_SPLITS). Falls through to the
+  // slot-swap below only for day-counts without a spaced template.
+  const spaced = FOCUS_LOWER_DEEMPH_SPLITS[split.length];
+  if (spaced) return [...spaced];
   // Free the FIRST lower slot → a focus-region cluster. Alternate push/pull so
   // both width regions (umeri via push, spate via pull) get the freed work.
   const out = [...split];
