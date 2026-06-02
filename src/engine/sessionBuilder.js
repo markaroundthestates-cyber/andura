@@ -122,12 +122,28 @@ const COMMON_MOVEMENTS = new Set([
 
 // SESSION_SIZE is the MAX exercises per session (sanity ceiling, anti-2h
 // session), NOT a fixed count. The real count now falls out of the weekly
-// volume budget (computeSessionExerciseCount) clamped to [MIN_SESSION, SESSION_SIZE].
+// volume budget (computeSessionExerciseCount) clamped to [minSession, SESSION_SIZE]
+// where minSession is tier-aware (minSessionForTier).
 const SESSION_SIZE = 8;
-// Floor so a session is never a token 1-2 movements (junk-low). Beginner/T0
-// lands near here naturally (persona modifier shrinks weekly volume); advanced
-// climbs toward SESSION_SIZE — emergent, no per-tier hardcode.
-const MIN_SESSION = 4;
+// Floor so a session is never a token 1-2 movements (junk-low). Tier-aware: a
+// beginner (T0) lands near the base floor naturally (persona modifier shrinks
+// weekly volume), but a TRAINED lifter (T1/T2+) should never present a session
+// below MIN_SESSION_TRAINED — a 4-exercise day reads thin/under-cooked to someone
+// past beginner. Advanced still climbs toward SESSION_SIZE — emergent above the
+// floor, no per-tier hardcode of the COUNT, only of the floor.
+const MIN_SESSION_BEGINNER = 4;
+const MIN_SESSION_TRAINED = 5;
+
+/**
+ * Tier-aware session-substance floor. T0 (beginner) keeps the base floor of 4;
+ * every trained tier (T1/T2+, and unknown/null defensively) floors at 5 so a
+ * trained lifter's session is never presented below 5 exercises.
+ * @param {string|null|undefined} profileTier - 'T0' | 'T1' | 'T2' | null
+ * @returns {number} minimum exercises per session for the tier
+ */
+function minSessionForTier(profileTier) {
+  return profileTier === 'T0' ? MIN_SESSION_BEGINNER : MIN_SESSION_TRAINED;
+}
 // Default count when no volume signal is available (empty user / no
 // volumeTargets) — preserves the legacy ~6-exercise session for cold-start.
 const DEFAULT_SESSION_SIZE = 6;
@@ -271,9 +287,10 @@ function distributeGroupSets(exsInGroup, budget, state) {
  *   exercises_for_grp  = round( sets_this_session / SETS_PER_EXERCISE )
  *   count              = Σ exercises_for_grp over the cluster's groups
  *
- * Clamped to [MIN_SESSION, SESSION_SIZE]. When no volume signal is present
- * (empty user / absent volumeTargets / unknown sessions-per-group) we keep the
- * legacy DEFAULT_SESSION_SIZE so cold-start callers stay stable.
+ * Clamped to [minSession, SESSION_SIZE] (minSession is tier-aware:
+ * minSessionForTier — T0 floors at 4, trained tiers at 5). When no volume signal
+ * is present (empty user / absent volumeTargets / unknown sessions-per-group) we
+ * keep the legacy DEFAULT_SESSION_SIZE so cold-start callers stay stable.
  *
  * `weeklySets(group)` is volumeTargets[EN-key] (periodization sets/week, EN
  * keyed — same RO→EN bridge sessionSetBudget uses). `sessionsTrainingThatGroup`
@@ -283,9 +300,10 @@ function distributeGroupSets(exsInGroup, budget, state) {
  * @param {string[]} groups - the cluster's Big-11 RO target groups
  * @param {Record<string, number>|null|undefined} volumeTargets - Big-11 EN -> sets/week
  * @param {Record<string, number>|null|undefined} weeklySessionsPerGroup - Big-11 RO -> sessions/week
- * @returns {number} session exercise count in [MIN_SESSION, SESSION_SIZE]
+ * @param {number} minSession - tier-aware substance floor (minSessionForTier)
+ * @returns {number} session exercise count in [minSession, SESSION_SIZE]
  */
-function computeSessionExerciseCount(groups, volumeTargets, weeklySessionsPerGroup) {
+function computeSessionExerciseCount(groups, volumeTargets, weeklySessionsPerGroup, minSession) {
   if (!volumeTargets || typeof volumeTargets !== 'object') return DEFAULT_SESSION_SIZE;
   let total = 0;
   let sawSignal = false;
@@ -309,7 +327,7 @@ function computeSessionExerciseCount(groups, volumeTargets, weeklySessionsPerGro
     }
   }
   if (!sawSignal) return DEFAULT_SESSION_SIZE;
-  return Math.min(SESSION_SIZE, Math.max(MIN_SESSION, total));
+  return Math.min(SESSION_SIZE, Math.max(minSession, total));
 }
 
 /**
@@ -546,9 +564,13 @@ export function movementKey(name, meta) {
  */
 export function buildSession(cluster, ctx) {
   const targets = clusterGroupsOrdered(cluster);
+  // Tier-aware substance floor: a trained lifter (T1/T2+) never lands below 5
+  // exercises; T0 keeps the base floor of 4. Threaded into both the count clamp
+  // and the post-drop floor guard so the fatigued exercise-drop can't breach it.
+  const minSession = minSessionForTier(ctx?.profileTier);
   // Per-session exercise budget — from the weekly volume budget (not a fixed 6).
   const sessionSize = computeSessionExerciseCount(
-    targets, ctx?.volumeTargets, ctx?.weeklySessionsPerGroup,
+    targets, ctx?.volumeTargets, ctx?.weeklySessionsPerGroup, minSession,
   );
   const available = new Set(ctx?.equipment?.available ?? []);
   const maxTier = tierCeiling(ctx?.profileTier);
@@ -700,10 +722,19 @@ export function buildSession(cluster, ctx) {
         const g = groupOf(e.name);
         if (dropLastFor.has(g)) lastIndexByGroup[g] = i;
       });
-      const dropIdx = new Set(Object.values(lastIndexByGroup));
-      const trimmed = chosen.filter((_, i) => !dropIdx.has(i));
-      chosen.length = 0;
-      chosen.push(...trimmed);
+      // Tier-aware floor guard: the fatigued exercise-drop must NEVER push the
+      // session below minSession (the ordering bug that let a 1-day-fatigue case
+      // fall to 2 exercises). Apply only as many drops as keep chosen.length at or
+      // above the floor — drop the LOWEST-priority occurrences first (highest
+      // index) so the anchor compounds survive when a drop must be skipped.
+      const maxDrops = Math.max(0, chosen.length - minSession);
+      const candidateIdx = Object.values(lastIndexByGroup).sort((a, b) => b - a);
+      const dropIdx = new Set(candidateIdx.slice(0, maxDrops));
+      if (dropIdx.size > 0) {
+        const trimmed = chosen.filter((_, i) => !dropIdx.has(i));
+        chosen.length = 0;
+        chosen.push(...trimmed);
+      }
     }
   }
 
