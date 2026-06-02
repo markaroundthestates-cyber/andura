@@ -14,12 +14,24 @@
 // engine-scoped resolver config above.
 const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
+const { FileStore } = require('metro-cache');
 const path = require('path');
 
 const projectRoot = __dirname;                           // .../salafull/mobile
 const srcRoot = path.resolve(projectRoot, '..', 'src');  // .../salafull/src
 
 const config = getDefaultConfig(projectRoot);
+
+// Project-local Metro cache (isolation): the default OS-temp `metro-cache` is
+// shared across every checkout on the machine. When the same repo is checked
+// out in multiple git worktrees (the RN-port agents), Metro's transform cache
+// keyed there leaks ABSOLUTE module paths from a SIBLING worktree into this
+// build's dependency graph ("Unable to resolve ...agent-XXXX/mobile/node_
+// modules/metro-runtime..."). Pinning the cache under this worktree keeps each
+// checkout's graph self-contained. Regenerates automatically.
+config.cacheStores = [
+  new FileStore({ root: path.join(projectRoot, '.metro-cache') }),
+];
 
 // Let Metro read the engine source above mobile/ — scoped to src/ only.
 config.watchFolders = [srcRoot];
