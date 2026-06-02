@@ -263,6 +263,11 @@
     "noCount": "Inca te cunosc - planul se ascute cu fiecare sesiune."
   },
 
+  "coachReturn": {
+    "line_one": "Bine ai revenit - am reechilibrat restul saptamanii dupa antrenamentul sarit. Fara stres, planul s-a adaptat.",
+    "line_other": "Bine ai revenit - am reechilibrat restul saptamanii dupa cele {n} antrenamente sarite. Fara stres, planul s-a adaptat."
+  },
+
   "restOverlay": {
     "ariaLabel": "Pauza activa",
     "kicker": "Pauza",

@@ -265,6 +265,50 @@ describe('CoachTodayCard — calibration honesty line', () => {
   });
 });
 
+// No-shame return — the warm "welcome back, the week rebalanced around the
+// miss" line. Renders when the engine reports a same-week return-after-miss, and
+// is HIDDEN entirely when there is no miss / the user hasn't returned this week
+// (engine returns null). Communication of the rebalance the brain already did.
+describe('CoachTodayCard — no-shame return line', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(engineWrappers, 'getCoachTodayQuote').mockReturnValue(null);
+    vi.spyOn(engineWrappers, 'getLaggingSignal').mockReturnValue(null);
+    vi.spyOn(engineWrappers, 'getCalibrationMaturity').mockReturnValue(null);
+    useWorkoutStore.setState({ sessionsHistory: [] });
+  });
+
+  it('renders the welcome-back line when the user returned after a same-week miss', () => {
+    vi.spyOn(engineWrappers, 'getReturnAfterMissSignal').mockReturnValue({ missedDays: 2 });
+    renderCard();
+    const line = screen.getByTestId('coach-return-line');
+    expect(line).toBeInTheDocument();
+    // EN default — warm, no-guilt, confirms the week rebalanced.
+    expect(line.textContent).toMatch(/Welcome back/i);
+    expect(line.textContent).toMatch(/rebalanced/i);
+  });
+
+  it('uses the singular copy for exactly one missed day', () => {
+    vi.spyOn(engineWrappers, 'getReturnAfterMissSignal').mockReturnValue({ missedDays: 1 });
+    renderCard();
+    const line = screen.getByTestId('coach-return-line');
+    expect(line.textContent).toMatch(/missed session\b/i);
+    expect(line.textContent).not.toMatch(/\d+ missed sessions/i);
+  });
+
+  it('renders NOTHING when there is no miss (engine returns null)', () => {
+    vi.spyOn(engineWrappers, 'getReturnAfterMissSignal').mockReturnValue(null);
+    renderCard();
+    expect(screen.queryByTestId('coach-return-line')).not.toBeInTheDocument();
+  });
+
+  it('cold start (no return) → no line, no crash (real engine, empty history)', () => {
+    // No mock — exercise the REAL wrapper with zero sessions (cold start → null).
+    renderCard();
+    expect(screen.queryByTestId('coach-return-line')).not.toBeInTheDocument();
+  });
+});
+
 // START-side double-session guard (counterpart to the PostRpe finish-side
 // confirm shipped dc9400d6). A session logged TODAY replaces the start CTA
 // with a "Session logged" control; the only way to a 2nd session today is the

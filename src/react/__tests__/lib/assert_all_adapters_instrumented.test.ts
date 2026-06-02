@@ -55,9 +55,12 @@ const REQUIRED_ADAPTERS = [
   // Calibration honesty adapter — reads detectCalibrationLevel to surface the
   // "still learning you" line while immature. Instrumented identically.
   'getCalibrationMaturity',
+  // No-shame return adapter — detects a same-week return-after-miss to surface
+  // the warm "welcome back, the week rebalanced" line. Instrumented identically.
+  'getReturnAfterMissSignal',
 ] as const;
 
-const EXPECTED_CAPTURE_EXCEPTION_SITES = 16; // 11 Big-11 + getPatternsBanner extra sub-path + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare) + getWorkoutForDay (schedule day-preview) + getCalibrationMaturity (calibration honesty)
+const EXPECTED_CAPTURE_EXCEPTION_SITES = 17; // 11 Big-11 + getPatternsBanner extra sub-path + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare) + getWorkoutForDay (schedule day-preview) + getCalibrationMaturity (calibration honesty) + getReturnAfterMissSignal (no-shame return)
 
 describe('Sentry adapter coverage anti-drift gate (D063 LOCK V1)', () => {
   const source = readFileSync(ENGINE_WRAPPERS_PATH, 'utf-8');

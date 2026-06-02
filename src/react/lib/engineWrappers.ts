@@ -50,6 +50,7 @@ import { detectWeakGroups } from '../../engine/weaknessDetector.js';
 import { detectCalibrationLevel, CALIBRATION_LEVELS } from '../../engine/calibration.js';
 import { DB } from '../../db.js';
 import { useWorkoutStore } from '../stores/workoutStore';
+import { useScheduleStore, weekStartIso } from '../stores/scheduleStore';
 import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
 // Piesa 1 nutrition-brain fix — real per-user maintenance TDEE base (omoara
 // baza flat 2640). Multiplicatorul de faza se aplica pe TDEE-ul real per-user.
@@ -98,6 +99,7 @@ import type {
   CoachRestReason,
   CoachTodayQuote,
   CoachCalibrationSignal,
+  CoachReturnSignal,
 } from './engineWrappers.types';
 
 // Barrel re-exports — preserve IDENTICAL public API after the hygiene split.
@@ -119,6 +121,7 @@ export type {
   CoachRestReason,
   CoachTodayQuote,
   CoachCalibrationSignal,
+  CoachReturnSignal,
   CoachAdaptation,
   CoachAdaptationKind,
 } from './engineWrappers.types';
@@ -1007,6 +1010,96 @@ export function getCalibrationMaturity(): CoachCalibrationSignal | null {
     logger.warn('[engineWrappers] getCalibrationMaturity failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getCalibrationMaturity' },
+    });
+    return null;
+  }
+}
+
+// ── No-shame return composer (Coach Voice / minimal-friction arc, ADR 025) ──
+//
+// Detects "returned this week after missing >=1 scheduled training day EARLIER
+// this week" and exposes a machine signal the React side turns into a warm,
+// NO-GUILT welcome-back line. This is COMMUNICATION ONLY — the adaptive brain
+// ALREADY rebalances a missed group on its own: a missed session means fewer
+// sets accumulate for that group over the trailing 14 days, so getLaggingMuscles
+// flags it (ratio < 0.6 vs peers) and M2 applyWeaknessAmplification pushes its
+// volume UP toward MRV on the remaining FRESH days — capped at MRV + recovery
+// cuts (NEVER cramming all missed volume into fewer days). So we do NOT add new
+// rebalance logic here; we only tell the user, honestly, that the week adapted.
+//
+// Truth-only: missedDays is the REAL count of scheduled training days earlier in
+// the current (Monday-anchored) week with NO logged session. Null when:
+//   - no scheduled training day earlier this week was missed (nothing to say)
+//   - cold start (zero prior sessions ever — not a "return")
+//   - the user has logged ZERO sessions this week so far (they have not actually
+//     "returned" yet — the line is for someone back in the gym after a same-week
+//     gap, not someone idle all week; the >14d absence case is ReactivateCard's)
+//
+// Determinism: `now` injected for testing; defaults to the live clock. Pure read
+// of the schedule (Mon..Sun training/rest tuple) + sessionsHistory; no mutation.
+const RETURN_WINDOW_DAYS = 14; // beyond this, the >14d ReactivateCard owns the win-back
+
+export function getReturnAfterMissSignal(now: number = Date.now()): CoachReturnSignal | null {
+  try {
+    const sessions = useWorkoutStore.getState().sessionsHistory;
+    // Cold start → not a "return" (never trained before). Honesty gate.
+    if (sessions.length === 0) return null;
+
+    const days = useScheduleStore.getState().days; // Mon..Sun, 'training'|'rest'
+    if (!Array.isArray(days) || days.length !== 7) return null;
+
+    const nowDate = new Date(now);
+    // Monday-first index of today (JS Sun=0 → Mon=0..Sun=6).
+    const todayIdx = (nowDate.getDay() + 6) % 7;
+
+    // LOCAL day-key (YYYY-MM-DD) of a Date — used for BOTH the scheduled-slot
+    // keys and the session keys so they compare on the same local-day basis
+    // (a session logged 09:00 local must match its weekday slot regardless of UTC
+    // offset). weekStartIso is itself local-day anchored (Monday of this week).
+    const localDayKey = (d: Date): string => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${dd}`;
+    };
+    const weekStart = weekStartIso(nowDate); // Monday ISO of the current week
+    const weekStartMs = new Date(`${weekStart}T00:00:00`).getTime();
+    const dayKeyFor = (idx: number): string =>
+      localDayKey(new Date(weekStartMs + idx * 86400000));
+    const sessionDayKey = (ts: number): string => localDayKey(new Date(ts));
+
+    // Sessions logged THIS week (within [weekStart, now]).
+    const loggedKeysThisWeek = new Set<string>();
+    let mostRecentTs = -Infinity;
+    for (const s of sessions) {
+      if (!Number.isFinite(s.ts)) continue;
+      if (s.ts > mostRecentTs) mostRecentTs = s.ts;
+      if (s.ts < weekStartMs || s.ts > now) continue;
+      loggedKeysThisWeek.add(sessionDayKey(s.ts));
+    }
+
+    // The user must have actually RETURNED this week (>=1 session logged this
+    // week). Someone idle the whole week has not "come back" — and a long
+    // absence (>14d) is ReactivateCard's job, not this same-week line.
+    if (loggedKeysThisWeek.size === 0) return null;
+    if (mostRecentTs !== -Infinity && now - mostRecentTs > RETURN_WINDOW_DAYS * 86400000) {
+      return null;
+    }
+
+    // Count scheduled training days EARLIER this week (idx < today) with no
+    // logged session — the real misses the user is returning from. Today is
+    // excluded (it is not yet "missed"); future days are not yet due.
+    let missedDays = 0;
+    for (let idx = 0; idx < todayIdx; idx++) {
+      if (days[idx] !== 'training') continue;
+      if (!loggedKeysThisWeek.has(dayKeyFor(idx))) missedDays++;
+    }
+    if (missedDays === 0) return null;
+    return { missedDays };
+  } catch (e) {
+    logger.warn('[engineWrappers] getReturnAfterMissSignal failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getReturnAfterMissSignal' },
     });
     return null;
   }

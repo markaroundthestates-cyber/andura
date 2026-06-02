@@ -193,6 +193,31 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionsHistory]);
 
+  // No-shame return — the warm "welcome back" line. When the user returns this
+  // week after missing >=1 scheduled training day EARLIER this week (a short,
+  // same-week gap), surface a NO-GUILT line confirming the week already adapted
+  // around the miss. The adaptive brain ALREADY rebalanced (a missed group reads
+  // as lagging → M2 weakness amp pushes its volume up on the remaining fresh days
+  // within MRV + recovery caps); this line is the COMMUNICATION of that truth, no
+  // new logic. Hidden entirely when there is no same-week miss / cold start / the
+  // user has not actually returned this week (engine returns null) — and the >14d
+  // absence is owned by ReactivateCard, so the two never double up. Recomputes on
+  // session-history change (a fresh log this week is the "return" trigger).
+  const returnLine = useMemo<string | null>(() => {
+    try {
+      const sig = engineWrappers.getReturnAfterMissSignal?.() ?? null;
+      if (sig === null) return null;
+      return sig.missedDays === 1
+        ? t('coachReturn.line_one')
+        : t('coachReturn.line_other', { n: sig.missedDays });
+    } catch {
+      return null;
+    }
+    // sessionsHistory is the signal dep — getReturnAfterMissSignal reads it (and
+    // the schedule) via getState() (indirect), so the lint cannot see the dep.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionsHistory]);
+
   // START-side double-session guard (counterpart to the PostRpe finish-side
   // confirm shipped dc9400d6). When a gym session is already logged TODAY we
   // must NOT show the normal "Start session" button — an accidental tap would
@@ -307,6 +332,23 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
           className="relative flex items-start gap-2 mt-2 text-xs leading-relaxed text-ink3"
         >
           <span>{calibrationLine}</span>
+        </div>
+      )}
+      {returnLine && (
+        /* No-shame return — the warm "welcome back, the week rebalanced around
+           the miss" line. A quiet aqua-tinted note (reassurance, not a headline).
+           Hidden entirely when there is no same-week miss / the user has not
+           returned this week (engine returns null). */
+        <div
+          data-testid="coach-return-line"
+          className="relative flex items-start gap-2 mt-2.5 text-sm leading-relaxed text-ink2"
+        >
+          <Sparkles
+            className="w-4 h-4 mt-0.5 shrink-0"
+            aria-hidden="true"
+            style={{ color: 'var(--aqua)' }}
+          />
+          <span>{returnLine}</span>
         </div>
       )}
       {todaySession ? (

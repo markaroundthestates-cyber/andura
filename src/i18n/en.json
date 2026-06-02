@@ -263,6 +263,11 @@
     "noCount": "Still getting to know you — the plan keeps sharpening with every session."
   },
 
+  "coachReturn": {
+    "line_one": "Welcome back — I've rebalanced the rest of your week around the missed session. No stress, the plan adapted.",
+    "line_other": "Welcome back — I've rebalanced the rest of your week around the {n} missed sessions. No stress, the plan adapted."
+  },
+
   "restOverlay": {
     "ariaLabel": "Active rest",
     "kicker": "Rest",

@@ -205,3 +205,14 @@ export interface CoachCalibrationSignal {
   // count can be derived (then the React copy drops the number — never faked).
   sessionsToNext: number | null;
 }
+
+// No-shame return signal — the user returned this week after missing >=1
+// scheduled training day EARLIER this week (short, same-week miss). Emitted by
+// getReturnAfterMissSignal() ONLY when there is a real miss + real prior history;
+// null otherwise (no miss / cold start / >14d absence owned by ReactivateCard).
+// The React side composes a warm, no-guilt line from the count (no copy here).
+// Truth-only: missedDays is the REAL count of scheduled training days earlier
+// this week with no logged session — never fabricated.
+export interface CoachReturnSignal {
+  missedDays: number; // 1..N scheduled training days earlier this week with no session
+}
