@@ -216,14 +216,20 @@ export function toCanonicalRO(volumeMap) {
  * Pure modifier layer applied post-volumeMap compute. NU mutate algorithm
  * phase cycle semantics (LOAD/LOAD+/PEAK/DELOAD untouched).
  *
+ * `now` is an injectable reference timestamp (default Date.now) threaded into
+ * getRecoveryByGroup so the redistribution is DETERMINISTIC under a fixed clock
+ * (the daily-plan adapter passes the same `now` it plans for). Omitting it
+ * preserves the prior Date.now() default — backward compatible.
+ *
  * @param {Object<string, number>} volumeMap - Big 11 RO keyed → sets/week
  * @param {Array} logs - session logs for Recovery state input
+ * @param {number} [now] - reference timestamp (default Date.now); inject for determinism
  * @returns {Object<string, number>} adjusted volumeMap (RO keyed)
  */
-export function applyRecoveryStateRedistribution(volumeMap, logs) {
+export function applyRecoveryStateRedistribution(volumeMap, logs, now = Date.now()) {
   const safeMap = volumeMap && typeof volumeMap === 'object' ? volumeMap : {};
   if (!Array.isArray(logs) || logs.length === 0) return { ...safeMap };
-  const recoveryState = getRecoveryByGroup(logs);
+  const recoveryState = getRecoveryByGroup(logs, undefined, now);
   const adjusted = {};
   for (const [group, sets] of Object.entries(safeMap)) {
     const state = recoveryState[group];

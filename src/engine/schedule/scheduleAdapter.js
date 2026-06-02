@@ -28,7 +28,11 @@ import {
 } from '../../coach/orchestrator/adapters/index.js';
 import { buildSession } from '../sessionBuilder.js';
 import { availableCoarseTypes } from '../equipmentMap.js';
-import { CLUSTER_BIG6_TO_BIG11_WEIGHT } from '../periodization/constants.js';
+import { CLUSTER_BIG6_TO_BIG11_WEIGHT, BIG11_RO_TO_EN_MAP } from '../periodization/constants.js';
+import {
+  toCanonicalRO,
+  applyRecoveryStateRedistribution,
+} from '../periodization/volumeLandmarks.js';
 
 export const CALENDAR_OVERRIDE_KEY = 'wv2-calendar-override';
 export const MISSING_EQUIPMENT_KEY = 'wv2-missing-equipment';
@@ -506,6 +510,80 @@ export function weeklySessionsPerGroup(split) {
 }
 
 /**
+ * Flatten engine recentSessions[*] → muscleRecovery LogEntry[] rows. Mirrors the
+ * Progress-tab manikin flattener (MuscleRecoveryGrid.flattenSessionsToLogs): the
+ * recovery engine's getMuscleState filters out rows without a weight (`l.w`), so
+ * each set must emit { ex, ts, w } — emitting only ex+ts would make every group
+ * read 'recovered' (silent no-op). recentSessions carries the persisted
+ * SessionExerciseBreakdown shape (exercises[*].exerciseName + sets[*].kg/timestamp).
+ * Pure read — no mutation of the input sessions.
+ *
+ * @param {Array<{exercises?: Array<{exerciseName?: string, sets?: Array<{kg?: number, reps?: number, timestamp?: number}>}>}>} sessions
+ * @returns {Array<{ex: string, ts: number, w: number, reps: number}>}
+ */
+function flattenSessionsToRecoveryLogs(sessions) {
+  const logs = [];
+  if (!Array.isArray(sessions)) return logs;
+  for (const session of sessions) {
+    const exercises = session && Array.isArray(session.exercises) ? session.exercises : [];
+    for (const ex of exercises) {
+      const name = ex && typeof ex.exerciseName === 'string' ? ex.exerciseName : '';
+      const sets = ex && Array.isArray(ex.sets) ? ex.sets : [];
+      for (const set of sets) {
+        if (!set) continue;
+        logs.push({
+          ex: name,
+          ts: typeof set.timestamp === 'number' ? set.timestamp : 0,
+          w: typeof set.kg === 'number' ? set.kg : 0,
+          reps: typeof set.reps === 'number' ? set.reps : 0,
+        });
+      }
+    }
+  }
+  return logs;
+}
+
+/**
+ * Translate a Big-11 RO-keyed volume map back to Big-11 EN keys (inverse of
+ * toCanonicalRO) so the recovery-adjusted budget still resolves through
+ * setsForGroup, which reads volumeTargets[BIG11_RO_TO_EN_MAP[group]]. Keys absent
+ * from the map pass through unchanged (defensive). Pure.
+ *
+ * @param {Object<string, number>} roMap - Big-11 RO keyed → sets/week
+ * @returns {Object<string, number>} - Big-11 EN keyed → sets/week
+ */
+function toCanonicalEN(roMap) {
+  if (!roMap || typeof roMap !== 'object') return {};
+  const out = {};
+  for (const [key, value] of Object.entries(roMap)) {
+    const enKey = BIG11_RO_TO_EN_MAP[key] ?? key;
+    out[enKey] = value;
+  }
+  return out;
+}
+
+/**
+ * Apply muscle-recovery redistribution to the EN-keyed periodization volume
+ * budget. The budget is EN-keyed (chest/back/...) but the recovery math is
+ * RO-keyed (getRecoveryByGroup returns RO), so: EN→RO (toCanonicalRO) → cut tired
+ * groups (applyRecoveryStateRedistribution: partial ×0.80, fatigued ×0.60) → RO→EN
+ * (toCanonicalEN) so setsForGroup still resolves the budget. No logs / empty
+ * recovery → applyRecoveryStateRedistribution returns the map unchanged → identical
+ * to the pre-M1 chassis budget (graceful degradation, ADR 025). Pure.
+ *
+ * @param {Object<string, number>|null|undefined} volumeMapEN - Big-11 EN keyed budget
+ * @param {Array<{ex: string, ts: number, w: number}>} logs - recovery LogEntry[]
+ * @param {number} now - reference timestamp threaded into recovery (determinism)
+ * @returns {Object<string, number>|null} adjusted EN-keyed budget (null passes through)
+ */
+function applyRecoveryToVolumeBudget(volumeMapEN, logs, now) {
+  if (!volumeMapEN || typeof volumeMapEN !== 'object') return volumeMapEN ?? null;
+  const ro = toCanonicalRO(volumeMapEN);
+  const adjustedRo = applyRecoveryStateRedistribution(ro, logs, now);
+  return toCanonicalEN(adjustedRo);
+}
+
+/**
  * Compose today's workout plan — invoke 8-engine pipeline §42.10 sequential
  * strict + aggregate blueprints by engine id + delegate exercise selection
  * to sessionBuilder.
@@ -602,6 +680,26 @@ export async function getDailyWorkout(userState, now = new Date()) {
   const specializationTarget = blueprints.specialization?.target_muscle_group ?? null;
   const userId = userState?.user?.uid ?? userState?.uid ?? '';
   const seed = `${userId}|${getWeekStartIso(date)}|${dayIdx}`;
+
+  // ── M1: muscle-recovery → today's volume budget (the moat seam) ──────────
+  // The recovery brain already exists (getRecoveryByGroup) but only DISPLAYED.
+  // Here it ACTS on the plan: a group fatigued today gets its weekly budget cut
+  // today (partial ×0.80, fatigued ×0.60), and the freed budget naturally flows
+  // to fresh groups since buildSession distributes session slots from the
+  // per-group budget. Logs come from the SAME persisted sessions the Progress
+  // manikin reads (recentSessions → flattenSessionsToRecoveryLogs). `date.getTime()`
+  // threads the planned clock into recovery so the cut is DETERMINISTIC.
+  // No logs / all-recovered → budget unchanged → identical to pre-M1 chassis
+  // (graceful degradation, ADR 025). Aerobic recovery folded in below (it only
+  // EASES fresh groups, never deepens — resistance recovery is the M1 core).
+  const baseVolumeTargets = blueprints.periodization?.volume_target_pct ?? null;
+  const recoveryLogs = flattenSessionsToRecoveryLogs(userState?.recentSessions);
+  const volumeTargets = applyRecoveryToVolumeBudget(
+    baseVolumeTargets,
+    recoveryLogs,
+    date.getTime(),
+  );
+
   const sessionCtx = {
     equipment: { available: availableCoarse },
     weakGroups: specializationTarget ? [specializationTarget] : [],
@@ -609,8 +707,9 @@ export async function getDailyWorkout(userState, now = new Date()) {
     prNames: Array.isArray(userState?.prNames) ? userState.prNames : [],
     seed,
     // Periodization volume signal (sets/week per Big-11 group, varies by
-    // mesocycle phase) — drives per-exercise set counts in buildSession.
-    volumeTargets: blueprints.periodization?.volume_target_pct ?? null,
+    // mesocycle phase), recovery-redistributed for TODAY (M1) — drives
+    // per-exercise set counts in buildSession.
+    volumeTargets,
     // Per-group weekly session frequency from the split — buildSession divides
     // the weekly volume budget by it to size the session (count + set counts).
     weeklySessionsPerGroup: sessionsPerGroup,
@@ -624,7 +723,9 @@ export async function getDailyWorkout(userState, now = new Date()) {
     warmup: blueprints.warmup || null,
     exercises: session && Array.isArray(session.exercises) ? session.exercises : [],
     intensityModifier: blueprints.deload?.intensity_modifier ?? null,
-    volumeTargets: blueprints.periodization?.volume_target_pct ?? null,
+    // Recovery-redistributed budget actually consumed by buildSession this
+    // session — the reported field matches what drove the plan (M1).
+    volumeTargets,
     // Goal Adaptation rest-time prescription [minSec, maxSec] per template ×
     // phase × mode (goalAdaptation/index.js:178 rest_time_modifier). Was
     // computed by the engine but dropped here → planner hardcoded restSec 90.
