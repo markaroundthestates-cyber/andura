@@ -75,6 +75,37 @@ export const mix = {
   brick55Light: 'rgba(71,112,6,0.55)',
 } as const;
 
+// ── withAlpha(color, alpha) ─────────────────────────────────────────────────
+// Runtime helper for the web's `color-mix(in oklab, <c> N%, transparent)`
+// pattern where the color is dynamic (caller-supplied `color` prop on Pill /
+// Ring glow / Sparkline tint) so it cannot be pre-baked in `mix` above. Mixing
+// an opaque color N% with transparent == that color carried at alpha N/100, so
+// we just apply the alpha. Accepts #rgb / #rrggbb / rgb()/rgba(). The oklab vs
+// sRGB color space differs slightly from the browser but the perceptual result
+// is visually equivalent at these accent hues (Bugatti-acceptable for tints).
+export function withAlpha(color: string, alpha: number): string {
+  const a = Math.min(1, Math.max(0, alpha));
+  const hex = color.trim();
+  if (hex.startsWith('#')) {
+    let h = hex.slice(1);
+    if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+    if (h.length === 6) {
+      const r = parseInt(h.slice(0, 2), 16);
+      const g = parseInt(h.slice(2, 4), 16);
+      const b = parseInt(h.slice(4, 6), 16);
+      return `rgba(${r},${g},${b},${a})`;
+    }
+  }
+  const rgbMatch = hex.match(/^rgba?\(([^)]+)\)$/i);
+  if (rgbMatch?.[1]) {
+    const parts = rgbMatch[1].split(',').map((p) => p.trim());
+    const [r, g, b] = parts;
+    return `rgba(${r},${g},${b},${a})`;
+  }
+  // Unknown format — return as-is (best effort; never throw in render path).
+  return color;
+}
+
 export const radius = { DEFAULT: 22, sm: 14 } as const;
 
 export const fontFamily = {
