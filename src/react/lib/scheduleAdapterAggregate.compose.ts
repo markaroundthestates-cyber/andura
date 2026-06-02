@@ -543,9 +543,20 @@ export async function composePlannedWorkoutToday(
     // tag (PUSH/PULL/LEGS/LOWER/UPPER/FULL). Missing/unknown → factor 1.0 →
     // identical to the flat cap. Round so the cap stays a whole-minute ceiling.
     const sessionTypeTag = typeof plan.sessionType === 'string' ? plan.sessionType : null;
-    const timeCapMin = Math.round(
+    const personaFatigueCap = Math.round(
       personaTimeCapMin(personaId) * clusterFatigueFactor(sessionTypeTag),
     );
+    // User-chosen pre-session TIME budget ("I only have N min today", EnergyCheck).
+    // It only ever SHRINKS the cap — min(personaFatigueCap, userTimeMin) — never
+    // EXTENDS past the persona/fatigue ceiling (safety: a generous user choice
+    // can't blow past the realistic load the persona model allows). null / unset
+    // → byte-identical to the prior persona+fatigue-derived cap. The trim floor
+    // (>=4 ex / >=2 sets / >=25 min) still protects an impossibly-short pick.
+    const userTimeMin = useWorkoutStore.getState().sessionTimeBudgetMin;
+    const timeCapMin =
+      typeof userTimeMin === 'number' && Number.isFinite(userTimeMin) && userTimeMin > 0
+        ? Math.min(personaFatigueCap, userTimeMin)
+        : personaFatigueCap;
     const exercises = trimSessionToTimeBudget(mapped, warmup?.durationMin ?? 0, timeCapMin);
     // Deload engine emits intensity_modifier object always (IDLE state =
     // {rir_increment:0, intensity_pct_decrement:0}). 'minus' only when

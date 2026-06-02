@@ -458,6 +458,11 @@
     "subHeaderTitle": "How do you feel?",
     "title": "How do you feel today?",
     "subtitle": "The coach adjusts intensity based on your energy.",
+    "timeBudget": {
+      "label": "How much time today?",
+      "minutes": "{n} min",
+      "noLimit": "No limit"
+    },
     "levels": {
       "excellent": "Excellent",
       "excellentHint": "Coach bumps intensity +15%",

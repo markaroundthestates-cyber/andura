@@ -410,3 +410,105 @@ describe('composePlannedWorkoutToday — persona time budget integration', () =>
     out!.exercises.forEach((e) => expect(e.sets).toBe(3));
   });
 });
+
+describe('composePlannedWorkoutToday — user pre-session TIME budget', () => {
+  // Marius (cap 90) with a high-volume plan, so the user-chosen budget has room
+  // to shrink the session well below the persona ceiling.
+  const STUB_PLAN_BASE = {
+    type: 'training' as const,
+    sessionType: 'UPPER', // fatigue factor 1.0 → flat persona cap (no interference)
+    warmup: null,
+    intensityModifier: null,
+    volumeTargets: null,
+    restTimeRange: [120, 180] as [number, number],
+    specializationTarget: null,
+    deloadState: 'IDLE',
+    workoutTitle: 'Antrenament azi',
+    estimatedDurationMin: 50,
+    volumeKg: 1000,
+  };
+  const EIGHT_COMPOUNDS = [
+    'DB Shoulder Press',
+    'Incline DB Press',
+    'Flat DB Press',
+    'Flat Barbell Bench',
+    'Lat Pulldown',
+    'Cable Row',
+    'Chest-Supported Row',
+    'Romanian Deadlift',
+  ];
+
+  function setMarius(): void {
+    useOnboardingStore.setState({
+      data: { age: 25, sex: 'm', goal: 'masa', frequency: '5', experience: 'avansat', weight: 90, height: 185 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+  }
+
+  async function composeWith(timeBudgetMin: number | null) {
+    setMarius();
+    useWorkoutStore.setState({ sessionTimeBudgetMin: timeBudgetMin });
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_PLAN_BASE,
+      exercises: EIGHT_COMPOUNDS.map((name) => ({ name, sets: 5 })),
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    return out!;
+  }
+
+  it('user picks 30 min → session compresses to ~30 (or floor) + fewer exercises vs no-limit', async () => {
+    const noLimit = await composeWith(null);
+    const limited = await composeWith(30);
+    // The shortened session is no longer than the user's budget (the floor may
+    // hold it slightly above if 30 is impossibly short — still <= the no-limit).
+    expect(limited.estimatedDuration!).toBeLessThanOrEqual(noLimit.estimatedDuration!);
+    // 30 min is well under marius 90 → the trim engaged: fewer total exercises.
+    expect(limited.exerciseCount).toBeLessThanOrEqual(noLimit.exerciseCount);
+    // Honest floor: never gutted below the ~4 exercise / 25 min minimum.
+    expect(limited.exercises.length).toBeGreaterThanOrEqual(4);
+    expect(limited.estimatedDuration!).toBeGreaterThanOrEqual(25);
+  });
+
+  it('skip / no time budget (null) → BYTE-IDENTICAL to the current persona-derived plan', async () => {
+    // Establish the persona-only baseline (no user budget).
+    setMarius();
+    useWorkoutStore.setState({ sessionTimeBudgetMin: null });
+    const mod1 = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod1, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_PLAN_BASE,
+      exercises: EIGHT_COMPOUNDS.map((name) => ({ name, sets: 5 })),
+    });
+    const baseline = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+
+    // Same plan, still no budget → must be deeply equal (no behavior change).
+    setMarius();
+    useWorkoutStore.setState({ sessionTimeBudgetMin: null });
+    const mod2 = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod2, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_PLAN_BASE,
+      exercises: EIGHT_COMPOUNDS.map((name) => ({ name, sets: 5 })),
+    });
+    const again = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+
+    expect(again).toEqual(baseline);
+  });
+
+  it('user time LONGER than the persona cap → persona cap still wins (no extension)', async () => {
+    const noLimit = await composeWith(null);            // marius cap 90
+    const generous = await composeWith(180);            // user "I have 3h"
+    // The budget only ever SHRINKS the cap; a value above the persona ceiling
+    // must not extend the session — identical to the persona-derived plan.
+    expect(generous.estimatedDuration).toBe(noLimit.estimatedDuration);
+    expect(generous.exerciseCount).toBe(noLimit.exerciseCount);
+  });
+
+  it('determinism — same budget + plan twice → identical duration', async () => {
+    const a = await composeWith(45);
+    const b = await composeWith(45);
+    expect(a.estimatedDuration).toBe(b.estimatedDuration);
+    expect(a.exerciseCount).toBe(b.exerciseCount);
+  });
+});

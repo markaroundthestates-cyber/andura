@@ -80,6 +80,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       streak: 0,
       lastStreakDate: null,
       sessionContext: null,
+      sessionTimeBudgetMin: null,
       refusalTriedByEx: {},
       deletedSessionTs: [],
 
@@ -146,6 +147,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           prData: null,
           pausedSnapshot: null,
           sessionContext: null,
+          sessionTimeBudgetMin: null,
           refusalTriedByEx: {},
         }),
 
@@ -175,6 +177,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             setIdx: 0,
             history: {},
             sessionContext: null,
+            sessionTimeBudgetMin: null,
             refusalTriedByEx: {},
           };
         }),
@@ -260,6 +263,11 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       // ca sa NU se scurga la sesiunea urmatoare (intrare directa Antrenor).
       setSessionContext: (ctx) => set({ sessionContext: ctx }),
 
+      // Pre-session TIME budget — EnergyCheck "How much time today?" choice.
+      // composePlannedWorkoutToday reads it to SHRINK the persona-derived cap.
+      // Cleared (null) on session teardown so it never leaks to the next session.
+      setSessionTimeBudgetMin: (min) => set({ sessionTimeBudgetMin: min }),
+
       // U-05 (HIGH) — day-boundary streak. Aceeasi zi calendaristica = no-op
       // (2 sesiuni/zi NU = 2 zile), ziua urmatoare = +1, gap > 1 zi = reset 1.
       // `now` injectabil pentru test determinism. lastStreakDate persistat.
@@ -284,6 +292,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           lastRating: null,
           pausedSnapshot: null,
           sessionContext: null,
+          sessionTimeBudgetMin: null,
           refusalTriedByEx: {},
         }),
     }),

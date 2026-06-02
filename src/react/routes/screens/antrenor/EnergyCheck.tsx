@@ -39,6 +39,7 @@ import { ChevronRight } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { saveReadiness } from '../../../../engine/readiness.js';
+import { useWorkoutStore } from '../../../stores/workoutStore';
 import { t } from '../../../../i18n/index.js';
 
 export type EnergyLevel = 'excelent' | 'bine' | 'normal' | 'slabit' | 'obosit';
@@ -61,6 +62,13 @@ interface EnergyOption {
   readiness: 1 | 2 | 3 | 4 | 5;
 }
 
+// Optional pre-session TIME budget chips ("How much time today?"). Skippable per
+// ADR 025 — leaving "No limit" selected (the default) keeps the persona-derived
+// behavior byte-identical. Picking a value SHRINKS today's session to fit (the
+// engine's existing tail-first trim, never below the floor). The user time only
+// ever tightens the cap; it never extends past the persona/fatigue ceiling.
+const TIME_BUDGET_CHOICES = [30, 45, 60, 90] as const;
+
 // 5-step Pulse energy ramp volt -> aqua -> gold -> ember -> ember-red, 1:1 with
 // the mockup (interfata-noua/data.jsx energy[]: excellent=volt, good=aqua,
 // normal=gold, low=ember, tired=ember-red). Adjacent states read distinctly and
@@ -75,6 +83,10 @@ const ENERGY_OPTIONS: readonly EnergyOption[] = [
 
 export function EnergyCheck(): JSX.Element {
   const navigate = useNavigate();
+  // Pre-session time budget — the user's optional "how much time today" pick.
+  // null = no limit (default) → persona-derived behavior unchanged.
+  const sessionTimeBudgetMin = useWorkoutStore((s) => s.sessionTimeBudgetMin);
+  const setSessionTimeBudgetMin = useWorkoutStore((s) => s.setSessionTimeBudgetMin);
 
   function handleSelect(option: EnergyOption): void {
     // Persist self-report to the engine readiness store (per-UID) so the read
@@ -110,6 +122,50 @@ export function EnergyCheck(): JSX.Element {
       <p className="text-base text-ink2 mb-6">
         {t('energyCheck.subtitle')}
       </p>
+      {/* Optional pre-session time budget. Skippable: "No limit" (null) is the
+          default and keeps the persona-derived session unchanged. A picked value
+          shrinks today's plan to fit (engine trim). */}
+      <div className="mb-6" data-testid="energy-time-budget">
+        <p className="text-sm text-ink3 mb-2">{t('energyCheck.timeBudget.label')}</p>
+        <div className="flex flex-wrap gap-2">
+          {TIME_BUDGET_CHOICES.map((min) => {
+            const selected = sessionTimeBudgetMin === min;
+            return (
+              <button
+                key={min}
+                type="button"
+                onClick={() => setSessionTimeBudgetMin(selected ? null : min)}
+                data-testid={`time-chip-${min}`}
+                data-selected={selected}
+                aria-pressed={selected}
+                className="rounded-full px-4 py-2 text-sm font-semibold border transition"
+                style={
+                  selected
+                    ? { color: 'var(--volt)', borderColor: 'var(--volt)', background: 'color-mix(in oklab, var(--volt) 12%, transparent)' }
+                    : { color: 'var(--ink2)', borderColor: 'var(--line-strong)' }
+                }
+              >
+                {t('energyCheck.timeBudget.minutes', { n: min })}
+              </button>
+            );
+          })}
+          <button
+            type="button"
+            onClick={() => setSessionTimeBudgetMin(null)}
+            data-testid="time-chip-nolimit"
+            data-selected={sessionTimeBudgetMin === null}
+            aria-pressed={sessionTimeBudgetMin === null}
+            className="rounded-full px-4 py-2 text-sm font-semibold border transition"
+            style={
+              sessionTimeBudgetMin === null
+                ? { color: 'var(--volt)', borderColor: 'var(--volt)', background: 'color-mix(in oklab, var(--volt) 12%, transparent)' }
+                : { color: 'var(--ink2)', borderColor: 'var(--line-strong)' }
+            }
+          >
+            {t('energyCheck.timeBudget.noLimit')}
+          </button>
+        </div>
+      </div>
       <div className="flex flex-col gap-3">
         {ENERGY_OPTIONS.map((opt, i) => (
           <button

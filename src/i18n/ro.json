@@ -458,6 +458,11 @@
     "subHeaderTitle": "Cum te simti?",
     "title": "Cum te simti azi?",
     "subtitle": "Coach-ul ajusteaza intensitatea pe baza energiei tale.",
+    "timeBudget": {
+      "label": "Cat timp ai azi?",
+      "minutes": "{n} min",
+      "noLimit": "Fara limita"
+    },
     "levels": {
       "excellent": "Excelent",
       "excellentHint": "Coach urca intensitatea +15%",

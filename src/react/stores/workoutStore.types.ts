@@ -162,6 +162,15 @@ export interface WorkoutState {
   // null = sesiune fara adaptare (intrare directa Antrenor → workout). Set de
   // WorkoutPreview.handleStart din location.state inainte de navigate workout.
   sessionContext: SessionContext | null;
+  // Optional pre-session TIME budget (minutes) the user picked on EnergyCheck
+  // ("How much time today?"). null = no limit / skipped → the persona+fatigue-
+  // derived cap is used unchanged (byte-identical to the prior behavior). When
+  // set, composePlannedWorkoutToday SHRINKS the effective cap to fit (it never
+  // EXTENDS past the persona cap — safety: user time only ever tightens it).
+  // Runtime-only (NOT persisted), like sessionContext — a per-session hint, not
+  // user-entered training data; cleared on session teardown so it never leaks
+  // to the next session.
+  sessionTimeBudgetMin: number | null;
   // Tombstones — the `ts` of every logged session the user explicitly DELETED
   // from Istoric (mislogged workout, Daniel's wife). Plain removal from
   // sessionsHistory is not enough: the cloud sync merges by UNION (mergeArrayUnion
@@ -266,6 +275,10 @@ export interface WorkoutActions {
   setLastRating: (rating: 'usoara' | 'normala' | 'grea') => void;
   // U-03 (HIGH) — set session intensity/pain context (WorkoutPreview.handleStart).
   setSessionContext: (ctx: SessionContext | null) => void;
+  // Pre-session TIME budget — set on EnergyCheck ("How much time today?"). null
+  // clears the limit (back to persona-derived cap). composePlannedWorkoutToday
+  // reads it to SHRINK the effective time cap (never extends it).
+  setSessionTimeBudgetMin: (min: number | null) => void;
   // U-05 (HIGH) — day-boundary streak. `now` injectabil (default Date.now())
   // pentru determinism test. Aceeasi zi = no-op, ziua urmatoare = +1, gap > 1
   // zi (sau primul streak) = reset la 1.
