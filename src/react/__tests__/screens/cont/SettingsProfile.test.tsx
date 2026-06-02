@@ -185,6 +185,43 @@ describe('SettingsProfile — interactions', () => {
   });
 });
 
+// Focus selector (D-focus 2026-06-02) — pick your look (Balanced default).
+describe('SettingsProfile — focus selector', () => {
+  it('renders focus select defaulting to Balanced (Echilibrat)', () => {
+    renderScreen();
+    expect(screen.getByTestId('profile-focus-select')).toHaveValue('balanced');
+  });
+
+  it('selecting a preset persists pe save + reflects din store', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-focus-select'), { target: { value: 'v-taper' } });
+    expect(screen.getByTestId('profile-focus-select')).toHaveValue('v-taper');
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(useOnboardingStore.getState().data.focusPreset).toBe('v-taper');
+  });
+
+  it('heads-up note ABSENT for the balanced default', () => {
+    renderScreen();
+    expect(screen.queryByTestId('profile-focus-deemph-note')).toBeNull();
+  });
+
+  it('heads-up note SHOWS for a de-emphasizing preset (v-taper), calm + RO no-diacritics', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-focus-select'), { target: { value: 'v-taper' } });
+    const note = screen.getByTestId('profile-focus-deemph-note');
+    expect(note).toBeInTheDocument();
+    // No-guilt maintenance tone + RO no-diacritics (no a-breve/t-comma/etc.).
+    expect(note.textContent).toMatch(/mentenanta/);
+    expect(note.textContent ?? '').not.toMatch(/[ăâîșțĂÂÎȘȚ]/);
+  });
+
+  it('heads-up note ABSENT for an emphasis-only preset (arms)', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-focus-select'), { target: { value: 'arms' } });
+    expect(screen.queryByTestId('profile-focus-deemph-note')).toBeNull();
+  });
+});
+
 describe('SettingsProfile — Compozitie corporala (§F-pass2-settings-profile-03)', () => {
   it('renders Compozitie corporala section heading', () => {
     renderScreen();
