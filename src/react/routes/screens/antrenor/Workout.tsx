@@ -54,6 +54,7 @@ import { SetHistoryChips } from '../../../components/Workout/SetHistoryChips';
 import { ExerciseActionsRow } from '../../../components/Workout/ExerciseActionsRow';
 import { CoachNote } from '../../../components/Workout/CoachNote';
 import { ExerciseMedia } from '../../../components/ExerciseMedia';
+import { getExerciseCueKey } from '../../../lib/exerciseCues';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { useCountUp } from '../../../hooks/useCountUp';
 import { DP } from '../../../../engine/dp.js';
@@ -1179,6 +1180,21 @@ export function Workout(): JSX.Element {
                   variant="card"
                   testId="workout-exercise-media"
                 />
+                {/* Form cue (Daniel 2026-06-02) — short canonical technique
+                    line UNDER the demo image, for the curated compound set
+                    (src/react/lib/exerciseCues.ts). Graceful: no cue for this
+                    exercise → render nothing (no empty box). */}
+                {(() => {
+                  const cueKey = getExerciseCueKey(currentExercise.engineName ?? currentExercise.name);
+                  return cueKey ? (
+                    <p
+                      className="mt-3 text-xs leading-snug text-ink3"
+                      data-testid="exercise-form-cue"
+                    >
+                      {t(cueKey)}
+                    </p>
+                  ) : null;
+                })()}
               </div>
             )}
           </div>

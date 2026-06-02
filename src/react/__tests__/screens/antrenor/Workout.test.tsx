@@ -248,6 +248,34 @@ describe('Workout — exercise demo accordion (design ADDENDUM 1)', async () => 
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByTestId('workout-demo-panel')).not.toBeInTheDocument();
   });
+
+  // Form cue (Daniel 2026-06-02) — short technique line UNDER the demo image,
+  // for the curated compound set. Covered compound (engineName 'Leg Press') →
+  // cue renders; uncovered exercise → graceful nothing.
+  it('renders a form cue under the demo image for a covered compound (Leg Press)', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce({
+      ...PHASE_5_FIXTURE,
+      exercises: [
+        { id: 'leg-press', name: 'Presa de picioare', engineName: 'Leg Press', sets: 4, targetReps: 12, targetKg: 100, restSec: 90 },
+        ...PHASE_5_FIXTURE.exercises.slice(1),
+      ],
+    });
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('workout-demo-toggle'));
+    const cue = screen.getByTestId('exercise-form-cue');
+    expect(cue).toBeInTheDocument();
+    // EN default locale — canonical Leg Press cue.
+    expect(cue).toHaveTextContent(/back and hips flat/i);
+  });
+
+  it('renders NO cue line for an uncovered exercise (graceful, no empty box)', async () => {
+    // Default PHASE_5_FIXTURE first exercise is name 'Bench Press' with NO
+    // engineName — 'Bench Press' is not a curated cue key, so nothing renders.
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('workout-demo-toggle'));
+    expect(screen.getByTestId('workout-demo-panel')).toBeInTheDocument();
+    expect(screen.queryByTestId('exercise-form-cue')).not.toBeInTheDocument();
+  });
 });
 
 // C3 — target kg modulated by the ENGINE intensityMod baseline (deload output),
