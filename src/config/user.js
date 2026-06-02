@@ -1,5 +1,7 @@
 // ══ USER CONFIG — defaults + localStorage override ═══════════
 
+import { kv } from '../storage/kv';
+
 export const USER_DEFAULTS = {
   bio: {
     name: 'Daniel',
@@ -21,7 +23,7 @@ export const USER_DEFAULTS = {
 };
 
 export function getUserConfig() {
-  const override = localStorage.getItem('sf.userConfig');
+  const override = kv.getItem('sf.userConfig');
   if (override) {
     try {
       return { ...USER_DEFAULTS, ...JSON.parse(override) };
@@ -39,6 +41,6 @@ export function getUserConfig() {
 export function updateUserConfig(patch) {
   const current = getUserConfig();
   const updated = { ...current, ...patch };
-  localStorage.setItem('sf.userConfig', JSON.stringify(updated));
+  kv.setItem('sf.userConfig', JSON.stringify(updated));
   return updated;
 }

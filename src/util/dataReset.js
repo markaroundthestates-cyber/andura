@@ -17,6 +17,7 @@ import {
   DYNAMIC_KEY_PREFIXES,
   PRESERVE_ON_RESET_KEYS,
 } from './dataRegistry.js';
+import { kv } from '../storage/kv';
 
 /**
  * Unprefixed legacy data keys NOT covered by the dataRegistry arrays but written
@@ -52,8 +53,7 @@ export function clearUserDataKeys() {
   const toRemove = new Set();
 
   // 1. Scan: wv2-* stores + dynamic-prefix keys + runtime engine keys.
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
+  for (const key of kv.keys()) {
     if (!key) continue;
     if (preserve.has(key)) continue;
     if (PRESERVE_PREFIXES.some((p) => key.startsWith(p))) continue;
@@ -64,10 +64,10 @@ export function clearUserDataKeys() {
   // 2. Canonical unprefixed user-data keys (present or not — set dedupes).
   for (const key of RESET_LEGACY_KEYS) {
     if (preserve.has(key)) continue;
-    if (localStorage.getItem(key) !== null) toRemove.add(key);
+    if (kv.getItem(key) !== null) toRemove.add(key);
   }
 
-  for (const key of toRemove) localStorage.removeItem(key);
+  for (const key of toRemove) kv.removeItem(key);
   return toRemove.size;
 }
 
@@ -163,7 +163,7 @@ export const DATA_OWNER_UID_KEY = 'data-owner-uid';
  */
 export async function wipeUserDataOnLogout() {
   clearUserDataKeys();
-  try { localStorage.removeItem(DATA_OWNER_UID_KEY); } catch { /* non-fatal */ }
+  try { kv.removeItem(DATA_OWNER_UID_KEY); } catch { /* non-fatal */ }
   await clearUserIndexedDB();
 }
 
@@ -189,7 +189,7 @@ export async function wipeUserDataOnLogout() {
 export async function enforceDataOwner(currentUid) {
   if (!currentUid) return false; // anonymous / skip-auth — nothing to own
   let prevOwner = null;
-  try { prevOwner = localStorage.getItem(DATA_OWNER_UID_KEY); } catch { /* treat as absent */ }
+  try { prevOwner = kv.getItem(DATA_OWNER_UID_KEY); } catch { /* treat as absent */ }
   if (prevOwner === currentUid) return false; // same user — keep their data
   const isSwitch = prevOwner !== null && prevOwner !== currentUid;
   if (isSwitch) {
@@ -199,6 +199,6 @@ export async function enforceDataOwner(currentUid) {
     await clearUserIndexedDB();
   }
   // Record (or re-record) ownership for the now-authenticated uid.
-  try { localStorage.setItem(DATA_OWNER_UID_KEY, currentUid); } catch { /* non-fatal */ }
+  try { kv.setItem(DATA_OWNER_UID_KEY, currentUid); } catch { /* non-fatal */ }
   return isSwitch;
 }
