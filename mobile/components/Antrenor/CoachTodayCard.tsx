@@ -25,7 +25,7 @@ import { coachPick } from '../../../src/react/lib/coachVoice';
 import { composeCoachInsight } from '../../../src/react/lib/coachInsight';
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../src/react/lib/scheduleAdapterAggregate';
 import { useWorkoutStore } from '../../../src/react/stores/workoutStore';
-import { haptic } from '../../../src/react/lib/motion';
+import { haptic } from '../../lib/motion';
 import { Ripple } from '../Ripple';
 import { Kicker } from '../pulse/Kicker';
 import { PulseCard } from '../pulse/PulseCard';

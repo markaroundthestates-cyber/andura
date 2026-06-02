@@ -21,7 +21,8 @@ import { SubHeader } from '../../../components/SubHeader';
 import { toast } from '../../../../src/react/lib/toast';
 import { DB } from '../../../../src/db.js';
 import { useWorkoutStore } from '../../../../src/react/stores/workoutStore';
-import { edgeFlash, haptic } from '../../../../src/react/lib/motion';
+import { edgeFlash } from '../../../../src/react/lib/motion';
+import { haptic } from '../../../lib/motion';
 import { accent, dark, radius, surface } from '../../../lib/tokens';
 import { t } from '../../../../src/i18n/index.js';
 
