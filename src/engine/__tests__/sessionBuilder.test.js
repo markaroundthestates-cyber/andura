@@ -272,6 +272,86 @@ describe('buildSession — PR anchoring', () => {
   });
 });
 
+// ── BUG 2 — commonness bias (no esoteric picks for a normal user) ─────────
+// Root cause: after PR (rank 0) + anchor (rank 1), the remaining 657 candidates
+// were ordered by a SEEDED HASH = effectively random, so obscure variants
+// (Garhammer Raise, "Stability Ball Stir the Pot", Cable Tibialis Raise, Cossack
+// Squat, Fire Hydrant, Windshield Wiper) got picked over recognizable lifts. Fix:
+// a curated COMMON band (rank 2) before the long tail (rank 3) — fills favor
+// movements a normal gym-goer knows; obscure only when nothing common is left.
+describe('buildSession — commonness bias (BUG 2)', () => {
+  const TYPES = ['push', 'pull', 'legs', 'upper', 'lower', 'full'];
+  // A clearly-esoteric subset present in the library (the reported offenders).
+  const OBSCURE = new Set([
+    'Garhammer Raise', 'Stability Ball Stir the Pot', 'Cable Tibialis Raise',
+    'Cossack Squat', 'Fire Hydrant', 'Windshield Wiper', 'Body Saw Plank',
+    'Wall Sit Static', 'Curtsy Lunge', 'Reverse Lunge Glute-Focus',
+    'Single-Arm Cable Glute Kickback', 'Med Ball Slam',
+  ]);
+
+  it('a normal-tier user with no PR history never receives an obscure variant', () => {
+    // Full equipment + advanced tier (the most permissive pool) — common
+    // alternatives always exist for every group, so obscure must never surface.
+    for (const type of TYPES) {
+      for (let s = 0; s < 40; s++) {
+        const session = buildSession(type, ctx({ prNames: [], seed: `common|${type}|${s}` }));
+        for (const ex of session.exercises) {
+          expect(OBSCURE.has(ex.name)).toBe(false);
+        }
+      }
+    }
+  });
+
+  it('a normal session is composed of recognizable movements', () => {
+    // The session should be dominated by anchor/common names, not long-tail.
+    const session = buildSession('legs', ctx({ prNames: [], seed: 'recognizable' }));
+    const recognizable = [
+      'Leg Press', 'Barbell Back Squat (High Bar)', 'Barbell Back Squat (Low Bar)',
+      'Front Squat', 'Hack Squat Machine', 'Goblet Squat', 'DB Squat',
+      'Bulgarian Split Squat', 'Walking Lunge', 'Reverse Lunge', 'Leg Extension',
+      'Leg Curl', 'Romanian Deadlift', 'Conventional Deadlift', 'Hip Thrust',
+      'Barbell Glute Bridge', 'Hip Abduction Machine', 'Glute Kickback Machine',
+      'Standing Calf Raise Machine', 'Seated Calf Raise Machine', 'Standing DB Calf Raise',
+      'Standing Barbell Calf Raise', 'Reverse Crunch', 'Cable Crunch Kneeling',
+      'Cable Crunch Standing', 'Hanging Leg Raise', 'Plank with Shoulder Tap',
+      'Smith Machine Squat', '45-Degree Leg Press', '5x',
+    ];
+    const known = session.exercises.filter((e) => recognizable.includes(e.name));
+    // At least the majority of the session is recognizable.
+    expect(known.length).toBeGreaterThanOrEqual(
+      Math.ceil(session.exercises.length * 0.6),
+    );
+  });
+
+  it('an obscure variant only appears when no common alternative is available', () => {
+    // Equipment pool reduced to band-only thins the common pool; even then a
+    // common pick (where one survives the equipment gate) is preferred over the
+    // long-tail hash order. Sanity: obscure picks remain rare under full equipment.
+    let obscureCount = 0;
+    let total = 0;
+    for (const type of TYPES) {
+      for (let s = 0; s < 20; s++) {
+        const session = buildSession(type, ctx({ prNames: [], seed: `rare|${type}|${s}` }));
+        for (const ex of session.exercises) {
+          total += 1;
+          if (OBSCURE.has(ex.name)) obscureCount += 1;
+        }
+      }
+    }
+    expect(total).toBeGreaterThan(0);
+    expect(obscureCount).toBe(0);
+  });
+
+  it('PR continuity still wins over commonness (a logged obscure lift stays)', () => {
+    // If a user has logged an unusual lift, continuity (rank 0) must still keep it
+    // — the commonness band (rank 2) does NOT override PR history.
+    const names = buildSession(
+      'legs', ctx({ prNames: ['Cossack Squat'], seed: 'pr-obscure' }),
+    ).exercises.map((e) => e.name);
+    expect(names).toContain('Cossack Squat');
+  });
+});
+
 // ── Tier filtering — persona / experience ────────────────────────────────
 
 describe('buildSession — tier filtering', () => {

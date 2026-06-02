@@ -53,6 +53,73 @@ const ANCHOR_NAMES = new Set([
   'Leg Curl', 'Romanian Deadlift', 'Cable Fly', 'Pec Deck / Cable Fly',
 ]);
 
+// BUG 2 fix — commonness bias. The library has NO popularity / "is_common" field
+// (schema: equipment_type, force_demand, tier, skill_level, muscle_target_*,
+// fallback_cascade, names — verified), so "obscure" can't be read off the data.
+// Without a commonness signal the non-anchor fill ordered candidates by a SEEDED
+// HASH = effectively random among 657, surfacing esoteric variants (Garhammer
+// Raise, "Stability Ball Stir the Pot", Cable Tibialis Raise, Cossack Squat,
+// Fire Hydrant, Windshield Wiper) over lifts a normal gym-goer recognizes.
+//
+// Fix = a CURATED set of standard, recognizable movements per Big-11 group (the
+// lifts Gigel knows). It seeds a COMMON band in rank() between anchors and the
+// long tail, so fills PREFER recognizable movements; obscure variants only appear
+// when nothing common is left for the group. Exact library keys (nameEn). This
+// only REORDERS non-anchor candidates — all gates (tier/skill/equipment, dedup,
+// PR continuity) stay intact. ANCHOR_NAMES already rank above this, so they are
+// not repeated here.
+const COMMON_MOVEMENTS = new Set([
+  // piept (chest) — barbell/DB/machine presses, incline, dips, push-up, flyes
+  'Flat Barbell Bench', 'Incline Barbell Bench', 'Decline Barbell Bench',
+  'Flat Chest Press Machine', 'Incline Chest Press Machine', 'Neutral Grip DB Press',
+  'Dip', 'Weighted Dip', 'Push-up', 'DB Fly', 'Incline DB Fly', 'Pec Deck Rear',
+  'Cable Crossover Standing', 'Close-Grip Bench Press',
+  // umeri (shoulders) — overhead press, machine press, lateral/front/rear raises
+  'OHP', 'Push Press', 'Seated DB Press', 'Standing DB Press', 'Arnold Press',
+  'Machine Shoulder Press', 'DB Lateral Raise', 'Cable Lateral Raise',
+  'Machine Lateral Raise', 'DB Front Raise', 'Cable Front Raise', 'Face Pull',
+  'Reverse Pec Deck', 'DB Rear Delt Fly',
+  // triceps — pushdowns, overhead extensions, skullcrushers, dips
+  'Cable Triceps Pushdown Rope', 'Cable Triceps Pushdown Straight Bar',
+  'Cable Triceps Pushdown V-bar', 'Lying Triceps Extension Barbell',
+  'Lying Triceps Extension EZ-bar', 'Seated Overhead Triceps Extension EZ-bar',
+  'Cable Overhead Triceps Extension Rope', 'Triceps Dip Parallel Bars',
+  'Triceps Press Machine', 'Bench Dip',
+  // spate (back) — pulldowns, rows, pull-ups/chin-ups, shrugs, deadlift
+  'Wide-Grip Lat Pulldown', 'Close-Grip Lat Pulldown', 'Neutral-Grip Lat Pulldown',
+  'Pull-up', 'Chin-up', 'Weighted Pull-up', 'Barbell Row', 'T-Bar Row',
+  'Pendlay Row', 'DB Row', 'Chest-Supported DB Row', 'Wide-Grip Cable Row',
+  'Close-Grip Cable Row', 'Conventional Deadlift', 'Trap Bar Deadlift',
+  'BB Shrug', 'DB Shrug',
+  // biceps — barbell/DB/EZ/cable curls, preacher, hammer
+  'Barbell Curl Standing', 'EZ-bar Curl Standing', 'DB Curl Standing',
+  'DB Curl Standing Alternate', 'DB Curl Seated Alternate', 'Preacher Curl',
+  'DB Preacher Curl', 'Concentration Curl', 'DB Concentration Curl Standing',
+  'Cable Curl Standing Straight Bar', 'Cable Curl Standing Rope',
+  'DB Hammer Curl Standing', 'Cable Hammer Curl Rope', 'Spider Curl Barbell',
+  // antebrate (forearms) — wrist curls, reverse curls, farmer's
+  'Wrist Curl Barbell Seated Palms-Up', 'Reverse Wrist Curl Barbell Seated',
+  "Farmer's Walk DB", 'Reverse Curl Barbell', 'Reverse Curl EZ-bar',
+  // picioare-quads — squats, leg press, lunges, leg extension, hack/goblet squat
+  'Barbell Back Squat (High Bar)', 'Barbell Back Squat (Low Bar)', 'Front Squat',
+  'Hack Squat Machine', 'Goblet Squat', 'DB Squat', 'Bulgarian Split Squat',
+  'DB Lunge', 'Walking Lunge', 'Reverse Lunge', 'Barbell Lunge', 'Leg Extension',
+  '45-Degree Leg Press', 'Smith Machine Squat',
+  // picioare-hamstrings — RDL variants, leg curls, good morning, deadlift
+  'Conventional Deadlift', 'Stiff-Leg Deadlift', 'Seated Leg Curl',
+  'Standing Leg Curl', 'Lying Leg Curl', 'Barbell Good Morning', 'DB Romanian Deadlift',
+  // fese (glutes) — hip thrust, glute bridge, sumo, kickback
+  'Hip Thrust', 'Barbell Glute Bridge', 'DB Hip Thrust', 'Cable Glute Kickback',
+  'Glute Kickback Machine', 'Hip Abduction Machine', 'Sumo Deadlift',
+  // gambe (calves) — standing/seated calf raise
+  'Standing Calf Raise Machine', 'Seated Calf Raise Machine', 'Standing DB Calf Raise',
+  'Leg Press Calf Raise', 'Donkey Calf Raise', 'Standing Barbell Calf Raise',
+  // core (abs) — crunches, leg raises, planks, cable crunch
+  'Reverse Crunch', 'Hanging Leg Raise', 'Hanging Knee Raise', 'Cable Crunch Kneeling',
+  'Cable Crunch Standing', 'Decline Sit-up', 'Plank with Shoulder Tap', 'V-Up',
+  'Ab Wheel Rollout', 'Cable Russian Twist',
+]);
+
 // SESSION_SIZE is the MAX exercises per session (sanity ceiling, anti-2h
 // session), NOT a fixed count. The real count now falls out of the weekly
 // volume budget (computeSessionExerciseCount) clamped to [MIN_SESSION, SESSION_SIZE].
@@ -328,11 +395,19 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed) {
   return pool;
 }
 
-/** Lower rank = more preferred. 0 = has PR history, 1 = known anchor, 2 = new. */
+/**
+ * Lower rank = more preferred. Bands (BUG 2 — commonness bias):
+ *   0 = has PR history (continuity)   · 1 = known anchor
+ *   2 = COMMON recognizable movement  · 3 = obscure / long-tail variant
+ * Within a band the seeded hash tiebreaks (determinism preserved). The COMMON
+ * band makes fills favor lifts a normal user knows; esoteric variants (rank 3)
+ * surface only when nothing common is left for the group.
+ */
 function rank(name, prNames) {
   if (prNames.has(name)) return 0;
   if (ANCHOR_NAMES.has(name)) return 1;
-  return 2;
+  if (COMMON_MOVEMENTS.has(name)) return 2;
+  return 3;
 }
 
 /** Seeded comparable key for a name (stable per seed, varied across seeds). */
