@@ -34,6 +34,7 @@ import {
   ISRAETEL_BASELINES,
 } from '../periodization/constants.js';
 import { getLaggingMuscles } from '../muscleRecovery.js';
+import { detectImbalances, applyImbalanceCorrection } from '../imbalanceDetector.js';
 import {
   toCanonicalRO,
   applyRecoveryStateRedistribution,
@@ -778,14 +779,26 @@ export async function getDailyWorkout(userState, now = new Date()) {
     [specializationTarget, ...laggingGroups].filter((g) => typeof g === 'string' && g.length > 0),
   )];
 
-  // CRITICAL ORDERING (M2 ↔ M1): amplify the WEEKLY budget FIRST, then M1's
-  // recovery redistribution cuts TODAY's budget on top. Net: a group that is
-  // BOTH weak AND fatigued today is still cut today (recovery wins for TODAY —
-  // we never amplify a fried muscle today); the amplification expresses on its
-  // FRESH days when recovery is a no-op for that group.
+  // ── M3: detect + correct antagonist/pattern imbalances (the moat substance:
+  // Andura silently balances push/pull + quad/ham from history, ZERO user input).
+  // Detected from the SAME flattened sessions M1/M2 use; the lagging side's group
+  // budgets are raised toward parity with the dominant side, severity-scaled, each
+  // group HARD-capped at its MRV. ADDITIVE only — never lowers the dominant side.
+  // No imbalance (balanced / insufficient data) → budget unchanged → identical to
+  // the M2 output (graceful degradation, ADR 025). NOT a medical signal — volume
+  // biasing only. date.getTime() threads the clock for determinism.
+  const imbalances = detectImbalances({ logs: recoveryLogs, now: date.getTime() });
+
+  // CRITICAL ORDERING (M2 → M3 → M1): amplify weak groups (M2), then close
+  // antagonist/pattern imbalances (M3) — both RAISE the WEEKLY budget, each group
+  // still clamped to its MRV — then M1's recovery redistribution cuts TODAY's
+  // budget on top (recovery runs LAST, wins for today). Net: a group that is
+  // weak/lagging-side AND fatigued today is still rested today; the weekly
+  // correction expresses on its FRESH days when recovery is a no-op for it.
   const amplifiedTargets = applyWeaknessAmplification(baseVolumeTargets, weakGroups);
+  const balancedTargets = applyImbalanceCorrection(amplifiedTargets, imbalances);
   const volumeTargets = applyRecoveryToVolumeBudget(
-    amplifiedTargets,
+    balancedTargets,
     recoveryLogs,
     date.getTime(),
   );
