@@ -434,6 +434,11 @@ const LOWER_CLUSTERS = Object.freeze(['lower', 'legs']);
 // 72h after push)→lower(Fri). Day-counts absent here fall back to the slot-swap.
 const FOCUS_LOWER_DEEMPH_SPLITS = Object.freeze({
   4: Object.freeze(['push', 'pull', 'upper', 'lower']),
+  // 5 days L/Ma/Mi/V/S (Mon-Tue-Wed consecutive block + Fri-Sat): push/pull/legs
+  // are mutually non-overlapping, so the Mon-Tue-Wed block stays clean, and
+  // push(Fri)/pull(Sat) repeat the width work without overlap. ONE leg day (Wed);
+  // umeri hit Mon+Fri, spate hit Tue+Sat — emphasis preserved, fully spaced.
+  5: Object.freeze(['push', 'pull', 'legs', 'push', 'pull']),
 });
 
 /**
