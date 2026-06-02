@@ -20,6 +20,12 @@ export type Goal = 'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta';
 /** Legacy goal values pre-D-1b + pre-D080 (zustand persist migrate handles). */
 export type LegacyGoal = 'definire' | 'sanatate' | 'longevitate';
 export type Frequency = '2' | '3' | '4' | '5';
+/**
+ * Focus selector (D-focus 2026-06-02) — the user's optional aesthetic LOOK. The
+ * engine (scheduleAdapter FOCUS_PRESETS) shapes volume + split around it.
+ * 'balanced' (DEFAULT) = Andura decides, ZERO change (opt-in, ADR 025).
+ */
+export type FocusPreset = 'balanced' | 'v-taper' | 'arms' | 'chest' | 'lower';
 export type Experience = 'incepator' | 'intermediar' | 'avansat';
 /**
  * Training type (Daniel spec 2026-05-30) — gates the whole experience. Many
@@ -71,6 +77,18 @@ export interface OnboardingData {
    * OPTIONAL — vezi nota la `targetWeight`.
    */
   targetDate?: string | null;
+  /**
+   * Focus selector (D-focus 2026-06-02) — the user's optional aesthetic LOOK
+   * preset. The engine shapes weekly volume (emphasized→MRV, de-emphasized→MEV
+   * maintenance) + the split (frees a leg day for the focus region) around it.
+   * Threaded to the pipeline via buildUserStateForPipeline → user.focusPreset →
+   * scheduleAdapter. Default 'balanced' (opt-in: ZERO change, ADR 025).
+   *
+   * OPTIONAL on the interface (mirror trainingType/targetWeight): existing literal
+   * setState calls in tests + pre-v7 migrate stay valid without an explicit
+   * focusPreset. EMPTY seeds 'balanced' + the v7 migrate spreads `...EMPTY` first.
+   */
+  focusPreset?: FocusPreset;
 }
 
 /**
@@ -232,6 +250,9 @@ const EMPTY: OnboardingData = {
   // Smoke 2026-05-28 #16 — tinta personala persistata (era doar form-state V1).
   targetWeight: null,
   targetDate: null,
+  // Focus selector (D-focus 2026-06-02) — default 'balanced' (opt-in, ZERO
+  // change). Legacy + migrated users seed 'balanced' via this EMPTY spread.
+  focusPreset: 'balanced',
 };
 
 /**
@@ -323,7 +344,10 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
       // v6 (training-type 2026-05-30): trainingType added. Both migrate branches
       // spread `...EMPTY` first → every pre-v6 user gets trainingType: 'gym'
       // (the original gym-only experience), zero behavior change for them.
-      version: 6,
+      // v7 (focus selector 2026-06-02): focusPreset added. Both migrate branches
+      // spread `...EMPTY` first → every pre-v7 user gets focusPreset: 'balanced'
+      // (Andura decides, opt-in) — ZERO behavior change for existing users.
+      version: 7,
       // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
       // fields (NU actions). Match appStore + scheduleStore + workoutStore
       // existing pattern. data + completed + completedAt persisted; actions

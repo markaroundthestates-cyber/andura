@@ -328,6 +328,10 @@ export function buildUserStateForPipeline(): {
       sex: onboardingData.sex,
       goal: onboardingData.goal,
       frequency: onboardingData.frequency,
+      // Focus selector (D-focus 2026-06-02) — the user's optional LOOK preset.
+      // scheduleAdapter shapes volume + split around it; 'balanced' (default) →
+      // ZERO change. Threaded like frequency (a setup-once onboarding param).
+      focusPreset: onboardingData.focusPreset ?? 'balanced',
       experience: onboardingData.experience,
       // Canonical greutate curenta (ultima logata > onboarding) — audit CRIT.
       weight: currentWeightKg,

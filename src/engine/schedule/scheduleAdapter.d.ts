@@ -51,7 +51,19 @@ export interface WorkoutPlan {
   workoutTitle: string;
 }
 
-export function frequencyToSplit(n: number): string[];
+export type FocusPreset = 'balanced' | 'v-taper' | 'arms' | 'chest' | 'lower';
+
+export interface FocusPresetSpec {
+  emphasize: readonly string[];
+  deEmphasize: readonly string[];
+}
+
+// Focus selector (D-focus 2026-06-02) — goal/look presets → per-Big-11-RO-group
+// emphasis. balanced = the empty no-op (byte-identical to pre-feature).
+export const FOCUS_PRESETS: Readonly<Record<FocusPreset, FocusPresetSpec>>;
+export const FOCUS_PRESET_IDS: readonly FocusPreset[];
+
+export function frequencyToSplit(n: number, focusPreset?: string): string[];
 export function weeklySessionsPerGroup(split: string[]): Record<string, number>;
 
 export function mapDateToIndex(date: Date): number;

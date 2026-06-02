@@ -409,17 +409,73 @@ const FREQUENCY_SPLITS = Object.freeze({
   7: Object.freeze(['push', 'pull', 'legs', 'upper', 'lower', 'full', 'full']),
 });
 
+// ── Focus-aware split reshaping (D-focus 2026-06-02) ─────────────────────
+// A focus preset that DE-EMPHASIZES the lower body should also reshape the WEEK:
+// remove ~1 lower/legs cluster and reallocate that day to the focus region
+// (upper-biased push/pull). E.g. v-taper @ 4 days: the balanced template
+// ['upper','lower','upper','lower'] (TWO leg days) → ['upper','push','pull','lower']
+// (ONE leg day; the freed day becomes shoulder/back-biased push+pull work). The
+// emphasized region thus gains ≥1 cluster. `balanced` → the templates UNCHANGED
+// (byte-identical). The reshape is purely a slot SWAP within the same N-day
+// template (length + day count preserved) — it only changes WHICH clusters fill
+// the freed lower slots, biased to the focus.
+const LOWER_CLUSTERS = Object.freeze(['lower', 'legs']);
+
+/**
+ * Reshape an ordered cluster template for a focus preset that de-emphasizes the
+ * lower body: replace ONE lower/legs cluster with a focus-region cluster
+ * (push/pull alternation), so the week trades a leg day for upper-focus work.
+ * Only the FIRST lower slot is swapped (≥1 leg day always retained — a
+ * de-emphasized muscle is MAINTAINED, never abandoned). Presets that do not
+ * de-emphasize the lower body, or templates with ≤1 lower slot, are returned
+ * unchanged. Pure.
+ *
+ * @param {string[]} split - ordered Big-6 cluster ids (a fresh copy)
+ * @param {{emphasize: ReadonlyArray<string>, deEmphasize: ReadonlyArray<string>}} preset
+ * @returns {string[]} reshaped split (same length)
+ */
+function reshapeSplitForFocus(split, preset) {
+  // Only reshape when the lower body is de-emphasized (the v-taper / freed-day
+  // case). Emphasis-only presets (arms/chest/lower) keep the balanced template
+  // — the volume stage carries those; no day is freed.
+  const deEmphLower =
+    preset.deEmphasize.includes('picioare-quads') ||
+    preset.deEmphasize.includes('picioare-hamstrings') ||
+    preset.deEmphasize.includes('fese');
+  if (!deEmphLower) return split;
+  const lowerIdxs = [];
+  for (let i = 0; i < split.length; i++) {
+    if (LOWER_CLUSTERS.includes(split[i])) lowerIdxs.push(i);
+  }
+  // Need ≥2 lower slots to free one (always retain ≥1 leg day).
+  if (lowerIdxs.length < 2) return split;
+  // Free the FIRST lower slot → a focus-region cluster. Alternate push/pull so
+  // both width regions (umeri via push, spate via pull) get the freed work.
+  const out = [...split];
+  const firstLower = lowerIdxs[0];
+  const priorPush = out.slice(0, firstLower).filter((c) => c === 'push').length;
+  out[firstLower] = priorPush % 2 === 0 ? 'push' : 'pull';
+  return out;
+}
+
 /**
  * Ordered cluster template for N training days/week. Pure + unit-testable. N is
  * clamped to [1,7] (0 active days → the 1-day Full template defensively, but the
  * caller gates rest days separately). Returns a fresh array copy.
  *
+ * `focusPreset` (optional, default 'balanced') makes the split focus-aware: a
+ * preset that de-emphasizes the lower body trades ONE leg day for focus-region
+ * work (reshapeSplitForFocus). `balanced`/unknown → the templates UNCHANGED
+ * (byte-identical to pre-feature).
+ *
  * @param {number} n - active training days that week
+ * @param {string} [focusPreset='balanced'] - focus preset id
  * @returns {string[]} ordered Big-6 cluster ids
  */
-export function frequencyToSplit(n) {
+export function frequencyToSplit(n, focusPreset = 'balanced') {
   const clamped = Math.min(7, Math.max(1, Number.isFinite(n) ? Math.round(n) : 1));
-  return [...(FREQUENCY_SPLITS[clamped] || FREQUENCY_SPLITS[1])];
+  const base = [...(FREQUENCY_SPLITS[clamped] || FREQUENCY_SPLITS[1])];
+  return reshapeSplitForFocus(base, resolveFocusPreset(focusPreset));
 }
 
 // Cluster id → uppercase session-type title tag (the OUTPUT field consumers
@@ -482,15 +538,19 @@ function activeWeekFromOverride(override) {
  * cluster for any queried day without returning null (rest-day null is gated
  * separately by the override only, per unchanged behavior).
  *
+ * The focus-aware split (focusPreset) reshapes which cluster fills each slot, so
+ * the scheduled cluster matches the reshaped week. Default 'balanced' → unchanged.
+ *
  * @param {ReadonlyArray<boolean>} activeWeek - length-7 active flags (Monday=0)
  * @param {number} dayIdx - 0..6
+ * @param {string} [focusPreset='balanced'] - focus preset id
  * @returns {string} cluster id
  */
-function clusterForDay(activeWeek, dayIdx) {
+function clusterForDay(activeWeek, dayIdx, focusPreset = 'balanced') {
   const activeIdxs = [];
   for (let i = 0; i < 7; i++) if (activeWeek[i]) activeIdxs.push(i);
   const n = activeIdxs.length;
-  const split = frequencyToSplit(n > 0 ? n : 1);
+  const split = frequencyToSplit(n > 0 ? n : 1, focusPreset);
   const pos = activeIdxs.indexOf(dayIdx);
   // dayIdx active → its ordinal position; otherwise slot by active-days-before-it.
   const position = pos >= 0
@@ -634,6 +694,125 @@ function toCanonicalEN(roMap) {
     const enKey = BIG11_RO_TO_EN_MAP[key] ?? key;
     out[enKey] = value;
   }
+  return out;
+}
+
+// ══ FOCUS SELECTOR — goal/look presets shape volume + split (D-focus 2026-06-02) ══
+// ADR 025 "override optional": Andura decides by default (focusPreset='balanced'
+// → ZERO change, byte-identical to pre-feature). A user CAN pick a high-level
+// LOOK (not muscles — Gigel thinks "wider shoulders", not "lateral delt"). The
+// preset maps the look → a per-Big-11-group emphasis: EMPHASIZED groups bias
+// toward their Israetel MRV (more width/size), DE-EMPHASIZED groups relax toward
+// their MEV (MAINTAINED with less work — NEVER below MEV, never abandoned), the
+// rest neutral. Two layers act: (1) the focus volume stage below biases the
+// weekly budget; (2) frequencyToSplit reshapes the week (a de-emphasized lower
+// body frees a leg day → the focus region gets it). Groups are Big-11 RO keys —
+// the SAME vocabulary weakGroups / the recovery engine use.
+//
+// FOCUS_LERP = the fraction of the gap (current → target landmark) the focus
+// stage closes. 0.50 rationale: half-way to MRV (emphasize) / half-way to MEV
+// (de-emphasize) is a decisive, FELT shift without pinning a group at an extreme
+// (MRV is a short overreach ceiling; MEV is the maintenance floor). ONE documented
+// constant for both directions — not a per-preset multiplier zoo. Every group is
+// clamped to [MEV, MRV] always.
+const FOCUS_LERP = 0.50;
+
+/**
+ * Goal/look presets → per-Big-11-RO-group emphasis. `balanced` (default) is the
+ * empty no-op. `emphasize` raises toward MRV; `deEmphasize` relaxes toward MEV.
+ * Groups not listed are neutral (unchanged). RO Big-11 keys (weakGroups vocab).
+ *
+ * @type {Readonly<Object<string, {emphasize: ReadonlyArray<string>, deEmphasize: ReadonlyArray<string>}>>}
+ */
+export const FOCUS_PRESETS = Object.freeze({
+  // DEFAULT — no change, current behavior exactly.
+  balanced: Object.freeze({ emphasize: Object.freeze([]), deEmphasize: Object.freeze([]) }),
+  // Width: shoulders + back UP; lower body relaxed to maintenance (Daniel's case:
+  // big legs already, wants the V). piept/core/biceps/triceps neutral.
+  'v-taper': Object.freeze({
+    emphasize: Object.freeze(['umeri', 'spate']),
+    deEmphasize: Object.freeze(['picioare-quads', 'picioare-hamstrings', 'fese', 'gambe']),
+  }),
+  // Arms: biceps + triceps UP (umeri secondary); rest neutral.
+  arms: Object.freeze({
+    emphasize: Object.freeze(['biceps', 'triceps', 'umeri']),
+    deEmphasize: Object.freeze([]),
+  }),
+  // Chest: piept UP (triceps secondary); rest neutral.
+  chest: Object.freeze({
+    emphasize: Object.freeze(['piept', 'triceps']),
+    deEmphasize: Object.freeze([]),
+  }),
+  // Lower: fese + quads/hams UP (gambe secondary); upper neutral.
+  lower: Object.freeze({
+    emphasize: Object.freeze(['fese', 'picioare-quads', 'picioare-hamstrings', 'gambe']),
+    deEmphasize: Object.freeze([]),
+  }),
+});
+
+/** Valid focusPreset ids (the keys of FOCUS_PRESETS). */
+export const FOCUS_PRESET_IDS = Object.freeze(Object.keys(FOCUS_PRESETS));
+
+/**
+ * Resolve a focusPreset id to its emphasis spec. Unknown/missing/`balanced` →
+ * the balanced no-op (graceful degradation, ADR 025). Pure.
+ *
+ * @param {string|null|undefined} focusPreset
+ * @returns {{emphasize: ReadonlyArray<string>, deEmphasize: ReadonlyArray<string>}}
+ */
+function resolveFocusPreset(focusPreset) {
+  return FOCUS_PRESETS[focusPreset] ?? FOCUS_PRESETS.balanced;
+}
+
+/**
+ * The Big-11 RO groups a preset DE-EMPHASIZES — the set whose auto-signals (M2
+ * weakness amp + M3 imbalance correction) must be SUPPRESSED so Andura doesn't
+ * re-inflate the region the user intentionally minimized (Daniel: focus BEATS
+ * auto-balance). `balanced`/unknown → empty (no suppression). Pure.
+ *
+ * @param {string|null|undefined} focusPreset
+ * @returns {Set<string>} Big-11 RO de-emphasized group ids
+ */
+function deEmphasizedGroups(focusPreset) {
+  return new Set(resolveFocusPreset(focusPreset).deEmphasize);
+}
+
+/**
+ * Focus volume stage — bias each group's weekly budget by the preset. EMPHASIZED
+ * groups lerp toward MRV; DE-EMPHASIZED groups lerp toward MEV (maintenance floor
+ * — clamped so they NEVER drop below MEV, never to zero); neutral groups
+ * unchanged. Every touched group is clamped to [MEV, MRV]. The budget is EN-keyed
+ * (chest/back/...) but presets are Big-11 RO — each is bridged to EN
+ * (BIG11_RO_TO_EN_MAP) for its budget entry + landmarks (ISRAETEL_BASELINES).
+ * Returns a NEW map. `balanced` (empty preset) → the map returned unchanged
+ * (byte-identical, graceful degradation, ADR 025). Pure.
+ *
+ * @param {Object<string, number>|null|undefined} volumeMapEN - Big-11 EN budget
+ * @param {string|null|undefined} focusPreset
+ * @returns {Object<string, number>|null} biased EN-keyed budget (null passes through)
+ */
+function applyFocusBias(volumeMapEN, focusPreset) {
+  if (!volumeMapEN || typeof volumeMapEN !== 'object') return volumeMapEN ?? null;
+  const preset = resolveFocusPreset(focusPreset);
+  if (preset.emphasize.length === 0 && preset.deEmphasize.length === 0) {
+    return { ...volumeMapEN };
+  }
+  const out = { ...volumeMapEN };
+  const biasGroup = (roGroup, towardKey) => {
+    const enKey = BIG11_RO_TO_EN_MAP[roGroup] ?? roGroup;
+    const current = out[enKey];
+    const lm = ISRAETEL_BASELINES[enKey];
+    if (typeof current !== 'number' || !Number.isFinite(current) || current <= 0) return;
+    if (!lm) return;
+    const target = lm[towardKey];
+    if (typeof target !== 'number' || !Number.isFinite(target)) return;
+    const biased = current + (target - current) * FOCUS_LERP;
+    // Clamp to [MEV, MRV] always — a de-emphasized group is MAINTAINED at MEV,
+    // never below; an emphasized group never exceeds MRV.
+    out[enKey] = Math.min(lm.MRV, Math.max(lm.MEV, biased));
+  };
+  for (const roGroup of preset.emphasize) biasGroup(roGroup, 'MRV');
+  for (const roGroup of preset.deEmphasize) biasGroup(roGroup, 'MEV');
   return out;
 }
 
@@ -914,9 +1093,20 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // map the queried day's ordinal-among-active-days → the Nth cluster of the
   // frequency-appropriate template. cluster drives BOTH selection (buildSession)
   // and the per-group weekly frequency the volume budget is divided across.
+  // Focus selector (D-focus 2026-06-02) — the user's optional LOOK preset shapes
+  // BOTH the split (focus-aware frequencyToSplit reshapes the week) and the
+  // volume budget (applyFocusBias below). Default 'balanced' → ZERO change
+  // (byte-identical to pre-feature). The de-emphasized RO groups are computed
+  // once + reused to SUPPRESS the auto-signals (M2 weakness / M3 imbalance) on
+  // the region the user intentionally minimized (focus BEATS auto-balance).
+  const focusPreset =
+    typeof userState?.user?.focusPreset === 'string' && FOCUS_PRESETS[userState.user.focusPreset]
+      ? userState.user.focusPreset
+      : 'balanced';
+  const deEmphSet = deEmphasizedGroups(focusPreset);
   const activeWeek =
     activeWeekFromOverride(override) ?? activeWeekForFrequency(userState?.user?.frequency);
-  const scheduledCluster = clusterForDay(activeWeek, dayIdx);
+  const scheduledCluster = clusterForDay(activeWeek, dayIdx, focusPreset);
   // "Different group" override — Andura picks the most-recovered ALTERNATIVE
   // cluster (≠ today's scheduled one) from the recovery state already derivable
   // from the user's logged sessions. Recovery flatten + state are pure + cheap;
@@ -933,7 +1123,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   const cluster = wantDifferentMuscle
     ? pickAlternativeCluster(scheduledCluster, overrideRecoveryState)
     : scheduledCluster;
-  const split = frequencyToSplit(activeWeek.filter(Boolean).length || 1);
+  const split = frequencyToSplit(activeWeek.filter(Boolean).length || 1, focusPreset);
   const sessionsPerGroup = weeklySessionsPerGroup(split);
   // OUTPUT session-type tag (uppercase) for the localized title boundary — kept
   // SEPARATE from the cluster id buildSession consumes. Reflects the EFFECTIVE
@@ -985,8 +1175,15 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     typeof userState?.user?.priorityGroup === 'string' && userState.user.priorityGroup.length > 0
       ? userState.user.priorityGroup
       : null;
+  // Focus suppression (D-focus): drop any de-emphasized group from the weak set
+  // so M2 weakness amplification does NOT re-inflate the region the user
+  // intentionally minimized (focus BEATS auto-balance). EMPHASIZED groups are
+  // unaffected here — focus + weakness compose fine (both raise), still MRV-capped.
+  // balanced → deEmphSet empty → identical to pre-feature.
   const weakGroups = [...new Set(
-    [priorityGroup, specializationTarget, ...laggingGroups].filter((g) => typeof g === 'string' && g.length > 0),
+    [priorityGroup, specializationTarget, ...laggingGroups].filter(
+      (g) => typeof g === 'string' && g.length > 0 && !deEmphSet.has(g),
+    ),
   )];
 
   // ── M3: detect + correct antagonist/pattern imbalances (the moat substance:
@@ -997,15 +1194,31 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // No imbalance (balanced / insufficient data) → budget unchanged → identical to
   // the M2 output (graceful degradation, ADR 025). NOT a medical signal — volume
   // biasing only. date.getTime() threads the clock for determinism.
-  const imbalances = detectImbalances({ logs: recoveryLogs, now: date.getTime() });
+  const rawImbalances = detectImbalances({ logs: recoveryLogs, now: date.getTime() });
+  // Focus suppression (D-focus): strip de-emphasized groups from each imbalance's
+  // laggingGroups so M3 imbalance correction does NOT re-inflate the minimized
+  // region (e.g. v-taper must not let a quad/ham imbalance pull the de-emphasized
+  // legs back up). A pair whose lagging side is fully de-emphasized drops out.
+  // balanced → deEmphSet empty → imbalances pass through unchanged (identical).
+  const imbalances =
+    deEmphSet.size === 0
+      ? rawImbalances
+      : rawImbalances
+        .map((imb) => ({
+          ...imb,
+          laggingGroups: imb.laggingGroups.filter((g) => !deEmphSet.has(g)),
+        }))
+        .filter((imb) => imb.laggingGroups.length > 0);
 
-  // CRITICAL ORDERING (M2 → M3 → M1): amplify weak groups (M2), then close
-  // antagonist/pattern imbalances (M3) — both RAISE the WEEKLY budget, each group
-  // still clamped to its MRV — then M1's recovery redistribution cuts TODAY's
-  // budget on top (recovery runs LAST, wins for today). Net: a group that is
-  // weak/lagging-side AND fatigued today is still rested today; the weekly
-  // correction expresses on its FRESH days when recovery is a no-op for it.
-  const amplifiedTargets = applyWeaknessAmplification(baseVolumeTargets, weakGroups);
+  // CRITICAL ORDERING (base → FOCUS → M2 → M3 → M1): the focus selector biases
+  // the budget FIRST (emphasized→MRV, de-emphasized→MEV), then weakness (M2) +
+  // imbalance (M3) amplify ON TOP (both already SUPPRESSED on de-emphasized
+  // groups above) — each clamped to MRV — then M1's recovery redistribution cuts
+  // TODAY's budget last (recovery + time remain guards: focus shapes intent, not
+  // safety). balanced → focusBiasedTargets === baseVolumeTargets clone → the rest
+  // of the chain is byte-identical to pre-feature.
+  const focusBiasedTargets = applyFocusBias(baseVolumeTargets, focusPreset);
+  const amplifiedTargets = applyWeaknessAmplification(focusBiasedTargets, weakGroups);
   const balancedTargets = applyImbalanceCorrection(amplifiedTargets, imbalances);
   const volumeTargets = applyRecoveryToVolumeBudget(
     balancedTargets,
@@ -1033,7 +1246,11 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     deloadMod !== null &&
     ((deloadMod.rir_increment ?? 0) > 0 || (deloadMod.intensity_pct_decrement ?? 0) > 0);
   const coachAdaptations = deriveCoachAdaptations({
-    baseTargets: baseVolumeTargets,
+    // weakness-amp (M2) is the amplified-vs-focusBiased delta — so a focus-bias
+    // bump is NOT mislabeled as weakness amplification (focus is intent, not a
+    // detected weakness). balanced → focusBiasedTargets === baseVolumeTargets
+    // clone → identical attribution to pre-feature.
+    baseTargets: focusBiasedTargets,
     amplifiedTargets,
     balancedTargets,
     recoveredTargets: volumeTargets,
