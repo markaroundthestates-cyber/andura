@@ -1,0 +1,68 @@
+// Calibration honesty — getCalibrationMaturity composer tests.
+//
+// Reuses the real calibration engine (detectCalibrationLevel) to surface an
+// HONEST "still learning you" signal while the model is immature, and HIDE it
+// (null) once dialed in. Truth-only: the session count is the user's REAL
+// unique-session count; "sessions to next tier" is the next tier's minSessions
+// entry threshold minus that count — never a fabricated number.
+
+import { describe, it, expect, beforeEach } from 'vitest';
+import { getCalibrationMaturity } from '../../lib/engineWrappers';
+import { useWorkoutStore } from '../../stores/workoutStore';
+import { CALIBRATION_LEVELS } from '../../../engine/calibration.js';
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// Build N sessions evenly spread across `spanDays` ending today. Each session is
+// a minimal sessionsHistory entry — only `ts` (the finish time) is read by the
+// calibration ctx mapping.
+function seedSessions(count: number, spanDays: number): void {
+  const now = Date.now();
+  const sessions = [];
+  for (let i = 0; i < count; i++) {
+    const daysAgo = count > 1 ? (spanDays / (count - 1)) * (count - 1 - i) : 0;
+    sessions.push({ ts: now - daysAgo * DAY_MS, title: `s${i}`, meta: '' });
+  }
+  useWorkoutStore.setState({ sessionsHistory: sessions });
+}
+
+beforeEach(() => {
+  useWorkoutStore.setState({ sessionsHistory: [] });
+});
+
+describe('engineWrappers — getCalibrationMaturity (calibration honesty)', () => {
+  it('cold start (0 sessions) → honest early-state signal, no crash', () => {
+    const sig = getCalibrationMaturity();
+    expect(sig).not.toBeNull();
+    expect(sig?.tierName).toBe('cold_start');
+    expect(sig?.sessionsCount).toBe(0);
+    // Honest count to the next tier (INITIAL entry threshold).
+    expect(sig?.sessionsToNext).toBe(CALIBRATION_LEVELS.INITIAL.minSessions);
+  });
+
+  it('immature tier exposes a real session count + sessions-to-next', () => {
+    // 4 sessions over 10 days → INITIAL (engine routing).
+    seedSessions(4, 10);
+    const sig = getCalibrationMaturity();
+    expect(sig).not.toBeNull();
+    expect(sig?.tierName).toBe('initial');
+    expect(sig?.sessionsCount).toBe(4);
+    // DEVELOPING entry threshold is 6 → 6 - 4 = 2 sessions remaining (honest).
+    expect(sig?.sessionsToNext).toBe(CALIBRATION_LEVELS.DEVELOPING.minSessions - 4);
+  });
+
+  it('returns null once the model is dialed in (PERSONALIZED+)', () => {
+    // 60 sessions over 150 days → PERSONALIZED (id 4) → bannerText null → hidden.
+    seedSessions(60, 150);
+    expect(getCalibrationMaturity()).toBeNull();
+  });
+
+  it('never fabricates a count past a known threshold (sessionsToNext stays honest)', () => {
+    // 4 sessions in 10 days (INITIAL). The "sessions remaining" is a positive,
+    // real delta to the next tier — never negative, never invented.
+    seedSessions(4, 10);
+    const sig = getCalibrationMaturity();
+    expect(sig?.sessionsToNext).toBeGreaterThan(0);
+    expect(Number.isInteger(sig?.sessionsToNext)).toBe(true);
+  });
+});

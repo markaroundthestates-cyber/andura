@@ -208,6 +208,63 @@ describe('CoachTodayCard — Coach Voice daily why line', () => {
   });
 });
 
+// Calibration honesty — the "still learning you" line. Renders an HONEST
+// "still calibrating" indicator while the model is immature (early tier), and
+// is HIDDEN once the model is dialed in (the engine returns null at
+// PERSONALIZED+). Truth-only: a real "sessions remaining" count is shown when
+// the engine exposes one; otherwise the copy carries no number.
+describe('CoachTodayCard — calibration honesty line', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(engineWrappers, 'getCoachTodayQuote').mockReturnValue(null);
+    vi.spyOn(engineWrappers, 'getLaggingSignal').mockReturnValue(null);
+    useWorkoutStore.setState({ sessionsHistory: [] });
+  });
+
+  it('renders the honest count copy while the model is still immature', () => {
+    vi.spyOn(engineWrappers, 'getCalibrationMaturity').mockReturnValue({
+      tierId: 0,
+      tierName: 'cold_start',
+      sessionsCount: 0,
+      sessionsToNext: 3,
+    });
+    renderCard();
+    const line = screen.getByTestId('coach-calibration-line');
+    expect(line).toBeInTheDocument();
+    // EN default — names the real "sessions remaining" count, never a fake one.
+    expect(line.textContent).toMatch(/Still learning you/i);
+    expect(line.textContent).toMatch(/3 more sessions/i);
+  });
+
+  it('phrases WITHOUT a number when the engine exposes no count (no fabrication)', () => {
+    vi.spyOn(engineWrappers, 'getCalibrationMaturity').mockReturnValue({
+      tierId: 1,
+      tierName: 'initial',
+      sessionsCount: 5,
+      sessionsToNext: null,
+    });
+    renderCard();
+    const line = screen.getByTestId('coach-calibration-line');
+    expect(line.textContent).toMatch(/Still getting to know you/i);
+    // No fabricated session count when none is available.
+    expect(line.textContent).not.toMatch(/\d+ more sessions/i);
+  });
+
+  it('renders NOTHING once the model is dialed in (engine returns null)', () => {
+    vi.spyOn(engineWrappers, 'getCalibrationMaturity').mockReturnValue(null);
+    renderCard();
+    expect(screen.queryByTestId('coach-calibration-line')).not.toBeInTheDocument();
+  });
+
+  it('cold start (empty history) does not crash and shows an honest early-state line', () => {
+    // No mock — exercise the REAL engine wrapper with zero sessions (cold start).
+    renderCard();
+    const line = screen.getByTestId('coach-calibration-line');
+    expect(line).toBeInTheDocument();
+    expect(line.textContent).toBeTruthy();
+  });
+});
+
 // START-side double-session guard (counterpart to the PostRpe finish-side
 // confirm shipped dc9400d6). A session logged TODAY replaces the start CTA
 // with a "Session logged" control; the only way to a 2nd session today is the

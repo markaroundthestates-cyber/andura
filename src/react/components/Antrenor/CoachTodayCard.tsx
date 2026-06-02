@@ -170,6 +170,29 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     }
   }, [workout?.coachAdaptations]);
 
+  // Calibration honesty — the "still learning you" line. The "no fabricated
+  // certainty" Andura value made visible: while the model is still immature
+  // (early calibration tier), say so plainly; once the model is dialed in
+  // (PERSONALIZED+) the engine returns null and the line disappears for good.
+  // Truth-only: when the engine exposes a real "sessions remaining" count we
+  // show it; otherwise we phrase it WITHOUT a number (never a fabricated count).
+  // Recomputes when the session history changes (a finished session matures the
+  // model). engineWrappers reads sessionsHistory imperatively (getState).
+  const calibrationLine = useMemo<string | null>(() => {
+    try {
+      const sig = engineWrappers.getCalibrationMaturity?.() ?? null;
+      if (sig === null) return null;
+      return sig.sessionsToNext != null
+        ? t('coachCalibration.withCount', { n: sig.sessionsToNext })
+        : t('coachCalibration.noCount');
+    } catch {
+      return null;
+    }
+    // sessionsHistory is the signal dep — getCalibrationMaturity reads it via
+    // getState() (indirect), so the lint cannot see the dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionsHistory]);
+
   // START-side double-session guard (counterpart to the PostRpe finish-side
   // confirm shipped dc9400d6). When a gym session is already logged TODAY we
   // must NOT show the normal "Start session" button — an accidental tap would
@@ -272,6 +295,18 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
             style={{ color: 'var(--volt)' }}
           />
           <span>{coachWhyLine}</span>
+        </div>
+      )}
+      {calibrationLine && (
+        /* Calibration honesty — the "still learning you" line. Sits just under
+           the coach "why" line, in a quieter ink tone (this is humility, not a
+           headline). Hidden entirely once the model is dialed in (composer
+           returns null at PERSONALIZED+). */
+        <div
+          data-testid="coach-calibration-line"
+          className="relative flex items-start gap-2 mt-2 text-xs leading-relaxed text-ink3"
+        >
+          <span>{calibrationLine}</span>
         </div>
       )}
       {todaySession ? (

@@ -191,3 +191,17 @@ export interface CoachTodayQuote {
   recoveredLabel: string; // RO display label (e.g., "Pectoralii", "Spatele")
   daysSince: number; // 1..N days since last trained
 }
+
+// Calibration maturity signal for the honest "still learning you" line.
+// Emitted by getCalibrationMaturity() ONLY while the model is still immature
+// (early tier); null once dialed in (PERSONALIZED+ — bannerText goes null). The
+// React side composes the user copy from these machine signals (no copy here).
+export interface CoachCalibrationSignal {
+  tierId: number; // 0=cold_start .. 3=personalizing (immature tiers only)
+  tierName: string; // engine tier name (e.g. 'cold_start', 'developing')
+  sessionsCount: number; // real unique-session count behind the model so far
+  // Sessions remaining until the NEXT tier's entry threshold. A real number
+  // when the engine exposes the next-tier minSessions; null when no honest
+  // count can be derived (then the React copy drops the number — never faked).
+  sessionsToNext: number | null;
+}

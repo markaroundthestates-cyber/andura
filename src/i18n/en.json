@@ -258,6 +258,11 @@
     }
   },
 
+  "coachCalibration": {
+    "withCount": "Still learning you — about {n} more sessions to dial this in.",
+    "noCount": "Still getting to know you — the plan keeps sharpening with every session."
+  },
+
   "restOverlay": {
     "ariaLabel": "Active rest",
     "kicker": "Rest",

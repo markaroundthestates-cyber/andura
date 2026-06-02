@@ -47,6 +47,7 @@ import {
   GROUP_LABELS_RO_BIG11,
 } from '../../engine/muscleRecovery.js';
 import { detectWeakGroups } from '../../engine/weaknessDetector.js';
+import { detectCalibrationLevel, CALIBRATION_LEVELS } from '../../engine/calibration.js';
 import { DB } from '../../db.js';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
@@ -96,6 +97,7 @@ import type {
   ProactiveAlertSeverity,
   CoachRestReason,
   CoachTodayQuote,
+  CoachCalibrationSignal,
 } from './engineWrappers.types';
 
 // Barrel re-exports — preserve IDENTICAL public API after the hygiene split.
@@ -116,6 +118,7 @@ export type {
   ProactiveAlertSeverity,
   CoachRestReason,
   CoachTodayQuote,
+  CoachCalibrationSignal,
   CoachAdaptation,
   CoachAdaptationKind,
 } from './engineWrappers.types';
@@ -930,6 +933,80 @@ export function getCoachTodayQuote(): CoachTodayQuote | null {
     logger.warn('[engineWrappers] getCoachTodayQuote failed:', e);
     captureException(e, {
       tags: { source: 'engine-adapter-fallback', adapter: 'getCoachTodayQuote' },
+    });
+    return null;
+  }
+}
+
+// ── Calibration maturity composer (calibration honesty — "still learning you") ─
+//
+// Surfaces the "no fabricated certainty" Andura value: an HONEST indicator that
+// the model is still calibrating, that fades as it matures. Reuses the real
+// calibration engine (src/engine/calibration.js#detectCalibrationLevel) — the
+// 6-tier maturity math (COLD_START → OPTIMIZED, ADR 009 §AMENDMENT). We do NOT
+// reinvent the maturity math; we read the tier the engine reports and expose a
+// machine signal the React side turns into copy (no RO/EN copy in this engine
+// boundary — i18n leak harness).
+//
+// Truth-only: the session count is the user's REAL unique-session count (one
+// per logged session ts); the "sessions to next tier" is the next tier's
+// minSessions entry threshold minus the real count. When the next tier exposes
+// no threshold we return null for the count and the React side phrases it
+// WITHOUT a fabricated number ("still getting to know you").
+//
+// Hidden when mature: PERSONALIZED (id 4) and OPTIMIZED (id 5) have a null
+// bannerText (the model is dialed in) → this composer returns null so a mature
+// user NEVER sees the line. Cold start with zero sessions → an honest early-
+// state signal (count 0) is fine; the React copy stays count-free.
+
+// Tier order matching calibration.js TIER_ORDER (id 0..5). Used to look up the
+// NEXT tier's entry threshold for an honest "sessions remaining" figure.
+const CALIBRATION_TIER_BY_ID = [
+  CALIBRATION_LEVELS.COLD_START,
+  CALIBRATION_LEVELS.INITIAL,
+  CALIBRATION_LEVELS.DEVELOPING,
+  CALIBRATION_LEVELS.PERSONALIZING,
+  CALIBRATION_LEVELS.PERSONALIZED,
+  CALIBRATION_LEVELS.OPTIMIZED,
+];
+
+// The model is "dialed in" (line hidden) at PERSONALIZED+ — exactly the tiers
+// the engine marks with a null bannerText. Mirror that boundary by id so the
+// honesty line and the engine's own "done learning" signal never disagree.
+const CALIBRATION_MATURE_TIER_ID = CALIBRATION_LEVELS.PERSONALIZED.id;
+
+export function getCalibrationMaturity(): CoachCalibrationSignal | null {
+  try {
+    const sessions = useWorkoutStore.getState().sessionsHistory;
+    // One calibration log per logged session: its finish `ts` is BOTH the unique
+    // session key (engine dedups by session/date) and the date the engine ages
+    // the model from. This is the user's real history — no fabrication.
+    const allLogs = sessions
+      .filter((s) => Number.isFinite(s.ts))
+      .map((s) => ({ session: s.ts, ts: s.ts }));
+    const level = detectCalibrationLevel({ allLogs });
+    // Mature → hidden. A dialed-in user never sees the line (graceful).
+    if (level.id >= CALIBRATION_MATURE_TIER_ID) return null;
+    const sessionsCount = allLogs.length;
+    // Honest "sessions to next tier": the NEXT tier's entry threshold minus the
+    // real count. Null when no next tier or no threshold is exposed (then the
+    // React copy drops the number rather than inventing one).
+    const nextTier = CALIBRATION_TIER_BY_ID[level.id + 1];
+    const nextMin = nextTier?.minSessions;
+    const sessionsToNext =
+      typeof nextMin === 'number' && Number.isFinite(nextMin) && nextMin > sessionsCount
+        ? nextMin - sessionsCount
+        : null;
+    return {
+      tierId: level.id,
+      tierName: level.name,
+      sessionsCount,
+      sessionsToNext,
+    };
+  } catch (e) {
+    logger.warn('[engineWrappers] getCalibrationMaturity failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getCalibrationMaturity' },
     });
     return null;
   }

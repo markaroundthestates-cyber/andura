@@ -258,6 +258,11 @@
     }
   },
 
+  "coachCalibration": {
+    "withCount": "Inca te invat - cam {n} sesiuni si te calibrez complet.",
+    "noCount": "Inca te cunosc - planul se ascute cu fiecare sesiune."
+  },
+
   "restOverlay": {
     "ariaLabel": "Pauza activa",
     "kicker": "Pauza",

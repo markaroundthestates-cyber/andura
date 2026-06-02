@@ -52,9 +52,12 @@ const REQUIRED_ADAPTERS = [
   // specific weekday (composePlannedWorkoutToday with an injected Date).
   // Instrumented identically (captureException + source tag).
   'getWorkoutForDay',
+  // Calibration honesty adapter — reads detectCalibrationLevel to surface the
+  // "still learning you" line while immature. Instrumented identically.
+  'getCalibrationMaturity',
 ] as const;
 
-const EXPECTED_CAPTURE_EXCEPTION_SITES = 15; // 11 Big-11 + getPatternsBanner extra sub-path + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare) + getWorkoutForDay (schedule day-preview)
+const EXPECTED_CAPTURE_EXCEPTION_SITES = 16; // 11 Big-11 + getPatternsBanner extra sub-path + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare) + getWorkoutForDay (schedule day-preview) + getCalibrationMaturity (calibration honesty)
 
 describe('Sentry adapter coverage anti-drift gate (D063 LOCK V1)', () => {
   const source = readFileSync(ENGINE_WRAPPERS_PATH, 'utf-8');
