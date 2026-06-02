@@ -908,6 +908,94 @@ function applyRecoveryToVolumeBudget(volumeMapEN, logs, now, aerobicSessions) {
   return toCanonicalEN(adjustedRo);
 }
 
+/**
+ * Recovery REDISTRIBUTION — the freed volume from a recovery-cut group flows to
+ * the FRESH (recovered) groups trained in TODAY's SAME session, so a fatigued
+ * chest on a push day becomes "lighter chest, HEAVIER shoulders/triceps" instead
+ * of a collapsed session whose freed volume simply vanished.
+ *
+ * The recovery cut (applyRecoveryToVolumeBudget: partial ×0.80, fatigued ×0.60)
+ * lowers a group's weekly budget; the difference (`balanced - recovered`) was
+ * previously DROPPED — `computeSessionExerciseCount` + `sessionSetBudget` size each
+ * group INDEPENDENTLY, so cutting chest never lifted shoulders. This reallocates
+ * that freed volume to the cluster's fresh groups, proportional to their cluster
+ * weight (CLUSTER_BIG6_TO_BIG11_WEIGHT), each HARD-capped at its own MRV
+ * (ISRAETEL_BASELINES) so no fresh group is ever pushed over its recoverable max.
+ *
+ * SESSION-LOCAL: this returns a NEW budget consumed by buildSession for TODAY only;
+ * the persisted weekly budget (`balancedTargets`) is never mutated, so chest is
+ * normal again on a fresh day (a per-day emphasis shift, not a weekly reweight).
+ *
+ * Only groups in TODAY's cluster participate (both the freed-from and the
+ * receive-into side) — the transfer is confined to the muscles this session trains.
+ * If NO fresh group is in the cluster (everything's fried), there is nothing to
+ * redistribute to → the cut budget passes through unchanged and the session
+ * legitimately stays lighter. Balanced / all-recovered day → no group is cut →
+ * freed total is 0 → the recovered map is returned untouched (byte-identical to
+ * pre-feature). Pure + deterministic (state in, no globals).
+ *
+ * @param {Object<string, number>|null|undefined} balancedTargetsEN - pre-recovery-cut EN budget
+ * @param {Object<string, number>|null|undefined} recoveredTargetsEN - post-recovery-cut EN budget
+ * @param {string} cluster - today's Big-6 cluster id (push|pull|legs|upper|lower|full)
+ * @param {{[group:string]: 'recovered'|'partial'|'fatigued'}} recoveryStateRO - RO recovery state (merged)
+ * @returns {Object<string, number>|null} session-local EN budget (null/recovered passes through)
+ */
+function redistributeRecoveredVolumeToFreshSessionGroups(
+  balancedTargetsEN, recoveredTargetsEN, cluster, recoveryStateRO,
+) {
+  if (!recoveredTargetsEN || typeof recoveredTargetsEN !== 'object') {
+    return recoveredTargetsEN ?? null;
+  }
+  if (!balancedTargetsEN || typeof balancedTargetsEN !== 'object') {
+    return { ...recoveredTargetsEN };
+  }
+  const weights =
+    CLUSTER_BIG6_TO_BIG11_WEIGHT[cluster] || CLUSTER_BIG6_TO_BIG11_WEIGHT[FALLBACK_CLUSTER];
+  const state = recoveryStateRO && typeof recoveryStateRO === 'object' ? recoveryStateRO : {};
+
+  // Sum the weekly volume the cut groups (in today's cluster) gave up, and tally
+  // the FRESH (recovered) cluster groups + their cluster weight so the transfer
+  // is proportional. A group is "fresh" when its state is absent or 'recovered'.
+  let freed = 0;
+  let freshWeightTotal = 0;
+  const freshGroupsRO = [];
+  for (const roGroup of Object.keys(weights)) {
+    const enKey = BIG11_RO_TO_EN_MAP[roGroup] ?? roGroup;
+    const w = typeof weights[roGroup] === 'number' ? weights[roGroup] : 0;
+    const groupState = state[roGroup] ?? 'recovered';
+    if (groupState === 'partial' || groupState === 'fatigued') {
+      const balanced = balancedTargetsEN[enKey];
+      const recovered = recoveredTargetsEN[enKey];
+      if (typeof balanced === 'number' && typeof recovered === 'number' && balanced > recovered) {
+        freed += balanced - recovered;
+      }
+    } else if (w > 0) {
+      freshGroupsRO.push(roGroup);
+      freshWeightTotal += w;
+    }
+  }
+
+  // Nothing freed (no cut group in the cluster) OR nowhere to send it (all
+  // fried) → pass the recovered budget through unchanged (session stays light).
+  if (freed <= 0 || freshWeightTotal <= 0 || freshGroupsRO.length === 0) {
+    return { ...recoveredTargetsEN };
+  }
+
+  const out = { ...recoveredTargetsEN };
+  for (const roGroup of freshGroupsRO) {
+    const enKey = BIG11_RO_TO_EN_MAP[roGroup] ?? roGroup;
+    const current = out[enKey];
+    if (typeof current !== 'number' || !Number.isFinite(current)) continue;
+    const share = freed * (weights[roGroup] / freshWeightTotal);
+    const mrv = ISRAETEL_BASELINES[enKey]?.MRV;
+    const bumped = current + share;
+    out[enKey] = typeof mrv === 'number' && Number.isFinite(mrv)
+      ? Math.min(mrv, bumped) // HARD MRV cap — a fresh group never exceeds its max
+      : bumped;
+  }
+  return out;
+}
+
 // ── Coach Voice: structured adaptations log (the moat made felt) ──────────
 // The adaptive brain (M1 recovery cut, M2 weakness amp, M3 imbalance fix,
 // deload) silently shapes the plan; the user sees only the result. This derives
@@ -1136,9 +1224,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // ── M1: muscle-recovery → today's volume budget (the moat seam) ──────────
   // The recovery brain already exists (getRecoveryByGroup) but only DISPLAYED.
   // Here it ACTS on the plan: a group fatigued today gets its weekly budget cut
-  // today (partial ×0.80, fatigued ×0.60), and the freed budget naturally flows
-  // to fresh groups since buildSession distributes session slots from the
-  // per-group budget. Logs come from the SAME persisted sessions the Progress
+  // today (partial ×0.80, fatigued ×0.60), and the volume it gives up is then
+  // REDISTRIBUTED to the fresh groups TODAY's cluster trains (see
+  // redistributeRecoveredVolumeToFreshSessionGroups below — proportional to
+  // cluster weight, MRV-capped), so the freed volume does NOT vanish: a fatigued
+  // chest on a push day becomes lighter-chest/heavier-shoulders, not a collapsed
+  // session. Logs come from the SAME persisted sessions the Progress
   // manikin reads (recentSessions → flattenSessionsToRecoveryLogs). `date.getTime()`
   // threads the planned clock into recovery so the cut is DETERMINISTIC.
   // No logs / all-recovered → budget unchanged → identical to pre-M1 chassis
@@ -1220,7 +1311,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   const focusBiasedTargets = applyFocusBias(baseVolumeTargets, focusPreset);
   const amplifiedTargets = applyWeaknessAmplification(focusBiasedTargets, weakGroups);
   const balancedTargets = applyImbalanceCorrection(amplifiedTargets, imbalances);
-  const volumeTargets = applyRecoveryToVolumeBudget(
+  const recoveredTargets = applyRecoveryToVolumeBudget(
     balancedTargets,
     recoveryLogs,
     date.getTime(),
@@ -1237,6 +1328,22 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   const mergedState = aerobicSessions
     ? mergeAerobicRecovery(resistanceState, aerobicSessions, date.getTime())
     : resistanceState;
+
+  // Recovery REDISTRIBUTION (the moat fix): the volume a recovery-cut group gave
+  // up this session is reallocated to the FRESH groups TODAY's cluster trains
+  // (proportional to cluster weight, each MRV-capped) — so a fatigued chest on a
+  // push day becomes "lighter chest, HEAVIER shoulders/triceps" and the session
+  // stays substantial instead of collapsing (the freed volume no longer vanishes).
+  // SESSION-LOCAL: balancedTargets (the weekly SSOT) is untouched, so chest is
+  // normal again on a fresh day. All-recovered / balanced → freed total is 0 →
+  // volumeTargets === recoveredTargets (byte-identical to pre-feature). Uses the
+  // SAME mergedState that drove the cut + the EFFECTIVE cluster the session trains.
+  const volumeTargets = redistributeRecoveredVolumeToFreshSessionGroups(
+    balancedTargets,
+    recoveredTargets,
+    cluster,
+    mergedState,
+  );
   // ACTIVE deload = any non-zero intensity modifier (mirrors the React-side
   // hasActiveDeload check in scheduleAdapterAggregate.compose: the IDLE blueprint
   // emits a zero modifier, every real deload state — SCHEDULED_LINEAR /
@@ -1253,7 +1360,10 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     baseTargets: focusBiasedTargets,
     amplifiedTargets,
     balancedTargets,
-    recoveredTargets: volumeTargets,
+    // The recovery-CUT attribution compares balanced→recovered (the groups that
+    // dropped), so it reads the PRE-redistribution recovered budget — the
+    // session-local fresh-group bump is an emphasis shift, not a detected cut.
+    recoveredTargets,
     resistanceState,
     mergedState,
     deloadActive,

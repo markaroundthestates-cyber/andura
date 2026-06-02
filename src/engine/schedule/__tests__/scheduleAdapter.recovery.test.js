@@ -139,7 +139,11 @@ describe('scheduleAdapter — M1 recovery wired into daily plan', () => {
     // chest is EN; getRecoveryByGroup returns RO ('piept'). The cut shows on the
     // EN 'chest' key only if EN->RO->cut->EN round-trips correctly. fatigued x0.60.
     expect(fatigued.volumeTargets.chest).toBeCloseTo(baseline.volumeTargets.chest * 0.6, 5);
-    // Untouched groups keep their baseline budget (no collateral key drift).
-    expect(fatigued.volumeTargets.back).toBe(baseline.volumeTargets.back);
+    // Monday resolves to an UPPER day (chest + back + ...): back is a FRESH
+    // same-session group, so chest's freed volume now FLOWS to it (recovery
+    // redistribution) — it is at least its baseline, never dragged down with chest
+    // (the prior "freed volume vanishes" bug). MRV-capped (back MRV 25).
+    expect(fatigued.volumeTargets.back).toBeGreaterThanOrEqual(baseline.volumeTargets.back);
+    expect(fatigued.volumeTargets.back).toBeLessThanOrEqual(25 + 1e-9);
   });
 });
