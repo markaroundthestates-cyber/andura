@@ -22,3 +22,10 @@ jest.mock('react-native', () => {
   });
   return RN;
 });
+
+// NOTE: the react-native-mmkv jest mock lives in mobile/__mocks__/react-native-mmkv.js
+// and is wired via `moduleNameMapper` in package.json (NOT a jest.mock factory
+// here) so it resolves from BOTH the mobile root AND the shared `../src` tree —
+// kv.native.js (which imports react-native-mmkv at require time) lives outside
+// mobile/rootDir, where a relative factory + mobile/node_modules resolution
+// would not reach it. See that file's header for the in-memory MMKV details.
