@@ -14,6 +14,7 @@ import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
 import { logger } from '../../../../util/logger.js';
+import { kv } from '../../../../storage/kv';
 import { useAppStore } from '../../../stores/appStore';
 import { SubHeader } from '../../../components/SubHeader';
 import { useWorkoutStore } from '../../../stores/workoutStore';
@@ -45,7 +46,9 @@ function wipeAllLocalData(): void {
     useAerobicStore.getState().reset();
     useCoachStore.setState({ schedContext: 'workout', persona: 'gigica', reactivateDismissed: false });
     localStorage.clear();
-    localStorage.setItem('__suppressFirebaseSyncUntil', String(Date.now() + 10000));
+    // RN consistency (W1a) — route the suppress marker through kv (MMKV on
+    // native); firebase.js already READS it via kv. Web stays localStorage.
+    kv.setItem('__suppressFirebaseSyncUntil', String(Date.now() + 10000));
   } catch (e) {
     logger.warn('[RestoreAccount] wipe failed:', e);
   }

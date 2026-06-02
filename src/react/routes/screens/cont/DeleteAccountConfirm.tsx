@@ -16,6 +16,7 @@ import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2 } from 'lucide-react';
 import { logger } from '../../../../util/logger.js';
+import { kv } from '../../../../storage/kv';
 import { useAppStore } from '../../../stores/appStore';
 import { SubHeader } from '../../../components/SubHeader';
 import { useWorkoutStore } from '../../../stores/workoutStore';
@@ -63,7 +64,9 @@ function wipeAllLocalData(): void {
     // not survive a page load). Mirrors fullReset (dataCleanup.js:209): set the
     // marker AFTER localStorage.clear() so a stale/empty syncToFirebase cannot
     // recreate users/{uid} and the next boot's syncFromFirebase short-circuits.
-    localStorage.setItem('__suppressFirebaseSyncUntil', String(Date.now() + 10000));
+    // RN consistency (W1a) — route the suppress marker through kv (MMKV on
+    // native); firebase.js already READS it via kv. Web stays localStorage.
+    kv.setItem('__suppressFirebaseSyncUntil', String(Date.now() + 10000));
   } catch (e) {
     logger.warn('[DeleteAccountConfirm] wipe failed:', e);
   }

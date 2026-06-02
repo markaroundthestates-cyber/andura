@@ -11,9 +11,9 @@
 // future single-store namespacing strategy stays a one-line MMKV `id` change.
 // One default MMKV instance covers all keys (same flat keyspace as localStorage).
 
-import { MMKV } from 'react-native-mmkv';
-
-const storage = new MMKV();
+// Shared default MMKV instance (also used by dbset.native.js — DB.set throwing
+// setter) so both native Tier-0 paths write the SAME flat keyspace.
+import { storage } from './mmkv.native.js';
 
 /**
  * Synchronous KV backed by MMKV. `getString` returns `undefined` for a missing

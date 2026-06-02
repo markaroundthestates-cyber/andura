@@ -2,6 +2,7 @@
 
 import { captureException } from './util/sentry.js';
 import { kv } from './storage/kv';
+import { dbSetRaw } from './storage/dbset';
 
 /**
  * Tier 0 localStorage wrapper.
@@ -18,12 +19,15 @@ export const DB = {
   get: k => { try { return JSON.parse(kv.getItem(k) || 'null') } catch { return null } },
   set: (k, v) => {
     try {
-      // NOTE: DB.set keeps a DIRECT localStorage.setItem (NOT kv.setItem) on purpose.
+      // NOTE: DB.set routes through dbSetRaw (the THROWING setter), NOT kv.setItem.
       // The MED-CODE-22 quota contract (return {ok:false,error:'quota_exceeded'} +
       // Sentry, rethrow unknown) needs the QuotaExceededError to PROPAGATE here;
-      // kv.setItem swallows all throws (silent no-op). RN write path = FLAG (kv on
-      // native, or kv.setItem returning ok/err) — separate wave, see report.
-      localStorage.setItem(k, JSON.stringify(v));
+      // kv.setItem swallows all throws (silent no-op, feeds Zustand's void
+      // StateStorage). dbSetRaw is platform-split: raw localStorage.setItem on
+      // web (Storage.prototype.setItem spy intact for db-set-quota.test.js) and
+      // MMKV `set` on native (no localStorage there → bare setItem = ReferenceError),
+      // both of which still THROW on real failure so the branching below holds.
+      dbSetRaw(k, JSON.stringify(v));
       return { ok: true };
     } catch (err) {
       if (err && err.name === 'QuotaExceededError') {
