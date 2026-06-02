@@ -1,6 +1,7 @@
 // ══ DATABASE + UTILS ════════════════════════════════════════
 
 import { captureException } from './util/sentry.js';
+import { kv } from './storage/kv';
 
 /**
  * Tier 0 localStorage wrapper.
@@ -14,9 +15,14 @@ import { captureException } from './util/sentry.js';
  * tree on quota exhaustion. Sentry capture wired pentru production observability.
  */
 export const DB = {
-  get: k => { try { return JSON.parse(localStorage.getItem(k) || 'null') } catch { return null } },
+  get: k => { try { return JSON.parse(kv.getItem(k) || 'null') } catch { return null } },
   set: (k, v) => {
     try {
+      // NOTE: DB.set keeps a DIRECT localStorage.setItem (NOT kv.setItem) on purpose.
+      // The MED-CODE-22 quota contract (return {ok:false,error:'quota_exceeded'} +
+      // Sentry, rethrow unknown) needs the QuotaExceededError to PROPAGATE here;
+      // kv.setItem swallows all throws (silent no-op). RN write path = FLAG (kv on
+      // native, or kv.setItem returning ok/err) — separate wave, see report.
       localStorage.setItem(k, JSON.stringify(v));
       return { ok: true };
     } catch (err) {

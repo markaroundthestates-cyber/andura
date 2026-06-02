@@ -14,6 +14,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { kv } from '../../storage/kv';
 
 export type Sex = 'm' | 'f';
 export type Goal = 'auto' | 'forta' | 'masa' | 'slabire' | 'mentenanta';
@@ -339,7 +340,7 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
     }),
     {
       name: 'wv2-onboarding-store',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => kv),
       // v3 (P-02 height): height added to OnboardingData. Backward-compat —
       // both migrate branches spread `...EMPTY` first, so v0/v1/v2 persisted
       // users get `height: null` default without corrupting existing Big 6.

@@ -10,6 +10,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { kv } from '../../storage/kv';
 import { todTs } from '../../db.js';
 
 // ── Hygiene split (zero behavior change) ─────────────────────────────────────
@@ -298,7 +299,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
     }),
     {
       name: 'wv2-workout-store',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => kv),
       // Persist selective: pausedSnapshot + lastSession + sessionsHistory +
       // streak + lastStreakDate (NU sessionContext/refusalTriedByEx runtime-only).
       // Phase 4 task_21 adds history pentru Istoric tab persistent browse.

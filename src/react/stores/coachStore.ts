@@ -11,6 +11,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { kv } from '../../storage/kv';
 
 export type SchedContext = 'workout' | 'rest';
 export type Persona = 'maria' | 'gigica' | 'marius';
@@ -41,7 +42,7 @@ export const useCoachStore = create<CoachState & CoachActions>()(
     }),
     {
       name: 'wv2-coach-store',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => kv),
       // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
       // fields (NU actions). Match appStore + scheduleStore + workoutStore
       // existing pattern. Removes future bug surface unde action functions

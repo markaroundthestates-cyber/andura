@@ -8,6 +8,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { kv } from '../../storage/kv';
 import { useOnboardingStore } from './onboardingStore';
 
 export type DayKind = 'training' | 'rest';
@@ -177,7 +178,7 @@ export const useScheduleStore = create<ScheduleState & ScheduleActions>()(
     }),
     {
       name: 'wv2-schedule-store',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => kv),
       // editMode is session-scope only — never persist so user returns out of
       // edit mode after navigating away mid-edit (avoid stale-edit-state ghost
       // on next visit). Days + weekStart still persist for offline coach use.

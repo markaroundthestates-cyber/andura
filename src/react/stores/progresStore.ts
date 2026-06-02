@@ -5,6 +5,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { kv } from '../../storage/kv';
 
 export interface WeightEntry {
   kg: number;
@@ -200,7 +201,7 @@ export const useProgresStore = create<ProgresState & ProgresActions>()(
     }),
     {
       name: 'wv2-progres-store',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => kv),
       // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
       // fields (NU actions). Match appStore + scheduleStore + workoutStore
       // existing pattern. weightLog + bodyData persisted; actions excluded

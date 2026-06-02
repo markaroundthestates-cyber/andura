@@ -23,6 +23,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { kv } from '../../storage/kv';
 
 // Class TYPES with baked-in MET (Compendium of Physical Activities mid-band,
 // conservative). 'alta' = a generic "other class" fallback.
@@ -258,7 +259,7 @@ export const useAerobicStore = create<AerobicState & AerobicActions>()(
     }),
     {
       name: 'wv2-aerobic-store',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => kv),
       // v2 (delete a logged class 2026-06-01): adds `deletedTs` tombstones so a
       // mislogged class can be removed AND stay removed across cloud sync.
       version: 2,

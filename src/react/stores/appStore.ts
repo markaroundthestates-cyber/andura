@@ -14,6 +14,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { kv } from '../../storage/kv';
 
 export type Persona = 'maria' | 'gigica' | 'marius';
 
@@ -58,7 +59,7 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'wv2-app-store',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => kv),
       // Partialize — only persist isSkipAuth across reloads (Maria 65 test drive
       // continuity). isAuthenticated remains derived from firebase-* tokens via
       // ProtectedRoute sync. persona + initialized are session-scope.

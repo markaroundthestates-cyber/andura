@@ -23,6 +23,7 @@
 // keys required.
 //
 import { DB } from './db.js';
+import { kv } from './storage/kv';
 import { toast } from './ui/toast.js';
 import { logger } from './util/logger.js';
 import { COACH_RELEVANT_KEYS } from './util/dataRegistry.js';
@@ -118,8 +119,8 @@ export function fbKey(localKey) {
 }
 
 function getDeviceId() {
-  let id = localStorage.getItem('device-id');
-  if (!id) { id = 'dev-' + Math.random().toString(36).slice(2,10); localStorage.setItem('device-id', id); }
+  let id = kv.getItem('device-id');
+  if (!id) { id = 'dev-' + Math.random().toString(36).slice(2,10); kv.setItem('device-id', id); }
   return id;
 }
 
@@ -343,7 +344,7 @@ export async function syncFromFirebase() {
     logger.debug('[Firebase] Sync suppressed, skipping restore');
     return false;
   }
-  const suppressUntil = localStorage.getItem('__suppressFirebaseSyncUntil');
+  const suppressUntil = kv.getItem('__suppressFirebaseSyncUntil');
   if (suppressUntil && Date.now() < Number(suppressUntil)) {
     logger.debug('[Firebase] Sync suppressed post-reset until', new Date(Number(suppressUntil)).toISOString());
     return false;

@@ -45,6 +45,7 @@ import {
   toCanonicalRO,
   applyRecoveryStateRedistribution,
 } from '../periodization/volumeLandmarks.js';
+import { kv } from '../../storage/kv';
 
 export const CALENDAR_OVERRIDE_KEY = 'wv2-calendar-override';
 export const MISSING_EQUIPMENT_KEY = 'wv2-missing-equipment';
@@ -131,7 +132,7 @@ export function detectMidWeekEdit(selectedDays, todayIdx) {
 export function getCalendarOverride(now = new Date()) {
   let raw = null;
   try {
-    raw = localStorage.getItem(CALENDAR_OVERRIDE_KEY);
+    raw = kv.getItem(CALENDAR_OVERRIDE_KEY);
   } catch { return null; }
   if (!raw) return null;
   let parsed = null;
@@ -164,7 +165,7 @@ export function commitCalendarEdit(selectedDays, now = new Date()) {
     committedAt:   now.toISOString(),
   };
   try {
-    localStorage.setItem(CALENDAR_OVERRIDE_KEY, JSON.stringify(override));
+    kv.setItem(CALENDAR_OVERRIDE_KEY, JSON.stringify(override));
   } catch { /* storage quota / disabled — accept silent loss, engines fallback to preset */ }
   return override;
 }
@@ -176,7 +177,7 @@ export function commitCalendarEdit(selectedDays, now = new Date()) {
  * resets, not automatic.
  */
 export function resetWeekOverride() {
-  try { localStorage.removeItem(CALENDAR_OVERRIDE_KEY); } catch { /* noop */ }
+  try { kv.removeItem(CALENDAR_OVERRIDE_KEY); } catch { /* noop */ }
 }
 
 // ── Missing equipment list storage (edges) ────────────────────────────────
@@ -191,7 +192,7 @@ export function resetWeekOverride() {
  */
 export function getMissingEquipment() {
   let raw = null;
-  try { raw = localStorage.getItem(MISSING_EQUIPMENT_KEY); } catch { return []; }
+  try { raw = kv.getItem(MISSING_EQUIPMENT_KEY); } catch { return []; }
   if (!raw) return [];
   let parsed = null;
   try { parsed = JSON.parse(raw); } catch { return []; }
@@ -210,7 +211,7 @@ export function setMissingEquipment(list) {
     ? list.filter(e => typeof e === 'string' && VALID_EQUIPMENT_IDS.includes(e))
     : [];
   try {
-    localStorage.setItem(MISSING_EQUIPMENT_KEY, JSON.stringify(safe));
+    kv.setItem(MISSING_EQUIPMENT_KEY, JSON.stringify(safe));
   } catch { /* noop */ }
 }
 
@@ -253,7 +254,7 @@ export const REFUSAL_COUNTER_THRESHOLD = 3;
  */
 export function getSkippedExercises() {
   let raw = null;
-  try { raw = localStorage.getItem(SKIPPED_EXERCISES_KEY); } catch { return []; }
+  try { raw = kv.getItem(SKIPPED_EXERCISES_KEY); } catch { return []; }
   if (!raw) return [];
   let parsed = null;
   try { parsed = JSON.parse(raw); } catch { return []; }
@@ -270,7 +271,7 @@ export function setSkippedExercises(list) {
   const safe = Array.isArray(list)
     ? [...new Set(list.filter(e => typeof e === 'string' && e.length > 0))]
     : [];
-  try { localStorage.setItem(SKIPPED_EXERCISES_KEY, JSON.stringify(safe)); } catch { /* noop */ }
+  try { kv.setItem(SKIPPED_EXERCISES_KEY, JSON.stringify(safe)); } catch { /* noop */ }
 }
 
 /**
@@ -297,7 +298,7 @@ export function toggleSkippedExercise(exerciseName) {
  */
 export function getRefusalCounter() {
   let raw = null;
-  try { raw = localStorage.getItem(REFUSAL_COUNTER_KEY); } catch { return {}; }
+  try { raw = kv.getItem(REFUSAL_COUNTER_KEY); } catch { return {}; }
   if (!raw) return {};
   let parsed = null;
   try { parsed = JSON.parse(raw); } catch { return {}; }
@@ -322,7 +323,7 @@ export function incrementRefusal(exerciseName) {
   if (typeof exerciseName !== 'string' || exerciseName.length === 0) return 0;
   const current = getRefusalCounter();
   const next = { ...current, [exerciseName]: (current[exerciseName] || 0) + 1 };
-  try { localStorage.setItem(REFUSAL_COUNTER_KEY, JSON.stringify(next)); } catch { /* noop */ }
+  try { kv.setItem(REFUSAL_COUNTER_KEY, JSON.stringify(next)); } catch { /* noop */ }
   return next[exerciseName];
 }
 
@@ -337,7 +338,7 @@ export function resetRefusalCounter(exerciseName) {
   const current = getRefusalCounter();
   if (!(exerciseName in current)) return;
   const { [exerciseName]: _drop, ...rest } = current;
-  try { localStorage.setItem(REFUSAL_COUNTER_KEY, JSON.stringify(rest)); } catch { /* noop */ }
+  try { kv.setItem(REFUSAL_COUNTER_KEY, JSON.stringify(rest)); } catch { /* noop */ }
 }
 
 // ── Translation table USER-FACING → ENGINE EQUIPMENT IDS ─────────────────

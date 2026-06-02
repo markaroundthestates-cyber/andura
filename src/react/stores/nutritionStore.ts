@@ -15,6 +15,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { kv } from '../../storage/kv';
 
 export interface NutritionDailyEntry {
   dateISO: string; // YYYY-MM-DD
@@ -68,7 +69,7 @@ export const useNutritionStore = create<NutritionState & NutritionActions>()(
     }),
     {
       name: 'wv2-nutrition-store',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => kv),
       // SUB-CHAT5-004 blueprint consistency — explicit partialize doar data
       // fields (NU actions). Match appStore + scheduleStore + workoutStore
       // existing pattern. dailyLog single data slice; actions excluded from
