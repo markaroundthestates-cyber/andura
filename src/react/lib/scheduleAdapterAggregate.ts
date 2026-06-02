@@ -41,4 +41,7 @@ export {
   computePlannedVolumeKg,
   computeEstimatedDurationMin,
   composePlannedWorkoutToday,
+  personaTimeCapMin,
+  personaTimeTargetMin,
+  trimSessionToTimeBudget,
 } from './scheduleAdapterAggregate.compose';

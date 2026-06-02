@@ -24,6 +24,7 @@ import {
   buildUserStateForPipeline,
   readinessScoreForUser,
 } from './scheduleAdapterAggregate.builder';
+import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
 
 // Engine workout-title fallback SENTINEL — a non-localized machine marker the
 // adapter emits when the pipeline produces no real title. The render boundaries
@@ -312,6 +313,127 @@ export function computeEstimatedDurationMin(
   return Math.round(totalSec / 60) + Math.round(warmup);
 }
 
+// ── Persona-aware session TIME budget (rest-inclusive) ─────────────────────
+// The chassis sizes a session from the weekly volume budget (exercise count
+// [4,8] × sets [2,5]) but never bounds the resulting session DURATION, so a
+// high-volume day could run ~2.5-3h. A real coach caps the session at a time
+// budget; rest periods dominate that time (a heavy compound rests 2-3 min
+// between sets), so the cap is measured on the REST-INCLUSIVE duration
+// (computeEstimatedDurationMin) — NOT a work-only estimate.
+//
+// Hard caps (minutes) per persona — older / less-recovered trainees tolerate a
+// shorter session (recovery + adherence), a trained Marius a longer one. The
+// soft TARGET (~cap − 15) is the comfortable mid-band the trim aims for; the
+// HARD cap is the absolute ceiling the trim guarantees the session lands under.
+// null / unknown persona → gigica (conservative middle, mirrors resolvePersonaId).
+const PERSONA_TIME_CAP_MIN: Readonly<Record<string, number>> = {
+  maria: 60,
+  gigica: 75,
+  marius: 90,
+};
+const TIME_TARGET_OFFSET_MIN = 15; // soft target = hard cap − this
+const DEFAULT_PERSONA_TIME_CAP_MIN = PERSONA_TIME_CAP_MIN.gigica ?? 75;
+
+// Trim floor — never gut the session below a real workout. A trimmed group
+// re-surfaces as lagging next session (M2 weakness amplification + M1 recovery
+// re-prioritize it), so trimming today is SAFE and self-correcting; the floor
+// only stops the trim from producing a stub.
+const MIN_EXERCISES_FLOOR = 4; // never below ~4 exercises
+const MIN_SETS_PER_EX = 2;     // never below MIN_SETS (matches chassis clamp)
+const MIN_SESSION_MIN = 25;    // never trim below a ~25min session
+
+/** Resolve the per-persona HARD time cap (minutes) — the absolute ceiling the
+ * trim guarantees. Unknown persona → gigica (conservative). Pure. */
+export function personaTimeCapMin(personaId: string | null | undefined): number {
+  if (typeof personaId === 'string' && personaId in PERSONA_TIME_CAP_MIN) {
+    return PERSONA_TIME_CAP_MIN[personaId]!;
+  }
+  return DEFAULT_PERSONA_TIME_CAP_MIN;
+}
+
+/** Soft TARGET session length (minutes) = hard cap − TIME_TARGET_OFFSET_MIN —
+ * the comfortable mid-band (e.g. marius ~75). Floored at MIN_SESSION_MIN so the
+ * target never drops below the session floor. Pure. */
+export function personaTimeTargetMin(personaId: string | null | undefined): number {
+  return Math.max(MIN_SESSION_MIN, personaTimeCapMin(personaId) - TIME_TARGET_OFFSET_MIN);
+}
+
+type TrimmableExercise = PlannedExercise;
+
+/**
+ * Bound a built session by a persona-aware TIME budget (rest-inclusive).
+ *
+ * When the session's rest-inclusive duration (computeEstimatedDurationMin)
+ * exceeds the persona HARD cap, trim volume until it fits — shaving sets from /
+ * dropping the LOWEST-priority exercises FIRST. The session list is already
+ * priority-ordered (buildSession → prioritizeWeakGroups puts weak / priority /
+ * imbalance-corrected groups at the FRONT), so the trim walks the TAIL and never
+ * touches the front: priority/weak groups always survive ("the whole workout
+ * optimized and maximized, don't gut the important part").
+ *
+ * Trim order, repeated until duration ≤ cap or a floor is hit:
+ *   1. Shave ONE set off the LAST exercise that still has > MIN_SETS_PER_EX.
+ *   2. If every surviving exercise is already at the set floor, DROP the LAST
+ *      exercise — but never below MIN_EXERCISES_FLOOR exercises.
+ *   3. Stop once the projected session would fall under MIN_SESSION_MIN.
+ *
+ * Pure + deterministic: same persona + warmup + exercises → identical result.
+ * No random, no wall-clock. A session already under the cap (or a tiny/empty
+ * one the floor protects) is returned UNCHANGED.
+ *
+ * @param exercises priority-ordered planned exercises (front = highest priority)
+ * @param warmupMin warmup minutes folded into the rest-inclusive duration
+ * @param capMin persona hard time cap (minutes)
+ */
+export function trimSessionToTimeBudget(
+  exercises: ReadonlyArray<TrimmableExercise>,
+  warmupMin: number,
+  capMin: number,
+): TrimmableExercise[] {
+  const out: TrimmableExercise[] = exercises.map((e) => ({ ...e }));
+  if (out.length === 0) return out;
+
+  // computeEstimatedDurationMin returns null only for an empty/zero session;
+  // the floor protects that (we never trim a session already at/under floor).
+  const duration = (list: ReadonlyArray<TrimmableExercise>): number =>
+    computeEstimatedDurationMin(list, warmupMin) ?? 0;
+
+  // Deterministic guard — set-shave then drop are both monotonic volume
+  // reductions, so the loop strictly shrinks each pass; the bound is a hard
+  // ceiling against any future non-monotonic edit (never an expected exit).
+  let guard = 0;
+  const maxIterations = out.length * 8 + 8;
+
+  while (duration(out) > capMin && guard < maxIterations) {
+    guard += 1;
+    if (duration(out) <= MIN_SESSION_MIN) break;
+
+    // 1) Shave one set off the LAST (lowest-priority) exercise above the floor.
+    let shaved = false;
+    for (let i = out.length - 1; i >= 0; i -= 1) {
+      if (out[i]!.sets > MIN_SETS_PER_EX) {
+        out[i] = { ...out[i]!, sets: out[i]!.sets - 1 };
+        shaved = true;
+        break;
+      }
+    }
+    if (shaved) continue;
+
+    // 2) Every surviving exercise is at the set floor — drop the LAST one, but
+    //    never below the exercise floor.
+    if (out.length > MIN_EXERCISES_FLOOR) {
+      out.pop();
+      continue;
+    }
+
+    // 3) Floor reached on both axes — stop (the chassis minimum survives even
+    //    if it nominally exceeds the cap; M1/M2 re-balance over the week).
+    break;
+  }
+
+  return out;
+}
+
 /**
  * Phase 6 task_02 real wire. Async pipeline consumer — caller (5 consumers
  * React) handles loading state via useState + useEffect pattern. Returns
@@ -347,9 +469,44 @@ export async function composePlannedWorkoutToday(
     const restRangeRaw = plan.restTimeRange as [number, number] | null | undefined;
     const restRange =
       Array.isArray(restRangeRaw) && restRangeRaw.length >= 2 ? restRangeRaw : null;
-    const exercises = (plan.exercises ?? []).map((ex, idx) =>
+    // F-workout-preview/T1 — Engine Warm-up blueprint surface. Engine emits
+    // duration_min (5-10 adaptive) + ui_label "Incalzire ~X min" via
+    // src/engine/warmup/index.js:289-300. Map to consumer-friendly {line,
+    // durationMin}. Null when ui_label missing/empty (defensive guard). Resolved
+    // BEFORE the time-budget trim so its minutes fold into the rest-inclusive
+    // duration the trim measures against (warmup counts toward the session cap).
+    const warmupRaw = plan.warmup as { duration_min?: number; ui_label?: string } | null;
+    const warmupLine = typeof warmupRaw?.ui_label === 'string' ? warmupRaw.ui_label : '';
+    const warmupDuration = typeof warmupRaw?.duration_min === 'number' ? warmupRaw.duration_min : 0;
+    const warmup = warmupRaw !== null && warmupLine.length > 0
+      ? { line: warmupLine, durationMin: warmupDuration }
+      : null;
+    const mapped = (plan.exercises ?? []).map((ex, idx) =>
       toPlannedExercise(ex, idx, experienceEn, readinessScore, restRange, coldStartProfile),
     );
+    // Persona-aware TIME budget — bound the session by a realistic, rest-
+    // inclusive duration. resolvePersonaId reads user.persona / age (the same
+    // userState slice the pipeline + specialization Gate 1 consume); null/unknown
+    // → gigica. The trim is a pure tail-first transform: it shaves sets from /
+    // drops the LOWEST-priority (TAIL) exercises until the session fits the hard
+    // cap, never touching the FRONT priority/weak/imbalance groups, and never
+    // below the floor (~4 exercises / 2 sets / ~25min). Warmup is folded into the
+    // duration the trim measures against (rest-inclusive, same estimator).
+    // Mirror the builder's persona resolution exactly (meta.persona Gate 1):
+    // pass age ONLY when it is a real number, else {} → resolvePersonaId default
+    // 'gigica'. A null age must NOT coerce to 0 (Number(null)=0 → marius); the
+    // {} guard keeps an empty/cold-start user on the conservative gigica cap.
+    const personaUser = userState.user as { persona?: string; age?: unknown };
+    const personaAge = Number(personaUser.age);
+    const personaId = resolvePersonaId(
+      typeof personaUser.persona === 'string'
+        ? { persona: personaUser.persona }
+        : Number.isFinite(personaAge)
+          ? { age: personaAge }
+          : {},
+    );
+    const timeCapMin = personaTimeCapMin(personaId);
+    const exercises = trimSessionToTimeBudget(mapped, warmup?.durationMin ?? 0, timeCapMin);
     // Deload engine emits intensity_modifier object always (IDLE state =
     // {rir_increment:0, intensity_pct_decrement:0}). 'minus' only when
     // ACTIVE deload (any non-zero modifier field). Phase 7+ wires 'plus'
@@ -358,16 +515,6 @@ export async function composePlannedWorkoutToday(
     const hasActiveDeload = mod !== null && (
       (mod.rir_increment ?? 0) > 0 || (mod.intensity_pct_decrement ?? 0) > 0
     );
-    // F-workout-preview/T1 — Engine Warm-up blueprint surface. Engine emits
-    // duration_min (5-10 adaptive) + ui_label "Incalzire ~X min" via
-    // src/engine/warmup/index.js:289-300. Map to consumer-friendly {line,
-    // durationMin}. Null when ui_label missing/empty (defensive guard).
-    const warmupRaw = plan.warmup as { duration_min?: number; ui_label?: string } | null;
-    const warmupLine = typeof warmupRaw?.ui_label === 'string' ? warmupRaw.ui_label : '';
-    const warmupDuration = typeof warmupRaw?.duration_min === 'number' ? warmupRaw.duration_min : 0;
-    const warmup = warmupRaw !== null && warmupLine.length > 0
-      ? { line: warmupLine, durationMin: warmupDuration }
-      : null;
     // Audit HIGH "0 kg" — tonajul planificat REAL din exercitiile prescrise
     // (sets × targetReps × targetKg), NU hardcode-ul 0 din engine
     // (scheduleAdapter.js volumeKg:0 → WorkoutPreview arata "0 kg" via `0 ?? fb`).

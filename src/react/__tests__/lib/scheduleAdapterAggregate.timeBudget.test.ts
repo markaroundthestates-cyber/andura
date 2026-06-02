@@ -1,0 +1,293 @@
+// Persona-aware session TIME budget (rest-inclusive) — trim tuning pass.
+//
+// The chassis sizes a session from the weekly volume budget but never bounds
+// the resulting session DURATION, so a high-volume day could run ~2.5-3h. A
+// real coach caps the session at a persona-aware time budget; rest periods
+// dominate that time, so the cap is measured on the REST-INCLUSIVE duration
+// (computeEstimatedDurationMin). The trim shaves sets from / drops the
+// LOWEST-priority (TAIL) exercises first, never the FRONT priority/weak groups,
+// and never below the floor (~4 exercises / 2 sets / ~25min).
+//
+// Tests:
+//   - a long marius session trims to <= 90min; a long maria session to <= 60min
+//   - a session already under the cap is UNCHANGED
+//   - the trim removes TAIL volume first (front survives while tail is dropped)
+//   - floor respected (never below ~4 exercises / 2 sets each)
+//   - determinism (same inputs twice -> identical plan)
+
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {
+  trimSessionToTimeBudget,
+  personaTimeCapMin,
+  personaTimeTargetMin,
+  computeEstimatedDurationMin,
+  composePlannedWorkoutToday,
+} from '../../lib/scheduleAdapterAggregate';
+import type { PlannedExercise } from '../../lib/engineWrappers';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+import { useWorkoutStore } from '../../stores/workoutStore';
+
+const TUESDAY_2026_05_19 = new Date(2026, 4, 19);
+
+function resetStores(): void {
+  useOnboardingStore.setState({
+    data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 75, height: 175 },
+    completed: true,
+    completedAt: Date.now(),
+  });
+  useWorkoutStore.setState({
+    exIdx: 0,
+    setIdx: 0,
+    phase: 'idle',
+    prHit: false,
+    prData: null,
+    history: {},
+    sessionStart: null,
+    lastRating: null,
+    pausedSnapshot: null,
+    lastSession: null,
+    sessionsHistory: [],
+    streak: 0,
+  });
+}
+
+beforeEach(() => {
+  localStorage.clear();
+  resetStores();
+  vi.restoreAllMocks();
+});
+
+// Build a planned exercise with explicit sets + restSec (the only fields the
+// duration estimator + trim read). `tag` rides on the name so we can assert
+// which positions survived.
+function ex(tag: string, sets: number, restSec: number): PlannedExercise {
+  return {
+    id: `${tag}-0`,
+    name: tag,
+    engineName: tag,
+    sets,
+    targetReps: 10,
+    targetKg: 40,
+    restSec,
+  };
+}
+
+describe('persona time caps + targets', () => {
+  it('hard caps: maria 60 / gigica 75 / marius 90', () => {
+    expect(personaTimeCapMin('maria')).toBe(60);
+    expect(personaTimeCapMin('gigica')).toBe(75);
+    expect(personaTimeCapMin('marius')).toBe(90);
+  });
+
+  it('unknown / null persona falls back to gigica (conservative)', () => {
+    expect(personaTimeCapMin(null)).toBe(75);
+    expect(personaTimeCapMin(undefined)).toBe(75);
+    expect(personaTimeCapMin('nope')).toBe(75);
+  });
+
+  it('soft target = hard cap - 15 (marius ~75)', () => {
+    expect(personaTimeTargetMin('marius')).toBe(75);
+    expect(personaTimeTargetMin('gigica')).toBe(60);
+    expect(personaTimeTargetMin('maria')).toBe(45);
+  });
+});
+
+describe('trimSessionToTimeBudget — rest-inclusive time bound', () => {
+  // 8 exercises x 5 sets x (40 work + 180 rest) = 8800s = ~147min — well over
+  // every persona cap, so the trim must engage.
+  function longSession(): PlannedExercise[] {
+    return Array.from({ length: 8 }, (_, i) => ex(`ex${i}`, 5, 180));
+  }
+
+  it('a long marius session trims to <= 90min (rest-inclusive)', () => {
+    const trimmed = trimSessionToTimeBudget(longSession(), 0, personaTimeCapMin('marius'));
+    const dur = computeEstimatedDurationMin(trimmed, 0)!;
+    expect(dur).toBeLessThanOrEqual(90);
+  });
+
+  it('a long maria session trims to <= 60min (rest-inclusive)', () => {
+    const trimmed = trimSessionToTimeBudget(longSession(), 0, personaTimeCapMin('maria'));
+    const dur = computeEstimatedDurationMin(trimmed, 0)!;
+    expect(dur).toBeLessThanOrEqual(60);
+  });
+
+  it('warmup minutes count toward the cap', () => {
+    // A session at exactly the cap WITHOUT warmup must trim once warmup pushes it
+    // over. 4 ex x 4 sets x (40 + 120) = 2560s = ~43min; +20 warmup = 63 > 60.
+    const session = Array.from({ length: 4 }, (_, i) => ex(`ex${i}`, 4, 120));
+    const trimmed = trimSessionToTimeBudget(session, 20, personaTimeCapMin('maria'));
+    const dur = computeEstimatedDurationMin(trimmed, 20)!;
+    expect(dur).toBeLessThanOrEqual(60);
+  });
+
+  it('a session already under the cap is UNCHANGED', () => {
+    // 4 ex x 3 sets x (40 + 90) = 1560s = 26min < 60.
+    const session = Array.from({ length: 4 }, (_, i) => ex(`ex${i}`, 3, 90));
+    const before = computeEstimatedDurationMin(session, 0)!;
+    expect(before).toBeLessThanOrEqual(60);
+    const trimmed = trimSessionToTimeBudget(session, 0, personaTimeCapMin('maria'));
+    expect(trimmed).toEqual(session);
+  });
+
+  it('an empty session is unchanged (floor protects it)', () => {
+    expect(trimSessionToTimeBudget([], 0, 60)).toEqual([]);
+  });
+
+  it('a tiny session under the floor is unchanged even if nominally over cap', () => {
+    // 4 ex x 2 sets x (40 + 600) = 5120s = ~85min, but the floor (4 ex / 2 sets)
+    // is already hit, so the trim cannot shrink it further — returned as-is.
+    const session = Array.from({ length: 4 }, (_, i) => ex(`ex${i}`, 2, 600));
+    const trimmed = trimSessionToTimeBudget(session, 0, personaTimeCapMin('maria'));
+    expect(trimmed).toEqual(session);
+  });
+
+  it('trims the TAIL first — the FRONT (priority/weak) exercise survives', () => {
+    // 8 distinct-tagged exercises; the front (ex0) is the priority/weak group.
+    const session = Array.from({ length: 8 }, (_, i) => ex(`ex${i}`, 5, 180));
+    const trimmed = trimSessionToTimeBudget(session, 0, personaTimeCapMin('marius'));
+    const names = trimmed.map((e) => e.name);
+    // Front priority exercise must survive at full strength.
+    expect(names[0]).toBe('ex0');
+    expect(trimmed[0]!.sets).toBe(5);
+    // A tail exercise must have been dropped or shaved before ex0 is touched.
+    const lastSurvivor = trimmed[trimmed.length - 1]!;
+    const tailWasTouched = trimmed.length < 8 || lastSurvivor.sets < 5;
+    expect(tailWasTouched).toBe(true);
+  });
+
+  it('shaves sets from the TAIL before dropping anything (front untouched)', () => {
+    // Mildly over: 5 ex x 4 sets x (40 + 180) = 4400s = ~73min vs maria 60.
+    // Set-shaving alone (no exercise drops) brings it under: 5 exercises x 2 sets
+    // floor x 220s = 2200s = ~37min is reachable, so the trim never needs to drop.
+    const session = Array.from({ length: 5 }, (_, i) => ex(`ex${i}`, 4, 180));
+    const trimmed = trimSessionToTimeBudget(session, 0, personaTimeCapMin('maria'));
+    expect(trimmed.length).toBe(5);           // shaving only, no exercise dropped
+    expect(trimmed[0]!.sets).toBe(4);          // front priority untouched
+    expect(trimmed[trimmed.length - 1]!.sets).toBeLessThan(4); // tail shaved first
+    expect(computeEstimatedDurationMin(trimmed, 0)!).toBeLessThanOrEqual(60);
+  });
+
+  it('floor respected — never below ~4 exercises / 2 sets each', () => {
+    const session = Array.from({ length: 8 }, (_, i) => ex(`ex${i}`, 5, 240));
+    const trimmed = trimSessionToTimeBudget(session, 0, personaTimeCapMin('maria'));
+    expect(trimmed.length).toBeGreaterThanOrEqual(4);
+    for (const e of trimmed) {
+      expect(e.sets).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it('determinism — same inputs twice produce an identical trimmed plan', () => {
+    const a = trimSessionToTimeBudget(
+      Array.from({ length: 8 }, (_, i) => ex(`ex${i}`, 5, 180)),
+      0,
+      personaTimeCapMin('marius'),
+    );
+    const b = trimSessionToTimeBudget(
+      Array.from({ length: 8 }, (_, i) => ex(`ex${i}`, 5, 180)),
+      0,
+      personaTimeCapMin('marius'),
+    );
+    expect(a).toEqual(b);
+  });
+
+  it('does not mutate the input array', () => {
+    const session = Array.from({ length: 8 }, (_, i) => ex(`ex${i}`, 5, 180));
+    const snapshot = JSON.parse(JSON.stringify(session));
+    trimSessionToTimeBudget(session, 0, personaTimeCapMin('maria'));
+    expect(session).toEqual(snapshot);
+  });
+});
+
+describe('composePlannedWorkoutToday — persona time budget integration', () => {
+  // A synthetic high-volume plan (8 compounds x 5 sets) routed through the real
+  // composer proves the trim engages end-to-end and the output duration lands
+  // under the persona cap. restTimeRange max 180s drives the rest-inclusive cost.
+  const STUB_PLAN_BASE = {
+    type: 'training' as const,
+    sessionType: 'FULL_UPPER',
+    warmup: null,
+    intensityModifier: null,
+    volumeTargets: null,
+    restTimeRange: [120, 180] as [number, number],
+    specializationTarget: null,
+    deloadState: 'IDLE',
+    workoutTitle: 'Antrenament azi',
+    estimatedDurationMin: 50,
+    volumeKg: 1000,
+  };
+
+  // Eight real COMPOUND engine names (src/constants.js COMPOUND_EX) so
+  // resolveRestSec picks the range MAX (180s) — the worst case for session time.
+  // Reused with repetition where the pool is < 8 (the trim is name-agnostic;
+  // only sets + restSec drive duration). All are compounds → all rest at 180.
+  const EIGHT_COMPOUNDS = [
+    'DB Shoulder Press',
+    'Incline DB Press',
+    'Flat DB Press',
+    'Flat Barbell Bench',
+    'Lat Pulldown',
+    'Cable Row',
+    'Chest-Supported Row',
+    'Romanian Deadlift',
+  ];
+
+  it('marius high-volume session lands <= 90min after the composer trim', async () => {
+    useOnboardingStore.setState({
+      data: { age: 25, sex: 'm', goal: 'masa', frequency: '5', experience: 'avansat', weight: 90, height: 185 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_PLAN_BASE,
+      exercises: EIGHT_COMPOUNDS.map((name) => ({ name, sets: 5 })),
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    expect(out!.estimatedDuration).toBeLessThanOrEqual(90);
+    // Trim actually engaged (8 x 5 x (40+180) = 147min raw was over the cap).
+    expect(out!.exerciseCount).toBeLessThanOrEqual(8);
+  });
+
+  it('maria high-volume session lands <= 60min and keeps the FRONT exercise', async () => {
+    useOnboardingStore.setState({
+      data: { age: 66, sex: 'f', goal: 'mentenanta', frequency: '3', experience: 'incepator', weight: 65, height: 162 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    const planExercises = EIGHT_COMPOUNDS.map((name) => ({ name, sets: 5 }));
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_PLAN_BASE,
+      exercises: planExercises,
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    expect(out!.estimatedDuration).toBeLessThanOrEqual(60);
+    // Front priority exercise (engine position 0) survives the trim.
+    const frontEngine = planExercises[0]!.name;
+    expect(out!.exercises[0]!.engineName).toBe(frontEngine);
+    // Floor honoured.
+    expect(out!.exercises.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('a normal-volume session is not trimmed by the composer', async () => {
+    useOnboardingStore.setState({
+      data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 75, height: 175 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    // 5 exercises x 3 sets x (40 + 180) = 3300s = 55min < gigica 75 cap.
+    const planExercises = EIGHT_COMPOUNDS.slice(0, 5).map((name) => ({ name, sets: 3 }));
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_PLAN_BASE,
+      exercises: planExercises,
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    // Gigica (age 30) cap 75 — 55min session untouched: count + sets preserved.
+    expect(out!.exerciseCount).toBe(5);
+    out!.exercises.forEach((e) => expect(e.sets).toBe(3));
+  });
+});
