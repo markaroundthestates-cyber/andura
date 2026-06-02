@@ -112,6 +112,43 @@ describe('scheduleStore — fresh init deriva days din onboarding frequency', ()
   });
 });
 
+// REGRESSION (Daniel 2026-06-02): scheduleStore's initializer runs at app BOOT,
+// before onboarding sets `frequency`, so it defaults to a 4-day week. A user who
+// onboarded with 2/3/5 days saw 4 selected days in the calendar (and the engine's
+// frequency split — e.g. full×3 — spread over the wrong day count → "4 full days")
+// until they manually edited the calendar. finalize() must reseed the schedule.
+describe('onboarding finalize seeds scheduleStore from frequency (boot-order bug)', () => {
+  afterEach(() => {
+    useOnboardingStore.getState().reset();
+    resetStore();
+  });
+
+  it('3-day onboarding → calendar shows 3 training days (was a stale 4 from boot)', async () => {
+    // Reproduce the boot order: scheduleStore was created with null frequency.
+    useScheduleStore.setState({ days: defaultWeekForFrequency(null) });
+    expect(countTraining(useScheduleStore.getState().days)).toBe(4);
+    // User completes onboarding picking 3 days/week (all Big-7 fields valid).
+    useOnboardingStore.setState((s) => ({
+      data: {
+        ...s.data,
+        age: 30, sex: 'm', goal: 'masa', frequency: '3',
+        experience: 'intermediar', weight: 80, height: 180,
+      },
+    }));
+    useOnboardingStore.getState().finalize();
+    expect(useOnboardingStore.getState().completed).toBe(true);
+    // finalize seeds via a lazy dynamic import → poll for the reseed to land.
+    const deadline = Date.now() + 1000;
+    while (
+      Date.now() < deadline &&
+      countTraining(useScheduleStore.getState().days) !== 3
+    ) {
+      await new Promise((r) => setTimeout(r, 5));
+    }
+    expect(countTraining(useScheduleStore.getState().days)).toBe(3);
+  });
+});
+
 describe('scheduleStore — initial state + actions', () => {
   it('default days = 4 training + 3 rest pattern', () => {
     resetStore();

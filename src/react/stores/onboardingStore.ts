@@ -322,6 +322,18 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
           if (!result.ok) return;
         }
         set({ completed: true, completedAt: Date.now() });
+        // Seed the weekly schedule from the now-known frequency. scheduleStore's
+        // initializer runs at app BOOT — before onboarding sets `frequency` — so it
+        // defaults to a 4-day week; a 2/3/5-day user would otherwise see 4 selected
+        // days in the calendar (and the engine's frequency-derived split, e.g.
+        // full×3, spread over the wrong day count → "4 full days") until they
+        // manually edited the calendar. resetWeekly() re-derives `days` from the
+        // frequency just validated above. Lazy import breaks the
+        // scheduleStore→onboardingStore module cycle; best-effort (the calendar
+        // also self-heals on week rollover via Calendar7Day).
+        void import('./scheduleStore')
+          .then((m) => m.useScheduleStore.getState().resetWeekly())
+          .catch(() => { /* schedule seed best-effort */ });
       },
       reset: () => set({ data: { ...EMPTY }, completed: false, completedAt: null }),
     }),
