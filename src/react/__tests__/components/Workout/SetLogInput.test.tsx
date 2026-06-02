@@ -304,6 +304,41 @@ describe('SetLogInput — multi-digit clip fix (spinner reset)', () => {
     expect(container.querySelector('style')?.textContent).toMatch(/-webkit-inner-spin-button/);
     expect((screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement).value).toBe('25');
   });
+
+  // Option B (Daniel 2026-06-02): the number sits on its OWN row, the ± steppers
+  // on a row BELOW it — so a 3+ digit / decimal value can never be squeezed by
+  // the buttons. The decimal 186.5 is the case the screenshot clipped to "18".
+  it('editable kg input renders a decimal value (186.5) in full, not clipped', () => {
+    renderInput({ kg: 186.5, reps: 8 });
+    expect((screen.getByTestId('kg-input') as HTMLInputElement).value).toBe('186.5');
+  });
+
+  it('option B: kg input precedes its ± stepper row (number owns its own row)', () => {
+    renderInput({ kg: 186.5, reps: 8 });
+    const input = screen.getByTestId('kg-input');
+    const minus = screen.getByTestId('kg-minus');
+    const plus = screen.getByTestId('kg-plus');
+    // The input is NOT a sibling sandwiched between the two buttons (the old
+    // one-row layout); it precedes the row that holds both steppers.
+    expect(input.compareDocumentPosition(minus) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(input.compareDocumentPosition(plus) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // Both steppers share one parent row that does NOT contain the input.
+    const stepperRow = minus.parentElement;
+    expect(stepperRow).toBe(plus.parentElement);
+    expect(stepperRow?.contains(input)).toBe(false);
+  });
+
+  it('option B: tinta kg input precedes its ± stepper row', () => {
+    renderInput({ mode: 'tinta', kg: 186.5, reps: 8 });
+    const input = screen.getByTestId('setlog-tinta-kg-input');
+    const minus = screen.getByTestId('setlog-tinta-kg-minus');
+    const plus = screen.getByTestId('setlog-tinta-kg-plus');
+    expect(input.compareDocumentPosition(minus) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const stepperRow = minus.parentElement;
+    expect(stepperRow).toBe(plus.parentElement);
+    expect(stepperRow?.contains(input)).toBe(false);
+    expect((input as HTMLInputElement).value).toBe('186.5');
+  });
 });
 
 describe('SetLogInput — A11Y HIGH chat5 editable mode aria attributes', () => {

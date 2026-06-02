@@ -53,13 +53,15 @@ import { t } from '../../../i18n/index.js';
 
 export type SetLogInputMode = 'editable' | 'tinta' | 'post-log';
 
-// CLIP FIX (2026-06-02): native <input type="number"> renders WebKit spinner
-// arrows inside the box. The NumDial inputs are narrow centered tiles (flanked
-// by ± buttons), so the spinner stole horizontal room and clipped multi-digit
-// values — a target of 25 kg showed only "2". Hide the spinners (same precedent
-// as onboarding BigNumberField .onb-bignum) so 2-4 digit values render fully
-// centered. `-moz-appearance:textfield` covers Firefox; the ± dials remain the
-// stepper affordance. CSS-only — no behavior / testid change.
+// CLIP FIX (2026-06-02, Daniel option B): the root cause was layout, not the
+// spinner — with the ± buttons flanking the input ON THE SAME ROW inside a
+// half-width tile, the number got only ~40px and a value like 186.5 clipped to
+// "18". Option B stacks the layout: the number owns its OWN full-tile row
+// (centered), the ± steppers sit on a row BELOW it — so the number can never be
+// squeezed by the buttons. This style still hides the native WebKit/Firefox
+// spinner arrows (same precedent as onboarding BigNumberField .onb-bignum) so
+// the centered value isn't nudged by the spin control. CSS-only — no behavior /
+// testid change.
 const NUMDIAL_SPIN_RESET = (
   <style>{`.numdial-input::-webkit-inner-spin-button,.numdial-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}.numdial-input{-moz-appearance:textfield;}`}</style>
 );
@@ -192,9 +194,10 @@ export function SetLogInput({
           {t('setLog.askDoneLabel')}
         </p>
         {/* Pulse NumDial pair (mockup interfata-noua/screens-workout.jsx NumDial)
-            — each control is a --surface-2 tile: mono Kicker label on top, big
-            − / value / + row, unit below. The free-type <input> is PRESERVED as
-            the big center value (Maria 65 types); the ± dials are the thumb add. */}
+            — each control is a --surface-2 tile: mono Kicker label on top, the
+            big value on its OWN row (option B, never clips), the − / + steppers
+            on a row below. The free-type <input> is PRESERVED as the big value
+            (Maria 65 types); the ± dials are the thumb add. */}
         <div className="flex gap-3 mb-4">
           <div
             className="flex-1 text-center rounded-2xl p-3"
@@ -206,25 +209,29 @@ export function SetLogInput({
             >
               {isBodyweight ? t('setLog.addedWeightLabel') : t('setLog.kgLabel')}
             </label>
+            {/* Option B (Daniel 2026-06-02): the number owns its OWN full-tile
+                row (centered) so a 3+ digit / decimal value (186.5) can NEVER be
+                clipped by the flanking buttons; the ± steppers sit on a row
+                BELOW it. */}
+            <input
+              id="setlog-tinta-kg-input"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              max={500}
+              step={0.5}
+              value={kgDisplay}
+              onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
+              onFocus={handleFocus}
+              data-testid="setlog-tinta-kg-input"
+              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 mt-2 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+            />
             <div className="flex items-center justify-between gap-2 mt-2">
               <DialButton
                 dir="down"
                 onPress={() => onKgChange(stepValue(kg, -0.5, 0, 500))}
                 ariaLabel={t('setLog.kgDecrease')}
                 testId="setlog-tinta-kg-minus"
-              />
-              <input
-                id="setlog-tinta-kg-input"
-                type="number"
-                inputMode="decimal"
-                min={0}
-                max={500}
-                step={0.5}
-                value={kgDisplay}
-                onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
-                onFocus={handleFocus}
-                data-testid="setlog-tinta-kg-input"
-                className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
               />
               <DialButton
                 dir="up"
@@ -244,25 +251,26 @@ export function SetLogInput({
             >
               {t('setLog.repsLabel')}
             </label>
+            {/* Option B — number on its own full-tile row, ± below (never clips). */}
+            <input
+              id="setlog-tinta-reps-input"
+              type="number"
+              inputMode="numeric"
+              min={0}
+              max={100}
+              step={1}
+              value={repsDisplay}
+              onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
+              onFocus={handleFocus}
+              data-testid="setlog-tinta-reps-input"
+              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 mt-2 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+            />
             <div className="flex items-center justify-between gap-2 mt-2">
               <DialButton
                 dir="down"
                 onPress={() => onRepsChange(stepValue(reps, -1, 0, 100))}
                 ariaLabel={t('setLog.repsDecrease')}
                 testId="setlog-tinta-reps-minus"
-              />
-              <input
-                id="setlog-tinta-reps-input"
-                type="number"
-                inputMode="numeric"
-                min={0}
-                max={100}
-                step={1}
-                value={repsDisplay}
-                onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
-                onFocus={handleFocus}
-                data-testid="setlog-tinta-reps-input"
-                className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
               />
               <DialButton
                 dir="up"
@@ -362,9 +370,10 @@ export function SetLogInput({
     <div className="flex gap-3 mb-6">
       <div className="flex-1">
         {/* Pulse NumDial tile (mockup screens-workout.jsx NumDial): mono Kicker
-            label, big − / value / + row on a --surface-2 tile. The free-type
-            <input> is PRESERVED as the big center value; the ± dials are the
-            thumb add. Editable bounds kg 1-500 loaded / 0-500 bodyweight. */}
+            label, the big value on its OWN row (option B, never clips), the
+            − / + steppers on a row below, on a --surface-2 tile. The free-type
+            <input> is PRESERVED as the big value; the ± dials are the thumb add.
+            Editable bounds kg 1-500 loaded / 0-500 bodyweight. */}
         <div
           className="text-center rounded-2xl p-3"
           style={{ background: 'var(--surface-2)', border: '1px solid var(--line)' }}
@@ -372,27 +381,28 @@ export function SetLogInput({
           <label className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 block" htmlFor="kg-input">
             {isBodyweight ? t('setLog.addedWeightLabel') : t('setLog.kgLabelRequired')}
           </label>
+          {/* Option B — number on its own full-tile row, ± below (never clips). */}
+          <input
+            id="kg-input"
+            type="number"
+            required={!isBodyweight}
+            aria-required={isBodyweight ? undefined : 'true'}
+            aria-invalid={kgError ? 'true' : undefined}
+            aria-describedby={kgError ? 'kg-input-error' : undefined}
+            min={isBodyweight ? 0 : 1}
+            max={500}
+            value={kgDisplay}
+            onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
+            onFocus={handleFocus}
+            data-testid="kg-input"
+            className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 mt-2 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+          />
           <div className="flex items-center justify-between gap-2 mt-2">
             <DialButton
               dir="down"
               onPress={() => onKgChange(stepValue(kg, -0.5, isBodyweight ? 0 : 1, 500))}
               ariaLabel={isBodyweight ? t('setLog.addedWeightDecrease') : t('setLog.kgDecrease')}
               testId="kg-minus"
-            />
-            <input
-              id="kg-input"
-              type="number"
-              required={!isBodyweight}
-              aria-required={isBodyweight ? undefined : 'true'}
-              aria-invalid={kgError ? 'true' : undefined}
-              aria-describedby={kgError ? 'kg-input-error' : undefined}
-              min={isBodyweight ? 0 : 1}
-              max={500}
-              value={kgDisplay}
-              onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
-              onFocus={handleFocus}
-              data-testid="kg-input"
-              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
             />
             <DialButton
               dir="up"
@@ -421,27 +431,28 @@ export function SetLogInput({
           <label className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 block" htmlFor="reps-input">
             {t('setLog.repsLabelRequired')}
           </label>
+          {/* Option B — number on its own full-tile row, ± below (never clips). */}
+          <input
+            id="reps-input"
+            type="number"
+            required
+            aria-required="true"
+            aria-invalid={repsError ? 'true' : undefined}
+            aria-describedby={repsError ? 'reps-input-error' : undefined}
+            min={1}
+            max={100}
+            value={repsDisplay}
+            onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
+            onFocus={handleFocus}
+            data-testid="reps-input"
+            className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 mt-2 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+          />
           <div className="flex items-center justify-between gap-2 mt-2">
             <DialButton
               dir="down"
               onPress={() => onRepsChange(stepValue(reps, -1, 1, 100))}
               ariaLabel={t('setLog.repsDecrease')}
               testId="reps-minus"
-            />
-            <input
-              id="reps-input"
-              type="number"
-              required
-              aria-required="true"
-              aria-invalid={repsError ? 'true' : undefined}
-              aria-describedby={repsError ? 'reps-input-error' : undefined}
-              min={1}
-              max={100}
-              value={repsDisplay}
-              onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
-              onFocus={handleFocus}
-              data-testid="reps-input"
-              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
             />
             <DialButton
               dir="up"
