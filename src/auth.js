@@ -14,6 +14,12 @@
 // Per-uid path migration runs ONCE post first auth (see migrations/
 // 2026-05-02-auth-path-migration.js).
 
+// Per-bundler env shim — reads Vite's import.meta.env on web/Vitest, the empty
+// RN bag on Metro (native/web). Keeps the unparseable `import.meta` token OUT of
+// the React Native + jest graph (auth.js is imported by the RN cont confirm
+// screens). Byte-equivalent on Vite/Vitest: VITE_ENV === import.meta.env there.
+import { VITE_ENV, IS_PROD } from './util/env';
+
 const AUTH_BASE = 'https://identitytoolkit.googleapis.com/v1';
 const TOKEN_BASE = 'https://securetoken.googleapis.com/v1';
 
@@ -22,7 +28,7 @@ const TOKEN_BASE = 'https://securetoken.googleapis.com/v1';
 // preserves window.__FIREBASE_API_KEY runtime fallback + PLACEHOLDER final default.
 // Daniel: set VITE_FIREBASE_API_KEY in deploy env OR replace placeholder pre-launch
 // publish (per ADR_MULTI_TENANT_AUTH_v1 §AMENDMENT 2026-05-02).
-export const FIREBASE_API_KEY = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_FIREBASE_API_KEY)
+export const FIREBASE_API_KEY = VITE_ENV?.VITE_FIREBASE_API_KEY
   || (typeof window !== 'undefined' && window.__FIREBASE_API_KEY)
   || 'PLACEHOLDER_WEB_API_KEY';
 
@@ -30,9 +36,8 @@ export const FIREBASE_API_KEY = (typeof import.meta !== 'undefined' && import.me
 // leaked în prod build. Iter 9.5 lesson (D040): silent fallback masked broken
 // Magic Link weeks. Visible boot-time error > silent 400s downstream.
 if (FIREBASE_API_KEY === 'PLACEHOLDER_WEB_API_KEY') {
-  const isProd = typeof import.meta !== 'undefined' && import.meta.env?.PROD === true;
   const msg = '[auth] FIREBASE_API_KEY = PLACEHOLDER_WEB_API_KEY — Magic Link will fail. Set VITE_FIREBASE_API_KEY build env var (per D040 deploy.yml injection).';
-  if (isProd) {
+  if (IS_PROD) {
     throw new Error(msg);
   }
   if (typeof console !== 'undefined') console.warn(msg);

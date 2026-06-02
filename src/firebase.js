@@ -28,6 +28,10 @@ import { toast } from './ui/toast.js';
 import { logger } from './util/logger.js';
 import { COACH_RELEVANT_KEYS } from './util/dataRegistry.js';
 import { getAuthState, getIdToken } from './auth.js';
+// Per-bundler env shim — keeps the unparseable `import.meta` token OUT of the
+// React Native + jest graph (firebase.js is reached by the RN cont confirm /
+// restore screens via accountDeletion). Byte-equivalent on Vite/Vitest.
+import { VITE_ENV, IS_PROD } from './util/env';
 
 // §4-H4 audit fix — env-var (build-time inject via deploy.yml secret
 // VITE_FIREBASE_RTDB_URL). The prior hardcoded PROD RTDB fallback was REMOVED:
@@ -36,7 +40,7 @@ import { getAuthState, getIdToken } from './auth.js';
 // already injects this secret at build time (.github/workflows/deploy.yml), so
 // requiring it does not break the live deploy; misconfigured builds now fail
 // LOUD instead of silently reading/writing prod.
-export const FIREBASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_FIREBASE_RTDB_URL) || '';
+export const FIREBASE_URL = VITE_ENV?.VITE_FIREBASE_RTDB_URL || '';
 
 // §B011-style audit fix — startup assert: fail fast if VITE_FIREBASE_RTDB_URL is
 // missing. Mirrors the FIREBASE_API_KEY placeholder guard in auth.js (D040
@@ -45,9 +49,8 @@ export const FIREBASE_URL = (typeof import.meta !== 'undefined' && import.meta.e
 // throws at boot (deploy must inject the secret); DEV build warns loud so local
 // dev knows to set VITE_FIREBASE_RTDB_URL in .env.local before any Firebase op.
 if (!FIREBASE_URL) {
-  const isProd = typeof import.meta !== 'undefined' && import.meta.env?.PROD === true;
   const msg = '[firebase] VITE_FIREBASE_RTDB_URL is not set — Firebase sync disabled. Set the VITE_FIREBASE_RTDB_URL build env var (deploy.yml secret) or add it to .env.local for local dev. The hardcoded PROD fallback was removed to prevent dev/preview builds silently hitting production data.';
-  if (isProd) {
+  if (IS_PROD) {
     throw new Error(msg);
   }
   if (typeof console !== 'undefined') console.warn(msg);
