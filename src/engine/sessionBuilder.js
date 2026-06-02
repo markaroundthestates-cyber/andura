@@ -149,6 +149,16 @@ const COMPOUND_MIN_SETS = 3;
 const COMPOUND_MAX_SETS = 5;
 const ISOLATION_MIN_SETS = 2;
 const ISOLATION_MAX_SETS = 3;
+// Recovery-aware floor for a NON-recovered group (M1 "make it bite"). The
+// weekly budget is already cut upstream (partial ×0.80, fatigued ×0.60 in
+// applyRecoveryToVolumeBudget); but the normal compound floor (3) absorbs that
+// cut on a high-frequency day, so a fatigued group can look identical to a
+// fresh one. When ctx.recoveryState marks a group partial/fatigued we LOWER its
+// compound floor to this value so the SAME already-cut budget reaches the
+// visible session (compound allowed down to 2). This is NOT an extra penalty —
+// it only lets the existing cut express itself. Never below 2 (a non-recovered
+// muscle gets a light touch, never zeroed). Isolation already floors at 2.
+const NONRECOVERED_COMPOUND_MIN_SETS = 2;
 // Typical weekly frequency a muscle group is trained — the periodization
 // volume target is sets/WEEK, but buildSession plans ONE session, so the
 // weekly target is divided across the sessions that hit the group. Used as a
@@ -209,11 +219,23 @@ function sessionSetBudget(big11RoGroup, volumeTargets, weeklySessionsPerGroup) {
  * compound) lands in the isolation band (~2-3), so you never get 5 sets of
  * tibialis. Total stays roughly aligned with the budget (anti-MRV blowout).
  *
+ * When `state` is 'partial' or 'fatigued' (M1 "make it bite"), two things change
+ * so the already-cut weekly budget (partial ×0.80 / fatigued ×0.60, applied
+ * upstream) becomes VISIBLE on the day instead of being absorbed by the normal
+ * floors: (1) the compound floor drops to NONRECOVERED_COMPOUND_MIN_SETS, and
+ * (2) each exercise loses ~1 set (the "~1 fewer set than normal" the spec asks
+ * for) BEFORE clamping. This is NOT a stacked extra penalty — it is the single
+ * visible expression of the recovery state: an exercise already at its floor
+ * stays at the floor (never cut into nothing), while one above the floor visibly
+ * trains lighter. 'recovered' (and absent state) → unchanged floors, no
+ * decrement (the common, no-regression path — most days).
+ *
  * @param {Array<{tier: number}>} exsInGroup - chosen exercises of this group (with tier)
  * @param {number|null} budget - per-session set budget for the group (sessionSetBudget)
+ * @param {'recovered'|'partial'|'fatigued'} [state] - this group's recovery state
  * @returns {number[]} set count per exercise, index-aligned with exsInGroup
  */
-function distributeGroupSets(exsInGroup, budget) {
+function distributeGroupSets(exsInGroup, budget, state) {
   const n = exsInGroup.length;
   if (n === 0) return [];
   // No volume signal → every exercise keeps the stable default (no-op path).
@@ -225,11 +247,17 @@ function distributeGroupSets(exsInGroup, budget) {
   const weightOf = (e) => (e.tier === COMPOUND_TIER ? COMPOUND_WEIGHT : ISOLATION_WEIGHT);
   const totalWeight = exsInGroup.reduce((s, e) => s + weightOf(e), 0);
 
+  // A non-recovered group: lower the compound floor (so the cut can reach below
+  // the usual 3) AND shave one set per exercise (the visible "lighter today").
+  const nonRecovered = state === 'partial' || state === 'fatigued';
+  const compoundFloor = nonRecovered ? NONRECOVERED_COMPOUND_MIN_SETS : COMPOUND_MIN_SETS;
+  const setShave = nonRecovered ? 1 : 0;
+
   return exsInGroup.map((e) => {
     const isCompound = e.tier === COMPOUND_TIER;
     const share = (budget * weightOf(e)) / totalWeight;
-    const rounded = Math.round(share);
-    const lo = isCompound ? COMPOUND_MIN_SETS : ISOLATION_MIN_SETS;
+    const rounded = Math.round(share) - setShave;
+    const lo = isCompound ? compoundFloor : ISOLATION_MIN_SETS;
     const hi = isCompound ? COMPOUND_MAX_SETS : ISOLATION_MAX_SETS;
     return Math.min(hi, Math.max(lo, rounded));
   });
@@ -512,6 +540,7 @@ export function movementKey(name, meta) {
  *   seed?: string,
  *   volumeTargets?: Record<string, number>,
  *   weeklySessionsPerGroup?: Record<string, number>,
+ *   recoveryState?: Record<string, 'recovered'|'partial'|'fatigued'>,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  */
@@ -639,14 +668,53 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  const metaOf = (name) => getExerciseMetadata(name);
+  const groupOf = (name) => metaOf(name).muscle_target_primary;
+
+  // M1 "make it bite" — fatigued exercise drop. A muscle the user trained hard
+  // recently (recovery state 'fatigued') should TRAIN LIGHT today: fewer
+  // movements AND fewer sets, visibly lighter than a fresh day. The set-floor
+  // drop below handles sets; here we drop ~1 exercise from each FATIGUED group
+  // that has MORE THAN ONE exercise this session (keeping the highest-priority,
+  // i.e. earliest-selected, so the anchor compound survives). Never drops a
+  // group to zero — a fatigued muscle gets a light touch, not skipped. partial
+  // and recovered groups keep all their exercises (sets-only adjustment). No
+  // ctx.recoveryState (pure-fn callers) → recoveryState empty → ZERO drop.
+  const recoveryState = ctx?.recoveryState ?? {};
+  {
+    const fatiguedGroupCount = {};
+    for (const e of chosen) {
+      const g = groupOf(e.name);
+      if (recoveryState[g] === 'fatigued') {
+        fatiguedGroupCount[g] = (fatiguedGroupCount[g] || 0) + 1;
+      }
+    }
+    // For each fatigued group with >1 exercise, drop its LAST occurrence (lowest
+    // selection priority) so the leading anchor stays. One drop per group.
+    const dropLastFor = new Set(
+      Object.keys(fatiguedGroupCount).filter((g) => fatiguedGroupCount[g] > 1),
+    );
+    if (dropLastFor.size > 0) {
+      const lastIndexByGroup = {};
+      chosen.forEach((e, i) => {
+        const g = groupOf(e.name);
+        if (dropLastFor.has(g)) lastIndexByGroup[g] = i;
+      });
+      const dropIdx = new Set(Object.values(lastIndexByGroup));
+      const trimmed = chosen.filter((_, i) => !dropIdx.has(i));
+      chosen.length = 0;
+      chosen.push(...trimmed);
+    }
+  }
+
   // Set-count from the periodization volume signal (sets/week per group),
   // distributed across the exercises hitting each group this session with the
   // PRIMARY COMPOUND weighted higher than isolation (BUG 1 — compound-anchored,
   // not even-split). Without a volumeTargets signal every exercise keeps
   // DEFAULT_SETS (no-op). The group's per-session budget uses the REAL
-  // sessions/week frequency (ctx.weeklySessionsPerGroup), not a blind 2.
-  const metaOf = (name) => getExerciseMetadata(name);
-  const groupOf = (name) => metaOf(name).muscle_target_primary;
+  // sessions/week frequency (ctx.weeklySessionsPerGroup), not a blind 2. A
+  // non-recovered group (partial/fatigued, ctx.recoveryState) lets its compound
+  // dip below the normal 3-set floor so the already-cut budget shows on the day.
   // Bucket the chosen exercises by group (preserving order) so the distribution
   // sees the whole group at once (compound + isolation together).
   const byGroup = /** @type {Record<string, Array<{name: string, tier: number}>>} */ ({});
@@ -658,7 +726,7 @@ export function buildSession(cluster, ctx) {
   const setsByName = /** @type {Record<string, number>} */ ({});
   for (const [g, exs] of Object.entries(byGroup)) {
     const budget = sessionSetBudget(g, ctx?.volumeTargets, ctx?.weeklySessionsPerGroup);
-    const counts = distributeGroupSets(exs, budget);
+    const counts = distributeGroupSets(exs, budget, recoveryState[g]);
     exs.forEach((e, i) => { setsByName[e.name] = counts[i]; });
   }
   let exercises = chosen.map((e) => ({

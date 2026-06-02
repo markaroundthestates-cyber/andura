@@ -1272,6 +1272,13 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // Per-group weekly session frequency from the split — buildSession divides
     // the weekly volume budget by it to size the session (count + set counts).
     weeklySessionsPerGroup: sessionsPerGroup,
+    // M1 "make it bite" — per-group recovery state (RO-keyed, recovered/partial/
+    // fatigued) so the recovery cut REACHES the visible session: a fatigued group
+    // is allowed below the normal compound set-floor AND drops ~1 exercise that
+    // day (visibly lighter), not just on paper. This is the SAME mergedState that
+    // drove the M1 budget cut above (resistance + aerobic) — NOT a new penalty,
+    // it only makes the existing cut visible. Empty state (no logs) → no-op.
+    recoveryState: mergedState,
   };
 
   const session = buildSession(cluster, sessionCtx);
