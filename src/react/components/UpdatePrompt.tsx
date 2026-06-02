@@ -34,7 +34,7 @@ import { t } from '../../i18n/index.js';
 export function UpdatePrompt(): JSX.Element | null {
   const [needRefresh, setNeedRefresh] = useState(false);
   // The reload trigger returned by registerSW (no-op until a SW registers).
-  const [updateSW, setUpdateSW] = useState<(() => Promise<void>) | null>(null);
+  const [updateSW, setUpdateSW] = useState<((reloadPage?: boolean) => Promise<void>) | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -91,6 +91,19 @@ export function UpdatePrompt(): JSX.Element | null {
     };
   }, []);
 
+  // Apply the waiting SW on explicit consent. Pass reloadPage:true so the page
+  // reloads onto the new version (do NOT rely on the lib default — the prior
+  // `updateSW()` no-arg call left the user on the stale page). On an INSTALLED
+  // PWA (home-screen icon, scope never navigates) the controllerchange
+  // auto-reload can fail to fire, so force a reload shortly after skipWaiting as
+  // a safety net — a no-op if the page already reloaded (it's gone by then).
+  function applyUpdate(): void {
+    void Promise.resolve(updateSW?.(true)).catch(() => { /* graceful — offline */ });
+    if (typeof window !== 'undefined') {
+      setTimeout(() => { window.location.reload(); }, 1200);
+    }
+  }
+
   if (!needRefresh) return null;
 
   return (
@@ -108,7 +121,7 @@ export function UpdatePrompt(): JSX.Element | null {
       </div>
       <button
         type="button"
-        onClick={() => { void updateSW?.(); }}
+        onClick={applyUpdate}
         data-testid="update-prompt-cta"
         className="px-3 py-1.5 bg-brick text-paper rounded-lg text-xs font-semibold"
       >
