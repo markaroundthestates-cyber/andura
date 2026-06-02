@@ -2275,7 +2275,10 @@
   },
 
   "swUpdate": {
-    "updating": "Updating..."
+    "updating": "Updating...",
+    "upToDate": "You have the latest version.",
+    "deferred": "Update ready, applies after your session.",
+    "checkFailed": "Could not check for updates."
   },
 
   "toast": {

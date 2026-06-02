@@ -11,16 +11,25 @@
 
 import '../global.css';
 
+import { useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { dark } from '../lib/tokens';
 import { pulseFontMap } from '../lib/fonts';
+import { ToastViewport } from '../components/Toast';
+import { runLaunchUpdateCheck } from '../lib/updates';
 
 export default function RootLayout() {
   // Empty map (fonts flagged missing) resolves instantly → never blocks render.
   useFonts(pulseFontMap());
+
+  // Launch-time OTA auto-check (§D102): silent, fire-and-forget, applies only
+  // when no active session. No-op on web / Expo Go / until EAS Update is set up.
+  useEffect(() => {
+    runLaunchUpdateCheck();
+  }, []);
 
   return (
     <SafeAreaProvider>
@@ -31,6 +40,7 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: dark.paper },
         }}
       />
+      <ToastViewport />
     </SafeAreaProvider>
   );
 }

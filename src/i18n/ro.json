@@ -2275,7 +2275,10 @@
   },
 
   "swUpdate": {
-    "updating": "Se actualizeaza..."
+    "updating": "Se actualizeaza...",
+    "upToDate": "Ai cea mai recenta versiune.",
+    "deferred": "Actualizare pregatita, se aplica dupa sesiune.",
+    "checkFailed": "Nu am putut verifica actualizarile."
   },
 
   "toast": {

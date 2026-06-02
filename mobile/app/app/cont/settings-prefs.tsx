@@ -23,20 +23,18 @@ import { RotateCcw, ChevronRight, RefreshCcw, GitBranch, DownloadCloud } from 'l
 import { useSettingsStore } from '../../../../src/react/stores/settingsStore';
 import type { WeekStart } from '../../../../src/react/stores/settingsStore';
 import { getCurrentLocale, setLocale, t } from '../../../../src/i18n/index.js';
-
-// CHECK-UPDATE handler — W-Final boundary. The web's checkForUpdatesAndApply
-// (src/react/lib/swUpdate.ts) drives the SERVICE-WORKER update flow and its
-// dynamic `import('virtual:pwa-register')` is a Vite-only virtual module Metro
-// cannot resolve at build → it is NOT imported here. On RN this maps to
-// expo-updates (W-Final). The row stays for parity; the handler is a flagged
-// no-op until the expo-updates wire lands.
-function checkForUpdatesAndApply(): void {
-  // FLAG W-Final: replace with expo-updates checkForUpdateAsync + fetch/reload
-  // (§D102 launch-time policy on RN).
-}
 import { SubHeader } from '../../../components/SubHeader';
 import { goto, goBack } from '../../../lib/nav';
 import { dark, accent } from '../../../lib/tokens';
+import { checkAndMaybeApply } from '../../../lib/updates';
+
+// CHECK-UPDATE handler — expo-updates twin of the web's checkForUpdatesAndApply
+// (src/react/lib/swUpdate.ts). Runs an explicit OTA check + safe-apply (reload
+// only when no active workout session, §D102) with toast feedback. Graceful
+// no-op on web / Expo Go dev / until EAS Update is configured (Daniel-gated).
+function checkForUpdatesAndApply(): void {
+  void checkAndMaybeApply({ notify: true });
+}
 
 const UNIT_OPTIONS: ReadonlyArray<{ value: 'kg' | 'lb'; labelKey: string }> = [
   { value: 'kg', labelKey: 'settings.prefs.units.kg' },
