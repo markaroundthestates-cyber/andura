@@ -785,6 +785,13 @@
       "projectedBfSuffix": "(~{pct}% grasime)",
       "disclaimer": "Estimare la ritmul curent, nu o promisiune."
     },
+    "goalForecast": {
+      "etaLine": "La ritmul asta: {kg} kg pe la ~{date}.",
+      "offTrack": "La ritmul curent nu esti pe drumul spre tinta.",
+      "reached": "Esti deja la tinta de greutate.",
+      "strengthHeading": "Forta - traiectorie",
+      "strengthLine": "{lift}: ~{kg} kg in ~{weeks} sapt."
+    },
     "nutritionInline": {
       "sectionHeading": "Nutritie · azi",
       "kcalLabel": "Kcal",

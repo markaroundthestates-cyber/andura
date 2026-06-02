@@ -785,6 +785,13 @@
       "projectedBfSuffix": "(~{pct}% body fat)",
       "disclaimer": "Estimate at the current pace, not a promise."
     },
+    "goalForecast": {
+      "etaLine": "At this pace: {kg} kg by ~{date}.",
+      "offTrack": "Not on track for your goal at the current pace.",
+      "reached": "You're already at your goal weight.",
+      "strengthHeading": "Strength — trajectory",
+      "strengthLine": "{lift}: ~{kg} kg in ~{weeks} wks."
+    },
     "nutritionInline": {
       "sectionHeading": "Nutrition · today",
       "kcalLabel": "Kcal",
