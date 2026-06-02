@@ -43,5 +43,6 @@ export {
   composePlannedWorkoutToday,
   personaTimeCapMin,
   personaTimeTargetMin,
+  clusterFatigueFactor,
   trimSessionToTimeBudget,
 } from './scheduleAdapterAggregate.compose';

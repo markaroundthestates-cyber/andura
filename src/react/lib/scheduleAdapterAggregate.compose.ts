@@ -358,6 +358,37 @@ export function personaTimeTargetMin(personaId: string | null | undefined): numb
   return Math.max(MIN_SESSION_MIN, personaTimeCapMin(personaId) - TIME_TARGET_OFFSET_MIN);
 }
 
+// Per-session-type FATIGUE factor scaling the flat persona cap. Not all minutes
+// cost the same: a leg / lower-body day is far more systemically fatiguing per
+// minute than an arms / upper day — heavy squat / leg-press load the CNS hard,
+// drive whole-body systemic fatigue, and demand long inter-set rests. So the
+// effective time ceiling must be LOWER for high-fatigue session types (2h of
+// legs is more tiring than 2h of upper). FULL-body sits in between: taxing, but
+// the load is distributed across the body rather than concentrated. UPPER / PUSH
+// / PULL move smaller muscles with less systemic cost → no reduction. Unknown /
+// missing type → 1.0 (graceful: identical to the flat-cap behavior).
+const CLUSTER_FATIGUE_FACTOR: Readonly<Record<string, number>> = {
+  LEGS: 0.8,  // most fatiguing — heavy lower-body compounds, CNS + systemic load
+  LOWER: 0.8, // synonym of LEGS in the engine's session tags
+  FULL: 0.9,  // taxing but distributed across the whole body
+  UPPER: 1.0, // smaller muscles, less systemic cost
+  PUSH: 1.0,
+  PULL: 1.0,
+};
+const DEFAULT_CLUSTER_FATIGUE_FACTOR = 1.0; // unknown/missing → no reduction
+
+/** Per-session-type fatigue multiplier for the time cap. Legs/lower (0.80) <
+ * full (0.90) < upper/push/pull (1.00). Unknown/missing → 1.0 (graceful, no
+ * reduction → identical to the flat cap). Case-insensitive on the engine tag.
+ * Pure. */
+export function clusterFatigueFactor(sessionType: string | null | undefined): number {
+  if (typeof sessionType !== 'string') return DEFAULT_CLUSTER_FATIGUE_FACTOR;
+  const key = sessionType.toUpperCase();
+  return key in CLUSTER_FATIGUE_FACTOR
+    ? CLUSTER_FATIGUE_FACTOR[key]!
+    : DEFAULT_CLUSTER_FATIGUE_FACTOR;
+}
+
 type TrimmableExercise = PlannedExercise;
 
 /**
@@ -505,7 +536,16 @@ export async function composePlannedWorkoutToday(
           ? { age: personaAge }
           : {},
     );
-    const timeCapMin = personaTimeCapMin(personaId);
+    // Fatigue-aware cap: scale the flat persona ceiling by the session's
+    // systemic fatigue cost (clusterFatigueFactor) — a LEGS/LOWER day caps lower
+    // than an UPPER/PUSH/PULL day at the SAME persona (heavy lower-body = CNS +
+    // systemic load + long rests). plan.sessionType is the engine's day-of-week
+    // tag (PUSH/PULL/LEGS/LOWER/UPPER/FULL). Missing/unknown → factor 1.0 →
+    // identical to the flat cap. Round so the cap stays a whole-minute ceiling.
+    const sessionTypeTag = typeof plan.sessionType === 'string' ? plan.sessionType : null;
+    const timeCapMin = Math.round(
+      personaTimeCapMin(personaId) * clusterFatigueFactor(sessionTypeTag),
+    );
     const exercises = trimSessionToTimeBudget(mapped, warmup?.durationMin ?? 0, timeCapMin);
     // Deload engine emits intensity_modifier object always (IDLE state =
     // {rir_increment:0, intensity_pct_decrement:0}). 'minus' only when

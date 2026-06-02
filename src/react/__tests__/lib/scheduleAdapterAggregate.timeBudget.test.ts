@@ -20,6 +20,7 @@ import {
   trimSessionToTimeBudget,
   personaTimeCapMin,
   personaTimeTargetMin,
+  clusterFatigueFactor,
   computeEstimatedDurationMin,
   composePlannedWorkoutToday,
 } from '../../lib/scheduleAdapterAggregate';
@@ -195,6 +196,124 @@ describe('trimSessionToTimeBudget — rest-inclusive time bound', () => {
     const snapshot = JSON.parse(JSON.stringify(session));
     trimSessionToTimeBudget(session, 0, personaTimeCapMin('maria'));
     expect(session).toEqual(snapshot);
+  });
+});
+
+describe('clusterFatigueFactor — fatigue-aware cap scaling', () => {
+  it('legs/lower are the most fatiguing (0.80)', () => {
+    expect(clusterFatigueFactor('LEGS')).toBe(0.8);
+    expect(clusterFatigueFactor('LOWER')).toBe(0.8);
+  });
+
+  it('full-body sits between legs and upper (0.90)', () => {
+    expect(clusterFatigueFactor('FULL')).toBe(0.9);
+    const legs = clusterFatigueFactor('LEGS');
+    const full = clusterFatigueFactor('FULL');
+    const upper = clusterFatigueFactor('UPPER');
+    expect(legs).toBeLessThan(full);
+    expect(full).toBeLessThan(upper);
+  });
+
+  it('upper / push / pull cost less systemically — no reduction (1.0)', () => {
+    expect(clusterFatigueFactor('UPPER')).toBe(1.0);
+    expect(clusterFatigueFactor('PUSH')).toBe(1.0);
+    expect(clusterFatigueFactor('PULL')).toBe(1.0);
+  });
+
+  it('case-insensitive on the engine tag', () => {
+    expect(clusterFatigueFactor('legs')).toBe(0.8);
+    expect(clusterFatigueFactor('Full')).toBe(0.9);
+  });
+
+  it('unknown / missing sessionType → factor 1.0 (graceful, no reduction)', () => {
+    expect(clusterFatigueFactor(null)).toBe(1.0);
+    expect(clusterFatigueFactor(undefined)).toBe(1.0);
+    expect(clusterFatigueFactor('FULL_UPPER')).toBe(1.0); // not a known key
+    expect(clusterFatigueFactor('')).toBe(1.0);
+  });
+});
+
+describe('composePlannedWorkoutToday — fatigue-aware time cap', () => {
+  const STUB_BASE = {
+    type: 'training' as const,
+    warmup: null,
+    intensityModifier: null,
+    volumeTargets: null,
+    restTimeRange: [120, 180] as [number, number],
+    specializationTarget: null,
+    deloadState: 'IDLE',
+    workoutTitle: 'Antrenament azi',
+    estimatedDurationMin: 50,
+    volumeKg: 1000,
+  };
+  const EIGHT_COMPOUNDS = [
+    'DB Shoulder Press',
+    'Incline DB Press',
+    'Flat DB Press',
+    'Flat Barbell Bench',
+    'Lat Pulldown',
+    'Cable Row',
+    'Chest-Supported Row',
+    'Romanian Deadlift',
+  ];
+
+  function setMariusOnboarding(): void {
+    useOnboardingStore.setState({
+      data: { age: 25, sex: 'm', goal: 'masa', frequency: '5', experience: 'avansat', weight: 90, height: 185 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+  }
+
+  async function durationFor(sessionType: string): Promise<number> {
+    setMariusOnboarding();
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_BASE,
+      sessionType,
+      exercises: EIGHT_COMPOUNDS.map((name) => ({ name, sets: 5 })),
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    return out!.estimatedDuration!;
+  }
+
+  it('LEGS caps/trims to a LOWER duration than UPPER (same persona + volume)', async () => {
+    const legs = await durationFor('LEGS');
+    const upper = await durationFor('UPPER');
+    // legs effectiveCap = 90 x 0.80 = 72; upper = 90 x 1.00 = 90 → legs trims more.
+    expect(legs).toBeLessThan(upper);
+    expect(legs).toBeLessThanOrEqual(72);
+    expect(upper).toBeLessThanOrEqual(90);
+  });
+
+  it('LOWER behaves like LEGS (lower than UPPER)', async () => {
+    const lower = await durationFor('LOWER');
+    const upper = await durationFor('UPPER');
+    expect(lower).toBeLessThan(upper);
+  });
+
+  it('FULL sits between legs and upper', async () => {
+    const legs = await durationFor('LEGS');
+    const full = await durationFor('FULL');
+    const upper = await durationFor('UPPER');
+    // effective caps: legs 72 < full 81 < upper 90.
+    expect(legs).toBeLessThan(full);
+    expect(full).toBeLessThanOrEqual(upper);
+  });
+
+  it('unknown sessionType → factor 1.0 → identical to the flat-cap (c2711c4b) result', async () => {
+    // 'FULL_UPPER' is not a known fatigue key → factor 1.0 → flat marius 90 cap.
+    const unknown = await durationFor('FULL_UPPER');
+    const upper = await durationFor('UPPER'); // factor 1.0 too → same effective cap
+    expect(unknown).toBe(upper);
+    expect(unknown).toBeLessThanOrEqual(90);
+  });
+
+  it('determinism — same persona + sessionType + plan twice → identical duration', async () => {
+    const a = await durationFor('LEGS');
+    const b = await durationFor('LEGS');
+    expect(a).toBe(b);
   });
 });
 
