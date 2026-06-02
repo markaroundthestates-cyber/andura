@@ -439,6 +439,16 @@ const FOCUS_LOWER_DEEMPH_SPLITS = Object.freeze({
   // push(Fri)/pull(Sat) repeat the width work without overlap. ONE leg day (Wed);
   // umeri hit Mon+Fri, spate hit Tue+Sat — emphasis preserved, fully spaced.
   5: Object.freeze(['push', 'pull', 'legs', 'push', 'pull']),
+  // 6/7 days are reachable only by MANUAL calendar edits (onboarding offers 2-5),
+  // and a dense week is usually consecutive (e.g. Mon-Sat), so the split itself
+  // must never place overlapping clusters on adjacent positions. push/pull/legs
+  // are mutually non-overlapping, so a push/pull alternation with ONE leg day is
+  // spacing-safe at any consecutive-day layout (no muscle on back-to-back days;
+  // each width region hit every ~48h). The blind slot-swap instead produced
+  // pull→pull (and lower→full) adjacency. Width-emphasis (umeri via push, spate
+  // via pull) preserved; legs maintained at one day.
+  6: Object.freeze(['push', 'pull', 'push', 'pull', 'push', 'legs']),
+  7: Object.freeze(['push', 'pull', 'push', 'pull', 'push', 'pull', 'legs']),
 });
 
 /**

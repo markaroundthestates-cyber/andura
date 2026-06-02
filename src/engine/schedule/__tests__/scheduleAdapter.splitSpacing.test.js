@@ -76,3 +76,45 @@ describe('split spacing — no two CALENDAR-CONSECUTIVE days share a muscle', ()
     }
   });
 });
+
+// MANUAL calendar range (Daniel 2026-06-02): onboarding offers 2-5 days, but the
+// calendar lets users go down to 1 or up to 7 — and a dense week (6-7 days) is
+// usually CONSECUTIVE. So the v-taper split must be spacing-safe by POSITION (no
+// canonical rest-day gaps to lean on): no two adjacent split entries may share a
+// muscle, for every n in 1..7. full-body templates are exempt (full×N is a
+// deliberate full-frequency choice the recovery engine manages).
+describe('v-taper split is spacing-safe across the full MANUAL range (1..7)', () => {
+  // n=4 is intentionally EXCLUDED from the layout-independent (worst-case)
+  // sweep: its template push/pull/UPPER/lower uses an `upper` day so that BOTH
+  // width regions land 2× (umeri via push+upper, spate via pull+upper) — the only
+  // way to get umeri2×+spate2×+1-leg into four days. That packs a pull->upper
+  // (spate/biceps) adjacency which is safe ONLY with a mid-week gap, exactly what
+  // the onboarding default 4-day pattern (L,Ma,J,V — Wed rest) provides; the
+  // CALENDAR-pattern suite above already guarantees freq-4 safety on that layout.
+  // 5-7 use pure push/pull/legs (no upper) → safe at ANY manual day layout.
+  for (let n = 1; n <= 7; n++) {
+    if (n === 4) continue;
+    it(`v-taper @ ${n} days: no adjacent split positions share a muscle`, () => {
+      const split = frequencyToSplit(n, 'v-taper');
+      expect(split.length).toBe(n);
+      for (let k = 0; k < split.length - 1; k++) {
+        // full×N (n=1 single, n=3 full,full,full) is intentional full-frequency.
+        if (split[k] === 'full' && split[k + 1] === 'full') continue;
+        const conflict = sharesMuscle(split[k], split[k + 1]);
+        expect(
+          conflict,
+          `v-taper @ ${n}d: ${split[k]} -> ${split[k + 1]} share a muscle on ` +
+            `adjacent days. Split: ${split.join('/')}`,
+        ).toBe(false);
+      }
+    });
+  }
+
+  it('v-taper keeps exactly ONE leg day at every reshaped frequency (4..7)', () => {
+    for (let n = 4; n <= 7; n++) {
+      const split = frequencyToSplit(n, 'v-taper');
+      const legDays = split.filter((c) => c === 'lower' || c === 'legs').length;
+      expect(legDays, `v-taper @ ${n}d leg days`).toBe(1);
+    }
+  });
+});
