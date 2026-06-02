@@ -162,6 +162,7 @@ const VAR_MAP: Record<string, string> = {
   '--surface-2': surface.s2,
   '--status-neutral-text': status.neutralText,
   '--status-danger-text': status.dangerText,
+  '--warn': '#ffc24f', // global.css [data-theme="dark"] L215 — Pulse amber
 };
 
 /** Resolve a web CSS-var color string to its Pulse DARK hex. Accepts either a
