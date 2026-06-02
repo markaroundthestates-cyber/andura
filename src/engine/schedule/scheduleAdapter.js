@@ -642,15 +642,21 @@ function applyWeaknessAmplification(volumeMapEN, weakGroupsRO) {
  * recovery → applyRecoveryStateRedistribution returns the map unchanged → identical
  * to the pre-M1 chassis budget (graceful degradation, ADR 025). Pure.
  *
+ * aerobicSessions (optional) are threaded into the RO stage so recent aerobic
+ * CLASSES fold into the recovery state (eases fresh groups recovered→partial,
+ * never deepens) — a hard spin class makes tomorrow's leg budget lighter. Absent
+ * → byte-identical resistance-only path.
+ *
  * @param {Object<string, number>|null|undefined} volumeMapEN - Big-11 EN keyed budget
  * @param {Array<{ex: string, ts: number, w: number}>} logs - recovery LogEntry[]
  * @param {number} now - reference timestamp threaded into recovery (determinism)
+ * @param {Array<{type?: string, ts?: number, date?: string}>} [aerobicSessions] - aerobicStore sessions
  * @returns {Object<string, number>|null} adjusted EN-keyed budget (null passes through)
  */
-function applyRecoveryToVolumeBudget(volumeMapEN, logs, now) {
+function applyRecoveryToVolumeBudget(volumeMapEN, logs, now, aerobicSessions) {
   if (!volumeMapEN || typeof volumeMapEN !== 'object') return volumeMapEN ?? null;
   const ro = toCanonicalRO(volumeMapEN);
-  const adjustedRo = applyRecoveryStateRedistribution(ro, logs, now);
+  const adjustedRo = applyRecoveryStateRedistribution(ro, logs, now, aerobicSessions);
   return toCanonicalEN(adjustedRo);
 }
 
@@ -761,10 +767,16 @@ export async function getDailyWorkout(userState, now = new Date()) {
   // manikin reads (recentSessions → flattenSessionsToRecoveryLogs). `date.getTime()`
   // threads the planned clock into recovery so the cut is DETERMINISTIC.
   // No logs / all-recovered → budget unchanged → identical to pre-M1 chassis
-  // (graceful degradation, ADR 025). Aerobic recovery folded in below (it only
-  // EASES fresh groups, never deepens — resistance recovery is the M1 core).
+  // (graceful degradation, ADR 025). Aerobic sessions (userState.aerobicSessions
+  // from useAerobicStore) are folded into the recovery state at the RO stage of
+  // applyRecoveryToVolumeBudget below: a recent class only EASES a fresh group
+  // (recovered→partial ×0.80), never deepens an already-stressed one — so a hard
+  // spin class (legs) makes today's leg budget lighter. No aerobic → identical.
   const baseVolumeTargets = blueprints.periodization?.volume_target_pct ?? null;
   const recoveryLogs = flattenSessionsToRecoveryLogs(userState?.recentSessions);
+  const aerobicSessions = Array.isArray(userState?.aerobicSessions)
+    ? userState.aerobicSessions
+    : undefined;
 
   // ── M2: weakness amplifies REAL volume toward MRV (the substance, not just
   // reordering). Weak groups are layered, graceful (ADR 025):
@@ -814,6 +826,7 @@ export async function getDailyWorkout(userState, now = new Date()) {
     balancedTargets,
     recoveryLogs,
     date.getTime(),
+    aerobicSessions,
   );
 
   const sessionCtx = {

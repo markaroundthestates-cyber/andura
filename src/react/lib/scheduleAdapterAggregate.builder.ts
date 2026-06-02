@@ -9,6 +9,7 @@
 import { useWorkoutStore } from '../stores/workoutStore';
 import type { LastSessionSummary } from '../stores/workoutStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
+import { useAerobicStore } from '../stores/aerobicStore';
 import { MS_PER_DAY } from '../../constants.js';
 import { getComputedReadinessScore, getTodayReadiness } from '../../engine/readiness.js';
 import { DB } from '../../db.js';
@@ -237,6 +238,7 @@ function goalPhaseForGoal(goal: unknown): 'BULK' | 'CUT' | 'MAINTAIN' | undefine
 export function buildUserStateForPipeline(): {
   user: Record<string, unknown>;
   recentSessions: ReadonlyArray<unknown>;
+  aerobicSessions: ReadonlyArray<unknown>;
   weights: Record<string, unknown>;
   prNames: string[];
   profileTier: string | null;
@@ -245,6 +247,11 @@ export function buildUserStateForPipeline(): {
 } {
   const onboardingData = useOnboardingStore.getState().data;
   const sessionsHistory = useWorkoutStore.getState().sessionsHistory ?? [];
+  // Aerobic CLASSES (aerobicStore) feed the recovery→plan loop: a hard spin class
+  // (legs) eases tomorrow's leg budget. The engine reads each session's `type` +
+  // `ts`/`date` (mergeAerobicRecovery) — the persisted shape passes straight
+  // through. Empty → engine path byte-identical to resistance-only.
+  const aerobicSessions = useAerobicStore.getState().sessions ?? [];
   const now = Date.now();
   // Live injury safety signal from the Pain CDL channel (DB('pain-cdl')) — the
   // honest persisted source PainButton writes. Feeds BOTH pipeline injury gates
@@ -330,6 +337,8 @@ export function buildUserStateForPipeline(): {
       trainingWeeks,
     },
     recentSessions,
+    // Aerobic CLASSES → recovery→plan loop (eases fresh groups, never deepens).
+    aerobicSessions,
     weights: {},
     // WP-4 PR-anchor set (sessionBuilder prefers logged names).
     prNames,

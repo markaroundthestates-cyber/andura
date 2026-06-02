@@ -21,7 +21,7 @@ import {
   CLUSTER_BIG6_TO_BIG11_WEIGHT,
   BIG11_EN_TO_RO_MAP,
 } from './constants.js';
-import { getRecoveryByGroup } from '../muscleRecovery.js';
+import { getRecoveryByGroup, mergeAerobicRecovery } from '../muscleRecovery.js';
 
 /**
  * Resolve persona id from user object. Priority:
@@ -221,15 +221,30 @@ export function toCanonicalRO(volumeMap) {
  * (the daily-plan adapter passes the same `now` it plans for). Omitting it
  * preserves the prior Date.now() default — backward compatible.
  *
+ * `aerobicSessions` (optional) folds recent aerobic CLASSES into the recovery
+ * STATE before redistributing: mergeAerobicRecovery only RAISES a `recovered`
+ * group to `partial` (eases — never deepens an already-stressed group, never
+ * reaches `fatigued`). So a leg group fresh from weights but hit by spinning
+ * reads `partial` → the ×0.80 cut lands, while a group the user lifted heavy
+ * stays at its (deeper) resistance state. Absent/empty → byte-identical to the
+ * resistance-only path (graceful degradation, ADR 025).
+ *
  * @param {Object<string, number>} volumeMap - Big 11 RO keyed → sets/week
  * @param {Array} logs - session logs for Recovery state input
  * @param {number} [now] - reference timestamp (default Date.now); inject for determinism
+ * @param {Array<{type?: string, ts?: number, date?: string}>} [aerobicSessions] - aerobicStore sessions (eases fresh groups)
  * @returns {Object<string, number>} adjusted volumeMap (RO keyed)
  */
-export function applyRecoveryStateRedistribution(volumeMap, logs, now = Date.now()) {
+export function applyRecoveryStateRedistribution(volumeMap, logs, now = Date.now(), aerobicSessions) {
   const safeMap = volumeMap && typeof volumeMap === 'object' ? volumeMap : {};
-  if (!Array.isArray(logs) || logs.length === 0) return { ...safeMap };
-  const recoveryState = getRecoveryByGroup(logs, undefined, now);
+  const hasAerobic = Array.isArray(aerobicSessions) && aerobicSessions.length > 0;
+  // No resistance logs AND no aerobic → nothing to redistribute (unchanged map).
+  if ((!Array.isArray(logs) || logs.length === 0) && !hasAerobic) return { ...safeMap };
+  // Resistance recovery state (RO keyed). Empty/no logs → {} (all recovered).
+  let recoveryState =
+    Array.isArray(logs) && logs.length > 0 ? getRecoveryByGroup(logs, undefined, now) : {};
+  // Fold aerobic in (eases recovered→partial only) when present — same RO key-space.
+  if (hasAerobic) recoveryState = mergeAerobicRecovery(recoveryState, aerobicSessions, now);
   const adjusted = {};
   for (const [group, sets] of Object.entries(safeMap)) {
     const state = recoveryState[group];
