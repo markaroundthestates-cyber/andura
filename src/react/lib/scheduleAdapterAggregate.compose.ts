@@ -341,6 +341,7 @@ const DEFAULT_PERSONA_TIME_CAP_MIN = PERSONA_TIME_CAP_MIN.gigica ?? 75;
 const MIN_EXERCISES_FLOOR = 4; // never below ~4 exercises
 const MIN_SETS_PER_EX = 2;     // never below MIN_SETS (matches chassis clamp)
 const MIN_SESSION_MIN = 25;    // never trim below a ~25min session
+const COMPOUND_MIN_SETS = 3;   // last-resort floor for the TOP compound (idx 0)
 
 /** Resolve the per-persona HARD time cap (minutes) — the absolute ceiling the
  * trim guarantees. Unknown persona → gigica (conservative). Pure. */
@@ -402,11 +403,22 @@ type TrimmableExercise = PlannedExercise;
  * touches the front: priority/weak groups always survive ("the whole workout
  * optimized and maximized, don't gut the important part").
  *
- * Trim order, repeated until duration ≤ cap or a floor is hit:
- *   1. Shave ONE set off the LAST exercise that still has > MIN_SETS_PER_EX.
- *   2. If every surviving exercise is already at the set floor, DROP the LAST
- *      exercise — but never below MIN_EXERCISES_FLOOR exercises.
- *   3. Stop once the projected session would fall under MIN_SESSION_MIN.
+ * Trim order is COMPOUND-PROTECTIVE — it removes whole TAIL accessories before
+ * it ever crushes the FRONT compounds' set counts, so a tight cap yields 2-3
+ * REAL lifts (e.g. ~[4,3]) instead of a flat [2,2,2,2,2] of token exercises.
+ * Repeated until duration ≤ cap or a floor is hit:
+ *   1. Stop once the projected session would fall under MIN_SESSION_MIN.
+ *   2. Shave ONE set off the LAST exercise IF it still has > MIN_SETS_PER_EX
+ *      (gentle single-set shaves for small overshoots — tail first).
+ *   3. ELSE (last exercise already at the set floor) DROP the LAST exercise,
+ *      but only while length > MIN_EXERCISES_FLOOR. Dropping tail accessories
+ *      keeps the front compounds at full set counts.
+ *   4. ELSE (at the exercise floor AND last exercise at the set floor) as a
+ *      LAST RESORT shave the last exercise above its floor scanning from the
+ *      end — but never shave index 0 (top compound) below COMPOUND_MIN_SETS.
+ *      If nothing remains shavable/droppable, break (accept a session slightly
+ *      over the cap; MIN_SESSION_MIN keeps the chassis minimum alive — M1/M2
+ *      re-balance over the week).
  *
  * Pure + deterministic: same persona + warmup + exercises → identical result.
  * No random, no wall-clock. A session already under the cap (or a tiny/empty
@@ -429,37 +441,54 @@ export function trimSessionToTimeBudget(
   const duration = (list: ReadonlyArray<TrimmableExercise>): number =>
     computeEstimatedDurationMin(list, warmupMin) ?? 0;
 
-  // Deterministic guard — set-shave then drop are both monotonic volume
-  // reductions, so the loop strictly shrinks each pass; the bound is a hard
-  // ceiling against any future non-monotonic edit (never an expected exit).
+  // Deterministic guard — every pass either shaves one set or drops one
+  // exercise (both monotonic volume reductions), so the loop strictly shrinks
+  // each pass; the bound is a hard ceiling against any future non-monotonic
+  // edit (never an expected exit). The drop path can run once per exercise on
+  // top of the per-exercise set shaves, so the bound scales with both.
   let guard = 0;
-  const maxIterations = out.length * 8 + 8;
+  const maxIterations = out.length * 10 + 10;
 
   while (duration(out) > capMin && guard < maxIterations) {
     guard += 1;
+
+    // 1) Never trim below the chassis minimum session.
     if (duration(out) <= MIN_SESSION_MIN) break;
 
-    // 1) Shave one set off the LAST (lowest-priority) exercise above the floor.
-    let shaved = false;
-    for (let i = out.length - 1; i >= 0; i -= 1) {
-      if (out[i]!.sets > MIN_SETS_PER_EX) {
-        out[i] = { ...out[i]!, sets: out[i]!.sets - 1 };
-        shaved = true;
-        break;
-      }
-    }
-    if (shaved) continue;
+    const last = out.length - 1;
 
-    // 2) Every surviving exercise is at the set floor — drop the LAST one, but
-    //    never below the exercise floor.
+    // 2) Gentle single-set shave off the LAST (lowest-priority) exercise while
+    //    it is above the set floor — preserves the good behavior for small
+    //    overshoots without touching the front compounds.
+    if (out[last]!.sets > MIN_SETS_PER_EX) {
+      out[last] = { ...out[last]!, sets: out[last]!.sets - 1 };
+      continue;
+    }
+
+    // 3) Last exercise already at the set floor — DROP it (a whole tail
+    //    accessory) instead of crushing the front compounds, but never below
+    //    the exercise floor. This is what keeps the front sets healthy.
     if (out.length > MIN_EXERCISES_FLOOR) {
       out.pop();
       continue;
     }
 
-    // 3) Floor reached on both axes — stop (the chassis minimum survives even
-    //    if it nominally exceeds the cap; M1/M2 re-balance over the week).
-    break;
+    // 4) At BOTH floors (exercise floor + last exercise at set floor). Last
+    //    resort: shave the last exercise still above its floor, scanning from
+    //    the end — but never shave index 0 (top compound) below
+    //    COMPOUND_MIN_SETS. If everything left is protected, break (accept a
+    //    session slightly over the cap; the chassis minimum survives and M1/M2
+    //    re-balance over the week).
+    let shaved = false;
+    for (let i = out.length - 1; i >= 0; i -= 1) {
+      const setFloor = i === 0 ? COMPOUND_MIN_SETS : MIN_SETS_PER_EX;
+      if (out[i]!.sets > setFloor) {
+        out[i] = { ...out[i]!, sets: out[i]!.sets - 1 };
+        shaved = true;
+        break;
+      }
+    }
+    if (!shaved) break;
   }
 
   return out;

@@ -30,6 +30,10 @@ import { useWorkoutStore } from '../../stores/workoutStore';
 
 const TUESDAY_2026_05_19 = new Date(2026, 4, 19);
 
+// Mirror of the (unexported) MIN_SETS_PER_EX floor in the compose module — used
+// only to assert "not flattened to the set floor" without importing internals.
+const MIN_SETS_PER_EX_TEST = 2;
+
 function resetStores(): void {
   useOnboardingStore.setState({
     data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 75, height: 175 },
@@ -156,16 +160,57 @@ describe('trimSessionToTimeBudget — rest-inclusive time bound', () => {
     expect(tailWasTouched).toBe(true);
   });
 
-  it('shaves sets from the TAIL before dropping anything (front untouched)', () => {
-    // Mildly over: 5 ex x 4 sets x (40 + 180) = 4400s = ~73min vs maria 60.
-    // Set-shaving alone (no exercise drops) brings it under: 5 exercises x 2 sets
-    // floor x 220s = 2200s = ~37min is reachable, so the trim never needs to drop.
-    const session = Array.from({ length: 5 }, (_, i) => ex(`ex${i}`, 4, 180));
+  it('a MILD overshoot just shaves ONE set off the tail (no drop, front intact)', () => {
+    // Barely over: 5 ex x 3 sets x (40 + 205) = 3675s = ~61.25min vs maria 60.
+    // A single tail set-shave (ex4 3->2) drops it to ~57min — under the cap —
+    // so the trim never needs to drop an exercise. This is the conservative
+    // "don't over-aggressive" path: gentle shave, full exercise count kept.
+    const session = Array.from({ length: 5 }, (_, i) => ex(`ex${i}`, 3, 205));
+    expect(computeEstimatedDurationMin(session, 0)!).toBeGreaterThan(60);
     const trimmed = trimSessionToTimeBudget(session, 0, personaTimeCapMin('maria'));
-    expect(trimmed.length).toBe(5);           // shaving only, no exercise dropped
-    expect(trimmed[0]!.sets).toBe(4);          // front priority untouched
-    expect(trimmed[trimmed.length - 1]!.sets).toBeLessThan(4); // tail shaved first
+    expect(trimmed.length).toBe(5);            // shaving only, no exercise dropped
+    expect(trimmed[0]!.sets).toBe(3);          // front priority untouched
+    expect(trimmed[trimmed.length - 1]!.sets).toBe(2); // exactly one set shaved off tail
     expect(computeEstimatedDurationMin(trimmed, 0)!).toBeLessThanOrEqual(60);
+  });
+
+  it('a TIGHT cap protects the FRONT compound and DROPS accessories (no flatten)', () => {
+    // Daniel bug repro: a healthy [3,5,2,3,3] with compounds (150s rest, idx 0/1)
+    // + accessories (75s rest) under a tight 30-min cap. The OLD trim flattened
+    // every exercise to 2 sets ([2,2,2,2,2] — 5 token lifts, main compound
+    // crushed). The compound-protective trim shaves the tail to the floor then
+    // DROPS whole accessories, keeping the front compound's set count.
+    const session = [
+      ex('compoundA', 3, 150),
+      ex('compoundB', 5, 150),
+      ex('accC', 2, 75),
+      ex('accD', 3, 75),
+      ex('accE', 3, 75),
+    ];
+    const trimmed = trimSessionToTimeBudget(session, 0, 30);
+    // Front compound (idx 0) keeps a real working volume — never crushed to 2.
+    expect(trimmed[0]!.name).toBe('compoundA');
+    expect(trimmed[0]!.sets).toBeGreaterThanOrEqual(3);
+    // The session is NOT a flat field of 2s: at least one exercise is > 2 sets.
+    expect(trimmed.some((e) => e.sets > MIN_SETS_PER_EX_TEST)).toBe(true);
+    // Accessories were dropped (fewer exercises) rather than flattened.
+    expect(trimmed.length).toBeLessThan(session.length);
+    // And it actually fits the budget (or the chassis minimum).
+    expect(computeEstimatedDurationMin(trimmed, 0)!).toBeLessThanOrEqual(30);
+  });
+
+  it('LAST RESORT shave never crushes index 0 below 3 sets (compound floor)', () => {
+    // Force both floors: exactly MIN_EXERCISES_FLOOR (4) heavy compounds so no
+    // drop is allowed, and an impossibly tight cap. The trim shaves the tail to
+    // the set floor (2) but must leave index 0 at >= 3 sets — never below the
+    // compound working floor — even though the session still exceeds the cap.
+    const session = Array.from({ length: 4 }, (_, i) => ex(`comp${i}`, 5, 180));
+    const trimmed = trimSessionToTimeBudget(session, 0, 30);
+    expect(trimmed.length).toBe(4);               // exercise floor held (no drop)
+    expect(trimmed[0]!.sets).toBeGreaterThanOrEqual(3); // top compound protected
+    for (const e of trimmed) {
+      expect(e.sets).toBeGreaterThanOrEqual(2);   // set floor held everywhere
+    }
   });
 
   it('floor respected — never below ~4 exercises / 2 sets each', () => {
