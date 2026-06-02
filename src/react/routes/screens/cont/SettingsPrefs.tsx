@@ -8,10 +8,11 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RotateCcw, ChevronRight, RefreshCcw, GitBranch } from 'lucide-react';
+import { RotateCcw, ChevronRight, RefreshCcw, GitBranch, DownloadCloud } from 'lucide-react';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import type { WeekStart } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
+import { checkForUpdatesAndApply } from '../../../lib/swUpdate';
 import { SubHeader } from '../../../components/SubHeader';
 import { getCurrentLocale, setLocale, t } from '../../../../i18n/index.js';
 
@@ -196,12 +197,29 @@ export function SettingsPrefs(): JSX.Element {
             type="button"
             onClick={() => navigate(gotoPath('schimba-faza-confirm'))}
             data-testid="advanced-schimba-faza"
-            className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink"
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink border-b border-line"
           >
             <GitBranch className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
             <div className="flex-1">
               <p className="text-sm font-medium">{t('settings.prefs.advanced.schimbaFaza')}</p>
               <p className="text-xs text-ink2">{t('settings.prefs.advanced.schimbaFazaDesc')}</p>
+            </div>
+            <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
+          </button>
+          {/* PWA update redesign (2026-06-02) — force "check for updates &
+              apply" (Daniel dev/testing tool). Runs registration.update() then
+              applies the waiting SW with an "Updating..." toast + reload. No
+              navigation — acts in place. */}
+          <button
+            type="button"
+            onClick={() => checkForUpdatesAndApply()}
+            data-testid="advanced-check-update"
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink"
+          >
+            <DownloadCloud className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+            <div className="flex-1">
+              <p className="text-sm font-medium">{t('settings.prefs.advanced.checkUpdate')}</p>
+              <p className="text-xs text-ink2">{t('settings.prefs.advanced.checkUpdateDesc')}</p>
             </div>
             <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
           </button>

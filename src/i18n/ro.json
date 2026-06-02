@@ -1413,7 +1413,9 @@
         "redoOnboarding": "Refa onboarding",
         "redoOnboardingDesc": "Reia configurarea initiala",
         "schimbaFaza": "Schimba faza manual",
-        "schimbaFazaDesc": "Reseteaza unele calibrari"
+        "schimbaFazaDesc": "Reseteaza unele calibrari",
+        "checkUpdate": "Verifica si aplica actualizari",
+        "checkUpdateDesc": "Ia ultima versiune acum"
       }
     },
     "profile": {
@@ -2272,11 +2274,8 @@
     "offline": "Esti offline — datele se salveaza local. Sync reluat la conexiune."
   },
 
-  "updatePrompt": {
-    "ariaLabel": "Versiune noua disponibila",
-    "title": "Versiune noua",
-    "body": "Actualizeaza pentru ultimele fix-uri.",
-    "updateCta": "Actualizeaza"
+  "swUpdate": {
+    "updating": "Se actualizeaza..."
   },
 
   "toast": {

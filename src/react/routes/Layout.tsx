@@ -14,7 +14,7 @@ import { BottomNav } from '../components/BottomNav';
 import { SessionPill } from '../components/SessionPill';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
-import { UpdatePrompt } from '../components/UpdatePrompt';
+import { useSwUpdate } from '../lib/swUpdate';
 import { InstallPrompt } from '../components/InstallPrompt';
 import { OfflineBanner } from '../components/OfflineBanner';
 import { ToastViewport } from '../components/Toast';
@@ -67,6 +67,12 @@ export function Layout(): JSX.Element {
   const acceptDisclaimer = useSettingsStore((s) => s.acceptDisclaimer);
   const scrollRef = useRef<HTMLDivElement>(null);
   useScrollResetOnNav(scrollRef);
+  // PWA auto-update redesign (2026-06-02) — persistent app-level SW
+  // registration + periodic check. Auto-applies a new version on launch /
+  // return when SAFE (no live workout session); defers mid-session. Replaces
+  // the floating UpdatePrompt banner. The check keeps running app-wide and the
+  // updateSW handle stays reachable for the Account "Check for updates" button.
+  useSwUpdate();
   return (
     <div className={`relative min-h-screen bg-paper text-ink flex flex-col persona-${persona}`}>
       {/* ANDURA PULSE (2026-05-29) — the living aurora backdrop sits behind
@@ -88,7 +94,6 @@ export function Layout(): JSX.Element {
         {t('nav.skipToContent')}
       </a>
       <OfflineBanner />
-      <UpdatePrompt />
       {!inSession && <InstallPrompt />}
       {/* DESKTOP BOTTOM-NAV FREEZE FIX (2026-05-29) — .app-scroll is the inner
           scroll surface. On desktop (>=768px) the scroll overflow lives HERE,

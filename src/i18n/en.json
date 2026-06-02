@@ -1413,7 +1413,9 @@
         "redoOnboarding": "Redo onboarding",
         "redoOnboardingDesc": "Re-run the initial setup",
         "schimbaFaza": "Switch phase manually",
-        "schimbaFazaDesc": "Reset some calibrations"
+        "schimbaFazaDesc": "Reset some calibrations",
+        "checkUpdate": "Check for updates & apply",
+        "checkUpdateDesc": "Get the latest version now"
       }
     },
     "profile": {
@@ -2272,11 +2274,8 @@
     "offline": "You're offline — data is saved locally. Sync resumes when reconnected."
   },
 
-  "updatePrompt": {
-    "ariaLabel": "New version available",
-    "title": "New version",
-    "body": "Update for the latest fixes.",
-    "updateCta": "Update"
+  "swUpdate": {
+    "updating": "Updating..."
   },
 
   "toast": {
