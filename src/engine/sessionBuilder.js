@@ -73,41 +73,99 @@ const MAX_T1 = 2;
 // Per-exercise set-count fallback when no engine volume signal is supplied
 // (keeps pure-function callers without periodization context stable).
 const DEFAULT_SETS = 3;
-// Per-exercise sanity clamp on the engine-derived set count. Below 2 = not a
-// real working set; above 5 = junk volume / fatigue per Israetel per-exercise.
-const MIN_SETS = 2;
-const MAX_SETS = 5;
+// Tier-scoped per-exercise clamps for the in-group distribution. A COMPOUND
+// (tier 1, the group's anchor lift) earns the bulk of the volume; ISOLATION
+// (tier 2/3) is trimmed. Within a session a compound must NEVER carry fewer
+// working sets than an isolation of the same group — these clamps + the
+// compound-first distribution order guarantee that.
+const COMPOUND_MIN_SETS = 3;
+const COMPOUND_MAX_SETS = 5;
+const ISOLATION_MIN_SETS = 2;
+const ISOLATION_MAX_SETS = 3;
 // Typical weekly frequency a muscle group is trained — the periodization
 // volume target is sets/WEEK, but buildSession plans ONE session, so the
-// weekly target is divided across the sessions that hit the group.
+// weekly target is divided across the sessions that hit the group. Used as a
+// LAST-RESORT fallback only when ctx.weeklySessionsPerGroup has no real
+// frequency for the group (NOT a blind constant divisor any more — BUG 1).
 const WEEKLY_FREQUENCY = 2;
+// A library tier-1 entry IS the compound anchor of its group (force_demand:high,
+// big movement). Used by the set distribution to weight the anchor higher.
+const COMPOUND_TIER = 1;
 
 /**
- * Per-exercise set count derived from the engine's weekly volume target.
+ * Per-session set budget for one Big-11 group — the weekly volume target split
+ * across the sessions that actually train the group this week.
  *
- * Periodization emits `volume_target_pct` = sets/WEEK per Big-11 group (EN
- * keyed, varies by mesocycle phase — DELOAD halves it). This converts a
- * group's weekly target into a per-exercise count for ONE session: weekly
- * target / weekly frequency / exercises hitting the group this session,
- * clamped [MIN_SETS, MAX_SETS]. Returns DEFAULT_SETS when no target is known
- * for the group (empty map / unmapped group) so callers without periodization
- * context keep the stable default.
+ * `realFreq` comes from ctx.weeklySessionsPerGroup[group] (the real sessions/week
+ * the frequency template assigns); only when that is absent/invalid do we fall
+ * back to WEEKLY_FREQUENCY (a sane last resort, NOT a blind constant divisor —
+ * BUG 1 fix). Returns null when no usable weekly volume signal exists for the
+ * group, so callers keep the stable DEFAULT_SETS per exercise.
  *
  * @param {string} big11RoGroup - exercise muscle_target_primary (Big-11 RO)
  * @param {Record<string, number>|null|undefined} volumeTargets - Big-11 EN -> sets/week
- * @param {number} exercisesInGroup - how many session exercises hit this group
- * @returns {number}
+ * @param {Record<string, number>|null|undefined} weeklySessionsPerGroup - Big-11 RO -> sessions/week
+ * @returns {number|null} per-session set budget for the group, or null when unknown
  */
-function setsForGroup(big11RoGroup, volumeTargets, exercisesInGroup) {
-  if (!volumeTargets || typeof volumeTargets !== 'object') return DEFAULT_SETS;
+function sessionSetBudget(big11RoGroup, volumeTargets, weeklySessionsPerGroup) {
+  if (!volumeTargets || typeof volumeTargets !== 'object') return null;
   const enKey = BIG11_RO_TO_EN_MAP[big11RoGroup] ?? big11RoGroup;
   const weekly = volumeTargets[enKey];
   if (typeof weekly !== 'number' || !Number.isFinite(weekly) || weekly <= 0) {
-    return DEFAULT_SETS;
+    return null;
   }
-  const perExercise = weekly / WEEKLY_FREQUENCY / Math.max(1, exercisesInGroup);
-  const rounded = Math.round(perExercise);
-  return Math.min(MAX_SETS, Math.max(MIN_SETS, rounded));
+  const rawFreq =
+    weeklySessionsPerGroup && typeof weeklySessionsPerGroup === 'object'
+      ? weeklySessionsPerGroup[big11RoGroup]
+      : undefined;
+  const realFreq =
+    typeof rawFreq === 'number' && Number.isFinite(rawFreq) && rawFreq > 0
+      ? rawFreq
+      : WEEKLY_FREQUENCY;
+  return weekly / realFreq;
+}
+
+/**
+ * Compound-anchored set distribution for the exercises of ONE group in a session.
+ *
+ * The OLD rule divided the budget EVENLY across the group's exercises, so a
+ * many-exercise group (compounds + isolation) starved each lift toward MIN_SETS
+ * while a single-exercise accessory group (one calf / one ab move) collected the
+ * whole budget and clamped to 5 — accessories out-volumed compounds (BUG 1).
+ *
+ * New rule: the group's per-session budget is distributed with the PRIMARY
+ * COMPOUND (tier 1) weighted higher than ISOLATION (tier 2/3). Compounds clamp
+ * to [COMPOUND_MIN_SETS, COMPOUND_MAX_SETS], isolation to [ISOLATION_MIN_SETS,
+ * ISOLATION_MAX_SETS]. Because a compound's floor (3) >= an isolation's ceiling
+ * (3), a compound never carries fewer working sets than an isolation of the same
+ * group. A tiny single-exercise accessory group (calves/core/forearms — no
+ * compound) lands in the isolation band (~2-3), so you never get 5 sets of
+ * tibialis. Total stays roughly aligned with the budget (anti-MRV blowout).
+ *
+ * @param {Array<{tier: number}>} exsInGroup - chosen exercises of this group (with tier)
+ * @param {number|null} budget - per-session set budget for the group (sessionSetBudget)
+ * @returns {number[]} set count per exercise, index-aligned with exsInGroup
+ */
+function distributeGroupSets(exsInGroup, budget) {
+  const n = exsInGroup.length;
+  if (n === 0) return [];
+  // No volume signal → every exercise keeps the stable default (no-op path).
+  if (budget == null) return exsInGroup.map(() => DEFAULT_SETS);
+
+  // Weight compounds higher than isolation so the anchor earns the volume.
+  const COMPOUND_WEIGHT = 2;
+  const ISOLATION_WEIGHT = 1;
+  const weightOf = (e) => (e.tier === COMPOUND_TIER ? COMPOUND_WEIGHT : ISOLATION_WEIGHT);
+  const totalWeight = exsInGroup.reduce((s, e) => s + weightOf(e), 0);
+
+  return exsInGroup.map((e) => {
+    const isCompound = e.tier === COMPOUND_TIER;
+    const share = (budget * weightOf(e)) / totalWeight;
+    const rounded = Math.round(share);
+    const lo = isCompound ? COMPOUND_MIN_SETS : ISOLATION_MIN_SETS;
+    const hi = isCompound ? COMPOUND_MAX_SETS : ISOLATION_MAX_SETS;
+    return Math.min(hi, Math.max(lo, rounded));
+  });
 }
 
 /**
@@ -123,7 +181,7 @@ function setsForGroup(big11RoGroup, volumeTargets, exercisesInGroup) {
  * legacy DEFAULT_SESSION_SIZE so cold-start callers stay stable.
  *
  * `weeklySets(group)` is volumeTargets[EN-key] (periodization sets/week, EN
- * keyed — same RO→EN bridge setsForGroup uses). `sessionsTrainingThatGroup`
+ * keyed — same RO→EN bridge sessionSetBudget uses). `sessionsTrainingThatGroup`
  * comes from ctx.weeklySessionsPerGroup (Big-11 RO keyed) computed by the
  * adapter from the frequency template — buildSession stays pure (no globals).
  *
@@ -507,18 +565,31 @@ export function buildSession(cluster, ctx) {
   }
 
   // Set-count from the periodization volume signal (sets/week per group),
-  // distributed across the exercises hitting each group this session. Without
-  // a volumeTargets signal every exercise keeps DEFAULT_SETS (no-op).
-  const groupOf = (name) => getExerciseMetadata(name).muscle_target_primary;
-  const perGroupCount = chosen.reduce((acc, e) => {
+  // distributed across the exercises hitting each group this session with the
+  // PRIMARY COMPOUND weighted higher than isolation (BUG 1 — compound-anchored,
+  // not even-split). Without a volumeTargets signal every exercise keeps
+  // DEFAULT_SETS (no-op). The group's per-session budget uses the REAL
+  // sessions/week frequency (ctx.weeklySessionsPerGroup), not a blind 2.
+  const metaOf = (name) => getExerciseMetadata(name);
+  const groupOf = (name) => metaOf(name).muscle_target_primary;
+  // Bucket the chosen exercises by group (preserving order) so the distribution
+  // sees the whole group at once (compound + isolation together).
+  const byGroup = /** @type {Record<string, Array<{name: string, tier: number}>>} */ ({});
+  for (const e of chosen) {
     const g = groupOf(e.name);
-    acc[g] = (acc[g] || 0) + 1;
-    return acc;
-  }, /** @type {Record<string, number>} */ ({}));
-  let exercises = chosen.map((e) => {
-    const g = groupOf(e.name);
-    return { name: e.name, sets: setsForGroup(g, ctx?.volumeTargets, perGroupCount[g]) };
-  });
+    (byGroup[g] ||= []).push({ name: e.name, tier: metaOf(e.name).tier });
+  }
+  // Per-exercise set count, keyed by name (group distribution applied once).
+  const setsByName = /** @type {Record<string, number>} */ ({});
+  for (const [g, exs] of Object.entries(byGroup)) {
+    const budget = sessionSetBudget(g, ctx?.volumeTargets, ctx?.weeklySessionsPerGroup);
+    const counts = distributeGroupSets(exs, budget);
+    exs.forEach((e, i) => { setsByName[e.name] = counts[i]; });
+  }
+  let exercises = chosen.map((e) => ({
+    name: e.name,
+    sets: setsByName[e.name] ?? DEFAULT_SETS,
+  }));
 
   // Weakness-prioritized ordering is LIVE whenever the pipeline supplies a weak
   // group (the Specialization engine only emits one when its 4-gate eligibility

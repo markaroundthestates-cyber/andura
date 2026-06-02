@@ -120,6 +120,104 @@ describe('buildSession — pure function', () => {
   });
 });
 
+// ── BUG 1 — compound-anchored set distribution ───────────────────────────
+// Root cause: sets were split EVENLY across a group's exercises and the divisor
+// was a hardcoded WEEKLY_FREQUENCY=2 (ignoring the real sessions/week). So a
+// many-exercise compound group starved each lift to 2 while a single-exercise
+// accessory group (one calf / one ab) collected the whole budget and clamped to
+// 5 — accessories out-volumed compounds. Fix: distribute the group budget with
+// the PRIMARY COMPOUND weighted higher, tier-scoped clamps, real frequency.
+describe('buildSession — compound-anchored set distribution (BUG 1)', () => {
+  // A realistic leg day with a periodization volume signal + real frequency.
+  const legVolume = { quads: 12, hamstrings: 10, glutes: 10, calves: 8, abs: 6 };
+  const legFreq = {
+    'picioare-quads': 2, 'picioare-hamstrings': 2, 'fese': 2, 'gambe': 2, 'core': 2,
+  };
+  const legCtx = (over = {}) => ({
+    ...ctx(over),
+    volumeTargets: legVolume,
+    weeklySessionsPerGroup: legFreq,
+    prNames: over.prNames ?? ['Leg Press', 'Leg Extension', 'Leg Curl', 'Romanian Deadlift'],
+  });
+  const setsOf = (session, name) => session.exercises.find((e) => e.name === name)?.sets;
+  const tierOf = (name) => getExerciseMetadata(name).tier;
+
+  it('the primary compound out-volumes an isolation of the SAME group', () => {
+    const s = buildSession('legs', legCtx());
+    const legPress = setsOf(s, 'Leg Press'); // tier 1 quad compound
+    const legExt = setsOf(s, 'Leg Extension'); // tier 2 quad isolation
+    expect(legPress).toBeDefined();
+    expect(legExt).toBeDefined();
+    expect(legPress).toBeGreaterThan(legExt);
+  });
+
+  it('within EVERY group, no isolation carries more sets than a compound of that group', () => {
+    for (let seed = 0; seed < 20; seed++) {
+      const s = buildSession('legs', legCtx({ seed: `dist|${seed}` }));
+      // bucket by group
+      const byGroup = {};
+      for (const e of s.exercises) {
+        const g = getExerciseMetadata(e.name).muscle_target_primary;
+        (byGroup[g] ||= []).push(e);
+      }
+      for (const exs of Object.values(byGroup)) {
+        const compoundMax = Math.max(
+          0, ...exs.filter((e) => tierOf(e.name) === 1).map((e) => e.sets),
+        );
+        const isoMax = Math.max(
+          0, ...exs.filter((e) => tierOf(e.name) !== 1).map((e) => e.sets),
+        );
+        if (compoundMax > 0 && isoMax > 0) {
+          expect(compoundMax).toBeGreaterThanOrEqual(isoMax);
+        }
+      }
+    }
+  });
+
+  it('no single accessory exercise exceeds 4 sets (no 5-set tibialis/garhammer)', () => {
+    for (let seed = 0; seed < 20; seed++) {
+      const s = buildSession('legs', legCtx({ seed: `acc|${seed}` }));
+      for (const e of s.exercises) {
+        // isolation (tier 2/3) is the accessory band — capped at the isolation
+        // ceiling; only a true tier-1 compound may go higher.
+        if (tierOf(e.name) !== 1) {
+          expect(e.sets).toBeLessThanOrEqual(3);
+        }
+      }
+    }
+  });
+
+  it('a multi-exercise compound group is no longer starved to 2 sets each', () => {
+    const s = buildSession('legs', legCtx());
+    expect(setsOf(s, 'Leg Press')).toBeGreaterThanOrEqual(3);
+  });
+
+  it('uses the REAL per-group frequency, not a blind 2 (more sessions → fewer sets/session)', () => {
+    // Same weekly volume, but trained 3x/week vs 1x/week → the 3x session must
+    // carry fewer sets on the compound than the 1x session (budget / freq).
+    const once = buildSession('legs', legCtx({ seed: 'freq' }));
+    // override frequency: quads trained 1x vs 3x
+    const oneX = buildSession('legs', {
+      ...legCtx({ seed: 'freq' }),
+      weeklySessionsPerGroup: { ...legFreq, 'picioare-quads': 1 },
+    });
+    const threeX = buildSession('legs', {
+      ...legCtx({ seed: 'freq' }),
+      weeklySessionsPerGroup: { ...legFreq, 'picioare-quads': 3 },
+    });
+    // 1x → bigger per-session budget → Leg Press at/above the 3x case.
+    expect(setsOf(oneX, 'Leg Press')).toBeGreaterThanOrEqual(setsOf(threeX, 'Leg Press'));
+    expect(setsOf(once, 'Leg Press')).toBeGreaterThan(0);
+  });
+
+  it('no volume signal → every exercise keeps the stable default of 3', () => {
+    // (ctx has no volumeTargets) — the no-op fallback path is preserved.
+    for (const ex of buildSession('legs', ctx()).exercises) {
+      expect(ex.sets).toBe(3);
+    }
+  });
+});
+
 // ── Determinism — same user+day → same selection ─────────────────────────
 
 describe('buildSession — determinism (PR identity)', () => {
