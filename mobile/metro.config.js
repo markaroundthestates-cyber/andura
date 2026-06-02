@@ -8,7 +8,12 @@
 // and the Obsidian vault — crawling all of it timed out Metro's file watcher
 // ("Failed to start watch mode") and left the dependency graph empty. `src/`
 // is bounded source only, so the watcher starts instantly.
+//
+// NativeWind v4 (Wave 2): `withNativeWind` wires the Tailwind CSS pipeline into
+// Metro (compiles `global.css` → RN style objects). Applied last so it wraps the
+// engine-scoped resolver config above.
 const { getDefaultConfig } = require('expo/metro-config');
+const { withNativeWind } = require('nativewind/metro');
 const path = require('path');
 
 const projectRoot = __dirname;                           // .../salafull/mobile
@@ -23,4 +28,4 @@ config.watchFolders = [srcRoot];
 // which would pull conflicting react/react-native versions).
 config.resolver.nodeModulesPaths = [path.resolve(projectRoot, 'node_modules')];
 
-module.exports = config;
+module.exports = withNativeWind(config, { input: './global.css' });

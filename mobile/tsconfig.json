@@ -4,12 +4,15 @@
     "strict": true,
     "allowJs": true,
     "esModuleInterop": true,
+    "module": "esnext",
     "moduleResolution": "bundler"
   },
   "include": [
-    "App.tsx",
     "**/*.ts",
     "**/*.tsx",
+    "nativewind-env.d.ts",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
     "../src/engine/**/*.js"
   ]
 }

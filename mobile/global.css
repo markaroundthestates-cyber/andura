@@ -1,0 +1,6 @@
+/* NativeWind v4 entry — the Tailwind directives Metro compiles into RN styles.
+   Mirrors the web app's Tailwind layer setup; Pulse tokens live in
+   tailwind.config.js theme.extend (no CSS custom props on native). */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
