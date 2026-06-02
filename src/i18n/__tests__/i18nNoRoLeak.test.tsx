@@ -1280,7 +1280,9 @@ describe('Wave F1 i18n — components surface EN-clean under EN locale', () => {
     assertNoRoLeak('ScheduleOverride', text);
     expect(text).toContain("Change today's plan?");
     expect(text).toContain('Easier');
-    expect(text).toContain('Mobility');
+    // Mobility + Cardio options were REMOVED (no dead buttons) — assert a
+    // surviving real option renders EN-clean instead.
+    expect(text).toContain('Different group');
   });
 });
 

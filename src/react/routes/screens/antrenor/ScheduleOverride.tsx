@@ -1,13 +1,23 @@
 // ══ SCHEDULE OVERRIDE — Phase 3 task_07 §C Rewrite Stub → Real ═══════════
-// Per spec §2 C 5-option override picker. Calendar V1 ephemeral override per
-// D-LEGACY-076 — azi only (next Monday resets to original preset per
-// scheduleAdapter). Phase 3 location.state propagation acceptable; Phase 4+
-// wires real scheduleAdapter override commit (CDL append-only log).
+// Per spec §2 C override picker. Calendar V1 ephemeral override per
+// D-LEGACY-076 — azi only (next session resets to original preset per
+// scheduleAdapter). location.state propagation drives WorkoutPreview, which
+// asks the engine for a real alternative session (different-muscle) or rides
+// intensityMod (easier/harder).
 //
-// Map override kind → intensityMod pentru consumer (workout-preview banner):
-//   easier → 'minus' / harder → 'plus' / different-muscle → 'normal'
-//   mobility → 'normal' (low-intensity routine, NU coach reduce — different
-//   semantic, scheduleAdapter routes la mobility template) / cardio → 'normal'
+// NO DEAD BUTTONS (Bugatti) — every visible option does something REAL:
+//   easier → intensityMod 'minus' (WorkoutPreview banner + session context)
+//   harder → intensityMod 'plus'
+//   different-muscle → engine picks the most-recovered ALTERNATIVE cluster
+//     (getTodayWorkout({differentMuscle:true}) → a real different session, today
+//     only, never mutates the persisted schedule)
+//
+// REMOVED 2026-06-02 (pending real templates — conscious gap, not silent loss):
+//   - mobility: no real mobility/stretching routine exists in the engine.
+//   - cardio: aerobic logging is an INLINE Antrenor-tab card (AerobicCoach /
+//     BothModeAerobicCard for aerobic/both training types) — there is no
+//     standalone aerobic route to navigate to. Re-add when a mobility template
+//     and/or a reachable cardio-log route exist.
 //
 // PAR-009 SubHeader consume — mockup andura-clasic.html L1107 sub-header
 // verbatim "Schimbi planul de azi?" sticky top + back-btn. Body h1
@@ -26,7 +36,7 @@ import { SubHeader } from '../../../components/SubHeader';
 import { t } from '../../../../i18n/index.js';
 import type { IntensityMod } from './EnergyCheck';
 
-export type OverrideKind = 'easier' | 'harder' | 'different-muscle' | 'mobility' | 'cardio';
+export type OverrideKind = 'easier' | 'harder' | 'different-muscle';
 
 interface OverrideOption {
   kind: OverrideKind;
@@ -41,8 +51,7 @@ const OVERRIDE_OPTIONS: readonly OverrideOption[] = [
   { kind: 'easier',            labelKey: 'scheduleOverride.options.easierLabel',           descriptionKey: 'scheduleOverride.options.easierDescription' },
   { kind: 'harder',            labelKey: 'scheduleOverride.options.harderLabel',           descriptionKey: 'scheduleOverride.options.harderDescription' },
   { kind: 'different-muscle',  labelKey: 'scheduleOverride.options.differentMuscleLabel',  descriptionKey: 'scheduleOverride.options.differentMuscleDescription' },
-  { kind: 'mobility',          labelKey: 'scheduleOverride.options.mobilityLabel',         descriptionKey: 'scheduleOverride.options.mobilityDescription' },
-  { kind: 'cardio',            labelKey: 'scheduleOverride.options.cardioLabel',           descriptionKey: 'scheduleOverride.options.cardioDescription' },
+  // mobility + cardio REMOVED 2026-06-02 (no dead buttons) — see file header.
 ];
 
 function intensityFor(kind: OverrideKind): IntensityMod {

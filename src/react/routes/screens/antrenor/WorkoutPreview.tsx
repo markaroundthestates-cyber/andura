@@ -36,6 +36,10 @@ import type { IntensityMod } from './EnergyCheck';
 interface WorkoutPreviewLocationState {
   energyLevel?: string;
   intensityMod?: IntensityMod;
+  // ScheduleOverride "Alta grupa" — when 'different-muscle', the preview asks the
+  // engine for the most-recovered ALTERNATIVE cluster (a real different session,
+  // ephemeral today-only). Other override kinds (easier/harder) ride intensityMod.
+  overrideKind?: 'easier' | 'harder' | 'different-muscle';
   cause?: string;
   // U-03 (HIGH) — pain context propagat din PainButton (region + intensity).
   painContext?: { region: string; intensity: 1 | 2 | 3 };
@@ -112,9 +116,11 @@ export function WorkoutPreview(): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
   const setSessionContext = useWorkoutStore((s) => s.setSessionContext);
-  const { intensityMod = 'normal', painContext, equipmentContext } =
+  const { intensityMod = 'normal', overrideKind, painContext, equipmentContext } =
     (location.state as WorkoutPreviewLocationState | null) ?? {};
   const busyCoarseTypes = equipmentContext?.busyCoarseTypes ?? [];
+  // "Different group" override → ask the engine for the alternative session.
+  const wantDifferentMuscle = overrideKind === 'different-muscle';
 
   // Phase 6 task_02 Option C: async getTodayWorkout — useState fallback null
   // while pipeline pending; preview still renders cu hardcoded fallback values
@@ -132,7 +138,7 @@ export function WorkoutPreview(): JSX.Element {
   const [error, setError] = useState<boolean>(false);
   useEffect(() => {
     let cancelled = false;
-    getTodayWorkout()
+    getTodayWorkout(wantDifferentMuscle ? { differentMuscle: true } : {})
       .then((w) => {
         if (!cancelled) {
           setWorkout(w);
@@ -146,7 +152,7 @@ export function WorkoutPreview(): JSX.Element {
         }
       });
     return () => { cancelled = true; };
-  }, []);
+  }, [wantDifferentMuscle]);
   // i18n bridge — same engine fallback sentinel handling as CoachTodayCard.
   // scheduleAdapterAggregate seeds workoutTitle with the non-localized sentinel
   // ENGINE_WORKOUT_TITLE_FALLBACK when the plan has no real title; treat it (and

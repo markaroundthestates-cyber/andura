@@ -76,4 +76,12 @@ export function translateToEngineEquipment(userIds: string[]): string[];
 export function getDailyWorkout(
   userState?: Record<string, unknown>,
   now?: Date,
+  options?: { differentMuscle?: boolean },
 ): Promise<WorkoutPlan | null>;
+
+// "Different group" ephemeral override — pick the most-recovered ALTERNATIVE
+// Big-6 cluster (≠ the scheduled one). Pure; deterministic tie-break.
+export function pickAlternativeCluster(
+  scheduledCluster: string,
+  recoveryState: Record<string, 'recovered' | 'partial' | 'fatigued'>,
+): string;

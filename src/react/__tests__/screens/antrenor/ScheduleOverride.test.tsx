@@ -64,7 +64,7 @@ describe('ScheduleOverride — render', () => {
     expect(screen.getByText(/Doar azi/i)).toBeInTheDocument();
   });
 
-  it('renders 5 override options cu data-override-kind', () => {
+  it('renders 3 override options cu data-override-kind', () => {
     renderOverride();
     expect(screen.getByRole('button', { name: /Mai usor/i })).toHaveAttribute(
       'data-override-kind',
@@ -78,22 +78,23 @@ describe('ScheduleOverride — render', () => {
       'data-override-kind',
       'different-muscle'
     );
-    expect(screen.getByRole('button', { name: /Mobilitate/i })).toHaveAttribute(
-      'data-override-kind',
-      'mobility'
-    );
-    expect(screen.getByRole('button', { name: /Cardio doar/i })).toHaveAttribute(
-      'data-override-kind',
-      'cardio'
-    );
   });
 
   it('renders description copy per option', () => {
     renderOverride();
     expect(screen.getByText(/-20%/)).toBeInTheDocument();
     expect(screen.getByText(/\+15%/)).toBeInTheDocument();
-    expect(screen.getByText(/Stretching/i)).toBeInTheDocument();
-    expect(screen.getByText(/25-40 min/i)).toBeInTheDocument();
+  });
+
+  // No dead buttons (Bugatti) — mobility + cardio were REMOVED (no real mobility
+  // template; aerobic logging is an inline Antrenor-tab card, not a route). The
+  // screen must no longer render them.
+  it('does NOT render removed mobility / cardio options', () => {
+    renderOverride();
+    expect(screen.queryByRole('button', { name: /Mobilitate/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Cardio/i })).toBeNull();
+    expect(screen.queryByText(/Stretching/i)).toBeNull();
+    expect(screen.queryByText(/25-40 min/i)).toBeNull();
   });
 });
 
@@ -115,28 +116,15 @@ describe('ScheduleOverride — intensityMod mapping flow', () => {
     expect(probe.textContent).toContain('"overrideKind":"harder"');
   });
 
-  it('Alta grupa → intensityMod=normal', () => {
+  // "Alta grupa" carries overrideKind=different-muscle (intensityMod stays normal);
+  // WorkoutPreview consumes overrideKind to request a real alternative session from
+  // the engine — it is NOT a dead label anymore.
+  it('Alta grupa → overrideKind=different-muscle (drives the engine alternative)', () => {
     renderOverride();
     fireEvent.click(screen.getByRole('button', { name: /Alta grupa/i }));
     const probe = screen.getByTestId('probe');
     expect(probe.textContent).toContain('"intensityMod":"normal"');
     expect(probe.textContent).toContain('"overrideKind":"different-muscle"');
-  });
-
-  it('Mobilitate → intensityMod=normal + overrideKind=mobility', () => {
-    renderOverride();
-    fireEvent.click(screen.getByRole('button', { name: /Mobilitate/i }));
-    const probe = screen.getByTestId('probe');
-    expect(probe.textContent).toContain('"intensityMod":"normal"');
-    expect(probe.textContent).toContain('"overrideKind":"mobility"');
-  });
-
-  it('Cardio doar → intensityMod=normal + overrideKind=cardio', () => {
-    renderOverride();
-    fireEvent.click(screen.getByRole('button', { name: /Cardio doar/i }));
-    const probe = screen.getByTestId('probe');
-    expect(probe.textContent).toContain('"intensityMod":"normal"');
-    expect(probe.textContent).toContain('"overrideKind":"cardio"');
   });
 });
 

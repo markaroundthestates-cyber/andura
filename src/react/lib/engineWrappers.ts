@@ -390,9 +390,14 @@ export function getWhyExerciseSummary(input: WhyExerciseInput): string | null {
  * Returns null cand calendar rest day OR pipeline hard halt OR engine
  * throws (fail-silent).
  */
-export async function getTodayWorkout(): Promise<PlannedWorkoutOutput | null> {
+export async function getTodayWorkout(
+  options: { differentMuscle?: boolean } = {},
+): Promise<PlannedWorkoutOutput | null> {
   try {
-    const planned = await composePlannedWorkoutToday();
+    // "Different group" ephemeral override (ScheduleOverride "Alta grupa") threaded
+    // through. Default {} → byte-identical to the prior no-arg behavior for every
+    // other consumer (Antrenor / Workout / PostRpe / SessionPill / coachDirector).
+    const planned = await composePlannedWorkoutToday(new Date(), options);
     if (planned === null) return null;
     return applyMmiCapToWorkout(planned);
   } catch (e) {

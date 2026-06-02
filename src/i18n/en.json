@@ -490,11 +490,7 @@
       "harderLabel": "Harder",
       "harderDescription": "Intensity raised +15%",
       "differentMuscleLabel": "Different group",
-      "differentMuscleDescription": "Change today's target",
-      "mobilityLabel": "Mobility",
-      "mobilityDescription": "Stretching + dynamic warm-up",
-      "cardioLabel": "Cardio only",
-      "cardioDescription": "Cardio session 25-40 min"
+      "differentMuscleDescription": "Change today's target"
     }
   },
 

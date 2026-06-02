@@ -12,6 +12,9 @@ import {
   setMissingEquipment,
   frequencyToSplit,
   weeklySessionsPerGroup,
+  pickAlternativeCluster,
+  getCalendarOverride,
+  CALENDAR_OVERRIDE_KEY,
 } from '../scheduleAdapter.js';
 import { getExerciseMetadata } from '../../exerciseLibrary.js';
 import { CLUSTER_BIG6_TO_BIG11_WEIGHT } from '../../periodization/constants.js';
@@ -429,5 +432,68 @@ describe('getDailyWorkout — a lower-body day surfaces over the week (real pipe
     expect(groups.some((g) =>
       ['picioare-quads', 'picioare-hamstrings', 'fese', 'gambe'].includes(g),
     )).toBe(true);
+  });
+});
+
+// ── "Different group" ephemeral override (D-override-different-muscle 2026-06-02) ──
+describe('pickAlternativeCluster — most-recovered alternative (pure)', () => {
+  it('excludes the scheduled cluster (never returns the same one)', () => {
+    expect(pickAlternativeCluster('upper', {})).not.toBe('upper');
+    expect(pickAlternativeCluster('push', {})).not.toBe('push');
+  });
+
+  it('no recovery signal → first non-scheduled cluster in declaration order (stable default)', () => {
+    // PHASE_CLUSTERS_BIG6 = ['push','pull','legs','upper','lower','full'].
+    // scheduled 'upper' → first non-'upper' = 'push'.
+    expect(pickAlternativeCluster('upper', {})).toBe('push');
+    // scheduled 'push' → first non-'push' = 'pull'.
+    expect(pickAlternativeCluster('push', {})).toBe('pull');
+  });
+
+  it('picks the cluster whose groups are the most RECOVERED today', () => {
+    // 'push' groups (piept/umeri/triceps) fatigued, 'pull' groups (spate/biceps/
+    // antebrate) fresh → for a scheduled 'legs' day, 'pull' must win over 'push'.
+    const recoveryState = {
+      piept: 'fatigued', umeri: 'fatigued', triceps: 'fatigued',
+      spate: 'recovered', biceps: 'recovered', antebrate: 'recovered',
+    };
+    expect(pickAlternativeCluster('legs', recoveryState)).toBe('pull');
+  });
+
+  it('is deterministic (same inputs → same output)', () => {
+    const state = { piept: 'partial', spate: 'recovered' };
+    expect(pickAlternativeCluster('legs', state)).toBe(pickAlternativeCluster('legs', state));
+  });
+});
+
+describe('getDailyWorkout — "Different group" override (real alternative session)', () => {
+  it('different-muscle → a DIFFERENT session type than today\'s scheduled one', async () => {
+    // Monday default split → scheduled UPPER. The override must surface a real
+    // alternative cluster (≠ UPPER) — not a relabel of the same session.
+    const scheduled = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
+    const alternative = await getDailyWorkout(
+      buildUserState(), MONDAY_2026_05_18, { differentMuscle: true });
+    expect(scheduled).not.toBeNull();
+    expect(alternative).not.toBeNull();
+    expect(scheduled.sessionType).toBe('UPPER');
+    expect(alternative.sessionType).not.toBe(scheduled.sessionType);
+    expect(alternative.type).toBe('training');
+  });
+
+  it('is EPHEMERAL — never writes the persisted calendar override', async () => {
+    localStorage.removeItem(CALENDAR_OVERRIDE_KEY);
+    await getDailyWorkout(buildUserState(), MONDAY_2026_05_18, { differentMuscle: true });
+    // The weekly schedule (calendar override storage) is untouched — today-only.
+    expect(localStorage.getItem(CALENDAR_OVERRIDE_KEY)).toBeNull();
+    expect(getCalendarOverride(MONDAY_2026_05_18)).toBeNull();
+  });
+
+  it('default (no option) → byte-identical to the prior scheduled session', async () => {
+    const a = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
+    const b = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18, {});
+    expect(a).not.toBeNull();
+    expect(b).not.toBeNull();
+    expect(b.sessionType).toBe(a.sessionType);
+    expect(b.exercises.map((e) => e.name)).toEqual(a.exercises.map((e) => e.name));
   });
 });

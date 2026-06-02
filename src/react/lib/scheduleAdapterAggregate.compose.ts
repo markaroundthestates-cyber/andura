@@ -472,10 +472,14 @@ export function trimSessionToTimeBudget(
  */
 export async function composePlannedWorkoutToday(
   now: Date = new Date(),
+  options: { differentMuscle?: boolean } = {},
 ): Promise<PlannedWorkoutOutput | null> {
   try {
     const userState = buildUserStateForPipeline();
-    const plan = await getDailyWorkout(userState, now);
+    // "Different group" ephemeral override threaded into the engine (the engine
+    // swaps today's scheduled cluster for the most-recovered alternative, in-memory
+    // only). Default {} → byte-identical to the prior single-arg behavior.
+    const plan = await getDailyWorkout(userState, now, options);
     if (plan === null) return null;
     // RO onboarding experience → EN engine bucket once (cold-start weight
     // scaling). RO strings never reach the engine (CRIT C1 map above).

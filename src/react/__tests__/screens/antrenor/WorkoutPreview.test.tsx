@@ -43,6 +43,7 @@ function renderPreview(
     intensityMod?: 'plus' | 'normal' | 'minus';
     cause?: string;
     painContext?: { region: string; intensity: 1 | 2 | 3 };
+    overrideKind?: 'easier' | 'harder' | 'different-muscle';
   }
 ) {
   return render(
@@ -108,6 +109,35 @@ describe('WorkoutPreview — base render', () => {
     const quote = screen.getByTestId('preview-coach-line');
     expect(quote).toBeInTheDocument();
     expect(quote.textContent?.length).toBeGreaterThan(0);
+  });
+});
+
+describe('WorkoutPreview — "Different group" override (ScheduleOverride wiring)', () => {
+  beforeEach(() => {
+    vi.mocked(engineWrappers.getTodayWorkout).mockClear();
+  });
+
+  it('overrideKind=different-muscle → asks the engine for the alternative session', async () => {
+    // The dead-button fix: "Alta grupa" must request a REAL alternative cluster.
+    // WorkoutPreview threads { differentMuscle: true } into getTodayWorkout.
+    renderPreview({ overrideKind: 'different-muscle' });
+    await waitFor(() =>
+      expect(engineWrappers.getTodayWorkout).toHaveBeenCalledWith({ differentMuscle: true }),
+    );
+  });
+
+  it('no overrideKind → engine called WITHOUT the override (default session)', async () => {
+    renderPreview();
+    await waitFor(() =>
+      expect(engineWrappers.getTodayWorkout).toHaveBeenCalledWith({}),
+    );
+  });
+
+  it('easier/harder override → NOT a different-muscle request (rides intensityMod)', async () => {
+    renderPreview({ overrideKind: 'easier', intensityMod: 'minus' });
+    await waitFor(() =>
+      expect(engineWrappers.getTodayWorkout).toHaveBeenCalledWith({}),
+    );
   });
 });
 
