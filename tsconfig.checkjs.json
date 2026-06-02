@@ -15,6 +15,7 @@
     "src/constants.d.ts"
   ],
   "exclude": [
+    "src/**/*.native.js",
     "src/util/__tests__/**",
     "src/util/tests/**",
     "src/migrations/__tests__/**",
