@@ -106,6 +106,73 @@ export function withAlpha(color: string, alpha: number): string {
   return color;
 }
 
+// ── STATUS + SURFACE tokens (PULSE DARK) ────────────────────────────────────
+// The banner/alert/rest-card surfaces in the Antrenor tab key off the web's
+// --status-* / --surface-* CSS vars (global.css [data-theme="dark"] L224-247).
+// RN has no CSS vars, so the dark-theme values are captured statically here.
+export const status = {
+  dangerBg: '#2e1410',
+  dangerBorder: '#5c2820',
+  dangerText: '#ff9580',
+  neutralBg: '#1a2030',
+  neutralBorder: '#333b52',
+  neutralText: '#c4cae0',
+  infoBg: '#0e2030',
+  infoBorder: '#1f3b52',
+  infoText: '#8fd4e8',
+} as const;
+
+/** Elevated/nested glass fill (global.css [data-theme="dark"] L224-225). RN has
+ *  no backdrop-filter, so the alpha is dropped to an opaque approximation that
+ *  reads as the elevated surface on the dark paper. */
+export const surface = {
+  base: '#181d2e', //  --surface  rgba(24,29,46,0.72) → opaque
+  s2: '#21273c', //    --surface-2 rgba(33,39,60,0.78) → opaque
+} as const;
+
+// ── varColor(cssVar) ────────────────────────────────────────────────────────
+// The shared web components carry accent colors as CSS-var strings (e.g.
+// `color="var(--aqua)"`, `style={{ color: 'var(--volt)' }}`). RN cannot read
+// CSS vars, so the ported screens map those var strings to the static Pulse
+// DARK hex. Single source so every Antrenor component resolves identically.
+const VAR_MAP: Record<string, string> = {
+  '--volt': accent.volt,
+  '--volt-deep': accent.voltDeep,
+  '--aqua': accent.aqua,
+  '--aqua-deep': accent.aquaDeep,
+  '--aqua-ink': dark.aquaInk,
+  '--ember': accent.ember,
+  '--ember-deep': accent.emberDeep,
+  '--ember-red': accent.emberRed,
+  '--ember-ink': dark.emberInk,
+  '--violet': accent.violet,
+  '--gold': accent.gold,
+  '--brick': dark.brick,
+  '--olive': dark.olive,
+  '--deep': dark.deep,
+  '--ink': dark.ink,
+  '--ink-2': dark.ink2,
+  '--ink-3': dark.ink3,
+  '--on-accent': dark.onAccent,
+  '--line': dark.line,
+  '--line-strong': dark.lineStrong,
+  '--paper': dark.paper,
+  '--paper-2': dark.paper2,
+  '--surface': surface.base,
+  '--surface-2': surface.s2,
+  '--status-neutral-text': status.neutralText,
+  '--status-danger-text': status.dangerText,
+};
+
+/** Resolve a web CSS-var color string to its Pulse DARK hex. Accepts either a
+ *  bare token name (`--aqua`) or the `var(--aqua)` wrapper. Returns the input
+ *  unchanged when it is already a literal color (best effort; never throws). */
+export function varColor(cssVar: string): string {
+  const m = cssVar.match(/^var\((--[\w-]+)\)$/);
+  const key = m?.[1] ?? cssVar;
+  return VAR_MAP[key] ?? cssVar;
+}
+
 export const radius = { DEFAULT: 22, sm: 14 } as const;
 
 export const fontFamily = {
