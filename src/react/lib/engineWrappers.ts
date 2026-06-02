@@ -116,6 +116,8 @@ export type {
   ProactiveAlertSeverity,
   CoachRestReason,
   CoachTodayQuote,
+  CoachAdaptation,
+  CoachAdaptationKind,
 } from './engineWrappers.types';
 // Nutrition / kcal coherence + AUTO phase (public surface):
 export { resolveActivePhase, getAutoDetectedPhaseLabelRo } from './engineWrappers.nutrition';

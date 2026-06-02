@@ -12,7 +12,7 @@ import { getDailyWorkout } from '../../engine/schedule/scheduleAdapter.js';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { COMPOUND_EX } from '../../constants.js';
-import type { PlannedExercise, PlannedWorkoutOutput } from './engineWrappers';
+import type { PlannedExercise, PlannedWorkoutOutput, CoachAdaptation } from './engineWrappers';
 import { toExerciseDisplay } from './exerciseDisplay';
 import { DP } from '../../engine/dp.js';
 import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
@@ -579,6 +579,12 @@ export async function composePlannedWorkoutToday(
       exercises,
       volumeKg: volumeKg ?? plan.volumeKg ?? 0,
       warmup,
+      // Coach Voice — pass the engine's structured adaptations log through to the
+      // CoachTodayCard composer (coachInsight). Tokens only; never copy. Defaults
+      // to [] when a (pre-this-feature) plan shape omits it.
+      coachAdaptations: Array.isArray((plan as { coachAdaptations?: CoachAdaptation[] }).coachAdaptations)
+        ? (plan as { coachAdaptations?: CoachAdaptation[] }).coachAdaptations!
+        : [],
     };
   } catch (e) {
     logger.warn('[scheduleAdapterAggregate] composePlannedWorkoutToday failed:', e);

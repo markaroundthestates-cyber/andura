@@ -37,6 +37,8 @@ import { todTs } from '../../../db.js';
 import type { PlannedWorkoutOutput } from '../../lib/engineWrappers';
 import * as engineWrappers from '../../lib/engineWrappers';
 import { coachPick } from '../../lib/coachVoice';
+import { composeCoachInsight } from '../../lib/coachInsight';
+import { Sparkles } from 'lucide-react';
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../lib/scheduleAdapterAggregate';
 import { gotoPath } from '../../lib/navigation';
 import { useWorkoutStore } from '../../stores/workoutStore';
@@ -154,6 +156,20 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     }
   }, []);
 
+  // Coach Voice — the daily "why" line. ONE plain-language sentence synthesizing
+  // the adaptations the engine actually applied to TODAY's plan (recovery cut /
+  // weakness amp / imbalance fix / deload), surfaced ABOVE the Start CTA as the
+  // first thing the user reads. composeCoachInsight returns null when NOTHING
+  // adapted → the line renders nothing (graceful, no filler). Memoized on the
+  // engine adaptations log carried by the workout prop.
+  const coachWhyLine = useMemo<string | null>(() => {
+    try {
+      return composeCoachInsight(workout?.coachAdaptations);
+    } catch {
+      return null;
+    }
+  }, [workout?.coachAdaptations]);
+
   // START-side double-session guard (counterpart to the PostRpe finish-side
   // confirm shipped dc9400d6). When a gym session is already logged TODAY we
   // must NOT show the normal "Start session" button — an accidental tap would
@@ -240,6 +256,24 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
           {intensityLabel}
         </span>
       </div>
+      {coachWhyLine && (
+        /* Coach Voice — the daily "why" line. Rendered ABOVE the Start CTA as
+           the first thing the user reads when the brain adapted today's plan.
+           Subtle volt sparkle affordance + mono kicker, consistent with the
+           card's Pulse ink tones. Hidden entirely when the composer returns null
+           (nothing adapted). */
+        <div
+          data-testid="coach-why-line"
+          className="relative flex items-start gap-2 mt-3.5 text-sm leading-relaxed text-ink2"
+        >
+          <Sparkles
+            className="w-4 h-4 mt-0.5 shrink-0"
+            aria-hidden="true"
+            style={{ color: 'var(--volt)' }}
+          />
+          <span>{coachWhyLine}</span>
+        </div>
+      )}
       {todaySession ? (
         /* A gym session is already logged TODAY → the normal start CTA is
            replaced by a "Session logged" state. Tapping it reveals two

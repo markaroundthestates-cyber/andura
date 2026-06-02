@@ -247,6 +247,17 @@
     "laggingSignal": "{group} sub-volum {weeks} sapt - focus azi pe sesiune."
   },
 
+  "coachInsight": {
+    "combine": "{primary} {secondary}",
+    "clause": {
+      "deload": "Saptamana asta e mai usoara intentionat - ti-am programat un deload.",
+      "recoveryCut": "Am redus azi din {group} - inca isi revine de la ultima sesiune.",
+      "recoveryCutAerobic": "Am redus azi din {group} - cardio-ul recent inca se simte acolo.",
+      "weaknessAmp": "Impingem mai mult pe {group} - a ramas in urma.",
+      "imbalanceFix": "Adaugam volum pe {group} ca sa echilibram corpul."
+    }
+  },
+
   "restOverlay": {
     "ariaLabel": "Pauza activa",
     "kicker": "Pauza",

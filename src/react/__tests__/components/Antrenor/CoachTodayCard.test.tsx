@@ -13,11 +13,38 @@ import { MemoryRouter } from 'react-router-dom';
 import { CoachTodayCard } from '../../../components/Antrenor/CoachTodayCard';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import * as engineWrappers from '../../../lib/engineWrappers';
+import type { PlannedWorkoutOutput, CoachAdaptation } from '../../../lib/engineWrappers';
 
 function renderCard(onStart: () => void = () => {}) {
   return render(
     <MemoryRouter>
       <CoachTodayCard onStart={onStart} workout={null} />
+    </MemoryRouter>,
+  );
+}
+
+// Minimal PlannedWorkoutOutput carrying a coachAdaptations log (only the fields
+// the card reads matter; the rest take defaults via the card's ?? fallbacks).
+function workoutWith(coachAdaptations: CoachAdaptation[]): PlannedWorkoutOutput {
+  return {
+    workoutTitle: '__engine_workout_title_fallback__',
+    sessionType: 'PUSH',
+    exerciseCount: 5,
+    estimatedDuration: 48,
+    intensityMod: 'normal',
+    exercises: [],
+    volumeKg: 0,
+    coachAdaptations,
+  };
+}
+
+function renderCardWithWorkout(
+  coachAdaptations: CoachAdaptation[],
+  onStart: () => void = () => {},
+) {
+  return render(
+    <MemoryRouter>
+      <CoachTodayCard onStart={onStart} workout={workoutWith(coachAdaptations)} />
     </MemoryRouter>,
   );
 }
@@ -135,6 +162,49 @@ describe('CoachTodayCard — MED-CODE-20 coachQuote refresh deps', () => {
     ).toBeInTheDocument();
     // Verify spy called at least twice (mount + post-setState).
     expect(spy.mock.calls.length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+// Coach Voice — the daily "why" line renders ABOVE the Start CTA when the
+// adaptive brain adapted today's plan, and is HIDDEN entirely when nothing
+// adapted (graceful, no filler). The line text is composed from the engine's
+// coachAdaptations log carried by the workout prop.
+describe('CoachTodayCard — Coach Voice daily why line', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(engineWrappers, 'getCoachTodayQuote').mockReturnValue(null);
+    vi.spyOn(engineWrappers, 'getLaggingSignal').mockReturnValue(null);
+    useWorkoutStore.setState({ sessionsHistory: [] });
+  });
+
+  it('renders the why line when an adaptation happened today', () => {
+    renderCardWithWorkout([
+      { kind: 'recovery-cut', group: 'piept', cause: 'resistance' },
+    ]);
+    const line = screen.getByTestId('coach-why-line');
+    expect(line).toBeInTheDocument();
+    // EN default — the composed sentence names the group + its reason.
+    expect(line.textContent).toMatch(/chest/i);
+    expect(line.textContent).toMatch(/recovering/i);
+  });
+
+  it('renders NOTHING when no adaptation happened (empty log)', () => {
+    renderCardWithWorkout([]);
+    expect(screen.queryByTestId('coach-why-line')).not.toBeInTheDocument();
+  });
+
+  it('renders NOTHING when the workout prop is null (cold start / loading)', () => {
+    renderCard();
+    expect(screen.queryByTestId('coach-why-line')).not.toBeInTheDocument();
+  });
+
+  it('the why line sits ABOVE the Start CTA in DOM order', () => {
+    const { container } = renderCardWithWorkout([{ kind: 'deload' }]);
+    const line = screen.getByTestId('coach-why-line');
+    const cta = screen.getByText('Start session');
+    // compareDocumentPosition: FOLLOWING (4) means cta comes after the line.
+    expect(line.compareDocumentPosition(cta) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    void container;
   });
 });
 

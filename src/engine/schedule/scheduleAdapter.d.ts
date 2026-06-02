@@ -18,6 +18,20 @@ export interface CalendarOverride {
   committedAt: string;
 }
 
+export type CoachAdaptationKind =
+  | 'recovery-cut'
+  | 'weakness-amp'
+  | 'imbalance-fix'
+  | 'deload';
+
+export interface CoachAdaptation {
+  kind: CoachAdaptationKind;
+  // Big-11 RO group key (piept / picioare-quads / ...) — absent for 'deload'.
+  group?: string;
+  // recovery-cut origin: a recent aerobic class vs a heavy resistance session.
+  cause?: 'aerobic' | 'resistance';
+}
+
 export interface WorkoutPlan {
   type: 'training';
   sessionType: string;
@@ -28,6 +42,10 @@ export interface WorkoutPlan {
   restTimeRange: readonly [number, number] | null;
   specializationTarget: string | null;
   deloadState: string;
+  // Coach Voice — structured adaptations log (machine tokens, no copy). Empty
+  // array when nothing adapted this session. Optional in the type so pre-feature
+  // plan-shape fixtures stay valid (additive); getDailyWorkout always emits it.
+  coachAdaptations?: CoachAdaptation[];
   estimatedDurationMin: number;
   volumeKg: number;
   workoutTitle: string;

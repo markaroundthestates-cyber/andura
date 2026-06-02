@@ -31,9 +31,14 @@ import { availableCoarseTypes } from '../equipmentMap.js';
 import {
   CLUSTER_BIG6_TO_BIG11_WEIGHT,
   BIG11_RO_TO_EN_MAP,
+  BIG11_EN_TO_RO_MAP,
   ISRAETEL_BASELINES,
 } from '../periodization/constants.js';
-import { getLaggingMuscles } from '../muscleRecovery.js';
+import {
+  getLaggingMuscles,
+  getRecoveryByGroup,
+  mergeAerobicRecovery,
+} from '../muscleRecovery.js';
 import { detectImbalances, applyImbalanceCorrection } from '../imbalanceDetector.js';
 import {
   toCanonicalRO,
@@ -660,6 +665,99 @@ function applyRecoveryToVolumeBudget(volumeMapEN, logs, now, aerobicSessions) {
   return toCanonicalEN(adjustedRo);
 }
 
+// ── Coach Voice: structured adaptations log (the moat made felt) ──────────
+// The adaptive brain (M1 recovery cut, M2 weakness amp, M3 imbalance fix,
+// deload) silently shapes the plan; the user sees only the result. This derives
+// a STRUCTURED, machine-readable log of what ACTUALLY changed this session —
+// NO copy strings (the React composer turns tokens → a localized sentence;
+// engines never emit Romanian copy, i18n leak harness forbids it). Truth-only:
+// every entry maps to a real budget delta this run (compare the SAME maps the
+// plan was built from), zero fabrication. Empty array when nothing adapted →
+// the React side renders no line (graceful).
+//
+// Each entry: { kind, group?, cause? } where group is a Big-11 RO key (the
+// vocabulary getLaggingMuscles / weakGroups use), cause is the recovery-cut
+// origin ('aerobic' | 'resistance'). Tolerance guards float noise so a 0.0001
+// rounding drift is never reported as a change.
+const ADAPT_EPSILON = 0.01;
+
+/**
+ * Derive the structured coach-adaptations log from the SAME maps the plan was
+ * built from. Pure — no recompute of the math, only a diff of what changed.
+ *
+ * @param {object} args
+ * @param {Object<string, number>|null} args.baseTargets - pre-adaptation EN budget (periodization)
+ * @param {Object<string, number>|null} args.amplifiedTargets - post weakness-amp (M2) EN budget
+ * @param {Object<string, number>|null} args.balancedTargets - post imbalance-fix (M3) EN budget
+ * @param {Object<string, number>|null} args.recoveredTargets - post recovery-cut (M1) EN budget (final)
+ * @param {{[group:string]: 'recovered'|'partial'|'fatigued'}} args.resistanceState - RO recovery state (resistance only)
+ * @param {{[group:string]: 'recovered'|'partial'|'fatigued'}} args.mergedState - RO recovery state (resistance + aerobic)
+ * @param {boolean} args.deloadActive - true when an ACTIVE deload modifier is in play
+ * @returns {Array<{kind: 'recovery-cut'|'weakness-amp'|'imbalance-fix'|'deload', group?: string, cause?: 'aerobic'|'resistance'}>}
+ */
+function deriveCoachAdaptations({
+  baseTargets,
+  amplifiedTargets,
+  balancedTargets,
+  recoveredTargets,
+  resistanceState,
+  mergedState,
+  deloadActive,
+}) {
+  /** @type {Array<{kind: string, group?: string, cause?: string}>} */
+  const out = [];
+
+  // Deload — the highest-salience signal (whole-week lighter on purpose).
+  if (deloadActive) out.push({ kind: 'deload' });
+
+  // Recovery cut (M1) — groups whose FINAL budget dropped below the balanced
+  // budget. Cause = aerobic when the resistance-only state for that group was
+  // 'recovered' but the merged state (with recent cardio) raised it (so the cut
+  // is owed to a class, e.g. spinning), else resistance.
+  if (balancedTargets && recoveredTargets) {
+    // recoveredTargets is EN-keyed (toCanonicalEN output) — read by EN key.
+    for (const [enKey, balanced] of Object.entries(balancedTargets)) {
+      const cut = recoveredTargets[enKey];
+      if (typeof balanced !== 'number' || typeof cut !== 'number') continue;
+      if (cut < balanced - ADAPT_EPSILON) {
+        const roGroup = BIG11_EN_TO_RO_MAP[enKey] ?? enKey;
+        const resistance = resistanceState[roGroup] ?? 'recovered';
+        const merged = mergedState[roGroup] ?? 'recovered';
+        const cause = resistance === 'recovered' && merged !== 'recovered'
+          ? 'aerobic'
+          : 'resistance';
+        out.push({ kind: 'recovery-cut', group: roGroup, cause });
+      }
+    }
+  }
+
+  // Weakness amplification (M2) — groups whose budget was raised above the
+  // base periodization budget toward MRV.
+  if (baseTargets && amplifiedTargets) {
+    for (const [enKey, amp] of Object.entries(amplifiedTargets)) {
+      const base = baseTargets[enKey];
+      if (typeof base !== 'number' || typeof amp !== 'number') continue;
+      if (amp > base + ADAPT_EPSILON) {
+        out.push({ kind: 'weakness-amp', group: BIG11_EN_TO_RO_MAP[enKey] ?? enKey });
+      }
+    }
+  }
+
+  // Imbalance correction (M3) — groups raised above the amplified budget to
+  // close an antagonist/pattern imbalance.
+  if (amplifiedTargets && balancedTargets) {
+    for (const [enKey, balanced] of Object.entries(balancedTargets)) {
+      const amp = amplifiedTargets[enKey];
+      if (typeof amp !== 'number' || typeof balanced !== 'number') continue;
+      if (balanced > amp + ADAPT_EPSILON) {
+        out.push({ kind: 'imbalance-fix', group: BIG11_EN_TO_RO_MAP[enKey] ?? enKey });
+      }
+    }
+  }
+
+  return out;
+}
+
 /**
  * Compose today's workout plan — invoke 8-engine pipeline §42.10 sequential
  * strict + aggregate blueprints by engine id + delegate exercise selection
@@ -829,6 +927,34 @@ export async function getDailyWorkout(userState, now = new Date()) {
     aerobicSessions,
   );
 
+  // Coach Voice — derive the structured adaptations log from the SAME maps the
+  // plan was built from (zero recompute of the math, only a diff of deltas). The
+  // recovery STATES (resistance-only vs merged-with-aerobic) drive the
+  // recovery-cut cause attribution (a spin class vs a heavy session). Both
+  // recompute cheaply + deterministically under the same clock the plan used.
+  const resistanceState =
+    recoveryLogs.length > 0 ? getRecoveryByGroup(recoveryLogs, undefined, date.getTime()) : {};
+  const mergedState = aerobicSessions
+    ? mergeAerobicRecovery(resistanceState, aerobicSessions, date.getTime())
+    : resistanceState;
+  // ACTIVE deload = any non-zero intensity modifier (mirrors the React-side
+  // hasActiveDeload check in scheduleAdapterAggregate.compose: the IDLE blueprint
+  // emits a zero modifier, every real deload state — SCHEDULED_LINEAR /
+  // REACTIVE_* — a non-zero one).
+  const deloadMod = blueprints.deload?.intensity_modifier ?? null;
+  const deloadActive =
+    deloadMod !== null &&
+    ((deloadMod.rir_increment ?? 0) > 0 || (deloadMod.intensity_pct_decrement ?? 0) > 0);
+  const coachAdaptations = deriveCoachAdaptations({
+    baseTargets: baseVolumeTargets,
+    amplifiedTargets,
+    balancedTargets,
+    recoveredTargets: volumeTargets,
+    resistanceState,
+    mergedState,
+    deloadActive,
+  });
+
   const sessionCtx = {
     equipment: { available: availableCoarse },
     weakGroups,
@@ -862,6 +988,10 @@ export async function getDailyWorkout(userState, now = new Date()) {
     restTimeRange: blueprints.goalAdaptation?.rest_time_modifier ?? null,
     specializationTarget,
     deloadState: blueprints.deload?.deload_state ?? 'IDLE',
+    // Coach Voice — structured, machine-readable adaptations log (the React side
+    // synthesizes one plain-language coach line from it). ADDITIVE field; empty
+    // array when nothing adapted this session. NO copy strings — tokens only.
+    coachAdaptations,
     estimatedDurationMin: 50,
     volumeKg: 0,
     // Non-localized fallback SENTINEL (NOT user copy). The React render

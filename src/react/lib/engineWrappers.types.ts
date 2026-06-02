@@ -94,6 +94,24 @@ export interface PlannedExercise {
   bwFraction?: number;
 }
 
+// Coach Voice — structured, machine-readable record of an adaptation the
+// adaptive brain applied to TODAY's plan. Emitted by the engine (getDailyWorkout);
+// the React composer (coachInsight) turns the log into ONE localized coach line.
+// NO copy strings — tokens only (kind/group/cause); the engine never emits RO copy.
+export type CoachAdaptationKind =
+  | 'recovery-cut'
+  | 'weakness-amp'
+  | 'imbalance-fix'
+  | 'deload';
+
+export interface CoachAdaptation {
+  kind: CoachAdaptationKind;
+  // Big-11 RO group key (piept / spate / picioare-quads / ...) — absent for 'deload'.
+  group?: string;
+  // recovery-cut origin: a recent aerobic class vs a heavy resistance session.
+  cause?: 'aerobic' | 'resistance';
+}
+
 export interface PlannedWorkoutOutput {
   workoutTitle: string;
   // Engine session-type tag (PUSH / PULL / UPPER_PICIOARE / UMERI_BRATE /
@@ -114,6 +132,10 @@ export interface PlannedWorkoutOutput {
   // entire output; never reaches this field). Consumer WorkoutPreview renders
   // warmup row only when non-null per mockup andura-clasic.html#L935 FIX 1.
   warmup?: { line: string; durationMin: number } | null;
+  // Coach Voice — the adaptive brain's structured adaptations for TODAY (tokens,
+  // not copy). The CoachTodayCard composer (coachInsight) turns it into one
+  // plain-language coach line. Empty array / absent → no line (graceful).
+  coachAdaptations?: CoachAdaptation[];
 }
 
 export interface WhyExerciseInput {

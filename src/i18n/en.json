@@ -247,6 +247,17 @@
     "laggingSignal": "{group} undervolume {weeks} wks — focus on it today."
   },
 
+  "coachInsight": {
+    "combine": "{primary} {secondary}",
+    "clause": {
+      "deload": "This week is lighter on purpose — you're due a deload.",
+      "recoveryCut": "Lighter on your {group} today — it's still recovering from your last session.",
+      "recoveryCutAerobic": "Lighter on your {group} today — your recent cardio is still in your legs.",
+      "weaknessAmp": "Pushing your {group} harder — it's been lagging behind.",
+      "imbalanceFix": "Adding volume to your {group} to balance you out."
+    }
+  },
+
   "restOverlay": {
     "ariaLabel": "Active rest",
     "kicker": "Rest",
