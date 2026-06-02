@@ -287,6 +287,10 @@
     "sessionTitle": {
       "PUSH": "Push (piept si umeri)",
       "PULL": "Pull (spate si biceps)",
+      "LEGS": "Picioare",
+      "LOWER": "Picioare",
+      "UPPER": "Partea de sus",
+      "FULL": "Corp complet",
       "UPPER_PICIOARE": "Picioare",
       "UMERI_BRATE": "Umeri si brate",
       "FULL_UPPER": "Trunchi complet",

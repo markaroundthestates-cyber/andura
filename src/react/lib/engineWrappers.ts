@@ -128,6 +128,12 @@ export { applyMmiCapToWorkout } from './engineWrappers.mmi';
 const SESSION_TYPE_KEYS = new Set([
   'PUSH',
   'PULL',
+  // Volume-driven frequency split (2026-06-02) cluster tags:
+  'LEGS',
+  'LOWER',
+  'UPPER',
+  'FULL',
+  // Legacy absolute-weekday tags (kept for back-compat resolution):
   'UPPER_PICIOARE',
   'UMERI_BRATE',
   'FULL_UPPER',

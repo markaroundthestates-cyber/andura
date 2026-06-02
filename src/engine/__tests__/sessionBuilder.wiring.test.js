@@ -54,25 +54,31 @@ describe('buildSession — set-count driven by periodization (LIVE)', () => {
       .toBeLessThan(load.meta.volume_target_pct.chest);
 
     const loadSession = buildSession(
-      'PUSH', baseCtx({ volumeTargets: load.meta.volume_target_pct }));
+      'push', baseCtx({ volumeTargets: load.meta.volume_target_pct }));
     const deloadSession = buildSession(
-      'PUSH', baseCtx({ volumeTargets: deload.meta.volume_target_pct }));
+      'push', baseCtx({ volumeTargets: deload.meta.volume_target_pct }));
 
-    // Same selection (same seed) — only the engine-derived sets change.
-    expect(deloadSession.exercises.map((e) => e.name))
-      .toEqual(loadSession.exercises.map((e) => e.name));
+    // Volume-driven program: a DELOAD week cuts the weekly budget, so BOTH the
+    // per-exercise set counts AND the session SIZE drop (fewer exercises). Same
+    // seed → deterministic selection ORDER, so the (smaller) DELOAD list is a
+    // prefix of the LOAD list — never a different set of movements.
+    const loadNames = loadSession.exercises.map((e) => e.name);
+    const deloadNames = deloadSession.exercises.map((e) => e.name);
+    expect(deloadNames.length).toBeLessThanOrEqual(loadNames.length);
+    expect(loadNames.slice(0, deloadNames.length)).toEqual(deloadNames);
+    // The real win: fewer total prescribed sets under deload.
     expect(totalSets(deloadSession)).toBeLessThan(totalSets(loadSession));
   });
 
   it('no volumeTargets signal -> every exercise keeps the default 3 (fallback)', () => {
-    const session = buildSession('PUSH', baseCtx());
+    const session = buildSession('push', baseCtx());
     for (const ex of session.exercises) expect(ex.sets).toBe(3);
   });
 
   it('per-exercise sets stay within the sane [2,5] clamp under real targets', async () => {
     const load = await evaluatePeriodization(userAt(0));
     const session = buildSession(
-      'PUSH', baseCtx({ volumeTargets: load.meta.volume_target_pct }));
+      'push', baseCtx({ volumeTargets: load.meta.volume_target_pct }));
     for (const ex of session.exercises) {
       expect(ex.sets).toBeGreaterThanOrEqual(2);
       expect(ex.sets).toBeLessThanOrEqual(5);
@@ -86,21 +92,21 @@ describe('buildSession — weakness selection bias (LIVE)', () => {
   it('a weak Big-11 group gets MORE exercises than the same group at baseline', () => {
     // 'umeri' is a PUSH target. Flag it weak -> pool fills umeri first, so it
     // wins extra slots within the SESSION_SIZE cap.
-    const base = buildSession('PUSH', baseCtx());
-    const weak = buildSession('PUSH', baseCtx({ weakGroups: ['umeri'] }));
+    const base = buildSession('push', baseCtx());
+    const weak = buildSession('push', baseCtx({ weakGroups: ['umeri'] }));
     expect(countGroup(weak, 'umeri')).toBeGreaterThan(countGroup(base, 'umeri'));
   });
 
   it('weak-group exercises occupy the first 2 positions of the session', () => {
-    const weak = buildSession('PUSH', baseCtx({ weakGroups: ['umeri'] }));
+    const weak = buildSession('push', baseCtx({ weakGroups: ['umeri'] }));
     const firstTwoGroups = weak.exercises.slice(0, 2).map((e) => groupOf(e.name));
     expect(firstTwoGroups).toContain('umeri');
   });
 
   it('weak group absent from the session leaves selection unbiased', () => {
     // picioare-quads is not a PUSH target -> no change vs baseline.
-    const base = buildSession('PUSH', baseCtx());
-    const weak = buildSession('PUSH', baseCtx({ weakGroups: ['picioare-quads'] }));
+    const base = buildSession('push', baseCtx());
+    const weak = buildSession('push', baseCtx({ weakGroups: ['picioare-quads'] }));
     expect(weak.exercises.map((e) => e.name))
       .toEqual(base.exercises.map((e) => e.name));
   });
@@ -108,8 +114,8 @@ describe('buildSession — weakness selection bias (LIVE)', () => {
   it('weakness bias feeds the real Specialization target vocabulary (Big-11 RO)', () => {
     // The live caller passes specialization target_muscle_group (Big-11 RO) as
     // weakGroups. 'spate' is a PULL target -> must gain volume when weak.
-    const base = buildSession('PULL', baseCtx());
-    const weak = buildSession('PULL', baseCtx({ weakGroups: ['spate'] }));
+    const base = buildSession('pull', baseCtx());
+    const weak = buildSession('pull', baseCtx({ weakGroups: ['spate'] }));
     expect(countGroup(weak, 'spate')).toBeGreaterThanOrEqual(countGroup(base, 'spate'));
     const firstTwo = weak.exercises.slice(0, 2).map((e) => groupOf(e.name));
     expect(firstTwo).toContain('spate');

@@ -5,6 +5,13 @@
  * by muscle group, filters on COARSE equipment_type + tier, and is deterministic
  * (seeded). Tests below cover the new contract: determinism, PR-anchoring, tier
  * filtering, equipment-constrained pools, plus weakness ordering on Big-11 groups.
+ *
+ * Volume-driven program (2026-06-02): buildSession's first param is now a Big-6
+ * CLUSTER id (push/pull/legs/upper/lower/full) whose target groups + slot bias
+ * come from CLUSTER_BIG6_TO_BIG11_WEIGHT — replacing the old uppercase session-
+ * type tags. The exercise count now falls out of the weekly volume budget
+ * (volumeTargets + weeklySessionsPerGroup), clamped [4,8], so without a volume
+ * signal it keeps the legacy ~6-exercise default.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -17,7 +24,10 @@ const allEquip = ['barbell', 'dumbbell', 'machine', 'cable', 'band'];
 const ctx = (over = {}) => ({
   equipment: { available: over.available ?? allEquip },
   weakGroups: over.weakGroups ?? [],
-  profileTier: over.profileTier ?? 'T2',
+  // Preserve an EXPLICIT null (the "conservative / no profile" case) — `??` would
+  // coerce null → 'T2' and silently mask the null-tier skill gate. Only default
+  // to T2 when the key is entirely absent.
+  profileTier: 'profileTier' in over ? over.profileTier : 'T2',
   prNames: over.prNames ?? [],
   seed: over.seed ?? 'user-1|2026-05-25|0',
 });
@@ -25,12 +35,12 @@ const ctx = (over = {}) => ({
 // ── buildSession — pure function, 657-pool selection ─────────────────────
 
 describe('buildSession — pure function', () => {
-  it('returns correct type field for PUSH', () => {
-    expect(buildSession('PUSH', ctx()).type).toBe('PUSH');
+  it('returns correct type field for the push cluster', () => {
+    expect(buildSession('push', ctx()).type).toBe('push');
   });
 
-  it('PUSH session targets chest/shoulder/triceps groups', () => {
-    const session = buildSession('PUSH', ctx());
+  it('push cluster targets chest/shoulder/triceps groups', () => {
+    const session = buildSession('push', ctx());
     const groups = session.exercises.map(
       (e) => getExerciseMetadata(e.name).muscle_target_primary,
     );
@@ -40,35 +50,37 @@ describe('buildSession — pure function', () => {
     expect(session.exercises.length).toBeGreaterThan(0);
   });
 
-  it('PULL session targets back/biceps groups only', () => {
-    const session = buildSession('PULL', ctx());
+  it('pull cluster targets back/biceps/forearm groups only', () => {
+    const session = buildSession('pull', ctx());
     const groups = session.exercises.map(
       (e) => getExerciseMetadata(e.name).muscle_target_primary,
     );
     for (const g of groups) {
-      expect(['spate', 'biceps']).toContain(g);
+      // pull cluster = spate (0.50) / biceps (0.30) / antebrate (0.20).
+      expect(['spate', 'biceps', 'antebrate']).toContain(g);
     }
   });
 
-  it('unknown type falls back to FULL_UPPER targets', () => {
+  it('unknown cluster falls back to the full-body cluster targets', () => {
     const session = buildSession('UNKNOWN_TYPE', ctx());
     expect(session.type).toBe('UNKNOWN_TYPE');
     expect(session.exercises.length).toBeGreaterThan(0);
   });
 
-  it('selects ~6 exercises per session', () => {
-    expect(buildSession('PUSH', ctx()).exercises.length).toBe(6);
-    expect(buildSession('PULL', ctx()).exercises.length).toBe(6);
+  it('selects ~6 exercises with no volume signal (legacy default)', () => {
+    // No volumeTargets in ctx → DEFAULT_SESSION_SIZE (6) preserved.
+    expect(buildSession('push', ctx()).exercises.length).toBe(6);
+    expect(buildSession('pull', ctx()).exercises.length).toBe(6);
   });
 
   it('each exercise has sets defaulting to 3', () => {
-    for (const ex of buildSession('PULL', ctx()).exercises) {
+    for (const ex of buildSession('pull', ctx()).exercises) {
       expect(ex.sets).toBe(3);
     }
   });
 
   it('includes at least one T1 compound on the primary group', () => {
-    const session = buildSession('PUSH', ctx());
+    const session = buildSession('push', ctx());
     const tiers = session.exercises.map((e) => getExerciseMetadata(e.name).tier);
     expect(tiers).toContain(1);
   });
@@ -77,11 +89,33 @@ describe('buildSession — pure function', () => {
   // is always available, so a session is still produced (clean seam for WP-5
   // substitution rather than a crash / empty list).
   it('missing ctx.equipment yields a bodyweight-only session (not empty)', () => {
-    const session = buildSession('PUSH', {});
-    expect(session.type).toBe('PUSH');
+    const session = buildSession('push', {});
+    expect(session.type).toBe('push');
     expect(session.exercises.length).toBeGreaterThan(0);
     for (const ex of session.exercises) {
       expect(getExerciseMetadata(ex.name).equipment_type).toBe('bodyweight');
+    }
+  });
+
+  // ── Volume-driven count (replaces the old fixed SESSION_SIZE=6) ──────────
+  it('exercise count is volume-driven (varies with the weekly budget, not always 6)', () => {
+    // A high weekly volume on every group of the cluster → count climbs above 6
+    // (up to the [4,8] clamp). A low budget shrinks it below 6. Same seed →
+    // selection identity stable; only the count moves with the budget.
+    const high = buildSession('push', ctx({}));
+    // attach a generous volume signal so the budget drives more slots.
+    const ctxVol = (vt, freq) => ({ ...ctx(), volumeTargets: vt, weeklySessionsPerGroup: freq });
+    const big = buildSession('push', ctxVol(
+      { chest: 18, shoulders: 18, triceps: 18 }, { piept: 1, umeri: 1, triceps: 1 },
+    ));
+    const small = buildSession('push', ctxVol(
+      { chest: 6, shoulders: 6, triceps: 6 }, { piept: 2, umeri: 2, triceps: 2 },
+    ));
+    expect(big.exercises.length).toBeGreaterThan(small.exercises.length);
+    // Both within the sane [4,8] clamp.
+    for (const s of [high, big, small]) {
+      expect(s.exercises.length).toBeGreaterThanOrEqual(4);
+      expect(s.exercises.length).toBeLessThanOrEqual(8);
     }
   });
 });
@@ -90,14 +124,14 @@ describe('buildSession — pure function', () => {
 
 describe('buildSession — determinism (PR identity)', () => {
   it('same seed → identical selection across calls', () => {
-    const a = buildSession('PUSH', ctx({ seed: 'u|d|0' }));
-    const b = buildSession('PUSH', ctx({ seed: 'u|d|0' }));
+    const a = buildSession('push', ctx({ seed: 'u|d|0' }));
+    const b = buildSession('push', ctx({ seed: 'u|d|0' }));
     expect(a.exercises).toEqual(b.exercises);
   });
 
   it('different seed → may differ but stays within target groups', () => {
-    const a = buildSession('PUSH', ctx({ seed: 'u|d|0' }));
-    const b = buildSession('PUSH', ctx({ seed: 'u|d|1' }));
+    const a = buildSession('push', ctx({ seed: 'u|d|0' }));
+    const b = buildSession('push', ctx({ seed: 'u|d|1' }));
     // Both valid PUSH sessions; identity stable per seed regardless of equality.
     for (const session of [a, b]) {
       for (const e of session.exercises) {
@@ -116,7 +150,7 @@ describe('buildSession — PR anchoring', () => {
   it('prefers known engine anchor names over arbitrary 657 names', () => {
     // With full equipment + advanced tier, the chest/shoulder/triceps anchors
     // (Incline DB Press, DB Shoulder Press, Lateral Raises, etc.) should win.
-    const names = buildSession('PUSH', ctx()).exercises.map((e) => e.name);
+    const names = buildSession('push', ctx()).exercises.map((e) => e.name);
     const anchors = [
       'Incline DB Press', 'Flat DB Press', 'DB Shoulder Press',
       'Lateral Raises', 'Pushdown', 'Overhead Triceps',
@@ -128,14 +162,14 @@ describe('buildSession — PR anchoring', () => {
     // Cable Curl carries PR history → must appear in a PULL session that has a
     // biceps slot, ahead of other biceps isolation candidates.
     const names = buildSession(
-      'PULL',
+      'pull',
       ctx({ prNames: ['Cable Curl'] }),
     ).exercises.map((e) => e.name);
     expect(names).toContain('Cable Curl');
   });
 
   it('Leg Press (anchor) selected for a quad-targeting session', () => {
-    const names = buildSession('LEGS', ctx()).exercises.map((e) => e.name);
+    const names = buildSession('legs', ctx()).exercises.map((e) => e.name);
     expect(names).toContain('Leg Press');
   });
 });
@@ -144,7 +178,7 @@ describe('buildSession — PR anchoring', () => {
 
 describe('buildSession — tier filtering', () => {
   it('T0 beginner never selects T3 accessories', () => {
-    const session = buildSession('PUSH', ctx({ profileTier: 'T0' }));
+    const session = buildSession('push', ctx({ profileTier: 'T0' }));
     for (const ex of session.exercises) {
       expect(getExerciseMetadata(ex.name).tier).toBeLessThanOrEqual(2);
     }
@@ -156,17 +190,17 @@ describe('buildSession — tier filtering', () => {
     // stays capped at T2. Same seed → deterministic, comparable.
     const constrained = { available: ['band'], seed: 'tier-probe' };
     const advTiers = buildSession(
-      'PUSH', ctx({ ...constrained, profileTier: 'T2' }),
+      'push', ctx({ ...constrained, profileTier: 'T2' }),
     ).exercises.map((e) => getExerciseMetadata(e.name).tier);
     const begTiers = buildSession(
-      'PUSH', ctx({ ...constrained, profileTier: 'T0' }),
+      'push', ctx({ ...constrained, profileTier: 'T0' }),
     ).exercises.map((e) => getExerciseMetadata(e.name).tier);
     expect(advTiers).toContain(3);
     expect(Math.max(...begTiers)).toBeLessThanOrEqual(2);
   });
 
   it('null tier is conservative (no T3)', () => {
-    const session = buildSession('PUSH', ctx({ profileTier: null }));
+    const session = buildSession('push', ctx({ profileTier: null }));
     for (const ex of session.exercises) {
       expect(getExerciseMetadata(ex.name).tier).toBeLessThanOrEqual(2);
     }
@@ -177,7 +211,7 @@ describe('buildSession — tier filtering', () => {
 
 describe('buildSession — equipment-constrained pool', () => {
   it('dumbbell-only → every non-bodyweight pick is a dumbbell exercise', () => {
-    const session = buildSession('PUSH', ctx({ available: ['dumbbell'] }));
+    const session = buildSession('push', ctx({ available: ['dumbbell'] }));
     for (const ex of session.exercises) {
       const type = getExerciseMetadata(ex.name).equipment_type;
       expect(['dumbbell', 'bodyweight']).toContain(type);
@@ -186,14 +220,14 @@ describe('buildSession — equipment-constrained pool', () => {
 
   it('cable removed → no cable exercise selected', () => {
     const avail = ['barbell', 'dumbbell', 'machine', 'band'];
-    const session = buildSession('PULL', ctx({ available: avail }));
+    const session = buildSession('pull', ctx({ available: avail }));
     for (const ex of session.exercises) {
       expect(getExerciseMetadata(ex.name).equipment_type).not.toBe('cable');
     }
   });
 
   it('bodyweight is always allowed even when no equipment available', () => {
-    const session = buildSession('PUSH', ctx({ available: [] }));
+    const session = buildSession('push', ctx({ available: [] }));
     expect(session.exercises.length).toBeGreaterThan(0);
     for (const ex of session.exercises) {
       expect(getExerciseMetadata(ex.name).equipment_type).toBe('bodyweight');
@@ -264,7 +298,7 @@ describe('prioritizeWeakGroups — weakness ordering', () => {
 //   T0 -> beginner only · T1 -> up to intermediate · T2+ -> advanced allowed.
 
 describe('buildSession — skill capability gate', () => {
-  const TYPES = ['PUSH', 'PULL', 'LEGS', 'UMERI_BRATE', 'UPPER_PICIOARE', 'FULL_UPPER'];
+  const TYPES = ['push', 'pull', 'legs', 'upper', 'lower', 'full'];
 
   it('T0 beginner NEVER receives an advanced movement (all session types, many seeds)', () => {
     for (const type of TYPES) {
@@ -385,7 +419,7 @@ describe('equipment snapping — barbell stack (audit CR-01)', () => {
 });
 
 describe('buildSession — BUG 5 movement dedup', () => {
-  const TYPES = ['PUSH', 'PULL', 'LEGS', 'UMERI_BRATE', 'UPPER_PICIOARE', 'FULL_UPPER'];
+  const TYPES = ['push', 'pull', 'legs', 'upper', 'lower', 'full'];
 
   it('never selects two exercises of the same movement (all types, many seeds)', () => {
     for (const type of TYPES) {
@@ -403,7 +437,7 @@ describe('buildSession — BUG 5 movement dedup', () => {
     // Scoped to the chest (piept) muscle: a chest fly + a rear-delt fly (umeri)
     // are legitimately DIFFERENT movements, so we count only same-muscle flyes.
     for (let s = 0; s < 60; s++) {
-      const session = buildSession('PUSH', ctx({ seed: `bug5-fly|${s}` }));
+      const session = buildSession('push', ctx({ seed: `bug5-fly|${s}` }));
       const chestFlyes = session.exercises.filter(
         (e) =>
           /fly/i.test(e.name) &&

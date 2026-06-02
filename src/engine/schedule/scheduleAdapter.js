@@ -28,6 +28,7 @@ import {
 } from '../../coach/orchestrator/adapters/index.js';
 import { buildSession } from '../sessionBuilder.js';
 import { availableCoarseTypes } from '../equipmentMap.js';
+import { CLUSTER_BIG6_TO_BIG11_WEIGHT } from '../periodization/constants.js';
 
 export const CALENDAR_OVERRIDE_KEY = 'wv2-calendar-override';
 export const MISSING_EQUIPMENT_KEY = 'wv2-missing-equipment';
@@ -372,20 +373,137 @@ export function translateToEngineEquipment(userIds) {
   return [...out];
 }
 
-// ── Daily workout pipeline consumer (Phase 6 task_01) ────────────────────
-// Day-of-week → session type V1 deterministic mapping per mockup convention
-// (L=Push, M=Pull, M2=Picioare, J=Umeri/brate, V=Full Upper, S=Push, D=Pull).
-// Engine pipeline blueprint outputs orthogonal — session type drives only
-// sessionBuilder exercise template selection (delegated downstream).
-const DAY_TO_SESSION_TYPE = Object.freeze([
-  'PUSH',           // L (0)
-  'PULL',           // M (1)
-  'UPPER_PICIOARE', // M2 (2)
-  'UMERI_BRATE',    // J (3)
-  'FULL_UPPER',     // V (4)
-  'PUSH',           // S (5)
-  'PULL',           // D (6)
-]);
+// ── Frequency-based split (D-volume-driven program 2026-06-02) ───────────
+// The program is VOLUME-DRIVEN: the user's Nth active training day maps to the
+// Nth cluster of a frequency-appropriate template — NOT to the absolute weekday.
+// The old DAY_TO_SESSION_TYPE absolute-weekday map surfaced legs only on
+// Wednesday and never reached glutes/calves; this maps active-day position →
+// cluster so a Lower/Legs/Full day exists at every frequency and every Big-11
+// group (incl. fese/gambe) is reachable.
+//
+// Templates (ordered clusters, lowercase = CLUSTER_BIG6_TO_BIG11_WEIGHT keys).
+// 3 → Full×3 (Daniel choice: better frequency, legs every session). Indexed 1..7.
+const FREQUENCY_SPLITS = Object.freeze({
+  1: Object.freeze(['full']),
+  2: Object.freeze(['upper', 'lower']),
+  3: Object.freeze(['full', 'full', 'full']),
+  4: Object.freeze(['upper', 'lower', 'upper', 'lower']),
+  5: Object.freeze(['upper', 'lower', 'push', 'pull', 'legs']),
+  6: Object.freeze(['push', 'pull', 'legs', 'upper', 'lower', 'full']),
+  7: Object.freeze(['push', 'pull', 'legs', 'upper', 'lower', 'full', 'full']),
+});
+
+/**
+ * Ordered cluster template for N training days/week. Pure + unit-testable. N is
+ * clamped to [1,7] (0 active days → the 1-day Full template defensively, but the
+ * caller gates rest days separately). Returns a fresh array copy.
+ *
+ * @param {number} n - active training days that week
+ * @returns {string[]} ordered Big-6 cluster ids
+ */
+export function frequencyToSplit(n) {
+  const clamped = Math.min(7, Math.max(1, Number.isFinite(n) ? Math.round(n) : 1));
+  return [...(FREQUENCY_SPLITS[clamped] || FREQUENCY_SPLITS[1])];
+}
+
+// Cluster id → uppercase session-type title tag (the OUTPUT field consumers
+// resolve to a localized title via engineWrappers.resolveSessionTitle). legs and
+// lower both surface as a lower-body "Picioare" title; full/upper get their own.
+const CLUSTER_TO_SESSION_TAG = Object.freeze({
+  push: 'PUSH',
+  pull: 'PULL',
+  legs: 'LEGS',
+  lower: 'LOWER',
+  upper: 'UPPER',
+  full: 'FULL',
+});
+
+// Engine-side mirror of scheduleStore.defaultWeekForFrequency: derive the 7-day
+// active/rest tuple from the onboarding `frequency` ('2'..'5') when no calendar
+// override exists. Returns an array of 7 booleans (true = active training day).
+// Spacing matches the store exactly so the engine + UI agree on which weekdays
+// are training days. Unknown/missing frequency → the store DEFAULT_WEEK pattern.
+const FREQUENCY_DEFAULT_WEEK = Object.freeze({
+  '2': Object.freeze([true, false, false, true, false, false, false]),       // L, J
+  '3': Object.freeze([true, false, true, false, true, false, false]),        // L, Mi, V
+  '4': Object.freeze([true, true, false, true, true, false, false]),         // L, Ma, J, V
+  '5': Object.freeze([true, true, true, false, true, true, false]),          // L, Ma, Mi, V, S
+});
+// Store DEFAULT_WEEK fallback: L, Mi, V, S active (4 days).
+const DEFAULT_ACTIVE_WEEK = Object.freeze([true, false, true, false, true, true, false]);
+
+/**
+ * Active-day boolean tuple (length 7, Monday=0) for a frequency string.
+ * @param {string|null|undefined} frequency - onboarding frequency ('2'..'5')
+ * @returns {ReadonlyArray<boolean>}
+ */
+function activeWeekForFrequency(frequency) {
+  return FREQUENCY_DEFAULT_WEEK[String(frequency)] || DEFAULT_ACTIVE_WEEK;
+}
+
+/**
+ * Active-day boolean tuple from a calendar override's selectedDays (active flag),
+ * or null when the override is absent/malformed (caller then falls back to
+ * frequency). Length-7 padded (missing/short → inactive tail).
+ * @param {{selectedDays?: Array<{active?: boolean}>}|null|undefined} override
+ * @returns {boolean[]|null}
+ */
+function activeWeekFromOverride(override) {
+  if (!override || !Array.isArray(override.selectedDays)) return null;
+  const out = [];
+  for (let i = 0; i < 7; i++) {
+    const cfg = override.selectedDays[i];
+    out.push(!!(cfg && cfg.active !== false && cfg.active !== undefined ? cfg.active : false));
+  }
+  return out;
+}
+
+/**
+ * Resolve the cluster for a given weekday index from an active-day week +
+ * frequency split. The cluster is template[ position-of-dayIdx-among-active ].
+ * When dayIdx is not itself active (no override gating it), position = the count
+ * of active days strictly before it (where it would slot) — keeps a deterministic
+ * cluster for any queried day without returning null (rest-day null is gated
+ * separately by the override only, per unchanged behavior).
+ *
+ * @param {ReadonlyArray<boolean>} activeWeek - length-7 active flags (Monday=0)
+ * @param {number} dayIdx - 0..6
+ * @returns {string} cluster id
+ */
+function clusterForDay(activeWeek, dayIdx) {
+  const activeIdxs = [];
+  for (let i = 0; i < 7; i++) if (activeWeek[i]) activeIdxs.push(i);
+  const n = activeIdxs.length;
+  const split = frequencyToSplit(n > 0 ? n : 1);
+  const pos = activeIdxs.indexOf(dayIdx);
+  // dayIdx active → its ordinal position; otherwise slot by active-days-before-it.
+  const position = pos >= 0
+    ? pos
+    : activeIdxs.filter((i) => i < dayIdx).length;
+  return split[Math.min(position, split.length - 1)];
+}
+
+/**
+ * How many sessions in the week's split train each Big-11 RO group — the
+ * per-group weekly frequency the volume budget is divided by (buildSession reads
+ * it as ctx.weeklySessionsPerGroup). Derived purely from the frequency template
+ * + CLUSTER_BIG6_TO_BIG11_WEIGHT (a cluster "trains" a group when that group is
+ * a key of the cluster's weight map). Pure.
+ *
+ * @param {string[]} split - the week's ordered cluster ids
+ * @returns {Record<string, number>} Big-11 RO group -> sessions/week
+ */
+export function weeklySessionsPerGroup(split) {
+  const counts = {};
+  for (const cluster of split) {
+    const weights = CLUSTER_BIG6_TO_BIG11_WEIGHT[cluster];
+    if (!weights) continue;
+    for (const group of Object.keys(weights)) {
+      counts[group] = (counts[group] || 0) + 1;
+    }
+  }
+  return counts;
+}
 
 /**
  * Compose today's workout plan — invoke 8-engine pipeline §42.10 sequential
@@ -468,11 +586,19 @@ export async function getDailyWorkout(userState, now = new Date()) {
     }
   }
 
-  // sessionBuilder ctx: coarse equipment + weak groups derived from
-  // Specialization target_muscle_group (single-element list for prioritization)
-  // + tier (persona/experience) + a per-user+day seed so the 657-pool selection
-  // is DETERMINISTIC (stable across renders, varies by day — PR identity).
-  const sessionType = DAY_TO_SESSION_TYPE[dayIdx] || 'FULL_UPPER';
+  // Frequency-based split: resolve the active-day week (override edge first, else
+  // derive from onboarding frequency threaded via userState.user.frequency) and
+  // map the queried day's ordinal-among-active-days → the Nth cluster of the
+  // frequency-appropriate template. cluster drives BOTH selection (buildSession)
+  // and the per-group weekly frequency the volume budget is divided across.
+  const activeWeek =
+    activeWeekFromOverride(override) ?? activeWeekForFrequency(userState?.user?.frequency);
+  const cluster = clusterForDay(activeWeek, dayIdx);
+  const split = frequencyToSplit(activeWeek.filter(Boolean).length || 1);
+  const sessionsPerGroup = weeklySessionsPerGroup(split);
+  // OUTPUT session-type tag (uppercase) for the localized title boundary — kept
+  // SEPARATE from the cluster id buildSession consumes.
+  const sessionType = CLUSTER_TO_SESSION_TAG[cluster] || 'FULL';
   const specializationTarget = blueprints.specialization?.target_muscle_group ?? null;
   const userId = userState?.user?.uid ?? userState?.uid ?? '';
   const seed = `${userId}|${getWeekStartIso(date)}|${dayIdx}`;
@@ -485,9 +611,12 @@ export async function getDailyWorkout(userState, now = new Date()) {
     // Periodization volume signal (sets/week per Big-11 group, varies by
     // mesocycle phase) — drives per-exercise set counts in buildSession.
     volumeTargets: blueprints.periodization?.volume_target_pct ?? null,
+    // Per-group weekly session frequency from the split — buildSession divides
+    // the weekly volume budget by it to size the session (count + set counts).
+    weeklySessionsPerGroup: sessionsPerGroup,
   };
 
-  const session = buildSession(sessionType, sessionCtx);
+  const session = buildSession(cluster, sessionCtx);
 
   return {
     type: 'training',

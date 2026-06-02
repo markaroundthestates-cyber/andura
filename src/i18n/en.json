@@ -287,6 +287,10 @@
     "sessionTitle": {
       "PUSH": "Push (chest and shoulders)",
       "PULL": "Pull (back and biceps)",
+      "LEGS": "Legs",
+      "LOWER": "Legs",
+      "UPPER": "Upper body",
+      "FULL": "Full body",
       "UPPER_PICIOARE": "Legs",
       "UMERI_BRATE": "Shoulders and arms",
       "FULL_UPPER": "Full upper",

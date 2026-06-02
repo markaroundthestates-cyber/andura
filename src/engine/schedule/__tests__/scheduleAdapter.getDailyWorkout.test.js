@@ -10,8 +10,11 @@ import {
   getDailyWorkout,
   commitCalendarEdit,
   setMissingEquipment,
+  frequencyToSplit,
+  weeklySessionsPerGroup,
 } from '../scheduleAdapter.js';
 import { getExerciseMetadata } from '../../exerciseLibrary.js';
+import { CLUSTER_BIG6_TO_BIG11_WEIGHT } from '../../periodization/constants.js';
 
 const TUESDAY_2026_05_19 = new Date(2026, 4, 19); // dayIdx 1 (M)
 const MONDAY_2026_05_18 = new Date(2026, 4, 18);  // dayIdx 0 (L)
@@ -90,11 +93,10 @@ describe('scheduleAdapter — getDailyWorkout pipeline consumer', () => {
   it('set-count is periodization-driven end-to-end (DELOAD week < LOAD week)', async () => {
     // LIVE-PROOF the full pipeline feeds periodization volume_target_pct into
     // sessionBuilder set counts. weeksElapsed 0 -> LOAD; weeksElapsed 3 ->
-    // mesocycle week 4 = DELOAD (-45% volume). Monday is a PUSH day whose
-    // chest/shoulder weekly targets sit above the per-exercise floor, so the
-    // -45% deload cut is observable (PULL groups can floor-clamp in both
-    // phases, masking the delta — chest/shoulders do not). Same day = same
-    // selection, so only the engine-derived sets move.
+    // mesocycle week 4 = DELOAD (-45% volume). Monday is an UPPER day (default
+    // 4-day split) whose chest/back/shoulder weekly targets sit above the
+    // per-exercise floor, so the -45% deload cut is observable in the TOTAL
+    // prescribed sets (DELOAD drops both per-exercise sets and session size).
     const sumSets = (plan) => plan.exercises.reduce((a, e) => a + e.sets, 0);
     const load = await getDailyWorkout(
       buildUserState({ meta: { weeksElapsed: 0 } }), MONDAY_2026_05_18);
@@ -145,13 +147,22 @@ describe('scheduleAdapter — getDailyWorkout pipeline consumer', () => {
     expect(plan.workoutTitle).toBe('__engine_workout_title_fallback__');
   });
 
-  it('sessionType derives from day-of-week deterministically', async () => {
+  it('sessionType derives from the frequency split deterministically', async () => {
+    // No calendar override + no user.frequency → engine derives the default
+    // active week (L, Mi, V, S = 4 days) → 4-day split ['upper','lower','upper',
+    // 'lower']. Monday (idx0, 1st active) → 'upper'→UPPER; Tuesday (idx1, not
+    // active, slots after 1 active day) → 'lower'→LOWER. Deterministic per day.
     const planMon = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
     const planTue = await getDailyWorkout(buildUserState(), TUESDAY_2026_05_19);
     expect(planMon).not.toBeNull();
     expect(planTue).not.toBeNull();
-    expect(planMon.sessionType).toBe('PUSH');     // L (0)
-    expect(planTue.sessionType).toBe('PULL');     // M (1)
+    expect(planMon.sessionType).toBe('UPPER');
+    expect(planTue.sessionType).toBe('LOWER');
+    // Same day → same plan (determinism invariant).
+    const planMon2 = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
+    expect(planMon2.sessionType).toBe('UPPER');
+    expect(planMon2.exercises.map((e) => e.name))
+      .toEqual(planMon.exercises.map((e) => e.name));
   });
 
   it('empty userState → defensive defaults, pipeline still completes', async () => {
@@ -211,5 +222,117 @@ describe('scheduleAdapter — getDailyWorkout pipeline consumer', () => {
     vi.spyOn(orchestratorModule, 'runPipeline').mockRejectedValueOnce(new Error('boom'));
     const plan = await getDailyWorkout(buildUserState(), TUESDAY_2026_05_19);
     expect(plan).toBeNull();
+  });
+});
+
+// ── frequencyToSplit — pure helper (volume-driven program 2026-06-02) ─────
+describe('frequencyToSplit — frequency-appropriate cluster template', () => {
+  // Daniel-LOCKED templates. The real win each must satisfy: a lower-body day
+  // (legs/lower/full — full trains every group incl. fese/gambe) exists at EVERY
+  // frequency, so legs/glutes/calves are NEVER orphaned the way the old absolute-
+  // weekday map orphaned them (legs only Wednesday, glutes/calves never).
+  const LOWER_CLUSTERS = new Set(['legs', 'lower', 'full']);
+
+  it('returns the exact LOCKED template per frequency', () => {
+    expect(frequencyToSplit(1)).toEqual(['full']);
+    expect(frequencyToSplit(2)).toEqual(['upper', 'lower']);
+    expect(frequencyToSplit(3)).toEqual(['full', 'full', 'full']);
+    expect(frequencyToSplit(4)).toEqual(['upper', 'lower', 'upper', 'lower']);
+    expect(frequencyToSplit(5)).toEqual(['upper', 'lower', 'push', 'pull', 'legs']);
+    expect(frequencyToSplit(6)).toEqual(['push', 'pull', 'legs', 'upper', 'lower', 'full']);
+    expect(frequencyToSplit(7)).toEqual(['push', 'pull', 'legs', 'upper', 'lower', 'full', 'full']);
+  });
+
+  it('every frequency template includes at least one lower-body day', () => {
+    for (let n = 1; n <= 7; n++) {
+      const split = frequencyToSplit(n);
+      expect(split.length).toBe(n);
+      expect(split.some((c) => LOWER_CLUSTERS.has(c))).toBe(true);
+    }
+  });
+
+  it('clamps out-of-range / non-finite N to [1,7]', () => {
+    expect(frequencyToSplit(0)).toEqual(['full']);
+    expect(frequencyToSplit(99)).toEqual(frequencyToSplit(7));
+    expect(frequencyToSplit(NaN)).toEqual(['full']);
+    expect(frequencyToSplit(3.4)).toEqual(['full', 'full', 'full']); // rounds to 3
+  });
+
+  it('returns a fresh array (callers cannot mutate the template)', () => {
+    const a = frequencyToSplit(4);
+    a.push('mutated');
+    expect(frequencyToSplit(4)).toEqual(['upper', 'lower', 'upper', 'lower']);
+  });
+});
+
+// ── weeklySessionsPerGroup — glutes + calves are reachable ────────────────
+describe('weeklySessionsPerGroup — every Big-11 group reachable across a week', () => {
+  it('glutes (fese) + calves (gambe) ARE trained at every frequency with a lower day', () => {
+    // The old bug: glutes/calves were NEVER programmed. Now a lower-body cluster
+    // (legs/lower/full) carries fese + gambe (CLUSTER_BIG6_TO_BIG11_WEIGHT), so
+    // the week's split trains them whenever it has a lower day — i.e. always.
+    for (let n = 1; n <= 7; n++) {
+      const per = weeklySessionsPerGroup(frequencyToSplit(n));
+      expect(per.fese).toBeGreaterThan(0);
+      expect(per.gambe).toBeGreaterThan(0);
+    }
+  });
+
+  it('counts how many sessions train each group (derived from cluster weight keys)', () => {
+    // 4-day split = upper,lower,upper,lower. piept appears in upper (×2); the
+    // quads group appears in lower (×2).
+    const per = weeklySessionsPerGroup(['upper', 'lower', 'upper', 'lower']);
+    expect(per.piept).toBe(2);
+    expect(per['picioare-quads']).toBe(2);
+    // A group only in lower is not counted for the upper days.
+    expect(per.gambe).toBe(2);
+  });
+
+  it('ignores unknown cluster ids defensively', () => {
+    expect(weeklySessionsPerGroup(['nope', 'full'])).toEqual(
+      Object.fromEntries(Object.keys(CLUSTER_BIG6_TO_BIG11_WEIGHT.full).map((g) => [g, 1])),
+    );
+  });
+});
+
+// ── Leg day guaranteed end-to-end (real pipeline, glutes/calves reachable) ─
+describe('getDailyWorkout — a lower-body day surfaces over the week (real pipeline)', () => {
+  // Walk the default-active week (L, Mi, V, S) and assert at least one day is a
+  // lower-body session AND that the union of prescribed groups reaches fese/gambe.
+  const WEEK = [
+    new Date(2026, 4, 18), // Mon
+    new Date(2026, 4, 20), // Wed
+    new Date(2026, 4, 22), // Fri
+    new Date(2026, 4, 23), // Sat
+  ];
+  it('the week contains a Lower/Legs day and reaches glutes + calves', async () => {
+    const tags = [];
+    const groupsSeen = new Set();
+    for (const day of WEEK) {
+      const plan = await getDailyWorkout(buildUserState(), day);
+      expect(plan).not.toBeNull();
+      tags.push(plan.sessionType);
+      for (const ex of plan.exercises) {
+        groupsSeen.add(getExerciseMetadata(ex.name).muscle_target_primary);
+      }
+    }
+    // 4-day split → upper,lower,upper,lower → at least one LOWER day exists.
+    expect(tags).toContain('LOWER');
+    // glutes (fese) + calves (gambe) are actually programmed across the week.
+    expect(groupsSeen.has('fese')).toBe(true);
+    expect(groupsSeen.has('gambe')).toBe(true);
+  });
+
+  it('a 3-day user gets Full×3 — legs every session (frequency wired via userState)', async () => {
+    const u3 = buildUserState({ user: { gender: 'M', age: 30, frequency: '3' } });
+    // freq '3' → active L, Mi, V → split full,full,full. Every day trains legs.
+    const mon = await getDailyWorkout(u3, new Date(2026, 4, 18)); // L (1st active)
+    expect(mon).not.toBeNull();
+    expect(mon.sessionType).toBe('FULL');
+    const groups = mon.exercises.map((e) => getExerciseMetadata(e.name).muscle_target_primary);
+    // Full body reaches at least one lower-body group in the session.
+    expect(groups.some((g) =>
+      ['picioare-quads', 'picioare-hamstrings', 'fese', 'gambe'].includes(g),
+    )).toBe(true);
   });
 });

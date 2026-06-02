@@ -33,6 +33,9 @@ export interface WorkoutPlan {
   workoutTitle: string;
 }
 
+export function frequencyToSplit(n: number): string[];
+export function weeklySessionsPerGroup(split: string[]): Record<string, number>;
+
 export function mapDateToIndex(date: Date): number;
 export function getWeekStartIso(date: Date): string;
 export function getCalendarOverride(now?: Date): CalendarOverride | null;

@@ -9,19 +9,32 @@
 // keep continuity (the 18/21 names that exist verbatim as library keys).
 
 import { EXERCISE_METADATA, getExerciseMetadata } from './exerciseLibrary.js';
-import { BIG11_RO_TO_EN_MAP } from './periodization/constants.js';
+import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT } from './periodization/constants.js';
 
-// Session type -> Big-11 canonical RO muscle groups (library muscle_target_primary).
-// Replaces the hardcoded EXERCISES_BY_TYPE name table. Primary group(s) first =
-// where the T1 compound anchor lands.
-const SESSION_TYPE_MUSCLE_TARGETS = {
-  'PUSH':           ['piept', 'umeri', 'triceps'],
-  'PULL':           ['spate', 'biceps'],
-  'LEGS':           ['picioare-quads', 'picioare-hamstrings', 'fese', 'gambe'],
-  'UMERI_BRATE':    ['umeri', 'biceps', 'triceps'],
-  'UPPER_PICIOARE': ['spate', 'piept', 'picioare-quads', 'picioare-hamstrings'],
-  'FULL_UPPER':     ['piept', 'spate', 'umeri'],
-};
+// buildSession's first param is now a Big-6 CLUSTER id (push/pull/legs/upper/
+// lower/full) — the target muscle groups + their session-slot bias come from the
+// shared CLUSTER_BIG6_TO_BIG11_WEIGHT map (periodization/constants.js, ADR_ENGINE_
+// REFACTOR §4.3 SSOT). Each cluster's weight keys ARE the Big-11 RO target groups
+// (library muscle_target_primary); the weights bias how many of the session's
+// slots each group earns (heavier weight → more exercises/sets). This replaced the
+// old hardcoded SESSION_TYPE_MUSCLE_TARGETS table whose absolute-weekday split
+// surfaced legs only on Wednesday and never reached glutes/calves.
+//
+// Fallback cluster when an unknown id is passed (defensive): a balanced full body.
+const FALLBACK_CLUSTER = 'full';
+
+/**
+ * Big-11 RO target groups for a cluster, ordered heaviest-weight-first so the
+ * primary group (where the T1 compound anchor lands) leads. Unknown cluster →
+ * the balanced full-body cluster.
+ * @param {string} cluster - push|pull|legs|upper|lower|full
+ * @returns {string[]} ordered Big-11 RO groups
+ */
+function clusterGroupsOrdered(cluster) {
+  const weights = CLUSTER_BIG6_TO_BIG11_WEIGHT[cluster]
+    || CLUSTER_BIG6_TO_BIG11_WEIGHT[FALLBACK_CLUSTER];
+  return Object.keys(weights).sort((a, b) => weights[b] - weights[a]);
+}
 
 // Coarse equipment types (library equipment_type). bodyweight is ALWAYS allowed
 // (needs no gym equipment) so it is never gated by the missing-equipment filter.
@@ -40,8 +53,20 @@ const ANCHOR_NAMES = new Set([
   'Leg Curl', 'Romanian Deadlift', 'Cable Fly', 'Pec Deck / Cable Fly',
 ]);
 
-// Target session length (exercises per session).
-const SESSION_SIZE = 6;
+// SESSION_SIZE is the MAX exercises per session (sanity ceiling, anti-2h
+// session), NOT a fixed count. The real count now falls out of the weekly
+// volume budget (computeSessionExerciseCount) clamped to [MIN_SESSION, SESSION_SIZE].
+const SESSION_SIZE = 8;
+// Floor so a session is never a token 1-2 movements (junk-low). Beginner/T0
+// lands near here naturally (persona modifier shrinks weekly volume); advanced
+// climbs toward SESSION_SIZE — emergent, no per-tier hardcode.
+const MIN_SESSION = 4;
+// Default count when no volume signal is available (empty user / no
+// volumeTargets) — preserves the legacy ~6-exercise session for cold-start.
+const DEFAULT_SESSION_SIZE = 6;
+// Typical working sets per exercise — converts a group's per-session set budget
+// into an exercise count (sets_for_group / SETS_PER_EXERCISE).
+const SETS_PER_EXERCISE = 3;
 // Max T1 compound anchors per session (1-2 compound on the primary group).
 const MAX_T1 = 2;
 
@@ -83,6 +108,55 @@ function setsForGroup(big11RoGroup, volumeTargets, exercisesInGroup) {
   const perExercise = weekly / WEEKLY_FREQUENCY / Math.max(1, exercisesInGroup);
   const rounded = Math.round(perExercise);
   return Math.min(MAX_SETS, Math.max(MIN_SETS, rounded));
+}
+
+/**
+ * Session exercise count derived from the weekly volume budget — replaces the
+ * old fixed SESSION_SIZE=6. For each Big-11 group the cluster trains:
+ *
+ *   sets_this_session  = weeklySets(group) / sessionsTrainingThatGroupThisWeek
+ *   exercises_for_grp  = round( sets_this_session / SETS_PER_EXERCISE )
+ *   count              = Σ exercises_for_grp over the cluster's groups
+ *
+ * Clamped to [MIN_SESSION, SESSION_SIZE]. When no volume signal is present
+ * (empty user / absent volumeTargets / unknown sessions-per-group) we keep the
+ * legacy DEFAULT_SESSION_SIZE so cold-start callers stay stable.
+ *
+ * `weeklySets(group)` is volumeTargets[EN-key] (periodization sets/week, EN
+ * keyed — same RO→EN bridge setsForGroup uses). `sessionsTrainingThatGroup`
+ * comes from ctx.weeklySessionsPerGroup (Big-11 RO keyed) computed by the
+ * adapter from the frequency template — buildSession stays pure (no globals).
+ *
+ * @param {string[]} groups - the cluster's Big-11 RO target groups
+ * @param {Record<string, number>|null|undefined} volumeTargets - Big-11 EN -> sets/week
+ * @param {Record<string, number>|null|undefined} weeklySessionsPerGroup - Big-11 RO -> sessions/week
+ * @returns {number} session exercise count in [MIN_SESSION, SESSION_SIZE]
+ */
+function computeSessionExerciseCount(groups, volumeTargets, weeklySessionsPerGroup) {
+  if (!volumeTargets || typeof volumeTargets !== 'object') return DEFAULT_SESSION_SIZE;
+  let total = 0;
+  let sawSignal = false;
+  for (const roGroup of groups) {
+    const enKey = BIG11_RO_TO_EN_MAP[roGroup] ?? roGroup;
+    const weekly = volumeTargets[enKey];
+    if (typeof weekly !== 'number' || !Number.isFinite(weekly) || weekly <= 0) continue;
+    const sessionsForGroup =
+      weeklySessionsPerGroup && typeof weeklySessionsPerGroup === 'object'
+        ? weeklySessionsPerGroup[roGroup]
+        : undefined;
+    const freq =
+      typeof sessionsForGroup === 'number' && Number.isFinite(sessionsForGroup) && sessionsForGroup > 0
+        ? sessionsForGroup
+        : WEEKLY_FREQUENCY;
+    const setsThisSession = weekly / freq;
+    const exForGroup = Math.round(setsThisSession / SETS_PER_EXERCISE);
+    if (exForGroup > 0) {
+      total += exForGroup;
+      sawSignal = true;
+    }
+  }
+  if (!sawSignal) return DEFAULT_SESSION_SIZE;
+  return Math.min(SESSION_SIZE, Math.max(MIN_SESSION, total));
 }
 
 /**
@@ -296,7 +370,7 @@ export function movementKey(name, meta) {
  * reordered to positions 1-2. Per-exercise set counts come from
  * ctx.volumeTargets (periodization sets/week), falling back to DEFAULT_SETS.
  *
- * @param {string} sessionType - 'PUSH'|'PULL'|'LEGS'|'UMERI_BRATE'|'UPPER_PICIOARE'|'FULL_UPPER'
+ * @param {string} cluster - Big-6 cluster id: 'push'|'pull'|'legs'|'upper'|'lower'|'full'
  * @param {{
  *   equipment?: { available?: string[] },
  *   weakGroups?: string[],
@@ -304,13 +378,16 @@ export function movementKey(name, meta) {
  *   prNames?: string[],
  *   seed?: string,
  *   volumeTargets?: Record<string, number>,
+ *   weeklySessionsPerGroup?: Record<string, number>,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  */
-export function buildSession(sessionType, ctx) {
-  const targets =
-    SESSION_TYPE_MUSCLE_TARGETS[sessionType] ||
-    SESSION_TYPE_MUSCLE_TARGETS['FULL_UPPER'];
+export function buildSession(cluster, ctx) {
+  const targets = clusterGroupsOrdered(cluster);
+  // Per-session exercise budget — from the weekly volume budget (not a fixed 6).
+  const sessionSize = computeSessionExerciseCount(
+    targets, ctx?.volumeTargets, ctx?.weeklySessionsPerGroup,
+  );
   const available = new Set(ctx?.equipment?.available ?? []);
   const maxTier = tierCeiling(ctx?.profileTier);
   const maxSkill = skillCeiling(ctx?.profileTier);
@@ -333,6 +410,21 @@ export function buildSession(sessionType, ctx) {
     pools.sort((a, b) => (weakSet.has(b.group) ? 1 : 0) - (weakSet.has(a.group) ? 1 : 0));
   }
 
+  // Weight-biased per-group slot cap: heavier-weight groups in the cluster earn
+  // MORE of the session's slots (cluster weights from CLUSTER_BIG6_TO_BIG11_
+  // WEIGHT). Each cap = ceil(weight × sessionSize), min 1 so no target group is
+  // starved. Caps may sum above sessionSize (rounding up) — that is fine, the
+  // total is bounded by sessionSize in the fill loop; the per-group cap only
+  // shapes the DISTRIBUTION (e.g. push: piept gets more slots than triceps).
+  const clusterWeights =
+    CLUSTER_BIG6_TO_BIG11_WEIGHT[cluster] || CLUSTER_BIG6_TO_BIG11_WEIGHT[FALLBACK_CLUSTER];
+  const slotCap = {};
+  for (const g of targets) {
+    const w = typeof clusterWeights[g] === 'number' ? clusterWeights[g] : 0;
+    slotCap[g] = Math.max(1, Math.ceil(w * sessionSize));
+  }
+  const groupCount = {};
+
   const chosen = [];
   const chosenNames = new Set();
   // BUG 5 — dedup by MOVEMENT (muscle + movement token), not exact name, so two
@@ -345,6 +437,8 @@ export function buildSession(sessionType, ctx) {
     chosen.push({ name: e.name, sets });
     chosenNames.add(e.name);
     chosenMovements.add(movementKey(e.name, e.meta));
+    const g = e.meta?.muscle_target_primary;
+    if (g) groupCount[g] = (groupCount[g] || 0) + 1;
   };
 
   // Phase 1 — T1 compound anchors on the PRIMARY group(s), up to MAX_T1.
@@ -376,12 +470,34 @@ export function buildSession(sessionType, ctx) {
   }
 
   // Phase 2 — round-robin fill across groups (isolation T2/T3 + any remaining
-  // T1), one per group per pass, until SESSION_SIZE or pools exhausted.
+  // T1), one per group per pass, until sessionSize or pools exhausted. Respect
+  // the weight-biased slotCap so heavier groups accrue more slots (the cluster
+  // weight bias). A weak group is exempt from its cap (it should win EXTRA
+  // volume — that is the Specialization point).
   let progressed = true;
-  while (chosen.length < SESSION_SIZE && progressed) {
+  while (chosen.length < sessionSize && progressed) {
+    progressed = false;
+    for (const { group, pool } of pools) {
+      if (chosen.length >= sessionSize) break;
+      const capped = !weakSet.has(group) && (groupCount[group] || 0) >= slotCap[group];
+      if (capped) continue;
+      const next = pool.find((e) => !isTaken(e));
+      if (next) {
+        take(next, DEFAULT_SETS);
+        progressed = true;
+      }
+    }
+  }
+
+  // Remainder pass — if the weighted caps left the session under budget (e.g. a
+  // small cluster whose caps summed below sessionSize, or thin pools), top up
+  // ignoring caps so the session still reaches its volume-driven size when the
+  // library can supply it.
+  progressed = true;
+  while (chosen.length < sessionSize && progressed) {
     progressed = false;
     for (const { pool } of pools) {
-      if (chosen.length >= SESSION_SIZE) break;
+      if (chosen.length >= sessionSize) break;
       const next = pool.find((e) => !isTaken(e));
       if (next) {
         take(next, DEFAULT_SETS);
@@ -413,7 +529,7 @@ export function buildSession(sessionType, ctx) {
     exercises = prioritizeWeakGroups(exercises, ctx?.weakGroups ?? []);
   }
 
-  return { type: sessionType, exercises };
+  return { type: cluster, exercises };
 }
 
 /**

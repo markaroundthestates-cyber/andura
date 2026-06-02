@@ -308,8 +308,10 @@ describe('scheduleAdapterAggregate — falsy-coercion nullish coalesce LOW-CODE-
 });
 
 // ── C1: weights from the DP brain (no longer hardcoded 20 / 10) ────────────
-// TUESDAY 2026-05-19 = PULL session (sessionBuilder PULL_DAY_PLAN includes
-// 'Lat Pulldown' EN canonical). Tests prove:
+// MONDAY 2026-05-18 = the freq-'4' user's 1st active day → UPPER cluster (spate
+// 0.25 → 'Lat Pulldown' EN canonical surfaces). (Volume-driven split 2026-06-02
+// moved the back day off the absolute weekday onto the active-day position.)
+// Tests prove:
 //   - logged-history user gets a DP-derived weight (NOT the old hardcode 20)
 //   - cold-start user gets a per-exercise population prior scaled by experience
 //   - the EN canonical name keys DP/cold-start (RO display never leaks into the
@@ -332,7 +334,7 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
       { ex: 'Lat Pulldown', w: 56, reps: '9', set: 1, ts: Date.now() - 2000 },
       { ex: 'Lat Pulldown', w: 56, reps: '9', set: 1, ts: Date.now() - 3000 },
     ]);
-    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const out = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     expect(out).not.toBeNull();
     const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
     expect(lat).toBeDefined();
@@ -356,7 +358,7 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
       completed: true,
       completedAt: Date.now(),
     });
-    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const out = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     expect(out).not.toBeNull();
     const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
     expect(lat).toBeDefined();
@@ -372,7 +374,7 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
       completed: true,
       completedAt: Date.now(),
     });
-    const begOut = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const begOut = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const begLat = findByEnSlug(begOut!.exercises, 'Lat Pulldown');
 
     useOnboardingStore.setState({
@@ -380,7 +382,7 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
       completed: true,
       completedAt: Date.now(),
     });
-    const advOut = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const advOut = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const advLat = findByEnSlug(advOut!.exercises, 'Lat Pulldown');
 
     expect(begLat).toBeDefined();
@@ -398,7 +400,7 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
   });
 
   it('preserves Romanian display name + sub while wiring engine weight', async () => {
-    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const out = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     expect(out).not.toBeNull();
     const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
     expect(lat).toBeDefined();
@@ -450,7 +452,7 @@ describe('scheduleAdapterAggregate — FIX #1 readiness-gated planned weight', (
     seedIncreaseDayLogs();
     DB.set('readiness', { [tod()]: 1 });
     DB.set('kcals', { [yesterdayKey()]: 1000 }); // 50% of KCAL_TARGET 2000 → -20
-    const lowOut = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const lowOut = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const lowLat = findByEnSlug(lowOut!.exercises, 'Lat Pulldown');
     expect(lowLat).toBeDefined();
     // Readiness gate held the weight at lastW (55), did NOT add the +step.
@@ -460,7 +462,7 @@ describe('scheduleAdapterAggregate — FIX #1 readiness-gated planned weight', (
     seedIncreaseDayLogs();
     DB.set('readiness', { [tod()]: 5 });
     DB.set('kcals', {});
-    const highOut = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const highOut = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const highLat = findByEnSlug(highOut!.exercises, 'Lat Pulldown');
     expect(highLat).toBeDefined();
     // INCREASE: 55 + 4 = 59 → bailib_stack round → 60. Strictly heavier than LOW.
@@ -474,14 +476,14 @@ describe('scheduleAdapterAggregate — FIX #1 readiness-gated planned weight', (
     // diverging numbers prove the score is CONSUMED, not ignored.
     seedIncreaseDayLogs();
     DB.set('readiness', {}); // none today → getComputedReadinessScore() = null
-    const noReadyOut = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const noReadyOut = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const noReadyLat = findByEnSlug(noReadyOut!.exercises, 'Lat Pulldown');
     expect(noReadyLat!.targetKg).toBe(60); // ungated INCREASE
 
     seedIncreaseDayLogs();
     DB.set('readiness', { [tod()]: 1 });
     DB.set('kcals', { [yesterdayKey()]: 1000 });
-    const lowOut = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const lowOut = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const lowLat = findByEnSlug(lowOut!.exercises, 'Lat Pulldown');
     expect(lowLat!.targetKg).toBe(55); // gated hold
     expect(lowLat!.targetKg).not.toBe(noReadyLat!.targetKg);
@@ -493,8 +495,9 @@ describe('scheduleAdapterAggregate — FIX #1 readiness-gated planned weight', (
 // range (rest_time_modifier [minSec, maxSec]) was computed but dropped at the
 // getDailyWorkout boundary. Now getDailyWorkout returns restTimeRange and the
 // planner maps it per exercise: compounds (COMPOUND_EX) rest at MAX, isolation
-// at MIN. TUESDAY = PULL: Lat Pulldown (compound, bailib_stack) + Bayesian Curl
-// (isolation, matrix_cable) both survive the equipment filter.
+// at MIN. MONDAY = the freq-'4' user's UPPER day: Lat Pulldown (compound,
+// bailib_stack) + Bayesian Curl (isolation, matrix_cable) both survive the
+// equipment filter (upper cluster trains spate + biceps).
 describe('scheduleAdapterAggregate — FIX #4 engine-sourced rest time', () => {
   function findByEnSlug(
     exercises: ReadonlyArray<{ id: string; restSec: number }>,
@@ -508,14 +511,14 @@ describe('scheduleAdapterAggregate — FIX #4 engine-sourced rest time', () => {
     // Read the engine rest range directly from the SAME pipeline the composer
     // drives (real builder userState) — proves the planner consumes THIS range.
     const userState = buildUserStateForPipeline();
-    const plan = await getDailyWorkout(userState, TUESDAY_2026_05_19);
+    const plan = await getDailyWorkout(userState, MONDAY_2026_05_18);
     expect(plan).not.toBeNull();
     const range = plan!.restTimeRange as readonly [number, number] | null;
     expect(Array.isArray(range)).toBe(true);
     const [minSec, maxSec] = range!;
     expect(maxSec).toBeGreaterThan(minSec); // a real range, not a point
 
-    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    const out = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const compound = findByEnSlug(out!.exercises, 'Lat Pulldown'); // COMPOUND_EX
     const isolation = findByEnSlug(out!.exercises, 'Bayesian Curl'); // isolation
     expect(compound).toBeDefined();
