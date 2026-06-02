@@ -775,8 +775,21 @@ export async function getDailyWorkout(userState, now = new Date()) {
   // No weak signal at all → weakGroups empty → amplification + reordering are
   // both no-ops → plan identical to the M1 chassis.
   const laggingGroups = laggingGroupsFromLogs(recoveryLogs, date.getTime());
+  // ── M4a: OPTIONAL priority-muscle override (D-priority-muscle 2026-06-02) ──
+  // Andura INFERS the priority by default — the lagging group above IS the
+  // inferred priority (M2). M4a only adds an opt-in hook so a user CAN pin a
+  // group ("vreau brate mai mari") via userState.user.priorityGroup (a Big-11 RO
+  // key, the SAME vocabulary weakGroups uses). When set, the pinned group is fed
+  // as an ADDITIONAL weak/priority group → it flows through the existing M2
+  // amplification-toward-MRV mechanism (NO duplicate math). When unset (default
+  // null) → ZERO change; the inferred priority governs. The picker UI is deferred
+  // (override optional, never required) — this is the engine-ready hook only.
+  const priorityGroup =
+    typeof userState?.user?.priorityGroup === 'string' && userState.user.priorityGroup.length > 0
+      ? userState.user.priorityGroup
+      : null;
   const weakGroups = [...new Set(
-    [specializationTarget, ...laggingGroups].filter((g) => typeof g === 'string' && g.length > 0),
+    [priorityGroup, specializationTarget, ...laggingGroups].filter((g) => typeof g === 'string' && g.length > 0),
   )];
 
   // ── M3: detect + correct antagonist/pattern imbalances (the moat substance:

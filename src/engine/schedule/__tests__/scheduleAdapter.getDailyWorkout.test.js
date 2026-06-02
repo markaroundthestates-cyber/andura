@@ -225,6 +225,101 @@ describe('scheduleAdapter — getDailyWorkout pipeline consumer', () => {
   });
 });
 
+// ── M4a — OPTIONAL priority-muscle override (Andura infers by default) ────
+describe('getDailyWorkout — M4a priority-muscle override', () => {
+  // priorityGroup is a Big-11 RO key (piept/spate/biceps/...) — the SAME
+  // vocabulary weakGroups uses. Set → fed as an additional weak group → it flows
+  // through M2 amplification-toward-MRV. Unset (default) → ZERO change.
+  it('priorityGroup set → that group gets MORE weekly volume (amplified toward MRV)', async () => {
+    // Monday = UPPER day (default 4-day split) → chest (piept) is trained. Pin
+    // piept as the priority and assert its EN budget entry (chest) rises vs the
+    // identical profile without a priority.
+    const base = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
+    const pinned = await getDailyWorkout(
+      buildUserState({ user: { gender: 'M', age: 30, frequency: '4', priorityGroup: 'piept' } }),
+      MONDAY_2026_05_18,
+    );
+    expect(base).not.toBeNull();
+    expect(pinned).not.toBeNull();
+    expect(typeof base.volumeTargets.chest).toBe('number');
+    expect(pinned.volumeTargets.chest).toBeGreaterThan(base.volumeTargets.chest);
+  });
+
+  it('priorityGroup unset (default) → IDENTICAL plan to no-override baseline', async () => {
+    // No priorityGroup field at all → weakGroups identical → plan identical
+    // (graceful degradation, ADR 025). Compare full exercise + volume output.
+    const a = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
+    const b = await getDailyWorkout(
+      buildUserState({ user: { gender: 'M', age: 30, frequency: '4', priorityGroup: null } }),
+      MONDAY_2026_05_18,
+    );
+    expect(a).not.toBeNull();
+    expect(b).not.toBeNull();
+    expect(b.volumeTargets).toEqual(a.volumeTargets);
+    expect(b.exercises.map((e) => e.name)).toEqual(a.exercises.map((e) => e.name));
+  });
+
+  it('empty-string / non-string priorityGroup → treated as unset (no-op)', async () => {
+    const base = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
+    const empty = await getDailyWorkout(
+      buildUserState({ user: { gender: 'M', age: 30, frequency: '4', priorityGroup: '' } }),
+      MONDAY_2026_05_18,
+    );
+    expect(base).not.toBeNull();
+    expect(empty).not.toBeNull();
+    expect(empty.volumeTargets).toEqual(base.volumeTargets);
+  });
+
+  it('priorityGroup is MRV-capped (never exceeds the Israetel ceiling)', async () => {
+    const pinned = await getDailyWorkout(
+      buildUserState({ user: { gender: 'M', age: 30, frequency: '4', priorityGroup: 'piept' } }),
+      MONDAY_2026_05_18,
+    );
+    expect(pinned).not.toBeNull();
+    // chest MRV = 22 (ISRAETEL_BASELINES). The amplified value must never exceed.
+    expect(pinned.volumeTargets.chest).toBeLessThanOrEqual(22);
+  });
+
+  it('priority group + fatigued today → recovery STILL cuts today (M1 wins for today)', async () => {
+    // Reuse the PROVEN M1 fatigue pattern (marius/T2 + Flat DB Press ×3 logged at
+    // `now`, the same shape scheduleAdapter.recovery.test.js fatigues chest with)
+    // so the chest budget is high enough that the recovery cut is observable even
+    // after priority amplification. Pin piept as priority, then prove recovery
+    // (M1, runs LAST) still cuts chest's TODAY budget below its pinned-fresh value.
+    const now = MONDAY_2026_05_18;
+    const marius = (priority, recentSessions = []) => ({
+      user: { age: 30, goal: 'hipertrofie', persona: 'marius', priorityGroup: priority },
+      recentSessions,
+      weights: {},
+      profileTier: 'T2',
+      flags: {},
+      meta: { weeksElapsed: 0 },
+    });
+    const chestFatiguedSession = {
+      ts: now.getTime(),
+      exercises: [
+        {
+          exerciseName: 'Flat DB Press',
+          sets: [
+            { kg: 40, reps: 8, timestamp: now.getTime() },
+            { kg: 40, reps: 8, timestamp: now.getTime() },
+            { kg: 40, reps: 8, timestamp: now.getTime() },
+          ],
+        },
+      ],
+    };
+    const pinnedFresh = await getDailyWorkout(marius('piept'), now);
+    const pinnedFatigued = await getDailyWorkout(
+      marius('piept', [chestFatiguedSession]),
+      now,
+    );
+    expect(pinnedFresh).not.toBeNull();
+    expect(pinnedFatigued).not.toBeNull();
+    // Recovery cut today → chest TODAY budget strictly below the fresh-pinned one.
+    expect(pinnedFatigued.volumeTargets.chest).toBeLessThan(pinnedFresh.volumeTargets.chest);
+  });
+});
+
 // ── frequencyToSplit — pure helper (volume-driven program 2026-06-02) ─────
 describe('frequencyToSplit — frequency-appropriate cluster template', () => {
   // Daniel-LOCKED templates. The real win each must satisfy: a lower-body day
