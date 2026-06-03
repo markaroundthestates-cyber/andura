@@ -11,7 +11,13 @@
 // Native only — Metro loads this into the RN graph; Vite/Vitest never resolve a
 // `.native.js` sibling, so `react-native-mmkv` is never imported on web/test.
 
-import { MMKV } from 'react-native-mmkv';
+// NOTE: react-native-mmkv removed for Expo SDK 52 (RN 0.76). mmkv v4 is
+// Nitro-based and its nitro-modules peer requires RN 0.78 (SDK 53) — the
+// ReactModuleInfo constructor mismatch fails the Android Kotlin compile.
+// Native Tier-0 runs on the in-memory store below for now (ephemeral —
+// persists in-session, lost on restart).
+// TODO(persistent-storage, pre-Beta): restore a SDK-52-compatible sync KV
+// (an mmkv 2.x/3.x line that pairs with RN 0.76, or an op-sqlite-backed sync KV).
 
 /**
  * In-memory fallback store implementing the MMKV surface that kv.native.js +
@@ -35,16 +41,8 @@ function makeMemoryStore() {
 }
 
 /**
- * Default MMKV store — one flat keyspace, same as web `localStorage`. Wrapped in
- * try/catch so a native-module failure degrades to an in-memory store rather than
- * throwing at module load (which would white-screen the app on boot).
+ * Default native Tier-0 store. TEMPORARY: in-memory only (see top-of-file note)
+ * until a SDK-52-compatible sync KV is restored. One flat keyspace, same shape
+ * as web `localStorage`.
  */
-function _initStorage() {
-  try {
-    return new MMKV();
-  } catch {
-    return makeMemoryStore();
-  }
-}
-
-export const storage = _initStorage();
+export const storage = makeMemoryStore();
