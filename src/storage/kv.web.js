@@ -8,7 +8,7 @@
 // stable while the native graph (kv.native.js) swaps in MMKV.
 
 /**
- * @type {{ getItem: (name: string) => string | null, setItem: (name: string, value: string) => void, removeItem: (name: string) => void, keys: () => string[] }}
+ * @type {{ getItem: (name: string) => string | null, setItem: (name: string, value: string) => void, removeItem: (name: string) => void, keys: () => string[], clearAll: () => void }}
  */
 export const kv = {
   getItem(name) {
@@ -47,6 +47,14 @@ export const kv = {
       return out;
     } catch {
       return [];
+    }
+  },
+  /** Wipe the entire keyspace (Expo web: localStorage.clear). Sibling of kv.js. */
+  clearAll() {
+    try {
+      if (typeof localStorage !== 'undefined') localStorage.clear();
+    } catch {
+      /* disabled — silent */
     }
   },
 };

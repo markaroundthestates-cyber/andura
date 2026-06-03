@@ -7,11 +7,9 @@
 // VERBATIM (await marker+IDB BEFORE authSignOut; suppress flag after marker).
 // The __suppressFirebaseSync writes route through kv (W1b) exactly like web.
 //
-// FLAG (foundation, not screen scope): the web wipe ends with
-// `localStorage.clear()`. On native there is no localStorage, so the call is
-// typeof-guarded; the authoritative native Tier-0 clear (MMKV clearAll) is NOT
-// invoked here because src/util/dataReset.js + the MMKV instance are not yet
-// native-routed for a FULL flush — see report "file-I/O / native gaps".
+// The wipe ends with a full Tier-0 namespace clear via `kv.clearAll()`
+// (localStorage.clear() on web, MMKV clearAll() on native — CR-03), so no
+// Tier-0 data lingers on the device after an account delete (GDPR Art. 17).
 
 import { useState } from 'react';
 import { Trash2 } from 'lucide-react-native';
@@ -48,10 +46,11 @@ function wipeAllLocalData(): void {
     useScheduleStore.getState().resetWeekly();
     useAerobicStore.getState().reset();
     useCoachStore.setState({ schedContext: 'workout', persona: 'gigica', reactivateDismissed: false });
-    // S-01 — full namespace clear (GDPR Art. 17). Web: localStorage.clear().
-    // Native has no localStorage → guard it (the MMKV full-flush is a foundation
-    // follow-up; the in-memory resets above already clear the live UI state).
-    if (typeof localStorage !== 'undefined') localStorage.clear();
+    // S-01 — full namespace clear (GDPR Art. 17) via the kv adapter so the WHOLE
+    // Tier-0 keyspace is wiped on EVERY platform: localStorage.clear() on web,
+    // MMKV clearAll() on native (CR-03). Previously the native branch was
+    // typeof-guarded → MMKV survived an account delete (GDPR Art. 17 break).
+    kv.clearAll();
     // RE-S-02 — persist the sync-suppression window ACROSS the clear. Routed via
     // kv (MMKV on native; firebase.js READS it via kv). Set AFTER the clear so a
     // stale syncToFirebase cannot recreate users/{uid} on the next boot.

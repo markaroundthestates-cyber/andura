@@ -30,7 +30,7 @@
  * storage-disabled contexts from throwing — identical to the per-call try/catch
  * the previous `() => localStorage` callsites relied on downstream.
  *
- * @type {{ getItem: (name: string) => string | null, setItem: (name: string, value: string) => void, removeItem: (name: string) => void, keys: () => string[] }}
+ * @type {{ getItem: (name: string) => string | null, setItem: (name: string, value: string) => void, removeItem: (name: string) => void, keys: () => string[], clearAll: () => void }}
  */
 export const kv = {
   getItem(name) {
@@ -70,6 +70,18 @@ export const kv = {
       return out;
     } catch {
       return [];
+    }
+  },
+  /**
+   * Wipe the ENTIRE keyspace (web: localStorage.clear). Used by the GDPR Art. 17
+   * full-namespace flush on account delete; native variant uses MMKV clearAll().
+   * Guarded no-op when storage is unavailable (SSR / disabled).
+   */
+  clearAll() {
+    try {
+      if (typeof localStorage !== 'undefined') localStorage.clear();
+    } catch {
+      /* disabled — silent */
     }
   },
 };

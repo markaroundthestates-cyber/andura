@@ -20,7 +20,7 @@ import { storage } from './mmkv.native.js';
  * key; the Web Storage contract (and Zustand's `createJSONStorage`) expects
  * `null`, so absence is normalized to `null`.
  *
- * @type {{ getItem: (name: string) => string | null, setItem: (name: string, value: string) => void, removeItem: (name: string) => void, keys: () => string[] }}
+ * @type {{ getItem: (name: string) => string | null, setItem: (name: string, value: string) => void, removeItem: (name: string) => void, keys: () => string[], clearAll: () => void }}
  */
 export const kv = {
   getItem(name) {
@@ -40,5 +40,13 @@ export const kv = {
    */
   keys() {
     return storage.getAllKeys();
+  },
+  /**
+   * Wipe the ENTIRE MMKV keyspace — the native parallel of localStorage.clear().
+   * Used by the GDPR Art. 17 full-namespace flush on account delete so no Tier-0
+   * data lingers on the device. The default MMKV instance covers all keys.
+   */
+  clearAll() {
+    storage.clearAll();
   },
 };

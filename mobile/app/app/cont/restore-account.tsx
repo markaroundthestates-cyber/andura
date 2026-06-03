@@ -8,9 +8,9 @@
 // button layout (restore hidden when expired) → built on the Card scaffold,
 // NOT the shared ConfirmScreen.
 //
-// FLAG (same as delete-account-confirm): web ends the wipe with
-// `localStorage.clear()` — typeof-guarded on native; full MMKV flush is a
-// foundation follow-up.
+// The wipe ends with a full Tier-0 namespace clear via `kv.clearAll()`
+// (localStorage.clear() on web, MMKV clearAll() on native — CR-03), so the
+// hard-delete-now path leaves no Tier-0 residue on the device (GDPR Art. 17).
 
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { RotateCcw } from 'lucide-react-native';
@@ -48,9 +48,14 @@ function wipeAllLocalData(): void {
     useScheduleStore.getState().resetWeekly();
     useAerobicStore.getState().reset();
     useCoachStore.setState({ schedContext: 'workout', persona: 'gigica', reactivateDismissed: false });
-    if (typeof localStorage !== 'undefined') localStorage.clear();
+    // Full Tier-0 namespace clear (GDPR Art. 17) via the kv adapter — wipes the
+    // WHOLE keyspace on every platform: localStorage.clear() on web, MMKV
+    // clearAll() on native (CR-03). Previously native was typeof-guarded → MMKV
+    // survived the hard-delete-now path.
+    kv.clearAll();
     // RN consistency (W1a) — suppress marker via kv (MMKV on native; firebase.js
-    // READS it via kv). Web stays localStorage.
+    // READS it via kv). Set AFTER the clear so it survives the wipe. Web stays
+    // localStorage.
     kv.setItem('__suppressFirebaseSyncUntil', String(Date.now() + 10000));
   } catch (e) {
     logger.warn('[RestoreAccount] wipe failed:', e);

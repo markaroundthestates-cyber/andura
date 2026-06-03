@@ -342,6 +342,27 @@ export async function wipeAnonymousDBs() {
 }
 
 /**
+ * Wipe the Tier-1 database for a GIVEN namespace (`andura_<ns>`). The
+ * platform-neutral entry point used by full-reset / logout flows so callers do
+ * NOT need to import Dexie directly (CR-04 — keeps dexie out of the native
+ * graph; db.native.js provides the op-sqlite-backed sibling). Closes the
+ * singleton first so a stale handle cannot block the delete, then re-resolves
+ * fresh on next access. Best-effort + non-fatal.
+ *
+ * @param {string} ns  sanitized namespace (e.g. from getNamespace())
+ * @returns {Promise<void>}
+ */
+export async function wipeNamespace(ns) {
+  if (!ns || typeof ns !== 'string') return;
+  try {
+    await closeDb();
+    await Dexie.delete(`${DB_NAME_PREFIX}_${ns}`);
+  } catch {
+    /* IndexedDB unavailable / delete blocked — non-fatal */
+  }
+}
+
+/**
  * Wipe entire user IndexedDB cu Dexie `delete()`. Per §56.12 LOCKED V1
  * opt-in IndexedDB wipe toggle (Logout flow batch 3).
  *

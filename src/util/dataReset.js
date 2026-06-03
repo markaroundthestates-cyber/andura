@@ -82,13 +82,14 @@ export function clearUserDataKeys() {
  */
 export async function clearUserIndexedDB() {
   try {
-    const dbModule = await import('../storage/db.js');
-    const ns = dbModule.getNamespace();
-    await dbModule.closeDb();
-    const Dexie = (await import('dexie')).default;
-    await Dexie.delete(`${dbModule.DB_NAME_PREFIX}_${ns}`);
+    // Extension-less import + the platform-neutral wipeNamespace (CR-04): Metro
+    // resolves db.native (op-sqlite) on device, Vite/Vitest keep db.js (Dexie).
+    // No direct `import('dexie')` here — that pulled Dexie onto native AND wiped
+    // the wrong (default-instance) DB instead of the resolved namespace.
+    const dbModule = await import('../storage/db');
+    await dbModule.wipeNamespace(dbModule.getNamespace());
   } catch {
-    // IndexedDB unavailable / delete blocked — non-fatal; local keys still wiped.
+    // Tier-1 store unavailable / delete blocked — non-fatal; local keys still wiped.
   }
 }
 

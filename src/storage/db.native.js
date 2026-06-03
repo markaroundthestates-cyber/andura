@@ -279,6 +279,25 @@ export async function logMigrationEvent(event) {
 }
 
 /**
+ * Wipe the Tier-1 store for a GIVEN namespace (`andura_<ns>.db`). Platform-neutral
+ * entry point (parity with db.js wipeNamespace) so callers don't import Dexie /
+ * op-sqlite directly (CR-04). Closes the singleton first, then drops the file's
+ * tables via _dropDbFile. Best-effort + non-fatal.
+ *
+ * @param {string} ns  sanitized namespace (e.g. from getNamespace())
+ * @returns {Promise<void>}
+ */
+export async function wipeNamespace(ns) {
+  if (!ns || typeof ns !== 'string') return;
+  try {
+    await closeDb();
+    _dropDbFile(_dbFileName(ns));
+  } catch {
+    /* op-sqlite unavailable / drop failed — non-fatal */
+  }
+}
+
+/**
  * Delete the entire SQLite file for a uid (per §56.12 opt-in wipe). Also sweeps
  * any anonymous residue on the device (GDPR Art. 17, §S-18 parity). The auth-DB
  * delete result is what the return value reflects (back-compat); anonymous
