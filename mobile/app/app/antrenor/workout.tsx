@@ -158,6 +158,9 @@ function WorkoutScreen(): React.JSX.Element {
   const [inputDirty, setInputDirty] = useState(false);
   const [restCountdown, setRestCountdown] = useState(0);
   const pendingAdvanceRef = useRef(false);
+  // LO-04 — hold the next-exercise reveal timeout id so unmount (exit / nav) can
+  // cancel it; otherwise advanceExercise() fires on an unmounted screen.
+  const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [restInitialSec, setRestInitialSec] = useState(0);
   const [exitSheetOpen, setExitSheetOpen] = useState(false);
   const [aaModalOpen, setAaModalOpen] = useState(false);
@@ -194,7 +197,8 @@ function WorkoutScreen(): React.JSX.Element {
   const runTransitionToNext = useCallback((): void => {
     pendingAdvanceRef.current = false;
     setPhase('transition');
-    setTimeout(() => {
+    transitionTimeoutRef.current = setTimeout(() => {
+      transitionTimeoutRef.current = null;
       advanceExercise();
     }, 1500);
   }, [setPhase, advanceExercise]);
@@ -231,6 +235,12 @@ function WorkoutScreen(): React.JSX.Element {
   useEffect(() => {
     return () => {
       void cancelRestEndNotification();
+      // LO-04 — cancel a pending next-exercise reveal so advanceExercise() never
+      // fires after the screen has unmounted.
+      if (transitionTimeoutRef.current !== null) {
+        clearTimeout(transitionTimeoutRef.current);
+        transitionTimeoutRef.current = null;
+      }
     };
   }, []);
 

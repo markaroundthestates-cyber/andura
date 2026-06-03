@@ -28,6 +28,10 @@
 //   3. Key string itself (last-resort, dev visibility)
 
 import { logger } from '../util/logger.js';
+// kv = synchronous KV adapter (web: localStorage; native: MMKV). The locale
+// override persists through it so the Cont > Limba choice survives on device
+// (ME-01). Web identical (kv forwards to localStorage).
+import { kv } from '../storage/kv';
 import roBundle from './ro.json';
 import enBundle from './en.json';
 
@@ -91,9 +95,10 @@ export function getCurrentLocale() {
   if (_cachedLocale) return _cachedLocale;
   const bundles = /** @type {Record<string, any>} */ (BUNDLES);
 
-  // 1. localStorage override (user explicit choice)
+  // 1. Persisted override (user explicit choice) via kv (web: localStorage;
+  //    native: MMKV).
   try {
-    const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(LOCALE_STORAGE_KEY) : null;
+    const stored = kv.getItem(LOCALE_STORAGE_KEY);
     if (stored && bundles[stored]) {
       _cachedLocale = /** @type {'ro' | 'en'} */ (stored);
       return _cachedLocale;
@@ -133,9 +138,7 @@ export function setLocale(locale) {
   const bundles = /** @type {Record<string, any>} */ (BUNDLES);
   if (!bundles[locale]) return false;
   try {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(LOCALE_STORAGE_KEY, locale);
-    }
+    kv.setItem(LOCALE_STORAGE_KEY, locale);
   } catch { /* ignore */ }
   _cachedLocale = locale;
   // Sync <html lang> — best-effort; non-DOM env (SSR/jsdom no document) skipped.

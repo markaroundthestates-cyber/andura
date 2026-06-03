@@ -15,8 +15,8 @@
 //    is kept; on native the dynamic firebase import rejects → graceful 'error'/
 //    'unsupported' (no crash). readPermission() returns 'unsupported' on native
 //    (no global Notification).
-//  - per-event toggle + reminder time persist to localStorage (undefined on RN
-//    native) → in-session state works, persistence is a W-Final kv wire.
+//  - per-event toggles persist through the kv adapter (MMKV on native — ME-02);
+//    reminder time persists via the settings store (kv-backed zustand persist).
 //  - reminder time: web <input type=time>; RN has no native time input here, so
 //    a HH:MM TextInput keeps setNotificationTime live + editable (a native time
 //    picker is a design-polish upgrade).
@@ -26,18 +26,20 @@ import { ScrollView, View, Text, Pressable, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AlertCircle } from 'lucide-react-native';
 import { logger } from '../../../../src/util/logger.js';
+import { kv } from '../../../../src/storage/kv';
 import { useSettingsStore } from '../../../../src/react/stores/settingsStore';
 import type { NotificationFrequency } from '../../../../src/react/stores/settingsStore';
 import { SubHeader } from '../../../components/SubHeader';
 import { Toggle } from '../../../components/Toggle';
 import { t } from '../../../../src/i18n/index.js';
 
-// FCM push + RTDB prefs sync are lazy-imported (NOT static) because they pull
-// src/firebase.js + src/auth.js, which still use top-level `import.meta`
-// (web-only env; not yet env-shimmed) — a static import would break Metro
-// native + jest. The dynamic import resolves on Expo web (full parity) and
-// rejects gracefully on native (W-Final = expo-notifications). Behavior +
-// call-sites are unchanged; only the import is deferred to call-time.
+// FCM push + RTDB prefs sync are lazy-imported (NOT static) because they pull the
+// FCM web SDK (firebase/messaging) — a WEB-only path with no native equivalent
+// until the expo-notifications boundary (W-Final). firebase.js + auth.js are
+// env-shimmed (no top-level import.meta), so the deferral is about the web FCM SDK,
+// not import.meta. The dynamic import resolves on Expo web (full parity) and
+// rejects gracefully on native. Behavior + call-sites are unchanged; only the
+// import is deferred to call-time.
 async function syncNotificationPrefs(): Promise<void> {
   try {
     const m = await import('../../../../src/react/lib/notificationPrefsSync');
@@ -98,10 +100,13 @@ const NOTIF_EVENTS_COACHING: ReadonlyArray<NotifEvent> = [
   { key: 'weekly-summary', testId: 'notif-event-weekly-summary', titleKey: 'settings.notifications.events.weeklySummaryTitle', descKey: 'settings.notifications.events.weeklySummaryDesc', defaultOn: true },
 ];
 
+// Per-event prefs persist through the shared kv adapter (web: localStorage;
+// native: MMKV) so the Antrenament/Coaching toggles survive on device (ME-02).
+// Web identical (kv forwards to localStorage). Reminder time persists via the
+// settings store (notificationTime), already kv-backed by zustand persist.
 function readNotifEventEnabled(key: string, defaultOn: boolean): boolean {
   try {
-    if (typeof localStorage === 'undefined') return defaultOn;
-    const raw = localStorage.getItem(`wv2-notif-event-${key}`);
+    const raw = kv.getItem(`wv2-notif-event-${key}`);
     if (raw === null) return defaultOn;
     return raw === '1';
   } catch {
@@ -111,8 +116,7 @@ function readNotifEventEnabled(key: string, defaultOn: boolean): boolean {
 
 function writeNotifEventEnabled(key: string, value: boolean): void {
   try {
-    if (typeof localStorage === 'undefined') return;
-    localStorage.setItem(`wv2-notif-event-${key}`, value ? '1' : '0');
+    kv.setItem(`wv2-notif-event-${key}`, value ? '1' : '0');
   } catch {
     /* disabled — silent */
   }

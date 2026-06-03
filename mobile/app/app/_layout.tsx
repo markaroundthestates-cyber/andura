@@ -10,10 +10,9 @@
 // 4-tab Layout shell. (The GymOnlyRoute gate lives on the workout route itself —
 // app/app/antrenor/workout.tsx — mirroring router.tsx L175.)
 //
-// NOTE: a real native build needs an AsyncStorage adapter for the zustand
-// `persist` stores (they currently bind to web `localStorage`); see FLAGS. On
-// web export (the Wave 2 verify target) localStorage exists, so the guards read
-// live state as on the PWA.
+// NOTE: the zustand `persist` stores read/write through the shared `kv` adapter
+// (kv.native.js → MMKV on device, localStorage on web), so the guards read live
+// persisted state on both native and web export — no AsyncStorage wiring needed.
 
 import { useEffect } from 'react';
 import { View } from 'react-native';

@@ -15,6 +15,11 @@
 import Dexie from 'dexie';
 import type { Table } from 'dexie';
 import type { LastSessionSummary } from '../stores/workoutStore';
+// §35-H1 aggregation now lives in a dependency-free shared module (LO-03) so the
+// native sibling imports the SAME implementation (no hand-synced drift). Re-export
+// keeps the public API of this module unchanged for existing importers.
+export { aggregateSessionsByWeek } from './sessionAggregate';
+export type { WeeklySessionAggregate } from './sessionAggregate';
 
 interface ArchivedSession extends LastSessionSummary {
   archivedAt: number;
@@ -77,80 +82,5 @@ export async function clearArchive(): Promise<void> {
   }
 }
 
-// ══ §35-H1 PRE-ARCHIVE AGGREGATION — Tier 2 storage compression ══════════
-// Per ADR 020 §Rotation, Tier 2 cold storage scales linearly cu raw archive
-// (every session = full LastSessionSummary object cu exercises breakdown).
-// Aggregation step compresses detailed sessions → per-week summary BEFORE
-// rotation to Tier 2 (deferred per tier2Stub.js), reducing footprint ~10-30x
-// on long-history users (1+ year accumulation).
-//
-// Format: YYYY-Www ISO-week key (Mon-Sun boundary aligned cu scheduleStore).
-
-export interface WeeklySessionAggregate {
-  /** ISO week key e.g. "2026-W21". */
-  weekKey: string;
-  /** Count of sessions în interval. */
-  sessionCount: number;
-  /** Sum of sets across sessions (undefined sums skipped). */
-  totalSets: number;
-  /** Total duration minutes. */
-  totalDurationMin: number;
-  /** Total volume kg (sum across sessions). */
-  totalVolumeKg: number;
-  /** Earliest session ts în interval. */
-  firstTs: number;
-  /** Latest session ts în interval. */
-  lastTs: number;
-}
-
-function isoWeekKey(ts: number): string {
-  const d = new Date(ts);
-  // ISO 8601 week: Thursday-anchored. Standard algorithm.
-  const target = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  const dayNr = (target.getUTCDay() + 6) % 7;
-  target.setUTCDate(target.getUTCDate() - dayNr + 3);
-  const firstThursday = target.valueOf();
-  target.setUTCMonth(0, 1);
-  if (target.getUTCDay() !== 4) {
-    target.setUTCMonth(0, 1 + ((4 - target.getUTCDay() + 7) % 7));
-  }
-  const weekNr = 1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
-  return `${new Date(firstThursday).getUTCFullYear()}-W${String(weekNr).padStart(2, '0')}`;
-}
-
-/**
- * Aggregate detailed sessions → per-week summary. Pure function: input array,
- * output map. Caller decides cand sa apeleze (pre-archive rotation per ADR 020).
- *
- * @param sessions detailed sessions list
- * @returns map weekKey → aggregate
- */
-export function aggregateSessionsByWeek(
-  sessions: ReadonlyArray<LastSessionSummary>
-): Record<string, WeeklySessionAggregate> {
-  const result: Record<string, WeeklySessionAggregate> = {};
-  for (const s of sessions) {
-    if (typeof s.ts !== 'number') continue;
-    const key = isoWeekKey(s.ts);
-    const prev = result[key];
-    if (prev === undefined) {
-      result[key] = {
-        weekKey: key,
-        sessionCount: 1,
-        totalSets: s.sets ?? 0,
-        totalDurationMin: s.durationMin ?? 0,
-        totalVolumeKg: s.volumeKg ?? 0,
-        firstTs: s.ts,
-        lastTs: s.ts,
-      };
-    } else {
-      prev.sessionCount += 1;
-      prev.totalSets += s.sets ?? 0;
-      prev.totalDurationMin += s.durationMin ?? 0;
-      prev.totalVolumeKg += s.volumeKg ?? 0;
-      if (s.ts < prev.firstTs) prev.firstTs = s.ts;
-      if (s.ts > prev.lastTs) prev.lastTs = s.ts;
-    }
-  }
-  return result;
-}
+// §35-H1 PRE-ARCHIVE AGGREGATION moved to ./sessionAggregate (LO-03) and
+// re-exported above — single dependency-free SSOT shared with the native sibling.
