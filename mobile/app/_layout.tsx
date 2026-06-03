@@ -16,14 +16,19 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { dark } from '../lib/tokens';
 import { pulseFontMap } from '../lib/fonts';
 import { ToastViewport } from '../components/Toast';
 import { runLaunchUpdateCheck } from '../lib/updates';
+import { useTheme, useThemeColorSchemeSync } from '../lib/theme';
 
 export default function RootLayout() {
   // Empty map (fonts flagged missing) resolves instantly → never blocks render.
   useFonts(pulseFontMap());
+
+  // Keep NativeWind's runtime colorScheme in lockstep with the stored theme so
+  // `dark:` utilities + the token hook flip together (the web CSS cascade twin).
+  useThemeColorSchemeSync();
+  const { colors, isDark } = useTheme();
 
   // Launch-time OTA auto-check (§D102): silent, fire-and-forget, applies only
   // when no active session. No-op on web / Expo Go / until EAS Update is set up.
@@ -33,11 +38,11 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="light" />
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: dark.paper },
+          contentStyle: { backgroundColor: colors.paper },
         }}
       />
       <ToastViewport />

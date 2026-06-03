@@ -22,7 +22,7 @@ import { useAppStore } from '../../../src/react/stores/appStore';
 import { useOnboardingStore } from '../../../src/react/stores/onboardingStore';
 import { isAuthenticated as readAuthFromStorage } from '../../../src/auth.js';
 import { BottomNav } from '../../components/BottomNav';
-import { dark } from '../../lib/tokens';
+import { useTheme } from '../../lib/theme';
 
 export default function AppShellLayout() {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
@@ -31,6 +31,7 @@ export default function AppShellLayout() {
   const pendingDeletionRestore = useAppStore((s) => s.pendingDeletionRestore);
   const onboardingCompleted = useOnboardingStore((s) => s.completed);
   const pathname = usePathname();
+  const { colors } = useTheme();
 
   // Mirror ProtectedRoute's mount sync: if storage already carries a valid
   // token (Magic Link landed prior session) reflect it into the store. Native
@@ -53,7 +54,7 @@ export default function AppShellLayout() {
   if (!onboardingCompleted) return <Redirect href="/onboarding/1" />;
 
   return (
-    <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-paper" style={{ backgroundColor: dark.paper }}>
+    <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-paper" style={{ backgroundColor: colors.paper }}>
       <View className="flex-1">
         <Slot />
       </View>

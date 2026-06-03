@@ -6,14 +6,12 @@
 // kept verbatim + persist through kv (W1). Every testID preserved (cont-accent-*,
 // cont-theme-*, nav-style-*, cont-appearance-accent).
 //
-// FLAG — theme/accent RUNTIME switching: the web applied the accent app-wide via
-// paletteSync.applyAccent (writes --brick on documentElement) and the theme via
-// themeSync (<html data-theme>). RN has no CSS variables; NativeWind tokens
-// (tailwind.config + lib/tokens) are STATIC (Pulse DARK). So the picker PERSISTS
-// the choice (cloud-synced, ready for a native theme system) but does NOT re-tint
-// the app live yet. Wiring NativeWind runtime theme/accent swap is W-Final /
-// design-polish + Daniel-gated. The web `applyAccent` call is therefore omitted
-// here (it touches `document`, native-unsafe) — store write retained.
+// THEME — runtime Dark/Light switching is now LIVE: the root layout's
+// useThemeColorSchemeSync mirrors the stored theme into NativeWind's colorScheme
+// and useTheme() (lib/theme) re-tints every chrome component on toggle. So
+// tapping Dark/Light here applies instantly (Daniel: "Light doesn't work" → fixed).
+// Accent re-tint (swapping the primary --brick among the 4 Pulse hues) is still
+// design-polish/W-Final — the store write persists the accent choice for that.
 
 import { ScrollView, View, Text, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -22,9 +20,9 @@ import { useSettingsStore } from '../../../../src/react/stores/settingsStore';
 import type { Accent } from '../../../../src/react/stores/settingsStore';
 import { t } from '../../../../src/i18n/index.js';
 import { SubHeader } from '../../../components/SubHeader';
-import { ZoneHeading } from '../../../components/cont/fields';
 import { goBack } from '../../../lib/nav';
-import { dark, accent as palette } from '../../../lib/tokens';
+import { accent as palette } from '../../../lib/tokens';
+import { useTheme } from '../../../lib/theme';
 
 const ACCENT_OPTIONS: ReadonlyArray<{ value: Accent; hex: string; labelKey: string }> = [
   { value: 'volt', hex: palette.volt, labelKey: 'cont.appearance.accentVolt' },
@@ -38,13 +36,14 @@ const NAV_STYLE_OPTIONS: ReadonlyArray<{ value: 'compact' | 'comfortable'; label
   { value: 'compact', labelKey: 'settings.appearance.navCompact' },
 ];
 
-const SURFACE_2 = 'rgba(33,39,60,0.78)';
-
 export default function SettingsAppearance() {
+  const { colors } = useTheme();
+  const SURFACE_2 = colors.surface.s2;
+
   const accentSel = useSettingsStore((s) => s.accent);
   const setAccent = useSettingsStore((s) => s.setAccent);
-  // FLAG: web also called applyAccent(a) (documentElement --brick) — omitted on
-  // RN (native-unsafe + static tokens). Store write persists the choice.
+  // FLAG: web also called applyAccent(a) (documentElement --brick) — accent
+  // re-tint is design-polish/W-Final. Store write persists the choice.
   const pickAccent = (a: Accent): void => {
     setAccent(a);
   };
@@ -61,16 +60,16 @@ export default function SettingsAppearance() {
   const setBottomNavStyle = useSettingsStore((s) => s.setBottomNavStyle);
 
   return (
-    <View testID="settings-appearance" style={{ flex: 1, backgroundColor: dark.paper }}>
+    <View testID="settings-appearance" style={{ flex: 1, backgroundColor: colors.paper }}>
       <SubHeader title={t('settings.appearance.title')} onBack={goBack} testIdBack="settings-appearance-back" />
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20 }}>
-        <Text className="font-mono uppercase" style={{ fontSize: 11, letterSpacing: 1.5, color: dark.ink3, marginBottom: 16 }}>
+        <Text className="font-mono uppercase" style={{ fontSize: 11, letterSpacing: 1.5, color: colors.ink3, marginBottom: 16 }}>
           {t('settings.appearance.subtitle')}
         </Text>
 
         {/* ACCENT — 4 Pulse swatches; selected gets glow + check. */}
-        <Text className="font-mono uppercase" style={{ fontSize: 11, letterSpacing: 1.5, fontWeight: '600', color: dark.ink3, marginBottom: 12 }}>
+        <Text className="font-mono uppercase" style={{ fontSize: 11, letterSpacing: 1.5, fontWeight: '600', color: colors.ink3, marginBottom: 12 }}>
           {t('cont.appearance.accentLabel')}
         </Text>
         <View
@@ -80,9 +79,9 @@ export default function SettingsAppearance() {
           style={{
             flexDirection: 'row',
             gap: 12,
-            backgroundColor: dark.paper2,
+            backgroundColor: colors.paper2,
             borderWidth: 1,
-            borderColor: dark.line,
+            borderColor: colors.line,
             borderRadius: 18,
             padding: 16,
             marginBottom: 24,
@@ -115,9 +114,9 @@ export default function SettingsAppearance() {
                     shadowOffset: { width: 0, height: 0 },
                   }}
                 >
-                  {active && <Check size={15} color={dark.onAccent} strokeWidth={2.8} />}
+                  {active && <Check size={15} color={colors.onAccent} strokeWidth={2.8} />}
                 </View>
-                <Text className="font-mono uppercase" style={{ fontSize: 9.5, color: dark.ink3, letterSpacing: 0.5, marginTop: 6 }}>
+                <Text className="font-mono uppercase" style={{ fontSize: 9.5, color: colors.ink3, letterSpacing: 0.5, marginTop: 6 }}>
                   {t(opt.labelKey)}
                 </Text>
               </Pressable>
@@ -147,11 +146,11 @@ export default function SettingsAppearance() {
                   end={{ x: 1, y: 1 }}
                   style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 10 }}
                 >
-                  <Text style={{ fontSize: 14, fontWeight: '600', color: dark.onAccent }}>{t(opt.labelKey)}</Text>
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: colors.onAccent }}>{t(opt.labelKey)}</Text>
                 </LinearGradient>
               ) : (
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 10 }}>
-                  <Text style={{ fontSize: 14, fontWeight: '600', color: dark.ink2 }}>{t(opt.labelKey)}</Text>
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: colors.ink2 }}>{t(opt.labelKey)}</Text>
                 </View>
               )}
             </Pressable>
@@ -159,10 +158,10 @@ export default function SettingsAppearance() {
         </View>
 
         {/* BOTTOM BAR — density (Comfortable / Compact). */}
-        <Text className="font-mono uppercase" style={{ fontSize: 11, letterSpacing: 1.5, fontWeight: '600', color: dark.ink3, marginBottom: 12 }}>
+        <Text className="font-mono uppercase" style={{ fontSize: 11, letterSpacing: 1.5, fontWeight: '600', color: colors.ink3, marginBottom: 12 }}>
           {t('settings.appearance.navHeading')}
         </Text>
-        <View style={{ backgroundColor: dark.paper2, borderWidth: 1, borderColor: dark.line, borderRadius: 18, overflow: 'hidden' }}>
+        <View style={{ backgroundColor: colors.paper2, borderWidth: 1, borderColor: colors.line, borderRadius: 18, overflow: 'hidden' }}>
           {NAV_STYLE_OPTIONS.map((opt, idx) => {
             const selected = navStyle === opt.value;
             return (
@@ -178,13 +177,13 @@ export default function SettingsAppearance() {
                   paddingHorizontal: 16,
                   paddingVertical: 12,
                   borderBottomWidth: idx < NAV_STYLE_OPTIONS.length - 1 ? 1 : 0,
-                  borderBottomColor: dark.line,
+                  borderBottomColor: colors.line,
                 }}
               >
-                <Text style={{ flex: 1, fontSize: 14, fontWeight: selected ? '600' : '400', color: selected ? dark.brick : dark.ink }}>
+                <Text style={{ flex: 1, fontSize: 14, fontWeight: selected ? '600' : '400', color: selected ? colors.brick : colors.ink }}>
                   {t(opt.labelKey)}
                 </Text>
-                {selected && <Check size={16} color={dark.brick} strokeWidth={2.6} />}
+                {selected && <Check size={16} color={colors.brick} strokeWidth={2.6} />}
               </Pressable>
             );
           })}

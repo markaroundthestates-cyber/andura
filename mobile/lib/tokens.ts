@@ -27,7 +27,7 @@ export const accent = {
   emberRed: '#ff5d6c',
 } as const;
 
-/** PULSE DARK — primary app look (global.css [data-theme="dark"] L198-213). */
+/** PULSE DARK — primary app look (global.css [data-theme="dark"] L198-215). */
 export const dark = {
   paper: '#090b13',
   paper2: '#0d101c',
@@ -43,6 +43,7 @@ export const dark = {
   aquaInk: '#4fd6e8',
   emberInk: '#ff7d52',
   onAccent: '#0a0c14',
+  warn: '#ffc24f', // global.css [data-theme="dark"] L215 — Pulse amber
 } as const;
 
 /** PULSE LIGHT — default :root in global.css (L116-135). */
@@ -61,6 +62,7 @@ export const light = {
   aquaInk: '#176577',
   emberInk: '#a83817',
   onAccent: '#0a0c14',
+  warn: '#8f6210', // global.css :root L134 — light warning amber (AA)
 } as const;
 
 // ── PRE-CALCULATED color-mix() RESULTS ──────────────────────────────────────
@@ -74,6 +76,11 @@ export const mix = {
   brick55Dark: 'rgba(182,242,58,0.55)',
   brick55Light: 'rgba(71,112,6,0.55)',
 } as const;
+
+/** Per-theme color-mix bundle — the reactive theme (lib/theme.ts) selects the
+ *  matching `brick16` / `brick55` for the active theme so chips/glows re-tint. */
+export const mixDark = { brick16: mix.brick16Dark, brick55: mix.brick55Dark } as const;
+export const mixLight = { brick16: mix.brick16Light, brick55: mix.brick55Light } as const;
 
 // ── withAlpha(color, alpha) ─────────────────────────────────────────────────
 // Runtime helper for the web's `color-mix(in oklab, <c> N%, transparent)`
@@ -122,6 +129,19 @@ export const status = {
   infoText: '#8fd4e8',
 } as const;
 
+/** PULSE LIGHT status surfaces (global.css :root L148-159). */
+export const statusLight = {
+  dangerBg: '#fbe6e2',
+  dangerBorder: '#f0c4ba',
+  dangerText: '#8a2818',
+  neutralBg: '#eef0f6',
+  neutralBorder: '#c8cde0',
+  neutralText: '#444a5e',
+  infoBg: '#e2f4f8',
+  infoBorder: '#b8e2ec',
+  infoText: '#0d4250',
+} as const;
+
 /** Elevated/nested glass fill (global.css [data-theme="dark"] L224-225). RN has
  *  no backdrop-filter, so the alpha is dropped to an opaque approximation that
  *  reads as the elevated surface on the dark paper. */
@@ -130,48 +150,64 @@ export const surface = {
   s2: '#21273c', //    --surface-2 rgba(33,39,60,0.78) → opaque
 } as const;
 
+/** PULSE LIGHT elevated surfaces (global.css :root L138-140). RN drops the
+ *  backdrop-filter, so the translucent glass is approximated opaque. */
+export const surfaceLight = {
+  base: '#ffffff', //  --surface  rgba(255,255,255,0.86) → opaque white card
+  s2: '#f4f6fb', //    --surface-2 rgba(244,246,251,0.92) → opaque
+} as const;
+
 // ── varColor(cssVar) ────────────────────────────────────────────────────────
 // The shared web components carry accent colors as CSS-var strings (e.g.
 // `color="var(--aqua)"`, `style={{ color: 'var(--volt)' }}`). RN cannot read
 // CSS vars, so the ported screens map those var strings to the static Pulse
 // DARK hex. Single source so every Antrenor component resolves identically.
-const VAR_MAP: Record<string, string> = {
-  '--volt': accent.volt,
-  '--volt-deep': accent.voltDeep,
-  '--aqua': accent.aqua,
-  '--aqua-deep': accent.aquaDeep,
-  '--aqua-ink': dark.aquaInk,
-  '--ember': accent.ember,
-  '--ember-deep': accent.emberDeep,
-  '--ember-red': accent.emberRed,
-  '--ember-ink': dark.emberInk,
-  '--violet': accent.violet,
-  '--gold': accent.gold,
-  '--brick': dark.brick,
-  '--olive': dark.olive,
-  '--deep': dark.deep,
-  '--ink': dark.ink,
-  '--ink-2': dark.ink2,
-  '--ink-3': dark.ink3,
-  '--on-accent': dark.onAccent,
-  '--line': dark.line,
-  '--line-strong': dark.lineStrong,
-  '--paper': dark.paper,
-  '--paper-2': dark.paper2,
-  '--surface': surface.base,
-  '--surface-2': surface.s2,
-  '--status-neutral-text': status.neutralText,
-  '--status-danger-text': status.dangerText,
-  '--warn': '#ffc24f', // global.css [data-theme="dark"] L215 — Pulse amber
-};
+// Build a CSS-var → hex map for a given theme palette so `varColor` can resolve
+// the same web var strings against EITHER the dark or light palette at runtime.
+type Palette = typeof dark | typeof light;
+function buildVarMap(p: Palette, s: typeof surface | typeof surfaceLight, st: typeof status | typeof statusLight): Record<string, string> {
+  return {
+    '--volt': accent.volt,
+    '--volt-deep': accent.voltDeep,
+    '--aqua': accent.aqua,
+    '--aqua-deep': accent.aquaDeep,
+    '--aqua-ink': p.aquaInk,
+    '--ember': accent.ember,
+    '--ember-deep': accent.emberDeep,
+    '--ember-red': accent.emberRed,
+    '--ember-ink': p.emberInk,
+    '--violet': accent.violet,
+    '--gold': accent.gold,
+    '--brick': p.brick,
+    '--olive': p.olive,
+    '--deep': p.deep,
+    '--ink': p.ink,
+    '--ink-2': p.ink2,
+    '--ink-3': p.ink3,
+    '--on-accent': p.onAccent,
+    '--line': p.line,
+    '--line-strong': p.lineStrong,
+    '--paper': p.paper,
+    '--paper-2': p.paper2,
+    '--surface': s.base,
+    '--surface-2': s.s2,
+    '--status-neutral-text': st.neutralText,
+    '--status-danger-text': st.dangerText,
+    '--warn': p.warn,
+  };
+}
 
-/** Resolve a web CSS-var color string to its Pulse DARK hex. Accepts either a
- *  bare token name (`--aqua`) or the `var(--aqua)` wrapper. Returns the input
- *  unchanged when it is already a literal color (best effort; never throws). */
-export function varColor(cssVar: string): string {
+export const varMapDark = buildVarMap(dark, surface, status);
+export const varMapLight = buildVarMap(light, surfaceLight, statusLight);
+
+/** Resolve a web CSS-var color string to a Pulse hex. Accepts either a bare
+ *  token name (`--aqua`) or the `var(--aqua)` wrapper. Optional `map` selects
+ *  the theme (defaults to DARK for back-compat). Returns the input unchanged
+ *  when it is already a literal color (best effort; never throws). */
+export function varColor(cssVar: string, map: Record<string, string> = varMapDark): string {
   const m = cssVar.match(/^var\((--[\w-]+)\)$/);
   const key = m?.[1] ?? cssVar;
-  return VAR_MAP[key] ?? cssVar;
+  return map[key] ?? cssVar;
 }
 
 export const radius = { DEFAULT: 22, sm: 14 } as const;
