@@ -19,6 +19,9 @@
 // the React Native + jest graph (auth.js is imported by the RN cont confirm
 // screens). Byte-equivalent on Vite/Vitest: VITE_ENV === import.meta.env there.
 import { VITE_ENV, IS_PROD } from './util/env';
+// kv = synchronous KV adapter (web: localStorage; native: MMKV). Token helpers
+// below route through it so auth sessions persist on device (CR-01).
+import { kv } from './storage/kv';
 
 const AUTH_BASE = 'https://identitytoolkit.googleapis.com/v1';
 const TOKEN_BASE = 'https://securetoken.googleapis.com/v1';
@@ -578,23 +581,14 @@ function _origin() {
   return 'https://andura.local';
 }
 
-/** @param {string} k */
-function _getItem(k) {
-  try { return typeof localStorage !== 'undefined' ? localStorage.getItem(k) : null; }
-  catch { return null; }
-}
-
-/** @param {string} k @param {string} v */
-function _setItem(k, v) {
-  try { if (typeof localStorage !== 'undefined') localStorage.setItem(k, v); }
-  catch {}
-}
-
-/** @param {string} k */
-function _removeItem(k) {
-  try { if (typeof localStorage !== 'undefined') localStorage.removeItem(k); }
-  catch {}
-}
+// Token persistence routes through the `kv` adapter (web: localStorage;
+// native: MMKV) so auth tokens SURVIVE app restarts on device. A bare
+// typeof-guarded localStorage write was a silent no-op on RN — sessions never
+// persisted. `kv` already swallows quota/disabled errors and normalizes a
+// missing key to null, so web behavior is byte-identical to the prior helpers.
+const _getItem = kv.getItem;
+const _setItem = kv.setItem;
+const _removeItem = kv.removeItem;
 
 // ── §56.5.3 Reactivation flow — USER_DISABLED catching ─────────────────────
 
