@@ -10,7 +10,7 @@ import { View, Text, Pressable } from 'react-native';
 import { usePathname } from 'expo-router';
 import { Dumbbell, Activity, CalendarDays, User } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { mix, dark } from '../lib/tokens';
+import { useTheme } from '../lib/theme';
 import { t } from '../../src/i18n/index.js';
 
 type Tab = 'antrenor' | 'progres' | 'istoric' | 'cont';
@@ -23,6 +23,7 @@ const TABS: readonly { id: Tab; Icon: typeof Activity }[] = [
 ];
 
 export function BottomNav() {
+  const { colors } = useTheme();
   const pathname = usePathname();
   const isActive = (tab: Tab): boolean =>
     pathname === `/app/${tab}` || pathname.startsWith(`/app/${tab}/`);
@@ -54,13 +55,13 @@ export function BottomNav() {
                 borderRadius: 12,
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: active ? mix.brick16Dark : 'transparent',
+                backgroundColor: active ? colors.mix.brick16 : 'transparent',
               }}
             >
               <Icon
                 size={20}
                 strokeWidth={active ? 2.2 : 1.8}
-                color={active ? dark.brick : dark.ink2}
+                color={active ? colors.brick : colors.ink2}
               />
             </View>
             <Text
@@ -68,7 +69,7 @@ export function BottomNav() {
               style={{
                 fontSize: 9,
                 letterSpacing: 1,
-                color: active ? dark.brick : dark.ink2,
+                color: active ? colors.brick : colors.ink2,
               }}
             >
               {t(`nav.tabs.${id}`)}

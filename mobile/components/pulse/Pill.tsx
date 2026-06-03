@@ -7,7 +7,8 @@
 
 import type { ReactNode } from 'react';
 import { View, Text } from 'react-native';
-import { dark, withAlpha } from '../../lib/tokens';
+import { withAlpha } from '../../lib/tokens';
+import { useTheme } from '../../lib/theme';
 
 interface PillProps {
   children: ReactNode;
@@ -17,7 +18,9 @@ interface PillProps {
   solid?: boolean;
 }
 
-export function Pill({ children, color = dark.brick, solid = false }: PillProps) {
+export function Pill({ children, color, solid = false }: PillProps) {
+  const { colors } = useTheme();
+  const c = color ?? colors.brick;
   return (
     <View
       testID="pulse-pill"
@@ -29,15 +32,15 @@ export function Pill({ children, color = dark.brick, solid = false }: PillProps)
         paddingHorizontal: 11,
         paddingVertical: 5,
         borderRadius: 999,
-        backgroundColor: solid ? color : withAlpha(color, 0.16),
+        backgroundColor: solid ? c : withAlpha(c, 0.16),
         borderWidth: solid ? 0 : 1,
-        borderColor: solid ? 'transparent' : withAlpha(color, 0.4),
+        borderColor: solid ? 'transparent' : withAlpha(c, 0.4),
       }}
     >
       <Text
         className="font-mono uppercase"
         style={{
-          color: solid ? dark.onAccent : color,
+          color: solid ? colors.onAccent : c,
           fontSize: 10.5,
           letterSpacing: 0.6,
         }}

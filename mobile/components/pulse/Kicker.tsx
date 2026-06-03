@@ -6,7 +6,7 @@
 
 import type { ReactNode } from 'react';
 import { Text } from 'react-native';
-import { dark } from '../../lib/tokens';
+import { useTheme } from '../../lib/theme';
 
 interface KickerProps {
   children: ReactNode;
@@ -14,12 +14,13 @@ interface KickerProps {
   color?: string;
 }
 
-export function Kicker({ children, color = dark.brick }: KickerProps) {
+export function Kicker({ children, color }: KickerProps) {
+  const { colors } = useTheme();
   return (
     <Text
       testID="pulse-kicker"
       className="font-mono uppercase"
-      style={{ color, fontSize: 10.5, letterSpacing: 1.9 }}
+      style={{ color: color ?? colors.brick, fontSize: 10.5, letterSpacing: 1.9 }}
     >
       {children}
     </Text>

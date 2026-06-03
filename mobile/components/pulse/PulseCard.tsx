@@ -12,7 +12,8 @@
 
 import type { ReactNode } from 'react';
 import { View, type ViewStyle, type StyleProp } from 'react-native';
-import { surface, dark, radius } from '../../lib/tokens';
+import { radius } from '../../lib/tokens';
+import { useTheme } from '../../lib/theme';
 
 interface PulseCardProps {
   children: ReactNode;
@@ -33,6 +34,7 @@ export function PulseCard({
   accessibilityLabel,
   accessibilityRole,
 }: PulseCardProps) {
+  const { colors } = useTheme();
   return (
     <View
       testID={testID}
@@ -42,9 +44,9 @@ export function PulseCard({
         {
           position: 'relative',
           overflow: 'hidden',
-          backgroundColor: surface.base,
+          backgroundColor: colors.surface.base,
           borderWidth: 1,
-          borderColor: dark.line,
+          borderColor: colors.line,
           borderRadius: tight ? radius.sm : radius.DEFAULT,
         },
         style,

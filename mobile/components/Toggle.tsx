@@ -6,7 +6,7 @@
 // track + padding hitSlop). testId passthrough preserved.
 
 import { Pressable, View } from 'react-native';
-import { dark } from '../lib/tokens';
+import { useTheme } from '../lib/theme';
 
 export interface ToggleProps {
   checked: boolean;
@@ -17,6 +17,7 @@ export interface ToggleProps {
 }
 
 export function Toggle({ checked, onToggle, ariaLabel, testId, disabled = false }: ToggleProps) {
+  const { colors } = useTheme();
   return (
     <Pressable
       accessibilityRole="switch"
@@ -32,7 +33,7 @@ export function Toggle({ checked, onToggle, ariaLabel, testId, disabled = false 
         borderRadius: 999,
         justifyContent: 'center',
         opacity: disabled ? 0.5 : 1,
-        backgroundColor: checked ? dark.brick : dark.lineStrong,
+        backgroundColor: checked ? colors.brick : colors.lineStrong,
       }}
     >
       <View
@@ -43,7 +44,7 @@ export function Toggle({ checked, onToggle, ariaLabel, testId, disabled = false 
           width: 20,
           height: 20,
           borderRadius: 10,
-          backgroundColor: dark.paper,
+          backgroundColor: colors.paper,
         }}
       />
     </Pressable>

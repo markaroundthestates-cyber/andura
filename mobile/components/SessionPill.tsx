@@ -27,7 +27,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { usePathname, router } from 'expo-router';
 import { Play, ChevronRight } from 'lucide-react-native';
-import { dark } from '../lib/tokens';
+import { useTheme } from '../lib/theme';
 import { gotoPath } from '../lib/nav';
 import { useWorkoutStore, getCurrentMode } from '../../src/react/stores/workoutStore';
 import { useOnboardingStore } from '../../src/react/stores/onboardingStore';
@@ -48,6 +48,7 @@ interface SessionPillProps {
 }
 
 export function SessionPill({ onPress }: SessionPillProps = {}): React.JSX.Element | null {
+  const { colors } = useTheme();
   const pathname = usePathname();
   // §44-C1 — subscribe to primitive fields (stable refs) then derive the tagged
   // mode in render body; calling getCurrentMode at selector level returns a new
@@ -170,16 +171,17 @@ export function SessionPill({ onPress }: SessionPillProps = {}): React.JSX.Eleme
         paddingHorizontal: 16,
         paddingVertical: 10,
         borderRadius: 999,
+        backgroundColor: colors.brick,
       }}
     >
-      <Play size={14} color={dark.paper} />
+      <Play size={14} color={colors.onAccent} />
       <Text
         numberOfLines={1}
-        style={{ flex: 1, fontSize: 14, fontWeight: '600', color: dark.paper }}
+        style={{ flex: 1, fontSize: 14, fontWeight: '600', color: colors.onAccent }}
       >
         {label}
       </Text>
-      <ChevronRight size={14} color={dark.paper} style={{ opacity: 0.7 }} />
+      <ChevronRight size={14} color={colors.onAccent} style={{ opacity: 0.7 }} />
     </Pressable>
   );
 }

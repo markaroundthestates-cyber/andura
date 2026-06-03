@@ -26,7 +26,8 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { dark, withAlpha } from '../../lib/tokens';
+import { withAlpha } from '../../lib/tokens';
+import { useTheme } from '../../lib/theme';
 import { useReducedMotion } from '../../lib/useReducedMotion';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -53,20 +54,23 @@ export function Ring({
   size = 132,
   stroke = 10,
   pct = 0,
-  color = dark.brick,
-  track = dark.line,
+  color,
+  track,
   children,
   glow = true,
   gradId,
 }: RingProps) {
+  const { colors } = useTheme();
   const reduced = useReducedMotion();
+  const arc = color ?? colors.brick;
+  const trackColor = track ?? colors.line;
   const r = (size - stroke) / 2;
   const circumference = 2 * Math.PI * r;
   const clamped = Math.min(1, Math.max(0, pct / 100));
   const targetDash = circumference * clamped;
   const useGrad = gradId === 'pulse';
-  const arcColor = useGrad ? `url(#${PULSE_GRAD_ID})` : color;
-  const glowToken = useGrad ? dark.aquaInk : color;
+  const arcColor = useGrad ? `url(#${PULSE_GRAD_ID})` : arc;
+  const glowToken = useGrad ? colors.aquaInk : arc;
 
   const dash = useSharedValue(targetDash);
   useEffect(() => {
@@ -93,8 +97,8 @@ export function Ring({
         {useGrad && (
           <Defs>
             <LinearGradient id={PULSE_GRAD_ID} x1="0" y1="0" x2="1" y2="1">
-              <Stop offset="0%" stopColor={dark.olive} />
-              <Stop offset="100%" stopColor={dark.aquaInk} />
+              <Stop offset="0%" stopColor={colors.olive} />
+              <Stop offset="100%" stopColor={colors.aquaInk} />
             </LinearGradient>
           </Defs>
         )}
@@ -103,7 +107,7 @@ export function Ring({
           cy={center}
           r={r}
           fill="none"
-          stroke={track}
+          stroke={trackColor}
           strokeWidth={stroke}
           testID="pulse-ring-track"
         />

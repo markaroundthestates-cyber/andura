@@ -16,11 +16,11 @@ import {
   X,
 } from 'lucide-react-native';
 import { toast, type ToastItem, type ToastVariant } from '../../src/react/lib/toast';
-import { dark } from '../lib/tokens';
+import { useTheme } from '../lib/theme';
 import { t } from '../../src/i18n/index.js';
 
-function VariantIcon({ variant }: { variant: ToastVariant }) {
-  const props = { size: 16, color: dark.brick };
+function VariantIcon({ variant, color }: { variant: ToastVariant; color: string }) {
+  const props = { size: 16, color };
   switch (variant) {
     case 'success':
       return <CheckCircle2 {...props} />;
@@ -40,6 +40,7 @@ function variantLive(variant: ToastVariant): 'polite' | 'assertive' {
 }
 
 function ToastCard({ item }: { item: ToastItem }) {
+  const { colors } = useTheme();
   useEffect(() => {
     if (item.durationMs <= 0) return;
     const handle = setTimeout(() => toast.dismiss(item.id), item.durationMs);
@@ -58,10 +59,12 @@ function ToastCard({ item }: { item: ToastItem }) {
         paddingVertical: 8,
         borderRadius: 12,
         maxWidth: 384,
+        backgroundColor: colors.paper2,
+        borderColor: colors.line,
       }}
     >
-      <VariantIcon variant={item.variant} />
-      <Text style={{ flex: 1, fontSize: 14, color: dark.ink }}>
+      <VariantIcon variant={item.variant} color={colors.brick} />
+      <Text style={{ flex: 1, fontSize: 14, color: colors.ink }}>
         {item.message as string}
       </Text>
       {item.dismissible && (
@@ -72,7 +75,7 @@ function ToastCard({ item }: { item: ToastItem }) {
           onPress={() => toast.dismiss(item.id)}
           style={{ padding: 4 }}
         >
-          <X size={16} color={dark.ink2} />
+          <X size={16} color={colors.ink2} />
         </Pressable>
       )}
     </View>

@@ -14,10 +14,8 @@
 import type { ReactNode } from 'react';
 import { View, Text, Pressable, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { dark, accent, withAlpha } from '../../lib/tokens';
-
-// --surface-2 (dark) glass fill from global.css L225.
-const SURFACE_2 = 'rgba(33,39,60,0.78)';
+import { accent, withAlpha } from '../../lib/tokens';
+import { useTheme } from '../../lib/theme';
 
 // ── LabelRow — row text on the left, control on the right ────────────────────
 // RN twin of rows.tsx LabelRow. The web wrapped INPUT children in <label> for
@@ -32,6 +30,7 @@ export function LabelRow({
   isLast?: boolean;
   children: ReactNode;
 }) {
+  const { colors } = useTheme();
   return (
     <View
       style={{
@@ -42,10 +41,10 @@ export function LabelRow({
         paddingVertical: 12,
         gap: 12,
         borderBottomWidth: isLast ? 0 : 1,
-        borderBottomColor: dark.line,
+        borderBottomColor: colors.line,
       }}
     >
-      <Text style={{ fontSize: 14, color: dark.ink, flexShrink: 1 }}>{label}</Text>
+      <Text style={{ fontSize: 14, color: colors.ink, flexShrink: 1 }}>{label}</Text>
       {children}
     </View>
   );
@@ -72,6 +71,7 @@ export function NumberField({
   placeholder?: string;
   invalid?: boolean;
 }) {
+  const { colors } = useTheme();
   return (
     <TextInput
       testID={testID}
@@ -79,7 +79,7 @@ export function NumberField({
       onChangeText={onChangeText}
       editable={!disabled}
       placeholder={placeholder}
-      placeholderTextColor={dark.ink3}
+      placeholderTextColor={colors.ink3}
       keyboardType={decimal ? 'decimal-pad' : 'number-pad'}
       style={{
         width: 80,
@@ -87,9 +87,9 @@ export function NumberField({
         paddingVertical: 6,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: invalid ? dark.brick : dark.line,
-        backgroundColor: SURFACE_2,
-        color: dark.ink,
+        borderColor: invalid ? colors.brick : colors.line,
+        backgroundColor: colors.surface.s2,
+        color: colors.ink,
         fontSize: 14,
         textAlign: 'right',
         opacity: disabled ? 0.5 : 1,
@@ -122,6 +122,7 @@ export function SegmentedField<V extends string>({
   onChange: (v: V) => void;
   testID: string;
 }) {
+  const { colors } = useTheme();
   return (
     <View testID={testID} style={{ flexDirection: 'row', gap: 6, flexShrink: 1, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
       {options.map((opt) => {
@@ -143,19 +144,19 @@ export function SegmentedField<V extends string>({
                 end={{ x: 1, y: 1 }}
                 style={{ paddingHorizontal: 12, paddingVertical: 7 }}
               >
-                <Text style={{ fontSize: 13, fontWeight: '700', color: dark.onAccent }}>{opt.label}</Text>
+                <Text style={{ fontSize: 13, fontWeight: '700', color: colors.onAccent }}>{opt.label}</Text>
               </LinearGradient>
             ) : (
               <View
                 style={{
                   paddingHorizontal: 12,
                   paddingVertical: 7,
-                  backgroundColor: SURFACE_2,
+                  backgroundColor: colors.surface.s2,
                   borderWidth: 1,
-                  borderColor: dark.line,
+                  borderColor: colors.line,
                 }}
               >
-                <Text style={{ fontSize: 13, fontWeight: '600', color: dark.ink2 }}>{opt.label}</Text>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.ink2 }}>{opt.label}</Text>
               </View>
             )}
           </Pressable>
@@ -169,13 +170,14 @@ export function SegmentedField<V extends string>({
 // A rounded translucent surface used for grouped rows. Matches the web
 // `.pulse-card` / `.pulse-card-tight` look with the dark tokens.
 export function Card({ children, style }: { children: ReactNode; style?: object }) {
+  const { colors } = useTheme();
   return (
     <View
       style={[
         {
-          backgroundColor: withAlpha(dark.paper2, 0.9),
+          backgroundColor: withAlpha(colors.paper2, 0.9),
           borderWidth: 1,
-          borderColor: dark.line,
+          borderColor: colors.line,
           borderRadius: 18,
           overflow: 'hidden',
         },
@@ -192,6 +194,7 @@ export function Card({ children, style }: { children: ReactNode; style?: object 
 // (Cont section heading + the settings sub-screen headings). Danger keeps the
 // warm brick-dark flag.
 export function ZoneHeading({ children, danger = false }: { children: ReactNode; danger?: boolean }) {
+  const { colors } = useTheme();
   return (
     <Text
       className="font-mono uppercase"
@@ -199,7 +202,7 @@ export function ZoneHeading({ children, danger = false }: { children: ReactNode;
         fontSize: 11,
         letterSpacing: 1.5,
         fontWeight: '600',
-        color: danger ? dark.brickDark : dark.ink3,
+        color: danger ? colors.brickDark : colors.ink3,
         marginTop: 24,
         marginBottom: 12,
       }}

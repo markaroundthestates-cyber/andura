@@ -26,7 +26,8 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { accent, dark, withAlpha } from '../../lib/tokens';
+import { accent, withAlpha } from '../../lib/tokens';
+import { useTheme } from '../../lib/theme';
 import { useReducedMotion } from '../../lib/useReducedMotion';
 
 interface BlobSpec {
@@ -99,6 +100,7 @@ function Blob({ spec, reduced }: { spec: BlobSpec; reduced: boolean }) {
 
 export function AuroraBackground() {
   const reduced = useReducedMotion();
+  const { colors } = useTheme();
 
   return (
     <View
@@ -106,7 +108,7 @@ export function AuroraBackground() {
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       pointerEvents="none"
-      style={[StyleSheet.absoluteFill, { backgroundColor: dark.paper2, overflow: 'hidden' }]}
+      style={[StyleSheet.absoluteFill, { backgroundColor: colors.paper2, overflow: 'hidden' }]}
     >
       {BLOBS.map((spec, i) => (
         <Blob key={i} spec={spec} reduced={reduced} />
@@ -115,7 +117,7 @@ export function AuroraBackground() {
       {/* Readability scrim — faint outer paper feather (transparent core). */}
       <LinearGradient
         pointerEvents="none"
-        colors={['transparent', withAlpha(dark.paper, 0.26)]}
+        colors={['transparent', withAlpha(colors.paper, 0.26)]}
         style={StyleSheet.absoluteFill}
       />
       {/* Edge vignette — frames the aurora without darkening the center. */}

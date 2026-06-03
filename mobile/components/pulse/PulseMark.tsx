@@ -24,7 +24,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { dark } from '../../lib/tokens';
+import { useTheme } from '../../lib/theme';
 import { useReducedMotion } from '../../lib/useReducedMotion';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -38,6 +38,7 @@ interface PulseMarkProps {
 }
 
 export function PulseMark({ size = 64, animated = true }: PulseMarkProps) {
+  const { colors } = useTheme();
   const reduced = useReducedMotion();
   const shouldAnimate = animated && !reduced;
   const offset = useSharedValue(shouldAnimate ? 120 : 0);
@@ -58,8 +59,8 @@ export function PulseMark({ size = 64, animated = true }: PulseMarkProps) {
       <Svg width={size} height={size} viewBox="0 0 64 64">
         <Defs>
           <LinearGradient id={MARK_GRAD_ID} x1="0" y1="0" x2="1" y2="1">
-            <Stop offset="0%" stopColor={dark.olive} />
-            <Stop offset="100%" stopColor={dark.aquaInk} />
+            <Stop offset="0%" stopColor={colors.olive} />
+            <Stop offset="100%" stopColor={colors.aquaInk} />
           </LinearGradient>
         </Defs>
         <Circle

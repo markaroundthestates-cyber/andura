@@ -16,11 +16,13 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { dark, withAlpha } from '../lib/tokens';
+import { withAlpha } from '../lib/tokens';
+import { useTheme } from '../lib/theme';
 import { useReducedMotion } from '../lib/useReducedMotion';
 import { t } from '../../src/i18n/index.js';
 
 function ShimmerTile({ style, testID }: { style: object; testID?: string }) {
+  const { colors } = useTheme();
   const { width } = useWindowDimensions();
   const reduced = useReducedMotion();
   const x = useSharedValue(-width);
@@ -43,11 +45,11 @@ function ShimmerTile({ style, testID }: { style: object; testID?: string }) {
     <View
       testID={testID}
       className="bg-paper-2"
-      style={[{ overflow: 'hidden' }, style]}
+      style={[{ overflow: 'hidden', backgroundColor: colors.paper2 }, style]}
     >
       <Animated.View style={[{ position: 'absolute', top: 0, bottom: 0, width: width }, sweep]}>
         <LinearGradient
-          colors={['transparent', withAlpha(dark.ink, 0.08), 'transparent']}
+          colors={['transparent', withAlpha(colors.ink, 0.08), 'transparent']}
           start={{ x: 0, y: 0.5 }}
           end={{ x: 1, y: 0.5 }}
           style={{ flex: 1 }}
@@ -63,13 +65,14 @@ interface LoadingSkeletonProps {
 }
 
 export function LoadingSkeleton({ lines = 3, testId = 'loading-skeleton' }: LoadingSkeletonProps) {
+  const { colors } = useTheme();
   return (
     <View
       testID={testId}
       accessibilityState={{ busy: true }}
       accessibilityLabel={t('loadingSkeleton.ariaLabel')}
       className="bg-paper"
-      style={{ flex: 1, padding: 24 }}
+      style={{ flex: 1, padding: 24, backgroundColor: colors.paper }}
     >
       <ShimmerTile style={{ height: 28, width: 128, borderRadius: 6, marginBottom: 24 }} />
       <View style={{ gap: 12 }}>

@@ -23,7 +23,7 @@ import Animated, {
   withDelay,
   Easing,
 } from 'react-native-reanimated';
-import { dark } from '../../lib/tokens';
+import { useTheme } from '../../lib/theme';
 import { useReducedMotion } from '../../lib/useReducedMotion';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -45,11 +45,13 @@ interface SparklineProps {
 
 export function Sparkline({
   data,
-  color = dark.aquaInk,
+  color,
   w = 300,
   h = 90,
   fill = true,
 }: SparklineProps) {
+  const { colors } = useTheme();
+  const lineColor = color ?? colors.aquaInk;
   const reduced = useReducedMotion();
   const draw = useSharedValue(reduced ? 0 : 600);
 
@@ -91,15 +93,15 @@ export function Sparkline({
     <Svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} testID="pulse-sparkline">
       <Defs>
         <LinearGradient id={AREA_GRAD_ID} x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0%" stopColor={color} stopOpacity={0.28} />
-          <Stop offset="100%" stopColor={color} stopOpacity={0} />
+          <Stop offset="0%" stopColor={lineColor} stopOpacity={0.28} />
+          <Stop offset="100%" stopColor={lineColor} stopOpacity={0} />
         </LinearGradient>
       </Defs>
       {fill && <Path d={area} fill={`url(#${AREA_GRAD_ID})`} testID="pulse-sparkline-area" />}
       <AnimatedPath
         d={line}
         fill="none"
-        stroke={color}
+        stroke={lineColor}
         strokeWidth={2.5}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -107,7 +109,7 @@ export function Sparkline({
         animatedProps={lineAnimatedProps}
         testID="pulse-sparkline-line"
       />
-      <Circle cx={last[0]} cy={last[1]} r={4.5} fill={color} testID="pulse-sparkline-dot" />
+      <Circle cx={last[0]} cy={last[1]} r={4.5} fill={lineColor} testID="pulse-sparkline-dot" />
     </Svg>
   );
 }

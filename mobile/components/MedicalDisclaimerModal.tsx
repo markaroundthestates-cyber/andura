@@ -9,7 +9,7 @@
 
 import { Modal, View, Text, Pressable, ScrollView } from 'react-native';
 import { AlertCircle } from 'lucide-react-native';
-import { dark } from '../lib/tokens';
+import { useTheme } from '../lib/theme';
 import { t } from '../../src/i18n/index.js';
 
 interface MedicalDisclaimerModalProps {
@@ -23,6 +23,7 @@ export function MedicalDisclaimerModal({
   onAcknowledge,
   onCancel,
 }: MedicalDisclaimerModalProps) {
+  const { colors } = useTheme();
   if (!open) return null;
   return (
     <Modal
@@ -47,13 +48,13 @@ export function MedicalDisclaimerModal({
           accessibilityViewIsModal
           accessibilityLabel={t('medicalDisclaimer.title')}
           className="bg-paper"
-          style={{ width: '100%', maxWidth: 448, maxHeight: '80%', borderRadius: 16, padding: 24 }}
+          style={{ width: '100%', maxWidth: 448, maxHeight: '80%', borderRadius: 16, padding: 24, backgroundColor: colors.paper }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-            <AlertCircle size={24} color={dark.brick} />
+            <AlertCircle size={24} color={colors.brick} />
             <Text
               testID="disclaimer-title"
-              style={{ fontSize: 16, fontWeight: '700', color: dark.ink, flex: 1 }}
+              style={{ fontSize: 16, fontWeight: '700', color: colors.ink, flex: 1 }}
             >
               {t('medicalDisclaimer.title')}
             </Text>
@@ -61,10 +62,10 @@ export function MedicalDisclaimerModal({
 
           <ScrollView style={{ marginBottom: 24 }}>
             <View style={{ gap: 12 }}>
-              <Text style={{ fontSize: 14, color: dark.ink2 }}>{t('medicalDisclaimer.p1')}</Text>
-              <Text style={{ fontSize: 14, color: dark.ink2 }}>{t('medicalDisclaimer.p2')}</Text>
-              <Text style={{ fontSize: 14, color: dark.ink2 }}>{t('medicalDisclaimer.p3')}</Text>
-              <Text style={{ fontSize: 12, fontStyle: 'italic', color: dark.ink2 }}>
+              <Text style={{ fontSize: 14, color: colors.ink2 }}>{t('medicalDisclaimer.p1')}</Text>
+              <Text style={{ fontSize: 14, color: colors.ink2 }}>{t('medicalDisclaimer.p2')}</Text>
+              <Text style={{ fontSize: 14, color: colors.ink2 }}>{t('medicalDisclaimer.p3')}</Text>
+              <Text style={{ fontSize: 12, fontStyle: 'italic', color: colors.ink2 }}>
                 {t('medicalDisclaimer.p4')}
               </Text>
             </View>
@@ -75,9 +76,9 @@ export function MedicalDisclaimerModal({
             accessibilityRole="button"
             onPress={onAcknowledge}
             className="bg-brick"
-            style={{ paddingVertical: 12, borderRadius: 14, alignItems: 'center', marginBottom: 8 }}
+            style={{ paddingVertical: 12, borderRadius: 14, alignItems: 'center', marginBottom: 8, backgroundColor: colors.brick }}
           >
-            <Text style={{ fontSize: 16, fontWeight: '600', color: dark.paper }}>
+            <Text style={{ fontSize: 16, fontWeight: '600', color: colors.paper }}>
               {t('medicalDisclaimer.acknowledgeCta')}
             </Text>
           </Pressable>
@@ -88,7 +89,7 @@ export function MedicalDisclaimerModal({
               onPress={onCancel}
               style={{ paddingVertical: 8, alignItems: 'center' }}
             >
-              <Text style={{ fontSize: 14, color: dark.ink2 }}>
+              <Text style={{ fontSize: 14, color: colors.ink2 }}>
                 {t('medicalDisclaimer.backCta')}
               </Text>
             </Pressable>

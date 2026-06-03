@@ -22,7 +22,8 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { dark, withAlpha } from '../../lib/tokens';
+import { withAlpha } from '../../lib/tokens';
+import { useTheme } from '../../lib/theme';
 import { useReducedMotion } from '../../lib/useReducedMotion';
 import { useCountUp } from '../../lib/useCountUp';
 import { Ring } from './Ring';
@@ -37,6 +38,7 @@ interface ReadinessOrbProps {
 }
 
 export function ReadinessOrb({ score = 80, label = '', canPR = false }: ReadinessOrbProps) {
+  const { colors } = useTheme();
   const reduced = useReducedMotion();
   const isEmpty = score === null || score === undefined;
   const display = useCountUp(isEmpty ? 0 : score);
@@ -91,7 +93,7 @@ export function ReadinessOrb({ score = 80, label = '', canPR = false }: Readines
         ]}
       >
         <LinearGradient
-          colors={['transparent', withAlpha(dark.aquaInk, 0.45), 'transparent']}
+          colors={['transparent', withAlpha(colors.aquaInk, 0.45), 'transparent']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{ flex: 1, borderRadius: 91 }}
@@ -105,7 +107,7 @@ export function ReadinessOrb({ score = 80, label = '', canPR = false }: Readines
         ]}
       >
         <LinearGradient
-          colors={['transparent', withAlpha(dark.olive, 0.4), 'transparent']}
+          colors={['transparent', withAlpha(colors.olive, 0.4), 'transparent']}
           start={{ x: 1, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={{ flex: 1, borderRadius: 80 }}
@@ -119,7 +121,7 @@ export function ReadinessOrb({ score = 80, label = '', canPR = false }: Readines
             width: 118,
             height: 118,
             borderRadius: 59,
-            backgroundColor: withAlpha(dark.aquaInk, 0.24),
+            backgroundColor: withAlpha(colors.aquaInk, 0.24),
           },
           coreStyle,
         ]}
@@ -130,7 +132,7 @@ export function ReadinessOrb({ score = 80, label = '', canPR = false }: Readines
           <Text
             testID="readiness-orb-score"
             className="font-display"
-            style={{ fontSize: 52, fontWeight: '700', lineHeight: 56, color: dark.ink }}
+            style={{ fontSize: 52, fontWeight: '700', lineHeight: 56, color: colors.ink }}
           >
             {isEmpty ? '—' : display}
           </Text>
@@ -138,7 +140,7 @@ export function ReadinessOrb({ score = 80, label = '', canPR = false }: Readines
             <Text
               testID="readiness-orb-label"
               className="font-mono uppercase"
-              style={{ marginTop: 4, fontSize: 10.5, letterSpacing: 1.9, color: dark.ink3 }}
+              style={{ marginTop: 4, fontSize: 10.5, letterSpacing: 1.9, color: colors.ink3 }}
             >
               {label}
             </Text>

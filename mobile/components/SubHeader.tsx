@@ -8,7 +8,7 @@
 import type { ReactNode } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
-import { dark } from '../lib/tokens';
+import { useTheme } from '../lib/theme';
 import { t } from '../../src/i18n/index.js';
 
 interface SubHeaderProps {
@@ -26,10 +26,11 @@ export function SubHeader({
   danger = false,
   rightAction,
 }: SubHeaderProps) {
+  const { colors } = useTheme();
   return (
     <View
       className="flex-row items-center border-b border-line bg-paper"
-      style={{ gap: 12, padding: 16 }}
+      style={{ gap: 12, padding: 16, backgroundColor: colors.paper, borderBottomColor: colors.line }}
     >
       <Pressable
         testID={testIdBack}
@@ -38,11 +39,11 @@ export function SubHeader({
         onPress={onBack}
         style={{ padding: 8, marginLeft: -8 }}
       >
-        <ArrowLeft size={20} color={dark.ink} />
+        <ArrowLeft size={20} color={colors.ink} />
       </Pressable>
       <Text
         className="text-xl font-bold"
-        style={{ color: danger ? dark.brick : dark.ink }}
+        style={{ color: danger ? colors.brick : colors.ink }}
       >
         {title}
       </Text>
