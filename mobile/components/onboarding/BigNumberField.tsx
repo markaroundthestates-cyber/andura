@@ -60,6 +60,11 @@ export function BigNumberField({
           placeholderTextColor={dark.ink3}
           keyboardType={inputMode === 'decimal' ? 'decimal-pad' : 'number-pad'}
           returnKeyType={enterKeyHint === 'done' ? 'done' : 'next'}
+          // Web parity (web BigNumberField input autoComplete="off"): RNW defaults
+          // the DOM autocomplete attr to "on" when this prop is omitted, which lets
+          // the browser overlay an autofill label (e.g. a saved "EGN"/personal-number
+          // entry) on these bare numeric fields. "off" suppresses it.
+          autoComplete="off"
           accessibilityLabel={ariaLabel}
           testID={testId}
           className="font-mono font-bold text-ink"
