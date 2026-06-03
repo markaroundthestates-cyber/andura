@@ -805,7 +805,7 @@ export function Workout(): JSX.Element {
         next[safeExIdx] = swapped;
         return next;
       });
-      swapExercise(safeExIdx);
+      swapExercise(safeExIdx, { id: swapped.id, name: swapped.name });
       // Refusal path: record the alternative we just surfaced so the NEXT
       // "Nu vreau" tap on this slot skips it (Daniel exhaustive cycle).
       if (kind === 'refusal' && typeof res.alternativeEngineName === 'string') {
@@ -867,7 +867,7 @@ export function Workout(): JSX.Element {
         next[safeExIdx] = swapped;
         return next;
       });
-      swapExercise(safeExIdx);
+      swapExercise(safeExIdx, { id: swapped.id, name: swapped.name });
       toast.show({
         message: t('workout.swap.swappedMissing', { original: res.originalName, alt: res.alternativeName }),
         variant: 'success',

@@ -82,6 +82,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       sessionContext: null,
       sessionTimeBudgetMin: null,
       refusalTriedByEx: {},
+      performedExercises: {},
       deletedSessionTs: [],
 
       startSession: (sessionStart) =>
@@ -95,6 +96,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           history: {},
           // Daniel smoke 2026-05-28 (#2 + #6) — fresh refusal slate per session.
           refusalTriedByEx: {},
+          performedExercises: {},
         }),
 
       // HIGH-CODE-05 fix: title preserved from caller (real workout name)
@@ -149,6 +151,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           sessionContext: null,
           sessionTimeBudgetMin: null,
           refusalTriedByEx: {},
+          performedExercises: {},
         }),
 
       finishSession: (summary) =>
@@ -179,6 +182,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             sessionContext: null,
             sessionTimeBudgetMin: null,
             refusalTriedByEx: {},
+            performedExercises: {},
           };
         }),
 
@@ -207,12 +211,18 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       // when swapping the CURRENT exercise, reset setIdx/phase so the new
       // movement starts fresh at set 1. Never touches sessionStart/streak/
       // lastSession/sessionsHistory/other-index history (safety contract §8.5).
-      swapExercise: (exIdx) =>
+      swapExercise: (exIdx, performed) =>
         set((s) => {
           const { [exIdx]: _dropped, ...restHistory } = s.history;
           const isCurrent = s.exIdx === exIdx;
           return {
             history: restHistory,
+            // Record the substitute actually performed at this slot so the saved
+            // session (PostRpe) reflects what was DONE, not the original plan
+            // (history-records-recommendation bug 2026-06-03).
+            performedExercises: performed
+              ? { ...s.performedExercises, [exIdx]: performed }
+              : s.performedExercises,
             ...(isCurrent
               ? { setIdx: 0, phase: 'logging' as WorkoutPhase, prHit: false, prData: null }
               : {}),
@@ -294,6 +304,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           sessionContext: null,
           sessionTimeBudgetMin: null,
           refusalTriedByEx: {},
+          performedExercises: {},
         }),
     }),
     {

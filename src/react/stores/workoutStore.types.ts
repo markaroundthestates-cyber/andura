@@ -187,6 +187,14 @@ export interface WorkoutState {
   // legitimately be re-used across exercises (refusing Bench at exIdx=0 must not
   // hide Bench from a future session that opens it at the same slot).
   refusalTriedByEx: Record<number, string[]>;
+  /**
+   * The exercise actually PERFORMED at each slot after an in-session swap
+   * (busy / refusal / missing-equipment). Keyed by exIdx. PostRpe reads this so a
+   * saved session records the SUBSTITUTE actually done, not the original
+   * recommendation (history-records-recommendation bug 2026-06-03). Runtime-only,
+   * fresh per session — same lifecycle as refusalTriedByEx.
+   */
+  performedExercises: Record<number, { id: string; name: string }>;
 }
 
 // ── §44-C1 Discriminated Union — WorkoutMode FSM tag ────────────────────────
@@ -302,7 +310,7 @@ export interface WorkoutActions {
    *     returns to 'logging' at setIdx 0 (the new exercise starts fresh).
    * A swap on a NOT-yet-started exercise (no sets logged) is a no-op on history.
    */
-  swapExercise: (exIdx: number) => void;
+  swapExercise: (exIdx: number, performed?: { id: string; name: string }) => void;
   /**
    * Delete a logged session from `sessionsHistory` by its `ts` (mislogged
    * workout — per-entry remove from Istoric). Records a tombstone

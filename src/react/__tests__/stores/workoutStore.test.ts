@@ -1092,6 +1092,26 @@ describe('workoutStore — swapExercise (WP-5 moat substitution safety)', () => 
     expect(s.lastSession?.title).toBe('X');
     expect(s.sessionsHistory).toHaveLength(1);
   });
+
+  it('records the performed substitute identity (history-records-recommendation fix)', () => {
+    useWorkoutStore.setState({
+      exIdx: 0,
+      sessionStart: 1000,
+      history: { 0: [{ kg: 50, reps: 10, rating: 'potrivit' }] },
+    });
+    useWorkoutStore.getState().swapExercise(0, { id: 'db-press', name: 'DB Press' });
+    expect(useWorkoutStore.getState().performedExercises[0]).toEqual({ id: 'db-press', name: 'DB Press' });
+  });
+
+  it('a swap without an identity leaves performedExercises untouched', () => {
+    useWorkoutStore.setState({
+      exIdx: 0,
+      sessionStart: 1000,
+      performedExercises: { 1: { id: 'a', name: 'A' } },
+    });
+    useWorkoutStore.getState().swapExercise(0);
+    expect(useWorkoutStore.getState().performedExercises).toEqual({ 1: { id: 'a', name: 'A' } });
+  });
 });
 
 // Daniel smoke 2026-05-28 (#2 + #6) — per-exIdx refusal-tried set, runtime-only.

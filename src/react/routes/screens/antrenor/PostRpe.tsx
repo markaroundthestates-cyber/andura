@@ -162,12 +162,17 @@ export function PostRpe(): JSX.Element {
       kg: formatKg(volume),
     });
 
+    const performedExercises = useWorkoutStore.getState().performedExercises;
     const exercisesBase: SessionExerciseBreakdown[] = Object.entries(history)
       .map(([exIdxStr, sets]) => {
         const exIdx = Number(exIdxStr);
         const planEx = planned?.exercises[exIdx];
-        const exerciseId = planEx?.id ?? `ex-${exIdx}`;
-        const exerciseName = planEx?.name ?? t('postRpe.fallbackExerciseName', { n: exIdx + 1 });
+        // Prefer the substitute actually performed at this slot (in-session swap)
+        // over the re-derived plan, so History + engine logs record what was DONE,
+        // not the original recommendation (bug 2026-06-03).
+        const performed = performedExercises[exIdx];
+        const exerciseId = performed?.id ?? planEx?.id ?? `ex-${exIdx}`;
+        const exerciseName = performed?.name ?? planEx?.name ?? t('postRpe.fallbackExerciseName', { n: exIdx + 1 });
         let totalVolume = 0;
         let peakOneRM = 0;
         const breakdownSets = sets.map((s) => {
