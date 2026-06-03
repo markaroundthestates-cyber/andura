@@ -10,11 +10,13 @@
 // the step; step completion sets the SAME onboardingStore.completed flag the
 // (app) shell onboarding-gate checks.
 
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useOnboardingStore, validateOnboardingField } from '../../../src/react/stores/onboardingStore';
 import { useProgresStore } from '../../../src/react/stores/progresStore';
+import { Entrance } from '../../components/motion/Entrance';
+import { PressableScale } from '../../components/motion/PressableScale';
 import { Kicker } from '../../components/pulse/Kicker';
 import { toast } from '../../../src/react/lib/toast';
 import { dark, accent, mix } from '../../lib/tokens';
@@ -141,8 +143,10 @@ export default function Onboarding(): React.JSX.Element {
           <Kicker color={accent.aqua}>{t('onboarding.stepKicker', { n: stepNum })}</Kicker>
         </View>
 
-        {/* Active step body. */}
-        <View>
+        {/* Active step body. Keyed by stepNum so the entrance (fade + slide-up)
+            re-runs on every step transition (web-export safe, reduced-motion
+            snaps instantly). */}
+        <Entrance key={stepNum} offset={16}>
           {stepNum === 1 && <Step1 value={data.age} onChange={(v) => setField('age', v)} />}
           {stepNum === 2 && <Step2 value={data.sex} onChange={(v) => setField('sex', v)} />}
           {stepNum === 3 && <StepTrainingType value={data.trainingType ?? 'gym'} onChange={(v) => setField('trainingType', v)} />}
@@ -152,13 +156,13 @@ export default function Onboarding(): React.JSX.Element {
           {stepNum === 7 && <Step6 value={data.weight} onChange={(v) => setField('weight', v)} />}
           {stepNum === 8 && <Step7Height value={data.height} onChange={(v) => setField('height', v)} />}
           {stepNum === 9 && <Step8Summary data={data} />}
-        </View>
+        </Entrance>
 
         <View style={{ flex: 1, minHeight: 24 }} />
 
         <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
           {stepNum > 1 && (
-            <Pressable
+            <PressableScale
               onPress={back}
               testID="onb-back"
               accessibilityRole="button"
@@ -166,9 +170,9 @@ export default function Onboarding(): React.JSX.Element {
               style={{ paddingHorizontal: 20, paddingVertical: 14, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}
             >
               <Text className="font-semibold text-ink" style={{ fontSize: 14 }}>{t('onboarding.backCta')}</Text>
-            </Pressable>
+            </PressableScale>
           )}
-          <Pressable
+          <PressableScale
             onPress={next}
             testID="onb-next"
             accessibilityRole="button"
@@ -188,7 +192,7 @@ export default function Onboarding(): React.JSX.Element {
             <Text className="font-semibold" style={{ fontSize: 16, color: isLast ? dark.brick : dark.onAccent }}>
               {isLast ? t('onboarding.finishCta') : t('onboarding.continueCta')}
             </Text>
-          </Pressable>
+          </PressableScale>
         </View>
       </ScrollView>
     </SafeAreaView>

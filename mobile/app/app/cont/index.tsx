@@ -12,8 +12,10 @@
 // (W6b ports the rest of the cont sub-screens; the rows whose targets are not
 // yet ported still navigate — the leaf routes are placeholders until then.)
 
-import { ScrollView, View, Text, Pressable } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Entrance } from '../../../components/motion/Entrance';
+import { PressableScale } from '../../../components/motion/PressableScale';
 import {
   User,
   Bell,
@@ -134,6 +136,7 @@ export default function Cont() {
       </Text>
 
       {/* Account card — gradient avatar pebble + name/email + streak Pill. */}
+      <Entrance delay={0}>
       <Card style={{ marginBottom: 16 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 18 }}>
           <View
@@ -180,9 +183,11 @@ export default function Cont() {
           <Pill color={accent.volt}>{`${streak} ${streakUnit}`}</Pill>
         </View>
       </Card>
+      </Entrance>
 
-      {SECTIONS.map((section) => (
-        <View key={section.id} testID={`cont-section-${section.id}`}>
+      {SECTIONS.map((section, sIdx) => (
+        <Entrance key={section.id} delay={60 + sIdx * 55}>
+        <View testID={`cont-section-${section.id}`}>
           <ZoneHeading danger={section.danger ?? false}>{t(section.titleKey)}</ZoneHeading>
           <Card>
             {section.rows.map((row, idx) => {
@@ -190,7 +195,7 @@ export default function Cont() {
               const isLast = idx === section.rows.length - 1;
               const color = row.danger ? dark.brickDark : dark.ink;
               return (
-                <Pressable
+                <PressableScale
                   key={row.id}
                   testID={`cont-row-${row.id}`}
                   accessibilityRole="button"
@@ -221,11 +226,12 @@ export default function Cont() {
                   </View>
                   <Text style={{ flex: 1, fontSize: 14, fontWeight: '600', color }}>{t(row.labelKey)}</Text>
                   <ChevronRight size={20} color={dark.ink3} strokeWidth={1.6} />
-                </Pressable>
+                </PressableScale>
               );
             })}
           </Card>
         </View>
+        </Entrance>
       ))}
 
       {/* Version footer — terse version + soft serif tagline. */}

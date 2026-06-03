@@ -13,10 +13,12 @@
 // Reset). Cancel is always the neutral hairline pill.
 
 import type { ReactNode } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SubHeader } from '../SubHeader';
 import { Card } from './fields';
+import { Entrance } from '../motion/Entrance';
+import { PressableScale } from '../motion/PressableScale';
 import { dark, accent, withAlpha } from '../../lib/tokens';
 
 // global.css [data-theme="dark"] L216 --danger (Pulse ember-red, 7.85:1 AA).
@@ -79,7 +81,8 @@ export function ConfirmScreen({
         contentContainerStyle={{ paddingTop: 8, paddingHorizontal: 24, paddingBottom: 24, alignItems: 'center' }}
         keyboardShouldPersistTaps="handled"
       >
-        <Card style={{ width: '100%', maxWidth: 384, marginTop: 8, padding: 24, alignItems: 'center' }}>
+        <Entrance style={{ width: '100%', maxWidth: 384, marginTop: 8 }}>
+        <Card style={{ width: '100%', padding: 24, alignItems: 'center' }}>
           {/* Icon disc — neutral glass pebble, or a brick-tinted danger pebble. */}
           <View
             style={{
@@ -116,7 +119,7 @@ export function ConfirmScreen({
           {children}
 
           <View style={{ width: '100%', marginTop: 32, gap: 12 }}>
-            <Pressable
+            <PressableScale
               testID={acceptTestID}
               accessibilityRole="button"
               onPress={onAccept}
@@ -136,9 +139,9 @@ export function ConfirmScreen({
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#ffffff' }}>{acceptLabel}</Text>
                 </View>
               )}
-            </Pressable>
+            </PressableScale>
 
-            <Pressable
+            <PressableScale
               testID={cancelTestID}
               accessibilityRole="button"
               onPress={onCancel}
@@ -152,9 +155,10 @@ export function ConfirmScreen({
               }}
             >
               <Text style={{ fontSize: 16, fontWeight: '500', color: dark.ink }}>{cancelLabel}</Text>
-            </Pressable>
+            </PressableScale>
           </View>
         </Card>
+        </Entrance>
       </ScrollView>
     </View>
   );

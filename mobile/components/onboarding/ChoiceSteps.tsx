@@ -13,7 +13,8 @@
 // when on.
 
 import type { ComponentType } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
+import { PressableScale } from '../motion/PressableScale';
 import {
   Sparkles,
   Dumbbell,
@@ -83,7 +84,7 @@ export function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): React.JS
           const selected = value === v;
           const s = rowStyle(selected);
           return (
-            <Pressable
+            <PressableScale
               key={v}
               onPress={() => onChange(v)}
               testID={`onb-sex-${v}`}
@@ -107,7 +108,7 @@ export function Step2({ value, onChange }: OptionStepProps<'m' | 'f'>): React.JS
               <Text className="font-display font-semibold text-ink" style={{ fontSize: 16 }}>
                 {v === 'm' ? t('onboarding.options.sex.m') : t('onboarding.options.sex.f')}
               </Text>
-            </Pressable>
+            </PressableScale>
           );
         })}
       </View>
@@ -141,7 +142,7 @@ function EnrichedRow({
 }): React.JSX.Element {
   const s = rowStyle(selected, autoHint);
   return (
-    <Pressable
+    <PressableScale
       onPress={onPress}
       testID={testID}
       accessibilityRole="button"
@@ -166,7 +167,7 @@ function EnrichedRow({
         <Text className="text-ink3" style={{ fontSize: 12, marginTop: 2 }}>{subtitle}</Text>
       </View>
       <CheckBadge on={selected} />
-    </Pressable>
+    </PressableScale>
   );
 }
 
