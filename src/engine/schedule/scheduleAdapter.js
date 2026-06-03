@@ -48,6 +48,12 @@ import {
 
 export const CALENDAR_OVERRIDE_KEY = 'wv2-calendar-override';
 export const MISSING_EQUIPMENT_KEY = 'wv2-missing-equipment';
+// The React scheduleStore persists the weekly training/rest pattern the Calendar
+// UI DISPLAYS here (zustand persist envelope: { state: { days: [...] } }). The
+// engine reads it so its active-day week matches what the user sees even when no
+// explicit calendar edit was committed (no override). Keep in sync with
+// scheduleStore.ts persist `name`.
+export const SCHEDULE_STORE_KEY = 'wv2-schedule-store';
 
 // Day labels — local naming Calendar V1 spec verbatim:
 //   L=Monday, M=Tuesday, M2=Wednesday (Miercuri), J=Thursday, V=Friday, S=Saturday, D=Sunday
@@ -563,6 +569,27 @@ function activeWeekFromOverride(override) {
     out.push(!!(cfg && cfg.active !== false && cfg.active !== undefined ? cfg.active : false));
   }
   return out;
+}
+
+/**
+ * Active-day boolean tuple (length 7, Monday=0) from the persisted React
+ * scheduleStore (`wv2-schedule-store` → state.days: ('training'|'rest')[7]).
+ * This is the schedule the Calendar UI DISPLAYS, so honoring it keeps the engine
+ * in agreement with what the user sees even when no explicit calendar edit was
+ * committed (no override). Returns null when the store is absent/malformed so the
+ * caller falls back to the frequency default.
+ *
+ * @returns {boolean[]|null}
+ */
+function activeWeekFromScheduleStore() {
+  let raw = null;
+  try { raw = localStorage.getItem(SCHEDULE_STORE_KEY); } catch { return null; }
+  if (!raw) return null;
+  let parsed = null;
+  try { parsed = JSON.parse(raw); } catch { return null; }
+  const days = parsed && parsed.state && parsed.state.days;
+  if (!Array.isArray(days) || days.length !== 7) return null;
+  return days.map((d) => d === 'training');
 }
 
 /**
@@ -1228,7 +1255,9 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       : 'balanced';
   const deEmphSet = deEmphasizedGroups(focusPreset);
   const activeWeek =
-    activeWeekFromOverride(override) ?? activeWeekForFrequency(userState?.user?.frequency);
+    activeWeekFromOverride(override) ??
+    activeWeekFromScheduleStore() ??
+    activeWeekForFrequency(userState?.user?.frequency);
   const scheduledCluster = clusterForDay(activeWeek, dayIdx, focusPreset);
   // "Different group" override — Andura picks the most-recovered ALTERNATIVE
   // cluster (≠ today's scheduled one) from the recovery state already derivable
