@@ -108,7 +108,17 @@ jobs:
       # §33-C1 + §20-H1 + §20-H2 audit fix — npm ci (deterministic from lockfile)
       # + typecheck + vitest gate BEFORE build/deploy. Production never ships
       # broken code. Pre-Beta launch hardening.
-      - run: npm ci --ignore-scripts
+      # Retry on transient registry ECONNRESET (deploy #748) so a flaky network
+      # never leaves live stuck on an old build.
+      - name: Install deps (npm ci, retry on transient network)
+        run: |
+          n=0
+          until npm ci --ignore-scripts; do
+            n=$((n+1))
+            if [ $n -ge 3 ]; then echo "npm ci failed after $n attempts"; exit 1; fi
+            echo "::warning::npm ci attempt $n failed, retrying in 15s..."
+            sleep 15
+          done
       - run: npm run typecheck
       - run: npm run test:run
       # iter 9.5 fix — VITE_FIREBASE_API_KEY + VITE_FIREBASE_RTDB_URL injected
