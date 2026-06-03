@@ -144,6 +144,17 @@ describe('DP.checkInSessionAdjust — per-set reps autoregulation (CUT/masa phas
     expect(r.newKg).toBeUndefined(); // masa phase moves reps, NOT weight
   });
 
+  it('greu at the rep floor (rMin) eases the WEIGHT instead of echoing the set', () => {
+    // Lat Pulldown [8,12]; recReps already at the floor (8) -> reps cannot drop, so a
+    // hard set must ease the WEIGHT one stack step (60 -> 55), NOT return {adjust:false}
+    // and echo the same load. Regression for the "coach just repeats last set" bug.
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [10], [8], { recKg: 60, recReps: 8 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
+    expect(r.newKg).toBe(55);
+    expect(r.newReps).toBeUndefined();
+  });
+
   it('single greu adjustment is MODEST (≤2 reps, never a big jump)', () => {
     const r = DP.checkInSessionAdjust('Lat Pulldown', [10], [9], { recKg: 60, recReps: 10 });
     expect(r.adjust).toBe(true);

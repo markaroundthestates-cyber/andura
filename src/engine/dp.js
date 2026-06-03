@@ -611,6 +611,18 @@ export const DP = {
       if (newReps < baseReps) {
         return { adjust: true, dir: 'down', newReps, holdKg: baseKg, msg: t('workout.adjust.greuReps', { reps: newReps }) };
       }
+      // Reps already at the floor (rMin) — a hard set can't be eased by dropping reps
+      // further. With a known working load (prior history), ease the WEIGHT one step
+      // instead of returning {adjust:false} and echoing the same set unchanged — the
+      // "coach just repeats the last set" bug (e.g. 8x64 rated hard -> next 8x64).
+      // Cold-start (no history, lastW=0) keeps the conservative starting load: we don't
+      // yet have a reliable basis to drop from, so the first session stays untouched.
+      if (dpState.lastW > 0) {
+        const easedKg = getPrevWeight(baseKg, ex);
+        if (easedKg < baseKg) {
+          return { adjust: true, dir: 'down', newKg: easedKg, msg: t('workout.adjust.greuWeight', { kg: easedKg }) };
+        }
+      }
       return { adjust: false };
     }
 
