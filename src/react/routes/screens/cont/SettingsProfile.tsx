@@ -208,6 +208,13 @@ export function SettingsProfile(): JSX.Element {
     (Object.keys(draft) as Array<keyof OnboardingData>).forEach((key) => {
       setField(key, draft[key]);
     });
+    // §focus-revert fix (BUG split 2026-06-03) — advance the onboarding edit clock so
+    // the cloud-hydrate LWW (storeSync onboarding apply, keyed on completedAt) treats
+    // THIS device's profile as the newest and never reverts edited fields (focusPreset/
+    // frequency/...) to a stale cloud copy on next boot. completedAt was frozen at
+    // onboarding finalize and never advanced on a profile edit, so a profile change
+    // (e.g. balanced→v-taper) was silently overwritten back on every app open.
+    useOnboardingStore.setState({ completedAt: Date.now() });
     // §weight-continuity — greutatea editata in profil devine autoritara: upsert
     // intrarea de AZI in weightLog (sursa canonica getCurrentWeightKg) cand
     // greutatea s-a schimbat. addWeightEntry face upsert-by-date (progresStore
