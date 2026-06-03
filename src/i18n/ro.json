@@ -272,7 +272,9 @@
     "ariaLabel": "Pauza activa",
     "kicker": "Pauza",
     "recovering": "{name} recupereaza",
-    "skipCta": "Sari pauza"
+    "skipCta": "Sari pauza",
+    "notifTitle": "Pauza s-a terminat",
+    "notifBody": "Inapoi la treaba — urmatorul set te asteapta."
   },
 
   "coachRest": {

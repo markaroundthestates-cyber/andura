@@ -272,7 +272,9 @@
     "ariaLabel": "Active rest",
     "kicker": "Rest",
     "recovering": "{name} is recovering",
-    "skipCta": "Skip rest"
+    "skipCta": "Skip rest",
+    "notifTitle": "Rest done",
+    "notifBody": "Back to it — next set is ready."
   },
 
   "coachRest": {

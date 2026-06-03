@@ -25,6 +25,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, View, Text, Pressable } from 'react-native';
+import { useKeepAwake } from 'expo-keep-awake';
 import { Redirect, router } from 'expo-router';
 import { HelpCircle, Play, ChevronDown } from 'lucide-react-native';
 
@@ -65,6 +66,7 @@ import { toast } from '../../../../src/react/lib/toast';
 import { incrementRefusal } from '../../../../src/engine/schedule/scheduleAdapter.js';
 import { clearTodayReadiness } from '../../../../src/engine/readiness.js';
 import { accent, dark, surface, withAlpha } from '../../../lib/tokens';
+import { scheduleRestEndNotification, cancelRestEndNotification } from '../../../lib/restNotification';
 import { t } from '../../../../src/i18n/index.js';
 
 const INACTIVITY_THRESHOLD_MIN = 7;
@@ -217,9 +219,20 @@ function WorkoutScreen(): React.JSX.Element {
     return () => clearInterval(interval);
   }, [phase, setPhase, runTransitionToNext]);
 
-  // W-Final: expo-keep-awake. The web wakeLock acquire/visibilitychange effect
-  // is intentionally NOT ported (RN has no DOM navigator.wakeLock); the
-  // keep-awake-during-workout behaviour lands at W-Final via expo-keep-awake.
+  // Keep the screen awake for the whole live session (RN twin of the web
+  // wakeLock effect, which couldn't port — RN has no DOM navigator.wakeLock).
+  // This hook activates on mount and releases on unmount (exit / pause / done),
+  // so a lifter mid-rest never has the screen sleep on them. Web/jest = no-op.
+  useKeepAwake();
+
+  // Defensive cleanup — if the screen unmounts while a rest is pending (exit,
+  // navigation), cancel the scheduled background notification so a stale buzz
+  // never fires after the session is gone.
+  useEffect(() => {
+    return () => {
+      void cancelRestEndNotification();
+    };
+  }, []);
 
   // Reset kg/reps inputs when advancing exercise (+ clear adjust notice).
   useEffect(() => {
@@ -342,14 +355,16 @@ function WorkoutScreen(): React.JSX.Element {
       }
       // Bug 1 — last set of a non-final exercise earns a real rest then advance.
       pendingAdvanceRef.current = true;
-      // W-Final: expo-notifications schedule a background rest notification here.
+      // Background rest-timer: alert at rest-end even if the app is backgrounded.
+      void scheduleRestEndNotification(currentExercise.restSec);
       setRestCountdown(currentExercise.restSec);
       setRestInitialSec(currentExercise.restSec);
       setPhase('rest');
       return;
     }
     pendingAdvanceRef.current = false;
-    // W-Final: expo-notifications schedule a background rest notification here.
+    // Background rest-timer: alert at rest-end even if the app is backgrounded.
+    void scheduleRestEndNotification(currentExercise.restSec);
     setRestCountdown(currentExercise.restSec);
     setRestInitialSec(currentExercise.restSec);
     setPhase('rest');
@@ -397,7 +412,9 @@ function WorkoutScreen(): React.JSX.Element {
       setAaPendingRating(null);
       setAaReason(null);
       // "Pauza +30s" — normal recovery + 30s extra (NOT a flat 30s replace).
+      // performLogSet already scheduled for restSec; reschedule for the longer rest.
       const extendedRest = currentExercise.restSec + 30;
+      void scheduleRestEndNotification(extendedRest);
       setRestCountdown(extendedRest);
       setRestInitialSec(extendedRest);
     }
@@ -405,6 +422,8 @@ function WorkoutScreen(): React.JSX.Element {
 
   function handleSkipRest(): void {
     bumpActivity();
+    // Early skip — kill the pending background rest notification.
+    void cancelRestEndNotification();
     setRestCountdown(0);
     if (pendingAdvanceRef.current) {
       runTransitionToNext();
@@ -415,6 +434,8 @@ function WorkoutScreen(): React.JSX.Element {
 
   const handleSkipExercise = useCallback((): void => {
     bumpActivity();
+    // Moving on — kill any pending background rest notification.
+    void cancelRestEndNotification();
     if (isLastExercise) {
       router.push(gotoPath('post-rpe') as never);
       return;
@@ -565,6 +586,8 @@ function WorkoutScreen(): React.JSX.Element {
       setExitSheetOpen(false);
       return;
     }
+    // Leaving the session in any non-continue way — kill the pending rest buzz.
+    void cancelRestEndNotification();
     if (action === 'pause') {
       pauseSession(workoutTitle);
       router.push(gotoPath('antrenor') as never);

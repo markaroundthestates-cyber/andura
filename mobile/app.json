@@ -33,7 +33,8 @@
       "expo-asset",
       "expo-router",
       "expo-font",
-      "expo-updates"
+      "expo-updates",
+      "expo-notifications"
     ]
   }
 }
