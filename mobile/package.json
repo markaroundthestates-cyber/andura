@@ -20,6 +20,7 @@
     ],
     "moduleNameMapper": {
       "^react-native-mmkv$": "<rootDir>/__mocks__/react-native-mmkv.js",
+      "^@op-engineering/op-sqlite$": "<rootDir>/__mocks__/@op-engineering/op-sqlite.js",
       "^expo-updates$": "<rootDir>/__mocks__/expo-updates.js",
       "^react$": "<rootDir>/node_modules/react",
       "^react/(.*)$": "<rootDir>/node_modules/react/$1",
@@ -32,6 +33,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
+    "@op-engineering/op-sqlite": "^16.2.0",
     "dexie": "^4.4.3",
     "expo": "~52.0.0",
     "expo-asset": "~11.0.5",

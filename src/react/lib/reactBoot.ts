@@ -54,7 +54,9 @@ import { runAuthPathMigration } from '../../migrations/2026-05-02-auth-path-migr
 import { enforceDataOwner } from '../../util/dataReset.js';
 import { useAppStore } from '../stores/appStore';
 import { hydrateStoresFromCloud, startStoreSyncSubscriptions } from './storeSync';
-import { migrateAnonymousToAuth } from '../../storage/migrateAnonymousToAuth.js';
+// Extension-less so Metro resolves the .native no-op sibling on device (keeps
+// dexie out of the RN graph — HI-03); Vite/Vitest keep the Dexie web module.
+import { migrateAnonymousToAuth } from '../../storage/migrateAnonymousToAuth';
 import { readDeletionMarker } from './accountDeletion';
 
 // Module-level idempotency guards. React 18 StrictMode double-invokes effects

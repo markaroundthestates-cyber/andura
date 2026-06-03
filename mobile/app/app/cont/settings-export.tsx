@@ -80,7 +80,7 @@ function collectTier0Keys(): Record<string, string | null> {
 async function collectTier1(): Promise<ExportPayload['tier1']> {
   const empty = { cdl: [], logs: [], appliedPatterns: [], archivedSessions: [] };
   try {
-    const dbModule = await import('../../../../src/storage/db.js');
+    const dbModule = await import('../../../../src/storage/db');
     const dexieModule = await import('../../../../src/react/lib/dexieMigration');
     const [cdl, logs, appliedPatterns, archivedSessions] = await Promise.all([
       dbModule.tier1All(dbModule.STORES.CDL_TIER1).catch(() => []),

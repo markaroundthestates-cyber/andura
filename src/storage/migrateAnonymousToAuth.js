@@ -20,7 +20,11 @@
 // anonymous source (source is deleted ONLY after a verified copy).
 
 import Dexie from 'dexie';
-import { DB_NAME_PREFIX, STORES, closeDb, logMigrationEvent } from './db.js';
+// Extension-less db import (CR-02 convention) — Metro resolves db.native on
+// device. NOTE: this WEB variant also imports Dexie directly (its own anon-DB
+// open/delete), so the native graph uses migrateAnonymousToAuth.native.js (a
+// no-op) instead — see that sibling. Vite/Vitest keep this file + db.js.
+import { DB_NAME_PREFIX, STORES, closeDb, logMigrationEvent } from './db';
 
 /** localStorage flag prefix marking a completed anon→auth migration per uid. */
 export const ANON_MIGRATED_FLAG_PREFIX = 'anon-migrated-';

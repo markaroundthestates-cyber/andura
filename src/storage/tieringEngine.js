@@ -25,11 +25,13 @@
 
 import { DB } from '../db.js';
 import { captureException as sentryCaptureException } from '../util/sentry.js';
+// Extension-less so Metro resolves the `.native` sibling (op-sqlite) on device
+// while Vite/Vitest keep db.js (Dexie). Same convention as kv/env/dbset (CR-02).
 import {
   STORES,
   tier1Bulk,
   logMigrationEvent,
-} from './db.js';
+} from './db';
 
 // ── Constants (ADR 020 §6 defaults, configurable via opts) ──────────────────
 

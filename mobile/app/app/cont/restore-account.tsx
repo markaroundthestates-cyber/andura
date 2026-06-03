@@ -59,7 +59,7 @@ function wipeAllLocalData(): void {
 
 async function wipeLocalDeviceDB(uid: string): Promise<void> {
   try {
-    const dbModule = await import('../../../../src/storage/db.js');
+    const dbModule = await import('../../../../src/storage/db');
     await dbModule.wipeUserDB(uid);
   } catch (e) {
     logger.warn('[RestoreAccount] Tier 1 IDB wipe failed:', e);
