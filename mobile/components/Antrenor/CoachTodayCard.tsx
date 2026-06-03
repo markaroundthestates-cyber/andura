@@ -15,7 +15,7 @@
 //   - Ripple is the W2b RN Ripple (android_ripple — no inline overlay).
 
 import { useMemo, useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Clock, Layers, Dumbbell, ArrowRight, CheckCircle2, Trash2, Plus, Sparkles } from 'lucide-react-native';
 import { todTs } from '../../../src/db.js';
@@ -26,6 +26,7 @@ import { composeCoachInsight } from '../../../src/react/lib/coachInsight';
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../src/react/lib/scheduleAdapterAggregate';
 import { useWorkoutStore } from '../../../src/react/stores/workoutStore';
 import { haptic } from '../../lib/motion';
+import { PressScale } from '../Press';
 import { Ripple } from '../Ripple';
 import { Kicker } from '../pulse/Kicker';
 import { PulseCard } from '../pulse/PulseCard';
@@ -212,7 +213,7 @@ export function CoachTodayCard({ onStart, workout }: Props): React.JSX.Element {
       )}
       {todaySession ? (
         <View style={{ marginTop: 16 }}>
-          <Pressable
+          <PressScale
             testID="coach-session-logged"
             accessibilityState={{ expanded: revealOptions }}
             onPress={() => {
@@ -235,10 +236,10 @@ export function CoachTodayCard({ onStart, workout }: Props): React.JSX.Element {
             <Text style={{ fontSize: 16, fontWeight: '600', color: accent.volt }}>
               {t('coachToday.sessionLogged')}
             </Text>
-          </Pressable>
+          </PressScale>
           {revealOptions && (
             <View style={{ gap: 10, marginTop: 10 }}>
-              <Pressable
+              <PressScale
                 testID="coach-session-delete"
                 onPress={handleDeleteToday}
                 style={{
@@ -256,8 +257,8 @@ export function CoachTodayCard({ onStart, workout }: Props): React.JSX.Element {
                 <Text style={{ fontSize: 14, fontWeight: '600', color: accent.ember }}>
                   {t('coachToday.deleteSessionToday')}
                 </Text>
-              </Pressable>
-              <Pressable
+              </PressScale>
+              <PressScale
                 testID="coach-session-add-second"
                 onPress={() => {
                   haptic(12);
@@ -278,13 +279,13 @@ export function CoachTodayCard({ onStart, workout }: Props): React.JSX.Element {
                 <Text style={{ fontSize: 14, fontWeight: '600', color: dark.ink2 }}>
                   {t('coachToday.addSecondToday')}
                 </Text>
-              </Pressable>
+              </PressScale>
             </View>
           )}
         </View>
       ) : (
         <>
-          <Pressable
+          <PressScale
             onPress={() => {
               haptic(12);
               onStart();
@@ -309,12 +310,12 @@ export function CoachTodayCard({ onStart, workout }: Props): React.JSX.Element {
               </Text>
               <ArrowRight size={18} color={dark.onAccent} />
             </LinearGradient>
-          </Pressable>
-          <Pressable testID="coach-today-override" onPress={handleOverride} style={{ marginTop: 10, alignItems: 'center' }}>
+          </PressScale>
+          <PressScale testID="coach-today-override" onPress={handleOverride} style={{ marginTop: 10, alignItems: 'center' }}>
             <Text style={{ fontSize: 14, color: dark.ink3, textDecorationLine: 'underline' }}>
               {t('coachToday.overrideCta')}
             </Text>
-          </Pressable>
+          </PressScale>
         </>
       )}
     </PulseCard>

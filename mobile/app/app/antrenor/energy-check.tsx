@@ -10,10 +10,13 @@
 // flow as URL params (router.push({ pathname, params })). EnergyCause /
 // WorkoutPreview read them via useLocalSearchParams (same field names).
 
-import { ScrollView, View, Text, Pressable } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { ChevronRight } from 'lucide-react-native';
 import { gotoPath, goBack } from '../../../lib/nav';
+import { PressScale } from '../../../components/Press';
+import { useEntrance } from '../../../lib/motion';
 import { SubHeader } from '../../../components/SubHeader';
 import { PulseCard } from '../../../components/pulse/PulseCard';
 import { saveReadiness } from '../../../../src/engine/readiness.js';
@@ -42,6 +45,24 @@ const ENERGY_OPTIONS: readonly EnergyOption[] = [
   { level: 'slabit', color: 'var(--ember)', labelKey: 'energyCheck.levels.weak', hintKey: 'energyCheck.levels.weakHint', intensity: 'minus', readiness: 2 },
   { level: 'obosit', color: 'var(--ember-red)', labelKey: 'energyCheck.levels.tired', hintKey: 'energyCheck.levels.tiredHint', intensity: 'minus', readiness: 1 },
 ];
+
+// Energy option card — staggered entrance + press-scale feedback (web-visible).
+function EnergyRow({
+  index,
+  onPress,
+  children,
+}: {
+  index: number;
+  onPress: () => void;
+  children: React.ReactNode;
+}): React.JSX.Element {
+  const entering = useEntrance(index);
+  return (
+    <Animated.View entering={entering}>
+      <PressScale onPress={onPress}>{children}</PressScale>
+    </Animated.View>
+  );
+}
 
 export default function EnergyCheck(): React.JSX.Element {
   const sessionTimeBudgetMin = useWorkoutStore((s) => s.sessionTimeBudgetMin);
@@ -79,7 +100,7 @@ export default function EnergyCheck(): React.JSX.Element {
             {TIME_BUDGET_CHOICES.map((min) => {
               const selected = sessionTimeBudgetMin === min;
               return (
-                <Pressable
+                <PressScale
                   key={min}
                   testID={`time-chip-${min}`}
                   accessibilityState={{ selected }}
@@ -96,10 +117,10 @@ export default function EnergyCheck(): React.JSX.Element {
                   <Text style={{ fontSize: 14, fontWeight: '600', color: selected ? varColor('--volt') : dark.ink2 }}>
                     {t('energyCheck.timeBudget.minutes', { n: min })}
                   </Text>
-                </Pressable>
+                </PressScale>
               );
             })}
-            <Pressable
+            <PressScale
               testID="time-chip-nolimit"
               accessibilityState={{ selected: sessionTimeBudgetMin === null }}
               onPress={() => setSessionTimeBudgetMin(null)}
@@ -115,15 +136,15 @@ export default function EnergyCheck(): React.JSX.Element {
               <Text style={{ fontSize: 14, fontWeight: '600', color: sessionTimeBudgetMin === null ? varColor('--volt') : dark.ink2 }}>
                 {t('energyCheck.timeBudget.noLimit')}
               </Text>
-            </Pressable>
+            </PressScale>
           </View>
         </View>
 
         <View style={{ gap: 12 }}>
-          {ENERGY_OPTIONS.map((opt) => {
+          {ENERGY_OPTIONS.map((opt, i) => {
             const dotColor = varColor(opt.color);
             return (
-              <Pressable key={opt.level} onPress={() => handleSelect(opt)}>
+              <EnergyRow key={opt.level} index={i} onPress={() => handleSelect(opt)}>
                 <PulseCard style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16 }}>
                   <View
                     style={{
@@ -145,7 +166,7 @@ export default function EnergyCheck(): React.JSX.Element {
                   </View>
                   <ChevronRight size={18} color={dark.ink3} />
                 </PulseCard>
-              </Pressable>
+              </EnergyRow>
             );
           })}
         </View>

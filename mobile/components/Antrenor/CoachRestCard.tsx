@@ -5,9 +5,10 @@
 // + accessibilityLabel (coachRest.ariaLabel). The .pulse-card-glow corner wash
 // is dropped (FIDELITY FLAG — decorative).
 
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import type { CoachRestReason } from '../../../src/react/lib/engineWrappers';
 import { PulseCard } from '../pulse/PulseCard';
+import { PressScale } from '../Press';
 import { dark, status } from '../../lib/tokens';
 import { t } from '../../../src/i18n/index.js';
 
@@ -64,7 +65,7 @@ export function CoachRestCard({
         </Text>
         <Text style={{ fontSize: 14, color: dark.ink2 }}>{t('coachRest.optional')}</Text>
       </View>
-      <Pressable
+      <PressScale
         onPress={onLightSession}
         style={{
           marginTop: 14,
@@ -78,12 +79,12 @@ export function CoachRestCard({
         <Text style={{ fontSize: 14, fontWeight: '500', color: dark.ink }}>
           {t('coachRest.lightSessionCta')}
         </Text>
-      </Pressable>
-      <Pressable onPress={onOverride} style={{ marginTop: 10, alignItems: 'center' }}>
+      </PressScale>
+      <PressScale onPress={onOverride} style={{ marginTop: 10, alignItems: 'center' }}>
         <Text style={{ fontSize: 14, color: dark.ink2, textDecorationLine: 'underline' }}>
           {t('coachRest.overrideCta')}
         </Text>
-      </Pressable>
+      </PressScale>
     </PulseCard>
   );
 }

@@ -10,8 +10,10 @@
 
 import { useEffect } from 'react';
 import { View, Text, Pressable } from 'react-native';
+import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 import { Trophy } from 'lucide-react-native';
 import { ConfettiBurst } from '../ConfettiBurst';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 import { accent, dark, withAlpha } from '../../lib/tokens';
 import { haptic } from '../../lib/motion';
 import { t } from '../../../src/i18n/index.js';
@@ -24,6 +26,7 @@ interface PrFlashProps {
 }
 
 export function PrFlash({ exercise, deltaKg, onClose, durationMs = 2600 }: PrFlashProps): React.JSX.Element {
+  const reduced = useReducedMotion();
   useEffect(() => {
     haptic(40);
     const tid = setTimeout(onClose, durationMs);
@@ -52,7 +55,7 @@ export function PrFlash({ exercise, deltaKg, onClose, durationMs = 2600 }: PrFla
       <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={{ position: 'absolute' }}>
         <ConfettiBurst count={56} />
       </View>
-      <View style={{ alignItems: 'center' }}>
+      <Animated.View entering={reduced ? FadeIn.duration(200) : ZoomIn.duration(420)} style={{ alignItems: 'center' }}>
         <View
           style={{
             width: 96,
@@ -77,7 +80,7 @@ export function PrFlash({ exercise, deltaKg, onClose, durationMs = 2600 }: PrFla
         <Text testID="pr-flash-detail" style={{ fontSize: 16, color: dark.ink, marginTop: 8, textAlign: 'center' }}>
           {t('workout.prFlash.detail', { exercise, deltaKg })}
         </Text>
-      </View>
+      </Animated.View>
     </Pressable>
   );
 }

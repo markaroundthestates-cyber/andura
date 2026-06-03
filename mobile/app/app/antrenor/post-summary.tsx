@@ -5,9 +5,12 @@
 // hub). ALL store reads + derivations kept 1:1 (parseMeta fallback, count-ups,
 // coachPick endSession, deriveMuscleGroups, kcal estimate). testIDs verbatim.
 
-import { ScrollView, View, Text, Pressable } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { Trophy, Check } from 'lucide-react-native';
+import { PressScale } from '../../../components/Press';
+import { useEntrance } from '../../../lib/motion';
 import { useWorkoutStore } from '../../../../src/react/stores/workoutStore';
 import { useCoachStore } from '../../../../src/react/stores/coachStore';
 import { coachPick, type CoachVoiceEndSessionRating } from '../../../../src/react/lib/coachVoice';
@@ -129,11 +132,15 @@ export default function PostSummary(): React.JSX.Element {
 
   const muscleGroups = deriveMuscleGroups(lastSession?.title);
 
+  // Staggered closure entrance (reduced-motion-safe, web-visible).
+  const enterHeader = useEntrance(0);
+  const enterStats = useEntrance(1);
+
   return (
     <View testID="post-summary" style={{ flex: 1, backgroundColor: dark.paper }}>
       <ScrollView contentContainerStyle={{ padding: 24, flexGrow: 1 }}>
         {/* Closure header. */}
-        <View style={{ alignItems: 'center', marginBottom: 24 }}>
+        <Animated.View entering={enterHeader} style={{ alignItems: 'center', marginBottom: 24 }}>
           <View
             style={{
               width: 72,
@@ -162,7 +169,7 @@ export default function PostSummary(): React.JSX.Element {
               {`“${coachLine}”`}
             </Text>
           ) : null}
-        </View>
+        </Animated.View>
 
         {/* PR banner. */}
         {prHit && (
@@ -228,7 +235,7 @@ export default function PostSummary(): React.JSX.Element {
         )}
 
         {/* Stats grid 4-cell (2x2). */}
-        <View testID="summary-stats-grid" style={{ gap: 12, marginBottom: 24 }}>
+        <Animated.View entering={enterStats} testID="summary-stats-grid" style={{ gap: 12, marginBottom: 24 }}>
           <View style={{ flexDirection: 'row', gap: 12 }}>
             <StatCell label={t('postSummary.statsLabels.duration')} value={t('postSummary.statsLabels.durationValue', { min: dur })} testID="summary-duration" />
             <StatCell label={t('postSummary.statsLabels.setsLogged')} value={setsDisplay.toString()} testID="summary-sets" />
@@ -237,7 +244,7 @@ export default function PostSummary(): React.JSX.Element {
             <StatCell label={t('postSummary.statsLabels.totalVolume')} value={`${formatKg(volumeDisplay)} kg`} testID="summary-volume" />
             <StatCell label={t('postSummary.statsLabels.kcalEstimate')} value={kcalDisplay.toString()} testID="summary-kcal" />
           </View>
-        </View>
+        </Animated.View>
 
         {/* Muscle group pills. */}
         {muscleGroups.length > 0 && (
@@ -305,14 +312,14 @@ export default function PostSummary(): React.JSX.Element {
 
       {/* Footer CTA (pinned). */}
       <View testID="summary-finish-footer" style={{ paddingHorizontal: 24, paddingTop: 12, paddingBottom: 24, backgroundColor: dark.paper }}>
-        <Pressable
+        <PressScale
           testID="summary-finish"
           accessibilityRole="button"
           onPress={handleFinish}
           style={{ paddingVertical: 16, backgroundColor: accent.volt, borderRadius: 14 }}
         >
           <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '600', color: dark.onAccent }}>{t('postSummary.finishCta')}</Text>
-        </Pressable>
+        </PressScale>
       </View>
     </View>
   );

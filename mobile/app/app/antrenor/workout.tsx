@@ -24,7 +24,7 @@
 //     setRestCountdown site).
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ScrollView, View, Text, Pressable } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import { useKeepAwake } from 'expo-keep-awake';
 import { Redirect, router } from 'expo-router';
 import { HelpCircle, Play, ChevronDown } from 'lucide-react-native';
@@ -53,6 +53,7 @@ import { WhyExerciseModal } from '../../../components/Workout/WhyExerciseModal';
 import { SetHistoryChips } from '../../../components/Workout/SetHistoryChips';
 import { ExerciseActionsRow } from '../../../components/Workout/ExerciseActionsRow';
 import { CoachNote } from '../../../components/Workout/CoachNote';
+import { PressScale } from '../../../components/Press';
 import { ExerciseMedia } from '../../../components/ExerciseMedia';
 import { getExerciseCueKey } from '../../../../src/react/lib/exerciseCues';
 import { Kicker } from '../../../components/pulse/Kicker';
@@ -654,14 +655,14 @@ function WorkoutScreen(): React.JSX.Element {
         <Text testID="workout-empty-body" style={{ fontSize: 14, color: dark.ink2, marginBottom: 24, textAlign: 'center' }}>
           {t('workout.empty.body')}
         </Text>
-        <Pressable
+        <PressScale
           testID="workout-empty-back"
           accessibilityRole="button"
           onPress={() => router.push(gotoPath('antrenor') as never)}
           style={{ paddingHorizontal: 24, paddingVertical: 12, backgroundColor: accent.volt, borderRadius: 14 }}
         >
           <Text style={{ fontSize: 16, fontWeight: '600', color: dark.onAccent }}>{t('workout.empty.backCta')}</Text>
-        </Pressable>
+        </PressScale>
       </View>
     );
   }
@@ -718,7 +719,7 @@ function WorkoutScreen(): React.JSX.Element {
             <Kicker color={accent.aqua}>{t('workout.currentExercise')}</Kicker>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 }}>
               <Text className="font-display" style={{ fontSize: 24, fontWeight: '700', color: dark.ink }}>{currentExercise.name}</Text>
-              <Pressable
+              <PressScale
                 testID="wv2-why-trigger"
                 accessibilityRole="button"
                 accessibilityLabel={t('workout.whyAriaLabel')}
@@ -735,7 +736,7 @@ function WorkoutScreen(): React.JSX.Element {
                 }}
               >
                 <HelpCircle size={14} color={accent.aqua} />
-              </Pressable>
+              </PressScale>
             </View>
             {currentExercise.sub ? (
               <Text testID="wv2-ex-sub" style={{ fontSize: 14, color: dark.ink2, marginTop: 2 }}>
@@ -746,7 +747,7 @@ function WorkoutScreen(): React.JSX.Element {
 
           {/* Exercise demo accordion. */}
           <View style={{ marginBottom: 16, borderRadius: 22, overflow: 'hidden', backgroundColor: surface.base, borderWidth: 1, borderColor: dark.line }}>
-            <Pressable
+            <PressScale
               testID="workout-demo-toggle"
               accessibilityRole="button"
               accessibilityState={{ expanded: demoOpen }}
@@ -772,7 +773,7 @@ function WorkoutScreen(): React.JSX.Element {
                 <Text style={{ fontSize: 14, color: dark.ink2, marginTop: 2 }}>{t('workout.demo.tapToWatch')}</Text>
               </View>
               <ChevronDown size={20} strokeWidth={1.8} color={dark.ink2} style={{ transform: [{ rotate: demoOpen ? '180deg' : '0deg' }] }} />
-            </Pressable>
+            </PressScale>
             {demoOpen && (
               <View testID="workout-demo-panel" style={{ paddingHorizontal: 12, paddingBottom: 12 }}>
                 <ExerciseMedia

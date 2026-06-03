@@ -11,9 +11,12 @@
 // countdownSec; the OS-level background rest notification (expo-notifications
 // firing over a backgrounded app) is W-Final, NOT here.
 
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
+import Animated, { SlideInDown } from 'react-native-reanimated';
 import { SkipForward } from 'lucide-react-native';
 import { SVGCountdownRing } from './SVGCountdownRing';
+import { PressScale } from '../Press';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 import { accent, dark, surface } from '../../lib/tokens';
 import { t } from '../../../src/i18n/index.js';
 
@@ -32,8 +35,10 @@ export function RestOverlay({
   onSkip,
   currentExerciseName,
 }: RestOverlayProps): React.JSX.Element {
+  const reduced = useReducedMotion();
   return (
-    <View
+    <Animated.View
+      entering={reduced ? undefined : SlideInDown.duration(300)}
       testID="rest-overlay"
       accessibilityRole="alert"
       accessibilityLabel={t('restOverlay.ariaLabel')}
@@ -83,7 +88,7 @@ export function RestOverlay({
           </Text>
         ) : null}
       </View>
-      <Pressable
+      <PressScale
         testID="rest-skip"
         accessibilityRole="button"
         onPress={onSkip}
@@ -103,7 +108,7 @@ export function RestOverlay({
         <Text style={{ fontSize: 12, fontWeight: '600', color: dark.ink }}>
           {t('restOverlay.skipCta')}
         </Text>
-      </Pressable>
-    </View>
+      </PressScale>
+    </Animated.View>
   );
 }

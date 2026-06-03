@@ -14,7 +14,9 @@
 
 import { useEffect, useState } from 'react';
 import { ScrollView, View, Text } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { Zap } from 'lucide-react-native';
+import { useEntrance } from '../../../lib/motion';
 import { useWorkoutStore, getCurrentMode } from '../../../../src/react/stores/workoutStore';
 import { useCoachStore } from '../../../../src/react/stores/coachStore';
 import { useScheduleStore } from '../../../../src/react/stores/scheduleStore';
@@ -89,6 +91,13 @@ export default function Antrenor(): React.JSX.Element {
 
   const readiness = coach?.readiness ?? null;
 
+  // Staggered screen entrance (FadeInUp), reduced-motion-safe + web-visible.
+  const enterHeader = useEntrance(0);
+  const enterHero = useEntrance(1);
+  const enterCoach = useEntrance(2);
+  const enterCalendar = useEntrance(3);
+  const enterPrWall = useEntrance(4);
+
   const showReactivate =
     lastSession !== null &&
     Date.now() - lastSession.ts > FOURTEEN_DAYS_MS &&
@@ -122,7 +131,7 @@ export default function Antrenor(): React.JSX.Element {
       contentContainerStyle={{ paddingTop: 16, paddingHorizontal: 20, paddingBottom: 24 }}
     >
       {/* Pulse header — mono date eyebrow, display title + PulseMark, serif subtitle. */}
-      <View style={{ marginBottom: 16 }}>
+      <Animated.View entering={enterHeader} style={{ marginBottom: 16 }}>
         <Text
           testID="antrenor-header-date"
           className="font-mono"
@@ -139,7 +148,7 @@ export default function Antrenor(): React.JSX.Element {
         <Text className="font-serif" style={{ fontStyle: 'italic', fontSize: 14, color: dark.ink2, marginTop: 2 }}>
           {t('antrenor.subtitle')}
         </Text>
-      </View>
+      </Animated.View>
 
       {coachError && (
         <View
@@ -175,7 +184,8 @@ export default function Antrenor(): React.JSX.Element {
       <AlertsBanner alerts={coach?.alerts ?? []} />
 
       {/* Pulse readiness HERO — the orb is the always-present living hero. */}
-      <View
+      <Animated.View
+        entering={enterHero}
         testID="readiness-hero"
         style={{
           backgroundColor: dark.paper2,
@@ -237,25 +247,31 @@ export default function Antrenor(): React.JSX.Element {
             </Text>
           )}
         </View>
-      </View>
+      </Animated.View>
 
       <PRNotificationBanner prHit={prHit} />
 
-      {showWorkoutCard ? (
-        <CoachTodayCard onStart={handleStart} workout={coach?.plannedWorkout ?? null} />
-      ) : (
-        <CoachRestCard
-          onLightSession={handleStart}
-          onOverride={handleStart}
-          restReason={coach?.restReason ?? null}
-        />
-      )}
+      <Animated.View entering={enterCoach}>
+        {showWorkoutCard ? (
+          <CoachTodayCard onStart={handleStart} workout={coach?.plannedWorkout ?? null} />
+        ) : (
+          <CoachRestCard
+            onLightSession={handleStart}
+            onOverride={handleStart}
+            restReason={coach?.restReason ?? null}
+          />
+        )}
+      </Animated.View>
 
-      <Calendar7Day />
+      <Animated.View entering={enterCalendar}>
+        <Calendar7Day />
+      </Animated.View>
 
       {trainingType === 'both' && <BothModeAerobicCard />}
 
-      <PRWallRecent records={coach?.prWallRecent ?? []} />
+      <Animated.View entering={enterPrWall}>
+        <PRWallRecent records={coach?.prWallRecent ?? []} />
+      </Animated.View>
     </ScrollView>
   );
 }

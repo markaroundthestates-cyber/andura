@@ -17,9 +17,12 @@
 // 'minus' duration & volume scaling unchanged.
 
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Pressable } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
+import Animated from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
+import { PressScale } from '../../../components/Press';
+import { useEntrance } from '../../../lib/motion';
 import { Clock, Layers, TrendingUp, Flame, Check, Zap } from 'lucide-react-native';
 import { gotoPath } from '../../../lib/nav';
 import { coachPick } from '../../../../src/react/lib/coachVoice';
@@ -174,6 +177,12 @@ export default function WorkoutPreview(): React.JSX.Element {
 
   const exerciseCount = workout?.exerciseCount ?? 5;
 
+  // Staggered screen entrance (reduced-motion-safe, web-visible).
+  const enterHero = useEntrance(0);
+  const enterBanner = useEntrance(1);
+  const enterList = useEntrance(2);
+  const enterCta = useEntrance(3);
+
   const rows =
     displayExercises && displayExercises.length > 0
       ? displayExercises.map((ex, i) => ({
@@ -227,7 +236,8 @@ export default function WorkoutPreview(): React.JSX.Element {
       )}
 
       {/* Hero — kicker + title + meta row. */}
-      <View
+      <Animated.View
+        entering={enterHero}
         testID="preview-hero"
         accessibilityLabel={t('workout.preview.ariaLabel')}
         style={{ marginBottom: 16 }}
@@ -252,10 +262,11 @@ export default function WorkoutPreview(): React.JSX.Element {
             <Text style={{ fontSize: 14, color: dark.ink2 }}>{formatVolume(volume)} kg</Text>
           </View>
         </View>
-      </View>
+      </Animated.View>
 
       {/* Intensity banner — tinted by the self-report. */}
-      <View
+      <Animated.View
+        entering={enterBanner}
         accessibilityRole="text"
         accessibilityLiveRegion="polite"
         accessibilityLabel={t('workout.preview.intensityBanner.ariaLabel')}
@@ -273,7 +284,7 @@ export default function WorkoutPreview(): React.JSX.Element {
       >
         <Zap size={18} color={banner.accent} fill={banner.accent} style={{ marginTop: 2 }} />
         <Text style={{ flex: 1, fontSize: 14, lineHeight: 21, color: dark.ink }}>{banner.msg}</Text>
-      </View>
+      </Animated.View>
 
       {/* Warmup row — renders only when the engine emits a warmup blueprint. */}
       {workout?.warmup && (
@@ -295,6 +306,7 @@ export default function WorkoutPreview(): React.JSX.Element {
       <View style={{ marginBottom: 10 }}>
         <Kicker>{t('workout.preview.exercisesHeading')}</Kicker>
       </View>
+      <Animated.View entering={enterList}>
       <PulseCard testID="preview-exercise-list" style={{ marginBottom: 16 }}>
         {rows.map((item, i) => (
           <View
@@ -347,6 +359,7 @@ export default function WorkoutPreview(): React.JSX.Element {
           </View>
         ))}
       </PulseCard>
+      </Animated.View>
 
       {coachLine && (
         <Text
@@ -365,7 +378,8 @@ export default function WorkoutPreview(): React.JSX.Element {
         {t('workout.preview.closingNote')}
       </Text>
 
-      <Pressable testID="preview-start-cta" onPress={handleStart} style={{ borderRadius: 999, overflow: 'hidden' }}>
+      <Animated.View entering={enterCta}>
+      <PressScale testID="preview-start-cta" onPress={handleStart} style={{ borderRadius: 999, overflow: 'hidden' }}>
         <LinearGradient
           colors={[accent.volt, accent.aqua]}
           start={{ x: 0, y: 0 }}
@@ -377,7 +391,8 @@ export default function WorkoutPreview(): React.JSX.Element {
             {t('workout.preview.confirmStartCta')}
           </Text>
         </LinearGradient>
-      </Pressable>
+      </PressScale>
+      </Animated.View>
     </ScrollView>
   );
 }

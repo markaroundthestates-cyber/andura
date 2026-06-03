@@ -8,11 +8,12 @@
 // engine/store logic kept 1:1. testIDs kept (program-change-confirm / -back /
 // -name / -sub / -accept / -cancel).
 
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { RefreshCw } from 'lucide-react-native';
 import { gotoPath } from '../../../lib/nav';
 import { SubHeader } from '../../../components/SubHeader';
+import { PressScale } from '../../../components/Press';
 import { PulseCard } from '../../../components/pulse/PulseCard';
 import { useOnboardingStore } from '../../../../src/react/stores/onboardingStore';
 import type { Goal } from '../../../../src/react/stores/onboardingStore';
@@ -78,22 +79,22 @@ export default function ProgramChangeConfirm(): React.JSX.Element {
         </Text>
 
         <View style={{ width: '100%', maxWidth: 360, marginTop: 32, gap: 12 }}>
-          <Pressable
+          <PressScale
             testID="program-change-confirm-accept"
             accessibilityRole="button"
             onPress={handleConfirm}
             style={{ paddingVertical: 16, backgroundColor: accent.volt, borderRadius: 14 }}
           >
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '600', color: dark.onAccent }}>{t('confirm.programChange.acceptCta')}</Text>
-          </Pressable>
-          <Pressable
+          </PressScale>
+          <PressScale
             testID="program-change-confirm-cancel"
             accessibilityRole="button"
             onPress={handleCancel}
             style={{ paddingVertical: 16, borderWidth: 1, borderColor: dark.lineStrong, borderRadius: 14 }}
           >
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '500', color: dark.ink2 }}>{t('confirm.programChange.cancelCta')}</Text>
-          </Pressable>
+          </PressScale>
         </View>
       </View>
     </View>

@@ -5,7 +5,8 @@
 // i18n. The { energyLevel, intensityMod } context arrives as URL params (from
 // EnergyCheck) and is forwarded to WorkoutPreview along with the picked cause.
 
-import { ScrollView, View, Text, Pressable } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
   Moon,
@@ -19,6 +20,8 @@ import {
 import { gotoPath, goBack } from '../../../lib/nav';
 import { SubHeader } from '../../../components/SubHeader';
 import { PulseCard } from '../../../components/pulse/PulseCard';
+import { PressScale } from '../../../components/Press';
+import { useEntrance } from '../../../lib/motion';
 import { dark } from '../../../lib/tokens';
 import { t } from '../../../../src/i18n/index.js';
 
@@ -36,6 +39,24 @@ const CAUSE_OPTIONS: readonly CauseOption[] = [
   { labelKey: 'energyCause.causes.illness', cause: 'Boala sau racit', Icon: Thermometer },
   { labelKey: 'energyCause.causes.other', cause: 'Altceva', Icon: MoreHorizontal },
 ];
+
+// Cause option card — staggered entrance + press-scale feedback (web-visible).
+function CauseRow({
+  index,
+  onPress,
+  children,
+}: {
+  index: number;
+  onPress: () => void;
+  children: React.ReactNode;
+}): React.JSX.Element {
+  const entering = useEntrance(index);
+  return (
+    <Animated.View entering={entering}>
+      <PressScale onPress={onPress}>{children}</PressScale>
+    </Animated.View>
+  );
+}
 
 export default function EnergyCause(): React.JSX.Element {
   const { energyLevel, intensityMod } = useLocalSearchParams<{
@@ -67,18 +88,18 @@ export default function EnergyCause(): React.JSX.Element {
       <ScrollView contentContainerStyle={{ padding: 24 }}>
         <Text style={{ fontSize: 16, color: dark.ink2, marginBottom: 24 }}>{t('energyCause.body')}</Text>
         <View style={{ gap: 10 }}>
-          {CAUSE_OPTIONS.map(({ labelKey, cause, Icon }) => (
-            <Pressable key={cause} onPress={() => handleSelect(cause)}>
+          {CAUSE_OPTIONS.map(({ labelKey, cause, Icon }, i) => (
+            <CauseRow key={cause} index={i} onPress={() => handleSelect(cause)}>
               <PulseCard style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16 }}>
                 <Icon size={16} color={dark.brick} />
                 <Text style={{ fontSize: 14, fontWeight: '500', color: dark.ink }}>{t(labelKey)}</Text>
               </PulseCard>
-            </Pressable>
+            </CauseRow>
           ))}
         </View>
-        <Pressable testID="energy-cause-skip" onPress={handleSkip} style={{ marginTop: 24, paddingVertical: 12, alignItems: 'center' }}>
+        <PressScale testID="energy-cause-skip" onPress={handleSkip} style={{ marginTop: 24, paddingVertical: 12, alignItems: 'center' }}>
           <Text style={{ fontSize: 14, color: dark.ink2 }}>{t('energyCause.skipCta')}</Text>
-        </Pressable>
+        </PressScale>
       </ScrollView>
     </View>
   );

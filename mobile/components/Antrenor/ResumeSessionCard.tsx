@@ -10,6 +10,7 @@ import { PlayCircle } from 'lucide-react-native';
 import type { PausedSession } from '../../../src/react/stores/workoutStore';
 import { PAUSED_SESSION_UNTITLED } from '../../../src/react/stores/workoutStore';
 import { PulseCard } from '../pulse/PulseCard';
+import { PressScale } from '../Press';
 import { dark } from '../../lib/tokens';
 import { t } from '../../../src/i18n/index.js';
 
@@ -58,7 +59,7 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): Rea
             borderTopColor: dark.line,
           }}
         >
-          <Pressable
+          <PressScale
             onPress={onResume}
             style={{
               flex: 1,
@@ -72,8 +73,8 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): Rea
             <Text style={{ fontSize: 14, fontWeight: '600', color: dark.paper }}>
               {t('resumeSession.resumeCta')}
             </Text>
-          </Pressable>
-          <Pressable
+          </PressScale>
+          <PressScale
             onPress={onDiscard}
             style={{
               borderWidth: 1,
@@ -87,7 +88,7 @@ export function ResumeSessionCard({ snapshot, onResume, onDiscard }: Props): Rea
             <Text style={{ fontSize: 14, fontWeight: '500', color: dark.ink2 }}>
               {t('resumeSession.discardCta')}
             </Text>
-          </Pressable>
+          </PressScale>
         </View>
       </PulseCard>
     </Pressable>

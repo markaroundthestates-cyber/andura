@@ -14,10 +14,11 @@
 // pain-medical-cue + data-region/-intensity → per-option testID).
 
 import { useState } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { gotoPath } from '../../../lib/nav';
 import { SubHeader } from '../../../components/SubHeader';
+import { PressScale } from '../../../components/Press';
 import { toast } from '../../../../src/react/lib/toast';
 import { DB } from '../../../../src/db.js';
 import { useWorkoutStore } from '../../../../src/react/stores/workoutStore';
@@ -160,7 +161,7 @@ export default function PainButton(): React.JSX.Element {
           {REGION_IDS.map((id) => {
             const selected = region === id;
             return (
-              <Pressable
+              <PressScale
                 key={id}
                 testID={`pain-region-${id}`}
                 accessibilityRole="button"
@@ -178,7 +179,7 @@ export default function PainButton(): React.JSX.Element {
                 <Text style={{ fontSize: 14, fontWeight: '500', color: selected ? dark.onAccent : dark.ink }}>
                   {t(`painButton.regions.${id}`)}
                 </Text>
-              </Pressable>
+              </PressScale>
             );
           })}
         </View>
@@ -189,7 +190,7 @@ export default function PainButton(): React.JSX.Element {
             {([1, 2, 3] as const).map((lvl) => {
               const selected = intensity === lvl;
               return (
-                <Pressable
+                <PressScale
                   key={lvl}
                   testID={`pain-intensity-${lvl}`}
                   accessibilityRole="button"
@@ -208,13 +209,13 @@ export default function PainButton(): React.JSX.Element {
                   <Text style={{ fontSize: 16, fontWeight: '500', color: selected ? dark.onAccent : dark.ink }}>
                     {intensityLabel(lvl)}
                   </Text>
-                </Pressable>
+                </PressScale>
               );
             })}
           </View>
         </View>
 
-        <Pressable
+        <PressScale
           testID="pain-continue"
           accessibilityRole="button"
           accessibilityState={{ disabled: continueDisabled }}
@@ -230,10 +231,10 @@ export default function PainButton(): React.JSX.Element {
           <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '600', color: dark.onAccent }}>
             {t('painButton.continueCta')}
           </Text>
-        </Pressable>
-        <Pressable testID="pain-exit" accessibilityRole="button" onPress={handleExit} style={{ paddingVertical: 12, marginTop: 12 }}>
+        </PressScale>
+        <PressScale testID="pain-exit" accessibilityRole="button" onPress={handleExit} style={{ paddingVertical: 12, marginTop: 12 }}>
           <Text style={{ textAlign: 'center', fontSize: 14, color: dark.ink2 }}>{t('painButton.exitCta')}</Text>
-        </Pressable>
+        </PressScale>
 
         {/* Closing safety cue — informative, NU paternalistic (D-LEGACY-061). */}
         <Text

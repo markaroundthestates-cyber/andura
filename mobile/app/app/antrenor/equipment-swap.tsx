@@ -12,10 +12,11 @@
 // data-equipment-id → testID + swap-preview-{id} / swap-preview-row).
 
 import { useEffect, useMemo, useState } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { gotoPath } from '../../../lib/nav';
 import { SubHeader } from '../../../components/SubHeader';
+import { PressScale } from '../../../components/Press';
 import { getTodayWorkout } from '../../../../src/react/lib/engineWrappers';
 import type { PlannedExercise } from '../../../../src/react/lib/engineWrappers';
 import { recomposeWithBusyTypes } from '../../../../src/react/lib/substitution';
@@ -121,7 +122,7 @@ export default function EquipmentSwap(): React.JSX.Element {
             const itemSwaps = isBusy ? swapsByItem[e.id] ?? [] : [];
             return (
               <View key={e.id} style={{ gap: 4 }}>
-                <Pressable
+                <PressScale
                   testID={`equipment-item-${e.id}`}
                   accessibilityRole="button"
                   accessibilityState={{ selected: isBusy }}
@@ -141,7 +142,7 @@ export default function EquipmentSwap(): React.JSX.Element {
                   <Text style={{ fontSize: 14, fontWeight: '600', color: isBusy ? accent.ember : dark.ink2 }}>
                     {isBusy ? t('equipmentSwap.statusBusy') : t('equipmentSwap.statusFree')}
                   </Text>
-                </Pressable>
+                </PressScale>
                 {/* WP-5 moat — inline NAMED alternative under the busy item. */}
                 {itemSwaps.length > 0 && (
                   <View testID={`swap-preview-${e.id}`} style={{ paddingLeft: 8, gap: 2 }}>
@@ -159,7 +160,7 @@ export default function EquipmentSwap(): React.JSX.Element {
           })}
         </View>
 
-        <Pressable
+        <PressScale
           testID="equipment-continue"
           accessibilityRole="button"
           onPress={handleContinue}
@@ -168,7 +169,7 @@ export default function EquipmentSwap(): React.JSX.Element {
           <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '600', color: dark.onAccent }}>
             {t('equipmentSwap.continueCta')}
           </Text>
-        </Pressable>
+        </PressScale>
       </ScrollView>
     </View>
   );

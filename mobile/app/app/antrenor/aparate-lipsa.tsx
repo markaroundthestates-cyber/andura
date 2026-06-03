@@ -12,11 +12,12 @@
 // (aparate-lipsa / -back / aparate-save + per-item data-item → testID).
 
 import { useState } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Check } from 'lucide-react-native';
 import { gotoPath } from '../../../lib/nav';
 import { SubHeader } from '../../../components/SubHeader';
+import { PressScale } from '../../../components/Press';
 import {
   getMissingEquipment,
   setMissingEquipment,
@@ -102,7 +103,7 @@ export default function AparateLipsa(): React.JSX.Element {
             const selected = missing.has(item.id);
             const label = t(`equipmentList.items.${item.id}`);
             return (
-              <Pressable
+              <PressScale
                 key={item.id}
                 testID={`aparate-lipsa-item-${item.id}`}
                 accessibilityRole="checkbox"
@@ -135,7 +136,7 @@ export default function AparateLipsa(): React.JSX.Element {
                   {selected && <Check size={15} color={dark.onAccent} strokeWidth={3} />}
                 </View>
                 <Text style={{ fontSize: 14, fontWeight: '600', color: selected ? dark.ink : dark.ink2 }}>{label}</Text>
-              </Pressable>
+              </PressScale>
             );
           })}
         </View>
@@ -143,7 +144,7 @@ export default function AparateLipsa(): React.JSX.Element {
         <Text className="font-serif" style={{ fontSize: 14, fontStyle: 'italic', lineHeight: 22, color: dark.ink3, marginBottom: 24 }}>
           {t('aparatLipsa.learnNote')}
         </Text>
-        <Pressable
+        <PressScale
           testID="aparate-save"
           accessibilityRole="button"
           onPress={handleSave}
@@ -152,7 +153,7 @@ export default function AparateLipsa(): React.JSX.Element {
           <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', color: dark.onAccent }}>
             {t('aparatLipsa.saveCta')}
           </Text>
-        </Pressable>
+        </PressScale>
       </ScrollView>
     </View>
   );

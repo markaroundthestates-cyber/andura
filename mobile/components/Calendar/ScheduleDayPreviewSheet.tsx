@@ -21,8 +21,11 @@
 
 import { useEffect, useState } from 'react';
 import { Modal, View, Text, Pressable, ScrollView } from 'react-native';
+import Animated, { SlideInDown } from 'react-native-reanimated';
 import { Layers, Clock } from 'lucide-react-native';
 import { getWorkoutForDay, resolveSessionTitle } from '../../../src/react/lib/engineWrappers';
+import { PressScale } from '../Press';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 import type { PlannedWorkoutOutput, PlannedExercise } from '../../../src/react/lib/engineWrappers';
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../src/react/lib/scheduleAdapterAggregate';
 import type { DayKind } from '../../../src/react/stores/scheduleStore';
@@ -84,6 +87,7 @@ export function ScheduleDayPreviewSheet({
 }: ScheduleDayPreviewSheetProps): React.JSX.Element | null {
   const [workout, setWorkout] = useState<PlannedWorkoutOutput | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const reduced = useReducedMotion();
 
   // Recompute from the live engine each open + whenever the tapped day changes.
   // Rest days skip the engine entirely. Training days fetch the proposed session.
@@ -131,6 +135,7 @@ export function ScheduleDayPreviewSheet({
         onPress={onClose}
         style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}
       >
+        <Animated.View entering={reduced ? undefined : SlideInDown.duration(300)}>
         <Pressable
           testID="schedule-day-preview-sheet"
           accessibilityViewIsModal
@@ -282,7 +287,7 @@ export function ScheduleDayPreviewSheet({
               </>
             )}
 
-            <Pressable
+            <PressScale
               testID="schedule-day-preview-close"
               accessibilityRole="button"
               onPress={onClose}
@@ -291,9 +296,10 @@ export function ScheduleDayPreviewSheet({
               <Text style={{ textAlign: 'center', fontSize: 14, color: dark.ink2 }}>
                 {t('calendar.dayPreview.closeCta')}
               </Text>
-            </Pressable>
+            </PressScale>
           </ScrollView>
         </Pressable>
+        </Animated.View>
       </Pressable>
     </Modal>
   );

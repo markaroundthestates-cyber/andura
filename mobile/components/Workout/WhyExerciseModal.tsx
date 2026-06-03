@@ -6,6 +6,9 @@
 // testIDs kept (why-modal-backdrop / why-modal / why-modal-text / -dismiss).
 
 import { Text, Pressable, Modal } from 'react-native';
+import Animated, { SlideInDown } from 'react-native-reanimated';
+import { PressScale } from '../Press';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 import { accent, dark } from '../../lib/tokens';
 import { t } from '../../../src/i18n/index.js';
 
@@ -16,6 +19,7 @@ interface WhyExerciseModalProps {
 }
 
 export function WhyExerciseModal({ whyText, exerciseName, onClose }: WhyExerciseModalProps): React.JSX.Element {
+  const reduced = useReducedMotion();
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onClose}>
       <Pressable
@@ -23,6 +27,7 @@ export function WhyExerciseModal({ whyText, exerciseName, onClose }: WhyExercise
         onPress={onClose}
         style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' }}
       >
+        <Animated.View entering={reduced ? undefined : SlideInDown.duration(280)}>
         <Pressable
           testID="why-modal"
           accessibilityViewIsModal
@@ -36,15 +41,16 @@ export function WhyExerciseModal({ whyText, exerciseName, onClose }: WhyExercise
           <Text testID="why-modal-text" style={{ fontSize: 14, color: dark.ink2, lineHeight: 22, marginBottom: 20 }}>
             {whyText}
           </Text>
-          <Pressable
+          <PressScale
             testID="why-modal-dismiss"
             accessibilityRole="button"
             onPress={onClose}
             style={{ padding: 12, backgroundColor: accent.volt, borderRadius: 14, minHeight: 44, justifyContent: 'center' }}
           >
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '600', color: dark.onAccent }}>{t('workout.whyDismiss')}</Text>
-          </Pressable>
+          </PressScale>
         </Pressable>
+        </Animated.View>
       </Pressable>
     </Modal>
   );

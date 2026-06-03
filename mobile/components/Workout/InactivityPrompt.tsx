@@ -6,8 +6,11 @@
 // kept (inactivity-prompt / -title / -body / inactivity-continue /
 // inactivity-save-exit).
 
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
+import Animated, { SlideInDown } from 'react-native-reanimated';
 import { Clock } from 'lucide-react-native';
+import { PressScale } from '../Press';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 import { accent, dark } from '../../lib/tokens';
 import { t } from '../../../src/i18n/index.js';
 
@@ -18,9 +21,11 @@ interface InactivityPromptProps {
 }
 
 export function InactivityPrompt({ open, onContinue, onSaveExit }: InactivityPromptProps): React.JSX.Element | null {
+  const reduced = useReducedMotion();
   if (!open) return null;
   return (
-    <View
+    <Animated.View
+      entering={reduced ? undefined : SlideInDown.duration(320)}
       testID="inactivity-prompt"
       accessibilityRole="alert"
       style={{
@@ -50,23 +55,23 @@ export function InactivityPrompt({ open, onContinue, onSaveExit }: InactivityPro
         {t('inactivity.body')}
       </Text>
       <View style={{ flexDirection: 'row', gap: 8 }}>
-        <Pressable
+        <PressScale
           testID="inactivity-continue"
           accessibilityRole="button"
           onPress={onContinue}
           style={{ flex: 1, backgroundColor: accent.volt, borderRadius: 8, paddingVertical: 10 }}
         >
           <Text style={{ textAlign: 'center', fontSize: 14, fontWeight: '600', color: dark.onAccent }}>{t('inactivity.continueCta')}</Text>
-        </Pressable>
-        <Pressable
+        </PressScale>
+        <PressScale
           testID="inactivity-save-exit"
           accessibilityRole="button"
           onPress={onSaveExit}
           style={{ borderWidth: 1, borderColor: dark.lineStrong, borderRadius: 8, paddingVertical: 10, paddingHorizontal: 14 }}
         >
           <Text style={{ fontSize: 14, fontWeight: '500', color: dark.ink2 }}>{t('inactivity.saveExitCta')}</Text>
-        </Pressable>
+        </PressScale>
       </View>
-    </View>
+    </Animated.View>
   );
 }

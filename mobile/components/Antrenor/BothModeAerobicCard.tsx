@@ -7,9 +7,10 @@
 // is dropped (RN focus model differs).
 
 import { useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import { Plus, HeartPulse } from 'lucide-react-native';
 import { Kicker } from '../pulse/Kicker';
+import { PressScale } from '../Press';
 import { PulseCard } from '../pulse/PulseCard';
 import { ClassLogger, TodayClassList } from './AerobicCoach';
 import { useAerobicStore, countClassesThisWeek } from '../../../src/react/stores/aerobicStore';
@@ -49,7 +50,7 @@ export function BothModeAerobicCard(): React.JSX.Element {
       {loggerOpen ? (
         <ClassLogger dateISO={todayIso()} onDone={() => setLoggerOpen(false)} />
       ) : (
-        <Pressable
+        <PressScale
           testID="both-aerobic-log-cta"
           onPress={() => setLoggerOpen(true)}
           style={{
@@ -70,7 +71,7 @@ export function BothModeAerobicCard(): React.JSX.Element {
           <Text style={{ fontSize: 14, fontWeight: '600', color: dark.ink }}>
             {t('antrenor.aerobic.logCta')}
           </Text>
-        </Pressable>
+        </PressScale>
       )}
 
       <View style={{ marginTop: 12 }}>

@@ -6,16 +6,17 @@
 // ClassLogger + TodayClassList so 'both' mode (BothModeAerobicCard) reuses them.
 // Same testIDs + i18n keys throughout.
 //
-// Web→RN: <section>/<div>→<View>, <button>→<Pressable>, <input type=number>→
+// Web→RN: <section>/<div>→<View>, <button>→<PressScale>, <input type=number>→
 // <TextInput inputMode="numeric">. The focus-restore refs (SC 2.4.3, web DOM
 // focus) are dropped — RN focus management differs and the visual flow is
 // preserved (FIDELITY FLAG). TDEEStrip is the W3a stub (W4 replaces). The
 // animate-card-rise entrances + btn-grad shimmer are design-polish-wave items.
 
 import { useState } from 'react';
-import { View, Text, Pressable, TextInput } from 'react-native';
+import { View, Text, TextInput } from 'react-native';
 import { HeartPulse, Plus, Check, Activity, Trash2 } from 'lucide-react-native';
 import { Kicker } from '../pulse/Kicker';
+import { PressScale } from '../Press';
 import { Pill } from '../pulse/Pill';
 import { PulseMark } from '../pulse/PulseMark';
 import { PulseCard } from '../pulse/PulseCard';
@@ -114,7 +115,7 @@ export function AerobicCoach(): React.JSX.Element {
       {loggerOpen ? (
         <ClassLogger dateISO={dateISO} onDone={() => setLoggerOpen(false)} />
       ) : (
-        <Pressable
+        <PressScale
           testID="aerobic-log-cta"
           onPress={() => setLoggerOpen(true)}
           style={{
@@ -132,7 +133,7 @@ export function AerobicCoach(): React.JSX.Element {
           <Text style={{ fontSize: 16, fontWeight: '600', color: dark.onAccent }}>
             {t('antrenor.aerobic.logCta')}
           </Text>
-        </Pressable>
+        </PressScale>
       )}
 
       {/* Today's logged classes — per-entry delete. */}
@@ -151,7 +152,7 @@ export function AerobicCoach(): React.JSX.Element {
           {SUBJECTIVE_OPTIONS.map(({ value, labelKey }) => {
             const selected = subjective === value;
             return (
-              <Pressable
+              <PressScale
                 key={value}
                 testID={`aerobic-readiness-${value}`}
                 accessibilityState={{ selected }}
@@ -168,7 +169,7 @@ export function AerobicCoach(): React.JSX.Element {
                 }}
               >
                 <Text style={{ fontSize: 14, fontWeight: '600', color: dark.ink }}>{t(labelKey)}</Text>
-              </Pressable>
+              </PressScale>
             );
           })}
         </View>
@@ -228,7 +229,7 @@ export function TodayClassList({ dateISO }: { dateISO: string }): React.JSX.Elem
             </Text>
             {confirmTs === s.ts ? (
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Pressable
+                <PressScale
                   testID={`aerobic-delete-cancel-${s.ts}`}
                   onPress={() => setConfirmTs(null)}
                   style={{
@@ -243,8 +244,8 @@ export function TodayClassList({ dateISO }: { dateISO: string }): React.JSX.Elem
                   <Text style={{ fontSize: 12, fontWeight: '600', color: dark.ink }}>
                     {t('antrenor.aerobic.deleteConfirmNo')}
                   </Text>
-                </Pressable>
-                <Pressable
+                </PressScale>
+                <PressScale
                   testID={`aerobic-delete-accept-${s.ts}`}
                   onPress={() => {
                     removeSession(s.ts);
@@ -255,17 +256,17 @@ export function TodayClassList({ dateISO }: { dateISO: string }): React.JSX.Elem
                   <Text style={{ fontSize: 12, fontWeight: '600', color: dark.paper }}>
                     {t('antrenor.aerobic.deleteConfirmYes')}
                   </Text>
-                </Pressable>
+                </PressScale>
               </View>
             ) : (
-              <Pressable
+              <PressScale
                 testID={`aerobic-delete-${s.ts}`}
                 accessibilityLabel={t('antrenor.aerobic.deleteAria')}
                 onPress={() => setConfirmTs(s.ts)}
                 style={{ padding: 8, borderRadius: 8 }}
               >
                 <Trash2 size={16} color={dark.ink2} />
-              </Pressable>
+              </PressScale>
             )}
           </View>
         ))}
@@ -322,7 +323,7 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
         {AEROBIC_CLASS_TYPES.map((ct) => {
           const selected = type === ct;
           return (
-            <Pressable
+            <PressScale
               key={ct}
               testID={`aerobic-type-${ct}`}
               accessibilityState={{ selected }}
@@ -342,7 +343,7 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
                 {t(`antrenor.aerobic.types.${ct}`)}
               </Text>
               {selected && <Check size={14} color={dark.brick} strokeWidth={2.6} />}
-            </Pressable>
+            </PressScale>
           );
         })}
       </View>
@@ -393,7 +394,7 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
             {t('antrenor.aerobic.alreadyLoggedBody')}
           </Text>
           <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
-            <Pressable
+            <PressScale
               testID="aerobic-already-logged-no"
               onPress={() => setConfirmAnother(false)}
               style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 10, backgroundColor: dark.paper, borderWidth: 1, borderColor: dark.lineStrong, borderRadius: 12, alignItems: 'center' }}
@@ -401,8 +402,8 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
               <Text style={{ fontSize: 14, fontWeight: '600', color: dark.ink }}>
                 {t('antrenor.aerobic.alreadyLoggedNo')}
               </Text>
-            </Pressable>
-            <Pressable
+            </PressScale>
+            <PressScale
               testID="aerobic-already-logged-yes"
               onPress={commit}
               style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 10, backgroundColor: dark.brick, borderRadius: 12, alignItems: 'center' }}
@@ -410,13 +411,13 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
               <Text style={{ fontSize: 14, fontWeight: '600', color: dark.onAccent }}>
                 {t('antrenor.aerobic.alreadyLoggedYes')}
               </Text>
-            </Pressable>
+            </PressScale>
           </View>
         </View>
       )}
 
       <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
-        <Pressable
+        <PressScale
           testID="aerobic-logger-cancel"
           onPress={onDone}
           style={{ paddingHorizontal: 20, paddingVertical: 12, backgroundColor: dark.paper2, borderWidth: 1, borderColor: dark.lineStrong, borderRadius: 12, alignItems: 'center' }}
@@ -424,8 +425,8 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
           <Text style={{ fontSize: 14, fontWeight: '600', color: dark.ink }}>
             {t('antrenor.aerobic.cancelCta')}
           </Text>
-        </Pressable>
-        <Pressable
+        </PressScale>
+        <PressScale
           testID="aerobic-logger-save"
           disabled={!minutesValid}
           onPress={handleSave}
@@ -446,7 +447,7 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
           <Text style={{ fontSize: 16, fontWeight: '600', color: dark.onAccent }}>
             {t('antrenor.aerobic.saveCta')}
           </Text>
-        </Pressable>
+        </PressScale>
       </View>
     </PulseCard>
   );

@@ -11,8 +11,9 @@
 // testIDs + bodyweight branches kept verbatim (kg-input / reps-input /
 // setlog-tinta* / setlog-postlog*). haptic() is the W3b web-guarded no-op shim.
 
-import { View, Text, Pressable, TextInput } from 'react-native';
+import { View, Text, TextInput } from 'react-native';
 import { Check, Pencil, Minus, Plus } from 'lucide-react-native';
+import { PressScale } from '../Press';
 import { accent, dark, surface, withAlpha } from '../../lib/tokens';
 import { haptic } from '../../lib/motion';
 import { t } from '../../../src/i18n/index.js';
@@ -35,7 +36,7 @@ interface DialButtonProps {
 
 function DialButton({ dir, onPress, ariaLabel, testID }: DialButtonProps): React.JSX.Element {
   return (
-    <Pressable
+    <PressScale
       testID={testID}
       accessibilityRole="button"
       accessibilityLabel={ariaLabel}
@@ -55,7 +56,7 @@ function DialButton({ dir, onPress, ariaLabel, testID }: DialButtonProps): React
       }}
     >
       {dir === 'down' ? <Minus size={16} color={dark.ink} /> : <Plus size={16} color={dark.ink} />}
-    </Pressable>
+    </PressScale>
   );
 }
 
@@ -188,7 +189,7 @@ export function SetLogInput({
           />
         </View>
 
-        <Pressable
+        <PressScale
           testID="setlog-tinta-log-btn"
           accessibilityRole="button"
           disabled={!Number.isFinite(reps) || reps < 1}
@@ -210,7 +211,7 @@ export function SetLogInput({
         >
           <Check size={20} color={dark.onAccent} />
           <Text style={{ fontSize: 16, fontWeight: '600', color: dark.onAccent }}>{t('setLog.confirmSetCta')}</Text>
-        </Pressable>
+        </PressScale>
       </View>
     );
   }
@@ -244,7 +245,7 @@ export function SetLogInput({
               </>
             )}
           </Text>
-          <Pressable
+          <PressScale
             testID="setlog-postlog-edit"
             accessibilityRole="button"
             accessibilityLabel={t('setLog.editAriaLabel')}
@@ -252,7 +253,7 @@ export function SetLogInput({
             style={{ minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 999 }}
           >
             <Pencil size={16} color={dark.ink2} />
-          </Pressable>
+          </PressScale>
         </View>
       </View>
     );

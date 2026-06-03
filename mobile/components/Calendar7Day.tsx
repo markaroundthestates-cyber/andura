@@ -15,12 +15,13 @@
 // replaces with the full engine-backed sheet.
 
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import { Pencil, Check } from 'lucide-react-native';
 import { useScheduleStore, weekStartIso } from '../../src/react/stores/scheduleStore';
 import { ScheduleDayPreviewSheet } from './Calendar/ScheduleDayPreviewSheet';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PulseCard } from './pulse/PulseCard';
+import { PressScale } from './Press';
 import { accent, dark, surface, withAlpha } from '../lib/tokens';
 import { t } from '../../src/i18n/index.js';
 
@@ -79,7 +80,7 @@ export function Calendar7Day(): React.JSX.Element {
           >
             {t('calendar.day7.title')}
           </Text>
-          <Pressable
+          <PressScale
             testID="calendar-edit-toggle"
             accessibilityLabel={editMode ? t('calendar.day7.editAriaSave') : t('calendar.day7.editAriaEdit')}
             onPress={handleToggleEdit}
@@ -101,7 +102,7 @@ export function Calendar7Day(): React.JSX.Element {
             ) : (
               <Pencil size={16} color={dark.ink3} />
             )}
-          </Pressable>
+          </PressScale>
         </View>
         <View style={{ flexDirection: 'row', gap: 6 }}>
           {days.map((kind, idx) => {
@@ -109,7 +110,7 @@ export function Calendar7Day(): React.JSX.Element {
             const label = dayLabel(idx);
             const isToday = idx === todayIdx;
             return (
-              <Pressable
+              <PressScale
                 key={idx}
                 testID={`calendar-day-${idx}`}
                 accessibilityLabel={`${label} - ${trainingDay ? t('calendar.day7.kindTraining') : t('calendar.day7.kindRest')}`}
@@ -139,7 +140,7 @@ export function Calendar7Day(): React.JSX.Element {
                 >
                   {label}
                 </Text>
-              </Pressable>
+              </PressScale>
             );
           })}
         </View>
@@ -151,7 +152,7 @@ export function Calendar7Day(): React.JSX.Element {
             >
               {t('calendar.day7.editHint')}
             </Text>
-            <Pressable testID="calendar-save" onPress={handleSave} style={{ marginTop: 12, borderRadius: 8, overflow: 'hidden' }}>
+            <PressScale testID="calendar-save" onPress={handleSave} style={{ marginTop: 12, borderRadius: 8, overflow: 'hidden' }}>
               <LinearGradient
                 colors={[accent.volt, accent.aqua]}
                 start={{ x: 0, y: 0 }}
@@ -162,7 +163,7 @@ export function Calendar7Day(): React.JSX.Element {
                   {t('calendar.day7.saveCta')}
                 </Text>
               </LinearGradient>
-            </Pressable>
+            </PressScale>
           </>
         )}
       </PulseCard>

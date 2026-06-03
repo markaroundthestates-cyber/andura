@@ -14,8 +14,29 @@
 
 import { Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { FadeInUp, type EntryExitAnimationFunction } from 'react-native-reanimated';
+import { useReducedMotion } from './useReducedMotion';
 
 const isNative = Platform.OS !== 'web';
+
+// Stagger step between sequential cards in a screen entrance (ms).
+const ENTRANCE_STEP_MS = 70;
+const ENTRANCE_DURATION_MS = 360;
+
+/**
+ * Staggered FadeInUp `entering` value for a card at list position `index`.
+ * Returns `undefined` when OS reduce-motion is on, so the element mounts
+ * statically (no slide/fade) — Maria 65 vestibular safety. Reanimated layout
+ * animations run on react-native-web, so the entrance shows on the web export.
+ *
+ * Usage: `const entering = useEntrance(0); <Animated.View entering={entering} />`
+ */
+export function useEntrance(index = 0): EntryExitAnimationFunction | undefined {
+  const reduced = useReducedMotion();
+  if (reduced) return undefined;
+  return FadeInUp.duration(ENTRANCE_DURATION_MS).delay(index * ENTRANCE_STEP_MS) as unknown as
+    EntryExitAnimationFunction;
+}
 
 // Above this single-pulse duration the web treated it as a "stronger" buzz (the
 // PR flash fires haptic(40)); map that to a success notification, shorter taps to

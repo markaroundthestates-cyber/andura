@@ -8,6 +8,9 @@
 // -finish-early / -discard).
 
 import { Text, Pressable, Modal } from 'react-native';
+import Animated, { SlideInDown } from 'react-native-reanimated';
+import { PressScale } from '../Press';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 import { accent, dark } from '../../lib/tokens';
 import { t } from '../../../src/i18n/index.js';
 
@@ -26,6 +29,7 @@ export function ExitConfirmSheet({
   totalExercises,
   onChoose,
 }: ExitConfirmSheetProps): React.JSX.Element | null {
+  const reduced = useReducedMotion();
   if (!open) return null;
   return (
     <Modal visible transparent animationType="fade" onRequestClose={() => onChoose('continue')}>
@@ -34,6 +38,7 @@ export function ExitConfirmSheet({
         onPress={() => onChoose('continue')}
         style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' }}
       >
+        <Animated.View entering={reduced ? undefined : SlideInDown.duration(280)}>
         <Pressable
           testID="exit-sheet"
           accessibilityViewIsModal
@@ -46,39 +51,40 @@ export function ExitConfirmSheet({
           <Text style={{ fontSize: 14, color: dark.ink2, marginBottom: 16 }}>
             {t('exitSheet.progressLine', { done: exIdx, total: totalExercises })}
           </Text>
-          <Pressable
+          <PressScale
             testID="exit-continue"
             accessibilityRole="button"
             onPress={() => onChoose('continue')}
             style={{ paddingVertical: 12, backgroundColor: accent.volt, borderRadius: 12, marginBottom: 8 }}
           >
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '600', color: dark.onAccent }}>{t('exitSheet.continueCta')}</Text>
-          </Pressable>
-          <Pressable
+          </PressScale>
+          <PressScale
             testID="exit-pause"
             accessibilityRole="button"
             onPress={() => onChoose('pause')}
             style={{ paddingVertical: 12, backgroundColor: dark.paper2, borderWidth: 1, borderColor: dark.lineStrong, borderRadius: 12, marginBottom: 8 }}
           >
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '600', color: dark.ink }}>{t('exitSheet.pauseCta')}</Text>
-          </Pressable>
-          <Pressable
+          </PressScale>
+          <PressScale
             testID="exit-finish-early"
             accessibilityRole="button"
             onPress={() => onChoose('finish-early')}
             style={{ paddingVertical: 12, backgroundColor: dark.paper2, borderWidth: 1, borderColor: dark.lineStrong, borderRadius: 12, marginBottom: 8 }}
           >
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '600', color: dark.ink }}>{t('exitSheet.finishEarlyCta')}</Text>
-          </Pressable>
-          <Pressable
+          </PressScale>
+          <PressScale
             testID="exit-discard"
             accessibilityRole="button"
             onPress={() => onChoose('discard')}
             style={{ paddingVertical: 8 }}
           >
             <Text style={{ textAlign: 'center', fontSize: 14, color: accent.volt }}>{t('exitSheet.discardCta')}</Text>
-          </Pressable>
+          </PressScale>
         </Pressable>
+        </Animated.View>
       </Pressable>
     </Modal>
   );

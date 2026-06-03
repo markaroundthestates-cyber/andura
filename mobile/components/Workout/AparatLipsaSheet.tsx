@@ -10,11 +10,14 @@
 
 import { useEffect, useState } from 'react';
 import { View, Text, Pressable, Modal, ScrollView } from 'react-native';
+import Animated, { SlideInDown } from 'react-native-reanimated';
 import { Check } from 'lucide-react-native';
 import {
   getMissingEquipment,
   setMissingEquipment,
 } from '../../../src/engine/schedule/scheduleAdapter.js';
+import { PressScale } from '../Press';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 import { accent, dark, surface, withAlpha } from '../../lib/tokens';
 import { t } from '../../../src/i18n/index.js';
 
@@ -46,6 +49,7 @@ export function AparatLipsaSheet({ open, onConfirm, onClose }: AparatLipsaSheetP
   // Re-hydrate from persistence each open (Cont-side changes surface; cancel
   // doesn't leak the prior open's draft).
   const [missing, setMissing] = useState<Set<string>>(new Set());
+  const reduced = useReducedMotion();
   useEffect(() => {
     if (!open) return;
     setMissing(new Set(getMissingEquipment()));
@@ -77,6 +81,7 @@ export function AparatLipsaSheet({ open, onConfirm, onClose }: AparatLipsaSheetP
         onPress={onClose}
         style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' }}
       >
+        <Animated.View entering={reduced ? undefined : SlideInDown.duration(280)}>
         <Pressable
           testID="aparat-lipsa-sheet"
           accessibilityViewIsModal
@@ -92,7 +97,7 @@ export function AparatLipsaSheet({ open, onConfirm, onClose }: AparatLipsaSheetP
                 const selected = missing.has(item.id);
                 const label = t(`equipmentList.items.${item.id}`);
                 return (
-                  <Pressable
+                  <PressScale
                     key={item.id}
                     testID={`aparat-lipsa-sheet-item-${item.id}`}
                     accessibilityRole="checkbox"
@@ -125,23 +130,24 @@ export function AparatLipsaSheet({ open, onConfirm, onClose }: AparatLipsaSheetP
                       {selected && <Check size={14} color={dark.onAccent} strokeWidth={2.6} />}
                     </View>
                     <Text style={{ fontSize: 14, fontWeight: '500', color: dark.ink }}>{label}</Text>
-                  </Pressable>
+                  </PressScale>
                 );
               })}
             </View>
           </ScrollView>
-          <Pressable
+          <PressScale
             testID="aparat-lipsa-sheet-save"
             accessibilityRole="button"
             onPress={handleSave}
             style={{ paddingVertical: 12, backgroundColor: accent.volt, borderRadius: 14, minHeight: 44, justifyContent: 'center' }}
           >
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '600', color: dark.onAccent }}>{t('workout.aparatLipsaSheet.saveCta')}</Text>
-          </Pressable>
-          <Pressable testID="aparat-lipsa-sheet-close" accessibilityRole="button" onPress={onClose} style={{ paddingVertical: 10, marginTop: 8 }}>
+          </PressScale>
+          <PressScale testID="aparat-lipsa-sheet-close" accessibilityRole="button" onPress={onClose} style={{ paddingVertical: 10, marginTop: 8 }}>
             <Text style={{ textAlign: 'center', fontSize: 14, color: dark.ink2 }}>{t('workout.aparatLipsaSheet.closeCta')}</Text>
-          </Pressable>
+          </PressScale>
         </Pressable>
+        </Animated.View>
       </Pressable>
     </Modal>
   );

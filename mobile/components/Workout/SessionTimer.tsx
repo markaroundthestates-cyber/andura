@@ -9,8 +9,9 @@
 // -elapsed / -exit-trigger / -menu-trigger / -menu-sheet / -menu-{row} /
 // -progress-bar / -progress-sets / -progress-ex / -progress-fill).
 
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { View, Text, Pressable, Modal } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing } from 'react-native-reanimated';
 import {
   X,
   MoreHorizontal,
@@ -22,6 +23,8 @@ import {
   XCircle,
 } from 'lucide-react-native';
 import { SessionElapsed } from './SessionElapsed';
+import { PressScale } from '../Press';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 import { accent, dark } from '../../lib/tokens';
 import { t } from '../../../src/i18n/index.js';
 
@@ -55,7 +58,7 @@ interface MenuRowProps {
 
 function MenuRow({ icon, title, desc, onPress, testID, danger }: MenuRowProps): React.JSX.Element {
   return (
-    <Pressable
+    <PressScale
       testID={testID}
       accessibilityRole="button"
       onPress={onPress}
@@ -66,7 +69,7 @@ function MenuRow({ icon, title, desc, onPress, testID, danger }: MenuRowProps): 
         <Text style={{ fontSize: 14, fontWeight: '600', color: danger ? accent.volt : dark.ink }}>{title}</Text>
         <Text style={{ fontSize: 12, color: dark.ink2 }}>{desc}</Text>
       </View>
-    </Pressable>
+    </PressScale>
   );
 }
 
@@ -106,6 +109,15 @@ function SessionTimerImpl({
     ? Math.min(100, Math.max(0, Math.round(((setsDone ?? 0) / (setsTotal as number)) * 100)))
     : 0;
 
+  // Animate the progress fill width as sets are logged (web-visible). Reduced
+  // motion snaps instantly.
+  const reduced = useReducedMotion();
+  const fill = useSharedValue(fillPct);
+  useEffect(() => {
+    fill.value = reduced ? fillPct : withTiming(fillPct, { duration: 420, easing: Easing.out(Easing.cubic) });
+  }, [fillPct, reduced, fill]);
+  const fillStyle = useAnimatedStyle(() => ({ width: `${fill.value}%` }));
+
   return (
     <>
       <View
@@ -129,7 +141,7 @@ function SessionTimerImpl({
           </Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-          <Pressable
+          <PressScale
             testID="workout-exit-trigger"
             accessibilityRole="button"
             accessibilityLabel={t('workout.timer.exitAriaLabel')}
@@ -137,8 +149,8 @@ function SessionTimerImpl({
             style={{ padding: 10, minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}
           >
             <X size={20} color={dark.ink2} />
-          </Pressable>
-          <Pressable
+          </PressScale>
+          <PressScale
             testID="workout-menu-trigger"
             accessibilityRole="button"
             accessibilityLabel={t('workout.timer.menuAriaLabel')}
@@ -147,7 +159,7 @@ function SessionTimerImpl({
             style={{ padding: 10, minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}
           >
             <MoreHorizontal size={20} color={dark.ink2} />
-          </Pressable>
+          </PressScale>
         </View>
       </View>
 
@@ -173,7 +185,7 @@ function SessionTimerImpl({
             </Text>
           </View>
           <View style={{ height: 4, backgroundColor: dark.paper2, borderRadius: 2, overflow: 'hidden' }}>
-            <View testID="workout-progress-fill" style={{ height: '100%', backgroundColor: accent.volt, width: `${fillPct}%` }} />
+            <Animated.View testID="workout-progress-fill" style={[{ height: '100%', backgroundColor: accent.volt }, fillStyle]} />
           </View>
         </View>
       )}

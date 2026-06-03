@@ -7,11 +7,14 @@
 // expo-router param). testIDs kept (ceva-nu-merge / -back + data-problem-kind →
 // per-option testID).
 
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { Activity, Users, PackageX, Shuffle, CircleX } from 'lucide-react-native';
 import { gotoPath, type GotoScreen } from '../../../lib/nav';
 import { SubHeader } from '../../../components/SubHeader';
+import { PressScale } from '../../../components/Press';
+import { useEntrance } from '../../../lib/motion';
 import { surface, dark, radius } from '../../../lib/tokens';
 import { t } from '../../../../src/i18n/index.js';
 
@@ -31,6 +34,45 @@ const PROBLEM_OPTIONS: readonly ProblemOption[] = [
   { kind: 'override', labelKey: 'cevaNuMerge.options.override', Icon: Shuffle, target: 'schedule-override' },
   { kind: 'cancel', labelKey: 'cevaNuMerge.options.cancel', Icon: CircleX, target: 'antrenor' },
 ];
+
+// Problem option card — staggered entrance + press-scale feedback.
+function ProblemRow({
+  index,
+  testID,
+  label,
+  Icon,
+  onPress,
+}: {
+  index: number;
+  testID: string;
+  label: string;
+  Icon: typeof Activity;
+  onPress: () => void;
+}): React.JSX.Element {
+  const entering = useEntrance(index);
+  return (
+    <Animated.View entering={entering}>
+      <PressScale
+        testID={testID}
+        accessibilityRole="button"
+        onPress={onPress}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 16,
+          padding: 16,
+          backgroundColor: surface.base,
+          borderWidth: 1,
+          borderColor: dark.line,
+          borderRadius: radius.sm,
+        }}
+      >
+        <Icon size={20} color={dark.ink2} />
+        <Text style={{ fontSize: 16, fontWeight: '500', color: dark.ink }}>{label}</Text>
+      </PressScale>
+    </Animated.View>
+  );
+}
 
 export default function CevaNuMerge(): React.JSX.Element {
   function handleSelect(option: ProblemOption): void {
@@ -54,30 +96,16 @@ export default function CevaNuMerge(): React.JSX.Element {
       <View style={{ flex: 1, padding: 24 }}>
         <Text style={{ fontSize: 16, color: dark.ink2, marginBottom: 24 }}>{t('cevaNuMerge.body')}</Text>
         <View style={{ gap: 12 }}>
-          {PROBLEM_OPTIONS.map((opt) => {
-            const Icon = opt.Icon;
-            return (
-              <Pressable
-                key={opt.kind}
-                testID={`ceva-nu-merge-option-${opt.kind}`}
-                accessibilityRole="button"
-                onPress={() => handleSelect(opt)}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 16,
-                  padding: 16,
-                  backgroundColor: surface.base,
-                  borderWidth: 1,
-                  borderColor: dark.line,
-                  borderRadius: radius.sm,
-                }}
-              >
-                <Icon size={20} color={dark.ink2} />
-                <Text style={{ fontSize: 16, fontWeight: '500', color: dark.ink }}>{t(opt.labelKey)}</Text>
-              </Pressable>
-            );
-          })}
+          {PROBLEM_OPTIONS.map((opt, i) => (
+            <ProblemRow
+              key={opt.kind}
+              index={i}
+              testID={`ceva-nu-merge-option-${opt.kind}`}
+              label={t(opt.labelKey)}
+              Icon={opt.Icon}
+              onPress={() => handleSelect(opt)}
+            />
+          ))}
         </View>
       </View>
     </View>

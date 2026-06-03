@@ -8,9 +8,10 @@
 // taps) guards an accidental finalize. testIDs kept verbatim.
 
 import { useRef, useState } from 'react';
-import { ScrollView, View, Text, Pressable } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import { router } from 'expo-router';
 import { Check } from 'lucide-react-native';
+import { PressScale } from '../../../components/Press';
 import { useWorkoutStore, energyLightForIntensityMod } from '../../../../src/react/stores/workoutStore';
 import type {
   SessionExerciseBreakdown,
@@ -175,7 +176,7 @@ export default function PostRpe(): React.JSX.Element {
           {RATING_META.map((opt) => {
             const selected = pick === opt.rating;
             return (
-              <Pressable
+              <PressScale
                 key={opt.rating}
                 testID={`post-rpe-rating-${opt.rating}`}
                 accessibilityRole="button"
@@ -213,7 +214,7 @@ export default function PostRpe(): React.JSX.Element {
                 >
                   {selected && <Check size={16} color={varColor('--on-accent')} strokeWidth={2.6} />}
                 </View>
-              </Pressable>
+              </PressScale>
             );
           })}
         </View>
@@ -226,27 +227,27 @@ export default function PostRpe(): React.JSX.Element {
             <Text style={{ fontSize: 16, fontWeight: '600', color: dark.ink }}>{t('postRpe.alreadyLoggedTitle')}</Text>
             <Text style={{ fontSize: 14, color: dark.ink2, marginTop: 4 }}>{t('postRpe.alreadyLoggedBody')}</Text>
             <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
-              <Pressable
+              <PressScale
                 testID="post-rpe-already-logged-no"
                 accessibilityRole="button"
                 onPress={() => setConfirmAnother(false)}
                 style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: dark.paper, borderWidth: 1, borderColor: dark.lineStrong, borderRadius: 12 }}
               >
                 <Text style={{ textAlign: 'center', fontSize: 14, fontWeight: '600', color: dark.ink }}>{t('postRpe.alreadyLoggedNo')}</Text>
-              </Pressable>
-              <Pressable
+              </PressScale>
+              <PressScale
                 testID="post-rpe-already-logged-yes"
                 accessibilityRole="button"
                 onPress={() => { if (pick) void handleSubmit(pick); }}
                 style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: accent.volt, borderRadius: 12 }}
               >
                 <Text style={{ textAlign: 'center', fontSize: 14, fontWeight: '600', color: dark.onAccent }}>{t('postRpe.alreadyLoggedYes')}</Text>
-              </Pressable>
+              </PressScale>
             </View>
           </View>
         )}
         {!confirmAnother && (
-          <Pressable
+          <PressScale
             testID="post-rpe-save"
             accessibilityRole="button"
             disabled={pick === null}
@@ -254,7 +255,7 @@ export default function PostRpe(): React.JSX.Element {
             style={{ paddingVertical: 16, backgroundColor: accent.volt, borderRadius: 999, opacity: pick === null ? 0.45 : 1 }}
           >
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '600', color: dark.onAccent }}>{t('postRpe.submitCta')}</Text>
-          </Pressable>
+          </PressScale>
         )}
         <Text testID="post-rpe-footer" style={{ marginTop: 16, fontSize: 12, color: dark.ink3, textAlign: 'center', lineHeight: 18 }}>
           {t('postRpe.footer')}

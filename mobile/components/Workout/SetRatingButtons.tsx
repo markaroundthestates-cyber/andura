@@ -5,8 +5,11 @@
 // engine keys (usor/potrivit/greu). The web exposed `data-rating`; RN keeps it
 // reachable via testID `setrating-<rating>` + the accessible label (button text).
 
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { Kicker } from '../pulse/Kicker';
+import { PressScale } from '../Press';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 import { accent, dark, varColor } from '../../lib/tokens';
 import { t } from '../../../src/i18n/index.js';
 
@@ -29,8 +32,10 @@ const RATING_META: readonly RatingMeta[] = [
 ];
 
 export function SetRatingButtons({ onRate }: SetRatingButtonsProps): React.JSX.Element {
+  const reduced = useReducedMotion();
   return (
-    <View
+    <Animated.View
+      entering={reduced ? undefined : FadeIn.duration(260)}
       testID="setrating-feel-card"
       style={{ borderRadius: 22, padding: 16, marginBottom: 8, backgroundColor: varColor('--surface'), borderWidth: 1, borderColor: dark.line }}
     >
@@ -39,7 +44,7 @@ export function SetRatingButtons({ onRate }: SetRatingButtonsProps): React.JSX.E
       </View>
       <View style={{ flexDirection: 'row', gap: 10 }}>
         {RATING_META.map((opt) => (
-          <Pressable
+          <PressScale
             key={opt.rating}
             testID={`setrating-${opt.rating}`}
             accessibilityRole="button"
@@ -61,9 +66,9 @@ export function SetRatingButtons({ onRate }: SetRatingButtonsProps): React.JSX.E
             <Text className="font-display" style={{ fontSize: 16, fontWeight: '700', color: opt.accent }}>
               {t(opt.labelKey)}
             </Text>
-          </Pressable>
+          </PressScale>
         ))}
       </View>
-    </View>
+    </Animated.View>
   );
 }

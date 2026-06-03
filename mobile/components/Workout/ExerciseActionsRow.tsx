@@ -4,9 +4,10 @@
 // — all swap logic stays in the parent. testIDs kept verbatim (wv2-ex-actions
 // root + wv2-ex-action-ocupat / -lipsa / -nuvreau).
 
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import { Users, Hand, PackageX } from 'lucide-react-native';
 import { PulseCard } from '../pulse/PulseCard';
+import { PressScale } from '../Press';
 import { dark } from '../../lib/tokens';
 import { t } from '../../../src/i18n/index.js';
 
@@ -25,12 +26,12 @@ interface ActionProps {
 
 function Action({ icon, label, onPress, testID }: ActionProps): React.JSX.Element {
   return (
-    <Pressable testID={testID} accessibilityRole="button" onPress={onPress} style={{ flex: 1 }}>
+    <PressScale testID={testID} accessibilityRole="button" onPress={onPress} style={{ flex: 1 }}>
       <PulseCard tight style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, minHeight: 44 }}>
         {icon}
         <Text style={{ fontSize: 14, fontWeight: '500', color: dark.ink2 }}>{label}</Text>
       </PulseCard>
-    </Pressable>
+    </PressScale>
   );
 }
 

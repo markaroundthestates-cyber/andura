@@ -3,10 +3,11 @@
 // lastSession age > 14 days + not dismissed. Same testID (reactivate-icon) +
 // i18n keys. Border uses the line-strong (warm interactive boundary) token.
 
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import { Hand } from 'lucide-react-native';
 import type { LastSessionSummary } from '../../../src/react/stores/workoutStore';
 import { PulseCard } from '../pulse/PulseCard';
+import { PressScale } from '../Press';
 import { dark } from '../../lib/tokens';
 import { t } from '../../../src/i18n/index.js';
 
@@ -33,7 +34,7 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): Reac
         {t('reactivate.body', { days: daysAgo })}
       </Text>
       <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
-        <Pressable
+        <PressScale
           onPress={onStart}
           style={{
             flex: 1,
@@ -47,8 +48,8 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): Reac
           <Text style={{ fontSize: 14, fontWeight: '600', color: dark.paper }}>
             {t('reactivate.startCta')}
           </Text>
-        </Pressable>
-        <Pressable
+        </PressScale>
+        <PressScale
           onPress={onDismiss}
           style={{
             borderWidth: 1,
@@ -62,7 +63,7 @@ export function ReactivateCard({ lastSession, onStart, onDismiss }: Props): Reac
           <Text style={{ fontSize: 14, fontWeight: '500', color: dark.ink2 }}>
             {t('reactivate.dismissCta')}
           </Text>
-        </Pressable>
+        </PressScale>
       </View>
     </PulseCard>
   );

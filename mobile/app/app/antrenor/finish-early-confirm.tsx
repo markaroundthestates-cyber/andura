@@ -4,11 +4,12 @@
 // from the sets logged so far — NO progress lost). Cancel → back to /workout.
 // testIDs kept (finish-early-confirm / -back / -accept / -cancel).
 
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import { router } from 'expo-router';
 import { Flag } from 'lucide-react-native';
 import { gotoPath } from '../../../lib/nav';
 import { SubHeader } from '../../../components/SubHeader';
+import { PressScale } from '../../../components/Press';
 import { PulseCard } from '../../../components/pulse/PulseCard';
 import { accent, dark } from '../../../lib/tokens';
 import { t } from '../../../../src/i18n/index.js';
@@ -39,22 +40,22 @@ export default function FinishEarlyConfirm(): React.JSX.Element {
         </Text>
 
         <View style={{ width: '100%', maxWidth: 360, marginTop: 32, gap: 12 }}>
-          <Pressable
+          <PressScale
             testID="finish-early-confirm-accept"
             accessibilityRole="button"
             onPress={handleConfirm}
             style={{ paddingVertical: 16, backgroundColor: accent.volt, borderRadius: 14 }}
           >
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '600', color: dark.onAccent }}>{t('confirm.finishEarly.acceptCta')}</Text>
-          </Pressable>
-          <Pressable
+          </PressScale>
+          <PressScale
             testID="finish-early-confirm-cancel"
             accessibilityRole="button"
             onPress={handleCancel}
             style={{ paddingVertical: 16, borderWidth: 1, borderColor: dark.lineStrong, borderRadius: 14 }}
           >
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '500', color: dark.ink2 }}>{t('confirm.finishEarly.cancelCta')}</Text>
-          </Pressable>
+          </PressScale>
         </View>
       </View>
     </View>
