@@ -242,7 +242,10 @@ export const PHASE_CLUSTERS_BIG6 = Object.freeze(['push', 'pull', 'legs', 'upper
  *   - pull:  spate 0.50 + biceps 0.30 + antebrate 0.20 (back-focus grip secondary)
  *     Helms RP 2018 — back primary stimulus + grip antebrate secondary
  *   - legs:  quads 0.30 + hamstrings 0.25 + fese 0.25 + gambe 0.15 + core 0.05
- *   - upper: piept 0.20 + spate 0.25 + umeri 0.20 + biceps 0.15 + triceps 0.15 + antebrate 0.05
+ *   - upper: piept 0.20 + spate 0.30 + umeri 0.20 + biceps 0.15 + triceps 0.15
+ *     (forearms removed 2026-06-03 — grip is incidental to pulls, not a programmed
+ *     slot; an explicit antebrate weight forced Farmer's Walk/reverse-grip onto a
+ *     V-taper back day. Same reason `pull` dropped its 0.20 antebrate. Bug #6.)
  *   - lower: alias semantic equivalent legs cluster
  *   - full:  balanced ~9-10% per group (11 groups summing ≈1.0)
  *
@@ -252,9 +255,9 @@ export const PHASE_CLUSTERS_BIG6 = Object.freeze(['push', 'pull', 'legs', 'upper
  */
 export const CLUSTER_BIG6_TO_BIG11_WEIGHT = Object.freeze({
   push:  Object.freeze({ piept: 0.40, umeri: 0.30, triceps: 0.30 }),
-  pull:  Object.freeze({ spate: 0.50, biceps: 0.30, antebrate: 0.20 }),
+  pull:  Object.freeze({ spate: 0.625, biceps: 0.375 }),
   legs:  Object.freeze({ 'picioare-quads': 0.30, 'picioare-hamstrings': 0.25, fese: 0.25, gambe: 0.15, core: 0.05 }),
-  upper: Object.freeze({ piept: 0.20, spate: 0.25, umeri: 0.20, biceps: 0.15, triceps: 0.15, antebrate: 0.05 }),
+  upper: Object.freeze({ piept: 0.20, spate: 0.30, umeri: 0.20, biceps: 0.15, triceps: 0.15 }),
   lower: Object.freeze({ 'picioare-quads': 0.30, 'picioare-hamstrings': 0.25, fese: 0.25, gambe: 0.15, core: 0.05 }),
   full:  Object.freeze({
     piept: 0.10, spate: 0.10, umeri: 0.10, biceps: 0.10, triceps: 0.10,

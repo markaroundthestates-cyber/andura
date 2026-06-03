@@ -57,12 +57,14 @@ describe('CLUSTER_BIG6_TO_BIG11_WEIGHT — Decision §3.3 Hybrid weight allocati
     expect(push.piept).toBe(0.40);
   });
 
-  it('pull cluster contains spate + biceps + antebrate Big 11 RO keys', () => {
+  it('pull cluster contains spate + biceps, no forearm slot (bug #6 2026-06-03)', () => {
     const pull = CLUSTER_BIG6_TO_BIG11_WEIGHT.pull;
     expect(pull).toHaveProperty('spate');
     expect(pull).toHaveProperty('biceps');
-    expect(pull).toHaveProperty('antebrate');
-    expect(pull.spate).toBe(0.50);
+    // Forearms removed: grip is incidental to pulls, not a programmed slot (was
+    // forcing Farmer's Walk / reverse-grip onto a V-taper back day).
+    expect(pull).not.toHaveProperty('antebrate');
+    expect(pull.spate).toBe(0.625);
   });
 
   it('legs cluster contains picioare-quads + picioare-hamstrings + fese + gambe + core', () => {
@@ -74,13 +76,14 @@ describe('CLUSTER_BIG6_TO_BIG11_WEIGHT — Decision §3.3 Hybrid weight allocati
     expect(legs).toHaveProperty('core');
   });
 
-  it('upper cluster spans 6 Big 11 groups (no leg groups)', () => {
+  it('upper cluster spans 5 Big 11 groups (no leg groups, no forearm slot — bug #6)', () => {
     const upper = CLUSTER_BIG6_TO_BIG11_WEIGHT.upper;
-    expect(Object.keys(upper)).toHaveLength(6);
+    expect(Object.keys(upper)).toHaveLength(5);
     expect(upper).not.toHaveProperty('picioare-quads');
     expect(upper).not.toHaveProperty('picioare-hamstrings');
     expect(upper).not.toHaveProperty('fese');
     expect(upper).not.toHaveProperty('gambe');
+    expect(upper).not.toHaveProperty('antebrate');
   });
 
   it('lower cluster matches legs cluster (alias semantic equivalent)', () => {
@@ -104,8 +107,8 @@ describe('clusterWeightForGroup — Hybrid routing helper', () => {
   it('returns 0.40 for push cluster + piept group', () => {
     expect(clusterWeightForGroup('push', 'piept')).toBe(0.40);
   });
-  it('returns 0.50 for pull cluster + spate group', () => {
-    expect(clusterWeightForGroup('pull', 'spate')).toBe(0.50);
+  it('returns 0.625 for pull cluster + spate group (forearm weight redistributed — bug #6)', () => {
+    expect(clusterWeightForGroup('pull', 'spate')).toBe(0.625);
   });
   it('returns 0 when group absent in cluster (legs+piept)', () => {
     expect(clusterWeightForGroup('legs', 'piept')).toBe(0);
