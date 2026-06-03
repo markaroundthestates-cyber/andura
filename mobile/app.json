@@ -20,10 +20,12 @@
       "backgroundColor": "#090b13"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "app.andura.mobile"
     },
     "android": {
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "app.andura.mobile"
     },
     "web": {
       "bundler": "metro",
@@ -35,6 +37,15 @@
       "expo-font",
       "expo-updates",
       "expo-notifications"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "4203440d-0940-4c68-b9f5-2487eb8639b0"
+      }
+    },
+    "owner": "smigghhter"
   }
 }
