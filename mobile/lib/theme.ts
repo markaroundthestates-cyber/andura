@@ -111,6 +111,13 @@ export function useThemeColorSchemeSync(): void {
   const theme = useSettingsStore((s) => s.theme);
   const { setColorScheme } = useColorScheme();
   useEffect(() => {
-    setColorScheme(theme === 'auto' ? 'system' : theme);
+    // Non-fatal: NativeWind setColorScheme can throw on some web configs
+    // (e.g. missing darkMode:'class'). The useTheme() palette still re-tints
+    // from the store, so a sync failure must never white-screen boot.
+    try {
+      setColorScheme(theme === 'auto' ? 'system' : theme);
+    } catch {
+      /* ignore — store-driven palette remains authoritative */
+    }
   }, [theme, setColorScheme]);
 }
