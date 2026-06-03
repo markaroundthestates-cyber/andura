@@ -85,6 +85,18 @@ describe('buildSession — pure function', () => {
     expect(tiers).toContain(1);
   });
 
+  it('orders primary compounds before isolation (tier non-decreasing — bug #6)', () => {
+    // Compounds lead, isolation follows: no tier-1 anchor appears after a higher
+    // tier. (No weak group in ctx() -> prioritizeWeakGroups is a no-op, so the
+    // tier ordering is the final order.)
+    const tiers = buildSession('pull', ctx()).exercises.map(
+      (e) => getExerciseMetadata(e.name).tier,
+    );
+    for (let i = 1; i < tiers.length; i++) {
+      expect(tiers[i]).toBeGreaterThanOrEqual(tiers[i - 1]);
+    }
+  });
+
   // WP-4: missing equipment no longer DROPs to an empty session — bodyweight
   // is always available, so a session is still produced (clean seam for WP-5
   // substitution rather than a crash / empty list).

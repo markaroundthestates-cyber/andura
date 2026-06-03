@@ -765,6 +765,18 @@ export function buildSession(cluster, ctx) {
     sets: setsByName[e.name] ?? DEFAULT_SETS,
   }));
 
+  // BUG #6 ordering — primary lifts lead, isolation/accessory follow, so a small-
+  // muscle isolation never lands ahead of a heavy compound (e.g. a biceps curl
+  // before the 2nd back pull, pre-fatiguing grip — the round-robin fill otherwise
+  // interleaves spate->biceps->spate). Stable sort by tier ascending (tier 1
+  // anchors first); selection order is preserved within a tier via the index
+  // tiebreak. Runs BEFORE weak-group front-loading so the Specialization engine
+  // still gets the final say on its weak group's position.
+  exercises = exercises
+    .map((e, i) => ({ e, i, tier: metaOf(e.name).tier ?? 2 }))
+    .sort((a, b) => (a.tier - b.tier) || (a.i - b.i))
+    .map((x) => x.e);
+
   // Weakness-prioritized ordering is LIVE whenever the pipeline supplies a weak
   // group (the Specialization engine only emits one when its 4-gate eligibility
   // passes, so presence of weakGroups IS the gate — no separate global flag is
