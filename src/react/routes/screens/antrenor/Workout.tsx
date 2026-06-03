@@ -770,8 +770,17 @@ export function Workout(): JSX.Element {
         // the alternative we surface so the NEXT tap skips it. Daniel verbatim
         // "nu sa dea doar 2 alternative" — pool walks the whole same-muscle
         // library before exhausting.
+        // BUG 6 — also exclude every OTHER session exercise (already-completed +
+        // still-pending) so a refusal substitute never re-offers a movement that
+        // exists elsewhere in the session (Farmer's Walk offered twice / an already-
+        // logged curl re-offered). Mirrors the busy path's otherNames exclusion.
+        const otherNames = (exercises ?? [])
+          .filter((_, i) => i !== safeExIdx)
+          .map((ex) => ex.engineName ?? ex.name)
+          .filter((n): n is string => typeof n === 'string' && n.length > 0);
         const triedNames = [
           engineName,
+          ...otherNames,
           ...(refusalTriedByEx[safeExIdx] ?? []),
         ];
         res = resolveRefusalSwap(engineName, safeExIdx, triedNames);

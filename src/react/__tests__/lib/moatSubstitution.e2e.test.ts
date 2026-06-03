@@ -164,6 +164,21 @@ describe('MOAT B3 — refusal swap produces a NAMED RO alternative + increments 
     incrementRefusal('Incline DB Press');
     expect(getRefusalCounter()['Incline DB Press']).toBe(2);
   });
+
+  it('excludes names passed in triedNames — no re-offering a sibling (bug #6)', () => {
+    // The Workout screen now feeds the refusal pool every OTHER session exercise
+    // (already-performed + pending) so a substitute is never a movement already in
+    // the session. Lock that contract: a tried name must not come back.
+    const first = resolveRefusalSwap('Incline DB Press', 1);
+    expect(first.swapped).toBe(true);
+    const firstAlt = first.alternativeEngineName;
+    expect(typeof firstAlt).toBe('string');
+    const tried = ['Incline DB Press', firstAlt].filter(
+      (n): n is string => typeof n === 'string',
+    );
+    const second = resolveRefusalSwap('Incline DB Press', 1, tried);
+    expect(second.alternativeEngineName).not.toBe(firstAlt);
+  });
 });
 
 // ── Behaviour 4 — EquipmentSwap inline preview recompose ──────────────────────
