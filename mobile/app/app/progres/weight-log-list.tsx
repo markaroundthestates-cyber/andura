@@ -4,6 +4,7 @@
 // → SubHeader + ScrollView + View/Text rows. Same testIDs + i18n keys.
 
 import { View, Text, ScrollView } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Scale } from 'lucide-react-native';
 import { useProgresStore } from '../../../../src/react/stores/progresStore';
 import { goto } from '../../../lib/nav';
@@ -70,8 +71,9 @@ export default function WeightLogList(): React.JSX.Element {
           <>
             <View className="bg-paper-2 border border-line" style={{ borderRadius: 22, overflow: 'hidden' }}>
               {sorted.map((entry, idx) => (
-                <View
+                <Animated.View
                   key={`${entry.date}-${entry.ts}`}
+                  entering={FadeInUp.duration(340).delay(idx < 10 ? idx * 45 : 0)}
                   testID={`weight-log-row-${idx}`}
                   style={{
                     flexDirection: 'row',
@@ -91,7 +93,7 @@ export default function WeightLogList(): React.JSX.Element {
                   >
                     {entry.kg.toFixed(1)} kg
                   </Text>
-                </View>
+                </Animated.View>
               ))}
             </View>
             <Text className="text-ink3" style={{ fontSize: 11, marginTop: 14, textAlign: 'center' }}>

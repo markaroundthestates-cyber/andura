@@ -12,7 +12,8 @@
 // §F-istoric-08 — Romanian no-diacritics weekday/month via the i18n bundle
 // (weekdays.relativeShort + months.short), format "<Weekday> · <DD> <mon>".
 
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, View, Text, Pressable } from 'react-native';
+import Animated, { FadeInUp, FadeIn } from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { History, Flame, Trophy, ChevronRight, type LucideIcon } from 'lucide-react-native';
 import { useWorkoutStore } from '../../../../src/react/stores/workoutStore';
@@ -52,24 +53,32 @@ export default function Istoric() {
       style={{ flex: 1, backgroundColor: dark.paper }}
       contentContainerStyle={{ padding: 24 }}
     >
-      <Text className="font-display" style={{ fontSize: 30, fontWeight: '700', color: dark.ink, marginBottom: 16 }}>
+      <Animated.Text
+        entering={FadeInUp.duration(420)}
+        className="font-display"
+        style={{ fontSize: 30, fontWeight: '700', color: dark.ink, marginBottom: 16 }}
+      >
         {t('tabs.istoric.title')}
-      </Text>
+      </Animated.Text>
 
-      {/* Streak stats trio */}
+      {/* Streak stats trio — staggered card-rise (volt/aqua/ember). */}
       <View testID="istoric-stats-grid" style={{ flexDirection: 'row', gap: 10, marginBottom: 16 }}>
-        <HistStat icon={Flame} color={accent.volt} value={stats.currentStreak} label={t('istoric.landing.statDaysStreak')} testId="stats-streak" />
-        <HistStat icon={History} color={accent.aqua} value={stats.totalSessions} label={t('istoric.landing.statTotalSessions')} testId="stats-total" />
-        <HistStat icon={Trophy} color={accent.ember} value={stats.prCount} label={t('istoric.landing.statRecords')} testId="stats-pr" />
+        <HistStat icon={Flame} color={accent.volt} value={stats.currentStreak} label={t('istoric.landing.statDaysStreak')} testId="stats-streak" delayMs={80} />
+        <HistStat icon={History} color={accent.aqua} value={stats.totalSessions} label={t('istoric.landing.statTotalSessions')} testId="stats-total" delayMs={150} />
+        <HistStat icon={Trophy} color={accent.ember} value={stats.prCount} label={t('istoric.landing.statRecords')} testId="stats-pr" delayMs={220} />
       </View>
 
-      <CalendarHeatmap />
+      <Animated.View entering={FadeInUp.duration(460).delay(300)}>
+        <CalendarHeatmap />
+      </Animated.View>
 
-      <RatingsStrip90Day />
+      <Animated.View entering={FadeInUp.duration(460).delay(380)}>
+        <RatingsStrip90Day />
+      </Animated.View>
 
       {/* PR Wall preview — "see all" → pr-wall standalone screen. */}
       {prHistory.length > 0 && (
-        <View testID="istoric-pr-wall" style={{ marginBottom: 24 }}>
+        <Animated.View entering={FadeInUp.duration(460).delay(460)} testID="istoric-pr-wall" style={{ marginBottom: 24 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <Trophy size={16} color={accent.ember} />
@@ -77,19 +86,28 @@ export default function Istoric() {
                 {t('istoric.landing.recordsHeading', { n: prHistory.length })}
               </Text>
             </View>
-            <Text
+            <Pressable
               testID="istoric-pr-wall-see-all"
               accessibilityRole="button"
               onPress={() => router.push(gotoPath('pr-wall') as never)}
-              style={{ fontSize: 14, fontWeight: '600', color: dark.brickDark }}
+              hitSlop={8}
+              style={({ pressed }) => ({
+                paddingHorizontal: 4,
+                paddingVertical: 2,
+                opacity: pressed ? 0.6 : 1,
+                transform: [{ scale: pressed ? 0.97 : 1 }],
+              })}
             >
-              {t('istoric.landing.seeAll')}
-            </Text>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: dark.brickDark }}>
+                {t('istoric.landing.seeAll')}
+              </Text>
+            </Pressable>
           </View>
           <View style={{ gap: 8 }}>
             {prHistory.map((pr, idx) => (
-              <View
+              <Animated.View
                 key={`${pr.exerciseId}-${pr.sessionTs}-${idx}`}
+                entering={FadeInUp.duration(360).delay(500 + idx * 50)}
                 testID={`pr-row-${idx}`}
                 style={{
                   flexDirection: 'row',
@@ -106,18 +124,18 @@ export default function Istoric() {
                 <Text className="font-mono" style={{ fontSize: 13, color: dark.ink2 }}>
                   {t('istoric.landing.recordSummary', { kg: pr.kg, reps: pr.reps, oneRM: pr.oneRMEstimate })}
                 </Text>
-              </View>
+              </Animated.View>
             ))}
           </View>
-        </View>
+        </Animated.View>
       )}
 
-      <View style={{ marginBottom: 12 }}>
+      <Animated.View entering={FadeIn.duration(420).delay(560)} style={{ marginBottom: 12 }}>
         <Kicker>{t('istoric.landing.sessionsHeading')}</Kicker>
-      </View>
+      </Animated.View>
 
       {sorted.length === 0 ? (
-        <View testID="istoric-empty" style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 48 }}>
+        <Animated.View entering={FadeInUp.duration(460).delay(600)} testID="istoric-empty" style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 48 }}>
           <View
             style={{
               width: 64,
@@ -137,7 +155,7 @@ export default function Istoric() {
           <Text style={{ fontSize: 14, color: dark.ink2, maxWidth: 280, textAlign: 'center' }}>
             {t('istoric.landing.emptyBody')}
           </Text>
-        </View>
+        </Animated.View>
       ) : (
         <VirtualSessionList
           sorted={sorted}
@@ -159,16 +177,19 @@ function HistStat({
   value,
   label,
   testId,
+  delayMs,
 }: {
   icon: LucideIcon;
   color: string;
   value: number;
   label: string;
   testId: string;
+  delayMs: number;
 }) {
   const display = useCountUp(value);
   return (
-    <View
+    <Animated.View
+      entering={FadeInUp.duration(440).delay(delayMs)}
       style={{
         flex: 1,
         backgroundColor: dark.paper2,
@@ -186,6 +207,6 @@ function HistStat({
         {display}
       </Text>
       <Text style={{ fontSize: 11, color: dark.ink2, marginTop: 2, textAlign: 'center' }}>{label}</Text>
-    </View>
+    </Animated.View>
   );
 }

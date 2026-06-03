@@ -110,7 +110,7 @@ export function ObiectivGoalCard(): React.JSX.Element {
               accessibilityRole="button"
               accessibilityState={{ selected, disabled }}
               accessibilityLabel={t('obiectiv.optionAriaTemplate', { title, sub })}
-              style={{
+              style={({ pressed }) => ({
                 flex: 1,
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -122,8 +122,9 @@ export function ObiectivGoalCard(): React.JSX.Element {
                 borderWidth: 1,
                 borderColor: selected ? dark.brick : dark.line,
                 backgroundColor: selected ? withAlpha(dark.brick, 0.12) : dark.paper2,
-                opacity: disabled ? 0.4 : 1,
-              }}
+                opacity: disabled ? 0.4 : pressed ? 0.85 : 1,
+                transform: [{ scale: pressed && !disabled ? 0.97 : 1 }],
+              })}
             >
               <Icon size={20} color={selected ? dark.brick : dark.ink2} />
               <Text className="font-semibold text-ink text-center" style={{ fontSize: 11, lineHeight: 13 }}>

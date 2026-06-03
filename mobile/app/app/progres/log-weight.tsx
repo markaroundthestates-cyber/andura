@@ -12,6 +12,7 @@
 
 import { useState } from 'react';
 import { View, Text, Pressable, TextInput } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { ArrowLeft } from 'lucide-react-native';
 import { useProgresStore } from '../../../../src/react/stores/progresStore';
 import { goto } from '../../../lib/nav';
@@ -68,7 +69,7 @@ export default function LogWeight(): React.JSX.Element {
         </Text>
       </View>
 
-      <View style={{ flex: 1, gap: 20 }}>
+      <Animated.View entering={FadeInUp.duration(440)} style={{ flex: 1, gap: 20 }}>
         <View>
           <Text className="text-ink2 font-medium" style={{ fontSize: 14, marginBottom: 8 }}>
             {t('progres.logWeight.kgLabel')}
@@ -129,7 +130,14 @@ export default function LogWeight(): React.JSX.Element {
           disabled={!valid}
           testID="weight-save"
           className="bg-brick"
-          style={{ width: '100%', paddingVertical: 16, borderRadius: 999, alignItems: 'center', opacity: valid ? 1 : 0.5 }}
+          style={({ pressed }) => ({
+            width: '100%',
+            paddingVertical: 16,
+            borderRadius: 999,
+            alignItems: 'center',
+            opacity: !valid ? 0.5 : pressed ? 0.85 : 1,
+            transform: [{ scale: pressed && valid ? 0.98 : 1 }],
+          })}
         >
           <Text className="font-semibold" style={{ fontSize: 16, color: dark.onAccent }}>
             {t('progres.logWeight.saveCta')}
@@ -140,7 +148,7 @@ export default function LogWeight(): React.JSX.Element {
             {t('progres.logWeight.cancelCta')}
           </Text>
         </Pressable>
-      </View>
+      </Animated.View>
     </View>
   );
 }

@@ -308,7 +308,7 @@ export function TDEEStrip(): React.JSX.Element {
             onPress={saveBoth}
             testID="nutri-save"
             className="bg-brick"
-            style={{
+            style={({ pressed }) => ({
               marginTop: 12,
               minHeight: 44,
               paddingHorizontal: 16,
@@ -319,7 +319,9 @@ export function TDEEStrip(): React.JSX.Element {
               justifyContent: 'center',
               gap: 6,
               alignSelf: 'flex-start',
-            }}
+              opacity: pressed ? 0.85 : 1,
+              transform: [{ scale: pressed ? 0.97 : 1 }],
+            })}
           >
             <Check size={16} color={dark.onAccent} />
             <Text className="font-semibold" style={{ fontSize: 14, color: dark.onAccent }}>

@@ -8,6 +8,7 @@
 // pr-wall-empty).
 
 import { ScrollView, View, Text } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { Award, ChevronRight } from 'lucide-react-native';
 import { getPRHistoryAll } from '../../../../src/react/lib/prHistoryAggregate';
@@ -51,11 +52,11 @@ export default function PrWall() {
           {t('istoric.prWallScreen.description')}
         </Text>
 
-        <View testID="pr-wall-stats" style={{ flexDirection: 'row', gap: 8, marginBottom: 20 }}>
+        <Animated.View entering={FadeInUp.duration(420)} testID="pr-wall-stats" style={{ flexDirection: 'row', gap: 8, marginBottom: 20 }}>
           <StatTile testId="pr-wall-stat-total" value={prList.length} label={t('istoric.prWallScreen.statTotal')} />
           <StatTile testId="pr-wall-stat-month" value={thisMonthCount} label={t('istoric.prWallScreen.statMonth')} />
           <StatTile testId="pr-wall-stat-exercises" value={distinctExercises} label={t('istoric.prWallScreen.statExercises')} />
-        </View>
+        </Animated.View>
 
         {prList.length === 0 ? (
           <View testID="pr-wall-empty" style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 48 }}>
@@ -82,8 +83,9 @@ export default function PrWall() {
         ) : (
           <View testID="pr-wall-list" style={{ gap: 8 }}>
             {prList.map((pr, idx) => (
-              <View
+              <Animated.View
                 key={`${pr.exerciseId}-${pr.sessionTs}-${idx}`}
+                entering={FadeInUp.duration(340).delay(idx < 12 ? 60 + idx * 45 : 0)}
                 testID={`pr-wall-row-${idx}`}
                 style={{
                   flexDirection: 'row',
@@ -119,7 +121,7 @@ export default function PrWall() {
                   </Text>
                 </View>
                 <ChevronRight size={20} color={dark.ink2} strokeWidth={1.6} />
-              </View>
+              </Animated.View>
             ))}
           </View>
         )}

@@ -167,16 +167,17 @@ export function CalendarHeatmap() {
             accessibilityRole="button"
             accessibilityLabel={t('calendar.heatmap.prevMonth')}
             onPress={() => navMonth(-1)}
-            style={{
+            style={({ pressed }) => ({
               width: 30,
               height: 30,
               borderRadius: 9,
               borderWidth: 1,
               borderColor: dark.line,
-              backgroundColor: dark.paper,
+              backgroundColor: pressed ? dark.paper2 : dark.paper,
               alignItems: 'center',
               justifyContent: 'center',
-            }}
+              transform: [{ scale: pressed ? 0.92 : 1 }],
+            })}
           >
             <ChevronLeft size={14} color={dark.ink} />
           </Pressable>
@@ -185,16 +186,17 @@ export function CalendarHeatmap() {
             accessibilityRole="button"
             accessibilityLabel={t('calendar.heatmap.nextMonth')}
             onPress={() => navMonth(1)}
-            style={{
+            style={({ pressed }) => ({
               width: 30,
               height: 30,
               borderRadius: 9,
               borderWidth: 1,
               borderColor: dark.line,
-              backgroundColor: dark.paper,
+              backgroundColor: pressed ? dark.paper2 : dark.paper,
               alignItems: 'center',
               justifyContent: 'center',
-            }}
+              transform: [{ scale: pressed ? 0.92 : 1 }],
+            })}
           >
             <ChevronRight size={14} color={dark.ink} />
           </Pressable>

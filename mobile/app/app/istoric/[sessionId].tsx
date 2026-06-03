@@ -13,6 +13,7 @@
 
 import { useState } from 'react';
 import { ScrollView, View, Text, Pressable } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, History, Trash2 } from 'lucide-react-native';
 import { useWorkoutStore } from '../../../../src/react/stores/workoutStore';
@@ -126,7 +127,8 @@ export default function IstoricDetail() {
         </Text>
       </View>
 
-      <View
+      <Animated.View
+        entering={FadeInUp.duration(440)}
         style={{
           backgroundColor: dark.paper2,
           borderWidth: 1,
@@ -146,10 +148,10 @@ export default function IstoricDetail() {
         <Text testID="istoric-detail-meta" style={{ fontSize: 14, color: dark.ink2, marginTop: 8 }}>
           {session.meta}
         </Text>
-      </View>
+      </Animated.View>
 
       {hasStats && (
-        <View testID="istoric-detail-stats-grid" style={{ flexDirection: 'row', gap: 10, marginBottom: 16 }}>
+        <Animated.View entering={FadeInUp.duration(440).delay(80)} testID="istoric-detail-stats-grid" style={{ flexDirection: 'row', gap: 10, marginBottom: 16 }}>
           {session.sets !== undefined && (
             <DetailStat testId="detail-sets" label={t('istoric.detail.stats.sets')} value={String(session.sets)} />
           )}
@@ -159,7 +161,7 @@ export default function IstoricDetail() {
           {session.volumeKg !== undefined && (
             <DetailStat testId="detail-volume" label={t('istoric.detail.stats.tonnage')} value={formatKg(session.volumeKg)} />
           )}
-        </View>
+        </Animated.View>
       )}
 
       {session.exercises && session.exercises.length > 0 ? (
@@ -262,7 +264,7 @@ export default function IstoricDetail() {
                 testID="istoric-detail-delete-accept"
                 accessibilityRole="button"
                 onPress={handleDelete}
-                style={{
+                style={({ pressed }) => ({
                   flex: 1,
                   flexDirection: 'row',
                   gap: 8,
@@ -272,7 +274,9 @@ export default function IstoricDetail() {
                   borderRadius: 12,
                   alignItems: 'center',
                   justifyContent: 'center',
-                }}
+                  opacity: pressed ? 0.85 : 1,
+                  transform: [{ scale: pressed ? 0.98 : 1 }],
+                })}
               >
                 <Trash2 size={16} color={dark.onAccent} />
                 <Text style={{ fontSize: 14, fontWeight: '600', color: dark.onAccent }}>
@@ -286,7 +290,7 @@ export default function IstoricDetail() {
             testID="istoric-detail-delete-cta"
             accessibilityRole="button"
             onPress={() => setConfirmDelete(true)}
-            style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingVertical: 12, alignItems: 'center', justifyContent: 'center' }}
+            style={({ pressed }) => ({ flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingVertical: 12, alignItems: 'center', justifyContent: 'center', opacity: pressed ? 0.6 : 1 })}
           >
             <Trash2 size={16} color={dark.brickDark} />
             <Text style={{ fontSize: 14, fontWeight: '600', color: dark.brickDark }}>

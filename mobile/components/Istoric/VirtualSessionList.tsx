@@ -16,6 +16,7 @@
 // exist — they were implementation detail of the spacer approach, not content.
 
 import { FlatList, Pressable, View, Text } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Trophy, ChevronRight } from 'lucide-react-native';
 import { Pill } from '../pulse/Pill';
 import { deriveSessionRating } from '../../../src/react/lib/sessionRating';
@@ -72,19 +73,26 @@ function SessionCard({
     session.sets !== undefined ||
     session.volumeKg !== undefined;
 
+  // Stagger only the first window of rows so deep lists don't ripple forever
+  // (and offscreen FlatList rows still animate cleanly as they mount).
+  const enterDelay = idx < 8 ? idx * 55 : 0;
+
   return (
-    <Pressable
-      testID={`istoric-session-${idx}`}
-      accessibilityRole="button"
-      onPress={() => onSelect(originalIdx)}
-      style={{
-        backgroundColor: dark.paper2,
-        borderWidth: 1,
-        borderColor: dark.line,
-        borderRadius: 22,
-        padding: 16,
-      }}
-    >
+    <Animated.View entering={FadeInUp.duration(380).delay(enterDelay)}>
+      <Pressable
+        testID={`istoric-session-${idx}`}
+        accessibilityRole="button"
+        onPress={() => onSelect(originalIdx)}
+        style={({ pressed }) => ({
+          backgroundColor: dark.paper2,
+          borderWidth: 1,
+          borderColor: dark.line,
+          borderRadius: 22,
+          padding: 16,
+          opacity: pressed ? 0.9 : 1,
+          transform: [{ scale: pressed ? 0.985 : 1 }],
+        })}
+      >
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
         <View style={{ flex: 1, minWidth: 0 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -138,7 +146,8 @@ function SessionCard({
       ) : (
         <Text style={{ fontSize: 14, color: dark.ink2, marginTop: 8 }}>{session.meta}</Text>
       )}
-    </Pressable>
+      </Pressable>
+    </Animated.View>
   );
 }
 

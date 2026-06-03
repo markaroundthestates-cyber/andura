@@ -136,12 +136,17 @@ export function MuscleBodyMap(): React.JSX.Element | null {
                   accessibilityRole="button"
                   accessibilityState={{ selected: active }}
                   onPress={() => setView(v)}
-                  style={{
+                  style={({ pressed }) => ({
                     paddingHorizontal: 12,
                     paddingVertical: 4,
                     borderRadius: 999,
-                    backgroundColor: active ? withAlpha(dark.brick, 0.16) : 'transparent',
-                  }}
+                    backgroundColor: active
+                      ? withAlpha(dark.brick, 0.16)
+                      : pressed
+                        ? withAlpha(dark.brick, 0.08)
+                        : 'transparent',
+                    opacity: pressed ? 0.85 : 1,
+                  })}
                 >
                   <Text
                     className="font-mono uppercase"

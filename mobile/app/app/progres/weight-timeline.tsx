@@ -9,6 +9,7 @@
 
 import { useMemo, useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import Svg, { Path, Polyline, Circle, Line, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { List, ChevronRight } from 'lucide-react-native';
 import { useProgresStore } from '../../../../src/react/stores/progresStore';
@@ -114,7 +115,8 @@ export default function WeightTimeline(): React.JSX.Element {
 
       <ScrollView contentContainerStyle={{ padding: 20 }}>
         {/* Range segment — Pulse pill group, active fills with volt. */}
-        <View
+        <Animated.View
+          entering={FadeInUp.duration(420)}
           testID="weight-timeline-range-tabs"
           accessibilityRole="tablist"
           className="border border-line bg-paper-2"
@@ -129,13 +131,15 @@ export default function WeightTimeline(): React.JSX.Element {
                 accessibilityState={{ selected: active }}
                 testID={`weight-timeline-range-${r.key}`}
                 onPress={() => setRange(r.key)}
-                style={{
+                style={({ pressed }) => ({
                   flex: 1,
                   paddingVertical: 8,
                   borderRadius: 999,
                   alignItems: 'center',
                   backgroundColor: active ? accent.volt : 'transparent',
-                }}
+                  opacity: pressed && !active ? 0.7 : 1,
+                  transform: [{ scale: pressed ? 0.97 : 1 }],
+                })}
               >
                 <Text
                   className="font-mono font-semibold"
@@ -146,10 +150,11 @@ export default function WeightTimeline(): React.JSX.Element {
               </Pressable>
             );
           })}
-        </View>
+        </Animated.View>
 
         {/* KPI card — hero current weight. */}
-        <View
+        <Animated.View
+          entering={FadeInUp.duration(440).delay(80)}
           testID="weight-timeline-kpi"
           className="bg-paper-2 border border-line"
           style={{ borderRadius: 22, padding: 16, marginBottom: 16 }}
@@ -175,10 +180,10 @@ export default function WeightTimeline(): React.JSX.Element {
               )}
             </>
           )}
-        </View>
+        </Animated.View>
 
         {/* Trend chart — Pulse aqua line + gradient fill. */}
-        <View testID="weight-timeline-chart-card" className="bg-paper-2 border border-line" style={{ borderRadius: 22, padding: 16, marginBottom: 16 }}>
+        <Animated.View entering={FadeInUp.duration(440).delay(160)} testID="weight-timeline-chart-card" className="bg-paper-2 border border-line" style={{ borderRadius: 22, padding: 16, marginBottom: 16 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <Text className="font-display font-bold text-ink" style={{ fontSize: 14 }}>
               {t('progres.weightTimeline.trendHeading')}
@@ -249,14 +254,22 @@ export default function WeightTimeline(): React.JSX.Element {
               })}
             </Svg>
           )}
-        </View>
+        </Animated.View>
 
         {/* Loguri recente CTA. */}
         <Pressable
           onPress={() => goto('weight-log-list')}
           testID="weight-timeline-logs-cta"
           className="bg-paper-2 border border-line"
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 22 }}
+          style={({ pressed }) => ({
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+            padding: 16,
+            borderRadius: 22,
+            opacity: pressed ? 0.85 : 1,
+            transform: [{ scale: pressed ? 0.98 : 1 }],
+          })}
         >
           <List size={20} color={dark.ink2} />
           <Text className="font-semibold text-ink" style={{ flex: 1, fontSize: 14 }}>

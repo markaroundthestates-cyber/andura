@@ -9,6 +9,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { ScrollView, View, Text, Pressable } from 'react-native';
+import Animated, { FadeInUp, FadeIn } from 'react-native-reanimated';
 import { Scale, LineChart } from 'lucide-react-native';
 import { useProgresStore } from '../../../../src/react/stores/progresStore';
 import { useOnboardingStore } from '../../../../src/react/stores/onboardingStore';
@@ -82,45 +83,53 @@ export default function Progres(): React.JSX.Element {
       contentContainerStyle={{ padding: 24, paddingBottom: 48 }}
     >
       {/* Pulse header — display wordmark + italic tagline. */}
-      <Text className="font-display font-bold text-ink" style={{ fontSize: 30, marginBottom: 2 }}>
+      <Animated.Text
+        entering={FadeInUp.duration(420)}
+        className="font-display font-bold text-ink"
+        style={{ fontSize: 30, marginBottom: 2 }}
+      >
         {t('tabs.progres.title')}
-      </Text>
-      <Text className="text-ink2" style={{ fontSize: 14, fontStyle: 'italic', marginBottom: 8 }}>
+      </Animated.Text>
+      <Animated.Text
+        entering={FadeInUp.duration(420).delay(60)}
+        className="text-ink2"
+        style={{ fontSize: 14, fontStyle: 'italic', marginBottom: 8 }}
+      >
         {t('tabs.progres.subtitle')}
-      </Text>
+      </Animated.Text>
 
       {/* ── ZONE 1: AZI — merged "Target Today" hero. ─────────────────────── */}
-      <View testID="progres-zone-azi">
+      <Animated.View entering={FadeInUp.duration(460).delay(120)} testID="progres-zone-azi">
         <ZoneHeading testID="progres-zone-azi-heading">{t('progres.zone.azi')}</ZoneHeading>
         <TDEEStrip />
-      </View>
+      </Animated.View>
 
       {/* ── ZONE 2: RECUPERARE — anatomical muscle recovery body map. ─────── */}
       {showRecoveryZone && (
-        <View testID="progres-zone-recovery">
+        <Animated.View entering={FadeInUp.duration(460).delay(200)} testID="progres-zone-recovery">
           <ZoneHeading testID="progres-zone-recovery-heading">{t('progres.zone.recuperare')}</ZoneHeading>
           <MuscleBodyMap />
-        </View>
+        </Animated.View>
       )}
 
       {/* ── ZONE 3: OBIECTIV — Target Weight + goal selector. ─────────────── */}
-      <View testID="progres-zone-obiectiv">
+      <Animated.View entering={FadeInUp.duration(460).delay(280)} testID="progres-zone-obiectiv">
         <ZoneHeading testID="progres-zone-obiectiv-heading">{t('progres.zone.obiectiv')}</ZoneHeading>
         <ObiectivCard />
         <ObiectivGoalCard />
-      </View>
+      </Animated.View>
 
       {/* ── ZONE 4: COMPOZITIE — body-composition group. ──────────────────── */}
-      <View testID="progres-zone-compozitie">
+      <Animated.View entering={FadeInUp.duration(460).delay(360)} testID="progres-zone-compozitie">
         <ZoneHeading testID="progres-zone-compozitie-heading">{t('progres.zone.compozitie')}</ZoneHeading>
         <BodyFatStrip />
         <ProjectionStrip />
         <GoalForecastBlock />
         <HeatMapWeekly />
-      </View>
+      </Animated.View>
 
       {/* ── ZONE 5: ACTIUNI — alerts + log/measure CTAs. ──────────────────── */}
-      <View testID="progres-zone-actiuni">
+      <Animated.View entering={FadeInUp.duration(460).delay(440)} testID="progres-zone-actiuni">
         <ZoneHeading testID="progres-zone-actiuni-heading">{t('progres.zone.actiuni')}</ZoneHeading>
         {alerts.length > 0 && (
           <Text
@@ -136,7 +145,7 @@ export default function Progres(): React.JSX.Element {
           onPress={() => goto('log-weight')}
           testID="cta-log-weight"
           className="bg-brick"
-          style={{
+          style={({ pressed }) => ({
             width: '100%',
             flexDirection: 'row',
             alignItems: 'center',
@@ -144,7 +153,9 @@ export default function Progres(): React.JSX.Element {
             padding: 16,
             marginBottom: 12,
             borderRadius: 14,
-          }}
+            opacity: pressed ? 0.85 : 1,
+            transform: [{ scale: pressed ? 0.98 : 1 }],
+          })}
         >
           <Scale size={20} color={dark.onAccent} />
           <Text className="font-semibold" style={{ fontSize: 16, color: dark.onAccent }}>
@@ -156,7 +167,7 @@ export default function Progres(): React.JSX.Element {
             onPress={() => goto('weight-timeline')}
             testID="cta-weight-timeline"
             className="bg-paper-2 border border-line-strong"
-            style={{
+            style={({ pressed }) => ({
               width: '100%',
               flexDirection: 'row',
               alignItems: 'center',
@@ -164,7 +175,9 @@ export default function Progres(): React.JSX.Element {
               padding: 16,
               marginBottom: 12,
               borderRadius: 14,
-            }}
+              opacity: pressed ? 0.85 : 1,
+              transform: [{ scale: pressed ? 0.98 : 1 }],
+            })}
           >
             <LineChart size={20} color={dark.ink} />
             <Text className="font-semibold text-ink" style={{ fontSize: 16 }}>
@@ -172,11 +185,11 @@ export default function Progres(): React.JSX.Element {
             </Text>
           </Pressable>
         )}
-      </View>
+      </Animated.View>
 
       {/* ── ZONE 6: TENDINTA — weight trend Sparkline (>=2 points). ───────── */}
       {sparkData.length >= 2 && (
-        <View testID="progres-zone-tendinta">
+        <Animated.View entering={FadeIn.duration(500).delay(520)} testID="progres-zone-tendinta">
           <ZoneHeading testID="progres-zone-tendinta-heading">{t('progres.zone.tendinta')}</ZoneHeading>
           <View
             testID="progres-trend-sparkline"
@@ -195,7 +208,7 @@ export default function Progres(): React.JSX.Element {
             </View>
             <Sparkline data={sparkData} color={accent.aqua} />
           </View>
-        </View>
+        </Animated.View>
       )}
     </ScrollView>
   );

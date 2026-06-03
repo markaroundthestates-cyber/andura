@@ -5,8 +5,11 @@
 // color-mix gradient bar → a single volt token fill, fidelity-acceptable for a
 // 7px snapshot bar). Same testIDs + i18n keys. Export name preserved.
 
+import { useEffect } from 'react';
 import { View, Text } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, withDelay, Easing } from 'react-native-reanimated';
 import { useProgresStore } from '../../../src/react/stores/progresStore';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 import { dark, accent, withAlpha } from '../../lib/tokens';
 import { t } from '../../../src/i18n/index.js';
 
@@ -89,18 +92,7 @@ export function HeatMapWeekly(): React.JSX.Element {
       {bars.length > 0 ? (
         <View testID="weight-snapshot-chart" style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 4, height: 32 }}>
           {bars.map((b, idx) => (
-            <View
-              key={idx}
-              testID={`weight-bar-${idx}`}
-              accessibilityRole="image"
-              accessibilityLabel={t('progres.weight.dayBarAriaLabel', { n: idx + 1, kg: b.kg })}
-              style={{
-                flex: 1,
-                borderRadius: 2,
-                height: `${b.heightPct}%`,
-                backgroundColor: withAlpha(dark.brick, 0.8),
-              }}
-            />
+            <WeightBarView key={idx} bar={b} idx={idx} />
           ))}
         </View>
       ) : (
@@ -112,5 +104,38 @@ export function HeatMapWeekly(): React.JSX.Element {
         {t('progres.weight.snapshotHint')}
       </Text>
     </View>
+  );
+}
+
+// One snapshot bar — grows from baseline to its height on reveal (staggered),
+// settles instantly under reduced motion. testID + aria preserved 1:1.
+function WeightBarView({ bar, idx }: { bar: WeightBar; idx: number }): React.JSX.Element {
+  const reduced = useReducedMotion();
+  const grow = useSharedValue(reduced ? 1 : 0);
+
+  useEffect(() => {
+    grow.value = reduced
+      ? 1
+      : withDelay(idx * 60, withTiming(1, { duration: 480, easing: Easing.bezier(0.2, 0.8, 0.2, 1) }));
+  }, [reduced, grow, idx, bar.heightPct]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    height: `${bar.heightPct * grow.value}%`,
+  }));
+
+  return (
+    <Animated.View
+      testID={`weight-bar-${idx}`}
+      accessibilityRole="image"
+      accessibilityLabel={t('progres.weight.dayBarAriaLabel', { n: idx + 1, kg: bar.kg })}
+      style={[
+        {
+          flex: 1,
+          borderRadius: 2,
+          backgroundColor: withAlpha(dark.brick, 0.8),
+        },
+        animatedStyle,
+      ]}
+    />
   );
 }
