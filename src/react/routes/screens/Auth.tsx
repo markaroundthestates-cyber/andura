@@ -25,14 +25,14 @@ import { sendMagicLink, buildGoogleSignInUrl } from '../../../auth.js';
 import { detectWebView, webViewLabel } from '../../lib/webviewDetect';
 import { PulseMark } from '../../components/pulse/PulseMark';
 import { t, tArray } from '../../../i18n/index.js';
+import { VITE_ENV, IS_DEV } from '../../../util/env';
 
 // §B005/D-2 audit fix — Google OAuth client ID from build-time env. Daniel
 // configures via GitHub Secrets + Google Cloud Console OAuth provider enable.
 // Graceful degradation: button hidden dacă env var missing (pre-Daniel-setup
 // state).
-const GOOGLE_OAUTH_CLIENT_ID = (
-  import.meta as ImportMeta & { env?: { VITE_GOOGLE_OAUTH_CLIENT_ID?: string } }
-).env?.VITE_GOOGLE_OAUTH_CLIENT_ID || '';
+const GOOGLE_OAUTH_CLIENT_ID =
+  (VITE_ENV as { VITE_GOOGLE_OAUTH_CLIENT_ID?: string }).VITE_GOOGLE_OAUTH_CLIENT_ID || '';
 
 function isValidEmail(s: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
@@ -120,7 +120,7 @@ export function Auth(): JSX.Element {
   }
 
   const showGoogle = GOOGLE_OAUTH_CLIENT_ID !== '';
-  const showMockLogin = import.meta.env.DEV;
+  const showMockLogin = IS_DEV;
   // §15-H3 audit fix — detect FB/IG/etc. WebView. Magic Link click opens
   // default browser (Chrome) → localStorage scope different → auth state
   // does NOT sync back to WebView → user stuck în loop. Banner warns to

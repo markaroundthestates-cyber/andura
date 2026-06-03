@@ -18,6 +18,7 @@
 
 import { getUserPath, FIREBASE_URL } from '../../firebase.js';
 import { getIdToken } from '../../auth.js';
+import { VITE_ENV } from '../../util/env';
 
 export type PushResult = 'granted' | 'denied' | 'unsupported' | 'no-account' | 'error';
 
@@ -37,9 +38,10 @@ interface FcmEnv {
 }
 
 function readEnv(): FcmEnv {
-  return (
-    (import.meta as ImportMeta & { env?: FcmEnv }).env || {}
-  );
+  // Per-bundler env shim (src/util/env): Vite/Vitest -> import.meta.env
+  // (PWA identical), Metro web/native -> {} (keeps unparseable import.meta
+  // out of the Expo bundle). Mirrors sentry.js.
+  return VITE_ENV as FcmEnv;
 }
 
 // Firebase web config gata de initializeApp. apiKey/appId/senderId obligatorii
