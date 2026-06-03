@@ -46,6 +46,11 @@ interface RestOverlayProps {
   // §F-pass2-restoverlay-03 — optional current exercise context. Cand
   // non-empty, renders sub-label "{name} recupereaza" pentru contextual cue.
   currentExerciseName?: string;
+  // BUG preview (2026-06-03) — on an inter-exercise rest (the last set of the
+  // current exercise was just logged), surface the NEXT exercise so the user
+  // knows where to go in the gym. Rendered only when non-empty; intermediate-set
+  // rests pass undefined (no spurious "next" mid-exercise).
+  nextExerciseName?: string | undefined;
 }
 
 export function RestOverlay({
@@ -53,6 +58,7 @@ export function RestOverlay({
   initialRestSec,
   onSkip,
   currentExerciseName,
+  nextExerciseName,
 }: RestOverlayProps): JSX.Element {
   return (
     <div
@@ -89,6 +95,14 @@ export function RestOverlay({
             data-testid="rest-context-line"
           >
             {t('restOverlay.recovering', { name: currentExerciseName })}
+          </p>
+        )}
+        {nextExerciseName && (
+          <p
+            className="text-[11px] font-semibold leading-snug mt-1 text-paper dark:text-ink"
+            data-testid="rest-up-next"
+          >
+            {t('workout.upNext', { name: nextExerciseName })}
           </p>
         )}
       </div>

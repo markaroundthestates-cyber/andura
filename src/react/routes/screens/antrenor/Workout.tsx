@@ -1308,6 +1308,10 @@ export function Workout(): JSX.Element {
           // name pentru contextual cue "Pauza · {name} recupereaza" mockup
           // pattern. Empty fallback when ai un workout fara nume (defensive).
           currentExerciseName={currentExercise.name}
+          // BUG preview (2026-06-03) — on the inter-exercise rest (last set just
+          // logged, pendingAdvanceRef set) show the NEXT exercise so the user knows
+          // what's coming; intermediate-set rests pass undefined (no spurious next).
+          nextExerciseName={pendingAdvanceRef.current ? nextExercise?.name : undefined}
         />
       )}
 

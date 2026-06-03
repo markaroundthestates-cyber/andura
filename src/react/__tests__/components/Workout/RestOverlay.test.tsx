@@ -134,3 +134,25 @@ describe('RestOverlay - §F-pass2-restoverlay-03 contextual exercise cue', () =>
     expect(cue.className).toContain('italic');
   });
 });
+
+describe('RestOverlay - next-exercise preview (last-set rest cue)', () => {
+  it('rest-up-next ABSENT when nextExerciseName omitted', () => {
+    render(<RestOverlay countdownSec={60} initialRestSec={90} onSkip={vi.fn()} />);
+    expect(screen.queryByTestId('rest-up-next')).toBeNull();
+  });
+
+  it('rest-up-next renders the next exercise name when provided', () => {
+    render(
+      <RestOverlay
+        countdownSec={60}
+        initialRestSec={90}
+        onSkip={vi.fn()}
+        currentExerciseName="Lat Pulldown"
+        nextExerciseName="Cable Row"
+      />,
+    );
+    const next = screen.getByTestId('rest-up-next');
+    expect(next).toBeInTheDocument();
+    expect(next.textContent ?? '').toContain('Cable Row');
+  });
+});
