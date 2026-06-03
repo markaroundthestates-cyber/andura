@@ -587,10 +587,21 @@ describe('movementKey — movement-pattern identity', () => {
 
   it('incline qualifier is scoped to press only — an incline curl stays a curl', () => {
     const inclineCurl = movementKey('Incline DB Curl', { muscle_target_primary: 'biceps' });
-    const hammerCurl = movementKey('Hammer Curl', { muscle_target_primary: 'biceps' });
+    const plainCurl = movementKey('DB Curl Standing', { muscle_target_primary: 'biceps' });
     expect(inclineCurl).toContain('curl');
     expect(inclineCurl).not.toContain('press');
-    expect(inclineCurl).toBe(hammerCurl);
+    // An incline curl is the same straight-curl movement as a standing DB curl.
+    expect(inclineCurl).toBe(plainCurl);
+  });
+
+  it('hammer curl is a DISTINCT movement from a straight curl (brachialis vs biceps, Wave 2)', () => {
+    // Wave 2: the CORE library treats hammer (brachialis_brachioradialis) and
+    // straight (elbow_flexion) curls as different patterns, so a session can pair
+    // a curl + a hammer (and the CORE biceps pool fills two real movements).
+    const hammer = movementKey('DB Hammer Curl Standing', { muscle_target_primary: 'biceps' });
+    const straight = movementKey('DB Curl Standing', { muscle_target_primary: 'biceps' });
+    expect(hammer).not.toBe(straight);
+    expect(hammer).toBe('biceps::hammer-curl');
   });
 
   it('iso-lateral ROW keys as a row, not a lateral-raise (audit MD-01)', () => {

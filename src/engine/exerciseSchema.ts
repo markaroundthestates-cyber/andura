@@ -39,6 +39,26 @@ export type CascadeStepType =
   | 'bodyweight'
   | 'light_variant';
 
+/**
+ * Recommendation status (Wave 2 CORE library, Daniel SSOT 2026-06-03). Gates
+ * whether an exercise enters AUTOMATIC selection:
+ *   - CORE_AUTO:       the curated ~146 staples — the ONLY pool auto-selection
+ *                      draws from (kills esoteric variants reaching a normal user).
+ *   - FALLBACK:        used only when equipment forces it (no CORE_AUTO fits).
+ *   - MANUAL_ADVANCED: in the library, never auto-recommended (skill/risk).
+ *   - ALIAS:           alternative name for the same movement.
+ *   - MODIFIER:        a technique over an exercise, not a separate exercise.
+ *   - DEPRECATED:      removed from selection entirely.
+ * Optional/absent → treated as non-CORE (not auto-selected) by the consumer.
+ */
+export type ExerciseStatus =
+  | 'CORE_AUTO'
+  | 'FALLBACK'
+  | 'MANUAL_ADVANCED'
+  | 'ALIAS'
+  | 'MODIFIER'
+  | 'DEPRECATED';
+
 export interface CascadeStep {
   type: CascadeStepType;
   /** single exercise reference (easier_machine, assisted_variant, bodyweight, light_variant) */
@@ -65,6 +85,11 @@ export interface ExerciseMetadata {
   skill_level?: SkillLevel;
   /** optional cascade ordered list per ADR v2 LOCK V2 §2.1 (undefined → engine fallback v1) */
   fallback_cascade?: CascadeStep[];
+  /**
+   * Recommendation status (Wave 2 CORE library). Optional: absent → non-CORE
+   * (auto-selection skips it; still reachable via substitution/fallback).
+   */
+  status?: ExerciseStatus;
 }
 
 export type ExerciseLibrary = Record<string, ExerciseMetadata>;
@@ -90,6 +115,15 @@ const CASCADE_STEP_TYPES: ReadonlySet<string> = new Set([
   'muscle_group_compose',
   'bodyweight',
   'light_variant',
+]);
+
+const EXERCISE_STATUSES: ReadonlySet<string> = new Set([
+  'CORE_AUTO',
+  'FALLBACK',
+  'MANUAL_ADVANCED',
+  'ALIAS',
+  'MODIFIER',
+  'DEPRECATED',
 ]);
 
 function isStringArray(v: unknown): v is string[] {
@@ -134,6 +168,9 @@ export function validateExercise(name: string, entry: unknown): string[] {
   }
   if (e.skill_level !== undefined && !SKILL_LEVELS.has(e.skill_level as string)) {
     errors.push(`"${name}": invalid skill_level "${String(e.skill_level)}"`);
+  }
+  if (e.status !== undefined && !EXERCISE_STATUSES.has(e.status as string)) {
+    errors.push(`"${name}": invalid status "${String(e.status)}"`);
   }
   if (e.fallback_cascade !== undefined) {
     if (!Array.isArray(e.fallback_cascade)) {

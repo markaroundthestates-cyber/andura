@@ -72,13 +72,15 @@ function resetStores(): void {
 // Pulldown, Pec Deck, Hammer Curl, Romanian Deadlift) is acceptable; an
 // uncurated raw key passthrough (the facade) is not.
 const RO_OR_ACCEPTED_EN = /[a-zăâîșț]/; // any lowercase letter → not a bare Title-Case key
+// Accepted English-standard gym terms whose RO form IS English (Romanians say
+// these in English verbatim). Rendering them as the engine key is CORRECT — not
+// the facade. Module-scoped so the B6 facade guard can exempt them too.
+const ACCEPTED_EN = [
+  'Bench Press', 'Deadlift', 'Romanian Deadlift', 'Face Pull', 'Lat Pulldown',
+  'Pec Deck', 'Hammer Curl', 'Hip Thrust', 'Push Press', 'Good Morning',
+  'Overhead Press', 'Plank',
+];
 function isRomanianish(display: string): boolean {
-  // Accepted English-standard gym terms whose RO form IS English.
-  const ACCEPTED_EN = [
-    'Bench Press', 'Deadlift', 'Romanian Deadlift', 'Face Pull', 'Lat Pulldown',
-    'Pec Deck', 'Hammer Curl', 'Hip Thrust', 'Push Press', 'Good Morning',
-    'Overhead Press',
-  ];
   if (ACCEPTED_EN.includes(display)) return true;
   return RO_OR_ACCEPTED_EN.test(display);
 }
@@ -285,8 +287,11 @@ describe('MOAT B6 — exercises surfaced through real selection render in Romani
       // English-standard gym term (Bench Press, Deadlift, Face Pull, ...). A bare
       // engine key passthrough that is NOT an accepted term = the facade.
       if (typeof ex.engineName === 'string') {
+        // A name === engine key with no sub is the facade UNLESS it is an
+        // accepted English-standard term (Hip Thrust, Plank, Face Pull, ...) —
+        // those legitimately render as the English key in a Romanian-first app.
         const isFacadePassthrough =
-          ex.name === ex.engineName && ex.sub === undefined;
+          ex.name === ex.engineName && ex.sub === undefined && !ACCEPTED_EN.includes(ex.name);
         expect(
           isFacadePassthrough,
           `exercise "${ex.engineName}" rendered as a raw English key "${ex.name}" (facade: no RO display applied)`,
