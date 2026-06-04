@@ -27,6 +27,7 @@ const ADAPT_EPSILON = 0.01;
  * @param {Object<string, number>|null} args.baseTargets - pre-adaptation EN budget (periodization)
  * @param {Object<string, number>|null} args.amplifiedTargets - post weakness-amp (M2) EN budget
  * @param {Object<string, number>|null} args.balancedTargets - post imbalance-fix (M3) EN budget
+ * @param {Object<string, number>|null} [args.preCutTargets] - budget the recovery cut ran ON (post intra-week makeup); defaults to balancedTargets
  * @param {Object<string, number>|null} args.recoveredTargets - post recovery-cut (M1) EN budget (final)
  * @param {{[group:string]: 'recovered'|'partial'|'fatigued'}} args.resistanceState - RO recovery state (resistance only)
  * @param {{[group:string]: 'recovered'|'partial'|'fatigued'}} args.mergedState - RO recovery state (resistance + aerobic)
@@ -37,11 +38,18 @@ export function deriveCoachAdaptations({
   baseTargets,
   amplifiedTargets,
   balancedTargets,
+  preCutTargets,
   recoveredTargets,
   resistanceState,
   mergedState,
   deloadActive,
 }) {
+  // The recovery cut runs on the post-makeup budget (intra-week deficit recovery
+  // adds volume BEFORE the cut). Compare the FINAL budget against the budget the
+  // cut actually ran on, so a made-up group that recovery then trims is still
+  // attributed correctly. Defaults to balancedTargets (pre-makeup callers / no
+  // makeup → identical to before).
+  const cutFromTargets = preCutTargets ?? balancedTargets;
   /** @type {Array<{kind: string, group?: string, cause?: string}>} */
   const out = [];
 
@@ -52,9 +60,9 @@ export function deriveCoachAdaptations({
   // budget. Cause = aerobic when the resistance-only state for that group was
   // 'recovered' but the merged state (with recent cardio) raised it (so the cut
   // is owed to a class, e.g. spinning), else resistance.
-  if (balancedTargets && recoveredTargets) {
+  if (cutFromTargets && recoveredTargets) {
     // recoveredTargets is EN-keyed (toCanonicalEN output) — read by EN key.
-    for (const [enKey, balanced] of Object.entries(balancedTargets)) {
+    for (const [enKey, balanced] of Object.entries(cutFromTargets)) {
       const cut = recoveredTargets[enKey];
       if (typeof balanced !== 'number' || typeof cut !== 'number') continue;
       if (cut < balanced - ADAPT_EPSILON) {

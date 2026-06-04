@@ -43,6 +43,11 @@ import {
   redistributeRecoveredVolumeToFreshSessionGroups,
 } from './volumeAdaptation.js';
 import { deriveCoachAdaptations } from './coachAdaptations.js';
+import {
+  weekSessionSpreadByGroup,
+  computeIntraWeekMakeup,
+  applyMakeupToVolumeBudget,
+} from './intraWeekMakeup.js';
 
 /**
  * Compose today's workout plan — invoke 8-engine pipeline §42.10 sequential
@@ -68,6 +73,7 @@ import { deriveCoachAdaptations } from './coachAdaptations.js';
  *   restTimeRange: [number, number]|null,
  *   specializationTarget: string|null,
  *   deloadState: string,
+ *   weekMakeup: {added: Object<string,number>, behind: Object<string,number>},
  *   estimatedDurationMin: number,
  *   volumeKg: number,
  *   workoutTitle: string,
@@ -268,8 +274,44 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   const focusBiasedTargets = applyFocusBias(baseVolumeTargets, focusPreset);
   const amplifiedTargets = applyWeaknessAmplification(focusBiasedTargets, weakGroups);
   const balancedTargets = applyImbalanceCorrection(amplifiedTargets, imbalances);
+
+  // ── INTRA-WEEK DEFICIT RECOVERY (D-intra-week 2026-06-04) ────────────────
+  // What was already done EARLIER this microcycle (skipped / early-ended sessions)
+  // is made up on a later day — BEFORE the M1 recovery cut below, so the body still
+  // governs: a fatigued group's makeup is then trimmed by recovery, and the final
+  // MEV/MRV clamp keeps it recoverable. The weekly TARGET is the PRE-adaptation base
+  // (baseVolumeTargets), prorated per group by how many of this week's PAST+TODAY
+  // scheduled days train it — so a group whose sessions are all UPCOMING registers
+  // NO deficit (Thursday must not chase Saturday's leg day). DONE volume + the week
+  // anchor arrive React-side on userState.weekContext (raw sessionsHistory carries
+  // per-exercise sets; the engine-mapped recentSessions may not). Cold start (no
+  // weekContext / no done volume / no elapsed sessions) → makeup all 0 → the budget
+  // is byte-identical to pre-feature (graceful degradation, ADR 025). Pure: the
+  // proration threads the planned clock's weekday + the active week; no globals.
+  // weekContext is the EXPLICIT opt-in signal that DONE-volume measurement ran
+  // (React builder computes it from raw sessionsHistory). Its ABSENCE means "no
+  // intra-week measurement available" → makeup is a strict NO-OP (NOT a zero-done
+  // assumption — treating absent as all-zero-done would manufacture a phantom
+  // deficit equal to the full to-date target). Every caller without weekContext
+  // (engine unit fixtures, legacy callers) is therefore byte-identical to before.
+  const weekContext =
+    userState && typeof userState.weekContext === 'object' && userState.weekContext !== null
+      ? userState.weekContext
+      : null;
+  const intraWeekMakeup = weekContext
+    ? computeIntraWeekMakeup(
+        baseVolumeTargets,
+        typeof weekContext.volumeDone === 'object' && weekContext.volumeDone !== null
+          ? weekContext.volumeDone
+          : {},
+        split,
+        weekSessionSpreadByGroup(activeWeek, dayIdx, focusPreset),
+      )
+    : { added: {}, behind: {} };
+  const madeUpTargets = applyMakeupToVolumeBudget(balancedTargets, intraWeekMakeup.added);
+
   const recoveredTargets = applyRecoveryToVolumeBudget(
-    balancedTargets,
+    madeUpTargets,
     recoveryLogs,
     date.getTime(),
     aerobicSessions,
@@ -295,8 +337,11 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // normal again on a fresh day. All-recovered / balanced → freed total is 0 →
   // volumeTargets === recoveredTargets (byte-identical to pre-feature). Uses the
   // SAME mergedState that drove the cut + the EFFECTIVE cluster the session trains.
+  // Pre-cut reference is madeUpTargets (the budget the recovery cut ran ON) — so a
+  // group whose intra-week makeup recovery then trimmed releases the CORRECT freed
+  // amount. No makeup → madeUpTargets === balancedTargets clone (identical).
   const volumeTargets = redistributeRecoveredVolumeToFreshSessionGroups(
-    balancedTargets,
+    madeUpTargets,
     recoveredTargets,
     cluster,
     mergedState,
@@ -317,6 +362,11 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     baseTargets: focusBiasedTargets,
     amplifiedTargets,
     balancedTargets,
+    // The recovery cut ran on the POST-makeup budget (intra-week deficit recovery
+    // adds volume before the cut), so the cut attribution compares madeUpTargets→
+    // recovered. No makeup → madeUpTargets === balancedTargets clone (identical
+    // attribution to pre-feature). M2/M3 attribution still reads the originals.
+    preCutTargets: madeUpTargets,
     // The recovery-CUT attribution compares balanced→recovered (the groups that
     // dropped), so it reads the PRE-redistribution recovered budget — the
     // session-local fresh-group bump is an emphasis shift, not a detected cut.
@@ -370,6 +420,11 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // synthesizes one plain-language coach line from it). ADDITIVE field; empty
     // array when nothing adapted this session. NO copy strings — tokens only.
     coachAdaptations,
+    // Intra-week deficit recovery (D-intra-week 2026-06-04) — DATA only (no copy
+    // this phase). `added` = makeup volume applied to TODAY's session per EN group;
+    // `behind` = deficit still outstanding after today. A follow-up phase renders a
+    // supportive note from this. Cold start / no deficit → both empty objects.
+    weekMakeup: { added: intraWeekMakeup.added, behind: intraWeekMakeup.behind },
     estimatedDurationMin: 50,
     volumeKg: 0,
     // Non-localized fallback SENTINEL (NOT user copy). The React render

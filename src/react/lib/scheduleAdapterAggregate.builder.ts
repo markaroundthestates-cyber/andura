@@ -12,6 +12,8 @@ import { useOnboardingStore } from '../stores/onboardingStore';
 import { useAerobicStore } from '../stores/aerobicStore';
 import { MS_PER_DAY } from '../../constants.js';
 import { getComputedReadinessScore, getTodayReadiness } from '../../engine/readiness.js';
+import { doneVolumeByGroupThisWeek } from '../../engine/schedule/intraWeekVolume.js';
+import { getWeekStartIso } from '../../engine/schedule/scheduleAdapter.js';
 import { DB } from '../../db.js';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
 import { estimateBF_Deurenberg } from '../../engine/bodyComposition.js';
@@ -244,6 +246,7 @@ export function buildUserStateForPipeline(): {
   profileTier: string | null;
   flags: Record<string, unknown>;
   meta: Record<string, unknown>;
+  weekContext: { volumeDone: Record<string, number>; weekStartMs: number };
 } {
   const onboardingData = useOnboardingStore.getState().data;
   const sessionsHistory = useWorkoutStore.getState().sessionsHistory ?? [];
@@ -322,6 +325,24 @@ export function buildUserStateForPipeline(): {
   // candidates so existing users keep visible PR continuity. EN canonical names
   // (logs key on the EN name, same as DP.getLogs / cold-start guidelines).
   const prNames = distinctLoggedExerciseNames();
+  // Intra-week deficit recovery (D-intra-week 2026-06-04) — DONE working-set volume
+  // per Big-11 EN group for the CURRENT microcycle, computed React-side from the
+  // RAW sessionsHistory (each LastSessionSummary carries per-exercise `sets`). The
+  // engine-mapped recentSessions above may NOT retain per-exercise sets, so the
+  // measurement MUST happen here from the raw store. weekStart = the user's
+  // training-microcycle anchor (getWeekStartIso(now), Monday-anchored, NOT a
+  // corporate calendar week) → ms. doneVolumeByGroupThisWeek counts only sessions
+  // in [weekStartMs, now]. Threaded into getDailyWorkout via userState.weekContext,
+  // where it is prorated + capped into TODAY's budget (recovery still overrides).
+  // Cold start (no sessions this week) → volumeDone {} → makeup no-op downstream.
+  const weekStartMs = new Date(getWeekStartIso(new Date(now))).getTime();
+  const weekContext = {
+    volumeDone: doneVolumeByGroupThisWeek(sessionsHistory, weekStartMs, now) as Record<
+      string,
+      number
+    >,
+    weekStartMs,
+  };
   return {
     user: {
       age: onboardingData.age,
@@ -387,5 +408,9 @@ export function buildUserStateForPipeline(): {
       // NU fabricam semnal). exactOptionalPropertyTypes: spread conditional.
       ...(todayEnergyEmoji !== undefined ? { energyEmoji: todayEnergyEmoji } : {}),
     },
+    // Intra-week deficit recovery — DONE volume + microcycle anchor for the engine
+    // proration/spread (getDailyWorkout reads userState.weekContext). Computed from
+    // RAW sessionsHistory (per-exercise sets); cold start → empty volumeDone.
+    weekContext,
   };
 }

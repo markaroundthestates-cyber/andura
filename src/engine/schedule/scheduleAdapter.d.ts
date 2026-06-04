@@ -46,6 +46,15 @@ export interface WorkoutPlan {
   // array when nothing adapted this session. Optional in the type so pre-feature
   // plan-shape fixtures stay valid (additive); getDailyWorkout always emits it.
   coachAdaptations?: CoachAdaptation[];
+  // Intra-week deficit recovery (D-intra-week 2026-06-04) — DATA only (no UI this
+  // phase). `added` = makeup volume applied to TODAY's session per Big-11 EN group;
+  // `behind` = deficit still outstanding after today. A follow-up phase renders a
+  // supportive note. Optional so pre-feature plan-shape fixtures stay valid
+  // (additive); getDailyWorkout always emits it (empty objects on cold start).
+  weekMakeup?: {
+    added: Record<string, number>;
+    behind: Record<string, number>;
+  };
   estimatedDurationMin: number;
   volumeKg: number;
   workoutTitle: string;
