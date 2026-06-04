@@ -1085,6 +1085,10 @@
       "restBody": "Zi de odihna. Coach-ul nu propune antrenament azi - recuperarea face parte din plan.",
       "emptyBody": "Coach-ul nu poate propune inca un antrenament pentru ziua asta. Programul se calculeaza din starea ta curenta - revino dupa ce mai logezi cateva sesiuni.",
       "liveNote": "Lista se recalculeaza din starea curenta (recuperare, progres) de fiecare data cand o deschizi.",
+      "doneTitle": "Ce ai facut",
+      "missed": "Nu ai antrenat in aceasta zi.",
+      "performedSet": "{kg} kg x {reps}",
+      "performedHeading": "Seturi efectuate",
       "closeCta": "Inchide"
     },
     "heatmap": {

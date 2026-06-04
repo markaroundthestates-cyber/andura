@@ -1085,6 +1085,10 @@
       "restBody": "Rest day. The coach proposes no workout today - recovery is part of the plan.",
       "emptyBody": "The coach can't propose a workout for this day yet. The schedule is computed from your current state - come back after logging a few more sessions.",
       "liveNote": "The list is recomputed from your current state (recovery, progress) every time you open it.",
+      "doneTitle": "What you did",
+      "missed": "You didn't train on this day.",
+      "performedSet": "{kg} kg x {reps}",
+      "performedHeading": "Sets performed",
       "closeCta": "Close"
     },
     "heatmap": {
