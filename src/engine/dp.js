@@ -1,7 +1,7 @@
 // ══ DP ENGINE — Double Progression ══════════════════════════
 import { DB } from '../db.js';
 import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../constants.js';
-import { roundToEquipmentWeight, getPrevWeight } from '../config/weights.js';
+import { roundToEquipmentWeight, getPrevWeight, getNextWeight } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier } from './exerciseMapping.js';
 import { getExerciseMetadata } from './exerciseLibrary.js';
 import { now as clockNow } from './clock.js';
@@ -307,7 +307,6 @@ export const DP = {
    */
   _recommendRaw(ex, nowMs) {
     const state = this.getState(ex);
-    const inc = this.getIncrement(ex);
     const phaseOverride = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
     const isInCut = this._isInCut(phaseOverride, nowMs);
     const range = this.getPhaseAwareRepRange(ex, isInCut);
@@ -374,34 +373,96 @@ export const DP = {
       };
     }
 
-    // Stage 1: CONSOLIDATE — hold weight, improve reps
-    if (lastRPE >= 9 || lastReps < rMax) {
-      const targetReps = Math.min(rMax, lastReps + (lastRPE <= 7 ? 2 : 1));
+    // ── RATING-DRIVEN PROGRESSION (Daniel bug 2026-06-04) ───────────────────────
+    // The coach must VISIBLY respond to the last set's rating from session 1 — not
+    // wait for 3 sessions at rMax before moving. The per-set rating (usor/potrivit/
+    // greu) reaches us as lastRPE (greu≈10, potrivit≈7.5, usor≈6.5). One step max
+    // per session — never a multi-step jump. EASY steps up decisively (rep target
+    // +1, or weight +1 stack step + reset to rMin when already at the top); HARD
+    // holds the weight and never increases; MEDIUM does modest standard filling.
+    const atTop = lastReps >= rMax;
+
+    // HARD (greu / lastRPE >= 9) → hold weight, never increase. Keep the rep
+    // target where it is (or −1 if it actually felt too heavy, RIR 1).
+    if (lastRPE >= 9) {
+      const targetReps = Math.max(rMin, Math.min(lastReps, rMax));
       return {
-        kg: lastW, repsTarget: targetReps, rir: lastRPE >= 9 ? 1 : 2,
-        status: lastRPE >= 9 ? 'TOO HEAVY' : 'CONSOLIDATE',
-        statusColor: lastRPE >= 9 ? 'var(--red)' : 'var(--accent)',
-        statusLabel: lastRPE >= 9 ? '🔴 E prea greu' : '🟡 Consolidam reps',
-        progressionNote: `Ultima data: ${lastW} kg × ${lastReps} reps. Tintim ${targetReps} astazi.`,
+        kg: lastW, repsTarget: targetReps, rir: 1,
+        status: 'TOO HEAVY',
+        statusColor: 'var(--red)',
+        statusLabel: '🔴 E prea greu',
+        progressionNote: `A fost greu · consolidam la ${lastW} kg × ${targetReps} reps.`,
         progressionStage: 1
       };
     }
 
-    // Stage 2: INCREASE — reached top reps, add weight
-    if (atTopReps && lastRPE <= 8) {
-      // Snap the bumped weight to the equipment stack at source so the
-      // progressionNote text ("56 kg → 60 kg") matches what the user can load
-      // (his machines have 27/32, never 26). recommend() re-snaps as the final
-      // gate; this keeps the displayed note honest.
-      const newKg = roundToEquipmentWeight(lastW + inc, ex);
+    // EASY (usor / lastRPE <= 6.5) → DECISIVE forward step THIS session.
+    if (lastRPE <= 6.5) {
+      if (!atTop) {
+        // Below the top of the range → raise the rep TARGET by +1 (toward rMax).
+        const targetReps = Math.min(rMax, lastReps + 1);
+        return {
+          kg: lastW, repsTarget: targetReps, rir: 2,
+          status: 'INCREASE',
+          statusColor: 'var(--green)',
+          statusLabel: '🟢 Crestem reps',
+          progressionNote: `Usor data trecuta → urcam la ${targetReps} reps.`,
+          progressionStage: 1
+        };
+      }
+      // Already at the top of the range → next equipment stack step + reset to rMin.
+      const newKg = getNextWeight(lastW, ex);
+      if (newKg > lastW) {
+        return {
+          kg: newKg, repsTarget: rMin, rir: 3,
+          status: 'INCREASE',
+          statusColor: 'var(--green)',
+          statusLabel: '🟢 Crestem greutatea',
+          progressionNote: `Ai atins varful de reps → urcam la ${newKg} kg, revenim la ${rMin} reps.`,
+          progressionStage: 2
+        };
+      }
+      // No higher stack step available (snaps back to same) → hold, focus quality.
       return {
-        kg: newKg, repsTarget: rMin, rir: 3,
-        status: 'INCREASE',
+        kg: lastW, repsTarget: rMax, rir: 2,
+        status: 'ON TARGET',
         statusColor: 'var(--green)',
-        statusLabel: '🟢 Crestem greutatea',
-        progressionNote: `${lastW} kg → ${newKg} kg · Revenim la ${rMin} reps`,
-        progressionStage: 2
+        statusLabel: '🟢 In tinta',
+        progressionNote: `Esti la varful echipamentului · mentinem ${lastW} kg × ${rMax} reps.`,
+        progressionStage: 0
       };
+    }
+
+    // MEDIUM (potrivit / ~7.5) → modest STANDARD double progression. Below the top
+    // of the range, fill it with +1 rep. The WEIGHT increase still waits for the
+    // range to be genuinely filled (atTopReps = consistently at rMax) — this is the
+    // classic double-progression gate and it PRESERVES the stagnation/+set rescue
+    // for a manageable-but-stuck lift. (EASY above already escapes this gate and
+    // bumps weight the moment a single top-range set feels easy — that is the
+    // decisive responsiveness the medium rating intentionally does not get.)
+    if (!atTop) {
+      const targetReps = Math.min(rMax, lastReps + 1);
+      return {
+        kg: lastW, repsTarget: targetReps, rir: 2,
+        status: 'CONSOLIDATE',
+        statusColor: 'var(--accent)',
+        statusLabel: '🟡 Consolidam reps',
+        progressionNote: `Ultima data: ${lastW} kg × ${lastReps} reps · tintim ${targetReps} astazi.`,
+        progressionStage: 1
+      };
+    }
+    if (atTopReps) {
+      const newKg = getNextWeight(lastW, ex);
+      if (newKg > lastW) {
+        return {
+          kg: newKg, repsTarget: rMin, rir: 3,
+          status: 'INCREASE',
+          statusColor: 'var(--green)',
+          statusLabel: '🟢 Crestem greutatea',
+          progressionNote: `${lastW} kg → ${newKg} kg · revenim la ${rMin} reps.`,
+          progressionStage: 2
+        };
+      }
     }
 
     // Stage 3: STAGNATION — add 1 set (max once)

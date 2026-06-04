@@ -343,8 +343,12 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
     expect(lat!.targetKg).toBe(55);
     expect(lat!.targetKg).not.toBe(20);
     expect(lat!.targetKg).not.toBe(suggestStartWeight('Lat Pulldown', 'intermediate'));
-    // DP repsTarget (11) wired too, not the old hardcoded 10.
-    expect(lat!.targetReps).toBe(11);
+    // DP repsTarget wired too (not a hardcode). The seeded logs carry no rpe, so
+    // DP reads the default RPE 7 = MEDIUM band → modest standard +1 rep (9 -> 10).
+    // (Before the 2026-06-04 rating-driven rewrite, RPE<=7 blanket-added +2 = 11;
+    // +1 is the correct medium fill — the decisive +1-then-weight is reserved for
+    // an actual EASY rating, RPE<=6.5.)
+    expect(lat!.targetReps).toBe(10);
   });
 
   it('cold-start (no logs) uses suggestStartWeight scaled by experience + bodyweight', async () => {

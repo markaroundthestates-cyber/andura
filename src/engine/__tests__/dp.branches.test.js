@@ -253,25 +253,33 @@ describe('DP._recommendRaw — branch coverage', () => {
     expect(r.repsTarget).toBe(15);   // rMax
   });
 
-  it('TOO HEAVY: lastRPE >= 9 → consolidate at RIR 1, +1 rep', () => {
+  it('TOO HEAVY: lastRPE >= 9 → holds weight AND rep target (never increases)', () => {
+    // Daniel bug 2026-06-04: a HARD set must NEVER push the prescription forward.
+    // The old code added +1 rep even when the last set was rated greu; the
+    // responsive rewrite holds BOTH weight and the rep target (capped at rMax),
+    // so the coach visibly eases instead of pretending the user can do more.
     store['logs'] = [log('Cable Row', 56, 9, 9)];
     const r = DP._recommendRaw('Cable Row');
     expect(r.status).toBe('TOO HEAVY');
     expect(r.rir).toBe(1);
     expect(r.kg).toBe(56);
-    expect(r.repsTarget).toBe(10);   // min(rMax12, 9 + 1)
+    expect(r.repsTarget).toBe(9);    // held at lastReps — HARD never increases reps
   });
 
-  it('CONSOLIDATE: lastReps < rMax with easy RPE adds 2 reps', () => {
-    // Cable Row rMax=12, lastReps 9, RPE 7 (<=7) → +2
+  it('CONSOLIDATE: lastReps < rMax with MEDIUM (potrivit) RPE adds 1 rep', () => {
+    // Daniel bug 2026-06-04: the rating bands are now explicit — easy is RPE<=6.5,
+    // medium (potrivit) ~7.5, hard >=9. RPE 7 falls in the MEDIUM band → modest
+    // standard +1 rep fill (not the old blanket +2 for RPE<=7). The decisive +1
+    // -toward-rMax (then weight) reserved for an actual EASY rating is covered by
+    // the dedicated EASY tests below.
     store['logs'] = [log('Cable Row', 56, 9, 7)];
     const r = DP._recommendRaw('Cable Row');
     expect(r.status).toBe('CONSOLIDATE');
-    expect(r.repsTarget).toBe(11);   // min(12, 9+2)
+    expect(r.repsTarget).toBe(10);   // min(12, 9+1)
     expect(r.rir).toBe(2);
   });
 
-  it('CONSOLIDATE: RPE 8 (not easy, not >=9) adds only 1 rep', () => {
+  it('CONSOLIDATE: RPE 8 (medium, not >=9) adds only 1 rep', () => {
     store['logs'] = [log('Cable Row', 56, 9, 8)];
     const r = DP._recommendRaw('Cable Row');
     expect(r.status).toBe('CONSOLIDATE');
@@ -332,6 +340,93 @@ describe('DP._recommendRaw — branch coverage', () => {
     expect(r.status).toBe('ON TARGET');
     expect(r.kg).toBe(56);
     expect(r.progressionStage).toBe(0);
+  });
+});
+
+// ── _recommendRaw — RATING-DRIVEN responsive progression (Daniel bug 2026-06-04)
+// The coach must VISIBLY respond to the LAST set's rating from session 1, not wait
+// for 3 sessions at rMax. EASY (usor, RPE<=6.5) steps forward decisively THIS next
+// session; HARD (greu, RPE>=9) never increases; MEDIUM (potrivit ~7.5) does modest
+// standard double progression. Max ONE step per session. These drive the real
+// getState/log path so a regression in the branch order actually fails here.
+// Cable Row: bailib_stack [..,55,60,65,..], range [8,12] (BULK, not cut).
+
+describe('DP._recommendRaw — rating-driven responsive progression', () => {
+  beforeEach(() => { store['phase-override'] = 'BULK'; });
+
+  it('EASY mid-range → raises the rep TARGET by +1 (one easy session is enough)', () => {
+    // The literal Daniel repro: ~8 reps target, logged 7 reps rated EASY. ONE easy
+    // session must move the prescription forward — not repeat 7 reps again.
+    store['logs'] = [log('Cable Row', 20, 7, 6.5)];
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.status).toBe('INCREASE');
+    expect(r.kg).toBe(20);          // weight held — still mid-range
+    expect(r.repsTarget).toBe(8);   // +1 toward rMax (decisive forward step)
+    expect(r.progressionNote).toMatch(/[Uu]sor/); // explains WHY (easy → more reps)
+  });
+
+  it('EASY mid-range moves on the FIRST session — NOT gated on 3 sessions', () => {
+    // A single log (one prior session) is enough; the old code waited for 3
+    // consecutive top-range sessions before any forward movement.
+    store['logs'] = [log('Cable Row', 56, 10, 6)];
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.status).toBe('INCREASE');
+    expect(r.repsTarget).toBe(11);  // 10 → 11, single session
+  });
+
+  it('EASY at the TOP of the range → +1 weight stack step, reps reset to rMin', () => {
+    // lastReps 12 == rMax; easy → next equipment step (60 → 65 bailib) + back to rMin 8.
+    store['logs'] = [log('Cable Row', 60, 12, 6.5)];
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.status).toBe('INCREASE');
+    expect(r.kg).toBe(65);          // one stack step up (bailib 60 → 65)
+    expect(r.repsTarget).toBe(8);   // reset to rMin
+    expect(r.progressionNote).toMatch(/varf|kg/);
+  });
+
+  it('aggression cap: EASY at top advances at most ONE stack step (never multi-step)', () => {
+    store['logs'] = [log('Cable Row', 60, 12, 6.5)];
+    const r = DP._recommendRaw('Cable Row');
+    // 60 → 65 is exactly one step; never jumps to 70+ in a single session.
+    expect(r.kg).toBe(65);
+  });
+
+  it('aggression cap: EASY mid-range raises reps by at most ONE', () => {
+    store['logs'] = [log('Cable Row', 56, 9, 5)]; // very easy (RPE 5)
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.repsTarget).toBe(10);  // 9 → 10, exactly +1 even when very easy
+  });
+
+  it('HARD → holds weight, never increases reps (eases / stays put)', () => {
+    store['logs'] = [log('Cable Row', 56, 10, 9.5)];
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.status).toBe('TOO HEAVY');
+    expect(r.kg).toBe(56);          // weight held
+    expect(r.repsTarget).toBeLessThanOrEqual(10); // never above lastReps
+    expect(r.progressionNote).toMatch(/greu/);    // explains it was hard
+  });
+
+  it('HARD at the top of the range still does NOT add weight', () => {
+    store['logs'] = [log('Cable Row', 56, 12, 10)];
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.status).toBe('TOO HEAVY');
+    expect(r.kg).toBe(56);          // never bumps weight on a hard set
+  });
+
+  it('MEDIUM mid-range → modest standard +1 rep (weight held)', () => {
+    store['logs'] = [log('Cable Row', 56, 9, 7.5)];
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.status).toBe('CONSOLIDATE');
+    expect(r.kg).toBe(56);
+    expect(r.repsTarget).toBe(10);  // +1 toward rMax
+  });
+
+  it('MEDIUM at top, range filled 3 sessions (atTopReps) → standard weight INCREASE', () => {
+    store['logs'] = [log('Cable Row', 60, 12, 7.5), log('Cable Row', 60, 12, 7.5), log('Cable Row', 60, 12, 7.5)];
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.status).toBe('INCREASE');
+    expect(r.kg).toBe(65);          // bailib one step
+    expect(r.repsTarget).toBe(8);   // rMin
   });
 });
 
@@ -624,6 +719,29 @@ describe('getInitialRecommendation', () => {
       recentLogs: [], bodyweightKg: 35, sex: 'f', experience: 'beginner',
     });
     expect(r.kg).toBeGreaterThanOrEqual(20); // leg_press_plates floor
+  });
+
+  // ── cold-start UNCHANGED guard (Daniel bug 2026-06-04 rewrite) ───────────────
+  // The rating-driven progression rewrite touches ONLY the with-history path
+  // (_recommendRaw stages). getInitialRecommendation (the no-history cold start
+  // feeding a golden master) must stay byte-identical. This pins the full exact
+  // output shape of the conservative fallback so any drift fails loudly.
+  it('cold-start fallback output is byte-identical (golden — must NOT drift)', () => {
+    expect(getInitialRecommendation('Cable Curl', null)).toEqual({
+      kg: 5, weight: 5, repsTarget: 10, reps: 10, sets: 3, rir: 3,
+      status: 'INIT', statusColor: 'var(--text3)', statusLabel: '🟡 Pornim conservator',
+      isInitial: true, rationale: 'Greutate de pornire · Recalibram dupa primul set',
+      confidence: 0.4,
+    });
+  });
+
+  it('cold-start exact-match output is byte-identical (golden — must NOT drift)', () => {
+    const ctx = { recentLogs: [{ logs: [{ ex: 'Cable Row', w: 50, reps: 10 }] }] };
+    expect(getInitialRecommendation('Cable Row', ctx)).toEqual({
+      kg: 50, weight: 50, repsTarget: 8, reps: 8, sets: 3, rir: 2,
+      status: 'CONSOLIDATE', statusColor: 'var(--accent)', statusLabel: '🟡 Continuam',
+      isInitial: false, rationale: 'Pornim de la ultima sesiune: 50 kg', confidence: 0.9,
+    });
   });
 });
 
