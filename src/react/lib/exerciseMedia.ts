@@ -26,6 +26,7 @@
 // below), placeholder for unknowns; v2 = source decision Daniel-gated.
 
 import { toExerciseDisplay } from './exerciseDisplay';
+import { getExerciseMetadata } from '../../engine/exerciseLibrary.js';
 
 export type ExerciseMediaType = 'image' | 'gif' | 'video' | 'lottie';
 
@@ -102,14 +103,111 @@ function toMediaSlug(engineName: string): string {
   return engineName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+// SIBLING REUSE (Daniel 2026-06-04: "daca dau skip pe principal, la NIMIC nu apare
+// poza") — the skip/substitute flow (resolveRefusalSwap / getFallbackCascade) is
+// NOT CORE-gated, so it surfaces broad-library variations (Decline DB Press,
+// Neutral-Grip DB Press, Single-Arm DB Press, Low-Incline DB Press...) that have
+// no own photo → placeholder. Fix: when a movement has no direct image, walk its
+// equipment_alternatives (preferred — same movement pattern) then fallback_cascade
+// up to 2 hops and REUSE the first sibling's photo (Daniel: "varianta cealalta").
+// Zero new files — every reused webp already lives in the repo. A genuinely
+// unrelated movement still falls through to null (placeholder, never a wrong image
+// from outside the family graph).
+//
+// ALIAS_OVERRIDE — a handful of generic/alias + antagonist-only movements the
+// family graph cannot reach (no equipment_alternatives into a covered node). Mapped
+// by hand to the closest covered sibling (Daniel-approved interim "varianta
+// cealalta"). The tibialis family points at the calf-raise photo: same lower-leg
+// region (the honest exact photo arrives with Daniel's own shots).
+const ALIAS_OVERRIDE: Readonly<Record<string, string>> = {
+  'Lateral Raises': 'DB Lateral Raise',
+  'Lateral Raises (cable)': 'Cable Lateral Raise',
+  'Rear Delt Fly': 'DB Rear Delt Fly',
+  'Rear Delt Cable': 'Cable Rear Delt Fly',
+  'Overhead Triceps': 'Cable Overhead Triceps Extension Rope',
+  Pushdown: 'Cable Triceps Pushdown Straight Bar',
+  'Face Pulls': 'Face Pull',
+  'Face Pull Bench': 'Face Pull',
+  'Kneeling Face Pull': 'Face Pull',
+  'Band Face Pull': 'Face Pull',
+  'Rope Face Pull': 'Face Pull',
+  'Single-Arm Face Pull': 'Face Pull',
+  'Calf Raises': 'Standing Calf Raise Machine',
+  'Reverse Calf Raise': 'Standing Calf Raise Machine',
+  'Tibialis Raise': 'Standing Calf Raise Machine',
+  'Standing Tibialis Raise': 'Standing Calf Raise Machine',
+  'Cable Tibialis Raise': 'Standing Calf Raise Machine',
+  'Banded Tibialis Raise': 'Standing Calf Raise Machine',
+  'DB Tibialis Raise': 'Standing Calf Raise Machine',
+};
+
+/** Covered slug for a name when its OWN photo exists, else undefined. */
+function directSlug(name: string): string | undefined {
+  const slug = toMediaSlug(name);
+  return EXERCISE_MEDIA_SLUGS.has(slug) ? slug : undefined;
+}
+
+/** Same-family neighbors of a movement, closest visual match first
+ *  (equipment_alternatives before the fallback cascade). */
+function siblingNames(name: string): string[] {
+  const meta = getExerciseMetadata(name) as {
+    equipment_alternatives?: string[];
+    fallback_cascade?: Array<{ exercise_id?: string; exercise_ids?: string[] }>;
+  };
+  const out: string[] = [...(meta.equipment_alternatives ?? [])];
+  for (const step of meta.fallback_cascade ?? []) {
+    if (step.exercise_id) out.push(step.exercise_id);
+    if (step.exercise_ids) out.push(...step.exercise_ids);
+  }
+  return out;
+}
+
+// Memoized per session — resolution is pure over the static library + manifest.
+const slugCache = new Map<string, string | null>();
+
+/** Resolve the photo slug to show for a movement: own photo → nearest sibling
+ *  photo (BFS, max 2 hops) → hand alias → null. */
+function resolvePhotoSlug(engineName: string): string | null {
+  const cached = slugCache.get(engineName);
+  if (cached !== undefined) return cached;
+
+  let result: string | null = directSlug(engineName) ?? null;
+  if (result === null) {
+    const seen = new Set<string>([engineName]);
+    let frontier = [engineName];
+    for (let hop = 0; hop < 2 && result === null; hop++) {
+      const next: string[] = [];
+      for (const node of frontier) {
+        for (const sib of siblingNames(node)) {
+          if (seen.has(sib)) continue;
+          seen.add(sib);
+          const hit = directSlug(sib);
+          if (hit) { result = hit; break; }
+          next.push(sib);
+        }
+        if (result !== null) break;
+      }
+      frontier = next;
+    }
+  }
+  if (result === null) {
+    const alias = ALIAS_OVERRIDE[engineName];
+    if (alias) result = directSlug(alias) ?? null;
+  }
+
+  slugCache.set(engineName, result);
+  return result;
+}
+
 /**
  * Look up media info for an engine exercise name. Returns the public-domain
- * interim image when one exists for this movement, else null (the
- * <ExerciseMedia> component then renders its muscle-group placeholder).
+ * interim image when one exists for this movement OR its closest same-family
+ * sibling (so a skip-substitute variation still shows a correct movement), else
+ * null (the <ExerciseMedia> component then renders its muscle-group placeholder).
  */
 export function getExerciseMedia(engineName: string): ExerciseMediaInfo | null {
-  const slug = toMediaSlug(engineName);
-  if (!EXERCISE_MEDIA_SLUGS.has(slug)) return null;
+  const slug = resolvePhotoSlug(engineName);
+  if (slug === null) return null;
   return {
     url: `/exercise-media/${slug}.webp`,
     url2: `/exercise-media/${slug}-2.webp`,

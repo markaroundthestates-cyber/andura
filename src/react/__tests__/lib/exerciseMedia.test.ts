@@ -24,11 +24,30 @@ describe('exerciseMedia — interim public-domain images', () => {
       .toBe('/exercise-media/barbell-back-squat-high-bar.webp');
   });
 
-  it('a movement with NO curated image returns null (placeholder, never wrong image)', () => {
-    // The 2 genuinely-missing (free-db only has the OPPOSITE muscle) → placeholder.
-    expect(getExerciseMedia('Tibialis Raise')).toBeNull();
-    expect(getExerciseMedia('Hip Abduction Machine')).toBeNull();
+  it('a movement OUTSIDE the family graph returns null (placeholder, never wrong image)', () => {
+    // Unknown name: no metadata, no equipment_alternatives, no alias → honest gap.
     expect(getExerciseMedia('Some Esoteric Exercise')).toBeNull();
+  });
+
+  // Daniel 2026-06-04: "daca dau skip pe principal, la NIMIC nu apare poza" — the
+  // skip/substitute flow surfaces broad-library variations that have no own photo.
+  // They MUST reuse the nearest same-family photo (equipment_alternatives), not show
+  // a blank placeholder.
+  it('a skip-substitute variation reuses its nearest same-family photo', () => {
+    // Single-Arm / Neutral-Grip DB Press → the flat DB press demo (same movement).
+    expect(getExerciseMedia('Single-Arm DB Press')!.url).toBe('/exercise-media/flat-db-press.webp');
+    expect(getExerciseMedia('Neutral Grip DB Press')!.url).toBe('/exercise-media/flat-db-press.webp');
+    // Low-Incline DB Press → the incline DB press demo.
+    expect(getExerciseMedia('Low-Incline DB Press')!.url).toBe('/exercise-media/incline-db-press.webp');
+    // Decline DB Press → a chest-press sibling (non-null is the contract).
+    expect(getExerciseMedia('Decline DB Press')).not.toBeNull();
+  });
+
+  // Antagonist-only / alias gaps the family graph can't reach are hand-mapped to
+  // the closest covered sibling (Daniel-approved interim "varianta cealalta").
+  it('hand-aliased gaps resolve to the closest covered sibling', () => {
+    expect(getExerciseMedia('Tibialis Raise')!.url).toBe('/exercise-media/standing-calf-raise-machine.webp');
+    expect(getExerciseMedia('Face Pulls')!.url).toBe('/exercise-media/face-pull.webp');
   });
 
   it('alt text is the RO demonstration label', () => {
