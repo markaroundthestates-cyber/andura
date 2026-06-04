@@ -214,6 +214,12 @@ export function CalendarHeatmap(): JSX.Element {
           const dotColor = tierDotColor(tier);
           const isToday = cell.key === todayKey;
           const isFuture = cell.key !== null && cell.key > todayKey;
+          // Rest-day glyph (Daniel 2026-06-04) — a PAST day with no gym session
+          // and no aerobic mark is a logged rest day. The legend promises a rest
+          // swatch (empty square); draw the matching glyph on the cell so the
+          // calendar honours the legend. Future + today + logged days never get
+          // it (nothing to mark / a mark already sits there).
+          const isRestDay = !isFuture && !isToday && !hasSession && !hasAerobic;
           // Future cells stay transparent (nothing logged yet); past + rest days
           // sit on the nested glass surface (--surface-2) so the month reads as a
           // filled grid inside the glass card (mockup .cal-day parity).
@@ -255,8 +261,16 @@ export function CalendarHeatmap(): JSX.Element {
               style={cellBg ? { background: cellBg } : undefined}
             >
               <span className={`font-mono text-[12px] leading-none ${numCls}`}>{cell.day}</span>
-              {(dotColor || hasAerobic) && (
+              {(dotColor || hasAerobic || isRestDay) && (
                 <span className="flex items-center gap-[3px]" aria-hidden="true">
+                  {isRestDay && (
+                    // Rest-day glyph — empty square matching the legend's rest
+                    // swatch (bg-paper2 + lineStrong border), sized like the dot.
+                    <span
+                      data-testid={`cal-rest-${cell.day}`}
+                      className="w-1.5 h-1.5 rounded-[3px] bg-paper2 border border-lineStrong"
+                    />
+                  )}
                   {dotColor && (
                     <span
                       data-testid={`cal-dot-${cell.day}`}

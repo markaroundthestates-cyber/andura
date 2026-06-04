@@ -248,6 +248,69 @@ describe('CalendarHeatmap — aerobic-class overlay (2026-05-30)', () => {
   });
 });
 
+describe('CalendarHeatmap — rest-day glyph (2026-06-04)', () => {
+  it('past day with no session + no aerobic shows the rest glyph', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 15, 10));
+    // Empty history → every past day is a rest day. The 12th (< the 15th) must
+    // carry the rest glyph matching the legend swatch.
+    render(<CalendarHeatmap />);
+    expect(screen.getByTestId('cal-rest-12')).toBeInTheDocument();
+    // No session/aerobic mark on that day.
+    expect(screen.queryByTestId('cal-dot-12')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('cal-aerobic-12')).not.toBeInTheDocument();
+  });
+
+  it('today gets no rest glyph', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 15, 10));
+    render(<CalendarHeatmap />);
+    expect(screen.queryByTestId('cal-rest-15')).not.toBeInTheDocument();
+  });
+
+  it('future day gets no rest glyph', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 15, 10));
+    render(<CalendarHeatmap />);
+    expect(screen.queryByTestId('cal-rest-20')).not.toBeInTheDocument();
+  });
+
+  it('past day with a logged session gets no rest glyph', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 15, 10));
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        {
+          title: 'Push',
+          meta: '',
+          ts: new Date(2026, 4, 12, 10).getTime(),
+          exercises: [
+            {
+              exerciseId: 'bench',
+              exerciseName: 'Bench',
+              sets: [{ kg: 100, reps: 5, rating: 'greu', timestamp: 0 }],
+              totalVolume: 500,
+              peakOneRM: 100,
+            },
+          ],
+        },
+      ],
+    });
+    render(<CalendarHeatmap />);
+    expect(screen.queryByTestId('cal-rest-12')).not.toBeInTheDocument();
+    expect(screen.getByTestId('cal-dot-12')).toBeInTheDocument();
+  });
+
+  it('past aerobic-only day gets no rest glyph', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 15, 10));
+    useAerobicStore.setState({ sessions: [aerobicOn('2026-05-12')] });
+    render(<CalendarHeatmap />);
+    expect(screen.queryByTestId('cal-rest-12')).not.toBeInTheDocument();
+    expect(screen.getByTestId('cal-aerobic-12')).toBeInTheDocument();
+  });
+});
+
 describe('CalendarHeatmap — accessibility invariants', () => {
   it('no diacritics in textContent', () => {
     const { container } = render(<CalendarHeatmap />);
