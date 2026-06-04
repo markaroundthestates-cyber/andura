@@ -7,13 +7,14 @@
 // 09:00, returns 14:00 post-workout → recovery state changed dar quote
 // stayed stale.
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { CoachTodayCard } from '../../../components/Antrenor/CoachTodayCard';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import * as engineWrappers from '../../../lib/engineWrappers';
 import type { PlannedWorkoutOutput, CoachAdaptation } from '../../../lib/engineWrappers';
+import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function renderCard(onStart: () => void = () => {}) {
   return render(
@@ -306,6 +307,106 @@ describe('CoachTodayCard — no-shame return line', () => {
     // No mock — exercise the REAL wrapper with zero sessions (cold start → null).
     renderCard();
     expect(screen.queryByTestId('coach-return-line')).not.toBeInTheDocument();
+  });
+});
+
+// Intra-week make-up note — the supportive, forward-looking line that makes the
+// engine's intra-week deficit recovery visible (not silent). Renders ONLY when
+// weekMakeup.added has a positive group; names the group(s) in a NO-BLAME line;
+// hidden entirely when weekMakeup is empty/absent. Pure derivation from the prop.
+describe('CoachTodayCard — intra-week make-up note', () => {
+  type WeekMakeup = NonNullable<PlannedWorkoutOutput['weekMakeup']>;
+
+  function renderCardWithMakeup(
+    weekMakeup: WeekMakeup | undefined,
+    onStart: () => void = () => {},
+  ) {
+    const workout: PlannedWorkoutOutput = {
+      workoutTitle: '__engine_workout_title_fallback__',
+      sessionType: 'PUSH',
+      exerciseCount: 5,
+      estimatedDuration: 48,
+      intensityMod: 'normal',
+      exercises: [],
+      volumeKg: 0,
+      coachAdaptations: [],
+      ...(weekMakeup ? { weekMakeup } : {}),
+    };
+    return render(
+      <MemoryRouter>
+        <CoachTodayCard onStart={onStart} workout={workout} />
+      </MemoryRouter>,
+    );
+  }
+
+  // Blame words that must NEVER appear in the supportive copy (RO no-diacritics).
+  const BLAME = /ratat|sarit|in urma/i;
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(engineWrappers, 'getCoachTodayQuote').mockReturnValue(null);
+    vi.spyOn(engineWrappers, 'getLaggingSignal').mockReturnValue(null);
+    vi.spyOn(engineWrappers, 'getCalibrationMaturity').mockReturnValue(null);
+    vi.spyOn(engineWrappers, 'getReturnAfterMissSignal').mockReturnValue(null);
+    useWorkoutStore.setState({ sessionsHistory: [] });
+    // The note copy is RO-first (Daniel's locked tone) — force RO so the
+    // assertions read the real shipped strings ("piept", no blame words).
+    _resetI18nCache();
+    setLocale('ro');
+  });
+
+  afterEach(() => {
+    setLocale('en');
+    _resetI18nCache();
+  });
+
+  it('renders the note naming "piept" when one group was added, with NO blame words', () => {
+    renderCardWithMakeup({ added: { chest: 2 }, behind: {} });
+    const note = screen.getByTestId('coach-week-makeup-note');
+    expect(note).toBeInTheDocument();
+    expect(note.textContent).toMatch(/piept/);
+    // Forward/supportive framing — never blame the user.
+    expect(note.textContent).not.toMatch(BLAME);
+  });
+
+  it('reads two added groups naturally with "si"', () => {
+    renderCardWithMakeup({ added: { chest: 2, shoulders: 1 }, behind: {} });
+    const note = screen.getByTestId('coach-week-makeup-note');
+    expect(note.textContent).toMatch(/piept si umeri/);
+    expect(note.textContent).not.toMatch(BLAME);
+  });
+
+  it('summarizes 3+ added groups generically (cateva grupe)', () => {
+    renderCardWithMakeup({
+      added: { chest: 2, shoulders: 1, back: 3 },
+      behind: {},
+    });
+    const note = screen.getByTestId('coach-week-makeup-note');
+    expect(note.textContent).toMatch(/cateva grupe/);
+    expect(note.textContent).not.toMatch(/piept/);
+    expect(note.textContent).not.toMatch(BLAME);
+  });
+
+  it('renders NOTHING when weekMakeup is empty (both maps empty)', () => {
+    renderCardWithMakeup({ added: {}, behind: {} });
+    expect(screen.queryByTestId('coach-week-makeup-note')).not.toBeInTheDocument();
+  });
+
+  it('renders NOTHING when weekMakeup is absent on the plan', () => {
+    renderCardWithMakeup(undefined);
+    expect(screen.queryByTestId('coach-week-makeup-note')).not.toBeInTheDocument();
+  });
+
+  it('renders NOTHING when only non-positive added values are present', () => {
+    renderCardWithMakeup({ added: { chest: 0 }, behind: {} });
+    expect(screen.queryByTestId('coach-week-makeup-note')).not.toBeInTheDocument();
+  });
+
+  it('behind-only → gentle forward note (no blame), names the group', () => {
+    renderCardWithMakeup({ added: {}, behind: { back: 2 } });
+    const note = screen.getByTestId('coach-week-makeup-note');
+    expect(note.textContent).toMatch(/spate/);
+    expect(note.textContent).not.toMatch(BLAME);
   });
 });
 

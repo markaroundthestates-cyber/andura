@@ -136,6 +136,16 @@ export interface PlannedWorkoutOutput {
   // not copy). The CoachTodayCard composer (coachInsight) turns it into one
   // plain-language coach line. Empty array / absent → no line (graceful).
   coachAdaptations?: CoachAdaptation[];
+  // Intra-week deficit recovery (D-intra-week 2026-06-04) — `added` = make-up
+  // volume the engine ADDED to TODAY's session per Big-11 EN group (chest/back/
+  // ...); `behind` = deficit still outstanding after today (capped/fatigued).
+  // CoachTodayCard turns a non-empty `added` into a short supportive note.
+  // Optional so pre-feature plan-shape fixtures stay valid (additive); the
+  // engine adapter always emits it (empty objects on cold start).
+  weekMakeup?: {
+    added: Record<string, number>;
+    behind: Record<string, number>;
+  };
 }
 
 export interface WhyExerciseInput {

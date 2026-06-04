@@ -235,7 +235,26 @@
     },
     "recoveredQuote": "{group} recupereaza din {when} - hai sa o facem curat.",
     "fallbackQuote": "Astazi e ziua ta. Vino la sala — sinea ta viitoare iti va multumi.",
-    "laggingSignal": "{group} sub-volum {weeks} sapt - focus azi pe sesiune."
+    "laggingSignal": "{group} sub-volum {weeks} sapt - focus azi pe sesiune.",
+    "weekMakeup": {
+      "added": "Am adaugat putin {groups} azi ca sa prinzi ritmul saptamanii.",
+      "addedMany": "Azi punem accent pe cateva grupe ca sa echilibram saptamana.",
+      "behind": "In zilele urmatoare recuperam linistit {groups}.",
+      "groupsJoin": " si ",
+      "label": {
+        "chest": "piept",
+        "back": "spate",
+        "shoulders": "umeri",
+        "quads": "cvadriceps",
+        "hamstrings": "hamstring",
+        "glutes": "fesieri",
+        "calves": "gambe",
+        "biceps": "biceps",
+        "triceps": "triceps",
+        "forearms": "antebrate",
+        "abs": "abdomen"
+      }
+    }
   },
   "coachInsight": {
     "combine": "{primary} {secondary}",

@@ -235,7 +235,26 @@
     },
     "recoveredQuote": "{group} has recovered since {when} — let's nail it.",
     "fallbackQuote": "Today is your day. Show up — your future self will thank you.",
-    "laggingSignal": "{group} undervolume {weeks} wks — focus on it today."
+    "laggingSignal": "{group} undervolume {weeks} wks — focus on it today.",
+    "weekMakeup": {
+      "added": "Added a little {groups} today to get your week back in rhythm.",
+      "addedMany": "Putting a touch more focus on a few muscle groups today to balance your week.",
+      "behind": "We'll build your {groups} back up over the next few days.",
+      "groupsJoin": " and ",
+      "label": {
+        "chest": "chest",
+        "back": "back",
+        "shoulders": "shoulders",
+        "quads": "quads",
+        "hamstrings": "hamstrings",
+        "glutes": "glutes",
+        "calves": "calves",
+        "biceps": "biceps",
+        "triceps": "triceps",
+        "forearms": "forearms",
+        "abs": "abs"
+      }
+    }
   },
   "coachInsight": {
     "combine": "{primary} {secondary}",

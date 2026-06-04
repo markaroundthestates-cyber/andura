@@ -218,6 +218,49 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionsHistory]);
 
+  // Intra-week make-up note — the SUPPORTIVE, forward-looking line that makes
+  // the engine's intra-week adaptation visible (not silent). When the engine
+  // ADDED make-up volume to TODAY's session for one or more groups (weekMakeup
+  // .added has a positive entry), name the group(s) in a warm, no-blame line
+  // ("Am adaugat putin piept azi ca sa prinzi ritmul saptamanii"). 1-2 groups
+  // read naturally with "si"; 3+ collapse to a generic "cateva grupe" line.
+  // When nothing was added but a deficit remains (behind-only), show an even
+  // gentler forward note. Hidden entirely when both maps are empty (cold start /
+  // balanced week). Pure derivation from the workout prop — no engine call.
+  const weekMakeupNote = useMemo<string | null>(() => {
+    try {
+      const mk = workout?.weekMakeup;
+      if (!mk) return null;
+      const labelOf = (g: string): string => {
+        const k = `coachToday.weekMakeup.label.${g}`;
+        const ro = t(k);
+        // i18n returns the key itself on miss → fall back to the raw EN group.
+        return ro === k ? g : ro;
+      };
+      const positive = (m: Record<string, number>): string[] =>
+        Object.entries(m)
+          .filter(([, v]) => typeof v === 'number' && v > 0)
+          .map(([g]) => g);
+      const joinGroups = (groups: string[]): string =>
+        groups.map(labelOf).join(t('coachToday.weekMakeup.groupsJoin'));
+
+      const added = positive(mk.added ?? {});
+      if (added.length >= 3) return t('coachToday.weekMakeup.addedMany');
+      if (added.length >= 1) {
+        return t('coachToday.weekMakeup.added', { groups: joinGroups(added) });
+      }
+      // Behind-only — gentler forward note. Soft, optional; still no blame.
+      const behind = positive(mk.behind ?? {});
+      if (behind.length >= 1) {
+        const g = behind.length >= 3 ? null : joinGroups(behind);
+        return g ? t('coachToday.weekMakeup.behind', { groups: g }) : null;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }, [workout?.weekMakeup]);
+
   // START-side double-session guard (counterpart to the PostRpe finish-side
   // confirm shipped dc9400d6). When a gym session is already logged TODAY we
   // must NOT show the normal "Start session" button — an accidental tap would
@@ -349,6 +392,23 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
             style={{ color: 'var(--aqua)' }}
           />
           <span>{returnLine}</span>
+        </div>
+      )}
+      {weekMakeupNote && (
+        /* Intra-week make-up note — the supportive, forward-looking line that
+           makes the engine's intra-week adaptation visible. A calm aqua-tinted
+           note (reassurance, not an alarm), matching the no-shame return line.
+           Hidden entirely when nothing was added / no outstanding deficit. */
+        <div
+          data-testid="coach-week-makeup-note"
+          className="relative flex items-start gap-2 mt-2.5 text-sm leading-relaxed text-ink2"
+        >
+          <Sparkles
+            className="w-4 h-4 mt-0.5 shrink-0"
+            aria-hidden="true"
+            style={{ color: 'var(--aqua)' }}
+          />
+          <span>{weekMakeupNote}</span>
         </div>
       )}
       {todaySession ? (

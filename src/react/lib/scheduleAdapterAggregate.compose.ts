@@ -629,6 +629,11 @@ export async function composePlannedWorkoutToday(
       coachAdaptations: Array.isArray((plan as { coachAdaptations?: CoachAdaptation[] }).coachAdaptations)
         ? (plan as { coachAdaptations?: CoachAdaptation[] }).coachAdaptations!
         : [],
+      // Intra-week deficit recovery — pass the engine's make-up map through to the
+      // CoachTodayCard supportive note. Data only; the card composes the copy.
+      // Defaults to empty maps when a (pre-this-feature) plan shape omits it.
+      weekMakeup: (plan as { weekMakeup?: { added: Record<string, number>; behind: Record<string, number> } }).weekMakeup
+        ?? { added: {}, behind: {} },
     };
   } catch (e) {
     logger.warn('[scheduleAdapterAggregate] composePlannedWorkoutToday failed:', e);
