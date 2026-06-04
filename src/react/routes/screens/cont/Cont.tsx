@@ -38,6 +38,7 @@ import {
   Bell,
   Sparkles,
   Palette,
+  Library,
   XOctagon,
   SlidersHorizontal,
   ShieldCheck,
@@ -87,6 +88,7 @@ const SECTIONS: readonly ContSection[] = [
     titleKey: 'cont.sections.general',
     rows: [
       { id: 'appearance', labelKey: 'cont.rows.appearance', Icon: Palette, target: 'settings-appearance' },
+      { id: 'exercise-library', labelKey: 'cont.rows.exerciseLibrary', Icon: Library, target: 'settings-exercise-library' },
       { id: 'aparate-lipsa', labelKey: 'cont.rows.aparateLipsa', Icon: XOctagon, target: 'aparate-lipsa' },
       { id: 'prefs', labelKey: 'cont.rows.prefs', Icon: SlidersHorizontal, target: 'settings-prefs' },
     ],

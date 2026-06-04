@@ -4,7 +4,6 @@
     "version": 3,
     "description": "RO bundle — opt-in locale post 2026-05-28 paradigm flip (Daniel CEO directive: default = EN, RO ramane optiune din Cont). RO no-diacritics rule (D-LEGACY-064) PRESERVED — toate string-urile aici sunt fara diacritice. Toate cheile mirror EN bundle (bundle integrity test enforces parity). Wave C2 (i18n EN-zero-leak): adauga antrenor.* / workout.* / preview.* / energy.* / postRpe.* / postSummary.* / progres.* / istoric.* / coach.* / settings.* sub-trees pentru paritate cu en.json."
   },
-
   "why": {
     "title": "❓ De ce {exercise}?",
     "dismiss": "Am inteles",
@@ -16,7 +15,6 @@
       "recovery": "Reducem volumul la {exercise} pentru ca semnele de oboseala sunt prezente. E mai inteligent sa te refaci azi, ca sa revii cu forte proaspete la antrenamentul urmator."
     }
   },
-
   "modals": {
     "alternative": {
       "title": "Inlocuieste exercitiul"
@@ -29,7 +27,6 @@
       "title": "De ce sari azi?"
     }
   },
-
   "common": {
     "ok": "OK",
     "cancel": "Anuleaza",
@@ -63,7 +60,6 @@
     "daysAgo_one": "acum {n} zi",
     "daysAgo_other": "acum {n} zile"
   },
-
   "weekdays": {
     "full": {
       "0": "Duminica",
@@ -93,7 +89,6 @@
       "6": "sambata"
     }
   },
-
   "months": {
     "short": {
       "0": "ian",
@@ -138,7 +133,6 @@
       "11": "decembrie"
     }
   },
-
   "nav": {
     "tabs": {
       "antrenor": "Antrenor",
@@ -149,7 +143,6 @@
     "ariaLabel": "Navigare principala",
     "skipToContent": "Sari la continut"
   },
-
   "tabs": {
     "antrenor": {
       "title": "Antrenor"
@@ -165,7 +158,6 @@
       "title": "Cont"
     }
   },
-
   "antrenor": {
     "ariaLabel": "Antrenor home",
     "subtitle": "Cine te ghideaza in sala.",
@@ -218,7 +210,6 @@
       "readinessTiredNote": "Ia-o usor azi. Tinem nutritia un pic mai bland."
     }
   },
-
   "coachToday": {
     "ariaLabel": "Coach-ul recomanda azi",
     "kicker": "Coach-ul recomanda azi",
@@ -246,7 +237,6 @@
     "fallbackQuote": "Astazi e ziua ta. Vino la sala — sinea ta viitoare iti va multumi.",
     "laggingSignal": "{group} sub-volum {weeks} sapt - focus azi pe sesiune."
   },
-
   "coachInsight": {
     "combine": "{primary} {secondary}",
     "clause": {
@@ -257,24 +247,20 @@
       "imbalanceFix": "Adaugam volum pe {group} ca sa echilibram corpul."
     }
   },
-
   "coachCalibration": {
     "withCount": "Inca te invat - cam {n} sesiuni si te calibrez complet.",
     "noCount": "Inca te cunosc - planul se ascute cu fiecare sesiune."
   },
-
   "coachReturn": {
     "line_one": "Bine ai revenit - am reechilibrat restul saptamanii dupa antrenamentul sarit. Fara stres, planul s-a adaptat.",
     "line_other": "Bine ai revenit - am reechilibrat restul saptamanii dupa cele {n} antrenamente sarite. Fara stres, planul s-a adaptat."
   },
-
   "restOverlay": {
     "ariaLabel": "Pauza activa",
     "kicker": "Pauza",
     "recovering": "{name} recupereaza",
     "skipCta": "Sari pauza"
   },
-
   "coachRest": {
     "ariaLabel": "Coach-ul recomanda azi - recuperare",
     "kicker": "Coach-ul recomanda azi",
@@ -290,7 +276,6 @@
     "readinessSuffix": " · readiness {score}/100",
     "andJoiner": " si "
   },
-
   "workout": {
     "loading": "Se incarca antrenamentul...",
     "adjust": {
@@ -479,7 +464,6 @@
       "closeCta": "Inchide"
     }
   },
-
   "scheduleOverride": {
     "subHeaderTitle": "Schimbi planul de azi?",
     "heading": "Vrei alt antrenament azi?",
@@ -493,7 +477,6 @@
       "differentMuscleDescription": "Schimba target azi"
     }
   },
-
   "energyCheck": {
     "subHeaderTitle": "Cum te simti?",
     "title": "Cum te simti azi?",
@@ -532,7 +515,6 @@
       "other": "Altceva"
     }
   },
-
   "readinessVerdict": {
     "label": "Forma",
     "fatigue": "Oboseala",
@@ -540,7 +522,6 @@
     "moderate": "Moderata — calm",
     "low": "Joasa — fii inteligent"
   },
-
   "postRpe": {
     "title": "Cum a fost sesiunea per total?",
     "subtitle": "Un tap — calibreaza urmatorul antrenament.",
@@ -572,7 +553,6 @@
     "alreadyLoggedYes": "Mai logheaza unul",
     "alreadyLoggedNo": "Renunta"
   },
-
   "postSummary": {
     "title": "Sesiune buna.",
     "subtitle": "Iata rezumatul.",
@@ -634,7 +614,6 @@
     "streakLabel_other": "{n} zile consecutive",
     "finishCta": "Terminat"
   },
-
   "progres": {
     "heading": "Progres",
     "subtitle": "Body composition · estimari calibrate.",
@@ -801,7 +780,6 @@
       "distinctNote": "Diferit de graficul de trend - aceasta e lista bruta."
     }
   },
-
   "bodyComp": {
     "bmrStrip": {
       "ariaLabel": "Calorii baza BMR",
@@ -842,7 +820,6 @@
       "manualLogged": "Logat manual"
     }
   },
-
   "objective": {
     "heading": "Obiectiv",
     "noGoal": "Niciun obiectiv setat",
@@ -856,7 +833,6 @@
       "explozivitate": "Explozivitate"
     }
   },
-
   "obiectiv": {
     "heading": "Obiectiv",
     "goalCardAriaLabel": "Obiectiv antrenament",
@@ -896,7 +872,6 @@
       "switchedToAutoMaintain": "Ai ales mentenanta — nu mai poti slabi sau pune masa. Esti pe Auto."
     }
   },
-
   "istoric": {
     "heading": "Istoric",
     "empty": "Nu ai sesiuni logate inca.",
@@ -926,7 +901,6 @@
       "right": "Potrivit",
       "hard": "Greu"
     },
-
     "landing": {
       "statDaysStreak": "Zile consecutive",
       "statTotalSessions": "Sesiuni total",
@@ -942,7 +916,6 @@
       "cardSets": "seturi",
       "cardKg": "kg"
     },
-
     "detail": {
       "title": "Detaliu sesiune",
       "back": "Inapoi",
@@ -977,7 +950,6 @@
       "deleteConfirmYes": "Sterge",
       "deleteConfirmNo": "Pastreaza"
     },
-
     "prWallScreen": {
       "title": "Recorduri Personale",
       "description": "Cronologic descrescator. Toate recordurile personale logate.",
@@ -988,11 +960,9 @@
       "emptyBody": "Depaseste un maxim si recordul apare aici cu data + greutatea.",
       "rowLine": "{kg} kg x {reps} reps - {date}"
     },
-
     "prDate": {
       "format": "{day} {month} {year}"
     },
-
     "ratingsStrip": {
       "heading": "Cum au fost sesiunile",
       "window": "ultimele 90 zile",
@@ -1011,12 +981,10 @@
       "sessions_one": "{n} sesiune",
       "sessions_other": "{n} sesiuni"
     },
-
     "virtualList": {
       "ariaLabel": "Lista istoric sesiuni"
     }
   },
-
   "stats": {
     "streak": "Streak",
     "streakValue_one": "{n} zi",
@@ -1029,25 +997,21 @@
     "streakUnit_other": "zile",
     "naFallback": "NA"
   },
-
   "readinessVerdictWidget": {
     "ariaLabel": "Verdict readiness"
   },
-
   "alerts": {
     "title": "Atentie",
     "muscleOveruse": "{group} acumuleaza volum mare — gandeste-te la o zi mai usoara.",
     "stalling": "Progresul la {exercise} a stagnat — sa schimbam ceva.",
     "lowAdherence": "Ai ratat cateva sesiuni — sa revenim pe traseu."
   },
-
   "patterns": {
     "stagnation": "Stagnare la {exercise}",
     "lowAdherence": "Aderenta scazuta saptamana asta",
     "stagnationWeeks": "Stagnare {weeks} saptamani. Coach ajusteaza intensitatea.",
     "lowAdherenceFull": "Adherenta scazuta saptamana asta. Reia ritmul cu o sesiune scurta."
   },
-
   "proactive": {
     "proteinDeficit": "Proteina medie ultimele {days} zile: {avg}g. Tinta: {target}g. Creste aportul.",
     "sleepDebt": "Readiness sub {threshold} pentru {days} zile consecutive. Prioritizeaza somnul.",
@@ -1060,7 +1024,6 @@
     "inactivity": "Nu ai antrenat de {days} zile. Reincepe cu o sesiune usoara.",
     "lowHydration": "Hidratare azi: {ml}ml. Tinta: {target}ml. Bea apa inainte de antrenament."
   },
-
   "nutrition": {
     "title": "Nutritie azi",
     "kcal": "{kcal} kcal",
@@ -1068,14 +1031,12 @@
     "logCta": "Logheaza masa",
     "targetSuffix": "/ {target}"
   },
-
   "reactivate": {
     "title": "Bun venit inapoi",
     "body": "N-am vorbit de {days} zile. Fara presiune - reluam usor, cu o sesiune ajustata.",
     "startCta": "Incep usor",
     "dismissCta": "Mai tarziu"
   },
-
   "resumeSession": {
     "title": "Reia sesiunea",
     "body": "Ai pus pe pauza {when}. Continui de unde ai ramas?",
@@ -1084,19 +1045,16 @@
     "discardCta": "Renunta",
     "untitledMarker": "Sesiune fara nume"
   },
-
   "prNotification": {
     "ariaLabel": "PR detectat",
     "title": "PR sesiunea trecuta",
     "body": "Felicitari - record nou."
   },
-
   "calendar7Day": {
     "ariaLabel": "Urmatoarele 7 zile",
     "today": "Azi",
     "restDayShort": "Pauza"
   },
-
   "calendar": {
     "day7": {
       "title": "Program de antrenament",
@@ -1164,7 +1122,6 @@
       }
     }
   },
-
   "exitConfirm": {
     "title": "Iesi din sesiune?",
     "body": "Ce vrei sa faci cu progresul de pana acum?",
@@ -1173,7 +1130,6 @@
     "finishEarly": "Termina mai devreme",
     "discard": "Renunta"
   },
-
   "exitSheet": {
     "title": "Iesi din sesiune?",
     "progressLine": "Ai facut {done}/{total} exercitii. Cum continui?",
@@ -1182,7 +1138,6 @@
     "finishEarlyCta": "Termina mai devreme",
     "discardCta": "Renunt la sesiune"
   },
-
   "aaFriction": {
     "title": "Asta e un salt mare",
     "reasons": {
@@ -1193,7 +1148,6 @@
     "acknowledgeCta": "Am sa fiu atent — logheaza-l",
     "forceCta": "Forteaza logarea oricum"
   },
-
   "painButton": {
     "subHeaderTitle": "Ma doare ceva",
     "heading": "Unde te doare?",
@@ -1226,7 +1180,6 @@
     "medicalCue": "Daca nu se potriveste niciuna, opreste sesiunea si consulta un medic.",
     "reassureToast": "Siguranta e pe primul loc. Am ajustat restul sesiunii."
   },
-
   "setLog": {
     "targetLabel": "Tinta",
     "targetReps": "repetari",
@@ -1253,7 +1206,6 @@
     "addedWeightIncrease": "Creste greutatea adaugata",
     "youDidBodyweight": "repetari cu greutatea corpului"
   },
-
   "setRating": {
     "prompt": "Cum a fost?",
     "options": {
@@ -1262,7 +1214,6 @@
       "greu": "Greu"
     }
   },
-
   "perSetSafety": {
     "title": "Stai un pic",
     "body": "Ai marit ritmul peste obisnuit. Verifica forma si recupereaza inainte de set urmator.",
@@ -1275,14 +1226,12 @@
       "over_recommendation": "Mult peste greutatea recomandata"
     }
   },
-
   "inactivity": {
     "title": "Mai esti acolo?",
     "body": "Nu am vazut activitate de ceva timp. Vrei sa continui sau sa salvezi si sa iesi?",
     "continueCta": "Continua",
     "saveExitCta": "Salveaza si iesi"
   },
-
   "aparatLipsa": {
     "subHeaderTitle": "Aparate lipsa",
     "introPre": "Bifeaza aparatele pe care ",
@@ -1292,7 +1241,6 @@
     "learnNote": "Coach-ul invata din selectiile tale. Daca lipsesc mai multe aparate, propune sesiuni bodyweight sau cu alternative.",
     "saveCta": "Salveaza setarea"
   },
-
   "equipmentList": {
     "items": {
       "banca-inclinata": "Banca inclinata",
@@ -1307,7 +1255,6 @@
       "banda-elastica": "Banda elastica"
     }
   },
-
   "energyCause": {
     "subHeaderTitle": "Ce e mai greu azi?",
     "body": "Alege una. Coach-ul foloseste raspunsul ca sa adapteze sesiunea.",
@@ -1321,7 +1268,6 @@
       "other": "Altceva"
     }
   },
-
   "cevaNuMerge": {
     "subHeaderTitle": "Ce nu merge?",
     "body": "Spune-mi ce e si ajustez sesiunea.",
@@ -1333,7 +1279,6 @@
       "cancel": "Renunt azi"
     }
   },
-
   "equipmentSwap": {
     "subHeaderTitle": "Schimba echipament",
     "heading": "Aparate ocupate?",
@@ -1344,7 +1289,6 @@
     "swapPreviewSuffix": "in loc de {original}",
     "continueCta": "Continui adaptat"
   },
-
   "cont": {
     "sections": {
       "cont": "Cont",
@@ -1367,7 +1311,8 @@
       "danger": "Deconectare si Stergere",
       "support": "Suport",
       "about": "Despre Andura",
-      "faq": "FAQ"
+      "faq": "FAQ",
+      "exerciseLibrary": "Biblioteca de exercitii"
     },
     "appearance": {
       "heading": "Aspect",
@@ -1385,7 +1330,6 @@
     "version": "Andura v1.0.0",
     "versionTagline": "Antrenament cu cap."
   },
-
   "settings": {
     "prefs": {
       "title": "Setari",
@@ -1772,7 +1716,6 @@
       "submitCta": "Trimite"
     }
   },
-
   "confirm": {
     "commonAttention": "Atentie",
     "commonAcceptCta": "Confirma",
@@ -1865,7 +1808,6 @@
       "cancelCta": "Anuleaza"
     }
   },
-
   "coachEngine": {
     "fatigue": {
       "insufficient": {
@@ -1980,7 +1922,6 @@
       "safeFallback": "Pregateste-te de antrenament."
     }
   },
-
   "splash": {
     "appName": "Andura",
     "tagline": "Ghidul tau in sala",
@@ -1991,7 +1932,6 @@
     "signupCta": "Creaza Cont",
     "trustFooter": "Facut in Romania · Datele tale raman ale tale"
   },
-
   "auth": {
     "title": "Bun venit",
     "subtitle": "Introdu emailul ca sa primesti un link de conectare.",
@@ -2080,14 +2020,12 @@
       }
     }
   },
-
   "authCallback": {
     "verifyingTitle": "Te conectam...",
     "verifyingBody": "Asteapta o secunda.",
     "errorTitle": "Eroare la verificare",
     "errorBody": "Te redirectionam catre login."
   },
-
   "onboarding": {
     "progress": "{current} din {total}",
     "stepKicker": "PASUL {n}",
@@ -2197,12 +2135,12 @@
       },
       "frequency": {
         "2": "2 zile",
-        "2Subtitle": "Minim, recuperare ampla",
         "3": "3 zile",
-        "3Subtitle": "Incepem usor, recuperare ampla",
         "4": "4 zile",
-        "4Subtitle": "Ritm echilibrat",
         "5": "5 zile",
+        "2Subtitle": "Minim, recuperare ampla",
+        "3Subtitle": "Incepem usor, recuperare ampla",
+        "4Subtitle": "Ritm echilibrat",
         "5Subtitle": "Volum mare, atentie la recuperare"
       },
       "experience": {
@@ -2241,11 +2179,9 @@
       }
     }
   },
-
   "offline": {
     "banner": "Esti offline. Unele functii nu vor merge pana cand revii online."
   },
-
   "install": {
     "prompt": "Instaleaza Andura pentru experienta completa.",
     "installCta": "Instaleaza",
@@ -2255,51 +2191,41 @@
     "ariaLabel": "Instaleaza Andura",
     "dismissAria": "Inchide"
   },
-
   "errorBoundary": {
     "title": "Ceva nu a mers",
     "body": "S-a produs o eroare neasteptata. Poti incerca din nou sau reincarca pagina.",
     "retryCta": "Incearca din nou",
     "reloadCta": "Reincarca"
   },
-
   "notFound": {
     "title": "Pagina nu a fost gasita",
     "body": "Linkul pe care l-ai accesat nu exista sau a fost mutat.",
     "homeCta": "Inapoi acasa"
   },
-
   "offlineBanner": {
     "reconnected": "Reconectat - sync reluat.",
     "offline": "Esti offline — datele se salveaza local. Sync reluat la conexiune."
   },
-
   "swUpdate": {
     "updating": "Se actualizeaza..."
   },
-
   "toast": {
     "dismissAria": "Inchide notificare"
   },
-
   "loadingSkeleton": {
     "ariaLabel": "Se incarca"
   },
-
   "sessionPill": {
     "ariaLabel": "Reia sesiunea curenta",
     "sessionFallback": "Sesiune",
     "liveLabel": "{exercise} · {min} min"
   },
-
   "workoutHeader": {
     "exerciseProgress": "Ex {n}/{total}"
   },
-
   "tdeeStrip": {
     "healthyFloorMsg": "Esti sub greutatea sanatoasa — hai sa crestem treptat, sanatos. Tinta de azi are un mic surplus, nu deficit. Daca slabesti fara sa vrei, merita o vorba cu un medic."
   },
-
   "medicalDisclaimer": {
     "title": "Inainte sa incepem",
     "p1": "Andura este un coach AI. Recomandarile sunt informative, nu substitut pentru sfat medical.",
@@ -2309,7 +2235,6 @@
     "acknowledgeCta": "Am inteles, continui",
     "backCta": "Inapoi"
   },
-
   "legalPage": {
     "back": "Inapoi",
     "versionLine": "Versiune Beta · Actualizat 2026-05-31",
@@ -2371,10 +2296,56 @@
     "termsChangesBody": "Putem actualiza acesti termeni pe masura ce Andura evolueaza. Data din partea de sus arata versiunea curenta. Folosirea in continuare dupa o modificare inseamna ca accepti termenii actualizati.",
     "termsQuestions": "Intrebari:"
   },
-
   "update": {
     "prompt": "O versiune noua e disponibila.",
     "updateCta": "Actualizeaza acum",
     "dismissCta": "Mai tarziu"
+  },
+  "exerciseLibrary": {
+    "title": "Biblioteca de exercitii",
+    "groupsIntro": "Alege o grupa musculara pentru a vedea exercitiile.",
+    "empty": "Nu sunt exercitii disponibile inca.",
+    "exerciseCount_one": "{count} exercitiu",
+    "exerciseCount_other": "{count} exercitii",
+    "detail": {
+      "secondary": "Muschi secundari",
+      "equipment": "Echipament",
+      "tier": "Nivel",
+      "none": "-"
+    },
+    "tier": {
+      "1": "Esential",
+      "2": "Intermediar",
+      "3": "Avansat"
+    },
+    "muscle": {
+      "piept": "Piept",
+      "spate": "Spate",
+      "umeri": "Umeri",
+      "biceps": "Biceps",
+      "triceps": "Triceps",
+      "antebrate": "Antebrate",
+      "picioare-quads": "Cvadriceps",
+      "picioare-hamstrings": "Hamstring",
+      "picioare-fesieri": "Fesieri",
+      "fese": "Fese",
+      "fesieri": "Fesieri",
+      "picioare-gambe": "Gambe",
+      "gambe": "Gambe",
+      "core": "Abdomen",
+      "abdomen": "Abdomen",
+      "oblici": "Oblici",
+      "trapezi": "Trapezi",
+      "corp-intreg": "Corp intreg",
+      "cardio": "Cardio"
+    },
+    "equipment": {
+      "barbell": "Bara",
+      "dumbbell": "Gantere",
+      "machine": "Aparat",
+      "cable": "Cablu",
+      "bodyweight": "Greutate corporala",
+      "band": "Banda elastica"
+    }
   }
 }

@@ -4,7 +4,6 @@
     "version": 3,
     "description": "EN bundle — DEFAULT locale post 2026-05-28 paradigm flip (Daniel CEO directive). Clean fitness English: Workout / Reps / Sets / Body fat (industry-standard vocabulary, cf. Fitbod / Strong / Hevy). All values are user-facing — keep terse and Maria-65-readable (no jargon). Wave C2 (i18n EN-zero-leak): adds antrenor.* / workout.* / preview.* / energy.* / postRpe.* / postSummary.* / progres.* / istoric.* / coach.* / settings.* sub-trees so every screen surfaces clean EN with zero Romanian leak. RO counterpart in ro.json — must mirror this structure verbatim (bundle integrity test enforces parity)."
   },
-
   "why": {
     "title": "❓ Why {exercise}?",
     "dismiss": "Got it",
@@ -16,7 +15,6 @@
       "recovery": "We're trimming volume on {exercise} because fatigue signals are present. It's smarter to recover today so you come back fresh next session."
     }
   },
-
   "modals": {
     "alternative": {
       "title": "Swap exercise"
@@ -29,7 +27,6 @@
       "title": "Why skip today?"
     }
   },
-
   "common": {
     "ok": "OK",
     "cancel": "Cancel",
@@ -63,7 +60,6 @@
     "daysAgo_one": "{n} day ago",
     "daysAgo_other": "{n} days ago"
   },
-
   "weekdays": {
     "full": {
       "0": "Sunday",
@@ -93,7 +89,6 @@
       "6": "Sat"
     }
   },
-
   "months": {
     "short": {
       "0": "Jan",
@@ -138,7 +133,6 @@
       "11": "december"
     }
   },
-
   "nav": {
     "tabs": {
       "antrenor": "Coach",
@@ -149,7 +143,6 @@
     "ariaLabel": "Main navigation",
     "skipToContent": "Skip to content"
   },
-
   "tabs": {
     "antrenor": {
       "title": "Coach"
@@ -165,7 +158,6 @@
       "title": "Account"
     }
   },
-
   "antrenor": {
     "ariaLabel": "Coach home",
     "subtitle": "Your guide in the gym.",
@@ -218,7 +210,6 @@
       "readinessTiredNote": "Take it easy today. We'll keep your nutrition a touch gentler."
     }
   },
-
   "coachToday": {
     "ariaLabel": "Coach recommendation for today",
     "kicker": "Today's recommendation",
@@ -246,7 +237,6 @@
     "fallbackQuote": "Today is your day. Show up — your future self will thank you.",
     "laggingSignal": "{group} undervolume {weeks} wks — focus on it today."
   },
-
   "coachInsight": {
     "combine": "{primary} {secondary}",
     "clause": {
@@ -257,24 +247,20 @@
       "imbalanceFix": "Adding volume to your {group} to balance you out."
     }
   },
-
   "coachCalibration": {
     "withCount": "Still learning you — about {n} more sessions to dial this in.",
     "noCount": "Still getting to know you — the plan keeps sharpening with every session."
   },
-
   "coachReturn": {
     "line_one": "Welcome back — I've rebalanced the rest of your week around the missed session. No stress, the plan adapted.",
     "line_other": "Welcome back — I've rebalanced the rest of your week around the {n} missed sessions. No stress, the plan adapted."
   },
-
   "restOverlay": {
     "ariaLabel": "Active rest",
     "kicker": "Rest",
     "recovering": "{name} is recovering",
     "skipCta": "Skip rest"
   },
-
   "coachRest": {
     "ariaLabel": "Coach recommendation today — recovery",
     "kicker": "Today's recommendation",
@@ -290,7 +276,6 @@
     "readinessSuffix": " · readiness {score}/100",
     "andJoiner": " and "
   },
-
   "workout": {
     "loading": "Loading workout…",
     "adjust": {
@@ -479,7 +464,6 @@
       "closeCta": "Close"
     }
   },
-
   "scheduleOverride": {
     "subHeaderTitle": "Change today's plan?",
     "heading": "Want a different workout today?",
@@ -493,7 +477,6 @@
       "differentMuscleDescription": "Change today's target"
     }
   },
-
   "energyCheck": {
     "subHeaderTitle": "How do you feel?",
     "title": "How do you feel today?",
@@ -532,7 +515,6 @@
       "other": "Other"
     }
   },
-
   "readinessVerdict": {
     "label": "Readiness",
     "fatigue": "Fatigue",
@@ -540,7 +522,6 @@
     "moderate": "Moderate — steady",
     "low": "Low — be smart"
   },
-
   "postRpe": {
     "title": "How was the session overall?",
     "subtitle": "One tap — calibrates the next workout.",
@@ -572,7 +553,6 @@
     "alreadyLoggedYes": "Log another",
     "alreadyLoggedNo": "Cancel"
   },
-
   "postSummary": {
     "title": "Great session.",
     "subtitle": "Here's the recap.",
@@ -634,7 +614,6 @@
     "streakLabel_other": "{n} days in a row",
     "finishCta": "Done"
   },
-
   "progres": {
     "heading": "Progress",
     "subtitle": "Body composition · calibrated estimates.",
@@ -801,7 +780,6 @@
       "distinctNote": "Different from the trend chart - this is the raw list."
     }
   },
-
   "bodyComp": {
     "bmrStrip": {
       "ariaLabel": "Base calories BMR",
@@ -842,7 +820,6 @@
       "manualLogged": "Logged manually"
     }
   },
-
   "objective": {
     "heading": "Goal",
     "noGoal": "No goal set",
@@ -856,7 +833,6 @@
       "explozivitate": "Explosive power"
     }
   },
-
   "obiectiv": {
     "heading": "Goal",
     "goalCardAriaLabel": "Training goal",
@@ -896,7 +872,6 @@
       "switchedToAutoMaintain": "You chose to maintain — you can't lose fat or bulk. Switched to Auto."
     }
   },
-
   "istoric": {
     "heading": "History",
     "empty": "No sessions logged yet.",
@@ -926,7 +901,6 @@
       "right": "Just right",
       "hard": "Hard"
     },
-
     "landing": {
       "statDaysStreak": "Day streak",
       "statTotalSessions": "Total sessions",
@@ -942,7 +916,6 @@
       "cardSets": "sets",
       "cardKg": "kg"
     },
-
     "detail": {
       "title": "Session detail",
       "back": "Back",
@@ -977,7 +950,6 @@
       "deleteConfirmYes": "Delete",
       "deleteConfirmNo": "Keep"
     },
-
     "prWallScreen": {
       "title": "Personal Records",
       "description": "Reverse-chrono. All personal records you've logged.",
@@ -988,11 +960,9 @@
       "emptyBody": "Beat a max and the record shows up here with date + weight.",
       "rowLine": "{kg} kg x {reps} reps - {date}"
     },
-
     "prDate": {
       "format": "{day} {month} {year}"
     },
-
     "ratingsStrip": {
       "heading": "How your sessions felt",
       "window": "last 90 days",
@@ -1011,12 +981,10 @@
       "sessions_one": "{n} session",
       "sessions_other": "{n} sessions"
     },
-
     "virtualList": {
       "ariaLabel": "Session history list"
     }
   },
-
   "stats": {
     "streak": "Streak",
     "streakValue_one": "{n} day",
@@ -1029,25 +997,21 @@
     "streakUnit_other": "days",
     "naFallback": "NA"
   },
-
   "readinessVerdictWidget": {
     "ariaLabel": "Readiness verdict"
   },
-
   "alerts": {
     "title": "Heads up",
     "muscleOveruse": "{group} is logging high volume — consider a lighter day.",
     "stalling": "Progress on {exercise} has stalled — let's mix it up.",
     "lowAdherence": "You've missed a few sessions — let's get back on track."
   },
-
   "patterns": {
     "stagnation": "Stagnation on {exercise}",
     "lowAdherence": "Low adherence this week",
     "stagnationWeeks": "Stagnation for {weeks} weeks. Coach is adjusting the intensity.",
     "lowAdherenceFull": "Low adherence this week. Get back in rhythm with a short session."
   },
-
   "proactive": {
     "proteinDeficit": "Average protein over the last {days} days: {avg}g. Target: {target}g. Increase your intake.",
     "sleepDebt": "Readiness below {threshold} for {days} days in a row. Prioritize sleep.",
@@ -1060,7 +1024,6 @@
     "inactivity": "You haven't trained for {days} days. Start back with an easy session.",
     "lowHydration": "Hydration today: {ml}ml. Target: {target}ml. Drink water before training."
   },
-
   "nutrition": {
     "title": "Nutrition today",
     "kcal": "{kcal} kcal",
@@ -1068,14 +1031,12 @@
     "logCta": "Log meal",
     "targetSuffix": "/ {target}"
   },
-
   "reactivate": {
     "title": "Welcome back",
     "body": "We haven't talked in {days} days. No pressure - we'll ease back in with an adjusted session.",
     "startCta": "Start light",
     "dismissCta": "Later"
   },
-
   "resumeSession": {
     "title": "Resume session",
     "body": "You paused {when}. Continue where you left off?",
@@ -1084,19 +1045,16 @@
     "discardCta": "Discard",
     "untitledMarker": "Untitled session"
   },
-
   "prNotification": {
     "ariaLabel": "PR detected",
     "title": "PR last session",
     "body": "Congrats - new record."
   },
-
   "calendar7Day": {
     "ariaLabel": "Next 7 days",
     "today": "Today",
     "restDayShort": "Rest"
   },
-
   "calendar": {
     "day7": {
       "title": "Training schedule",
@@ -1164,7 +1122,6 @@
       }
     }
   },
-
   "exitConfirm": {
     "title": "Leave the session?",
     "body": "What do you want to do with the progress so far?",
@@ -1173,7 +1130,6 @@
     "finishEarly": "Finish early",
     "discard": "Discard"
   },
-
   "exitSheet": {
     "title": "Leave the session?",
     "progressLine": "You've done {done}/{total} exercises. How do you want to continue?",
@@ -1182,7 +1138,6 @@
     "finishEarlyCta": "Finish early",
     "discardCta": "Discard session"
   },
-
   "aaFriction": {
     "title": "That's a big jump",
     "reasons": {
@@ -1193,7 +1148,6 @@
     "acknowledgeCta": "I'll be careful — log it",
     "forceCta": "Force log anyway"
   },
-
   "painButton": {
     "subHeaderTitle": "Something hurts",
     "heading": "Where does it hurt?",
@@ -1226,7 +1180,6 @@
     "medicalCue": "If none fits, stop the session and consult a doctor.",
     "reassureToast": "Safety comes first. We've adjusted the rest of the session."
   },
-
   "setLog": {
     "targetLabel": "Target",
     "targetReps": "reps",
@@ -1253,7 +1206,6 @@
     "addedWeightIncrease": "Increase added weight",
     "youDidBodyweight": "bodyweight reps"
   },
-
   "setRating": {
     "prompt": "How was it?",
     "options": {
@@ -1262,7 +1214,6 @@
       "greu": "Hard"
     }
   },
-
   "perSetSafety": {
     "title": "Hold up",
     "body": "You picked up the pace beyond usual. Check your form and recover before the next set.",
@@ -1275,14 +1226,12 @@
       "over_recommendation": "Way above the recommended load"
     }
   },
-
   "inactivity": {
     "title": "Still there?",
     "body": "We haven't seen activity for a while. Want to continue or save and exit?",
     "continueCta": "Continue",
     "saveExitCta": "Save and exit"
   },
-
   "aparatLipsa": {
     "subHeaderTitle": "Missing equipment",
     "introPre": "Check the equipment you ",
@@ -1292,7 +1241,6 @@
     "learnNote": "The coach learns from your choices. If several machines are missing, it suggests bodyweight sessions or alternatives.",
     "saveCta": "Save the setting"
   },
-
   "equipmentList": {
     "items": {
       "banca-inclinata": "Incline bench",
@@ -1307,7 +1255,6 @@
       "banda-elastica": "Resistance band"
     }
   },
-
   "energyCause": {
     "subHeaderTitle": "What's hardest today?",
     "body": "Pick one. The coach uses your answer to adapt the session.",
@@ -1321,7 +1268,6 @@
       "other": "Something else"
     }
   },
-
   "cevaNuMerge": {
     "subHeaderTitle": "What's wrong?",
     "body": "Tell me what's up and I'll adjust the session.",
@@ -1333,7 +1279,6 @@
       "cancel": "Skip today"
     }
   },
-
   "equipmentSwap": {
     "subHeaderTitle": "Swap equipment",
     "heading": "Machines busy?",
@@ -1344,7 +1289,6 @@
     "swapPreviewSuffix": "instead of {original}",
     "continueCta": "Continue adapted"
   },
-
   "cont": {
     "sections": {
       "cont": "Account",
@@ -1367,7 +1311,8 @@
       "danger": "Logout & delete",
       "support": "Support",
       "about": "About Andura",
-      "faq": "FAQ"
+      "faq": "FAQ",
+      "exerciseLibrary": "Exercise library"
     },
     "appearance": {
       "heading": "Appearance",
@@ -1385,7 +1330,6 @@
     "version": "Andura v1.0.0",
     "versionTagline": "Training with brain."
   },
-
   "settings": {
     "prefs": {
       "title": "Settings",
@@ -1772,7 +1716,6 @@
       "submitCta": "Send"
     }
   },
-
   "confirm": {
     "commonAttention": "Heads up",
     "commonAcceptCta": "Confirm",
@@ -1865,7 +1808,6 @@
       "cancelCta": "Cancel"
     }
   },
-
   "coachEngine": {
     "fatigue": {
       "insufficient": {
@@ -1980,7 +1922,6 @@
       "safeFallback": "Get ready to train."
     }
   },
-
   "splash": {
     "appName": "Andura",
     "tagline": "Your guide in the gym",
@@ -1991,7 +1932,6 @@
     "signupCta": "Create Account",
     "trustFooter": "Made in Romania · Your data stays yours"
   },
-
   "auth": {
     "title": "Welcome",
     "subtitle": "Enter your email to receive a sign-in link.",
@@ -2080,14 +2020,12 @@
       }
     }
   },
-
   "authCallback": {
     "verifyingTitle": "Signing you in...",
     "verifyingBody": "Just a second.",
     "errorTitle": "Verification error",
     "errorBody": "Redirecting you to login."
   },
-
   "onboarding": {
     "progress": "{current} of {total}",
     "stepKicker": "STEP {n}",
@@ -2197,12 +2135,12 @@
       },
       "frequency": {
         "2": "2 days",
-        "2Subtitle": "Minimum, ample recovery",
         "3": "3 days",
-        "3Subtitle": "Start easy, ample recovery",
         "4": "4 days",
-        "4Subtitle": "Balanced rhythm",
         "5": "5 days",
+        "2Subtitle": "Minimum, ample recovery",
+        "3Subtitle": "Start easy, ample recovery",
+        "4Subtitle": "Balanced rhythm",
         "5Subtitle": "High volume, mind the recovery"
       },
       "experience": {
@@ -2241,11 +2179,9 @@
       }
     }
   },
-
   "offline": {
     "banner": "You're offline. Some features won't work until you're back online."
   },
-
   "install": {
     "prompt": "Install Andura for the full experience.",
     "installCta": "Install",
@@ -2255,51 +2191,41 @@
     "ariaLabel": "Install Andura",
     "dismissAria": "Close"
   },
-
   "errorBoundary": {
     "title": "Something went wrong",
     "body": "An unexpected error occurred. You can try again or reload the page.",
     "retryCta": "Try again",
     "reloadCta": "Reload"
   },
-
   "notFound": {
     "title": "Page not found",
     "body": "The link you followed doesn't exist or has been moved.",
     "homeCta": "Back home"
   },
-
   "offlineBanner": {
     "reconnected": "Reconnected - sync resumed.",
     "offline": "You're offline — data is saved locally. Sync resumes when reconnected."
   },
-
   "swUpdate": {
     "updating": "Updating..."
   },
-
   "toast": {
     "dismissAria": "Close notification"
   },
-
   "loadingSkeleton": {
     "ariaLabel": "Loading"
   },
-
   "sessionPill": {
     "ariaLabel": "Resume current session",
     "sessionFallback": "Session",
     "liveLabel": "{exercise} · {min} min"
   },
-
   "workoutHeader": {
     "exerciseProgress": "Ex {n}/{total}"
   },
-
   "tdeeStrip": {
     "healthyFloorMsg": "You're below a healthy weight — let's grow gradually and healthily. Today's target has a small surplus, not a deficit. If you're losing weight unintentionally, it's worth a word with a doctor."
   },
-
   "medicalDisclaimer": {
     "title": "Before we begin",
     "p1": "Andura is an AI coach. The recommendations are informational, not a substitute for medical advice.",
@@ -2309,7 +2235,6 @@
     "acknowledgeCta": "Got it, continue",
     "backCta": "Back"
   },
-
   "legalPage": {
     "back": "Back",
     "versionLine": "Beta version · Updated 2026-05-31",
@@ -2371,10 +2296,56 @@
     "termsChangesBody": "We may update these terms as Andura evolves. The date at the top shows the current version. Continued use after a change means you accept the updated terms.",
     "termsQuestions": "Questions:"
   },
-
   "update": {
     "prompt": "A new version is available.",
     "updateCta": "Update now",
     "dismissCta": "Later"
+  },
+  "exerciseLibrary": {
+    "title": "Exercise library",
+    "groupsIntro": "Pick a muscle group to see its exercises.",
+    "empty": "No exercises available yet.",
+    "exerciseCount_one": "{count} exercise",
+    "exerciseCount_other": "{count} exercises",
+    "detail": {
+      "secondary": "Secondary muscles",
+      "equipment": "Equipment",
+      "tier": "Tier",
+      "none": "-"
+    },
+    "tier": {
+      "1": "Essential",
+      "2": "Intermediate",
+      "3": "Advanced"
+    },
+    "muscle": {
+      "piept": "Chest",
+      "spate": "Back",
+      "umeri": "Shoulders",
+      "biceps": "Biceps",
+      "triceps": "Triceps",
+      "antebrate": "Forearms",
+      "picioare-quads": "Quads",
+      "picioare-hamstrings": "Hamstrings",
+      "picioare-fesieri": "Glutes",
+      "fese": "Glutes",
+      "fesieri": "Glutes",
+      "picioare-gambe": "Calves",
+      "gambe": "Calves",
+      "core": "Core",
+      "abdomen": "Core",
+      "oblici": "Obliques",
+      "trapezi": "Traps",
+      "corp-intreg": "Full body",
+      "cardio": "Cardio"
+    },
+    "equipment": {
+      "barbell": "Barbell",
+      "dumbbell": "Dumbbells",
+      "machine": "Machine",
+      "cable": "Cable",
+      "bodyweight": "Bodyweight",
+      "band": "Resistance band"
+    }
   }
 }

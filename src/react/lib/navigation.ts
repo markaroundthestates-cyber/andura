@@ -39,7 +39,7 @@ export type GotoScreen =
   | 'log-weight' | 'weight-log-list'
   // Phase 6 Cont sub-screens (task_09-17)
   | 'settings-profile' | 'settings-notifications' | 'settings-subscription'
-  | 'settings-appearance' | 'settings-prefs' | 'settings-privacy'
+  | 'settings-appearance' | 'settings-prefs' | 'settings-exercise-library' | 'settings-privacy'
   | 'settings-terms' | 'settings-export' | 'settings-import' | 'settings-danger'
   | 'settings-about' | 'settings-support' | 'settings-faq'
   // §D047 RIP-OUT drill-down confirm screens (A003 ConfirmModal replacement)
@@ -100,6 +100,10 @@ export function gotoPath(screen: GotoScreen): string {
   // PARITY-MISSING-SCREENS Wave 2e — Progres + Istoric standalone sub-screens
   if (screen === 'weight-timeline') return '/app/progres/weight-timeline';
   if (screen === 'pr-wall') return '/app/istoric/pr-wall';
+
+  // Exercise Library — Cont › General drill-down (CORE_AUTO by muscle group).
+  // Explicit path (NOT the settings-* convention) per spec: /app/cont/exercise-library.
+  if (screen === 'settings-exercise-library') return '/app/cont/exercise-library';
 
   // Phase 6 Cont sub-screens (task_09-17, nested sub /app/cont)
   if (

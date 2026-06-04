@@ -84,6 +84,8 @@ const SettingsNotifications = lazy(() => import('./screens/cont/SettingsNotifica
 const SettingsSubscription = lazy(() => import('./screens/cont/SettingsSubscription').then((m) => ({ default: m.SettingsSubscription })));
 const SettingsAppearance = lazy(() => import('./screens/cont/SettingsAppearance').then((m) => ({ default: m.SettingsAppearance })));
 const SettingsPrefs = lazy(() => import('./screens/cont/SettingsPrefs').then((m) => ({ default: m.SettingsPrefs })));
+// Exercise Library — Cont › General drill-down (CORE_AUTO by muscle group).
+const ExerciseLibrary = lazy(() => import('./screens/cont/ExerciseLibrary').then((m) => ({ default: m.ExerciseLibrary })));
 const SettingsPrivacy = lazy(() => import('./screens/cont/SettingsPrivacy').then((m) => ({ default: m.SettingsPrivacy })));
 const SettingsTerms = lazy(() => import('./screens/cont/SettingsTerms').then((m) => ({ default: m.SettingsTerms })));
 const SettingsExport = lazy(() => import('./screens/cont/SettingsExport').then((m) => ({ default: m.SettingsExport })));
@@ -215,6 +217,7 @@ export const router = createBrowserRouter([
           { path: 'settings-subscription', element: <LazyRoute><SettingsSubscription /></LazyRoute> },
           { path: 'settings-appearance', element: <LazyRoute><SettingsAppearance /></LazyRoute> },
           { path: 'settings-prefs', element: <LazyRoute><SettingsPrefs /></LazyRoute> },
+          { path: 'exercise-library', element: <LazyRoute><ExerciseLibrary /></LazyRoute> },
           { path: 'settings-privacy', element: <LazyRoute><SettingsPrivacy /></LazyRoute> },
           { path: 'settings-terms', element: <LazyRoute><SettingsTerms /></LazyRoute> },
           { path: 'settings-export', element: <LazyRoute><SettingsExport /></LazyRoute> },
