@@ -850,3 +850,34 @@ describe('DP.getSmartRecommendation — post-session rating gate', () => {
     expect(r.kg).toBeLessThanOrEqual(56);
   });
 });
+
+// ── REAL coarse-rating→RPE scale guard (Daniel 2026-06-04) ───────────────────
+// Production never logs RPE 9 — the per-set coarse rating maps to a COMPRESSED
+// scale (workoutStore RATING_TO_RPE: usor=6.5 / potrivit=7.5 / greu=8.5). The DP
+// thresholds MUST be calibrated to those exact values, or 'greu' silently falls
+// into MEDIUM (mildly increases) and the coach feels unresponsive. These tests
+// drive the EXACT production values so a future threshold drift fails here.
+describe('DP._recommendRaw — REAL rating→RPE scale (6.5 / 7.5 / 8.5)', () => {
+  it('greu (8.5) → HARD: holds weight AND rep target, never increases', () => {
+    store['logs'] = [log('Cable Row', 56, 9, 8.5)];
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.status).toBe('TOO HEAVY');
+    expect(r.kg).toBe(56);
+    expect(r.repsTarget).toBeLessThanOrEqual(9); // never bumped above what was done
+  });
+
+  it('usor (6.5) below top → EASY: steps the rep target up +1 this session', () => {
+    store['logs'] = [log('Cable Row', 56, 9, 6.5)];
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.status).toBe('INCREASE');
+    expect(r.repsTarget).toBe(10); // min(rMax, 9+1)
+  });
+
+  it('potrivit (7.5) below top → MEDIUM: modest +1 rep, weight held', () => {
+    store['logs'] = [log('Cable Row', 56, 9, 7.5)];
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.status).toBe('CONSOLIDATE');
+    expect(r.repsTarget).toBe(10);
+    expect(r.kg).toBe(56);
+  });
+});

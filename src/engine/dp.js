@@ -193,11 +193,12 @@ export const DP = {
     // Per-observation deviation, clamped so an extreme single set can't dominate.
     let dev = loggedKg / recKg;
     dev = Math.max(0.7, Math.min(1.4, dev));
-    // Rating nudge: a hard set (≥9.5) shades the bucket down ~5%, an easy set
-    // (≤6.5) shades it up ~5% — small, honest, on top of the load deviation.
+    // Rating nudge: a hard set shades the bucket down ~5%, an easy set shades it
+    // up ~5% — small, honest, on top of the load deviation. Thresholds match the
+    // real coarse rating→RPE scale (greu=8.5 / usor=6.5), so >= 8.5 / <= 6.5.
     const rpe = Number(obs.lastRPE);
     if (Number.isFinite(rpe)) {
-      if (rpe >= 9.5) dev *= 0.95;
+      if (rpe >= 8.5) dev *= 0.95;
       else if (rpe <= 6.5) dev *= 1.05;
     }
     const nowMs = Number.isFinite(Number(obs.nowMs)) ? Number(obs.nowMs) : clockNow();
@@ -382,9 +383,11 @@ export const DP = {
     // holds the weight and never increases; MEDIUM does modest standard filling.
     const atTop = lastReps >= rMax;
 
-    // HARD (greu / lastRPE >= 9) → hold weight, never increase. Keep the rep
-    // target where it is (or −1 if it actually felt too heavy, RIR 1).
-    if (lastRPE >= 9) {
+    // HARD (greu) → hold weight, never increase. Keep the rep target where it is.
+    // Threshold calibrated to the REAL per-set rating→RPE scale (workoutStore
+    // RATING_TO_RPE: usor=6.5 / potrivit=7.5 / greu=8.5). The coarse rating never
+    // produces 9, so the gate is >= 8.5 (catches greu=8.5; potrivit=7.5 stays MEDIUM).
+    if (lastRPE >= 8.5) {
       const targetReps = Math.max(rMin, Math.min(lastReps, rMax));
       return {
         kg: lastW, repsTarget: targetReps, rir: 1,
