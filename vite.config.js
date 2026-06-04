@@ -89,6 +89,12 @@ export default defineConfig({
         globIgnores: [
           '**/assets/index-*.js',
           '**/assets/vendor-data-*.js',
+          // Wave 2 (2026-06-04) — interim exercise demo images (public-domain
+          // free-exercise-db, ~82 small webp). Kept OUT of the precache so they
+          // never bloat the PWA install: lazy-loaded by <img> only when an
+          // exercise card opens, then HTTP/runtime-cached. The app bundle +
+          // install size are unchanged (Daniel: "sa nu blocam andura... micute").
+          '**/exercise-media/**',
         ],
         cleanupOutdatedCaches: true,
         navigateFallback: '/index.html',
