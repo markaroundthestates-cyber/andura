@@ -422,7 +422,8 @@
       "swappedRefusal": "Inlocuit {original} cu {alt}",
       "missingNoAlt": "Lista a fost salvata. Nu am o alternativa pentru {name}. Poti sari exercitiul.",
       "missingPreserved": "Lista a fost salvata. Sesiunea continua nemodificata.",
-      "swappedMissing": "Inlocuit {original} cu {alt} — aparatul lipsa."
+      "swappedMissing": "Inlocuit {original} cu {alt} — aparatul lipsa.",
+      "finishedEarly": "Gata cu exercitiul asta, mergem mai departe."
     },
     "exit": {
       "title": "Iesi din sesiune?",

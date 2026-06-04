@@ -422,7 +422,8 @@
       "swappedRefusal": "Replaced {original} with {alt}",
       "missingNoAlt": "Saved. I don't have an alternative for {name}. You can skip this exercise.",
       "missingPreserved": "Saved. The session continues unchanged.",
-      "swappedMissing": "Replaced {original} with {alt} — missing equipment."
+      "swappedMissing": "Replaced {original} with {alt} — missing equipment.",
+      "finishedEarly": "Done with this one, moving on."
     },
     "exit": {
       "title": "Leave the session?",

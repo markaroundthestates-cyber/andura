@@ -67,6 +67,7 @@ import { useWakeLock } from './workout/useWakeLock';
 import { useWhyModalA11y } from './workout/useWhyModalA11y';
 import { useInactivityWatch } from './workout/useInactivityWatch';
 import { useWorkoutSwap } from './workout/useWorkoutSwap';
+import { toast } from '../../../lib/toast';
 
 // Phase 4 task_17: WV2_FALLBACK retired. Workout consumer of
 // engineWrappers.getTodayWorkout direct — empty state cand null (engine
@@ -627,18 +628,28 @@ export function Workout(): JSX.Element {
     setPhase('logging');
   }
 
+  // Shared finish-the-current-exercise mover. Last exercise → post-rpe (the
+  // session is done); otherwise advanceExercise() moves to the next exercise.
+  // advanceExercise only bumps exIdx — it never touches history[*], so the real
+  // logged sets of THIS exercise (and every earlier one) stay intact and NO
+  // empty/duplicate entry is created. Used by the ⋯ "Sari exercitiul" menu and
+  // by the early-finish path below.
+  const advanceOrFinish = useCallback((): void => {
+    if (isLastExercise) {
+      navigate(gotoPath('post-rpe'));
+      return;
+    }
+    advanceExercise();
+  }, [isLastExercise, navigate, advanceExercise]);
+
   // P-05 (MED) — ⋯ menu "Sari exercitiul curent". Daca e ultimul exercitiu →
   // post-rpe (finish, ca last set); altfel advanceExercise (next, fara
   // penalizare per copy mockup). bumpActivity reseteaza inactivity watch.
   // useCallback: passed to memoized SessionTimer — stable ref keeps memo intact.
   const handleSkipExercise = useCallback((): void => {
     bumpActivity();
-    if (isLastExercise) {
-      navigate(gotoPath('post-rpe'));
-      return;
-    }
-    advanceExercise();
-  }, [bumpActivity, isLastExercise, navigate, advanceExercise]);
+    advanceOrFinish();
+  }, [bumpActivity, advanceOrFinish]);
 
   // WP-5 moat — in-place substitution (Aparat ocupat / Nu vreau / Aparat lipsa)
   // for the CURRENT exercise. Extracted to useWorkoutSwap (behavior preserved):
@@ -647,7 +658,7 @@ export function Workout(): JSX.Element {
   const {
     aparatLipsaSheetOpen,
     handleOcupat,
-    handleNuVreau,
+    handleNuVreau: handleRefusalSwap,
     handleOpenAparatLipsa,
     handleCloseAparatLipsa,
     handleAparatLipsaConfirm,
@@ -662,6 +673,34 @@ export function Workout(): JSX.Element {
     bumpActivity,
     navigate,
   });
+
+  // P0 (Daniel 2026-06-04) — "Nu vreau" decision split. The refusal SWAP (a
+  // fresh same-muscle alternative restarted at set 1) is only honest when the
+  // user has NOT started this exercise: it means "I don't want to DO this
+  // movement, give me a substitute". Once at least one set is already logged for
+  // the current slot, "Nu vreau" means "I'm done with this one, skip the
+  // remaining set(s)" — finishing the exercise WITH its real logged sets, not
+  // refusing it. Offering a brand-new alternative there made the coach feel dumb
+  // and polluted history with a restarted, never-performed exercise.
+  //
+  // "Already started" = >=1 set logged for the current exercise this session
+  // (currentSetIdx === history[safeExIdx].length). Started → finish now (keep
+  // the logged sets, advanceOrFinish to next / post-rpe) with a calm supportive
+  // toast, NO swap call, NO injected alternative. Not started → the legitimate
+  // refusal swap is unchanged. Equipment-busy ("Aparat ocupat") + Aparat lipsa
+  // paths are untouched — those are real mid-set machine substitutions.
+  const handleNuVreau = useCallback((): void => {
+    bumpActivity();
+    if (currentSetIdx >= 1) {
+      advanceOrFinish();
+      toast.show({
+        message: t('workout.swap.finishedEarly'),
+        variant: 'success',
+      });
+      return;
+    }
+    handleRefusalSwap();
+  }, [bumpActivity, currentSetIdx, advanceOrFinish, handleRefusalSwap]);
 
   // §F-workout-05 — open the why-exercise explainer. Builds engine context on
   // tap (current readiness + recommendation kg vs last logged kg) so the verdict
