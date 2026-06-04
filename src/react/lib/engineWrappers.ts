@@ -77,10 +77,10 @@ import { captureException } from '../../util/sentry.js';
 
 // ── Hygiene-split sibling modules (re-exported below for barrel API) ──────
 import { applyMmiCapToWorkout } from './engineWrappers.mmi';
-import {
-  resolveSessionTitle,
-  dateForWeekdayIndex,
-} from './engineWrappers.session';
+// dateForWeekdayIndex is used in this module's body (getWorkoutForDay);
+// resolveSessionTitle is only re-exported below (no local use) — keep it out of
+// this import to avoid an unused-binding warning.
+import { dateForWeekdayIndex } from './engineWrappers.session';
 import {
   flattenSessionsToEngineLogs,
   estimateOneRM,
