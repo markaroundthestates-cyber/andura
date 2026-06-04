@@ -807,20 +807,22 @@ describe('Workout — "Nu vreau" finishes exercise when sets already logged (P0)
     });
   };
 
-  // Log set 1 of the current 4-set exercise, skip the rest, advance past the
-  // fast-sets window → back in logging on set 2 with history[0].length === 1
-  // (the action row is visible again). Mirrors the rest-timer describe helpers.
-  const logOneSetThenBackToLogging = (): void => {
-    logSet('Usor');
-    fireEvent.click(screen.getByTestId('rest-skip'));
-    advancePastFastSets();
+  // Log N sets of the current exercise, skipping the rest after each → back in
+  // logging with history[exIdx].length === N. Mirrors the rest-timer helpers.
+  const logSetsThenBackToLogging = (n: number): void => {
+    for (let i = 0; i < n; i++) {
+      logSet('Usor');
+      fireEvent.click(screen.getByTestId('rest-skip'));
+      advancePastFastSets();
+    }
   };
 
-  it('(a) >=1 set logged + "Nu vreau" → finishes exercise (advances), NO swap/navigate, logged sets preserved', async () => {
+  // Daniel 2026-06-04: finishing early is right only when you've done a MEANINGFUL
+  // chunk (>= half the prescribed sets). Bench Press has 4 sets → 2 = mostly done.
+  it('(a) mostly-done (>=half sets) + "Nu vreau" → finishes exercise (advances), NO swap/navigate, sets preserved', async () => {
     await renderWorkoutAndWait();
-    logOneSetThenBackToLogging();
-    // Precondition: one real set logged on exercise 0, back in logging on set 2.
-    expect(useWorkoutStore.getState().history[0]?.length).toBe(1);
+    logSetsThenBackToLogging(2); // 2 of 4 = mostly done
+    expect(useWorkoutStore.getState().history[0]?.length).toBe(2);
     expect(useWorkoutStore.getState().exIdx).toBe(0);
 
     fireEvent.click(screen.getByTestId('wv2-ex-action-nuvreau'));
@@ -828,13 +830,10 @@ describe('Workout — "Nu vreau" finishes exercise when sets already logged (P0)
     // Finished THIS exercise → advanced to the next (exIdx 0 → 1), NOT a refusal
     // swap (which would have navigated to ceva-nu-merge given no engineName).
     expect(useWorkoutStore.getState().exIdx).toBe(1);
-    // Still on the workout screen — no navigate away (the swap fallback would
-    // have unmounted Workout onto a LocationProbe route). No probe is rendered
-    // for the /workout route itself, so Workout's presence proves we stayed.
     expect(screen.getByTestId('workout')).toBeInTheDocument();
     expect(screen.queryByTestId('probe')).not.toBeInTheDocument();
-    // The real logged set is preserved; no restarted/empty alternative injected.
-    expect(useWorkoutStore.getState().history[0]?.length).toBe(1);
+    // The real logged sets are preserved; no restarted/empty alternative injected.
+    expect(useWorkoutStore.getState().history[0]?.length).toBe(2);
     expect(useWorkoutStore.getState().history[1]?.length ?? 0).toBe(0);
   });
 
@@ -854,15 +853,34 @@ describe('Workout — "Nu vreau" finishes exercise when sets already logged (P0)
     expect(useWorkoutStore.getState().exIdx).toBe(0);
   });
 
-  it('(c) last exercise + >=1 set + "Nu vreau" → goes to post-rpe (no swap)', async () => {
+  it('(b2) LOW completion (1 of 4 sets) + "Nu vreau" → swap, NOT abandon (Daniel: don\'t leave undertrained)', async () => {
+    // Barely started (1/4 < half) → finishing now would leave the user
+    // undertrained, so we fall to the legitimate same-muscle swap (still get the
+    // volume). The no-engineName fixture proves the SWAP path fired (navigate),
+    // not the early-finish branch (which never navigates away).
     await renderWorkoutAndWait();
-    // Jump to the last exercise (index 4 of the 5-fixture) with a started state:
-    // set exIdx via the store, then log one set so it counts as started.
+    logSetsThenBackToLogging(1); // 1 of 4 = barely started
+    expect(useWorkoutStore.getState().history[0]?.length).toBe(1);
+
+    fireEvent.click(screen.getByTestId('wv2-ex-action-nuvreau'));
+
+    expect(screen.getByTestId('probe')).toHaveAttribute(
+      'data-pathname',
+      '/app/antrenor/ceva-nu-merge'
+    );
+    // Did NOT silently finish/advance the exercise.
+    expect(useWorkoutStore.getState().exIdx).toBe(0);
+  });
+
+  it('(c) last exercise + mostly-done + "Nu vreau" → goes to post-rpe (no swap)', async () => {
+    await renderWorkoutAndWait();
+    // Jump to the last exercise (index 4 of the 5-fixture, 3 sets) started + mostly
+    // done: set exIdx via the store, then log 2 of 3 sets (>= half).
     act(() => {
       useWorkoutStore.setState({ exIdx: 4, phase: 'logging' });
     });
-    logOneSetThenBackToLogging();
-    expect(useWorkoutStore.getState().history[4]?.length).toBe(1);
+    logSetsThenBackToLogging(2);
+    expect(useWorkoutStore.getState().history[4]?.length).toBe(2);
 
     fireEvent.click(screen.getByTestId('wv2-ex-action-nuvreau'));
 
@@ -875,14 +893,14 @@ describe('Workout — "Nu vreau" finishes exercise when sets already logged (P0)
 
   it('(d) history after early-finish holds only the real performed sets — no junk/restart entry', async () => {
     await renderWorkoutAndWait();
-    logOneSetThenBackToLogging(); // history[0] = 1 real set (kg 22.5, reps 10)
+    logSetsThenBackToLogging(2); // history[0] = 2 real sets (kg 22.5, reps 10)
     fireEvent.click(screen.getByTestId('wv2-ex-action-nuvreau'));
 
     const state = useWorkoutStore.getState();
-    // Exactly one history slot (the started exercise), with exactly its 1 real
-    // set — no empty/duplicate entry from an un-started alternative.
+    // Exactly one history slot (the started exercise), with exactly its 2 real
+    // sets — no empty/duplicate entry from an un-started alternative.
     expect(Object.keys(state.history)).toEqual(['0']);
-    expect(state.history[0]?.length).toBe(1);
+    expect(state.history[0]?.length).toBe(2);
     expect(state.history[0]?.[0]?.reps).toBe(10);
   });
 });

@@ -691,7 +691,15 @@ export function Workout(): JSX.Element {
   // paths are untouched — those are real mid-set machine substitutions.
   const handleNuVreau = useCallback((): void => {
     bumpActivity();
-    if (currentSetIdx >= 1) {
+    // Daniel 2026-06-04 refinement: finishing early is right only when you've done
+    // a MEANINGFUL chunk (3/4 → done). But skipping after just 1/5 and abandoning
+    // the exercise leaves you undertrained — so a LOW-completion skip falls to the
+    // legitimate same-muscle swap (you still get the volume). Threshold: mostly
+    // done = at least half the prescribed sets, OR already on the last set.
+    const prescribed = hasWorkout ? currentExercise.sets : 0;
+    const mostlyDone =
+      currentSetIdx >= Math.ceil(prescribed / 2) || currentSetIdx + 1 >= prescribed;
+    if (currentSetIdx >= 1 && mostlyDone) {
       advanceOrFinish();
       toast.show({
         message: t('workout.swap.finishedEarly'),
@@ -700,7 +708,7 @@ export function Workout(): JSX.Element {
       return;
     }
     handleRefusalSwap();
-  }, [bumpActivity, currentSetIdx, advanceOrFinish, handleRefusalSwap]);
+  }, [bumpActivity, currentSetIdx, hasWorkout, currentExercise, advanceOrFinish, handleRefusalSwap]);
 
   // §F-workout-05 — open the why-exercise explainer. Builds engine context on
   // tap (current readiness + recommendation kg vs last logged kg) so the verdict
