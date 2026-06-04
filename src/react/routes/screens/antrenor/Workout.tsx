@@ -29,7 +29,7 @@
 import type { JSX } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { HelpCircle, Play, ChevronDown } from 'lucide-react';
+import { HelpCircle, Images, ChevronDown } from 'lucide-react';
 import { AparatLipsaSheet } from '../../../components/Workout/AparatLipsaSheet';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
@@ -1170,7 +1170,7 @@ export function Workout(): JSX.Element {
                   border: '1px solid color-mix(in oklab, var(--volt) 36%, transparent)',
                 }}
               >
-                <Play className="w-4 h-4" fill="currentColor" aria-hidden="true" />
+                <Images className="w-4 h-4" strokeWidth={1.8} aria-hidden="true" />
               </span>
               <span className="flex-1 min-w-0">
                 <Kicker color="var(--volt)">{t('workout.demo.eyebrow')}</Kicker>

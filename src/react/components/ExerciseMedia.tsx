@@ -139,6 +139,24 @@ export function ExerciseMedia({
     );
   }
 
+  // Card variant with two frames: show start + end of the movement side by side
+  // (free-db ships 0.jpg + 1.jpg = the two key positions) so a beginner sees the
+  // full range, not a single ambiguous still. Smaller variants stay single-image.
+  if (isCard && media.url2) {
+    return (
+      <div
+        className={`grid grid-cols-2 gap-1 overflow-hidden ${sizeClass} ${className}`}
+        data-testid={testId}
+        data-variant={variant}
+        role="img"
+        aria-label={alt}
+      >
+        <img className="w-full h-full object-cover" src={media.url} alt={`${alt} (1)`} loading="lazy" decoding="async" />
+        <img className="w-full h-full object-cover" src={media.url2} alt={`${alt} (2)`} loading="lazy" decoding="async" />
+      </div>
+    );
+  }
+
   return (
     <img
       className={`object-cover ${sizeClass} ${className}`}

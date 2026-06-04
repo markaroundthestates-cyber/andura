@@ -36,19 +36,19 @@ describe('exerciseMedia — interim public-domain images', () => {
   // Integrity: every slug the manifest claims must have a real file, and we don't
   // ship orphan webp files that nothing references. Guards against drift between
   // the generator (scripts/_fetch_exercise_media.cjs) and the committed assets.
-  it('manifest <-> public/exercise-media files stay in sync', () => {
+  it('manifest <-> public/exercise-media files stay in sync (both frames)', () => {
     expect(existsSync(MEDIA_DIR)).toBe(true);
-    const files = new Set(
-      readdirSync(MEDIA_DIR).filter((f) => f.endsWith('.webp')).map((f) => f.replace(/\.webp$/, '')),
-    );
-    expect(files.size).toBeGreaterThanOrEqual(80);
-    // Each on-disk image is reachable: getExerciseMedia for a name that slugifies
-    // to it returns that url (slug round-trips). We assert via the resolver on the
-    // slug itself (slug -> slug is idempotent under toMediaSlug for these).
-    for (const slug of files) {
+    const all = readdirSync(MEDIA_DIR).filter((f) => f.endsWith('.webp'));
+    // Primary frames (start of movement) = *.webp without the -2 suffix.
+    const primaries = all.filter((f) => !f.endsWith('-2.webp')).map((f) => f.replace(/\.webp$/, ''));
+    expect(primaries.length).toBeGreaterThanOrEqual(80);
+    for (const slug of primaries) {
       const m = getExerciseMedia(slug);
       expect(m, `orphan image not in manifest: ${slug}.webp`).not.toBeNull();
       expect(m!.url).toBe(`/exercise-media/${slug}.webp`);
+      // The second frame (end of movement) must exist + be wired.
+      expect(existsSync(join(MEDIA_DIR, `${slug}-2.webp`)), `missing 2nd frame: ${slug}-2.webp`).toBe(true);
+      expect(m!.url2).toBe(`/exercise-media/${slug}-2.webp`);
     }
   });
 });

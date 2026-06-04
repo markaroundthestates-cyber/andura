@@ -30,8 +30,11 @@ import { toExerciseDisplay } from './exerciseDisplay';
 export type ExerciseMediaType = 'image' | 'gif' | 'video' | 'lottie';
 
 export interface ExerciseMediaInfo {
-  /** Absolute or relative URL to the media asset. */
+  /** Absolute or relative URL to the media asset (start of the movement). */
   url: string;
+  /** Optional second frame (end of the movement) — shown side-by-side in the
+   *  card variant so the user sees the full range. */
+  url2?: string;
   /** Media kind — determines render: <img>, <video>, lottie player. */
   type: ExerciseMediaType;
   /** Provenance/credit (e.g. "WGER CC-BY-SA"). Visible only on the detail
@@ -90,7 +93,12 @@ function toMediaSlug(engineName: string): string {
 export function getExerciseMedia(engineName: string): ExerciseMediaInfo | null {
   const slug = toMediaSlug(engineName);
   if (!EXERCISE_MEDIA_SLUGS.has(slug)) return null;
-  return { url: `/exercise-media/${slug}.webp`, type: 'image', credit: 'Public domain' };
+  return {
+    url: `/exercise-media/${slug}.webp`,
+    url2: `/exercise-media/${slug}-2.webp`,
+    type: 'image',
+    credit: 'Public domain',
+  };
 }
 
 /**
