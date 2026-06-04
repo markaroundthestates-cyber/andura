@@ -17,6 +17,11 @@
 //   - engineWrappers.nutrition  — goal/phase/target kcal coherence math + AUTO
 //                                 phase detection (resolveActivePhase etc.)
 //   - engineWrappers.mmi        — MMI silent auto-cap (applyMmiCapToWorkout)
+//   - engineWrappers.session    — session-type title resolver + weekday-index
+//                                 Date helper (resolveSessionTitle etc.)
+//   - engineWrappers.shared     — non-adapter helpers shared by the adapters
+//                                 (flattenSessionsToEngineLogs / estimateOneRM /
+//                                 readPainCdl)
 // The instrumented engine ADAPTERS (try/catch + Sentry captureException) stay
 // in THIS file — the anti-drift gate (assert_all_adapters_instrumented) scans
 // this file's text for adapter instrumentation.
@@ -48,7 +53,6 @@ import {
 } from '../../engine/muscleRecovery.js';
 import { detectWeakGroups } from '../../engine/weaknessDetector.js';
 import { detectCalibrationLevel, CALIBRATION_LEVELS } from '../../engine/calibration.js';
-import { DB } from '../../db.js';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { useScheduleStore, weekStartIso } from '../stores/scheduleStore';
 import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
@@ -73,6 +77,15 @@ import { captureException } from '../../util/sentry.js';
 
 // ── Hygiene-split sibling modules (re-exported below for barrel API) ──────
 import { applyMmiCapToWorkout } from './engineWrappers.mmi';
+import {
+  resolveSessionTitle,
+  dateForWeekdayIndex,
+} from './engineWrappers.session';
+import {
+  flattenSessionsToEngineLogs,
+  estimateOneRM,
+  readPainCdl,
+} from './engineWrappers.shared';
 import {
   BASELINE_NUTRITION,
   readUserKcalFloor,
@@ -129,72 +142,8 @@ export type {
 export { resolveActivePhase, getAutoDetectedPhaseLabelRo } from './engineWrappers.nutrition';
 // MMI silent auto-cap:
 export { applyMmiCapToWorkout } from './engineWrappers.mmi';
-
-// ── Whitelisted engine session-type tags (DAY_TO_SESSION_TYPE) ───────────
-// Each maps to a workout.sessionTitle.* i18n key; anything else → generic
-// fallback. Keeps the title HONEST per-day instead of the old hardcoded "Push".
-const SESSION_TYPE_KEYS = new Set([
-  'PUSH',
-  'PULL',
-  // Volume-driven frequency split (2026-06-02) cluster tags:
-  'LEGS',
-  'LOWER',
-  'UPPER',
-  'FULL',
-  // Legacy absolute-weekday tags (kept for back-compat resolution):
-  'UPPER_PICIOARE',
-  'UMERI_BRATE',
-  'FULL_UPPER',
-]);
-
-/**
- * Localized per-day workout title from the engine session-type tag.
- *
- * Bugatti truth fix — the engine never emitted a real per-day workoutTitle
- * (always the fallback sentinel), so every render boundary fell to a HARDCODED
- * "Push (piept si umeri)" copy → a PULL day still showed "Push". Now the engine
- * threads its real sessionType (PUSH/PULL/...); this resolves it to the matching
- * localized title. Unknown/absent sessionType → generic localized fallback (NU
- * a fabricated Push label).
- */
-export function resolveSessionTitle(sessionType: string | null | undefined): string {
-  if (typeof sessionType === 'string' && SESSION_TYPE_KEYS.has(sessionType)) {
-    return __t(`workout.sessionTitle.${sessionType}`);
-  }
-  return __t('workout.sessionTitle.fallback');
-}
-
-// ── Shared helpers ───────────────────────────────────────────────────────
-
-/**
- * Flatten workoutStore sessionsHistory → engine logs shape {ex, ts, w, reps}.
- * Shared helper extracted from 3x duplication (getPatternsBanner STAGNATION +
- * getCoachRestReason + getLaggingSignal) per code review nuclear chat 5 HIGH-4
- * DRY fix. Drift risk eliminated: single canonical mapping for engine consumers
- * (detectGlobalStagnation / getRecoveryByGroup / detectWeakGroups).
- *
- * Defensive: session.exercises optional (backward compat pre-Phase-5-task-03
- * persisted sessions fără breakdown). Skips sessions cu exercises absent.
- */
-function flattenSessionsToEngineLogs(
-  sessions: ReadonlyArray<{ exercises?: ReadonlyArray<{ exerciseName: string; sets: ReadonlyArray<{ kg: number; reps: number; timestamp: number }> }> }>,
-): Array<{ ex: string; ts: number; w: number; reps: number }> {
-  const logs: Array<{ ex: string; ts: number; w: number; reps: number }> = [];
-  for (const session of sessions) {
-    if (!session.exercises) continue;
-    for (const ex of session.exercises) {
-      for (const set of ex.sets) {
-        logs.push({
-          ex: ex.exerciseName,
-          ts: set.timestamp,
-          w: set.kg,
-          reps: set.reps,
-        });
-      }
-    }
-  }
-  return logs;
-}
+// Session-type title resolver + weekday-index Date helper (public surface):
+export { resolveSessionTitle, dateForWeekdayIndex } from './engineWrappers.session';
 
 // ── Wrappers cu try/catch fallback safe ──────────────────────────────────
 
@@ -291,23 +240,12 @@ export function getFatigue(): FatigueOutput | null {
  * volume; baseline entries excluded.
  *
  * Engine dep: src/engine/prEngine.js#detectPR.
- */
-/**
- * Phase 4 task_18: enrich engine detectPR output cu 1RM estimate (Epley
- * formula `kg * (1 + reps/30)`) + deltaKg + deltaPct fields. Pure function
- * augment — engine logic unchanged. Backward compat consumers that read only
- * type/kg/reps/prevBest (existing fields preserved).
  *
- * Epley chosen vs Brzycki: Epley simpler closed-form, well-known în
- * fitness apps, accurate la 1-15 rep range typical training context.
- * Brzycki alternative `kg * 36 / (37 - reps)` deferred Phase 5+ daca
- * needed cross-formula calibration.
+ * Phase 4 task_18: enriches engine detectPR output cu 1RM estimate (Epley
+ * formula via estimateOneRM) + deltaKg + deltaPct fields. Pure augment —
+ * engine logic unchanged. Backward compat consumers that read only
+ * type/kg/reps/prevBest (existing fields preserved).
  */
-function estimateOneRM(kg: number, reps: number): number {
-  if (kg <= 0 || reps <= 0) return 0;
-  return Math.round(kg * (1 + reps / 30) * 10) / 10; // 1 decimal precision
-}
-
 export function getPRDelta(
   exercise: string,
   set: PRSet,
@@ -407,21 +345,6 @@ export async function getTodayWorkout(
     });
     return null;
   }
-}
-
-/**
- * Build a Date anchored to a given Monday-first weekday index (0=Mon … 6=Sun)
- * within the CURRENT week. `dayIdx === todayIdx` returns `now` unchanged so the
- * preview for today uses the live clock (identical to getTodayWorkout). Other
- * indices shift the date to the matching day of this week — the same week the
- * calendar override is committed for, so a rest/training override resolves
- * correctly (getCalendarOverride matches on weekStartIso). Pure.
- */
-export function dateForWeekdayIndex(dayIdx: number, now: Date = new Date()): Date {
-  const todayIdx = (now.getDay() + 6) % 7; // JS Sun=0 → Monday-first Mon=0
-  const target = new Date(now);
-  target.setDate(target.getDate() + (dayIdx - todayIdx));
-  return target;
 }
 
 /**
@@ -767,29 +690,6 @@ export function getProactiveAlerts(ctx: Record<string, unknown> = {}): Proactive
 // renders generic recovery message.
 
 const MAX_FATIGUED_GROUPS_DISPLAY = 2; // top-2 most fatigued shown in coach line
-
-// Pain CDL read (ADR-ENGINE-MATH-LOCKED-VALUES section 9, item 43-H2). I/O
-// boundary: read the append-only pain CDL persisted by PainButton
-// (DB('pain-cdl')) so getRecoveryByGroup can escalate the recovery state of a
-// muscle group with a recently-reported pain region. Engine core stays pure —
-// the data is passed in as an argument. Soft-fail -> undefined (recovery falls
-// back to log-only state, conservative baseline).
-const PAIN_CDL_KEY = 'pain-cdl';
-
-interface PainCdlEntry {
-  type?: string;
-  region?: string;
-  intensity?: 1 | 2 | 3;
-  ts?: number;
-}
-
-function readPainCdl(): PainCdlEntry[] | undefined {
-  try {
-    return (DB.get(PAIN_CDL_KEY) as PainCdlEntry[] | null) ?? undefined;
-  } catch {
-    return undefined;
-  }
-}
 
 /**
  * Composer §F-pass2-coachrest-01 — extract fatigued muscle groups + readiness
