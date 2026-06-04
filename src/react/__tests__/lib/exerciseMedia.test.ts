@@ -25,10 +25,9 @@ describe('exerciseMedia — interim public-domain images', () => {
   });
 
   it('a movement with NO curated image returns null (placeholder, never wrong image)', () => {
-    // The 6 genuinely-missing (no free-db equivalent even as a sibling) → placeholder.
+    // The 2 genuinely-missing (free-db only has the OPPOSITE muscle) → placeholder.
     expect(getExerciseMedia('Tibialis Raise')).toBeNull();
     expect(getExerciseMedia('Hip Abduction Machine')).toBeNull();
-    expect(getExerciseMedia('Plate Pinch Hold')).toBeNull();
     expect(getExerciseMedia('Some Esoteric Exercise')).toBeNull();
   });
 
