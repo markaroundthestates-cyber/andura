@@ -146,8 +146,12 @@ export function redistributeRecoveredVolumeToFreshSessionGroups(
   if (!balancedTargetsEN || typeof balancedTargetsEN !== 'object') {
     return { ...recoveredTargetsEN };
   }
+  // Valid Big-6 clusters always resolve; an unknown cluster falls back to the
+  // balanced full-body weight map (was a reference to an undefined FALLBACK_CLUSTER
+  // identifier — latent, never reached for valid clusters). The trailing `|| {}`
+  // keeps Object.keys() below safe (no-op redistribution) for any truly-unknown id.
   const weights =
-    CLUSTER_BIG6_TO_BIG11_WEIGHT[cluster] || CLUSTER_BIG6_TO_BIG11_WEIGHT[FALLBACK_CLUSTER];
+    CLUSTER_BIG6_TO_BIG11_WEIGHT[cluster] || CLUSTER_BIG6_TO_BIG11_WEIGHT.full || {};
   const state = recoveryStateRO && typeof recoveryStateRO === 'object' ? recoveryStateRO : {};
 
   // Sum the weekly volume the cut groups (in today's cluster) gave up, and tally
