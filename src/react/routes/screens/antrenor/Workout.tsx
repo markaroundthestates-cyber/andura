@@ -60,15 +60,13 @@ import { useCountUp } from '../../../hooks/useCountUp';
 import { DP } from '../../../../engine/dp.js';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { roundToEquipmentWeight } from '../../../../config/weights.js';
-import { resolveBusySwap, resolveMissingSwap, resolveRefusalSwap } from '../../../lib/substitution';
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../lib/scheduleAdapterAggregate';
-import { toast } from '../../../lib/toast';
-import { incrementRefusal } from '../../../../engine/schedule/scheduleAdapter.js';
 import { clearTodayReadiness } from '../../../../engine/readiness.js';
 import { t } from '../../../../i18n/index.js';
-
-const INACTIVITY_THRESHOLD_MIN = 7; // Mockup wv2 verbatim L4401
-const INACTIVITY_CHECK_INTERVAL_MS = 30_000; // Mockup wv2 verbatim L4404
+import { useWakeLock } from './workout/useWakeLock';
+import { useWhyModalA11y } from './workout/useWhyModalA11y';
+import { useInactivityWatch } from './workout/useInactivityWatch';
+import { useWorkoutSwap } from './workout/useWorkoutSwap';
 
 // Phase 4 task_17: WV2_FALLBACK retired. Workout consumer of
 // engineWrappers.getTodayWorkout direct — empty state cand null (engine
@@ -257,11 +255,6 @@ export function Workout(): JSX.Element {
   const [aaModalOpen, setAaModalOpen] = useState(false);
   const [aaReason, setAaReason] = useState<AggressiveReason | null>(null);
   const [aaPendingRating, setAaPendingRating] = useState<SetRating | null>(null);
-  // Phase 4 task_15 §A: inactivity watch state. lastActivityAt updates on
-  // input change + rating click + skip rest click. Interval 30s checks
-  // delta > 7 min → show prompt.
-  const [lastActivityAt, setLastActivityAt] = useState<number>(Date.now());
-  const [inactivityPromptOpen, setInactivityPromptOpen] = useState(false);
   // §F-pass2-setloginput-02 — SetLogInput parent state machine wire (deferred
   // tactical sibling per e02f0b94 "Parent state machine wire tactical sibling").
   // Mockup wv2 two-step within the logging phase (andura-clasic.html#L1463-1485):
@@ -277,12 +270,6 @@ export function Workout(): JSX.Element {
   // andura-clasic.html#L1449). Null = closed; string = whyEngine summary shown
   // in a bottom-sheet explainer. Built on tap so it reflects current readiness.
   const [whyText, setWhyText] = useState<string | null>(null);
-  // Daniel smoke 2026-05-28 #17 — in-session "Aparat lipsa" sheet open state.
-  // Tap the third action-row button -> sheet slides up -> user toggles items ->
-  // Salveaza persists wv2-missing-equipment (visible in Cont -> AparateLipsa on
-  // next mount) + recompose the current exercise via resolveMissingSwap if the
-  // new missing list now blocks its equipment.
-  const [aparatLipsaSheetOpen, setAparatLipsaSheetOpen] = useState(false);
   // Fix #2 — in-session RPE auto-correction notice (DP.checkInSessionAdjust).
   // Null = no adjustment surfaced; string = the engine's honest localized message
   // (e.g. "Ai dat greu - coboram la 8 reps pe setul urmator", or a weight twin in
@@ -305,12 +292,6 @@ export function Workout(): JSX.Element {
   useEffect(() => {
     setDemoOpen(false);
   }, [safeExIdx]);
-  // U-04 (MED) — why-modal focus management (auto-focus + Escape + restore +
-  // trap), paritate cu ExitConfirmSheet sister pattern. whyDismissRef = singurul
-  // buton ("Am inteles") → Tab trap pe el insusi.
-  const whyDismissRef = useRef<HTMLButtonElement | null>(null);
-  const whyPrevFocusRef = useRef<HTMLElement | null>(null);
-
   // Init session on mount cand idle (no paused snapshot resumed via Antrenor).
   // §44-C1: idle mode === no live session + no paused snapshot + no lastSession
   // priority. Resume case is mode=paused — Antrenor calls resumeSession() before
@@ -367,50 +348,9 @@ export function Workout(): JSX.Element {
     return () => clearInterval(interval);
   }, [phase, setPhase, runTransitionToNext]);
 
-  // Wake lock acquire on mount + release on unmount — fail silent.
-  // Phase 4 task_15 §B: visibilitychange re-acquire pattern. Browser tab
-  // background → OS auto-releases wake lock. Foreground re-acquires dacă lock
-  // null. lockRef shared mutable reference cu event handler.
-  const lockRef = useRef<{ release: () => Promise<void> } | null>(null);
-  useEffect(() => {
-    interface WakeLockSentinel {
-      release: () => Promise<void>;
-    }
-    interface NavigatorWithWakeLock {
-      wakeLock?: { request: (type: 'screen') => Promise<WakeLockSentinel> };
-    }
-    const nav = navigator as unknown as NavigatorWithWakeLock;
-    const acquire = (): void => {
-      if (!nav.wakeLock || lockRef.current) return;
-      nav.wakeLock
-        .request('screen')
-        .then((sentinel) => {
-          lockRef.current = sentinel;
-        })
-        .catch(() => {
-          /* fail silent */
-        });
-    };
-    acquire();
-    function handleVisibilityChange(): void {
-      if (document.visibilityState === 'visible' && !lockRef.current) {
-        acquire();
-      } else if (document.visibilityState === 'hidden') {
-        // OS auto-releases; clear ref so foreground re-acquires fresh.
-        lockRef.current = null;
-      }
-    }
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      if (lockRef.current) {
-        lockRef.current.release().catch(() => {
-          /* fail silent */
-        });
-        lockRef.current = null;
-      }
-    };
-  }, []);
+  // Wake lock acquire on mount + release on unmount (+ visibilitychange
+  // re-acquire) — fail silent. Extracted to useWakeLock (behavior preserved).
+  useWakeLock();
 
   // Reset kg/reps inputs when advancing exercise. U-03: kg target reflects
   // session intensityMod (targetKg derived above) — depend on it so an
@@ -438,52 +378,15 @@ export function Workout(): JSX.Element {
     setInputDirty(false);
   }, [safeExIdx, currentSetIdx]);
 
-  // Phase 4 task_15 §A: inactivity watch — interval 30s checks idle minutes
-  // vs lastActivityAt; > 7 min triggers prompt overlay. Reset triggers
-  // (input/rating/skip) bumpActivity() inline.
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const idleMin = (Date.now() - lastActivityAt) / 60_000;
-      if (idleMin > INACTIVITY_THRESHOLD_MIN) {
-        setInactivityPromptOpen(true);
-      }
-    }, INACTIVITY_CHECK_INTERVAL_MS);
-    return () => clearInterval(interval);
-  }, [lastActivityAt]);
+  // Phase 4 task_15 §A: inactivity watch (interval 30s + > 7 min prompt) +
+  // bumpActivity reset — extracted to useInactivityWatch (behavior preserved,
+  // effect order #8 unchanged at this position).
+  const { inactivityPromptOpen, bumpActivity } = useInactivityWatch();
 
-  // U-04 (MED) — why-modal a11y: auto-focus "Am inteles" la open, Escape inchide,
-  // Tab trap (singur buton → ramane focus pe el), restore focus la invoker on
-  // close. Paritate cu ExitConfirmSheet/AaFrictionModal sister pattern (WCAG
-  // 2.1.1 / 2.4.3). Open gated pe whyText !== null.
-  useEffect(() => {
-    if (whyText === null) return;
-    whyPrevFocusRef.current = document.activeElement as HTMLElement | null;
-    whyDismissRef.current?.focus();
-    function onKey(e: KeyboardEvent): void {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        setWhyText(null);
-        return;
-      }
-      if (e.key === 'Tab') {
-        // Singur element focusabil → trap pe el insusi.
-        e.preventDefault();
-        whyDismissRef.current?.focus();
-      }
-    }
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      whyPrevFocusRef.current?.focus();
-    };
-  }, [whyText]);
-
-  // useCallback: referenced by handlers passed to memoized SessionTimer; only
-  // touches stable state setters so the empty dep array is correct + stable.
-  const bumpActivity = useCallback((): void => {
-    setLastActivityAt(Date.now());
-    setInactivityPromptOpen(false);
-  }, []);
+  // U-04 (MED) — why-modal a11y (auto-focus + Escape + Tab-trap + restore) +
+  // whyDismissRef ownership — extracted to useWhyModalA11y (behavior preserved,
+  // effect order #9 unchanged at this position; effect deps stay [whyText]).
+  const whyDismissRef = useWhyModalA11y(whyText, setWhyText);
 
   // Pulse arc 2026-05-29 (blueprint C3-g) — live session volume = Σ kg×reps
   // across every logged set so far (the mockup's count-up header stat). Derived
@@ -737,182 +640,28 @@ export function Workout(): JSX.Element {
     advanceExercise();
   }, [bumpActivity, isLastExercise, navigate, advanceExercise]);
 
-  // WP-5 moat — in-place substitution for the CURRENT exercise. The exercise
-  // list lives in this screen's local `exercises` state; the store owns the
-  // logged-set integrity. Swap = replace exercises[safeExIdx] with the
-  // alternative + swapExercise(safeExIdx) (drops partial sets of the original,
-  // restarts at set 1) + a NAMED toast (the key to the moat: the user SEES the
-  // alternative). Honest noAlt → toast tells the user to skip it (anti-
-  // paternalism, never force an inferior movement). Replaces the old behavior
-  // where the buttons navigated AWAY and the user never saw a named alternative.
-  //
-  // Daniel smoke 2026-05-28 (#2 + #6 + #3.2) — REFUSAL path now consumes a
-  // per-exIdx tried-set so each "Nu vreau" tap surfaces a DIFFERENT same-muscle
-  // candidate (no 2-element ping-pong). On exhaustion (every same-muscle option
-  // tried this session) the toast switches to "ai incercat tot pentru
-  // [muscleGroup]". Equipment paths unchanged (different semantic).
-  const applySwap = useCallback(
-    (engineName: string, kind: 'busy' | 'refusal'): void => {
-      bumpActivity();
-      let res;
-      if (kind === 'busy') {
-        // BUG 5 — exclude every OTHER session exercise (already-completed
-        // earlier + still-pending later) so a busy-swap never returns a movement
-        // that exists elsewhere in the session (the "chest fly twice" bug).
-        const otherNames = (exercises ?? [])
-          .filter((_, i) => i !== safeExIdx)
-          .map((ex) => ex.engineName ?? ex.name)
-          .filter((n): n is string => typeof n === 'string' && n.length > 0);
-        res = resolveBusySwap(engineName, safeExIdx, otherNames);
-      } else {
-        // Refusal: build tried-set = the original we're about to swap out + all
-        // names previously refused at this slot. markRefusalTried below records
-        // the alternative we surface so the NEXT tap skips it. Daniel verbatim
-        // "nu sa dea doar 2 alternative" — pool walks the whole same-muscle
-        // library before exhausting.
-        // BUG 6 — also exclude every OTHER session exercise (already-completed +
-        // still-pending) so a refusal substitute never re-offers a movement that
-        // exists elsewhere in the session (Farmer's Walk offered twice / an already-
-        // logged curl re-offered). Mirrors the busy path's otherNames exclusion.
-        const otherNames = (exercises ?? [])
-          .filter((_, i) => i !== safeExIdx)
-          .map((ex) => ex.engineName ?? ex.name)
-          .filter((n): n is string => typeof n === 'string' && n.length > 0);
-        const triedNames = [
-          engineName,
-          ...otherNames,
-          ...(refusalTriedByEx[safeExIdx] ?? []),
-        ];
-        res = resolveRefusalSwap(engineName, safeExIdx, triedNames);
-      }
-      if (kind === 'refusal') {
-        // Preserve the existing refusal counter (threshold → "permanent?" flow).
-        incrementRefusal(engineName);
-        // Append the JUST-refused exercise to the per-exIdx tried-set so a
-        // subsequent "Nu vreau" tap doesn't re-offer it (idempotent on store).
-        markRefusalTried(safeExIdx, engineName);
-      }
-      if (kind === 'refusal' && res.poolExhausted) {
-        const groupLabel = res.muscleGroup ?? t('workout.swap.exhaustedFallbackGroup');
-        toast.show({
-          message: t('workout.swap.exhaustedPool', { group: groupLabel }),
-          variant: 'info',
-        });
-        return;
-      }
-      if (!res.swapped || res.exercise === null) {
-        toast.show({
-          message: t('workout.swap.noAlternative', { name: res.originalName }),
-          variant: 'info',
-        });
-        return;
-      }
-      const swapped = res.exercise;
-      setExercises((prev) => {
-        if (prev === null) return prev;
-        const next = prev.slice();
-        next[safeExIdx] = swapped;
-        return next;
-      });
-      swapExercise(safeExIdx, { id: swapped.id, name: swapped.name });
-      // Refusal path: record the alternative we just surfaced so the NEXT
-      // "Nu vreau" tap on this slot skips it (Daniel exhaustive cycle).
-      if (kind === 'refusal' && typeof res.alternativeEngineName === 'string') {
-        markRefusalTried(safeExIdx, res.alternativeEngineName);
-      }
-      toast.show({
-        message:
-          kind === 'busy'
-            ? t('workout.swap.swappedBusy', { original: res.originalName, alt: res.alternativeName })
-            : t('workout.swap.swappedRefusal', { original: res.originalName, alt: res.alternativeName }),
-        variant: 'success',
-      });
-    },
-    [bumpActivity, safeExIdx, swapExercise, refusalTriedByEx, markRefusalTried, exercises]
-  );
-
-  // Daniel smoke 2026-05-28 #17 — in-session aparat-lipsa save flow. The sheet
-  // already persisted the new list (single SoT = wv2-missing-equipment local
-  // storage, read by Cont -> AparateLipsa next mount), so we only need to (a)
-  // close the sheet, (b) check if the new list blocks the CURRENT exercise's
-  // equipment and, if so, swap it in-place via resolveMissingSwap — same UX
-  // contract as Aparat ocupat (NAMED alternative + toast). When the current
-  // exercise is still performable, no swap, no toast — quiet success.
-  const handleAparatLipsaConfirm = useCallback(
-    (_missing: readonly string[]): void => {
-      setAparatLipsaSheetOpen(false);
-      bumpActivity();
-      const engineName = currentExercise.engineName;
-      if (typeof engineName !== 'string' || engineName.length === 0) return;
-      // BUG 5 — exclude every other session exercise so the missing-equipment
-      // swap never duplicates a movement that exists elsewhere in the session.
-      const otherNames = (exercises ?? [])
-        .filter((_, i) => i !== safeExIdx)
-        .map((ex) => ex.engineName ?? ex.name)
-        .filter((n): n is string => typeof n === 'string' && n.length > 0);
-      const res = resolveMissingSwap(engineName, safeExIdx, otherNames);
-      // resolveMissingSwap returns swapped=false when the original is still
-      // performable with the new missing list (no equipment overlap). Honest
-      // noAlt when the user has marked so much missing that nothing works —
-      // toast tells them, mirrors Aparat ocupat path.
-      if (!res.swapped || res.exercise === null) {
-        if (res.noAlt) {
-          toast.show({
-            message: t('workout.swap.missingNoAlt', { name: res.originalName }),
-            variant: 'info',
-          });
-        } else {
-          toast.show({
-            message: t('workout.swap.missingPreserved'),
-            variant: 'success',
-          });
-        }
-        return;
-      }
-      const swapped = res.exercise;
-      setExercises((prev) => {
-        if (prev === null) return prev;
-        const next = prev.slice();
-        next[safeExIdx] = swapped;
-        return next;
-      });
-      swapExercise(safeExIdx, { id: swapped.id, name: swapped.name });
-      toast.show({
-        message: t('workout.swap.swappedMissing', { original: res.originalName, alt: res.alternativeName }),
-        variant: 'success',
-      });
-    },
-    [bumpActivity, currentExercise.engineName, safeExIdx, swapExercise, exercises]
-  );
-
-  const handleOpenAparatLipsa = useCallback((): void => {
-    bumpActivity();
-    setAparatLipsaSheetOpen(true);
-  }, [bumpActivity]);
-
-  const handleCloseAparatLipsa = useCallback((): void => {
-    setAparatLipsaSheetOpen(false);
-  }, []);
-
-  const handleOcupat = useCallback((): void => {
-    const engineName = currentExercise.engineName;
-    if (typeof engineName !== 'string' || engineName.length === 0) {
-      // No canonical name (defensive — pre-WP-5 fixture) → fall back to the old
-      // navigate path so the user is never stranded.
-      navigate(gotoPath('equipment-swap'));
-      return;
-    }
-    applySwap(engineName, 'busy');
-  }, [currentExercise.engineName, applySwap, navigate]);
-
-  const handleNuVreau = useCallback((): void => {
-    const engineName = currentExercise.engineName;
-    if (typeof engineName !== 'string' || engineName.length === 0) {
-      navigate(gotoPath('ceva-nu-merge'));
-      return;
-    }
-    applySwap(engineName, 'refusal');
-  }, [currentExercise.engineName, applySwap, navigate]);
+  // WP-5 moat — in-place substitution (Aparat ocupat / Nu vreau / Aparat lipsa)
+  // for the CURRENT exercise. Extracted to useWorkoutSwap (behavior preserved):
+  // owns aparatLipsaSheetOpen + applySwap + the three handlers. All useCallback/
+  // useState (no effects) so effect order is unchanged.
+  const {
+    aparatLipsaSheetOpen,
+    handleOcupat,
+    handleNuVreau,
+    handleOpenAparatLipsa,
+    handleCloseAparatLipsa,
+    handleAparatLipsaConfirm,
+  } = useWorkoutSwap({
+    exercises,
+    safeExIdx,
+    currentExercise,
+    refusalTriedByEx,
+    markRefusalTried,
+    swapExercise,
+    setExercises,
+    bumpActivity,
+    navigate,
+  });
 
   // §F-workout-05 — open the why-exercise explainer. Builds engine context on
   // tap (current readiness + recommendation kg vs last logged kg) so the verdict
