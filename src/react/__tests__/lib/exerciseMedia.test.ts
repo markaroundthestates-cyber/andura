@@ -25,7 +25,9 @@ describe('exerciseMedia — interim public-domain images', () => {
   });
 
   it('a movement with NO curated image returns null (placeholder, never wrong image)', () => {
-    expect(getExerciseMedia('Pec Deck / Cable Fly')).toBeNull();
+    // Genuinely-missing modern machines free-db lacks → placeholder.
+    expect(getExerciseMedia('Tibialis Raise')).toBeNull();
+    expect(getExerciseMedia('Glute Drive Machine')).toBeNull();
     expect(getExerciseMedia('Some Esoteric Exercise')).toBeNull();
   });
 
