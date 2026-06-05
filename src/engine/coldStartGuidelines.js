@@ -13,11 +13,11 @@ const BASE_WEIGHTS = {
   'Pushdown': 15,
   'Lat Pulldown': 30,
   'Cable Row': 30,
-  'Face Pulls': 15,
+  'Face Pulls': 10,
   'Bayesian Curl': 8,
   'Incline DB Curl': 5,
-  'Overhead Triceps': 15,
-  'Rear Delt Fly': 15,
+  'Overhead Triceps': 10,
+  'Rear Delt Fly': 5,
   'Cable Curl': 10,
   'Preacher Curl': 8,
   'Leg Press': 80,
@@ -67,15 +67,20 @@ const BW_FRACTION = /** @type {Record<string, number>} */ ({
   'Pec Deck': 0.30,
   // Larger cable isolation
   'Pushdown': 0.22,
-  'Overhead Triceps': 0.20,
+  'Overhead Triceps': 0.11,
   'Cable Curl': 0.16,
-  'Face Pulls': 0.22,
+  // Rear-delt / rotator small isolation (NOT a compound-row share)
+  'Face Pulls': 0.10,
   // Small isolation (DB per hand / fine cable)
   'Bayesian Curl': 0.13,
   'Incline DB Curl': 0.085,
   'Preacher Curl': 0.13,
   'Lateral Raises': 0.075,
-  'Rear Delt Fly': 0.22,
+  // Rear-delt fly is a tiny isolation, NOT a Cable-Row-share movement. The
+  // pec_deck stack still floors the 78kg start at its 18kg minimum plate (the
+  // real machine minimum, weights.js:12), but this fraction stops the heavy-user
+  // blow-up (was 0.22 -> 32kg at 136kg bodyweight).
+  'Rear Delt Fly': 0.06,
 });
 
 // Generic fraction for exercises with no explicit pattern entry AND no usable
@@ -100,12 +105,28 @@ const FALLBACK_MUSCLE_FRACTION = /** @type {Record<string, number>} */ ({
   'spate': 0.55,
   'gambe': 0.60,
   'piept': 0.50,
+  // 'umeri' is a single 96-exercise bucket mixing overhead PRESSES (compound,
+  // ~0.25 share) with lateral-raise / rear-delt / front-raise / face-pull / cuff
+  // ISOLATIONS (tiny share). A flat 0.25 gave a rear-delt fly the shoulder-PRESS
+  // load (~20kg @ 78kg). Resolved per movement pattern in _shoulderFraction below
+  // — this entry is the PRESS value (the fallback when the name is not a known
+  // isolation pattern).
   'umeri': 0.25,
   'triceps': 0.20,
   'biceps': 0.18,
   'antebrate': 0.14,
   'core': 0.14,
 });
+
+// Shoulder ISOLATION movements inside the coarse 'umeri' bucket — lateral /
+// rear-delt / front raises, face pulls, reverse pec deck, rotator-cuff work.
+// These carry a tiny fraction of bodyweight, NOT the overhead-press share. Any
+// 'umeri' exercise whose name matches this gets UMERI_ISOLATION_FRACTION instead
+// of the 0.25 press fraction. Keyed on the ENGLISH canonical name the composer
+// passes (scheduleAdapterAggregate.compose.ts:140,174).
+const UMERI_ISOLATION_RE =
+  /lateral|side rais|rear delt|reverse pec|face pull|front rais|rotation|pull-?apart|cuban|scaption|y raise|y-t-w|external rotat|internal rotat/i;
+const UMERI_ISOLATION_FRACTION = 0.16; // pre-equipment-damp; ×cable 0.70 ≈ 0.11
 
 // Equipment damping on the muscle fraction. machine/barbell load the full bar/
 // stack; dumbbell values are PER HAND (so a smaller share); cable/band lighter.
@@ -133,8 +154,14 @@ const FALLBACK_REFERENCE_BW = 70;
  */
 function _fallbackFraction(exerciseName) {
   const meta = getExerciseMetadata(exerciseName);
-  const base = meta ? FALLBACK_MUSCLE_FRACTION[meta.muscle_target_primary] : undefined;
+  let base = meta ? FALLBACK_MUSCLE_FRACTION[meta.muscle_target_primary] : undefined;
   if (base == null) return BW_FRACTION_DEFAULT;
+  // Sub-split the coarse 'umeri' bucket: a lateral/rear-delt/front-raise/face-pull
+  // isolation must NOT inherit the overhead-press fraction (0.25). (Daniel coach
+  // audit 2026-06-05: rear-delt fly was priced at the press share ~20kg.)
+  if (meta.muscle_target_primary === 'umeri' && UMERI_ISOLATION_RE.test(exerciseName)) {
+    base = UMERI_ISOLATION_FRACTION;
+  }
   const eqF = meta && FALLBACK_EQUIP_FACTOR[meta.equipment_type] != null
     ? FALLBACK_EQUIP_FACTOR[meta.equipment_type]
     : 0.70;
