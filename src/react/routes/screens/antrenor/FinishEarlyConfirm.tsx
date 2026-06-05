@@ -18,7 +18,14 @@ export function FinishEarlyConfirm(): JSX.Element {
   const navigate = useNavigate();
 
   function handleConfirm(): void {
-    navigate(gotoPath('post-rpe'));
+    // Carry an explicit finish-early intent flag into PostRpe. The user has
+    // ALREADY confirmed cutting the session short here, so PostRpe must NOT
+    // gate the save behind the second-workout-per-day "log another?" confirm
+    // (that redundant re-confirm silently dropped the partial session when a
+    // session was already logged today — Daniel audit 2026-06-05). The partial
+    // finish-early session lands in sessionsHistory + bumps the streak just
+    // like a normal Done, in one tap.
+    navigate(gotoPath('post-rpe'), { state: { finishEarly: true } });
   }
 
   function handleCancel(): void {

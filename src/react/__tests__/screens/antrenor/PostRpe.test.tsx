@@ -50,6 +50,24 @@ function renderPostRpe() {
   );
 }
 
+// Finish-early entry — FinishEarlyConfirm navigates to PostRpe carrying
+// state.finishEarly:true. Reproduces the real path so the test proves the wire,
+// not a hand-set flag.
+function renderPostRpeFinishEarly() {
+  return render(
+    <MemoryRouter
+      initialEntries={[
+        { pathname: '/app/antrenor/post-rpe', state: { finishEarly: true } },
+      ]}
+    >
+      <Routes>
+        <Route path="/app/antrenor/post-rpe" element={<PostRpe />} />
+        <Route path="/app/antrenor/post-summary" element={<LocationProbe />} />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
 // Pulse select-then-Save (2026-05-29): a rating tap only SELECTS; the finalize
 // pipeline fires on Save. submit(name) reproduces a full user flow — pick the
 // rating, then confirm with Save.
@@ -560,5 +578,63 @@ describe('PostRpe — double-workout-per-day confirm', () => {
       expect(useWorkoutStore.getState().lastSession).not.toBeNull();
     });
     expect(screen.queryByTestId('post-rpe-already-logged')).not.toBeInTheDocument();
+  });
+});
+
+// FIX 1 (Daniel audit 2026-06-05) — finish-early must land the partial session
+// in sessionsHistory + bump the streak, parity with the normal Done path. The
+// bug: a session already logged today tripped the "log another?" gate which
+// bailed BEFORE finishSession, silently dropping the partial finish-early.
+// FinishEarlyConfirm now passes state.finishEarly:true so PostRpe skips that
+// redundant re-confirm (the user already confirmed the early finish).
+describe('PostRpe — finish-early parity (FIX 1)', () => {
+  beforeEach(() => {
+    seedSession();
+    // Single set logged — a genuine early finish (1 set then "finish early").
+    useWorkoutStore.setState({
+      history: { 0: [{ kg: 22.5, reps: 10, rating: 'potrivit' }] },
+      sessionsHistory: [],
+    });
+  });
+
+  it('finish-early appends the partial to sessionsHistory + increments streak', async () => {
+    const yesterdayIso = new Date(Date.now() - 86_400_000).toLocaleDateString('sv');
+    useWorkoutStore.setState({ streak: 5, lastStreakDate: yesterdayIso });
+    renderPostRpeFinishEarly();
+    submit(/Just right/i);
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession).not.toBeNull();
+    });
+    expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(1);
+    expect(useWorkoutStore.getState().streak).toBe(6);
+  });
+
+  it('finish-early after a session ALREADY logged today still saves (no silent drop)', async () => {
+    // The exact audit scenario: a returning user already has a session today,
+    // then cuts a second session short via finish-early. Old behavior bailed at
+    // the "log another?" gate; the partial was lost.
+    useWorkoutStore.setState({
+      sessionsHistory: [{ title: 'Earlier', meta: '', ts: Date.now() - 3_600_000 }],
+    });
+    renderPostRpeFinishEarly();
+    submit(/Just right/i);
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(2);
+    });
+    // No redundant confirm panel on the finish-early path.
+    expect(screen.queryByTestId('post-rpe-already-logged')).not.toBeInTheDocument();
+  });
+
+  it('a second same-day finish-early does NOT double-count the streak day', async () => {
+    // First finish-early today bumps the streak to 6 and stamps today.
+    const todayIso = new Date().toLocaleDateString('sv');
+    useWorkoutStore.setState({ streak: 6, lastStreakDate: todayIso });
+    renderPostRpeFinishEarly();
+    submit(/Just right/i);
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession).not.toBeNull();
+    });
+    // The session lands (history grows) but the streak holds (same-day no-op).
+    expect(useWorkoutStore.getState().streak).toBe(6);
   });
 });

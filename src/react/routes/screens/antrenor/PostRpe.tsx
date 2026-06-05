@@ -26,7 +26,7 @@
 
 import type { JSX } from 'react';
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { useWorkoutStore, energyLightForIntensityMod } from '../../../stores/workoutStore';
 import type {
@@ -71,6 +71,14 @@ function formatKg(kg: number): string {
 
 export function PostRpe(): JSX.Element {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Finish-early intent — FinishEarlyConfirm navigates here with
+  // state.finishEarly after the user EXPLICITLY confirmed cutting the session
+  // short. In that case the second-workout-per-day "log another?" re-confirm is
+  // redundant friction that silently dropped the partial session when a session
+  // was already logged today (Daniel audit 2026-06-05). When finish-early, save
+  // the partial in one tap — finishSession + incrementStreak, parity with Done.
+  const finishEarly = (location.state as { finishEarly?: boolean } | null)?.finishEarly === true;
   const history = useWorkoutStore((s) => s.history);
   const sessionStart = useWorkoutStore((s) => s.sessionStart);
   const sessionContext = useWorkoutStore((s) => s.sessionContext);
@@ -142,7 +150,12 @@ export function PostRpe(): JSX.Element {
     // and the user hasn't confirmed a second one yet → reveal the confirm panel
     // and bail (release the submit latch so the confirm tap can re-enter). The
     // real session data the user logged is untouched — this only defers the save.
-    if (loggedToday && !confirmAnother) {
+    // SKIPPED on the finish-early path: the user already confirmed cutting the
+    // session short at FinishEarlyConfirm, so a second "log another?" gate would
+    // be redundant friction that drops the partial session (Daniel audit
+    // 2026-06-05). The same-day streak no-op (nextStreak) still prevents a second
+    // finish from double-counting the streak day.
+    if (loggedToday && !confirmAnother && !finishEarly) {
       submittingRef.current = false;
       setConfirmAnother(true);
       return;
