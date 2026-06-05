@@ -21,16 +21,18 @@ import { DP } from '../dp.js';
 describe('DP.getPhaseAwareRepRange', () => {
   it('returns capped [rMin, 10] for isolation exercise with rMax=12 in CUT', () => {
     expect(DP.getPhaseAwareRepRange('Cable Curl', true)).toEqual([10, 10]);
-    expect(DP.getPhaseAwareRepRange('Preacher Curl', true)).toEqual([10, 10]);
-    expect(DP.getPhaseAwareRepRange('Overhead Triceps', true)).toEqual([10, 10]);
-    expect(DP.getPhaseAwareRepRange('Pushdown', true)).toEqual([10, 10]);
+    // Real emitted CORE_AUTO names (legacy 'Preacher Curl'/'Overhead Triceps'/'Pushdown' were dead).
+    expect(DP.getPhaseAwareRepRange('EZ-bar Preacher Curl', true)).toEqual([10, 10]);
+    expect(DP.getPhaseAwareRepRange('Cable Overhead Triceps Extension Rope', true)).toEqual([10, 10]);
+    expect(DP.getPhaseAwareRepRange('Cable Triceps Pushdown Straight Bar', true)).toEqual([10, 10]);
     expect(DP.getPhaseAwareRepRange('Incline DB Curl', true)).toEqual([10, 10]);
     expect(DP.getPhaseAwareRepRange('Bayesian Curl', true)).toEqual([10, 10]);
   });
 
   it('returns original [10, 12] for isolation in NON-CUT', () => {
     expect(DP.getPhaseAwareRepRange('Cable Curl', false)).toEqual([10, 12]);
-    expect(DP.getPhaseAwareRepRange('Overhead Triceps', false)).toEqual([10, 12]);
+    // Real emitted CORE_AUTO triceps name (legacy 'Overhead Triceps' was dead).
+    expect(DP.getPhaseAwareRepRange('Cable Overhead Triceps Extension Rope', false)).toEqual([10, 12]);
   });
 
   it('returns original range for compound with [8, 12] in CUT (Lat Pulldown)', () => {
@@ -39,9 +41,10 @@ describe('DP.getPhaseAwareRepRange', () => {
     expect(DP.getPhaseAwareRepRange('Chest-Supported Row', true)).toEqual([10, 12]);
   });
 
-  it('caps 12-15 isolation range to [10,10] in CUT (Lateral Raises, Rear Delt Fly)', () => {
-    expect(DP.getPhaseAwareRepRange('Lateral Raises', true)).toEqual([10, 10]);
-    expect(DP.getPhaseAwareRepRange('Rear Delt Fly', true)).toEqual([10, 10]);
+  it('caps 12-15 isolation range to [10,10] in CUT (DB Lateral Raise, DB Rear Delt Fly)', () => {
+    // Real emitted CORE_AUTO names (legacy 'Lateral Raises'/'Rear Delt Fly' were dead).
+    expect(DP.getPhaseAwareRepRange('DB Lateral Raise', true)).toEqual([10, 10]);
+    expect(DP.getPhaseAwareRepRange('DB Rear Delt Fly', true)).toEqual([10, 10]);
   });
 
   it('caps the 10-15 leg-machine range to [10,10] in CUT (Leg Curl)', () => {

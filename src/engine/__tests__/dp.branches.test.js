@@ -235,10 +235,10 @@ describe('DP._recommendRaw — branch coverage', () => {
   });
 
   it('CAP REPS: at/above MAX_KG but below the top of the range → hold weight, add reps within range', () => {
-    // Lateral Raises MAX_KG=18, range [12,15], rMax=15. At the weight cap we fill
+    // DB Lateral Raise MAX_KG=18, range [12,15], rMax=15. At the weight cap we fill
     // reps toward rMax (never beyond it — weight is the lever, capped here).
-    store['logs'] = [log('Lateral Raises', 18, 13, 7)];
-    const r = DP._recommendRaw('Lateral Raises');
+    store['logs'] = [log('DB Lateral Raise', 18, 13, 7)];
+    const r = DP._recommendRaw('DB Lateral Raise');
     expect(r.status).toBe('CAP REPS');
     expect(r.kg).toBe(18);           // weight held at cap
     expect(r.repsTarget).toBe(14);   // min(rMax 15, lastReps+1) = 14, still < rMax
@@ -260,10 +260,10 @@ describe('DP._recommendRaw — branch coverage', () => {
   });
 
   it('PEAK: at weight cap AND at the top of the range (>= rMax) → maintain', () => {
-    // Lateral Raises rMax=15; once lastReps reaches rMax at the weight cap we
+    // DB Lateral Raise rMax=15; once lastReps reaches rMax at the weight cap we
     // maintain at rMax (no rMax+4 over-range escalation any more).
-    store['logs'] = [log('Lateral Raises', 18, 15, 7)];
-    const r = DP._recommendRaw('Lateral Raises');
+    store['logs'] = [log('DB Lateral Raise', 18, 15, 7)];
+    const r = DP._recommendRaw('DB Lateral Raise');
     expect(r.status).toBe('PEAK');
     expect(r.kg).toBe(18);
     expect(r.repsTarget).toBe(15);   // rMax
@@ -709,16 +709,16 @@ describe('getInitialRecommendation', () => {
   it('light beginner stays conservative (floored at the population prior, never below equipment min)', () => {
     // 55kg female beginner, no logs → scaled start is small; floor keeps it at
     // the conservative prior, never dropping below the equipment minimum.
-    const r = getInitialRecommendation('Lateral Raises', {
+    const r = getInitialRecommendation('DB Lateral Raise', {
       recentLogs: [],
       bodyweightKg: 55,
       sex: 'f',
       experience: 'beginner',
     });
     expect(r.isInitial).toBe(true);
-    const minKg = 7; // dumbbell floor
+    const minKg = 5; // equipment floor for this emitted name (rounds on bailib_stack)
     expect(r.kg).toBeGreaterThanOrEqual(minKg);
-    // Lateral Raises stays light for a light beginner (NOT pushed up absurdly).
+    // DB Lateral Raise stays light for a light beginner (NOT pushed up absurdly).
     expect(r.kg).toBeLessThanOrEqual(10);
   });
 
@@ -780,7 +780,7 @@ describe('getInitialRecommendation', () => {
 // defaults to the real clock when nowMs omitted (production byte-identical) and
 // accepts an injected epoch ms for deterministic tests.
 //
-// Discriminator: 'Lateral Raises' range [12,15] (isolation) → CUT caps to
+// Discriminator: 'DB Lateral Raise' range [12,15] (isolation) → CUT caps to
 // [10,10]; non-CUT stays [12,15]. So getRepsRange reveals the branch taken.
 describe('DP injectable clock — AUTO/TARGET_DATE CUT branch (§07.198-204)', () => {
   const TARGET_MS = new Date('2026-07-20').getTime();
@@ -800,27 +800,27 @@ describe('DP injectable clock — AUTO/TARGET_DATE CUT branch (§07.198-204)', (
   });
 
   it('getRepsRange respects injected nowMs on AUTO (cap before, raw after)', () => {
-    expect(DP.getRepsRange('Lateral Raises', BEFORE)).toEqual([10, 10]); // in-cut cap
-    expect(DP.getRepsRange('Lateral Raises', AFTER)).toEqual([12, 15]);  // not-in-cut
+    expect(DP.getRepsRange('DB Lateral Raise', BEFORE)).toEqual([10, 10]); // in-cut cap
+    expect(DP.getRepsRange('DB Lateral Raise', AFTER)).toEqual([12, 15]);  // not-in-cut
   });
 
   it('getRepsRange omitting nowMs defaults to real clock (no throw, valid range)', () => {
-    const r = DP.getRepsRange('Lateral Raises');
+    const r = DP.getRepsRange('DB Lateral Raise');
     expect(Array.isArray(r)).toBe(true);
     expect(r.length).toBe(2);
   });
 
   it('_recommendRaw on AUTO uses injected clock for the cut-aware rep target', () => {
     store['logs'] = [
-      log('Lateral Raises', 12, 12, 7),
-      log('Lateral Raises', 12, 12, 7),
-      log('Lateral Raises', 12, 12, 7),
+      log('DB Lateral Raise', 12, 12, 7),
+      log('DB Lateral Raise', 12, 12, 7),
+      log('DB Lateral Raise', 12, 12, 7),
     ];
     // In-cut (BEFORE) caps the isolation range to [10,10]; not-in-cut (AFTER)
     // keeps [12,15]. The default-maintain repsTarget is min(rMax, lastReps+1),
     // so the cut branch yields a strictly lower-or-equal target than the bulk one.
-    const cut = DP._recommendRaw('Lateral Raises', BEFORE);
-    const bulk = DP._recommendRaw('Lateral Raises', AFTER);
+    const cut = DP._recommendRaw('DB Lateral Raise', BEFORE);
+    const bulk = DP._recommendRaw('DB Lateral Raise', AFTER);
     expect(cut.repsTarget).toBeLessThanOrEqual(bulk.repsTarget);
   });
 });

@@ -9,16 +9,39 @@ import { suggestStartWeight } from './coldStartGuidelines.js';
 import { t } from '../i18n/index.js';
 
 export const DP = {
-  // Rep ranges per exercise
+  // Rep ranges per exercise — keyed on the CANONICAL engineNames the session
+  // builder actually emits for ACTIVE CORE_AUTO exercises (exercises.json status
+  // CORE_AUTO). The founder's tuning (12-15 lateral/rear-delt/face-pull, 10-12
+  // curls/triceps, 10-15 legs) is re-pointed onto the real emitted names — the
+  // earlier legacy keys (Lateral Raises / Pushdown / Calf Raises / …) were DEAD
+  // (status=undefined → never offered active), so the intent never reached the
+  // engine. See _ENGINE_AUDIT F-1.
   REP_RANGES: {
     'DB Shoulder Press':[6,10],'Incline DB Press':[6,10],'Flat DB Press':[8,12],
     'Lat Pulldown':[8,12],'Cable Row':[8,12],'Chest-Supported Row':[10,12],
     'Romanian Deadlift':[8,12],'Leg Press':[8,12],
-    'Lateral Raises':[12,15],'Rear Delt Fly':[12,15],'Face Pulls':[12,15],
+    // Umeri izolatie — lateral / rear delt (founder intent [12,15])
+    'DB Lateral Raise':[12,15],'Cable Lateral Raise':[12,15],
+    'Machine Lateral Raise':[12,15],'Leaning Lateral Raise':[12,15],
+    'DB Rear Delt Fly':[12,15],'Cable Rear Delt Fly':[12,15],'Reverse Pec Deck':[12,15],
+    'Face Pull':[12,15],
+    // Biceps izolatie (founder intent [10,12])
     'Incline DB Curl':[10,12],'Bayesian Curl':[10,12],'Cable Curl':[10,12],
-    'Preacher Curl':[10,12],'Overhead Triceps':[10,12],'Pushdown':[10,12],
-    'Pec Deck / Cable Fly':[12,15],'Leg Curl':[10,15],'Leg Extension':[10,15],
-    'Calf Raises':[10,15]
+    'EZ-bar Preacher Curl':[10,12],
+    // Triceps izolatie (founder intent [10,12])
+    'Cable Overhead Triceps Extension Rope':[10,12],
+    'Cable Single-Arm Overhead Triceps Extension':[10,12],
+    'DB Overhead Triceps Extension Two-Hand':[10,12],
+    'Cable Triceps Pushdown Straight Bar':[10,12],'Cable Triceps Pushdown Rope':[10,12],
+    'Cable Triceps Pushdown V-bar':[10,12],'Cable Triceps Pushdown Single-Arm':[10,12],
+    'Triceps Press Machine':[10,12],
+    // Piept izolatie
+    'Pec Deck / Cable Fly':[12,15],
+    // Picioare / gambe (founder intent [10,15])
+    'Leg Curl':[10,15],'Leg Extension':[10,15],
+    'Standing Calf Raise Machine':[10,15],'Seated Calf Raise Machine':[10,15],
+    'Smith Standing Calf Raise':[10,15],'Leg Press Calf Raise':[10,15],
+    'Standing DB Calf Raise':[10,15],'Single-Leg Calf Raise Bodyweight':[10,15]
   },
 
   // Weight steps per equipment type
@@ -60,37 +83,74 @@ export const DP = {
     compound: 2.5, isolation: 1.0, legs: 2.5
   },
 
-  // Max sensible weights per exercise — calibrat pe nivelul real al utilizatorului
-  // Daniel: Lat Pulldown 64, Cable Row 72, Incline DB 30, Lateral Raises 10, Bayesian 18
+  // Max sensible weights per exercise — calibrat pe nivelul real al utilizatorului.
+  // Keyed on the CORE_AUTO engineNames the builder emits (legacy keys like
+  // 'Lateral Raises'/'Pushdown'/'Calf Raises' were DEAD — never offered active —
+  // so their caps never applied). Daniel refs: Lat Pulldown 64, Cable Row 72,
+  // Incline DB 30, lateral raise ~10, Bayesian 18.
+  // Heavy generic COMPOUNDS get explicit defensive caps too (audit F-1): without
+  // a MAX_KG they were bounded only by accident of the equipment-list ceiling, so
+  // an absurd load could be prescribed if equipment data changed. Caps sit well
+  // above any realistic strong-lifter load — they clip ONLY absurd values.
   MAX_KG: {
     // Izolatie umeri — cap real ~16-18kg/gantera pentru lateral raises
-    'Lateral Raises': 18,
-    'Lateral Raises (cable)': 25, // cablu = greutate mai mare posibil
-    'Rear Delt Fly': 16,
-    'Face Pulls': 55, // cablu, poate creste mai mult
+    'DB Lateral Raise': 18,
+    'Cable Lateral Raise': 25, // cablu = greutate mai mare posibil
+    'Machine Lateral Raise': 30, 'Leaning Lateral Raise': 18,
+    'DB Rear Delt Fly': 16, 'Cable Rear Delt Fly': 25, 'Reverse Pec Deck': 45,
+    'Face Pull': 55, // cablu, poate creste mai mult
     // Izolatie biceps
     'Incline DB Curl': 18, // per gantera
-    'Hammer Curl': 28, // per gantera — Daniel face 20-22kg
     'Bayesian Curl': 25,
     'Cable Curl': 35,
-    'Preacher Curl': 30,
+    'EZ-bar Preacher Curl': 50,
     // Triceps
-    'Overhead Triceps': 55,
-    'Pushdown': 55,
+    'Cable Overhead Triceps Extension Rope': 55,
+    'Cable Single-Arm Overhead Triceps Extension': 35,
+    'DB Overhead Triceps Extension Two-Hand': 45,
+    'Cable Triceps Pushdown Straight Bar': 70, 'Cable Triceps Pushdown Rope': 70,
+    'Cable Triceps Pushdown V-bar': 70, 'Cable Triceps Pushdown Single-Arm': 40,
+    'Triceps Press Machine': 120,
     // Piept izolatie
     'Pec Deck / Cable Fly': 60,
-    // Picioare — Leg Press are mult loc
-    'Leg Press': 400, 'Leg Curl': 160, 'Leg Extension': 160, 'Calf Raises': 200,
+    // Picioare / gambe — Leg Press are mult loc
+    'Leg Press': 400, 'Leg Curl': 160, 'Leg Extension': 160,
+    'Standing Calf Raise Machine': 250, 'Seated Calf Raise Machine': 200,
+    'Smith Standing Calf Raise': 250, 'Leg Press Calf Raise': 400,
+    'Standing DB Calf Raise': 50,
+    // ── Heavy generic COMPOUNDS — explicit defensive caps (audit F-1) ──────────
+    // Barbell presses / rows / squats / deadlifts: ceilings above world-class
+    // training loads; protect against absurd prescription if equipment changes.
+    'Flat Barbell Bench': 220, 'Incline Barbell Bench': 200,
+    'Close-Grip Bench Press': 180, 'Smith Close-Grip Bench': 180,
+    'Smith Machine Bench': 220, 'Smith Incline Bench': 200,
+    'Barbell Row': 200, 'Pendlay Row': 200, 'Landmine T-Bar Row': 200,
+    'Hammer Strength Row': 250, 'T-Bar Row Machine': 250,
+    'Barbell Back Squat (High Bar)': 320, 'Front Squat': 250,
+    'Hack Squat Machine': 400, 'Pendulum Squat': 400, 'Belt Squat': 400,
+    'Smith Machine Squat': 320,
+    'Trap Bar Deadlift': 360, 'Hip Thrust': 360,
+    'Plate-Loaded Hip Thrust Machine': 360, 'Smith Hip Thrust': 360,
+    'OHP': 150, 'Smith OHP': 150, 'Landmine Shoulder Press': 120,
+    // Bodyweight compounds — cap is on ADDED external load (vest/belt).
+    'Weighted Pull-up': 80, 'Pull-up': 80, 'Chin-up': 80, 'Dip': 100,
   },
 
   // How many kg before we stop adding weight and switch to reps/volume
   WEIGHT_CAP_STRATEGY: {
-    // isolation: after cap → add reps first, then volume, NOT weight
-    'Lateral Raises': 'reps', 'Lateral Raises (cable)': 'reps',
-    'Rear Delt Fly': 'reps', 'Face Pulls': 'reps',
-    'Incline DB Curl': 'reps', 'Bayesian Curl': 'reps', 'Hammer Curl': 'reps',
-    'Cable Curl': 'reps', 'Preacher Curl': 'reps',
-    'Overhead Triceps': 'reps', 'Pushdown': 'reps',
+    // isolation: after cap → add reps first, then volume, NOT weight.
+    // Keyed on real emitted CORE_AUTO names (legacy keys were dead — audit F-1).
+    'DB Lateral Raise': 'reps', 'Cable Lateral Raise': 'reps',
+    'Machine Lateral Raise': 'reps', 'Leaning Lateral Raise': 'reps',
+    'DB Rear Delt Fly': 'reps', 'Cable Rear Delt Fly': 'reps',
+    'Reverse Pec Deck': 'reps', 'Face Pull': 'reps',
+    'Incline DB Curl': 'reps', 'Bayesian Curl': 'reps',
+    'Cable Curl': 'reps', 'EZ-bar Preacher Curl': 'reps',
+    'Cable Overhead Triceps Extension Rope': 'reps',
+    'Cable Single-Arm Overhead Triceps Extension': 'reps',
+    'DB Overhead Triceps Extension Two-Hand': 'reps',
+    'Cable Triceps Pushdown Straight Bar': 'reps', 'Cable Triceps Pushdown Rope': 'reps',
+    'Cable Triceps Pushdown V-bar': 'reps', 'Cable Triceps Pushdown Single-Arm': 'reps',
   },
 
   // In CUT: isolation exercises with rMax in 11-15 range cap at 10 reps.
