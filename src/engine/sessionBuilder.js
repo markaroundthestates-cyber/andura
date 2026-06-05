@@ -8,7 +8,7 @@
 // ANCHORS on the known engine names that carry PR history, so existing users
 // keep continuity (the 18/21 names that exist verbatim as library keys).
 
-import { EXERCISE_METADATA, getExerciseMetadata } from './exerciseLibrary.js';
+import { EXERCISE_METADATA, getExerciseMetadata, isActiveMeta } from './exerciseLibrary.js';
 import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT } from './periodization/constants.js';
 
 // buildSession's first param is now a Big-6 CLUSTER id (push/pull/legs/upper/
@@ -422,36 +422,27 @@ function equipmentOk(meta, available) {
  * @returns {Array<{name: string, meta: object}>}
  */
 function poolForGroup(group, available, maxTier, maxSkill, prNames, seed) {
-  // Wave 2 CORE library gate (Daniel SSOT 2026-06-03): auto-selection draws from
-  // the curated CORE_AUTO catalog (+ PR continuity) FIRST; esoteric long-tail
-  // variants only tail behind it, reached only when CORE_AUTO can't fill the
-  // group's demand under the active equipment. MANUAL_ADVANCED / DEPRECATED /
-  // ALIAS / MODIFIER are NEVER auto-offered (handstand push-up, conventional
-  // deadlift, etc.) — they stay in the library for manual/substitution use only.
-  const core = [];      // CORE_AUTO + PR-history (the auto pool)
-  const fallback = [];  // FALLBACK + untagged long-tail (last resort only)
+  // ACTIVE visibility gate (Daniel SSOT 2026-06-05, supersedes 2026-06-03 CORE+
+  // FALLBACK gate): auto-selection draws ONLY from the curated ACTIVE catalog
+  // (CORE_AUTO — see isActiveMeta / ACTIVE_STATUSES) plus PR-history continuity.
+  // The untagged long-tail, MANUAL_ADVANCED, DEPRECATED, ALIAS, MODIFIER AND the
+  // single FALLBACK entry are ALL hidden (the FALLBACK band was investigated and
+  // is NOT load-bearing — hamstrings carries 11 CORE_AUTO options). A group that
+  // runs short simply redistributes its slots to other groups (no esoteric
+  // variant ever surfaces over a common lift). Hidden exercises stay in the
+  // library, just never auto-offered; widen ACTIVE_STATUSES (one place) to revert.
+  const core = []; // ACTIVE (CORE_AUTO) + PR-history — the only auto pool now.
   for (const [name, meta] of Object.entries(EXERCISE_METADATA)) {
     if (meta.muscle_target_primary !== group) continue;
     if (meta.tier > maxTier) continue;
     if (skillRankOf(meta) > maxSkill) continue; // capability gate: never above skill ceiling
     if (!equipmentOk(meta, available)) continue;
-    const status = meta.status;
     // PR continuity wins: an exercise the user has actually logged stays offered
     // regardless of status (don't yank a lift out from under an existing user).
-    if (status === 'CORE_AUTO' || prNames.has(name)) { core.push({ name, meta }); continue; }
-    // FALLBACK is the ONLY non-CORE band auto-selection may reach (and only when
-    // CORE_AUTO can't fill the group's demand). Everything else — MANUAL_ADVANCED,
-    // DEPRECATED, ALIAS, MODIFIER, AND untagged long-tail ("MANUAL_ADVANCED restul"
-    // per Daniel SSOT) — is excluded from auto-selection; a group that runs short
-    // simply redistributes its slots to other groups (no esoteric variant ever
-    // surfaces over a common lift). Such exercises remain reachable via explicit
-    // substitution / equipment-fallback paths, just never auto-offered.
-    if (status === 'FALLBACK') fallback.push({ name, meta });
+    if (isActiveMeta(meta) || prNames.has(name)) core.push({ name, meta });
   }
-  // Deterministic ordering within each band: PR-anchored first (continuity), then
-  // plain anchors, then common, then the rest; seeded-stable by name hash. CORE
-  // band is sorted/placed entirely BEFORE the fallback band, so the long tail is
-  // a genuine last resort (only consumed when CORE_AUTO runs short for the group).
+  // Deterministic ordering: PR-anchored first (continuity), then plain anchors,
+  // then common, then the rest; seeded-stable by name hash.
   const byRankSeed = (a, b) => {
     const ra = rank(a.name, prNames);
     const rb = rank(b.name, prNames);
@@ -459,8 +450,7 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed) {
     return seededKey(a.name, seed) - seededKey(b.name, seed);
   };
   core.sort(byRankSeed);
-  fallback.sort(byRankSeed);
-  return core.concat(fallback);
+  return core;
 }
 
 /**

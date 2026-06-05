@@ -11,7 +11,18 @@
 // getFallbackCascade is NEW per P3-MOAT-DESIGN.md §5.1 (cascade traversal).
 // NOT yet wired into sessionBuilder/scheduleAdapter/UI (later work-package).
 
-import { EXERCISE_METADATA, getValidAlternatives } from './exerciseLibrary.js';
+import { EXERCISE_METADATA, getValidAlternatives, isActiveExercise } from './exerciseLibrary.js';
+
+// ── ACTIVE visibility gate (Daniel SSOT 2026-06-05) ─────────────────────────
+// Every alternative this module OFFERS must be ACTIVE (CORE_AUTO). The swap
+// audit proved the broad pool reached all 657 entries and never read `status`,
+// so untagged/exotic/contraindicated variants surfaced as top swap picks. The
+// gate is applied to the OFFERED candidate, never to the SOURCE exercise: the
+// user may be swapping out a non-active lift (a legacy PR exercise, an already-
+// swapped pick), and that source still resolves to active alternatives. Single
+// source of truth is isActiveExercise (exerciseLibrary.ACTIVE_STATUSES) —
+// widen there to re-enable a status band everywhere at once.
+const offerable = (name) => isActiveExercise(name);
 
 /**
  * Find ranked alternatives for an exercise. Default: skip if zero valid alternatives
@@ -24,7 +35,9 @@ export function findAlternatives(exerciseName) {
   const meta = EXERCISE_METADATA[exerciseName];
   if (!meta) return { alternatives: [], shouldSkip: true };
 
-  const validNames = getValidAlternatives(exerciseName);
+  // ACTIVE gate: only offer curated CORE_AUTO alternatives (drop untagged/
+  // MANUAL_ADVANCED/FALLBACK from the curated equipment_alternatives list).
+  const validNames = getValidAlternatives(exerciseName).filter(offerable);
   if (!validNames.length) return { alternatives: [], shouldSkip: true };
 
   // Rank by similarity: same muscle_target_primary > same equipment_type > same force_demand
@@ -92,6 +105,7 @@ function findBroadAlternatives(exerciseName, availableTypes) {
   const candidates = [];
   for (const [name, m] of Object.entries(EXERCISE_METADATA)) {
     if (name === exerciseName) continue;
+    if (!offerable(name)) continue; // ACTIVE gate: only offer CORE_AUTO swaps
     if (m.muscle_target_primary !== meta.muscle_target_primary) continue;
     if (tier1Strict && m.force_demand !== 'high') continue; // NU degrade heavy compound
     if (!isExerciseAvailable(name, availableTypes)) continue;
@@ -157,6 +171,7 @@ export function findRefusalPool(exerciseName, triedNames = []) {
   const candidates = [];
   for (const [name, m] of Object.entries(EXERCISE_METADATA)) {
     if (tried.has(name)) continue;
+    if (!offerable(name)) continue; // ACTIVE gate: only offer CORE_AUTO swaps
     if (m.muscle_target_primary !== muscleGroup) continue;
     // Refusal = preference. Equipment + tier-1 strict NOT enforced (the user
     // chose to swap; we honor the choice with the closest available match
@@ -199,12 +214,18 @@ export function getFallbackCascade(exerciseName, availableTypes = []) {
     return { exercise: exerciseName, isAlternative: false };
   }
 
-  // Traverse ordered cascade.
+  // Traverse ordered cascade. ACTIVE gate: a cascade step is only taken when its
+  // target exercise(s) are ACTIVE (CORE_AUTO) — a curated cascade may point at an
+  // untagged/hidden variant (438 of 1041 CORE_AUTO cascade refs do), and we must
+  // never surface a hidden exercise via a swap. A step whose target is hidden is
+  // SKIPPED; traversal falls through to the gated ranking / broad-library
+  // degradation below (both active-only), which coverage proves always lands an
+  // active same-muscle swap for every group that has one available.
   const cascade = (meta && Array.isArray(meta.fallback_cascade)) ? meta.fallback_cascade : [];
   for (const step of cascade) {
     if (step.type === 'muscle_group_compose') {
       const ids = step.exercise_ids || [];
-      if (ids.length && ids.every(id => isExerciseAvailable(id, availableTypes))) {
+      if (ids.length && ids.every(id => offerable(id) && isExerciseAvailable(id, availableTypes))) {
         return {
           exercises: ids,
           isAlternative: true,
@@ -214,7 +235,7 @@ export function getFallbackCascade(exerciseName, availableTypes = []) {
       }
     } else {
       const id = step.exercise_id;
-      if (id && isExerciseAvailable(id, availableTypes)) {
+      if (id && offerable(id) && isExerciseAvailable(id, availableTypes)) {
         return {
           exercise: id,
           isAlternative: true,

@@ -28,6 +28,55 @@ import { validateLibrary } from './exerciseSchema';
 /** @type {Record<string, ExerciseMetadata>} */
 export const EXERCISE_METADATA = exercisesData;
 
+// ── ACTIVE VISIBILITY GATE (Daniel SSOT 2026-06-05) ─────────────────────────
+// Founder decision: ONLY the curated CORE_AUTO staples are ACTIVE — selectable
+// or offered anywhere the engine picks an exercise. The other ~514 entries
+// (MANUAL_ADVANCED, FALLBACK, and the untagged long-tail) stay in exercises.json
+// (data preserved, fully reversible) but must NEVER surface in daily-plan
+// selection (sessionBuilder.poolForGroup) or the skip/swap alternative pool
+// (alternativeFinder.findRefusalPool / findAlternatives / getFallbackCascade /
+// findBroadAlternatives). This kills the "junk alternative" problem the swap
+// audit proved: the broad pool reached all 657 and never read `status`, so
+// untagged/exotic/contraindicated variants surfaced as top swap picks.
+//
+// SINGLE source of truth: widen ACTIVE_STATUSES here (one place) to re-enable a
+// status band later. The FALLBACK band was investigated (2026-06-05) and is NOT
+// load-bearing — its only entry (Nordic Hamstring Curl Assisted) is referenced
+// only as a cascade step of OTHER hidden exercises, and hamstrings carries 11
+// CORE_AUTO options, so hiding it never starves a swap. MANUAL_ADVANCED hidden
+// (skill/risk). Both excluded from the active set.
+//
+// PR continuity is layered ON TOP of this gate by the consumers (a lift the user
+// has actually logged stays offered regardless of status) — that is a per-call
+// allow-list, not a widening of the active set, so it is handled at the call
+// site (poolForGroup prNames), not here.
+
+/** @type {ReadonlySet<string>} ONLY these statuses are auto-active. */
+export const ACTIVE_STATUSES = new Set(['CORE_AUTO']);
+
+/**
+ * Is an exercise ACTIVE (auto-selectable / offerable) under the visibility gate?
+ * True only for entries whose `status` is in ACTIVE_STATUSES (today: CORE_AUTO).
+ * Untagged long-tail, MANUAL_ADVANCED, FALLBACK, DEPRECATED, ALIAS, MODIFIER →
+ * false. Unknown name → false (cannot offer what we have no metadata for).
+ * @param {string} exerciseName canonical English engine name
+ * @returns {boolean}
+ */
+export function isActiveExercise(exerciseName) {
+  const meta = EXERCISE_METADATA[exerciseName];
+  return !!meta && ACTIVE_STATUSES.has(/** @type {string} */ (meta.status));
+}
+
+/**
+ * Is a metadata object ACTIVE? Sibling of isActiveExercise for the hot loops
+ * that already hold the entry (avoids a second map lookup over 657 entries).
+ * @param {{status?: string}|null|undefined} meta
+ * @returns {boolean}
+ */
+export function isActiveMeta(meta) {
+  return !!meta && ACTIVE_STATUSES.has(/** @type {string} */ (meta.status));
+}
+
 // Validate once at module load. Dev: throw on malformed data (fail-loud so a bad entry is caught
 // in tests/dev). Prod: fail-safe (log + continue) so one bad entry never bricks boot.
 {

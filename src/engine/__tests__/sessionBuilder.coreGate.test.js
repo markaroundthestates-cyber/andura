@@ -22,17 +22,17 @@ const ctx = (over = {}) => ({
 const CLUSTERS = ['push', 'pull', 'legs', 'upper', 'lower', 'full'];
 
 describe('CORE library gate — full equipment auto-selection is CORE_AUTO only', () => {
-  it('every auto-selected exercise is CORE_AUTO or FALLBACK (no untagged long-tail) across all clusters + 25 seeds', () => {
+  it('every auto-selected exercise is CORE_AUTO (active gate) across all clusters + 25 seeds', () => {
     for (const cluster of CLUSTERS) {
       for (let s = 0; s < 25; s++) {
         const session = buildSession(cluster, ctx({ seed: `core|${cluster}|${s}` }));
         for (const ex of session.exercises) {
           const status = getExerciseMetadata(ex.name).status;
-          // No PR history → auto pool is CORE_AUTO (preferred) + FALLBACK (last
-          // resort). An untagged long-tail / MANUAL_ADVANCED variant must NEVER
-          // surface — that was the "farmer's walk / reverse-grip exotic" bug.
-          expect(['CORE_AUTO', 'FALLBACK'], `${cluster} seed ${s}: "${ex.name}" status=${status}`)
-            .toContain(status);
+          // Daniel SSOT 2026-06-05: the active gate narrowed auto-selection to
+          // CORE_AUTO ONLY (the FALLBACK band is now hidden too — not load-bearing).
+          // No PR history here, so an untagged / FALLBACK / MANUAL_ADVANCED variant
+          // must NEVER surface — that was the "farmer's walk / reverse-grip" bug.
+          expect(status, `${cluster} seed ${s}: "${ex.name}" status=${status}`).toBe('CORE_AUTO');
         }
       }
     }

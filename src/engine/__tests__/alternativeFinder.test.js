@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { findAlternatives, findRefusalPool, getFallbackCascade } from '../alternativeFinder.js';
+import { getExerciseMetadata } from '../exerciseLibrary.js';
 
 // Ported from archived smart-routing/__tests__/smartRouting.test.js (WP-2 MOAT revive).
 // The archived handleEquipmentBusy case is NOT ported — v1 equipment-detection module
@@ -19,20 +20,36 @@ describe('findAlternatives §36.37 (ranking)', () => {
     expect(r.alternatives).toEqual([]);
   });
 
+  // ACTIVE gate (Daniel SSOT 2026-06-05): findAlternatives now only OFFERS active
+  // (CORE_AUTO) candidates. The prior source 'Lateral Raises' is untagged and its
+  // single curated alt is the untagged 'Lateral Raises (cable)', so under the gate
+  // it correctly returns []. Source switched to 'Incline DB Curl' (CORE_AUTO tier-2)
+  // whose curated alts (Bayesian Curl, Cable Curl) are BOTH CORE_AUTO — a real
+  // gated tier-2 isolation with active alternatives.
   it('Tier 2 isolation has alternatives ranked by similarity', () => {
-    const r = findAlternatives('Lateral Raises');
+    const r = findAlternatives('Incline DB Curl');
     expect(r.alternatives.length).toBeGreaterThan(0);
     // Ranked: same muscle_target_primary first
     r.alternatives.forEach(alt => {
       expect(alt.similarity).toBeGreaterThan(0);
+      // ACTIVE gate: every offered alternative is CORE_AUTO.
+      expect(getExerciseMetadata(alt.name).status).toBe('CORE_AUTO');
     });
   });
 
   it('alternatives are sorted descending by similarity', () => {
-    const r = findAlternatives('Lateral Raises');
+    const r = findAlternatives('Incline DB Curl');
     for (let i = 1; i < r.alternatives.length; i++) {
       expect(r.alternatives[i - 1].similarity).toBeGreaterThanOrEqual(r.alternatives[i].similarity);
     }
+  });
+
+  it('ACTIVE gate — untagged source whose only curated alt is also untagged → shouldSkip', () => {
+    // 'Lateral Raises' (untagged) has a single curated alt 'Lateral Raises (cable)'
+    // (also untagged). Under the active gate neither is offerable → honest skip.
+    const r = findAlternatives('Lateral Raises');
+    expect(r.shouldSkip).toBe(true);
+    expect(r.alternatives).toEqual([]);
   });
 });
 
@@ -60,14 +77,35 @@ describe('getFallbackCascade §5.1 (cascade traversal)', () => {
     expect(r.exercise).toBe('Pike Push-up');
   });
 
-  it('muscle_group_compose step returns an exercises array (1-2 exercises)', () => {
-    // dumbbell-only: machine steps skip → muscle_group_compose (DB) hits before bodyweight.
-    const r = getFallbackCascade('Incline Barbell Bench', ['dumbbell']);
+  it('muscle_group_compose step returns an all-active exercises array (1-2 exercises)', () => {
+    // ACTIVE gate (Daniel SSOT 2026-06-05): a compose step is only taken when ALL
+    // its exercises are active (CORE_AUTO) — never surface a hidden variant even
+    // bundled. Source switched to 'Smith Machine Bench' whose compose step is
+    // [Flat DB Press, Cable Fly] (both CORE_AUTO, dumbbell/cable). Equipment =
+    // dumbbell+cable+bodyweight (no machine): original + the two machine steps
+    // skip → compose lands before bodyweight. (Incline Barbell Bench's compose is
+    // [Incline DB Press(CORE_AUTO), Incline DB Fly(untagged)] → correctly skipped
+    // by the gate now, falling through to its bodyweight step.)
+    const r = getFallbackCascade('Smith Machine Bench', ['dumbbell', 'cable', 'bodyweight']);
     expect(r.isAlternative).toBe(true);
     expect(r.cascadeStep).toBe('muscle_group_compose');
     expect(Array.isArray(r.exercises)).toBe(true);
     expect(r.exercises.length).toBeGreaterThan(0);
     expect(r.exercises.length).toBeLessThanOrEqual(2);
+    // Every composed exercise is active.
+    r.exercises.forEach((n) => expect(getExerciseMetadata(n).status).toBe('CORE_AUTO'));
+  });
+
+  it('ACTIVE gate — compose step with a hidden member is SKIPPED, never surfaced', () => {
+    // Incline Barbell Bench's compose step = [Incline DB Press (CORE_AUTO),
+    // Incline DB Fly (untagged/hidden)]. With dumbbell-only the gate rejects the
+    // compose (one member hidden) and falls through to a later ACTIVE step — the
+    // result must NOT be that compose, and whatever it returns is active.
+    const r = getFallbackCascade('Incline Barbell Bench', ['dumbbell']);
+    expect(r.isAlternative).toBe(true);
+    expect(r.cascadeStep).not.toBe('muscle_group_compose');
+    const offered = r.exercise ?? (Array.isArray(r.exercises) ? r.exercises[0] : undefined);
+    expect(getExerciseMetadata(offered).status).toBe('CORE_AUTO');
   });
 
   it('degrades to ranking when no cascade and original equip missing but a ranked alt is available', () => {
