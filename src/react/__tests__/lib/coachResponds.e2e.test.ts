@@ -24,7 +24,7 @@ import { getComputedReadinessScore } from '../../../engine/readiness.js';
 import { composePlannedWorkoutToday } from '../../lib/scheduleAdapterAggregate';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
-import { DB, tod } from '../../../db.js';
+import { DB } from '../../../db.js';
 
 const MONDAY_2026_05_18 = new Date(2026, 4, 18); // freq-'4' UPPER day (Lat Pulldown surfaces)
 
