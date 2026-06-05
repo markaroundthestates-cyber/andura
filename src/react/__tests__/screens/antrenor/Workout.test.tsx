@@ -568,6 +568,56 @@ describe('Workout — finish last set of last exercise navigates post-rpe', asyn
       '/app/antrenor/post-rpe'
     );
   });
+
+  // Founder UX 2026-06-06 — no trailing rest timer when the just-finished set is
+  // the LAST real work in the session. After restoreExercise jumps the cursor
+  // BACK to an earlier slot whose later slots are ALL already completed, finishing
+  // it must go straight to post-rpe (NOT an inter-exercise rest + transition to an
+  // already-done exercise). isLastExercise now means "no slot after this still
+  // needs sets", not "highest raw index".
+  it('no rest after the LAST remaining set even when later slots are already done (post-restore)', async () => {
+    const full = (n: number) =>
+      Array.from({ length: n }, () => ({ kg: 20, reps: 10, rating: 'potrivit' as const }));
+    // Cursor on exercise 0 (Bench Press, 4 sets) with 3 logged; exercises 1-4
+    // already FULLY completed (as if done earlier, then we restored slot 0).
+    useWorkoutStore.setState({
+      exIdx: 0,
+      phase: 'logging',
+      history: {
+        0: full(3),
+        1: full(4),
+        2: full(3),
+        3: full(3),
+        4: full(3),
+      },
+      sessionStart: Date.now() - 1000,
+    });
+    await renderWorkoutAndWait();
+    logSet('Potrivit'); // set 4/4 of exercise 0 → the final remaining work
+    expect(useWorkoutStore.getState().phase).not.toBe('rest');
+    expect(screen.queryByTestId('rest-overlay')).not.toBeInTheDocument();
+    expect(screen.getByTestId('probe')).toHaveAttribute(
+      'data-pathname',
+      '/app/antrenor/post-rpe'
+    );
+  });
+
+  // Guard: a normal last set of a NON-final exercise STILL rests (we only suppress
+  // the very last set of the session, never an inter-exercise rest).
+  it('still rests after the last set of a non-final exercise (no over-suppression)', async () => {
+    const full = (n: number) =>
+      Array.from({ length: n }, () => ({ kg: 20, reps: 10, rating: 'potrivit' as const }));
+    useWorkoutStore.setState({
+      exIdx: 0,
+      phase: 'logging',
+      history: { 0: full(3) }, // exercises 1-4 NOT done → real next work exists
+      sessionStart: Date.now() - 1000,
+    });
+    await renderWorkoutAndWait();
+    logSet('Potrivit'); // set 4/4 of exercise 0, but more exercises remain
+    expect(useWorkoutStore.getState().phase).toBe('rest');
+    expect(screen.getByTestId('rest-overlay')).toBeInTheDocument();
+  });
 });
 
 // Bug 2 — "Up next" hint on the LAST set of a (non-final) exercise so the user

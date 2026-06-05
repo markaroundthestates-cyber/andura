@@ -235,7 +235,25 @@ export function Workout(): JSX.Element {
   const currentSetIdx = hasWorkout ? history[safeExIdx]?.length ?? 0 : 0;
   const isLastSetOfExercise =
     hasWorkout && currentSetIdx + 1 >= currentExercise.sets;
-  const isLastExercise = hasWorkout && exercises !== null && safeExIdx + 1 >= exercises.length;
+  // Founder UX 2026-06-06 — index of the next exercise with REAL work left: not
+  // dropped, and not already completed (full set history). After restoreExercise
+  // jumps the cursor BACK to an earlier slot, the slots AHEAD of it may already
+  // be done — finishing the restored exercise must NOT earn a trailing rest +
+  // transition to an already-completed exercise. The session is effectively over
+  // once no slot after the current one still needs sets. -1 = nothing follows.
+  const nextActiveIdx =
+    hasWorkout && exercises !== null
+      ? (() => {
+          for (let i = safeExIdx + 1; i < exercises.length; i++) {
+            if (droppedExercises[i]) continue;
+            const ex = exercises[i];
+            const done = history[i]?.length ?? 0;
+            if (ex && done < ex.sets) return i;
+          }
+          return -1;
+        })()
+      : -1;
+  const isLastExercise = hasWorkout && exercises !== null && nextActiveIdx === -1;
 
   const [kgInput, setKgInput] = useState<number>(targetKg);
   const [repsInput, setRepsInput] = useState<number>(currentExercise.targetReps);
@@ -883,8 +901,10 @@ export function Workout(): JSX.Element {
     );
   }
 
-  // Past empty/loading guard — exercises is non-null array.
-  const nextExercise = exercises[safeExIdx + 1];
+  // Past empty/loading guard — exercises is non-null array. Use nextActiveIdx so
+  // the up-next preview + transition reveal name the next NON-dropped exercise
+  // (a dropped trailing slot is skipped, never previewed).
+  const nextExercise = nextActiveIdx >= 0 ? exercises[nextActiveIdx] : undefined;
 
   // P-11 (LOW) — global progress (SessionTimer wv2-progress block). setsTotal =
   // sum planned sets; setsDone = current ordinal advancing through the session.
