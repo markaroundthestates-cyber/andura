@@ -201,6 +201,35 @@ export function SettingsProfile(): JSX.Element {
       toast.show({ message: t(heightCheck.messageKey, heightCheck.params), variant: 'warning' });
       return;
     }
+    // Body-composition input gate (Daniel audit — neck 103 / waist 42 swapped
+    // got stored, feeding an unreliable BF%). The US-Navy formula self-guards
+    // (waist-neck<=0 → null), but a swapped/out-of-range entry still landed in
+    // bodyData unfiltered. Block the bad save with a clear message rather than
+    // silently storing garbage: enforce sane per-field ranges + neck < waist.
+    // Only fields the user actually entered are checked (empty = untouched).
+    const numOrNull = (raw: string): number | null => {
+      if (!raw.trim()) return null;
+      const n = Number(raw);
+      return Number.isFinite(n) ? n : null;
+    };
+    const neckNum = numOrNull(neck);
+    const waistNum = numOrNull(waist);
+    const hipNum = numOrNull(hip);
+    const outOfRange =
+      (neckNum !== null && (neckNum < 25 || neckNum > 60)) ||
+      (waistNum !== null && (waistNum < 50 || waistNum > 200)) ||
+      (draft.sex === 'f' && hipNum !== null && (hipNum < 50 || hipNum > 200));
+    if (outOfRange) {
+      toast.show({ message: t('settings.profile.bodyMeasureRange'), variant: 'warning' });
+      return;
+    }
+    // Neck must be smaller than waist — the US-Navy waist-neck circumference
+    // proxy is meaningless otherwise (and neck>=waist is the swapped-fields
+    // signature). Checked only when both are present.
+    if (neckNum !== null && waistNum !== null && neckNum >= waistNum) {
+      toast.show({ message: t('settings.profile.bodyMeasureNeckWaist'), variant: 'warning' });
+      return;
+    }
     // §weight-continuity — captureaza greutatea canonica curenta INAINTE de
     // commit ca sa detectam o schimbare reala (NU scriem un weigh-in fantoma in
     // timeline cand user-ul a editat doar goal/sex/etc).

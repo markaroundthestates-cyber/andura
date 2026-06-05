@@ -291,6 +291,57 @@ describe('SettingsProfile — Compozitie corporala (§F-pass2-settings-profile-0
     expect(last?.hipsCm).toBe(96);
   });
 
+  // Body-composition input gate (Daniel audit — neck 103 / waist 42 swapped got
+  // stored, feeding an unreliable BF%). The save must block swapped/impossible
+  // measurements rather than persist garbage.
+  // Real audit record neck 103 / waist 42: neck is above the 25-60 band, so the
+  // range gate blocks it (waist 42 is also below 50). Either way the swapped
+  // garbage never reaches bodyData.
+  it('respinge masuratoare out-of-range (gat 103 > 60) pe save — bodyData neatins + toast', async () => {
+    const { useProgresStore } = await import('../../../stores/progresStore');
+    useProgresStore.getState().reset();
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-neck-input'), { target: { value: '103' } });
+    fireEvent.change(screen.getByTestId('profile-waist-input'), { target: { value: '42' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(useProgresStore.getState().bodyData.length).toBe(0);
+    expect(screen.queryByTestId('settings-profile-saved')).not.toBeInTheDocument();
+    const items = toast.getSnapshot();
+    expect(
+      items.some((t) => t.variant === 'warning' && /Verifica masuratorile/.test(String(t.message))),
+    ).toBe(true);
+  });
+
+  // Neck >= waist with both values IN their valid bands — the swapped-fields
+  // signature the US-Navy proxy can't survive (waist-neck<=0). Must block.
+  it('respinge neck>=waist (ambele in banda) pe save — bodyData neatins + toast', async () => {
+    const { useProgresStore } = await import('../../../stores/progresStore');
+    useProgresStore.getState().reset();
+    renderScreen();
+    // neck 55 >= waist 52, both inside the valid ranges (neck 25-60, waist 50-200).
+    fireEvent.change(screen.getByTestId('profile-waist-input'), { target: { value: '52' } });
+    fireEvent.change(screen.getByTestId('profile-neck-input'), { target: { value: '55' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(useProgresStore.getState().bodyData.length).toBe(0);
+    expect(screen.queryByTestId('settings-profile-saved')).not.toBeInTheDocument();
+    const items = toast.getSnapshot();
+    expect(
+      items.some((t) => t.variant === 'warning' && /Gatul trebuie sa fie mai mic/.test(String(t.message))),
+    ).toBe(true);
+  });
+
+  it('accepta neck<waist valid in banda pe save — bodyData scris', async () => {
+    const { useProgresStore } = await import('../../../stores/progresStore');
+    useProgresStore.getState().reset();
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-waist-input'), { target: { value: '101' } });
+    fireEvent.change(screen.getByTestId('profile-neck-input'), { target: { value: '43' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    const last = useProgresStore.getState().bodyData.at(-1);
+    expect(last?.waistCm).toBe(101);
+    expect(last?.neckCm).toBe(43);
+  });
+
   // §progress-v2 — skinfold avansat optional: collapsed default, toggle reveals.
   it('panoul skinfold e ascuns default + dezvaluit de toggle (men sites)', () => {
     renderScreen();

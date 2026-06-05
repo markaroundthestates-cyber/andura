@@ -1452,6 +1452,8 @@
       "hip": "Hip (cm)",
       "bfHint": "Fill in neck, waist and height for a US Navy estimate. Until then we show a demographic estimate.",
       "bfRangeError": "Value is outside the 3-60% range. It won't be saved until you fix it.",
+      "bodyMeasureNeckWaist": "Neck must be smaller than waist. It looks like these two values were swapped.",
+      "bodyMeasureRange": "Check your measurements: neck 25-60 cm, waist 50-200 cm, hip 50-200 cm.",
       "bodyCompFooter": "Calculated automatically (US Navy: waist + neck + height + sex) or set by you. Falls back to a demographic estimate when measurements are missing.",
       "skinfoldHeading": "Skinfolds (advanced, optional)",
       "skinfoldToggle": "I measure with a caliper",

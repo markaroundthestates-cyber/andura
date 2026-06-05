@@ -1452,6 +1452,8 @@
       "hip": "Sold (cm)",
       "bfHint": "Completeaza gat, talie si inaltime pentru estimarea US Navy. Pana atunci aratam o estimare demografica.",
       "bfRangeError": "Valoare in afara intervalului 3-60%. Nu va fi salvata pana nu o corectezi.",
+      "bodyMeasureNeckWaist": "Gatul trebuie sa fie mai mic decat talia. Pare ca ai inversat cele doua valori.",
+      "bodyMeasureRange": "Verifica masuratorile: gat 25-60 cm, talie 50-200 cm, sold 50-200 cm.",
       "bodyCompFooter": "Calculat automat (US Navy: talie + gat + inaltime + sex) sau editat manual. Fallback Demographic Prior daca lipsesc masuratori.",
       "skinfoldHeading": "Pliuri cutanate (avansat, optional)",
       "skinfoldToggle": "Masor cu caliper",
