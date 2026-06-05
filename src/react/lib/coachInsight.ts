@@ -110,13 +110,19 @@ export interface CoachInsightContext {
 }
 
 /**
- * Localized Big-11 group label (RO/EN) from a group token. Resolves the i18n
- * bucket (coachEngine.muscleGroups.${group}); falls back to the raw token when
- * the bundle lacks the key (defensive — engine emits Big-11 RO keys). Lowercased
- * so it reads naturally MID-sentence ("...your hamstrings...").
+ * Localized Big-11 group label (RO/EN) from a group token, in the BARE
+ * (article-stripped) form. Every coach clause interpolates this label AFTER a
+ * preposition ("pe {group}", "din {group}") where Romanian wants the bare noun
+ * ("pe biceps", "din spate"), NOT the nominative-with-article form ("pe
+ * bicepsul", "din spatele"). Resolves coachEngine.muscleGroupsBare.${group};
+ * falls back to the article form bucket, then to the raw token (defensive —
+ * engine emits Big-11 RO keys). Lowercased so it reads naturally mid-sentence.
  */
 function groupLabel(group: string | undefined): string {
   if (!group) return '';
+  const bareKey = `coachEngine.muscleGroupsBare.${group}`;
+  const bare = t(bareKey);
+  if (bare && bare !== bareKey) return bare.toLowerCase();
   const key = `coachEngine.muscleGroups.${group}`;
   const localized = t(key);
   const label = localized && localized !== key ? localized : group;

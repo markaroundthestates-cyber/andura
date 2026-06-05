@@ -1906,6 +1906,19 @@
       "fese": "Glutes",
       "gambe": "Calves"
     },
+    "muscleGroupsBare": {
+      "piept": "Chest",
+      "spate": "Back",
+      "umeri": "Shoulders",
+      "biceps": "Biceps",
+      "triceps": "Triceps",
+      "antebrate": "Forearms",
+      "core": "Core",
+      "picioare-quads": "Quads",
+      "picioare-hamstrings": "Hamstrings",
+      "fese": "Glutes",
+      "gambe": "Calves"
+    },
     "voice": {
       "preset": [
         "Let's go, you've got the rhythm.",

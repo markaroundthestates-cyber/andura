@@ -238,7 +238,7 @@
     },
     "recoveredQuote": "{group} recupereaza din {when} - hai sa o facem curat.",
     "fallbackQuote": "Astazi e ziua ta. Vino la sala — sinea ta viitoare iti va multumi.",
-    "laggingSignal": "{group} sub-volum {weeks} sapt - focus azi pe sesiune.",
+    "laggingSignal": "{group} sub-volum {weeks} sapt - concentreaza-te pe el azi.",
     "weekMakeup": {
       "added": "Am adaugat putin {groups} azi ca sa prinzi ritmul saptamanii.",
       "addedMany": "Azi punem accent pe cateva grupe ca sa echilibram saptamana.",
@@ -1905,6 +1905,19 @@
       "picioare-hamstrings": "Hamstringii",
       "fese": "Fesele",
       "gambe": "Gambele"
+    },
+    "muscleGroupsBare": {
+      "piept": "piept",
+      "spate": "spate",
+      "umeri": "umeri",
+      "biceps": "biceps",
+      "triceps": "triceps",
+      "antebrate": "antebrate",
+      "core": "core",
+      "picioare-quads": "cvadriceps",
+      "picioare-hamstrings": "hamstring",
+      "fese": "fese",
+      "gambe": "gambe"
     },
     "voice": {
       "preset": [
