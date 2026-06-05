@@ -54,6 +54,7 @@ import {
 import { detectWeakGroups } from '../../engine/weaknessDetector.js';
 import { detectCalibrationLevel, CALIBRATION_LEVELS } from '../../engine/calibration.js';
 import { useWorkoutStore } from '../stores/workoutStore';
+import { useOnboardingStore } from '../stores/onboardingStore';
 import { useScheduleStore, weekStartIso } from '../stores/scheduleStore';
 import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
 // Piesa 1 nutrition-brain fix — real per-user maintenance TDEE base (omoara
@@ -568,8 +569,36 @@ export function getAdherenceOutput(): AdherenceOutput {
  */
 export const STAGNATION_WEEKS_THRESHOLD = 2;
 
-const LOW_ADHERENCE_THRESHOLD = 50;   // adherence < 50 → banner
 const LOW_ADHERENCE_MIN_SESSIONS_GATE = 3; // Gigel-friendly: fresh user (<3 sessions) sees no adherence-low banner
+
+/**
+ * Weekly WORKOUT adherence (Daniel P0 2026-06-05). The banner previously read
+ * getAdherenceScore() — a TODAY score that is 75% nutrition (kcal/protein/
+ * weight), so a gym-only user who trains perfectly but logs no food was
+ * STRUCTURALLY flagged "low adherence", contradicting Andura's gym-first
+ * positioning (Gigel: "I trained 3x and the coach says I slacked?"). For a
+ * workout-focused app, adherence = did you train as often as you planned.
+ *
+ * Counts sessions in the rolling 7-day window vs the user's frequency target;
+ * "low" = fewer than HALF the target over a full week. Rolling 7 days self-
+ * normalizes for how far into the week we are (a consistent user always has
+ * ~target sessions in ANY 7-day window). No / invalid target → never low
+ * (fail-safe: don't nag a user with no plan). Pure (state in, no globals).
+ *
+ * @param sessionTimestamps finished-session `ts` values (workoutStore.sessionsHistory)
+ * @param frequencyTarget planned sessions/week (onboarding frequency, parsed)
+ * @param now reference epoch ms (threaded for determinism)
+ */
+export function isLowWeeklyWorkoutAdherence(
+  sessionTimestamps: readonly number[],
+  frequencyTarget: number,
+  now: number,
+): boolean {
+  if (!Number.isFinite(frequencyTarget) || frequencyTarget <= 0) return false;
+  const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+  const sessionsThisWeek = sessionTimestamps.filter((ts) => ts >= weekAgo).length;
+  return sessionsThisWeek < Math.ceil(frequencyTarget / 2);
+}
 
 /**
  * Composer Option B Bugatti — patterns banner via pure-function engines
@@ -610,14 +639,20 @@ export function getPatternsBanner(): PatternBanner[] {
   // since "adherence" requires a baseline to fall below. Gigel-friendly:
   // first-time user sees encouragement, not "you slacked").
   try {
-    const sessionCount = useWorkoutStore.getState().sessionsHistory.length;
-    if (sessionCount >= LOW_ADHERENCE_MIN_SESSIONS_GATE) {
-      const adherence = getAdherenceScore();
-      // Engine returns {score, color, label}; defensive number-only legacy fallback
-      const score = typeof adherence === 'object' && adherence !== null
-        ? (adherence as { score?: number }).score
-        : (typeof adherence === 'number' ? adherence : null);
-      if (typeof score === 'number' && score < LOW_ADHERENCE_THRESHOLD) {
+    const sessionsHistory = useWorkoutStore.getState().sessionsHistory;
+    if (sessionsHistory.length >= LOW_ADHERENCE_MIN_SESSIONS_GATE) {
+      // Workout adherence, NOT the nutrition-weighted daily getAdherenceScore:
+      // a gym-only user who trains as planned must never read "low adherence".
+      const frequencyTarget = parseInt(
+        String(useOnboardingStore.getState().data.frequency ?? ''),
+        10,
+      );
+      const lowAdherence = isLowWeeklyWorkoutAdherence(
+        sessionsHistory.map((s) => s.ts),
+        frequencyTarget,
+        Date.now(),
+      );
+      if (lowAdherence) {
         banners.push({
           id: 'LOW_ADHERENCE',
           severity: 'info',

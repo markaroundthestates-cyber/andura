@@ -90,6 +90,7 @@ import { detectGlobalStagnation } from '../../../engine/stagnationDetector.js';
 import { getRecoveryByGroup } from '../../../engine/muscleRecovery.js';
 import { detectWeakGroups } from '../../../engine/weaknessDetector.js';
 import { useWorkoutStore } from '../../stores/workoutStore';
+import { useOnboardingStore } from '../../stores/onboardingStore';
 
 // Helper: seed workoutStore cu N sessions (minimal shape, exercises with 1
 // set each). Gates getPatternsBanner LOW_ADHERENCE try-block (needs 3+
@@ -244,10 +245,15 @@ describe('engineWrappers §48-H1 Sentry instrumentation', () => {
       maxStagnationWeeks: 0,
       byExercise: {},
     });
-    vi.mocked(getAdherenceScore).mockImplementation(() => {
-      throw new Error('adherence sub-engine boom');
-    });
+    // LOW_ADHERENCE now reads the onboarding frequency target (workout-based
+    // adherence, post 2026-06-05) — force that read to throw to exercise the catch.
+    const onboardingSpy = vi
+      .spyOn(useOnboardingStore, 'getState')
+      .mockImplementation(() => {
+        throw new Error('adherence sub-engine boom');
+      });
     expect(getPatternsBanner()).toEqual([]);
+    onboardingSpy.mockRestore();
     expect(captureException).toHaveBeenCalledTimes(1);
     expect(captureException).toHaveBeenCalledWith(
       expect.any(Error),
