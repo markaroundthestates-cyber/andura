@@ -581,6 +581,7 @@ export function movementKey(name, meta) {
  *   volumeTargets?: Record<string, number>,
  *   weeklySessionsPerGroup?: Record<string, number>,
  *   recoveryState?: Record<string, 'recovered'|'partial'|'fatigued'>,
+ *   emphasizedGroups?: string[],
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  */
@@ -606,14 +607,32 @@ export function buildSession(cluster, ctx) {
     pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed),
   }));
 
+  // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the user's
+  // chosen LOOK preset raises (arms→biceps/triceps/umeri, chest→piept/triceps, …).
+  // Treated like a weak group for SURFACING (extra slot + front-of-session) so the
+  // emphasis produces a VISIBLY different exercise list than balanced, not just a
+  // higher weekly number that the SESSION_SIZE clamp + cluster-weight slot caps
+  // absorb (the root cause of "arms/chest look identical to balanced"). Distinct
+  // from weakGroups: emphasis is the user's explicit intent, weakGroups is
+  // auto-detected lagging — but both deserve more visible volume, so they share
+  // the surfacing levers. Empty (balanced) → byte-identical to pre-feature.
+  const emphSet = new Set(
+    (ctx?.emphasizedGroups ?? []).filter((g) => targets.includes(g)),
+  );
+  // Surfacing set = weak (auto) ∪ emphasized (user intent). Used for the slot-cap
+  // exemption + the extra-slot budget so an emphasized group this cluster trains
+  // wins more exercises even when the cluster-weight cap would otherwise hold it.
+  const surfaceSet = new Set([...(ctx?.weakGroups ?? []), ...emphSet]);
+
   // Weakness bias: when the Specialization engine flags a weak Big-11 group
   // that this session trains, fill that group FIRST in the round-robin so it
   // wins the limited SESSION_SIZE slots = MORE exercises (more volume) on the
   // weak group. weakGroups arrive as Big-11 RO (specialization target), the
   // same vocabulary as the pool group keys (WP-3 bridge) so they match directly.
-  const weakSet = new Set(ctx?.weakGroups ?? []);
-  if (weakSet.size > 0) {
-    pools.sort((a, b) => (weakSet.has(b.group) ? 1 : 0) - (weakSet.has(a.group) ? 1 : 0));
+  // Emphasized groups (focus) share this front-fill for the same reason — both
+  // live in surfaceSet (weak ∪ emphasized), which also drives the cap exemption.
+  if (surfaceSet.size > 0) {
+    pools.sort((a, b) => (surfaceSet.has(b.group) ? 1 : 0) - (surfaceSet.has(a.group) ? 1 : 0));
   }
 
   // Weight-biased per-group slot cap: heavier-weight groups in the cluster earn
@@ -628,7 +647,19 @@ export function buildSession(cluster, ctx) {
   for (const g of targets) {
     const w = typeof clusterWeights[g] === 'number' ? clusterWeights[g] : 0;
     slotCap[g] = Math.max(1, Math.ceil(w * sessionSize));
+    // Focus EMPHASIS — an emphasized group earns ONE extra slot over its
+    // cluster-weight cap so the preset surfaces as an additional exercise on that
+    // group (the visible difference arms/chest were missing). The session total is
+    // still bounded by effectiveSessionSize below, so this REDISTRIBUTES a slot
+    // from the lowest-weight non-emphasized group toward the emphasized one.
+    if (emphSet.has(g)) slotCap[g] += 1;
   }
+  // Make ROOM for the emphasized extra slots: raise the session budget by the
+  // number of emphasized groups this cluster trains (clamped to SESSION_SIZE).
+  // Without this the session stays saturated at the balanced size and the extra
+  // emphasized slot only DISPLACES another group rather than adding visible
+  // volume. balanced / no emphasized group in this cluster → unchanged.
+  const effectiveSessionSize = Math.min(SESSION_SIZE, sessionSize + emphSet.size);
   const groupCount = {};
 
   const chosen = [];
@@ -681,11 +712,13 @@ export function buildSession(cluster, ctx) {
   // weight bias). A weak group is exempt from its cap (it should win EXTRA
   // volume — that is the Specialization point).
   let progressed = true;
-  while (chosen.length < sessionSize && progressed) {
+  while (chosen.length < effectiveSessionSize && progressed) {
     progressed = false;
     for (const { group, pool } of pools) {
-      if (chosen.length >= sessionSize) break;
-      const capped = !weakSet.has(group) && (groupCount[group] || 0) >= slotCap[group];
+      if (chosen.length >= effectiveSessionSize) break;
+      // Weak (auto) AND emphasized (focus) groups are exempt from their cap — both
+      // should win EXTRA volume (the Specialization point + the user's look choice).
+      const capped = !surfaceSet.has(group) && (groupCount[group] || 0) >= slotCap[group];
       if (capped) continue;
       const next = pool.find((e) => !isTaken(e));
       if (next) {
@@ -696,14 +729,14 @@ export function buildSession(cluster, ctx) {
   }
 
   // Remainder pass — if the weighted caps left the session under budget (e.g. a
-  // small cluster whose caps summed below sessionSize, or thin pools), top up
-  // ignoring caps so the session still reaches its volume-driven size when the
-  // library can supply it.
+  // small cluster whose caps summed below effectiveSessionSize, or thin pools),
+  // top up ignoring caps so the session still reaches its volume-driven size when
+  // the library can supply it.
   progressed = true;
-  while (chosen.length < sessionSize && progressed) {
+  while (chosen.length < effectiveSessionSize && progressed) {
     progressed = false;
     for (const { pool } of pools) {
-      if (chosen.length >= sessionSize) break;
+      if (chosen.length >= effectiveSessionSize) break;
       const next = pool.find((e) => !isTaken(e));
       if (next) {
         take(next, DEFAULT_SETS);
@@ -803,7 +836,12 @@ export function buildSession(cluster, ctx) {
   // group (the Specialization engine only emits one when its 4-gate eligibility
   // passes, so presence of weakGroups IS the gate — no separate global flag is
   // needed). Pairs with the pool-bias above: the weak group gets BOTH more
-  // volume (extra slots) and front-of-session ordering.
+  // volume (extra slots) and front-of-session ordering. Focus EMPHASIS shares the
+  // front-of-session lever (the user's look choice leads the session) — applied
+  // AFTER weakness so an auto-detected weakness still wins the very front.
+  if (emphSet.size > 0) {
+    exercises = prioritizeWeakGroups(exercises, [...emphSet]);
+  }
   if ((ctx?.weakGroups?.length ?? 0) > 0) {
     exercises = prioritizeWeakGroups(exercises, ctx?.weakGroups ?? []);
   }

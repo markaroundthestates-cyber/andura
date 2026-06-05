@@ -87,6 +87,22 @@ export function deEmphasizedGroups(focusPreset) {
 }
 
 /**
+ * The Big-11 RO groups a preset EMPHASIZES — the set the session builder must
+ * surface VISIBLY (extra exercise slots + front-of-session), so an arms/chest
+ * pick produces a noticeably different generated session than balanced (not just
+ * a paper volume bump that the SESSION_SIZE clamp + slot caps absorb). The weekly
+ * volume bias (applyFocusBias) raises these groups' budget; this set lets that
+ * intent reach the visible exercise list. `balanced`/unknown → empty (no boost).
+ * Pure.
+ *
+ * @param {string|null|undefined} focusPreset
+ * @returns {Set<string>} Big-11 RO emphasized group ids
+ */
+export function emphasizedGroups(focusPreset) {
+  return new Set(resolveFocusPreset(focusPreset).emphasize);
+}
+
+/**
  * Focus volume stage — bias each group's weekly budget by the preset. EMPHASIZED
  * groups lerp toward MRV; DE-EMPHASIZED groups lerp toward MEV (maintenance floor
  * — clamped so they NEVER drop below MEV, never to zero); neutral groups

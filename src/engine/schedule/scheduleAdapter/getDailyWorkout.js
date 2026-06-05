@@ -35,7 +35,7 @@ import {
 import { pickAlternativeCluster } from './alternativeCluster.js';
 import { weeklySessionsPerGroup } from './weeklySessions.js';
 import { flattenSessionsToRecoveryLogs } from './recoveryLogs.js';
-import { FOCUS_PRESETS, deEmphasizedGroups, applyFocusBias } from './focus.js';
+import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias } from './focus.js';
 import {
   laggingGroupsFromLogs,
   applyWeaknessAmplification,
@@ -153,6 +153,16 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       ? userState.user.focusPreset
       : 'balanced';
   const deEmphSet = deEmphasizedGroups(focusPreset);
+  // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the preset
+  // raises. Threaded into buildSession so the emphasis surfaces as MORE exercise
+  // slots + front-of-session on the day the group is trained — NOT just a weekly
+  // volume bump the SESSION_SIZE clamp + cluster-weight slot caps silently absorb.
+  // This is what makes arms/chest produce a VISIBLY different session than balanced
+  // (Daniel: "whatever I pick I get the v-taper workout" — arms/chest were
+  // exercise-for-exercise clones of balanced because only v-taper changed the
+  // SPLIT; emphasis-only presets need an in-session lever). balanced → empty set →
+  // byte-identical to pre-feature.
+  const emphSet = emphasizedGroups(focusPreset);
   const activeWeek =
     activeWeekFromOverride(override) ??
     activeWeekFromScheduleStore() ??
@@ -396,6 +406,13 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // drove the M1 budget cut above (resistance + aerobic) — NOT a new penalty,
     // it only makes the existing cut visible. Empty state (no logs) → no-op.
     recoveryState: mergedState,
+    // Focus EMPHASIS surfacing (D-focus-visible 2026-06-05) — the emphasized
+    // Big-11 RO groups earn an EXTRA exercise slot (over the cluster-weight cap)
+    // AND front-of-session ordering, so the preset's volume intent shows as a
+    // different exercise list, not just a higher weekly number the clamps absorb.
+    // Distinct from weakGroups (auto-detected lagging): emphasis is the USER'S
+    // explicit look choice. balanced → empty array → no-op (byte-identical).
+    emphasizedGroups: [...emphSet],
   };
 
   const session = buildSession(cluster, sessionCtx);

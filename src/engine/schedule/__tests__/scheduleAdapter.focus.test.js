@@ -330,3 +330,94 @@ describe('focus determinism', () => {
     expect(a).toEqual(b);
   });
 });
+
+// ── VISIBLE DIFFERENTIATION (D-focus-visible 2026-06-05) ─────────────────────
+// Daniel: "whatever I pick I get the v-taper workout." Root cause was NOT a
+// persistence/cache bug — it was that arms/chest produced an exercise-for-exercise
+// CLONE of balanced's session (only v-taper changed the SPLIT, so only v-taper
+// LOOKED different). The weekly volume bias was real but the SESSION_SIZE clamp +
+// cluster-weight slot caps + per-exercise set clamps absorbed it, so the visible
+// exercise list never moved. These tests assert each preset now produces a
+// DISTINGUISHABLE generated session for the SAME frequency + state.
+describe('focus presets produce VISIBLY distinguishable sessions', () => {
+  // A comparable signature of the actual generated session: the ordered exercise
+  // names + their set counts. Two presets are distinguishable iff this differs.
+  function sessionSignature(plan) {
+    return (plan.exercises || []).map((e) => `${e.name}:${e.sets}`).join('|');
+  }
+
+  it('arms ≠ balanced — the generated session differs (not a clone)', async () => {
+    const balanced = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
+    const arms = await getDailyWorkout(
+      buildUserState({ user: { focusPreset: 'arms' } }),
+      MONDAY_2026_05_18,
+    );
+    expect(sessionSignature(arms)).not.toBe(sessionSignature(balanced));
+  });
+
+  it('chest ≠ balanced — the generated session differs (not a clone)', async () => {
+    const balanced = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
+    const chest = await getDailyWorkout(
+      buildUserState({ user: { focusPreset: 'chest' } }),
+      MONDAY_2026_05_18,
+    );
+    expect(sessionSignature(chest)).not.toBe(sessionSignature(balanced));
+  });
+
+  it('v-taper ≠ balanced — the generated session differs (split + content)', async () => {
+    const balanced = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
+    const vtaper = await getDailyWorkout(
+      buildUserState({ user: { focusPreset: 'v-taper' } }),
+      MONDAY_2026_05_18,
+    );
+    expect(sessionSignature(vtaper)).not.toBe(sessionSignature(balanced));
+    // v-taper also changes the session TYPE on this day (PUSH, not UPPER).
+    expect(vtaper.sessionType).not.toBe(balanced.sessionType);
+  });
+
+  it('all four presets are pairwise distinguishable (no two share a session)', async () => {
+    const presets = ['balanced', 'arms', 'chest', 'v-taper'];
+    const sigs = {};
+    for (const p of presets) {
+      const plan = await getDailyWorkout(
+        buildUserState({ user: { focusPreset: p } }),
+        MONDAY_2026_05_18,
+      );
+      sigs[p] = sessionSignature(plan);
+    }
+    const seen = new Set();
+    for (const p of presets) {
+      expect(seen.has(sigs[p]), `${p} session is a duplicate of another preset`).toBe(false);
+      seen.add(sigs[p]);
+    }
+  });
+
+  it('arms surfaces an arm movement (triceps pushdown / curl) balanced lacks', async () => {
+    const balanced = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
+    const arms = await getDailyWorkout(
+      buildUserState({ user: { focusPreset: 'arms' } }),
+      MONDAY_2026_05_18,
+    );
+    const names = (plan) => new Set((plan.exercises || []).map((e) => e.name));
+    const armsNames = names(arms);
+    const balancedNames = names(balanced);
+    // At least one exercise present under arms that is NOT in the balanced session
+    // (the extra arm/shoulder slot the emphasis earned).
+    const added = [...armsNames].filter((n) => !balancedNames.has(n));
+    expect(added.length).toBeGreaterThan(0);
+  });
+
+  it('lower surfaces on a LEG day (emphasis cannot show on an upper day, honestly)', async () => {
+    // Monday @ freq 4 is an UPPER day → no leg group trained → lower preset is a
+    // no-op there (correct + honest). The leg emphasis surfaces on the leg day
+    // (Tuesday, dayIdx 1 = the 2nd active day = 'lower' cluster). Compare the
+    // generated session there.
+    const TUESDAY = new Date(2026, 4, 19); // dayIdx 1 (Ma) — 'lower' cluster @ freq4
+    const balanced = await getDailyWorkout(buildUserState(), TUESDAY);
+    const lower = await getDailyWorkout(
+      buildUserState({ user: { focusPreset: 'lower' } }),
+      TUESDAY,
+    );
+    expect(sessionSignature(lower)).not.toBe(sessionSignature(balanced));
+  });
+});

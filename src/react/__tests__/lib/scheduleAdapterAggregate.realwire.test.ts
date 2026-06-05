@@ -181,6 +181,50 @@ describe('scheduleAdapterAggregate — composePlannedWorkoutToday real wire asyn
       expect(out!.volumeKg).toBeGreaterThan(0);
     }
   });
+
+  // ── FOCUS PERSISTENCE → RECOMPUTE (D-focus-visible 2026-06-05) ─────────────
+  // Daniel: "whatever I pick I get the v-taper workout." This proves the live
+  // wire is NOT cached/memoized: writing onboardingStore.data.focusPreset (the
+  // EXACT key SettingsProfile.handleSave → setField persists) changes the NEXT
+  // composePlannedWorkoutToday output. buildUserStateForPipeline reads the store
+  // fresh on every compose call (no module cache), so the Coach plan re-derives
+  // the moment the selector changes.
+  function sig(out: NonNullable<Awaited<ReturnType<typeof composePlannedWorkoutToday>>>): string {
+    return out.exercises.map((e) => `${e.name}:${e.sets}`).join('|');
+  }
+
+  it('changing onboardingStore.focusPreset changes the next plan (no cache)', async () => {
+    // Baseline (balanced) plan for the SAME day + state.
+    useOnboardingStore.setState({
+      data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 75, height: 175, focusPreset: 'balanced' },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    const balanced = await composePlannedWorkoutToday(MONDAY_2026_05_18);
+    expect(balanced).not.toBeNull();
+
+    // The user changes the focus selector → setField writes data.focusPreset.
+    // Mirror that exact mutation (the only thing that changed).
+    useOnboardingStore.getState().setField('focusPreset', 'arms');
+    const arms = await composePlannedWorkoutToday(MONDAY_2026_05_18);
+    expect(arms).not.toBeNull();
+
+    // The plan re-derived: a different generated session, NOT a stale clone.
+    expect(sig(arms!)).not.toBe(sig(balanced!));
+  });
+
+  it('focusPreset is threaded into the pipeline userState (buildUserStateForPipeline)', async () => {
+    useOnboardingStore.getState().setField('focusPreset', 'v-taper');
+    const state = buildUserStateForPipeline();
+    expect((state.user as { focusPreset?: string }).focusPreset).toBe('v-taper');
+    // Default (no preset set) → 'balanced' (opt-in default, ZERO change).
+    useOnboardingStore.setState({
+      data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 75, height: 175 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    expect((buildUserStateForPipeline().user as { focusPreset?: string }).focusPreset).toBe('balanced');
+  });
 });
 
 describe('scheduleAdapterAggregate — week boundary + storage key safety', () => {
