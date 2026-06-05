@@ -409,7 +409,7 @@
     "actions": {
       "busy": "Busy",
       "missing": "Missing",
-      "refuse": "Skip"
+      "refuse": "Don't want"
     },
     "setLabel": "Set {current}/{total}",
     "upNext": "Up next: {name}",

@@ -795,16 +795,19 @@ describe('Workout — in-workout substitution row (F-workout-03)', async () => {
     resetStore();
   });
 
-  it('renders three action buttons in logging phase (Busy + Missing + Skip) — EN default', async () => {
+  it('renders three action buttons in logging phase (Busy + Missing + Don\'t want) — EN default', async () => {
     // Daniel smoke 2026-05-28 #17 — third button "Aparat lipsa" added. Labels
     // compressed for the 3-column row (full names live in aria-label / sheet
     // titles). Mockup parity preserved at the testid level. Wave C2 i18n: EN
-    // default → Busy / Missing / Skip (was RO Ocupat / Lipsa / Nu vreau).
+    // default → Busy / Missing / Don't want (was RO Ocupat / Lipsa / Nu vreau).
+    // Founder relabel 2026-06-06 — "Skip" misled (the control opens a swap
+    // pick-list / finishes the exercise, it does NOT cleanly skip to the next);
+    // "Don't want" matches the RO "Nu vreau" + the pick-list drop framing.
     await renderWorkoutAndWait();
     expect(screen.getByTestId('wv2-ex-actions')).toBeInTheDocument();
     expect(screen.getByTestId('wv2-ex-action-ocupat')).toHaveTextContent('Busy');
     expect(screen.getByTestId('wv2-ex-action-lipsa')).toHaveTextContent('Missing');
-    expect(screen.getByTestId('wv2-ex-action-nuvreau')).toHaveTextContent('Skip');
+    expect(screen.getByTestId('wv2-ex-action-nuvreau')).toHaveTextContent("Don't want");
   });
 
   it('"Ocupat" navigates la equipment-swap when no engineName (defensive fallback)', async () => {
