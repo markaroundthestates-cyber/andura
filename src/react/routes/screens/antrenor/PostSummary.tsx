@@ -279,10 +279,14 @@ export function PostSummary(): JSX.Element {
               <p className="text-base font-semibold" style={{ color: 'var(--ember)' }}>{t('postSummary.prNew')}</p>
               <p className="text-sm text-ink2" data-testid="summary-pr-detail">
                 {prData
-                  ? t('postSummary.prSummaryDetail', {
+                  ? // Show the ACTUAL achieved weight (prData.kg), not the delta.
+                    // A reps/volume PR has deltaKg=0 → the old "{sign}{deltaKg} kg"
+                    // rendered a misleading "0 kg" (Daniel audit 2026-06-05). The
+                    // gain magnitude still surfaces via the deltaPct badge below.
+                    // Fall back to deltaKg only for legacy prData lacking .kg.
+                    t('postSummary.prSummaryDetail', {
                       exercise: prData.exercise,
-                      sign: prData.deltaKg > 0 ? '+' : '',
-                      kg: prData.deltaKg,
+                      kg: prData.kg ?? prData.deltaKg,
                     })
                   : t('postSummary.prFallbackDetail', {
                       title: lastSession?.title ?? t('postSummary.fallbackTitle').toLowerCase(),

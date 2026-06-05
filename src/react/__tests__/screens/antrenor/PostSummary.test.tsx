@@ -503,28 +503,43 @@ describe('PostSummary — F11 PR banner prData expand (task_10 §B)', () => {
     expect(detail.textContent).toMatch(/Push \(piept si umeri\)/);
   });
 
-  it('banner shows prData exercise + deltaKg cand prData present (EN default)', () => {
+  it('banner shows prData exercise + ACTUAL achieved kg (NU deltaKg) cand prData present (EN default)', () => {
+    // Daniel audit 2026-06-05 — the detail line shows the real lifted weight
+    // (prData.kg), not the delta. The gain magnitude still surfaces via the
+    // deltaPct badge. A reps/volume PR has deltaKg=0; showing it rendered "0 kg".
     useWorkoutStore.setState({
       prHit: true,
-      prData: { exercise: 'Bench Press', deltaKg: 2.5, type: 'weight' },
+      prData: { exercise: 'Bench Press', deltaKg: 2.5, kg: 60, type: 'weight' },
     });
     renderSummary();
     const detail = screen.getByTestId('summary-pr-detail');
     expect(detail.textContent).toMatch(/Bench Press/);
-    expect(detail.textContent).toMatch(/\+2\.5 kg/);
+    expect(detail.textContent).toMatch(/60 kg/);
     // task_22: type now displayed în separate enrichment label badge (Weight PR under EN)
     expect(screen.getByTestId('summary-pr-type-label').textContent).toMatch(/Weight PR/);
   });
 
-  it('banner shows negative deltaKg fara double-sign', () => {
+  it('reps/volume PR shows the real lifted kg, NOT a misleading "0 kg" (deltaKg=0)', () => {
+    // The exact audit bug: "New PR! Incline DB Press - 0 kg" while the record
+    // was 15 kg. A reps PR at the same weight has deltaKg=0 → must NOT render 0.
     useWorkoutStore.setState({
       prHit: true,
-      prData: { exercise: 'Squat', deltaKg: -5, type: 'reps' },
+      prData: { exercise: 'Incline DB Press', deltaKg: 0, kg: 15, type: 'reps' },
     });
     renderSummary();
     const detail = screen.getByTestId('summary-pr-detail');
-    expect(detail.textContent).toMatch(/-5 kg/);
-    expect(detail.textContent).not.toMatch(/\+-5/);
+    expect(detail.textContent).toMatch(/Incline DB Press/);
+    expect(detail.textContent).toMatch(/15 kg/);
+    expect(detail.textContent).not.toMatch(/0 kg/);
+  });
+
+  it('falls back to deltaKg when legacy prData lacks .kg', () => {
+    useWorkoutStore.setState({
+      prHit: true,
+      prData: { exercise: 'Squat', deltaKg: 5, type: 'reps' },
+    });
+    renderSummary();
+    expect(screen.getByTestId('summary-pr-detail').textContent).toMatch(/5 kg/);
   });
 
   it('volume PR type rendered in banner enrichment label', () => {

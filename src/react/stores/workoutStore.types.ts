@@ -44,6 +44,11 @@ export interface ExerciseHistoryEntry {
 export interface PRData {
   exercise: string;
   deltaKg: number;
+  // Actual achieved weight of the PR set (engine raw.kg). The summary detail
+  // line shows THIS (the real lift), not deltaKg — a reps/volume PR has
+  // deltaKg=0, which rendered a misleading "0 kg" (Daniel audit 2026-06-05).
+  // Optional for backward compat with persisted/legacy prData lacking it.
+  kg?: number;
   type: 'weight' | 'reps' | 'volume';
   // Phase 4 task_18: enriched fields optional pentru backward compat (zero
   // legacy default cand absent). PostSummary banner Phase 5+ task_22

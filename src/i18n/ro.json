@@ -593,7 +593,7 @@
     "prBannerAriaLabel": "PR nou detectat",
     "prNew": "PR nou!",
     "prFallbackDetail": "Cel mai bun set la {title}",
-    "prSummaryDetail": "{exercise} - {sign}{kg} kg",
+    "prSummaryDetail": "{exercise} - {kg} kg",
     "prTypeLabel": {
       "weight": "PR greutate",
       "volume": "PR volum",

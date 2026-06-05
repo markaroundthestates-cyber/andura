@@ -593,7 +593,7 @@
     "prBannerAriaLabel": "New PR detected",
     "prNew": "New PR!",
     "prFallbackDetail": "Top set on {title}",
-    "prSummaryDetail": "{exercise} - {sign}{kg} kg",
+    "prSummaryDetail": "{exercise} - {kg} kg",
     "prTypeLabel": {
       "weight": "Weight PR",
       "volume": "Volume PR",

@@ -476,6 +476,7 @@ export function Workout(): JSX.Element {
       markPRHit({
         exercise: exerciseName,
         deltaKg: delta.deltaKg,
+        kg: delta.kg,
         type: delta.type,
         deltaPct: delta.deltaPct,
         oneRMEstimate: delta.oneRMEstimate,
