@@ -1195,3 +1195,50 @@ describe('workoutStore — deleteSession (delete a mislogged workout)', () => {
     expect(useWorkoutStore.getState().deletedSessionTs).toHaveLength(0);
   });
 });
+
+// ══ dropExercise / restoreExercise — founder swap redesign 2026-06-05 ════════
+describe('dropExercise — index-stable drop with recovery', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('marks the slot dropped + clears its partial history, never touches other slots', () => {
+    useWorkoutStore.setState({
+      history: {
+        0: [{ kg: 50, reps: 8, rating: 'potrivit' }],
+        1: [{ kg: 60, reps: 6, rating: 'greu' }],
+      },
+    });
+    useWorkoutStore.getState().dropExercise(0, { id: 'a-0', name: 'Bench', engineName: 'Flat Barbell Bench' });
+    const s = useWorkoutStore.getState();
+    expect(s.droppedExercises[0]).toEqual({ id: 'a-0', name: 'Bench', engineName: 'Flat Barbell Bench' });
+    // slot 0 partial history dropped...
+    expect(s.history[0]).toBeUndefined();
+    // ...slot 1 history invariant (index-stable, no shifting).
+    expect(s.history[1]).toEqual([{ kg: 60, reps: 6, rating: 'greu' }]);
+  });
+
+  it('is idempotent on an already-dropped slot', () => {
+    useWorkoutStore.getState().dropExercise(0, { id: 'a-0', name: 'Bench' });
+    const first = useWorkoutStore.getState().droppedExercises[0];
+    useWorkoutStore.getState().dropExercise(0, { id: 'a-0', name: 'OTHER' });
+    expect(useWorkoutStore.getState().droppedExercises[0]).toBe(first); // unchanged
+  });
+
+  it('restoreExercise clears the marker + jumps the session back to the slot fresh', () => {
+    useWorkoutStore.getState().dropExercise(2, { id: 'c-2', name: 'Curl' });
+    useWorkoutStore.setState({ exIdx: 3, setIdx: 1, phase: 'rest' });
+    useWorkoutStore.getState().restoreExercise(2);
+    const s = useWorkoutStore.getState();
+    expect(s.droppedExercises[2]).toBeUndefined();
+    expect(s.exIdx).toBe(2);
+    expect(s.setIdx).toBe(0);
+    expect(s.phase).toBe('logging');
+  });
+
+  it('restoreExercise is a no-op for a slot that was not dropped', () => {
+    useWorkoutStore.setState({ exIdx: 5 });
+    useWorkoutStore.getState().restoreExercise(0);
+    expect(useWorkoutStore.getState().exIdx).toBe(5); // unchanged
+  });
+});

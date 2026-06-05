@@ -206,6 +206,17 @@ export interface WorkoutState {
    * fresh per session — same lifecycle as refusalTriedByEx.
    */
   performedExercises: Record<number, { id: string; name: string; engineName?: string }>;
+  /**
+   * Founder swap redesign 2026-06-05 — exercises the user DROPPED from today's
+   * session via the pick-list's "I don't want to do this" row. Keyed by exIdx,
+   * value = the dropped exercise's identity (so the "skipped" recovery UI can
+   * name it). A drop is index-STABLE (it does NOT splice the exercises array —
+   * that would shift every history[exIdx]/performedExercises key) — the slot is
+   * marked dropped and the advance loop skips it. The user can RESTORE a dropped
+   * slot (restoreExercise) when the machine frees up. Runtime-only, fresh per
+   * session — same lifecycle as refusalTriedByEx/performedExercises.
+   */
+  droppedExercises: Record<number, { id: string; name: string; engineName?: string }>;
 }
 
 // ── §44-C1 Discriminated Union — WorkoutMode FSM tag ────────────────────────
@@ -347,6 +358,25 @@ export interface WorkoutActions {
    * pool query lives in src/engine/alternativeFinder.js findRefusalPool.
    */
   markRefusalTried: (exIdx: number, engineName: string) => void;
+
+  /**
+   * Founder swap redesign 2026-06-05 — DROP the exercise at `exIdx` from today's
+   * session (pick-list "I don't want to do this" row). Index-stable: marks the
+   * slot dropped (droppedExercises[exIdx] = identity) and CLEARS history[exIdx]
+   * (any partial sets are abandoned), but never splices the exercises array — so
+   * every other slot's history/performedExercises key is invariant. The Workout
+   * screen's advance loop skips dropped slots; the user can bring one back with
+   * {@link restoreExercise}. Idempotent on an already-dropped slot.
+   */
+  dropExercise: (exIdx: number, identity: { id: string; name: string; engineName?: string }) => void;
+
+  /**
+   * Founder swap redesign 2026-06-05 — RESTORE a previously-dropped exercise
+   * (the machine freed up). Clears droppedExercises[exIdx] and jumps the session
+   * to that slot (exIdx set, setIdx 0, phase logging) so the user resumes it
+   * fresh. No-op when the slot was not dropped.
+   */
+  restoreExercise: (exIdx: number) => void;
 
   /**
    * Resets ACTIVE-session runtime state only — NOT cumulative history.

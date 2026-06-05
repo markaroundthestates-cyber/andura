@@ -83,6 +83,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       sessionTimeBudgetMin: null,
       refusalTriedByEx: {},
       performedExercises: {},
+      droppedExercises: {},
       deletedSessionTs: [],
 
       startSession: (sessionStart) =>
@@ -97,6 +98,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           // Daniel smoke 2026-05-28 (#2 + #6) — fresh refusal slate per session.
           refusalTriedByEx: {},
           performedExercises: {},
+      droppedExercises: {},
         }),
 
       // HIGH-CODE-05 fix: title preserved from caller (real workout name)
@@ -152,6 +154,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           sessionTimeBudgetMin: null,
           refusalTriedByEx: {},
           performedExercises: {},
+      droppedExercises: {},
         }),
 
       finishSession: (summary) =>
@@ -189,6 +192,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             sessionTimeBudgetMin: null,
             refusalTriedByEx: {},
             performedExercises: {},
+      droppedExercises: {},
           };
         }),
 
@@ -269,6 +273,36 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           };
         }),
 
+      // Founder swap redesign 2026-06-05 — DROP the exercise at exIdx (pick-list
+      // "I don't want to do this"). Index-stable: mark the slot dropped + clear
+      // its partial history; never splice the array (would shift every other
+      // index-keyed map). Idempotent. The screen's advance loop skips dropped
+      // slots; restoreExercise brings one back.
+      dropExercise: (exIdx, identity) =>
+        set((s) => {
+          if (s.droppedExercises[exIdx]) return {};
+          const { [exIdx]: _dropped, ...restHistory } = s.history;
+          return {
+            history: restHistory,
+            droppedExercises: { ...s.droppedExercises, [exIdx]: identity },
+          };
+        }),
+
+      // Founder swap redesign 2026-06-05 — RESTORE a dropped slot (machine freed
+      // up). Clear its drop marker + jump the session to it fresh (setIdx 0,
+      // logging). No-op when the slot was not dropped.
+      restoreExercise: (exIdx) =>
+        set((s) => {
+          if (!s.droppedExercises[exIdx]) return {};
+          const { [exIdx]: _restored, ...rest } = s.droppedExercises;
+          return {
+            droppedExercises: rest,
+            exIdx,
+            setIdx: 0,
+            phase: 'logging' as WorkoutPhase,
+          };
+        }),
+
       markPRHit: (data) => set({ prHit: true, prData: data ?? null }),
 
       setLastRating: (rating) => set({ lastRating: rating }),
@@ -311,6 +345,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           sessionTimeBudgetMin: null,
           refusalTriedByEx: {},
           performedExercises: {},
+          droppedExercises: {},
         }),
     }),
     {
