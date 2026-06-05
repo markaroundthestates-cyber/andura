@@ -154,13 +154,20 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
   // Namespace-imported with optional-chained access: tolerates partial mocks
   // in sibling tests that stub engineWrappers without exporting
   // getLaggingSignal (Antrenor.test pattern pre-HIGH-EPSILON dispatch).
+  // Plan allocation of TODAY's proposed plan — the SAME truth source the why-line
+  // truth-gate uses. Shared so the lagging signal can be plan-gated too (LLM-judge
+  // Pattern A): "focus azi pe {group}" must never name a group the plan omits.
+  const planAllocation = useMemo(
+    () => getPlanAllocationByGroup(workout?.exercises),
+    [workout?.exercises],
+  );
   const laggingSignal = useMemo<string | null>(() => {
     try {
-      return engineWrappers.getLaggingSignal?.() ?? null;
+      return engineWrappers.getLaggingSignal?.(planAllocation) ?? null;
     } catch {
       return null;
     }
-  }, []);
+  }, [planAllocation]);
 
   // Calibration honesty signal — read ONCE here so BOTH the "still learning you"
   // line AND the narrative truth-gate (below) share one source: a confident
@@ -194,15 +201,14 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
   // claim is suppressed while the model is still learning. Memoized on the inputs.
   const coachWhyLine = useMemo<string | null>(() => {
     try {
-      const allocation = getPlanAllocationByGroup(workout?.exercises);
       return composeCoachInsight(workout?.coachAdaptations, {
-        allocation,
+        allocation: planAllocation,
         calibrationImmature,
       });
     } catch {
       return null;
     }
-  }, [workout?.coachAdaptations, workout?.exercises, calibrationImmature]);
+  }, [workout?.coachAdaptations, planAllocation, calibrationImmature]);
 
   // Calibration honesty — the "still learning you" line. The "no fabricated
   // certainty" Andura value made visible: while the model is still immature

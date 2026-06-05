@@ -80,3 +80,63 @@ describe('engineWrappers — getLaggingSignal gated by calibration maturity', ()
     expect(getLaggingSignal()).toBeNull(); // → no trend claim
   });
 });
+
+// Plan-allocation gate (LLM-judge Pattern A, 2026-06-06). The lagging line says
+// "focus azi pe {group}". The founder bug: it named biceps as sub-volume "focus
+// azi" while TODAY's plan was chest+shoulders only (zero biceps). The line must
+// only fire when today's plan actually trains the weak group.
+describe('engineWrappers — getLaggingSignal gated by today plan allocation', () => {
+  // Build a MATURE history (so the calibration gate is open) where biceps is the
+  // weak group: many chest sessions at a high 1RM + a single, very light biceps
+  // log → biceps avg 1RM far below the cross-group average → detected weak.
+  function seedMatureWeakBiceps(): void {
+    const now = Date.now();
+    const sessions = [];
+    for (let i = 0; i < 60; i++) {
+      const ts = now - ((150 / 59) * (59 - i)) * DAY_MS;
+      sessions.push({
+        ts,
+        title: `s${i}`,
+        meta: '',
+        exercises: [
+          {
+            exerciseId: 'flat-db-press',
+            exerciseName: 'Flat DB Press',
+            engineName: 'Flat DB Press',
+            totalVolume: 500,
+            peakOneRM: 116,
+            sets: [{ kg: 100, reps: 5, rating: 'potrivit' as const, timestamp: ts }],
+          },
+          // Very light biceps → its 1RM is far under the average → weak group.
+          {
+            exerciseId: 'cable-curl',
+            exerciseName: 'Cable Curl',
+            engineName: 'Cable Curl',
+            totalVolume: 25,
+            peakOneRM: 6,
+            sets: [{ kg: 5, reps: 5, rating: 'potrivit' as const, timestamp: ts }],
+          },
+        ],
+      });
+    }
+    useWorkoutStore.setState({ sessionsHistory: sessions });
+  }
+
+  it('SUPPRESSES "focus azi pe {group}" when today plan does not train the weak group', () => {
+    seedMatureWeakBiceps();
+    expect(getCalibrationMaturity()).toBeNull(); // mature → trend gate open
+    // Sanity: with no allocation the line DOES fire (weak biceps detected).
+    expect(getLaggingSignal()).not.toBeNull();
+    // Today's plan trains chest+shoulders only — zero biceps. The line is a lie.
+    const chestShouldersOnly = new Set(['piept', 'umeri']);
+    expect(getLaggingSignal({ allocatedGroups: chestShouldersOnly })).toBeNull();
+  });
+
+  it('SHOWS "focus azi pe {group}" when today plan actually trains the weak group', () => {
+    seedMatureWeakBiceps();
+    expect(getCalibrationMaturity()).toBeNull();
+    // Today's plan includes biceps → naming it is honest.
+    const withBiceps = new Set(['piept', 'biceps']);
+    expect(getLaggingSignal({ allocatedGroups: withBiceps })).not.toBeNull();
+  });
+});

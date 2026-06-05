@@ -786,9 +786,18 @@ export function getCoachRestReason(): CoachRestReason | null {
  * sentence for CoachTodayCard italic line below WHY quote. Null cand no
  * weakness detected (T0 fresh / balanced training).
  *
+ * Plan-allocation gate (LLM-judge Pattern A, 2026-06-06): the line says "focus
+ * azi pe {group}". That is a lie unless TODAY's plan actually trains {group}.
+ * Callers pass today's allocation (getPlanAllocationByGroup on the proposed
+ * exercise list — RO Big-11 keys, same buckets weaknessDetector emits); the line
+ * is suppressed when the top weak group is not in the plan today. With no
+ * allocation passed the gate is inert (back-compat for partial-mock callers).
+ *
  * Defensive: engine throws → null fallback graceful.
  */
-export function getLaggingSignal(): string | null {
+export function getLaggingSignal(
+  allocation?: { allocatedGroups: Set<string> } | null,
+): string | null {
   try {
     const sessions = useWorkoutStore.getState().sessionsHistory;
     const logs = flattenSessionsToEngineLogs(sessions);
@@ -803,6 +812,10 @@ export function getLaggingSignal(): string | null {
     if (getCalibrationMaturity() !== null) return null;
     const topWeak = weakGroups[0];
     if (topWeak === undefined) return null;
+    // Plan-allocation gate (LLM-judge Pattern A): never claim "focus azi pe
+    // {group}" for a group today's plan does not train. Only enforced when the
+    // caller passed the plan's allocation (back-compat otherwise).
+    if (allocation && !allocation.allocatedGroups.has(topWeak)) return null;
     // i18n render boundary: resolve a locale-aware muscle label (engine bucket
     // key → coachEngine.muscleGroups.* per locale, RO label as fallback) then
     // build the line via t() — never hardcoded RO copy (leaked under EN).
