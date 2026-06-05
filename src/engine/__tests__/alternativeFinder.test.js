@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { findAlternatives, findRefusalPool, getFallbackCascade } from '../alternativeFinder.js';
+import { findAlternatives, findRefusalPool, getFallbackCascade, buildSwapPickList } from '../alternativeFinder.js';
 import { getExerciseMetadata } from '../exerciseLibrary.js';
 
 // Ported from archived smart-routing/__tests__/smartRouting.test.js (WP-2 MOAT revive).
@@ -217,5 +217,95 @@ describe('findRefusalPool — exhaustive preference cycle (Nu vreau)', () => {
       return c.name === 'Cable Curl' || c.name === 'Incline DB Curl' || c.name === 'Preacher Curl';
     });
     expect(hasMedium).toBe(true);
+  });
+});
+
+// ══ SWAP PICK-LIST — founder redesign 2026-06-05 (manual short list) ════════
+// Contract: a SHORT (4-5 row) ranked same-muscle list, active-only, minus the
+// session; row 1 is a distinct (non-near-duplicate) smart pre-pick; EXACTLY one
+// bodyweight when the muscle has one; ranked by effectiveness; diversify-modality
+// on repeat busy; umeri sub-bucketed (press vs lateral vs rear). Real data.
+describe('buildSwapPickList (founder manual pick-list)', () => {
+  it('returns a SHORT decidable list (4-5 rows) of active same-muscle options', () => {
+    const { items, muscleGroup } = buildSwapPickList('OHP');
+    expect(muscleGroup).toBe('umeri');
+    expect(items.length).toBeGreaterThanOrEqual(4);
+    expect(items.length).toBeLessThanOrEqual(5);
+    // exactly one pre-pick, and it is row 1
+    expect(items[0].prePick).toBe(true);
+    expect(items.filter((i) => i.prePick).length).toBe(1);
+  });
+
+  it('PRE-PICK is NOT a near-duplicate twin of the busy exercise', () => {
+    // "Pec Deck / Cable Fly" (machine) busy must NOT pre-pick "Cable Fly" (its
+    // near-identical fly twin). The pre-pick must be a genuinely distinct chest
+    // movement (a press, a different fly station, etc).
+    const { items } = buildSwapPickList('Pec Deck / Cable Fly', ['Flat DB Press']);
+    expect(items[0].prePick).toBe(true);
+    expect(items[0].name).not.toBe('Cable Fly');
+    // sanity: pre-pick is a real chest exercise, not the original
+    expect(items[0].name).not.toBe('Pec Deck / Cable Fly');
+  });
+
+  it('ranks by effectiveness — same sub-movement scores above off-movement', () => {
+    // For a shoulder PRESS, a press alternative must rank above a lateral raise
+    // (off-movement). Find both in the full pool (no cap) by widening exclude=[].
+    const { items } = buildSwapPickList('OHP');
+    const pressIdx = items.findIndex((i) => /press|ohp/i.test(i.name));
+    const lateralIdx = items.findIndex((i) => /lateral/i.test(i.name));
+    // A press option exists and, when a lateral also made the short list, it
+    // never outranks the press (effectiveness-first).
+    expect(pressIdx).toBeGreaterThanOrEqual(0);
+    if (lateralIdx >= 0) expect(pressIdx).toBeLessThan(lateralIdx);
+  });
+
+  it('guarantees EXACTLY ONE bodyweight row when the muscle has one (chest)', () => {
+    const { items } = buildSwapPickList('Flat Barbell Bench');
+    const bw = items.filter((i) => i.isBodyweight);
+    expect(bw.length).toBe(1); // chest has Push-up/Dip — exactly one surfaces
+  });
+
+  it('OMITS bodyweight (never fabricates) when the muscle has none (biceps)', () => {
+    const { items } = buildSwapPickList('Cable Curl');
+    const bw = items.filter((i) => i.isBodyweight);
+    expect(bw.length).toBe(0); // biceps has zero bodyweight in the curated set
+    expect(items.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('never offers an exercise already in today’s session', () => {
+    const inSession = ['Cable Fly', 'Flat DB Press', 'Incline DB Press'];
+    const { items } = buildSwapPickList('Flat Barbell Bench', inSession);
+    for (const it of items) expect(inSession).not.toContain(it.name);
+  });
+
+  it('umeri sub-bucket: a PRESS refusal keeps the pre-pick a press (not a lateral/rear)', () => {
+    const { items } = buildSwapPickList('OHP');
+    expect(/press|ohp/i.test(items[0].name)).toBe(true);
+  });
+
+  it('umeri sub-bucket: a LATERAL refusal keeps the pre-pick a lateral', () => {
+    const { items } = buildSwapPickList('DB Lateral Raise');
+    expect(/lateral|y raise/i.test(items[0].name)).toBe(true);
+  });
+
+  it('DIVERSIFY MODALITY: a run of busy machine-skips pivots the pre-pick to a free weight', () => {
+    // Two machine/cable station tries at this slot → infer machine-poor gym →
+    // pivot firmly toward free weights (dumbbell/barbell/bodyweight).
+    const tried = ['Smith Machine Bench', 'Flat Chest Press Machine'];
+    const { items } = buildSwapPickList('Incline Barbell Bench', [], tried);
+    const freeTypes = ['dumbbell', 'barbell', 'bodyweight'];
+    expect(freeTypes).toContain(items[0].equipmentType);
+  });
+
+  it('never re-offers a name already tried at this slot (tried-set excluded)', () => {
+    const tried = ['Flat DB Press', 'Incline DB Press'];
+    const { items } = buildSwapPickList('Flat Barbell Bench', [], tried);
+    for (const it of items) expect(tried).not.toContain(it.name);
+  });
+
+  it('unknown / no-metadata exercise → empty list (honest, no fabrication)', () => {
+    const { items, muscleGroup } = buildSwapPickList('Totally Fake Exercise');
+    expect(items).toEqual([]);
+    expect(muscleGroup).toBe('unknown');
   });
 });
