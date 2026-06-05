@@ -855,6 +855,7 @@
   },
   "obiectiv": {
     "heading": "Goal",
+    "goalTypeHeading": "Goal type",
     "goalCardAriaLabel": "Training goal",
     "alesBadge": "Picked",
     "activeSuffix": " · active",
@@ -1465,7 +1466,7 @@
       "frequencyDaily": "Daily",
       "frequencyWeekly": "Weekly",
       "frequencyOff": "Off",
-      "daysHeading": "Active days",
+      "daysHeading": "Reminder days",
       "dayAria": "Day {label}",
       "reminderTimeHeading": "Reminder time",
       "reminderTimeAria": "Daily reminder time",

@@ -855,6 +855,7 @@
   },
   "obiectiv": {
     "heading": "Obiectiv",
+    "goalTypeHeading": "Tip obiectiv",
     "goalCardAriaLabel": "Obiectiv antrenament",
     "alesBadge": "Ales",
     "activeSuffix": " · activ",
@@ -1361,8 +1362,8 @@
       "units": {
         "heading": "Unitati",
         "kg": "Kilograme (kg)",
-        "lb": "Pounds (lb)",
-        "note": "Momentan doar kilograme. Pounds vor fi disponibile post-Beta."
+        "lb": "Livre (lb)",
+        "note": "Momentan doar kilograme. Livrele (lb) vor fi disponibile post-Beta."
       },
       "weekStart": {
         "heading": "Inceput saptamana",
@@ -1465,7 +1466,7 @@
       "frequencyDaily": "Zilnic",
       "frequencyWeekly": "Saptamanal",
       "frequencyOff": "Dezactivat",
-      "daysHeading": "Zile active",
+      "daysHeading": "Zile reminder",
       "dayAria": "Ziua {label}",
       "reminderTimeHeading": "Ora reminder",
       "reminderTimeAria": "Ora reminder zilnic",

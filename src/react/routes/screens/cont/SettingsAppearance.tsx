@@ -118,8 +118,10 @@ export function SettingsAppearance(): JSX.Element {
           </div>
         </div>
 
-        {/* MODE — Dark/Light segmented toggle; active half = Pulse gradient
-            (mockup). Wired to the real theme store. */}
+        {/* MODE — Dark/Light segmented toggle; active half = a gradient derived
+            from the LIVE accent (--brick), not the fixed volt→aqua --grad-pulse,
+            so it tracks the selected accent like the rest of the UI (audit
+            2026-06-05: the toggle stayed volt after switching accent to Aqua). */}
         <div
           className="flex gap-1.5 rounded-[14px] p-1 mb-6"
           style={{ background: 'var(--surface-2)' }}
@@ -136,7 +138,15 @@ export function SettingsAppearance(): JSX.Element {
               className={`flex-1 min-h-[44px] py-2.5 rounded-[11px] text-sm font-semibold transition-colors ${
                 opt.active ? 'text-ink' : 'text-ink2'
               }`}
-              style={opt.active ? { background: 'var(--grad-pulse)', color: 'var(--on-accent)' } : undefined}
+              style={
+                opt.active
+                  ? {
+                      background:
+                        'linear-gradient(135deg, var(--brick), color-mix(in oklab, var(--brick) 72%, black))',
+                      color: 'var(--on-accent)',
+                    }
+                  : undefined
+              }
             >
               {t(opt.labelKey)}
             </button>

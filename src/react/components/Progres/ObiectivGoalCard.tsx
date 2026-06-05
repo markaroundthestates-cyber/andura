@@ -125,7 +125,10 @@ export function ObiectivGoalCard(): JSX.Element {
       aria-label={t('obiectiv.goalCardAriaLabel')}
     >
       <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-2">
-        {t('obiectiv.heading')}
+        {/* "Goal type" — distinct from the zone heading "Goal" above the target-
+            weight card, which otherwise read as two identical "GOAL" headers
+            back-to-back (audit 2026-06-05). */}
+        {t('obiectiv.goalTypeHeading')}
       </p>
       {/* Compact 5-tile selector (Daniel mockup goals-compact.png 2026-06-01):
           5 EQUAL tiles in one row (grid-cols-5), each centered icon + short
