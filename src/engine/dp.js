@@ -318,6 +318,94 @@ export const DP = {
     DB.set('session-bias', { ...bias, ts: nowMs });
   },
 
+  // ── PERSISTENT PER-EXERCISE machine-calibration factor ──────────────────────
+  // The gap (founder): a cable/machine's EFFECTIVE resistance depends on its
+  // pulley ratio, which varies by gym — "32 kg on the stack" feels different on
+  // every machine. We must NOT ask the user "how many pulleys?". Instead the
+  // engine LEARNS, from logged performance on THIS user's real machine, a stable
+  // per-exercise correction factor that absorbs whatever the mechanical reality
+  // is, converging after a few sessions, no questions asked.
+  //
+  // DISTINCT from the per-BUCKET session-bias above (no overlap of purpose):
+  //   - session-bias: FAST (alpha 0.4), per-BUCKET, VOLATILE (4h TTL). Its job is
+  //     to calibrate the STARTING estimate of the NEXT exercise in the SAME
+  //     session by transferring across exercises that share a coarse bucket. It
+  //     deliberately self-expires so it never carries a stale within-session
+  //     guess into the next day.
+  //   - calibration factor (this): SLOW (alpha 0.3), PER-EXERCISE (engineName),
+  //     PERSISTENT (synced per-UID, survives reload). Its job is to capture the
+  //     STABLE per-machine/strength offset of one specific exercise across
+  //     sessions. Different scope, different lifetime, different key — they read
+  //     the same (recKg, loggedKg) observation but never collide.
+  //
+  // NO DOUBLE-COUNT with the transient fatigue models. We learn from the ratio
+  // loggedKg / recKg where recKg is the ALREADY-ADJUSTED recommendation — it has
+  // the synergist pre-fatigue discount, readiness gate, across-session recovery
+  // AND this factor itself already folded in. So if a set was discounted 7% for
+  // synergist pre-fatigue and the user lifts exactly the discounted rec, the
+  // ratio is ~1.0 → the factor does not move → the transient discount is NEVER
+  // baked into the persistent factor. The slow alpha washes residual noise.
+  // The self-consistent fixed point is recKg == loggedKg (factor stops moving
+  // when the recommendation already matches the user's real working load).
+
+  CAL_ALPHA: 0.3,            // slow EMA → only the stable offset survives noise
+  CAL_MIN: 0.6,             // clamp band: one weird session can't break it
+  CAL_MAX: 1.5,
+  CAL_DEV_MIN: 0.6,         // per-observation deviation clamp (outlier guard)
+  CAL_DEV_MAX: 1.5,
+
+  /** @returns {Record<string, {kgFactor:number, n:number}>} */
+  _getCalFactors() {
+    const raw = /** @type {any} */ (DB.get('dp-cal-factors'));
+    return (raw && typeof raw === 'object' && !Array.isArray(raw)) ? raw : {};
+  },
+
+  // The learned multiplier for one exercise. No data → 1.0 (identity), so a brand
+  // new user and the golden master are byte-unchanged. Clamped to the sane band.
+  /** @param {string} ex @returns {number} */
+  _calFactor(ex) {
+    const f = this._getCalFactors()[ex];
+    if (!f || !Number.isFinite(f.kgFactor)) return 1;
+    return Math.max(this.CAL_MIN, Math.min(this.CAL_MAX, f.kgFactor));
+  },
+
+  // Apply the learned per-exercise factor to a recommended load. Identity when no
+  // data (factor 1.0). Bodyweight / 0-load left untouched (the load axis is reps).
+  /** @param {string} ex @param {number} kg @returns {number} */
+  _applyCalibration(ex, kg) {
+    if (!kg || !Number.isFinite(kg) || kg <= 0) return kg;
+    return kg * this._calFactor(ex);
+  },
+
+  // Update the persistent per-exercise factor from one logged set. recKg is the
+  // ALREADY-ADJUSTED recommendation (factor + synergist discount + recovery +
+  // readiness all folded in) → learning the residual deviation cannot double-
+  // count any transient. Slow EMA (CAL_ALPHA) so a single outlier barely moves
+  // it; deviation and result both clamped. No-op without a valid (recKg, loggedKg).
+  /**
+   * @param {string} ex
+   * @param {{recKg?:number, loggedKg?:number}} obs
+   */
+  _recordCalibration(ex, obs) {
+    if (typeof ex !== 'string' || !ex) return;
+    const recKg = Number(obs.recKg);
+    const loggedKg = Number(obs.loggedKg);
+    if (!Number.isFinite(recKg) || recKg <= 0) return;
+    if (!Number.isFinite(loggedKg) || loggedKg <= 0) return;
+    let dev = loggedKg / recKg;
+    dev = Math.max(this.CAL_DEV_MIN, Math.min(this.CAL_DEV_MAX, dev));
+    const factors = this._getCalFactors();
+    const prev = factors[ex];
+    const prevFactor = (prev && Number.isFinite(prev.kgFactor)) ? prev.kgFactor : 1;
+    const n = (prev && Number.isFinite(prev.n)) ? prev.n : 0;
+    const next = prevFactor + this.CAL_ALPHA * (dev - prevFactor);
+    factors[ex] = {
+      kgFactor: Math.max(this.CAL_MIN, Math.min(this.CAL_MAX, next)),
+      n: n + 1,
+    };
+    DB.set('dp-cal-factors', factors);
+  },
+
   // Get last N logs for exercise
   /**
    * @param {string} ex
@@ -389,8 +477,16 @@ export const DP = {
   /** @param {string} ex */
   recommend(ex, nowMs) {
     const result = this._recommendRaw(ex, nowMs);
-    // Rotunjeste kg la step-ul echipamentului (helcometre din 4, cabluri din 2.5, DB din 2)
-    if (result && result.kg) result.kg = this.roundToStep(result.kg, ex);
+    if (result && result.kg) {
+      // Apply the learned persistent per-exercise machine-calibration factor to
+      // the raw load, THEN snap to a real equipment value. No learned data →
+      // factor 1.0 (identity) → byte-identical to the prior behavior (golden-safe
+      // for cold start). Applied here (not in _recommendRaw) so every branch
+      // (INIT / INCREASE / EASE / CAP / …) is corrected uniformly before snapping.
+      const calibrated = this._applyCalibration(ex, result.kg);
+      // Rotunjeste kg la step-ul echipamentului (helcometre din 4, cabluri din 2.5, DB din 2)
+      result.kg = this.roundToStep(calibrated, ex);
+    }
     return result;
   },
 
@@ -718,6 +814,12 @@ export const DP = {
     // the caller did not pass a recommendation.
     if (Number.isFinite(loggedKg) && loggedKg > 0) {
       this._recordSessionBias(ex, { recKg: Number(ctx.recKg), loggedKg, lastRPE, nowMs });
+      // Persistent per-exercise machine-calibration: learn the STABLE offset of
+      // THIS exercise on the user's real machine. recKg is the already-adjusted
+      // recommendation, so the slow EMA captures the durable per-machine reality
+      // without baking in synergist pre-fatigue / recovery / readiness transients
+      // (see _recordCalibration). Self-guards on a valid (recKg, loggedKg).
+      this._recordCalibration(ex, { recKg: Number(ctx.recKg), loggedKg });
     }
 
     // STRENGTH phase autoregulates WEIGHT; everything else (BULK/CUT/AUTO masa-

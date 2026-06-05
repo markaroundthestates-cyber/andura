@@ -9,7 +9,7 @@ export const USER_DATA_KEYS = [
   'pr-records', 'current-kcal', 'suppl-list', 'waters', 'workout-skips',
   'session-burns', 'wellbeing', 'notif-enabled', 'closed-days', 'muted',
   'onboarding-done', 'onboarding-completed', 'last-recalibration', 'sf.userConfig',
-  'profile-history'
+  'profile-history', 'dp-cal-factors'
 ];
 
 // Coach/session transient state — deleted by both resetTestData and fullReset

@@ -101,6 +101,7 @@ export const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs',
   'peak-hours','session-start-hours','auto-recommendations','applied-recommendations','applied-patterns','session-draft','workout-skips','coach-decisions','coach-decisions-aggregate','coach-decisions-archive','cdl-patterns',
   'profile-history', // profile-history — onboarding Q1-Q5 + reconciliation events (per ADR 014 §6)
   'tombstones',      // tombstones — Memory Paradox hotfix (Batch B Task 2): localStorage soft-delete tracking (per ADR_MULTI_TENANT_AUTH_v1 + future T&B Faza 1+2)
+  'dp-cal-factors',  // dp-cal-factors — DP persistent per-exercise machine-calibration factors (object engineName -> {kgFactor,n}); object-merge sync, learned per-UID, durable across sessions/devices
 ];
 
 // RTDB key sanitizer — Firebase Realtime Database forbids `. $ # [ ] /` in node
