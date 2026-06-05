@@ -172,9 +172,11 @@ export function Istoric(): JSX.Element {
         // la originalIdx, testid-uri rand neschimbate.
         <VirtualSessionList
           sorted={sorted}
-          sessionsHistory={sessionsHistory}
           formatDate={formatDate}
-          onSelect={(originalIdx) => navigate(`/app/istoric/${originalIdx}`)}
+          // Navigate by stable session `ts`, NOT array index (Daniel audit
+          // 2026-06-05) — index pointed at the wrong session after a
+          // delete/reorder and broke deep-links.
+          onSelect={(ts) => navigate(`/app/istoric/${ts}`)}
         />
       )}
     </section>

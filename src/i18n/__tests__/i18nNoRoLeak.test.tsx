@@ -732,7 +732,6 @@ describe('Wave E3 i18n — no RO leak on calendar + Istoric tab', () => {
     const { container } = render(
       <VirtualSessionList
         sorted={sessions}
-        sessionsHistory={sessions}
         formatDate={(ts) => String(ts)}
         onSelect={() => {}}
       />,

@@ -18,7 +18,8 @@
 // din exercises[*].sets[*].rating) + data eyebrow + rand meta cu min/seturi/kg.
 // Rating + PR sunt DERIVATE din breakdown (deriveSessionRating + sets[].isPR) —
 // NU fabricate; sesiunile legacy fara breakdown nu arata chip/trofeu (honest).
-// Drill-down `onSelect(originalIdx)` + windowing + testid-uri raman neschimbate.
+// Drill-down emite `onSelect(session.ts)` (ts stabil, NU array index — Daniel
+// audit 2026-06-05) + windowing + testid-uri raman neschimbate.
 
 import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
@@ -45,9 +46,11 @@ export interface SessionRow {
 
 interface VirtualSessionListProps {
   sorted: SessionRow[];
-  sessionsHistory: SessionRow[];
   formatDate: (ts: number) => string;
-  onSelect: (originalIdx: number) => void;
+  // Receives the selected session's stable `ts` (NOT an array index) — the
+  // detail route resolves by ts so a delete/reorder can't open the wrong
+  // session (Daniel audit 2026-06-05).
+  onSelect: (ts: number) => void;
 }
 
 // Inaltime estimata rand (card p-4, titlu + meta + chips ~3-4 linii) + gap-2.5.
@@ -75,15 +78,13 @@ function sessionHasPR(session: SessionRow): boolean {
 function SessionCard({
   session,
   idx,
-  originalIdx,
   formatDate,
   onSelect,
 }: {
   session: SessionRow;
   idx: number;
-  originalIdx: number;
   formatDate: (ts: number) => string;
-  onSelect: (originalIdx: number) => void;
+  onSelect: (ts: number) => void;
 }): JSX.Element {
   const rating = deriveSessionRating(session as Parameters<typeof deriveSessionRating>[0]);
   const chip = rating ? ratingChip(rating) : null;
@@ -99,9 +100,9 @@ function SessionCard({
     <li key={`${session.ts}-${idx}`}>
       <button
         type="button"
-        onClick={() => onSelect(originalIdx)}
+        onClick={() => onSelect(session.ts)}
         data-testid={`istoric-session-${idx}`}
-        data-session-idx={originalIdx}
+        data-session-ts={session.ts}
         className="pulse-card pulse-card-tight w-full text-left p-4 press-feedback transition-transform hover:scale-[1.01]"
       >
         <div className="flex items-start justify-between gap-2.5">
@@ -162,7 +163,6 @@ function SessionCard({
 
 export function VirtualSessionList({
   sorted,
-  sessionsHistory,
   formatDate,
   onSelect,
 }: VirtualSessionListProps): JSX.Element {
@@ -226,18 +226,11 @@ export function VirtualSessionList({
       )}
       {sorted.slice(start, end).map((session, sliceIdx) => {
         const idx = start + sliceIdx;
-        // Index original in sessionsHistory pentru detail navigate. `sorted` e
-        // [...sessionsHistory].sort(), deci fiecare element e ACEEASI referinta
-        // de obiect ca in sessionsHistory → indexOf (identitate) rezolva corect
-        // chiar daca doua sesiuni au acelasi `ts` (findIndex pe ts deschidea
-        // sesiunea gresita la coliziune de timestamp).
-        const originalIdx = sessionsHistory.indexOf(session);
         return (
           <SessionCard
             key={`${session.ts}-${idx}`}
             session={session}
             idx={idx}
-            originalIdx={originalIdx}
             formatDate={formatDate}
             onSelect={onSelect}
           />

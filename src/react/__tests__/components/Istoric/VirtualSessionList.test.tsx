@@ -1,7 +1,8 @@
 // ══ VIRTUAL SESSION LIST TESTS — §35-M2 windowing ═══════════════════════
 // Verifica: liste scurte randeaza tot (sub prag), liste lungi (>30) randeaza
 // doar fereastra vizibila + spacer-e care pastreaza inaltimea de scroll,
-// navigarea drill-down foloseste originalIdx neschimbat.
+// navigarea drill-down foloseste `ts` stabil (NU array index) — Daniel audit
+// 2026-06-05.
 
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -20,7 +21,6 @@ function renderList(sorted: SessionRow[], onSelect = vi.fn()): { onSelect: typeo
   render(
     <VirtualSessionList
       sorted={sorted}
-      sessionsHistory={sorted}
       formatDate={(ts) => String(ts)}
       onSelect={onSelect}
     />
@@ -38,10 +38,12 @@ describe('VirtualSessionList — short list (no virtualization)', () => {
     expect(screen.queryByTestId('istoric-list-pad-bottom')).not.toBeInTheDocument();
   });
 
-  it('onSelect primeste originalIdx la tap', () => {
-    const { onSelect } = renderList(makeSessions(3));
+  it('onSelect primeste ts-ul stabil la tap (NU array index)', () => {
+    const sessions = makeSessions(3);
+    const { onSelect } = renderList(sessions);
     fireEvent.click(screen.getByTestId('istoric-session-1'));
-    expect(onSelect).toHaveBeenCalledWith(1);
+    // Row 1 = sessions[1] → carries its stable ts, not the index 1.
+    expect(onSelect).toHaveBeenCalledWith(sessions[1]!.ts);
   });
 });
 
@@ -56,36 +58,27 @@ describe('VirtualSessionList — long list (windowed)', () => {
     expect(screen.getByTestId('istoric-list-pad-bottom')).toBeInTheDocument();
   });
 
-  it('pastreaza originalIdx corect pe randuri vizibile', () => {
-    const { onSelect } = renderList(makeSessions(60));
+  it('emite ts-ul corect pe randuri vizibile', () => {
+    const sessions = makeSessions(60);
+    const { onSelect } = renderList(sessions);
     fireEvent.click(screen.getByTestId('istoric-session-0'));
-    expect(onSelect).toHaveBeenCalledWith(0);
+    expect(onSelect).toHaveBeenCalledWith(sessions[0]!.ts);
   });
 });
 
-describe('VirtualSessionList — same-ts collision (stable identity)', () => {
-  it('deschide sesiunea corecta cand doua sesiuni au acelasi ts', () => {
-    // Doua sesiuni cu ACELASI ts → findIndex(s.ts===ts) returna mereu prima
-    // (originalIdx gresit). Sorted = copie [...history].sort(stable) deci
-    // pastreaza referintele de obiect; indexOf rezolva fiecare distinct.
+describe('VirtualSessionList — reorder safety (stable ts, not index)', () => {
+  it('emite ts-ul randului, neafectat de pozitia in array (reorder/delete)', () => {
+    // Daniel audit 2026-06-05: navigarea pe index deschidea sesiunea gresita
+    // dupa un delete/reorder. Acum fiecare rand emite ts-ul propriu, deci
+    // resolverul de detail (find s.ts===ts) gaseste mereu sesiunea corecta
+    // indiferent de ordinea din array.
     const a: SessionRow = { title: 'Sesiune A', meta: '1 set', ts: 1_700_000_000_000 };
-    const b: SessionRow = { title: 'Sesiune B', meta: '2 seturi', ts: 1_700_000_000_000 };
-    const history = [a, b];
-    const sorted = [...history].sort((x, y) => y.ts - x.ts);
-    const onSelect = vi.fn();
-    render(
-      <VirtualSessionList
-        sorted={sorted}
-        sessionsHistory={history}
-        formatDate={(ts) => String(ts)}
-        onSelect={onSelect}
-      />
-    );
-    // Rand 0 = primul din sorted (= a, originalIdx 0).
+    const b: SessionRow = { title: 'Sesiune B', meta: '2 seturi', ts: 1_700_000_500_000 };
+    const sorted = [b, a]; // newest first (b)
+    const { onSelect } = renderList(sorted);
     fireEvent.click(screen.getByTestId('istoric-session-0'));
-    expect(onSelect).toHaveBeenLastCalledWith(0);
-    // Rand 1 = al doilea din sorted (= b, originalIdx 1) — NU 0.
+    expect(onSelect).toHaveBeenLastCalledWith(b.ts);
     fireEvent.click(screen.getByTestId('istoric-session-1'));
-    expect(onSelect).toHaveBeenLastCalledWith(1);
+    expect(onSelect).toHaveBeenLastCalledWith(a.ts);
   });
 });

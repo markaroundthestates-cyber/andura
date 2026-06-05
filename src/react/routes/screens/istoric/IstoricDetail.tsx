@@ -77,10 +77,14 @@ export function IstoricDetail(): JSX.Element {
   // without spinning up a separate route (surgical, matches inline aerobic UX).
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const idx = sessionId !== undefined ? Number(sessionId) : -1;
+  // Resolve by stable `ts`, NOT array index (Daniel audit 2026-06-05). The
+  // list links carry the session's ts; an array index pointed at the WRONG
+  // session after a delete/reorder (silent wrong data) and a deep-link by ts
+  // 404'd. Sessions carry `ts` (no id), so ts is the stable identifier.
+  const tsParam = sessionId !== undefined ? Number(sessionId) : NaN;
   const session =
-    Number.isFinite(idx) && idx >= 0 && idx < sessionsHistory.length
-      ? sessionsHistory[idx]
+    Number.isFinite(tsParam)
+      ? sessionsHistory.find((s) => s.ts === tsParam) ?? null
       : null;
 
   function handleBack(): void {

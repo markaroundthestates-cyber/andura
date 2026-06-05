@@ -111,11 +111,17 @@ describe('Istoric — populated list', () => {
     expect(screen.getByTestId('istoric-session-2').textContent).toMatch(/Push/);
   });
 
-  it('tap session navigates /app/istoric/:idx', () => {
+  it('tap session navigates /app/istoric/:ts (stable id, not index)', () => {
     renderIstoric();
-    fireEvent.click(screen.getByTestId('istoric-session-0'));
-    // Pull's original index în sessionsHistory = 1
+    // Row 0 = Pull (newest, ts=1700200000000). The link carries its stable ts.
+    const row = screen.getByTestId('istoric-session-0');
+    expect(row).toHaveAttribute('data-session-ts', '1700200000000');
+    fireEvent.click(row);
+    // IstoricDetail resolves the session by ts → renders Pull's detail.
     expect(screen.getByTestId('istoric-detail')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1 }).textContent
+    ).toMatch(/Pull/);
   });
 });
 
@@ -192,8 +198,8 @@ describe('IstoricDetail — render', () => {
     });
   });
 
-  it('renders session title + meta', () => {
-    renderIstoric('/app/istoric/0');
+  it('renders session title + meta (resolved by stable ts)', () => {
+    renderIstoric('/app/istoric/1700000000000');
     expect(
       screen.getByRole('heading', { name: /Push \(piept si umeri\)/i, level: 1 })
     ).toBeInTheDocument();
@@ -201,19 +207,19 @@ describe('IstoricDetail — render', () => {
   });
 
   it('renders stats grid cand numeric fields prezente', () => {
-    renderIstoric('/app/istoric/0');
+    renderIstoric('/app/istoric/1700000000000');
     expect(screen.getByTestId('detail-sets')).toHaveTextContent('5');
     expect(screen.getByTestId('detail-duration')).toHaveTextContent('52');
     expect(screen.getByTestId('detail-volume')).toHaveTextContent('12 450');
   });
 
   it('Back button navigates Istoric list', () => {
-    renderIstoric('/app/istoric/0');
+    renderIstoric('/app/istoric/1700000000000');
     fireEvent.click(screen.getByTestId('istoric-detail-back'));
     expect(screen.getByTestId('istoric-home')).toBeInTheDocument();
   });
 
-  it('renders missing state cand sessionId invalid (EN default copy)', () => {
+  it('renders missing state cand ts not found (EN default copy)', () => {
     renderIstoric('/app/istoric/999');
     expect(screen.getByTestId('istoric-detail-missing')).toBeInTheDocument();
     expect(screen.getByText(/Session not found/i)).toBeInTheDocument();
@@ -237,7 +243,7 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
         {
           title: 'Push',
           meta: '5 seturi · 30 min · 910 kg',
-          ts: Date.now(),
+          ts: 1717000010000,
           sets: 5,
           durationMin: 30,
           volumeKg: 910,
@@ -256,7 +262,7 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
         },
       ],
     });
-    renderIstoric('/app/istoric/0');
+    renderIstoric('/app/istoric/1717000010000');
     expect(screen.getByTestId('istoric-detail-breakdown')).toBeInTheDocument();
     expect(screen.getByTestId('detail-ex-bench-press')).toBeInTheDocument();
     expect(screen.getByTestId('detail-ex-volume').textContent).toMatch(/450 kg/);
@@ -276,7 +282,7 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
         {
           title: 'Push',
           meta: '1 seturi · 5 min · 25 kg',
-          ts: Date.now(),
+          ts: 1717000020000,
           exercises: [
             {
               exerciseId: 'bench-press',
@@ -289,7 +295,7 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
         },
       ],
     });
-    renderIstoric('/app/istoric/0');
+    renderIstoric('/app/istoric/1717000020000');
     expect(screen.getByTestId('detail-set-bench-press-0').textContent).toMatch(/PR/);
   });
 
@@ -299,11 +305,11 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
         {
           title: 'Push',
           meta: '5 seturi · 30 min · 910 kg',
-          ts: Date.now(),
+          ts: 1717000030000,
         },
       ],
     });
-    renderIstoric('/app/istoric/0');
+    renderIstoric('/app/istoric/1717000030000');
     expect(screen.queryByTestId('istoric-detail-breakdown')).not.toBeInTheDocument();
     expect(screen.getByTestId('istoric-detail-legacy')).toBeInTheDocument();
   });
@@ -314,7 +320,7 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
         {
           title: 'Push',
           meta: '6 seturi · 45 min · 1200 kg',
-          ts: Date.now(),
+          ts: 1717000040000,
           exercises: [
             {
               exerciseId: 'bench',
@@ -334,7 +340,7 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
         },
       ],
     });
-    renderIstoric('/app/istoric/0');
+    renderIstoric('/app/istoric/1717000040000');
     expect(screen.getByTestId('detail-ex-bench')).toBeInTheDocument();
     expect(screen.getByTestId('detail-ex-overhead')).toBeInTheDocument();
   });
@@ -350,7 +356,7 @@ describe('IstoricDetail — delete a mislogged session', () => {
     useWorkoutStore.setState({
       sessionsHistory: [{ title: 'Push', meta: '5 seturi · 45 min · 9 800 kg', ts }],
     });
-    renderIstoric('/app/istoric/0');
+    renderIstoric(`/app/istoric/${ts}`);
     // First tap reveals confirm; session still present.
     fireEvent.click(screen.getByTestId('istoric-detail-delete-cta'));
     expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(1);
@@ -367,7 +373,7 @@ describe('IstoricDetail — delete a mislogged session', () => {
     useWorkoutStore.setState({
       sessionsHistory: [{ title: 'Pull', meta: '4 seturi · 40 min · 8 000 kg', ts }],
     });
-    renderIstoric('/app/istoric/0');
+    renderIstoric(`/app/istoric/${ts}`);
     fireEvent.click(screen.getByTestId('istoric-detail-delete-cta'));
     fireEvent.click(screen.getByTestId('istoric-detail-delete-cancel'));
     expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(1);
