@@ -1751,8 +1751,8 @@
     "logout": {
       "title": "Sign out",
       "heading": "Sign out?",
-      "body1": "Your account and logged workouts (including records) stay safely saved and come back when you sign in with the same email.",
-      "body2": "For your safety on a shared device, the displayed history, the weight chart, and your streak are cleared from this phone on sign-out.",
+      "body1": "Your logged workouts and records are saved to your account, not to this phone. They come back next time you sign in with the same email.",
+      "body2": "For your safety on a shared device, the history, the weight chart, and your streak are cleared from this phone on sign-out, until you sign back in.",
       "acceptCta": "Confirm",
       "cancelCta": "Cancel"
     },

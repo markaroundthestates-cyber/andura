@@ -1751,8 +1751,8 @@
     "logout": {
       "title": "Iesi din cont",
       "heading": "Iesi din cont?",
-      "body1": "Contul tau si antrenamentele logate (cu tot cu recorduri) raman salvate in siguranta si revin cand intri din nou cu acelasi email.",
-      "body2": "Pentru siguranta ta pe un dispozitiv folosit in comun, istoricul afisat, graficul de greutate si seria de zile se sterg de pe acest telefon la deconectare.",
+      "body1": "Antrenamentele logate si recordurile sunt salvate in contul tau, nu pe acest telefon. Ele raman acolo si revin data viitoare cand intri cu acelasi email.",
+      "body2": "Pentru siguranta ta pe un dispozitiv folosit in comun, istoricul, graficul de greutate si seria de zile se sterg de pe acest telefon la deconectare, pana cand te conectezi din nou.",
       "acceptCta": "Confirma actiunea",
       "cancelCta": "Anuleaza"
     },
