@@ -879,8 +879,14 @@ export function getCoachTodayQuote(): CoachTodayQuote | null {
       if (state !== 'recovered') continue;
       const days = daysSinceGroup(logs, group);
       if (days === null) continue;
-      if (days < 1 || days > COACH_TODAY_QUOTE_MAX_DAYS) continue;
+      // F-2 fix: gate on real elapsed HOURS, not floored days. The old `days < 1`
+      // guard (days is floored) skipped every group trained <24h ago before
+      // `hours` was read, so the formatter's sub-day "{n}h ago" branch could never
+      // fire. A `recovered` group is by definition past its recovery threshold, so
+      // any positive elapsed time is a valid "recovered since" window; cap at
+      // COACH_TODAY_QUOTE_MAX_DAYS (in hours).
       const hours = hoursSinceGroup(logs, group) ?? days * 24;
+      if (hours <= 0 || hours > COACH_TODAY_QUOTE_MAX_DAYS * 24) continue;
       if (best === null || hours < best.hours) {
         best = { group, days, hours };
       }

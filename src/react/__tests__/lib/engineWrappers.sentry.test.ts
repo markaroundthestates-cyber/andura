@@ -88,7 +88,7 @@ import { runProactiveChecks } from '../../../engine/proactiveEngine.js';
 import { composePlannedWorkoutToday } from '../../lib/scheduleAdapterAggregate';
 import { evaluate as evaluateBN } from '../../../engine/bayesianNutrition/index.js';
 import { detectGlobalStagnation } from '../../../engine/stagnationDetector.js';
-import { getRecoveryByGroup } from '../../../engine/muscleRecovery.js';
+import { getRecoveryByGroup, daysSinceGroup, hoursSinceGroup } from '../../../engine/muscleRecovery.js';
 import { detectWeakGroups } from '../../../engine/weaknessDetector.js';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
@@ -324,6 +324,30 @@ describe('engineWrappers §48-H1 Sentry instrumentation', () => {
     useWorkoutStore.setState({ sessionsHistory: [] });
     expect(getCoachTodayQuote()).toBeNull();
     expect(getRecoveryByGroup).not.toHaveBeenCalled();
+  });
+
+  it('F-2: a recovered group trained <24h ago surfaces with sub-day elapsedHours', () => {
+    // Regression for the dead <24h branch: the old `days < 1` floor-gate skipped
+    // any group trained <24h ago (days floors to 0) BEFORE elapsedHours was read,
+    // so the formatter's "{n}h ago" path was unreachable. A recovered group at 13h
+    // (e.g. a 24h-recovery small muscle) must now produce a quote carrying the real
+    // sub-day elapsedHours so CoachTodayCard can render "13h", not be dropped.
+    seedSessions(1);
+    vi.mocked(getRecoveryByGroup).mockReturnValue({ biceps: 'recovered' } as never);
+    vi.mocked(daysSinceGroup).mockReturnValue(0); // floored — the old gate's trap
+    vi.mocked(hoursSinceGroup).mockReturnValue(13);
+    const quote = getCoachTodayQuote();
+    expect(quote).not.toBeNull();
+    expect(quote?.elapsedHours).toBe(13);
+    expect(quote?.daysSince).toBe(0);
+  });
+
+  it('F-2: a group beyond the max window (>14 days) is still excluded', () => {
+    seedSessions(1);
+    vi.mocked(getRecoveryByGroup).mockReturnValue({ biceps: 'recovered' } as never);
+    vi.mocked(daysSinceGroup).mockReturnValue(20);
+    vi.mocked(hoursSinceGroup).mockReturnValue(20 * 24);
+    expect(getCoachTodayQuote()).toBeNull();
   });
 
   it('no engine throw: captureException NOT called (happy path)', () => {
