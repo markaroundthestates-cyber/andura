@@ -875,6 +875,7 @@
     "targetMonthLabel": "Pana in",
     "etaSuffix": "la un ritm sanatos.",
     "etaPrefix": "Estimat in",
+    "etaByDate": "(pana pe ~{date})",
     "atTarget": "Esti deja la tinta.",
     "subhealthyWarning": "Tinta e sub greutatea sanatoasa (~{minKg} kg minim la inaltimea ta). Alege o tinta sanatoasa.",
     "targetClampedWarning": "Tinta de {entered} kg e periculoasa la inaltimea ta — am ridicat-o la {floor} kg (minimul sigur). Alege o tinta sanatoasa.",

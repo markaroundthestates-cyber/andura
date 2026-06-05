@@ -26,7 +26,7 @@ import { getCurrentWeightKg } from '../../lib/userTdee';
 import { computeTargetEta, fmtKg } from '../../lib/targetEta';
 import { evaluateTargetRate, MAX_SAFE_KG_PER_WEEK } from '../../lib/targetSafety';
 import { dangerousFloorWeightKg } from '../../../engine/bodyComposition.js';
-import { t } from '../../../i18n/index.js';
+import { t, getCurrentLocale } from '../../../i18n/index.js';
 
 /**
  * §i18n 2026-05-28 — pluralized horizon label via t() keys. Uses CLDR-style
@@ -190,7 +190,19 @@ export function ObiectivCard(): JSX.Element {
           className="text-xs text-ink3 mt-2 px-1 leading-snug"
           data-testid="obiectiv-eta"
         >
-          {t('obiectiv.etaPrefix')} {localizeEta(eta.weeks)} {t('obiectiv.etaSuffix')}
+          {/* Show the healthy-pace PROJECTED date alongside the horizon so it is
+              directly comparable to the user's chosen deadline ("By {date}")
+              above — the two are different by design (desired deadline vs
+              realistic pace) and looked contradictory without it (audit
+              2026-06-05: "By 08/31/2026" vs "~8 months"). */}
+          {t('obiectiv.etaPrefix')} {localizeEta(eta.weeks)}{' '}
+          {t('obiectiv.etaByDate', {
+            date: new Date(Date.now() + eta.weeks * 7 * 86_400_000).toLocaleDateString(
+              getCurrentLocale() === 'ro' ? 'ro-RO' : 'en-US',
+              { month: 'short', year: 'numeric' },
+            ),
+          })}{' '}
+          {t('obiectiv.etaSuffix')}
         </p>
       )}
     </section>

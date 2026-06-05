@@ -88,21 +88,22 @@ describe('ObiectivCard — ETA wiring (BUG #8 safe-rate)', () => {
   it('ETA realista la ritm sanatos — 81 -> 75 kg = -6kg / 0.5 = 12 sapt ≈ ~3 luni', () => {
     renderCard();
     fireEvent.change(screen.getByTestId('obiectiv-target-weight-input'), { target: { value: '75' } });
-    expect(screen.getByTestId('obiectiv-eta').textContent).toMatch(/~3 luni la un ritm sanatos/);
+    // The projected date (etaByDate) now sits between the horizon and the suffix.
+    expect(screen.getByTestId('obiectiv-eta').textContent).toMatch(/~3 luni.*la un ritm sanatos/);
   });
 
   it('ETA in saptamani pentru tinta apropiata (<8 sapt)', () => {
     renderCard();
     fireEvent.change(screen.getByTestId('obiectiv-target-weight-input'), { target: { value: '78' } });
-    expect(screen.getByTestId('obiectiv-eta').textContent).toMatch(/~6 saptamani la un ritm sanatos/);
+    expect(screen.getByTestId('obiectiv-eta').textContent).toMatch(/~6 saptamani.*la un ritm sanatos/);
   });
 
   it('BUG #8 — tinta agresiva da orizont lung, NU "~1 luna"', () => {
     renderCard();
     fireEvent.change(screen.getByTestId('obiectiv-target-weight-input'), { target: { value: '60' } });
     const txt = screen.getByTestId('obiectiv-eta').textContent ?? '';
-    expect(txt).toMatch(/~10 luni la un ritm sanatos/);
-    expect(txt).not.toMatch(/~1 luna/);
+    expect(txt).toMatch(/~10 luni.*la un ritm sanatos/);
+    expect(txt).not.toMatch(/~1 luna\b/);
   });
 
   it('BUG #8 — tinta subponderala (banda BMI 17-18.5) → avertisment + suprima ETA', () => {

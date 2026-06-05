@@ -875,6 +875,7 @@
     "targetMonthLabel": "By",
     "etaSuffix": "at a healthy pace.",
     "etaPrefix": "Estimated in",
+    "etaByDate": "(by ~{date})",
     "atTarget": "You're already at your goal.",
     "subhealthyWarning": "This goal is below a healthy weight (~{minKg} kg minimum at your height). Pick a healthy target.",
     "targetClampedWarning": "A {entered} kg goal is dangerous at your height — we raised it to {floor} kg (the safe minimum). Pick a healthy target.",
