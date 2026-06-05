@@ -170,6 +170,31 @@ describe('HeatMapWeekly — weight snapshot 7-day mockup parity (Wave C2 i18n EN
     expect(delta).not.toHaveTextContent(/\b2z\b/);
   });
 
+  // Daniel audit: headline showed an old 108 kg (3 days ago) over today's 78 kg
+  // because weightLog is insertion-ordered and the 108 was logged AFTER the 78
+  // (so it sat at the array tail). The headline must be the most-recent-by-DATE
+  // entry (78), with the outlier still surfaced via the anomaly flag.
+  it('headline = latest by DATE not array order; anomaly still flags the outlier', () => {
+    const today = '2026-05-22';
+    const threeDaysAgo = '2026-05-19';
+    const now = Date.now();
+    useProgresStore.setState({
+      // Insertion order: today's 78 first, THEN a back-dated 108 (the array-tail
+      // trap). Chronologically 108 is older than 78.
+      weightLog: [
+        { kg: 78, date: today, ts: now },
+        { kg: 108, date: threeDaysAgo, ts: now + 1000 },
+      ],
+    });
+    renderComponent();
+    // Headline = today's 78, not the array-tail 108.
+    expect(screen.getByTestId('weight-snapshot-latest')).toHaveTextContent(/78/);
+    expect(screen.getByTestId('weight-snapshot-latest')).not.toHaveTextContent(/108/);
+    // Anomaly flag still fires: 30 kg over 3 days = 10 kg/day >> 2 kg/day prag.
+    expect(screen.getByTestId('weight-snapshot-delta-implausible')).toHaveTextContent(/Check the value/i);
+    expect(screen.queryByTestId('weight-snapshot-delta')).not.toBeInTheDocument();
+  });
+
   it('hides delta cand only 1 entry (need 2 puncte)', () => {
     useProgresStore.setState({
       weightLog: [{ kg: 80, date: '2026-05-22', ts: Date.now() }],

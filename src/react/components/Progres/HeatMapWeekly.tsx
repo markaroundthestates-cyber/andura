@@ -43,8 +43,21 @@ function spanDays(firstDate: string, lastDate: string): number {
   return Math.max(1, Math.round(Math.abs(b - a) / MS_PER_DAY));
 }
 
-function buildBars(weightLog: Array<{ kg: number; ts: number }>): WeightBar[] {
-  const last7 = weightLog.slice(-7);
+// Chronological order by calendar `date` (ts tiebreak when same day — newer
+// weigh-in wins), mirroring progresStore.selectLatestBodyData. weightLog is
+// appended in INSERTION order (addWeightEntry tail-appends new dates), so a
+// back-dated or out-of-order entry would otherwise sit at the array tail and be
+// mistaken for the latest (Daniel audit — an old 108 kg headlined over today's
+// 78 kg). Sorting here makes "latest" mean most-recent-by-date.
+function sortByDate(weightLog: Array<{ kg: number; date: string; ts: number }>): Array<{ kg: number; date: string; ts: number }> {
+  return [...weightLog].sort((a, b) => {
+    const dateCmp = a.date.localeCompare(b.date);
+    if (dateCmp !== 0) return dateCmp;
+    return a.ts - b.ts;
+  });
+}
+
+function buildBars(last7: Array<{ kg: number; date: string; ts: number }>): WeightBar[] {
   if (last7.length === 0) return [];
   const kgs = last7.map((w) => w.kg);
   const min = Math.min(...kgs);
@@ -59,8 +72,12 @@ function buildBars(weightLog: Array<{ kg: number; ts: number }>): WeightBar[] {
 
 export function HeatMapWeekly(): JSX.Element {
   const weightLog = useProgresStore((s) => s.weightLog);
-  const bars = buildBars(weightLog);
-  const last7 = weightLog.slice(-7);
+  // Order chronologically by date BEFORE windowing so the headline + delta read
+  // the real most-recent weigh-in, not whatever entry happens to be last in the
+  // (insertion-ordered) array (Daniel audit headline bug).
+  const sorted = sortByDate(weightLog);
+  const last7 = sorted.slice(-7);
+  const bars = buildBars(last7);
   const latest = last7[last7.length - 1];
   const first = last7[0];
   const delta = latest && first && last7.length >= 2 ? +(latest.kg - first.kg).toFixed(1) : null;
