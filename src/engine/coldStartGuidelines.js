@@ -3,6 +3,8 @@
 // Cold start does NOT mean silence. It means population-prior guidelines
 // scaled by onboarding data (experience, goal, equipment).
 
+import { getExerciseMetadata } from './exerciseLibrary.js';
+
 const BASE_WEIGHTS = {
   'DB Shoulder Press': 10,
   'Incline DB Press': 15,
@@ -76,9 +78,68 @@ const BW_FRACTION = /** @type {Record<string, number>} */ ({
   'Rear Delt Fly': 0.22,
 });
 
-// Generic fraction for exercises with no explicit pattern entry — small
-// isolation level (conservative; never aggressive for an unknown movement).
+// Generic fraction for exercises with no explicit pattern entry AND no usable
+// metadata — small isolation level (conservative; never aggressive for a truly
+// unknown movement).
 const BW_FRACTION_DEFAULT = 0.12;
+
+// ── Metadata-aware fallback (Daniel audit 2026-06-05) ────────────────────────
+// The explicit BW_FRACTION table covers ~17 staple lifts. Every OTHER exercise
+// (Romanian Deadlift, Hip Thrust, Bulgarian Split Squat, Front Squat, ...) fell
+// to BW_FRACTION_DEFAULT (0.12 — isolation level), so a heavy compound surfaced
+// at the equipment floor: a 108kg user was offered RDL @ 9kg. Instead of
+// enumerating hundreds of movements, derive a sensible fraction from the
+// exercise's PRIMARY MUSCLE (canonical RO group) damped by its EQUIPMENT type
+// (barbell/machine carry more total load than per-hand dumbbells). Still
+// deliberately CONSERVATIVE — the first real set's RIR + AaFriction's
+// over-recommendation guard recalibrate, so a touch light beats overshoot.
+const FALLBACK_MUSCLE_FRACTION = /** @type {Record<string, number>} */ ({
+  'picioare-quads': 0.70,
+  'fese': 0.70,
+  'picioare-hamstrings': 0.60,
+  'spate': 0.55,
+  'gambe': 0.60,
+  'piept': 0.50,
+  'umeri': 0.25,
+  'triceps': 0.20,
+  'biceps': 0.18,
+  'antebrate': 0.14,
+  'core': 0.14,
+});
+
+// Equipment damping on the muscle fraction. machine/barbell load the full bar/
+// stack; dumbbell values are PER HAND (so a smaller share); cable/band lighter.
+// bodyweight movements never reach suggestStartWeight via the composer (the
+// bodyweight branch uses added-load 0), but keep 0 for safety.
+const FALLBACK_EQUIP_FACTOR = /** @type {Record<string, number>} */ ({
+  machine: 1.0,
+  barbell: 0.85,
+  cable: 0.70,
+  dumbbell: 0.40,
+  band: 0.30,
+  bodyweight: 0,
+});
+
+// Reference bodyweight the flat (no-profile) fallback prices the fraction at.
+const FALLBACK_REFERENCE_BW = 70;
+
+/**
+ * Conservative bodyweight FRACTION for an exercise that is not in the explicit
+ * BW_FRACTION table, derived from its metadata (muscle_target_primary ×
+ * equipment_type). Unknown muscle → the isolation-level BW_FRACTION_DEFAULT (so
+ * an unrecognised movement still can never resolve aggressive). Pure.
+ * @param {string} exerciseName English canonical name
+ * @returns {number}
+ */
+function _fallbackFraction(exerciseName) {
+  const meta = getExerciseMetadata(exerciseName);
+  const base = meta ? FALLBACK_MUSCLE_FRACTION[meta.muscle_target_primary] : undefined;
+  if (base == null) return BW_FRACTION_DEFAULT;
+  const eqF = meta && FALLBACK_EQUIP_FACTOR[meta.equipment_type] != null
+    ? FALLBACK_EQUIP_FACTOR[meta.equipment_type]
+    : 0.70;
+  return base * eqF;
+}
 
 // Sex factor on the bodyweight-derived start. Female lifters carry a lower
 // share of bodyweight as working weight on most patterns at equal training age;
@@ -101,7 +162,7 @@ function _profileScaledStart(exerciseName, experience, bodyweightKg, sex) {
   const multMap = /** @type {Record<string, number>} */ (EXPERIENCE_MULTIPLIER);
   const expMult = multMap[experience] ?? 1.0;
   const fracMap = BW_FRACTION;
-  const frac = fracMap[exerciseName] ?? BW_FRACTION_DEFAULT;
+  const frac = fracMap[exerciseName] ?? _fallbackFraction(exerciseName);
   const sexMap = SEX_FACTOR;
   const sexF = (typeof sex === 'string' && sexMap[sex] != null) ? sexMap[sex] : 1.0;
   return bodyweightKg * frac * sexF * expMult;
@@ -126,8 +187,13 @@ export function suggestStartWeight(exerciseName, experience, profile) {
   const baseMap = /** @type {Record<string, number>} */ (BASE_WEIGHTS);
   const multMap = /** @type {Record<string, number>} */ (EXPERIENCE_MULTIPLIER);
   const mult = multMap[experience] ?? 1.0;
-  // Legacy flat prior (no bodyweight) — preserved exactly for back-compat.
-  const flat = (baseMap[exerciseName] ?? 10) * mult;
+  // Flat prior (no bodyweight). Explicit BASE_WEIGHTS entry first; otherwise the
+  // metadata-aware fallback priced at the reference bodyweight (floored at 10 so
+  // isolation never drops below the equipment floor), NOT the old blanket 10kg
+  // that put every unlisted compound at the floor.
+  const flat =
+    (baseMap[exerciseName] ??
+      Math.max(10, Math.round(_fallbackFraction(exerciseName) * FALLBACK_REFERENCE_BW))) * mult;
   const bw = profile && Number(profile.bodyweightKg);
   if (!bw || !Number.isFinite(bw) || bw <= 0) {
     return Math.round(flat);
