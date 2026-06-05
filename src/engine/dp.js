@@ -388,13 +388,34 @@ export const DP = {
     // RATING_TO_RPE: usor=6.5 / potrivit=7.5 / greu=8.5). The coarse rating never
     // produces 9, so the gate is >= 8.5 (catches greu=8.5; potrivit=7.5 stays MEDIUM).
     if (lastRPE >= 8.5) {
+      const easedKg = getPrevWeight(lastW, ex);
       const targetReps = Math.max(rMin, Math.min(lastReps, rMax));
+      if (easedKg < lastW) {
+        // The rating said too heavy → the coach actually LIGHTENS the load. It used
+        // to HOLD at lastW, which contradicted the "too heavy" label and ignored how
+        // the set felt: the user lifts a weight, rates it hard, and is handed the
+        // exact same weight again (Daniel/Gigel P0 2026-06-05 — "il doare in cur de
+        // ce simt eu"). One equipment step down; paired with EASY stepping back up,
+        // the coach auto-regulates around the user's true working weight instead of
+        // re-prescribing a load they just struggled with.
+        return {
+          kg: easedKg, repsTarget: targetReps, rir: 2,
+          status: 'EASE BACK',
+          statusColor: 'var(--accent2)',
+          statusLabel: '🟡 Usuram putin',
+          progressionNote: `A fost greu · coboram la ${easedKg} kg ca sa stapanesti miscarea.`,
+          progressionStage: 1
+        };
+      }
+      // Already at the equipment floor → cannot lighten the load; trim the rep
+      // target instead so the next session is still genuinely easier than this one.
+      const trimmedReps = Math.max(rMin, lastReps - 1);
       return {
-        kg: lastW, repsTarget: targetReps, rir: 1,
-        status: 'TOO HEAVY',
-        statusColor: 'var(--red)',
-        statusLabel: '🔴 E prea greu',
-        progressionNote: `A fost greu · consolidam la ${lastW} kg × ${targetReps} reps.`,
+        kg: lastW, repsTarget: trimmedReps, rir: 2,
+        status: 'EASE BACK',
+        statusColor: 'var(--accent2)',
+        statusLabel: '🟡 Usuram putin',
+        progressionNote: `A fost greu · ramanem la ${lastW} kg dar tintim ${trimmedReps} reps.`,
         progressionStage: 1
       };
     }

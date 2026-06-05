@@ -162,11 +162,14 @@ describe('E2E coach-responds — DP.getSmartRecommendation moves on EASY', () =>
     expect(rec.status).toBe('INCREASE');
   });
 
-  it('HARD set HOLDS the weight (no increase)', () => {
+  it('HARD set EASES the weight down (rating said too heavy)', () => {
+    // Daniel/Gigel P0 2026-06-05: HARD used to HOLD at the same weight (the coach
+    // labelled it "too heavy" then re-prescribed the identical load). It now drops
+    // one equipment step so the next session is genuinely lighter.
     persistSessionLogs(sessionWith('Flat DB Press', 17.5, 10, 'greu', 3000), Date.now() - 3000);
     const rec = DP.getSmartRecommendation('Flat DB Press', null, null, undefined, null);
-    expect(rec.kg).toBe(17.5); // held
-    expect(rec.status).toBe('TOO HEAVY');
+    expect(rec.kg).toBeLessThan(17.5); // eased down, not held
+    expect(rec.status).toBe('EASE BACK');
   });
 
   it('COLD-START user (uncalibrated readiness): EASY set still moves the recommendation', () => {
@@ -223,11 +226,17 @@ describe('E2E coach-responds — composePlannedWorkoutToday responds to EASY', (
     expect(lat2.targetReps).toBeGreaterThan(lat1.targetReps); // 10 -> 11, NOT stuck
   });
 
-  it('GREU-rated Lat Pulldown HOLDS the weight (no increase) end-to-end', async () => {
-    seedHistory('greu', 10);
+  it('GREU-rated Lat Pulldown EASES the weight down end-to-end', async () => {
+    // P0 2026-06-05: a hard set now lightens the next prescription instead of
+    // re-serving the same weight the user struggled with. Seed at a real ladder
+    // value (55) — 56 is not a Lat Pulldown stack step (it snaps to 55), which
+    // would mask the one-step drop.
+    persistSessionLogs(sessionWith('Lat Pulldown', 55, 10, 'greu', 3000), Date.now() - 3000);
+    persistSessionLogs(sessionWith('Lat Pulldown', 55, 10, 'greu', 2000), Date.now() - 2000);
+    persistSessionLogs(sessionWith('Lat Pulldown', 55, 10, 'greu', 1000), Date.now() - 1000);
     const out = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const lat = findByEnSlug(out!.exercises, 'Lat Pulldown')!;
-    expect(lat.targetKg).toBe(55); // held at last weight
+    expect(lat.targetKg).toBeLessThan(55); // eased below last weight
   });
 
   // ── THE PRODUCTION SCENARIO (Daniel's exact live test) ───────────────────

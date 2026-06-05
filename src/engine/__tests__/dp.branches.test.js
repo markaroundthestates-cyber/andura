@@ -253,17 +253,17 @@ describe('DP._recommendRaw — branch coverage', () => {
     expect(r.repsTarget).toBe(15);   // rMax
   });
 
-  it('TOO HEAVY: lastRPE >= 9 → holds weight AND rep target (never increases)', () => {
-    // Daniel bug 2026-06-04: a HARD set must NEVER push the prescription forward.
-    // The old code added +1 rep even when the last set was rated greu; the
-    // responsive rewrite holds BOTH weight and the rep target (capped at rMax),
-    // so the coach visibly eases instead of pretending the user can do more.
+  it('HARD → eases the load one step DOWN (rating said too heavy, so lighten it)', () => {
+    // Daniel/Gigel P0 2026-06-05: a HARD set used to be handed back the EXACT same
+    // weight ("🔴 E prea greu" label, then identical kg) — the action contradicted
+    // the message and ignored how the set felt. The coach now actually LIGHTENS one
+    // equipment step. Never increases reps on hard.
     store['logs'] = [log('Cable Row', 56, 9, 9)];
     const r = DP._recommendRaw('Cable Row');
-    expect(r.status).toBe('TOO HEAVY');
-    expect(r.rir).toBe(1);
-    expect(r.kg).toBe(56);
-    expect(r.repsTarget).toBe(9);    // held at lastReps — HARD never increases reps
+    expect(r.status).toBe('EASE BACK');
+    expect(r.kg).toBeLessThan(56);                 // load actually drops
+    expect(r.repsTarget).toBeLessThanOrEqual(9);   // never increases reps on hard
+    expect(r.progressionNote).toMatch(/coboram/);
   });
 
   it('CONSOLIDATE: lastReps < rMax with MEDIUM (potrivit) RPE adds 1 rep', () => {
@@ -397,20 +397,31 @@ describe('DP._recommendRaw — rating-driven responsive progression', () => {
     expect(r.repsTarget).toBe(10);  // 9 → 10, exactly +1 even when very easy
   });
 
-  it('HARD → holds weight, never increases reps (eases / stays put)', () => {
+  it('HARD → eases the load down a step, never increases', () => {
     store['logs'] = [log('Cable Row', 56, 10, 9.5)];
     const r = DP._recommendRaw('Cable Row');
-    expect(r.status).toBe('TOO HEAVY');
-    expect(r.kg).toBe(56);          // weight held
+    expect(r.status).toBe('EASE BACK');
+    expect(r.kg).toBeLessThan(56);          // weight eased down
     expect(r.repsTarget).toBeLessThanOrEqual(10); // never above lastReps
     expect(r.progressionNote).toMatch(/greu/);    // explains it was hard
   });
 
-  it('HARD at the top of the range still does NOT add weight', () => {
+  it('HARD at the top of the range still does NOT add weight (eases instead)', () => {
     store['logs'] = [log('Cable Row', 56, 12, 10)];
     const r = DP._recommendRaw('Cable Row');
-    expect(r.status).toBe('TOO HEAVY');
-    expect(r.kg).toBe(56);          // never bumps weight on a hard set
+    expect(r.status).toBe('EASE BACK');
+    expect(r.kg).toBeLessThan(56);          // never bumps weight on a hard set
+  });
+
+  it('GIGEL P0: lift below the prescription + HARD → next is LIGHTER, not the same', () => {
+    // The exact report (2026-06-05): coach prescribed a weight, the user lifted a
+    // lighter one and rated it hard, and the next session re-prescribed the SAME
+    // weight he just struggled with. The eased load must be strictly below what he
+    // lifted — the coach responds to how it felt, not just to whether reps were hit.
+    store['logs'] = [log('Cable Row', 45, 9, 8.5)]; // hit reps at 45kg, rated greu
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.kg).toBeLessThan(45);
+    expect(r.status).toBe('EASE BACK');
   });
 
   it('MEDIUM mid-range → modest standard +1 rep (weight held)', () => {
@@ -858,11 +869,13 @@ describe('DP.getSmartRecommendation — post-session rating gate', () => {
 // into MEDIUM (mildly increases) and the coach feels unresponsive. These tests
 // drive the EXACT production values so a future threshold drift fails here.
 describe('DP._recommendRaw — REAL rating→RPE scale (6.5 / 7.5 / 8.5)', () => {
-  it('greu (8.5) → HARD: holds weight AND rep target, never increases', () => {
+  it('greu (8.5) → HARD: eases the weight DOWN a step, never increases', () => {
+    // The exact production value for "greu" (RATING_TO_RPE). Was a hold-at-same;
+    // now the coach lightens one step so a too-heavy set is not re-prescribed.
     store['logs'] = [log('Cable Row', 56, 9, 8.5)];
     const r = DP._recommendRaw('Cable Row');
-    expect(r.status).toBe('TOO HEAVY');
-    expect(r.kg).toBe(56);
+    expect(r.status).toBe('EASE BACK');
+    expect(r.kg).toBeLessThan(56);
     expect(r.repsTarget).toBeLessThanOrEqual(9); // never bumped above what was done
   });
 
