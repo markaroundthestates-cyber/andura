@@ -5,6 +5,7 @@ import {
   daysSinceGroup,
   hoursSinceGroup,
   getGroupRecoveryDetail,
+  groupForExerciseBig11,
   getLaggingMuscles,
   GROUP_HEAD_MAP,
   GROUP_HEAD_MAP_BIG11,
@@ -116,6 +117,35 @@ describe('getGroupRecoveryDetail — exposed {state, elapsedHours} signal', () =
     // piept never trained in legLogs => recovered, no elapsed time.
     expect(detail.piept.state).toBe('recovered');
     expect(detail.piept.elapsedHours).toBeNull();
+  });
+});
+
+describe('groupForExerciseBig11 — exercise -> primary Big-11 group(s)', () => {
+  it('maps a chest press to piept', () => {
+    expect(groupForExerciseBig11('Flat DB Press')).toEqual(['piept']);
+    expect(groupForExerciseBig11('Incline DB Press')).toEqual(['piept']);
+  });
+
+  it('maps a back row to spate', () => {
+    expect(groupForExerciseBig11('Cable Row')).toEqual(['spate']);
+    expect(groupForExerciseBig11('Lat Pulldown')).toEqual(['spate']);
+  });
+
+  it('maps a biceps curl to biceps', () => {
+    expect(groupForExerciseBig11('Cable Curl')).toEqual(['biceps']);
+  });
+
+  it('maps a multi-group lift to each primary group (Leg Press -> quads + glutes)', () => {
+    const groups = groupForExerciseBig11('Leg Press');
+    expect(groups).toContain('picioare-quads');
+    expect(groups).toContain('fese');
+  });
+
+  it('returns [] for an unknown / empty exercise name', () => {
+    expect(groupForExerciseBig11('Totally Unknown Lift')).toEqual([]);
+    expect(groupForExerciseBig11(undefined)).toEqual([]);
+    expect(groupForExerciseBig11(null)).toEqual([]);
+    expect(groupForExerciseBig11('')).toEqual([]);
   });
 });
 

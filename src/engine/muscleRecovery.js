@@ -332,6 +332,36 @@ export function getGroupRecoveryDetail(logs, painEntries, now = Date.now()) {
 }
 
 /**
+ * Map a single exercise (by its canonical EN engine name) to the Big-11 group(s)
+ * its PRIMARY muscles load. Same taxonomy + attribution the recovery + lagging
+ * math use (EXERCISE_MUSCLES.primary → GROUP_HEAD_MAP_BIG11), so a narrative
+ * layer can compute "which groups does TODAY's plan actually train" against the
+ * exact buckets the engine reasons in. Returns [] for an unknown exercise name.
+ *
+ * Primary-only (not secondary) so allocation reflects the exercise's MAIN target
+ * — a bench press counts toward chest, not toward the triceps it incidentally
+ * assists. Pure; no clock.
+ *
+ * @param {string|undefined|null} engineName — canonical EN exercise name (the key into EXERCISE_MUSCLES)
+ * @returns {string[]} Big-11 RO group keys this exercise primarily trains (deduped)
+ */
+export function groupForExerciseBig11(engineName) {
+  if (!engineName) return [];
+  const exMap = /** @type {Record<string, {primary?: string[], secondary?: string[]}>} */ (EXERCISE_MUSCLES);
+  const muscles = exMap[engineName];
+  if (!muscles) return [];
+  const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP);
+  /** @type {Set<string>} */
+  const groups = new Set();
+  for (const head of muscles.primary || []) {
+    for (const [g, heads] of Object.entries(headMap)) {
+      if (heads.includes(head)) groups.add(g);
+    }
+  }
+  return [...groups];
+}
+
+/**
  * Volume-based lagging detection: groups under-volume 2+ saptamani vs Big 6
  * equal distribution (~16-17% target each). Lagging = group < 60% of average
  * peer group volume across last 14 days.

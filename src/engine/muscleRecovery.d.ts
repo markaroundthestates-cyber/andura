@@ -67,6 +67,7 @@ export function getGroupRecoveryDetail(
   painEntries?: PainCdlEntry[],
   now?: number
 ): Record<string, GroupRecoveryDetail>;
+export function groupForExerciseBig11(engineName: string | null | undefined): string[];
 export function getLaggingMuscles(
   profile: { logs?: LogEntry[]; lookbackDays?: number; now?: number } | null | undefined
 ): LaggingMuscle[];
