@@ -595,9 +595,17 @@
     from { opacity: 0; transform: scale(0.96); }
     to { opacity: 1; transform: scale(1); }
   }
+  /* Bottom-sheet entrance. Founder UX 2026-06-06 — the panel used to flash
+     off-screen for a frame on open (the translateY(100%) start frame could
+     paint before the animation's backwards-fill took, reading as "it rendered
+     in the wrong place, then settled"). Pairing opacity (start at 0) hides that
+     start frame entirely, and a fixed 8% offset paired with opacity no longer
+     depends on the element's measured height — so the sheet animates in cleanly
+     without the off-screen flash. Shared by every bottom sheet (session
+     options, swap pick, exit, aparat lipsa, schedule preview). */
   @keyframes andura-slide-up {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
+    from { transform: translateY(8%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
   @keyframes andura-slide-down {
     from { transform: translateY(-100%); opacity: 0; }
@@ -643,7 +651,7 @@
 
   .animate-fade-in-up { animation: andura-fade-in-up 280ms ease-out both; }
   .animate-scale-in { animation: andura-scale-in 200ms ease-out both; }
-  .animate-slide-up { animation: andura-slide-up 260ms ease-out both; }
+  .animate-slide-up { animation: andura-slide-up 260ms cubic-bezier(0.16, 1, 0.3, 1) both; will-change: transform, opacity; }
   /* Backdrop fade for modal/sheet overlays — opacity only. */
   .animate-fade-in { animation: andura-fade-in 200ms ease-out both; }
   .animate-card-rise { animation: andura-card-rise 380ms cubic-bezier(0.16, 1, 0.3, 1) both; }
