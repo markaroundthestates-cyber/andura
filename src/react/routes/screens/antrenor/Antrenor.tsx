@@ -93,6 +93,13 @@ export function Antrenor(): JSX.Element {
   const sessionStart = useWorkoutStore((s) => s.sessionStart);
   const pausedSnapshot = useWorkoutStore((s) => s.pausedSnapshot);
   const lastSession = useWorkoutStore((s) => s.lastSession);
+  // FIX 2 (Daniel audit 2026-06-05) — "has trained before" derives from durable
+  // session history, not the transient lastSession (null after deletes / certain
+  // flows). Used to swap the readiness-empty microcopy: a returning user must
+  // NOT see the "log your FIRST session" copy when readiness is merely unknown
+  // today (no energy-check yet).
+  const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
+  const hasTrainedBefore = sessionsHistory.length > 0;
   const prHit = useWorkoutStore((s) => s.prHit);
   const resumeSession = useWorkoutStore((s) => s.resumeSession);
   const discardSession = useWorkoutStore((s) => s.discardSession);
@@ -277,7 +284,7 @@ export function Antrenor(): JSX.Element {
               className="font-serif italic text-ink2 text-sm mt-1.5"
               data-testid="readiness-empty-microcopy"
             >
-              {t('antrenor.readinessEmpty')}
+              {t(hasTrainedBefore ? 'antrenor.readinessEmptyReturning' : 'antrenor.readinessEmpty')}
             </p>
           )}
         </div>

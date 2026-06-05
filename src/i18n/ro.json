@@ -164,6 +164,7 @@
     "errorBanner": "Nu am putut incarca recomandarile coach-ului. Poti incepe sesiunea oricum.",
     "primedForPr": "Pregatit de PR",
     "readinessEmpty": "Logheaza prima sesiune ca sa-ti trezesti readiness-ul.",
+    "readinessEmptyReturning": "Fa verificarea de energie de azi ca sa-ti vezi readiness-ul.",
     "header": {
       "dateSeparator": "·"
     },

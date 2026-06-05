@@ -51,6 +51,7 @@ function resetStores(): void {
     lastRating: null,
     pausedSnapshot: null,
     lastSession: null,
+    sessionsHistory: [],
     streak: 0,
   });
   useCoachStore.setState({
@@ -373,6 +374,25 @@ describe('Antrenor home — F4 readiness verdict', () => {
     // No fabricated readiness verdict + no PR pill in the empty state.
     expect(screen.queryByRole('status', { name: /Verdict readiness|Readiness verdict/i })).not.toBeInTheDocument();
     expect(screen.queryByText(/poti incerca PR|you can try a PR|Primed for a PR|Pregatit de PR/i)).not.toBeInTheDocument();
+  });
+
+  // FIX 2 (Daniel audit 2026-06-05) — a RETURNING user whose readiness is merely
+  // unknown today (no energy-check) must NOT see the "log your FIRST session"
+  // copy. "Has trained before" derives from sessionsHistory, NOT lastSession
+  // (which is null after deletes / certain flows).
+  it('returning user (sessionsHistory entries, lastSession null) → NO "first session" readiness copy', async () => {
+    useWorkoutStore.setState({
+      lastSession: null,
+      sessionsHistory: [{ title: 'Earlier', meta: '', ts: Date.now() - 86_400_000 }],
+    });
+    // Default mock readiness=null → the empty microcopy renders, but the
+    // returning variant (not the first-session line).
+    renderAntrenor();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const micro = screen.getByTestId('readiness-empty-microcopy');
+    expect(micro).toBeInTheDocument();
+    expect(micro.textContent ?? '').not.toMatch(/first session/i);
+    expect(micro.textContent ?? '').toMatch(/energy check/i);
   });
 
   it('with-data → orb shows real score + verdict (no placeholder)', async () => {

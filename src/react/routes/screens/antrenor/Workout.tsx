@@ -100,6 +100,11 @@ export function Workout(): JSX.Element {
   const sessionStart = useWorkoutStore((s) => s.sessionStart);
   const pausedSnapshot = useWorkoutStore((s) => s.pausedSnapshot);
   const lastSession = useWorkoutStore((s) => s.lastSession);
+  // FIX 2 (Daniel audit 2026-06-05) — "has trained before" must derive from the
+  // durable session history, not the transient lastSession (null after deletes /
+  // certain flows). A returning user with prior sessions must NEVER see the
+  // first-session/baseline copy.
+  const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
   const startSession = useWorkoutStore((s) => s.startSession);
   const logSet = useWorkoutStore((s) => s.logSet);
   const setPhase = useWorkoutStore((s) => s.setPhase);
@@ -166,11 +171,20 @@ export function Workout(): JSX.Element {
   // has nothing to adapt from. Surface a brief, non-technical note so the user
   // understands why the targets are not adapting yet, instead of leaving them
   // wondering. Loaded exercises only (bodyweight has its own rep-based flow).
+  // Gate on the ENGINE key (engineName), not the RO display name. DP keys its
+  // state on the English canonical; reading it under the display name returned a
+  // cold-start (lastW===0) even for an exercise the user has logged → the
+  // "first session" copy showed for returning users (Daniel P0 name-key bug,
+  // 2026-06-05). Additionally suppress the copy entirely for anyone who has
+  // trained before (sessionsHistory.length>0): the note literally says "First
+  // session", so even a brand-new exercise must not call a returning user a
+  // first-timer — derive "trained before" from durable history, NOT lastSession.
   const noExerciseHistory =
     hasWorkout &&
+    sessionsHistory.length === 0 &&
     !currentExercise.isBodyweight &&
     currentExercise.name !== '' &&
-    DP.getState(currentExercise.name).lastW === 0;
+    DP.getState(currentExercise.engineName ?? currentExercise.name).lastW === 0;
   // Apply the ENGINE intensityMod baseline (deload output) to target kg. This
   // is the COARSE deload-state modifier (±%), distinct from readiness: as of
   // the wiring fix, today's readiness already shapes the per-exercise targetKg

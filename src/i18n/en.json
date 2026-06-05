@@ -164,6 +164,7 @@
     "errorBanner": "Couldn't load coach recommendations. You can start the session anyway.",
     "primedForPr": "Primed for a PR",
     "readinessEmpty": "Log your first session to wake your readiness.",
+    "readinessEmptyReturning": "Run today's energy check to read your readiness.",
     "header": {
       "dateSeparator": "·"
     },

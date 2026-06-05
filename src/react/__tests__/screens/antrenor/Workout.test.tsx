@@ -1566,6 +1566,8 @@ describe('Workout — first-session baseline note', () => {
   }
 
   it('shows the baseline note on the first session (no history for the exercise)', async () => {
+    // Genuine first-timer: no sessionsHistory + no per-exercise engine history.
+    useWorkoutStore.setState({ sessionsHistory: [], lastSession: null });
     await renderWorkoutAndWait();
     // No seeded logs → DP.getState('Bench Press').lastW = 0 → noExerciseHistory.
     const note = screen.getByTestId('baseline-note');
@@ -1587,6 +1589,21 @@ describe('Workout — first-session baseline note', () => {
     logSet('Greu');
     fireEvent.click(screen.getByTestId('rest-skip'));
     expect(screen.getByTestId('insession-adjust-notice')).toBeInTheDocument();
+    expect(screen.queryByTestId('baseline-note')).not.toBeInTheDocument();
+  });
+
+  // FIX 2 (Daniel audit 2026-06-05) — a RETURNING user (sessionsHistory has
+  // entries) must NEVER see the "First session - building your baseline" copy,
+  // even with lastSession=null and no per-exercise engine history. "Has trained
+  // before" derives from durable sessionsHistory, not transient lastSession.
+  it('does NOT show the baseline note for a returning user (sessionsHistory has entries, lastSession null)', async () => {
+    // No DB logs for Bench Press (DP.getState lastW === 0), but the user has a
+    // prior session in history and lastSession is null (post-delete / transient).
+    useWorkoutStore.setState({
+      lastSession: null,
+      sessionsHistory: [{ title: 'Earlier', meta: '', ts: Date.now() - 86_400_000 }],
+    });
+    await renderWorkoutAndWait();
     expect(screen.queryByTestId('baseline-note')).not.toBeInTheDocument();
   });
 });
