@@ -351,10 +351,15 @@ export const DP = {
 
     // ── CAP CHECK: at or above max sensible weight for this exercise
     if (maxKg && lastW >= maxKg) {
-      // Don't add weight — focus on reps and quality
-      const targetReps = Math.min(rMax + 4, lastReps + 1); // can exceed normal range
-      if (lastReps >= rMax + 4) {
-        // At both weight cap AND rep cap → maintain, focus on technique/feel
+      // Weight is the progression lever — but we are capped, so fill reps to the
+      // TOP of the hypertrophy range and stop there. Never escalate a (often
+      // heavy/compound) lift to 20+ reps: once at rMax at the cap we maintain and
+      // focus on execution, we do NOT keep stacking reps (the old rMax+4 ceiling
+      // prescribed e.g. a capped Leg Press at 16-24 reps).
+      const targetReps = Math.min(rMax, lastReps + 1); // stay within the range
+      if (lastReps >= rMax) {
+        // At both weight cap AND the top of the rep range → maintain, focus on
+        // technique/feel.
         return {
           kg: lastW, repsTarget: rMax, rir: 2,
           status: 'PEAK',

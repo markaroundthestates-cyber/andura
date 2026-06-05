@@ -234,19 +234,33 @@ describe('DP._recommendRaw — branch coverage', () => {
     expect(r.status).not.toBe('SCALE BACK');
   });
 
-  it('CAP REPS: at/above MAX_KG but below rep cap → hold weight, add reps', () => {
-    // Lateral Raises MAX_KG=18, range [12,15], rMax+4=19
+  it('CAP REPS: at/above MAX_KG but below the top of the range → hold weight, add reps within range', () => {
+    // Lateral Raises MAX_KG=18, range [12,15], rMax=15. At the weight cap we fill
+    // reps toward rMax (never beyond it — weight is the lever, capped here).
     store['logs'] = [log('Lateral Raises', 18, 13, 7)];
     const r = DP._recommendRaw('Lateral Raises');
     expect(r.status).toBe('CAP REPS');
     expect(r.kg).toBe(18);           // weight held at cap
-    expect(r.repsTarget).toBe(14);   // lastReps+1, < rMax+4
+    expect(r.repsTarget).toBe(14);   // min(rMax 15, lastReps+1) = 14, still < rMax
     expect(r.rir).toBe(2);
   });
 
-  it('PEAK: at weight cap AND rep cap (>= rMax+4) → maintain', () => {
-    // Lateral Raises rMax=15 → rMax+4=19; lastReps 19 hits PEAK
-    store['logs'] = [log('Lateral Raises', 18, 19, 7)];
+  it('CAP REPS never escalates beyond rMax (no more rMax+4 runaway)', () => {
+    // Leg Press range [15,20], rMax=20, MAX_KG=400. At the cap with lastReps=15
+    // the prescription climbs ONE rep to 16 — NOT to 16-24. A capped heavy
+    // compound must not be pushed to 20+ reps (Daniel coach audit 2026-06-05).
+    store['logs'] = [log('Leg Press', 400, 15, 7)];
+    const r = DP._recommendRaw('Leg Press');
+    expect(r.status).toBe('CAP REPS');
+    expect(r.kg).toBe(400);
+    expect(r.repsTarget).toBe(16);          // min(rMax 20, 15+1)
+    expect(r.repsTarget).toBeLessThanOrEqual(20); // never above rMax
+  });
+
+  it('PEAK: at weight cap AND at the top of the range (>= rMax) → maintain', () => {
+    // Lateral Raises rMax=15; once lastReps reaches rMax at the weight cap we
+    // maintain at rMax (no rMax+4 over-range escalation any more).
+    store['logs'] = [log('Lateral Raises', 18, 15, 7)];
     const r = DP._recommendRaw('Lateral Raises');
     expect(r.status).toBe('PEAK');
     expect(r.kg).toBe(18);
