@@ -161,7 +161,11 @@ function clauseFor(adapt: CoachAdaptation): string {
  *    still immature (mutually exclusive with the "still learning" line), and
  *    suppressed when the plan does not actually allocate that group (can't claim
  *    to push a group the plan barely touches).
- *  - deload / imbalance-fix: unaffected by allocation reconciliation.
+ *  - imbalance-fix ("adding {group} volume to balance the body"): suppressed when
+ *    the plan does not actually allocate that group today (can't claim to add
+ *    volume to a group the plan never trains this session). NOT a trend claim →
+ *    NOT gated by calibration maturity.
+ *  - deload: carries no group → unaffected by allocation reconciliation.
  */
 function clauseSupportedBy(adapt: CoachAdaptation, ctx: CoachInsightContext): boolean {
   const alloc = ctx.allocation;
@@ -171,6 +175,10 @@ function clauseSupportedBy(adapt: CoachAdaptation, ctx: CoachInsightContext): bo
   }
   if (adapt.kind === 'weakness-amp') {
     if (ctx.calibrationImmature) return false;
+    if (alloc && adapt.group && !alloc.allocatedGroups.has(adapt.group)) return false;
+    return true;
+  }
+  if (adapt.kind === 'imbalance-fix') {
     if (alloc && adapt.group && !alloc.allocatedGroups.has(adapt.group)) return false;
     return true;
   }

@@ -236,6 +236,36 @@ describe('composeCoachInsight — plan-allocation reconciliation', () => {
     expect(line).toContain('back');
     expect(line).toContain('lagging');
   });
+
+  it('DROPS an imbalance-fix clause for a group the plan does not allocate', () => {
+    // LLM-judge `imbalance-NOT-allocated`: plan = chest 8 + shoulders 6 (zero
+    // hamstrings), engine flags an imbalance-fix on hamstrings → "adding hamstring
+    // volume" is a lie on a chest/shoulders plan. The prior exemption let it leak.
+    const alloc = getPlanAllocationByGroup([
+      ex('Incline DB Press', 4),
+      ex('Flat DB Press', 4),
+      ex('DB Shoulder Press', 6),
+    ]);
+    const line = composeCoachInsight(
+      [{ kind: 'imbalance-fix', group: 'picioare-hamstrings' }],
+      { allocation: alloc },
+    );
+    expect(line).toBeNull();
+  });
+
+  it('KEEPS an imbalance-fix clause for a group the plan actually trains', () => {
+    const alloc = getPlanAllocationByGroup([
+      ex('Romanian Deadlift', 5),
+      ex('Leg Curl', 4),
+    ]);
+    const line = composeCoachInsight(
+      [{ kind: 'imbalance-fix', group: 'picioare-hamstrings' }],
+      { allocation: alloc },
+    );
+    expect(line).not.toBeNull();
+    expect(line).toContain('hamstrings');
+    expect(line).toContain('balance');
+  });
 });
 
 describe('composeCoachInsight — calibration-maturity gate (trend vs still-learning)', () => {
