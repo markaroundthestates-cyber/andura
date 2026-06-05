@@ -265,8 +265,9 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
     expect(screen.getByTestId('detail-ex-1rm').textContent).toMatch(/20\.4 kg/);
     expect(screen.getByTestId('detail-ex-1rm').textContent).not.toMatch(/20 4/);
     expect(screen.getByTestId('detail-set-bench-press-0').textContent).toMatch(/22\.5/);
-    // Rating column under EN default surfaces "Right" (ratingLabels.potrivit -> Right).
-    expect(screen.getByTestId('detail-set-bench-press-1').textContent).toMatch(/Right/);
+    // Rating column under EN default surfaces "Just right" (ratingLabels.potrivit),
+    // consistent with the post-RPE option label (Daniel audit 2026-06-05).
+    expect(screen.getByTestId('detail-set-bench-press-1').textContent).toMatch(/Just right/);
   });
 
   it('marks PR sets visual (PR label)', () => {

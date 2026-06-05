@@ -144,6 +144,16 @@ export function setLocale(locale) {
       document.documentElement.lang = locale;
     }
   } catch { /* ignore */ }
+  // Notify PERSISTENT components that never re-mount on navigation (e.g. the
+  // BottomNav lives in Layout's <Outlet> parent and is never re-rendered when a
+  // route re-mounts), so their t() calls re-evaluate against the new bundle. Most
+  // screens flip simply by being re-mounted on tab nav; the persistent chrome
+  // needs this signal (Daniel audit 2026-06-05: nav stayed English on RO).
+  try {
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new CustomEvent('andura:localechange', { detail: locale }));
+    }
+  } catch { /* ignore */ }
   return true;
 }
 

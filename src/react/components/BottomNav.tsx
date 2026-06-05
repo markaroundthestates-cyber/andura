@@ -17,6 +17,7 @@
 // prefers-reduced-motion block in global.css.
 
 import type { JSX } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Dumbbell, Activity, CalendarDays, User } from 'lucide-react';
 import { useSettingsStore } from '../stores/settingsStore';
@@ -41,6 +42,17 @@ export function BottomNav(): JSX.Element {
   const navigate = useNavigate();
   const navStyle = useSettingsStore((s) => s.bottomNavStyle);
   const compact = navStyle === 'compact';
+
+  // This nav is persistent (Layout <Outlet> parent) and never re-mounts on tab
+  // navigation, so its t() labels would freeze at the locale present on first
+  // mount (English by default) even after the user switches language — Daniel
+  // audit 2026-06-05. Re-render when setLocale() broadcasts a locale change.
+  const [, bumpLocale] = useState(0);
+  useEffect(() => {
+    const onLocaleChange = (): void => bumpLocale((n) => n + 1);
+    window.addEventListener('andura:localechange', onLocaleChange);
+    return () => window.removeEventListener('andura:localechange', onLocaleChange);
+  }, []);
 
   const isActive = (tab: Tab): boolean =>
     location.pathname === `/app/${tab}` ||

@@ -962,7 +962,7 @@
       "legacyFallback": "Per-exercise detail unavailable for sessions logged before this update.",
       "ratingLabels": {
         "usor": "Easy",
-        "potrivit": "Right",
+        "potrivit": "Just right",
         "greu": "Hard"
       },
       "deleteCta": "Delete this session",
@@ -1370,6 +1370,7 @@
       },
       "language": {
         "heading": "Language",
+        "bilingualHeading": "Language / Limba",
         "english": "English",
         "romanian": "Romana",
         "default": "Default"

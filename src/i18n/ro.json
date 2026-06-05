@@ -1370,6 +1370,7 @@
       },
       "language": {
         "heading": "Limba",
+        "bilingualHeading": "Language / Limba",
         "english": "English",
         "romanian": "Romana",
         "default": "Implicit"

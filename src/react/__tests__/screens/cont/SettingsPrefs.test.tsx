@@ -81,9 +81,11 @@ describe('SettingsPrefs — render + interactions', () => {
   // §i18n 2026-05-28 paradigm flip — language toggle is live (Daniel CEO
   // directive). Replaces the static "Romana — Implicit" placeholder.
   describe('Language toggle (EN default / RO opt-in)', () => {
-    it('renders heading "Limba / Language"', () => {
+    it('renders bilingual heading "Language / Limba"', () => {
       renderScreen();
-      expect(screen.getByText('Limba / Language')).toBeInTheDocument();
+      // Static bilingual label (same in both bundles) — fixes the EN "Language /
+      // Language" duplicate the old `t(heading) / Language` produced (audit 2026-06-05).
+      expect(screen.getByText('Language / Limba')).toBeInTheDocument();
     });
 
     it('renders English + Romana options', () => {

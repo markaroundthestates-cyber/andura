@@ -133,13 +133,13 @@ export function SettingsPrefs(): JSX.Element {
             syncs <html lang> for a11y/SEO. Selected row marked with • per
             UNIT_OPTIONS / WEEK_START_OPTIONS pattern for visual consistency. */}
         <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-ink3 mb-3">
-          {t('settings.prefs.language.heading')} / Language
+          {t('settings.prefs.language.bilingualHeading')}
         </p>
         <div
           className="flex gap-1.5 rounded-[14px] p-1 mb-4"
           style={{ background: 'var(--surface-2)' }}
           role="group"
-          aria-label={`${t('settings.prefs.language.heading')} / Language`}
+          aria-label={t('settings.prefs.language.bilingualHeading')}
         >
           {LANGUAGE_OPTIONS.map((opt) => {
             const selected = locale === opt.value;
