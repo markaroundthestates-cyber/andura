@@ -123,6 +123,15 @@ function toPlannedExercise(
   readinessScore: number | null,
   restRange: readonly [number, number] | null,
   coldStartProfile: { bodyweightKg: number | null; sex: string | null } | null = null,
+  // Intra-session synergist pre-fatigue: the exercises positioned EARLIER in this
+  // session plan (ordered). DP.getSmartRecommendation reads their synergist load
+  // (muscle_target_secondary × sets × force) and shaves a modest, capped amount
+  // off a small-muscle isolation that follows a compound which used it as a
+  // synergist (e.g. a biceps curl after back rows no longer starts as if fresh).
+  // Empty / omitted → no discount (the exercise is treated as the session's first
+  // work). The cold-start (no history) branch is untouched — the discount only
+  // applies to the history-driven DP weight inside getSmartRecommendation.
+  priorExercises: ReadonlyArray<{ name: string; sets: number }> = [],
 ): PlannedExercise {
   const slug = engineEx.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   const display = toExerciseDisplay(engineEx.name);
@@ -142,6 +151,7 @@ function toPlannedExercise(
     null,
     undefined,
     sessionRating,
+    priorExercises,
   ) as DpRecommendation | null;
   const hasHistory = DP.getLogs(engineEx.name, 1).length > 0;
   const targetReps =
@@ -545,8 +555,21 @@ export async function composePlannedWorkoutToday(
     const warmup = warmupRaw !== null && warmupLine.length > 0
       ? { line: warmupLine, durationMin: warmupDuration }
       : null;
-    const mapped = (plan.exercises ?? []).map((ex, idx) =>
-      toPlannedExercise(ex, idx, experienceEn, readinessScore, restRange, coldStartProfile),
+    const planExercises = plan.exercises ?? [];
+    const mapped = planExercises.map((ex, idx) =>
+      // priorExercises = the exercises positioned BEFORE this one in today's plan,
+      // so a small-muscle isolation later in the session is discounted for the
+      // synergist load the earlier compounds already imposed on it (intra-session
+      // pre-fatigue). idx 0 → [] → no discount (nothing precedes it).
+      toPlannedExercise(
+        ex,
+        idx,
+        experienceEn,
+        readinessScore,
+        restRange,
+        coldStartProfile,
+        planExercises.slice(0, idx),
+      ),
     );
     // Persona-aware TIME budget — bound the session by a realistic, rest-
     // inclusive duration. resolvePersonaId reads user.persona / age (the same

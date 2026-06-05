@@ -116,6 +116,111 @@ export const DP = {
     return steps[ex] || (COMPOUND_EX.includes(ex) ? 2.5 : 2.5);
   },
 
+  // ── INTRA-SESSION SYNERGIST PRE-FATIGUE discount ────────────────────────────
+  // The gap (founder, an experienced lifter): a small muscle worked LATER in the
+  // session as an isolation is already PRE-FATIGUED if an earlier compound used it
+  // as a SYNERGIST (rows/pulldowns hammer the biceps; presses hammer the triceps;
+  // rows hammer the rear delts). The engine prescribes the isolation as if the
+  // muscle were fresh → the starting estimate is too high. This model applies a
+  // MODEST, conservative haircut to the isolation's load when its target muscle
+  // accumulated genuine synergist volume earlier THIS session.
+  //
+  // DISTINCT from the two existing fatigue mechanisms (no double-count):
+  //   - _recordSessionBias: a per-BUCKET (compound|iso × large|small × force) load-
+  //     DEVIATION EMA. A back compound and a biceps curl fall in different buckets
+  //     and NEVER cross-contaminate, so it cannot see synergist pre-fatigue at all.
+  //     It reacts to how far the user's logged kg drifted from the rec; this reacts
+  //     to the PLAN's prior synergist set-volume. Orthogonal axes.
+  //   - muscleRecovery / muscleMap: ACROSS sessions (hours-based recovery). This is
+  //     WITHIN the current session, from exercises done minutes ago.
+  //
+  // The synergist signal is the library's `muscle_target_secondary` (e.g. Cable Row
+  // lists "biceps"). We only discount SMALL muscles that commonly act as synergists
+  // to big compounds and get over-prescribed when isolated — biceps / triceps /
+  // shoulders (rear+side delts) / forearms / calves. We never discount the big
+  // compounds themselves (the gap is small-muscle isolations starting too high).
+
+  // Big-11 RO muscle_target_primary values we treat as small/synergist isolations
+  // eligible for the discount. Large prime movers (piept/spate/picioare*/fese) and
+  // core are excluded — they are not the over-prescribed-after-a-compound case.
+  /** @type {ReadonlySet<string>} */
+  SYNERGIST_SMALL_MUSCLES: new Set(['biceps', 'triceps', 'umeri', 'antebrate', 'gambe']),
+
+  // Per accumulated synergist-set, how much load to shave (fraction). A high-force
+  // compound contributes more per set than a low-force one (force factor below).
+  // Tuned conservative: a typical back day (Cable Row 3 sets + Lat Pulldown 4 sets,
+  // both high-force) accumulates ~7 weighted sets → ~7% haircut on the biceps curl.
+  SYNERGIST_DISCOUNT_PER_SET: 0.012,
+
+  // Hard cap on the total haircut — never crater the weight. A realistic single
+  // equipment step or two, not a collapse: 12% off is the most pre-fatigue ever
+  // removes, no matter how much synergist volume piled up earlier.
+  SYNERGIST_DISCOUNT_CAP: 0.12,
+
+  // Force-demand weighting: a high-force compound (heavy row/press) loads its
+  // synergists far harder per set than a low-force movement. Multiplies the set
+  // count that feeds the discount.
+  /** @type {Readonly<Record<string, number>>} */
+  SYNERGIST_FORCE_FACTOR: { high: 1, medium: 0.6, low: 0.3 },
+
+  // Accumulate per-muscle synergist set-volume from the exercises done EARLIER in
+  // the same session. `priorExercises` is the ordered list of exercises BEFORE the
+  // one being prescribed: each { name, sets }. For every prior exercise we read its
+  // muscle_target_secondary (the synergist muscles it fatigued) and add its set
+  // count × the force factor to each of those muscles. Primary muscles are NOT
+  // accumulated here — the DP history already carries direct-work fatigue; the gap
+  // is specifically the SECONDARY/synergist case. Pure; reads only the library.
+  /**
+   * @param {ReadonlyArray<{name?:string, sets?:number}>} priorExercises
+   * @returns {Record<string, number>} muscle (Big-11 RO) → weighted synergist sets
+   */
+  accumulateSynergistLoad(priorExercises) {
+    /** @type {Record<string, number>} */
+    const load = {};
+    if (!Array.isArray(priorExercises)) return load;
+    for (const pe of priorExercises) {
+      if (!pe || typeof pe.name !== 'string') continue;
+      const meta = getExerciseMetadata(pe.name);
+      const sec = (meta && Array.isArray(meta.muscle_target_secondary))
+        ? meta.muscle_target_secondary : [];
+      if (!sec.length) continue;
+      const sets = Number(pe.sets);
+      if (!Number.isFinite(sets) || sets <= 0) continue;
+      const forceFactors = /** @type {Record<string, number>} */ (this.SYNERGIST_FORCE_FACTOR);
+      const force = (meta && meta.force_demand) || 'medium';
+      const factor = forceFactors[force] ?? 0.6;
+      const weighted = sets * factor;
+      for (const m of sec) {
+        if (typeof m !== 'string') continue;
+        load[m] = (load[m] || 0) + weighted;
+      }
+    }
+    return load;
+  },
+
+  // The fraction to shave off a SMALL-muscle isolation's load given the synergist
+  // volume its target muscle accumulated earlier this session. 0 when: the exercise
+  // is a compound, its primary muscle is not a small/synergist muscle, or there was
+  // no prior synergist load on that muscle (e.g. the isolation came FIRST). Capped.
+  /**
+   * @param {string} ex exercise being prescribed (English canonical name)
+   * @param {Record<string, number>} synergistLoad output of accumulateSynergistLoad
+   * @returns {number} discount fraction in [0, SYNERGIST_DISCOUNT_CAP]
+   */
+  synergistDiscountFraction(ex, synergistLoad) {
+    if (!synergistLoad || typeof synergistLoad !== 'object') return 0;
+    // Big compounds are not the over-prescribed case — never discount them.
+    if (COMPOUND_EX.includes(ex)) return 0;
+    const meta = getExerciseMetadata(ex);
+    const primary = (meta && meta.muscle_target_primary) || 'unknown';
+    const small = /** @type {Set<string>} */ (this.SYNERGIST_SMALL_MUSCLES);
+    if (!small.has(primary)) return 0;
+    const accumulated = Number(synergistLoad[primary]) || 0;
+    if (accumulated <= 0) return 0;
+    const raw = accumulated * this.SYNERGIST_DISCOUNT_PER_SET;
+    return Math.min(this.SYNERGIST_DISCOUNT_CAP, raw);
+  },
+
   // ── Per-session BUCKETED bias (Bug 4) ───────────────────────────────────────
   // Daniel: at set 1 we only estimate; once one exercise is logged we already
   // have actual kg + reps + rating, so the STARTING recommendation of the NEXT
@@ -778,8 +883,16 @@ export const DP = {
    *   'grea' demotes an INCREASE day to a HOLD (same mechanism as low readiness).
    *   'usoara'/'normala'/null leave the normal double-progression untouched.
    *   Optional trailing param — existing callers are byte-identical.
+   * @param {ReadonlyArray<{name?:string, sets?:number}>} [priorExercises] The
+   *   exercises ALREADY positioned earlier in TODAY's session plan (ordered, the
+   *   ones before `ex`). Used by the intra-session synergist pre-fatigue discount:
+   *   if `ex` is a small-muscle isolation (biceps/triceps/delts/forearms/calves)
+   *   and an earlier compound used that muscle as a SYNERGIST, the starting load
+   *   is shaved a modest, capped amount so it is not prescribed as if fresh.
+   *   Omitted / empty → no discount (the isolation is treated as the first work of
+   *   the session). Byte-identical for every existing caller that does not pass it.
    */
-  getSmartRecommendation(ex, readinessScore, _muscleState, nowMs, sessionRating) {
+  getSmartRecommendation(ex, readinessScore, _muscleState, nowMs, sessionRating, priorExercises) {
     const base = this.recommend(ex, nowMs);
     /** @type {Record<string, any>} */
     let result = { ...base };
@@ -804,6 +917,33 @@ export const DP = {
       result.statusLabel = '🟡 Consolidam reps';
       result.statusColor = 'var(--accent)';
       result.progressionNote = `Ultima sesiune a fost grea · Mentinem ${result.kg} kg azi`;
+    }
+
+    // ── INTRA-SESSION SYNERGIST PRE-FATIGUE (the gap) ───────────────────────────
+    // If this is a small-muscle isolation and an earlier compound this session used
+    // that muscle as a synergist, shave a modest, capped amount off the prescribed
+    // load — the muscle is NOT fresh. Applied AFTER readiness/rating gates so it
+    // discounts the final intended load, then snapped back to a real equipment
+    // value. Discount fraction is exposed for explainability/testing. Conservative:
+    // never touches a compound, never an isolation with no prior synergist work,
+    // never more than SYNERGIST_DISCOUNT_CAP. Bodyweight/0-load left untouched (the
+    // load axis is reps, not external kg). Orthogonal to _recordSessionBias (load-
+    // deviation bucket EMA) and muscleRecovery (across-session hours) — no double-
+    // count: those never see this session's plan-ordered synergist volume.
+    const synergistLoad = this.accumulateSynergistLoad(priorExercises || []);
+    const discountFraction = this.synergistDiscountFraction(ex, synergistLoad);
+    if (discountFraction > 0 && Number.isFinite(result.kg) && result.kg > 0) {
+      const preKg = result.kg;
+      const discountedKg = this.roundToStep(preKg * (1 - discountFraction), ex);
+      // Only commit the discount if it actually moved the load DOWN a real step
+      // (a tiny haircut that snaps back to the same equipment value is a no-op —
+      // we never report a discount we did not apply).
+      if (discountedKg < preKg) {
+        result.kg = discountedKg;
+        result.synergistDiscount = discountFraction;
+        result.synergistPreFatigue = { ...synergistLoad };
+        result.synergistKgBefore = preKg;
+      }
     }
 
     // Rep range instead of fixed — phase-aware (CUT caps isolation to 10)
