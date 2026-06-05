@@ -118,6 +118,16 @@ interface SetLogInputProps {
   reps: number;
   onKgChange: (n: number) => void;
   onRepsChange: (n: number) => void;
+  // Decoupled PRESCRIBED TARGET (Daniel P0 2026-06-05 "coach is a notepad"):
+  // the read-only "Tinta" the coach prescribes for THIS set, distinct from the
+  // editable kg/reps which are the user's ACTUAL ENTRY. The target display
+  // (setlog-tinta-kg / setlog-tinta-reps) shows targetKg/targetReps so the
+  // engine's re-prescription is always visible, even after the user edits their
+  // logged numbers. When omitted, falls back to kg/reps (backward compat — the
+  // 'editable'/'post-log' modes + legacy callsites without a target are byte-
+  // identical). The editable steppers always render kg/reps.
+  targetKg?: number;
+  targetReps?: number;
   // §F-pass2-setloginput-01/02 — state machine mode (default 'editable'
   // pentru backward compat existing Workout.tsx wire).
   mode?: SetLogInputMode;
@@ -139,7 +149,16 @@ export function SetLogInput({
   onLog,
   onEdit,
   isBodyweight = false,
+  targetKg,
+  targetReps,
 }: SetLogInputProps): JSX.Element {
+  // The PRESCRIBED target shown read-only above the actual-entry steppers. The
+  // coach prescribes targetKg/targetReps; the user logs kg/reps. They are
+  // DECOUPLED so the visible target reflects the engine's recommendation, not
+  // the user's own typing (the "notepad" bug). Fallback to kg/reps keeps every
+  // legacy callsite (no target passed) byte-identical.
+  const displayTargetKg = targetReps !== undefined || targetKg !== undefined ? (targetKg ?? kg) : kg;
+  const displayTargetReps = targetReps !== undefined || targetKg !== undefined ? (targetReps ?? reps) : reps;
   // Smoke 2026-05-28 #4 — display number sau gol cand value=0/NaN. Inputul
   // "0" lipit nu putea fi sters (Daniel: "trebuie sa pun 022"). Acum gol →
   // user scrie direct 22.
@@ -169,10 +188,13 @@ export function SetLogInput({
             className="font-display text-2xl font-bold text-ink"
             data-testid="setlog-tinta-reps"
           >
-            {reps}
+            {displayTargetReps}
           </span>
           {/* Bodyweight: target is reps "cu greutatea corpului", NO barbell-
-              style kg target. Loaded: "reps + Y kg" as before. */}
+              style kg target. Loaded: "reps + Y kg" as before. The kg/reps
+              shown here are the PRESCRIBED target (displayTargetReps/Kg), not
+              the editable actual-entry below — so the coach's recommendation
+              stays visible even after the user edits what they really lifted. */}
           {isBodyweight ? (
             <span className="text-sm text-ink2" data-testid="setlog-tinta-bw">
               {t('setLog.bodyweightTargetReps')}
@@ -184,7 +206,7 @@ export function SetLogInput({
                 className="font-display text-2xl font-bold text-ink ml-2"
                 data-testid="setlog-tinta-kg"
               >
-                {kg} kg
+                {displayTargetKg} kg
               </span>
             </>
           )}

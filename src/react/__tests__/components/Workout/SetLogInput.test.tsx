@@ -199,6 +199,46 @@ describe('SetLogInput — §F-pass2-setloginput-01 tinta mode (pre-log)', () => 
   });
 });
 
+// DECOUPLED prescribed-target vs actual-entry (Daniel P0 2026-06-05 "coach is a
+// notepad"): the read-only "Tinta" must show the engine's PRESCRIBED target
+// (targetKg/targetReps), NOT the editable kg/reps the user logs. The editable
+// steppers always render kg/reps (the actual entry). When no target props are
+// passed the display falls back to kg/reps (backward compat).
+describe('SetLogInput — decoupled prescribed target vs actual entry', () => {
+  it('tinta target display shows targetKg/targetReps, NOT the editable kg/reps', () => {
+    // User logged 8x20 (kg/reps) but the coach prescribed 10x50 (target).
+    renderInput({ mode: 'tinta', kg: 20, reps: 8, targetKg: 50, targetReps: 10 });
+    // Read-only target = the prescription.
+    expect(screen.getByTestId('setlog-tinta-reps')).toHaveTextContent('10');
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('50 kg');
+    // Editable entry = the user's actual numbers (NOT mirrored from target).
+    expect((screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement).value).toBe('20');
+    expect((screen.getByTestId('setlog-tinta-reps-input') as HTMLInputElement).value).toBe('8');
+  });
+
+  it('target display falls back to kg/reps when no target props passed (backward compat)', () => {
+    renderInput({ mode: 'tinta', kg: 22.5, reps: 10 });
+    expect(screen.getByTestId('setlog-tinta-reps')).toHaveTextContent('10');
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
+  });
+
+  it('editing the entry input does not change the displayed target (steppers control kg, not target)', () => {
+    const onKgChange = vi.fn();
+    renderInput({ mode: 'tinta', kg: 50, reps: 10, targetKg: 50, targetReps: 10, onKgChange });
+    // The user types their real lift into the entry; onKgChange fires (parent owns
+    // state) but the read-only target prop is unchanged → display stays 50 kg.
+    fireEvent.change(screen.getByTestId('setlog-tinta-kg-input'), { target: { value: '8' } });
+    expect(onKgChange).toHaveBeenCalledWith(8);
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('50 kg');
+  });
+
+  it('bodyweight target uses targetReps for the read-only reps target', () => {
+    renderInput({ mode: 'tinta', kg: 0, reps: 6, targetReps: 12, isBodyweight: true });
+    expect(screen.getByTestId('setlog-tinta-reps')).toHaveTextContent('12');
+    expect(screen.getByTestId('setlog-tinta-bw')).toBeInTheDocument();
+  });
+});
+
 describe('SetLogInput — §F-pass2-setloginput-02 post-log mode (readonly + edit)', () => {
   it('renders setlog-postlog block when mode="post-log"', () => {
     renderInput({ mode: 'post-log' });

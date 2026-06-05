@@ -1687,11 +1687,11 @@ describe('Workout — shared current-recommended-load (autoreg + AaFriction)', (
     expect(useWorkoutStore.getState().history[0]?.length).toBe(2);
   });
 
-  it('autoreg does NOT clobber a kg the user has manually typed for the next set', async () => {
+  it('autoreg does NOT clobber a kg the user has manually typed for the next set (entry kept), but the TARGET shows the engine rec', async () => {
     vi.mocked(getTodayWorkout).mockResolvedValueOnce(STRENGTH_REC_50_FIXTURE);
     await renderWorkoutAndWait();
 
-    // Set 1: over-perform so autoreg WOULD raise the next set's kgInput.
+    // Set 1: over-perform so autoreg WOULD raise the next set's recommendation.
     fireEvent.change(screen.getByTestId('setlog-tinta-kg-input'), { target: { value: '75' } });
     fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
     // The user manually edits the kg DURING this set (dirty signal). The clobber
@@ -1702,10 +1702,27 @@ describe('Workout — shared current-recommended-load (autoreg + AaFriction)', (
     fireEvent.click(screen.getByTestId('aa-friction-continue'));
     fireEvent.click(screen.getByTestId('rest-skip'));
 
-    // The user manually typed their own load for set 1 (75) → autoreg must NOT
-    // overwrite the next set's input. The tinta keeps the user's 75, NOT the
-    // engine's raised value. (The shared rec still tracks the engine internally,
-    // proven by the sibling test; this asserts the INPUT is not clobbered.)
-    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('75 kg');
+    // DECOUPLED target/entry (Daniel P0 2026-06-05 "coach is a notepad"):
+    // - The user manually typed their own load for set 1 (75) → autoreg must NOT
+    //   overwrite the next set's EDITABLE ENTRY: the kg INPUT keeps 75.
+    // - But the read-only TARGET now shows the engine's re-prescription (rec
+    //   raised 50 → 55), so the coach is SEEN reacting even though the user
+    //   edited their logged numbers (the notepad bug fixed).
+    expect((screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement).value).toBe('75');
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('55 kg');
+  });
+
+  it('TARGET decouples from ENTRY: editing the logged kg does not change the prescribed target on the SAME set', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(STRENGTH_REC_50_FIXTURE);
+    await renderWorkoutAndWait();
+    // The set opens with target == entry == the engine rec (50 kg).
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('50 kg');
+    expect((screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement).value).toBe('50');
+    // The user edits what they ACTUALLY lifted (8 kg). The read-only TARGET must
+    // NOT mirror that edit — it stays the coach's prescription (50). The old bug
+    // showed the user's own 8 back as the "Tinta".
+    fireEvent.change(screen.getByTestId('setlog-tinta-kg-input'), { target: { value: '8' } });
+    expect((screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement).value).toBe('8');
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('50 kg');
   });
 });

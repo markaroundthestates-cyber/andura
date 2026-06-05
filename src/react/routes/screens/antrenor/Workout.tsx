@@ -1105,6 +1105,16 @@ export function Workout(): JSX.Element {
           <SetLogInput
             kg={kgInput}
             reps={repsInput}
+            // DECOUPLE target from entry (Daniel P0 2026-06-05 "coach is a
+            // notepad"): the read-only "Tinta" shows the engine's PRESCRIBED
+            // recommendation for this set (recKg/recReps — the SHARED current-
+            // recommended-load that DP.checkInSessionAdjust re-prescribes after
+            // each rated set, ALWAYS, regardless of inputDirty). The editable
+            // steppers below keep kgInput/repsInput = the user's ACTUAL ENTRY.
+            // So a Hard/Easy rating visibly moves the TARGET even when the user
+            // edited their logged numbers — the coach is seen reacting.
+            targetKg={recKg}
+            targetReps={recReps}
             isBodyweight={currentExercise.isBodyweight ?? false}
             mode={editing ? 'editable' : setLogged ? 'post-log' : 'tinta'}
             onLog={() => {
