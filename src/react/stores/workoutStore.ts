@@ -162,7 +162,13 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           // side-effect at action boundary per ADR 026 §9 (engines read DB
           // synchronously; localStorage write is sync). Soft-fail inside
           // persistSessionLogs preserves zero-throw render contract.
-          persistSessionLogs(summary, s.sessionStart);
+          // Safety net (Daniel P0 2026-06-05): persistSessionLogs early-returns
+          // when sessionStart is null. The 'finished' mount-gate bug left
+          // sessionStart null for every returning user → engine logs NEVER
+          // written. Fall back to the summary's own timestamp so the per-set
+          // logs the engine reads are written no matter the session lifecycle.
+          const sessionGroupStart = s.sessionStart ?? summary.ts ?? Date.now();
+          persistSessionLogs(summary, sessionGroupStart);
           // U-11 (MED): rolling cap SESSIONS_HISTORY_MAX — slice ultimele N
           // (newest-tail) ca persist sa nu depaseasca quota localStorage.
           // 08.040: archiveaza overflow-ul (sesiunile vechi care ar cadea afara)

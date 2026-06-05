@@ -390,11 +390,21 @@ describe('workoutStore — finishSession integration writeback', () => {
     expect(useWorkoutStore.getState().sessionStart).toBeNull();
   });
 
-  it('finishSession does NOT write logs when sessionStart null', () => {
-    // Edge case: finishSession called without active session (defensive).
+  it('finishSession writes logs via summary.ts fallback when sessionStart null (P0 safety net)', () => {
+    // Daniel P0 2026-06-05: the getCurrentMode 'finished' mount-gate left
+    // sessionStart null for EVERY returning user → persistSessionLogs
+    // early-returned → the engine `logs` key was silently never written → DP /
+    // recovery ran permanently input-starved ("the coach never adapts").
+    // finishSession now falls back to the summary's own timestamp so the per-set
+    // engine logs are NEVER lost again, no matter the session lifecycle.
     useWorkoutStore.setState({ sessionStart: null });
-    const summary = makeSummary();
+    const summary = makeSummary(); // summary.ts = T0 + 30 * 60000
     useWorkoutStore.getState().finishSession(summary);
-    expect(DB.get('logs')).toBeNull();
+    const logs = DB.get<LogEntry[]>('logs');
+    expect(logs).not.toBeNull();
+    expect(logs).toHaveLength(5);
+    for (const log of logs!) {
+      expect(log.session).toBe(summary.ts);
+    }
   });
 });

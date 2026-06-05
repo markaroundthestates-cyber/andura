@@ -173,6 +173,22 @@ describe('Workout — base render (phase=idle init → logging)', async () => {
     expect(useWorkoutStore.getState().sessionStart).not.toBeNull();
   });
 
+  // Daniel P0 2026-06-05 REGRESSION — a returning user ALWAYS has a prior
+  // `lastSession`, which made getCurrentMode report 'finished' (NOT 'idle'), so
+  // the mount gate never called startSession → sessionStart stayed null →
+  // persistSessionLogs early-returned at finish → the engine `logs` key was
+  // NEVER written for any returning user (DP/recovery ran permanently
+  // input-starved: "the coach never adapts"). The gate now also starts on
+  // 'finished'. This test FAILS on the pre-fix gate (sessionStart stays null).
+  it('starts a session for a RETURNING user (lastSession present → was mode=finished)', async () => {
+    useWorkoutStore.setState({
+      lastSession: { title: 'Push', meta: '5 seturi · 30 min · 910 kg', ts: Date.now() - 86_400_000 },
+    });
+    await renderWorkoutAndWait();
+    expect(useWorkoutStore.getState().sessionStart).not.toBeNull();
+    expect(useWorkoutStore.getState().phase).toBe('logging');
+  });
+
   it('renders log zone cu set counter "Set 1/4"', async () => {
     await renderWorkoutAndWait();
     expect(screen.getByTestId('log-zone')).toBeInTheDocument();
