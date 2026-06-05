@@ -38,6 +38,7 @@ import type { PlannedWorkoutOutput } from '../../lib/engineWrappers';
 import * as engineWrappers from '../../lib/engineWrappers';
 import { coachPick } from '../../lib/coachVoice';
 import { composeCoachInsight, getPlanAllocationByGroup } from '../../lib/coachInsight';
+import { BIG11_EN_TO_RO_MAP } from '../../../engine/periodization/constants.js';
 import { Sparkles } from 'lucide-react';
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../lib/scheduleAdapterAggregate';
 import { gotoPath } from '../../lib/navigation';
@@ -266,10 +267,20 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
         // i18n returns the key itself on miss → fall back to the raw EN group.
         return ro === k ? g : ro;
       };
+      // Plan-allocation gate (LLM-judge Pattern B): "Am adaugat putin {group} azi"
+      // must only name a group TODAY's plan actually trains. weekMakeup keys are
+      // EN volume-target keys; translate to the RO Big-11 buckets the allocation
+      // uses (BIG11_EN_TO_RO_MAP) before checking allocatedGroups.
+      const allocated = planAllocation.allocatedGroups;
+      const isAllocatedToday = (enGroup: string): boolean => {
+        const roGroup = BIG11_EN_TO_RO_MAP[enGroup] ?? enGroup;
+        return allocated.has(roGroup);
+      };
       const positive = (m: Record<string, number>): string[] =>
         Object.entries(m)
           .filter(([, v]) => typeof v === 'number' && v > 0)
-          .map(([g]) => g);
+          .map(([g]) => g)
+          .filter(isAllocatedToday);
       const joinGroups = (groups: string[]): string =>
         groups.map(labelOf).join(t('coachToday.weekMakeup.groupsJoin'));
 
@@ -288,7 +299,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     } catch {
       return null;
     }
-  }, [workout?.weekMakeup]);
+  }, [workout?.weekMakeup, planAllocation]);
 
   // START-side double-session guard (counterpart to the PostRpe finish-side
   // confirm shipped dc9400d6). When a gym session is already logged TODAY we

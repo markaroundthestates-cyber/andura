@@ -333,9 +333,20 @@ describe('CoachTodayCard — no-shame return line', () => {
 describe('CoachTodayCard — intra-week make-up note', () => {
   type WeekMakeup = NonNullable<PlannedWorkoutOutput['weekMakeup']>;
 
+  // The make-up note is now plan-gated (LLM-judge Pattern B): it only names a
+  // group TODAY's plan actually trains. Default the plan to one that trains
+  // chest + shoulders + back so the EXISTING note-shows assertions (which name
+  // those groups) remain valid; the suppression case is covered separately below.
+  const PLAN_CHEST_SHOULDERS_BACK: PlannedWorkoutOutput['exercises'] = [
+    { id: 'a', name: 'Flat DB Press', engineName: 'Flat DB Press', sets: 4, targetReps: 8, targetKg: 30, restSec: 90 },
+    { id: 'b', name: 'DB Shoulder Press', engineName: 'DB Shoulder Press', sets: 3, targetReps: 8, targetKg: 20, restSec: 90 },
+    { id: 'c', name: 'Cable Row', engineName: 'Cable Row', sets: 4, targetReps: 10, targetKg: 60, restSec: 90 },
+  ];
+
   function renderCardWithMakeup(
     weekMakeup: WeekMakeup | undefined,
     onStart: () => void = () => {},
+    exercises: PlannedWorkoutOutput['exercises'] = PLAN_CHEST_SHOULDERS_BACK,
   ) {
     const workout: PlannedWorkoutOutput = {
       workoutTitle: '__engine_workout_title_fallback__',
@@ -343,7 +354,7 @@ describe('CoachTodayCard — intra-week make-up note', () => {
       exerciseCount: 5,
       estimatedDuration: 48,
       intensityMod: 'normal',
-      exercises: [],
+      exercises,
       volumeKg: 0,
       coachAdaptations: [],
       ...(weekMakeup ? { weekMakeup } : {}),
@@ -423,6 +434,36 @@ describe('CoachTodayCard — intra-week make-up note', () => {
     const note = screen.getByTestId('coach-week-makeup-note');
     expect(note.textContent).toMatch(/spate/);
     expect(note.textContent).not.toMatch(BLAME);
+  });
+
+  // Plan-allocation gate (LLM-judge Pattern B, makeup-added-but-plan-omits): the
+  // founder bug — "Am adaugat putin piept azi" when TODAY's plan trains ZERO
+  // chest. The note must only name a group the plan actually allocates.
+  const PLAN_BACK_BICEPS_ONLY: PlannedWorkoutOutput['exercises'] = [
+    { id: 'a', name: 'Cable Row', engineName: 'Cable Row', sets: 4, targetReps: 10, targetKg: 60, restSec: 90 },
+    { id: 'b', name: 'Lat Pulldown', engineName: 'Lat Pulldown', sets: 4, targetReps: 10, targetKg: 50, restSec: 90 },
+    { id: 'c', name: 'Cable Curl', engineName: 'Cable Curl', sets: 3, targetReps: 12, targetKg: 20, restSec: 60 },
+  ];
+
+  it('SUPPRESSES "added piept azi" when today plan trains zero chest', () => {
+    // weekMakeup says chest was added, but the plan is back+biceps only → a lie.
+    renderCardWithMakeup({ added: { chest: 2 }, behind: {} }, () => {}, PLAN_BACK_BICEPS_ONLY);
+    expect(screen.queryByTestId('coach-week-makeup-note')).not.toBeInTheDocument();
+  });
+
+  it('drops the unallocated group but keeps an allocated one from the same makeup', () => {
+    // chest is not trained today (dropped); back IS → the note names only back.
+    renderCardWithMakeup({ added: { chest: 2, back: 3 }, behind: {} }, () => {}, PLAN_BACK_BICEPS_ONLY);
+    const note = screen.getByTestId('coach-week-makeup-note');
+    expect(note.textContent).toMatch(/spate/);
+    expect(note.textContent).not.toMatch(/piept/);
+  });
+
+  it('SHOWS the note when the makeup group IS allocated today (supporting plan)', () => {
+    // Default plan trains chest → "added chest" is honest.
+    renderCardWithMakeup({ added: { chest: 2 }, behind: {} });
+    const note = screen.getByTestId('coach-week-makeup-note');
+    expect(note.textContent).toMatch(/piept/);
   });
 });
 
