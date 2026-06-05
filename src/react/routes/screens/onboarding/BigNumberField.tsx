@@ -67,6 +67,17 @@ export function BigNumberField({
             const n = Number(v);
             onChange(Number.isFinite(n) ? n : null);
           }}
+          // Founder UX 2026-06-06 — a REJECTED (out-of-range) value must not get
+          // appended to when the user comes back to fix it: typing "10" then
+          // "45" gave "1045". When the committed value is out of range, focusing
+          // the field selects its contents so the next keystroke REPLACES it
+          // (clean re-entry) instead of appending. A valid value is left intact
+          // (no surprise select on a correct entry).
+          onFocus={(e) => {
+            if (value !== null && (value < min || value > max)) {
+              e.target.select();
+            }
+          }}
           placeholder={placeholder}
           min={min}
           max={max}

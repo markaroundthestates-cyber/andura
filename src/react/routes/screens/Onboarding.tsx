@@ -105,6 +105,14 @@ export function Onboarding(): JSX.Element {
     return { ok: true };
   }
 
+  // Founder UX 2026-06-06 — the Continua button must LOOK disabled while the
+  // current step is invalid (it already blocks the navigation + shows a toast,
+  // but a green/active button on an out-of-range age read as "it's fine").
+  // Pure read of the same gate (no toast side-effect) so the visual state
+  // tracks validity exactly. The button stays clickable (keeps the explanatory
+  // toast on tap) but carries aria-disabled + a dimmed style.
+  const stepValid = validateCurrentStep().ok;
+
   function next(): void {
     const check = validateCurrentStep();
     if (!check.ok) {
@@ -209,7 +217,8 @@ export function Onboarding(): JSX.Element {
           type="button"
           onClick={next}
           data-testid="onb-next"
-          className={`btn-primary-lift btn-grad press-feedback flex-1 px-5 py-3 text-base font-semibold${isLast ? ' option-selected-ring' : ''}`}
+          aria-disabled={!stepValid}
+          className={`btn-primary-lift btn-grad press-feedback flex-1 px-5 py-3 text-base font-semibold${isLast ? ' option-selected-ring' : ''}${!stepValid ? ' opacity-50' : ''}`}
         >
           {isLast ? t('onboarding.finishCta') : t('onboarding.continueCta')}
         </button>

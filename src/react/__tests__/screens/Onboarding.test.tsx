@@ -320,6 +320,47 @@ describe('Onboarding — A11Y HIGH chat5 form aria attributes', () => {
     expect(screen.getByTestId('onb-age-error').textContent).toMatch(/18 si 99/);
   });
 
+  // Founder UX 2026-06-06 — a rejected (out-of-range) age value selects on
+  // re-focus so the next keystroke REPLACES it instead of appending
+  // ("10" then "45" used to give "1045"). Valid values are left untouched.
+  it('step 1 out-of-range age selects on focus (no append on re-entry)', () => {
+    renderAt(1);
+    const input = screen.getByTestId('onb-age-input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: '10' } }); // < 18 → rejected
+    let selected = false;
+    input.select = () => { selected = true; };
+    fireEvent.focus(input);
+    expect(selected).toBe(true);
+  });
+
+  it('step 1 valid age does NOT select on focus (no surprise re-select)', () => {
+    renderAt(1);
+    const input = screen.getByTestId('onb-age-input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: '32' } }); // valid
+    let selected = false;
+    input.select = () => { selected = true; };
+    fireEvent.focus(input);
+    expect(selected).toBe(false);
+  });
+
+  // Founder UX 2026-06-06 — Continua must LOOK disabled while the step is
+  // invalid (it already blocks + toasts, but a green button read as "OK").
+  it('step 1 Continua shows disabled state when age out-of-range', () => {
+    renderAt(1);
+    fireEvent.change(screen.getByTestId('onb-age-input'), { target: { value: '10' } });
+    const btn = screen.getByTestId('onb-next');
+    expect(btn).toHaveAttribute('aria-disabled', 'true');
+    expect(btn.className).toMatch(/opacity-50/);
+  });
+
+  it('step 1 Continua is enabled-looking with a valid age', () => {
+    renderAt(1);
+    fireEvent.change(screen.getByTestId('onb-age-input'), { target: { value: '32' } });
+    const btn = screen.getByTestId('onb-next');
+    expect(btn).toHaveAttribute('aria-disabled', 'false');
+    expect(btn.className).not.toMatch(/opacity-50/);
+  });
+
   it('step 7 weight input has aria-required + required', () => {
     renderAt(7);
     const input = screen.getByTestId('onb-weight-input');
