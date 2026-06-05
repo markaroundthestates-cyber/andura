@@ -118,9 +118,22 @@ export function PostRpe(): JSX.Element {
     const entries = Object.values(history).flat();
     const setsDone = entries.length;
     const volume = entries.reduce((acc, h) => acc + h.kg * h.reps, 0);
+    // Duration = elapsed from session start to now. The mount-gate fix
+    // (Workout.tsx §44-C1) sets sessionStart for every new session, but a
+    // returning user whose start was lost on an older lifecycle path used to
+    // land durationMin:0 for a real 12-set session (Daniel audit — "0 min" in
+    // History with thousands of kg logged). When sessionStart is null, recover
+    // the real elapsed from the earliest logged set timestamp (logSet stamps
+    // each set Date.now()) so a completed session never records a bogus 0.
+    const earliestSetTs = entries.reduce<number | null>((min, h) => {
+      const ts = h.timestamp;
+      if (typeof ts !== 'number' || !Number.isFinite(ts)) return min;
+      return min === null || ts < min ? ts : min;
+    }, null);
+    const startTs = sessionStart ?? earliestSetTs;
     const dur =
-      sessionStart !== null
-        ? Math.max(1, Math.floor((Date.now() - sessionStart) / 60000))
+      startTs !== null
+        ? Math.max(1, Math.floor((Date.now() - startTs) / 60000))
         : 0;
 
     // H2 audit fix (midnight data loss) — re-deriving the plan here was the bug:

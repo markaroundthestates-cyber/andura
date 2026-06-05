@@ -327,6 +327,41 @@ describe('PostRpe — submit pipeline', () => {
     });
   });
 
+  // Regression (Daniel audit): a real 12-set session showed "0 min" in History
+  // because sessionStart was null (start lost on an older lifecycle path) and
+  // duration fell to a bogus 0. With sessionStart null, the real elapsed must be
+  // recovered from the earliest logged set timestamp — never 0 for a logged
+  // session.
+  it('durationMin recovers from earliest set timestamp when sessionStart is null', async () => {
+    const start = Date.now() - 25 * 60000; // earliest set ~25 min ago
+    useWorkoutStore.setState({
+      exIdx: 0,
+      setIdx: 0,
+      phase: 'logging',
+      prHit: false,
+      history: {
+        0: [
+          { kg: 100, reps: 5, rating: 'potrivit', timestamp: start },
+          { kg: 100, reps: 5, rating: 'potrivit', timestamp: start + 5 * 60000 },
+          { kg: 100, reps: 5, rating: 'greu', timestamp: start + 10 * 60000 },
+        ],
+      },
+      sessionStart: null, // start lost — the bug condition
+      lastRating: null,
+      pausedSnapshot: null,
+      lastSession: null,
+      streak: 5,
+      sessionsHistory: [],
+      deletedSessionTs: [],
+    });
+    localStorage.clear();
+    renderPostRpe();
+    submit(/Just right/i);
+    await waitFor(() => {
+      expect(useWorkoutStore.getState().lastSession?.durationMin).toBe(25);
+    });
+  });
+
   it('finishSession payload populates numeric volumeKg field', async () => {
     renderPostRpe();
     submit(/Just right/i);
