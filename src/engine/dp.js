@@ -1096,10 +1096,22 @@ export const DP = {
     const discountFraction = this.synergistDiscountFraction(ex, synergistLoad);
     if (discountFraction > 0 && Number.isFinite(result.kg) && result.kg > 0) {
       const preKg = result.kg;
-      const discountedKg = this.roundToStep(preKg * (1 - discountFraction), ex);
-      // Only commit the discount if it actually moved the load DOWN a real step
-      // (a tiny haircut that snaps back to the same equipment value is a no-op —
-      // we never report a discount we did not apply).
+      // Nearest-snap the discounted target. On fine increments (dumbbells, finer
+      // cables) this already lands on a lower step and we honor it directly.
+      let discountedKg = this.roundToStep(preKg * (1 - discountFraction), ex);
+      // DEFECT-1: on a COARSE stack the 8-12% haircut can round back UP to preKg
+      // (e.g. 23kg matrix_cable: 21.07 → nearest is 23), so the discount silently
+      // no-ops at common loads. When the discount is genuine but nearest-snap did
+      // not move the load down, drop to the next-LOWER available equipment step so
+      // the lighter intent is honored. Bounded to ONE step below preKg (never an
+      // over-drop): getPrevWeight returns exactly the adjacent lower step, and we
+      // only take it if it actually moves down (already at the stack floor → no-op).
+      if (discountedKg >= preKg) {
+        const prevKg = getPrevWeight(preKg, ex);
+        if (prevKg < preKg) discountedKg = prevKg;
+      }
+      // Commit only if the load actually moved DOWN (we never report a discount we
+      // did not apply — e.g. already at the equipment floor).
       if (discountedKg < preKg) {
         result.kg = discountedKg;
         result.synergistDiscount = discountFraction;

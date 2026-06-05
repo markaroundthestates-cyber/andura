@@ -141,14 +141,30 @@ describe('getSmartRecommendation — biceps curl after back compounds is discoun
     expect(afterPress.kg).toBeLessThan(fresh.kg);
   });
 
-  it('a coarse-grid light weight is honestly UNCHANGED when the haircut cannot move a step', () => {
-    // 23 kg Cable Curl: 8.4% = 21.1, but the next stack step down is 18 (22% jump)
-    // — too coarse. The model rounds back to 23 and, since it did not actually move
-    // the load, reports NO discount (we never claim a discount we did not apply).
+  it('DEFECT-1: a coarse-grid load drops ONE step down so the discount is honored', () => {
+    // 23 kg Cable Curl on matrix_cable [..,18,23,27,..]: 8.4% = 21.07. Nearest-snap
+    // rounds back UP to 23 (18 is the closer-by-distance loser) → the discount used
+    // to silently no-op at this common load. The fix snaps DOWN to the next-lower
+    // available step (23 → 18) so the lighter, pre-fatigued intent is honored —
+    // bounded to ONE step (never an over-drop below the adjacent step).
     seedHistory('Cable Curl', 23, 11, 7.5);
+    const fresh = DP.getSmartRecommendation('Cable Curl', null, null, undefined, null, []);
+    const afterBack = DP.getSmartRecommendation('Cable Curl', null, null, undefined, null, BACK_COMPOUNDS);
+    expect(fresh.kg).toBe(23); // curl first → no discount, full working weight
+    expect(afterBack.synergistDiscount).toBeCloseTo(0.084, 5);
+    expect(afterBack.kg).toBe(18); // exactly one stack step below 23
+    expect(afterBack.kg).toBeLessThan(fresh.kg);
+    expect(afterBack.synergistKgBefore).toBe(23);
+  });
+
+  it('DEFECT-1: already at the equipment floor → no over-drop, honest no-discount', () => {
+    // 5 kg Cable Curl is the matrix_cable stack floor: there is no lower step to
+    // take, so the discount cannot move the load — and we never report a discount
+    // we did not apply (no fabricated drop below the equipment minimum).
+    seedHistory('Cable Curl', 5, 11, 7.5);
     const afterBack = DP.getSmartRecommendation('Cable Curl', null, null, undefined, null, BACK_COMPOUNDS);
     expect(afterBack.synergistDiscount).toBeUndefined();
-    expect(afterBack.kg).toBe(23);
+    expect(afterBack.kg).toBe(5);
   });
 
   it('a different muscle isolation is NOT discounted by unrelated synergist load', () => {
