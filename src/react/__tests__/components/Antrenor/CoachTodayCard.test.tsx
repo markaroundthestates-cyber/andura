@@ -426,6 +426,113 @@ describe('CoachTodayCard — intra-week make-up note', () => {
   });
 });
 
+// Plan-allocation truth reconciliation (chest-heavy-plan bug, 2026-06-05). The
+// founder caught the card claiming what the generated plan did NOT do: "lighter
+// on your back" while back was at standard load, "focus on biceps" while the plan
+// was chest-heavy, and a "2 wks trend" line while still admitting "still learning
+// you". These tests pin every contradiction shut at the render layer.
+describe('CoachTodayCard — narrative reconciled with the proposed plan', () => {
+  // A chest-heavy plan matching the founder's example: 8 chest sets dominate, 1
+  // back set is an afterthought. engineName values are real EXERCISE_MUSCLES keys.
+  function chestHeavyPlan(
+    coachAdaptations: CoachAdaptation[],
+  ): PlannedWorkoutOutput {
+    return {
+      workoutTitle: '__engine_workout_title_fallback__',
+      sessionType: 'PUSH',
+      exerciseCount: 3,
+      estimatedDuration: 48,
+      intensityMod: 'normal',
+      exercises: [
+        { id: 'a', name: 'Incline DB Press', engineName: 'Incline DB Press', sets: 4, targetReps: 8, targetKg: 30, restSec: 90 },
+        { id: 'b', name: 'Flat DB Press', engineName: 'Flat DB Press', sets: 4, targetReps: 8, targetKg: 30, restSec: 90 },
+        { id: 'c', name: 'Cable Row', engineName: 'Cable Row', sets: 1, targetReps: 10, targetKg: 65, restSec: 90 },
+      ],
+      volumeKg: 0,
+      coachAdaptations,
+    };
+  }
+
+  function renderPlan(workout: PlannedWorkoutOutput) {
+    return render(
+      <MemoryRouter>
+        <CoachTodayCard onStart={() => {}} workout={workout} />
+      </MemoryRouter>,
+    );
+  }
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(engineWrappers, 'getCoachTodayQuote').mockReturnValue(null);
+    vi.spyOn(engineWrappers, 'getLaggingSignal').mockReturnValue(null);
+    vi.spyOn(engineWrappers, 'getReturnAfterMissSignal').mockReturnValue(null);
+    useWorkoutStore.setState({ sessionsHistory: [] });
+    setLocale('en');
+    _resetI18nCache();
+    setLocale('en');
+  });
+
+  afterEach(() => {
+    setLocale('en');
+    _resetI18nCache();
+  });
+
+  it('ALLOWS "lighter on back" when the plan genuinely goes light on back', () => {
+    // Mature model (no calibration gate). The chest-heavy plan trains back with a
+    // single afterthought set → back is truly lighter → the recovery-cut clause is
+    // allowed to fire (proves the gate keeps TRUE claims). The false case is next.
+    vi.spyOn(engineWrappers, 'getCalibrationMaturity').mockReturnValue(null);
+    renderPlan(
+      chestHeavyPlan([{ kind: 'recovery-cut', group: 'spate', cause: 'resistance' }]),
+    );
+    const line = screen.queryByTestId('coach-why-line');
+    expect(line?.textContent ?? '').toMatch(/back/i);
+  });
+
+  it('SUPPRESSES "lighter on back" when the plan trains back as a focus group', () => {
+    vi.spyOn(engineWrappers, 'getCalibrationMaturity').mockReturnValue(null);
+    const backHeavy: PlannedWorkoutOutput = {
+      workoutTitle: '__engine_workout_title_fallback__',
+      sessionType: 'PULL',
+      exerciseCount: 2,
+      estimatedDuration: 48,
+      intensityMod: 'normal',
+      exercises: [
+        { id: 'a', name: 'Cable Row', engineName: 'Cable Row', sets: 4, targetReps: 8, targetKg: 65, restSec: 90 },
+        { id: 'b', name: 'Lat Pulldown', engineName: 'Lat Pulldown', sets: 4, targetReps: 10, targetKg: 55, restSec: 90 },
+      ],
+      volumeKg: 0,
+      coachAdaptations: [{ kind: 'recovery-cut', group: 'spate', cause: 'resistance' }],
+    };
+    renderPlan(backHeavy);
+    // Back is the focus of the plan → "lighter on back" is a lie → no why-line.
+    expect(screen.queryByTestId('coach-why-line')).not.toBeInTheDocument();
+  });
+
+  it('SUPPRESSES the weakness-amp "focus" clause while the model is still learning', () => {
+    // Founder's third lie: "biceps undervolume 2 wks — focus on it" co-existing
+    // with "still learning you". The trend claim must vanish while immature.
+    vi.spyOn(engineWrappers, 'getCalibrationMaturity').mockReturnValue({
+      tierId: 0,
+      tierName: 'cold_start',
+      sessionsCount: 1,
+      sessionsToNext: 1,
+    });
+    renderPlan(chestHeavyPlan([{ kind: 'weakness-amp', group: 'spate' }]));
+    // The "still learning" line IS shown; the trend why-line is NOT.
+    expect(screen.getByTestId('coach-calibration-line')).toBeInTheDocument();
+    expect(screen.queryByTestId('coach-why-line')).not.toBeInTheDocument();
+  });
+
+  it('does NOT push a weakness-amp clause for a group the plan barely trains', () => {
+    // Mature model (no calibration gate) — biceps flagged weak, but the chest-
+    // heavy plan allocates ZERO biceps → cannot claim to push biceps today.
+    vi.spyOn(engineWrappers, 'getCalibrationMaturity').mockReturnValue(null);
+    renderPlan(chestHeavyPlan([{ kind: 'weakness-amp', group: 'biceps' }]));
+    expect(screen.queryByTestId('coach-why-line')).not.toBeInTheDocument();
+  });
+});
+
 // START-side double-session guard (counterpart to the PostRpe finish-side
 // confirm shipped dc9400d6). A session logged TODAY replaces the start CTA
 // with a "Session logged" control; the only way to a 2nd session today is the

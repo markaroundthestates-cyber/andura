@@ -37,7 +37,7 @@ import { todTs } from '../../../db.js';
 import type { PlannedWorkoutOutput } from '../../lib/engineWrappers';
 import * as engineWrappers from '../../lib/engineWrappers';
 import { coachPick } from '../../lib/coachVoice';
-import { composeCoachInsight } from '../../lib/coachInsight';
+import { composeCoachInsight, getPlanAllocationByGroup } from '../../lib/coachInsight';
 import { Sparkles } from 'lucide-react';
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../lib/scheduleAdapterAggregate';
 import { gotoPath } from '../../lib/navigation';
@@ -162,42 +162,59 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     }
   }, []);
 
+  // Calibration honesty signal — read ONCE here so BOTH the "still learning you"
+  // line AND the narrative truth-gate (below) share one source: a confident
+  // multi-session TREND claim ("it's been lagging behind") must never co-exist
+  // with "still learning" — same signal, never disagreeing. Non-null = the model
+  // is still immature; null = dialed in (PERSONALIZED+ → line disappears for
+  // good). Recomputes when session history changes (a finished session matures
+  // the model); engineWrappers reads sessionsHistory imperatively (getState).
+  const calibrationSig = useMemo(() => {
+    try {
+      return engineWrappers.getCalibrationMaturity?.() ?? null;
+    } catch {
+      return null;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionsHistory]);
+  const calibrationImmature = calibrationSig !== null;
+
   // Coach Voice — the daily "why" line. ONE plain-language sentence synthesizing
   // the adaptations the engine actually applied to TODAY's plan (recovery cut /
   // weakness amp / imbalance fix / deload), surfaced ABOVE the Start CTA as the
   // first thing the user reads. composeCoachInsight returns null when NOTHING
-  // adapted → the line renders nothing (graceful, no filler). Memoized on the
-  // engine adaptations log carried by the workout prop.
+  // adapted → the line renders nothing (graceful, no filler).
+  //
+  // Truth-reconciled (2026-06-05): every clause is checked against the SAME live
+  // state the plan uses before it is voiced. We pass (1) the plan's real per-group
+  // allocation (computed from the PROPOSED exercise list) so a "lighter on {group}"
+  // claim is dropped when the plan actually allocates that group heavily, and a
+  // "focus" claim can only name a group the plan really trains; and (2) the
+  // calibration-immature flag so a confident "it's been lagging behind" trend
+  // claim is suppressed while the model is still learning. Memoized on the inputs.
   const coachWhyLine = useMemo<string | null>(() => {
     try {
-      return composeCoachInsight(workout?.coachAdaptations);
+      const allocation = getPlanAllocationByGroup(workout?.exercises);
+      return composeCoachInsight(workout?.coachAdaptations, {
+        allocation,
+        calibrationImmature,
+      });
     } catch {
       return null;
     }
-  }, [workout?.coachAdaptations]);
+  }, [workout?.coachAdaptations, workout?.exercises, calibrationImmature]);
 
   // Calibration honesty — the "still learning you" line. The "no fabricated
   // certainty" Andura value made visible: while the model is still immature
-  // (early calibration tier), say so plainly; once the model is dialed in
-  // (PERSONALIZED+) the engine returns null and the line disappears for good.
-  // Truth-only: when the engine exposes a real "sessions remaining" count we
-  // show it; otherwise we phrase it WITHOUT a number (never a fabricated count).
-  // Recomputes when the session history changes (a finished session matures the
-  // model). engineWrappers reads sessionsHistory imperatively (getState).
+  // (early calibration tier), say so plainly; once dialed in the signal is null
+  // and the line disappears for good. Truth-only: a real "sessions remaining"
+  // count when the engine exposes one; otherwise phrased WITHOUT a number.
   const calibrationLine = useMemo<string | null>(() => {
-    try {
-      const sig = engineWrappers.getCalibrationMaturity?.() ?? null;
-      if (sig === null) return null;
-      return sig.sessionsToNext != null
-        ? t('coachCalibration.withCount', { n: sig.sessionsToNext })
-        : t('coachCalibration.noCount');
-    } catch {
-      return null;
-    }
-    // sessionsHistory is the signal dep — getCalibrationMaturity reads it via
-    // getState() (indirect), so the lint cannot see the dependency.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionsHistory]);
+    if (calibrationSig === null) return null;
+    return calibrationSig.sessionsToNext != null
+      ? t('coachCalibration.withCount', { n: calibrationSig.sessionsToNext })
+      : t('coachCalibration.noCount');
+  }, [calibrationSig]);
 
   // No-shame return — the warm "welcome back" line. When the user returns this
   // week after missing >=1 scheduled training day EARLIER this week (a short,

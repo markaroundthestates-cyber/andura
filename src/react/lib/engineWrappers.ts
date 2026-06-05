@@ -794,6 +794,13 @@ export function getLaggingSignal(): string | null {
     const logs = flattenSessionsToEngineLogs(sessions);
     const { weakGroups } = detectWeakGroups(logs);
     if (!weakGroups || weakGroups.length === 0) return null;
+    // Truth gate (chest-heavy-plan bug, 2026-06-05): the "{group} undervolume
+    // {weeks} wks" line is a CONFIDENT multi-week TREND claim. While the model is
+    // still immature (the "still learning you — N more sessions" line is showing)
+    // we do NOT have enough history to assert a multi-week trend — a trend claim
+    // and "still learning" must be mutually exclusive. Suppress the line entirely
+    // until the model matures (getCalibrationMaturity returns null at that point).
+    if (getCalibrationMaturity() !== null) return null;
     const topWeak = weakGroups[0];
     if (topWeak === undefined) return null;
     // i18n render boundary: resolve a locale-aware muscle label (engine bucket

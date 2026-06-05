@@ -7,7 +7,7 @@
 // entry threshold minus that count — never a fabricated number.
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { getCalibrationMaturity } from '../../lib/engineWrappers';
+import { getCalibrationMaturity, getLaggingSignal } from '../../lib/engineWrappers';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { CALIBRATION_LEVELS } from '../../../engine/calibration.js';
 
@@ -64,5 +64,19 @@ describe('engineWrappers — getCalibrationMaturity (calibration honesty)', () =
     const sig = getCalibrationMaturity();
     expect(sig?.sessionsToNext).toBeGreaterThan(0);
     expect(Number.isInteger(sig?.sessionsToNext)).toBe(true);
+  });
+});
+
+// Trend-claim gate (chest-heavy-plan bug, 2026-06-05). The "{group} undervolume
+// {weeks} wks" lagging line is a CONFIDENT multi-week trend claim. It must be
+// mutually exclusive with the "still learning you" calibration line — never both
+// at once. While the model is immature, getLaggingSignal suppresses the line.
+describe('engineWrappers — getLaggingSignal gated by calibration maturity', () => {
+  it('suppresses the undervolume-trend line while the model is still immature', () => {
+    // A few sessions → immature (getCalibrationMaturity non-null). Whatever the
+    // weakness detector finds, no confident multi-week trend claim is allowed yet.
+    seedSessions(4, 10);
+    expect(getCalibrationMaturity()).not.toBeNull(); // still learning
+    expect(getLaggingSignal()).toBeNull(); // → no trend claim
   });
 });
