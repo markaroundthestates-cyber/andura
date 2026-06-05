@@ -31,6 +31,7 @@
 // for V1, GIFs render as-is since the demo set is image/lottie not GIF).
 
 import type { JSX } from 'react';
+import { useState } from 'react';
 import { Dumbbell } from 'lucide-react';
 import { getExerciseMedia, getExerciseMediaAlt } from '../lib/exerciseMedia';
 import { t } from '../../i18n/index.js';
@@ -70,6 +71,24 @@ export function ExerciseMedia({
   const alt = getExerciseMediaAlt(engineName);
   const sizeClass = VARIANT_CLASSES[variant];
   const isCard = variant === 'card';
+
+  // Founder UX 2026-06-06 — the demo box used to expand to an empty dark panel
+  // for ~2s while the image/video downloaded (looks broken). A shimmer skeleton
+  // now fills the frame until the media's load event fires, then fades out. One
+  // flag covers all media branches (single img, dual-frame card, video). For the
+  // dual-frame card both images must load before the skeleton clears.
+  const [mediaLoaded, setMediaLoaded] = useState(false);
+  const [framesLoaded, setFramesLoaded] = useState(0);
+
+  // Shimmer overlay shown over a media frame until it finishes loading. Absolute,
+  // pointer-events-none, fades out on load so it never blocks interaction.
+  const skeleton = !mediaLoaded ? (
+    <span
+      aria-hidden="true"
+      data-testid={`${testId}-skeleton`}
+      className="absolute inset-0 bg-paper2 animate-shimmer pointer-events-none"
+    />
+  ) : null;
 
   if (!media) {
     // Placeholder — muscle-group icon on accent-washed paper2 surface. The
@@ -125,17 +144,21 @@ export function ExerciseMedia({
   // assets land without API churn).
   if (media.type === 'video') {
     return (
-      <video
-        className={`object-cover ${sizeClass} ${className}`}
-        data-testid={testId}
-        data-variant={variant}
-        src={media.url}
-        autoPlay
-        muted
-        loop
-        playsInline
-        aria-label={alt}
-      />
+      <div className={`relative overflow-hidden ${sizeClass} ${className}`} data-variant={variant}>
+        {skeleton}
+        <video
+          className="w-full h-full object-cover"
+          data-testid={testId}
+          data-variant={variant}
+          src={media.url}
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-label={alt}
+          onLoadedData={() => setMediaLoaded(true)}
+        />
+      </div>
     );
   }
 
@@ -143,29 +166,41 @@ export function ExerciseMedia({
   // (free-db ships 0.jpg + 1.jpg = the two key positions) so a beginner sees the
   // full range, not a single ambiguous still. Smaller variants stay single-image.
   if (isCard && media.url2) {
+    const onFrameLoad = (): void =>
+      setFramesLoaded((n) => {
+        const next = n + 1;
+        if (next >= 2) setMediaLoaded(true);
+        return next;
+      });
     return (
       <div
-        className={`grid grid-cols-2 gap-1 overflow-hidden ${sizeClass} ${className}`}
+        className={`relative grid grid-cols-2 gap-1 overflow-hidden ${sizeClass} ${className}`}
         data-testid={testId}
         data-variant={variant}
         role="img"
         aria-label={alt}
       >
-        <img className="w-full h-full object-cover" src={media.url} alt={`${alt} (1)`} loading="lazy" decoding="async" />
-        <img className="w-full h-full object-cover" src={media.url2} alt={`${alt} (2)`} loading="lazy" decoding="async" />
+        {skeleton}
+        <img className="w-full h-full object-cover" src={media.url} alt={`${alt} (1)`} loading="lazy" decoding="async" onLoad={onFrameLoad} onError={onFrameLoad} />
+        <img className="w-full h-full object-cover" src={media.url2} alt={`${alt} (2)`} loading="lazy" decoding="async" onLoad={onFrameLoad} onError={onFrameLoad} />
       </div>
     );
   }
 
   return (
-    <img
-      className={`object-cover ${sizeClass} ${className}`}
-      data-testid={testId}
-      data-variant={variant}
-      src={media.url}
-      alt={alt}
-      loading="lazy"
-      decoding="async"
-    />
+    <div className={`relative overflow-hidden ${sizeClass} ${className}`} data-variant={variant}>
+      {skeleton}
+      <img
+        className="w-full h-full object-cover"
+        data-testid={testId}
+        data-variant={variant}
+        src={media.url}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        onLoad={() => setMediaLoaded(true)}
+        onError={() => setMediaLoaded(true)}
+      />
+    </div>
   );
 }
