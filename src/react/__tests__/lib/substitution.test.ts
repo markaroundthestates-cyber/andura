@@ -8,6 +8,7 @@ import {
   resolveBusySwap,
   resolveRefusalSwap,
   resolveMissingSwap,
+  resolveSwapPickList,
   recomposeWithBusyTypes,
   availableTypesExcludingBusy,
 } from '../../lib/substitution';
@@ -191,5 +192,60 @@ describe('recomposeWithBusyTypes — list recompose never drops a row', () => {
     ];
     const out = recomposeWithBusyTypes(noEngine, ['barbell', 'dumbbell', 'machine', 'cable']);
     expect(out[0]!.name).toBe('Misterios');
+  });
+});
+
+// ══ resolveSwapPickList — founder manual pick-list shaping ═══════════════════
+// Shapes the engine buildSwapPickList ranking into renderable PlannedExercise
+// rows (real DP prescription). Pins the UI contract: short ranked list, distinct
+// pre-pick row 0, exactly one bodyweight when the muscle has one, RO names.
+describe('resolveSwapPickList — manual pick-list rows', () => {
+  it('returns SHORT (4-5) ranked rows with row 0 = pre-pick + a RO display name + real prescription', () => {
+    const { rows, originalName, muscleGroup } = resolveSwapPickList('Flat Barbell Bench', 0);
+    expect(rows.length).toBeGreaterThanOrEqual(4);
+    expect(rows.length).toBeLessThanOrEqual(5);
+    expect(rows[0]!.prePick).toBe(true);
+    expect(rows.filter((r) => r.prePick).length).toBe(1);
+    // Each row is a ready-to-render alternative: RO display name + engine key +
+    // a real swapped PlannedExercise (carries swapReason + engineName).
+    for (const r of rows) {
+      expect(r.displayName.length).toBeGreaterThan(0);
+      expect(r.engineName.length).toBeGreaterThan(0);
+      expect(r.exercise.swapReason).toBeTruthy();
+      expect(r.exercise.engineName).toBeTruthy();
+    }
+    expect(originalName.length).toBeGreaterThan(0);
+    expect(muscleGroup.length).toBeGreaterThan(0);
+  });
+
+  it('pre-pick is NOT a near-duplicate twin (Pec Deck / Cable Fly never pre-picks Cable Fly)', () => {
+    const { rows } = resolveSwapPickList('Pec Deck / Cable Fly', 0, ['Flat DB Press']);
+    expect(rows[0]!.engineName).not.toBe('Cable Fly');
+    expect(rows[0]!.engineName).not.toBe('Pec Deck / Cable Fly');
+  });
+
+  it('guarantees EXACTLY one bodyweight row when the muscle has one (chest)', () => {
+    const { rows } = resolveSwapPickList('Flat Barbell Bench', 0);
+    expect(rows.filter((r) => r.isBodyweight).length).toBe(1);
+  });
+
+  it('OMITS bodyweight (no fabrication) when the muscle has none (biceps)', () => {
+    const { rows } = resolveSwapPickList('Cable Curl', 0);
+    expect(rows.filter((r) => r.isBodyweight).length).toBe(0);
+    expect(rows.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('excludes the session + the per-slot tried-set (no duplicate/no re-offer)', () => {
+    const inSession = ['Cable Fly', 'Flat DB Press'];
+    const tried = ['Incline DB Press'];
+    const { rows } = resolveSwapPickList('Flat Barbell Bench', 0, inSession, tried);
+    const names = rows.map((r) => r.engineName);
+    for (const n of [...inSession, ...tried]) expect(names).not.toContain(n);
+  });
+
+  it('honest empty rows when the exercise has no metadata (UI falls to skip)', () => {
+    const { rows, muscleGroup } = resolveSwapPickList('Totally Fake Exercise', 0);
+    expect(rows).toEqual([]);
+    expect(muscleGroup).toBe('');
   });
 });

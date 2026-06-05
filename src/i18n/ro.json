@@ -425,7 +425,20 @@
       "missingNoAlt": "Lista a fost salvata. Nu am o alternativa pentru {name}. Poti sari exercitiul.",
       "missingPreserved": "Lista a fost salvata. Sesiunea continua nemodificata.",
       "swappedMissing": "Inlocuit {original} cu {alt} — aparatul lipsa.",
-      "finishedEarly": "Gata cu exercitiul asta, mergem mai departe."
+      "finishedEarly": "Gata cu exercitiul asta, mergem mai departe.",
+      "pickTitle": "Alege alt exercitiu pentru {group}",
+      "pickSubtitle": "Inlocuiesti {original}",
+      "pickRecommended": "Recomandat",
+      "pickBodyweight": "Greutate corporala",
+      "pickDrop": "Nu vreau sa fac asta",
+      "pickDropHint": "Scoate exercitiul din sesiunea de azi",
+      "pickCancel": "Inapoi",
+      "pickEmpty": "Nu am alt exercitiu pentru {group}. Poti sari exercitiul.",
+      "swappedPick": "Inlocuit {original} cu {alt}",
+      "dropped": "Am scos {name} din sesiunea de azi.",
+      "skippedTitle": "Exercitii sarite",
+      "skippedRestore": "Adauga la loc",
+      "restored": "Ai adaugat {name} inapoi."
     },
     "exit": {
       "title": "Iesi din sesiune?",

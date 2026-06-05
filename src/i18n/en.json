@@ -425,7 +425,20 @@
       "missingNoAlt": "Saved. I don't have an alternative for {name}. You can skip this exercise.",
       "missingPreserved": "Saved. The session continues unchanged.",
       "swappedMissing": "Replaced {original} with {alt} — missing equipment.",
-      "finishedEarly": "Done with this one, moving on."
+      "finishedEarly": "Done with this one, moving on.",
+      "pickTitle": "Pick another {group} exercise",
+      "pickSubtitle": "Replacing {original}",
+      "pickRecommended": "Recommended",
+      "pickBodyweight": "Bodyweight",
+      "pickDrop": "I don't want to do this",
+      "pickDropHint": "Remove it from today's session",
+      "pickCancel": "Back",
+      "pickEmpty": "I don't have another {group} exercise. You can skip this one.",
+      "swappedPick": "Replaced {original} with {alt}",
+      "dropped": "Removed {name} from today's session.",
+      "skippedTitle": "Skipped exercises",
+      "skippedRestore": "Add back",
+      "restored": "Added {name} back."
     },
     "exit": {
       "title": "Leave the session?",

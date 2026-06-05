@@ -24,6 +24,7 @@
 //   - 📥_inbox/wiring-audit-2026-05-26/P3-MOAT-DESIGN.md §5
 
 import {
+  buildSwapPickList,
   findRefusalPool,
   getFallbackCascade,
 } from '../../engine/alternativeFinder.js';
@@ -138,8 +139,16 @@ export function resolveMissingSwap(
 
 // Daniel smoke 2026-05-28 (#3.3 etc) — RO display labels for engine muscle
 // targets so the "ai incercat tot pentru [muscleGroup]" copy reads naturally.
-// Keys must match EXERCISE_METADATA muscle_target_primary values; misses fall
-// to the raw key as a defensive last-line baseline. NO_DIACRITICS_RULE.
+// Keys MUST match the actual EXERCISE_METADATA muscle_target_primary values;
+// misses fall to the raw key as a defensive last-line baseline. NO_DIACRITICS.
+//
+// Recon Section C fix (2026-06-05): the prior map carried DEAD keys that no
+// CORE_AUTO entry ever uses (`picioare-fesieri`, `picioare-gambe`, `fesieri`,
+// `abdomen`, `oblici`, `trapezi`, `cardio`, `corp-intreg`), while the REAL keys
+// (`fese`, `core`, `gambe`) were missing or mis-spelled — so a refusal on a
+// glute/core/calf movement fell through to the raw key ("fese"/"core") in the
+// exhausted-pool copy. Realigned to the 11 muscle groups actually present in the
+// active set (verified against exercises.json CORE_AUTO).
 const MUSCLE_GROUP_RO: Readonly<Record<string, string>> = {
   piept: 'piept',
   spate: 'spate',
@@ -149,14 +158,9 @@ const MUSCLE_GROUP_RO: Readonly<Record<string, string>> = {
   antebrate: 'antebrate',
   'picioare-quads': 'cvadriceps',
   'picioare-hamstrings': 'hamstring',
-  'picioare-fesieri': 'fesieri',
-  'picioare-gambe': 'gambe',
-  fesieri: 'fesieri',
-  abdomen: 'abdomen',
-  oblici: 'oblici',
-  trapezi: 'trapezi',
-  cardio: 'cardio',
-  'corp-intreg': 'corp intreg',
+  gambe: 'gambe',
+  fese: 'fesieri',
+  core: 'abdomen',
 };
 
 function muscleGroupLabel(key: string): string {
@@ -235,6 +239,76 @@ export function resolveRefusalSwap(
     noAlt: false,
     muscleGroup: muscleGroupLabel(muscleGroup),
   };
+}
+
+// ══ SWAP PICK-LIST — founder redesign 2026-06-05 (manual short list) ════════
+export interface SwapPickRow {
+  /** Ready-to-render alternative (real DP/cold-start prescription). */
+  exercise: PlannedExercise;
+  /** English canonical engine name (for the tried-set + dedup). */
+  engineName: string;
+  /** RO display name (sheet row label). */
+  displayName: string;
+  /** True for ROW 1 — the pre-selected smart default. */
+  prePick: boolean;
+  /** True when this is the single universal-fallback bodyweight row. */
+  isBodyweight: boolean;
+}
+
+export interface SwapPickList {
+  /** Ranked 4-5 rows (row 0 = prePick). Empty when no same-muscle option. */
+  rows: SwapPickRow[];
+  /** RO display name of the original being replaced. */
+  originalName: string;
+  /** RO muscle-group label (header copy). '' when unknown. */
+  muscleGroup: string;
+}
+
+/**
+ * Build the manual swap PICK-LIST for the current exercise (founder redesign).
+ * Wraps the engine buildSwapPickList ranking into renderable PlannedExercise
+ * rows. The UI renders these as a short sheet and lets the user pick any row;
+ * row 0 (`prePick:true`) is the default. Equipment is IGNORED here — the
+ * pick-list is the user's deliberate choice (busy / "want something else"), the
+ * same taste-decision semantics as the old refusal path. Honest empty `rows`
+ * when the muscle has no same-muscle active alternative (UI falls to skip).
+ *
+ * @param engineName English canonical name of the exercise to replace
+ * @param exIdx position in the session (for each row's swapped id slug)
+ * @param excludeNames English canonical names already in today's session (any
+ *   slot) — never offered (no duplicate-in-session, ever)
+ * @param triedNames English canonical names already tried/busy at THIS slot —
+ *   drives diversify-modality + excluded from the list (never re-offered)
+ */
+export function resolveSwapPickList(
+  engineName: string,
+  exIdx: number,
+  excludeNames: readonly string[] = [],
+  triedNames: readonly string[] = [],
+): SwapPickList {
+  const originalName = toExerciseDisplay(engineName).name;
+  const { items, muscleGroup } = buildSwapPickList(
+    engineName,
+    excludeNames as string[],
+    triedNames as string[],
+  ) as {
+    items: Array<{ name: string; prePick: boolean; isBodyweight: boolean }>;
+    muscleGroup: string;
+  };
+
+  if (muscleGroup === 'unknown' || items.length === 0) {
+    return { rows: [], originalName, muscleGroup: '' };
+  }
+
+  const rows: SwapPickRow[] = items.map((it) => ({
+    exercise: buildSwappedExercise(it.name, exIdx, 'Schimbat la cerere'),
+    engineName: it.name,
+    displayName: toExerciseDisplay(it.name).name,
+    prePick: it.prePick,
+    isBodyweight: it.isBodyweight,
+  }));
+
+  return { rows, originalName, muscleGroup: muscleGroupLabel(muscleGroup) };
 }
 
 /**
