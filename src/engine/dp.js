@@ -13,12 +13,12 @@ export const DP = {
   REP_RANGES: {
     'DB Shoulder Press':[6,10],'Incline DB Press':[6,10],'Flat DB Press':[8,12],
     'Lat Pulldown':[8,12],'Cable Row':[8,12],'Chest-Supported Row':[10,12],
-    'Romanian Deadlift':[8,12],'Leg Press':[15,20],
-    'Lateral Raises':[12,15],'Rear Delt Fly':[12,15],'Face Pulls':[15,20],
+    'Romanian Deadlift':[8,12],'Leg Press':[8,12],
+    'Lateral Raises':[12,15],'Rear Delt Fly':[12,15],'Face Pulls':[12,15],
     'Incline DB Curl':[10,12],'Bayesian Curl':[10,12],'Cable Curl':[10,12],
     'Preacher Curl':[10,12],'Overhead Triceps':[10,12],'Pushdown':[10,12],
-    'Pec Deck / Cable Fly':[12,15],'Leg Curl':[15,20],'Leg Extension':[15,20],
-    'Calf Raises':[15,20]
+    'Pec Deck / Cable Fly':[12,15],'Leg Curl':[10,15],'Leg Extension':[10,15],
+    'Calf Raises':[10,15]
   },
 
   // Weight steps per equipment type

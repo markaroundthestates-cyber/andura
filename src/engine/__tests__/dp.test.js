@@ -44,8 +44,10 @@ describe('DP.getPhaseAwareRepRange', () => {
     expect(DP.getPhaseAwareRepRange('Rear Delt Fly', true)).toEqual([10, 10]);
   });
 
-  it('leaves 15-20 leg ranges unchanged in CUT (Leg Curl)', () => {
-    expect(DP.getPhaseAwareRepRange('Leg Curl', true)).toEqual([15, 20]);
+  it('caps the 10-15 leg-machine range to [10,10] in CUT (Leg Curl)', () => {
+    // Leg Curl is now hypertrophy-ranged [10,15] (not endurance 15-20); in CUT the
+    // non-compound 12<rMax<=15 cap collapses it to [10,10] like the other isolation.
+    expect(DP.getPhaseAwareRepRange('Leg Curl', true)).toEqual([10, 10]);
   });
 });
 

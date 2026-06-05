@@ -246,15 +246,17 @@ describe('DP._recommendRaw — branch coverage', () => {
   });
 
   it('CAP REPS never escalates beyond rMax (no more rMax+4 runaway)', () => {
-    // Leg Press range [15,20], rMax=20, MAX_KG=400. At the cap with lastReps=15
-    // the prescription climbs ONE rep to 16 — NOT to 16-24. A capped heavy
-    // compound must not be pushed to 20+ reps (Daniel coach audit 2026-06-05).
+    // Leg Press is now hypertrophy-ranged [8,12], rMax=12, MAX_KG=400. At the
+    // weight cap with lastReps=15 (already past the top of the range), the coach
+    // does NOT prescribe 15+ endurance reps — it maintains at rMax=12 and shifts
+    // focus to execution (PEAK). A heavy compound stays in the 6-12 hypertrophy
+    // band (Daniel founder audit 2026-06-05: kill 15-20 endurance defaults).
     store['logs'] = [log('Leg Press', 400, 15, 7)];
     const r = DP._recommendRaw('Leg Press');
-    expect(r.status).toBe('CAP REPS');
+    expect(r.status).toBe('PEAK');
     expect(r.kg).toBe(400);
-    expect(r.repsTarget).toBe(16);          // min(rMax 20, 15+1)
-    expect(r.repsTarget).toBeLessThanOrEqual(20); // never above rMax
+    expect(r.repsTarget).toBe(12);          // rMax (never 15+)
+    expect(r.repsTarget).toBeLessThanOrEqual(12); // never above the hypertrophy rMax
   });
 
   it('PEAK: at weight cap AND at the top of the range (>= rMax) → maintain', () => {
