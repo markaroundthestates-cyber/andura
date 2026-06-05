@@ -67,7 +67,13 @@ export interface PausedSession {
 // sesiuni persisted Phase 4 fără breakdown.
 export interface SessionExerciseBreakdown {
   exerciseId: string;
+  // RO/locale DISPLAY name shown in Istoric ("Impins din piept"). NOT an engine key.
   exerciseName: string;
+  // English canonical engine key ("Flat DB Press") — the identity DP / PR records
+  // key on. Persisted so the writeback (buildLogEntriesFromSummary) routes
+  // logs[].ex from THIS, not the RO display name. Optional — legacy sessions
+  // (pre-fix) carry only exerciseName; the writeback falls back to it.
+  engineName?: string;
   sets: Array<{
     kg: number;
     reps: number;
@@ -194,7 +200,7 @@ export interface WorkoutState {
    * recommendation (history-records-recommendation bug 2026-06-03). Runtime-only,
    * fresh per session — same lifecycle as refusalTriedByEx.
    */
-  performedExercises: Record<number, { id: string; name: string }>;
+  performedExercises: Record<number, { id: string; name: string; engineName?: string }>;
 }
 
 // ── §44-C1 Discriminated Union — WorkoutMode FSM tag ────────────────────────
@@ -310,7 +316,7 @@ export interface WorkoutActions {
    *     returns to 'logging' at setIdx 0 (the new exercise starts fresh).
    * A swap on a NOT-yet-started exercise (no sets logged) is a no-op on history.
    */
-  swapExercise: (exIdx: number, performed?: { id: string; name: string }) => void;
+  swapExercise: (exIdx: number, performed?: { id: string; name: string; engineName?: string }) => void;
   /**
    * Delete a logged session from `sessionsHistory` by its `ts` (mislogged
    * workout — per-entry remove from Istoric). Records a tombstone

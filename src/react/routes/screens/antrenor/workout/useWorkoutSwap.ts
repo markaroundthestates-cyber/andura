@@ -13,7 +13,7 @@ export interface UseWorkoutSwapArgs {
   currentExercise: PlannedExercise;
   refusalTriedByEx: Record<number, readonly string[]>;
   markRefusalTried: (exIdx: number, name: string) => void;
-  swapExercise: (exIdx: number, ex: { id: string; name: string }) => void;
+  swapExercise: (exIdx: number, ex: { id: string; name: string; engineName?: string }) => void;
   setExercises: React.Dispatch<React.SetStateAction<readonly PlannedExercise[] | null>>;
   bumpActivity: () => void;
   navigate: NavigateFunction;
@@ -126,7 +126,7 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         next[safeExIdx] = swapped;
         return next;
       });
-      swapExercise(safeExIdx, { id: swapped.id, name: swapped.name });
+      swapExercise(safeExIdx, { id: swapped.id, name: swapped.name, ...(swapped.engineName !== undefined ? { engineName: swapped.engineName } : {}) });
       // Refusal path: record the alternative we just surfaced so the NEXT
       // "Nu vreau" tap on this slot skips it (Daniel exhaustive cycle).
       if (kind === 'refusal' && typeof res.alternativeEngineName === 'string') {
@@ -188,7 +188,7 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         next[safeExIdx] = swapped;
         return next;
       });
-      swapExercise(safeExIdx, { id: swapped.id, name: swapped.name });
+      swapExercise(safeExIdx, { id: swapped.id, name: swapped.name, ...(swapped.engineName !== undefined ? { engineName: swapped.engineName } : {}) });
       toast.show({
         message: t('workout.swap.swappedMissing', { original: res.originalName, alt: res.alternativeName }),
         variant: 'success',

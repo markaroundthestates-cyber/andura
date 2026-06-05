@@ -77,6 +77,7 @@ function flattenSessionsToLogs(
   sessions: ReadonlyArray<{
     exercises?: ReadonlyArray<{
       exerciseName: string;
+      engineName?: string;
       sets: ReadonlyArray<{ kg: number; reps: number; timestamp: number }>;
     }>;
   }>,
@@ -86,7 +87,9 @@ function flattenSessionsToLogs(
     if (!session.exercises) continue;
     for (const ex of session.exercises) {
       for (const set of ex.sets) {
-        logs.push({ ex: ex.exerciseName, ts: set.timestamp, w: set.kg, reps: set.reps });
+        // Engine group-resolution keys on the ENGLISH canonical name; engineName
+        // with display fallback for legacy breakdowns (Daniel P0 2026-06-05).
+        logs.push({ ex: ex.engineName ?? ex.exerciseName, ts: set.timestamp, w: set.kg, reps: set.reps });
       }
     }
   }

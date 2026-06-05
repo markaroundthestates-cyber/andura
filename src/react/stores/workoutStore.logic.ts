@@ -80,12 +80,20 @@ export function buildLogEntriesFromSummary(
   const exercises = summary.exercises ?? [];
   for (const ex of exercises) {
     let setIdx = 0;
+    // Daniel P0 (2026-06-05): the engine (DP.getLogs / getState / PR records)
+    // keys on the ENGLISH canonical name. The screen records exerciseName as the
+    // RO DISPLAY name ("Impins din piept"), so writing logs[].ex from it stranded
+    // every log where DP couldn't find it → cold-start INIT every session →
+    // ratings never moved the next recommendation (the "weight didn't move" bug).
+    // Route logs[].ex from the engineName; fall back to exerciseName only for
+    // legacy sessions (pre-fix) that never carried it.
+    const engineKey = ex.engineName ?? ex.exerciseName;
     for (const s of ex.sets) {
       setIdx += 1;
       const ts = s.timestamp;
       entries.push({
         date: todTs(ts),
-        ex: ex.exerciseName,
+        ex: engineKey,
         w: s.kg,
         kg: s.kg,
         set: setIdx,

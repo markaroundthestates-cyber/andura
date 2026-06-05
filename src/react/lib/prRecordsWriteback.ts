@@ -82,17 +82,24 @@ export function enrichExercisesWithPR(
 ): SessionExerciseBreakdown[] {
   // Accumulator — starts with coerced prior logs, grows as sets are "logged".
   const acc: PriorHistoryEntry[] = coercePriorHistory(priorLogs);
-  return exercises.map((ex) => ({
+  return exercises.map((ex) => {
+    // PR detection compares against the persisted logs (DB('logs')), which are
+    // keyed on the ENGLISH canonical engineName. Comparing under the RO display
+    // name found no prior history → a false PR every session (Daniel P0
+    // 2026-06-05). Use engineName; fall back to exerciseName for legacy breakdowns.
+    const prKey = ex.engineName ?? ex.exerciseName;
+    return {
     ...ex,
     sets: ex.sets.map((s) => {
       // detectPR contract: { w, reps }. Returns null when no PR.
-      const detection = detectPR(ex.exerciseName, { w: s.kg, reps: s.reps }, acc);
+      const detection = detectPR(prKey, { w: s.kg, reps: s.reps }, acc);
       // Add this set to accumulator AFTER detection (so within-session
       // progressive overload can produce multiple PRs on same exercise).
-      acc.unshift({ ex: ex.exerciseName, w: s.kg, reps: s.reps });
+      acc.unshift({ ex: prKey, w: s.kg, reps: s.reps });
       return detection ? { ...s, isPR: true } : s;
     }),
-  }));
+    };
+  });
 }
 
 /**

@@ -432,15 +432,22 @@ export function Workout(): JSX.Element {
     // PR is detected against the EFFECTIVE load (h.kg already effective), so a
     // pure-bodyweight rep PR (added 0) now fires instead of being killed by the
     // detectPR w<=0 guard.
+    // exerciseName = RO DISPLAY name (shown in the PR celebration banner/flash).
+    // engineKey = ENGLISH canonical the engine (DP getLogs/getState/
+    // checkInSessionAdjust + PR records) keys on. Using the RO display for the
+    // engine lookups stranded every PR / in-session adjustment under a name the
+    // engine never reads (Daniel P0 2026-06-05) → progression never moved. Split
+    // them: engine reads use engineKey, the user-facing PR copy keeps the display.
     const exerciseName = currentExercise.name;
+    const engineKey = currentExercise.engineName ?? currentExercise.name;
     const exerciseHistory =
       history[safeExIdx]?.map((h) => ({
-        ex: exerciseName,
+        ex: engineKey,
         w: h.kg,
         reps: h.reps,
       })) ?? [];
     const delta = getPRDelta(
-      exerciseName,
+      engineKey,
       { w: effKg, reps: repsInput },
       exerciseHistory
     );
@@ -482,7 +489,7 @@ export function Workout(): JSX.Element {
       // the NEXT set index so the engine can measure performance deviation and
       // apply the fatigue taper. The engine decides phase-aware whether to move
       // weight (newKg) or reps (newReps, weight held = holdKg).
-      const adjust = DP.checkInSessionAdjust(exerciseName, recentRPEs, recentReps, {
+      const adjust = DP.checkInSessionAdjust(engineKey, recentRPEs, recentReps, {
         // Shared current-recommended-load: feed the engine the LIVE rec (recKg/
         // recReps), not the stale per-exercise target — so a prior in-session
         // bump is the baseline for the next bump (the up-ramp never computes

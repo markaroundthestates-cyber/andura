@@ -173,6 +173,12 @@ export function PostRpe(): JSX.Element {
         const performed = performedExercises[exIdx];
         const exerciseId = performed?.id ?? planEx?.id ?? `ex-${exIdx}`;
         const exerciseName = performed?.name ?? planEx?.name ?? t('postRpe.fallbackExerciseName', { n: exIdx + 1 });
+        // English canonical key the engine (DP/PR records) reads. exerciseName is
+        // the RO DISPLAY name; persisting logs under it stranded the history so DP
+        // never saw it (Daniel P0). Carry the engineName so the writeback keys
+        // logs[].ex on it. Fall back to the display name only when no engine key
+        // is available (defensive — planned exercises always carry engineName).
+        const engineName = performed?.engineName ?? planEx?.engineName ?? exerciseName;
         let totalVolume = 0;
         let peakOneRM = 0;
         const breakdownSets = sets.map((s) => {
@@ -189,6 +195,7 @@ export function PostRpe(): JSX.Element {
         return {
           exerciseId,
           exerciseName,
+          engineName,
           sets: breakdownSets,
           totalVolume,
           peakOneRM: Math.round(peakOneRM * 10) / 10,

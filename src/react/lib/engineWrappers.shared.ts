@@ -19,7 +19,7 @@ import { DB } from '../../db.js';
  * persisted sessions fără breakdown). Skips sessions cu exercises absent.
  */
 export function flattenSessionsToEngineLogs(
-  sessions: ReadonlyArray<{ exercises?: ReadonlyArray<{ exerciseName: string; sets: ReadonlyArray<{ kg: number; reps: number; timestamp: number }> }> }>,
+  sessions: ReadonlyArray<{ exercises?: ReadonlyArray<{ exerciseName: string; engineName?: string; sets: ReadonlyArray<{ kg: number; reps: number; timestamp: number }> }> }>,
 ): Array<{ ex: string; ts: number; w: number; reps: number }> {
   const logs: Array<{ ex: string; ts: number; w: number; reps: number }> = [];
   for (const session of sessions) {
@@ -27,7 +27,10 @@ export function flattenSessionsToEngineLogs(
     for (const ex of session.exercises) {
       for (const set of ex.sets) {
         logs.push({
-          ex: ex.exerciseName,
+          // Engine consumers (stagnation/recovery/weak-group) key on the ENGLISH
+          // canonical name. Use engineName; fall back to the display name for
+          // legacy breakdowns (pre-fix) that never carried it (Daniel P0).
+          ex: ex.engineName ?? ex.exerciseName,
           ts: set.timestamp,
           w: set.kg,
           reps: set.reps,
