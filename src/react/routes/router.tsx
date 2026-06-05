@@ -22,6 +22,7 @@ import { lazy, Suspense } from 'react';
 import type { JSX, ReactNode } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
+import { PublicOnlyRoute } from './PublicOnlyRoute';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { Layout } from './Layout';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
@@ -151,10 +152,14 @@ function GymOnlyRoute({ children }: { children: ReactNode }): JSX.Element {
 
 export const router = createBrowserRouter([
   { path: '/', element: <TopLevelRoute><Splash /></TopLevelRoute> },
-  { path: '/auth', element: <TopLevelRoute><Auth /></TopLevelRoute> },
-  { path: '/auth/reactivate', element: <TopLevelRoute><Auth /></TopLevelRoute> },
+  // PublicOnlyRoute (Daniel audit 2026-06-05) — an authenticated user hitting
+  // /auth* is bounced into /app instead of re-rendering the login screen.
+  { path: '/auth', element: <TopLevelRoute><PublicOnlyRoute mode="auth"><Auth /></PublicOnlyRoute></TopLevelRoute> },
+  { path: '/auth/reactivate', element: <TopLevelRoute><PublicOnlyRoute mode="auth"><Auth /></PublicOnlyRoute></TopLevelRoute> },
   { path: '/auth-callback', element: <TopLevelRoute><AuthCallback /></TopLevelRoute> },
-  { path: '/onboarding/:step', element: <TopLevelRoute><Onboarding /></TopLevelRoute> },
+  // A user who already completed onboarding can't re-enter the wizard (→ /app);
+  // an authed-but-not-onboarded user still sees it (legitimate flow).
+  { path: '/onboarding/:step', element: <TopLevelRoute><PublicOnlyRoute mode="onboarding"><Onboarding /></PublicOnlyRoute></TopLevelRoute> },
   // Daniel-directed redesign 2026-05-26 — pagini legale publice (fix /terms 404).
   { path: '/terms', element: <TopLevelRoute><Terms /></TopLevelRoute> },
   { path: '/privacy', element: <TopLevelRoute><Privacy /></TopLevelRoute> },
