@@ -141,7 +141,8 @@
       "cont": "Account"
     },
     "ariaLabel": "Main navigation",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "tabAria": "{label} tab"
   },
   "tabs": {
     "antrenor": {

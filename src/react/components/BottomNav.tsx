@@ -120,6 +120,11 @@ export function BottomNav(): JSX.Element {
             } items-center justify-center h-full active:scale-[.96] transition-colors ${
               active ? 'text-brick' : 'text-ink2'
             }`}
+            // A11y 2026-06-06 — an explicit accessible name so the nav button is
+            // announced as "<Tab> tab" (the 9px mono label + aria-hidden icon
+            // left the button without a robust name in the a11y tree). Matches
+            // the explicit-aria pattern the steppers/toggles already use.
+            aria-label={t('nav.tabAria', { label: t(`nav.tabs.${id}`) })}
             aria-current={active ? 'page' : undefined}
           >
             {/* Active icon sits in a glowing tinted chip (mockup .bnav-ico.on).

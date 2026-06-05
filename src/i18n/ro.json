@@ -141,7 +141,8 @@
       "cont": "Cont"
     },
     "ariaLabel": "Navigare principala",
-    "skipToContent": "Sari la continut"
+    "skipToContent": "Sari la continut",
+    "tabAria": "Tab {label}"
   },
   "tabs": {
     "antrenor": {

@@ -41,6 +41,16 @@ describe('BottomNav Pulse reskin — preserved contract', () => {
     expect(within(nav).getByRole('button', { name: /Progress/i })).toHaveAttribute('aria-current', 'page');
   });
 
+  // A11y 2026-06-06 — each tab button exposes an explicit accessible name
+  // ("<Tab> tab") so it is never a nameless generic button in the a11y tree.
+  it('every tab button has an explicit aria-label accessible name', () => {
+    renderAt('/app/antrenor');
+    const nav = screen.getByRole('navigation', { name: /Main navigation/i });
+    ['Coach tab', 'Progress tab', 'History tab', 'Account tab'].forEach((name) => {
+      expect(within(nav).getByRole('button', { name })).toBeInTheDocument();
+    });
+  });
+
   it('keeps the app-fixed-column anchor class (bezel alignment invariant)', () => {
     renderAt('/app/antrenor');
     expect(screen.getByRole('navigation', { name: /Main navigation/i })).toHaveClass('app-fixed-column');
