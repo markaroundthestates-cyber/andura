@@ -58,9 +58,15 @@ interface Props {
   workout?: PlannedWorkoutOutput | null;
 }
 
-// HIGH-CODE-03 — day-label formatter. 1=yesterday, 2-6=N days, 7+=last week.
+// HIGH-CODE-03 — "when" label formatter. Hour-accurate under a day (e.g. a leg
+// session at 18:00 read 07:00 next morning = "13h", NOT the misleading
+// "yesterday"), then day buckets: 1=yesterday, 2-6=N days, 7+=last week.
 // Locale-aware via i18n bundle. Pure function (testable inline).
-function formatDaysSince(days: number): string {
+function formatRecoveredWhen(elapsedHours: number, days: number): string {
+  // Sub-day: show whole hours so a same-night/next-morning gap reads honestly.
+  if (elapsedHours < 24) {
+    return t('coachToday.daysSince.hoursFmt', { n: Math.max(1, Math.round(elapsedHours)) });
+  }
   if (days <= 1) return t('coachToday.daysSince.yesterday');
   if (days <= 6) return t('coachToday.daysSince.daysFmt', { n: days });
   return t('coachToday.daysSince.lastWeek');
@@ -125,8 +131,8 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     try {
       const dynamic = engineWrappers.getCoachTodayQuote?.() ?? null;
       if (dynamic !== null) {
-        const dayLabel = formatDaysSince(dynamic.daysSince);
-        return t('coachToday.recoveredQuote', { group: dynamic.recoveredLabel, when: dayLabel });
+        const whenLabel = formatRecoveredWhen(dynamic.elapsedHours, dynamic.daysSince);
+        return t('coachToday.recoveredQuote', { group: dynamic.recoveredLabel, when: whenLabel });
       }
     } catch {
       // fall through to generic fallback

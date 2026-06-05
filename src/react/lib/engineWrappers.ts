@@ -49,6 +49,7 @@ import { runProactiveChecks } from '../../engine/proactiveEngine.js';
 import {
   getRecoveryByGroup,
   daysSinceGroup,
+  hoursSinceGroup,
   GROUP_LABELS_RO_BIG11,
 } from '../../engine/muscleRecovery.js';
 import { detectWeakGroups } from '../../engine/weaknessDetector.js';
@@ -851,14 +852,17 @@ export function getCoachTodayQuote(): CoachTodayQuote | null {
     if (logs.length === 0) return null;
     const groupState = getRecoveryByGroup(logs, readPainCdl());
     // Iterate groups; pick first recovered group cu daysSince in window.
-    let best: { group: string; days: number } | null = null;
+    // hours = the REAL elapsed gap (sub-day precise); days = the floored bucket
+    // used for the recently-trained window guard (1..COACH_TODAY_QUOTE_MAX_DAYS).
+    let best: { group: string; days: number; hours: number } | null = null;
     for (const [group, state] of Object.entries(groupState)) {
       if (state !== 'recovered') continue;
       const days = daysSinceGroup(logs, group);
       if (days === null) continue;
       if (days < 1 || days > COACH_TODAY_QUOTE_MAX_DAYS) continue;
-      if (best === null || days < best.days) {
-        best = { group, days };
+      const hours = hoursSinceGroup(logs, group) ?? days * 24;
+      if (best === null || hours < best.hours) {
+        best = { group, days, hours };
       }
     }
     if (best === null) return null;
@@ -871,7 +875,7 @@ export function getCoachTodayQuote(): CoachTodayQuote | null {
       localized && localized !== i18nKey
         ? localized
         : (GROUP_LABELS_RO_BIG11[best.group] ?? best.group);
-    return { recoveredLabel: label, daysSince: best.days };
+    return { recoveredLabel: label, daysSince: best.days, elapsedHours: best.hours };
   } catch (e) {
     logger.warn('[engineWrappers] getCoachTodayQuote failed:', e);
     captureException(e, {

@@ -231,6 +231,7 @@
     "overrideCta": "Vrei altceva azi? →",
     "daysSince": {
       "yesterday": "ieri",
+      "hoursFmt": "acum {n}h",
       "daysFmt": "{n} zile",
       "lastWeek": "saptamana trecuta"
     },

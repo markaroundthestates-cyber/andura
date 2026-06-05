@@ -58,6 +58,7 @@ vi.mock('../../../engine/stagnationDetector.js', () => ({
 vi.mock('../../../engine/muscleRecovery.js', () => ({
   getRecoveryByGroup: vi.fn(),
   daysSinceGroup: vi.fn(),
+  hoursSinceGroup: vi.fn(),
   GROUP_LABELS_RO_BIG11: {},
 }));
 

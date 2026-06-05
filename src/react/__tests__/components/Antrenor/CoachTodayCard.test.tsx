@@ -79,11 +79,27 @@ describe('CoachTodayCard — MED-CODE-20 coachQuote refresh deps', () => {
     vi.spyOn(engineWrappers, 'getCoachTodayQuote').mockReturnValue({
       recoveredLabel: 'Pectoralii',
       daysSince: 3,
+      elapsedHours: 72, // >=24h => day bucket rendering ("3 days")
     });
     renderCard();
     // Wave C2 i18n: EN default → "{group} has recovered since 3 days — let's nail it."
     expect(
       screen.getByText(/Pectoralii has recovered since 3 days/i),
+    ).toBeInTheDocument();
+  });
+
+  it('renders an HOUR-accurate "{when}" for a sub-day gap (13h, not "yesterday")', () => {
+    // A recovered group last trained ~13h ago (e.g. light session 18:00 -> 07:00):
+    // daysSince floors to 0, but elapsedHours=13 must surface as "13h ago", NOT
+    // the misleading "yesterday"/day-bucket copy.
+    vi.spyOn(engineWrappers, 'getCoachTodayQuote').mockReturnValue({
+      recoveredLabel: 'Pectoralii',
+      daysSince: 0,
+      elapsedHours: 13,
+    });
+    renderCard();
+    expect(
+      screen.getByText(/Pectoralii has recovered since 13h ago/i),
     ).toBeInTheDocument();
   });
 
@@ -136,7 +152,7 @@ describe('CoachTodayCard — MED-CODE-20 coachQuote refresh deps', () => {
     const spy = vi
       .spyOn(engineWrappers, 'getCoachTodayQuote')
       .mockReturnValueOnce(null)
-      .mockReturnValue({ recoveredLabel: 'Spatele', daysSince: 2 });
+      .mockReturnValue({ recoveredLabel: 'Spatele', daysSince: 2, elapsedHours: 48 });
 
     renderCard();
     // Initial: fallback generic, NO "Spatele recovered".

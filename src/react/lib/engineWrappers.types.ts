@@ -199,7 +199,11 @@ export interface CoachRestReason {
 
 export interface CoachTodayQuote {
   recoveredLabel: string; // RO display label (e.g., "Pectoralii", "Spatele")
-  daysSince: number; // 1..N days since last trained
+  daysSince: number; // 1..N days since last trained (floored — legacy day bucket)
+  // REAL elapsed hours since the group was last trained (NOT floored to days).
+  // Lets the card render an hour-accurate "{when}" ("20h" vs "yesterday") and
+  // exposes the honest rest gap to any narrative layer. Always >= the day bucket.
+  elapsedHours: number;
 }
 
 // Calibration maturity signal for the honest "still learning you" line.

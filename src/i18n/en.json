@@ -231,6 +231,7 @@
     "overrideCta": "Want something else today? →",
     "daysSince": {
       "yesterday": "yesterday",
+      "hoursFmt": "{n}h ago",
       "daysFmt": "{n} days",
       "lastWeek": "last week"
     },
