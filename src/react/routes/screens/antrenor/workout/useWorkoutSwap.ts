@@ -2,7 +2,11 @@ import { useCallback, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 import type { PlannedExercise } from '../../../../lib/engineWrappers';
 import { gotoPath } from '../../../../lib/navigation';
-import { resolveBusySwap, resolveMissingSwap, resolveRefusalSwap } from '../../../../lib/substitution';
+import {
+  resolveMissingSwap,
+  resolveSwapPickList,
+  type SwapPickRow,
+} from '../../../../lib/substitution';
 import { toast } from '../../../../lib/toast';
 import { incrementRefusal } from '../../../../../engine/schedule/scheduleAdapter.js';
 import { t } from '../../../../../i18n/index.js';
@@ -14,25 +18,48 @@ export interface UseWorkoutSwapArgs {
   refusalTriedByEx: Record<number, readonly string[]>;
   markRefusalTried: (exIdx: number, name: string) => void;
   swapExercise: (exIdx: number, ex: { id: string; name: string; engineName?: string }) => void;
+  dropExercise: (exIdx: number, identity: { id: string; name: string; engineName?: string }) => void;
   setExercises: React.Dispatch<React.SetStateAction<readonly PlannedExercise[] | null>>;
   bumpActivity: () => void;
+  advanceOrFinish: () => void;
   navigate: NavigateFunction;
+}
+
+export interface SwapPickSheetState {
+  open: boolean;
+  rows: readonly SwapPickRow[];
+  muscleGroup: string;
+  originalName: string;
 }
 
 export interface UseWorkoutSwap {
   aparatLipsaSheetOpen: boolean;
+  pickSheet: SwapPickSheetState;
   handleOcupat: () => void;
   handleNuVreau: () => void;
+  handlePickRow: (row: SwapPickRow) => void;
+  handleDropExercise: () => void;
+  handleClosePick: () => void;
   handleOpenAparatLipsa: () => void;
   handleCloseAparatLipsa: () => void;
   handleAparatLipsaConfirm: (missing: readonly string[]) => void;
 }
 
-// WP-5 moat — in-session substitution for the CURRENT exercise. Extracted
-// verbatim from Workout.tsx (behavior preserved): owns aparatLipsaSheetOpen +
-// applySwap + the busy/refusal/missing-equipment handlers. The exercise list
-// lives in the screen's local `exercises` state (setExercises in); the store
-// owns the logged-set integrity (swapExercise in).
+const CLOSED_PICK: SwapPickSheetState = {
+  open: false,
+  rows: [],
+  muscleGroup: '',
+  originalName: '',
+};
+
+// Founder swap redesign 2026-06-05 — the in-session substitution buttons no
+// longer BLINDLY auto-swap one alternative. "Aparat ocupat" + "Nu vreau" now
+// open a SHORT manual pick-list sheet (resolveSwapPickList): a ranked 4-5 row
+// same-muscle list (active CORE_AUTO pool minus today's session), row 1 = a
+// pre-selected smart distinct pick, exactly one bodyweight fallback, plus a
+// separated "I don't want to do this" row that DROPS the exercise (recoverable).
+// The user picks any row manually. Aparat lipsa stays a direct equipment swap
+// (resolveMissingSwap) — it's a hard machine constraint, not a free choice.
 export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
   const {
     exercises,
@@ -41,132 +68,138 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
     refusalTriedByEx,
     markRefusalTried,
     swapExercise,
+    dropExercise,
     setExercises,
     bumpActivity,
+    advanceOrFinish,
     navigate,
   } = args;
 
   // Daniel smoke 2026-05-28 #17 — in-session "Aparat lipsa" sheet open state.
   const [aparatLipsaSheetOpen, setAparatLipsaSheetOpen] = useState(false);
+  // Founder redesign — manual swap pick-list sheet state (busy / refusal).
+  const [pickSheet, setPickSheet] = useState<SwapPickSheetState>(CLOSED_PICK);
 
-  // WP-5 moat — in-place substitution for the CURRENT exercise. The exercise
-  // list lives in this screen's local `exercises` state; the store owns the
-  // logged-set integrity. Swap = replace exercises[safeExIdx] with the
-  // alternative + swapExercise(safeExIdx) (drops partial sets of the original,
-  // restarts at set 1) + a NAMED toast (the key to the moat: the user SEES the
-  // alternative). Honest noAlt → toast tells the user to skip it (anti-
-  // paternalism, never force an inferior movement). Replaces the old behavior
-  // where the buttons navigated AWAY and the user never saw a named alternative.
-  //
-  // Daniel smoke 2026-05-28 (#2 + #6 + #3.2) — REFUSAL path now consumes a
-  // per-exIdx tried-set so each "Nu vreau" tap surfaces a DIFFERENT same-muscle
-  // candidate (no 2-element ping-pong). On exhaustion (every same-muscle option
-  // tried this session) the toast switches to "ai incercat tot pentru
-  // [muscleGroup]". Equipment paths unchanged (different semantic).
-  const applySwap = useCallback(
-    (engineName: string, kind: 'busy' | 'refusal'): void => {
+  // Names already present in / pending elsewhere in the session — never offered
+  // as a swap (no duplicate-in-session). Built fresh per open.
+  const otherSessionNames = useCallback((): string[] => {
+    return (exercises ?? [])
+      .filter((_, i) => i !== safeExIdx)
+      .map((ex) => ex.engineName ?? ex.name)
+      .filter((n): n is string => typeof n === 'string' && n.length > 0);
+  }, [exercises, safeExIdx]);
+
+  // Open the manual pick-list for the CURRENT exercise. `triedNames` (the per-
+  // slot refusal-tried set) drives the engine's diversify-modality ranking. Empty
+  // rows → still open the sheet (it shows the honest "no other exercise" copy +
+  // the drop row), so the user is never stranded. No-engineName fixture → legacy
+  // navigate fallback so the user is never stranded.
+  const openPickList = useCallback(
+    (fallbackPath: 'equipment-swap' | 'ceva-nu-merge'): void => {
       bumpActivity();
-      let res;
-      if (kind === 'busy') {
-        // BUG 5 — exclude every OTHER session exercise (already-completed
-        // earlier + still-pending later) so a busy-swap never returns a movement
-        // that exists elsewhere in the session (the "chest fly twice" bug).
-        const otherNames = (exercises ?? [])
-          .filter((_, i) => i !== safeExIdx)
-          .map((ex) => ex.engineName ?? ex.name)
-          .filter((n): n is string => typeof n === 'string' && n.length > 0);
-        res = resolveBusySwap(engineName, safeExIdx, otherNames);
-      } else {
-        // Refusal: build tried-set = the original we're about to swap out + all
-        // names previously refused at this slot. markRefusalTried below records
-        // the alternative we surface so the NEXT tap skips it. Daniel verbatim
-        // "nu sa dea doar 2 alternative" — pool walks the whole same-muscle
-        // library before exhausting.
-        // BUG 6 — also exclude every OTHER session exercise (already-completed +
-        // still-pending) so a refusal substitute never re-offers a movement that
-        // exists elsewhere in the session (Farmer's Walk offered twice / an already-
-        // logged curl re-offered). Mirrors the busy path's otherNames exclusion.
-        const otherNames = (exercises ?? [])
-          .filter((_, i) => i !== safeExIdx)
-          .map((ex) => ex.engineName ?? ex.name)
-          .filter((n): n is string => typeof n === 'string' && n.length > 0);
-        const triedNames = [
-          engineName,
-          ...otherNames,
-          ...(refusalTriedByEx[safeExIdx] ?? []),
-        ];
-        res = resolveRefusalSwap(engineName, safeExIdx, triedNames);
+      const engineName = currentExercise.engineName;
+      if (typeof engineName !== 'string' || engineName.length === 0) {
+        navigate(gotoPath(fallbackPath));
+        return;
       }
-      if (kind === 'refusal') {
-        // Preserve the existing refusal counter (threshold → "permanent?" flow).
+      const excludeNames = otherSessionNames();
+      const triedNames = [...(refusalTriedByEx[safeExIdx] ?? [])];
+      const { rows, muscleGroup, originalName } = resolveSwapPickList(
+        engineName,
+        safeExIdx,
+        excludeNames,
+        triedNames,
+      );
+      setPickSheet({ open: true, rows, muscleGroup, originalName });
+    },
+    [bumpActivity, currentExercise.engineName, otherSessionNames, refusalTriedByEx, safeExIdx, navigate],
+  );
+
+  const handleOcupat = useCallback((): void => {
+    openPickList('equipment-swap');
+  }, [openPickList]);
+
+  const handleNuVreau = useCallback((): void => {
+    openPickList('ceva-nu-merge');
+  }, [openPickList]);
+
+  const handleClosePick = useCallback((): void => {
+    setPickSheet(CLOSED_PICK);
+  }, []);
+
+  // Apply the user's manual pick — swap the current exercise in-place (real DP
+  // prescription, restart at set 1) + record the original + the chosen
+  // alternative in the per-slot tried-set so a SUBSEQUENT pick-list skips both
+  // (the diversify-modality ranking reads this). Increment the refusal counter
+  // (threshold "permanent?" flow) on the original, as the old refusal path did.
+  const handlePickRow = useCallback(
+    (row: SwapPickRow): void => {
+      bumpActivity();
+      const engineName = currentExercise.engineName;
+      if (typeof engineName === 'string' && engineName.length > 0) {
         incrementRefusal(engineName);
-        // Append the JUST-refused exercise to the per-exIdx tried-set so a
-        // subsequent "Nu vreau" tap doesn't re-offer it (idempotent on store).
         markRefusalTried(safeExIdx, engineName);
       }
-      if (kind === 'refusal' && res.poolExhausted) {
-        const groupLabel = res.muscleGroup ?? t('workout.swap.exhaustedFallbackGroup');
-        toast.show({
-          message: t('workout.swap.exhaustedPool', { group: groupLabel }),
-          variant: 'info',
-        });
-        return;
-      }
-      if (!res.swapped || res.exercise === null) {
-        toast.show({
-          message: t('workout.swap.noAlternative', { name: res.originalName }),
-          variant: 'info',
-        });
-        return;
-      }
-      const swapped = res.exercise;
+      const swapped = row.exercise;
       setExercises((prev) => {
         if (prev === null) return prev;
         const next = prev.slice();
         next[safeExIdx] = swapped;
         return next;
       });
-      swapExercise(safeExIdx, { id: swapped.id, name: swapped.name, ...(swapped.engineName !== undefined ? { engineName: swapped.engineName } : {}) });
-      // Refusal path: record the alternative we just surfaced so the NEXT
-      // "Nu vreau" tap on this slot skips it (Daniel exhaustive cycle).
-      if (kind === 'refusal' && typeof res.alternativeEngineName === 'string') {
-        markRefusalTried(safeExIdx, res.alternativeEngineName);
-      }
+      swapExercise(safeExIdx, {
+        id: swapped.id,
+        name: swapped.name,
+        ...(swapped.engineName !== undefined ? { engineName: swapped.engineName } : {}),
+      });
+      // Record the surfaced alternative so the NEXT pick-list at this slot skips
+      // it (no re-offer) and reads it as an already-tried modality.
+      markRefusalTried(safeExIdx, row.engineName);
+      setPickSheet(CLOSED_PICK);
       toast.show({
-        message:
-          kind === 'busy'
-            ? t('workout.swap.swappedBusy', { original: res.originalName, alt: res.alternativeName })
-            : t('workout.swap.swappedRefusal', { original: res.originalName, alt: res.alternativeName }),
+        message: t('workout.swap.swappedPick', {
+          original: pickSheet.originalName || row.engineName,
+          alt: row.displayName,
+        }),
         variant: 'success',
       });
     },
-    [bumpActivity, safeExIdx, swapExercise, refusalTriedByEx, markRefusalTried, exercises, setExercises]
+    [bumpActivity, currentExercise.engineName, markRefusalTried, safeExIdx, setExercises, swapExercise, pickSheet.originalName],
   );
 
+  // Drop the WHOLE exercise from today's session (pick-list "I don't want to do
+  // this"). Index-stable store drop (marks the slot dropped + clears its partial
+  // history; never splices the array) + advance past it. The dropped exercise
+  // stays recoverable via the skipped-exercises strip (restoreExercise).
+  const handleDropExercise = useCallback((): void => {
+    bumpActivity();
+    const identity = {
+      id: currentExercise.id,
+      name: pickSheet.originalName || currentExercise.name,
+      ...(currentExercise.engineName !== undefined ? { engineName: currentExercise.engineName } : {}),
+    };
+    dropExercise(safeExIdx, identity);
+    setPickSheet(CLOSED_PICK);
+    toast.show({
+      message: t('workout.swap.dropped', { name: identity.name }),
+      variant: 'info',
+    });
+    advanceOrFinish();
+  }, [bumpActivity, currentExercise, pickSheet.originalName, dropExercise, safeExIdx, advanceOrFinish]);
+
   // Daniel smoke 2026-05-28 #17 — in-session aparat-lipsa save flow. The sheet
-  // already persisted the new list (single SoT = wv2-missing-equipment local
-  // storage, read by Cont -> AparateLipsa next mount), so we only need to (a)
-  // close the sheet, (b) check if the new list blocks the CURRENT exercise's
-  // equipment and, if so, swap it in-place via resolveMissingSwap — same UX
-  // contract as Aparat ocupat (NAMED alternative + toast). When the current
-  // exercise is still performable, no swap, no toast — quiet success.
+  // already persisted the new list; we (a) close the sheet, (b) check if the new
+  // list blocks the CURRENT exercise's equipment and, if so, swap it in-place via
+  // resolveMissingSwap — a hard equipment constraint, not a free choice, so it
+  // stays a direct NAMED swap (unchanged from prior behaviour).
   const handleAparatLipsaConfirm = useCallback(
     (_missing: readonly string[]): void => {
       setAparatLipsaSheetOpen(false);
       bumpActivity();
       const engineName = currentExercise.engineName;
       if (typeof engineName !== 'string' || engineName.length === 0) return;
-      // BUG 5 — exclude every other session exercise so the missing-equipment
-      // swap never duplicates a movement that exists elsewhere in the session.
-      const otherNames = (exercises ?? [])
-        .filter((_, i) => i !== safeExIdx)
-        .map((ex) => ex.engineName ?? ex.name)
-        .filter((n): n is string => typeof n === 'string' && n.length > 0);
+      const otherNames = otherSessionNames();
       const res = resolveMissingSwap(engineName, safeExIdx, otherNames);
-      // resolveMissingSwap returns swapped=false when the original is still
-      // performable with the new missing list (no equipment overlap). Honest
-      // noAlt when the user has marked so much missing that nothing works —
-      // toast tells them, mirrors Aparat ocupat path.
       if (!res.swapped || res.exercise === null) {
         if (res.noAlt) {
           toast.show({
@@ -194,7 +227,7 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         variant: 'success',
       });
     },
-    [bumpActivity, currentExercise.engineName, safeExIdx, swapExercise, exercises, setExercises]
+    [bumpActivity, currentExercise.engineName, safeExIdx, swapExercise, otherSessionNames, setExercises]
   );
 
   const handleOpenAparatLipsa = useCallback((): void => {
@@ -206,30 +239,14 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
     setAparatLipsaSheetOpen(false);
   }, []);
 
-  const handleOcupat = useCallback((): void => {
-    const engineName = currentExercise.engineName;
-    if (typeof engineName !== 'string' || engineName.length === 0) {
-      // No canonical name (defensive — pre-WP-5 fixture) → fall back to the old
-      // navigate path so the user is never stranded.
-      navigate(gotoPath('equipment-swap'));
-      return;
-    }
-    applySwap(engineName, 'busy');
-  }, [currentExercise.engineName, applySwap, navigate]);
-
-  const handleNuVreau = useCallback((): void => {
-    const engineName = currentExercise.engineName;
-    if (typeof engineName !== 'string' || engineName.length === 0) {
-      navigate(gotoPath('ceva-nu-merge'));
-      return;
-    }
-    applySwap(engineName, 'refusal');
-  }, [currentExercise.engineName, applySwap, navigate]);
-
   return {
     aparatLipsaSheetOpen,
+    pickSheet,
     handleOcupat,
     handleNuVreau,
+    handlePickRow,
+    handleDropExercise,
+    handleClosePick,
     handleOpenAparatLipsa,
     handleCloseAparatLipsa,
     handleAparatLipsaConfirm,

@@ -27,10 +27,11 @@
 //   - mockup andura-clasic.html screen-workout wv2 reference
 
 import type { JSX } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HelpCircle, Images, ChevronDown } from 'lucide-react';
 import { AparatLipsaSheet } from '../../../components/Workout/AparatLipsaSheet';
+import { SwapPickSheet } from '../../../components/Workout/SwapPickSheet';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { coachPick } from '../../../lib/coachVoice';
@@ -113,6 +114,10 @@ export function Workout(): JSX.Element {
   const discardSession = useWorkoutStore((s) => s.discardSession);
   const markPRHit = useWorkoutStore((s) => s.markPRHit);
   const swapExercise = useWorkoutStore((s) => s.swapExercise);
+  // Founder swap redesign 2026-06-05 — drop/restore exercise (pick-list).
+  const dropExercise = useWorkoutStore((s) => s.dropExercise);
+  const restoreExercise = useWorkoutStore((s) => s.restoreExercise);
+  const droppedExercises = useWorkoutStore((s) => s.droppedExercises);
   // Daniel smoke 2026-05-28 (#2 + #6) — per-exIdx refusal-tried set + mutation.
   const refusalTriedByEx = useWorkoutStore((s) => s.refusalTriedByEx);
   const markRefusalTried = useWorkoutStore((s) => s.markRefusalTried);
@@ -680,14 +685,19 @@ export function Workout(): JSX.Element {
     advanceOrFinish();
   }, [bumpActivity, advanceOrFinish]);
 
-  // WP-5 moat — in-place substitution (Aparat ocupat / Nu vreau / Aparat lipsa)
-  // for the CURRENT exercise. Extracted to useWorkoutSwap (behavior preserved):
-  // owns aparatLipsaSheetOpen + applySwap + the three handlers. All useCallback/
-  // useState (no effects) so effect order is unchanged.
+  // Founder swap redesign 2026-06-05 — in-session substitution for the CURRENT
+  // exercise. "Aparat ocupat" + "Nu vreau" open a SHORT manual pick-list sheet
+  // (handleOcupat/handleNuVreau → pickSheet); the user picks a row (handlePickRow)
+  // or drops the exercise (handleDropExercise). Aparat lipsa stays a direct
+  // equipment swap. All useCallback/useState (no effects) so effect order holds.
   const {
     aparatLipsaSheetOpen,
+    pickSheet,
     handleOcupat,
     handleNuVreau: handleRefusalSwap,
+    handlePickRow,
+    handleDropExercise,
+    handleClosePick,
     handleOpenAparatLipsa,
     handleCloseAparatLipsa,
     handleAparatLipsaConfirm,
@@ -698,8 +708,10 @@ export function Workout(): JSX.Element {
     refusalTriedByEx,
     markRefusalTried,
     swapExercise,
+    dropExercise,
     setExercises,
     bumpActivity,
+    advanceOrFinish,
     navigate,
   });
 
@@ -738,6 +750,26 @@ export function Workout(): JSX.Element {
     }
     handleRefusalSwap();
   }, [bumpActivity, currentSetIdx, hasWorkout, currentExercise, advanceOrFinish, handleRefusalSwap]);
+
+  // Founder swap redesign 2026-06-05 — bring a dropped exercise back (its machine
+  // freed up). restoreExercise clears the drop marker + jumps the session to that
+  // slot fresh. The dropped exercise's identity is shown in the skipped strip.
+  const handleRestoreExercise = useCallback(
+    (slotIdx: number, name: string): void => {
+      bumpActivity();
+      restoreExercise(slotIdx);
+      toast.show({ message: t('workout.swap.restored', { name }), variant: 'success' });
+    },
+    [bumpActivity, restoreExercise],
+  );
+  // Stable, render-ordered list of dropped slots for the skipped strip.
+  const droppedSlots = useMemo(
+    () =>
+      Object.entries(droppedExercises)
+        .map(([k, v]) => ({ slotIdx: Number(k), ...v }))
+        .sort((a, b) => a.slotIdx - b.slotIdx),
+    [droppedExercises],
+  );
 
   // §F-workout-05 — open the why-exercise explainer. Builds engine context on
   // tap (current readiness + recommendation kg vs last logged kg) so the verdict
@@ -1050,6 +1082,34 @@ export function Workout(): JSX.Element {
             onNuVreau={handleNuVreau}
           />
 
+          {/* Founder swap redesign 2026-06-05 — skipped-exercises strip. An
+              exercise dropped via the pick-list "I don't want to do this" row
+              stays RETRIEVABLE: when the machine frees up the user taps "Adauga
+              la loc" to bring it back (restoreExercise jumps the session to it
+              fresh). Least-intrusive: a compact chip row, shown only when there
+              is something to restore. */}
+          {droppedSlots.length > 0 && (
+            <div className="mb-4" data-testid="skipped-strip">
+              <p className="text-xs font-medium text-ink3 mb-1.5">
+                {t('workout.swap.skippedTitle')}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {droppedSlots.map((slot) => (
+                  <button
+                    key={slot.slotIdx}
+                    type="button"
+                    onClick={() => handleRestoreExercise(slot.slotIdx, slot.name)}
+                    data-testid={`skipped-restore-${slot.slotIdx}`}
+                    className="pulse-card pulse-card-tight flex items-center gap-1.5 px-3 py-1.5 text-xs text-ink2"
+                  >
+                    <span className="font-medium text-ink truncate max-w-[10rem]">{slot.name}</span>
+                    <span className="text-brick">{t('workout.swap.skippedRestore')}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <p className="text-sm text-ink2 mb-2">
             {t('workout.setLabel', { current: currentSetIdx + 1, total: currentExercise.sets })}
           </p>
@@ -1216,6 +1276,20 @@ export function Workout(): JSX.Element {
         open={aparatLipsaSheetOpen}
         onConfirm={handleAparatLipsaConfirm}
         onClose={handleCloseAparatLipsa}
+      />
+
+      {/* Founder swap redesign 2026-06-05 — manual swap pick-list. "Aparat
+          ocupat" / "Nu vreau" open this short ranked same-muscle list (row 1 =
+          smart pre-pick, exactly one bodyweight fallback) + a separated drop row
+          that removes the exercise from today's session (recoverable below). */}
+      <SwapPickSheet
+        open={pickSheet.open}
+        muscleGroup={pickSheet.muscleGroup}
+        originalName={pickSheet.originalName}
+        rows={pickSheet.rows}
+        onPick={handlePickRow}
+        onDrop={handleDropExercise}
+        onClose={handleClosePick}
       />
 
       {/* §F-workout-05 — why-exercise explainer bottom sheet. Mockup
