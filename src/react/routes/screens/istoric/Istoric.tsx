@@ -11,8 +11,9 @@
 // <mon>" pentru cititor casnic; numeric DD.MM.YYYY retras (jargon-numeric).
 
 import type { JSX } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { History, Flame, Trophy, type LucideIcon } from 'lucide-react';
+import { History, Flame, Trophy, ChevronDown, type LucideIcon } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { getPRHistoryAll, getStreakStats } from '../../../lib/prHistoryAggregate';
 import { CalendarHeatmap } from '../../../components/Istoric/CalendarHeatmap';
@@ -54,6 +55,10 @@ export function Istoric(): JSX.Element {
   // Phase 6 task_23 enrich aggregates
   const stats = getStreakStats();
   const prHistory = getPRHistoryAll();
+
+  // Founder UX 2026-06-06 — which record row is expanded (collapsed by default
+  // so the records list stays compact). Single-open accordion; null = all closed.
+  const [openRecord, setOpenRecord] = useState<number | null>(null);
 
   return (
     <section
@@ -121,19 +126,44 @@ export function Istoric(): JSX.Element {
               {t('istoric.landing.seeAll')}
             </button>
           </div>
+          {/* Founder UX 2026-06-06 — records are COLLAPSED by default: each row
+              shows just the exercise name + a chevron, so a 10+ record wall no
+              longer makes the page endless. Tapping a row reveals its detail
+              (kg x reps ~1RM). All data stays accessible, just one tap deeper. */}
           <ul className="flex flex-col gap-2">
-            {prHistory.map((pr, idx) => (
-              <li
-                key={`${pr.exerciseId}-${pr.sessionTs}-${idx}`}
-                data-testid={`pr-row-${idx}`}
-                className="pulse-card pulse-card-tight flex justify-between items-center p-3"
-              >
-                <span className="text-sm font-medium text-ink">{pr.exerciseName}</span>
-                <span className="font-mono text-[13px] text-ink2">
-                  {t('istoric.landing.recordSummary', { kg: pr.kg, reps: pr.reps, oneRM: pr.oneRMEstimate })}
-                </span>
-              </li>
-            ))}
+            {prHistory.map((pr, idx) => {
+              const open = openRecord === idx;
+              return (
+                <li
+                  key={`${pr.exerciseId}-${pr.sessionTs}-${idx}`}
+                  data-testid={`pr-row-${idx}`}
+                  className="pulse-card pulse-card-tight overflow-hidden"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenRecord(open ? null : idx)}
+                    data-testid={`pr-row-toggle-${idx}`}
+                    aria-expanded={open}
+                    className="w-full flex justify-between items-center gap-2 p-3 text-left"
+                  >
+                    <span className="text-sm font-medium text-ink truncate">{pr.exerciseName}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 flex-shrink-0 text-ink3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+                      strokeWidth={1.8}
+                      aria-hidden="true"
+                    />
+                  </button>
+                  {open && (
+                    <p
+                      data-testid={`pr-row-detail-${idx}`}
+                      className="font-mono text-[13px] text-ink2 px-3 pb-3 -mt-1 animate-fade-in-up"
+                    >
+                      {t('istoric.landing.recordSummary', { kg: pr.kg, reps: pr.reps, oneRM: pr.oneRMEstimate })}
+                    </p>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </section>
       )}

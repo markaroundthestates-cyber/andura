@@ -7,6 +7,8 @@ import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Istoric } from '../../../routes/screens/istoric/Istoric';
 import { IstoricDetail } from '../../../routes/screens/istoric/IstoricDetail';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { DB } from '../../../../db.js';
+import type { PRRecordEntry } from '../../../lib/prRecordsWriteback';
 import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function LocationProbe(): JSX.Element {
@@ -396,5 +398,59 @@ describe('Istoric — D-LEGACY-064 no-diacritics', () => {
     });
     const { container } = renderIstoric();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+});
+
+// Founder UX 2026-06-06 — the "Records (N)" landing section is COLLAPSED by
+// default: each row shows only the exercise name + chevron, and the detail
+// (kg x reps ~1RM) reveals on tap. Records read from the curated pr-records
+// SSOT (same source as the PR Wall).
+function prRecord(ts: number, ex: string, kg: number, reps: number): PRRecordEntry {
+  return { ex, kg, reps, date: new Date(ts).toISOString().slice(0, 10), ts, score: kg * reps };
+}
+
+describe('Istoric — Records section collapse-by-default', () => {
+  beforeEach(() => {
+    resetStore();
+    DB.set('pr-records', [
+      prRecord(1700200000000, 'Bench Press', 60, 5),
+      prRecord(1700100000000, 'Squat', 100, 3),
+    ]);
+  });
+
+  afterEach(() => {
+    try { DB.set('pr-records', []); } catch { /* noop */ }
+  });
+
+  it('renders a row per record but NO detail preview by default', () => {
+    renderIstoric();
+    expect(screen.getByTestId('pr-row-0')).toBeInTheDocument();
+    expect(screen.getByTestId('pr-row-1')).toBeInTheDocument();
+    // Collapsed: the kg x reps detail is not in the tree.
+    expect(screen.queryByTestId('pr-row-detail-0')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pr-row-detail-1')).not.toBeInTheDocument();
+    // Toggle starts collapsed.
+    expect(screen.getByTestId('pr-row-toggle-0')).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('tapping a row expands ONLY that record detail', () => {
+    renderIstoric();
+    fireEvent.click(screen.getByTestId('pr-row-toggle-0'));
+    expect(screen.getByTestId('pr-row-detail-0')).toBeInTheDocument();
+    expect(screen.getByTestId('pr-row-toggle-0')).toHaveAttribute('aria-expanded', 'true');
+    // The detail shows the real kg x reps (~1RM) summary.
+    expect(screen.getByTestId('pr-row-detail-0').textContent).toMatch(/60 kg/);
+    // The other record stays collapsed (single-open accordion).
+    expect(screen.queryByTestId('pr-row-detail-1')).not.toBeInTheDocument();
+  });
+
+  it('tapping an open row collapses it again', () => {
+    renderIstoric();
+    const toggle = screen.getByTestId('pr-row-toggle-0');
+    fireEvent.click(toggle);
+    expect(screen.getByTestId('pr-row-detail-0')).toBeInTheDocument();
+    fireEvent.click(toggle);
+    expect(screen.queryByTestId('pr-row-detail-0')).not.toBeInTheDocument();
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
   });
 });
