@@ -3,6 +3,8 @@ import { MS_PER_DAY, MS_PER_HOUR } from '../../constants.js';
 import {
   getRecoveryByGroup,
   daysSinceGroup,
+  hoursSinceGroup,
+  getGroupRecoveryDetail,
   getLaggingMuscles,
   GROUP_HEAD_MAP,
   GROUP_HEAD_MAP_BIG11,
@@ -67,6 +69,53 @@ describe('daysSinceGroup (Big 11 canonical V1)', () => {
     ];
     expect(daysSinceGroup(logs, 'piept')).toBe(3);
     expect(daysSinceGroup(logs, 'umeri')).toBeLessThanOrEqual(1);
+  });
+});
+
+describe('hoursSinceGroup — sub-day elapsed precision (Big 11 canonical V1)', () => {
+  // Real wall-clock anchors: trained yesterday 18:00, checked next morning 07:00.
+  // That is 13h of rest — sub-minimal for the SAME group — yet a day-floored
+  // model reads "yesterday"/0-1 days and treats it as a full rest day.
+  const yesterday1800 = new Date('2026-06-04T18:00:00').getTime();
+  const today0700 = new Date('2026-06-05T07:00:00').getTime();
+
+  it('returns null when no logs hit the group', () => {
+    expect(hoursSinceGroup([], 'picioare-quads')).toBeNull();
+  });
+
+  it('reports the REAL 13h gap for an 18:00 -> next-day 07:00 leg session', () => {
+    const logs = [{ ex: 'Leg Press', w: 120, reps: 8, rpe: 9, ts: yesterday1800 }];
+    const hours = hoursSinceGroup(logs, 'picioare-quads', today0700);
+    expect(hours).toBeCloseTo(13, 5);
+    // Where the day-floored signal hides it: floor(13h) -> 0 whole days.
+    expect(daysSinceGroup(logs, 'picioare-quads', today0700)).toBe(0);
+  });
+});
+
+describe('getGroupRecoveryDetail — exposed {state, elapsedHours} signal', () => {
+  // Same 18:00 -> 07:00 (13h) leg session. quad recoveryHours=96h, so 13h is deep
+  // sub-minimal: the group must NOT read 'recovered', and elapsedHours must be the
+  // real ~13 (not floored to a day).
+  const yesterday1800 = new Date('2026-06-04T18:00:00').getTime();
+  const today0700 = new Date('2026-06-05T07:00:00').getTime();
+  const legLogs = [
+    { ex: 'Leg Press', w: 120, reps: 8, rpe: 9, ts: yesterday1800 },
+    { ex: 'Leg Extension', w: 60, reps: 10, rpe: 8, ts: yesterday1800 },
+  ];
+
+  it('exposes real elapsedHours and a non-recovered state for a 13h-rested group', () => {
+    const detail = getGroupRecoveryDetail(legLogs, undefined, today0700);
+    expect(detail['picioare-quads'].elapsedHours).toBeCloseTo(13, 5);
+    expect(['partial', 'fatigued']).toContain(detail['picioare-quads'].state);
+    expect(detail['picioare-quads'].state).not.toBe('recovered');
+  });
+
+  it('reports every Big-11 group; untrained groups recovered with null elapsedHours', () => {
+    const detail = getGroupRecoveryDetail(legLogs, undefined, today0700);
+    expect(Object.keys(detail).sort()).toEqual(BIG11_GROUPS.slice().sort());
+    // piept never trained in legLogs => recovered, no elapsed time.
+    expect(detail.piept.state).toBe('recovered');
+    expect(detail.piept.elapsedHours).toBeNull();
   });
 });
 

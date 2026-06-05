@@ -56,6 +56,17 @@ export function getRecoveryByGroup(
   now?: number
 ): Record<string, RecoveryState>;
 export function daysSinceGroup(logs: LogEntry[], group: string, now?: number): number | null;
+export function hoursSinceGroup(logs: LogEntry[], group: string, now?: number): number | null;
+
+export interface GroupRecoveryDetail {
+  state: RecoveryState;
+  elapsedHours: number | null;
+}
+export function getGroupRecoveryDetail(
+  logs: LogEntry[],
+  painEntries?: PainCdlEntry[],
+  now?: number
+): Record<string, GroupRecoveryDetail>;
 export function getLaggingMuscles(
   profile: { logs?: LogEntry[]; lookbackDays?: number; now?: number } | null | undefined
 ): LaggingMuscle[];

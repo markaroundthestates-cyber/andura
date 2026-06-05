@@ -17,7 +17,7 @@
 // fatigued=0.60) cataloged for cross-engine audit gate.
 
 import { EXERCISE_MUSCLES, getMuscleState } from './muscleMap.js';
-import { MS_PER_DAY } from '../constants.js';
+import { MS_PER_DAY, MS_PER_HOUR } from '../constants.js';
 import {
   GROUP_HEAD_MAP_BIG11,
   GROUP_LABELS_RO_BIG11,
@@ -238,13 +238,17 @@ function applyPainEscalation(groupState, painEntries, now = Date.now()) {
 }
 
 /**
- * Days since last session targeting a given group.
+ * Most-recent timestamp (epoch ms) of a session that touched a given group, or
+ * null if the group was never trained. Single source of truth for the
+ * elapsed-time helpers below: session.ts is epoch ms and carries time-of-day, so
+ * the raw timestamp preserves sub-day (hour-level) precision that day-floored
+ * callers would otherwise lose. Pure.
+ *
  * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs
  * @param {string} group
- * @param {number} [now] — reference timestamp (default Date.now); inject for deterministic testing
- * @returns {number|null} — null if never trained
+ * @returns {number|null} — epoch ms of the last-trained session, or null if never trained
  */
-export function daysSinceGroup(logs, group, now = Date.now()) {
+function lastTrainedTsForGroup(logs, group) {
   const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP);
   const heads = new Set(headMap[group] || []);
   if (heads.size === 0) return null;
@@ -260,8 +264,71 @@ export function daysSinceGroup(logs, group, now = Date.now()) {
     const ts = log.ts || (log.date ? new Date(log.date).getTime() : 0);
     if (ts > latest) latest = ts;
   }
-  if (latest === 0) return null;
+  return latest === 0 ? null : latest;
+}
+
+/**
+ * REAL elapsed HOURS since the last session targeting a given group (NOT floored
+ * to whole days). This is the honest rest-gap signal: a session at 18:00 read at
+ * 07:00 the next morning is ~13h — sub-minimal for the same group — even though
+ * daysSinceGroup would floor it to 0/1 "day" and read it as a full rest. Pairs
+ * with getRecoveryByGroup (which already decays per-hour) so the daily plan and
+ * narrative speak the same hour-accurate truth.
+ *
+ * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs
+ * @param {string} group
+ * @param {number} [now] — reference timestamp (default Date.now); inject for deterministic testing
+ * @returns {number|null} — elapsed hours (float), or null if never trained
+ */
+export function hoursSinceGroup(logs, group, now = Date.now()) {
+  const latest = lastTrainedTsForGroup(logs, group);
+  if (latest === null) return null;
+  return (now - latest) / MS_PER_HOUR;
+}
+
+/**
+ * Days since last session targeting a given group (floored). Kept for callers
+ * that genuinely want whole-day buckets; derives from the same last-trained
+ * timestamp as hoursSinceGroup (single source of truth).
+ *
+ * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs
+ * @param {string} group
+ * @param {number} [now] — reference timestamp (default Date.now); inject for deterministic testing
+ * @returns {number|null} — null if never trained
+ */
+export function daysSinceGroup(logs, group, now = Date.now()) {
+  const latest = lastTrainedTsForGroup(logs, group);
+  if (latest === null) return null;
   return Math.floor((now - latest) / MS_PER_DAY);
+}
+
+/**
+ * Per-group recovery DETAIL — the clean machine signal a narrative layer words.
+ * For every Big-11 group, exposes BOTH the recovery `state`
+ * ('recovered'|'partial'|'fatigued', already hour-accurate via getMuscleState's
+ * per-hour decay) AND the REAL `elapsedHours` since that group was last trained
+ * (null if never trained). No copy here — the narrative agent decides whether to
+ * say "13h" / "yesterday" / "fresh" from these numbers.
+ *
+ * Sub-minimal rest surfaces honestly: a group trained 13h ago reads
+ * elapsedHours≈13 with state 'partial'/'fatigued' (never a false 'recovered').
+ *
+ * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs
+ * @param {Array<{type?: string, region?: string, intensity?: 1|2|3, ts?: number}>} [painEntries]
+ * @param {number} [now] — reference timestamp (default Date.now); inject for deterministic testing
+ * @returns {{[group:string]: {state: 'recovered'|'partial'|'fatigued', elapsedHours: number|null}}}
+ */
+export function getGroupRecoveryDetail(logs, painEntries, now = Date.now()) {
+  const groupState = getRecoveryByGroup(logs, painEntries, now);
+  /** @type {{[group:string]: {state: 'recovered'|'partial'|'fatigued', elapsedHours: number|null}}} */
+  const detail = {};
+  for (const group of Object.keys(groupState)) {
+    detail[group] = {
+      state: groupState[group],
+      elapsedHours: hoursSinceGroup(logs, group, now),
+    };
+  }
+  return detail;
 }
 
 /**
