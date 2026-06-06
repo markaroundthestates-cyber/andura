@@ -44,8 +44,11 @@ export interface DebugSnapshot {
 }
 
 /** Discrete things worth recording. `tap` = universal click capture; the rest
- *  are surgically-wired semantic events at their existing call sites. */
-export type DebugEventKind = 'tap' | 'rec' | 'log' | 'swap' | 'skip';
+ *  are surgically-wired semantic events at their existing call sites.
+ *  `adjust` = the engine's post-input re-recommendation for the NEXT set (the
+ *  step-by-step "after you entered X + rated Y, Andura now recommends Z" trace
+ *  the founder needs to calibrate — D107 phase 2 enrichment). */
+export type DebugEventKind = 'tap' | 'rec' | 'log' | 'adjust' | 'swap' | 'skip';
 
 export interface DebugEvent {
   /** epoch ms */

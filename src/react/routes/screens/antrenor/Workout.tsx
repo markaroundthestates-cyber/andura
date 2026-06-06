@@ -432,9 +432,25 @@ export function Workout(): JSX.Element {
   // never throws (debugLog fully wrapped).
   useEffect(() => {
     if (!hasWorkout) return;
+    // source = whether this starting rec is a cold-start (no prior engine state
+    // for this exercise → lastW===0) vs adapted from history. Cheap: DP.getState
+    // on the ENGINE key is already read for noExerciseHistory above. Bodyweight
+    // has no external-load state, so it reports 'history' (its rep flow adapts).
+    // 'calibrated' is not cheaply derivable from DP state → not surfaced here.
+    let source: 'coldstart' | 'history' = 'history';
+    try {
+      if (!currentExercise.isBodyweight && currentExercise.name !== '') {
+        source =
+          DP.getState(currentExercise.engineName ?? currentExercise.name).lastW === 0
+            ? 'coldstart'
+            : 'history';
+      }
+    } catch {
+      /* omit on any failure — capture must never break the screen */
+    }
     debugLog.event(
       'rec',
-      { exercise: currentExercise.name, setIdx: currentSetIdx + 1, recKg, recReps },
+      { exercise: currentExercise.name, setIdx: currentSetIdx + 1, recKg, recReps, source },
       { route: '/app/antrenor/workout', exercise: currentExercise.name, setIdx: currentSetIdx + 1, shownKg: recKg, shownReps: recReps },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -493,12 +509,30 @@ export function Workout(): JSX.Element {
       ...(currentExercise.isBodyweight ? { addedKg: kgInput } : {}),
     });
 
-    // D107 phase 1 — permanent interaction-log: the set the user just logged
-    // (effective kg + reps + rating), plus the rec they saw. No-op when the
+    // D107 — permanent interaction-log: the set the user just logged paired
+    // with the recommendation ACTIVE for that set + the computed discrepancy, so
+    // RECOMMENDED-vs-ENTERED is visible at a glance (the fuel for calibrating the
+    // engine). recKg/recReps = what Andura recommended; effKg/repsInput = what
+    // the user entered; deltaKg/deltaReps = the discrepancy; wasManualOverride =
+    // the user edited the prefilled target (inputDirty). No-op when the
     // `andura-debug` flag is OFF; never throws (debugLog is fully wrapped).
     debugLog.event(
       'log',
-      { exercise: currentExercise.name, kg: effKg, reps: repsInput, rating },
+      {
+        exercise: currentExercise.name,
+        setIdx: currentSetIdx + 1,
+        recKg,
+        recReps,
+        enteredKg: effKg,
+        enteredReps: repsInput,
+        rating,
+        deltaKg: effKg - recKg,
+        deltaReps: repsInput - recReps,
+        wasManualOverride: inputDirty,
+        // Keep the phase-1 `kg`/`reps` keys so prior consumers/exports stay readable.
+        kg: effKg,
+        reps: repsInput,
+      },
       { route: '/app/antrenor/workout', exercise: currentExercise.name, setIdx: currentSetIdx + 1, shownKg: recKg, shownReps: recReps },
     );
 
@@ -606,6 +640,30 @@ export function Workout(): JSX.Element {
       } else {
         setAdjustNotice(null);
       }
+
+      // D107 — capture the engine's post-input RE-RECOMMENDATION for the NEXT
+      // set: "after you entered X and rated Y, Andura now recommends Z" (or that
+      // it held). fromRecKg/fromRecReps = the rec active for the set just logged
+      // (recKg/recReps before any mutation above); toRecKg/toRecReps = the next
+      // set's rec (the engine's correction, falling back to the held value).
+      // dir = 'up' | 'down' | 'hold'. This makes the engine's response-to-input
+      // visible step by step. No-op when flag OFF; never throws.
+      debugLog.event(
+        'adjust',
+        {
+          exercise: currentExercise.name,
+          setIdx: currentSetIdx + 1,
+          fromRecKg: recKg,
+          fromRecReps: recReps,
+          enteredKg: effKg,
+          rating,
+          toRecKg: adjust.adjust && typeof adjust.newKg === 'number' ? adjust.newKg : recKg,
+          toRecReps: adjust.adjust && typeof adjust.newReps === 'number' ? adjust.newReps : recReps,
+          dir: adjust.adjust ? (adjust.dir ?? 'up') : 'hold',
+          reason: adjust.adjust ? (adjust.msg ?? null) : 'no-adjust',
+        },
+        { route: '/app/antrenor/workout', exercise: currentExercise.name, setIdx: currentSetIdx + 1, shownKg: recKg, shownReps: recReps },
+      );
     }
 
     if (isLastSetOfExercise) {

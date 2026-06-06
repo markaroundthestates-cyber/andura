@@ -112,6 +112,96 @@ describe('debugLog — semantic log event', () => {
   });
 });
 
+// ── D107 enrichment: RECOMMENDED-vs-ENTERED discrepancy + step-by-step adapt ──
+// These mirror the exact payload shapes Workout.tsx now emits, with REAL values
+// (recommended 15, entered 30 → deltaKg 15, manual override) so the founder can
+// see rec-vs-entered-vs-discrepancy and the engine's response-to-input.
+describe('debugLog — D107 discrepancy + re-recommendation enrichment', () => {
+  it("'log' pairs the active rec onto the entry + computes deltas + manual-override (rec 15, entered 30)", () => {
+    setDebugEnabled(true);
+    debugLog.event('log', {
+      exercise: 'Bench Press',
+      setIdx: 1,
+      recKg: 15,
+      recReps: 10,
+      enteredKg: 30,
+      enteredReps: 8,
+      rating: 'ok',
+      deltaKg: 30 - 15,
+      deltaReps: 8 - 10,
+      wasManualOverride: true,
+      kg: 30,
+      reps: 8,
+    });
+    const e = debugLog.snapshot()[0]!;
+    expect(e.kind).toBe('log');
+    expect(e.payload?.recKg).toBe(15);
+    expect(e.payload?.enteredKg).toBe(30);
+    expect(e.payload?.deltaKg).toBe(15);
+    expect(e.payload?.deltaReps).toBe(-2);
+    expect(e.payload?.wasManualOverride).toBe(true);
+    // Phase-1 kg/reps keys preserved for prior export readability.
+    expect(e.payload?.kg).toBe(30);
+  });
+
+  it("'adjust' records the engine's post-input next-set re-recommendation (up)", () => {
+    setDebugEnabled(true);
+    debugLog.event('adjust', {
+      exercise: 'Bench Press',
+      setIdx: 1,
+      fromRecKg: 60,
+      fromRecReps: 8,
+      enteredKg: 60,
+      rating: 'usor',
+      toRecKg: 62.5,
+      toRecReps: 8,
+      dir: 'up',
+      reason: 'A mers usor - urcam la 62.5 kg pe setul urmator',
+    });
+    const e = debugLog.snapshot()[0]!;
+    expect(e.kind).toBe('adjust');
+    expect(e.payload?.fromRecKg).toBe(60);
+    expect(e.payload?.toRecKg).toBe(62.5);
+    expect(e.payload?.dir).toBe('up');
+  });
+
+  it("'adjust' records a HOLD when the engine did not re-recommend", () => {
+    setDebugEnabled(true);
+    debugLog.event('adjust', {
+      exercise: 'Bench Press',
+      setIdx: 1,
+      fromRecKg: 60,
+      fromRecReps: 8,
+      enteredKg: 60,
+      rating: 'ok',
+      toRecKg: 60,
+      toRecReps: 8,
+      dir: 'hold',
+      reason: 'no-adjust',
+    });
+    const e = debugLog.snapshot()[0]!;
+    expect(e.payload?.dir).toBe('hold');
+    expect(e.payload?.toRecKg).toBe(e.payload?.fromRecKg);
+  });
+
+  it("'rec' carries the starting-recommendation source (coldstart vs history)", () => {
+    setDebugEnabled(true);
+    debugLog.event('rec', { exercise: 'Bench Press', setIdx: 1, recKg: 40, recReps: 10, source: 'coldstart' });
+    const e = debugLog.snapshot()[0]!;
+    expect(e.kind).toBe('rec');
+    expect(e.payload?.source).toBe('coldstart');
+  });
+
+  it('flag OFF → enriched events still record nothing + export stays valid JSON', () => {
+    debugLog.event('log', { exercise: 'Bench Press', recKg: 15, enteredKg: 30, deltaKg: 15, wasManualOverride: true });
+    debugLog.event('adjust', { exercise: 'Bench Press', dir: 'up', toRecKg: 62.5 });
+    expect(debugLog.snapshot()).toHaveLength(0);
+    const parsed = JSON.parse(debugLog.exportJson()) as { v: number; events: unknown[] };
+    expect(parsed.v).toBe(1);
+    expect(parsed.events).toHaveLength(0);
+  });
+});
+
 // ── Universal tap capture (useDebugCapture in Layout) ───────────────────────
 function Harness(): JSX.Element {
   useDebugCapture();
