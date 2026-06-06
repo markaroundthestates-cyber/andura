@@ -185,7 +185,36 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     ? pickAlternativeCluster(scheduledCluster, overrideRecoveryState)
     : scheduledCluster;
   const split = frequencyToSplit(activeWeek.filter(Boolean).length || 1, focusPreset);
+  // DE-EMPHASIZED divisor fix (D-focus-divisor 2026-06-06): the per-session set
+  // budget = weeklyBudget / weeklySessionsPerGroup[group]. A v-taper collapses the
+  // lower body from 2 leg days → 1, dropping the leg divisor 2→1, so the (already
+  // de-emphasized) weekly leg budget lands ENTIRELY on the single remaining leg day
+  // → a FATTER session than balanced (≈29 vs ≈25 sets), the opposite of "lighten
+  // legs" (founder live 2026-06-06: "powerlifter legs, could barely walk"). Fix:
+  // keep a DE-EMPHASIZED group's divisor at the BALANCED session count (the count
+  // before focus collapsed the days), so the lone leg day stays ~light (≈half the
+  // weekly budget) instead of absorbing the whole week. Net intent: a v-taper leg
+  // day's volume ≤ a balanced leg day, never more. EMPHASIZED + neutral groups are
+  // untouched; balanced (deEmphSet empty) → identical to pre-fix.
   const sessionsPerGroup = weeklySessionsPerGroup(split);
+  if (deEmphSet.size > 0) {
+    const balancedSessionsPerGroup = weeklySessionsPerGroup(
+      frequencyToSplit(activeWeek.filter(Boolean).length || 1, 'balanced'),
+    );
+    for (const roGroup of deEmphSet) {
+      const balancedFreq = balancedSessionsPerGroup[roGroup];
+      const collapsedFreq = sessionsPerGroup[roGroup];
+      // Only RAISE the divisor (de-emph collapsed the days) — never lower it, so a
+      // group the focus did NOT collapse keeps its real frequency.
+      if (
+        typeof balancedFreq === 'number' &&
+        typeof collapsedFreq === 'number' &&
+        balancedFreq > collapsedFreq
+      ) {
+        sessionsPerGroup[roGroup] = balancedFreq;
+      }
+    }
+  }
   // OUTPUT session-type tag (uppercase) for the localized title boundary — kept
   // SEPARATE from the cluster id buildSession consumes. Reflects the EFFECTIVE
   // cluster so a "Different group" override surfaces the alternative session type.

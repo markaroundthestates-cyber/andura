@@ -275,6 +275,56 @@ describe('focus suppresses auto-signals on de-emphasized groups', () => {
   });
 });
 
+// ── De-emphasized divisor — the lone leg day must LIGHTEN, not fatten ────────
+// D-focus-divisor 2026-06-06 (founder live: "powerlifter legs, could barely walk").
+// A v-taper collapses the lower body 2 leg days → 1 AND lowers the weekly leg
+// budget toward MEV. The BUG: the per-session set budget = weeklyBudget /
+// sessionsPerGroup, and collapsing to one leg day dropped the divisor 2→1, so the
+// whole (reduced) weekly leg budget landed on the SINGLE leg day → a FATTER session
+// (≈29 sets) than a balanced leg day (≈25). Fix: a de-emphasized group keeps the
+// BALANCED divisor, so its lone leg day stays ~light. Invariant: a v-taper leg day's
+// total sets ≤ a balanced leg day's, and well below the old ≈29.
+describe('v-taper leg day LIGHTENS (de-emphasized divisor fix)', () => {
+  // Founder setup: freq 4 → active L/Ma/J/V. Balanced has TWO leg days (Ma=dayIdx1,
+  // V=dayIdx4); v-taper collapses to ONE (V=dayIdx4). Compare the leg-day sessions.
+  const TUE = new Date(2026, 4, 19); // dayIdx 1 — balanced 'lower'
+  const FRI = new Date(2026, 4, 22); // dayIdx 4 — balanced 'lower' AND v-taper 'lower'
+  const totalSets = (plan) => (plan.exercises || []).reduce((s, e) => s + e.sets, 0);
+
+  it('v-taper single leg day ≤ both balanced leg days (no re-concentration)', async () => {
+    const balTue = await getDailyWorkout(buildUserState(), TUE);
+    const balFri = await getDailyWorkout(buildUserState(), FRI);
+    const vtFri = await getDailyWorkout(
+      buildUserState({ user: { focusPreset: 'v-taper' } }),
+      FRI,
+    );
+    // All three are leg days (LOWER cluster) — same comparison basis.
+    expect(balTue.sessionType).toBe('LOWER');
+    expect(balFri.sessionType).toBe('LOWER');
+    expect(vtFri.sessionType).toBe('LOWER');
+    const vt = totalSets(vtFri);
+    // The v-taper leg day must NOT be heavier than a balanced leg day — the whole
+    // point of de-emphasis (the bug had it at 29 vs 25/27).
+    expect(vt).toBeLessThanOrEqual(totalSets(balTue));
+    expect(vt).toBeLessThanOrEqual(totalSets(balFri));
+    // Hard ceiling well below the old ≈29-set "powerlifter legs" regression.
+    expect(vt).toBeLessThan(28);
+  });
+
+  it('the de-emphasized leg compounds are not pushed to their max set count', async () => {
+    const vtFri = await getDailyWorkout(
+      buildUserState({ user: { focusPreset: 'v-taper' } }),
+      FRI,
+    );
+    // The squat + the leg press (quad compounds) must sit BELOW COMPOUND_MAX_SETS (5)
+    // — the divisor bug had Leg Press:4 / RDL:5; the fix keeps them ~3.
+    const setOf = (name) =>
+      (vtFri.exercises || []).find((e) => e.name === name)?.sets ?? null;
+    const legPress = setOf('Leg Press');
+    if (legPress !== null) expect(legPress).toBeLessThan(5);
+  });
+});
+
 // ── Recovery + time guards still apply ──────────────────────────────────────
 describe('recovery (M1) + time cap remain guards under focus', () => {
   // A heavy shoulder session TODAY fries umeri (the v-taper EMPHASIZED group).
