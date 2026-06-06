@@ -20,6 +20,20 @@ export const EQUIPMENT_WEIGHTS = {
   // Gantere fixe cu etichete galbene — incremente 1kg mic, 2.5kg mare
   'dumbbell': [7, 8, 9, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 47.5, 50],
 
+  // ── TINY ISOLATIONS — light DB ladder (rear-delt fly, lateral raise) ─────────
+  // Gigel sim 2026-06-06 (Target 3): rear-delt / lateral-raise true working loads
+  // are ~2-8kg, but the CORE_AUTO names (DB Rear Delt Fly / DB Lateral Raise /
+  // Leaning Lateral Raise) were UNMAPPED → fell to the bailib_stack default (5kg
+  // floor, coarse 5kg steps) — and the sim's legacy 'Rear Delt Fly' hit the 18kg
+  // pec_deck floor (+40% to +400% overshoot). A fly priced at a row's load wasted
+  // the whole movement for 24-48 sessions. These get a fine DB ladder from 2kg so
+  // the (already-correct low 0.06 BW fraction) is not clamped up to a machine floor.
+  'light_iso_db': [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22.5, 25],
+
+  // Tiny cable isolations (Cable Rear Delt Fly, Cable Lateral Raise) — fine pulley
+  // stack from ~2.5kg. Same intent as light_iso_db, on the finer cable increments.
+  'light_iso_cable': [2.5, 3.75, 5, 6.25, 7.5, 8.75, 10, 12.5, 15, 17.5, 20, 22.5, 25, 30, 35],
+
   // Bara olimpica + discuri (bench/press cu bara) — bara ~20kg, increment 2.5kg
   // pana la 70, apoi pasi de 5/10kg. (CR-01: fara asta Flat Barbell Bench cadea
   // pe bailib_stack si capa orice bench >80kg la 80.)
@@ -41,6 +55,19 @@ export const EXERCISE_EQUIPMENT_MAP = {
   'Rear Delt Cable':       'matrix_cable',
   'Pec Deck / Cable Fly':  'pec_deck',
   'Rear Delt Fly':         'pec_deck',
+  // ── Tiny rear-delt / lateral-raise ISOLATIONS (Gigel sim Target 3) ──────────
+  // The CANONICAL CORE_AUTO names the composer actually emits — route them to the
+  // light isolation ladders so their ~2-8kg true loads are not clamped to the 5kg
+  // bailib default or the 18kg pec_deck floor. DB variants → light DB ladder; cable
+  // variants → fine cable ladder; machine selector variants → fine cable ladder too
+  // (machine rear-delt/lateral selectors start light, not at an 18kg plate).
+  'DB Rear Delt Fly':      'light_iso_db',
+  'Cable Rear Delt Fly':   'light_iso_cable',
+  'Reverse Pec Deck':      'light_iso_cable',
+  'DB Lateral Raise':      'light_iso_db',
+  'Leaning Lateral Raise': 'light_iso_db',
+  'Cable Lateral Raise':   'light_iso_cable',
+  'Machine Lateral Raise': 'light_iso_cable',
   'Leg Extension':         'leg_machine',
   'Leg Curl':              'leg_machine',
   'Leg Press':             'leg_press_plates',

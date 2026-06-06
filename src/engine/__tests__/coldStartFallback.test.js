@@ -7,6 +7,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { suggestStartWeight } from '../coldStartGuidelines.js';
+import { roundToEquipmentWeight, getEquipmentType } from '../../config/weights.js';
 
 const HEAVY = { bodyweightKg: 108, sex: 'm' };
 
@@ -88,5 +89,52 @@ describe('coldStartGuidelines — chest-fly isolations are NOT priced as presses
   it('chest fly @ bw 65 is no longer the bugged ~32 press value', () => {
     const fly = suggestStartWeight('Pec Deck / Cable Fly', 'intermediate', { bodyweightKg: 65, sex: 'm' });
     expect(fly).toBeLessThanOrEqual(20);
+  });
+});
+
+// ══ TINY ISOLATIONS — cold-start floor must match reality, not the 18kg machine
+// stack (Gigel sim 2026-06-06, Target 3) ════════════════════════════════════════
+// The CORE_AUTO names the composer emits (DB/Cable/Machine Rear Delt Fly + Lateral
+// Raise, Reverse Pec Deck) were UNMAPPED in EXERCISE_EQUIPMENT_MAP → snapped on the
+// bailib_stack default (5kg floor, coarse 5kg steps); the sim's legacy 'Rear Delt
+// Fly' snapped on the 18kg pec_deck floor (+40% to +400% overshoot, movement wasted
+// 24-48 sessions). They now route to light DB / fine-cable ladders so the (already
+// low 0.06) fraction lands at a realistic ~3-6kg, never floored at 18.
+describe('cold-start tiny isolations snap to a realistic light floor (<= ~6kg, not 18)', () => {
+  const TINY_DB = ['DB Rear Delt Fly', 'DB Lateral Raise', 'Leaning Lateral Raise'];
+  const TINY_CABLE = ['Cable Rear Delt Fly', 'Cable Lateral Raise', 'Machine Lateral Raise', 'Reverse Pec Deck'];
+
+  it('the tiny rear-delt / lateral isolations route to a light ladder, not pec_deck/bailib', () => {
+    for (const ex of TINY_DB) expect(getEquipmentType(ex)).toBe('light_iso_db');
+    for (const ex of TINY_CABLE) expect(getEquipmentType(ex)).toBe('light_iso_cable');
+  });
+
+  it('a snapped free rear-delt-fly cold-start lands light (<= 6kg), never the 18kg machine floor', () => {
+    // The free DB / cable fly (true ~3-6kg) must land light. The machine Reverse Pec
+    // Deck legitimately uses a stack (heavier), so it is asserted separately below.
+    for (const ex of ['DB Rear Delt Fly', 'Cable Rear Delt Fly']) {
+      const raw = suggestStartWeight(ex, 'intermediate', { bodyweightKg: 80, sex: 'm' });
+      const snapped = roundToEquipmentWeight(raw, ex);
+      expect(snapped).toBeLessThanOrEqual(6); // was 18 (pec_deck floor) → +200% overshoot
+      expect(snapped).toBeGreaterThan(0);
+    }
+  });
+
+  it('the machine Reverse Pec Deck is no longer floored at the 18kg stack', () => {
+    const raw = suggestStartWeight('Reverse Pec Deck', 'intermediate', { bodyweightKg: 80, sex: 'm' });
+    const snapped = roundToEquipmentWeight(raw, 'Reverse Pec Deck');
+    // Machine selector (heavier than a free fly) but well under the old 18kg floor.
+    expect(snapped).toBeLessThan(18);
+    expect(snapped).toBeGreaterThan(0);
+  });
+
+  it('even a HEAVY user (108kg) keeps the rear-delt fly tiny (the 0.06 fraction holds)', () => {
+    const raw = suggestStartWeight('DB Rear Delt Fly', 'intermediate', HEAVY);
+    expect(roundToEquipmentWeight(raw, 'DB Rear Delt Fly')).toBeLessThanOrEqual(10);
+  });
+
+  it('the light ladder snaps a ~3.5kg target to a real fine step, not up to 5/18', () => {
+    expect(roundToEquipmentWeight(3.5, 'DB Rear Delt Fly')).toBeLessThanOrEqual(4);
+    expect(roundToEquipmentWeight(3.5, 'Cable Rear Delt Fly')).toBeLessThanOrEqual(5);
   });
 });

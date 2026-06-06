@@ -28,6 +28,18 @@ const BASE_WEIGHTS = {
   'Rear Delt Fly': 5,
   'Cable Curl': 10,
   'Preacher Curl': 8,
+  // Canonical CORE_AUTO tiny-isolation names (Gigel sim Target 3): the flat (no-
+  // bodyweight) prior. Without an entry the flat path floors at 10kg, which then
+  // dominated the bodyweight-scaled ~5kg via Math.max(flat, scaled) — re-flooring
+  // a rear-delt fly. Pin the realistic light priors (mirror the legacy 5/Rear Delt
+  // Fly + 5/Lateral Raises values onto the names the composer actually emits).
+  'DB Rear Delt Fly': 5,
+  'Cable Rear Delt Fly': 5,
+  'Reverse Pec Deck': 8,
+  'DB Lateral Raise': 5,
+  'Cable Lateral Raise': 5,
+  'Machine Lateral Raise': 7,
+  'Leaning Lateral Raise': 5,
   'Leg Press': 80,
   'Leg Extension': 30,
   'Leg Curl': 25,
@@ -98,6 +110,20 @@ const BW_FRACTION = /** @type {Record<string, number>} */ ({
   // real machine minimum, weights.js:12), but this fraction stops the heavy-user
   // blow-up (was 0.22 -> 32kg at 136kg bodyweight).
   'Rear Delt Fly': 0.06,
+  // ── Canonical CORE_AUTO tiny-isolation names the composer actually emits ─────
+  // (Gigel sim 2026-06-06, Target 3). The legacy keys above ('Rear Delt Fly',
+  // 'Lateral Raises') are NOT what scheduleAdapterAggregate emits — the live names
+  // are these. Without explicit entries they fell to the coarse umeri-isolation
+  // fallback (0.16 × equip), which on a cable variant priced an 80kg user's rear-
+  // delt fly ~9kg. Pin the tiny fraction directly (paired with the light ladders
+  // in weights.js so the snap stays light, never the 18kg pec_deck floor).
+  'DB Rear Delt Fly': 0.06,
+  'Cable Rear Delt Fly': 0.06,
+  'Reverse Pec Deck': 0.12,
+  'DB Lateral Raise': 0.075,
+  'Cable Lateral Raise': 0.075,
+  'Machine Lateral Raise': 0.10,
+  'Leaning Lateral Raise': 0.075,
 });
 
 // Generic fraction for exercises with no explicit pattern entry AND no usable
