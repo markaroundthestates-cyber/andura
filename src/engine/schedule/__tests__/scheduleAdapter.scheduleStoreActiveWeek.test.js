@@ -113,6 +113,49 @@ describe('getDailyWorkout — honors the user-chosen training days (scheduleStor
     }
   });
 
+  it('missed Tuesday does NOT shift the positional cluster map (founder live 2026-06-06)', async () => {
+    // Founder days Mon/Tue/Thu/Fri (balanced, freq 4); he did NOT train Tuesday.
+    // A skipped scheduled day must NOT mis-map the day->cluster: each weekday keeps
+    // its positional cluster whether or not the prior day was trained. The balanced
+    // freq-4 split is ['upper','lower','upper','lower'] → Mon=UPPER, Tue=LOWER,
+    // Thu=UPPER, Fri=LOWER. Tuesday IS the (legitimately) leg day; Thursday/Friday
+    // do NOT inherit legs because Tuesday was missed.
+    setScheduleStoreDays(['training', 'training', 'rest', 'training', 'training', 'rest', 'rest']);
+    // recentSessions carries ONLY a Monday session (Tuesday genuinely missed) —
+    // the missed leg day reads as lagging (M2), which must amplify volume, NOT
+    // relocate the cluster.
+    const state = () => buildUserState({
+      focusPreset: 'balanced',
+      frequency: '4',
+      persona: 'gigica',
+    });
+    const monTrained = {
+      ts: MON.getTime(),
+      exercises: [
+        { name: 'Bench Press', sets: [{ kg: 60, reps: 8 }, { kg: 60, reps: 8 }, { kg: 60, reps: 8 }] },
+        { name: 'Barbell Row', sets: [{ kg: 50, reps: 8 }, { kg: 50, reps: 8 }, { kg: 50, reps: 8 }] },
+      ],
+    };
+    const withMon = () => ({ ...state(), recentSessions: [monTrained] });
+
+    const mon = await getDailyWorkout(state(), MON);
+    const tue = await getDailyWorkout(withMon(), TUE);
+    const thu = await getDailyWorkout(withMon(), THU);
+    const fri = await getDailyWorkout(withMon(), FRI);
+
+    expect(mon.sessionType).toBe('UPPER');
+    expect(tue.sessionType).toBe('LOWER'); // Tue is the leg day — correct, not relocated
+    expect(thu.sessionType).toBe('UPPER'); // Thu stays upper despite the missed Tue
+    expect(fri.sessionType).toBe('LOWER');
+
+    // The leg days are NOT thin: the engine emits a substantial session (the §D101
+    // recovery-redistribution + tier-aware floor family). A real production count —
+    // a leg day must never collapse to a 2-3 exercise stub. Verified at the engine
+    // layer (the React time-budget trim floors at >=4 ex / >=25 min on top of this).
+    expect(tue.exercises.length).toBeGreaterThanOrEqual(6);
+    expect(fri.exercises.length).toBeGreaterThanOrEqual(6);
+  });
+
   it('an explicit calendar override still wins over the scheduleStore (deliberate per-week edit)', async () => {
     // scheduleStore says Mon active; override marks Mon REST → override wins → null.
     setScheduleStoreDays(['training', 'rest', 'training', 'rest', 'training', 'training', 'rest']);
