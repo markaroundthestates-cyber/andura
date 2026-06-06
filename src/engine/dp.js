@@ -521,6 +521,25 @@ export const DP = {
     const last3Reps = logs.slice(0,3).map((l) => typeof l.reps === 'string' ? (parseInt(l.reps) || (rMin ?? 8)) : (l.reps ?? (rMin ?? 8)));
     const atTopReps = last3Reps.every((r) => r >= (rMax ?? 12));
 
+    // ── Cross-session EASE-BACK gate signals (Gigel sim 2026-06-06, Target 2) ──
+    // The single-`greu` EASE-BACK at the recommend path saw-tooths a strong/
+    // consistent user: working AT true capacity is rated greu, so every session
+    // the engine demotes the load the user just demonstrated → 248 oscillation
+    // flags, chronic undershoot, never-converge. EASE-BACK must require a SUSTAINED
+    // hard signal (2+ consecutive greu) OR genuine distress (a hard set where reps
+    // collapsed well below the minimum). A single greu AT target reps is normal
+    // working intensity → HOLD / progress, never ease.
+    // consecutiveGreu: count of most-recent logs (newest-first) rated greu (rpe>=8.5).
+    let consecutiveGreu = 0;
+    for (const l of logs) {
+      if ((l.rpe || 7) >= 8.5) consecutiveGreu++;
+      else break;
+    }
+    // lastRepsBelowTarget: the last set felt hard AND reps fell clearly short of the
+    // bottom of the range (true overload / failed set) — eases immediately even on
+    // one set. Threshold = below rMin (could not finish the minimum prescribed reps).
+    const lastRepsBelowTarget = lastRPE >= 8.5 && lastReps < (rMin ?? 8);
+
     // How many sets at +1 volume
     const exSets = /** @type {Record<string, number>} */ (EX_SETS);
     const currentSets = exSets[ex] || 3;
@@ -528,6 +547,7 @@ export const DP = {
 
     return {
       lastW, lastReps, lastRPE, isStagnant, atTopReps,
+      consecutiveGreu, lastRepsBelowTarget,
       range, rMin: rMin ?? 8, rMax: rMax ?? 12, currentSets, extraSets,
       logs
     };
@@ -596,7 +616,8 @@ export const DP = {
       };
     }
 
-    const { lastW, lastReps, lastRPE, isStagnant, atTopReps, extraSets } = state;
+    const { lastW, lastReps, lastRPE, isStagnant, atTopReps, extraSets,
+      consecutiveGreu, lastRepsBelowTarget } = state;
 
     // ── SCALE BACK: ≤50% of minimum reps → drop one step on equipment list
     if (lastReps < Math.ceil(rMin * 0.5)) {
@@ -649,11 +670,26 @@ export const DP = {
     // holds the weight and never increases; MEDIUM does modest standard filling.
     const atTop = lastReps >= rMax;
 
-    // HARD (greu) → hold weight, never increase. Keep the rep target where it is.
+    // HARD (greu) → ease the cross-session load — but ONLY on a SUSTAINED hard
+    // signal, never a single greu at target (Gigel sim 2026-06-06, Target 2).
     // Threshold calibrated to the REAL per-set rating→RPE scale (workoutStore
     // RATING_TO_RPE: usor=6.5 / potrivit=7.5 / greu=8.5). The coarse rating never
-    // produces 9, so the gate is >= 8.5 (catches greu=8.5; potrivit=7.5 stays MEDIUM).
-    if (lastRPE >= 8.5) {
+    // produces 9, so the gate is >= 8.5.
+    //
+    // EASE-BACK requires EITHER:
+    //   (a) genuine distress — the last hard set's reps collapsed below rMin
+    //       (a failed/overload set), OR
+    //   (b) 2+ CONSECUTIVE greu sessions WHILE not hitting the rep target
+    //       (a sustained too-heavy trend the user cannot work through).
+    // A SINGLE greu at/near target reps is normal working intensity for a strong
+    // or override-up user; and EVEN a sustained greu run is PRODUCTIVE overload as
+    // long as the user keeps completing the prescribed reps (greu-at-capacity =
+    // capacity signal, NOT overload — the override-up suppressor). Easing either
+    // case demotes the load they just demonstrated and drives the saw-tooth. Both
+    // fall through to standard double-progression (HOLD weight, MEDIUM path).
+    const hitTargetReps = lastReps >= (rMin ?? 8);
+    const sustainedHard = lastRepsBelowTarget || (consecutiveGreu >= 2 && !hitTargetReps);
+    if (lastRPE >= 8.5 && sustainedHard) {
       const easedKg = getPrevWeight(lastW, ex);
       const targetReps = Math.max(rMin, Math.min(lastReps, rMax));
       if (easedKg < lastW) {

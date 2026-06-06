@@ -162,13 +162,23 @@ describe('E2E coach-responds — DP.getSmartRecommendation moves on EASY', () =>
     expect(rec.status).toBe('INCREASE');
   });
 
-  it('HARD set EASES the weight down (rating said too heavy)', () => {
-    // Daniel/Gigel P0 2026-06-05: HARD used to HOLD at the same weight (the coach
-    // labelled it "too heavy" then re-prescribed the identical load). It now drops
-    // one equipment step so the next session is genuinely lighter.
+  it('single HARD set at hit reps HOLDS the weight (Gigel sim 2026-06-06 Target 2)', () => {
+    // SUPERSEDES the single-greu-ease rule (142c1c7c). The 50-Gigel sim showed it is
+    // the #1 oscillation cause: a user working at true capacity rates greu but hits
+    // the reps → easing demotes the load they just demonstrated. A single greu at hit
+    // reps is now HELD (productive overload); only failed reps / sustained greu ease.
     persistSessionLogs(sessionWith('Flat DB Press', 17.5, 10, 'greu', 3000), Date.now() - 3000);
     const rec = DP.getSmartRecommendation('Flat DB Press', null, null, undefined, null);
-    expect(rec.kg).toBeLessThan(17.5); // eased down, not held
+    expect(rec.kg).toBe(17.5);            // held, not demoted
+    expect(rec.status).not.toBe('EASE BACK');
+  });
+
+  it('HARD set with FAILED reps still EASES the weight down (genuine distress)', () => {
+    // reps fell below the floor (5 < rMin 8, but above the SCALE-BACK <=50% cliff) on
+    // a greu set → real too-heavy signal → ease one equipment step even on one session.
+    persistSessionLogs(sessionWith('Flat DB Press', 17.5, 5, 'greu', 3000), Date.now() - 3000);
+    const rec = DP.getSmartRecommendation('Flat DB Press', null, null, undefined, null);
+    expect(rec.kg).toBeLessThan(17.5);   // eased down on distress
     expect(rec.status).toBe('EASE BACK');
   });
 
@@ -226,17 +236,26 @@ describe('E2E coach-responds — composePlannedWorkoutToday responds to EASY', (
     expect(lat2.targetReps).toBeGreaterThan(lat1.targetReps); // 10 -> 11, NOT stuck
   });
 
-  it('GREU-rated Lat Pulldown EASES the weight down end-to-end', async () => {
-    // P0 2026-06-05: a hard set now lightens the next prescription instead of
-    // re-serving the same weight the user struggled with. Seed at a real ladder
-    // value (55) — 56 is not a Lat Pulldown stack step (it snaps to 55), which
-    // would mask the one-step drop.
+  it('GREU-rated Lat Pulldown at hit reps HOLDS end-to-end (Target 2 capacity signal)', async () => {
+    // SUPERSEDES the ease-on-greu rule. Three greu sessions but the user HIT the reps
+    // (10 >= rMin) each time = working AT capacity, not overload. The end-to-end plan
+    // must HOLD the demonstrated 55kg, never demote it (that demotion was the saw-tooth).
     persistSessionLogs(sessionWith('Lat Pulldown', 55, 10, 'greu', 3000), Date.now() - 3000);
     persistSessionLogs(sessionWith('Lat Pulldown', 55, 10, 'greu', 2000), Date.now() - 2000);
     persistSessionLogs(sessionWith('Lat Pulldown', 55, 10, 'greu', 1000), Date.now() - 1000);
     const out = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const lat = findByEnSlug(out!.exercises, 'Lat Pulldown')!;
-    expect(lat.targetKg).toBeLessThan(55); // eased below last weight
+    expect(lat.targetKg).toBeGreaterThanOrEqual(55); // held at demonstrated capacity
+  });
+
+  it('GREU-rated Lat Pulldown with FAILED reps EASES end-to-end (sustained distress)', async () => {
+    // Two consecutive greu sessions where reps fell below the floor (5 < rMin 8) =
+    // sustained too-heavy the user cannot work through → ease the load end-to-end.
+    persistSessionLogs(sessionWith('Lat Pulldown', 55, 5, 'greu', 2000), Date.now() - 2000);
+    persistSessionLogs(sessionWith('Lat Pulldown', 55, 5, 'greu', 1000), Date.now() - 1000);
+    const out = await composePlannedWorkoutToday(MONDAY_2026_05_18);
+    const lat = findByEnSlug(out!.exercises, 'Lat Pulldown')!;
+    expect(lat.targetKg).toBeLessThan(55); // eased below last weight on distress
   });
 
   // ── THE PRODUCTION SCENARIO (Daniel's exact live test) ───────────────────

@@ -269,16 +269,37 @@ describe('DP._recommendRaw — branch coverage', () => {
     expect(r.repsTarget).toBe(15);   // rMax
   });
 
-  it('HARD → eases the load one step DOWN (rating said too heavy, so lighten it)', () => {
-    // Daniel/Gigel P0 2026-06-05: a HARD set used to be handed back the EXACT same
-    // weight ("🔴 E prea greu" label, then identical kg) — the action contradicted
-    // the message and ignored how the set felt. The coach now actually LIGHTENS one
-    // equipment step. Never increases reps on hard.
-    store['logs'] = [log('Cable Row', 56, 9, 9)];
+  it('single HARD at target reps HOLDS the load (Gigel sim 2026-06-06 Target 2: no single-greu ease)', () => {
+    // SUPERSEDES the prior "single greu eases one step" rule (142c1c7c). The 50-Gigel
+    // sim proved single-greu EASE-BACK is the #1 oscillation driver (248 flags): a
+    // strong/override-up user works AT true capacity (rated greu) and finishes the
+    // reps, so easing demotes the load they just demonstrated → saw-tooth. A single
+    // greu where the user HIT the rep target is productive overload → HOLD (standard
+    // double progression), it does NOT ease.
+    store['logs'] = [log('Cable Row', 56, 9, 8.5)]; // hit reps (9>=rMin 8), single greu
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.status).not.toBe('EASE BACK');
+    expect(r.kg).toBe(56);                          // load held, not demoted
+  });
+
+  it('single HARD with reps BELOW the floor still eases (genuine distress)', () => {
+    // Distress override: a hard set where reps collapsed below rMin (failed set) is a
+    // real too-heavy signal and eases immediately even on ONE set.
+    store['logs'] = [log('Cable Row', 56, 5, 8.5)]; // reps 5 < rMin 8 → failed, greu
     const r = DP._recommendRaw('Cable Row');
     expect(r.status).toBe('EASE BACK');
-    expect(r.kg).toBeLessThan(56);                 // load actually drops
-    expect(r.repsTarget).toBeLessThanOrEqual(9);   // never increases reps on hard
+    expect(r.kg).toBeLessThan(56);
+  });
+
+  it('2+ CONSECUTIVE greu while missing reps eases the load (sustained too-heavy)', () => {
+    // Sustained hard trend the user cannot work through → ease.
+    store['logs'] = [
+      log('Cable Row', 56, 7, 8.5), // newest: greu, reps below rMin
+      log('Cable Row', 56, 7, 8.5), // prior: greu
+    ];
+    const r = DP._recommendRaw('Cable Row');
+    expect(r.status).toBe('EASE BACK');
+    expect(r.kg).toBeLessThan(56);
     expect(r.progressionNote).toMatch(/coboram/);
   });
 
@@ -413,31 +434,34 @@ describe('DP._recommendRaw — rating-driven responsive progression', () => {
     expect(r.repsTarget).toBe(10);  // 9 → 10, exactly +1 even when very easy
   });
 
-  it('HARD → eases the load down a step, never increases', () => {
-    store['logs'] = [log('Cable Row', 56, 10, 9.5)];
+  it('single HARD at hit reps HOLDS the load (Gigel sim Target 2: no single-greu ease)', () => {
+    // SUPERSEDES single-greu ease. reps 10 >= rMin 8 → productive overload → HOLD.
+    store['logs'] = [log('Cable Row', 56, 10, 8.5)];
     const r = DP._recommendRaw('Cable Row');
-    expect(r.status).toBe('EASE BACK');
-    expect(r.kg).toBeLessThan(56);          // weight eased down
-    expect(r.repsTarget).toBeLessThanOrEqual(10); // never above lastReps
-    expect(r.progressionNote).toMatch(/greu/);    // explains it was hard
+    expect(r.status).not.toBe('EASE BACK');
+    expect(r.kg).toBe(56);                   // weight held, not demoted
   });
 
-  it('HARD at the top of the range still does NOT add weight (eases instead)', () => {
-    store['logs'] = [log('Cable Row', 56, 12, 10)];
+  it('single HARD at the TOP of the range progresses via double-progression', () => {
+    // reps 12 = rMax, all-top → standard double progression bumps the weight one
+    // stack step (it is NOT an ease — the user owned the top of the range).
+    store['logs'] = [log('Cable Row', 56, 12, 8.5)];
     const r = DP._recommendRaw('Cable Row');
-    expect(r.status).toBe('EASE BACK');
-    expect(r.kg).toBeLessThan(56);          // never bumps weight on a hard set
+    expect(r.status).not.toBe('EASE BACK');
+    expect(r.kg).toBeGreaterThanOrEqual(56);
   });
 
-  it('GIGEL P0: lift below the prescription + HARD → next is LIGHTER, not the same', () => {
-    // The exact report (2026-06-05): coach prescribed a weight, the user lifted a
-    // lighter one and rated it hard, and the next session re-prescribed the SAME
-    // weight he just struggled with. The eased load must be strictly below what he
-    // lifted — the coach responds to how it felt, not just to whether reps were hit.
+  it('GIGEL P0 revisited: single greu at hit reps HOLDS (Target 2 supersedes 142c1c7c)', () => {
+    // 2026-06-05 the rule was "single greu eases one step" so a too-heavy set is not
+    // re-prescribed. The 50-Gigel sim (2026-06-06) proved that single-greu ease is
+    // the saw-tooth root cause for users working at capacity. New rule: a single greu
+    // where reps were HIT holds the load (capacity signal); only failed reps / a
+    // sustained greu run ease. The two ease cases are covered by the distress +
+    // 2-consecutive tests above.
     store['logs'] = [log('Cable Row', 45, 9, 8.5)]; // hit reps at 45kg, rated greu
     const r = DP._recommendRaw('Cable Row');
-    expect(r.kg).toBeLessThan(45);
-    expect(r.status).toBe('EASE BACK');
+    expect(r.kg).toBe(45);
+    expect(r.status).not.toBe('EASE BACK');
   });
 
   it('MEDIUM mid-range → modest standard +1 rep (weight held)', () => {
@@ -887,14 +911,15 @@ describe('DP.getSmartRecommendation — post-session rating gate', () => {
 // into MEDIUM (mildly increases) and the coach feels unresponsive. These tests
 // drive the EXACT production values so a future threshold drift fails here.
 describe('DP._recommendRaw — REAL rating→RPE scale (6.5 / 7.5 / 8.5)', () => {
-  it('greu (8.5) → HARD: eases the weight DOWN a step, never increases', () => {
-    // The exact production value for "greu" (RATING_TO_RPE). Was a hold-at-same;
-    // now the coach lightens one step so a too-heavy set is not re-prescribed.
+  it('greu (8.5) single at hit reps → HARD: HOLDS, never increases (Target 2 scale guard)', () => {
+    // The exact production value for "greu" (RATING_TO_RPE). A SINGLE greu where the
+    // user hit reps is productive overload → HOLD the load (no ease, no increase).
+    // Sustained-greu / failed-reps ease cases are covered in the branch-coverage block.
     store['logs'] = [log('Cable Row', 56, 9, 8.5)];
     const r = DP._recommendRaw('Cable Row');
-    expect(r.status).toBe('EASE BACK');
-    expect(r.kg).toBeLessThan(56);
-    expect(r.repsTarget).toBeLessThanOrEqual(9); // never bumped above what was done
+    expect(r.status).not.toBe('EASE BACK');
+    expect(r.status).not.toBe('INCREASE'); // greu must never push the load up
+    expect(r.kg).toBe(56);
   });
 
   it('usor (6.5) below top → EASY: steps the rep target up +1 this session', () => {
@@ -910,5 +935,34 @@ describe('DP._recommendRaw — REAL rating→RPE scale (6.5 / 7.5 / 8.5)', () =>
     expect(r.status).toBe('CONSOLIDATE');
     expect(r.repsTarget).toBe(10);
     expect(r.kg).toBe(56);
+  });
+});
+
+// ── Target 1: re-anchor to OBSERVED capacity, absorb a consistent override ────
+// 50-Gigel sim 2026-06-06: a user who OVERRIDES (logs well above the prescription)
+// must be caught up to within 1-2 sessions, not stuck-low for 28-40. The anchor is
+// the last LOGGED load (getState.lastW), so once an override is logged the next rec
+// reflects it — provided the single-greu EASE-BACK no longer demotes it (Target 2).
+describe('DP._recommendRaw — re-anchor to observed override (Target 1)', () => {
+  it('a logged override at hit reps is HELD next session (not demoted by a single greu)', () => {
+    // The user overrode the (low) prescription and lifted 50kg for 9 reps, rated greu.
+    // Next session the rec must anchor to the demonstrated 50kg, not ease below it.
+    store['logs'] = [log('Leg Press', 50, 9, 8.5)];
+    const r = DP._recommendRaw('Leg Press');
+    expect(r.status).not.toBe('EASE BACK');
+    expect(r.kg).toBe(50); // anchored to what was actually lifted, not eased down
+  });
+
+  it('a consistent override is absorbed within <=2 sessions (50->90 stays at 90)', () => {
+    // Two sessions of a consistent override-up user logging 90kg at hit reps. The rec
+    // must now sit AT the logged 90kg (absorbed), never the old prescribed-history
+    // creep that left it ~55-67% low for dozens of sessions.
+    store['logs'] = [
+      log('Leg Press', 90, 10, 7.5), // newest: potrivit at 90
+      log('Leg Press', 90, 9, 8.5),  // prior: greu at 90 (hit reps)
+    ];
+    const r = DP._recommendRaw('Leg Press');
+    expect(r.kg).toBeGreaterThanOrEqual(90); // converged to demonstrated capacity
+    expect(r.status).not.toBe('EASE BACK');
   });
 });
