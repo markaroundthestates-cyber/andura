@@ -22,7 +22,7 @@
     "test:e2e:smoke": "playwright test tests/smoke-react.spec.ts tests/magic-link.spec.ts",
     "test:visual": "playwright test tests/visual-regression.spec.ts",
     "test:all": "npm run test:run && npm run test:e2e",
-    "mutation:engine": "stryker run --files 'src/engine/**/*.{ts,js}' --testRunner vitest --mutate 'src/engine/**/*.{ts,js}'",
+    "mutation:engine": "stryker run --testRunner vitest --mutate 'src/engine/**/*.ts,src/engine/**/*.js'",
     "exploration": "node scripts/nightly-exploration.mjs",
     "simulation:c": "playwright test tests/simulation/parallel-fuzz.spec.js",
     "test:calibration": "node --experimental-vm-modules tests/simulation/calibration-test.js",
