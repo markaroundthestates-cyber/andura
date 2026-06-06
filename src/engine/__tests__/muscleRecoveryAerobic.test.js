@@ -69,6 +69,26 @@ describe('getAerobicRecoveryContribution', () => {
       }
     }
   });
+
+  // Backward logging (decision #45): a class logged TODAY for a PAST day carries
+  // a fresh `ts` but an older `date`. Recency must anchor on `date` (when the
+  // class HAPPENED), not `ts` (when it was logged) — otherwise a days-old class
+  // would wrongly read as "just done" and ease groups in the 24h window.
+  it('a backdated class (old date, fresh ts) eases NOTHING — recency uses date, not ts', () => {
+    // date = 3 days ago, ts = now (just logged). The 24h window must reject it.
+    const threeDaysAgo = new Date(now - 3 * 24 * MS_PER_HOUR);
+    const iso = `${threeDaysAgo.getFullYear()}-${String(threeDaysAgo.getMonth() + 1).padStart(2, '0')}-${String(threeDaysAgo.getDate()).padStart(2, '0')}`;
+    const out = getAerobicRecoveryContribution([{ type: 'aerobic', date: iso, ts: now }], now);
+    expect(out).toEqual({});
+  });
+
+  it("a class dated TODAY eases its dominant groups (date anchor, today's noon is in-window)", () => {
+    const t = new Date(now);
+    const iso = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+    const out = getAerobicRecoveryContribution([{ type: 'aerobic', date: iso, ts: now }], now);
+    expect(out.core).toBe('partial');
+    expect(out['picioare-quads']).toBe('partial');
+  });
 });
 
 describe('mergeAerobicRecovery', () => {

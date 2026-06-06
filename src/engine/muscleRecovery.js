@@ -163,7 +163,25 @@ export function getAerobicRecoveryContribution(sessions, now = Date.now()) {
     if (!s || typeof s.type !== 'string') continue;
     const gradient = AEROBIC_GROUP_GRADIENT[s.type];
     if (!gradient) continue;
-    const ts = typeof s.ts === 'number' ? s.ts : (s.date ? new Date(`${s.date}T12:00:00`).getTime() : 0);
+    // Recency must reflect WHEN THE CLASS HAPPENED, not when it was logged.
+    // Backward logging (decision #45): a class logged TODAY for a PAST day keeps
+    // a fresh `ts` (= now) but an older `date`. Anchoring on `ts` would read a
+    // days-old class as "just done" and ease groups it shouldn't.
+    //   - When `ts` falls on the SAME calendar day as `date` it is a genuine
+    //     real-time log → use `ts` (precise, and never in the future).
+    //   - Otherwise (backdated, or `ts` absent) anchor on the day's NOON so a
+    //     past day reads as past and today's morning log never lands in the
+    //     future (noon-anchoring `ts` on the current day could).
+    const rawTs = typeof s.ts === 'number' ? s.ts : 0;
+    const noonTs = s.date ? new Date(`${s.date}T12:00:00`).getTime() : 0;
+    let ts;
+    if (rawTs && noonTs) {
+      const tsDay = new Date(rawTs);
+      const sameDay = `${tsDay.getFullYear()}-${String(tsDay.getMonth() + 1).padStart(2, '0')}-${String(tsDay.getDate()).padStart(2, '0')}` === s.date;
+      ts = sameDay ? rawTs : noonTs;
+    } else {
+      ts = rawTs || noonTs;
+    }
     if (!ts) continue;
     const hoursAgo = (now - ts) / (60 * 60 * 1000);
     if (hoursAgo < 0 || hoursAgo > AEROBIC_RECOVERY_WINDOW_HOURS) continue;

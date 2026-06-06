@@ -60,6 +60,42 @@ export const DEFAULT_AEROBIC_MINUTES = 50;
 export const AEROBIC_MINUTES_MIN = 5;
 export const AEROBIC_MINUTES_MAX = 240;
 
+// BACKWARD / retroactive logging (Daniel decision #45) — a user can log a class
+// for a PAST day ("I forgot to log yesterday's cardio, today I log it dated
+// yesterday"). The window is bounded: far enough back to cover a missed week or
+// two, never the future (you cannot log a class that has not happened).
+export const AEROBIC_BACKLOG_DAYS = 30;
+
+/** Local ISO date YYYY-MM-DD for a Date (mirror progresStore/LogWeight). */
+export function aerobicTodayIso(now: Date = new Date()): string {
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
+/**
+ * Earliest loggable date (today − AEROBIC_BACKLOG_DAYS) as local ISO. Pure —
+ * powers the date picker's `min`. Mirrors aerobicTodayIso's local-midnight math.
+ */
+export function aerobicMinDateIso(now: Date = new Date()): string {
+  const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - AEROBIC_BACKLOG_DAYS);
+  return aerobicTodayIso(d);
+}
+
+/**
+ * Clamp a chosen ISO date for the date PICKER (UI). Pure. The future is BLOCKED
+ * (a class cannot be logged ahead) → anything past today clamps to today; a date
+ * older than the backlog window clamps to the floor. Garbage / unparseable input
+ * falls back to today. Used by the picker's onChange; the store's logClass only
+ * hard-blocks the future (a past literal stays as-is — see logClass).
+ */
+export function clampAerobicDateIso(dateISO: string, now: Date = new Date()): string {
+  const today = aerobicTodayIso(now);
+  const floor = aerobicMinDateIso(now);
+  if (typeof dateISO !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(dateISO)) return today;
+  if (dateISO > today) return today; // future blocked
+  if (dateISO < floor) return floor; // older than the backlog window
+  return dateISO;
+}
+
 export interface AerobicSession {
   /** Local ISO date YYYY-MM-DD (mirror progresStore/LogWeight todayIso). */
   date: string;
@@ -224,8 +260,15 @@ export const useAerobicStore = create<AerobicState & AerobicActions>()(
           return;
         }
         if (AEROBIC_MET[type] === undefined) return;
+        // Backward logging is allowed (Daniel decision #45). The store only HARD-
+        // BLOCKS the FUTURE — a class that has not happened can never be logged —
+        // by snapping a future date to today. Past dates pass through as-is; the
+        // UI date picker bounds the backlog window (min/max) so the user can't
+        // reach past it, but a backdated literal is legitimate data.
+        const today = aerobicTodayIso();
+        const safeDate = typeof date === 'string' && date > today ? today : date;
         const kcal = computeAerobicKcal(type, weightKg, minutes) ?? 0;
-        const session: AerobicSession = { date, type, minutes, kcal, ts: Date.now() };
+        const session: AerobicSession = { date: safeDate, type, minutes, kcal, ts: Date.now() };
         set((s) => ({
           sessions: [...s.sessions, session],
           // Remember the duration the user just used (editable memory).

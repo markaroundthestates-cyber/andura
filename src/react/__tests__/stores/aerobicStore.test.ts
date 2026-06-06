@@ -13,9 +13,13 @@ import {
   AEROBIC_MET,
   AEROBIC_CLASS_TYPES,
   DEFAULT_AEROBIC_MINUTES,
+  AEROBIC_BACKLOG_DAYS,
   computeAerobicKcal,
   countClassesThisWeek,
   aerobicKcalForDate,
+  aerobicTodayIso,
+  aerobicMinDateIso,
+  clampAerobicDateIso,
   type AerobicSession,
 } from '../../stores/aerobicStore';
 
@@ -164,6 +168,75 @@ describe('aerobicStore — removeSession (delete a mislogged class)', () => {
     useAerobicStore.getState().removeSession(999999);
     expect(useAerobicStore.getState().sessions).toHaveLength(1);
     expect(useAerobicStore.getState().deletedTs).toHaveLength(0);
+  });
+});
+
+describe('backward logging — date window helpers (decision #45)', () => {
+  // Fixed reference date so the window math is deterministic (2026-06-07).
+  const ref = new Date('2026-06-07T12:00:00');
+
+  it('aerobicTodayIso = local YYYY-MM-DD', () => {
+    expect(aerobicTodayIso(ref)).toBe('2026-06-07');
+  });
+
+  it('aerobicMinDateIso = today − backlog days (the picker floor)', () => {
+    // 2026-06-07 minus 30 days = 2026-05-08.
+    expect(AEROBIC_BACKLOG_DAYS).toBe(30);
+    expect(aerobicMinDateIso(ref)).toBe('2026-05-08');
+  });
+
+  it('clamp passes a date inside the window through unchanged', () => {
+    expect(clampAerobicDateIso('2026-06-05', ref)).toBe('2026-06-05'); // 2 days ago
+    expect(clampAerobicDateIso('2026-06-07', ref)).toBe('2026-06-07'); // today
+    expect(clampAerobicDateIso('2026-05-08', ref)).toBe('2026-05-08'); // floor
+  });
+
+  it('clamp BLOCKS the future — a tomorrow date snaps to today', () => {
+    expect(clampAerobicDateIso('2026-06-08', ref)).toBe('2026-06-07');
+    expect(clampAerobicDateIso('2027-01-01', ref)).toBe('2026-06-07');
+  });
+
+  it('clamp snaps a date older than the window to the floor', () => {
+    expect(clampAerobicDateIso('2026-01-01', ref)).toBe('2026-05-08');
+  });
+
+  it('clamp falls back to today on garbage input', () => {
+    expect(clampAerobicDateIso('not-a-date', ref)).toBe('2026-06-07');
+    // @ts-expect-error — boundary garbage.
+    expect(clampAerobicDateIso(null, ref)).toBe('2026-06-07');
+  });
+});
+
+describe('aerobicStore — logClass backward / future-block (decision #45)', () => {
+  beforeEach(resetStore);
+
+  it('logs a class dated 2 days ago UNDER that date (backward logging)', () => {
+    const now = new Date();
+    const twoDaysAgo = aerobicTodayIso(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 2));
+    useAerobicStore.getState().logClass({ date: twoDaysAgo, type: 'spinning', minutes: 50, weightKg: 70 });
+    const { sessions } = useAerobicStore.getState();
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0]?.date).toBe(twoDaysAgo);
+    // Backdated session still carries a fresh ts (sync union dedupe key).
+    expect(typeof sessions[0]?.ts).toBe('number');
+  });
+
+  it('aerobicKcalForDate finds the backdated class under its day, not today', () => {
+    const now = new Date();
+    const today = aerobicTodayIso(now);
+    const twoDaysAgo = aerobicTodayIso(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 2));
+    useAerobicStore.getState().logClass({ date: twoDaysAgo, type: 'aerobic', minutes: 60, weightKg: 60 });
+    const { sessions } = useAerobicStore.getState();
+    expect(aerobicKcalForDate(sessions, twoDaysAgo)).toBe(300); // 5.0*60*1
+    expect(aerobicKcalForDate(sessions, today)).toBe(0); // not logged today
+  });
+
+  it('HARD-BLOCKS a future date — snaps it to today', () => {
+    const now = new Date();
+    const today = aerobicTodayIso(now);
+    const tomorrow = aerobicTodayIso(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1));
+    useAerobicStore.getState().logClass({ date: tomorrow, type: 'step', minutes: 40, weightKg: 60 });
+    expect(useAerobicStore.getState().sessions[0]?.date).toBe(today);
   });
 });
 

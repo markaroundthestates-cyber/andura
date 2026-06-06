@@ -233,6 +233,73 @@ describe('AerobicCoach — double-log-per-day confirm', () => {
   });
 });
 
+describe('AerobicCoach — backward / retroactive logging (decision #45)', () => {
+  function isoDaysAgo(n: number): string {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  it('the logger shows a date field defaulting to today', () => {
+    renderAerobicCoach();
+    fireEvent.click(screen.getByTestId('aerobic-log-cta'));
+    expect(screen.getByTestId('aerobic-date-field')).toBeInTheDocument();
+    expect(screen.getByTestId('aerobic-date-input')).toHaveValue(todayIso());
+    // Today selected → the "today" hint, not the backdated hint.
+    expect(screen.getByTestId('aerobic-date-hint').textContent).toMatch(/Today/);
+  });
+
+  it('the date input BLOCKS the future via max=today and bounds the backlog via min', () => {
+    renderAerobicCoach();
+    fireEvent.click(screen.getByTestId('aerobic-log-cta'));
+    const input = screen.getByTestId('aerobic-date-input');
+    expect(input).toHaveAttribute('max', todayIso());
+    expect(input).toHaveAttribute('min', isoDaysAgo(30));
+  });
+
+  it('logs a class dated 2 days ago UNDER that date (the core ask)', () => {
+    renderAerobicCoach();
+    fireEvent.click(screen.getByTestId('aerobic-log-cta'));
+    const twoDaysAgo = isoDaysAgo(2);
+    fireEvent.change(screen.getByTestId('aerobic-date-input'), { target: { value: twoDaysAgo } });
+    // Backdated hint surfaces so the backdate is never silent.
+    expect(screen.getByTestId('aerobic-date-hint').textContent).toMatch(/past day/);
+    fireEvent.click(screen.getByTestId('aerobic-type-aerobic'));
+    fireEvent.click(screen.getByTestId('aerobic-logger-save'));
+    const { sessions } = useAerobicStore.getState();
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0]?.date).toBe(twoDaysAgo);
+  });
+
+  it("a backdated class appears in THAT day's list (selected-day list mirrors the picker)", () => {
+    const ts = Date.now();
+    const twoDaysAgo = isoDaysAgo(2);
+    useAerobicStore.setState({
+      sessions: [{ date: twoDaysAgo, type: 'step', minutes: 50, kcal: 300, ts }],
+      lastDuration: 50,
+      subjectiveByDate: {},
+      deletedTs: [],
+    });
+    renderAerobicCoach();
+    // Default view is today → the 2-days-ago class is NOT shown yet.
+    expect(screen.queryByTestId('aerobic-today-list')).not.toBeInTheDocument();
+    // Pick the backdated day → its list appears.
+    fireEvent.click(screen.getByTestId('aerobic-log-cta'));
+    fireEvent.change(screen.getByTestId('aerobic-date-input'), { target: { value: twoDaysAgo } });
+    expect(screen.getByTestId('aerobic-today-list')).toBeInTheDocument();
+    expect(screen.getByTestId(`aerobic-today-item-${ts}`)).toBeInTheDocument();
+  });
+
+  it('re-opening the logger re-defaults the date to today (no stale backdate)', () => {
+    renderAerobicCoach();
+    fireEvent.click(screen.getByTestId('aerobic-log-cta'));
+    fireEvent.change(screen.getByTestId('aerobic-date-input'), { target: { value: isoDaysAgo(3) } });
+    fireEvent.click(screen.getByTestId('aerobic-logger-cancel'));
+    fireEvent.click(screen.getByTestId('aerobic-log-cta'));
+    expect(screen.getByTestId('aerobic-date-input')).toHaveValue(todayIso());
+  });
+});
+
 describe('AerobicCoach — simplified subjective readiness (self-report, no engine)', () => {
   it('records the self-reported readiness for today', () => {
     renderAerobicCoach();

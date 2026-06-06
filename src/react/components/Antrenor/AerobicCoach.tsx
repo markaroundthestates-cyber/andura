@@ -27,6 +27,9 @@ import {
   countClassesThisWeek,
   computeAerobicKcal,
   aerobicSessionsForDate,
+  aerobicTodayIso,
+  aerobicMinDateIso,
+  clampAerobicDateIso,
   AEROBIC_CLASS_TYPES,
   AEROBIC_MINUTES_MIN,
   AEROBIC_MINUTES_MAX,
@@ -38,8 +41,52 @@ import { getCurrentWeightKg } from '../../lib/userTdee';
 import { t } from '../../../i18n/index.js';
 
 function todayIso(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return aerobicTodayIso();
+}
+
+/**
+ * Class DATE picker — backward / retroactive logging (Daniel decision #45). A
+ * native date input bounded to the loggable window: max = today (the FUTURE is
+ * blocked, you cannot log a class that has not happened), min = today − backlog.
+ * Defaults to today, so the common case is one tap fewer. When a past day is
+ * picked it surfaces a small "logging for a past day" hint so the backdate is
+ * never silent. Exported so 'both' mode reuses the exact same control.
+ */
+export function ClassDatePicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (dateISO: string) => void;
+}): JSX.Element {
+  const today = aerobicTodayIso();
+  const min = aerobicMinDateIso();
+  const isBackdated = value < today;
+  return (
+    <div data-testid="aerobic-date-field">
+      <label className="block text-xs text-ink2 mt-4 mb-1" htmlFor="aerobic-date">
+        {t('antrenor.aerobic.dateLabel')}
+      </label>
+      <input
+        id="aerobic-date"
+        type="date"
+        value={value}
+        min={min}
+        max={today}
+        onChange={(e) => onChange(clampAerobicDateIso(e.target.value))}
+        data-testid="aerobic-date-input"
+        aria-label={t('antrenor.aerobic.dateAriaLabel')}
+        className="w-44 px-3 py-2 border border-lineStrong rounded-xl bg-paper text-ink font-mono text-base"
+      />
+      <p
+        className={`text-xs mt-1 ${isBackdated ? 'font-semibold' : 'text-ink3'}`}
+        style={isBackdated ? { color: 'var(--aqua-ink)' } : undefined}
+        data-testid="aerobic-date-hint"
+      >
+        {isBackdated ? t('antrenor.aerobic.dateBackdatedHint') : t('antrenor.aerobic.dateTodayHint')}
+      </p>
+    </div>
+  );
 }
 
 const SUBJECTIVE_OPTIONS: ReadonlyArray<{ value: SubjectiveReadiness; labelKey: string }> = [
@@ -49,11 +96,18 @@ const SUBJECTIVE_OPTIONS: ReadonlyArray<{ value: SubjectiveReadiness; labelKey: 
 ];
 
 export function AerobicCoach(): JSX.Element {
-  const dateISO = todayIso();
+  // The subjective readiness is always TODAY's self-report (how you feel now),
+  // independent of which day a class is being logged for.
+  const todayISO = todayIso();
   const sessions = useAerobicStore((s) => s.sessions);
   const subjectiveByDate = useAerobicStore((s) => s.subjectiveByDate);
   const setSubjectiveReadiness = useAerobicStore((s) => s.setSubjectiveReadiness);
   const frequency = useOnboardingStore((s) => s.data.frequency);
+
+  // The day a class is being logged for — defaults to today, the picker can move
+  // it back into the backlog window (backward logging, Daniel decision #45). The
+  // "classes for this day" list mirrors it so the user sees the right day.
+  const [selectedDate, setSelectedDate] = useState<string>(todayISO);
 
   const [loggerOpen, setLoggerOpen] = useState(false);
   // SC 2.4.3 — when the inline logger closes, return focus to the CTA that
@@ -70,7 +124,7 @@ export function AerobicCoach(): JSX.Element {
   // Weekly target = the onboarding training frequency (sessions/week). Null when
   // not set (fresh user) → show the count without a "/ target".
   const weeklyTarget = frequency != null ? Number(frequency) : null;
-  const subjective = subjectiveByDate[dateISO] ?? null;
+  const subjective = subjectiveByDate[todayISO] ?? null;
 
   return (
     <section
@@ -114,14 +168,23 @@ export function AerobicCoach(): JSX.Element {
         </div>
       </div>
 
-      {/* Log a class CTA + inline logger. */}
+      {/* Log a class CTA + inline logger (with backward-date picker). */}
       {loggerOpen ? (
-        <ClassLogger dateISO={dateISO} onDone={() => setLoggerOpen(false)} />
+        <ClassLogger
+          dateISO={selectedDate}
+          onDateChange={setSelectedDate}
+          onDone={() => setLoggerOpen(false)}
+        />
       ) : (
         <button
           ref={logCtaRef}
           type="button"
-          onClick={() => setLoggerOpen(true)}
+          onClick={() => {
+            // Re-default to today each open — a stale backdate from a prior log
+            // must not silently carry over to the next class.
+            setSelectedDate(todayISO);
+            setLoggerOpen(true);
+          }}
           data-testid="aerobic-log-cta"
           className="btn-primary-lift btn-grad press-feedback w-full mb-4 px-5 py-4 text-base font-semibold flex items-center justify-center gap-2"
         >
@@ -130,8 +193,9 @@ export function AerobicCoach(): JSX.Element {
         </button>
       )}
 
-      {/* Today's logged classes — per-entry delete (mislogged-class removal). */}
-      <TodayClassList dateISO={dateISO} />
+      {/* Logged classes for the selected day — per-entry delete (mislogged-class
+          removal). Mirrors the picker so a backdated log appears in its day. */}
+      <TodayClassList dateISO={selectedDate} />
 
       {/* Simplified SUBJECTIVE readiness — pure self-report, NO engine. */}
       <div
@@ -150,7 +214,7 @@ export function AerobicCoach(): JSX.Element {
               <button
                 key={value}
                 type="button"
-                onClick={() => setSubjectiveReadiness(dateISO, value)}
+                onClick={() => setSubjectiveReadiness(todayISO, value)}
                 data-testid={`aerobic-readiness-${value}`}
                 aria-pressed={selected}
                 className={`press-feedback py-3 px-2 rounded-xl border text-sm font-semibold text-ink transition-colors ${selected ? 'ob-row-selected option-selected-ring' : 'bg-paper2 border-lineStrong'}`}
@@ -262,7 +326,16 @@ export function TodayClassList({ dateISO }: { dateISO: string }): JSX.Element | 
  * another?" (explicit confirm, not a hard block) so an accidental second log is
  * caught while a genuine second class is still one tap away.
  */
-export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () => void }): JSX.Element {
+export function ClassLogger({
+  dateISO,
+  onDateChange,
+  onDone,
+}: {
+  dateISO: string;
+  /** Backward-logging date picker hook — omit to hide the picker (fixed date). */
+  onDateChange?: (dateISO: string) => void;
+  onDone: () => void;
+}): JSX.Element {
   const lastDuration = useAerobicStore((s) => s.lastDuration);
   const logClass = useAerobicStore((s) => s.logClass);
   const sessions = useAerobicStore((s) => s.sessions);
@@ -286,11 +359,20 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
   const weightKg = getCurrentWeightKg();
   const kcalPreview = minutesValid ? computeAerobicKcal(type, weightKg, minutes) : null;
 
-  // A class already logged today → Save first asks to confirm a second log.
-  const alreadyLoggedToday = aerobicSessionsForDate(sessions, dateISO).length > 0;
+  // A class already logged on the SELECTED day → Save first asks to confirm a
+  // second log (the day can be backdated, so this tracks the chosen day, not
+  // literally today).
+  const alreadyLoggedThisDay = aerobicSessionsForDate(sessions, dateISO).length > 0;
+
+  function handleDateChange(next: string): void {
+    // Switching the day invalidates a pending double-log confirm (it was raised
+    // for the previous day).
+    setConfirmAnother(false);
+    onDateChange?.(next);
+  }
 
   function commit(): void {
-    // logClass persists the session + remembers the duration (memory).
+    // logClass persists the session (under the chosen date) + remembers duration.
     logClass({ date: dateISO, type, minutes, weightKg });
     onDone();
   }
@@ -299,7 +381,7 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
     if (!minutesValid) return;
     // Explicit double-log confirm (not a hard block): an accidental second log
     // is caught, a genuine second class is one more tap.
-    if (alreadyLoggedToday && !confirmAnother) {
+    if (alreadyLoggedThisDay && !confirmAnother) {
       setConfirmAnother(true);
       return;
     }
@@ -314,6 +396,11 @@ export function ClassLogger({ dateISO, onDone }: { dateISO: string; onDone: () =
       <div ref={headingRef} tabIndex={-1} className="outline-none">
         <Kicker color="var(--aqua-ink)">{t('antrenor.aerobic.loggerKicker')}</Kicker>
       </div>
+
+      {/* Class DATE — backward / retroactive logging (decision #45). Defaults to
+          today; can move back into the backlog window. Hidden when the host does
+          not wire onDateChange (fixed-date callers). */}
+      {onDateChange && <ClassDatePicker value={dateISO} onChange={handleDateChange} />}
 
       {/* Class type picker. */}
       <p className="text-xs text-ink2 mt-3 mb-2">{t('antrenor.aerobic.typeLabel')}</p>

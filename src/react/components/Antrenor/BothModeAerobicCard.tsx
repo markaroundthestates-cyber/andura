@@ -11,19 +11,21 @@ import { useEffect, useRef, useState } from 'react';
 import { Plus, HeartPulse } from 'lucide-react';
 import { Kicker } from '../pulse/Kicker';
 import { ClassLogger, TodayClassList } from './AerobicCoach';
-import { useAerobicStore, countClassesThisWeek } from '../../stores/aerobicStore';
+import { useAerobicStore, countClassesThisWeek, aerobicTodayIso } from '../../stores/aerobicStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { t } from '../../../i18n/index.js';
 
 function todayIso(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return aerobicTodayIso();
 }
 
 export function BothModeAerobicCard(): JSX.Element {
   const sessions = useAerobicStore((s) => s.sessions);
   const frequency = useOnboardingStore((s) => s.data.frequency);
   const [loggerOpen, setLoggerOpen] = useState(false);
+  // Day a class is logged for — defaults to today, the picker can backdate it
+  // (backward logging, decision #45). The day's list mirrors it.
+  const [selectedDate, setSelectedDate] = useState<string>(todayIso());
   // SC 2.4.3 — restore focus to the trigger CTA when the inline logger closes
   // (the CTA unmounts while open, so re-focus it after it remounts). prevOpen
   // guards the initial render.
@@ -55,12 +57,20 @@ export function BothModeAerobicCard(): JSX.Element {
       </div>
 
       {loggerOpen ? (
-        <ClassLogger dateISO={todayIso()} onDone={() => setLoggerOpen(false)} />
+        <ClassLogger
+          dateISO={selectedDate}
+          onDateChange={setSelectedDate}
+          onDone={() => setLoggerOpen(false)}
+        />
       ) : (
         <button
           ref={logCtaRef}
           type="button"
-          onClick={() => setLoggerOpen(true)}
+          onClick={() => {
+            // Re-default to today each open — no stale backdate carryover.
+            setSelectedDate(todayIso());
+            setLoggerOpen(true);
+          }}
           data-testid="both-aerobic-log-cta"
           className="btn-secondary-lift press-feedback w-full mt-1 px-4 py-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-sm font-semibold flex items-center justify-center gap-2"
         >
@@ -69,9 +79,10 @@ export function BothModeAerobicCard(): JSX.Element {
         </button>
       )}
 
-      {/* Today's logged classes — per-entry delete (shared with aerobic-only). */}
+      {/* Logged classes for the selected day — per-entry delete (shared with
+          aerobic-only). Mirrors the picker so a backdated log shows in its day. */}
       <div className="mt-3">
-        <TodayClassList dateISO={todayIso()} />
+        <TodayClassList dateISO={selectedDate} />
       </div>
     </div>
   );
