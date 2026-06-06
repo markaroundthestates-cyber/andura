@@ -118,6 +118,61 @@ export function fbKey(localKey) {
   return localKey.replace(/[.$#[\]/]/g, '_');
 }
 
+// ── Name-keyed value encoding (forbidden-char-safe, REVERSIBLE) ──────────────
+// fbKey() above only sanitizes the TOP-LEVEL SYNC_KEYS node names. Some sync
+// VALUES are objects keyed by FREE-TEXT exercise names (e.g. `dp-cal-factors` =
+// {engineName -> {kgFactor,n}}). Exercise names can carry Firebase-forbidden key
+// chars `. $ # [ ] /` (founder live: "Pec Deck / Cable Fly" has a `/`). Because
+// syncToFirebase sends ONE atomic PATCH, a single forbidden NESTED key made RTDB
+// REST reject the ENTIRE batch with 400 — all sync (weights, logs, kcals…)
+// silently stopped persisting to the cloud from that point on. localStorage kept
+// working, so one device looked fine while a new browser saw stale/empty data.
+//
+// A naive replace(/[.$#[\]/]/g,'_') is IRREVERSIBLE — "Pec Deck / Cable Fly" and
+// "Pec Deck _ Cable Fly" collide, and the engine reads factors by EXACT name. So
+// the at-risk maps are serialized to the cloud as an ARRAY of {name, ...rest}
+// entries: array indices become the (numeric, always-valid) RTDB keys and the
+// real exercise name lives in a VALUE field. Round-trip is lossless — decode
+// rebuilds the exact object so DP._calFactor finds its factor by name. The
+// localStorage copy is NEVER touched; only the cloud representation changes.
+//
+// SYNC_KEYS whose value is a free-text-name-keyed object. Audited 2026-06-06:
+// `dp-cal-factors` is the only one (pr-records/coach-decisions/logs are arrays;
+// step-streaks/sf.userConfig are fixed-key objects). Listed so any future
+// name-keyed map opts in by key name alone.
+export const NAME_KEYED_SYNC_KEYS = Object.freeze(['dp-cal-factors']);
+
+// Encode a free-text-name-keyed object → array of {name, ...rest} for the cloud.
+// Non-object input is returned untouched (defensive: never corrupt a scalar).
+/** @param {unknown} obj @returns {unknown} */
+export function encodeNameKeyed(obj) {
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return obj;
+  return Object.keys(/** @type {Record<string, unknown>} */ (obj)).map(name => {
+    const v = /** @type {Record<string, unknown>} */ (obj)[name];
+    return (v && typeof v === 'object' && !Array.isArray(v))
+      ? { name, .../** @type {Record<string, unknown>} */ (v) }
+      : { name, value: v };
+  });
+}
+
+// Decode the cloud array of {name, ...rest} back → exact original object. Tolerant
+// of the LEGACY plain-object shape too (a value that already round-tripped before
+// this fix, or a valid all-safe-key map): a non-array is returned untouched so the
+// existing merge path handles it. Entries missing a string `name` are skipped.
+/** @param {unknown} arr @returns {unknown} */
+export function decodeNameKeyed(arr) {
+  if (!Array.isArray(arr)) return arr;
+  /** @type {Record<string, unknown>} */
+  const out = {};
+  for (const entry of arr) {
+    if (!entry || typeof entry !== 'object' || typeof entry.name !== 'string') continue;
+    const { name, ...rest } = entry;
+    // {name, value} wrapper (non-object original value) unwraps back to the scalar.
+    out[name] = ('value' in entry && Object.keys(rest).length === 1) ? rest.value : rest;
+  }
+  return out;
+}
+
 function getDeviceId() {
   let id = localStorage.getItem('device-id');
   if (!id) { id = 'dev-' + Math.random().toString(36).slice(2,10); localStorage.setItem('device-id', id); }
@@ -324,7 +379,9 @@ export async function syncToFirebase() {
       if (v == null) return;
       // Remote node name must be a valid RTDB key (sanitize forbidden chars,
       // e.g. the dot in `sf.userConfig`). localStorage key `k` stays as-is.
-      payload[fbKey(k)] = v;
+      // Name-keyed maps (dp-cal-factors) → array-of-entries so a free-text
+      // exercise name with a forbidden char (`/` etc.) can't 400 the whole PATCH.
+      payload[fbKey(k)] = NAME_KEYED_SYNC_KEYS.includes(k) ? encodeNameKeyed(v) : v;
     });
     payload['_device'] = getDeviceId();
     payload['_ts'] = Date.now();
@@ -381,20 +438,25 @@ export async function syncFromFirebase() {
         // keep writing to the original localStorage key `k`.
         const rk = fbKey(k);
         if (remote[rk] == null) return;
+        // Name-keyed maps were pushed as an array-of-{name,...} (forbidden-char
+        // safe). Decode back to the exact {name -> value} object BEFORE the merge
+        // so DP reads its per-exercise factor by the original name. Tolerant of the
+        // legacy plain-object shape (decode returns non-arrays untouched).
+        const remoteVal = NAME_KEYED_SYNC_KEYS.includes(k) ? decodeNameKeyed(remote[rk]) : remote[rk];
         const local = DB.get(k);
-        if (local == null) { DB.set(k, remote[rk]); return; }
+        if (local == null) { DB.set(k, remoteVal); return; }
 
         // Merge objects (weights, kcals, prots, etc.).
         // Strategy: union of remote + local, with local taking priority on conflicts.
         // KNOWN LIMITATION: if the same date was edited on two devices, local always wins
         // regardless of which edit was more recent. Proper last-write-wins requires
         // per-entry timestamps — deferred until multi-device use becomes a real concern.
-        if (typeof remote[rk] === 'object' && !Array.isArray(remote[rk])) {
-          DB.set(k, Object.assign({}, remote[rk], local));
-        } else if (Array.isArray(remote[rk])) {
+        if (typeof remoteVal === 'object' && !Array.isArray(remoteVal)) {
+          DB.set(k, Object.assign({}, remoteVal, local));
+        } else if (Array.isArray(remoteVal)) {
           // For arrays (logs), merge by timestamp uniqueness
           const localArr = Array.isArray(local) ? local : [];
-          const remoteArr = remote[rk];
+          const remoteArr = remoteVal;
           const tsSet = new Set(localArr.map(e => e.ts));
           const merged = [...localArr];
           remoteArr.forEach(e => { if (!tsSet.has(e.ts)) merged.push(e); });
