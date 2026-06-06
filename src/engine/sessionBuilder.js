@@ -441,16 +441,58 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed) {
     // regardless of status (don't yank a lift out from under an existing user).
     if (isActiveMeta(meta) || prNames.has(name)) core.push({ name, meta });
   }
-  // Deterministic ordering: PR-anchored first (continuity), then plain anchors,
-  // then common, then the rest; seeded-stable by name hash.
+  // Deterministic ordering: PR-anchored first (continuity), then SQUAT-PATTERN
+  // primacy on the quads group, then plain anchors, then common, then the rest;
+  // seeded-stable by name hash.
+  //
+  // SQUAT primacy (D-squat-lead 2026-06-06): the squat is the most systemic quad
+  // pattern and must lead the leg day when fresh — but D104 tier-sort can't order
+  // it ahead of the machine Leg Press because BOTH are tier-1, and Leg Press won
+  // the quad anchor only because it sits in the legacy ANCHOR_NAMES (band 1) while
+  // every squat pattern sits in COMMON (band 2). Founder live 2026-06-06: leg day
+  // emitted Leg Press → RDL → squat (the squat landed 3rd, after a machine press +
+  // a hinge). Here a quads squat pattern ranks ABOVE a non-squat quad anchor (the
+  // Leg Press) so the squat becomes the quad anchor → leads the session. It stays
+  // BELOW the user's own PR-history lift (band 0) so continuity is never broken.
+  // Scoped to the quads group only (squatPrimacy is 0 for every other group), so
+  // no other cluster's ordering moves. All squat variants are skill_level beginner
+  // (Smith/Hack/Goblet/Belt — machine-guided), so a beginner gets a safe squat
+  // lead; a free barbell squat is still skill-gated out for T0 in poolForGroup.
   const byRankSeed = (a, b) => {
     const ra = rank(a.name, prNames);
     const rb = rank(b.name, prNames);
+    // PR continuity (band 0) is absolute — never reorder a user's logged lift.
+    const aPr = prNames.has(a.name);
+    const bPr = prNames.has(b.name);
+    if (aPr !== bPr) return aPr ? -1 : 1;
+    if (!aPr && !bPr) {
+      const sa = squatPrimacy(a.name, a.meta);
+      const sb = squatPrimacy(b.name, b.meta);
+      if (sa !== sb) return sb - sa; // higher primacy first
+    }
     if (ra !== rb) return ra - rb;
     return seededKey(a.name, seed) - seededKey(b.name, seed);
   };
   core.sort(byRankSeed);
   return core;
+}
+
+/**
+ * Squat-pattern primacy for the QUADS group only (D-squat-lead 2026-06-06). The
+ * squat is the primary, most systemic quad compound and should lead the leg day
+ * over the machine Leg Press / other quad accessories. Returns 1 for a tier-1
+ * quads exercise whose movement pattern is a squat (movementKey ...::squat), else
+ * 0 — so the ordering lever is inert for every other group and for non-squat /
+ * non-compound quad lifts. Used ONLY as a tiebreak below PR continuity.
+ *
+ * @param {string} name - library exercise name
+ * @param {{muscle_target_primary?: string, tier?: number}} meta
+ * @returns {0|1} 1 = primary squat pattern on quads, 0 = everything else
+ */
+function squatPrimacy(name, meta) {
+  if (meta?.muscle_target_primary !== 'picioare-quads') return 0;
+  if (meta?.tier !== COMPOUND_TIER) return 0;
+  return movementKey(name, meta) === 'picioare-quads::squat' ? 1 : 0;
 }
 
 /**

@@ -97,6 +97,52 @@ describe('buildSession — pure function', () => {
     }
   });
 
+  // SQUAT primacy (D-squat-lead 2026-06-06) — the squat is the most systemic quad
+  // pattern and must LEAD the leg day when fresh. Founder live 2026-06-06: the leg
+  // day emitted Leg Press → RDL → squat (the squat landed 3rd, behind a machine
+  // press). Both are tier-1 so D104's tier-sort can't order them; Leg Press won the
+  // quad anchor only because it sits in the legacy ANCHOR_NAMES band while squats
+  // sit in COMMON. Now a quads squat pattern outranks the machine Leg Press for the
+  // anchor slot → leads the session — UNLESS the user has a Leg Press PR (continuity
+  // wins, asserted below).
+  it('a squat pattern LEADS the leg day over the machine Leg Press (no PR)', () => {
+    // Full gym, no PR history → the quad anchor must be a squat pattern, not the
+    // Leg Press, and it must be at position 0 (compounds lead, squat is the anchor).
+    const s = buildSession('lower', {
+      ...ctx({ available: ['machine', 'barbell', 'dumbbell', 'cable'] }),
+      volumeTargets: { quads: 14, hamstrings: 12, glutes: 12, calves: 14, core: 8 },
+      weeklySessionsPerGroup: {
+        'picioare-quads': 2, 'picioare-hamstrings': 2, fese: 2, gambe: 2, core: 2,
+      },
+    });
+    const names = s.exercises.map((e) => e.name);
+    const first = s.exercises[0];
+    const firstMeta = getExerciseMetadata(first.name);
+    // The session leads with a quads squat pattern (movementKey ...::squat).
+    expect(firstMeta.muscle_target_primary).toBe('picioare-quads');
+    expect(movementKey(first.name, firstMeta)).toBe('picioare-quads::squat');
+    // The squat appears strictly BEFORE the Leg Press when both are present.
+    const squatIdx = s.exercises.findIndex(
+      (e) => movementKey(e.name, getExerciseMetadata(e.name)) === 'picioare-quads::squat',
+    );
+    const legPressIdx = names.indexOf('Leg Press');
+    if (legPressIdx !== -1) expect(squatIdx).toBeLessThan(legPressIdx);
+  });
+
+  it('Leg Press PR continuity still wins (squat primacy never breaks a logged lift)', () => {
+    // A user who has logged Leg Press keeps it as their quad anchor (band-0 PR
+    // continuity is absolute — squat primacy only reorders NON-PR candidates).
+    const s = buildSession('lower', {
+      ...ctx({ available: ['machine', 'barbell', 'dumbbell', 'cable'] }),
+      prNames: ['Leg Press'],
+      volumeTargets: { quads: 14, hamstrings: 12, glutes: 12, calves: 14, core: 8 },
+      weeklySessionsPerGroup: {
+        'picioare-quads': 2, 'picioare-hamstrings': 2, fese: 2, gambe: 2, core: 2,
+      },
+    });
+    expect(s.exercises[0].name).toBe('Leg Press');
+  });
+
   // WP-4: missing equipment no longer DROPs to an empty session — bodyweight
   // is always available, so a session is still produced (clean seam for WP-5
   // substitution rather than a crash / empty list).
@@ -278,9 +324,16 @@ describe('buildSession — PR anchoring', () => {
     expect(names).toContain('Cable Curl');
   });
 
-  it('Leg Press (anchor) selected for a quad-targeting session', () => {
-    const names = buildSession('legs', ctx()).exercises.map((e) => e.name);
-    expect(names).toContain('Leg Press');
+  it('a quad compound anchor leads a quad-targeting session', () => {
+    // The legs session anchors on a tier-1 quad compound. Since the squat-primacy
+    // fix (D-squat-lead 2026-06-06) the SQUAT pattern is the quad anchor (a more
+    // systemic lift than the machine Leg Press), so it leads the session; the Leg
+    // Press is an accessory that only fits in larger (volume-driven) sessions.
+    const first = buildSession('legs', ctx()).exercises[0];
+    const meta = getExerciseMetadata(first.name);
+    expect(meta.muscle_target_primary).toBe('picioare-quads');
+    expect(meta.tier).toBe(1);
+    expect(movementKey(first.name, meta)).toBe('picioare-quads::squat');
   });
 });
 
