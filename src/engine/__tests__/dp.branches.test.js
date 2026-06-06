@@ -254,9 +254,16 @@ describe('DP._recommendRaw — branch coverage', () => {
     store['logs'] = [log('Leg Press', 400, 15, 7)];
     const r = DP._recommendRaw('Leg Press');
     expect(r.status).toBe('PEAK');
-    expect(r.kg).toBe(400);
+    expect(r.kg).toBe(400);                  // RAW (pre-snap) load
     expect(r.repsTarget).toBe(12);          // rMax (never 15+)
     expect(r.repsTarget).toBeLessThanOrEqual(12); // never above the hypertrophy rMax
+    // Production path (audit F-2 2026-06-07): recommend() snaps to the real
+    // equipment ladder. leg_press_plates tops at 320, so a 400kg log is snapped
+    // DOWN to the ladder top (320) — NOT held at the raw 400 the coach can't
+    // prescribe. This assertion guards the production snap the old RAW-only test
+    // masked (it must never silently crater to the 20kg floor).
+    const prod = DP.recommend('Leg Press');
+    expect(prod.kg).toBe(320);
   });
 
   it('PEAK: at weight cap AND at the top of the range (>= rMax) → maintain', () => {
