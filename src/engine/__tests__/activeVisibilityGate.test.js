@@ -45,18 +45,23 @@ describe('ACTIVE visibility gate — single source of truth', () => {
     expect(isActiveExercise('Totally Not Real')).toBe(false); // unknown
   });
 
-  it('the active catalog is the 144 CORE_AUTO entries (data preserved, just hidden)', () => {
-    // 144 = the original 143 + `45-Degree Leg Press`, tagged CORE_AUTO 2026-06-06
-    // so the founder's real gym machine (a 45deg sled press, not the generic
-    // horizontal Leg Press) is selectable in the swap pick-list. Tagging only —
-    // no load-model / cold-start change (the 45-vs-horizontal load delta is a
-    // separate per-user equipment decision, deliberately deferred).
+  it('the active catalog is the 143 CORE_AUTO entries (data preserved, just hidden)', () => {
+    // 143 CORE_AUTO. The canonical `Leg Press` entry IS the 45deg sled (Daniel
+    // SSOT 2026-06-06: treat the leg press as the 45deg incline/sled GLOBALLY —
+    // most commercial gyms have the sled, which loads more). Its RO label is
+    // "Presa de picioare la 45 grade" and its 1.9 cold-start fraction reflects the
+    // higher sled load. The standalone `45-Degree Leg Press` entry was therefore
+    // un-tagged again (it would have duplicated the now-45deg `Leg Press` in the
+    // pick-list); `Horizontal Leg Press` stays the lower-load selectable variant.
     const active = Object.keys(EXERCISE_METADATA).filter(isActive);
     const coreAuto = Object.entries(EXERCISE_METADATA)
       .filter(([, m]) => m.status === 'CORE_AUTO').map(([n]) => n);
     expect(active.sort()).toEqual(coreAuto.sort());
-    expect(active.length).toBe(144);
-    expect(active).toContain('45-Degree Leg Press');
+    expect(active.length).toBe(143);
+    expect(active).not.toContain('45-Degree Leg Press'); // folded into canonical `Leg Press`
+    // The canonical leg press the engine anchors IS the 45deg sled identity.
+    expect(EXERCISE_METADATA['Leg Press'].status).toBe('CORE_AUTO');
+    expect(EXERCISE_METADATA['Leg Press'].nameRo).toBe('Presa de picioare la 45 grade');
     // Full library untouched (reversibility): all 657 still present.
     expect(Object.keys(EXERCISE_METADATA).length).toBe(657);
   });

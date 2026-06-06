@@ -134,10 +134,11 @@
     "status": "CORE_AUTO"
   },
   "Leg Press": {
-    "nameRo": "Presa de picioare",
+    "nameRo": "Presa de picioare la 45 grade",
     "nameEn": "Leg Press",
     "equipment_type": "machine",
     "equipment_alternatives": [
+      "Horizontal Leg Press",
       "Leg Extension"
     ],
     "force_demand": "high",
@@ -12256,8 +12257,7 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ],
-    "status": "CORE_AUTO"
+    ]
   },
   "Horizontal Leg Press": {
     "nameRo": "Presa de picioare orizontala",

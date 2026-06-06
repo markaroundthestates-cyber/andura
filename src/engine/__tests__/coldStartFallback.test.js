@@ -199,3 +199,37 @@ describe('cold-start cable/barbell compounds are no longer seeded absurdly low (
     expect(suggestStartWeight('Lat Pulldown', 'beginner', LIGHT)).toBeLessThanOrEqual(45);
   });
 });
+
+// ══ LEG PRESS = the 45deg SLED, globally (Daniel SSOT 2026-06-06) ════════════
+// The canonical `Leg Press` the engine anchors/offers IS the 45deg incline/sled
+// (most commercial gyms have the sled — it loads MORE than a horizontal press).
+// Its 1.9 cold-start fraction reflects the higher sled load; the lower-load
+// `Horizontal Leg Press` is the selectable alternative and must price BELOW it
+// for the same lifter. PR history keyed on `Leg Press` is untouched (the emitted
+// name did not change — only its identity/RO label/equipment-alternatives), so
+// no existing logs are stranded.
+describe('the default Leg Press is the 45deg sled (loads higher than horizontal)', () => {
+  it('the 45deg sled (canonical `Leg Press`) opens HIGHER than the `Horizontal Leg Press`', () => {
+    const MID = { bodyweightKg: 90, sex: 'm' };
+    const sled = suggestStartWeight('Leg Press', 'intermediate', MID);              // 1.9 fraction
+    const horizontal = suggestStartWeight('Horizontal Leg Press', 'intermediate', MID); // 0.70 fallback
+    expect(sled).toBeGreaterThan(horizontal);
+    expect(sled).toBeGreaterThanOrEqual(150); // 1.9 × 90 = 171 — a real 45deg sled number
+  });
+
+  it('a light beginner female stays sane on the 45deg sled (not absurd)', () => {
+    // 60kg f beginner: 60 × 1.9 × 0.78 (female) × 0.7 (beginner) ≈ 62kg — a
+    // reasonable first sled prescription (carriage + plates), the first set recalibrates.
+    const w = suggestStartWeight('Leg Press', 'beginner', { bodyweightKg: 60, sex: 'f' });
+    expect(w).toBeGreaterThanOrEqual(50);
+    expect(w).toBeLessThanOrEqual(90);
+  });
+
+  it('a strong male is not absurd on the 45deg sled', () => {
+    // 100kg advanced male: 100 × 1.9 × 1.3 = 247kg — heavy but real for a sled at
+    // advanced training age (RIR on the first set trims any overshoot).
+    const w = suggestStartWeight('Leg Press', 'advanced', { bodyweightKg: 100, sex: 'm' });
+    expect(w).toBeLessThanOrEqual(260);
+    expect(w).toBeGreaterThanOrEqual(180);
+  });
+});
