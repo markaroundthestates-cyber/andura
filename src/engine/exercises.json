@@ -12256,7 +12256,8 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "status": "CORE_AUTO"
   },
   "Horizontal Leg Press": {
     "nameRo": "Presa de picioare orizontala",

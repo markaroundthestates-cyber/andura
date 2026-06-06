@@ -45,12 +45,18 @@ describe('ACTIVE visibility gate — single source of truth', () => {
     expect(isActiveExercise('Totally Not Real')).toBe(false); // unknown
   });
 
-  it('the active catalog is the 143 CORE_AUTO entries (data preserved, just hidden)', () => {
+  it('the active catalog is the 144 CORE_AUTO entries (data preserved, just hidden)', () => {
+    // 144 = the original 143 + `45-Degree Leg Press`, tagged CORE_AUTO 2026-06-06
+    // so the founder's real gym machine (a 45deg sled press, not the generic
+    // horizontal Leg Press) is selectable in the swap pick-list. Tagging only —
+    // no load-model / cold-start change (the 45-vs-horizontal load delta is a
+    // separate per-user equipment decision, deliberately deferred).
     const active = Object.keys(EXERCISE_METADATA).filter(isActive);
     const coreAuto = Object.entries(EXERCISE_METADATA)
       .filter(([, m]) => m.status === 'CORE_AUTO').map(([n]) => n);
     expect(active.sort()).toEqual(coreAuto.sort());
-    expect(active.length).toBe(143);
+    expect(active.length).toBe(144);
+    expect(active).toContain('45-Degree Leg Press');
     // Full library untouched (reversibility): all 657 still present.
     expect(Object.keys(EXERCISE_METADATA).length).toBe(657);
   });

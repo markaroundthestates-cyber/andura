@@ -5,7 +5,7 @@
 // its demo image (ExerciseMedia) + an inline expand showing the full two-frame
 // demo + secondary muscles / equipment / tier.
 //
-// Scope (Daniel spec): ONLY status === 'CORE_AUTO' (~143) — the curated set the
+// Scope (Daniel spec): ONLY status === 'CORE_AUTO' (~144) — the curated set the
 // app actually programs, exactly the ones that have demo images. NOT the full
 // ~657 library.
 //
