@@ -50,3 +50,43 @@ describe('coldStartGuidelines — metadata-aware fallback for unlisted compounds
     expect(flat).toBeGreaterThanOrEqual(25);
   });
 });
+
+// ══ CHEST-FLY ISOLATION — must NOT be priced as a chest PRESS ════════════════
+// Daniel coach audit 2026-06-06 ("chest fly 10 x 32"): the composer emits
+// engineName 'Pec Deck / Cable Fly' (also 'Cable Fly' / 'DB Fly'), but those
+// keys were ABSENT from BW_FRACTION + BASE_WEIGHTS (only a DEAD bare 'Pec Deck'
+// key existed) so they fell to FALLBACK_MUSCLE_FRACTION['piept'] = 0.50 — the
+// chest-PRESS share — and a fly was priced like a bench press (~32-50kg).
+// These pin the isolation fraction and that a fly lands clearly BELOW a press.
+describe('coldStartGuidelines — chest-fly isolations are NOT priced as presses', () => {
+  const PRESS_FALLBACK_FRACTION = 0.5; // FALLBACK_MUSCLE_FRACTION['piept']
+  for (const bw of [65, 100]) {
+    const press = bw * PRESS_FALLBACK_FRACTION; // what the bug used to apply
+
+    it(`Pec Deck / Cable Fly @ bw ${bw} uses the 0.30 machine-fly fraction, not the 0.50 press share`, () => {
+      const fly = suggestStartWeight('Pec Deck / Cable Fly', 'intermediate', { bodyweightKg: bw, sex: 'm' });
+      // 0.30 fraction floored at the 20kg fly prior: bw65 -> 20, bw100 -> 30.
+      expect(fly).toBe(bw === 65 ? 20 : 30);
+      // The old bug applied the 0.50 press share (bw65 -> ~35, bw100 -> ~50).
+      expect(fly).toBeLessThan(press);
+    });
+
+    it(`Cable Fly @ bw ${bw} uses the 0.18 free-fly fraction, well below the press share`, () => {
+      const fly = suggestStartWeight('Cable Fly', 'intermediate', { bodyweightKg: bw, sex: 'm' });
+      // 0.18 floored at 12: bw65 -> max(12, 11.7)=12, bw100 -> 18.
+      expect(fly).toBe(bw === 65 ? 12 : 18);
+      expect(fly).toBeLessThan(press);
+    });
+
+    it(`DB Fly @ bw ${bw} (per-hand) uses the 0.18 free-fly fraction, well below the press share`, () => {
+      const fly = suggestStartWeight('DB Fly', 'intermediate', { bodyweightKg: bw, sex: 'm' });
+      expect(fly).toBe(bw === 65 ? 12 : 18);
+      expect(fly).toBeLessThan(press);
+    });
+  }
+
+  it('chest fly @ bw 65 is no longer the bugged ~32 press value', () => {
+    const fly = suggestStartWeight('Pec Deck / Cable Fly', 'intermediate', { bodyweightKg: 65, sex: 'm' });
+    expect(fly).toBeLessThanOrEqual(20);
+  });
+});

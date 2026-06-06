@@ -9,6 +9,14 @@ const BASE_WEIGHTS = {
   'DB Shoulder Press': 10,
   'Incline DB Press': 15,
   'Pec Deck': 20,
+  // Chest-fly ISOLATIONS (the composer emits these full canonical names, never
+  // bare 'Pec Deck'). A fly is an isolation — it must NOT inherit the chest-PRESS
+  // floor. Machine pec-deck heavier than a free fly; cable/DB fly lighter (DB per
+  // hand). (Daniel coach audit 2026-06-06: 'Pec Deck / Cable Fly' missed both
+  // tables -> piept 0.50 press fallback -> a fly priced as a bench press ~32kg.)
+  'Pec Deck / Cable Fly': 20,
+  'Cable Fly': 12,
+  'DB Fly': 12,
   'Lateral Raises': 5,
   'Pushdown': 15,
   'Lat Pulldown': 30,
@@ -65,6 +73,15 @@ const BW_FRACTION = /** @type {Record<string, number>} */ ({
   'Incline DB Press': 0.20,
   'DB Shoulder Press': 0.14,
   'Pec Deck': 0.30,
+  // Chest-fly ISOLATIONS — keyed on the EXACT engineNames the composer emits
+  // (scheduleAdapterAggregate.compose.ts:183). A fly is an isolation share, NOT
+  // the chest-PRESS share (FALLBACK_MUSCLE_FRACTION piept 0.50). Machine pec-deck
+  // ~0.30 (the bare 'Pec Deck' intent, now keyed to the live name); a free cable/
+  // DB fly is lighter (DB per hand) ~0.18. Lands a fly clearly BELOW a press for
+  // the same user (Daniel coach audit 2026-06-06: 'chest fly 10 x 32').
+  'Pec Deck / Cable Fly': 0.30,
+  'Cable Fly': 0.18,
+  'DB Fly': 0.18,
   // Larger cable isolation
   'Pushdown': 0.22,
   'Overhead Triceps': 0.11,
