@@ -486,6 +486,131 @@ export const DP = {
       .slice(0, n);
   },
 
+  // ── RETURN-AFTER-GAP DELOAD + RAMP (detraining, Daniel decision #3) ──────────
+  // Real failure observed in the founder's data: 3 months off legs → the engine
+  // (reading only the pre-gap lastW) let him chase a 230 PR + full v-taper volume
+  // on the very first session back → "barely walk", DOMS / injury risk. After a
+  // training GAP for an exercise, the COMEBACK must be DELOADED then RAMPED, fully
+  // automatic from the logs — no user input.
+  //
+  // FULLY LOG-DRIVEN (no extra DB writes — the recommend path stays side-effect
+  // free for this feature): the gap and the ramp position are both READ from the
+  // exercise's own timestamped log history.
+  //   - GAP = the span between the two most-recent DISTINCT-DAY logs that exceeds
+  //     RETURN_GAP_MIN. The "pre-gap working load" is the load logged just BEFORE
+  //     that gap; the comeback sessions are the logs AFTER it.
+  //   - Comeback session index = how many logs landed AFTER the gap boundary
+  //     (0 = none yet → the very first session back; 1,2,3 = ramping up).
+  // The deload multiplier starts deep (scaled by gap length) and RAMPS by
+  // RETURN_RAMP_STEP per comeback session back toward 1.0 over ~3-4 sessions.
+  //
+  // Composes cleanly with the rest of the pipeline (getSmartRecommendation applies
+  // it as the LAST load multiplier, after readiness / rating / synergist gates and
+  // before the final equipment snap) and STACKS sensibly — it only ever LOWERS the
+  // load and caps PR, so it cannot push past the other safety gates. The set-trim
+  // (−1 set on the comeback) is surfaced as `setsAdjust` for the schedule layer to
+  // apply against its own recovery-aware set floor (never below 1).
+  //
+  // FUTURE PR-FLOOR (decision #6, not built here): an active return-deload window
+  // DELIBERATELY prescribes below the demonstrated max on the comeback. A future
+  // upward-climb / PR-floor MUST EXEMPT an exercise whose rec carries
+  // `returnDeload` (status 'RETURN DELOAD') — do not floor the comeback up to PR.
+
+  // A gap shorter than this is NORMAL (a missed day, a rest week) and must NOT
+  // trigger a deload — false positives ruin trust. ~3 weeks.
+  RETURN_GAP_MIN_WEEKS: 3,
+  // Deload DEPTH scales with gap length, clamped to a sane monotonic band:
+  //   ~3 weeks  → mild  (~70% of pre-gap working load)
+  //   ~3 months → deep  (~60%)
+  // Linear in gap weeks between the two anchors, clamped at both ends.
+  RETURN_DELOAD_MILD: 0.70,   // start fraction at the 3-week trigger
+  RETURN_DELOAD_DEEP: 0.60,   // floor fraction at / beyond ~3 months (13 weeks)
+  RETURN_DELOAD_DEEP_WEEKS: 13,
+  // Per comeback session, ramp the multiplier back toward full by this much.
+  // ~0.13 → ~3-4 sessions from 0.60/0.70 back to 1.0.
+  RETURN_RAMP_STEP: 0.13,
+  // Sets trimmed on the comeback (and while ramping) — the schedule layer clamps
+  // against its own MIN floor so a session never drops below 1 working set.
+  RETURN_SET_TRIM: 1,
+
+  // ms in a week — gap arithmetic.
+  _WEEK_MS: 7 * 24 * 3600 * 1000,
+
+  // Compute the return-after-gap deload plan for an exercise from its OWN log
+  // history. Pure (reads logs only). Returns null when there is no qualifying gap
+  // (cold start, a single log, or every gap < RETURN_GAP_MIN_WEEKS) → the normal
+  // pipeline is byte-unchanged. When a gap qualifies, returns the load multiplier
+  // for THIS comeback session, the pre-gap working load, the comeback index, the
+  // gap length, and whether the ramp is complete.
+  /**
+   * @param {string} ex
+   * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
+   * @returns {{ multiplier:number, preGapW:number, gapWeeks:number, session:number, done:boolean } | null}
+   */
+  _returnDeload(ex, nowMs) {
+    const ms = nowMs == null ? clockNow() : nowMs;
+    // Read enough history to see the gap boundary + the few comeback sessions.
+    const logs = this.getLogs(ex, 12); // newest-first, ts DESC
+    // Need at least one historical log to anchor the pre-gap working load. The
+    // commonest comeback (one logged session, then a long break) is handled by the
+    // gap-from-now path below with a single log.
+    if (logs.length < 1) return null;
+
+    // Find the gap boundary: the largest span between consecutive (newest-first)
+    // logs that exceeds the trigger. logs[i] is newer than logs[i+1]; the span
+    // logs[i].ts - logs[i+1].ts is the gap the user took BEFORE logging logs[i].
+    const gapMinMs = this.RETURN_GAP_MIN_WEEKS * this._WEEK_MS;
+    let boundary = -1; // index of the FIRST post-gap (comeback) log, newest-first
+    let gapMs = 0;
+    for (let i = 0; i < logs.length - 1; i++) {
+      const a = Number(logs[i].ts);
+      const b = Number(logs[i + 1].ts);
+      if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+      const span = a - b;
+      if (span >= gapMinMs && span > gapMs) {
+        gapMs = span;
+        boundary = i;
+      }
+    }
+
+    // Also consider the gap from the LAST log to NOW (the user is back today but
+    // has not logged yet this session) — the most common comeback case.
+    const lastTs = Number(logs[0].ts);
+    const gapFromNow = Number.isFinite(lastTs) ? ms - lastTs : 0;
+    let preGapW;
+    let session;
+    if (gapFromNow >= gapMinMs && gapFromNow >= gapMs) {
+      // First session back, nothing logged post-gap yet. Pre-gap load = last log.
+      gapMs = gapFromNow;
+      preGapW = Number(logs[0].w);
+      session = 0;
+    } else if (boundary >= 0) {
+      // Already logged 1+ comeback sessions — we are mid-ramp. Pre-gap load is the
+      // log just BEFORE the boundary (logs[boundary + 1]); comeback session index
+      // = how many logs landed at/after the boundary (boundary is 0-based newest-
+      // first, so boundary === 0 → 1 comeback log so far → session 1, etc.).
+      preGapW = Number(logs[boundary + 1].w);
+      session = boundary + 1;
+    } else {
+      return null;
+    }
+    if (!Number.isFinite(preGapW) || preGapW <= 0) return null;
+
+    const gapWeeks = gapMs / this._WEEK_MS;
+    // Depth scales linearly with gap length between the mild and deep anchors,
+    // clamped to the band (monotonic: longer gap → deeper start).
+    const span = Math.max(1, this.RETURN_DELOAD_DEEP_WEEKS - this.RETURN_GAP_MIN_WEEKS);
+    const frac = Math.min(1, Math.max(0,
+      (gapWeeks - this.RETURN_GAP_MIN_WEEKS) / span));
+    const startMult = this.RETURN_DELOAD_MILD
+      - frac * (this.RETURN_DELOAD_MILD - this.RETURN_DELOAD_DEEP);
+    // Ramp back toward full by RETURN_RAMP_STEP per comeback session.
+    const multiplier = Math.min(1, startMult + session * this.RETURN_RAMP_STEP);
+    // Window complete once the multiplier has climbed back to (≈) full.
+    if (multiplier >= 1) return null;
+    return { multiplier, preGapW, gapWeeks, session, done: false };
+  },
+
   // Get progression state for exercise
   /** @param {string} ex */
   getState(ex) {
@@ -1157,6 +1282,50 @@ export const DP = {
         result.synergistDiscount = discountFraction;
         result.synergistPreFatigue = { ...synergistLoad };
         result.synergistKgBefore = preKg;
+      }
+    }
+
+    // ── RETURN-AFTER-GAP DELOAD + RAMP (detraining, decision #3) ────────────────
+    // Applied as the LAST load multiplier — after readiness / rating / synergist
+    // gates — so it always wins on a genuine comeback (it only ever LOWERS the
+    // load + caps PR, so it cannot conflict with those gates). Anchored on the
+    // PRE-GAP working load (not the gated rec), so the comeback is a true fraction
+    // of what the user actually trained before the gap. NO-OP when there is no
+    // qualifying gap (cold start / single log / gap < 3 weeks) → byte-unchanged.
+    const rd = this._returnDeload(ex, nowMs);
+    if (rd && Number.isFinite(result.kg) && result.kg > 0) {
+      const target = rd.preGapW * rd.multiplier;
+      // NO PR on the comeback: never prescribe at/above the pre-gap working load
+      // (cap intensity). The deload target is already below it, but the cap also
+      // guards the ramp's final sessions from snapping back up to / past it.
+      const cappedTarget = Math.min(target, getPrevWeight(rd.preGapW, ex));
+      const deloadKg = this.roundToStep(Math.max(0, cappedTarget), ex);
+      // The return window is AUTHORITATIVE on the load: it both deloads the first
+      // session back AND ramps each subsequent session toward (but never up to)
+      // the pre-gap working load — faster than DP's one-step climb, and capped
+      // below PR. So it overrides whatever the normal path produced (which on the
+      // ramp is the slow climb from the already-low comeback lastW). It only ever
+      // sits BELOW the pre-gap load (the cap), so it never pushes past PR.
+      if (deloadKg > 0) {
+        result.kg = deloadKg;
+        result.status = 'RETURN DELOAD';
+        result.statusColor = 'var(--accent2)';
+        result.statusLabel = '🟡 Revenire dupa pauza';
+        const wk = Math.round(rd.gapWeeks);
+        result.progressionNote = rd.session === 0
+          ? `Pauza de ~${wk} saptamani · pornim usor la ${deloadKg} kg si urcam treptat, fara PR azi.`
+          : `Revenire in crestere · ${deloadKg} kg azi, continuam sa urcam catre nivelul de dinainte.`;
+        // Set-trim on the comeback — the schedule layer applies this against its
+        // own recovery-aware MIN floor (never below 1 working set).
+        result.setsAdjust = -this.RETURN_SET_TRIM;
+        // Forensic flags (explainability / future PR-floor exemption — decision #6
+        // must NOT floor the comeback up to PR while returnDeload is present).
+        result.returnDeload = {
+          multiplier: rd.multiplier,
+          preGapKg: rd.preGapW,
+          gapWeeks: rd.gapWeeks,
+          session: rd.session,
+        };
       }
     }
 

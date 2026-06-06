@@ -42,6 +42,11 @@ export const ENGINE_WORKOUT_TITLE_FALLBACK = '__engine_workout_title_fallback__'
 interface DpRecommendation {
   kg?: number;
   repsTarget?: number;
+  // Return-after-gap deload (detraining): when the DP brain detects a training
+  // GAP for this exercise it deloads the comeback load AND trims one working set.
+  // setsAdjust is the per-exercise set delta (−1 on the comeback / ramp), applied
+  // here against a MIN floor of 1 so a session never drops below one working set.
+  setsAdjust?: number;
 }
 
 // Fix #4 — default rest fallback (the prior hardcode) used only when the engine
@@ -197,7 +202,14 @@ function toPlannedExercise(
     // English canonical name preserved for WP-5 substitution + DP/library keys.
     engineName: engineEx.name,
     ...(display.sub !== undefined ? { sub: display.sub } : {}),
-    sets: engineEx.sets,
+    // Return-after-gap deload trims one working set on the comeback / ramp
+    // (rec.setsAdjust, −1). Composes with the schedule layer's own recovery-aware
+    // set count (engineEx.sets already reflects volume + recovery cuts) by
+    // subtracting on top, floored at 1 so a session never drops below one set.
+    sets:
+      rec && typeof rec.setsAdjust === 'number'
+        ? Math.max(1, engineEx.sets + rec.setsAdjust)
+        : engineEx.sets,
     targetReps,
     targetKg,
     // Fix #4 — rest from the engine rest range (compound=MAX / isolation=MIN),
