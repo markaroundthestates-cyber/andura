@@ -72,14 +72,27 @@ const EXPERIENCE_MULTIPLIER = { beginner: 0.7, intermediate: 1.0, advanced: 1.3 
 // to a generic isolation fraction (safe, low) so an unknown exercise can never
 // resolve to an aggressive start.
 const BW_FRACTION = /** @type {Record<string, number>} */ ({
+  // ── Cable/barbell compound cold-start fractions raised (Gigel sim Target 4) ──
+  // 50-Gigel sim 2026-06-06: barbell mean signed-err -0.59, cable -0.30; RDL/Face
+  // Pull/Leg Press the worst offenders (RDL -45% to -75%, Face Pull -53% to -76%).
+  // The old fractions seeded these compounds ~55-67% of true, freezing the first
+  // sessions absurdly low. Raised toward realistic starts (still conservative — the
+  // first set's RIR recalibrates, and Target 1's re-anchor now absorbs the override
+  // fast). Romanian Deadlift gets an EXPLICIT entry (it fell to the hamstrings×
+  // barbell fallback ~0.51); Face Pull keyed on the canonical CORE_AUTO name (only
+  // legacy 'Face Pulls' existed → the live name fell to the umeri-iso fallback ~0.11).
   // Heavy compound legs (machine, both legs)
-  'Leg Press': 1.6,
+  'Leg Press': 1.9,
   'Leg Extension': 0.42,
   'Leg Curl': 0.34,
+  // Heavy posterior-chain barbell hinge
+  'Romanian Deadlift': 0.80,
   // Compound upper — pulls/rows (full stack, both arms)
-  'Lat Pulldown': 0.62,
-  'Cable Row': 0.62,
-  'Chest-Supported Row': 0.55,
+  'Lat Pulldown': 0.72,
+  'Cable Row': 0.72,
+  'Chest-Supported Row': 0.62,
+  // Rear-delt / rotator cable compound-ish pull (canonical CORE_AUTO name)
+  'Face Pull': 0.16,
   // Compound upper — DB presses (PER HAND)
   'Flat DB Press': 0.22,
   'Incline DB Press': 0.20,

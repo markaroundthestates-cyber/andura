@@ -14,10 +14,11 @@ const HEAVY = { bodyweightKg: 108, sex: 'm' };
 describe('coldStartGuidelines — metadata-aware fallback for unlisted compounds', () => {
   it('Romanian Deadlift (hamstrings/barbell) starts like a compound, not the floor', () => {
     const w = suggestStartWeight('Romanian Deadlift', 'intermediate', HEAVY);
-    // Old behaviour: ~13kg (0.12 default). New: hamstrings 0.60 × barbell 0.85 ×
-    // 108 ≈ 55kg. Assert a sensible compound band (never the ~9-13 floor again).
-    expect(w).toBeGreaterThanOrEqual(40);
-    expect(w).toBeLessThanOrEqual(80);
+    // Old behaviour: ~13kg (0.12 default), then ~55kg (fallback). Now an EXPLICIT
+    // 0.80 fraction (Gigel sim Target 4 — RDL was -45% to -75% of true): 0.80 × 108
+    // ≈ 86kg. Assert a sensible heavy-compound band (never the ~9-13 floor again).
+    expect(w).toBeGreaterThanOrEqual(60);
+    expect(w).toBeLessThanOrEqual(110);
   });
 
   it('Hip Thrust (glutes/barbell) starts heavy (it is a strong hip movement)', () => {
@@ -33,9 +34,10 @@ describe('coldStartGuidelines — metadata-aware fallback for unlisted compounds
     expect(w).toBeLessThanOrEqual(45);
   });
 
-  it('an explicit-table lift (Lat Pulldown) is UNCHANGED by the fallback', () => {
-    // 0.62 × 108 = 67 (explicit path, not the fallback).
-    expect(suggestStartWeight('Lat Pulldown', 'intermediate', HEAVY)).toBe(67);
+  it('an explicit-table lift (Lat Pulldown) uses the explicit fraction (Target 4 raised 0.62 -> 0.72)', () => {
+    // 0.72 × 108 = 78 (explicit path, not the fallback). Raised from 0.62 (was 67)
+    // per the Gigel sim Target 4 (cable compounds seeded too low).
+    expect(suggestStartWeight('Lat Pulldown', 'intermediate', HEAVY)).toBe(78);
   });
 
   it('an unknown-metadata movement still resolves to the conservative isolation default', () => {
@@ -136,5 +138,41 @@ describe('cold-start tiny isolations snap to a realistic light floor (<= ~6kg, n
   it('the light ladder snaps a ~3.5kg target to a real fine step, not up to 5/18', () => {
     expect(roundToEquipmentWeight(3.5, 'DB Rear Delt Fly')).toBeLessThanOrEqual(4);
     expect(roundToEquipmentWeight(3.5, 'Cable Rear Delt Fly')).toBeLessThanOrEqual(5);
+  });
+});
+
+// ══ CABLE / BARBELL COMPOUND cold-starts raised (Gigel sim Target 4) ══════════
+// barbell mean signed-err was -0.59, cable -0.30; the first session opened these
+// compounds 33-75% below true. The fractions are raised so the FIRST prescription
+// is realistic (Target 1's re-anchor then absorbs any remaining gap from session 2).
+describe('cold-start cable/barbell compounds are no longer seeded absurdly low (Target 4)', () => {
+  const MID = { bodyweightKg: 85, sex: 'm' }; // a typical intermediate male
+
+  it('Romanian Deadlift opens like a real hinge (>= ~60kg @ 85kg bw), not the old ~43', () => {
+    const w = suggestStartWeight('Romanian Deadlift', 'intermediate', MID);
+    expect(w).toBeGreaterThanOrEqual(60); // 0.80 × 85 = 68 (was ~0.51 -> ~43)
+  });
+
+  it('Lat Pulldown / Cable Row open at the raised 0.72 fraction, not 0.62', () => {
+    expect(suggestStartWeight('Lat Pulldown', 'intermediate', MID)).toBeGreaterThanOrEqual(58); // 0.72×85≈61
+    expect(suggestStartWeight('Cable Row', 'intermediate', MID)).toBeGreaterThanOrEqual(58);
+  });
+
+  it('Face Pull (canonical CORE_AUTO name) is no longer the ~0.11 umeri-iso fallback', () => {
+    // Was: umeri-iso 0.16 × cable 0.70 ≈ 0.11 (≈9kg). Now explicit 0.16 (≈14kg).
+    const w = suggestStartWeight('Face Pull', 'intermediate', MID);
+    expect(w).toBeGreaterThanOrEqual(11);
+  });
+
+  it('Leg Press opens heavier (1.9 fraction) so an advanced lifter is not at -40%', () => {
+    const w = suggestStartWeight('Leg Press', 'intermediate', { bodyweightKg: 90, sex: 'm' });
+    expect(w).toBeGreaterThanOrEqual(150); // 1.9 × 90 = 171 (was 1.6 -> 144)
+  });
+
+  it('still SANE: none of the raised compounds overshoot wildly for a light user', () => {
+    const LIGHT = { bodyweightKg: 60, sex: 'f' };
+    // female factor 0.78 keeps a light beginner from an aggressive start.
+    expect(suggestStartWeight('Romanian Deadlift', 'beginner', LIGHT)).toBeLessThanOrEqual(45);
+    expect(suggestStartWeight('Lat Pulldown', 'beginner', LIGHT)).toBeLessThanOrEqual(45);
   });
 });

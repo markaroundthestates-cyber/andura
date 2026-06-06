@@ -398,9 +398,9 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
   it('cold-start (no logs) uses suggestStartWeight scaled by experience + bodyweight', async () => {
     // No logs → cold-start path. The composer now threads the user's bodyweight
     // (75kg) + sex into suggestStartWeight, so Lat Pulldown intermediate scales
-    // by the bodyweight model (75 * 0.62 * 1.0 * 1.0 = 46.5 → 47), NOT the bare
-    // 70kg-reference prior (30). This is the cold-start fix: a heavier user gets
-    // a heavier, still-conservative start.
+    // by the bodyweight model (75 * 0.72 * 1.0 * 1.0 = 54), NOT the bare 70kg-
+    // reference prior (30). This is the cold-start fix: a heavier user gets a
+    // heavier, still-conservative start. (Fraction raised 0.62 -> 0.72, Target 4.)
     useOnboardingStore.setState({
       data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar', weight: 75, height: 175 },
       completed: true,
@@ -410,10 +410,10 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
     expect(out).not.toBeNull();
     const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
     expect(lat).toBeDefined();
-    // suggestStartWeight 46.5→47 (bodyweight-scaled), now SNAPPED to the Lat
-    // Pulldown equipment stack (bailib, 5kg steps: 45/50) → 45. Smoke 2026-06-01:
+    // suggestStartWeight 54 (bodyweight-scaled, 0.72 fraction), SNAPPED to the Lat
+    // Pulldown equipment stack (bailib, 5kg steps: 50/55) → 55. Smoke 2026-06-01:
     // the cold-start plan weight must be a load the machine can actually be set to.
-    expect(lat!.targetKg).toBe(45);
+    expect(lat!.targetKg).toBe(55);
   });
 
   it('experience RO->EN scaling: avansat (advanced 1.3x) beats incepator (beginner 0.7x)', async () => {
@@ -435,13 +435,13 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
 
     expect(begLat).toBeDefined();
     expect(advLat).toBeDefined();
-    // Bodyweight-scaled (75kg, male): beginner 75*0.62*0.7=32.55→33, advanced
-    // 75*0.62*1.3=60.45→60 — RO strings mapped to EN buckets, NOT silently
-    // falling to the x1.0 default (which would tie them).
+    // Bodyweight-scaled (75kg, male), 0.72 fraction (Target 4): beginner
+    // 75*0.72*0.7=37.8→38, advanced 75*0.72*1.3=70.2→70 — RO strings mapped to EN
+    // buckets, NOT silently falling to the x1.0 default (which would tie them).
     expect(advLat!.targetKg).toBeGreaterThan(begLat!.targetKg);
-    // beginner 32.55→33 raw, SNAPPED to the bailib stack → 35 (advanced 60 is
+    // beginner 37.8→38 raw, SNAPPED to the bailib stack → 40 (advanced 70 is
     // already on the stack). Relative order (advanced > beginner) preserved.
-    expect(begLat!.targetKg).toBe(35);
+    expect(begLat!.targetKg).toBe(40);
     expect(advLat!.targetKg).toBe(
       suggestStartWeight('Lat Pulldown', 'advanced', { bodyweightKg: 75, sex: 'm' }),
     );
