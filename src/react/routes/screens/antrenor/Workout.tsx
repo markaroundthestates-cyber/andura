@@ -69,6 +69,7 @@ import { useWhyModalA11y } from './workout/useWhyModalA11y';
 import { useInactivityWatch } from './workout/useInactivityWatch';
 import { useWorkoutSwap } from './workout/useWorkoutSwap';
 import { toast } from '../../../lib/toast';
+import { debugLog } from '../../../lib/debugLog';
 
 // Phase 4 task_17: WV2_FALLBACK retired. Workout consumer of
 // engineWrappers.getTodayWorkout direct — empty state cand null (engine
@@ -423,6 +424,22 @@ export function Workout(): JSX.Element {
     setInputDirty(false);
   }, [safeExIdx, currentSetIdx]);
 
+  // D107 phase 1 — permanent interaction-log: record the engine recommendation
+  // SHOWN for the current set (the recKg/recReps the user sees in SetLogInput).
+  // Fires on exercise/set change and whenever autoreg bumps the shared rec. The
+  // tap/log events later capture what the user actually did vs this rec — the
+  // raw material the later self-evaluation phase mines. No-op when flag OFF;
+  // never throws (debugLog fully wrapped).
+  useEffect(() => {
+    if (!hasWorkout) return;
+    debugLog.event(
+      'rec',
+      { exercise: currentExercise.name, setIdx: currentSetIdx + 1, recKg, recReps },
+      { route: '/app/antrenor/workout', exercise: currentExercise.name, setIdx: currentSetIdx + 1, shownKg: recKg, shownReps: recReps },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [safeExIdx, currentSetIdx, recKg, recReps]);
+
   // Phase 4 task_15 §A: inactivity watch (interval 30s + > 7 min prompt) +
   // bumpActivity reset — extracted to useInactivityWatch (behavior preserved,
   // effect order #8 unchanged at this position).
@@ -468,6 +485,15 @@ export function Workout(): JSX.Element {
       rating,
       ...(currentExercise.isBodyweight ? { addedKg: kgInput } : {}),
     });
+
+    // D107 phase 1 — permanent interaction-log: the set the user just logged
+    // (effective kg + reps + rating), plus the rec they saw. No-op when the
+    // `andura-debug` flag is OFF; never throws (debugLog is fully wrapped).
+    debugLog.event(
+      'log',
+      { exercise: currentExercise.name, kg: effKg, reps: repsInput, rating },
+      { route: '/app/antrenor/workout', exercise: currentExercise.name, setIdx: currentSetIdx + 1, shownKg: recKg, shownReps: recReps },
+    );
 
     // Phase 4 task_10: PR detection wire — call engineWrappers.getPRDelta
     // post logSet. Compose history for engine (per-exercise flat list cu
@@ -700,8 +726,10 @@ export function Workout(): JSX.Element {
   // useCallback: passed to memoized SessionTimer — stable ref keeps memo intact.
   const handleSkipExercise = useCallback((): void => {
     bumpActivity();
+    // D107 phase 1 — record the skip (no-op when flag OFF; never throws).
+    debugLog.event('skip', { from: currentExercise.name });
     advanceOrFinish();
-  }, [bumpActivity, advanceOrFinish]);
+  }, [bumpActivity, advanceOrFinish, currentExercise.name]);
 
   // Founder swap redesign 2026-06-05 — in-session substitution for the CURRENT
   // exercise. "Aparat ocupat" + "Nu vreau" open a SHORT manual pick-list sheet
