@@ -193,18 +193,27 @@ export function PostRpe(): JSX.Element {
       .map(([exIdxStr, sets]) => {
         const exIdx = Number(exIdxStr);
         const planEx = planned?.exercises[exIdx];
+        // Engine identity recorded WITH the set at log time (Daniel P0 2026-06-06).
+        // This is the authoritative source — it was captured live on the Workout
+        // screen where currentExercise.engineName is correct, so it survives any
+        // finish-time plan drift (getTodayWorkout() returning null on a midnight
+        // roll, a swap the re-derived plan never reflected, reordered slots). The
+        // re-derived plan + performed-swap below are now only the LEGACY fallback
+        // for in-flight sets logged before this fix shipped.
+        const loggedEngineName = sets.find((s) => s.engineName)?.engineName;
+        const loggedExerciseName = sets.find((s) => s.exerciseName)?.exerciseName;
         // Prefer the substitute actually performed at this slot (in-session swap)
         // over the re-derived plan, so History + engine logs record what was DONE,
         // not the original recommendation (bug 2026-06-03).
         const performed = performedExercises[exIdx];
         const exerciseId = performed?.id ?? planEx?.id ?? `ex-${exIdx}`;
-        const exerciseName = performed?.name ?? planEx?.name ?? t('postRpe.fallbackExerciseName', { n: exIdx + 1 });
+        const exerciseName =
+          loggedExerciseName ?? performed?.name ?? planEx?.name ?? t('postRpe.fallbackExerciseName', { n: exIdx + 1 });
         // English canonical key the engine (DP/PR records) reads. exerciseName is
         // the RO DISPLAY name; persisting logs under it stranded the history so DP
-        // never saw it (Daniel P0). Carry the engineName so the writeback keys
-        // logs[].ex on it. Fall back to the display name only when no engine key
-        // is available (defensive — planned exercises always carry engineName).
-        const engineName = performed?.engineName ?? planEx?.engineName ?? exerciseName;
+        // never saw it (Daniel P0). The set-recorded engineName takes precedence;
+        // fall back to the swap / re-derived plan / display name for legacy sets.
+        const engineName = loggedEngineName ?? performed?.engineName ?? planEx?.engineName ?? exerciseName;
         let totalVolume = 0;
         let peakOneRM = 0;
         const breakdownSets = sets.map((s) => {

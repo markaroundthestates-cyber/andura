@@ -483,6 +483,13 @@ export function Workout(): JSX.Element {
       kg: effKg,
       reps: repsInput,
       rating,
+      // Capture the engine identity AT LOG TIME from the live screen (authoritative
+      // here). This frees PostRpe's logs writeback from re-deriving the engine key
+      // via a fresh getTodayWorkout() at finish — which drifted (midnight null
+      // plan / unseen swap / reordered slots) and stranded logs under the RO
+      // display name → DP cold-started forever (Daniel P0 2026-06-06).
+      engineName: currentExercise.engineName ?? currentExercise.name,
+      exerciseName: currentExercise.name,
       ...(currentExercise.isBodyweight ? { addedKg: kgInput } : {}),
     });
 

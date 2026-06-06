@@ -38,6 +38,21 @@ export interface ExerciseHistoryEntry {
   // Optional pentru backward compat — logSet action auto-set Date.now()
   // dacă call site nu provides.
   timestamp?: number;
+  // Engine identity captured AT LOG TIME from the live Workout screen, where it
+  // is authoritative (currentExercise.engineName). Daniel P0 2026-06-06: PostRpe
+  // used to re-derive the engine key from a FRESH getTodayWorkout() at finish,
+  // indexed by exIdx — when that re-derivation drifted (midnight roll → null
+  // plan, a swap the re-derived plan didn't reflect, reordered slots) the logs
+  // were keyed under the RO display name → DP.getLogs never found them → the
+  // coach cold-started forever on real manual entries. Recording the engine key
+  // with the set makes the logs writeback independent of finish-time plan re-
+  // derivation. Optional — legacy in-flight sets (pre-fix) lack it; PostRpe falls
+  // back to the re-derived plan / performed swap for those.
+  engineName?: string;
+  // RO/locale DISPLAY name captured at log time (currentExercise.name), shown in
+  // Istoric. Same finish-time-independence rationale as engineName. Optional for
+  // backward compat.
+  exerciseName?: string;
 }
 
 // Phase 4 task_10/18: PR detection payload (engineWrappers.getPRDelta result).
