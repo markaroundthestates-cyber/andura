@@ -20,6 +20,8 @@
 // SchimbaFazaConfirm (un singur multiplicator → kcal-ul tinta). Floor sex-aware
 // LOCK8 (1000f/1200b) preservat.
 
+import { todDate } from '../../db.js';
+
 // Densitate caloric grasime corporala (kcal/kg) — clasica 1 lb grasime = 3500
 // kcal → 1 kg = ~7700 kcal. Folosita pentru deriv. deficit-ului zilnic.
 export const KCAL_PER_KG_BODYFAT = 7700;
@@ -123,7 +125,10 @@ export function evaluateTargetRate(
     const safeWeeks = Math.abs(deltaKg) / MAX_SAFE_KG_PER_WEEK;
     const safeDays = Math.ceil(safeWeeks * 7);
     const safeDate = new Date(now.getTime() + safeDays * 24 * 60 * 60 * 1000);
-    const safeIso = safeDate.toISOString().slice(0, 10);
+    // LOCAL date for display (db.js:35 rule — NEVER toISOString for a date the
+    // user reads against locally-formatted dates). UTC slice was off-by-one near
+    // local midnight (RO = UTC+2/+3). Audit 2026-06-07 MEDIUM-1.
+    const safeIso = todDate(safeDate);
     return { kind: 'unsafe', requiredKgPerWeek, safeDeadlineDate: safeIso, direction };
   }
   return { kind: 'safe', requiredKgPerWeek, direction };

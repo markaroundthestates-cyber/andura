@@ -33,7 +33,7 @@ import type { JSX } from 'react';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, Layers, Dumbbell, ArrowRight, CheckCircle2, Trash2, Plus } from 'lucide-react';
-import { todTs } from '../../../db.js';
+import { tod, todTs } from '../../../db.js';
 import type { PlannedWorkoutOutput } from '../../lib/engineWrappers';
 import * as engineWrappers from '../../lib/engineWrappers';
 import { coachPick } from '../../lib/coachVoice';
@@ -127,7 +127,9 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
   // imperative (NU subscription), so dep array must trigger recompute via
   // Zustand selector subscription pe sessionsHistory.
   const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
-  const todayDate = new Date().toISOString().slice(0, 10);
+  // LOCAL date so the day-rollover quote recompute fires at LOCAL midnight, not
+  // UTC (RO = ~02:00/03:00 local). db.js:35 rule. Audit 2026-06-07 LOW-3.
+  const todayDate = tod();
   const coachQuote = useMemo<string>(() => {
     try {
       const dynamic = engineWrappers.getCoachTodayQuote?.() ?? null;

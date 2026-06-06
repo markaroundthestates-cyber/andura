@@ -1,5 +1,5 @@
 // ══ ADHERENCE SCORE ENGINE ════════════════════════════════════
-import { DB, tod } from '../db.js';
+import { DB, tod, todDate } from '../db.js';
 import { PROG } from '../constants.js';
 import * as coachDecisionLog from '../util/coachDecisionLog.js';
 import { nowDate as clockNowDate } from './clock.js';
@@ -102,7 +102,11 @@ export function getAdherenceScore(nowMs) {
 export function computeAdherence({ windowDays = 30, nowMs } = {}) {
   const cutoffDate = nowMs == null ? clockNowDate() : new Date(nowMs);
   cutoffDate.setDate(cutoffDate.getDate() - windowDays);
-  const cutoffStr = cutoffDate.toISOString().slice(0, 10);
+  // LOCAL date (db.js:35 rule — NEVER toISOString for a "today"-class date key):
+  // `e.date` is stamped LOCAL via tod()/todTs(), so a UTC-sliced cutoff would be
+  // the previous day for the first 2-3h after local midnight (RO = UTC+2/+3),
+  // including/excluding one extra day's decisions. Audit 2026-06-07 MEDIUM-1.
+  const cutoffStr = todDate(cutoffDate);
 
   const entries = coachDecisionLog.readAllActive(e =>
     e.date >= cutoffStr &&

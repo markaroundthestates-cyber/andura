@@ -245,4 +245,36 @@ describe('adherence injectable clock (§07.198-204)', () => {
     expect(capturedPredicate({ date: '2026-02-13', synthetic: false, outcome: {} })).toBe(true);
     expect(capturedPredicate({ date: '2026-02-12', synthetic: false, outcome: {} })).toBe(false);
   });
+
+  // Audit 2026-06-07 MEDIUM-1: the cutoff was computed via toISOString().slice(0,10)
+  // (UTC) but compared against `e.date` which is stamped LOCAL (tod()/todTs() =
+  // toLocaleDateString('sv')). Near local midnight east of UTC (RO = UTC+2/+3) the
+  // UTC slice is the PREVIOUS day, so the 30-day window includes/excludes one extra
+  // day of decisions. Fix uses todDate() (local). This test pins a `now` just after
+  // local midnight so UTC and local dates diverge in a positive-offset TZ.
+  it('computeAdherence: cutoff uses the LOCAL date, not the UTC slice (midnight boundary)', () => {
+    let capturedPredicate = null;
+    mockReadAllActive.mockImplementation((pred) => { capturedPredicate = pred; return []; });
+    // 2026-06-07 00:30 LOCAL in a UTC+3 zone = 2026-06-06 21:30 UTC.
+    const NOW = new Date(2026, 5, 7, 0, 30, 0).getTime();
+    const cutoff = new Date(NOW);
+    cutoff.setDate(cutoff.getDate() - 30);
+    const localCutoff = cutoff.toLocaleDateString('sv'); // what todDate() produces
+    const utcCutoff = cutoff.toISOString().slice(0, 10);  // the old (buggy) value
+
+    computeAdherence({ windowDays: 30, nowMs: NOW });
+    // The cutoff boundary must be the LOCAL date: an entry stamped on localCutoff
+    // passes; the day before localCutoff does not.
+    expect(capturedPredicate({ date: localCutoff, synthetic: false, outcome: {} })).toBe(true);
+    const dayBefore = new Date(cutoff.getTime() - 86400000).toLocaleDateString('sv');
+    expect(capturedPredicate({ date: dayBefore, synthetic: false, outcome: {} })).toBe(false);
+
+    // In a positive-offset TZ (RO) the two slices diverge — assert the LOCAL value
+    // is the one used (the entry on the UTC slice date would have been wrongly
+    // excluded by the old code when local > utc, or included one day early).
+    if (localCutoff !== utcCutoff) {
+      // localCutoff is the LATER date; an entry on the (earlier) utcCutoff must NOT pass.
+      expect(capturedPredicate({ date: utcCutoff, synthetic: false, outcome: {} })).toBe(false);
+    }
+  });
 });

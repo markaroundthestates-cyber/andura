@@ -100,6 +100,34 @@ describe('evaluateTargetRate — verdict siguranta', () => {
     const r = evaluateTargetRate(110, 100, '2026-01-01', now);
     expect(r).toBe(null);
   });
+
+  // Audit 2026-06-07 MEDIUM-1: safeDeadlineDate was toISOString().slice(0,10)
+  // (UTC). Displayed against locally-formatted dates, it was off-by-one near
+  // local midnight in a positive-offset TZ. Fix uses todDate() (local). Pin a
+  // `now` just AFTER local midnight (where the UTC instant is still the previous
+  // calendar day in RO = UTC+2/+3) so the +N-day safe deadline's UTC slice trails
+  // the LOCAL date by one — the LOCAL date is the correct one to surface.
+  it('safeDeadlineDate uses the LOCAL date, not the UTC slice (midnight boundary)', () => {
+    // 2026-05-28 00:30 LOCAL = 2026-05-27 21:30 UTC in a UTC+3 zone.
+    const earlyLocal = new Date(2026, 4, 28, 0, 30, 0);
+    // 110 → 105 (delta 5kg) by 2026-06-01 (~4 days) → unsafe; safe deadline ~24 days out.
+    const r = evaluateTargetRate(110, 105, '2026-06-01', earlyLocal);
+    expect(r?.kind).toBe('unsafe');
+    if (r?.kind === 'unsafe') {
+      // Recompute the exact safeDate the engine builds and slice it LOCAL.
+      const deltaKg = Math.abs(105 - 110);
+      const safeWeeks = deltaKg / MAX_SAFE_KG_PER_WEEK;
+      const safeDays = Math.ceil(safeWeeks * 7);
+      const safeDate = new Date(earlyLocal.getTime() + safeDays * 24 * 60 * 60 * 1000);
+      const localSlice = safeDate.toLocaleDateString('sv'); // what todDate() gives
+      const utcSlice = safeDate.toISOString().slice(0, 10);  // the old buggy value
+      expect(r.safeDeadlineDate).toBe(localSlice);
+      // In RO (UTC+3) the two diverge — prove the engine no longer emits the UTC one.
+      if (localSlice !== utcSlice) {
+        expect(r.safeDeadlineDate).not.toBe(utcSlice);
+      }
+    }
+  });
 });
 
 describe('computeTargetKcalOverride — cuplare tinta ↔ kcal', () => {
