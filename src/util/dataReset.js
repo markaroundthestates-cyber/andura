@@ -21,8 +21,16 @@ import {
 /**
  * Unprefixed legacy data keys NOT covered by the dataRegistry arrays but written
  * via engine wrappers / src/db.js. `pain-cdl` (PainButton Recovery Engine log).
+ *
+ * Audit 2026-06-07 (L-2): the debug-log ring buffer (`andura-debug-log`,
+ * debugLog.ts LOG_KEY) carries on-device interaction PII (typed loads, routes,
+ * shown kg/reps) and was wiped on account-DELETE (localStorage.clear) but NOT by
+ * "Reseteaza toate datele" — it matched no reset registry array or preserve/wipe
+ * prefix, so a full reset left it intact. Add the buffer + its capture flag
+ * (`andura-debug`, FLAG_KEY) so reset = fresh start clears them too. (Never
+ * cloud-synced — deliberately out of SYNC_KEYS.)
  */
-const EXTRA_DATA_KEYS = Object.freeze(['pain-cdl']);
+const EXTRA_DATA_KEYS = Object.freeze(['pain-cdl', 'andura-debug-log', 'andura-debug']);
 
 /**
  * Keys that MUST survive a reset (account session + device identity + UI prefs).

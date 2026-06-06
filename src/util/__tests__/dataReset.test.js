@@ -87,6 +87,18 @@ describe('clearUserDataKeys', () => {
     expect(localStorage.getItem(DATA_OWNER_UID_KEY)).toBe('uid-A');
     expect(localStorage.getItem('logs')).toBeNull();
   });
+
+  // Audit 2026-06-07 (L-2): the debug-log buffer carries on-device interaction
+  // PII and survived "Reseteaza toate datele" (wiped only on account-delete).
+  // Reset must now clear it + its capture flag. Real keys: debugLog.ts LOG_KEY /
+  // FLAG_KEY.
+  it('clears the debug-log buffer + capture flag (PII not left behind on reset)', () => {
+    localStorage.setItem('andura-debug-log', JSON.stringify([{ t: 'tap', kg: 96 }]));
+    localStorage.setItem('andura-debug', '1');
+    clearUserDataKeys();
+    expect(localStorage.getItem('andura-debug-log')).toBeNull();
+    expect(localStorage.getItem('andura-debug')).toBeNull();
+  });
 });
 
 // ── XCUT-1 reset cloud-clear — RESET must delete the wv2 cloud subtree ────────
