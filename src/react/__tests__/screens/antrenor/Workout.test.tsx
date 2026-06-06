@@ -1558,22 +1558,22 @@ describe('Workout — in-session responsive autoregulation wire', () => {
     });
   }
 
-  it('a single Greu set eases the NEXT set rep target (masa phase) + surfaces the notice', async () => {
+  it('a single Greu set eases the NEXT set WEIGHT (Daniel 2026-06-06 Gigel rule) + surfaces the notice', async () => {
     await renderWorkoutAndWait();
     seedBenchHistory();
     // No notice before any rated set.
     expect(screen.queryByTestId('insession-adjust-notice')).not.toBeInTheDocument();
 
-    // Set 1 Greu → AUTO/masa phase → engine drops the NEXT set's rep target
-    // 10→8 (modest −2) and HOLDS the weight at the fixture target (22.5 kg).
+    // Set 1 Greu → with a working load present (seeded history), the coach eases the
+    // WEIGHT one step (visible, Daniel decision) instead of only trimming reps. The
+    // fixture target 22.5 kg steps down; the rep target is held.
     logSet('Greu');
     fireEvent.click(screen.getByTestId('rest-skip'));
     const notice = screen.getByTestId('insession-adjust-notice');
     expect(notice).toBeInTheDocument();
-    expect(notice.textContent ?? '').toMatch(/8 reps/); // honest "easing reps" wording
-    // The next set's rep target reflects the eased value; the weight is unchanged.
-    expect(screen.getByTestId('setlog-tinta-reps')).toHaveTextContent('8');
-    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
+    // The next set's WEIGHT target dropped below the prescribed 22.5 kg; reps held.
+    expect(screen.getByTestId('setlog-tinta-kg')).not.toHaveTextContent('22.5 kg');
+    expect(screen.getByTestId('setlog-tinta-reps')).toHaveTextContent('10');
   });
 
   it('a single Potrivit set holds the target (no adjust, no notice) early in the exercise', async () => {

@@ -574,12 +574,14 @@ describe('DP.checkInSessionAdjust — BULK reps autoregulation', () => {
     expect(r.adjust).toBe(false);
   });
 
-  it('single greu eases reps modestly (−2), weight held', () => {
+  it('single greu eases the WEIGHT one step (Daniel 2026-06-06 Gigel rule)', () => {
+    // hard with a working load (lastW 56 from the seeded log) → step the WEIGHT down,
+    // visible, instead of only trimming reps. Weight-first; rep-trim is cold-start-only.
     const r = DP.checkInSessionAdjust('Cable Row', [10], [10], { recKg: 56, recReps: 10, setIdx: 0 });
     expect(r.adjust).toBe(true);
     expect(r.dir).toBe('down');
-    expect(r.newReps).toBe(8);
-    expect(r.holdKg).toBe(56);
+    expect(r.newKg).toBeLessThan(56);
+    expect(r.newReps).toBeUndefined();
   });
 
   it('under-performance that felt hard eases the rep target', () => {

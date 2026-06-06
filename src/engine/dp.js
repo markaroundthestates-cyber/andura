@@ -962,23 +962,27 @@ export const DP = {
         }
         return { adjust: false };
       }
-      // masa/maintenance → drop the rep target (−1 maint / −2 hypertrophy), floored.
-      const drop = isMaint ? 1 : 2;
-      const newReps = Math.max(rMin, baseReps - drop);
-      if (newReps < baseReps) {
-        return { adjust: true, dir: 'down', newReps, holdKg: baseKg, msg: t('workout.adjust.greuReps', { reps: newReps }) };
-      }
-      // Reps already at the floor (rMin) — a hard set can't be eased by dropping reps
-      // further. With a known working load (prior history), ease the WEIGHT one step
-      // instead of returning {adjust:false} and echoing the same set unchanged — the
-      // "coach just repeats the last set" bug (e.g. 8x64 rated hard -> next 8x64).
-      // Cold-start (no history, lastW=0) keeps the conservative starting load: we don't
-      // yet have a reliable basis to drop from, so the first session stays untouched.
+      // Daniel decision 2026-06-06 (Gigel rule, extends DECISIONS dp-hard-eases to
+      // the in-session next-set): a hard set must VISIBLY ease the WEIGHT one step
+      // whenever we have a real working load to drop from. Holding the load and only
+      // trimming the rep target reads as "the coach did nothing" to a non-expert who
+      // watches the kg — the exact "weights never change" complaint. So weight-FIRST:
+      // step the load down (getPrevWeight) when there is prior history to drop from.
+      // This eases DOWN in any phase (you always lighten what felt too hard) and does
+      // NOT touch the UP path, so it never pushes strength progression in a deficit.
       if (dpState.lastW > 0) {
         const easedKg = getPrevWeight(baseKg, ex);
         if (easedKg < baseKg) {
           return { adjust: true, dir: 'down', newKg: easedKg, msg: t('workout.adjust.greuWeight', { kg: easedKg }) };
         }
+      }
+      // Cold-start (no working load yet) OR already at the lightest step — no reliable
+      // load to drop from, so trim the rep target instead (−1 maint / −2 hypertrophy),
+      // floored. Keeps the first-ever session conservative rather than echoing the set.
+      const drop = isMaint ? 1 : 2;
+      const newReps = Math.max(rMin, baseReps - drop);
+      if (newReps < baseReps) {
+        return { adjust: true, dir: 'down', newReps, holdKg: baseKg, msg: t('workout.adjust.greuReps', { reps: newReps }) };
       }
       return { adjust: false };
     }

@@ -139,14 +139,27 @@ describe('DP.checkInSessionAdjust — per-set reps autoregulation (CUT/masa phas
     DP.getState = DP.getState.mockRestore?.() || DP.getState;
   });
 
-  it('single greu eases the NEXT set reps (−2 in hypertrophy, weight held)', () => {
-    // recReps 10 → greu drops to 8 (floored at rMin 8). Weight held = recKg.
+  it('single greu eases the NEXT set WEIGHT one step (Daniel 2026-06-06 Gigel rule)', () => {
+    // Daniel decision 2026-06-06: a hard set must VISIBLY ease the WEIGHT when there
+    // is a working load to drop from (lastW 60) — holding the load and only trimming
+    // reps reads as "the coach did nothing". Lat Pulldown stack 60 -> 55. Weight-first.
     const r = DP.checkInSessionAdjust('Lat Pulldown', [10], [8], { recKg: 60, recReps: 10 });
     expect(r.adjust).toBe(true);
     expect(r.dir).toBe('down');
+    expect(r.newKg).toBe(55);
+    expect(r.newReps).toBeUndefined(); // weight-first now, not the rep target
+  });
+
+  it('cold-start greu (no working load) trims reps, not weight', () => {
+    // Fallback: with no prior history (lastW 0) there is no reliable load to step
+    // down from, so a hard set trims the rep target (−2 hypertrophy, floored) and
+    // keeps the conservative starting load. loggedKg present so the early gate passes.
+    DP.getState = vi.fn(() => ({ lastW: 0 }));
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [10], [10], { recKg: 60, recReps: 10, loggedKg: 60 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
     expect(r.newReps).toBe(8);
-    expect(r.holdKg).toBe(60);
-    expect(r.newKg).toBeUndefined(); // masa phase moves reps, NOT weight
+    expect(r.newKg).toBeUndefined();
   });
 
   it('greu at the rep floor (rMin) eases the WEIGHT instead of echoing the set', () => {
