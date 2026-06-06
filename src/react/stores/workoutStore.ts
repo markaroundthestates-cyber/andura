@@ -11,6 +11,34 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { todTs } from '../../db.js';
+import { captureException } from '../../util/sentry.js';
+
+// F1 fix (audit 2026-06-07, MED-HIGH) — quota-safe persist storage.
+// zustand's createJSONStorage(() => localStorage) calls localStorage.setItem
+// UNGUARDED inside the persist-wrapped `set`, so a QuotaExceededError on the
+// `wv2-workout-store` write propagates straight out of finishSession → aborts
+// PostRpe.handleSubmit before incrementStreak/navigate → the just-completed
+// session is silently lost. Mirror the src/db.js DB.set soft-fail: try/catch
+// the disk write, Sentry-capture + swallow QuotaExceededError so the in-memory
+// state update + navigate still complete. Other errors bubble per contract.
+const quotaSafeLocalStorage: Storage = {
+  get length() { return localStorage.length; },
+  clear: () => localStorage.clear(),
+  key: (i) => localStorage.key(i),
+  getItem: (k) => localStorage.getItem(k),
+  removeItem: (k) => localStorage.removeItem(k),
+  setItem: (k, v) => {
+    try {
+      localStorage.setItem(k, v);
+    } catch (err) {
+      if (err && (err as { name?: string }).name === 'QuotaExceededError') {
+        try { captureException(err, { tags: { component: 'workoutStore.persist', key: k } }); } catch { /* swallow Sentry failure */ }
+        return; // soft-fail: in-memory state stays correct; finish completes
+      }
+      throw err;
+    }
+  },
+};
 
 // ── Hygiene split (zero behavior change) ─────────────────────────────────────
 // Pure types + the WorkoutMode FSM selector live in workoutStore.types.ts; pure
@@ -350,7 +378,10 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
     }),
     {
       name: 'wv2-workout-store',
-      storage: createJSONStorage(() => localStorage),
+      // F1 fix — quota-safe storage adapter (see quotaSafeLocalStorage above):
+      // a localStorage quota error on the persist write must NOT throw into
+      // finishSession (would abort PostRpe before streak/navigate → lost session).
+      storage: createJSONStorage(() => quotaSafeLocalStorage),
       // Persist selective: pausedSnapshot + lastSession + sessionsHistory +
       // streak + lastStreakDate (NU sessionContext/refusalTriedByEx runtime-only).
       // Phase 4 task_21 adds history pentru Istoric tab persistent browse.
