@@ -162,4 +162,31 @@ describe('firebase — nested name-key safety (dp-cal-factors 400 fix)', () => {
     expect(decodeNameKeyed(null)).toBe(null);
     expect(decodeNameKeyed({ already: 'object' })).toEqual({ already: 'object' });
   });
+
+  // Audit 2026-06-07 (L-1): the old wrapper key `value` was AMBIGUOUS — a
+  // name-keyed map whose object value's ONLY key is literally `value` decoded
+  // back to a scalar (object → scalar lossiness). The reserved sentinel wrapper
+  // makes any future name-keyed map round-trip.
+  it('round-trips an object value whose only key is literally `value` (was lossy)', () => {
+    const map = { Ex: { value: 3 } };
+    const restored = decodeNameKeyed(encodeNameKeyed(map));
+    // Stays an OBJECT — does NOT collapse to the scalar 3.
+    expect(restored).toEqual(map);
+    expect(typeof restored.Ex).toBe('object');
+    expect(restored.Ex.value).toBe(3);
+  });
+
+  it('round-trips genuine scalar + array values via the sentinel', () => {
+    const map = { A: 5, B: 'txt', C: [1, 2, 3] };
+    const restored = decodeNameKeyed(encodeNameKeyed(map));
+    expect(restored).toEqual(map);
+  });
+
+  it('a {name, value} cloud entry now decodes to the OBJECT {value} (no scalar collapse)', () => {
+    // Post-sentinel contract: the ambiguous `value` heuristic is gone. The sole
+    // name-keyed key (dp-cal-factors) never wrote bare scalars, so this is lossless
+    // for real data — and an object value {value:N} now round-trips correctly.
+    const cloudArray = [{ name: 'Ex', value: 7 }];
+    expect(decodeNameKeyed(cloudArray)).toEqual({ Ex: { value: 7 } });
+  });
 });

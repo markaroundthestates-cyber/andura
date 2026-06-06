@@ -142,6 +142,15 @@ export function fbKey(localKey) {
 // name-keyed map opts in by key name alone.
 export const NAME_KEYED_SYNC_KEYS = Object.freeze(['dp-cal-factors']);
 
+// Reserved sentinel key for the scalar/array wrapper (audit 2026-06-07 L-1).
+// A non-object value is wrapped under this key instead of the ambiguous `value`
+// so decode can ALWAYS round-trip — even a future name-keyed map whose object
+// value's only key is literally `value` (the old wrapper collided with that and
+// silently decoded the object back to a scalar). The `__` prefix can't collide
+// with a real free-text-name-keyed object's own keys (engine maps use plain
+// names like kgFactor/n).
+const NAME_KEYED_SCALAR_SENTINEL = '__nk_scalar__';
+
 // Encode a free-text-name-keyed object → array of {name, ...rest} for the cloud.
 // Non-object input is returned untouched (defensive: never corrupt a scalar).
 /** @param {unknown} obj @returns {unknown} */
@@ -151,7 +160,7 @@ export function encodeNameKeyed(obj) {
     const v = /** @type {Record<string, unknown>} */ (obj)[name];
     return (v && typeof v === 'object' && !Array.isArray(v))
       ? { name, .../** @type {Record<string, unknown>} */ (v) }
-      : { name, value: v };
+      : { name, [NAME_KEYED_SCALAR_SENTINEL]: v };
   });
 }
 
@@ -159,6 +168,14 @@ export function encodeNameKeyed(obj) {
 // of the LEGACY plain-object shape too (a value that already round-tripped before
 // this fix, or a valid all-safe-key map): a non-array is returned untouched so the
 // existing merge path handles it. Entries missing a string `name` are skipped.
+//
+// Scalar/array values are recognized ONLY by the reserved sentinel key
+// (NAME_KEYED_SCALAR_SENTINEL) — unambiguous, so an object value whose only key
+// is literally `value` round-trips as an object (the old `value`-wrapper heuristic
+// collided with that and silently collapsed it to a scalar — audit L-1). The sole
+// name-keyed SYNC_KEY (`dp-cal-factors`) only ever holds {kgFactor,n} OBJECT values
+// (never a bare scalar), so no real pre-sentinel cloud data relied on a `value`
+// wrapper — dropping that branch is lossless for existing data and removes the trap.
 /** @param {unknown} arr @returns {unknown} */
 export function decodeNameKeyed(arr) {
   if (!Array.isArray(arr)) return arr;
@@ -167,8 +184,9 @@ export function decodeNameKeyed(arr) {
   for (const entry of arr) {
     if (!entry || typeof entry !== 'object' || typeof entry.name !== 'string') continue;
     const { name, ...rest } = entry;
-    // {name, value} wrapper (non-object original value) unwraps back to the scalar.
-    out[name] = ('value' in entry && Object.keys(rest).length === 1) ? rest.value : rest;
+    out[name] = (NAME_KEYED_SCALAR_SENTINEL in entry && Object.keys(rest).length === 1)
+      ? rest[NAME_KEYED_SCALAR_SENTINEL] // unambiguous scalar/array unwrap
+      : rest; // object value — keep as-is (round-trips exactly)
   }
   return out;
 }
