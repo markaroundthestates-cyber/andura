@@ -52,6 +52,17 @@ export function resolvePersonaId(user) {
  * §obiectiv-drop-longevitate 2026-05-28: 'longevitate' branch dropped (UI Goal
  * dropped — semantic dup of mentenanta; persisted users migrated → mentenanta).
  *
+ * Audit fix 2026-06-07 (HIGH-1): the onboarding Goal vocab is
+ * `auto/forta/masa/slabire/mentenanta` (onboardingStore.ts:19) and the raw
+ * string is threaded straight to the engine — but this chain only knew the
+ * canonical EN vocab, so `masa`/`mentenanta`/`auto` all fell through to the
+ * hipertrofie default (modifier 1.0). A user who picked Mentenanta trained at
+ * FULL hypertrophy volume. Map the onboarding vocab explicitly: `masa`→hipertrofie
+ * (mass = full hypertrophy dose, the prior fall-through was coincidentally
+ * correct), `mentenanta`→sanatate (the 0.50 MAINTENANCE modifier that exists for
+ * exactly this case but was never reached), `auto`→hipertrofie (sensible default
+ * dose; nutrition auto-detect is handled separately by goalPhaseForGoal).
+ *
  * @param {{goal?: string}} [user]
  * @returns {'hipertrofie'|'forta'|'recompozitie'|'slabire'|'sanatate'}
  */
@@ -62,10 +73,16 @@ export function resolveGoalId(user) {
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '');
   if (g.startsWith('hipertrofie') || g.startsWith('hypertrophy')) return 'hipertrofie';
+  // Onboarding vocab: masa = mass-gain (full hypertrophy dose). auto = no explicit
+  // goal → sensible default dose (full hypertrophy); nutrition phase auto-detects
+  // separately (goalPhaseForGoal returns undefined for 'auto').
+  if (g.startsWith('masa') || g.startsWith('auto')) return 'hipertrofie';
   if (g.startsWith('forta') || g.startsWith('strength')) return 'forta';
   if (g.startsWith('recompozit') || g.startsWith('recomp')) return 'recompozitie';
   if (g.startsWith('slabire') || g.startsWith('weight') || g.startsWith('fat-loss') || g.startsWith('fat loss')) return 'slabire';
-  if (g.startsWith('sanatate') || g.startsWith('sanatate') || g.startsWith('health')) return 'sanatate';
+  // Onboarding vocab: mentenanta = maintenance → the sanatate (0.50) modifier
+  // (longevitate was merged into mentenanta; both = MAINTAIN phase).
+  if (g.startsWith('mentenanta') || g.startsWith('sanatate') || g.startsWith('health')) return 'sanatate';
   return 'hipertrofie';
 }
 

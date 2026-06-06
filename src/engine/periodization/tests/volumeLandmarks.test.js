@@ -80,6 +80,41 @@ describe('resolveGoalId — §9.4 goal modifiers (case + diacritic insensitive)'
     expect(resolveGoalId({ goal: 'foo' })).toBe('hipertrofie');
     expect(resolveGoalId(null)).toBe('hipertrofie');
   });
+  // Audit fix 2026-06-07 (HIGH-1): onboarding Goal vocab (auto/forta/masa/slabire/
+  // mentenanta) is threaded raw to the engine. Pre-fix masa/mentenanta/auto all
+  // fell through to the hipertrofie default (modifier 1.0) → a Mentenanta user
+  // trained at full hypertrophy volume.
+  it('onboarding vocab: masa → hipertrofie (mass = full hypertrophy dose)', () => {
+    expect(resolveGoalId({ goal: 'masa' })).toBe('hipertrofie');
+    expect(resolveGoalId({ goal: 'Masa' })).toBe('hipertrofie');
+  });
+  it('onboarding vocab: mentenanta → sanatate (maintenance modifier, NOT hipertrofie)', () => {
+    expect(resolveGoalId({ goal: 'mentenanta' })).toBe('sanatate');
+    expect(resolveGoalId({ goal: 'Mentenanta' })).toBe('sanatate');
+  });
+  it('onboarding vocab: auto → hipertrofie (sensible default dose)', () => {
+    expect(resolveGoalId({ goal: 'auto' })).toBe('hipertrofie');
+  });
+});
+
+describe('mentenanta volume haircut — onboarding maintenance user (audit HIGH-1)', () => {
+  // A maintenance-goal user must get REDUCED weekly volume vs a hypertrophy user,
+  // not the full hypertrophy dose. Real values: marius persona (modifier 1.0),
+  // chest baseline MAV 14. hipertrofie goal modifier 1.0 → 14 sets; mentenanta
+  // resolves to sanatate 0.50 → 7 sets. Verified across the full 11-group map.
+  it('mentenanta map is strictly lower than hipertrofie map (every group)', () => {
+    const base = { personaId: 'marius', blockScaling: 1.0, phaseVolumeMul: 1.0 };
+    const hyper = computeVolumeMap({ ...base, goalId: resolveGoalId({ goal: 'masa' }) });
+    const maint = computeVolumeMap({ ...base, goalId: resolveGoalId({ goal: 'mentenanta' }) });
+    for (const group of Object.keys(hyper)) {
+      // maintenance ≤ hypertrophy everywhere; strictly lower where the group has volume.
+      expect(maint[group]).toBeLessThanOrEqual(hyper[group]);
+      if (hyper[group] > 0) expect(maint[group]).toBeLessThan(hyper[group]);
+    }
+    // Concrete anchor: chest MAV 14 → hyper 14, maint round(14*0.5)=7.
+    expect(hyper.chest).toBe(14);
+    expect(maint.chest).toBe(7);
+  });
 });
 
 describe('recoveryGreenMultiplier — §9.4 +10-15% bonus daca recovery green', () => {
