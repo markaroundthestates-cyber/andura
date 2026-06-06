@@ -15,7 +15,6 @@ vi.mock('../../lib/exerciseMedia', () => ({
   getExerciseMediaAlt: (name: string) => getExerciseMediaAlt(name),
 }));
 
-// eslint-disable-next-line import/first
 import { ExerciseMedia } from '../../components/ExerciseMedia';
 
 beforeEach(() => {

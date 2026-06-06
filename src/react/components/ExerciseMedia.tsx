@@ -78,7 +78,9 @@ export function ExerciseMedia({
   // flag covers all media branches (single img, dual-frame card, video). For the
   // dual-frame card both images must load before the skeleton clears.
   const [mediaLoaded, setMediaLoaded] = useState(false);
-  const [framesLoaded, setFramesLoaded] = useState(0);
+  // dual-frame card counts loaded frames via the updater closure; the value
+  // itself is never read, so it stays out of the destructure (no unused var).
+  const [, setFramesLoaded] = useState(0);
 
   // Shimmer overlay shown over a media frame until it finishes loading. Absolute,
   // pointer-events-none, fades out on load so it never blocks interaction.
