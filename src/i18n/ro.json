@@ -1403,7 +1403,13 @@
         "schimbaFaza": "Schimba faza manual",
         "schimbaFazaDesc": "Reseteaza unele calibrari",
         "checkUpdate": "Verifica si aplica actualizari",
-        "checkUpdateDesc": "Ia ultima versiune acum"
+        "checkUpdateDesc": "Ia ultima versiune acum",
+        "debugLog": "Jurnal debug",
+        "debugLogDesc": "Inregistreaza tap-urile pentru raportari bug (se aplica la urmatoarea pornire)",
+        "debugLogCopy": "Copiaza jurnal debug",
+        "debugLogCopyDesc": "Copiaza evenimentele inregistrate ca JSON",
+        "debugLogCopied": "Jurnal debug copiat",
+        "debugLogEmpty": "Jurnalul debug e gol"
       }
     },
     "profile": {

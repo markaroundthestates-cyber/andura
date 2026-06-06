@@ -8,11 +8,13 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RotateCcw, ChevronRight, RefreshCcw, GitBranch, DownloadCloud } from 'lucide-react';
+import { RotateCcw, ChevronRight, RefreshCcw, GitBranch, DownloadCloud, Bug, ClipboardCopy } from 'lucide-react';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import type { WeekStart } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
 import { checkForUpdatesAndApply } from '../../../lib/swUpdate';
+import { debugLog, isDebugEnabled, setDebugEnabled } from '../../../lib/debugLog';
+import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
 import { getCurrentLocale, setLocale, t } from '../../../../i18n/index.js';
 
@@ -50,6 +52,33 @@ export function SettingsPrefs(): JSX.Element {
     if (next === locale) return;
     setLocale(next);
     setLocaleState(next);
+  }
+
+  // D107 phase 1 — permanent interaction-log controls. The flag lives in
+  // localStorage (`andura-debug`), NOT in settingsStore — it must never sync to
+  // the cloud. Mirror it into local state so the toggle flips immediately; the
+  // capture listener reads the flag at next launch (mount-once, per the desc).
+  const [debugOn, setDebugOn] = useState<boolean>(() => isDebugEnabled());
+
+  function handleToggleDebug(next: boolean): void {
+    if (next === debugOn) return;
+    setDebugEnabled(next);
+    setDebugOn(next);
+  }
+
+  function handleCopyDebugLog(): void {
+    const json = debugLog.exportJson();
+    const empty = debugLog.snapshot().length === 0;
+    if (empty) {
+      toast.show({ message: t('settings.prefs.advanced.debugLogEmpty'), variant: 'info' });
+      return;
+    }
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      void navigator.clipboard
+        .writeText(json)
+        .then(() => toast.show({ message: t('settings.prefs.advanced.debugLogCopied'), variant: 'success' }))
+        .catch(() => { /* clipboard denied — silent, never throw */ });
+    }
   }
 
   return (
@@ -214,12 +243,52 @@ export function SettingsPrefs(): JSX.Element {
             type="button"
             onClick={() => checkForUpdatesAndApply()}
             data-testid="advanced-check-update"
-            className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink"
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink border-b border-line"
           >
             <DownloadCloud className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
             <div className="flex-1">
               <p className="text-sm font-medium">{t('settings.prefs.advanced.checkUpdate')}</p>
               <p className="text-xs text-ink2">{t('settings.prefs.advanced.checkUpdateDesc')}</p>
+            </div>
+            <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
+          </button>
+          {/* D107 phase 1 — permanent interaction-log (debug). Toggle (default
+              OFF, applies next launch) + copy-as-JSON. Flag is localStorage-only
+              (`andura-debug`), never cloud-synced. */}
+          <button
+            type="button"
+            role="switch"
+            aria-checked={debugOn}
+            onClick={() => handleToggleDebug(!debugOn)}
+            data-testid="advanced-debug-toggle"
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink border-b border-line"
+          >
+            <Bug className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+            <div className="flex-1">
+              <p className="text-sm font-medium">{t('settings.prefs.advanced.debugLog')}</p>
+              <p className="text-xs text-ink2">{t('settings.prefs.advanced.debugLogDesc')}</p>
+            </div>
+            <span
+              className="relative inline-flex w-10 h-6 rounded-full flex-shrink-0 transition-colors"
+              style={{ background: debugOn ? 'var(--grad-pulse)' : 'var(--surface-2)' }}
+              aria-hidden="true"
+            >
+              <span
+                className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-paper transition-transform"
+                style={{ transform: debugOn ? 'translateX(16px)' : 'translateX(0)' }}
+              />
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={handleCopyDebugLog}
+            data-testid="advanced-debug-copy"
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink"
+          >
+            <ClipboardCopy className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+            <div className="flex-1">
+              <p className="text-sm font-medium">{t('settings.prefs.advanced.debugLogCopy')}</p>
+              <p className="text-xs text-ink2">{t('settings.prefs.advanced.debugLogCopyDesc')}</p>
             </div>
             <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
           </button>
