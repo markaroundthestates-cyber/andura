@@ -15,6 +15,7 @@ import { SessionPill } from '../components/SessionPill';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { useSwUpdate } from '../lib/swUpdate';
+import { useDebugCapture } from '../lib/debugCapture';
 import { InstallPrompt } from '../components/InstallPrompt';
 import { OfflineBanner } from '../components/OfflineBanner';
 import { ToastViewport } from '../components/Toast';
@@ -73,6 +74,11 @@ export function Layout(): JSX.Element {
   // the floating UpdatePrompt banner. The check keeps running app-wide and the
   // updateSW handle stays reachable for the Account "Check for updates" button.
   useSwUpdate();
+  // Permanent interaction-log (DECISIONS §D107 phase 1) — universal tap capture.
+  // Gated on the `andura-debug` flag (default OFF): when OFF the listener is
+  // never attached → zero prod cost. Captures every data-testid'd tap + route +
+  // store snapshot for deterministic bug repro / later personalization mining.
+  useDebugCapture();
   return (
     <div className={`relative min-h-screen bg-paper text-ink flex flex-col persona-${persona}`}>
       {/* ANDURA PULSE (2026-05-29) — the living aurora backdrop sits behind
