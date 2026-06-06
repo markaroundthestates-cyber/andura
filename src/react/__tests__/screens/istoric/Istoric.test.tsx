@@ -113,17 +113,63 @@ describe('Istoric — populated list', () => {
     expect(screen.getByTestId('istoric-session-2').textContent).toMatch(/Push/);
   });
 
-  it('tap session navigates /app/istoric/:ts (stable id, not index)', () => {
+  it('tap session expands inline, "See details" navigates /app/istoric/:ts (stable id, not index)', () => {
     renderIstoric();
-    // Row 0 = Pull (newest, ts=1700200000000). The link carries its stable ts.
+    // Row 0 = Pull (newest, ts=1700200000000). The row carries its stable ts.
     const row = screen.getByTestId('istoric-session-0');
     expect(row).toHaveAttribute('data-session-ts', '1700200000000');
+    // Founder UX 2026-06-06 — rows are collapsed: tap expands inline, then the
+    // revealed "See details" link drills to the full detail (by stable ts).
     fireEvent.click(row);
+    fireEvent.click(screen.getByTestId('istoric-session-0-details'));
     // IstoricDetail resolves the session by ts → renders Pull's detail.
     expect(screen.getByTestId('istoric-detail')).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { level: 1 }).textContent
     ).toMatch(/Pull/);
+  });
+});
+
+// Founder UX 2026-06-06 — the Sessions list mirrors the Records section: each
+// session is COLLAPSED by default (title + date + chevron); tap a row to reveal
+// its detail (min/sets/kg) + a "See details" link. Single-open accordion.
+describe('Istoric — Sessions section collapse-by-default', () => {
+  beforeEach(() => {
+    resetStore();
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        { title: 'Push', meta: '5 seturi · 45 min · 9 800 kg', ts: 1700000000000 },
+        { title: 'Pull', meta: '6 seturi · 50 min · 10 200 kg', ts: 1700200000000 }, // newest
+      ],
+    });
+  });
+
+  it('renders a row per session but NO detail by default', () => {
+    renderIstoric();
+    expect(screen.getByTestId('istoric-session-0')).toBeInTheDocument();
+    expect(screen.getByTestId('istoric-session-1')).toBeInTheDocument();
+    // Collapsed: the meta detail is not in the tree yet.
+    expect(screen.queryByTestId('istoric-session-0-detail')).not.toBeInTheDocument();
+    expect(screen.getByTestId('istoric-session-0')).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('tapping a session expands ONLY that session (single-open)', () => {
+    renderIstoric();
+    fireEvent.click(screen.getByTestId('istoric-session-0'));
+    expect(screen.getByTestId('istoric-session-0-detail')).toBeInTheDocument();
+    expect(screen.getByTestId('istoric-session-0')).toHaveAttribute('aria-expanded', 'true');
+    // The other session stays collapsed.
+    expect(screen.queryByTestId('istoric-session-1-detail')).not.toBeInTheDocument();
+  });
+
+  it('tapping an open session collapses it again', () => {
+    renderIstoric();
+    const row = screen.getByTestId('istoric-session-0');
+    fireEvent.click(row);
+    expect(screen.getByTestId('istoric-session-0-detail')).toBeInTheDocument();
+    fireEvent.click(row);
+    expect(screen.queryByTestId('istoric-session-0-detail')).not.toBeInTheDocument();
+    expect(row).toHaveAttribute('aria-expanded', 'false');
   });
 });
 

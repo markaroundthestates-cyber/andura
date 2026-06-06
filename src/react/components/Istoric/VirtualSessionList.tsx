@@ -23,7 +23,7 @@
 
 import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Trophy, ChevronRight } from 'lucide-react';
+import { Trophy, ChevronDown, ChevronRight } from 'lucide-react';
 import { Pill } from '../pulse/Pill';
 import { deriveSessionRating } from '../../lib/sessionRating';
 import type { SessionRating } from '../../lib/sessionRating';
@@ -80,11 +80,15 @@ function SessionCard({
   idx,
   formatDate,
   onSelect,
+  open,
+  onToggle,
 }: {
   session: SessionRow;
   idx: number;
   formatDate: (ts: number) => string;
   onSelect: (ts: number) => void;
+  open: boolean;
+  onToggle: () => void;
 }): JSX.Element {
   const rating = deriveSessionRating(session as Parameters<typeof deriveSessionRating>[0]);
   const chip = rating ? ratingChip(rating) : null;
@@ -96,14 +100,21 @@ function SessionCard({
     session.sets !== undefined ||
     session.volumeKg !== undefined;
 
+  // Founder UX 2026-06-06 — sesiunile sunt COLAPSATE implicit (oglinda sectiunii
+  // Recorduri): randul compact arata doar titlu + data + trofeu PR / chip rating +
+  // chevron, ca lista lunga sa nu mai fie un "perete de pagini". Tap pe rand
+  // expandeaza inline detaliul (min · seturi · kg sau meta legacy) + un link
+  // "Vezi tot" care navigheaza la detaliul complet (pastreaza drill-down-ul,
+  // emite ts-ul stabil prin onSelect — NU array index).
   return (
-    <li key={`${session.ts}-${idx}`}>
+    <li key={`${session.ts}-${idx}`} className="pulse-card pulse-card-tight overflow-hidden">
       <button
         type="button"
-        onClick={() => onSelect(session.ts)}
+        onClick={onToggle}
         data-testid={`istoric-session-${idx}`}
         data-session-ts={session.ts}
-        className="pulse-card pulse-card-tight w-full text-left p-4 press-feedback transition-transform hover:scale-[1.01]"
+        aria-expanded={open}
+        className="w-full text-left p-4 press-feedback"
       >
         <div className="flex items-start justify-between gap-2.5">
           <div className="flex-1 min-w-0">
@@ -122,41 +133,53 @@ function SessionCard({
             </div>
             <p className="font-mono text-[11px] text-ink3 mt-0.5">{formatDate(session.ts)}</p>
           </div>
-          {chip ? (
-            <Pill color={chip.color}>{chip.label}</Pill>
-          ) : (
-            <ChevronRight
-              className="w-5 h-5 text-ink2 flex-shrink-0"
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {chip && <Pill color={chip.color}>{chip.label}</Pill>}
+            <ChevronDown
+              className={`w-5 h-5 text-ink2 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
               strokeWidth={1.6}
               aria-hidden="true"
             />
-          )}
-        </div>
-        {hasNumeric ? (
-          <div className="flex gap-4 mt-3 text-xs text-ink2">
-            {session.durationMin !== undefined && (
-              <span>
-                <b className="font-mono text-ink">{session.durationMin}</b>{' '}
-                {t('istoric.landing.cardMinutes')}
-              </span>
-            )}
-            {session.sets !== undefined && (
-              <span>
-                <b className="font-mono text-ink">{session.sets}</b>{' '}
-                {t('istoric.landing.cardSets')}
-              </span>
-            )}
-            {session.volumeKg !== undefined && (
-              <span>
-                <b className="font-mono text-ink">{session.volumeKg.toLocaleString('en-US')}</b>{' '}
-                {t('istoric.landing.cardKg')}
-              </span>
-            )}
           </div>
-        ) : (
-          <p className="text-sm text-ink2 mt-2">{session.meta}</p>
-        )}
+        </div>
       </button>
+      {open && (
+        <div data-testid={`istoric-session-${idx}-detail`} className="px-4 pb-4 -mt-1 animate-fade-in-up">
+          {hasNumeric ? (
+            <div className="flex gap-4 text-xs text-ink2">
+              {session.durationMin !== undefined && (
+                <span>
+                  <b className="font-mono text-ink">{session.durationMin}</b>{' '}
+                  {t('istoric.landing.cardMinutes')}
+                </span>
+              )}
+              {session.sets !== undefined && (
+                <span>
+                  <b className="font-mono text-ink">{session.sets}</b>{' '}
+                  {t('istoric.landing.cardSets')}
+                </span>
+              )}
+              {session.volumeKg !== undefined && (
+                <span>
+                  <b className="font-mono text-ink">{session.volumeKg.toLocaleString('en-US')}</b>{' '}
+                  {t('istoric.landing.cardKg')}
+                </span>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-ink2">{session.meta}</p>
+          )}
+          <button
+            type="button"
+            onClick={() => onSelect(session.ts)}
+            data-testid={`istoric-session-${idx}-details`}
+            className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-brickdark press-feedback"
+          >
+            {t('istoric.landing.seeDetails')}
+            <ChevronRight className="w-4 h-4" strokeWidth={1.8} aria-hidden="true" />
+          </button>
+        </div>
+      )}
     </li>
   );
 }
@@ -171,6 +194,11 @@ export function VirtualSessionList({
     start: 0,
     end: sorted.length,
   });
+
+  // Founder UX 2026-06-06 — single-open accordion (oglinda sectiunii Recorduri):
+  // care sesiune e expandata; null = toate colapsate. Cheia e `ts`-ul stabil (NU
+  // array index) ca windowing-ul / reorder-ul sa nu mute starea pe alt rand.
+  const [openSession, setOpenSession] = useState<number | null>(null);
 
   const virtualize = sorted.length > VIRTUALIZE_THRESHOLD;
 
@@ -233,6 +261,10 @@ export function VirtualSessionList({
             idx={idx}
             formatDate={formatDate}
             onSelect={onSelect}
+            open={openSession === session.ts}
+            onToggle={() =>
+              setOpenSession((prev) => (prev === session.ts ? null : session.ts))
+            }
           />
         );
       })}

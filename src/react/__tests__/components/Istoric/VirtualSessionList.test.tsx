@@ -38,12 +38,50 @@ describe('VirtualSessionList — short list (no virtualization)', () => {
     expect(screen.queryByTestId('istoric-list-pad-bottom')).not.toBeInTheDocument();
   });
 
-  it('onSelect primeste ts-ul stabil la tap (NU array index)', () => {
+  it('onSelect primeste ts-ul stabil la "Vezi tot" (NU array index)', () => {
     const sessions = makeSessions(3);
     const { onSelect } = renderList(sessions);
+    // Founder UX 2026-06-06 — randul e colapsat: tap pe rand il expandeaza,
+    // navigarea trece pe link-ul "Vezi tot" din panoul expandat.
     fireEvent.click(screen.getByTestId('istoric-session-1'));
+    fireEvent.click(screen.getByTestId('istoric-session-1-details'));
     // Row 1 = sessions[1] → carries its stable ts, not the index 1.
     expect(onSelect).toHaveBeenCalledWith(sessions[1]!.ts);
+  });
+});
+
+describe('VirtualSessionList — collapse-by-default (accordion)', () => {
+  it('randurile sunt colapsate implicit (fara detail in DOM)', () => {
+    renderList(makeSessions(3));
+    expect(screen.getByTestId('istoric-session-0')).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('istoric-session-0-detail')).not.toBeInTheDocument();
+  });
+
+  it('tap pe un rand expandeaza DOAR acel rand (single-open)', () => {
+    renderList(makeSessions(3));
+    fireEvent.click(screen.getByTestId('istoric-session-0'));
+    expect(screen.getByTestId('istoric-session-0')).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('istoric-session-0-detail')).toBeInTheDocument();
+    // Celelalte raman colapsate.
+    expect(screen.queryByTestId('istoric-session-1-detail')).not.toBeInTheDocument();
+  });
+
+  it('tap pe randul deschis il colapseaza la loc', () => {
+    renderList(makeSessions(3));
+    const row = screen.getByTestId('istoric-session-0');
+    fireEvent.click(row);
+    expect(screen.getByTestId('istoric-session-0-detail')).toBeInTheDocument();
+    fireEvent.click(row);
+    expect(screen.queryByTestId('istoric-session-0-detail')).not.toBeInTheDocument();
+    expect(row).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('deschiderea altui rand inchide pe primul (single-open accordion)', () => {
+    renderList(makeSessions(3));
+    fireEvent.click(screen.getByTestId('istoric-session-0'));
+    fireEvent.click(screen.getByTestId('istoric-session-1'));
+    expect(screen.queryByTestId('istoric-session-0-detail')).not.toBeInTheDocument();
+    expect(screen.getByTestId('istoric-session-1-detail')).toBeInTheDocument();
   });
 });
 
@@ -62,6 +100,7 @@ describe('VirtualSessionList — long list (windowed)', () => {
     const sessions = makeSessions(60);
     const { onSelect } = renderList(sessions);
     fireEvent.click(screen.getByTestId('istoric-session-0'));
+    fireEvent.click(screen.getByTestId('istoric-session-0-details'));
     expect(onSelect).toHaveBeenCalledWith(sessions[0]!.ts);
   });
 });
@@ -77,8 +116,10 @@ describe('VirtualSessionList — reorder safety (stable ts, not index)', () => {
     const sorted = [b, a]; // newest first (b)
     const { onSelect } = renderList(sorted);
     fireEvent.click(screen.getByTestId('istoric-session-0'));
+    fireEvent.click(screen.getByTestId('istoric-session-0-details'));
     expect(onSelect).toHaveBeenLastCalledWith(b.ts);
     fireEvent.click(screen.getByTestId('istoric-session-1'));
+    fireEvent.click(screen.getByTestId('istoric-session-1-details'));
     expect(onSelect).toHaveBeenLastCalledWith(a.ts);
   });
 });
