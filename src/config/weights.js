@@ -54,7 +54,15 @@ export const EXERCISE_EQUIPMENT_MAP = {
   'Lateral Raises (cable)':'matrix_cable',
   'Rear Delt Cable':       'matrix_cable',
   'Pec Deck / Cable Fly':  'pec_deck',
-  'Rear Delt Fly':         'pec_deck',
+  // Bare canonical 'Rear Delt Fly' (ANCHOR_NAME + library key — the composer still
+  // emits it for users with PR history, and the diary cohort drives it). A rear-delt
+  // fly is a TINY isolation (true ~3-8kg); routing it to pec_deck floored the 5kg
+  // prior up to the 18kg minimum plate (+40% to +400% overshoot, movement wasted
+  // 24-48 sessions — Gigel sim 2026-06-06 Target 3, frozen +0.745 cold-start bias).
+  // A free rear-delt fly is a dumbbell movement → light DB ladder (floor 2kg). This
+  // does NOT touch any machine PRESS (Pec Deck/Leg Press/DB & machine presses keep
+  // their stacks); only this fly isolation moves off the 18kg plate floor.
+  'Rear Delt Fly':         'light_iso_db',
   // ── Tiny rear-delt / lateral-raise ISOLATIONS (Gigel sim Target 3) ──────────
   // The CANONICAL CORE_AUTO names the composer actually emits — route them to the
   // light isolation ladders so their ~2-8kg true loads are not clamped to the 5kg

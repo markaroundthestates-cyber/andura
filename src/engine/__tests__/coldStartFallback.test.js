@@ -122,6 +122,29 @@ describe('cold-start tiny isolations snap to a realistic light floor (<= ~6kg, n
     }
   });
 
+  it('the bare canonical Rear Delt Fly cold-start lands light (<= ~6kg), not the 18kg pec_deck floor', () => {
+    // The ANCHOR_NAME / library-key 'Rear Delt Fly' (still emitted for users with PR
+    // history, and driven by the diary cohort) routed to pec_deck → its 5kg prior was
+    // re-floored to the 18kg minimum plate (frozen +0.745 cold-start bias, Gigel sim
+    // 2026-06-06 Target 3). It now rounds on the light DB ladder.
+    expect(getEquipmentType('Rear Delt Fly')).toBe('light_iso_db');
+    const raw = suggestStartWeight('Rear Delt Fly', 'intermediate', { bodyweightKg: 80, sex: 'm' });
+    const snapped = roundToEquipmentWeight(raw, 'Rear Delt Fly');
+    expect(snapped).toBeLessThanOrEqual(6); // was 18 → ~+260% overshoot at true ~5kg
+    expect(snapped).toBeGreaterThan(0);
+  });
+
+  it('machine PRESSES are unchanged by the rear-delt re-route (floors intact)', () => {
+    // Guard: the Part-A fix must not lower any machine PRESS floor.
+    const MID = { bodyweightKg: 84, sex: 'm' };
+    // chest fly machine keeps its pec_deck stack (legitimately heavier than a fly DB)
+    expect(getEquipmentType('Pec Deck / Cable Fly')).toBe('pec_deck');
+    // presses keep their stacks and seed well above the tiny-isolation floor
+    expect(suggestStartWeight('DB Shoulder Press', 'intermediate', MID)).toBeGreaterThanOrEqual(10);
+    expect(suggestStartWeight('Incline DB Press', 'intermediate', MID)).toBeGreaterThanOrEqual(15);
+    expect(suggestStartWeight('Leg Press', 'intermediate', MID)).toBeGreaterThanOrEqual(120);
+  });
+
   it('the machine Reverse Pec Deck is no longer floored at the 18kg stack', () => {
     const raw = suggestStartWeight('Reverse Pec Deck', 'intermediate', { bodyweightKg: 80, sex: 'm' });
     const snapped = roundToEquipmentWeight(raw, 'Reverse Pec Deck');
