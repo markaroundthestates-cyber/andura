@@ -486,6 +486,54 @@ export const DP = {
       .slice(0, n);
   },
 
+  // ── DEEP ADAPTATION: demonstrated working capacity (Daniel decision #6) ──────
+  // The hardened sim (_SIM_REVALIDATE v2) proved the core defect: a user who
+  // FOLLOWS the coach never converges (trusts_coach 0.6%, timid −0.701 collapse),
+  // because the engine seeds an under-low cold-start and only climbs one small
+  // rep-ladder step per session — ~30 sessions to reach the real working weight.
+  // Only users who OVERRIDE the load UP converge (ego_lifter 11%), because the
+  // next prescription anchors on the last LOGGED load (getState.lastW).
+  //
+  // The fix reads the user's OWN demonstrated capacity straight from the logs:
+  // the HEAVIEST load they have actually COMPLETED at target reps (reps >= rMin)
+  // without a distress (failed) set. That single number drives both halves of the
+  // adaptation fix:
+  //   (a) PR-FLOOR — the rec never drops below it (stops the timid down-ratchet:
+  //       rating everything "greu" can no longer spiral the rec below proven kg).
+  //   (b) FIND-YOUR-WEIGHT catch-up — when the current rec sits well below it (an
+  //       under-seeded cold start, or the user keeps logging more), climb in BIG
+  //       steps toward it instead of one rep at a time (~2-3 sessions, not ~30).
+  // Both are CATCHING UP to established capacity, so they run in ALL phases. Only
+  // pushing ABOVE the demonstrated load toward a NEW max is phase-gated (part c).
+  //
+  // Pure: reads only the exercise's own `logs`. A distress set (rpe>=8.5 AND reps
+  // below rMin = a failed/overload set) is EXCLUDED — we floor on what they truly
+  // OWN, never on a grind they could not complete. Returns 0 when no qualifying
+  // log exists (cold start) → the floor/catch-up are inert and the path is
+  // byte-unchanged for a brand-new user.
+  /**
+   * @param {string} ex
+   * @param {number} rMin minimum reps of the active (phase-aware) range
+   * @returns {number} heaviest completed-at-target-reps load, or 0
+   */
+  _demonstratedWorkingW(ex, rMin) {
+    const logs = this.getLogs(ex, 12); // newest-first
+    let best = 0;
+    const floorReps = rMin ?? 8;
+    for (const l of logs) {
+      const w = Number(l.w);
+      if (!Number.isFinite(w) || w <= 0) continue;
+      const reps = typeof l.reps === 'string' ? parseInt(l.reps, 10) : Number(l.reps);
+      if (!Number.isFinite(reps) || reps < floorReps) continue; // must hit target reps
+      const rpe = Number(l.rpe) || 7;
+      // Exclude a genuine failed/overload set (hard AND short of the minimum) — but
+      // a set that HIT the reps counts even if rated greu (greu-at-target = capacity).
+      if (rpe >= 8.5 && reps < floorReps) continue;
+      if (w > best) best = w;
+    }
+    return best;
+  },
+
   // ── RETURN-AFTER-GAP DELOAD + RAMP (detraining, Daniel decision #3) ──────────
   // Real failure observed in the founder's data: 3 months off legs → the engine
   // (reading only the pre-gap lastW) let him chase a 230 PR + full v-taper volume
@@ -665,6 +713,21 @@ export const DP = {
     // one set. Threshold = below rMin (could not finish the minimum prescribed reps).
     const lastRepsBelowTarget = lastRPE >= 8.5 && lastReps < (rMin ?? 8);
 
+    // consecutiveEasyHit: count of most-recent logs (newest-first) that were NOT
+    // hard (rpe < 8.5) AND hit the rep target (reps >= rMin). A run of these is the
+    // "the load is too light / they keep doing more" signal a COACH-FOLLOWER emits:
+    // they log AT the under-seeded rec, never above it, so demoW can't exceed it —
+    // but a sustained easy-at-target run proves the rec is below their real working
+    // weight and the FIND-YOUR-WEIGHT catch-up (decision #6 part b) should climb in
+    // big steps even without a heavier logged load. Resets on a hard / short set.
+    let consecutiveEasyHit = 0;
+    for (const l of logs) {
+      const r = l.rpe || 7;
+      const rp = typeof l.reps === 'string' ? parseInt(l.reps, 10) : Number(l.reps);
+      if (r < 8.5 && Number.isFinite(rp) && rp >= (rMin ?? 8)) consecutiveEasyHit++;
+      else break;
+    }
+
     // How many sets at +1 volume
     const exSets = /** @type {Record<string, number>} */ (EX_SETS);
     const currentSets = exSets[ex] || 3;
@@ -672,7 +735,7 @@ export const DP = {
 
     return {
       lastW, lastReps, lastRPE, isStagnant, atTopReps,
-      consecutiveGreu, lastRepsBelowTarget,
+      consecutiveGreu, lastRepsBelowTarget, consecutiveEasyHit,
       range, rMin: rMin ?? 8, rMax: rMax ?? 12, currentSets, extraSets,
       logs
     };
@@ -691,6 +754,38 @@ export const DP = {
       const calibrated = this._applyCalibration(ex, result.kg);
       // Rotunjeste kg la step-ul echipamentului (helcometre din 4, cabluri din 2.5, DB din 2)
       result.kg = this.roundToStep(calibrated, ex);
+
+      // ── PR-FLOOR (Daniel decision #6, part a) — FIRM ─────────────────────────
+      // The rec must NEVER drop below the user's demonstrated working capacity (the
+      // heaviest load they completed at target reps). This stops the timid down-
+      // ratchet proven in the hardened sim (timid −0.701 collapse): rating every set
+      // "greu" can no longer spiral the rec below a load the user has actually owned —
+      // EASE-BACK / SCALE-BACK / maintain can lighten WITHIN that floor but never
+      // below it. A FLOOR, not a target (we never push UP to it here — catch-up
+      // (part b) does the upward climb; this only blocks the down-ratchet).
+      // EXEMPTION: an active return-deload window is ALLOWED below the floor by
+      // design — the comeback intentionally starts light (decision #3, 344e92a6).
+      if (this._returnDeload(ex, nowMs) == null) {
+        const phaseOverride = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
+        const inCut = this._isInCut(phaseOverride, nowMs);
+        const rng = this.getPhaseAwareRepRange(ex, inCut);
+        const floorW = this._demonstratedWorkingW(ex, rng[0] ?? 8);
+        if (floorW > 0 && Number.isFinite(result.kg) && result.kg > 0 && result.kg < floorW) {
+          result.kg = this.roundToStep(floorW, ex);
+          // Re-tag a down-ratchet status as a floor HOLD so the note matches the kg
+          // (EASE BACK / SCALE BACK can no longer claim to lighten below proven kg).
+          if (result.status === 'EASE BACK' || result.status === 'SCALE BACK') {
+            result.status = 'ON TARGET';
+            result.statusColor = 'var(--green)';
+            result.statusLabel = '🟢 La nivelul tau';
+            result.progressionNote = `Ramanem la ${result.kg} kg · nivelul pe care l-ai demonstrat deja.`;
+          } else if (result.status === 'CATCH UP') {
+            // The floor lifted the catch-up step straight to the demonstrated load —
+            // keep the note's kg aligned with the final prescribed kg.
+            result.progressionNote = `Te descurci usor → urcam la ${result.kg} kg, catre nivelul tau real.`;
+          }
+        }
+      }
     }
     return result;
   },
@@ -742,7 +837,7 @@ export const DP = {
     }
 
     const { lastW, lastReps, lastRPE, isStagnant, atTopReps, extraSets,
-      consecutiveGreu, lastRepsBelowTarget } = state;
+      consecutiveGreu, lastRepsBelowTarget, consecutiveEasyHit } = state;
 
     // ── SCALE BACK: ≤50% of minimum reps → drop one step on equipment list
     if (lastReps < Math.ceil(rMin * 0.5)) {
@@ -784,6 +879,75 @@ export const DP = {
         progressionNote: `Suntem la plafonul de greutate (${maxKg} kg). Astazi urcam la ${targetReps} reps.`,
         progressionStage: 1
       };
+    }
+
+    // ── FIND-YOUR-WEIGHT fast climb (Daniel decision #6, part b) — ALL phases ───
+    // The defect (hardened sim): a coach-follower seeds an under-low cold start and
+    // climbs only ONE rep-ladder step per session → ~30 sessions to reach their real
+    // working weight. When the current load sits well BELOW the user's demonstrated
+    // working capacity (heaviest load completed at target reps) AND the last set was
+    // NOT hard (usor/potrivit) while HITTING the reps, jump in BIG steps toward the
+    // demonstrated load — this is CATCHING UP to what they already own, not chasing
+    // a new max, so it runs in every phase (a cut user still trains at their real
+    // weight, not 40 kg). Composes with the ease-back gate: it only fires on a non-
+    // hard, reps-hit set, so a hard-but-hit set HOLDS and a distress set EASES (both
+    // handled below) — the climb never fights the ease-back. Skipped during an
+    // active return-deload window (the comeback intentionally starts light).
+    const demoW = this._demonstratedWorkingW(ex, rMin);
+    const lastNotHard = lastRPE < 8.5;
+    const hitRepsNow = lastReps >= rMin;
+    const rdActive = this._returnDeload(ex, nowMs) != null;
+    // TWO catch-up triggers:
+    //   • belowDemo — the rec sits below a HEAVIER load the user already logged at
+    //     target reps (e.g. an override-up user, or a re-seeded cold start). Climb
+    //     toward that demonstrated load (never past it).
+    //   • easyRun — a coach-FOLLOWER who logs AT the under-seeded rec never produces
+    //     a higher demoW, so a sustained easy-at-target run (consecutiveEasyHit>=2)
+    //     is the "too light" signal. Climb a big step even with no heavier log; the
+    //     EASE-BACK / hard set still gates it (lastNotHard + hitRepsNow required).
+    const belowDemo = demoW > 0 && lastW < demoW * 0.97;
+    // easyRun fires only on USOR (lastRPE<=6.5), not potrivit: at the user's true
+    // working weight the rating is potrivit, which must STOP the climb — climbing on
+    // potrivit would overshoot true capacity. usor = genuine headroom, climb.
+    // Runs in (almost) all phases — part b is catch-up to the user's REAL working
+    // weight, not a new max: an usor rating proves the load is below true capacity,
+    // and the climb self-stops the moment the rating becomes potrivit (true working
+    // weight). EXPLICIT CUT restraint (part c): in a deliberate deficit we do NOT
+    // chase a new max above what the user has already demonstrated (demoW), so the
+    // pure easy-run climb is suppressed there once at/above demoW — the EASY-branch
+    // MAINTAIN then holds. (AUTO's date-based cut is NOT a deliberate deficit and
+    // still climbs to find the real weight; belowDemo always runs, all phases.)
+    const explicitCutAtCap = phaseOverride === 'CUT' && demoW > 0 && lastW >= demoW;
+    const easyRun = consecutiveEasyHit >= 2 && lastRPE <= 6.5 && !explicitCutAtCap;
+    if (!rdActive && lastNotHard && hitRepsNow && (belowDemo || easyRun)) {
+      // Big jump toward the user's real working weight. When a heavier demoW exists
+      // we jump STRAIGHT to it (capped there — never overshoot a proven load). On the
+      // pure easy-run signal (no heavier log) the step is +20%, growing with the run
+      // length (a long sustained-usor run = very under-seeded → climb faster) so a
+      // follower reaches their working weight in ~2-3 sessions, not ~30. Snap to a
+      // real equipment step; guarantee at least one step of progress on a coarse
+      // stack. Bounded by the exercise MAX_KG below.
+      const stepFrac = 0.20 + 0.10 * Math.min(3, Math.max(0, consecutiveEasyHit - 2));
+      const ceiling = belowDemo ? demoW : lastW * (1 + stepFrac);
+      const jumpedRaw = belowDemo ? demoW : lastW * (1 + stepFrac);
+      let climbKg = this.roundToStep(Math.min(ceiling, jumpedRaw), ex);
+      if (climbKg <= lastW) climbKg = belowDemo
+        ? Math.min(demoW, getNextWeight(lastW, ex))
+        : getNextWeight(lastW, ex);
+      if (climbKg > lastW) {
+        // Respect the exercise cap (never climb past a defensive MAX_KG).
+        if (maxKg && climbKg > maxKg) climbKg = roundToEquipmentWeight(maxKg, ex);
+        if (climbKg > lastW) {
+          return {
+            kg: climbKg, repsTarget: rMin, rir: 3,
+            status: 'CATCH UP',
+            statusColor: 'var(--green)',
+            statusLabel: '🟢 Urcam la nivelul tau',
+            progressionNote: `Te descurci usor → urcam la ${climbKg} kg, catre nivelul tau real.`,
+            progressionStage: 2
+          };
+        }
+      }
     }
 
     // ── RATING-DRIVEN PROGRESSION (Daniel bug 2026-06-04) ───────────────────────
@@ -847,9 +1011,54 @@ export const DP = {
       };
     }
 
+    // ── PHASE-AWARE push ABOVE established capacity (decision #6, part c) ────────
+    // Past the user's demonstrated working weight we are chasing a NEW max, not
+    // catching up — so the phase governs how hard we push:
+    //   • STRENGTH: aggressive — drive the WEIGHT up on an easy set even before the
+    //     rep range is filled (chase strength). BULK/surplus keeps the standard
+    //     rep-then-weight double progression (it already drives load up steadily; the
+    //     weight-first-on-easy behavior is reserved for an explicit STRENGTH block).
+    //   • CUT / deficit: RESTRAINED — once at/above the established working weight
+    //     do NOT chase a new PR; hold and maintain (no aggressive new-max climbing
+    //     while under-fuelled). Catch-up (part b) already ran above, so the user is
+    //     at their real weight, not 40 kg — this only caps the climb PAST it.
+    //   • MAINTENANCE / BULK / AUTO: normal double progression (untouched).
+    const isStrengthPhase = phaseOverride === 'STRENGTH';
+    const aboveEstablished = demoW > 0 && lastW >= demoW;
+
     // EASY (usor / lastRPE <= 6.5) → DECISIVE forward step THIS session.
     if (lastRPE <= 6.5) {
+      // CUT restraint: in an EXPLICIT deficit, at/above the established working
+      // weight → do NOT chase a new max. Hold the load, maintain. Gated on explicit
+      // 'CUT' (not AUTO's date-based cut) so the normal AUTO double-progression
+      // (easy → +1 rep) is unchanged for the default user.
+      if (phaseOverride === 'CUT' && aboveEstablished) {
+        return {
+          kg: lastW, repsTarget: Math.min(rMax, Math.max(lastReps, rMin)), rir: 2,
+          status: 'MAINTAIN',
+          statusColor: 'var(--accent)',
+          statusLabel: '🟡 Mentinem in definire',
+          progressionNote: `In definire mentinem ${lastW} kg la nivelul tau · nu fortam un PR nou acum.`,
+          progressionStage: 0
+        };
+      }
       if (!atTop) {
+        // STRENGTH phase: aggressive — drive the WEIGHT up on an easy set even
+        // before the rep range is filled (chase strength), as long as a real step
+        // exists. Other phases raise the rep target by +1 toward rMax (standard).
+        if (isStrengthPhase) {
+          const strKg = getNextWeight(lastW, ex);
+          if (strKg > lastW && !(maxKg && strKg > maxKg)) {
+            return {
+              kg: strKg, repsTarget: rMin, rir: 3,
+              status: 'INCREASE',
+              statusColor: 'var(--green)',
+              statusLabel: '🟢 Crestem greutatea',
+              progressionNote: `Faza de forta · usor → urcam la ${strKg} kg.`,
+              progressionStage: 2
+            };
+          }
+        }
         // Below the top of the range → raise the rep TARGET by +1 (toward rMax).
         const targetReps = Math.min(rMax, lastReps + 1);
         return {

@@ -209,31 +209,39 @@ describe('E2E coach-responds — composePlannedWorkoutToday responds to EASY', (
     persistSessionLogs(sessionWith('Lat Pulldown', 56, reps, rating, 1000), Date.now() - 1000);
   }
 
-  it('EASY-rated Lat Pulldown (reps 9, range 8-12) → planned reps 10 (one up), weight held', async () => {
+  it('EASY-rated Lat Pulldown 3x (reps 9) → FIND-YOUR-WEIGHT climbs the WEIGHT (decision #6)', async () => {
+    // SUPERSEDED by decision #6 (deep adaptation, part b): a SUSTAINED easy-at-target
+    // run (3 usor sessions hitting the reps) is the "the load is too light" signal a
+    // coach-follower emits — the engine now climbs the WEIGHT in a big step toward the
+    // user's real working weight (find-your-weight catch-up), instead of only adding
+    // one rep. The old contract (+1 rep, weight held) under-loaded a follower for ~30
+    // sessions; this is the exact fix. Single-easy-session +1-rep behavior is unchanged
+    // (covered by the DP.getSmartRecommendation single-session tests above).
     seedHistory('usor', 9);
     const out = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     expect(out).not.toBeNull();
     const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
     expect(lat).toBeDefined();
-    // EASY at 9 reps → INCREASE rep target to 10; weight held (snapped 56 -> 55).
-    expect(lat!.targetReps).toBe(10);
-    expect(lat!.targetKg).toBe(55);
+    expect(lat!.targetKg).toBeGreaterThan(55); // climbed off the under-seeded 55
   });
 
   it('EASY twice (the live "logged easy AGAIN") keeps moving forward, never stalls', async () => {
-    // First easy session at 9 reps.
+    // First easy session at 9 reps → single-session contract: +1 rep target (10).
     persistSessionLogs(sessionWith('Lat Pulldown', 56, 9, 'usor', 4000), Date.now() - 4000);
     const out1 = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const lat1 = findByEnSlug(out1!.exercises, 'Lat Pulldown')!;
     expect(lat1.targetReps).toBe(10);
 
-    // User does the next session at the new target (10 reps) and rates it easy
-    // again — the SECOND easy session. The recommendation must move FURTHER (11),
-    // not stall at the same 10 (Daniel's exact complaint).
+    // User does the next session at the new target (10 reps) and rates it easy AGAIN
+    // — now a SUSTAINED easy run (decision #6): the recommendation must move FURTHER,
+    // not stall (Daniel's exact complaint). It now advances via the WEIGHT (find-your-
+    // weight catch-up) rather than reps — either way it is NOT stuck.
     persistSessionLogs(sessionWith('Lat Pulldown', 56, 10, 'usor', 1000), Date.now() - 1000);
     const out2 = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const lat2 = findByEnSlug(out2!.exercises, 'Lat Pulldown')!;
-    expect(lat2.targetReps).toBeGreaterThan(lat1.targetReps); // 10 -> 11, NOT stuck
+    // Forward progress on EITHER axis (weight up, or reps up) — never stalled.
+    const moved = lat2.targetKg > lat1.targetKg || lat2.targetReps > lat1.targetReps;
+    expect(moved).toBe(true);
   });
 
   it('GREU-rated Lat Pulldown at hit reps HOLDS end-to-end (Target 2 capacity signal)', async () => {
@@ -283,7 +291,11 @@ describe('E2E coach-responds — composePlannedWorkoutToday responds to EASY', (
       Date.now() - 1000,
     );
     const rec2 = DP.getSmartRecommendation('Flat DB Press', null, null, undefined, null);
-    // It must move FURTHER (11 -> 12), not stall at the same number.
-    expect(rec2.repsTarget).toBeGreaterThan(rec1.repsTarget);
+    // It must move FURTHER, not stall at the same number. A SECOND easy-at-target set
+    // is now a sustained easy run (decision #6 find-your-weight) → forward progress
+    // comes via the WEIGHT (catch-up climb) rather than only reps — either axis proves
+    // it is NOT stuck (Daniel's exact "didn't move" complaint).
+    const moved = rec2.kg > rec1.kg || rec2.repsTarget > rec1.repsTarget;
+    expect(moved).toBe(true);
   });
 });
