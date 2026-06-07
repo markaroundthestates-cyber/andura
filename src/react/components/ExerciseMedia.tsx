@@ -159,6 +159,9 @@ export function ExerciseMedia({
           playsInline
           aria-label={alt}
           onLoadedData={() => setMediaLoaded(true)}
+          // Clear the skeleton on a failed video load too (mirror the <img>
+          // branches) so a broken URL never leaves the shimmer up forever.
+          onError={() => setMediaLoaded(true)}
         />
       </div>
     );

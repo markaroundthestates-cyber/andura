@@ -932,48 +932,6 @@
     transform: scale(0.94);
   }
 
-  /* ══ AURORA BLOBS — ambient palette-aware background motion (Daniel
-     "in background vreau animatii" 2026-05-28) ════════════════════════════
-     Three blobs drift very slowly behind the app shell. transform-only,
-     GPU-friendly, large displacement but blurred 80px so the motion reads as
-     "the surface is alive" not "something is moving on screen". 28-44s cycles
-     are well below the threshold for movement-triggered discomfort, and the
-     global prefers-reduced-motion block below collapses them automatically.
-     Mounted by BackgroundAurora.tsx in Layout shell. */
-  @keyframes andura-aurora-1 {
-    0%, 100% {
-      transform: translate(0, 0) scale(1) rotate(0deg);
-    }
-    33% {
-      transform: translate(8vw, 6vh) scale(1.12) rotate(8deg);
-    }
-    66% {
-      transform: translate(4vw, 12vh) scale(0.92) rotate(-6deg);
-    }
-  }
-  @keyframes andura-aurora-2 {
-    0%, 100% {
-      transform: translate(0, 0) scale(1) rotate(0deg);
-    }
-    33% {
-      transform: translate(-10vw, -4vh) scale(1.08) rotate(-10deg);
-    }
-    66% {
-      transform: translate(-5vw, -10vh) scale(0.94) rotate(7deg);
-    }
-  }
-  @keyframes andura-aurora-3 {
-    0%, 100% {
-      transform: translate(0, 0) scale(1) rotate(0deg);
-    }
-    50% {
-      transform: translate(-7vw, 8vh) scale(1.15) rotate(-12deg);
-    }
-  }
-  .animate-aurora-1 { animation: andura-aurora-1 32s ease-in-out infinite; }
-  .animate-aurora-2 { animation: andura-aurora-2 38s ease-in-out infinite; }
-  .animate-aurora-3 { animation: andura-aurora-3 44s ease-in-out infinite; }
-
   /* ══ PULSE MOTION LANGUAGE (ported from interfata-noua/index.html) ════════
      Daniel-approved Pulse redesign. These ADD the Pulse-specific motion idioms
      on top of the existing andura-* set (which stays — well-tested, tasteful):

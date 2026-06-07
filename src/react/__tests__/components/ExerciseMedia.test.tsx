@@ -65,6 +65,16 @@ describe('ExerciseMedia — loading skeleton', () => {
     expect(screen.queryByTestId('em-skeleton')).not.toBeInTheDocument();
   });
 
+  // Audit 2026-06-07 (LOW-3): a failed video load must clear the skeleton too
+  // (mirror the <img> error path), else a broken URL leaves the shimmer forever.
+  it('clears the skeleton on video error (no permanent shimmer)', () => {
+    getExerciseMedia.mockReturnValue({ url: '/x.mp4', type: 'video' });
+    render(<ExerciseMedia engineName="Bench Press" variant="card" testId="em" />);
+    expect(screen.getByTestId('em-skeleton')).toBeInTheDocument();
+    fireEvent.error(screen.getByTestId('em'));
+    expect(screen.queryByTestId('em-skeleton')).not.toBeInTheDocument();
+  });
+
   it('no skeleton on the placeholder (no media)', () => {
     getExerciseMedia.mockReturnValue(undefined);
     render(<ExerciseMedia engineName="Unknown" variant="card" testId="em" />);

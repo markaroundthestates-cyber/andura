@@ -307,10 +307,9 @@ export function CalendarHeatmap(): JSX.Element {
       </div>
 
       {/* Pulse reskin (GROUP E) — legend mirrors the cell marks: glowing dots in
-          the session-state tokens (easy=volt / normal=aqua / hard=ember). Recovery
-          + rest keep their real tokens (no Pulse glow — they are not logged
-          sessions). Order follows the mockup: easy → normal → hard → recovery →
-          rest. */}
+          the session-state tokens (easy=volt / normal=aqua / hard=ember). Rest
+          keeps its real token (no Pulse glow — not a logged session). Order
+          follows the mockup: easy → normal → hard → rest. */}
       <div
         className="flex items-center gap-3.5 flex-wrap pt-3.5 mt-3.5 border-t border-line"
         data-testid="cal-legend"
@@ -358,14 +357,10 @@ export function CalendarHeatmap(): JSX.Element {
           />
           {t('calendar.heatmap.legend.hard')}
         </span>
-        <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
-          <span
-            className="inline-block w-2.5 h-2.5 rounded-[3px]"
-            style={{ background: 'var(--violet)', boxShadow: '0 0 6px var(--violet)' }}
-            aria-hidden="true"
-          />
-          {t('calendar.heatmap.legend.recovery')}
-        </span>
+        {/* Audit 2026-06-07 (LOW-2): the "recovery"/violet legend swatch was
+            removed — tierDotColor only ever paints volt/aqua/ember (l1/l2/l3),
+            so no cell ever showed a recovery mark; the legend advertised a swatch
+            users would never see. */}
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
           <span
             className="inline-block w-2.5 h-2.5 rounded-[3px] bg-paper2 border border-lineStrong"
