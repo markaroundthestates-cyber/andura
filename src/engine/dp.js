@@ -8,6 +8,8 @@ import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
 import { updatePosterior, savePosterior } from './dp/strengthKalman.js';
+import { ceilingE1RM, gainDecay } from './dp/ceiling.js';
+import { getUserConfig } from '../config/user.js';
 import { t } from '../i18n/index.js';
 
 export const DP = {
@@ -576,6 +578,67 @@ export const DP = {
     return eq !== 'bodyweight' && eq !== 'band';
   },
 
+  // ══ BUILD #3 — realistic ceiling source helpers (F3 spec §3) ════════════════
+  // Current bodyweight (kg) for ceiling normalization. Reads the logged weights
+  // series (latest) with the userConfig startKg as the fallback — the same source
+  // SYS.getCurrentKg uses. Pure read; returns 0 when unresolvable.
+  /** @returns {number} */
+  _currentBodyweightKg() {
+    const ws = /** @type {any} */ (DB.get('weights')) || {};
+    const dates = Object.keys(ws).sort((a, b) => a.localeCompare(b));
+    if (dates.length) {
+      const last = dates[dates.length - 1];
+      const w = last != null ? Number(ws[last]) : NaN;
+      if (Number.isFinite(w) && w > 0) return w;
+    }
+    const cfg = getUserConfig();
+    const start = cfg && cfg.bio ? Number(cfg.bio.startKg ?? cfg.bio.currentKgFallback) : NaN;
+    return Number.isFinite(start) && start > 0 ? start : 0;
+  },
+
+  // Training age = distinct calendar-day sessions logged for this exercise (a
+  // proxy for the attainable fraction of the ceiling). Reads the exercise's own logs.
+  /** @param {string} ex @returns {number} */
+  _trainingAge(ex) {
+    const logs = this.getLogs(ex, 12);
+    const days = new Set();
+    for (const l of logs) {
+      const ts = Number(l.ts);
+      if (Number.isFinite(ts) && ts > 0) days.add(Math.floor(ts / 86400000));
+    }
+    return days.size;
+  },
+
+  // The realistic derived ceiling expressed as a working-kg cap at the rep target
+  // (back-solved from the e1RM ceiling, like demoW). Sex is unavailable in the
+  // engine's per-set path (it lives in the React onboarding store, passed only via
+  // ctx to the cold-start) → default 'm' (the more permissive factor — a higher
+  // ceiling, never an under-cap). Returns 0 when bodyweight is unusable.
+  /** @param {string} ex @param {number} repTarget @returns {number} */
+  _ceilingKg(ex, repTarget) {
+    if (!this._e1rmEligible(ex)) return 0;
+    const bw = this._currentBodyweightKg();
+    if (bw <= 0) return 0;
+    const ceilE1RM = ceilingE1RM(ex, bw, 'm', this._trainingAge(ex));
+    if (!(ceilE1RM > 0)) return 0;
+    return this._kgFromE1RM(ceilE1RM, repTarget ?? 8);
+  },
+
+  // The effective per-exercise weight cap. With dp_ceiling_v1 ON the derived
+  // realistic ceiling REPLACES the flat MAX_KG — but only ever as the MAX of the
+  // two, so a mapped lift's cap is never LOWERED below its hand-tuned MAX_KG (the
+  // §8.4 no-regression gate) and an UNMAPPED lift (MAX_KG null → old 80kg-default
+  // fragility, F-1) gets a finite derived ceiling instead. OFF → the flat MAX_KG
+  // (byte-identical legacy).
+  /** @param {string} ex @param {number} repTarget @returns {number|null} */
+  _effectiveMaxKg(ex, repTarget) {
+    const flat = /** @type {Record<string, number>} */ (this.MAX_KG)[ex] || null;
+    if (!isEnabled('dp_ceiling_v1')) return flat;
+    const ceil = this.roundToStep(this._ceilingKg(ex, repTarget), ex);
+    if (!(ceil > 0)) return flat; // ceiling unavailable → keep the flat cap
+    return flat ? Math.max(flat, ceil) : ceil;
+  },
+
   // RIR-corrected, saturated Epley e1RM for one logged set. Returns null when the
   // inputs are unusable (no/zero load) — null = "no e1RM", fall through to raw kg.
   /** @param {number} w @param {number} reps @param {number} [rpe] @returns {number|null} */
@@ -970,8 +1033,10 @@ export const DP = {
     const range = this.getPhaseAwareRepRange(ex, isInCut);
     const rMin = range[0] ?? 8;
     const rMax = range[1] ?? 12;
-    const maxKgs = /** @type {Record<string, number>} */ (this.MAX_KG);
-    const maxKg = maxKgs[ex] || null;
+    // CAP: the flat hand-tuned MAX_KG, OR (dp_ceiling_v1 ON) the MAX of it and the
+    // derived realistic ceiling (back-solved at the rep target). Never below the old
+    // MAX_KG; gives unmapped lifts a finite ceiling instead of the 80kg default (F-1).
+    const maxKg = this._effectiveMaxKg(ex, rMin);
     const capStrats = /** @type {Record<string, string>} */ (this.WEIGHT_CAP_STRATEGY);
     const _capStrategy = capStrats[ex] || null;
 
@@ -1083,7 +1148,20 @@ export const DP = {
       // follower reaches their working weight in ~2-3 sessions, not ~30. Snap to a
       // real equipment step; guarantee at least one step of progress on a coarse
       // stack. Bounded by the exercise MAX_KG below.
-      const stepFrac = 0.20 + 0.10 * Math.min(3, Math.max(0, consecutiveEasyHit - 2));
+      let stepFrac = 0.20 + 0.10 * Math.min(3, Math.max(0, consecutiveEasyHit - 2));
+      // DIMINISHING RETURNS (dp_ceiling_v1 ON): a PURE easy-run push is chasing a
+      // NEW max, so its step decays toward 0 as the current e1RM approaches the
+      // realistic ceiling — the climb cannot blow past genetic reality and slows
+      // long before it. The belowDemo catch-up (returning to an already-OWNED load)
+      // is NOT throttled. OFF → stepFrac unchanged (byte-identical).
+      if (!belowDemo && isEnabled('dp_ceiling_v1')) {
+        const curE1RM = this.e1RMForSet(lastW, lastReps, lastRPE);
+        const bw = this._currentBodyweightKg();
+        const ceilE1RM = bw > 0 ? ceilingE1RM(ex, bw, 'm', this._trainingAge(ex)) : 0;
+        if (curE1RM != null && ceilE1RM > 0) {
+          stepFrac *= gainDecay(curE1RM, ceilE1RM);
+        }
+      }
       const ceiling = belowDemo ? demoW : lastW * (1 + stepFrac);
       const jumpedRaw = belowDemo ? demoW : lastW * (1 + stepFrac);
       let climbKg = this.roundToStep(Math.min(ceiling, jumpedRaw), ex);
