@@ -166,6 +166,8 @@
     "primedForPr": "Primed for a PR",
     "readinessEmpty": "Log your first session to wake your readiness.",
     "readinessEmptyReturning": "Run today's energy check to read your readiness.",
+    "energyCheckCta": "Check your energy today",
+    "energyCheckRerunAria": "Re-run today's energy check",
     "header": {
       "dateSeparator": "·"
     },

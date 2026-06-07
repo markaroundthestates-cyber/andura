@@ -55,7 +55,8 @@ import { ReadinessOrb } from '../../../components/pulse/ReadinessOrb';
 import { PulseMark } from '../../../components/pulse/PulseMark';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { Pill } from '../../../components/pulse/Pill';
-import { Zap } from 'lucide-react';
+import { getTodayReadiness } from '../../../../engine/readiness.js';
+import { Zap, ArrowRight } from 'lucide-react';
 
 const FOURTEEN_DAYS_MS = 14 * 86400000;
 
@@ -154,6 +155,16 @@ export function Antrenor(): JSX.Element {
 
   const readiness = coach?.readiness ?? null;
 
+  // PRE-WORKOUT STEP reframe (Daniel Option A 2026-06-07) — the energy-check is
+  // now a deliberate "step 1: assess" that PRECEDES the start, not something the
+  // Start button drops you into. "Done today" = today has a self-report in the
+  // engine readiness store (saveReadiness keys by tod() local-date). When NOT
+  // done, the hero leads with the energy-check CTA; when done, Start proceeds
+  // straight to the plan/preview (readiness already known — no re-route). Read
+  // in render: leaving for energy-check and coming back remounts this screen, so
+  // the flag is fresh; coach (the async aggregate) is also a recompute signal.
+  const energyCheckDoneToday = getTodayReadiness() != null;
+
   const showReactivate =
     lastSession !== null &&
     Date.now() - lastSession.ts > FOURTEEN_DAYS_MS &&
@@ -164,11 +175,24 @@ export function Antrenor(): JSX.Element {
   // engine signal preferred when aggregate loaded, fallback user override (§A002).
   const showWorkoutCard = coach !== null ? !coach.isRestDay : schedContext === 'workout';
 
+  // Step 2: START. If today's energy-check is already done, go STRAIGHT to the
+  // plan preview (readiness is known — re-routing through energy-check would
+  // double-prompt). If not done yet, route to the energy-check first (the
+  // assess step), exactly as before. Reused by the reactivate / light-session /
+  // override CTAs so every "start" affordance honors the same skip-if-done rule.
   const handleStart = (): void => {
-    navigate(gotoPath('energy-check'));
+    navigate(gotoPath(energyCheckDoneToday ? 'workout-preview' : 'energy-check'));
   };
 
   const handleReactivateStart = (): void => {
+    navigate(gotoPath(energyCheckDoneToday ? 'workout-preview' : 'energy-check'));
+  };
+
+  // Re-run the check on demand — tapping the readiness hero (orb/verdict)
+  // re-opens energy-check even when it's already done today, so the user is
+  // never locked into a stale self-report. Distinct from handleStart (which
+  // skips the check once done).
+  const handleEnergyCheck = (): void => {
     navigate(gotoPath('energy-check'));
   };
 
@@ -260,11 +284,22 @@ export function Antrenor(): JSX.Element {
         data-testid="readiness-hero"
         style={{ ['--wash' as string]: 'var(--aqua)' }}
       >
-        <ReadinessOrb
-          score={readiness ? readiness.score : null}
-          label={t('stats.readiness')}
-          canPR={readiness?.canPR ?? false}
-        />
+        {/* Orb is tappable — re-opens the energy-check on demand (even when
+            already done today) so the user is never locked into a stale
+            self-report. Re-run intent, distinct from Start (handleStart). */}
+        <button
+          type="button"
+          onClick={handleEnergyCheck}
+          data-testid="readiness-orb-rerun"
+          aria-label={t('antrenor.energyCheckRerunAria')}
+          className="flex-shrink-0 rounded-full"
+        >
+          <ReadinessOrb
+            score={readiness ? readiness.score : null}
+            label={t('stats.readiness')}
+            canPR={readiness?.canPR ?? false}
+          />
+        </button>
         <div className="flex-1 min-w-0">
           <Kicker color="var(--aqua)">{t('readinessVerdictWidget.ariaLabel')}</Kicker>
           {readiness ? (
@@ -286,6 +321,23 @@ export function Antrenor(): JSX.Element {
             >
               {t(hasTrainedBefore ? 'antrenor.readinessEmptyReturning' : 'antrenor.readinessEmpty')}
             </p>
+          )}
+          {/* Step 1: ASSESS. Until today's energy-check is recorded, the hero
+              leads with a clear primary action to run it — presented as the
+              deliberate pre-workout step, separate from starting the session.
+              Once done today, this disappears (readiness is known) and Start
+              proceeds straight to the plan. */}
+          {!energyCheckDoneToday && (
+            <button
+              type="button"
+              onClick={handleEnergyCheck}
+              data-testid="readiness-energy-check-cta"
+              className="btn-primary-lift press-feedback pulse-grad-bg pulse-shine mt-3 w-full rounded-full py-2.5 px-4 text-sm font-semibold flex items-center justify-center gap-2"
+              style={{ color: 'var(--on-accent)' }}
+            >
+              <span>{t('antrenor.energyCheckCta')}</span>
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </button>
           )}
         </div>
       </div>

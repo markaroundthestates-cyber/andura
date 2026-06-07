@@ -39,6 +39,7 @@ import { useCoachStore } from '../../../stores/coachStore';
 import { useScheduleStore, type WeekDays } from '../../../stores/scheduleStore';
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 import { getReadiness, getFatigue } from '../../../lib/engineWrappers';
+import { saveReadiness } from '../../../../engine/readiness.js';
 
 function resetStores(): void {
   useWorkoutStore.setState({
@@ -72,9 +73,17 @@ function renderAntrenor() {
       <Routes>
         <Route path="/app/antrenor" element={<Antrenor />} />
         <Route path="/app/antrenor/energy-check" element={<div>EnergyCheckStub</div>} />
+        <Route path="/app/antrenor/workout-preview" element={<div>WorkoutPreviewStub</div>} />
       </Routes>
     </MemoryRouter>
   );
+}
+
+// Pre-workout reframe (Option A 2026-06-07) — "done today" is a today-dated
+// self-report in the engine readiness store (saveReadiness keys by tod()).
+// Seed it directly so handleStart skips the re-route through energy-check.
+function seedEnergyCheckToday(value = 3): void {
+  saveReadiness(value);
 }
 
 describe('Antrenor home — base render', () => {
@@ -503,12 +512,47 @@ describe('Antrenor home — navigation', () => {
     vi.mocked(getFatigue).mockReturnValue(null);
   });
 
-  it('clicks CoachTodayCard Start session → navigates la /app/antrenor/energy-check — EN default', () => {
-    // Post-D088 bottom "Incepe antrenament" dedup: CoachTodayCard's own button
-    // is the workout-day entry. Single navigation contract — energy-check.
-    // Wave C2 i18n: EN default → "Start session" (was RO "Incepe sesiunea").
+  it('no energy-check today → Start routes to energy-check first (assess step)', () => {
+    // Pre-workout reframe (Option A): with no self-report today, Start still
+    // routes through energy-check — the deliberate "step 1: assess" precedes
+    // the session. Post-D088 dedup: CoachTodayCard's own button is the entry.
     renderAntrenor();
     fireEvent.click(screen.getByRole('button', { name: /Start session/i }));
+    expect(screen.getByText('EnergyCheckStub')).toBeInTheDocument();
+  });
+
+  it('no energy-check today → hub leads with the energy-check CTA (step 1: assess)', () => {
+    // The hero surfaces a prominent "Check your energy today" action when the
+    // self-report is unknown — the visible pre-workout step on the hub.
+    renderAntrenor();
+    const cta = screen.getByTestId('readiness-energy-check-cta');
+    expect(cta).toBeInTheDocument();
+    fireEvent.click(cta);
+    expect(screen.getByText('EnergyCheckStub')).toBeInTheDocument();
+  });
+
+  it('energy-check DONE today → Start goes STRAIGHT to workout-preview (no re-route)', () => {
+    // Readiness is already known → re-routing through energy-check would
+    // double-prompt. Start proceeds directly to the plan preview.
+    seedEnergyCheckToday();
+    renderAntrenor();
+    fireEvent.click(screen.getByRole('button', { name: /Start session/i }));
+    expect(screen.getByText('WorkoutPreviewStub')).toBeInTheDocument();
+    expect(screen.queryByText('EnergyCheckStub')).not.toBeInTheDocument();
+  });
+
+  it('energy-check DONE today → the energy-check CTA is hidden on the hub', () => {
+    seedEnergyCheckToday();
+    renderAntrenor();
+    expect(screen.queryByTestId('readiness-energy-check-cta')).not.toBeInTheDocument();
+  });
+
+  it('energy-check DONE today → tapping the readiness orb still re-opens the check (re-run)', () => {
+    // "Done today" must NOT lock the user out of redoing the check — tapping the
+    // orb re-opens energy-check on demand even when already recorded.
+    seedEnergyCheckToday();
+    renderAntrenor();
+    fireEvent.click(screen.getByTestId('readiness-orb-rerun'));
     expect(screen.getByText('EnergyCheckStub')).toBeInTheDocument();
   });
 });

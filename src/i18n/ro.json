@@ -166,6 +166,8 @@
     "primedForPr": "Pregatit de PR",
     "readinessEmpty": "Logheaza prima sesiune ca sa-ti activezi starea de pregatire.",
     "readinessEmptyReturning": "Fa verificarea de energie de azi ca sa-ti vezi starea de pregatire.",
+    "energyCheckCta": "Verifica-ti energia azi",
+    "energyCheckRerunAria": "Refa verificarea de energie de azi",
     "header": {
       "dateSeparator": "·"
     },
