@@ -322,6 +322,15 @@ export const FLAGS = Object.freeze({
   // sharper on the e1RM jump when dp_e1rm_v1 ON).
   dp_ego_cap_v1: { rollout: 0, default: false },
 
+  // #8/D pain/injury per-exercise deprioritize (RISK MED — changes session
+  // COMPOSITION, path A). When ON, repeated skip (durable synced `dp-exercise-pain`
+  // counter, time-decayed) / recent pain-cdl report on a SPECIFIC exercise's muscle
+  // demotes it in sessionBuilder.poolForGroup so a same-muscle sibling leads; never
+  // a hard ban, never drops the last exercise for a muscle. OFF → empty penalty map
+  // → byte-identical pool order (the existing muscle-GROUP pain handling only). No
+  // F3 flag dependency. Reuses alternativeFinder/poolForGroup selection (no rebuild).
+  dp_pain_deprioritize_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

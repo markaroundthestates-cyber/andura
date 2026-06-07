@@ -14,6 +14,8 @@ import {
   deloadAdapter,
 } from '../../../coach/orchestrator/adapters/index.js';
 import { buildSession } from '../../sessionBuilder.js';
+import { isEnabled } from '../../../util/featureFlags.js';
+import { exercisePenaltyMap } from '../../dp/exercisePain.js';
 import { availableCoarseTypes } from '../../equipmentMap.js';
 import {
   getRecoveryByGroup,
@@ -450,6 +452,11 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // Distinct from weakGroups (auto-detected lagging): emphasis is the USER'S
     // explicit look choice. balanced → empty array → no-op (byte-identical).
     emphasizedGroups: [...emphSet],
+    // #8/D pain/injury per-exercise deprioritize (dp_pain_deprioritize_v1, default
+    // OFF → empty map → byte-identical pool order). When ON, a repeatedly-skipped /
+    // recently-painful SPECIFIC exercise is demoted in poolForGroup so a same-muscle
+    // sibling is preferred; never a hard ban (poolForGroup keeps the last option).
+    exercisePenalties: isEnabled('dp_pain_deprioritize_v1') ? exercisePenaltyMap() : null,
   };
 
   const session = buildSession(cluster, sessionCtx);

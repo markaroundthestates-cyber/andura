@@ -419,9 +419,13 @@ function equipmentOk(meta, available) {
  * @param {number} maxSkill - highest SKILL_RANK allowed (capability gate)
  * @param {Set<string>} prNames - names that carry PR history (preferred anchors)
  * @param {number} seed
+ * @param {Record<string, number>|null} [penalties] - #8/D per-exercise pain/skip
+ *   penalty (engineName → 0..1); a penalized NON-PR exercise is demoted to the
+ *   back of the pool so a same-muscle sibling leads. Null/empty → no reorder
+ *   (byte-identical). Never DROPS an entry (anti-paternalism + last-option safety).
  * @returns {Array<{name: string, meta: object}>}
  */
-function poolForGroup(group, available, maxTier, maxSkill, prNames, seed) {
+function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties) {
   // ACTIVE visibility gate (Daniel SSOT 2026-06-05, supersedes 2026-06-03 CORE+
   // FALLBACK gate): auto-selection draws ONLY from the curated ACTIVE catalog
   // (CORE_AUTO — see isActiveMeta / ACTIVE_STATUSES) plus PR-history continuity.
@@ -474,6 +478,23 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed) {
     return seededKey(a.name, seed) - seededKey(b.name, seed);
   };
   core.sort(byRankSeed);
+
+  // #8/D pain/skip demotion: a penalized NON-PR exercise sinks to the back of the
+  // pool (STABLE partition, relative order preserved) so a clean same-muscle
+  // sibling leads. PR-history lifts (continuity) are NEVER demoted. Nothing is
+  // dropped — the penalized exercise is still selectable if it is the only option
+  // (the downstream slot-fill can still reach it). Empty/absent penalties → the
+  // partition is a no-op (the predicate is always false) → byte-identical order.
+  if (penalties) {
+    const PENALTY_DEMOTE = 0.5; // ≥ → demote (a single skip/mild pain stays in place)
+    const clean = [];
+    const demoted = [];
+    for (const e of core) {
+      const p = prNames.has(e.name) ? 0 : (penalties[e.name] ?? 0);
+      (p >= PENALTY_DEMOTE ? demoted : clean).push(e);
+    }
+    return clean.concat(demoted);
+  }
   return core;
 }
 
@@ -614,6 +635,7 @@ export function movementKey(name, meta) {
  *   weeklySessionsPerGroup?: Record<string, number>,
  *   recoveryState?: Record<string, 'recovered'|'partial'|'fatigued'>,
  *   emphasizedGroups?: string[],
+ *   exercisePenalties?: Record<string, number>|null,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  */
@@ -632,11 +654,14 @@ export function buildSession(cluster, ctx) {
   const maxSkill = skillCeiling(ctx?.profileTier);
   const prNames = new Set(ctx?.prNames ?? []);
   const seed = hashString(String(ctx?.seed ?? ''));
+  // #8/D per-exercise pain/skip penalties (engineName → 0..1). Null/empty (the
+  // common case + flag off) → poolForGroup order is byte-identical.
+  const penalties = ctx?.exercisePenalties ?? null;
 
   // Pools per target group (ordered: PR-anchored -> anchor -> new, seeded-stable).
   const pools = targets.map((g) => ({
     group: g,
-    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed),
+    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties),
   }));
 
   // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the user's

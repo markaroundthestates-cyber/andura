@@ -50,6 +50,7 @@ import { detectAggressiveLoad, deriveThresholds } from '../../../lib/aaFrictionD
 import type { AggressiveReason } from '../../../lib/aaFrictionDetect';
 import { sanityCheckSet } from '../../../../engine/dp/anomalyGuard.js';
 import type { SanityResult } from '../../../../engine/dp/anomalyGuard.js';
+import { recordExerciseSkip } from '../../../../engine/dp/exercisePain.js';
 import { getEngineSignals } from '../../../lib/engineSignalsAggregate';
 import { InactivityPrompt } from '../../../components/Workout/InactivityPrompt';
 import { PrFlash } from '../../../components/Workout/PrFlash';
@@ -902,6 +903,10 @@ export function Workout(): JSX.Element {
       sessionStart ?? undefined,
       currentExercise.engineName ?? currentExercise.name,
     );
+    // #8/D — durable, SYNCED per-exercise skip counter (dp-exercise-pain). Additive
+    // state (always written, like dp-cal-factors); only the READ in poolForGroup is
+    // flag-gated (dp_pain_deprioritize_v1). Quota-guarded, never throws.
+    recordExerciseSkip(currentExercise.engineName ?? currentExercise.name);
     advanceOrFinish();
   }, [bumpActivity, advanceOrFinish, currentExercise.name, currentExercise.engineName, sessionStart]);
 
