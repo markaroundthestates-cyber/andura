@@ -41,6 +41,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { AlertCircle, Pencil, Check } from 'lucide-react';
 import { Pill } from '../pulse/Pill';
 import { Kicker } from '../pulse/Kicker';
+import { sanitizeNum } from '../ui/NumberField';
 import { getNutritionTargetTodayReal } from '../../lib/bayesianNutritionAggregate';
 import type { NutritionTarget } from '../../lib/bayesianNutritionAggregate';
 import { readBayesianNutritionContext } from '../../lib/nutritionObservations';
@@ -301,12 +302,17 @@ export function TDEEStrip(): JSX.Element {
           </div>
 
           {kcalEdit ? (
+            // SELECT-ALL-ON-TAP (2026-06-07, same fix as the set-log inputs):
+            // type="number" .select() is a no-op so tapping never selected-all
+            // → first keystroke inserted into the prefilled value. type="text" +
+            // inputMode="numeric" keeps the numeric keypad AND lets onFocus
+            // .select() work; sanitizeNum keeps digits only. The string
+            // `kcalDraft` IS the buffer; the 0-9999 range stays in saveKcal.
             <input
-              type="number"
+              type="text"
               value={kcalDraft}
-              onChange={(e) => setKcalDraft(e.target.value)}
-              min={0}
-              max={9999}
+              onChange={(e) => setKcalDraft(sanitizeNum(e.target.value, false))}
+              onFocus={(e) => e.currentTarget.select()}
               inputMode="numeric"
               aria-label={t('progres.tdee.kcalInputAriaLabel')}
               data-testid="nutri-kcal-input"
@@ -333,11 +339,10 @@ export function TDEEStrip(): JSX.Element {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3" data-testid="nutri-protein-chip">
             {proteinEdit ? (
               <input
-                type="number"
+                type="text"
                 value={proteinDraft}
-                onChange={(e) => setProteinDraft(e.target.value)}
-                min={0}
-                max={500}
+                onChange={(e) => setProteinDraft(sanitizeNum(e.target.value, false))}
+                onFocus={(e) => e.currentTarget.select()}
                 inputMode="numeric"
                 aria-label={t('progres.tdee.proteinInputAriaLabel')}
                 data-testid="nutri-protein-input"

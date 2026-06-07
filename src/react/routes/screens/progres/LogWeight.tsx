@@ -14,6 +14,7 @@ import type { JSX } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { sanitizeNum } from '../../../components/ui/NumberField';
 import { useProgresStore } from '../../../stores/progresStore';
 import { gotoPath } from '../../../lib/navigation';
 import { t } from '../../../../i18n/index.js';
@@ -86,19 +87,24 @@ export function LogWeight(): JSX.Element {
               with text-ink so it reads on BOTH dark and light (no hardcoded light
               surface). Unit label below as a mono kicker (mockup L116-119). */}
           <div className="pulse-card px-4 py-5 text-center">
+            {/* SELECT-ALL-ON-TAP + decimal-safe (2026-06-07, same fix as the
+                set-log inputs): type="number" .select() is a no-op so tapping
+                never selected-all → first keystroke inserted ("78"→"7895").
+                type="text" + inputMode="decimal" keeps the numeric keypad AND
+                lets onFocus .select() work; sanitizeNum keeps one decimal
+                (78.5). The string `kg` IS the buffer; range validation
+                (30-250) stays in `valid` / `kgError`. */}
             <input
               id="weight-kg"
-              type="number"
+              type="text"
               required
               aria-required="true"
               aria-invalid={kgError ? 'true' : undefined}
               aria-describedby={kgError ? 'weight-kg-error' : undefined}
               value={kg}
-              onChange={(e) => setKg(e.target.value)}
+              onChange={(e) => setKg(sanitizeNum(e.target.value, true))}
+              onFocus={(e) => e.currentTarget.select()}
               placeholder={t('progres.logWeight.kgPlaceholder')}
-              step="0.1"
-              min={30}
-              max={250}
               inputMode="decimal"
               data-testid="weight-kg-input"
               className="w-full bg-transparent border-none outline-none text-center font-display text-5xl font-bold text-ink placeholder:text-ink3"

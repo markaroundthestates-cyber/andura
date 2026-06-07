@@ -45,10 +45,10 @@
 // setlog-tinta-target-display / setlog-postlog / setlog-postlog-text /
 // setlog-postlog-edit.
 
-import type { JSX, FocusEvent, ChangeEvent } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import type { JSX } from 'react';
 import { Check, Pencil, Minus, Plus } from 'lucide-react';
 import { Ripple } from '../Ripple';
+import { NumberField } from '../ui/NumberField';
 import { haptic } from '../../lib/motion';
 import { t } from '../../../i18n/index.js';
 
@@ -82,108 +82,10 @@ function stepValue(current: number, delta: number, min: number, max: number): nu
   return Math.min(max, Math.max(min, next));
 }
 
-// SELECT-ALL-ON-TAP FIX (2026-06-07, Daniel live "aveam 90, vreau 95, se face
-// 9590.0"): the kg/reps fields used type="number" + onFocus select(), but
-// .select()/setSelectionRange are a NO-OP on type="number" in most browsers, so
-// tapping never selected-all → the first keystroke INSERTED into the old value
-// instead of replacing it. Fix: type="text" + inputMode (numeric keypad stays)
-// so .select() works → first keystroke after tap replaces the whole value.
-//
-// type="text" is uncontrolled-feeling from the parent's POV (parent owns a
-// number; a controlled value={String(n)} strips an in-progress trailing "." on
-// re-render so you can't type "9.5"). So NumberField keeps a LOCAL text buffer:
-// the buffer survives mid-typing (".", "9."), parses to a number for the
-// parent, and RESYNCS from the parent only when the parent value changes
-// EXTERNALLY (± steppers, target prefill) — guarded so the user's own typing
-// is never clobbered (resync only when the parsed buffer differs from incoming).
-function sanitizeNum(raw: string, allowDecimal: boolean): string {
-  // Keep digits; for kg keep a single decimal point (first one wins).
-  let cleaned = raw.replace(allowDecimal ? /[^0-9.]/g : /[^0-9]/g, '');
-  if (allowDecimal) {
-    const firstDot = cleaned.indexOf('.');
-    if (firstDot !== -1) {
-      cleaned = cleaned.slice(0, firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g, '');
-    }
-  }
-  return cleaned;
-}
-
-// Number → the buffer string shown when the value arrives from the parent.
-// Mirrors the prior kgDisplay/repsDisplay rule: 0/NaN → empty (so the leading
-// "0" is never glued in front, smoke #4 "022" fix).
-function numToBuffer(n: number): string {
-  return Number.isFinite(n) && n > 0 ? String(n) : '';
-}
-
-interface NumberFieldProps {
-  value: number;
-  onChange: (n: number) => void;
-  allowDecimal: boolean; // kg → true (decimal plates 186.5), reps → false
-  inputMode: 'decimal' | 'numeric';
-  id: string;
-  testId: string;
-  className: string;
-  required?: boolean | undefined;
-  'aria-required'?: 'true' | undefined;
-  'aria-invalid'?: 'true' | undefined;
-  'aria-describedby'?: string | undefined;
-}
-
-function NumberField({
-  value,
-  onChange,
-  allowDecimal,
-  inputMode,
-  id,
-  testId,
-  className,
-  ...aria
-}: NumberFieldProps): JSX.Element {
-  const [buffer, setBuffer] = useState(() => numToBuffer(value));
-  // Track the last numeric value WE emitted so an external change (stepper /
-  // prefill) can be told apart from the parent simply echoing our own onChange
-  // back as a prop — only the former should overwrite an in-progress buffer.
-  const lastEmitted = useRef(value);
-
-  useEffect(() => {
-    // Resync only when the parent value diverged from what the buffer currently
-    // parses to (external ± / prefill). If they match, the parent is just
-    // echoing our keystroke — leave the buffer (keeps a trailing "9." alive).
-    const parsed = buffer === '' ? 0 : Number(buffer);
-    if (value !== parsed && value !== lastEmitted.current) {
-      setBuffer(numToBuffer(value));
-    }
-    lastEmitted.current = value;
-  }, [value, buffer]);
-
-  function handleChange(e: ChangeEvent<HTMLInputElement>): void {
-    const next = sanitizeNum(e.target.value, allowDecimal);
-    setBuffer(next);
-    const n = next === '' || next === '.' ? 0 : Number(next);
-    lastEmitted.current = n;
-    onChange(Number.isFinite(n) ? n : 0);
-  }
-
-  // SELECT-ALL on tap: with type="text" .select() works → first keystroke
-  // replaces the whole value (no more "9590").
-  function handleFocus(e: FocusEvent<HTMLInputElement>): void {
-    e.currentTarget.select();
-  }
-
-  return (
-    <input
-      id={id}
-      type="text"
-      inputMode={inputMode}
-      value={buffer}
-      onChange={handleChange}
-      onFocus={handleFocus}
-      data-testid={testId}
-      className={className}
-      {...aria}
-    />
-  );
-}
+// SELECT-ALL-ON-TAP + decimal-safe text buffer now live in the shared
+// components/ui/NumberField (extracted 2026-06-07 so the Progres inputs can
+// reuse the same fix). It owns the type="number" .select() no-op fix described
+// there.
 
 interface DialButtonProps {
   dir: 'down' | 'up';

@@ -3,7 +3,7 @@
 // progres undeva" — Tinte personale moved from Cont > Profil si tinte
 // (ephemeral local state) to Progres tab > ObiectivCard (persisted).
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ObiectivCard } from '../../../components/Progres/ObiectivCard';
@@ -81,6 +81,58 @@ describe('ObiectivCard — render + interactions', () => {
     renderCard();
     fireEvent.change(screen.getByTestId('obiectiv-target-weight-input'), { target: { value: '' } });
     expect(useProgresStore.getState().targetObiectiv.weightKg).toBeNull();
+  });
+});
+
+// SELECT-ALL-ON-TAP + decimal-safe (2026-06-07, same fix as the set-log kg/reps
+// inputs): a type="number" .select() is a no-op so tapping never selected-all →
+// the first keystroke INSERTED into the old value ("75"→"7580"). type="text" +
+// inputMode="decimal" keeps the numeric keypad AND makes .select() work.
+describe('ObiectivCard — select-all-on-tap target weight (type="number" fix)', () => {
+  it('target weight input is type="text" + inputMode="decimal" (so .select() works)', () => {
+    renderCard();
+    const input = screen.getByTestId('obiectiv-target-weight-input') as HTMLInputElement;
+    expect(input.type).toBe('text');
+    expect(input).toHaveAttribute('inputmode', 'decimal');
+  });
+
+  it('focus selects-all so the first keystroke replaces the whole value', () => {
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 75 });
+    renderCard();
+    const input = screen.getByTestId('obiectiv-target-weight-input') as HTMLInputElement;
+    const selectSpy = vi.spyOn(input, 'select');
+    fireEvent.focus(input);
+    expect(selectSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('showing 75, tap + type 80 → 80 (not 7580) in the field + store', () => {
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 75 });
+    renderCard();
+    const input = screen.getByTestId('obiectiv-target-weight-input') as HTMLInputElement;
+    expect(input.value).toBe('75');
+    fireEvent.focus(input);
+    // select-all means the keystrokes replace the value → jsdom delivers "80".
+    fireEvent.change(input, { target: { value: '80' } });
+    expect(input.value).toBe('80');
+    expect(useProgresStore.getState().targetObiectiv.weightKg).toBe(80);
+  });
+
+  it('one decimal (75.5) is preserved while typing + stored', () => {
+    renderCard();
+    const input = screen.getByTestId('obiectiv-target-weight-input') as HTMLInputElement;
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: '75.' } });
+    expect(input.value).toBe('75.');
+    fireEvent.change(input, { target: { value: '75.5' } });
+    expect(input.value).toBe('75.5');
+    expect(useProgresStore.getState().targetObiectiv.weightKg).toBe(75.5);
+  });
+
+  it('letters + a second decimal point are sanitized out (first dot wins)', () => {
+    renderCard();
+    const input = screen.getByTestId('obiectiv-target-weight-input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: '7a5.5.5' } });
+    expect(input.value).toBe('75.55');
   });
 });
 

@@ -1,7 +1,7 @@
 // ══ LOG WEIGHT TESTS — task_16 §A mockup verbatim + persist ══════════════
 
 import type { JSX } from 'react';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { LogWeight } from '../../../routes/screens/progres/LogWeight';
@@ -45,14 +45,15 @@ describe('LogWeight — render', () => {
     expect(screen.getByText(/Inregistrarea este salvata local/i)).toBeInTheDocument();
   });
 
-  it('renders kg input cu placeholder + step + min/max attributes', () => {
+  it('renders kg input as type=text + inputMode=decimal (select-all-on-tap fix)', () => {
+    // 2026-06-07 select-all-on-tap fix: type="number" .select() is a no-op, so
+    // the field is now type="text" + inputMode="decimal" (numeric keypad kept).
+    // The 30-250 range moved from HTML min/max to JS validation (kgError/valid).
     renderLogWeight();
     const kgInput = screen.getByTestId('weight-kg-input');
-    expect(kgInput).toHaveAttribute('type', 'number');
+    expect(kgInput).toHaveAttribute('type', 'text');
+    expect(kgInput).toHaveAttribute('inputmode', 'decimal');
     expect(kgInput).toHaveAttribute('placeholder', 'ex. 78.5');
-    expect(kgInput).toHaveAttribute('step', '0.1');
-    expect(kgInput).toHaveAttribute('min', '30');
-    expect(kgInput).toHaveAttribute('max', '250');
   });
 
   it('renders date input defaulting today YYYY-MM-DD', () => {
@@ -224,5 +225,47 @@ describe('LogWeight — A11Y HIGH chat5 form aria attributes', () => {
     fireEvent.change(input, { target: { value: '300' } });
     expect(input).toHaveAttribute('aria-invalid', 'true');
     expect(screen.getByTestId('weight-kg-error').textContent).toMatch(/30 si 250/);
+  });
+});
+
+// SELECT-ALL-ON-TAP + decimal-safe (2026-06-07, same fix as the set-log inputs):
+// type="number" .select() is a no-op so tapping never selected-all → the first
+// keystroke INSERTED into the prefilled value. type="text" + inputMode="decimal"
+// keeps the numeric keypad AND makes onFocus .select() work.
+describe('LogWeight — select-all-on-tap weigh-in input', () => {
+  it('focus selects-all so the first keystroke replaces the whole value', () => {
+    renderLogWeight();
+    const input = screen.getByTestId('weight-kg-input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: '90' } });
+    const selectSpy = vi.spyOn(input, 'select');
+    fireEvent.focus(input);
+    expect(selectSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('showing 90, tap + type 95 → 95 (not 9590)', () => {
+    renderLogWeight();
+    const input = screen.getByTestId('weight-kg-input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: '90' } });
+    expect(input.value).toBe('90');
+    fireEvent.focus(input);
+    // select-all means the keystrokes replace the value → jsdom delivers "95".
+    fireEvent.change(input, { target: { value: '95' } });
+    expect(input.value).toBe('95');
+  });
+
+  it('one decimal (90.5) is preserved + saved verbatim', () => {
+    renderLogWeight();
+    const input = screen.getByTestId('weight-kg-input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: '90.5' } });
+    expect(input.value).toBe('90.5');
+    fireEvent.click(screen.getByTestId('weight-save'));
+    expect(useProgresStore.getState().weightLog[0]!.kg).toBe(90.5);
+  });
+
+  it('letters are sanitized out (digits + one decimal only)', () => {
+    renderLogWeight();
+    const input = screen.getByTestId('weight-kg-input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: '7a8.5.5' } });
+    expect(input.value).toBe('78.55');
   });
 });

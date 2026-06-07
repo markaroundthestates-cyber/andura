@@ -18,8 +18,9 @@
 //
 // Persistence: progresStore.setTargetObiectiv (zustand persist localStorage).
 
-import type { JSX } from 'react';
-import { useState } from 'react';
+import type { ChangeEvent, FocusEvent, JSX } from 'react';
+import { useEffect, useState } from 'react';
+import { sanitizeNum } from '../ui/NumberField';
 import { useProgresStore } from '../../stores/progresStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { getCurrentWeightKg } from '../../lib/userTdee';
@@ -57,6 +58,27 @@ export function ObiectivCard(): JSX.Element {
   // valoarea introdusa a fost respinsa/ridicata, fara sa salvam o tinta letala.
   const [clampedFromKg, setClampedFromKg] = useState<number | null>(null);
 
+  // SELECT-ALL-ON-TAP + decimal-safe buffer (2026-06-07, same fix as the set-log
+  // kg/reps inputs): a type="number" field's .select() is a no-op so tapping
+  // never selected-all → first keystroke inserted into the old value ("90"→"9590").
+  // type="text" + inputMode="decimal" keeps the numeric keypad AND makes
+  // .select() work. A LOCAL text buffer lets a mid-typed "75." survive the
+  // store-driven re-render; it resyncs only when the STORED value diverges
+  // externally (e.g. the BMI-floor clamp raised it, or persisted hydration).
+  const targetWeightKg = target.weightKg;
+  const [weightBuffer, setWeightBuffer] = useState(() =>
+    targetWeightKg != null ? String(targetWeightKg) : '',
+  );
+  useEffect(() => {
+    const parsed = weightBuffer === '' ? null : Number(weightBuffer);
+    if ((targetWeightKg ?? null) !== parsed) {
+      setWeightBuffer(targetWeightKg != null ? String(targetWeightKg) : '');
+    }
+    // Resync the displayed buffer only when the stored value moved out from
+    // under us (clamp/hydration), not on the user's own keystroke echo.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetWeightKg]);
+
   const eta = computeTargetEta(target.weightKg, currentWeightKg, height ?? null);
   // §obiectiv-tinta integration (Smoke #16) — surface verdict cand ritm-ul
   // necesar depaseste cap-ul fiziologic (1.5kg/sapt). evaluateTargetRate
@@ -70,8 +92,12 @@ export function ObiectivCard(): JSX.Element {
   const deadlineInputValue =
     target.month && /^\d{4}-\d{2}$/.test(target.month) ? `${target.month}-01` : target.month ?? '';
 
-  function handleWeightChange(value: string): void {
-    if (value === '') {
+  function handleWeightChange(raw: string): void {
+    // Sanitize to digits + a single decimal point (185.5 ok, "1a8.5.5" → "185.5"),
+    // then keep that text in the buffer so a trailing "." survives re-render.
+    const value = sanitizeNum(raw, true);
+    setWeightBuffer(value);
+    if (value === '' || value === '.') {
       setClampedFromKg(null);
       setTarget({ weightKg: null });
       return;
@@ -114,14 +140,12 @@ export function ObiectivCard(): JSX.Element {
         <label className="flex items-center justify-between px-4 py-3 border-b border-line">
           <span className="text-sm text-ink">{t('obiectiv.targetWeightLabel')}</span>
           <input
-            type="number"
-            min={30}
-            max={250}
-            step={0.1}
+            type="text"
             inputMode="decimal"
             autoComplete="off"
-            value={target.weightKg ?? ''}
-            onChange={(e) => handleWeightChange(e.target.value)}
+            value={weightBuffer}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleWeightChange(e.target.value)}
+            onFocus={(e: FocusEvent<HTMLInputElement>) => e.currentTarget.select()}
             data-testid="obiectiv-target-weight-input"
             placeholder="—"
             className="w-20 px-2.5 py-1.5 text-right border border-lineStrong rounded-xl bg-paper text-ink font-mono text-sm"

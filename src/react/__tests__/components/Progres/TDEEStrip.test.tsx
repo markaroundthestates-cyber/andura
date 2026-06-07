@@ -1,6 +1,6 @@
 // Phase 6 task_22 — TDEEStrip Progres dashboard tests.
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
 import { useNutritionStore } from '../../../stores/nutritionStore';
 import { useAerobicStore } from '../../../stores/aerobicStore';
@@ -386,5 +386,56 @@ describe('TDEEStrip — no add-on clamp (stable hero on a CUT day)', () => {
     expect(screen.queryByTestId('tdee-fatigue-ease-note')).not.toBeInTheDocument();
     // The info line attributes the 700 kcal burned.
     expect(screen.getByTestId('tdee-aerobic-info').textContent).toMatch(/700/);
+  });
+});
+
+// SELECT-ALL-ON-TAP (2026-06-07, same fix as the set-log inputs): the kcal +
+// protein override inputs used type="number" + a prefilled draft, but type=
+// "number" .select() is a no-op so tapping never selected-all → the first
+// keystroke INSERTED into the prefilled value. type="text" + inputMode="numeric"
+// keeps the numeric keypad AND makes onFocus .select() work; sanitizeNum keeps
+// digits only.
+describe('TDEEStrip — select-all-on-tap kcal/protein override inputs', () => {
+  it('kcal override input is type="text" + inputMode="numeric"; focus selects-all', async () => {
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-strip').textContent).toMatch(/2\.640\s*kcal/);
+    });
+    fireEvent.click(screen.getByTestId('nutri-kcal-edit'));
+    const input = screen.getByTestId('nutri-kcal-input') as HTMLInputElement;
+    expect(input.type).toBe('text');
+    expect(input).toHaveAttribute('inputmode', 'numeric');
+    // Prefilled with the current target → select-all so the first keystroke replaces.
+    expect(input.value).toBe('2640');
+    const selectSpy = vi.spyOn(input, 'select');
+    fireEvent.focus(input);
+    expect(selectSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('kcal input replaces (not inserts) + sanitizes letters out', async () => {
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByTestId('tdee-strip').textContent).toMatch(/2\.640\s*kcal/);
+    });
+    fireEvent.click(screen.getByTestId('nutri-kcal-edit'));
+    const input = screen.getByTestId('nutri-kcal-input') as HTMLInputElement;
+    fireEvent.focus(input);
+    // select-all → keystrokes replace the prefilled 2640 (jsdom delivers "1800").
+    fireEvent.change(input, { target: { value: '1800' } });
+    expect(input.value).toBe('1800');
+    // Letters + a stray dot (kcal is whole numbers) are stripped.
+    fireEvent.change(input, { target: { value: '18a0.0' } });
+    expect(input.value).toBe('1800');
+  });
+
+  it('protein override input is type="text" + inputMode="numeric"', async () => {
+    render(<TDEEStrip />);
+    await waitFor(() => {
+      expect(screen.getByText(/180 g protein/)).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByTestId('nutri-protein-edit'));
+    const input = screen.getByTestId('nutri-protein-input') as HTMLInputElement;
+    expect(input.type).toBe('text');
+    expect(input).toHaveAttribute('inputmode', 'numeric');
   });
 });
