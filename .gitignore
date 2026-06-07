@@ -92,6 +92,10 @@ reports/lighthouse/
 # the heavy original PNGs are kept local-only.
 assets-source/body/*.png
 
+# Playwright auth storageState — holds a REAL Firebase idToken minted by
+# tests/auth.setup.ts. NEVER commit (generated per-run, secret).
+playwright/.auth/
+
 # local agent/tool scratch (never shipped, never committed)
 dist-dev/
 .playwright-mcp/
