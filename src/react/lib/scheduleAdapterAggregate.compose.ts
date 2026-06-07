@@ -9,6 +9,7 @@
 
 import { logger } from '../../util/logger.js';
 import { getDailyWorkout } from '../../engine/schedule/scheduleAdapter.js';
+import { getReadinessVerdict } from '../../engine/readiness.js';
 import { signalBus, type SessionSignalTrace } from './signalBus';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { useWorkoutStore } from '../stores/workoutStore';
@@ -518,6 +519,39 @@ export function trimSessionToTimeBudget(
 }
 
 /**
+ * F2 #1 — apply the readiness verdict's GRADED volumeMultiplier to the session
+ * set counts. readiness.js getReadinessVerdict() emits a per-band multiplier
+ * (PR_DAY 1.1 / NORMAL·SOLID 1.0 / MODERATE 0.85 / LIGHT 0.7 / REST 0) that was
+ * COMPUTED but never consumed — the only live readiness effect was the binary
+ * dp.js < 60 weight-HOLD cliff, so MODERATE vs LIGHT produced zero plan
+ * difference. This scales SETS (Path A — dimensionally safe), NOT weight: the
+ * cliff still owns the load (kg). multiplier 1.0 → byte-identical. Floored at
+ * MIN_SETS_PER_EX (the same trim floor) so a tired day never guts a lift below
+ * one real working set; rounded to whole sets. score null (no energy-check) →
+ * verdict.volumeMultiplier 1.0 → no change. Applied BEFORE the time-budget trim
+ * so the trim measures the readiness-scaled session. Pure + deterministic.
+ *
+ * @param exercises planned exercises (sets to scale)
+ * @param readinessScore live readiness score, or null (no energy-check today)
+ */
+export function scaleSetsByReadiness(
+  exercises: ReadonlyArray<TrimmableExercise>,
+  readinessScore: number | null,
+): TrimmableExercise[] {
+  const { volumeMultiplier } = getReadinessVerdict(readinessScore);
+  // 1.0 (NORMAL / no-score) or a non-positive/non-finite guard → no-op
+  // (REST = 0 is a rest day the pipeline already filters upstream; never gut to
+  // zero here). Identity keeps the common case byte-identical.
+  if (!Number.isFinite(volumeMultiplier) || volumeMultiplier <= 0 || volumeMultiplier === 1) {
+    return exercises.map((e) => ({ ...e }));
+  }
+  return exercises.map((e) => ({
+    ...e,
+    sets: Math.max(MIN_SETS_PER_EX, Math.round(e.sets * volumeMultiplier)),
+  }));
+}
+
+/**
  * Phase 6 task_02 real wire. Async pipeline consumer — caller (5 consumers
  * React) handles loading state via useState + useEffect pattern. Returns
  * null pe rest day OR pipeline hard halt OR thrown exception (fail-silent).
@@ -630,7 +664,13 @@ export async function composePlannedWorkoutToday(
       typeof userTimeMin === 'number' && Number.isFinite(userTimeMin) && userTimeMin > 0
         ? Math.min(personaFatigueCap, userTimeMin)
         : personaFatigueCap;
-    const exercises = trimSessionToTimeBudget(mapped, warmup?.durationMin ?? 0, timeCapMin);
+    // F2 #1 — scale set counts by the readiness verdict's graded volumeMultiplier
+    // (LIGHT 0.7 / MODERATE 0.85 / NORMAL 1.0 / PR 1.1), floored at MIN_SETS_PER_EX.
+    // This consumes the dropped readiness ramp (Path A — sets, not weight); the
+    // dp.js < 60 HOLD cliff still owns the load. Applied BEFORE the trim so the
+    // time budget measures the readiness-scaled session. 1.0 → byte-identical.
+    const readinessScaled = scaleSetsByReadiness(mapped, readinessScore);
+    const exercises = trimSessionToTimeBudget(readinessScaled, warmup?.durationMin ?? 0, timeCapMin);
     // Deload engine emits intensity_modifier object always (IDLE state =
     // {rir_increment:0, intensity_pct_decrement:0}). 'minus' only when
     // ACTIVE deload (any non-zero modifier field). Phase 7+ wires 'plus'

@@ -45,4 +45,5 @@ export {
   personaTimeTargetMin,
   clusterFatigueFactor,
   trimSessionToTimeBudget,
+  scaleSetsByReadiness,
 } from './scheduleAdapterAggregate.compose';
