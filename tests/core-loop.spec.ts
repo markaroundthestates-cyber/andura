@@ -22,10 +22,11 @@ import { existsSync } from 'node:fs';
 // file, which the setup writes only when this spec's dependency runs (so it
 // doesn't exist yet during collection). When the SA is absent the setup skips
 // and so does this whole file (graceful — public smoke is unaffected).
-const hasSA = !!process.env['GOOGLE_APPLICATION_CREDENTIALS'];
+const hasSA =
+  !!process.env['FIREBASE_SERVICE_ACCOUNT'] || !!process.env['GOOGLE_APPLICATION_CREDENTIALS'];
 test.skip(
   !hasSA,
-  'core-loop requires a Firebase Admin SA (set GOOGLE_APPLICATION_CREDENTIALS so auth.setup.ts can mint a real session).',
+  'core-loop requires a Firebase Admin SA (set FIREBASE_SERVICE_ACCOUNT or GOOGLE_APPLICATION_CREDENTIALS so auth.setup.ts can mint a real session).',
 );
 // storageState is read at run-time (setup has run by then). existsSync stays a
 // belt-and-braces fallback in case the setup skipped despite the env being set.

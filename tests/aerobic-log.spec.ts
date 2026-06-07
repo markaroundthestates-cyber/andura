@@ -14,10 +14,11 @@ import { existsSync } from 'node:fs';
 // Skip guard keys on the SA env (collection-time) — the storageState file is
 // written by the 'setup' project at run-time. See core-loop.spec.ts for the
 // rationale.
-const hasSA = !!process.env['GOOGLE_APPLICATION_CREDENTIALS'];
+const hasSA =
+  !!process.env['FIREBASE_SERVICE_ACCOUNT'] || !!process.env['GOOGLE_APPLICATION_CREDENTIALS'];
 test.skip(
   !hasSA,
-  'aerobic-log requires a Firebase Admin SA (set GOOGLE_APPLICATION_CREDENTIALS so auth.setup.ts can mint a real session).',
+  'aerobic-log requires a Firebase Admin SA (set FIREBASE_SERVICE_ACCOUNT or GOOGLE_APPLICATION_CREDENTIALS so auth.setup.ts can mint a real session).',
 );
 test.use({ storageState: existsSync(STORAGE_STATE) || hasSA ? STORAGE_STATE : undefined });
 

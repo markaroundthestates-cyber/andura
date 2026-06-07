@@ -1,0 +1,107 @@
+name: Authenticated E2E (core loop)
+
+# ═══════════════════════════════════════════════════════════════════════
+# Authenticated deep-journey E2E — the "automated gym test" (P0).
+# Runs tests/auth.setup.ts (mints a REAL Firebase session via the Admin SA)
+# then tests/core-loop.spec.ts + tests/aerobic-log.spec.ts.
+#
+# NON-BLOCKING BY CONSTRUCTION:
+#   - This is a SEPARATE workflow. The Deploy + QA Report + CI workflows do NOT
+#     `needs:` it and are completely unaware of it — its result can NEVER block a
+#     release. The prod deploy gate stays exactly as safe as before.
+#   - The test step is additionally `continue-on-error: true` so a flaky authed
+#     E2E surfaces a report (artifact + step annotation) without ever turning the
+#     run red on the commit. Treat as advisory regression signal, not a gate.
+#
+# TARGET = LOCAL PREVIEW OF THE CI-BUILT DIST (not live andura.app):
+#   The aerobic #45 backdated date-picker + the latest workout fixes need the
+#   CURRENT build. A `vite preview` of the dist we build here always carries the
+#   current code, so the deep specs test exactly what's on `main` — independent of
+#   when GitHub Pages last propagated. (Leaving PLAYWRIGHT_BASE_URL unset makes
+#   playwright.config.js auto-spawn `npm run preview` on :4173.)
+#
+# SECRETS CONSUMED (all already present in the repo — none added/modified here):
+#   FIREBASE_SERVICE_ACCOUNT   Admin SA JSON (or base64). auth.setup.ts parses it
+#                              in-memory and mints a custom token. NEVER printed.
+#   PLAYWRIGHT_AUTH_TEST_UID   test account uid (skips the getUserByEmail lookup;
+#                              env uid takes precedence in CI per auth.setup.ts).
+#   VITE_FIREBASE_API_KEY      public web API key for the custom-token REST
+#                              exchange (passed as PLAYWRIGHT_FIREBASE_API_KEY).
+# ═══════════════════════════════════════════════════════════════════════
+
+on:
+  # Run after a deploy completes so the authed E2E rides every release — but as
+  # its own workflow, so it can't gate the deploy. Also manual via the Actions UI.
+  workflow_run:
+    workflows: ["Deploy to GitHub Pages"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  HUSKY: '0'
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+jobs:
+  authenticated-e2e:
+    name: Authenticated core-loop E2E (advisory, non-blocking)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    # Don't bother when the deploy itself was skipped (docs-only pushes etc.).
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion != 'skipped' }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      # Build the dist the preview server serves — CURRENT code (carries #45 +
+      # latest fixes). Same Firebase build env as deploy.yml so the bundle ships a
+      # real web API key (auth.setup can self-source it too, but pass it for speed).
+      - name: Build (current code → dist for preview)
+        run: npm run build
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_RTDB_URL: ${{ secrets.VITE_FIREBASE_RTDB_UR }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      # The authed setup + deep specs. auth.setup.ts reads FIREBASE_SERVICE_ACCOUNT
+      # inline (JSON or base64) — no temp file, no GOOGLE_APPLICATION_CREDENTIALS
+      # needed. The 'setup' Playwright project mints the session; core-loop +
+      # aerobic reuse its storageState. continue-on-error keeps this advisory.
+      - name: Run authenticated core-loop + aerobic E2E (preview of current build)
+        id: authed
+        continue-on-error: true
+        run: npx playwright test tests/auth.setup.ts tests/core-loop.spec.ts tests/aerobic-log.spec.ts --reporter=list
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PLAYWRIGHT_AUTH_TEST_UID: ${{ secrets.PLAYWRIGHT_AUTH_TEST_UID }}
+          PLAYWRIGHT_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+
+      - name: Surface authed E2E outcome (advisory)
+        if: always()
+        run: |
+          if [ "${{ steps.authed.outcome }}" = "success" ]; then
+            echo "::notice::Authenticated core-loop E2E passed."
+          else
+            echo "::warning::Authenticated core-loop E2E did not pass (advisory, non-blocking) — see the HTML report artifact."
+          fi
+
+      - name: Upload Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: authenticated-e2e-report
+          path: playwright-report/
+          retention-days: 14

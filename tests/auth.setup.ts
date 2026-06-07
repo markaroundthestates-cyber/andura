@@ -17,8 +17,14 @@
 // wrote a custom-token marker and never signed in, so every deep spec skipped.
 //
 // ── Env vars ────────────────────────────────────────────────────────────────
+//   FIREBASE_SERVICE_ACCOUNT         INLINE Admin SA JSON (raw JSON or base64) —
+//                                    the CI path (GitHub Actions secret). Takes
+//                                    precedence over the file path below. The key
+//                                    is parsed in-memory; never written to disk.
 //   GOOGLE_APPLICATION_CREDENTIALS   absolute path to the Firebase Admin SA JSON
-//                                    (lives OUTSIDE the repo, gitignored). REQUIRED.
+//                                    (lives OUTSIDE the repo, gitignored). The
+//                                    LOCAL run path (~/.andura-admin/). Used when
+//                                    FIREBASE_SERVICE_ACCOUNT is absent.
 //   PLAYWRIGHT_AUTH_TEST_EMAIL       test account email. Defaults to the seeded
 //                                    throwaway test account (mark.aroundthestates).
 //                                    NEVER the primary account.
@@ -98,16 +104,37 @@ const ONBOARDED_PROFILE = {
   version: 7,
 };
 
+// Parse the inline FIREBASE_SERVICE_ACCOUNT secret (raw JSON or base64-encoded
+// JSON — detect by trying JSON.parse first, then base64). Returns the parsed SA
+// object so cert() can consume it in-memory (the key never touches disk).
+function parseInlineSA(raw: string): Record<string, unknown> {
+  const tryParse = (s: string): Record<string, unknown> | null => {
+    try {
+      const o = JSON.parse(s);
+      return o && typeof o === 'object' ? (o as Record<string, unknown>) : null;
+    } catch {
+      return null;
+    }
+  };
+  const direct = tryParse(raw.trim());
+  if (direct) return direct;
+  const decoded = tryParse(Buffer.from(raw.trim(), 'base64').toString('utf8'));
+  if (decoded) return decoded;
+  throw new Error('FIREBASE_SERVICE_ACCOUNT is neither valid JSON nor base64-encoded JSON');
+}
+
 setup('authenticate via Firebase Admin custom token (if SA present)', async ({ page }) => {
+  // SA source: inline secret (CI) takes precedence over the local file path.
+  const saInline = process.env['FIREBASE_SERVICE_ACCOUNT'];
   const saPath = process.env['GOOGLE_APPLICATION_CREDENTIALS'];
-  if (!saPath) {
+  if (!saInline && !saPath) {
     setup.skip(
       true,
-      'auth setup skipped — set GOOGLE_APPLICATION_CREDENTIALS (Firebase Admin SA JSON) to enable authenticated deep-journey specs. Unauthenticated specs (magic-link, public smoke) still run.',
+      'auth setup skipped — set FIREBASE_SERVICE_ACCOUNT (CI secret) or GOOGLE_APPLICATION_CREDENTIALS (local SA JSON path) to enable authenticated deep-journey specs. Unauthenticated specs (magic-link, public smoke) still run.',
     );
     return;
   }
-  if (!existsSync(saPath)) {
+  if (!saInline && saPath && !existsSync(saPath)) {
     setup.skip(true, `auth setup skipped — service account file not found at ${saPath}`);
     return;
   }
@@ -117,7 +144,11 @@ setup('authenticate via Firebase Admin custom token (if SA present)', async ({ p
   const { initializeApp, cert, getApps } = await import('firebase-admin/app');
   const { getAuth } = await import('firebase-admin/auth');
   if (!getApps().length) {
-    initializeApp({ credential: cert(saPath) });
+    // Inline secret → parse + cert() the object (in-memory). Else cert(filePath).
+    const credential = saInline
+      ? cert(parseInlineSA(saInline) as Parameters<typeof cert>[0])
+      : cert(saPath as string);
+    initializeApp({ credential });
   }
 
   const email = process.env['PLAYWRIGHT_AUTH_TEST_EMAIL'] || DEFAULT_TEST_EMAIL;
