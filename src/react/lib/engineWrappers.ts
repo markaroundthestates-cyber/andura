@@ -52,7 +52,8 @@ import {
   hoursSinceGroup,
   GROUP_LABELS_RO_BIG11,
 } from '../../engine/muscleRecovery.js';
-import { detectWeakGroups } from '../../engine/weaknessDetector.js';
+import { flattenSessionsToRecoveryLogs } from '../../engine/schedule/scheduleAdapter/recoveryLogs.js';
+import { laggingGroupsFromLogs } from '../../engine/schedule/scheduleAdapter/volumeAdaptation.js';
 import { detectCalibrationLevel, CALIBRATION_LEVELS } from '../../engine/calibration.js';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
@@ -800,8 +801,16 @@ export function getLaggingSignal(
 ): string | null {
   try {
     const sessions = useWorkoutStore.getState().sessionsHistory;
-    const logs = flattenSessionsToEngineLogs(sessions);
-    const { weakGroups } = detectWeakGroups(logs);
+    // Honesty repoint (F0 dedup #2, 2026-06-07): name the muscle the PLAN actually
+    // amplifies, not a narrate-only signal that can disagree with it. The plan
+    // drives weakness off getLaggingMuscles (set-volume ratio < 0.6 over 14d,
+    // EN-keyed via recovery logs) at getDailyWorkout.js → laggingGroupsFromLogs.
+    // The old detectWeakGroups path (Brzycki 1RM ratio < 0.8) was NARRATE-only and
+    // could name a different muscle than the one M2 pushes toward MRV — a lie.
+    // Both emit the same Big-11 RO vocabulary, so the i18n key + plan-allocation
+    // gate below stay valid. laggingGroupsFromLogs returns most-lagging-first.
+    const recoveryLogs = flattenSessionsToRecoveryLogs(sessions);
+    const weakGroups = laggingGroupsFromLogs(recoveryLogs, Date.now());
     if (!weakGroups || weakGroups.length === 0) return null;
     // Truth gate (chest-heavy-plan bug, 2026-06-05): the "{group} undervolume
     // {weeks} wks" line is a CONFIDENT multi-week TREND claim. While the model is

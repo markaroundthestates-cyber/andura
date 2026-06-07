@@ -87,37 +87,47 @@ describe('engineWrappers — getLaggingSignal gated by calibration maturity', ()
 // only fire when today's plan actually trains the weak group.
 describe('engineWrappers — getLaggingSignal gated by today plan allocation', () => {
   // Build a MATURE history (so the calibration gate is open) where biceps is the
-  // weak group: many chest sessions at a high 1RM + a single, very light biceps
-  // log → biceps avg 1RM far below the cross-group average → detected weak.
+  // SET-VOLUME weak group — the signal the PLAN actually amplifies (F0 dedup #2:
+  // getLaggingSignal now reads getLaggingMuscles, set-volume ratio < 0.6 over the
+  // trailing 14 days, NOT the narrate-only 1RM detector). 60 sessions over 150
+  // days keep the model mature; the RECENT (in-window) sessions carry MANY chest
+  // sets and FEW biceps sets so biceps' set ratio falls under 0.6 vs the average.
+  // Crucially the 1RM signal does NOT make biceps weak here (biceps kg is HIGH) —
+  // proving the sentence follows the driving (volume) signal, not 1RM.
   function seedMatureWeakBiceps(): void {
     const now = Date.now();
     const sessions = [];
     for (let i = 0; i < 60; i++) {
       const ts = now - ((150 / 59) * (59 - i)) * DAY_MS;
-      sessions.push({
-        ts,
-        title: `s${i}`,
-        meta: '',
-        exercises: [
-          {
-            exerciseId: 'flat-db-press',
-            exerciseName: 'Flat DB Press',
-            engineName: 'Flat DB Press',
-            totalVolume: 500,
-            peakOneRM: 116,
-            sets: [{ kg: 100, reps: 5, rating: 'potrivit' as const, timestamp: ts }],
-          },
-          // Very light biceps → its 1RM is far under the average → weak group.
-          {
-            exerciseId: 'cable-curl',
-            exerciseName: 'Cable Curl',
-            engineName: 'Cable Curl',
-            totalVolume: 25,
-            peakOneRM: 6,
-            sets: [{ kg: 5, reps: 5, rating: 'potrivit' as const, timestamp: ts }],
-          },
-        ],
-      });
+      const inWindow = now - ts < 14 * DAY_MS;
+      const exercises = [
+        {
+          exerciseId: 'flat-db-press',
+          exerciseName: 'Flat DB Press', // chest_mid → piept
+          engineName: 'Flat DB Press',
+          totalVolume: 1500,
+          peakOneRM: 116,
+          // Many chest sets per recent session → high chest set-volume.
+          sets: [
+            { kg: 100, reps: 5, rating: 'potrivit' as const, timestamp: ts },
+            { kg: 100, reps: 5, rating: 'potrivit' as const, timestamp: ts },
+            { kg: 100, reps: 5, rating: 'potrivit' as const, timestamp: ts },
+          ],
+        },
+      ];
+      // Biceps appears only in-window, with a SINGLE set (low set-volume) but a
+      // HIGH kg (so 1RM ratio would NOT flag it — only set-volume does).
+      if (inWindow) {
+        exercises.push({
+          exerciseId: 'cable-curl',
+          exerciseName: 'Cable Curl', // bi_long/bi_short → biceps
+          engineName: 'Cable Curl',
+          totalVolume: 200,
+          peakOneRM: 110,
+          sets: [{ kg: 40, reps: 5, rating: 'potrivit' as const, timestamp: ts }],
+        });
+      }
+      sessions.push({ ts, title: `s${i}`, meta: '', exercises });
     }
     useWorkoutStore.setState({ sessionsHistory: sessions });
   }
@@ -138,5 +148,21 @@ describe('engineWrappers — getLaggingSignal gated by today plan allocation', (
     // Today's plan includes biceps → naming it is honest.
     const withBiceps = new Set(['piept', 'biceps']);
     expect(getLaggingSignal({ allocatedGroups: withBiceps })).not.toBeNull();
+  });
+
+  // F0 dedup #2 honesty fix: the sentence must follow the DRIVING (set-volume)
+  // signal, NOT the narrate-only 1RM detector. In seedMatureWeakBiceps biceps is
+  // VOLUME-weak (1 set vs 3 chest sets in-window) but NOT 1RM-weak (biceps kg=40,
+  // peakOneRM=110, on par with chest). The old detectWeakGroups path (1RM ratio
+  // < 0.8) would NOT have flagged biceps; getLaggingMuscles (set-volume) does.
+  // Asserting biceps IS named proves the sentence now matches what the plan
+  // amplifies — it can no longer name a muscle the plan ignores.
+  it('names the SET-VOLUME-weak group (drives the plan), not a 1RM-only signal', () => {
+    seedMatureWeakBiceps();
+    expect(getCalibrationMaturity()).toBeNull();
+    // Plan trains biceps today → the volume-weak group is honestly named.
+    const line = getLaggingSignal({ allocatedGroups: new Set(['piept', 'biceps']) });
+    expect(line).not.toBeNull();
+    expect(line).toContain('Biceps'); // RO label for the biceps group
   });
 });
