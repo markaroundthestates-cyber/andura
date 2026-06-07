@@ -7,6 +7,7 @@ import { getExerciseMetadata } from './exerciseLibrary.js';
 import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
+import { updatePosterior, savePosterior } from './dp/strengthKalman.js';
 import { t } from '../i18n/index.js';
 
 export const DP = {
@@ -622,12 +623,65 @@ export const DP = {
     return this._kgFromE1RM(bestE1RM, floorReps);
   },
 
-  // The PR-floor / find-your-weight demonstrated load. With dp_e1rm_v1 ON (and the
-  // exercise e1RM-eligible with qualifying logs) it is the e1RM-back-solved load;
-  // otherwise the raw heaviest-at-target-reps kg (byte-identical legacy). The flag
-  // is resolved per-user; in no-uid contexts (sim) it resolves to the default OFF.
+  // ══ BUILD #2 — Kalman strength posterior demoW (F3 spec §2) ══════════════════
+  // Build the per-set e1RM observation stream from this exercise's logs (oldest-
+  // first), fold it through the REUSED 1-D Kalman (strengthKalman) into a posterior
+  // {mu,sigma}, persist it (quota-guarded), and back-solve `mu` to a working kg at
+  // the rep target. `mu` is the SMOOTHED demonstrated e1RM — bounded by the high
+  // measurement noise so a single coarse-rating set barely moves it (damps the
+  // saw-tooth the raw max-of-logs can introduce). Returns 0 when no usable
+  // observation (cold start / e1RM-ineligible) → caller falls to the raw path.
+  /** @param {string} ex @param {number} rMin @param {boolean} [persist] @returns {number} */
+  _kalmanDemoW(ex, rMin, persist = false) {
+    if (!this._e1rmEligible(ex)) return 0;
+    const logs = this.getLogs(ex, 12); // newest-first
+    const floorReps = rMin ?? 8;
+    // PURE recompute over the available log window (oldest-first), seeded fresh each
+    // time → deterministic and side-effect-free for the READ path. `recommend()`
+    // reads demoW several times per render, so persisting on every read would
+    // double-count the same sets (a NO-DOUBLE-COUNT trap). Persistence is opt-in
+    // (`persist`) and reserved for a single authoritative per-session write site.
+    const obs = [];
+    for (let i = logs.length - 1; i >= 0; i--) { // oldest-first
+      const l = logs[i];
+      const w = Number(l.w);
+      if (!Number.isFinite(w) || w <= 0) continue;
+      const reps = typeof l.reps === 'string' ? parseInt(l.reps, 10) : Number(l.reps);
+      if (!Number.isFinite(reps)) continue;
+      const rpe = Number(l.rpe) || 7;
+      const e = this.e1RMForSet(w, reps, rpe);
+      if (e == null) continue;
+      // A failed-AND-short greu set is a noisy observation → down-weighted (high R).
+      const failedShort = rpe >= 8.5 && reps < floorReps;
+      obs.push({ e1rm: e, ts: Number(l.ts) || 0, failedShort });
+    }
+    const post = updatePosterior(null, obs);
+    if (!post || !Number.isFinite(post.mu) || post.mu <= 0) return 0;
+    if (persist) savePosterior(ex, post); // quota-guarded; never throws
+    // Smoothing must NEVER drop the demonstrated FLOOR below proven raw capacity
+    // (that down-drift is what feeds the find-your-weight saw-tooth). Take the MAX
+    // of the Kalman-smoothed estimate and the raw heaviest-at-target load: the
+    // posterior can RAISE the floor (cross-rep-scheme normalization) but a lagging
+    // estimate can never LOWER it below what the user has owned.
+    const kalmanKg = this._kgFromE1RM(post.mu, floorReps);
+    const rawKg = this._demonstratedWorkingW_e1rm(ex, floorReps);
+    return Math.max(kalmanKg, rawKg);
+  },
+
+  // The PR-floor / find-your-weight demonstrated load. Resolution order (each flag
+  // defaults OFF → byte-identical legacy):
+  //   dp_strength_kalman_v1 ON → the Kalman-smoothed posterior mu (back-solved kg)
+  //   dp_e1rm_v1 ON            → the e1RM-back-solved heaviest-at-target load (#1)
+  //   else                     → the raw heaviest-at-target kg (legacy)
+  // Kalman depends on #1's e1RM observation; if it produces nothing it degrades to
+  // the #1 e1RM path, then to the raw path — never a regression. Flags resolve
+  // per-user; in no-uid contexts (sim) they resolve to default OFF.
   /** @param {string} ex @param {number} rMin @returns {number} */
   _demoWorkingW(ex, rMin) {
+    if (isEnabled('dp_strength_kalman_v1')) {
+      const k = this._kalmanDemoW(ex, rMin);
+      if (k > 0) return k;
+    }
     if (isEnabled('dp_e1rm_v1')) {
       const e = this._demonstratedWorkingW_e1rm(ex, rMin);
       if (e > 0) return e;
