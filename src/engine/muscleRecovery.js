@@ -21,7 +21,6 @@ import { MS_PER_DAY, MS_PER_HOUR } from '../constants.js';
 import {
   GROUP_HEAD_MAP_BIG11,
   GROUP_LABELS_RO_BIG11,
-  DECAY_RATE_HOURS_BIG11,
   BIG11_GROUPS,
   PAIN_REGION_GROUP_MAP,
 } from './muscleRecoveryConstants.js';
@@ -33,7 +32,7 @@ export const GROUP_HEAD_MAP = GROUP_HEAD_MAP_BIG11;
 const GROUP_LABELS_RO = GROUP_LABELS_RO_BIG11;
 
 // Re-export Big 11 constants for downstream cross-engine consumption.
-export { GROUP_HEAD_MAP_BIG11, GROUP_LABELS_RO_BIG11, DECAY_RATE_HOURS_BIG11, BIG11_GROUPS };
+export { GROUP_HEAD_MAP_BIG11, GROUP_LABELS_RO_BIG11, BIG11_GROUPS };
 
 // State thresholds — getMuscleState returns 0-100 (higher = more recent stress).
 // Calibrated against typical session contribution: ~22.5 per primary muscle head

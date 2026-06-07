@@ -46,7 +46,6 @@ export interface LaggingMuscle {
 
 export const GROUP_LABELS_RO_BIG11: Record<string, string>;
 export const GROUP_HEAD_MAP_BIG11: Record<string, string[]>;
-export const DECAY_RATE_HOURS_BIG11: number;
 export const BIG11_GROUPS: readonly string[];
 export const PAIN_REGION_GROUP_MAP: Record<string, string[]>;
 
