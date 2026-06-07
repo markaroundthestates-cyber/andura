@@ -34,6 +34,7 @@ import { AparatLipsaSheet } from '../../../components/Workout/AparatLipsaSheet';
 import { SwapPickSheet } from '../../../components/Workout/SwapPickSheet';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
+import { INSESSION_RATING_TO_RPE } from '../../../stores/workoutStore.logic';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout, getPRDelta, getWhyExerciseSummary, resolveSessionTitle } from '../../../lib/engineWrappers';
 import type { PlannedExercise, PlannedWorkoutOutput } from '../../../lib/engineWrappers';
@@ -79,18 +80,11 @@ import { debugLog } from '../../../lib/debugLog';
 type SetRating = ExerciseHistoryEntry['rating'];
 
 // In-session coarse rating → RPE for DP.checkInSessionAdjust (responsive per-set
-// autoregulation, Daniel 2026-05-30 rewrite).
-// DISTINCT from workoutStore.RATING_TO_RPE (usor 6.5 / potrivit 7.5 / greu 8.5):
-// that map calibrates the PERSISTED fatigue/dp history. Here the decision is the
-// LIVE per-set correction "this set was greu/potrivit/usor -> adjust the NEXT
-// set's target now" — phase-aware (weight in STRENGTH, reps in masa). greu maps
-// to 10 (the engine eases at RPE>=9.5), usor to 6.5 (the engine nudges up at
-// <=6.5), potrivit to 7.5 (hold, with a small late-set taper). Not persisted.
-const INSESSION_RATING_TO_RPE: Readonly<Record<SetRating, number>> = {
-  usor: 6.5,
-  potrivit: 7.5,
-  greu: 10,
-};
+// autoregulation, Daniel 2026-05-30 rewrite). Now co-located with the persisted
+// cross-session map RATING_TO_RPE in workoutStore.logic (TWO HORIZONS note +
+// guard test there) so the two can never be edited apart. DISTINCT by design:
+// persisted greu = 8.5 (cross-session fatigue gates), in-session greu = 10 (the
+// live ease branch fires at RPE >= 9.5). Imported below.
 
 export function Workout(): JSX.Element {
   const navigate = useNavigate();

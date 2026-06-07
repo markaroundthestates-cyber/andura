@@ -50,10 +50,44 @@ export const LOGS_MAX = 5000;
 //                     trip that cliff on every greu set — too aggressive.
 // Per-set stamp from each set's own rating — NU propagate one session rating
 // onto all sets, NU fabricate per-set variation.
-const RATING_TO_RPE: Readonly<Record<'usor' | 'potrivit' | 'greu', number>> = {
+//
+// ── TWO HORIZONS, TWO THRESHOLDS — deliberate divergence (do NOT unify) ───────
+// There are intentionally TWO rating→RPE maps, one per decision horizon. They
+// are co-located here so editing one without the other is impossible to miss
+// (guard test pins the inequalities below):
+//
+//   RATING_TO_RPE (CROSS-SESSION, PERSISTED) — greu = 8.5.
+//     Stamped onto persisted log rows (below) and read back by dp.js's
+//     cross-session gates calibrated to this scale: greu gate (dp.js ~981,
+//     lastRPE >= 8.5), consecutiveGreu, distress, easy. greu MUST stay < 9.5 so
+//     a persisted honest hard set never accidentally trips the in-session-only
+//     ease branch; and >= 8.5 so the cross-session greu gate fires.
+//
+//   INSESSION_RATING_TO_RPE (LIVE PER-SET) — greu = 10.
+//     Fed ONLY to DP.checkInSessionAdjust for the live "this set was greu →
+//     ease the NEXT set DOWN now" correction, whose greu branch fires at
+//     lastRPE >= 9.5 (dp.js ~1327). greu MUST be >= 9.5 or that live ease branch
+//     goes dead (a behavior regression).
+//
+// Unifying the numbers is a PRESCRIPTION change, not a cleanup: lowering
+// in-session greu to 8.5 kills the live ease branch; raising persisted greu to
+// 10 trips the cross-session ease/consecutiveGreu logic harder (moves live kg).
+export const RATING_TO_RPE: Readonly<Record<'usor' | 'potrivit' | 'greu', number>> = {
   usor: 6.5,
   potrivit: 7.5,
   greu: 8.5,
+};
+
+// LIVE per-set horizon (see TWO HORIZONS note above). Lives here next to
+// RATING_TO_RPE so the divergence is discoverable; imported by Workout.tsx and
+// fed only to DP.checkInSessionAdjust. greu = 10 so the >= 9.5 in-session ease
+// branch is reachable. Not persisted.
+export const INSESSION_RATING_TO_RPE: Readonly<
+  Record<'usor' | 'potrivit' | 'greu', number>
+> = {
+  usor: 6.5,
+  potrivit: 7.5,
+  greu: 10,
 };
 
 // U-11 (MED) — rolling cap pe sessionsHistory (persistat integral cu exercises
