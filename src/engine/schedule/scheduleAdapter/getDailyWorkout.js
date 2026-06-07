@@ -20,6 +20,7 @@ import {
   mergeAerobicRecovery,
 } from '../../muscleRecovery.js';
 import { detectImbalances, applyImbalanceCorrection } from '../../imbalanceDetector.js';
+import { buildSessionSignalTrace, APPLIED_MAP } from './signalBus.core.js';
 
 import { mapDateToIndex, getWeekStartIso } from './dateHelpers.js';
 import { getCalendarOverride } from './calendarOverrideStorage.js';
@@ -136,6 +137,13 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       blueprints[r.output.id] = r.output.meta || {};
     }
   }
+
+  // Signal-bus trace — observation-only computed-vs-applied record (additive
+  // field on the returned object, ignored by every existing consumer). PURE;
+  // the dev-gated SINK is wired React-side (signalBus.ts). Zero prescription.
+  // Timestamp = the injected deterministic clock (NOT Date.now()) so the field
+  // stays deterministic — preserves the plan byte-identical / determinism guards.
+  const __signalTrace = buildSessionSignalTrace(results, APPLIED_MAP, hardError, date.getTime());
 
   // Frequency-based split: resolve the active-day week (override edge first, else
   // derive from onboarding frequency threaded via userState.user.frequency) and
@@ -480,5 +488,8 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // src/react/lib/scheduleAdapterAggregate.ts (engine→React import is a
     // layering violation, so the literal is duplicated with this cross-ref).
     workoutTitle: '__engine_workout_title_fallback__',
+    // Signal-bus computed-vs-applied trace (observation only, additive). The
+    // React layer reads this and feeds the dev-gated sink; no engine→React import.
+    __signalTrace,
   };
 }

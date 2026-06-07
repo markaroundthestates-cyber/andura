@@ -9,6 +9,7 @@
 
 import { logger } from '../../util/logger.js';
 import { getDailyWorkout } from '../../engine/schedule/scheduleAdapter.js';
+import { signalBus, type SessionSignalTrace } from './signalBus';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { COMPOUND_EX } from '../../constants.js';
@@ -532,6 +533,10 @@ export async function composePlannedWorkoutToday(
     // only). Default {} → byte-identical to the prior single-arg behavior.
     const plan = await getDailyWorkout(userState, now, options);
     if (plan === null) return null;
+    // Signal-bus sink (dev-gated, default OFF → no-op). The engine attaches the
+    // PURE computed-vs-applied trace as an additive `__signalTrace` field; only
+    // this React boundary persists it (engine stays React-free).
+    signalBus.record((plan as { __signalTrace?: SessionSignalTrace }).__signalTrace);
     // RO onboarding experience → EN engine bucket once (cold-start weight
     // scaling). RO strings never reach the engine (CRIT C1 map above).
     const experienceEn = experienceToEngine(
