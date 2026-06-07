@@ -26,6 +26,7 @@ import type { LastSessionSummary } from '../../stores/workoutStore';
 import { DB } from '../../../db.js';
 import { MS_PER_DAY } from '../../../constants.js';
 import { isEnergyDownSustained } from '../../../engine/deload/triggerHierarchy.js';
+import { saveReadiness } from '../../../engine/readiness.js';
 import { isMariusDualSignalGreen } from '../../../engine/periodization/mesocycle.js';
 import { computeRiskScore } from '../../../engine/goalAdaptation/pushBackTiers.js';
 import { isNewbieEffect } from '../../../engine/goalAdaptation/templates.js';
@@ -237,6 +238,35 @@ describe('buildUserStateForPipeline — energyDirection reaches deload AA-trigge
     const state = buildUserStateForPipeline();
     const sessions = state.recentSessions as Array<Record<string, unknown>>;
     expect('energyDirection' in sessions[0]!).toBe(false);
+  });
+});
+
+describe('buildUserStateForPipeline — F1 T2/T3 top-level meta.energyDirection', () => {
+  // One field (mapped from TODAY's EnergyCheck via EMOJI_TO_DIRECTION), four
+  // readers: Deload Hook D3 (deload/index.js:237), Tempo, Specialization
+  // light-coupling, Warmup. Proves the builder now populates the field the
+  // engines read; absent today-check → absent field (NU a fabricated NONE).
+  it('red energy-check today → meta.energyDirection DOWN', () => {
+    saveReadiness(1); // 1-2 → red → DOWN
+    const state = buildUserStateForPipeline();
+    expect(state.meta.energyDirection).toBe('DOWN');
+  });
+
+  it('green energy-check today → meta.energyDirection UP', () => {
+    saveReadiness(5); // 4-5 → green → UP
+    const state = buildUserStateForPipeline();
+    expect(state.meta.energyDirection).toBe('UP');
+  });
+
+  it('yellow energy-check today → meta.energyDirection NONE', () => {
+    saveReadiness(3); // 3 → yellow → NONE
+    const state = buildUserStateForPipeline();
+    expect(state.meta.energyDirection).toBe('NONE');
+  });
+
+  it('no energy-check today → energyDirection absent (not fabricated)', () => {
+    const state = buildUserStateForPipeline();
+    expect('energyDirection' in (state.meta as Record<string, unknown>)).toBe(false);
   });
 });
 

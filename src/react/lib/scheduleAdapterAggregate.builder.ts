@@ -407,6 +407,20 @@ export function buildUserStateForPipeline(): {
       // contribuiau). Omit cand fara energy-check azi (engine ramane inert onest,
       // NU fabricam semnal). exactOptionalPropertyTypes: spread conditional.
       ...(todayEnergyEmoji !== undefined ? { energyEmoji: todayEnergyEmoji } : {}),
+      // F1 T2+T3 — top-level meta.energyDirection (UP/NONE/DOWN), derived from
+      // TODAY's energyEmoji via the SAME EMOJI_TO_DIRECTION map the per-session
+      // stamping uses (NU a second persisted copy). ONE field, FOUR readers:
+      // Deload Hook D3 consumeEnergyReadiness (deload/index.js:237), Tempo
+      // (tempo/index.js:172,212), Specialization light-coupling
+      // (specialization/index.js:233), Warmup (warmup/index.js:196). Deload AA
+      // already fired via the recentSessionsForEnergy fallback (:246); this
+      // closes the null D3 readiness signal. Omit when no energy-check today
+      // (or unmapped emoji) → engines stay at TODAY's conservative baseline,
+      // NU a fabricated NONE.
+      ...(todayEnergyEmoji !== undefined &&
+      EMOJI_TO_DIRECTION[todayEnergyEmoji] !== undefined
+        ? { energyDirection: EMOJI_TO_DIRECTION[todayEnergyEmoji] }
+        : {}),
     },
     // Intra-week deficit recovery — DONE volume + microcycle anchor for the engine
     // proration/spread (getDailyWorkout reads userState.weekContext). Computed from
