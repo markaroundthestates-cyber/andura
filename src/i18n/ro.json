@@ -1417,7 +1417,9 @@
         "debugLogCopy": "Copiaza jurnal debug",
         "debugLogCopyDesc": "Copiaza evenimentele inregistrate ca JSON",
         "debugLogCopied": "Jurnal debug copiat",
-        "debugLogEmpty": "Jurnalul debug e gol"
+        "debugLogEmpty": "Jurnalul debug e gol",
+        "collect": "Imbunatateste antrenamentul (pe dispozitiv)",
+        "collectDesc": "Pastreaza interactiunile tale de antrenament pe acest dispozitiv ca sa-ti imbunatateasca coaching-ul. Nu paraseste niciodata dispozitivul."
       }
     },
     "profile": {

@@ -30,7 +30,18 @@ import {
  * (`andura-debug`, FLAG_KEY) so reset = fresh start clears them too. (Never
  * cloud-synced — deliberately out of SYNC_KEYS.)
  */
-const EXTRA_DATA_KEYS = Object.freeze(['pain-cdl', 'andura-debug-log', 'andura-debug']);
+// `andura-debug-log` = the LEGACY localStorage ring (D107 pre-IDB era); the
+// durable behavior log now lives in the `behavior_tier1` IndexedDB store, wiped
+// by clearUserIndexedDB() (whole-namespace DB delete) — but keep the legacy key
+// here so a reset also clears any residual ring from a pre-migration build.
+// `andura-debug` (debug verbosity) + `andura-behavior-collect` (collection gate)
+// are the flag keys — wiped so reset = fresh start. None are cloud-synced.
+const EXTRA_DATA_KEYS = Object.freeze([
+  'pain-cdl',
+  'andura-debug-log',
+  'andura-debug',
+  'andura-behavior-collect',
+]);
 
 /**
  * Keys that MUST survive a reset (account session + device identity + UI prefs).

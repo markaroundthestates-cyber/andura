@@ -13,7 +13,7 @@ import { useSettingsStore } from '../../../stores/settingsStore';
 import type { WeekStart } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
 import { checkForUpdatesAndApply } from '../../../lib/swUpdate';
-import { debugLog, isDebugEnabled, setDebugEnabled } from '../../../lib/debugLog';
+import { debugLog, isDebugEnabled, setDebugEnabled, isCollectEnabled, setCollectEnabled } from '../../../lib/debugLog';
 import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
 import { getCurrentLocale, setLocale, t } from '../../../../i18n/index.js';
@@ -60,19 +60,31 @@ export function SettingsPrefs(): JSX.Element {
   // capture listener reads the flag at next launch (mount-once, per the desc).
   const [debugOn, setDebugOn] = useState<boolean>(() => isDebugEnabled());
 
+  // D107 — durable behavioral-log COLLECTION gate (distinct from the founder's
+  // debug verbosity above). Default-OFF for now (the default-ON decision is
+  // Daniel's, pending). Honest user-facing OFF switch = trust.
+  const [collectOn, setCollectOn] = useState<boolean>(() => isCollectEnabled());
+
   function handleToggleDebug(next: boolean): void {
     if (next === debugOn) return;
     setDebugEnabled(next);
     setDebugOn(next);
   }
 
-  function handleCopyDebugLog(): void {
-    const json = debugLog.exportJson();
-    const empty = debugLog.snapshot().length === 0;
-    if (empty) {
+  function handleToggleCollect(next: boolean): void {
+    if (next === collectOn) return;
+    setCollectEnabled(next);
+    setCollectOn(next);
+  }
+
+  async function handleCopyDebugLog(): Promise<void> {
+    // Export now reads the durable IDB store (async).
+    const events = await debugLog.snapshot();
+    if (events.length === 0) {
       toast.show({ message: t('settings.prefs.advanced.debugLogEmpty'), variant: 'info' });
       return;
     }
+    const json = await debugLog.exportJson();
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       void navigator.clipboard
         .writeText(json)
@@ -279,9 +291,35 @@ export function SettingsPrefs(): JSX.Element {
               />
             </span>
           </button>
+          {/* D107 — durable behavioral-log collection gate (default-OFF for now;
+              honest user-facing switch). Distinct from the debug toggle above. */}
           <button
             type="button"
-            onClick={handleCopyDebugLog}
+            role="switch"
+            aria-checked={collectOn}
+            onClick={() => handleToggleCollect(!collectOn)}
+            data-testid="advanced-collect-toggle"
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink border-b border-line"
+          >
+            <DownloadCloud className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+            <div className="flex-1">
+              <p className="text-sm font-medium">{t('settings.prefs.advanced.collect')}</p>
+              <p className="text-xs text-ink2">{t('settings.prefs.advanced.collectDesc')}</p>
+            </div>
+            <span
+              className="relative inline-flex w-10 h-6 rounded-full flex-shrink-0 transition-colors"
+              style={{ background: collectOn ? 'var(--grad-pulse)' : 'var(--surface-2)' }}
+              aria-hidden="true"
+            >
+              <span
+                className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-paper transition-transform"
+                style={{ transform: collectOn ? 'translateX(16px)' : 'translateX(0)' }}
+              />
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => void handleCopyDebugLog()}
             data-testid="advanced-debug-copy"
             className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink"
           >

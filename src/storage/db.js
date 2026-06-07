@@ -60,7 +60,7 @@ import { getAuthState } from '../auth.js';
 // ── Constants ───────────────────────────────────────────────────────────────
 
 /** Schema version — bump on store/index changes, register `upgrade()` hook. */
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 /** DB name prefix — final form: `<PREFIX>_<namespace>` (per §56.1.4 LOCKED V1). */
 export const DB_NAME_PREFIX = 'andura';
@@ -71,6 +71,10 @@ export const STORES = Object.freeze({
   LOGS_TIER1: 'logs_tier1',
   APPLIED_PATTERNS_TIER1: 'applied_patterns_tier1',
   MIGRATION_EVENTS: 'migration_events',
+  // D107 — durable per-UID behavioral interaction log (local-only archive tier,
+  // never cloud-synced). Replaces the 500-event localStorage ring so the moat
+  // signal survives reinstall/cache-clear + a long multi-exercise session.
+  BEHAVIOR_TIER1: 'behavior_tier1',
 });
 
 // ── Module-level singleton (lazy) ───────────────────────────────────────────
@@ -202,6 +206,13 @@ function _defineSchema(db) {
         rec.status = 'success';
       }
     });
+  });
+  // v3 — D107: additive `behavior_tier1` store for the durable behavioral log.
+  // Primary key `id` (client-supplied unique row id) + indexes on `t` (epoch ms,
+  // for the days-window prune `where('t').below(cutoff)`), `kind`, `session`.
+  // No upgrade hook needed — purely a new store (existing data untouched).
+  db.version(3).stores({
+    [STORES.BEHAVIOR_TIER1]: 'id, t, kind, session',
   });
 }
 

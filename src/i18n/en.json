@@ -1417,7 +1417,9 @@
         "debugLogCopy": "Copy debug log",
         "debugLogCopyDesc": "Copy the recorded events as JSON",
         "debugLogCopied": "Debug log copied",
-        "debugLogEmpty": "Debug log is empty"
+        "debugLogEmpty": "Debug log is empty",
+        "collect": "Improve my training (on-device)",
+        "collectDesc": "Keep your training interactions on this device to improve your coaching. Never leaves your device."
       }
     },
     "profile": {

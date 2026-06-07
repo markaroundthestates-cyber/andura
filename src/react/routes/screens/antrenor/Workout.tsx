@@ -32,7 +32,7 @@ import { useNavigate } from 'react-router-dom';
 import { HelpCircle, Images, ChevronDown } from 'lucide-react';
 import { AparatLipsaSheet } from '../../../components/Workout/AparatLipsaSheet';
 import { SwapPickSheet } from '../../../components/Workout/SwapPickSheet';
-import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
+import { useWorkoutStore, getCurrentMode, energyLightForIntensityMod } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { INSESSION_RATING_TO_RPE } from '../../../stores/workoutStore.logic';
 import { coachPick } from '../../../lib/coachVoice';
@@ -446,6 +446,8 @@ export function Workout(): JSX.Element {
       'rec',
       { exercise: currentExercise.name, setIdx: currentSetIdx + 1, recKg, recReps, source },
       { route: '/app/antrenor/workout', exercise: currentExercise.name, setIdx: currentSetIdx + 1, shownKg: recKg, shownReps: recReps },
+      sessionStart ?? undefined,
+      currentExercise.engineName ?? currentExercise.name,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [safeExIdx, currentSetIdx, recKg, recReps]);
@@ -515,6 +517,10 @@ export function Workout(): JSX.Element {
       {
         exercise: currentExercise.name,
         setIdx: currentSetIdx + 1,
+        // Canonical D107 names (clearer for the future calibration engine); the
+        // recKg/recReps aliases are kept so prior consumers/exports stay readable.
+        prescribedKg: recKg,
+        prescribedReps: recReps,
         recKg,
         recReps,
         enteredKg: effKg,
@@ -523,11 +529,17 @@ export function Workout(): JSX.Element {
         deltaKg: effKg - recKg,
         deltaReps: repsInput - recReps,
         wasManualOverride: inputDirty,
+        // Pre-workout readiness bucket (energy traffic-light derived from the live
+        // intensityMod) — the missing fatigue-aware context field. Raw bucket, not
+        // a reverse-mapped RPE (a future engine isn't locked to today's mapping).
+        readiness: energyLightForIntensityMod(engineIntensityMod),
         // Keep the phase-1 `kg`/`reps` keys so prior consumers/exports stay readable.
         kg: effKg,
         reps: repsInput,
       },
       { route: '/app/antrenor/workout', exercise: currentExercise.name, setIdx: currentSetIdx + 1, shownKg: recKg, shownReps: recReps },
+      sessionStart ?? undefined,
+      currentExercise.engineName ?? currentExercise.name,
     );
 
     // Phase 4 task_10: PR detection wire — call engineWrappers.getPRDelta
@@ -657,6 +669,8 @@ export function Workout(): JSX.Element {
           reason: adjust.adjust ? (adjust.msg ?? null) : 'no-adjust',
         },
         { route: '/app/antrenor/workout', exercise: currentExercise.name, setIdx: currentSetIdx + 1, shownKg: recKg, shownReps: recReps },
+        sessionStart ?? undefined,
+        currentExercise.engineName ?? currentExercise.name,
       );
     }
 
@@ -785,10 +799,16 @@ export function Workout(): JSX.Element {
   // useCallback: passed to memoized SessionTimer — stable ref keeps memo intact.
   const handleSkipExercise = useCallback((): void => {
     bumpActivity();
-    // D107 phase 1 — record the skip (no-op when flag OFF; never throws).
-    debugLog.event('skip', { from: currentExercise.name });
+    // D107 — record the skip (no-op when collect gate OFF; never throws).
+    debugLog.event(
+      'skip',
+      { from: currentExercise.name },
+      undefined,
+      sessionStart ?? undefined,
+      currentExercise.engineName ?? currentExercise.name,
+    );
     advanceOrFinish();
-  }, [bumpActivity, advanceOrFinish, currentExercise.name]);
+  }, [bumpActivity, advanceOrFinish, currentExercise.name, currentExercise.engineName, sessionStart]);
 
   // Founder swap redesign 2026-06-05 — in-session substitution for the CURRENT
   // exercise. "Aparat ocupat" + "Nu vreau" open a SHORT manual pick-list sheet

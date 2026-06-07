@@ -65,12 +65,13 @@ describe('storage/db — namespace resolution', () => {
 });
 
 describe('storage/db — schema definition', () => {
-  it('defines all 4 stores in v1', async () => {
+  it('defines all stores (v1 4 + v3 behavior_tier1)', async () => {
     const db = getDb();
     await db.open();
     const names = db.tables.map(t => t.name).sort();
     expect(names).toEqual([
       STORES.APPLIED_PATTERNS_TIER1,
+      STORES.BEHAVIOR_TIER1,
       STORES.CDL_TIER1,
       STORES.LOGS_TIER1,
       STORES.MIGRATION_EVENTS,
@@ -78,7 +79,45 @@ describe('storage/db — schema definition', () => {
   });
 
   it('exports SCHEMA_VERSION constant', () => {
-    expect(SCHEMA_VERSION).toBe(2);
+    expect(SCHEMA_VERSION).toBe(3);
+  });
+});
+
+// ── D107 v3 behavior_tier1 store ────────────────────────────────────────────
+describe('storage/db — v3 behavior_tier1 (D107)', () => {
+  it('v3 fresh DB exposes behavior_tier1 with t/kind/session indexes', async () => {
+    const db = getDb();
+    await db.table(STORES.BEHAVIOR_TIER1).put({ id: '100-1', t: 100, kind: 'log', session: 50 });
+    await db.table(STORES.BEHAVIOR_TIER1).put({ id: '200-1', t: 200, kind: 'tap', session: 50 });
+    const byKind = await db.table(STORES.BEHAVIOR_TIER1).where('kind').equals('log').toArray();
+    expect(byKind).toHaveLength(1);
+    expect(byKind[0].id).toBe('100-1');
+    // Days-window prune query (delete rows below a cutoff) is indexable on `t`.
+    const old = await db.table(STORES.BEHAVIOR_TIER1).where('t').below(150).toArray();
+    expect(old.map(r => r.id)).toEqual(['100-1']);
+  });
+
+  it('v2→v3 upgrade preserves existing data + adds behavior_tier1', async () => {
+    // Simulate a pre-existing v2 DB with a logs row + migration event.
+    const v2Db = new Dexie(DEFAULT_DB_NAME);
+    v2Db.version(1).stores({
+      [STORES.CDL_TIER1]: 'id, ts, date',
+      [STORES.LOGS_TIER1]: 'id, ts, ex, session',
+      [STORES.APPLIED_PATTERNS_TIER1]: 'id, ts, type',
+      [STORES.MIGRATION_EVENTS]: '++id, ts, kind',
+    });
+    v2Db.version(2).stores({ [STORES.MIGRATION_EVENTS]: '++id, ts, kind, status' });
+    await v2Db.open();
+    await v2Db.table(STORES.LOGS_TIER1).add({ id: 'L1', ts: 1000, ex: 'Bench', session: 1 });
+    v2Db.close();
+
+    // Reopen via production getDb() — triggers v2→v3 (additive store).
+    const db = getDb();
+    await db.open();
+    const logs = await db.table(STORES.LOGS_TIER1).toArray();
+    expect(logs).toHaveLength(1); // existing data intact
+    // The new store is addressable + empty.
+    expect(await db.table(STORES.BEHAVIOR_TIER1).count()).toBe(0);
   });
 });
 

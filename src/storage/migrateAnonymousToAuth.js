@@ -57,6 +57,13 @@ function _open(dbName) {
   db.version(2).stores({
     [STORES.MIGRATION_EVENTS]: '++id, ts, kind, status',
   });
+  // v3 — D107 behavior_tier1 (mirror db.js _defineSchema; additive-only). The
+  // store must be addressable so the handle opens at the current schema version,
+  // but behavior rows are NOT migrated anon→auth (device-local behavioral
+  // history, like the per-namespace migration_events audit trail).
+  db.version(3).stores({
+    [STORES.BEHAVIOR_TIER1]: 'id, t, kind, session',
+  });
   return db;
 }
 

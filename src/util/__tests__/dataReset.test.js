@@ -92,12 +92,14 @@ describe('clearUserDataKeys', () => {
   // PII and survived "Reseteaza toate datele" (wiped only on account-delete).
   // Reset must now clear it + its capture flag. Real keys: debugLog.ts LOG_KEY /
   // FLAG_KEY.
-  it('clears the debug-log buffer + capture flag (PII not left behind on reset)', () => {
+  it('clears the debug-log buffer + capture flag + collect gate (PII not left behind on reset)', () => {
     localStorage.setItem('andura-debug-log', JSON.stringify([{ t: 'tap', kg: 96 }]));
     localStorage.setItem('andura-debug', '1');
+    localStorage.setItem('andura-behavior-collect', 'true'); // D107 collection gate
     clearUserDataKeys();
     expect(localStorage.getItem('andura-debug-log')).toBeNull();
     expect(localStorage.getItem('andura-debug')).toBeNull();
+    expect(localStorage.getItem('andura-behavior-collect')).toBeNull();
   });
 });
 

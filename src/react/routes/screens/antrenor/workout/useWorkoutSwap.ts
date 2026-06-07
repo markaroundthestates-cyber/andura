@@ -155,7 +155,13 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
       });
       // D107 phase 1 — permanent interaction-log: the manual swap the user made
       // (from original → chosen alternative). No-op when flag OFF; never throws.
-      debugLog.event('swap', { from: pickSheet.originalName || engineName, to: swapped.name });
+      debugLog.event(
+        'swap',
+        { from: pickSheet.originalName || engineName, to: swapped.name },
+        undefined,
+        undefined,
+        currentExercise.engineName ?? undefined,
+      );
       // Record the surfaced alternative so the NEXT pick-list at this slot skips
       // it (no re-offer) and reads it as an already-tried modality.
       markRefusalTried(safeExIdx, row.engineName);
@@ -182,8 +188,14 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
       name: pickSheet.originalName || currentExercise.name,
       ...(currentExercise.engineName !== undefined ? { engineName: currentExercise.engineName } : {}),
     };
-    // D107 phase 1 — dropping the whole exercise is a skip. No-op when flag OFF.
-    debugLog.event('skip', { from: identity.name });
+    // D107 — dropping the whole exercise is a skip. No-op when collect gate OFF.
+    debugLog.event(
+      'skip',
+      { from: identity.name },
+      undefined,
+      undefined,
+      currentExercise.engineName ?? undefined,
+    );
     dropExercise(safeExIdx, identity);
     setPickSheet(CLOSED_PICK);
     toast.show({
@@ -228,8 +240,14 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         return next;
       });
       swapExercise(safeExIdx, { id: swapped.id, name: swapped.name, ...(swapped.engineName !== undefined ? { engineName: swapped.engineName } : {}) });
-      // D107 phase 1 — equipment-missing swap. No-op when flag OFF; never throws.
-      debugLog.event('swap', { from: res.originalName, to: swapped.name });
+      // D107 — equipment-missing swap. No-op when collect gate OFF; never throws.
+      debugLog.event(
+        'swap',
+        { from: res.originalName, to: swapped.name },
+        undefined,
+        undefined,
+        engineName,
+      );
       toast.show({
         message: t('workout.swap.swappedMissing', { original: res.originalName, alt: res.alternativeName }),
         variant: 'success',

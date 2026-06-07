@@ -1,15 +1,17 @@
-// ══ DEBUG LOG — permanent interaction-log (DECISIONS §D107 phase 1) ══════════
-// CAPTURE + EXPORT ONLY. Validates:
-//   - flag OFF (default) → debugLog.event() is a no-op (nothing recorded)
-//   - flag ON → events are recorded with payload + snapshot
-//   - the global tap listener (useDebugCapture) records a tap with route +
-//     snapshot when a data-testid'd element is clicked; OFF → no listener
-//   - ring buffer caps at MAX_EVENTS
-//   - exportJson() returns valid, parseable JSON
-//   - a semantic 'log' event captures kg/reps/rating
+// ══ BEHAVIOR LOG — durable interaction-log (DECISIONS §D107) ═════════════════
+// Durable per-UID IndexedDB capture (replaces the legacy 500-event localStorage
+// ring). Validates:
+//   - collection gate (andura-behavior-collect) DEFAULT-OFF → semantic events
+//     are a no-op; ON → events persist durably to behavior_tier1
+//   - debug gate (andura-debug) DEFAULT-OFF → tap capture is a no-op; ON → taps
+//     persist (taps are gated by the DEBUG flag, not the collect flag)
+//   - the canonical BehaviorEvent carries exEngine (EN canonical) + readiness
+//   - days-window prune drops rows older than RETENTION_DAYS
+//   - exportJson envelope is v:2, parseable; snapshot/export are async (IDB)
+//   - jsdom IDB safety (fake-indexeddb is registered globally in setup.ts)
 //
-// The flag + buffer live in localStorage (jsdom provides it). Each test resets
-// both. The tap-listener tests render a tiny tree that mounts useDebugCapture.
+// The IDB write in event() is fire-and-forget; tests await a microtask flush
+// (awaiting snapshot() after a tick) so the async put settles before assertions.
 
 import type { JSX } from 'react';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -18,191 +20,157 @@ import {
   debugLog,
   isDebugEnabled,
   setDebugEnabled,
-  LOG_KEY,
+  isCollectEnabled,
+  setCollectEnabled,
   FLAG_KEY,
-  MAX_EVENTS,
+  COLLECT_KEY,
+  RETENTION_DAYS,
+  __resetPruneThrottleForTest,
 } from '../../lib/debugLog';
 import { useDebugCapture } from '../../lib/debugCapture';
+import Dexie from 'dexie';
+import { closeDb, _resetNamespaceCache, getDb, getNamespace, DB_NAME_PREFIX, STORES } from '../../../storage/db.js';
 
-beforeEach(() => {
-  localStorage.removeItem(LOG_KEY);
-  localStorage.removeItem(FLAG_KEY);
+const DAY_MS = 86_400_000;
+
+// Let the fire-and-forget IDB put (+ throttled prune) settle before reading.
+// A few macrotask ticks cover the put → prune async chain in fake-indexeddb.
+async function flush(): Promise<void> {
+  for (let i = 0; i < 3; i++) await new Promise((r) => setTimeout(r, 0));
+}
+
+async function freshDb(): Promise<void> {
+  const ns = getNamespace();
+  await closeDb();
+  try { await Dexie.delete(`${DB_NAME_PREFIX}_${ns}`); } catch { /* swallow */ }
+  _resetNamespaceCache();
+}
+
+beforeEach(async () => {
+  localStorage.clear();
+  await freshDb();
 });
 
-afterEach(() => {
+afterEach(async () => {
   cleanup();
-  localStorage.removeItem(LOG_KEY);
-  localStorage.removeItem(FLAG_KEY);
+  await freshDb();
+  localStorage.clear();
 });
 
-describe('debugLog — D107 phase 1 flag gate', () => {
-  it('flag defaults OFF', () => {
-    expect(isDebugEnabled()).toBe(false);
+describe('debugLog — D107 collection gate (default OFF for now)', () => {
+  it('collection gate defaults OFF', () => {
+    expect(isCollectEnabled()).toBe(false);
   });
 
-  it('flag OFF → event() records nothing (no-op)', () => {
-    debugLog.event('tap', { testid: 'x' });
-    expect(debugLog.snapshot()).toHaveLength(0);
-    expect(localStorage.getItem(LOG_KEY)).toBeNull();
+  it('collect OFF → semantic event() records nothing', async () => {
+    debugLog.event('log', { exercise: 'Bench Press', kg: 60 });
+    await flush();
+    expect(await debugLog.snapshot()).toHaveLength(0);
   });
 
-  it('flag ON → event() records with payload + snapshot', () => {
-    setDebugEnabled(true);
-    expect(isDebugEnabled()).toBe(true);
-    debugLog.event('tap', { testid: 'btn' }, { route: '/app/antrenor' });
-    const snap = debugLog.snapshot();
+  it('collect ON → semantic event() persists durably to IDB', async () => {
+    setCollectEnabled(true);
+    expect(isCollectEnabled()).toBe(true);
+    debugLog.event('log', { exercise: 'Bench Press', kg: 60, reps: 8, rating: 'potrivit' });
+    await flush();
+    const snap = await debugLog.snapshot();
     expect(snap).toHaveLength(1);
-    expect(snap[0]!.kind).toBe('tap');
-    expect(snap[0]!.payload).toEqual({ testid: 'btn' });
-    expect(snap[0]!.snap).toEqual({ route: '/app/antrenor' });
+    expect(snap[0]!.kind).toBe('log');
+    expect(snap[0]!.payload).toMatchObject({ exercise: 'Bench Press', kg: 60 });
     expect(typeof snap[0]!.t).toBe('number');
   });
 
-  it('setDebugEnabled(false) clears the flag', () => {
-    setDebugEnabled(true);
-    setDebugEnabled(false);
-    expect(isDebugEnabled()).toBe(false);
+  it('setCollectEnabled(false) clears the gate', () => {
+    setCollectEnabled(true);
+    setCollectEnabled(false);
+    expect(isCollectEnabled()).toBe(false);
+    expect(localStorage.getItem(COLLECT_KEY)).toBeNull();
   });
 });
 
-describe('debugLog — ring buffer + export', () => {
-  it('caps the buffer at MAX_EVENTS (keeps the most recent)', () => {
-    setDebugEnabled(true);
-    for (let i = 0; i < MAX_EVENTS + 25; i++) {
-      debugLog.event('tap', { i });
-    }
-    const snap = debugLog.snapshot();
-    expect(snap).toHaveLength(MAX_EVENTS);
-    // Oldest 25 evicted → first remaining is index 25, last is the final push.
-    expect(snap[0]!.payload).toEqual({ i: 25 });
-    expect(snap[MAX_EVENTS - 1]!.payload).toEqual({ i: MAX_EVENTS + 24 });
-  });
-
-  it('exportJson() returns valid parseable JSON wrapping the events', () => {
-    setDebugEnabled(true);
-    debugLog.event('tap', { testid: 'a' });
-    debugLog.event('skip', { from: 'Bench Press' });
-    const json = debugLog.exportJson();
-    const parsed = JSON.parse(json) as { v: number; count: number; events: unknown[] };
-    expect(parsed.v).toBe(1);
-    expect(parsed.count).toBe(2);
-    expect(parsed.events).toHaveLength(2);
-  });
-
-  it('clear() empties the buffer', () => {
-    setDebugEnabled(true);
-    debugLog.event('tap', {});
-    debugLog.clear();
-    expect(debugLog.snapshot()).toHaveLength(0);
-  });
-});
-
-describe('debugLog — semantic log event', () => {
-  it("'log' event captures kg/reps/rating", () => {
-    setDebugEnabled(true);
+describe('debugLog — canonical BehaviorEvent (exEngine + readiness + session)', () => {
+  it('persists exEngine (EN canonical), session, and readiness from the call', async () => {
+    setCollectEnabled(true);
     debugLog.event(
       'log',
-      { exercise: 'Bench Press', kg: 60, reps: 8, rating: 'ok' },
-      { route: '/app/antrenor/workout', setIdx: 2, shownKg: 60, shownReps: 8 },
+      { exercise: 'Impins din piept', readiness: 'green', prescribedKg: 60, enteredKg: 62.5 },
+      { route: '/app/antrenor/workout', setIdx: 2 },
+      1717000000000, // sessionGroupStart
+      'Flat Barbell Bench Press', // EN canonical engineName
     );
-    const e = debugLog.snapshot()[0]!;
-    expect(e.kind).toBe('log');
-    expect(e.payload).toEqual({ exercise: 'Bench Press', kg: 60, reps: 8, rating: 'ok' });
+    await flush();
+    const e = (await debugLog.snapshot())[0]!;
+    expect(e.exEngine).toBe('Flat Barbell Bench Press');
+    expect(e.session).toBe(1717000000000);
+    expect(e.payload?.readiness).toBe('green');
     expect(e.snap?.setIdx).toBe(2);
   });
 });
 
-// ── D107 enrichment: RECOMMENDED-vs-ENTERED discrepancy + step-by-step adapt ──
-// These mirror the exact payload shapes Workout.tsx now emits, with REAL values
-// (recommended 15, entered 30 → deltaKg 15, manual override) so the founder can
-// see rec-vs-entered-vs-discrepancy and the engine's response-to-input.
-describe('debugLog — D107 discrepancy + re-recommendation enrichment', () => {
-  it("'log' pairs the active rec onto the entry + computes deltas + manual-override (rec 15, entered 30)", () => {
-    setDebugEnabled(true);
-    debugLog.event('log', {
-      exercise: 'Bench Press',
-      setIdx: 1,
-      recKg: 15,
-      recReps: 10,
-      enteredKg: 30,
-      enteredReps: 8,
-      rating: 'ok',
-      deltaKg: 30 - 15,
-      deltaReps: 8 - 10,
-      wasManualOverride: true,
-      kg: 30,
-      reps: 8,
-    });
-    const e = debugLog.snapshot()[0]!;
-    expect(e.kind).toBe('log');
-    expect(e.payload?.recKg).toBe(15);
-    expect(e.payload?.enteredKg).toBe(30);
-    expect(e.payload?.deltaKg).toBe(15);
-    expect(e.payload?.deltaReps).toBe(-2);
-    expect(e.payload?.wasManualOverride).toBe(true);
-    // Phase-1 kg/reps keys preserved for prior export readability.
-    expect(e.payload?.kg).toBe(30);
+describe('debugLog — durable IDB backend + days-window prune', () => {
+  it(`prunes rows older than RETENTION_DAYS (${RETENTION_DAYS}d) on write`, async () => {
+    setCollectEnabled(true);
+    __resetPruneThrottleForTest(); // ensure the prune fires on the next write
+    // Seed an ANCIENT row directly (older than the window) + a fresh event.
+    const ancientT = Date.now() - (RETENTION_DAYS + 5) * DAY_MS;
+    const db = getDb();
+    await db.table(STORES.BEHAVIOR_TIER1).put({ id: `${ancientT}-9`, t: ancientT, kind: 'log' });
+    // A fresh event triggers the (now un-throttled) days-window prune.
+    debugLog.event('log', { exercise: 'Squat' });
+    await flush();
+    const snap = await debugLog.snapshot();
+    // The ancient row is pruned; only the fresh one survives.
+    expect(snap.map((r) => r.id)).not.toContain(`${ancientT}-9`);
+    expect(snap.some((r) => r.payload?.exercise === 'Squat')).toBe(true);
   });
 
-  it("'adjust' records the engine's post-input next-set re-recommendation (up)", () => {
-    setDebugEnabled(true);
-    debugLog.event('adjust', {
-      exercise: 'Bench Press',
-      setIdx: 1,
-      fromRecKg: 60,
-      fromRecReps: 8,
-      enteredKg: 60,
-      rating: 'usor',
-      toRecKg: 62.5,
-      toRecReps: 8,
-      dir: 'up',
-      reason: 'A mers usor - urcam la 62.5 kg pe setul urmator',
-    });
-    const e = debugLog.snapshot()[0]!;
-    expect(e.kind).toBe('adjust');
-    expect(e.payload?.fromRecKg).toBe(60);
-    expect(e.payload?.toRecKg).toBe(62.5);
-    expect(e.payload?.dir).toBe('up');
+  it('clear() empties the durable store', async () => {
+    setCollectEnabled(true);
+    debugLog.event('log', { exercise: 'Bench' });
+    await flush();
+    await debugLog.clear();
+    expect(await debugLog.snapshot()).toHaveLength(0);
   });
 
-  it("'adjust' records a HOLD when the engine did not re-recommend", () => {
-    setDebugEnabled(true);
-    debugLog.event('adjust', {
-      exercise: 'Bench Press',
-      setIdx: 1,
-      fromRecKg: 60,
-      fromRecReps: 8,
-      enteredKg: 60,
-      rating: 'ok',
-      toRecKg: 60,
-      toRecReps: 8,
-      dir: 'hold',
-      reason: 'no-adjust',
-    });
-    const e = debugLog.snapshot()[0]!;
-    expect(e.payload?.dir).toBe('hold');
-    expect(e.payload?.toRecKg).toBe(e.payload?.fromRecKg);
-  });
-
-  it("'rec' carries the starting-recommendation source (coldstart vs history)", () => {
-    setDebugEnabled(true);
-    debugLog.event('rec', { exercise: 'Bench Press', setIdx: 1, recKg: 40, recReps: 10, source: 'coldstart' });
-    const e = debugLog.snapshot()[0]!;
-    expect(e.kind).toBe('rec');
-    expect(e.payload?.source).toBe('coldstart');
-  });
-
-  it('flag OFF → enriched events still record nothing + export stays valid JSON', () => {
-    debugLog.event('log', { exercise: 'Bench Press', recKg: 15, enteredKg: 30, deltaKg: 15, wasManualOverride: true });
-    debugLog.event('adjust', { exercise: 'Bench Press', dir: 'up', toRecKg: 62.5 });
-    expect(debugLog.snapshot()).toHaveLength(0);
-    const parsed = JSON.parse(debugLog.exportJson()) as { v: number; events: unknown[] };
-    expect(parsed.v).toBe(1);
-    expect(parsed.events).toHaveLength(0);
+  it('exportJson() returns a parseable v:2 envelope', async () => {
+    setCollectEnabled(true);
+    debugLog.event('log', { exercise: 'a' });
+    debugLog.event('skip', { from: 'Bench Press' });
+    await flush();
+    const json = await debugLog.exportJson();
+    const parsed = JSON.parse(json) as { v: number; count: number; events: unknown[] };
+    expect(parsed.v).toBe(2);
+    expect(parsed.count).toBe(2);
+    expect(parsed.events).toHaveLength(2);
   });
 });
 
-// ── Universal tap capture (useDebugCapture in Layout) ───────────────────────
+describe('debugLog — debug gate (tap capture, default OFF, separate from collect)', () => {
+  it('debug gate defaults OFF', () => {
+    expect(isDebugEnabled()).toBe(false);
+  });
+
+  it('tap is gated by the DEBUG flag, NOT the collect flag', async () => {
+    // Collect ON but debug OFF → a `tap` must STILL be a no-op (tap is debug-grade).
+    setCollectEnabled(true);
+    setDebugEnabled(false);
+    debugLog.event('tap', { testid: 'x' });
+    await flush();
+    expect(await debugLog.snapshot()).toHaveLength(0);
+  });
+
+  it('debug ON → tap persists', async () => {
+    setDebugEnabled(true);
+    debugLog.event('tap', { testid: 'btn' }, { route: '/app/antrenor' });
+    await flush();
+    const snap = await debugLog.snapshot();
+    expect(snap).toHaveLength(1);
+    expect(snap[0]!.kind).toBe('tap');
+    expect(localStorage.getItem(FLAG_KEY)).toBe('true');
+  });
+});
+
+// ── Universal tap capture (useDebugCapture in Layout) — gated by DEBUG flag ──
 function Harness(): JSX.Element {
   useDebugCapture();
   return (
@@ -213,22 +181,23 @@ function Harness(): JSX.Element {
 }
 
 describe('useDebugCapture — universal tap listener', () => {
-  it('flag OFF → listener not attached, tap records nothing', () => {
+  it('debug OFF → listener not attached, tap records nothing', async () => {
     const { getByTestId } = render(<Harness />);
     fireEvent.click(getByTestId('my-button'));
-    expect(debugLog.snapshot()).toHaveLength(0);
+    await flush();
+    expect(await debugLog.snapshot()).toHaveLength(0);
   });
 
-  it('flag ON → a tap on a testid element records route + snapshot', () => {
+  it('debug ON → a tap on a testid element records route + snapshot', async () => {
     setDebugEnabled(true);
     const { getByTestId } = render(<Harness />);
     fireEvent.click(getByTestId('my-button'));
-    const snap = debugLog.snapshot();
+    await flush();
+    const snap = await debugLog.snapshot();
     expect(snap).toHaveLength(1);
     const e = snap[0]!;
     expect(e.kind).toBe('tap');
     expect(e.payload).toEqual({ testid: 'my-button' });
-    // Snapshot always carries the route (jsdom location.pathname).
     expect(typeof e.snap?.route).toBe('string');
   });
 });
