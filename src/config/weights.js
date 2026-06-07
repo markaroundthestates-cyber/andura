@@ -1,6 +1,9 @@
 // ══ EQUIPMENT WEIGHT CONFIGS ══════════════════════════════════
 // Per-machine weight stacks based on real gym equipment (Matrix + Bailib + plates)
 
+import { isEnabled } from '../util/featureFlags.js';
+import { learnedStep } from '../engine/dp/equipmentLadder.js';
+
 export const EQUIPMENT_WEIGHTS = {
   // Matrix Dual Adjustable Pulley (helcometru) — incremente ~4.5kg
   'matrix_cable': [5, 9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 63, 68, 72, 77, 81, 86, 90],
@@ -182,7 +185,29 @@ function getList(exerciseName) {
   const exMap = /** @type {Record<string, string>} */ (EXERCISE_EQUIPMENT_MAP);
   const equipWeights = /** @type {Record<string, number[]>} */ (EQUIPMENT_WEIGHTS);
   const equipType = exMap[exerciseName] || 'bailib_stack';
-  return equipWeights[equipType] || equipWeights['bailib_stack'] || [];
+  const hardCoded = equipWeights[equipType] || equipWeights['bailib_stack'] || [];
+  // F4 #10 learned per-gym ladder (dp_learned_ladder_v1, default OFF → hardCoded →
+  // byte-identical). When ON + a learned step exists for this exercise, refine the
+  // ladder GRANULARITY: keep the hard-coded floor/ceiling (the safe bounds) but
+  // walk the rungs at the user's REAL gym increment. With no learned step (the
+  // common case + flag off) this is a no-op.
+  if (isEnabled('dp_learned_ladder_v1') && hardCoded.length >= 2) {
+    const step = learnedStep(exerciseName);
+    if (step > 0) {
+      const lo = hardCoded[0];
+      const hi = hardCoded[hardCoded.length - 1];
+      // Only refine when the learned step is FINER than the hard-coded spacing
+      // (never coarsen below the equipment table — a coarser learned step would
+      // throw away rungs the gym actually has). Span lo→hi at the learned step.
+      const hardSpan = (hi - lo) / (hardCoded.length - 1);
+      if (step < hardSpan) {
+        const ladder = [];
+        for (let w = lo; w <= hi + 1e-9; w += step) ladder.push(Math.round(w * 100) / 100);
+        if (ladder.length >= 2) return ladder;
+      }
+    }
+  }
+  return hardCoded;
 }
 
 /**

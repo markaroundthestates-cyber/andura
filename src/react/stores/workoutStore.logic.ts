@@ -8,6 +8,7 @@ import { DB, todTs } from '../../db.js';
 import { archiveSession } from '../lib/dexieMigration';
 import { isEnabled } from '../../util/featureFlags.js';
 import { learnRecovery, saveRecoveryConstants, RECOVERY_CONSTANTS_KEY } from '../../engine/muscleMap.js';
+import { learnedStepFromLogs, saveLearnedStep } from '../../engine/dp/equipmentLadder.js';
 import type {
   SessionIntensityMod,
   EnergyLight,
@@ -170,6 +171,22 @@ export function persistSessionLogs(
       const prior = (DB.get(RECOVERY_CONSTANTS_KEY) as Record<string, { hours: number; n: number }>) || undefined;
       const learned = learnRecovery(merged as unknown as Parameters<typeof learnRecovery>[0], prior);
       if (Object.keys(learned).length) saveRecoveryConstants(learned);
+    }
+    // F4 #10 — learn the per-gym equipment ladder (true load increment) for each
+    // exercise just logged (flag dp_learned_ladder_v1, default OFF → skipped →
+    // byte-identical). Same authoritative per-session write site as recovery
+    // above. The inference needs the full distinct-load history per exercise, so
+    // it reads from `merged` (the just-updated log). Quota-guarded + fail-silent.
+    if (isEnabled('dp_learned_ladder_v1')) {
+      const loadsByEx: Record<string, number[]> = {};
+      for (const l of merged as Array<{ ex?: string; w?: number }>) {
+        if (typeof l.ex !== 'string' || !l.ex || !(Number(l.w) > 0)) continue;
+        (loadsByEx[l.ex] ??= []).push(Number(l.w));
+      }
+      for (const [ex, loads] of Object.entries(loadsByEx)) {
+        const step = learnedStepFromLogs(loads);
+        if (step > 0) saveLearnedStep(ex, step, new Set(loads).size);
+      }
     }
   } catch {
     // Soft-fail — storage quota / SSR jsdom edge. Engine adapters tolerate

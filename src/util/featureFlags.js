@@ -331,6 +331,16 @@ export const FLAGS = Object.freeze({
   // F3 flag dependency. Reuses alternativeFinder/poolForGroup selection (no rebuild).
   dp_pain_deprioritize_v1: { rollout: 0, default: false },
 
+  // #10/E learned per-gym equipment ladder (RISK LOW-MED — changes only the
+  // GRANULARITY of a load step, bounded by the equipment snap's floor/ceiling). When
+  // ON, the real available rungs are inferred from the user's DISTINCT logged loads
+  // per exercise (modal gap = the gym's true increment) and refine getList →
+  // getNextWeight/getPrevWeight/roundToEquipmentWeight; slow-converging (needs >=
+  // LADDER_MIN_DISTINCT distinct loads) and ONLY refines FINER than the hard-coded
+  // spacing (never coarsens). Persists `dp-equipment-ladder` (sync, quota-guarded).
+  // OFF → the hard-coded table (byte-identical). No F3 flag dependency.
+  dp_learned_ladder_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'
