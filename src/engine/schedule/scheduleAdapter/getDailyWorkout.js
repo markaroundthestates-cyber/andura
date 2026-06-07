@@ -468,6 +468,13 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // computed by the engine but dropped here → planner hardcoded restSec 90.
     // null when the blueprint is absent (empty user) → planner falls back to 90.
     restTimeRange: blueprints.goalAdaptation?.rest_time_modifier ?? null,
+    // F2 #2 — Goal Adaptation rep + RIR modifiers (goalAdaptation/index.js:176-177).
+    // rep_range_modifier [min,max] is the engine's intended per-(template,phase,
+    // mode) rep band; rir_target_modifier [min,max] the intended RIR band. Both
+    // were computed but dropped here (only rest_time_modifier was read). null when
+    // the blueprint is absent (empty user) → DP keeps its phase-aware default band.
+    repRangeModifier: blueprints.goalAdaptation?.rep_range_modifier ?? null,
+    rirTargetModifier: blueprints.goalAdaptation?.rir_target_modifier ?? null,
     specializationTarget,
     deloadState: blueprints.deload?.deload_state ?? 'IDLE',
     // Coach Voice — structured, machine-readable adaptations log (the React side

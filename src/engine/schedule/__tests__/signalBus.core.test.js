@@ -47,12 +47,25 @@ describe('buildSessionSignalTrace — computed vs applied vs dropped', () => {
     expect(w.dropped).toEqual([]);
   });
 
-  it('goalAdaptation: rest_time_modifier applied', () => {
-    const results = [ok('goalAdaptation', { rest_time_modifier: [60, 120], rep_range_modifier: {} })];
+  it('goalAdaptation: rest_time + rep_range + rir_target applied, nutrition fields dropped', () => {
+    const results = [
+      ok('goalAdaptation', {
+        rest_time_modifier: [60, 120],
+        rep_range_modifier: [3, 8],
+        rir_target_modifier: [1, 2],
+        kcal_target_delta_pct: 0,
+        macro_split: {},
+      }),
+    ];
     const t = buildSessionSignalTrace(results, APPLIED_MAP, null, FIXED_NOW);
     const g = t.engines.find((e) => e.engineId === 'goalAdaptation');
     expect(g.applied).toContain('rest_time_modifier');
-    expect(g.dropped).toContain('rep_range_modifier');
+    expect(g.applied).toContain('rep_range_modifier');
+    expect(g.applied).toContain('rir_target_modifier');
+    // kcal/macro drive the SEPARATE nutrition aggregate, NOT the workout — they
+    // stay correctly dropped in the workout pipeline (F2 spec §4).
+    expect(g.dropped).toContain('kcal_target_delta_pct');
+    expect(g.dropped).toContain('macro_split');
   });
 
   it('deload: intensity_modifier + deload_state applied', () => {
@@ -112,7 +125,7 @@ describe('buildSessionSignalTrace — computed vs applied vs dropped', () => {
     const KNOWN_FIELDS = {
       periodization: ['volume_target_pct'],
       specialization: ['target_muscle_group'],
-      goalAdaptation: ['rest_time_modifier'],
+      goalAdaptation: ['rest_time_modifier', 'rep_range_modifier', 'rir_target_modifier'],
       deload: ['intensity_modifier', 'deload_state'],
     };
     for (const [id, fields] of Object.entries(KNOWN_FIELDS)) {

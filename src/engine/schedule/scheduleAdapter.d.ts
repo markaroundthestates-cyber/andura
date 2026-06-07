@@ -40,6 +40,11 @@ export interface WorkoutPlan {
   intensityModifier: Record<string, unknown> | null;
   volumeTargets: Record<string, unknown> | null;
   restTimeRange: readonly [number, number] | null;
+  // F2 #2 — Goal Adaptation rep + RIR target modifiers ([min,max] bands).
+  // Optional so pre-feature plan-shape fixtures stay valid (additive);
+  // getDailyWorkout always emits them (null on absent blueprint).
+  repRangeModifier?: readonly [number, number] | null;
+  rirTargetModifier?: readonly [number, number] | null;
   specializationTarget: string | null;
   deloadState: string;
   // Coach Voice — structured adaptations log (machine tokens, no copy). Empty

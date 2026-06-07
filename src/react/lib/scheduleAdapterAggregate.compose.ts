@@ -139,6 +139,16 @@ function toPlannedExercise(
   // work). The cold-start (no history) branch is untouched — the discount only
   // applies to the history-driven DP weight inside getSmartRecommendation.
   priorExercises: ReadonlyArray<{ name: string; sets: number }> = [],
+  // F2 #2 — Goal Adaptation rep + RIR target modifiers (session-level [min,max]
+  // bands from the goalAdaptation blueprint). Threaded into DP.getSmartRecommendation
+  // as an opts context arg. rep_range_modifier narrows the prescribed reps
+  // (intersected with DP's phase-aware range, never widened); rir_target_modifier
+  // shifts the displayed intensity label only (no load change). null/omitted →
+  // byte-identical (DP keeps its phase-aware default band + rir-derived label).
+  goalModifiers: {
+    repRange?: readonly [number, number] | null;
+    rirTarget?: readonly [number, number] | null;
+  } = {},
 ): PlannedExercise {
   const slug = engineEx.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   const display = toExerciseDisplay(engineEx.name);
@@ -159,6 +169,10 @@ function toPlannedExercise(
     undefined,
     sessionRating,
     priorExercises,
+    {
+      repRangeModifier: goalModifiers.repRange ?? null,
+      rirTargetModifier: goalModifiers.rirTarget ?? null,
+    },
   ) as DpRecommendation | null;
   const hasHistory = DP.getLogs(engineEx.name, 1).length > 0;
   const targetReps =
@@ -594,6 +608,25 @@ export async function composePlannedWorkoutToday(
     const restRangeRaw = plan.restTimeRange as [number, number] | null | undefined;
     const restRange =
       Array.isArray(restRangeRaw) && restRangeRaw.length >= 2 ? restRangeRaw : null;
+    // F2 #2 — Goal Adaptation rep + RIR modifiers ([min,max] bands, session-level).
+    // Same guard as restRange: only a finite [min,max] pair is threaded; anything
+    // else → null → DP keeps its phase-aware default band + rir-derived label.
+    const repRangeRaw = plan.repRangeModifier as [number, number] | null | undefined;
+    const repRangeMod =
+      Array.isArray(repRangeRaw) &&
+      repRangeRaw.length >= 2 &&
+      Number.isFinite(repRangeRaw[0]) &&
+      Number.isFinite(repRangeRaw[1])
+        ? repRangeRaw
+        : null;
+    const rirRangeRaw = plan.rirTargetModifier as [number, number] | null | undefined;
+    const rirTargetMod =
+      Array.isArray(rirRangeRaw) &&
+      rirRangeRaw.length >= 2 &&
+      Number.isFinite(rirRangeRaw[0]) &&
+      Number.isFinite(rirRangeRaw[1])
+        ? rirRangeRaw
+        : null;
     // F-workout-preview/T1 — Engine Warm-up blueprint surface. Engine emits
     // duration_min (5-10 adaptive) + ui_label "Incalzire ~X min" via
     // src/engine/warmup/index.js:289-300. Map to consumer-friendly {line,
@@ -620,6 +653,7 @@ export async function composePlannedWorkoutToday(
         restRange,
         coldStartProfile,
         planExercises.slice(0, idx),
+        { repRange: repRangeMod, rirTarget: rirTargetMod },
       ),
     );
     // Persona-aware TIME budget — bound the session by a realistic, rest-

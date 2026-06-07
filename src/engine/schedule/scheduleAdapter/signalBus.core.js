@@ -19,7 +19,10 @@
  *   periodization   → volume_target_pct (volumeTargets)
  *   specialization  → target_muscle_group (specializationTarget)
  *   warmup          → whole blueprint (returned as `warmup`)
- *   goalAdaptation  → rest_time_modifier (restTimeRange)
+ *   goalAdaptation  → rest_time_modifier (restTimeRange) + rep_range_modifier
+ *                     (DP rep band) + rir_target_modifier (intensity label).
+ *                     kcal_target_delta_pct/macro_split stay DROPPED here — they
+ *                     drive the separate nutrition aggregate, NOT the workout.
  *   deload          → intensity_modifier, deload_state
  *   energyAdjustment/bayesianNutrition/tempo → none read in the workout pipeline
  */
@@ -27,7 +30,7 @@ export const APPLIED_MAP = {
   periodization: new Set(['volume_target_pct']),
   specialization: new Set(['target_muscle_group']),
   warmup: '*',
-  goalAdaptation: new Set(['rest_time_modifier']),
+  goalAdaptation: new Set(['rest_time_modifier', 'rep_range_modifier', 'rir_target_modifier']),
   deload: new Set(['intensity_modifier', 'deload_state']),
   energyAdjustment: new Set(),
   bayesianNutrition: new Set(),

@@ -1428,11 +1428,19 @@ export const DP = {
    *   Omitted / empty → no discount (the isolation is treated as the first work of
    *   the session). Byte-identical for every existing caller that does not pass it.
    */
-  getSmartRecommendation(ex, readinessScore, _muscleState, nowMs, sessionRating, priorExercises) {
+  getSmartRecommendation(ex, readinessScore, _muscleState, nowMs, sessionRating, priorExercises, opts = {}) {
     const base = this.recommend(ex, nowMs);
     /** @type {Record<string, any>} */
     let result = { ...base };
-    result.intensityLabel = this.getIntensityLabel(result.rir ?? 2);
+    // F2 #2 — RIR label override: when Goal Adaptation supplies a rir_target_modifier
+    // [min,max] band, the displayed intensity label reflects the engine's intended
+    // RIR (band floor — the harder end the user trains toward) instead of DP's raw
+    // per-exercise rir. Label only — NO load/reps change. Absent → DP's rir-derived
+    // label (byte-identical). Bounded by getIntensityLabel's own thresholds.
+    const rirMod = opts && Array.isArray(opts.rirTargetModifier) ? opts.rirTargetModifier : null;
+    const labelRir =
+      rirMod && Number.isFinite(rirMod[0]) ? rirMod[0] : (result.rir ?? 2);
+    result.intensityLabel = this.getIntensityLabel(labelRir);
 
     // Readiness check: don't increase if tired
     if (readinessScore != null && readinessScore < 60 && result.status === 'INCREASE') {
@@ -1542,9 +1550,27 @@ export const DP = {
     const phOv2 = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
     const inCut2 = this._isInCut(phOv2, nowMs);
     const range = this.getPhaseAwareRepRange(ex, inCut2);
-    const [rMin, rMax] = range;
-    const rMinSafe = rMin ?? 8;
-    const rMaxSafe = rMax ?? 12;
+    let [rMin, rMax] = range;
+    let rMinSafe = rMin ?? 8;
+    let rMaxSafe = rMax ?? 12;
+    // F2 #2 — Goal Adaptation rep_range_modifier [min,max]: the engine's intended
+    // per-(template,phase,mode) rep band. INTERSECT with the phase-aware range
+    // (never widen past it — the CUT cap + per-exercise REP_RANGES stay
+    // authoritative ceilings); empty intersection falls back to the phase band.
+    // Then clamp the prescribed repsTarget into the intersected band so the goal
+    // actually narrows the prescribed reps. Absent/malformed → byte-identical.
+    const repMod = opts && Array.isArray(opts.repRangeModifier) ? opts.repRangeModifier : null;
+    if (repMod && Number.isFinite(repMod[0]) && Number.isFinite(repMod[1])) {
+      const lo = Math.max(rMinSafe, Math.min(repMod[0], repMod[1]));
+      const hi = Math.min(rMaxSafe, Math.max(repMod[0], repMod[1]));
+      if (lo <= hi) {
+        rMinSafe = lo;
+        rMaxSafe = hi;
+        if (Number.isFinite(result.repsTarget)) {
+          result.repsTarget = Math.max(rMinSafe, Math.min(rMaxSafe, result.repsTarget));
+        }
+      }
+    }
     const rTarget = result.repsTarget || rMinSafe;
     const rLow = Math.max(rMinSafe, rTarget - 1);
     const rHigh = Math.min(rMaxSafe + 2, rTarget + 1);
