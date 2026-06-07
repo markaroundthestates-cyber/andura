@@ -1500,7 +1500,8 @@ nav[data-nav-style]::before {
   50%      { opacity: 0.72; }
 }
 .body-map-region--stressed {
-  animation: andura-body-region-glow 2.4s ease-in-out infinite;
+  /* Daniel 2026-06-07: a bit snappier flash (was 2.4s). */
+  animation: andura-body-region-glow 1.6s ease-in-out infinite;
 }
 
 /* ── Photoreal body map ────────────────────────────────────────────────────

@@ -205,8 +205,10 @@ export interface GlowRegion {
 // Sex-specific now (4 tables) because the maps genuinely differ — female narrower
 // shoulders, different chest/hip ratios.
 const MALE_FRONT_GLOWS: GlowRegion[] = [
-  { group: 'umeri', cx: 0.315, cy: 0.29, r: 0.075 },
-  { group: 'umeri', cx: 0.685, cy: 0.29, r: 0.075 },
+  // Shoulders: enlarged + seated on the deltoid cap (the small outboard blob read
+  // as "uncolored" over the bright delt under the screen blend — Daniel live).
+  { group: 'umeri', cx: 0.32, cy: 0.285, r: 0.1 },
+  { group: 'umeri', cx: 0.68, cy: 0.285, r: 0.1 },
   { group: 'piept', cx: 0.431, cy: 0.256, r: 0.095 },
   { group: 'piept', cx: 0.564, cy: 0.256, r: 0.095 },
   { group: 'biceps', cx: 0.326, cy: 0.32, r: 0.06 },
@@ -223,7 +225,15 @@ const MALE_FRONT_GLOWS: GlowRegion[] = [
 ];
 
 const MALE_BACK_GLOWS: GlowRegion[] = [
-  { group: 'spate', cx: 0.49, cy: 0.27, r: 0.13 },
+  // BACK is one engine group (spate = traps + lats + erectors + intercostals);
+  // a single blob left the traps/lats/lower-back grey, so it's spread across the
+  // whole posterior chain — all the SAME back-recovery color (Daniel live).
+  { group: 'spate', cx: 0.49, cy: 0.205, r: 0.09 }, // traps / upper back
+  { group: 'spate', cx: 0.405, cy: 0.315, r: 0.085 }, // lat (left)
+  { group: 'spate', cx: 0.585, cy: 0.315, r: 0.085 }, // lat (right)
+  { group: 'spate', cx: 0.49, cy: 0.4, r: 0.08 }, // lower back / erectors
+  { group: 'spate', cx: 0.37, cy: 0.4, r: 0.05 }, // intercostals (left)
+  { group: 'spate', cx: 0.62, cy: 0.4, r: 0.05 }, // intercostals (right)
   { group: 'umeri', cx: 0.344, cy: 0.233, r: 0.075 },
   { group: 'umeri', cx: 0.645, cy: 0.236, r: 0.075 },
   { group: 'triceps', cx: 0.316, cy: 0.335, r: 0.06 },
@@ -239,8 +249,9 @@ const MALE_BACK_GLOWS: GlowRegion[] = [
 ];
 
 const FEMALE_FRONT_GLOWS: GlowRegion[] = [
-  { group: 'umeri', cx: 0.34, cy: 0.31, r: 0.075 },
-  { group: 'umeri', cx: 0.66, cy: 0.31, r: 0.075 },
+  // Shoulders: enlarged + seated on the deltoid (see MALE_FRONT note).
+  { group: 'umeri', cx: 0.34, cy: 0.305, r: 0.095 },
+  { group: 'umeri', cx: 0.66, cy: 0.305, r: 0.095 },
   { group: 'piept', cx: 0.44, cy: 0.258, r: 0.095 },
   { group: 'piept', cx: 0.554, cy: 0.256, r: 0.095 },
   { group: 'biceps', cx: 0.347, cy: 0.308, r: 0.06 },
@@ -257,7 +268,13 @@ const FEMALE_FRONT_GLOWS: GlowRegion[] = [
 ];
 
 const FEMALE_BACK_GLOWS: GlowRegion[] = [
-  { group: 'spate', cx: 0.487, cy: 0.3, r: 0.13 },
+  // BACK spread across the whole posterior chain (see MALE_BACK note) — narrower.
+  { group: 'spate', cx: 0.487, cy: 0.23, r: 0.085 }, // traps / upper back
+  { group: 'spate', cx: 0.415, cy: 0.33, r: 0.08 }, // lat (left)
+  { group: 'spate', cx: 0.578, cy: 0.33, r: 0.08 }, // lat (right)
+  { group: 'spate', cx: 0.487, cy: 0.42, r: 0.075 }, // lower back / erectors
+  { group: 'spate', cx: 0.39, cy: 0.42, r: 0.045 }, // intercostals (left)
+  { group: 'spate', cx: 0.605, cy: 0.42, r: 0.045 }, // intercostals (right)
   { group: 'umeri', cx: 0.367, cy: 0.238, r: 0.075 },
   { group: 'umeri', cx: 0.63, cy: 0.239, r: 0.075 },
   { group: 'triceps', cx: 0.333, cy: 0.311, r: 0.06 },
