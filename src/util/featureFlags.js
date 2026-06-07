@@ -306,6 +306,22 @@ export const FLAGS = Object.freeze({
   // (needs mu). The last + riskiest sub-build — must ride green #1+#2 sims first.
   dp_intensity_corridor_v1: { rollout: 0, default: false },
 
+  // ── F4 Adaptive layer (engine-wiring 2026-06-07) — guard/learning layers on
+  // top of the F3 substrate. Each defaults OFF (rollout 0) → flag-off the live
+  // per-exercise prescription is BYTE-IDENTICAL (the calibration-sim hash + golden
+  // gate hold). Flip ON is a human gate (Daniel) AFTER reviewing the sim A/B. See
+  // _ENGINE_WIRING_2026-06-07/F4_adaptive_layer_spec.md.
+
+  // #6/B ego-jump cap (RISK LOW — only ever LOWERS a too-aggressive prescription
+  // toward the proven working load, bounded below by the PR-floor so it cannot
+  // crater). When ON, a USER-DRIVEN ego jump (logged load > rec × EGO_JUMP_RATIO)
+  // that was THEN rated greu / missed reps caps the NEXT prescription at
+  // rec × EGO_JUMP_RATIO and down-weights that set's calibration (so the inflated
+  // kg doesn't bake into the factor). OFF → no cap (the existing SCALE-BACK /
+  // EASE-BACK reactive brakes only). Independent of the F3 flags (works on raw kg;
+  // sharper on the e1RM jump when dp_e1rm_v1 ON).
+  dp_ego_cap_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

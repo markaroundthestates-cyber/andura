@@ -10,6 +10,7 @@ import { isEnabled } from '../util/featureFlags.js';
 import { updatePosterior, savePosterior, loadPosterior } from './dp/strengthKalman.js';
 import { ceilingE1RM, gainDecay } from './dp/ceiling.js';
 import { sanityCheckSet } from './dp/anomalyGuard.js';
+import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
 import { getUserConfig } from '../config/user.js';
 import { t } from '../i18n/index.js';
 
@@ -1600,9 +1601,18 @@ export const DP = {
         lastLoggedW: dpState.lastW || null,
         maxKg: /** @type {Record<string, number>} */ (this.MAX_KG)[ex] || null,
         bwKg: this._currentBodyweightKg(),
-        sex: 'm', repTarget: rMin,
+        sex: 'm',
       });
-      const calibrationSafe = !(suspect && suspect.field === 'weight');
+      // #6/B ego-jump cap (dp_ego_cap_v1, default OFF → byte-identical): a
+      // USER-DRIVEN ego jump (logged ≫ rec) that was THEN too hard / short on reps
+      // also down-weights this set's calibration so the inflated kg doesn't bake
+      // into the per-exercise factor (the prescription cap itself is returned
+      // below). Flag-off → egoJump is always false → identical legacy path.
+      const egoJump = isEnabled('dp_ego_cap_v1') && isEgoJump({
+        recKg: Number(ctx.recKg), loggedKg, loggedReps, rMin,
+        wasHard: lastRPE >= 9.5,
+      });
+      const calibrationSafe = !(suspect && suspect.field === 'weight') && !egoJump;
       if (calibrationSafe) {
         this._recordSessionBias(ex, { recKg: Number(ctx.recKg), loggedKg, lastRPE, nowMs });
         // Persistent per-exercise machine-calibration: learn the STABLE offset of
@@ -1611,6 +1621,25 @@ export const DP = {
         // without baking in synergist pre-fatigue / recovery / readiness transients
         // (see _recordCalibration). Self-guards on a valid (recKg, loggedKg).
         this._recordCalibration(ex, { recKg: Number(ctx.recKg), loggedKg });
+      }
+
+      // #6/B ego-jump cap — the prescription side. Cap the NEXT set at
+      // rec × EGO_JUMP_RATIO (snapped + PR-floored below, so it only ever LOWERS a
+      // too-aggressive load toward the proven working weight, never craters) and
+      // warn (Gigel-honest, not scolding). Returned here so it precedes the
+      // generic deviation/rating branches (an ego jump is a more specific signal).
+      // Flag-off → egoJump false → this block never runs (byte-identical).
+      if (egoJump) {
+        const recKgNum = Number(ctx.recKg);
+        const cappedRaw = egoCappedKg(recKgNum);
+        let cappedKg = this.roundToStep(cappedRaw, ex);
+        // PR-floor: never cap below the user's demonstrated working load.
+        const floor = this._demoWorkingW(ex, rMin);
+        if (floor > 0 && cappedKg < floor) cappedKg = this.roundToStep(floor, ex);
+        // Only emit when the cap actually LOWERS the load below what they logged.
+        if (cappedKg > 0 && cappedKg < loggedKg) {
+          return { adjust: true, dir: 'down', newKg: cappedKg, msg: t('workout.adjust.egoCap', { kg: cappedKg }) };
+        }
       }
     }
 

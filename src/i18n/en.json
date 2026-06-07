@@ -316,6 +316,7 @@
       "overPerformReps": "You beat the target - moving up to {reps} reps on the next set",
       "underWeight": "That was too heavy - dropping to {kg} kg on the next set",
       "underReps": "That was too heavy - dropping to {reps} reps on the next set",
+      "egoCap": "You jumped up a lot and it got heavy - staying at {kg} kg to build it right",
       "baselineNote": "First session - building your baseline. Recommendations start adapting from your next session."
     },
     "sessionTitle": {

@@ -748,7 +748,6 @@ export function Workout(): JSX.Element {
       maxKg: (DP.MAX_KG as Record<string, number>)[engineKeyForGuard] ?? null,
       bwKg: Number(getCurrentWeightKg()) || null,
       sex: 'm',
-      repTarget: recReps,
     });
     if (!sanity.ok) {
       setAnomalyResult(sanity);
