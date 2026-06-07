@@ -78,18 +78,32 @@ describe('buildSessionSignalTrace — computed vs applied vs dropped', () => {
     expect(d.dropped).toEqual(['volume_modifier']);
   });
 
-  it('dark engines: energyAdjustment/bayesianNutrition/tempo fully dropped in workout pipeline', () => {
+  it('dark engines: energyAdjustment/bayesianNutrition fully dropped in workout pipeline', () => {
     const results = [
       ok('energyAdjustment', { intensity_modifier: 'plus' }),
       ok('bayesianNutrition', { kcal_target: 2400 }),
-      ok('tempo', { tempo_prescription: '3-1-1' }),
     ];
     const t = buildSessionSignalTrace(results, APPLIED_MAP, null, FIXED_NOW);
-    for (const id of ['energyAdjustment', 'bayesianNutrition', 'tempo']) {
+    for (const id of ['energyAdjustment', 'bayesianNutrition']) {
       const e = t.engines.find((x) => x.engineId === id);
       expect(e.applied).toEqual([]);
       expect(e.dropped.length).toBeGreaterThan(0);
     }
+  });
+
+  it('tempo: tempo_prescription + form_cue applied (uniform session cue, F2 #3)', () => {
+    const results = [
+      ok('tempo', {
+        tempo_prescription: { notation: '2-1-2-0', preSetIntro: 'Tempo 2-1-2-0, controleaza coborarea' },
+        form_cue: { cueText: 'controleaza coborarea' },
+        mind_muscle_active: true,
+      }),
+    ];
+    const t = buildSessionSignalTrace(results, APPLIED_MAP, null, FIXED_NOW);
+    const e = t.engines.find((x) => x.engineId === 'tempo');
+    expect(e.applied).toContain('tempo_prescription');
+    expect(e.applied).toContain('form_cue');
+    expect(e.dropped).toContain('mind_muscle_active');
   });
 
   it('records errorCode + ran=false for a failed adapter', () => {
@@ -127,6 +141,7 @@ describe('buildSessionSignalTrace — computed vs applied vs dropped', () => {
       specialization: ['target_muscle_group'],
       goalAdaptation: ['rest_time_modifier', 'rep_range_modifier', 'rir_target_modifier'],
       deload: ['intensity_modifier', 'deload_state'],
+      tempo: ['tempo_prescription', 'form_cue'],
     };
     for (const [id, fields] of Object.entries(KNOWN_FIELDS)) {
       const map = APPLIED_MAP[id];
@@ -137,8 +152,8 @@ describe('buildSessionSignalTrace — computed vs applied vs dropped', () => {
     }
     // warmup consumes the whole blueprint → '*' sentinel
     expect(APPLIED_MAP.warmup).toBe('*');
-    // dark engines must declare an empty applied set
-    for (const id of ['energyAdjustment', 'bayesianNutrition', 'tempo']) {
+    // remaining dark engines must declare an empty applied set
+    for (const id of ['energyAdjustment', 'bayesianNutrition']) {
       expect(APPLIED_MAP[id]).toBeInstanceOf(Set);
       expect([...APPLIED_MAP[id]]).toEqual([]);
     }

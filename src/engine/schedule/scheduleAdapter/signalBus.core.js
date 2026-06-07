@@ -24,7 +24,8 @@
  *                     kcal_target_delta_pct/macro_split stay DROPPED here — they
  *                     drive the separate nutrition aggregate, NOT the workout.
  *   deload          → intensity_modifier, deload_state
- *   energyAdjustment/bayesianNutrition/tempo → none read in the workout pipeline
+ *   energyAdjustment/bayesianNutrition → none read in the workout pipeline
+ *   tempo → tempo_prescription + form_cue (uniform session-level cue, F2 #3)
  */
 export const APPLIED_MAP = {
   periodization: new Set(['volume_target_pct']),
@@ -34,7 +35,10 @@ export const APPLIED_MAP = {
   deload: new Set(['intensity_modifier', 'deload_state']),
   energyAdjustment: new Set(),
   bayesianNutrition: new Set(),
-  tempo: new Set(),
+  // F2 #3 — tempo_prescription (preSetIntro → session cue) + form_cue surfaced
+  // as a UNIFORM session-level narration (per-exercise movementId is a Faza-3
+  // input dep — not faked). Display only; no weight/sets/reps.
+  tempo: new Set(['tempo_prescription', 'form_cue']),
 };
 
 /**

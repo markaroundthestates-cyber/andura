@@ -132,6 +132,12 @@ export interface PlannedWorkoutOutput {
   // entire output; never reaches this field). Consumer WorkoutPreview renders
   // warmup row only when non-null per mockup andura-clasic.html#L935 FIX 1.
   warmup?: { line: string; durationMin: number } | null;
+  // F2 #3 — Tempo session-level form/tempo cue (Tempo engine preSetIntro +
+  // notation). UNIFORM across the session: per-exercise movementId is a Faza-3
+  // input dep (meta.movementId unset → one generic cue), so it is a session-level
+  // narration string, NOT a per-exercise faked-movement cue. Touches NO
+  // weight/sets/reps. Null when the blueprint is absent (cold start / rest day).
+  tempoCue?: { line: string; notation: string | null } | null;
   // Coach Voice — the adaptive brain's structured adaptations for TODAY (tokens,
   // not copy). The CoachTodayCard composer (coachInsight) turns it into one
   // plain-language coach line. Empty array / absent → no line (graceful).

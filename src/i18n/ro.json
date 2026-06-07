@@ -482,6 +482,7 @@
       },
       "errorBanner": "Nu am putut incarca sesiunea de azi. Iti aratam o sesiune demo.",
       "warmupAriaLabel": "Incalzire azi",
+      "tempoAriaLabel": "Indiciu de tempo azi",
       "warmupLine": "Incalzire ~{min} min",
       "exercisesHeading": "Exercitii",
       "swappedPrefix": "Inlocuit · {reason}",

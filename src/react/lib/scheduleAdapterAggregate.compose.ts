@@ -639,6 +639,17 @@ export async function composePlannedWorkoutToday(
     const warmup = warmupRaw !== null && warmupLine.length > 0
       ? { line: warmupLine, durationMin: warmupDuration }
       : null;
+    // F2 #3 — Tempo session-level cue. The Tempo engine's preSetIntro (notation +
+    // form cue, persona-aware) was computed but dropped. Surfaced as a UNIFORM
+    // session narration (per-exercise movementId is a Faza-3 input dep — the
+    // engine emits one generic cue, so a per-exercise cue would be faked). Display
+    // only — touches NO weight/sets/reps. Null when the line is empty/absent.
+    const tempoRaw = plan.tempoCue as { line?: string | null; notation?: string | null } | null;
+    const tempoLine = typeof tempoRaw?.line === 'string' ? tempoRaw.line : '';
+    const tempoCue =
+      tempoRaw !== null && tempoLine.length > 0
+        ? { line: tempoLine, notation: typeof tempoRaw?.notation === 'string' ? tempoRaw.notation : null }
+        : null;
     const planExercises = plan.exercises ?? [];
     const mapped = planExercises.map((ex, idx) =>
       // priorExercises = the exercises positioned BEFORE this one in today's plan,
@@ -737,6 +748,9 @@ export async function composePlannedWorkoutToday(
       exercises,
       volumeKg: volumeKg ?? plan.volumeKg ?? 0,
       warmup,
+      // F2 #3 — session-level tempo/form cue (uniform; display only). Null → the
+      // render boundary omits the cue row (graceful, byte-identical to pre-feature).
+      tempoCue,
       // Coach Voice — pass the engine's structured adaptations log through to the
       // CoachTodayCard composer (coachInsight). Tokens only; never copy. Defaults
       // to [] when a (pre-this-feature) plan shape omits it.

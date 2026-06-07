@@ -320,6 +320,25 @@ export function WorkoutPreview(): JSX.Element {
           </span>
         </div>
       )}
+      {/* F2 #3 — Tempo session cue. The Tempo engine emits a persona-aware
+          preSetIntro (tempo notation + form cue). UNIFORM session-level (per-
+          exercise movementId is a Faza-3 input dep), so it shows once for the
+          whole session, NOT per lift. Display only — no weight/sets/reps. Renders
+          ONLY cand the engine emits a non-empty cue (workout.tempoCue != null).
+          Idiom mirror warmup row above. The line is engine-native RO copy. */}
+      {workout?.tempoCue && (
+        <div
+          className="pulse-card flex items-center gap-2.5 p-3 mb-4 animate-card-rise delay-100"
+          data-testid="preview-tempo-row"
+          role="region"
+          aria-label={t('workout.preview.tempoAriaLabel')}
+        >
+          <Clock className="w-4 h-4 text-brick flex-shrink-0" aria-hidden="true" />
+          <span className="coach-quote font-serif italic text-ink2 text-sm flex-1 leading-relaxed">
+            {workout.tempoCue.line}
+          </span>
+        </div>
+      )}
       {/* F-workout-preview/T4 — Exercise list 5 numbered. Mockup parity
           andura-clasic.html#L941-985. Renders engine exercises cand
           available; falls back hardcoded mockup demo cand engine emits

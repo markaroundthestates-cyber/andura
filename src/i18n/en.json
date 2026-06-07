@@ -482,6 +482,7 @@
       },
       "errorBanner": "Couldn't load today's session. Showing you a demo session.",
       "warmupAriaLabel": "Warm-up today",
+      "tempoAriaLabel": "Tempo cue today",
       "warmupLine": "Warm-up ~{min} min",
       "exercisesHeading": "Exercises",
       "swappedPrefix": "Swapped · {reason}",

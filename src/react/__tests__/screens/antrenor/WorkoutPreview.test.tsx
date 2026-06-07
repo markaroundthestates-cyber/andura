@@ -413,6 +413,42 @@ describe('WorkoutPreview — warmup row (T3)', () => {
   });
 });
 
+describe('WorkoutPreview — tempo cue row (F2 #3)', () => {
+  beforeEach(() => {
+    mockedGetTodayWorkout.mockResolvedValue(null);
+  });
+
+  it('tempo row NOT rendered cand workout.tempoCue absent (default fixture)', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout());
+    renderPreview();
+    await waitFor(() => {
+      expect(screen.getByTestId('preview-hero')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('preview-tempo-row')).not.toBeInTheDocument();
+  });
+
+  it('tempo row NOT rendered cand workout.tempoCue is null', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout({ tempoCue: null }));
+    renderPreview();
+    await waitFor(() => {
+      expect(screen.getByTestId('preview-hero')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('preview-tempo-row')).not.toBeInTheDocument();
+  });
+
+  it('tempo row renders the engine cue line cand workout.tempoCue non-null', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout({
+      tempoCue: { line: 'Tempo 2-1-2-0, controleaza coborarea', notation: '2-1-2-0' },
+    }));
+    renderPreview();
+    await waitFor(() => {
+      const row = screen.getByTestId('preview-tempo-row');
+      expect(row).toBeInTheDocument();
+      expect(row.textContent).toMatch(/2-1-2-0/);
+    });
+  });
+});
+
 describe('WorkoutPreview — FALLBACK guard (loading + error + empty)', () => {
   // gsd-ui-auditor chat 5 Wave 8 — FALLBACK guard pentru edge cases:
   // (1) loading state expune aria-busy pana resolve; (2) promise rejection

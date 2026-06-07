@@ -468,6 +468,21 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // computed by the engine but dropped here → planner hardcoded restSec 90.
     // null when the blueprint is absent (empty user) → planner falls back to 90.
     restTimeRange: blueprints.goalAdaptation?.rest_time_modifier ?? null,
+    // F2 #3 — Tempo session-level cue (tempo/index.js:244-245). The Tempo engine
+    // emits a persona-aware preSetIntro (notation + form cue) + form_cue, computed
+    // but dropped. Surfaced as a UNIFORM session cue: per-exercise movementId is a
+    // Faza-3 structural input dep (meta.movementId is never set, so the engine
+    // emits one generic cue), so we apply it session-level — better than dropping,
+    // and we do NOT fake per-exercise movement. null when the blueprint is absent.
+    tempoCue: blueprints.tempo
+      ? {
+          line:
+            blueprints.tempo.tempo_prescription?.preSetIntro ??
+            blueprints.tempo.form_cue?.cueText ??
+            null,
+          notation: blueprints.tempo.tempo_prescription?.notation ?? null,
+        }
+      : null,
     // F2 #2 — Goal Adaptation rep + RIR modifiers (goalAdaptation/index.js:176-177).
     // rep_range_modifier [min,max] is the engine's intended per-(template,phase,
     // mode) rep band; rir_target_modifier [min,max] the intended RIR band. Both
