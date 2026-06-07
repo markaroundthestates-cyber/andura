@@ -45,8 +45,11 @@ import { SetLogInput } from '../../../components/Workout/SetLogInput';
 import { SetRatingButtons } from '../../../components/Workout/SetRatingButtons';
 import { ExitConfirmSheet } from '../../../components/Workout/ExitConfirmSheet';
 import { AaFrictionModal } from '../../../components/AaFrictionModal';
+import { AnomalyConfirmModal } from '../../../components/Workout/AnomalyConfirmModal';
 import { detectAggressiveLoad, deriveThresholds } from '../../../lib/aaFrictionDetect';
 import type { AggressiveReason } from '../../../lib/aaFrictionDetect';
+import { sanityCheckSet } from '../../../../engine/dp/anomalyGuard.js';
+import type { SanityResult } from '../../../../engine/dp/anomalyGuard.js';
 import { getEngineSignals } from '../../../lib/engineSignalsAggregate';
 import { InactivityPrompt } from '../../../components/Workout/InactivityPrompt';
 import { PrFlash } from '../../../components/Workout/PrFlash';
@@ -307,6 +310,14 @@ export function Workout(): JSX.Element {
   const [aaModalOpen, setAaModalOpen] = useState(false);
   const [aaReason, setAaReason] = useState<AggressiveReason | null>(null);
   const [aaPendingRating, setAaPendingRating] = useState<SetRating | null>(null);
+  // #5/A anomaly / fat-finger guard — confirm sheet state. When sanityCheckSet
+  // flags an implausible entered value (×10 typo / past the physical ceiling /
+  // reps>50), hold the rating + show a confirm. Quarantine, never reject.
+  const [anomalyResult, setAnomalyResult] = useState<SanityResult | null>(null);
+  const [anomalyPendingRating, setAnomalyPendingRating] = useState<SetRating | null>(null);
+  // Carries an anomaly "Da, corect" confirmation through the (possible) AA modal
+  // into performLogSet so calibration learns from a user-confirmed real outlier.
+  const aaConfirmedRef = useRef(false);
   // §F-pass2-setloginput-02 — SetLogInput parent state machine wire (deferred
   // tactical sibling per e02f0b94 "Parent state machine wire tactical sibling").
   // Mockup wv2 two-step within the logging phase (andura-clasic.html#L1463-1485):
@@ -492,7 +503,7 @@ export function Workout(): JSX.Element {
   );
   const liveVolumeDisplay = useCountUp(Math.round(liveVolumeKg));
 
-  function performLogSet(rating: SetRating): void {
+  function performLogSet(rating: SetRating, userConfirmed = false): void {
     // Bodyweight model: kgInput is the ADDED weight (belt/dumbbell, default 0).
     // The TRAINING load that PR/volume/progression must use is the EFFECTIVE
     // load = bodyweight x fraction + added. We persist `kg` = effective so every
@@ -636,6 +647,10 @@ export function Workout(): JSX.Element {
         recReps,
         loggedKg: effKg, // the load the user ACTUALLY logged this set
         setIdx: currentSetIdx + 1,
+        // #5/A — when the user explicitly confirmed a flagged outlier, let the
+        // engine learn from it; otherwise the engine self-skips calibration on a
+        // suspect value (belt-and-suspenders to the UI confirm gate).
+        userConfirmed,
       }) as {
         adjust: boolean;
         dir?: 'down' | 'up';
@@ -717,6 +732,38 @@ export function Workout(): JSX.Element {
 
   function handleLogSet(rating: SetRating): void {
     bumpActivity();
+    // #5/A anomaly / fat-finger guard (runs FIRST — an implausible TYPO is more
+    // fundamental than an aggressive-but-real load). Bodyweight sets carry no
+    // external load to bound on the weight axis (reps still checked). Reference
+    // the user's prior logged load for this lift (the ×10-jump anchor) + the
+    // exercise cap + bodyweight (the physical ceiling). On a flag, hold the rating
+    // and ask "sigur?" — quarantine, never reject.
+    const engineKeyForGuard = currentExercise.engineName ?? currentExercise.name;
+    const priorLogs = DP.getLogs(engineKeyForGuard, 1) as Array<{ w?: number }>;
+    const sanity = sanityCheckSet({
+      ex: engineKeyForGuard,
+      w: currentExercise.isBodyweight ? 0 : kgInput,
+      reps: repsInput,
+      lastLoggedW: priorLogs[0]?.w ?? null,
+      maxKg: (DP.MAX_KG as Record<string, number>)[engineKeyForGuard] ?? null,
+      bwKg: Number(getCurrentWeightKg()) || null,
+      sex: 'm',
+      repTarget: recReps,
+    });
+    if (!sanity.ok) {
+      setAnomalyResult(sanity);
+      setAnomalyPendingRating(rating);
+      return;
+    }
+    proceedAfterAnomaly(rating);
+  }
+
+  // The AA-friction check + log, after the anomaly guard has cleared (or was not
+  // triggered). Split out so the anomaly confirm can re-enter the same path.
+  function proceedAfterAnomaly(rating: SetRating, userConfirmed = false): void {
+    // Carry the anomaly-confirm decision through the AA modal (if it fires) into
+    // the final performLogSet so calibration learns from a CONFIRMED outlier.
+    aaConfirmedRef.current = userConfirmed;
     // Phase 4 task_14: LOCK 9 aaFrictionDetect pre-check. Compose set sample
     // history din current exercise + new set candidate. Cand trigger →
     // suspend state machine (NU logSet/rest/transition), show modal.
@@ -756,13 +803,13 @@ export function Workout(): JSX.Element {
       setAaModalOpen(true);
       return;
     }
-    performLogSet(rating);
+    performLogSet(rating, userConfirmed);
   }
 
   function handleAaForceContinue(): void {
     setAaModalOpen(false);
     if (aaPendingRating !== null) {
-      performLogSet(aaPendingRating);
+      performLogSet(aaPendingRating, aaConfirmedRef.current);
       setAaPendingRating(null);
       setAaReason(null);
     }
@@ -771,7 +818,7 @@ export function Workout(): JSX.Element {
   function handleAaAcknowledge(): void {
     setAaModalOpen(false);
     if (aaPendingRating !== null) {
-      performLogSet(aaPendingRating);
+      performLogSet(aaPendingRating, aaConfirmedRef.current);
       setAaPendingRating(null);
       setAaReason(null);
       // Phase 4 task_14 §C: "Pauza +30s" = ai mers mai greu decat de obicei →
@@ -783,6 +830,36 @@ export function Workout(): JSX.Element {
       setRestCountdown(extendedRest);
       setRestInitialSec(extendedRest);
     }
+  }
+
+  // #5/A — "Da, corect": the user confirms the flagged value is real. Log as-is,
+  // marking userConfirmed so calibration accepts it (anti-paternalism: never drop
+  // a confirmed entry). The AA-friction check still runs after.
+  function handleAnomalyConfirm(): void {
+    setAnomalyResult(null);
+    if (anomalyPendingRating !== null) {
+      const r = anomalyPendingRating;
+      setAnomalyPendingRating(null);
+      proceedAfterAnomaly(r, true);
+    }
+  }
+
+  // #5/A — "Am gresit → X": the user mistyped. Apply the suggested correction to
+  // the editable field and DISMISS — the corrected value is now visible in the
+  // input, and the user re-taps the rating to log it (avoids logging a stale
+  // pre-correction value through React's async state batching). When no
+  // suggestion exists, just dismiss so the user re-enters manually.
+  function handleAnomalyFix(suggested: number | null): void {
+    const result = anomalyResult;
+    setAnomalyResult(null);
+    setAnomalyPendingRating(null);
+    if (suggested == null || result == null) return;
+    if (result.field === 'reps') {
+      setRepsInput(suggested);
+    } else {
+      setKgInput(suggested);
+    }
+    setInputDirty(true);
   }
 
   function handleSkipRest(): void {
@@ -1388,6 +1465,16 @@ export function Workout(): JSX.Element {
         reason={aaReason}
         onAcknowledge={handleAaAcknowledge}
         onForceContinue={handleAaForceContinue}
+      />
+
+      {/* #5/A anomaly / fat-finger confirm — quarantines an implausible entry
+          (×10 typo / past ceiling / reps>50) with a "sigur?" sheet. */}
+      <AnomalyConfirmModal
+        open={anomalyResult !== null}
+        result={anomalyResult}
+        value={anomalyResult?.field === 'reps' ? repsInput : kgInput}
+        onConfirm={handleAnomalyConfirm}
+        onFix={handleAnomalyFix}
       />
 
       {/* Pulse arc 2026-05-29 (blueprint C3-c) — mid-session PR celebration,

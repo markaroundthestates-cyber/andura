@@ -9,6 +9,7 @@ import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
 import { updatePosterior, savePosterior, loadPosterior } from './dp/strengthKalman.js';
 import { ceilingE1RM, gainDecay } from './dp/ceiling.js';
+import { sanityCheckSet } from './dp/anomalyGuard.js';
 import { getUserConfig } from '../config/user.js';
 import { t } from '../i18n/index.js';
 
@@ -1540,11 +1541,13 @@ export const DP = {
    * @param {string} ex
    * @param {number[]} recentRPEs RPE per logged set (last = most recent).
    * @param {number[]} recentReps reps per logged set (last = most recent).
-   * @param {{ recKg?: number, recReps?: number, loggedKg?: number, setIdx?: number, nowMs?: number } | number} [opts]
+   * @param {{ recKg?: number, recReps?: number, loggedKg?: number, setIdx?: number, nowMs?: number, userConfirmed?: boolean } | number} [opts]
    *   Optional context: recKg/recReps = what was RECOMMENDED for the set just
    *   logged; loggedKg = the load the user ACTUALLY logged for that set (defaults
    *   to the DP history lastW when omitted); setIdx = 0-based position of the NEXT
-   *   set (fatigue). A bare number is accepted as legacy `nowMs` for back-compat.
+   *   set (fatigue); userConfirmed = the user explicitly confirmed a flagged
+   *   fat-finger value (#5/A) so calibration may learn from it. A bare number is
+   *   accepted as legacy `nowMs` for back-compat.
    */
   checkInSessionAdjust(ex, recentRPEs, recentReps, opts) {
     const ctx = (typeof opts === 'number' || opts == null) ? { nowMs: opts } : opts;
@@ -1586,13 +1589,29 @@ export const DP = {
     // _recordSessionBias self-guards on a valid recKg, so this is a no-op when
     // the caller did not pass a recommendation.
     if (Number.isFinite(loggedKg) && loggedKg > 0) {
-      this._recordSessionBias(ex, { recKg: Number(ctx.recKg), loggedKg, lastRPE, nowMs });
-      // Persistent per-exercise machine-calibration: learn the STABLE offset of
-      // THIS exercise on the user's real machine. recKg is the already-adjusted
-      // recommendation, so the slow EMA captures the durable per-machine reality
-      // without baking in synergist pre-fatigue / recovery / readiness transients
-      // (see _recordCalibration). Self-guards on a valid (recKg, loggedKg).
-      this._recordCalibration(ex, { recKg: Number(ctx.recKg), loggedKg });
+      // #5/A anomaly guard (belt-and-suspenders): if the logged load is an
+      // implausible fat-finger (×10 typo / past the physical ceiling) AND the user
+      // did NOT explicitly confirm it (ctx.userConfirmed !== true), skip the
+      // calibration + session-bias learning so a single outlier can never poison
+      // the per-exercise factor / the session bucket — even if it lands in `logs`.
+      // A CONFIRMED-real outlier (userConfirmed===true) flows through normally.
+      const suspect = ctx.userConfirmed === true ? null : sanityCheckSet({
+        ex, w: loggedKg, reps: loggedReps,
+        lastLoggedW: dpState.lastW || null,
+        maxKg: /** @type {Record<string, number>} */ (this.MAX_KG)[ex] || null,
+        bwKg: this._currentBodyweightKg(),
+        sex: 'm', repTarget: rMin,
+      });
+      const calibrationSafe = !(suspect && suspect.field === 'weight');
+      if (calibrationSafe) {
+        this._recordSessionBias(ex, { recKg: Number(ctx.recKg), loggedKg, lastRPE, nowMs });
+        // Persistent per-exercise machine-calibration: learn the STABLE offset of
+        // THIS exercise on the user's real machine. recKg is the already-adjusted
+        // recommendation, so the slow EMA captures the durable per-machine reality
+        // without baking in synergist pre-fatigue / recovery / readiness transients
+        // (see _recordCalibration). Self-guards on a valid (recKg, loggedKg).
+        this._recordCalibration(ex, { recKg: Number(ctx.recKg), loggedKg });
+      }
     }
 
     // STRENGTH phase autoregulates WEIGHT; everything else (BULK/CUT/AUTO masa-

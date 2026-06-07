@@ -1278,6 +1278,14 @@
       "over_recommendation": "Mult peste greutatea recomandata"
     }
   },
+  "anomalyGuard": {
+    "title": "Sigur valoarea asta?",
+    "weight": "Ai trecut {value} kg. Pare mult fata de ce ai facut pana acum (~{plausible} kg). Sigur?",
+    "reps": "Ai trecut {value} repetari. Pare mult. Sigur?",
+    "confirmCta": "Da, corect",
+    "fixCta": "Am gresit → {suggested}",
+    "fixGenericCta": "Corectez"
+  },
   "inactivity": {
     "title": "Mai esti acolo?",
     "body": "Nu am vazut activitate de ceva timp. Vrei sa continui sau sa salvezi si sa iesi?",
