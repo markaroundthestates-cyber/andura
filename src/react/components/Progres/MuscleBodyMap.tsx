@@ -245,7 +245,9 @@ export function MuscleBodyMap(): JSX.Element | null {
                 const color = drawCold ? NEUTRAL_FILL : STATE_COLOR[state];
                 const stressed =
                   !drawCold && !reduceMotion && (state === 'fatigued' || state === 'partial');
-                const d = glow.r * 2 * 100; // diameter as % of box width
+                // Daniel 2026-06-07: muscle bubbles +21% bigger (he asked for
+                // 20-23% larger glows) so the body reads more clearly at a glance.
+                const d = glow.r * 2 * 100 * 1.21; // diameter as % of box width
                 return (
                   <span
                     key={`${glow.group}-${i}`}

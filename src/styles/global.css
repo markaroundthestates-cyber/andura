@@ -1542,14 +1542,17 @@ nav[data-nav-style]::before {
   pointer-events: none;
   /* Soft radial blob of the recovery color, fading to transparent at the edge.
      screen blend keeps the underlying muscle shading visible through the light. */
+  /* Daniel 2026-06-07: muscle-group colors a notch MORE predominant — richer
+     color stops + a tighter transparent falloff so the recovery hue reads
+     stronger over the body (was 85/45/78). */
   background: radial-gradient(
     closest-side,
-    color-mix(in oklab, var(--glow-color) 85%, transparent) 0%,
-    color-mix(in oklab, var(--glow-color) 45%, transparent) 45%,
-    transparent 78%
+    color-mix(in oklab, var(--glow-color) 95%, transparent) 0%,
+    color-mix(in oklab, var(--glow-color) 65%, transparent) 48%,
+    transparent 82%
   );
   mix-blend-mode: screen;
-  filter: blur(5px);
+  filter: blur(4px);
 }
 
 /* Fata / Spate view toggle — small segmented control above the figure.
