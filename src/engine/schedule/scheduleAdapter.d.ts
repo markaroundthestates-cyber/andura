@@ -48,6 +48,9 @@ export interface WorkoutPlan {
   // F2 #3 — Tempo session-level cue (uniform; per-exercise movementId is Faza-3).
   // Optional/additive; getDailyWorkout emits it (null on absent blueprint).
   tempoCue?: { line: string | null; notation: string | null } | null;
+  // F2 #4 — Energy Adjustment reconcile input (direction + tier-gated magnitude).
+  // Optional/additive; getDailyWorkout emits it (null on absent blueprint).
+  energyAdjustment?: { direction: string; magnitudePct: number } | null;
   specializationTarget: string | null;
   deloadState: string;
   // Coach Voice — structured adaptations log (machine tokens, no copy). Empty

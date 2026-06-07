@@ -46,4 +46,5 @@ export {
   clusterFatigueFactor,
   trimSessionToTimeBudget,
   scaleSetsByReadiness,
+  resolveIntensityFactors,
 } from './scheduleAdapterAggregate.compose';

@@ -533,6 +533,33 @@ export function trimSessionToTimeBudget(
 }
 
 /**
+ * F2 #4 — RECONCILE the in-session ±% weight scale FACTORS from the Energy
+ * Adjustment engine output, replacing the flat ×0.8 / ×1.15 constants Workout.tsx
+ * used. This is NOT a third multiplier and NOT a new trigger: the caller's
+ * intensityMod 3-state still GATES whether any scale happens — this only supplies
+ * the MAGNITUDE. When the engine emits a DOWN direction with a real magnitude the
+ * 'minus' factor becomes (1 − |pct|) (engine |pct| ≤ 0.15, so a SMALLER cut than
+ * the old flat 0.8); UP supplies the 'plus' factor (1 + |pct|, ≤ 1.15, never a
+ * bigger push). Absent / NONE direction → the legacy constant (byte-identical).
+ * Pure.
+ *
+ * @param energyAdjustment engine direction + tier-gated magnitude, or null
+ * @returns { minus, plus } the multipliers for the intensityMod 'minus'/'plus' scale
+ */
+export function resolveIntensityFactors(
+  energyAdjustment: { direction: 'UP' | 'DOWN' | 'NONE'; magnitudePct: number } | null,
+): { minus: number; plus: number } {
+  const mag =
+    energyAdjustment && Number.isFinite(energyAdjustment.magnitudePct)
+      ? Math.abs(energyAdjustment.magnitudePct)
+      : 0;
+  return {
+    minus: energyAdjustment?.direction === 'DOWN' && mag > 0 ? 1 - mag : 0.8,
+    plus: energyAdjustment?.direction === 'UP' && mag > 0 ? 1 + mag : 1.15,
+  };
+}
+
+/**
  * F2 #1 — apply the readiness verdict's GRADED volumeMultiplier to the session
  * set counts. readiness.js getReadinessVerdict() emits a per-band multiplier
  * (PR_DAY 1.1 / NORMAL·SOLID 1.0 / MODERATE 0.85 / LIGHT 0.7 / REST 0) that was
@@ -650,6 +677,19 @@ export async function composePlannedWorkoutToday(
       tempoRaw !== null && tempoLine.length > 0
         ? { line: tempoLine, notation: typeof tempoRaw?.notation === 'string' ? tempoRaw.notation : null }
         : null;
+    // F2 #4 — Energy Adjustment reconcile passthrough (direction + tier-gated
+    // magnitude). Surfaced unchanged so Workout.tsx can use the engine magnitude
+    // in place of the flat ±% constants (NOT a new multiplier). Guard the shape;
+    // only a UP/DOWN direction with a finite magnitude in the engine band is kept,
+    // else null → Workout.tsx falls back to the legacy constant (byte-identical).
+    const energyRaw = plan.energyAdjustment as { direction?: string; magnitudePct?: number } | null;
+    const energyDir =
+      energyRaw?.direction === 'UP' || energyRaw?.direction === 'DOWN' ? energyRaw.direction : 'NONE';
+    const energyMag = Number(energyRaw?.magnitudePct);
+    const energyAdjustment =
+      energyDir !== 'NONE' && Number.isFinite(energyMag) && energyMag !== 0
+        ? { direction: energyDir as 'UP' | 'DOWN', magnitudePct: energyMag }
+        : null;
     const planExercises = plan.exercises ?? [];
     const mapped = planExercises.map((ex, idx) =>
       // priorExercises = the exercises positioned BEFORE this one in today's plan,
@@ -751,6 +791,9 @@ export async function composePlannedWorkoutToday(
       // F2 #3 — session-level tempo/form cue (uniform; display only). Null → the
       // render boundary omits the cue row (graceful, byte-identical to pre-feature).
       tempoCue,
+      // F2 #4 — Energy Adjustment reconcile input (direction + magnitude). Null →
+      // Workout.tsx keeps the legacy flat ±% constant (byte-identical).
+      energyAdjustment,
       // Coach Voice — pass the engine's structured adaptations log through to the
       // CoachTodayCard composer (coachInsight). Tokens only; never copy. Defaults
       // to [] when a (pre-this-feature) plan shape omits it.

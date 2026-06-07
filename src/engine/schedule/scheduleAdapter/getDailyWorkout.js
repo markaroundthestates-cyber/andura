@@ -460,6 +460,20 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     warmup: blueprints.warmup || null,
     exercises: session && Array.isArray(session.exercises) ? session.exercises : [],
     intensityModifier: blueprints.deload?.intensity_modifier ?? null,
+    // F2 #4 — Energy Adjustment direction + magnitude (energyAdjustment/index.js:
+    // 204-205). RECONCILE only: the in-session ±% scale in Workout.tsx used FLAT
+    // hardcoded literals (×0.8 / ×1.15); this surfaces the engine's tier-gated
+    // asymmetric magnitude (UP/DOWN, |pct| ≤ 0.15) so the SAME single scale uses
+    // the real engine number instead of a constant — NOT a third multiplier.
+    // direction UP/DOWN/NONE; magnitudePct signed float in [-0.15,+0.15]. null
+    // when the blueprint is absent (empty user) → Workout.tsx keeps the legacy
+    // constant fallback (byte-identical).
+    energyAdjustment: blueprints.energyAdjustment
+      ? {
+          direction: blueprints.energyAdjustment.adjustment_direction ?? 'NONE',
+          magnitudePct: Number(blueprints.energyAdjustment.adjustment_magnitude_pct) || 0,
+        }
+      : null,
     // Recovery-redistributed budget actually consumed by buildSession this
     // session — the reported field matches what drove the plan (M1).
     volumeTargets,

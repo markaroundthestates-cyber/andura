@@ -24,7 +24,9 @@
  *                     kcal_target_delta_pct/macro_split stay DROPPED here — they
  *                     drive the separate nutrition aggregate, NOT the workout.
  *   deload          → intensity_modifier, deload_state
- *   energyAdjustment/bayesianNutrition → none read in the workout pipeline
+ *   energyAdjustment → adjustment_direction + adjustment_magnitude_pct (F2 #4
+ *                      reconcile: drives the in-session ±% scale magnitude)
+ *   bayesianNutrition → none read in the workout pipeline
  *   tempo → tempo_prescription + form_cue (uniform session-level cue, F2 #3)
  */
 export const APPLIED_MAP = {
@@ -33,7 +35,11 @@ export const APPLIED_MAP = {
   warmup: '*',
   goalAdaptation: new Set(['rest_time_modifier', 'rep_range_modifier', 'rir_target_modifier']),
   deload: new Set(['intensity_modifier', 'deload_state']),
-  energyAdjustment: new Set(),
+  // F2 #4 — RECONCILE: adjustment_direction + adjustment_magnitude_pct now drive
+  // the in-session ±% scale magnitude in Workout.tsx (replacing the flat ×0.8/
+  // ×1.15 constants — same single scale, not a third channel). energy_state +
+  // volume_intensity_scope + forward_constraint_object stay dropped here.
+  energyAdjustment: new Set(['adjustment_direction', 'adjustment_magnitude_pct']),
   bayesianNutrition: new Set(),
   // F2 #3 — tempo_prescription (preSetIntro → session cue) + form_cue surfaced
   // as a UNIFORM session-level narration (per-exercise movementId is a Faza-3

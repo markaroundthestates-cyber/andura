@@ -62,7 +62,7 @@ import { useCountUp } from '../../../hooks/useCountUp';
 import { DP } from '../../../../engine/dp.js';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { roundToEquipmentWeight } from '../../../../config/weights.js';
-import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../../lib/scheduleAdapterAggregate';
+import { ENGINE_WORKOUT_TITLE_FALLBACK, resolveIntensityFactors } from '../../../lib/scheduleAdapterAggregate';
 import { clearTodayReadiness } from '../../../../engine/readiness.js';
 import { t } from '../../../../i18n/index.js';
 import { useWakeLock } from './workout/useWakeLock';
@@ -133,6 +133,13 @@ export function Workout(): JSX.Element {
   // longer multiplies weight separately (it now feeds the engine VIA readiness,
   // C2). 'normal' default until the async plan resolves.
   const [engineIntensityMod, setEngineIntensityMod] = useState<PlannedWorkoutOutput['intensityMod']>('normal');
+  // F2 #4 — Energy Adjustment direction + tier-gated magnitude (|pct| ≤ 0.15).
+  // RECONCILE only: it supplies the MAGNITUDE for the existing in-session ±%
+  // scale below, replacing the flat ×0.8/×1.15 constants — it does NOT add a
+  // new multiplier or a new trigger. null until the async plan resolves / when
+  // the engine emits no adjustment → the scale keeps its legacy constant.
+  const [energyAdjustment, setEnergyAdjustment] =
+    useState<PlannedWorkoutOutput['energyAdjustment']>(null);
   useEffect(() => {
     let cancelled = false;
     getTodayWorkout().then((planned) => {
@@ -149,6 +156,7 @@ export function Workout(): JSX.Element {
             : resolveSessionTitle(planned?.sessionType),
         );
         setEngineIntensityMod(planned?.intensityMod ?? 'normal');
+        setEnergyAdjustment(planned?.energyAdjustment ?? null);
       }
     });
     return () => { cancelled = true; };
@@ -193,8 +201,15 @@ export function Workout(): JSX.Element {
   // on an INCREASE day when readiness < 60. So targetKg arrives readiness-gated;
   // this block layers only the deload baseline on top (no double-count — the two
   // signals are different: per-exercise progression gate vs whole-session deload).
-  // Magnitudes (-20% / +15%) unchanged (separate Daniel UX call). Round 0.5
-  // (incremente reale sala). 'normal' / no deload → target neschimbat.
+  // F2 #4 RECONCILE — the deload-magnitude is no longer a flat hardcoded
+  // constant: when the Energy Adjustment engine emits a tier-gated asymmetric
+  // magnitude (|pct| ≤ 0.15) it REPLACES the legacy ×0.8 / ×1.15 literals on the
+  // SAME single scale (NOT a third multiplier, NOT a new trigger — the
+  // intensityMod 3-state below still GATES whether any scale happens). DOWN
+  // supplies the 'minus' factor, UP the 'plus' factor; absent / NONE → the legacy
+  // constant fallback (byte-identical). Engine magnitude ≤ 15% < the old flat
+  // 20% down, so the net swing is SMALLER, never additive. Round 0.5 (incremente
+  // reale sala). 'normal' / no deload → target neschimbat.
   //
   // Daniel smoke 2026-05-28 #18 — mid-session pain override: when PainButton
   // posted a sessionContext with intensityMod='minus' + painContext, the
@@ -219,13 +234,17 @@ export function Workout(): JSX.Element {
   // and bodyweight branches pass the engine target straight through (already
   // equipment-snapped upstream by DP.recommend / getSmartRecommendation) — left
   // untouched per the engine-owns-snapping contract.
+  // F2 #4 — resolve the ±% scale FACTOR from the engine magnitude (reconcile),
+  // with the legacy flat constants as the fallback when the engine emits no
+  // matching direction (pure helper resolveIntensityFactors).
+  const { minus: minusFactor, plus: plusFactor } = resolveIntensityFactors(energyAdjustment ?? null);
   const targetKg =
     currentExercise.isBodyweight
       ? currentExercise.targetKg
       : intensityMod === 'minus'
-      ? roundToEquipmentWeight(currentExercise.targetKg * 0.8, currentExercise.engineName ?? currentExercise.name)
+      ? roundToEquipmentWeight(currentExercise.targetKg * minusFactor, currentExercise.engineName ?? currentExercise.name)
       : intensityMod === 'plus'
-      ? roundToEquipmentWeight(currentExercise.targetKg * 1.15, currentExercise.engineName ?? currentExercise.name)
+      ? roundToEquipmentWeight(currentExercise.targetKg * plusFactor, currentExercise.engineName ?? currentExercise.name)
       : currentExercise.targetKg;
   const currentSetIdx = hasWorkout ? history[safeExIdx]?.length ?? 0 : 0;
   const isLastSetOfExercise =

@@ -138,6 +138,12 @@ export interface PlannedWorkoutOutput {
   // narration string, NOT a per-exercise faked-movement cue. Touches NO
   // weight/sets/reps. Null when the blueprint is absent (cold start / rest day).
   tempoCue?: { line: string; notation: string | null } | null;
+  // F2 #4 — Energy Adjustment direction + tier-gated magnitude. RECONCILE input
+  // for the in-session ±% scale: Workout.tsx uses this engine magnitude in place
+  // of the flat ×0.8/×1.15 constants (NOT a third channel — the same single
+  // scale, real number). direction UP/DOWN/NONE; magnitudePct signed [-0.15,+0.15].
+  // Null when the blueprint is absent → Workout.tsx keeps the legacy constant.
+  energyAdjustment?: { direction: 'UP' | 'DOWN' | 'NONE'; magnitudePct: number } | null;
   // Coach Voice — the adaptive brain's structured adaptations for TODAY (tokens,
   // not copy). The CoachTodayCard composer (coachInsight) turns it into one
   // plain-language coach line. Empty array / absent → no line (graceful).
