@@ -16,6 +16,7 @@ import {
   PERSONA_MODIFIERS,
   RECOVERY_GREEN_BONUS,
   GOAL_MODIFIERS,
+  EXPERIENCE_MODIFIERS,
   MARIA_FUNCTIONAL_MAPPING,
   PERSONA_AGE_BOUNDARIES,
   CLUSTER_BIG6_TO_BIG11_WEIGHT,
@@ -87,6 +88,34 @@ export function resolveGoalId(user) {
 }
 
 /**
+ * Resolve experience id from user object — case + diacritic insensitive, accepts
+ * BOTH the RO onboarding vocab (incepator/intermediar/avansat) and the EN bucket
+ * (beginner/intermediate/advanced) the schedule adapter normalizes to.
+ *
+ * Audit fix 2026-06-07 (HIGH/MED schedule): volume keyed only on age (persona) +
+ * goal, so a 25yo beginner got the same full dose as a 25yo advanced lifter.
+ * This resolves the onboarding `experience` field into the EXPERIENCE_MODIFIERS
+ * scalar so a novice starts at a lower (near-MEV) weekly volume.
+ *
+ * Defaults to 'avansat' (1.00 = full dose) when missing/unknown so the legacy
+ * call path (no experience threaded) stays byte-identical to today.
+ *
+ * @param {{experience?: string}} [user]
+ * @returns {'incepator'|'intermediar'|'avansat'}
+ */
+export function resolveExperienceId(user) {
+  if (!user || typeof user.experience !== 'string') return 'avansat';
+  const e = user.experience
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '');
+  if (e.startsWith('incepator') || e.startsWith('beginner') || e.startsWith('novice')) return 'incepator';
+  if (e.startsWith('intermediar') || e.startsWith('intermediate')) return 'intermediar';
+  if (e.startsWith('avansat') || e.startsWith('advanced')) return 'avansat';
+  return 'avansat';
+}
+
+/**
  * Recovery green bonus multiplier per §9.4 ("+10-15% daca recovery green").
  * V1 conservative pick LOW (1.10) default green; HIGH (1.15) reserved future
  * Vitality Layer maturity calibration (signal strength gradient).
@@ -105,8 +134,16 @@ export function recoveryGreenMultiplier(ctx) {
  * Hard limit invariant safety preservation + §9.6 Anti-cascade hard cap).
  *
  * Formula:
- *   target = MAV_baseline × persona × recovery × goal × blockScaling × phaseVolMul
+ *   target = MAV_baseline × persona × recovery × goal × experience × blockScaling × phaseVolMul
  *   capped at MRV_baseline (NU multiplied — Israetel MRV is the absolute ceiling)
+ *
+ * §experience-volume 2026-06-07 (audit HIGH/MED): the experience modifier
+ * (EXPERIENCE_MODIFIERS) composes multiplicatively so a beginner starts at a
+ * LOWER weekly dose than an advanced lifter of the same age+goal. It is floored
+ * at the per-group MEV so the beginner cut never sinks below the minimum
+ * effective volume. `experienceId` is OPTIONAL: omitted → 'avansat' (1.00 = full
+ * dose) AND the MEV floor is NOT applied, so the legacy call path stays byte-
+ * identical to today (the floor only engages once experience is threaded).
  *
  * @param {Object} input
  * @param {string} input.muscleGroup
@@ -114,6 +151,7 @@ export function recoveryGreenMultiplier(ctx) {
  * @param {'hipertrofie'|'forta'|'recompozitie'|'slabire'|'longevitate'|'sanatate'} input.goalId
  * @param {number} input.blockScaling     - 1.00 / 1.10 / 1.15 per macrocycle
  * @param {number} input.phaseVolumeMul   - 0.55 (DELOAD) sau 1.00 (LOAD/LOAD+/PEAK)
+ * @param {'incepator'|'intermediar'|'avansat'} [input.experienceId] - omitted → avansat (full dose, MEV floor off)
  * @param {boolean} [input.recoveryGreen]
  * @param {'low'|'high'} [input.recoveryStrength]
  * @returns {import('./types.js').MuscleVolumeTarget}
@@ -124,6 +162,7 @@ export function computeMuscleVolumeTarget({
   goalId,
   blockScaling,
   phaseVolumeMul,
+  experienceId,
   recoveryGreen,
   recoveryStrength,
 }) {
@@ -137,10 +176,21 @@ export function computeMuscleVolumeTarget({
   const recovery = recoveryGreenMultiplier({ recoveryGreen, recoveryStrength });
   const block = Number.isFinite(blockScaling) ? blockScaling : 1.0;
   const phase = Number.isFinite(phaseVolumeMul) ? phaseVolumeMul : 1.0;
+  // §experience-volume — the modifier defaults to 1.0 (avansat / full dose) when
+  // experience is absent OR explicitly avansat, so the legacy + advanced path is
+  // byte-identical to today. A value <1.0 means a genuine experience CUT.
+  const experience = typeof experienceId === 'string' ? (EXPERIENCE_MODIFIERS[experienceId] ?? 1.0) : 1.0;
+  const experienceCuts = experience < 1.0;
 
-  const raw = baseline.MAV * persona * recovery * goal * block * phase;
+  const raw = baseline.MAV * persona * recovery * goal * experience * block * phase;
   const cappedAtMrv = Math.min(raw, baseline.MRV);
-  const sets = Math.max(0, Math.round(cappedAtMrv));
+  // MEV floor — a beginner/intermediate cut never drops below the minimum
+  // effective dose for a worked group. Engaged ONLY when the experience modifier
+  // actually cuts (<1.0), so the advanced/legacy result (incl. the deliberate
+  // Maria-sanatate sub-MEV maintenance dose) is unchanged. A group with MEV 0
+  // (abs/forearms) has no floor either way.
+  const floored = experienceCuts ? Math.max(cappedAtMrv, baseline.MEV) : cappedAtMrv;
+  const sets = Math.max(0, Math.round(floored));
 
   return {
     sets,
@@ -153,7 +203,8 @@ export function computeMuscleVolumeTarget({
 /**
  * Compute full volume map across all 11 Israetel muscle groups.
  *
- * @param {Object} input - same shape as computeMuscleVolumeTarget without muscleGroup
+ * @param {Object} input - same shape as computeMuscleVolumeTarget without
+ *   muscleGroup (incl. the optional §experience-volume `experienceId`).
  * @returns {Object<string, number>}  - muscleGroup → sets/week
  */
 export function computeVolumeMap(input) {

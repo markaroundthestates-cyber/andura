@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   resolvePersonaId,
   resolveGoalId,
+  resolveExperienceId,
   recoveryGreenMultiplier,
   computeMuscleVolumeTarget,
   computeVolumeMap,
@@ -12,6 +13,7 @@ import {
   PERSONA_MODIFIERS,
   RECOVERY_GREEN_BONUS,
   GOAL_MODIFIERS,
+  EXPERIENCE_MODIFIERS,
 } from '../constants.js';
 
 describe('resolvePersonaId — §9.4 persona resolution + ADR 017 personas', () => {
@@ -114,6 +116,99 @@ describe('mentenanta volume haircut — onboarding maintenance user (audit HIGH-
     // Concrete anchor: chest MAV 14 → hyper 14, maint round(14*0.5)=7.
     expect(hyper.chest).toBe(14);
     expect(maint.chest).toBe(7);
+  });
+});
+
+// §experience-volume 2026-06-07 (audit HIGH/MED): volume keyed only on AGE
+// (persona) + goal, NOT experience — so a 25yo beginner got the same full
+// ~150-set/week advanced dose as a 25yo advanced lifter. The experience modifier
+// (EXPERIENCE_MODIFIERS) now scales the starting volume: beginner LOWER (near
+// MEV), intermediate mid, advanced full (unchanged). Floored at the per-group MEV.
+describe('resolveExperienceId — RO + EN vocab, diacritic/case insensitive', () => {
+  it('RO onboarding vocab maps to its modifier bucket', () => {
+    expect(resolveExperienceId({ experience: 'incepator' })).toBe('incepator');
+    expect(resolveExperienceId({ experience: 'intermediar' })).toBe('intermediar');
+    expect(resolveExperienceId({ experience: 'avansat' })).toBe('avansat');
+  });
+
+  it('EN bucket (schedule adapter normalize) maps too', () => {
+    expect(resolveExperienceId({ experience: 'beginner' })).toBe('incepator');
+    expect(resolveExperienceId({ experience: 'intermediate' })).toBe('intermediar');
+    expect(resolveExperienceId({ experience: 'advanced' })).toBe('avansat');
+  });
+
+  it('case + diacritic insensitive (Incepator / Începător)', () => {
+    expect(resolveExperienceId({ experience: 'Incepator' })).toBe('incepator');
+    expect(resolveExperienceId({ experience: 'Începător' })).toBe('incepator');
+  });
+
+  it('missing/unknown → avansat (full dose, legacy-safe default)', () => {
+    expect(resolveExperienceId(undefined)).toBe('avansat');
+    expect(resolveExperienceId({})).toBe('avansat');
+    expect(resolveExperienceId({ experience: 'wat' })).toBe('avansat');
+  });
+});
+
+describe('experience volume scaling — beginner starts lower than advanced (audit HIGH/MED)', () => {
+  const base = { personaId: 'marius', goalId: 'hipertrofie', blockScaling: 1.0, phaseVolumeMul: 1.0 };
+  const sumMap = (m) => Object.values(m).reduce((a, b) => a + b, 0);
+
+  it('beginner weekly volume is STRICTLY lower than advanced (every worked group + total)', () => {
+    const adv = computeVolumeMap({ ...base, experienceId: 'avansat' });
+    const beg = computeVolumeMap({ ...base, experienceId: 'incepator' });
+    for (const group of Object.keys(adv)) {
+      if (adv[group] > ISRAETEL_BASELINES[group].MEV) {
+        expect(beg[group]).toBeLessThan(adv[group]);
+      }
+    }
+    // Concrete anchor: full advanced ~150 sets/week → beginner materially less.
+    expect(sumMap(beg)).toBeLessThan(sumMap(adv));
+    expect(sumMap(adv)).toBe(150);
+    expect(sumMap(beg)).toBe(105);
+  });
+
+  it('intermediate sits between beginner and advanced', () => {
+    const adv = sumMap(computeVolumeMap({ ...base, experienceId: 'avansat' }));
+    const inter = sumMap(computeVolumeMap({ ...base, experienceId: 'intermediar' }));
+    const beg = sumMap(computeVolumeMap({ ...base, experienceId: 'incepator' }));
+    expect(beg).toBeLessThan(inter);
+    expect(inter).toBeLessThan(adv);
+    expect(inter).toBe(128);
+  });
+
+  it('advanced == legacy (no experienceId threaded) — byte-identical, today unchanged', () => {
+    const adv = computeVolumeMap({ ...base, experienceId: 'avansat' });
+    const legacy = computeVolumeMap({ ...base });
+    expect(adv).toEqual(legacy);
+  });
+
+  it('beginner respects the per-group MEV floor (cut never sinks below MEV)', () => {
+    // Real values: chest MAV 14 × incepator 0.70 = 9.8 → 10, still ≥ MEV 8.
+    // Force a deep cut (DELOAD phase 0.55) so the raw would drop below MEV and
+    // assert the floor catches it: 14 × 0.70 × 0.55 = 5.39 → floored to MEV 8.
+    const beg = computeMuscleVolumeTarget({
+      muscleGroup: 'chest',
+      personaId: 'marius',
+      goalId: 'hipertrofie',
+      experienceId: 'incepator',
+      blockScaling: 1.0,
+      phaseVolumeMul: 0.55,
+    });
+    expect(beg.sets).toBe(ISRAETEL_BASELINES.chest.MEV); // 8 — floored, not 5
+  });
+
+  it('chest beginner concrete dose = round(14 × 0.70) = 10 (real anchor)', () => {
+    const beg = computeMuscleVolumeTarget({
+      muscleGroup: 'chest',
+      personaId: 'marius',
+      goalId: 'hipertrofie',
+      experienceId: 'incepator',
+      blockScaling: 1.0,
+      phaseVolumeMul: 1.0,
+    });
+    // 14 × 1.0(persona) × 1.0(goal) × 0.70(experience) = 9.8 → 10.
+    expect(beg.sets).toBe(Math.round(ISRAETEL_BASELINES.chest.MAV * EXPERIENCE_MODIFIERS.incepator));
+    expect(beg.sets).toBe(10);
   });
 });
 

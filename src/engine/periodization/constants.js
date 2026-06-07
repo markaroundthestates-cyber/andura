@@ -88,6 +88,31 @@ export const GOAL_MODIFIERS = Object.freeze({
 });
 
 /**
+ * Experience volume modifiers (multiplicative scalar, composed AFTER persona ×
+ * goal). Audit 2026-06-07 (HIGH/MED schedule): training volume keyed only on
+ * AGE (persona) + goal, NOT on EXPERIENCE — so a 25yo absolute beginner got the
+ * SAME full ~8-exercise/34-set day as a 25yo advanced lifter. The Israetel
+ * baselines are explicitly "intermediate-to-advanced trainee target zones"
+ * (constants ISRAETEL_BASELINES doc), so a novice trained at the FULL dose day
+ * one — too much to recover from + adhere to. A beginner now starts LOWER
+ * (closer to MEV: more recovery room + better adherence), intermediate mid,
+ * advanced unchanged (full dose = today). Composed multiplicatively with persona
+ * + goal; the per-group MEV floor (computeMuscleVolumeTarget) stops the beginner
+ * cut from sinking below the minimum effective dose. Aligns with the beginner-
+ * first + detraining philosophy (a novice is never slammed on session one).
+ *
+ * RO onboarding vocab (Experience union, onboardingStore.ts:29) +
+ * EN bucket (scheduleAdapter normalize) both resolved by resolveExperienceId.
+ *
+ * @type {Readonly<Object<string, number>>}
+ */
+export const EXPERIENCE_MODIFIERS = Object.freeze({
+  incepator:    0.70, // beginner — start near MEV, max recovery + adherence room
+  intermediar:  0.85, // intermediate — mid dose
+  avansat:      1.00, // advanced — full Israetel target (unchanged from today)
+});
+
+/**
  * Maria 65 Dual-Layer functional → Israetel mapping. Per §9.4 + §45.3 Q19
  * LOCKED: 6 movement patterns map to Israetel muscle groups.
  *

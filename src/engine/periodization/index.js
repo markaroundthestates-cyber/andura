@@ -17,6 +17,7 @@ import {
 import {
   resolvePersonaId,
   resolveGoalId,
+  resolveExperienceId,
   computeVolumeMap,
 } from './volumeLandmarks.js';
 import {
@@ -78,8 +79,13 @@ export async function evaluate(ctx) {
 
   const personaId = resolvePersonaId(user);
   const goalId = resolveGoalId(user);
+  // §experience-volume 2026-06-07 — scale the starting weekly volume by training
+  // experience so a beginner starts near MEV (recovery + adherence room) instead
+  // of the full advanced dose. Composed multiplicatively with persona + goal.
+  const experienceId = resolveExperienceId(user);
   trace.personaId = personaId;
   trace.goalId = goalId;
+  trace.experienceId = experienceId;
 
   // Macrocycle position from elapsed weeks (orchestrator passes via meta)
   const weeksElapsed = Number(meta.weeksElapsed);
@@ -136,6 +142,7 @@ export async function evaluate(ctx) {
   const volumeMap = computeVolumeMap({
     personaId,
     goalId,
+    experienceId,
     blockScaling: scaling,
     phaseVolumeMul: phaseVolMul,
     recoveryGreen,
