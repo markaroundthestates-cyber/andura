@@ -1,0 +1,23 @@
+{
+  "_note": "Frozen calibration-sim baseline (T1.5). Re-baseline ONLY by an explicit intentional commit (same protocol as the golden harness). The regression gate asserts metrics are NOT materially worse than this; the hash pins determinism. nProfiles=12 (CI tier — full 50-cohort ~28s blocks the vitest worker RPC heartbeat under the full suite; 12 keeps the gate ~7s while the crater/regression invariants hold at any N).",
+  "engineHead": "frozen 2026-06-07 (signal-bus + dedup landed)",
+  "nProfiles": 12,
+  "seed": "0xA9D04A",
+  "hash": "2dd5ad64ac62757d688c18f5963cc3d4e1b496a2f7d0e4b7d9b4263a6da22def",
+  "convergedPct": 4.6,
+  "medianSessionsToConverge": 26.5,
+  "meanFinalAbsErr": 0.292,
+  "flags": {
+    "nonAdaptation": 3,
+    "oscillation": 27,
+    "stuckHigh": 4,
+    "stuckLow": 95,
+    "absurd": 11
+  },
+  "equipMeanSignedErr": {
+    "barbell": -0.285,
+    "cable": -0.272,
+    "dumbbell": -0.176,
+    "machine": -0.131
+  }
+}
