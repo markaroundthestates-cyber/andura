@@ -248,6 +248,37 @@ export const FLAGS = Object.freeze({
   // Faza 4 smoke validation orchestrated path comportament corect.
   warmup_via_orchestrator: { rollout: 0, default: false },
 
+  // ── F3 Core-Intelligence layer (engine-wiring 2026-06-07) — additive,
+  // compute-alongside, kill-switchable. Each defaults OFF (rollout 0) → with the
+  // flag off the live per-exercise prescription is BYTE-IDENTICAL to today (the
+  // calibration-sim hash + golden-master gate hold flag-OFF). Flip to ON is a
+  // human gate (Daniel) AFTER reviewing the calibration-sim A/B. See
+  // _ENGINE_WIRING_2026-06-07/F3_core_intelligence_spec.md.
+
+  // #1 e1RM substrate (RISK HIGH — rewrites how per-exercise weight is decided).
+  // When ON, the PR-floor (_demonstratedWorkingW) + find-your-weight demoW
+  // compare loads in RIR-corrected e1RM space (Epley, R_CAP=12) instead of raw
+  // kg, so high-rep work (60×12) no longer floors identically to 60×8. Within a
+  // fixed rep band the back-solved kg is identical → golden-safe. Bodyweight/band
+  // exercises are EXCLUDED (e1RM=null → today's raw-kg path). OFF → raw kg.
+  dp_e1rm_v1: { rollout: 0, default: false },
+
+  // #2 per-exercise Kalman strength latent (RISK MED — smooths an existing
+  // signal). When ON, the demoW/PR-floor read a Kalman posterior `mu` over the
+  // per-set e1RM (#1) instead of the raw max-of-logs, with a time-scaled process
+  // noise so variance grows with time-since-last-set. Reuses the pure
+  // kalmanUpdate1D from bayesianNutrition. Persists `dp-strength-posterior` (sync,
+  // quota-guarded). OFF → raw e1RM (or raw kg if #1 also off). Depends on #1.
+  dp_strength_kalman_v1: { rollout: 0, default: false },
+
+  // #3 realistic ceiling + diminishing returns (RISK MED — Daniel HARD rule:
+  // never prescribed stronger than physically real). When ON, a normalized
+  // strength-standard e1RM ceiling (pattern × bodyweight × sex × training-age)
+  // replaces the flat MAX_KG, and the gain-rate decays to 0 near the ceiling so a
+  // climb mathematically cannot exceed it. OFF → flat MAX_KG (current). Depends
+  // on #1 for the e1RM unit; degrades to a kg ceiling if #1 off.
+  dp_ceiling_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

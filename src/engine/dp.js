@@ -6,6 +6,7 @@ import { SIMILAR_EXERCISES, getSimilarityMultiplier } from './exerciseMapping.js
 import { getExerciseMetadata } from './exerciseLibrary.js';
 import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
+import { isEnabled } from '../util/featureFlags.js';
 import { t } from '../i18n/index.js';
 
 export const DP = {
@@ -534,6 +535,107 @@ export const DP = {
     return best;
   },
 
+  // ══ BUILD #1 — e1RM as the internal progression currency (F3 spec §1) ════════
+  // RIR-corrected Epley estimated-1RM. The 3-bucket per-set rating maps to
+  // reps-in-reserve (NOT to RPE-as-a-number): `usor` had clear headroom, `greu`
+  // was at/near failure. e1RM = W·(1 + R_eff/30) with R_eff = reps + RIR, the
+  // EFFECTIVE reps SATURATED at R_CAP (Epley is linear and over-estimates in the
+  // high-rep zone Daniel trains — see F3 §1c caveat 1). This is the SUBSTRATE the
+  // PR-floor / find-your-weight re-express in (a 60×12 no longer floors identically
+  // to a 60×8). Computed on the fly from existing logs — NO new persistence (#1).
+  // Bodyweight/band exercises have no clean external-load e1RM → null → the caller
+  // falls through to today's raw-kg path (e1RM is opt-IN per exercise, never forced).
+  //
+  // ADDITIVE second map — the existing workoutStore RATING_TO_RPE (usor 6.5 /
+  // potrivit 7.5 / greu 8.5) is UNTOUCHED; this is a separate RIR map for e1RM only.
+  // Values 3/1/0 are a conservative DESIGN PROPOSAL (F3 §10) pending a sim sweep +
+  // Daniel sanity check before the flag flips ON.
+  RATING_TO_RIR: { usor: 3, potrivit: 1, greu: 0 },
+  E1RM_R_CAP: 12, // saturate EFFECTIVE reps in Epley (Daniel high-rep, F3 §1c)
+
+  // Map a logged set's stored rpe (the 3-bucket reverse-map, or a legacy raw rpe)
+  // back to reps-in-reserve. The 3 buckets are 6.5/7.5/8.5; a legacy/absent rpe
+  // defaults to the neutral potrivit-equivalent (RIR 1), matching the existing
+  // neutral-7 convention (getState lastRPE = lastLog.rpe || 7).
+  /** @param {number} [rpe] @returns {number} */
+  _rirFromRpe(rpe) {
+    const r = Number(rpe);
+    if (!Number.isFinite(r)) return this.RATING_TO_RIR.potrivit;
+    if (r <= 6.5) return this.RATING_TO_RIR.usor;   // usor — clear headroom
+    if (r >= 8.5) return this.RATING_TO_RIR.greu;   // greu — at/near failure
+    return this.RATING_TO_RIR.potrivit;             // potrivit — working target
+  },
+
+  // Whether an exercise has a clean external-load e1RM. Bodyweight/band resistance
+  // is indeterminate (W is 0 or "added load only") → excluded from e1RM, the
+  // caller uses the raw-kg path. Detection via getExerciseMetadata (F3 §1c.2).
+  /** @param {string} ex @returns {boolean} */
+  _e1rmEligible(ex) {
+    const eq = getExerciseMetadata(ex)?.equipment_type;
+    return eq !== 'bodyweight' && eq !== 'band';
+  },
+
+  // RIR-corrected, saturated Epley e1RM for one logged set. Returns null when the
+  // inputs are unusable (no/zero load) — null = "no e1RM", fall through to raw kg.
+  /** @param {number} w @param {number} reps @param {number} [rpe] @returns {number|null} */
+  e1RMForSet(w, reps, rpe) {
+    const W = Number(w);
+    const R = typeof reps === 'string' ? parseInt(reps, 10) : Number(reps);
+    if (!Number.isFinite(W) || W <= 0) return null;
+    if (!Number.isFinite(R) || R <= 0) return null;
+    const rEff = Math.min(this.E1RM_R_CAP, R + this._rirFromRpe(rpe));
+    return W * (1 + rEff / 30);
+  },
+
+  // Back-solve a target working load (kg) from an e1RM at a given rep target. The
+  // inverse of e1RMForSet at RIR 1 (the `potrivit` working target, F3 §1d): the kg
+  // that, taken to `repTarget` reps with ~1 RIR, realizes `e1rm`. Within a fixed
+  // rep band this returns the SAME kg the raw path floored at (golden-safe).
+  /** @param {number} e1rm @param {number} repTarget @returns {number} */
+  _kgFromE1RM(e1rm, repTarget) {
+    const rEff = Math.min(this.E1RM_R_CAP, (Number(repTarget) || 8) + this.RATING_TO_RIR.potrivit);
+    return e1rm / (1 + rEff / 30);
+  },
+
+  // e1RM analogue of _demonstratedWorkingW: the HIGHEST e1RM the user has owned at
+  // ≥rMin reps (same failed-AND-short exclusion as the raw path), back-solved to kg
+  // at the CURRENT rep target. So high-rep work is no longer discarded vs a lower-
+  // rep heavier set. Returns 0 when no qualifying log (cold start → inert, raw path
+  // unchanged). Bodyweight/band → 0 (the caller's raw _demonstratedWorkingW runs).
+  /** @param {string} ex @param {number} rMin @returns {number} */
+  _demonstratedWorkingW_e1rm(ex, rMin) {
+    if (!this._e1rmEligible(ex)) return 0;
+    const logs = this.getLogs(ex, 12);
+    const floorReps = rMin ?? 8;
+    let bestE1RM = 0;
+    for (const l of logs) {
+      const w = Number(l.w);
+      if (!Number.isFinite(w) || w <= 0) continue;
+      const reps = typeof l.reps === 'string' ? parseInt(l.reps, 10) : Number(l.reps);
+      if (!Number.isFinite(reps) || reps < floorReps) continue; // must hit target reps
+      const rpe = Number(l.rpe) || 7;
+      if (rpe >= 8.5 && reps < floorReps) continue; // failed/overload set excluded
+      const e = this.e1RMForSet(w, reps, rpe);
+      if (e != null && e > bestE1RM) bestE1RM = e;
+    }
+    if (bestE1RM <= 0) return 0;
+    return this._kgFromE1RM(bestE1RM, floorReps);
+  },
+
+  // The PR-floor / find-your-weight demonstrated load. With dp_e1rm_v1 ON (and the
+  // exercise e1RM-eligible with qualifying logs) it is the e1RM-back-solved load;
+  // otherwise the raw heaviest-at-target-reps kg (byte-identical legacy). The flag
+  // is resolved per-user; in no-uid contexts (sim) it resolves to the default OFF.
+  /** @param {string} ex @param {number} rMin @returns {number} */
+  _demoWorkingW(ex, rMin) {
+    if (isEnabled('dp_e1rm_v1')) {
+      const e = this._demonstratedWorkingW_e1rm(ex, rMin);
+      if (e > 0) return e;
+      // e1RM produced nothing (cold start / ineligible) → raw path, never a regression.
+    }
+    return this._demonstratedWorkingW(ex, rMin);
+  },
+
   // ── RETURN-AFTER-GAP DELOAD + RAMP (detraining, Daniel decision #3) ──────────
   // Real failure observed in the founder's data: 3 months off legs → the engine
   // (reading only the pre-gap lastW) let him chase a 230 PR + full v-taper volume
@@ -769,7 +871,7 @@ export const DP = {
         const phaseOverride = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
         const inCut = this._isInCut(phaseOverride, nowMs);
         const rng = this.getPhaseAwareRepRange(ex, inCut);
-        const floorW = this._demonstratedWorkingW(ex, rng[0] ?? 8);
+        const floorW = this._demoWorkingW(ex, rng[0] ?? 8);
         if (floorW > 0 && Number.isFinite(result.kg) && result.kg > 0 && result.kg < floorW) {
           result.kg = this.roundToStep(floorW, ex);
           // Re-tag a down-ratchet status as a floor HOLD so the note matches the kg
@@ -893,7 +995,7 @@ export const DP = {
     // hard, reps-hit set, so a hard-but-hit set HOLDS and a distress set EASES (both
     // handled below) — the climb never fights the ease-back. Skipped during an
     // active return-deload window (the comeback intentionally starts light).
-    const demoW = this._demonstratedWorkingW(ex, rMin);
+    const demoW = this._demoWorkingW(ex, rMin);
     const lastNotHard = lastRPE < 8.5;
     const hitRepsNow = lastReps >= rMin;
     const rdActive = this._returnDeload(ex, nowMs) != null;
