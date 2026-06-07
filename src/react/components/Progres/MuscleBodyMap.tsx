@@ -142,7 +142,7 @@ export function MuscleBodyMap(): JSX.Element | null {
   const labelFor = (group: string): string =>
     groups.find((g) => g.group === group)?.label ?? group;
 
-  const glows = getGlowRegions(view);
+  const glows = getGlowRegions(sex, view);
   const imageSrc = getBodyImageSrc(sex, view);
 
   // Overall fatigue score in the panel header (position 2, beside the legend).

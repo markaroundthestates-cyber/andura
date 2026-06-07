@@ -193,54 +193,83 @@ export interface GlowRegion {
   r: number;
 }
 
-// Image-space body landmarks (the renders are framed near-identically per view).
-const FRONT_GLOWS: GlowRegion[] = [
-  // SHOULDERS — deltoid caps, outer top of torso.
-  { group: 'umeri', cx: 0.315, cy: 0.285, r: 0.075 },
-  { group: 'umeri', cx: 0.685, cy: 0.285, r: 0.075 },
-  // CHEST — two pectoral masses below the clavicle.
-  { group: 'piept', cx: 0.42, cy: 0.305, r: 0.095 },
-  { group: 'piept', cx: 0.58, cy: 0.305, r: 0.095 },
-  // BICEPS — front upper arm.
-  { group: 'biceps', cx: 0.285, cy: 0.355, r: 0.06 },
-  { group: 'biceps', cx: 0.715, cy: 0.355, r: 0.06 },
-  // TRICEPS — outer/back upper-arm edge (slightly outboard of biceps).
-  { group: 'triceps', cx: 0.245, cy: 0.36, r: 0.05 },
-  { group: 'triceps', cx: 0.755, cy: 0.36, r: 0.05 },
-  // FOREARMS — lower arm.
-  { group: 'antebrate', cx: 0.265, cy: 0.46, r: 0.06 },
-  { group: 'antebrate', cx: 0.735, cy: 0.46, r: 0.06 },
-  // CORE / ABS — central column.
-  { group: 'core', cx: 0.5, cy: 0.41, r: 0.1 },
-  // QUADS — front of thighs.
-  { group: 'picioare-quads', cx: 0.42, cy: 0.62, r: 0.085 },
-  { group: 'picioare-quads', cx: 0.58, cy: 0.62, r: 0.085 },
-  // CALVES — lower legs.
-  { group: 'gambe', cx: 0.435, cy: 0.84, r: 0.055 },
-  { group: 'gambe', cx: 0.565, cy: 0.84, r: 0.055 },
+// Centers (cx, cy) were SAMPLED from Daniel's own color-coded muscle maps
+// (one paint per sex × view, public/body source images) — each Big-11 group
+// painted a distinct color, then the median pixel center per color region taken
+// as a fraction of the image box (scripts/admin/_sample_muscle_map.cjs). Radii
+// are the prior hand-tuned blob sizes (kept — Daniel's note was about POSITION,
+// not size; the +21% render multiplier in MuscleBodyMap is applied separately).
+// Two manual nudges over the raw sample: FRONT shoulders are pulled outboard onto
+// the deltoid cap (the orange paint wraps inboard over the clavicle, dragging the
+// centroid toward the sternum), and FRONT core is snapped to body-center.
+// Sex-specific now (4 tables) because the maps genuinely differ — female narrower
+// shoulders, different chest/hip ratios.
+const MALE_FRONT_GLOWS: GlowRegion[] = [
+  { group: 'umeri', cx: 0.315, cy: 0.29, r: 0.075 },
+  { group: 'umeri', cx: 0.685, cy: 0.29, r: 0.075 },
+  { group: 'piept', cx: 0.431, cy: 0.256, r: 0.095 },
+  { group: 'piept', cx: 0.564, cy: 0.256, r: 0.095 },
+  { group: 'biceps', cx: 0.326, cy: 0.32, r: 0.06 },
+  { group: 'biceps', cx: 0.669, cy: 0.322, r: 0.06 },
+  { group: 'triceps', cx: 0.298, cy: 0.326, r: 0.05 },
+  { group: 'triceps', cx: 0.694, cy: 0.332, r: 0.05 },
+  { group: 'antebrate', cx: 0.28, cy: 0.405, r: 0.06 },
+  { group: 'antebrate', cx: 0.716, cy: 0.407, r: 0.06 },
+  { group: 'core', cx: 0.5, cy: 0.364, r: 0.1 },
+  { group: 'picioare-quads', cx: 0.402, cy: 0.552, r: 0.085 },
+  { group: 'picioare-quads', cx: 0.592, cy: 0.551, r: 0.085 },
+  { group: 'gambe', cx: 0.382, cy: 0.751, r: 0.055 },
+  { group: 'gambe', cx: 0.611, cy: 0.75, r: 0.055 },
 ];
 
-const BACK_GLOWS: GlowRegion[] = [
-  // UPPER BACK / LATS — broad V across the upper torso.
-  { group: 'spate', cx: 0.5, cy: 0.32, r: 0.13 },
-  // SHOULDERS — rear deltoid caps.
-  { group: 'umeri', cx: 0.315, cy: 0.285, r: 0.075 },
-  { group: 'umeri', cx: 0.685, cy: 0.285, r: 0.075 },
-  // TRICEPS — back of upper arm (dominant from behind).
-  { group: 'triceps', cx: 0.255, cy: 0.37, r: 0.06 },
-  { group: 'triceps', cx: 0.745, cy: 0.37, r: 0.06 },
-  // FOREARMS — lower arm (rear).
-  { group: 'antebrate', cx: 0.265, cy: 0.46, r: 0.06 },
-  { group: 'antebrate', cx: 0.735, cy: 0.46, r: 0.06 },
-  // GLUTES — two rounded masses below the lower back.
-  { group: 'fese', cx: 0.44, cy: 0.505, r: 0.085 },
-  { group: 'fese', cx: 0.56, cy: 0.505, r: 0.085 },
-  // HAMSTRINGS — back of thighs.
-  { group: 'picioare-hamstrings', cx: 0.43, cy: 0.65, r: 0.085 },
-  { group: 'picioare-hamstrings', cx: 0.57, cy: 0.65, r: 0.085 },
-  // CALVES — rear lower legs.
-  { group: 'gambe', cx: 0.43, cy: 0.83, r: 0.065 },
-  { group: 'gambe', cx: 0.57, cy: 0.83, r: 0.065 },
+const MALE_BACK_GLOWS: GlowRegion[] = [
+  { group: 'spate', cx: 0.49, cy: 0.27, r: 0.13 },
+  { group: 'umeri', cx: 0.344, cy: 0.233, r: 0.075 },
+  { group: 'umeri', cx: 0.645, cy: 0.236, r: 0.075 },
+  { group: 'triceps', cx: 0.316, cy: 0.335, r: 0.06 },
+  { group: 'triceps', cx: 0.676, cy: 0.324, r: 0.06 },
+  { group: 'antebrate', cx: 0.259, cy: 0.415, r: 0.06 },
+  { group: 'antebrate', cx: 0.734, cy: 0.417, r: 0.06 },
+  { group: 'fese', cx: 0.398, cy: 0.459, r: 0.085 },
+  { group: 'fese', cx: 0.587, cy: 0.459, r: 0.085 },
+  { group: 'picioare-hamstrings', cx: 0.394, cy: 0.604, r: 0.085 },
+  { group: 'picioare-hamstrings', cx: 0.605, cy: 0.597, r: 0.085 },
+  { group: 'gambe', cx: 0.399, cy: 0.729, r: 0.065 },
+  { group: 'gambe', cx: 0.589, cy: 0.726, r: 0.065 },
+];
+
+const FEMALE_FRONT_GLOWS: GlowRegion[] = [
+  { group: 'umeri', cx: 0.34, cy: 0.31, r: 0.075 },
+  { group: 'umeri', cx: 0.66, cy: 0.31, r: 0.075 },
+  { group: 'piept', cx: 0.44, cy: 0.258, r: 0.095 },
+  { group: 'piept', cx: 0.554, cy: 0.256, r: 0.095 },
+  { group: 'biceps', cx: 0.347, cy: 0.308, r: 0.06 },
+  { group: 'biceps', cx: 0.647, cy: 0.308, r: 0.06 },
+  { group: 'triceps', cx: 0.323, cy: 0.326, r: 0.05 },
+  { group: 'triceps', cx: 0.671, cy: 0.328, r: 0.05 },
+  { group: 'antebrate', cx: 0.3, cy: 0.407, r: 0.06 },
+  { group: 'antebrate', cx: 0.695, cy: 0.405, r: 0.06 },
+  { group: 'core', cx: 0.5, cy: 0.369, r: 0.1 },
+  { group: 'picioare-quads', cx: 0.402, cy: 0.543, r: 0.085 },
+  { group: 'picioare-quads', cx: 0.592, cy: 0.542, r: 0.085 },
+  { group: 'gambe', cx: 0.396, cy: 0.757, r: 0.055 },
+  { group: 'gambe', cx: 0.591, cy: 0.758, r: 0.055 },
+];
+
+const FEMALE_BACK_GLOWS: GlowRegion[] = [
+  { group: 'spate', cx: 0.487, cy: 0.3, r: 0.13 },
+  { group: 'umeri', cx: 0.367, cy: 0.238, r: 0.075 },
+  { group: 'umeri', cx: 0.63, cy: 0.239, r: 0.075 },
+  { group: 'triceps', cx: 0.333, cy: 0.311, r: 0.06 },
+  { group: 'triceps', cx: 0.654, cy: 0.297, r: 0.06 },
+  { group: 'antebrate', cx: 0.288, cy: 0.42, r: 0.06 },
+  { group: 'antebrate', cx: 0.703, cy: 0.411, r: 0.06 },
+  { group: 'fese', cx: 0.412, cy: 0.461, r: 0.085 },
+  { group: 'fese', cx: 0.578, cy: 0.461, r: 0.085 },
+  { group: 'picioare-hamstrings', cx: 0.408, cy: 0.601, r: 0.085 },
+  { group: 'picioare-hamstrings', cx: 0.584, cy: 0.602, r: 0.085 },
+  { group: 'gambe', cx: 0.412, cy: 0.74, r: 0.065 },
+  { group: 'gambe', cx: 0.572, cy: 0.738, r: 0.065 },
 ];
 
 /** Public path to the photoreal neutral base for a sex + view. */
@@ -249,7 +278,8 @@ export function getBodyImageSrc(sex: Sex, view: View): string {
   return `/body/${s}-${view}.webp`;
 }
 
-/** Normalized glow placement for a given view (shared across sexes — same pose). */
-export function getGlowRegions(view: View): GlowRegion[] {
-  return view === 'back' ? BACK_GLOWS : FRONT_GLOWS;
+/** Normalized glow placement for a given sex + view (sampled from the ref maps). */
+export function getGlowRegions(sex: Sex, view: View): GlowRegion[] {
+  if (sex === 'f') return view === 'back' ? FEMALE_BACK_GLOWS : FEMALE_FRONT_GLOWS;
+  return view === 'back' ? MALE_BACK_GLOWS : MALE_FRONT_GLOWS;
 }
