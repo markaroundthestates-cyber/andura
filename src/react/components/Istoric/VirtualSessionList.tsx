@@ -51,6 +51,10 @@ interface VirtualSessionListProps {
   // detail route resolves by ts so a delete/reorder can't open the wrong
   // session (Daniel audit 2026-06-05).
   onSelect: (ts: number) => void;
+  // Founder UX 2026-06-07 — when set, the list shows only the first N rows with
+  // an "Show all (total)" toggle so a long history is a short preview, not a
+  // wall of pages. Omit → render the whole list (legacy behaviour).
+  previewCount?: number;
 }
 
 // Inaltime estimata rand (card p-4, titlu + meta + chips ~3-4 linii) + gap-2.5.
@@ -188,11 +192,20 @@ export function VirtualSessionList({
   sorted,
   formatDate,
   onSelect,
+  previewCount,
 }: VirtualSessionListProps): JSX.Element {
   const listRef = useRef<HTMLUListElement>(null);
+
+  // Founder UX 2026-06-07 — preview/expand: collapsed to the first `previewCount`
+  // rows until the user opens the full list. `list` is what we actually render
+  // (and window over); the toggle below flips `expanded`.
+  const [expanded, setExpanded] = useState(false);
+  const hasPreview = previewCount != null && sorted.length > previewCount;
+  const list = hasPreview && !expanded ? sorted.slice(0, previewCount) : sorted;
+
   const [range, setRange] = useState<{ start: number; end: number }>({
     start: 0,
-    end: sorted.length,
+    end: list.length,
   });
 
   // Founder UX 2026-06-06 — single-open accordion (oglinda sectiunii Recorduri):
@@ -200,11 +213,11 @@ export function VirtualSessionList({
   // array index) ca windowing-ul / reorder-ul sa nu mute starea pe alt rand.
   const [openSession, setOpenSession] = useState<number | null>(null);
 
-  const virtualize = sorted.length > VIRTUALIZE_THRESHOLD;
+  const virtualize = list.length > VIRTUALIZE_THRESHOLD;
 
   useEffect(() => {
     if (!virtualize) {
-      setRange({ start: 0, end: sorted.length });
+      setRange({ start: 0, end: list.length });
       return;
     }
 
@@ -222,7 +235,7 @@ export function VirtualSessionList({
 
       const start = Math.max(0, Math.floor(viewportTop / ROW_HEIGHT) - OVERSCAN);
       const visibleCount = Math.ceil(viewportH / ROW_HEIGHT);
-      const end = Math.min(sorted.length, start + visibleCount + OVERSCAN * 2);
+      const end = Math.min(list.length, start + visibleCount + OVERSCAN * 2);
 
       setRange((prev) => (prev.start === start && prev.end === end ? prev : { start, end }));
     }
@@ -234,25 +247,26 @@ export function VirtualSessionList({
       window.removeEventListener('scroll', recompute);
       window.removeEventListener('resize', recompute);
     };
-  }, [virtualize, sorted.length]);
+  }, [virtualize, list.length]);
 
   const start = virtualize ? range.start : 0;
-  const end = virtualize ? range.end : sorted.length;
+  const end = virtualize ? range.end : list.length;
   const padTop = start * ROW_HEIGHT;
-  const padBottom = Math.max(0, (sorted.length - end) * ROW_HEIGHT);
+  const padBottom = Math.max(0, (list.length - end) * ROW_HEIGHT);
 
   return (
-    <ul
-      ref={listRef}
-      className="flex flex-col gap-2.5"
-      role="list"
-      aria-label={t('istoric.virtualList.ariaLabel')}
-      data-testid="istoric-list"
-    >
+    <>
+      <ul
+        ref={listRef}
+        className="flex flex-col gap-2.5"
+        role="list"
+        aria-label={t('istoric.virtualList.ariaLabel')}
+        data-testid="istoric-list"
+      >
       {padTop > 0 && (
         <li aria-hidden="true" style={{ height: padTop }} data-testid="istoric-list-pad-top" />
       )}
-      {sorted.slice(start, end).map((session, sliceIdx) => {
+      {list.slice(start, end).map((session, sliceIdx) => {
         const idx = start + sliceIdx;
         return (
           <SessionCard
@@ -275,6 +289,23 @@ export function VirtualSessionList({
           data-testid="istoric-list-pad-bottom"
         />
       )}
-    </ul>
+      </ul>
+      {hasPreview && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          data-testid="istoric-sessions-toggle"
+          aria-expanded={expanded}
+          className="mt-3 w-full flex items-center justify-center gap-1.5 text-sm font-semibold text-brickdark press-feedback"
+        >
+          {expanded ? t('istoric.landing.showLess') : t('istoric.landing.showAllCount', { n: sorted.length })}
+          <ChevronDown
+            className={`w-4 h-4 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+            strokeWidth={1.8}
+            aria-hidden="true"
+          />
+        </button>
+      )}
+    </>
   );
 }

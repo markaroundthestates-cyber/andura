@@ -105,6 +105,45 @@ describe('VirtualSessionList — long list (windowed)', () => {
   });
 });
 
+describe('VirtualSessionList — preview/expand (Founder UX 2026-06-07)', () => {
+  function renderPreview(sorted: SessionRow[]): void {
+    render(
+      <VirtualSessionList
+        sorted={sorted}
+        formatDate={(ts) => String(ts)}
+        onSelect={vi.fn()}
+        previewCount={3}
+      />
+    );
+  }
+
+  it('shows only the first previewCount rows + a toggle when the list is longer', () => {
+    renderPreview(makeSessions(10));
+    expect(screen.getByTestId('istoric-session-0')).toBeInTheDocument();
+    expect(screen.getByTestId('istoric-session-2')).toBeInTheDocument();
+    // Beyond the preview window → not rendered until expanded.
+    expect(screen.queryByTestId('istoric-session-3')).not.toBeInTheDocument();
+    expect(screen.getByTestId('istoric-sessions-toggle')).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('expands to the full list on toggle, then collapses back', () => {
+    renderPreview(makeSessions(10));
+    const toggle = screen.getByTestId('istoric-sessions-toggle');
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('istoric-session-9')).toBeInTheDocument();
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('istoric-session-9')).not.toBeInTheDocument();
+  });
+
+  it('no toggle when the list is within the preview count', () => {
+    renderPreview(makeSessions(3));
+    expect(screen.queryByTestId('istoric-sessions-toggle')).not.toBeInTheDocument();
+    expect(screen.getByTestId('istoric-session-2')).toBeInTheDocument();
+  });
+});
+
 describe('VirtualSessionList — reorder safety (stable ts, not index)', () => {
   it('emite ts-ul randului, neafectat de pozitia in array (reorder/delete)', () => {
     // Daniel audit 2026-06-05: navigarea pe index deschidea sesiunea gresita

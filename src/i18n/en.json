@@ -951,6 +951,8 @@
       "statRecords": "Records",
       "recordsHeading": "Records ({n})",
       "seeAll": "See all",
+      "showAllCount": "Show all ({n})",
+      "showLess": "Show less",
       "seeDetails": "See details",
       "sessionsHeading": "Sessions",
       "emptyTitle": "Your first session is waiting",

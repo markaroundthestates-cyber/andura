@@ -951,6 +951,8 @@
       "statRecords": "Recorduri",
       "recordsHeading": "Recorduri ({n})",
       "seeAll": "Vezi toate",
+      "showAllCount": "Arata toate ({n})",
+      "showLess": "Arata mai putin",
       "seeDetails": "Vezi tot",
       "sessionsHeading": "Sesiuni",
       "emptyTitle": "Prima ta sesiune te asteapta",

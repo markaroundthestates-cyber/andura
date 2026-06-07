@@ -60,6 +60,15 @@ export function Istoric(): JSX.Element {
   // so the records list stays compact). Single-open accordion; null = all closed.
   const [openRecord, setOpenRecord] = useState<number | null>(null);
 
+  // Founder UX 2026-06-07 — both lists preview the first 3 rows + a "Show all"
+  // expand, so a long history reads as a short preview, not a wall of pages.
+  const LIST_PREVIEW = 3;
+  const [showAllRecords, setShowAllRecords] = useState(false);
+  const visiblePr =
+    showAllRecords || prHistory.length <= LIST_PREVIEW
+      ? prHistory
+      : prHistory.slice(0, LIST_PREVIEW);
+
   return (
     <section
       className="p-6 min-h-screen"
@@ -131,7 +140,7 @@ export function Istoric(): JSX.Element {
               longer makes the page endless. Tapping a row reveals its detail
               (kg x reps ~1RM). All data stays accessible, just one tap deeper. */}
           <ul className="flex flex-col gap-2">
-            {prHistory.map((pr, idx) => {
+            {visiblePr.map((pr, idx) => {
               const open = openRecord === idx;
               return (
                 <li
@@ -165,6 +174,24 @@ export function Istoric(): JSX.Element {
               );
             })}
           </ul>
+          {prHistory.length > LIST_PREVIEW && (
+            <button
+              type="button"
+              onClick={() => setShowAllRecords((v) => !v)}
+              data-testid="istoric-records-toggle"
+              aria-expanded={showAllRecords}
+              className="mt-3 w-full flex items-center justify-center gap-1.5 text-sm font-semibold text-brickdark press-feedback"
+            >
+              {showAllRecords
+                ? t('istoric.landing.showLess')
+                : t('istoric.landing.showAllCount', { n: prHistory.length })}
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${showAllRecords ? 'rotate-180' : ''}`}
+                strokeWidth={1.8}
+                aria-hidden="true"
+              />
+            </button>
+          )}
         </section>
       )}
 
@@ -203,6 +230,8 @@ export function Istoric(): JSX.Element {
         <VirtualSessionList
           sorted={sorted}
           formatDate={formatDate}
+          // Preview the first 3 sessions + "Show all" expand (Daniel 2026-06-07).
+          previewCount={LIST_PREVIEW}
           // Navigate by stable session `ts`, NOT array index (Daniel audit
           // 2026-06-05) — index pointed at the wrong session after a
           // delete/reorder and broke deep-links.
