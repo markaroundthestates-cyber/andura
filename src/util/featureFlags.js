@@ -279,6 +279,15 @@ export const FLAGS = Object.freeze({
   // on #1 for the e1RM unit; degrades to a kg ceiling if #1 off.
   dp_ceiling_v1: { rollout: 0, default: false },
 
+  // #4 cross-exercise transfer cold-start (RISK LOW — first-session-only). When
+  // ON, a NEW exercise with no logs seeds its working load from a RELATED lift the
+  // user already has e1RM for (equipment_alternatives → re-keyed SIMILAR_EXERCISES
+  // → muscle match over the user's logged lifts), scaled by the similarity ratio,
+  // in e1RM space (so the rep scheme normalizes). OFF → suggestStartWeight only
+  // (current). Depends on #1's e1RM; degrades to suggestStartWeight when no related
+  // e1RM exists. Only the first session of a new exercise (no history to regress).
+  dp_transfer_coldstart_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

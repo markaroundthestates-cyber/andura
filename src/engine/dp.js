@@ -2,12 +2,12 @@
 import { DB } from '../db.js';
 import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../constants.js';
 import { roundToEquipmentWeight, getPrevWeight, getNextWeight } from '../config/weights.js';
-import { SIMILAR_EXERCISES, getSimilarityMultiplier } from './exerciseMapping.js';
+import { SIMILAR_EXERCISES, getSimilarityMultiplier, getTransferSources } from './exerciseMapping.js';
 import { getExerciseMetadata } from './exerciseLibrary.js';
 import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
-import { updatePosterior, savePosterior } from './dp/strengthKalman.js';
+import { updatePosterior, savePosterior, loadPosterior } from './dp/strengthKalman.js';
 import { ceilingE1RM, gainDecay } from './dp/ceiling.js';
 import { getUserConfig } from '../config/user.js';
 import { t } from '../i18n/index.js';
@@ -751,6 +751,74 @@ export const DP = {
       // e1RM produced nothing (cold start / ineligible) → raw path, never a regression.
     }
     return this._demonstratedWorkingW(ex, rMin);
+  },
+
+  // ══ BUILD #4 — cross-exercise transfer cold-start (F3 spec §4) ═══════════════
+  // When a NEW exercise has no logs, seed its working load from a RELATED exercise
+  // the user HAS trained, in e1RM space (so a related lift at 12×15 can seed a new
+  // lift at 8×10 — e1RM normalizes the rep scheme; raw-kg transfer could not). The
+  // related-exercise graph comes from getTransferSources (equipment_alternatives →
+  // legacy SIMILAR_EXERCISES → muscle match over the user's own logged lifts).
+  // First related lift with a usable e1RM wins, scaled by the legacy similarity
+  // ratio. LOW risk — only the FIRST session of a new exercise (no history to
+  // regress), bounded by equipment snap + ceiling. Flag dp_transfer_coldstart_v1
+  // (default OFF). e1RM-ineligible target (bodyweight/band) → null (raw path).
+
+  // The names the user has actually logged (the candidate pool for the
+  // muscle-match last resort in getTransferSources). Reads the `logs` key once.
+  /** @returns {string[]} */
+  _loggedExerciseNames() {
+    const logs = /** @type {Array<{ex?: string, w?: number}>} */ (DB.get('logs')) || [];
+    const names = new Set();
+    for (const l of logs) { if (l && l.ex && l.w) names.add(l.ex); }
+    return [...names];
+  },
+
+  // The user's best DEMONSTRATED e1RM for one exercise (kg-scale e1RM, NOT a
+  // working kg). Prefers the Kalman posterior mu (dp_strength_kalman_v1 ON +
+  // persisted) else the heaviest qualifying per-set e1RM from the logs. Returns 0
+  // when the user has no usable e1RM for it. Pure read.
+  /** @param {string} ex @param {number} rMin @returns {number} */
+  _bestE1RM(ex, rMin) {
+    if (!this._e1rmEligible(ex)) return 0;
+    if (isEnabled('dp_strength_kalman_v1')) {
+      const post = loadPosterior(ex);
+      if (post && Number.isFinite(post.mu) && post.mu > 0) return post.mu;
+    }
+    const logs = this.getLogs(ex, 12);
+    const floorReps = rMin ?? 8;
+    let best = 0;
+    for (const l of logs) {
+      const w = Number(l.w);
+      if (!Number.isFinite(w) || w <= 0) continue;
+      const reps = typeof l.reps === 'string' ? parseInt(l.reps, 10) : Number(l.reps);
+      if (!Number.isFinite(reps) || reps < floorReps) continue;
+      const rpe = Number(l.rpe) || 7;
+      if (rpe >= 8.5 && reps < floorReps) continue;
+      const e = this.e1RMForSet(w, reps, rpe);
+      if (e != null && e > best) best = e;
+    }
+    return best;
+  },
+
+  // Seed a NEW exercise's working kg from a related lift's e1RM. Returns null when
+  // no related lift has a usable e1RM (caller falls to today's suggestStartWeight).
+  // @param {string} ex new exercise engineName
+  // @param {number} repTarget rep target to back-solve the seed at
+  // @returns {{kg:number, source:string, ratio:number}|null}
+  coldStartTransfer(ex, repTarget) {
+    if (!this._e1rmEligible(ex)) return null;
+    const rt = repTarget ?? 10;
+    const sources = getTransferSources(ex, getExerciseMetadata, this._loggedExerciseNames());
+    for (const src of sources) {
+      const srcE1RM = this._bestE1RM(src, rt);
+      if (srcE1RM <= 0) continue;
+      const ratio = getSimilarityMultiplier(ex, src);
+      const seededE1RM = srcE1RM * ratio;
+      const kg = this.roundToStep(this._kgFromE1RM(seededE1RM, rt), ex);
+      if (kg > 0) return { kg, source: src, ratio };
+    }
+    return null;
   },
 
   // ── RETURN-AFTER-GAP DELOAD + RAMP (detraining, Daniel decision #3) ──────────
@@ -1833,6 +1901,26 @@ export function getInitialRecommendation(exerciseName, ctx) {
       status: 'CONSOLIDATE', statusColor: 'var(--accent)', statusLabel: '🟡 Continuam',
       isInitial: false, rationale: `Pornim de la ultima sesiune: ${exactLog.weight} kg`, confidence: 0.9
     };
+  }
+
+  // F3 #4 — cross-exercise transfer in e1RM space (flag dp_transfer_coldstart_v1,
+  // default OFF → this whole block is skipped → byte-identical legacy). Seeds the
+  // new lift's load from a RELATED lift the user has e1RM for (equipment_alternatives
+  // → SIMILAR_EXERCISES → muscle match), normalizing the rep scheme. Wins over the
+  // legacy raw-kg similar loop below; falls through to it / to the profile fallback
+  // when no related e1RM exists.
+  if (isEnabled('dp_transfer_coldstart_v1')) {
+    const seed = DP.coldStartTransfer(exerciseName, 10);
+    if (seed && seed.kg > 0) {
+      const rounded = roundToEquipmentWeight(seed.kg, exerciseName);
+      return {
+        kg: rounded, weight: rounded, repsTarget: 10, reps: 10, sets: 3, rir: 3,
+        status: 'INIT', statusColor: 'var(--text3)', statusLabel: '🟡 Pornire estimata',
+        isInitial: true,
+        rationale: `Pornim de la ${seed.source} (estimare e1RM ×${seed.ratio})`,
+        confidence: 0.7,
+      };
+    }
   }
 
   const similar = /** @type {Record<string, string[]>} */ (SIMILAR_EXERCISES);

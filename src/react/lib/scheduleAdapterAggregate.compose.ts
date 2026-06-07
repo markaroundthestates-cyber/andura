@@ -17,6 +17,7 @@ import { COMPOUND_EX } from '../../constants.js';
 import type { PlannedExercise, PlannedWorkoutOutput, CoachAdaptation } from './engineWrappers';
 import { toExerciseDisplay } from './exerciseDisplay';
 import { DP } from '../../engine/dp.js';
+import { isEnabled } from '../../util/featureFlags.js';
 import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
 import { roundToEquipmentWeight } from '../../config/weights.js';
 import { isBodyweightExercise, bodyweightFraction } from '../../engine/bodyweightLoad.js';
@@ -194,6 +195,14 @@ function toPlannedExercise(
   // load — see logSet — but the recommendation tracks the same axis), so we
   // keep it; cold-start added = 0.
   const isBw = isBodyweightExercise(engineEx.name);
+  // F3 #4 — cross-exercise transfer cold-start (flag dp_transfer_coldstart_v1,
+  // default OFF → null → today's suggestStartWeight path, byte-identical). For a
+  // NEW external-load lift with no history, seed from a RELATED lift the user has
+  // e1RM for (normalizing the rep scheme) before falling to the population prior.
+  const transferSeed =
+    !isBw && !hasHistory && isEnabled('dp_transfer_coldstart_v1')
+      ? DP.coldStartTransfer(engineEx.name, targetReps)
+      : null;
   const rawTargetKg = isBw
     ? hasHistory && rec && typeof rec.kg === 'number'
       ? rec.kg
@@ -202,7 +211,9 @@ function toPlannedExercise(
       ? rec && typeof rec.kg === 'number'
         ? rec.kg
         : suggestStartWeight(engineEx.name, experienceEn, csProfile)
-      : suggestStartWeight(engineEx.name, experienceEn, csProfile);
+      : transferSeed && transferSeed.kg > 0
+        ? transferSeed.kg
+        : suggestStartWeight(engineEx.name, experienceEn, csProfile);
   // Snap the prescribed EXTERNAL load to a weight the machine/dumbbell can
   // actually be set to — covers the cold-start suggestStartWeight path that
   // otherwise surfaced impossible weights (smoke 2026-06-01: Flat DB Press 18kg
