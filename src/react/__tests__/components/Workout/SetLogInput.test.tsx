@@ -6,6 +6,7 @@
 // log' readonly modes covered + backward-compat baseline + a11y +
 // no-diacritics.
 
+import { useState } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { SetLogInput } from '../../../components/Workout/SetLogInput';
@@ -459,5 +460,144 @@ describe('SetLogInput — A11Y HIGH chat5 editable mode aria attributes', () => 
     renderInput({ onKgChange });
     fireEvent.change(screen.getByTestId('kg-input'), { target: { value: '' } });
     expect(onKgChange).toHaveBeenCalledWith(0);
+  });
+});
+
+// SELECT-ALL-ON-TAP + DECIMAL BUFFER (2026-06-07, Daniel live "aveam 90, vreau
+// 95, se face 9590.0"): the fields used type="number" + onFocus .select(), but
+// .select() is a NO-OP on type="number" in most browsers → tapping never
+// selected-all → the first keystroke INSERTED into the old value. Fix:
+// type="text" + inputMode (numeric keypad kept) so .select() works, + a local
+// text buffer so an in-progress decimal ("9.") survives the parent re-render.
+
+// Controlled harness mirroring the REAL parent (Workout.tsx owns kg/reps as
+// NUMBERS). Lets us assert the buffer round-trips through the parent and that
+// external setters (the ± steppers, target prefill) resync the field.
+function ControlledSetLog({
+  initialKg = 90,
+  initialReps = 10,
+  ...rest
+}: { initialKg?: number; initialReps?: number } & Partial<Parameters<typeof SetLogInput>[0]>) {
+  const [kg, setKg] = useState(initialKg);
+  const [reps, setReps] = useState(initialReps);
+  return (
+    <>
+      <SetLogInput kg={kg} reps={reps} onKgChange={setKg} onRepsChange={setReps} {...rest} />
+      <span data-testid="probe-kg">{kg}</span>
+      <span data-testid="probe-reps">{reps}</span>
+      <button data-testid="ext-set-kg-186-5" onClick={() => setKg(186.5)}>
+        ext kg
+      </button>
+    </>
+  );
+}
+
+describe('SetLogInput — select-all-on-tap + decimal buffer (type="number" .select() fix)', () => {
+  it('kg + reps inputs are type="text" (so .select() works) with the numeric inputMode kept', () => {
+    renderInput();
+    const kgInput = screen.getByTestId('kg-input') as HTMLInputElement;
+    const repsInput = screen.getByTestId('reps-input') as HTMLInputElement;
+    expect(kgInput.type).toBe('text');
+    expect(repsInput.type).toBe('text');
+    expect(kgInput).toHaveAttribute('inputmode', 'decimal');
+    expect(repsInput).toHaveAttribute('inputmode', 'numeric');
+  });
+
+  it('tinta kg + reps inputs are type="text" with numeric inputMode kept', () => {
+    renderInput({ mode: 'tinta', kg: 90, reps: 10 });
+    const kgInput = screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement;
+    const repsInput = screen.getByTestId('setlog-tinta-reps-input') as HTMLInputElement;
+    expect(kgInput.type).toBe('text');
+    expect(repsInput.type).toBe('text');
+    expect(kgInput).toHaveAttribute('inputmode', 'decimal');
+    expect(repsInput).toHaveAttribute('inputmode', 'numeric');
+  });
+
+  it('focus calls .select() on the kg field (select-all so first keystroke replaces)', () => {
+    renderInput({ kg: 90 });
+    const kgInput = screen.getByTestId('kg-input') as HTMLInputElement;
+    const selectSpy = vi.spyOn(kgInput, 'select');
+    fireEvent.focus(kgInput);
+    expect(selectSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('value shown at 90 → typing "95" yields 95 (NOT 9590 — the bug)', () => {
+    // The browser select-all-on-focus means the keystrokes replace the whole
+    // value; jsdom delivers that as a change whose target.value is the
+    // post-replacement string "95". The buffer must take it verbatim → 95.
+    render(<ControlledSetLog initialKg={90} />);
+    const kgInput = screen.getByTestId('kg-input') as HTMLInputElement;
+    expect(kgInput.value).toBe('90');
+    fireEvent.focus(kgInput);
+    fireEvent.change(kgInput, { target: { value: '95' } });
+    expect(kgInput.value).toBe('95');
+    expect(screen.getByTestId('probe-kg')).toHaveTextContent('95');
+  });
+
+  it('typing "9.5" preserves the decimal (not stripped on re-render) and yields 9.5', () => {
+    render(<ControlledSetLog initialKg={90} />);
+    const kgInput = screen.getByTestId('kg-input') as HTMLInputElement;
+    fireEvent.focus(kgInput);
+    // Mid-typing: the trailing "." must survive the parent re-render (the naive
+    // controlled value={String(kg)} stripped it so you could never type "9.5").
+    fireEvent.change(kgInput, { target: { value: '9' } });
+    fireEvent.change(kgInput, { target: { value: '9.' } });
+    expect(kgInput.value).toBe('9.');
+    fireEvent.change(kgInput, { target: { value: '9.5' } });
+    expect(kgInput.value).toBe('9.5');
+    expect(screen.getByTestId('probe-kg')).toHaveTextContent('9.5');
+  });
+
+  it('typing a real plate weight 186.5 round-trips through the parent verbatim', () => {
+    render(<ControlledSetLog initialKg={90} />);
+    const kgInput = screen.getByTestId('kg-input') as HTMLInputElement;
+    fireEvent.focus(kgInput);
+    fireEvent.change(kgInput, { target: { value: '186.5' } });
+    expect(kgInput.value).toBe('186.5');
+    expect(screen.getByTestId('probe-kg')).toHaveTextContent('186.5');
+  });
+
+  it('kg sanitizes letters + a second decimal point out (first dot wins)', () => {
+    render(<ControlledSetLog initialKg={90} />);
+    const kgInput = screen.getByTestId('kg-input') as HTMLInputElement;
+    fireEvent.focus(kgInput);
+    fireEvent.change(kgInput, { target: { value: '1a2.3.4' } });
+    expect(kgInput.value).toBe('12.34');
+  });
+
+  it('reps rejects a decimal point entirely (whole numbers only)', () => {
+    render(<ControlledSetLog initialReps={10} />);
+    const repsInput = screen.getByTestId('reps-input') as HTMLInputElement;
+    fireEvent.focus(repsInput);
+    fireEvent.change(repsInput, { target: { value: '12.5' } });
+    expect(repsInput.value).toBe('125');
+    expect(screen.getByTestId('probe-reps')).toHaveTextContent('125');
+  });
+
+  it('the ± stepper resyncs the buffer (external change overwrites the field)', () => {
+    render(<ControlledSetLog initialKg={90} />);
+    const kgInput = screen.getByTestId('kg-input') as HTMLInputElement;
+    fireEvent.click(screen.getByTestId('kg-plus'));
+    // 90 + 0.5 → 90.5, and the field reflects the parent's new value.
+    expect(screen.getByTestId('probe-kg')).toHaveTextContent('90.5');
+    expect(kgInput.value).toBe('90.5');
+    fireEvent.click(screen.getByTestId('kg-minus'));
+    expect(kgInput.value).toBe('90');
+  });
+
+  it('an external prefill (target change) resyncs the buffer to the new value', () => {
+    render(<ControlledSetLog initialKg={90} />);
+    const kgInput = screen.getByTestId('kg-input') as HTMLInputElement;
+    fireEvent.click(screen.getByTestId('ext-set-kg-186-5'));
+    expect(kgInput.value).toBe('186.5');
+  });
+
+  it('clearing the field emits 0 and shows empty (smoke #4 "022" fix preserved)', () => {
+    render(<ControlledSetLog initialKg={90} />);
+    const kgInput = screen.getByTestId('kg-input') as HTMLInputElement;
+    fireEvent.focus(kgInput);
+    fireEvent.change(kgInput, { target: { value: '' } });
+    expect(kgInput.value).toBe('');
+    expect(screen.getByTestId('probe-kg')).toHaveTextContent('0');
   });
 });

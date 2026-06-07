@@ -210,8 +210,10 @@ describe('Workout — base render (phase=idle init → logging)', async () => {
     await renderWorkoutAndWait();
     fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
     fireEvent.click(screen.getByTestId('setlog-postlog-edit'));
-    expect(screen.getByTestId('kg-input')).toHaveValue(22.5);
-    expect(screen.getByTestId('reps-input')).toHaveValue(10);
+    // type="text" + local buffer (select-all fix 2026-06-07): value is the
+    // string buffer, not a parsed number.
+    expect((screen.getByTestId('kg-input') as HTMLInputElement).value).toBe('22.5');
+    expect((screen.getByTestId('reps-input') as HTMLInputElement).value).toBe('10');
   });
 
   it('renders 3 rating buttons (Easy / Just right / Hard under EN default) after Logheaza', async () => {

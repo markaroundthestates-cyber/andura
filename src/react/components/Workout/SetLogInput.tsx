@@ -45,7 +45,8 @@
 // setlog-tinta-target-display / setlog-postlog / setlog-postlog-text /
 // setlog-postlog-edit.
 
-import type { JSX, FocusEvent } from 'react';
+import type { JSX, FocusEvent, ChangeEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Check, Pencil, Minus, Plus } from 'lucide-react';
 import { Ripple } from '../Ripple';
 import { haptic } from '../../lib/motion';
@@ -79,6 +80,109 @@ function stepValue(current: number, delta: number, min: number, max: number): nu
   // Round to the step grid so a 0.5 nudge off a typed 22.3 lands on 22.5/22.0.
   const next = Math.round((base + delta) * 2) / 2;
   return Math.min(max, Math.max(min, next));
+}
+
+// SELECT-ALL-ON-TAP FIX (2026-06-07, Daniel live "aveam 90, vreau 95, se face
+// 9590.0"): the kg/reps fields used type="number" + onFocus select(), but
+// .select()/setSelectionRange are a NO-OP on type="number" in most browsers, so
+// tapping never selected-all → the first keystroke INSERTED into the old value
+// instead of replacing it. Fix: type="text" + inputMode (numeric keypad stays)
+// so .select() works → first keystroke after tap replaces the whole value.
+//
+// type="text" is uncontrolled-feeling from the parent's POV (parent owns a
+// number; a controlled value={String(n)} strips an in-progress trailing "." on
+// re-render so you can't type "9.5"). So NumberField keeps a LOCAL text buffer:
+// the buffer survives mid-typing (".", "9."), parses to a number for the
+// parent, and RESYNCS from the parent only when the parent value changes
+// EXTERNALLY (± steppers, target prefill) — guarded so the user's own typing
+// is never clobbered (resync only when the parsed buffer differs from incoming).
+function sanitizeNum(raw: string, allowDecimal: boolean): string {
+  // Keep digits; for kg keep a single decimal point (first one wins).
+  let cleaned = raw.replace(allowDecimal ? /[^0-9.]/g : /[^0-9]/g, '');
+  if (allowDecimal) {
+    const firstDot = cleaned.indexOf('.');
+    if (firstDot !== -1) {
+      cleaned = cleaned.slice(0, firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g, '');
+    }
+  }
+  return cleaned;
+}
+
+// Number → the buffer string shown when the value arrives from the parent.
+// Mirrors the prior kgDisplay/repsDisplay rule: 0/NaN → empty (so the leading
+// "0" is never glued in front, smoke #4 "022" fix).
+function numToBuffer(n: number): string {
+  return Number.isFinite(n) && n > 0 ? String(n) : '';
+}
+
+interface NumberFieldProps {
+  value: number;
+  onChange: (n: number) => void;
+  allowDecimal: boolean; // kg → true (decimal plates 186.5), reps → false
+  inputMode: 'decimal' | 'numeric';
+  id: string;
+  testId: string;
+  className: string;
+  required?: boolean | undefined;
+  'aria-required'?: 'true' | undefined;
+  'aria-invalid'?: 'true' | undefined;
+  'aria-describedby'?: string | undefined;
+}
+
+function NumberField({
+  value,
+  onChange,
+  allowDecimal,
+  inputMode,
+  id,
+  testId,
+  className,
+  ...aria
+}: NumberFieldProps): JSX.Element {
+  const [buffer, setBuffer] = useState(() => numToBuffer(value));
+  // Track the last numeric value WE emitted so an external change (stepper /
+  // prefill) can be told apart from the parent simply echoing our own onChange
+  // back as a prop — only the former should overwrite an in-progress buffer.
+  const lastEmitted = useRef(value);
+
+  useEffect(() => {
+    // Resync only when the parent value diverged from what the buffer currently
+    // parses to (external ± / prefill). If they match, the parent is just
+    // echoing our keystroke — leave the buffer (keeps a trailing "9." alive).
+    const parsed = buffer === '' ? 0 : Number(buffer);
+    if (value !== parsed && value !== lastEmitted.current) {
+      setBuffer(numToBuffer(value));
+    }
+    lastEmitted.current = value;
+  }, [value, buffer]);
+
+  function handleChange(e: ChangeEvent<HTMLInputElement>): void {
+    const next = sanitizeNum(e.target.value, allowDecimal);
+    setBuffer(next);
+    const n = next === '' || next === '.' ? 0 : Number(next);
+    lastEmitted.current = n;
+    onChange(Number.isFinite(n) ? n : 0);
+  }
+
+  // SELECT-ALL on tap: with type="text" .select() works → first keystroke
+  // replaces the whole value (no more "9590").
+  function handleFocus(e: FocusEvent<HTMLInputElement>): void {
+    e.currentTarget.select();
+  }
+
+  return (
+    <input
+      id={id}
+      type="text"
+      inputMode={inputMode}
+      value={buffer}
+      onChange={handleChange}
+      onFocus={handleFocus}
+      data-testid={testId}
+      className={className}
+      {...aria}
+    />
+  );
 }
 
 interface DialButtonProps {
@@ -159,17 +263,9 @@ export function SetLogInput({
   // legacy callsite (no target passed) byte-identical.
   const displayTargetKg = targetReps !== undefined || targetKg !== undefined ? (targetKg ?? kg) : kg;
   const displayTargetReps = targetReps !== undefined || targetKg !== undefined ? (targetReps ?? reps) : reps;
-  // Smoke 2026-05-28 #4 — display number sau gol cand value=0/NaN. Inputul
-  // "0" lipit nu putea fi sters (Daniel: "trebuie sa pun 022"). Acum gol →
-  // user scrie direct 22.
-  const kgDisplay = Number.isFinite(kg) && kg > 0 ? String(kg) : '';
-  const repsDisplay = Number.isFinite(reps) && reps > 0 ? String(reps) : '';
-
-  // Smoke 2026-05-28 #4 — selectAll la focus pentru paste-ready: user atinge
-  // inputul si valoarea curenta e selectata, prima cifra tastata o inlocuieste.
-  function handleFocus(e: FocusEvent<HTMLInputElement>): void {
-    e.currentTarget.select();
-  }
+  // Smoke 2026-05-28 #4 — display number sau gol cand value=0/NaN. The 0/empty
+  // rule + select-all-on-focus + decimal-safe text buffer now live in
+  // NumberField (the type="number" .select() no-op fix, 2026-06-07).
 
   if (mode === 'tinta') {
     // Smoke 2026-05-28 #4 — confirmare OBLIGATORIE pre-rating. Tinta ramane
@@ -235,17 +331,13 @@ export function SetLogInput({
                 row (centered) so a 3+ digit / decimal value (186.5) can NEVER be
                 clipped by the flanking buttons; the ± steppers sit on a row
                 BELOW it. */}
-            <input
+            <NumberField
               id="setlog-tinta-kg-input"
-              type="number"
               inputMode="decimal"
-              min={0}
-              max={500}
-              step={0.5}
-              value={kgDisplay}
-              onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
-              onFocus={handleFocus}
-              data-testid="setlog-tinta-kg-input"
+              allowDecimal
+              value={kg}
+              onChange={onKgChange}
+              testId="setlog-tinta-kg-input"
               className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 mt-2 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
             />
             <div className="flex items-center justify-between gap-2 mt-2">
@@ -274,17 +366,13 @@ export function SetLogInput({
               {t('setLog.repsLabel')}
             </label>
             {/* Option B — number on its own full-tile row, ± below (never clips). */}
-            <input
+            <NumberField
               id="setlog-tinta-reps-input"
-              type="number"
               inputMode="numeric"
-              min={0}
-              max={100}
-              step={1}
-              value={repsDisplay}
-              onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
-              onFocus={handleFocus}
-              data-testid="setlog-tinta-reps-input"
+              allowDecimal={false}
+              value={reps}
+              onChange={onRepsChange}
+              testId="setlog-tinta-reps-input"
               className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 mt-2 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
             />
             <div className="flex items-center justify-between gap-2 mt-2">
@@ -404,19 +492,17 @@ export function SetLogInput({
             {isBodyweight ? t('setLog.addedWeightLabel') : t('setLog.kgLabelRequired')}
           </label>
           {/* Option B — number on its own full-tile row, ± below (never clips). */}
-          <input
+          <NumberField
             id="kg-input"
-            type="number"
+            inputMode="decimal"
+            allowDecimal
+            value={kg}
+            onChange={onKgChange}
             required={!isBodyweight}
             aria-required={isBodyweight ? undefined : 'true'}
             aria-invalid={kgError ? 'true' : undefined}
             aria-describedby={kgError ? 'kg-input-error' : undefined}
-            min={isBodyweight ? 0 : 1}
-            max={500}
-            value={kgDisplay}
-            onChange={(e) => onKgChange(e.target.value === '' ? 0 : Number(e.target.value))}
-            onFocus={handleFocus}
-            data-testid="kg-input"
+            testId="kg-input"
             className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 mt-2 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
           />
           <div className="flex items-center justify-between gap-2 mt-2">
@@ -454,19 +540,17 @@ export function SetLogInput({
             {t('setLog.repsLabelRequired')}
           </label>
           {/* Option B — number on its own full-tile row, ± below (never clips). */}
-          <input
+          <NumberField
             id="reps-input"
-            type="number"
+            inputMode="numeric"
+            allowDecimal={false}
+            value={reps}
+            onChange={onRepsChange}
             required
             aria-required="true"
             aria-invalid={repsError ? 'true' : undefined}
             aria-describedby={repsError ? 'reps-input-error' : undefined}
-            min={1}
-            max={100}
-            value={repsDisplay}
-            onChange={(e) => onRepsChange(e.target.value === '' ? 0 : Number(e.target.value))}
-            onFocus={handleFocus}
-            data-testid="reps-input"
+            testId="reps-input"
             className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 mt-2 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
           />
           <div className="flex items-center justify-between gap-2 mt-2">
