@@ -1772,7 +1772,12 @@ describe('Workout — shared current-recommended-load (autoreg + AaFriction)', (
     await renderWorkoutAndWait();
     // The set opens with target == entry == the engine rec (50 kg).
     expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('50 kg');
-    expect((screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement).value).toBe('50');
+    // NumberField seeds its local text buffer from the prop via an effect — under
+    // full-suite load that commit can lag a tick, so wait for it (was a flaky
+    // "expected '' to be '50'" race) rather than reading synchronously.
+    await waitFor(() =>
+      expect((screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement).value).toBe('50'),
+    );
     // The user edits what they ACTUALLY lifted (8 kg). The read-only TARGET must
     // NOT mirror that edit — it stays the coach's prescription (50). The old bug
     // showed the user's own 8 back as the "Tinta".

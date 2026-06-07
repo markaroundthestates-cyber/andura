@@ -17,6 +17,12 @@ import { afterEach, beforeEach } from 'vitest';
 
 beforeEach(() => {
   localStorage.clear();
+  // D107 behavioral collection is DEFAULT-ON in prod (absent key = enabled). In
+  // tests we force it OFF for determinism — otherwise every Workout/flow test
+  // fires async IDB behavior-log writes that perturb render timing (flaky
+  // target/entry assertions). The debugLog suite removes this key explicitly to
+  // assert the absent→ON default.
+  localStorage.setItem('andura-behavior-collect', 'false');
 });
 
 afterEach(() => {

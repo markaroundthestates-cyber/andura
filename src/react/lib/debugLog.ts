@@ -117,29 +117,26 @@ export function setDebugEnabled(on: boolean): void {
 }
 
 /**
- * Durable semantic-event collection gate. DEFAULT-OFF for now (the default-ON
- * decision is Daniel's, pending — D107 P-1).
- *
- * ▶▶ DEFAULT-ON ONE-LINER: to flip the default to ON, change the line below to
- *    `return localStorage.getItem(COLLECT_KEY) !== 'false';`
- *    (treat absent/unset as enabled; only an explicit 'false' disables). No other
- *    code change is required — Settings, reset, export all already honor it. ◀◀
+ * Durable semantic-event collection gate. DEFAULT-ON (Daniel decision 2026-06-07,
+ * D107 P-1): on-device only, never synced; the user opts OUT via Settings. Absent/
+ * unset = enabled; only an explicit 'false' disables — so setCollectEnabled(false)
+ * PERSISTS 'false' (does NOT clear the key, else it would revert to the ON default).
  */
 export function isCollectEnabled(): boolean {
   try {
     if (!hasLocalStorage()) return false;
-    return localStorage.getItem(COLLECT_KEY) === 'true';
+    return localStorage.getItem(COLLECT_KEY) !== 'false';
   } catch {
     return false;
   }
 }
 
-/** Persist / clear the collection gate (Settings toggle). */
+/** Persist the collection gate (Settings toggle). Explicit 'true'/'false' both
+ *  ways so the stored value is unambiguous regardless of the default. */
 export function setCollectEnabled(on: boolean): void {
   try {
     if (!hasLocalStorage()) return;
-    if (on) localStorage.setItem(COLLECT_KEY, 'true');
-    else localStorage.removeItem(COLLECT_KEY);
+    localStorage.setItem(COLLECT_KEY, on ? 'true' : 'false');
   } catch {
     /* never throw from capture controls */
   }

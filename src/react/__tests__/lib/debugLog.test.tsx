@@ -57,12 +57,16 @@ afterEach(async () => {
   localStorage.clear();
 });
 
-describe('debugLog — D107 collection gate (default OFF for now)', () => {
-  it('collection gate defaults OFF', () => {
-    expect(isCollectEnabled()).toBe(false);
+describe('debugLog — D107 collection gate (default ON, opt-out)', () => {
+  it('collection gate defaults ON', () => {
+    // Global test setup forces the key OFF for determinism; remove it to assert
+    // the real prod default (absent/unset → enabled).
+    localStorage.removeItem(COLLECT_KEY);
+    expect(isCollectEnabled()).toBe(true);
   });
 
   it('collect OFF → semantic event() records nothing', async () => {
+    setCollectEnabled(false);
     debugLog.event('log', { exercise: 'Bench Press', kg: 60 });
     await flush();
     expect(await debugLog.snapshot()).toHaveLength(0);
@@ -80,11 +84,11 @@ describe('debugLog — D107 collection gate (default OFF for now)', () => {
     expect(typeof snap[0]!.t).toBe('number');
   });
 
-  it('setCollectEnabled(false) clears the gate', () => {
+  it('setCollectEnabled(false) persists an explicit opt-out', () => {
     setCollectEnabled(true);
     setCollectEnabled(false);
     expect(isCollectEnabled()).toBe(false);
-    expect(localStorage.getItem(COLLECT_KEY)).toBeNull();
+    expect(localStorage.getItem(COLLECT_KEY)).toBe('false');
   });
 });
 
