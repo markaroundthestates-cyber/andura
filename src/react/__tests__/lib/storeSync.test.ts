@@ -7,6 +7,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AUTH_STORAGE_KEYS } from '../../../auth.js';
 import { hydrateStoresFromCloud, __resetStoreSyncForTest } from '../../lib/storeSync';
+import { DB } from '../../../db.js';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useProgresStore } from '../../stores/progresStore';
 import { useNutritionStore } from '../../stores/nutritionStore';
@@ -244,6 +245,70 @@ describe('hydrateStoresFromCloud — NO CLOBBER (local edits survive)', () => {
     const hist = useWorkoutStore.getState().sessionsHistory;
     expect(hist.find((s) => s.ts === 1234)).toBeUndefined();
     expect(useWorkoutStore.getState().deletedSessionTs).toContain(1234);
+  });
+
+  // F0 dedup #4a — cross-channel tombstone reconciliation. A session deleted via
+  // the wv2 tombstone channel (Channel B) must also have its GHOST flat-`logs`
+  // rows (Channel A, what dp.js reads) pruned on hydrate. The join is the per-set
+  // timestamp (logs[].ts === session.exercises[].sets[].timestamp).
+  it('reconcile: a tombstoned session\'s ghost `logs` rows are pruned on hydrate', async () => {
+    seedAuth();
+    // Local has the session (logged on this device) + its flat logs (Channel A).
+    // sessionStart (logs[].session) differs from session.ts (the tombstone key) —
+    // the reconciliation must match on the per-set ts, not the session id.
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        { title: 'Mislog', meta: '', ts: 5000, exercises: [
+          { exerciseId: 'flat-db-press', exerciseName: 'Flat DB Press', engineName: 'Flat DB Press', totalVolume: 0, peakOneRM: 0,
+            sets: [{ kg: 100, reps: 5, rating: 'potrivit' as const, timestamp: 4901 }] },
+        ] },
+      ],
+      lastSession: null,
+      deletedSessionTs: [],
+    });
+    DB.set('logs', [
+      { ex: 'Flat DB Press', w: 100, kg: 100, ts: 4901, session: 4900, set: 1, sets: 1, reps: '5', date: '' },
+      { ex: 'Squat', w: 120, kg: 120, ts: 3000, session: 2900, set: 1, sets: 1, reps: '5', date: '' },
+    ]);
+    // The OTHER device deleted session ts=5000 → remote tombstone arrives.
+    stubFetch({
+      workout: { data: { sessionsHistory: [], deletedSessionTs: [5000] }, updatedAt: 9 },
+    });
+
+    await hydrateStoresFromCloud();
+
+    expect(useWorkoutStore.getState().deletedSessionTs).toContain(5000);
+    const logs = DB.get<Array<{ ts: number }>>('logs') ?? [];
+    // The ghost row (ts=4901, owned by the tombstoned session) is gone.
+    expect(logs.find((r) => r.ts === 4901)).toBeUndefined();
+    // The unrelated row survives (precise per-set-timestamp join, no over-removal).
+    expect(logs.find((r) => r.ts === 3000)).toBeDefined();
+  });
+
+  it('reconcile: a NON-deleted session keeps its `logs` rows on hydrate (no over-prune)', async () => {
+    seedAuth();
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        { title: 'Push', meta: '', ts: 6000, exercises: [
+          { exerciseId: 'flat-db-press', exerciseName: 'Flat DB Press', engineName: 'Flat DB Press', totalVolume: 0, peakOneRM: 0,
+            sets: [{ kg: 100, reps: 5, rating: 'potrivit' as const, timestamp: 5901 }] },
+        ] },
+      ],
+      lastSession: null,
+      deletedSessionTs: [],
+    });
+    DB.set('logs', [
+      { ex: 'Flat DB Press', w: 100, kg: 100, ts: 5901, session: 5900, set: 1, sets: 1, reps: '5', date: '' },
+    ]);
+    // Remote just confirms the same session, no tombstone.
+    stubFetch({
+      workout: { data: { sessionsHistory: [{ title: 'Push', meta: '', ts: 6000 }], deletedSessionTs: [] }, updatedAt: 9 },
+    });
+
+    await hydrateStoresFromCloud();
+
+    const logs = DB.get<Array<{ ts: number }>>('logs') ?? [];
+    expect(logs.find((r) => r.ts === 5901)).toBeDefined();
   });
 
   it('no-op when unauthenticated (null user path → no fetch result applied)', async () => {

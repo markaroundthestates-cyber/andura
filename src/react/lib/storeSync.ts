@@ -24,6 +24,7 @@
 //   - reactBoot.ts runPostAuthSync (calls hydrateStoresFromCloud on login/boot)
 
 import { fbGetUserChild, fbPatchUserChild } from '../../firebase.js';
+import { DB } from '../../db.js';
 import {
   mergeArrayUnion,
   mergeMaxScalar,
@@ -46,6 +47,53 @@ const PUSH_DEBOUNCE_MS = 3000;
 interface RemoteEnvelope {
   data?: unknown;
   updatedAt?: number;
+}
+
+// ── Cross-channel tombstone reconciliation (F0 dedup #4a, additive) ───────────
+// The flat `logs` array (Channel A, firebase.js SYNC_KEYS — what dp.js reads via
+// DP.getLogs) has NO tombstone path; deletions live only in the wv2 channel's
+// deletedSessionTs (Channel B). So a session deleted on another device leaves
+// GHOST `logs` rows on a device that only learns of the deletion via the wv2
+// tombstone on hydrate — dp.js then prescribes off a workout the user removed.
+//
+// Repair, additive + subtractive only: for every tombstoned session still
+// present in the just-merged history, prune the `logs` rows that belong to it.
+// The robust join is the per-set TIMESTAMP: each logs row carries `ts` =
+// set.timestamp (buildLogEntriesFromSummary), identical to the session's
+// exercises[*].sets[*].timestamp. (logs[].session is the session START ts, which
+// differs from the tombstone = session FINISH ts, so a session-id match would be
+// wrong — match on set timestamps instead.) Never resurrects, never throws.
+interface MinimalSession {
+  ts?: number;
+  exercises?: Array<{ sets?: Array<{ timestamp?: number }> }>;
+}
+
+function reconcileTombstonedLogs(
+  mergedSessions: readonly MinimalSession[],
+  deletedSet: ReadonlySet<number | undefined>,
+): void {
+  try {
+    // Collect the set timestamps of every tombstoned session in the merged list.
+    const deletedSetTimestamps = new Set<number>();
+    for (const sess of mergedSessions) {
+      if (!deletedSet.has(sess?.ts)) continue;
+      const exercises = Array.isArray(sess?.exercises) ? sess.exercises : [];
+      for (const ex of exercises) {
+        const sets = Array.isArray(ex?.sets) ? ex.sets : [];
+        for (const set of sets) {
+          if (typeof set?.timestamp === 'number') deletedSetTimestamps.add(set.timestamp);
+        }
+      }
+    }
+    if (deletedSetTimestamps.size === 0) return;
+    const logs = DB.get<Array<{ ts?: number }>>('logs');
+    if (!Array.isArray(logs) || logs.length === 0) return;
+    const pruned = logs.filter((row) => !deletedSetTimestamps.has(row?.ts as number));
+    if (pruned.length !== logs.length) DB.set('logs', pruned);
+  } catch {
+    // Best-effort — a reconciliation failure must never abort hydrate or break
+    // the engine's logs read (dp.js tolerates stale/missing logs gracefully).
+  }
 }
 
 /**
@@ -96,8 +144,10 @@ const SYNCED: SyncedStore[] = [
       // la 0 INAINTE de merge: pastreaza inregistrarea (zero pierdere date) dar
       // evita NaN sa otraveasca sortarea reverse-chrono din Istoric (b.ts - a.ts)
       // + UI formatDate degradeaza la em-dash in loc de cheia i18n literala.
-      const mergedSessions = mergeArrayUnion(local.sessionsHistory, d.sessionsHistory, 'ts')
-        .filter((s) => !deletedSet.has(s?.ts));
+      // Union BEFORE the tombstone filter — the reconciliation needs the deleted
+      // sessions' set timestamps (they are filtered out of mergedSessions below).
+      const unionSessions = mergeArrayUnion(local.sessionsHistory, d.sessionsHistory, 'ts');
+      const mergedSessions = unionSessions.filter((s) => !deletedSet.has(s?.ts));
       const sessionsHistory = mergedSessions.map((s) =>
         Number.isFinite(s?.ts) ? s : { ...s, ts: 0 },
       );
@@ -113,6 +163,11 @@ const SYNCED: SyncedStore[] = [
       );
       const lastSession =
         mergedLastSession && deletedSet.has(mergedLastSession.ts) ? null : mergedLastSession;
+      // Cross-channel repair: drop ghost flat-`logs` rows (Channel A, dp.js read
+      // path) for any session tombstoned via the wv2 channel (Channel B). Uses
+      // unionSessions (pre-tombstone-filter) so the deleted session's set
+      // timestamps are still visible to join against logs[].ts. Additive guard.
+      reconcileTombstonedLogs(unionSessions, deletedSet);
       useWorkoutStore.setState({ sessionsHistory, streak, lastStreakDate, lastSession, deletedSessionTs });
     },
   },
