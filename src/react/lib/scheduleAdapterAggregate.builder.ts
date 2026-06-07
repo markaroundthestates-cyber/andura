@@ -172,6 +172,44 @@ function distinctLoggedExerciseNames(): string[] {
   return [...names];
 }
 
+/** A persisted set row from the `logs` channel (EN engineName key). */
+type LogRow = { ex?: string; w?: number; reps?: number | string; ts?: number; session?: number };
+
+// How many most-recent distinct sessions feed the Specialization recent window
+// (consensus B2 last-12-sessions, weaknessConsumer.js:144-164).
+const SPECIALIZATION_RECENT_SESSIONS = 12;
+
+/**
+ * Specialization weakness-detector inputs (specialization/index.js:200-201).
+ * Reads the SAME persisted `logs` channel distinctLoggedExerciseNames + DP
+ * consume — native `{ex (EN), w, reps, ts, session}` shape (workoutStore.logic.ts:
+ * 124-137). Passed THROUGH UNCHANGED: the detector wants exactly `{ex,w,reps}`
+ * keyed on the EN name, so NO remap / NO EN-RO translation.
+ *   - lifetime = full logs.
+ *   - recent = rows whose `session` ∈ the 12 most-recent distinct session anchors
+ *     (consensus requires recent ∧ lifetime to converge on the same top-1 weak
+ *     group or Specialization defers — both windows MUST be fed).
+ * Pure (reads persisted DB only). Empty → {lifetime:[], recent:[]} → engine stays
+ * at its conservative no-target baseline (NU a fabricated signal).
+ */
+function loggedSetsForWeakness(): { lifetime: LogRow[]; recent: LogRow[] } {
+  const lifetime = (DB.get('logs') as LogRow[] | null) ?? [];
+  if (lifetime.length === 0) return { lifetime: [], recent: [] };
+  const distinctSessions = [
+    ...new Set(
+      lifetime
+        .map((l) => l?.session)
+        .filter((s): s is number => typeof s === 'number' && Number.isFinite(s)),
+    ),
+  ].sort((a, b) => b - a);
+  const recentWindow = new Set(distinctSessions.slice(0, SPECIALIZATION_RECENT_SESSIONS));
+  const recent =
+    recentWindow.size === 0
+      ? []
+      : lifetime.filter((l) => typeof l?.session === 'number' && recentWindow.has(l.session));
+  return { lifetime, recent };
+}
+
 function tierForExperience(experience: unknown): 'T0' | 'T1' | 'T2' | null {
   switch (experience) {
     case 'incepator':
@@ -325,6 +363,9 @@ export function buildUserStateForPipeline(): {
   // candidates so existing users keep visible PR continuity. EN canonical names
   // (logs key on the EN name, same as DP.getLogs / cold-start guidelines).
   const prNames = distinctLoggedExerciseNames();
+  // F1 T1 — Specialization weakness-detector inputs (lifetimeLogs + recentLogs).
+  // Same persisted `logs` channel, native shape, passed through unchanged.
+  const { lifetime: lifetimeLogs, recent: recentLogs } = loggedSetsForWeakness();
   // Intra-week deficit recovery (D-intra-week 2026-06-04) — DONE working-set volume
   // per Big-11 EN group for the CURRENT microcycle, computed React-side from the
   // RAW sessionsHistory (each LastSessionSummary carries per-exercise `sets`). The
@@ -421,6 +462,16 @@ export function buildUserStateForPipeline(): {
       EMOJI_TO_DIRECTION[todayEnergyEmoji] !== undefined
         ? { energyDirection: EMOJI_TO_DIRECTION[todayEnergyEmoji] }
         : {}),
+      // F1 T1 — Specialization weakness-detector inputs (specialization/index.js:
+      // 200-201 buildWeaknessSignal). lifetimeLogs = full `logs`; recentLogs =
+      // the last-12-distinct-sessions subset (consensus B2 — recent ∧ lifetime
+      // must converge on the same top-1 weak group or Specialization defers, so
+      // BOTH windows are fed). Once non-null, target_muscle_group folds into the
+      // de-duped weakGroups Set at getDailyWorkout.js:284-287 (a SECOND weakness
+      // source alongside getLaggingMuscles; the Set + MRV-capped
+      // applyWeaknessAmplification absorb the overlap — see report). Omit when no
+      // logs → engine keeps its conservative no-target baseline (NU fabricated).
+      ...(lifetimeLogs.length ? { lifetimeLogs, recentLogs } : {}),
     },
     // Intra-week deficit recovery — DONE volume + microcycle anchor for the engine
     // proration/spread (getDailyWorkout reads userState.weekContext). Computed from

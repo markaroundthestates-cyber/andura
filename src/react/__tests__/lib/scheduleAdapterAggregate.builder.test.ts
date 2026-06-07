@@ -350,6 +350,75 @@ describe('buildUserStateForPipeline — meta-wire activates specialization for a
     expect(result.meta.activation_state).toBe(ACTIVATION_STATE.INELIGIBLE_NOT_ADVANCED);
   });
 
+  // F1 T1 — the builder itself now populates lifetimeLogs/recentLogs from the
+  // persisted `logs` key (the headline un-darkening). These rows carry the native
+  // {ex (EN), w, reps, ts, session} shape workoutStore.logic.ts writes.
+  const weakBicepsLogRows = (session: number) => [
+    { ex: 'Bench Press', w: 120, reps: 5, ts: session + 1, session },
+    { ex: 'Barbell Row', w: 110, reps: 5, ts: session + 2, session },
+    { ex: 'Bicep Curl', w: 25, reps: 8, ts: session + 3, session },
+    { ex: 'Squat', w: 130, reps: 5, ts: session + 4, session },
+  ];
+
+  it('T1: builder feeds lifetimeLogs/recentLogs from the `logs` key → engine target null→value', async () => {
+    seedOnboarding({ age: 25, experience: 'avansat', goal: 'masa' });
+    // Two distinct sessions in the persisted `logs` channel.
+    DB.set('logs', [
+      ...weakBicepsLogRows(NOW - 7 * MS_PER_DAY),
+      ...weakBicepsLogRows(NOW - 1 * MS_PER_DAY),
+    ]);
+    const state = buildUserStateForPipeline();
+    // The builder now SETS the detector inputs (were absent → engine starved).
+    expect(Array.isArray(state.meta.lifetimeLogs)).toBe(true);
+    expect((state.meta.lifetimeLogs as unknown[]).length).toBe(8);
+    expect(Array.isArray(state.meta.recentLogs)).toBe(true);
+    // Native shape passed through unchanged (EN ex key, w, reps).
+    const row = (state.meta.lifetimeLogs as Array<Record<string, unknown>>)[0]!;
+    expect(row.ex).toBe('Bench Press');
+
+    // Through the REAL engine, fed ONLY by the builder meta (no hand-fed logs):
+    // target_muscle_group flips null → a weak group (signal-bus `computed`).
+    const result = await evaluateSpecialization({
+      user: {},
+      recentSessions: [],
+      profileTier: state.profileTier as string,
+      meta: state.meta,
+    });
+    expect(result.meta.target_muscle_group).toBe('biceps');
+  });
+
+  it('T1: no logs → lifetimeLogs/recentLogs absent → engine target stays null (conservative)', async () => {
+    seedOnboarding({ age: 25, experience: 'avansat', goal: 'masa' });
+    const state = buildUserStateForPipeline();
+    expect('lifetimeLogs' in (state.meta as Record<string, unknown>)).toBe(false);
+    expect('recentLogs' in (state.meta as Record<string, unknown>)).toBe(false);
+    const result = await evaluateSpecialization({
+      user: {},
+      recentSessions: [],
+      profileTier: state.profileTier as string,
+      meta: state.meta,
+    });
+    expect(result.meta.target_muscle_group).toBeNull();
+  });
+
+  it('T1: recentLogs window = the 12 most-recent distinct sessions', () => {
+    seedOnboarding({ age: 25, experience: 'avansat', goal: 'masa' });
+    // 14 distinct sessions; only the newest 12 should be in recentLogs.
+    const rows: Array<Record<string, unknown>> = [];
+    for (let i = 0; i < 14; i += 1) {
+      const session = NOW - i * MS_PER_DAY;
+      rows.push({ ex: 'Bench Press', w: 100, reps: 5, ts: session, session });
+    }
+    DB.set('logs', rows);
+    const state = buildUserStateForPipeline();
+    const recent = state.meta.recentLogs as Array<{ session: number }>;
+    const distinct = new Set(recent.map((r) => r.session));
+    expect(distinct.size).toBe(12);
+    // The two oldest sessions are excluded from the recent window.
+    expect(distinct.has(NOW - 13 * MS_PER_DAY)).toBe(false);
+    expect(distinct.has(NOW - 0 * MS_PER_DAY)).toBe(true);
+  });
+
   it('preserves injury meta (painButtonActive/painAffectedGroups) alongside persona/goalPhase', () => {
     DB.set('pain-cdl', [
       { type: 'pain', region: 'umar-stang', intensity: 2, ts: NOW - 3 * MS_PER_DAY },
