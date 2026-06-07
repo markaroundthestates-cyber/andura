@@ -288,6 +288,15 @@ export const FLAGS = Object.freeze({
   // e1RM exists. Only the first session of a new exercise (no history to regress).
   dp_transfer_coldstart_v1: { rollout: 0, default: false },
 
+  // #5 per-user learned recovery (RISK MED — shifts the fatigue map / which days
+  // + muscles get trained, path A). When ON, getMuscleState reads a per-muscle
+  // recovery time-constant LEARNED from when the user's e1RM on that muscle's
+  // lifts returns to baseline (sourced from the durable `logs`, NOT the D107
+  // behavioral log), blended toward the global prior via a slow EMA and clamped to
+  // [0.5x, 2x] of the global. Persists `dp-recovery-constants` (sync, quota-
+  // guarded). OFF → the fixed MUSCLE_HEADS globals (current). Independent of #1.
+  dp_learned_recovery_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

@@ -103,6 +103,7 @@ export const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs',
   'tombstones',      // tombstones — Memory Paradox hotfix (Batch B Task 2): localStorage soft-delete tracking (per ADR_MULTI_TENANT_AUTH_v1 + future T&B Faza 1+2)
   'dp-cal-factors',  // dp-cal-factors — DP persistent per-exercise machine-calibration factors (object engineName -> {kgFactor,n}); object-merge sync, learned per-UID, durable across sessions/devices
   'dp-strength-posterior', // dp-strength-posterior — F3 #2 per-exercise Kalman strength latent (object engineName -> {mu,sigma,lastObsTs,n}); name-keyed object-merge sync, learned per-UID, durable across sessions/devices
+  'dp-recovery-constants', // dp-recovery-constants — F3 #5 per-user learned per-muscle recovery hours (object muscleHead -> {hours,n}); muscle keys are EN underscore tokens (Firebase-safe, NOT name-keyed); object-merge sync, learned per-UID, durable
 ];
 
 // RTDB key sanitizer — Firebase Realtime Database forbids `. $ # [ ] /` in node

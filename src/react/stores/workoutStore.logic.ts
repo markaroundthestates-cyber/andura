@@ -6,6 +6,8 @@
 
 import { DB, todTs } from '../../db.js';
 import { archiveSession } from '../lib/dexieMigration';
+import { isEnabled } from '../../util/featureFlags.js';
+import { learnRecovery, saveRecoveryConstants, RECOVERY_CONSTANTS_KEY } from '../../engine/muscleMap.js';
 import type {
   SessionIntensityMod,
   EnergyLight,
@@ -160,6 +162,15 @@ export function persistSessionLogs(
     // latest-set-first within session.
     const merged = [...newEntries.slice().reverse(), ...existing].slice(0, LOGS_MAX);
     DB.set('logs', merged);
+    // F3 #5 — learn the per-muscle recovery constant from the freshly-updated log
+    // history (flag dp_learned_recovery_v1, default OFF → skipped → byte-identical).
+    // Single authoritative per-session write site (avoids re-learning on every
+    // render read). Quota-guarded + fail-silent inside the try.
+    if (isEnabled('dp_learned_recovery_v1')) {
+      const prior = (DB.get(RECOVERY_CONSTANTS_KEY) as Record<string, { hours: number; n: number }>) || undefined;
+      const learned = learnRecovery(merged as unknown as Parameters<typeof learnRecovery>[0], prior);
+      if (Object.keys(learned).length) saveRecoveryConstants(learned);
+    }
   } catch {
     // Soft-fail — storage quota / SSR jsdom edge. Engine adapters tolerate
     // missing logs (return 'DATE INSUFICIENTE' baseline). Preserves zero-
