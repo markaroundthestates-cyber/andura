@@ -504,6 +504,13 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // the blueprint is absent (empty user) → DP keeps its phase-aware default band.
     repRangeModifier: blueprints.goalAdaptation?.rep_range_modifier ?? null,
     rirTargetModifier: blueprints.goalAdaptation?.rir_target_modifier ?? null,
+    // F3 #6 — Periodization %1RM intensity corridor {floor,ceiling} (goal-derived,
+    // hard-capped 90%, phase-multiplied; periodization/index.js:174). Computed but
+    // previously dropped here (only volume_target_pct was read). Surfaced so the
+    // compose seam can thread it into DP.getSmartRecommendation, which (behind
+    // dp_intensity_corridor_v1, default OFF) bounds the prescribed kg's implied
+    // %1RM into the band. null when the blueprint is absent → DP no-op.
+    intensityCorridor: blueprints.periodization?.intensity_target_pct ?? null,
     specializationTarget,
     deloadState: blueprints.deload?.deload_state ?? 'IDLE',
     // Coach Voice — structured, machine-readable adaptations log (the React side

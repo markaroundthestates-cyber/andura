@@ -45,6 +45,9 @@ export interface WorkoutPlan {
   // getDailyWorkout always emits them (null on absent blueprint).
   repRangeModifier?: readonly [number, number] | null;
   rirTargetModifier?: readonly [number, number] | null;
+  // F3 #6 — Periodization %1RM intensity corridor {floor,ceiling}. Optional/additive;
+  // getDailyWorkout emits it (null on absent blueprint).
+  intensityCorridor?: { floor: number; ceiling: number } | null;
   // F2 #3 — Tempo session-level cue (uniform; per-exercise movementId is Faza-3).
   // Optional/additive; getDailyWorkout emits it (null on absent blueprint).
   tempoCue?: { line: string | null; notation: string | null } | null;

@@ -149,6 +149,10 @@ function toPlannedExercise(
   goalModifiers: {
     repRange?: readonly [number, number] | null;
     rirTarget?: readonly [number, number] | null;
+    // F3 #6 — Periodization %1RM intensity corridor {floor,ceiling}. Threaded into
+    // getSmartRecommendation opts; behind dp_intensity_corridor_v1 (default OFF) it
+    // bounds the prescribed kg's implied %1RM. null/omitted → DP no-op.
+    intensityCorridor?: { floor: number; ceiling: number } | null;
   } = {},
 ): PlannedExercise {
   const slug = engineEx.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -173,6 +177,7 @@ function toPlannedExercise(
     {
       repRangeModifier: goalModifiers.repRange ?? null,
       rirTargetModifier: goalModifiers.rirTarget ?? null,
+      intensityCorridor: goalModifiers.intensityCorridor ?? null,
     },
   ) as DpRecommendation | null;
   const hasHistory = DP.getLogs(engineEx.name, 1).length > 0;
@@ -665,6 +670,19 @@ export async function composePlannedWorkoutToday(
       Number.isFinite(rirRangeRaw[1])
         ? rirRangeRaw
         : null;
+    // F3 #6 — Periodization %1RM intensity corridor {floor,ceiling}. Same guard:
+    // only a finite floor<=ceiling pair is threaded; anything else → null → DP
+    // no-op. Behind dp_intensity_corridor_v1 (default OFF) DP bounds the prescribed
+    // kg's implied %1RM into this band.
+    const corridorRaw = plan.intensityCorridor as { floor?: number; ceiling?: number } | null | undefined;
+    const intensityCorridor =
+      corridorRaw &&
+      Number.isFinite(corridorRaw.floor) &&
+      Number.isFinite(corridorRaw.ceiling) &&
+      (corridorRaw.floor as number) > 0 &&
+      (corridorRaw.ceiling as number) >= (corridorRaw.floor as number)
+        ? { floor: corridorRaw.floor as number, ceiling: corridorRaw.ceiling as number }
+        : null;
     // F-workout-preview/T1 — Engine Warm-up blueprint surface. Engine emits
     // duration_min (5-10 adaptive) + ui_label "Incalzire ~X min" via
     // src/engine/warmup/index.js:289-300. Map to consumer-friendly {line,
@@ -715,7 +733,7 @@ export async function composePlannedWorkoutToday(
         restRange,
         coldStartProfile,
         planExercises.slice(0, idx),
-        { repRange: repRangeMod, rirTarget: rirTargetMod },
+        { repRange: repRangeMod, rirTarget: rirTargetMod, intensityCorridor },
       ),
     );
     // Persona-aware TIME budget — bound the session by a realistic, rest-

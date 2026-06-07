@@ -297,6 +297,15 @@ export const FLAGS = Object.freeze({
   // guarded). OFF → the fixed MUSCLE_HEADS globals (current). Independent of #1.
   dp_learned_recovery_v1: { rollout: 0, default: false },
 
+  // #6 intensity corridor as an e1RM band (RISK HIGH — directly bounds prescribed
+  // kg BOTH ways). When ON, the periodization %1RM corridor {floor,ceiling} bounds
+  // the implied %1RM of the prescribed load = (kg·(1+repTarget_eff/30))/mu: too
+  // light → raised to floor, too heavy → lowered to ceiling. The real path-A+path-B
+  // unify (F2 deferred it here pending e1RM). Applied as the LAST load step, EXEMPT
+  // during a return-deload comeback. OFF / no corridor → no-op. Depends on #1 + #2
+  // (needs mu). The last + riskiest sub-build — must ride green #1+#2 sims first.
+  dp_intensity_corridor_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

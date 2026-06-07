@@ -821,6 +821,47 @@ export const DP = {
     return null;
   },
 
+  // ══ BUILD #6 — intensity corridor as an e1RM band (F3 spec §6) ═══════════════
+  // The periodization %1RM corridor {floor,ceiling} finally BOUNDS the prescribed
+  // kg, now that e1RM (#1) + Kalman mu (#2) exist. The intensity the user trains at
+  // = (prescribedKg · (1 + repTarget_eff/30)) / mu = the implied %1RM; the corridor
+  // bounds it: too light → raise to floor, too heavy → lower to ceiling. This is
+  // the genuine path-A (periodization constraint) + path-B (kg prescription) unify
+  // F2 deferred (it designed a relative-width hack precisely BECAUSE there was no
+  // e1RM). Dimension-correct (no fake e1RM), goal-aware (forta band high, sanatate
+  // low). Applied as the LAST load step, after all gates. Kill-switch null/OFF →
+  // no-op. Depends on #1 + #2 (needs mu for the implied-%1RM denominator).
+  //
+  // PR-floor reconciliation (F3 §6c): the corridor FLOOR and the PR-floor both
+  // raise a too-light load → the PR-floor already ran upstream (recommend), so the
+  // corridor floor only ever raises FURTHER (most protective). The corridor ceiling
+  // is the deliberate goal cap (a lighter-goal user is meant to train lighter) and
+  // wins over a high demonstrated e1RM — a Daniel-flagged design choice (F3 §10).
+  //
+  // @param {number} kg the gated prescribed load
+  // @param {string} ex @param {number} repTarget
+  // @param {{floor:number, ceiling:number}} corridor %1RM band
+  // @returns {number} corridor-bounded kg (snapped), or the input kg when inert
+  _applyIntensityCorridor(kg, ex, repTarget, corridor) {
+    if (!isEnabled('dp_intensity_corridor_v1')) return kg;          // kill-switch
+    if (!corridor || typeof corridor !== 'object') return kg;
+    const floor = Number(corridor.floor);
+    const ceiling = Number(corridor.ceiling);
+    if (!(Number.isFinite(floor) && Number.isFinite(ceiling) && floor > 0 && ceiling >= floor)) return kg;
+    if (!Number.isFinite(kg) || kg <= 0) return kg;
+    if (!this._e1rmEligible(ex)) return kg;                         // no clean %1RM
+    const rt = repTarget ?? 8;
+    const mu = this._bestE1RM(ex, rt);                              // Kalman mu / best e1RM
+    if (!(mu > 0)) return kg;                                       // no estimate → inert
+    const rEff = Math.min(this.E1RM_R_CAP, rt + this.RATING_TO_RIR.potrivit);
+    const impliedPct = (kg * (1 + rEff / 30)) / mu;
+    // The kg that realizes a target %1RM at this rep scheme.
+    const kgForPct = (pct) => (pct * mu) / (1 + rEff / 30);
+    if (impliedPct < floor)   return this.roundToStep(kgForPct(floor), ex);
+    if (impliedPct > ceiling) return this.roundToStep(kgForPct(ceiling), ex);
+    return kg;                                                      // inside the band → byte-identical
+  },
+
   // ── RETURN-AFTER-GAP DELOAD + RAMP (detraining, Daniel decision #3) ──────────
   // Real failure observed in the founder's data: 3 months off legs → the engine
   // (reading only the pre-gap lastW) let him chase a 230 PR + full v-taper volume
@@ -1876,6 +1917,21 @@ export const DP = {
     const rTarget = result.repsTarget || rMinSafe;
     const rLow = Math.max(rMinSafe, rTarget - 1);
     const rHigh = Math.min(rMaxSafe + 2, rTarget + 1);
+
+    // F2 §3 / F3 #6 — intensity corridor (e1RM band) as the LAST load step, after
+    // every gate. Bounds the implied %1RM into the goal's periodization band. EXEMPT
+    // during an active return-deload comeback (the comeback intentionally starts
+    // light, F2 §3b guard) — never fight the ramp. Flag dp_intensity_corridor_v1
+    // OFF / no corridor in opts → no-op → byte-identical.
+    const corridor = opts && opts.intensityCorridor ? opts.intensityCorridor : null;
+    if (corridor && !result.returnDeload && Number.isFinite(result.kg) && result.kg > 0) {
+      const bounded = this._applyIntensityCorridor(result.kg, ex, rTarget, corridor);
+      if (Number.isFinite(bounded) && bounded > 0 && bounded !== result.kg) {
+        result.kg = bounded;
+        result.intensityCorridorApplied = { floor: corridor.floor, ceiling: corridor.ceiling, kg: bounded };
+      }
+    }
+
     result.repsRange = `${rLow}–${rHigh}`;
 
     return result;
