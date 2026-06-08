@@ -532,6 +532,22 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // across days as the day's slot count varies (DIAG #3 incoherent allocation),
     // and the catch-all overlap day stops ballooning a few slots into 5-set presses.
     coherentAlloc: isEnabled('dp_coherent_weekly_alloc_v1'),
+    // #73 goal/sex-aware SELECTION (dp_smart_selection_v1, default OFF →
+    // byte-identical). When ON:
+    //  - lateralRaiseGuarantee: a focus that emphasizes the shoulders (umeri in
+    //    emphSet — v-taper / upper / shoulders) guarantees a lateral raise in the
+    //    session (the #1 width movement the DIAG showed selection was missing), so
+    //    the emphasized delts reach the 17-20 width band instead of stalling ~16.
+    //  - sexBias: the user's onboarding sex ('m'|'f') biases the leg-day accessory
+    //    pool toward sex-common lifts (poolForGroup reorder, never a hard ban).
+    // Both off (flag OFF) → no umeri injection + sexBias null → byte-identical.
+    lateralRaiseGuarantee:
+      isEnabled('dp_smart_selection_v1') && emphSet.has('umeri'),
+    sexBias: isEnabled('dp_smart_selection_v1')
+      ? (userState?.user?.sex === 'm' || userState?.user?.sex === 'f'
+        ? userState.user.sex
+        : null)
+      : null,
   };
 
   const session = buildSession(cluster, sessionCtx);

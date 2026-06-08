@@ -120,6 +120,25 @@ const COMMON_MOVEMENTS = new Set([
   'Ab Wheel Rollout', 'Cable Russian Twist',
 ]);
 
+// #73 SEX/COMMONNESS BIAS (dp_smart_selection_v1). The library has no per-sex
+// popularity field; this is a CURATED set of glute/lower-body accessories that
+// are common in WOMEN's training but rare in a MAN's leg day (the "Gigel picked
+// cable glute kickback on his leg day — that's weird" signal). For a MALE user
+// these sink to the BACK of their group pool (a same-muscle sibling — RDL / leg
+// curl / leg extension / squat / leg press / hip abductor / calf — leads). It is
+// a REORDER only, never a hard ban: a demoted move is still selectable if it is
+// the only option left for the muscle (anti-paternalism, last-option safety). For
+// a FEMALE user (or no sex signal) the pool is UNTOUCHED (these are fine for her).
+// Exact library nameEn keys. Hip Abduction Machine is deliberately NOT here — it
+// is on the men's preferred list (spec §B2).
+const MALE_RARE_LOWER = new Set([
+  'Cable Glute Kickback', 'Glute Kickback Machine', 'Cable Pull-Through',
+  'Hip Thrust', 'Smith Hip Thrust', 'DB Hip Thrust', 'Barbell Glute Bridge',
+  'DB Glute Bridge', 'Single-Leg Glute Bridge', 'Glute Bridge Bodyweight',
+  'Fire Hydrant', 'Cable Hip Abduction', 'Banded Lateral Walk', 'Frog Pump',
+  'Donkey Kick', 'Cable Standing Hip Abduction',
+]);
+
 // SESSION_SIZE is the MAX exercises per session (sanity ceiling, anti-2h
 // session), NOT a fixed count. The real count now falls out of the weekly
 // volume budget (computeSessionExerciseCount) clamped to [minSession, SESSION_SIZE]
@@ -528,9 +547,13 @@ function equipmentOk(meta, available) {
  *   penalty (engineName → 0..1); a penalized NON-PR exercise is demoted to the
  *   back of the pool so a same-muscle sibling leads. Null/empty → no reorder
  *   (byte-identical). Never DROPS an entry (anti-paternalism + last-option safety).
+ * @param {'m'|'f'|null} [sexBias] - #73 sex/commonness bias. 'm' demotes the
+ *   MALE_RARE_LOWER glute/lower accessories (female-common, male-rare) to the back
+ *   of the pool so a sex-common sibling leads; PR-history lifts are never demoted.
+ *   'f'/null → no reorder (byte-identical). Reorder only, never DROPS an entry.
  * @returns {Array<{name: string, meta: object}>}
  */
-function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties) {
+function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, sexBias) {
   // ACTIVE visibility gate (Daniel SSOT 2026-06-05, supersedes 2026-06-03 CORE+
   // FALLBACK gate): auto-selection draws ONLY from the curated ACTIVE catalog
   // (CORE_AUTO — see isActiveMeta / ACTIVE_STATUSES) plus PR-history continuity.
@@ -590,17 +613,33 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalt
   // dropped — the penalized exercise is still selectable if it is the only option
   // (the downstream slot-fill can still reach it). Empty/absent penalties → the
   // partition is a no-op (the predicate is always false) → byte-identical order.
+  let ordered = core;
   if (penalties) {
     const PENALTY_DEMOTE = 0.5; // ≥ → demote (a single skip/mild pain stays in place)
     const clean = [];
     const demoted = [];
-    for (const e of core) {
+    for (const e of ordered) {
       const p = prNames.has(e.name) ? 0 : (penalties[e.name] ?? 0);
       (p >= PENALTY_DEMOTE ? demoted : clean).push(e);
     }
-    return clean.concat(demoted);
+    ordered = clean.concat(demoted);
   }
-  return core;
+
+  // #73 SEX/COMMONNESS BIAS — for a MALE user, the female-common / male-rare lower
+  // accessories (MALE_RARE_LOWER) sink to the back (STABLE partition, relative
+  // order preserved) so a sex-common sibling (RDL / leg curl / squat / leg press /
+  // hip abductor / calf) leads. PR-history lifts (continuity) are NEVER demoted.
+  // Nothing is dropped — a demoted move stays selectable if it is the only option
+  // left for the muscle. 'f'/null sexBias → no reorder (byte-identical).
+  if (sexBias === 'm') {
+    const common = [];
+    const rare = [];
+    for (const e of ordered) {
+      (!prNames.has(e.name) && MALE_RARE_LOWER.has(e.name) ? rare : common).push(e);
+    }
+    if (rare.length > 0) ordered = common.concat(rare);
+  }
+  return ordered;
 }
 
 /**
@@ -744,6 +783,8 @@ export function movementKey(name, meta) {
  *   fatigueSetsAdjust?: ((name: string) => number)|null,
  *   emphasisSetsBoost?: boolean,
  *   coherentAlloc?: boolean,
+ *   lateralRaiseGuarantee?: boolean,
+ *   sexBias?: 'm'|'f'|null,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  *
@@ -771,11 +812,15 @@ export function buildSession(cluster, ctx) {
   // #8/D per-exercise pain/skip penalties (engineName → 0..1). Null/empty (the
   // common case + flag off) → poolForGroup order is byte-identical.
   const penalties = ctx?.exercisePenalties ?? null;
+  // #73 sex/commonness bias (dp_smart_selection_v1) — 'm' demotes female-common /
+  // male-rare lower accessories in poolForGroup; 'f'/null → no reorder. Default
+  // absent (flag OFF / pure-fn callers) → null → byte-identical pool order.
+  const sexBias = ctx?.sexBias === 'm' || ctx?.sexBias === 'f' ? ctx.sexBias : null;
 
   // Pools per target group (ordered: PR-anchored -> anchor -> new, seeded-stable).
   const pools = targets.map((g) => ({
     group: g,
-    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties),
+    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, sexBias),
   }));
 
   // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the user's
@@ -912,6 +957,77 @@ export function buildSession(cluster, ctx) {
       if (next) {
         take(next, DEFAULT_SETS);
         progressed = true;
+      }
+    }
+  }
+
+  // #73 LATERAL-RAISE GUARANTEE (ctx.lateralRaiseGuarantee, dp_smart_selection_v1).
+  // When the focus emphasizes the shoulders (umeri in emphSet — v-taper / upper /
+  // shoulders) and this cluster trains umeri, the session MUST include a lateral
+  // raise (the #1 width movement). The DIAG (_REF_gold_vtaper_cut) showed selection
+  // picking press + rear-delt but NO lateral raise → the v-taper delts stalled at
+  // ~16 instead of the 17-20 width band. Here, if no lateral raise landed, inject
+  // one: prefer to REPLACE the lowest-priority umeri NON-press isolation (a rear
+  // delt / face pull — width budget redirected to the lateral); else ADD it if the
+  // session has room; else replace the single lowest-priority non-anchor exercise.
+  // OFF (flag OFF / umeri not emphasized / no umeri target) → never runs →
+  // byte-identical. The injected lateral flows into the set-distribution + ordering
+  // below exactly like any other selected umeri exercise.
+  if (ctx?.lateralRaiseGuarantee === true && targets.includes('umeri')) {
+    const LATERAL_MK = 'umeri::lateral-raise';
+    const hasLateral = chosen.some(
+      (e) => movementKey(e.name, getExerciseMetadata(e.name)) === LATERAL_MK,
+    );
+    if (!hasLateral) {
+      const umeriPool = pools.find((p) => p.group === 'umeri')?.pool ?? [];
+      const lateral = umeriPool.find(
+        (e) => movementKey(e.name, e.meta) === LATERAL_MK && !isTaken(e),
+      );
+      if (lateral) {
+        // Removal candidate: the LAST-selected umeri isolation (tier >= 2) that is
+        // NOT itself a press/lateral — i.e. a rear-delt / face-pull / Y-raise. Walk
+        // from the back (lowest priority first). A press anchor is never removed.
+        let removeIdx = -1;
+        for (let i = chosen.length - 1; i >= 0; i--) {
+          const m = getExerciseMetadata(chosen[i].name);
+          if (m.muscle_target_primary !== 'umeri') continue;
+          if ((m.tier ?? 2) <= COMPOUND_TIER) continue; // keep the press anchor
+          removeIdx = i;
+          break;
+        }
+        if (removeIdx >= 0) {
+          const removed = chosen[removeIdx];
+          chosenNames.delete(removed.name);
+          chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+          const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+          if (rg && groupCount[rg]) groupCount[rg] -= 1;
+          chosen.splice(removeIdx, 1, { name: lateral.name, sets: DEFAULT_SETS });
+          chosenNames.add(lateral.name);
+          chosenMovements.add(movementKey(lateral.name, lateral.meta));
+          groupCount.umeri = (groupCount.umeri || 0) + 1;
+        } else if (chosen.length < SESSION_SIZE) {
+          take(lateral, DEFAULT_SETS);
+        } else {
+          // No umeri isolation to swap + session full: replace the lowest-priority
+          // non-anchor (tier >= 2) exercise so the guarantee still holds.
+          let fallbackIdx = -1;
+          for (let i = chosen.length - 1; i >= 0; i--) {
+            if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+            fallbackIdx = i;
+            break;
+          }
+          if (fallbackIdx >= 0) {
+            const removed = chosen[fallbackIdx];
+            chosenNames.delete(removed.name);
+            chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+            const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+            if (rg && groupCount[rg]) groupCount[rg] -= 1;
+            chosen.splice(fallbackIdx, 1, { name: lateral.name, sets: DEFAULT_SETS });
+            chosenNames.add(lateral.name);
+            chosenMovements.add(movementKey(lateral.name, lateral.meta));
+            groupCount.umeri = (groupCount.umeri || 0) + 1;
+          }
+        }
       }
     }
   }

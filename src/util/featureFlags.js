@@ -736,6 +736,26 @@ export const FLAGS = Object.freeze({
   // Daniel — flag-ON today stops the WRONG rep prescription + carries the metric +
   // targetSec to the consumer; the dedicated timer input lands at the UI pass.
   dp_metric_types_v1: { rollout: 0, default: false },
+
+  // #73 goal/sex-aware exercise SELECTION (engine-wiring 2026-06-08) (RISK MED —
+  // changes session COMPOSITION, path A; never kg). Two biases, both default OFF →
+  // the chosen exercise list is BYTE-IDENTICAL to today. When ON:
+  //  (1) LATERAL-RAISE GUARANTEE — when the focus emphasizes the shoulders (umeri
+  //      in emphasizedGroups: v-taper / upper / shoulders) and the cluster trains
+  //      umeri, the session is guaranteed to include a lateral raise (the #1 width
+  //      movement) — the DIAG miss where selection picked press + rear-delt but NO
+  //      lateral raise, leaving the v-taper delts at ~16 instead of the 17-20 band.
+  //  (2) SEX/COMMONNESS BIAS — a man's leg-day accessory pool prefers the lifts
+  //      common for men (RDL / leg extension / leg curl / squat / leg press / hip
+  //      abductor / calf) and DEMOTES moves common for women + rare for men (cable
+  //      glute kickback / hip thrust / cable-ankle); women → inverse (no demotion).
+  //      A pure REORDER (poolForGroup), never a hard ban — every option stays
+  //      reachable if nothing else fits (anti-paternalism, last-option safety).
+  // OFF → no umeri injection + sexBias null → byte-identical pool order +
+  // composition (the calibration-sim hash is path-B/orthogonal + stays green; the
+  // full-path-sim OFF arm unchanged). Flip ON is a human gate (Daniel) AFTER the
+  // sim A/B. See _REF_gold_vtaper_cut_2026-06-08 + _ENGINE_volume_policy §73.
+  dp_smart_selection_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */
