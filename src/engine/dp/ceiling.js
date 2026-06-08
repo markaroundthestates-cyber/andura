@@ -133,6 +133,54 @@ export function gainDecay(mu, ceiling) {
 export const NEAR_CEILING_RATIO = 0.9;  // >= → EXPECTED (near genetic ceiling)
 export const PROBLEM_PLATEAU_RATIO = 0.7; // < → PROBLEM (recovery/technique/adherence)
 
+// ══ BUILD F6c #35 — age-scaled TENDON load-rate cap (F6c spec §6) ════════════
+// gainDecay (above) throttles the climb by the MUSCULAR strength ceiling; this is
+// a SECOND, ORTHOGONAL throttle keyed on CHRONOLOGICAL age — connective tissue
+// (tendon/ligament) adapts SLOWER than muscle, and that gap widens with age, so an
+// older lifter's LOAD must climb slower than the muscular signal alone would allow
+// (Daniel's explicit "65 vs 30 differ" rule). It is distinct from the recovery
+// model (#5/#21 — WHEN a muscle is trained, path A); this caps HOW FAST the LOAD
+// climbs (path B step). NOTE the input is CHRONOLOGICAL age (onboarding `age`,
+// builder.ts:147), NOT trainingAge — ageFraction above is training-age and does
+// NOT provide this cap (spec §9).
+//
+// Returns a max-allowed per-session load-increase FRACTION, monotonically
+// DECREASING in chronological age: full step (1.0 = no cap) up to TENDON_FULL_AGE,
+// linearly tapering to TENDON_FLOOR_FRAC at TENDON_CAP_AGE, then flat. Composed
+// (MIN-style) with gainDecay + the deficit throttle at the climb site — it only
+// ever LOWERS the up-step magnitude, NEVER raises it, and NEVER lowers below the
+// PR-floor (the floor is applied separately, after this cap). An absent / invalid
+// age returns 1.0 (neutral — a cold-start user is never penalized).
+//
+// UNVERIFIED DESIGN PROPOSAL (spec §9): the age knots + the floor fraction are a
+// research/Daniel sanity-check item before dp_tendon_cap_v1 flips ON. The shape
+// (older → smaller per-session load step) is the verified physiology; the exact
+// numbers are tunable.
+export const TENDON_FULL_AGE = 35;     // <= this age → no cap (full muscular step)
+export const TENDON_CAP_AGE = 65;      // >= this age → the floor fraction (max taper)
+// Smallest allowed per-session load-step fraction. Set BELOW the easy-run climb
+// band's max (the find-your-weight pure-easy-run step caps at +0.50, dp.js) so the
+// cap actually bites at the oldest ages (otherwise a 0.50 floor only equals the max
+// and never reduces a step). DESIGN PROPOSAL (spec §9) — the magnitude is tunable.
+export const TENDON_FLOOR_FRAC = 0.34;
+
+/**
+ * Max-allowed per-session LOAD-increase fraction for a chronological age. 1.0 at /
+ * below TENDON_FULL_AGE (no cap), linearly tapering to TENDON_FLOOR_FRAC at
+ * TENDON_CAP_AGE, flat thereafter. Absent / invalid age → 1.0 (neutral). PURE.
+ * @param {number} ageYears chronological age (onboarding `age`)
+ * @returns {number} in [TENDON_FLOOR_FRAC, 1]
+ */
+export function tendonLoadRateCap(ageYears) {
+  const a = Number(ageYears);
+  if (!Number.isFinite(a) || a <= 0) return 1;       // absent/invalid → neutral
+  if (a <= TENDON_FULL_AGE) return 1;                // young → no cap
+  if (a >= TENDON_CAP_AGE) return TENDON_FLOOR_FRAC; // old → max taper
+  const span = TENDON_CAP_AGE - TENDON_FULL_AGE;
+  const t = (a - TENDON_FULL_AGE) / span;            // 0..1 across the taper band
+  return 1 - t * (1 - TENDON_FLOOR_FRAC);
+}
+
 // ══ BUILD F6c #37 — deficit-aware progression throttle (F6c spec §3) ═════════
 // The dp.js climb is phase-BLIND today — it chases new-max PRs the same in a deep
 // cut as in a bulk. D109 already encodes "in a deficit preserve, don't push" in the

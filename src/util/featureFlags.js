@@ -619,6 +619,24 @@ export const FLAGS = Object.freeze({
   // persistence (reuses dp-recovery-constants). Optional Daniel-flag.
   dp_strength_bw_ratio_v1: { rollout: 0, default: false },
 
+  // #35 age-scaled tendon load-rate cap (RISK MED — slows LOAD progression for
+  // older users; bounded — only caps the up-step, never the PR-floor). gainDecay
+  // throttles the climb by the MUSCULAR ceiling; this is a SECOND, ORTHOGONAL
+  // throttle keyed on CHRONOLOGICAL onboarding age (NOT trainingAge — ageFraction
+  // is training-age and does NOT provide this cap), because connective tissue
+  // (tendon/ligament) adapts slower than muscle and the gap widens with age
+  // (Daniel's explicit "65 vs 30 differ" rule). When ON, tendonLoadRateCap(ageYears)
+  // caps the per-session NEW-max load-increase FRACTION (composed MIN-style with
+  // gainDecay + the deficit factor at the easy-run/CATCH-UP climb), threaded read-
+  // only via opts.ageYears — dp.js never reads onboarding. The belowDemo catch-up to
+  // an already-OWNED load is NEVER capped; the PR-floor is applied separately after.
+  // OFF → tendonLoadRateCap returns 1.0 (no cap) → byte-identical. Absent/invalid age
+  // → neutral 1.0 (a cold-start user is never penalized). The age knots + floor
+  // fraction are DESIGN PROPOSALS (spec §9) — research/Daniel sanity-check before
+  // flip (the shape is verified physiology, the numbers tunable). Daniel-flag (he
+  // named the 65-vs-30 rule). No new persistence (curve = code constant).
+  dp_tendon_cap_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

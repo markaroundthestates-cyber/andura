@@ -8,7 +8,7 @@ import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
 import { updatePosterior, savePosterior, loadPosterior, trendDirection } from './dp/strengthKalman.js';
-import { ceilingE1RM, gainDecay, deficitClimbFactor } from './dp/ceiling.js';
+import { ceilingE1RM, gainDecay, deficitClimbFactor, tendonLoadRateCap } from './dp/ceiling.js';
 import { populationPriorE1RM } from './dp/populationPrior.js';
 import { sanityCheckSet } from './dp/anomalyGuard.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
@@ -1250,9 +1250,12 @@ export const DP = {
   // → CUT|BULK|MAINTENANCE|STRENGTH), threaded read-only from the React boundary
   // (dp.js never imports nutrition). Absent → no throttle. Behind
   // dp_deficit_throttle_v1 (default OFF) it does nothing → byte-identical.
-  /** @param {string} ex @param {number} [nowMs] @param {string|null} [energyPhase] */
-  recommend(ex, nowMs, energyPhase) {
-    const result = this._recommendRaw(ex, nowMs, energyPhase);
+  // `ageYears` (F6c #35): the CHRONOLOGICAL onboarding age, threaded read-only from
+  // the React boundary. Behind dp_tendon_cap_v1 (default OFF) it does nothing →
+  // byte-identical. Absent/invalid → neutral cap (no extra throttle).
+  /** @param {string} ex @param {number} [nowMs] @param {string|null} [energyPhase] @param {number} [ageYears] */
+  recommend(ex, nowMs, energyPhase, ageYears) {
+    const result = this._recommendRaw(ex, nowMs, energyPhase, ageYears);
     if (result && result.kg) {
       // Apply the learned persistent per-exercise machine-calibration factor to
       // the raw load, THEN snap to a real equipment value. No learned data →
@@ -1315,7 +1318,7 @@ export const DP = {
    * @param {string} ex
    * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
    */
-  _recommendRaw(ex, nowMs, energyPhase) {
+  _recommendRaw(ex, nowMs, energyPhase, ageYears) {
     const state = this.getState(ex);
     const phaseOverride = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
     // F6c #37 — deficit-aware throttle on the NEW-max climb. The resolved energy
@@ -1325,6 +1328,13 @@ export const DP = {
     // treated as MAINTENANCE (no throttle).
     const deficitThrottleOn = isEnabled('dp_deficit_throttle_v1') && typeof energyPhase === 'string';
     const climbFactor = deficitThrottleOn ? deficitClimbFactor(energyPhase) : 1;
+    // F6c #35 — age-scaled tendon load-rate cap on the NEW-max climb step. The
+    // CHRONOLOGICAL onboarding age (passed read-only from the React boundary) caps
+    // the per-session load-increase fraction, behind dp_tendon_cap_v1 (default OFF).
+    // When OFF or no age → cap 1.0 (no throttle) → byte-identical. Composed MIN-style
+    // with gainDecay + the deficit factor at the climb site; never below the PR-floor.
+    const tendonCapOn = isEnabled('dp_tendon_cap_v1');
+    const tendonCap = tendonCapOn ? tendonLoadRateCap(ageYears) : 1;
     const isInCut = this._isInCut(phaseOverride, nowMs);
     const range = this.getPhaseAwareRepRange(ex, isInCut);
     const rMin = range[0] ?? 8;
@@ -1465,6 +1475,16 @@ export const DP = {
       // stepFrac unchanged (byte-identical).
       if (!belowDemo && climbFactor < 1) {
         stepFrac *= climbFactor;
+      }
+      // F6c #35 — tendon load-rate cap: an older lifter's connective tissue adapts
+      // slower than muscle, so CAP the per-session load-increase fraction (compose
+      // MIN-style: the smaller of the muscular step and the tendon-safe step). Only
+      // the NEW-max push (!belowDemo) is capped — the belowDemo catch-up to an
+      // already-OWNED load is never throttled (capacity must not be crater-blocked).
+      // tendonCap is 1.0 when the flag is OFF / age absent → stepFrac unchanged
+      // (byte-identical).
+      if (!belowDemo && tendonCap < 1) {
+        stepFrac = Math.min(stepFrac, tendonCap);
       }
       const ceiling = belowDemo ? demoW : lastW * (1 + stepFrac);
       const jumpedRaw = belowDemo ? demoW : lastW * (1 + stepFrac);
@@ -2034,7 +2054,11 @@ export const DP = {
     // F6c #37 — thread the resolved energy phase (read-only) into the climb logic.
     // Absent → no throttle; behind dp_deficit_throttle_v1 (default OFF) → no-op.
     const energyPhase = opts && typeof opts.energyPhase === 'string' ? opts.energyPhase : null;
-    const base = this.recommend(ex, nowMs, energyPhase);
+    // F6c #35 — thread the CHRONOLOGICAL onboarding age (read-only) into the climb
+    // logic for the tendon load-rate cap. Absent/invalid → neutral; behind
+    // dp_tendon_cap_v1 (default OFF) → no-op.
+    const ageYears = opts && Number.isFinite(Number(opts.ageYears)) ? Number(opts.ageYears) : undefined;
+    const base = this.recommend(ex, nowMs, energyPhase, ageYears);
     /** @type {Record<string, any>} */
     let result = { ...base };
     // F2 #2 — RIR label override: when Goal Adaptation supplies a rir_target_modifier

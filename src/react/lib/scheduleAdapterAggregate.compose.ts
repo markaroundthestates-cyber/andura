@@ -174,6 +174,16 @@ function toPlannedExercise(
   // nutrition — the resolved token is passed in. Flag OFF → null → no throttle →
   // byte-identical.
   const energyPhase = isEnabled('dp_deficit_throttle_v1') ? resolveActivePhase() : null;
+  // F6c #35 — read the CHRONOLOGICAL onboarding age ONLY when the flag is on, threaded
+  // into getSmartRecommendation opts so the dp.js climb can cap the per-session
+  // load-rate for an older lifter (tendon adapts slower than muscle). dp.js never
+  // reads onboarding — the number is passed in. Flag OFF → undefined → no cap →
+  // byte-identical. (Onboarding age is chronological 18-99, NOT trainingAge.)
+  const ageRaw = useOnboardingStore.getState().data.age;
+  const ageYears =
+    isEnabled('dp_tendon_cap_v1') && typeof ageRaw === 'number' && Number.isFinite(ageRaw)
+      ? ageRaw
+      : undefined;
   const rec = DP.getSmartRecommendation(
     engineEx.name,
     readinessScore,
@@ -186,6 +196,7 @@ function toPlannedExercise(
       rirTargetModifier: goalModifiers.rirTarget ?? null,
       intensityCorridor: goalModifiers.intensityCorridor ?? null,
       energyPhase,
+      ...(ageYears !== undefined ? { ageYears } : {}),
     },
   ) as DpRecommendation | null;
   const hasHistory = DP.getLogs(engineEx.name, 1).length > 0;
