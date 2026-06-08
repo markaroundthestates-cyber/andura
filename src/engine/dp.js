@@ -11,6 +11,8 @@ import { updatePosterior, savePosterior, loadPosterior } from './dp/strengthKalm
 import { ceilingE1RM, gainDecay } from './dp/ceiling.js';
 import { sanityCheckSet } from './dp/anomalyGuard.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
+import { classifyAndIntervene } from './dp/plateauIntervention.js';
+import { detectStagnation } from './stagnationDetector.js';
 import { getUserConfig } from '../config/user.js';
 import { t } from '../i18n/index.js';
 
@@ -609,6 +611,29 @@ export const DP = {
       if (Number.isFinite(ts) && ts > 0) days.add(Math.floor(ts / 86400000));
     }
     return days.size;
+  },
+
+  // #2/C — consecutive stagnant weeks for one exercise, from the SOLE detector
+  // (stagnationDetector.detectStagnation, the same one the narration banner uses).
+  // Reads the full `logs` key (detectStagnation filters by ex + groups by ISO week
+  // internally). Pure read; 0 when there is no usable cross-week history.
+  /** @param {string} ex @returns {number} */
+  _stagnationWeeks(ex) {
+    const logs = /** @type {Array<any>} */ (DB.get('logs')) || [];
+    if (!Array.isArray(logs) || logs.length === 0) return 0;
+    return detectStagnation(ex, logs).stagnationWeeks;
+  },
+
+  // #2/C — escalation occurrence for a PROBLEM plateau, derived from how LONG the
+  // stall has run (NO new persistence — the F4 spec keeps #2/C persistence-free):
+  // weeks 2-3 → 1 (rep_shift), 4-5 → 2 (deload), 6+ → 3 (variation). A longer
+  // unbroken problem stall escalates the intervention monotonically.
+  /** @param {string} ex @returns {number} */
+  _plateauOccurrence(ex) {
+    const w = this._stagnationWeeks(ex);
+    if (w >= 6) return 3;
+    if (w >= 4) return 2;
+    return 1;
   },
 
   // The realistic derived ceiling expressed as a working-kg cap at the rep target
@@ -1942,6 +1967,45 @@ export const DP = {
     const inCut2 = this._isInCut(phOv2, nowMs);
     const range = this.getPhaseAwareRepRange(ex, inCut2);
     let [rMin, rMax] = range;
+
+    // ── #2/C PLATEAU → INTERVENTION (dp_plateau_intervention_v1, default OFF) ────
+    // GLUE the existing stagnationDetector (detector) + classifyPlateau (the
+    // near-ceiling-vs-problem classifier, until now unconsumed). On a real
+    // stagnation, classify by mu/ceiling and resolve the right intervention:
+    //   near_ceiling → narrate + rotate a same-muscle VARIATION (no deload);
+    //   problem      → escalating rep_shift → deload → variation;
+    //   midrange     → none (double-progression handles it).
+    // The descriptor is annotated on the result for the consumer (React deload /
+    // substitution layer); the only LOAD/REP change applied engine-side is the
+    // problem rep_shift (move the target band up one), which never touches kg and
+    // is bounded by rMax. EXEMPT during a return-deload comeback (never fight the
+    // ramp). Flag-OFF → the whole block is skipped → byte-identical legacy.
+    if (isEnabled('dp_plateau_intervention_v1') && !result.returnDeload) {
+      const stag = this._stagnationWeeks(ex);
+      if (stag >= 1) { // cheap pre-gate; the module enforces PLATEAU_MIN_WEEKS
+        const rMinC = rMin ?? 8;
+        const mu = this._bestE1RM(ex, rMinC);
+        const ceil = this._ceilingKg(ex, rMinC) > 0
+          ? ceilingE1RM(ex, this._currentBodyweightKg(), 'm', this._trainingAge(ex))
+          : (/** @type {Record<string, number>} */ (this.MAX_KG)[ex] || 0);
+        const intervention = classifyAndIntervene({
+          stagnationWeeks: stag, mu, ceiling: ceil, ex,
+          occurrence: this._plateauOccurrence(ex),
+          triedNames: [ex],
+        });
+        if (intervention) {
+          result.plateauIntervention = intervention;
+          // The only engine-applicable action here: a problem-plateau rep_shift
+          // nudges the rep target up one (toward rMax) to break a stalled band.
+          // Never changes kg; the deload / variation actions are consumer-driven.
+          if (intervention.classification === 'problem'
+              && intervention.action === 'rep_shift'
+              && Number.isFinite(result.repsTarget)) {
+            result.repsTarget = Math.min(rMax ?? rMin ?? 12, result.repsTarget + 1);
+          }
+        }
+      }
+    }
     let rMinSafe = rMin ?? 8;
     let rMaxSafe = rMax ?? 12;
     // F2 #2 — Goal Adaptation rep_range_modifier [min,max]: the engine's intended
