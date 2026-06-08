@@ -25,8 +25,10 @@ import { useProgresStore } from '../../stores/progresStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { getCurrentWeightKg } from '../../lib/userTdee';
 import { computeTargetEta, fmtKg } from '../../lib/targetEta';
-import { evaluateTargetRate, MAX_SAFE_KG_PER_WEEK } from '../../lib/targetSafety';
-import { dangerousFloorWeightKg } from '../../../engine/bodyComposition.js';
+import { evaluateTargetRate, MAX_SAFE_KG_PER_WEEK, daysUntilTarget } from '../../lib/targetSafety';
+import { dangerousFloorWeightKg, estimateBfDeurenbergCapped } from '../../../engine/bodyComposition.js';
+import { evaluateGoalRealism } from '../../../engine/goalRealism.js';
+import { isEnabled } from '../../../util/featureFlags.js';
 import { t, getCurrentLocale } from '../../../i18n/index.js';
 
 /**
@@ -50,6 +52,12 @@ export function ObiectivCard(): JSX.Element {
   const target = useProgresStore((s) => s.targetObiectiv);
   const setTarget = useProgresStore((s) => s.setTargetObiectiv);
   const height = useOnboardingStore((s) => s.data.height);
+  // #74 goal-realism inputs (only read when the flag is ON — see below).
+  const age = useOnboardingStore((s) => s.data.age);
+  const sex = useOnboardingStore((s) => s.data.sex);
+  const goal = useOnboardingStore((s) => s.data.goal);
+  const experience = useOnboardingStore((s) => s.data.experience);
+  const weight = useOnboardingStore((s) => s.data.weight);
   // §weight-continuity — canonical current weight = latest log > onboarding
   // seed (cross-screen consistency with SettingsProfile, NutritionInline etc).
   const currentWeightKg = getCurrentWeightKg();
@@ -84,6 +92,64 @@ export function ObiectivCard(): JSX.Element {
   // necesar depaseste cap-ul fiziologic (1.5kg/sapt). evaluateTargetRate
   // accepta YYYY-MM (daysUntilTarget interpreteaza ca ultima zi a lunii).
   const rateVerdict = evaluateTargetRate(currentWeightKg, target.weightKg, target.month);
+
+  // #74 GOAL REALISM (dp_goal_realism_v1, default OFF) — a gentle reframe when
+  // the ask is unrealistic / contradictory. Flag OFF → this whole block is inert
+  // (no detection runs, no message renders) → BYTE-IDENTICAL ObiectivCard.
+  // Surfaced ONCE per distinct goal-signature with a 30-day anti-spam cooldown so
+  // it never nags (a goal-set advisory, not a per-session banner). The BF estimate
+  // (bodyComposition two-tier Deurenberg, capped) is passed as a noisy BAND;
+  // classifyBfZone defaults to the conservative zone when it's null.
+  const COOLDOWN_KEY = 'goalRealism-shown';
+  const COOLDOWN_MS = 30 * 24 * 60 * 60 * 1000;
+  const realismFlag = (() => {
+    if (!isEnabled('dp_goal_realism_v1')) return null;
+    const weeks = target.month ? (() => {
+      const days = daysUntilTarget(target.month);
+      return days != null && days > 0 ? days / 7 : null;
+    })() : null;
+    const { bfPct } = estimateBfDeurenbergCapped({
+      weightKg: weight ?? NaN,
+      heightCm: height ?? NaN,
+      ageYears: age ?? NaN,
+      ...(sex ? { sex } : {}),
+    });
+    return evaluateGoalRealism({
+      currentKg: currentWeightKg,
+      targetKg: target.weightKg,
+      weeks,
+      bfPct,
+      sex,
+      goal,
+      experience,
+    });
+  })();
+  // Anti-spam: surface a flag only when this exact goal-signature hasn't been
+  // shown inside the cooldown window. Computed at render; the dismiss/show stamp
+  // is written when the message is actually rendered (effect below).
+  const realismSignature = realismFlag
+    ? `${realismFlag.type}|${realismFlag.label}|${target.weightKg}|${target.month}|${goal}`
+    : null;
+  const [realismDismissed, setRealismDismissed] = useState(false);
+  const showRealism = (() => {
+    if (realismFlag === null || realismDismissed) return false;
+    try {
+      const raw = localStorage.getItem(COOLDOWN_KEY);
+      if (raw) {
+        const prev = JSON.parse(raw) as { sig?: string; ts?: number };
+        if (prev?.sig === realismSignature && typeof prev.ts === 'number' && Date.now() - prev.ts < COOLDOWN_MS) {
+          return false; // same goal already reframed recently
+        }
+      }
+    } catch { /* malformed → show */ }
+    return true;
+  })();
+  useEffect(() => {
+    if (!showRealism || realismSignature === null) return;
+    try {
+      localStorage.setItem(COOLDOWN_KEY, JSON.stringify({ sig: realismSignature, ts: Date.now() }));
+    } catch { /* quota → best-effort */ }
+  }, [showRealism, realismSignature]);
 
   // HTML <input type="date"> only renders its value when given a full YYYY-MM-DD.
   // A legacy month-only stored deadline (YYYY-MM) would show blank, so default
@@ -200,6 +266,25 @@ export function ObiectivCard(): JSX.Element {
             safeDate: rateVerdict.safeDeadlineDate,
           })}
         </p>
+      )}
+      {showRealism && realismFlag && (
+        <div
+          className="mt-2 px-3 py-2.5 rounded-xl bg-paper2 border border-line"
+          role="note"
+          data-testid="goal-realism-reframe"
+        >
+          <p className="text-xs text-ink2 leading-snug">
+            {t(realismFlag.reframeKey, realismFlag.vars)}
+          </p>
+          <button
+            type="button"
+            className="mt-1.5 text-[11px] text-ink3 underline underline-offset-2"
+            data-testid="goal-realism-dismiss"
+            onClick={() => setRealismDismissed(true)}
+          >
+            {t('common.dismiss')}
+          </button>
+        </div>
       )}
       {eta?.kind === 'at-target' && (
         <p

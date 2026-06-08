@@ -925,6 +925,19 @@
       "switchedToAutoMaintain": "Ai ales mentenanta — nu mai poti slabi sau pune masa. Esti pe Auto."
     }
   },
+  "goalRealism": {
+    "timeline": {
+      "unrealistic": "Targetul tau cere ~{askedPct}%/saptamana. Realist e {safeRateLow}-{safeRateHigh}%/saptamana — mare parte dintr-o scadere mai rapida e muschi si apa, nu grasime. Ajusteaza la {safeWeeksMin}-{safeWeeksMax} saptamani pentru un ritm sigur, sau {aggressiveWeeksMin}-{aggressiveWeeksMax} saptamani daca accepti risc de pierdere musculara. Tu decizi.",
+      "veryAggressive": "Targetul tau cere ~{askedPct}%/saptamana — fezabil la nivelul tau de grasime, dar e un ritm agresiv cu risc real de pierdere musculara. Un plan de {safeWeeksMin}-{safeWeeksMax} saptamani e mai sigur; {aggressiveWeeksMin}-{aggressiveWeeksMax} saptamani e capatul agresiv. Tu decizi."
+    },
+    "contradiction": {
+      "recomp": "Sa pui muschi si sa slabesti in acelasi timp e posibil pentru tine acum (recompozitie) — dar numai daca slabirea e lenta. Daca le fortezi pe amandoua repede, se bat cap in cap. Tinem deficitul bland ca muschiul sa ramana.",
+      "sequential": "Sa pui muschi si sa slabesti repede in acelasi timp rar merge cand esti deja slab — corpul alege una. Mai bine pe rand: slabesti pana la tinta intai, apoi un lean bulk. Sau tii greutatea constanta si faci recompozitie lent. Tu decizi."
+    },
+    "frequency": {
+      "beginnerTooMany": "{requested} zile grele pe saptamana e mai mult decat poate recupera corpul tau inca — asa apar accidentarile si epuizarea. {sustainableHard} antrenamente grele plus cateva usoare construiesc mai mult, mai repede. Crestem treptat pe masura ce te adaptezi."
+    }
+  },
   "istoric": {
     "heading": "Istoric",
     "empty": "Nu ai sesiuni logate inca.",

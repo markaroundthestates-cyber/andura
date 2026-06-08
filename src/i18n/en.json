@@ -925,6 +925,19 @@
       "switchedToAutoMaintain": "You chose to maintain — you can't lose fat or bulk. Switched to Auto."
     }
   },
+  "goalRealism": {
+    "timeline": {
+      "unrealistic": "Your target needs ~{askedPct}%/week. Realistic is {safeRateLow}-{safeRateHigh}%/week — much of a faster drop is muscle and water, not fat. Adjust to {safeWeeksMin}-{safeWeeksMax} weeks for a safe pace, or {aggressiveWeeksMin}-{aggressiveWeeksMax} weeks if you accept some muscle-loss risk. Your call.",
+      "veryAggressive": "Your target needs ~{askedPct}%/week — doable at your body-fat level, but it's an aggressive pace with real muscle-loss risk. A {safeWeeksMin}-{safeWeeksMax}-week plan is safer; {aggressiveWeeksMin}-{aggressiveWeeksMax} weeks is the aggressive end. Your call."
+    },
+    "contradiction": {
+      "recomp": "Building muscle and losing fat at the same time is possible for you right now (a recomp) — but only if the cut is slow. Chasing both fast pulls against each other. We'll keep the deficit gentle so the muscle sticks.",
+      "sequential": "Gaining muscle and losing fat fast at once rarely works once you're already lean — the body picks one. Better to do them in sequence: cut to your target first, then a lean bulk. Or keep weight steady and recomp slowly. Your call."
+    },
+    "frequency": {
+      "beginnerTooMany": "{requested} hard days a week is more than your body can recover from yet — that's how injuries and burnout start. {sustainableHard} hard sessions plus a couple of light fillers will build more, faster. We can ramp up as you adapt."
+    }
+  },
   "istoric": {
     "heading": "History",
     "empty": "No sessions logged yet.",

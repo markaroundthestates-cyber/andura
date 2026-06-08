@@ -756,6 +756,24 @@ export const FLAGS = Object.freeze({
   // full-path-sim OFF arm unchanged). Flip ON is a human gate (Daniel) AFTER the
   // sim A/B. See _REF_gold_vtaper_cut_2026-06-08 + _ENGINE_volume_policy §73.
   dp_smart_selection_v1: { rollout: 0, default: false },
+
+  // #74 goal-realism push-back layer (engine-wiring 2026-06-08) (RISK LOW —
+  // pure detection + a reframe MESSAGE; never blocks, never touches kg/sets,
+  // surfaced ONCE at goal-set with an anti-spam cooldown). Andura today just
+  // OBEYS the goal — it can't refuse/reframe an impossible or contradictory ask
+  // ("lose 18kg in 7 weeks", "+8kg muscle AND visible abs in 12 weeks", a
+  // beginner wanting 7 hard days/week). A real coach reframes gently: shows the
+  // realistic RANGE, proposes the sustainable alternative. When ON, the
+  // goal-set surface runs src/engine/goalRealism.js (rate-of-change band labels,
+  // BF gate via bodyComposition.js as a noisy BAND, contradiction + frequency
+  // detectors) and renders a gentle reframe (i18n keys goalRealism.* EN/RO) the
+  // user can dismiss + proceed. OFF → the detector is never invoked + no message
+  // renders → the deployed app is BYTE-IDENTICAL (a goal-set advisory, NOT the
+  // dp.js kg path — the calibration-sim hash is orthogonal + stays green). Flip
+  // ON is a human gate (Daniel) AFTER review. The band/zone constants are
+  // calibrated from _ENGINE_load_bf_rate_policy_2026-06-08 §3 + §4 (verified
+  // physiology — Helms/ISSN/Aragon). See spec §4.
+  dp_goal_realism_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */

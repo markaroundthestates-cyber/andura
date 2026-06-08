@@ -3,13 +3,14 @@
 // progres undeva" — Tinte personale moved from Cont > Profil si tinte
 // (ephemeral local state) to Progres tab > ObiectivCard (persisted).
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ObiectivCard } from '../../../components/Progres/ObiectivCard';
 import { useProgresStore } from '../../../stores/progresStore';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
+import * as flags from '../../../../util/featureFlags.js';
 
 function renderCard() {
   return render(
@@ -219,6 +220,48 @@ describe('ObiectivCard — persistence round-trip (store hydrate)', () => {
     useProgresStore.getState().setTargetObiectiv({ weightKg: 75, month: '2026-09' });
     renderCard();
     expect((screen.getByTestId('obiectiv-target-month-input') as HTMLInputElement).value).toBe('2026-09-01');
+  });
+});
+
+// #74 goal-realism push-back (dp_goal_realism_v1, default OFF).
+describe('ObiectivCard — #74 goal-realism reframe (dp_goal_realism_v1)', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    try { localStorage.removeItem('goalRealism-shown'); } catch { /* ignore */ }
+  });
+
+  it('flag OFF (default) → NO reframe renders even on an unrealistic goal (byte-identical)', () => {
+    // 81 -> 63 by a near deadline = ~2.5%/wk (unrealistic) — yet flag OFF = silent.
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 63, month: '2026-08-07' });
+    renderCard();
+    expect(screen.queryByTestId('goal-realism-reframe')).toBeNull();
+  });
+
+  it('flag ON + unrealistic timeline → reframe shows the realistic range', () => {
+    vi.spyOn(flags, 'isEnabled').mockImplementation((id: string) => id === 'dp_goal_realism_v1');
+    // 81 -> 63 (-18kg) by ~7 weeks out = ~2.5%/wk → unrealistic.
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 63, month: '2026-07-27' });
+    renderCard();
+    const reframe = screen.getByTestId('goal-realism-reframe');
+    expect(reframe).toBeInTheDocument();
+    expect(reframe.textContent).toMatch(/saptamana/); // ranges-not-verdicts tone
+    expect(screen.getByTestId('goal-realism-dismiss')).toBeInTheDocument();
+  });
+
+  it('flag ON + realistic plan → no reframe (no nag)', () => {
+    vi.spyOn(flags, 'isEnabled').mockImplementation((id: string) => id === 'dp_goal_realism_v1');
+    // 81 -> 75 (-6kg) far out → safe pace → silent.
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 75, month: '2027-06-01' });
+    renderCard();
+    expect(screen.queryByTestId('goal-realism-reframe')).toBeNull();
+  });
+
+  it('flag ON + dismiss → reframe goes away', () => {
+    vi.spyOn(flags, 'isEnabled').mockImplementation((id: string) => id === 'dp_goal_realism_v1');
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 63, month: '2026-07-27' });
+    renderCard();
+    fireEvent.click(screen.getByTestId('goal-realism-dismiss'));
+    expect(screen.queryByTestId('goal-realism-reframe')).toBeNull();
   });
 });
 
