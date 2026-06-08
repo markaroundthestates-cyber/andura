@@ -32,7 +32,7 @@ export const N_WEEKS = 16;          // weeks of sessions per user journey
 export const SEED = 0xf01ce7;       // distinct from calibration-sim SEED
 
 // The path-A flags this harness PROVES are observable + safe through the real
-// seam (default OFF in production). Each maps to the journey trait that fires it.
+// seam. Each maps to the journey trait that fires it.
 export const PATH_A_FLAGS = Object.freeze([
   'dp_acwr_readiness_v1',          // ACWR spike → readiness penalty → set/weight hold
   'dp_weekly_recovery_alloc_v1',   // fatigued week → weekly volume redistributed
@@ -44,6 +44,24 @@ export const PATH_A_FLAGS = Object.freeze([
   // path (dark primitives) — exercised at their reachable seam in fp-darkprimitives,
   // NOT here, and flagged honestly in the report. Including them here would be
   // faking full-path coverage they do not have.
+]);
+
+// The set of dp_*_v1 intelligence flags FLIPPED to registry-default ON (the clean
+// partial flip 2026-06-08 — the subset proven 100% on the #70 persona-matrix AND
+// green on the full suite; the e1rm/kalman/ceiling/population_prior/acwr/learned-
+// volume/weekly-recovery/stimulus cluster stayed OFF because their ON behavior
+// breaks pinned per-exercise unit contracts — reported as needs-fix). The frozen
+// A/B baselines (hashOff = all-off world, hashOn = PATH_A-on / rest-off) were
+// generated when these defaulted OFF — so once the registry defaults to ON, this
+// harness can no longer rely on "no _devFlags ⇒ off". setPathAFlags now writes an
+// EXPLICIT _devFlags map over this set so the OFF arm forces them all OFF and the
+// ON arm forces exactly PATH_A_FLAGS ON (the rest OFF), making the A/B independent
+// of the registry default — the SAME _devFlags-override mechanism, no engine
+// change, baselines preserved byte-for-byte.
+export const FLIPPED_FLAGS = Object.freeze([
+  'dp_emphasis_specialization_v1', 'dp_coherent_weekly_alloc_v1',
+  'dp_pain_deprioritize_v1', 'dp_pain_memory_v1', 'dp_effective_reps_v1',
+  'dp_tendon_cap_v1', 'dp_deficit_throttle_v1', 'dp_energy_volume_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the
@@ -60,22 +78,23 @@ export function resetWorld() {
 
 /**
  * Set the dev-flag override that the real featureFlags.isEnabled honors first.
- *   - `false` → write nothing → registry default (all OFF) → the BASELINE arm.
- *   - `true`  → ALL path-A flags ON → the stacked ON arm.
- *   - `{ only: 'flag_id' }` → exactly that ONE flag ON (the rest OFF) → per-flag
- *     isolation, so each path-A flag's effect can be attributed end-to-end.
+ * Writes an EXPLICIT map over FLIPPED_FLAGS (registry default is now ON, post
+ * 2026-06-08 flip) so the A/B is independent of the registry default:
+ *   - `false` → ALL flipped flags forced OFF → the BASELINE (all-off) arm.
+ *   - `true`  → exactly PATH_A_FLAGS ON, the rest of the flipped set OFF → the
+ *               stacked path-A ON arm (matches the frozen hashOn semantics).
+ *   - `{ only: 'flag_id' }` → exactly that ONE flag ON, the rest OFF → per-flag
+ *               isolation, so each path-A flag's effect can be attributed end-to-end.
  */
 export function setPathAFlags(mode) {
-  if (mode === false || mode == null) {
-    try { localStorage.removeItem(DEV_FLAGS_KEY); } catch { /* ignore */ }
-    return;
-  }
   const obj = {};
+  for (const f of FLIPPED_FLAGS) obj[f] = false; // explicit OFF over the flipped set
   if (mode === true) {
     for (const f of PATH_A_FLAGS) obj[f] = true;
-  } else if (typeof mode === 'object' && typeof mode.only === 'string') {
+  } else if (mode && typeof mode === 'object' && typeof mode.only === 'string') {
     obj[mode.only] = true;
   }
+  // mode === false / null → the all-off map above (the baseline arm).
   try { localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify(obj)); } catch { /* ignore */ }
 }
 

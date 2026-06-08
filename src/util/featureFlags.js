@@ -343,7 +343,7 @@ export const FLAGS = Object.freeze({
   // a hard ban, never drops the last exercise for a muscle. OFF → empty penalty map
   // → byte-identical pool order (the existing muscle-GROUP pain handling only). No
   // F3 flag dependency. Reuses alternativeFinder/poolForGroup selection (no rebuild).
-  dp_pain_deprioritize_v1: { rollout: 0, default: false },
+  dp_pain_deprioritize_v1: { rollout: 1, default: true },
 
   // #64 PERSISTENT pain memory + proactive substitution (RISK MED — changes
   // session COMPOSITION, path A: it SWAPS a pinned exercise, not just demotes).
@@ -357,7 +357,7 @@ export const FLAGS = Object.freeze({
   // unchanged). Also threads the pain flag into dp.js load-transition reason
   // derivation (#75) so a pinned exercise's load drop reads reason='pain' →
   // open-ended window. Reuses getTransferSources / poolForGroup (no rebuild).
-  dp_pain_memory_v1: { rollout: 0, default: false },
+  dp_pain_memory_v1: { rollout: 1, default: true },
 
   // #10/E learned per-gym equipment ladder (RISK LOW-MED — changes only the
   // GRANULARITY of a load step, bounded by the equipment snap's floor/ceiling). When
@@ -445,7 +445,7 @@ export const FLAGS = Object.freeze({
   // calibration-sim hash is orthogonal + stays green flag-OFF. Flip ON is a human
   // gate (Daniel) AFTER review. See _ENGINE_WIRING_2026-06-07/
   // F_emphasis_specialization_spec.md.
-  dp_emphasis_specialization_v1: { rollout: 0, default: false },
+  dp_emphasis_specialization_v1: { rollout: 1, default: true },
 
   // ── F6a Recovery/Fatigue-deepening cluster (engine-wiring 2026-06-08) — pure
   // signal detectors on top of the F3 substrate. Each defaults OFF (rollout 0) →
@@ -489,7 +489,7 @@ export const FLAGS = Object.freeze({
   // DOSE path (feed stimulusSets into the V1 landmark/session budget) is DEFERRED
   // (spec §2c.2 — needs V1 + a trim-only clamp). OFF → never computed → byte-
   // identical. Degrades to a neutral RIR=1 when no rating present.
-  dp_effective_reps_v1: { rollout: 0, default: false },
+  dp_effective_reps_v1: { rollout: 1, default: true },
 
   // V1 #10 learned MEV/MAV (RISK MED — path A, shifts how many sets a muscle gets).
   // Static landmarks today: ISRAETEL_BASELINES → computeMuscleVolumeTarget; every
@@ -597,7 +597,7 @@ export const FLAGS = Object.freeze({
   // weekly/freq budget → byte-identical composition (calibration-sim hash orthogonal:
   // path A, not the dp.js path-B kg). Flip ON is a human gate (Daniel) AFTER the sim
   // A/B. See _DIAG_session_composition_2026-06-08.md #3 + _ENGINE_volume_policy §71.
-  dp_coherent_weekly_alloc_v1: { rollout: 0, default: false },
+  dp_coherent_weekly_alloc_v1: { rollout: 1, default: true },
 
   // #32 detraining vs deload vs life-dip classifier (RISK MED-HIGH — the LIFE_DIP
   // branch SUPPRESSES a deload, so a mis-classification could let a fatigued user
@@ -663,7 +663,7 @@ export const FLAGS = Object.freeze({
   // phase (cold start) → MAINTENANCE → no throttle. The CUT factor is a DESIGN
   // PROPOSAL (spec §9). Daniel-flag (it embodies the D109 product rule). No new
   // persistence.
-  dp_deficit_throttle_v1: { rollout: 0, default: false },
+  dp_deficit_throttle_v1: { rollout: 1, default: true },
 
   // #76 energy → VOLUME / RIR / deload modulation (magnitude-aware) (RISK MED —
   // changes session SET-VOLUME + the RIR display band for cutting/bulking users,
@@ -687,7 +687,7 @@ export const FLAGS = Object.freeze({
   // RIR/deload knobs are a DESIGN PROPOSAL (spec §9) — sim sweep + Daniel sanity-
   // check before flip; the SHAPE (deeper deficit → less volume + more RIR + more
   // deloads, load untouched) is the verified principle. No new persistence.
-  dp_energy_volume_v1: { rollout: 0, default: false },
+  dp_energy_volume_v1: { rollout: 1, default: true },
 
   // #21 strength/bodyweight + cut/bulk aware (RISK MED — shifts the fatigue map for
   // users whose bodyweight is changing, path A; bounded by the existing recovery
@@ -721,7 +721,7 @@ export const FLAGS = Object.freeze({
   // fraction are DESIGN PROPOSALS (spec §9) — research/Daniel sanity-check before
   // flip (the shape is verified physiology, the numbers tunable). Daniel-flag (he
   // named the 65-vs-30 rule). No new persistence (curve = code constant).
-  dp_tendon_cap_v1: { rollout: 0, default: false },
+  dp_tendon_cap_v1: { rollout: 1, default: true },
 
   // #12 stimulus-per-minute optimizer (RISK MED — changes WHICH tail exercise is
   // dropped by the time-budget trim; never the front, never below floor). The

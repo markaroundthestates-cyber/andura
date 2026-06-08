@@ -6,7 +6,7 @@
 // evaluates goal-realism for the unrealistic asks, and scores each persona
 // PASS / DIVERGE against the principle bands. READ-ONLY — no engine change.
 
-import { world, resetWorld, setPathAFlags } from '../full-path-sim/fp-config.js';
+import { world, resetWorld, setPathAFlags, FLIPPED_FLAGS } from '../full-path-sim/fp-config.js';
 import { getExerciseMetadata } from '../../../src/engine/exerciseLibrary.js';
 import { DEV_FLAGS_KEY } from '../../../src/util/featureFlags.js';
 import { DB } from '../../../src/db.js';
@@ -31,7 +31,11 @@ const COMPOUND_RE = /squat|deadlift|press|row|pull-?up|chin-?up|pulldown|lunge|l
 const LATERAL_RAISE_RE = /lateral raise|lat raise|side raise/i;
 
 function setFlags(ids) {
+  // Start from an explicit ALL-OFF base over the flipped set (registry default is
+  // now ON post 2026-06-08 flip) so an empty `ids` list = a TRUE off arm (the
+  // gold-ref Daniel-OFF), not "registry ON". Listed ids then force ON.
   const obj = {};
+  for (const f of FLIPPED_FLAGS) obj[f] = false;
   for (const f of ids) obj[f] = true;
   try { localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify(obj)); } catch { /* */ }
 }

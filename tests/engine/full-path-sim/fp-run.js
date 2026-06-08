@@ -13,7 +13,7 @@
 // Deterministic: mulberry32 per profile + a fixed COHORT_START; every engine clock
 // is the injected `now`/ts (no Date.now leak in the driven path).
 
-import { world, resetWorld, setPathAFlags } from './fp-config.js';
+import { world, resetWorld, setPathAFlags, FLIPPED_FLAGS } from './fp-config.js';
 import { buildJourneyCohort, trueCapAt } from './fp-journeys.js';
 import { computeACWR } from '../../../src/engine/muscleRecovery.js';
 import { getComputedReadinessScore } from '../../../src/engine/readiness.js';
@@ -244,10 +244,14 @@ export async function acwrRealClockFullPath() {
 // that builds the precise trait, flips OFF→ON, and shows the COMPOSED stream move.
 
 /** Write a single dev-flag override (any flag id), the resolution-order step-1 the
- *  real featureFlags.isEnabled honors first. Empty/false clears (baseline). */
+ *  real featureFlags.isEnabled honors first. Builds an explicit ALL-OFF base over
+ *  the flipped set (registry default is now ON post 2026-06-08 flip) so the OFF
+ *  arm (`false`/empty) is a TRUE baseline + only `flagId` is ON. */
 function setFlag(flagId) {
-  if (!flagId) { try { localStorage.removeItem(DEV_FLAGS_KEY); } catch { /* */ } return; }
-  try { localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify({ [flagId]: true })); } catch { /* */ }
+  const obj = {};
+  for (const f of FLIPPED_FLAGS) obj[f] = false;
+  if (flagId) obj[flagId] = true;
+  try { localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify(obj)); } catch { /* */ }
 }
 const _isod = (ms) => new Date(ms).toLocaleDateString('sv');
 const _sig = (p) => (p ? p.exercises.map((e) => `${e.engineName}:${e.sets}:${e.targetKg}`).join('|') : 'null');
