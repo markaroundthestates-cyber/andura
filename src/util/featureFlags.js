@@ -688,6 +688,23 @@ export const FLAGS = Object.freeze({
   // Existing isKalmanFeatureFlagEnabled API preserved (caller-provided
   // flags arg takes precedence — test isolation + per-call override OK).
   bayesian_kalman_v1: { rollout: 1, default: true },
+
+  // #6 library canonical-alias writeback (RISK MED — touches the name-keying
+  // boundary every name-keyed engine store reads). The alias map + chains-as-data
+  // are ALWAYS-ON DATA (pure resolution + the deterministic substitution source);
+  // this flag gates ONLY the BEHAVIORAL half: routing the persisted log key
+  // through resolveCanonical in the workout writeback. The intent is to stop the
+  // b32abac3 strand class (a log written under an RO/legacy display name is found
+  // by the engine under the EN canonical). Gated default-OFF because resolving on
+  // the WRITE side without the engine READ side (DP.getLogs) also resolving would
+  // split a history mid-stream for a caller that feeds the engine an UNRESOLVED
+  // name on the read side (the calibration-sim does exactly this with its legacy
+  // synonym profile names). In production the screen passes the SAME engineName to
+  // both the writeback and DP.recommend, so they already agree — flipping this ON
+  // only HELPS the legacy/RO-display fallback path and never the canonical path.
+  // OFF → engineKey derivation is byte-identical to pre-#6 (ex.engineName ??
+  // ex.exerciseName, unresolved) → determinism hash + sim unchanged.
+  dp_library_chains_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */

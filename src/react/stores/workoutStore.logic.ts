@@ -13,6 +13,7 @@ import { learnedStepFromLogs, saveLearnedStep } from '../../engine/dp/equipmentL
 import { learnVolumeLandmarks, saveLearnedVolume, LEARNED_VOLUME_KEY } from '../../engine/periodization/learnedVolume.js';
 import { learnFatigueCurve, saveFatigueCurve, FATIGUE_CURVE_KEY } from '../../engine/dp/fatigueCurve.js';
 import { DP } from '../../engine/dp.js';
+import { resolveCanonical } from '../../engine/exerciseAliases.js';
 import type {
   SessionIntensityMod,
   EnergyLight,
@@ -128,7 +129,16 @@ export function buildLogEntriesFromSummary(
     // ratings never moved the next recommendation (the "weight didn't move" bug).
     // Route logs[].ex from the engineName; fall back to exerciseName only for
     // legacy sessions (pre-fix) that never carried it.
-    const engineKey = ex.engineName ?? ex.exerciseName;
+    //
+    // #6 canonical resolution (behind dp_library_chains_v1, default OFF → the
+    // unresolved legacy derivation, byte-identical to pre-#6). When ON, the derived
+    // key is passed through resolveCanonical so a legacy/RO-display name (the
+    // exerciseName fallback path) can NEVER strand a log off the engine key again —
+    // it resolves to the EN canonical the engine reads. IDENTITY for an already-
+    // canonical engineName (the common case: engineName present → already the
+    // library key); unknown names pass through unchanged.
+    const rawKey = ex.engineName ?? ex.exerciseName;
+    const engineKey = isEnabled('dp_library_chains_v1') ? resolveCanonical(rawKey) : rawKey;
     for (const s of ex.sets) {
       setIdx += 1;
       const ts = s.timestamp;
