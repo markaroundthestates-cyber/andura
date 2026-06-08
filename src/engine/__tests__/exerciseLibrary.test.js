@@ -1621,7 +1621,10 @@ describe('Bundle 6.0.4.4 Calves Library Extension §ADR v2 LOCK V2', () => {
 
   // §11 tier distribution Bundle 6.0.4.4
   it('Bundle 6.0.4.4 tier distribution: Tier 1 + Tier 2 + Tier 3 all present', () => {
-    expect(EXERCISE_METADATA['Standing Calf Raise Machine'].tier).toBe(1);
+    // Standing Calf Raise Machine re-tiered to T2 (isolation; was mis-tagged T1
+    // and inflating to 5 sets / ordering ahead of leg compounds — see
+    // isolation-tier-guard #42). Donkey Calf Raise still anchors Tier 1 here.
+    expect(EXERCISE_METADATA['Standing Calf Raise Machine'].tier).toBe(2);
     expect(EXERCISE_METADATA['Donkey Calf Raise'].tier).toBe(1);
     expect(EXERCISE_METADATA['Seated Calf Raise Machine'].tier).toBe(2);
     expect(EXERCISE_METADATA['Cable Calf Raise'].tier).toBe(2);
@@ -1632,7 +1635,9 @@ describe('Bundle 6.0.4.4 Calves Library Extension §ADR v2 LOCK V2', () => {
 
   // §12 force_demand distribution Bundle 6.0.4.4
   it('Bundle 6.0.4.4 force_demand: high + medium + low all present', () => {
-    expect(EXERCISE_METADATA['Standing Calf Raise Machine'].force_demand).toBe('high');
+    // Standing Calf Raise Machine re-tiered to medium (isolation; see #42).
+    // Donkey Calf Raise still anchors force_demand:high here.
+    expect(EXERCISE_METADATA['Standing Calf Raise Machine'].force_demand).toBe('medium');
     expect(EXERCISE_METADATA['Donkey Calf Raise'].force_demand).toBe('high');
     expect(EXERCISE_METADATA['Seated Calf Raise Machine'].force_demand).toBe('medium');
     expect(EXERCISE_METADATA['Cable Calf Raise'].force_demand).toBe('medium');
@@ -2458,7 +2463,10 @@ describe('Bundle 6.0.7 Core Library Extension §ADR v2 LOCK V2 + Co-CTO autonomo
   });
 
   it('Bundle 6.0.7 Sub-batch 6 — 3 Rollout family Tier 1-2 anti-extension', () => {
-    expect(EXERCISE_METADATA['Ab Wheel Rollout'].tier).toBe(1);
+    // Ab Wheel Rollout re-tiered to T2 (core anti-extension isolation; was
+    // mis-tagged T1 inflating to 5 sets / ordering ahead of compounds — see #42).
+    // Barbell Rollout (loaded barbell variant) stays T1.
+    expect(EXERCISE_METADATA['Ab Wheel Rollout'].tier).toBe(2);
     expect(EXERCISE_METADATA['Barbell Rollout'].tier).toBe(1);
     expect(EXERCISE_METADATA['Stability Ball Rollout'].tier).toBe(2);
     ['Ab Wheel Rollout', 'Barbell Rollout', 'Stability Ball Rollout'].forEach(name => {
@@ -2467,9 +2475,18 @@ describe('Bundle 6.0.7 Core Library Extension §ADR v2 LOCK V2 + Co-CTO autonomo
   });
 
   it('Bundle 6.0.7 Sub-batch 7-8 — Hanging + L-Sit gymnastic Tier 1 force_demand high', () => {
-    ['Hanging Leg Raise', 'Toes-to-Bar', 'L-Sit Hold Parallel Bars', 'Captains Chair Leg Raise', 'Dragon Flag', 'Windshield Wiper'].forEach(name => {
+    // Hanging Leg Raise + Captains Chair Leg Raise re-tiered to T2 / medium (core
+    // flexion isolations; were mis-tagged T1/high inflating to 5 sets and ordering
+    // ahead of leg compounds — see isolation-tier-guard #42). The remaining
+    // gymnastic holds/levers (Toes-to-Bar, L-Sit, Dragon Flag, Windshield Wiper)
+    // stay genuine T1/high.
+    ['Toes-to-Bar', 'L-Sit Hold Parallel Bars', 'Dragon Flag', 'Windshield Wiper'].forEach(name => {
       expect(EXERCISE_METADATA[name].tier).toBe(1);
       expect(EXERCISE_METADATA[name].force_demand).toBe('high');
+    });
+    ['Hanging Leg Raise', 'Captains Chair Leg Raise'].forEach(name => {
+      expect(EXERCISE_METADATA[name].tier).toBe(2);
+      expect(EXERCISE_METADATA[name].force_demand).toBe('medium');
     });
   });
 

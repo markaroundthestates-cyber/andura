@@ -16750,8 +16750,8 @@
       "Smith Standing Calf Raise",
       "Standing Barbell Calf Raise"
     ],
-    "force_demand": "high",
-    "tier": 1,
+    "force_demand": "medium",
+    "tier": 2,
     "muscle_target_primary": "gambe",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
@@ -16790,8 +16790,8 @@
       "Standing Calf Raise Machine",
       "Standing Barbell Calf Raise"
     ],
-    "force_demand": "high",
-    "tier": 1,
+    "force_demand": "medium",
+    "tier": 2,
     "muscle_target_primary": "gambe",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
@@ -16830,8 +16830,8 @@
       "Hack Squat Calf Raise",
       "Standing Calf Raise Machine"
     ],
-    "force_demand": "high",
-    "tier": 1,
+    "force_demand": "medium",
+    "tier": 2,
     "muscle_target_primary": "gambe",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
@@ -24576,8 +24576,8 @@
       "Barbell Rollout",
       "Stability Ball Rollout"
     ],
-    "force_demand": "high",
-    "tier": 1,
+    "force_demand": "medium",
+    "tier": 2,
     "muscle_target_primary": "core",
     "muscle_target_secondary": [
       "umeri",
@@ -24702,8 +24702,8 @@
       "Hanging Knee Raise",
       "Toes-to-Bar"
     ],
-    "force_demand": "high",
-    "tier": 1,
+    "force_demand": "medium",
+    "tier": 2,
     "muscle_target_primary": "core",
     "muscle_target_secondary": [
       "antebrate",
@@ -24826,8 +24826,8 @@
       "Captains Chair Knee Raise",
       "Hanging Leg Raise"
     ],
-    "force_demand": "high",
-    "tier": 1,
+    "force_demand": "medium",
+    "tier": 2,
     "muscle_target_primary": "core",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
@@ -25308,8 +25308,8 @@
       "Cable Crunch Standing",
       "Plate Crunch"
     ],
-    "force_demand": "high",
-    "tier": 1,
+    "force_demand": "medium",
+    "tier": 2,
     "muscle_target_primary": "core",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
