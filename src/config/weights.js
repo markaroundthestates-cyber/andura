@@ -62,6 +62,19 @@ export const EQUIPMENT_WEIGHTS = {
   // ── Calf-raise selector / plate machines (standing/seated calf) (audit F-1).
   // Heavy stacks reach 250kg (>= MAX_KG); 5/10kg steps.
   'calf_machine': [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 180, 200, 220, 250],
+
+  // ── Bodyweight ADDED-LOAD ladder — #7 config coverage (2026-06-08) ──────────
+  // For bodyweight CORE_AUTO movements (Pull-up / Dip / Push-up / core / etc.)
+  // the prescribed `kg` is ADDED weight only (belt plate / dip-belt DB / weight
+  // vest), starting at 0 (pure bodyweight). The 24 bodyweight CORE_AUTO were
+  // UNMAPPED → fell to bailib_stack (5kg floor) → a user adding a 2.5kg belt
+  // plate to a pull-up snapped UP to 5kg, and a pure-bodyweight 0 snapped to the
+  // 5kg floor too. A fine belt-plate ladder from 0 (2.5kg micro-plate steps low,
+  // 5kg high) so an added-load progression is honest. Ceiling 80kg (>= the
+  // Weighted Pull-up / Dip MAX_KG belt caps). The history path snaps the added
+  // load on this ladder; toPlannedExercise leaves the cold-start added load raw
+  // (0) for bodyweight, so this only ever refines the logged-belt progression.
+  'bodyweight_added': [0, 2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 35, 40, 45, 50, 55, 60, 70, 80],
 };
 
 // Mapare exercitiu → tipul de echipament din sala
@@ -178,6 +191,112 @@ export const EXERCISE_EQUIPMENT_MAP = {
   'Seated Leg Curl':       'leg_machine',
   'Standing Leg Curl':     'leg_machine',
   'Leg Extension Single-Leg':'leg_machine',
+
+  // ══ #7 CONFIG COVERAGE — the remaining 66 CORE_AUTO that were UNMAPPED ══════
+  // (2026-06-08). Every one fell to the bailib_stack DEFAULT (5kg floor, coarse
+  // 5kg steps, top 80) → the chest-fly-32kg / odd-DB bug class (task-list #35):
+  // a DB Fly / Cable Crossover priced at a ROW's load (an 8kg fly snapped UP to
+  // 10kg on the 5kg row grid), a light isolation floored at 5kg, a bodyweight
+  // belt-plate snapped to the 5kg floor. Each routed to a ladder whose
+  // floor/ceiling/granularity match its REAL working load.
+
+  // ── Chest FLY isolations (the headline bug class) — light fine ladders, NOT a
+  // row stack. A free DB fly is a light DB movement; a cable crossover a fine
+  // cable. (Cable Fly + Pec Deck already mapped; these were the gaps.)
+  'DB Fly':                'light_iso_db',
+  'Cable Crossover High-to-Low': 'light_iso_cable',
+
+  // ── Cable PULLDOWN / ROW variants — the heavy lat/row stack (same as the base
+  // Lat Pulldown / Cable Row that were mapped to bailib_stack): real working
+  // loads 30-80kg, the bailib stack is CORRECT for these (it was only wrong as a
+  // silent DEFAULT for light isolations).
+  'Wide-Grip Lat Pulldown':    'bailib_stack',
+  'Neutral-Grip Lat Pulldown': 'bailib_stack',
+  'V-Bar Lat Pulldown':        'bailib_stack',
+  'Straight-Arm Lat Pulldown': 'matrix_cable', // lat ISOLATION — finer/lighter than a pulldown
+  'V-Bar Cable Row':           'bailib_stack',
+  'Single-Arm Cable Row':      'matrix_cable', // single-arm = per-side lighter, finer pulley
+
+  // ── Cable arms / pushdowns / overhead — the fine Matrix pulley (2.5kg-ish),
+  // matching the existing 'Pushdown'/'Overhead Triceps'/'Cable Curl' family.
+  'Cable Hammer Curl Rope':                     'matrix_cable',
+  'Cable Triceps Pushdown Straight Bar':        'matrix_cable',
+  'Cable Triceps Pushdown V-bar':               'matrix_cable',
+  'Cable Triceps Pushdown Rope':                'matrix_cable',
+  'Cable Triceps Pushdown Single-Arm':          'matrix_cable',
+  'Cable Overhead Triceps Extension Rope':      'matrix_cable',
+  'Cable Single-Arm Overhead Triceps Extension':'matrix_cable',
+
+  // ── Cable glutes / core — Matrix pulley (mid loads, fine steps).
+  'Cable Pull-Through':        'matrix_cable',
+  'Cable Glute Kickback':      'light_iso_cable', // tiny per-leg isolation
+  'Pallof Press Cable Standing':'light_iso_cable', // anti-rotation, light
+  'Cable Woodchop High-to-Low':'matrix_cable',
+  'Cable Crunch Kneeling':     'matrix_cable',
+
+  // ── Rear-delt cable already light_iso_cable above; Face Pull is a light rear-
+  // delt/ext-rotation cable → fine light ladder (not the heavy lat stack).
+  'Face Pull':                 'matrix_cable',
+
+  // ── DUMBBELL compounds / mid lifts — the standard fixed-DB rack (7-50kg, 2.5
+  // steps). These are real DB loads, not tiny isolations.
+  'DB Row':                    'dumbbell',
+  'Chest-Supported DB Row':    'dumbbell',
+  'DB Shrug':                  'dumbbell',
+  'Seated DB Press':           'dumbbell',
+  'Goblet Squat':              'dumbbell',
+  'Bulgarian Split Squat':     'dumbbell',
+  'DB Lunge':                  'dumbbell',
+  'Walking Lunge':             'dumbbell',
+  'Reverse Lunge':             'dumbbell',
+  'DB Romanian Deadlift':      'dumbbell',
+  'DB Single-Leg RDL':         'dumbbell',
+  'DB Hip Thrust':             'dumbbell',
+  'Standing DB Calf Raise':    'dumbbell',
+  'DB Curl Standing':          'dumbbell',
+  'DB Hammer Curl Standing':   'dumbbell',
+  'DB Overhead Triceps Extension Two-Hand': 'dumbbell',
+  "Farmer's Walk DB":          'dumbbell', // carry load IS a DB pair load
+
+  // ── Tiny DB rear/lower-trap raise — light DB ladder (floor 2kg), like the
+  // lateral/rear-delt isolations (a Y raise true load is ~2-6kg).
+  'Y Raise':                   'light_iso_db',
+
+  // ── BAND resistance — no stack; a fine light ladder is the closest proxy for
+  // the band-tension "kg" the user logs (band-assisted pull-up assist, pull-apart
+  // tension, band leg curl). Light fine cable ladder (2.5kg floor).
+  'Band-Assisted Pull-up':     'light_iso_cable',
+  'Band Pull-Apart':           'light_iso_cable',
+  'Band Leg Curl':             'light_iso_cable',
+
+  // ── BODYWEIGHT movements — the prescribed kg is ADDED load only (belt/vest),
+  // starting at 0. Fine belt-plate ladder so a 2.5kg add isn't snapped to a 5kg
+  // floor and a pure-bodyweight 0 stays 0 (the history path snaps added load on
+  // this; cold-start added stays raw 0 in toPlannedExercise's isBw branch).
+  'Dip':                       'bodyweight_added',
+  'Push-up':                   'bodyweight_added',
+  'Knee Push-up':              'bodyweight_added',
+  'Diamond Push-up':           'bodyweight_added',
+  'Incline Push-up':           'bodyweight_added',
+  'Pike Push-up':              'bodyweight_added',
+  'Pull-up':                   'bodyweight_added',
+  'Weighted Pull-up':          'bodyweight_added',
+  'Chin-up':                   'bodyweight_added',
+  'Inverted Row Bar':          'bodyweight_added',
+  'Bodyweight Squat':          'bodyweight_added',
+  'Hyperextension Bodyweight': 'bodyweight_added',
+  'Single-Leg Glute Bridge':   'bodyweight_added',
+  'Glute Bridge Bodyweight':   'bodyweight_added',
+  'Tibialis Raise':            'bodyweight_added',
+  'Single-Leg Calf Raise Bodyweight': 'bodyweight_added',
+  'Dead Hang':                 'bodyweight_added',
+  'Plank':                     'bodyweight_added',
+  'Side Plank':                'bodyweight_added',
+  'Dead Bug':                  'bodyweight_added',
+  'Reverse Crunch':            'bodyweight_added',
+  'Hanging Leg Raise':         'bodyweight_added',
+  'Hanging Knee Raise':        'bodyweight_added',
+  'Bicycle Crunch':            'bodyweight_added',
 };
 
 /** @param {string} exerciseName */

@@ -3,50 +3,50 @@
   "seed": 15736039,
   "nProfiles": 8,
   "weeks": 6,
-  "hashOff": "3148e5265c89da8bbdfc03ecb12108b4ef2a5a8347bc19f24b20a95257f44bd1",
-  "hashOn": "1b5299287ab5109fa28e75ab8fc0a5cd7db62b7f059f893faab3e8125a2671dd",
+  "hashOff": "850f62e2b45536ad8f2af761f3cedd00d1f5e75f15960928032684004c5b85eb",
+  "hashOn": "184fa090f3b6372b27c154533f9db32441feeeff4c82db8a13f208ef70f560f6",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 7.07,
+    "meanExerciseCount": 7.03,
     "meanSetTotal": 13.2,
-    "meanDurationMin": 39.9,
-    "meanVolumeKg": 1745,
+    "meanDurationMin": 40,
+    "meanVolumeKg": 1750,
     "minusRatePct": 21.9
   },
   "sessionOn": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 7.06,
-    "meanSetTotal": 12.63,
-    "meanDurationMin": 38.7,
-    "meanVolumeKg": 1694,
+    "meanExerciseCount": 7.02,
+    "meanSetTotal": 12.65,
+    "meanDurationMin": 38.8,
+    "meanVolumeKg": 1711,
     "minusRatePct": 21.9
   },
   "convergenceOff": {
-    "totalSeries": 119,
-    "convergedPct": 7.6,
+    "totalSeries": 120,
+    "convergedPct": 7.5,
     "medianSessionsToConverge": 3,
-    "meanFinalAbsErr": 0.594
+    "meanFinalAbsErr": 0.58
   },
   "convergenceOn": {
-    "totalSeries": 117,
-    "convergedPct": 7.7,
+    "totalSeries": 118,
+    "convergedPct": 7.6,
     "medianSessionsToConverge": 4,
-    "meanFinalAbsErr": 0.593
+    "meanFinalAbsErr": 0.584
   },
   "flagsOff": {
     "oscillation": 0,
-    "stuckLow": 87,
+    "stuckLow": 86,
     "stuckHigh": 18,
-    "absurd": 36
+    "absurd": 37
   },
   "flagsOn": {
     "oscillation": 0,
-    "stuckLow": 83,
+    "stuckLow": 82,
     "stuckHigh": 19,
-    "absurd": 33
+    "absurd": 36
   },
-  "craterOff": 91,
-  "craterOn": 83
+  "craterOff": 89,
+  "craterOn": 84
 }
