@@ -60,6 +60,17 @@ const sumSets = (plan) => plan.exercises.reduce((a, e) => a + e.sets, 0);
 beforeEach(() => {
   localStorage.clear();
   vi.restoreAllMocks();
+  // This file pins the M1 recovery CHASSIS math (the flat per-group recovery cut +
+  // freed-volume redistribution) on the base periodization budget. dp_learned_volume
+  // _v1 + dp_weekly_recovery_alloc_v1 now DEFAULT ON (THE FLIP 2026-06-08) and overlay
+  // a learned per-muscle MEV/MAV + a smarter weekly redistribution ON TOP of this
+  // chassis, which shifts the exact set counts under assertion (the flat 0.60 cut is
+  // re-shaped). That ON behavior is validated through the real seam by the full-path-
+  // sim (§B isolation proves each flag moves the stream safely) + the #70 matrix.
+  // Force them OFF here so the chassis recovery math stays isolated + exact.
+  localStorage.setItem('_devFlags', JSON.stringify({
+    dp_learned_volume_v1: false, dp_weekly_recovery_alloc_v1: false,
+  }));
 });
 
 describe('scheduleAdapter — M1 recovery wired into daily plan', () => {

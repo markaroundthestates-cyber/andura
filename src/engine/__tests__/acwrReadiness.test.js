@@ -63,16 +63,20 @@ describe('F6a #5 ACWR readiness', () => {
     const old = logsOver('Flat DB Press', 60, 28, 7, 1);
     const spike = logsOver('Flat DB Press', 60, 6, 1, 4);
     DB.set('logs', [...old, ...spike]);
+    // dp_acwr_readiness_v1 now DEFAULTS ON (THE FLIP 2026-06-08) so "no _devFlags" no
+    // longer means OFF — force the flag OFF explicitly to exercise the no-ACWR path.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_acwr_readiness_v1: false }));
     // readinessInput 4 → base 95, no nutrition penalty.
     const off = getReadinessScore(4, null, null, null, null, NOW);
-    expect(off).toBe(95); // flag OFF (no _devFlags) → ACWR not applied
+    expect(off).toBe(95); // flag OFF → ACWR not applied
   });
 
   it('flag ON + spike → score lowered below the OFF value', () => {
     const old = logsOver('Flat DB Press', 60, 28, 7, 1);
     const spike = logsOver('Flat DB Press', 60, 6, 1, 4);
     DB.set('logs', [...old, ...spike]);
-    const off = getReadinessScore(4, null, null, null, null, NOW); // 95
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_acwr_readiness_v1: false }));
+    const off = getReadinessScore(4, null, null, null, null, NOW); // 95 (forced OFF)
     localStorage.setItem('_devFlags', JSON.stringify({ dp_acwr_readiness_v1: true }));
     const on = getReadinessScore(4, null, null, null, null, NOW);
     expect(on).toBeLessThan(off);

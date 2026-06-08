@@ -306,11 +306,16 @@ describe('F6c #12 — trim drop order: flag OFF byte-identical, ON drops lowest 
   const ONE_DROP_CAP = 32;
 
   it('flag OFF: drops the positional LAST (the compound) — legacy tail-first', () => {
+    // dp_stimulus_per_min_v1 now DEFAULTS ON (THE FLIP 2026-06-08) so "no _devFlags"
+    // no longer means OFF — force the flag OFF explicitly to exercise the legacy
+    // blind tail-first drop.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_stimulus_per_min_v1: false }));
     const trimmed = trimSessionToTimeBudget(tailMixSession(), 0, ONE_DROP_CAP);
     const names = trimmed.map((e) => e.name);
     // The last-positioned compound was dropped (blind tail-first); the isolation survives.
     expect(names).not.toContain('compTail');
     expect(names).toContain('isoTail');
+    localStorage.removeItem('_devFlags');
   });
 
   it('flag ON: drops the lowest stimulus/min tail (the isolation), KEEPS the compound', () => {

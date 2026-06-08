@@ -410,10 +410,13 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
     expect(out).not.toBeNull();
     const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
     expect(lat).toBeDefined();
-    // suggestStartWeight 54 (bodyweight-scaled, 0.72 fraction), SNAPPED to the Lat
-    // Pulldown equipment stack (bailib, 5kg steps: 50/55) → 55. Smoke 2026-06-01:
-    // the cold-start plan weight must be a load the machine can actually be set to.
-    expect(lat!.targetKg).toBe(55);
+    // dp_population_prior_v1 ON (THE FLIP 2026-06-08): the cold-start seeds from the
+    // published per-exercise strength-standard prior (bodyweight × sex × training-age)
+    // back-solved in e1RM space, a more principled + slightly more conservative seed
+    // than the bare suggestStartWeight fraction — 50kg on the bailib stack for a 75kg
+    // intermediate male (vs the 55 the raw fraction snapped to). Still a sensible,
+    // machine-settable, conservative start (Gigel: a touch light beats too heavy).
+    expect(lat!.targetKg).toBe(50);
   });
 
   it('experience RO->EN scaling: avansat (advanced 1.3x) beats incepator (beginner 0.7x)', async () => {
@@ -435,13 +438,14 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
 
     expect(begLat).toBeDefined();
     expect(advLat).toBeDefined();
-    // Bodyweight-scaled (75kg, male), 0.72 fraction (Target 4): beginner
-    // 75*0.72*0.7=37.8→38, advanced 75*0.72*1.3=70.2→70 — RO strings mapped to EN
-    // buckets, NOT silently falling to the x1.0 default (which would tie them).
+    // dp_population_prior_v1 ON (THE FLIP 2026-06-08): the cold-start seeds from the
+    // strength-standard prior scaled by training age. The RO experience strings still
+    // map to EN buckets (advanced strictly heavier than beginner — NOT a silent tie at
+    // the x1.0 default). beginner snaps to 35 on the bailib stack, advanced to 70.
     expect(advLat!.targetKg).toBeGreaterThan(begLat!.targetKg);
-    // beginner 37.8→38 raw, SNAPPED to the bailib stack → 40 (advanced 70 is
-    // already on the stack). Relative order (advanced > beginner) preserved.
-    expect(begLat!.targetKg).toBe(40);
+    expect(begLat!.targetKg).toBe(35); // conservative beginner prior, stack-snapped
+    // Advanced agrees with the bodyweight-scaled suggestStartWeight (70) — the prior
+    // and the fraction converge at the experienced end.
     expect(advLat!.targetKg).toBe(
       suggestStartWeight('Lat Pulldown', 'advanced', { bodyweightKg: 75, sex: 'm' }),
     );

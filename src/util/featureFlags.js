@@ -506,7 +506,7 @@ export const FLAGS = Object.freeze({
   // identical; the `?? baseline` fallback ALSO keeps any muscle with no learned data
   // byte-identical even when ON. The [0.6,1.6] clamp + alpha are DESIGN PROPOSALS
   // (spec §7) — sim sweep + Daniel review before flip (volume dose is a felt change).
-  dp_learned_volume_v1: { rollout: 0, default: false },
+  dp_learned_volume_v1: { rollout: 1, default: true },
 
   // V4 #15 auto-pivot near ceiling (RISK MED — PROPOSES a goal pivot, never auto-
   // switches: worst case is a dismissable banner). The classifier (classifyPlateau)
@@ -570,7 +570,7 @@ export const FLAGS = Object.freeze({
   // AA candidate) is DEFERRED behind the PARTIAL deload-telemetry boundary (spec §7).
   // OFF → no ACWR read, no term → byte-identical readiness score. Independent of #1.
   // UNVERIFIED thresholds (spec §7) — Daniel/research review before flip.
-  dp_acwr_readiness_v1: { rollout: 0, default: false },
+  dp_acwr_readiness_v1: { rollout: 1, default: true },
 
   // #30 weekly volume distribution by recovery (RISK MED — changes WHICH DAY a
   // group is trained, path A scheduling; never kg). When ON,
@@ -581,7 +581,7 @@ export const FLAGS = Object.freeze({
   // never above MRV, never zeroes a trained group). OFF → the allocator is never
   // invoked → the positional split + intra-day M1 path run as today → byte-identical
   // composition. Even ON, an all-recovered / no-history week self-no-ops to a clone.
-  dp_weekly_recovery_alloc_v1: { rollout: 0, default: false },
+  dp_weekly_recovery_alloc_v1: { rollout: 1, default: true },
 
   // #71 coherent weekly volume allocation (engine-wiring 2026-06-08) (RISK MED —
   // changes the per-EXERCISE set count, path A; never kg). Today buildSession sizes
@@ -647,7 +647,7 @@ export const FLAGS = Object.freeze({
   // a constant in the bundle, privacy-safe by construction. OFF → transfer-then-
   // suggestStartWeight (F3 behavior) → byte-identical. The table values are DESIGN
   // PROPOSALS (spec §9) — research/Daniel review before flip. No new persistence.
-  dp_population_prior_v1: { rollout: 0, default: false },
+  dp_population_prior_v1: { rollout: 1, default: true },
 
   // #37 deficit-aware progression throttle (RISK MED — changes the climb RATE for
   // cutting users; never touches the PR-floor). D109 already encodes "in a deficit
@@ -739,7 +739,7 @@ export const FLAGS = Object.freeze({
   // floors (>=4 ex / >=2 sets / >=25min / compound idx-0 >=3) are UNCHANGED in both
   // modes. The stimulusScore weighting is a DESIGN PROPOSAL (spec §9) — Daniel/
   // research sanity-check before flip (the shape is verified, the constants tunable).
-  dp_stimulus_per_min_v1: { rollout: 0, default: false },
+  dp_stimulus_per_min_v1: { rollout: 1, default: true },
 
   // #34 N-of-1 self-experiment (RISK HIGH — deliberately perturbs prescription to
   // learn the user's OWN response; the guardrails are the safety envelope). The

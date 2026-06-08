@@ -92,6 +92,16 @@ function setsForGroupInPlan(plan, roGroup) {
 beforeEach(() => {
   localStorage.clear();
   vi.restoreAllMocks();
+  // This file pins the M2 weakness-amplification CHASSIS math (weak group → toward
+  // MRV; M1 recovery wins on a fatigued day) on the base periodization budget.
+  // dp_learned_volume_v1 + dp_weekly_recovery_alloc_v1 now DEFAULT ON (THE FLIP
+  // 2026-06-08) and overlay learned MEV/MAV + weekly redistribution that shift the
+  // exact set counts under assertion. That ON behavior is validated through the real
+  // seam by the full-path-sim (§B isolation) + the #70 matrix. Force them OFF here so
+  // the weakness chassis math stays isolated + exact.
+  localStorage.setItem('_devFlags', JSON.stringify({
+    dp_learned_volume_v1: false, dp_weekly_recovery_alloc_v1: false,
+  }));
 });
 
 describe('scheduleAdapter — M2 weakness amplifies real volume toward MRV', () => {
