@@ -208,6 +208,20 @@ function toPlannedExercise(
     !isBw && !hasHistory && isEnabled('dp_transfer_coldstart_v1')
       ? DP.coldStartTransfer(engineEx.name, targetReps)
       : null;
+  // F6c #33 — population-prior cold-start (flag dp_population_prior_v1, default OFF
+  // → null → byte-identical). Fires ONLY when transfer found NO related lift: seed
+  // the new external-load lift's start from the user's OWN demographic profile
+  // (sex/BW/experience) via the shipped static POPULATION_E1RM_PRIOR table, before
+  // falling to suggestStartWeight. PRIVACY: on-device static lookup, no data
+  // collection. Chain: transfer → population prior → suggestStartWeight.
+  const populationSeed =
+    !isBw && !hasHistory && !transferSeed && isEnabled('dp_population_prior_v1')
+      ? DP.coldStartPopulationSeed(engineEx.name, targetReps, {
+          bodyweightKg: csProfile?.bodyweightKg ?? null,
+          sex: csProfile?.sex ?? null,
+          experience: experienceEn,
+        })
+      : null;
   const rawTargetKg = isBw
     ? hasHistory && rec && typeof rec.kg === 'number'
       ? rec.kg
@@ -218,7 +232,9 @@ function toPlannedExercise(
         : suggestStartWeight(engineEx.name, experienceEn, csProfile)
       : transferSeed && transferSeed.kg > 0
         ? transferSeed.kg
-        : suggestStartWeight(engineEx.name, experienceEn, csProfile);
+        : populationSeed && populationSeed.kg > 0
+          ? populationSeed.kg
+          : suggestStartWeight(engineEx.name, experienceEn, csProfile);
   // Snap the prescribed EXTERNAL load to a weight the machine/dumbbell can
   // actually be set to — covers the cold-start suggestStartWeight path that
   // otherwise surfaced impossible weights (smoke 2026-06-01: Flat DB Press 18kg

@@ -9,6 +9,7 @@ import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
 import { updatePosterior, savePosterior, loadPosterior, trendDirection } from './dp/strengthKalman.js';
 import { ceilingE1RM, gainDecay } from './dp/ceiling.js';
+import { populationPriorE1RM } from './dp/populationPrior.js';
 import { sanityCheckSet } from './dp/anomalyGuard.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
 import { classifyAndIntervene } from './dp/plateauIntervention.js';
@@ -958,6 +959,31 @@ export const DP = {
       if (kg > 0) return { kg, source: src, ratio };
     }
     return null;
+  },
+
+  // ══ BUILD F6c #33 — population-prior cold-start seed (F6c spec §2) ═══════════
+  // Fires when there is NO related lift to transfer from (coldStartTransfer → null):
+  // seed the new lift's working kg from the user's OWN demographic profile (sex /
+  // bodyweight / experience) via the SHIPPED static POPULATION_E1RM_PRIOR table,
+  // back-solved to kg with _kgFromE1RM (the SAME inverse the rest of the engine
+  // uses — dimension-correct, no duplicated math). The table carries a WIDE sigma
+  // (the prior washes out on the first real set). Returns null when bodyweight is
+  // unusable OR the lift is e1RM-ineligible (bodyweight/band) → the caller falls to
+  // today's suggestStartWeight (byte-identical). PRIVACY: on-device static lookup,
+  // NO data collection (the table is a bundle constant). Gated at the caller behind
+  // dp_population_prior_v1 (default OFF).
+  // @param {string} ex new exercise engineName
+  // @param {number} repTarget rep target to back-solve the seed at
+  // @param {{ bodyweightKg?:number|null, sex?:string|null, experience?:string|null }} profile
+  // @returns {{kg:number, pattern:string, sigma:number}|null}
+  coldStartPopulationSeed(ex, repTarget, profile) {
+    if (!this._e1rmEligible(ex)) return null;
+    const prior = populationPriorE1RM(ex, profile || {});
+    if (!prior || !(prior.e1rm > 0)) return null;
+    const rt = repTarget ?? 10;
+    const kg = this.roundToStep(this._kgFromE1RM(prior.e1rm, rt), ex);
+    if (!(kg > 0)) return null;
+    return { kg, pattern: prior.pattern, sigma: prior.sigma };
   },
 
   // ══ BUILD #6 — intensity corridor as an e1RM band (F3 spec §6) ═══════════════
