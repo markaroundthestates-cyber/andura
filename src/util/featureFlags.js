@@ -809,6 +809,17 @@ export const FLAGS = Object.freeze({
   // Workout screen is byte-identical. No new persistence (reads dp-strength-
   // posterior via the carried confidence field). Optional Daniel-flag.
   dp_coach_confidence_v1: { rollout: 0, default: false },
+
+  // #56 moat "why?" on-tap one-liner (RISK LOW — read-only narration). Upgrades the
+  // "why this exercise?" explainer's data source from the coarse kg-vs-last re-guess
+  // (getWhyExerciseSummary) to the engine's REAL decision reason — PlannedExercise
+  // .recReason.status (F5-W0). whyForStatus maps the machine status enum (EASE BACK /
+  // CONSOLIDATE / INIT / INCREASE / …) to a plain-RO i18n sentence (why.reason.*),
+  // never the engine's hardcoded copy (i18n-leak rule). MINIMALISM: one sentence,
+  // available ON TAP, never auto-pushed. OFF → handleOpenWhy uses the existing
+  // categorical summary → byte-identical (no new DOM, no behavior change). No new
+  // persistence. Optional Daniel-flag.
+  dp_moat_why_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */

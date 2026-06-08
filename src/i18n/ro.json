@@ -13,6 +13,17 @@
       "progression_down": "Reducem putin greutatea la {exercise} pentru a prioritiza tehnica. Uneori, un mic pas in spate e necesar pentru a debloca urmatorul salt in forta. Ramanem pe pozitii!",
       "hold": "Pastram greutatea la {exercise} astazi. Esti intr-o zona excelenta de consolidare, iar asta ne asigura ca baza e solida inainte de urmatoarea crestere.",
       "recovery": "Reducem volumul la {exercise} pentru ca semnele de oboseala sunt prezente. E mai inteligent sa te refaci azi, ca sa revii cu forte proaspete la antrenamentul urmator."
+    },
+    "reason": {
+      "increase": "Ai pus usor ultima data, asa ca urc putin greutatea.",
+      "catchUp": "Te descurci usor — urc catre greutatea ta reala.",
+      "easeBack": "A fost greu de cateva ori, asa ca usurez putin ca sa stapanesti miscarea.",
+      "consolidate": "Nu esti complet refacut, asa ca azi ramanem la aceeasi greutate.",
+      "init": "Inca te cunosc — asta e un punct de pornire, il reglez dupa primul set.",
+      "maintain": "Esti in definire, asa ca mentinem greutatea — nu fortam un record acum.",
+      "onTarget": "Esti fix in zona buna — mentinem si construim baza.",
+      "stagnantSet": "Te-ai blocat aici de cateva ori, asa ca adaug o serie in loc de greutate.",
+      "technique": "Cobor putin ca sa lucram pe forma — un pas inapoi pentru doi inainte."
     }
   },
   "coachConfidence": {

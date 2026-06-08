@@ -61,6 +61,7 @@ import { ExerciseActionsRow } from '../../../components/Workout/ExerciseActionsR
 import { CoachNote } from '../../../components/Workout/CoachNote';
 import { isEnabled } from '../../../../util/featureFlags.js';
 import { confidenceTier, confidenceTierKey } from '../../../lib/coachConfidence';
+import { whyForStatus } from '../../../lib/whyReason';
 import { ExerciseMedia } from '../../../components/ExerciseMedia';
 import { getExerciseCueKey } from '../../../lib/exerciseCues';
 import { Kicker } from '../../../components/pulse/Kicker';
@@ -1018,6 +1019,17 @@ export function Workout(): JSX.Element {
   // tinta afisata in SetLogInput (kgInput) pe sesiuni adaptate.
   function handleOpenWhy(): void {
     bumpActivity();
+    // #56 moat "why?" (flag dp_moat_why_v1, default OFF) — when ON, prefer the
+    // engine's REAL decision reason (recReason.status carried via F5-W0) over the
+    // coarse kg-vs-last re-guess. One plain sentence, on tap, never invented:
+    // an unmapped/absent status falls through to the existing categorical summary.
+    if (isEnabled('dp_moat_why_v1')) {
+      const reasonKey = whyForStatus(currentExercise.recReason?.status);
+      if (reasonKey !== null) {
+        setWhyText(t(reasonKey, { exercise: currentExercise.name }));
+        return;
+      }
+    }
     const sets = history[safeExIdx] ?? [];
     const lastWeightKg = sets.length > 0 ? sets[sets.length - 1]!.kg : null;
     const summary = getWhyExerciseSummary({

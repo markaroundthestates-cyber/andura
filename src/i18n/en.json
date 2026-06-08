@@ -13,6 +13,17 @@
       "progression_down": "We're easing the weight on {exercise} to prioritize technique. Sometimes a small step back is what unlocks the next jump in strength. We're holding the line.",
       "hold": "We're holding the weight on {exercise} today. You're in a great consolidation zone — that makes sure the base is solid before the next bump.",
       "recovery": "We're trimming volume on {exercise} because fatigue signals are present. It's smarter to recover today so you come back fresh next session."
+    },
+    "reason": {
+      "increase": "You handled it easily last time, so I'm nudging the weight up.",
+      "catchUp": "You're handling this easily — climbing toward your real weight.",
+      "easeBack": "It's been hard a few times, so I'm easing off so you own the movement.",
+      "consolidate": "You're not fully recovered, so today we hold the same weight.",
+      "init": "Still getting to know you — this is a starting point, I'll tune it after your first set.",
+      "maintain": "You're cutting, so we maintain — no need to chase a record now.",
+      "onTarget": "You're right in the sweet spot — we hold and build the base.",
+      "stagnantSet": "You've stalled here a few times, so I add a set instead of weight.",
+      "technique": "Easing down to work on form — one step back for two forward."
     }
   },
   "coachConfidence": {
