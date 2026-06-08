@@ -261,7 +261,7 @@ export const FLAGS = Object.freeze({
   // kg, so high-rep work (60×12) no longer floors identically to 60×8. Within a
   // fixed rep band the back-solved kg is identical → golden-safe. Bodyweight/band
   // exercises are EXCLUDED (e1RM=null → today's raw-kg path). OFF → raw kg.
-  dp_e1rm_v1: { rollout: 0, default: false },
+  dp_e1rm_v1: { rollout: 1, default: true },
 
   // #2 per-exercise Kalman strength latent (RISK MED — smooths an existing
   // signal). When ON, the demoW/PR-floor read a Kalman posterior `mu` over the
@@ -269,7 +269,7 @@ export const FLAGS = Object.freeze({
   // noise so variance grows with time-since-last-set. Reuses the pure
   // kalmanUpdate1D from bayesianNutrition. Persists `dp-strength-posterior` (sync,
   // quota-guarded). OFF → raw e1RM (or raw kg if #1 also off). Depends on #1.
-  dp_strength_kalman_v1: { rollout: 0, default: false },
+  dp_strength_kalman_v1: { rollout: 1, default: true },
 
   // #3 realistic ceiling + diminishing returns (RISK MED — Daniel HARD rule:
   // never prescribed stronger than physically real). When ON, a normalized
@@ -277,7 +277,7 @@ export const FLAGS = Object.freeze({
   // replaces the flat MAX_KG, and the gain-rate decays to 0 near the ceiling so a
   // climb mathematically cannot exceed it. OFF → flat MAX_KG (current). Depends
   // on #1 for the e1RM unit; degrades to a kg ceiling if #1 off.
-  dp_ceiling_v1: { rollout: 0, default: false },
+  dp_ceiling_v1: { rollout: 1, default: true },
 
   // #4 cross-exercise transfer cold-start (RISK LOW — first-session-only). When
   // ON, a NEW exercise with no logs seeds its working load from a RELATED lift the

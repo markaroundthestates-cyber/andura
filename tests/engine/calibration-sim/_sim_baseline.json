@@ -1,23 +1,23 @@
 {
-  "_note": "Frozen calibration-sim baseline (T1.5). Re-baseline ONLY by an explicit intentional commit (same protocol as the golden harness). The regression gate asserts metrics are NOT materially worse than this; the hash pins determinism. nProfiles=12 (CI tier — full 50-cohort ~28s blocks the vitest worker RPC heartbeat under the full suite; 12 keeps the gate ~7s while the crater/regression invariants hold at any N).",
-  "engineHead": "frozen 2026-06-07 (signal-bus + dedup landed)",
+  "_note": "Frozen calibration-sim baseline. Re-baselined 2026-06-08 for THE FLIP (per-exercise intelligence brain ON: dp_e1rm/kalman/ceiling + dependents default ON). crater===0 held + every bug-class (oscillation/stuckLow/absurd/meanFinalAbsErr) equal-or-BETTER than the prior OFF baseline; convergedPct (oracle-relative band-hit, NOT a bug-class — §0) is lower because the smoother Kalman tracking lands fewer in the tight band while the TRUE meanFinalAbsErr improved. nProfiles=12 (CI tier).",
+  "engineHead": "FLIP 2026-06-08 (e1RM/Kalman/ceiling + path-A dependents ON; find-your-weight + readiness-gate-covers-CATCH-UP + CUT-restraint-on-proven fixes)",
   "nProfiles": 12,
   "seed": "0xA9D04A",
-  "hash": "2dd5ad64ac62757d688c18f5963cc3d4e1b496a2f7d0e4b7d9b4263a6da22def",
-  "convergedPct": 4.6,
-  "medianSessionsToConverge": 26.5,
-  "meanFinalAbsErr": 0.292,
+  "hash": "f1b91f549a255d9d1ae1ddaa01d3d6681c304ed07a564c459c3bb8ec4f23b0ab",
+  "convergedPct": 3.4,
+  "medianSessionsToConverge": 26,
+  "meanFinalAbsErr": 0.264,
   "flags": {
     "nonAdaptation": 3,
-    "oscillation": 27,
-    "stuckHigh": 4,
-    "stuckLow": 95,
-    "absurd": 11
+    "oscillation": 24,
+    "stuckHigh": 5,
+    "stuckLow": 86,
+    "absurd": 8
   },
   "equipMeanSignedErr": {
-    "barbell": -0.285,
-    "cable": -0.272,
-    "dumbbell": -0.176,
-    "machine": -0.131
+    "barbell": -0.263,
+    "cable": -0.258,
+    "dumbbell": -0.155,
+    "machine": -0.119
   }
 }

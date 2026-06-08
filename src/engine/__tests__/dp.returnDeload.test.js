@@ -42,6 +42,17 @@ const NOW = new Date(2026, 5, 1, 12, 0, 0).getTime();
 beforeEach(() => {
   store = {};
   store['phase-override'] = 'BULK'; // masa-like; deterministic, avoids the CUT date branch
+  // This file pins the RETURN-AFTER-GAP deload depth/ramp on RAW pre-gap loads. With
+  // dp_e1rm_v1 now DEFAULT ON (THE FLIP 2026-06-08) the held/comeback load is re-
+  // expressed in e1RM space, shifting the exact kg under assertion (e.g. a no-deload
+  // hold climbs a notch via the find-your-weight catch-up). Force the e1RM cluster
+  // OFF so the deload DEPTH + ramp logic stays isolated on the raw pre-gap load (the
+  // e1RM-ON load path is covered by dp.e1rm.* + the calibration-sim).
+  try {
+    localStorage.setItem('_devFlags', JSON.stringify({
+      dp_e1rm_v1: false, dp_strength_kalman_v1: false, dp_ceiling_v1: false,
+    }));
+  } catch { /* jsdom always provides localStorage */ }
 });
 
 /**

@@ -16,6 +16,16 @@ const DAY = 86400000;
 const BASE = 1_717_000_000_000;
 
 const ON = () => localStorage.setItem('_devFlags', JSON.stringify({ dp_deficit_throttle_v1: true }));
+// dp_deficit_throttle_v1 ON, e1RM cluster OFF: the stagnation-reframe block pins the
+// deficit throttle's effect on the RAW stagnation branch (56×12 same-weight run).
+// dp_e1rm_v1 now DEFAULTS ON (THE FLIP 2026-06-08) and would route that top-reps
+// history through the find-your-weight CATCH UP before the stagnation reframe is
+// reached, masking the branch under test — so force the e1RM cluster OFF here (the
+// throttle on the e1RM find-your-weight climb is covered by the easy-run block).
+const ON_STAG = () => localStorage.setItem('_devFlags', JSON.stringify({
+  dp_deficit_throttle_v1: true,
+  dp_e1rm_v1: false, dp_strength_kalman_v1: false, dp_ceiling_v1: false,
+}));
 
 // A coach-follower easy-run history: the SAME light load taken to target reps and
 // rated `usor` across sessions (consecutiveEasyHit run, no heavier logged set) →
@@ -91,7 +101,7 @@ describe('dp_deficit_throttle_v1 ON — CUT damps the NEW-max easy-run climb', (
 });
 
 describe('dp_deficit_throttle_v1 ON — CUT reframes a stagnation hold as success', () => {
-  beforeEach(() => { localStorage.clear(); seedStagnant(); ON(); });
+  beforeEach(() => { localStorage.clear(); seedStagnant(); ON_STAG(); });
 
   it('a CUT stagnation HOLDS as MAINTAIN (no +SET escalation)', () => {
     const cut = smartStag('CUT');

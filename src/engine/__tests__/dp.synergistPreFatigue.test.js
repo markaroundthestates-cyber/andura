@@ -36,6 +36,17 @@ import { DP } from '../dp.js';
 beforeEach(() => {
   store = {};
   store['phase-override'] = 'BULK'; // masa-like → no CUT rep cap interference
+  // This file pins the SYNERGIST PRE-FATIGUE discount on a RAW working load. With
+  // dp_e1rm_v1 now DEFAULT ON (THE FLIP 2026-06-08) the base working load is re-
+  // expressed in e1RM space (a 54×11 set floors higher at an 8-rep target), which
+  // would shift every base kg and mask the discount under test. Force the e1RM
+  // cluster OFF so the discount fraction + the equipment-step snap stay isolated
+  // (the e1RM-ON load path is covered by dp.e1rm.* + the calibration-sim).
+  try {
+    localStorage.setItem('_devFlags', JSON.stringify({
+      dp_e1rm_v1: false, dp_strength_kalman_v1: false, dp_ceiling_v1: false,
+    }));
+  } catch { /* jsdom always provides localStorage */ }
 });
 
 /** Seed a real, stable working history so DP runs its history branch (not INIT). */

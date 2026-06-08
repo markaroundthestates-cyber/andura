@@ -62,6 +62,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   'dp_emphasis_specialization_v1', 'dp_coherent_weekly_alloc_v1',
   'dp_pain_deprioritize_v1', 'dp_pain_memory_v1', 'dp_effective_reps_v1',
   'dp_tendon_cap_v1', 'dp_deficit_throttle_v1', 'dp_energy_volume_v1',
+  // THE FLIP 2026-06-08 — per-exercise intelligence brain + path-A dependents now
+  // default ON. Added here so the A/B OFF baseline forces them explicitly OFF
+  // (the harness can no longer rely on "no _devFlags ⇒ off"), keeping hashOff a
+  // true all-off baseline byte-for-byte.
+  'dp_e1rm_v1', 'dp_strength_kalman_v1', 'dp_ceiling_v1',
+  'dp_population_prior_v1', 'dp_acwr_readiness_v1', 'dp_learned_volume_v1',
+  'dp_weekly_recovery_alloc_v1', 'dp_stimulus_per_min_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

@@ -1542,9 +1542,22 @@ export const DP = {
     // pure easy-run climb is suppressed there once at/above demoW — the EASY-branch
     // MAINTAIN then holds. (AUTO's date-based cut is NOT a deliberate deficit and
     // still climbs to find the real weight; belowDemo always runs, all phases.)
-    const explicitCutAtCap = phaseOverride === 'CUT' && demoW > 0 && lastW >= demoW;
+    // CUT new-max restraint references the PROVEN raw load (not the e1RM-estimated
+    // demoW): with dp_e1rm_v1 ON, demoW can sit above the proven load, so comparing
+    // lastW to demoW would MISS the restraint and let a deficit user chase a new max
+    // the estimate implies. Once at/above the PROVEN demonstrated load in an explicit
+    // cut, do not chase a new PR (under-fuelled). OFF, proven == demoW → byte-safe.
+    const provenCutW = this._demonstratedWorkingW(ex, rMin);
+    const explicitCutAtCap = phaseOverride === 'CUT'
+      && ((demoW > 0 && lastW >= demoW) || (provenCutW > 0 && lastW >= provenCutW));
     const easyRun = consecutiveEasyHit >= 2 && lastRPE <= 6.5 && !explicitCutAtCap;
-    if (!rdActive && lastNotHard && hitRepsNow && (belowDemo || easyRun)) {
+    // A belowDemo that is only an e1RM ESTIMATE above the proven load (no heavier RAW
+    // log) is a NEW-max find-your-weight push — suppress it in an explicit cut at/above
+    // the proven load (no chasing PRs under-fuelled); a REAL catch-up to a heavier
+    // logged load (provenCutW > lastW) still runs. OFF, proven == demoW so belowDemo
+    // cannot fire at/above proven → byte-identical.
+    const belowDemoActive = belowDemo && !(explicitCutAtCap && !(provenCutW > lastW));
+    if (!rdActive && lastNotHard && hitRepsNow && (belowDemoActive || easyRun)) {
       // Big jump toward the user's real working weight. When a heavier demoW exists
       // we jump STRAIGHT to it (capped there — never overshoot a proven load). On the
       // pure easy-run signal (no heavier log) the step is +20%, growing with the run
@@ -1553,12 +1566,20 @@ export const DP = {
       // real equipment step; guarantee at least one step of progress on a coarse
       // stack. Bounded by the exercise MAX_KG below.
       let stepFrac = 0.20 + 0.10 * Math.min(3, Math.max(0, consecutiveEasyHit - 2));
-      // DIMINISHING RETURNS (dp_ceiling_v1 ON): a PURE easy-run push is chasing a
-      // NEW max, so its step decays toward 0 as the current e1RM approaches the
-      // realistic ceiling — the climb cannot blow past genetic reality and slows
-      // long before it. The belowDemo catch-up (returning to an already-OWNED load)
-      // is NOT throttled. OFF → stepFrac unchanged (byte-identical).
-      if (!belowDemo && isEnabled('dp_ceiling_v1')) {
+      // A climb is a NEW-MAX push (not a catch-up to an already-OWNED load) unless a
+      // genuinely heavier RAW load was logged. With dp_e1rm_v1 ON, belowDemo can fire
+      // from an e1RM ESTIMATE a notch above an usor working load (no heavier log) —
+      // that is still a new-max find-your-weight push and MUST ride the diminishing-
+      // returns / deficit / tendon dampers below, or the follower's big step overshoots
+      // its true capacity and saw-tooths. provenCatchUp gates the no-throttle exemption
+      // to ONLY a real heavier logged load. OFF, provenW == demoW so this is byte-safe.
+      const provenW = provenCutW;
+      const provenCatchUp = belowDemo && provenW > lastW;
+      // DIMINISHING RETURNS (dp_ceiling_v1 ON): a NEW-max push is chasing capacity, so
+      // its step decays toward 0 as the current e1RM approaches the realistic ceiling
+      // — the climb cannot blow past genetic reality and slows long before it. A real
+      // catch-up to an already-OWNED load is NOT throttled. OFF → stepFrac unchanged.
+      if (!provenCatchUp && isEnabled('dp_ceiling_v1')) {
         const curE1RM = this.e1RMForSet(lastW, lastReps, lastRPE, ex); // ex → #3/F bias (flag-gated)
         const bw = this._currentBodyweightKg();
         const ceilE1RM = bw > 0 ? ceilingE1RM(ex, bw, 'm', this._trainingAge(ex)) : 0;
@@ -1571,7 +1592,7 @@ export const DP = {
       // catch-up to an already-OWNED load is NEVER throttled (capacity must not be
       // crater-blocked). climbFactor is 1.0 when the flag is OFF / phase != CUT →
       // stepFrac unchanged (byte-identical).
-      if (!belowDemo && climbFactor < 1) {
+      if (!provenCatchUp && climbFactor < 1) {
         stepFrac *= climbFactor;
       }
       // F6c #35 — tendon load-rate cap: an older lifter's connective tissue adapts
@@ -1581,7 +1602,7 @@ export const DP = {
       // already-OWNED load is never throttled (capacity must not be crater-blocked).
       // tendonCap is 1.0 when the flag is OFF / age absent → stepFrac unchanged
       // (byte-identical).
-      if (!belowDemo && tendonCap < 1) {
+      if (!provenCatchUp && tendonCap < 1) {
         stepFrac = Math.min(stepFrac, tendonCap);
       }
       // #75 — DOWN-move rebound cap: right after a forced load DROP (≥10%), the rep
@@ -1614,11 +1635,35 @@ export const DP = {
           progressionStage: 0
         };
       }
-      const ceiling = belowDemo ? demoW : lastW * (1 + stepFrac);
-      const jumpedRaw = belowDemo ? demoW : lastW * (1 + stepFrac);
-      let climbKg = this.roundToStep(Math.min(ceiling, jumpedRaw), ex);
-      if (climbKg <= lastW) climbKg = belowDemo
-        ? Math.min(demoW, getNextWeight(lastW, ex))
+      // Three climb shapes (most→least restrained):
+      //   • provenCatchUp — a REAL heavier RAW logged load exists → jump to it (demoW),
+      //     capped at the proven load (never overshoot what was actually lifted).
+      //   • easyRun — a SUSTAINED-usor follower (no heavier log) → the find-your-weight
+      //     BIG step toward true capacity (ceiling-damped above), so they treble up in
+      //     2-3 sessions instead of stalling. This is the only NEW-max push.
+      //   • belowDemo-only — dp_e1rm_v1 lifted demoW a notch above the working load
+      //     from a single high-rep / easy set (no sustained run, no heavier log) → a
+      //     MODEST catch-up to the e1RM estimate (demoW), NOT a big step. This keeps a
+      //     normal top-reps history a one-step climb (the rich STAGNANT/TECHNIQUE/etc.
+      //     branches below stay reachable) instead of collapsing into an over-jump.
+      // OFF, demoW == proven == lastW so belowDemo is false → byte-identical.
+      const bigStep = lastW * (1 + stepFrac);
+      const ceiling = easyRun && !provenCatchUp ? bigStep : demoW;
+      let climbKg = this.roundToStep(ceiling, ex);
+      // Never overshoot the catch-up target (proven load for a real catch-up, else the
+      // e1RM demoW estimate): roundToStep is nearest, so a target between two coarse
+      // rungs can snap UP past it (e.g. demoW 60.3 on a 55/60/65 stack must not snap to
+      // 65). Floor back to the rung at-or-below the target. The easyRun big step is
+      // exempt (it is deliberately chasing the next rung up toward true capacity).
+      if (!easyRun || provenCatchUp) {
+        const capW = provenCatchUp ? provenW : demoW;
+        if (capW > 0 && climbKg > capW) {
+          const down = getPrevWeight(climbKg, ex);
+          if (down < climbKg && down >= lastW) climbKg = down;
+        }
+      }
+      if (climbKg <= lastW) climbKg = provenCatchUp
+        ? Math.min(provenW, getNextWeight(lastW, ex))
         : getNextWeight(lastW, ex);
       if (climbKg > lastW) {
         // Respect the exercise cap (never climb past a defensive MAX_KG).
@@ -1715,7 +1760,11 @@ export const DP = {
     //     at their real weight, not 40 kg — this only caps the climb PAST it.
     //   • MAINTENANCE / BULK / AUTO: normal double progression (untouched).
     const isStrengthPhase = phaseOverride === 'STRENGTH';
-    const aboveEstablished = demoW > 0 && lastW >= demoW;
+    // The CUT new-max restraint is "at/above the DEMONSTRATED load". Reference the
+    // PROVEN raw working load (heaviest logged at target reps), not the e1RM-estimated
+    // demoW which can sit above it — comparing to the estimate would let a deficit user
+    // chase a new max. OFF, proven == demoW → byte-identical.
+    const aboveEstablished = provenCutW > 0 ? lastW >= provenCutW : (demoW > 0 && lastW >= demoW);
 
     // EASY (usor / lastRPE <= 6.5) → DECISIVE forward step THIS session.
     if (lastRPE <= 6.5) {
@@ -2226,8 +2275,14 @@ export const DP = {
       rirMod && Number.isFinite(rirMod[0]) ? rirMod[0] : (result.rir ?? 2);
     result.intensityLabel = this.getIntensityLabel(labelRir);
 
-    // Readiness check: don't increase if tired
-    if (readinessScore != null && readinessScore < 60 && result.status === 'INCREASE') {
+    // Readiness check: don't increase if tired. Covers BOTH the standard INCREASE
+    // and the CATCH UP climb — with dp_e1rm_v1 ON, a top-reps / under-seeded set
+    // routes a weight climb through CATCH UP (e1RM lifts the demonstrated working
+    // load), and a fatigued user (readiness < 60) must not get that aggressive climb
+    // either (pre-flip, top-reps was INCREASE → covered; the gate must follow the
+    // status the climb now takes). OFF, the climb is INCREASE → unchanged behavior.
+    const isClimbStatus = result.status === 'INCREASE' || result.status === 'CATCH UP';
+    if (readinessScore != null && readinessScore < 60 && isClimbStatus) {
       result.kg = this.getState(ex).lastW;
       result.status = 'CONSOLIDATE';
       result.statusLabel = '🟡 Consolidam reps';
@@ -2239,6 +2294,10 @@ export const DP = {
     // session 'grea' — do NOT push a weight increase this session. Hold the load
     // (back to lastW) and keep reps, exactly like the low-readiness gate above.
     // Only demotes an INCREASE; HOLD/CONSOLIDATE/SCALE-BACK are already non-pushing.
+    // Deliberately does NOT demote CATCH UP: a find-your-weight catch-up toward an
+    // under-seeded user's real capacity is the correct response to a still-climbing
+    // user even when the session felt hard (the climb self-stops on potrivit) — and
+    // demoting it stalls the follower (cohort-sim regression observed).
     if (sessionRating === 'grea' && result.status === 'INCREASE') {
       result.kg = this.getState(ex).lastW;
       result.status = 'CONSOLIDATE';

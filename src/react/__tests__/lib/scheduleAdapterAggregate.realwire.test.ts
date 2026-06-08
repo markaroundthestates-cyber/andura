@@ -513,7 +513,12 @@ describe('scheduleAdapterAggregate — FIX #1 readiness-gated planned weight', (
     const highOut = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const highLat = findByEnSlug(highOut!.exercises, 'Lat Pulldown');
     expect(highLat).toBeDefined();
-    // INCREASE: 55 + 4 = 59 → bailib_stack round → 60. Strictly heavier than LOW.
+    // HIGH readiness → the climb fires: 55 → 60 (bailib_stack). dp_e1rm_v1 ON (THE
+    // FLIP 2026-06-08) routes the 55×12 top-reps climb through the find-your-weight
+    // CATCH UP (e1RM-credited working load) instead of the raw +1-step INCREASE, but
+    // through the full compose path it lands on the same 60 rung. Strictly heavier than
+    // the LOW (gated-hold 55) arm — proving readiness still gates the climb (the gate
+    // now covers CATCH UP, not only INCREASE).
     expect(highLat!.targetKg).toBe(60);
     expect(highLat!.targetKg).toBeGreaterThan(lowLat!.targetKg);
   });
@@ -526,7 +531,9 @@ describe('scheduleAdapterAggregate — FIX #1 readiness-gated planned weight', (
     DB.set('readiness', {}); // none today → getComputedReadinessScore() = null
     const noReadyOut = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const noReadyLat = findByEnSlug(noReadyOut!.exercises, 'Lat Pulldown');
-    expect(noReadyLat!.targetKg).toBe(60); // ungated INCREASE
+    // Ungated climb → 60 (bailib_stack). dp_e1rm_v1 ON routes it through the find-your-
+    // weight CATCH UP but lands on the same 60 rung through the full compose path.
+    expect(noReadyLat!.targetKg).toBe(60);
 
     seedIncreaseDayLogs();
     DB.set('readiness', { [tod()]: 1 });

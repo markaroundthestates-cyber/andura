@@ -34,6 +34,20 @@ beforeEach(() => {
   // Force BULK/non-CUT for the branch tests that need it; individual tests
   // override to 'CUT' where they probe cut-specific logic.
   store['phase-override'] = 'BULK';
+  // This file pins the RAW-kg _recommendRaw branch STRUCTURE (INIT / SCALE BACK /
+  // STAGNANT +SET / TECHNIQUE / ON TARGET / rating-driven) + the readiness/rating
+  // GATES. dp_e1rm_v1 et al. now DEFAULT ON (THE FLIP 2026-06-08) and re-express the
+  // demonstrated working load in e1RM space, which routes a top-reps history through
+  // the find-your-weight CATCH UP before those branches are reached — that ON
+  // behavior is covered by dp.e1rm.*, dp.deepAdaptation, the calibration-sim and the
+  // #70 persona-matrix. Here we force the e1RM cluster OFF so each raw-kg branch +
+  // gate stays individually exercised (same explicit-OFF baseline pattern the sims
+  // use now that "no _devFlags" no longer means OFF).
+  try {
+    localStorage.setItem('_devFlags', JSON.stringify({
+      dp_e1rm_v1: false, dp_strength_kalman_v1: false, dp_ceiling_v1: false,
+    }));
+  } catch { /* jsdom always provides localStorage */ }
 });
 
 // ── getLogs — filter + slice behavior ────────────────────────────────────────

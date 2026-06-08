@@ -127,14 +127,23 @@ describe('DP deep adaptation — (b) FIND-YOUR-WEIGHT fast climb', () => {
 
   it('climbs straight toward a heavier DEMONSTRATED load (override-up / re-seed)', () => {
     // The user once completed 200 at target reps; the rec is currently low (150) and
-    // the last set was usor-at-reps → catch up toward the proven 200, not +1 rep.
+    // the last set was usor-at-reps → catch up toward the proven load, not +1 rep.
+    // dp_e1rm_v1 ON (THE FLIP 2026-06-08): the "demonstrated load" is now the e1RM of
+    // the proven set, not its raw kg. 200×10 @ potrivit (RIR 1) is an e1RM of 273; the
+    // equivalent load at the 8-rep floor is ≈210kg, which on Leg Press's coarse stack
+    // (200/220) snaps to the nearest rung 220. The catch-up (rir 3, deliberately
+    // conservative) climbs toward that e1RM-credited 8-rep capacity, bounded by the
+    // exercise MAX_KG. It still cannot exceed the e1RM ceiling (dp_ceiling_v1).
     store['logs'] = [
       { ex: EX, w: 150, reps: 12, rpe: 6.5, ts: NOW - DAY },
       { ex: EX, w: 200, reps: 10, rpe: 7.5, ts: NOW - 3 * DAY },
     ];
     const rec = DP.recommend(EX, NOW);
     expect(rec.kg).toBeGreaterThan(150);
-    expect(rec.kg).toBeLessThanOrEqual(200); // never overshoot the demonstrated load
+    // Climbs to the e1RM-credited 8-rep equivalent of the proven 200×10 (≈210 → snaps
+    // to the 220 rung), never an unbounded jump (well under 2× the proven load).
+    expect(rec.kg).toBeLessThanOrEqual(220);
+    expect(rec.kg).toBeLessThan(200 * 2);
   });
 
   it('a hard-but-hit set HOLDS — the climb does not fight the ease-back', () => {
@@ -159,33 +168,48 @@ describe('DP deep adaptation — (c) PHASE-AWARE push above established capacity
       { ex: EX, w: 150, reps: 12, rpe: 7.5, ts: NOW - 3 * DAY }, // potrivit breaks the usor run
     ];
     const rec = DP.recommend(EX, NOW);
-    expect(rec.kg).toBe(150);          // held — no new-max climb in a deficit
+    // dp_e1rm_v1 ON (THE FLIP 2026-06-08): the status stays MAINTAIN (no new-max
+    // CHASE in a deficit — the CUT restraint references the proven load and the
+    // sustained-usor climb is suppressed). The PR-FLOOR re-expresses the held 150×12
+    // working load at the 8-rep floor (e1RM equivalent ≈160): this is NOT a new max —
+    // it is the SAME demonstrated capacity at a heavier-but-lower-rep prescription,
+    // so a deficit user is held at their real working level (160@8 ≡ 150@12), labeled
+    // MAINTAIN. The coach is not pushing past what the user already did.
     expect(rec.status).toBe('MAINTAIN');
+    expect(rec.kg).toBe(160); // e1RM 8-rep equivalent of the proven 150×12 (held, not chased)
   });
 
   it('STRENGTH: an easy set pushes the WEIGHT up aggressively even below top reps', () => {
     store['phase-override'] = 'STRENGTH';
-    // A single easy set below top reps (not a sustained-usor run) → the STRENGTH
-    // EASY branch drives the WEIGHT up rather than only adding a rep.
+    // An easy set below top reps → drive the WEIGHT up (chase strength). dp_e1rm_v1
+    // ON (THE FLIP 2026-06-08): 150×9 @ usor (RIR 3) credits an e1RM whose 8-rep
+    // equivalent is ≈160, so the climb routes through the find-your-weight CATCH UP to
+    // that demonstrated capacity (rather than the +1-step INCREASE). Either way the
+    // WEIGHT goes up — the strength intent is met (the e1RM path just reaches the real
+    // working load in one move instead of laddering).
     store['logs'] = [
       { ex: EX, w: 150, reps: 9, rpe: 6.5, ts: NOW - DAY },
       { ex: EX, w: 150, reps: 9, rpe: 8.5, ts: NOW - 3 * DAY }, // prior hard → run length 1
     ];
     const rec = DP.recommend(EX, NOW);
     expect(rec.kg).toBeGreaterThan(150); // chase strength — drive load up
-    expect(rec.status).toBe('INCREASE');
+    expect(rec.status).toBe('CATCH UP'); // e1RM find-your-weight climb to the credited load
   });
 
-  it('AUTO/MAINTENANCE-style: a single easy set below top reps fills reps (normal double progression)', () => {
+  it('AUTO/MAINTENANCE-style: an easy set below top reps catches up to the e1RM working load', () => {
     store['phase-override'] = 'MAINTENANCE';
-    // Single easy set below top reps (no sustained-usor run) → standard double
-    // progression: hold the weight, raise the rep target.
+    // Single easy set below top reps. dp_e1rm_v1 ON (THE FLIP 2026-06-08): 150×9 @
+    // usor credits a higher demonstrated working load (8-rep equivalent ≈160), so the
+    // coach climbs the WEIGHT toward that credited load (CATCH UP) instead of only
+    // adding a rep at 150. The user demonstrated capacity above their logged 150×9 —
+    // the find-your-weight catch-up surfaces it. (The pure raw +1-rep double-
+    // progression is covered by the e1RM-OFF dp.branches CONSOLIDATE tests.)
     store['logs'] = [
       { ex: EX, w: 150, reps: 9, rpe: 6.5, ts: NOW - DAY },
       { ex: EX, w: 150, reps: 9, rpe: 8.5, ts: NOW - 3 * DAY }, // prior hard → run length 1
     ];
     const rec = DP.recommend(EX, NOW);
-    expect(rec.kg).toBe(150);
-    expect(rec.repsTarget).toBeGreaterThan(9);
+    expect(rec.kg).toBe(160);            // e1RM-credited 8-rep working load
+    expect(rec.status).toBe('CATCH UP');
   });
 });

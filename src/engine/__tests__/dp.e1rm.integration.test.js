@@ -34,6 +34,12 @@ function seedHighRepHistory() {
 }
 
 const ON = () => localStorage.setItem('_devFlags', JSON.stringify({ dp_e1rm_v1: true }));
+// dp_e1rm_v1 now DEFAULTS ON (THE FLIP 2026-06-08), so "no _devFlags" no longer
+// means OFF — the OFF arm must force the flag off explicitly (same pattern as the
+// full-path-sim FLIPPED_FLAGS all-off baseline).
+const OFF = () => localStorage.setItem('_devFlags', JSON.stringify({
+  dp_e1rm_v1: false, dp_strength_kalman_v1: false, dp_ceiling_v1: false,
+}));
 
 describe('dp_e1rm_v1 — value path on a realistic high-rep history', () => {
   beforeEach(() => {
@@ -42,7 +48,8 @@ describe('dp_e1rm_v1 — value path on a realistic high-rep history', () => {
   });
 
   it('OFF: demonstrated working load = the raw heaviest set (~60kg, stuck)', () => {
-    // No _devFlags → dp_e1rm_v1 resolves to its default (OFF) → raw path.
+    // dp_e1rm_v1 now defaults ON → force OFF explicitly to exercise the raw path.
+    OFF();
     const rMin = (DP.REP_RANGES[EX] || [8, 12])[0]; // 10
     const off = DP._demoWorkingW(EX, rMin);
     expect(off).toBeCloseTo(RAW_KG, 6); // 60 — high-rep work discarded by raw kg
@@ -62,6 +69,7 @@ describe('dp_e1rm_v1 — value path on a realistic high-rep history', () => {
 
   it('ON never regresses below the OFF/raw demonstrated load (PR-floor safe)', () => {
     const rMin = (DP.REP_RANGES[EX] || [8, 12])[0];
+    OFF();
     const off = DP._demoWorkingW(EX, rMin);
     ON();
     const on = DP._demoWorkingW(EX, rMin);
