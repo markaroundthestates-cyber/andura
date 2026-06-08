@@ -21,6 +21,7 @@ import {
   computeVolumeMap,
 } from './volumeLandmarks.js';
 import { readLearnedVolume } from './learnedVolume.js';
+import { isEnabled } from '../../util/featureFlags.js';
 import {
   computeMacrocycleBlock,
   effectiveBlockScaling,
@@ -32,6 +33,20 @@ import {
 } from './crossEngineHooks.js';
 
 export const ENGINE_ID = 'periodization';
+
+// ── #76 deloadBias → deload CADENCE (energy→volume work, dp_energy_volume_v1) ──
+// energyVolumeFactor (dp/ceiling.js) surfaces a deloadBias ∈ [0,1] — a deeper /
+// sustained energy DEFICIT warrants deloads MORE OFTEN. The volume + RIR halves of
+// that signal are already wired (compose.ts scaleSetsByEnergy + shiftRirBand); the
+// CADENCE half was surfaced-but-dropped (DEADCODE-AUDIT / spec §9). This consumes
+// it: a STRONG sustained-deficit bias pulls the calendar deload FORWARD by one week
+// (PEAK W3 → DELOAD), so a hard cut deloads sooner instead of grinding the PEAK week
+// into a deeper hole. Bounded — it can ONLY pull a deload that the W4 calendar would
+// fire anyway one week earlier (never deepens it, never moves it >1 week, never adds
+// a deload outside the mesocycle). Threshold ≈ a sustained ≥24% deficit (deloadBias
+// reaches ~0.76 there; energyVolumeFactor t-curve, ceiling.js). DESIGN PROPOSAL knob
+// — sim-swept, not invented (mirrors the ceiling.js cut-band caveat).
+const DELOAD_BIAS_PULL_FORWARD = 0.75;
 
 /**
  * Compute confidence level based on ctx data completeness.
@@ -104,8 +119,27 @@ export async function evaluate(ctx) {
   signals.push(...gateSignals);
   trace.blockScaling = scaling;
 
+  // #76 deloadBias cadence pull-forward (dp_energy_volume_v1). A strong sustained
+  // deficit bias on the PEAK week (W3) advances the deload one week early. Flag OFF
+  // OR bias below threshold OR not on W3 → weekInMesocycle unchanged → byte-identical
+  // phase. Only EVER W3→W4-equivalent (PEAK→DELOAD); never touches W1/W2 (too early
+  // to deload) nor W4 (already deload). The deficit-deload still rides the SAME
+  // CALENDAR deload machinery + multipliers — it just lands a week sooner.
+  const deloadBias = Number(meta.deloadBias);
+  const biasPullsForward =
+    isEnabled('dp_energy_volume_v1') &&
+    Number.isFinite(deloadBias) &&
+    deloadBias >= DELOAD_BIAS_PULL_FORWARD &&
+    block.weekInMesocycle === 3;
+  const effectiveWeekInMeso = biasPullsForward ? 4 : block.weekInMesocycle;
+  if (biasPullsForward) {
+    signals.push('deload_cadence_pull_forward_w3_to_w4_energy_deficit_bias_76');
+  }
+  trace.deloadBias = Number.isFinite(deloadBias) ? deloadBias : null;
+  trace.biasPullsForward = biasPullsForward;
+
   // Phase + multipliers
-  const phase = computePhase(block.weekInMesocycle);
+  const phase = computePhase(effectiveWeekInMeso);
   const phaseVolMul = volumeMultiplierForPhase(phase);
   const phaseIntMul = intensityMultiplierForPhase(phase);
   trace.phase = phase;

@@ -12,6 +12,7 @@ const buildCtx = ({
   earlySafetyTriggered = false,
   consecutiveExtensions = 0,
   recoveryGreen = false,
+  deloadBias,
 } = {}) => ({
   user: {
     ...(persona ? { persona } : {}),
@@ -26,6 +27,7 @@ const buildCtx = ({
     weeksElapsed,
     earlySafetyTriggered,
     consecutiveExtensions,
+    ...(deloadBias !== undefined ? { deloadBias } : {}),
   },
   recoveryGreen,
 });
@@ -105,6 +107,36 @@ describe('evaluate — integration end-to-end §9.1 ADR 026', () => {
       earlySafetyTriggered: true,
     }));
     expect(result.meta.deload_window).toEqual({ trigger: 'EARLY_SAFETY', days: 7 });
+  });
+
+  // ── #76 deloadBias → deload CADENCE pull-forward (dp_energy_volume_v1 ON by
+  // default). A strong sustained-deficit bias on the PEAK week (W3) advances the
+  // deload one week early; bounded to W3→W4-equivalent only. ──────────────────
+  it('#76 deloadBias ≥0.75 on W3 (PEAK) pulls the deload FORWARD to DELOAD', async () => {
+    const base = await evaluate(buildCtx({ persona: 'marius', goal: 'hipertrofie', weeksElapsed: 2 }));
+    expect(base.meta.mesocycle_phase).toBe('PEAK'); // W3 baseline, no bias
+    const pulled = await evaluate(buildCtx({ persona: 'marius', goal: 'hipertrofie', weeksElapsed: 2, deloadBias: 0.8 }));
+    expect(pulled.meta.mesocycle_phase).toBe('DELOAD');
+    expect(pulled.meta.deload_window).toEqual({ trigger: 'CALENDAR', days: 7 });
+    expect(pulled.signals).toContain('deload_cadence_pull_forward_w3_to_w4_energy_deficit_bias_76');
+  });
+
+  it('#76 deloadBias below threshold (0.5) does NOT pull forward — W3 stays PEAK', async () => {
+    const result = await evaluate(buildCtx({ persona: 'marius', goal: 'hipertrofie', weeksElapsed: 2, deloadBias: 0.5 }));
+    expect(result.meta.mesocycle_phase).toBe('PEAK');
+    expect(result.signals).not.toContain('deload_cadence_pull_forward_w3_to_w4_energy_deficit_bias_76');
+  });
+
+  it('#76 deloadBias never pulls W1/W2 forward (too early to deload)', async () => {
+    const w1 = await evaluate(buildCtx({ persona: 'marius', goal: 'hipertrofie', weeksElapsed: 0, deloadBias: 0.9 }));
+    expect(w1.meta.mesocycle_phase).toBe('LOAD');
+    const w2 = await evaluate(buildCtx({ persona: 'marius', goal: 'hipertrofie', weeksElapsed: 1, deloadBias: 0.9 }));
+    expect(w2.meta.mesocycle_phase).toBe('LOAD+');
+  });
+
+  it('#76 no deloadBias field → byte-identical PEAK at W3 (off-state contract)', async () => {
+    const result = await evaluate(buildCtx({ persona: 'marius', goal: 'hipertrofie', weeksElapsed: 2 }));
+    expect(result.meta.mesocycle_phase).toBe('PEAK');
   });
 
   it('Marius dual-signal green at W4 → extension granted, deload_window null', async () => {

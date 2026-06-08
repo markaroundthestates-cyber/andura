@@ -22,6 +22,8 @@ import { detectSubRecoveryDrift } from '../../engine/dp/subRecoveryDrift.js';
 import { classifyPerformanceDip } from '../../engine/dp/dipClassifier.js';
 import { computeACWR } from '../../engine/muscleRecovery.js';
 import { calculateFatigueScore } from '../../engine/fatigue.js';
+import { energyVolumeFactor } from '../../engine/dp/ceiling.js';
+import { resolveEnergyMagnitude } from './engineWrappers.nutrition';
 import { DP } from '../../engine/dp.js';
 import {
   getCurrentWeightKg,
@@ -490,6 +492,19 @@ export function buildUserStateForPipeline(): {
     lifetimeLogs as ReadonlyArray<{ ex?: string; w?: number; reps?: number | string; rpe?: number; ts?: number }>,
     now,
   );
+  // #76 deloadBias → deload CADENCE (dp_energy_volume_v1). energyVolumeFactor
+  // surfaces deloadBias ∈ [0,1] (deeper/sustained deficit → deloads sooner). The
+  // volume + RIR halves are wired in compose; the cadence half pulls the CALENDAR
+  // deload one week forward in periodization (index.js DELOAD_BIAS_PULL_FORWARD).
+  // Flag OFF → energyMagnitude null → deloadBias 0 → omitted → periodization sees
+  // no field → byte-identical cadence. Resolved here (the SAME magnitude compose
+  // resolves) so the engine's meta carries it BEFORE periodization runs.
+  const energyDeloadBias = isEnabled('dp_energy_volume_v1')
+    ? (() => {
+        const mag = resolveEnergyMagnitude();
+        return mag ? energyVolumeFactor(mag).deloadBias : 0;
+      })()
+    : 0;
   // Intra-week deficit recovery (D-intra-week 2026-06-04) — DONE working-set volume
   // per Big-11 EN group for the CURRENT microcycle, computed React-side from the
   // RAW sessionsHistory (each LastSessionSummary carries per-exercise `sets`). The
@@ -586,6 +601,10 @@ export function buildUserStateForPipeline(): {
       // spread: both flags OFF → {} → these keys are absent → the deload trigger
       // hierarchy reads undefined → byte-identical to today.
       ...deloadTelemetry,
+      // #76 deloadBias → periodization deload CADENCE. Only set when a real
+      // (deficit) bias exists — 0 omitted so periodization reads undefined →
+      // byte-identical when the flag is OFF or there's no deficit.
+      ...(energyDeloadBias > 0 ? { deloadBias: energyDeloadBias } : {}),
       // Audit MED — emoji-ul de energie de AZI (EnergyCheck) → engine Energy
       // Adjustment (resolveEmojiState citeste meta.energyEmoji). Era nesetat →
       // engine inert pe sesiunea curenta (green→UP / yellow→NONE / red→DOWN nu
