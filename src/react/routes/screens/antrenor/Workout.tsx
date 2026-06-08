@@ -59,6 +59,8 @@ import { WhyExerciseModal } from '../../../components/Workout/WhyExerciseModal';
 import { SetHistoryChips } from '../../../components/Workout/SetHistoryChips';
 import { ExerciseActionsRow } from '../../../components/Workout/ExerciseActionsRow';
 import { CoachNote } from '../../../components/Workout/CoachNote';
+import { isEnabled } from '../../../../util/featureFlags.js';
+import { confidenceTier, confidenceTierKey } from '../../../lib/coachConfidence';
 import { ExerciseMedia } from '../../../components/ExerciseMedia';
 import { getExerciseCueKey } from '../../../lib/exerciseCues';
 import { Kicker } from '../../../components/pulse/Kicker';
@@ -197,6 +199,18 @@ export function Workout(): JSX.Element {
     !currentExercise.isBodyweight &&
     currentExercise.name !== '' &&
     DP.getState(currentExercise.engineName ?? currentExercise.name).lastW === 0;
+
+  // #63 coach-confidence subtle line (flag dp_coach_confidence_v1, default OFF).
+  // Maps the carried per-exercise posterior sigma (F5-W0 confidence) to ONE gentle
+  // qualitative tier line. Flag OFF → null → nothing renders (byte-identical). No
+  // number/sigma/jargon ever leaves the helper — only an i18n key + {exercise}.
+  const confidenceLine: string | null = useMemo(() => {
+    if (!hasWorkout || !isEnabled('dp_coach_confidence_v1')) return null;
+    const conf = currentExercise.confidence;
+    if (!conf) return null;
+    const tier = confidenceTier(conf.sigma, conf.n);
+    return t(confidenceTierKey(tier), { exercise: currentExercise.name });
+  }, [hasWorkout, currentExercise.confidence, currentExercise.name]);
   // Apply the ENGINE intensityMod baseline (deload output) to target kg. This
   // is the COARSE deload-state modifier (±%), distinct from readiness: as of
   // the wiring fix, today's readiness already shapes the per-exercise targetKg
@@ -1370,6 +1384,15 @@ export function Workout(): JSX.Element {
               case (NOT every set forever); hidden once an adjust notice surfaces. */}
           {noExerciseHistory && adjustNotice === null && (
             <CoachNote testId="baseline-note" message={t('workout.adjust.baselineNote')} />
+          )}
+
+          {/* #63 coach-confidence subtle line (flag dp_coach_confidence_v1, default
+              OFF). One quiet qualitative readout of how well Andura "knows" this
+              lift ("inca te invat" → "te-am prins"), reusing the CoachNote shell
+              (role="status"). Parent-gated: confidenceLine is null when the flag is
+              OFF or no posterior is carried → byte-identical. ZERO number/jargon. */}
+          {confidenceLine !== null && (
+            <CoachNote testId="coach-confidence-note" message={confidenceLine} />
           )}
 
           {/* Set history previous — re-skinned to the mockup .set-chip glowing

@@ -795,6 +795,20 @@ export const FLAGS = Object.freeze({
   // thresholds (10% / 2-3 exposures / 7% e1RM tolerance) are DESIGN PROPOSALS from
   // _ENGINE_progression_rir_rest_count_policy_2026-06-08 §1 `load_transition_window`.
   dp_load_transition_v1: { rollout: 0, default: false },
+
+  // #63 coach-confidence subtle line (RISK LOW — pure narration, no prescription
+  // path). Surfaces the per-exercise Kalman posterior UNCERTAINTY (sigma) carried
+  // on PlannedExercise.confidence (F5-W0) as a GENTLE qualitative tier — wide sigma
+  // / cold-start → "still learning you", narrow → "dialed in". confidenceTier maps
+  // {sigma,n} → one of LEARNING / GETTING_THERE / DIALED_IN + an i18n key; the
+  // thresholds anchor to the engine's own SIGMA_PROBE_THRESHOLD (so "still learning"
+  // never contradicts "the engine would probe here"). MINIMALISM (Daniel LOCK
+  // 2026-06-08 §5): one subtle line, NEVER a number/RIR/1RM/sigma/chart. The
+  // PRESCRIPTION (kg/reps/sets) is untouched — this feature has zero path to a
+  // weight or set count. OFF → the parent gate returns null → no extra DOM, the
+  // Workout screen is byte-identical. No new persistence (reads dp-strength-
+  // posterior via the carried confidence field). Optional Daniel-flag.
+  dp_coach_confidence_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */

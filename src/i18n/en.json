@@ -15,6 +15,11 @@
       "recovery": "We're trimming volume on {exercise} because fatigue signals are present. It's smarter to recover today so you come back fresh next session."
     }
   },
+  "coachConfidence": {
+    "learning": "Still learning you on {exercise}.",
+    "gettingThere": "Starting to get you on {exercise}.",
+    "dialedIn": "Dialed in on {exercise}."
+  },
   "modals": {
     "alternative": {
       "title": "Swap exercise"

@@ -15,6 +15,11 @@
       "recovery": "Reducem volumul la {exercise} pentru ca semnele de oboseala sunt prezente. E mai inteligent sa te refaci azi, ca sa revii cu forte proaspete la antrenamentul urmator."
     }
   },
+  "coachConfidence": {
+    "learning": "Inca te invat la {exercise}.",
+    "gettingThere": "Incep sa te prind la {exercise}.",
+    "dialedIn": "Te-am prins la {exercise}."
+  },
   "modals": {
     "alternative": {
       "title": "Inlocuieste exercitiul"
