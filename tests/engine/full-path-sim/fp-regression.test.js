@@ -27,6 +27,7 @@ import {
   fatigueCurveFullPath,
   subRecoveryDriftFullPath,
   dipClassifierFullPath,
+  cutCohortFullPath,
 } from './fp-run.js';
 import { analyzeFullPath, craterViolations } from './fp-analyze.js';
 import { fullPathStreamHash } from './fp-hash.js';
@@ -157,6 +158,21 @@ describe('full-path-sim CI gate', () => {
     expect(r.intensityModOn, JSON.stringify(r)).toBe('normal');
     expect(r.suppressed, JSON.stringify(r)).toBe(true);
   }, 60000);
+
+  // ── §B #76 energy→volume — a CUT cohort gets LESS volume but SAME loads ──────
+  // The deeper half Daniel flagged: #37 only throttles the LOAD climb; #76 cuts the
+  // VOLUME by the deficit MAGNITUDE. This proves it through the WHOLE seam AND proves
+  // the CRITICAL invariant — KEEP LOAD: a deficit cuts sets, NEVER the prescribed kg.
+  it('§B #76 dp_energy_volume_v1 — a CUT cohort gets LESS volume but the SAME loads (full path)', async () => {
+    const r = await cutCohortFullPath();
+    // 1) The deficit cut the session VOLUME (fewer working sets ON than OFF).
+    expect(r.setsOn, JSON.stringify(r)).toBeLessThan(r.setsOff);
+    expect(r.lessVolume, JSON.stringify(r)).toBe(true);
+    // 2) KEEP-LOAD — every prescribed kg is BYTE-IDENTICAL OFF vs ON. Nutrition
+    //    modulates volume + fatigue, never the heavy load that preserves muscle.
+    expect(r.loadsOn, JSON.stringify(r)).toBe(r.loadsOff);
+    expect(r.loadsIdentical, JSON.stringify(r)).toBe(true);
+  }, 120000);
 
   // ── §C SAFETY NOT WORSE (relative OFF→ON on the full-path prescribed kg) ────
   // crater + oscillation are ZERO-TOLERANCE-style (a flag must not REINTRODUCE the

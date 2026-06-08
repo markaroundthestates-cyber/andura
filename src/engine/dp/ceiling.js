@@ -207,6 +207,101 @@ export function deficitClimbFactor(phase) {
   return phase === 'CUT' ? DEFICIT_CLIMB_FACTOR : 1;
 }
 
+// ══ BUILD #76 — energy → VOLUME / RIR / deload modulation (magnitude-aware) ══
+// #37 (deficitClimbFactor above) only throttles the LOAD CLIMB RATE on a binary
+// phase (CUT vs not). #76 is the DEEPER half Daniel flagged: it modulates the
+// SESSION VOLUME + fatigue-management (RIR / deload), scaled by the deficit/surplus
+// MAGNITUDE — not just the phase string. It is the path-A (volume) mirror of #37,
+// composed at the React compose seam (scaleSetsByEnergy), never in the dp.js kg
+// path. CRITICAL INVARIANT: this NEVER touches the prescribed kg — heavy load
+// preserves muscle in a deficit; only sets / RIR / deload frequency move.
+//
+// Magnitude = { phase, severity } where severity ∈ [0,1] is the deficit/surplus
+// kcal-shift as a FRACTION of maintenance (resolved at the React boundary from the
+// coherent kcal-sizing model — the actual kcal-delta, NOT the bayesian
+// likelihood typing; see scheduleAdapterAggregate.compose.ts).
+//
+// VOLUME (the policy _ENGINE_volume_policy §11 "aggressive cut: reduce volume
+// 15-30%, PRESERVE intensity"): in a deficit cut session volume between
+// VOLUME_CUT_MIN (mild, −15%) and VOLUME_CUT_MAX (deep, −30%), linearly in
+// severity, anchored at the deficit ONSET threshold (a trivial deficit must not
+// cut). In a surplus, allow a SMALL extra volume tolerance toward +10% (bounded;
+// the MRV clamp lives downstream). MAINTENANCE / absent → 1.0 (no change).
+//
+// RIR: a deeper deficit pushes FURTHER from failure (recovery impaired) → a
+// positive RIR shift up to RIR_SHIFT_MAX reps; a surplus can train slightly CLOSER
+// to failure → a small negative shift. The shift is a label/target nudge only — it
+// rides the rirTargetModifier band (display), NEVER the kg.
+//
+// DELOAD: a deeper/sustained deficit warrants deloads more often → a deloadBias in
+// [0,1] (0 = no change, 1 = strongest pull-forward) the deload cadence can consume.
+// Surfaced for the deload seam; the volume/RIR halves are the wired effect today.
+//
+// UNVERIFIED DESIGN PROPOSAL (spec §9): the cut band + onset + RIR/deload knobs are
+// a sim-sweep + Daniel sanity-check item before dp_energy_volume_v1 flips ON. The
+// SHAPE (deeper deficit → less volume + more RIR + more deloads, load untouched) is
+// the verified principle; the numbers are tunable.
+export const ENERGY_DEFICIT_ONSET = 0.05;   // below this severity → no cut (a trivial deficit)
+export const VOLUME_CUT_MIN = 0.15;          // mild deficit → −15% volume
+export const VOLUME_CUT_MAX = 0.30;          // deep deficit → −30% volume (policy floor)
+export const SEVERITY_AT_MAX_CUT = 0.30;     // severity (30% kcal deficit) that reaches the max cut
+export const VOLUME_SURPLUS_BONUS_MAX = 0.10; // deep surplus → up to +10% volume tolerance
+export const SEVERITY_AT_MAX_SURPLUS = 0.15;  // severity (15% kcal surplus) that reaches the bonus
+export const VOLUME_FACTOR_MIN = 0.70;        // hard clamp (the policy's deepest cut)
+export const VOLUME_FACTOR_MAX = 1.10;        // hard clamp (the surplus ceiling)
+export const RIR_SHIFT_MAX = 2;               // deep deficit → up to +2 RIR (further from failure)
+export const RIR_SHIFT_SURPLUS_MAX = 1;       // deep surplus → up to −1 RIR (closer to failure)
+
+/**
+ * Magnitude-aware energy → session modulation. Returns the VOLUME multiplier
+ * (clamped [VOLUME_FACTOR_MIN, VOLUME_FACTOR_MAX]), the RIR shift (reps further
+ * from / closer to failure), and a deload-frequency bias [0,1]. The prescribed
+ * LOAD is NEVER an output here — load is owned by the dp.js kg path and must not
+ * move with nutrition (KEEP-LOAD invariant). MAINTENANCE / absent phase / a
+ * sub-onset deficit → the neutral identity { volumeFactor:1, rirShift:0,
+ * deloadBias:0 } (byte-identical caller). PURE — no I/O, no clock, no RNG.
+ *
+ * @param {{ phase: string|null|undefined, severity: number }|null|undefined} magnitude
+ *   phase = resolveActivePhase token; severity = |kcalShift|/maintenance in [0,1].
+ * @returns {{ volumeFactor: number, rirShift: number, deloadBias: number }}
+ */
+export function energyVolumeFactor(magnitude) {
+  const phase = magnitude && typeof magnitude.phase === 'string' ? magnitude.phase : null;
+  const sevRaw = magnitude && Number.isFinite(magnitude.severity) ? Number(magnitude.severity) : 0;
+  const severity = Math.min(1, Math.max(0, sevRaw));
+  const NEUTRAL = { volumeFactor: 1, rirShift: 0, deloadBias: 0 };
+
+  if (phase === 'CUT') {
+    // Sub-onset (a trivial deficit) → no modulation (don't punish a maintenance-ish cut).
+    if (severity <= ENERGY_DEFICIT_ONSET) return NEUTRAL;
+    // Linearly ramp the cut from MIN (at onset) to MAX (at SEVERITY_AT_MAX_CUT), then flat.
+    const span = Math.max(1e-9, SEVERITY_AT_MAX_CUT - ENERGY_DEFICIT_ONSET);
+    const t = Math.min(1, (severity - ENERGY_DEFICIT_ONSET) / span);
+    const cut = VOLUME_CUT_MIN + t * (VOLUME_CUT_MAX - VOLUME_CUT_MIN);
+    const volumeFactor = Math.max(VOLUME_FACTOR_MIN, Math.min(VOLUME_FACTOR_MAX, 1 - cut));
+    // Deeper deficit → push further from failure (recovery impaired). 0..RIR_SHIFT_MAX.
+    const rirShift = Math.round(t * RIR_SHIFT_MAX);
+    // Deeper deficit → deloads more often. Bias scales with severity depth.
+    const deloadBias = t;
+    return { volumeFactor, rirShift, deloadBias };
+  }
+
+  if (phase === 'BULK' || phase === 'STRENGTH') {
+    // Surplus → a SMALL extra volume tolerance (bounded; MRV clamp is downstream).
+    if (severity <= ENERGY_DEFICIT_ONSET) return NEUTRAL;
+    const span = Math.max(1e-9, SEVERITY_AT_MAX_SURPLUS - ENERGY_DEFICIT_ONSET);
+    const t = Math.min(1, (severity - ENERGY_DEFICIT_ONSET) / span);
+    const bonus = t * VOLUME_SURPLUS_BONUS_MAX;
+    const volumeFactor = Math.max(VOLUME_FACTOR_MIN, Math.min(VOLUME_FACTOR_MAX, 1 + bonus));
+    // Surplus → can train slightly CLOSER to failure. 0..−RIR_SHIFT_SURPLUS_MAX.
+    const rirShift = -Math.round(t * RIR_SHIFT_SURPLUS_MAX);
+    return { volumeFactor, rirShift, deloadBias: 0 };
+  }
+
+  // MAINTENANCE / absent / unknown → neutral.
+  return NEUTRAL;
+}
+
 // ══ BUILD F6c #21 — relative strength (strength-to-bodyweight ratio) ═════════
 // e1RM is already kg-scale and the ceiling is already BW-normalized, so mu/bw — a
 // user's strength relative to their own bodyweight — is a one-line derivation from

@@ -20,6 +20,7 @@ import { getComputedReadinessScore } from '../../../src/engine/readiness.js';
 import { tod as todReal } from '../../../src/db.js';
 import { DEV_FLAGS_KEY } from '../../../src/util/featureFlags.js';
 import { learnFatigueCurve, saveFatigueCurve } from '../../../src/engine/dp/fatigueCurve.js';
+import { useProgresStore } from '../../../src/react/stores/progresStore.ts';
 
 const MS_DAY = 86400000;
 const COHORT_START = Date.UTC(2026, 0, 5); // Monday — stable active-day rotation
@@ -417,5 +418,72 @@ export async function dipClassifierFullPath() {
     intensityModOn: planOn ? planOn.intensityMod : 'null',
     suppressed: !!(planOff && planOn && planOff.intensityMod === 'minus' && planOn.intensityMod === 'normal'),
     acwr: acwr ? acwr.acwr : null,
+  };
+}
+
+/**
+ * #76 dp_energy_volume_v1 — energy → VOLUME modulation (magnitude-aware) full-path
+ * probe. Build a real CUT cohort (goal 'slabire' + a target weight well BELOW current
+ * + a near deadline → resolveActivePhase 'CUT' + a DEEP deficit severity via the
+ * coherent kcal-sizing model), then compose the SAME session OFF vs ON. Proves the
+ * two halves Daniel asked for, through the WHOLE seam:
+ *   1) LESS VOLUME — the ON session's total working sets is strictly fewer (the
+ *      deficit cuts volume toward −30%).
+ *   2) SAME LOADS — every prescribed kg is BYTE-IDENTICAL OFF vs ON (KEEP-LOAD: a
+ *      deficit must never drop the heavy load that preserves muscle).
+ * The cohort has logged history (so the dp.js path prescribes a real progressive
+ * load, not a cold-start default) at a fixed working weight, on a freq-4 split.
+ *
+ * @returns {{ setsOff:number, setsOn:number, loadsOff:string, loadsOn:string,
+ *             loadsIdentical:boolean, lessVolume:boolean, phase:string|null }}
+ */
+export async function cutCohortFullPath() {
+  resetWorld();
+  useProgresStore.setState({ weightLog: [], bodyData: [], targetObiectiv: { weightKg: null, month: null } });
+  // CUT cohort: an overweight intermediate male cutting hard. goal 'slabire' + a
+  // target far below current + a near deadline drive a DEEP deficit through the
+  // coherent kcal-sizing model (resolveEnergyMagnitude → severity toward the −30% end).
+  _seedOnboarding({ goal: 'slabire', weight: 100, height: 178, age: 30, sex: 'm', experience: 'intermediar' });
+  const now = Date.now();
+  // Current weight 100kg (logged), target 80kg by ~next month → a large required
+  // daily deficit → deep severity. The target deadline reads the WALL clock (month),
+  // so use the real current month for determinism within the run.
+  const monthISO = new Date(now + 30 * MS_DAY).toISOString().slice(0, 7); // YYYY-MM ~1mo out
+  useProgresStore.setState({
+    weightLog: [{ kg: 100, date: _isod(now - MS_DAY), ts: now - MS_DAY }],
+    targetObiectiv: { weightKg: 80, month: monthISO },
+  });
+  // Real logged history at a fixed working load on a spread of lifts so the dp.js
+  // path prescribes a genuine progressive kg (not a cold-start INIT) for each.
+  const exs = ['Lat Pulldown', 'Cable Row', 'Leg Press', 'Leg Extension', 'Bench Press', 'DB Shoulder Press'];
+  const logs = [];
+  for (let d = 42; d >= 0; d -= 7) {
+    const ts = now - d * MS_DAY;
+    for (const ex of exs) {
+      for (let s = 1; s <= 3; s++) {
+        logs.push({ ex, w: 50, kg: 50, reps: '10', set: s, ts: ts + s * 1000, session: ts, date: _isod(ts), rpe: 7.5 });
+      }
+    }
+  }
+  world.DB.set('logs', logs);
+
+  setFlag(null);
+  const planOff = await world.composePlannedWorkoutToday(new Date());
+  setFlag('dp_energy_volume_v1');
+  const planOn = await world.composePlannedWorkoutToday(new Date());
+
+  // Per-exercise prescribed kg signature (the KEEP-LOAD proof): the loads alone,
+  // keyed by EN name, MUST be byte-identical OFF vs ON. Only the set counts move.
+  const loadSig = (p) =>
+    p ? p.exercises.map((e) => `${e.engineName}:${e.targetKg}`).sort().join('|') : 'null';
+
+  return {
+    setsOff: _sets(planOff),
+    setsOn: _sets(planOn),
+    loadsOff: loadSig(planOff),
+    loadsOn: loadSig(planOn),
+    loadsIdentical: loadSig(planOff) === loadSig(planOn),
+    lessVolume: _sets(planOn) < _sets(planOff),
+    phase: planOff && planOff.exercises.length ? 'CUT-cohort' : null,
   };
 }

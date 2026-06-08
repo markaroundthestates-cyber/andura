@@ -24,7 +24,8 @@ import { roundToEquipmentWeight } from '../../config/weights.js';
 import { isBodyweightExercise, bodyweightFraction } from '../../engine/bodyweightLoad.js';
 import { getMetricType } from '../../engine/metricType.js';
 import { getCurrentWeightKg } from './userTdee';
-import { resolveActivePhase } from './engineWrappers.nutrition';
+import { resolveActivePhase, resolveEnergyMagnitude } from './engineWrappers.nutrition';
+import { energyVolumeFactor } from '../../engine/dp/ceiling.js';
 import { experienceToEngine } from './scheduleAdapterAggregate.session';
 import {
   buildUserStateForPipeline,
@@ -792,6 +793,67 @@ export function scaleSetsByReadiness(
 }
 
 /**
+ * #76 — energy → VOLUME modulation (magnitude-aware). Scales the session set
+ * counts by the deficit/surplus MAGNITUDE-derived volumeFactor (energyVolumeFactor,
+ * dp/ceiling.js): a deeper deficit cuts volume toward −30% (recovery impaired), a
+ * surplus allows a small extra tolerance toward +10% (MRV-bounded). This is the
+ * DEEPER half of the nutrition→workout bridge — #37 only throttles the LOAD climb
+ * rate; this throttles the VOLUME, scaled by severity.
+ *
+ * CRITICAL INVARIANT — KEEP LOAD: this scales ONLY sets (path A — the same
+ * dimension scaleSetsByReadiness owns); the prescribed targetKg/targetReps are
+ * passed through UNTOUCHED. Heavy load preserves muscle in a deficit; nutrition
+ * modulates volume + fatigue-management, never the kg.
+ *
+ * MEV floor conserved: sets are floored at MIN_SETS_PER_EX (the same floor the
+ * readiness scaler + trim use) so a deep cut never guts a lift below one real
+ * working set. Composes MIN-style with readiness in practice (applied AFTER the
+ * readiness scale, on its already-reduced sets) so the two never double-cut
+ * catastrophically below the floor. Behind dp_energy_volume_v1 (default OFF) →
+ * magnitude null OR factor 1.0 → byte-identical. Pure + deterministic.
+ *
+ * @param exercises planned exercises (sets to scale; kg/reps untouched)
+ * @param volumeFactor the energyVolumeFactor multiplier (1.0 = no change)
+ */
+export function scaleSetsByEnergy(
+  exercises: ReadonlyArray<TrimmableExercise>,
+  volumeFactor: number,
+): TrimmableExercise[] {
+  // 1.0 / non-positive / non-finite guard → identity (byte-identical common case).
+  if (!Number.isFinite(volumeFactor) || volumeFactor <= 0 || volumeFactor === 1) {
+    return exercises.map((e) => ({ ...e }));
+  }
+  return exercises.map((e) => ({
+    ...e,
+    // KEEP-LOAD: only sets move. targetKg / targetReps pass through unchanged.
+    sets: Math.max(MIN_SETS_PER_EX, Math.round(e.sets * volumeFactor)),
+  }));
+}
+
+/**
+ * #76 — fold the energy-derived RIR shift into a Goal-Adaptation rir_target_modifier
+ * [min,max] band. A deeper deficit pushes FURTHER from failure (positive shift →
+ * higher RIR target); a surplus trains slightly CLOSER (negative shift). The band
+ * is the DISPLAY/intensity-label channel only (dp.js getSmartRecommendation uses it
+ * for the label, NEVER the kg) — so the KEEP-LOAD invariant holds. When no base
+ * band exists the shift seeds one from a sane default RIR; rirShift 0 → the base
+ * band unchanged (byte-identical). Floored at RIR ≥ 0. Pure.
+ *
+ * @param base the existing rirTargetModifier band (or null)
+ * @param rirShift the energyVolumeFactor RIR shift (reps; + = further from failure)
+ */
+export function shiftRirBand(
+  base: readonly [number, number] | null,
+  rirShift: number,
+): readonly [number, number] | null {
+  if (!Number.isFinite(rirShift) || rirShift === 0) return base;
+  // Default band when none supplied — a moderate hypertrophy 1-2 RIR target, the
+  // baseline the engine trains toward; the shift moves it from there.
+  const [lo, hi] = base ?? [1, 2];
+  return [Math.max(0, lo + rirShift), Math.max(0, hi + rirShift)];
+}
+
+/**
  * Phase 6 task_02 real wire. Async pipeline consumer — caller (5 consumers
  * React) handles loading state via useState + useEffect pattern. Returns
  * null pe rest day OR pipeline hard halt OR thrown exception (fail-silent).
@@ -846,13 +908,27 @@ export async function composePlannedWorkoutToday(
         ? repRangeRaw
         : null;
     const rirRangeRaw = plan.rirTargetModifier as [number, number] | null | undefined;
-    const rirTargetMod =
+    const rirTargetModBase =
       Array.isArray(rirRangeRaw) &&
       rirRangeRaw.length >= 2 &&
       Number.isFinite(rirRangeRaw[0]) &&
       Number.isFinite(rirRangeRaw[1])
-        ? rirRangeRaw
+        ? (rirRangeRaw as readonly [number, number])
         : null;
+    // #76 — resolve the active energy MAGNITUDE (phase + deficit/surplus severity)
+    // ONCE, behind dp_energy_volume_v1 (default OFF → null → no modulation). It feeds
+    // BOTH the per-exercise RIR shift (folded into the rir band below) AND the
+    // session-volume scale (scaleSetsByEnergy after the readiness scale). The
+    // magnitude comes from the coherent kcal-sizing model (resolveEnergyMagnitude) —
+    // sessionBuilder/dp never import nutrition; the resolved {phase,severity} token
+    // is passed read-only. Flag OFF → null → factor 1.0 + rirShift 0 → byte-identical.
+    const energyMagnitude = isEnabled('dp_energy_volume_v1') ? resolveEnergyMagnitude() : null;
+    const energyMod = energyMagnitude ? energyVolumeFactor(energyMagnitude) : null;
+    // RIR shift folded into the rir DISPLAY band only (never the kg — KEEP-LOAD). 0
+    // shift / no magnitude → the base band unchanged (byte-identical).
+    const rirTargetMod = energyMod
+      ? shiftRirBand(rirTargetModBase, energyMod.rirShift)
+      : rirTargetModBase;
     // F3 #6 — Periodization %1RM intensity corridor {floor,ceiling}. Same guard:
     // only a finite floor<=ceiling pair is threaded; anything else → null → DP
     // no-op. Behind dp_intensity_corridor_v1 (default OFF) DP bounds the prescribed
@@ -967,7 +1043,16 @@ export async function composePlannedWorkoutToday(
     // dp.js < 60 HOLD cliff still owns the load. Applied BEFORE the trim so the
     // time budget measures the readiness-scaled session. 1.0 → byte-identical.
     const readinessScaled = scaleSetsByReadiness(mapped, readinessScore);
-    const exercises = trimSessionToTimeBudget(readinessScaled, warmup?.durationMin ?? 0, timeCapMin);
+    // #76 — energy → VOLUME modulation (magnitude-aware), applied AFTER the readiness
+    // scale (composes MIN-style on its already-reduced sets, so the two never double-
+    // cut below the MEV floor) and BEFORE the time-budget trim (so the trim measures
+    // the energy-scaled session). A deep deficit cuts toward −30% volume; a surplus
+    // allows up to +10%. KEEP-LOAD: only sets move, the prescribed kg is untouched.
+    // energyMod null (flag OFF / no magnitude) → factor 1.0 → byte-identical.
+    const energyScaled = energyMod
+      ? scaleSetsByEnergy(readinessScaled, energyMod.volumeFactor)
+      : readinessScaled;
+    const exercises = trimSessionToTimeBudget(energyScaled, warmup?.durationMin ?? 0, timeCapMin);
     // Deload engine emits intensity_modifier object always (IDLE state =
     // {rir_increment:0, intensity_pct_decrement:0}). 'minus' only when
     // ACTIVE deload (any non-zero modifier field). Phase 7+ wires 'plus'

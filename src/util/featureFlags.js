@@ -647,6 +647,30 @@ export const FLAGS = Object.freeze({
   // persistence.
   dp_deficit_throttle_v1: { rollout: 0, default: false },
 
+  // #76 energy → VOLUME / RIR / deload modulation (magnitude-aware) (RISK MED —
+  // changes session SET-VOLUME + the RIR display band for cutting/bulking users,
+  // path A; NEVER the prescribed kg). #37 (dp_deficit_throttle_v1) only throttles
+  // the LOAD CLIMB RATE on the binary phase; #76 is the DEEPER half Daniel flagged:
+  // it consumes the deficit/surplus MAGNITUDE (the coherent kcal-shift as a fraction
+  // of maintenance, resolveEnergyMagnitude → energyVolumeFactor) and modulates the
+  // SESSION — cutting weekly/session volume −15% (mild deficit) toward −30% (deep
+  // deficit) per _ENGINE_volume_policy §11, pushing RIR further from failure
+  // (recovery impaired), and biasing deloads more often; a surplus mirrors it
+  // (small extra volume tolerance toward +10%, MRV-bounded, train slightly closer
+  // to failure). Applied at the React compose seam (scaleSetsByEnergy, AFTER the
+  // readiness scale, composing MIN-style on its already-reduced sets so they never
+  // double-cut below the MEV floor MIN_SETS_PER_EX). CRITICAL INVARIANT — KEEP LOAD:
+  // ONLY sets + the RIR display band move; the prescribed targetKg is UNTOUCHED
+  // (heavy load preserves muscle in a deficit — nutrition modulates volume +
+  // fatigue-management, never the kg). sessionBuilder/dp never import nutrition —
+  // the resolved {phase,severity} token is passed read-only. OFF → magnitude null →
+  // volumeFactor 1.0 + rirShift 0 → byte-identical (the calibration-sim kg path is
+  // never touched; the full-path-sim OFF hash is unchanged). The cut band + onset +
+  // RIR/deload knobs are a DESIGN PROPOSAL (spec §9) — sim sweep + Daniel sanity-
+  // check before flip; the SHAPE (deeper deficit → less volume + more RIR + more
+  // deloads, load untouched) is the verified principle. No new persistence.
+  dp_energy_volume_v1: { rollout: 0, default: false },
+
   // #21 strength/bodyweight + cut/bulk aware (RISK MED — shifts the fatigue map for
   // users whose bodyweight is changing, path A; bounded by the existing recovery
   // clamp + slow EMA). relativeStrength(mu, bw) = mu/bw is a one-line derivation from

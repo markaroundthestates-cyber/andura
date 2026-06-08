@@ -276,6 +276,37 @@ export function resolveActivePhase(): PhaseToken | null {
 }
 
 /**
+ * #76 — resolve the ACTIVE energy MAGNITUDE (phase + deficit/surplus SEVERITY) for
+ * the session-volume modulation. The SEVERITY is the deficit/surplus kcal-shift as
+ * a FRACTION of maintenance (|kcalTarget − maintenance| / maintenance), derived
+ * from the SAME coherent kcal-sizing model the nutrition UI uses (resolveActivePhase
+ * → getCoherentKcalToday → sizeKcalForPhase.dailyShift). This is the actual
+ * kcal-delta magnitude, NOT the bayesian likelihood typing (which is async + needs
+ * a full BN ctx not assembled at this sync compose boundary — see the report).
+ *
+ * Returns null when there is NO directional energy signal (cold-start, no goal/
+ * target, MAINTENANCE, or no maintenance estimate) so the caller falls back to the
+ * neutral (no-modulation) path. severity is clamped [0,1]. I/O boundary (reads the
+ * same stores resolveActivePhase / getCoherentKcalToday read); pure-ish, no clock.
+ *
+ * @returns {{ phase: PhaseToken, severity: number } | null}
+ */
+export function resolveEnergyMagnitude(): { phase: PhaseToken; severity: number } | null {
+  const phase = resolveActivePhase();
+  // No phase, or MAINTENANCE → no deficit/surplus magnitude to modulate against.
+  if (phase === null || phase === 'MAINTENANCE') return null;
+  const tdee = readUserMaintenanceTDEE();
+  if (tdee === null || !Number.isFinite(tdee) || tdee <= 0) return null;
+  const coherent = getCoherentKcalToday(tdee);
+  if (coherent === null) return null;
+  // severity = the absolute kcal shift as a fraction of maintenance. A CUT lands
+  // below maintenance (deficit), a BULK/STRENGTH above (surplus) — either way the
+  // magnitude is |delta|/maintenance, clamped [0,1].
+  const severity = Math.min(1, Math.max(0, Math.abs(tdee - coherent.kcal) / tdee));
+  return { phase, severity };
+}
+
+/**
  * Coherence-model kcal (2026-05-30) — the ONE function that makes goal + target
  * weight + phase + kcal coherent. The active phase sets the SIGN (CUT=deficit,
  * BULK=surplus, MAINTENANCE≈0, STRENGTH≈slight surplus); the target weight +

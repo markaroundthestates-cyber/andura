@@ -46,6 +46,8 @@ export {
   clusterFatigueFactor,
   trimSessionToTimeBudget,
   scaleSetsByReadiness,
+  scaleSetsByEnergy,
+  shiftRirBand,
   resolveIntensityFactors,
   stimulusScore,
   stimulusPerMin,
