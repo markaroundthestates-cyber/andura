@@ -73,6 +73,7 @@ function renderAntrenor() {
       <Routes>
         <Route path="/app/antrenor" element={<Antrenor />} />
         <Route path="/app/antrenor/energy-check" element={<div>EnergyCheckStub</div>} />
+        <Route path="/app/antrenor/time-budget" element={<div>TimeBudgetStub</div>} />
         <Route path="/app/antrenor/workout-preview" element={<div>WorkoutPreviewStub</div>} />
       </Routes>
     </MemoryRouter>
@@ -531,13 +532,14 @@ describe('Antrenor home — navigation', () => {
     expect(screen.getByText('EnergyCheckStub')).toBeInTheDocument();
   });
 
-  it('energy-check DONE today → Start goes STRAIGHT to workout-preview (no re-route)', () => {
+  it('energy-check DONE today → Start goes to the time-budget step (#69), not re-prompting energy', () => {
     // Readiness is already known → re-routing through energy-check would
-    // double-prompt. Start proceeds directly to the plan preview.
+    // double-prompt. #69: Start opens the "how much time today" step (→ preview),
+    // never the energy-check again.
     seedEnergyCheckToday();
     renderAntrenor();
     fireEvent.click(screen.getByRole('button', { name: /Start session/i }));
-    expect(screen.getByText('WorkoutPreviewStub')).toBeInTheDocument();
+    expect(screen.getByText('TimeBudgetStub')).toBeInTheDocument();
     expect(screen.queryByText('EnergyCheckStub')).not.toBeInTheDocument();
   });
 

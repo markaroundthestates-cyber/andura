@@ -175,17 +175,20 @@ export function Antrenor(): JSX.Element {
   // engine signal preferred when aggregate loaded, fallback user override (§A002).
   const showWorkoutCard = coach !== null ? !coach.isRestDay : schedContext === 'workout';
 
-  // Step 2: START. If today's energy-check is already done, go STRAIGHT to the
-  // plan preview (readiness is known — re-routing through energy-check would
-  // double-prompt). If not done yet, route to the energy-check first (the
-  // assess step), exactly as before. Reused by the reactivate / light-session /
-  // override CTAs so every "start" affordance honors the same skip-if-done rule.
+  // Step 2: START (#69 pre-workout reframe — Daniel UX LOCK 2026-06-08). When
+  // today's energy-check is DONE, Start opens the dedicated "how much time today"
+  // step (TimeBudget) → workout-preview. When it's NOT done yet, Start routes to
+  // the energy-check first (the assess step); EnergyCheck now returns to THIS hub
+  // (not straight to preview), so the user then taps Start again → time → preview.
+  // No double-prompt: the energy-check is never re-shown once done. Reused by the
+  // reactivate / light-session / override CTAs so every "start" affordance honors
+  // the same rule.
   const handleStart = (): void => {
-    navigate(gotoPath(energyCheckDoneToday ? 'workout-preview' : 'energy-check'));
+    navigate(gotoPath(energyCheckDoneToday ? 'time-budget' : 'energy-check'));
   };
 
   const handleReactivateStart = (): void => {
-    navigate(gotoPath(energyCheckDoneToday ? 'workout-preview' : 'energy-check'));
+    navigate(gotoPath(energyCheckDoneToday ? 'time-budget' : 'energy-check'));
   };
 
   // Re-run the check on demand — tapping the readiness hero (orb/verdict)
