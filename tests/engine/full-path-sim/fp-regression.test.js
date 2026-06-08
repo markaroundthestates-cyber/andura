@@ -21,7 +21,13 @@
 // no workflow edit. Deterministic + offline (no API).
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { runFullPathCohortAsync, acwrRealClockFullPath } from './fp-run.js';
+import {
+  runFullPathCohortAsync,
+  acwrRealClockFullPath,
+  fatigueCurveFullPath,
+  subRecoveryDriftFullPath,
+  dipClassifierFullPath,
+} from './fp-run.js';
 import { analyzeFullPath, craterViolations } from './fp-analyze.js';
 import { fullPathStreamHash } from './fp-hash.js';
 import { exerciseDipClassifier, exerciseAutoPivot, DIP_CLASS } from './fp-darkprimitives.js';
@@ -114,6 +120,38 @@ describe('full-path-sim CI gate', () => {
     expect(r.setsOn, JSON.stringify(r)).toBeLessThan(r.setsOff); // fewer sets ON
   }, 120000);
 
+  // ── §B F6a WIRED flags (was dark → now alive through the real compose seam) ──
+  // Each was a built-but-DARK primitive (no live consumer); now wired at its seam.
+  // These ride the deload-set path (not the journey-cohort readiness/energy path),
+  // so — like ACWR — they get a targeted real-clock probe that flips OFF→ON and
+  // shows the COMPOSED session move. Proof the wiring is live: OFF did NOTHING.
+  it('§B #20 dp_fatigue_curve_v1 — a learned CRASHER drops a working set (full path)', async () => {
+    const r = await fatigueCurveFullPath();
+    expect(r.curveKeys, JSON.stringify(r)).toBeGreaterThan(0);   // the learner ran
+    // OFF→ON moves the composed stream, and the -1 lands on the CRASHER (above its
+    // band floor → visible), never below the ≥1 clamp.
+    expect(r.moved, JSON.stringify(r)).toBe(true);
+    expect(r.crasherOn, JSON.stringify(r)).toBe(r.crasherOff - 1);
+    expect(r.setsOn, JSON.stringify(r)).toBeLessThan(r.setsOff);
+  }, 60000);
+  it('§B #26 dp_subrecovery_drift_v1 — systemic drift pre-empts a deload (full path)', async () => {
+    const r = await subRecoveryDriftFullPath();
+    // OFF: no AA candidate → no reactive deload. ON: the drift candidate feeds the
+    // AA trigger → REACTIVE_AA deload → intensityMod flips 'normal' → 'minus'.
+    expect(r.intensityModOff, JSON.stringify(r)).toBe('normal');
+    expect(r.intensityModOn, JSON.stringify(r)).toBe('minus');
+  }, 60000);
+  it('§B #32 dp_dip_classifier_v1 — a LIFE_DIP suppresses an over-reactive deload (full path)', async () => {
+    const r = await dipClassifierFullPath();
+    // The scenario fires a reactive (energy-down-sustained) deload OFF; ON the
+    // classifier resolves LIFE_DIP (low ACWR + bad-sleep, not training fatigue) and
+    // SUPPRESSES it → intensityMod 'minus' → 'normal'. ACWR must be LOW (the guard).
+    expect(r.acwr, JSON.stringify(r)).toBeLessThanOrEqual(1.2);
+    expect(r.intensityModOff, JSON.stringify(r)).toBe('minus');
+    expect(r.intensityModOn, JSON.stringify(r)).toBe('normal');
+    expect(r.suppressed, JSON.stringify(r)).toBe(true);
+  }, 60000);
+
   // ── §C SAFETY NOT WORSE (relative OFF→ON on the full-path prescribed kg) ────
   // crater + oscillation are ZERO-TOLERANCE-style (a flag must not REINTRODUCE the
   // F-1 crater class nor a saw-tooth): ON must not exceed OFF. absurd + convergence
@@ -140,12 +178,13 @@ describe('full-path-sim CI gate', () => {
   });
 });
 
-// ── DARK path-A primitives (NOT full-path-drivable — honest unit-seam coverage) ──
-// dp_dip_classifier_v1 + dp_auto_pivot_v1 have no live caller in the compose path,
-// so the cohort cannot observe them. Exercised here at their reachable seam with a
-// loud marker that they are NOT yet seam-wired (flip them only with this caveat).
-describe('full-path-sim — DARK path-A primitives (unit seam, NOT wired into compose)', () => {
-  it('dp_dip_classifier_v1 logic is correct (but uncalled in the session path)', () => {
+// ── path-A primitive unit-seam coverage ─────────────────────────────────────
+// dp_auto_pivot_v1 (proposeGoalPivot) is still DARK — its live render-surface is a
+// UX moment DEFERRED for Daniel (no live caller in compose). dp_dip_classifier_v1
+// is now WIRED into the deload seam (proven by the §B full-path test above); its
+// unit-seam branches stay covered here as a fast, deterministic logic guard.
+describe('full-path-sim — path-A primitive unit seams', () => {
+  it('dp_dip_classifier_v1 branch logic is correct (now also wired §B full-path)', () => {
     const r = exerciseDipClassifier();
     expect(r.gap).toBe(DIP_CLASS.DETRAINING);
     expect(r.fatigueByAcwr).toBe(DIP_CLASS.FATIGUE); // ACWR-high safety guard

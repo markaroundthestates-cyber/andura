@@ -18,6 +18,8 @@ import { buildJourneyCohort, trueCapAt } from './fp-journeys.js';
 import { computeACWR } from '../../../src/engine/muscleRecovery.js';
 import { getComputedReadinessScore } from '../../../src/engine/readiness.js';
 import { tod as todReal } from '../../../src/db.js';
+import { DEV_FLAGS_KEY } from '../../../src/util/featureFlags.js';
+import { learnFatigueCurve, saveFatigueCurve } from '../../../src/engine/dp/fatigueCurve.js';
 
 const MS_DAY = 86400000;
 const COHORT_START = Date.UTC(2026, 0, 5); // Monday — stable active-day rotation
@@ -232,5 +234,188 @@ export async function acwrRealClockFullPath() {
     scoreOff, scoreOn,
     setsOff: totalSets(planOff), setsOn: totalSets(planOn),
     moved: sig(planOff) !== sig(planOn),
+  };
+}
+
+// ── F6a wired-flag full-path probes (was-dark → now alive) ─────────────────────
+// These three flags ride the deload-set seam, NOT the readiness/energy-score seam
+// the journey cohort drives — so (like ACWR) they get a targeted real-clock probe
+// that builds the precise trait, flips OFF→ON, and shows the COMPOSED stream move.
+
+/** Write a single dev-flag override (any flag id), the resolution-order step-1 the
+ *  real featureFlags.isEnabled honors first. Empty/false clears (baseline). */
+function setFlag(flagId) {
+  if (!flagId) { try { localStorage.removeItem(DEV_FLAGS_KEY); } catch { /* */ } return; }
+  try { localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify({ [flagId]: true })); } catch { /* */ }
+}
+const _isod = (ms) => new Date(ms).toLocaleDateString('sv');
+const _sig = (p) => (p ? p.exercises.map((e) => `${e.engineName}:${e.sets}:${e.targetKg}`).join('|') : 'null');
+const _sets = (p) => (p ? p.exercises.reduce((a, e) => a + e.sets, 0) : 0);
+
+function _seedOnboarding(extra = {}) {
+  world.useOnboardingStore.setState({
+    data: {
+      age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'intermediar',
+      weight: 80, height: 178, focusPreset: 'balanced', focusPresetPickedAt: null, ...extra,
+    },
+    completed: true, completedAt: Date.now() - 200 * MS_DAY,
+  });
+}
+
+/**
+ * #20 dp_fatigue_curve_v1 — a per-user CRASHER (reps collapse early at fixed load)
+ * earns -1 working set through distributeGroupSets. Seed a crasher log history,
+ * run the REAL finish-time learner (gated ON) to populate dp-fatigue-curve, then
+ * compose with the flag OFF vs ON: ON drops the crasher's set count (clamped ≥1).
+ * @returns {{setsOff:number,setsOn:number,moved:boolean,curveKeys:number}}
+ */
+export async function fatigueCurveFullPath() {
+  resetWorld();
+  _seedOnboarding();
+  const now = Date.now();
+  // Two learned curves on exercises a freq-4 push/upper day surfaces ABOVE their
+  // band floor (so the ±1 is VISIBLE, not absorbed by the clamp):
+  //   - DB Shoulder Press = CRASHER (reps crash by set 2: 10→4 → dropIndex 2 → -1).
+  //     It composes at the compound ceiling (5) → -1 makes it 4.
+  //   - Pec Deck / Cable Fly = MAINTAINER (reps held flat: 10→10 → never drops →
+  //     dropIndex = sets+1 → +1). It composes at the isolation floor (2) → +1 → 3.
+  // 6 fixed-load sessions > FATIGUE_MIN_SESSIONS so the curve is trusted.
+  const CRASHER = 'DB Shoulder Press';
+  const MAINTAINER = 'Pec Deck / Cable Fly';
+  const logs = [];
+  for (let d = 42; d >= 2; d -= 7) {
+    const ts = now - d * MS_DAY;
+    [10, 4, 4, 4].forEach((reps, i) => {
+      logs.push({ ex: CRASHER, w: 20, kg: 20, reps: String(reps), set: i + 1, ts: ts + i * 1000, session: ts, date: _isod(ts), rpe: 7.5 });
+    });
+    [10, 10, 10, 10].forEach((reps, i) => {
+      logs.push({ ex: MAINTAINER, w: 30, kg: 30, reps: String(reps), set: i + 1, ts: ts + 10000 + i * 1000, session: ts, date: _isod(ts), rpe: 7.5 });
+    });
+  }
+  world.DB.set('logs', logs);
+
+  // Compose OFF first (no curve consumed → population set counts).
+  setFlag(null);
+  const planOff = await world.composePlannedWorkoutToday(new Date());
+
+  // Learn the curve at "finish time" with the flag ON (the real persist path runs
+  // learnFatigueCurve only when gated). Persist into dp-fatigue-curve.
+  setFlag('dp_fatigue_curve_v1');
+  const learned = learnFatigueCurve(logs);
+  saveFatigueCurve(learned);
+  const planOn = await world.composePlannedWorkoutToday(new Date());
+
+  // Per-exercise set count by EN name (proof the ±1 landed on the right exercise).
+  const byName = (p) => {
+    const m = {};
+    if (p) for (const e of p.exercises) m[e.engineName] = e.sets;
+    return m;
+  };
+  const off = byName(planOff);
+  const on = byName(planOn);
+  return {
+    setsOff: _sets(planOff),
+    setsOn: _sets(planOn),
+    moved: _sig(planOff) !== _sig(planOn),
+    curveKeys: Object.keys(learned).length,
+    crasherOff: off[CRASHER] ?? null,
+    crasherOn: on[CRASHER] ?? null,
+    maintainerOff: off[MAINTAINER] ?? null,
+    maintainerOn: on[MAINTAINER] ?? null,
+  };
+}
+
+/**
+ * #26 dp_subrecovery_drift_v1 — an EARLY systemic under-recovery (greu-share rising
+ * at a fixed working load across ≥2 muscle groups) pre-empts a deload: the drift
+ * candidate feeds the AA trigger (meta.aaMarkerDirectActive) → REACTIVE_AA deload →
+ * intensityMod 'minus' through the full compose seam. OFF → no candidate → 'normal'.
+ * @returns {{intensityModOff:string,intensityModOn:string,moved:boolean,setsOff:number,setsOn:number}}
+ */
+export async function subRecoveryDriftFullPath() {
+  resetWorld();
+  _seedOnboarding();
+  const now = Date.now();
+  // Same fixed working load (60kg, 10 reps held) on exercises spanning ≥2 muscle
+  // groups (back + legs), with the greu rating SHARE rising across the window
+  // (early sets potrivit, later sets greu) → rating-drift slope > 0, reps held.
+  const exs = ['Lat Pulldown', 'Cable Row', 'Leg Press', 'Leg Extension'];
+  const logs = [];
+  const N = 8;
+  for (const ex of exs) {
+    for (let i = N - 1; i >= 0; i--) {
+      // newest-first persisted; older = potrivit (7.5), newer = greu (8.5) → rising.
+      const ts = now - i * 3 * MS_DAY;
+      const rpe = i <= 3 ? 8.5 : 7.5; // last 4 sessions drift to greu at flat load
+      logs.push({ ex, w: 60, kg: 60, reps: '10', set: 1, ts, session: ts, date: _isod(ts), rpe });
+    }
+  }
+  world.DB.set('logs', logs);
+
+  setFlag(null);
+  const planOff = await world.composePlannedWorkoutToday(new Date());
+  setFlag('dp_subrecovery_drift_v1');
+  const planOn = await world.composePlannedWorkoutToday(new Date());
+
+  return {
+    intensityModOff: planOff ? planOff.intensityMod : 'null',
+    intensityModOn: planOn ? planOn.intensityMod : 'null',
+    moved: _sig(planOff) !== _sig(planOn),
+    setsOff: _sets(planOff),
+    setsOn: _sets(planOn),
+  };
+}
+
+/**
+ * #32 dp_dip_classifier_v1 — a LIFE_DIP (low accumulated volume + bad-sleep week +
+ * a sustained energy-down pattern that WOULD trigger a reactive deload) is the
+ * lifestyle cause, NOT training fatigue → the classifier SUPPRESSES the reactive
+ * deload (meta.suppressReactiveDeload). OFF → the energy-down-sustained AA deload
+ * fires (intensityMod 'minus'); ON → suppressed (intensityMod 'normal'). The proof
+ * is the SUPPRESSION direction: ON removes a deload OFF produced.
+ * @returns {{intensityModOff:string,intensityModOn:string,suppressed:boolean,acwr:number|null}}
+ */
+export async function dipClassifierFullPath() {
+  resetWorld();
+  _seedOnboarding();
+  const now = Date.now();
+  // FLAT, EVEN low-volume history over 28d (NO acute spike → ACWR ~1.0 ≤ 1.2 →
+  // volumeNotHigh, NOT fatigue) on a SINGLE exercise/group (so drift is NOT
+  // systemic → the LIFE_DIP gate requires !driftSystemic). Light loads, reps held,
+  // no rating drift. The 4 most-recent sessions carry a 'sleep' note → fatigue.js
+  // sleepBad >= 2 (the LIFESTYLE source). One session every 2 days, identical load,
+  // so the acute(7d) and chronic(28d) windows match → ACWR ~1.0.
+  const logs = [];
+  for (let d = 28; d >= 0; d -= 2) {
+    const ts = now - d * MS_DAY;
+    const recent = d <= 7; // last 4 sessions → lifestyle sleep markers
+    logs.push({
+      ex: 'Lat Pulldown', w: 40, kg: 40, reps: '10', set: 1, ts, session: ts,
+      date: _isod(ts), rpe: 7.5, ...(recent ? { notes: ['sleep'] } : {}),
+    });
+  }
+  world.DB.set('logs', logs);
+  const acwr = computeACWR(logs, now);
+
+  // A sustained energy-DOWN pattern (3 red sessions) → isEnergyDownSustained → the
+  // reactive-AA deload the LIFE_DIP must suppress. recentSessions come from
+  // sessionsHistory (newest-tail); energyEmoji 'red' → energyDirection DOWN.
+  const history = [];
+  for (let k = 2; k >= 0; k--) {
+    const ts = now - k * MS_DAY;
+    history.push({ title: 'Antrenament', meta: 'x', ts, energyEmoji: 'red', energy: 'red', exercises: [] });
+  }
+  world.useWorkoutStore.setState({ sessionsHistory: history });
+
+  setFlag(null);
+  const planOff = await world.composePlannedWorkoutToday(new Date());
+  setFlag('dp_dip_classifier_v1');
+  const planOn = await world.composePlannedWorkoutToday(new Date());
+
+  return {
+    intensityModOff: planOff ? planOff.intensityMod : 'null',
+    intensityModOn: planOn ? planOn.intensityMod : 'null',
+    suppressed: !!(planOff && planOn && planOff.intensityMod === 'minus' && planOn.intensityMod === 'normal'),
+    acwr: acwr ? acwr.acwr : null,
   };
 }

@@ -245,6 +245,20 @@ export async function evaluate(ctx) {
   const energyDownSustained = energySignal.sustainedThresholdMet
     || isEnergyDownSustained(recentSessionsForEnergy);
 
+  // F6a #32 dip-classifier suppression (LIFE_DIP): when the builder's
+  // classifyPerformanceDip resolves the dip cause as a LIFESTYLE patch (low
+  // accumulated volume + bad sleep / missed days / under-eating, NOT training
+  // fatigue), it sets meta.suppressReactiveDeload so a full REACTIVE deload does
+  // NOT fire — hold steady, no panic (spec §5b). It NEVER suppresses a SCHEDULED
+  // (calendar) deload nor a composite 3/3 — only the reactive AA cause the
+  // life-dip would otherwise over-trigger. Inert by default (undefined → false),
+  // and the ACWR-HIGH-forces-FATIGUE guard upstream means a truly fatigued user
+  // is never suppressed here. Default-OFF flag → builder never sets it.
+  const suppressReactiveDeload = meta.suppressReactiveDeload === true;
+  if (suppressReactiveDeload) {
+    signals.push('deload_reactive_suppressed_life_dip_f6a_32_lifestyle_not_training_fatigue');
+  }
+
   // Hook D4 — Bayesian σ + Pain-Aware reference-only
   const bayesianPainAwareRef = consumeBayesianPainAware({
     sigmaHighFlag:                meta.sigmaHighFlag,
@@ -266,9 +280,12 @@ export async function evaluate(ctx) {
   trace.compositeTrigger = composite;
 
   const aa = detectAATrigger({
-    aaDetectionActive:    meta.aaDetectionActive,
-    energyDownSustained,
-    aaMarkerDirectActive: meta.aaMarkerDirectActive,
+    // F6a #32 LIFE_DIP suppression zeroes the REACTIVE-AA candidates (energy-down
+    // sustained + the #26 drift candidate aaMarkerDirectActive) — a lifestyle dip
+    // is not training fatigue, so do not deload. Composite + Linear are untouched.
+    aaDetectionActive:    suppressReactiveDeload ? false : meta.aaDetectionActive,
+    energyDownSustained:  suppressReactiveDeload ? false : energyDownSustained,
+    aaMarkerDirectActive: suppressReactiveDeload ? false : meta.aaMarkerDirectActive,
   });
   trace.aaTrigger = aa;
 

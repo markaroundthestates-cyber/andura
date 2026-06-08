@@ -46,31 +46,19 @@ const REGISTRY_REL = 'util/featureFlags.js'; // the definition site — excluded
 // math is unit-tested; the consumer is not yet built). When one gets a live
 // `isEnabled` gate, the stale-allow-list test below forces its removal here.
 //
-// SCOPE NOTE (honesty): the task author named TWO known-dark flags (dip + auto-
-// pivot). This guard's own scan found TWO MORE engine flags with no live gate —
-// dp_subrecovery_drift_v1 + dp_fatigue_curve_v1 — both documented in the registry
-// as "ships the pure detector/learner, the live wiring is DEFERRED". They are the
-// SAME bug class (built-but-dark) and are allow-listed here with that citation;
-// the discovery is surfaced loudly in the build report, NOT silently buried.
+// SHRUNK 2026-06-08 (F6a wiring): dp_fatigue_curve_v1 (#20), dp_subrecovery_drift_v1
+// (#26) + dp_dip_classifier_v1 (#32) were allow-listed dark; each is now WIRED to a
+// live consumer behind its own isEnabled gate — so per the stale-allow-list guard
+// they MUST leave this list. ONLY dp_auto_pivot_v1 remains: its live render-surface
+// (banner/modal) is a UX moment DEFERRED for Daniel — intentionally left dark.
+//   #20 → fatigueSetsAdjust into distributeGroupSets (getDailyWorkout.js gate)
+//   #26 → drift candidate → deload AA trigger (scheduleAdapterAggregate.builder.ts)
+//   #32 → LIFE_DIP suppresses the reactive deload (builder → deload/index.js)
 const KNOWN_DARK_ALLOWLIST = Object.freeze({
-  dp_dip_classifier_v1:
-    'classifyPerformanceDip — pure classifier; LIFE_DIP deload-suppression wiring ' +
-    'DEFERRED behind the PARTIAL deload-telemetry boundary (registry §F6b spec §7). ' +
-    'No live isEnabled gate. fp-darkprimitives covers the logic at its unit seam.',
   dp_auto_pivot_v1:
     'proposeGoalPivot — pure goal-pivot proposer; the live render-surface (banner/' +
     'modal consumer) is a UX moment DEFERRED for Daniel (registry §F6b). No live ' +
     'isEnabled gate. fp-darkprimitives covers the logic at its unit seam.',
-  dp_subrecovery_drift_v1:
-    'detectSubRecoveryDrift — pure early under-recovery detector; the deload-TIMING ' +
-    'tier (AA-trigger candidate) + the narration read are DEFERRED behind the PARTIAL ' +
-    'deload-telemetry boundary (registry §F6a spec §7). No live isEnabled gate + no ' +
-    'live import of subRecoveryDrift.js. [FOUND BY THIS GUARD — beyond the 2 named.]',
-  dp_fatigue_curve_v1:
-    'learnFatigueCurve / fatigueSetsAdjust — pure per-set fatigue learner; the ' +
-    'setsAdjust DOSE wiring into distributeGroupSets is not yet built (registry §F6b ' +
-    'V?: "OFF → the learner is never invoked + setsAdjust 0 → byte-identical"). No ' +
-    'live isEnabled gate + no live import of fatigueCurve.js. [FOUND BY THIS GUARD.]',
 });
 
 // Only the per-exercise / per-session ENGINE flags are in scope — the dimension-
