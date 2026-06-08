@@ -462,6 +462,27 @@ export const FLAGS = Object.freeze({
   // (spec §7) — sim sweep + Daniel review before flip (volume dose is a felt change).
   dp_learned_volume_v1: { rollout: 0, default: false },
 
+  // V4 #15 auto-pivot near ceiling (RISK MED — PROPOSES a goal pivot, never auto-
+  // switches: worst case is a dismissable banner). The classifier (classifyPlateau)
+  // + the per-lift intervention (near_ceiling → variation rotation) already ship
+  // behind dp_plateau_intervention_v1; this is the GOAL-level aggregation the audit's
+  // #15 asks for — a thin new layer (proposeGoalPivot), NOT a rebuild. When ON,
+  // nearCeilingShare aggregates the per-lift near_ceiling signal; when ≥ a broad
+  // share of the user's main lifts are near their realistic ceiling AND a sustained
+  // global stagnation persists, it PROPOSES switching off pure strength (→ hipertrofie
+  // / recompozitie / sanatate, goals the table already supports). Reuses the entire
+  // pushBackTiers re-prompt UX (evaluateReprompt) for the anti-spam cooldowns (28d
+  // rolling / 60d post-goal-shift / 4-per-year cap) so it never nags. On accept the
+  // consumer sets the goal (re-routing volume/intensity through the existing goal
+  // modifiers); on decline → cooldown. Persists `dp-pivot-prompts` (sync — the
+  // goal-shift anchor; phase-change-date records NUTRITION phase, NOT goal, so it
+  // cannot double as the anchor). OFF → no aggregation, no proposal → byte-identical.
+  // Depends on dp_ceiling_v1 for a real mu/ceiling split (degrades to a flat-MAX_KG
+  // proximity otherwise). PIVOT_SHARE_THRESHOLD + the targets/wording are DESIGN
+  // PROPOSALS (spec §7) — Daniel's product/UX call before flip. The live render-
+  // surface wiring (the banner/modal consumer) is a UX moment DEFERRED for Daniel.
+  dp_auto_pivot_v1: { rollout: 0, default: false },
+
   // #20 per-set fatigue curve (RISK LOW-MED — nudges SET COUNT by +/-1 within the
   // existing clamp, never kg). When ON, learnFatigueCurve classifies a user-per-
   // exercise as a MAINTAINER (flat curve → +1 working set) vs a CRASHER (early

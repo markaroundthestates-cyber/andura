@@ -109,6 +109,7 @@ export const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs',
   'dp-temperament', // dp-temperament — F4 #3 per-user temperament RIR bias sandbagger vs grinder (object engineName|'global' -> {bias,n}); name-keyed object-merge sync (the reserved 'global' key carries the cross-lift trait), learned per-UID, durable across sessions/devices
   'dp-fatigue-curve', // dp-fatigue-curve — F6a #20 per-user per-exercise reps-drop-off curve (object engineName -> {dropIndex,n}); name-keyed object-merge sync, learned per-UID, durable across sessions/devices
   'dp-learned-volume', // dp-learned-volume — F6b V1 #10 per-user learned per-muscle productive volume band (object ISRAETEL-EN-muscle -> {mev,mav,n}); muscle keys are EN tokens (Firebase-safe, NOT name-keyed, same as dp-recovery-constants); object-merge sync, learned per-UID, durable
+  'dp-pivot-prompts', // dp-pivot-prompts — F6b V4 #15 goal-pivot re-prompt anti-spam bookkeeping (fixed-key object {lastRepromptMs,lastConfirmMs,lastGoalShiftMs,repromptCountThisYear}); the goal-shift anchor evaluateReprompt expects (phase-change-date records NUTRITION phase, NOT goal); per-UID, durable
 ];
 
 // RTDB key sanitizer — Firebase Realtime Database forbids `. $ # [ ] /` in node
