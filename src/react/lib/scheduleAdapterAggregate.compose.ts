@@ -53,6 +53,13 @@ interface DpRecommendation {
   // setsAdjust is the per-exercise set delta (−1 on the comeback / ramp), applied
   // here against a MIN floor of 1 so a session never drops below one working set.
   setsAdjust?: number;
+  // F5-W0 — the engine's machine status enum for THIS recommendation (EASE BACK /
+  // CONSOLIDATE / INIT / ON TARGET / INCREASE / …) + its pre-localized RO
+  // progression sentence. Already computed by getSmartRecommendation; carried onto
+  // the PlannedExercise (recReason) so the moat "why?" / replay can read the real
+  // branch instead of re-guessing.
+  status?: string;
+  progressionNote?: string;
 }
 
 // Fix #4 — default rest fallback (the prior hardcode) used only when the engine
@@ -316,6 +323,25 @@ function toPlannedExercise(
     // #7 always-on metric data + the gated prescribed duration.
     metricType,
     ...(targetSec !== undefined ? { targetSec } : {}),
+    // F5-W0 — carry the DP decision REASON (status + progression note) forward.
+    // Already computed in `rec` above; historically dropped here. Additive +
+    // byte-identical: no current consumer reads recReason (grep: 0 matches), so
+    // every existing PlannedExercise consumer ignores it. CARRIED ONLY.
+    ...(rec && rec.status
+      ? {
+          recReason: {
+            status: String(rec.status),
+            ...(rec.progressionNote !== undefined ? { note: rec.progressionNote } : {}),
+          },
+        }
+      : {}),
+    // F5-W0 — carry the strength-posterior UNCERTAINTY (sigma) + observation count.
+    // DP._posteriorConfidence is a pure recompute from the e1RM log stream (no DB
+    // write, driver-flag-independent), returning { sigma:null, n:0 } for a
+    // cold-start / e1RM-ineligible exercise. One extra deterministic read; the
+    // PRESCRIPTION (kg/reps/sets) above is untouched. CARRIED ONLY — nothing
+    // consumes confidence yet.
+    ...(rec ? { confidence: DP._posteriorConfidence(engineEx.name) } : {}),
   };
 }
 

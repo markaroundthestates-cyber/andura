@@ -845,6 +845,35 @@ export const DP = {
     return post && Number.isFinite(post.sigma) ? post.sigma : null;
   },
 
+  // F5-W0 — the posterior UNCERTAINTY (sigma) PLUS the count of usable e1RM
+  // observations (n) that folded into it, recomputed from the SAME stream as
+  // _posteriorSigma (deterministic, no DB write, driver-flag-independent). sigma
+  // is null for an e1RM-ineligible / cold-start exercise; n is then 0. The coach-
+  // confidence tier (#63) needs both (a 1-2 set fluke must not claim "dialed in"),
+  // so n is surfaced here rather than re-derived from a coarse getLogs count —
+  // n counts the observations the posterior ACTUALLY used.
+  /** @param {string} ex @returns {{sigma:number|null, n:number}} */
+  _posteriorConfidence(ex) {
+    if (!this._e1rmEligible(ex)) return { sigma: null, n: 0 };
+    const logs = this.getLogs(ex, 12); // newest-first
+    const obs = [];
+    for (let i = logs.length - 1; i >= 0; i--) { // oldest-first
+      const l = logs[i];
+      const w = Number(l.w);
+      if (!Number.isFinite(w) || w <= 0) continue;
+      const reps = typeof l.reps === 'string' ? parseInt(l.reps, 10) : Number(l.reps);
+      if (!Number.isFinite(reps)) continue;
+      const rpe = Number(l.rpe) || 7;
+      const e = this.e1RMForSet(w, reps, rpe, ex);
+      if (e == null) continue;
+      const failedShort = rpe >= 8.5;
+      obs.push({ e1rm: e, ts: Number(l.ts) || 0, failedShort });
+    }
+    const post = updatePosterior(null, obs);
+    const sigma = post && Number.isFinite(post.sigma) ? post.sigma : null;
+    return { sigma, n: obs.length };
+  },
+
   // ══ BUILD F6c #31 — noise-aware trend direction for one exercise (spec §1) ═══
   // Folds the recent per-set e1RM observations (SAME stream _posteriorSigma builds)
   // through trendDirection: returns 'UP'|'FLAT'|'DOWN' only when the net mu move

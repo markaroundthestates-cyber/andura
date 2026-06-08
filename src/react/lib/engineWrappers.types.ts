@@ -103,6 +103,24 @@ export interface PlannedExercise {
   // targetReps is 0 (no rep target) and targetSec carries the hold/carry duration
   // so the consumer never renders a "× reps" prescription. Absent → reps path.
   targetSec?: number;
+  // F5-W0 — the per-exercise DP decision REASON, carried forward from
+  // getSmartRecommendation (which engine branch fired: EASE BACK / CONSOLIDATE /
+  // INIT / ON TARGET / INCREASE / …). The composer already computes this rec but
+  // historically dropped status/progressionNote at toPlannedExercise; W0 carries
+  // them so the moat "De ce atat?" / replay-debugger can read the real reason
+  // instead of re-guessing. `status` is the engine's machine enum; `note` is the
+  // engine's pre-localized RO progression sentence (progressionNote). Absent on a
+  // cold-start row with no rec, or on a pre-W0 fixture → consumers degrade to the
+  // honest fallback. CARRIED ONLY — nothing renders this yet.
+  recReason?: { status: string; note?: string };
+  // F5-W0 — the per-exercise strength-posterior UNCERTAINTY (Kalman sigma) +
+  // observation count, carried forward via DP._posteriorSigma (a pure recompute
+  // from the e1RM log stream, no DB write, independent of dp_strength_kalman_v1).
+  // `sigma` is null for an e1RM-ineligible / cold-start exercise (the honest "I
+  // don't know you yet"); `n` is the count of usable e1RM observations folded into
+  // the posterior. Feeds the coach-confidence tier (#63) + the replay trace (#66).
+  // CARRIED ONLY — nothing consumes this yet.
+  confidence?: { sigma: number | null; n: number };
 }
 
 // Coach Voice — structured, machine-readable record of an adaptation the
