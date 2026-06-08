@@ -299,6 +299,20 @@
     "line_one": "Welcome back — I've rebalanced the rest of your week around the missed session. No stress, the plan adapted.",
     "line_other": "Welcome back — I've rebalanced the rest of your week around the {n} missed sessions. No stress, the plan adapted."
   },
+  "coachPivot": {
+    "ariaLabel": "Coach suggestion — change the focus of your training",
+    "kicker": "A suggestion",
+    "banner": "You're close to your strength ceiling on most exercises — from here the weight climbs slower and slower. Want to shift the focus?",
+    "optionMasa": "Muscle growth",
+    "optionMentenanta": "Maintenance",
+    "optionForta": "Stay on strength",
+    "confirmMasa": "Switch to muscle growth? I'll adjust: a few more reps, more volume, less chasing records.",
+    "confirmMentenanta": "Switch to maintenance? I'll hold your gains with a lighter, steady load — no record chasing.",
+    "confirmYes": "Yes, switch",
+    "confirmCancel": "Not now",
+    "whyCta": "Why this?",
+    "whyLine": "You're close to your natural ceiling on most of your main exercises, and the weights haven't climbed in a few weeks."
+  },
   "restOverlay": {
     "ariaLabel": "Active rest",
     "kicker": "Rest",

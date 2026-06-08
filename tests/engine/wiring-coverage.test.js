@@ -49,17 +49,18 @@ const REGISTRY_REL = 'util/featureFlags.js'; // the definition site — excluded
 // SHRUNK 2026-06-08 (F6a wiring): dp_fatigue_curve_v1 (#20), dp_subrecovery_drift_v1
 // (#26) + dp_dip_classifier_v1 (#32) were allow-listed dark; each is now WIRED to a
 // live consumer behind its own isEnabled gate — so per the stale-allow-list guard
-// they MUST leave this list. ONLY dp_auto_pivot_v1 remains: its live render-surface
-// (banner/modal) is a UX moment DEFERRED for Daniel — intentionally left dark.
+// they MUST leave this list.
 //   #20 → fatigueSetsAdjust into distributeGroupSets (getDailyWorkout.js gate)
 //   #26 → drift candidate → deload AA trigger (scheduleAdapterAggregate.builder.ts)
 //   #32 → LIFE_DIP suppresses the reactive deload (builder → deload/index.js)
-const KNOWN_DARK_ALLOWLIST = Object.freeze({
-  dp_auto_pivot_v1:
-    'proposeGoalPivot — pure goal-pivot proposer; the live render-surface (banner/' +
-    'modal consumer) is a UX moment DEFERRED for Daniel (registry §F6b). No live ' +
-    'isEnabled gate. fp-darkprimitives covers the logic at its unit seam.',
-});
+//
+// EMPTIED 2026-06-08 (#15 wiring): dp_auto_pivot_v1 was the LAST entry — its live
+// render-surface now ships. getGoalPivotProposal (engineWrappers.ts) gates on
+// isEnabled('dp_auto_pivot_v1') and feeds the GoalPivotBanner in the Progres
+// OBIECTIV zone (banner + Tier-3 confirm + on-accept setGoal). Per the stale-
+// allow-list guard it leaves the list → the allow-list is now EMPTY (every scoped
+// dp_*_v1 engine flag has a live consumer; nothing is deliberately dark).
+const KNOWN_DARK_ALLOWLIST = Object.freeze({});
 
 // Only the per-exercise / per-session ENGINE flags are in scope — the dimension-
 // rollout / orchestrator-strangler flags (aa_via_cluster, *_via_orchestrator,

@@ -69,6 +69,7 @@ import { useMuscleRecoveryGroups } from '../../../components/Progres/MuscleRecov
 import { MuscleBodyMap } from '../../../components/Progres/MuscleBodyMap';
 import { ObiectivCard } from '../../../components/Progres/ObiectivCard';
 import { ObiectivGoalCard } from '../../../components/Progres/ObiectivGoalCard';
+import { GoalPivotBanner } from '../../../components/Progres/GoalPivotBanner';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
 import { Sparkline } from '../../../components/pulse/Sparkline';
 import { Kicker } from '../../../components/pulse/Kicker';
@@ -173,6 +174,10 @@ export function Progres(): JSX.Element {
           are "your objective", co-located. */}
       <div data-testid="progres-zone-obiectiv" className="animate-card-rise delay-150">
         <ZoneHeading testId="progres-zone-obiectiv-heading">{t('progres.zone.obiectiv')}</ZoneHeading>
+        {/* #15 dp_auto_pivot_v1 — near-ceiling goal-pivot suggestion (flag OFF →
+            renders null → byte-identical). Sits atop the goal hub since accepting
+            it sets the goal the cards below display. */}
+        <GoalPivotBanner />
         <ObiectivCard />
         <ObiectivGoalCard />
       </div>

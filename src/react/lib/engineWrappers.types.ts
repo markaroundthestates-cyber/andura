@@ -271,3 +271,20 @@ export interface CoachCalibrationSignal {
 export interface CoachReturnSignal {
   missedDays: number; // 1..N scheduled training days earlier this week with no session
 }
+
+// Goal-pivot proposal (#15 dp_auto_pivot_v1) — emitted by getGoalPivotProposal()
+// ONLY when the flag is ON AND the engine proposes a pivot (a broad share of the
+// user's main lifts near their realistic ceiling + sustained global stagnation +
+// the pushBackTiers anti-spam cooldowns all clear); null otherwise (flag OFF /
+// not near ceiling / cooling down / cold start). The React side renders a Tier-2
+// banner + Tier-3 confirm and, on accept, sets the goal (no copy here).
+export interface GoalPivotProposal {
+  // Onboarding Goal ids the consumer can switch to (the wording's offered moves).
+  // 'masa' = mass/hypertrophy (→ hipertrofie volume), 'mentenanta' = maintenance
+  // (→ sanatate). Filtered against the user's CURRENT goal (never re-offers it).
+  targets: Array<'masa' | 'mentenanta'>;
+  share: number; // [0,1] share of main lifts classified near_ceiling
+  nearCount: number; // count of main lifts near ceiling
+  total: number; // total main lifts with usable data
+  stagnationWeeks: number; // sustained global stagnation (weeks)
+}

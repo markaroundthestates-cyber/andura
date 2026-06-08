@@ -299,6 +299,20 @@
     "line_one": "Bine ai revenit - am reechilibrat restul saptamanii dupa antrenamentul sarit. Fara stres, planul s-a adaptat.",
     "line_other": "Bine ai revenit - am reechilibrat restul saptamanii dupa cele {n} antrenamente sarite. Fara stres, planul s-a adaptat."
   },
+  "coachPivot": {
+    "ariaLabel": "Sugestie antrenor - schimba accentul antrenamentului",
+    "kicker": "O sugestie",
+    "banner": "Esti aproape de maximul tau de forta pe majoritatea exercitiilor - de aici greutatea urca tot mai greu. Vrei sa mutam accentul?",
+    "optionMasa": "Crestere musculara",
+    "optionMentenanta": "Mentinere",
+    "optionForta": "Raman pe forta",
+    "confirmMasa": "Trec pe crestere musculara? Iti ajustez: ceva mai multe repetari, mai mult volum, mai putina cautare de recorduri.",
+    "confirmMentenanta": "Trec pe mentinere? Iti pastrez progresul cu o incarcare mai usoara si constanta - fara cautare de recorduri.",
+    "confirmYes": "Da, schimba",
+    "confirmCancel": "Nu acum",
+    "whyCta": "De ce?",
+    "whyLine": "Esti aproape de plafonul tau natural pe cele mai multe exercitii principale, iar greutatile n-au mai crescut de cateva saptamani."
+  },
   "restOverlay": {
     "ariaLabel": "Pauza activa",
     "kicker": "Pauza",

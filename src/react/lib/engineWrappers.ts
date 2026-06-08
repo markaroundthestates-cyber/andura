@@ -44,6 +44,11 @@ import { whySummary } from '../../engine/whyEngine.js';
 import { evaluate as evaluateBN } from '../../engine/bayesianNutrition/index.js';
 import type { BayesianNutritionContext } from '../../engine/bayesianNutrition/index';
 import { detectGlobalStagnation } from '../../engine/stagnationDetector.js';
+import { proposeGoalPivot } from '../../engine/dp/autoPivot.js';
+import { ceilingE1RM } from '../../engine/dp/ceiling.js';
+import { resolveGoalId } from '../../engine/periodization/volumeLandmarks.js';
+import { isEnabled } from '../../util/featureFlags.js';
+import { DB } from '../../db.js';
 import { getAdherenceScore } from '../../engine/adherence.js';
 import { runProactiveChecks } from '../../engine/proactiveEngine.js';
 import {
@@ -65,6 +70,7 @@ import {
   readUserMaintenanceTDEE,
   readUserWeightKg,
   computeProteinTargetG,
+  getCurrentWeightKg,
 } from './userTdee';
 // Wave E4 — locale-aware muscle-group labels for getCoachTodayQuote so the
 // "Pectorals recovered since yesterday" line surfaces in EN under EN locale.
@@ -116,6 +122,7 @@ import type {
   CoachTodayQuote,
   CoachCalibrationSignal,
   CoachReturnSignal,
+  GoalPivotProposal,
 } from './engineWrappers.types';
 
 // Barrel re-exports — preserve IDENTICAL public API after the hygiene split.
@@ -138,6 +145,7 @@ export type {
   CoachTodayQuote,
   CoachCalibrationSignal,
   CoachReturnSignal,
+  GoalPivotProposal,
   CoachAdaptation,
   CoachAdaptationKind,
 } from './engineWrappers.types';
@@ -1082,4 +1090,202 @@ export function getReturnAfterMissSignal(now: number = Date.now()): CoachReturnS
     });
     return null;
   }
+}
+
+// ── Goal-pivot (#15 dp_auto_pivot_v1) — the LAST dark primitive's live consumer ──
+// proposeGoalPivot is a PURE goal-pivot proposer (autoPivot.js): when a broad share
+// of the user's MAIN lifts are near their realistic ceiling AND a sustained global
+// stagnation persists (they keep forcing PRs that won't come), it PROPOSES moving
+// off pure strength. The anti-spam cooldowns (28d rolling / 60d post-goal-shift /
+// 4-per-year cap) are reused VERBATIM via evaluateReprompt inside the engine. This
+// wrapper is the I/O boundary: it derives the per-lift mu+ceiling exactly like the
+// strength-forecast surface (goalForecast.ts) and threads the persisted re-prompt
+// bookkeeping (`dp-pivot-prompts`, the SYNC_KEY whose value is the goal-shift anchor;
+// phase-change-date records the NUTRITION phase, NOT goal, so it cannot double as it).
+
+const PIVOT_PROMPTS_KEY = 'dp-pivot-prompts';
+// How many distinct main lifts (by recent volume) we read for the population call —
+// the same recency window + lift surface the strength forecast uses (goalForecast.ts).
+const PIVOT_WINDOW_DAYS = 84;
+
+interface PivotPromptsRecord {
+  lastRepromptMs?: number;
+  lastConfirmMs?: number;
+  lastGoalShiftMs?: number;
+  repromptCountThisYear?: number;
+  // The calendar year the count belongs to — lets the 4-per-year cap roll over
+  // cleanly without a cron (read-time reset when the year changes).
+  repromptYear?: number;
+}
+
+function readPivotPrompts(): PivotPromptsRecord {
+  try {
+    const raw = DB.get(PIVOT_PROMPTS_KEY) as PivotPromptsRecord | null;
+    return raw && typeof raw === 'object' ? raw : {};
+  } catch {
+    return {};
+  }
+}
+
+function writePivotPrompts(rec: PivotPromptsRecord): void {
+  try {
+    DB.set(PIVOT_PROMPTS_KEY, rec);
+  } catch (e) {
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'writePivotPrompts' },
+    });
+  }
+}
+
+/**
+ * The live consumer of proposeGoalPivot (#15). Returns the proposal descriptor
+ * (banner targets + the near-ceiling evidence) ONLY when dp_auto_pivot_v1 is ON
+ * AND the engine proposes a pivot; null otherwise (flag OFF / not near ceiling /
+ * cooling down / cold start). FLAG OFF → returns null BEFORE any aggregation, so
+ * the live path is byte-identical (no detection runs). Read-only — persistence is
+ * the explicit record* actions on accept/decline/shown.
+ */
+export function getGoalPivotProposal(now: number = Date.now()): GoalPivotProposal | null {
+  // Flag gate FIRST — OFF → no aggregation, no proposal (byte-identical live path).
+  if (!isEnabled('dp_auto_pivot_v1')) return null;
+  try {
+    const sessions = useWorkoutStore.getState().sessionsHistory;
+    if (!Array.isArray(sessions) || sessions.length === 0) return null;
+
+    const data = useOnboardingStore.getState().data;
+    const bwKg = getCurrentWeightKg() ?? data.weight ?? 0;
+    if (!(bwKg > 0)) return null;
+    const sex = typeof data.sex === 'string' ? data.sex : 'm';
+    // Engine goal id the user is currently on (a target == current is dropped by
+    // proposeGoalPivot). resolveGoalId maps the onboarding vocab → engine vocab.
+    const currentGoalId =
+      typeof data.goal === 'string' ? resolveGoalId({ goal: data.goal }) : resolveGoalId({});
+
+    // Training age ≈ distinct training-day count (ceiling's ageFraction input) —
+    // the same monotone proxy goalForecast.ts uses.
+    const DAY_MS = 86400000;
+    const trainingAge = new Set(
+      sessions
+        .map((s) =>
+          Array.isArray(s.exercises) && s.exercises.length ? Math.floor((s.ts ?? 0) / DAY_MS) : null,
+        )
+        .filter((d): d is number => d !== null && d > 0),
+    ).size;
+
+    // Per-lift mu (best recent demonstrated e1RM) + ceiling, mirroring the
+    // strength-forecast derivation (recency-windowed, EN-canonical engineName for
+    // classifyPattern — the namekey lesson). mu = max estimated 1RM in-window per
+    // lift (the demonstrated proxy classifyPlateau expects).
+    const cutoff = now - PIVOT_WINDOW_DAYS * DAY_MS;
+    const muByLift = new Map<string, number>();
+    const engineKeyByLift = new Map<string, string>();
+    for (const session of sessions) {
+      if (!session.exercises) continue;
+      for (const ex of session.exercises) {
+        const name = ex.exerciseName;
+        if (typeof name !== 'string' || name.length === 0) continue;
+        if (!engineKeyByLift.has(name)) engineKeyByLift.set(name, ex.engineName || name);
+        for (const set of ex.sets) {
+          const ts = set.timestamp;
+          if (!Number.isFinite(ts) || ts < cutoff || ts > now) continue;
+          const oneRm = estimateOneRM(set.kg, set.reps);
+          if (oneRm <= 0) continue;
+          const prev = muByLift.get(name) ?? 0;
+          if (oneRm > prev) muByLift.set(name, oneRm);
+        }
+      }
+    }
+
+    const lifts = Array.from(muByLift.entries()).map(([name, mu]) => ({
+      ex: engineKeyByLift.get(name) || name,
+      mu,
+      ceiling: ceilingE1RM(engineKeyByLift.get(name) || name, bwKg, sex, trainingAge),
+    }));
+    if (lifts.length === 0) return null;
+
+    // Sustained global stagnation gate — the SAME detector the per-exercise
+    // stagnation banner uses (engine logs flattened EN-canonical).
+    const logs = flattenSessionsToEngineLogs(sessions);
+    const { maxStagnationWeeks } = detectGlobalStagnation(logs);
+
+    // Anti-spam bookkeeping — the persisted goal-shift anchor + cooldowns. The
+    // 4-per-year cap count is read-time-reset when the calendar year changes.
+    const stored = readPivotPrompts();
+    const thisYear = new Date(now).getFullYear();
+    const repromptCountThisYear =
+      stored.repromptYear === thisYear ? stored.repromptCountThisYear ?? 0 : 0;
+
+    const proposal = proposeGoalPivot({
+      lifts,
+      maxStagnationWeeks,
+      currentGoalId,
+      nowMs: now,
+      prompts: {
+        lastRepromptMs: stored.lastRepromptMs,
+        lastConfirmMs: stored.lastConfirmMs,
+        lastGoalShiftMs: stored.lastGoalShiftMs,
+        repromptCountThisYear,
+      },
+    });
+    if (!proposal) return null;
+
+    // Map the engine's pivot targets → the onboarding Goal ids the selector sets.
+    // The wording offers two productive moves: hypertrophy (masa → hipertrofie
+    // volume) + maintenance (mentenanta → sanatate). 'Raman pe forta' (decline) is
+    // a UI-only action (no goal change) handled by the consumer. Filter out the
+    // user's current onboarding goal so we never re-offer what they're already on.
+    const currentOnboardingGoal = typeof data.goal === 'string' ? data.goal : 'auto';
+    const targets = (['masa', 'mentenanta'] as const).filter((g) => g !== currentOnboardingGoal);
+    if (targets.length === 0) return null;
+
+    return {
+      targets: [...targets],
+      share: proposal.share,
+      nearCount: proposal.nearCount,
+      total: proposal.total,
+      stagnationWeeks: proposal.stagnationWeeks,
+    };
+  } catch (e) {
+    logger.warn('[engineWrappers] getGoalPivotProposal failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getGoalPivotProposal' },
+    });
+    return null;
+  }
+}
+
+/**
+ * Record that the pivot banner was SHOWN to the user (a re-prompt fired). Stamps
+ * lastRepromptMs (the 28d rolling anchor) + bumps the 4-per-year cap count. Called
+ * once when the banner first appears (the consumer guards against double-stamping).
+ */
+export function recordGoalPivotShown(now: number = Date.now()): void {
+  const stored = readPivotPrompts();
+  const thisYear = new Date(now).getFullYear();
+  const count = stored.repromptYear === thisYear ? stored.repromptCountThisYear ?? 0 : 0;
+  writePivotPrompts({
+    ...stored,
+    lastRepromptMs: now,
+    repromptCountThisYear: count + 1,
+    repromptYear: thisYear,
+  });
+}
+
+/**
+ * Record that the user ACCEPTED a pivot (goal changed). Stamps lastConfirmMs (21d
+ * post-confirm cooldown) + lastGoalShiftMs (60d post-goal-shift cooldown — the
+ * anchor phase-change-date cannot provide, as it tracks the nutrition phase).
+ */
+export function recordGoalPivotAccepted(now: number = Date.now()): void {
+  const stored = readPivotPrompts();
+  writePivotPrompts({ ...stored, lastConfirmMs: now, lastGoalShiftMs: now });
+}
+
+/**
+ * Record that the user DECLINED / dismissed ('Raman pe forta'). Stamps the 28d
+ * rolling re-prompt anchor (lastRepromptMs) so the prompt cools down without a
+ * goal change — the decline IS the cooldown.
+ */
+export function recordGoalPivotDeclined(now: number = Date.now()): void {
+  recordGoalPivotShown(now);
 }

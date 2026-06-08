@@ -58,9 +58,12 @@ const REQUIRED_ADAPTERS = [
   // No-shame return adapter — detects a same-week return-after-miss to surface
   // the warm "welcome back, the week rebalanced" line. Instrumented identically.
   'getReturnAfterMissSignal',
+  // Goal-pivot adapter (#15 dp_auto_pivot_v1) — reads proposeGoalPivot to surface
+  // the near-ceiling goal-pivot suggestion. Instrumented identically.
+  'getGoalPivotProposal',
 ] as const;
 
-const EXPECTED_CAPTURE_EXCEPTION_SITES = 17; // 11 Big-11 + getPatternsBanner extra sub-path + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare) + getWorkoutForDay (schedule day-preview) + getCalibrationMaturity (calibration honesty) + getReturnAfterMissSignal (no-shame return)
+const EXPECTED_CAPTURE_EXCEPTION_SITES = 19; // 11 Big-11 + getPatternsBanner extra sub-path + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare) + getWorkoutForDay (schedule day-preview) + getCalibrationMaturity (calibration honesty) + getReturnAfterMissSignal (no-shame return) + getGoalPivotProposal (#15 auto-pivot) + writePivotPrompts (#15 prompt-bookkeeping write fallback)
 
 describe('Sentry adapter coverage anti-drift gate (D063 LOCK V1)', () => {
   const source = readFileSync(ENGINE_WRAPPERS_PATH, 'utf-8');
@@ -120,12 +123,16 @@ describe('Sentry adapter coverage anti-drift gate (D063 LOCK V1)', () => {
     //      'MAINTENANCE' (faza neutra onesta cold-start, NU engine-adapter-fallback)
     //   - `resolveActivePhase`: localStorage JSON parse failure → goal-derived
     //      phase fallback (silent override absent, coherent pipeline preserved)
+    //   - `readPivotPrompts`: DB.get('dp-pivot-prompts') failure → {} (empty
+    //      bookkeeping = conservative; the proposal simply sees no cooldowns yet,
+    //      NU engine-adapter-fallback — the write path writePivotPrompts IS Sentry-wrapped)
     const PRIVATE_HELPERS_NO_SENTRY = [
       'buildSilentMmiContext',
       'getPhaseOverrideKcalToday',
       'readPainCdl',
       'detectAutoPhaseKey',
       'resolveActivePhase',
+      'readPivotPrompts',
     ];
 
     const lines = source.split(/\r?\n/);
