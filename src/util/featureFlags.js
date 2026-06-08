@@ -441,6 +441,17 @@ export const FLAGS = Object.freeze({
   // UNVERIFIED thresholds (spec §7) — Daniel/research review before flip.
   dp_acwr_readiness_v1: { rollout: 0, default: false },
 
+  // #30 weekly volume distribution by recovery (RISK MED — changes WHICH DAY a
+  // group is trained, path A scheduling; never kg). When ON,
+  // allocateWeeklyVolumeByRecovery re-skins the EXISTING M1 redistribution at the
+  // WEEK level: a group whose recovery window has not elapsed (partial/fatigued)
+  // defers its excess weekly budget to the groups that ARE fresh (room-to-MRV
+  // weighted), conserving the week's TOTAL volume + MEV/MRV bounds (never below MEV,
+  // never above MRV, never zeroes a trained group). OFF → the allocator is never
+  // invoked → the positional split + intra-day M1 path run as today → byte-identical
+  // composition. Even ON, an all-recovered / no-history week self-no-ops to a clone.
+  dp_weekly_recovery_alloc_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

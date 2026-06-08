@@ -45,6 +45,7 @@ import {
   applyEmphasisDeEmphasis,
   applyRecoveryToVolumeBudget,
   redistributeRecoveredVolumeToFreshSessionGroups,
+  allocateWeeklyVolumeByRecovery,
 } from './volumeAdaptation.js';
 import { deriveCoachAdaptations } from './coachAdaptations.js';
 import {
@@ -270,11 +271,27 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // applyRecoveryToVolumeBudget below: a recent class only EASES a fresh group
   // (recovered→partial ×0.80), never deepens an already-stressed one — so a hard
   // spin class (legs) makes today's leg budget lighter. No aerobic → identical.
-  const baseVolumeTargets = blueprints.periodization?.volume_target_pct ?? null;
+  const baseVolumeTargetsRaw = blueprints.periodization?.volume_target_pct ?? null;
   const recoveryLogs = flattenSessionsToRecoveryLogs(userState?.recentSessions);
   const aerobicSessions = Array.isArray(userState?.aerobicSessions)
     ? userState.aerobicSessions
     : undefined;
+
+  // ── F6a #30: weekly volume allocation by recovery (flag-gated, NO-OP OFF) ──
+  // RE-SKINS the EXISTING M1 redistribution at the WEEK level: a group whose
+  // recovery window has not elapsed (partial/fatigued) defers its excess weekly
+  // budget to the groups that ARE fresh (room-to-MRV weighted), conserving the
+  // week's total volume + MEV/MRV bounds. Behind dp_weekly_recovery_alloc_v1
+  // (default OFF) → the allocator is never invoked → baseVolumeTargets is the raw
+  // periodization budget → byte-identical positional split + intra-day M1 path.
+  // Even ON, an all-recovered / no-history week self-no-ops to a clone.
+  const baseVolumeTargets =
+    isEnabled('dp_weekly_recovery_alloc_v1') && baseVolumeTargetsRaw && recoveryLogs.length > 0
+      ? allocateWeeklyVolumeByRecovery(
+          baseVolumeTargetsRaw,
+          getRecoveryByGroup(recoveryLogs, undefined, date.getTime()),
+        )
+      : baseVolumeTargetsRaw;
 
   // ── M2: weakness amplifies REAL volume toward MRV (the substance, not just
   // reordering). Weak groups are layered, graceful (ADR 025):

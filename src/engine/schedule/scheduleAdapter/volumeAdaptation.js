@@ -247,3 +247,95 @@ export function redistributeRecoveredVolumeToFreshSessionGroups(
   }
   return out;
 }
+
+// ══ BUILD F6a #30 — weekly volume distribution by recovery (F6a spec §4) ══════
+// The intra-day redistribution above moves a fatigued group's freed volume to the
+// fresh groups TODAY's cluster trains. #30 lifts that SAME mechanism to a WEEK-
+// ahead allocation: a group whose recovery window has NOT elapsed (still partial/
+// fatigued) hands its excess weekly budget to the groups that ARE fresh — so the
+// week's set targets flow to the days a group is freshest, instead of wherever the
+// positional split lands them. It RE-SKINS the existing redistribution kernel; no
+// new redistribution math, no net volume (the freed total is conserved, MRV-capped,
+// never below MEV, never zeroes a trained group).
+//
+// NO-OP PASS-THROUGH CONTRACT (mirrors applyEmphasisDeEmphasis): the caller gates
+// this behind dp_weekly_recovery_alloc_v1 (default OFF) AND it self-no-ops when no
+// group is partial/fatigued (all-recovered / no history) → returns a clone → the
+// positional split + the EXISTING intra-day M1 path run exactly as today. Pure.
+//
+// @param {Object<string, number>|null|undefined} weeklyTargetsEN - Big-11 EN weekly budget
+// @param {{[group:string]: 'recovered'|'partial'|'fatigued'}} recoveryStateRO - RO recovery state
+// @returns {Object<string, number>|null} re-allocated EN budget (null/empty passes through)
+export function allocateWeeklyVolumeByRecovery(weeklyTargetsEN, recoveryStateRO) {
+  if (!weeklyTargetsEN || typeof weeklyTargetsEN !== 'object') return weeklyTargetsEN ?? null;
+  const state = recoveryStateRO && typeof recoveryStateRO === 'object' ? recoveryStateRO : {};
+
+  // Freed = the share of a not-yet-recovered group's weekly budget we defer to a
+  // fresher day (partial → 20%, fatigued → 40% — the SAME 0.80/0.60 recovery cut
+  // factors the intra-day path uses). Trim never takes a group below its MEV.
+  let freed = 0;
+  let freshWeightTotal = 0;
+  const freshGroupsRO = [];
+  const out = { ...weeklyTargetsEN };
+  const TRIM = { partial: 0.20, fatigued: 0.40 };
+  // Walk every RO group that maps into the budget.
+  for (const [roGroup, enKey] of Object.entries(BIG11_RO_TO_EN_MAP)) {
+    const current = out[enKey];
+    if (typeof current !== 'number' || !Number.isFinite(current) || current <= 0) continue;
+    const groupState = state[roGroup] ?? 'recovered';
+    const lm = ISRAETEL_BASELINES[enKey];
+    if (groupState === 'partial' || groupState === 'fatigued') {
+      const mev = lm && typeof lm.MEV === 'number' ? lm.MEV : 0;
+      const want = current * TRIM[groupState];
+      // never below MEV — the deferred amount is bounded by the room above MEV.
+      const give = Math.max(0, Math.min(want, current - mev));
+      if (give > 0) {
+        out[enKey] = current - give;
+        freed += give;
+      }
+    } else {
+      // weight a fresh group by its room-to-MRV so the deferred volume lands where
+      // there is the most recoverable headroom (proportional, MRV-capped below).
+      const room = lm && typeof lm.MRV === 'number' ? Math.max(0, lm.MRV - current) : 1;
+      freshGroupsRO.push(roGroup);
+      freshWeightTotal += room > 0 ? room : 0;
+    }
+  }
+
+  // Nothing deferred OR nowhere fresh to send it → conserve by returning the clone
+  // (the trims, if any, are reverted so total weekly volume is preserved exactly).
+  if (freed <= 0 || freshWeightTotal <= 0 || freshGroupsRO.length === 0) {
+    return { ...weeklyTargetsEN };
+  }
+
+  // Distribute the freed volume to fresh groups proportional to their room-to-MRV,
+  // each HARD-capped at MRV (a fresh group never exceeds its recoverable max).
+  let placed = 0;
+  for (const roGroup of freshGroupsRO) {
+    const enKey = BIG11_RO_TO_EN_MAP[roGroup] ?? roGroup;
+    const current = out[enKey];
+    if (typeof current !== 'number' || !Number.isFinite(current)) continue;
+    const lm = ISRAETEL_BASELINES[enKey];
+    const mrv = lm && typeof lm.MRV === 'number' ? lm.MRV : Infinity;
+    const room = Math.max(0, mrv - current);
+    const share = freed * (room / freshWeightTotal);
+    const add = Math.min(room, share);
+    out[enKey] = current + add;
+    placed += add;
+  }
+  // Conservation: any remainder that could not be placed (everyone at MRV) is
+  // returned to the trimmed groups so the week's total is never reduced.
+  if (placed < freed - 1e-9) {
+    const remainder = freed - placed;
+    // hand it back to the first trimmed group with headroom (simple, deterministic).
+    for (const [roGroup, enKey] of Object.entries(BIG11_RO_TO_EN_MAP)) {
+      const groupState = state[roGroup] ?? 'recovered';
+      const isTrimmed = groupState === 'partial' || groupState === 'fatigued';
+      if (isTrimmed && typeof out[enKey] === 'number') {
+        out[enKey] += remainder;
+        break;
+      }
+    }
+  }
+  return out;
+}
