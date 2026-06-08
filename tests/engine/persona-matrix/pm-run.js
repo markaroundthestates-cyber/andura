@@ -82,6 +82,9 @@ async function runPersona(persona, { flags }) {
   // with the offending exercise name, so the gate can assert a refused/contraindicated
   // PATTERN never appears for the injury/refusal personas.
   const movementsSeen = []; // { token, name }
+  // #82 — every exercise's coarse equipment_type, so the gate can assert an
+  // equipment-profile persona only ever gets lifts they can actually perform.
+  const equipmentSeen = []; // { equip, name }
   const injuryGroups = persona.pain
     ? { knee: ['picioare-quads', 'picioare-hamstrings'], lowerBack: ['spate'], shoulder: ['umeri'] }[persona.pain]
     : [];
@@ -103,6 +106,7 @@ async function runPersona(persona, { flags }) {
       if (LATERAL_RAISE_RE.test(name)) lateralRaisePresent = true;
       if (injuryGroups.includes(g)) injuryGroupExercises += 1;
       movementsSeen.push({ token: movementKey(name, meta).split('::')[1] ?? '', name });
+      equipmentSeen.push({ equip: meta.equipment_type ?? '', name });
       const isCompound = COMPOUND_RE.test(name);
       if (isCompound && firstCompoundIdx === -1) firstCompoundIdx = i;
       if (!isCompound && firstNonCompoundIdx === -1) firstNonCompoundIdx = i;
@@ -133,14 +137,14 @@ async function runPersona(persona, { flags }) {
     hardDaysPerWeek: persona.days ?? Number(persona.data.frequency),
   });
 
-  return { persona, weekly, days, lateralRaisePresent, injuryGroupExercises, movementsSeen, bfPct, realism };
+  return { persona, weekly, days, lateralRaisePresent, injuryGroupExercises, movementsSeen, equipmentSeen, bfPct, realism };
 }
 
 // ── band-check: principle-band acceptance per persona ──────────────────────
 // Returns { pass, findings[] }. Bands are SANE RANGES from the policy docs, not
 // a single gold — a coach varies. A finding = a real divergence (a fix item).
 function checkPersona(agg) {
-  const { persona, weekly, days, lateralRaisePresent, movementsSeen, realism } = agg;
+  const { persona, weekly, days, lateralRaisePresent, movementsSeen, equipmentSeen, realism } = agg;
   const findings = [];
   const trained = days.filter((d) => !d.rest);
   const exec = persona.data.experience;
@@ -251,6 +255,16 @@ function checkPersona(agg) {
       if (getExerciseMetadata(name).muscle_target_primary === 'umeri'
           && isExcludedMovement(name, token, excl)) {
         findings.push(`shoulder contraindication: "${name}" is an overhead-press/upright-row aggravator — must be excluded`);
+      }
+    }
+  }
+  // 14. #82 EQUIPMENT PROFILE — a home/DB-only persona must NEVER get a lift whose
+  //     equipment_type is outside their profile (bodyweight always allowed).
+  if (Array.isArray(persona.expectEquipment)) {
+    const ok = new Set([...persona.expectEquipment, 'bodyweight']);
+    for (const { equip, name } of equipmentSeen) {
+      if (!ok.has(equip)) {
+        findings.push(`equipment mismatch: "${name}" needs '${equip}' not in profile ${JSON.stringify(persona.expectEquipment)}`);
       }
     }
   }

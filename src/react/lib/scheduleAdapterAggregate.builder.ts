@@ -529,6 +529,14 @@ export function buildUserStateForPipeline(): {
       ...(Array.isArray(onboardingData.refusedPatterns) && onboardingData.refusedPatterns.length > 0
         ? { refusedPatterns: onboardingData.refusedPatterns }
         : {}),
+      // #82 explicit AVAILABLE equipment profile (coarse types, e.g.
+      // ['dumbbell','bodyweight'] for a home DB+bench+pull-up setup) → filters the
+      // pool to only what the user has. Pass-through of the persisted onboarding field.
+      // INPUT-CAPTURE BOUNDARY: the UI to set a home/DB-only profile is a follow-up;
+      // absent → omitted → the missing-picker path (byte-identical).
+      ...(Array.isArray(onboardingData.equipmentProfile) && onboardingData.equipmentProfile.length > 0
+        ? { equipmentProfile: onboardingData.equipmentProfile }
+        : {}),
       // Degrade safe-absent: only set when the estimate/timeline is real.
       ...(bfPct !== undefined ? { bfPct } : {}),
       trainingWeeks,

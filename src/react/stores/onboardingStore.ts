@@ -119,6 +119,17 @@ export interface OnboardingData {
    * Absent/empty → no exclusion (byte-identical).
    */
   refusedPatterns?: string[];
+  /**
+   * #82 explicit AVAILABLE equipment profile — coarse library equipment_type values
+   * the user HAS (subset of barbell|dumbbell|machine|cable|bodyweight|band). When
+   * non-empty it filters the selection pool to only these (bodyweight is always
+   * implicitly added) — the subtractive missing-equipment picker cannot express
+   * "home: dumbbells + bench + pull-up bar" cleanly. INPUT-CAPTURE BOUNDARY: the
+   * onboarding/profile UI to SET a home/DB-only profile is a follow-up; the filter is
+   * wired + tested and activates the moment it is populated. Absent/empty → the
+   * missing-picker path (byte-identical).
+   */
+  equipmentProfile?: string[];
 }
 
 /**

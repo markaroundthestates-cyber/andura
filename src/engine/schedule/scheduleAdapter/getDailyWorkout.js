@@ -109,8 +109,22 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
 
   // Compute available equipment — WP-4 selection uses COARSE equipment types
   // (library equipment_type), derived from the user's missing picker IDs.
+  // #82 EQUIPMENT PROFILE (fresh-eyes M5): a user with an explicit AVAILABLE
+  // equipment profile (e.g. home gym = ['dumbbell','bodyweight'] for DB+bench+pull-up)
+  // filters the pool to ONLY what they have — the subtractive missing-picker can't
+  // express "I only have dumbbells" cleanly. When user.equipmentProfile is a non-empty
+  // list of coarse types it REPLACES the missing-picker-derived availability (bodyweight
+  // is always implicitly available — added below). Absent/empty → the existing
+  // missing-picker path (byte-identical). INPUT-CAPTURE BOUNDARY: the onboarding UI to
+  // SET a home/DB-only profile is a follow-up; the filter is wired + tested now.
+  const profile = Array.isArray(userState?.user?.equipmentProfile)
+    ? userState.user.equipmentProfile.filter((t) => typeof t === 'string' && t.length > 0)
+    : [];
   const missingUserIds = getMissingEquipment();
-  const availableCoarse = availableCoarseTypes(missingUserIds);
+  const availableCoarse =
+    profile.length > 0
+      ? [...new Set([...profile, 'bodyweight'])] // bodyweight always performable
+      : availableCoarseTypes(missingUserIds);
 
   // Build EngineContext + invoke 8-adapter pipeline sequential strict
   const ctx = buildEngineContext(userState);
