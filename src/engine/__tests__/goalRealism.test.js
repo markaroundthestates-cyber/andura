@@ -15,6 +15,8 @@ import {
   labelLossRate,
   recommendedTimelineWeeks,
   detectUnrealisticTimeline,
+  detectUnrealisticGain,
+  gainRateForExperience,
   detectContradictoryGoals,
   detectUnwiseFrequency,
   evaluateGoalRealism,
@@ -138,6 +140,43 @@ describe('#74 detectUnrealisticTimeline — Daniel worked example 108→90/7wk',
   it('incomplete input → null', () => {
     expect(detectUnrealisticTimeline({ currentKg: 100, weeks: 7 })).toBeNull();
     expect(detectUnrealisticTimeline({})).toBeNull();
+  });
+});
+
+describe('#70-D4 detectUnrealisticGain — Catalin +8kg muscle/12wk', () => {
+  it('intermediate +8kg in 12wk → unrealistic gain reframe', () => {
+    const flag = detectUnrealisticGain({
+      goal: 'masa', currentKg: 95, targetKg: 103, weeks: 12, experience: 'intermediar',
+    });
+    expect(flag).not.toBeNull();
+    expect(flag.type).toBe('gain');
+    expect(flag.reframeKey).toBe('goalRealism.gain.unrealistic');
+    expect(flag.vars.gainKg).toBe(8);
+    expect(flag.vars.askedWeeks).toBe(12);
+    // realistic intermediate lean-gain ~0.5 kg/month → ~8/0.5 months ≈ 70 weeks
+    expect(flag.vars.realisticRateKgMo).toBe(0.5);
+    expect(flag.vars.realisticWeeks).toBeGreaterThan(12);
+  });
+  it('a plausible lean bulk (+2kg/12wk intermediate) → null (no nag)', () => {
+    expect(detectUnrealisticGain({
+      goal: 'masa', currentKg: 80, targetKg: 82, weeks: 12, experience: 'intermediar',
+    })).toBeNull();
+  });
+  it('a LOSS target (target < current) → null (the loss detector owns it)', () => {
+    expect(detectUnrealisticGain({
+      goal: 'masa', currentKg: 95, targetKg: 88, weeks: 12, experience: 'intermediar',
+    })).toBeNull();
+  });
+  it('non-masa goal → null', () => {
+    expect(detectUnrealisticGain({
+      goal: 'slabire', currentKg: 95, targetKg: 103, weeks: 12, experience: 'intermediar',
+    })).toBeNull();
+  });
+  it('experience scales the realistic gain rate', () => {
+    expect(gainRateForExperience('incepator')).toBe(1.0);
+    expect(gainRateForExperience('intermediar')).toBe(0.5);
+    expect(gainRateForExperience('avansat')).toBe(0.25);
+    expect(gainRateForExperience(undefined)).toBe(0.5);
   });
 });
 

@@ -964,6 +964,9 @@
       "recomp": "Sa pui muschi si sa slabesti in acelasi timp e posibil pentru tine acum (recompozitie) — dar numai daca slabirea e lenta. Daca le fortezi pe amandoua repede, se bat cap in cap. Tinem deficitul bland ca muschiul sa ramana.",
       "sequential": "Sa pui muschi si sa slabesti repede in acelasi timp rar merge cand esti deja slab — corpul alege una. Mai bine pe rand: slabesti pana la tinta intai, apoi un lean bulk. Sau tii greutatea constanta si faci recompozitie lent. Tu decizi."
     },
+    "gain": {
+      "unrealistic": "+{gainKg} kg in {askedWeeks} saptamani la ritmul asta e mai mult apa si grasime, nu muschi — muschiul real vine pe la {realisticRateKgMo} kg/luna. {gainKg} kg de muschi adevarat cer cam {realisticWeeks} saptamani. Iar sa pui atata si sa-ti apara si abdomenul se bat cap in cap: mai bine lean bulk lent, apoi definire. Tu decizi."
+    },
     "frequency": {
       "beginnerTooMany": "{requested} zile grele pe saptamana e mai mult decat poate recupera corpul tau inca — asa apar accidentarile si epuizarea. {sustainableHard} antrenamente grele plus cateva usoare construiesc mai mult, mai repede. Crestem treptat pe masura ce te adaptezi."
     }

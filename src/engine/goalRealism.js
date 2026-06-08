@@ -31,6 +31,24 @@ export const RATE_REALISTIC = 0.75;
 export const RATE_AGGRESSIVE = 1.0;
 export const RATE_VERY_AGGRESSIVE = 1.25;
 
+// ── Real-muscle GAIN rate bands (kg/month, spec §3 "Real muscle (lean, slower)") ──
+// #70-D4 — the loss detectors only rate-gate a LOSS; a too-fast muscle-GAIN ask
+// (Catalin: +8kg "muscle" + visible abs in 12 weeks) was uncaught. The policy:
+// real LEAN muscle gain is novice ~0.5-1.0, intermediate ~0.25-0.5, advanced
+// ~0.1-0.25 kg/MONTH. A scale target far above the realistic LEAN gain over the
+// deadline is mostly fat/water, not the "muscle + abs" the user pictures → reframe
+// to a realistic rate + a recomp/sequential framing (you can't add 8kg of MUSCLE
+// and reveal abs at once). Per-month; 1 month ≈ 4.345 weeks (avg). Pure data.
+export const GAIN_RATE_BEGINNER_KG_MO = 1.0;
+export const GAIN_RATE_INTERMEDIATE_KG_MO = 0.5;
+export const GAIN_RATE_ADVANCED_KG_MO = 0.25;
+export const WEEKS_PER_MONTH = 4.345;
+// How far above the realistic lean-gain ceiling an ask must sit to be flagged —
+// a small overshoot is within estimate noise + early "newbie water/glycogen", so
+// only a MATERIAL overshoot (≥1.5× the experience ceiling) reframes. Conservative
+// (don't nag a slightly-keen but plausible bulk).
+export const GAIN_UNREALISTIC_FACTOR = 1.5;
+
 // ── BF gate on the MAX sustainable rate (spec §4) ─────────────────────────
 //   M>25 / F>32      → default 1.0 / aggressive 1.25  (higher BF = more fat to
 //                       spend before muscle is at risk)
@@ -167,7 +185,7 @@ export const SUSTAINABLE_BEGINNER_HARD_DAYS = 3;
 
 /**
  * @typedef {Object} GoalRealismFlag
- * @property {'timeline'|'contradiction'|'frequency'} type
+ * @property {'timeline'|'gain'|'contradiction'|'frequency'} type
  * @property {RateLabel|string} label
  * @property {string} reframeKey  - i18n key (resolved EN/RO at the React boundary)
  * @property {Object<string, number|string>} vars - interpolation variables
@@ -229,6 +247,72 @@ export function detectUnrealisticTimeline(input = {}) {
       safeWeeksMax: tl.safeWeeksMax,
       aggressiveWeeksMin: tl.aggressiveWeeksMin,
       aggressiveWeeksMax: tl.aggressiveWeeksMax,
+    },
+  };
+}
+
+/**
+ * Realistic LEAN muscle-gain ceiling (kg/month) for an experience level (spec §3).
+ * Novice gains fastest, advanced slowest. Unknown → the intermediate rate (the
+ * sane middle). Pure.
+ *
+ * @param {string|null|undefined} experience - incepator/intermediar/avansat
+ * @returns {number} realistic lean-gain ceiling in kg/month
+ */
+export function gainRateForExperience(experience) {
+  const exp = typeof experience === 'string' ? experience.toLowerCase() : '';
+  if (exp === 'incepator') return GAIN_RATE_BEGINNER_KG_MO;
+  if (exp === 'avansat') return GAIN_RATE_ADVANCED_KG_MO;
+  return GAIN_RATE_INTERMEDIATE_KG_MO; // intermediar / unknown
+}
+
+/**
+ * Detect an unrealistic muscle-GAIN timeline (#70-D4). The loss timeline detector
+ * skips a gain target (targetKg > currentKg); this is its mirror. When the goal is
+ * muscle (masa) and the SCALE gain implied by (target - current) over the deadline
+ * sits MATERIALLY above the realistic LEAN-gain rate for the user's experience
+ * (spec §3), the ask ("+8kg muscle + abs in 12 weeks") is reframed: a realistic
+ * lean-gain timeline + the recomp/sequential truth (you can't add that much MUSCLE
+ * and reveal abs at once — the rest is fat/water). Ranges, not verdicts. Returns
+ * null for a loss/maintain target, a non-masa goal, or a plausible bulk. Pure.
+ *
+ * @param {GoalRealismInput} input
+ * @returns {GoalRealismFlag|null}
+ */
+export function detectUnrealisticGain(input = {}) {
+  const goal = typeof input.goal === 'string' ? input.goal.toLowerCase() : '';
+  if (goal !== 'masa') return null; // only a muscle-mass goal makes a gain-rate claim
+
+  const currentKg = Number(input.currentKg);
+  const targetKg = Number(input.targetKg);
+  const weeks = Number(input.weeks);
+  if (!Number.isFinite(currentKg) || currentKg <= 0) return null;
+  if (!Number.isFinite(targetKg) || targetKg <= 0) return null;
+  if (!Number.isFinite(weeks) || weeks <= 0) return null;
+
+  const gainKg = targetKg - currentKg; // positive = gain intent
+  if (gainKg <= 0) return null; // a loss/maintain target is the loss detector's job
+
+  const months = weeks / WEEKS_PER_MONTH;
+  const askedRateKgMo = gainKg / months;
+  const realisticRate = gainRateForExperience(input.experience);
+  // Only reframe a MATERIAL overshoot (≥1.5× the realistic lean-gain ceiling).
+  if (askedRateKgMo <= realisticRate * GAIN_UNREALISTIC_FACTOR) return null;
+
+  // Realistic weeks to gain THIS much LEAN mass at the experience ceiling — the
+  // honest "this is how long real muscle takes" window (rounded UP, longer/safer).
+  const realisticWeeks = Math.ceil((gainKg / realisticRate) * WEEKS_PER_MONTH);
+
+  return {
+    type: 'gain',
+    label: 'unrealistic',
+    reframeKey: 'goalRealism.gain.unrealistic',
+    vars: {
+      gainKg: Math.round(gainKg * 10) / 10,
+      askedWeeks: Math.round(weeks),
+      // realistic lean-gain rate per MONTH (one decimal for display)
+      realisticRateKgMo: Math.round(realisticRate * 100) / 100,
+      realisticWeeks,
     },
   };
 }
@@ -337,6 +421,7 @@ export function detectUnwiseFrequency(input = {}) {
 export function evaluateGoalRealism(input = {}) {
   return (
     detectUnrealisticTimeline(input) ??
+    detectUnrealisticGain(input) ??
     detectContradictoryGoals(input) ??
     detectUnwiseFrequency(input) ??
     null

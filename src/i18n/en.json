@@ -964,6 +964,9 @@
       "recomp": "Building muscle and losing fat at the same time is possible for you right now (a recomp) — but only if the cut is slow. Chasing both fast pulls against each other. We'll keep the deficit gentle so the muscle sticks.",
       "sequential": "Gaining muscle and losing fat fast at once rarely works once you're already lean — the body picks one. Better to do them in sequence: cut to your target first, then a lean bulk. Or keep weight steady and recomp slowly. Your call."
     },
+    "gain": {
+      "unrealistic": "+{gainKg} kg in {askedWeeks} weeks is mostly water and fat at that pace, not muscle — real muscle comes on around {realisticRateKgMo} kg/month. {gainKg} kg of actual muscle takes about {realisticWeeks} weeks. And gaining that much while revealing abs pulls in opposite directions: better to lean-bulk slowly, then cut. Your call."
+    },
     "frequency": {
       "beginnerTooMany": "{requested} hard days a week is more than your body can recover from yet — that's how injuries and burnout start. {sustainableHard} hard sessions plus a couple of light fillers will build more, faster. We can ramp up as you adapt."
     }
