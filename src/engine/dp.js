@@ -13,6 +13,7 @@ import { sanityCheckSet } from './dp/anomalyGuard.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
 import { classifyAndIntervene } from './dp/plateauIntervention.js';
 import { temperamentBias, temperamentBiasFromLogs, saveTemperament, GLOBAL_KEY as TEMPERAMENT_GLOBAL_KEY } from './dp/temperament.js';
+import { shouldProbe, probeSet } from './dp/activeProbing.js';
 import { detectStagnation } from './stagnationDetector.js';
 import { getUserConfig } from '../config/user.js';
 import { t } from '../i18n/index.js';
@@ -812,6 +813,32 @@ export const DP = {
     const kalmanKg = this._kgFromE1RM(post.mu, floorReps);
     const rawKg = this._demonstratedWorkingW_e1rm(ex, floorReps);
     return Math.max(kalmanKg, rawKg);
+  },
+
+  // #1/H — the posterior UNCERTAINTY (sigma) for one exercise, recomputed from the
+  // same e1RM observation stream _kalmanDemoW folds (deterministic, no DB write).
+  // The active-probing policy reads this: a WIDE sigma (new lift / long layoff) is
+  // the trigger for a single calibration set. Returns null when e1RM-ineligible or
+  // no usable observation (cold-start path → no probe).
+  /** @param {string} ex @returns {number|null} */
+  _posteriorSigma(ex) {
+    if (!this._e1rmEligible(ex)) return null;
+    const logs = this.getLogs(ex, 12); // newest-first
+    const obs = [];
+    for (let i = logs.length - 1; i >= 0; i--) { // oldest-first
+      const l = logs[i];
+      const w = Number(l.w);
+      if (!Number.isFinite(w) || w <= 0) continue;
+      const reps = typeof l.reps === 'string' ? parseInt(l.reps, 10) : Number(l.reps);
+      if (!Number.isFinite(reps)) continue;
+      const rpe = Number(l.rpe) || 7;
+      const e = this.e1RMForSet(w, reps, rpe, ex);
+      if (e == null) continue;
+      const failedShort = rpe >= 8.5;
+      obs.push({ e1rm: e, ts: Number(l.ts) || 0, failedShort });
+    }
+    const post = updatePosterior(null, obs);
+    return post && Number.isFinite(post.sigma) ? post.sigma : null;
   },
 
   // The PR-floor / find-your-weight demonstrated load. Resolution order (each flag
@@ -2101,6 +2128,36 @@ export const DP = {
     }
 
     result.repsRange = `${rLow}–${rHigh}`;
+
+    // ── #1/H ACTIVE PROBING (dp_active_probing_v1, default OFF) ──────────────────
+    // When the Kalman posterior is WIDE (sigma > threshold — new lift / long
+    // layoff), the user is FRESH (readiness >= HIGH), and the last set was not hard,
+    // OFFER a single deliberate calibration set (slightly heavier, bounded by the
+    // ceiling + ego-cap). It is a DESCRIPTOR only — result.kg is NOT changed (the
+    // consumer offers the probe as an explicit opt-in set), so flag-ON leaves the
+    // main prescription byte-identical. EXEMPT during a return-deload comeback
+    // (never probe on the way back). Needs dp_strength_kalman_v1 for sigma →
+    // flag-OFF (or no posterior) → no probe → byte-identical legacy.
+    if (isEnabled('dp_active_probing_v1') && !result.returnDeload
+        && Number.isFinite(result.kg) && result.kg > 0) {
+      const sigma = this._posteriorSigma(ex);
+      const lastRpe = Number(this.getState(ex).lastRPE);
+      if (shouldProbe({ sigma, readinessScore, lastRpe: Number.isFinite(lastRpe) ? lastRpe : null })) {
+        const ceilKg = this._ceilingKg(ex, rTarget);
+        const nextStep = getNextWeight(result.kg, ex);
+        const probeKg = this.roundToStep(probeSet(result.kg, ceilKg, nextStep), ex);
+        // Only surface a probe that is a REAL step above the working load (on a
+        // coarse stack the bounded overload can round back to the same rung → skip).
+        if (probeKg > result.kg) {
+          result.activeProbe = {
+            kg: probeKg,
+            reps: rTarget,
+            sigma,
+            note: 'Set de calibrare — da tot ce poti, ne ajuta sa te citim corect.',
+          };
+        }
+      }
+    }
 
     return result;
   }
