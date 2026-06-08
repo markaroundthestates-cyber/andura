@@ -73,6 +73,15 @@ function readPainCdl(): PainCdlEntry[] | undefined {
 // (getMuscleState) filters out rows without a weight (`w`), so emit ex + ts +
 // w + reps exactly like the real adapter does (NOT just ex+ts, or every group
 // reads 'recovered').
+//
+// CORRECTNESS (#78, Daniel live bug 2026-06-08): recovery must count ONLY sets
+// the user ACTUALLY PERFORMED, never prescribed/skipped ones. A performed set
+// carries a real execution timestamp (logSet stamps Date.now(); PostRpe
+// preserves it) AND a real load (kg > 0). A prescribed-but-not-done set — or any
+// cloud-imported / malformed breakdown that lacks an execution stamp — has
+// timestamp 0/absent and must NOT make a muscle glow "trained". The engine's
+// exp-decay already nulls a ts=0 row to ~0, but we filter it out explicitly at
+// the source so the mannequin can never report a skipped session as trained.
 function flattenSessionsToLogs(
   sessions: ReadonlyArray<{
     exercises?: ReadonlyArray<{
@@ -87,6 +96,11 @@ function flattenSessionsToLogs(
     if (!session.exercises) continue;
     for (const ex of session.exercises) {
       for (const set of ex.sets) {
+        // Performed-only gate: a real performed set has a positive execution
+        // timestamp and a real load. Skip anything missing either (prescribed /
+        // skipped / malformed) so recovery never glows for a non-performed set.
+        if (!(Number.isFinite(set.timestamp) && set.timestamp > 0)) continue;
+        if (!(Number.isFinite(set.kg) && set.kg > 0)) continue;
         // Engine group-resolution keys on the ENGLISH canonical name; engineName
         // with display fallback for legacy breakdowns (Daniel P0 2026-06-05).
         logs.push({ ex: ex.engineName ?? ex.exerciseName, ts: set.timestamp, w: set.kg, reps: set.reps });

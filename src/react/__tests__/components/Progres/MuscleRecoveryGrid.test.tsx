@@ -72,6 +72,102 @@ describe('MuscleRecoveryGrid', () => {
     expect(['partial', 'fatigued']).toContain(state);
   });
 
+  it('skipped/prescribed-only session (no execution timestamp) does NOT glow (#78)', () => {
+    // Daniel live bug 2026-06-08: schedule today → remove/skip → the mannequin
+    // still showed those muscles TRAINED. A prescribed-but-not-performed set
+    // carries no real execution timestamp (timestamp 0 / absent). It must NOT
+    // make a group glow — recovery counts only sets the user actually performed.
+    setSessions([
+      {
+        title: 'Piept',
+        meta: '',
+        ts: NOW,
+        exercises: [
+          {
+            exerciseId: 'incline-db-press',
+            exerciseName: 'Incline DB Press',
+            totalVolume: 0,
+            peakOneRM: 0,
+            // Prescribed plan sets — real load but timestamp 0 (never performed).
+            sets: [
+              { kg: 30, reps: 8, rating: 'greu', timestamp: 0 },
+              { kg: 30, reps: 8, rating: 'greu', timestamp: 0 },
+            ],
+          },
+          {
+            exerciseId: 'flat-db-press',
+            exerciseName: 'Flat DB Press',
+            totalVolume: 0,
+            peakOneRM: 0,
+            sets: [{ kg: 32, reps: 8, rating: 'greu', timestamp: 0 }],
+          },
+        ],
+      },
+    ]);
+    render(<MuscleRecoveryGrid />);
+    // Every Big-11 group stays 'recovered' — no skipped set leaked into recovery.
+    for (const group of BIG11_GROUPS) {
+      expect(
+        screen.getByTestId(`recovery-cell-${group}`),
+      ).toHaveAttribute('data-recovery-state', 'recovered');
+    }
+  });
+
+  it('performed session glows but a skipped one in the same history does not (#78)', () => {
+    // Mixed history: one genuinely-performed chest session (real timestamps) +
+    // one skipped LEG session (prescribed sets, timestamp 0). Chest must glow;
+    // the skipped leg work must leave legs 'recovered'.
+    setSessions([
+      {
+        title: 'Piept',
+        meta: '',
+        ts: NOW,
+        exercises: [
+          {
+            exerciseId: 'incline-db-press',
+            exerciseName: 'Incline DB Press',
+            totalVolume: 0,
+            peakOneRM: 0,
+            sets: [
+              { kg: 30, reps: 8, rating: 'greu', timestamp: NOW - 2 * HOUR },
+              { kg: 30, reps: 8, rating: 'greu', timestamp: NOW - 2 * HOUR },
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Picioare',
+        meta: '',
+        ts: NOW,
+        exercises: [
+          {
+            exerciseId: 'leg-press',
+            // Real engine key (EXERCISE_MUSCLES['Leg Press'] primary quad+glute)
+            // so this case proves the PERFORMED-FILTER keeps legs recovered, not
+            // an unknown-exercise no-op. Performed, this WOULD glow quads.
+            exerciseName: 'Leg Press',
+            engineName: 'Leg Press',
+            totalVolume: 0,
+            peakOneRM: 0,
+            sets: [
+              { kg: 100, reps: 5, rating: 'greu', timestamp: 0 },
+              { kg: 100, reps: 5, rating: 'greu', timestamp: 0 },
+            ],
+          },
+        ],
+      },
+    ]);
+    render(<MuscleRecoveryGrid />);
+    // Performed chest → stressed.
+    expect(['partial', 'fatigued']).toContain(
+      screen.getByTestId('recovery-cell-piept').getAttribute('data-recovery-state'),
+    );
+    // Skipped legs → still recovered (no glow from prescribed-only sets).
+    expect(
+      screen.getByTestId('recovery-cell-picioare-quads'),
+    ).toHaveAttribute('data-recovery-state', 'recovered');
+  });
+
   it('does NOT print a fabricated per-muscle percentage (data honesty)', () => {
     // The engine returns a discrete state, not a %. The cell must not surface a
     // numeric "NN%" measurement — only the state label + color encode recovery.
