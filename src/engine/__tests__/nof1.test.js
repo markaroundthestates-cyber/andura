@@ -208,3 +208,114 @@ describe('dp_nof1_v1 — consumer setsAdjust bias', () => {
     localStorage.removeItem('_devFlags');
   });
 });
+
+// ── LIVE arm-scheduler (DP.stepNof1Experiment) — the DEFERRED half now wired ──
+// Synthetic multi-session data: an ESTABLISHED, climbing lift runs arm A (N
+// sessions) → arm B (N) → a winner is kept that biases future set count. The
+// guardrails (CUT / beginner / one-at-a-time) each veto a start; an inconclusive
+// pair keeps the NULL preference; flag-OFF is byte-identical (nothing scheduled).
+describe('DP.stepNof1Experiment — live arm-scheduling', () => {
+  // An ESTABLISHED, confidently-CLIMBING lift: >= NOF1_MIN_TRAINING_AGE distinct
+  // days of rising e1RM so _trainingAge clears the bar AND _trendDir is confident.
+  function seedEstablished() {
+    const logs = [];
+    const n = NOF1_MIN_TRAINING_AGE + 4;
+    for (let i = 0; i < n; i++) {
+      logs.push({ ex: EX, w: 40 + i * 2.5, reps: 10, rpe: 7.5, ts: BASE + i * DAY });
+    }
+    localStorage.setItem('logs', JSON.stringify(logs));
+  }
+  const MAINT = { phaseToken: 'MAINTENANCE', isBeginner: false };
+
+  beforeEach(() => { localStorage.clear(); seedEstablished(); });
+
+  it('STARTS an experiment (arm A) on the first eligible logged lift', () => {
+    const r = DP.stepNof1Experiment([EX], MAINT);
+    expect(r.action).toBe('start');
+    expect(r.arm).toBe(NOF1_ARMS[0]);
+    expect(loadExperiment()?.exercise).toBe(EX);
+    expect(loadExperiment()?.arm).toBe(NOF1_ARMS[0]);
+  });
+
+  it('advances the arm-A counter only when the lift is trained that session', () => {
+    DP.stepNof1Experiment([EX], MAINT);                 // start (counter 0)
+    const skipped = DP.stepNof1Experiment(['Other Lift'], MAINT); // not trained
+    expect(skipped.action).toBe('none');
+    expect(loadExperiment()?.sessionsInArm).toBe(0);    // unchanged
+    const adv = DP.stepNof1Experiment([EX], MAINT);     // trained → advance
+    expect(adv.action).toBe('advance');
+    expect(loadExperiment()?.sessionsInArm).toBe(1);
+  });
+
+  it('runs arm A → switches to arm B → decides a winner that biases future sets', () => {
+    DP.stepNof1Experiment([EX], MAINT); // start, counter 0
+    // Finish arm A's block: NOF1_BLOCK_SESSIONS advances (counter 0→1→2, then the
+    // 3rd call's inArm clears the block → switch to arm B).
+    for (let i = 0; i < NOF1_BLOCK_SESSIONS; i++) DP.stepNof1Experiment([EX], MAINT);
+    expect(loadExperiment()?.arm).toBe(NOF1_ARMS[1]); // switched to arm B
+    expect(loadExperiment()?.slopeArmA).not.toBeNull(); // arm-A slope recorded
+    // Make arm B's measured window FLAT (a plateau) so it differs from the
+    // climbing arm A → a confident, conclusive winner ('volume').
+    const flat = [];
+    for (let i = 0; i < 6; i++) flat.push({ ex: EX, w: 60, reps: 10, rpe: 7.5, ts: BASE + (100 + i) * DAY });
+    localStorage.setItem('logs', JSON.stringify(flat));
+    let last;
+    for (let i = 0; i < NOF1_BLOCK_SESSIONS; i++) last = DP.stepNof1Experiment([EX], MAINT);
+    expect(last.action).toBe('decide');
+    expect(loadExperiment()).toBeNull();               // slot freed (one at a time)
+    const pref = loadPreference(EX);
+    // A decided preference (volume, since climbing arm A out-sloped flat arm B)
+    // now biases the lift via the existing consumer (+1 set).
+    expect(pref?.arm).toBe('volume');
+    expect(nof1SetBias(pref)).toBe(NOF1_SET_BIAS);
+  });
+
+  it('NEVER experiments in a CUT (a deficit confounds)', () => {
+    const r = DP.stepNof1Experiment([EX], { phaseToken: 'CUT', isBeginner: false });
+    expect(r.action).toBe('none');
+    expect(loadExperiment()).toBeNull();
+  });
+
+  it('NEVER experiments for a beginner (no stable baseline)', () => {
+    const r = DP.stepNof1Experiment([EX], { phaseToken: 'MAINTENANCE', isBeginner: true });
+    expect(r.action).toBe('none');
+    expect(loadExperiment()).toBeNull();
+  });
+
+  it('only ONE lift at a time — a second eligible lift cannot start while one runs', () => {
+    DP.stepNof1Experiment([EX], MAINT); // EX experiment now in flight
+    // Even a fully-eligible OTHER lift logged the same session cannot start one.
+    const other = 'Leg Press';
+    const r = DP.stepNof1Experiment([other], MAINT);
+    expect(r.action).toBe('none');     // the in-flight EX is not trained here
+    expect(loadExperiment()?.exercise).toBe(EX); // still EX, untouched
+  });
+
+  it('an inconclusive A/B keeps the NULL preference (reversible default)', () => {
+    DP.stepNof1Experiment([EX], MAINT); // start
+    for (let i = 0; i < NOF1_BLOCK_SESSIONS; i++) DP.stepNof1Experiment([EX], MAINT); // → arm B
+    // Leave the SAME climbing logs → arm B measures ~the same slope as arm A →
+    // the diff is within the noise band → decideWinner returns null.
+    let last;
+    for (let i = 0; i < NOF1_BLOCK_SESSIONS; i++) last = DP.stepNof1Experiment([EX], MAINT);
+    expect(last.action).toBe('decide');
+    expect(last.arm).toBeNull();         // inconclusive
+    expect(loadPreference(EX)).toBeNull(); // NULL preference kept → today's behavior
+  });
+
+  it('does nothing on an empty session', () => {
+    expect(DP.stepNof1Experiment([], MAINT).action).toBe('none');
+    expect(loadExperiment()).toBeNull();
+  });
+
+  it('a non-established lift never starts an experiment', () => {
+    // Only 2 distinct days → trainingAge below NOF1_MIN_TRAINING_AGE.
+    localStorage.setItem('logs', JSON.stringify([
+      { ex: EX, w: 40, reps: 10, rpe: 7.5, ts: BASE },
+      { ex: EX, w: 42.5, reps: 10, rpe: 7.5, ts: BASE + DAY },
+    ]));
+    const r = DP.stepNof1Experiment([EX], MAINT);
+    expect(r.action).toBe('none');
+    expect(loadExperiment()).toBeNull();
+  });
+});

@@ -8,7 +8,16 @@ import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
 import { updatePosterior, savePosterior, loadPosterior, trendDirection } from './dp/strengthKalman.js';
-import { loadPreference as loadNof1Preference, nof1SetBias } from './dp/nof1.js';
+import {
+  loadPreference as loadNof1Preference,
+  nof1SetBias,
+  loadExperiment as loadNof1Experiment,
+  saveExperiment as saveNof1Experiment,
+  savePreference as saveNof1Preference,
+  isEligibleForExperiment as isNof1Eligible,
+  advanceExperiment as advanceNof1Experiment,
+  NOF1_ARMS,
+} from './dp/nof1.js';
 import { ceilingE1RM, gainDecay, deficitClimbFactor, tendonLoadRateCap } from './dp/ceiling.js';
 import { populationPriorE1RM } from './dp/populationPrior.js';
 import { sanityCheckSet, logOutlier } from './dp/anomalyGuard.js';
@@ -965,6 +974,74 @@ export const DP = {
       obs.push({ e1rm: e, ts: Number(l.ts) || 0, failedShort });
     }
     return trendDirection(null, obs);
+  },
+
+  // ══ BUILD F6c #34 — N-of-1 LIVE arm-scheduler (F6c spec §5d) ════════════════
+  // The DEFERRED live half: advancing the in-flight experiment by ONE on each real
+  // session completion + sourcing the per-arm slope from the live loop. Called once
+  // per session (the persist/finish seam, workoutStore.logic.persistSessionLogs)
+  // ONLY when dp_nof1_v1 is ON; OFF → never invoked → no experiment is ever
+  // scheduled, the preference is never written → byte-identical (the OFF-equivalent).
+  //
+  // The pure decision logic is REUSED verbatim (isEligibleForExperiment / the guards,
+  // advanceExperiment, decideWinner inside it); this method is the THIN, reviewable
+  // boundary that owns ONLY the DB reads (the in-flight state, the per-arm #31 slope
+  // via _trendDir, the posterior sigma via _posteriorConfidence) + the persistence.
+  //
+  // GUARDRAILS (the safety envelope — all enforced through isEligibleForExperiment +
+  // the design): never in a CUT (phaseToken), never a beginner (isBeginner), never
+  // >1 lift at once (a single in-flight state + experimentRunning guard), always
+  // reversible (an inconclusive decision keeps the NULL preference = today's
+  // behavior). The bias is SET-COUNT only (±1, clamped downstream) so an arm can
+  // never produce an unsafe load — the ego/anomaly caps still own the kg.
+  //
+  // @param {ReadonlyArray<string>} loggedExNames EN-canonical lifts logged THIS session
+  // @param {{ phaseToken?:string|null, isBeginner?:boolean }} [ctx]
+  // @returns {{action:'advance'|'switch'|'decide'|'start'|'none', exercise?:string, arm?:string|null}}
+  stepNof1Experiment(loggedExNames, ctx) {
+    const names = Array.isArray(loggedExNames)
+      ? loggedExNames.filter((n) => typeof n === 'string' && n)
+      : [];
+    if (names.length === 0) return { action: 'none' };
+    const phaseToken = (ctx && ctx.phaseToken) || null;
+    const isBeginner = !!(ctx && ctx.isBeginner);
+
+    const running = loadNof1Experiment();
+    // ── An experiment is already in flight (one lift at a time) ──────────────
+    if (running) {
+      // Only advance when THIS session actually trained the experiment's lift —
+      // a session that skipped it adds no arm observation (keeps the block clean).
+      if (!names.includes(running.exercise)) return { action: 'none' };
+      const slope = this._trendDir(running.exercise).slope;
+      const sigma = this._posteriorConfidence(running.exercise).sigma;
+      const { next, decided } = advanceNof1Experiment(running, slope, sigma || 0);
+      if (decided) {
+        // Both arms measured → keep the winner (or the NULL = reversible default).
+        saveNof1Preference(running.exercise, decided);
+        saveNof1Experiment(null); // free the single slot (one lift at a time)
+        return { action: 'decide', exercise: running.exercise, arm: decided.arm };
+      }
+      saveNof1Experiment(next);
+      const action = next && next.arm !== running.arm ? 'switch' : 'advance';
+      return { action, exercise: running.exercise, arm: next ? next.arm : null };
+    }
+
+    // ── No experiment running → start one on the FIRST eligible logged lift ───
+    for (const ex of names) {
+      const eligible = isNof1Eligible({
+        engineName: ex,
+        trainingAge: this._trainingAge(ex),
+        confidentTrend: this._trendDir(ex).confident,
+        isBeginner,
+        energyPhase: phaseToken,
+        experimentRunning: false,        // verified null above
+        hasPreference: loadNof1Preference(ex) != null,
+      });
+      if (!eligible) continue;
+      saveNof1Experiment({ exercise: ex, arm: NOF1_ARMS[0], sessionsInArm: 0, slopeArmA: null });
+      return { action: 'start', exercise: ex, arm: NOF1_ARMS[0] };
+    }
+    return { action: 'none' };
   },
 
   // The PR-floor / find-your-weight demonstrated load. Resolution order (each flag

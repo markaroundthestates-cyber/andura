@@ -16,6 +16,8 @@ import { distillAndPersistBehaviorTuning } from '../../engine/dp/behaviorDistill
 import { debugLog } from '../lib/debugLog';
 import { DP } from '../../engine/dp.js';
 import { resolveCanonical } from '../../engine/exerciseAliases.js';
+import { useOnboardingStore } from './onboardingStore';
+import { experienceToEngine } from '../lib/scheduleAdapterAggregate.session';
 import type {
   SessionIntensityMod,
   EnergyLight,
@@ -260,6 +262,24 @@ export function persistSessionLogs(
     // distiller (only `rec`/`log` semantic events feed it).
     if (isEnabled('dp_behavior_distill_v1')) {
       void distillAndPersistBehaviorTuning(() => debugLog.snapshot());
+    }
+    // F6c #34 — advance the live N-of-1 self-experiment by ONE on this session
+    // completion (flag dp_nof1_v1, default OFF → skipped → byte-identical: no
+    // experiment is ever scheduled + the preference is never written). Same
+    // authoritative per-session write site as the learners above. DP owns the
+    // signal reads (the in-flight state, the per-arm #31 slope, the posterior
+    // sigma) + the persistence; this seam supplies ONLY the lifts logged this
+    // session (EN-canonical, from `newEntries[].ex`) + the two guardrail inputs
+    // it can't read engine-side: the resolved nutrition phase (CUT confounds) +
+    // the onboarding experience (a beginner has no stable baseline). Quota-
+    // guarded + fail-silent inside the try.
+    if (isEnabled('dp_nof1_v1')) {
+      const loggedExNames = [...new Set(newEntries.map((e) => e.ex).filter(Boolean))];
+      const experience = experienceToEngine(useOnboardingStore.getState().data.experience);
+      DP.stepNof1Experiment(loggedExNames, {
+        phaseToken: resolveActivePhase(),
+        isBeginner: experience === 'beginner',
+      });
     }
   } catch {
     // Soft-fail — storage quota / SSR jsdom edge. Engine adapters tolerate
