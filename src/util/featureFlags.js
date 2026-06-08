@@ -401,6 +401,23 @@ export const FLAGS = Object.freeze({
   // F_emphasis_specialization_spec.md.
   dp_emphasis_specialization_v1: { rollout: 0, default: false },
 
+  // ── F6a Recovery/Fatigue-deepening cluster (engine-wiring 2026-06-08) — pure
+  // signal detectors on top of the F3 substrate. Each defaults OFF (rollout 0) →
+  // flag-OFF the live per-exercise prescription is BYTE-IDENTICAL (the
+  // calibration-sim hash + golden gate hold). Flip ON is a human gate (Daniel)
+  // AFTER reviewing the sim A/B. See
+  // _ENGINE_WIRING_2026-06-07/F6a_recovery_fatigue_spec.md.
+
+  // #26 sub-recovery from rating drift (RISK LOW — pure log read; narrates first,
+  // never touches kg). When ON, detectSubRecoveryDrift flags EARLY systemic
+  // under-recovery (greu-share rising at a matched working load across sessions,
+  // or e1RM quietly suppressed at flat kg over >=2 muscle groups). The deload-
+  // TIMING tier (feed a new candidate into the AA trigger) is DEFERRED behind the
+  // PARTIAL deload-telemetry boundary (spec §7) — this build ships the pure
+  // detector + the narration read only. OFF → the detector is never invoked →
+  // byte-identical. Degrades to rating-drift-only when dp_e1rm_v1 is OFF.
+  dp_subrecovery_drift_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'
