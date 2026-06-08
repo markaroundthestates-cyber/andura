@@ -114,6 +114,7 @@ export const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs',
   'dp-pivot-prompts', // dp-pivot-prompts — F6b V4 #15 goal-pivot re-prompt anti-spam bookkeeping (fixed-key object {lastRepromptMs,lastConfirmMs,lastGoalShiftMs,repromptCountThisYear}); the goal-shift anchor evaluateReprompt expects (phase-change-date records NUTRITION phase, NOT goal); per-UID, durable
   'dp-nof1-preference', // dp-nof1-preference — F6c #34 per-exercise N-of-1 kept preference (object engineName -> {arm:'volume'|'intensity',decidedTs,slopeA,slopeB}); name-keyed object-merge sync (in NAME_KEYED_SYNC_KEYS), learned per-UID, durable across sessions/devices
   'dp-nof1-experiment', // dp-nof1-experiment — F6c #34 single in-flight experiment state (fixed-key object {exercise,arm,sessionsInArm,slopeArmA}); only ONE lift at a time; exercise NAME lives in a VALUE field (Firebase-safe — NOT a key), so NOT name-keyed; per-UID, durable
+  'dp-behavior-tuning', // dp-behavior-tuning — #59 D107 behavioral-log distillation → per-user tuning (fixed-key object {ratingRirOffset:{offset,n}}); a GLOBAL per-user rating-semantic offset (NOT name-keyed, like dp-pivot-prompts); object-merge sync, learned per-UID, durable across sessions/devices
 ];
 
 // RTDB key sanitizer — Firebase Realtime Database forbids `. $ # [ ] /` in node

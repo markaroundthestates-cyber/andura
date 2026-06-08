@@ -16,6 +16,7 @@ import { quarantineSet, isQuarantined } from './dp/logQuarantine.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
 import { classifyAndIntervene } from './dp/plateauIntervention.js';
 import { temperamentBias, temperamentBiasFromLogs, saveTemperament, GLOBAL_KEY as TEMPERAMENT_GLOBAL_KEY } from './dp/temperament.js';
+import { behaviorRirOffset } from './dp/behaviorDistill.js';
 import { shouldProbe, probeSet } from './dp/activeProbing.js';
 import { chooseCandidate } from './dp/mpc.js';
 import { deriveLoadTransition } from './dp/loadTransition.js';
@@ -587,9 +588,16 @@ export const DP = {
     else if (r <= 6.5) base = this.RATING_TO_RIR.usor;   // usor — clear headroom
     else if (r >= 8.5) base = this.RATING_TO_RIR.greu;   // greu — at/near failure
     else base = this.RATING_TO_RIR.potrivit;             // potrivit — working target
-    if (ex && isEnabled('dp_temperament_v1')) {
-      return Math.max(0, base + temperamentBias(ex));
-    }
+    // #3/F temperament (dp_temperament_v1) + #59 D107 behavior distillation
+    // (dp_behavior_distill_v1) both ADD a learned per-user RIR correction on top of
+    // the base 3/1/0 map; they compose (each gated by its OWN flag) and clamp ≥0.
+    // The temperament bias is per-EXERCISE (needs `ex`); the behavior offset is a
+    // GLOBAL per-user rating-semantic offset distilled from the D107 log (applies
+    // even without `ex`). Both flags OFF → `base` unchanged → byte-identical.
+    let corr = 0;
+    if (ex && isEnabled('dp_temperament_v1')) corr += temperamentBias(ex);
+    if (isEnabled('dp_behavior_distill_v1')) corr += behaviorRirOffset();
+    if (corr !== 0) return Math.max(0, base + corr);
     return base;
   },
 

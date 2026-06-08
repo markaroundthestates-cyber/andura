@@ -390,6 +390,24 @@ export const FLAGS = Object.freeze({
   // dp_e1rm_v1 (RIR is the lever it tunes); inert when e1RM is off.
   dp_temperament_v1: { rollout: 0, default: false },
 
+  // #59 D107 behavioral-log distillation → per-user rating-semantic offset (RISK
+  // MED — discounts the user's own rating, like temperament; the clamp band + the
+  // ceiling/PR-floor are the guards). The D107 behavior log (durable per-UID IDB
+  // `behavior_tier1`) is COLLECTED but DARK — no engine reads it. When ON, a
+  // periodic on-device (NO LLM) PURE distillation mines the SEMANTIC events only
+  // (`rec` shown vs `log` committed — `tap` debug noise is EXCLUDED) for the
+  // rating↔behavior mismatch UNIQUE to this log (the user rates greu yet ENTERED
+  // more than prescribed + hit top reps → their greu has reserve), folds it into a
+  // single per-user RIR offset (slow EMA, clamped, MIN_PAIRS floor), and
+  // dp._rirFromRpe ADDS it to RATING_TO_RIR (composes with the temperament bias,
+  // each on its own flag). Persists `dp-behavior-tuning` (fixed-key object, synced
+  // per-UID — NOT name-keyed). OFF → the distillation never runs + the consumer
+  // reads no offset → byte-identical (the calibration-sim cohort has no behavior
+  // log, so even ON it is neutral on the sim). Deterministic (the only time used is
+  // each event's own `t`). This is the FIRST distilled signal; the loop is
+  // extensible (a sibling field in distillBehavior). Daniel-flag.
+  dp_behavior_distill_v1: { rollout: 0, default: false },
+
   // #1/H active probing when uncertain (RISK MED-HIGH — deliberately prescribes a
   // single set ABOVE the smoothed mu to gather a high-information observation, so it
   // is bounded by the ceiling + ego-cap and gated to ONE set when FRESH only). When

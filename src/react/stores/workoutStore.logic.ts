@@ -12,6 +12,8 @@ import { resolveActivePhase } from '../lib/engineWrappers.nutrition';
 import { learnedStepFromLogs, saveLearnedStep } from '../../engine/dp/equipmentLadder.js';
 import { learnVolumeLandmarks, saveLearnedVolume, LEARNED_VOLUME_KEY } from '../../engine/periodization/learnedVolume.js';
 import { learnFatigueCurve, saveFatigueCurve, FATIGUE_CURVE_KEY } from '../../engine/dp/fatigueCurve.js';
+import { distillAndPersistBehaviorTuning } from '../../engine/dp/behaviorDistill.js';
+import { debugLog } from '../lib/debugLog';
 import { DP } from '../../engine/dp.js';
 import { resolveCanonical } from '../../engine/exerciseAliases.js';
 import type {
@@ -248,6 +250,16 @@ export function persistSessionLogs(
         priorCurve,
       );
       if (Object.keys(learnedCurve).length) saveFatigueCurve(learnedCurve);
+    }
+    // #59 D107 — distill the durable behavior log (behavior_tier1) into the per-user
+    // rating-semantic tuning (flag dp_behavior_distill_v1, default OFF → skipped →
+    // byte-identical). The log read is ASYNC (IDB) so this is FIRED-AND-FORGOTTEN —
+    // never awaited, never blocks the sync finish path; the distillation is pure +
+    // fail-silent inside. The tuning (dp-behavior-tuning) is read by dp._rirFromRpe
+    // on the NEXT recommendation. Debug-noise (`tap`) is excluded INSIDE the
+    // distiller (only `rec`/`log` semantic events feed it).
+    if (isEnabled('dp_behavior_distill_v1')) {
+      void distillAndPersistBehaviorTuning(() => debugLog.snapshot());
     }
   } catch {
     // Soft-fail — storage quota / SSR jsdom edge. Engine adapters tolerate

@@ -18,7 +18,7 @@ export const USER_DATA_KEYS = [
   'dp-strength-posterior', 'dp-recovery-constants', 'dp-exercise-pain',
   'dp-pain-memory', 'dp-log-quarantine', 'dp-equipment-ladder', 'dp-temperament',
   'dp-fatigue-curve', 'dp-learned-volume', 'dp-pivot-prompts',
-  'dp-nof1-preference', 'dp-nof1-experiment', 'tombstones'
+  'dp-nof1-preference', 'dp-nof1-experiment', 'dp-behavior-tuning', 'tombstones'
 ];
 
 // Coach/session transient state — deleted by both resetTestData and fullReset
