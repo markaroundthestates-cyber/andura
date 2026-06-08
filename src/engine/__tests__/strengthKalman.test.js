@@ -10,6 +10,7 @@ import {
   processNoiseForGap,
   loadPosterior,
   savePosterior,
+  trendDirection,
   STRENGTH_POSTERIOR_KEY,
   Q_BASE,
   SIGMA_PRIOR as SIGMA_PRIOR_REF,
@@ -136,5 +137,56 @@ describe('persistence — quota-guarded + corrupt-hydrate guard', () => {
   it('loadPosterior returns null on a corrupt persisted entry', () => {
     localStorage.setItem(STRENGTH_POSTERIOR_KEY, JSON.stringify({ 'Leg Press': { mu: 'oops', sigma: -1 } }));
     expect(loadPosterior('Leg Press')).toBeNull();
+  });
+});
+
+// ══ BUILD F6c #31 — trendDirection (noise-aware trend-vs-noise) ══════════════
+describe('trendDirection — direction is confident only when it clears the noise band', () => {
+  const MS = MS_DAY;
+  // Build a chronological per-set e1RM stream from (kg, reps, rpe) tuples.
+  const stream = (rows) =>
+    rows.map((r, i) => ({
+      e1rm: DP.e1RMForSet(r.w, r.reps, r.rpe ?? RPE.potrivit),
+      ts: i * MS,
+      failedShort: false,
+    }));
+
+  it('returns FLAT/unconfident on < 2 observations (cold start → legacy fallback)', () => {
+    expect(trendDirection(null, [])).toEqual({ dir: 'FLAT', slope: 0, confident: false });
+    const one = stream([{ w: 60, reps: 8 }]);
+    expect(trendDirection(null, one).dir).toBe('FLAT');
+    expect(trendDirection(null, one).confident).toBe(false);
+  });
+
+  it('a steady-load trace is FLAT (no false-positive trend)', () => {
+    const flat = stream(Array.from({ length: 8 }, () => ({ w: 60, reps: 8 })));
+    const t = trendDirection(null, flat);
+    expect(t.dir).toBe('FLAT');
+    expect(t.confident).toBe(false);
+  });
+
+  it('one bad day inside a steady trace is rejected as FLAT (the deepen win)', () => {
+    const rows = Array.from({ length: 8 }, () => ({ w: 60, reps: 8 }));
+    rows[5] = { w: 50, reps: 6, rpe: RPE.greu }; // a single bad/short set
+    const t = trendDirection(null, stream(rows));
+    expect(t.dir).toBe('FLAT'); // net move stays inside the noise band
+  });
+
+  it('a sustained climb fires UP once it clears the noise band', () => {
+    const rows = [];
+    for (let i = 0; i < 8; i++) rows.push({ w: 60 + i * 5, reps: 8, rpe: RPE.usor });
+    const t = trendDirection(null, stream(rows));
+    expect(t.dir).toBe('UP');
+    expect(t.confident).toBe(true);
+    expect(t.slope).toBeGreaterThan(0);
+  });
+
+  it('a sustained decline fires DOWN once it clears the noise band', () => {
+    const rows = [];
+    for (let i = 0; i < 8; i++) rows.push({ w: 100 - i * 5, reps: 8, rpe: RPE.greu });
+    const t = trendDirection(null, stream(rows));
+    expect(t.dir).toBe('DOWN');
+    expect(t.confident).toBe(true);
+    expect(t.slope).toBeLessThan(0);
   });
 });

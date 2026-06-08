@@ -553,6 +553,72 @@ export const FLAGS = Object.freeze({
   // independently as today → byte-identical.
   dp_dip_classifier_v1: { rollout: 0, default: false },
 
+  // ── F6c Personalization cluster (engine-wiring 2026-06-08) — a thin layer that
+  // SPENDS the F3 substrate (Kalman {mu,sigma}, ceiling, learned recovery, the
+  // nutrition phase) on personalization beyond the population. Each defaults OFF
+  // (rollout 0) → flag-OFF the deployed app is BYTE-IDENTICAL (the calibration-sim
+  // hash + golden gate hold). Flip ON is a human gate (Daniel) AFTER reviewing the
+  // sim/unit A/B. See _ENGINE_WIRING_2026-06-07/F6c_personalization_spec.md.
+
+  // #31 trend-vs-noise (RISK LOW — re-classifies an existing branch input; cannot
+  // change a load directly). The Kalman posterior already rejects a single bad day
+  // (HIGH R), but the trend is never made EXPLICIT as a direction: legacy isStagnant
+  // (dp.js) only checks raw-kg equality over the last 3 logs — rep-scheme-blind and
+  // unable to distinguish a real downtrend from one bad day. When ON, trendDirection
+  // folds the recent per-set e1RM through the SAME posterior and a direction is only
+  // confident UP/DOWN when the net mu move clears its own noise band (TREND_Z·sigma);
+  // a confidently CLIMBING lift is then NOT treated as stagnant (the +SET/technique
+  // rescue is suppressed). OFF → the raw-kg equality test runs unchanged (byte-
+  // identical). Reads the existing dp-strength-posterior; no new persistence. TREND_Z
+  // is a DESIGN PROPOSAL (spec §9) — Daniel/sim sanity-check before flip. Degrades to
+  // FLAT/unconfident (legacy path) when the Kalman fold yields nothing (cold start).
+  dp_trend_signal_v1: { rollout: 0, default: false },
+
+  // #33 population-prior cold-start (RISK LOW — first-session-only, no related lift).
+  // F3 #4 transfer seeds a NEW lift from a RELATED one the user already has e1RM for;
+  // #33 fires when there is NONE (a truly new user, first ever lift). A SHIPPED static
+  // POPULATION_E1RM_PRIOR table (e1RM as a multiple of bodyweight per movement pattern
+  // × sex × experience, keyed via the ceiling's classifyPattern) seeds the working kg
+  // with a WIDE sigma (population guess — the first real set dominates fast). PRIVACY
+  // (Daniel hard rule): an on-device static lookup from the user's OWN onboarding
+  // sex/BW/experience only — NO data collection, NO server call, NO cohort telemetry;
+  // a constant in the bundle, privacy-safe by construction. OFF → transfer-then-
+  // suggestStartWeight (F3 behavior) → byte-identical. The table values are DESIGN
+  // PROPOSALS (spec §9) — research/Daniel review before flip. No new persistence.
+  dp_population_prior_v1: { rollout: 0, default: false },
+
+  // #37 deficit-aware progression throttle (RISK MED — changes the climb RATE for
+  // cutting users; never touches the PR-floor). D109 already encodes "in a deficit
+  // preserve, don't push" in the deload engine; #37 extends it to the dp.js weight-
+  // climb, which is phase-blind today (pushes for PRs the same in a deep cut as a
+  // bulk). When ON, the already-resolved nutrition phase (resolveActivePhase →
+  // CUT|BULK|MAINTENANCE|STRENGTH, threaded in read-only via opts — dp.js never
+  // imports nutrition) scales the pure-easy-run NEW-max climb via deficitClimbFactor
+  // (CUT throttles, others 1.0) and reframes a CUT hold as success (suppresses the
+  // problem-plateau +SET on a near-cap cut). The PR-floor / catch-up to an already-
+  // OWNED load is NEVER throttled — a deficit must not crater capacity. OFF →
+  // deficitClimbFactor returns 1.0 + the reframe is inert → byte-identical. Absent
+  // phase (cold start) → MAINTENANCE → no throttle. The CUT factor is a DESIGN
+  // PROPOSAL (spec §9). Daniel-flag (it embodies the D109 product rule). No new
+  // persistence.
+  dp_deficit_throttle_v1: { rollout: 0, default: false },
+
+  // #21 strength/bodyweight + cut/bulk aware (RISK MED — shifts the fatigue map for
+  // users whose bodyweight is changing, path A; bounded by the existing recovery
+  // clamp + slow EMA). relativeStrength(mu, bw) = mu/bw is a one-line derivation from
+  // the ceiling's already-BW-normalized values (narration / correct plateau
+  // attribution — does not move kg). The kg-affecting half: when bodyweight DROPS (a
+  // cut) the same absolute e1RM is HIGHER relative strength but recovery + volume
+  // tolerance FALL; when it RISES (a bulk) tolerance rises. A sustained bodyweight
+  // trend nudges the EXISTING learned-recovery EMA (muscleMap.js learnRecovery) toward
+  // the LONGER end of its [0.5×,2×] clamp in a cut, shorter in a surplus — no new
+  // clamp, REUSE the existing band; volume tolerance then follows automatically (the
+  // fatigue map → set counts). OFF → relativeStrength computed-but-unused + the EMA
+  // gets no BW nudge → byte-identical. Composes with #37 (both read the phase) but is
+  // independently flagged. Depends on F3 #2 (mu) + #5 (recovery EMA). No new
+  // persistence (reuses dp-recovery-constants). Optional Daniel-flag.
+  dp_strength_bw_ratio_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

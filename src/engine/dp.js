@@ -7,7 +7,7 @@ import { getExerciseMetadata } from './exerciseLibrary.js';
 import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
-import { updatePosterior, savePosterior, loadPosterior } from './dp/strengthKalman.js';
+import { updatePosterior, savePosterior, loadPosterior, trendDirection } from './dp/strengthKalman.js';
 import { ceilingE1RM, gainDecay } from './dp/ceiling.js';
 import { sanityCheckSet } from './dp/anomalyGuard.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
@@ -842,6 +842,34 @@ export const DP = {
     return post && Number.isFinite(post.sigma) ? post.sigma : null;
   },
 
+  // ══ BUILD F6c #31 — noise-aware trend direction for one exercise (spec §1) ═══
+  // Folds the recent per-set e1RM observations (SAME stream _posteriorSigma builds)
+  // through trendDirection: returns 'UP'|'FLAT'|'DOWN' only when the net mu move
+  // clears the posterior's own noise band — so a single bad day stays FLAT. Reads
+  // the existing logs only; recomputed (no DB write). Returns FLAT/unconfident when
+  // e1RM-ineligible or < 2 usable observations (cold start → the legacy raw path is
+  // used). Consumed by getState's isStagnant ONLY behind dp_trend_signal_v1.
+  /** @param {string} ex @returns {{dir:'UP'|'FLAT'|'DOWN', slope:number, confident:boolean}} */
+  _trendDir(ex) {
+    const FLAT = { dir: /** @type {'FLAT'} */ ('FLAT'), slope: 0, confident: false };
+    if (!this._e1rmEligible(ex)) return FLAT;
+    const logs = this.getLogs(ex, 12); // newest-first
+    const obs = [];
+    for (let i = logs.length - 1; i >= 0; i--) { // oldest-first
+      const l = logs[i];
+      const w = Number(l.w);
+      if (!Number.isFinite(w) || w <= 0) continue;
+      const reps = typeof l.reps === 'string' ? parseInt(l.reps, 10) : Number(l.reps);
+      if (!Number.isFinite(reps)) continue;
+      const rpe = Number(l.rpe) || 7;
+      const e = this.e1RMForSet(w, reps, rpe, ex);
+      if (e == null) continue;
+      const failedShort = rpe >= 8.5;
+      obs.push({ e1rm: e, ts: Number(l.ts) || 0, failedShort });
+    }
+    return trendDirection(null, obs);
+  },
+
   // The PR-floor / find-your-weight demonstrated load. Resolution order (each flag
   // defaults OFF → byte-identical legacy):
   //   dp_strength_kalman_v1 ON → the Kalman-smoothed posterior mu (back-solved kg)
@@ -1127,7 +1155,18 @@ export const DP = {
 
     // Check stagnation (same weight last 3+ sessions)
     const last3W = logs.slice(0,3).map((l) => l.w);
-    const isStagnant = last3W.length >= 3 && last3W.every(w => w === last3W[0]);
+    let isStagnant = last3W.length >= 3 && last3W.every(w => w === last3W[0]);
+    // F6c #31 — noise-aware refinement (flag dp_trend_signal_v1, default OFF →
+    // byte-identical). The legacy raw-kg equality test cannot tell a real plateau
+    // from a confidently CLIMBING lift whose last 3 logs happen to share a kg (e.g.
+    // an e1RM rising via rep gains at a fixed load). When the posterior trend is
+    // CONFIDENTLY UP, the lift is NOT stagnant — suppress the +SET/technique rescue
+    // (it would over-react). FLAT/DOWN/unconfident → the legacy result is kept, so
+    // the change only ever REMOVES a false-positive stagnation, never adds one.
+    if (isStagnant && isEnabled('dp_trend_signal_v1')) {
+      const trend = this._trendDir(ex);
+      if (trend.confident && trend.dir === 'UP') isStagnant = false;
+    }
 
     // Check if at top of rep range consistently
     const last3Reps = logs.slice(0,3).map((l) => typeof l.reps === 'string' ? (parseInt(l.reps) || (rMin ?? 8)) : (l.reps ?? (rMin ?? 8)));

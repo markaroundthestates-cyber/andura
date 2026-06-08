@@ -137,3 +137,59 @@ export function updatePosterior(prior, obs) {
   if (state == null) return null;
   return { mu: state.mu, sigma: state.sigma, lastObsTs: lastTs ?? 0, n };
 }
+
+// ══ BUILD F6c #31 — TREND-vs-NOISE decomposition (F6c spec §1) ════════════════
+// The Kalman posterior already separates trend from noise IMPLICITLY: `mu` is the
+// smoothed working e1RM and the HIGH R (R_BASE=12 / R_FAILED=36) means one bad set
+// barely moves mu. What is MISSING is the trend made EXPLICIT as a direction. The
+// legacy isStagnant (dp.js:1130) only checks raw-kg equality over the last 3 logs —
+// it cannot tell a real downtrend from a single bad day and is rep-scheme-blind.
+//
+// trendDirection folds the recent per-set e1RM observations through the SAME
+// posterior (REUSE — no new filter) and returns a direction that is only `DOWN`/`UP`
+// when the move is STATISTICALLY larger than the posterior's own noise band
+// (|slope| > Z · sigma_now). A one-bad-day-then-recover trace nets to ~0 slope →
+// FLAT (the noise is rejected — the whole point). PURE — no DB.
+//
+// Z is the significance multiple on the posterior sigma: a move must clear Z·sigma
+// to count as a confident trend. DESIGN PROPOSAL (spec §9 — UNVERIFIED) — a Daniel/
+// sim sanity-check before dp_trend_signal_v1 flips ON; conservative default 1.0
+// (one posterior standard deviation), so a noisy lift stays FLAT.
+export const TREND_Z = 1.0;
+
+/**
+ * Noise-aware trend direction over the recent per-set e1RM observations. Folds them
+ * through the existing posterior (continuing `prior` when supplied, else seeding a
+ * fresh one) and compares the net mu move to the posterior's own uncertainty band.
+ *
+ *   slope      = mu_now − mu_before (e1RM kg over the folded window)
+ *   confident  = |slope| > TREND_Z · sigma_now (the move clears the noise band)
+ *   dir        = confident && slope>0 → 'UP'; confident && slope<0 → 'DOWN'; else 'FLAT'
+ *
+ * Returns FLAT/unconfident when there are < 2 usable observations or no posterior
+ * can be formed (cold start) — so the legacy raw path is always a safe fallback.
+ *
+ * @param {{mu:number, sigma:number, lastObsTs:number, n:number}|null} prior
+ * @param {ReadonlyArray<{e1rm:number, ts:number, failedShort?:boolean}>} recentObs
+ *   chronological (oldest-first) per-set e1RM observations
+ * @returns {{ dir:'UP'|'FLAT'|'DOWN', slope:number, confident:boolean }}
+ */
+export function trendDirection(prior, recentObs) {
+  const FLAT = { dir: /** @type {'FLAT'} */ ('FLAT'), slope: 0, confident: false };
+  const obs = Array.isArray(recentObs)
+    ? recentObs.filter((o) => o && Number.isFinite(Number(o.e1rm)) && Number(o.e1rm) > 0)
+    : [];
+  // The mu the window STARTS from: the prior's mu if continuing one, else the first
+  // observation's value (the seed the fold itself uses). Need ≥2 reference points.
+  const startMu = prior && Number.isFinite(prior.mu) && prior.mu > 0
+    ? prior.mu
+    : (obs.length > 0 ? Number(obs[0].e1rm) : NaN);
+  if (!Number.isFinite(startMu) || obs.length < 2) return FLAT;
+  const post = updatePosterior(prior, obs);
+  if (!post || !Number.isFinite(post.mu) || !Number.isFinite(post.sigma)) return FLAT;
+  const slope = post.mu - startMu;
+  const band = TREND_Z * post.sigma;
+  const confident = Math.abs(slope) > band;
+  const dir = confident ? (slope > 0 ? 'UP' : 'DOWN') : 'FLAT';
+  return { dir, slope, confident };
+}
