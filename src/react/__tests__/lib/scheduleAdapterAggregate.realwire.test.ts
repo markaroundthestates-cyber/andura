@@ -410,13 +410,13 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
     expect(out).not.toBeNull();
     const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
     expect(lat).toBeDefined();
-    // dp_population_prior_v1 ON (THE FLIP 2026-06-08): the cold-start seeds from the
-    // published per-exercise strength-standard prior (bodyweight × sex × training-age)
-    // back-solved in e1RM space, a more principled + slightly more conservative seed
-    // than the bare suggestStartWeight fraction — 50kg on the bailib stack for a 75kg
-    // intermediate male (vs the 55 the raw fraction snapped to). Still a sensible,
-    // machine-settable, conservative start (Gigel: a touch light beats too heavy).
-    expect(lat!.targetKg).toBe(50);
+    // dp_population_prior_v1 ON (THE FLIP 2026-06-08) + #80 cold-start safety damps:
+    // the cold-start seeds from the published per-exercise strength-standard prior,
+    // back-solved in e1RM space, then damped by the policy's no-history confidence
+    // (×0.92) + load-AXIS (Lat Pulldown = cable ×0.80; age 30 → no age damp). For a
+    // 75kg intermediate male this lands a sensible, machine-settable 40kg (down from
+    // the pre-#80 50 — undershoot+ramp > overshoot; the first set recalibrates).
+    expect(lat!.targetKg).toBe(40);
   });
 
   it('experience RO->EN scaling: avansat (advanced 1.3x) beats incepator (beginner 0.7x)', async () => {
@@ -438,17 +438,16 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
 
     expect(begLat).toBeDefined();
     expect(advLat).toBeDefined();
-    // dp_population_prior_v1 ON (THE FLIP 2026-06-08): the cold-start seeds from the
-    // strength-standard prior scaled by training age. The RO experience strings still
-    // map to EN buckets (advanced strictly heavier than beginner — NOT a silent tie at
-    // the x1.0 default). beginner snaps to 35 on the bailib stack, advanced to 70.
+    // dp_population_prior_v1 ON (THE FLIP 2026-06-08) + #80 cold-start safety damps:
+    // the cold-start seeds from the strength-standard prior scaled by training age,
+    // then damped by no-history confidence (×0.92) + load-AXIS (cable ×0.80; age 30
+    // → no age damp). The RO experience strings still map to EN buckets (advanced
+    // strictly heavier than beginner — NOT a silent tie at the x1.0 default).
     expect(advLat!.targetKg).toBeGreaterThan(begLat!.targetKg);
-    expect(begLat!.targetKg).toBe(35); // conservative beginner prior, stack-snapped
-    // Advanced agrees with the bodyweight-scaled suggestStartWeight (70) — the prior
-    // and the fraction converge at the experienced end.
-    expect(advLat!.targetKg).toBe(
-      suggestStartWeight('Lat Pulldown', 'advanced', { bodyweightKg: 75, sex: 'm' }),
-    );
+    expect(begLat!.targetKg).toBe(25); // #80-damped conservative beginner prior (cable axis + confidence), stack-snapped
+    // Advanced #80-damped prior snaps to 50 on the bailib stack — heavier than the
+    // beginner seed, but the policy damps keep it below the undamped raw fraction.
+    expect(advLat!.targetKg).toBe(50);
   });
 
   it('preserves Romanian display name + sub while wiring engine weight', async () => {

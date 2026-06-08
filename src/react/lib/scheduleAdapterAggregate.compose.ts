@@ -263,6 +263,8 @@ function toPlannedExercise(
           bodyweightKg: csProfile?.bodyweightKg ?? null,
           sex: csProfile?.sex ?? null,
           experience: experienceEn,
+          // #80 chronological age → cold-start age damper (older→lighter, policy §1).
+          age: typeof ageRaw === 'number' && Number.isFinite(ageRaw) ? ageRaw : null,
         })
       : null;
   const rawTargetKg = isBw

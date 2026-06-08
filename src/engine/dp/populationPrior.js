@@ -16,6 +16,7 @@
 // movement key so it shares the ceiling's movement taxonomy (no new classifier).
 
 import { classifyPattern } from './ceiling.js';
+import { getExerciseMetadata } from '../exerciseLibrary.js';
 
 // ── UNVERIFIED DESIGN PROPOSAL (spec §9) — research / Daniel sanity-check before
 //    dp_population_prior_v1 flips ON ──
@@ -54,7 +55,52 @@ export const PRIOR_SEX_FACTOR = Object.freeze({ m: 1.0, f: 0.78 });
 // SIGMA_PRIOR (8) so the prior washes out fast.
 export const POPULATION_SIGMA = 16;
 
+// ── #80 — cold-start safety dampers (policy _ENGINE_load_bf_rate_policy §1) ──────
+// The raw POPULATION_E1RM_PRIOR ratio × bodyweight × sex over-seeds day-1 loads a
+// coach would never give to an OLDER, DETRAINED or sedentary new user (audit: a 65F
+// beginner Goblet Squat @ ~37kg; a 60yo detrained Leg Press @ ~180kg). The prior
+// encodes only sex + experience — NOT chronological age, the load AXIS (a dumbbell
+// goblet cannot be loaded at a barbell 1RM), nor the policy's no-history confidence
+// penalty. These three damps (compose multiplicatively, only ever LOWER the seed)
+// land coach-sane day-1 loads while keeping the signal-floor (target ~RPE 6-7, the
+// first set then recalibrates — undershoot+ramp > overshoot).
+
+// CONNECTIVE/strength decline with chronological age — older → lighter, meaningful
+// at 60+/65+ (policy §1 + Daniel's "65 vs 30 differ"). Mirrors the tendon-cap age
+// shape (ceiling.js): no damp at/below FULL_AGE, linear taper to FLOOR at FLOOR_AGE.
+export const COLDSTART_AGE_FULL = 45;     // <= → no damp (1.0)
+export const COLDSTART_AGE_FLOOR_AGE = 70; // >= → max taper (the floor)
+export const COLDSTART_AGE_FLOOR = 0.62;   // smallest age multiplier
+
+// No-history confidence penalty (policy §1: ×0.90–0.95 — SMALL, experience already
+// encodes "unknown/weak", don't double-discount). A cold-start seed is by definition
+// no-history → always applied.
+export const COLDSTART_CONFIDENCE_PENALTY = 0.92;
+
+// Load-AXIS factor: the prior ratio is a barbell/free-weight 1RM. A dumbbell (per-
+// hand) goblet/movement, a band, or a cable variant cannot be loaded at that 1RM,
+// so price the seed on the movement's real load axis. machine ≈ barbell. Mirrors the
+// coldStartGuidelines FALLBACK_EQUIP_FACTOR spirit (per-hand DB carries far less).
+export const COLDSTART_EQUIP_AXIS = Object.freeze({
+  barbell: 1.0, machine: 0.90, cable: 0.80, dumbbell: 0.45, band: 0.40, bodyweight: 1.0,
+});
+
 const EXPERIENCE_KEYS = ['beginner', 'intermediate', 'advanced'];
+
+/**
+ * Chronological-age damper on the cold-start seed: 1.0 at/below COLDSTART_AGE_FULL,
+ * linear taper to COLDSTART_AGE_FLOOR at COLDSTART_AGE_FLOOR_AGE, flat thereafter.
+ * Absent/invalid age → 1.0 (neutral — a young or age-unknown user is not penalized).
+ * @param {number|null|undefined} ageYears @returns {number} in [FLOOR, 1]
+ */
+export function coldStartAgeFactor(ageYears) {
+  const a = Number(ageYears);
+  if (!Number.isFinite(a) || a <= 0) return 1;
+  if (a <= COLDSTART_AGE_FULL) return 1;
+  if (a >= COLDSTART_AGE_FLOOR_AGE) return COLDSTART_AGE_FLOOR;
+  const span = COLDSTART_AGE_FLOOR_AGE - COLDSTART_AGE_FULL;
+  return 1 - ((a - COLDSTART_AGE_FULL) / span) * (1 - COLDSTART_AGE_FLOOR);
+}
 
 /**
  * Population-typical e1RM (kg-scale) for a new lift from the user's OWN demographic
@@ -62,7 +108,7 @@ const EXPERIENCE_KEYS = ['beginner', 'intermediate', 'advanced'];
  * unusable (the caller falls to today's suggestStartWeight).
  *
  * @param {string} ex canonical engineName
- * @param {{ bodyweightKg?: number|null, sex?: string|null, experience?: string|null }} profile
+ * @param {{ bodyweightKg?: number|null, sex?: string|null, experience?: string|null, age?: number|null }} profile
  * @returns {{ e1rm:number, sigma:number, pattern:string }|null}
  */
 export function populationPriorE1RM(ex, profile) {
@@ -76,7 +122,15 @@ export function populationPriorE1RM(ex, profile) {
   if (!Number.isFinite(ratio) || ratio <= 0) return null;
   const sexKey = profile && typeof profile.sex === 'string' ? profile.sex.toLowerCase() : '';
   const sexF = PRIOR_SEX_FACTOR[sexKey] ?? PRIOR_SEX_FACTOR.m;
-  const e1rm = ratio * bw * sexF;
+  // #80 cold-start safety damps (policy §1): chronological-age × no-history
+  // confidence × load-axis. Each only ever LOWERS the seed; absent age / unknown
+  // equipment → neutral 1.0 → byte-identical to the prior raw seed.
+  const ageF = coldStartAgeFactor(profile ? profile.age : undefined);
+  const meta = getExerciseMetadata(ex);
+  const eqF = (meta && COLDSTART_EQUIP_AXIS[meta.equipment_type] != null)
+    ? COLDSTART_EQUIP_AXIS[meta.equipment_type]
+    : 0.80; // unknown equipment → the conservative cable-level axis
+  const e1rm = ratio * bw * sexF * ageF * COLDSTART_CONFIDENCE_PENALTY * eqF;
   if (!(e1rm > 0)) return null;
   return { e1rm, sigma: POPULATION_SIGMA, pattern };
 }
