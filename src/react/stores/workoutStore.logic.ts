@@ -9,6 +9,7 @@ import { archiveSession } from '../lib/dexieMigration';
 import { isEnabled } from '../../util/featureFlags.js';
 import { learnRecovery, saveRecoveryConstants, RECOVERY_CONSTANTS_KEY } from '../../engine/muscleMap.js';
 import { learnedStepFromLogs, saveLearnedStep } from '../../engine/dp/equipmentLadder.js';
+import { learnVolumeLandmarks, saveLearnedVolume, LEARNED_VOLUME_KEY } from '../../engine/periodization/learnedVolume.js';
 import { DP } from '../../engine/dp.js';
 import type {
   SessionIntensityMod,
@@ -197,6 +198,20 @@ export function persistSessionLogs(
     // tunes is the only effect, and the structural-RIR signal is robust to it).
     if (isEnabled('dp_temperament_v1')) {
       DP.learnTemperament(false);
+    }
+    // F6b V1 #10 — learn the per-user productive volume band (personalMEV/MAV) per
+    // muscle from the freshly-updated log history (flag dp_learned_volume_v1, default
+    // OFF → skipped → byte-identical). Same authoritative per-session write site. When
+    // dp_effective_reps_v1 is ALSO on, learn on EFFECTIVE (stimulus) volume rather than
+    // raw set count (V3 dose link). Quota-guarded + fail-silent inside the try.
+    if (isEnabled('dp_learned_volume_v1')) {
+      const priorVol = (DB.get(LEARNED_VOLUME_KEY) as Record<string, { mev: number; mav: number; n: number }>) || undefined;
+      const learnedVol = learnVolumeLandmarks(
+        merged as unknown as Parameters<typeof learnVolumeLandmarks>[0],
+        priorVol,
+        { effective: isEnabled('dp_effective_reps_v1') }
+      );
+      if (Object.keys(learnedVol).length) saveLearnedVolume(learnedVol);
     }
   } catch {
     // Soft-fail — storage quota / SSR jsdom edge. Engine adapters tolerate

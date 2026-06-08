@@ -154,6 +154,10 @@ export function recoveryGreenMultiplier(ctx) {
  * @param {'incepator'|'intermediar'|'avansat'} [input.experienceId] - omitted → avansat (full dose, MEV floor off)
  * @param {boolean} [input.recoveryGreen]
  * @param {'low'|'high'} [input.recoveryStrength]
+ * @param {Record<string, {mev:number, mav:number}>} [input.learned] - F6b V1 #10: per-user
+ *   LEARNED landmarks keyed on ISRAETEL EN muscle (dp_learned_volume_v1). When present,
+ *   `learned[muscleGroup].mav ?? baseline.MAV` drives the target and `.mev ?? baseline.MEV`
+ *   the floor. Omitted / muscle absent → the `?? baseline` fallback = BYTE-IDENTICAL to today.
  * @returns {import('./types.js').MuscleVolumeTarget}
  */
 export function computeMuscleVolumeTarget({
@@ -165,11 +169,20 @@ export function computeMuscleVolumeTarget({
   experienceId,
   recoveryGreen,
   recoveryStrength,
+  learned,
 }) {
   const baseline = ISRAETEL_BASELINES[muscleGroup];
   if (!baseline) {
     return { sets: 0, mev: 0, mav: 0, mrv: 0 };
   }
+
+  // F6b V1 #10 — the LEARNED productive band overrides the static Israetel MAV/MEV
+  // for this muscle when present (dp_learned_volume_v1 ON + enough history). The
+  // `?? baseline` fallback guarantees byte-identical for any muscle with no learned
+  // data, even when the flag is ON (spec §3c off-byte-identical proof).
+  const learnedMu = learned && typeof learned === 'object' ? learned[muscleGroup] : undefined;
+  const mavDriver = learnedMu && Number.isFinite(learnedMu.mav) && learnedMu.mav > 0 ? learnedMu.mav : baseline.MAV;
+  const mevFloorVal = learnedMu && Number.isFinite(learnedMu.mev) && learnedMu.mev > 0 ? learnedMu.mev : baseline.MEV;
 
   const persona = PERSONA_MODIFIERS[personaId] ?? PERSONA_MODIFIERS.gigica;
   const goal = GOAL_MODIFIERS[goalId] ?? GOAL_MODIFIERS.hipertrofie;
@@ -182,20 +195,22 @@ export function computeMuscleVolumeTarget({
   const experience = typeof experienceId === 'string' ? (EXPERIENCE_MODIFIERS[experienceId] ?? 1.0) : 1.0;
   const experienceCuts = experience < 1.0;
 
-  const raw = baseline.MAV * persona * recovery * goal * experience * block * phase;
+  const raw = mavDriver * persona * recovery * goal * experience * block * phase;
+  // MRV is the ABSOLUTE Israetel ceiling — never learned (the learned band only
+  // moves the MAV target + MEV floor; the recoverable cap stays the literature hard cap).
   const cappedAtMrv = Math.min(raw, baseline.MRV);
   // MEV floor — a beginner/intermediate cut never drops below the minimum
   // effective dose for a worked group. Engaged ONLY when the experience modifier
   // actually cuts (<1.0), so the advanced/legacy result (incl. the deliberate
   // Maria-sanatate sub-MEV maintenance dose) is unchanged. A group with MEV 0
-  // (abs/forearms) has no floor either way.
-  const floored = experienceCuts ? Math.max(cappedAtMrv, baseline.MEV) : cappedAtMrv;
+  // (abs/forearms) has no floor either way. Uses the learned MEV when present.
+  const floored = experienceCuts ? Math.max(cappedAtMrv, mevFloorVal) : cappedAtMrv;
   const sets = Math.max(0, Math.round(floored));
 
   return {
     sets,
-    mev: baseline.MEV,
-    mav: baseline.MAV,
+    mev: mevFloorVal,
+    mav: mavDriver,
     mrv: baseline.MRV,
   };
 }
@@ -204,7 +219,8 @@ export function computeMuscleVolumeTarget({
  * Compute full volume map across all 11 Israetel muscle groups.
  *
  * @param {Object} input - same shape as computeMuscleVolumeTarget without
- *   muscleGroup (incl. the optional §experience-volume `experienceId`).
+ *   muscleGroup (incl. the optional §experience-volume `experienceId` + the F6b V1
+ *   optional `learned` per-muscle landmark override — both spread through unchanged).
  * @returns {Object<string, number>}  - muscleGroup → sets/week
  */
 export function computeVolumeMap(input) {

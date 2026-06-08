@@ -20,6 +20,7 @@ import {
   resolveExperienceId,
   computeVolumeMap,
 } from './volumeLandmarks.js';
+import { readLearnedVolume } from './learnedVolume.js';
 import {
   computeMacrocycleBlock,
   effectiveBlockScaling,
@@ -139,6 +140,13 @@ export async function evaluate(ctx) {
   // Volume map computation (Israetel × persona × goal × scaling × phase)
   const recoveryGreen = safeCtx.recoveryGreen === true || (safeCtx.recovery && safeCtx.recovery.green === true);
   const recoveryStrength = (safeCtx.recovery && safeCtx.recovery.strength) || undefined;
+  // F6b V1 #10 — the per-user LEARNED MEV/MAV band (dp_learned_volume_v1, default
+  // OFF). readLearnedVolume returns null when the flag is OFF or there's no learned
+  // data → the `?? baseline` fallback in computeMuscleVolumeTarget = byte-identical
+  // to the static Israetel table. The orchestrator may also pre-inject it via
+  // meta.learnedVolume (preferred when present, e.g. a future pure-context path).
+  const learned =
+    (safeCtx.meta && typeof safeCtx.meta === 'object' && safeCtx.meta.learnedVolume) || readLearnedVolume() || undefined;
   const volumeMap = computeVolumeMap({
     personaId,
     goalId,
@@ -147,6 +155,7 @@ export async function evaluate(ctx) {
     phaseVolumeMul: phaseVolMul,
     recoveryGreen,
     recoveryStrength,
+    learned,
   });
   trace.volumeMap = volumeMap;
 

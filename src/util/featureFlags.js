@@ -445,6 +445,23 @@ export const FLAGS = Object.freeze({
   // identical. Degrades to a neutral RIR=1 when no rating present.
   dp_effective_reps_v1: { rollout: 0, default: false },
 
+  // V1 #10 learned MEV/MAV (RISK MED — path A, shifts how many sets a muscle gets).
+  // Static landmarks today: ISRAETEL_BASELINES → computeMuscleVolumeTarget; every
+  // user of the same persona/goal/experience gets the IDENTICAL MEV/MAV — no per-user
+  // volume learning anywhere. When ON, learnVolumeLandmarks learns each muscle's
+  // PERSONAL productive band from the user's own (weekly-sets → next-week-1RM-delta)
+  // history: personalMAV = where progress saturates (junk volume past it), personalMEV
+  // = where the muscle regresses (under-dosing). EMA-blended toward the Israetel prior
+  // (alpha 0.3) + clamped to [0.6×, 1.6×] of the prior + the MRV hard cap + MEV floor
+  // as guards (mirrors the F3 learned-recovery design 1:1). Pairs with V3: learns on
+  // EFFECTIVE volume when dp_effective_reps_v1 is ALSO on, raw set count when off.
+  // Persists `dp-learned-volume` (sync, muscle-keyed like dp-recovery-constants,
+  // quota-guarded). OFF → computeMuscleVolumeTarget reads the static table → byte-
+  // identical; the `?? baseline` fallback ALSO keeps any muscle with no learned data
+  // byte-identical even when ON. The [0.6,1.6] clamp + alpha are DESIGN PROPOSALS
+  // (spec §7) — sim sweep + Daniel review before flip (volume dose is a felt change).
+  dp_learned_volume_v1: { rollout: 0, default: false },
+
   // #20 per-set fatigue curve (RISK LOW-MED — nudges SET COUNT by +/-1 within the
   // existing clamp, never kg). When ON, learnFatigueCurve classifies a user-per-
   // exercise as a MAINTAINER (flat curve → +1 working set) vs a CRASHER (early

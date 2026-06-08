@@ -16,7 +16,8 @@ export const USER_DATA_KEYS = [
   // start-over semantic as dp-cal-factors. `tombstones` is the soft-delete ledger
   // (synced) — stale residue after a start-over, cleared for the same parity reason.
   'dp-strength-posterior', 'dp-recovery-constants', 'dp-exercise-pain',
-  'dp-equipment-ladder', 'dp-temperament', 'dp-fatigue-curve', 'tombstones'
+  'dp-equipment-ladder', 'dp-temperament', 'dp-fatigue-curve', 'dp-learned-volume',
+  'tombstones'
 ];
 
 // Coach/session transient state — deleted by both resetTestData and fullReset
