@@ -21,6 +21,7 @@
 // is a hard invariant (same inputs → same output).
 
 import { KCAL_PER_KG } from './nutritionProjection';
+import { gainDecay } from '../../engine/dp/ceiling.js';
 
 // ── Weight ETA ────────────────────────────────────────────────────────────────
 
@@ -122,6 +123,22 @@ export const STRENGTH_FORECAST_WEEKS = 4;
 // streak must not promise +30%). 8% over 4 weeks is already an optimistic ceiling.
 export const STRENGTH_MAX_GAIN_FRACTION = 0.08;
 
+// ── BUILD F6b V5 #27 — trajectory planner (F6b spec §5) ──────────────────────
+// The shipped forecast above is honest but NAIVE: a pure linear slope + flat % cap
+// that does NOT know the user's CEILING (so it can project past diminishing returns)
+// and does NOT use the goal (a maintenance user shouldn't be promised gains). When
+// dp_trajectory_v1 is ON, the projection becomes ceiling-aware + goal-aware: the flat
+// % cap is replaced by a per-week DECAYED walk from current mu toward the ceiling
+// (gainDecay, ceiling.js:122) so the arc ASYMPTOTES instead of extrapolating a straight
+// line, and a maintenance goal projects "hold ~current" not gains. Read-only narration
+// — it never touches a prescription. OFF (trajectory opt absent) → the exact linear +
+// flat-% math below (byte-identical). DESIGN PROPOSAL (spec §7): the 8-week horizon +
+// the maintenance goal-set need a Daniel sanity check before the flag flips ON.
+export const STRENGTH_TRAJECTORY_WEEKS = 8; // the deeper arc (vs the naive 4)
+// Goals that should project "hold ~current", not gains (resolveGoalId vocab +
+// the onboarding maintenance literals). A user on maintenance is not promised PRs.
+export const TRAJECTORY_HOLD_GOALS = Object.freeze(['sanatate', 'mentenanta', 'longevitate']);
+
 /** One logged working set for a lift: estimated 1RM at a point in time. */
 export interface LiftSamplePoint {
   /** Timestamp (ms) of the set. */
@@ -135,6 +152,14 @@ export interface LiftHistory {
   name: string;
   /** Samples (any order) — at least STRENGTH_MIN_SESSIONS distinct sessions to project. */
   samples: ReadonlyArray<LiftSamplePoint>;
+  // ── BUILD F6b V5 #27 (optional — present only when dp_trajectory_v1 is ON; the
+  //    I/O boundary derives + injects them so the math stays pure + flag-free) ──
+  /** Switch the ceiling-aware decayed projection on. Absent/false → today's linear+cap. */
+  trajectory?: boolean;
+  /** Derived realistic e1RM ceiling (kg, ceilingE1RM). The projection asymptotes to it. */
+  ceiling?: number;
+  /** Resolved goal id — a maintenance goal projects "hold ~current", not gains. */
+  goalId?: string;
 }
 
 export interface StrengthForecast {
@@ -194,6 +219,48 @@ export function projectLiftStrength(history: LiftHistory): StrengthForecast | nu
 
   // Current best = the max recent estimated 1RM (the strongest the user has shown).
   const currentOneRm = Math.max(...ys);
+
+  // ── BUILD F6b V5 #27 — ceiling-aware + goal-aware deepening (dp_trajectory_v1) ──
+  // When ON, replace the flat % cap with a per-week DECAYED walk from currentOneRm
+  // toward the ceiling: each future week adds slope × gainDecay(mu, ceiling), so the
+  // arc flattens near the ceiling (physically credible) and can NEVER exceed it. A
+  // maintenance goal projects "hold ~current" (no PRs promised). OFF (trajectory opt
+  // absent) → the exact linear + flat-% math below (byte-identical).
+  if (history.trajectory) {
+    const weeks = STRENGTH_TRAJECTORY_WEEKS;
+    const ceiling = Number(history.ceiling);
+    const hasCeiling = Number.isFinite(ceiling) && ceiling > 0;
+    // Maintenance goal → hold current (don't promise gains to a maintenance user).
+    const goalId = typeof history.goalId === 'string' ? history.goalId : '';
+    if (TRAJECTORY_HOLD_GOALS.includes(goalId)) {
+      return {
+        name: history.name,
+        currentOneRm: round1(currentOneRm),
+        projectedOneRm: round1(currentOneRm),
+        weeks,
+      };
+    }
+    const slopePerWeek = slopePerDay * 7;
+    let mu = currentOneRm;
+    for (let w = 0; w < weeks; w++) {
+      // Far from the ceiling → ~full weekly slope; near it → the curve flattens.
+      const decay = hasCeiling ? gainDecay(mu, ceiling) : 1;
+      mu += slopePerWeek * decay;
+      // Hard clamp — the projection can never cross the realistic ceiling (the
+      // Daniel "Eddie-Hall" rule applied to narration too).
+      if (hasCeiling && mu > ceiling) {
+        mu = ceiling;
+        break;
+      }
+    }
+    return {
+      name: history.name,
+      currentOneRm: round1(currentOneRm),
+      projectedOneRm: round1(mu),
+      weeks,
+    };
+  }
+
   const horizonDays = (STRENGTH_FORECAST_WEEKS * WEEK_MS) / DAY_MS;
   const rawGain = slopePerDay * horizonDays;
   // Conservative cap on the projected gain.
@@ -222,6 +289,9 @@ import { readBayesianNutritionContext } from './nutritionObservations';
 import { readTdeeEstimateKcal } from './engineWrappers';
 import { getCurrentWeightKg } from './userTdee';
 import { avgRecentLoggedIntake } from './nutritionProjection';
+import { isEnabled } from '../../util/featureFlags.js';
+import { ceilingE1RM } from '../../engine/dp/ceiling.js';
+import { resolveGoalId } from '../../engine/periodization/volumeLandmarks.js';
 
 /** Epley 1RM estimate (kg) — same formula engineWrappers uses for PR deltas. */
 function epleyOneRm(kg: number, reps: number): number {
@@ -291,12 +361,17 @@ export function readStrengthForecasts(now: number): StrengthForecast[] {
   const sessions = useWorkoutStore.getState().sessionsHistory;
   const cutoff = now - STRENGTH_WINDOW_DAYS * DAY_MS;
   const byLift = new Map<string, LiftSamplePoint[]>();
+  // Track the EN engine key per display lift (ceilingE1RM's classifyPattern needs the
+  // canonical name, NOT the RO display name — the namekey lesson). Legacy sessions
+  // without engineName fall back to the display name (mirrors the writeback fallback).
+  const engineKeyByLift = new Map<string, string>();
 
   for (const session of sessions) {
     if (!session.exercises) continue;
     for (const ex of session.exercises) {
       const name = ex.exerciseName;
       if (typeof name !== 'string' || name.length === 0) continue;
+      if (!engineKeyByLift.has(name)) engineKeyByLift.set(name, ex.engineName || name);
       for (const set of ex.sets) {
         const ts = set.timestamp;
         if (!Number.isFinite(ts) || ts < cutoff || ts > now) continue;
@@ -308,9 +383,35 @@ export function readStrengthForecasts(now: number): StrengthForecast[] {
     }
   }
 
+  // BUILD F6b V5 #27 — when dp_trajectory_v1 is ON, derive the ceiling-aware +
+  // goal-aware inputs ONCE at the boundary (pure math stays flag-free). OFF → the
+  // inputs are absent → projectLiftStrength runs today's linear + flat-% (byte-identical).
+  const trajectory = isEnabled('dp_trajectory_v1');
+  let bwKg = 0;
+  let sex = 'm';
+  let goalId = '';
+  let trainingAge = 0;
+  if (trajectory) {
+    const data = useOnboardingStore.getState().data;
+    bwKg = getCurrentWeightKg() ?? data.weight ?? 0;
+    sex = typeof data.sex === 'string' ? data.sex : 'm';
+    goalId = typeof data.goal === 'string' ? resolveGoalId({ goal: data.goal }) : resolveGoalId({});
+    // Training age ≈ distinct training-day sessions logged (the ceiling's ageFraction
+    // input) — the recency-windowed session count is a safe, monotone proxy.
+    trainingAge = new Set(
+      sessions
+        .map((s) => (Array.isArray(s.exercises) && s.exercises.length ? Math.floor((s.ts ?? 0) / DAY_MS) : null))
+        .filter((d): d is number => d !== null && d > 0)
+    ).size;
+  }
+
   const forecasts: StrengthForecast[] = [];
   for (const [name, samples] of byLift) {
-    const f = projectLiftStrength({ name, samples });
+    const ceiling =
+      trajectory && bwKg > 0 ? ceilingE1RM(engineKeyByLift.get(name) || name, bwKg, sex, trainingAge) : 0;
+    const f = projectLiftStrength(
+      trajectory ? { name, samples, trajectory, ceiling, goalId } : { name, samples }
+    );
     if (f) forecasts.push(f);
   }
   // Most projected absolute gain first (the lift the user is climbing fastest).

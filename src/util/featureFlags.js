@@ -483,6 +483,26 @@ export const FLAGS = Object.freeze({
   // surface wiring (the banner/modal consumer) is a UX moment DEFERRED for Daniel.
   dp_auto_pivot_v1: { rollout: 0, default: false },
 
+  // V5 #27 trajectory planner (RISK LOW-MED — read-only narration; the module never
+  // alters a prescription). goalForecast.projectLiftStrength already projects a per-
+  // lift strength trajectory but is HONEST-yet-NAIVE: a pure linear slope + a flat 8%
+  // cap that does NOT know the user's CEILING (can project past diminishing returns)
+  // nor the GOAL (promises gains to a maintenance user). When ON, the projection
+  // becomes ceiling-aware + goal-aware: the flat % cap is replaced by a per-week
+  // DECAYED walk from current mu toward the ceiling (gainDecay) so the 8-week arc
+  // ASYMPTOTES instead of extrapolating a straight line and can NEVER exceed the
+  // realistic ceiling (the Eddie-Hall rule applied to narration); a maintenance goal
+  // projects "hold ~current", not gains. The existing honesty guards (≥3 sessions,
+  // flat/declining → no forecast) are untouched — it only makes a SHOWN forecast more
+  // realistic, never invents one. The I/O boundary derives bw/sex/trainingAge/goal +
+  // the ceiling and injects them; the pure math stays flag-free. NO new persistence.
+  // OFF → the linear + flat-% math + the 4-week horizon (byte-identical). Depends on
+  // dp_ceiling_v1 conceptually (degrades to today's flat-cap linear when the ceiling
+  // is unusable — the forecast just stays naive, never breaks). The 8-week horizon is
+  // a DESIGN PROPOSAL (spec §7) — Daniel sanity check before flip. LOWER over-promise
+  // risk than today's uncapped linear (the ceiling clamp reduces it).
+  dp_trajectory_v1: { rollout: 0, default: false },
+
   // #20 per-set fatigue curve (RISK LOW-MED — nudges SET COUNT by +/-1 within the
   // existing clamp, never kg). When ON, learnFatigueCurve classifies a user-per-
   // exercise as a MAINTAINER (flat curve → +1 working set) vs a CRASHER (early

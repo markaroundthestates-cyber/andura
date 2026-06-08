@@ -171,3 +171,83 @@ describe('goalForecast — projectLiftStrength (strength trajectory)', () => {
     expect(a).toEqual(b);
   });
 });
+
+// ══ BUILD F6b V5 #27 — trajectory planner (ceiling-aware + goal-aware) ════════
+// The `trajectory` opt switches the deeper projection on (the I/O boundary derives
+// + injects ceiling/goal/flag). OFF (opt absent) → today's linear + flat-% (byte-
+// identical). Cases (spec §5c): off=identical, far-from-ceiling≈linear-ish, near-
+// ceiling FLATTENS and stays < ceiling, maintenance goal HOLDS, <3 sessions → null.
+describe('goalForecast — V5 #27 trajectory planner', () => {
+  const DAY = 24 * 60 * 60 * 1000;
+  const T = Date.UTC(2026, 5, 2);
+  const rising = [
+    { ts: T - 21 * DAY, oneRm: 100 },
+    { ts: T - 14 * DAY, oneRm: 102 },
+    { ts: T - 7 * DAY, oneRm: 104 },
+    { ts: T, oneRm: 106 },
+  ];
+
+  it('OFF (no trajectory opt) → byte-identical to today (linear + flat-% + 4 weeks)', () => {
+    const today = projectLiftStrength({ name: 'Bench', samples: rising });
+    expect(today).not.toBeNull();
+    expect(today!.weeks).toBe(STRENGTH_FORECAST_WEEKS); // 4 — unchanged
+  });
+
+  it('ON far from the ceiling → projects gains over the 8-week arc (near-full slope)', () => {
+    const f = projectLiftStrength({
+      name: 'Bench', samples: rising, trajectory: true, ceiling: 400, goalId: 'forta',
+    });
+    expect(f).not.toBeNull();
+    expect(f!.weeks).toBe(8);
+    expect(f!.projectedOneRm).toBeGreaterThan(f!.currentOneRm); // still climbing
+    expect(f!.projectedOneRm).toBeLessThan(400); // never crosses the (far) ceiling
+  });
+
+  it('ON near the ceiling → the arc FLATTENS and stays below the ceiling', () => {
+    // currentOneRm = 106; ceiling 110 (mu/ceiling ≈ 0.96, deep in the decay zone) →
+    // the 8-week walk asymptotes well under 110, far below a naive straight line.
+    const f = projectLiftStrength({
+      name: 'Bench', samples: rising, trajectory: true, ceiling: 110, goalId: 'forta',
+    });
+    expect(f).not.toBeNull();
+    expect(f!.projectedOneRm).toBeLessThanOrEqual(110); // ceiling clamp holds
+    // Flattened: the near-ceiling 8-week gain is SMALLER than the same lift's gain
+    // far from the ceiling (the decay bit).
+    const farGain = (() => {
+      const ff = projectLiftStrength({ name: 'Bench', samples: rising, trajectory: true, ceiling: 400, goalId: 'forta' });
+      return ff!.projectedOneRm - ff!.currentOneRm;
+    })();
+    expect(f!.projectedOneRm - f!.currentOneRm).toBeLessThan(farGain);
+  });
+
+  it('maintenance goal → HOLD ~current (no gains promised to a maintenance user)', () => {
+    const f = projectLiftStrength({
+      name: 'Bench', samples: rising, trajectory: true, ceiling: 400, goalId: 'sanatate',
+    });
+    expect(f).not.toBeNull();
+    expect(f!.projectedOneRm).toBe(f!.currentOneRm); // held, not projected up
+  });
+
+  it('keeps the honesty guards — <3 sessions still → null even with trajectory ON', () => {
+    const two = [{ ts: T - 7 * DAY, oneRm: 100 }, { ts: T, oneRm: 102 }];
+    expect(projectLiftStrength({ name: 'Bench', samples: two, trajectory: true, ceiling: 400, goalId: 'forta' })).toBeNull();
+  });
+
+  it('a flat/declining lift → null even with trajectory ON (never invents a forecast)', () => {
+    const down = [
+      { ts: T - 21 * DAY, oneRm: 110 },
+      { ts: T - 14 * DAY, oneRm: 108 },
+      { ts: T - 7 * DAY, oneRm: 106 },
+      { ts: T, oneRm: 104 },
+    ];
+    expect(projectLiftStrength({ name: 'Bench', samples: down, trajectory: true, ceiling: 400, goalId: 'forta' })).toBeNull();
+  });
+
+  it('no usable ceiling → degrades to a slope-based walk, never crashes', () => {
+    const f = projectLiftStrength({
+      name: 'Bench', samples: rising, trajectory: true, ceiling: 0, goalId: 'forta',
+    });
+    expect(f).not.toBeNull();
+    expect(f!.projectedOneRm).toBeGreaterThan(f!.currentOneRm); // decay=1 → uncapped slope walk
+  });
+});
