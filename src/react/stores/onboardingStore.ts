@@ -25,7 +25,15 @@ export type Frequency = '2' | '3' | '4' | '5';
  * engine (scheduleAdapter FOCUS_PRESETS) shapes volume + split around it.
  * 'balanced' (DEFAULT) = Andura decides, ZERO change (opt-in, ADR 025).
  */
-export type FocusPreset = 'balanced' | 'v-taper' | 'arms' | 'chest' | 'lower' | 'upper';
+export type FocusPreset =
+  | 'balanced'
+  | 'v-taper'
+  | 'arms'
+  | 'chest'
+  | 'shoulders'
+  | 'back'
+  | 'lower'
+  | 'upper';
 export type Experience = 'incepator' | 'intermediar' | 'avansat';
 /**
  * Training type (Daniel spec 2026-05-30) — gates the whole experience. Many

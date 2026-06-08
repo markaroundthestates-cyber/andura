@@ -52,6 +52,22 @@ export const FOCUS_PRESETS = Object.freeze({
     emphasize: Object.freeze(['piept', 'triceps']),
     deEmphasize: Object.freeze([]),
   }),
+  // Shoulders: umeri UP (lateral + rear delt for width); NOTHING de-emphasized
+  // (a standalone shoulder bias, not a body-region trade like v-taper). Distinct
+  // from v-taper (umeri + spate both up, lower relaxed) and from upper/arms (umeri
+  // only secondary). umeri is the PRIMARY emphasis → routes into the lateral-raise
+  // guarantee (dp_smart_selection_v1) the same as v-taper/upper.
+  shoulders: Object.freeze({
+    emphasize: Object.freeze(['umeri']),
+    deEmphasize: Object.freeze([]),
+  }),
+  // Back: spate UP (lats / upper back for width); NOTHING de-emphasized (a
+  // standalone back bias). Distinct from v-taper (umeri + spate, lower relaxed)
+  // and upper (piept + spate + umeri). Bias the group up only.
+  back: Object.freeze({
+    emphasize: Object.freeze(['spate']),
+    deEmphasize: Object.freeze([]),
+  }),
   // Lower: fese + quads/hams UP (gambe secondary); upper neutral.
   lower: Object.freeze({
     emphasize: Object.freeze(['fese', 'picioare-quads', 'picioare-hamstrings', 'gambe']),

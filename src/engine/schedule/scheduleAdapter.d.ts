@@ -74,7 +74,15 @@ export interface WorkoutPlan {
   workoutTitle: string;
 }
 
-export type FocusPreset = 'balanced' | 'v-taper' | 'arms' | 'chest' | 'lower' | 'upper';
+export type FocusPreset =
+  | 'balanced'
+  | 'v-taper'
+  | 'arms'
+  | 'chest'
+  | 'shoulders'
+  | 'back'
+  | 'lower'
+  | 'upper';
 
 export interface FocusPresetSpec {
   emphasize: readonly string[];

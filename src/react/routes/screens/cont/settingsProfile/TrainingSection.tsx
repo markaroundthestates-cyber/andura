@@ -27,11 +27,13 @@ const EXPERIENCE_LABEL_KEYS: Record<Experience, string> = {
 // shows ONE calm maintenance note (no guilt, no blocker).
 const FOCUS_OPTIONS: ReadonlyArray<{ id: FocusPreset; labelKey: string; descKey: string }> = [
   { id: 'balanced', labelKey: 'settings.profile.focusBalanced', descKey: 'settings.profile.focusBalancedDesc' },
-  { id: 'v-taper', labelKey: 'settings.profile.focusVTaper', descKey: 'settings.profile.focusVTaperDesc' },
   { id: 'arms', labelKey: 'settings.profile.focusArms', descKey: 'settings.profile.focusArmsDesc' },
   { id: 'chest', labelKey: 'settings.profile.focusChest', descKey: 'settings.profile.focusChestDesc' },
-  { id: 'lower', labelKey: 'settings.profile.focusLower', descKey: 'settings.profile.focusLowerDesc' },
+  { id: 'shoulders', labelKey: 'settings.profile.focusShoulders', descKey: 'settings.profile.focusShouldersDesc' },
+  { id: 'back', labelKey: 'settings.profile.focusBack', descKey: 'settings.profile.focusBackDesc' },
   { id: 'upper', labelKey: 'settings.profile.focusUpper', descKey: 'settings.profile.focusUpperDesc' },
+  { id: 'lower', labelKey: 'settings.profile.focusLower', descKey: 'settings.profile.focusLowerDesc' },
+  { id: 'v-taper', labelKey: 'settings.profile.focusVTaper', descKey: 'settings.profile.focusVTaperDesc' },
 ];
 
 /** True when the selected preset de-emphasizes a region → show the calm note. */

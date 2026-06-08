@@ -57,9 +57,18 @@ beforeEach(() => {
 
 // ── Preset data map ───────────────────────────────────────────────────────
 describe('FOCUS_PRESETS — goal/look → per-group emphasis map', () => {
-  it('exposes the six presets, balanced = empty no-op', () => {
-    expect(FOCUS_PRESET_IDS).toEqual(['balanced', 'v-taper', 'arms', 'chest', 'lower', 'upper']);
+  it('exposes the eight presets, balanced = empty no-op', () => {
+    expect(FOCUS_PRESET_IDS).toEqual([
+      'balanced', 'v-taper', 'arms', 'chest', 'shoulders', 'back', 'lower', 'upper',
+    ]);
     expect(FOCUS_PRESETS.balanced).toEqual({ emphasize: [], deEmphasize: [] });
+  });
+
+  it('shoulders/back are standalone single-group emphasis, nothing de-emphasized', () => {
+    expect(FOCUS_PRESETS.shoulders.emphasize).toEqual(['umeri']);
+    expect(FOCUS_PRESETS.shoulders.deEmphasize).toEqual([]);
+    expect(FOCUS_PRESETS.back.emphasize).toEqual(['spate']);
+    expect(FOCUS_PRESETS.back.deEmphasize).toEqual([]);
   });
 
   it('upper mirrors v-taper — piept/spate/umeri UP, the SAME lower groups de-emphasized', () => {
