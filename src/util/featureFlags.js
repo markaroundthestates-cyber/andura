@@ -774,6 +774,27 @@ export const FLAGS = Object.freeze({
   // calibrated from _ENGINE_load_bf_rate_policy_2026-06-08 §3 + §4 (verified
   // physiology — Helms/ISSN/Aragon). See spec §4.
   dp_goal_realism_v1: { rollout: 0, default: false },
+
+  // #75 load-transition-window + reason-derivation (engine-wiring 2026-06-08)
+  // (RISK MED — changes how dp.js READS reps right after a forced load change,
+  // path B; never invents a load, only SUPPRESSES a misread or CAPS a rebound).
+  // After a forced load change ≥10%, raw reps are misleading: an UP-jump drops
+  // reps (8kg×20→10kg×12 = e1RM continuity, NOT regression) so today's ease-back
+  // could fire a FALSE demotion; a DOWN move spikes reps (10→8 = −20% → 3×20+)
+  // which the catch-up/easy-run path could misread as headroom and OVERSHOOT on
+  // the rebound. When ON, deriveLoadTransition opens a 2-3 exposure window (per-
+  // reason; pain OPEN-ENDED until 2 pain-free exposures) where: UP-jump + e1RM
+  // continuity → suppress_regression (the ease-back is skipped, the post-jump rep
+  // drop re-climbs normally); DOWN move → cap_rebound holds the upward correction
+  // to the min increment until 2 clean exposures. The DOWN reason is DERIVED by
+  // priority (pain #64 > deload > equipment > manual > failed-reps/form > fatigue
+  // > unknown→CONSERVATIVE) from signals dp.js already has, defaulting conservative
+  // when unknown (no aggressive auto-climb). OFF → deriveLoadTransition is never
+  // invoked → byte-identical (the calibration-sim hash holds flag-OFF; ON is the
+  // validation gate). Flip ON is a human gate (Daniel) AFTER the sim A/B. The
+  // thresholds (10% / 2-3 exposures / 7% e1RM tolerance) are DESIGN PROPOSALS from
+  // _ENGINE_progression_rir_rest_count_policy_2026-06-08 §1 `load_transition_window`.
+  dp_load_transition_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */

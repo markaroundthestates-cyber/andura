@@ -17,6 +17,7 @@ import { classifyAndIntervene } from './dp/plateauIntervention.js';
 import { temperamentBias, temperamentBiasFromLogs, saveTemperament, GLOBAL_KEY as TEMPERAMENT_GLOBAL_KEY } from './dp/temperament.js';
 import { shouldProbe, probeSet } from './dp/activeProbing.js';
 import { chooseCandidate } from './dp/mpc.js';
+import { deriveLoadTransition } from './dp/loadTransition.js';
 import { detectStagnation } from './stagnationDetector.js';
 import { getUserConfig } from '../config/user.js';
 import { t } from '../i18n/index.js';
@@ -1367,6 +1368,41 @@ export const DP = {
     const { lastW, lastReps, lastRPE, isStagnant, atTopReps, extraSets,
       consecutiveGreu, lastRepsBelowTarget, consecutiveEasyHit } = state;
 
+    // ── #75 LOAD-TRANSITION WINDOW (dp_load_transition_v1, default OFF) ──────────
+    // After a forced load change ≥10%, raw reps are misread: an UP-jump rep DROP is
+    // e1RM continuity (NOT regression → suppress the ease-back); a DOWN move rep
+    // SPIKE is the stimulus changing (NOT headroom → cap the upward rebound). The
+    // descriptor is computed ONCE here and consumed at the ease-back + catch-up
+    // sites below. Reason signals available inside dp.js: deload (_returnDeload) +
+    // failed-reps/form (state.lastRepsBelowTarget). Pain (#64), equipment-swap +
+    // manual user input are NOT plumbed into dp.js's recommend path today → they
+    // DEFAULT conservative (spec §1 default) — a real product wiring of those
+    // channels into opts is the BOUNDARY (never fabricated). OFF → never invoked →
+    // byte-identical (the inert descriptor below keeps every site unchanged).
+    const ltOn = isEnabled('dp_load_transition_v1');
+    /** @type {ReturnType<typeof deriveLoadTransition>} */
+    const loadTransition = ltOn
+      ? deriveLoadTransition({
+          logs: state.logs,
+          e1RMForSet: (w, reps, rpe) => this.e1RMForSet(w, reps, rpe, ex),
+          reasonSignals: {
+            // deload state (real, available): a return-deload window is active.
+            deloadActive: this._returnDeload(ex, nowMs) != null,
+            // failed-reps / too-hard (real, available): the last hard set's reps
+            // collapsed below the floor.
+            failedReps: !!lastRepsBelowTarget,
+            // pain / equipment / manual: NOT available in dp.js today → omitted →
+            // deriveDecreaseReason defaults conservative (unknown) when nothing
+            // higher-priority fires. BOUNDARY: wire opts.painFlag/equipmentSwap/
+            // manualReason from the React boundary to activate those branches.
+          },
+          // Pain memory (#64) lives outside dp.js → not available here → treated as
+          // not-flagged (the pain branch only opens when painFlag is sourced).
+          painStillFlagged: false,
+        })
+      : { transition_active: false, direction: null, reason: null, load_change_pct: 0,
+          suppress_regression: false, cap_rebound: false, window: 0, exposuresInWindow: 0, asked: false };
+
     // ── SCALE BACK: ≤50% of minimum reps → drop one step on equipment list
     if (lastReps < Math.ceil(rMin * 0.5)) {
       const prevKg = getPrevWeight(lastW, ex);
@@ -1487,6 +1523,36 @@ export const DP = {
       if (!belowDemo && tendonCap < 1) {
         stepFrac = Math.min(stepFrac, tendonCap);
       }
+      // #75 — DOWN-move rebound cap: right after a forced load DROP (≥10%), the rep
+      // SPIKE is the stimulus changing, NOT new headroom. Do NOT auto-jump back up
+      // in big steps — cap the upward correction to the MINIMUM increment (one
+      // equipment step) until 2 clean exposures clear the window. loadTransition
+      // .cap_rebound is only true inside a DOWN window (flag ON); OFF → false →
+      // byte-identical. The PR-floor catch-up (belowDemo to an already-OWNED load)
+      // is exempt — returning to a proven load is not chasing a new max.
+      if (loadTransition.cap_rebound && !belowDemo) {
+        const oneStep = getNextWeight(lastW, ex);
+        const cappedKg = oneStep > lastW ? oneStep : lastW;
+        if (cappedKg > lastW) {
+          return {
+            kg: cappedKg, repsTarget: rMin, rir: 3,
+            status: 'CATCH UP',
+            statusColor: 'var(--green)',
+            statusLabel: '🟢 Urcam un pas',
+            progressionNote: `Dupa o greutate mai mica, urcam controlat la ${cappedKg} kg.`,
+            progressionStage: 1
+          };
+        }
+        // No higher step available → hold (do not climb past the just-reduced load).
+        return {
+          kg: lastW, repsTarget: Math.min(rMax, Math.max(lastReps, rMin)), rir: 2,
+          status: 'MAINTAIN',
+          statusColor: 'var(--accent)',
+          statusLabel: '🟡 Mentinem',
+          progressionNote: `Ramanem la ${lastW} kg cat ne stabilizam dupa schimbarea de greutate.`,
+          progressionStage: 0
+        };
+      }
       const ceiling = belowDemo ? demoW : lastW * (1 + stepFrac);
       const jumpedRaw = belowDemo ? demoW : lastW * (1 + stepFrac);
       let climbKg = this.roundToStep(Math.min(ceiling, jumpedRaw), ex);
@@ -1537,7 +1603,12 @@ export const DP = {
     // fall through to standard double-progression (HOLD weight, MEDIUM path).
     const hitTargetReps = lastReps >= (rMin ?? 8);
     const sustainedHard = lastRepsBelowTarget || (consecutiveGreu >= 2 && !hitTargetReps);
-    if (lastRPE >= 8.5 && sustainedHard) {
+    // #75 — SUPPRESS the ease-back when an UP-jump's rep drop is e1RM continuity,
+    // not regression (8kg×20 ≈ 10kg×12). loadTransition.suppress_regression is only
+    // true inside an UP window WITH e1RM continuity (flag ON); OFF → always false →
+    // byte-identical. A genuine over-heavy jump (e1RM dropped past tolerance) leaves
+    // suppress_regression false, so the ease-back still fires.
+    if (lastRPE >= 8.5 && sustainedHard && !loadTransition.suppress_regression) {
       const easedKg = getPrevWeight(lastW, ex);
       const targetReps = Math.max(rMin, Math.min(lastReps, rMax));
       if (easedKg < lastW) {
