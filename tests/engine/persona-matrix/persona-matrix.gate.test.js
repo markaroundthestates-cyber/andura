@@ -74,5 +74,22 @@ describe('PERSONA-MATRIX ACCEPTANCE GATE (#70, Andura-ON)', () => {
     // 3. the two unrealistic-frequency / contradictory personas reframe.
     const stefan = results.find((r) => r.agg.persona.id === 22);
     expect(stefan.agg.realism, 'Stefan (beginner 7d) should reframe frequency').toBeTruthy();
+
+    // 4. #81 HARD SAFETY EXCLUSION (contraindicated / refused) — these are NOT lenient
+    //    findings: shipping a deadlift to a disc patient or a squat to a user who
+    //    refused it is the bug. The per-persona safety findings (refusal violated /
+    //    disc|shoulder contraindication) MUST be empty.
+    const SAFETY_RE = /refusal violated|contraindication/i;
+    for (const id of [23, 24, 13]) { // Andreea (refusal), Ion (disc), Radu (shoulder)
+      const r = results.find((x) => x.agg.persona.id === id);
+      const safety = r.check.findings.filter((f) => SAFETY_RE.test(f));
+      expect(safety, `${r.agg.persona.name} #81 safety violations:\n${safety.join('\n')}`).toEqual([]);
+    }
+
+    // 5. #82 EQUIPMENT PROFILE — Mihai ("home: DB+bench+pullup") must get ZERO
+    //    machine/cable lifts (only DB / barbell-free / bodyweight / pull-up).
+    const mihai = results.find((x) => x.agg.persona.id === 15);
+    const equipViol = mihai.check.findings.filter((f) => /equipment/i.test(f));
+    expect(equipViol, `Mihai #82 equipment violations:\n${equipViol.join('\n')}`).toEqual([]);
   }, 240000);
 });

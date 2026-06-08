@@ -14,6 +14,7 @@ import {
   deloadAdapter,
 } from '../../../coach/orchestrator/adapters/index.js';
 import { buildSession } from '../../sessionBuilder.js';
+import { buildExclusionTokens, contraindicatedGroupsFromPainCdl } from '../../movementExclusion.js';
 import { isEnabled } from '../../../util/featureFlags.js';
 import { exercisePenaltyMap } from '../../dp/exercisePain.js';
 import { painSwapMap } from '../../dp/painMemory.js';
@@ -488,6 +489,31 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     deloadActive,
   });
 
+  // #81 HARD movement-pattern EXCLUSION (contraindicated injury / explicit refusal).
+  // SAFETY fix (NOT a flagged experiment — shipping a deadlift to a disc-herniation
+  // patient or a squat to a user who refused it is the bug). Two honest inputs:
+  //   - INJURY: the Pain CDL channel read with the INJECTED clock
+  //     (contraindicatedGroupsFromPainCdl(date.getTime())) — the SAME clock the
+  //     recovery path uses, so it is correct under a planned/back-dated clock (the
+  //     React builder's meta.painAffectedGroups derives off Date.now() and is stale
+  //     against a non-real clock). A lower-back/disc report (→ spate) or a shoulder
+  //     report (→ umeri) maps to the contraindicated tokens in INJURY_PATTERN_EXCLUSIONS.
+  //   - REFUSAL: user.refusedPatterns (persisted per-UID list, e.g. ['squat',
+  //     'deadlift']) hard-removes those PATTERNS — distinct from the in-session
+  //     one-tap skip. INPUT-CAPTURE BOUNDARY: the onboarding/profile UI that SETS
+  //     this list is a follow-up (no field exists yet); the engine exclusion is wired
+  //     + tested now and activates the moment the field is populated.
+  // No injury + no refusal (the common case) → empty token set → poolForGroup removes
+  // nothing → byte-identical to today.
+  const injuryGroups = contraindicatedGroupsFromPainCdl(date.getTime());
+  const refusedPatterns = Array.isArray(userState?.user?.refusedPatterns)
+    ? userState.user.refusedPatterns
+    : [];
+  const excludedMovements =
+    injuryGroups.length > 0 || refusedPatterns.length > 0
+      ? buildExclusionTokens(injuryGroups, refusedPatterns)
+      : null;
+
   const sessionCtx = {
     equipment: { available: availableCoarse },
     weakGroups,
@@ -527,6 +553,11 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // existing DEMOTE (exercisePenalties above). Empty pin store → empty map →
     // byte-identical even with the flag ON.
     painSwaps: isEnabled('dp_pain_memory_v1') ? painSwapMap() : null,
+    // #81 HARD contraindication/refusal exclusion (SAFETY — applied whenever a real
+    // injury/refusal signal exists, NOT gated behind a default-OFF experiment).
+    // poolForGroup REMOVES the contraindicated movement pattern (last-option guarded)
+    // so a safe same-muscle sibling leads. Null (no injury + no refusal) → no-op.
+    excludedMovements,
     // F6a #20 per-set fatigue curve (dp_fatigue_curve_v1, default OFF → null →
     // distributeGroupSets applies adjust 0 → byte-identical). When ON, the learned
     // per-exercise drop-off index (persisted dp-fatigue-curve, name-keyed on the EN

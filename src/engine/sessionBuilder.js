@@ -10,6 +10,7 @@
 
 import { EXERCISE_METADATA, getExerciseMetadata, isActiveMeta } from './exerciseLibrary.js';
 import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT, ISRAETEL_BASELINES } from './periodization/constants.js';
+import { isExcludedMovement } from './movementExclusion.js';
 
 // buildSession's first param is now a Big-6 CLUSTER id (push/pull/legs/upper/
 // lower/full) — the target muscle groups + their session-slot bias come from the
@@ -584,9 +585,16 @@ function equipmentOk(meta, available) {
  *   substitute (held until the pin is cleared). Otherwise the pinned exercise is
  *   left untouched (the penalty demote still applies). Null/empty → no swap
  *   (byte-identical). Never DROPS the muscle's last option (anti-paternalism).
+ * @param {{tokens: Set<string>, pressAllow: ReadonlyArray<string>}|null} [excludedMovements]
+ *   #81 HARD contraindication/refusal exclusion (movementExclusion.buildExclusionTokens).
+ *   A candidate whose movementKey token is in `tokens` (with the landmine/neutral
+ *   shoulder-press carve-out) is REMOVED from the pool entirely — a same-muscle safe
+ *   sibling (already in-pool) then leads — UNLESS it would empty the muscle (the
+ *   last-option guard keeps a non-empty leg day). Null/empty → no removal
+ *   (byte-identical). Unlike the penalty DEMOTE this is a hard REMOVE (safety).
  * @returns {Array<{name: string, meta: object}>}
  */
-function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, sexBias, painSwaps) {
+function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, sexBias, painSwaps, excludedMovements) {
   // ACTIVE visibility gate (Daniel SSOT 2026-06-05, supersedes 2026-06-03 CORE+
   // FALLBACK gate): auto-selection draws ONLY from the curated ACTIVE catalog
   // (CORE_AUTO — see isActiveMeta / ACTIVE_STATUSES) plus PR-history continuity.
@@ -636,6 +644,30 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalt
         // Replace the pinned entry in-place with its curated substitute.
         core[i] = { name: sub, meta: subMeta };
       }
+    }
+  }
+
+  // #81 HARD movement EXCLUSION (contraindicated injury pattern / explicit refusal).
+  // A candidate whose movement token is excluded is REMOVED from the pool (not just
+  // demoted) so the safe same-muscle sibling already in `core` leads — UNLESS the
+  // removal would empty the muscle (last-option guard: never an empty leg day).
+  // SAFETY overrides PR continuity here: a disc patient who has logged RDL still must
+  // not be handed RDL. The shoulder-press carve-out (landmine/neutral) is honored by
+  // isExcludedMovement. Null/empty excl → the predicate is always false → no-op.
+  if (excludedMovements && excludedMovements.tokens && excludedMovements.tokens.size > 0) {
+    const kept = [];
+    const dropped = [];
+    for (const e of core) {
+      const token = movementKey(e.name, e.meta).split('::')[1] ?? '';
+      (isExcludedMovement(e.name, token, excludedMovements) ? dropped : kept).push(e);
+    }
+    // Only apply the removal when at least one SAFE option survives for the muscle —
+    // otherwise keep the (contraindicated) pool rather than emit an empty group. The
+    // round-robin in buildSession redistributes an empty group's slots elsewhere, so
+    // when kept is empty leaving the originals is the conservative last-resort.
+    if (kept.length > 0 && dropped.length > 0) {
+      core.length = 0;
+      core.push(...kept);
     }
   }
 
@@ -847,6 +879,7 @@ export function movementKey(name, meta) {
  *   emphasizedGroups?: string[],
  *   exercisePenalties?: Record<string, number>|null,
  *   painSwaps?: Record<string, string>|null,
+ *   excludedMovements?: {tokens: Set<string>, pressAllow: ReadonlyArray<string>}|null,
  *   fatigueSetsAdjust?: ((name: string) => number)|null,
  *   emphasisSetsBoost?: boolean,
  *   coherentAlloc?: boolean,
@@ -886,11 +919,16 @@ export function buildSession(cluster, ctx) {
   // #64 PERSISTENT pain memory proactive swap (engineName → substitute). Null/empty
   // (the common case + flag off) → poolForGroup makes no swap → byte-identical.
   const painSwaps = ctx?.painSwaps ?? null;
+  // #81 HARD contraindication/refusal exclusion descriptor ({tokens, pressAllow}).
+  // Built by movementExclusion.buildExclusionTokens from the injury signal + the
+  // persisted refusal list. Null / empty tokens (no injury + no refusal — the common
+  // case) → poolForGroup removes nothing → byte-identical pool.
+  const excludedMovements = ctx?.excludedMovements ?? null;
 
   // Pools per target group (ordered: PR-anchored -> anchor -> new, seeded-stable).
   const pools = targets.map((g) => ({
     group: g,
-    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, sexBias, painSwaps),
+    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, sexBias, painSwaps, excludedMovements),
   }));
 
   // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the user's

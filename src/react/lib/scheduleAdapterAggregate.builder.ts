@@ -522,6 +522,13 @@ export function buildUserStateForPipeline(): {
       // Canonical greutate curenta (ultima logata > onboarding) — audit CRIT.
       weight: currentWeightKg,
       height: onboardingData.height,
+      // #81 explicit movement REFUSAL list (e.g. ['squat','deadlift']) → hard pool
+      // exclusion in getDailyWorkout. Pass-through of the persisted onboarding field.
+      // INPUT-CAPTURE BOUNDARY: the UI to set this is a follow-up; absent → omitted
+      // → no exclusion (byte-identical). exactOptionalPropertyTypes: spread conditional.
+      ...(Array.isArray(onboardingData.refusedPatterns) && onboardingData.refusedPatterns.length > 0
+        ? { refusedPatterns: onboardingData.refusedPatterns }
+        : {}),
       // Degrade safe-absent: only set when the estimate/timeline is real.
       ...(bfPct !== undefined ? { bfPct } : {}),
       trainingWeeks,

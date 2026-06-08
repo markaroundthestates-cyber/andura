@@ -8,6 +8,8 @@
 
 import { world, resetWorld, setPathAFlags, FLIPPED_FLAGS } from '../full-path-sim/fp-config.js';
 import { getExerciseMetadata } from '../../../src/engine/exerciseLibrary.js';
+import { movementKey } from '../../../src/engine/sessionBuilder.js';
+import { INJURY_PATTERN_EXCLUSIONS, REFUSAL_PATTERN_TOKENS, isExcludedMovement, buildExclusionTokens } from '../../../src/engine/movementExclusion.js';
 import { DEV_FLAGS_KEY } from '../../../src/util/featureFlags.js';
 import { DB } from '../../../src/db.js';
 import { evaluateGoalRealism } from '../../../src/engine/goalRealism.js';
@@ -76,6 +78,10 @@ async function runPersona(persona, { flags }) {
   const days = [];
   let lateralRaisePresent = false;
   let injuryGroupExercises = 0; // exercises hitting the injured group (lower=safer)
+  // #81 — every movement token emitted across the week (e.g. squat/deadlift/press),
+  // with the offending exercise name, so the gate can assert a refused/contraindicated
+  // PATTERN never appears for the injury/refusal personas.
+  const movementsSeen = []; // { token, name }
   const injuryGroups = persona.pain
     ? { knee: ['picioare-quads', 'picioare-hamstrings'], lowerBack: ['spate'], shoulder: ['umeri'] }[persona.pain]
     : [];
@@ -91,10 +97,12 @@ async function runPersona(persona, { flags }) {
     let firstCompoundIdx = -1;
     exs.forEach((e, i) => {
       const name = e.engineName || e.name;
-      const g = getExerciseMetadata(name).muscle_target_primary;
+      const meta = getExerciseMetadata(name);
+      const g = meta.muscle_target_primary;
       weekly[g] = (weekly[g] || 0) + (e.sets || 0);
       if (LATERAL_RAISE_RE.test(name)) lateralRaisePresent = true;
       if (injuryGroups.includes(g)) injuryGroupExercises += 1;
+      movementsSeen.push({ token: movementKey(name, meta).split('::')[1] ?? '', name });
       const isCompound = COMPOUND_RE.test(name);
       if (isCompound && firstCompoundIdx === -1) firstCompoundIdx = i;
       if (!isCompound && firstNonCompoundIdx === -1) firstNonCompoundIdx = i;
@@ -125,14 +133,14 @@ async function runPersona(persona, { flags }) {
     hardDaysPerWeek: persona.days ?? Number(persona.data.frequency),
   });
 
-  return { persona, weekly, days, lateralRaisePresent, injuryGroupExercises, bfPct, realism };
+  return { persona, weekly, days, lateralRaisePresent, injuryGroupExercises, movementsSeen, bfPct, realism };
 }
 
 // ── band-check: principle-band acceptance per persona ──────────────────────
 // Returns { pass, findings[] }. Bands are SANE RANGES from the policy docs, not
 // a single gold — a coach varies. A finding = a real divergence (a fix item).
 function checkPersona(agg) {
-  const { persona, weekly, days, lateralRaisePresent, realism } = agg;
+  const { persona, weekly, days, lateralRaisePresent, movementsSeen, realism } = agg;
   const findings = [];
   const trained = days.filter((d) => !d.rest);
   const exec = persona.data.experience;
@@ -208,6 +216,42 @@ function checkPersona(agg) {
   if (exec === 'incepator') {
     for (const [g, v] of Object.entries(weekly)) {
       if (v > 22) findings.push(`beginner: ${GROUP_LABEL[g] || g} weekly ${v} > 22 (over-dosed for a novice)`);
+    }
+  }
+  // 11. #81 EXPLICIT REFUSAL — a refused movement PATTERN must NEVER appear (hard
+  //     exclusion, not just deprioritize). The landmine/neutral shoulder-press carve-
+  //     out is honored by the engine; the leg-pattern refusals (squat/deadlift) have
+  //     no carve-out so any occurrence is a violation.
+  if (Array.isArray(persona.expectNoRefused)) {
+    const banned = new Set();
+    for (const r of persona.expectNoRefused) for (const t of REFUSAL_PATTERN_TOKENS[r] || []) banned.add(t);
+    for (const { token, name } of movementsSeen) {
+      if (banned.has(token)) {
+        findings.push(`refusal violated: "${name}" (pattern '${token}') appeared despite refusedPatterns ${JSON.stringify(persona.expectNoRefused)}`);
+      }
+    }
+  }
+  // 12. #81 INJURY CONTRAINDICATION — a back-safe (disc) persona must get ZERO
+  //     spinal-loading patterns (deadlift/squat/good-morning/hip-thrust). The pain
+  //     CDL (lombar→spate) drives the exclusion; any contraindicated pattern is a
+  //     safety violation. Press carve-out (landmine/neutral) not relevant for spate.
+  if (persona.expectBackSafe) {
+    const banned = new Set(INJURY_PATTERN_EXCLUSIONS.spate);
+    for (const { token, name } of movementsSeen) {
+      if (banned.has(token)) {
+        findings.push(`disc contraindication: "${name}" (pattern '${token}') is spinal-loading — must be excluded for a back-safe user`);
+      }
+    }
+  }
+  // 13b. #81 SHOULDER impingement — no overhead press / upright row (name-based for
+  //     OHP). Uses the real engine predicate so the gate tracks the carve-out exactly.
+  if (persona.expectShoulderSafe) {
+    const excl = buildExclusionTokens(['umeri'], []);
+    for (const { token, name } of movementsSeen) {
+      if (getExerciseMetadata(name).muscle_target_primary === 'umeri'
+          && isExcludedMovement(name, token, excl)) {
+        findings.push(`shoulder contraindication: "${name}" is an overhead-press/upright-row aggravator — must be excluded`);
+      }
     }
   }
   // 10. every persona produces a real, non-empty week.

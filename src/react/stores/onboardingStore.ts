@@ -108,6 +108,17 @@ export interface OnboardingData {
    * Only consumed when `dp_emphasis_specialization_v1` is on.
    */
   focusPresetPickedAt?: number | null;
+  /**
+   * #81 explicit movement-pattern REFUSAL list (persisted per-UID). Keys from
+   * movementExclusion.REFUSAL_PATTERN_TOKENS (e.g. 'squat' | 'deadlift' | 'lunge' |
+   * 'hip-thrust' | 'overhead-press'). A listed pattern is HARD-EXCLUDED from
+   * selection (distinct from the in-session one-tap skip): the user says "I don't
+   * squat" and that family never appears, routed to a safe same-muscle alternative.
+   * INPUT-CAPTURE BOUNDARY: the onboarding/profile UI that SETS this is a follow-up;
+   * the engine exclusion is wired + tested and activates the moment it is populated.
+   * Absent/empty → no exclusion (byte-identical).
+   */
+  refusedPatterns?: string[];
 }
 
 /**
