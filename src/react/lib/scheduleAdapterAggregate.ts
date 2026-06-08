@@ -47,4 +47,6 @@ export {
   trimSessionToTimeBudget,
   scaleSetsByReadiness,
   resolveIntensityFactors,
+  stimulusScore,
+  stimulusPerMin,
 } from './scheduleAdapterAggregate.compose';

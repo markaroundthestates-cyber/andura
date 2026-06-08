@@ -637,6 +637,24 @@ export const FLAGS = Object.freeze({
   // named the 65-vs-30 rule). No new persistence (curve = code constant).
   dp_tendon_cap_v1: { rollout: 0, default: false },
 
+  // #12 stimulus-per-minute optimizer (RISK MED — changes WHICH tail exercise is
+  // dropped by the time-budget trim; never the front, never below floor). The
+  // trimSessionToTimeBudget drop is BLIND tail-first today (positionally-last),
+  // optimizing priority order NOT training-value-per-minute — the "27-min legs"
+  // complaint (a short day can lose a high-stimulus compound to a low-density
+  // isolation just because it sits later). When ON, the DROP step removes the
+  // LOWEST stimulus-per-minute candidate among the TRIMMABLE TAIL (positions at/
+  // beyond MIN_EXERCISES_FLOOR — the FRONT priority/weak prefix is never a drop
+  // candidate), so the remaining session is DENSER. stimulusScore reuses signals
+  // already loaded (compound-vs-isolation via COMPOUND_EX + muscle-target breadth
+  // via getExerciseMetadata) — NO new data source, NO persistence (pure transform).
+  // A density tie → the positionally-last (legacy ordering preserved). OFF → strict
+  // tail-first (out.pop) → byte-identical; the front/weak/priority protection + all
+  // floors (>=4 ex / >=2 sets / >=25min / compound idx-0 >=3) are UNCHANGED in both
+  // modes. The stimulusScore weighting is a DESIGN PROPOSAL (spec §9) — Daniel/
+  // research sanity-check before flip (the shape is verified, the constants tunable).
+  dp_stimulus_per_min_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

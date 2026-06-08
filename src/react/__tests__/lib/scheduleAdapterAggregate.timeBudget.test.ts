@@ -23,6 +23,8 @@ import {
   clusterFatigueFactor,
   computeEstimatedDurationMin,
   composePlannedWorkoutToday,
+  stimulusScore,
+  stimulusPerMin,
 } from '../../lib/scheduleAdapterAggregate';
 import type { PlannedExercise } from '../../lib/engineWrappers';
 import { useOnboardingStore } from '../../stores/onboardingStore';
@@ -241,6 +243,115 @@ describe('trimSessionToTimeBudget — rest-inclusive time bound', () => {
     const snapshot = JSON.parse(JSON.stringify(session));
     trimSessionToTimeBudget(session, 0, personaTimeCapMin('maria'));
     expect(session).toEqual(snapshot);
+  });
+});
+
+// ── F6c #12 — stimulus-per-minute optimizer ─────────────────────────────────
+// stimulusScore differentiates a compound (COMPOUND_EX) + wide muscle breadth from
+// a low-density isolation. stimulusPerMin = score / minute cost. The trim's DROP
+// step removes the lowest stimulus/min tail candidate when dp_stimulus_per_min_v1
+// is ON — denser remaining session — and is byte-identical (strict tail-first) OFF.
+describe('F6c #12 — stimulusScore + stimulusPerMin (pure)', () => {
+  it('a compound scores higher than an isolation', () => {
+    // Leg Press is in COMPOUND_EX; Calf Raises is not.
+    expect(stimulusScore('Leg Press')).toBeGreaterThan(stimulusScore('Calf Raises'));
+  });
+
+  it('an unknown name falls to the baseline (never throws)', () => {
+    expect(stimulusScore('___not_a_real_ex___')).toBeGreaterThan(0);
+    expect(stimulusScore(undefined)).toBeGreaterThan(0);
+  });
+
+  it('stimulusPerMin divides the score by the rest-inclusive minute cost', () => {
+    // A cheaper (shorter-rest, fewer-set) compound has a HIGHER density than a
+    // long-rest, many-set isolation.
+    const denseCompound = ex('Leg Press', 2, 60);
+    const sparseIso = ex('Calf Raises', 5, 180);
+    denseCompound.engineName = 'Leg Press';
+    sparseIso.engineName = 'Calf Raises';
+    expect(stimulusPerMin(denseCompound)).toBeGreaterThan(stimulusPerMin(sparseIso));
+  });
+});
+
+describe('F6c #12 — trim drop order: flag OFF byte-identical, ON drops lowest density', () => {
+  const ON = (): void => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_stimulus_per_min_v1: true }));
+  };
+
+  // A session at the SET FLOOR (2) — so the trim can only DROP, never shave — whose
+  // TAIL has a high-stimulus compound positioned LAST and a low-density isolation
+  // positioned EARLIER in the tail. Front 4 are CHEAP (short rest) so they survive;
+  // the cap forces dropping exactly ONE tail item. Blind tail-first → drops the
+  // last (compound); stimulus trim → drops the low-density isolation instead.
+  function tailMixSession(): PlannedExercise[] {
+    const e = (tag: string, name: string, sets: number, rest: number): PlannedExercise => {
+      const p = ex(tag, sets, rest);
+      p.engineName = name;
+      return p;
+    };
+    return [
+      // Front 4 (priority/weak prefix, never a drop candidate) — cheap (60s rest).
+      e('f0', 'Lat Pulldown', 2, 60),
+      e('f1', 'Cable Row', 2, 60),
+      e('f2', 'Flat DB Press', 2, 60),
+      e('f3', 'Incline DB Press', 2, 60),
+      // Tail: a low-density isolation (idx 4) + a high-stimulus compound LAST (idx 5),
+      // both expensive (300s rest) + at the set floor → the trim must DROP one.
+      e('isoTail', 'Calf Raises', 2, 300),   // idx 4 — low density (isolation)
+      e('compTail', 'Leg Press', 2, 300),    // idx 5 (last) — high density (compound)
+    ];
+  }
+  // Front 4: 4 x 2 x (40+60) = 800s; each tail: 2 x (40+300) = 680s. Full = 2160s
+  // = 36min. A 32-min cap forces dropping exactly ONE tail item (→ ~25min).
+  const ONE_DROP_CAP = 32;
+
+  it('flag OFF: drops the positional LAST (the compound) — legacy tail-first', () => {
+    const trimmed = trimSessionToTimeBudget(tailMixSession(), 0, ONE_DROP_CAP);
+    const names = trimmed.map((e) => e.name);
+    // The last-positioned compound was dropped (blind tail-first); the isolation survives.
+    expect(names).not.toContain('compTail');
+    expect(names).toContain('isoTail');
+  });
+
+  it('flag ON: drops the lowest stimulus/min tail (the isolation), KEEPS the compound', () => {
+    ON();
+    const trimmed = trimSessionToTimeBudget(tailMixSession(), 0, ONE_DROP_CAP);
+    const names = trimmed.map((e) => e.name);
+    // The denser compound survives; the low-density isolation is dropped instead.
+    expect(names).toContain('compTail');
+    expect(names).not.toContain('isoTail');
+    localStorage.removeItem('_devFlags');
+  });
+
+  it('flag ON: the FRONT prefix (first 4) is never a drop candidate', () => {
+    ON();
+    const trimmed = trimSessionToTimeBudget(tailMixSession(), 0, ONE_DROP_CAP);
+    const names = trimmed.map((e) => e.name);
+    // The four front exercises always survive (priority/weak protection unchanged).
+    for (const f of ['f0', 'f1', 'f2', 'f3']) expect(names).toContain(f);
+    localStorage.removeItem('_devFlags');
+  });
+
+  it('flag ON: a uniform-density tail trims to the SAME result as OFF (tie → positional)', () => {
+    const uniform = (): PlannedExercise[] =>
+      Array.from({ length: 8 }, (_, i) => {
+        const p = ex(`ex${i}`, 5, 180);
+        p.engineName = 'Calf Raises'; // identical density for every row
+        return p;
+      });
+    const off = trimSessionToTimeBudget(uniform(), 0, personaTimeCapMin('maria'));
+    ON();
+    const on = trimSessionToTimeBudget(uniform(), 0, personaTimeCapMin('maria'));
+    localStorage.removeItem('_devFlags');
+    expect(on.map((e) => e.name)).toEqual(off.map((e) => e.name));
+  });
+
+  it('flag ON: all floors still hold (>=4 ex / >=2 sets)', () => {
+    ON();
+    const trimmed = trimSessionToTimeBudget(tailMixSession(), 0, 20);
+    expect(trimmed.length).toBeGreaterThanOrEqual(4);
+    for (const e of trimmed) expect(e.sets).toBeGreaterThanOrEqual(2);
+    localStorage.removeItem('_devFlags');
   });
 });
 

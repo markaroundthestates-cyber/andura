@@ -14,6 +14,7 @@ import { signalBus, type SessionSignalTrace } from './signalBus';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { COMPOUND_EX } from '../../constants.js';
+import { getExerciseMetadata } from '../../engine/exerciseLibrary.js';
 import type { PlannedExercise, PlannedWorkoutOutput, CoachAdaptation } from './engineWrappers';
 import { toExerciseDisplay } from './exerciseDisplay';
 import { DP } from '../../engine/dp.js';
@@ -479,6 +480,52 @@ export function clusterFatigueFactor(sessionType: string | null | undefined): nu
     : DEFAULT_CLUSTER_FATIGUE_FACTOR;
 }
 
+// ── F6c #12 — STIMULUS-per-minute optimizer (F6c spec §7) ───────────────────
+// The trim below is BLIND tail-first: it drops the positionally-LAST exercise
+// among the trimmable tail, optimizing for priority order, NOT training-value-
+// per-minute — so a short "27-min legs" day can lose a high-stimulus compound to a
+// low-density isolation merely because the compound sits later. #12 DEEPENS the
+// drop decision (it does NOT replace the trim): among the TRIMMABLE tail it drops
+// the LOWEST stimulus-per-minute candidate instead of strictly the last, so the
+// remaining session is DENSER. The FRONT (priority/weak — kept at the head by
+// prioritizeWeakGroups) is still never dropped, and every floor still holds.
+//
+// stimulusScore reuses signals already loaded — NO new data source: a compound
+// (COMPOUND_EX) scores higher than an isolation, and a wider muscle-target breadth
+// (primary + secondary, getExerciseMetadata) adds to the score. UNVERIFIED weighting
+// (spec §9) — the constants are a Daniel/research sanity-check item before the flag
+// flips ON; the SHAPE (compound + breadth = more stimulus) is the verified principle.
+const STIMULUS_COMPOUND_BONUS = 2; // a compound carries more systemic stimulus
+const STIMULUS_PER_SECONDARY = 0.5; // each extra muscle worked adds stimulus breadth
+const STIMULUS_BASE = 1; // an isolation single-muscle baseline
+
+/** A coarse training-VALUE score for an exercise: compound vs isolation + muscle-
+ * target breadth (primary + secondary). Reuses the library metadata already loaded.
+ * UNVERIFIED weighting (spec §9). Pure. */
+export function stimulusScore(engineName: string | undefined | null): number {
+  const name = typeof engineName === 'string' ? engineName : '';
+  let score = STIMULUS_BASE;
+  if (COMPOUND_EX.includes(name)) score += STIMULUS_COMPOUND_BONUS;
+  const meta = getExerciseMetadata(name) as {
+    muscle_target_secondary?: unknown;
+  } | null;
+  const secondary = meta && Array.isArray(meta.muscle_target_secondary)
+    ? meta.muscle_target_secondary.length
+    : 0;
+  score += secondary * STIMULUS_PER_SECONDARY;
+  return score;
+}
+
+/** Stimulus-PER-MINUTE for one exercise = stimulusScore / its rest-inclusive minute
+ * cost (computeEstimatedDurationMin on the single exercise). Higher = denser
+ * training value. A zero/invalid minute cost → score itself (avoid div-by-zero;
+ * a 0-set row is already protected by the floor). Pure. */
+export function stimulusPerMin(ex: TrimmableExercise): number {
+  const minutes = computeEstimatedDurationMin([ex], 0) ?? 0;
+  const score = stimulusScore(ex.engineName ?? ex.name);
+  return minutes > 0 ? score / minutes : score;
+}
+
 type TrimmableExercise = PlannedExercise;
 
 /**
@@ -525,6 +572,11 @@ export function trimSessionToTimeBudget(
   const out: TrimmableExercise[] = exercises.map((e) => ({ ...e }));
   if (out.length === 0) return out;
 
+  // F6c #12 — when ON, the DROP step (3) removes the lowest stimulus/min tail
+  // candidate instead of strictly the positional last (denser remaining session).
+  // OFF → strict tail-first (out.pop) → byte-identical.
+  const stimulusTrimOn = isEnabled('dp_stimulus_per_min_v1');
+
   // computeEstimatedDurationMin returns null only for an empty/zero session;
   // the floor protects that (we never trim a session already at/under floor).
   const duration = (list: ReadonlyArray<TrimmableExercise>): number =>
@@ -549,6 +601,29 @@ export function trimSessionToTimeBudget(
     // 2) Gentle single-set shave off the LAST (lowest-priority) exercise while
     //    it is above the set floor — preserves the good behavior for small
     //    overshoots without touching the front compounds.
+    //    F6c #12: when ON, shave the LOWEST stimulus/min TAIL exercise still above
+    //    the floor (positions >= MIN_EXERCISES_FLOOR) instead of strictly the last,
+    //    so set-volume is shed from the least-dense work first and the high-stimulus
+    //    compounds keep their sets. OFF → the last (legacy) → byte-identical. The
+    //    front prefix (< MIN_EXERCISES_FLOOR) is never shaved here (only the last-
+    //    resort step 4 may touch it, exactly as before).
+    if (stimulusTrimOn) {
+      let shaveIdx = -1;
+      let lowest = Infinity;
+      for (let i = out.length - 1; i >= MIN_EXERCISES_FLOOR; i -= 1) {
+        if (out[i]!.sets > MIN_SETS_PER_EX) {
+          const spm = stimulusPerMin(out[i]!);
+          if (spm < lowest) { lowest = spm; shaveIdx = i; }
+        }
+      }
+      // No tail candidate above the floor → fall back to the legacy last-position
+      // shave (covers the case where the only shavable rows are in the front prefix,
+      // handled identically to OFF below).
+      if (shaveIdx >= 0) {
+        out[shaveIdx] = { ...out[shaveIdx]!, sets: out[shaveIdx]!.sets - 1 };
+        continue;
+      }
+    }
     if (out[last]!.sets > MIN_SETS_PER_EX) {
       out[last] = { ...out[last]!, sets: out[last]!.sets - 1 };
       continue;
@@ -558,7 +633,24 @@ export function trimSessionToTimeBudget(
     //    accessory) instead of crushing the front compounds, but never below
     //    the exercise floor. This is what keeps the front sets healthy.
     if (out.length > MIN_EXERCISES_FLOOR) {
-      out.pop();
+      // F6c #12 — STIMULUS-per-minute drop: instead of strictly the positional
+      // last, drop the LOWEST stimulus/min candidate among the TRIMMABLE TAIL
+      // (positions >= MIN_EXERCISES_FLOOR — the FRONT prefix that the floor keeps
+      // is priority/weak and is never a drop candidate), so the remaining session
+      // is denser. Behind dp_stimulus_per_min_v1 (default OFF) → strict tail-first
+      // (out.pop()) → byte-identical. A density tie → the positionally-last (keeps
+      // the legacy ordering deterministic).
+      if (stimulusTrimOn) {
+        let dropIdx = out.length - 1;
+        let lowest = stimulusPerMin(out[dropIdx]!);
+        for (let i = out.length - 1; i >= MIN_EXERCISES_FLOOR; i -= 1) {
+          const spm = stimulusPerMin(out[i]!);
+          if (spm < lowest) { lowest = spm; dropIdx = i; }
+        }
+        out.splice(dropIdx, 1);
+      } else {
+        out.pop();
+      }
       continue;
     }
 
