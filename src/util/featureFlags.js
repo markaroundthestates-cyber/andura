@@ -418,6 +418,17 @@ export const FLAGS = Object.freeze({
   // byte-identical. Degrades to rating-drift-only when dp_e1rm_v1 is OFF.
   dp_subrecovery_drift_v1: { rollout: 0, default: false },
 
+  // #20 per-set fatigue curve (RISK LOW-MED — nudges SET COUNT by +/-1 within the
+  // existing clamp, never kg). When ON, learnFatigueCurve classifies a user-per-
+  // exercise as a MAINTAINER (flat curve → +1 working set) vs a CRASHER (early
+  // drop-off → -1, never below 1 working set) from the within-session reps-vs-set
+  // curve at a fixed load, EMA-smoothed. fatigueSetsAdjust feeds the SAME setsAdjust
+  // channel _returnDeload uses — no new schedule plumbing. Persists `dp-fatigue-
+  // curve` (sync, name-keyed, quota-guarded). OFF → the learner is never invoked +
+  // setsAdjust 0 → byte-identical distributeGroupSets. Degrades to raw-reps drop-off
+  // when dp_e1rm_v1 is OFF.
+  dp_fatigue_curve_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'
