@@ -1,21 +1,21 @@
 {
-  "_note": "Frozen calibration-sim baseline. Re-baselined 2026-06-08 for #79 (cap working load below realistic 1RM — never prescribe a working load heavier than the heaviest the user actually lifted at >= the target reps, nor above the age/sex/bodyweight realistic ceiling; no '5×1RM'). The cap is CRATER-SAFE: floored at the raw demonstrated load so a genuinely-lifted heavy set is never demoted (only the cross-rep Epley OVER-extrapolation is removed). OLD hash f1b91f54… → NEW fd2cf38a…. crater===0 HELD + absurd-OVERSHOOT (>3x true) ===0 HELD + absurd 8=8 + oscillation 24=24 + meanFinalAbsErr flat (0.264→0.265). convergedPct 3.4→2.9 (within the §1.A band) — a few fewer high-rep over-prescriptions land in the aggressive oracle's tight band, which is the safety cap working as intended (§0). #80 (cold-start age/load-axis/no-history-confidence damps) does NOT move this hash — it only affects genuine day-1 no-history seeds, not the sim's converging cohort. nProfiles=12 (CI tier).",
-  "engineHead": "FLIP 2026-06-08 + #79 realistic-1RM working-load cap (dp.js _ceilingCappedWorkingKg)",
+  "_note": "Frozen calibration-sim baseline. Re-baselined 2026-06-09 for the RDL equipment-ladder fix (fresh-eyes #1: 'Romanian Deadlift' was mapped to the 'dumbbell' weight ladder, top 50kg — a barbell RDL back-solved to ~140kg snapped flat to 50 for everyone; re-routed to 'barbell_heavy', reaches 360kg). The sim's legs pool includes RDL, so its converging cohort now reaches realistic barbell loads instead of the 50kg ceiling. OLD hash fd2cf38a… → NEW 5414275e…. crater===0 HELD + absurd-OVERSHOOT (>3x true) ===0 HELD. barbell signed-err IMPROVED -0.263→-0.133 (RDL was the worst barbell undershoot — un-capping it converges it). absurd 8→7, nonAdaptation 3→2, oscillation 24=24, meanFinalAbsErr 0.265→0.259, convergedPct 2.9=2.9 — all within the §1.A band, the fix only helps. dp_metric_types_v1 default-ON does NOT move this hash (the calibration pool has no time/carry exercises). nProfiles=12 (CI tier).",
+  "engineHead": "RDL barbell_heavy ladder fix + dp_metric_types_v1 default-ON (config/weights.js + featureFlags.js)",
   "nProfiles": 12,
   "seed": "0xA9D04A",
-  "hash": "fd2cf38a9e4706262fb958762294921c58f411fc96f33f59c10f0229af0177b2",
+  "hash": "5414275e8248fb7f87af10a6e467cd3da56bc7479f08ccd3469531751e1971b8",
   "convergedPct": 2.9,
   "medianSessionsToConverge": 27,
-  "meanFinalAbsErr": 0.265,
+  "meanFinalAbsErr": 0.259,
   "flags": {
-    "nonAdaptation": 3,
+    "nonAdaptation": 2,
     "oscillation": 24,
     "stuckHigh": 5,
-    "stuckLow": 86,
-    "absurd": 8
+    "stuckLow": 85,
+    "absurd": 7
   },
   "equipMeanSignedErr": {
-    "barbell": -0.263,
+    "barbell": -0.133,
     "cable": -0.26,
     "dumbbell": -0.155,
     "machine": -0.119

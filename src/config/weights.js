@@ -124,7 +124,15 @@ export const EXERCISE_EQUIPMENT_MAP = {
   'Incline DB Curl':       'dumbbell',
   'Hammer Curl':           'dumbbell',
   'Preacher Curl':         'dumbbell',
-  'Romanian Deadlift':     'dumbbell',
+  // Barbell RDL is a heavy posterior-chain hinge — it belongs on the heavy
+  // barbell ladder (reaches 360kg), NOT the dumbbell ladder (top 50kg). The bare
+  // 'Romanian Deadlift' is the BARBELL variant (library equipment_type=barbell);
+  // the dumbbell variant has its own 'DB Romanian Deadlift' entry below. (Fresh-
+  // eyes 2026-06-08: an advanced lifter's RDL back-solved to ~140kg snapped to the
+  // 50kg dumbbell-ladder ceiling — pinned flat-50 for everyone regardless of
+  // strength/training-age. Routing to barbell_heavy lets the population prior +
+  // demonstrated load scale it, while a beginner's lighter prior stays low.)
+  'Romanian Deadlift':     'barbell_heavy',
   'Calf Raises':           'dumbbell',
 
   // ── Heavy CORE_AUTO compounds — previously UNMAPPED → bailib_stack (top 80) →
