@@ -988,6 +988,11 @@
         "reps": "Reps",
         "rating": "How it felt"
       },
+      "prBadge": {
+        "weight": "PR",
+        "reps": "Rep PR",
+        "volume": "Vol PR"
+      },
       "legacyFallback": "Per-exercise detail unavailable for sessions logged before this update.",
       "ratingLabels": {
         "usor": "Easy",

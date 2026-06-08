@@ -988,6 +988,11 @@
         "reps": "Reps",
         "rating": "Cum a fost"
       },
+      "prBadge": {
+        "weight": "PR",
+        "reps": "Reps record",
+        "volume": "Volum record"
+      },
       "legacyFallback": "Detaliu per exercitiu indisponibil pentru sesiuni inregistrate inainte de actualizare.",
       "ratingLabels": {
         "usor": "Usor",

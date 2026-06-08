@@ -20,6 +20,19 @@ import { useWorkoutStore } from '../../../stores/workoutStore';
 import { pluralRo } from '../../../lib/pluralRo';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { t, getCurrentLocale } from '../../../../i18n/index.js';
+import { isEnabled } from '../../../../util/featureFlags.js';
+
+// BUILD F6b V2 #14 — per-type PR badge label (spec §1b.2). When
+// dp_rep_volume_pr_v1 is ON and the set carries a `prType`, render the typed
+// label via an i18n key keyed on the type (NOT prEngine.formatPRMessage's
+// hardcoded RO — the i18n-leak rule). OFF or a set without prType → today's flat
+// " PR" suffix → byte-identical.
+function prBadgeLabel(prType?: 'weight' | 'reps' | 'volume'): string {
+  if (isEnabled('dp_rep_volume_pr_v1') && prType) {
+    return ` ${t(`istoric.detail.prBadge.${prType}`)}`;
+  }
+  return ' PR';
+}
 
 // §F-istoric-08 — weekday + month via i18n bundle (Wave E3).
 // Reads weekdays.relativeShort + months.short so the format flips locale
@@ -214,7 +227,7 @@ export function IstoricDetail(): JSX.Element {
                       data-testid={`detail-set-${ex.exerciseId}-${idx}`}
                       className={s.isPR ? 'text-succ font-semibold' : 'text-ink'}
                     >
-                      <td className="py-1">{idx + 1}{s.isPR ? ' PR' : ''}</td>
+                      <td className="py-1">{idx + 1}{s.isPR ? prBadgeLabel(s.prType) : ''}</td>
                       <td className="py-1">{s.kg}</td>
                       <td className="py-1">{s.reps}</td>
                       <td className="py-1">{ratingLabel(s.rating)}</td>

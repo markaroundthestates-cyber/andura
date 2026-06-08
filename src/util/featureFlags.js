@@ -418,6 +418,22 @@ export const FLAGS = Object.freeze({
   // byte-identical. Degrades to rating-drift-only when dp_e1rm_v1 is OFF.
   dp_subrecovery_drift_v1: { rollout: 0, default: false },
 
+  // ── F6b Volume/Progress-intelligence cluster (engine-wiring 2026-06-08) —
+  // volume + the SHAPE of progress: half path-A (sets), half narration of what
+  // the engine already computes. Each defaults OFF (rollout 0) → flag-OFF the
+  // deployed app is BYTE-IDENTICAL (calibration-sim hash + golden gate hold).
+  // Flip ON is a human gate (Daniel) AFTER reviewing the sim/unit A/B. See
+  // _ENGINE_WIRING_2026-06-07/F6b_volume_progress_spec.md.
+
+  // V2 #14 rep-PR + volume-PR surfacing (RISK LOW — recognition only, never
+  // alters a prescribed kg or set count). prEngine.detectPR ALREADY emits
+  // weight|reps|volume; prRecordsWriteback collapsed it to a flat isPR boolean.
+  // When ON, the writeback carries detection.type forward (set.prType) and the
+  // badge renders a per-type i18n label so a rep/volume PR is first-class (the
+  // PRs that keep coming for a near-ceiling user, where load-PRs dry up). OFF or
+  // a set with no prType → today's flat " PR" badge → byte-identical.
+  dp_rep_volume_pr_v1: { rollout: 0, default: false },
+
   // #20 per-set fatigue curve (RISK LOW-MED — nudges SET COUNT by +/-1 within the
   // existing clamp, never kg). When ON, learnFatigueCurve classifies a user-per-
   // exercise as a MAINTAINER (flat curve → +1 working set) vs a CRASHER (early

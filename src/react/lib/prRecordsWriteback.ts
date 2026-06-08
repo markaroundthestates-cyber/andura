@@ -16,6 +16,7 @@
 //   - src/react/lib/engineWrappers.ts#buildSilentMmiContext (MMI input)
 
 import { detectPR } from '../../engine/prEngine.js';
+import { isEnabled } from '../../util/featureFlags.js';
 import { DB } from '../../db.js';
 import type {
   LogEntry,
@@ -80,6 +81,14 @@ export function enrichExercisesWithPR(
   exercises: SessionExerciseBreakdown[],
   priorLogs: RawLogEntry[],
 ): SessionExerciseBreakdown[] {
+  // ── BUILD F6b V2 #14 — carry the PR TYPE forward (spec §1b.1) ─────────────
+  // detectPR already emits 'weight'|'reps'|'volume'; today this writeback
+  // collapses all three to a flat `isPR: true` so a rep/volume PR is invisible.
+  // When dp_rep_volume_pr_v1 is ON we additionally stamp `set.prType` so the
+  // badge can render a per-type label. The field is additive + optional — OFF
+  // (or any pre-existing isPR reader) ignores it → byte-identical. Flag read
+  // once per call (cheap, deterministic per finishSession).
+  const typedPR = isEnabled('dp_rep_volume_pr_v1');
   // Accumulator — starts with coerced prior logs, grows as sets are "logged".
   const acc: PriorHistoryEntry[] = coercePriorHistory(priorLogs);
   return exercises.map((ex) => {
@@ -96,7 +105,10 @@ export function enrichExercisesWithPR(
       // Add this set to accumulator AFTER detection (so within-session
       // progressive overload can produce multiple PRs on same exercise).
       acc.unshift({ ex: prKey, w: s.kg, reps: s.reps });
-      return detection ? { ...s, isPR: true } : s;
+      if (!detection) return s;
+      return typedPR
+        ? { ...s, isPR: true, prType: detection.type }
+        : { ...s, isPR: true };
     }),
     };
   });

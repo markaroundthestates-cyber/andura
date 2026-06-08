@@ -100,6 +100,10 @@ export interface SessionExerciseBreakdown {
     rating: 'usor' | 'potrivit' | 'greu';
     timestamp: number;
     isPR?: boolean;
+    // BUILD F6b V2 #14 — the PR TYPE (weight|reps|volume) carried past the flat
+    // isPR boolean when dp_rep_volume_pr_v1 is ON (spec §1b.1). Additive +
+    // optional — every pre-flag fixture stays valid; OFF readers ignore it.
+    prType?: 'weight' | 'reps' | 'volume';
   }>;
   totalVolume: number; // sum(kg*reps)
   peakOneRM: number; // max Epley estimate across sets, 1 decimal
