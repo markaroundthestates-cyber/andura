@@ -1,12 +1,12 @@
 {
-  "_note": "Frozen calibration-sim baseline. Re-baselined 2026-06-08 for THE FLIP (per-exercise intelligence brain ON: dp_e1rm/kalman/ceiling + dependents default ON). crater===0 held + every bug-class (oscillation/stuckLow/absurd/meanFinalAbsErr) equal-or-BETTER than the prior OFF baseline; convergedPct (oracle-relative band-hit, NOT a bug-class — §0) is lower because the smoother Kalman tracking lands fewer in the tight band while the TRUE meanFinalAbsErr improved. nProfiles=12 (CI tier).",
-  "engineHead": "FLIP 2026-06-08 (e1RM/Kalman/ceiling + path-A dependents ON; find-your-weight + readiness-gate-covers-CATCH-UP + CUT-restraint-on-proven fixes)",
+  "_note": "Frozen calibration-sim baseline. Re-baselined 2026-06-08 for #79 (cap working load below realistic 1RM — never prescribe a working load heavier than the heaviest the user actually lifted at >= the target reps, nor above the age/sex/bodyweight realistic ceiling; no '5×1RM'). The cap is CRATER-SAFE: floored at the raw demonstrated load so a genuinely-lifted heavy set is never demoted (only the cross-rep Epley OVER-extrapolation is removed). OLD hash f1b91f54… → NEW fd2cf38a…. crater===0 HELD + absurd-OVERSHOOT (>3x true) ===0 HELD + absurd 8=8 + oscillation 24=24 + meanFinalAbsErr flat (0.264→0.265). convergedPct 3.4→2.9 (within the §1.A band) — a few fewer high-rep over-prescriptions land in the aggressive oracle's tight band, which is the safety cap working as intended (§0). #80 (cold-start age/load-axis/no-history-confidence damps) does NOT move this hash — it only affects genuine day-1 no-history seeds, not the sim's converging cohort. nProfiles=12 (CI tier).",
+  "engineHead": "FLIP 2026-06-08 + #79 realistic-1RM working-load cap (dp.js _ceilingCappedWorkingKg)",
   "nProfiles": 12,
   "seed": "0xA9D04A",
-  "hash": "f1b91f549a255d9d1ae1ddaa01d3d6681c304ed07a564c459c3bb8ec4f23b0ab",
-  "convergedPct": 3.4,
-  "medianSessionsToConverge": 26,
-  "meanFinalAbsErr": 0.264,
+  "hash": "fd2cf38a9e4706262fb958762294921c58f411fc96f33f59c10f0229af0177b2",
+  "convergedPct": 2.9,
+  "medianSessionsToConverge": 27,
+  "meanFinalAbsErr": 0.265,
   "flags": {
     "nonAdaptation": 3,
     "oscillation": 24,
@@ -16,7 +16,7 @@
   },
   "equipMeanSignedErr": {
     "barbell": -0.263,
-    "cable": -0.258,
+    "cable": -0.26,
     "dumbbell": -0.155,
     "machine": -0.119
   }

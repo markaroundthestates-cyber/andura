@@ -679,6 +679,39 @@ export const DP = {
     return this._kgFromE1RM(ceilE1RM, repTarget ?? 8);
   },
 
+  // #79 — cap a back-solved WORKING LOAD (kg, at the rep target) so it can NEVER
+  // imply a 1RM at-or-above what is physically achievable for the prescribed reps
+  // (Daniel: "daca face 10x200 nu poate sa ii recomande peste 1rm… sa nu ne trezim
+  // cu 5xrm"). Epley is LINEAR and over-estimates the 1RM in the high-rep zone
+  // (200×10 → e1RM 280, but the real 1RM is not 280); the saturated R_CAP (12)
+  // damps but does not BOUND that inflation, so the e1RM back-solved across rep
+  // schemes can prescribe a working load heavier than achievable for the target
+  // reps. The cap is the realistic-1RM ceiling expressed AT the rep target
+  // (_ceilingKg, from ceiling.js — age/sex/bodyweight-normalized, now ON): a set
+  // of N reps is then always physically achievable for N reps.
+  //
+  // CRATER-SAFE FLOOR (Daniel hard rule: never demote a PROVEN load): the ceiling is
+  // an ESTIMATE and at a low training age can sit BELOW what the user has GENUINELY
+  // lifted, so the cap is floored at the heaviest RAW load actually completed at the
+  // target reps (_demonstratedWorkingW) — you cannot be capped below a load you have
+  // already lifted for those reps. The cap removes ONLY the cross-rep Epley
+  // over-extrapolation above the larger of {realistic ceiling, raw demonstrated}.
+  // Only ever LOWERS the working kg (Math.min); a sub-cap load is unchanged. Inert
+  // when dp_ceiling_v1 OFF or the ceiling is unavailable (no bodyweight) →
+  // byte-identical. PURE.
+  /** @param {string} ex @param {number} workingKg @param {number} repTarget @returns {number} */
+  _ceilingCappedWorkingKg(ex, workingKg, repTarget) {
+    const w = Number(workingKg);
+    if (!isEnabled('dp_ceiling_v1') || !(w > 0)) return w;
+    if (!this._e1rmEligible(ex)) return w;
+    const ceilKg = this._ceilingKg(ex, repTarget);
+    if (!(ceilKg > 0)) return w;
+    // The cap can never sit below a genuinely-demonstrated RAW load at these reps.
+    const rawFloor = this._demonstratedWorkingW(ex, repTarget);
+    const cap = Math.max(ceilKg, rawFloor);
+    return Math.min(w, cap);
+  },
+
   // The effective per-exercise weight cap. With dp_ceiling_v1 ON the derived
   // realistic ceiling REPLACES the flat MAX_KG — but only ever as the MAX of the
   // two, so a mapped lift's cap is never LOWERED below its hand-tuned MAX_KG (the
@@ -740,7 +773,11 @@ export const DP = {
       if (e != null && e > bestE1RM) bestE1RM = e;
     }
     if (bestE1RM <= 0) return 0;
-    return this._kgFromE1RM(bestE1RM, floorReps);
+    // #79 — a high-rep set's Epley e1RM can over-estimate the real 1RM; cap the
+    // back-solved working load at the realistic ceiling (floored at the raw
+    // demonstrated load) so it never implies a 1RM ≥ what is achievable at the
+    // prescribed reps (no "5×1RM"). Inert when dp_ceiling_v1 OFF / no bodyweight.
+    return this._ceilingCappedWorkingKg(ex, this._kgFromE1RM(bestE1RM, floorReps), floorReps);
   },
 
   // ══ BUILD #3/F — temperament learn-and-persist (F4 spec §F) ══════════════════
@@ -838,7 +875,11 @@ export const DP = {
     // of the Kalman-smoothed estimate and the raw heaviest-at-target load: the
     // posterior can RAISE the floor (cross-rep-scheme normalization) but a lagging
     // estimate can never LOWER it below what the user has owned.
-    const kalmanKg = this._kgFromE1RM(post.mu, floorReps);
+    // #79 — cap the smoothed-mu working load at the realistic 1RM ceiling (a high-
+    // rep-fed posterior mu can back-solve to a load above the achievable 1RM),
+    // floored at the raw demonstrated load (anti-crater). Inert when dp_ceiling_v1
+    // OFF → byte-identical. rawKg below is already capped.
+    const kalmanKg = this._ceilingCappedWorkingKg(ex, this._kgFromE1RM(post.mu, floorReps), floorReps);
     const rawKg = this._demonstratedWorkingW_e1rm(ex, floorReps);
     return Math.max(kalmanKg, rawKg);
   },
@@ -1029,7 +1070,8 @@ export const DP = {
   // dp_population_prior_v1 (default OFF).
   // @param {string} ex new exercise engineName
   // @param {number} repTarget rep target to back-solve the seed at
-  // @param {{ bodyweightKg?:number|null, sex?:string|null, experience?:string|null }} profile
+  // @param {{ bodyweightKg?:number|null, sex?:string|null, experience?:string|null, age?:number|null }} profile
+  //   age = chronological onboarding age → #80 cold-start age damper (older→lighter).
   // @returns {{kg:number, pattern:string, sigma:number}|null}
   coldStartPopulationSeed(ex, repTarget, profile) {
     if (!this._e1rmEligible(ex)) return null;

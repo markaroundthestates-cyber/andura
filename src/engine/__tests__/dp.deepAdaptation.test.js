@@ -213,3 +213,59 @@ describe('DP deep adaptation — (c) PHASE-AWARE push above established capacity
     expect(rec.status).toBe('CATCH UP');
   });
 });
+
+// ══ #79 — REALISTIC-1RM CAP on the demonstrated working load (no "5×1RM") ═════
+// Daniel: "daca face 10x200 nu poate sa ii recomande peste 1rm… sa nu ne trezim cu
+// 5xrm." Epley over-estimates the 1RM at high reps: a 200×10 set credits an e1RM
+// (≈280) that, back-solved to a heavier-but-lower-rep prescription, exceeds what the
+// user actually lifted — an unsafe over-extrapolation across rep schemes. The cap
+// (_ceilingCappedWorkingKg) bounds the demonstrated working load at the realistic
+// ceiling, FLOORED at the heaviest RAW load actually lifted at >= the target reps —
+// so a working set of N reps is always physically achievable, while a genuinely
+// PROVEN heavy set is never demoted (anti-crater). Flags ON via _devFlags.
+describe('DP #79 — working load capped below the realistic 1RM (no 5×1RM)', () => {
+  beforeEach(() => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_e1rm_v1: true, dp_ceiling_v1: true }));
+    store['weights'] = { '2026-01-01': 100 }; // bodyweight → finite ceiling
+  });
+
+  it('a 200×10 high-rep set never back-solves a working load HEAVIER than the lifted load', () => {
+    const ex = 'Barbell Back Squat (High Bar)';
+    // ONE high-rep, easy (usor) set: Epley credits e1RM ≈ 200×1.4 = 280, which at the
+    // 5-rep target would back-solve to ≈233 (200×(1.4/1.2)) — HEAVIER than the 200 the
+    // user actually moved. That is the "5×1RM" over-extrapolation the cap forbids.
+    store['logs'] = [{ ex, w: 200, reps: 10, rpe: 6.5, ts: NOW - DAY }];
+    const demoKg = DP._demonstratedWorkingW_e1rm(ex, 5);
+    // The cap holds the working load to the load actually lifted (200) — never the
+    // inflated 233. A 200×5 prescription is achievable (they did 200×10).
+    expect(demoKg).toBeLessThanOrEqual(200 + 1e-6);
+    expect(demoKg).toBeGreaterThan(0);
+    // And its implied 1RM (Epley at the 5-rep target) is below the raw set's own e1RM
+    // (the inflated 280) — i.e. the prescription does not chase the over-estimate.
+    const impliedE1RM = demoKg * (1 + Math.min(DP.E1RM_R_CAP, 5 + DP.RATING_TO_RIR.potrivit) / 30);
+    expect(impliedE1RM).toBeLessThan(280);
+  });
+
+  it('a GENUINELY heavy proven set (140×8 at-target) is NOT cratered by the cap', () => {
+    const ex = 'Barbell Back Squat (High Bar)';
+    // 140×8 greu HIT the target → demonstrated capacity. The realistic-ceiling ESTIMATE
+    // at this LOW training age sits BELOW 140's implied 1RM, so an unfloored ceiling
+    // clamp WOULD demote the proven load. The crater-safe floor (max(ceiling, raw
+    // demonstrated)) stops that: the cap leaves the e1RM working load UNCHANGED vs the
+    // same computation with the cap OFF (the ceiling never bites a proven set).
+    store['logs'] = [{ ex, w: 140, reps: 8, rpe: 8.5, ts: NOW - DAY }];
+    const capped = DP._demonstratedWorkingW_e1rm(ex, 8);
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_e1rm_v1: true, dp_ceiling_v1: false }));
+    const uncapped = DP._demonstratedWorkingW_e1rm(ex, 8);
+    expect(capped).toBeCloseTo(uncapped, 6); // proven load untouched by the cap (floor protects it)
+  });
+
+  it('OFF (dp_ceiling_v1) → byte-identical (no cap, the e1RM extrapolation stands)', () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_e1rm_v1: true, dp_ceiling_v1: false }));
+    const ex = 'Barbell Back Squat (High Bar)';
+    store['logs'] = [{ ex, w: 200, reps: 10, rpe: 6.5, ts: NOW - DAY }];
+    const demoKg = DP._demonstratedWorkingW_e1rm(ex, 5);
+    // No cap → the full cross-rep e1RM back-solve (≈233, heavier than the 200 lifted).
+    expect(demoKg).toBeGreaterThan(200);
+  });
+});
