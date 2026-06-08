@@ -10,6 +10,26 @@ export type SessionIntensityMod = 'plus' | 'normal' | 'minus';
 
 export type EnergyLight = 'green' | 'yellow' | 'red';
 
+// Pre-workout reframe (Daniel UX LOCK 2026-06-08) — the energy self-report is
+// recorded on EnergyCheck, which now returns to the MAIN Antrenor page (no longer
+// straight to workout-preview). The user then taps Start → time screen → preview,
+// so the navigation location.state that USED to carry intensityMod/energyLevel
+// from EnergyCheck to WorkoutPreview no longer survives the round-trip through the
+// hub. This runtime-only slice is the durable carrier: EnergyCheck/EnergyCause
+// write it, WorkoutPreview reads it (store-first, location.state fallback for the
+// legacy override entry points — schedule-override/pain still push state directly).
+// Cleared on session teardown (finish/discard/reset) so it never leaks to the next
+// session — same lifecycle as sessionContext/sessionTimeBudgetMin.
+export type EnergyLevelSelfReport = 'excelent' | 'bine' | 'normal' | 'slabit' | 'obosit';
+
+export interface SessionEnergy {
+  energyLevel: EnergyLevelSelfReport;
+  intensityMod: SessionIntensityMod;
+  // The drained/exhausted cause (EnergyCause). Display-only context; carried for
+  // parity with the prior location.state shape. Optional — most reports skip it.
+  cause?: string;
+}
+
 export interface SessionPainContext {
   region: string;
   intensity: 1 | 2 | 3;
@@ -192,6 +212,13 @@ export interface WorkoutState {
   // null = sesiune fara adaptare (intrare directa Antrenor → workout). Set de
   // WorkoutPreview.handleStart din location.state inainte de navigate workout.
   sessionContext: SessionContext | null;
+  // Pre-workout reframe (Daniel UX LOCK 2026-06-08) — the energy self-report
+  // (energyLevel + intensityMod) recorded on EnergyCheck. Survives the
+  // EnergyCheck → main → Start → time-screen → workout-preview round-trip that
+  // location.state cannot (the hub remount drops navigation state). WorkoutPreview
+  // reads it store-first. Runtime-only (NOT persisted), cleared on session
+  // teardown — same lifecycle as sessionContext.
+  sessionEnergy: SessionEnergy | null;
   // Optional pre-session TIME budget (minutes) the user picked on EnergyCheck
   // ("How much time today?"). null = no limit / skipped → the persona+fatigue-
   // derived cap is used unchanged (byte-identical to the prior behavior). When
@@ -324,6 +351,11 @@ export interface WorkoutActions {
   setLastRating: (rating: 'usoara' | 'normala' | 'grea') => void;
   // U-03 (HIGH) — set session intensity/pain context (WorkoutPreview.handleStart).
   setSessionContext: (ctx: SessionContext | null) => void;
+  // Pre-workout reframe (Daniel UX LOCK 2026-06-08) — record the energy
+  // self-report on EnergyCheck/EnergyCause so it survives the round-trip back to
+  // the hub before Start. null clears it. WorkoutPreview reads sessionEnergy
+  // store-first (location.state fallback for legacy override entry points).
+  setSessionEnergy: (energy: SessionEnergy | null) => void;
   // Pre-session TIME budget — set on EnergyCheck ("How much time today?"). null
   // clears the limit (back to persona-derived cap). composePlannedWorkoutToday
   // reads it to SHRINK the effective time cap (never extends it).

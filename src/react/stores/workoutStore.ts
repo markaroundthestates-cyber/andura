@@ -51,6 +51,8 @@ export type {
   WorkoutPhase,
   SessionIntensityMod,
   EnergyLight,
+  EnergyLevelSelfReport,
+  SessionEnergy,
   SessionPainContext,
   SessionContext,
   ExerciseHistoryEntry,
@@ -108,6 +110,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       streak: 0,
       lastStreakDate: null,
       sessionContext: null,
+      sessionEnergy: null,
       sessionTimeBudgetMin: null,
       refusalTriedByEx: {},
       performedExercises: {},
@@ -179,6 +182,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           prData: null,
           pausedSnapshot: null,
           sessionContext: null,
+          sessionEnergy: null,
           sessionTimeBudgetMin: null,
           refusalTriedByEx: {},
           performedExercises: {},
@@ -217,6 +221,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             setIdx: 0,
             history: {},
             sessionContext: null,
+            sessionEnergy: null,
             sessionTimeBudgetMin: null,
             refusalTriedByEx: {},
             performedExercises: {},
@@ -341,6 +346,13 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       // ca sa NU se scurga la sesiunea urmatoare (intrare directa Antrenor).
       setSessionContext: (ctx) => set({ sessionContext: ctx }),
 
+      // Pre-workout reframe (Daniel UX LOCK 2026-06-08) — record the energy
+      // self-report (energyLevel + intensityMod [+ cause]) on EnergyCheck/
+      // EnergyCause. The flow now returns to the hub before Start, so this store
+      // slice (NOT location.state) carries the self-report through to
+      // WorkoutPreview. Cleared on session teardown so it never leaks to the next.
+      setSessionEnergy: (energy) => set({ sessionEnergy: energy }),
+
       // Pre-session TIME budget — EnergyCheck "How much time today?" choice.
       // composePlannedWorkoutToday reads it to SHRINK the persona-derived cap.
       // Cleared (null) on session teardown so it never leaks to the next session.
@@ -370,6 +382,7 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           lastRating: null,
           pausedSnapshot: null,
           sessionContext: null,
+          sessionEnergy: null,
           sessionTimeBudgetMin: null,
           refusalTriedByEx: {},
           performedExercises: {},
