@@ -17,6 +17,21 @@ import { ingestExport, groupSessions } from '../../../scripts/coach-replay/inges
 const MS_DAY = 86400000;
 const isod = (ms) => new Date(ms).toISOString().slice(0, 10);
 
+// Deterministic anchor for the JOURNEY tests: the replay composes each session on
+// `new Date(s.ts)`, and the seeded sessions are exact 7-day multiples back from the
+// anchor — so they ALL share the anchor's weekday. The freq-4 balanced split is
+// upper/lower/upper/lower (Mon/Tue/Thu/Fri); Lat Pulldown (back/pull) only surfaces
+// on an UPPER day. Using `Date.now()` made these gates real-clock FLAKY — on a LEG
+// weekday no session surfaces Lat Pulldown and `latRows.length===0`. Snap to the
+// most recent Monday-noon so the upper day (and the lift) is always present, while
+// keeping the anchor close to now (Kalman/ACWR windows unchanged in shape).
+function mondayAnchor() {
+  const d = new Date();
+  d.setHours(12, 0, 0, 0);
+  while (d.getDay() !== 1) d.setTime(d.getTime() - MS_DAY);
+  return d.getTime();
+}
+
 /** A small real-shaped export: one barbell lift logged across several weekly
  *  sessions at a steadily climbing load (a clean overload journey). EN engine
  *  key on `ex` (the load-bearing rule). One deliberate orphan row (no `ex`). */
@@ -64,7 +79,7 @@ describe('coach-replay — ingest (pure)', () => {
 
 describe('coach-replay — journey replay through the REAL compose path', () => {
   it('emits a per-session decision trace carrying recReason + confidence', async () => {
-    const exp = buildExport(Date.now());
+    const exp = buildExport(mondayAnchor());
     const result = await replayJourney(exp);
 
     expect(result.meta.sessions).toBeGreaterThan(0);
@@ -91,7 +106,7 @@ describe('coach-replay — journey replay through the REAL compose path', () => 
   });
 
   it('the Lat Pulldown rec status + sigma reflect a real DP branch as history accumulates (not a re-guess)', async () => {
-    const exp = buildExport(Date.now());
+    const exp = buildExport(mondayAnchor());
     const result = await replayJourney(exp);
     // Lat Pulldown rows in chronological order — the lift the user actually trained.
     const latRows = result.sessions
@@ -124,7 +139,7 @@ describe('coach-replay — journey replay through the REAL compose path', () => 
 
 describe('coach-replay — A/B flag diff (support superpower)', () => {
   it('runs the same logs OFF vs ONE flag ON and returns a structured diff', async () => {
-    const exp = buildExport(Date.now());
+    const exp = buildExport(mondayAnchor());
     const ab = await replayAB(exp, 'dp_acwr_readiness_v1');
     expect(ab.flag).toBe('dp_acwr_readiness_v1');
     expect(Array.isArray(ab.diffs)).toBe(true);

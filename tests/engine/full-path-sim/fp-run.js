@@ -299,16 +299,27 @@ export async function fatigueCurveFullPath() {
   }
   world.DB.set('logs', logs);
 
+  // Compose on a deterministic UPPER/push day (the crasher DB Shoulder Press +
+  // maintainer Pec Deck only surface on the freq-4 upper cluster). The default
+  // freq-4 balanced split is upper/lower/upper/lower (Mon/Tue/Thu/Fri), so a
+  // Monday (getDay()===1) surfaces the push exercises. Using `new Date()` made
+  // this gate real-clock FLAKY — on a weekday whose cluster is a LEG day the
+  // crasher never appears in the plan, so OFF==ON and the wiring proof vanished
+  // even though the engine is correct. Pin to the nearest Monday >= now so the
+  // log timestamps (relative to now) stay in the past.
+  const composeDay = new Date(now);
+  while (composeDay.getDay() !== 1) composeDay.setTime(composeDay.getTime() + MS_DAY);
+
   // Compose OFF first (no curve consumed → population set counts).
   setFlag(null);
-  const planOff = await world.composePlannedWorkoutToday(new Date());
+  const planOff = await world.composePlannedWorkoutToday(composeDay);
 
   // Learn the curve at "finish time" with the flag ON (the real persist path runs
   // learnFatigueCurve only when gated). Persist into dp-fatigue-curve.
   setFlag('dp_fatigue_curve_v1');
   const learned = learnFatigueCurve(logs);
   saveFatigueCurve(learned);
-  const planOn = await world.composePlannedWorkoutToday(new Date());
+  const planOn = await world.composePlannedWorkoutToday(composeDay);
 
   // Per-exercise set count by EN name (proof the ±1 landed on the right exercise).
   const byName = (p) => {
