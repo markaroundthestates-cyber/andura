@@ -452,6 +452,22 @@ export const FLAGS = Object.freeze({
   // composition. Even ON, an all-recovered / no-history week self-no-ops to a clone.
   dp_weekly_recovery_alloc_v1: { rollout: 0, default: false },
 
+  // #32 detraining vs deload vs life-dip classifier (RISK MED-HIGH — the LIFE_DIP
+  // branch SUPPRESSES a deload, so a mis-classification could let a fatigued user
+  // grind; the ACWR-HIGH-forces-FATIGUE guard is the safety). When ON,
+  // classifyPerformanceDip FUSES the already-computed _returnDeload (gap) +
+  // computeACWR (#5) + detectSubRecoveryDrift (#26) + fatigue.js sleep/notes +
+  // closed-days/kcal into one class and only RE-ROUTES among responses that already
+  // exist (ramp / deload / hold). Its only NEW behavior is the LIFE_DIP branch
+  // swapping an over-reactive deload for a HOLD when the cause is lifestyle (low
+  // volume + bad sleep/missed/under-eating), never pushing harder than today. The
+  // deload-suppression WIRING into the live session is DEFERRED behind the PARTIAL
+  // deload-telemetry boundary (spec §7) — this ships the pure classifier. Degrades
+  // to gap-vs-fatigue only (no LIFE_DIP) when #5/#26 are OFF (null inputs). OFF →
+  // never called → _returnDeload + the deload hierarchy + the <60 hold run
+  // independently as today → byte-identical.
+  dp_dip_classifier_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'
