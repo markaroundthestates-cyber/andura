@@ -58,6 +58,10 @@ describe('Navigation helper — Phase 3 Antrenor sub-screens nested', () => {
     expect(gotoPath('energy-cause')).toBe('/app/antrenor/energy-cause');
   });
 
+  it('time-budget → /app/antrenor/time-budget', () => {
+    expect(gotoPath('time-budget')).toBe('/app/antrenor/time-budget');
+  });
+
   it('workout-preview → /app/antrenor/workout-preview', () => {
     expect(gotoPath('workout-preview')).toBe('/app/antrenor/workout-preview');
   });

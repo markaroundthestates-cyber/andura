@@ -559,6 +559,9 @@
       "other": "Altceva"
     }
   },
+  "timeBudget": {
+    "subtitle": "Alege o durata, sau lasa Fara limita — coach-ul potriveste sesiunea."
+  },
   "readinessVerdict": {
     "label": "Forma",
     "fatigue": "Oboseala",

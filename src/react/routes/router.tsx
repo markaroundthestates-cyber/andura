@@ -52,6 +52,7 @@ const NotFound = lazy(() => import('./screens/NotFound').then((m) => ({ default:
 // §B007 lazy — Antrenor sub-screens (workout flow, 11 routes)
 const EnergyCheck = lazy(() => import('./screens/antrenor/EnergyCheck').then((m) => ({ default: m.EnergyCheck })));
 const EnergyCause = lazy(() => import('./screens/antrenor/EnergyCause').then((m) => ({ default: m.EnergyCause })));
+const TimeBudget = lazy(() => import('./screens/antrenor/TimeBudget').then((m) => ({ default: m.TimeBudget })));
 const WorkoutPreview = lazy(() => import('./screens/antrenor/WorkoutPreview').then((m) => ({ default: m.WorkoutPreview })));
 const Workout = lazy(() => import('./screens/antrenor/Workout').then((m) => ({ default: m.Workout })));
 const CevaNuMerge = lazy(() => import('./screens/antrenor/CevaNuMerge').then((m) => ({ default: m.CevaNuMerge })));
@@ -178,6 +179,7 @@ export const router = createBrowserRouter([
           { index: true, element: <LazyRoute><Antrenor /></LazyRoute> },
           { path: 'energy-check', element: <LazyRoute><EnergyCheck /></LazyRoute> },
           { path: 'energy-cause', element: <LazyRoute><EnergyCause /></LazyRoute> },
+          { path: 'time-budget', element: <LazyRoute><TimeBudget /></LazyRoute> },
           { path: 'workout-preview', element: <LazyRoute><WorkoutPreview /></LazyRoute> },
           { path: 'workout', element: <GymOnlyRoute><LazyRoute><Workout /></LazyRoute></GymOnlyRoute> },
           { path: 'ceva-nu-merge', element: <LazyRoute><CevaNuMerge /></LazyRoute> },

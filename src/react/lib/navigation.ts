@@ -30,6 +30,7 @@ export type GotoScreen =
   | 'antrenor' | 'progres' | 'istoric' | 'cont'
   // Phase 3 Antrenor sub-screens
   | 'energy-check' | 'energy-cause'
+  | 'time-budget'
   | 'workout-preview' | 'workout'
   | 'ceva-nu-merge' | 'pain-button'
   | 'equipment-swap' | 'aparate-lipsa'
@@ -81,6 +82,7 @@ export function gotoPath(screen: GotoScreen): string {
   // Phase 3 Antrenor sub-screens (bottom nav vizibil, nested sub /app/antrenor)
   if (
     screen === 'energy-check' || screen === 'energy-cause' ||
+    screen === 'time-budget' ||
     screen === 'workout-preview' || screen === 'workout' ||
     screen === 'ceva-nu-merge' || screen === 'pain-button' ||
     screen === 'equipment-swap' || screen === 'aparate-lipsa' ||

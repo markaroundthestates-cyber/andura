@@ -559,6 +559,9 @@
       "other": "Other"
     }
   },
+  "timeBudget": {
+    "subtitle": "Pick a length, or leave No limit — the coach fits the session to it."
+  },
   "readinessVerdict": {
     "label": "Readiness",
     "fatigue": "Fatigue",
