@@ -26,6 +26,7 @@ import { getMetricType } from '../../engine/metricType.js';
 import { getCurrentWeightKg } from './userTdee';
 import { resolveActivePhase, resolveEnergyMagnitude } from './engineWrappers.nutrition';
 import { energyVolumeFactor } from '../../engine/dp/ceiling.js';
+import { emphasizedGroups as resolveEmphasizedGroups } from '../../engine/schedule/scheduleAdapter/focus.js';
 import { experienceToEngine } from './scheduleAdapterAggregate.session';
 import {
   buildUserStateForPipeline,
@@ -818,16 +819,40 @@ export function scaleSetsByReadiness(
 export function scaleSetsByEnergy(
   exercises: ReadonlyArray<TrimmableExercise>,
   volumeFactor: number,
+  emphasizedGroups?: ReadonlySet<string> | null,
 ): TrimmableExercise[] {
   // 1.0 / non-positive / non-finite guard → identity (byte-identical common case).
   if (!Number.isFinite(volumeFactor) || volumeFactor <= 0 || volumeFactor === 1) {
     return exercises.map((e) => ({ ...e }));
   }
-  return exercises.map((e) => ({
-    ...e,
-    // KEEP-LOAD: only sets move. targetKg / targetReps pass through unchanged.
-    sets: Math.max(MIN_SETS_PER_EX, Math.round(e.sets * volumeFactor)),
-  }));
+  // #70-D1 — EMPHASIS FLOOR: the deficit volume cut must COMPOSE with the
+  // composition cuts (emphasis / coherent-alloc already trimmed sets upstream), not
+  // STACK on top and drag an EMPHASIZED group BELOW its band. The composition-core
+  // already lands the v-taper back at its band (≈20); a further −30% energy cut then
+  // pulled it to ≈14 (under the muscle-preserving cut band — the gold _REF cut band
+  // is 16-20). In a deficit the EMPHASIZED muscle is exactly the one to PRESERVE
+  // (cut the rest of the session's volume, keep the priority work), so an exercise
+  // whose PRIMARY muscle is emphasized is FLOORED at its pre-cut sets — the cut
+  // trims toward the floor, never through it. Non-emphasized groups take the full
+  // cut, so the deficit still reduces overall session volume (KEEP-LOAD intact —
+  // sets only). No emphasized set / no focus → identical to the plain cut.
+  const emphSet = emphasizedGroups ?? null;
+  const isEmphasized = (e: TrimmableExercise): boolean => {
+    if (!emphSet || emphSet.size === 0) return false;
+    const meta = getExerciseMetadata(e.engineName ?? e.name) as { muscle_target_primary?: string } | null;
+    const g = meta?.muscle_target_primary;
+    return typeof g === 'string' && emphSet.has(g);
+  };
+  return exercises.map((e) => {
+    const cut = Math.max(MIN_SETS_PER_EX, Math.round(e.sets * volumeFactor));
+    // Emphasized group → floor at the pre-cut sets (preserve the priority muscle).
+    const sets = isEmphasized(e) ? Math.max(cut, e.sets) : cut;
+    return {
+      ...e,
+      // KEEP-LOAD: only sets move. targetKg / targetReps pass through unchanged.
+      sets,
+    };
+  });
 }
 
 /**
@@ -1049,8 +1074,15 @@ export async function composePlannedWorkoutToday(
     // the energy-scaled session). A deep deficit cuts toward −30% volume; a surplus
     // allows up to +10%. KEEP-LOAD: only sets move, the prescribed kg is untouched.
     // energyMod null (flag OFF / no magnitude) → factor 1.0 → byte-identical.
+    // #70-D1 — the emphasized focus groups (the user's look preset) so the energy
+    // cut FLOORS them at their pre-cut sets (preserve the priority muscle in a
+    // deficit) instead of dragging the emphasized region below its band. balanced /
+    // no focus → empty set → the cut is the plain MIN-compose (byte-identical).
+    const emphasizedRoGroups = energyMod
+      ? resolveEmphasizedGroups(useOnboardingStore.getState().data.focusPreset)
+      : null;
     const energyScaled = energyMod
-      ? scaleSetsByEnergy(readinessScaled, energyMod.volumeFactor)
+      ? scaleSetsByEnergy(readinessScaled, energyMod.volumeFactor, emphasizedRoGroups)
       : readinessScaled;
     const exercises = trimSessionToTimeBudget(energyScaled, warmup?.durationMin ?? 0, timeCapMin);
     // Deload engine emits intensity_modifier object always (IDLE state =
