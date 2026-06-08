@@ -1,0 +1,52 @@
+{
+  "_note": "FROZEN full-path-sim baseline. Re-baseline only intentionally (delete + rerun gen).",
+  "seed": 15736039,
+  "nProfiles": 8,
+  "weeks": 6,
+  "hashOff": "3148e5265c89da8bbdfc03ecb12108b4ef2a5a8347bc19f24b20a95257f44bd1",
+  "hashOn": "1b5299287ab5109fa28e75ab8fc0a5cd7db62b7f059f893faab3e8125a2671dd",
+  "sessionOff": {
+    "plannedSessions": 192,
+    "emptySessions": 0,
+    "meanExerciseCount": 7.07,
+    "meanSetTotal": 13.2,
+    "meanDurationMin": 39.9,
+    "meanVolumeKg": 1745,
+    "minusRatePct": 21.9
+  },
+  "sessionOn": {
+    "plannedSessions": 192,
+    "emptySessions": 0,
+    "meanExerciseCount": 7.06,
+    "meanSetTotal": 12.63,
+    "meanDurationMin": 38.7,
+    "meanVolumeKg": 1694,
+    "minusRatePct": 21.9
+  },
+  "convergenceOff": {
+    "totalSeries": 119,
+    "convergedPct": 7.6,
+    "medianSessionsToConverge": 3,
+    "meanFinalAbsErr": 0.594
+  },
+  "convergenceOn": {
+    "totalSeries": 117,
+    "convergedPct": 7.7,
+    "medianSessionsToConverge": 4,
+    "meanFinalAbsErr": 0.593
+  },
+  "flagsOff": {
+    "oscillation": 0,
+    "stuckLow": 87,
+    "stuckHigh": 18,
+    "absurd": 36
+  },
+  "flagsOn": {
+    "oscillation": 0,
+    "stuckLow": 83,
+    "stuckHigh": 19,
+    "absurd": 33
+  },
+  "craterOff": 91,
+  "craterOn": 83
+}
