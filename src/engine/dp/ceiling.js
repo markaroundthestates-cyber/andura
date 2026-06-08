@@ -159,6 +159,24 @@ export function deficitClimbFactor(phase) {
   return phase === 'CUT' ? DEFICIT_CLIMB_FACTOR : 1;
 }
 
+// ══ BUILD F6c #21 — relative strength (strength-to-bodyweight ratio) ═════════
+// e1RM is already kg-scale and the ceiling is already BW-normalized, so mu/bw — a
+// user's strength relative to their own bodyweight — is a one-line derivation from
+// values that already exist. It is a NARRATION / correct-plateau-attribution signal
+// (a user at mu/bw near the pattern's STRENGTH_STANDARD_RATIO is genuinely strong-
+// for-their-weight, reinforcing a near-ceiling plateau classification); it does NOT
+// move a prescribed kg. PURE.
+/**
+ * Strength-to-bodyweight ratio (e1RM per kg bodyweight). Returns 0 when either input
+ * is unusable. @param {number} mu @param {number} bwKg @returns {number}
+ */
+export function relativeStrength(mu, bwKg) {
+  const m = Number(mu);
+  const bw = Number(bwKg);
+  if (!Number.isFinite(m) || m <= 0 || !Number.isFinite(bw) || bw <= 0) return 0;
+  return m / bw;
+}
+
 /**
  * Classify a stagnation by how close the estimate sits to the ceiling.
  * @param {number} mu @param {number} ceiling

@@ -7,7 +7,8 @@
 import { DB, todTs } from '../../db.js';
 import { archiveSession } from '../lib/dexieMigration';
 import { isEnabled } from '../../util/featureFlags.js';
-import { learnRecovery, saveRecoveryConstants, RECOVERY_CONSTANTS_KEY } from '../../engine/muscleMap.js';
+import { learnRecovery, saveRecoveryConstants, RECOVERY_CONSTANTS_KEY, bodyweightTrendRecoveryFactor } from '../../engine/muscleMap.js';
+import { resolveActivePhase } from '../lib/engineWrappers.nutrition';
 import { learnedStepFromLogs, saveLearnedStep } from '../../engine/dp/equipmentLadder.js';
 import { learnVolumeLandmarks, saveLearnedVolume, LEARNED_VOLUME_KEY } from '../../engine/periodization/learnedVolume.js';
 import { DP } from '../../engine/dp.js';
@@ -171,7 +172,17 @@ export function persistSessionLogs(
     // render read). Quota-guarded + fail-silent inside the try.
     if (isEnabled('dp_learned_recovery_v1')) {
       const prior = (DB.get(RECOVERY_CONSTANTS_KEY) as Record<string, { hours: number; n: number }>) || undefined;
-      const learned = learnRecovery(merged as unknown as Parameters<typeof learnRecovery>[0], prior);
+      // F6c #21 — bodyweight-trend → recovery nudge (flag dp_strength_bw_ratio_v1,
+      // default OFF → factor 1 → byte-identical). A sustained cut slows the learned
+      // recovery; a surplus speeds it (REUSING the existing [0.5x, 2x] clamp). The
+      // resolved phase token is passed in (engine never imports nutrition).
+      const bwTrendFactor = isEnabled('dp_strength_bw_ratio_v1')
+        ? bodyweightTrendRecoveryFactor(
+            DB.get('weights') as Record<string, number> | null,
+            resolveActivePhase(),
+          )
+        : 1;
+      const learned = learnRecovery(merged as unknown as Parameters<typeof learnRecovery>[0], prior, bwTrendFactor);
       if (Object.keys(learned).length) saveRecoveryConstants(learned);
     }
     // F4 #10 — learn the per-gym equipment ladder (true load increment) for each

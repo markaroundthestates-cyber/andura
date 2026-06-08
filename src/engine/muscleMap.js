@@ -104,9 +104,15 @@ function _recoveryE1RM(w, reps, rpe) {
  * @param {Record<string, {hours:number, n:number}>} [prior] existing learned
  *   constants to EMA-continue (the persisted `dp-recovery-constants`); absent ->
  *   seed from the global prior.
+ * @param {number} [bwTrendFactor] F6c #21 — a sustained bodyweight-trend nudge on the
+ *   learned recovery (a cut → > 1 longer recovery, a surplus → < 1 shorter). Applied
+ *   to the EMA-blended hours BEFORE the existing [0.5x, 2x] clamp (REUSE the band —
+ *   no new clamp). Default 1 (no nudge) → byte-identical. Gated by the caller behind
+ *   dp_strength_bw_ratio_v1.
  * @returns {Record<string, {hours:number, n:number}>}
  */
-export function learnRecovery(logs, prior) {
+export function learnRecovery(logs, prior, bwTrendFactor) {
+  const bwF = Number.isFinite(bwTrendFactor) && bwTrendFactor > 0 ? bwTrendFactor : 1;
   /** @type {Record<string, {hours:number, n:number}>} */
   const out = {};
   const rows = (logs || []).filter(l => !l.baseline && l.ex && l.w);
@@ -152,11 +158,50 @@ export function learnRecovery(logs, prior) {
     // (or the global prior on first learn). Slow alpha + clamp [0.5x, 2x].
     const start = prior && prior[m] && Number.isFinite(prior[m].hours) ? prior[m].hours : global;
     let blended = start + RECOVERY_EMA_ALPHA * (observed - start);
+    // F6c #21 — bodyweight-trend nudge (cut → slower recovery, surplus → faster),
+    // applied BEFORE the clamp so the existing [0.5x, 2x] band still bounds it
+    // (no new clamp). bwF === 1 (default / flag OFF) → no change → byte-identical.
+    blended *= bwF;
     blended = Math.max(global * RECOVERY_CLAMP_LO, Math.min(global * RECOVERY_CLAMP_HI, blended));
     const n = (prior && prior[m] && Number.isFinite(prior[m].n) ? prior[m].n : 0) + 1;
     out[m] = { hours: Math.round(blended), n };
   }
   return out;
+}
+
+// ── F6c #21 — bodyweight-trend → recovery nudge factor ──────────────────────
+// UNVERIFIED DESIGN PROPOSAL (spec §9): how far a sustained cut/surplus shifts the
+// learned recovery. Conservative, single-step magnitudes — the slow EMA + the
+// existing [0.5x, 2x] clamp keep it bounded. Daniel sanity-check before flip.
+export const BW_RECOVERY_CUT_FACTOR = 1.15;     // a cut → ~15% longer recovery
+export const BW_RECOVERY_SURPLUS_FACTOR = 0.90; // a surplus → ~10% shorter recovery
+const BW_TREND_MIN_FRACTION = 0.005;            // >=0.5% bodyweight move = a real trend
+
+/**
+ * Bodyweight-trend recovery nudge factor for the learned-recovery EMA. A sustained
+ * DEFICIT (a CUT phase confirmed by a falling bodyweight series) slows recovery
+ * (factor > 1); a sustained SURPLUS (a BULK phase + a rising series) speeds it
+ * (< 1); anything ambiguous → 1 (no nudge → byte-identical). REQUIRES BOTH the phase
+ * token AND a confirming bodyweight move (phase alone, e.g. a brand-new CUT with no
+ * weight change yet, does not nudge). PURE — the phase token is passed in (no
+ * nutrition import).
+ *
+ * @param {Record<string, number>|null|undefined} weightsSeries date→kg map (the `weights` key)
+ * @param {string|null|undefined} phase resolveActivePhase token (CUT|BULK|MAINTENANCE|STRENGTH)
+ * @returns {number} the recovery factor (1 = no nudge)
+ */
+export function bodyweightTrendRecoveryFactor(weightsSeries, phase) {
+  if (phase !== 'CUT' && phase !== 'BULK') return 1;
+  if (!weightsSeries || typeof weightsSeries !== 'object') return 1;
+  const dates = Object.keys(weightsSeries).sort((a, b) => a.localeCompare(b));
+  if (dates.length < 2) return 1;
+  const first = Number(weightsSeries[dates[0]]);
+  const last = Number(weightsSeries[dates[dates.length - 1]]);
+  if (!Number.isFinite(first) || first <= 0 || !Number.isFinite(last) || last <= 0) return 1;
+  const change = (last - first) / first; // signed fraction of bodyweight
+  if (phase === 'CUT' && change <= -BW_TREND_MIN_FRACTION) return BW_RECOVERY_CUT_FACTOR;
+  if (phase === 'BULK' && change >= BW_TREND_MIN_FRACTION) return BW_RECOVERY_SURPLUS_FACTOR;
+  return 1; // phase + series disagree (or move too small) → no nudge
 }
 
 /**
