@@ -1079,8 +1079,17 @@ export function Workout(): JSX.Element {
   // signal — sessionStart!=null already gates PainButton.inSession but the tag
   // covers edge cases (paused / freshly-resumed sessions etc.).
   const handleGoPain = useCallback(
-    (): void => navigate(gotoPath('pain-button'), { state: { from: 'workout' } }),
-    [navigate],
+    // #64 carry the ACTIVE exercise's ENGINE key (EN canonical) so PainButton can
+    // pin a durable pain memory keyed by the exercise the ⋯ pain action opened from
+    // (the pin store is engine-name-keyed, #41). Reuses the existing location.state
+    // channel (no new store thread).
+    (): void => navigate(gotoPath('pain-button'), {
+      state: {
+        from: 'workout',
+        activeExercise: currentExercise.engineName ?? currentExercise.name,
+      },
+    }),
+    [navigate, currentExercise.engineName, currentExercise.name],
   );
   const handleGoFinishEarly = useCallback(
     (): void => navigate(gotoPath('finish-early-confirm')),

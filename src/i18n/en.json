@@ -1272,7 +1272,9 @@
     "continueCta": "Continue adapted",
     "exitCta": "Save and exit",
     "medicalCue": "If none fits, stop the session and consult a doctor.",
-    "reassureToast": "Safety comes first. We've adjusted the rest of the session."
+    "reassureToast": "Safety comes first. We've adjusted the rest of the session.",
+    "clearPinCta": "No longer hurts - bring this exercise back",
+    "clearPinToast": "Got it - this exercise is back to normal."
   },
   "setLog": {
     "targetLabel": "Target",

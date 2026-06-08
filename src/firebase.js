@@ -105,6 +105,7 @@ export const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs',
   'dp-strength-posterior', // dp-strength-posterior — F3 #2 per-exercise Kalman strength latent (object engineName -> {mu,sigma,lastObsTs,n}); name-keyed object-merge sync, learned per-UID, durable across sessions/devices
   'dp-recovery-constants', // dp-recovery-constants — F3 #5 per-user learned per-muscle recovery hours (object muscleHead -> {hours,n}); muscle keys are EN underscore tokens (Firebase-safe, NOT name-keyed); object-merge sync, learned per-UID, durable
   'dp-exercise-pain', // dp-exercise-pain — F4 #8 per-exercise pain/skip deprioritize (object engineName -> {skips,lastSkipTs}); name-keyed object-merge sync, learned per-UID, durable across sessions/devices
+  'dp-pain-memory', // dp-pain-memory — F7 #64 PERSISTENT pain pin + proactive substitute (object engineName -> {region,intensity,pinnedTs,substitute}); non-decaying, held until cleared; name-keyed object-merge sync (NAME_KEYED_SYNC_KEYS), learned per-UID, durable across sessions/devices
   'dp-equipment-ladder', // dp-equipment-ladder — F4 #10 learned per-gym load increment (object engineName -> {step,n}); name-keyed object-merge sync, learned per-UID, durable across sessions/devices
   'dp-temperament', // dp-temperament — F4 #3 per-user temperament RIR bias sandbagger vs grinder (object engineName|'global' -> {bias,n}); name-keyed object-merge sync (the reserved 'global' key carries the cross-lift trait), learned per-UID, durable across sessions/devices
   'dp-fatigue-curve', // dp-fatigue-curve — F6a #20 per-user per-exercise reps-drop-off curve (object engineName -> {dropIndex,n}); name-keyed object-merge sync, learned per-UID, durable across sessions/devices
@@ -150,7 +151,7 @@ export function fbKey(localKey) {
 // `dp-cal-factors` is the only one (pr-records/coach-decisions/logs are arrays;
 // step-streaks/sf.userConfig are fixed-key objects). Listed so any future
 // name-keyed map opts in by key name alone.
-export const NAME_KEYED_SYNC_KEYS = Object.freeze(['dp-cal-factors', 'dp-strength-posterior', 'dp-exercise-pain', 'dp-equipment-ladder', 'dp-temperament', 'dp-fatigue-curve', 'dp-nof1-preference']);
+export const NAME_KEYED_SYNC_KEYS = Object.freeze(['dp-cal-factors', 'dp-strength-posterior', 'dp-exercise-pain', 'dp-pain-memory', 'dp-equipment-ladder', 'dp-temperament', 'dp-fatigue-curve', 'dp-nof1-preference']);
 
 // Reserved sentinel key for the scalar/array wrapper (audit 2026-06-07 L-1).
 // A non-object value is wrapped under this key instead of the ambiguous `value`

@@ -1272,7 +1272,9 @@
     "continueCta": "Continui adaptat",
     "exitCta": "Salveaza si iesi",
     "medicalCue": "Daca nu se potriveste niciuna, opreste sesiunea si consulta un medic.",
-    "reassureToast": "Siguranta e pe primul loc. Am ajustat restul sesiunii."
+    "reassureToast": "Siguranta e pe primul loc. Am ajustat restul sesiunii.",
+    "clearPinCta": "Nu ma mai doare - readu acest exercitiu",
+    "clearPinToast": "Am inteles - exercitiul revine la normal."
   },
   "setLog": {
     "targetLabel": "Tinta",

@@ -16,6 +16,7 @@ import {
 import { buildSession } from '../../sessionBuilder.js';
 import { isEnabled } from '../../../util/featureFlags.js';
 import { exercisePenaltyMap } from '../../dp/exercisePain.js';
+import { painSwapMap } from '../../dp/painMemory.js';
 import { fatigueSetsAdjust } from '../../dp/fatigueCurve.js';
 import { availableCoarseTypes } from '../../equipmentMap.js';
 import {
@@ -509,6 +510,13 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // recently-painful SPECIFIC exercise is demoted in poolForGroup so a same-muscle
     // sibling is preferred; never a hard ban (poolForGroup keeps the last option).
     exercisePenalties: isEnabled('dp_pain_deprioritize_v1') ? exercisePenaltyMap() : null,
+    // #64 PERSISTENT pain memory PROACTIVE swap (dp_pain_memory_v1, default OFF →
+    // null → byte-identical pool). When ON, a user-PINNED painful exercise is
+    // REPLACED in poolForGroup by its persisted curated chain substitute (held
+    // until the pin is cleared); no suitable substitute → falls back to the
+    // existing DEMOTE (exercisePenalties above). Empty pin store → empty map →
+    // byte-identical even with the flag ON.
+    painSwaps: isEnabled('dp_pain_memory_v1') ? painSwapMap() : null,
     // F6a #20 per-set fatigue curve (dp_fatigue_curve_v1, default OFF → null →
     // distributeGroupSets applies adjust 0 → byte-identical). When ON, the learned
     // per-exercise drop-off index (persisted dp-fatigue-curve, name-keyed on the EN

@@ -551,9 +551,17 @@ function equipmentOk(meta, available) {
  *   MALE_RARE_LOWER glute/lower accessories (female-common, male-rare) to the back
  *   of the pool so a sex-common sibling leads; PR-history lifts are never demoted.
  *   'f'/null → no reorder (byte-identical). Reorder only, never DROPS an entry.
+ * @param {Record<string, string>|null} [painSwaps] - #64 PERSISTENT pain memory
+ *   proactive swap (engineName → curated substitute). When a PINNED painful
+ *   exercise is in THIS group's pool AND its substitute belongs to the same group
+ *   + passes the equipment/tier/skill gates AND the painful exercise is NOT the
+ *   last option for the muscle, the pinned entry is REPLACED in-place by the
+ *   substitute (held until the pin is cleared). Otherwise the pinned exercise is
+ *   left untouched (the penalty demote still applies). Null/empty → no swap
+ *   (byte-identical). Never DROPS the muscle's last option (anti-paternalism).
  * @returns {Array<{name: string, meta: object}>}
  */
-function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, sexBias) {
+function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, sexBias, painSwaps) {
   // ACTIVE visibility gate (Daniel SSOT 2026-06-05, supersedes 2026-06-03 CORE+
   // FALLBACK gate): auto-selection draws ONLY from the curated ACTIVE catalog
   // (CORE_AUTO — see isActiveMeta / ACTIVE_STATUSES) plus PR-history continuity.
@@ -573,6 +581,39 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalt
     // regardless of status (don't yank a lift out from under an existing user).
     if (isActiveMeta(meta) || prNames.has(name)) core.push({ name, meta });
   }
+
+  // #64 PERSISTENT pain memory PROACTIVE SWAP — replace a PINNED painful exercise
+  // in this group's pool with its persisted curated substitute, BEFORE ordering.
+  // Bounded safety envelope: only when the substitute belongs to THIS group, passes
+  // the equipment/tier/skill gates, is not already in the pool, and the painful
+  // exercise is NOT the last option for the muscle (never drop a muscle's last
+  // exercise — the same anti-ban guard the penalty path relies on). Otherwise the
+  // pinned exercise is left in place (the penalty demote below still applies → it
+  // degrades to today's behavior). Null/empty painSwaps → no swap (byte-identical).
+  if (painSwaps) {
+    for (let i = 0; i < core.length; i++) {
+      const name = core[i].name;
+      const sub = painSwaps[name];
+      if (typeof sub !== 'string' || !sub) continue;
+      if (core.length <= 1) break; // never drop the muscle's last option
+      const subMeta = EXERCISE_METADATA[sub];
+      if (!subMeta || subMeta.muscle_target_primary !== group) continue;
+      if (subMeta.tier > maxTier) continue;
+      if (skillRankOf(subMeta) > maxSkill) continue;
+      if (!equipmentOk(subMeta, available)) continue;
+      if (core.some((e) => e.name === sub)) {
+        // The substitute is ALREADY offered for this group → the pinned exercise is
+        // redundant; remove it so it can't be selected (the substitute covers the
+        // muscle). Last-option guard above ensures the group is never emptied.
+        core.splice(i, 1);
+        i--;
+      } else {
+        // Replace the pinned entry in-place with its curated substitute.
+        core[i] = { name: sub, meta: subMeta };
+      }
+    }
+  }
+
   // Deterministic ordering: PR-anchored first (continuity), then SQUAT-PATTERN
   // primacy on the quads group, then plain anchors, then common, then the rest;
   // seeded-stable by name hash.
@@ -780,6 +821,7 @@ export function movementKey(name, meta) {
  *   recoveryState?: Record<string, 'recovered'|'partial'|'fatigued'>,
  *   emphasizedGroups?: string[],
  *   exercisePenalties?: Record<string, number>|null,
+ *   painSwaps?: Record<string, string>|null,
  *   fatigueSetsAdjust?: ((name: string) => number)|null,
  *   emphasisSetsBoost?: boolean,
  *   coherentAlloc?: boolean,
@@ -816,11 +858,14 @@ export function buildSession(cluster, ctx) {
   // male-rare lower accessories in poolForGroup; 'f'/null → no reorder. Default
   // absent (flag OFF / pure-fn callers) → null → byte-identical pool order.
   const sexBias = ctx?.sexBias === 'm' || ctx?.sexBias === 'f' ? ctx.sexBias : null;
+  // #64 PERSISTENT pain memory proactive swap (engineName → substitute). Null/empty
+  // (the common case + flag off) → poolForGroup makes no swap → byte-identical.
+  const painSwaps = ctx?.painSwaps ?? null;
 
   // Pools per target group (ordered: PR-anchored -> anchor -> new, seeded-stable).
   const pools = targets.map((g) => ({
     group: g,
-    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, sexBias),
+    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, sexBias, painSwaps),
   }));
 
   // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the user's

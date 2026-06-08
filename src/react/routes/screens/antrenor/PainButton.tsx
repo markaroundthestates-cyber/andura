@@ -45,6 +45,8 @@ import { DB } from '../../../../db.js';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { edgeFlash, haptic } from '../../../lib/motion';
 import { t } from '../../../../i18n/index.js';
+import { isEnabled } from '../../../../util/featureFlags.js';
+import { pinPain, clearPainPin, isPinnedPainful } from '../../../../engine/dp/painMemory.js';
 
 export type BodyRegion =
   | 'gat'
@@ -140,14 +142,35 @@ export function PainButton(): JSX.Element {
   // Workout.tsx mount-init or paused-resume) and was reached via the ⋯ menu's
   // pain action. Location state `from:'workout'` is a defensive secondary
   // signal in case the route is hit elsewhere.
-  const fromState = (location.state as { from?: string } | null)?.from;
+  const navState = location.state as { from?: string; activeExercise?: string } | null;
+  const fromState = navState?.from;
   const inSession = sessionStart !== null || fromState === 'workout';
+  // #64 the ACTIVE exercise the ⋯ pain action was opened from (engine key, #41) —
+  // threaded via location.state from Workout.tsx handleGoPain. Used to pin a durable
+  // pain memory so the exercise is proactively substituted next session (flag-gated).
+  const activeExercise = navState?.activeExercise;
+  // #64 clear-UX ("No longer hurts" / "Nu ma mai doare") — reversible: deletes the
+  // pin so the exercise returns to normal selection next session. Shown only when
+  // the active exercise is currently pinned (flag-gated). Placement here is the
+  // natural pain surface; the design pass owns the final coach-surface placement.
+  const showClearPin =
+    isEnabled('dp_pain_memory_v1') &&
+    typeof activeExercise === 'string' &&
+    !!activeExercise &&
+    isPinnedPainful(activeExercise);
 
   function handleContinue(): void {
     if (!region) return;
     // §43-H2: persist pain to append-only CDL so Recovery Engine adapts future
     // sessions (not just this one via location.state).
     persistPainCdl(region, intensity);
+    // #64 PERSISTENT pain memory (dp_pain_memory_v1, default OFF → no-op): pin the
+    // ACTIVE exercise as painful so it is PROACTIVELY substituted next session until
+    // the user clears the pin. Quota-guarded inside pinPain (never throws). Only when
+    // a live session supplied the active exercise (the ⋯ pain action from Workout).
+    if (isEnabled('dp_pain_memory_v1') && typeof activeExercise === 'string' && activeExercise) {
+      pinPain(activeExercise, { region, intensity });
+    }
     // Wave C3 (2026-05-28) — tactile + visual confirmation that the pain report
     // was registered. Soft haptic buzz (10ms — Material "subtle confirm"), then
     // a brief brick-tinted edge flash so the user feels "they heard me" without
@@ -179,6 +202,16 @@ export function PainButton(): JSX.Element {
 
   function handleExit(): void {
     navigate(gotoPath('antrenor'));
+  }
+
+  // #64 clear the durable pain pin for the active exercise (reversible). Toast +
+  // return to the workout so the next session re-prescribes the original lift.
+  function handleClearPin(): void {
+    if (typeof activeExercise !== 'string' || !activeExercise) return;
+    clearPainPin(activeExercise);
+    haptic(10);
+    toast.show({ message: t('painButton.clearPinToast'), variant: 'success' });
+    navigate(inSession ? gotoPath('workout') : gotoPath('antrenor'));
   }
 
   function handleBack(): void {
@@ -263,6 +296,16 @@ export function PainButton(): JSX.Element {
       >
         {t('painButton.exitCta')}
       </button>
+      {showClearPin && (
+        <button
+          type="button"
+          onClick={handleClearPin}
+          data-testid="pain-clear-pin"
+          className="w-full mt-2 py-3 text-green text-sm font-medium"
+        >
+          {t('painButton.clearPinCta')}
+        </button>
+      )}
       {/* §F-pain-button-02 closing italic — verbatim mockup L1021. Safety
           cue NU paternalistic per D-LEGACY-061 (informativ daca presets nu se
           potrivesc). Lora serif italic matches mockup typography. */}

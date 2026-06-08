@@ -331,6 +331,20 @@ export const FLAGS = Object.freeze({
   // F3 flag dependency. Reuses alternativeFinder/poolForGroup selection (no rebuild).
   dp_pain_deprioritize_v1: { rollout: 0, default: false },
 
+  // #64 PERSISTENT pain memory + proactive substitution (RISK MED — changes
+  // session COMPOSITION, path A: it SWAPS a pinned exercise, not just demotes).
+  // When ON, a user-PINNED painful exercise (durable, non-decaying dp-pain-memory
+  // store) is PROACTIVELY REPLACED in sessionBuilder.poolForGroup with its
+  // persisted curated chain substitute (getTransferSources, skip-re-irritating-
+  // region), until the user clears the pin ("Nu ma mai doare"). Never the
+  // last-for-a-muscle (the pool's last-option guard holds); no suitable substitute
+  // → falls back to the existing DEMOTE. OFF → painSwaps null → byte-identical pool
+  // order (the decaying dp_pain_deprioritize_v1 demote rides its OWN flag,
+  // unchanged). Also threads the pain flag into dp.js load-transition reason
+  // derivation (#75) so a pinned exercise's load drop reads reason='pain' →
+  // open-ended window. Reuses getTransferSources / poolForGroup (no rebuild).
+  dp_pain_memory_v1: { rollout: 0, default: false },
+
   // #10/E learned per-gym equipment ladder (RISK LOW-MED — changes only the
   // GRANULARITY of a load step, bounded by the equipment snap's floor/ceiling). When
   // ON, the real available rungs are inferred from the user's DISTINCT logged loads

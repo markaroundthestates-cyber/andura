@@ -18,6 +18,7 @@ import { temperamentBias, temperamentBiasFromLogs, saveTemperament, GLOBAL_KEY a
 import { shouldProbe, probeSet } from './dp/activeProbing.js';
 import { chooseCandidate } from './dp/mpc.js';
 import { deriveLoadTransition } from './dp/loadTransition.js';
+import { isPinnedPainful } from './dp/painMemory.js';
 import { detectStagnation } from './stagnationDetector.js';
 import { getUserConfig } from '../config/user.js';
 import { t } from '../i18n/index.js';
@@ -1409,25 +1410,33 @@ export const DP = {
     // channels into opts is the BOUNDARY (never fabricated). OFF → never invoked →
     // byte-identical (the inert descriptor below keeps every site unchanged).
     const ltOn = isEnabled('dp_load_transition_v1');
+    // #64 closes #75's deferred `pain` boundary: when dp_pain_memory_v1 is ON and
+    // THIS exercise carries a durable pain pin (dp-pain-memory), the load-decrease
+    // reason is `pain` → the OPEN-ENDED window (loadTransition stays active until the
+    // pain memory clears). Flag OFF → false → byte-identical (#75's prior default).
+    const painPinned = isEnabled('dp_pain_memory_v1') && isPinnedPainful(ex);
     /** @type {ReturnType<typeof deriveLoadTransition>} */
     const loadTransition = ltOn
       ? deriveLoadTransition({
           logs: state.logs,
           e1RMForSet: (w, reps, rpe) => this.e1RMForSet(w, reps, rpe, ex),
           reasonSignals: {
+            // pain (#64, real, available behind dp_pain_memory_v1): a durable pain
+            // pin on this exercise → reason=pain (highest priority, open-ended).
+            painFlag: painPinned,
             // deload state (real, available): a return-deload window is active.
             deloadActive: this._returnDeload(ex, nowMs) != null,
             // failed-reps / too-hard (real, available): the last hard set's reps
             // collapsed below the floor.
             failedReps: !!lastRepsBelowTarget,
-            // pain / equipment / manual: NOT available in dp.js today → omitted →
+            // equipment / manual: NOT available in dp.js today → omitted →
             // deriveDecreaseReason defaults conservative (unknown) when nothing
-            // higher-priority fires. BOUNDARY: wire opts.painFlag/equipmentSwap/
-            // manualReason from the React boundary to activate those branches.
+            // higher-priority fires. BOUNDARY: wire opts.equipmentSwap/manualReason
+            // from the React boundary to activate those branches.
           },
-          // Pain memory (#64) lives outside dp.js → not available here → treated as
-          // not-flagged (the pain branch only opens when painFlag is sourced).
-          painStillFlagged: false,
+          // #64 the open-ended pain window stays active while the pin is held; it
+          // clears only when the user clears the pin (painPinned → false).
+          painStillFlagged: painPinned,
         })
       : { transition_active: false, direction: null, reason: null, load_change_pct: 0,
           suppress_regression: false, cap_rebound: false, window: 0, exposuresInWindow: 0, asked: false };
