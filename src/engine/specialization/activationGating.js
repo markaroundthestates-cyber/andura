@@ -137,6 +137,14 @@ export function detectInjuryAutoDisable({
  * @param {boolean} [input.painButtonActive]
  * @param {ReadonlyArray<string>|Array<string>} [input.painAffectedGroups]
  * @param {string|null} [input.candidateTargetGroup]
+ * @param {boolean} [input.userPickedEmphasis] - F emphasis-specialization opt-in:
+ *   the user EXPLICITLY picked this muscle-group emphasis (a LOOK preset), so the
+ *   persona (Gate 1) + goal-phase (Gate 3) gates are bypassed — anti-paternalism
+ *   cuts the other way for an explicit opt-in ("the user asked for it"). The
+ *   injury Safety Override (Gate 4) is ALWAYS kept (universal anti-injury), and
+ *   the downstream MRV cap on the volume trade is preserved. Default false →
+ *   identical to the strict V1 4-gate (only set when
+ *   dp_emphasis_specialization_v1 is on).
  * @returns {import('./types.js').EligibilityResult}
  */
 export function evaluateEligibility({
@@ -146,9 +154,13 @@ export function evaluateEligibility({
   painButtonActive,
   painAffectedGroups,
   candidateTargetGroup,
+  userPickedEmphasis,
 }) {
-  // Gate 1: Persona Q12 §45.3 LOCKED
-  if (!isEligiblePersona(persona)) {
+  const emphasisBypass = userPickedEmphasis === true;
+
+  // Gate 1: Persona Q12 §45.3 LOCKED — bypassed for an explicit user-picked
+  // emphasis (the user asked for it; anti-paternalism F4).
+  if (!emphasisBypass && !isEligiblePersona(persona)) {
     return {
       eligible: false,
       state:    ACTIVATION_STATE.INELIGIBLE_NOT_MARIUS,
@@ -165,8 +177,10 @@ export function evaluateEligibility({
     };
   }
 
-  // Gate 3: Goal Phase Q5=D + Q13=A dual safety gate Cut DISABLE
-  if (!isEligibleGoalPhase(goalPhase)) {
+  // Gate 3: Goal Phase Q5=D + Q13=A dual safety gate Cut DISABLE — bypassed for an
+  // explicit user-picked emphasis (the user asked for it; injury Gate 4 below + the
+  // MRV cap remain the universal safety net).
+  if (!emphasisBypass && !isEligibleGoalPhase(goalPhase)) {
     return {
       eligible: false,
       state:    ACTIVATION_STATE.INELIGIBLE_PHASE_GATE,

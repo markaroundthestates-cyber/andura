@@ -31,6 +31,7 @@ const FOCUS_OPTIONS: ReadonlyArray<{ id: FocusPreset; labelKey: string; descKey:
   { id: 'arms', labelKey: 'settings.profile.focusArms', descKey: 'settings.profile.focusArmsDesc' },
   { id: 'chest', labelKey: 'settings.profile.focusChest', descKey: 'settings.profile.focusChestDesc' },
   { id: 'lower', labelKey: 'settings.profile.focusLower', descKey: 'settings.profile.focusLowerDesc' },
+  { id: 'upper', labelKey: 'settings.profile.focusUpper', descKey: 'settings.profile.focusUpperDesc' },
 ];
 
 /** True when the selected preset de-emphasizes a region → show the calm note. */

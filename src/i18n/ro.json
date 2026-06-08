@@ -1460,6 +1460,8 @@
       "focusChestDesc": "Mai mult lucru pe piept.",
       "focusLower": "Partea de jos",
       "focusLowerDesc": "Mai mult fese si picioare.",
+      "focusUpper": "Partea de sus",
+      "focusUpperDesc": "Mai mult piept, spate si umeri. Mai putin picioare.",
       "focusDeEmphNote": "Minimizezi niste muschi. Decizia ta. Ii tin la mentenanta, nu la zero.",
       "trainingType": "Ce faci",
       "goal": "Obiectiv",

@@ -79,6 +79,57 @@ export function applyWeaknessAmplification(volumeMapEN, weakGroupsRO) {
 }
 
 /**
+ * EMPHASIS de-emphasis — the REST-DOWN half of the specialization engine's
+ * zero-sum trade (F emphasis-specialization). The engine already computes
+ * `volume_modifier.otherGroupsReductionPct` (−0.25): every muscle group that is
+ * NOT part of the user-picked emphasis relaxes toward its Israetel MEV by that
+ * magnitude, redirecting recovery bandwidth to the emphasized target (which
+ * rides applyWeaknessAmplification toward MRV separately). Modeled byte-for-byte
+ * on applyFocusBias's de-emphasize branch: lerp current→MEV by |reductionPct|,
+ * HARD-clamped to [MEV, MRV] — so a relaxed group is MAINTAINED at MEV, NEVER
+ * below, never zero.
+ *
+ * The budget is EN-keyed (chest/back/...) but the emphasis groups arrive Big-11
+ * RO — each protected RO group is bridged to EN (BIG11_RO_TO_EN_MAP). Any EN
+ * group NOT in the protected set (the emphasized groups: target + its preset
+ * siblings) is relaxed. Returns a NEW map. Empty protected set OR
+ * reductionPct >= 0 → the map is returned unchanged (no-op, graceful per ADR
+ * 025). Pure.
+ *
+ * @param {Object<string, number>|null|undefined} volumeMapEN - Big-11 EN budget
+ * @param {Set<string>|Array<string>} protectedGroupsRO - emphasized Big-11 RO groups to KEEP
+ * @param {number} reductionPct - the engine's otherGroupsReductionPct (e.g. -0.25)
+ * @returns {Object<string, number>|null} de-emphasized EN-keyed budget (null passes through)
+ */
+export function applyEmphasisDeEmphasis(volumeMapEN, protectedGroupsRO, reductionPct) {
+  if (!volumeMapEN || typeof volumeMapEN !== 'object') return volumeMapEN ?? null;
+  const magnitude = typeof reductionPct === 'number' && Number.isFinite(reductionPct)
+    ? Math.abs(reductionPct)
+    : 0;
+  const protectedRO = protectedGroupsRO instanceof Set
+    ? protectedGroupsRO
+    : new Set(Array.isArray(protectedGroupsRO) ? protectedGroupsRO : []);
+  if (magnitude <= 0 || protectedRO.size === 0) return { ...volumeMapEN };
+  // EN keys the emphasis protects (target + preset siblings) — bridged from RO.
+  const protectedEN = new Set();
+  for (const ro of protectedRO) protectedEN.add(BIG11_RO_TO_EN_MAP[ro] ?? ro);
+  const out = { ...volumeMapEN };
+  for (const enKey of Object.keys(out)) {
+    if (protectedEN.has(enKey)) continue; // emphasized → untouched (rides UP elsewhere)
+    const current = out[enKey];
+    const lm = ISRAETEL_BASELINES[enKey];
+    if (typeof current !== 'number' || !Number.isFinite(current) || current <= 0) continue;
+    if (!lm) continue;
+    // Lerp toward MEV by the engine's reduction magnitude (same shape as
+    // applyFocusBias de-emph branch: current + (MEV - current) * magnitude).
+    const biased = current + (lm.MEV - current) * magnitude;
+    // HARD clamp to [MEV, MRV] — MAINTENANCE at MEV, never below, never zero.
+    out[enKey] = Math.min(lm.MRV, Math.max(lm.MEV, biased));
+  }
+  return out;
+}
+
+/**
  * Apply muscle-recovery redistribution to the EN-keyed periodization volume
  * budget. The budget is EN-keyed (chest/back/...) but the recovery math is
  * RO-keyed (getRecoveryByGroup returns RO), so: EN→RO (toCanonicalRO) → cut tired

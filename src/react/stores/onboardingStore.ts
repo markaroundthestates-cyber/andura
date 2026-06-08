@@ -25,7 +25,7 @@ export type Frequency = '2' | '3' | '4' | '5';
  * engine (scheduleAdapter FOCUS_PRESETS) shapes volume + split around it.
  * 'balanced' (DEFAULT) = Andura decides, ZERO change (opt-in, ADR 025).
  */
-export type FocusPreset = 'balanced' | 'v-taper' | 'arms' | 'chest' | 'lower';
+export type FocusPreset = 'balanced' | 'v-taper' | 'arms' | 'chest' | 'lower' | 'upper';
 export type Experience = 'incepator' | 'intermediar' | 'avansat';
 /**
  * Training type (Daniel spec 2026-05-30) — gates the whole experience. Many
@@ -89,6 +89,17 @@ export interface OnboardingData {
    * focusPreset. EMPTY seeds 'balanced' + the v7 migrate spreads `...EMPTY` first.
    */
   focusPreset?: FocusPreset;
+  /**
+   * Epoch-ms when `focusPreset` was last set to a NON-balanced value (the
+   * emphasis "pick time"). The specialization-phase wire derives
+   * `meta.specializationWeeksElapsed` from this so the 4-week mesocycle clock
+   * runs from when the user CHOSE the emphasis — NOT from `trainingWeeks` — and
+   * the volume trade auto-returns to balanced after 4 weeks. Stamped by
+   * `setField` on a focusPreset change; cleared (null) when the user reverts to
+   * 'balanced'. Null/absent → no emphasis clock (the meso wire stays inert).
+   * Only consumed when `dp_emphasis_specialization_v1` is on.
+   */
+  focusPresetPickedAt?: number | null;
 }
 
 /**
@@ -253,6 +264,8 @@ const EMPTY: OnboardingData = {
   // Focus selector (D-focus 2026-06-02) — default 'balanced' (opt-in, ZERO
   // change). Legacy + migrated users seed 'balanced' via this EMPTY spread.
   focusPreset: 'balanced',
+  // Emphasis pick-time clock (null until the user picks a non-balanced focus).
+  focusPresetPickedAt: null,
 };
 
 /**
@@ -292,6 +305,17 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
         // (Onboarding.tsx Continua button) + finalize gate — preserves
         // in-progress typing UX while protecting engine downstream.
         if (!isSafeOnboardingValue(key, value)) return;
+        // Emphasis pick-time clock (T4 spec F): when the user changes focusPreset,
+        // stamp the pick time for a NON-balanced pick (starts the 4-week meso
+        // clock the specialization-phase wire reads) or clear it on a revert to
+        // 'balanced'. Co-set in the SAME update so the pair never drifts. Only
+        // consumed downstream when dp_emphasis_specialization_v1 is on; otherwise
+        // an inert extra field (persisted, ignored).
+        if (key === 'focusPreset') {
+          const pickedAt = value === 'balanced' ? null : Date.now();
+          set((s) => ({ data: { ...s.data, focusPreset: value as FocusPreset, focusPresetPickedAt: pickedAt } }));
+          return;
+        }
         set((s) => ({ data: { ...s.data, [key]: value } }));
       },
       finalize: () => {

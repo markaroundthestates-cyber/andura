@@ -174,9 +174,24 @@ function fixtureT2MariusCut() {
  */
 function buildLegacyCtx(userState, co) {
   const ctx = buildEngineContext(userState);
+  // Mirror the adapter's D2 shape map: it renames constraintObject →
+  // periodizationConstraint AND derives meta.periodizationPhase from the CO's
+  // `phase` (F emphasis-specialization T3 — LOAD+ normalizes to LOAD) when the
+  // ctx doesn't already carry an explicit phase. The legacy "direct invocation"
+  // equivalent must apply the SAME mapping for the parity to be meaningful.
+  const coPhase = co && typeof co.phase === 'string' ? co.phase : null;
+  const derivedPhase = coPhase === null ? null : (coPhase.toUpperCase() === 'LOAD+' ? 'LOAD' : coPhase.toUpperCase());
   return Object.freeze({
     ...ctx,
-    meta: Object.freeze({ ...ctx.meta, periodizationConstraint: co }),
+    meta: Object.freeze({
+      ...ctx.meta,
+      periodizationConstraint: co,
+      ...(typeof ctx.meta?.periodizationPhase === 'string'
+        ? {}
+        : derivedPhase !== null
+          ? { periodizationPhase: derivedPhase }
+          : {}),
+    }),
   });
 }
 

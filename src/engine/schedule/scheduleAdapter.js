@@ -64,6 +64,6 @@ export { pickAlternativeCluster } from './scheduleAdapter/alternativeCluster.js'
 
 export { weeklySessionsPerGroup } from './scheduleAdapter/weeklySessions.js';
 
-export { FOCUS_PRESETS, FOCUS_PRESET_IDS } from './scheduleAdapter/focus.js';
+export { FOCUS_PRESETS, FOCUS_PRESET_IDS, primaryEmphasizedGroup } from './scheduleAdapter/focus.js';
 
 export { getDailyWorkout } from './scheduleAdapter/getDailyWorkout.js';

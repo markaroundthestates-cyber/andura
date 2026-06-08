@@ -42,6 +42,7 @@ import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias } f
 import {
   laggingGroupsFromLogs,
   applyWeaknessAmplification,
+  applyEmphasisDeEmphasis,
   applyRecoveryToVolumeBudget,
   redistributeRecoveredVolumeToFreshSessionGroups,
 } from './volumeAdaptation.js';
@@ -230,6 +231,25 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // cluster so a "Different group" override surfaces the alternative session type.
   const sessionType = CLUSTER_TO_SESSION_TAG[cluster] || 'FULL';
   const specializationTarget = blueprints.specialization?.target_muscle_group ?? null;
+  // F emphasis = specialization-phase (T6) — the engine's already-computed
+  // volume_modifier (DISCARDED until now; getDailyWorkout read only the target).
+  // When the user-picked emphasis is ACTIVE the engine emits a non-zero
+  // otherGroupsReductionPct (−0.25); after the 4-week mesocycle it auto-returns
+  // to zeros (computeMesocycleProgress.exiting) → the trade silently reverts to
+  // balanced. Behind dp_emphasis_specialization_v1 (default OFF). Flag-OFF the
+  // builder never sets the spec target/accept meta → the modifier stays zero (and
+  // the de-emph step below is gated on the flag anyway) → byte-identical.
+  const specVol = blueprints.specialization?.volume_modifier ?? null;
+  const emphasisSpecOn = isEnabled('dp_emphasis_specialization_v1');
+  // Active iff the flag is on AND the engine emitted a real cut for a resolved
+  // target (zeros after the meso exit / when not active → inert).
+  const emphasisActive =
+    emphasisSpecOn &&
+    specVol !== null &&
+    typeof specVol.otherGroupsReductionPct === 'number' &&
+    specVol.otherGroupsReductionPct < 0 &&
+    typeof specializationTarget === 'string' &&
+    specializationTarget.length > 0;
   const userId = userState?.user?.uid ?? userState?.uid ?? '';
   const seed = `${userId}|${getWeekStartIso(date)}|${dayIdx}`;
 
@@ -320,9 +340,23 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // TODAY's budget last (recovery + time remain guards: focus shapes intent, not
   // safety). balanced → focusBiasedTargets === baseVolumeTargets clone → the rest
   // of the chain is byte-identical to pre-feature.
-  const focusBiasedTargets = applyFocusBias(baseVolumeTargets, focusPreset);
+  // T7 — when the specialization-phase emphasis is ACTIVE, the emphasized
+  // target's UP-bias is owned by applyWeaknessAmplification (the spec target is in
+  // weakGroups), so suppress applyFocusBias's emphasize-up to avoid a double-lerp
+  // toward MRV. The de-emphasize→MEV branch of applyFocusBias is KEPT (v-taper/
+  // upper lower-region relax). Flag-OFF / not active → suppressEmphasizeUp is
+  // false → applyFocusBias is byte-identical to today.
+  const focusBiasedTargets = applyFocusBias(baseVolumeTargets, focusPreset, emphasisActive);
   const amplifiedTargets = applyWeaknessAmplification(focusBiasedTargets, weakGroups);
-  const balancedTargets = applyImbalanceCorrection(amplifiedTargets, imbalances);
+  // T6 REST-DOWN — relax every non-emphasized group toward MEV by the engine's
+  // otherGroupsReductionPct (the zero-sum trade's down half). Protect the
+  // emphasized set (the target rode UP via amplification above). Gated on
+  // emphasisActive → flag-OFF this is skipped entirely → byte-identical. Runs
+  // AFTER amplification so the target's UP is never clawed back. MEV-clamped.
+  const tradedTargets = emphasisActive
+    ? applyEmphasisDeEmphasis(amplifiedTargets, emphSet, specVol.otherGroupsReductionPct)
+    : amplifiedTargets;
+  const balancedTargets = applyImbalanceCorrection(tradedTargets, imbalances);
 
   // ── INTRA-WEEK DEFICIT RECOVERY (D-intra-week 2026-06-04) ────────────────
   // What was already done EARLIER this microcycle (skipped / early-ended sessions)

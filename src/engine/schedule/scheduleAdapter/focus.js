@@ -57,6 +57,15 @@ export const FOCUS_PRESETS = Object.freeze({
     emphasize: Object.freeze(['fese', 'picioare-quads', 'picioare-hamstrings', 'gambe']),
     deEmphasize: Object.freeze([]),
   }),
+  // Upper: the MIRROR of v-taper — piept/spate/umeri UP; the SAME lower groups
+  // relaxed to maintenance. De-emphasizing the identical lower set means UPPER
+  // inherits the lower-de-emphasis split reshape (reshapeSplitForFocus keys on
+  // picioare-*/fese being de-emphasized) + the divisor fix + the M2/M3
+  // suppression for FREE — one mechanism, data-only addition.
+  upper: Object.freeze({
+    emphasize: Object.freeze(['piept', 'spate', 'umeri']),
+    deEmphasize: Object.freeze(['picioare-quads', 'picioare-hamstrings', 'fese', 'gambe']),
+  }),
 });
 
 /** Valid focusPreset ids (the keys of FOCUS_PRESETS). */
@@ -103,6 +112,21 @@ export function emphasizedGroups(focusPreset) {
 }
 
 /**
+ * The PRIMARY emphasized Big-11 RO group of a preset — its first `emphasize[]`
+ * entry (Top-1 discipline, the specialization engine V1 invariant). This is the
+ * group routed into the specialization engine as the user-picked TARGET
+ * (meta.userOverrideWeakGroup) when the emphasis-specialization trade is on.
+ * `balanced`/unknown/empty-emphasize → null (no target). Pure.
+ *
+ * @param {string|null|undefined} focusPreset
+ * @returns {string|null} Big-11 RO primary emphasized group, or null
+ */
+export function primaryEmphasizedGroup(focusPreset) {
+  const emphasize = resolveFocusPreset(focusPreset).emphasize;
+  return emphasize.length > 0 ? emphasize[0] : null;
+}
+
+/**
  * Focus volume stage — bias each group's weekly budget by the preset. EMPHASIZED
  * groups lerp toward MRV; DE-EMPHASIZED groups lerp toward MEV (maintenance floor
  * — clamped so they NEVER drop below MEV, never to zero); neutral groups
@@ -114,9 +138,15 @@ export function emphasizedGroups(focusPreset) {
  *
  * @param {Object<string, number>|null|undefined} volumeMapEN - Big-11 EN budget
  * @param {string|null|undefined} focusPreset
+ * @param {boolean} [suppressEmphasizeUp=false] - F emphasis-specialization (T7):
+ *   when the specialization-phase emphasis is ACTIVE, the emphasized target's
+ *   UP-bias toward MRV is owned by applyWeaknessAmplification (the spec target is
+ *   in weakGroups), so the emphasize loop here is SKIPPED to avoid a double-lerp.
+ *   The de-emphasize→MEV branch is unaffected (v-taper/upper lower-region relax).
+ *   Default false → byte-identical to the pre-feature emphasize+de-emphasize.
  * @returns {Object<string, number>|null} biased EN-keyed budget (null passes through)
  */
-export function applyFocusBias(volumeMapEN, focusPreset) {
+export function applyFocusBias(volumeMapEN, focusPreset, suppressEmphasizeUp = false) {
   if (!volumeMapEN || typeof volumeMapEN !== 'object') return volumeMapEN ?? null;
   const preset = resolveFocusPreset(focusPreset);
   if (preset.emphasize.length === 0 && preset.deEmphasize.length === 0) {
@@ -136,7 +166,9 @@ export function applyFocusBias(volumeMapEN, focusPreset) {
     // never below; an emphasized group never exceeds MRV.
     out[enKey] = Math.min(lm.MRV, Math.max(lm.MEV, biased));
   };
-  for (const roGroup of preset.emphasize) biasGroup(roGroup, 'MRV');
+  if (!suppressEmphasizeUp) {
+    for (const roGroup of preset.emphasize) biasGroup(roGroup, 'MRV');
+  }
   for (const roGroup of preset.deEmphasize) biasGroup(roGroup, 'MEV');
   return out;
 }

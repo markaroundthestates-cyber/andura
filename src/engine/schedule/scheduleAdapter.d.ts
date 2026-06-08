@@ -74,7 +74,7 @@ export interface WorkoutPlan {
   workoutTitle: string;
 }
 
-export type FocusPreset = 'balanced' | 'v-taper' | 'arms' | 'chest' | 'lower';
+export type FocusPreset = 'balanced' | 'v-taper' | 'arms' | 'chest' | 'lower' | 'upper';
 
 export interface FocusPresetSpec {
   emphasize: readonly string[];
@@ -85,6 +85,11 @@ export interface FocusPresetSpec {
 // emphasis. balanced = the empty no-op (byte-identical to pre-feature).
 export const FOCUS_PRESETS: Readonly<Record<FocusPreset, FocusPresetSpec>>;
 export const FOCUS_PRESET_IDS: readonly FocusPreset[];
+
+// The primary emphasized Big-11 RO group of a preset (first emphasize[] entry,
+// Top-1 discipline) — null for balanced/unknown. Routed into the specialization
+// engine as the user-picked TARGET when dp_emphasis_specialization_v1 is on.
+export function primaryEmphasizedGroup(focusPreset?: string | null): string | null;
 
 export function frequencyToSplit(n: number, focusPreset?: string): string[];
 export function weeklySessionsPerGroup(split: string[]): Record<string, number>;

@@ -341,6 +341,66 @@ export const FLAGS = Object.freeze({
   // OFF → the hard-coded table (byte-identical). No F3 flag dependency.
   dp_learned_ladder_v1: { rollout: 0, default: false },
 
+  // #2/C plateau → intervention (RISK LOW-MED — the near_ceiling branch only
+  // narrates + rotates a same-muscle variation, reversible, no kg crater; the
+  // problem branch reuses an already-tested rep-shift / deload / variation path).
+  // When ON, a stagnation (stagnationDetector >= PLATEAU_MIN_WEEKS) is classified
+  // by classifyPlateau(mu, ceiling): near_ceiling → variation rotation (no deload),
+  // problem → an escalating rep_shift→deload→variation intervention, midrange →
+  // today's double-progression. OFF → no classification, no intervention
+  // (byte-identical: the overlay is never reached). Depends on dp_ceiling_v1 for
+  // the real EXPECTED/PROBLEM split (degrades to a flat-MAX_KG ceiling otherwise).
+  dp_plateau_intervention_v1: { rollout: 0, default: false },
+
+  // #3/F temperament: sandbagger vs grinder (RISK MED — deliberately discounts the
+  // user's own rating, so a mis-detection could push a true grinder too hard → the
+  // ceiling + the clamp band are the guards). When ON, a per-user RIR bias LEARNED
+  // from rating-vs-(reps,load) patterns adjusts RATING_TO_RIR: a sandbagger's greu
+  // is treated as having reserve (don't stall the climb), a grinder's usor as near
+  // failure (don't over-climb). Slow EMA, clamped. Persists `dp-temperament` (sync,
+  // quota-guarded). OFF → the global RATING_TO_RIR (byte-identical). Depends on
+  // dp_e1rm_v1 (RIR is the lever it tunes); inert when e1RM is off.
+  dp_temperament_v1: { rollout: 0, default: false },
+
+  // #1/H active probing when uncertain (RISK MED-HIGH — deliberately prescribes a
+  // single set ABOVE the smoothed mu to gather a high-information observation, so it
+  // is bounded by the ceiling + ego-cap and gated to ONE set when FRESH only). When
+  // ON, a wide Kalman posterior (sigma > SIGMA_PROBE_THRESHOLD) on a fresh
+  // (readiness >= HIGH), non-hard last set offers a deliberate calibration test set
+  // that shrinks sigma. OFF → no probe (byte-identical). Depends on
+  // dp_strength_kalman_v1 (needs sigma; meaningless on raw kg).
+  dp_active_probing_v1: { rollout: 0, default: false },
+
+  // #4/I MPC — model-predictive progression (RISK HIGH — changes how the next load
+  // is CHOSEN, path B). When ON, a small bounded set of candidate next-loads is
+  // simulated forward N sessions through the SAME deterministic engine (the forward
+  // model — no rebuild) under an assumed rating response and scored (e1RM gain
+  // toward ceiling, penalized by oscillation / over-cap risk); the best candidate is
+  // picked, but ONLY where it would change the greedy decision (common case → same
+  // step, golden-safe). OFF → the greedy one-step double-progression (byte-identical).
+  // Depends on dp_e1rm_v1 + dp_strength_kalman_v1 + dp_ceiling_v1 (its forward model).
+  dp_mpc_v1: { rollout: 0, default: false },
+
+  // ── F emphasis = specialization-phase (engine-wiring 2026-06-07) — wires the
+  // EXISTING src/engine/specialization/ engine's already-computed volume_modifier
+  // ({+30% target, +1 session, -25% others}, 4-week mesocycle) into session
+  // COMPOSITION (path A — sets/exercises per group), which getDailyWorkout used
+  // to DISCARD (it read only target_muscle_group). When ON, a user-picked
+  // muscle-group EMPHASIS (focusPreset arms/chest/lower/upper/v-taper) routes its
+  // primary group into the spec engine as the user-picked TARGET
+  // (meta.userOverrideWeakGroup + auto-accept proposal), bypasses the persona/
+  // phase eligibility gate (explicit opt-in — keeps the injury gate + MRV cap),
+  // and CONSUMES the modifier: target rides applyWeaknessAmplification toward MRV
+  // + the other groups relax to MEV (clamped, never below, never zero) via
+  // applyEmphasisDeEmphasis. Phase-bounded to a 4-week mesocycle (auto-return).
+  // OFF → no meta override is set + the de-emph helper is a no-op → the plan
+  // composition is BYTE-IDENTICAL to today (the focus-bias path only). Changes
+  // session COMPOSITION (path A), NOT per-exercise weight (path B) — the
+  // calibration-sim hash is orthogonal + stays green flag-OFF. Flip ON is a human
+  // gate (Daniel) AFTER review. See _ENGINE_WIRING_2026-06-07/
+  // F_emphasis_specialization_spec.md.
+  dp_emphasis_specialization_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

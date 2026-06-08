@@ -1460,6 +1460,8 @@
       "focusChestDesc": "More chest work.",
       "focusLower": "Lower body",
       "focusLowerDesc": "More glutes and legs.",
+      "focusUpper": "Upper body",
+      "focusUpperDesc": "More chest, back and shoulders. Less leg work.",
       "focusDeEmphNote": "You're minimizing some muscles. Your call. I'll keep them at maintenance, not zero.",
       "trainingType": "What you do",
       "goal": "Goal",

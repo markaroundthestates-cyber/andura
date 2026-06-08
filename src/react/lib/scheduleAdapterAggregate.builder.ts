@@ -13,7 +13,8 @@ import { useAerobicStore } from '../stores/aerobicStore';
 import { MS_PER_DAY } from '../../constants.js';
 import { getComputedReadinessScore, getTodayReadiness } from '../../engine/readiness.js';
 import { doneVolumeByGroupThisWeek } from '../../engine/schedule/intraWeekVolume.js';
-import { getWeekStartIso } from '../../engine/schedule/scheduleAdapter.js';
+import { getWeekStartIso, primaryEmphasizedGroup } from '../../engine/schedule/scheduleAdapter.js';
+import { isEnabled } from '../../util/featureFlags.js';
 import { DB } from '../../db.js';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
 import { estimateBF_Deurenberg } from '../../engine/bodyComposition.js';
@@ -356,6 +357,34 @@ export function buildUserStateForPipeline(): {
   const persona = resolvePersonaId(
     onboardingData.age !== null ? { age: onboardingData.age } : {},
   );
+  // ── F emphasis = specialization-phase (T2+T4+T5, dp_emphasis_specialization_v1)
+  // Route a USER-PICKED muscle-group emphasis into the EXISTING specialization
+  // engine: the preset's primary emphasized group becomes the engine's user-picked
+  // TARGET (meta.userOverrideWeakGroup — override beats the lagging detector, so
+  // the pick is DETERMINISTIC with empty logs), the pick auto-accepts the proposal
+  // (meta.userProposalAccepted — the pick IS the accept; anti-paternalism cuts the
+  // other way for an explicit opt-in) and bypasses the persona/phase gate
+  // (meta.userPickedEmphasis — keeps the injury gate + MRV cap), and the pick-time
+  // clock (focusPresetPickedAt) → weeks-elapsed drives the 4-week mesocycle
+  // auto-return. ALL gated behind the flag → flag-OFF sets NONE of these meta
+  // fields, so buildWeaknessSignal resolves no target and the plan composition is
+  // byte-identical to today. balanced / no primary group → also inert.
+  const emphasisSpecOn = isEnabled('dp_emphasis_specialization_v1');
+  const emphasisTargetGroup = emphasisSpecOn
+    ? primaryEmphasizedGroup(onboardingData.focusPreset ?? 'balanced')
+    : null;
+  const emphasisPickedAt =
+    typeof onboardingData.focusPresetPickedAt === 'number' &&
+    Number.isFinite(onboardingData.focusPresetPickedAt)
+      ? onboardingData.focusPresetPickedAt
+      : null;
+  // Weeks since the emphasis was picked (clock for computeMesocycleProgress, which
+  // exits at >= 4). Floors to 0 for a just-picked emphasis. Absent pick-time → 0
+  // (fresh — engine treats elapsed 0 as week 1, never exiting yet).
+  const emphasisWeeksElapsed =
+    emphasisTargetGroup && emphasisPickedAt !== null
+      ? Math.max(0, Math.floor((now - emphasisPickedAt) / (7 * MS_PER_DAY)))
+      : 0;
   const profileTier = tierForExperience(onboardingData.experience);
   const goalPhase = goalPhaseForGoal(onboardingData.goal);
   // PR-anchor set for WP-4 selection: distinct exercise names the user has
@@ -472,6 +501,21 @@ export function buildUserStateForPipeline(): {
       // applyWeaknessAmplification absorb the overlap — see report). Omit when no
       // logs → engine keeps its conservative no-target baseline (NU fabricated).
       ...(lifetimeLogs.length ? { lifetimeLogs, recentLogs } : {}),
+      // F emphasis = specialization-phase (T2+T4+T5) — only when the flag is on
+      // AND the user picked a non-balanced emphasis with a primary group. These
+      // four fields turn the user's LOOK pick into the spec engine's active
+      // user-picked block: target (override beats detector), auto-accept (pick =
+      // accept), gate bypass (explicit opt-in; injury gate + MRV cap KEPT), and
+      // the 4-week meso clock. Conditional spread → flag-OFF / balanced emits NONE
+      // → meta byte-identical to today → buildWeaknessSignal resolves no target.
+      ...(emphasisTargetGroup
+        ? {
+            userOverrideWeakGroup: emphasisTargetGroup,
+            userProposalAccepted: true,
+            userPickedEmphasis: true,
+            specializationWeeksElapsed: emphasisWeeksElapsed,
+          }
+        : {}),
     },
     // Intra-week deficit recovery — DONE volume + microcycle anchor for the engine
     // proration/spread (getDailyWorkout reads userState.weekContext). Computed from

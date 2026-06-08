@@ -211,6 +211,7 @@ export async function evaluate(ctx) {
     painButtonActive:       meta.painButtonActive,
     painAffectedGroups:     meta.painAffectedGroups,
     candidateTargetGroup:   weaknessSignal.targetGroup,
+    userPickedEmphasis:     meta.userPickedEmphasis,
   });
   trace.eligibility = eligibility;
 

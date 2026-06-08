@@ -99,6 +99,26 @@ import { evaluate as evaluateSpecialization, ENGINE_ID } from '../../../engine/s
 import { captureException } from '../../../util/sentry.js';
 
 /**
+ * Normalize a periodization block-phase name (the Constraint Object's `phase`,
+ * one of LOAD / LOAD+ / PEAK / DELOAD per periodization WEEK_PHASES) to the
+ * specialization engine's application-phase vocabulary (ACCUMULATION / LOAD —
+ * the only phases isApplicationPhaseEligible accepts). LOAD+ is an accumulation
+ * block (week 2: full volume, only the RIR target descends) → LOAD. LOAD +
+ * ACCUMULATION pass through. PEAK + DELOAD pass through unchanged so they stay
+ * correctly INELIGIBLE (high-intensity / recovery weeks — no extra-volume
+ * specialization, Q11=B + Q12=A). Unknown / null → null (engine emits zeros).
+ *
+ * @param {string|null} phase
+ * @returns {string|null}
+ */
+function normalizeToApplicationPhase(phase) {
+  if (typeof phase !== 'string') return null;
+  const upper = phase.toUpperCase();
+  if (upper === 'LOAD+') return 'LOAD';
+  return upper; // ACCUMULATION/LOAD eligible; PEAK/DELOAD pass (stay ineligible)
+}
+
+/**
  * Specialization adapter — implements `EngineAdapter` contract per ADR 030 D2.
  *
  * D2 Shape mapping concrete: orchestrator-side `meta.constraintObject` slot
@@ -157,11 +177,35 @@ export const specializationAdapter = Object.freeze({
       // **D2 shape mapping:** rename orchestrator-generic `constraintObject` slot
       // to engine-specific `periodizationConstraint` field. Engine purity
       // preserved per ADR 030 §2.2 D2 thin scope (identical pattern batches 2-5).
+      //
+      // **Phase wire (F emphasis-specialization T3):** computeVolumeModifier gates
+      // on isApplicationPhaseEligible(meta.periodizationPhase) — eligible only for
+      // ACCUMULATION/LOAD — but `meta.periodizationPhase` is NEVER set in prod, so
+      // the modifier always emitted ZEROS (the engine's MAV-up/MEV-down trade was
+      // dead). The phase IS available on the frozen Constraint Object the
+      // periodization engine emits (`phase`, one of LOAD/LOAD+/PEAK/DELOAD per
+      // WEEK_PHASES). Copy it through, NORMALIZING the accumulation block names to
+      // the engine's eligible vocabulary: LOAD+ (week 2, full volume, only RIR
+      // descends) is an accumulation phase → map to LOAD; PEAK + DELOAD stay
+      // themselves (correctly ineligible — high-intensity / recovery weeks). This
+      // is a thin-adapter shape map (ADR 030 D2-legal), idempotent, and harmless
+      // when the spec engine isn't ACTIVE (zeros still flow). Only RIDES into the
+      // trade when a user-picked emphasis (meta.userPickedEmphasis) is active.
+      const coPhase =
+        upstreamCO && typeof upstreamCO.phase === 'string' ? upstreamCO.phase : null;
+      const periodizationPhase = normalizeToApplicationPhase(coPhase);
       const adaptedCtx = Object.freeze({
         ...ctx,
         meta: Object.freeze({
           ...ctx.meta,
           periodizationConstraint: upstreamCO,
+          // Preserve an explicit upstream phase if already set (test fixtures);
+          // else derive from the CO. Absent CO phase → null (engine sees zeros).
+          ...(typeof ctx.meta?.periodizationPhase === 'string'
+            ? {}
+            : periodizationPhase !== null
+              ? { periodizationPhase }
+              : {}),
         }),
       });
 
