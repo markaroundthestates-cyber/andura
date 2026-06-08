@@ -45,6 +45,7 @@ import {
   laggingGroupsFromLogs,
   applyWeaknessAmplification,
   applyEmphasisDeEmphasis,
+  applyBeginnerVolumeCap,
   applyRecoveryToVolumeBudget,
   redistributeRecoveredVolumeToFreshSessionGroups,
   allocateWeeklyVolumeByRecovery,
@@ -375,7 +376,16 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   const tradedTargets = emphasisActive
     ? applyEmphasisDeEmphasis(amplifiedTargets, emphSet, specVol.otherGroupsReductionPct)
     : amplifiedTargets;
-  const balancedTargets = applyImbalanceCorrection(tradedTargets, imbalances);
+  const balancedTargetsRaw = applyImbalanceCorrection(tradedTargets, imbalances);
+  // #70-D5 — BEGINNER per-group weekly volume CAP (experience anchoring, behind
+  // dp_learned_volume_v1, default OFF → byte-identical). A beginner (T0) is hard-
+  // capped at each group's MAV no matter the day count, so a high-frequency ask
+  // can't hand a novice advanced-peak volume (Stefan back 26 > the beginner band).
+  // Applied AFTER all amplification (focus/weakness/imbalance) so none of those can
+  // lift a beginner past MAV; the recovery cut + MEV/MRV clamp still run below.
+  const balancedTargets = isEnabled('dp_learned_volume_v1')
+    ? applyBeginnerVolumeCap(balancedTargetsRaw, userState?.profileTier)
+    : balancedTargetsRaw;
 
   // ── INTRA-WEEK DEFICIT RECOVERY (D-intra-week 2026-06-04) ────────────────
   // What was already done EARLIER this microcycle (skipped / early-ended sessions)
@@ -556,6 +566,16 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
         ? userState.user.sex
         : null)
       : null,
+    // #70-D2 — COMPOUND-FIRST guarantee on an emphasis/weak-reordered session
+    // (dp_emphasis_specialization_v1, default OFF → byte-identical). When ON, the
+    // weak/emphasis front-loader is prevented from leading the day with an ISOLATION
+    // (a glute-emphasis leg day whose fese pick is a kickback/abduction) ahead of an
+    // available compound. Rides the same emphasis switch the front-loader rides.
+    compoundFirstGuard: emphasisSpecOn,
+    // #70-D5 — BEGINNER per-group slot cap (dp_learned_volume_v1, default OFF →
+    // byte-identical). When ON, a beginner's NON-focus groups are capped to keep a
+    // high-frequency novice week in the MEV/low-MAV band (experience anchoring).
+    beginnerVolumeCap: isEnabled('dp_learned_volume_v1'),
   };
 
   const session = buildSession(cluster, sessionCtx);

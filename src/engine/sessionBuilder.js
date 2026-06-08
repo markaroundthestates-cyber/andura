@@ -152,6 +152,12 @@ const SESSION_SIZE = 8;
 // floor, no per-tier hardcode of the COUNT, only of the floor.
 const MIN_SESSION_BEGINNER = 4;
 const MIN_SESSION_TRAINED = 5;
+// #70-D5 — max exercises a BEGINNER (T0) gets per muscle group in a session. A
+// novice training a group on several days of a high-freq split otherwise stacks
+// 3 exercises × the compound set-floor on EACH day → over-MRV weekly (the policy:
+// beginner = MEV/low-MAV, no peak). 2 keeps a beginner's per-group week in the
+// novice band even on a 3×/week group frequency. Trained tiers are uncapped here.
+const BEGINNER_MAX_SLOTS_PER_GROUP = 2;
 
 /**
  * Tier-aware session-substance floor. T0 (beginner) keeps the base floor of 4;
@@ -225,6 +231,18 @@ const COMPOUND_MAX_SETS_EMPHASIZED = 6;
 // upstream. NOT applied to a NON-RECOVERED emphasized group (the recovery floor
 // wins — never force volume onto a fatigued muscle). Flag OFF → never used.
 const COMPOUND_MIN_SETS_EMPHASIZED = 4;
+// #70-D3 emphasized ISOLATION ceiling (dp_emphasis_specialization_v1). The
+// COMPOUND-band raise above does nothing for a SMALL group that has NO compound
+// in the library (biceps / triceps are isolation-only — curls, pushdowns,
+// extensions). So an `arms` focus raised the weekly budget toward MAV upstream
+// but the per-exercise ISOLATION clamp [2,3] capped each arm lift at 3 → biceps
+// stalled ~6/wk on a 2×/wk split, below the 7-12 gold band (DIAG D3). For an
+// emphasized + RECOVERED group whose weekly target still has room to grow toward
+// MAV, the isolation ceiling rises to ISOLATION_MAX_SETS_EMPHASIZED so the direct
+// arm work reaches the band (the +2-6 sets specialization quantum, policy §3),
+// bounded by MAV upstream + this hard ceiling. Flag OFF / not emphasized → the
+// [2,3] clamp is byte-identical.
+const ISOLATION_MAX_SETS_EMPHASIZED = 5;
 
 /**
  * Per-session set budget for one Big-11 group — the weekly volume target split
@@ -390,6 +408,13 @@ function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasi
   const emphasizeRecovered = emphasized && !nonRecovered;
   const compoundCeiling = emphasized ? COMPOUND_MAX_SETS_EMPHASIZED : COMPOUND_MAX_SETS;
   const anchorIdx = emphasizeRecovered ? exsInGroup.findIndex((e) => e.tier === COMPOUND_TIER) : -1;
+  // #70-D3 — an emphasized RECOVERED group raises its ISOLATION ceiling too, so a
+  // SMALL isolation-only group (biceps/triceps — no compound in the library) can
+  // reach the band on its direct arm work instead of being capped at 3 sets/lift.
+  // The compound-band raise above is inert for these groups (no tier-1 anchor);
+  // this is the lever that delivers the arms-emphasis +sets. Non-emphasized /
+  // non-recovered → the normal [2,3] band (byte-identical).
+  const isolationCeiling = emphasizeRecovered ? ISOLATION_MAX_SETS_EMPHASIZED : ISOLATION_MAX_SETS;
 
   return exsInGroup.map((e, i) => {
     const isCompound = e.tier === COMPOUND_TIER;
@@ -398,7 +423,7 @@ function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasi
     // Anchor compound of an emphasized recovered group floors higher (visible +sets).
     const cFloor = i === anchorIdx ? COMPOUND_MIN_SETS_EMPHASIZED : compoundFloor;
     const lo = isCompound ? cFloor : ISOLATION_MIN_SETS;
-    const hi = isCompound ? compoundCeiling : ISOLATION_MAX_SETS;
+    const hi = isCompound ? compoundCeiling : isolationCeiling;
     return Math.min(hi, Math.max(lo, rounded));
   });
 }
@@ -908,6 +933,20 @@ export function buildSession(cluster, ctx) {
   for (const g of targets) {
     const w = typeof clusterWeights[g] === 'number' ? clusterWeights[g] : 0;
     slotCap[g] = Math.max(1, Math.ceil(w * sessionSize));
+    // #70-D5 — BEGINNER per-group slot cap. A beginner (T0) on a high-frequency
+    // split that trains a group on several days (e.g. back on UPPER + 2× PULL)
+    // got 3 back exercises EACH day → 3 days × 3 ex × the 3-set compound floor =
+    // ~26 weekly sets, advanced-peak territory the weekly-budget cap can't undo
+    // (the per-exercise FLOOR overrides a small budget). Capping a beginner at
+    // BEGINNER_MAX_SLOTS_PER_GROUP exercises/group keeps the realized weekly
+    // volume in the MEV/low-MAV band the policy wants (2 ex × 3 days × 3 = 18 <
+    // the novice ceiling). Trained tiers (T1/T2+) are untouched (byte-identical).
+    // The EMPHASIZED focus group is exempt (the user explicitly asked for it —
+    // a beginner with a chest focus still gets the chest surfacing; only the
+    // NON-focus groups are slot-capped to keep the novice week in band).
+    if (ctx?.beginnerVolumeCap && ctx?.profileTier === 'T0' && !emphSet.has(g)) {
+      slotCap[g] = Math.min(slotCap[g], BEGINNER_MAX_SLOTS_PER_GROUP);
+    }
     // Focus EMPHASIS — an emphasized group earns ONE extra slot over its
     // cluster-weight cap so the preset surfaces as an additional exercise on that
     // group (the visible difference arms/chest were missing). The session total is
@@ -972,13 +1011,26 @@ export function buildSession(cluster, ctx) {
   // the weight-biased slotCap so heavier groups accrue more slots (the cluster
   // weight bias). A weak group is exempt from its cap (it should win EXTRA
   // volume — that is the Specialization point).
+  // #70-D5 — a BEGINNER's per-group slot cap is a HARD ceiling that binds even a
+  // surfaceSet (weak/emphasized) group AND the remainder pass below: a novice
+  // should never stack more than BEGINNER_MAX_SLOTS_PER_GROUP exercises on one
+  // muscle in a session (over-MRV weekly on a high-freq split — DIAG D5). Trained
+  // tiers have no hard cap (Infinity) → byte-identical.
+  // The emphasized focus group is exempt from the hard cap too (a beginner's
+  // explicit look choice surfaces; only non-focus groups are bound).
+  const beginnerHardCapFor = (group) =>
+    ctx?.beginnerVolumeCap && ctx?.profileTier === 'T0' && !emphSet.has(group)
+      ? BEGINNER_MAX_SLOTS_PER_GROUP
+      : Infinity;
   let progressed = true;
   while (chosen.length < effectiveSessionSize && progressed) {
     progressed = false;
     for (const { group, pool } of pools) {
       if (chosen.length >= effectiveSessionSize) break;
       // Weak (auto) AND emphasized (focus) groups are exempt from their cap — both
-      // should win EXTRA volume (the Specialization point + the user's look choice).
+      // should win EXTRA volume (the Specialization point + the user's look choice)
+      // — EXCEPT a beginner's hard per-group ceiling, which always binds.
+      if ((groupCount[group] || 0) >= beginnerHardCapFor(group)) continue;
       const capped = !surfaceSet.has(group) && (groupCount[group] || 0) >= slotCap[group];
       if (capped) continue;
       const next = pool.find((e) => !isTaken(e));
@@ -996,8 +1048,11 @@ export function buildSession(cluster, ctx) {
   progressed = true;
   while (chosen.length < effectiveSessionSize && progressed) {
     progressed = false;
-    for (const { pool } of pools) {
+    for (const { group, pool } of pools) {
       if (chosen.length >= effectiveSessionSize) break;
+      // #70-D5 — the beginner per-group hard cap binds here too (the remainder
+      // pass otherwise ignores all caps, re-stacking a small cluster's lone group).
+      if ((groupCount[group] || 0) >= beginnerHardCapFor(group)) continue;
       const next = pool.find((e) => !isTaken(e));
       if (next) {
         take(next, DEFAULT_SETS);
@@ -1148,30 +1203,45 @@ export function buildSession(cluster, ctx) {
   const setsByName = /** @type {Record<string, number>} */ ({});
   for (const [g, exs] of Object.entries(byGroup)) {
     const perSessionBudget = sessionSetBudget(g, ctx?.volumeTargets, ctx?.weeklySessionsPerGroup);
-    // #71 — pin a STABLE per-exercise dose so the same lift no longer swings with
-    // however many slots this day's cluster gave the group (DIAG #3). OFF or no
-    // usable budget → the legacy weekly/freq budget (byte-identical).
-    const budget = coherentAlloc
-      ? (coherentDayBudget(perSessionBudget, exs.length) ?? perSessionBudget)
-      : perSessionBudget;
-    // #72 — an emphasized group raises its compound band so the focus lift carries
+    // #72 — an emphasized group raises its set band so the focus work carries
     // visibly more sets (DIAG #2), but ONLY when its WEEKLY target still has room to
-    // grow toward MAV (policy: "an emphasized group's weekly set target rises TOWARD
-    // MAV"). A group already AT/ABOVE its MAV (e.g. v-taper back, which earns many
-    // weekly slots and already sits at the budget high-end) is left at the normal
-    // band — lifting its per-exercise floor would only over-shoot the band + the
-    // muscle's recoverable volume. This keeps the emphasis surfacing on the groups
-    // that genuinely look identical to balanced (arms/chest — few slots, below MAV)
-    // without inflating an already-saturated one. OFF → never emphasized.
+    // grow toward its ceiling (policy: "an emphasized group's weekly set target rises
+    // TOWARD MAV/MRV").
+    // #70-D3 — gate the boost on the group's REAL ceiling. A multi-slot group that
+    // can carry a COMPOUND this session (back / chest / legs) keeps the MAV gate so
+    // an already-saturated v-taper back is not over-inflated. A SMALL group with NO
+    // compound in the session (biceps / triceps — isolation-only) is gated on MRV
+    // instead: an `arms` focus lerps the weekly budget toward MRV (≈23 > MAV 14), so
+    // a MAV gate would silently disable the very boost the user asked for and leave
+    // the arms stuck at 3 sets/lift (DIAG D3). The weekly MRV cap upstream still
+    // bounds the total, so surfacing the per-exercise sets toward the band is safe.
     const enKey = BIG11_RO_TO_EN_MAP[g] ?? g;
     const weeklyForGroup =
       ctx?.volumeTargets && typeof ctx.volumeTargets === 'object' ? ctx.volumeTargets[enKey] : undefined;
-    const groupMav = ISRAETEL_BASELINES[enKey]?.MAV;
-    const belowMav =
-      typeof weeklyForGroup === 'number' && typeof groupMav === 'number'
-        ? weeklyForGroup < groupMav
+    const landmark = ISRAETEL_BASELINES[enKey];
+    const groupMav = landmark?.MAV;
+    const hasCompoundThisSession = exs.some((e) => e.tier === COMPOUND_TIER);
+    const ceilingLandmark = hasCompoundThisSession ? groupMav : landmark?.MRV;
+    const belowCeiling =
+      typeof weeklyForGroup === 'number' && typeof ceilingLandmark === 'number'
+        ? weeklyForGroup < ceilingLandmark
         : true; // no signal → don't block the lift (the few-slot emphasis case)
-    const isEmphasized = emphasisSetsBoost && emphSet.has(g) && belowMav;
+    const isEmphasized = emphasisSetsBoost && emphSet.has(g) && belowCeiling;
+    // #71 — pin a STABLE per-exercise dose so the same lift no longer swings with
+    // however many slots this day's cluster gave the group (DIAG #3). OFF or no
+    // usable budget → the legacy weekly/freq budget (byte-identical).
+    // #70-D3 — but an EMPHASIZED ISOLATION-only group (biceps/triceps) is the
+    // OPPOSITE case from the balloon #71 fixes: its big weekly budget (focus→MRV)
+    // expects ~4 exercises, yet the session fits only 1-2 (cluster slots + a time
+    // cap). The de-balloon then divides the dose by the EXPECTED count and crushes
+    // the lone arm lift to ~3 sets — defeating the emphasis. So skip the de-balloon
+    // for an emphasized isolation-only group: keep the full per-session budget so
+    // its 1-2 lifts CONCENTRATE the volume toward the band (bounded by the raised
+    // isolation ceiling + the weekly MRV cap). Groups with a compound keep #71.
+    const skipDeballoon = isEmphasized && !hasCompoundThisSession;
+    const budget = coherentAlloc && !skipDeballoon
+      ? (coherentDayBudget(perSessionBudget, exs.length) ?? perSessionBudget)
+      : perSessionBudget;
     const counts = distributeGroupSets(
       exs, budget, recoveryState[g], ctx?.fatigueSetsAdjust, isEmphasized,
     );
@@ -1208,6 +1278,30 @@ export function buildSession(cluster, ctx) {
     exercises = prioritizeWeakGroups(exercises, ctx?.weakGroups ?? []);
   }
 
+  // #70-D2 COMPOUND-FIRST guarantee (final): the weak/emphasis front-loaders above
+  // pull a target group's selected exercise to position 0, which can be an ISOLATION
+  // when that group's slot resolved to one (a glute-emphasis leg day whose fese pick
+  // is Cable Glute Kickback / Hip Abduction — both tier-2 isolations, the glute
+  // COMPOUND hip-thrust not having been selected). That violates the "1-2 main
+  // compounds FIRST, then accessories" rule. If the lead exercise is an isolation
+  // (tier > 1) AND a COMPOUND (tier 1) exists later in the session, hoist the
+  // earliest such compound to the front (stable; everything else keeps order). A
+  // session with no compound (a pure isolation/arm accessory day) is left untouched
+  // — leading with an isolation is allowed there. Pure reorder; never adds/drops.
+  // Behind ctx.compoundFirstGuard (dp_emphasis_specialization_v1, default OFF →
+  // byte-identical): only fires alongside the emphasis front-loader that creates
+  // the isolation-leads case in the first place.
+  if (ctx?.compoundFirstGuard === true && exercises.length > 1) {
+    const tierOf = (name) => metaOf(name).tier ?? 2;
+    if (tierOf(exercises[0].name) > COMPOUND_TIER) {
+      const compoundIdx = exercises.findIndex((e) => tierOf(e.name) === COMPOUND_TIER);
+      if (compoundIdx > 0) {
+        const [lead] = exercises.splice(compoundIdx, 1);
+        exercises.unshift(lead);
+      }
+    }
+  }
+
   return { type: cluster, exercises };
 }
 
@@ -1232,6 +1326,8 @@ export function prioritizeWeakGroups(exercises, weakGroups) {
   const weak = exercises.filter((e) => isWeak(e.name));
   const rest = exercises.filter((e) => !isWeak(e.name));
 
-  // Place weak exercises first (up to 2 positions), then the rest
+  // Place weak exercises first (up to 2 positions), then the rest. The
+  // compound-first INVARIANT is enforced by the final guard in buildSession (a
+  // promoted isolation never leads ahead of an available compound — #70-D2).
   return [...weak.slice(0, 2), ...rest, ...weak.slice(2)];
 }

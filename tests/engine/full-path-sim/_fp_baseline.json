@@ -4,7 +4,7 @@
   "nProfiles": 8,
   "weeks": 6,
   "hashOff": "aa0da62f0e17ec8044936b4c266140d0a3972a6c8024b34f9513dce72f9459ed",
-  "hashOn": "faa928732ccf8d63ca9193620ea28213171e583c0fa581dc3fe15f087137deaa",
+  "hashOn": "5b15222fcde1f9e1d034f61896a0f3000b85a74c9b71827f0caa3c372b3b2235",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
@@ -17,10 +17,10 @@
   "sessionOn": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 7.15,
-    "meanSetTotal": 11.54,
-    "meanDurationMin": 35.4,
-    "meanVolumeKg": 1612,
+    "meanExerciseCount": 7.2,
+    "meanSetTotal": 11.7,
+    "meanDurationMin": 35.3,
+    "meanVolumeKg": 1626,
     "minusRatePct": 21.9
   },
   "convergenceOff": {
@@ -31,9 +31,9 @@
   },
   "convergenceOn": {
     "totalSeries": 121,
-    "convergedPct": 8.3,
+    "convergedPct": 9.9,
     "medianSessionsToConverge": 6.5,
-    "meanFinalAbsErr": 0.572
+    "meanFinalAbsErr": 0.582
   },
   "flagsOff": {
     "oscillation": 0,
@@ -43,11 +43,11 @@
   },
   "flagsOn": {
     "oscillation": 0,
-    "stuckLow": 83,
-    "stuckHigh": 20,
+    "stuckLow": 79,
+    "stuckHigh": 23,
     "absurd": 35
   },
   "craterOff": 89,
-  "craterOn": 85,
-  "_rebaseline_note": "hashOn + sessionOn/convergenceOn/flagsOn/craterOn re-frozen 2026-06-08 for #71 dp_coherent_weekly_alloc_v1 + #72 dp_emphasis_specialization_v1 per-exercise sets-boost (both default OFF — hashOff unchanged byte-for-byte). ON arm now exercises both via PATH_A_FLAGS."
+  "craterOn": 83,
+  "_rebaseline_note": "hashOn + sessionOn/convergenceOn/flagsOn/craterOn re-frozen 2026-06-08 for #70 persona-matrix divergence fixes (D1 energy-volume emphasis floor, D2 leg-day compound-first, D3 arms-emphasis isolation ceiling, D5 beginner volume cap). All gated within existing flags (default OFF) — hashOff unchanged byte-for-byte."
 }

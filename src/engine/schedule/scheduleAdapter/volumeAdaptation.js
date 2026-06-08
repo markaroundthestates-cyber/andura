@@ -78,6 +78,43 @@ export function applyWeaknessAmplification(volumeMapEN, weakGroupsRO) {
   return out;
 }
 
+// #70-D5 — BEGINNER per-group weekly volume CAP. The frequency reframe (#74) tells
+// a beginner asking high frequency that it's unwise, but the COMPOSED week still
+// handed a beginner advanced-peak volume (Stefan: a beginner on a 5-day split got
+// back 26 sets/wk — MRV/specialization territory). The volume policy is explicit:
+// "Beginner: start at MEV / low-MAV; NO specialization volume" + "high MAV/MRV
+// allowed ONLY as a ramp PEAK ... NEVER the default baseline." So a beginner's
+// per-group weekly is HARD-capped at its MAV (the low-MAV ceiling — no peak), no
+// matter how many days they push. This is a SAFETY clamp (over-MRV on a novice =
+// junk volume + injury/burnout risk), applied AFTER all amplification so an
+// emphasis/imbalance bump can never lift a beginner past MAV either. Pure.
+const BEGINNER_TIER = 'T0';
+
+/**
+ * Cap every group's weekly volume at its Israetel MAV when the user is a BEGINNER
+ * (profileTier T0). A beginner should sit at MEV/low-MAV, never the MRV peak (spec
+ * _ENGINE_volume_policy). EN-keyed budget; each entry clamped to ISRAETEL_BASELINES
+ * MAV. A group already at/below MAV is unchanged. Non-beginner tier → the map is
+ * returned unchanged (byte-identical). Returns a NEW map. Pure.
+ *
+ * @param {Object<string, number>|null|undefined} volumeMapEN - Big-11 EN budget
+ * @param {string|null|undefined} profileTier - 'T0'|'T1'|'T2'|null
+ * @returns {Object<string, number>|null} capped EN-keyed budget (null passes through)
+ */
+export function applyBeginnerVolumeCap(volumeMapEN, profileTier) {
+  if (!volumeMapEN || typeof volumeMapEN !== 'object') return volumeMapEN ?? null;
+  if (profileTier !== BEGINNER_TIER) return { ...volumeMapEN };
+  const out = { ...volumeMapEN };
+  for (const enKey of Object.keys(out)) {
+    const current = out[enKey];
+    const mav = ISRAETEL_BASELINES[enKey]?.MAV;
+    if (typeof current !== 'number' || !Number.isFinite(current)) continue;
+    if (typeof mav !== 'number' || !Number.isFinite(mav)) continue;
+    if (current > mav) out[enKey] = mav; // beginner ceiling = MAV (no peak)
+  }
+  return out;
+}
+
 /**
  * EMPHASIS de-emphasis — the REST-DOWN half of the specialization engine's
  * zero-sum trade (F emphasis-specialization). The engine already computes

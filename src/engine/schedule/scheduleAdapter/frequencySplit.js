@@ -66,6 +66,27 @@ const FOCUS_LOWER_DEEMPH_SPLITS = Object.freeze({
   7: Object.freeze(['push', 'pull', 'push', 'pull', 'push', 'pull', 'legs']),
 });
 
+// #70-D2/Elena — recovery-SPACED templates for a LOWER-EMPHASIS preset (`lower`),
+// the symmetric counterpart of FOCUS_LOWER_DEEMPH_SPLITS. A user who picks a glute/
+// leg focus must get the lower body as the PROMINENT region, but the balanced 5-day
+// template (upper/lower/push/pull/legs) is upper-dominant (3 upper-region days vs 2
+// lower) → back out-volumes the focused legs (Elena: spate 26 > quads 10). Here ONE
+// upper-region day is traded for a lower/legs day so the lower body leads, kept
+// spacing-safe (legs / lower never on back-to-back active days; push/pull carry the
+// retained upper work non-overlapping). Day-counts absent here keep the balanced
+// template (the volume stage still biases the emphasized groups up).
+const FOCUS_LOWER_EMPH_SPLITS = Object.freeze({
+  // 4 days L/Ma/J/V: lower/upper/legs/upper → TWO lower-region days (lower+legs),
+  // upper split across two non-adjacent days. (balanced was upper/lower/upper/lower
+  // = 2 lower already, so 4-day lower focus is fine — omitted; the volume bias leads.)
+  // 5 days: legs/upper/lower/push/pull → THREE lower-region hits (legs+lower) lead,
+  // upper carried by upper+push+pull spaced; legs(Mon)/lower(Wed) non-adjacent.
+  5: Object.freeze(['legs', 'upper', 'lower', 'push', 'pull']),
+  // 6/7 (manual calendar) — lead with two lower-region days, upper spaced after.
+  6: Object.freeze(['legs', 'upper', 'lower', 'push', 'pull', 'legs']),
+  7: Object.freeze(['legs', 'upper', 'lower', 'push', 'pull', 'legs', 'upper']),
+});
+
 /**
  * Reshape an ordered cluster template for a focus preset that de-emphasizes the
  * lower body: replace ONE lower/legs cluster with a focus-region cluster
@@ -73,7 +94,12 @@ const FOCUS_LOWER_DEEMPH_SPLITS = Object.freeze({
  * Only the FIRST lower slot is swapped (≥1 leg day always retained — a
  * de-emphasized muscle is MAINTAINED, never abandoned). Presets that do not
  * de-emphasize the lower body, or templates with ≤1 lower slot, are returned
- * unchanged. Pure.
+ * unchanged.
+ *
+ * #70-D2/Elena — the MIRROR case: a preset that EMPHASIZES the lower body trades
+ * ONE upper-region day for a lower/legs day (FOCUS_LOWER_EMPH_SPLITS), so a glute/
+ * leg focus makes the legs the PROMINENT region instead of being out-volumed by
+ * the upper-dominant default template. Pure.
  *
  * @param {string[]} split - ordered Big-6 cluster ids (a fresh copy)
  * @param {{emphasize: ReadonlyArray<string>, deEmphasize: ReadonlyArray<string>}} preset
@@ -81,12 +107,24 @@ const FOCUS_LOWER_DEEMPH_SPLITS = Object.freeze({
  */
 function reshapeSplitForFocus(split, preset) {
   // Only reshape when the lower body is de-emphasized (the v-taper / freed-day
-  // case). Emphasis-only presets (arms/chest/lower) keep the balanced template
+  // case). Emphasis-only presets (arms/chest) keep the balanced template
   // — the volume stage carries those; no day is freed.
   const deEmphLower =
     preset.deEmphasize.includes('picioare-quads') ||
     preset.deEmphasize.includes('picioare-hamstrings') ||
     preset.deEmphasize.includes('fese');
+  // #70-D2/Elena — a LOWER-emphasis preset reshapes toward MORE lower days (the
+  // mirror of the de-emphasis reshape) so the focused region actually leads the
+  // week. Only fires when the lower body is emphasized AND NOT de-emphasized.
+  const emphLower =
+    !deEmphLower &&
+    (preset.emphasize.includes('fese') ||
+      preset.emphasize.includes('picioare-quads') ||
+      preset.emphasize.includes('picioare-hamstrings'));
+  if (emphLower) {
+    const lowerEmph = FOCUS_LOWER_EMPH_SPLITS[split.length];
+    return lowerEmph ? [...lowerEmph] : split;
+  }
   if (!deEmphLower) return split;
   const lowerIdxs = [];
   for (let i = 0; i < split.length; i++) {

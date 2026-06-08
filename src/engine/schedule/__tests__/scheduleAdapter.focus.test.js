@@ -130,11 +130,27 @@ describe('frequencyToSplit — focus-aware split reshaping', () => {
     expect(legDays).toBeLessThan(balancedLegDays);
   });
 
-  it('emphasis-only presets (arms/chest/lower) leave the split UNCHANGED', () => {
-    for (const id of ['arms', 'chest', 'lower']) {
+  it('emphasis-only presets (arms/chest) leave the split UNCHANGED', () => {
+    for (const id of ['arms', 'chest']) {
       for (let n = 1; n <= 7; n++) {
         expect(frequencyToSplit(n, id)).toEqual(frequencyToSplit(n));
       }
+    }
+  });
+
+  it('#70-D2 lower focus reshapes 5+ days toward MORE leg days (≥ balanced)', () => {
+    // lower-focus split must make the lower body the PROMINENT region (Elena: a
+    // 5-day glute focus was out-volumed by the upper-heavy balanced template).
+    for (const n of [5, 6, 7]) {
+      const lower = frequencyToSplit(n, 'lower');
+      const balanced = frequencyToSplit(n);
+      const legDays = (s) => s.filter((c) => c === 'lower' || c === 'legs').length;
+      expect(legDays(lower)).toBeGreaterThanOrEqual(legDays(balanced));
+      expect(legDays(lower)).toBeGreaterThanOrEqual(2);
+    }
+    // Low day-counts (1-4) keep the balanced template (the volume bias carries it).
+    for (const n of [1, 2, 3, 4]) {
+      expect(frequencyToSplit(n, 'lower')).toEqual(frequencyToSplit(n));
     }
   });
 
