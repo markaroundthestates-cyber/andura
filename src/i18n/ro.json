@@ -664,6 +664,10 @@
     "logWeightCta": "Logheaza greutatea",
     "history": "Istoric",
     "noData": "Logheaza-ti greutatea ca sa vezi progresul.",
+    "stimulus": {
+      "heading": "Stimul real saptamana asta",
+      "line": "~{stimulus} seturi grele de stimul real, din {raw} logate."
+    },
     "bodyFat": {
       "label": "Grasime corporala",
       "estimate": "~{pct}%",

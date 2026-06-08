@@ -62,6 +62,7 @@ import { gotoPath } from '../../../lib/navigation';
 import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
 import { ProjectionStrip } from '../../../components/Progres/ProjectionStrip';
 import { GoalForecastBlock } from '../../../components/Progres/GoalForecastBlock';
+import { StimulusBlock } from '../../../components/Progres/StimulusBlock';
 import { BodyFatStrip } from '../../../components/Progres/BodyFatStrip';
 import { HeatMapWeekly } from '../../../components/Progres/HeatMapWeekly';
 import { useMuscleRecoveryGroups } from '../../../components/Progres/MuscleRecoveryGrid';
@@ -187,6 +188,8 @@ export function Progres(): JSX.Element {
         <ProjectionStrip />
         {/* Goal forecast — date-anchored weight ETA + strength trajectory (honest, hedged). */}
         <GoalForecastBlock />
+        {/* V3 #19 — effective-reps "real stimulus this week" (flag-gated, null when OFF). */}
+        <StimulusBlock />
         <HeatMapWeekly />
       </div>
 

@@ -664,6 +664,10 @@
     "logWeightCta": "Log weight",
     "history": "History",
     "noData": "Log your weight to see progress.",
+    "stimulus": {
+      "heading": "Real stimulus this week",
+      "line": "~{stimulus} hard sets of real stimulus, from {raw} logged."
+    },
     "bodyFat": {
       "label": "Body fat",
       "estimate": "~{pct}%",

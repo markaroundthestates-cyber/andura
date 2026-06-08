@@ -434,6 +434,17 @@ export const FLAGS = Object.freeze({
   // a set with no prType → today's flat " PR" badge → byte-identical.
   dp_rep_volume_pr_v1: { rollout: 0, default: false },
 
+  // V3 #19 effective-reps / stimulus model (RISK LOW-MED — narration first).
+  // effectiveReps(set) weights a set by proximity-to-failure via the existing
+  // RATING_TO_RIR (dp.js:563): a set taken to failure ≈ full stimulus, a left-
+  // in-the-tank set ≈ a fraction — quantifying the "junk volume" raw set-count
+  // cannot see. Pure fn of the existing logs row (no new input, no persistence).
+  // This build ships the pure estimator + the Progres narration read only; the
+  // DOSE path (feed stimulusSets into the V1 landmark/session budget) is DEFERRED
+  // (spec §2c.2 — needs V1 + a trim-only clamp). OFF → never computed → byte-
+  // identical. Degrades to a neutral RIR=1 when no rating present.
+  dp_effective_reps_v1: { rollout: 0, default: false },
+
   // #20 per-set fatigue curve (RISK LOW-MED — nudges SET COUNT by +/-1 within the
   // existing clamp, never kg). When ON, learnFatigueCurve classifies a user-per-
   // exercise as a MAINTAINER (flat curve → +1 working set) vs a CRASHER (early
