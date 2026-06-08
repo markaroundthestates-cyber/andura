@@ -30,6 +30,14 @@ export default defineConfig({
       // (tests/e2e/, tests/*.spec.js stay in Playwright runner via npm run test)
       'tests/engine/**/*.test.{js,ts}',
     ],
+    // Local-only golden harness (`tests/engine/_engine_golden.harness.test.js`)
+    // is a MANUAL before/after snapshot tool (run via `npm run test:golden`),
+    // built for the long-finished god-file-split migration. It froze old engine
+    // values, so it must not gate husky/`test:run`. It is excluded from the
+    // auto-run via the `--exclude` flag in the `test:run` npm script (no-op
+    // elsewhere — the file is untracked/local-only). Regression protection now
+    // lives in the calibration-sim determinism hash + full-path-sim + the unit
+    // suite + the isolation tier guard (#42).
     setupFiles: ['./src/react/__tests__/setup.ts'],
     // §2-C2 — explicit timeouts (default 5000ms causes slow CI nondeterminism).
     testTimeout: 10000,
