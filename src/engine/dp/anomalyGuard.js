@@ -121,3 +121,64 @@ export function sanityCheckSet({ ex, w, reps, lastLoggedW, maxKg, bwKg, sex } = 
 
   return ok;
 }
+
+// ══ BUILD #65 — log OUTLIER detector vs the user's OWN posterior band ═════════
+// _ENGINE_WIRING_2026-06-07/F7_pain_outlier_spec.md §2 (dp_log_outlier_v1, OFF).
+//
+// Distinct from sanityCheckSet above (a coarse PHYSICAL / ×10 fat-finger check):
+// logOutlier is a STATISTICAL test against THIS user's own Kalman posterior band.
+// A value can sit inside the elite physical ceiling yet be wildly outside the
+// user's established working e1RM — that is the gap this closes. UPPER-tail only
+// (an over-log is a mis-log; an under-log is real fatigue, never flagged — same
+// protect-the-floor stance the PR-floor takes). Same flag-not-delete philosophy
+// as sanityCheckSet (anti-paternalism): the caller keeps the set in `logs` and
+// only suppresses its LEARNING contribution; the user can revert ("that was real").
+
+// ── Daniel-tunable (spec §2 — DESIGN PROPOSALS, sim sweep + sanity before flip) ──
+// How many posterior std-devs ABOVE mu a single set's e1RM must be to flag as a
+// likely mis-log. Deliberately WIDE (4σ) so it only ever catches a gross over-log,
+// NEVER a real PR (a PR moves mu a little and stays comfortably inside a few σ; a
+// 2× typo blows past 4σ). Surfaced as a named const for a sim sweep / sanity check.
+export const OUTLIER_Z = 4;
+// The posterior must be MATURE before it can judge an outlier — a cold-start band
+// is too wide/unreliable. Below this observation count, never flag (the fat-finger
+// guard still protects cold-start).
+export const OUTLIER_MIN_N = 5;
+
+/**
+ * @typedef {object} OutlierResult
+ * @property {boolean} isOutlier  true ⇒ the set's e1RM is an UPPER-tail outlier vs
+ *   the user's own mature posterior band (a likely over-log → exclude from learning)
+ * @property {number|null} z       the standardized distance (obs−mu)/sigma, or null
+ *   when the test could not run (no posterior / immature / invalid sigma)
+ */
+
+/**
+ * Statistical outlier test against the user's OWN Kalman posterior band. PURE —
+ * deterministic, no DB, no clock; the caller passes the set's e1RM + the posterior.
+ *
+ * Fires ONLY when:
+ *   - the posterior is mature (`n >= OUTLIER_MIN_N`) with a finite `sigma > 0`, and
+ *   - the observation is `> OUTLIER_Z` std-devs ABOVE `mu` (upper tail only).
+ * Returns isOutlier:false (with z:null) for any cold-start / missing-band case so
+ * a thin posterior never false-flags — the fat-finger guard remains the protection.
+ *
+ * @param {number} e1rmObs   the logged set's RIR-corrected e1RM (dp.e1RMForSet)
+ * @param {{mu?:number, sigma?:number, n?:number}|null|undefined} posterior the
+ *   exercise's loaded Kalman posterior (strengthKalman.loadPosterior)
+ * @returns {OutlierResult}
+ */
+export function logOutlier(e1rmObs, posterior) {
+  const obs = Number(e1rmObs);
+  if (!posterior || !Number.isFinite(obs) || obs <= 0) return { isOutlier: false, z: null };
+  const mu = Number(posterior.mu);
+  const sigma = Number(posterior.sigma);
+  const n = Number(posterior.n);
+  // Mature-band guard: too-few observations or a degenerate sigma → cannot judge.
+  if (!Number.isFinite(n) || n < OUTLIER_MIN_N) return { isOutlier: false, z: null };
+  if (!Number.isFinite(mu) || mu <= 0) return { isOutlier: false, z: null };
+  if (!Number.isFinite(sigma) || sigma <= 0) return { isOutlier: false, z: null };
+  const z = (obs - mu) / sigma;
+  // UPPER tail only — an under-log is real fatigue (protect the down-side).
+  return { isOutlier: z > OUTLIER_Z, z };
+}

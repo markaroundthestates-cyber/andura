@@ -11,7 +11,8 @@ import { updatePosterior, savePosterior, loadPosterior, trendDirection } from '.
 import { loadPreference as loadNof1Preference, nof1SetBias } from './dp/nof1.js';
 import { ceilingE1RM, gainDecay, deficitClimbFactor, tendonLoadRateCap } from './dp/ceiling.js';
 import { populationPriorE1RM } from './dp/populationPrior.js';
-import { sanityCheckSet } from './dp/anomalyGuard.js';
+import { sanityCheckSet, logOutlier } from './dp/anomalyGuard.js';
+import { quarantineSet, isQuarantined } from './dp/logQuarantine.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
 import { classifyAndIntervene } from './dp/plateauIntervention.js';
 import { temperamentBias, temperamentBiasFromLogs, saveTemperament, GLOBAL_KEY as TEMPERAMENT_GLOBAL_KEY } from './dp/temperament.js';
@@ -793,6 +794,16 @@ export const DP = {
     // reads demoW several times per render, so persisting on every read would
     // double-count the same sets (a NO-DOUBLE-COUNT trap). Persistence is opt-in
     // (`persist`) and reserved for a single authoritative per-session write site.
+    // #65 log-outlier exclusion (dp_log_outlier_v1, default OFF → outlierOn false →
+    // never skips → byte-identical). A set that is an upper-tail over-log vs the
+    // user's OWN mature persisted posterior — OR was already quarantined by ts — is
+    // SKIPPED from the fold so a single mis-log never moves mu (the same `continue`
+    // shape the loop uses for invalid sets). The test reads the PERSISTED prior
+    // posterior (loadPosterior) as the band, deterministic + recomputable, so no
+    // stored-state corruption and no circular dependence on this fold's own output.
+    // The set stays in `logs` verbatim — only its LEARNING contribution is dropped.
+    const outlierOn = isEnabled('dp_log_outlier_v1');
+    const priorPost = outlierOn ? loadPosterior(ex) : null;
     const obs = [];
     for (let i = logs.length - 1; i >= 0; i--) { // oldest-first
       const l = logs[i];
@@ -803,6 +814,10 @@ export const DP = {
       const rpe = Number(l.rpe) || 7;
       const e = this.e1RMForSet(w, reps, rpe, ex); // ex → #3/F temperament bias (flag-gated)
       if (e == null) continue;
+      if (outlierOn &&
+          (isQuarantined(ex, Number(l.ts)) || logOutlier(e, priorPost).isOutlier)) {
+        continue; // excluded over-log — never folded into mu
+      }
       // A failed-AND-short greu set is a noisy observation → down-weighted (high R).
       const failedShort = rpe >= 8.5 && reps < floorReps;
       obs.push({ e1rm: e, ts: Number(l.ts) || 0, failedShort });
@@ -1953,7 +1968,29 @@ export const DP = {
         recKg: Number(ctx.recKg), loggedKg, loggedReps, rMin,
         wasHard: lastRPE >= 9.5,
       });
-      const calibrationSafe = !(suspect && suspect.field === 'weight') && !egoJump;
+      // #65 log-outlier detector (dp_log_outlier_v1, default OFF → never called →
+      // byte-identical): a logged set whose RIR-corrected e1RM is > OUTLIER_Z σ above
+      // the user's MATURE Kalman posterior mu is a likely over-log → EXCLUDE it from
+      // calibration learning (same gate slot as the fat-finger suspect + ego jump),
+      // KEEP it in logs, and record it to the reversible dp-log-quarantine ledger. A
+      // user-CONFIRMED set (userConfirmed===true) bypasses (consistent with the
+      // fat-finger confirm path). ON-but-Kalman-OFF → loadPosterior null → not-outlier
+      // → degrades to fat-finger-only. The set's ts is already-quarantined → skip a
+      // second ledger write (idempotent on re-render).
+      let outlier = { isOutlier: false, z: null };
+      if (ctx.userConfirmed !== true && isEnabled('dp_log_outlier_v1')) {
+        const obsE1RM = this.e1RMForSet(loggedKg, loggedReps, lastRPE, ex);
+        if (obsE1RM != null) {
+          outlier = logOutlier(obsE1RM, loadPosterior(ex));
+          if (outlier.isOutlier) {
+            const setTs = Number(ctx.nowMs) || Date.now();
+            if (!isQuarantined(ex, setTs)) {
+              quarantineSet(ex, { ts: setTs, w: loggedKg, reps: loggedReps, z: outlier.z });
+            }
+          }
+        }
+      }
+      const calibrationSafe = !(suspect && suspect.field === 'weight') && !egoJump && !outlier.isOutlier;
       if (calibrationSafe) {
         this._recordSessionBias(ex, { recKg: Number(ctx.recKg), loggedKg, lastRPE, nowMs });
         // Persistent per-exercise machine-calibration: learn the STABLE offset of

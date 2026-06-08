@@ -322,6 +322,20 @@ export const FLAGS = Object.freeze({
   // sharper on the e1RM jump when dp_e1rm_v1 ON).
   dp_ego_cap_v1: { rollout: 0, default: false },
 
+  // #65 log OUTLIER detector vs the user's OWN posterior band (RISK MED — changes
+  // WHAT the engine learns from, path B). When ON, a logged set whose RIR-corrected
+  // e1RM is > OUTLIER_Z (4) std-devs ABOVE the user's mature Kalman posterior mu (a
+  // likely over-log / typo the coarse fat-finger guard misses) is EXCLUDED from the
+  // two learning steps — _recordCalibration/_recordSessionBias (calibrationSafe gate)
+  // + the Kalman posterior fold — but KEPT in `logs` VERBATIM and recorded to a
+  // reversible dp-log-quarantine ledger ("asta a fost real" re-feeds via the existing
+  // userConfirmed path). UPPER-tail only (an under-log is real fatigue). Fires only
+  // when the posterior is mature (n >= OUTLIER_MIN_N). OFF → never called →
+  // byte-identical. ON-but-dp_strength_kalman_v1-OFF → no posterior → degrades to the
+  // fat-finger guard only (still safe, just not personalized). Distinct from the ×10
+  // fat-finger guard (anomalyGuard.sanityCheckSet) which is a physical/typo check.
+  dp_log_outlier_v1: { rollout: 0, default: false },
+
   // #8/D pain/injury per-exercise deprioritize (RISK MED — changes session
   // COMPOSITION, path A). When ON, repeated skip (durable synced `dp-exercise-pain`
   // counter, time-decayed) / recent pain-cdl report on a SPECIFIC exercise's muscle

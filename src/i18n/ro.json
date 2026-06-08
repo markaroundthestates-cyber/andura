@@ -1328,7 +1328,10 @@
     "reps": "Ai trecut {value} repetari. Pare mult. Sigur?",
     "confirmCta": "Da, corect",
     "fixCta": "Am gresit → {suggested}",
-    "fixGenericCta": "Corectez"
+    "fixGenericCta": "Corectez",
+    "quarantineNote": "Nu am invatat dintr-un set care parea mult peste obisnuitul tau ({value} kg) - ramane in jurnal.",
+    "quarantineRevertCta": "A fost real - invata din el",
+    "quarantineRevertToast": "Am inteles - invat din setul acela."
   },
   "inactivity": {
     "title": "Mai esti acolo?",

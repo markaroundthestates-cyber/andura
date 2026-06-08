@@ -1328,7 +1328,10 @@
     "reps": "You entered {value} reps. That looks high. Sure?",
     "confirmCta": "Yes, correct",
     "fixCta": "I mistyped → {suggested}",
-    "fixGenericCta": "Let me fix it"
+    "fixGenericCta": "Let me fix it",
+    "quarantineNote": "We didn't learn from a set that looked far above your usual ({value} kg) - it's still in your log.",
+    "quarantineRevertCta": "That was real - learn from it",
+    "quarantineRevertToast": "Got it - learning from that set."
   },
   "inactivity": {
     "title": "Still there?",

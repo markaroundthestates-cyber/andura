@@ -207,6 +207,7 @@ describe('(b) sync round-trip guard (#41) — reversible encode, byte-identical'
       'dp-strength-posterior',
       'dp-exercise-pain',
       'dp-pain-memory',
+      'dp-log-quarantine',
       'dp-equipment-ladder',
       'dp-temperament',
       'dp-fatigue-curve',
