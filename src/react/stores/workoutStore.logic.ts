@@ -9,6 +9,7 @@ import { archiveSession } from '../lib/dexieMigration';
 import { isEnabled } from '../../util/featureFlags.js';
 import { learnRecovery, saveRecoveryConstants, RECOVERY_CONSTANTS_KEY } from '../../engine/muscleMap.js';
 import { learnedStepFromLogs, saveLearnedStep } from '../../engine/dp/equipmentLadder.js';
+import { DP } from '../../engine/dp.js';
 import type {
   SessionIntensityMod,
   EnergyLight,
@@ -187,6 +188,15 @@ export function persistSessionLogs(
         const step = learnedStepFromLogs(loads);
         if (step > 0) saveLearnedStep(ex, step, new Set(loads).size);
       }
+    }
+    // F4 #3/F — learn the per-user temperament RIR bias (sandbagger vs grinder)
+    // from the freshly-updated log history (flag dp_temperament_v1, default OFF →
+    // skipped → byte-identical). Same authoritative per-session write site. The
+    // fold reads from `logs` (already persisted above) inside DP. Quota-guarded +
+    // fail-silent. isInCut is unknown at this layer → false (the rep-range floor it
+    // tunes is the only effect, and the structural-RIR signal is robust to it).
+    if (isEnabled('dp_temperament_v1')) {
+      DP.learnTemperament(false);
     }
   } catch {
     // Soft-fail — storage quota / SSR jsdom edge. Engine adapters tolerate

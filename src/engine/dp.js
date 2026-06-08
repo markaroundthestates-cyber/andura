@@ -12,6 +12,7 @@ import { ceilingE1RM, gainDecay } from './dp/ceiling.js';
 import { sanityCheckSet } from './dp/anomalyGuard.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
 import { classifyAndIntervene } from './dp/plateauIntervention.js';
+import { temperamentBias, temperamentBiasFromLogs, saveTemperament, GLOBAL_KEY as TEMPERAMENT_GLOBAL_KEY } from './dp/temperament.js';
 import { detectStagnation } from './stagnationDetector.js';
 import { getUserConfig } from '../config/user.js';
 import { t } from '../i18n/index.js';
@@ -564,13 +565,25 @@ export const DP = {
   // back to reps-in-reserve. The 3 buckets are 6.5/7.5/8.5; a legacy/absent rpe
   // defaults to the neutral potrivit-equivalent (RIR 1), matching the existing
   // neutral-7 convention (getState lastRPE = lastLog.rpe || 7).
-  /** @param {number} [rpe] @returns {number} */
-  _rirFromRpe(rpe) {
+  //
+  // #3/F TEMPERAMENT: with dp_temperament_v1 ON, a per-user learned RIR bias
+  // (temperamentBias, sandbagger>0 / grinder<0) is ADDED to the base RIR so a
+  // chronic-greu sandbagger's greu is no longer treated as RIR 0 (the engine
+  // resumes climbing) and a grinder's usor is discounted (no over-climb). Clamped
+  // to ≥0 (reserve is never negative) and only applied when `ex` is supplied + the
+  // flag is on → flag-OFF (or no ex) is byte-identical to the legacy 3/1/0 map.
+  /** @param {number} [rpe] @param {string} [ex] @returns {number} */
+  _rirFromRpe(rpe, ex) {
     const r = Number(rpe);
-    if (!Number.isFinite(r)) return this.RATING_TO_RIR.potrivit;
-    if (r <= 6.5) return this.RATING_TO_RIR.usor;   // usor — clear headroom
-    if (r >= 8.5) return this.RATING_TO_RIR.greu;   // greu — at/near failure
-    return this.RATING_TO_RIR.potrivit;             // potrivit — working target
+    let base;
+    if (!Number.isFinite(r)) base = this.RATING_TO_RIR.potrivit;
+    else if (r <= 6.5) base = this.RATING_TO_RIR.usor;   // usor — clear headroom
+    else if (r >= 8.5) base = this.RATING_TO_RIR.greu;   // greu — at/near failure
+    else base = this.RATING_TO_RIR.potrivit;             // potrivit — working target
+    if (ex && isEnabled('dp_temperament_v1')) {
+      return Math.max(0, base + temperamentBias(ex));
+    }
+    return base;
   },
 
   // Whether an exercise has a clean external-load e1RM. Bodyweight/band resistance
@@ -668,13 +681,15 @@ export const DP = {
 
   // RIR-corrected, saturated Epley e1RM for one logged set. Returns null when the
   // inputs are unusable (no/zero load) — null = "no e1RM", fall through to raw kg.
-  /** @param {number} w @param {number} reps @param {number} [rpe] @returns {number|null} */
-  e1RMForSet(w, reps, rpe) {
+  // Optional `ex` enables the #3/F per-user temperament RIR bias (flag-gated inside
+  // _rirFromRpe); omitting it keeps the legacy 3/1/0 mapping (byte-identical).
+  /** @param {number} w @param {number} reps @param {number} [rpe] @param {string} [ex] @returns {number|null} */
+  e1RMForSet(w, reps, rpe, ex) {
     const W = Number(w);
     const R = typeof reps === 'string' ? parseInt(reps, 10) : Number(reps);
     if (!Number.isFinite(W) || W <= 0) return null;
     if (!Number.isFinite(R) || R <= 0) return null;
-    const rEff = Math.min(this.E1RM_R_CAP, R + this._rirFromRpe(rpe));
+    const rEff = Math.min(this.E1RM_R_CAP, R + this._rirFromRpe(rpe, ex));
     return W * (1 + rEff / 30);
   },
 
@@ -706,11 +721,52 @@ export const DP = {
       if (!Number.isFinite(reps) || reps < floorReps) continue; // must hit target reps
       const rpe = Number(l.rpe) || 7;
       if (rpe >= 8.5 && reps < floorReps) continue; // failed/overload set excluded
-      const e = this.e1RMForSet(w, reps, rpe);
+      const e = this.e1RMForSet(w, reps, rpe, ex); // ex → #3/F temperament bias (flag-gated)
       if (e != null && e > bestE1RM) bestE1RM = e;
     }
     if (bestE1RM <= 0) return 0;
     return this._kgFromE1RM(bestE1RM, floorReps);
+  },
+
+  // ══ BUILD #3/F — temperament learn-and-persist (F4 spec §F) ══════════════════
+  // The single authoritative per-session learn site for the temperament RIR bias
+  // (mirrors F3 #5 recovery / F4 #10 ladder: learn once on session-finish, never on
+  // every render read). Builds per-set observations (rating + structural true-RIR
+  // inputs) for each e1RM-eligible exercise just logged, folds them — globally and
+  // per-exercise — into the EMA bias, and persists (quota-guarded). The structural
+  // demoKg is the demonstrated working load (the same PR-floor the engine already
+  // computes); repTarget is the phase rep-range floor. PURE-ish: reads logs + writes
+  // the synced dp-temperament cache. Inert unless dp_temperament_v1 is ON (caller-
+  // gated) — and even on, the bias only enters e1RM via _rirFromRpe.
+  /** @param {boolean} [isInCut] @returns {void} */
+  learnTemperament(isInCut = false) {
+    const logs = /** @type {Array<{ex?:string, w?:number, reps?:number|string, rpe?:number, ts?:number}>} */ (DB.get('logs')) || [];
+    if (!Array.isArray(logs) || logs.length === 0) return;
+    // Group eligible sets per exercise (oldest-first per exercise for a stable fold).
+    const byEx = /** @type {Record<string, Array<any>>} */ ({});
+    for (const l of logs) {
+      const ex = l.ex;
+      if (typeof ex !== 'string' || !ex) continue;
+      if (!this._e1rmEligible(ex)) continue;
+      if (!(Number(l.w) > 0)) continue;
+      (byEx[ex] ??= []).push(l);
+    }
+    const globalObs = [];
+    for (const ex of Object.keys(byEx)) {
+      const rMin = this.getPhaseAwareRepRange(ex, isInCut)[0] ?? 8;
+      const demoKg = this._demonstratedWorkingW_e1rm(ex, rMin) || this._demonstratedWorkingW(ex, rMin);
+      const sets = byEx[ex]
+        .slice()
+        .sort((a, b) => (Number(a.ts) || 0) - (Number(b.ts) || 0)) // oldest-first
+        .map((l) => ({ w: Number(l.w), reps: l.reps, rpe: Number(l.rpe) || 7, repTarget: rMin, demoKg }));
+      const perEx = temperamentBiasFromLogs(sets);
+      if (perEx) saveTemperament(ex, perEx); // quota-guarded; never throws
+      for (const s of sets) globalObs.push(s);
+    }
+    if (globalObs.length) {
+      const g = temperamentBiasFromLogs(globalObs);
+      if (g) saveTemperament(TEMPERAMENT_GLOBAL_KEY, g);
+    }
   },
 
   // ══ BUILD #2 — Kalman strength posterior demoW (F3 spec §2) ══════════════════
@@ -739,7 +795,7 @@ export const DP = {
       const reps = typeof l.reps === 'string' ? parseInt(l.reps, 10) : Number(l.reps);
       if (!Number.isFinite(reps)) continue;
       const rpe = Number(l.rpe) || 7;
-      const e = this.e1RMForSet(w, reps, rpe);
+      const e = this.e1RMForSet(w, reps, rpe, ex); // ex → #3/F temperament bias (flag-gated)
       if (e == null) continue;
       // A failed-AND-short greu set is a noisy observation → down-weighted (high R).
       const failedShort = rpe >= 8.5 && reps < floorReps;
@@ -822,7 +878,7 @@ export const DP = {
       if (!Number.isFinite(reps) || reps < floorReps) continue;
       const rpe = Number(l.rpe) || 7;
       if (rpe >= 8.5 && reps < floorReps) continue;
-      const e = this.e1RMForSet(w, reps, rpe);
+      const e = this.e1RMForSet(w, reps, rpe, ex); // ex → #3/F temperament bias (flag-gated)
       if (e != null && e > best) best = e;
     }
     return best;
@@ -1291,7 +1347,7 @@ export const DP = {
       // long before it. The belowDemo catch-up (returning to an already-OWNED load)
       // is NOT throttled. OFF → stepFrac unchanged (byte-identical).
       if (!belowDemo && isEnabled('dp_ceiling_v1')) {
-        const curE1RM = this.e1RMForSet(lastW, lastReps, lastRPE);
+        const curE1RM = this.e1RMForSet(lastW, lastReps, lastRPE, ex); // ex → #3/F bias (flag-gated)
         const bw = this._currentBodyweightKg();
         const ceilE1RM = bw > 0 ? ceilingE1RM(ex, bw, 'm', this._trainingAge(ex)) : 0;
         if (curE1RM != null && ceilE1RM > 0) {
