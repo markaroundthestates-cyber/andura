@@ -19,6 +19,7 @@ import { isEnabled } from '../../../util/featureFlags.js';
 import { exercisePenaltyMap } from '../../dp/exercisePain.js';
 import { painSwapMap } from '../../dp/painMemory.js';
 import { fatigueSetsAdjust } from '../../dp/fatigueCurve.js';
+import { effectiveRepsSetsTrim } from '../../dp/effectiveReps.js';
 import { availableCoarseTypes } from '../../equipmentMap.js';
 import {
   getRecoveryByGroup,
@@ -580,6 +581,17 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // [floor, ceiling] band in distributeGroupSets. The learner runs at session
     // finish (workoutStore.logic persistSessionLogs); this only READS the cache.
     fatigueSetsAdjust: isEnabled('dp_fatigue_curve_v1') ? fatigueSetsAdjust : null,
+    // #19 V3 effective-reps DOSE (dp_effective_reps_v1, default ON post-flip). The
+    // narration (StimulusBlock) was wired; the DOSE half — feeding the stimulus
+    // efficiency back into the set-count TARGET so a train-to-failure user needs
+    // FEWER raw sets for the same stimulus — was DEFERRED (the last hop). TRIM-ONLY:
+    // effectiveRepsSetsTrim reads the user's recent working sets and returns -1 (drop
+    // one set) ONLY for a consistent grinder (mean stimulus-per-set ≥85% of full),
+    // else 0. It can NEVER return positive → never pushes past MRV / the band ceiling
+    // (spec §2c.2 trim-only clamp). Applied alongside fatigueSetsAdjust in
+    // distributeGroupSets, clamped to the SAME [floor, ceiling] + ≥1 working set.
+    // Flag OFF → null → no trim → byte-identical.
+    effectiveRepsSetsTrim: isEnabled('dp_effective_reps_v1') ? effectiveRepsSetsTrim : null,
     // #72 emphasis raises per-exercise SETS (dp_emphasis_specialization_v1, default
     // OFF → byte-identical). When ON, an emphasized Big-11 RO group's compound
     // ceiling rises in buildSession so the weekly budget already raised toward MRV

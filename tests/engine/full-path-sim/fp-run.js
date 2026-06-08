@@ -342,6 +342,64 @@ export async function fatigueCurveFullPath() {
 }
 
 /**
+ * #19 V3 dp_effective_reps_v1 DOSE — a consistent GRINDER (every working set logged
+ * `greu`, at/near failure) delivers near-full stimulus per set, so effectiveRepsSets
+ * Trim drops ONE raw set on that exercise through distributeGroupSets (trim-only,
+ * clamped ≥1). OFF → no trim → byte-identical. Composed on a deterministic UPPER day
+ * (Monday) where DB Shoulder Press surfaces ABOVE its floor so the -1 is VISIBLE.
+ * @returns {{setsOff:number,setsOn:number,moved:boolean,grinderOff:number|null,grinderOn:number|null}}
+ */
+export async function effectiveRepsDoseFullPath() {
+  resetWorld();
+  // The trim is TRIM-ONLY + clamp-bounded, so it only bites where the composed set
+  // count has band HEADROOM (above its floor, below its ceiling). At the intermediate
+  // budget compounds pin at the floor (3) or round their share above the ceiling (5),
+  // so a -1 is clamp-absorbed (correct, conservative). A BEGINNER's lower volume budget
+  // lands DB Shoulder Press at exactly the ceiling 5 with its share rounding to 5 (not
+  // 6+), so the trim -1 → 4 is VISIBLE — the clean clamp-free proof the wiring is live.
+  const now = Date.now();
+  world.useOnboardingStore.setState({
+    data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'incepator',
+      weight: 80, height: 178, focusPreset: 'balanced', focusPresetPickedAt: null },
+    completed: true, completedAt: now - 200 * MS_DAY,
+  });
+  const GRINDER = 'DB Shoulder Press';
+  const logs = [];
+  // 8 recent working sets all rated `greu` (RIR 0 → full-window stimulus) at a fixed
+  // load → mean efficiency 1.0 ≥ DOSE_TRIM_EFFICIENCY → trim -1.
+  for (let d = 42; d >= 2; d -= 5) {
+    const ts = now - d * MS_DAY;
+    [10, 10].forEach((reps, i) => {
+      logs.push({ ex: GRINDER, w: 30, kg: 30, reps: String(reps), rating: 'greu', set: i + 1, ts: ts + i * 1000, session: ts, date: _isod(ts), rpe: 8.5 });
+    });
+  }
+  world.DB.set('logs', logs);
+
+  const composeDay = new Date(now);
+  while (composeDay.getDay() !== 1) composeDay.setTime(composeDay.getTime() + MS_DAY);
+
+  setFlag(null);
+  const planOff = await world.composePlannedWorkoutToday(composeDay);
+  setFlag('dp_effective_reps_v1');
+  const planOn = await world.composePlannedWorkoutToday(composeDay);
+
+  const byName = (p) => {
+    const m = {};
+    if (p) for (const e of p.exercises) m[e.engineName] = e.sets;
+    return m;
+  };
+  const off = byName(planOff);
+  const on = byName(planOn);
+  return {
+    setsOff: _sets(planOff),
+    setsOn: _sets(planOn),
+    moved: _sig(planOff) !== _sig(planOn),
+    grinderOff: off[GRINDER] ?? null,
+    grinderOn: on[GRINDER] ?? null,
+  };
+}
+
+/**
  * #26 dp_subrecovery_drift_v1 — an EARLY systemic under-recovery (greu-share rising
  * at a fixed working load across ≥2 muscle groups) pre-empts a deload: the drift
  * candidate feeds the AA trigger (meta.aaMarkerDirectActive) → REACTIVE_AA deload →

@@ -11,13 +11,15 @@
 //     (the "logged-but-in-the-tank" detection).
 //   - absent/legacy rating → neutral potrivit reserve (no crash, no fabrication).
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   effectiveReps,
   summarizeStimulus,
+  effectiveRepsSetsTrim,
   EFFECTIVE_WINDOW,
   TARGET_EFFECTIVE_PER_SET,
 } from '../dp/effectiveReps.js';
+import { DB } from '../../db.js';
 
 describe('F6b V3 #19 — effectiveReps(set)', () => {
   it('greu (RIR 0) high-rep set delivers the FULL window of stimulus', () => {
@@ -82,5 +84,45 @@ describe('F6b V3 #19 — summarizeStimulus(sets)', () => {
       { reps: 15, rating: 'usor' },
     ];
     expect(summarizeStimulus(sets)).toEqual(summarizeStimulus(sets.map((x) => ({ ...x }))));
+  });
+});
+
+// ── V3 DOSE half (spec §2c.2) — the deferred last hop: effective-reps → set TRIM ──
+describe('F6b V3 #19 — effectiveRepsSetsTrim (the DOSE, trim-only)', () => {
+  beforeEach(() => { localStorage.clear(); });
+
+  const log = (ex, rating, n) =>
+    Array.from({ length: n }, (_, i) => ({ ex, w: 60, reps: 10, rating, ts: 1000 + i }));
+
+  it('a consistent grinder (all-greu, near failure) → trim -1 (fewer raw sets needed)', () => {
+    DB.set('logs', log('Flat DB Press', 'greu', 8));
+    expect(effectiveRepsSetsTrim('Flat DB Press')).toBe(-1);
+  });
+
+  it('a left-in-the-tank user (all-usor) → 0 (they NEED the raw volume, never trimmed)', () => {
+    DB.set('logs', log('Flat DB Press', 'usor', 8));
+    expect(effectiveRepsSetsTrim('Flat DB Press')).toBe(0);
+  });
+
+  it('a middling potrivit user is below the 85% efficiency cut → 0', () => {
+    // potrivit (RIR 1) → 4 effective / 5 target = 0.8 < 0.85 → no trim.
+    DB.set('logs', log('Flat DB Press', 'potrivit', 8));
+    expect(effectiveRepsSetsTrim('Flat DB Press')).toBe(0);
+  });
+
+  it('too few recent sets (< DOSE_MIN_SETS) → 0 (untrusted → byte-identical)', () => {
+    DB.set('logs', log('Flat DB Press', 'greu', 3));
+    expect(effectiveRepsSetsTrim('Flat DB Press')).toBe(0);
+  });
+
+  it('TRIM-ONLY: even the densest grinder never returns a POSITIVE adjust', () => {
+    DB.set('logs', log('Flat DB Press', 'greu', 20));
+    expect(effectiveRepsSetsTrim('Flat DB Press')).toBeLessThanOrEqual(0);
+  });
+
+  it('total function — no logs / bad name → 0 (never throws)', () => {
+    expect(effectiveRepsSetsTrim('Nonexistent Lift')).toBe(0);
+    expect(effectiveRepsSetsTrim('')).toBe(0);
+    expect(effectiveRepsSetsTrim(null)).toBe(0);
   });
 });

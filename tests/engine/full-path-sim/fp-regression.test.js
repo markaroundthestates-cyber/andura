@@ -25,6 +25,7 @@ import {
   runFullPathCohortAsync,
   acwrRealClockFullPath,
   fatigueCurveFullPath,
+  effectiveRepsDoseFullPath,
   subRecoveryDriftFullPath,
   dipClassifierFullPath,
   cutCohortFullPath,
@@ -139,6 +140,15 @@ describe('full-path-sim CI gate', () => {
     // band floor → visible), never below the ≥1 clamp.
     expect(r.moved, JSON.stringify(r)).toBe(true);
     expect(r.crasherOn, JSON.stringify(r)).toBe(r.crasherOff - 1);
+    expect(r.setsOn, JSON.stringify(r)).toBeLessThan(r.setsOff);
+  }, 60000);
+  it('§B #19 dp_effective_reps_v1 DOSE — a grinder gets one raw set trimmed (full path)', async () => {
+    const r = await effectiveRepsDoseFullPath();
+    // OFF: the grinder composes at its full set count. ON: the trim drops ONE set
+    // (trim-only, never below the band floor) → the composed stream moves.
+    expect(r.grinderOff, JSON.stringify(r)).toBeGreaterThan(0);
+    expect(r.moved, JSON.stringify(r)).toBe(true);
+    expect(r.grinderOn, JSON.stringify(r)).toBe(r.grinderOff - 1);
     expect(r.setsOn, JSON.stringify(r)).toBeLessThan(r.setsOff);
   }, 60000);
   it('§B #26 dp_subrecovery_drift_v1 — systemic drift pre-empts a deload (full path)', async () => {

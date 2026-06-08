@@ -376,13 +376,25 @@ function coherentDayBudget(perSessionBudget, actualExCount) {
  * @param {boolean} [emphasized] - #72: this group is emphasized → raise the compound ceiling
  * @returns {number[]} set count per exercise, index-aligned with exsInGroup
  */
-function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasized) {
+function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasized, trimFn) {
   const n = exsInGroup.length;
   if (n === 0) return [];
-  const adjustOf = (e) =>
-    typeof fatigueAdjustFn === 'function' && typeof e.name === 'string'
-      ? (Number(fatigueAdjustFn(e.name)) || 0)
+  // #19 V3 DOSE — the effective-reps TRIM is combined with the fatigue-curve adjust
+  // into the SAME per-exercise integer adjust. The trim is clamped ≤0 (trim-only;
+  // it can never ADD a set), so the worst it does is offset a maintainer's +1 — a
+  // grinder who also has a flat curve nets 0, which is correct (their stimulus is
+  // already dense). Both flags OFF → both fns null → adjust 0 → byte-identical.
+  const trimOf = (e) =>
+    typeof trimFn === 'function' && typeof e.name === 'string'
+      ? Math.min(0, Number(trimFn(e.name)) || 0)
       : 0;
+  const adjustOf = (e) => {
+    const base =
+      typeof fatigueAdjustFn === 'function' && typeof e.name === 'string'
+        ? (Number(fatigueAdjustFn(e.name)) || 0)
+        : 0;
+    return base + trimOf(e);
+  };
   // No volume signal → every exercise keeps the stable default (no-op path).
   // F6a #20 still applies the learned adjust here, clamped so a maintainer's +1
   // never exceeds the band ceiling and a crasher's -1 never drops below ≥1 set.
@@ -881,6 +893,7 @@ export function movementKey(name, meta) {
  *   painSwaps?: Record<string, string>|null,
  *   excludedMovements?: {tokens: Set<string>, pressAllow: ReadonlyArray<string>}|null,
  *   fatigueSetsAdjust?: ((name: string) => number)|null,
+ *   effectiveRepsSetsTrim?: ((name: string) => number)|null,
  *   emphasisSetsBoost?: boolean,
  *   coherentAlloc?: boolean,
  *   lateralRaiseGuarantee?: boolean,
@@ -1282,6 +1295,7 @@ export function buildSession(cluster, ctx) {
       : perSessionBudget;
     const counts = distributeGroupSets(
       exs, budget, recoveryState[g], ctx?.fatigueSetsAdjust, isEmphasized,
+      ctx?.effectiveRepsSetsTrim,
     );
     exs.forEach((e, i) => { setsByName[e.name] = counts[i]; });
   }

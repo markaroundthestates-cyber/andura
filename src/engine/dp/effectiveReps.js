@@ -28,6 +28,16 @@ import { DP } from '../dp.js';
 export const EFFECTIVE_WINDOW = 5;          // last ~5 reps before failure carry stimulus
 export const TARGET_EFFECTIVE_PER_SET = 5;  // a to-failure working set ≈ one full stimulus-set
 
+// ── V3 DOSE half (spec §2c.2 — the DEFERRED last hop) ────────────────────────
+// A user who trains every working set to/near failure delivers near-full stimulus
+// PER set, so they reach the same weekly stimulus with FEWER raw sets. The narration
+// (StimulusBlock) shows this; the DOSE feeds it back into the set-count TARGET. This
+// is TRIM-ONLY by construction (it can only ever return ≤0) — it never ADDS a set
+// (so it can never push past MRV / the band ceiling). A left-in-the-tank user (low
+// efficiency) gets 0 — they genuinely NEED the raw volume, so we never trim them.
+const DOSE_MIN_SETS = 6;                  // need ≥6 recent working sets to trust the pattern
+const DOSE_TRIM_EFFICIENCY = 0.85;        // mean stimulus-per-set ≥85% of full → 1 set is junk
+
 // RIR map lives on the dp singleton (dp.js:563). Read it there so V3 stays in
 // lock-step with F3 (and any temperament adjustment) rather than re-declaring it.
 const RATING_TO_RIR = DP.RATING_TO_RIR;
@@ -98,4 +108,44 @@ export function summarizeStimulus(sets) {
     effectiveReps: totalEff,
     stimulusSets: Math.round(stimulusSets * 10) / 10,
   };
+}
+
+/**
+ * V3 DOSE — the TRIM-ONLY set-count adjust for one exercise (spec §2c.2). Reads the
+ * user's recent working sets; if they consistently train to/near failure (mean
+ * stimulus-per-set ≥ DOSE_TRIM_EFFICIENCY of a full to-failure set), one raw set is
+ * effectively junk volume → return -1 (drop ONE set; the caller clamps to ≥1). A
+ * left-in-the-tank user (low efficiency) gets 0 — they need the raw volume. NEVER
+ * returns a positive value (trim-only → can never push past MRV / the band ceiling).
+ * Requires ≥DOSE_MIN_SETS recent sets to be trusted (else 0 → byte-identical).
+ *
+ * PURE-read of the durable logs (DP.getLogs, newest-first, EN-keyed). No DB write,
+ * no clock, no RNG. Returns 0 on any unusable input (total function).
+ *
+ * @param {string} engineName EN canonical exercise name
+ * @returns {0|-1}
+ */
+export function effectiveRepsSetsTrim(engineName) {
+  if (typeof engineName !== 'string' || !engineName) return 0;
+  let sets;
+  try {
+    sets = DP.getLogs(engineName, 12);
+  } catch {
+    return 0;
+  }
+  if (!Array.isArray(sets) || sets.length < DOSE_MIN_SETS) return 0;
+  let totalEff = 0;
+  let counted = 0;
+  for (const s of sets) {
+    if (!s) continue;
+    const reps = Number(s.reps);
+    if (!Number.isFinite(reps) || reps <= 0) continue;
+    totalEff += effectiveReps(s);
+    counted += 1;
+  }
+  if (counted < DOSE_MIN_SETS) return 0;
+  // Mean stimulus-per-set as a fraction of a full to-failure set. A grinder sits
+  // near 1.0; a sandbagger sits well below DOSE_TRIM_EFFICIENCY.
+  const meanEfficiency = totalEff / counted / TARGET_EFFECTIVE_PER_SET;
+  return meanEfficiency >= DOSE_TRIM_EFFICIENCY ? -1 : 0;
 }
