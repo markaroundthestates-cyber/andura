@@ -39,6 +39,11 @@ reports/coach-brain-eval/*.json
 reports/coach-brain-eval/*.md
 reports/coach-brain-eval/.oracle-cache.json
 
+# Coach Replay (#66 dev tool) — REAL user log exports + emitted traces stay LOCAL.
+# A user's real journey export is ingested in-memory only; never committed/synced.
+scripts/coach-replay/_local/
+reports/coach-replay/
+
 # Obsidian daily notes + scratch files at vault root (auto-generated, never commit)
 # Pattern YYYY-MM-DD.md = Obsidian Daily Notes default
 /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].md

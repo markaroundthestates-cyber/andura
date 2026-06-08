@@ -25,6 +25,7 @@
     "test:all": "npm run test:run && npm run test:e2e",
     "mutation:engine": "stryker run --testRunner vitest --mutate 'src/engine/**/*.ts,src/engine/**/*.js'",
     "exploration": "node scripts/nightly-exploration.mjs",
+    "coach:replay": "vitest run scripts/coach-replay/cli.test.mjs",
     "simulation:c": "playwright test tests/simulation/parallel-fuzz.spec.js",
     "test:calibration": "node --experimental-vm-modules tests/simulation/calibration-test.js",
     "golden-master": "node tests/golden-master/runner.js",
