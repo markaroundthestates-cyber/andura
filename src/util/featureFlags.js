@@ -705,6 +705,21 @@ export const FLAGS = Object.freeze({
   // OFF → engineKey derivation is byte-identical to pre-#6 (ex.engineName ??
   // ex.exerciseName, unresolved) → determinism hash + sim unchanged.
   dp_library_chains_v1: { rollout: 0, default: false },
+
+  // #7 per-exercise metric types (RISK MED — changes the PRESCRIPTION SHAPE for a
+  // non-reps movement, the only correctness-fix half of #7). The metric_type DATA
+  // (exercises.json) + the metricType.js resolver are ALWAYS-ON + inert; this flag
+  // gates ONLY the BEHAVIORAL honoring at the compose boundary: a time / carry
+  // exercise (Plank / Side Plank / Dead Hang / Pallof / Plate Pinch Hold / Wrist
+  // Roller / Farmer's Walk) no longer receives a weight × reps prescription — its
+  // targetReps is suppressed (0) and a prescribed DURATION (targetSec) is emitted
+  // instead (a load may still ride for a carry / weighted hold). OFF → the legacy
+  // reps × weight prescription (today's behavior, byte-identical: the full-path-sim
+  // never enables this flag, so the determinism hash holds). The full seconds /
+  // distance LOGGING UI (SetLogInput) is a fragile UX remainder DEFERRED for
+  // Daniel — flag-ON today stops the WRONG rep prescription + carries the metric +
+  // targetSec to the consumer; the dedicated timer input lands at the UI pass.
+  dp_metric_types_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */

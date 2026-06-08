@@ -92,6 +92,17 @@ export interface PlannedExercise {
   // core/plank 0). Present only when isBodyweight. Effective load =
   // userBodyweightKg x bwFraction + targetKg(added).
   bwFraction?: number;
+  // #7 per-exercise prescription METRIC. Always stamped at the
+  // scheduleAdapterAggregate boundary (always-on DATA): 'reps' (default — weight ×
+  // reps), 'time' (an isometric hold prescribed in seconds), 'distance' (meters),
+  // or 'carry' (a loaded carry — load over time/distance). Absent on pre-#7
+  // fixtures → consumers treat it as 'reps'.
+  metricType?: 'reps' | 'time' | 'distance' | 'carry';
+  // #7 prescribed DURATION in seconds for a time / carry exercise. Present ONLY
+  // when dp_metric_types_v1 is ON AND metricType is 'time'/'carry' — then
+  // targetReps is 0 (no rep target) and targetSec carries the hold/carry duration
+  // so the consumer never renders a "× reps" prescription. Absent → reps path.
+  targetSec?: number;
 }
 
 // Coach Voice — structured, machine-readable record of an adaptation the

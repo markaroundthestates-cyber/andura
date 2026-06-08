@@ -22,6 +22,7 @@ import { isEnabled } from '../../util/featureFlags.js';
 import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
 import { roundToEquipmentWeight } from '../../config/weights.js';
 import { isBodyweightExercise, bodyweightFraction } from '../../engine/bodyweightLoad.js';
+import { getMetricType } from '../../engine/metricType.js';
 import { getCurrentWeightKg } from './userTdee';
 import { resolveActivePhase } from './engineWrappers.nutrition';
 import { experienceToEngine } from './scheduleAdapterAggregate.session';
@@ -97,6 +98,19 @@ function resolveRestSec(
   const [minSec, maxSec] = restRange;
   return COMPOUND_EX.includes(engineName) ? maxSec : minSec;
 }
+
+// #7 metric-type prescription honoring (behind dp_metric_types_v1). Default
+// PRESCRIBED DURATION (seconds) for a time / carry movement, so a non-reps
+// exercise gets a sane "hold X seconds" / "carry X seconds" target instead of a
+// phantom rep count. Conservative round figures (the per-exercise DP tuning of
+// duration is a future refinement; these are honest starting prescriptions):
+//   - time (isometric hold): 30s — a standard plank/hold working set.
+//   - carry (loaded carry):  40s — a typical farmer's-walk working bout.
+// Keyed loosely; absent → the metric's generic default below.
+const METRIC_DEFAULT_SEC: Readonly<Record<'time' | 'carry', number>> = {
+  time: 30,
+  carry: 40,
+};
 
 /**
  * Map engine exercise (sessionBuilder output `{ name, sets }`) to
@@ -264,6 +278,19 @@ function toPlannedExercise(
   const targetKg = isBw
     ? rawTargetKg
     : roundToEquipmentWeight(rawTargetKg, engineEx.name);
+  // #7 prescription METRIC. The metric_type DATA is always stamped (consumers
+  // read it whether or not the honoring flag is on). The BEHAVIORAL honoring —
+  // suppressing the weight × reps prescription for a time / carry movement — is
+  // gated behind dp_metric_types_v1 (default OFF → byte-identical reps path; the
+  // full-path-sim never enables it, so the determinism hash holds).
+  const metricType = getMetricType(engineEx.name);
+  const honorMetric =
+    isEnabled('dp_metric_types_v1') && (metricType === 'time' || metricType === 'carry');
+  // A non-reps exercise no longer gets a rep target: targetReps → 0 (no "× reps"),
+  // and a prescribed DURATION (targetSec) is emitted instead. A load may still ride
+  // (a weighted plank / a farmer's-walk carry) — targetKg is kept as-is.
+  const finalTargetReps = honorMetric ? 0 : targetReps;
+  const targetSec = honorMetric ? METRIC_DEFAULT_SEC[metricType] : undefined;
   return {
     id: `${slug}-${idx}`,
     name: display.name,
@@ -278,7 +305,7 @@ function toPlannedExercise(
       rec && typeof rec.setsAdjust === 'number'
         ? Math.max(1, engineEx.sets + rec.setsAdjust)
         : engineEx.sets,
-    targetReps,
+    targetReps: finalTargetReps,
     targetKg,
     // Fix #4 — rest from the engine rest range (compound=MAX / isolation=MIN),
     // NOT the prior hardcoded 90 for every exercise.
@@ -286,6 +313,9 @@ function toPlannedExercise(
     // Bodyweight flag + fraction so the UI + volume/PR math resolve the
     // effective load (bodyweight x fraction + targetKg added).
     ...(isBw ? { isBodyweight: true, bwFraction: bodyweightFraction(engineEx.name) } : {}),
+    // #7 always-on metric data + the gated prescribed duration.
+    metricType,
+    ...(targetSec !== undefined ? { targetSec } : {}),
   };
 }
 
