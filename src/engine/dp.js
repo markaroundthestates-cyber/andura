@@ -8,6 +8,7 @@ import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
 import { updatePosterior, savePosterior, loadPosterior, trendDirection } from './dp/strengthKalman.js';
+import { loadPreference as loadNof1Preference, nof1SetBias } from './dp/nof1.js';
 import { ceilingE1RM, gainDecay, deficitClimbFactor, tendonLoadRateCap } from './dp/ceiling.js';
 import { populationPriorE1RM } from './dp/populationPrior.js';
 import { sanityCheckSet } from './dp/anomalyGuard.js';
@@ -2329,6 +2330,24 @@ export const DP = {
             note: 'Set de calibrare — da tot ce poti, ne ajuta sa te citim corect.',
           };
         }
+      }
+    }
+
+    // ── F6c #34 N-of-1 SELF-EXPERIMENT bias (dp_nof1_v1, default OFF) ────────────
+    // A DECIDED per-lift preference (the user's OWN response from a completed micro-
+    // block A/B) biases this lift's SET COUNT: +1 for a 'volume' winner, −1 for an
+    // 'intensity' winner, applied additively on the EXISTING setsAdjust channel (the
+    // schedule layer clamps it against its own MIN floor — never below 1 working set).
+    // Bounded to ±1 set → it can never produce an unsafe load (the kg is untouched;
+    // ego/anomaly caps already applied above). A NULL/absent preference → 0 bias →
+    // today's behavior even when the flag is ON (the reversible default). EXEMPT
+    // during a return-deload comeback (never perturb the ramp). OFF → never read →
+    // byte-identical.
+    if (isEnabled('dp_nof1_v1') && !result.returnDeload) {
+      const bias = nof1SetBias(loadNof1Preference(ex));
+      if (bias !== 0) {
+        result.setsAdjust = (Number(result.setsAdjust) || 0) + bias;
+        result.nof1Bias = bias;
       }
     }
 

@@ -655,6 +655,30 @@ export const FLAGS = Object.freeze({
   // research sanity-check before flip (the shape is verified, the constants tunable).
   dp_stimulus_per_min_v1: { rollout: 0, default: false },
 
+  // #34 N-of-1 self-experiment (RISK HIGH — deliberately perturbs prescription to
+  // learn the user's OWN response; the guardrails are the safety envelope). The
+  // MEASUREMENT half is fully REUSED from #31 (trendDirection's noise-aware Kalman
+  // slope). A deliberately SMALL, infrequent, opt-in micro-block A/B on ONE
+  // established lift: arm A (+sets/lower intensity) then arm B (−sets/higher) over
+  // short equal blocks, slopes compared noise-aware (winner only when the slope diff
+  // clears Z·sigma), the winner KEPT as a per-lift preference (dp-nof1-preference,
+  // synced, EN-name-keyed) that biases that lift's future SET COUNT by ±1 (the
+  // existing setsAdjust channel, clamped to the schedule MIN floor — never an unsafe
+  // load; the kg is untouched; ego/anomaly caps still apply). MANDATORY guardrails:
+  // never in a CUT (deficit confounds), never a beginner (no baseline), never >1 lift
+  // at once, ALWAYS reversible (a null preference == today's behavior, the OFF-
+  // equivalent even when ON). When ON, the consumer reads the kept preference + adds
+  // the bias; OFF → never read + the bias is never applied → byte-identical. The
+  // confounding controls + the micro-block length + the significance Z are DESIGN
+  // PROPOSALS (spec §5d/§9) — sim sweep + Daniel review before flip. The LIVE auto-
+  // scheduling of arms across sessions (advancing the in-flight counter during a
+  // real session) is the fragile, confounding-sensitive part — shipped as a pure
+  // orchestrator (advanceExperiment) whose live-session wiring is DEFERRED for
+  // Daniel's review (the consumer-bias half IS fully wired). New persistence:
+  // dp-nof1-preference (EN-name-keyed sync) + dp-nof1-experiment (in-flight state,
+  // sync). Daniel-flag (the most novel + moat-personalization item).
+  dp_nof1_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

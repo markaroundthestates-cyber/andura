@@ -110,6 +110,8 @@ export const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs',
   'dp-fatigue-curve', // dp-fatigue-curve — F6a #20 per-user per-exercise reps-drop-off curve (object engineName -> {dropIndex,n}); name-keyed object-merge sync, learned per-UID, durable across sessions/devices
   'dp-learned-volume', // dp-learned-volume — F6b V1 #10 per-user learned per-muscle productive volume band (object ISRAETEL-EN-muscle -> {mev,mav,n}); muscle keys are EN tokens (Firebase-safe, NOT name-keyed, same as dp-recovery-constants); object-merge sync, learned per-UID, durable
   'dp-pivot-prompts', // dp-pivot-prompts — F6b V4 #15 goal-pivot re-prompt anti-spam bookkeeping (fixed-key object {lastRepromptMs,lastConfirmMs,lastGoalShiftMs,repromptCountThisYear}); the goal-shift anchor evaluateReprompt expects (phase-change-date records NUTRITION phase, NOT goal); per-UID, durable
+  'dp-nof1-preference', // dp-nof1-preference — F6c #34 per-exercise N-of-1 kept preference (object engineName -> {arm:'volume'|'intensity',decidedTs,slopeA,slopeB}); name-keyed object-merge sync (in NAME_KEYED_SYNC_KEYS), learned per-UID, durable across sessions/devices
+  'dp-nof1-experiment', // dp-nof1-experiment — F6c #34 single in-flight experiment state (fixed-key object {exercise,arm,sessionsInArm,slopeArmA}); only ONE lift at a time; exercise NAME lives in a VALUE field (Firebase-safe — NOT a key), so NOT name-keyed; per-UID, durable
 ];
 
 // RTDB key sanitizer — Firebase Realtime Database forbids `. $ # [ ] /` in node
@@ -148,7 +150,7 @@ export function fbKey(localKey) {
 // `dp-cal-factors` is the only one (pr-records/coach-decisions/logs are arrays;
 // step-streaks/sf.userConfig are fixed-key objects). Listed so any future
 // name-keyed map opts in by key name alone.
-export const NAME_KEYED_SYNC_KEYS = Object.freeze(['dp-cal-factors', 'dp-strength-posterior', 'dp-exercise-pain', 'dp-equipment-ladder', 'dp-temperament', 'dp-fatigue-curve']);
+export const NAME_KEYED_SYNC_KEYS = Object.freeze(['dp-cal-factors', 'dp-strength-posterior', 'dp-exercise-pain', 'dp-equipment-ladder', 'dp-temperament', 'dp-fatigue-curve', 'dp-nof1-preference']);
 
 // Reserved sentinel key for the scalar/array wrapper (audit 2026-06-07 L-1).
 // A non-object value is wrapped under this key instead of the ambiguous `value`
