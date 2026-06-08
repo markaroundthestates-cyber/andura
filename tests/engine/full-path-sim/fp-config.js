@@ -69,6 +69,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   'dp_e1rm_v1', 'dp_strength_kalman_v1', 'dp_ceiling_v1',
   'dp_population_prior_v1', 'dp_acwr_readiness_v1', 'dp_learned_volume_v1',
   'dp_weekly_recovery_alloc_v1', 'dp_stimulus_per_min_v1',
+  // THE FLIP 2026-06-09 — #7 metric-types now defaults ON (the seconds INPUT UI
+  // landed W2). Added here so the A/B arms force it explicitly OFF: the prescription
+  // stream pins weight×reps for EVERY exercise; honoring metric-types would suppress
+  // reps→targetSec for time/carry holds and move the frozen hashes. The honoring is
+  // a CORRECTNESS fix (a Plank in seconds, not phantom reps) verified on the live
+  // compose path + the #70 matrix, NOT in this determinism stream.
+  'dp_metric_types_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

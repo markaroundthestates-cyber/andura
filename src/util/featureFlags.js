@@ -805,7 +805,7 @@ export const FLAGS = Object.freeze({
   // distance LOGGING UI (SetLogInput) is a fragile UX remainder DEFERRED for
   // Daniel — flag-ON today stops the WRONG rep prescription + carries the metric +
   // targetSec to the consumer; the dedicated timer input lands at the UI pass.
-  dp_metric_types_v1: { rollout: 0, default: false },
+  dp_metric_types_v1: { rollout: 1, default: true },
 
   // #73 goal/sex-aware exercise SELECTION (engine-wiring 2026-06-08) (RISK MED —
   // changes session COMPOSITION, path A; never kg). Two biases, both default OFF →
