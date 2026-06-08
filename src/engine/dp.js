@@ -14,6 +14,7 @@ import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
 import { classifyAndIntervene } from './dp/plateauIntervention.js';
 import { temperamentBias, temperamentBiasFromLogs, saveTemperament, GLOBAL_KEY as TEMPERAMENT_GLOBAL_KEY } from './dp/temperament.js';
 import { shouldProbe, probeSet } from './dp/activeProbing.js';
+import { chooseCandidate } from './dp/mpc.js';
 import { detectStagnation } from './stagnationDetector.js';
 import { getUserConfig } from '../config/user.js';
 import { t } from '../i18n/index.js';
@@ -2112,6 +2113,49 @@ export const DP = {
     const rTarget = result.repsTarget || rMinSafe;
     const rLow = Math.max(rMinSafe, rTarget - 1);
     const rHigh = Math.min(rMaxSafe + 2, rTarget + 1);
+
+    // ── #4/I MPC — model-predictive progression (dp_mpc_v1, default OFF) ─────────
+    // Look one short horizon ahead over a small bounded candidate set {greedy, +1
+    // step, +2 steps}, simulate each forward through the engine's OWN pure e1RM
+    // model (ceiling/gainDecay + Kalman), score (gain toward ceiling − over-cap −
+    // oscillation), and pick the best — but SELECTIVELY: the greedy load wins unless
+    // a candidate beats it by OVERRIDE_MARGIN, so the common case is the greedy step
+    // (golden-safe). Only on a climbing status (not a hold/scale-back/return-deload),
+    // bounded by the ceiling. Needs e1RM + Kalman + ceiling (the forward model) →
+    // flag-OFF (or any dep off / e1RM-ineligible) → no MPC → byte-identical legacy.
+    if (isEnabled('dp_mpc_v1') && !result.returnDeload
+        && (result.status === 'INCREASE' || result.status === 'CATCH UP')
+        && Number.isFinite(result.kg) && result.kg > 0
+        && this._e1rmEligible(ex)) {
+      const greedyKg = result.kg;
+      const plus1 = getNextWeight(greedyKg, ex);
+      const plus2 = getNextWeight(plus1, ex);
+      // Distinct, monotone candidate loads (a coarse stack may collapse +1/+2).
+      const candKgs = [greedyKg, plus1, plus2].filter((v, i, a) => a.indexOf(v) === i && v >= greedyKg);
+      const ceilKg = this._ceilingKg(ex, rTarget);
+      const ceilE1RM = ceilKg > 0
+        ? ceilingE1RM(ex, this._currentBodyweightKg(), 'm', this._trainingAge(ex))
+        : 0;
+      // Candidate e1RMs at the rep target (the model's currency).
+      const candE1RMs = candKgs.map((kg) => this.e1RMForSet(kg, rTarget, 7.5, ex)).filter((e) => e != null);
+      if (candE1RMs.length >= 2) {
+        const muNow = this._bestE1RM(ex, rMinSafe);
+        const sigmaNow = this._posteriorSigma(ex);
+        const stepE1RM = candE1RMs.length >= 2 ? (candE1RMs[1] - candE1RMs[0]) : 0;
+        const pick = chooseCandidate(candE1RMs, 0, {
+          ceiling: ceilE1RM, muNow, sigmaNow: sigmaNow ?? 8, stepE1RM,
+        });
+        if (pick.overrodeGreedy && pick.idx < candKgs.length) {
+          const chosenKg = candKgs[pick.idx];
+          // Never let MPC push above the realistic ceiling kg (hard bound).
+          const cappedKg = ceilKg > 0 ? Math.min(chosenKg, this.roundToStep(ceilKg, ex)) : chosenKg;
+          if (cappedKg > greedyKg) {
+            result.kg = cappedKg;
+            result.mpc = { from: greedyKg, to: cappedKg, scores: pick.scores };
+          }
+        }
+      }
+    }
 
     // F2 §3 / F3 #6 — intensity corridor (e1RM band) as the LAST load step, after
     // every gate. Bounds the implied %1RM into the goal's periodization band. EXEMPT
