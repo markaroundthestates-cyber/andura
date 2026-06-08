@@ -8,7 +8,7 @@ import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
 import { updatePosterior, savePosterior, loadPosterior, trendDirection } from './dp/strengthKalman.js';
-import { ceilingE1RM, gainDecay } from './dp/ceiling.js';
+import { ceilingE1RM, gainDecay, deficitClimbFactor } from './dp/ceiling.js';
 import { populationPriorE1RM } from './dp/populationPrior.js';
 import { sanityCheckSet } from './dp/anomalyGuard.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
@@ -1246,9 +1246,13 @@ export const DP = {
   },
 
   // MAIN RECOMMENDATION FUNCTION
-  /** @param {string} ex */
-  recommend(ex, nowMs) {
-    const result = this._recommendRaw(ex, nowMs);
+  // `energyPhase` (F6c #37): the resolved nutrition phase token (resolveActivePhase
+  // → CUT|BULK|MAINTENANCE|STRENGTH), threaded read-only from the React boundary
+  // (dp.js never imports nutrition). Absent → no throttle. Behind
+  // dp_deficit_throttle_v1 (default OFF) it does nothing → byte-identical.
+  /** @param {string} ex @param {number} [nowMs] @param {string|null} [energyPhase] */
+  recommend(ex, nowMs, energyPhase) {
+    const result = this._recommendRaw(ex, nowMs, energyPhase);
     if (result && result.kg) {
       // Apply the learned persistent per-exercise machine-calibration factor to
       // the raw load, THEN snap to a real equipment value. No learned data →
@@ -1311,9 +1315,16 @@ export const DP = {
    * @param {string} ex
    * @param {number} [nowMs] Injected epoch ms; defaults to real clock.
    */
-  _recommendRaw(ex, nowMs) {
+  _recommendRaw(ex, nowMs, energyPhase) {
     const state = this.getState(ex);
     const phaseOverride = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
+    // F6c #37 — deficit-aware throttle on the NEW-max climb. The resolved energy
+    // phase (passed read-only from the React boundary) gates a climb-rate damp +
+    // a CUT plateau-reframe, behind dp_deficit_throttle_v1 (default OFF). When OFF
+    // or no phase → factor 1.0 + reframe inert → byte-identical. Absent phase →
+    // treated as MAINTENANCE (no throttle).
+    const deficitThrottleOn = isEnabled('dp_deficit_throttle_v1') && typeof energyPhase === 'string';
+    const climbFactor = deficitThrottleOn ? deficitClimbFactor(energyPhase) : 1;
     const isInCut = this._isInCut(phaseOverride, nowMs);
     const range = this.getPhaseAwareRepRange(ex, isInCut);
     const rMin = range[0] ?? 8;
@@ -1446,6 +1457,14 @@ export const DP = {
         if (curE1RM != null && ceilE1RM > 0) {
           stepFrac *= gainDecay(curE1RM, ceilE1RM);
         }
+      }
+      // F6c #37 — deficit throttle: a PURE easy-run push chases a NEW max, so in a
+      // CUT we DAMP its step (composed MIN-style with gainDecay above). The belowDemo
+      // catch-up to an already-OWNED load is NEVER throttled (capacity must not be
+      // crater-blocked). climbFactor is 1.0 when the flag is OFF / phase != CUT →
+      // stepFrac unchanged (byte-identical).
+      if (!belowDemo && climbFactor < 1) {
+        stepFrac *= climbFactor;
       }
       const ceiling = belowDemo ? demoW : lastW * (1 + stepFrac);
       const jumpedRaw = belowDemo ? demoW : lastW * (1 + stepFrac);
@@ -1642,6 +1661,24 @@ export const DP = {
           progressionStage: 2
         };
       }
+    }
+
+    // F6c #37 — CUT plateau-reframe: in a deliberate deficit, merely HOLDING the
+    // demonstrated weight is the SUCCESS path (retention), NOT a stagnation problem.
+    // Suppress the +SET escalation (which adds fatigue the user can't recover from
+    // under-fuelled) and reframe as MAINTAIN — mirroring the Stage-4 CUT branch
+    // below + D109. Gated on dp_deficit_throttle_v1 + energyPhase==='CUT' (default
+    // OFF → this block is skipped, the legacy +SET runs → byte-identical). No
+    // ex-extra-sets write here (the hold is not a stagnation escalation).
+    if (isStagnant && deficitThrottleOn && energyPhase === 'CUT') {
+      return {
+        kg: lastW, repsTarget: rMax, rir: 2,
+        status: 'MAINTAIN',
+        statusColor: 'var(--accent)',
+        statusLabel: '🟡 Mentinem in definire',
+        progressionNote: `In definire mentii ${lastW} kg la nivelul tau · pastrarea fortei e succesul acum.`,
+        progressionStage: 0
+      };
     }
 
     // Stage 3: STAGNATION — add 1 set (max once)
@@ -1994,7 +2031,10 @@ export const DP = {
    *   the session). Byte-identical for every existing caller that does not pass it.
    */
   getSmartRecommendation(ex, readinessScore, _muscleState, nowMs, sessionRating, priorExercises, opts = {}) {
-    const base = this.recommend(ex, nowMs);
+    // F6c #37 — thread the resolved energy phase (read-only) into the climb logic.
+    // Absent → no throttle; behind dp_deficit_throttle_v1 (default OFF) → no-op.
+    const energyPhase = opts && typeof opts.energyPhase === 'string' ? opts.energyPhase : null;
+    const base = this.recommend(ex, nowMs, energyPhase);
     /** @type {Record<string, any>} */
     let result = { ...base };
     // F2 #2 — RIR label override: when Goal Adaptation supplies a rir_target_modifier

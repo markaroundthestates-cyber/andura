@@ -22,6 +22,7 @@ import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
 import { roundToEquipmentWeight } from '../../config/weights.js';
 import { isBodyweightExercise, bodyweightFraction } from '../../engine/bodyweightLoad.js';
 import { getCurrentWeightKg } from './userTdee';
+import { resolveActivePhase } from './engineWrappers.nutrition';
 import { experienceToEngine } from './scheduleAdapterAggregate.session';
 import {
   buildUserStateForPipeline,
@@ -167,6 +168,12 @@ function toPlannedExercise(
   // (per-set 'greu' already blocks the increase via logs.rpe; this closes the
   // post-session signal that was previously stored but never wired into load).
   const sessionRating = readLastSessionRating();
+  // F6c #37 — resolve the active energy phase (read-only) ONLY when the flag is on,
+  // threaded into getSmartRecommendation opts so the dp.js climb can throttle a
+  // NEW-max push in a deficit + reframe a CUT hold as success. dp.js never imports
+  // nutrition — the resolved token is passed in. Flag OFF → null → no throttle →
+  // byte-identical.
+  const energyPhase = isEnabled('dp_deficit_throttle_v1') ? resolveActivePhase() : null;
   const rec = DP.getSmartRecommendation(
     engineEx.name,
     readinessScore,
@@ -178,6 +185,7 @@ function toPlannedExercise(
       repRangeModifier: goalModifiers.repRange ?? null,
       rirTargetModifier: goalModifiers.rirTarget ?? null,
       intensityCorridor: goalModifiers.intensityCorridor ?? null,
+      energyPhase,
     },
   ) as DpRecommendation | null;
   const hasHistory = DP.getLogs(engineEx.name, 1).length > 0;

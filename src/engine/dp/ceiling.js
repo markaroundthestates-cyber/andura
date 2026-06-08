@@ -133,6 +133,32 @@ export function gainDecay(mu, ceiling) {
 export const NEAR_CEILING_RATIO = 0.9;  // >= → EXPECTED (near genetic ceiling)
 export const PROBLEM_PLATEAU_RATIO = 0.7; // < → PROBLEM (recovery/technique/adherence)
 
+// ══ BUILD F6c #37 — deficit-aware progression throttle (F6c spec §3) ═════════
+// The dp.js climb is phase-BLIND today — it chases new-max PRs the same in a deep
+// cut as in a bulk. D109 already encodes "in a deficit preserve, don't push" in the
+// deload engine (depthCalculator.js:117); #37 extends it to the weight-climb. This
+// is a pure throttle FACTOR on the NEW-max climb step (the pure-easy-run push above
+// demonstrated capacity), composed (MIN) with gainDecay. It NEVER touches the
+// PR-floor / catch-up to an already-OWNED load — a deficit must not crater capacity.
+//
+// UNVERIFIED DESIGN PROPOSAL (spec §9 — embodies the D109 product rule): the CUT
+// factor needs a sim sweep + Daniel sanity-check before dp_deficit_throttle_v1 flips
+// ON. In a deficit, recovery + the ability to add muscle/strength are blunted, so the
+// new-max climb is damped (not stopped — a real strength gain in a cut still climbs,
+// just slower). BULK/STRENGTH/MAINTENANCE = full climb (1.0).
+export const DEFICIT_CLIMB_FACTOR = 0.5; // CUT new-max climb runs at ~half the rate
+
+/**
+ * Multiplier on the NEW-max climb step for the active energy phase. CUT throttles
+ * (DEFICIT_CLIMB_FACTOR); BULK / STRENGTH / MAINTENANCE / absent → 1.0 (full climb,
+ * byte-identical). PURE.
+ * @param {string|null|undefined} phase resolveActivePhase token (CUT|BULK|MAINTENANCE|STRENGTH)
+ * @returns {number} in (0,1]
+ */
+export function deficitClimbFactor(phase) {
+  return phase === 'CUT' ? DEFICIT_CLIMB_FACTOR : 1;
+}
+
 /**
  * Classify a stagnation by how close the estimate sits to the ceiling.
  * @param {number} mu @param {number} ceiling
