@@ -517,6 +517,15 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // [floor, ceiling] band in distributeGroupSets. The learner runs at session
     // finish (workoutStore.logic persistSessionLogs); this only READS the cache.
     fatigueSetsAdjust: isEnabled('dp_fatigue_curve_v1') ? fatigueSetsAdjust : null,
+    // #72 emphasis raises per-exercise SETS (dp_emphasis_specialization_v1, default
+    // OFF → byte-identical). When ON, an emphasized Big-11 RO group's compound
+    // ceiling rises in buildSession so the weekly budget already raised toward MRV
+    // (applyWeaknessAmplification, with non-focus held at MEV via
+    // applyEmphasisDeEmphasis above) actually REACHES the visible per-exercise set
+    // count (the +2-6 sets specialization quantum, policy §3) instead of being
+    // capped at 5 — the DIAG #2 "emphasis doesn't change the sets" gap. Reuses the
+    // SAME flag the spec-engine trade rides (one coherent emphasis switch).
+    emphasisSetsBoost: emphasisSpecOn,
   };
 
   const session = buildSession(cluster, sessionCtx);

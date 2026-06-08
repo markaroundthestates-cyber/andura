@@ -4,7 +4,7 @@
   "nProfiles": 8,
   "weeks": 6,
   "hashOff": "aa0da62f0e17ec8044936b4c266140d0a3972a6c8024b34f9513dce72f9459ed",
-  "hashOn": "762f2fa7e445a40c605db8f549e6b77bb16ca51ba2b538a0fb35993570ba3c6d",
+  "hashOn": "ff37afe018f75ff9f4f0345509ff1cf1f441ad4556fd7f57c5e4996ba5138dd9",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
@@ -18,9 +18,9 @@
     "plannedSessions": 192,
     "emptySessions": 0,
     "meanExerciseCount": 7.03,
-    "meanSetTotal": 12.48,
-    "meanDurationMin": 38.3,
-    "meanVolumeKg": 1691,
+    "meanSetTotal": 12.52,
+    "meanDurationMin": 38.4,
+    "meanVolumeKg": 1695,
     "minusRatePct": 21.9
   },
   "convergenceOff": {

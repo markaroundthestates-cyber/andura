@@ -9,7 +9,7 @@
 // keep continuity (the 18/21 names that exist verbatim as library keys).
 
 import { EXERCISE_METADATA, getExerciseMetadata, isActiveMeta } from './exerciseLibrary.js';
-import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT } from './periodization/constants.js';
+import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT, ISRAETEL_BASELINES } from './periodization/constants.js';
 
 // buildSession's first param is now a Big-6 CLUSTER id (push/pull/legs/upper/
 // lower/full) — the target muscle groups + their session-slot bias come from the
@@ -184,6 +184,28 @@ const WEEKLY_FREQUENCY = 2;
 // A library tier-1 entry IS the compound anchor of its group (force_demand:high,
 // big movement). Used by the set distribution to weight the anchor higher.
 const COMPOUND_TIER = 1;
+// #72 emphasis specialization (dp_emphasis_specialization_v1) — when a group is
+// EMPHASIZED (the user's look choice) AND its weekly budget has risen toward MAV
+// upstream (applyWeaknessAmplification → MRV-half, with non-focus held at MEV via
+// applyEmphasisDeEmphasis), the per-exercise compound clamp [3,5] previously
+// CAPPED the extra volume at 5 so the emphasized lift looked identical to balanced
+// (DIAG #2). Raising the compound ceiling for an emphasized group lets the already-
+// raised weekly budget actually REACH the per-exercise set count (the +2-6 sets/wk
+// specialization quantum, policy §3) — bounded by MRV upstream + this hard ceiling
+// so it never blows out. Flag OFF → the emphasis ceiling is never used → the
+// [3,5] clamp is byte-identical to today.
+const COMPOUND_MAX_SETS_EMPHASIZED = 6;
+// The emphasized COMPOUND floor — raised from COMPOUND_MIN_SETS (3) to 4 so the
+// emphasized anchor lift VISIBLY carries more working sets than a balanced one.
+// DIAG #2: emphasis added slots + front-position but the per-exercise set count
+// stayed at the balanced 3, because the round-robin gives an emphasized group MANY
+// slots so the raised weekly budget spreads thin instead of concentrating into the
+// visible set number. Lifting the floor delivers the +sets the user expects on the
+// focus compound (the +2-6/wk specialization quantum, policy §3), kept bounded by
+// COMPOUND_MAX_SETS_EMPHASIZED + the MRV cap + the MEV-hold-on-others coupling
+// upstream. NOT applied to a NON-RECOVERED emphasized group (the recovery floor
+// wins — never force volume onto a fatigued muscle). Flag OFF → never used.
+const COMPOUND_MIN_SETS_EMPHASIZED = 4;
 
 /**
  * Per-session set budget for one Big-11 group — the weekly volume target split
@@ -217,6 +239,7 @@ function sessionSetBudget(big11RoGroup, volumeTargets, weeklySessionsPerGroup) {
       : WEEKLY_FREQUENCY;
   return weekly / realFreq;
 }
+
 
 /**
  * Compound-anchored set distribution for the exercises of ONE group in a session.
@@ -253,13 +276,26 @@ function sessionSetBudget(big11RoGroup, volumeTargets, weeklySessionsPerGroup) {
  * clamp the recovery path already enforces — so +1 never exceeds the band's high
  * and -1 never drops below its low (≥ the ≥1-working-set floor the bands carry).
  *
+ * #72 emphasis (dp_emphasis_specialization_v1) — when `emphasized` is true the
+ * group's COMPOUND ceiling rises to COMPOUND_MAX_SETS_EMPHASIZED (6), and the
+ * ANCHOR compound (first/highest-priority compound only) floors at
+ * COMPOUND_MIN_SETS_EMPHASIZED (4) so the headline focus lift VISIBLY carries more
+ * sets than balanced (DIAG #2: the round-robin gave the focus group MANY slots, so
+ * the raised weekly budget spread thin instead of concentrating into the visible
+ * set count). The raised FLOOR is ANCHOR-ONLY (not every compound) so a group that
+ * already earns many weekly slots is not multiplied past its weekly budget (policy
+ * §3 coupling), and only on a RECOVERED group (a non-recovered emphasized group
+ * keeps the recovery floor — never force volume onto a fatigued muscle). Default
+ * false → [3,5] byte-identical.
+ *
  * @param {Array<{name?: string, tier: number}>} exsInGroup - chosen exercises of this group (with tier)
  * @param {number|null} budget - per-session set budget for the group (sessionSetBudget)
  * @param {'recovered'|'partial'|'fatigued'} [state] - this group's recovery state
  * @param {((name: string) => number)|null} [fatigueAdjustFn] - F6a #20 per-exercise sets adjust (-1|0|+1); null/absent → 0
+ * @param {boolean} [emphasized] - #72: this group is emphasized → raise the compound ceiling
  * @returns {number[]} set count per exercise, index-aligned with exsInGroup
  */
-function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn) {
+function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasized) {
   const n = exsInGroup.length;
   if (n === 0) return [];
   const adjustOf = (e) =>
@@ -284,13 +320,23 @@ function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn) {
   const nonRecovered = state === 'partial' || state === 'fatigued';
   const compoundFloor = nonRecovered ? NONRECOVERED_COMPOUND_MIN_SETS : COMPOUND_MIN_SETS;
   const setShave = nonRecovered ? 1 : 0;
+  // #72 — an emphasized + RECOVERED group raises its compound band: the ceiling
+  // rises (so a high budget can reach 6), and the ANCHOR (first/highest-priority
+  // compound only) earns the raised FLOOR so it visibly carries more sets — applied
+  // to the anchor alone, NOT every compound, so a group that already gets many
+  // weekly slots is not multiplied past its weekly budget (policy §3 coupling).
+  const emphasizeRecovered = emphasized && !nonRecovered;
+  const compoundCeiling = emphasized ? COMPOUND_MAX_SETS_EMPHASIZED : COMPOUND_MAX_SETS;
+  const anchorIdx = emphasizeRecovered ? exsInGroup.findIndex((e) => e.tier === COMPOUND_TIER) : -1;
 
-  return exsInGroup.map((e) => {
+  return exsInGroup.map((e, i) => {
     const isCompound = e.tier === COMPOUND_TIER;
     const share = (budget * weightOf(e)) / totalWeight;
     const rounded = Math.round(share) - setShave + adjustOf(e);
-    const lo = isCompound ? compoundFloor : ISOLATION_MIN_SETS;
-    const hi = isCompound ? COMPOUND_MAX_SETS : ISOLATION_MAX_SETS;
+    // Anchor compound of an emphasized recovered group floors higher (visible +sets).
+    const cFloor = i === anchorIdx ? COMPOUND_MIN_SETS_EMPHASIZED : compoundFloor;
+    const lo = isCompound ? cFloor : ISOLATION_MIN_SETS;
+    const hi = isCompound ? compoundCeiling : ISOLATION_MAX_SETS;
     return Math.min(hi, Math.max(lo, rounded));
   });
 }
@@ -653,8 +699,13 @@ export function movementKey(name, meta) {
  *   emphasizedGroups?: string[],
  *   exercisePenalties?: Record<string, number>|null,
  *   fatigueSetsAdjust?: ((name: string) => number)|null,
+ *   emphasisSetsBoost?: boolean,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
+ *
+ * #72 (ctx.emphasisSetsBoost, dp_emphasis_specialization_v1) — an emphasized group's
+ * per-exercise compound band widens so its raised weekly budget reaches the visible
+ * sets. Default OFF (absent → byte-identical to today).
  */
 export function buildSession(cluster, ctx) {
   const targets = clusterGroupsOrdered(cluster);
@@ -882,11 +933,33 @@ export function buildSession(cluster, ctx) {
     const g = groupOf(e.name);
     (byGroup[g] ||= []).push({ name: e.name, tier: metaOf(e.name).tier });
   }
+  // #72 emphasis sets-boost (default OFF → the distribution is byte-identical).
+  const emphasisSetsBoost = ctx?.emphasisSetsBoost === true;
   // Per-exercise set count, keyed by name (group distribution applied once).
   const setsByName = /** @type {Record<string, number>} */ ({});
   for (const [g, exs] of Object.entries(byGroup)) {
     const budget = sessionSetBudget(g, ctx?.volumeTargets, ctx?.weeklySessionsPerGroup);
-    const counts = distributeGroupSets(exs, budget, recoveryState[g], ctx?.fatigueSetsAdjust);
+    // #72 — an emphasized group raises its compound band so the focus lift carries
+    // visibly more sets (DIAG #2), but ONLY when its WEEKLY target still has room to
+    // grow toward MAV (policy: "an emphasized group's weekly set target rises TOWARD
+    // MAV"). A group already AT/ABOVE its MAV (e.g. v-taper back, which earns many
+    // weekly slots and already sits at the budget high-end) is left at the normal
+    // band — lifting its per-exercise floor would only over-shoot the band + the
+    // muscle's recoverable volume. This keeps the emphasis surfacing on the groups
+    // that genuinely look identical to balanced (arms/chest — few slots, below MAV)
+    // without inflating an already-saturated one. OFF → never emphasized.
+    const enKey = BIG11_RO_TO_EN_MAP[g] ?? g;
+    const weeklyForGroup =
+      ctx?.volumeTargets && typeof ctx.volumeTargets === 'object' ? ctx.volumeTargets[enKey] : undefined;
+    const groupMav = ISRAETEL_BASELINES[enKey]?.MAV;
+    const belowMav =
+      typeof weeklyForGroup === 'number' && typeof groupMav === 'number'
+        ? weeklyForGroup < groupMav
+        : true; // no signal → don't block the lift (the few-slot emphasis case)
+    const isEmphasized = emphasisSetsBoost && emphSet.has(g) && belowMav;
+    const counts = distributeGroupSets(
+      exs, budget, recoveryState[g], ctx?.fatigueSetsAdjust, isEmphasized,
+    );
     exs.forEach((e, i) => { setsByName[e.name] = counts[i]; });
   }
   let exercises = chosen.map((e) => ({
