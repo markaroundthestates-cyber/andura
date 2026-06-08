@@ -9,7 +9,14 @@ export const USER_DATA_KEYS = [
   'pr-records', 'current-kcal', 'suppl-list', 'waters', 'workout-skips',
   'session-burns', 'wellbeing', 'notif-enabled', 'closed-days', 'muted',
   'onboarding-done', 'onboarding-completed', 'last-recalibration', 'sf.userConfig',
-  'profile-history', 'dp-cal-factors'
+  'profile-history', 'dp-cal-factors',
+  // Durable per-UID learned engine state — synced (firebase.js SYNC_KEYS) so they
+  // MUST also reset locally (else they survive a fullReset while the cloud clears
+  // them = shared-device cross-user bleed once a dp_*_v1 flag flips ON). Same
+  // start-over semantic as dp-cal-factors. `tombstones` is the soft-delete ledger
+  // (synced) — stale residue after a start-over, cleared for the same parity reason.
+  'dp-strength-posterior', 'dp-recovery-constants', 'dp-exercise-pain',
+  'dp-equipment-ladder', 'tombstones'
 ];
 
 // Coach/session transient state — deleted by both resetTestData and fullReset

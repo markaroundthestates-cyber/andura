@@ -93,6 +93,18 @@ describe('dataRegistry — key list integrity', () => {
   it('profile-history is in SYNC_KEYS (Firebase backup, per ADR 014 §6)', () => {
     expect(SYNC_KEYS).toContain('profile-history');
   });
+
+  // Parity guard (V3 cohesion audit #1): every cloud-cleared SYNC_KEY MUST also be
+  // covered by the local reset registry. Otherwise a synced key survives a local
+  // fullReset while clearUserCloudData wipes it cloud-side → on a shared device the
+  // next user inherits the prior user's learned engine state until a cloud restore
+  // overwrites it (cross-user data bleed). This caught dp-strength-posterior /
+  // -recovery-constants / -exercise-pain / -equipment-ladder + tombstones.
+  it('every SYNC_KEY is covered by the local reset registry (SYNC_KEYS ⊆ RESET set)', () => {
+    const resetCovered = new Set([...USER_DATA_KEYS, ...TEST_RESIDUE_KEYS, ...CDL_KEYS]);
+    const uncovered = SYNC_KEYS.filter(k => !resetCovered.has(k));
+    expect(uncovered, `SYNC_KEYS not in reset registry: ${uncovered.join(', ')}`).toHaveLength(0);
+  });
 });
 
 describe('getAllDynamicKeys', () => {
