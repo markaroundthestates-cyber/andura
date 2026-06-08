@@ -1317,7 +1317,16 @@
     "bodyweightTargetReps": "repetari cu greutatea corpului",
     "addedWeightDecrease": "Scade greutatea adaugata",
     "addedWeightIncrease": "Creste greutatea adaugata",
-    "youDidBodyweight": "repetari cu greutatea corpului"
+    "youDidBodyweight": "repetari cu greutatea corpului",
+    "secondsLabel": "sec",
+    "secondsLabelRequired": "Secunde *",
+    "secondsError": "Pune 1-3600 secunde",
+    "secondsDecrease": "Scade secunde",
+    "secondsIncrease": "Creste secunde",
+    "targetSeconds": "sec",
+    "carryLoadLabel": "kg carat",
+    "askHeldLabel": "Cat ai tinut?",
+    "askCarriedLabel": "Cat ai carat?"
   },
   "setRating": {
     "prompt": "Cum a fost?",
@@ -1559,7 +1568,8 @@
       "skinfoldAbdomen": "Abdomen (mm)",
       "skinfoldThigh": "Coapsa (mm)",
       "skinfoldTriceps": "Triceps (mm)",
-      "skinfoldSuprailiac": "Suprailiac (mm)"
+      "skinfoldSuprailiac": "Suprailiac (mm)",
+      "sectionPreferences": "Preferinte"
     },
     "notifications": {
       "title": "Notificari",
@@ -2500,6 +2510,27 @@
       "cable": "Cablu",
       "bodyweight": "Greutate corporala",
       "band": "Banda elastica"
+    }
+  },
+  "preferences": {
+    "refusalTitle": "Miscari de evitat",
+    "refusalDesc": "Alege ce nu vrei niciodata in plan. Andura pune o alternativa sigura pe acelasi muschi. Optional.",
+    "equipmentTitle": "Cu ce te antrenezi",
+    "equipmentDesc": "Alege doar ce ai. Andura iti construieste planul din astea. Lasa gol pentru sala completa.",
+    "refusal": {
+      "squat": "Genuflexiuni",
+      "deadlift": "Indreptari",
+      "lunge": "Fandari",
+      "hipThrust": "Hip thrust",
+      "overheadPress": "Impins deasupra capului"
+    },
+    "equipment": {
+      "barbell": "Bara",
+      "dumbbell": "Gantere",
+      "machine": "Aparate",
+      "cable": "Cabluri",
+      "bodyweight": "Greutatea corpului",
+      "band": "Benzi elastice"
     }
   }
 }

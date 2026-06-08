@@ -16,9 +16,19 @@ import {
 } from 'lucide-react';
 import type { OnboardingData } from '../../../stores/onboardingStore';
 import { goalLabel } from './shared';
+import { PreferencesPickers } from '../../../components/PreferencesPickers';
 import { t } from '../../../../i18n/index.js';
 
-export function Step8Summary({ data }: { data: OnboardingData }): JSX.Element {
+interface Step8SummaryProps {
+  data: OnboardingData;
+  // #81/#82 optional preference capture — refused movement patterns + available
+  // equipment. Skippable: leaving both empty persists nothing (byte-identical to
+  // the pre-#81/#82 onboarding). Wired to setField by the parent Onboarding.tsx.
+  onRefusedChange?: (next: string[]) => void;
+  onEquipmentChange?: (next: string[]) => void;
+}
+
+export function Step8Summary({ data, onRefusedChange, onEquipmentChange }: Step8SummaryProps): JSX.Element {
   // Wave A5 polish (Daniel "Top Grade" 2026-05-28) — each summary row gets a
   // lucide icon (Calendar/User/Target/Activity/Award/Scale/Ruler) for visual
   // affordance + a clean two-column hierarchy (icon+label left, value right).
@@ -77,6 +87,20 @@ export function Step8Summary({ data }: { data: OnboardingData }): JSX.Element {
           </div>
         ))}
       </div>
+
+      {/* #81/#82 optional preferences — refused movements + equipment profile.
+          Activates the already-wired engine exclusion/filter. Skippable: empty
+          = today's behavior. Rendered only when the parent supplies handlers. */}
+      {onRefusedChange && onEquipmentChange && (
+        <div className="mt-6 animate-fade-in-up delay-600">
+          <PreferencesPickers
+            refusedPatterns={data.refusedPatterns ?? []}
+            equipmentProfile={data.equipmentProfile ?? []}
+            onRefusedChange={onRefusedChange}
+            onEquipmentChange={onEquipmentChange}
+          />
+        </div>
+      )}
     </>
   );
 }

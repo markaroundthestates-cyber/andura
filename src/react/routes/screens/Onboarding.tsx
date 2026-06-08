@@ -197,7 +197,13 @@ export function Onboarding(): JSX.Element {
         {stepNum === 6 && <Step5 value={data.experience} onChange={(v) => setField('experience', v)} />}
         {stepNum === 7 && <Step6 value={data.weight} onChange={(v) => setField('weight', v)} />}
         {stepNum === 8 && <Step7Height value={data.height} onChange={(v) => setField('height', v)} />}
-        {stepNum === 9 && <Step8Summary data={data} />}
+        {stepNum === 9 && (
+          <Step8Summary
+            data={data}
+            onRefusedChange={(v) => setField('refusedPatterns', v)}
+            onEquipmentChange={(v) => setField('equipmentProfile', v)}
+          />
+        )}
       </div>
 
       <div className="flex-1" />

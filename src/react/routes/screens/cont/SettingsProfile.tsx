@@ -31,6 +31,7 @@ import { PersonalSection } from './settingsProfile/PersonalSection';
 import { BodyCompSection } from './settingsProfile/BodyCompSection';
 import { SkinfoldSection } from './settingsProfile/SkinfoldSection';
 import { TrainingSection } from './settingsProfile/TrainingSection';
+import { PreferencesSection } from './settingsProfile/PreferencesSection';
 
 // §obiectiv-relocate 2026-05-28 — Goal selector relocated to Progres tab
 // (ObiectivGoalCard). GOAL_LABELS dropped din SettingsProfile (Frecventa +
@@ -390,6 +391,11 @@ export function SettingsProfile(): JSX.Element {
             kcal a coach-ului via engineWrappers.getTargetKcalToday. */}
 
         <TrainingSection draft={draft} update={update} />
+
+        {/* #81/#82 — refused movements + equipment profile, editable later
+            (set optionally at onboarding). Same draft/update path → committed
+            by handleSave's setField loop. */}
+        <PreferencesSection draft={draft} update={update} />
 
         <button
           type="button"

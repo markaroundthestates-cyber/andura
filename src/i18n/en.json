@@ -1317,7 +1317,16 @@
     "bodyweightTargetReps": "bodyweight reps",
     "addedWeightDecrease": "Decrease added weight",
     "addedWeightIncrease": "Increase added weight",
-    "youDidBodyweight": "bodyweight reps"
+    "youDidBodyweight": "bodyweight reps",
+    "secondsLabel": "sec",
+    "secondsLabelRequired": "Seconds *",
+    "secondsError": "Enter 1-3600 seconds",
+    "secondsDecrease": "Decrease seconds",
+    "secondsIncrease": "Increase seconds",
+    "targetSeconds": "sec",
+    "carryLoadLabel": "kg carried",
+    "askHeldLabel": "How long did you hold?",
+    "askCarriedLabel": "How long did you carry?"
   },
   "setRating": {
     "prompt": "How was it?",
@@ -1559,7 +1568,8 @@
       "skinfoldAbdomen": "Abdomen (mm)",
       "skinfoldThigh": "Thigh (mm)",
       "skinfoldTriceps": "Triceps (mm)",
-      "skinfoldSuprailiac": "Suprailiac (mm)"
+      "skinfoldSuprailiac": "Suprailiac (mm)",
+      "sectionPreferences": "Preferences"
     },
     "notifications": {
       "title": "Notifications",
@@ -2500,6 +2510,27 @@
       "cable": "Cable",
       "bodyweight": "Bodyweight",
       "band": "Resistance band"
+    }
+  },
+  "preferences": {
+    "refusalTitle": "Movements to avoid",
+    "refusalDesc": "Pick any you never want in your plan. Andura swaps in a safe same-muscle alternative. Optional.",
+    "equipmentTitle": "What you train with",
+    "equipmentDesc": "Pick only what you have. Andura builds your plan from these. Leave empty for a full gym.",
+    "refusal": {
+      "squat": "Squats",
+      "deadlift": "Deadlifts",
+      "lunge": "Lunges",
+      "hipThrust": "Hip thrusts",
+      "overheadPress": "Overhead press"
+    },
+    "equipment": {
+      "barbell": "Barbell",
+      "dumbbell": "Dumbbells",
+      "machine": "Machines",
+      "cable": "Cables",
+      "bodyweight": "Bodyweight",
+      "band": "Bands"
     }
   }
 }
