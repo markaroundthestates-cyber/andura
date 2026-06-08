@@ -246,16 +246,32 @@ function sessionSetBudget(big11RoGroup, volumeTargets, weeklySessionsPerGroup) {
  * trains lighter. 'recovered' (and absent state) → unchanged floors, no
  * decrement (the common, no-regression path — most days).
  *
- * @param {Array<{tier: number}>} exsInGroup - chosen exercises of this group (with tier)
+ * F6a #20 — the optional `fatigueAdjustFn` (name → -1|0|+1) is the per-set
+ * fatigue-curve dose (dp_fatigue_curve_v1, default OFF → caller passes null →
+ * adjust 0 → byte-identical). A learned MAINTAINER earns +1 working set, a CRASHER
+ * loses 1, applied to that exercise's set count BEFORE the SAME [floor, ceiling]
+ * clamp the recovery path already enforces — so +1 never exceeds the band's high
+ * and -1 never drops below its low (≥ the ≥1-working-set floor the bands carry).
+ *
+ * @param {Array<{name?: string, tier: number}>} exsInGroup - chosen exercises of this group (with tier)
  * @param {number|null} budget - per-session set budget for the group (sessionSetBudget)
  * @param {'recovered'|'partial'|'fatigued'} [state] - this group's recovery state
+ * @param {((name: string) => number)|null} [fatigueAdjustFn] - F6a #20 per-exercise sets adjust (-1|0|+1); null/absent → 0
  * @returns {number[]} set count per exercise, index-aligned with exsInGroup
  */
-function distributeGroupSets(exsInGroup, budget, state) {
+function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn) {
   const n = exsInGroup.length;
   if (n === 0) return [];
+  const adjustOf = (e) =>
+    typeof fatigueAdjustFn === 'function' && typeof e.name === 'string'
+      ? (Number(fatigueAdjustFn(e.name)) || 0)
+      : 0;
   // No volume signal → every exercise keeps the stable default (no-op path).
-  if (budget == null) return exsInGroup.map(() => DEFAULT_SETS);
+  // F6a #20 still applies the learned adjust here, clamped so a maintainer's +1
+  // never exceeds the band ceiling and a crasher's -1 never drops below ≥1 set.
+  if (budget == null) {
+    return exsInGroup.map((e) => Math.min(COMPOUND_MAX_SETS, Math.max(1, DEFAULT_SETS + adjustOf(e))));
+  }
 
   // Weight compounds higher than isolation so the anchor earns the volume.
   const COMPOUND_WEIGHT = 2;
@@ -272,7 +288,7 @@ function distributeGroupSets(exsInGroup, budget, state) {
   return exsInGroup.map((e) => {
     const isCompound = e.tier === COMPOUND_TIER;
     const share = (budget * weightOf(e)) / totalWeight;
-    const rounded = Math.round(share) - setShave;
+    const rounded = Math.round(share) - setShave + adjustOf(e);
     const lo = isCompound ? compoundFloor : ISOLATION_MIN_SETS;
     const hi = isCompound ? COMPOUND_MAX_SETS : ISOLATION_MAX_SETS;
     return Math.min(hi, Math.max(lo, rounded));
@@ -636,6 +652,7 @@ export function movementKey(name, meta) {
  *   recoveryState?: Record<string, 'recovered'|'partial'|'fatigued'>,
  *   emphasizedGroups?: string[],
  *   exercisePenalties?: Record<string, number>|null,
+ *   fatigueSetsAdjust?: ((name: string) => number)|null,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  */
@@ -869,7 +886,7 @@ export function buildSession(cluster, ctx) {
   const setsByName = /** @type {Record<string, number>} */ ({});
   for (const [g, exs] of Object.entries(byGroup)) {
     const budget = sessionSetBudget(g, ctx?.volumeTargets, ctx?.weeklySessionsPerGroup);
-    const counts = distributeGroupSets(exs, budget, recoveryState[g]);
+    const counts = distributeGroupSets(exs, budget, recoveryState[g], ctx?.fatigueSetsAdjust);
     exs.forEach((e, i) => { setsByName[e.name] = counts[i]; });
   }
   let exercises = chosen.map((e) => ({

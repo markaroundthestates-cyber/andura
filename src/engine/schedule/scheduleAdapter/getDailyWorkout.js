@@ -16,6 +16,7 @@ import {
 import { buildSession } from '../../sessionBuilder.js';
 import { isEnabled } from '../../../util/featureFlags.js';
 import { exercisePenaltyMap } from '../../dp/exercisePain.js';
+import { fatigueSetsAdjust } from '../../dp/fatigueCurve.js';
 import { availableCoarseTypes } from '../../equipmentMap.js';
 import {
   getRecoveryByGroup,
@@ -508,6 +509,14 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // recently-painful SPECIFIC exercise is demoted in poolForGroup so a same-muscle
     // sibling is preferred; never a hard ban (poolForGroup keeps the last option).
     exercisePenalties: isEnabled('dp_pain_deprioritize_v1') ? exercisePenaltyMap() : null,
+    // F6a #20 per-set fatigue curve (dp_fatigue_curve_v1, default OFF → null →
+    // distributeGroupSets applies adjust 0 → byte-identical). When ON, the learned
+    // per-exercise drop-off index (persisted dp-fatigue-curve, name-keyed on the EN
+    // canonical engineName — the SAME name sessionBuilder uses for the pool) yields
+    // +1 working set for a MAINTAINER / -1 for a CRASHER, clamped to the existing
+    // [floor, ceiling] band in distributeGroupSets. The learner runs at session
+    // finish (workoutStore.logic persistSessionLogs); this only READS the cache.
+    fatigueSetsAdjust: isEnabled('dp_fatigue_curve_v1') ? fatigueSetsAdjust : null,
   };
 
   const session = buildSession(cluster, sessionCtx);

@@ -11,6 +11,7 @@ import { learnRecovery, saveRecoveryConstants, RECOVERY_CONSTANTS_KEY, bodyweigh
 import { resolveActivePhase } from '../lib/engineWrappers.nutrition';
 import { learnedStepFromLogs, saveLearnedStep } from '../../engine/dp/equipmentLadder.js';
 import { learnVolumeLandmarks, saveLearnedVolume, LEARNED_VOLUME_KEY } from '../../engine/periodization/learnedVolume.js';
+import { learnFatigueCurve, saveFatigueCurve, FATIGUE_CURVE_KEY } from '../../engine/dp/fatigueCurve.js';
 import { DP } from '../../engine/dp.js';
 import type {
   SessionIntensityMod,
@@ -223,6 +224,20 @@ export function persistSessionLogs(
         { effective: isEnabled('dp_effective_reps_v1') }
       );
       if (Object.keys(learnedVol).length) saveLearnedVolume(learnedVol);
+    }
+    // F6a #20 — learn the per-user per-exercise reps-drop-off curve at fixed load
+    // (flag dp_fatigue_curve_v1, default OFF → skipped → byte-identical). Same
+    // authoritative per-session write site. A MAINTAINER (flat curve, drop-off
+    // late/never) → +1 working set / a CRASHER (early drop-off) → -1, consumed by
+    // distributeGroupSets via fatigueSetsAdjust. EMA-continued from the persisted
+    // cache so the curve never saw-tooths. Quota-guarded + fail-silent inside the try.
+    if (isEnabled('dp_fatigue_curve_v1')) {
+      const priorCurve = (DB.get(FATIGUE_CURVE_KEY) as Record<string, { dropIndex: number; n: number }>) || undefined;
+      const learnedCurve = learnFatigueCurve(
+        merged as unknown as Parameters<typeof learnFatigueCurve>[0],
+        priorCurve,
+      );
+      if (Object.keys(learnedCurve).length) saveFatigueCurve(learnedCurve);
     }
   } catch {
     // Soft-fail — storage quota / SSR jsdom edge. Engine adapters tolerate
