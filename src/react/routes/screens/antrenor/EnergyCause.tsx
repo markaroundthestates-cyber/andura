@@ -43,7 +43,7 @@
 //   - mockup andura-clasic.html#L899-911 screen-energy-cause
 
 import type { JSX } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Moon,
   Utensils,
@@ -55,8 +55,8 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { useWorkoutStore } from '../../../stores/workoutStore';
 import { t } from '../../../../i18n/index.js';
-import type { EnergyLevel, IntensityMod } from './EnergyCheck';
 
 interface CauseOption {
   /** i18n key under energyCause.causes.* — label localized at render. */
@@ -76,27 +76,30 @@ const CAUSE_OPTIONS: readonly CauseOption[] = [
   { labelKey: 'energyCause.causes.other', cause: 'Altceva', Icon: MoreHorizontal },
 ];
 
-interface EnergyCauseLocationState {
-  energyLevel?: EnergyLevel;
-  intensityMod?: IntensityMod;
-}
-
 export function EnergyCause(): JSX.Element {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { energyLevel, intensityMod } =
-    (location.state as EnergyCauseLocationState | null) ?? {};
+  // #69 pre-workout reframe — the energy self-report (energyLevel + intensityMod)
+  // was recorded into the store by EnergyCheck before routing here; we merge in
+  // the chosen cause then return to the MAIN page (no longer straight to preview).
+  const sessionEnergy = useWorkoutStore((s) => s.sessionEnergy);
+  const setSessionEnergy = useWorkoutStore((s) => s.setSessionEnergy);
+
+  function recordCause(cause?: string): void {
+    // Preserve the energyLevel/intensityMod recorded on EnergyCheck; add cause.
+    // Defensive fallback: if the slice is somehow empty (deep-link to this
+    // screen), default to the 'minus' self-report this drill represents.
+    const base = sessionEnergy ?? { energyLevel: 'obosit' as const, intensityMod: 'minus' as const };
+    setSessionEnergy({ ...base, ...(cause !== undefined ? { cause } : {}) });
+  }
 
   function handleSelect(cause: string): void {
-    navigate(gotoPath('workout-preview'), {
-      state: { energyLevel, intensityMod, cause },
-    });
+    recordCause(cause);
+    navigate(gotoPath('antrenor'));
   }
 
   function handleSkip(): void {
-    navigate(gotoPath('workout-preview'), {
-      state: { energyLevel, intensityMod },
-    });
+    recordCause();
+    navigate(gotoPath('antrenor'));
   }
 
   function handleBack(): void {

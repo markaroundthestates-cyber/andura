@@ -3,8 +3,11 @@
 // Mockup andura-clasic.html#L878-897 reference (3-state); spec extends la
 // 5-option (Excelent / Bine / Normal / Slabit / Obosit) cu intensity 'plus'
 // / 'normal' / 'minus' map. Slabit + Obosit -> energy-cause; restul ->
-// direct workout-preview. Intensity propagated via location.state pentru
-// Phase 3 izolare flow (Phase 4+ trece la workoutStore intensity slice).
+// inapoi la pagina MAIN (Antrenor). Intensity propagat via workoutStore
+// sessionEnergy slice (#69 pre-workout reframe 2026-06-08): self-report-ul e
+// inregistrat AICI, dar flow-ul se intoarce la hub inainte de Start, deci
+// location.state nu mai supravietuieste round-trip-ul -> sessionEnergy e
+// purtatorul durabil citit de WorkoutPreview.
 //
 // Mockup parity (andura-clasic.html L878-897 traffic-light + per-option hint
 // subtitle). 5-option spec extension preserved (intent: granular self-report)
@@ -34,8 +37,9 @@
 //   - mockup andura-clasic.html#L878-897 screen-energy-check
 
 import type { JSX } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { saveReadiness } from '../../../../engine/readiness.js';
@@ -62,13 +66,6 @@ interface EnergyOption {
   readiness: 1 | 2 | 3 | 4 | 5;
 }
 
-// Optional pre-session TIME budget chips ("How much time today?"). Skippable per
-// ADR 025 — leaving "No limit" selected (the default) keeps the persona-derived
-// behavior byte-identical. Picking a value SHRINKS today's session to fit (the
-// engine's existing tail-first trim, never below the floor). The user time only
-// ever tightens the cap; it never extends past the persona/fatigue ceiling.
-const TIME_BUDGET_CHOICES = [30, 45, 60, 90] as const;
-
 // 5-step Pulse energy ramp volt -> aqua -> gold -> ember -> ember-red, 1:1 with
 // the mockup (interfata-noua/data.jsx energy[]: excellent=volt, good=aqua,
 // normal=gold, low=ember, tired=ember-red). Adjacent states read distinctly and
@@ -83,22 +80,26 @@ const ENERGY_OPTIONS: readonly EnergyOption[] = [
 
 export function EnergyCheck(): JSX.Element {
   const navigate = useNavigate();
-  // Pre-session time budget — the user's optional "how much time today" pick.
-  // null = no limit (default) → persona-derived behavior unchanged.
-  const sessionTimeBudgetMin = useWorkoutStore((s) => s.sessionTimeBudgetMin);
-  const setSessionTimeBudgetMin = useWorkoutStore((s) => s.setSessionTimeBudgetMin);
+  const setSessionEnergy = useWorkoutStore((s) => s.setSessionEnergy);
+  // #69 pre-workout reframe — selecting a level HIGHLIGHTS it (no auto-navigate);
+  // the explicit Continue CTA commits + routes. null until the user picks.
+  const [selected, setSelected] = useState<EnergyOption | null>(null);
 
-  function handleSelect(option: EnergyOption): void {
+  function handleContinue(): void {
+    if (!selected) return;
     // Persist self-report to the engine readiness store (per-UID) so the read
-    // side (getComputedReadinessScore) is no longer starved. ADD to the
-    // existing navigation flow — location.state is still consumed downstream
-    // (WorkoutPreview banner + energy-cause routing), NOT removed.
-    saveReadiness(option.readiness);
-    const state = { energyLevel: option.level, intensityMod: option.intensity };
-    if (option.intensity === 'minus') {
-      navigate(gotoPath('energy-cause'), { state });
+    // side (getComputedReadinessScore) is no longer starved — UNCHANGED contract.
+    saveReadiness(selected.readiness);
+    // #69 — the flow now returns to the MAIN page (or energy-cause for minus)
+    // before Start, so location.state cannot survive the round-trip. Record the
+    // self-report in the workoutStore sessionEnergy slice (the durable carrier
+    // WorkoutPreview reads). Drained/Exhausted (minus) still route to the cause
+    // drill first; everything else returns straight to the hub.
+    setSessionEnergy({ energyLevel: selected.level, intensityMod: selected.intensity });
+    if (selected.intensity === 'minus') {
+      navigate(gotoPath('energy-cause'));
     } else {
-      navigate(gotoPath('workout-preview'), { state });
+      navigate(gotoPath('antrenor'));
     }
   }
 
@@ -113,7 +114,7 @@ export function EnergyCheck(): JSX.Element {
         onBack={handleBack}
         testIdBack="energy-check-back"
       />
-      <div className="p-6 flex-1">
+      <div className="p-6 flex-1 flex flex-col">
       {/* Pulse reskin (mockup interfata-noua/screens-workout.jsx:38-50) — display
           h1 promoted to a bolder title; body keeps the verbose "Cum te simti azi?"
           for user familiarity (h2 semantic preserved per PAR-009 single-h1
@@ -122,77 +123,59 @@ export function EnergyCheck(): JSX.Element {
       <p className="text-base text-ink2 mb-6">
         {t('energyCheck.subtitle')}
       </p>
-      {/* Optional pre-session time budget. Skippable: "No limit" (null) is the
-          default and keeps the persona-derived session unchanged. A picked value
-          shrinks today's plan to fit (engine trim). */}
-      <div className="mb-6" data-testid="energy-time-budget">
-        <p className="text-sm text-ink3 mb-2">{t('energyCheck.timeBudget.label')}</p>
-        <div className="flex flex-wrap gap-2">
-          {TIME_BUDGET_CHOICES.map((min) => {
-            const selected = sessionTimeBudgetMin === min;
-            return (
-              <button
-                key={min}
-                type="button"
-                onClick={() => setSessionTimeBudgetMin(selected ? null : min)}
-                data-testid={`time-chip-${min}`}
-                data-selected={selected}
-                aria-pressed={selected}
-                className="rounded-full px-4 py-2 text-sm font-semibold border transition"
-                style={
-                  selected
-                    ? { color: 'var(--volt)', borderColor: 'var(--volt)', background: 'color-mix(in oklab, var(--volt) 12%, transparent)' }
-                    : { color: 'var(--ink2)', borderColor: 'var(--line-strong)' }
-                }
-              >
-                {t('energyCheck.timeBudget.minutes', { n: min })}
-              </button>
-            );
-          })}
-          <button
-            type="button"
-            onClick={() => setSessionTimeBudgetMin(null)}
-            data-testid="time-chip-nolimit"
-            data-selected={sessionTimeBudgetMin === null}
-            aria-pressed={sessionTimeBudgetMin === null}
-            className="rounded-full px-4 py-2 text-sm font-semibold border transition"
-            style={
-              sessionTimeBudgetMin === null
-                ? { color: 'var(--volt)', borderColor: 'var(--volt)', background: 'color-mix(in oklab, var(--volt) 12%, transparent)' }
-                : { color: 'var(--ink2)', borderColor: 'var(--line-strong)' }
-            }
-          >
-            {t('energyCheck.timeBudget.noLimit')}
-          </button>
-        </div>
-      </div>
+      {/* #69 — the time-budget chips moved OFF this screen onto the dedicated
+          TimeBudget step (shown after Start). EnergyCheck now ONLY captures the
+          energy level: tap selects/highlights (no auto-navigate), then Continue. */}
       <div className="flex flex-col gap-3">
-        {ENERGY_OPTIONS.map((opt, i) => (
-          <button
-            key={opt.level}
-            type="button"
-            onClick={() => handleSelect(opt)}
-            data-energy-level={opt.level}
-            data-intensity={opt.intensity}
-            className="energy-btn pulse-card flex items-center gap-4 p-4 hover:border-lineStrong transition text-left animate-card-rise"
-            style={{ animationDelay: `${i * 0.05}s` }}
-          >
-            {/* Glowing dot (mockup .energy-dot) — the per-state color drives a soft
-                bloom so adjacent energy levels read distinctly. Decorative
-                (aria-hidden); the label owns the accessible name. */}
-            <span
-              className="w-4 h-4 rounded-full flex-shrink-0"
-              style={{ background: opt.color, boxShadow: `0 0 16px ${opt.color}` }}
-              aria-hidden="true"
-            />
-            <span className="flex flex-col flex-1 min-w-0">
-              <span className="font-display text-base font-semibold text-ink">{t(opt.labelKey)}</span>
-              <span className="text-sm text-ink2">{t(opt.hintKey)}</span>
-            </span>
-            <ChevronRight className="w-[18px] h-[18px] text-ink3 flex-shrink-0" aria-hidden="true" />
-          </button>
-        ))}
+        {ENERGY_OPTIONS.map((opt, i) => {
+          const isSelected = selected?.level === opt.level;
+          return (
+            <button
+              key={opt.level}
+              type="button"
+              onClick={() => setSelected(opt)}
+              data-energy-level={opt.level}
+              data-intensity={opt.intensity}
+              data-selected={isSelected}
+              aria-pressed={isSelected}
+              className="energy-btn pulse-card flex items-center gap-4 p-4 hover:border-lineStrong transition text-left animate-card-rise"
+              style={{
+                animationDelay: `${i * 0.05}s`,
+                ...(isSelected
+                  ? { borderColor: opt.color, background: `color-mix(in oklab, ${opt.color} 10%, transparent)` }
+                  : {}),
+              }}
+            >
+              {/* Glowing dot (mockup .energy-dot) — the per-state color drives a soft
+                  bloom so adjacent energy levels read distinctly. Decorative
+                  (aria-hidden); the label owns the accessible name. */}
+              <span
+                className="w-4 h-4 rounded-full flex-shrink-0"
+                style={{ background: opt.color, boxShadow: `0 0 16px ${opt.color}` }}
+                aria-hidden="true"
+              />
+              <span className="flex flex-col flex-1 min-w-0">
+                <span className="font-display text-base font-semibold text-ink">{t(opt.labelKey)}</span>
+                <span className="text-sm text-ink2">{t(opt.hintKey)}</span>
+              </span>
+            </button>
+          );
+        })}
       </div>
+      <div className="flex-1" />
+      {/* #69 explicit Continue CTA — commits the self-report + routes (minus →
+          energy-cause, otherwise back to the hub). Disabled until a level is picked. */}
+      <button
+        type="button"
+        onClick={handleContinue}
+        disabled={!selected}
+        data-testid="energy-check-continue"
+        className="btn-primary-lift press-feedback pulse-grad-bg pulse-shine mt-6 w-full rounded-full py-3.5 px-4 text-base font-semibold flex items-center justify-center gap-2 disabled:opacity-40"
+        style={{ color: 'var(--on-accent)' }}
+      >
+        <span>{t('energyCheck.submitCta')}</span>
+        <ArrowRight className="w-4 h-4" aria-hidden="true" />
+      </button>
       </div>
     </section>
   );

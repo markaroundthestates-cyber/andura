@@ -116,8 +116,16 @@ export function WorkoutPreview(): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
   const setSessionContext = useWorkoutStore((s) => s.setSessionContext);
-  const { intensityMod = 'normal', overrideKind, painContext, equipmentContext } =
+  // #69 pre-workout reframe — the energy self-report now lives in the workoutStore
+  // sessionEnergy slice (EnergyCheck/EnergyCause write it). The new flow returns
+  // to the hub before Start, so location.state no longer carries intensityMod
+  // here. Read STORE-FIRST; fall back to location.state for the legacy override
+  // entry points (schedule-override / pain-button still push state directly).
+  const sessionEnergy = useWorkoutStore((s) => s.sessionEnergy);
+  const { intensityMod: stateIntensityMod, overrideKind, painContext, equipmentContext } =
     (location.state as WorkoutPreviewLocationState | null) ?? {};
+  const intensityMod: IntensityMod =
+    stateIntensityMod ?? sessionEnergy?.intensityMod ?? 'normal';
   const busyCoarseTypes = equipmentContext?.busyCoarseTypes ?? [];
   // "Different group" override → ask the engine for the alternative session.
   const wantDifferentMuscle = overrideKind === 'different-muscle';

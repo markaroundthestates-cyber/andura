@@ -6,6 +6,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { EnergyCause } from '../../../routes/screens/antrenor/EnergyCause';
+import { useWorkoutStore } from '../../../stores/workoutStore';
+import type { SessionEnergy } from '../../../stores/workoutStore';
 // i18n locale pin — these specs assert RO copy (Ce e mai greu azi / Sari peste
 // / Alege una / etc). Force RO so the i18n indirection resolves to the RO
 // assertion targets. EN coverage is locked separately by i18nNoRoLeak.test.tsx.
@@ -14,33 +16,27 @@ beforeEach(() => {
   try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
   _resetI18nCache();
   setLocale('ro');
+  // #69 — the energy self-report is recorded by EnergyCheck into the store before
+  // routing here; seed it directly for the isolated EnergyCause render.
+  useWorkoutStore.setState({
+    sessionEnergy: { energyLevel: 'slabit', intensityMod: 'minus' },
+  });
 });
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
-  const s = (loc.state ?? null) as Record<string, unknown> | null;
-  return (
-    <div data-testid="probe" data-pathname={loc.pathname}>
-      {s ? JSON.stringify(s) : 'no-state'}
-    </div>
-  );
+  return <div data-testid="probe" data-pathname={loc.pathname} />;
 }
 
 function renderEnergyCause(
-  initialState: { energyLevel?: string; intensityMod?: string } = {
-    energyLevel: 'slabit',
-    intensityMod: 'minus',
-  }
+  seed: SessionEnergy = { energyLevel: 'slabit', intensityMod: 'minus' }
 ) {
+  useWorkoutStore.setState({ sessionEnergy: seed });
   return render(
-    <MemoryRouter
-      initialEntries={[
-        { pathname: '/app/antrenor/energy-cause', state: initialState },
-      ]}
-    >
+    <MemoryRouter initialEntries={['/app/antrenor/energy-cause']}>
       <Routes>
         <Route path="/app/antrenor/energy-cause" element={<EnergyCause />} />
-        <Route path="/app/antrenor/workout-preview" element={<LocationProbe />} />
+        <Route path="/app/antrenor" element={<LocationProbe />} />
       </Routes>
     </MemoryRouter>
   );
@@ -78,47 +74,50 @@ describe('EnergyCause — render', () => {
   });
 });
 
-describe('EnergyCause — navigation flow', () => {
-  it('selecting cause navigates la workout-preview cu cause + intensityMod + energyLevel', () => {
+describe('EnergyCause — #69 navigation flow (→ MAIN, energy in store)', () => {
+  it('selecting cause → MAIN (Antrenor); cause + intensityMod + energyLevel persisted to the store', () => {
     renderEnergyCause();
     fireEvent.click(screen.getByRole('button', { name: /Stres mental/i }));
-    const probe = screen.getByTestId('probe');
-    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
-    expect(probe.textContent).toContain('"cause":"Stres mental"');
-    expect(probe.textContent).toContain('"intensityMod":"minus"');
-    expect(probe.textContent).toContain('"energyLevel":"slabit"');
+    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/antrenor');
+    const e = useWorkoutStore.getState().sessionEnergy;
+    expect(e?.cause).toBe('Stres mental');
+    expect(e?.intensityMod).toBe('minus');
+    expect(e?.energyLevel).toBe('slabit');
   });
 
-  it('Skip navigates la workout-preview fara cause', () => {
+  it('Skip → MAIN; intensityMod/energyLevel preserved, no cause set', () => {
     renderEnergyCause();
     fireEvent.click(screen.getByTestId('energy-cause-skip'));
-    const probe = screen.getByTestId('probe');
-    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
-    expect(probe.textContent).not.toContain('cause');
-    expect(probe.textContent).toContain('"intensityMod":"minus"');
+    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/antrenor');
+    const e = useWorkoutStore.getState().sessionEnergy;
+    expect(e?.cause).toBeUndefined();
+    expect(e?.intensityMod).toBe('minus');
   });
 
-  it('preserves intensityMod cand state present', () => {
+  it('preserves the energyLevel recorded on EnergyCheck', () => {
     renderEnergyCause({ energyLevel: 'obosit', intensityMod: 'minus' });
     fireEvent.click(screen.getByRole('button', { name: /Altceva/i }));
-    const probe = screen.getByTestId('probe');
-    expect(probe.textContent).toContain('"energyLevel":"obosit"');
-    expect(probe.textContent).toContain('"cause":"Altceva"');
+    const e = useWorkoutStore.getState().sessionEnergy;
+    expect(e?.energyLevel).toBe('obosit');
+    expect(e?.cause).toBe('Altceva');
   });
 
-  it('handles missing state gracefully (no crash)', () => {
+  it('handles an empty energy slice gracefully (deep-link defensive fallback)', () => {
+    useWorkoutStore.setState({ sessionEnergy: null });
     render(
       <MemoryRouter initialEntries={['/app/antrenor/energy-cause']}>
         <Routes>
           <Route path="/app/antrenor/energy-cause" element={<EnergyCause />} />
-          <Route path="/app/antrenor/workout-preview" element={<LocationProbe />} />
+          <Route path="/app/antrenor" element={<LocationProbe />} />
         </Routes>
       </MemoryRouter>
     );
     fireEvent.click(screen.getByRole('button', { name: /Dormit putin/i }));
-    const probe = screen.getByTestId('probe');
-    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
-    expect(probe.textContent).toContain('"cause":"Dormit putin"');
+    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/antrenor');
+    const e = useWorkoutStore.getState().sessionEnergy;
+    expect(e?.cause).toBe('Dormit putin');
+    // Defensive fallback: a deep-link with no prior self-report defaults to minus.
+    expect(e?.intensityMod).toBe('minus');
   });
 });
 

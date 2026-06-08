@@ -1,4 +1,9 @@
-// ══ ENERGY CHECK TESTS — task_05 §A 5-option flow ════════════════════════
+// ══ ENERGY CHECK TESTS — #69 pre-workout reframe (select + Continue → hub) ══
+// Flow change (Daniel UX LOCK 2026-06-08): EnergyCheck shows ONLY the 5 energy
+// levels (time-budget chips moved to the dedicated TimeBudget step). Tapping a
+// level SELECTS it (highlight, no auto-navigate); the explicit Continue CTA
+// commits the self-report into the workoutStore sessionEnergy slice + the engine
+// readiness store, then routes: minus → energy-cause, otherwise → MAIN (Antrenor).
 // MemoryRouter jsdom paradigm per D020.
 
 import type { JSX } from 'react';
@@ -6,6 +11,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { EnergyCheck } from '../../../routes/screens/antrenor/EnergyCheck';
+import { useWorkoutStore } from '../../../stores/workoutStore';
 import {
   getComputedReadinessScore,
   getTodayReadiness,
@@ -13,12 +19,7 @@ import {
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
-  const s = (loc.state ?? null) as Record<string, unknown> | null;
-  return (
-    <div data-testid="probe" data-pathname={loc.pathname}>
-      {s ? JSON.stringify(s) : 'no-state'}
-    </div>
-  );
+  return <div data-testid="probe" data-pathname={loc.pathname} />;
 }
 
 function renderEnergyCheck() {
@@ -27,11 +28,21 @@ function renderEnergyCheck() {
       <Routes>
         <Route path="/app/antrenor/energy-check" element={<EnergyCheck />} />
         <Route path="/app/antrenor/energy-cause" element={<LocationProbe />} />
-        <Route path="/app/antrenor/workout-preview" element={<LocationProbe />} />
+        <Route path="/app/antrenor" element={<LocationProbe />} />
       </Routes>
     </MemoryRouter>
   );
 }
+
+function selectThenContinue(name: RegExp) {
+  fireEvent.click(screen.getByRole('button', { name }));
+  fireEvent.click(screen.getByTestId('energy-check-continue'));
+}
+
+beforeEach(() => {
+  localStorage.clear();
+  useWorkoutStore.setState({ sessionEnergy: null });
+});
 
 describe('EnergyCheck — render (Wave C2 i18n EN default)', () => {
   it('renders SubHeader title "How do you feel?" (mockup L879 verbatim, EN-default)', () => {
@@ -72,69 +83,97 @@ describe('EnergyCheck — render (Wave C2 i18n EN default)', () => {
     expect(exhausted).toHaveAttribute('data-energy-level', 'obosit');
     expect(exhausted).toHaveAttribute('data-intensity', 'minus');
   });
+
+  it('#69 — the time-budget chips are GONE from EnergyCheck (moved to TimeBudget)', () => {
+    renderEnergyCheck();
+    expect(screen.queryByTestId('energy-time-budget')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('time-chip-30')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('time-chip-nolimit')).not.toBeInTheDocument();
+  });
+
+  it('#69 — Continue is present', () => {
+    renderEnergyCheck();
+    expect(screen.getByTestId('energy-check-continue')).toBeInTheDocument();
+  });
 });
 
-describe('EnergyCheck — navigation flow (EN labels, RO semantic ids)', () => {
-  it('Excellent → workout-preview cu intensityMod=plus', () => {
-    renderEnergyCheck();
-    fireEvent.click(screen.getByRole('button', { name: /Excellent/i }));
-    const probe = screen.getByTestId('probe');
-    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
-    expect(probe.textContent).toContain('"intensityMod":"plus"');
-    expect(probe.textContent).toContain('"energyLevel":"excelent"');
-  });
-
-  it('Good → workout-preview cu intensityMod=normal', () => {
+describe('EnergyCheck — #69 select-then-Continue (no auto-navigate)', () => {
+  it('tapping a level does NOT navigate — it only highlights it (selected)', () => {
     renderEnergyCheck();
     fireEvent.click(screen.getByRole('button', { name: /Good/i }));
-    const probe = screen.getByTestId('probe');
-    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
-    expect(probe.textContent).toContain('"intensityMod":"normal"');
-    expect(probe.textContent).toContain('"energyLevel":"bine"');
+    // Still on the energy-check screen (no probe yet).
+    expect(screen.queryByTestId('probe')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Good/i })).toHaveAttribute('data-selected', 'true');
   });
 
-  it('Normal → workout-preview cu intensityMod=normal', () => {
+  it('Excellent → Continue → MAIN (Antrenor), sessionEnergy intensityMod=plus', () => {
     renderEnergyCheck();
-    fireEvent.click(screen.getByRole('button', { name: /Normal/i }));
-    const probe = screen.getByTestId('probe');
-    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/workout-preview');
-    expect(probe.textContent).toContain('"intensityMod":"normal"');
+    selectThenContinue(/Excellent/i);
+    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/antrenor');
+    const e = useWorkoutStore.getState().sessionEnergy;
+    expect(e?.intensityMod).toBe('plus');
+    expect(e?.energyLevel).toBe('excelent');
   });
 
-  it('Drained → energy-cause cu intensityMod=minus', () => {
+  it('Good → Continue → MAIN, sessionEnergy intensityMod=normal', () => {
     renderEnergyCheck();
-    fireEvent.click(screen.getByRole('button', { name: /Drained/i }));
-    const probe = screen.getByTestId('probe');
-    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/energy-cause');
-    expect(probe.textContent).toContain('"intensityMod":"minus"');
-    expect(probe.textContent).toContain('"energyLevel":"slabit"');
+    selectThenContinue(/Good/i);
+    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/antrenor');
+    expect(useWorkoutStore.getState().sessionEnergy?.intensityMod).toBe('normal');
+    expect(useWorkoutStore.getState().sessionEnergy?.energyLevel).toBe('bine');
   });
 
-  it('Exhausted → energy-cause cu intensityMod=minus', () => {
+  it('Normal → Continue → MAIN, sessionEnergy intensityMod=normal', () => {
     renderEnergyCheck();
-    fireEvent.click(screen.getByRole('button', { name: /Exhausted/i }));
-    const probe = screen.getByTestId('probe');
-    expect(probe).toHaveAttribute('data-pathname', '/app/antrenor/energy-cause');
-    expect(probe.textContent).toContain('"intensityMod":"minus"');
-    expect(probe.textContent).toContain('"energyLevel":"obosit"');
+    selectThenContinue(/Normal/i);
+    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/antrenor');
+    expect(useWorkoutStore.getState().sessionEnergy?.intensityMod).toBe('normal');
+  });
+
+  it('Drained → Continue → energy-cause, sessionEnergy intensityMod=minus', () => {
+    renderEnergyCheck();
+    selectThenContinue(/Drained/i);
+    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/antrenor/energy-cause');
+    const e = useWorkoutStore.getState().sessionEnergy;
+    expect(e?.intensityMod).toBe('minus');
+    expect(e?.energyLevel).toBe('slabit');
+  });
+
+  it('Exhausted → Continue → energy-cause, sessionEnergy intensityMod=minus', () => {
+    renderEnergyCheck();
+    selectThenContinue(/Exhausted/i);
+    expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/antrenor/energy-cause');
+    const e = useWorkoutStore.getState().sessionEnergy;
+    expect(e?.intensityMod).toBe('minus');
+    expect(e?.energyLevel).toBe('obosit');
+  });
+
+  it('Continue is a no-op until a level is selected (disabled)', () => {
+    renderEnergyCheck();
+    const cta = screen.getByTestId('energy-check-continue');
+    expect(cta).toBeDisabled();
+    fireEvent.click(cta);
+    expect(screen.queryByTestId('probe')).not.toBeInTheDocument();
   });
 });
 
 describe('EnergyCheck — readiness write (C2 engine wire)', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
   it('getComputedReadinessScore is null BEFORE any selection (starved baseline)', () => {
     expect(getComputedReadinessScore()).toBeNull();
   });
 
-  it('selecting an option makes getComputedReadinessScore non-null', () => {
+  it('selecting + Continue makes getComputedReadinessScore non-null', () => {
     renderEnergyCheck();
     expect(getComputedReadinessScore()).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: /Good/i }));
+    selectThenContinue(/Good/i);
     expect(getComputedReadinessScore()).not.toBeNull();
     expect(typeof getComputedReadinessScore()).toBe('number');
+  });
+
+  it('selecting WITHOUT Continue does NOT write readiness yet (commit on Continue)', () => {
+    renderEnergyCheck();
+    fireEvent.click(screen.getByRole('button', { name: /Good/i }));
+    expect(getComputedReadinessScore()).toBeNull();
   });
 
   it('maps the 5 options to readiness 1-5 (Excellent=5 .. Exhausted=1) — EN default labels', () => {
@@ -148,7 +187,7 @@ describe('EnergyCheck — readiness write (C2 engine wire)', () => {
     for (const [name, expected] of cases) {
       localStorage.clear();
       const { unmount } = renderEnergyCheck();
-      fireEvent.click(screen.getByRole('button', { name }));
+      selectThenContinue(name);
       expect(getTodayReadiness()).toBe(expected);
       unmount();
     }
@@ -157,13 +196,13 @@ describe('EnergyCheck — readiness write (C2 engine wire)', () => {
   it('higher readiness yields a higher computed score (monotonic wire)', () => {
     localStorage.clear();
     const a = renderEnergyCheck();
-    fireEvent.click(screen.getByRole('button', { name: /Exhausted/i }));
+    selectThenContinue(/Exhausted/i);
     const lowScore = getComputedReadinessScore();
     a.unmount();
 
     localStorage.clear();
     const b = renderEnergyCheck();
-    fireEvent.click(screen.getByRole('button', { name: /Excellent/i }));
+    selectThenContinue(/Excellent/i);
     const highScore = getComputedReadinessScore();
     b.unmount();
 
