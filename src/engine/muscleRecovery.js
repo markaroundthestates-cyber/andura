@@ -437,3 +437,90 @@ export function getLaggingMuscles(profile) {
   lagging.sort((a, b) => a.ratio - b.ratio);
   return lagging;
 }
+
+// ══ BUILD F6a #5 — ACWR readiness (acute:chronic workload ratio, F6a spec §3) ═
+// Rolling acute:chronic workload ratio per the SAME per-set stress kernel
+// getMuscleState uses (15·k·rpeContrib) — NOT a new tonnage formula. Acute = the
+// recent short window (≈7d) load; chronic = the long window (≈28d) load scaled to
+// the SAME window length (so the ratio is dimensionless ~1.0 at steady volume). A
+// spike (>HIGH) = accumulated fatigue; an undershoot (<LOW) = detraining / a life
+// dip (links to #32). PURE — pure read of `logs`, recomputed each session; `now`
+// injectable. Independent of e1RM (#1).
+//
+// UNVERIFIED thresholds (F6a §7): the 0.8–1.3 sweet-spot + HIGH/LOW cuts are a
+// literature DESIGN PROPOSAL, must be sourced/cited + Daniel/research-reviewed
+// before dp_acwr_readiness_v1 flips ON, exactly like the F3 ceiling ratios.
+export const ACWR_ACUTE_DAYS = 7;
+export const ACWR_CHRONIC_DAYS = 28;
+export const ACWR_HIGH = 1.5;   // accumulated-fatigue spike → readiness penalty
+export const ACWR_LOW = 0.8;    // undershoot → no penalty (links to #32 LIFE_DIP)
+const ACWR_PRIMARY_W = 15 * 1.5;   // primary head per-set weight (getMuscleState kernel)
+const ACWR_SECONDARY_W = 15 * 1.0; // secondary head per-set weight
+
+/**
+ * Sum the per-set stress "load units" over [now - days, now] across the logs,
+ * using the SAME 15·k·rpeContrib weighting getMuscleState applies (primary 1.5x /
+ * secondary 1.0x), WITHOUT the exp-decay (this is accumulated WORKLOAD, not an
+ * instantaneous recovery state). PURE.
+ * @param {ReadonlyArray<{ex?:string, baseline?:boolean, w?:number, rpe?:number, ts?:number, date?:string}>} logs
+ * @param {number} now
+ * @param {number} days
+ * @returns {number}
+ */
+function _loadUnits(logs, now, days) {
+  const cutoff = now - days * MS_PER_DAY;
+  const exMap = /** @type {Record<string, {primary?:string[], secondary?:string[]}>} */ (EXERCISE_MUSCLES);
+  let total = 0;
+  for (const l of Array.isArray(logs) ? logs : []) {
+    if (!l || l.baseline || !l.ex) continue;
+    const w = Number(l.w);
+    if (!Number.isFinite(w) || w <= 0) continue;
+    const ts = Number(l.ts) || (l.date ? new Date(l.date).getTime() : 0);
+    if (!Number.isFinite(ts) || ts < cutoff || ts > now) continue;
+    const ms = exMap[l.ex];
+    if (!ms) continue;
+    const rpeContrib = l.rpe ? Math.min(Number(l.rpe) / 10, 1) : 0.7;
+    total += (ms.primary?.length || 0) * ACWR_PRIMARY_W * rpeContrib;
+    total += (ms.secondary?.length || 0) * ACWR_SECONDARY_W * rpeContrib;
+  }
+  return total;
+}
+
+/**
+ * Systemic acute:chronic workload ratio. PURE. Acute = the last ACWR_ACUTE_DAYS
+ * load; chronic = the last ACWR_CHRONIC_DAYS load scaled to the SAME window length
+ * (chronic_per_acute_window = chronicTotal × acuteDays/chronicDays) so the ratio is
+ * ~1.0 at steady volume. Returns null when there is not enough chronic history to
+ * form an honest denominator (cold start → the caller leaves readiness untouched).
+ * @param {ReadonlyArray<{ex?:string, baseline?:boolean, w?:number, rpe?:number, ts?:number, date?:string}>} logs
+ * @param {number} [now]
+ * @returns {{acwr:number, acute:number, chronic:number}|null}
+ */
+export function computeACWR(logs, now = Date.now()) {
+  const acute = _loadUnits(logs, now, ACWR_ACUTE_DAYS);
+  const chronicTotal = _loadUnits(logs, now, ACWR_CHRONIC_DAYS);
+  // Need a real chronic baseline: at least the acute window's worth of history
+  // beyond the acute window itself, else the ratio is undefined (cold start).
+  if (!(chronicTotal > 0)) return null;
+  const chronicPerWindow = chronicTotal * (ACWR_ACUTE_DAYS / ACWR_CHRONIC_DAYS);
+  if (!(chronicPerWindow > 0)) return null;
+  const acwr = acute / chronicPerWindow;
+  return { acwr: Math.round(acwr * 1000) / 1000, acute: Math.round(acute), chronic: Math.round(chronicTotal) };
+}
+
+/**
+ * The ADDITIVE readiness-score penalty from a systemic ACWR spike, in [0, cap].
+ * Only a spike (> ACWR_HIGH) penalizes — accumulated volume means "you feel fine
+ * but you've been piling on, hold today" (it nudges the score toward the existing
+ * <60 hold). An undershoot (< ACWR_LOW) is UNPENALIZED (links to #32). Bounded so
+ * a single spike can cross the <60 cliff but never crater the score. PURE.
+ * @param {{acwr:number}|null} acwr
+ * @returns {number} >= 0 points to SUBTRACT from the readiness score
+ */
+export function acwrReadinessPenalty(acwr) {
+  if (!acwr || !Number.isFinite(acwr.acwr) || acwr.acwr <= ACWR_HIGH) return 0;
+  // Linear above HIGH, capped at 25 points (enough to cross 60+ → <60 on a good
+  // energy day, never enough to floor the [10,100] score on its own).
+  const over = acwr.acwr - ACWR_HIGH;
+  return Math.min(25, Math.round(over * 50));
+}

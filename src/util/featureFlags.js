@@ -429,6 +429,18 @@ export const FLAGS = Object.freeze({
   // when dp_e1rm_v1 is OFF.
   dp_fatigue_curve_v1: { rollout: 0, default: false },
 
+  // #5 ACWR readiness (RISK MED — adjusts the readiness SCORE, an existing driver,
+  // path B). When ON, computeACWR (the rolling acute:chronic workload ratio, reusing
+  // getMuscleState's per-set stress kernel + getLaggingMuscles' rolling-sum) adds an
+  // ADDITIVE penalty to getReadinessScore on a systemic VOLUME SPIKE (ACWR > HIGH)
+  // BEFORE the [10,100] clamp, so a "you feel fine but you've been piling on volume"
+  // day crosses the existing <60 hold. One-way (only ever LOWERS toward the hold) +
+  // bounded (penalty capped) → it can never crater kg. The deload-TIMING tier (a new
+  // AA candidate) is DEFERRED behind the PARTIAL deload-telemetry boundary (spec §7).
+  // OFF → no ACWR read, no term → byte-identical readiness score. Independent of #1.
+  // UNVERIFIED thresholds (spec §7) — Daniel/research review before flip.
+  dp_acwr_readiness_v1: { rollout: 0, default: false },
+
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
   // "PRIMER §2 brand-promise 'Kalman adaptive TDEE NU 2000 kcal hardcoded'

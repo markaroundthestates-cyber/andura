@@ -41,7 +41,8 @@ export function getReadinessScore(
   kcalYesterday: number | null | undefined,
   protYesterday: number | null | undefined,
   targetKcal: number | null | undefined,
-  targetProt: number | null | undefined
+  targetProt: number | null | undefined,
+  nowMs?: number
 ): number;
 
 export function getReadinessVerdict(

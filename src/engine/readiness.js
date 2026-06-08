@@ -1,6 +1,8 @@
 import { DB, tod, todDate } from '../db.js';
 import { KCAL_TARGET, PROT_TARGET } from '../constants.js';
 import { nowDate as clockNowDate } from './clock.js';
+import { isEnabled } from '../util/featureFlags.js';
+import { computeACWR, acwrReadinessPenalty } from './muscleRecovery.js';
 
 export const READINESS_PR   = 85;
 export const READINESS_HIGH = 70;
@@ -21,8 +23,13 @@ export const READINESS_LABELS = {
  * @param {number | null | undefined} protYesterday
  * @param {number | null | undefined} targetKcal
  * @param {number | null | undefined} targetProt
+ * @param {number} [nowMs] Injected epoch ms for the F6a #5 ACWR term; defaults to
+ *   the real clock. Only read when dp_acwr_readiness_v1 is ON (else byte-identical).
  */
-export function getReadinessScore(readinessInput, kcalYesterday, protYesterday, targetKcal, targetProt) {
+export function getReadinessScore(readinessInput, kcalYesterday, protYesterday, targetKcal, protTarget, nowMs) {
+  // NOTE: the 5th positional param historically named `targetProt`; renamed to
+  // `protTarget` here is a no-op (callers pass positionally) — keep the read below.
+  const targetProt = protTarget;
   if (readinessInput == null) return null;
   /** @type {Record<number, number>} */
   const readinessPoints = { 5: 40, 4: 35, 3: 25, 2: 15, 1: 0 };
@@ -39,6 +46,20 @@ export function getReadinessScore(readinessInput, kcalYesterday, protYesterday, 
     if (ratio < 0.70) score -= 10;
     else if (ratio < 0.85) score -= 5;
   }
+
+  // F6a #5 — ACWR readiness penalty (flag-gated, ADDITIVE before the clamp). A
+  // systemic acute:chronic workload SPIKE subtracts from the score so it can cross
+  // the existing <60 hold EVEN on a good energy-check day ("you feel fine but
+  // you've been piling on volume, hold today"). OFF → no read, no term → the score
+  // is byte-identical. The penalty is bounded (acwrReadinessPenalty caps at 25) and
+  // one-way (only ever LOWERS toward the existing hold; never raises) → the [10,100]
+  // clamp + the one-way effect mean it can never crater the prescribed kg.
+  if (isEnabled('dp_acwr_readiness_v1')) {
+    const logs = /** @type {any} */ (DB.get('logs')) || [];
+    const acwr = computeACWR(logs, nowMs == null ? Date.now() : nowMs);
+    score -= acwrReadinessPenalty(acwr);
+  }
+
   return Math.max(10, Math.min(100, Math.round(score)));
 }
 
@@ -132,5 +153,5 @@ export function getComputedReadinessScore(targetKcal, targetProt, nowMs) {
   // Per-user targets cand threaded (React boundary); altfel flat din constants.js.
   const kcalTarget = targetKcal != null && Number.isFinite(targetKcal) && targetKcal > 0 ? targetKcal : KCAL_TARGET;
   const protTarget = targetProt != null && Number.isFinite(targetProt) && targetProt > 0 ? targetProt : PROT_TARGET;
-  return getReadinessScore(r, kcals[yDate], prots[yDate], kcalTarget, protTarget);
+  return getReadinessScore(r, kcals[yDate], prots[yDate], kcalTarget, protTarget, nowMs);
 }
