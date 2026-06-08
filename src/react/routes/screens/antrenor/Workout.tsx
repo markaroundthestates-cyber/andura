@@ -57,6 +57,7 @@ import { PrFlash } from '../../../components/Workout/PrFlash';
 import { TransitionScreen } from '../../../components/Workout/TransitionScreen';
 import { WhyExerciseModal } from '../../../components/Workout/WhyExerciseModal';
 import { SetHistoryChips } from '../../../components/Workout/SetHistoryChips';
+import { QuarantineNotice } from '../../../components/Workout/QuarantineNotice';
 import { ExerciseActionsRow } from '../../../components/Workout/ExerciseActionsRow';
 import { CoachNote } from '../../../components/Workout/CoachNote';
 import { isEnabled } from '../../../../util/featureFlags.js';
@@ -201,6 +202,13 @@ export function Workout(): JSX.Element {
     currentExercise.name !== '' &&
     DP.getState(currentExercise.engineName ?? currentExercise.name).lastW === 0;
 
+  // #7 metric-type of the current exercise (always stamped at the compose
+  // boundary). 'time'/'distance' = an isometric hold logged in seconds, 'carry' =
+  // a loaded carry (load + seconds). 'reps' (default) = the unchanged weight ×
+  // reps path. Drives the SetLogInput metric rendering + the seconds capture.
+  const currentMetricType = currentExercise.metricType ?? 'reps';
+  const isMetricExercise = currentMetricType === 'time' || currentMetricType === 'distance' || currentMetricType === 'carry';
+
   // #63 coach-confidence subtle line (flag dp_coach_confidence_v1, default OFF).
   // Maps the carried per-exercise posterior sigma (F5-W0 confidence) to ONE gentle
   // qualitative tier line. Flag OFF → null → nothing renders (byte-identical). No
@@ -290,6 +298,12 @@ export function Workout(): JSX.Element {
 
   const [kgInput, setKgInput] = useState<number>(targetKg);
   const [repsInput, setRepsInput] = useState<number>(currentExercise.targetReps);
+  // #7 metric-set capture — the performed DURATION in seconds for a time/carry
+  // exercise (Plank/Dead Hang/Farmer's Walk). Seeded from the prescribed target
+  // (currentExercise.targetSec) or a sane default; only consumed when the current
+  // exercise's metricType is time/carry (reps sets ignore it). Reset per set in
+  // the same effect that resets repsInput.
+  const [durationInput, setDurationInput] = useState<number>(currentExercise.targetSec ?? 30);
   // Audit fix (shared current-recommended-load) — autoregulation and the
   // AaFriction over-recommendation check must read/write ONE recommended load,
   // not drift between `kgInput` (autoreg writes) and the stale per-exercise
@@ -446,12 +460,15 @@ export function Workout(): JSX.Element {
   useEffect(() => {
     setKgInput(targetKg);
     setRepsInput(currentExercise.targetReps);
+    // #7 — seed the seconds entry from the prescribed duration on exercise change
+    // (time/carry only; reps sets never read durationInput).
+    setDurationInput(currentExercise.targetSec ?? 30);
     // Shared current-recommended-load resets to the per-exercise target on
     // exercise change — in-session autoreg bumps it from here within the set run.
     setRecKg(targetKg);
     setRecReps(currentExercise.targetReps);
     setAdjustNotice(null);
-  }, [safeExIdx, targetKg, currentExercise.targetReps]);
+  }, [safeExIdx, targetKg, currentExercise.targetReps, currentExercise.targetSec]);
 
   // §F-pass2-setloginput-02 — each new set begins at pre-log `tinta`. Keyed on
   // exercise (safeExIdx) + set index (currentSetIdx bumps when a set logs into
@@ -549,6 +566,10 @@ export function Workout(): JSX.Element {
       engineName: currentExercise.engineName ?? currentExercise.name,
       exerciseName: currentExercise.name,
       ...(currentExercise.isBodyweight ? { addedKg: kgInput } : {}),
+      // #7 metric capture — persist the performed seconds for a time/carry set so
+      // recovery/engine see a real performed set with the right metric. Absent on
+      // reps sets (the common case) → every kg/reps consumer is unchanged.
+      ...(isMetricExercise ? { durationSec: durationInput } : {}),
     });
 
     // D107 — permanent interaction-log: the set the user just logged paired
@@ -754,6 +775,13 @@ export function Workout(): JSX.Element {
     // the user's prior logged load for this lift (the ×10-jump anchor) + the
     // exercise cap + bodyweight (the physical ceiling). On a flag, hold the rating
     // and ask "sigur?" — quarantine, never reject.
+    // #7 — a time/carry set has no weight × reps to sanity-check (reps may be 0,
+    // the load may legitimately be 0 for a bodyweight hold). Skip the fat-finger
+    // guard (which bounds reps/weight) and log the performed seconds directly.
+    if (isMetricExercise) {
+      proceedAfterAnomaly(rating);
+      return;
+    }
     const engineKeyForGuard = currentExercise.engineName ?? currentExercise.name;
     const priorLogs = DP.getLogs(engineKeyForGuard, 1) as Array<{ w?: number }>;
     const sanity = sanityCheckSet({
@@ -779,6 +807,12 @@ export function Workout(): JSX.Element {
     // Carry the anomaly-confirm decision through the AA modal (if it fires) into
     // the final performLogSet so calibration learns from a CONFIRMED outlier.
     aaConfirmedRef.current = userConfirmed;
+    // #7 — the AA over-aggression friction check bounds weight × reps; a time/
+    // carry set has neither, so skip it and log the seconds set directly.
+    if (isMetricExercise) {
+      performLogSet(rating, userConfirmed);
+      return;
+    }
     // Phase 4 task_14: LOCK 9 aaFrictionDetect pre-check. Compose set sample
     // history din current exercise + new set candidate. Cand trigger →
     // suspend state machine (NU logSet/rest/transition), show modal.
@@ -1429,6 +1463,12 @@ export function Workout(): JSX.Element {
             isBodyweight={currentExercise.isBodyweight ?? false}
           />
 
+          {/* #65 outlier-quarantine surface — a calm, no-guilt note on any set
+              the detector quarantined (still in the log; learning suppressed) +
+              a one-tap "that was real" that re-feeds it to learning. Renders
+              nothing when the ledger is empty (the common case). */}
+          <QuarantineNotice engineName={currentExercise.engineName ?? currentExercise.name} />
+
           {/* §F-pass2-setloginput-02 — mockup wv2 two-step (andura-clasic.html
               #L1463-1485). Pre-log `tinta` (target + Logheaza CTA) → post-log
               readonly "Tu ai facut..." + pencil revise + rating row. `editing`
@@ -1447,6 +1487,17 @@ export function Workout(): JSX.Element {
             targetKg={recKg}
             targetReps={recReps}
             isBodyweight={currentExercise.isBodyweight ?? false}
+            // #7 metric-type rendering — a time/carry exercise shows a seconds
+            // input (+ a load tile for carries) instead of kg/reps. Reps sets
+            // pass 'reps' (the default) → byte-identical kg/reps tiles.
+            metricType={currentMetricType}
+            durationSec={durationInput}
+            onDurationChange={(n) => {
+              bumpActivity();
+              setInputDirty(true);
+              setDurationInput(n);
+            }}
+            {...(currentExercise.targetSec !== undefined ? { targetSec: currentExercise.targetSec } : {})}
             mode={editing ? 'editable' : setLogged ? 'post-log' : 'tinta'}
             onLog={() => {
               bumpActivity();

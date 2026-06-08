@@ -144,6 +144,19 @@ interface SetLogInputProps {
   // "X reps cu greutatea corpului" and the kg field becomes an optional
   // "+ added weight" input (min 0). Default false = legacy loaded behavior.
   isBodyweight?: boolean;
+  // #7 metric type. Default 'reps' (weight × reps — every loaded/bodyweight
+  // strength lift; byte-identical to the prior component). 'time' = an isometric
+  // hold prescribed/logged in SECONDS (Plank/Dead Hang — no rep target, the reps
+  // tile is replaced by a seconds tile). 'carry' = a loaded carry (Farmer's Walk
+  // — a LOAD tile + a duration-seconds tile). 'distance' falls through to the
+  // seconds tile (no separate meters axis surfaced yet).
+  metricType?: 'reps' | 'time' | 'distance' | 'carry';
+  // Performed/entered duration in seconds for a time/carry set. Required when
+  // metricType is time/carry; ignored for reps.
+  durationSec?: number;
+  onDurationChange?: (n: number) => void;
+  // Prescribed duration in seconds (the time/carry target shown read-only).
+  targetSec?: number;
 }
 
 export function SetLogInput({
@@ -157,7 +170,20 @@ export function SetLogInput({
   isBodyweight = false,
   targetKg,
   targetReps,
+  metricType = 'reps',
+  durationSec = 0,
+  onDurationChange,
+  targetSec,
 }: SetLogInputProps): JSX.Element {
+  // #7 metric branches. 'time' = a hold logged in seconds, no load tile (a
+  // weighted plank would carry a load, but the curated time entries are
+  // bodyweight holds → keep it one clean field). 'carry' = a load tile PLUS a
+  // duration-seconds tile. 'distance' is treated as a duration field too (no
+  // separate meters axis surfaced). 'reps' = the unchanged weight × reps path.
+  const isTimeMetric = metricType === 'time' || metricType === 'distance';
+  const isCarryMetric = metricType === 'carry';
+  const isMetricSet = isTimeMetric || isCarryMetric;
+  const displayTargetSec = targetSec ?? durationSec;
   // The PRESCRIBED target shown read-only above the actual-entry steppers. The
   // coach prescribes targetKg/targetReps; the user logs kg/reps. They are
   // DECOUPLED so the visible target reflects the engine's recommendation, not
@@ -168,6 +194,174 @@ export function SetLogInput({
   // Smoke 2026-05-28 #4 — display number sau gol cand value=0/NaN. The 0/empty
   // rule + select-all-on-focus + decimal-safe text buffer now live in
   // NumberField (the type="number" .select() no-op fix, 2026-06-07).
+
+  // ── #7 metric set (time / carry) ─────────────────────────────────────────
+  // An isometric hold (Plank/Dead Hang) is logged in SECONDS, not reps; a loaded
+  // carry (Farmer's Walk) is a LOAD + a duration. The performed-set capture goes
+  // through onDurationChange so recovery/engine see a real performed set with the
+  // right metric. Reps/weight sets fall through to the unchanged path below.
+  if (isMetricSet) {
+    const askLabel = isCarryMetric ? t('setLog.askCarriedLabel') : t('setLog.askHeldLabel');
+    const secError =
+      !Number.isFinite(durationSec) || durationSec < 1 || durationSec > 3600
+        ? t('setLog.secondsError')
+        : null;
+
+    if (mode === 'post-log') {
+      return (
+        <div className="pulse-card p-[18px] mb-6" data-testid="setlog-postlog">
+          <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 mb-2">
+            {t('setLog.youDidLabel')}
+          </p>
+          <div className="flex items-center gap-2">
+            <p className="flex-1 text-base text-ink" data-testid="setlog-postlog-text">
+              <span className="font-display text-3xl font-bold">{durationSec}</span>
+              <span className="text-sm text-ink2 mx-2">{t('setLog.secondsLabel')}</span>
+              {isCarryMetric && Number.isFinite(kg) && kg > 0 && (
+                <span className="font-display text-3xl font-bold">· {kg} kg</span>
+              )}
+            </p>
+            <button
+              type="button"
+              onClick={onEdit}
+              aria-label={t('setLog.editAriaLabel')}
+              data-testid="setlog-postlog-edit"
+              className="p-2 rounded-full text-ink2 min-w-[44px] min-h-[44px] flex items-center justify-center"
+            >
+              <Pencil className="w-4 h-4" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    const isTinta = mode === 'tinta';
+    return (
+      <div className="pulse-card p-[18px] mb-6" data-testid={isTinta ? 'setlog-tinta' : 'setlog-metric'}>
+        {isTinta && (
+          <>
+            <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-center" style={{ color: 'var(--aqua)' }}>
+              {t('setLog.targetLabel')}
+            </p>
+            <div className="flex items-baseline justify-center gap-2 mt-2 mb-4" data-testid="setlog-metric-target">
+              <span className="font-display text-2xl font-bold text-ink" data-testid="setlog-metric-target-sec">
+                {displayTargetSec}
+              </span>
+              <span className="text-sm text-ink2">{t('setLog.targetSeconds')}</span>
+              {isCarryMetric && (
+                <span className="font-display text-2xl font-bold text-ink ml-2" data-testid="setlog-metric-target-kg">
+                  {displayTargetKg} kg
+                </span>
+              )}
+            </div>
+          </>
+        )}
+        <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 mb-2 text-center">
+          {askLabel}
+        </p>
+        <div className="flex gap-3 mb-4">
+          {/* SECONDS tile — replaces the reps tile for a hold/carry. */}
+          <div
+            className="flex-1 text-center rounded-2xl p-3"
+            style={{ background: 'var(--surface-2)', border: '1px solid var(--line)' }}
+          >
+            <label
+              className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 block"
+              htmlFor="setlog-seconds-input"
+            >
+              {t('setLog.secondsLabelRequired')}
+            </label>
+            <NumberField
+              id="setlog-seconds-input"
+              inputMode="numeric"
+              allowDecimal={false}
+              value={durationSec}
+              onChange={(n) => onDurationChange?.(n)}
+              required
+              aria-required="true"
+              aria-invalid={secError ? 'true' : undefined}
+              aria-describedby={secError ? 'setlog-seconds-error' : undefined}
+              testId="setlog-seconds-input"
+              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 mt-2 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+            />
+            <div className="flex items-center justify-between gap-2 mt-2">
+              <DialButton
+                dir="down"
+                onPress={() => onDurationChange?.(stepValue(durationSec, -5, 1, 3600))}
+                ariaLabel={t('setLog.secondsDecrease')}
+                testId="setlog-seconds-minus"
+              />
+              <DialButton
+                dir="up"
+                onPress={() => onDurationChange?.(stepValue(durationSec, 5, 1, 3600))}
+                ariaLabel={t('setLog.secondsIncrease')}
+                testId="setlog-seconds-plus"
+              />
+            </div>
+          </div>
+          {/* LOAD tile — carry only (the weight carried). Time holds have none. */}
+          {isCarryMetric && (
+            <div
+              className="flex-1 text-center rounded-2xl p-3"
+              style={{ background: 'var(--surface-2)', border: '1px solid var(--line)' }}
+            >
+              <label
+                className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 block"
+                htmlFor="setlog-carry-kg-input"
+              >
+                {t('setLog.carryLoadLabel')}
+              </label>
+              <NumberField
+                id="setlog-carry-kg-input"
+                inputMode="decimal"
+                allowDecimal
+                value={kg}
+                onChange={onKgChange}
+                testId="setlog-carry-kg-input"
+                className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 mt-2 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+              />
+              <div className="flex items-center justify-between gap-2 mt-2">
+                <DialButton
+                  dir="down"
+                  onPress={() => onKgChange(stepValue(kg, -0.5, 0, 500))}
+                  ariaLabel={t('setLog.kgDecrease')}
+                  testId="setlog-carry-kg-minus"
+                />
+                <DialButton
+                  dir="up"
+                  onPress={() => onKgChange(stepValue(kg, 0.5, 0, 500))}
+                  ariaLabel={t('setLog.kgIncrease')}
+                  testId="setlog-carry-kg-plus"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+        {secError && (
+          <p id="setlog-seconds-error" role="alert" data-testid="setlog-seconds-error" className="mt-1 mb-2 text-xs text-danger">
+            {secError}
+          </p>
+        )}
+        {isTinta && (
+          <button
+            type="button"
+            onClick={() => {
+              haptic(12);
+              onLog?.();
+            }}
+            disabled={!Number.isFinite(durationSec) || durationSec < 1}
+            data-testid="setlog-tinta-log-btn"
+            className="btn-primary-lift btn-grad press-feedback relative overflow-hidden w-full flex items-center justify-center gap-2 p-3 rounded-full text-base font-semibold min-h-[44px] disabled:opacity-50"
+          >
+            <Ripple color="rgba(255,255,255,0.55)" />
+            <Check className="w-5 h-5 relative" aria-hidden="true" />
+            <span className="relative">{t('setLog.confirmSetCta')}</span>
+          </button>
+        )}
+        {NUMDIAL_SPIN_RESET}
+      </div>
+    );
+  }
 
   if (mode === 'tinta') {
     // Smoke 2026-05-28 #4 — confirmare OBLIGATORIE pre-rating. Tinta ramane

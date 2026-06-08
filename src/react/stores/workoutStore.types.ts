@@ -58,6 +58,12 @@ export interface ExerciseHistoryEntry {
   // Optional pentru backward compat — logSet action auto-set Date.now()
   // dacă call site nu provides.
   timestamp?: number;
+  // #7 metric-type capture — the PERFORMED duration in seconds for a time /
+  // carry exercise (an isometric hold like Plank, or a loaded carry like
+  // Farmer's Walk). Present ONLY for time/carry sets (the SetLogInput renders a
+  // seconds field instead of / alongside reps). Absent for reps/weight sets →
+  // every existing consumer (PR/volume/DP, which read kg/reps) is unchanged.
+  durationSec?: number;
   // Engine identity captured AT LOG TIME from the live Workout screen, where it
   // is authoritative (currentExercise.engineName). Daniel P0 2026-06-06: PostRpe
   // used to re-derive the engine key from a FRESH getTodayWorkout() at finish,
