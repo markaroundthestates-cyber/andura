@@ -21608,7 +21608,8 @@
         "exercise_id": "Towel Hang"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "metric_type": "time"
   },
   "Plate Pinch Hold": {
     "nameRo": "Mentinere prindere disc antebrate",
@@ -21648,7 +21649,8 @@
         "exercise_id": "Towel Hang"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "metric_type": "time"
   },
   "Farmer's Walk DB": {
     "nameRo": "Mers fermierului cu gantere",
@@ -21690,7 +21692,8 @@
         "exercise_id": "Towel Hang"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "metric_type": "carry"
   },
   "Farmer's Walk Trap Bar": {
     "nameRo": "Mers fermierului cu trap bar",
@@ -21732,7 +21735,8 @@
         "exercise_id": "Towel Hang"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "metric_type": "carry"
   },
   "Farmer's Walk Kettlebell": {
     "nameRo": "Mers fermierului cu kettlebell",
@@ -21852,7 +21856,8 @@
         "exercise_id": "Wrist Curl DB Seated Palms-Up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "metric_type": "time"
   },
   "Bar Hang Single-Arm": {
     "nameRo": "Atarnare la bara cu un brat",
@@ -23652,7 +23657,8 @@
         "exercise_id": "Scapular Plank"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "metric_type": "time"
   },
   "Side Plank": {
     "nameRo": "Plank lateral",
@@ -23695,7 +23701,8 @@
         "exercise_id": "Side Plank Dip"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "metric_type": "time"
   },
   "Plank with Shoulder Tap": {
     "nameRo": "Plank cu atingere umar",
@@ -23987,7 +23994,8 @@
         "exercise_id": "Pallof Press Band"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "metric_type": "time"
   },
   "Pallof Press Half-Kneeling": {
     "nameRo": "Anti-rotatie Pallof in genunchi",

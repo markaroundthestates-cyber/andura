@@ -32,6 +32,25 @@ export type Tier = 1 | 2 | 3;
  */
 export type SkillLevel = 'beginner' | 'intermediate' | 'advanced';
 
+/**
+ * Per-exercise PRESCRIPTION METRIC (Wave 2 #7, Daniel SSOT 2026-06-08). What the
+ * coach prescribes + the user logs for ONE set — distinct from `equipment_type`
+ * (how it's loaded) and `force_demand`:
+ *   - 'reps':     weight × repetitions (the default — every loaded/bodyweight
+ *                 strength movement). Absent → treated as 'reps' (safe default).
+ *   - 'time':     an isometric HOLD prescribed in seconds (Plank, Side Plank,
+ *                 Dead Hang, Pallof, Dead Bug, Wrist Roller). A load may still
+ *                 ride (a weighted plank) but the working axis is SECONDS, NOT
+ *                 reps — so it must never get an "8 × 60kg reps" prescription.
+ *   - 'distance': prescribed in meters (none in the curated 143 today; reserved
+ *                 for sled/prowler-type future entries).
+ *   - 'carry':    a loaded carry — load (kg) over time/distance (Farmer's Walk).
+ *                 Both a load AND a duration/distance axis; NEVER reps.
+ * Optional/absent → 'reps' (the consumer default), so every untagged entry +
+ * the golden master stay byte-identical.
+ */
+export type MetricType = 'reps' | 'time' | 'distance' | 'carry';
+
 export type CascadeStepType =
   | 'easier_machine'
   | 'assisted_variant'
@@ -83,6 +102,13 @@ export interface ExerciseMetadata {
    * Optional: undefined → treated as 'beginner' by the consumer (safe default).
    */
   skill_level?: SkillLevel;
+  /**
+   * Prescription metric (Wave 2 #7). Optional: absent → 'reps' (the consumer
+   * default — every loaded/bodyweight strength lift). Set ONLY on the curated
+   * non-reps CORE_AUTO entries (isometric holds → 'time', loaded carries →
+   * 'carry') so they never receive a weight × reps prescription.
+   */
+  metric_type?: MetricType;
   /** optional cascade ordered list per ADR v2 LOCK V2 §2.1 (undefined → engine fallback v1) */
   fallback_cascade?: CascadeStep[];
   /**
@@ -108,6 +134,8 @@ const FORCE_DEMANDS: ReadonlySet<string> = new Set(['low', 'medium', 'high']);
 const TIERS: ReadonlySet<number> = new Set([1, 2, 3]);
 
 const SKILL_LEVELS: ReadonlySet<string> = new Set(['beginner', 'intermediate', 'advanced']);
+
+const METRIC_TYPES: ReadonlySet<string> = new Set(['reps', 'time', 'distance', 'carry']);
 
 const CASCADE_STEP_TYPES: ReadonlySet<string> = new Set([
   'easier_machine',
@@ -171,6 +199,9 @@ export function validateExercise(name: string, entry: unknown): string[] {
   }
   if (e.status !== undefined && !EXERCISE_STATUSES.has(e.status as string)) {
     errors.push(`"${name}": invalid status "${String(e.status)}"`);
+  }
+  if (e.metric_type !== undefined && !METRIC_TYPES.has(e.metric_type as string)) {
+    errors.push(`"${name}": invalid metric_type "${String(e.metric_type)}"`);
   }
   if (e.fallback_cascade !== undefined) {
     if (!Array.isArray(e.fallback_cascade)) {
