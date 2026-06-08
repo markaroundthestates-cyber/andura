@@ -240,6 +240,49 @@ function sessionSetBudget(big11RoGroup, volumeTargets, weeklySessionsPerGroup) {
   return weekly / realFreq;
 }
 
+/**
+ * #71 COHERENT WEEKLY ALLOCATION (dp_coherent_weekly_alloc_v1) — derive a per-day
+ * group budget that makes the per-EXERCISE set count CONSISTENT day-to-day.
+ *
+ * DIAG #3: today the per-session budget (weekly/freq) is split across HOWEVER MANY
+ * exercises that day's cluster gave the group, so the SAME lift swings (Lat Pulldown
+ * 3 on Pull where back gets 4 slots, 4-5 on Upper where back gets 2 slots) — each
+ * day composes independently with no cross-day per-exercise reconciliation, and the
+ * catch-all overlap "Upper" day balloons because it concentrates the whole per-day
+ * budget onto its few slots.
+ *
+ * Fix: pin a STABLE per-exercise dose for the group, independent of how many slots a
+ * given day landed. The dose = (weekly/freq) / expectedExercisesPerSession, where
+ * expectedExercisesPerSession = round((weekly/freq) / SETS_PER_EXERCISE) — the SAME
+ * sizing computeSessionExerciseCount uses, so it agrees with the slot demand. The
+ * coherent day-budget is dose × actualExercisesThisDay, so each exercise lands at
+ * ~dose regardless of the day's slot count.
+ *
+ * DE-BALLOON-ONLY (safe direction): we return min(weekly/freq, dose × actualEx) —
+ * i.e. we only ever LOWER the day's budget, never raise it. When a day gave the
+ * group FEWER slots than expected (the catch-all overlap "Upper" balloon + the HIGH
+ * side of the same-lift swing), actualEx < expectedEx → dose×actualEx < weekly/freq,
+ * so the budget shrinks and the per-exercise sets stop ballooning. When a day gave
+ * AT-LEAST the expected slots (the well-behaved case), min() keeps the legacy
+ * weekly/freq budget → those sessions are unchanged. This kills the 3↔5 swing's high
+ * end + the balloon WITHOUT inflating any other day (which would change well-behaved
+ * sessions + the prescribed-kg downstream). Returns null when there is no usable
+ * per-session budget (caller keeps the legacy weekly/freq path).
+ *
+ * @param {number|null} perSessionBudget - sessionSetBudget(group) = weekly/freq
+ * @param {number} actualExCount - exercises of this group placed THIS session
+ * @returns {number|null} coherent per-day group budget, or null when unusable
+ */
+function coherentDayBudget(perSessionBudget, actualExCount) {
+  if (typeof perSessionBudget !== 'number' || !Number.isFinite(perSessionBudget) || perSessionBudget <= 0) {
+    return null;
+  }
+  if (!Number.isFinite(actualExCount) || actualExCount <= 0) return null;
+  const expectedEx = Math.max(1, Math.round(perSessionBudget / SETS_PER_EXERCISE));
+  const perExerciseDose = perSessionBudget / expectedEx;
+  // De-balloon only — never raise above the legacy weekly/freq budget.
+  return Math.min(perSessionBudget, perExerciseDose * actualExCount);
+}
 
 /**
  * Compound-anchored set distribution for the exercises of ONE group in a session.
@@ -700,12 +743,15 @@ export function movementKey(name, meta) {
  *   exercisePenalties?: Record<string, number>|null,
  *   fatigueSetsAdjust?: ((name: string) => number)|null,
  *   emphasisSetsBoost?: boolean,
+ *   coherentAlloc?: boolean,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  *
  * #72 (ctx.emphasisSetsBoost, dp_emphasis_specialization_v1) — an emphasized group's
- * per-exercise compound band widens so its raised weekly budget reaches the visible
- * sets. Default OFF (absent → byte-identical to today).
+ * per-exercise compound ceiling rises so its raised weekly budget reaches the visible
+ * sets. #71 (ctx.coherentAlloc, dp_coherent_weekly_alloc_v1) — each group's per-day
+ * budget is derived from a STABLE per-exercise dose so the same lift no longer swings
+ * across days. Both default OFF (absent → byte-identical to today).
  */
 export function buildSession(cluster, ctx) {
   const targets = clusterGroupsOrdered(cluster);
@@ -933,12 +979,20 @@ export function buildSession(cluster, ctx) {
     const g = groupOf(e.name);
     (byGroup[g] ||= []).push({ name: e.name, tier: metaOf(e.name).tier });
   }
-  // #72 emphasis sets-boost (default OFF → the distribution is byte-identical).
+  // #71 coherent allocation + #72 emphasis sets-boost (both default OFF → the
+  // distribution is byte-identical to today).
+  const coherentAlloc = ctx?.coherentAlloc === true;
   const emphasisSetsBoost = ctx?.emphasisSetsBoost === true;
   // Per-exercise set count, keyed by name (group distribution applied once).
   const setsByName = /** @type {Record<string, number>} */ ({});
   for (const [g, exs] of Object.entries(byGroup)) {
-    const budget = sessionSetBudget(g, ctx?.volumeTargets, ctx?.weeklySessionsPerGroup);
+    const perSessionBudget = sessionSetBudget(g, ctx?.volumeTargets, ctx?.weeklySessionsPerGroup);
+    // #71 — pin a STABLE per-exercise dose so the same lift no longer swings with
+    // however many slots this day's cluster gave the group (DIAG #3). OFF or no
+    // usable budget → the legacy weekly/freq budget (byte-identical).
+    const budget = coherentAlloc
+      ? (coherentDayBudget(perSessionBudget, exs.length) ?? perSessionBudget)
+      : perSessionBudget;
     // #72 — an emphasized group raises its compound band so the focus lift carries
     // visibly more sets (DIAG #2), but ONLY when its WEEKLY target still has room to
     // grow toward MAV (policy: "an emphasized group's weekly set target rises TOWARD

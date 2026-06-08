@@ -4,7 +4,7 @@
   "nProfiles": 8,
   "weeks": 6,
   "hashOff": "aa0da62f0e17ec8044936b4c266140d0a3972a6c8024b34f9513dce72f9459ed",
-  "hashOn": "ff37afe018f75ff9f4f0345509ff1cf1f441ad4556fd7f57c5e4996ba5138dd9",
+  "hashOn": "faa928732ccf8d63ca9193620ea28213171e583c0fa581dc3fe15f087137deaa",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
@@ -17,10 +17,10 @@
   "sessionOn": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 7.03,
-    "meanSetTotal": 12.52,
-    "meanDurationMin": 38.4,
-    "meanVolumeKg": 1695,
+    "meanExerciseCount": 7.15,
+    "meanSetTotal": 11.54,
+    "meanDurationMin": 35.4,
+    "meanVolumeKg": 1612,
     "minusRatePct": 21.9
   },
   "convergenceOff": {
@@ -30,10 +30,10 @@
     "meanFinalAbsErr": 0.581
   },
   "convergenceOn": {
-    "totalSeries": 123,
-    "convergedPct": 8.1,
+    "totalSeries": 121,
+    "convergedPct": 8.3,
     "medianSessionsToConverge": 6.5,
-    "meanFinalAbsErr": 0.578
+    "meanFinalAbsErr": 0.572
   },
   "flagsOff": {
     "oscillation": 0,
@@ -43,10 +43,11 @@
   },
   "flagsOn": {
     "oscillation": 0,
-    "stuckLow": 86,
-    "stuckHigh": 19,
-    "absurd": 36
+    "stuckLow": 83,
+    "stuckHigh": 20,
+    "absurd": 35
   },
   "craterOff": 89,
-  "craterOn": 84
+  "craterOn": 85,
+  "_rebaseline_note": "hashOn + sessionOn/convergenceOn/flagsOn/craterOn re-frozen 2026-06-08 for #71 dp_coherent_weekly_alloc_v1 + #72 dp_emphasis_specialization_v1 per-exercise sets-boost (both default OFF — hashOff unchanged byte-for-byte). ON arm now exercises both via PATH_A_FLAGS."
 }

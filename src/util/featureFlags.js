@@ -537,6 +537,22 @@ export const FLAGS = Object.freeze({
   // composition. Even ON, an all-recovered / no-history week self-no-ops to a clone.
   dp_weekly_recovery_alloc_v1: { rollout: 0, default: false },
 
+  // #71 coherent weekly volume allocation (engine-wiring 2026-06-08) (RISK MED —
+  // changes the per-EXERCISE set count, path A; never kg). Today buildSession sizes
+  // each group's per-session budget as weekly/freq, then splits it across HOWEVER
+  // MANY exercises that day's cluster gave the group — so the SAME lift swings (Lat
+  // Pulldown 3 on a Pull day where back gets 4 slots, 4-5 on an Upper day where back
+  // gets 2), and the catch-all overlap "Upper" day balloons its few slots into 5-set
+  // presses (DIAG #3 incoherent-weekly-allocation). When ON, coherentDayBudget pins a
+  // STABLE per-exercise dose = (weekly/freq) / expectedExercisesPerSession (the SAME
+  // sizing computeSessionExerciseCount uses) and hands distributeGroupSets dose ×
+  // actualExercisesThisDay, so each exercise lands at ~dose regardless of the day's
+  // slot count → consistent day-to-day, weekly total conserved. OFF → the legacy
+  // weekly/freq budget → byte-identical composition (calibration-sim hash orthogonal:
+  // path A, not the dp.js path-B kg). Flip ON is a human gate (Daniel) AFTER the sim
+  // A/B. See _DIAG_session_composition_2026-06-08.md #3 + _ENGINE_volume_policy §71.
+  dp_coherent_weekly_alloc_v1: { rollout: 0, default: false },
+
   // #32 detraining vs deload vs life-dip classifier (RISK MED-HIGH — the LIFE_DIP
   // branch SUPPRESSES a deload, so a mis-classification could let a fatigued user
   // grind; the ACWR-HIGH-forces-FATIGUE guard is the safety). When ON,

@@ -36,7 +36,8 @@ export const SEED = 0xf01ce7;       // distinct from calibration-sim SEED
 export const PATH_A_FLAGS = Object.freeze([
   'dp_acwr_readiness_v1',          // ACWR spike → readiness penalty → set/weight hold
   'dp_weekly_recovery_alloc_v1',   // fatigued week → weekly volume redistributed
-  'dp_emphasis_specialization_v1', // user emphasis pick → spec engine target + trade
+  'dp_emphasis_specialization_v1', // user emphasis pick → spec target + trade + #72 per-exercise sets-boost
+  'dp_coherent_weekly_alloc_v1',   // #71 same-lift no longer swings across days (stable per-exercise dose)
   'dp_learned_volume_v1',          // multi-week response → personal MEV/MAV landmarks
   'dp_stimulus_per_min_v1',        // tight time budget → densest-first trim
   // dp_dip_classifier_v1 + dp_auto_pivot_v1 have NO live caller in the compose

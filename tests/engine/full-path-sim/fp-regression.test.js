@@ -99,6 +99,12 @@ describe('full-path-sim CI gate', () => {
   it('§B isolation — dp_emphasis_specialization_v1 moves the stream alone', async () => {
     expect(await singleFlagMoves('dp_emphasis_specialization_v1')).toBe(true);
   }, 120000);
+  it('§B isolation — dp_coherent_weekly_alloc_v1 moves the stream alone', async () => {
+    // #71 — the v-taper emphasis users get a push/pull/upper/lower split where back
+    // is trained on two clusters with DIFFERENT slot counts (pull 4, upper 2), so the
+    // coherent per-exercise dose visibly re-levels the same lift across those days.
+    expect(await singleFlagMoves('dp_coherent_weekly_alloc_v1')).toBe(true);
+  }, 120000);
   it('§B isolation — dp_learned_volume_v1 moves the stream alone', async () => {
     expect(await singleFlagMoves('dp_learned_volume_v1')).toBe(true);
   }, 120000);

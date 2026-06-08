@@ -526,6 +526,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // capped at 5 — the DIAG #2 "emphasis doesn't change the sets" gap. Reuses the
     // SAME flag the spec-engine trade rides (one coherent emphasis switch).
     emphasisSetsBoost: emphasisSpecOn,
+    // #71 coherent weekly volume allocation (dp_coherent_weekly_alloc_v1, default
+    // OFF → byte-identical). When ON, buildSession derives each group's per-day
+    // budget from a STABLE per-exercise dose so the SAME lift no longer swings 3↔5
+    // across days as the day's slot count varies (DIAG #3 incoherent allocation),
+    // and the catch-all overlap day stops ballooning a few slots into 5-set presses.
+    coherentAlloc: isEnabled('dp_coherent_weekly_alloc_v1'),
   };
 
   const session = buildSession(cluster, sessionCtx);
