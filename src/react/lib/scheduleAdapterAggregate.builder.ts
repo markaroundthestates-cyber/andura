@@ -18,6 +18,11 @@ import { isEnabled } from '../../util/featureFlags.js';
 import { DB } from '../../db.js';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
 import { estimateBF_Deurenberg } from '../../engine/bodyComposition.js';
+import { detectSubRecoveryDrift } from '../../engine/dp/subRecoveryDrift.js';
+import { classifyPerformanceDip } from '../../engine/dp/dipClassifier.js';
+import { computeACWR } from '../../engine/muscleRecovery.js';
+import { calculateFatigueScore } from '../../engine/fatigue.js';
+import { DP } from '../../engine/dp.js';
 import {
   getCurrentWeightKg,
   readUserMaintenanceTDEE,
@@ -256,6 +261,89 @@ function goalPhaseForGoal(goal: unknown): 'BULK' | 'CUT' | 'MAINTAIN' | undefine
   }
 }
 
+// ── F6a — composite deload-trigger telemetry assembly (the PARTIAL seam) ──────
+// The deload engine reads its REACTIVE-AA trigger candidates off `meta` (deload/
+// index.js:268-272: aaMarkerDirectActive + the energy-down feed). The builder
+// previously assembled ONLY recentSessionsForEnergy (the energy candidate); the
+// drift/composite candidate + the life-dip suppression were the PARTIAL boundary
+// (registry §F6a §7). This assembles them — INERT unless a flag that reads it is
+// ON, so with both flags OFF every field below is undefined → the trigger
+// hierarchy is byte-identical to today.
+//
+//   #26 dp_subrecovery_drift_v1 → meta.aaMarkerDirectActive (early under-recovery
+//        pre-empts a deload via the AA-trigger slot the engine already reads).
+//   #32 dp_dip_classifier_v1    → meta.suppressReactiveDeload (a LIFE_DIP cause
+//        suppresses the reactive deload — lifestyle patch, not training fatigue).
+//
+// PURE on its inputs (a read of the durable `logs` + the existing detectors); no
+// DB writes. Returns only the keys whose owning flag is ON.
+function buildDeloadTriggerTelemetry(
+  logs: ReadonlyArray<{ ex?: string; w?: number; reps?: number | string; rpe?: number; ts?: number }>,
+  now: number,
+): { aaMarkerDirectActive?: boolean; suppressReactiveDeload?: boolean } {
+  const driftOn = isEnabled('dp_subrecovery_drift_v1');
+  const dipOn = isEnabled('dp_dip_classifier_v1');
+  if (!driftOn && !dipOn) return {}; // both OFF → no telemetry → byte-identical.
+
+  // Group the flat log into per-exercise newest-first slices (DP.getLogs order)
+  // for the detectors. Keyed on the EN canonical engineName (the `ex` field).
+  const byEx: Record<string, Array<{ ex: string; w?: number; reps?: number | string; rpe?: number; ts?: number }>> = {};
+  for (const l of Array.isArray(logs) ? logs : []) {
+    if (!l || typeof l.ex !== 'string' || !l.ex) continue;
+    (byEx[l.ex] ??= []).push({ ex: l.ex, w: l.w, reps: l.reps, rpe: l.rpe, ts: l.ts });
+  }
+  for (const ex of Object.keys(byEx)) {
+    (byEx[ex] ?? []).sort((a, b) => Number(b.ts ?? 0) - Number(a.ts ?? 0));
+  }
+
+  // e1RM fn only when dp_e1rm_v1 is ON (the drift detector degrades to rating-
+  // drift-only otherwise — same graceful-degrade the module documents).
+  const e1rmFn = isEnabled('dp_e1rm_v1')
+    ? (w: number, reps: number | string, rpe?: number, ex?: string): number | null =>
+        (DP as unknown as { e1RMForSet: (w: number, reps: number | string, rpe?: number, ex?: string) => number | null })
+          .e1RMForSet(w, reps, rpe, ex)
+    : null;
+
+  const drift = (driftOn || dipOn)
+    ? detectSubRecoveryDrift(byEx, now, e1rmFn as Parameters<typeof detectSubRecoveryDrift>[2])
+    : { systemic: false };
+
+  const out: { aaMarkerDirectActive?: boolean; suppressReactiveDeload?: boolean } = {};
+
+  // #32 first — classify the dip CAUSE; LIFE_DIP suppresses the reactive deload.
+  // The classifier consumes already-computed signals (gap via _returnDeload across
+  // the user's logged exercises, ACWR, the #26 drift, fatigue.js sleep/notes). The
+  // ACWR-HIGH-forces-FATIGUE guard inside it means a truly fatigued user is never
+  // suppressed. Degrades safe (acwr null → not LIFE_DIP) → today's behavior.
+  if (dipOn) {
+    // Any qualifying training GAP across the user's logged exercises → DETRAINING
+    // branch (the existing ramp owns it; the classifier only labels it).
+    let returnDeload: { multiplier: number } | null = null;
+    for (const ex of Object.keys(byEx)) {
+      const rd = DP._returnDeload(ex, now) as { multiplier: number } | null;
+      if (rd != null) { returnDeload = rd; break; }
+    }
+    const acwr = computeACWR(logs, now);
+    const fatigue = calculateFatigueScore() as { recommend?: string; sleepBad?: number };
+    const dip = classifyPerformanceDip({
+      returnDeload,
+      acwr,
+      drift: { systemic: !!drift.systemic },
+      fatigue,
+      lifestyle: { closedDaysRecent: 0, kcalShortfall: false },
+    });
+    if (dip.suppressDeload) out.suppressReactiveDeload = true;
+  }
+
+  // #26 — a systemic drift pattern feeds the AA-trigger candidate so an EARLY,
+  // mild deload can PRE-EMPT a crater. If #32 suppressed (LIFE_DIP), the engine
+  // zeroes the AA candidates anyway — but the classifier guarantees LIFE_DIP only
+  // fires when drift is NOT systemic, so the two never contradict here.
+  if (driftOn && drift.systemic) out.aaMarkerDirectActive = true;
+
+  return out;
+}
+
 /**
  * Build the userState aggregate consumed by getDailyWorkout pipeline.
  * Primary-source slice fields verified (anti-recurrence D027 §5):
@@ -395,6 +483,13 @@ export function buildUserStateForPipeline(): {
   // F1 T1 — Specialization weakness-detector inputs (lifetimeLogs + recentLogs).
   // Same persisted `logs` channel, native shape, passed through unchanged.
   const { lifetime: lifetimeLogs, recent: recentLogs } = loggedSetsForWeakness();
+  // F6a — composite deload-trigger telemetry (the PARTIAL seam). Both flags OFF →
+  // {} → meta byte-identical. #26 sets aaMarkerDirectActive (drift pre-empt), #32
+  // sets suppressReactiveDeload (LIFE_DIP suppress). Pure read of `logs`.
+  const deloadTelemetry = buildDeloadTriggerTelemetry(
+    lifetimeLogs as ReadonlyArray<{ ex?: string; w?: number; reps?: number | string; rpe?: number; ts?: number }>,
+    now,
+  );
   // Intra-week deficit recovery (D-intra-week 2026-06-04) — DONE working-set volume
   // per Big-11 EN group for the CURRENT microcycle, computed React-side from the
   // RAW sessionsHistory (each LastSessionSummary carries per-exercise `sets`). The
@@ -471,6 +566,11 @@ export function buildUserStateForPipeline(): {
       // reads it. The composite trigger (performanceDropPct/restTimeMultiplier/
       // rirMismatch) needs CDL telemetry not assembled here — DEFERRED (see report).
       recentSessionsForEnergy: recentSessions,
+      // F6a composite deload-trigger telemetry — #26 aaMarkerDirectActive (drift
+      // pre-empt) + #32 suppressReactiveDeload (LIFE_DIP suppress). Conditional
+      // spread: both flags OFF → {} → these keys are absent → the deload trigger
+      // hierarchy reads undefined → byte-identical to today.
+      ...deloadTelemetry,
       // Audit MED — emoji-ul de energie de AZI (EnergyCheck) → engine Energy
       // Adjustment (resolveEmojiState citeste meta.energyEmoji). Era nesetat →
       // engine inert pe sesiunea curenta (green→UP / yellow→NONE / red→DOWN nu

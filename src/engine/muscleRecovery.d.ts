@@ -83,3 +83,14 @@ export function mergeAerobicRecovery(
   aerobicSessions: Array<{ type?: string; ts?: number; date?: string }>,
   now?: number
 ): Record<string, RecoveryState>;
+
+// F6a #5 — acute:chronic workload ratio (also consumed by the #32 dip classifier).
+export const ACWR_HIGH: number;
+export const ACWR_LOW: number;
+export function computeACWR(
+  logs: ReadonlyArray<{ ex?: string; baseline?: boolean; w?: number; rpe?: number; ts?: number; date?: string }>,
+  now?: number
+): { acwr: number; acute: number; chronic: number } | null;
+export function acwrReadinessPenalty(
+  acwr: { acwr: number } | null
+): number;
