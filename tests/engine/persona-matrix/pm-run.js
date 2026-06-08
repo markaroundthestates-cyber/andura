@@ -162,19 +162,32 @@ function checkPersona(agg) {
       findings.push(`day${d.off} (${d.sessionType}) leads with an isolation (not compound-first)`);
     }
   }
-  // 3. emphasis present in volume — the focus group should be among the top by
-  //    weekly volume (specialization +2-6 sets reallocation).
+  // 3. emphasis present in volume — the emphasized focus REGION must clearly WIN
+  //    the weekly volume race (fresh-eyes 2026-06-08 #2: a small/lower focus that
+  //    only ranks "somewhere in the top 3 individual groups" under-delivers — the
+  //    user picked arms/chest/glutes and a coach would make THAT region lead). We
+  //    score the focus as a COMBINED region (sum its Big-11 groups — arms =
+  //    biceps+triceps, lower = quads+hams+glutes, etc.) and require that summed
+  //    region to rank TOP-1-or-2 against every OTHER single group's volume. This
+  //    is the genuine "did the focus win" assertion the audit asked for; it stays
+  //    bounded by MEV/MRV (the budget biasing clamps each group), so it cannot
+  //    starve the rest.
   const FOCUS_GROUP = {
     'v-taper': ['spate', 'umeri'], back: ['spate'], chest: ['piept'],
     shoulders: ['umeri'], arms: ['biceps', 'triceps'], lower: ['fese', 'picioare-quads', 'picioare-hamstrings'],
     upper: ['spate', 'piept', 'umeri'],
   }[persona.data.focusPreset];
   if (FOCUS_GROUP) {
-    const sorted = Object.entries(weekly).sort((a, b) => b[1] - a[1]);
-    const top3 = sorted.slice(0, Math.max(3, FOCUS_GROUP.length)).map(([g]) => g);
-    const hit = FOCUS_GROUP.some((g) => top3.includes(g));
-    if (!hit) {
-      findings.push(`focus '${persona.data.focusPreset}' not in top volume groups (top: ${top3.join(',')})`);
+    const focusVol = FOCUS_GROUP.reduce((a, g) => a + (weekly[g] || 0), 0);
+    // every NON-focus group's individual volume — the focus region must out-rank
+    // all but at most one of them (top-1 or top-2).
+    const focusSet = new Set(FOCUS_GROUP);
+    const others = Object.entries(weekly).filter(([g]) => !focusSet.has(g)).map(([, v]) => v);
+    const aboveFocus = others.filter((v) => v > focusVol).length;
+    if (aboveFocus > 1) {
+      const sorted = Object.entries(weekly).sort((a, b) => b[1] - a[1])
+        .map(([g, v]) => `${g}:${v}`).join(' ');
+      findings.push(`focus '${persona.data.focusPreset}' region vol ${focusVol} not top-2 (${aboveFocus} groups above; ${sorted})`);
     }
   }
   // 4. v-taper specials — lateral raise present + core kept LOW.
