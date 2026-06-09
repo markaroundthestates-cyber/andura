@@ -47,10 +47,11 @@ export const MAKEUP_PER_SESSION_CAP_FRACTION = 0.30;
  * @param {ReadonlyArray<boolean>} activeWeek - length-7 active flags (Monday=0)
  * @param {number} todayIdx - 0..6 (Monday=0), today's weekday index
  * @param {string} [focusPreset='balanced'] - focus preset id (split reshape)
+ * @param {boolean} [rebalance=false] - W-Split flag (dp_split_rebalance_v1)
  * @returns {{ elapsed: Record<string, number>, remaining: Record<string, number> }}
  *   per-RO-group session counts (PAST+TODAY / TODAY+FUTURE)
  */
-export function weekSessionSpreadByGroup(activeWeek, todayIdx, focusPreset = 'balanced') {
+export function weekSessionSpreadByGroup(activeWeek, todayIdx, focusPreset = 'balanced', rebalance = false) {
   /** @type {Record<string, number>} */
   const elapsed = {};
   /** @type {Record<string, number>} */
@@ -58,7 +59,7 @@ export function weekSessionSpreadByGroup(activeWeek, todayIdx, focusPreset = 'ba
   const week = Array.isArray(activeWeek) ? activeWeek : [];
   for (let day = 0; day < 7; day++) {
     if (!week[day]) continue; // rest day → trains nothing
-    const cluster = clusterForDay(week, day, focusPreset);
+    const cluster = clusterForDay(week, day, focusPreset, rebalance);
     // Per-group membership of a SINGLE training day = the cluster's weight-map keys.
     const groupsThisDay = weeklySessionsPerGroup([cluster]);
     for (const roGroup of Object.keys(groupsThisDay)) {

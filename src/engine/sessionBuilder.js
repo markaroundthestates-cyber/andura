@@ -1515,6 +1515,34 @@ export function buildSession(cluster, ctx) {
     sets: setsByName[e.name] ?? DEFAULT_SETS,
   }));
 
+  // W-Split GAP 4 — SENIOR / COLD-START per-session VOLUME CAP. A senior beginner
+  // must not get ~20+ sets in session 1 (oracle grid: 68-72yo novice). ctx.
+  // seniorSessionCap is a resolved MAX total sets for THIS session (age × experience
+  // ceiling, computed at the getDailyWorkout seam behind dp_split_rebalance_v1).
+  // When the assembled session exceeds it, trim sets proportionally from the
+  // HIGHEST-set exercises first, never below SET_FLOOR (2 = MEV — a capped session
+  // is still trained, never gutted). Absent (flag OFF / non-senior) → no-op →
+  // byte-identical. Deterministic: trims by descending sets then stable index.
+  const seniorCap = ctx?.seniorSessionCap;
+  if (typeof seniorCap === 'number' && Number.isFinite(seniorCap) && seniorCap > 0) {
+    const SET_FLOOR = 2;
+    let total = exercises.reduce((a, e) => a + (e.sets || 0), 0);
+    // Trim one set at a time from the current highest-set exercise (≥ floor) until
+    // the total fits the cap or nothing is trimmable. Bounded: each pass removes ≥1
+    // set, and the trimmable pool only shrinks → terminates.
+    let guard = exercises.length * 12;
+    while (total > seniorCap && guard-- > 0) {
+      let maxIdx = -1;
+      let maxSets = SET_FLOOR;
+      exercises.forEach((e, i) => {
+        if ((e.sets || 0) > maxSets) { maxSets = e.sets; maxIdx = i; }
+      });
+      if (maxIdx < 0) break; // every exercise already at the floor
+      exercises[maxIdx] = { ...exercises[maxIdx], sets: exercises[maxIdx].sets - 1 };
+      total -= 1;
+    }
+  }
+
   // BUG #6 ordering — primary lifts lead, isolation/accessory follow, so a small-
   // muscle isolation never lands ahead of a heavy compound (e.g. a biceps curl
   // before the 2nd back pull, pre-fatiguing grip — the round-robin fill otherwise

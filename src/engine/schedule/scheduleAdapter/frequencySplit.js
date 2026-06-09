@@ -24,6 +24,165 @@ const FREQUENCY_SPLITS = Object.freeze({
   7: Object.freeze(['push', 'pull', 'legs', 'upper', 'lower', 'full', 'full']),
 });
 
+// ══ W-Split rebalance (oracle grid GAP 1 + GAP 4, 2026-06-09) ════════════════
+// FLAG-GATED (dp_split_rebalance_v1). When OFF the legacy templates +
+// reshapeSplitForFocus run UNCHANGED (byte-identical). When ON, the split-picker
+// gains four week-level fixes the per-exercise brain cannot reach (the 5th — the
+// senior per-session cap + maintenance floor — lives in sessionBuilder /
+// volumeAdaptation). All tie-breaks are positional (no Math.random / Date.now) →
+// deterministic.
+
+// Full-body templates for minimal frequency: each session trains ALL major
+// regions, so a once/twice-weekly user is never handed an upper/lower (or
+// push/pull) split that zeroes legs or leaves back < chest. 1 day = one full
+// body; 2 days = full-body A/B (identical clusters — buildSession varies the
+// exercise pick by seed, so A/B are not literal clones).
+const MINIMAL_FREQ_FULLBODY = Object.freeze({
+  1: Object.freeze(['full']),
+  2: Object.freeze(['full', 'full']),
+});
+
+// Clusters that train chest (push side) vs back (pull side). upper/full train
+// BOTH, so they are region-neutral for the back≥chest day-count floor — only
+// push (chest-only) and pull (back-only) tilt the balance.
+const PUSH_REGION_CLUSTERS = Object.freeze(['push']);
+const PULL_REGION_CLUSTERS = Object.freeze(['pull']);
+
+/** Day-count of clusters in `set` within `split`. */
+function countClusters(split, set) {
+  let n = 0;
+  for (const c of split) if (set.includes(c)) n += 1;
+  return n;
+}
+
+/**
+ * Focus → desired day-mix DIRECTION. A focus must bias WHICH clusters land on the
+ * week's days, not just per-exercise sets. Returns the cluster the focus leans
+ * TOWARD and the antagonist it leans AWAY from, so the rebalancer can convert a
+ * surplus antagonist day into a focus-region day. `null` → no day-mix lean
+ * (balanced / arms — arms wants push+pull both, handled separately).
+ */
+function focusDayMixLean(preset) {
+  const emph = preset.emphasize;
+  const wantsBack = emph.includes('spate');
+  const wantsChest = emph.includes('piept');
+  const wantsShoulders = emph.includes('umeri');
+  const wantsArms = emph.includes('biceps') || emph.includes('triceps');
+  const wantsLower =
+    emph.includes('fese') ||
+    emph.includes('picioare-quads') ||
+    emph.includes('picioare-hamstrings');
+  // v-taper / back / upper (back is emphasized, chest is not the lead) → PULL-heavy.
+  // (upper emphasizes piept too, but its defining ask is width/back ≥ chest — the
+  // antagonist floor below still guarantees back ≥ chest.)
+  if (wantsBack && !wantsChest) return { toward: 'pull', away: 'push' };
+  // chest → PUSH-heavy.
+  if (wantsChest && !wantsBack) return { toward: 'push', away: 'pull' };
+  // shoulders (umeri lives in push) with nothing pulled → mild PUSH lean.
+  if (wantsShoulders && !wantsBack && !wantsChest && !wantsArms) {
+    return { toward: 'push', away: 'pull' };
+  }
+  // lower → leg-heavy (handled by the existing FOCUS_LOWER_EMPH_SPLITS path; no
+  // push/pull lean here).
+  if (wantsLower) return null;
+  // arms → balanced push+pull (don't over-bloat one side); no lean.
+  return null;
+}
+
+/**
+ * Apply the focus day-mix lean to a split: convert ONE `away`-region day into a
+ * `toward`-region day, but only when the split has a surplus of the away region
+ * (>1, so the away region is never abandoned). Pure; first matching slot only.
+ */
+function applyDayMixLean(split, lean) {
+  if (!lean) return split;
+  const awaySet = lean.away === 'push' ? PUSH_REGION_CLUSTERS : PULL_REGION_CLUSTERS;
+  const awayCount = countClusters(split, awaySet);
+  const towardCount = countClusters(split, lean.toward === 'push' ? PUSH_REGION_CLUSTERS : PULL_REGION_CLUSTERS);
+  // Only lean when the away side currently leads AND has a day to spare.
+  if (awayCount <= towardCount || awayCount < 2) return split;
+  const out = [...split];
+  for (let i = 0; i < out.length; i++) {
+    if (awaySet.includes(out[i])) { out[i] = lean.toward; break; }
+  }
+  return out;
+}
+
+/**
+ * HARD FLOOR — the focus region's weekly day-count ≥ its antagonist's. For a
+ * back-emphasis focus (v-taper / back / upper) this enforces back-exposure ≥
+ * chest-exposure (the V means the back LEADS, never trails chest); for a chest
+ * focus the mirror. Rebalances by swapping ONE antagonist (push/pull) day for a
+ * focus-region day until the floor holds OR no swappable antagonist day remains
+ * (last-option safety: never produce an empty/degenerate split). Pure.
+ */
+function enforceAntagonistFloor(split, lean) {
+  if (!lean) return split;
+  const focusSet = lean.toward === 'push' ? PUSH_REGION_CLUSTERS : PULL_REGION_CLUSTERS;
+  const antagSet = lean.away === 'push' ? PUSH_REGION_CLUSTERS : PULL_REGION_CLUSTERS;
+  const out = [...split];
+  // Swap antagonist→focus days one at a time while the antagonist still out-counts
+  // the focus region. Bounded by split length (can't loop forever).
+  for (let guard = 0; guard < out.length; guard++) {
+    const focusN = countClusters(out, focusSet);
+    const antagN = countClusters(out, antagSet);
+    if (focusN >= antagN) break; // floor satisfied
+    // Find an antagonist day to convert; keep ≥1 antagonist day (the antagonist is
+    // MAINTAINED, never abandoned) only if converting would not zero a region the
+    // floor needs — but the floor requires focus ≥ antagonist, so converting down
+    // to parity is correct. Stop if no antagonist day left to convert.
+    let swapped = false;
+    for (let i = 0; i < out.length; i++) {
+      if (antagSet.includes(out[i])) { out[i] = focusSet[0]; swapped = true; break; }
+    }
+    if (!swapped) break;
+  }
+  return out;
+}
+
+/**
+ * W-Split rebalance (flag-gated). Minimal-freq full-body + focus day-mix lean +
+ * antagonist floor, layered ON TOP of the existing focus reshape. Pure.
+ *
+ * @param {number} n - active training days (already clamped to [1,7])
+ * @param {string[]} base - the legacy FREQUENCY_SPLITS template (fresh copy)
+ * @param {{emphasize: ReadonlyArray<string>, deEmphasize: ReadonlyArray<string>}} preset
+ * @returns {string[]} rebalanced split
+ */
+function rebalanceSplit(n, base, preset) {
+  // (1) Minimal frequency → FULL-BODY (never an upper/lower that zeroes a region).
+  if (MINIMAL_FREQ_FULLBODY[n]) return [...MINIMAL_FREQ_FULLBODY[n]];
+  // Start from the existing focus reshape (lower de-emph / emph templates), which
+  // already gives v-taper its push/pull/legs shape — then layer the day-mix lean +
+  // floor so the focus region provably leads.
+  let split = reshapeSplitForFocus([...base], preset);
+  const lean = focusDayMixLean(preset);
+  // (3) FOCUS drives the day-type MIX.
+  split = applyDayMixLean(split, lean);
+  // (4) HARD FLOOR — focus region day-count ≥ antagonist.
+  split = enforceAntagonistFloor(split, lean);
+  // (2) push:pull DAY-COUNT balance for the BALANCED (no-lean) case: a balanced
+  // multi-day split must not skew push≠pull. The legacy templates are already
+  // balanced (5d = 1 push : 1 pull; 6/7 add full/upper), so this is a no-op guard
+  // that only fires if a template ever drifts — converts the surplus side's first
+  // day toward parity. Skipped when a focus lean intentionally tilts the week.
+  if (!lean) {
+    const pushN = countClusters(split, PUSH_REGION_CLUSTERS);
+    const pullN = countClusters(split, PULL_REGION_CLUSTERS);
+    if (Math.abs(pushN - pullN) > 1) {
+      const fromSet = pushN > pullN ? PUSH_REGION_CLUSTERS : PULL_REGION_CLUSTERS;
+      const toCluster = pushN > pullN ? 'pull' : 'push';
+      const next = [...split];
+      for (let i = 0; i < next.length; i++) {
+        if (fromSet.includes(next[i])) { next[i] = toCluster; break; }
+      }
+      split = next;
+    }
+  }
+  // Last-option safety: never return empty/degenerate.
+  return split.length > 0 ? split : [...base];
+}
+
 // ── Focus-aware split reshaping (D-focus 2026-06-02) ─────────────────────
 // A focus preset that DE-EMPHASIZES the lower body should also reshape the WEEK:
 // remove ~1 lower/legs cluster and reallocate that day to the focus region
@@ -156,14 +315,21 @@ function reshapeSplitForFocus(split, preset) {
  * work (reshapeSplitForFocus). `balanced`/unknown → the templates UNCHANGED
  * (byte-identical to pre-feature).
  *
+ * `rebalance` (W-Split, dp_split_rebalance_v1) gates the week-level rebalance:
+ * minimal-freq full-body + focus day-mix lean + the back≥chest antagonist floor.
+ * Default false → ZERO change (the legacy reshape path runs unchanged).
+ *
  * @param {number} n - active training days that week
  * @param {string} [focusPreset='balanced'] - focus preset id
+ * @param {boolean} [rebalance=false] - W-Split flag (dp_split_rebalance_v1)
  * @returns {string[]} ordered Big-6 cluster ids
  */
-export function frequencyToSplit(n, focusPreset = 'balanced') {
+export function frequencyToSplit(n, focusPreset = 'balanced', rebalance = false) {
   const clamped = Math.min(7, Math.max(1, Number.isFinite(n) ? Math.round(n) : 1));
   const base = [...(FREQUENCY_SPLITS[clamped] || FREQUENCY_SPLITS[1])];
-  return reshapeSplitForFocus(base, resolveFocusPreset(focusPreset));
+  const preset = resolveFocusPreset(focusPreset);
+  if (rebalance) return rebalanceSplit(clamped, base, preset);
+  return reshapeSplitForFocus(base, preset);
 }
 
 // Cluster id → uppercase session-type title tag (the OUTPUT field consumers
@@ -253,13 +419,14 @@ export function activeWeekFromScheduleStore() {
  * @param {ReadonlyArray<boolean>} activeWeek - length-7 active flags (Monday=0)
  * @param {number} dayIdx - 0..6
  * @param {string} [focusPreset='balanced'] - focus preset id
+ * @param {boolean} [rebalance=false] - W-Split flag (dp_split_rebalance_v1)
  * @returns {string} cluster id
  */
-export function clusterForDay(activeWeek, dayIdx, focusPreset = 'balanced') {
+export function clusterForDay(activeWeek, dayIdx, focusPreset = 'balanced', rebalance = false) {
   const activeIdxs = [];
   for (let i = 0; i < 7; i++) if (activeWeek[i]) activeIdxs.push(i);
   const n = activeIdxs.length;
-  const split = frequencyToSplit(n > 0 ? n : 1, focusPreset);
+  const split = frequencyToSplit(n > 0 ? n : 1, focusPreset, rebalance);
   const pos = activeIdxs.indexOf(dayIdx);
   // dayIdx active → its ordinal position; otherwise slot by active-days-before-it.
   const position = pos >= 0

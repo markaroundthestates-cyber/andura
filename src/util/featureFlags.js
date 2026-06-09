@@ -974,6 +974,23 @@ export const FLAGS = Object.freeze({
   // per-exercise engineName|sets|reps|kg), so it NEVER changes the plan. Default ON
   // (cheap, side-effect-free); OFF → no field attached → byte-identical output.
   dp_decision_trace_v1: { rollout: 1, default: true },
+
+  // W-Split (oracle grid GAP 1 + GAP 4, 2026-06-09) — WEEK-LEVEL split + safety
+  // wiring, all behind THIS one flag. Five coupled fixes that the per-exercise
+  // brain cannot reach: (1) freq ≤2 → FULL-BODY templates (never an upper/lower
+  // split that zeroes a region — fixes the once-weekly user + the 72yo 2-day
+  // upper/lower that left back<chest); (2) push:pull DAY-COUNT balance on
+  // multi-day splits; (3) FOCUS drives the day-type MIX (v-taper/back/upper →
+  // PULL-heavy week, lower → leg-heavy); (4) HARD FLOOR — a focus region's weekly
+  // day-count ≥ its antagonist (v-taper: back-exposure ≥ chest-exposure), the
+  // split rebalanced until it holds; (5) senior/cold-start PER-SESSION volume cap
+  // (age×experience) + a per-major-muscle weekly MAINTENANCE FLOOR so no major
+  // muscle collapses to ~0. Determinism: all tie-breaks reuse the existing seeded
+  // keys (no Math.random/Date.now). OFF (rollout 0, default false) → every code
+  // path early-returns to the pre-feature shape → BYTE-IDENTICAL (the full-path-sim
+  // hash + golden gate hold; this flag is NOT in the fp ON cohort). Flip ON is a
+  // human gate (Daniel) AFTER the persona-matrix A/B review.
+  dp_split_rebalance_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */

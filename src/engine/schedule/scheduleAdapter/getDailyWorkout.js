@@ -41,6 +41,7 @@ import {
 } from './frequencySplit.js';
 import { pickAlternativeCluster } from './alternativeCluster.js';
 import { weeklySessionsPerGroup } from './weeklySessions.js';
+import { resolveExperienceId } from '../../periodization/volumeLandmarks.js';
 import { flattenSessionsToRecoveryLogs } from './recoveryLogs.js';
 import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias } from './focus.js';
 import {
@@ -48,6 +49,8 @@ import {
   applyWeaknessAmplification,
   applyEmphasisDeEmphasis,
   applyBeginnerVolumeCap,
+  applyMaintenanceFloor,
+  seniorSessionVolumeCap,
   applyRecoveryToVolumeBudget,
   redistributeRecoveredVolumeToFreshSessionGroups,
   allocateWeeklyVolumeByRecovery,
@@ -194,11 +197,15 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // SPLIT; emphasis-only presets need an in-session lever). balanced → empty set →
   // byte-identical to pre-feature.
   const emphSet = emphasizedGroups(focusPreset);
+  // W-Split (dp_split_rebalance_v1) — gate the week-level split rebalance
+  // (minimal-freq full-body + focus day-mix lean + back≥chest antagonist floor).
+  // OFF → frequencyToSplit/clusterForDay run their legacy reshape → byte-identical.
+  const splitRebalance = isEnabled('dp_split_rebalance_v1');
   const activeWeek =
     activeWeekFromOverride(override) ??
     activeWeekFromScheduleStore() ??
     activeWeekForFrequency(userState?.user?.frequency);
-  const scheduledCluster = clusterForDay(activeWeek, dayIdx, focusPreset);
+  const scheduledCluster = clusterForDay(activeWeek, dayIdx, focusPreset, splitRebalance);
   // "Different group" override — Andura picks the most-recovered ALTERNATIVE
   // cluster (≠ today's scheduled one) from the recovery state already derivable
   // from the user's logged sessions. Recovery flatten + state are pure + cheap;
@@ -215,7 +222,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   const cluster = wantDifferentMuscle
     ? pickAlternativeCluster(scheduledCluster, overrideRecoveryState)
     : scheduledCluster;
-  const split = frequencyToSplit(activeWeek.filter(Boolean).length || 1, focusPreset);
+  const split = frequencyToSplit(activeWeek.filter(Boolean).length || 1, focusPreset, splitRebalance);
   // DE-EMPHASIZED divisor fix (D-focus-divisor 2026-06-06): the per-session set
   // budget = weeklyBudget / weeklySessionsPerGroup[group]. A v-taper collapses the
   // lower body from 2 leg days → 1, dropping the leg divisor 2→1, so the (already
@@ -230,7 +237,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   const sessionsPerGroup = weeklySessionsPerGroup(split);
   if (deEmphSet.size > 0) {
     const balancedSessionsPerGroup = weeklySessionsPerGroup(
-      frequencyToSplit(activeWeek.filter(Boolean).length || 1, 'balanced'),
+      frequencyToSplit(activeWeek.filter(Boolean).length || 1, 'balanced', splitRebalance),
     );
     for (const roGroup of deEmphSet) {
       const balancedFreq = balancedSessionsPerGroup[roGroup];
@@ -399,9 +406,17 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // can't hand a novice advanced-peak volume (Stefan back 26 > the beginner band).
   // Applied AFTER all amplification (focus/weakness/imbalance) so none of those can
   // lift a beginner past MAV; the recovery cut + MEV/MRV clamp still run below.
-  const balancedTargets = isEnabled('dp_learned_volume_v1')
+  const balancedCappedTargets = isEnabled('dp_learned_volume_v1')
     ? applyBeginnerVolumeCap(balancedTargetsRaw, userState?.profileTier)
     : balancedTargetsRaw;
+  // W-Split GAP 4 — per-major-muscle weekly MAINTENANCE FLOOR (dp_split_rebalance_v1,
+  // default OFF → byte-identical). Raises any MAJOR muscle that fell below its MEV
+  // (a de-emphasis collapse, the 72yo's back) back UP to MEV so no big mover ~0s.
+  // Applied AFTER the beginner cap so the floor sits inside [MEV, MAV/MRV]; small
+  // groups (biceps/triceps/calves) are untouched (a focus trade may relax them).
+  const balancedTargets = splitRebalance
+    ? applyMaintenanceFloor(balancedCappedTargets)
+    : balancedCappedTargets;
 
   // ── INTRA-WEEK DEFICIT RECOVERY (D-intra-week 2026-06-04) ────────────────
   // What was already done EARLIER this microcycle (skipped / early-ended sessions)
@@ -433,7 +448,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
           ? weekContext.volumeDone
           : {},
         split,
-        weekSessionSpreadByGroup(activeWeek, dayIdx, focusPreset),
+        weekSessionSpreadByGroup(activeWeek, dayIdx, focusPreset, splitRebalance),
       )
     : { added: {}, behind: {} };
   const madeUpTargets = applyMakeupToVolumeBudget(balancedTargets, intraWeekMakeup.added);
@@ -533,6 +548,14 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     equipment: { available: availableCoarse },
     weakGroups,
     profileTier: userState?.profileTier ?? null,
+    // W-Split GAP 4 — SENIOR / COLD-START per-session VOLUME CAP (dp_split_rebalance_v1,
+    // default OFF → null → buildSession leaves the session untouched, byte-identical).
+    // When ON, a senior (age ≥60) and/or beginner gets a MAX total working-sets ceiling
+    // (age × experience) so session 1 is not ~20+ sets; buildSession trims down to it,
+    // never below the per-exercise MEV floor. A trained adult → null → no cap.
+    seniorSessionCap: splitRebalance
+      ? seniorSessionVolumeCap(userState?.user?.age, resolveExperienceId(userState?.user))
+      : null,
     prNames: Array.isArray(userState?.prNames) ? userState.prNames : [],
     seed,
     // Periodization volume signal (sets/week per Big-11 group, varies by

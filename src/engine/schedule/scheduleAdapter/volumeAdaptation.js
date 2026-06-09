@@ -115,6 +115,81 @@ export function applyBeginnerVolumeCap(volumeMapEN, profileTier) {
   return out;
 }
 
+// ══ W-Split GAP 4 — SENIOR / COLD-START safety (oracle grid 2026-06-09) ══════
+// FLAG-GATED (dp_split_rebalance_v1). Two pure pieces the per-exercise brain
+// can't reach: a PER-SESSION volume ceiling (so a 68-72yo beginner is not handed
+// ~20+ sets in session 1) and a per-major-muscle weekly MAINTENANCE FLOOR (so no
+// major muscle collapses to ~0 — the 72yo's back, a v-taper's relaxed back).
+// Mirrors the existing age/experience shape (resolveExperienceId / the beginner
+// cap) — extends, does not duplicate.
+
+// Per-session set ceilings. A novice/senior tolerates far less per-session volume
+// than a trained adult. NUMBERS: a sane novice full-body session is ~12-16 working
+// sets (MEV/low-MAV across the body); a senior beginner sits at the low end. These
+// CAPS engage ONLY for a senior (age ≥ 60) and/or a beginner — a trained adult gets
+// no cap (the existing MEV/MRV + recovery clamps already govern them).
+const SENIOR_AGE = 60;
+const ELDERLY_AGE = 70;
+
+/**
+ * The MAX total working sets for ONE session, by age + experience. Returns null
+ * when no cap applies (a non-senior non-beginner — the common case → buildSession
+ * leaves the session untouched, byte-identical). The cap is a CEILING the
+ * session-builder trims down to (never below the per-exercise MEV floor). Pure.
+ *
+ * @param {number|null|undefined} age - chronological onboarding age
+ * @param {'incepator'|'intermediar'|'avansat'|null|undefined} experienceId
+ * @returns {number|null} max session sets, or null (no cap)
+ */
+export function seniorSessionVolumeCap(age, experienceId) {
+  const a = typeof age === 'number' && Number.isFinite(age) ? age : null;
+  const beginner = experienceId === 'incepator';
+  const elderly = a !== null && a >= ELDERLY_AGE;
+  const senior = a !== null && a >= SENIOR_AGE;
+  // Pick the tightest applicable ceiling. A 70+ beginner is the most fragile.
+  if (elderly && beginner) return 14;
+  if (elderly) return 16;
+  if (senior && beginner) return 15;
+  if (senior) return 18;
+  if (beginner) return 18; // a young novice — cap the high-frequency bloat too
+  return null; // trained adult → no per-session cap
+}
+
+// Major muscles that must never collapse to ~0 in a week (the big movers — a
+// program that zeroes one of these is broken regardless of focus). Small/isolation
+// groups (biceps, triceps, calves, forearms, abs) are allowed to fall to MEV/0 by
+// a focus trade. RO keys (the budget is EN-keyed; bridged per entry).
+const MAJOR_MUSCLES_RO = Object.freeze(['piept', 'spate', 'umeri', 'picioare-quads', 'picioare-hamstrings', 'fese']);
+
+/**
+ * Per-major-muscle weekly MAINTENANCE FLOOR — raise any MAJOR muscle whose weekly
+ * budget fell below its Israetel MEV back UP to MEV, so a de-emphasis / collapse
+ * never drops a big mover to ~0 (a de-emphasized group is MAINTAINED at MEV, never
+ * abandoned — the same invariant applyFocusBias's de-emphasize branch states).
+ * Only RAISES (a floor); never lowers a group above MEV. Small groups untouched.
+ * Returns a NEW map. Pure. (Applied AFTER all biasing; the upstream MRV clamps
+ * still bound the top.)
+ *
+ * @param {Object<string, number>|null|undefined} volumeMapEN - Big-11 EN budget
+ * @returns {Object<string, number>|null} floored EN-keyed budget (null passes through)
+ */
+export function applyMaintenanceFloor(volumeMapEN) {
+  if (!volumeMapEN || typeof volumeMapEN !== 'object') return volumeMapEN ?? null;
+  const out = { ...volumeMapEN };
+  for (const roGroup of MAJOR_MUSCLES_RO) {
+    const enKey = BIG11_RO_TO_EN_MAP[roGroup] ?? roGroup;
+    const mev = ISRAETEL_BASELINES[enKey]?.MEV;
+    if (typeof mev !== 'number' || !Number.isFinite(mev) || mev <= 0) continue;
+    const current = out[enKey];
+    // Raise to MEV when the group exists in the budget but fell below the floor
+    // (incl. 0 / absent → treat as needing the maintenance dose).
+    if (typeof current !== 'number' || !Number.isFinite(current) || current < mev) {
+      out[enKey] = mev;
+    }
+  }
+  return out;
+}
+
 /**
  * EMPHASIS de-emphasis — the REST-DOWN half of the specialization engine's
  * zero-sum trade (F emphasis-specialization). The engine already computes
