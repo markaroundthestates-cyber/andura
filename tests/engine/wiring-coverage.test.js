@@ -60,7 +60,18 @@ const REGISTRY_REL = 'util/featureFlags.js'; // the definition site — excluded
 // OBIECTIV zone (banner + Tier-3 confirm + on-accept setGoal). Per the stale-
 // allow-list guard it leaves the list → the allow-list is now EMPTY (every scoped
 // dp_*_v1 engine flag has a live consumer; nothing is deliberately dark).
-const KNOWN_DARK_ALLOWLIST = Object.freeze({});
+//
+// ADDED 2026-06-09 (Wave 1.3 focus-policy FOUNDATION step): dp_focus_policy_v1 gates
+// the per-focus pattern-policy resolver that will READ src/engine/focusPolicy.js
+// FOCUS_RULES (session caps / per-session requirements / cross-day weekly minimums /
+// frequency caps). THIS step ships ONLY the frozen DATA table + the OFF flag — the
+// constraint RESOLVER (the live consumer) is a LATER Wave 1.3 step, deliberately
+// deferred so the data contract + tag-availability are landed + reviewed first.
+// When the resolver adds its isEnabled('dp_focus_policy_v1') gate, the stale-allow-
+// list guard below forces this entry's removal.
+const KNOWN_DARK_ALLOWLIST = Object.freeze({
+  dp_focus_policy_v1: 'Wave 1.3 — FOCUS_RULES data table shipped; resolver (live consumer) is a deferred later step.',
+});
 
 // Only the per-exercise / per-session ENGINE flags are in scope — the dimension-
 // rollout / orchestrator-strangler flags (aa_via_cluster, *_via_orchestrator,

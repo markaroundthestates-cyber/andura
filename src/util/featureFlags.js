@@ -953,6 +953,15 @@ export const FLAGS = Object.freeze({
   // Wave 2 (the ~31 missing S/A movements + the adductor MACHINE group) is a separate
   // library add — NOT this flag.
   dp_daniel_tier_select_v1: { rollout: 1, default: true },
+
+  // Wave 1.3 focus-policy (DATA ONLY — INERT until its resolver lands). Per-focus
+  // PATTERN policy (session caps, per-session requirements, cross-day weekly
+  // minimums, frequency caps) lives as the frozen FOCUS_RULES table in
+  // src/engine/focusPolicy.js. This flag GATES the future resolver that will read
+  // that table at the compose seam — it is NOT YET wired to sessionBuilder/compose
+  // (no consumer imports FOCUS_RULES this step). OFF → the table is never read →
+  // byte-identical to today. The resolver (a LATER Wave 1.3 step) flips this on.
+  dp_focus_policy_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */
