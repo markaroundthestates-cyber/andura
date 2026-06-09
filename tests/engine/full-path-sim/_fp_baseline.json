@@ -3,51 +3,51 @@
   "seed": 15736039,
   "nProfiles": 8,
   "weeks": 6,
-  "hashOff": "3d61fd180ca463c0bd85e88442fc07c949bc9c38972c36bf1125476cb014b395",
-  "hashOn": "9fd60f0759789ce7ab5384bddb9f62247f77d16ce576ea6c4d4e56392d6c922a",
+  "hashOff": "23ecf4985265df39e08406db6579a6f2060059fb5e0cfa4ec67c28bdef4a5227",
+  "hashOn": "72afc02a6ecd08545f7f6cb1d8094ef4a00108bdbf5aea078a69eebe4b8426f7",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 6.86,
-    "meanSetTotal": 12.79,
-    "meanDurationMin": 47.5,
-    "meanVolumeKg": 1750,
+    "meanExerciseCount": 7.45,
+    "meanSetTotal": 15.32,
+    "meanDurationMin": 48.5,
+    "meanVolumeKg": 1726,
     "minusRatePct": 21.9
   },
   "sessionOn": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 6.98,
-    "meanSetTotal": 11.35,
-    "meanDurationMin": 43.6,
-    "meanVolumeKg": 1602,
+    "meanExerciseCount": 7.55,
+    "meanSetTotal": 13.95,
+    "meanDurationMin": 45.7,
+    "meanVolumeKg": 1522,
     "minusRatePct": 21.9
   },
   "convergenceOff": {
-    "totalSeries": 119,
-    "convergedPct": 7.6,
-    "medianSessionsToConverge": 4,
-    "meanFinalAbsErr": 0.579
+    "totalSeries": 118,
+    "convergedPct": 13.6,
+    "medianSessionsToConverge": 5.5,
+    "meanFinalAbsErr": 0.539
   },
   "convergenceOn": {
-    "totalSeries": 116,
-    "convergedPct": 11.2,
-    "medianSessionsToConverge": 9,
-    "meanFinalAbsErr": 0.568
+    "totalSeries": 121,
+    "convergedPct": 11.6,
+    "medianSessionsToConverge": 4,
+    "meanFinalAbsErr": 0.563
   },
   "flagsOff": {
     "oscillation": 0,
-    "stuckLow": 86,
-    "stuckHigh": 18,
-    "absurd": 31
+    "stuckLow": 87,
+    "stuckHigh": 14,
+    "absurd": 34
   },
   "flagsOn": {
     "oscillation": 0,
-    "stuckLow": 76,
-    "stuckHigh": 21,
-    "absurd": 29
+    "stuckLow": 89,
+    "stuckHigh": 17,
+    "absurd": 35
   },
-  "craterOff": 81,
-  "craterOn": 74,
-  "_rebaseline_note": "Re-frozen 2026-06-09 for the TIMER-REALISM change (NO flag — pure UX honesty): computeEstimatedDurationMin now adds a ~75s per-exercise transition/setup constant (walking to the machine, loading plates) that the work+rest sum omitted. The composed-plan time-budget trim (trimSessionToTimeBudget) measures against this more-honest duration, so it trims slightly more (meanExerciseCount 7.08->6.86 OFF), shifting the prescription stream → hashOff/hashOn re-frozen. Determinism is INTACT (the section-A fresh-OFF-reproduces-itself test passed → no RNG/clock leak; only the deterministic duration moved). Section-C crater/convergence stayed in-band (craterOff 83->81, craterOn 75->74). The two NEW flags in this batch (dp_behavioral_tier_v1 + dp_tier_compound_floor_v1) are default-OFF and do NOT affect this hash. Prior re-freeze (2026-06-09): prioritizeWeakGroups tier-blind ordering fix — compound-first holds GLOBALLY, emphasized group leads within its tier band; pure REORDER of the same exercises+sets."
+  "craterOff": 68,
+  "craterOn": 57,
+  "_rebaseline_note": "Re-frozen 2026-06-09 for the dp_daniel_tier_select_v1 default-ON flip (founder-gated, live 2026-06-09). Exercise selection now follows Daniel's S/A/B/C/D tier list (tier-S/A movements lead the auto-pool, D-band hard-excluded), so the composed prescription stream legitimately shifted in BOTH the OFF and ON arms (the flag is a registry default-ON, NOT in the harness FLIPPED_FLAGS override set, so it is ON in every arm — the new all-default world). Determinism is INTACT (the section-A fresh-OFF-reproduces-itself test passes → no RNG/clock leak; only the deterministic tier-ranked selection moved). The two §B per-flag probes (dp_fatigue_curve_v1 / dp_effective_reps_v1) re-pinned their fixture exercise from the now-out-ranked DB Shoulder Press [tier B] to the selected Cable Row [tier S] so the -1/trim stays VISIBLE above the band floor — the flag wiring is unchanged (verified: the crasher/grinder still drops a set OFF->ON on a composed exercise). Section-C convergence stayed in-band (ON not materially worse than OFF)."
 }

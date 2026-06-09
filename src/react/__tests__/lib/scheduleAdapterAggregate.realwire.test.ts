@@ -554,8 +554,12 @@ describe('scheduleAdapterAggregate — FIX #1 readiness-gated planned weight', (
 // getDailyWorkout boundary. Now getDailyWorkout returns restTimeRange and the
 // planner maps it per exercise: compounds (COMPOUND_EX) rest at MAX, isolation
 // at MIN. MONDAY = the freq-'4' user's UPPER day: Lat Pulldown (compound,
-// bailib_stack) + Bayesian Curl (isolation, matrix_cable) both survive the
-// equipment filter (upper cluster trains spate + biceps).
+// COMPOUND_EX) + DB Preacher Curl (isolation) both survive the equipment filter
+// (upper cluster trains spate + biceps). (Isolation pin updated from Bayesian Curl
+// to DB Preacher Curl 2026-06-09: the dp_daniel_tier_select_v1 default-ON flip
+// changed WHICH movements the selection composes — Lat Pulldown stays the picked
+// compound, DB Preacher Curl is the picked biceps isolation. The INVARIANT is
+// unchanged and STILL HOLDS: compound = range MAX, isolation = range MIN.)
 describe('scheduleAdapterAggregate — FIX #4 engine-sourced rest time', () => {
   function findByEnSlug(
     exercises: ReadonlyArray<{ id: string; restSec: number }>,
@@ -578,7 +582,7 @@ describe('scheduleAdapterAggregate — FIX #4 engine-sourced rest time', () => {
 
     const out = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const compound = findByEnSlug(out!.exercises, 'Lat Pulldown'); // COMPOUND_EX
-    const isolation = findByEnSlug(out!.exercises, 'Bayesian Curl'); // isolation
+    const isolation = findByEnSlug(out!.exercises, 'DB Preacher Curl'); // isolation
     expect(compound).toBeDefined();
     expect(isolation).toBeDefined();
     // Wired end-to-end: compound takes the engine range MAX, isolation the MIN.

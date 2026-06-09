@@ -946,10 +946,13 @@ export const FLAGS = Object.freeze({
   // would empty the muscle (last-option safety guard). OFF → poolForGroup is byte-
   // identical to today (the legacy rank() ordering; no tier-rank read, no D removal) →
   // the calibration-sim/persona-matrix/full-path-sim determinism hashes hold flag-OFF.
-  // Threaded via ctx.danielTierSelect (resolved at the getDailyWorkout seam). Flip ON
-  // is a human gate (Daniel) AFTER review. Wave 2 (the ~31 missing S/A movements +
-  // the adductor MACHINE group) is a separate library add — NOT this flag.
-  dp_daniel_tier_select_v1: { rollout: 0, default: false },
+  // Threaded via ctx.danielTierSelect (resolved at the getDailyWorkout seam). LIVE as
+  // of 2026-06-09 — the founder-gated flip ON (default-ON, full rollout) after the
+  // persona-matrix + calibration-sim validated it ON; the determinism sims were
+  // re-baselined for the ON-default world (selection now follows Daniel's tier list).
+  // Wave 2 (the ~31 missing S/A movements + the adductor MACHINE group) is a separate
+  // library add — NOT this flag.
+  dp_daniel_tier_select_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

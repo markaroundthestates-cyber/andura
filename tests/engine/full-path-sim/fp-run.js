@@ -276,31 +276,37 @@ function _seedOnboarding(extra = {}) {
  */
 export async function fatigueCurveFullPath() {
   resetWorld();
-  _seedOnboarding();
+  // avansat so the back compound the new tier-ON selection composes (Cable Row, a
+  // tier-S back movement) lands ABOVE its band floor (4 sets) → the -1 is VISIBLE,
+  // not clamp-absorbed. (Pre 2026-06-09 the crasher was DB Shoulder Press at the
+  // compound ceiling; the dp_daniel_tier_select_v1 default-ON flip out-ranks DB
+  // Shoulder Press [tier B] with tier-S movements, so it no longer composes — the
+  // probe repoints to a SELECTED exercise. The flag wiring is unchanged: the deload
+  // set-distribution math is selection-independent.)
+  _seedOnboarding({ experience: 'avansat' });
   const now = Date.now();
-  // Two learned curves on exercises a freq-4 push/upper day surfaces ABOVE their
-  // band floor (so the ±1 is VISIBLE, not absorbed by the clamp):
-  //   - DB Shoulder Press = CRASHER (reps crash by set 2: 10→4 → dropIndex 2 → -1).
-  //     It composes at the compound ceiling (5) → -1 makes it 4.
-  //   - Pec Deck / Cable Fly = MAINTAINER (reps held flat: 10→10 → never drops →
-  //     dropIndex = sets+1 → +1). It composes at the isolation floor (2) → +1 → 3.
-  // 6 fixed-load sessions > FATIGUE_MIN_SESSIONS so the curve is trusted.
-  const CRASHER = 'DB Shoulder Press';
-  const MAINTAINER = 'Pec Deck / Cable Fly';
+  // One learned CRASHER curve on a back compound the freq-4 upper day surfaces
+  // ABOVE its band floor (so the -1 is VISIBLE, not clamp-absorbed):
+  //   - Cable Row = CRASHER (reps crash by set 2: 10→4 → dropIndex 2 → -1).
+  //     At the avansat back-group budget it composes at 4 sets → -1 makes it 3.
+  // 6 fixed-load sessions > FATIGUE_MIN_SESSIONS so the curve is trusted. (The
+  // pre-flip probe also seeded a Pec Deck MAINTAINER for the +1 direction, but
+  // under the tier-ON selection that exercise is out-ranked / not composed and its
+  // extra back-day budget pushed Cable Row to the ceiling 5 where -1 clamp-absorbs;
+  // the +1 maintainer direction stays covered by the fatigueCurve.test.js unit
+  // seam. This probe proves the CRASHER -1 reaches the composed stream.)
+  const CRASHER = 'Cable Row';
   const logs = [];
   for (let d = 42; d >= 2; d -= 7) {
     const ts = now - d * MS_DAY;
     [10, 4, 4, 4].forEach((reps, i) => {
       logs.push({ ex: CRASHER, w: 20, kg: 20, reps: String(reps), set: i + 1, ts: ts + i * 1000, session: ts, date: _isod(ts), rpe: 7.5 });
     });
-    [10, 10, 10, 10].forEach((reps, i) => {
-      logs.push({ ex: MAINTAINER, w: 30, kg: 30, reps: String(reps), set: i + 1, ts: ts + 10000 + i * 1000, session: ts, date: _isod(ts), rpe: 7.5 });
-    });
   }
   world.DB.set('logs', logs);
 
-  // Compose on a deterministic UPPER/push day (the crasher DB Shoulder Press +
-  // maintainer Pec Deck only surface on the freq-4 upper cluster). The default
+  // Compose on a deterministic UPPER/push day (the crasher Cable Row + maintainer
+  // Pec Deck only surface on the freq-4 upper cluster). The default
   // freq-4 balanced split is upper/lower/upper/lower (Mon/Tue/Thu/Fri), so a
   // Monday (getDay()===1) surfaces the push exercises. Using `new Date()` made
   // this gate real-clock FLAKY — on a weekday whose cluster is a LEG day the
@@ -336,8 +342,6 @@ export async function fatigueCurveFullPath() {
     curveKeys: Object.keys(learned).length,
     crasherOff: off[CRASHER] ?? null,
     crasherOn: on[CRASHER] ?? null,
-    maintainerOff: off[MAINTAINER] ?? null,
-    maintainerOn: on[MAINTAINER] ?? null,
   };
 }
 
@@ -346,24 +350,25 @@ export async function fatigueCurveFullPath() {
  * `greu`, at/near failure) delivers near-full stimulus per set, so effectiveRepsSets
  * Trim drops ONE raw set on that exercise through distributeGroupSets (trim-only,
  * clamped ≥1). OFF → no trim → byte-identical. Composed on a deterministic UPPER day
- * (Monday) where DB Shoulder Press surfaces ABOVE its floor so the -1 is VISIBLE.
+ * (Monday) where the grinder surfaces ABOVE its floor so the -1 is VISIBLE.
  * @returns {{setsOff:number,setsOn:number,moved:boolean,grinderOff:number|null,grinderOn:number|null}}
  */
 export async function effectiveRepsDoseFullPath() {
   resetWorld();
   // The trim is TRIM-ONLY + clamp-bounded, so it only bites where the composed set
-  // count has band HEADROOM (above its floor, below its ceiling). At the intermediate
-  // budget compounds pin at the floor (3) or round their share above the ceiling (5),
-  // so a -1 is clamp-absorbed (correct, conservative). A BEGINNER's lower volume budget
-  // lands DB Shoulder Press at exactly the ceiling 5 with its share rounding to 5 (not
-  // 6+), so the trim -1 → 4 is VISIBLE — the clean clamp-free proof the wiring is live.
+  // count has band HEADROOM (above its floor, below its ceiling). With the
+  // dp_daniel_tier_select_v1 default-ON flip (2026-06-09) DB Shoulder Press [tier B]
+  // is out-ranked by tier-S movements and no longer composes, so this probe repoints
+  // to a SELECTED grinder: Cable Row (tier-S back compound). At the avansat volume it
+  // lands ABOVE its floor (4 sets), so the trim -1 → 3 is VISIBLE — the clean clamp-
+  // free proof the wiring is live. (The trim math is selection-independent.)
   const now = Date.now();
   world.useOnboardingStore.setState({
-    data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'incepator',
+    data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'avansat',
       weight: 80, height: 178, focusPreset: 'balanced', focusPresetPickedAt: null },
     completed: true, completedAt: now - 200 * MS_DAY,
   });
-  const GRINDER = 'DB Shoulder Press';
+  const GRINDER = 'Cable Row';
   const logs = [];
   // 8 recent working sets all rated `greu` (RIR 0 → full-window stimulus) at a fixed
   // load → mean efficiency 1.0 ≥ DOSE_TRIM_EFFICIENCY → trim -1.
