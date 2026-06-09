@@ -16,8 +16,9 @@ import { DB } from '../../../src/db.js';
 import { evaluateGoalRealism } from '../../../src/engine/goalRealism.js';
 import { estimateBfDeurenbergCapped } from '../../../src/engine/bodyComposition.js';
 import {
-  PERSONAS, ANDURA_ON_FLAGS, GROUP_LABEL, PAIN_REGION, COHORT_START, MS_DAY,
+  PERSONAS, ANDURA_ON_FLAGS, STRENGTH_PERSONA, GROUP_LABEL, PAIN_REGION, COHORT_START, MS_DAY,
 } from './pm-personas.js';
+import { DP } from '../../../src/engine/dp.js';
 
 // Active-day offsets per frequency — DERIVED from the engine's REAL active-week
 // bit-pattern (activeWeekForFrequency in frequencySplit.js), NOT hardcoded
@@ -132,7 +133,15 @@ async function runPersona(persona, { flags }) {
       const isCompound = COMPOUND_RE.test(name);
       if (isCompound && firstCompoundIdx === -1) firstCompoundIdx = i;
       if (!isCompound && firstNonCompoundIdx === -1) firstNonCompoundIdx = i;
-      rows.push({ sets: e.sets, name, g, isCompound });
+      // M1 — carry the prescribed reps + the engine's REAL compound signal (tier 1)
+      // + e1RM-eligibility so the strength arm can assert forta unclamps reps on
+      // ALL tier-1 compounds, not just the 9 legacy COMPOUND_EX names.
+      rows.push({
+        sets: e.sets, name, g, isCompound,
+        reps: Number(e.targetReps),
+        tier: meta.tier,
+        e1rmEligible: DP._e1rmEligible(name),
+      });
     });
     // compound-first = the lead exercise (idx 0) is a compound (or no compound on
     // an isolation-only accessory day, which is allowed for a focus/arm day).
@@ -326,6 +335,26 @@ export async function runMatrix() {
     flags: ['dp_emphasis_specialization_v1', 'dp_coherent_weekly_alloc_v1', 'dp_learned_volume_v1'],
   });
   return { results, danielOff, danielCompCore };
+}
+
+// M1 strength arm — run the forta STRENGTH_PERSONA with dp_strength_goal_v1
+// FORCED ON (added to the ANDURA_ON set for this arm only). Returns the aggregate
+// + the list of tier-1, e1RM-eligible compound prescriptions whose reps must land
+// in the strength band. NOT part of the 26-persona headline.
+export async function runStrengthArm() {
+  const agg = await runPersona(STRENGTH_PERSONA, {
+    flags: [...ANDURA_ON_FLAGS, 'dp_strength_goal_v1'],
+  });
+  const strengthCompounds = [];
+  for (const d of agg.days) {
+    if (d.rest || !d.rows) continue;
+    for (const r of d.rows) {
+      if (r.tier === 1 && r.e1rmEligible && Number.isFinite(r.reps) && r.reps > 0) {
+        strengthCompounds.push({ off: d.off, name: r.name, reps: r.reps });
+      }
+    }
+  }
+  return { agg, strengthCompounds };
 }
 
 export { runPersona, checkPersona, ACTIVE_DAYS, GROUP_LABEL };

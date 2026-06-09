@@ -16,7 +16,8 @@
 // items), NOT test failures, so the gate documents reality without fudging.
 
 import { describe, it, expect } from 'vitest';
-import { runMatrix, GROUP_LABEL } from './pm-run.js';
+import { runMatrix, runStrengthArm, GROUP_LABEL } from './pm-run.js';
+import { STRENGTH_PERSONA } from './pm-personas.js';
 
 const PAD = (s, n) => String(s).padEnd(n);
 
@@ -92,4 +93,20 @@ describe('PERSONA-MATRIX ACCEPTANCE GATE (#70, Andura-ON)', () => {
     const equipViol = mihai.check.findings.filter((f) => /equipment/i.test(f));
     expect(equipViol, `Mihai #82 equipment violations:\n${equipViol.join('\n')}`).toEqual([]);
   }, 240000);
+
+  // M1 (audit 2026-06-09) — closes the CI coverage gap that let M1 slip. A forta
+  // user with dp_strength_goal_v1 ON must get a STRENGTH rep scheme (3-6) on EVERY
+  // tier-1 compound, not just the 9 legacy COMPOUND_EX names. Pre-fix, squat/bench/
+  // OHP/lunge (tier-1 but absent from COMPOUND_EX) got 8-rep hypertrophy schemes.
+  it('M1: forta (dp_strength_goal_v1 ON) gets 3-6 reps on ALL tier-1 compounds', async () => {
+    const [lo, hi] = STRENGTH_PERSONA.expectStrengthReps;
+    const { strengthCompounds } = await runStrengthArm();
+
+    // sanity — the strength persona actually trained tier-1 e1RM compounds.
+    expect(strengthCompounds.length, 'strength persona produced no tier-1 compound').toBeGreaterThan(0);
+
+    const offBand = strengthCompounds.filter((c) => c.reps < lo || c.reps > hi);
+    const detail = strengthCompounds.map((c) => `day${c.off} ${c.name}=${c.reps}r`).join(' | ');
+    expect(offBand, `forta tier-1 compounds OUT of the ${lo}-${hi} strength band:\n${detail}`).toEqual([]);
+  }, 120000);
 });

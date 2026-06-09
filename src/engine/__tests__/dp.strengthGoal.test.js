@@ -31,6 +31,13 @@ const STRENGTH_OFF = () =>
 
 const BENCH = 'Flat Barbell Bench'; // COMPOUND_EX, barbell e1RM-eligible, NO REP_RANGES entry → default [8,12]
 const CABLE = 'Lat Pulldown';       // COMPOUND_EX cable, REP_RANGES [8,12]
+// M1 (audit 2026-06-09): tier-1 compounds NOT in the 9-name legacy COMPOUND_EX
+// list. Pre-fix the rep-unclamp gated on COMPOUND_EX.includes(ex) → these primary
+// strength lifts got HYPERTROPHY reps (8) for a forta user. Post-fix the gate is
+// getExerciseMetadata(ex)?.tier === 1 → they unclamp to 3-6 like any compound.
+const SQUAT = 'Smith Machine Squat'; // tier 1, machine e1RM-eligible, NOT in COMPOUND_EX
+const OHP = 'OHP';                   // tier 1, barbell e1RM-eligible, NOT in COMPOUND_EX
+const LUNGE = 'Barbell Lunge';       // tier 1, barbell e1RM-eligible, NOT in COMPOUND_EX
 
 /** Seed a real, stable working history so DP runs its history branch + has a mu. */
 function seedHistory(ex, w, reps, rpe) {
@@ -130,6 +137,42 @@ describe('W-Goal — flag ON unclamps forta reps on a barbell compound', () => {
     const out = DP._applyIntensityCorridor(20, CABLE, 5, FORTA_CORRIDOR);
     expect(out).toBe(20);
   });
+});
+
+describe('W-Goal M1 — tier-1 compounds OUTSIDE the legacy COMPOUND_EX list now unclamp', () => {
+  // The defect: forta unclamped reps only on the 9 legacy names. A forta user got
+  // 3-rep RDL/Lat Pulldown but 8-rep Squat/Bench/OHP/Lunge. The fix gates on the
+  // engine's REAL compound signal (tier === 1), so ALL tier-1 compounds unclamp.
+  for (const [label, ex] of [['Smith Squat', SQUAT], ['OHP', OHP], ['Barbell Lunge', LUNGE]]) {
+    it(`forta on ${label} (tier-1, NOT in COMPOUND_EX) drops reps into 3-6`, () => {
+      STRENGTH_ON();
+      seedHistory(ex, 60, 8, 8);
+      const rec = DP.getSmartRecommendation(ex, null, null, undefined, null, [], {
+        repRangeModifier: FORTA,
+      });
+      expect(rec.repsTarget).toBeGreaterThanOrEqual(3);
+      expect(rec.repsTarget).toBeLessThanOrEqual(6);
+    });
+
+    it(`hipertrofie on ${label} stays 8-12 (only forta unclamps)`, () => {
+      STRENGTH_ON();
+      seedHistory(ex, 60, 8, 8);
+      const rec = DP.getSmartRecommendation(ex, null, null, undefined, null, [], {
+        repRangeModifier: HYPER,
+      });
+      expect(rec.repsTarget).toBeGreaterThanOrEqual(8);
+      expect(rec.repsTarget).toBeLessThanOrEqual(12);
+    });
+
+    it(`OFF: forta on ${label} stays floored at 8 (byte-identical legacy)`, () => {
+      STRENGTH_OFF();
+      seedHistory(ex, 60, 8, 8);
+      const rec = DP.getSmartRecommendation(ex, null, null, undefined, null, [], {
+        repRangeModifier: FORTA,
+      });
+      expect(rec.repsTarget).toBe(8);
+    });
+  }
 });
 
 describe('W-Goal — strength diverges from hypertrophy under the flag', () => {

@@ -2579,7 +2579,7 @@ export const DP = {
       const strengthUnclamp =
         isEnabled('dp_strength_goal_v1')
         && goalLo < rMinSafe
-        && COMPOUND_EX.includes(ex)
+        && getExerciseMetadata(ex)?.tier === 1
         && this._e1rmEligible(ex);
       const lo = strengthUnclamp ? goalLo : Math.max(rMinSafe, goalLo);
       const hi = Math.min(rMaxSafe, Math.max(repMod[0], repMod[1]));

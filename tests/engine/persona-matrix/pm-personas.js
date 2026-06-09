@@ -134,4 +134,18 @@ export const PERSONAS = [
     { age: 26, sex: 'f', goal: 'mentenanta', frequency: '3', experience: 'incepator', weight: 63, height: 166, focusPreset: 'balanced' }),
 ];
 
+// M1 (audit 2026-06-09) — a pure-STRENGTH (forta) persona run with
+// dp_strength_goal_v1 forced ON (the gate's 26-persona ANDURA_ON set does NOT
+// include it; the flag flips the rep scheme, not the composition). The legacy
+// rep-unclamp gated on the 9-name COMPOUND_EX list, so a forta user got 3-rep
+// RDL/pulldown but 8-rep squat/bench/OHP — a hypertrophy scheme on the primary
+// strength lifts. This persona drives the gate's strength arm: EVERY tier-1,
+// e1RM-eligible compound in its week must prescribe reps in the 3-6 band.
+// Kept OUT of the main PERSONAS loop so the 26-persona headline is unchanged.
+export const STRENGTH_PERSONA = p(
+  26, 'Razvan', '30 M 90kg pure-STRENGTH balanced 4d advanced (dp_strength_goal_v1 ON)',
+  { age: 30, sex: 'm', goal: 'forta', frequency: '4', experience: 'avansat', weight: 90, height: 182, focusPreset: 'balanced' },
+  { expectStrengthReps: [3, 6], note: 'M1 — forta reps must unclamp on ALL tier-1 compounds' },
+);
+
 export { MS_DAY };
