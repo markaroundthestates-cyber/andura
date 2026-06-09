@@ -1,4 +1,6 @@
 // ══ DP ENGINE — Double Progression ══════════════════════════
+// MORATORIUM: no new logic here — extract to dp/<submodule>; size-guarded by
+// src/engine/__tests__/dp.size-guard.test.js (ratchet ceiling blocks growth).
 import { DB } from '../db.js';
 import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../constants.js';
 import { roundToEquipmentWeight, getPrevWeight, getNextWeight } from '../config/weights.js';
