@@ -12,6 +12,7 @@ import type { LastSessionSummary } from '../stores/workoutStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { useAerobicStore } from '../stores/aerobicStore';
 import { MS_PER_DAY } from '../../constants.js';
+import { now as clockNow } from '../../engine/clock.js';
 import { getComputedReadinessScore, getTodayReadiness } from '../../engine/readiness.js';
 import { doneVolumeByGroupThisWeek } from '../../engine/schedule/intraWeekVolume.js';
 import { getWeekStartIso, primaryEmphasizedGroup } from '../../engine/schedule/scheduleAdapter.js';
@@ -363,7 +364,11 @@ export function buildUserStateForPipeline(): {
   // `ts`/`date` (mergeAerobicRecovery) — the persisted shape passes straight
   // through. Empty → engine path byte-identical to resistance-only.
   const aerobicSessions = useAerobicStore.getState().sessions ?? [];
-  const now = Date.now();
+  // Route through the injectable engine clock (clock.js). Production: byte-
+  // identical to Date.now() (no mock set). A simulated-date journey/test pins
+  // the clock so weeksElapsed advances with the simulated arc (periodization
+  // wave rotates W4/W8/W12) instead of freezing on the real wall clock.
+  const now = clockNow();
   // Live injury safety signal from the Pain CDL channel (DB('pain-cdl')) — the
   // honest persisted source PainButton writes. Feeds BOTH pipeline injury gates
   // that were previously inert (meta:{}):
