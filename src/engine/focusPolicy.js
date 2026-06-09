@@ -364,3 +364,405 @@ export const FOCUS_RULES = Object.freeze({
 
 /** Valid focus ids (the keys of FOCUS_RULES — mirrors FOCUS_PRESETS). */
 export const FOCUS_RULE_IDS = Object.freeze(Object.keys(FOCUS_RULES));
+
+// ══ TAG DERIVER (Wave 1.3-B) ════════════════════════════════════════════════
+// The library has NO sub-muscle tag (1.3-A investigation). The ONLY grounded
+// signals are muscle_target_primary (coarse), the movementKey() token, and the
+// exercise name. deriveExerciseTags maps ONE exercise → the Set of POLICY tags
+// FOCUS_RULES actually references, using exactly those signals (mirrors how 1.3-A
+// classified the CORE_AUTO pool). A tag 1.3-A marked MISSING (front_delt /
+// front_raise — no CORE_AUTO front-raise variant) is simply NEVER emitted → any
+// requirement/cap keyed on it is a graceful no-op, NOT an error.
+//
+// The token comes from movementKey(name, meta) → '<group>::<token>'. The resolver
+// passes its own movementKey in (threaded, so focusPolicy stays decoupled from
+// sessionBuilder — no import cycle).
+
+/** muscle_target_primary values that count as "lower body" for heavy compounds. */
+const LOWER_GROUPS = new Set(['picioare-quads', 'picioare-hamstrings', 'fese']);
+/** movement tokens that are a HEAVY lower compound (tier-1 only). */
+const HEAVY_LOWER_TOKENS = new Set(['squat', 'deadlift', 'leg-press', 'hip-thrust']);
+
+/**
+ * Extract the bare movement token from a movementKey ('umeri::lateral-raise' →
+ * 'lateral-raise'; 'piept::name:foo' → 'name:foo'; 'piept::incline-press' →
+ * 'incline-press'). Returns '' when no token segment.
+ * @param {string} mk
+ * @returns {string}
+ */
+function tokenOf(mk) {
+  const i = mk.indexOf('::');
+  return i >= 0 ? mk.slice(i + 2) : '';
+}
+
+/**
+ * Derive the Set of POLICY tags for ONE exercise, from ONLY muscle_target_primary
+ * + the movementKey token + the name. Grounded against the 143 CORE_AUTO entries
+ * (Wave 1.3-A). Covers exactly the tags FOCUS_RULES references; MISSING tags
+ * (front_delt/front_raise) are never emitted (graceful no-op downstream).
+ *
+ * @param {string} name - library/engine exercise name
+ * @param {{muscle_target_primary?: string, tier?: number}} meta
+ * @param {(name: string, meta: object) => string} movementKey - threaded tokenizer
+ * @returns {Set<string>} policy tags
+ */
+export function deriveExerciseTags(name, meta, movementKey) {
+  const tags = new Set();
+  const group = meta?.muscle_target_primary ?? '';
+  const lower = String(name).toLowerCase();
+  const mk = typeof movementKey === 'function' ? movementKey(name, meta) : `${group}::`;
+  const token = tokenOf(mk);
+  const tier = meta?.tier;
+
+  // ── Shoulders (umeri) ──
+  if (group === 'umeri') {
+    if (token === 'lateral-raise') {
+      tags.add('side_delt');
+      tags.add('lateral_raise');
+    }
+    // Rear delt = the rear-delt / face-pull tokens, OR a 'fly' on umeri (reverse
+    // pec deck keys umeri::fly). Cable/DB Rear Delt Fly → rear-delt; Face Pull →
+    // face-pull.
+    if (token === 'rear-delt' || token === 'face-pull' || token === 'fly') {
+      tags.add('rear_delt');
+    }
+    // Overhead press on shoulders = the vertical (overhead) press. The press
+    // token on umeri is always an overhead press (Shoulder/Landmine Press); an
+    // incline/decline-press key is a chest angle, not an umeri pattern.
+    if (token === 'press') {
+      tags.add('vertical_press');
+    }
+    // front_delt / front_raise — NO CORE_AUTO front-raise variant (1.3-A MISSING).
+    // Intentionally NOT emitted → shoulders' front_delt minimum is a graceful no-op.
+  }
+
+  // ── Chest (piept) ──
+  if (group === 'piept') {
+    // Chest press = a press (flat/incline/decline) or a dip (Dip keys piept::dip).
+    if (token === 'press' || token === 'incline-press' || token === 'decline-press' || token === 'dip') {
+      tags.add('chest_press');
+    }
+    if (token === 'fly') tags.add('flye');
+  }
+
+  // ── Back (spate) ──
+  if (group === 'spate') {
+    if (token === 'pulldown' || token === 'pull-up' || token === 'chin-up') {
+      tags.add('vertical_pull');
+    }
+    if (token === 'row') tags.add('horizontal_row');
+    // Lat isolation = Machine Pullover (spate::pullover) OR Straight-Arm Lat
+    // Pulldown (keys spate::pulldown since 'pulldown' matches first → name-match).
+    if (token === 'pullover' || /straight[-\s]?arm/.test(lower)) {
+      tags.add('lat_isolation');
+      tags.add('pullover');
+      tags.add('straight_arm_pulldown');
+    }
+  }
+
+  // ── Triceps ──
+  if (group === 'triceps') {
+    tags.add('direct_triceps');
+    // Overhead (long-head) triceps = name contains 'overhead' (Cable/DB Overhead
+    // Triceps Extension). The token is 'extension'/'press' so name-match is the
+    // grounded signal.
+    if (/overhead/.test(lower)) tags.add('overhead_triceps');
+  }
+
+  // ── Biceps ──
+  if (group === 'biceps') {
+    tags.add('direct_biceps');
+    // Stretched-position curl = preacher OR incline (EZ-bar/DB Preacher Curl,
+    // Incline DB Curl) — the long-head-stretch curls.
+    if (/preacher/.test(lower) || /incline/.test(lower)) {
+      tags.add('stretch_curl');
+      tags.add('preacher');
+    }
+  }
+
+  // ── Heavy lower compound (across the three lower groups, tier-1 only) ──
+  if (LOWER_GROUPS.has(group) && tier === 1 && HEAVY_LOWER_TOKENS.has(token)) {
+    tags.add('heavy_lower_compound');
+  }
+
+  return tags;
+}
+
+// ══ THE RESOLVER (Wave 1.3-B) ═══════════════════════════════════════════════
+// applyFocusPolicy is the LOCAL (per-session) constraint resolver. It reads the
+// focus's sessionCaps + sessionRequirements from FOCUS_RULES and adjusts the
+// already-selected `chosen` list. It is FLAG-GATED at the call site
+// (dp_focus_policy_v1) — flag OFF → never called → output byte-identical.
+//
+// PRECEDENCE (Daniel-locked, highest first):
+//   safety/equipment/refusal   — enforced UPSTREAM (poolForGroup HARD excludes);
+//                                NEVER touched/overridden here. The pool the
+//                                resolver injects from has already passed them.
+//   > recovery                 — applied UPSTREAM (M1 fatigued-drop); NEVER undone.
+//   > movement coverage        — never strand a movement pattern empty (a prune is
+//                                refused if it removes the LAST exercise carrying a
+//                                required tag / movement).
+//   > weekly focus targets     — 1.3-C cross-day ledger: a HOOK (ctx.weeklyLedger)
+//                                is read if present but NOT enforced here.
+//   > sessionRequirements      — inject a required slot if available & missing.
+//   > sessionCaps              — prune the lowest-value excess over a cap.
+//   > score bias / tier / hist — the existing ranking (lowest precedence; the
+//                                tiebreak for WHICH excess to prune / WHICH
+//                                candidate to inject).
+//
+// GRACEFUL RELAXATION (when over-constrained / requirements conflict):
+//   (1) caps + score bias relax FIRST (a cap never removes a logged PR lift, never
+//       empties a required movement);
+//   (2) then LOW/MEDIUM-priority relaxable requirements drop (priority 'low' before
+//       'medium'); a HIGH/non-relaxable requirement is still only met if a real
+//       candidate exists — it NEVER invents/forces an excluded exercise;
+//   (3) NEVER relax safety/equipment/refusal (upstream) and NEVER inject an
+//       unavailable exercise. PREFER returning FEWER good exercises over padding
+//       with bad/excluded ones.
+//
+// DETERMINISM: all tie-breaks use the threaded seeded score (ctx.scoreOf) + the
+// existing `chosen` order — NO Math.random / Date.now. Same seed → same output.
+
+/** Resolve which sessionRequirements apply, as {tag, count, priority, relaxable}. */
+function requirementsFor(rule, cluster) {
+  const reqs = rule.sessionRequirements || {};
+  const out = [];
+  const push = (tag, count, priority, relaxable) =>
+    out.push({ tag, count, priority, relaxable });
+
+  // Numeric minimums (always per-session).
+  if (typeof reqs.minSideDeltSlots === 'number')
+    push('side_delt', reqs.minSideDeltSlots, 'high', true);
+  if (typeof reqs.minRearDeltSlots === 'number')
+    push('rear_delt', reqs.minRearDeltSlots, 'high', true);
+  if (typeof reqs.minVerticalPullSlots === 'number')
+    push('vertical_pull', reqs.minVerticalPullSlots, 'high', true);
+  if (typeof reqs.minHorizontalRowSlots === 'number')
+    push('horizontal_row', reqs.minHorizontalRowSlots, 'high', true);
+
+  // Conditional booleans — gated on the day's cluster (the "IfChestDay" etc.). The
+  // resolver owns the cluster→condition mapping; an unmet condition → not applicable.
+  const isPush = cluster === 'push' || cluster === 'upper';
+  const isPull = cluster === 'pull' || cluster === 'upper';
+  const isChest = cluster === 'chest' || cluster === 'push' || cluster === 'upper';
+  const isBack = cluster === 'back' || cluster === 'pull' || cluster === 'upper';
+  const isArms = cluster === 'arms';
+
+  if (reqs.requireFlyeIfChestDay && isChest)
+    push('flye', 1, 'medium', true);
+  if (reqs.requireLatIsolationIfBackDay && isBack)
+    push('lat_isolation', 1, 'medium', true); // thin pool — relaxable
+  if (reqs.requireOverheadTricepsIfArmsOrPush && (isArms || isPush))
+    push('overhead_triceps', 1, 'medium', true);
+  if (reqs.requireStretchCurlIfArmsOrPull && (isArms || isPull))
+    push('stretch_curl', 1, 'medium', true);
+
+  return out;
+}
+
+/** Map a sessionCaps key → the predicate that detects an offending exercise. */
+function capMatchers() {
+  // Each returns true when an exercise's tagset/movement matches the cap's pattern.
+  return {
+    maxVerticalPress: (tags) => tags.has('vertical_press'),
+    maxChestPressPatterns: (tags) => tags.has('chest_press'),
+    maxTotalPressPatterns: (tags) => tags.has('vertical_press') || tags.has('chest_press'),
+    maxVerticalPulls: (tags) => tags.has('vertical_pull'),
+    maxHorizontalRows: (tags) => tags.has('horizontal_row'),
+    maxHeavyLowerCompounds: (tags) => tags.has('heavy_lower_compound'),
+    maxDirectBicepsExercises: (tags) => tags.has('direct_biceps'),
+    maxDirectTricepsExercises: (tags) => tags.has('direct_triceps'),
+    maxDirectArmExercises: (tags) => tags.has('direct_biceps') || tags.has('direct_triceps'),
+  };
+}
+
+/**
+ * Apply the per-focus LOCAL constraint policy to an already-selected session.
+ *
+ * @param {Array<{name: string, sets: number}>} chosen - the selected exercises (in order)
+ * @param {Object} ctx - resolver context (threaded from the call site)
+ * @param {string} ctx.focusId - FOCUS_RULES key (e.g. 'v-taper')
+ * @param {number} [ctx.daysPerWeek] - training days/week (for the 1.3-C hook only)
+ * @param {string} [ctx.cluster] - the day's cluster (push/pull/legs/upper/lower/...)
+ * @param {Array<{name: string, meta: object}>} [ctx.pool] - remaining available candidates
+ *        (already past ALL upstream HARD excludes — injuries/refusal/equipment/D-band)
+ * @param {Set<string>} [ctx.prNames] - logged-PR names (NEVER pruned — continuity)
+ * @param {(name: string, meta: object) => string} ctx.movementKey - tokenizer
+ * @param {(name: string) => object} ctx.getMeta - metadata lookup
+ * @param {(name: string) => number} [ctx.scoreOf] - selection score (higher = keep);
+ *        the deterministic tiebreak for prune/inject. Defaults to 0 (order-only).
+ * @param {number} [ctx.sessionSizeCap] - per-session slot ceiling (default chosen.length)
+ * @param {Object} [ctx.weeklyLedger] - 1.3-C cross-day ledger HOOK (read, not enforced)
+ * @returns {Array<{name: string, sets: number}>} the adjusted session
+ */
+export function applyFocusPolicy(chosen, ctx) {
+  if (!Array.isArray(chosen) || chosen.length === 0) return chosen;
+  const rule = FOCUS_RULES[ctx?.focusId];
+  if (!rule) return chosen; // unknown / balanced-with-no-policy → no-op
+  const movementKey = ctx?.movementKey;
+  const getMeta = ctx?.getMeta;
+  if (typeof movementKey !== 'function' || typeof getMeta !== 'function') return chosen;
+  const scoreOf = typeof ctx?.scoreOf === 'function' ? ctx.scoreOf : () => 0;
+  const prNames = ctx?.prNames instanceof Set ? ctx.prNames : new Set();
+  const cluster = ctx?.cluster ?? '';
+
+  // Work on a mutable copy of the selected list, enriched with derived tags. Order
+  // is the selection order = the priority order (earlier = higher value).
+  /** @type {Array<{name: string, sets: number, tags: Set<string>, idx: number}>} */
+  let session = chosen.map((e, idx) => ({
+    name: e.name,
+    sets: e.sets,
+    tags: deriveExerciseTags(e.name, getMeta(e.name), movementKey),
+    idx,
+  }));
+
+  const sessionSizeCap = typeof ctx?.sessionSizeCap === 'number' ? ctx.sessionSizeCap : chosen.length;
+
+  // Count helpers over the current session.
+  const tagCount = (tag) => session.reduce((n, e) => n + (e.tags.has(tag) ? 1 : 0), 0);
+  // Movement key of an exercise (the dedup unit). MOVEMENT COVERAGE here means
+  // REQUIRED coverage: the precedence rule "don't strand a movement pattern that
+  // required coverage needs" is enforced via isRequirementCarrier (the sole carrier
+  // of a still-needed required tag is never pruned/displaced). A non-required
+  // accessory that happens to be the only holder of its key is NOT protected — a
+  // cap's job is to thin a pattern, and an inject may displace a low-value accessory.
+  const mkOf = (e) => movementKey(e.name, getMeta(e.name));
+
+  // ── 1.3-C HOOK (weekly focus targets) — read-only, NOT enforced here. A future
+  // cross-day ledger plugs in via ctx.weeklyLedger; this resolver stays LOCAL. ──
+  // (intentionally no enforcement this step — see precedence block above)
+
+  // ── sessionRequirements: INJECT a missing required slot when a candidate exists ──
+  // Sort requirements so HIGH (least relaxable) is satisfied first; MEDIUM next;
+  // LOW last. Within a priority, a stable order (declaration order) — deterministic.
+  const PRIORITY_RANK = { high: 0, medium: 1, low: 2 };
+  const reqs = requirementsFor(rule, cluster).sort(
+    (a, b) => (PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority]),
+  );
+
+  // The pool of injection candidates (already past every upstream HARD exclude),
+  // not already in the session, each enriched with derived tags + a score. Ordered
+  // best-first (score desc, then stable by name for determinism).
+  const inSession = new Set(session.map((e) => e.name));
+  const inMovement = new Set(session.map((e) => mkOf(e)));
+  const candidates = (Array.isArray(ctx?.pool) ? ctx.pool : [])
+    .filter((c) => c && c.name && !inSession.has(c.name))
+    .map((c) => ({
+      name: c.name,
+      meta: c.meta ?? getMeta(c.name),
+      tags: deriveExerciseTags(c.name, c.meta ?? getMeta(c.name), movementKey),
+      score: scoreOf(c.name),
+    }))
+    .sort((a, b) => (b.score - a.score) || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+
+  for (const req of reqs) {
+    let have = tagCount(req.tag);
+    if (have >= req.count) continue;
+    // Find the best-ranked candidate that carries the tag AND does not duplicate a
+    // movement already present (avoid two of the same movement key).
+    while (have < req.count) {
+      const pick = candidates.find(
+        (c) => c.tags.has(req.tag) && !inSession.has(c.name) && !inMovement.has(mkOf({ name: c.name, meta: c.meta })),
+      );
+      if (!pick) break; // NO qualifying candidate → graceful no-op (never invent/force)
+
+      if (session.length < sessionSizeCap) {
+        // Room: simply ADD the required slot.
+        session.push({ name: pick.name, sets: defaultSetsOf(session), tags: pick.tags, idx: session.length });
+      } else {
+        // At ceiling: REPLACE the lowest-value NON-required exercise. "Non-required"
+        // = does not itself satisfy a still-needed requirement (required coverage)
+        // and is not a logged PR (continuity).
+        const replaceIdx = lowestValueReplaceable(session, reqs, prNames, scoreOf);
+        if (replaceIdx < 0) break; // nothing safe to displace → graceful no-op
+        const removed = session[replaceIdx];
+        inMovement.delete(mkOf(removed));
+        session[replaceIdx] = { name: pick.name, sets: removed.sets, tags: pick.tags, idx: removed.idx };
+      }
+      inSession.add(pick.name);
+      inMovement.add(mkOf({ name: pick.name, meta: pick.meta }));
+      have++;
+    }
+  }
+
+  // ── sessionCaps: PRUNE the lowest-value excess over each cap ──
+  // Lowest-value = lowest selection score, then LAST in selection order (latest idx)
+  // — the deterministic tiebreak. NEVER prune a logged-PR lift (continuity). NEVER
+  // prune an exercise that is the SOLE carrier of a still-needed session requirement
+  // (required movement coverage — the precedence rule "don't strand a movement
+  // pattern that required coverage needs"). A cap's whole job is to thin a PATTERN,
+  // so reducing a pattern to its cap — even when each offender is a distinct
+  // movement key — is the intended behavior (only REQUIRED coverage is protected,
+  // not every uniquely-keyed accessory).
+  const caps = rule.sessionCaps || {};
+  const matchers = capMatchers();
+  const requiredTags = new Set(reqs.map((r) => r.tag));
+  for (const [capKey, capVal] of Object.entries(caps)) {
+    const match = matchers[capKey];
+    if (!match || typeof capVal !== 'number') continue;
+    let offenders = session.filter((e) => match(e.tags));
+    if (offenders.length <= capVal) continue;
+    // Removal order: lowest score first, then latest idx (lowest priority) first.
+    const removable = offenders
+      .filter((e) => !prNames.has(e.name) && !isRequirementCarrier(e, requiredTags, session))
+      .sort((a, b) => (scoreOf(a.name) - scoreOf(b.name)) || (b.idx - a.idx));
+    let excess = offenders.length - capVal;
+    const toRemove = new Set();
+    for (const e of removable) {
+      if (excess <= 0) break;
+      toRemove.add(e.name);
+      excess--;
+    }
+    // GRACEFUL RELAXATION: if protections (PR/coverage/requirement) leave the cap
+    // un-meetable, we PREFER honoring those protections over forcing the cap — the
+    // cap is a SOFT preference below safety/recovery/coverage. (excess may stay > 0.)
+    if (toRemove.size > 0) {
+      session = session.filter((e) => !toRemove.has(e.name));
+    }
+  }
+
+  return session.map((e) => ({ name: e.name, sets: e.sets }));
+}
+
+/** A reasonable default set count for an injected exercise = the modal/most-common
+ * sets among the current session (so an injection matches the session's dosing),
+ * falling back to 3 when empty. */
+function defaultSetsOf(session) {
+  if (!session.length) return 3;
+  const counts = {};
+  for (const e of session) counts[e.sets] = (counts[e.sets] || 0) + 1;
+  let best = 3, bestN = -1;
+  for (const [s, n] of Object.entries(counts)) {
+    if (n > bestN) { bestN = n; best = Number(s); }
+  }
+  return best;
+}
+
+/** True when `e` is the sole/needed carrier of a still-required tag in the session. */
+function isRequirementCarrier(e, requiredTags, session) {
+  for (const tag of e.tags) {
+    if (!requiredTags.has(tag)) continue;
+    // sole carrier of this required tag → protected.
+    const carriers = session.filter((o) => o.tags.has(tag)).length;
+    if (carriers <= 1) return true;
+  }
+  return false;
+}
+
+/** Index of the lowest-value session entry safe to displace for a required inject,
+ * or -1 if none. Safe = not a logged PR (continuity) and not a still-needed
+ * requirement carrier (required coverage). A non-critical singleton MAY be
+ * displaced — the only coverage that matters at the inject step is REQUIRED
+ * coverage (isRequirementCarrier), not every uniquely-keyed accessory. Lowest
+ * score + latest idx (lowest priority) wins. */
+function lowestValueReplaceable(session, reqs, prNames, scoreOf) {
+  const requiredTags = new Set(reqs.map((r) => r.tag));
+  const candidates = session
+    .map((e, i) => ({ e, i }))
+    .filter(({ e }) =>
+      !prNames.has(e.name) &&
+      !isRequirementCarrier(e, requiredTags, session),
+    )
+    .sort((a, b) => (scoreOf(a.e.name) - scoreOf(b.e.name)) || (b.e.idx - a.e.idx));
+  return candidates.length ? candidates[0].i : -1;
+}

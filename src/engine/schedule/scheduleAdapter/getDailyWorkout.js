@@ -644,6 +644,17 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // so the engine prescribes from HIS ranked list per muscle ("Andura picks like
     // Daniel"). PR-history continuity (band 0) + squat-primacy + all gates intact.
     danielTierSelect: isEnabled('dp_daniel_tier_select_v1'),
+    // Wave 1.3-B focus-policy resolver (dp_focus_policy_v1, default OFF →
+    // byte-identical). When ON, buildSession applies the per-focus LOCAL
+    // constraint policy (sessionCaps + sessionRequirements from FOCUS_RULES):
+    // prune press/arm/pull excess over a cap, inject a missing required slot
+    // (side/rear delt, flye, lat-isolation, overhead-triceps, stretch-curl) when a
+    // qualifying candidate is in the pool — under the safety/recovery/coverage >
+    // requirements > caps > score precedence. The focus id keys FOCUS_RULES; the
+    // active-day count is the 1.3-C weekly-ledger hook (read, not enforced here).
+    focusPolicy: isEnabled('dp_focus_policy_v1'),
+    focusId: focusPreset,
+    daysPerWeek: activeWeek.filter(Boolean).length || 1,
   };
 
   const session = buildSession(cluster, sessionCtx);

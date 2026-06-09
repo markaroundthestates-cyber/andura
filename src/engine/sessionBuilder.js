@@ -12,6 +12,7 @@ import { EXERCISE_METADATA, getExerciseMetadata, isActiveMeta } from './exercise
 import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT, ISRAETEL_BASELINES } from './periodization/constants.js';
 import { isExcludedMovement } from './movementExclusion.js';
 import { EXERCISE_TIER_RANK, tierRankOf, tierSelectScore, TIER_SELECTABLE_SA } from './exerciseTierRank.js';
+import { applyFocusPolicy } from './focusPolicy.js';
 
 // buildSession's first param is now a Big-6 CLUSTER id (push/pull/legs/upper/
 // lower/full) — the target muscle groups + their session-slot bias come from the
@@ -1037,6 +1038,9 @@ export function movementKey(name, meta) {
  *   tierCompoundFloor?: boolean,
  *   lateralRaiseGuarantee?: boolean,
  *   danielTierSelect?: boolean,
+ *   focusPolicy?: boolean,
+ *   focusId?: string,
+ *   daysPerWeek?: number,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  *
@@ -1334,6 +1338,53 @@ export function buildSession(cluster, ctx) {
             groupCount.umeri = (groupCount.umeri || 0) + 1;
           }
         }
+      }
+    }
+  }
+
+  // Wave 1.3-B FOCUS-POLICY resolver (ctx.focusPolicy, dp_focus_policy_v1). When
+  // the flag is ON, apply the per-focus LOCAL constraint policy (sessionCaps +
+  // sessionRequirements from FOCUS_RULES) to the selected list: prune excess over a
+  // cap, inject a missing required slot when a candidate exists, under the Daniel-
+  // locked precedence (safety/recovery/coverage > requirements > caps > score). The
+  // candidate POOL it injects from is the same per-group pools (already past every
+  // upstream HARD exclude). OFF (flag absent → ctx.focusPolicy !== true) → never
+  // called → byte-identical. Runs on `chosen` BEFORE set-distribution so any
+  // injected/pruned exercise flows through the existing dosing + ordering.
+  if (ctx?.focusPolicy === true) {
+    // Flat candidate pool: every pool entry not already taken, de-duped by name.
+    const seen = new Set(chosen.map((e) => e.name));
+    const candidatePool = [];
+    for (const { pool } of pools) {
+      for (const e of pool) {
+        if (!seen.has(e.name)) { seen.add(e.name); candidatePool.push({ name: e.name, meta: e.meta }); }
+      }
+    }
+    const focusResolved = applyFocusPolicy(chosen, {
+      focusId: ctx?.focusId,
+      daysPerWeek: ctx?.daysPerWeek,
+      cluster,
+      pool: candidatePool,
+      prNames,
+      movementKey,
+      getMeta: getExerciseMetadata,
+      // Match the Phase-2 selection score (Daniel tier list when ON, else neutral)
+      // so the resolver's prune/inject tiebreak agrees with how the session was built.
+      scoreOf: (name) =>
+        danielTierSelect ? tierSelectScore(name, { hasLog: prNames.has(name) }) : -rank(name, prNames),
+      sessionSizeCap: SESSION_SIZE,
+    });
+    if (Array.isArray(focusResolved) && focusResolved.length > 0) {
+      chosen.length = 0;
+      chosen.push(...focusResolved);
+      // Rebuild the take()-tracking sets so the downstream set-distribution +
+      // ordering see the resolved list (groupCount drives nothing further, but keep
+      // chosenNames/Movements coherent for any later read).
+      chosenNames.clear();
+      chosenMovements.clear();
+      for (const e of chosen) {
+        chosenNames.add(e.name);
+        chosenMovements.add(movementKey(e.name, getExerciseMetadata(e.name)));
       }
     }
   }
