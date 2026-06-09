@@ -890,6 +890,47 @@ export const FLAGS = Object.freeze({
   // categorical summary → byte-identical (no new DOM, no behavior change). No new
   // persistence. Optional Daniel-flag.
   dp_moat_why_v1: { rollout: 0, default: false },
+
+  // behavioral tier auto-detect (engine-wiring) (RISK MED — overrides the user's
+  // self-reported experience, which then drives session COUNT / volume / slot caps
+  // via minSessionForTier/tierCeiling, path A; never the dp.js kg). The self-
+  // reported experience seeds profileTier ONLY as a cold-start guess; behavior is
+  // the truth. When ON, resolveBehavioralTier (convergenceGuard.js) infers the REAL
+  // training level from logged behavior and OVERRIDES the seed in BOTH directions:
+  //  - PRIMARY signal = STRENGTH relative to bodyweight (best RIR-corrected e1RM /
+  //    bodyweight per main pattern vs STRENGTH_TIER_BAND, sex-normalized). A user
+  //    can have years of prior training before installing Andura, so the in-app
+  //    session COUNT does NOT block promotion to advanced — strength itself is the
+  //    proof (an advanced ratio basically cannot occur without real training age).
+  //  - CORROBORATE = progression rate: a lift still climbing near-linearly (newbie
+  //    gains) suppresses an advanced (T2) promotion (caps to T1).
+  //  - The session count ONLY gates the literal zero-data cold-start (need ≥2-3
+  //    logged sessions before acting); never blocks promotion once strength exists.
+  // Asymmetric: demotion (the over-claimer) is fast, advanced promotion trusts the
+  // strength signal. Hysteresis (profileTier_lastChange_ts + a min-sessions gate)
+  // stops the tier yo-yoing. OFF → resolveBehavioralTier is never invoked at the
+  // builder seam → profileTier = tierForExperience(seed) byte-identical (the self-
+  // report). Changes session COMPOSITION (path A), NOT per-exercise kg — the
+  // calibration-sim hash is orthogonal + stays green flag-OFF. The bands +
+  // hysteresis knobs are DESIGN PROPOSALS — Daniel/research review before flip.
+  dp_behavioral_tier_v1: { rollout: 0, default: false },
+
+  // tier-aware FRESH compound set floor (engine-wiring) (RISK LOW — only ever
+  // RAISES a fresh compound's floor from 2→3 for a trained lifter, bounded by the
+  // existing [floor, ceiling] clamp; path A, never kg). distributeGroupSets floors
+  // a fresh compound at COMPOUND_MIN_SETS=3 today; a NON-recovered group drops to
+  // NONRECOVERED_COMPOUND_MIN_SETS=2. Science: 2 sets/exercise is genuinely
+  // effective (esp. beginners / limited recovery), 3 is better for trained/advanced
+  // lifters — what drives growth is WEEKLY sets per muscle. When ON, the FRESH
+  // compound floor is TIER-AWARE: a TRAINED lifter (T1/T2) keeps the floor at 3
+  // (compounds never stranded at 2 when the muscle is fresh), a T0 novice may sit
+  // at 2 (MEV, manageable recovery — current behavior preserved for T0). The
+  // recovery path (non-recovered → 2) and the emphasized anchor floor are UNCHANGED
+  // in both modes. OFF → the universal COMPOUND_MIN_SETS=3 floor → byte-identical
+  // (the calibration-sim hash is path-B/orthogonal + stays green). Threaded into
+  // distributeGroupSets via ctx.tierCompoundFloor (resolved at the getDailyWorkout
+  // seam). Flip ON is a human gate (Daniel) AFTER the sim A/B.
+  dp_tier_compound_floor_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */

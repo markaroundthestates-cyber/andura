@@ -320,6 +320,54 @@ export function relativeStrength(mu, bwKg) {
   return m / bw;
 }
 
+// ══ BUILD — behavioral training-level bands (e1RM/bodyweight per pattern) ═════
+// The ELITE ceiling above (STRENGTH_STANDARD_RATIO) clips physically-absurd loads;
+// these are the LOWER tier thresholds used to INFER a user's real training level
+// from what they actually lift (convergenceGuard.resolveTier). For each movement
+// pattern, the e1RM/bodyweight ratio at which a male lifter crosses into the
+// INTERMEDIATE band and into the ADVANCED band. Below intermediate → beginner.
+//
+// SOURCE: public strength-standard references (strengthlevel.com / symmetric-
+// strength style male standards, ~80-90kg bodyweight reference), rounded
+// conservatively. The ADVANCED threshold deliberately sits BELOW the elite
+// STRENGTH_STANDARD_RATIO ceiling (e.g. squat advanced 1.75 < elite 2.5, bench
+// advanced 1.35 < elite 2.0) — reaching the advanced band is real-training-age
+// proof, reaching elite is a competitive outlier. Female lifters scale via the
+// SAME CEILING_SEX_FACTOR applied to the user's measured ratio before comparison
+// (so one male-referenced table serves both). Only the MAIN patterns the bands
+// are meaningful for are listed; an unlisted pattern (isolation) returns null
+// (no level signal — isolations don't carry a clean strength-standard).
+//
+// strengthlevel.com male bodyweight-multiple standards (Intermediate / Advanced):
+//   Squat        ~1.25 / ~1.75   Bench   ~1.0  / ~1.35
+//   Deadlift     ~1.5  / ~2.25   OHP     ~0.6  / ~0.9
+//   Row (bent)   ~1.0  / ~1.4
+export const STRENGTH_TIER_BAND = Object.freeze({
+  squat:      Object.freeze({ intermediate: 1.25, advanced: 1.75 }),
+  deadlift:   Object.freeze({ intermediate: 1.50, advanced: 2.25 }),
+  benchpress: Object.freeze({ intermediate: 1.00, advanced: 1.35 }),
+  ohp:        Object.freeze({ intermediate: 0.60, advanced: 0.90 }),
+  row:        Object.freeze({ intermediate: 1.00, advanced: 1.40 }),
+});
+
+/**
+ * Classify a single movement's training level from the user's relative-strength
+ * ratio (e1RM/bodyweight, already sex-normalized by the caller) against
+ * STRENGTH_TIER_BAND. Returns null for a pattern with no band (isolation — no
+ * strength-standard signal) or an unusable ratio. PURE.
+ * @param {string} pattern classifyPattern token
+ * @param {number} ratio sex-normalized e1RM/bodyweight
+ * @returns {'beginner'|'intermediate'|'advanced'|null}
+ */
+export function classifyMovementLevel(pattern, ratio) {
+  const band = STRENGTH_TIER_BAND[pattern];
+  const r = Number(ratio);
+  if (!band || !Number.isFinite(r) || r <= 0) return null;
+  if (r >= band.advanced) return 'advanced';
+  if (r >= band.intermediate) return 'intermediate';
+  return 'beginner';
+}
+
 /**
  * Classify a stagnation by how close the estimate sits to the ceiling.
  * @param {number} mu @param {number} ceiling

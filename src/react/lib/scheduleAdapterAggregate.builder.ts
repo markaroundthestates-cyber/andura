@@ -25,6 +25,7 @@ import { calculateFatigueScore } from '../../engine/fatigue.js';
 import { energyVolumeFactor } from '../../engine/dp/ceiling.js';
 import { resolveEnergyMagnitude } from './engineWrappers.nutrition';
 import { DP } from '../../engine/dp.js';
+import { resolveBehavioralTier } from '../../coach/orchestrator/utilities/convergenceGuard.js';
 import {
   getCurrentWeightKg,
   readUserMaintenanceTDEE,
@@ -55,6 +56,11 @@ const EMOJI_TO_DIRECTION: Readonly<Record<string, string>> = {
   yellow: 'NONE',
   red: 'DOWN',
 };
+
+// Persisted last-change timestamp for the behavioral tier (dp_behavioral_tier_v1
+// hysteresis — the profileTier_lastChange_ts field hint). Set only when the
+// resolved tier actually moves; read on the next run to stop the tier yo-yoing.
+const PROFILE_TIER_TS_KEY = 'profileTier_lastChange_ts';
 
 /**
  * Audit HIGH — readiness score cu tinta nutritionala REALA per-user (mentenanta
@@ -475,13 +481,44 @@ export function buildUserStateForPipeline(): {
     emphasisTargetGroup && emphasisPickedAt !== null
       ? Math.max(0, Math.floor((now - emphasisPickedAt) / (7 * MS_PER_DAY)))
       : 0;
-  const profileTier = tierForExperience(onboardingData.experience);
+  // The self-reported experience seeds the tier as a COLD-START guess only (the
+  // behavioral override below replaces it when dp_behavioral_tier_v1 is ON).
+  const seedTier = tierForExperience(onboardingData.experience);
   const goalPhase = goalPhaseForGoal(onboardingData.goal);
   // PR-anchor set for WP-4 selection: distinct exercise names the user has
   // actually logged (weighted set). sessionBuilder prefers these over other
   // candidates so existing users keep visible PR continuity. EN canonical names
   // (logs key on the EN name, same as DP.getLogs / cold-start guidelines).
   const prNames = distinctLoggedExerciseNames();
+  // Behavioral tier auto-detect (dp_behavioral_tier_v1, default OFF → byte-
+  // identical: profileTier stays the self-report). When ON, the REAL training
+  // level is inferred from logged behavior (strength relative to bodyweight is
+  // the PRIMARY signal) and OVERRIDES the seed in both directions, with the
+  // session count gating only the literal cold-start + hysteresis (the persisted
+  // profileTier_lastChange_ts) preventing yo-yo. Strength = proof of training age,
+  // so the in-app session count never blocks an advanced promotion. The resolved
+  // tier flows to the pipeline as the top-level profileTier below (consumed by
+  // sessionBuilder via minSessionForTier/tierCeiling/slot caps) — the same seam
+  // the self-report drove. The last-change timestamp is persisted (the
+  // profileTier_lastChange_ts field hint) so the hysteresis survives across runs.
+  let profileTier: string | null = seedTier;
+  if (isEnabled('dp_behavioral_tier_v1')) {
+    const lastChangeTs = DB.get<number>(PROFILE_TIER_TS_KEY) ?? null;
+    const res = resolveBehavioralTier({
+      seedTier,
+      bodyweightKg: currentWeightKg,
+      sex: onboardingData.sex,
+      sessionCount: sessionsHistory.length,
+      lastChangeTs,
+      now,
+      exerciseNames: prNames,
+      getLogsFor: (ex: string) => DP.getLogs(ex, 12),
+      e1RMForSet: (w: number, reps: number | string, rpe: number | undefined, ex: string) =>
+        DP.e1RMForSet(w, Number(reps), rpe, ex),
+    });
+    profileTier = res.tier;
+    if (res.changed && res.lastChangeTs !== null) DB.set(PROFILE_TIER_TS_KEY, res.lastChangeTs);
+  }
   // F1 T1 — Specialization weakness-detector inputs (lifetimeLogs + recentLogs).
   // Same persisted `logs` channel, native shape, passed through unchanged.
   const { lifetime: lifetimeLogs, recent: recentLogs } = loggedSetsForWeakness();
