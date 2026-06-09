@@ -273,6 +273,95 @@ export function sizeKcalForPhase(input: KcalSizingInputs): KcalSizingResult {
   return finalize(tdee, sign * absShift, false, kcalFloor);
 }
 
+// ── A4 coached recommendation (sustainable cap, flag dp_nutrition_coached_v1) ──
+// The MATH target (sizeKcalForPhase above) is goal-driven + as aggressive as the
+// deadline demands, bounded only by the hard sex floor (CEO LOCK 2026-05-31). A
+// bare floor stops "dangerous" but not "too aggressive / unsustainable": a 150kg
+// man told to cut to 90kg in 8 weeks math-targets ~−7700/day → floored to 1200,
+// a punishing deficit that wastes muscle. A good coach prescribes a SUSTAINABLE
+// deficit, not the mathematical extreme.
+//
+// Evidence (documented): an aggressive-but-sustainable cut sits around a 20-25%
+// deficit below maintenance (~0.5-1%/wk bodyweight — Helms et al. 2014 "Evidence-
+// based recommendations for natural bodybuilding contest preparation"; ISSN/
+// Aragon-Schoenfeld). The existing no-target default already uses a 20% deficit
+// (CUT_DEFICIT_FRACTION_DEFAULT). We cap the COACHED deficit at the upper-
+// sustainable 25% below maintenance, and the COACHED surplus at a moderate 20%
+// above (lean-gain bias — a leaner surplus minimizes fat gain). The cap only ever
+// pulls the math target back TOWARD maintenance (a milder shift); a math target
+// already milder than the cap is returned unchanged. The hard sex floor still
+// applies underneath (the coached deficit can never sit below it).
+export const COACHED_MAX_DEFICIT_FRACTION = 0.25; // ≤25% below maintenance
+export const COACHED_MAX_SURPLUS_FRACTION = 0.20;  // ≤20% above maintenance
+
+export type CoachedReason =
+  | 'deficit_capped_sustainable'
+  | 'surplus_capped_moderate'
+  | 'at_floor'
+  | 'within_sustainable';
+
+export interface CoachedKcalResult {
+  /** The coached (sustainable-bounded) recommendation — what the user follows. */
+  kcal: number;
+  /** Short reason token explaining the coached number vs the math target. */
+  reason: CoachedReason;
+}
+
+/**
+ * Bound a MATH kcal target to a sustainable rate, given the user's maintenance.
+ * Pure. Deterministic. The phase sign is inferred from math-vs-maintenance:
+ *   - math < maintenance (a deficit) → never deeper than 25% below maintenance,
+ *     never below the sex floor (floor wins → reason 'at_floor').
+ *   - math > maintenance (a surplus) → never richer than 20% above maintenance.
+ *   - math already within the sustainable band → returned unchanged
+ *     ('within_sustainable').
+ * When the math target is ALREADY the floor (a tiny-maintenance user whose 25%
+ * cap would itself land below the floor), the floor is the coached number too and
+ * the reason is 'at_floor' (the floor, not the cap, is the binding limit).
+ */
+export function applySustainableCap(
+  mathKcal: number,
+  maintenanceTdee: number,
+  kcalFloor: number,
+): CoachedKcalResult {
+  const tdee = Number(maintenanceTdee);
+  const floor =
+    Number.isFinite(kcalFloor) && kcalFloor > 0 ? kcalFloor : SAFE_FALLBACK_FLOOR;
+  // No usable maintenance → cannot reason about a sustainable rate; pass through
+  // (still floor-guarded) and report the floor binding if it bit.
+  if (!Number.isFinite(tdee) || tdee <= 0) {
+    const k = Math.max(Math.round(mathKcal), floor);
+    return { kcal: k, reason: k > Math.round(mathKcal) ? 'at_floor' : 'within_sustainable' };
+  }
+
+  if (mathKcal < tdee) {
+    // Deficit. The deepest SUSTAINABLE coached number, but never below the floor.
+    const sustainableDeficitKcal = Math.round(tdee * (1 - COACHED_MAX_DEFICIT_FRACTION));
+    const coached = Math.max(mathKcal, sustainableDeficitKcal, floor);
+    if (coached <= mathKcal) return { kcal: mathKcal, reason: 'within_sustainable' };
+    // The cap raised the target. If it landed at the floor (the floor is higher
+    // than the 25% cap for this small-maintenance user), the floor is the binding
+    // limit; otherwise the sustainable-deficit cap bound it.
+    return {
+      kcal: coached,
+      reason: coached === floor && floor > sustainableDeficitKcal ? 'at_floor' : 'deficit_capped_sustainable',
+    };
+  }
+
+  if (mathKcal > tdee) {
+    // Surplus. The richest moderate coached number; floor is irrelevant above tdee.
+    const moderateSurplusKcal = Math.round(tdee * (1 + COACHED_MAX_SURPLUS_FRACTION));
+    const coached = Math.max(Math.min(mathKcal, moderateSurplusKcal), floor);
+    return {
+      kcal: coached,
+      reason: coached < mathKcal ? 'surplus_capped_moderate' : 'within_sustainable',
+    };
+  }
+
+  // math == maintenance (MAINTENANCE / STRENGTH near-neutral) — nothing to bound.
+  return { kcal: Math.max(mathKcal, floor), reason: 'within_sustainable' };
+}
+
 // Conservative fallback floor when the caller passes an invalid one (NaN/<=0) —
 // the higher male minimum, so a missing-sex edge can never drop below the safe
 // band. The sex-aware caller (readUserKcalFloor) supplies 1000/1200 normally.

@@ -44,8 +44,14 @@ import { daysUntilTarget } from './targetSafety';
 import {
   targetDirection,
   sizeKcalForPhase,
+  applySustainableCap,
   type PhaseToken,
+  type CoachedReason,
 } from './goalPhaseModel';
+// A4 coached recommendation vs math target — flag-gated (dp_nutrition_coached_v1,
+// default OFF → byte-identical). The math target stays the value emitted today;
+// ON, kcal becomes the sustainable-capped coached number + a reason is surfaced.
+import { isEnabled } from '../../util/featureFlags.js';
 import type { NutritionTargetsEngine } from './engineWrappers.types';
 // resolveActivePhase + AUTO detector + manual-override gating moved to the
 // ./phaseResolution LEAF (severs the nutrition→userTdee→workoutStore→
@@ -148,6 +154,11 @@ export function buildPerUserBaseline(phaseKcal: number | null): NutritionTargets
     // When the subponderal guardrail RAISED the target, it was not held down by
     // a safety floor/cap — suppress the limit note so the two never contradict.
     ...(!guarded.clamped && safetyLimited ? { safetyLimited } : {}),
+    // A4 — surface the coached vs math split ONLY when the flag is ON (coherent
+    // carries coachedReason only then). Flag OFF → absent → byte-identical.
+    ...(phaseKcal === null && coherent?.coachedReason !== undefined
+      ? { mathKcalTarget: coherent.mathKcal, coachedReason: coherent.coachedReason }
+      : {}),
   };
 }
 
@@ -230,9 +241,24 @@ export function resolveEnergyMagnitude(): { phase: PhaseToken; severity: number 
  * when there is no directional signal (caller falls back to maintenance).
  */
 export interface CoherentKcalResult {
+  /**
+   * The kcal the caller shows. Flag OFF → the MATH target (byte-identical to
+   * today). Flag ON → the COACHED recommendation (sustainable-capped).
+   */
   kcal: number;
   rateCapped: boolean;
   floored: boolean;
+  /**
+   * A4 — the raw MATH target (TDEE − deficit / + surplus, bounded only by the sex
+   * floor), ALWAYS present so the honest "why" stays available even when the
+   * coached cap pulled `kcal` back. Equals `kcal` when the flag is OFF.
+   */
+  mathKcal: number;
+  /**
+   * A4 — present ONLY when the coached flag (dp_nutrition_coached_v1) is ON. The
+   * reason the coached `kcal` differs from (or matches) the math target.
+   */
+  coachedReason?: CoachedReason;
 }
 
 /**
@@ -256,15 +282,30 @@ export function getCoherentKcalToday(tdee: number | null): CoherentKcalResult | 
   const { weightKg, month } = useProgresStore.getState().targetObiectiv;
   const currentWeight = getCurrentWeightKg();
   const days = month ? daysUntilTarget(month) : null;
+  const kcalFloor = readUserKcalFloor();
   const r = sizeKcalForPhase({
     phase,
     maintenanceTdee: tdee,
     currentKg: currentWeight,
     targetKg: weightKg,
     daysRemaining: days,
-    kcalFloor: readUserKcalFloor(),
+    kcalFloor,
   });
-  return { kcal: r.kcalTarget, rateCapped: r.rateCapped, floored: r.floored };
+  const mathKcal = r.kcalTarget;
+  // A4 — flag OFF → kcal IS the math target (byte-identical, no coached field).
+  if (!isEnabled('dp_nutrition_coached_v1')) {
+    return { kcal: mathKcal, rateCapped: r.rateCapped, floored: r.floored, mathKcal };
+  }
+  // Flag ON → the COACHED recommendation bounds the math target to a sustainable
+  // rate (deficit ≤25% below maintenance / surplus ≤20% above), floor still under.
+  const coached = applySustainableCap(mathKcal, tdee, kcalFloor);
+  return {
+    kcal: coached.kcal,
+    rateCapped: r.rateCapped,
+    floored: r.floored,
+    mathKcal,
+    coachedReason: coached.reason,
+  };
 }
 
 export function getPhaseOverrideKcalToday(): number | null {

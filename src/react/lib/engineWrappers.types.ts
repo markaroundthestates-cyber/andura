@@ -230,6 +230,17 @@ export interface NutritionTargetsEngine {
   // Distinct de healthyFloorClamped (subponderal) si de add-on clamp (plafonare
   // add-on peste mentenanta) — aici e despre tinta de baza, NU add-on-uri.
   safetyLimited?: 'floored' | 'capped';
+  // A4 coached recommendation (flag dp_nutrition_coached_v1, default OFF). The
+  // kcalTarget shown is the COACHED (sustainable-capped) number; mathKcalTarget is
+  // the raw math target it was bounded from (TDEE − deficit / + surplus, sex-floored)
+  // and coachedReason explains the relationship. ALL THREE present ONLY when the flag
+  // is ON (flag OFF → these are absent + kcalTarget is the math target, byte-identical).
+  mathKcalTarget?: number;
+  coachedReason?:
+    | 'deficit_capped_sustainable'
+    | 'surplus_capped_moderate'
+    | 'at_floor'
+    | 'within_sustainable';
 }
 
 export interface AdherenceOutput {

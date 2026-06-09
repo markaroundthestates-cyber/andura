@@ -989,6 +989,22 @@ export const FLAGS = Object.freeze({
   // (cheap, side-effect-free); OFF → no field attached → byte-identical output.
   dp_decision_trace_v1: { rollout: 1, default: true },
 
+  // A4 nutrition coached recommendation vs math target (Hardening, 2026-06-09)
+  // (RISK LOW — additive; only ever pulls the kcal target back TOWARD maintenance,
+  // never makes it more aggressive, never below the sex floor). The math target
+  // (TDEE − deficit / + surplus) is goal-driven + bounded only by the hard sex
+  // floor (CEO LOCK 2026-05-31): a bare floor stops "dangerous" but not "too
+  // aggressive" — a 150kg→90kg-in-8wk cut math-targets a punishing floored 1200.
+  // When ON, getCoherentKcaltoday emits BOTH numbers: the math target stays
+  // available (mathKcal, for the honest "why"), and the COACHED recommendation
+  // (what the user follows) is the math target BOUNDED to a sustainable rate —
+  // deficit ≤25% below maintenance, surplus ≤20% above (Helms/ISSN evidence) —
+  // with a reason token (deficit_capped_sustainable / surplus_capped_moderate /
+  // at_floor / within_sustainable) surfaced on the output. OFF → no coached
+  // override, kcal == the math target → BYTE-IDENTICAL to today (the nutrition
+  // snapshots + safety tests hold flag-OFF). Flip ON is a human gate (Daniel).
+  dp_nutrition_coached_v1: { rollout: 0, default: false },
+
   // W-Split (oracle grid GAP 1 + GAP 4, 2026-06-09) — WEEK-LEVEL split + safety
   // wiring, all behind THIS one flag. Five coupled fixes that the per-exercise
   // brain cannot reach: (1) freq ≤2 → FULL-BODY templates (never an upper/lower

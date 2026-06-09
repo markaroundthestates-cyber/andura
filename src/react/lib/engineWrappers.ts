@@ -466,6 +466,12 @@ export async function getNutritionTargetsToday(
       // Suppress when the subponderal guardrail raised the target (not held down
       // by a floor/cap) so the limit note never contradicts the support message.
       ...(!guarded.clamped && safetyLimited ? { safetyLimited } : {}),
+      // A4 — surface the coached vs math split ONLY when the flag is ON (the
+      // coherent result carries coachedReason only then). Flag OFF → absent →
+      // byte-identical output.
+      ...(phaseKcal === null && coherent?.coachedReason !== undefined
+        ? { mathKcalTarget: coherent.mathKcal, coachedReason: coherent.coachedReason }
+        : {}),
     };
   } catch (e) {
     logger.warn('[engineWrappers] getNutritionTargetsToday failed:', e);
