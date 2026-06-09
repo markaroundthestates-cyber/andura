@@ -144,9 +144,9 @@ jobs:
         run: npm run depcheck
         continue-on-error: true
 
+      # A6 HARD GATE — circular imports block the build (was advisory).
       - name: Circular imports detector (madge)
         run: npm run madge:circular
-        continue-on-error: true
 
       - name: Code duplication detector (jscpd)
         run: npm run jscpd
@@ -156,9 +156,11 @@ jobs:
         run: npm run licenses
         continue-on-error: true
 
-      - name: NPM security audit
-        run: npm audit --production --audit-level=moderate
-        continue-on-error: true
+      # A6 HARD GATE — high/critical vulnerabilities block the build (was
+      # advisory). audit-level=high so only high+critical fail; moderate/low
+      # stay non-blocking (reported but ignored at this level).
+      - name: NPM security audit (high/critical)
+        run: npm audit --production --audit-level=high
 
       # Track 7 §7.4 + §7.6-activate — Snyk vulnerability scan.
       # SNYK_TOKEN uploaded by Daniel + verified GREEN per SETUP_VERIFICATION.md.
