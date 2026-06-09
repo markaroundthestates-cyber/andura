@@ -84,6 +84,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   // exercises and move the frozen hashes. The ON behavior is proven correct on
   // the #70 matrix + the persona-acceptance suite, NOT in this determinism stream.
   'dp_focus_policy_v1',
+  // THE FLIP 2026-06-09 — W-Goal coherent strength (dp_strength_goal_v1, scoped to
+  // forta only after the corridor-leak fix) + focus-aware split rebalance
+  // (dp_split_rebalance_v1) now default ON. Added here so the A/B arms force them
+  // explicitly OFF: the all-off baseline stays a true all-off world (the harness can
+  // no longer rely on "no _devFlags ⇒ off"), keeping hashOff byte-for-byte. ON behavior
+  // is proven on the #70 matrix + the unit suites, NOT in this determinism stream.
+  'dp_strength_goal_v1', 'dp_split_rebalance_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

@@ -318,7 +318,7 @@ export const FLAGS = Object.freeze({
   // corridor is also still inert at cold-start (needs Kalman mu). Subsumes #6's
   // corridor for the forta compound path. Needs #1 + #2 (mu). OFF → BYTE-IDENTICAL
   // (forta still floors to 8, corridor stays gated by #6 alone). Human gate (Daniel).
-  dp_strength_goal_v1: { rollout: 0, default: false },
+  dp_strength_goal_v1: { rollout: 1, default: true },
 
   // ── F4 Adaptive layer (engine-wiring 2026-06-07) — guard/learning layers on
   // top of the F3 substrate. Each defaults OFF (rollout 0) → flag-off the live
@@ -1004,7 +1004,7 @@ export const FLAGS = Object.freeze({
   // path early-returns to the pre-feature shape → BYTE-IDENTICAL (the full-path-sim
   // hash + golden gate hold; this flag is NOT in the fp ON cohort). Flip ON is a
   // human gate (Daniel) AFTER the persona-matrix A/B review.
-  dp_split_rebalance_v1: { rollout: 0, default: false },
+  dp_split_rebalance_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

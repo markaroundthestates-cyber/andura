@@ -23,6 +23,11 @@ const FORTA_CORRIDOR = { floor: 0.78, ceiling: 0.90 }; // periodization forta co
 const HYPER_CORRIDOR = { floor: 0.70, ceiling: 0.85 };
 const STRENGTH_ON = () =>
   localStorage.setItem('_devFlags', JSON.stringify({ dp_strength_goal_v1: true }));
+// dp_strength_goal_v1 now defaults ON (2026-06-09 flip) — the OFF-arm tests must
+// force it explicitly OFF to assert the byte-identical legacy behavior (same OFF-pin
+// precedent the focus-policy flip used).
+const STRENGTH_OFF = () =>
+  localStorage.setItem('_devFlags', JSON.stringify({ dp_strength_goal_v1: false }));
 
 const BENCH = 'Flat Barbell Bench'; // COMPOUND_EX, barbell e1RM-eligible, NO REP_RANGES entry → default [8,12]
 const CABLE = 'Lat Pulldown';       // COMPOUND_EX cable, REP_RANGES [8,12]
@@ -45,6 +50,7 @@ beforeEach(() => {
 
 describe('W-Goal — flag OFF is byte-identical (forta still clamps to 8)', () => {
   it('forta on a barbell compound floors to 8 with the flag OFF', () => {
+    STRENGTH_OFF();
     seedHistory(BENCH, 60, 8, 8);
     const rec = DP.getSmartRecommendation(BENCH, null, null, undefined, null, [], {
       repRangeModifier: FORTA,
@@ -59,6 +65,7 @@ describe('W-Goal — flag OFF is byte-identical (forta still clamps to 8)', () =
     // [3,8] ∩ default [8,12] = [8,8] → 8 (today's documented behavior). My change
     // must NOT alter this when the flag is OFF: reps stay 8 and the corridor (gated
     // by dp_intensity_corridor_v1, also OFF here) does not move the load.
+    STRENGTH_OFF();
     seedHistory(BENCH, 60, 8, 8);
     const forta = DP.getSmartRecommendation(BENCH, null, null, undefined, null, [], {
       repRangeModifier: FORTA,
@@ -118,6 +125,7 @@ describe('W-Goal — flag ON unclamps forta reps on a barbell compound', () => {
   });
 
   it('the corridor stays OFF when NEITHER flag is set (byte-identical)', () => {
+    STRENGTH_OFF();
     seedHistory(CABLE, 80, 5, 7.5);
     const out = DP._applyIntensityCorridor(20, CABLE, 5, FORTA_CORRIDOR);
     expect(out).toBe(20);
