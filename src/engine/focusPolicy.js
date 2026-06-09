@@ -502,9 +502,13 @@ export function deriveExerciseTags(name, meta, movementKey) {
 //   > movement coverage        — never strand a movement pattern empty (a prune is
 //                                refused if it removes the LAST exercise carrying a
 //                                required tag / movement).
-//   > weekly focus targets     — 1.3-C cross-day ledger: a HOOK (ctx.weeklyLedger)
-//                                is read if present but NOT enforced here.
-//   > sessionRequirements      — inject a required slot if available & missing.
+//   > weekly focus targets     — 1.3-C: each WeeklyFocusTarget is TRANSLATED into a
+//                                per-session requirement (one matching exposure on a
+//                                qualifying cluster day) and MAX-merged into the
+//                                effective requirement set below — NOT a cross-day
+//                                ledger (the app composes per-day, no composeWeek).
+//   > sessionRequirements      — inject a required slot if available & missing
+//                                (the effective set = explicit reqs MAX weekly).
 //   > sessionCaps              — prune the lowest-value excess over a cap.
 //   > score bias / tier / hist — the existing ranking (lowest precedence; the
 //                                tiebreak for WHICH excess to prune / WHICH
@@ -523,22 +527,83 @@ export function deriveExerciseTags(name, meta, movementKey) {
 // DETERMINISM: all tie-breaks use the threaded seeded score (ctx.scoreOf) + the
 // existing `chosen` order — NO Math.random / Date.now. Same seed → same output.
 
-/** Resolve which sessionRequirements apply, as {tag, count, priority, relaxable}. */
-function requirementsFor(rule, cluster) {
-  const reqs = rule.sessionRequirements || {};
-  const out = [];
-  const push = (tag, count, priority, relaxable) =>
-    out.push({ tag, count, priority, relaxable });
+// ── 1.3-C: weeklyMinimums → per-session requirements ──────────────────────────
+// The app composes PER-DAY on demand (no composeWeek), so there is NO cross-day
+// state to spread a weekly count across. We translate each WeeklyFocusTarget into
+// a PER-SESSION minimum on its QUALIFYING cluster day: ONE matching exposure per
+// qualifying day. The split's frequency (this cluster recurs N×/week) then delivers
+// the weekly count emergently — we do NOT divide/spread. clusterFrequency is NOT
+// cleanly threaded into this resolver's ctx (only daysPerWeek + the day's cluster
+// are — see sessionBuilder applyFocusPolicy call), so we take the SIMPLE + SAFE
+// branch: per-session min = 1 (never ceil(weeklyTarget/clusterFrequency)).
+//
+// The set of canonical tags the deriver actually emits. A weekly target whose
+// matchingTags do not intersect this set (e.g. front_delt/front_raise — no
+// CORE_AUTO variant, 1.3-A MISSING) yields NO requirement → graceful no-op, never
+// forced/invented (exactly like the explicit-requirement path).
+const DERIVABLE_TAGS = new Set([
+  'side_delt', 'lateral_raise', 'rear_delt', 'vertical_press',
+  'chest_press', 'flye', 'vertical_pull', 'horizontal_row',
+  'lat_isolation', 'pullover', 'straight_arm_pulldown',
+  'direct_triceps', 'overhead_triceps', 'direct_biceps', 'stretch_curl',
+  'heavy_lower_compound',
+]);
 
-  // Numeric minimums (always per-session).
+/** Pick the day-band key for a weekly target from the user's training days/week. */
+function dayBandKey(daysPerWeek) {
+  const d = Number(daysPerWeek);
+  if (!Number.isFinite(d) || d <= 2) return 'days1to2';
+  if (d <= 4) return 'days3to4';
+  return 'days5plus';
+}
+
+/**
+ * The canonical (derivable) tag a weekly target maps onto — the FIRST of its
+ * matchingTags the deriver can emit. Chosen so it aligns with the explicit
+ * sessionRequirements tag for the same concept (e.g. 'side_delt'), enabling a clean
+ * MAX-merge (never a sum). Returns '' when none of the tags is derivable → no-op.
+ * @param {string[]} matchingTags
+ * @returns {string}
+ */
+function canonicalWeeklyTag(matchingTags) {
+  for (const t of matchingTags || []) {
+    if (DERIVABLE_TAGS.has(t)) return t;
+  }
+  return '';
+}
+
+/**
+ * Resolve the EFFECTIVE per-session requirements, as {tag, count, priority,
+ * relaxable}: the explicit sessionRequirements AND the translated weeklyMinimums,
+ * MAX-merged by tag (never summed — a tag carried by both an explicit min and a
+ * weekly target counts ONCE, at the larger count + higher priority + stricter
+ * relaxable). daysPerWeek selects the weekly target's day-band.
+ */
+function requirementsFor(rule, cluster, daysPerWeek) {
+  // Build into a by-tag map so the explicit + weekly passes MAX-merge cleanly.
+  /** @type {Map<string, {tag: string, count: number, priority: string, relaxable: boolean}>} */
+  const byTag = new Map();
+  const PRI_RANK = { high: 0, medium: 1, low: 2 };
+  const merge = (tag, count, priority, relaxable) => {
+    if (!tag || !(count > 0)) return;
+    const prev = byTag.get(tag);
+    if (!prev) { byTag.set(tag, { tag, count, priority, relaxable }); return; }
+    // MAX-merge: larger count, higher priority (lower rank), stricter relaxable.
+    prev.count = Math.max(prev.count, count);
+    if (PRI_RANK[priority] < PRI_RANK[prev.priority]) prev.priority = priority;
+    prev.relaxable = prev.relaxable && relaxable;
+  };
+
+  // ── Explicit sessionRequirements (always per-session) ──
+  const reqs = rule.sessionRequirements || {};
   if (typeof reqs.minSideDeltSlots === 'number')
-    push('side_delt', reqs.minSideDeltSlots, 'high', true);
+    merge('side_delt', reqs.minSideDeltSlots, 'high', true);
   if (typeof reqs.minRearDeltSlots === 'number')
-    push('rear_delt', reqs.minRearDeltSlots, 'high', true);
+    merge('rear_delt', reqs.minRearDeltSlots, 'high', true);
   if (typeof reqs.minVerticalPullSlots === 'number')
-    push('vertical_pull', reqs.minVerticalPullSlots, 'high', true);
+    merge('vertical_pull', reqs.minVerticalPullSlots, 'high', true);
   if (typeof reqs.minHorizontalRowSlots === 'number')
-    push('horizontal_row', reqs.minHorizontalRowSlots, 'high', true);
+    merge('horizontal_row', reqs.minHorizontalRowSlots, 'high', true);
 
   // Conditional booleans — gated on the day's cluster (the "IfChestDay" etc.). The
   // resolver owns the cluster→condition mapping; an unmet condition → not applicable.
@@ -549,15 +614,33 @@ function requirementsFor(rule, cluster) {
   const isArms = cluster === 'arms';
 
   if (reqs.requireFlyeIfChestDay && isChest)
-    push('flye', 1, 'medium', true);
+    merge('flye', 1, 'medium', true);
   if (reqs.requireLatIsolationIfBackDay && isBack)
-    push('lat_isolation', 1, 'medium', true); // thin pool — relaxable
+    merge('lat_isolation', 1, 'medium', true); // thin pool — relaxable
   if (reqs.requireOverheadTricepsIfArmsOrPush && (isArms || isPush))
-    push('overhead_triceps', 1, 'medium', true);
+    merge('overhead_triceps', 1, 'medium', true);
   if (reqs.requireStretchCurlIfArmsOrPull && (isArms || isPull))
-    push('stretch_curl', 1, 'medium', true);
+    merge('stretch_curl', 1, 'medium', true);
 
-  return out;
+  // ── 1.3-C: translated weeklyMinimums (one per-session exposure on a qualifying
+  // cluster day; MAX-merged with any explicit min above, NEVER summed) ──
+  const band = dayBandKey(daysPerWeek);
+  for (const wt of rule.weeklyMinimums || []) {
+    // (1) cluster not applicable → graceful no-op.
+    if (!Array.isArray(wt.applicableClusters) || !wt.applicableClusters.includes(cluster)) continue;
+    // (2) weekly target for this band is 0 → no-op.
+    const weeklyTarget = wt.targetByDays?.[band];
+    if (!(weeklyTarget > 0)) continue;
+    // (4) the canonical derivable tag; underivable (front_delt) → graceful no-op.
+    const tag = canonicalWeeklyTag(wt.matchingTags);
+    if (!tag) continue;
+    // (3) per-session min = 1 (simple + safe; clusterFrequency not in ctx).
+    // (5)/(6) MAX-merge carries priority + relaxable so relaxation treats a low/
+    // medium weekly target as relaxable before a high explicit requirement.
+    merge(tag, 1, wt.priority, wt.relaxable);
+  }
+
+  return [...byTag.values()];
 }
 
 /** Map a sessionCaps key → the predicate that detects an offending exercise. */
@@ -628,15 +711,16 @@ export function applyFocusPolicy(chosen, ctx) {
   // cap's job is to thin a pattern, and an inject may displace a low-value accessory.
   const mkOf = (e) => movementKey(e.name, getMeta(e.name));
 
-  // ── 1.3-C HOOK (weekly focus targets) — read-only, NOT enforced here. A future
-  // cross-day ledger plugs in via ctx.weeklyLedger; this resolver stays LOCAL. ──
-  // (intentionally no enforcement this step — see precedence block above)
+  // ── 1.3-C: weekly focus targets are TRANSLATED into per-session requirements
+  // inside requirementsFor() (one exposure per qualifying cluster day, MAX-merged
+  // with explicit sessionRequirements). The resolver stays LOCAL — no cross-day
+  // state — and the split's frequency delivers the weekly count emergently. ──
 
   // ── sessionRequirements: INJECT a missing required slot when a candidate exists ──
   // Sort requirements so HIGH (least relaxable) is satisfied first; MEDIUM next;
   // LOW last. Within a priority, a stable order (declaration order) — deterministic.
   const PRIORITY_RANK = { high: 0, medium: 1, low: 2 };
-  const reqs = requirementsFor(rule, cluster).sort(
+  const reqs = requirementsFor(rule, cluster, ctx?.daysPerWeek).sort(
     (a, b) => (PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority]),
   );
 

@@ -246,6 +246,149 @@ describe('applyFocusPolicy — determinism', () => {
   });
 });
 
+describe('applyFocusPolicy — 1.3-C weeklyMinimums → per-session requirements', () => {
+  it('translates a v-taper weekly side-delt target into a per-session require on a push day', () => {
+    // v-taper push day: explicit minSideDeltSlots already requires a side delt, but
+    // ALSO prove the weekly side_delt_slots target translates onto the same push
+    // cluster. Use a focus whose weekly target has NO explicit twin to isolate the
+    // weekly path: 'back' weekly horizontal_row_slots on a pull day with no explicit
+    // min would still fire — but back HAS explicit mins. Instead use v-taper's
+    // lat_isolation weekly (medium, no explicit twin) on an upper day.
+    const metaMap = {
+      'DB Shoulder Press': { muscle_target_primary: 'umeri', tier: 1 },
+      'Cable Rear Delt Fly': { muscle_target_primary: 'umeri', tier: 2 },
+      'DB Lateral Raise': { muscle_target_primary: 'umeri', tier: 2 },
+      'Machine Pullover': { muscle_target_primary: 'spate', tier: 2 },
+    };
+    // v-taper upper day: weekly side_delt (high), rear_delt (high), lat_isolation
+    // (medium) all applicable to 'upper'. Session has press only → inject lateral +
+    // rear + lat-isolation from the pool (all available).
+    const chosen = [{ name: 'DB Shoulder Press', sets: 3 }];
+    const pool = [
+      { name: 'DB Lateral Raise', meta: metaMap['DB Lateral Raise'] },
+      { name: 'Cable Rear Delt Fly', meta: metaMap['Cable Rear Delt Fly'] },
+      { name: 'Machine Pullover', meta: metaMap['Machine Pullover'] },
+    ];
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'v-taper', cluster: 'upper', daysPerWeek: 4, sessionSizeCap: 8,
+    }));
+    const names = out.map((e) => e.name);
+    // side_delt comes via BOTH explicit minSideDeltSlots AND weekly side_delt_slots
+    // (upper is applicable); the lat-isolation comes ONLY from the weekly target.
+    expect(names).toContain('DB Lateral Raise');     // side_delt (weekly + explicit)
+    expect(names).toContain('Machine Pullover');     // lat_isolation (weekly-only)
+  });
+
+  it('a weekly target on a push day injects a side delt even with NO explicit min for it', () => {
+    // 'chest' focus: weekly chest_flye_slots is applicable to 'push'; there is an
+    // explicit requireFlyeIfChestDay but that is gated on chest/push/upper too — to
+    // isolate the weekly path use 'lower' focus whose ONLY requirement is the weekly
+    // heavy_lower_compound (sessionRequirements is empty for lower).
+    const metaMap = {
+      'Leg Extension': { muscle_target_primary: 'picioare-quads', tier: 2 },
+      'Barbell Back Squat (High Bar)': { muscle_target_primary: 'picioare-quads', tier: 1 },
+    };
+    const chosen = [{ name: 'Leg Extension', sets: 3 }]; // no heavy compound yet
+    const pool = [{ name: 'Barbell Back Squat (High Bar)', meta: metaMap['Barbell Back Squat (High Bar)'] }];
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'lower', cluster: 'legs', daysPerWeek: 3, sessionSizeCap: 8,
+    }));
+    // lower.sessionRequirements is empty; the squat is injected ONLY because the
+    // weekly heavy_lower_compound target translated into a per-session require.
+    expect(out.map((e) => e.name)).toContain('Barbell Back Squat (High Bar)');
+  });
+
+  it('weekly+explicit merge takes the MAX not the sum (no double-count)', () => {
+    // v-taper push day has BOTH explicit minSideDeltSlots:1 AND weekly
+    // side_delt_slots (days3to4 → 2 for push? push is applicable). The per-session
+    // weekly translation is 1, the explicit is 1 → MAX = 1, NOT 1+1=2. So a single
+    // lateral satisfies; a second is NOT force-injected even though two are in pool.
+    const metaMap = {
+      'DB Shoulder Press': { muscle_target_primary: 'umeri', tier: 1 },
+      'Cable Rear Delt Fly': { muscle_target_primary: 'umeri', tier: 2 },
+      'DB Lateral Raise': { muscle_target_primary: 'umeri', tier: 2 },
+      'Cable Lateral Raise': { muscle_target_primary: 'umeri', tier: 2 },
+    };
+    const chosen = [
+      { name: 'DB Shoulder Press', sets: 3 },
+      { name: 'Cable Rear Delt Fly', sets: 3 },
+      { name: 'DB Lateral Raise', sets: 3 }, // already 1 side_delt present
+    ];
+    // Two laterals available; if it summed (2) it would inject the 2nd. MAX(1,1)=1
+    // is already met → no injection.
+    const pool = [{ name: 'Cable Lateral Raise', meta: metaMap['Cable Lateral Raise'] }];
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'v-taper', cluster: 'push', daysPerWeek: 4, sessionSizeCap: 8,
+    }));
+    const laterals = out.filter((e) => deriveExerciseTags(e.name, metaMap[e.name], movementKey).has('side_delt'));
+    expect(laterals.length).toBe(1); // MAX(1,1)=1 — NOT 2
+    expect(out.map((e) => e.name)).not.toContain('Cable Lateral Raise');
+  });
+
+  it('a non-applicable cluster is a graceful no-op (weekly target skipped)', () => {
+    // 'lower' focus has NO explicit sessionRequirements; its only requirement is the
+    // weekly heavy_lower_compound target, applicable to legs/lower/full/fullbody —
+    // NOT to 'push'. On a push day the weekly translation must NOT fire even with a
+    // heavy compound in the pool (isolates the weekly path from any explicit min).
+    const metaMap = {
+      'Flat DB Press': { muscle_target_primary: 'piept', tier: 1 },
+      'Barbell Back Squat (High Bar)': { muscle_target_primary: 'picioare-quads', tier: 1 },
+    };
+    const chosen = [{ name: 'Flat DB Press', sets: 3 }];
+    const pool = [{ name: 'Barbell Back Squat (High Bar)', meta: metaMap['Barbell Back Squat (High Bar)'] }];
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'lower', cluster: 'push', daysPerWeek: 4, sessionSizeCap: 8,
+    }));
+    // heavy_lower_compound not applicable to a push day → session unchanged.
+    expect(out.map((e) => e.name)).toEqual(['Flat DB Press']);
+  });
+
+  it('an underivable weekly tag (front_delt) is a graceful no-op (never invented)', () => {
+    // shoulders focus, days5plus → front_delt_slots target is 1, applicable to a
+    // push day. The deriver NEVER emits front_delt → no candidate ever qualifies →
+    // graceful no-op (the session keeps its side/rear delts, no front-raise forced).
+    const metaMap = {
+      'DB Shoulder Press': { muscle_target_primary: 'umeri', tier: 1 },
+      'DB Lateral Raise': { muscle_target_primary: 'umeri', tier: 2 },
+      'Cable Rear Delt Fly': { muscle_target_primary: 'umeri', tier: 2 },
+    };
+    const chosen = [
+      { name: 'DB Shoulder Press', sets: 3 },
+      { name: 'DB Lateral Raise', sets: 3 },
+      { name: 'Cable Rear Delt Fly', sets: 3 },
+    ];
+    // Pool has only umeri pieces; NONE derive front_delt, so the front_delt weekly
+    // target can never be satisfied and must not error / inject a bogus pick.
+    const pool = [];
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'shoulders', cluster: 'push', daysPerWeek: 6, sessionSizeCap: 8,
+    }));
+    expect(out.map((e) => e.name)).toEqual([
+      'DB Shoulder Press', 'DB Lateral Raise', 'Cable Rear Delt Fly',
+    ]);
+    expect(out.every((e) => !deriveExerciseTags(e.name, metaMap[e.name], movementKey).has('front_delt'))).toBe(true);
+  });
+
+  it('same seed/input twice → identical output (determinism with weekly translation)', () => {
+    const metaMap = {
+      'DB Shoulder Press': { muscle_target_primary: 'umeri', tier: 1 },
+      'DB Lateral Raise': { muscle_target_primary: 'umeri', tier: 2 },
+      'Cable Rear Delt Fly': { muscle_target_primary: 'umeri', tier: 2 },
+      'Machine Pullover': { muscle_target_primary: 'spate', tier: 2 },
+    };
+    const chosen = [{ name: 'DB Shoulder Press', sets: 3 }];
+    const pool = [
+      { name: 'DB Lateral Raise', meta: metaMap['DB Lateral Raise'] },
+      { name: 'Cable Rear Delt Fly', meta: metaMap['Cable Rear Delt Fly'] },
+      { name: 'Machine Pullover', meta: metaMap['Machine Pullover'] },
+    ];
+    const run = () => applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'v-taper', cluster: 'upper', daysPerWeek: 4, sessionSizeCap: 8,
+    }));
+    expect(run()).toEqual(run());
+  });
+});
+
 describe('applyFocusPolicy — integration through the real composer (v-taper push)', () => {
   // A realistic equipment set so the umeri/piept/triceps pools fill from CORE_AUTO.
   const FULL_GYM = [
