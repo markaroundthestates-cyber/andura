@@ -11,6 +11,7 @@ import { getExerciseMetadata } from '../../../src/engine/exerciseLibrary.js';
 import { movementKey } from '../../../src/engine/sessionBuilder.js';
 import { INJURY_PATTERN_EXCLUSIONS, REFUSAL_PATTERN_TOKENS, isExcludedMovement, buildExclusionTokens } from '../../../src/engine/movementExclusion.js';
 import { DEV_FLAGS_KEY } from '../../../src/util/featureFlags.js';
+import { activeWeekForFrequency } from '../../../src/engine/schedule/scheduleAdapter/frequencySplit.js';
 import { DB } from '../../../src/db.js';
 import { evaluateGoalRealism } from '../../../src/engine/goalRealism.js';
 import { estimateBfDeurenbergCapped } from '../../../src/engine/bodyComposition.js';
@@ -18,12 +19,33 @@ import {
   PERSONAS, ANDURA_ON_FLAGS, GROUP_LABEL, PAIN_REGION, COHORT_START, MS_DAY,
 } from './pm-personas.js';
 
-// Active-day offsets per frequency (mirror the schedule's default active days).
+// Active-day offsets per frequency — DERIVED from the engine's REAL active-week
+// bit-pattern (activeWeekForFrequency in frequencySplit.js), NOT hardcoded
+// contiguous offsets. The compose path resolves the same activeWeekForFrequency
+// (no override / no schedule-store under resetWorld's localStorage.clear), and
+// clusterForDay maps each day-INDEX to a cluster by its ORDINAL position among
+// the active days. Feeding contiguous offsets (e.g. [0,1,2,3,4] for freq-5)
+// queries REST-day indices the engine never trains and skips real active days,
+// double-mapping one cluster and dropping another (the old freq-5 fabricated
+// PULL/PULL with no LEGS). Deriving from the real pattern drives the composer on
+// the SAME days the engine actually trains. Frequencies 1-7 all covered (6/7 use
+// the DEFAULT_ACTIVE_WEEK fallback the engine itself uses, kept consistent).
+function offsetsForFrequency(freq) {
+  const week = activeWeekForFrequency(freq);
+  const out = [];
+  for (let i = 0; i < week.length; i++) if (week[i]) out.push(i);
+  return out;
+}
 const ACTIVE_DAYS = {
-  '2': [0, 3],
-  '3': [0, 2, 4],
-  '4': [0, 1, 3, 4],
-  '5': [0, 1, 2, 3, 4],
+  1: offsetsForFrequency('1'), 2: offsetsForFrequency('2'),
+  3: offsetsForFrequency('3'), 4: offsetsForFrequency('4'),
+  5: offsetsForFrequency('5'), 6: offsetsForFrequency('6'),
+  7: offsetsForFrequency('7'),
+  // string-keyed mirrors (personas carry frequency as a string '2'..'5')
+  '1': offsetsForFrequency('1'), '2': offsetsForFrequency('2'),
+  '3': offsetsForFrequency('3'), '4': offsetsForFrequency('4'),
+  '5': offsetsForFrequency('5'), '6': offsetsForFrequency('6'),
+  '7': offsetsForFrequency('7'),
 };
 
 // Compound vs isolation hint for the "compound-first" structure check (the

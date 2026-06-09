@@ -30,6 +30,27 @@ export default defineConfig({
       // (tests/e2e/, tests/*.spec.js stay in Playwright runner via npm run test)
       'tests/engine/**/*.test.{js,ts}',
     ],
+    // Throwaway probe convention: `_DIAG*` / `_diag*` / `_regen*` / `_probe*`
+    // files are disposable agent/dev diagnostics (some run multi-minute engine
+    // sweeps, e.g. a 165s cohort sim) that bloat the suite and starve the
+    // vitest worker IPC `onTaskUpdate` heartbeat → a teardown RPC timeout that
+    // flips the husky pre-commit exit code to 1. They are untracked + can't be
+    // rm'd in this sandbox, so EXCLUDE them from collection (alongside the
+    // local-only golden harness). Must re-list vitest's defaults — setting
+    // `exclude` replaces them. (2026-06-09)
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/cypress/**',
+      '**/.{idea,git,cache,output,temp}/**',
+      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
+      '**/_DIAG*',
+      '**/_diag*',
+      '**/_regen*',
+      '**/_probe*',
+      '**/_PROBE*',
+      '**/_engine_golden.harness.test.js',
+    ],
     // Local-only golden harness (`tests/engine/_engine_golden.harness.test.js`)
     // is a MANUAL before/after snapshot tool (run via `npm run test:golden`),
     // built for the long-finished god-file-split migration. It froze old engine

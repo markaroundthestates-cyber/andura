@@ -26,11 +26,27 @@ import { world, resetWorld, setPathAFlags, FLIPPED_FLAGS } from './full-path-sim
 import { getExerciseMetadata } from '../../src/engine/exerciseLibrary.js';
 import { movementKey } from '../../src/engine/sessionBuilder.js';
 import { deriveExerciseTags, FOCUS_RULES } from '../../src/engine/focusPolicy.js';
+import { activeWeekForFrequency } from '../../src/engine/schedule/scheduleAdapter/frequencySplit.js';
 import { DEV_FLAGS_KEY } from '../../src/util/featureFlags.js';
 
 const MS_DAY = 86400000;
 const COHORT_START = Date.UTC(2026, 0, 5); // Monday — mirrors the persona-matrix
-const ACTIVE_DAYS = { '2': [0, 3], '3': [0, 2, 4], '4': [0, 1, 3, 4], '5': [0, 1, 2, 3, 4] };
+// Active-day offsets DERIVED from the engine's real active-week bit-pattern
+// (activeWeekForFrequency), NOT hardcoded contiguous offsets. The composer
+// resolves the same activeWeekForFrequency (no override / no schedule-store under
+// resetWorld), so the harness must query the SAME day-indices the engine trains —
+// contiguous offsets (e.g. freq-5 [0,1,2,3,4]) hit rest-day indices the engine
+// never trains and skip real active days, mis-slotting clusters.
+const offsetsForFrequency = (freq) => {
+  const week = activeWeekForFrequency(freq);
+  const out = [];
+  for (let i = 0; i < week.length; i++) if (week[i]) out.push(i);
+  return out;
+};
+const ACTIVE_DAYS = {
+  '2': offsetsForFrequency('2'), '3': offsetsForFrequency('3'),
+  '4': offsetsForFrequency('4'), '5': offsetsForFrequency('5'),
+};
 
 const EVIDENCE_PATH = 'C:\\Users\\Daniel\\Documents\\_wt_p3\\tests\\engine\\_DIAG_focuspolicy_evidence.txt';
 
