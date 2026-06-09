@@ -3,8 +3,8 @@
   "seed": 15736039,
   "nProfiles": 8,
   "weeks": 6,
-  "hashOff": "23ecf4985265df39e08406db6579a6f2060059fb5e0cfa4ec67c28bdef4a5227",
-  "hashOn": "72afc02a6ecd08545f7f6cb1d8094ef4a00108bdbf5aea078a69eebe4b8426f7",
+  "hashOff": "b550df4d4d646ccbaf6b495464f9d02a9f09d0bb3c98c377881cd91148d3627d",
+  "hashOn": "b572575c1ae3134c2d15c84e47ee2986a002b3c5071f006f429af079f53c2b8e",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
@@ -24,16 +24,16 @@
     "minusRatePct": 21.9
   },
   "convergenceOff": {
-    "totalSeries": 118,
-    "convergedPct": 13.6,
-    "medianSessionsToConverge": 5.5,
-    "meanFinalAbsErr": 0.539
+    "totalSeries": 117,
+    "convergedPct": 12.8,
+    "medianSessionsToConverge": 7,
+    "meanFinalAbsErr": 0.54
   },
   "convergenceOn": {
     "totalSeries": 121,
-    "convergedPct": 11.6,
+    "convergedPct": 10.7,
     "medianSessionsToConverge": 4,
-    "meanFinalAbsErr": 0.563
+    "meanFinalAbsErr": 0.566
   },
   "flagsOff": {
     "oscillation": 0,

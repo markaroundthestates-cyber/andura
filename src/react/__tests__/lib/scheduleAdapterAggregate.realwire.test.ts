@@ -408,12 +408,15 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
     });
     const out = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     expect(out).not.toBeNull();
-    const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
+    // tier-select anchor (2026-06-09): the back::pulldown anchor now follows the
+    // SELECTION band, so the S-band 'Wide-Grip Lat Pulldown' leads the (no-log)
+    // cold-start session over the out-ranked plain 'Lat Pulldown' (same movement key).
+    const lat = findByEnSlug(out!.exercises, 'Wide-Grip Lat Pulldown');
     expect(lat).toBeDefined();
     // dp_population_prior_v1 ON (THE FLIP 2026-06-08) + #80 cold-start safety damps:
     // the cold-start seeds from the published per-exercise strength-standard prior,
     // back-solved in e1RM space, then damped by the policy's no-history confidence
-    // (×0.92) + load-AXIS (Lat Pulldown = cable ×0.80; age 30 → no age damp). For a
+    // (×0.92) + load-AXIS (pulldown = cable ×0.80; age 30 → no age damp). For a
     // 75kg intermediate male this lands a sensible, machine-settable 40kg (down from
     // the pre-#80 50 — undershoot+ramp > overshoot; the first set recalibrates).
     expect(lat!.targetKg).toBe(40);
@@ -426,7 +429,11 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
       completedAt: Date.now(),
     });
     const begOut = await composePlannedWorkoutToday(MONDAY_2026_05_18);
-    const begLat = findByEnSlug(begOut!.exercises, 'Lat Pulldown');
+    // tier-select anchor (2026-06-09): the no-log back::pulldown anchor follows the
+    // SELECTION band, which is experience-scored — beginner leads with the S-band
+    // 'Wide-Grip Lat Pulldown', advanced with the higher-band 'Single-Arm Lat Pulldown'
+    // (both same pulldown movement, both out-ranking the plain 'Lat Pulldown').
+    const begLat = findByEnSlug(begOut!.exercises, 'Wide-Grip Lat Pulldown');
 
     useOnboardingStore.setState({
       data: { age: 30, sex: 'm', goal: 'masa', frequency: '4', experience: 'avansat', weight: 75, height: 175 },
@@ -434,7 +441,7 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
       completedAt: Date.now(),
     });
     const advOut = await composePlannedWorkoutToday(MONDAY_2026_05_18);
-    const advLat = findByEnSlug(advOut!.exercises, 'Lat Pulldown');
+    const advLat = findByEnSlug(advOut!.exercises, 'Single-Arm Lat Pulldown');
 
     expect(begLat).toBeDefined();
     expect(advLat).toBeDefined();
@@ -453,7 +460,9 @@ describe('scheduleAdapterAggregate — C1 DP/cold-start weight wiring', () => {
   it('preserves Romanian display name + sub while wiring engine weight', async () => {
     const out = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     expect(out).not.toBeNull();
-    const lat = findByEnSlug(out!.exercises, 'Lat Pulldown');
+    // tier-select anchor (2026-06-09): no-log cold-start leads with the S-band
+    // 'Wide-Grip Lat Pulldown' (same pulldown movement, out-ranks plain 'Lat Pulldown').
+    const lat = findByEnSlug(out!.exercises, 'Wide-Grip Lat Pulldown');
     expect(lat).toBeDefined();
     // id stays English-canonical slug (engine identity) while the user-facing
     // exercise carries the RO display (exro base preserved through C1 merge).
@@ -580,6 +589,15 @@ describe('scheduleAdapterAggregate — FIX #4 engine-sourced rest time', () => {
     const [minSec, maxSec] = range!;
     expect(maxSec).toBeGreaterThan(minSec); // a real range, not a point
 
+    // tier-select anchor (2026-06-09): the no-log back::pulldown anchor follows the
+    // SELECTION band, which surfaces a pulldown VARIANT ('Wide-Grip Lat Pulldown')
+    // not in the canonical COMPOUND_EX list — so this test (which probes COMPOUND_EX
+    // → rest MAX) seeds a 'Lat Pulldown' log so the canonical COMPOUND_EX member wins
+    // the anchor (its hasLog tierSelect boost out-scores the variant), keeping the
+    // compound-vs-isolation rest contract under test.
+    DB.set('logs', [
+      { ex: 'Lat Pulldown', w: 56, reps: '9', set: 1, ts: Date.now() - 1000 },
+    ]);
     const out = await composePlannedWorkoutToday(MONDAY_2026_05_18);
     const compound = findByEnSlug(out!.exercises, 'Lat Pulldown'); // COMPOUND_EX
     const isolation = findByEnSlug(out!.exercises, 'DB Preacher Curl'); // isolation

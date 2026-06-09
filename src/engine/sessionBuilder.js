@@ -958,7 +958,7 @@ const MOVEMENT_TOKEN_DEFS = [
   ['deadlift', 'deadlift'], ['romanian', 'deadlift'], ['rdl', 'deadlift'],
   ['kickback', 'kickback'], ['skull', 'skull'], ['crunch', 'crunch'],
   ['shrug', 'shrug'], ['row', 'row'], ['lateral', 'lateral-raise'], ['squat', 'squat'],
-  ['lunge', 'lunge'], ['calf', 'calf'], ['press', 'press'], ['dip', 'dip'],
+  ['lunge', 'lunge'], ['calf', 'calf'], ['ohp', 'press'], ['press', 'press'], ['dip', 'dip'],
   ['fly', 'fly'], ['pec', 'fly'], ['hammer curl', 'hammer-curl'], ['curl', 'curl'],
   ['extension', 'extension'], ['raise', 'raise'], ['pull', 'pull'],
 ];
@@ -1186,8 +1186,23 @@ export function buildSession(cluster, ctx) {
       if (e.meta.tier !== 1 || isTaken(e)) return false;
       const mk = movementKey(e.name, e.meta);
       const myRank = rank(e.name, prNames);
-      const preferredSameMovement = pool.some(
-        (o) => movementKey(o.name, o.meta) === mk && rank(o.name, prNames) < myRank,
+      // Phase-1 anchor dedup tiebreak. LEGACY (flag OFF) defers a T1 to a
+      // strictly-lower-rank (commonness) same-movement variant → byte-identical.
+      // Under dp_daniel_tier_select_v1, preference must follow Daniel's SELECTION
+      // band (tierSelectScore), NOT commonness — otherwise once the OHP dedup
+      // collapses Machine Shoulder Press [S] and DB Shoulder Press [COMMON] onto
+      // one movementKey, commonness would defer the S-band press to the B-band
+      // one (the umeri anchor regresses). Use the same score the Phase-2 sort
+      // uses so anchor + fill agree. (2026-06-09)
+      const myScore = danielTierSelect
+        ? tierSelectScore(e.name, { hasLog: prNames.has(e.name) })
+        : 0;
+      const preferredSameMovement = pool.some((o) =>
+        movementKey(o.name, o.meta) !== mk
+          ? false
+          : danielTierSelect
+            ? tierSelectScore(o.name, { hasLog: prNames.has(o.name) }) > myScore
+            : rank(o.name, prNames) < myRank,
       );
       return !preferredSameMovement;
     });

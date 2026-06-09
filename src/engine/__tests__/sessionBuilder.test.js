@@ -678,6 +678,18 @@ describe('movementKey — movement-pattern identity', () => {
     const key = movementKey('Hammer Strength Iso-Lateral High Row', { muscle_target_primary: 'spate' });
     expect(key).toBe('spate::row');
   });
+
+  it('OHP variants collapse onto the vertical-press key (dedup vs a shoulder press)', () => {
+    // An OHP name without the word "press" (e.g. "Smith OHP") used to fall back to
+    // a name-unique key and escape dedup, so a Smith OHP + a Machine Shoulder Press
+    // could both land in one session (two vertical presses). They must share key.
+    const smithOhp = movementKey('Smith OHP', getExerciseMetadata('Smith OHP'));
+    const machinePress = movementKey('Machine Shoulder Press', getExerciseMetadata('Machine Shoulder Press'));
+    const ohp = movementKey('OHP', getExerciseMetadata('OHP'));
+    expect(smithOhp).toBe('umeri::press');
+    expect(smithOhp).toBe(machinePress);
+    expect(ohp).toBe(machinePress);
+  });
 });
 
 describe('equipment snapping — barbell stack (audit CR-01)', () => {
