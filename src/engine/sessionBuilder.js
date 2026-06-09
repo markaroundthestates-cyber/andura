@@ -201,6 +201,13 @@ const ISOLATION_MAX_SETS = 3;
 // it only lets the existing cut express itself. Never below 2 (a non-recovered
 // muscle gets a light touch, never zeroed). Isolation already floors at 2.
 const NONRECOVERED_COMPOUND_MIN_SETS = 2;
+// dp_tier_compound_floor_v1 — the FRESH (recovered) compound floor for a T0 NOVICE.
+// 2 sets/exercise is genuinely effective (MEV) and keeps a beginner's recovery
+// manageable; a TRAINED lifter (T1/T2) keeps the universal COMPOUND_MIN_SETS (3)
+// so their fresh compounds are never stranded at 2. Only used when the flag is on
+// AND the group is recovered AND the user is a beginner → flag OFF / trained →
+// COMPOUND_MIN_SETS (byte-identical).
+const NOVICE_COMPOUND_MIN_SETS = 2;
 // Typical weekly frequency a muscle group is trained — the periodization
 // volume target is sets/WEEK, but buildSession plans ONE session, so the
 // weekly target is divided across the sessions that hit the group. Used as a
@@ -369,14 +376,26 @@ function coherentDayBudget(perSessionBudget, actualExCount) {
  * keeps the recovery floor — never force volume onto a fatigued muscle). Default
  * false → [3,5] byte-identical.
  *
+ * TIER-AWARE FRESH COMPOUND FLOOR (dp_tier_compound_floor_v1) — `novice` true means
+ * the user is a T0 beginner AND the flag is on: a FRESH (recovered) compound's floor
+ * is allowed to sit at NOVICE_COMPOUND_MIN_SETS (2) instead of the universal
+ * COMPOUND_MIN_SETS (3). Science: 2 sets/exercise is genuinely effective (MEV,
+ * manageable recovery for a beginner); 3 is better for a TRAINED lifter (so a
+ * trained lifter's fresh compound is never stranded below 3 — the universal default
+ * already gives them 3). Default false → the fresh compound floor stays 3 for
+ * everyone → byte-identical. The recovery (non-recovered → 2) + emphasis-anchor
+ * floors are UNCHANGED in both modes.
+ *
  * @param {Array<{name?: string, tier: number}>} exsInGroup - chosen exercises of this group (with tier)
  * @param {number|null} budget - per-session set budget for the group (sessionSetBudget)
  * @param {'recovered'|'partial'|'fatigued'} [state] - this group's recovery state
  * @param {((name: string) => number)|null} [fatigueAdjustFn] - F6a #20 per-exercise sets adjust (-1|0|+1); null/absent → 0
  * @param {boolean} [emphasized] - #72: this group is emphasized → raise the compound ceiling
+ * @param {((name: string) => number)|null} [trimFn] - #19 effective-reps trim (≤0)
+ * @param {boolean} [novice] - dp_tier_compound_floor_v1: T0 beginner → fresh compound floor may drop to 2
  * @returns {number[]} set count per exercise, index-aligned with exsInGroup
  */
-function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasized, trimFn) {
+function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasized, trimFn, novice) {
   const n = exsInGroup.length;
   if (n === 0) return [];
   // #19 V3 DOSE — the effective-reps TRIM is combined with the fatigue-curve adjust
@@ -411,7 +430,12 @@ function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasi
   // A non-recovered group: lower the compound floor (so the cut can reach below
   // the usual 3) AND shave one set per exercise (the visible "lighter today").
   const nonRecovered = state === 'partial' || state === 'fatigued';
-  const compoundFloor = nonRecovered ? NONRECOVERED_COMPOUND_MIN_SETS : COMPOUND_MIN_SETS;
+  // dp_tier_compound_floor_v1 — a FRESH (recovered) compound for a T0 NOVICE may
+  // floor at NOVICE_COMPOUND_MIN_SETS (2, MEV) instead of the universal 3; a TRAINED
+  // lifter keeps 3. Inert (3) for a non-recovered group (the recovery floor wins) or
+  // when the flag is off (novice false) → byte-identical.
+  const freshCompoundFloor = novice ? NOVICE_COMPOUND_MIN_SETS : COMPOUND_MIN_SETS;
+  const compoundFloor = nonRecovered ? NONRECOVERED_COMPOUND_MIN_SETS : freshCompoundFloor;
   const setShave = nonRecovered ? 1 : 0;
   // #72 — an emphasized + RECOVERED group raises its compound band: the ceiling
   // rises (so a high budget can reach 6), and the ANCHOR (first/highest-priority
@@ -896,6 +920,7 @@ export function movementKey(name, meta) {
  *   effectiveRepsSetsTrim?: ((name: string) => number)|null,
  *   emphasisSetsBoost?: boolean,
  *   coherentAlloc?: boolean,
+ *   tierCompoundFloor?: boolean,
  *   lateralRaiseGuarantee?: boolean,
  *   sexBias?: 'm'|'f'|null,
  * } | null | undefined} ctx
@@ -1246,6 +1271,11 @@ export function buildSession(cluster, ctx) {
     const g = groupOf(e.name);
     (byGroup[g] ||= []).push({ name: e.name, tier: metaOf(e.name).tier });
   }
+  // dp_tier_compound_floor_v1 — a T0 NOVICE's FRESH compound floor may drop to 2
+  // (MEV). ctx.tierCompoundFloor is the resolved flag (set at the getDailyWorkout
+  // seam); a beginner is gated on the resolved profileTier. Trained / flag OFF →
+  // false → the universal 3-set fresh floor (byte-identical).
+  const noviceCompoundFloor = ctx?.tierCompoundFloor === true && ctx?.profileTier === 'T0';
   // #71 coherent allocation + #72 emphasis sets-boost (both default OFF → the
   // distribution is byte-identical to today).
   const coherentAlloc = ctx?.coherentAlloc === true;
@@ -1295,7 +1325,7 @@ export function buildSession(cluster, ctx) {
       : perSessionBudget;
     const counts = distributeGroupSets(
       exs, budget, recoveryState[g], ctx?.fatigueSetsAdjust, isEmphasized,
-      ctx?.effectiveRepsSetsTrim,
+      ctx?.effectiveRepsSetsTrim, noviceCompoundFloor,
     );
     exs.forEach((e, i) => { setsByName[e.name] = counts[i]; });
   }

@@ -607,6 +607,13 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // across days as the day's slot count varies (DIAG #3 incoherent allocation),
     // and the catch-all overlap day stops ballooning a few slots into 5-set presses.
     coherentAlloc: isEnabled('dp_coherent_weekly_alloc_v1'),
+    // tier-aware FRESH compound floor (dp_tier_compound_floor_v1, default OFF →
+    // byte-identical). When ON, a T0 NOVICE's fresh compound floor may drop to 2
+    // (MEV) in distributeGroupSets while a TRAINED lifter (T1/T2) keeps the
+    // universal 3 (so trained compounds are never stranded at 2 when the muscle is
+    // fresh). The beginner gate reads ctx.profileTier inside buildSession; OFF →
+    // the universal 3-set fresh floor for everyone.
+    tierCompoundFloor: isEnabled('dp_tier_compound_floor_v1'),
     // #73 goal/sex-aware SELECTION (dp_smart_selection_v1, default OFF →
     // byte-identical). When ON:
     //  - lateralRaiseGuarantee: a focus that emphasizes the shoulders (umeri in
