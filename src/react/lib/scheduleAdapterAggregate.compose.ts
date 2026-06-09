@@ -34,6 +34,7 @@ import {
   readinessScoreForUser,
 } from './scheduleAdapterAggregate.builder';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
+import { phaseRirShift } from '../../engine/periodization/mesocycle.js';
 
 // Engine workout-title fallback SENTINEL — a non-localized machine marker the
 // adapter emits when the pipeline produces no real title. The render boundaries
@@ -964,9 +965,21 @@ export async function composePlannedWorkoutToday(
     const energyMod = energyMagnitude ? energyVolumeFactor(energyMagnitude) : null;
     // RIR shift folded into the rir DISPLAY band only (never the kg — KEEP-LOAD). 0
     // shift / no magnitude → the base band unchanged (byte-identical).
-    const rirTargetMod = energyMod
+    const rirEnergyMod = energyMod
       ? shiftRirBand(rirTargetModBase, energyMod.rirShift)
       : rirTargetModBase;
+    // W-Meso — intra-block RIR ramp (dp_meso_rir_v1, default OFF). The mesocycle
+    // phase (LOAD/LOAD+/PEAK/DELOAD) shifts the rir DISPLAY band so the early weeks
+    // run HIGHER RIR (more in reserve) ramping to LOWER RIR at PEAK — the standard
+    // accumulation→intensification feel. Folded through the SAME shiftRirBand
+    // channel as #76 (label only, never the kg — KEEP-LOAD invariant). DELOAD →
+    // shift 0 (the deload machinery already owns its recovery cut). Flag OFF / no
+    // phase / shift 0 → the band passes through unchanged (byte-identical).
+    const mesoPhase = plan.mesocyclePhase as 'LOAD' | 'LOAD+' | 'PEAK' | 'DELOAD' | null | undefined;
+    const mesoRirShift =
+      isEnabled('dp_meso_rir_v1') && typeof mesoPhase === 'string' ? phaseRirShift(mesoPhase) : 0;
+    const rirTargetMod =
+      mesoRirShift !== 0 ? shiftRirBand(rirEnergyMod, mesoRirShift) : rirEnergyMod;
     // F3 #6 — Periodization %1RM intensity corridor {floor,ceiling}. Same guard:
     // only a finite floor<=ceiling pair is threaded; anything else → null → DP
     // no-op. Behind dp_intensity_corridor_v1 (default OFF) DP bounds the prescribed

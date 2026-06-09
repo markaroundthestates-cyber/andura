@@ -8,6 +8,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { scaleSetsByEnergy, shiftRirBand } from '../../lib/scheduleAdapterAggregate';
+import { phaseRirShift } from '../../../engine/periodization/mesocycle.js';
 import type { PlannedExercise } from '../../lib/engineWrappers';
 
 const MIN_SETS_PER_EX = 2; // mirror of the compose-module floor
@@ -93,5 +94,39 @@ describe('shiftRirBand — energy RIR shift folded into the display band (NOT th
 
   it('no base band + a shift → seeds from a sane default RIR band', () => {
     expect(shiftRirBand(null, 2)).toEqual([3, 4]); // default [1,2] + 2
+  });
+});
+
+// W-Meso — the intra-block RIR ramp wiring (dp_meso_rir_v1). The compose seam folds
+// phaseRirShift(mesocyclePhase) through the SAME shiftRirBand channel as #76. These
+// assert the COMPOSED transformation: across a 4-week block the rir DISPLAY band
+// steps DOWN W0(LOAD)→PEAK (accumulation→intensification), DELOAD is unaffected, and
+// — KEEP-LOAD — the band is the display channel only (it never feeds the kg).
+describe('W-Meso intra-block RIR ramp — phaseRirShift folded via shiftRirBand', () => {
+  // The exact composition compose.ts performs: shiftRirBand(base, phaseRirShift(p)).
+  const banded = (phase: string, base: readonly [number, number] | null = [1, 2]) =>
+    shiftRirBand(base, phaseRirShift(phase as 'LOAD' | 'LOAD+' | 'PEAK' | 'DELOAD'));
+
+  it('steps DOWN across the accumulation block W0→PEAK (more reserve early → less at PEAK)', () => {
+    expect(banded('LOAD')).toEqual([1, 2]);   // shift 0  → unchanged (early week)
+    expect(banded('LOAD+')).toEqual([0, 1]);  // shift -1 → one step closer to failure
+    expect(banded('PEAK')).toEqual([0, 0]);   // shift -2 → floored, closest to failure
+  });
+
+  it('floor of the band is monotonically non-increasing LOAD ≥ LOAD+ ≥ PEAK', () => {
+    const lo = (b: readonly [number, number] | null) => (b ? b[0] : NaN);
+    expect(lo(banded('LOAD', [2, 3]))).toBeGreaterThanOrEqual(lo(banded('LOAD+', [2, 3])));
+    expect(lo(banded('LOAD+', [2, 3]))).toBeGreaterThanOrEqual(lo(banded('PEAK', [2, 3])));
+  });
+
+  it('DELOAD leaves the band unchanged (deload machinery owns the recovery cut)', () => {
+    expect(banded('DELOAD', [1, 2])).toEqual([1, 2]);
+    expect(banded('DELOAD', null)).toBeNull(); // shift 0 + no base → still null
+  });
+
+  it('flag-OFF equivalence: shift 0 (LOAD/DELOAD) passes the base through byte-identical', () => {
+    // OFF path mirrors a 0 shift — the band is never touched.
+    expect(banded('LOAD', [2, 3])).toEqual([2, 3]);
+    expect(banded('LOAD', null)).toBeNull();
   });
 });

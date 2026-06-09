@@ -742,6 +742,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // the blueprint is absent (empty user) → DP keeps its phase-aware default band.
     repRangeModifier: blueprints.goalAdaptation?.rep_range_modifier ?? null,
     rirTargetModifier: blueprints.goalAdaptation?.rir_target_modifier ?? null,
+    // W-Meso — the periodization mesocycle phase (LOAD/LOAD+/PEAK/DELOAD) for the
+    // current week-in-block (periodization/index.js blueprint mesocycle_phase).
+    // Surfaced so the compose seam can fold the intra-block RIR ramp (early weeks
+    // higher RIR, ramping to lower RIR at PEAK) into the rir DISPLAY band behind
+    // dp_meso_rir_v1 (default OFF). null when the blueprint is absent → no ramp.
+    mesocyclePhase: blueprints.periodization?.mesocycle_phase ?? null,
     // F3 #6 — Periodization %1RM intensity corridor {floor,ceiling} (goal-derived,
     // hard-capped 90%, phase-multiplied; periodization/index.js:174). Computed but
     // previously dropped here (only volume_target_pct was read). Surfaced so the

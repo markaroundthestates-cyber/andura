@@ -45,6 +45,9 @@ export interface WorkoutPlan {
   // getDailyWorkout always emits them (null on absent blueprint).
   repRangeModifier?: readonly [number, number] | null;
   rirTargetModifier?: readonly [number, number] | null;
+  // W-Meso — periodization mesocycle phase for the current week-in-block.
+  // Optional/additive; getDailyWorkout emits it (null on absent blueprint).
+  mesocyclePhase?: 'LOAD' | 'LOAD+' | 'PEAK' | 'DELOAD' | null;
   // F3 #6 — Periodization %1RM intensity corridor {floor,ceiling}. Optional/additive;
   // getDailyWorkout emits it (null on absent blueprint).
   intensityCorridor?: { floor: number; ceiling: number } | null;

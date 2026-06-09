@@ -4,6 +4,7 @@ import {
   volumeMultiplierForPhase,
   intensityMultiplierForPhase,
   rirTargetForPhase,
+  phaseRirShift,
   isMariusDualSignalGreen,
   hasInjuryBlock,
   isExtensionAllowedByCap,
@@ -77,6 +78,30 @@ describe('rirTargetForPhase — §9.3 Cluster 2.1 RIR drift LOAD→PEAK', () => 
   it('non-numeric baseline coerces to defensive default 2', () => {
     expect(rirTargetForPhase('LOAD', 'foo')).toBe(2);
     expect(rirTargetForPhase('LOAD', null)).toBe(2);
+  });
+});
+
+describe('phaseRirShift — W-Meso intra-block RIR ramp W0→PEAK', () => {
+  it('LOAD → 0 (early week, most in reserve)', () => {
+    expect(phaseRirShift('LOAD')).toBe(0);
+  });
+  it('LOAD+ → −1 (one step closer to failure)', () => {
+    expect(phaseRirShift('LOAD+')).toBe(-1);
+  });
+  it('PEAK → −2 (intensification, closest to failure)', () => {
+    expect(phaseRirShift('PEAK')).toBe(-2);
+  });
+  it('DELOAD → 0 (recovery unaffected — deload machinery owns its cut)', () => {
+    expect(phaseRirShift('DELOAD')).toBe(0);
+  });
+  it('ramps monotonically DOWN across the accumulation block', () => {
+    expect(phaseRirShift('LOAD')).toBeGreaterThan(phaseRirShift('LOAD+'));
+    expect(phaseRirShift('LOAD+')).toBeGreaterThan(phaseRirShift('PEAK'));
+  });
+  it('NEVER raises RIR above baseline (shift ≤ 0 every phase)', () => {
+    for (const p of ['LOAD', 'LOAD+', 'PEAK', 'DELOAD']) {
+      expect(phaseRirShift(p)).toBeLessThanOrEqual(0);
+    }
   });
 });
 

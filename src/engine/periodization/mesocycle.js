@@ -77,6 +77,30 @@ export function rirTargetForPhase(phase, baselineRir) {
 }
 
 /**
+ * Intra-block RIR shift (reps) for a phase — the SIGNED offset the accumulation
+ * → intensification ramp applies to a baseline RIR band. Mirrors
+ * rirTargetForPhase's drift relative to baseline:
+ *   - LOAD:   0  (early week — most in reserve)
+ *   - LOAD+: -1  (one step closer to failure)
+ *   - PEAK:  -2  (intensification — closest to failure)
+ *   - DELOAD: 0  (recovery — NOT pushed; deload machinery owns its own cuts)
+ *
+ * So across a mesocycle the early weeks run HIGHER RIR (more reserve), ramping
+ * DOWN to lower RIR at PEAK. NEVER raises RIR above baseline — it only shifts the
+ * accumulation weeks closer to failure as the block progresses. Pure.
+ *
+ * @param {import('./types.js').MesocyclePhase} phase
+ * @returns {number} signed RIR shift in reps (≤ 0)
+ */
+export function phaseRirShift(phase) {
+  // Use baseline 0 so the return is the pure relative offset (rirTargetForPhase
+  // floors at 0; baseline 0 makes LOAD→0, LOAD+→0... so derive from a high base
+  // then subtract to recover the true signed step without the floor clamping it).
+  const HIGH = 100; // far above any real RIR → floor never engages
+  return rirTargetForPhase(phase, HIGH) - HIGH;
+}
+
+/**
  * Marius 5:1 dual-signal evaluation per §9.3 2.3 verbatim.
  *
  * Signal 1: RIR stable [1, 2] ALL 4 weeks (zero RIR drift week-over-week)

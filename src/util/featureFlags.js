@@ -1021,6 +1021,19 @@ export const FLAGS = Object.freeze({
   // hash + golden gate hold; this flag is NOT in the fp ON cohort). Flip ON is a
   // human gate (Daniel) AFTER the persona-matrix A/B review.
   dp_split_rebalance_v1: { rollout: 1, default: true },
+
+  // W-Meso (2026-06-09) — intra-block RIR ramp. The mesocycle deload already
+  // fires (W3 −45% volume / −20% load, weeksElapsed wired), but the LOAD/LOAD+/
+  // PEAK accumulation weeks compose IDENTICALLY because the intended intra-block
+  // RIR drift (rirTargetForPhase, mesocycle.js) was computed but DARK. This wires
+  // it: the phase shifts the rir DISPLAY band (compose.ts shiftRirBand, label only
+  // — never the kg, KEEP-LOAD) so early weeks run HIGHER RIR (more in reserve)
+  // ramping to LOWER RIR at PEAK (accumulation→intensification). DELOAD unaffected.
+  // Behavior CHANGES across weeks → must be byte-identical OFF: rollout 0 / default
+  // false → phaseRirShift never called, the band passes through unchanged → the
+  // full-path-sim hash + golden gate hold (NOT in the fp ON cohort). Flip ON is a
+  // human gate (Daniel) after a focused multi-week ON review.
+  dp_meso_rir_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */
