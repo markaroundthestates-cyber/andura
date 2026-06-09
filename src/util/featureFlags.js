@@ -961,7 +961,7 @@ export const FLAGS = Object.freeze({
   // that table at the compose seam — it is NOT YET wired to sessionBuilder/compose
   // (no consumer imports FOCUS_RULES this step). OFF → the table is never read →
   // byte-identical to today. The resolver (a LATER Wave 1.3 step) flips this on.
-  dp_focus_policy_v1: { rollout: 0, default: false },
+  dp_focus_policy_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

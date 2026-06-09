@@ -76,6 +76,14 @@ export const FLIPPED_FLAGS = Object.freeze([
   // a CORRECTNESS fix (a Plank in seconds, not phantom reps) verified on the live
   // compose path + the #70 matrix, NOT in this determinism stream.
   'dp_metric_types_v1',
+  // THE FLIP 2026-06-09 — Wave 1.3-D focus-policy now defaults ON (caps +
+  // per-session requirements + weekly-as-session, verified 25/25 on the #70
+  // persona matrix). Added here so the A/B arms force it explicitly OFF: the
+  // frozen prescription stream pins a fixed per-focus composition for every
+  // profile; honoring the focus-policy caps/requirements would prune/inject
+  // exercises and move the frozen hashes. The ON behavior is proven correct on
+  // the #70 matrix + the persona-acceptance suite, NOT in this determinism stream.
+  'dp_focus_policy_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the
