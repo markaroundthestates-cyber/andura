@@ -1184,7 +1184,9 @@ export const DP = {
   // @param {{floor:number, ceiling:number}} corridor %1RM band
   // @returns {number} corridor-bounded kg (snapped), or the input kg when inert
   _applyIntensityCorridor(kg, ex, repTarget, corridor) {
-    if (!isEnabled('dp_intensity_corridor_v1')) return kg;          // kill-switch
+    // Either gate opens the corridor: the standalone #6 flag, OR W-Goal's coherent
+    // strength flag (which flips reps-low + heavier-load together for the forta path).
+    if (!isEnabled('dp_intensity_corridor_v1') && !isEnabled('dp_strength_goal_v1')) return kg; // kill-switch
     if (!corridor || typeof corridor !== 'object') return kg;
     const floor = Number(corridor.floor);
     const ceiling = Number(corridor.ceiling);
@@ -2564,13 +2566,30 @@ export const DP = {
     // actually narrows the prescribed reps. Absent/malformed → byte-identical.
     const repMod = opts && Array.isArray(opts.repRangeModifier) ? opts.repRangeModifier : null;
     if (repMod && Number.isFinite(repMod[0]) && Number.isFinite(repMod[1])) {
-      const lo = Math.max(rMinSafe, Math.min(repMod[0], repMod[1]));
+      // W-Goal — UNCLAMP the rep floor for STRENGTH on a barbell compound. Normally
+      // the goal band INTERSECTS the per-exercise REP_RANGES (max(default_lo, goal_lo)),
+      // which floors forta's [3,8] up to the [8,12] default → forta ≡ hipertrofie on
+      // every main lift. When dp_strength_goal_v1 is ON and this is an e1RM-eligible
+      // COMPOUND whose goal band asks for fewer reps than the default floor, let the
+      // GOAL low win so forta actually prescribes ~3-6. Gated + scoped to compounds →
+      // hipertrofie/other goals (low >= default) and isolation lifts are untouched.
+      const goalLo = Math.min(repMod[0], repMod[1]);
+      const strengthUnclamp =
+        isEnabled('dp_strength_goal_v1')
+        && goalLo < rMinSafe
+        && COMPOUND_EX.includes(ex)
+        && this._e1rmEligible(ex);
+      const lo = strengthUnclamp ? goalLo : Math.max(rMinSafe, goalLo);
       const hi = Math.min(rMaxSafe, Math.max(repMod[0], repMod[1]));
       if (lo <= hi) {
         rMinSafe = lo;
         rMaxSafe = hi;
         if (Number.isFinite(result.repsTarget)) {
-          result.repsTarget = Math.max(rMinSafe, Math.min(rMaxSafe, result.repsTarget));
+          // Strength trains at the LOW (heavy) end: when we unclamped for forta,
+          // anchor to the new floor instead of inheriting the [8,12] default target
+          // (which would re-pin at 8 and erase the unclamp). Other goals just narrow.
+          const desired = strengthUnclamp ? rMinSafe : result.repsTarget;
+          result.repsTarget = Math.max(rMinSafe, Math.min(rMaxSafe, desired));
         }
       }
     }

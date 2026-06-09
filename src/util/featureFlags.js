@@ -306,6 +306,20 @@ export const FLAGS = Object.freeze({
   // (needs mu). The last + riskiest sub-build — must ride green #1+#2 sims first.
   dp_intensity_corridor_v1: { rollout: 0, default: false },
 
+  // W-Goal — coherent STRENGTH goal (RISK HIGH — makes goal=forta a REAL strength
+  // prescription, not hypertrophy-with-long-rest). ONE flag that flips BOTH levers
+  // atomically: (a) UNCLAMP the rep floor — for an e1RM-eligible barbell COMPOUND,
+  // the goal rep band's low (forta [3,8]) is honored below the per-exercise
+  // REP_RANGES default [8,12] (today max(8,3)=8 erases it → forta ≡ hipertrofie on
+  // every main lift); (b) turn the %1RM intensity corridor ON for that same path so
+  // the lower reps ride the HEAVIER {0.78,0.90} load — never lower reps at a
+  // hypertrophy load (incoherent). Only forta's band has a low < default, so other
+  // goals (hipertrofie [8,12] etc.) are byte-identical even with the flag ON; the
+  // corridor is also still inert at cold-start (needs Kalman mu). Subsumes #6's
+  // corridor for the forta compound path. Needs #1 + #2 (mu). OFF → BYTE-IDENTICAL
+  // (forta still floors to 8, corridor stays gated by #6 alone). Human gate (Daniel).
+  dp_strength_goal_v1: { rollout: 0, default: false },
+
   // ── F4 Adaptive layer (engine-wiring 2026-06-07) — guard/learning layers on
   // top of the F3 substrate. Each defaults OFF (rollout 0) → flag-off the live
   // per-exercise prescription is BYTE-IDENTICAL (the calibration-sim hash + golden
