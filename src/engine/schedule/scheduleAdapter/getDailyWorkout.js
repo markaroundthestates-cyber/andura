@@ -556,6 +556,16 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     seniorSessionCap: splitRebalance
       ? seniorSessionVolumeCap(userState?.user?.age, resolveExperienceId(userState?.user))
       : null,
+    // W-Split GAP 4 — MAJOR-MUSCLE SLOT GUARANTEE (dp_split_rebalance_v1, default
+    // OFF → false → buildSession never runs the guarantee, byte-identical). The
+    // slot-side complement of applyMaintenanceFloor: the weekly floor keeps every
+    // major muscle ≥ MEV in the BUDGET, but a slot-limited full-body day whose
+    // focus front-loads its emphasized region can drop a major muscle to ZERO
+    // SLOTS (Gigel 2d UPPER: hams/glutes/calves slotted out → the floored budget
+    // never lands). When ON, buildSession guarantees each major muscle this cluster
+    // trains at least one exercise so a de-emphasized region is MAINTAINED at MEV,
+    // never zeroed.
+    maintenanceFloorGuarantee: splitRebalance,
     prNames: Array.isArray(userState?.prNames) ? userState.prNames : [],
     seed,
     // Periodization volume signal (sets/week per Big-11 group, varies by

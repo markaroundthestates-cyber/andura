@@ -156,10 +156,13 @@ export function seniorSessionVolumeCap(age, experienceId) {
 }
 
 // Major muscles that must never collapse to ~0 in a week (the big movers — a
-// program that zeroes one of these is broken regardless of focus). Small/isolation
-// groups (biceps, triceps, calves, forearms, abs) are allowed to fall to MEV/0 by
-// a focus trade. RO keys (the budget is EN-keyed; bridged per entry).
-const MAJOR_MUSCLES_RO = Object.freeze(['piept', 'spate', 'umeri', 'picioare-quads', 'picioare-hamstrings', 'fese']);
+// program that zeroes one of these is broken regardless of focus). Calves (gambe)
+// are included: a leg-de-emphasis focus on a minimal-freq full-body day was
+// zeroing the whole posterior chain incl. calves (Gigel 2d UPPER), and the
+// documented policy is de-emphasized → MAINTENANCE (MEV), never zero. The small
+// ARM/abs isolation groups (biceps, triceps, forearms, abs) stay free to fall to
+// MEV/0 by a focus trade. RO keys (the budget is EN-keyed; bridged per entry).
+const MAJOR_MUSCLES_RO = Object.freeze(['piept', 'spate', 'umeri', 'picioare-quads', 'picioare-hamstrings', 'fese', 'gambe']);
 
 /**
  * Per-major-muscle weekly MAINTENANCE FLOOR — raise any MAJOR muscle whose weekly

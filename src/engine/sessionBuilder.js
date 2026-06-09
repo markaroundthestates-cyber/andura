@@ -143,6 +143,22 @@ const MIN_SESSION_TRAINED = 5;
 // novice band even on a 3×/week group frequency. Trained tiers are uncapped here.
 const BEGINNER_MAX_SLOTS_PER_GROUP = 2;
 
+// W-Split GAP 4 — MAJOR muscles that must never be slot-starved to ZERO on a
+// full-body day (the big movers). The per-major-muscle WEEKLY maintenance floor
+// (applyMaintenanceFloor) guarantees ≥ MEV in the BUDGET, but the session is
+// slot-limited (SESSION_SIZE < the 11 full-body groups), so a focus that
+// front-loads its emphasized region (upper → piept/spate/umeri win the slots +
+// the extra-slot exemption) can push the posterior chain entirely OUT of the
+// session — the budget floor then never reaches the day (Gigel 2d UPPER:
+// hams/glutes/calves = 0). This set is the slot-side complement of the budget
+// floor: each major muscle the cluster trains is GUARANTEED at least one slot so
+// the MEV budget actually lands as an exercise. RO keys. Gated on
+// ctx.maintenanceFloorGuarantee (dp_split_rebalance_v1) → OFF = byte-identical.
+const MAJOR_MUSCLES_SLOT_GUARANTEE = Object.freeze([
+  'piept', 'spate', 'umeri',
+  'picioare-quads', 'picioare-hamstrings', 'fese', 'gambe',
+]);
+
 /**
  * Tier-aware session-substance floor. T0 (beginner) keeps the base floor of 4;
  * every trained tier (T1/T2+, and unknown/null defensively) floors at 5 so a
@@ -1385,6 +1401,81 @@ export function buildSession(cluster, ctx) {
       for (const e of chosen) {
         chosenNames.add(e.name);
         chosenMovements.add(movementKey(e.name, getExerciseMetadata(e.name)));
+      }
+    }
+  }
+
+  // W-Split GAP 4 — MAJOR-MUSCLE SLOT GUARANTEE (ctx.maintenanceFloorGuarantee,
+  // dp_split_rebalance_v1). The slot-side complement of the weekly maintenance
+  // floor (applyMaintenanceFloor): the budget floor keeps every major muscle ≥ MEV
+  // in the volume BUDGET, but a slot-limited full-body day whose focus front-loads
+  // its emphasized region can drop a major muscle to ZERO SLOTS, so the floored
+  // budget never becomes an exercise (Gigel 2d UPPER: hams/glutes/calves slotted
+  // out entirely). Here, for each MAJOR muscle this cluster trains that ended with
+  // NO exercise, inject one from its pool so the MEV budget lands on the day.
+  // The injected slot is sized by the SAME sessionSetBudget path below (≥ its
+  // MEV-derived band), so a de-emphasized major muscle is MAINTAINED, never zeroed.
+  // Runs AFTER all fill + focus-policy so it is the final word on slot membership.
+  // OFF (flag OFF / pure-fn callers) → never runs → byte-identical. Deterministic:
+  // majors walked in a fixed order; the displaced slot is the lowest-priority
+  // (highest-index) non-anchor exercise of the most over-slotted group.
+  if (ctx?.maintenanceFloorGuarantee === true) {
+    const groupOfName = (name) => getExerciseMetadata(name).muscle_target_primary;
+    // Recount groupCount off `chosen` (focus-policy may have rebuilt the list).
+    const liveCount = {};
+    for (const e of chosen) {
+      const g = groupOfName(e.name);
+      if (g) liveCount[g] = (liveCount[g] || 0) + 1;
+    }
+    const majorsToTrain = MAJOR_MUSCLES_SLOT_GUARANTEE.filter((g) => targets.includes(g));
+    for (const major of majorsToTrain) {
+      if ((liveCount[major] || 0) > 0) continue; // already has a slot
+      const pool = pools.find((p) => p.group === major)?.pool ?? [];
+      const inject = pool.find((e) => !isTaken(e));
+      if (!inject) continue; // library can't supply this group under the constraints
+      if (chosen.length < SESSION_SIZE) {
+        // Room left — simply add the maintenance slot.
+        take(inject, DEFAULT_SETS);
+        liveCount[major] = (liveCount[major] || 0) + 1;
+        continue;
+      }
+      // Session full — displace the lowest-priority (last) exercise of the most
+      // over-slotted group (the group carrying the MOST exercises, > 1). Removing a
+      // 2nd+ slot of an over-allocated group (the focus front-loads its emphasized
+      // region to 2 slots each) leaves that group with ≥ 1 exercise, so the swap
+      // never steals another group's only slot and an anchor always survives. Walk
+      // from the back so the lowest selection-priority slot of the biggest group
+      // goes first; among groups tied on count, the one whose lowest slot is latest
+      // (most expendable) wins. Deterministic.
+      const majorSet = new Set(majorsToTrain);
+      let removeIdx = -1;
+      let bestOverflow = 1;
+      for (let i = chosen.length - 1; i >= 0; i--) {
+        const g = getExerciseMetadata(chosen[i].name).muscle_target_primary;
+        const cnt = liveCount[g] || 0;
+        if (cnt > bestOverflow) { bestOverflow = cnt; removeIdx = i; }
+      }
+      // No over-slotted group to thin (every group at exactly 1) — then a major
+      // muscle is being crowded out by a NON-MAJOR group (arms/abs/forearms). A
+      // major (a big mover the user de-emphasized to MAINTENANCE) outranks a small
+      // isolation group for the last slot, so displace the lowest-priority
+      // single-slot NON-MAJOR exercise. Majors already placed are never touched.
+      if (removeIdx === -1) {
+        for (let i = chosen.length - 1; i >= 0; i--) {
+          const g = getExerciseMetadata(chosen[i].name).muscle_target_primary;
+          if (!majorSet.has(g)) { removeIdx = i; break; }
+        }
+      }
+      if (removeIdx >= 0) {
+        const removed = chosen[removeIdx];
+        const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+        chosenNames.delete(removed.name);
+        chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+        if (rg && liveCount[rg]) liveCount[rg] -= 1;
+        chosen.splice(removeIdx, 1, { name: inject.name, sets: DEFAULT_SETS });
+        chosenNames.add(inject.name);
+        chosenMovements.add(movementKey(inject.name, inject.meta));
+        liveCount[major] = (liveCount[major] || 0) + 1;
       }
     }
   }
