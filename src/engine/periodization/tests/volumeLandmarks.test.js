@@ -182,19 +182,43 @@ describe('experience volume scaling — beginner starts lower than advanced (aud
     expect(adv).toEqual(legacy);
   });
 
-  it('beginner respects the per-group MEV floor (cut never sinks below MEV)', () => {
-    // Real values: chest MAV 14 × incepator 0.70 = 9.8 → 10, still ≥ MEV 8.
-    // Force a deep cut (DELOAD phase 0.55) so the raw would drop below MEV and
-    // assert the floor catches it: 14 × 0.70 × 0.55 = 5.39 → floored to MEV 8.
+  it('beginner experience cut never sinks below MEV (NORMAL phase floor binds)', () => {
+    // The MEV floor protects the EXPERIENCE/persona/goal cut on a normal training
+    // week — it must NOT use the deload phase to force the cut (a deload is a
+    // recovery week that is SUPPOSED to dip below MEV; see the deload test below).
+    // Real values: chest MAV 14 × forta 0.70 × incepator 0.70 = 6.86 → would round
+    // to 7, below MEV 8; assert the floor catches it at MEV on a NORMAL (1.0) week.
     const beg = computeMuscleVolumeTarget({
       muscleGroup: 'chest',
       personaId: 'marius',
-      goalId: 'hipertrofie',
+      goalId: 'forta',
       experienceId: 'incepator',
       blockScaling: 1.0,
-      phaseVolumeMul: 0.55,
+      phaseVolumeMul: 1.0,
     });
-    expect(beg.sets).toBe(ISRAETEL_BASELINES.chest.MEV); // 8 — floored, not 5
+    expect(beg.sets).toBe(ISRAETEL_BASELINES.chest.MEV); // 8 — floored, not 7
+  });
+
+  it('DELOAD week DOES dip below MEV for all tiers (deload = recovery, MEV floor before phase)', () => {
+    // The MEV floor is applied to the PRE-deload (normal-week) dose, then the
+    // DELOAD phase multiplier (0.55) is applied LAST — so a deload genuinely cuts
+    // volume for incepator/intermediar too, not only avansat. Without this, the
+    // floor restored the full dose and the deload was a no-op for the majority of
+    // users. chest MAV 14: normal incepator dose = round(14×0.70) = 10 (≥ MEV 8);
+    // deload = round(10×0.55) = round(5.39 effective) → 5-6, BELOW the MEV 8 floor.
+    const base = { muscleGroup: 'chest', personaId: 'marius', goalId: 'hipertrofie', blockScaling: 1.0 };
+    for (const exp of ['incepator', 'intermediar', 'avansat']) {
+      const normal = computeMuscleVolumeTarget({ ...base, experienceId: exp, phaseVolumeMul: 1.0 });
+      const deload = computeMuscleVolumeTarget({ ...base, experienceId: exp, phaseVolumeMul: 0.55 });
+      expect(deload.sets).toBeLessThan(normal.sets); // a deload actually deloads — ALL tiers
+    }
+    // The regression the fix targets: incepator/intermediar deload was previously
+    // restored to the MEV floor (no cut). It must now be allowed BELOW MEV on a
+    // recovery week (the floor protects only the non-deload experience cut).
+    for (const exp of ['incepator', 'intermediar']) {
+      const deload = computeMuscleVolumeTarget({ ...base, experienceId: exp, phaseVolumeMul: 0.55 });
+      expect(deload.sets).toBeLessThan(ISRAETEL_BASELINES.chest.MEV); // 4 < 8
+    }
   });
 
   it('chest beginner concrete dose = round(14 × 0.70) = 10 (real anchor)', () => {

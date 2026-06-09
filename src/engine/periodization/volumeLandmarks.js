@@ -195,17 +195,25 @@ export function computeMuscleVolumeTarget({
   const experience = typeof experienceId === 'string' ? (EXPERIENCE_MODIFIERS[experienceId] ?? 1.0) : 1.0;
   const experienceCuts = experience < 1.0;
 
-  const raw = mavDriver * persona * recovery * goal * experience * block * phase;
+  // PRE-DELOAD dose — everything EXCEPT the periodization phase multiplier. The MRV
+  // cap + MEV floor are computed on this normal-week dose; the DELOAD phase cut is
+  // applied LAST (below), because a deload is a recovery week that is SUPPOSED to dip
+  // below MEV. Applying the floor to the post-phase dose (the old order) silently
+  // restored the full dose for any non-avansat user → the deload cut never reached
+  // them. With phase applied last, every non-deload week (phase = 1.0) stays
+  // byte-identical, and the DELOAD week (phase = 0.55) genuinely cuts for ALL tiers.
+  const preDeloadRaw = mavDriver * persona * recovery * goal * experience * block;
   // MRV is the ABSOLUTE Israetel ceiling — never learned (the learned band only
   // moves the MAV target + MEV floor; the recoverable cap stays the literature hard cap).
-  const cappedAtMrv = Math.min(raw, baseline.MRV);
+  const cappedAtMrv = Math.min(preDeloadRaw, baseline.MRV);
   // MEV floor — a beginner/intermediate cut never drops below the minimum
   // effective dose for a worked group. Engaged ONLY when the experience modifier
   // actually cuts (<1.0), so the advanced/legacy result (incl. the deliberate
   // Maria-sanatate sub-MEV maintenance dose) is unchanged. A group with MEV 0
   // (abs/forearms) has no floor either way. Uses the learned MEV when present.
-  const floored = experienceCuts ? Math.max(cappedAtMrv, mevFloorVal) : cappedAtMrv;
-  const sets = Math.max(0, Math.round(floored));
+  const flooredPre = experienceCuts ? Math.max(cappedAtMrv, mevFloorVal) : cappedAtMrv;
+  // Phase (DELOAD 0.55, else 1.0) applied LAST — the deload is allowed below MEV.
+  const sets = Math.max(0, Math.round(flooredPre * phase));
 
   return {
     sets,
