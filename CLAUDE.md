@@ -24,6 +24,12 @@ amendments:
     note: Body §0-§7 (~32KB) GUT — paradigm fragmentation risk eliminat (schema body outdated încărcat default în orice chat fresh confunda DECISIONS.md SSOT real). Replaced cu stub pointer 5 linii. Backup tag `pre-claude-md-gut-2026-05-16-1200` preserves prior content.
 ---
 
+> ℹ️ **REPO NOTE (for a fresh clone / new agent):** This file points at `DECISIONS.md`, `ANDURA_PRIMER.md`, `CHAT_STATE.md`, `📤_outbox/`, `📥_inbox/`, `07-meta/`, `99-archive/` etc. Those are **VAULT paths** — the developer's private Obsidian planning vault, gitignored and NOT present in this app repo. If you cloned the app, ignore vault references; they will be missing.
+>
+> **In-repo source of truth** is the code itself plus the tracked docs: `README.md`, `AGENTS.md`, and `SECURITY.md`. The vault is planning-only and external to the build.
+
+---
+
 > 🛑 **STOP. Read [[DECISIONS.md]] instead. Historical Faza 3 reference only.**
 >
 > Schema body GUT 2026-05-16 — current SSOT is `DECISIONS.md` root §D001. Wiki/ FROZEN imutabilă archived `99-archive/wiki-pre-2026-05-15/`. Karpathy 4 principii core philosophy: [[07-meta/karpathy-skills-ref/CLAUDE.md]] §1-§4. Prior body preserved în backup tag `pre-claude-md-gut-2026-05-16-1200` origin.
