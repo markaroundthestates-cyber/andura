@@ -33,7 +33,7 @@
  * @type {Readonly<Record<string, TierBand>>}
  */
 export const EXERCISE_TIER_RANK = Object.freeze({
-  // ── S-band (57) ──
+  // ── S-band (63) ──
   "45° Hyperextension": 'S',
   "Barbell Back Squat (High Bar)": 'S',
   "Bayesian Curl": 'S',
@@ -44,6 +44,7 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Cable Lateral Raise": 'S',
   "Cable Overhead Triceps Extension EZ-bar": 'S',
   "Cable Overhead Triceps Extension Rope": 'S',
+  "Cable Single-Arm Overhead Triceps Extension": 'S',
   "Cable Rear Delt Fly": 'S',
   "Cable Row": 'S',
   "Cable Triceps Kickback Rope": 'S',
@@ -61,10 +62,13 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Hammer Strength Row": 'S',
   "Hanging Leg Raise": 'S',
   "Hip Abduction Machine": 'S',
+  "Converging Chest Press": 'S',
   "Incline Chest Press Machine": 'S',
   "Incline DB Curl": 'S',
+  "Lat Pulldown": 'S',
   "Leg Curl": 'S',
   "Leg Extension": 'S',
+  "Leg Extension Single-Leg": 'S',
   "Leg Press Calf Raise": 'S',
   "Machine Lateral Raise": 'S',
   "Machine Preacher Curl": 'S',
@@ -88,12 +92,15 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Smith OHP": 'S',
   "Standing Cable Hip Abduction": 'S',
   "Standing Calf Raise Machine": 'S',
+  "V-Bar Cable Row": 'S',
+  "V-Bar Lat Pulldown": 'S',
   "Wide-Grip Cable Row": 'S',
   "Wide-Grip Lat Pulldown": 'S',
   "Y Raise": 'S',
-  // ── A-band (67) ──
+  // ── A-band (79) ──
   "45-Degree Leg Press": 'A',
   "Ab Wheel Rollout": 'A',
+  "Assisted Dip Machine": 'A',
   "Band-Assisted Pull-up": 'A',
   "Barbell Back Squat (Low Bar)": 'A',
   "BB Shrug": 'A',
@@ -102,14 +109,19 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Cable Curl": 'A',
   "Cable Curl Lying on Bench": 'A',
   "Cable Glute Kickback": 'A',
+  "Cable Hammer Curl Rope": 'A',
   "Cable Shrug": 'A',
   "Cable Triceps Pushdown Rope": 'A',
+  "Cable Triceps Pushdown Single-Arm": 'A',
   "Cable Triceps Pushdown Straight Bar": 'A',
+  "Cable Triceps Pushdown V-bar": 'A',
   "Captains Chair Leg Raise": 'A',
+  "Chest-Supported DB Row": 'A',
   "Close-Grip Bench Press": 'A',
   "Cossack Squat": 'A',
   "DB Curl Standing": 'A',
   "DB Fly": 'A',
+  "DB Hammer Curl Standing": 'A',
   "DB Lying Triceps Extension": 'A',
   "DB Overhead Triceps Extension Two-Hand": 'A',
   "DB Rear Delt Fly": 'A',
@@ -121,6 +133,7 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Donkey Calf Raise": 'A',
   "EZ-bar Curl Standing": 'A',
   "Farmer's Walk DB": 'A',
+  "Farmer's Walk Trap Bar": 'A',
   "Flat Barbell Bench": 'A',
   "Flat DB Press": 'A',
   "Front Squat": 'A',
@@ -134,12 +147,14 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Kroc Row": 'A',
   "Leaning Lateral Raise": 'A',
   "Leg Curl Single-Leg": 'A',
+  "Leg Press": 'A',
   "Lying Triceps Extension Barbell": 'A',
+  "Lying Triceps Extension EZ-bar": 'A',
+  "Machine Pullover": 'A',
   "Machine Seated Curl": 'A',
   "Meadows Row": 'A',
   "Neutral-Grip Pull-up": 'A',
   "Nordic Hamstring Curl": 'A',
-  "OHP": 'A',
   "Pec Deck / Cable Fly": 'A',
   "Pendlay Row": 'A',
   "Pull-up": 'A',
@@ -147,7 +162,9 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Rope Face Pull": 'A',
   "Seated DB Press": 'A',
   "Seated Rear Delt": 'A',
+  "Single-Arm Cable Row": 'A',
   "Single-Arm Rear Delt": 'A',
+  "Smith Close-Grip Bench": 'A',
   "Smith Hip Thrust": 'A',
   "Smith Reverse Lunge": 'A',
   "Smith Split Squat": 'A',
@@ -156,10 +173,11 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Straight-Arm Lat Pulldown": 'A',
   "Triceps Press Machine": 'A',
   "Walking Lunge": 'A',
+  "Weighted Pull-up": 'A',
   "Wide-Stance Leg Press": 'A',
   "Wrist Curl DB Seated Palms-Up": 'A',
   "Wrist Roller": 'A',
-  // ── B-band (60) ──
+  // ── B-band (65) ──
   "Arnold Press": 'B',
   "Barbell Curl Standing": 'B',
   "Barbell Curl Strict Wall Support": 'B',
@@ -169,7 +187,6 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Bent-Over DB Lateral": 'B',
   "Cable Crossover High-to-Low": 'B',
   "Cable Fly Low-to-High": 'B',
-  "Cable Hammer Curl Rope": 'B',
   "Cable Leg Curl": 'B',
   "Cable Pull-Through": 'B',
   "Cable Triceps Pushdown Reverse Grip": 'B',
@@ -178,9 +195,12 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Chin-up": 'B',
   "Conventional Deadlift": 'B',
   "Curtsy Lunge": 'B',
+  "DB Hip Thrust": 'B',
   "DB Lateral Raise": 'B',
   "DB Lunge": 'B',
   "DB Pullover": 'B',
+  "DB Shoulder Press": 'B',
+  "DB Single-Leg RDL": 'B',
   "DB Spider Curl": 'B',
   "DB Step-up": 'B',
   "Dead Hang": 'B',
@@ -194,8 +214,10 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "JM Press": 'B',
   "Kettlebell Goblet Squat": 'B',
   "Landmine Shoulder Press": 'B',
+  "Landmine T-Bar Row": 'B',
   "Lateral Lunge": 'B',
   "Machine Rear Delt": 'B',
+  "OHP": 'B',
   "Pallof Press Cable Standing": 'B',
   "Pec Deck Plate-Loaded": 'B',
   "Plank": 'B',
@@ -203,6 +225,7 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Power Clean": 'B',
   "Rack Pull": 'B',
   "Reverse Hyper": 'B',
+  "Reverse Lunge": 'B',
   "Reverse Lunge Glute-Focus": 'B',
   "Seated DB Lateral": 'B',
   "Single-Leg Calf Raise Bodyweight": 'B',
@@ -220,7 +243,7 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Triceps Dip Machine": 'B',
   "Triceps Dip Parallel Bars": 'B',
   "Wrist Curl Barbell Seated Palms-Up": 'B',
-  // ── C-band (38) ──
+  // ── C-band (42) ──
   "21s Curl Barbell": 'C',
   "Alternating Front Raise": 'C',
   "Band Pull-Apart": 'C',
@@ -242,9 +265,12 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Floor Press Barbell": 'C',
   "Frog Pump": 'C',
   "Glute Bridge Bodyweight": 'C',
+  "Hyperextension Bodyweight": 'C',
+  "Incline Push-up": 'C',
   "Inverted Row Bar": 'C',
   "Inverted Row Bar Wide": 'C',
   "Kettlebell Swing": 'C',
+  "Knee Push-up": 'C',
   "Partial Lateral": 'C',
   "Pike Push-up": 'C',
   "Pistol Squat": 'C',
@@ -253,6 +279,7 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Preacher Curl": 'C',
   "Push-up": 'C',
   "Side Plank": 'C',
+  "Single-Leg Glute Bridge": 'C',
   "Slider Hamstring Curl": 'C',
   "T-Bar Row": 'C',
   "Towel Hang": 'C',
@@ -272,29 +299,83 @@ export const EXERCISE_TIER_RANK = Object.freeze({
   "Single-Arm DB Press": 'D',
 });
 
+// UNRANKED = BUG guard. Every CORE_AUTO library nameEn MUST carry an explicit
+// band (enforced by the unrankedCount===0 invariant test) — a missing band is a
+// MAP GAP (the alias-gap bug class: e.g. "Lat Pulldown"/"Leg Press" once had NO
+// band, so flag-ON they ranked UNRANKED = below C-band and were almost never
+// picked). The TEST catches that gap loudly. But PRODUCTION must never SINK a
+// surprise unranked lift below C in a live session — so a library entry with no
+// band resolves to this safe middle band (B) instead of an UNRANKED-below-C rank.
+// This is a fail-SAFE fallback, not a license to leave gaps (the test is the gate).
+export const DEFAULT_UNRANKED_TIER = 'B';
+
 /**
  * Numeric rank for a library nameEn under Daniel's selection bands.
- *   S=0 · A=1 · B=2 · C=3 · UNRANKED=4 · D=5 (exclude sentinel)
- * Lower = more preferred. UNRANKED (a library lift Daniel didn't rank) sorts
- * AFTER all of S/A/B/C but BEFORE D — so a known-good lift always leads an
- * unranked one, and a D anti-pattern is the worst (and is hard-removed upstream).
+ *   S=0 · A=1 · B=2 · C=3 · D=5 (exclude sentinel)
+ * Lower = more preferred. An UNRANKED name (no explicit band — a MAP GAP the
+ * unrankedCount===0 test forbids for CORE_AUTO) falls back to DEFAULT_UNRANKED_TIER
+ * (B → 2) so a surprise gap in production ranks as a safe middle option rather than
+ * sinking below C. A D anti-pattern is the worst (and is hard-removed upstream).
  * @param {string} nameEn - library canonical English exercise name
- * @returns {0|1|2|3|4|5}
+ * @returns {0|1|2|3|5}
  */
 export function tierRankOf(nameEn) {
-  const band = EXERCISE_TIER_RANK[nameEn];
+  const band = EXERCISE_TIER_RANK[nameEn] ?? DEFAULT_UNRANKED_TIER;
   switch (band) {
     case 'S': return 0;
     case 'A': return 1;
     case 'B': return 2;
     case 'C': return 3;
-    case 'D': return 5; // exclude sentinel — distinct from UNRANKED (4)
-    default:  return 4; // UNRANKED
+    case 'D': return 5; // exclude sentinel
+    default:  return 2; // defensive: DEFAULT_UNRANKED_TIER fallback (B)
   }
 }
 
 /** Sentinel numeric rank for a D-band (excluded) exercise. */
 export const TIER_RANK_EXCLUDE = 5;
+
+// ── hasLog = BOUNDED BONUS, not absolute override (Wave 1.1, dp_daniel_tier_select_v1)
+// The OLD tier-select pool put PR-history as an ABSOLUTE band-0: a logged lift beat
+// ANYTHING (so a logged mediocre C lift outranked a much-higher unlogged S). Wave 1.1
+// makes the log a BOUNDED bonus on top of Daniel's selection band, so quality leads:
+//   tierScore = { S:100, A:80, B:60, C:35 }   (D excluded upstream, never scored)
+//   score(e)  = tierScore[band] + hasLogBonus(+10) + recentProgressBonus(+5)
+//                                 − stalenessPenalty(−5)
+// Worked examples (the founder's intent): logged-C (45) < unlogged-S (100);
+// logged-A (90) competitive with unlogged-S (100); logged-B (70) < unlogged-A (80)
+// but not absurdly. Higher score = picked first. progress / staleness / userPreference
+// are HOOKS (default 0 — no live source threaded yet) so the model is correct +
+// extensible without fabricating signal. Used ONLY on the tier-select path.
+/** @type {Readonly<Record<'S'|'A'|'B'|'C', number>>} */
+export const TIER_SELECT_SCORE = Object.freeze({ S: 100, A: 80, B: 60, C: 35 });
+/** hasLog bounded bonus (a logged lift is preferred, but never an absolute override). */
+export const HAS_LOG_BONUS = 10;
+/** recent-progress bonus (the lift is moving up) — hook, no live source yet. */
+export const RECENT_PROGRESS_BONUS = 5;
+/** staleness penalty (the lift has been unused a long time) — hook, no live source yet. */
+export const STALENESS_PENALTY = 5;
+
+/**
+ * Tier-select SELECTION SCORE for a library nameEn (higher = picked first). The
+ * band quality dominates; a log is a bounded bonus, not an override (Wave 1.1).
+ * D-band is excluded from the pool upstream so it is never scored here; an UNRANKED
+ * name falls back to DEFAULT_UNRANKED_TIER (B). progress/staleness/preference are
+ * optional bonuses (default 0) so a caller without those signals scores on band+log.
+ *
+ * @param {string} nameEn - library canonical English exercise name
+ * @param {{hasLog?: boolean, progressing?: boolean, stale?: boolean}} [signals]
+ * @returns {number} selection score (higher preferred)
+ */
+export function tierSelectScore(nameEn, signals) {
+  const band = EXERCISE_TIER_RANK[nameEn] ?? DEFAULT_UNRANKED_TIER;
+  // D should be excluded before scoring; if it slips through, score it at the floor.
+  const base = TIER_SELECT_SCORE[/** @type {'S'|'A'|'B'|'C'} */ (band)] ?? 0;
+  let score = base;
+  if (signals?.hasLog) score += HAS_LOG_BONUS;
+  if (signals?.progressing) score += RECENT_PROGRESS_BONUS;
+  if (signals?.stale) score -= STALENESS_PENALTY;
+  return score;
+}
 
 // ── FLAG-GATED auto-selectability (dp_daniel_tier_select_v1) ─────────────────
 // PART B intent: Daniel's S/A picks must be REACHABLE by auto-selection. The

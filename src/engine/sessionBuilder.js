@@ -11,7 +11,7 @@
 import { EXERCISE_METADATA, getExerciseMetadata, isActiveMeta } from './exerciseLibrary.js';
 import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT, ISRAETEL_BASELINES } from './periodization/constants.js';
 import { isExcludedMovement } from './movementExclusion.js';
-import { EXERCISE_TIER_RANK, tierRankOf, TIER_SELECTABLE_SA } from './exerciseTierRank.js';
+import { EXERCISE_TIER_RANK, tierRankOf, tierSelectScore, TIER_SELECTABLE_SA } from './exerciseTierRank.js';
 
 // buildSession's first param is now a Big-6 CLUSTER id (push/pull/legs/upper/
 // lower/full) — the target muscle groups + their session-slot bias come from the
@@ -120,25 +120,6 @@ const COMMON_MOVEMENTS = new Set([
   'Reverse Crunch', 'Hanging Leg Raise', 'Hanging Knee Raise', 'Cable Crunch Kneeling',
   'Cable Crunch Standing', 'Decline Sit-up', 'Plank with Shoulder Tap', 'V-Up',
   'Ab Wheel Rollout', 'Cable Russian Twist',
-]);
-
-// #73 SEX/COMMONNESS BIAS (dp_smart_selection_v1). The library has no per-sex
-// popularity field; this is a CURATED set of glute/lower-body accessories that
-// are common in WOMEN's training but rare in a MAN's leg day (the "Gigel picked
-// cable glute kickback on his leg day — that's weird" signal). For a MALE user
-// these sink to the BACK of their group pool (a same-muscle sibling — RDL / leg
-// curl / leg extension / squat / leg press / hip abductor / calf — leads). It is
-// a REORDER only, never a hard ban: a demoted move is still selectable if it is
-// the only option left for the muscle (anti-paternalism, last-option safety). For
-// a FEMALE user (or no sex signal) the pool is UNTOUCHED (these are fine for her).
-// Exact library nameEn keys. Hip Abduction Machine is deliberately NOT here — it
-// is on the men's preferred list (spec §B2).
-const MALE_RARE_LOWER = new Set([
-  'Cable Glute Kickback', 'Glute Kickback Machine', 'Cable Pull-Through',
-  'Hip Thrust', 'Smith Hip Thrust', 'DB Hip Thrust', 'Barbell Glute Bridge',
-  'DB Glute Bridge', 'Single-Leg Glute Bridge', 'Glute Bridge Bodyweight',
-  'Fire Hydrant', 'Cable Hip Abduction', 'Banded Lateral Walk', 'Frog Pump',
-  'Donkey Kick', 'Cable Standing Hip Abduction',
 ]);
 
 // SESSION_SIZE is the MAX exercises per session (sanity ceiling, anti-2h
@@ -610,10 +591,6 @@ function equipmentOk(meta, available) {
  *   penalty (engineName → 0..1); a penalized NON-PR exercise is demoted to the
  *   back of the pool so a same-muscle sibling leads. Null/empty → no reorder
  *   (byte-identical). Never DROPS an entry (anti-paternalism + last-option safety).
- * @param {'m'|'f'|null} [sexBias] - #73 sex/commonness bias. 'm' demotes the
- *   MALE_RARE_LOWER glute/lower accessories (female-common, male-rare) to the back
- *   of the pool so a sex-common sibling leads; PR-history lifts are never demoted.
- *   'f'/null → no reorder (byte-identical). Reorder only, never DROPS an entry.
  * @param {Record<string, string>|null} [painSwaps] - #64 PERSISTENT pain memory
  *   proactive swap (engineName → curated substitute). When a PINNED painful
  *   exercise is in THIS group's pool AND its substitute belongs to the same group
@@ -638,7 +615,7 @@ function equipmentOk(meta, available) {
  *   would empty the muscle (last-option guard). Default false → byte-identical.
  * @returns {Array<{name: string, meta: object}>}
  */
-function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, sexBias, painSwaps, excludedMovements, danielTierSelect) {
+export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect) {
   // ACTIVE visibility gate (Daniel SSOT 2026-06-05, supersedes 2026-06-03 CORE+
   // FALLBACK gate): auto-selection draws ONLY from the curated ACTIVE catalog
   // (CORE_AUTO — see isActiveMeta / ACTIVE_STATUSES) plus PR-history continuity.
@@ -760,15 +737,9 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalt
   // no other cluster's ordering moves. All squat variants are skill_level beginner
   // (Smith/Hack/Goblet/Belt — machine-guided), so a beginner gets a safe squat
   // lead; a free barbell squat is still skill-gated out for T0 in poolForGroup.
-  // dp_daniel_tier_select_v1 — when ON, the QUALITY band is Daniel's expert
-  // SELECTION rank (tierRankOf: S<A<B<C<UNRANKED) instead of the legacy
-  // ANCHOR/COMMON/seeded rank(). PR continuity (band 0) + squat-primacy + the
-  // seeded within-band tiebreak are PRESERVED in both modes; only the middle
-  // quality key swaps. OFF → legacy rank() → byte-identical.
-  const qualityRank = (name) =>
-    danielTierSelect ? tierRankOf(name) : rank(name, prNames);
+  // LEGACY ordering (flag OFF) — byte-identical to pre-Wave-1.1. PR continuity is an
+  // absolute band-0, then squat-primacy, then the legacy ANCHOR/COMMON/seeded rank().
   const byRankSeed = (a, b) => {
-    // PR continuity (band 0) is absolute — never reorder a user's logged lift.
     const aPr = prNames.has(a.name);
     const bPr = prNames.has(b.name);
     if (aPr !== bPr) return aPr ? -1 : 1;
@@ -777,12 +748,43 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalt
       const sb = squatPrimacy(b.name, b.meta);
       if (sa !== sb) return sb - sa; // higher primacy first
     }
-    const ra = qualityRank(a.name);
-    const rb = qualityRank(b.name);
+    const ra = rank(a.name, prNames);
+    const rb = rank(b.name, prNames);
     if (ra !== rb) return ra - rb;
     return seededKey(a.name, seed) - seededKey(b.name, seed);
   };
-  core.sort(byRankSeed);
+
+  if (danielTierSelect) {
+    // dp_daniel_tier_select_v1 — Wave 1.1 SCORE model. PR-history is NO LONGER an
+    // absolute band-0 override: it is a BOUNDED bonus on top of Daniel's selection
+    // band (tierSelectScore), so a logged mediocre lift can't beat a much-higher
+    // unlogged one (logged-C 45 < unlogged-S 100; logged-A 90 ~ unlogged-S 100). The
+    // PR-continuity SAFETY (a logged lift is never dropped) is preserved upstream by
+    // the last-option guards (D-removal / exclusion) + the +10 log bonus keeping a
+    // logged lift competitive — it just no longer trumps a far better unlogged pick.
+    // Higher score first; squat-primacy (quads only) is a tiebreak above the seed.
+    const scoreOf = (name) => tierSelectScore(name, { hasLog: prNames.has(name) });
+    core.sort((a, b) => {
+      const sa = squatPrimacy(a.name, a.meta);
+      const sb = squatPrimacy(b.name, b.meta);
+      if (sa !== sb) return sb - sa; // squat leads the quad anchor (quads only)
+      const va = scoreOf(a.name);
+      const vb = scoreOf(b.name);
+      if (va !== vb) return vb - va; // higher score first
+      return seededKey(a.name, seed) - seededKey(b.name, seed);
+    });
+    // BACK pattern coverage (Wave 1.1) — a spate session must PREFER a mix, not 3
+    // vertical pulls. Once a pull pattern (vertical-pull / horizontal-row) is already
+    // represented in the chosen-so-far order, additional same-pattern candidates take
+    // a coverage PENALTY so an un-covered pattern's best option outranks a 3rd vertical
+    // pull. Scoring bias only (greedy re-order of the existing pool), never a hard
+    // block — so a back day with only vertical pulls still fills (last-option safety).
+    if (group === 'spate') {
+      reorderBackForCoverage(core, scoreOf, seed);
+    }
+  } else {
+    core.sort(byRankSeed);
+  }
 
   // #8/D pain/skip demotion: a penalized NON-PR exercise sinks to the back of the
   // pool (STABLE partition, relative order preserved) so a clean same-muscle
@@ -802,20 +804,14 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalt
     ordered = clean.concat(demoted);
   }
 
-  // #73 SEX/COMMONNESS BIAS — for a MALE user, the female-common / male-rare lower
-  // accessories (MALE_RARE_LOWER) sink to the back (STABLE partition, relative
-  // order preserved) so a sex-common sibling (RDL / leg curl / squat / leg press /
-  // hip abductor / calf) leads. PR-history lifts (continuity) are NEVER demoted.
-  // Nothing is dropped — a demoted move stays selectable if it is the only option
-  // left for the muscle. 'f'/null sexBias → no reorder (byte-identical).
-  if (sexBias === 'm') {
-    const common = [];
-    const rare = [];
-    for (const e of ordered) {
-      (!prNames.has(e.name) && MALE_RARE_LOWER.has(e.name) ? rare : common).push(e);
-    }
-    if (rare.length > 0) ordered = common.concat(rare);
-  }
+  // SEX-BIAS CUT (Wave 1.1, Daniel 2026-06-09): exercise SELECTION quality must NOT
+  // depend on the user's sex — Hip Thrust / Kickback / Abduction are valid for men,
+  // Bench is valid for women. The old #73 MALE_RARE_LOWER reorder (demoting female-
+  // common / male-rare lower accessories for a MALE user) is REMOVED here; sex now
+  // lives ONLY in cold-start load seeding / strength + volume priors (coldStart
+  // Guidelines / populationPrior), never in pick quality. sexBias is no longer
+  // threaded into poolForGroup. Daniel's expert tier list (danielTierSelect) is the
+  // sex-agnostic quality signal that supersedes it.
   return ordered;
 }
 
@@ -835,6 +831,81 @@ function squatPrimacy(name, meta) {
   if (meta?.muscle_target_primary !== 'picioare-quads') return 0;
   if (meta?.tier !== COMPOUND_TIER) return 0;
   return movementKey(name, meta) === 'picioare-quads::squat' ? 1 : 0;
+}
+
+// BACK pull-pattern classes (Wave 1.1 coverage bias). Uses the existing movementKey
+// tokens: pulldown / pull-up / chin-up = a VERTICAL pull; row = a HORIZONTAL row.
+// Everything else on the back (pullover lat-isolation, shrug traps, face-pull) is
+// 'other' — it never triggers a coverage penalty (we only balance vertical-vs-row).
+const BACK_VERTICAL_TOKENS = new Set(['pulldown', 'pull-up', 'chin-up']);
+const BACK_ROW_TOKENS = new Set(['row']);
+// Coverage penalty applied to a candidate whose pull pattern is ALREADY represented
+// in the chosen-so-far set. Sized so an un-covered pattern's best option (even a B,
+// 60) outranks an already-covered higher option (an S, 100, − penalty) when the
+// uncovered side has a real candidate — i.e. it flips vertical-vs-row, not S-vs-C.
+const BACK_COVERAGE_PENALTY = 45;
+
+/**
+ * Pull-pattern class of a back exercise: 'vertical' | 'row' | 'other'.
+ * @param {string} name
+ * @param {{muscle_target_primary?: string}} meta
+ * @returns {'vertical'|'row'|'other'}
+ */
+function backPullPattern(name, meta) {
+  const token = movementKey(name, meta).split('::')[1] ?? '';
+  if (BACK_VERTICAL_TOKENS.has(token)) return 'vertical';
+  if (BACK_ROW_TOKENS.has(token)) return 'row';
+  return 'other';
+}
+
+/**
+ * BACK pattern-coverage greedy re-order (Wave 1.1, dp_daniel_tier_select_v1). A back
+ * session must PREFER a mix (≥1 vertical pull + ≥1 horizontal row), not 3 vertical
+ * pulls. Greedy: repeatedly pick the highest EFFECTIVE-score candidate, where the
+ * effective score subtracts BACK_COVERAGE_PENALTY when the candidate's pull pattern
+ * (vertical / row) is ALREADY represented in what we've picked so far. So the first
+ * vertical and the first row pay no penalty; a SECOND same-pattern candidate is
+ * penalized, letting the un-covered pattern's best option leapfrog a 3rd vertical
+ * pull. 'other' (pullover / shrug / face-pull) is never penalized. This is a scoring
+ * BIAS (re-order), never a hard block — a vertical-only pool still fills in order.
+ * Mutates `core` in place (the round-robin then picks from the front, naturally
+ * alternating patterns). Deterministic: seed breaks score ties (same as the sort).
+ *
+ * @param {Array<{name: string, meta: object}>} core - tier-select-sorted back pool
+ * @param {(name: string) => number} scoreOf - base selection score (band + log)
+ * @param {number} seed
+ */
+function reorderBackForCoverage(core, scoreOf, seed) {
+  if (core.length <= 1) return;
+  const remaining = core.slice();
+  const result = [];
+  const covered = new Set(); // 'vertical' | 'row' already represented
+  while (remaining.length > 0) {
+    let bestIdx = 0;
+    let bestScore = -Infinity;
+    let bestKey = Infinity;
+    for (let i = 0; i < remaining.length; i++) {
+      const e = remaining[i];
+      const pattern = backPullPattern(e.name, e.meta);
+      const penalty =
+        (pattern === 'vertical' || pattern === 'row') && covered.has(pattern)
+          ? BACK_COVERAGE_PENALTY
+          : 0;
+      const eff = scoreOf(e.name) - penalty;
+      const key = seededKey(e.name, seed);
+      if (eff > bestScore || (eff === bestScore && key < bestKey)) {
+        bestScore = eff;
+        bestKey = key;
+        bestIdx = i;
+      }
+    }
+    const [picked] = remaining.splice(bestIdx, 1);
+    const pat = backPullPattern(picked.name, picked.meta);
+    if (pat === 'vertical' || pat === 'row') covered.add(pat);
+    result.push(picked);
+  }
+  core.length = 0;
+  core.push(...result);
 }
 
 /**
@@ -965,7 +1036,6 @@ export function movementKey(name, meta) {
  *   coherentAlloc?: boolean,
  *   tierCompoundFloor?: boolean,
  *   lateralRaiseGuarantee?: boolean,
- *   sexBias?: 'm'|'f'|null,
  *   danielTierSelect?: boolean,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
@@ -994,10 +1064,6 @@ export function buildSession(cluster, ctx) {
   // #8/D per-exercise pain/skip penalties (engineName → 0..1). Null/empty (the
   // common case + flag off) → poolForGroup order is byte-identical.
   const penalties = ctx?.exercisePenalties ?? null;
-  // #73 sex/commonness bias (dp_smart_selection_v1) — 'm' demotes female-common /
-  // male-rare lower accessories in poolForGroup; 'f'/null → no reorder. Default
-  // absent (flag OFF / pure-fn callers) → null → byte-identical pool order.
-  const sexBias = ctx?.sexBias === 'm' || ctx?.sexBias === 'f' ? ctx.sexBias : null;
   // #64 PERSISTENT pain memory proactive swap (engineName → substitute). Null/empty
   // (the common case + flag off) → poolForGroup makes no swap → byte-identical.
   const painSwaps = ctx?.painSwaps ?? null;
@@ -1015,7 +1081,7 @@ export function buildSession(cluster, ctx) {
   // Pools per target group (ordered: PR-anchored -> anchor -> new, seeded-stable).
   const pools = targets.map((g) => ({
     group: g,
-    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, sexBias, painSwaps, excludedMovements, danielTierSelect),
+    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect),
   }));
 
   // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the user's

@@ -620,16 +620,13 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     //    emphSet — v-taper / upper / shoulders) guarantees a lateral raise in the
     //    session (the #1 width movement the DIAG showed selection was missing), so
     //    the emphasized delts reach the 17-20 width band instead of stalling ~16.
-    //  - sexBias: the user's onboarding sex ('m'|'f') biases the leg-day accessory
-    //    pool toward sex-common lifts (poolForGroup reorder, never a hard ban).
-    // Both off (flag OFF) → no umeri injection + sexBias null → byte-identical.
+    // SEX-BIAS CUT (Wave 1.1, Daniel 2026-06-09): the sexBias selection demotion is
+    // REMOVED — exercise quality must not depend on sex (Hip Thrust/Kickback valid
+    // for men; Bench valid for women). Sex stays ONLY in cold-start load seeding /
+    // strength + volume priors (coldStartGuidelines / populationPrior), never in
+    // pick quality. So sexBias is no longer threaded into buildSession/poolForGroup.
     lateralRaiseGuarantee:
       isEnabled('dp_smart_selection_v1') && emphSet.has('umeri'),
-    sexBias: isEnabled('dp_smart_selection_v1')
-      ? (userState?.user?.sex === 'm' || userState?.user?.sex === 'f'
-        ? userState.user.sex
-        : null)
-      : null,
     // #70-D2 — COMPOUND-FIRST guarantee on an emphasis/weak-reordered session
     // (dp_emphasis_specialization_v1, default OFF → byte-identical). When ON, the
     // weak/emphasis front-loader is prevented from leading the day with an ISOLATION
