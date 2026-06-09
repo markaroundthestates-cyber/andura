@@ -3,51 +3,51 @@
   "seed": 15736039,
   "nProfiles": 8,
   "weeks": 6,
-  "hashOff": "079e1dd3f6cd09eb1fc86e5db46c44231b551cc71d810e4246039d5f4ff4b65f",
-  "hashOn": "d5f6a620a36b02284fd756e0e7e67490cdd25b89ffc5d29458b6fc082cb33ea4",
+  "hashOff": "db1370be257951c1cf55f69efca1cc9a753fcbe7aa3c2eccec20e121ea29a3f8",
+  "hashOn": "eb6293cdb74817c8c351a6525786933b6399c190ec03d12ba400f89dde773b75",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 7.07,
-    "meanSetTotal": 13.19,
+    "meanExerciseCount": 7.08,
+    "meanSetTotal": 13.12,
     "meanDurationMin": 39.8,
-    "meanVolumeKg": 1781,
+    "meanVolumeKg": 1789,
     "minusRatePct": 21.9
   },
   "sessionOn": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 7.16,
-    "meanSetTotal": 11.68,
-    "meanDurationMin": 35.3,
+    "meanExerciseCount": 7.15,
+    "meanSetTotal": 11.66,
+    "meanDurationMin": 35.2,
     "meanVolumeKg": 1650,
     "minusRatePct": 21.9
   },
   "convergenceOff": {
     "totalSeries": 123,
-    "convergedPct": 7.3,
-    "medianSessionsToConverge": 3,
-    "meanFinalAbsErr": 0.571
+    "convergedPct": 8.1,
+    "medianSessionsToConverge": 6.5,
+    "meanFinalAbsErr": 0.576
   },
   "convergenceOn": {
-    "totalSeries": 121,
-    "convergedPct": 9.9,
+    "totalSeries": 120,
+    "convergedPct": 10,
     "medianSessionsToConverge": 6.5,
-    "meanFinalAbsErr": 0.572
+    "meanFinalAbsErr": 0.573
   },
   "flagsOff": {
     "oscillation": 0,
-    "stuckLow": 89,
-    "stuckHigh": 18,
+    "stuckLow": 87,
+    "stuckHigh": 19,
     "absurd": 34
   },
   "flagsOn": {
     "oscillation": 0,
-    "stuckLow": 79,
+    "stuckLow": 78,
     "stuckHigh": 23,
     "absurd": 32
   },
-  "craterOff": 80,
-  "craterOn": 74,
-  "_rebaseline_note": "Re-frozen 2026-06-09 for the RDL equipment-ladder fix (fresh-eyes #1): 'Romanian Deadlift' was mapped to the 'dumbbell' weight ladder (top 50kg) so a barbell RDL back-solved to ~140kg snapped flat to 50 for every lifter; re-routed to 'barbell_heavy' (reaches 360kg). BOTH arms move (the cold-start ladder snap is flag-independent). OLD hashOff aa0da62f… → 079e1dd3…, hashOn 5b15222f… → d5f6a620…. The fix only IMPROVES: meanVolumeKg up (RDL now carries real load), absurd 38→34 OFF / 35→32 ON, crater 89→80 OFF / 83→74 ON; convergence + oscillation stable; hashOn != hashOff still holds (§B). dp_metric_types_v1 default-ON is forced explicitly OFF in both arms (added to FLIPPED_FLAGS), so it does NOT move these hashes — the metric honoring is verified on the live compose path + #70 matrix, not in this weight-prescription stream."
+  "craterOff": 83,
+  "craterOn": 75,
+  "_rebaseline_note": "Re-frozen 2026-06-09 for the prioritizeWeakGroups tier-blind ordering fix (founder live smoke): an emphasized group with >2 exercises dumped its COMPOUNDS (Chin-up/Pull-up) behind biceps isolations on Pull, and pulled a tier-2 isolation (Rear Delt Fly) to #2 ahead of chest compounds on Push. Now tier-major/weakness-minor: compound-first holds GLOBALLY, emphasized group leads within its tier band. Pure REORDER of the same exercises+sets (only sequence moves); persona-matrix + calibration-sim + the §B/§C bands all stayed green. hashOff/hashOn re-frozen to the new sequence."
 }

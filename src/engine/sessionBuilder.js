@@ -1375,11 +1375,27 @@ export function prioritizeWeakGroups(exercises, weakGroups) {
   const isWeak = (name) =>
     weakSet.has(getExerciseMetadata(name).muscle_target_primary);
 
-  const weak = exercises.filter((e) => isWeak(e.name));
-  const rest = exercises.filter((e) => !isWeak(e.name));
+  // No weak/emphasized exercise in this session → nothing to surface (no-op,
+  // preserves the caller's order).
+  if (!exercises.some((e) => isWeak(e.name))) return exercises.slice();
 
-  // Place weak exercises first (up to 2 positions), then the rest. The
-  // compound-first INVARIANT is enforced by the final guard in buildSession (a
-  // promoted isolation never leads ahead of an available compound — #70-D2).
-  return [...weak.slice(0, 2), ...rest, ...weak.slice(2)];
+  // Stable TIER-major / weakness-minor ordering. The OLD rule sliced the weak
+  // group's first 2 exercises to the front and dumped the rest to the BACK,
+  // which broke compound-first two ways the founder hit live (2026-06-09):
+  //   • Push (umeri emphasized): weak.slice(0,2) = DB Shoulder Press + Rear Delt
+  //     Fly → the tier-2 Rear Delt Fly ISOLATION landed at #2, ahead of every
+  //     chest compound.
+  //   • Pull (spate emphasized, 4 back compounds): weak.slice(2) shoved Chin-up +
+  //     Pull-up (tier-1 COMPOUNDS) to the very back, behind the biceps curls.
+  // The single compoundFirstGuard only protected position 0, so #2+ stayed wrong.
+  // Now: COMPOUND-first holds GLOBALLY (a tier-1 lift never sits behind a tier-2
+  // isolation — the grip-fatigue rule, BUG #6), and WITHIN each tier band the
+  // weak/emphasized group leads so it still visibly surfaces (its compound leads
+  // the compounds; an isolation-only weak group leads the accessory block). Pure
+  // reorder; never adds or drops an exercise.
+  const tierOf = (name) => getExerciseMetadata(name).tier ?? 2;
+  return exercises
+    .map((e, i) => ({ e, i, tier: tierOf(e.name), weak: isWeak(e.name) ? 0 : 1 }))
+    .sort((a, b) => (a.tier - b.tier) || (a.weak - b.weak) || (a.i - b.i))
+    .map((x) => x.e);
 }

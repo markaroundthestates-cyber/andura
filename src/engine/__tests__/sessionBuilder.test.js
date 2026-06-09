@@ -481,21 +481,38 @@ describe('buildSession — equipment-constrained pool', () => {
 // ── prioritizeWeakGroups — weakness ordering (Big-11 groups) ─────────────
 
 describe('prioritizeWeakGroups — weakness ordering', () => {
-  it('weak biceps → a biceps exercise moves to the first 2 positions', () => {
+  it('weak biceps → curls lead the isolation band but stay behind back compounds (compound-first)', () => {
     const exercises = [
-      { name: 'Lat Pulldown', sets: 3 },   // spate
-      { name: 'Cable Row', sets: 3 },       // spate
-      { name: 'Cable Curl', sets: 3 },      // biceps
-      { name: 'Hammer Curl', sets: 3 },     // biceps
+      { name: 'Lat Pulldown', sets: 3 },   // spate  t1 compound
+      { name: 'Cable Row', sets: 3 },       // spate  t1 compound
+      { name: 'Rear Delt Fly', sets: 3 },   // umeri  t2 isolation (non-weak)
+      { name: 'Cable Curl', sets: 3 },      // biceps t2 isolation (weak)
     ];
     const result = prioritizeWeakGroups(exercises, ['biceps']);
     const names = result.map((e) => e.name);
-    const firstTwo = names.slice(0, 2);
-    expect(
-      firstTwo.some(
-        (n) => getExerciseMetadata(n).muscle_target_primary === 'biceps',
-      ),
-    ).toBe(true);
+    // Compounds always first — a weak ISOLATION never pre-fatigues ahead of a
+    // back compound (BUG #6 grip-fatigue rule).
+    expect(names.slice(0, 2)).toEqual(['Lat Pulldown', 'Cable Row']);
+    // The weak group still surfaces: its curl leads the accessory block, ahead
+    // of the non-weak rear-delt isolation.
+    expect(names.indexOf('Cable Curl')).toBeLessThan(names.indexOf('Rear Delt Fly'));
+  });
+
+  it('emphasized back keeps Chin-up/Pull-up (compounds) ahead of biceps isolations', () => {
+    // The live 2026-06-09 Pull bug: a 4-compound back group dumped Chin-up +
+    // Pull-up to the back, behind the curls. Compound-first must hold for ALL
+    // of the emphasized group's compounds, not just its first two.
+    const exercises = [
+      { name: 'Lat Pulldown', sets: 3 }, // spate t1
+      { name: 'Cable Row', sets: 3 },    // spate t1
+      { name: 'Chin-up', sets: 3 },      // spate t1
+      { name: 'Pull-up', sets: 3 },      // spate t1
+      { name: 'Cable Curl', sets: 3 },   // biceps t2
+      { name: 'Hammer Curl', sets: 3 },  // biceps t2
+    ];
+    const names = prioritizeWeakGroups(exercises, ['spate']).map((e) => e.name);
+    expect(names.indexOf('Chin-up')).toBeLessThan(names.indexOf('Cable Curl'));
+    expect(names.indexOf('Pull-up')).toBeLessThan(names.indexOf('Cable Curl'));
   });
 
   it('does NOT add exercises not in the original list', () => {
