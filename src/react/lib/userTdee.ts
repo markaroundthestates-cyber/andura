@@ -38,8 +38,19 @@
 
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { useWorkoutStore } from '../stores/workoutStore';
-import { useProgresStore } from '../stores/progresStore';
-import type { Sex, Goal } from '../stores/onboardingStore';
+import type { Sex } from '../stores/onboardingStore';
+// getCurrentWeightKg / readUserWeightKg / readOnboardingGoal / computeProteinTargetG
+// + PROTEIN_G_PER_KG_BODYWEIGHT moved to the workoutStore-FREE leaf ./userProfile
+// to sever the nutrition→userTdee→workoutStore circular edge (madge hard-gate).
+// Re-exported here so every `from './userTdee'` importer resolves unchanged.
+import { getCurrentWeightKg } from './userProfile';
+export {
+  getCurrentWeightKg,
+  readUserWeightKg,
+  readOnboardingGoal,
+  computeProteinTargetG,
+  PROTEIN_G_PER_KG_BODYWEIGHT,
+} from './userProfile';
 
 // NEAT base = non-exercise activity thermogenesis multiplier (viata in afara
 // salii: deplasari, casa, munca usoara). 1.25 = mijlocul benzii sedentar→usor
@@ -83,12 +94,7 @@ export const SESSIONS_WINDOW_DAYS = 7;
 // e completa; pana atunci planul tine kcal-ul realist.
 export const BLEND_FULL_WEEKS = 4;
 
-// Protein target g/kg greutate corporala. Spec Piesa 1: "Proteine = g/kg ×
-// greutate (per-user, nu flat)". Constanta nu exista exportata in cod (engine
-// MACRO_BANDS = g/kg LBM, dar LBM cere BF% indisponibil din onboarding singur).
-// 1.8 g/kg corp = mid-range standard pentru trainee (sub pragul de alerta
-// proactiveEngine.js:15 "2.2g/kg corp", peste minim conservare masa musculara).
-export const PROTEIN_G_PER_KG_BODYWEIGHT = 1.8;
+// PROTEIN_G_PER_KG_BODYWEIGHT moved to ./userProfile (re-exported above).
 
 // Romanian population height averages (INS data ~2020). Fallback DOAR pentru
 // useri pre-v3 cu height null (onboarded inainte de P-02). Mirror BMRStrip.tsx
@@ -333,58 +339,6 @@ export function readUserMaintenanceTDEE(): number | null {
   });
 }
 
-/**
- * Sursa canonica de greutate CURENTA (kg) — adevarul unic pentru TOATE
- * citirile de greutate curenta din app (TDEE/BMR/proteine/BF%/pipeline). Era
- * fragmentata: nutritia/corpul citeau greutatea INGHETATA din onboarding, dar
- * LogWeight scrie doar in progresStore.weightLog → logarea unei greutati nu
- * misca nimic (split source-of-truth, audit CRIT).
- *
- * Regula: ultima greutate LOGATA (progresStore.weightLog, cea mai recenta intrare
- * dupa data) daca exista, altfel greutatea de onboarding (initial/fallback).
- * Onboarding ramane seed-ul + fallback-ul (seedFromProfileIfEmpty intact).
- * Reads stores → I/O boundary (NU pura). Returns null cand niciun semnal.
- */
-export function getCurrentWeightKg(): number | null {
-  const weightLog = useProgresStore.getState().weightLog;
-  // Cea mai recenta intrare dupa DATA, NU pozitia in array. addWeightEntry
-  // adauga datele noi la coada indiferent de ordine → o cantarire back-dated
-  // (zi uitata logata ulterior) ar deveni [length-1] si ar masca greutatea
-  // curenta reala, corupand BMR/TDEE/proteine/BF%/periodizare. Comparam `date`
-  // (YYYY-MM-DD, sortabil lexicografic) — robust la semantica mixta a lui `ts`
-  // (live = Date.now(), importate = Date.UTC(date)).
-  // reduce fara seed: acumulatorul e WeightEntry (NU | undefined sub
-  // noUncheckedIndexedAccess); arunca pe array gol, de aceea guard-ul .length.
-  const lastWeight = weightLog.length
-    ? weightLog.reduce((m, e) => (e.date > m.date ? e : m))
-    : undefined;
-  return lastWeight?.kg ?? useOnboardingStore.getState().data.weight ?? null;
-}
-
-/**
- * I/O boundary — read user bodyweight (kg). Pentru protein target g/kg ×
- * greutate. Delegheaza la sursa canonica getCurrentWeightKg (ultima greutate
- * logata > onboarding) ca logarea unei greutati sa miste tinta de proteine.
- * Returns null cand absent.
- */
-export function readUserWeightKg(): number | null {
-  return getCurrentWeightKg();
-}
-
-/**
- * I/O boundary — read onboarding goal (RO vocab) din onboardingStore.
- * Pentru goal-delta nutrition kcal (slabire→deficit / masa→surplus) cand
- * NU exista override manual de faza (SchimbaFaza). Returns null cand absent.
- */
-export function readOnboardingGoal(): Goal | null {
-  return useOnboardingStore.getState().data.goal;
-}
-
-/**
- * Protein target (g) = g/kg × greutate corporala. Pure. Returns null cand
- * greutate absenta (caller pastreaza protein baseline).
- */
-export function computeProteinTargetG(weightKg: number | null): number | null {
-  if (weightKg === null || weightKg <= 0) return null;
-  return Math.round(weightKg * PROTEIN_G_PER_KG_BODYWEIGHT);
-}
+// getCurrentWeightKg / readUserWeightKg / readOnboardingGoal / computeProteinTargetG
+// moved to ./userProfile (workoutStore-FREE leaf) + re-exported at the top of this
+// module. Single source of truth preserved; public API unchanged.

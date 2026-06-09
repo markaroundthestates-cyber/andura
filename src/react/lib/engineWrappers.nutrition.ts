@@ -23,23 +23,17 @@ import {
   readUserWeightKg,
   getCurrentWeightKg,
   computeProteinTargetG,
-  readOnboardingGoal,
 } from './userTdee';
 // Problem 2 — AUTO phase auto-detection din weight trend (goal 'auto' onboarding
 // → engine recomanda faza, NU mentenanta flat). Cold-start onest: fara istoric
 // greutate → MAINTAIN (×1.0). PHASES enum + detector pure din Engine #2.
-import {
-  detectAutoPhaseFromWeightTrend,
-  detectAutoPhaseFromBodyComp,
-} from '../../engine/goalAdaptation/phaseAutoDetection.js';
 import { useProgresStore } from '../stores/progresStore';
 // BUG #13 + BUG #4 safety — guardrail anti-subnutritie pe OUTPUT-ul de kcal:
 // cand user-ul e deja subponderal (BMI <= 18.5) NU servim deficit nici mentenanta,
 // ci un surplus moderat de crestere (clampKcalToHealthyFloor ridica la TDEE×1.08).
 // computeBMI alimenteaza si AUTO body-comp detection (BUG #5).
-import { clampKcalToHealthyFloor, computeBMI } from '../../engine/bodyComposition.js';
+import { clampKcalToHealthyFloor } from '../../engine/bodyComposition.js';
 import { useOnboardingStore } from '../stores/onboardingStore';
-import { estimateBfFraction } from './scheduleAdapterAggregate';
 // daysUntilTarget feeds the coherence-model rate-cap sizing (deadline → days).
 import { daysUntilTarget } from './targetSafety';
 // Coherence model 2026-05-30 (Daniel repro masa+target90 → 2200 deficit). The
@@ -49,13 +43,20 @@ import { daysUntilTarget } from './targetSafety';
 // goal's surplus. sizeKcalForPhase forces the sign from the phase.
 import {
   targetDirection,
-  phaseForGoal,
-  enabledGoalsForDirection,
   sizeKcalForPhase,
   type PhaseToken,
 } from './goalPhaseModel';
-import type { Goal } from '../stores/onboardingStore';
 import type { NutritionTargetsEngine } from './engineWrappers.types';
+// resolveActivePhase + AUTO detector + manual-override gating moved to the
+// ./phaseResolution LEAF (severs the nutrition→userTdee→workoutStore→
+// workoutStore.logic→nutrition circular edge, madge hard-gate). Imported back
+// here for the coherence-model functions + re-exported below → public API kept.
+import {
+  resolveActivePhase,
+  PHASE_MULTIPLIERS,
+  isPhaseTokenEnabledForDirection,
+} from './phaseResolution';
+export { resolveActivePhase, getAutoDetectedPhaseLabelRo } from './phaseResolution';
 
 export const BASELINE_NUTRITION: NutritionTargetsEngine = {
   kcalTarget: 2640,    // mockup verbatim L1812
@@ -150,15 +151,6 @@ export function buildPerUserBaseline(phaseKcal: number | null): NutritionTargets
   };
 }
 
-// Valid manual-override tokens (membership check only — the kcal MAGNITUDE is
-// sized coherently via sizeKcalForPhase, NOT these keys; see getPhaseOverrideKcalToday).
-export const PHASE_MULTIPLIERS: Record<string, number> = {
-  CUT: 0.82,
-  BULK: 1.08,
-  MAINTENANCE: 1.0,
-  STRENGTH: 1.05,
-};
-
 /**
  * BUG #13 + BUG #4 safety chokepoint — aplica guardrail-ul anti-subnutritie pe
  * kcal-ul final. Cand user-ul e deja subponderal (BMI <= 18.5), ridica kcal-ul
@@ -185,95 +177,10 @@ export function applyHealthyFloorGuardrail(kcal: number): { kcal: number; clampe
   });
   return { kcal: r.kcal, clamped: r.clamped };
 }
-/**
- * Resolve the ACTIVE phase token, coherence-model precedence (2026-05-30):
- *   1. manual phase override (B001 SchimbaFaza) when set + not AUTO — the user
- *      explicitly picked a phase; honor it UNLESS it contradicts the target-weight
- *      direction (a BULK/STRENGTH override under a LOSE target, or a CUT override
- *      under a GAIN target). A stale override must not outrank a fresher, clearly
- *      contradicting target: treat it invalid (enabledGoalsForDirection) and fall
- *      through to the coherent goal/AUTO resolution below — the same reconciliation
- *      the goal-vs-target path already applies (override-vs-target parity).
- *   2. else the onboarding goal's phase (phaseForGoal). 'auto'/null → AUTO.
- *   3. AUTO resolves to the real phase, signal precedence:
- *      a. target-weight direction (the user's explicit master intent): LOSE→CUT,
- *         GAIN→BULK. A MAINTAIN-band target falls through.
- *      b. the established Engine #2 detector (detectAutoPhaseKey): weight-trend
- *         (what the body actually does over time) with a sex-aware body-comp
- *         fallback (BMI + BF%). Always yields a phase (cold-start → MAINTENANCE).
- *
- *   The pure deriveAutoPhase() in goalPhaseModel (men BF>15→CUT / <12→BUILD,
- *   women BF>25/22) is the literal spec model used for the gating/derivation
- *   contract + its own unit tests; the engine wiring REUSES the established
- *   detector here so the well-tested AUTO body-comp behavior is not regressed.
- * Pure-ish I/O boundary (reads localStorage + stores). Defensive → AUTO.
- */
-// Phase token → its equivalent onboarding goal (inverse of phaseForGoal), so a
-// manual override can be tested against the SAME gating set the goal card uses.
-const PHASE_TOKEN_TO_GOAL: Record<string, Goal> = {
-  CUT: 'slabire',
-  BULK: 'masa',
-  STRENGTH: 'forta',
-  MAINTENANCE: 'mentenanta',
-};
-
-/**
- * True when a manual phase override is coherent with the target-weight direction
- * (reuses enabledGoalsForDirection — the goal-card gating set). No direction (no
- * target / MAINTAIN-band) → nothing to contradict, override stays valid. AUTO is
- * never reconciled here (handled before this). Pure.
- */
-function isPhaseTokenEnabledForDirection(
-  token: PhaseToken,
-  dir: ReturnType<typeof targetDirection>,
-): boolean {
-  if (dir === null) return true;
-  const goal = PHASE_TOKEN_TO_GOAL[token];
-  if (goal === undefined) return true;
-  return enabledGoalsForDirection(dir).has(goal);
-}
-
-export function resolveActivePhase(): PhaseToken | null {
-  // Target-weight direction (master intent) — needed up front so a manual
-  // override can be reconciled against it before it is honored.
-  const { weightKg } = useProgresStore.getState().targetObiectiv;
-  const dir = targetDirection(getCurrentWeightKg(), weightKg);
-  try {
-    const raw = JSON.parse(localStorage.getItem('phase-override') ?? 'null') as string | null;
-    if (raw && raw !== 'AUTO' && PHASE_MULTIPLIERS[raw] !== undefined) {
-      // Override-vs-target reconciliation (parity with goal-vs-target below): a
-      // manual phase that contradicts a clear target direction (e.g. a BULK
-      // override while target < current) is treated as INVALID via the same
-      // gating set the goal card uses, and we fall through to the coherent
-      // goal/AUTO resolution. A non-contradicting override is honored.
-      if (!isPhaseTokenEnabledForDirection(raw as PhaseToken, dir)) {
-        /* contradicting override → drop, fall through to goal-derived */
-      } else {
-        return raw as PhaseToken;
-      }
-    }
-  } catch {
-    /* fall through to goal-derived */
-  }
-  const goal = readOnboardingGoal();
-  // Cold-start, no onboarding goal AND no target → no directional signal at all;
-  // return null so the caller falls back to plain maintenance (no fabricated
-  // deficit/surplus). A target set without a goal still drives direction below.
-  if ((goal === null || goal === undefined) && dir === null) return null;
-
-  const token = phaseForGoal(goal as Parameters<typeof phaseForGoal>[0]);
-  if (token !== 'AUTO') return token;
-
-  // AUTO — (a) target direction is the explicit master signal.
-  if (dir === 'LOSE') return 'CUT';
-  if (dir === 'GAIN') return 'BULK';
-
-  // (b) established Engine #2 detector (weight-trend + sex-aware body-comp).
-  const trendKey = detectAutoPhaseKey();
-  return trendKey === 'CUT' || trendKey === 'BULK' || trendKey === 'STRENGTH'
-    ? (trendKey as PhaseToken)
-    : 'MAINTENANCE';
-}
+// resolveActivePhase + PHASE_TOKEN_TO_GOAL + isPhaseTokenEnabledForDirection +
+// PHASE_MULTIPLIERS moved to the ./phaseResolution LEAF (severs the
+// nutrition→userTdee→workoutStore→workoutStore.logic→nutrition circular edge).
+// Imported back at the top of this module; resolveActivePhase re-exported there.
 
 /**
  * #76 — resolve the ACTIVE energy MAGNITUDE (phase + deficit/surplus SEVERITY) for
@@ -412,58 +319,6 @@ export function getPhaseOverrideKcalToday(): number | null {
   }
 }
 
-/**
- * AUTO phase key — combina DOUA semnale pure (Engine #2):
- *   1. weight-trend (detectAutoPhaseFromWeightTrend): ce face corpul de fapt in
- *      timp. Are PRIORITATE cand exista un trend directional clar (CUT/BULK) —
- *      o pierdere/crestere consistenta sustine faza respectiva.
- *   2. body-comp (detectAutoPhaseFromBodyComp): BMI + bf% din onboarding. Decide
- *      cand weight-trend e MAINTAIN (cold-start / span scurt / platou) — asa un
- *      user NOU supraponderal (110kg/1.84m, BMI 32.5, fara istoric) primeste CUT
- *      in loc de mentenanta tacuta (BUG #5).
- *
- * Mapeaza PHASES engine → cheile PHASE_MULTIPLIERS ('MAINTAIN' → 'MAINTENANCE').
- * Defensive: throw → 'MAINTENANCE'. Pure-ish I/O boundary (citeste stores).
- */
-function detectAutoPhaseKey(): string {
-  try {
-    const phaseToKey = (phase: string): string =>
-      phase === 'CUT' ? 'CUT' : phase === 'BULK' ? 'BULK' : 'MAINTENANCE';
-
-    // 1. weight-trend prioritar cand are semnal directional (CUT/BULK).
-    const weightLog = useProgresStore.getState().weightLog;
-    const trend = detectAutoPhaseFromWeightTrend(weightLog);
-    if (trend.phase === 'CUT' || trend.phase === 'BULK') {
-      return phaseToKey(trend.phase);
-    }
-
-    // 2. weight-trend MAINTAIN (cold-start/flat) → decide din compozitia corporala.
-    // Canonical greutate curenta (ultima logata > onboarding) — audit CRIT.
-    const { sex, height, age } = useOnboardingStore.getState().data;
-    const weight = getCurrentWeightKg();
-    const bfFraction = estimateBfFraction({ weight, height, age, sex });
-    const bmi = computeBMI(Number(weight), Number(height));
-    const bodyComp = detectAutoPhaseFromBodyComp({
-      bfPctFraction: bfFraction ?? null,
-      bmi,
-      ...(sex ? { sex } : {}),
-    });
-    return phaseToKey(bodyComp.phase);
-  } catch {
-    return 'MAINTENANCE';
-  }
-}
-
-/**
- * Problem 2 + BUG #5 (UI surface) — eticheta RO a fazei AUTO-detectate (weight
- * trend + body-comp), pentru SchimbaFaza ("Auto → Mentinere/Cut/Bulk recomandat").
- * Cold-start fara stats → 'Mentinere'. Reuse detectAutoPhaseKey (single source).
- */
-const AUTO_PHASE_LABELS_RO: Record<string, string> = {
-  CUT: 'Cut',
-  BULK: 'Bulk',
-  MAINTENANCE: 'Mentinere',
-};
-export function getAutoDetectedPhaseLabelRo(): string {
-  return AUTO_PHASE_LABELS_RO[detectAutoPhaseKey()] ?? 'Mentinere';
-}
+// detectAutoPhaseKey + AUTO_PHASE_LABELS_RO + getAutoDetectedPhaseLabelRo moved
+// to the ./phaseResolution LEAF (single-source AUTO detector). getAutoDetected-
+// PhaseLabelRo is re-exported at the top of this module → public API unchanged.

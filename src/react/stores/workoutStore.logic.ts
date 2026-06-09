@@ -8,7 +8,7 @@ import { DB, todTs } from '../../db.js';
 import { archiveSession } from '../lib/dexieMigration';
 import { isEnabled } from '../../util/featureFlags.js';
 import { learnRecovery, saveRecoveryConstants, RECOVERY_CONSTANTS_KEY, bodyweightTrendRecoveryFactor } from '../../engine/muscleMap.js';
-import { resolveActivePhase } from '../lib/engineWrappers.nutrition';
+import { resolveActivePhase } from '../lib/phaseResolution';
 import { learnedStepFromLogs, saveLearnedStep } from '../../engine/dp/equipmentLadder.js';
 import { learnVolumeLandmarks, saveLearnedVolume, LEARNED_VOLUME_KEY } from '../../engine/periodization/learnedVolume.js';
 import { learnFatigueCurve, saveFatigueCurve, FATIGUE_CURVE_KEY } from '../../engine/dp/fatigueCurve.js';

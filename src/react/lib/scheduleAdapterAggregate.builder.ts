@@ -2,8 +2,9 @@
 // Hygiene split (barrel re-export, zero behavior change): the builder-layer
 // signal-completion helpers (energyDirection / weekIdx / bf / phase) + the
 // SINGLE buildUserStateForPipeline overlay live here. buildUserStateForPipeline
-// + estimateBfFraction are re-exported by scheduleAdapterAggregate.ts — the
-// public API is unchanged. readinessScoreForUser is consumed cross-module by the
+// is re-exported by scheduleAdapterAggregate.ts; estimateBfFraction now lives in
+// the ./bodyComp leaf and is re-exported through here → the public API is
+// unchanged. readinessScoreForUser is consumed cross-module by the
 // compose concern (export added for the sibling import; NOT in the barrel surface).
 
 import { useWorkoutStore } from '../stores/workoutStore';
@@ -17,7 +18,7 @@ import { getWeekStartIso, primaryEmphasizedGroup } from '../../engine/schedule/s
 import { isEnabled } from '../../util/featureFlags.js';
 import { DB } from '../../db.js';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
-import { estimateBF_Deurenberg } from '../../engine/bodyComposition.js';
+import { estimateBfFraction } from './bodyComp';
 import { detectSubRecoveryDrift } from '../../engine/dp/subRecoveryDrift.js';
 import { classifyPerformanceDip } from '../../engine/dp/dipClassifier.js';
 import { computeACWR } from '../../engine/muscleRecovery.js';
@@ -132,38 +133,10 @@ function deriveWeekIdx(
   return (weeksSinceStart % MESOCYCLE_WEEKS) + 1;
 }
 
-/**
- * Estimate body-fat as a FRACTION (0.0-1.0) from BMI/age/sex via Deurenberg
- * 1991: BF% = 1.20·BMI + 0.23·age − 10.8·sex − 5.4 (sex: male=1, female=0).
- * The percent is divided by 100 → FRACTION, because the engine thresholds are
- * fractional (bfPctHighMale 0.25); a raw percent would false-positive every
- * user (CRITICAL trap). Clamp [0.03, 0.60]. undefined when any input missing →
- * engine sees absent → no false BF-high risk (computeRiskScore guards
- * Number.isFinite(bf) && bf > 0). Population estimate, fitness-not-medicine —
- * NOT a body-composition measurement. Pure.
- *
- * @param input weight (kg), height (cm), age (years), sex ('m'|'f')
- */
-export function estimateBfFraction(input: {
-  weight?: number | null;
-  height?: number | null;
-  age?: number | null;
-  sex?: string | null;
-}): number | undefined {
-  // Canonical Deurenberg math lives in engine/bodyComposition (PERCENT 2-60).
-  // Single source of truth — here we divide to a FRACTION at the engine
-  // boundary (engine thresholds are fractional; raw percent false-positives
-  // every user, CRITICAL trap) + apply the engine clamp [0.03, 0.60].
-  const bfPercent = estimateBF_Deurenberg({
-    weightKg: Number(input.weight),
-    heightCm: Number(input.height),
-    ageYears: Number(input.age),
-    ...(typeof input.sex === 'string' ? { sex: input.sex } : {}),
-  });
-  if (bfPercent == null) return undefined;
-  const fraction = bfPercent / 100; // percent → FRACTION (engine thresholds are fractional)
-  return Math.min(0.6, Math.max(0.03, fraction));
-}
+// estimateBfFraction moved to ./bodyComp (leaf) to sever the nutrition→aggregate
+// circular edge (madge hard-gate). Re-exported here so the barrel public surface
+// (scheduleAdapterAggregate.ts) is unchanged.
+export { estimateBfFraction } from './bodyComp';
 
 /**
  * Profile tier from onboarding experience (specialization Gate 2 reads T1+).
