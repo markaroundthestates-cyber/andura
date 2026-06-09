@@ -2565,6 +2565,7 @@ export const DP = {
     // Then clamp the prescribed repsTarget into the intersected band so the goal
     // actually narrows the prescribed reps. Absent/malformed → byte-identical.
     const repMod = opts && Array.isArray(opts.repRangeModifier) ? opts.repRangeModifier : null;
+    let goalIsForta = false; // forta signature (goal low < default floor) — gates the corridor below
     if (repMod && Number.isFinite(repMod[0]) && Number.isFinite(repMod[1])) {
       // W-Goal — UNCLAMP the rep floor for STRENGTH on a barbell compound. Normally
       // the goal band INTERSECTS the per-exercise REP_RANGES (max(default_lo, goal_lo)),
@@ -2574,6 +2575,7 @@ export const DP = {
       // GOAL low win so forta actually prescribes ~3-6. Gated + scoped to compounds →
       // hipertrofie/other goals (low >= default) and isolation lifts are untouched.
       const goalLo = Math.min(repMod[0], repMod[1]);
+      goalIsForta = goalLo < rMinSafe;
       const strengthUnclamp =
         isEnabled('dp_strength_goal_v1')
         && goalLo < rMinSafe
@@ -2640,13 +2642,13 @@ export const DP = {
       }
     }
 
-    // F2 §3 / F3 #6 — intensity corridor (e1RM band) as the LAST load step, after
-    // every gate. Bounds the implied %1RM into the goal's periodization band. EXEMPT
-    // during an active return-deload comeback (the comeback intentionally starts
-    // light, F2 §3b guard) — never fight the ramp. Flag dp_intensity_corridor_v1
-    // OFF / no corridor in opts → no-op → byte-identical.
+    // F2 §3 / F3 #6 — intensity corridor (e1RM band) as the LAST load step, after every
+    // gate. Bounds implied %1RM into the goal band. EXEMPT during a return-deload comeback
+    // (F2 §3b, never fight the ramp). Goal scope: dp_intensity_corridor_v1 opens it for
+    // every goal; dp_strength_goal_v1 ONLY for forta (else masa's corridor caps a legit load).
     const corridor = opts && opts.intensityCorridor ? opts.intensityCorridor : null;
-    if (corridor && !result.returnDeload && Number.isFinite(result.kg) && result.kg > 0) {
+    const corridorAllowed = isEnabled('dp_intensity_corridor_v1') || (isEnabled('dp_strength_goal_v1') && goalIsForta);
+    if (corridor && corridorAllowed && !result.returnDeload && Number.isFinite(result.kg) && result.kg > 0) {
       const bounded = this._applyIntensityCorridor(result.kg, ex, rTarget, corridor);
       if (Number.isFinite(bounded) && bounded > 0 && bounded !== result.kg) {
         result.kg = bounded;
