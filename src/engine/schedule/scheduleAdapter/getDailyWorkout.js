@@ -640,6 +640,13 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // byte-identical). When ON, a beginner's NON-focus groups are capped to keep a
     // high-frequency novice week in the MEV/low-MAV band (experience anchoring).
     beginnerVolumeCap: isEnabled('dp_learned_volume_v1'),
+    // Daniel expert tier-list SELECTION (dp_daniel_tier_select_v1, default OFF →
+    // byte-identical). When ON, poolForGroup orders each muscle's auto-pool by
+    // Daniel's hand-ranked S/A/B/C/D selection band (exerciseTierRank.js) as the
+    // PRIMARY quality key + hard-excludes D-band anti-patterns (last-option guarded),
+    // so the engine prescribes from HIS ranked list per muscle ("Andura picks like
+    // Daniel"). PR-history continuity (band 0) + squat-primacy + all gates intact.
+    danielTierSelect: isEnabled('dp_daniel_tier_select_v1'),
   };
 
   const session = buildSession(cluster, sessionCtx);

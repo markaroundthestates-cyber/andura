@@ -11,6 +11,7 @@
 import { EXERCISE_METADATA, getExerciseMetadata, isActiveMeta } from './exerciseLibrary.js';
 import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT, ISRAETEL_BASELINES } from './periodization/constants.js';
 import { isExcludedMovement } from './movementExclusion.js';
+import { EXERCISE_TIER_RANK, tierRankOf, TIER_SELECTABLE_SA } from './exerciseTierRank.js';
 
 // buildSession's first param is now a Big-6 CLUSTER id (push/pull/legs/upper/
 // lower/full) — the target muscle groups + their session-slot bias come from the
@@ -628,9 +629,16 @@ function equipmentOk(meta, available) {
  *   sibling (already in-pool) then leads — UNLESS it would empty the muscle (the
  *   last-option guard keeps a non-empty leg day). Null/empty → no removal
  *   (byte-identical). Unlike the penalty DEMOTE this is a hard REMOVE (safety).
+ * @param {boolean} [danielTierSelect] - dp_daniel_tier_select_v1. When true the
+ *   pool ordering uses Daniel's expert SELECTION band (tierRankOf) as the PRIMARY
+ *   quality key (S<A<B<C<UNRANKED), REPLACING the ANCHOR_NAMES/COMMON_MOVEMENTS/
+ *   seeded band ordering — PR-history continuity stays band 0, the seeded hash stays
+ *   the within-band tiebreak, and squat-primacy + all gates are intact. A D-band
+ *   pick is HARD-EXCLUDED from the pool (like a contraindication) UNLESS removing it
+ *   would empty the muscle (last-option guard). Default false → byte-identical.
  * @returns {Array<{name: string, meta: object}>}
  */
-function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, sexBias, painSwaps, excludedMovements) {
+function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, sexBias, painSwaps, excludedMovements, danielTierSelect) {
   // ACTIVE visibility gate (Daniel SSOT 2026-06-05, supersedes 2026-06-03 CORE+
   // FALLBACK gate): auto-selection draws ONLY from the curated ACTIVE catalog
   // (CORE_AUTO — see isActiveMeta / ACTIVE_STATUSES) plus PR-history continuity.
@@ -648,7 +656,16 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalt
     if (!equipmentOk(meta, available)) continue;
     // PR continuity wins: an exercise the user has actually logged stays offered
     // regardless of status (don't yank a lift out from under an existing user).
-    if (isActiveMeta(meta) || prNames.has(name)) core.push({ name, meta });
+    // dp_daniel_tier_select_v1 — when ON, ALSO admit Daniel's S/A picks that are
+    // not (yet) CORE_AUTO (TIER_SELECTABLE_SA) so his top picks are reachable; this
+    // replaces a static exercises.json status flip so flag-OFF stays byte-identical.
+    if (
+      isActiveMeta(meta) ||
+      prNames.has(name) ||
+      (danielTierSelect && TIER_SELECTABLE_SA.has(name))
+    ) {
+      core.push({ name, meta });
+    }
   }
 
   // #64 PERSISTENT pain memory PROACTIVE SWAP — replace a PINNED painful exercise
@@ -707,6 +724,25 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalt
     }
   }
 
+  // dp_daniel_tier_select_v1 — HARD-EXCLUDE Daniel's D-band picks (anti-pattern
+  // blocklist: momentum / half-ROM / ego-load / joint-irritating) from the auto-
+  // pool, the same hard-REMOVE shape as the #81 contraindication exclusion above.
+  // A PR-history lift (the user actually logged it) is NEVER removed — continuity
+  // wins (we don't yank a logged lift even if Daniel rates the variant D). Removal
+  // is skipped when it would empty the muscle (last-option guard: never an empty
+  // group). Flag OFF → no D read, no removal → byte-identical. Runs BEFORE ordering.
+  if (danielTierSelect) {
+    const kept = [];
+    const dropped = [];
+    for (const e of core) {
+      (EXERCISE_TIER_RANK[e.name] === 'D' && !prNames.has(e.name) ? dropped : kept).push(e);
+    }
+    if (kept.length > 0 && dropped.length > 0) {
+      core.length = 0;
+      core.push(...kept);
+    }
+  }
+
   // Deterministic ordering: PR-anchored first (continuity), then SQUAT-PATTERN
   // primacy on the quads group, then plain anchors, then common, then the rest;
   // seeded-stable by name hash.
@@ -724,9 +760,14 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalt
   // no other cluster's ordering moves. All squat variants are skill_level beginner
   // (Smith/Hack/Goblet/Belt — machine-guided), so a beginner gets a safe squat
   // lead; a free barbell squat is still skill-gated out for T0 in poolForGroup.
+  // dp_daniel_tier_select_v1 — when ON, the QUALITY band is Daniel's expert
+  // SELECTION rank (tierRankOf: S<A<B<C<UNRANKED) instead of the legacy
+  // ANCHOR/COMMON/seeded rank(). PR continuity (band 0) + squat-primacy + the
+  // seeded within-band tiebreak are PRESERVED in both modes; only the middle
+  // quality key swaps. OFF → legacy rank() → byte-identical.
+  const qualityRank = (name) =>
+    danielTierSelect ? tierRankOf(name) : rank(name, prNames);
   const byRankSeed = (a, b) => {
-    const ra = rank(a.name, prNames);
-    const rb = rank(b.name, prNames);
     // PR continuity (band 0) is absolute — never reorder a user's logged lift.
     const aPr = prNames.has(a.name);
     const bPr = prNames.has(b.name);
@@ -736,6 +777,8 @@ function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalt
       const sb = squatPrimacy(b.name, b.meta);
       if (sa !== sb) return sb - sa; // higher primacy first
     }
+    const ra = qualityRank(a.name);
+    const rb = qualityRank(b.name);
     if (ra !== rb) return ra - rb;
     return seededKey(a.name, seed) - seededKey(b.name, seed);
   };
@@ -923,6 +966,7 @@ export function movementKey(name, meta) {
  *   tierCompoundFloor?: boolean,
  *   lateralRaiseGuarantee?: boolean,
  *   sexBias?: 'm'|'f'|null,
+ *   danielTierSelect?: boolean,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  *
@@ -962,11 +1006,16 @@ export function buildSession(cluster, ctx) {
   // persisted refusal list. Null / empty tokens (no injury + no refusal — the common
   // case) → poolForGroup removes nothing → byte-identical pool.
   const excludedMovements = ctx?.excludedMovements ?? null;
+  // dp_daniel_tier_select_v1 — when true, poolForGroup orders by Daniel's expert
+  // SELECTION band (tierRankOf) as the primary quality key + hard-excludes D-band
+  // anti-patterns. Default absent (flag OFF / pure-fn callers) → false → the legacy
+  // anchor/common/seeded ordering, no D removal → byte-identical pool.
+  const danielTierSelect = ctx?.danielTierSelect === true;
 
   // Pools per target group (ordered: PR-anchored -> anchor -> new, seeded-stable).
   const pools = targets.map((g) => ({
     group: g,
-    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, sexBias, painSwaps, excludedMovements),
+    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, sexBias, painSwaps, excludedMovements, danielTierSelect),
   }));
 
   // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the user's

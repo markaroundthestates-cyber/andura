@@ -931,6 +931,25 @@ export const FLAGS = Object.freeze({
   // distributeGroupSets via ctx.tierCompoundFloor (resolved at the getDailyWorkout
   // seam). Flip ON is a human gate (Daniel) AFTER the sim A/B.
   dp_tier_compound_floor_v1: { rollout: 0, default: false },
+
+  // Daniel expert tier-list SELECTION (Wave 1, 2026-06-09) (RISK MED — changes
+  // session COMPOSITION, path A; never kg). Wires the founder's hand-ranked
+  // exercise-selection tier list (src/engine/exerciseTierRank.js, S/A/B/C/D per
+  // muscle) into poolForGroup as the PRIMARY quality ordering key, so the engine
+  // prescribes from HIS ranked list ("Andura picks like Daniel"). When ON,
+  // poolForGroup orders a group's auto-pool by tierRankOf(nameEn) (S<A<B<C<UNRANKED),
+  // REPLACING the legacy ANCHOR_NAMES/COMMON_MOVEMENTS/seeded band ordering — PR-
+  // history continuity stays band 0 (a user's logged lift is NEVER reordered), the
+  // seeded hash stays the within-band tiebreak (determinism), and the squat-primacy
+  // + equipment/tier/skill/pain/exclusion gates are untouched. D-band picks are HARD-
+  // EXCLUDED from the auto-pool (like the contraindication remove) UNLESS removing one
+  // would empty the muscle (last-option safety guard). OFF → poolForGroup is byte-
+  // identical to today (the legacy rank() ordering; no tier-rank read, no D removal) →
+  // the calibration-sim/persona-matrix/full-path-sim determinism hashes hold flag-OFF.
+  // Threaded via ctx.danielTierSelect (resolved at the getDailyWorkout seam). Flip ON
+  // is a human gate (Daniel) AFTER review. Wave 2 (the ~31 missing S/A movements +
+  // the adductor MACHINE group) is a separate library add — NOT this flag.
+  dp_daniel_tier_select_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */
