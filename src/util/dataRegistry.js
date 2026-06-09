@@ -65,6 +65,98 @@ export const CDL_KEYS = [
   'applied-patterns',
 ];
 
+// ══ SYNC CLASSIFICATION — how each synced key behaves under sync + delete ════
+// SSOT (Hardening A5): every key in firebase.js SYNC_KEYS is classified into one
+// of three sync-behavior categories. This is the single explicit answer to
+// "what happens to key X when it syncs and when the user deletes from it":
+//
+//   'append-only'  — a CDL-style log: entries are appended + (rarely) superseded
+//                    in place, NEVER reordered or overwritten by sync. The merge
+//                    is a UNION by entry id/ts (firebase.js array branch) so a
+//                    remote append and a local append both survive. Resetting
+//                    these is a deliberate start-over (CDL_KEYS wiped on fullReset),
+//                    NOT a per-entry user delete.
+//   'mutable'      — profile / settings / per-day rollups (objects + scalars):
+//                    last-write-wins. firebase.js merges objects as
+//                    Object.assign(remote, local) (LOCAL wins on key collision)
+//                    and keeps the local scalar. No per-entry delete semantics.
+//   'deletable'    — a ts-indexed history array the user can delete entries from.
+//                    Deletion writes a tombstone (util/tombstones.js) that the
+//                    post-merge filter re-applies so a remote copy can't resurrect
+//                    a deleted entry. These are exactly tombstones.js TS_INDEXED_KEYS.
+//
+// `coach-decisions` is BOTH append-only (its CDL semantic) AND ts-indexed, so the
+// tombstone filter can scrub a resurrected CDL row — but the user does not delete
+// individual CDL entries from the UI, so it is classified by its primary
+// append-only semantic. `tombstones` itself is the delete-ledger (mutable map).
+/** @typedef {'append-only'|'mutable'|'deletable'} SyncCategory */
+/** @type {Readonly<Record<string, SyncCategory>>} */
+export const SYNC_CLASSIFICATION = Object.freeze({
+  // ── deletable — ts-indexed history, user-deletable, tombstone-protected ──
+  'logs': 'deletable',
+  'pr-records': 'deletable',
+
+  // ── append-only — CDL log + derived behavioral history (union on sync) ──
+  'coach-decisions': 'append-only',
+  'coach-decisions-aggregate': 'append-only',
+  'coach-decisions-archive': 'append-only',
+  'cdl-patterns': 'append-only',
+  'applied-patterns': 'append-only',
+  'profile-history': 'append-only',
+
+  // ── mutable — objects/scalars, last-write-wins on sync ──────────────────
+  'weights': 'mutable',
+  'kcals': 'mutable',
+  'prots': 'mutable',
+  'waters': 'mutable',
+  'wellbeing': 'mutable',
+  'session-burns': 'mutable',
+  'session-ratings': 'mutable',
+  'muted': 'mutable',
+  'notif-enabled': 'mutable',
+  'suppl-list': 'mutable',
+  'early-stops': 'mutable',
+  'phase-log': 'mutable',
+  'closed-days': 'mutable',
+  'step-streaks': 'mutable',
+  'steps-today': 'mutable',
+  'bf-override': 'mutable',
+  'phase-override': 'mutable',
+  'current-kcal': 'mutable',
+  'phase-change-date': 'mutable',
+  'readiness': 'mutable',
+  'unavailable-equipment': 'mutable',
+  'sf.userConfig': 'mutable',
+  'peak-hours': 'mutable',
+  'session-start-hours': 'mutable',
+  'auto-recommendations': 'mutable',
+  'applied-recommendations': 'mutable',
+  'session-draft': 'mutable',
+  'workout-skips': 'mutable',
+  'tombstones': 'mutable', // the soft-delete ledger itself (a merged map)
+
+  // ── mutable — DP learned per-UID engine state (object-merge LWW on sync) ──
+  // All are name-keyed or fixed-key OBJECT maps that the engine learns over time
+  // and merges (remote ∪ local, local wins on collision). They are never
+  // per-entry user-deleted (deletion = full reset, which CDL_KEYS-style wipes
+  // them) and never an ordered append-log, so each is 'mutable'. Name-keyed maps
+  // (firebase.js NAME_KEYED_SYNC_KEYS) round-trip via encode/decodeNameKeyed.
+  'dp-cal-factors': 'mutable',
+  'dp-strength-posterior': 'mutable',
+  'dp-recovery-constants': 'mutable',
+  'dp-exercise-pain': 'mutable',
+  'dp-pain-memory': 'mutable',
+  'dp-log-quarantine': 'mutable',
+  'dp-equipment-ladder': 'mutable',
+  'dp-temperament': 'mutable',
+  'dp-fatigue-curve': 'mutable',
+  'dp-learned-volume': 'mutable',
+  'dp-pivot-prompts': 'mutable',
+  'dp-nof1-preference': 'mutable',
+  'dp-nof1-experiment': 'mutable',
+  'dp-behavior-tuning': 'mutable',
+});
+
 // Returns all currently-stored keys that match a DYNAMIC_KEY_PREFIXES entry
 export function getAllDynamicKeys() {
   const keys = [];
