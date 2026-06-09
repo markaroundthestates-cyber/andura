@@ -512,7 +512,13 @@
         "minus": "Coach reduce intensitatea -20%. Mai usor azi, focus pe forma.",
         "normal": "Sesiune normala - baseline. Coach ajusteaza in timpul sesiunii daca apare ceva."
       },
-      "errorBanner": "Nu am putut incarca sesiunea de azi. Iti aratam o sesiune demo.",
+      "errorBanner": "Nu am putut incarca sesiunea de azi.",
+      "emptyPlan": {
+        "heading": "Nu pot genera planul complet acum",
+        "body": "Coach-ul nu a putut compune o sesiune acum. Incearca din nou sau porneste o sesiune manuala mai usoara.",
+        "retry": "Reincearca",
+        "manual": "Sesiune manuala light"
+      },
       "warmupAriaLabel": "Incalzire azi",
       "tempoAriaLabel": "Indiciu de tempo azi",
       "warmupLine": "Incalzire ~{min} min",

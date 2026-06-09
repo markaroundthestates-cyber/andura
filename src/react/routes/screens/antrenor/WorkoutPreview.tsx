@@ -84,33 +84,11 @@ function formatVolume(kg: number): string {
   return kg.toLocaleString('ro-RO').replace(/,/g, ' ').replace(/\./g, ' ');
 }
 
-// F-workout-preview/T4 — Hardcoded mockup demo fallback exercise list cand
-// engine emits 0 exercises (rest day handled upstream null; this guards
-// pipeline edge: sessionBuilder returns empty array on context mismatch).
-// Verbatim mockup andura-clasic.html#L945-984 — 5 exercises Push session
-// (incline DB press / military / lateral / triceps cable / abdominal plank).
-interface FallbackExercise {
-  nameKey: string;
-  detail: { sets: number; kg?: number; reps?: string; seconds?: number };
-}
-const FALLBACK_EXERCISES: FallbackExercise[] = [
-  { nameKey: 'workout.preview.fallbackExercises.inclineDbPress',       detail: { sets: 4, kg: 22.5, reps: '8-10' } },
-  { nameKey: 'workout.preview.fallbackExercises.seatedMilitaryPress',  detail: { sets: 4, kg: 20,   reps: '8-10' } },
-  { nameKey: 'workout.preview.fallbackExercises.lateralRaise',         detail: { sets: 3, kg: 8,    reps: '12-15' } },
-  { nameKey: 'workout.preview.fallbackExercises.tricepCableExtension', detail: { sets: 3, kg: 15,   reps: '10-12' } },
-  { nameKey: 'workout.preview.fallbackExercises.plank',                detail: { sets: 3, seconds: 45 } },
-];
-
-function fallbackDetail(d: FallbackExercise['detail']): string {
-  if (d.seconds !== undefined) {
-    return t('workout.preview.exerciseTimedDetail', { sets: d.sets, seconds: d.seconds });
-  }
-  return t('workout.preview.exerciseDetail', {
-    sets: d.sets,
-    kg: d.kg ?? 0,
-    reps: d.reps ?? '',
-  });
-}
+// A3 honest-fallback — the old hardcoded 5-exercise "Push" demo list was
+// removed (it posed a fabricated plan as a real coach decision). When the
+// engine emits 0 exercises (rare — full-path-sim asserts non-empty) the UI
+// now shows an HONEST empty state with [Reincearca] + [Sesiune manuala light]
+// instead of fake prescriptions.
 
 export function WorkoutPreview(): JSX.Element {
   const navigate = useNavigate();
@@ -144,8 +122,13 @@ export function WorkoutPreview(): JSX.Element {
   const [workout, setWorkout] = useState<PlannedWorkoutOutput | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
+  // A3 — [Reincearca] re-runs the pipeline by bumping reloadKey (re-fires the
+  // effect below). Resets loading/error so the honest empty state can clear.
+  const [reloadKey, setReloadKey] = useState<number>(0);
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
+    setError(false);
     getTodayWorkout(wantDifferentMuscle ? { differentMuscle: true } : {})
       .then((w) => {
         if (!cancelled) {
@@ -160,7 +143,7 @@ export function WorkoutPreview(): JSX.Element {
         }
       });
     return () => { cancelled = true; };
-  }, [wantDifferentMuscle]);
+  }, [wantDifferentMuscle, reloadKey]);
   // i18n bridge — same engine fallback sentinel handling as CoachTodayCard.
   // scheduleAdapterAggregate seeds workoutTitle with the non-localized sentinel
   // ENGINE_WORKOUT_TITLE_FALLBACK when the plan has no real title; treat it (and
@@ -220,6 +203,17 @@ export function WorkoutPreview(): JSX.Element {
     navigate(gotoPath('workout'));
   }
 
+  // A3 honest-fallback actions. hasNoPlan = engine settled (not loading) with
+  // zero exercises to show — the only case the old fake demo list rendered.
+  const hasNoPlan = !loading && (!displayExercises || displayExercises.length === 0);
+  function handleRetry(): void {
+    setReloadKey((k) => k + 1);
+  }
+  function handleManualLight(): void {
+    // Wire to the existing manual override path (easier/harder/different group).
+    navigate(gotoPath('schedule-override'));
+  }
+
   // F-workout-preview/T2 — Hero card dark idiom mirror CoachTodayCard L36-61
   // (bg-ink text-paper rounded-2xl + brick eyebrow + chips). DIFFERENT vs
   // CoachTodayCard: eyebrow "Sesiunea de azi" + 3 chips (duration / count /
@@ -265,6 +259,9 @@ export function WorkoutPreview(): JSX.Element {
       >
         <Kicker color="var(--volt)">{t('workout.preview.todaysSessionKicker')}</Kicker>
         <h1 className="font-display text-2xl font-bold mt-1.5 tracking-tight text-ink leading-tight">{title}</h1>
+        {/* A3 — duration/count/volume chips only when a real plan exists; the
+            honest empty state must not show fabricated metrics. */}
+        {!hasNoPlan && (
         <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-2.5 text-sm text-ink2">
           <span className="flex items-center gap-1.5" data-testid="preview-duration">
             <Clock className="w-3.5 h-3.5" aria-hidden="true" />
@@ -279,6 +276,7 @@ export function WorkoutPreview(): JSX.Element {
             {formatVolume(volume)} kg
           </span>
         </div>
+        )}
       </div>
       {/* Intensity banner — Pulse tinted card with a Zap glyph (mockup
           interfata-noua/screens-workout.jsx:83-87). bg/border derive from the
@@ -347,11 +345,47 @@ export function WorkoutPreview(): JSX.Element {
           </span>
         </div>
       )}
-      {/* F-workout-preview/T4 — Exercise list 5 numbered. Mockup parity
-          andura-clasic.html#L941-985. Renders engine exercises cand
-          available; falls back hardcoded mockup demo cand engine emits
-          empty array (defensive — getTodayWorkout returns null for
-          rest/halt; this guards sessionBuilder edge case 0 exercises).
+      {/* A3 honest-fallback — when the engine settles with NO exercises (rare;
+          full-path-sim asserts non-empty), show an HONEST empty state instead
+          of the old fabricated demo list: a plain message + [Reincearca]
+          (re-run pipeline) + [Sesiune manuala light] (existing manual override
+          path). The start CTA is suppressed — there is no real plan to start. */}
+      {hasNoPlan ? (
+        <div
+          className="pulse-card p-5 mb-4 animate-card-rise"
+          data-testid="preview-empty-plan"
+          role="status"
+          aria-live="polite"
+        >
+          <h2 className="font-display text-lg font-bold text-ink tracking-tight">
+            {t('workout.preview.emptyPlan.heading')}
+          </h2>
+          <p className="text-sm text-ink2 leading-relaxed mt-2 mb-4">
+            {t('workout.preview.emptyPlan.body')}
+          </p>
+          <div className="flex flex-col gap-2.5">
+            <button
+              type="button"
+              onClick={handleRetry}
+              data-testid="preview-empty-retry"
+              className="btn-primary-lift pulse-grad-bg w-full py-3.5 text-paper rounded-full text-base font-semibold"
+            >
+              {t('workout.preview.emptyPlan.retry')}
+            </button>
+            <button
+              type="button"
+              onClick={handleManualLight}
+              data-testid="preview-empty-manual"
+              className="w-full py-3.5 rounded-full text-base font-semibold border border-line text-ink"
+            >
+              {t('workout.preview.emptyPlan.manual')}
+            </button>
+          </div>
+        </div>
+      ) : (
+      <>
+      {/* F-workout-preview/T4 — Exercise list numbered. Mockup parity
+          andura-clasic.html#L941-985. Renders engine exercises.
           Each row: numbered badge + name + detail (sets/reps) + dumbbell icon. */}
       <div className="mb-2.5">
         <Kicker>{t('workout.preview.exercisesHeading')}</Kicker>
@@ -360,8 +394,7 @@ export function WorkoutPreview(): JSX.Element {
         className="pulse-card divide-y divide-line overflow-hidden mb-4"
         data-testid="preview-exercise-list"
       >
-        {(displayExercises && displayExercises.length > 0
-          ? displayExercises.map((ex, i) => ({
+        {(displayExercises ?? []).map((ex, i) => ({
               key: ex.id,
               name: ex.name,
               // Engine canonical name passed to <ExerciseMedia> (image/gif
@@ -381,19 +414,7 @@ export function WorkoutPreview(): JSX.Element {
                   : t('workout.preview.exerciseDetailBodyweight', { sets: ex.sets, reps: ex.targetReps })
                 : t('workout.preview.exerciseDetail', { sets: ex.sets, kg: ex.targetKg, reps: ex.targetReps }),
               idx: i,
-            }))
-          : FALLBACK_EXERCISES.map((ex, i) => {
-              const name = t(ex.nameKey);
-              return {
-                key: `fallback-${i}`,
-                name,
-                engineName: name,
-                sub: undefined as string | undefined,
-                detail: fallbackDetail(ex.detail),
-                idx: i,
-              };
-            })
-        ).map((item) => (
+            })).map((item) => (
           <li
             key={item.key}
             className="flex items-center gap-3 p-3"
@@ -472,6 +493,8 @@ export function WorkoutPreview(): JSX.Element {
         <Check className="w-5 h-5" aria-hidden="true" />
         {t('workout.preview.confirmStartCta')}
       </button>
+      </>
+      )}
     </section>
   );
 }

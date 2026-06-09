@@ -355,9 +355,16 @@ describe('WorkoutPreview — hero card (T2)', () => {
     expect(screen.getByTestId('preview-volume')).toBeInTheDocument();
   });
 
-  it('exercise-count chip renders fallback 5 exercises cand workout null', () => {
+  it('hides hero metric chips once engine settles with no plan (honest state)', async () => {
+    // A3 honest-fallback — old behavior showed a fabricated "5 exercises" chip
+    // on null. Now, after the engine settles empty, the chips disappear (no
+    // fake metrics) and the honest empty state surfaces instead.
+    mockedGetTodayWorkout.mockResolvedValue(null);
     renderPreview();
-    expect(screen.getByTestId('preview-exercise-count').textContent).toMatch(/5\s*exercises/i);
+    await waitFor(() => {
+      expect(screen.getByTestId('preview-empty-plan')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('preview-exercise-count')).not.toBeInTheDocument();
   });
 
   it('exercise-count chip wires engine workout.exerciseCount', async () => {
@@ -484,11 +491,13 @@ describe('WorkoutPreview — FALLBACK guard (loading + error + empty)', () => {
       expect(banner).toHaveAttribute('role', 'alert');
       expect(banner.textContent).toMatch(/Couldn't load today's session/i);
     });
-    // Fallback content still renders so Gigel can proceed
-    expect(screen.getAllByTestId('preview-exercise-row')).toHaveLength(5);
+    // A3 honest-fallback — no fabricated demo plan: the honest empty state shows
+    // instead of fake exercise rows + a Start CTA that would start nothing real.
+    expect(screen.getByTestId('preview-empty-plan')).toBeInTheDocument();
+    expect(screen.queryAllByTestId('preview-exercise-row')).toHaveLength(0);
     expect(
-      screen.getByRole('button', { name: /Confirm, let's start/i }),
-    ).toBeInTheDocument();
+      screen.queryByRole('button', { name: /Confirm, let's start/i }),
+    ).toBeNull();
   });
 
   it('no error banner on happy path (engine resolves null)', async () => {
@@ -506,16 +515,37 @@ describe('WorkoutPreview — exercise list (T4)', () => {
     mockedGetTodayWorkout.mockResolvedValue(null);
   });
 
-  it('renders fallback 5 exercise rows cand workout null', () => {
+  it('shows honest empty state (NU fabricated demo rows) cand engine settles empty', async () => {
+    // A3 honest-fallback — the old hardcoded 5-exercise "Push" demo list is
+    // gone. On no plan, the UI shows an honest message + actions, not fake rows.
     renderPreview();
-    const rows = screen.getAllByTestId('preview-exercise-row');
-    expect(rows).toHaveLength(5);
+    await waitFor(() => {
+      expect(screen.getByTestId('preview-empty-plan')).toBeInTheDocument();
+    });
+    expect(screen.queryAllByTestId('preview-exercise-row')).toHaveLength(0);
+    expect(screen.getByTestId('preview-empty-plan').textContent).toMatch(/Can't build the full plan right now/i);
   });
 
-  it('fallback row 1 shows mockup-parity incline DB press (EN default)', () => {
+  it('honest empty state offers [Try again] + [Light manual session]', async () => {
     renderPreview();
-    const list = screen.getByTestId('preview-exercise-list');
-    expect(list.textContent).toMatch(/Incline dumbbell press/i);
+    await waitFor(() => {
+      expect(screen.getByTestId('preview-empty-plan')).toBeInTheDocument();
+    });
+    expect(screen.getByTestId('preview-empty-retry')).toBeInTheDocument();
+    expect(screen.getByTestId('preview-empty-manual')).toBeInTheDocument();
+  });
+
+  it('[Try again] re-runs the pipeline (re-calls getTodayWorkout)', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(null);
+    renderPreview();
+    await waitFor(() => {
+      expect(screen.getByTestId('preview-empty-retry')).toBeInTheDocument();
+    });
+    const callsBefore = mockedGetTodayWorkout.mock.calls.length;
+    fireEvent.click(screen.getByTestId('preview-empty-retry'));
+    await waitFor(() => {
+      expect(mockedGetTodayWorkout.mock.calls.length).toBeGreaterThan(callsBefore);
+    });
   });
 
   it('renders engine exercises cand workout.exercises non-empty (3 rows)', async () => {

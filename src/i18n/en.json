@@ -512,7 +512,13 @@
         "minus": "Coach is trimming intensity -20%. Lighter today, focus on form.",
         "normal": "Normal session - baseline. Coach adjusts during the session if anything comes up."
       },
-      "errorBanner": "Couldn't load today's session. Showing you a demo session.",
+      "errorBanner": "Couldn't load today's session.",
+      "emptyPlan": {
+        "heading": "Can't build the full plan right now",
+        "body": "The coach couldn't compose a session right now. Try again, or start a lighter manual session.",
+        "retry": "Try again",
+        "manual": "Light manual session"
+      },
       "warmupAriaLabel": "Warm-up today",
       "tempoAriaLabel": "Tempo cue today",
       "warmupLine": "Warm-up ~{min} min",
