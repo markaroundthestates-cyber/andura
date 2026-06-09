@@ -242,6 +242,7 @@
     "exercisesCount_one": "{n} exercitiu",
     "exercisesCount_other": "{n} exercitii",
     "durationLabel": "~ {min} min",
+    "durationRange": "{lo}-{hi} min",
     "intensity": {
       "plus": "Intensitate mai mare",
       "normal": "Incarcare standard",
@@ -1189,6 +1190,7 @@
       "exercisesHeading": "Exercitii propuse",
       "metaCount": "{n} exercitii",
       "metaDuration": "~ {min} min",
+      "metaDurationRange": "{lo}-{hi} min",
       "restBody": "Zi de odihna. Coach-ul nu propune antrenament azi - recuperarea face parte din plan.",
       "emptyBody": "Coach-ul nu poate propune inca un antrenament pentru ziua asta. Programul se calculeaza din starea ta curenta - revino dupa ce mai logezi cateva sesiuni.",
       "liveNote": "Lista se recalculeaza din starea curenta (recuperare, progres) de fiecare data cand o deschizi.",

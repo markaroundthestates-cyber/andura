@@ -397,6 +397,11 @@ export function buildSwappedExercise(
 // tranzitie/setup), folosit la estimarea de durata. Banda tipica 30-50s pentru
 // un set de hipertrofie; 40 = mijloc conservativ. Estimare documentata.
 const SET_WORK_SEC = 40;
+// Tranzitie/setup per EXERCITIU (mers la aparat, schimbat greutatile, reglat
+// banca, gasit un loc liber). SET_WORK_SEC + restSec acopera doar timpul DIN
+// cadrul unui exercitiu; aceasta constanta adauga timpul DINTRE exercitii pe care
+// estimarea il rata. ~75s e o medie conservativa pentru o sala normala. Documentat.
+const EXERCISE_TRANSITION_SEC = 75;
 
 /**
  * Tonajul planificat REAL (kg) — suma sets × targetReps × targetKg peste
@@ -450,15 +455,20 @@ export function computeEstimatedDurationMin(
 ): number | null {
   if (!Array.isArray(exercises) || exercises.length === 0) return null;
   let totalSec = 0;
+  let countedExercises = 0;
   for (const ex of exercises) {
     const sets = Number(ex.sets);
     const restSec = Number(ex.restSec);
     if (Number.isFinite(sets) && sets > 0) {
       const rest = Number.isFinite(restSec) ? restSec : 0;
       totalSec += sets * (SET_WORK_SEC + rest);
+      // Tranzitia/setup INTRE exercitii (mers la aparat, incarcat discuri) pe care
+      // doar sets×(work+rest) o rata → timp real de sala mai onest.
+      countedExercises += 1;
     }
   }
   if (totalSec <= 0) return null;
+  totalSec += countedExercises * EXERCISE_TRANSITION_SEC;
   const warmup = Number.isFinite(warmupMin) && warmupMin > 0 ? warmupMin : 0;
   return Math.round(totalSec / 60) + Math.round(warmup);
 }

@@ -163,11 +163,12 @@ describe('trimSessionToTimeBudget — rest-inclusive time bound', () => {
   });
 
   it('a MILD overshoot just shaves ONE set off the tail (no drop, front intact)', () => {
-    // Barely over: 5 ex x 3 sets x (40 + 205) = 3675s = ~61.25min vs maria 60.
-    // A single tail set-shave (ex4 3->2) drops it to ~57min — under the cap —
-    // so the trim never needs to drop an exercise. This is the conservative
-    // "don't over-aggressive" path: gentle shave, full exercise count kept.
-    const session = Array.from({ length: 5 }, (_, i) => ex(`ex${i}`, 3, 205));
+    // Barely over (rest-inclusive + the per-exercise transition the honest estimate
+    // now adds): 5 ex x 3 sets x (40 work + 180 rest) + 5 x 75 transition = 3675s =
+    // ~61.25min vs maria 60. A single tail set-shave (ex4 3->2) drops it to ~57.6min
+    // — under the cap — so the trim never needs to drop an exercise. This is the
+    // conservative "don't over-aggressive" path: gentle shave, full exercise count.
+    const session = Array.from({ length: 5 }, (_, i) => ex(`ex${i}`, 3, 180));
     expect(computeEstimatedDurationMin(session, 0)!).toBeGreaterThan(60);
     const trimmed = trimSessionToTimeBudget(session, 0, personaTimeCapMin('maria'));
     expect(trimmed.length).toBe(5);            // shaving only, no exercise dropped

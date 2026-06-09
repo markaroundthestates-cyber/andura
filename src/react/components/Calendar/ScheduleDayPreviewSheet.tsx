@@ -274,8 +274,9 @@ export function ScheduleDayPreviewSheet({
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-              {t('calendar.dayPreview.metaDuration', {
-                min: workout.estimatedDuration,
+              {t('calendar.dayPreview.metaDurationRange', {
+                lo: Math.max(0, workout.estimatedDuration - 10),
+                hi: workout.estimatedDuration + 10,
               })}
             </span>
           </div>

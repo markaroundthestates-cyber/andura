@@ -3,51 +3,51 @@
   "seed": 15736039,
   "nProfiles": 8,
   "weeks": 6,
-  "hashOff": "db1370be257951c1cf55f69efca1cc9a753fcbe7aa3c2eccec20e121ea29a3f8",
-  "hashOn": "eb6293cdb74817c8c351a6525786933b6399c190ec03d12ba400f89dde773b75",
+  "hashOff": "3d61fd180ca463c0bd85e88442fc07c949bc9c38972c36bf1125476cb014b395",
+  "hashOn": "9fd60f0759789ce7ab5384bddb9f62247f77d16ce576ea6c4d4e56392d6c922a",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 7.08,
-    "meanSetTotal": 13.12,
-    "meanDurationMin": 39.8,
-    "meanVolumeKg": 1789,
+    "meanExerciseCount": 6.86,
+    "meanSetTotal": 12.79,
+    "meanDurationMin": 47.5,
+    "meanVolumeKg": 1750,
     "minusRatePct": 21.9
   },
   "sessionOn": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 7.15,
-    "meanSetTotal": 11.66,
-    "meanDurationMin": 35.2,
-    "meanVolumeKg": 1650,
+    "meanExerciseCount": 6.98,
+    "meanSetTotal": 11.35,
+    "meanDurationMin": 43.6,
+    "meanVolumeKg": 1602,
     "minusRatePct": 21.9
   },
   "convergenceOff": {
-    "totalSeries": 123,
-    "convergedPct": 8.1,
-    "medianSessionsToConverge": 6.5,
-    "meanFinalAbsErr": 0.576
+    "totalSeries": 119,
+    "convergedPct": 7.6,
+    "medianSessionsToConverge": 4,
+    "meanFinalAbsErr": 0.579
   },
   "convergenceOn": {
-    "totalSeries": 120,
-    "convergedPct": 10,
-    "medianSessionsToConverge": 6.5,
-    "meanFinalAbsErr": 0.573
+    "totalSeries": 116,
+    "convergedPct": 11.2,
+    "medianSessionsToConverge": 9,
+    "meanFinalAbsErr": 0.568
   },
   "flagsOff": {
     "oscillation": 0,
-    "stuckLow": 87,
-    "stuckHigh": 19,
-    "absurd": 34
+    "stuckLow": 86,
+    "stuckHigh": 18,
+    "absurd": 31
   },
   "flagsOn": {
     "oscillation": 0,
-    "stuckLow": 78,
-    "stuckHigh": 23,
-    "absurd": 32
+    "stuckLow": 76,
+    "stuckHigh": 21,
+    "absurd": 29
   },
-  "craterOff": 83,
-  "craterOn": 75,
-  "_rebaseline_note": "Re-frozen 2026-06-09 for the prioritizeWeakGroups tier-blind ordering fix (founder live smoke): an emphasized group with >2 exercises dumped its COMPOUNDS (Chin-up/Pull-up) behind biceps isolations on Pull, and pulled a tier-2 isolation (Rear Delt Fly) to #2 ahead of chest compounds on Push. Now tier-major/weakness-minor: compound-first holds GLOBALLY, emphasized group leads within its tier band. Pure REORDER of the same exercises+sets (only sequence moves); persona-matrix + calibration-sim + the §B/§C bands all stayed green. hashOff/hashOn re-frozen to the new sequence."
+  "craterOff": 81,
+  "craterOn": 74,
+  "_rebaseline_note": "Re-frozen 2026-06-09 for the TIMER-REALISM change (NO flag — pure UX honesty): computeEstimatedDurationMin now adds a ~75s per-exercise transition/setup constant (walking to the machine, loading plates) that the work+rest sum omitted. The composed-plan time-budget trim (trimSessionToTimeBudget) measures against this more-honest duration, so it trims slightly more (meanExerciseCount 7.08->6.86 OFF), shifting the prescription stream → hashOff/hashOn re-frozen. Determinism is INTACT (the section-A fresh-OFF-reproduces-itself test passed → no RNG/clock leak; only the deterministic duration moved). Section-C crater/convergence stayed in-band (craterOff 83->81, craterOn 75->74). The two NEW flags in this batch (dp_behavioral_tier_v1 + dp_tier_compound_floor_v1) are default-OFF and do NOT affect this hash. Prior re-freeze (2026-06-09): prioritizeWeakGroups tier-blind ordering fix — compound-first holds GLOBALLY, emphasized group leads within its tier band; pure REORDER of the same exercises+sets."
 }

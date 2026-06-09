@@ -242,6 +242,7 @@
     "exercisesCount_one": "{n} exercise",
     "exercisesCount_other": "{n} exercises",
     "durationLabel": "~ {min} min",
+    "durationRange": "{lo}-{hi} min",
     "intensity": {
       "plus": "Higher intensity",
       "normal": "Standard load",
@@ -1189,6 +1190,7 @@
       "exercisesHeading": "Proposed exercises",
       "metaCount": "{n} exercises",
       "metaDuration": "~ {min} min",
+      "metaDurationRange": "{lo}-{hi} min",
       "restBody": "Rest day. The coach proposes no workout today - recovery is part of the plan.",
       "emptyBody": "The coach can't propose a workout for this day yet. The schedule is computed from your current state - come back after logging a few more sessions.",
       "liveNote": "The list is recomputed from your current state (recovery, progress) every time you open it.",

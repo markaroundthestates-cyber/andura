@@ -139,7 +139,8 @@ describe('Antrenor home — base render', () => {
     renderAntrenor();
     // workoutTitle comes from engine verbatim (still RO in mock fixture).
     expect(await screen.findByText(/Push \(piept si umeri\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/~ 52 min/i)).toBeInTheDocument();
+    // Timer realism: the estimate renders as an honest +/-10 min band (52 → 42-62).
+    expect(screen.getByText(/42-62 min/i)).toBeInTheDocument();
     // Wave C2: under EN default, "6 exercises" (was "6 exercitii").
     expect(screen.getByText(/6 exercises/i)).toBeInTheDocument();
   });

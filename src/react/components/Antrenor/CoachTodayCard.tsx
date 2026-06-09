@@ -105,6 +105,12 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
       ? engineWrappers.resolveSessionTitle?.(sessionType) ?? t('coachToday.fallbackTitle')
       : t('coachToday.fallbackTitle');
   const duration = workout?.estimatedDuration ?? 48;
+  // Honest ± band — the estimate is a central guess (sets x rest + per-exercise
+  // transition + warmup), but real gym time varies (busy machines, longer rests).
+  // Show a +/-10 min range instead of a false-precise single number. Floored at 0.
+  const DURATION_BAND_MIN = 10;
+  const durationLo = Math.max(0, duration - DURATION_BAND_MIN);
+  const durationHi = duration + DURATION_BAND_MIN;
   const exerciseCount = workout?.exerciseCount ?? 5;
   // Pulse meta chip (mockup interfata-noua/screens-antrenor.jsx:50) — the
   // mockup hard-coded "+15%"; the engine exposes a truthful 'plus'|'normal'|
@@ -378,7 +384,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
       <div className="relative flex gap-3.5 mt-3.5 text-sm text-ink2">
         <span className="flex items-center gap-1.5">
           <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-          {t('coachToday.durationLabel', { min: duration })}
+          {t('coachToday.durationRange', { lo: durationLo, hi: durationHi })}
         </span>
         <span className="flex items-center gap-1.5">
           <Layers className="w-3.5 h-3.5" aria-hidden="true" />
