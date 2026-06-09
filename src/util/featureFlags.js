@@ -962,6 +962,18 @@ export const FLAGS = Object.freeze({
   // (no consumer imports FOCUS_RULES this step). OFF → the table is never read →
   // byte-identical to today. The resolver (a LATER Wave 1.3 step) flips this on.
   dp_focus_policy_v1: { rollout: 1, default: true },
+
+  // A2.1 consolidated honest DECISION TRACE (audit-grade, additive). When ON, the
+  // compose seam attaches a `decisionTrace` field — a structured array of the REAL
+  // multi-factor reasons that shaped THIS session's plan (phase / readiness /
+  // recovery cut / emphasis / deload / focus / time budget / DP load tally /
+  // finalDecision), each DERIVED from a signal the path actually computed (an
+  // unfired factor is omitted, never fabricated). It is INERT observability — no UI
+  // consumer yet (A2.2 owns rendering) — and is invisible to the prescription
+  // determinism hash (which reads only sessionType/intensityMod/exerciseCount +
+  // per-exercise engineName|sets|reps|kg), so it NEVER changes the plan. Default ON
+  // (cheap, side-effect-free); OFF → no field attached → byte-identical output.
+  dp_decision_trace_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

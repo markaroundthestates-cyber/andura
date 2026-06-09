@@ -11,6 +11,7 @@ import { logger } from '../../util/logger.js';
 import { getDailyWorkout } from '../../engine/schedule/scheduleAdapter.js';
 import { getReadinessVerdict } from '../../engine/readiness.js';
 import { signalBus, type SessionSignalTrace } from './signalBus';
+import { buildDecisionTrace } from './decisionTrace';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { COMPOUND_EX } from '../../constants.js';
@@ -1114,6 +1115,36 @@ export async function composePlannedWorkoutToday(
     // Durata estimata REAL din volumul de seturi + odihna (vs hardcode 50 engine):
     // per set ~ timp sub tensiune/tranzitie + restSec. null cand fara exercitii.
     const estimatedDuration = computeEstimatedDurationMin(exercises, warmup?.durationMin ?? 0);
+    // A2.1 — consolidated HONEST decision trace, behind dp_decision_trace_v1 (default
+    // ON). Pure derivation over values THIS compose already computed — phase (the
+    // active CUT/BULK direction), readiness (the energy-check score), the engine's
+    // coachAdaptations log (recovery cuts + emphasis shifts), the active-deload flag,
+    // the focus preset, the resolved time cap, the per-exercise DP recReason status
+    // tally, and the final plan shape. Each factor is emitted ONLY when its real
+    // signal fired (an unfired factor is OMITTED, never fabricated). INERT
+    // observability — no UI consumer yet (A2.2) — and invisible to the prescription
+    // hash, so it NEVER changes exercises/sets/loads. Flag OFF → field omitted →
+    // byte-identical output. resolveActivePhase() is read only when the flag is ON.
+    const traceOn = isEnabled('dp_decision_trace_v1');
+    const planCoachAdaptations = Array.isArray(
+      (plan as { coachAdaptations?: CoachAdaptation[] }).coachAdaptations,
+    )
+      ? (plan as { coachAdaptations?: CoachAdaptation[] }).coachAdaptations!
+      : [];
+    const decisionTrace = traceOn
+      ? buildDecisionTrace({
+          readinessScore,
+          phase: resolveActivePhase(),
+          energyMagnitude,
+          coachAdaptations: planCoachAdaptations,
+          deloadActive: hasActiveDeload,
+          timeCapMin,
+          focusPreset: useOnboardingStore.getState().data.focusPreset ?? null,
+          exercises,
+          sessionType: typeof plan.sessionType === 'string' ? plan.sessionType : null,
+          estimatedDuration: estimatedDuration ?? plan.estimatedDurationMin ?? 50,
+        })
+      : null;
     return {
       workoutTitle: plan.workoutTitle ?? ENGINE_WORKOUT_TITLE_FALLBACK,
       // Thread the engine's day-of-week session type so the render boundaries
@@ -1146,6 +1177,10 @@ export async function composePlannedWorkoutToday(
       // Defaults to empty maps when a (pre-this-feature) plan shape omits it.
       weekMakeup: (plan as { weekMakeup?: { added: Record<string, number>; behind: Record<string, number> } }).weekMakeup
         ?? { added: {}, behind: {} },
+      // A2.1 — additive honest decision trace (spread-conditional: omitted entirely
+      // when the flag is OFF, exactOptionalPropertyTypes-safe). Never read by any
+      // current consumer (A2.2 owns the UX surface) → does not change the plan.
+      ...(decisionTrace !== null ? { decisionTrace } : {}),
     };
   } catch (e) {
     logger.warn('[scheduleAdapterAggregate] composePlannedWorkoutToday failed:', e);

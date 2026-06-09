@@ -6,6 +6,16 @@
 
 // ── Output types simplified pentru React consumption ─────────────────────
 
+// A2.1 — one honest factor that shaped a composed session (the decision-trace
+// entry). The builder lives in decisionTrace.ts; the type is HERE (the shared type
+// home) so PlannedWorkoutOutput can reference it without a circular import.
+export interface DecisionTraceEntry {
+  /** the load-bearing decision dimension (phase / readiness / dp / …). */
+  factor: string;
+  /** the ACTUAL value of that decision (a number, a token, or a short summary). */
+  value: string | number;
+}
+
 export interface ReadinessOutput {
   score: number;
   /**
@@ -187,6 +197,14 @@ export interface PlannedWorkoutOutput {
     added: Record<string, number>;
     behind: Record<string, number>;
   };
+  // A2.1 — consolidated HONEST decision trace: a structured array of the REAL
+  // multi-factor reasons that shaped THIS session's plan (phase / readiness /
+  // recovery cut / emphasis / deload / focus / time budget / DP load tally /
+  // finalDecision), each derived from a signal the compose path actually computed —
+  // an unfired factor is OMITTED, never fabricated. Present ONLY when
+  // dp_decision_trace_v1 is ON; INERT observability (A2.2 owns rendering), invisible
+  // to the prescription determinism hash → additive, never changes the plan.
+  decisionTrace?: DecisionTraceEntry[];
 }
 
 export interface WhyExerciseInput {
