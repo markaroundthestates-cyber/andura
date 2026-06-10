@@ -1,5 +1,8 @@
 // Track 7 §7.3 + §7.6-activate — Lighthouse CI 12+ config.
-// Mobile preset + devtools throttling + 3 runs (median anti-flake).
+// Mobile is the DEFAULT form factor (no `preset` needed) + devtools throttling +
+// 3 runs (median anti-flake). NOTE: `preset` only accepts perf/experimental/
+// desktop — setting it to 'mobile' made lhci fail with exit 1 every run (silently
+// green via the deploy.yml `|| echo` advisory), so it is omitted (audit 2026-06-10).
 //
 // THRESHOLDS RATCHETED §7.6 activation: lowered din master spec aspirational
 // values pentru realistic first-CI-run baseline. Daniel ratchets UP post real
@@ -27,7 +30,8 @@ module.exports = {
       startServerReadyPattern: 'Local',
       numberOfRuns: 3,
       settings: {
-        preset: 'mobile',
+        // mobile form factor is the default; `preset` only accepts
+        // perf/experimental/desktop, so it is intentionally not set here.
         throttlingMethod: 'devtools',
         skipAudits: [
           // Skip audits that require network conditions inconsistent with

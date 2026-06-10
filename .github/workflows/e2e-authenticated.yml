@@ -83,7 +83,10 @@ jobs:
       - name: Run authenticated core-loop + aerobic E2E (preview of current build)
         id: authed
         continue-on-error: true
-        run: npx playwright test tests/auth.setup.ts tests/core-loop.spec.ts tests/aerobic-log.spec.ts --reporter=list
+        # list → console output visible in the run log; html → writes
+        # playwright-report/ so the upload step has the report to attach when a
+        # spec FAILS (was list-only → "no files found" warning + no failure report).
+        run: npx playwright test tests/auth.setup.ts tests/core-loop.spec.ts tests/aerobic-log.spec.ts --reporter=list,html
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           PLAYWRIGHT_AUTH_TEST_UID: ${{ secrets.PLAYWRIGHT_AUTH_TEST_UID }}
