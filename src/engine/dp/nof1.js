@@ -30,6 +30,7 @@
 // wiring is DEFERRED for Daniel's review (mirrors F6a's deferred deload-timing).
 
 import { DB } from '../../db.js';
+import { now as clockNow } from '../clock.js'; // M-3 audit: injectable clock
 
 export const NOF1_PREFERENCE_KEY = 'dp-nof1-preference';   // EN-name-keyed, synced
 export const NOF1_EXPERIMENT_KEY = 'dp-nof1-experiment';   // single in-flight state, synced
@@ -234,6 +235,6 @@ export function advanceExperiment(state, currentSlope, sigma) {
   const arm = decideWinner(slopeA, slopeB, sigma);
   return {
     next: null, // experiment ends (cleared) — only one lift at a time
-    decided: { arm, decidedTs: Date.now(), slopeA, slopeB },
+    decided: { arm, decidedTs: clockNow(), slopeA, slopeB },
   };
 }

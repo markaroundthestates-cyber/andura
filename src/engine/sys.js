@@ -87,7 +87,7 @@ export const SYS = {
     if (override) return override;
 
     const bf = this.getBF();
-    const now = new Date();
+    const now = new Date(clockNow()); // M-2 audit: injectable clock (sim-date safe)
 
     // Auto pilot activ: BF + sezon decid faza (regula de baza: BF >15% = niciodata bulk)
     const summerEnd = new Date(now.getFullYear(), 7, 31); // 31 Aug
@@ -176,7 +176,7 @@ export const SYS = {
     const bf = this.getBF();
     const phase = this.getPhase();
     const checkpoints = [];
-    const now = new Date();
+    const now = new Date(clockNow()); // M-2 audit: injectable clock
 
     if (phase === 'CUT' || phase === 'MAINTENANCE') {
       const bfTargets = [20, 17, 15, 12, 10];
@@ -230,7 +230,7 @@ export const SYS = {
   },
 
   getTimeline() {
-    const now = new Date();
+    const now = new Date(clockNow()); // M-2 audit: injectable clock
     const year = now.getFullYear();
     return [
       { label: 'Definire pana la vara', date: new Date(year,0,1), endDate: new Date(year,5,1), type: 'cut' },

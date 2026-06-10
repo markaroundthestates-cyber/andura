@@ -3,11 +3,12 @@
 
 import { buildEngineContext } from '../../../coach/orchestrator/contextBuilder.js';
 import { runPipeline } from '../../../coach/orchestrator/index.js';
+import { logger } from '../../../util/logger.js';
+import { captureException } from '../../../util/sentry.js';
 import {
   periodizationAdapter,
   goalAdaptationAdapter,
   energyAdjustmentAdapter,
-  bayesianNutritionAdapter,
   tempoAdapter,
   specializationAdapter,
   warmupAdapter,
@@ -133,11 +134,18 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
 
   // Build EngineContext + invoke 8-adapter pipeline sequential strict
   const ctx = buildEngineContext(userState);
+  // H-2 audit 2026-06-10: bayesianNutritionAdapter REMOVED from this pipeline —
+  // its blueprint was computed then never read here (zero `blueprints.
+  // bayesianNutrition` consumers in this file), pure wasted compute per plan
+  // build. Bayesian Nutrition's REAL path is the React nutrition aggregate
+  // (engineWrappers.ts evaluateBN + bayesianNutritionAggregate.ts), untouched.
+  // BN consumed the constraint object read-only (never re-emitted), so removal
+  // does not alter the downstream ctx chain — composition is byte-identical
+  // (full-path-sim hash gate holds).
   const adapters = [
     periodizationAdapter,
     goalAdaptationAdapter,
     energyAdjustmentAdapter,
-    bayesianNutritionAdapter,
     tempoAdapter,
     specializationAdapter,
     warmupAdapter,
@@ -147,7 +155,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   let results;
   try {
     results = await runPipeline(ctx, adapters);
-  } catch {
+  } catch (err) {
+    // M-1 audit 2026-06-10: a crashed pipeline used to be swallowed silently and
+    // rendered as a rest day — indistinguishable from a real rest day for both
+    // the user and debugging. Surface it before the null fallback (db.js idiom).
+    logger.error('[getDailyWorkout] engine pipeline crashed — rendering as rest day', err);
+    try { captureException(err, { tags: { component: 'getDailyWorkout.runPipeline' } }); } catch { /* swallow Sentry failure */ }
     return null;
   }
 

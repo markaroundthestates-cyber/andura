@@ -511,7 +511,7 @@ export const DP = {
     // `ts` (legacy logs) fall back to 0 → sort to the end; stable sort keeps
     // their relative insertion order. Sort a copy — never mutate the DB array.
     return logs
-      .filter((l) => l.ex === ex && l.w)
+      .filter((l) => l.ex === ex && Number.isFinite(l.w) && l.w > 0) // F-4: reject negative/NaN weights
       .sort((a, b) => (b.ts || 0) - (a.ts || 0))
       .slice(0, n);
   },
