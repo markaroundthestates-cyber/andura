@@ -92,6 +92,21 @@ jobs:
           PLAYWRIGHT_AUTH_TEST_UID: ${{ secrets.PLAYWRIGHT_AUTH_TEST_UID }}
           PLAYWRIGHT_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
 
+      # Audit 2026-06-10 (DATA-HIGH): the authed suite writes REAL data under the
+      # playwright-test uid in the PRODUCTION RTDB — without cleanup it accumulates
+      # forever (829 logs in 3 days). Daniel: "sa scrie si sa stearga dupa" →
+      # write-then-wipe. The script hard-verifies the uid's email is playwright-test*
+      # before deleting anything (a real account can never match). Advisory like the
+      # suite itself — a cleanup hiccup must not redden the run.
+      - name: Wipe playwright-test user data (write-then-wipe)
+        if: always()
+        continue-on-error: true
+        run: node scripts/e2e-cleanup-test-user.cjs
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PLAYWRIGHT_AUTH_TEST_UID: ${{ secrets.PLAYWRIGHT_AUTH_TEST_UID }}
+          VITE_FIREBASE_RTDB_URL: ${{ secrets.VITE_FIREBASE_RTDB_UR }}
+
       - name: Surface authed E2E outcome (advisory)
         if: always()
         run: |
