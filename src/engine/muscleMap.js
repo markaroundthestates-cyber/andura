@@ -1,6 +1,7 @@
 import { MS_PER_HOUR } from '../constants.js';
 import { DB } from '../db.js';
 import { isEnabled } from '../util/featureFlags.js';
+import { getExerciseMetadata } from './exerciseLibrary.js'; // QA-F8 metadata-derived mapping (no cycle: exerciseLibrary imports only logger+json+schema)
 
 export const MUSCLE_HEADS = {
   chest_upper: { recoveryHours: 60, label: 'Piept sus' },
@@ -23,6 +24,19 @@ export const MUSCLE_HEADS = {
   glute:       { recoveryHours: 72, label: 'Fese' },
   calf:        { recoveryHours: 48, label: 'Gamba' },
 };
+
+// ── QA-F9 (audit 2026-06-10) — decay calibration ─────────────────────────────
+// getMuscleState decays each set's contribution as exp(-K*h/recoveryHours).
+// K was implicitly 1 (time-constant = the full recovery window), which kept 34%
+// of the stress ALIVE at h == recoveryHours — founder live case: a 16-set leg
+// day still read "Loaded" (quad 48, ham 68 vs threshold 35) 4.3 DAYS later, and
+// the R4 anchor-shave would have trimmed Saturday's legs on a false
+// "unrecovered". K=1.8 calibrated on his real history: that same leg day reads
+// Easing at 4.3d (ham ~28) and Fresh by ~6d; a typical 3-set accessory day is
+// Easing next morning and Fresh in ~0.8*recoveryHours; today's 11-direct-set
+// shoulder day still reads Loaded tonight (delt_mid ~91). recoveryHours stays
+// the per-head physiology knob; K shapes how hard the tail cuts off.
+const RECOVERY_DECAY_K = 1.8;
 
 // The `core` secondary token (loaded compounds below) is NOT a MUSCLE_HEADS
 // bench — it decays at getMuscleState's default 48h rate and aggregates into the
@@ -58,6 +72,83 @@ export const EXERCISE_MUSCLES = {
   'Romanian Deadlift':      { primary: ['hamstring','glute'], secondary: ['lower_back','core'] },
   'Calf Raises':            { primary: ['calf'], secondary: [] },
 };
+
+// ══ QA-F8 (audit 2026-06-10) — metadata-derived muscle mapping ═══════════════
+// The curated EXERCISE_MUSCLES above covers ~27 legacy names; every other name
+// was SILENTLY SKIPPED, so recovery/imbalance were blind to ~630/657 library
+// exercises (founder live: a 11-direct-set shoulder day read "Easing" because
+// Seated DB Press / DB Lateral Raise / Face Pull / Reverse Pec Deck are not in
+// the curated map — only the presses' secondary delt counted). The library
+// metadata (`muscle_target_primary`/`muscle_target_secondary`) uses the SAME
+// Big-11 canonical vocabulary as GROUP_HEAD_MAP_BIG11, so heads are derivable
+// for the whole library. Curated entries always WIN (richer head detail).
+/** @param {string} group @param {string} exName @returns {string[]} */
+function headsForGroup(group, exName) {
+  const n = (exName || '').toLowerCase();
+  switch (group) {
+    case 'piept':
+      if (/incline/.test(n)) return ['chest_upper'];
+      if (/decline/.test(n)) return ['chest_lower'];
+      if (/fly|crossover|pec deck|pullover/.test(n)) return ['chest_mid', 'chest_upper'];
+      return ['chest_mid'];
+    case 'umeri':
+      if (/rear|reverse|face pull|pull-apart|pull apart/.test(n)) return ['delt_rear', 'rear_delt_trap'];
+      if (/front raise/.test(n)) return ['delt_front'];
+      if (/press|ohp|pike|handstand|jammer|landmine|push/.test(n)) return ['delt_front', 'delt_mid'];
+      return ['delt_mid'];
+    case 'spate':
+      if (/shrug/.test(n)) return ['mid_trap', 'rear_delt_trap'];
+      if (/hyperextension|back extension|good morning|deadlift|superman/.test(n)) return ['lower_back'];
+      if (/pulldown|pull-up|pullup|chin|pullover/.test(n)) return ['lat'];
+      if (/row/.test(n)) return ['mid_trap', 'lat'];
+      return ['lat', 'mid_trap'];
+    case 'biceps':
+      if (/preacher|concentration|spider/.test(n)) return ['bi_short'];
+      if (/hammer|reverse|incline|drag/.test(n)) return ['bi_long'];
+      return ['bi_long', 'bi_short'];
+    case 'triceps':
+      if (/overhead|french|skull|behind/.test(n)) return ['tri_long'];
+      return ['tri_lateral', 'tri_medial'];
+    case 'core': return ['core'];
+    case 'picioare-quads': return ['quad'];
+    case 'picioare-hamstrings': return ['hamstring'];
+    case 'fese': return ['glute'];
+    case 'gambe': return ['calf'];
+    case 'antebrate': return []; // no forearm heads modelled (GROUP_HEAD_MAP placeholder)
+    default: return []; // unknown vocab -> contribute nothing (defensive)
+  }
+}
+
+/** @type {Map<string, {primary: string[], secondary: string[]} | null>} */
+const _derivedMusclesCache = new Map();
+
+/**
+ * Resolve the muscle heads an exercise loads: curated entry if present, else
+ * DERIVED from the library's Big-11 metadata (primary + secondary groups, name
+ * heuristics pick the right heads within a group). Returns null when the name
+ * is unknown to both (then the caller skips it — same contract as before).
+ * @param {string|undefined|null} ex
+ * @returns {{primary: string[], secondary: string[]} | null}
+ */
+export function musclesForExercise(ex) {
+  if (!ex) return null;
+  const curated = /** @type {Record<string, {primary: string[], secondary: string[]}>} */ (EXERCISE_MUSCLES)[ex];
+  if (curated) return curated;
+  if (_derivedMusclesCache.has(ex)) return _derivedMusclesCache.get(ex) ?? null;
+  /** @type {{primary: string[], secondary: string[]} | null} */
+  let out = null;
+  const meta = getExerciseMetadata(ex);
+  const primaryGroup = meta && typeof meta.muscle_target_primary === 'string' ? meta.muscle_target_primary : null;
+  if (primaryGroup) {
+    const primary = headsForGroup(primaryGroup, ex);
+    const secondaryGroups = Array.isArray(meta.muscle_target_secondary) ? meta.muscle_target_secondary : [];
+    const secondary = [...new Set(secondaryGroups.flatMap((g) => headsForGroup(String(g), ex)))]
+      .filter((h) => !primary.includes(h));
+    out = primary.length ? { primary, secondary } : null;
+  }
+  _derivedMusclesCache.set(ex, out);
+  return out;
+}
 
 // ══ BUILD #5 — per-user LEARNED recovery (F3 spec §5) ════════════════════════
 // The FIXED global recoveryHours above are a population prior. Build #5 learns a
@@ -120,7 +211,7 @@ export function learnRecovery(logs, prior, bwTrendFactor) {
   /** @type {Record<string, Map<number, {ts:number, best:number}>>} */
   const perMuscle = {};
   for (const l of rows) {
-    const ms = (/** @type {Record<string, {primary:string[],secondary:string[]}>} */ (EXERCISE_MUSCLES))[l.ex ?? ''];
+    const ms = musclesForExercise(l.ex); // QA-F8: learn from the whole library, not just curated names
     if (!ms) continue;
     const ts = Number(l.ts) || new Date(l.date ?? '').getTime();
     if (!Number.isFinite(ts) || ts <= 0) continue;
@@ -264,20 +355,20 @@ export function getMuscleState(logs, now = Date.now(), learnedHours) {
 
   const recentLogs = (logs || []).filter(l => !l.baseline && l.ex && l.w);
   recentLogs.forEach(l => {
-    const ms = (/** @type {Record<string, { primary: string[], secondary: string[] }>} */ (EXERCISE_MUSCLES))[l.ex ?? ''];
+    const ms = musclesForExercise(l.ex); // QA-F8: curated OR metadata-derived (was: curated-only, ~630 names skipped)
     if (!ms) return;
     const logTime = l.ts || new Date(l.date ?? '').getTime();
     const rpeContrib = l.rpe ? Math.min(l.rpe / 10, 1) : 0.7;
     ms.primary.forEach(/** @param {string} m */ (m) => {
       const recovH = recovHoursFor(m);
       const hoursAgo = (now - logTime) / MS_PER_HOUR;
-      const decay = Math.exp(-hoursAgo / recovH);
+      const decay = Math.exp((-RECOVERY_DECAY_K * hoursAgo) / recovH);
       state[m] = Math.min(100, (state[m] ?? 0) + 15 * 1.5 * rpeContrib * decay);
     });
     ms.secondary.forEach(/** @param {string} m */ (m) => {
       const recovH = recovHoursFor(m);
       const hoursAgo = (now - logTime) / MS_PER_HOUR;
-      const decay = Math.exp(-hoursAgo / recovH);
+      const decay = Math.exp((-RECOVERY_DECAY_K * hoursAgo) / recovH);
       state[m] = Math.min(100, (state[m] ?? 0) + 15 * 1.0 * rpeContrib * decay);
     });
   });

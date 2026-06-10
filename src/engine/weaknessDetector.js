@@ -8,7 +8,7 @@
 // Citation: Brzycki, M. (1993). "Strength testing—predicting a one-rep max
 // from reps-to-fatigue." J Phys Ed Recreation & Dance 64(1): 88-90.
 
-import { EXERCISE_MUSCLES } from './muscleMap.js';
+import { EXERCISE_MUSCLES, musclesForExercise } from './muscleMap.js';
 
 /**
  * Brzycki formula: 1RM = weight × (36 / (37 - reps))
@@ -81,14 +81,13 @@ function getLastLogPerExercise(logs) {
 function resolveGroup(exerciseName) {
   if (!exerciseName) return null;
   const lower = exerciseName.toLowerCase();
-  const exMap = /** @type {Record<string, {primary?: string[], secondary?: string[]}>} */ (EXERCISE_MUSCLES ?? {});
-  // Check EXERCISE_MUSCLES for primary muscle head → map to Big 11 group
-  for (const [exName, muscles] of Object.entries(exMap)) {
-    if (lower === exName.toLowerCase() && (muscles.primary?.length ?? 0) > 0) {
-      return _headToGroup(muscles.primary?.[0]);
-    }
-  }
-  // Fallback keyword heuristics Big 11 — PRIORITY ORDER mandatory (antebrate + fese ÎNAINTE biceps/legs broad to avoid mis-classification)
+  // 1. Curated exact map (richest head detail).
+  const curated = /** @type {Record<string, {primary?: string[]}>} */ (EXERCISE_MUSCLES)[exerciseName];
+  if (curated && (curated.primary?.length ?? 0) > 0) return _headToGroup(curated.primary[0]);
+  // 2. Specific keyword heuristics — these encode VARIANT knowledge the coarse
+  // library metadata lacks (bulgarian/sumo/kickback are glute-dominant → fese,
+  // not just "picioare"; farmer → antebrate). PRIORITY ORDER mandatory (antebrate
+  // + fese ÎNAINTE biceps/legs broad to avoid mis-classification).
   if (/wrist|forearm|grip|farmer|fat grip|hammer hold/i.test(lower)) return 'antebrate';
   if (/hip thrust|glute|sumo|bulgarian|kickback|hip abduction/i.test(lower)) return 'fese';
   if (/calf|heel raise|tibialis/i.test(lower)) return 'gambe';
@@ -100,6 +99,10 @@ function resolveGroup(exerciseName) {
   if (/curl|bicep/i.test(lower)) return 'biceps';
   if (/tricep|pushdown|skull|extension overhead|dip|french press/i.test(lower)) return 'triceps';
   if (/plank|crunch|\bab\b|core|dead bug|bird dog|hollow|wood ?chop|pallof|sit-up|russian twist|leg raise|toes-to-bar|l-sit/i.test(lower)) return 'core';
+  // 3. QA-F8: metadata-derived as the FINAL fallback (was: return null) — covers
+  // the ~630 library names that match no keyword above (recovery/imbalance gain).
+  const derived = musclesForExercise(exerciseName);
+  if (derived && (derived.primary?.length ?? 0) > 0) return _headToGroup(derived.primary[0]);
   return null;
 }
 

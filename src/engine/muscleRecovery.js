@@ -16,7 +16,7 @@
 // + volume redistribution multipliers (recovered=1.00, partial=0.80,
 // fatigued=0.60) cataloged for cross-engine audit gate.
 
-import { EXERCISE_MUSCLES, getMuscleState } from './muscleMap.js';
+import { getMuscleState, musclesForExercise } from './muscleMap.js';
 import { MS_PER_DAY, MS_PER_HOUR } from '../constants.js';
 import {
   GROUP_HEAD_MAP_BIG11,
@@ -270,10 +270,9 @@ function lastTrainedTsForGroup(logs, group) {
   const heads = new Set(headMap[group] || []);
   if (heads.size === 0) return null;
   let latest = 0;
-  const exMap = /** @type {Record<string, {primary?: string[], secondary?: string[]}>} */ (EXERCISE_MUSCLES);
   for (const log of logs || []) {
     if (log.baseline || !log.ex) continue;
-    const muscles = exMap[log.ex];
+    const muscles = musclesForExercise(log.ex); // QA-F8: curated OR metadata-derived
     if (!muscles) continue;
     const touchesGroup = [...(muscles.primary || []), ...(muscles.secondary || [])]
       .some(h => heads.has(h));
@@ -364,8 +363,7 @@ export function getGroupRecoveryDetail(logs, painEntries, now = Date.now()) {
  */
 export function groupForExerciseBig11(engineName) {
   if (!engineName) return [];
-  const exMap = /** @type {Record<string, {primary?: string[], secondary?: string[]}>} */ (EXERCISE_MUSCLES);
-  const muscles = exMap[engineName];
+  const muscles = musclesForExercise(engineName); // QA-F8: curated OR metadata-derived
   if (!muscles) return [];
   const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP);
   /** @type {Set<string>} */
@@ -395,7 +393,6 @@ export function getLaggingMuscles(profile) {
   const cutoff = now - lookbackDays * MS_PER_DAY;
 
   const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP);
-  const exMap = /** @type {Record<string, {primary?: string[], secondary?: string[]}>} */ (EXERCISE_MUSCLES);
   /** @type {Record<string, number>} */
   const setsPerGroup = {};
   for (const g of Object.keys(headMap)) setsPerGroup[g] = 0;
@@ -404,7 +401,7 @@ export function getLaggingMuscles(profile) {
     if (log.baseline || !log.ex) continue;
     const ts = log.ts || (log.date ? new Date(log.date).getTime() : 0);
     if (ts < cutoff) continue;
-    const muscles = exMap[log.ex];
+    const muscles = musclesForExercise(log.ex); // QA-F8: curated OR metadata-derived
     if (!muscles) continue;
     /** @type {Set<string>} */
     const touched = new Set();
@@ -469,7 +466,6 @@ const ACWR_SECONDARY_W = 15 * 1.0; // secondary head per-set weight
  */
 function _loadUnits(logs, now, days) {
   const cutoff = now - days * MS_PER_DAY;
-  const exMap = /** @type {Record<string, {primary?:string[], secondary?:string[]}>} */ (EXERCISE_MUSCLES);
   let total = 0;
   for (const l of Array.isArray(logs) ? logs : []) {
     if (!l || l.baseline || !l.ex) continue;
@@ -477,7 +473,7 @@ function _loadUnits(logs, now, days) {
     if (!Number.isFinite(w) || w <= 0) continue;
     const ts = Number(l.ts) || (l.date ? new Date(l.date).getTime() : 0);
     if (!Number.isFinite(ts) || ts < cutoff || ts > now) continue;
-    const ms = exMap[l.ex];
+    const ms = musclesForExercise(l.ex); // QA-F8: curated OR metadata-derived
     if (!ms) continue;
     const rpeContrib = l.rpe ? Math.min(Number(l.rpe) / 10, 1) : 0.7;
     total += (ms.primary?.length || 0) * ACWR_PRIMARY_W * rpeContrib;

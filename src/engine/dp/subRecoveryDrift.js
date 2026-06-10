@@ -19,7 +19,7 @@
 // Aggregate to a SYSTEMIC flag: >=2 muscle groups (EXERCISE_MUSCLES) drifting at
 // once → {systemic:true}; a single exercise → {exercise-local} (narrate only).
 
-import { EXERCISE_MUSCLES } from '../muscleMap.js';
+import { musclesForExercise } from '../muscleMap.js';
 
 // ── Daniel-tunable (F6a §1f / §7 — DESIGN PROPOSAL, needs a sim sweep + sanity
 //    check before the flag flips ON, like the RATING_TO_RIR caveat) ────────────
@@ -122,7 +122,7 @@ export function detectExerciseDrift(logs, ex, e1rmFn) {
   }
 
   const drift = ratingDrift || e1rmDrift;
-  const ms = (/** @type {Record<string,{primary:string[]}>} */ (EXERCISE_MUSCLES))[ex];
+  const ms = musclesForExercise(ex); // QA-F8: curated OR metadata-derived
   const groups = drift && ms ? [...ms.primary] : [];
   return { drift, ratingDrift, e1rmDrift, groups, slope };
 }

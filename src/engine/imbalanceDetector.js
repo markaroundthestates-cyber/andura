@@ -39,7 +39,7 @@
 // data (a side with ~zero volume → ratio undefined, or too few sessions) and a
 // balanced ratio both yield NO correction (graceful degradation, ADR 025).
 
-import { EXERCISE_MUSCLES } from './muscleMap.js';
+import { musclesForExercise } from './muscleMap.js';
 import { GROUP_HEAD_MAP_BIG11 } from './muscleRecoveryConstants.js';
 import { MS_PER_DAY } from '../constants.js';
 import { ISRAETEL_BASELINES, BIG11_RO_TO_EN_MAP } from './periodization/constants.js';
@@ -104,7 +104,6 @@ export const CORRECTION_STRENGTH = 0.50;
  */
 function setsPerGroup(logs, cutoff) {
   const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP_BIG11);
-  const exMap = /** @type {Record<string, {primary?: string[], secondary?: string[]}>} */ (EXERCISE_MUSCLES);
   /** @type {Record<string, number>} */
   const counts = {};
   for (const g of Object.keys(headMap)) counts[g] = 0;
@@ -112,7 +111,7 @@ function setsPerGroup(logs, cutoff) {
     if (!log || log.baseline || !log.ex) continue;
     const ts = log.ts || (log.date ? new Date(log.date).getTime() : 0);
     if (ts < cutoff) continue;
-    const muscles = exMap[log.ex];
+    const muscles = musclesForExercise(log.ex); // QA-F8: curated OR metadata-derived
     if (!muscles) continue;
     /** @type {Set<string>} */
     const touched = new Set();

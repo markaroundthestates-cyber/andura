@@ -39,9 +39,14 @@ function buildUserState(overrides = {}) {
   };
 }
 
-// A chest-only session N days ago. 2 days back decays the synergists (shoulders/
-// triceps) back to FRESH while chest still reads non-recovered — so the push day
-// has a CUT chest + FRESH shoulders/triceps to receive the freed volume.
+// A chest-only session N hours ago. The gap is chosen so the synergists
+// (shoulders/triceps, 48h recovery) decay back to FRESH while chest (60h) still
+// reads non-recovered — so the push day has a CUT chest + FRESH shoulders/triceps
+// to receive the freed volume. NOTE 2026-06-10 (QA-F9): the decay was recalibrated
+// (K=1.8) so a session clears its window faster; this demonstration gap was 48h
+// (chest then ~11.2, just under the partial=12 cutoff → no longer non-recovered),
+// retuned to 36h (chest ~16 = partial, synergists ~8 = recovered) which preserves
+// the exact intent (chest_mid ~16 = partial; delt/tri synergists ~8 = recovered).
 function chestSession(ts) {
   return {
     ts,
@@ -58,7 +63,7 @@ function chestSession(ts) {
   };
 }
 
-const TWO_DAYS = 2 * 24 * 60 * 60 * 1000;
+const TWO_DAYS = 36 * 60 * 60 * 1000; // 36h demonstration gap (see chestSession note; QA-F9 retune)
 
 beforeEach(() => {
   localStorage.clear();

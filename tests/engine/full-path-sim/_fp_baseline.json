@@ -3,51 +3,51 @@
   "seed": 15736039,
   "nProfiles": 8,
   "weeks": 6,
-  "hashOff": "054c9f7ecc39d764eb474c7dd0e5a181d7cb64a76ec82171ebf6ffeb80c4d221",
-  "hashOn": "09e5c3b5699f6acf9a6a594300366b96e8c961b0698a39d78cf214fb23e77fe4",
+  "hashOff": "a92e79ca19f5a59b08bd993ed95c0c6943617c6931b5f768843f6f8713fb0ab8",
+  "hashOn": "125f55c53ff5a715187d44b7665aa431f4ac47281aa9644050e3af8169af3afd",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 6.71,
-    "meanSetTotal": 13.55,
-    "meanDurationMin": 49.3,
-    "meanVolumeKg": 1556,
+    "meanExerciseCount": 6.53,
+    "meanSetTotal": 13.06,
+    "meanDurationMin": 47.9,
+    "meanVolumeKg": 1545,
     "minusRatePct": 21.9
   },
   "sessionOn": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 6.84,
-    "meanSetTotal": 12.56,
-    "meanDurationMin": 47.4,
-    "meanVolumeKg": 1425,
+    "meanExerciseCount": 6.63,
+    "meanSetTotal": 12.03,
+    "meanDurationMin": 46.2,
+    "meanVolumeKg": 1416,
     "minusRatePct": 21.9
   },
   "convergenceOff": {
-    "totalSeries": 113,
-    "convergedPct": 12.4,
-    "medianSessionsToConverge": 5.5,
-    "meanFinalAbsErr": 0.542
+    "totalSeries": 104,
+    "convergedPct": 13.5,
+    "medianSessionsToConverge": 5,
+    "meanFinalAbsErr": 0.537
   },
   "convergenceOn": {
-    "totalSeries": 115,
-    "convergedPct": 12.2,
-    "medianSessionsToConverge": 5.5,
-    "meanFinalAbsErr": 0.548
+    "totalSeries": 103,
+    "convergedPct": 13.6,
+    "medianSessionsToConverge": 5,
+    "meanFinalAbsErr": 0.536
   },
   "flagsOff": {
     "oscillation": 0,
-    "stuckLow": 81,
-    "stuckHigh": 16,
-    "absurd": 35
+    "stuckLow": 75,
+    "stuckHigh": 14,
+    "absurd": 32
   },
   "flagsOn": {
     "oscillation": 0,
-    "stuckLow": 82,
-    "stuckHigh": 17,
-    "absurd": 35
+    "stuckLow": 76,
+    "stuckHigh": 12,
+    "absurd": 30
   },
-  "craterOff": 70,
-  "craterOn": 54,
-  "_rebaseline_note": "Re-frozen 2026-06-10 for FIX-A wave (live-QA F2/F6/F7 composition fixes, on top of the D117 #1/#2/#3 freeze). F7 (UNGATED, sessionBuilder isBigLower now movement-token-based: squat/leg-press/lunge/deadlift/hip-thrust/good-morning on quad/ham OR tier-1): leg-press/squat stance VARIANTS now count toward MAX_BIG_LOWER_LIFTS=2, so a tier-2 wide-stance leg-press can no longer slip in as a 3rd big lift after Squat+RDL and cold-start ~80 (Daniel's live Legs bug). F2 (GATED dp_load_model_v1 LIVE, compose.ts cold-start preview): the resolveMaxKg cap now clamps the population-prior/coldstart seed BEFORE the ladder snap (previously the cap lived only in dp.recommend's at-cap brake which keys on lastW -> inert at cold-start) -> Y Raise cold-start 25->18 (his live ego-load). F6 (GATED dp_focus_policy_v1 LIVE, sessionBuilder accessory ordering): focus-relevant accessories sort ahead of off-focus within the accessory band (Pull: Pullover before Shrug/Hyperext on v-taper). hashOff shifts (F7 ungated touches OFF); hashOn shifts (F7+F2+F6). VERIFIED DETERMINISTIC (two fresh runs reproduce 054c9f7e / 09e5c3b5 within the same run; the section-A fresh-OFF-reproduces-itself test passes -> no RNG/clock leak) and SAFER: section-C is self-relative ON-vs-OFF and HOLDS, and absolute safety IMPROVED vs the D117 baseline -- craterOn 56->54, absurd ON/OFF 37->35 (F2's clamp removes cold-start absurd loads, exactly its purpose); oscillation 0=0; convergence ON 12.2% within band of OFF 12.4%. Persona-matrix #70 gate stays green. F5 (Upper 8->7) NOT applied -- the Pullover is a v-taper lat_isolation weekly-min requirement, not stray selection; dropping it blanket-style regresses pure Upper/Lower users -> deferred for a cross-day-aware fix (same class as the DARK dp_lumbar_dedup_v1)."
+  "craterOff": 65,
+  "craterOn": 53,
+  "_rebaseline_note": "Re-frozen 2026-06-10 for FIXWAVE-C (QA-F8 recovery metadata-mapping + QA-F9 decay K=1.8), on top of the FIX-A freeze. WHY the hash shifts (BOTH OFF and ON): recovery state feeds session composition (the recovery-redistribute pass in getDailyWorkout shifts freed volume between same-session muscles, and imbalance/weakness read the same map). QA-F8 made musclesForExercise resolve the WHOLE library (curated wins, else metadata-derived) instead of only ~27 curated names, so many sessions now register recovery/imbalance signal they previously ignored (UNGATED structural correctness, not a flag). QA-F9 set the decay time-constant K=1.8 (was implicitly 1) so a session clears its recovery window on a realistic curve (a 16-set leg day reads recovered by the next leg day instead of lingering 'Loaded' 5-6 days — the founder's live complaint). VERIFIED DETERMINISTIC (two fresh runs reproduce a92e79ca / 125f55c5 within the same run; the section-A fresh-OFF-reproduces-itself test passes -> no RNG/clock leak) and SAFER than the FIX-A baseline on every absolute metric: craterOff 70->65, craterOn 54->53, absurd OFF 35->32 / ON 35->30 (recovery seeing the whole library + the faster-clearing decay reduce stale over-stress that drove absurd loads), oscillation 0=0, convergence ON 12.2%->13.6%. Section-C self-relative ON-vs-OFF HOLDS (craterOn<=craterOff, osc 0=0, absurd in band, convergence in band). Persona-matrix #70 stays green. meanExerciseCount drifts 6.71->6.53 OFF as the recovery-redistribute reflects the corrected per-muscle load."
 }
