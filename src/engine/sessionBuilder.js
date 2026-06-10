@@ -1441,6 +1441,28 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  // #2 (Daniel coach audit 2026-06-10) — UPPER arm de-duplication. The upper catch-all
+  // is the densest day (it saturates to 8) and doubles up DIRECT-ARM isolation (a biceps
+  // AND a triceps lift) though both groups carry only 0.15 weight. Triceps is already
+  // hit hard by the day's presses (+ the Push day); biceps is the under-served arm
+  // (pull + upper only), and the guarantee above already kept it. So on UPPER, drop the
+  // redundant standalone TRICEPS isolation → the day lands at 7 focused lifts. Scoped to
+  // 'upper' (pull is biceps-led, full-body needs breadth) and EXEMPT when triceps is the
+  // user's emphasis (arms/triceps focus keeps its direct work). One removal, no refill.
+  if (cluster === 'upper' && !emphSet.has('triceps')) {
+    const primaryOf = (n) => getExerciseMetadata(n)?.muscle_target_primary;
+    const isIso = (n) => (getExerciseMetadata(n)?.tier ?? 2) > COMPOUND_TIER;
+    const hasBiceps = chosen.some((e) => primaryOf(e.name) === 'biceps');
+    const triIdx = chosen.findIndex((e) => primaryOf(e.name) === 'triceps' && isIso(e.name));
+    if (hasBiceps && triIdx >= 0 && chosen.length > minSession) {
+      const removed = chosen[triIdx];
+      chosenNames.delete(removed.name);
+      chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+      if (groupCount.triceps) groupCount.triceps -= 1;
+      chosen.splice(triIdx, 1);
+    }
+  }
+
   // Wave 1.3-B FOCUS-POLICY resolver (ctx.focusPolicy, dp_focus_policy_v1). When
   // the flag is ON, apply the per-focus LOCAL constraint policy (sessionCaps +
   // sessionRequirements from FOCUS_RULES) to the selected list: prune excess over a

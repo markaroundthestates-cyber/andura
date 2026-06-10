@@ -3,51 +3,51 @@
   "seed": 15736039,
   "nProfiles": 8,
   "weeks": 6,
-  "hashOff": "76d59fc46592de6eb949c7be99c83b31171807b2666ff5b90f2a7f51cfd4b596",
-  "hashOn": "912de8846812ed02180f721990c7ef7790619207664c58ec574f976022b1888a",
+  "hashOff": "75b5dd7e12000c0a4fd8ff1016ebed9ba1c20d2aa376c48d64f2c16599f54e82",
+  "hashOn": "9cf49a5d6ebfb9d701741575644f7d913a7cdd98aa67149f0f13b8fa24c1c903",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 7.27,
-    "meanSetTotal": 14.73,
-    "meanDurationMin": 52.7,
-    "meanVolumeKg": 1648,
+    "meanExerciseCount": 6.74,
+    "meanSetTotal": 13.58,
+    "meanDurationMin": 49.4,
+    "meanVolumeKg": 1572,
     "minusRatePct": 21.9
   },
   "sessionOn": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 7.39,
-    "meanSetTotal": 13.58,
-    "meanDurationMin": 50.6,
-    "meanVolumeKg": 1496,
+    "meanExerciseCount": 6.84,
+    "meanSetTotal": 12.59,
+    "meanDurationMin": 47.5,
+    "meanVolumeKg": 1428,
     "minusRatePct": 21.9
   },
   "convergenceOff": {
-    "totalSeries": 117,
-    "convergedPct": 12,
+    "totalSeries": 114,
+    "convergedPct": 12.3,
     "medianSessionsToConverge": 5.5,
-    "meanFinalAbsErr": 0.533
+    "meanFinalAbsErr": 0.539
   },
   "convergenceOn": {
-    "totalSeries": 121,
-    "convergedPct": 12.4,
-    "medianSessionsToConverge": 7,
-    "meanFinalAbsErr": 0.551
+    "totalSeries": 115,
+    "convergedPct": 12.2,
+    "medianSessionsToConverge": 5.5,
+    "meanFinalAbsErr": 0.548
   },
   "flagsOff": {
     "oscillation": 0,
-    "stuckLow": 88,
-    "stuckHigh": 13,
-    "absurd": 35
+    "stuckLow": 82,
+    "stuckHigh": 16,
+    "absurd": 37
   },
   "flagsOn": {
     "oscillation": 0,
-    "stuckLow": 88,
-    "stuckHigh": 16,
-    "absurd": 36
+    "stuckLow": 82,
+    "stuckHigh": 17,
+    "absurd": 37
   },
   "craterOff": 70,
-  "craterOn": 54,
-  "_rebaseline_note": "Re-frozen 2026-06-10 for Daniel coach-audit #3 (MAX_BIG_LOWER_LIFTS): a session may stack at most 2 BIG lower lifts (tier-1 movers on the quad/ham groups — squat/hinge/lunge/press). His live Legs day stacked 3 (Hack Squat + RDL + Walking Lunge); the cap drops the 3rd big compound and the round-robin fill replaces it with an accessory (glute/calf/core). UNGATED (it is the correct shape, not a flag toggle), so BOTH arms' selection streams legitimately shift on the leg/lower/full days. VERIFIED DETERMINISTIC (the section-A fresh-OFF-reproduces-itself test passes; two fresh runs reproduce 76d59fc4 / 912de884 — no RNG/clock leak) and SAFE: section-C is self-relative ON-vs-OFF and HOLDS — craterOn 54 <= craterOff 70, oscillation 0=0, absurd ON 36 <= OFF 35 + 10 band, convergence ON 12.4% >= OFF 12%. vs the prior freeze: craterOff 63->70 / craterOn 52->54 (oracle-gap craters reshuffle as the leg day swaps a heavy compound for an accessory — NOT the zero-tolerance F-1 class, which the §1.B-style invariant still holds at 0), meanVolumeKg drifts (1712->1648 OFF, 1507->1496 ON) with the lighter accessory replacing a heavy lower compound. Persona-matrix #70 gate stays green (26 personas); the lower day now reads 2 big lifts + accessories (Daniel's intended shape). #1 (chest-press 3-set floor on a shoulder-emphasized push day) + #2 (upper density via arm-alternation) were investigated but DEFERRED — their clean fixes need a downstream set-reducer root-cause (#1) and week-parity arm-alternation (#2), not a blunt cap that would cut real volume / break the M2 weakness-amplification invariant."
+  "craterOn": 56,
+  "_rebaseline_note": "Re-frozen 2026-06-10 for Daniel coach-audit #1 + #2 (composition refinements, on top of the #3 lower-cap freeze). #1 (compoundSetFloor in scaleSetsByEnergy/scaleSetsByReadiness/trimSessionToTimeBudget): a tier-1 compound's working sets never fall below 3 under the deficit/readiness/time cuts (a CUT trims accessories/isolations + drops tail work, never the main lift's 3-set dose) — chest press 2→3 on a v-taper push. #2 (UPPER arm de-dup in buildSession): the upper catch-all drops its redundant standalone TRICEPS isolation (triceps is hit by the day's presses; the under-served biceps stays, guaranteed) so upper lands at 7 focused lifts — meanExerciseCount drifts down (~7.3→6.7 OFF) as upper sheds one arm. Both UNGATED (correct shape, not flags). VERIFIED DETERMINISTIC (two fresh runs reproduce 75b5dd7e / 9cf49a5d — no RNG/clock leak; the section-A fresh-OFF-reproduces-itself test passes) and SAFE: section-C is self-relative ON-vs-OFF and HOLDS — craterOn 56 <= craterOff 70, oscillation 0=0, absurd ON 37 <= OFF 37 + 10 band, convergence ON 12.2% within band of OFF 12.3%. Persona-matrix #70 gate green (26 personas); the v-taper program now reads chest-press 3 sets on push, upper 7 (biceps kept), lower 2 big lifts. #2 chosen as deterministic keep-biceps-drop-redundant-triceps (triceps covered by pressing, biceps under-served) rather than literal weekly bi/tri alternation — simpler + lower-risk, reversible if Daniel prefers true alternation."
 }
