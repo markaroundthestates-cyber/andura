@@ -164,11 +164,11 @@ describe('trimSessionToTimeBudget — rest-inclusive time bound', () => {
 
   it('a MILD overshoot just shaves ONE set off the tail (no drop, front intact)', () => {
     // Barely over (rest-inclusive + the per-exercise transition the honest estimate
-    // now adds): 5 ex x 3 sets x (40 work + 180 rest) + 5 x 75 transition = 3675s =
-    // ~61.25min vs maria 60. A single tail set-shave (ex4 3->2) drops it to ~57.6min
+    // now adds): 5 ex x 3 sets x (50 work + 160 rest) + 5 x 105 transition = 3675s =
+    // ~61.25min vs maria 60. A single tail set-shave (ex4 3->2) drops it to ~57.75min
     // — under the cap — so the trim never needs to drop an exercise. This is the
     // conservative "don't over-aggressive" path: gentle shave, full exercise count.
-    const session = Array.from({ length: 5 }, (_, i) => ex(`ex${i}`, 3, 180));
+    const session = Array.from({ length: 5 }, (_, i) => ex(`ex${i}`, 3, 160));
     expect(computeEstimatedDurationMin(session, 0)!).toBeGreaterThan(60);
     const trimmed = trimSessionToTimeBudget(session, 0, personaTimeCapMin('maria'));
     expect(trimmed.length).toBe(5);            // shaving only, no exercise dropped
@@ -198,8 +198,11 @@ describe('trimSessionToTimeBudget — rest-inclusive time bound', () => {
     expect(trimmed.some((e) => e.sets > MIN_SETS_PER_EX_TEST)).toBe(true);
     // Accessories were dropped (fewer exercises) rather than flattened.
     expect(trimmed.length).toBeLessThan(session.length);
-    // And it actually fits the budget (or the chassis minimum).
-    expect(computeEstimatedDurationMin(trimmed, 0)!).toBeLessThanOrEqual(30);
+    // It trims toward the cap as far as the floors allow. With the honest (higher)
+    // estimator + the 4-exercise / compound-3-set floors, a 30-min request can't go
+    // below ~35min — the point is compound-protection + dropping accessories, not
+    // hitting 30 exactly. Assert it trimmed well down (under the floor-limited band).
+    expect(computeEstimatedDurationMin(trimmed, 0)!).toBeLessThanOrEqual(40);
   });
 
   it('LAST RESORT shave never crushes index 0 below 3 sets (compound floor)', () => {
@@ -302,9 +305,10 @@ describe('F6c #12 — trim drop order: flag OFF byte-identical, ON drops lowest 
       e('compTail', 'Leg Press', 2, 300),    // idx 5 (last) — high density (compound)
     ];
   }
-  // Front 4: 4 x 2 x (40+60) = 800s; each tail: 2 x (40+300) = 680s. Full = 2160s
-  // = 36min. A 32-min cap forces dropping exactly ONE tail item (→ ~25min).
-  const ONE_DROP_CAP = 32;
+  // Front 4: 4 x 2 x (50+60) = 880s; each tail: 2 x (50+300) = 700s; transition
+  // 6 x 105 = 630s. Full = 2910s = ~48.5min. Dropping ONE tail → 5 ex = 2105s =
+  // ~35.1min. A 40-min cap forces dropping exactly ONE tail item (48.5 > 40 >= 35.1).
+  const ONE_DROP_CAP = 40;
 
   it('flag OFF: drops the positional LAST (the compound) — legacy tail-first', () => {
     // dp_stimulus_per_min_v1 now DEFAULTS ON (THE FLIP 2026-06-08) so "no _devFlags"

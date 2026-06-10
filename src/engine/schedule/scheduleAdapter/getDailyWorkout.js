@@ -647,6 +647,13 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // fresh). The beginner gate reads ctx.profileTier inside buildSession; OFF →
     // the universal 3-set fresh floor for everyone.
     tierCompoundFloor: isEnabled('dp_tier_compound_floor_v1'),
+    // R4 anchor-protective shave (dp_anchor_sets_v1, Daniel coach audit 2026-06-10
+    // "main lifts primesc 3 seturi, nu totul 2"). When ON, a NON-RECOVERED group's
+    // 1-set shave + lowered floor EXEMPT the anchor (first tier-1 compound) — the
+    // squat stays at 3 working sets and the lighter day is carried by the
+    // isolations (one extra set shaved from the back of the group instead, total
+    // preserved). OFF → byte-identical (the shave hits every exercise).
+    anchorProtect: isEnabled('dp_anchor_sets_v1'),
     // #73 goal/sex-aware SELECTION (dp_smart_selection_v1, default OFF →
     // byte-identical). When ON:
     //  - lateralRaiseGuarantee: a focus that emphasizes the shoulders (umeri in
@@ -660,6 +667,11 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // pick quality. So sexBias is no longer threaded into buildSession/poolForGroup.
     lateralRaiseGuarantee:
       isEnabled('dp_smart_selection_v1') && emphSet.has('umeri'),
+    // #R6a upper-day biceps guarantee (dp_biceps_guarantee_v1, default ON). A
+    // cluster that trains biceps (upper/pull/full → targets includes 'biceps')
+    // must include >=1 biceps movement — Daniel's real Upper day rounded biceps
+    // (0.15 weight) out entirely. OFF → byte-identical (never injects).
+    bicepsGuarantee: isEnabled('dp_biceps_guarantee_v1'),
     // #70-D2 — COMPOUND-FIRST guarantee on an emphasis/weak-reordered session
     // (dp_emphasis_specialization_v1, default OFF → byte-identical). When ON, the
     // weak/emphasis front-loader is prevented from leading the day with an ISOLATION

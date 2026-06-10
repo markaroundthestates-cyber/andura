@@ -394,7 +394,7 @@ function coherentDayBudget(perSessionBudget, actualExCount) {
  * @param {boolean} [novice] - dp_tier_compound_floor_v1: T0 beginner → fresh compound floor may drop to 2
  * @returns {number[]} set count per exercise, index-aligned with exsInGroup
  */
-function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasized, trimFn, novice) {
+function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasized, trimFn, novice, anchorProtect) {
   const n = exsInGroup.length;
   if (n === 0) return [];
   // #19 V3 DOSE — the effective-reps TRIM is combined with the fatigue-curve adjust
@@ -452,16 +452,42 @@ function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasi
   // non-recovered → the normal [2,3] band (byte-identical).
   const isolationCeiling = emphasizeRecovered ? ISOLATION_MAX_SETS_EMPHASIZED : ISOLATION_MAX_SETS;
 
-  return exsInGroup.map((e, i) => {
+  // R4 anchor-protective shave (dp_anchor_sets_v1 via ctx.anchorProtect, Daniel
+  // coach audit 2026-06-10): on a NON-RECOVERED group the 1-set shave + lowered
+  // floor exempt the ANCHOR (first tier-1 compound) — the main lift keeps its
+  // fresh 3-set floor and the lighter day is carried by the accessories (the
+  // anchor's spared set is re-shaved from the BACK of the group so the group
+  // total is preserved). OFF / recovered → protectIdx -1 → byte-identical.
+  const protectIdx = anchorProtect === true && nonRecovered
+    ? exsInGroup.findIndex((e) => e.tier === COMPOUND_TIER)
+    : -1;
+  const counts = exsInGroup.map((e, i) => {
     const isCompound = e.tier === COMPOUND_TIER;
     const share = (budget * weightOf(e)) / totalWeight;
-    const rounded = Math.round(share) - setShave + adjustOf(e);
+    const isProtected = i === protectIdx;
+    const rounded = Math.round(share) - (isProtected ? 0 : setShave) + adjustOf(e);
     // Anchor compound of an emphasized recovered group floors higher (visible +sets).
-    const cFloor = i === anchorIdx ? COMPOUND_MIN_SETS_EMPHASIZED : compoundFloor;
+    const cFloor = i === anchorIdx ? COMPOUND_MIN_SETS_EMPHASIZED
+      : isProtected ? freshCompoundFloor : compoundFloor;
     const lo = isCompound ? cFloor : ISOLATION_MIN_SETS;
     const hi = isCompound ? compoundCeiling : isolationCeiling;
     return Math.min(hi, Math.max(lo, rounded));
   });
+  if (protectIdx >= 0) {
+    // Re-shave the protected set from the back of the group (last isolation above
+    // its floor), keeping the group's total equal to the unprotected world.
+    let spare = counts[protectIdx]
+      - Math.min(exsInGroup[protectIdx].tier === COMPOUND_TIER ? compoundCeiling : isolationCeiling,
+          Math.max(compoundFloor, Math.round((budget * weightOf(exsInGroup[protectIdx])) / totalWeight) - setShave + adjustOf(exsInGroup[protectIdx])));
+    for (let i = exsInGroup.length - 1; i >= 0 && spare > 0; i--) {
+      if (i === protectIdx) continue;
+      // Pull from the back, down to each exercise's own floor — a non-anchor
+      // compound may yield to compoundFloor before an isolation drops to MEV.
+      const floorI = exsInGroup[i].tier === COMPOUND_TIER ? compoundFloor : ISOLATION_MIN_SETS;
+      while (spare > 0 && counts[i] > floorI) { counts[i] -= 1; spare -= 1; }
+    }
+  }
+  return counts;
 }
 
 /**
@@ -1358,6 +1384,48 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  // #R6a UPPER-DAY BICEPS GUARANTEE (ctx.bicepsGuarantee, dp_biceps_guarantee_v1).
+  // Daniel coach audit 2026-06-10: his real Upper day (8 exercises) landed chest +
+  // back + shoulders + triceps but NO biceps, even though `upper` weights biceps
+  // 0.15 — the low slot share rounded biceps out. When a cluster TRAINS biceps
+  // (upper / pull / full → targets includes 'biceps') the session MUST include at
+  // least one biceps movement. If none landed, inject one: prefer to ADD if the
+  // session has room; else replace the lowest-priority non-anchor isolation. OFF /
+  // no biceps target → never runs → byte-identical.
+  if (ctx?.bicepsGuarantee === true && targets.includes('biceps')) {
+    const hasBiceps = chosen.some(
+      (e) => getExerciseMetadata(e.name)?.muscle_target_primary === 'biceps',
+    );
+    if (!hasBiceps) {
+      const bicepsPool = pools.find((p) => p.group === 'biceps')?.pool ?? [];
+      const biceps = bicepsPool.find((e) => !isTaken(e));
+      if (biceps) {
+        if (chosen.length < SESSION_SIZE) {
+          take(biceps, DEFAULT_SETS);
+        } else {
+          // Session full: replace the lowest-priority non-anchor (tier >= 2) exercise.
+          let removeIdx = -1;
+          for (let i = chosen.length - 1; i >= 0; i--) {
+            if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+            removeIdx = i;
+            break;
+          }
+          if (removeIdx >= 0) {
+            const removed = chosen[removeIdx];
+            chosenNames.delete(removed.name);
+            chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+            const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+            if (rg && groupCount[rg]) groupCount[rg] -= 1;
+            chosen.splice(removeIdx, 1, { name: biceps.name, sets: DEFAULT_SETS });
+            chosenNames.add(biceps.name);
+            chosenMovements.add(movementKey(biceps.name, biceps.meta));
+            groupCount.biceps = (groupCount.biceps || 0) + 1;
+          }
+        }
+      }
+    }
+  }
+
   // Wave 1.3-B FOCUS-POLICY resolver (ctx.focusPolicy, dp_focus_policy_v1). When
   // the flag is ON, apply the per-focus LOCAL constraint policy (sessionCaps +
   // sessionRequirements from FOCUS_RULES) to the selected list: prune excess over a
@@ -1597,7 +1665,7 @@ export function buildSession(cluster, ctx) {
       : perSessionBudget;
     const counts = distributeGroupSets(
       exs, budget, recoveryState[g], ctx?.fatigueSetsAdjust, isEmphasized,
-      ctx?.effectiveRepsSetsTrim, noviceCompoundFloor,
+      ctx?.effectiveRepsSetsTrim, noviceCompoundFloor, ctx?.anchorProtect === true,
     );
     exs.forEach((e, i) => { setsByName[e.name] = counts[i]; });
   }

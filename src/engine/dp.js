@@ -11,6 +11,7 @@ import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
 import { updatePosterior, savePosterior, loadPosterior, trendDirection } from './dp/strengthKalman.js';
 import { phaseAwareRepRange } from './dp/repRange.js';
+import { resolveMaxKg, resolveStep } from './dp/loadModel.js';
 import {
   loadPreference as loadNof1Preference,
   nof1SetBias,
@@ -49,28 +50,28 @@ export const DP = {
     'DB Shoulder Press':[6,10],'Incline DB Press':[6,10],'Flat DB Press':[8,12],
     'Lat Pulldown':[8,12],'Cable Row':[8,12],'Chest-Supported Row':[10,12],
     'Romanian Deadlift':[8,12],'Leg Press':[8,12],
-    // Umeri izolatie — lateral / rear delt (founder intent [12,15])
-    'DB Lateral Raise':[12,15],'Cable Lateral Raise':[12,15],
-    'Machine Lateral Raise':[12,15],'Leaning Lateral Raise':[12,15],
-    'DB Rear Delt Fly':[12,15],'Cable Rear Delt Fly':[12,15],'Reverse Pec Deck':[12,15],
+    // Umeri izolatie — lateral / rear delt (founder spec 2026-06-10: [12,20])
+    'DB Lateral Raise':[12,20],'Cable Lateral Raise':[12,20],
+    'Machine Lateral Raise':[12,20],'Leaning Lateral Raise':[12,20],
+    'DB Rear Delt Fly':[12,20],'Cable Rear Delt Fly':[12,20],'Reverse Pec Deck':[12,20],
     'Face Pull':[12,15],
-    // Biceps izolatie (founder intent [10,12])
-    'Incline DB Curl':[10,12],'Bayesian Curl':[10,12],'Cable Curl':[10,12],
-    'EZ-bar Preacher Curl':[10,12],
-    // Triceps izolatie (founder intent [10,12])
-    'Cable Overhead Triceps Extension Rope':[10,12],
-    'Cable Single-Arm Overhead Triceps Extension':[10,12],
-    'DB Overhead Triceps Extension Two-Hand':[10,12],
-    'Cable Triceps Pushdown Straight Bar':[10,12],'Cable Triceps Pushdown Rope':[10,12],
-    'Cable Triceps Pushdown V-bar':[10,12],'Cable Triceps Pushdown Single-Arm':[10,12],
-    'Triceps Press Machine':[10,12],
+    // Biceps izolatie (founder spec 2026-06-10 [10,15])
+    'Incline DB Curl':[10,15],'Bayesian Curl':[10,15],'Cable Curl':[10,15],
+    'EZ-bar Preacher Curl':[10,15],
+    // Triceps izolatie (founder spec 2026-06-10 [10,15])
+    'Cable Overhead Triceps Extension Rope':[10,15],
+    'Cable Single-Arm Overhead Triceps Extension':[10,15],
+    'DB Overhead Triceps Extension Two-Hand':[10,15],
+    'Cable Triceps Pushdown Straight Bar':[10,15],'Cable Triceps Pushdown Rope':[10,15],
+    'Cable Triceps Pushdown V-bar':[10,15],'Cable Triceps Pushdown Single-Arm':[10,15],
+    'Triceps Press Machine':[10,15],
     // Piept izolatie
     'Pec Deck / Cable Fly':[12,15],
-    // Picioare / gambe (founder intent [10,15])
-    'Leg Curl':[10,15],'Leg Extension':[10,15],
-    'Standing Calf Raise Machine':[10,15],'Seated Calf Raise Machine':[10,15],
-    'Smith Standing Calf Raise':[10,15],'Leg Press Calf Raise':[10,15],
-    'Standing DB Calf Raise':[10,15],'Single-Leg Calf Raise Bodyweight':[10,15]
+    // Picioare izo/gambe (founder 2026-06-10: [15,20] inapoi — #20 semantic = doar compounde grele)
+    'Leg Curl':[15,20],'Leg Extension':[15,20],
+    'Standing Calf Raise Machine':[12,20],'Seated Calf Raise Machine':[12,20],
+    'Smith Standing Calf Raise':[12,20],'Leg Press Calf Raise':[12,20],
+    'Standing DB Calf Raise':[12,20],'Single-Leg Calf Raise Bodyweight':[12,20]
   },
 
   // Weight steps per equipment type
@@ -199,9 +200,9 @@ export const DP = {
 
   /** @param {string} ex */
   getIncrement(ex) {
-    // Incrementul = 1 treapta pe echipamentul exercitiului
+    // 1 treapta pe echipament. Curated wins; dp_load_model_v1 deriva gap-urile.
     const steps = /** @type {Record<string, number>} */ (this.WEIGHT_STEPS);
-    return steps[ex] || (COMPOUND_EX.includes(ex) ? 2.5 : 2.5);
+    return resolveStep({ curated: steps[ex], meta: getExerciseMetadata(ex), flagOn: isEnabled('dp_load_model_v1') });
   },
 
   // ── INTRA-SESSION SYNERGIST PRE-FATIGUE discount ────────────────────────────
@@ -731,7 +732,7 @@ export const DP = {
   // (byte-identical legacy).
   /** @param {string} ex @param {number} repTarget @returns {number|null} */
   _effectiveMaxKg(ex, repTarget) {
-    const flat = /** @type {Record<string, number>} */ (this.MAX_KG)[ex] || null;
+    const flat = resolveMaxKg({ curated: /** @type {Record<string, number>} */ (this.MAX_KG)[ex], meta: getExerciseMetadata(ex), flagOn: isEnabled('dp_load_model_v1') });
     if (!isEnabled('dp_ceiling_v1')) return flat;
     const ceil = this.roundToStep(this._ceilingKg(ex, repTarget), ex);
     if (!(ceil > 0)) return flat; // ceiling unavailable → keep the flat cap
@@ -1521,8 +1522,7 @@ export const DP = {
     // derived realistic ceiling (back-solved at the rep target). Never below the old
     // MAX_KG; gives unmapped lifts a finite ceiling instead of the 80kg default (F-1).
     const maxKg = this._effectiveMaxKg(ex, rMin);
-    const capStrats = /** @type {Record<string, string>} */ (this.WEIGHT_CAP_STRATEGY);
-    const _capStrategy = capStrats[ex] || null;
+    // (dead WEIGHT_CAP_STRATEGY read removed — the at-cap brake keys on maxKg only)
 
     // No history → start conservative
     if (!state.logs.length) {
@@ -2135,7 +2135,7 @@ export const DP = {
       const suspect = ctx.userConfirmed === true ? null : sanityCheckSet({
         ex, w: loggedKg, reps: loggedReps,
         lastLoggedW: dpState.lastW || null,
-        maxKg: /** @type {Record<string, number>} */ (this.MAX_KG)[ex] || null,
+        maxKg: resolveMaxKg({ curated: /** @type {Record<string, number>} */ (this.MAX_KG)[ex], meta: getExerciseMetadata(ex), flagOn: isEnabled('dp_load_model_v1') }),
         bwKg: this._currentBodyweightKg(),
         sex: 'm',
       });
@@ -2537,7 +2537,7 @@ export const DP = {
         const mu = this._bestE1RM(ex, rMinC);
         const ceil = this._ceilingKg(ex, rMinC) > 0
           ? ceilingE1RM(ex, this._currentBodyweightKg(), 'm', this._trainingAge(ex))
-          : (/** @type {Record<string, number>} */ (this.MAX_KG)[ex] || 0);
+          : (resolveMaxKg({ curated: /** @type {Record<string, number>} */ (this.MAX_KG)[ex], meta: getExerciseMetadata(ex), flagOn: isEnabled('dp_load_model_v1') }) || 0);
         const intervention = classifyAndIntervene({
           stagnationWeeks: stag, mu, ceiling: ceil, ex,
           occurrence: this._plateauOccurrence(ex),

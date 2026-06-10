@@ -21,13 +21,18 @@ const FORTA = [3, 8];          // goalAdaptation forta rep_range_modifier (TEMPL
 const HYPER = [8, 12];         // hipertrofie / masa rep band
 const FORTA_CORRIDOR = { floor: 0.78, ceiling: 0.90 }; // periodization forta corridor
 const HYPER_CORRIDOR = { floor: 0.70, ceiling: 0.85 };
+// dp_rep_class_v1 (full scope 2026-06-10) re-points compound bases ([6,10] derived
+// for non-curated names) — this file tests the STRENGTH flag's two arms against the
+// LEGACY rep world (BENCH/SQUAT/OHP default [8,12] → forta clamp floors to 8), so
+// pin the rep-class flag OFF in both helpers. The strength×rep-class ON interplay
+// is covered by the persona-matrix forta personas.
 const STRENGTH_ON = () =>
-  localStorage.setItem('_devFlags', JSON.stringify({ dp_strength_goal_v1: true }));
+  localStorage.setItem('_devFlags', JSON.stringify({ dp_strength_goal_v1: true, dp_rep_class_v1: false }));
 // dp_strength_goal_v1 now defaults ON (2026-06-09 flip) — the OFF-arm tests must
 // force it explicitly OFF to assert the byte-identical legacy behavior (same OFF-pin
 // precedent the focus-policy flip used).
 const STRENGTH_OFF = () =>
-  localStorage.setItem('_devFlags', JSON.stringify({ dp_strength_goal_v1: false }));
+  localStorage.setItem('_devFlags', JSON.stringify({ dp_strength_goal_v1: false, dp_rep_class_v1: false }));
 
 const BENCH = 'Flat Barbell Bench'; // COMPOUND_EX, barbell e1RM-eligible, NO REP_RANGES entry → default [8,12]
 const CABLE = 'Lat Pulldown';       // COMPOUND_EX cable, REP_RANGES [8,12]
@@ -108,6 +113,10 @@ describe('W-Goal — flag ON unclamps forta reps on a barbell compound', () => {
   });
 
   it('ON: hipertrofie reps == the flag-OFF hipertrofie reps (untouched)', () => {
+    // Both arms pin rep-class OFF (the OFF arm via STRENGTH_OFF) so only the
+    // STRENGTH flag differs — otherwise the ambient default-ON rep-class would
+    // re-point BENCH's compound band and confound the comparison.
+    STRENGTH_OFF();
     seedHistory(BENCH, 60, 8, 8);
     const off = DP.getSmartRecommendation(BENCH, null, null, undefined, null, [], {
       repRangeModifier: HYPER,

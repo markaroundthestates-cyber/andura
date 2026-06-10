@@ -1,15 +1,15 @@
 {
-  "_note": "Frozen calibration-sim baseline. Re-baselined 2026-06-09 for the RDL equipment-ladder fix (fresh-eyes #1: 'Romanian Deadlift' was mapped to the 'dumbbell' weight ladder, top 50kg — a barbell RDL back-solved to ~140kg snapped flat to 50 for everyone; re-routed to 'barbell_heavy', reaches 360kg). The sim's legs pool includes RDL, so its converging cohort now reaches realistic barbell loads instead of the 50kg ceiling. OLD hash fd2cf38a… → NEW 5414275e…. crater===0 HELD + absurd-OVERSHOOT (>3x true) ===0 HELD. barbell signed-err IMPROVED -0.263→-0.133 (RDL was the worst barbell undershoot — un-capping it converges it). absurd 8→7, nonAdaptation 3→2, oscillation 24=24, meanFinalAbsErr 0.265→0.259, convergedPct 2.9=2.9 — all within the §1.A band, the fix only helps. dp_metric_types_v1 default-ON does NOT move this hash (the calibration pool has no time/carry exercises). nProfiles=12 (CI tier).",
-  "engineHead": "RDL barbell_heavy ladder fix + dp_metric_types_v1 default-ON (config/weights.js + featureFlags.js)",
+  "_note": "Frozen calibration-sim baseline. Re-baselined 2026-06-10 for Daniel's coach-audit R2 (curated REP_RANGES spec → laterals/rear/calves [12,20], curls/triceps [10,15], leg ext/curl [15,20]). The curated table is the rep TRUTH, applied regardless of dp_rep_class_v1 (the flag governs DERIVATION for non-curated names only), so the wider floors move the rMin this sim back-solves the demonstrated working load at → the path-B prescription hash legitimately shifts (OLD 5414275e… → NEW 80d35da1…). VERIFIED BENIGN, learning IMPROVED: convergedPct 2.9→5.1, meanFinalAbsErr 0.259→0.258, machine signed-err -0.119→-0.104; crater===0 HELD, absurd-OVERSHOOT(>3x)===0 HELD, nonAdaptation 2=2, stuckHigh 5=5, stuckLow 85=85, absurd 7=7, barbell/cable/dumbbell bias flat. The ONLY metric that rose is oscillation 24→26 (+2): the wider rep bands let two borderline profiles bounce one extra weight step while converging closer to capacity — a saw-tooth-detector threshold artifact in a cohort that overall converges BETTER, not an instability regression (crater/absurd/stuck all flat, convergence up). dp_load_model_v1 is pinned OFF in resetStore (path-B), so the flip does NOT move this hash. nProfiles=12 (CI tier).",
+  "engineHead": "R2 curated REP_RANGES spec (Daniel coach audit 2026-06-10) — dp.js REP_RANGES",
   "nProfiles": 12,
   "seed": "0xA9D04A",
-  "hash": "5414275e8248fb7f87af10a6e467cd3da56bc7479f08ccd3469531751e1971b8",
-  "convergedPct": 2.9,
+  "hash": "80d35da1077953421253ace7990b1db3f7e3785dc773ad2290569fc6a0ed888a",
+  "convergedPct": 5.1,
   "medianSessionsToConverge": 27,
-  "meanFinalAbsErr": 0.259,
+  "meanFinalAbsErr": 0.258,
   "flags": {
     "nonAdaptation": 2,
-    "oscillation": 24,
+    "oscillation": 26,
     "stuckHigh": 5,
     "stuckLow": 85,
     "absurd": 7
@@ -17,7 +17,7 @@
   "equipMeanSignedErr": {
     "barbell": -0.133,
     "cable": -0.26,
-    "dumbbell": -0.155,
-    "machine": -0.119
+    "dumbbell": -0.156,
+    "machine": -0.104
   }
 }

@@ -91,6 +91,10 @@ export const FLIPPED_FLAGS = Object.freeze([
   // no longer rely on "no _devFlags ⇒ off"), keeping hashOff byte-for-byte. ON behavior
   // is proven on the #70 matrix + the unit suites, NOT in this determinism stream.
   'dp_strength_goal_v1', 'dp_split_rebalance_v1',
+  // THE FLIP 2026-06-10 (R4) — anchor-protective shave defaults ON (the non-
+  // recovered shave exempts the anchor compound, re-shaved from the back).
+  // Path-A SETS distribution → pinned OFF here so hashOff stays byte-for-byte.
+  'dp_anchor_sets_v1',
   // THE FLIP 2026-06-10 — metadata-derived rep-range resolver now defaults ON
   // (izolarile primesc banda lor de clasa 12-20/15-20; CUT nu le mai striveste la
   // 10). Added here so the A/B arms force it explicitly OFF: the frozen stream
@@ -98,6 +102,15 @@ export const FLIPPED_FLAGS = Object.freeze([
   // would move the frozen hashes. ON behavior is proven on Daniel's before/after
   // probe + the #70 persona matrix, NOT in this determinism stream.
   'dp_rep_class_v1',
+  // THE FLIP 2026-06-10 (R6a) — upper-day biceps guarantee defaults ON (a cluster
+  // that trains biceps injects one if selection rounded it out). Path-A selection
+  // surface → pinned OFF here so the frozen composition hashes stay byte-for-byte.
+  'dp_biceps_guarantee_v1',
+  // THE FLIP 2026-06-10 (R5) — metadata-derived load model defaults ON (a derived
+  // maxKg cap + equipment step fills the ~uncapped exercises; curated wins). It
+  // moves prescribed kg + the at-cap brake → pinned OFF here so hashOff/hashOn
+  // stay frozen; ON is proven on the Daniel probe + loadModel.test.js + #70.
+  'dp_load_model_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

@@ -40,10 +40,10 @@ describe('DP.getPhaseAwareRepRange', () => {
     expect(DP.getPhaseAwareRepRange('Bayesian Curl', true)).toEqual([10, 10]);
   });
 
-  it('returns original [10, 12] for isolation in NON-CUT', () => {
-    expect(DP.getPhaseAwareRepRange('Cable Curl', false)).toEqual([10, 12]);
+  it('returns original [10, 15] for isolation in NON-CUT (founder spec 2026-06-10)', () => {
+    expect(DP.getPhaseAwareRepRange('Cable Curl', false)).toEqual([10, 15]);
     // Real emitted CORE_AUTO triceps name (legacy 'Overhead Triceps' was dead).
-    expect(DP.getPhaseAwareRepRange('Cable Overhead Triceps Extension Rope', false)).toEqual([10, 12]);
+    expect(DP.getPhaseAwareRepRange('Cable Overhead Triceps Extension Rope', false)).toEqual([10, 15]);
   });
 
   it('returns original range for compound with [8, 12] in CUT (Lat Pulldown)', () => {
@@ -52,16 +52,18 @@ describe('DP.getPhaseAwareRepRange', () => {
     expect(DP.getPhaseAwareRepRange('Chest-Supported Row', true)).toEqual([10, 12]);
   });
 
-  it('caps 12-15 isolation range to [10,10] in CUT (DB Lateral Raise, DB Rear Delt Fly)', () => {
-    // Real emitted CORE_AUTO names (legacy 'Lateral Raises'/'Rear Delt Fly' were dead).
-    expect(DP.getPhaseAwareRepRange('DB Lateral Raise', true)).toEqual([10, 10]);
-    expect(DP.getPhaseAwareRepRange('DB Rear Delt Fly', true)).toEqual([10, 10]);
+  it('12-20 laterals are OUTSIDE the legacy cut-cap scope (founder spec 2026-06-10 moved them up)', () => {
+    // The legacy cap only bites rMax in (10,15]; lateral/rear-delt are now [12,20]
+    // per the founder revision, so even the legacy arm leaves them uncapped — the
+    // cap mechanic itself stays covered by the curls/triceps assertions above.
+    expect(DP.getPhaseAwareRepRange('DB Lateral Raise', true)).toEqual([12, 20]);
+    expect(DP.getPhaseAwareRepRange('DB Rear Delt Fly', true)).toEqual([12, 20]);
   });
 
-  it('caps the 10-15 leg-machine range to [10,10] in CUT (Leg Curl)', () => {
-    // Leg Curl is now hypertrophy-ranged [10,15] (not endurance 15-20); in CUT the
-    // non-compound 12<rMax<=15 cap collapses it to [10,10] like the other isolation.
-    expect(DP.getPhaseAwareRepRange('Leg Curl', true)).toEqual([10, 10]);
+  it('15-20 leg-machine isolations are outside the cut-cap scope too (Leg Curl)', () => {
+    // Founder spec 2026-06-10 (semantic rewrite of #20): single-joint leg machines
+    // are back to [15,20]; rMax 20 > 15 → the legacy cap never applied to this band.
+    expect(DP.getPhaseAwareRepRange('Leg Curl', true)).toEqual([15, 20]);
   });
 });
 

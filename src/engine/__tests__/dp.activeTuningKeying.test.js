@@ -45,40 +45,44 @@ describe('F-1: every tuning-table key names a LIVE active CORE_AUTO exercise', (
 });
 
 describe("F-1: founder's re-pointed tuning reaches the emitted isolation names", () => {
-  // The legacy intent (12-15 lateral/rear-delt/face-pull, 10-12 curls/triceps,
-  // 10-15 calves) must now apply to the names the builder actually emits.
-  it('lateral raises → [12,15] on every emitted variant', () => {
+  // Founder spec 2026-06-10 (R2 coach audit): low-risk isolations get their class
+  // band — laterals/rear-delts/calves [12,20], curls/triceps [10,15] — applied to
+  // the names the builder actually emits. Face Pull stays [12,15] (rotator-cuff
+  // safety: high reps on a small external rotator invite sloppy form).
+  it('lateral raises → [12,20] on every emitted variant', () => {
     for (const n of ['DB Lateral Raise', 'Cable Lateral Raise', 'Machine Lateral Raise', 'Leaning Lateral Raise']) {
-      expect(DP.REP_RANGES[n]).toEqual([12, 15]);
+      expect(DP.REP_RANGES[n]).toEqual([12, 20]);
       expect(isActive(n)).toBe(true);
     }
   });
 
-  it('rear delt + face pull → [12,15] on emitted names', () => {
-    for (const n of ['DB Rear Delt Fly', 'Cable Rear Delt Fly', 'Reverse Pec Deck', 'Face Pull']) {
-      expect(DP.REP_RANGES[n]).toEqual([12, 15]);
+  it('rear delt + reverse pec deck → [12,20]; face pull stays [12,15]', () => {
+    for (const n of ['DB Rear Delt Fly', 'Cable Rear Delt Fly', 'Reverse Pec Deck']) {
+      expect(DP.REP_RANGES[n]).toEqual([12, 20]);
       expect(isActive(n)).toBe(true);
     }
+    expect(DP.REP_RANGES['Face Pull']).toEqual([12, 15]);
+    expect(isActive('Face Pull')).toBe(true);
   });
 
-  it('triceps pushdown / overhead → [10,12] on emitted names', () => {
+  it('triceps pushdown / overhead → [10,15] on emitted names', () => {
     for (const n of [
       'Cable Triceps Pushdown Straight Bar', 'Cable Triceps Pushdown Rope',
       'Cable Overhead Triceps Extension Rope', 'DB Overhead Triceps Extension Two-Hand',
     ]) {
-      expect(DP.REP_RANGES[n]).toEqual([10, 12]);
+      expect(DP.REP_RANGES[n]).toEqual([10, 15]);
       expect(isActive(n)).toBe(true);
     }
   });
 
-  it('preacher curl → [10,12] on the emitted name', () => {
-    expect(DP.REP_RANGES['EZ-bar Preacher Curl']).toEqual([10, 12]);
+  it('preacher curl → [10,15] on the emitted name', () => {
+    expect(DP.REP_RANGES['EZ-bar Preacher Curl']).toEqual([10, 15]);
     expect(isActive('EZ-bar Preacher Curl')).toBe(true);
   });
 
-  it('calf raises → [10,15] on emitted names', () => {
+  it('calf raises → [12,20] on emitted names', () => {
     for (const n of ['Standing Calf Raise Machine', 'Seated Calf Raise Machine', 'Smith Standing Calf Raise']) {
-      expect(DP.REP_RANGES[n]).toEqual([10, 15]);
+      expect(DP.REP_RANGES[n]).toEqual([12, 20]);
       expect(isActive(n)).toBe(true);
     }
   });

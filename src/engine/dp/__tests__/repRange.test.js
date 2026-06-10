@@ -99,10 +99,17 @@ describe('repRange — phaseAwareRepRange (both flag arms, surgical isolation-on
       .toEqual([10, 15]);
   });
 
-  it('ON → COMPOUND is byte-identical to legacy (surgical: flag never touches compounds)', () => {
-    const args = { curated: [8, 12], meta: compMeta, isInCut: true, isLegacyCompound: true };
-    expect(phaseAwareRepRange({ ...args, flagOn: true }))
-      .toEqual(phaseAwareRepRange({ ...args, flagOn: false }));
+  it('ON → curated COMPOUND keeps its founder band, uncapped in CUT (pulls/RDL stay 8-12)', () => {
+    expect(phaseAwareRepRange({ curated: [8, 12], meta: compMeta, isInCut: true, flagOn: true, isLegacyCompound: true }))
+      .toEqual([8, 12]);
+  });
+
+  it('ON → non-curated COMPOUND derives [6,10] (presses/squat machines — was [8,12]→cut-crushed [8,10] via the stale COMPOUND_EX exemption)', () => {
+    expect(phaseAwareRepRange({ curated: undefined, meta: compMeta, isInCut: true, flagOn: true, isLegacyCompound: false }))
+      .toEqual([6, 10]);
+    // OFF stays the legacy crush — the ON arm is the fix.
+    expect(phaseAwareRepRange({ curated: undefined, meta: compMeta, isInCut: true, flagOn: false, isLegacyCompound: false }))
+      .toEqual([8, 10]);
   });
 
   it('ON → a meta-less name falls back to the legacy default ([8,12] non-cut; [8,10] under the legacy CUT cap)', () => {

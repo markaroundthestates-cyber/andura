@@ -319,6 +319,12 @@ function toPlannedExercise(
         ? Math.max(1, engineEx.sets + rec.setsAdjust)
         : engineEx.sets,
     targetReps: finalTargetReps,
+    // R6c — the rep BAND for preview display ("10–15"). DP attaches repsRange on
+    // every recommendation; targetReps stays the numeric per-set prefill target.
+    // Suppressed for time/carry metrics (no rep band on a plank).
+    ...(!honorMetric && rec && typeof (rec as { repsRange?: unknown }).repsRange === 'string'
+      ? { repsBand: (rec as unknown as { repsRange: string }).repsRange }
+      : {}),
     targetKg,
     // Fix #4 — rest from the engine rest range (compound=MAX / isolation=MIN),
     // NOT the prior hardcoded 90 for every exercise.
@@ -395,15 +401,15 @@ export function buildSwappedExercise(
   return { ...planned, swapReason };
 }
 
-// Audit HIGH "0 kg" — secunde estimate per set de lucru (timp sub tensiune +
-// tranzitie/setup), folosit la estimarea de durata. Banda tipica 30-50s pentru
-// un set de hipertrofie; 40 = mijloc conservativ. Estimare documentata.
-const SET_WORK_SEC = 40;
+// Secunde estimate per set de lucru (timp sub tensiune + re-rack/cretat/micro-
+// pauze/check forma). Calibrat 2026-06-10 pe sesiunile reale Daniel: 40s subevalua
+// executia reala a unui set; 50s aduce 7ex in 55-70 min si 8ex in 65-80 min.
+const SET_WORK_SEC = 50;
 // Tranzitie/setup per EXERCITIU (mers la aparat, schimbat greutatile, reglat
 // banca, gasit un loc liber). SET_WORK_SEC + restSec acopera doar timpul DIN
 // cadrul unui exercitiu; aceasta constanta adauga timpul DINTRE exercitii pe care
-// estimarea il rata. ~75s e o medie conservativa pentru o sala normala. Documentat.
-const EXERCISE_TRANSITION_SEC = 75;
+// estimarea il rata. Calibrat 2026-06-10: ~105s o medie reala pentru o sala plina.
+const EXERCISE_TRANSITION_SEC = 105;
 
 /**
  * Tonajul planificat REAL (kg) — suma sets × targetReps × targetKg peste

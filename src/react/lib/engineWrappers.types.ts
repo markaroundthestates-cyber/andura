@@ -87,6 +87,12 @@ export interface PlannedExercise {
   swapReason?: string;
   sets: number;
   targetReps: number;
+  // R6c (Daniel coach audit 2026-06-10): the per-exercise rep BAND ("10–15") for
+  // preview display — the engine now carries class-correct bands (dp_rep_class_v1)
+  // and showing only the single target ("8 reps") hid half the prescription.
+  // Sourced from DP.getSmartRecommendation().repsRange at the compose boundary;
+  // optional — preview rows fall back to targetReps when absent.
+  repsBand?: string;
   // For LOADED exercises: the external kg on the bar/stack (the load).
   // For BODYWEIGHT exercises: the ADDED weight (belt/dumbbell; default 0 =
   // pure bodyweight, negative = assisted). The TRAINING load used by

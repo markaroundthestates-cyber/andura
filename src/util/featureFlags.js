@@ -1060,6 +1060,44 @@ export const FLAGS = Object.freeze({
   // honoring the metadata-derived ranges would move the hashes. ON behavior is
   // proven on the before/after probe + the #70 persona matrix, NOT in this stream.
   dp_rep_class_v1: { rollout: 1, default: true },
+
+  // R5 load-model (Daniel coach audit 2026-06-10 "Y Raise 25kg ego-load") (RISK
+  // MED-HIGH — MOVES kg: caps + steps). The curated MAX_KG/WEIGHT_STEPS enumerate
+  // ~60 staples; every other exercise (Y Raise, Hip Abduction Machine, Smith
+  // Shrug, Machine Pullover, Hammer Curl, ...) had NO defensive cap → the
+  // double-progression climbed it without the at-cap reps-growth brake
+  // (dp.js keys the brake solely on a present maxKg), and NO equipment step →
+  // generic 2.5 even on 5kg machine stacks. When ON, dp/loadModel.js derives a
+  // defensive cap (muscle × equipment × class, clip-only-absurd, founder-
+  // mirrored isolation values) + a real equipment step for the gaps; curated
+  // entries always win. OFF → byte-identical legacy (curated-or-null cap, flat
+  // 2.5 step). THE FLIP 2026-06-10 — probe on Daniel's real 22-exercise program
+  // PASSED: the only braked lift is Y Raise (ego-load 25kg → cap 18, the audit
+  // target); every legit lift is well under its derived cap (Hyperext 55 vs 180,
+  // RDL vs 360, presses vs 220) and every curated cap wins unchanged. Pinned OFF
+  // in fp-config FLIPPED_FLAGS (path A) + calibration-sim resetStore (path B,
+  // direct getSmartRecommendation) so both determinism baselines stay frozen.
+  dp_load_model_v1: { rollout: 1, default: true },
+
+  // R4 anchor-protective shave (Daniel coach audit 2026-06-10 "main lifts primesc
+  // 3 seturi, nu totul 2") (RISK LOW-MED — moves SETS distribution, never kg). On
+  // a NON-RECOVERED group the legacy shave hit every exercise including the
+  // anchor (Daniel's real day: Smith Squat at 2 sets, readiness 60). When ON, the
+  // first tier-1 compound of the group is EXEMPT from the shave + keeps the fresh
+  // 3-set floor; the spared set is re-shaved from the back of the group
+  // (isolations above their floor) so the group TOTAL stays equal — "coach-ul
+  // taie din accesorii, nu din lift-ul principal". OFF → byte-identical. Pinned
+  // OFF in the fp-config FLIPPED_FLAGS baseline (path-A composition surface).
+  dp_anchor_sets_v1: { rollout: 1, default: true },
+
+  // #R6a upper-day biceps guarantee (Daniel coach audit 2026-06-10 "ziua Upper nu
+  // are biceps") (RISK LOW — selection only, never kg). A cluster that trains
+  // biceps (upper/pull/full) must include >=1 biceps movement; the low slot share
+  // (upper biceps 0.15) rounded it out of his real 8-exercise Upper day. When ON,
+  // a biceps movement is injected if none landed (add if room, else replace the
+  // lowest-priority non-anchor isolation). OFF → byte-identical. Pinned OFF in the
+  // fp-config FLIPPED_FLAGS baseline (path-A composition surface).
+  dp_biceps_guarantee_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

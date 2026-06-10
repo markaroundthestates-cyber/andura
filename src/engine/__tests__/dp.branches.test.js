@@ -51,6 +51,12 @@ beforeEach(() => {
       // individually exercised; the ON metadata-derived arm is covered by
       // dp/repRange.test.js + the persona-matrix + the full-path-sim.
       dp_rep_class_v1: false,
+      // dp_load_model_v1 also defaults ON (THE FLIP 2026-06-10) — it adds derived
+      // maxKg caps + equipment steps to the ~uncapped exercises, which moves the
+      // getIncrement fallback (unlisted → derived equip step, not flat 2.5) + the
+      // at-cap brake these branch tests assert in the LEGACY load world. Pin OFF;
+      // ON is covered by dp/__tests__/loadModel.test.js + the Daniel probe.
+      dp_load_model_v1: false,
     }));
   } catch { /* jsdom always provides localStorage */ }
 });
@@ -286,13 +292,13 @@ describe('DP._recommendRaw — branch coverage', () => {
   });
 
   it('PEAK: at weight cap AND at the top of the range (>= rMax) → maintain', () => {
-    // DB Lateral Raise rMax=15; once lastReps reaches rMax at the weight cap we
-    // maintain at rMax (no rMax+4 over-range escalation any more).
-    store['logs'] = [log('DB Lateral Raise', 18, 15, 7)];
+    // DB Lateral Raise rMax=20 (R2 lateral band [12,20]); once lastReps reaches
+    // rMax at the weight cap we maintain at rMax (no rMax+4 over-range escalation).
+    store['logs'] = [log('DB Lateral Raise', 18, 20, 7)];
     const r = DP._recommendRaw('DB Lateral Raise');
     expect(r.status).toBe('PEAK');
     expect(r.kg).toBe(18);
-    expect(r.repsTarget).toBe(15);   // rMax
+    expect(r.repsTarget).toBe(20);   // rMax
   });
 
   it('single HARD at target reps HOLDS the load (Gigel sim 2026-06-06 Target 2: no single-greu ease)', () => {
@@ -551,7 +557,7 @@ describe('DP.getIntensityLabel — RIR thresholds', () => {
 
 describe('DP.getPhaseAwareRepRange — boundaries', () => {
   it('non-CUT returns the raw range unchanged', () => {
-    expect(DP.getPhaseAwareRepRange('Cable Curl', false)).toEqual([10, 12]);
+    expect(DP.getPhaseAwareRepRange('Cable Curl', false)).toEqual([10, 15]);
   });
 
   it('CUT does NOT cap a compound even if rMax in 11-15 (COMPOUND_EX guard)', () => {
@@ -852,8 +858,10 @@ describe('DP injectable clock — AUTO/TARGET_DATE CUT branch (§07.198-204)', (
   });
 
   it('getRepsRange respects injected nowMs on AUTO (cap before, raw after)', () => {
-    expect(DP.getRepsRange('DB Lateral Raise', BEFORE)).toEqual([10, 10]); // in-cut cap
-    expect(DP.getRepsRange('DB Lateral Raise', AFTER)).toEqual([12, 15]);  // not-in-cut
+    // Fixture = Cable Curl [10,15]: still inside the legacy cut-cap scope (rMax<=15).
+    // DB Lateral Raise moved to [12,20] (founder spec 2026-06-10) → outside the cap.
+    expect(DP.getRepsRange('Cable Curl', BEFORE)).toEqual([10, 10]); // in-cut cap
+    expect(DP.getRepsRange('Cable Curl', AFTER)).toEqual([10, 15]);  // not-in-cut
   });
 
   it('getRepsRange omitting nowMs defaults to real clock (no throw, valid range)', () => {

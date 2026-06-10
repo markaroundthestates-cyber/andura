@@ -144,13 +144,18 @@ function legacyRepRange(curated, isInCut, isLegacyCompound) {
  * Full phase-aware dispatch — BOTH flag arms — extracted here so the dp.js
  * moratorium holds (DP.getPhaseAwareRepRange stays a thin shim).
  *
- * SURGICAL SCOPE (Daniel coach audit 2026-06-10): the flag touches ONLY
- * ISOLATIONS — the complaint was isolations shown at 8-10 instead of 12-20.
- * Compounds keep their EXACT legacy range (byte-identical ON vs OFF) so there is
- * no cross-flag interaction with the forta clamp (which floors to rMin) and no
- * compound rep shift. An isolation gets its class-aware band (curated > derived)
- * and is NOT cut-capped — the deficit is carried by volume, not by crushing the
- * isolation rep stimulus (Daniel point #5: "CUT reduces sets, not reps").
+ * FULL SCOPE (Daniel 2026-06-10 "fa-le pe toate" — supersedes the interim
+ * isolation-only narrowing): the flag-ON arm resolves EVERY exercise with
+ * metadata. Isolations get their class band (curated > derived) and are NOT
+ * cut-capped (Daniel point #5: the deficit is carried by volume, not by
+ * crushing the isolation rep stimulus). Compounds get curated-or-derived [6,10]
+ * — this delivers "presses 6-10" (Smith OHP / Smith Squat / chest-press
+ * machines had NO curated entry and fell to [8,12], then the LEGACY cut-cap
+ * crushed them to [8,10] because its exemption keys on the stale 9-name
+ * COMPOUND_EX list (the M1 stale-list class) — the ON arm has no cut-cap at
+ * all, so the stale list is unreachable for ON users. Curated compounds
+ * (Lat Pulldown / Cable Row / RDL / Leg Press [8,12]) keep the founder band.
+ * Only a meta-less name still walks the byte-identical legacy path.
  *
  * @param {Object} input
  * @param {[number, number] | undefined} input.curated curated REP_RANGES[ex]
@@ -161,9 +166,6 @@ function legacyRepRange(curated, isInCut, isLegacyCompound) {
  * @returns {number[]}
  */
 export function phaseAwareRepRange({ curated, meta, isInCut, flagOn, isLegacyCompound }) {
-  if (!flagOn) return legacyRepRange(curated, isInCut, isLegacyCompound);
-  // FLAG ON — compounds + meta-less names stay on the exact legacy path; only an
-  // isolation with metadata gets the uncapped class-aware band.
-  if (!meta || isHighFatigueCompound(meta)) return legacyRepRange(curated, isInCut, isLegacyCompound);
+  if (!flagOn || !meta) return legacyRepRange(curated, isInCut, isLegacyCompound);
   return resolveRepRange({ curated, meta, isInCut });
 }

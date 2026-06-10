@@ -32,7 +32,12 @@ export function resetStore() {
     // true legacy-rep world (the determinism + calibration-drift guard the sim
     // exists for). The ON rep behavior is covered by dp/repRange.test.js + the
     // #70 persona-matrix + the full-path-sim ON arm.
-    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false }));
+    // dp_load_model_v1 also defaults ON (THE FLIP 2026-06-10): it adds a derived
+    // maxKg cap + equipment step to the ~uncapped exercises, moving both the
+    // at-cap reps-brake and the increment this sim's hash freezes. Same path-B
+    // reasoning — pin OFF here; ON behavior is covered by loadModel.test.js + the
+    // Daniel real-exercise probe + the #70 persona-matrix.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false, dp_load_model_v1: false }));
   } catch {
     /* jsdom always provides localStorage */
   }

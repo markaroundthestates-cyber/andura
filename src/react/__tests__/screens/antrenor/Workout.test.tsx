@@ -144,11 +144,12 @@ function resetStore(): void {
     sessionContext: null,
   });
   localStorage.clear();
-  // dp_rep_class_v1 defaults ON (THE FLIP 2026-06-10). These UI tests assert
-  // specific legacy rep targets (e.g. the mock 'Bench Press' default 10) and the
-  // PR/log wiring around them — pin the legacy rep arm so they exercise the UI
-  // flow, not the rep-range feature (covered by dp/repRange.test.js).
-  localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false }));
+  // dp_rep_class_v1 + dp_load_model_v1 default ON (THE FLIP 2026-06-10). These UI
+  // tests assert specific legacy rep targets + autoreg load steps (e.g. the mock
+  // 'Bench Press' default 10 reps + the +2.5 move-up) and the PR/log wiring around
+  // them — pin both legacy arms so they exercise the UI flow, not the rep-range /
+  // load-model features (covered by dp/repRange.test.js + loadModel.test.js).
+  localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false, dp_load_model_v1: false }));
   vi.mocked(getPRDelta).mockReturnValue(null);
 }
 
