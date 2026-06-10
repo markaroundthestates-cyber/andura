@@ -1098,6 +1098,16 @@ export const FLAGS = Object.freeze({
   // lowest-priority non-anchor isolation). OFF → byte-identical. Pinned OFF in the
   // fp-config FLIPPED_FLAGS baseline (path-A composition surface).
   dp_biceps_guarantee_v1: { rollout: 1, default: true },
+
+  // #R6d cross-week lumbar redundancy dedup (Daniel coach audit 2026-06-10 "RDL +
+  // Hyperextension aceeasi saptamana") (RISK MED — trims session COMPOSITION; OFF
+  // by default pending Daniel A/B because cluster-granularity can occasionally
+  // demote a hinge that was not truly redundant). When ON, a REPEAT leg/posterior
+  // day this week demotes the heavy lumbar hip-hinge family (deadlift/good-morning/
+  // back-extension) via the existing poolForGroup demote channel so a non-hinge
+  // sibling (leg curl) leads; the FIRST leg day keeps its hinge; demote-only +
+  // last-option guarded → never strands. OFF → merges null → byte-identical.
+  dp_lumbar_dedup_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */

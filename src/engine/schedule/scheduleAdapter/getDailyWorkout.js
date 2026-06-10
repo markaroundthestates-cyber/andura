@@ -17,6 +17,7 @@ import { buildSession } from '../../sessionBuilder.js';
 import { buildExclusionTokens, contraindicatedGroupsFromPainCdl } from '../../movementExclusion.js';
 import { isEnabled } from '../../../util/featureFlags.js';
 import { exercisePenaltyMap } from '../../dp/exercisePain.js';
+import { lumbarDedupPenalties, mergePenalties } from './lumbarDedup.js';
 import { painSwapMap } from '../../dp/painMemory.js';
 import { fatigueSetsAdjust } from '../../dp/fatigueCurve.js';
 import { effectiveRepsSetsTrim } from '../../dp/effectiveReps.js';
@@ -593,7 +594,22 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // OFF → empty map → byte-identical pool order). When ON, a repeatedly-skipped /
     // recently-painful SPECIFIC exercise is demoted in poolForGroup so a same-muscle
     // sibling is preferred; never a hard ban (poolForGroup keeps the last option).
-    exercisePenalties: isEnabled('dp_pain_deprioritize_v1') ? exercisePenaltyMap() : null,
+    // #R6d cross-week lumbar dedup (dp_lumbar_dedup_v1, default OFF → merges null
+    // → byte-identical) merged into the SAME demote channel: a REPEAT leg/posterior
+    // day this week demotes the heavy lumbar hinge family so a non-hinge sibling
+    // leads (RDL on the first leg day, leg curl on the second — Daniel's "two
+    // lumbar hinges/week" audit). Demote-only, last-option guarded → never strands.
+    exercisePenalties: mergePenalties(
+      isEnabled('dp_pain_deprioritize_v1') ? exercisePenaltyMap() : null,
+      lumbarDedupPenalties({
+        flagOn: isEnabled('dp_lumbar_dedup_v1'),
+        activeWeek,
+        dayIdx,
+        todayCluster: cluster,
+        focusPreset,
+        splitRebalance,
+      }),
+    ),
     // #64 PERSISTENT pain memory PROACTIVE swap (dp_pain_memory_v1, default OFF →
     // null → byte-identical pool). When ON, a user-PINNED painful exercise is
     // REPLACED in poolForGroup by its persisted curated chain substitute (held
