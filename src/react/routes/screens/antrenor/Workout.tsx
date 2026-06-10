@@ -487,8 +487,26 @@ export function Workout(): JSX.Element {
   // tap/log events later capture what the user actually did vs this rec — the
   // raw material the later self-evaluation phase mines. No-op when flag OFF;
   // never throws (debugLog fully wrapped).
+  //
+  // F3 (Daniel live 2026-06-10) — STALE-REC FLASH guard. recKg/recReps are state
+  // that LAGS one render behind the exercise: on an exercise transition the effect
+  // fires once with the PREVIOUS exercise's recKg (before the reset effect's
+  // setRecKg commits), then again with the reconciled value — a visible wrong-weight
+  // flash + a double-logged `rec`. On a transition the EXERCISE-SYNCED target
+  // (targetKg/targetReps, recomputed from currentExercise every render) is the
+  // correct shown rec (recKg is reset to it); within an exercise recKg is the truth
+  // (autoreg may have bumped it). Pick the synced value on a transition, dedupe by
+  // (exIdx,setIdx,kg,reps) so the post-reset re-render does not emit the same slot
+  // twice → exactly one rec event per set, never stale.
+  const recEmitRef = useRef<{ exIdx: number; sig: string }>({ exIdx: -1, sig: '' });
   useEffect(() => {
     if (!hasWorkout) return;
+    const isTransition = safeExIdx !== recEmitRef.current.exIdx;
+    const shownKg = isTransition ? targetKg : recKg;
+    const shownReps = isTransition ? currentExercise.targetReps : recReps;
+    const sig = `${safeExIdx}:${currentSetIdx}:${shownKg}:${shownReps}`;
+    if (sig === recEmitRef.current.sig) return; // post-reset re-render — already logged
+    recEmitRef.current = { exIdx: safeExIdx, sig };
     // source = whether this starting rec is a cold-start (no prior engine state
     // for this exercise → lastW===0) vs adapted from history. Cheap: DP.getState
     // on the ENGINE key is already read for noExerciseHistory above. Bodyweight
@@ -507,8 +525,8 @@ export function Workout(): JSX.Element {
     }
     debugLog.event(
       'rec',
-      { exercise: currentExercise.name, setIdx: currentSetIdx + 1, recKg, recReps, source },
-      { route: '/app/antrenor/workout', exercise: currentExercise.name, setIdx: currentSetIdx + 1, shownKg: recKg, shownReps: recReps },
+      { exercise: currentExercise.name, setIdx: currentSetIdx + 1, recKg: shownKg, recReps: shownReps, source },
+      { route: '/app/antrenor/workout', exercise: currentExercise.name, setIdx: currentSetIdx + 1, shownKg, shownReps },
       sessionStart ?? undefined,
       currentExercise.engineName ?? currentExercise.name,
     );
@@ -683,6 +701,9 @@ export function Workout(): JSX.Element {
         recKg,
         recReps,
         loggedKg: effKg, // the load the user ACTUALLY logged this set
+        // F1 — did the user MANUALLY type this set's load (vs an untouched prefill)?
+        // A deliberate lower entry is the DOWN signal the in-session adjust honors.
+        wasManualOverride: inputDirty,
         setIdx: currentSetIdx + 1,
         // #5/A — when the user explicitly confirmed a flagged outlier, let the
         // engine learn from it; otherwise the engine self-skips calibration on a

@@ -46,6 +46,7 @@ vi.mock('../../../lib/engineWrappers', async () => {
 import { Workout } from '../../../routes/screens/antrenor/Workout';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { getPRDelta, getTodayWorkout, getWhyExerciseSummary } from '../../../lib/engineWrappers';
+import { debugLog } from '../../../lib/debugLog';
 import { DB } from '../../../../db.js';
 
 function LocationProbe(): JSX.Element {
@@ -544,6 +545,62 @@ describe('Workout — state machine transition + advance exercise', async () => 
     // Advances exactly once (exIdx 0 → 1), never skips a whole exercise.
     expect(useWorkoutStore.getState().exIdx).toBe(1);
     expect(useWorkoutStore.getState().phase).toBe('logging');
+  });
+});
+
+// ── F3 — no stale-rec flash on exercise transition (Daniel live 2026-06-10) ───
+// The first `rec` event of a new exercise carried the PREVIOUS exercise's kg/reps
+// (recKg state lags one render behind the exercise) → a visible wrong-weight flash
+// + a double-logged rec. The emit now uses the exercise-synced target on a
+// transition + dedupes by slot, so each exercise's first rec carries ITS OWN value.
+describe('Workout — F3 rec emit carries the CURRENT exercise on transition', async () => {
+  beforeEach(() => {
+    resetStore();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  const advanceBeyondFastSetsWindow = (): void => {
+    act(() => {
+      vi.advanceTimersByTime(31000);
+    });
+  };
+
+  it('the first rec of exercise 2 never carries exercise 1 kg; one rec per set', async () => {
+    const spy = vi.spyOn(debugLog, 'event');
+    await renderWorkoutAndWait();
+    // Drive Bench Press (ex0, 22.5kg) → Overhead Press (ex1, 17.5kg): log all 4
+    // sets then let the inter-exercise rest + transition land us on ex1 logging.
+    for (let i = 0; i < 4; i++) {
+      logSet('Potrivit');
+      if (i < 3) {
+        fireEvent.click(screen.getByTestId('rest-skip'));
+        advanceBeyondFastSetsWindow();
+      }
+    }
+    act(() => { vi.advanceTimersByTime(90000); }); // inter-exercise rest end → transition
+    act(() => { vi.advanceTimersByTime(1500); });   // transition delay → advance to ex1
+    expect(useWorkoutStore.getState().exIdx).toBe(1);
+
+    const recEvents = spy.mock.calls
+      .filter((c) => c[0] === 'rec')
+      .map((c) => c[1] as { exercise: string; setIdx: number; recKg: number });
+    const ohpRecs = recEvents.filter((e) => e.exercise === 'Overhead Press');
+    // At least one rec for the new exercise, and NONE of them carry Bench Press kg.
+    expect(ohpRecs.length).toBeGreaterThan(0);
+    for (const e of ohpRecs) {
+      expect(e.recKg).not.toBe(22.5);      // never the previous exercise's load
+      expect(e.recKg).toBe(17.5);          // its own target
+    }
+    // No stale cross-pollination the other way either (a Bench rec carrying 17.5).
+    const benchRecs = recEvents.filter((e) => e.exercise === 'Bench Press');
+    for (const e of benchRecs) expect(e.recKg).toBe(22.5);
+    // Exactly one rec per (exercise,set) slot — no double-fire.
+    const slots = recEvents.map((e) => `${e.exercise}:${e.setIdx}`);
+    expect(new Set(slots).size).toBe(slots.length);
+    spy.mockRestore();
   });
 });
 

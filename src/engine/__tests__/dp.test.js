@@ -237,6 +237,86 @@ describe('DP.checkInSessionAdjust — per-set reps autoregulation (CUT/masa phas
   });
 });
 
+// ── checkInSessionAdjust — F1 manual-override DOWN anchor (Daniel live 2026-06-10)
+// REAL session replay: rec 30×6 Seated DB Press (dumbbell ladder ...,20,22.5,25,
+// 27.5,30,...), Daniel manually typed lower loads. Before F1 the coach kept
+// re-showing 30 every set (dir:"hold"/"no-adjust") while he worked 20-25 — the
+// up-channel worked but there was no symmetric DOWN. After F1 a deliberate lower
+// entry is honored within the session. greu = INSESSION_RATING_TO_RPE 10 (>=9.5);
+// potrivit = 7.5; usor = 6.5. CUT phase mock → non-strength (v-taper-like).
+describe('DP.checkInSessionAdjust — F1 manual-override DOWN (real Daniel values)', () => {
+  beforeEach(() => {
+    DP.getState = vi.fn(() => ({ lastW: 30 })); // has Seated DB Press history
+  });
+  afterEach(() => {
+    DP.getState = DP.getState.mockRestore?.() || DP.getState;
+  });
+
+  it('rec 30 → entered 20 "potrivit" anchors the next set to 20 (not a held 30)', () => {
+    const r = DP.checkInSessionAdjust('Seated DB Press', [7.5], [8], {
+      recKg: 30, recReps: 6, loggedKg: 20, wasManualOverride: true, setIdx: 1,
+    });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
+    expect(r.newKg).toBe(20); // snapped to the entered load
+  });
+
+  it('rec 30 → entered 25 "greu" eases the next set to one step UNDER 25 (= 22.5)', () => {
+    const r = DP.checkInSessionAdjust('Seated DB Press', [10], [6], {
+      recKg: 30, recReps: 6, loggedKg: 25, wasManualOverride: true, setIdx: 2,
+    });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
+    expect(r.newKg).toBe(22.5); // dumbbell rung below 25
+  });
+
+  it('rec 30 → entered 22.5 "greu" eases to one step under (= 20)', () => {
+    const r = DP.checkInSessionAdjust('Seated DB Press', [10], [6], {
+      recKg: 30, recReps: 6, loggedKg: 22.5, wasManualOverride: true, setIdx: 3,
+    });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
+    expect(r.newKg).toBe(20);
+  });
+
+  it('a lower entry rated "usor" keeps the current rec (no chase-down)', () => {
+    const r = DP.checkInSessionAdjust('Seated DB Press', [6.5], [10], {
+      recKg: 30, recReps: 6, loggedKg: 20, wasManualOverride: true, setIdx: 1,
+    });
+    expect(r.adjust).toBe(false); // hold the rec, do not follow them down
+  });
+
+  it('without wasManualOverride the down anchor never fires (prefill / engine value)', () => {
+    // Same lower load + potrivit but NOT a manual edit → the override path is inert;
+    // falls through to the legacy rating logic (potrivit early set → hold).
+    const r = DP.checkInSessionAdjust('Seated DB Press', [7.5], [6], {
+      recKg: 30, recReps: 6, loggedKg: 20, setIdx: 1,
+    });
+    expect(r.adjust).toBe(false);
+  });
+
+  it('a small deviation (one step under rec) does NOT trip the anchor — needs > one step', () => {
+    // Entered 27.5 = exactly one dumbbell step below rec 30 → not "more than one step";
+    // override-down stays inert (potrivit early set → hold).
+    const r = DP.checkInSessionAdjust('Seated DB Press', [7.5], [6], {
+      recKg: 30, recReps: 6, loggedKg: 27.5, wasManualOverride: true, setIdx: 1,
+    });
+    expect(r.adjust).toBe(false);
+  });
+
+  it('UP channel is unchanged: easy at a HIGHER entered load still ramps up (Face Pull 9→up)', () => {
+    // Daniel's contrast case in the same live log: Face Pull rec 9, he did 27 "usor"
+    // → the engine ramps UP via the over-performance/usor path. A manual override that
+    // is ABOVE rec is not a down-override, so F1 never intercepts the up channel.
+    DP.getState = vi.fn(() => ({ lastW: 9 }));
+    const r = DP.checkInSessionAdjust('Face Pull', [6.5], [12], {
+      recKg: 9, recReps: 12, loggedKg: 27, wasManualOverride: true, setIdx: 0,
+    });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('up');
+  });
+});
+
 // ── checkInSessionAdjust — STRENGTH phase moves WEIGHT ───────────────────────
 describe('DP.checkInSessionAdjust — STRENGTH phase weight autoregulation', () => {
   afterEach(() => {

@@ -27,6 +27,7 @@ import { populationPriorE1RM } from './dp/populationPrior.js';
 import { sanityCheckSet, logOutlier } from './dp/anomalyGuard.js';
 import { quarantineSet, isQuarantined } from './dp/logQuarantine.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
+import { manualOverrideDownTarget } from './dp/inSessionOverride.js';
 import { classifyAndIntervene } from './dp/plateauIntervention.js';
 import { temperamentBias, temperamentBiasFromLogs, saveTemperament, GLOBAL_KEY as TEMPERAMENT_GLOBAL_KEY } from './dp/temperament.js';
 import { behaviorRirOffset } from './dp/behaviorDistill.js';
@@ -2078,7 +2079,7 @@ export const DP = {
    * @param {string} ex
    * @param {number[]} recentRPEs RPE per logged set (last = most recent).
    * @param {number[]} recentReps reps per logged set (last = most recent).
-   * @param {{ recKg?: number, recReps?: number, loggedKg?: number, setIdx?: number, nowMs?: number, userConfirmed?: boolean } | number} [opts]
+   * @param {{ recKg?: number, recReps?: number, loggedKg?: number, setIdx?: number, nowMs?: number, userConfirmed?: boolean, wasManualOverride?: boolean } | number} [opts]
    *   Optional context: recKg/recReps = what was RECOMMENDED for the set just
    *   logged; loggedKg = the load the user ACTUALLY logged for that set (defaults
    *   to the DP history lastW when omitted); setIdx = 0-based position of the NEXT
@@ -2272,6 +2273,10 @@ export const DP = {
     const setIdx = Number(ctx.setIdx);
     const lateSet = Number.isFinite(setIdx) && setIdx >= 2;
 
+    // (a0) F1 manual-override DOWN anchor (dp/inSessionOverride.js; no override → null → legacy).
+    const overrideDown = manualOverrideDownTarget({ wasManualOverride: ctx.wasManualOverride, haveRec, loggedKg, recKg, lastRPE, ex }, { getPrevWeight, roundToStep: (kg, e) => this.roundToStep(kg, e), t });
+    if (overrideDown) return overrideDown;
+
     // GREU (single hard set) → ease the NEXT set MODESTLY.
     if (lastRPE >= 9.5) {
       if (isStrength) {
@@ -2281,14 +2286,9 @@ export const DP = {
         }
         return { adjust: false };
       }
-      // Daniel decision 2026-06-06 (Gigel rule, extends DECISIONS dp-hard-eases to
-      // the in-session next-set): a hard set must VISIBLY ease the WEIGHT one step
-      // whenever we have a real working load to drop from. Holding the load and only
-      // trimming the rep target reads as "the coach did nothing" to a non-expert who
-      // watches the kg — the exact "weights never change" complaint. So weight-FIRST:
-      // step the load down (getPrevWeight) when there is prior history to drop from.
-      // This eases DOWN in any phase (you always lighten what felt too hard) and does
-      // NOT touch the UP path, so it never pushes strength progression in a deficit.
+      // Daniel 2026-06-06 (Gigel rule, in-session extension of dp-hard-eases): a hard
+      // set must VISIBLY ease the WEIGHT one step (getPrevWeight) when prior history
+      // exists — holding kg and trimming reps reads as "coach did nothing". DOWN only.
       if (dpState.lastW > 0) {
         const easedKg = getPrevWeight(baseKg, ex);
         if (easedKg < baseKg) {
