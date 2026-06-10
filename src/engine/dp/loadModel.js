@@ -135,3 +135,30 @@ export function resolveStep({ curated, meta, flagOn }) {
   if (!flagOn || !meta) return 2.5;
   return EQUIP_STEPS[meta.equipment_type || ''] ?? 2.5;
 }
+
+/**
+ * Guard the machine-calibration factor against compounding past demonstrated
+ * capacity (Daniel bug 2026-06-10: Leg Ext 96x10, e1RM 128 -> the learned 1.255
+ * factor pushed the rec to 110x15 — heavier AND more reps than any set he has
+ * produced). The factor (learned when the engine UNDER-prescribed) is applied
+ * AFTER the e1RM ceiling, so it escapes it; and the ceiling itself goes inert
+ * without a logged bodyweight. This caps the post-factor load at the larger of
+ * {un-factored base rec, demonstrated-e1RM working load at the target reps} —
+ * the factor may lift the base up to the user's OWN proven capacity but never
+ * above it, and a legitimate base progression is never undone (it is the floor).
+ * Inert when no factor moved the load (calibrated <= base) or no demonstrated
+ * e1RM exists (cold start) -> returns `calibrated` unchanged (golden-safe).
+ *
+ * @param {number} calibrated  base rec after _applyCalibration
+ * @param {number} baseKg      the un-factored base rec (result.kg pre-factor)
+ * @param {number} demoE1rmKg  _demonstratedWorkingW_e1rm(ex, repTarget); 0 if none
+ * @returns {number}
+ */
+export function clampCalibratedToDemonstrated(calibrated, baseKg, demoE1rmKg) {
+  const c = Number(calibrated);
+  if (!(c > 0)) return calibrated;
+  const floor = Number(baseKg) > 0 ? Number(baseKg) : 0;
+  const demo = Number(demoE1rmKg) > 0 ? Number(demoE1rmKg) : 0;
+  const cap = Math.max(floor, demo);
+  return cap > 0 ? Math.min(c, cap) : c;
+}

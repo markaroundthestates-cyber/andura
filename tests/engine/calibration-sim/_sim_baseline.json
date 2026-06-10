@@ -1,23 +1,23 @@
 {
-  "_note": "Frozen calibration-sim baseline. Re-baselined 2026-06-10 for Daniel's coach-audit R2 (curated REP_RANGES spec → laterals/rear/calves [12,20], curls/triceps [10,15], leg ext/curl [15,20]). The curated table is the rep TRUTH, applied regardless of dp_rep_class_v1 (the flag governs DERIVATION for non-curated names only), so the wider floors move the rMin this sim back-solves the demonstrated working load at → the path-B prescription hash legitimately shifts (OLD 5414275e… → NEW 80d35da1…). VERIFIED BENIGN, learning IMPROVED: convergedPct 2.9→5.1, meanFinalAbsErr 0.259→0.258, machine signed-err -0.119→-0.104; crater===0 HELD, absurd-OVERSHOOT(>3x)===0 HELD, nonAdaptation 2=2, stuckHigh 5=5, stuckLow 85=85, absurd 7=7, barbell/cable/dumbbell bias flat. The ONLY metric that rose is oscillation 24→26 (+2): the wider rep bands let two borderline profiles bounce one extra weight step while converging closer to capacity — a saw-tooth-detector threshold artifact in a cohort that overall converges BETTER, not an instability regression (crater/absurd/stuck all flat, convergence up). dp_load_model_v1 is pinned OFF in resetStore (path-B), so the flip does NOT move this hash. nProfiles=12 (CI tier).",
-  "engineHead": "R2 curated REP_RANGES spec (Daniel coach audit 2026-06-10) — dp.js REP_RANGES",
-  "nProfiles": 12,
-  "seed": "0xA9D04A",
-  "hash": "80d35da1077953421253ace7990b1db3f7e3785dc773ad2290569fc6a0ed888a",
-  "convergedPct": 5.1,
-  "medianSessionsToConverge": 27,
-  "meanFinalAbsErr": 0.258,
-  "flags": {
-    "nonAdaptation": 2,
-    "oscillation": 26,
-    "stuckHigh": 5,
-    "stuckLow": 85,
-    "absurd": 7
-  },
-  "equipMeanSignedErr": {
-    "barbell": -0.133,
-    "cable": -0.26,
-    "dumbbell": -0.156,
-    "machine": -0.104
-  }
+ "_note": "Frozen calibration-sim baseline. Re-baselined 2026-06-10 for the CALIBRATION-vs-DEMONSTRATED guard (Daniel coach-audit, read his live account: Leg Ext 96x10/e1RM128 + learned factor 1.255 → the post-everything machine-calibration multiplier compounded the demonstrated-anchored base into 110x15 — heavier AND more reps than any set he has produced, with the EASE-BACK note still saying 90). Fix: clampCalibratedToDemonstrated (dp.js recommend@1446 + dp/loadModel.js) bounds the post-factor load at max(un-factored base, the user's OWN raw demonstrated-e1RM working load at the target reps; raw-working-W fallback for e1rm-ineligible lifts). The factor may still lift a sub-demonstrated base UP to proven capacity, never past it. Inert at cold start (no factor / no demonstrated capacity → byte-identical). The path-B prescription-stream hash legitimately shifts (80d35da1… → f568d8d6…). VERIFIED a NET WIN + DETERMINISTIC (two fresh runs reproduce f568d8d6, no RNG/clock leak): convergedPct 5.1→7.4 (+2.3, learns BETTER), medianSessionsToConverge 27→26, OSCILLATION 26→6 (−20: the factor was a major saw-tooth source — over-inflate, user can't hit it, correct down, re-learn, repeat; bounding it stabilized the engine), stuckHigh 5→2 (−3, fewer over-prescriptions = Daniel's bug class), crater===0 HELD, absurd===7 HELD (overshoot>3x===0 HELD). The TRADEOFF (conservatism): nonAdaptation 2→4 (+2 — P000 erratic ego-loader entering 16x5 + P009 over-entering a pre-fatigued biceps; the engine now correctly RESISTS over-entry instead of chasing it, matching Daniel's anti-ego-load intent R5; per-exercise the fix tracks demonstrated capacity correctly — isolated probe Bayesian Curl 8.3-demo → 9 rec) and stuckLow 85→93 (+8, the flip side of bounding, within the +10 oracle-gap band). meanFinalAbsErr 0.258→0.265 (+0.007, within the +0.02 gate). Equip signed bias drifted within the −0.07 band (machine −0.104→−0.122, cable −0.26→−0.294, dumbbell −0.156→−0.177, barbell −0.133→−0.149). nProfiles=12 (CI tier).",
+ "engineHead": "calibration-vs-demonstrated guard (Daniel coach audit 2026-06-10) — clampCalibratedToDemonstrated",
+ "nProfiles": 12,
+ "seed": "0xA9D04A",
+ "hash": "f568d8d693c014cb6e5eecccf0e005c60c2228699338908da9b65fcbc1fe6100",
+ "convergedPct": 7.4,
+ "medianSessionsToConverge": 26,
+ "meanFinalAbsErr": 0.265,
+ "flags": {
+  "nonAdaptation": 4,
+  "oscillation": 6,
+  "stuckHigh": 2,
+  "stuckLow": 93,
+  "absurd": 7
+ },
+ "equipMeanSignedErr": {
+  "barbell": -0.149,
+  "cable": -0.294,
+  "dumbbell": -0.177,
+  "machine": -0.122
+ }
 }

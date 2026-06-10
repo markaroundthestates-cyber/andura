@@ -87,15 +87,19 @@ describe('machine-calibration: identity when nothing learned', () => {
 
 describe('machine-calibration: convergence toward the user real load', () => {
   it('3 sessions at +20% over rec raise the factor and shift the next rec up', () => {
-    // Each "session": read the current rec, the user logs +20% over it, record.
-    // recKg is the ALREADY-factor-applied recommendation (recommend()).
+    // Each "session": read the current rec, the user logs +20% over it (and that
+    // heavier set is ADDED to the log, so demonstrated capacity rises with the
+    // factor — the realistic over-performance path). The demonstrated-capacity
+    // guard (clampCalibratedToDemonstrated, Daniel bug 2026-06-10) bounds the factor
+    // at proven load, so the rec climbs because the PROOF climbs, not past it.
     store['logs'] = steadyHistory('Cable Row', 40, 12, 7);
-    let lastRec = DP.recommend('Cable Row').kg;
-    const recs = [lastRec];
+    let ts = 4000;
+    const recs = [DP.recommend('Cable Row').kg];
     for (let s = 0; s < 3; s++) {
       const rec = DP.recommend('Cable Row').kg;
       const logged = rec * 1.2; // user consistently lifts 20% more than prescribed
       DP._recordCalibration('Cable Row', { recKg: rec, loggedKg: logged });
+      store['logs'].unshift({ ex: 'Cable Row', w: logged, reps: 12, rpe: 7, ts: ts++ });
       recs.push(DP.recommend('Cable Row').kg);
     }
     const factor = DP._calFactor('Cable Row');
@@ -148,17 +152,22 @@ describe('machine-calibration: clamp band holds', () => {
 // ── (4) Persistence round-trips (hydrate after reload) ────────────────────────
 
 describe('machine-calibration: persistence round-trips', () => {
-  it('a factor written to dp-cal-factors hydrates and is applied on a fresh read', () => {
+  it('a factor written to dp-cal-factors hydrates and is applied, BOUNDED by proof', () => {
     // Simulate a prior session having learned a factor, persisted to the store.
     store['dp-cal-factors'] = { 'Cable Row': { kgFactor: 1.3, n: 4 } };
     store['logs'] = steadyHistory('Cable Row', 40, 12, 7);
-    // No re-learning this "session" — the persisted factor alone must apply.
+    // The persisted factor hydrates (read on a fresh "session").
     expect(DP._calFactor('Cable Row')).toBeCloseTo(1.3, 5);
     const withFactor = DP.recommend('Cable Row').kg;
-    // Compare to the same exercise with the factor cleared (the un-learned rec).
     delete store['dp-cal-factors'];
     const withoutFactor = DP.recommend('Cable Row').kg;
-    expect(withFactor).toBeGreaterThan(withoutFactor);
+    // Daniel bug 2026-06-10: on an exercise whose base rec already sits at/above
+    // proven capacity (steady 40×12 → the base progresses on its own), the factor
+    // is fully bounded — it CANNOT compound on top to an impossible load, so the
+    // 1.3 multiplier adds nothing here (the un-factored rec already won). The factor
+    // only ever lifts a base that UNDER-shoots proof up TO proof (see convergence).
+    expect(withFactor).toBe(withoutFactor);
+    expect(equipListFor('Cable Row')).toContain(withFactor);
   });
 
   it('the learned factor is written under the synced persistent key dp-cal-factors', () => {

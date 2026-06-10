@@ -11,7 +11,7 @@ import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
 import { updatePosterior, savePosterior, loadPosterior, trendDirection } from './dp/strengthKalman.js';
 import { phaseAwareRepRange } from './dp/repRange.js';
-import { resolveMaxKg, resolveStep } from './dp/loadModel.js';
+import { resolveMaxKg, resolveStep, clampCalibratedToDemonstrated } from './dp/loadModel.js';
 import {
   loadPreference as loadNof1Preference,
   nof1SetBias,
@@ -768,8 +768,8 @@ export const DP = {
   // at the CURRENT rep target. So high-rep work is no longer discarded vs a lower-
   // rep heavier set. Returns 0 when no qualifying log (cold start → inert, raw path
   // unchanged). Bodyweight/band → 0 (the caller's raw _demonstratedWorkingW runs).
-  /** @param {string} ex @param {number} rMin @returns {number} */
-  _demonstratedWorkingW_e1rm(ex, rMin) {
+  /** raw=skip the realistic ceiling + bridge sub-target reps (calibration guard: the user's own logs bound it, not a population ceiling). @param {string} ex @param {number} rMin @param {boolean} [raw] @returns {number} */
+  _demonstratedWorkingW_e1rm(ex, rMin, raw) {
     if (!this._e1rmEligible(ex)) return 0;
     const logs = this.getLogs(ex, 12);
     const floorReps = rMin ?? 8;
@@ -778,7 +778,7 @@ export const DP = {
       const w = Number(l.w);
       if (!Number.isFinite(w) || w <= 0) continue;
       const reps = typeof l.reps === 'string' ? parseInt(l.reps, 10) : Number(l.reps);
-      if (!Number.isFinite(reps) || reps < floorReps) continue; // must hit target reps
+      if (!Number.isFinite(reps) || (!raw && reps < floorReps)) continue; // raw bridges via e1RM
       const rpe = Number(l.rpe) || 7;
       if (rpe >= 8.5 && reps < floorReps) continue; // failed/overload set excluded
       const e = this.e1RMForSet(w, reps, rpe, ex); // ex → #3/F temperament bias (flag-gated)
@@ -789,7 +789,8 @@ export const DP = {
     // back-solved working load at the realistic ceiling (floored at the raw
     // demonstrated load) so it never implies a 1RM ≥ what is achievable at the
     // prescribed reps (no "5×1RM"). Inert when dp_ceiling_v1 OFF / no bodyweight.
-    return this._ceilingCappedWorkingKg(ex, this._kgFromE1RM(bestE1RM, floorReps), floorReps);
+    return raw ? this._kgFromE1RM(bestE1RM, floorReps)
+      : this._ceilingCappedWorkingKg(ex, this._kgFromE1RM(bestE1RM, floorReps), floorReps);
   },
 
   // ══ BUILD #3/F — temperament learn-and-persist (F4 spec §F) ══════════════════
@@ -1436,13 +1437,12 @@ export const DP = {
   recommend(ex, nowMs, energyPhase, ageYears) {
     const result = this._recommendRaw(ex, nowMs, energyPhase, ageYears);
     if (result && result.kg) {
-      // Apply the learned persistent per-exercise machine-calibration factor to
-      // the raw load, THEN snap to a real equipment value. No learned data →
-      // factor 1.0 (identity) → byte-identical to the prior behavior (golden-safe
-      // for cold start). Applied here (not in _recommendRaw) so every branch
-      // (INIT / INCREASE / EASE / CAP / …) is corrected uniformly before snapping.
-      const calibrated = this._applyCalibration(ex, result.kg);
-      // Rotunjeste kg la step-ul echipamentului (helcometre din 4, cabluri din 2.5, DB din 2)
+      // Calibration factor (identity at no data → golden-safe), bounded to the user's OWN
+      // demonstrated capacity — lifts a sub-proof base UP to proven load, never compounds
+      // past it (Daniel bug 2026-06-10: 96×10/e1RM128 → 110×15). Raw e1RM + raw-W fallback (@821).
+      const rt = result.repsTarget ?? 12;
+      const demoCap = this._demonstratedWorkingW_e1rm(ex, rt, true) || this._demonstratedWorkingW(ex, rt);
+      const calibrated = clampCalibratedToDemonstrated(this._applyCalibration(ex, result.kg), result.kg, demoCap);
       result.kg = this.roundToStep(calibrated, ex);
 
       // ── PR-FLOOR (Daniel decision #6, part a) — FIRM ─────────────────────────
