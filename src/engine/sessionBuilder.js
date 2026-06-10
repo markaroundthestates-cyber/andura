@@ -159,6 +159,14 @@ const MAJOR_MUSCLES_SLOT_GUARANTEE = Object.freeze([
   'picioare-quads', 'picioare-hamstrings', 'fese', 'gambe',
 ]);
 
+// Daniel coach audit 2026-06-10 (#3): a single session must not pile on more than
+// 2 BIG lower lifts (the systemic squat/hinge/lunge movers = tier-1 on the quad &
+// hamstring movers). His live Legs day stacked 3 (Hack Squat + RDL + Walking Lunge)
+// → too dense; 2 big + accessories is the right shape. Glute machines / calves /
+// core are accessories (other groups), so they never count toward the cap.
+const LOWER_BIG_GROUPS = new Set(['picioare-quads', 'picioare-hamstrings']);
+const MAX_BIG_LOWER_LIFTS = 2;
+
 /**
  * Tier-aware session-substance floor. T0 (beginner) keeps the base floor of 4;
  * every trained tier (T1/T2+, and unknown/null defensively) floors at 5 so a
@@ -1207,12 +1215,19 @@ export function buildSession(cluster, ctx) {
   const chosenMovements = new Set();
   const isTaken = (e) =>
     chosenNames.has(e.name) || chosenMovements.has(movementKey(e.name, e.meta));
+  // #3 (Daniel coach audit 2026-06-10) — a big lower lift = a tier-1 mover on the
+  // quad/ham groups (squat/hinge/lunge/press). Cap at MAX_BIG_LOWER_LIFTS per
+  // session so a legs/lower/full day never stacks 3+ heavy bilateral compounds.
+  const isBigLower = (e) => e.meta?.tier === 1 && LOWER_BIG_GROUPS.has(e.meta?.muscle_target_primary);
+  let bigLowerCount = 0;
+  const bigLowerCapped = (e) => bigLowerCount >= MAX_BIG_LOWER_LIFTS && isBigLower(e);
   const take = (e, sets) => {
     chosen.push({ name: e.name, sets });
     chosenNames.add(e.name);
     chosenMovements.add(movementKey(e.name, e.meta));
     const g = e.meta?.muscle_target_primary;
     if (g) groupCount[g] = (groupCount[g] || 0) + 1;
+    if (isBigLower(e)) bigLowerCount += 1;
   };
 
   // Phase 1 — T1 compound anchors on the PRIMARY group(s), up to MAX_T1.
@@ -1285,7 +1300,7 @@ export function buildSession(cluster, ctx) {
       if ((groupCount[group] || 0) >= beginnerHardCapFor(group)) continue;
       const capped = !surfaceSet.has(group) && (groupCount[group] || 0) >= slotCap[group];
       if (capped) continue;
-      const next = pool.find((e) => !isTaken(e));
+      const next = pool.find((e) => !isTaken(e) && !bigLowerCapped(e));
       if (next) {
         take(next, DEFAULT_SETS);
         progressed = true;
@@ -1305,7 +1320,7 @@ export function buildSession(cluster, ctx) {
       // #70-D5 — the beginner per-group hard cap binds here too (the remainder
       // pass otherwise ignores all caps, re-stacking a small cluster's lone group).
       if ((groupCount[group] || 0) >= beginnerHardCapFor(group)) continue;
-      const next = pool.find((e) => !isTaken(e));
+      const next = pool.find((e) => !isTaken(e) && !bigLowerCapped(e));
       if (next) {
         take(next, DEFAULT_SETS);
         progressed = true;

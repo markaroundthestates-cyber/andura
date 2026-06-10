@@ -3,51 +3,51 @@
   "seed": 15736039,
   "nProfiles": 8,
   "weeks": 6,
-  "hashOff": "3f3aea102dbbcf28c4d43fc61592a4a78a9ff24363652cc09ab5aa8fb91f7a15",
-  "hashOn": "598fa8b276c24aa0c033ecb1d50b624d04e32ca08e4388f5585f8e8e3ff3d735",
+  "hashOff": "76d59fc46592de6eb949c7be99c83b31171807b2666ff5b90f2a7f51cfd4b596",
+  "hashOn": "912de8846812ed02180f721990c7ef7790619207664c58ec574f976022b1888a",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 7.25,
-    "meanSetTotal": 14.69,
-    "meanDurationMin": 52.8,
-    "meanVolumeKg": 1712,
+    "meanExerciseCount": 7.27,
+    "meanSetTotal": 14.73,
+    "meanDurationMin": 52.7,
+    "meanVolumeKg": 1648,
     "minusRatePct": 21.9
   },
   "sessionOn": {
     "plannedSessions": 192,
     "emptySessions": 0,
     "meanExerciseCount": 7.39,
-    "meanSetTotal": 13.57,
+    "meanSetTotal": 13.58,
     "meanDurationMin": 50.6,
-    "meanVolumeKg": 1507,
+    "meanVolumeKg": 1496,
     "minusRatePct": 21.9
   },
   "convergenceOff": {
-    "totalSeries": 111,
-    "convergedPct": 12.6,
+    "totalSeries": 117,
+    "convergedPct": 12,
     "medianSessionsToConverge": 5.5,
-    "meanFinalAbsErr": 0.532
+    "meanFinalAbsErr": 0.533
   },
   "convergenceOn": {
-    "totalSeries": 119,
-    "convergedPct": 12.6,
+    "totalSeries": 121,
+    "convergedPct": 12.4,
     "medianSessionsToConverge": 7,
-    "meanFinalAbsErr": 0.549
+    "meanFinalAbsErr": 0.551
   },
   "flagsOff": {
     "oscillation": 0,
-    "stuckLow": 82,
+    "stuckLow": 88,
     "stuckHigh": 13,
-    "absurd": 32
+    "absurd": 35
   },
   "flagsOn": {
     "oscillation": 0,
-    "stuckLow": 86,
+    "stuckLow": 88,
     "stuckHigh": 16,
-    "absurd": 35
+    "absurd": 36
   },
-  "craterOff": 63,
-  "craterOn": 52,
-  "_rebaseline_note": "Re-frozen 2026-06-10 for Daniel's coach-audit batch (R2 + R6b). TWO ungated changes legitimately shift BOTH the OFF and ON arms: (1) R2 — the curated REP_RANGES spec (laterals/rear-delt 12-20, curls/triceps 10-15, leg ext/curl 15-20, calves 12-20) is the curated truth, applied regardless of dp_rep_class_v1 (the flag governs DERIVATION for non-curated names only), so every prescription's repsTarget moved → meanVolumeKg shifts. (2) R6b — the session-duration estimator constants (SET_WORK_SEC 40->50, EXERCISE_TRANSITION_SEC 75->105, calibrated on Daniel's real sessions) feed trimSessionToTimeBudget in the same scheduleAdapterAggregate the full path runs, so more-realistic (higher) durations make the persona-time-cap trim cut slightly more — meanExerciseCount 7.45->7.25, meanSetTotal 15.32->14.69, meanDurationMin 48.5->52.8 (more realistic, as intended). Determinism is INTACT (the section-A fresh-OFF-reproduces-itself test passes → no RNG/clock leak; only the deterministic rep-band + trim moved). Section-C SAFETY IMPROVED, not worse: craterOff 68->63, craterOn 57->52, OFF 'absurd' 34->32 — the more-realistic trim and class-correct rep bands reduce absurd/crater prescriptions. The new default-ON selection flags (dp_anchor_sets_v1, dp_biceps_guarantee_v1) are pinned OFF in FLIPPED_FLAGS so the OFF arm stays a true all-off world; their ON behavior is proven on the unit suites + #70 persona matrix, NOT in this determinism stream."
+  "craterOff": 70,
+  "craterOn": 54,
+  "_rebaseline_note": "Re-frozen 2026-06-10 for Daniel coach-audit #3 (MAX_BIG_LOWER_LIFTS): a session may stack at most 2 BIG lower lifts (tier-1 movers on the quad/ham groups — squat/hinge/lunge/press). His live Legs day stacked 3 (Hack Squat + RDL + Walking Lunge); the cap drops the 3rd big compound and the round-robin fill replaces it with an accessory (glute/calf/core). UNGATED (it is the correct shape, not a flag toggle), so BOTH arms' selection streams legitimately shift on the leg/lower/full days. VERIFIED DETERMINISTIC (the section-A fresh-OFF-reproduces-itself test passes; two fresh runs reproduce 76d59fc4 / 912de884 — no RNG/clock leak) and SAFE: section-C is self-relative ON-vs-OFF and HOLDS — craterOn 54 <= craterOff 70, oscillation 0=0, absurd ON 36 <= OFF 35 + 10 band, convergence ON 12.4% >= OFF 12%. vs the prior freeze: craterOff 63->70 / craterOn 52->54 (oracle-gap craters reshuffle as the leg day swaps a heavy compound for an accessory — NOT the zero-tolerance F-1 class, which the §1.B-style invariant still holds at 0), meanVolumeKg drifts (1712->1648 OFF, 1507->1496 ON) with the lighter accessory replacing a heavy lower compound. Persona-matrix #70 gate stays green (26 personas); the lower day now reads 2 big lifts + accessories (Daniel's intended shape). #1 (chest-press 3-set floor on a shoulder-emphasized push day) + #2 (upper density via arm-alternation) were investigated but DEFERRED — their clean fixes need a downstream set-reducer root-cause (#1) and week-parity arm-alternation (#2), not a blunt cap that would cut real volume / break the M2 weakness-amplification invariant."
 }
