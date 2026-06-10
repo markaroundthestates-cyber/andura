@@ -64,40 +64,9 @@ jobs:
         with:
           node-version: 22
 
-      - name: 'REAL Diagnostic: git 128 root cause surface (iter 8 deep)'
-        run: |
-          set +e
-          echo "═══════════════════════════════════════════════════════════"
-          echo "=== Git binary path + version ==="
-          which git
-          git --version
-          echo ""
-          echo "=== Git config user (CI auto-set) ==="
-          git config --global --get user.email
-          git config --global --get user.name
-          git config --global --list | head -20
-          echo ""
-          echo "=== Node + npm versions ==="
-          which node && node --version
-          which npm && npm --version
-          echo ""
-          echo "=== Husky + Git + Node + NPM env vars (sorted) ==="
-          env | sort | grep -iE "^(HUSKY|GIT|GH_|GITHUB|NODE|NPM)" | head -30
-          echo ""
-          echo "=== .npmrc content ==="
-          cat .npmrc 2>/dev/null || echo "(no .npmrc)"
-          echo ""
-          echo "=== package-lock.json HEAD 20 lines (check for git+ urls) ==="
-          head -20 package-lock.json
-          echo ""
-          echo "=== package.json prepare script ==="
-          node -e "console.log('prepare:', JSON.stringify(require('./package.json').scripts.prepare))"
-          echo ""
-          echo "=== Working dir state ==="
-          pwd
-          ls -la .husky 2>/dev/null | head -5 || echo "(no .husky dir)"
-          echo "═══════════════════════════════════════════════════════════"
-          set -e
+      # (Audit 2026-06-10: the iter-8 "git 128 root cause" diagnostic step was
+      # removed — the root cause was resolved long ago via HUSKY=0 +
+      # --ignore-scripts below; the diagnostic only burned minutes on every run.)
 
       # §33-C3 audit fix — restored npm ci deterministic install (was `npm install`
       # iter 8 diagnostic). deploy.yml uses same npm ci --ignore-scripts pattern

@@ -43,8 +43,10 @@ export const FLAGS = Object.freeze({
   // UNCONDITIONALLY — these flags gate nothing. The prior per-flag comments
   // narrated a "Faza 3 BLOCKED / 0/8 engines wired / vizor fara usa" story that
   // is now FALSE and actively misled debugging, so it was removed. Kept (not
-  // deleted) so featureFlags.test.js stays green; full removal of the flags +
-  // the src/coach/orchestrator/ subsystem is tracked for the cleanup wave.
+  // deleted) so featureFlags.test.js stays green. NOTE: runPipeline/adapters/
+  // contextBuilder in src/coach/orchestrator/ are LIVE (getDailyWorkout imports
+  // them) — only the coachDirector strangler remnants + these flags are dead;
+  // their removal is tracked for the cleanup wave, scoped accordingly.
   aa_via_cluster: { rollout: 0, default: false },
 
   // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.

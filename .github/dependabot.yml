@@ -24,3 +24,23 @@ updates:
     commit-message:
       prefix: "chore(deps-actions)"
       include: "scope"
+
+  # Audit 2026-06-10 (GITHUB F2): npm ecosystem was MISSING — JS dependency CVEs
+  # only surfaced reactively via ci.yml's npm-audit gate. Weekly grouped PRs make
+  # them proactive. Daniel reviews + merges; CI full suite gates every PR anyway.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Bucharest"
+    groups:
+      npm-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"

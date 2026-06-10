@@ -144,3 +144,34 @@ public/body/test/
 # Personal dev tooling, not app code; stays local (CC reads it on disk), backed up in
 # Andura-Backup. Untracked from the app repo 2026-06-01.
 /.claude/
+
+# ── Audit/sim/probe artifact families (full-audit 2026-06-10, NOISE root-cause) ──
+# Every audit/debug session dropped reports + probes at the vault root under these
+# prefixes; .gitignore never covered them, so ~80 untracked files piled up in
+# `git status`. Root-level only (the leading /) — real source under src/tests is
+# never matched. The vitest config already EXCLUDES _DIAG*/_diag*/_regen*/_probe*
+# from collection; this just keeps them out of git noise too.
+/_AUDIT_*
+/_ENGINE_*
+/_SIM_*
+/_DIAG_*
+/_FULLAUDIT_*
+/_ORACLE_*
+/_FRESHEYES_*
+/_JOURNEY_*
+/_ANDURA_*
+/_PROBE_*
+/_REF_*
+/_REPRO_*
+/_diag_*
+/_deadcode_*
+/_i18n_*
+/_hash_*
+/_compute_*
+/_legcheck*
+/_bundle_stats*
+/sim-diaries/
+/UsersDaniel*
+/OVERNIGHT-*
+/DEADCODE-AUDIT-*
+/LIVE-QA-FINDINGS-*

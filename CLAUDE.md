@@ -97,7 +97,7 @@ amendments:
 - **`📤_outbox/LATEST.md`** = CC autonomous last raport (mandatory §CC.2 step 4)
 - **`CHAT_STATE.md`** = live Claude chat conversation continuity, cross-CC-session pick-up (mandatory §CC.2 step 5) — distinct de LATEST.md (CC task report) + HANDOVER files (end-of-chat narrative) + PRIMER §5 (substantial milestones)
 - **`📥_inbox/`** = Daniel inputs + Claude chat narrative handovers + `_CONSUMED/` archive
-- **`04-architecture/mockups/andura-clasic.html`** = DESIGN MASTER mockup (single source UI parity)
+- **`04-architecture/mockups/interfata-noua/`** = DESIGN MASTER (Pulse, D094 LOCKED — live din 2026-05-29; volt-green/aqua/ember + Space Grotesk/Manrope/Space Mono). `andura-clasic.html` = SUPERSEDED-BY-D094, referinta istorica only
 - **`07-meta/karpathy-skills-ref/CLAUDE.md`** §1-§4 = Karpathy 4 principii core philosophy MANDATORY read pre-task tactical
 - **`08-workflows/HANDOVER_VERIFICATION_CHECKLIST.md`** = Bugatti gate §0-§11 post-LANDED verification
 - **`99-archive/wiki-pre-2026-05-15/`** = FROZEN deep-substance reference on-demand explicit path read only (off-default-search)
@@ -108,7 +108,7 @@ ZERO intermediate review gates pre-Beta (no "run npm dev walkthrough," no "do a 
 
 ### Strategy LOCKED V1 active
 
-Port-First-Then-React paradigm split post D015 STRAT PIVOT 2026-05-16 (vanilla legacy retired → React Andura Clasic direct pe `andura-clasic.html` DESIGN MASTER) + gym-focused primary + Library 657/657 exercises = 100% LANDED (LOCK 2) + Tier-based personalization T0→T3+ + Pre-Beta FULL strict + Daniel Gates 100% + Bugatti audit nuclear pre-Launch. Engines pipeline 8/8 + MMI Engine #9 LANDED (LOCK 10).
+Port-First-Then-React paradigm split post D015 STRAT PIVOT 2026-05-16 (vanilla legacy retired → React Andura Clasic direct pe `andura-clasic.html`, mockup ulterior SUPERSEDED de Pulse D094) + gym-focused primary + Library 657/657 exercises = 100% LANDED (LOCK 2) + Tier-based personalization T0→T3+ + Pre-Beta FULL strict + Daniel Gates 100% + Bugatti audit nuclear pre-Launch. Engines pipeline 8/8 + MMI Engine #9 LANDED (LOCK 10).
 
 ### Testing baseline
 
