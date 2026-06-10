@@ -25,7 +25,7 @@
 import { DB } from './db.js';
 import { toast } from './ui/toast.js';
 import { logger } from './util/logger.js';
-import { COACH_RELEVANT_KEYS } from './util/dataRegistry.js';
+import { COACH_RELEVANT_KEYS, DYNAMIC_KEY_PREFIXES } from './util/dataRegistry.js';
 import { getAuthState, getIdToken } from './auth.js';
 
 // §4-H4 audit fix — env-var (build-time inject via deploy.yml secret
@@ -372,7 +372,14 @@ export async function clearFirebaseKeys(keys) {
       // (e.g. `sf.userConfig` → `sf_userConfig`, fixing the reset DELETE 400)
       // while preserving legitimate `/` separators in wv2 child paths
       // (`wv2/workout` stays a real subtree path, never collapsed to `wv2_workout`).
-      const remoteKey = key.split('/').map(fbKey).join('/');
+      // EXCEPT dynamic-prefix keys (audit 2026-06-10 DATA-MED): a free-text
+      // exercise name with `/` (e.g. `ex-extra-sets-Pec Deck / Cable Fly`) is
+      // ONE node on the push side (`payload[fbKey(k)]` sanitizes whole-key), so
+      // the delete must whole-key sanitize too — per-segment split would target
+      // a 2-level path that never existed, leaving an undeletable fossil node.
+      const remoteKey = DYNAMIC_KEY_PREFIXES.some((p) => key.startsWith(p))
+        ? fbKey(key)
+        : key.split('/').map(fbKey).join('/');
       const ok = await fbRemove(`${userPath}/${remoteKey}`);
       if (ok) logger.debug(`[Firebase] Removed key: ${key}`);
       else logger.warn(`[Firebase] Failed to remove key: ${key}`);

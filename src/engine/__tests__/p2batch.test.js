@@ -39,6 +39,8 @@ describe('H11c — COACH_RELEVANT_KEYS completeness', () => {
 
   it('firebase.js imports COACH_RELEVANT_KEYS from dataRegistry', () => {
     const firebaseSrc = readFileSync(resolve(__dirname, '../../firebase.js'), 'utf8');
-    expect(firebaseSrc).toContain("import { COACH_RELEVANT_KEYS } from './util/dataRegistry.js'");
+    // Robust to co-imports (audit 2026-06-10 added DYNAMIC_KEY_PREFIXES for the
+    // slash-fossil delete fix) — assert the symbol + source, not the exact line.
+    expect(firebaseSrc).toMatch(/import \{[^}]*\bCOACH_RELEVANT_KEYS\b[^}]*\} from '\.\/util\/dataRegistry\.js'/);
   });
 });
