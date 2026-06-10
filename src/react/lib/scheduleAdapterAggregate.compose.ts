@@ -21,6 +21,7 @@ import { toExerciseDisplay } from './exerciseDisplay';
 import { DP } from '../../engine/dp.js';
 import { isEnabled } from '../../util/featureFlags.js';
 import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
+import { resolveMaxKg } from '../../engine/dp/loadModel.js';
 import { roundToEquipmentWeight } from '../../config/weights.js';
 import { isBodyweightExercise, bodyweightFraction } from '../../engine/bodyweightLoad.js';
 import { getMetricType } from '../../engine/metricType.js';
@@ -269,6 +270,32 @@ function toPlannedExercise(
           age: typeof ageRaw === 'number' && Number.isFinite(ageRaw) ? ageRaw : null,
         })
       : null;
+  const rawColdStartKg =
+    transferSeed && transferSeed.kg > 0
+      ? transferSeed.kg
+      : populationSeed && populationSeed.kg > 0
+        ? populationSeed.kg
+        : suggestStartWeight(engineEx.name, experienceEn, csProfile);
+  // F2 (Daniel live 2026-06-10) — clamp the COLD-START external load to the
+  // exercise's defensive MAX_KG cap. The cap (loadModel.resolveMaxKg: curated
+  // MAX_KG, else metadata-derived behind dp_load_model_v1 — e.g. Y Raise umeri/db
+  // → 18) is enforced inside dp.recommend's at-cap brake, but that brake keys on
+  // the PRIOR logged weight (lastW) so it is INERT at cold-start (lastW=0). The
+  // population-prior / suggestStartWeight seed then snapped to the ladder TOP
+  // (umeri raise → 25) with no ceiling → an ego-load preview. The same cap, applied
+  // where the cold-start rec is BORN. With-history rows already come capped from
+  // dp.recommend, so this is scoped to the cold-start branch only.
+  const coldStartCap = isBw
+    ? null
+    : resolveMaxKg({
+        curated: (DP.MAX_KG as Record<string, number>)[engineEx.name],
+        meta: getExerciseMetadata(engineEx.name),
+        flagOn: isEnabled('dp_load_model_v1'),
+      });
+  const cappedColdStartKg =
+    coldStartCap != null && coldStartCap > 0
+      ? Math.min(rawColdStartKg, coldStartCap)
+      : rawColdStartKg;
   const rawTargetKg = isBw
     ? hasHistory && rec && typeof rec.kg === 'number'
       ? rec.kg
@@ -276,12 +303,8 @@ function toPlannedExercise(
     : hasHistory
       ? rec && typeof rec.kg === 'number'
         ? rec.kg
-        : suggestStartWeight(engineEx.name, experienceEn, csProfile)
-      : transferSeed && transferSeed.kg > 0
-        ? transferSeed.kg
-        : populationSeed && populationSeed.kg > 0
-          ? populationSeed.kg
-          : suggestStartWeight(engineEx.name, experienceEn, csProfile);
+        : cappedColdStartKg
+      : cappedColdStartKg;
   // Snap the prescribed EXTERNAL load to a weight the machine/dumbbell can
   // actually be set to — covers the cold-start suggestStartWeight path that
   // otherwise surfaced impossible weights (smoke 2026-06-01: Flat DB Press 18kg

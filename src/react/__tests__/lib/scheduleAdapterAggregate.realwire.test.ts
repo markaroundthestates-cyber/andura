@@ -29,6 +29,11 @@ import {
 import { DB, tod } from '../../../db.js';
 import { MS_PER_DAY } from '../../../constants.js';
 import { suggestStartWeight } from '../../../engine/coldStartGuidelines.js';
+import { resolveMaxKg } from '../../../engine/dp/loadModel.js';
+import { getExerciseMetadata } from '../../../engine/exerciseLibrary.js';
+import { isBodyweightExercise } from '../../../engine/bodyweightLoad.js';
+import { isEnabled } from '../../../util/featureFlags.js';
+import { DP } from '../../../engine/dp.js';
 
 const TUESDAY_2026_05_19 = new Date(2026, 4, 19); // dayIdx 1 (M, PULL session)
 const MONDAY_2026_05_18 = new Date(2026, 4, 18);  // dayIdx 0 (L, PUSH session)
@@ -179,6 +184,33 @@ describe('scheduleAdapterAggregate — composePlannedWorkoutToday real wire asyn
     expect(out!.volumeKg).toBeGreaterThanOrEqual(0);
     if (out!.exercises.some((e) => e.targetKg > 0)) {
       expect(out!.volumeKg).toBeGreaterThan(0);
+    }
+  });
+
+  // ── F2 — COLD-START load clamped to the defensive MAX_KG (Daniel live 2026-06-10)
+  // Empty history → every external-load exercise is a cold-start seed (population
+  // prior / suggestStartWeight). Before F2 those snapped to the ladder TOP with no
+  // ceiling (Y Raise umeri/db → 25 despite an 18 cap), because dp.recommend's at-cap
+  // brake keys on the PRIOR logged weight (inert at cold-start). The compose path now
+  // applies the same resolveMaxKg cap where the cold-start rec is born. Assert the
+  // session-wide invariant: no cold-start external load exceeds its cap.
+  it('cold-start external loads never exceed the exercise defensive MAX_KG (F2)', async () => {
+    const flagOn = isEnabled('dp_load_model_v1');
+    // Drive several real cold-start sessions (no history seeded) across days.
+    for (const day of [TUESDAY_2026_05_19, MONDAY_2026_05_18]) {
+      const out = await composePlannedWorkoutToday(day);
+      if (!out) continue;
+      for (const ex of out.exercises) {
+        if (isBodyweightExercise(ex.engineName ?? ex.name)) continue; // bodyweight = added load
+        const cap = resolveMaxKg({
+          curated: (DP.MAX_KG as Record<string, number>)[ex.engineName ?? ex.name],
+          meta: getExerciseMetadata(ex.engineName ?? ex.name),
+          flagOn,
+        });
+        if (cap != null && cap > 0) {
+          expect(ex.targetKg).toBeLessThanOrEqual(cap);
+        }
+      }
     }
   });
 
