@@ -6,7 +6,7 @@
 // Plus one integration test through the real composer (buildSession) for v-taper.
 
 import { describe, it, expect } from 'vitest';
-import { deriveExerciseTags, applyFocusPolicy } from '../focusPolicy.js';
+import { deriveExerciseTags, applyFocusPolicy, focusRelevantTags } from '../focusPolicy.js';
 import { buildSession, movementKey } from '../sessionBuilder.js';
 import { getExerciseMetadata } from '../exerciseLibrary.js';
 
@@ -433,5 +433,72 @@ describe('applyFocusPolicy — integration through the real composer (v-taper pu
     });
     expect(Array.isArray(off.exercises)).toBe(true);
     expect(off.exercises.length).toBeGreaterThan(0);
+  });
+});
+
+// ── F6 — focus-relevant tag set + focus-weighted accessory ordering ──────────
+describe('focusRelevantTags — derived from the focus rules', () => {
+  it('v-taper cares about side/rear delt + lat isolation (its requirement+weekly tags)', () => {
+    const tags = focusRelevantTags('v-taper');
+    expect(tags.has('side_delt')).toBe(true);   // minSideDeltSlots
+    expect(tags.has('rear_delt')).toBe(true);    // minRearDeltSlots
+    expect(tags.has('lat_isolation')).toBe(true);// lat_isolation weekly-min
+    expect(tags.has('pullover')).toBe(true);
+  });
+
+  it('balanced / unknown focus → empty set (ordering becomes a no-op)', () => {
+    expect(focusRelevantTags('balanced').size).toBe(0);
+    expect(focusRelevantTags('definitely-not-a-focus').size).toBe(0);
+  });
+});
+
+describe('F6 — focus-weighted accessory ordering on Pull (v-taper)', () => {
+  const FULL_GYM = ['barbell', 'dumbbell', 'cable', 'machine', 'bodyweight', 'band'];
+  function vtaperPull() {
+    return buildSession('pull', {
+      equipment: { available: FULL_GYM },
+      profileTier: 'T2',
+      seed: 'f6-vtaper-pull',
+      danielTierSelect: true,
+      focusPolicy: true,
+      focusId: 'v-taper',
+      daysPerWeek: 4,
+      cluster: 'pull',
+      volumeTargets: { spate: 16, biceps: 10, antebrate: 6 },
+      weeklySessionsPerGroup: { spate: 2, biceps: 2, antebrate: 2 },
+    });
+  }
+
+  it('a focus-relevant accessory (lat-iso) never sits behind an off-focus accessory', () => {
+    const s = vtaperPull();
+    const relevant = focusRelevantTags('v-taper');
+    const COMPOUND_TIER = 1;
+    const isAccessory = (n) => (getExerciseMetadata(n).tier ?? 2) > COMPOUND_TIER;
+    const isFocus = (n) => {
+      for (const tag of deriveExerciseTags(n, getExerciseMetadata(n), movementKey)) {
+        if (relevant.has(tag)) return true;
+      }
+      return false;
+    };
+    const acc = s.exercises
+      .map((e, i) => ({ name: e.name, i }))
+      .filter((x) => isAccessory(x.name));
+    const focusAcc = acc.filter((x) => isFocus(x.name));
+    const offAcc = acc.filter((x) => !isFocus(x.name));
+    // Invariant: every focus-relevant accessory precedes every off-focus accessory.
+    if (focusAcc.length > 0 && offAcc.length > 0) {
+      const lastFocus = Math.max(...focusAcc.map((x) => x.i));
+      const firstOff = Math.min(...offAcc.map((x) => x.i));
+      expect(lastFocus).toBeLessThan(firstOff);
+    }
+    // Compounds-first is untouched: no accessory precedes a tier-1 compound.
+    const firstAccessoryIdx = acc.length ? Math.min(...acc.map((x) => x.i)) : Infinity;
+    const lastCompoundIdx = s.exercises
+      .map((e, i) => ({ t: getExerciseMetadata(e.name).tier ?? 2, i }))
+      .filter((x) => x.t === COMPOUND_TIER)
+      .reduce((m, x) => Math.max(m, x.i), -1);
+    if (lastCompoundIdx >= 0 && Number.isFinite(firstAccessoryIdx)) {
+      expect(lastCompoundIdx).toBeLessThan(firstAccessoryIdx);
+    }
   });
 });

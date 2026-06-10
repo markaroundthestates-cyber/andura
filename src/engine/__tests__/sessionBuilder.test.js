@@ -143,6 +143,45 @@ describe('buildSession — pure function', () => {
     expect(s.exercises[0].name).toBe('Leg Press');
   });
 
+  // F7 (Daniel live 2026-06-10) — a LEG-PRESS VARIANT must not slip in as an
+  // accessory once 2 big lower lifts are present. His live Legs day composed
+  // Squat + RDL and THEN a tier-2 "Wide-Stance Leg Press" as a 3rd big lift,
+  // cold-started at ~80kg (vs his ~220 Leg Press history) — because isBigLower
+  // keyed on tier===1 only and the stance variant is library tier 2. After F7 the
+  // classification is movement-pattern based (leg-press token counts), so the cap
+  // blocks the 3rd big lift. PR history on Squat + RDL pins the 2 big lifts.
+  it('no leg-press-family VARIANT appears as a 3rd big lift after Squat + RDL', () => {
+    const s = buildSession('legs', {
+      ...ctx({
+        available: ['machine', 'barbell', 'dumbbell', 'cable'],
+        prNames: ['Barbell Back Squat (High Bar)', 'Romanian Deadlift'],
+      }),
+      danielTierSelect: true,
+      volumeTargets: { quads: 14, hamstrings: 12, glutes: 12, calves: 14, core: 8 },
+      weeklySessionsPerGroup: {
+        'picioare-quads': 2, 'picioare-hamstrings': 2, fese: 2, gambe: 2, core: 2,
+      },
+      daysPerWeek: 4,
+    });
+    // At most 2 big lower lifts in the whole session (the cap).
+    const LOWER_BIG = new Set(['picioare-quads', 'picioare-hamstrings']);
+    const BIG_TOKENS = new Set(['squat', 'leg-press', 'lunge', 'deadlift', 'hip-thrust', 'good-morning']);
+    const isBig = (name) => {
+      const m = getExerciseMetadata(name);
+      if (!LOWER_BIG.has(m?.muscle_target_primary)) return false;
+      if (m?.tier === 1) return true;
+      return BIG_TOKENS.has(movementKey(name, m).split('::')[1] ?? '');
+    };
+    const bigCount = s.exercises.filter((e) => isBig(e.name)).length;
+    expect(bigCount).toBeLessThanOrEqual(2);
+    // And specifically: NO leg-press movement appears (Squat + RDL already fill the
+    // 2 big slots, so a leg-press variant — base OR stance — must be capped out).
+    const legPressFamily = s.exercises.filter(
+      (e) => (movementKey(e.name, getExerciseMetadata(e.name)).split('::')[1] ?? '') === 'leg-press',
+    );
+    expect(legPressFamily).toEqual([]);
+  });
+
   // WP-4: missing equipment no longer DROPs to an empty session — bodyweight
   // is always available, so a session is still produced (clean seam for WP-5
   // substitution rather than a crash / empty list).

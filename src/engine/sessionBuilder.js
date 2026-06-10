@@ -12,7 +12,7 @@ import { EXERCISE_METADATA, getExerciseMetadata, isActiveMeta } from './exercise
 import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT, ISRAETEL_BASELINES } from './periodization/constants.js';
 import { isExcludedMovement } from './movementExclusion.js';
 import { EXERCISE_TIER_RANK, tierRankOf, tierSelectScore, TIER_SELECTABLE_SA } from './exerciseTierRank.js';
-import { applyFocusPolicy } from './focusPolicy.js';
+import { applyFocusPolicy, deriveExerciseTags, focusRelevantTags } from './focusPolicy.js';
 
 // buildSession's first param is now a Big-6 CLUSTER id (push/pull/legs/upper/
 // lower/full) — the target muscle groups + their session-slot bias come from the
@@ -166,6 +166,22 @@ const MAJOR_MUSCLES_SLOT_GUARANTEE = Object.freeze([
 // core are accessories (other groups), so they never count toward the cap.
 const LOWER_BIG_GROUPS = new Set(['picioare-quads', 'picioare-hamstrings']);
 const MAX_BIG_LOWER_LIFTS = 2;
+// F7 (Daniel coach audit 2026-06-10) — the big-lower cap was keyed on tier===1
+// alone, but several STANCE/variant compounds of the same systemic movement are
+// library tier 2 (Wide-/Narrow-Stance Leg Press, DB Sumo/Pistol Squat, Lateral/
+// Curtsy/Deficit Lunge). They are the SAME bilateral squat/press/hinge/lunge
+// pattern as their tier-1 base, so a tier-2 Wide-Stance Leg Press slipped in as an
+// "accessory" AFTER Squat+RDL → a 3rd big lift on the live Legs day. Classify a big
+// lower lift by the MOVEMENT PATTERN token (the same coarse family movementKey uses
+// for dedup) on the quad/ham groups, in ADDITION to the tier-1 signal — a strict
+// superset that never drops a current tier-1 mover (incl. GHR/Nordic/good-morning/
+// hyper) while folding the variant compounds in. The single-joint isolations of the
+// same groups carry the DISTINCT leg-extension/leg-curl tokens (matched before the
+// generic extension/curl), so they are NOT swept in. Keyed on the canonical token →
+// works for every present + future stance variant of these patterns automatically.
+const LOWER_BIG_MOVEMENT_TOKENS = new Set([
+  'squat', 'leg-press', 'lunge', 'deadlift', 'hip-thrust', 'good-morning',
+]);
 
 /**
  * Tier-aware session-substance floor. T0 (beginner) keeps the base floor of 4;
@@ -1218,7 +1234,18 @@ export function buildSession(cluster, ctx) {
   // #3 (Daniel coach audit 2026-06-10) — a big lower lift = a tier-1 mover on the
   // quad/ham groups (squat/hinge/lunge/press). Cap at MAX_BIG_LOWER_LIFTS per
   // session so a legs/lower/full day never stacks 3+ heavy bilateral compounds.
-  const isBigLower = (e) => e.meta?.tier === 1 && LOWER_BIG_GROUPS.has(e.meta?.muscle_target_primary);
+  // F7 — big lower lift = a quad/ham mover that is EITHER tier-1 (the existing
+  // signal, keeps GHR/Nordic/good-morning/hyper) OR carries a systemic compound
+  // movement-pattern token (folds in the tier-2 stance/lunge/squat VARIANTS that
+  // used to slip in as accessories). movementKey returns `<group>::<token>`; the
+  // token after `::` is the family. Isolations (leg-extension/leg-curl) carry their
+  // own distinct tokens → not in LOWER_BIG_MOVEMENT_TOKENS → correctly excluded.
+  const isBigLower = (e) => {
+    if (!LOWER_BIG_GROUPS.has(e.meta?.muscle_target_primary)) return false;
+    if (e.meta?.tier === 1) return true;
+    const token = movementKey(e.name, e.meta).split('::')[1] ?? '';
+    return LOWER_BIG_MOVEMENT_TOKENS.has(token);
+  };
   let bigLowerCount = 0;
   const bigLowerCapped = (e) => bigLowerCount >= MAX_BIG_LOWER_LIFTS && isBigLower(e);
   const take = (e, sets) => {
@@ -1763,6 +1790,34 @@ export function buildSession(cluster, ctx) {
   }
   if ((ctx?.weakGroups?.length ?? 0) > 0) {
     exercises = prioritizeWeakGroups(exercises, ctx?.weakGroups ?? []);
+  }
+
+  // F6 (Daniel coach audit 2026-06-10) — FOCUS-WEIGHTED accessory ordering. Within
+  // the ACCESSORY band (tier > 1) a focus-RELEVANT isolation should lead the non-
+  // focus accessories (his v-taper Pull: the lat-iso Machine Pullover before the
+  // off-focus Shrug + Hyperextension). Stable sort keyed (tier, focus-relevance,
+  // current index): tier stays primary so COMPOUNDS-FIRST is untouched, and the
+  // current order is the final tiebreak so the weak/emphasis front-load above is
+  // preserved within each band. Focus-relevance is derived from the SAME focus-
+  // policy data the resolver enforces (focusRelevantTags ∩ the exercise's tags), so
+  // it never drifts. Gated on dp_focus_policy_v1 (ctx.focusPolicy) + a real focusId
+  // → balanced / flag-off → empty tag set → key is uniform → byte-identical order.
+  if (ctx?.focusPolicy === true && ctx?.focusId) {
+    const relevant = focusRelevantTags(ctx.focusId);
+    if (relevant.size > 0) {
+      const isFocusAccessory = (name) => {
+        const meta = getExerciseMetadata(name);
+        if ((meta?.tier ?? 2) <= COMPOUND_TIER) return false; // accessories only
+        for (const tag of deriveExerciseTags(name, meta, movementKey)) {
+          if (relevant.has(tag)) return true;
+        }
+        return false;
+      };
+      exercises = exercises
+        .map((e, i) => ({ e, i, tier: getExerciseMetadata(e.name).tier ?? 2, foc: isFocusAccessory(e.name) ? 0 : 1 }))
+        .sort((a, b) => (a.tier - b.tier) || (a.foc - b.foc) || (a.i - b.i))
+        .map((x) => x.e);
+    }
   }
 
   // #70-D2 COMPOUND-FIRST guarantee (final): the weak/emphasis front-loaders above

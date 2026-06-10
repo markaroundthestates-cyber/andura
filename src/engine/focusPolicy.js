@@ -365,6 +365,45 @@ export const FOCUS_RULES = Object.freeze({
 /** Valid focus ids (the keys of FOCUS_RULES — mirrors FOCUS_PRESETS). */
 export const FOCUS_RULE_IDS = Object.freeze(Object.keys(FOCUS_RULES));
 
+// Map each explicit sessionRequirements key → the policy tag(s) it is ABOUT, so
+// the focus-relevant tag set is derived from the SAME data the resolver enforces
+// (no second source of truth). Keyed on the requirement field name.
+const REQ_KEY_TAGS = Object.freeze({
+  minSideDeltSlots: ['side_delt', 'lateral_raise'],
+  minRearDeltSlots: ['rear_delt'],
+  minVerticalPullSlots: ['vertical_pull'],
+  minHorizontalRowSlots: ['horizontal_row'],
+  requireFlyeIfChestDay: ['flye'],
+  requireLatIsolationIfBackDay: ['lat_isolation', 'pullover', 'straight_arm_pulldown'],
+  requireOverheadTricepsIfArmsOrPush: ['overhead_triceps'],
+  requireStretchCurlIfArmsOrPull: ['stretch_curl', 'preacher'],
+});
+
+/**
+ * F6 (Daniel coach audit 2026-06-10) — the Set of policy tags a focus CARES about,
+ * derived from its FOCUS_RULES (sessionRequirements field names + every weekly
+ * minimum's matchingTags). An ACCESSORY carrying one of these tags is "focus-
+ * relevant" and should order ahead of a non-focus accessory (e.g. v-taper: a lat-
+ * isolation Pullover before Shrug/Hyperextension). Derived from the SAME data the
+ * resolver reads, so the two never drift. Unknown / balanced focus → empty Set →
+ * the caller's ordering is byte-identical.
+ *
+ * @param {string} focusId - FOCUS_RULES key (e.g. 'v-taper')
+ * @returns {Set<string>} policy tags the focus references
+ */
+export function focusRelevantTags(focusId) {
+  const rule = FOCUS_RULES[focusId];
+  const out = new Set();
+  if (!rule) return out;
+  for (const key of Object.keys(rule.sessionRequirements || {})) {
+    for (const tag of REQ_KEY_TAGS[key] || []) out.add(tag);
+  }
+  for (const wt of rule.weeklyMinimums || []) {
+    for (const tag of wt.matchingTags || []) out.add(tag);
+  }
+  return out;
+}
+
 // ══ TAG DERIVER (Wave 1.3-B) ════════════════════════════════════════════════
 // The library has NO sub-muscle tag (1.3-A investigation). The ONLY grounded
 // signals are muscle_target_primary (coarse), the movementKey() token, and the
