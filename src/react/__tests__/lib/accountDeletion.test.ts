@@ -94,7 +94,12 @@ describe('hardDeleteCloudUser', () => {
     const ok = await hardDeleteCloudUser();
     expect(ok).toBe(true);
     expect(buildAuthUrl).toHaveBeenCalledWith('users/u1');
-    expect(fetchSpy).toHaveBeenCalledWith('https://rtdb.test/users/u1.json?auth=tok', { method: 'DELETE' });
+    // audit 2026-06-10: the DELETE now carries AbortSignal.timeout(15000) (never
+    // hang the UI). Assert method + the timeout signal's presence.
+    expect(fetchSpy).toHaveBeenCalledWith(
+      'https://rtdb.test/users/u1.json?auth=tok',
+      expect.objectContaining({ method: 'DELETE', signal: expect.any(AbortSignal) }),
+    );
   });
 
   it('returns false when unauthenticated (no uid)', async () => {

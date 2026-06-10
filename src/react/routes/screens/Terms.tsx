@@ -22,9 +22,12 @@ export function Terms(): JSX.Element {
     }
   }
 
+  // h-full + overflow-y-auto: inside the desktop phone-bezel (#root overflow
+  // hidden + #root>* height clamp) the page needs its OWN scroll, otherwise the
+  // legal tail clips with no scrollbar (audit APP-MED-01 / LIVE-MED-01).
   return (
     <section
-      className="bg-paper min-h-screen text-ink"
+      className="bg-paper min-h-screen h-full overflow-y-auto text-ink"
       data-testid="terms-page"
     >
       <div className="max-w-md mx-auto p-6">

@@ -97,7 +97,7 @@ export async function hardDeleteCloudUser(): Promise<boolean> {
   if (!auth?.uid) return false;
   try {
     const url = await buildAuthUrl(`users/${auth.uid}`);
-    const r = await fetch(url, { method: 'DELETE' });
+    const r = await fetch(url, { method: 'DELETE', signal: AbortSignal.timeout(15000) }); // _fbFetch idiom: never hang
     return r.ok;
   } catch (e) {
     logger.warn('[accountDeletion] hard cloud delete failed:', e);

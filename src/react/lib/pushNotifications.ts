@@ -135,7 +135,7 @@ export async function enablePushNotifications(): Promise<PushResult> {
     const idToken = await getIdToken();
     const url = `${FIREBASE_URL}/${userPath}/fcmTokens/${token}.json`
       + (idToken ? `?auth=${encodeURIComponent(idToken)}` : '');
-    const res = await fetch(url, { method: 'PUT', body: 'true' });
+    const res = await fetch(url, { method: 'PUT', body: 'true', signal: AbortSignal.timeout(15000) }); // _fbFetch idiom
     if (!res.ok) return 'error';
 
     return 'granted';
@@ -183,7 +183,7 @@ export async function disablePushNotifications(): Promise<void> {
         const idToken = await getIdToken().catch(() => null);
         const url = `${FIREBASE_URL}/${userPath}/fcmTokens/${token}.json`
           + (idToken ? `?auth=${encodeURIComponent(idToken)}` : '');
-        await fetch(url, { method: 'DELETE' }).catch(() => undefined);
+        await fetch(url, { method: 'DELETE', signal: AbortSignal.timeout(15000) }).catch(() => undefined); // _fbFetch idiom
       }
     }
   } catch {

@@ -82,6 +82,7 @@ export async function syncNotificationPrefs(): Promise<void> {
       method: 'PUT',
       body: JSON.stringify(prefs),
       headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(15000), // _fbFetch idiom: never hang
     });
   } catch {
     // Best-effort — orice esec (network, auth) inghitit silent.
