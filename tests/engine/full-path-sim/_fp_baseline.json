@@ -3,31 +3,31 @@
   "seed": 15736039,
   "nProfiles": 8,
   "weeks": 6,
-  "hashOff": "75b5dd7e12000c0a4fd8ff1016ebed9ba1c20d2aa376c48d64f2c16599f54e82",
-  "hashOn": "9cf49a5d6ebfb9d701741575644f7d913a7cdd98aa67149f0f13b8fa24c1c903",
+  "hashOff": "054c9f7ecc39d764eb474c7dd0e5a181d7cb64a76ec82171ebf6ffeb80c4d221",
+  "hashOn": "09e5c3b5699f6acf9a6a594300366b96e8c961b0698a39d78cf214fb23e77fe4",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 6.74,
-    "meanSetTotal": 13.58,
-    "meanDurationMin": 49.4,
-    "meanVolumeKg": 1572,
+    "meanExerciseCount": 6.71,
+    "meanSetTotal": 13.55,
+    "meanDurationMin": 49.3,
+    "meanVolumeKg": 1556,
     "minusRatePct": 21.9
   },
   "sessionOn": {
     "plannedSessions": 192,
     "emptySessions": 0,
     "meanExerciseCount": 6.84,
-    "meanSetTotal": 12.59,
-    "meanDurationMin": 47.5,
-    "meanVolumeKg": 1428,
+    "meanSetTotal": 12.56,
+    "meanDurationMin": 47.4,
+    "meanVolumeKg": 1425,
     "minusRatePct": 21.9
   },
   "convergenceOff": {
-    "totalSeries": 114,
-    "convergedPct": 12.3,
+    "totalSeries": 113,
+    "convergedPct": 12.4,
     "medianSessionsToConverge": 5.5,
-    "meanFinalAbsErr": 0.539
+    "meanFinalAbsErr": 0.542
   },
   "convergenceOn": {
     "totalSeries": 115,
@@ -37,17 +37,17 @@
   },
   "flagsOff": {
     "oscillation": 0,
-    "stuckLow": 82,
+    "stuckLow": 81,
     "stuckHigh": 16,
-    "absurd": 37
+    "absurd": 35
   },
   "flagsOn": {
     "oscillation": 0,
     "stuckLow": 82,
     "stuckHigh": 17,
-    "absurd": 37
+    "absurd": 35
   },
   "craterOff": 70,
-  "craterOn": 56,
-  "_rebaseline_note": "Re-frozen 2026-06-10 for Daniel coach-audit #1 + #2 (composition refinements, on top of the #3 lower-cap freeze). #1 (compoundSetFloor in scaleSetsByEnergy/scaleSetsByReadiness/trimSessionToTimeBudget): a tier-1 compound's working sets never fall below 3 under the deficit/readiness/time cuts (a CUT trims accessories/isolations + drops tail work, never the main lift's 3-set dose) — chest press 2→3 on a v-taper push. #2 (UPPER arm de-dup in buildSession): the upper catch-all drops its redundant standalone TRICEPS isolation (triceps is hit by the day's presses; the under-served biceps stays, guaranteed) so upper lands at 7 focused lifts — meanExerciseCount drifts down (~7.3→6.7 OFF) as upper sheds one arm. Both UNGATED (correct shape, not flags). VERIFIED DETERMINISTIC (two fresh runs reproduce 75b5dd7e / 9cf49a5d — no RNG/clock leak; the section-A fresh-OFF-reproduces-itself test passes) and SAFE: section-C is self-relative ON-vs-OFF and HOLDS — craterOn 56 <= craterOff 70, oscillation 0=0, absurd ON 37 <= OFF 37 + 10 band, convergence ON 12.2% within band of OFF 12.3%. Persona-matrix #70 gate green (26 personas); the v-taper program now reads chest-press 3 sets on push, upper 7 (biceps kept), lower 2 big lifts. #2 chosen as deterministic keep-biceps-drop-redundant-triceps (triceps covered by pressing, biceps under-served) rather than literal weekly bi/tri alternation — simpler + lower-risk, reversible if Daniel prefers true alternation."
+  "craterOn": 54,
+  "_rebaseline_note": "Re-frozen 2026-06-10 for FIX-A wave (live-QA F2/F6/F7 composition fixes, on top of the D117 #1/#2/#3 freeze). F7 (UNGATED, sessionBuilder isBigLower now movement-token-based: squat/leg-press/lunge/deadlift/hip-thrust/good-morning on quad/ham OR tier-1): leg-press/squat stance VARIANTS now count toward MAX_BIG_LOWER_LIFTS=2, so a tier-2 wide-stance leg-press can no longer slip in as a 3rd big lift after Squat+RDL and cold-start ~80 (Daniel's live Legs bug). F2 (GATED dp_load_model_v1 LIVE, compose.ts cold-start preview): the resolveMaxKg cap now clamps the population-prior/coldstart seed BEFORE the ladder snap (previously the cap lived only in dp.recommend's at-cap brake which keys on lastW -> inert at cold-start) -> Y Raise cold-start 25->18 (his live ego-load). F6 (GATED dp_focus_policy_v1 LIVE, sessionBuilder accessory ordering): focus-relevant accessories sort ahead of off-focus within the accessory band (Pull: Pullover before Shrug/Hyperext on v-taper). hashOff shifts (F7 ungated touches OFF); hashOn shifts (F7+F2+F6). VERIFIED DETERMINISTIC (two fresh runs reproduce 054c9f7e / 09e5c3b5 within the same run; the section-A fresh-OFF-reproduces-itself test passes -> no RNG/clock leak) and SAFER: section-C is self-relative ON-vs-OFF and HOLDS, and absolute safety IMPROVED vs the D117 baseline -- craterOn 56->54, absurd ON/OFF 37->35 (F2's clamp removes cold-start absurd loads, exactly its purpose); oscillation 0=0; convergence ON 12.2% within band of OFF 12.4%. Persona-matrix #70 gate stays green. F5 (Upper 8->7) NOT applied -- the Pullover is a v-taper lat_isolation weekly-min requirement, not stray selection; dropping it blanket-style regresses pure Upper/Lower users -> deferred for a cross-day-aware fix (same class as the DARK dp_lumbar_dedup_v1)."
 }
