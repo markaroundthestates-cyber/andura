@@ -80,7 +80,7 @@ export function classifyPattern(ex) {
   if (/deadlift|romanian|rdl|hinge/i.test(n)) return 'deadlift';
   if (/squat/i.test(n)) return 'squat';
   if (/ohp|overhead press|shoulder press/i.test(n)) return 'ohp';
-  if (/lateral|rear delt|reverse pec|face pull/i.test(n)) return 'lateral';
+  if (/lateral|rear delt|reverse pec|reverse crossover|reverse cable|face pull/i.test(n)) return 'lateral';
   if (/pulldown|pull-?up|chin-?up/i.test(n)) return 'pulldown';
   if (/row/i.test(n)) return 'row';
   if (/curl/i.test(n) || muscle === 'biceps') return 'bicep';

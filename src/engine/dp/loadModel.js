@@ -35,8 +35,10 @@ const ISO_CAPS = /** @type {Record<string, Record<string, number>>} */ ({
   'biceps':              { dumbbell: 25, cable: 40, machine: 60, barbell: 50, default: 40 },
   'triceps':             { dumbbell: 45, cable: 70, machine: 120, barbell: 60, default: 60 },
   'piept':               { dumbbell: 30, cable: 60, machine: 100, barbell: 60, default: 60 },
-  // spate isolations span pullovers (moderate) to shrugs (legitimately heavy).
-  'spate':               { dumbbell: 60, cable: 90, machine: 180, barbell: 180, default: 100 },
+  // spate isolations span pullovers (moderate) to shrugs (legitimately heavy — a
+  // strong lifter barbell-shrugs 200kg+, so the barbell cap sits at 250 to avoid
+  // false-braking heavy shrugs; audit 2026-06-10).
+  'spate':               { dumbbell: 60, cable: 90, machine: 180, barbell: 250, default: 100 },
   'fese':                { dumbbell: 60, cable: 40, machine: 150, barbell: 120, default: 120 },
   'picioare-quads':      { machine: 180, default: 160 },
   'picioare-hamstrings': { machine: 180, default: 160 },
@@ -54,7 +56,7 @@ const COMPOUND_CAPS = /** @type {Record<string, number>} */ ({
   'fese': 360,
   'spate': 250,
   'piept': 220,
-  'umeri': 150,
+  'umeri': 180,
   'gambe': 250,
   'core': 100,
   'biceps': 80,

@@ -15,8 +15,10 @@ describe('loadModel — deriveMaxKg (synthetic metadata)', () => {
     expect(deriveMaxKg({ tier: 2, force_demand: 'medium', muscle_target_primary: 'fese', equipment_type: 'machine' })).toBe(150);
   });
 
-  it('back isolation spans pullover-to-shrug → machine/barbell 180, cable 90', () => {
+  it('back isolation spans pullover-to-shrug → machine 180, barbell 250 (heavy shrugs), cable 90', () => {
     expect(deriveMaxKg({ tier: 2, force_demand: 'medium', muscle_target_primary: 'spate', equipment_type: 'machine' })).toBe(180);
+    // barbell shrug 250: a strong lifter shrugs 200kg+ → 180 false-braked them (audit 2026-06-10).
+    expect(deriveMaxKg({ tier: 2, force_demand: 'medium', muscle_target_primary: 'spate', equipment_type: 'barbell' })).toBe(250);
     expect(deriveMaxKg({ tier: 2, force_demand: 'medium', muscle_target_primary: 'spate', equipment_type: 'cable' })).toBe(90);
   });
 
@@ -72,5 +74,11 @@ describe('loadModel — real Wave-2 library (Daniel audit exercises)', () => {
     expect(resolveMaxKg({ curated: undefined, meta: getExerciseMetadata('Hip Abduction Machine'), flagOn: true })).toBe(150);
     // Shrug: whatever its tag, it must HAVE a finite brake now (was unbounded).
     expect(resolveMaxKg({ curated: undefined, meta: getExerciseMetadata('Smith Machine Shrug'), flagOn: true })).toBeGreaterThan(0);
+  });
+});
+
+describe('loadModel — audit-2 refinements (2026-06-10 fresh-eyes sweep)', () => {
+  it('umeri compound cap raised 150→180 (Machine Shoulder Press borderline false-brake)', () => {
+    expect(deriveMaxKg({ tier: 1, force_demand: 'high', muscle_target_primary: 'umeri', equipment_type: 'machine' })).toBe(180);
   });
 });
