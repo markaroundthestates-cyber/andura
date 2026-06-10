@@ -91,6 +91,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   // no longer rely on "no _devFlags ⇒ off"), keeping hashOff byte-for-byte. ON behavior
   // is proven on the #70 matrix + the unit suites, NOT in this determinism stream.
   'dp_strength_goal_v1', 'dp_split_rebalance_v1',
+  // THE FLIP 2026-06-10 — metadata-derived rep-range resolver now defaults ON
+  // (izolarile primesc banda lor de clasa 12-20/15-20; CUT nu le mai striveste la
+  // 10). Added here so the A/B arms force it explicitly OFF: the frozen stream
+  // pins the legacy rep band per exercise; honoring the derived/curated ranges
+  // would move the frozen hashes. ON behavior is proven on Daniel's before/after
+  // probe + the #70 persona matrix, NOT in this determinism stream.
+  'dp_rep_class_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

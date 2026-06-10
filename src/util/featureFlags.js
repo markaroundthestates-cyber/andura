@@ -1052,9 +1052,14 @@ export const FLAGS = Object.freeze({
   // calf t1/high mistag), curated REP_RANGES still wins when the name hits, and
   // the CUT cap stops crushing isolation reps to 10 (hybrid policy: the deficit
   // is carried by volume, not by stripping the isolation stimulus). OFF →
-  // byte-identical legacy lookup + CUT cap (the full-path-sim hash + golden
-  // gate hold; NOT in the fp ON cohort). Flip ON after the ON-arm review.
-  dp_rep_class_v1: { rollout: 0, default: false },
+  // byte-identical legacy lookup + CUT cap. THE FLIP 2026-06-10 — default ON
+  // after the before/after verification on Daniel's real workout (18/22 toward
+  // spec, 0 regressions) + repRange 26 + dp 178 green. Added to fp-config
+  // FLIPPED_FLAGS so the A/B baseline forces it explicitly OFF (hashOff/hashOn
+  // byte-for-byte): the frozen prescription stream pins the legacy rep band, and
+  // honoring the metadata-derived ranges would move the hashes. ON behavior is
+  // proven on the before/after probe + the #70 persona matrix, NOT in this stream.
+  dp_rep_class_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

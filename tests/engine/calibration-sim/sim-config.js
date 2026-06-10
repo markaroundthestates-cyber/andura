@@ -24,6 +24,15 @@ export const SEED = 0xa9d04a;
 export function resetStore() {
   try {
     localStorage.clear();
+    // dp_rep_class_v1 defaults ON (THE FLIP 2026-06-10) and re-points isolation
+    // rep ranges (un-caps them in CUT), which shifts the rMin the demonstrated-
+    // working-load floor back-solves at → it moves this sim's frozen prescription
+    // hash. This sim drives getSmartRecommendation DIRECTLY, so (unlike the path-A
+    // flips) the flip reaches it. Pin it OFF here to keep the frozen baseline a
+    // true legacy-rep world (the determinism + calibration-drift guard the sim
+    // exists for). The ON rep behavior is covered by dp/repRange.test.js + the
+    // #70 persona-matrix + the full-path-sim ON arm.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false }));
   } catch {
     /* jsdom always provides localStorage */
   }

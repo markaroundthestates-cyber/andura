@@ -124,10 +124,33 @@ export function resolveRepRange({ curated, meta, isInCut: _isInCut }) {
 }
 
 /**
+ * Byte-identical pre-feature rep range: curated-or-[8,12], CUT caps 11-15-max
+ * non-compound isolations at 10.
+ *
+ * @param {[number, number] | undefined} curated
+ * @param {boolean} isInCut
+ * @param {boolean} isLegacyCompound COMPOUND_EX.includes(ex)
+ * @returns {number[]}
+ */
+function legacyRepRange(curated, isInCut, isLegacyCompound) {
+  const range = curated || [8, 12];
+  if (!isInCut) return range;
+  const [rMin, rMax] = range;
+  if (rMax != null && rMax > 10 && rMax <= 15 && !isLegacyCompound) return [Math.min(rMin ?? 8, 10), 10];
+  return range;
+}
+
+/**
  * Full phase-aware dispatch — BOTH flag arms — extracted here so the dp.js
- * moratorium holds (DP.getPhaseAwareRepRange stays a thin shim). The legacy arm
- * is byte-identical to the pre-extract dp.js body: curated-or-[8,12], CUT caps
- * 11-15-max non-compound isolations at 10.
+ * moratorium holds (DP.getPhaseAwareRepRange stays a thin shim).
+ *
+ * SURGICAL SCOPE (Daniel coach audit 2026-06-10): the flag touches ONLY
+ * ISOLATIONS — the complaint was isolations shown at 8-10 instead of 12-20.
+ * Compounds keep their EXACT legacy range (byte-identical ON vs OFF) so there is
+ * no cross-flag interaction with the forta clamp (which floors to rMin) and no
+ * compound rep shift. An isolation gets its class-aware band (curated > derived)
+ * and is NOT cut-capped — the deficit is carried by volume, not by crushing the
+ * isolation rep stimulus (Daniel point #5: "CUT reduces sets, not reps").
  *
  * @param {Object} input
  * @param {[number, number] | undefined} input.curated curated REP_RANGES[ex]
@@ -138,10 +161,9 @@ export function resolveRepRange({ curated, meta, isInCut: _isInCut }) {
  * @returns {number[]}
  */
 export function phaseAwareRepRange({ curated, meta, isInCut, flagOn, isLegacyCompound }) {
-  if (flagOn) return resolveRepRange({ curated, meta, isInCut });
-  const range = curated || [8, 12];
-  if (!isInCut) return range;
-  const [rMin, rMax] = range;
-  if (rMax != null && rMax > 10 && rMax <= 15 && !isLegacyCompound) return [Math.min(rMin ?? 8, 10), 10];
-  return range;
+  if (!flagOn) return legacyRepRange(curated, isInCut, isLegacyCompound);
+  // FLAG ON — compounds + meta-less names stay on the exact legacy path; only an
+  // isolation with metadata gets the uncapped class-aware band.
+  if (!meta || isHighFatigueCompound(meta)) return legacyRepRange(curated, isInCut, isLegacyCompound);
+  return resolveRepRange({ curated, meta, isInCut });
 }

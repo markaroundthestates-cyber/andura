@@ -16,6 +16,17 @@ vi.mock('../../db.js', () => ({
 
 import { DP } from '../dp.js';
 
+// dp_rep_class_v1 defaults ON (THE FLIP 2026-06-10) — the metadata-derived rep
+// resolver that un-caps isolations in CUT. This file pins the LEGACY rep-range
+// arm (curated-or-[8,12] + the CUT isolation cap) so the cut-cap mechanic + the
+// progression branches that read the capped range stay individually exercised.
+// The ON arm is covered by dp/repRange.test.js (unit) + persona-matrix + fp-sim.
+beforeEach(() => {
+  try {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false }));
+  } catch { /* jsdom always provides localStorage */ }
+});
+
 // ── getPhaseAwareRepRange ─────────────────────────────────────────────────────
 
 describe('DP.getPhaseAwareRepRange', () => {

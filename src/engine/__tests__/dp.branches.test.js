@@ -46,6 +46,11 @@ beforeEach(() => {
   try {
     localStorage.setItem('_devFlags', JSON.stringify({
       dp_e1rm_v1: false, dp_strength_kalman_v1: false, dp_ceiling_v1: false,
+      // dp_rep_class_v1 defaults ON (THE FLIP 2026-06-10). This file pins the
+      // LEGACY rep-range arm (curated-or-[8,12] + CUT cap) so each branch stays
+      // individually exercised; the ON metadata-derived arm is covered by
+      // dp/repRange.test.js + the persona-matrix + the full-path-sim.
+      dp_rep_class_v1: false,
     }));
   } catch { /* jsdom always provides localStorage */ }
 });

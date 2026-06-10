@@ -9,6 +9,7 @@ import {
   deriveExerciseClass,
   isHighFatigueCompound,
   resolveRepRange,
+  phaseAwareRepRange,
 } from '../repRange.js';
 import { getExerciseMetadata } from '../../exerciseLibrary.js';
 
@@ -77,6 +78,38 @@ describe('repRange — resolveRepRange precedence + CUT policy', () => {
   it('CUT does NOT crush isolation reps (the bug Daniel reported)', () => {
     const meta = { tier: 2, force_demand: 'medium', muscle_target_primary: 'umeri' };
     expect(resolveRepRange({ curated: undefined, meta, isInCut: true })).toEqual([12, 20]);
+  });
+});
+
+describe('repRange — phaseAwareRepRange (both flag arms, surgical isolation-only)', () => {
+  const isoMeta = { tier: 2, force_demand: 'medium', muscle_target_primary: 'umeri' };       // lateral raise
+  const legMeta = { tier: 2, force_demand: 'medium', muscle_target_primary: 'picioare-quads' }; // leg ext
+  const compMeta = { tier: 1, force_demand: 'high', muscle_target_primary: 'picioare-quads' };  // squat
+
+  it('OFF → legacy CUT cap crushes a 12-15 isolation to [10,10]', () => {
+    expect(phaseAwareRepRange({ curated: [12, 15], meta: isoMeta, isInCut: true, flagOn: false, isLegacyCompound: false }))
+      .toEqual([10, 10]);
+  });
+
+  it('ON → isolation keeps its band in CUT (no crush — the fix)', () => {
+    expect(phaseAwareRepRange({ curated: [12, 15], meta: isoMeta, isInCut: true, flagOn: true, isLegacyCompound: false }))
+      .toEqual([12, 15]);
+    // leg-machine isolation 10-15 also uncapped
+    expect(phaseAwareRepRange({ curated: [10, 15], meta: legMeta, isInCut: true, flagOn: true, isLegacyCompound: false }))
+      .toEqual([10, 15]);
+  });
+
+  it('ON → COMPOUND is byte-identical to legacy (surgical: flag never touches compounds)', () => {
+    const args = { curated: [8, 12], meta: compMeta, isInCut: true, isLegacyCompound: true };
+    expect(phaseAwareRepRange({ ...args, flagOn: true }))
+      .toEqual(phaseAwareRepRange({ ...args, flagOn: false }));
+  });
+
+  it('ON → a meta-less name falls back to the legacy default ([8,12] non-cut; [8,10] under the legacy CUT cap)', () => {
+    expect(phaseAwareRepRange({ curated: undefined, meta: null, isInCut: false, flagOn: true, isLegacyCompound: false }))
+      .toEqual([8, 12]);
+    expect(phaseAwareRepRange({ curated: undefined, meta: null, isInCut: true, flagOn: true, isLegacyCompound: false }))
+      .toEqual([8, 10]);
   });
 });
 
