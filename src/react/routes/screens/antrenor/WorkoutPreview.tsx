@@ -408,11 +408,13 @@ export function WorkoutPreview(): JSX.Element {
               sub: ex.swapReason ? t('workout.preview.swappedPrefix', { reason: ex.swapReason }) : ex.sub,
               // Bodyweight: show "greutatea corpului" instead of "0 kg" (the
               // symptom Daniel flagged); append "+X kg" only when added > 0.
+              // R6c — show the rep BAND ("10–15 reps") when the engine carries
+              // one (dp_rep_class_v1 class bands); single target otherwise.
               detail: ex.isBodyweight
                 ? ex.targetKg > 0
-                  ? t('workout.preview.exerciseDetailBodyweightAdded', { sets: ex.sets, kg: ex.targetKg, reps: ex.targetReps })
-                  : t('workout.preview.exerciseDetailBodyweight', { sets: ex.sets, reps: ex.targetReps })
-                : t('workout.preview.exerciseDetail', { sets: ex.sets, kg: ex.targetKg, reps: ex.targetReps }),
+                  ? t('workout.preview.exerciseDetailBodyweightAdded', { sets: ex.sets, kg: ex.targetKg, reps: ex.repsBand ?? ex.targetReps })
+                  : t('workout.preview.exerciseDetailBodyweight', { sets: ex.sets, reps: ex.repsBand ?? ex.targetReps })
+                : t('workout.preview.exerciseDetail', { sets: ex.sets, kg: ex.targetKg, reps: ex.repsBand ?? ex.targetReps }),
               idx: i,
             })).map((item) => (
           <li

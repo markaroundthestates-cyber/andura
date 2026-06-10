@@ -96,22 +96,24 @@ interface ScheduleDayPreviewSheetProps {
 // Same bodyweight-aware detail copy as WorkoutPreview (kept local so the preview
 // sheet stays self-contained + read-only; identical i18n keys → identical copy).
 function exerciseDetail(ex: PlannedExercise): string {
+  // R6c — show the rep BAND ("10–15 reps") when the engine carries one.
+  const reps = ex.repsBand ?? ex.targetReps;
   if (ex.isBodyweight) {
     return ex.targetKg > 0
       ? t('workout.preview.exerciseDetailBodyweightAdded', {
           sets: ex.sets,
           kg: ex.targetKg,
-          reps: ex.targetReps,
+          reps,
         })
       : t('workout.preview.exerciseDetailBodyweight', {
           sets: ex.sets,
-          reps: ex.targetReps,
+          reps,
         });
   }
   return t('workout.preview.exerciseDetail', {
     sets: ex.sets,
     kg: ex.targetKg,
-    reps: ex.targetReps,
+    reps,
   });
 }
 
