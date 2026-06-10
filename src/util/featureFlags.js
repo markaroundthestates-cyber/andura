@@ -1034,6 +1034,27 @@ export const FLAGS = Object.freeze({
   // full-path-sim hash + golden gate hold (NOT in the fp ON cohort). Flip ON is a
   // human gate (Daniel) after a focused multi-week ON review.
   dp_meso_rir_v1: { rollout: 0, default: false },
+
+  // Metadata-derived rep-range resolver (Daniel coach audit 2026-06-10) (RISK
+  // MED — the band feeds EVERY consumer coherently: prescription + live-adjust
+  // + getRepsRange display + the demonstrated-weight floor back-solve at rMin
+  // (dp.js:819/1460), so kg can shift INDIRECTLY where the rep target moves —
+  // a compound back-solved at 6 floors slightly higher than at 8). The curated
+  // DP.REP_RANGES is keyed on the OLD ~143-name vocabulary ('Lateral Raises',
+  // 'Pec Deck / Cable Fly', 'Overhead Triceps'); the live Wave-2 library (657)
+  // emits different canonical engineNames ('Cable Lateral Raise', 'Cable Fly',
+  // 'Y Raise', …) that miss those keys, so every new-library exercise fell
+  // through to the flat [8,12] default — izolari shown 8-10 instead of their
+  // built 12-20/15-20 bands (the per-exercise ranges were DARK for exactly the
+  // exercises users train). When ON, DP.getPhaseAwareRepRange derives a
+  // class-aware base range from each exercise's OWN metadata (muscle + tier +
+  // force_demand, src/engine/dp/repRange.js — scales to all 657, catches the
+  // calf t1/high mistag), curated REP_RANGES still wins when the name hits, and
+  // the CUT cap stops crushing isolation reps to 10 (hybrid policy: the deficit
+  // is carried by volume, not by stripping the isolation stimulus). OFF →
+  // byte-identical legacy lookup + CUT cap (the full-path-sim hash + golden
+  // gate hold; NOT in the fp ON cohort). Flip ON after the ON-arm review.
+  dp_rep_class_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */

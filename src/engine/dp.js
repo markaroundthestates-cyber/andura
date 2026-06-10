@@ -10,6 +10,7 @@ import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
 import { updatePosterior, savePosterior, loadPosterior, trendDirection } from './dp/strengthKalman.js';
+import { phaseAwareRepRange } from './dp/repRange.js';
 import {
   loadPreference as loadNof1Preference,
   nof1SetBias,
@@ -189,12 +190,11 @@ export const DP = {
    * @param {boolean} isInCut
    */
   getPhaseAwareRepRange(ex, isInCut) {
-    const ranges = /** @type {Record<string, number[]>} */ (this.REP_RANGES);
-    const range = ranges[ex] || [8, 12];
-    if (!isInCut) return range;
-    const [rMin, rMax] = range;
-    if (rMax != null && rMax > 10 && rMax <= 15 && !COMPOUND_EX.includes(ex)) return [Math.min(rMin ?? 8, 10), 10];
-    return range;
+    // Both arms (dp_rep_class_v1 metadata-derived + legacy curated/CUT-cap) live
+    // in dp/repRange.js per the moratorium — this stays a thin shim.
+    const curated = /** @type {Record<string, number[]>} */ (this.REP_RANGES)[ex];
+    return phaseAwareRepRange({ curated, meta: getExerciseMetadata(ex), isInCut,
+      flagOn: isEnabled('dp_rep_class_v1'), isLegacyCompound: COMPOUND_EX.includes(ex) });
   },
 
   /** @param {string} ex */
