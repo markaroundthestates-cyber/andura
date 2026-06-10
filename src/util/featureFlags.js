@@ -35,217 +35,37 @@ import { logger } from './logger.js';
  * @type {Object<string, FlagDefinition>}
  */
 export const FLAGS = Object.freeze({
-  // Strangler switch + dimension-activation flag for AA detection (ADR 018 §6
-  // Phase 1). When ON, coachDirector routes AA through the Decision Cluster
-  // + autoAggressionAdapter; when OFF, legacy applyAAAdjustments runs.
-  // Default 0% — production behavior unchanged. Ramp via _devFlags or
-  // explicit edit here once golden-master parity is validated.
+  // ── VESTIGIAL flags (verified DEAD 2026-06-10 full-audit) ──────────────────
+  // The 8 flags in this block (aa_via_cluster + the 7 *_via_orchestrator) gate
+  // the RETIRED coachDirector strangler path and are read by NO production code
+  // (grep: only this file + featureFlags.test.js). The live React path
+  // (getDailyWorkout.js → runPipeline) invokes the engines DIRECTLY and
+  // UNCONDITIONALLY — these flags gate nothing. The prior per-flag comments
+  // narrated a "Faza 3 BLOCKED / 0/8 engines wired / vizor fara usa" story that
+  // is now FALSE and actively misled debugging, so it was removed. Kept (not
+  // deleted) so featureFlags.test.js stays green; full removal of the flags +
+  // the src/coach/orchestrator/ subsystem is tracked for the cleanup wave.
   aa_via_cluster: { rollout: 0, default: false },
 
-  // Faza 3 STRANGLER batch 1 Periodization wiring real (ADR 030 D1-D5 LOCKED V1
-  // + Q-OPEN-1→7 RESOLVED V1 2026-05-08; ADR 026 §42.10 pipeline #1). When ON,
-  // coach decision flow invokes Periodization Engine via orchestrator
-  // `runPipeline` cu `periodizationAdapter`; when OFF, Periodization remains
-  // un-invoked (current state — Faza 3 BLOCKED scope-major discovery seminal
-  // "vizor fara usa" 2026-05-06 morning chat-2 acasa: 0/8 engines wired in
-  // coach decision flow live pre-Strangler).
-  //
-  // Default 0% — production behavior unchanged (Periodization stays orphan).
-  // Golden-master parity tests legacy↔orchestrated zero-behavior-change strict
-  // in `src/coach/orchestrator/__tests__/periodizationParity.test.js`.
-  // Ramp via _devFlags or explicit rollout edit aici once Daniel cont propriu
-  // smoke (Faza 4) validates wiring real comportament corect.
+  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
   periodization_via_orchestrator: { rollout: 0, default: false },
 
-  // Faza 3 STRANGLER batch 2 Goal Adaptation wiring real (ADR 026 §42.10
-  // pipeline #2; first downstream Constraint Object consumer post Periodization
-  // batch 1 commit `de4222b`). When ON, coach decision flow invokes Goal
-  // Adaptation via `runPipeline` cu `goalAdaptationAdapter`; when OFF, Goal
-  // Adaptation remains un-invoked (orphan pre-Strangler same as Periodization).
-  //
-  // Adapter D2 shape mapping concrete: orchestrator slot `meta.constraintObject`
-  // → engine-side `meta.periodizationConstraint` (per §9.2.5 Cluster 5 Hook 1
-  // convention). Missing upstream Constraint Object = INVALID_INPUT 'hard'
-  // severity halt per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
-  //
-  // Default 0% — production behavior unchanged. Golden-master parity tests
-  // legacy↔orchestrated zero-behavior-change strict in
-  // `src/coach/orchestrator/__tests__/goalAdaptationParity.test.js`.
-  // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
-  // Faza 4 smoke validation orchestrated path comportament corect.
+  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
   goal_adaptation_via_orchestrator: { rollout: 0, default: false },
 
-  // Faza 3 STRANGLER batch 3 Energy Adjustment wiring real (ADR 026 §42.10
-  // pipeline #3; second downstream Constraint Object consumer + Forward
-  // Constraint Object Hook 4 propagation per §9.3.1 #5). When ON, coach
-  // decision flow invokes Energy Adjustment via `runPipeline` cu
-  // `energyAdjustmentAdapter`; when OFF, Energy Adjustment remains un-invoked
-  // (orphan pre-Strangler same as Periodization + Goal Adaptation).
-  //
-  // Adapter D2 shape mapping concrete (identical pattern batch 2): orchestrator
-  // slot `meta.constraintObject` → engine-side `meta.periodizationConstraint`
-  // (per §9.3 Cluster 5 Hook 1 convention). Adapter additionally surfaces
-  // `engineResult.meta.forward_constraint_object` (frozen pass-through Hook 4)
-  // as `output.constraintObject` for orchestrator downstream propagation
-  // (Bayesian Nutrition #4 + Tempo #5 + Specialization #6 + Warm-up #7 +
-  // Deload #8 toate consume forwarded Floor/Ceiling).
-  //
-  // Missing upstream Constraint Object = INVALID_INPUT 'hard' severity halt
-  // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
-  //
-  // Default 0% — production behavior unchanged. Golden-master parity tests
-  // legacy↔orchestrated zero-behavior-change strict in
-  // `src/coach/orchestrator/__tests__/energyAdjustmentParity.test.js`.
-  // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
-  // Faza 4 smoke validation orchestrated path comportament corect.
+  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
   energy_adjustment_via_orchestrator: { rollout: 0, default: false },
 
-  // Faza 3 STRANGLER batch 4 Bayesian Nutrition wiring real (ADR 030 D1-D5
-  // LOCKED V1 + Q-OPEN-1→7 RESOLVED V1 2026-05-08; ADR 026 §42.10 pipeline #4).
-  // When ON, coach decision flow invokes Bayesian Nutrition Engine via orchestrator
-  // `runPipeline` cu `bayesianNutritionAdapter` cumulative 4-adapter chain
-  // (Periodization → Goal Adaptation → Energy Adjustment → Bayesian Nutrition);
-  // when OFF, Bayesian remains un-invoked via orchestrator (engine V1 LANDED
-  // commit `8615ec1` standalone, NU yet wired into live coach flow).
-  //
-  // Adapter D2 shape mapping concrete (identical pattern batches 2-3):
-  // orchestrator slot `meta.constraintObject` → engine-side
-  // `meta.periodizationConstraint` (per §9.4 Cluster C Hook 1 convention).
-  // Engine consumes Constraint Object read-only — adapter follows Goal
-  // Adaptation pattern (NU re-emit `output.constraintObject`, since engine
-  // doesn't emit `meta.forward_constraint_object` in output blueprint).
-  // Constraint Object stays propagated downstream din upstream Energy
-  // Adjustment Hook 4 emission (batch 3) prin orchestrator's existing
-  // currentCtx chain.
-  //
-  // Convergence Guard "T2 Unlock" (ADR 009 §AMENDMENT 2026-05-05) = orchestrator-
-  // level concern via `src/coach/orchestrator/utilities/convergenceGuard.js`,
-  // NU engine-emitted metadata. Adapter does NOT propagate convergenceGuard.
-  //
-  // Missing upstream Constraint Object = INVALID_INPUT 'hard' severity halt
-  // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
-  //
-  // Default 0% — production behavior unchanged. Golden-master parity tests
-  // legacy↔orchestrated zero-behavior-change strict in
-  // `src/coach/orchestrator/__tests__/bayesianNutritionParity.test.js`.
-  // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
-  // Faza 4 smoke validation orchestrated path comportament corect.
+  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
   bayesian_nutrition_via_orchestrator: { rollout: 0, default: false },
 
-  // Faza 3 STRANGLER batch 5 Tempo wiring real (ADR 030 D1-D5 LOCKED V1 +
-  // Q-OPEN-1→7 RESOLVED V1 2026-05-08; ADR 026 §42.10 pipeline #5 + ADR 026
-  // §9.5 canonical SSOT + ADR 028 SPEC REFERENCE redirect). When ON, coach
-  // decision flow invokes Tempo Engine via orchestrator `runPipeline` cu
-  // `tempoAdapter` cumulative 5-adapter chain (Periodization → Goal Adaptation
-  // → Energy Adjustment → Bayesian Nutrition → Tempo); when OFF, Tempo remains
-  // un-invoked via orchestrator (engine V1 LANDED commit `d82d118` Faza 2.5
-  // batch 5 standalone, NU yet wired into live coach flow).
-  //
-  // Adapter D2 shape mapping concrete (identical pattern batches 2-4):
-  // orchestrator slot `meta.constraintObject` → engine-side
-  // `meta.periodizationConstraint` (per §9.5 Cluster A1 Hook 1 convention).
-  // Engine consumes Constraint Object read-only — adapter follows Bayesian
-  // Nutrition / Goal Adaptation pattern (NU re-emit `output.constraintObject`,
-  // since engine doesn't emit `meta.forward_constraint_object` in output
-  // blueprint, only `trace.forwardedConstraint` boolean). Constraint Object
-  // stays propagated downstream din upstream Energy Adjustment Hook 4 emission
-  // (batch 3) prin orchestrator's existing currentCtx chain.
-  //
-  // Convergence Guard "T2 Unlock" (ADR 009 §AMENDMENT 2026-05-05) =
-  // orchestrator-level concern via
-  // `src/coach/orchestrator/utilities/convergenceGuard.js`, NU engine-emitted
-  // metadata. Adapter does NOT propagate convergenceGuard.
-  //
-  // Missing upstream Constraint Object = INVALID_INPUT 'hard' severity halt
-  // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
-  //
-  // Default 0% — production behavior unchanged. Golden-master parity tests
-  // legacy↔orchestrated zero-behavior-change strict in
-  // `src/coach/orchestrator/__tests__/tempoParity.test.js`.
-  // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
-  // Faza 4 smoke validation orchestrated path comportament corect.
+  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
   tempo_via_orchestrator: { rollout: 0, default: false },
 
-  // Faza 3 STRANGLER batch 6 Specialization wiring real (ADR 030 D1-D5 LOCKED V1
-  // + Q-OPEN-1→7 RESOLVED V1 2026-05-08; ADR 026 §42.10 pipeline #6 + ADR 026
-  // §9.6 canonical SSOT + ADR 029 SPEC REFERENCE redirect). When ON, coach
-  // decision flow invokes Specialization Engine via orchestrator `runPipeline`
-  // cu `specializationAdapter` cumulative 6-adapter chain (Periodization →
-  // Goal Adaptation → Energy Adjustment → Bayesian Nutrition → Tempo →
-  // Specialization); when OFF, Specialization remains un-invoked via
-  // orchestrator (engine V1 LANDED commit `4cf50ab` Faza 2.5 batch 6 standalone
-  // — wires `weaknessDetector` orfan per §36.84 Gap #1 via import in
-  // `weaknessConsumer.js`, NU yet wired into live coach flow).
-  //
-  // Engine = PARALLEL volume+frequency modifier on top of Periodization for
-  // advanced users (Marius persona gate strict Q12 §45.3 LOCKED + tier T1+ +
-  // phase Bulk/Recomp + NU injury invariant 5). Hook 1 read-only consume CO
-  // (anti-cascade safeguard).
-  //
-  // Adapter D2 shape mapping concrete (identical pattern batches 2-5):
-  // orchestrator slot `meta.constraintObject` → engine-side
-  // `meta.periodizationConstraint` (per §9.6 Cluster A Hook 1 convention).
-  // Engine consumes Constraint Object read-only — adapter follows Tempo /
-  // Bayesian Nutrition / Goal Adaptation pattern (NU re-emit
-  // `output.constraintObject`, since engine doesn't emit
-  // `meta.forward_constraint_object` in output blueprint, only
-  // `trace.forwardedConstraint` boolean). Constraint Object stays propagated
-  // downstream din upstream Energy Adjustment Hook 4 emission (batch 3) prin
-  // orchestrator's existing currentCtx chain.
-  //
-  // Convergence Guard "T2 Unlock" (ADR 009 §AMENDMENT 2026-05-05) =
-  // orchestrator-level concern via
-  // `src/coach/orchestrator/utilities/convergenceGuard.js`, NU engine-emitted
-  // metadata. Adapter does NOT propagate convergenceGuard.
-  //
-  // Missing upstream Constraint Object = INVALID_INPUT 'hard' severity halt
-  // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
-  //
-  // Default 0% — production behavior unchanged. Golden-master parity tests
-  // legacy↔orchestrated zero-behavior-change strict in
-  // `src/coach/orchestrator/__tests__/specializationParity.test.js`.
-  // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
-  // Faza 4 smoke validation orchestrated path comportament corect.
+  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
   specialization_via_orchestrator: { rollout: 0, default: false },
 
-  // Faza 3 STRANGLER batch 7 Warm-up wiring real (ADR 030 D1-D5 LOCKED V1 +
-  // Q-OPEN-1→7 RESOLVED V1 2026-05-08; ADR 026 §42.10 pipeline #7 + ADR 026 §9.7
-  // canonical SSOT + ADR 031 SPEC REFERENCE direct). When ON, coach decision flow
-  // invokes Warm-up Engine via orchestrator `runPipeline` cu `warmupAdapter`
-  // cumulative 7-adapter chain (Periodization → Goal Adaptation → Energy
-  // Adjustment → Bayesian Nutrition → Tempo → Specialization → Warm-up); when
-  // OFF, Warm-up remains un-invoked via orchestrator (engine V1 LANDED commit
-  // `20999fb` Faza 2.5 batch 7 standalone, NU yet wired into live coach flow).
-  //
-  // Engine = adaptive warm-up routine 5-10 min Hybrid 1-2 general dynamic + 2-3
-  // specific muscle prep, persona-aware thresholds (Maria 5-10 mobility flow /
-  // Gigica 5-7 dynamic+ramp / Marius 8-10 ramp 50-70-90%), T0 Instant Skip
-  // default §65.3 Source 1 Option A (skipDecision metadata flag — warmup_state
-  // stays ACTIVE pentru T0 fresh fara explicit userOptedSkip per anti-paternalism
-  // ADR 025) + T1+ opt-in expanded routine, optional 2 min text-only cooldown
-  // post-session (§65.4 Source 1 OVERRIDE Q4 reconciled). Hook D1 read-only
-  // consume CO. Convergence Guard orchestrator-level NU engine-emitted
-  // (Specialization/Tempo/Bayesian/Goal Adaptation precedent).
-  //
-  // Adapter D2 shape mapping concrete (identical pattern batches 2-6):
-  // orchestrator slot `meta.constraintObject` → engine-side
-  // `meta.periodizationConstraint` (per §9.7 Cluster D Hook D1 convention).
-  // Engine consumes Constraint Object read-only — adapter follows Specialization
-  // / Tempo / Bayesian Nutrition / Goal Adaptation pattern (NU re-emit
-  // `output.constraintObject`, since engine doesn't emit
-  // `meta.forward_constraint_object` in output blueprint, only
-  // `trace.forwardedConstraint` boolean). Constraint Object stays propagated
-  // downstream din upstream Energy Adjustment Hook 4 emission (batch 3) prin
-  // orchestrator's existing currentCtx chain pentru batch 8 Deload.
-  //
-  // Missing upstream Constraint Object = INVALID_INPUT 'hard' severity halt
-  // per ADR 030 §3.6 fail-safe Anti-Cascade Silent default.
-  //
-  // Default 0% — production behavior unchanged. Golden-master parity tests
-  // legacy↔orchestrated zero-behavior-change strict in
-  // `src/coach/orchestrator/__tests__/warmupParity.test.js`.
-  // Ramp via _devFlags or explicit rollout edit aici post Daniel cont propriu
-  // Faza 4 smoke validation orchestrated path comportament corect.
+  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
   warmup_via_orchestrator: { rollout: 0, default: false },
 
   // ── F3 Core-Intelligence layer (engine-wiring 2026-06-07) — additive,
