@@ -606,6 +606,24 @@ export function stimulusPerMin(ex: TrimmableExercise): number {
 
 type TrimmableExercise = PlannedExercise;
 
+// #1 (Daniel coach audit 2026-06-10) — a MAIN lift's working sets must not be cut
+// below 3 by the volume reducers (the deficit/readiness set-scalers + the time-budget
+// trim). His live v-taper push (goal=slabire → deficit) had the chest PRESS cut to 2
+// while the emphasized shoulder kept its volume: the deficit/readiness scalers + the
+// trim all floored at MIN_SETS_PER_EX (2), not compound-aware. A real coach in a cut
+// sheds ACCESSORY/isolation volume + drops tail work but keeps each major group's
+// press/pull/hinge at a real 3-set effective dose (load preserves muscle; volume is
+// trimmed off the fluff, not the main lift). So a tier-1 compound floors at 3.
+function compoundSetFloor(ex: TrimmableExercise): number {
+  const tier = (getExerciseMetadata(ex.engineName ?? ex.name) as { tier?: number } | null)?.tier;
+  return tier === 1 ? COMPOUND_MIN_SETS : MIN_SETS_PER_EX;
+}
+// The trim's per-position floor: idx 0 (the day's lead compound) always 3; any other
+// tier-1 compound also 3; isolations MIN_SETS_PER_EX.
+function trimSetFloor(ex: TrimmableExercise, idx: number): number {
+  return idx === 0 ? COMPOUND_MIN_SETS : compoundSetFloor(ex);
+}
+
 /**
  * Bound a built session by a persona-aware TIME budget (rest-inclusive).
  *
@@ -689,7 +707,7 @@ export function trimSessionToTimeBudget(
       let shaveIdx = -1;
       let lowest = Infinity;
       for (let i = out.length - 1; i >= MIN_EXERCISES_FLOOR; i -= 1) {
-        if (out[i]!.sets > MIN_SETS_PER_EX) {
+        if (out[i]!.sets > trimSetFloor(out[i]!, i)) {
           const spm = stimulusPerMin(out[i]!);
           if (spm < lowest) { lowest = spm; shaveIdx = i; }
         }
@@ -702,7 +720,7 @@ export function trimSessionToTimeBudget(
         continue;
       }
     }
-    if (out[last]!.sets > MIN_SETS_PER_EX) {
+    if (out[last]!.sets > trimSetFloor(out[last]!, last)) {
       out[last] = { ...out[last]!, sets: out[last]!.sets - 1 };
       continue;
     }
@@ -740,7 +758,7 @@ export function trimSessionToTimeBudget(
     //    re-balance over the week).
     let shaved = false;
     for (let i = out.length - 1; i >= 0; i -= 1) {
-      const setFloor = i === 0 ? COMPOUND_MIN_SETS : MIN_SETS_PER_EX;
+      const setFloor = trimSetFloor(out[i]!, i);
       if (out[i]!.sets > setFloor) {
         out[i] = { ...out[i]!, sets: out[i]!.sets - 1 };
         shaved = true;
@@ -864,9 +882,11 @@ export function scaleSetsByEnergy(
     return typeof g === 'string' && emphSet.has(g);
   };
   return exercises.map((e) => {
-    const cut = Math.max(MIN_SETS_PER_EX, Math.round(e.sets * volumeFactor));
-    // Emphasized group → floor at the pre-cut sets (preserve the priority muscle).
-    const sets = isEmphasized(e) ? Math.max(cut, e.sets) : cut;
+    // #1 — a non-emphasized tier-1 COMPOUND floors at 3 (main lift keeps its dose in a
+    // cut); an emphasized group floors at its pre-cut sets (priority muscle preserved);
+    // everything else takes the full cut down to MIN_SETS_PER_EX. KEEP-LOAD intact.
+    const lo = isEmphasized(e) ? e.sets : compoundSetFloor(e);
+    const sets = Math.max(lo, Math.round(e.sets * volumeFactor));
     return {
       ...e,
       // KEEP-LOAD: only sets move. targetKg / targetReps pass through unchanged.
