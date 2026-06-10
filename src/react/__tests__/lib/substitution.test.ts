@@ -11,6 +11,7 @@ import {
   resolveSwapPickList,
   recomposeWithBusyTypes,
   availableTypesExcludingBusy,
+  dedupQueueAfterSwap,
 } from '../../lib/substitution';
 import { movementKey } from '../../../engine/sessionBuilder.js';
 import { getExerciseMetadata } from '../../../engine/exerciseLibrary.js';
@@ -71,6 +72,57 @@ describe('resolveBusySwap — BUG 5 excludeNames (movement-aware)', () => {
     // The result is NOT a fly movement, and collides with none of the excludes.
     expect(altKey).not.toBe(mk('Cable Fly'));
     for (const ex of otherFlyes) expect(altKey).not.toBe(mk(ex));
+  });
+});
+
+// ── F4 — post-swap queue dedup (Daniel live 2026-06-10) ─────────────────────
+// Real case: he swapped Y Raise → DB Lateral Raise, and the NEXT planned exercise
+// was Cable Lateral Raise (same movement) — he had to swap again. After a swap the
+// remaining queue must be re-deduped against the swap TARGET's movement.
+describe('dedupQueueAfterSwap — remaining queue re-deduped against the swap target', () => {
+  const mk = (name: string) => movementKey(name, getExerciseMetadata(name));
+  const plan = (engineName: string, id: string): PlannedExercise => ({
+    id, name: engineName, engineName, sets: 3, targetReps: 12, targetKg: 10, restSec: 90,
+  });
+
+  it('Cable Lateral Raise queued after swapping in DB Lateral Raise → it is substituted to a non-lateral', () => {
+    // idx0 = the just-swapped-in target; idx1 = the colliding pending lateral; idx2
+    // = an unrelated movement that must pass through untouched.
+    const list = [
+      plan('DB Lateral Raise', 'a0'),
+      plan('Cable Lateral Raise', 'a1'),
+      plan('Lat Pulldown', 'a2'),
+    ];
+    const out = dedupQueueAfterSwap(list, 0, 'DB Lateral Raise');
+    // The colliding slot is no longer a lateral-raise movement.
+    const sub = out[1]!;
+    expect(mk(sub.engineName as string)).not.toBe(mk('DB Lateral Raise'));
+    // It is a real same-muscle (umeri) alternative, named, not blank/the target.
+    expect((sub.engineName as string).length).toBeGreaterThan(0);
+    expect(sub.engineName).not.toBe('DB Lateral Raise');
+    expect(sub.engineName).not.toBe('Cable Lateral Raise');
+    // The unrelated downstream slot is untouched (same reference).
+    expect(out[2]).toBe(list[2]);
+  });
+
+  it('no collision in the queue → returns the SAME array reference (no-op)', () => {
+    const list = [
+      plan('DB Lateral Raise', 'a0'),
+      plan('Lat Pulldown', 'a1'),
+      plan('Cable Row', 'a2'),
+    ];
+    expect(dedupQueueAfterSwap(list, 0, 'DB Lateral Raise')).toBe(list);
+  });
+
+  it('only re-checks AFTER the swap index — an earlier same-movement slot is left alone', () => {
+    // A lateral BEFORE the swap index (already performed/locked) is never touched.
+    const list = [
+      plan('Cable Lateral Raise', 'a0'),
+      plan('DB Lateral Raise', 'a1'),
+      plan('Lat Pulldown', 'a2'),
+    ];
+    const out = dedupQueueAfterSwap(list, 1, 'DB Lateral Raise');
+    expect(out[0]).toBe(list[0]); // earlier lateral untouched
   });
 });
 

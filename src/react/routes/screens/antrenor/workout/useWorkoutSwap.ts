@@ -3,6 +3,7 @@ import type { NavigateFunction } from 'react-router-dom';
 import type { PlannedExercise } from '../../../../lib/engineWrappers';
 import { gotoPath } from '../../../../lib/navigation';
 import {
+  dedupQueueAfterSwap,
   resolveMissingSwap,
   resolveSwapPickList,
   type SwapPickRow,
@@ -146,7 +147,10 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         if (prev === null) return prev;
         const next = prev.slice();
         next[safeExIdx] = swapped;
-        return next;
+        // F4 — re-dedup the REMAINING queue against the swap target so a pending
+        // same-movement slot (e.g. Cable Lateral Raise queued after swapping in DB
+        // Lateral Raise) is substituted now, not left for the user to swap again.
+        return dedupQueueAfterSwap(next, safeExIdx, swapped.engineName ?? swapped.name);
       });
       swapExercise(safeExIdx, {
         id: swapped.id,
@@ -237,7 +241,8 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         if (prev === null) return prev;
         const next = prev.slice();
         next[safeExIdx] = swapped;
-        return next;
+        // F4 — same post-swap queue dedup as the manual pick path.
+        return dedupQueueAfterSwap(next, safeExIdx, swapped.engineName ?? swapped.name);
       });
       swapExercise(safeExIdx, { id: swapped.id, name: swapped.name, ...(swapped.engineName !== undefined ? { engineName: swapped.engineName } : {}) });
       // D107 — equipment-missing swap. No-op when collect gate OFF; never throws.

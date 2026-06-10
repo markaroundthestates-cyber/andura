@@ -398,6 +398,58 @@ function resolveCascade(
 }
 
 /**
+ * F4 (Daniel live 2026-06-10) — POST-SWAP queue dedup. After a swap lands at
+ * `swapIdx`, the swap TARGET can collide (same movement family) with an exercise
+ * still PENDING later in the session — the original compose was valid, the swap
+ * introduced the redundancy. Live case: Y Raise → DB Lateral Raise while Cable
+ * Lateral Raise was queued next ⇒ two lateral raises back-to-back, the user had to
+ * swap again. The existing BUG-5 dedup protects the swap PICK from duplicating a
+ * pending movement, but not the REVERSE (a pending slot now duplicating the new
+ * target). This re-checks indices AFTER swapIdx and substitutes each slot whose
+ * movement matches the target, reusing the SAME ranked same-muscle pick-list
+ * (resolveSwapPickList → row 0) the manual swap uses, excluding the whole session
+ * + the target so the replacement is movement-distinct. Last-option guard: if a
+ * colliding slot has no movement-distinct substitute, it is LEFT untouched (never
+ * empty/drop a slot). Performed/earlier slots (≤ swapIdx) are never touched.
+ *
+ * @param exercises the session list AFTER the swap was applied at swapIdx
+ * @param swapIdx index of the just-swapped slot
+ * @param targetEngineName English canonical name swapped IN at swapIdx
+ * @returns the same array reference when nothing collides, else a new list with
+ *   the colliding downstream slot(s) substituted
+ */
+export function dedupQueueAfterSwap(
+  exercises: readonly PlannedExercise[],
+  swapIdx: number,
+  targetEngineName: string,
+): readonly PlannedExercise[] {
+  if (typeof targetEngineName !== 'string' || targetEngineName.length === 0) return exercises;
+  const targetKey = movementKeyOf(targetEngineName);
+  // Names already committed across the session (any slot) — the pick must avoid
+  // every one of them, plus the target itself, so it is movement-distinct.
+  const sessionNames = exercises
+    .map((ex) => ex.engineName ?? ex.name)
+    .filter((n): n is string => typeof n === 'string' && n.length > 0);
+  const exclude = new Set<string>([...sessionNames, targetEngineName]);
+  let next: PlannedExercise[] | null = null;
+  for (let i = swapIdx + 1; i < exercises.length; i++) {
+    const ex = exercises[i]!;
+    const name = ex.engineName ?? ex.name;
+    if (typeof name !== 'string' || name.length === 0) continue;
+    if (movementKeyOf(name) !== targetKey) continue;
+    // Colliding pending slot — find a movement-distinct same-muscle substitute.
+    const { rows } = resolveSwapPickList(name, i, [...exclude], []);
+    const pick = rows.find((r) => movementKeyOf(r.engineName) !== targetKey);
+    if (!pick) continue; // last-option guard — leave the slot rather than empty it
+    if (next === null) next = exercises.slice();
+    next[i] = pick.exercise;
+    exclude.delete(name);
+    exclude.add(pick.engineName);
+  }
+  return next ?? exercises;
+}
+
+/**
  * Recompute a planned exercise LIST with a set of coarse equipment types marked
  * temporarily unavailable (EquipmentSwap "busy" preview). Each exercise that can
  * no longer be performed is replaced via the cascade; performable ones pass
