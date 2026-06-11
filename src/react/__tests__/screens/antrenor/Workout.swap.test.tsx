@@ -160,8 +160,11 @@ describe('Workout swap — "Nu vreau" (not started) opens the pick-list', () => 
     await waitFor(() => {
       expect(toast.getSnapshot().length).toBeGreaterThan(0);
     });
+    // The counter entry is now the timestamped {n, ts} shape (refusal-memory
+    // 2026-06-10); assert the COUNT via the entry's n (or the stable
+    // getRefusalCounter API) rather than the raw legacy number.
     const counter = JSON.parse(localStorage.getItem('wv2-refusal-counter') ?? '{}');
-    expect(counter['Incline Barbell Bench']).toBe(1);
+    expect(counter['Incline Barbell Bench']?.n ?? counter['Incline Barbell Bench']).toBe(1);
   });
 });
 

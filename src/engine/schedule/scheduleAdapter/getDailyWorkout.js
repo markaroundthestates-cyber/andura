@@ -18,7 +18,8 @@ import { buildSession } from '../../sessionBuilder.js';
 import { buildExclusionTokens, contraindicatedGroupsFromPainCdl } from '../../movementExclusion.js';
 import { isEnabled } from '../../../util/featureFlags.js';
 import { exercisePenaltyMap } from '../../dp/exercisePain.js';
-import { lumbarDedupPenalties, mergePenalties } from './lumbarDedup.js';
+import { lumbarDedupPenalties, mergePenalties, weekClustersFor } from './lumbarDedup.js';
+import { getRefusalPenalties } from './refusalFlowStorage.js';
 import { painSwapMap } from '../../dp/painMemory.js';
 import { fatigueSetsAdjust } from '../../dp/fatigueCurve.js';
 import { effectiveRepsSetsTrim } from '../../dp/effectiveReps.js';
@@ -596,6 +597,14 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // drove the M1 budget cut above (resistance + aerobic) — NOT a new penalty,
     // it only makes the existing cut visible. Empty state (no logs) → no-op.
     recoveryState: mergedState,
+    // F5 (dp_latiso_dedup_v1, 2026-06-10) — the active week's derived clusters,
+    // so the focus-policy resolver can defer a weekly minimum from the GENERALIST
+    // 'upper' day to the week's SPECIALIST days (v-taper: Pull owns the lat-iso
+    // exposure, Upper lands at 7 lifts — Daniel's coach-review + the D117 intent).
+    // OFF → null → byte-identical (no deferral).
+    weekClusters: isEnabled('dp_latiso_dedup_v1')
+      ? weekClustersFor({ activeWeek, focusPreset, splitRebalance })
+      : null,
     // Focus EMPHASIS surfacing (D-focus-visible 2026-06-05) — the emphasized
     // Big-11 RO groups earn an EXTRA exercise slot (over the cluster-weight cap)
     // AND front-of-session ordering, so the preset's volume intent shows as a
@@ -612,8 +621,15 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // day this week demotes the heavy lumbar hinge family so a non-hinge sibling
     // leads (RDL on the first leg day, leg curl on the second — Daniel's "two
     // lumbar hinges/week" audit). Demote-only, last-option guarded → never strands.
+    // Refusal-memory (dp_refusal_memory_v1, Daniel 2026-06-10): a "nu vreau"
+    // swap-away DEMOTES that exercise here with a 28-day-half-life decay — it
+    // comes back on its own (reversible) and swap PICK-LISTS are untouched (the
+    // refused name still appears there). Soft layer between "nothing" (the old
+    // behavior under 3 refusals) and the threshold-3 "permanent?" modal. Empty
+    // counter → empty map → byte-identical (sims have no refusals).
     exercisePenalties: mergePenalties(
       isEnabled('dp_pain_deprioritize_v1') ? exercisePenaltyMap() : null,
+      isEnabled('dp_refusal_memory_v1') ? getRefusalPenalties(date.getTime()) : null,
       lumbarDedupPenalties({
         flagOn: isEnabled('dp_lumbar_dedup_v1'),
         activeWeek,

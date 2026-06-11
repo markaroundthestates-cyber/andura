@@ -35,40 +35,11 @@ import { logger } from './logger.js';
  * @type {Object<string, FlagDefinition>}
  */
 export const FLAGS = Object.freeze({
-  // ── VESTIGIAL flags (verified DEAD 2026-06-10 full-audit) ──────────────────
-  // The 8 flags in this block (aa_via_cluster + the 7 *_via_orchestrator) gate
-  // the RETIRED coachDirector strangler path and are read by NO production code
-  // (grep: only this file + featureFlags.test.js). The live React path
-  // (getDailyWorkout.js → runPipeline) invokes the engines DIRECTLY and
-  // UNCONDITIONALLY — these flags gate nothing. The prior per-flag comments
-  // narrated a "Faza 3 BLOCKED / 0/8 engines wired / vizor fara usa" story that
-  // is now FALSE and actively misled debugging, so it was removed. Kept (not
-  // deleted) so featureFlags.test.js stays green. NOTE: runPipeline/adapters/
-  // contextBuilder in src/coach/orchestrator/ are LIVE (getDailyWorkout imports
-  // them) — only the coachDirector strangler remnants + these flags are dead;
-  // their removal is tracked for the cleanup wave, scoped accordingly.
-  aa_via_cluster: { rollout: 0, default: false },
-
-  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
-  periodization_via_orchestrator: { rollout: 0, default: false },
-
-  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
-  goal_adaptation_via_orchestrator: { rollout: 0, default: false },
-
-  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
-  energy_adjustment_via_orchestrator: { rollout: 0, default: false },
-
-  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
-  bayesian_nutrition_via_orchestrator: { rollout: 0, default: false },
-
-  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
-  tempo_via_orchestrator: { rollout: 0, default: false },
-
-  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
-  specialization_via_orchestrator: { rollout: 0, default: false },
-
-  // VESTIGIAL — retired coachDirector strangler flag (see header above). Dead.
-  warmup_via_orchestrator: { rollout: 0, default: false },
+  // (2026-06-10 full-audit cleanup: the 8 retired coachDirector-strangler flags
+  // — aa_via_cluster + the 7 *_via_orchestrator — were DELETED. They gated a
+  // path that no longer exists: the live React path (getDailyWorkout.js →
+  // runPipeline) invokes the engines directly and unconditionally. NOTE:
+  // runPipeline/adapters/contextBuilder in src/coach/orchestrator/ are LIVE.)
 
   // ── F3 Core-Intelligence layer (engine-wiring 2026-06-07) — additive,
   // compute-alongside, kill-switchable. Each defaults OFF (rollout 0) → with the
@@ -928,8 +899,34 @@ export const FLAGS = Object.freeze({
   // day this week demotes the heavy lumbar hip-hinge family (deadlift/good-morning/
   // back-extension) via the existing poolForGroup demote channel so a non-hinge
   // sibling (leg curl) leads; the FIRST leg day keeps its hinge; demote-only +
-  // last-option guarded → never strands. OFF → merges null → byte-identical.
-  dp_lumbar_dedup_v1: { rollout: 0, default: false },
+  // last-option guarded → never strands. FLIPPED ON 2026-06-10 (Daniel approved
+  // the conservative build "de acord conservator"; his real week showed the exact
+  // RDL+Hyperextension redundancy it removes).
+  dp_lumbar_dedup_v1: { rollout: 1, default: true },
+
+  // Refusal-memory soft demote (Daniel 2026-06-10 "fa-l cumva reversibil sau sa
+  // apara totusi recomandarile refuzate"). A "nu vreau" swap-away increments the
+  // existing wv2-refusal-counter (now timestamped); composition demotes that
+  // exercise via getRefusalPenalties (poolForGroup penalty channel: stable-
+  // partition to the back, PR-history protected, last-option guarded — NEVER a
+  // ban) with a 28-day half-life decay so it returns on its own. Swap pick-lists
+  // are untouched (the refused exercise still appears there) and the threshold-3
+  // "permanent?" modal flow is unchanged. Empty counter → empty map →
+  // byte-identical (sims/fresh users carry no refusals). Device-local v1 (the
+  // counter is not in SYNC_KEYS).
+  dp_refusal_memory_v1: { rollout: 1, default: true },
+
+  // F5 cross-day lat-iso dedup (Daniel coach-review 2026-06-10 + the D117 #2
+  // "Upper 8→7" intent). The v-taper lat_isolation weekly minimum (1/wk) was
+  // translated into a per-session requirement on EVERY qualifying day → Machine
+  // Pullover injected on BOTH Pull and Upper (cross-day redundancy). With this
+  // ON, the GENERALIST 'upper' day defers a weekly target whose SPECIALIST days
+  // this week (pull/back) can deliver the weekly count by themselves — derived
+  // from the pure day→cluster map (weekClustersFor), no ledger. rear_delt (2/wk
+  // > 1 specialist day) keeps its Upper exposure; a pure Upper/Lower split (0
+  // specialist days) defers nothing — the regression a blanket drop would cause.
+  // OFF → weekClusters null → byte-identical.
+  dp_latiso_dedup_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

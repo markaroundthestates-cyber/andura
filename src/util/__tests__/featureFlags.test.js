@@ -20,8 +20,12 @@ beforeEach(cleanLs);
 afterEach(cleanLs);
 
 describe('featureFlags — FLAGS registry', () => {
-  it('exposes aa_via_cluster flag (Strangler AA Phase 1, default 0%)', () => {
-    expect(FLAGS.aa_via_cluster).toEqual({ rollout: 0, default: false });
+  it('the retired coachDirector-strangler flags stay deleted (2026-06-10 cleanup)', () => {
+    // The live path (getDailyWorkout → runPipeline) runs the engines directly;
+    // these gated nothing and their comments mis-narrated the wiring.
+    expect(FLAGS.aa_via_cluster).toBeUndefined();
+    expect(FLAGS.periodization_via_orchestrator).toBeUndefined();
+    expect(FLAGS.warmup_via_orchestrator).toBeUndefined();
   });
 
   it('FLAGS is frozen (immutable)', () => {

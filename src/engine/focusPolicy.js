@@ -617,8 +617,35 @@ function canonicalWeeklyTag(matchingTags) {
  * MAX-merged by tag (never summed — a tag carried by both an explicit min and a
  * weekly target counts ONCE, at the larger count + higher priority + stricter
  * relaxable). daysPerWeek selects the weekly target's day-band.
+ *
+ * weekClusters (F5 dp_latiso_dedup_v1, 2026-06-10): the active week's derived
+ * cluster list. On the GENERALIST 'upper' day, a weekly target whose SPECIALIST
+ * qualifying days this week (its applicableClusters minus 'upper') can deliver
+ * the weekly count BY THEMSELVES is deferred to those days — Daniel's real case:
+ * v-taper lat_isolation (1/wk) injected Machine Pullover on BOTH Pull and Upper
+ * (cross-day redundancy, Upper stuck at 8). With a Pull day in the week, Upper
+ * defers the lat-iso → 7 lifts; rear_delt (2/wk > 1 specialist day) keeps its
+ * Upper exposure; a pure Upper/Lower split (0 specialist days) keeps everything
+ * — the exact regression the blanket drop would have caused. Null/absent → no
+ * deferral (byte-identical legacy).
  */
-function requirementsFor(rule, cluster, daysPerWeek) {
+function requirementsFor(rule, cluster, daysPerWeek, weekClusters) {
+  // F5 deferral set — computed from the weekly targets BEFORE the merge loop.
+  /** @type {Set<string>} */
+  const deferToSpecialist = new Set();
+  if (cluster === 'upper' && Array.isArray(weekClusters) && weekClusters.length > 0) {
+    const bandKey = dayBandKey(daysPerWeek);
+    for (const wt of rule.weeklyMinimums || []) {
+      const tag = canonicalWeeklyTag(wt.matchingTags);
+      if (!tag) continue;
+      const weeklyTarget = wt.targetByDays?.[bandKey];
+      if (!(weeklyTarget > 0)) continue;
+      const specialist = (wt.applicableClusters || []).filter((c) => c !== 'upper');
+      if (specialist.length === 0) continue;
+      const specialistDays = weekClusters.filter((c) => specialist.includes(c)).length;
+      if (specialistDays >= weeklyTarget) deferToSpecialist.add(tag);
+    }
+  }
   // Build into a by-tag map so the explicit + weekly passes MAX-merge cleanly.
   /** @type {Map<string, {tag: string, count: number, priority: string, relaxable: boolean}>} */
   const byTag = new Map();
@@ -673,6 +700,8 @@ function requirementsFor(rule, cluster, daysPerWeek) {
     // (4) the canonical derivable tag; underivable (front_delt) → graceful no-op.
     const tag = canonicalWeeklyTag(wt.matchingTags);
     if (!tag) continue;
+    // (F5) deferred to this week's specialist days → no-op on the generalist day.
+    if (deferToSpecialist.has(tag)) continue;
     // (3) per-session min = 1 (simple + safe; clusterFrequency not in ctx).
     // (5)/(6) MAX-merge carries priority + relaxable so relaxation treats a low/
     // medium weekly target as relaxable before a high explicit requirement.
@@ -759,7 +788,7 @@ export function applyFocusPolicy(chosen, ctx) {
   // Sort requirements so HIGH (least relaxable) is satisfied first; MEDIUM next;
   // LOW last. Within a priority, a stable order (declaration order) — deterministic.
   const PRIORITY_RANK = { high: 0, medium: 1, low: 2 };
-  const reqs = requirementsFor(rule, cluster, ctx?.daysPerWeek).sort(
+  const reqs = requirementsFor(rule, cluster, ctx?.daysPerWeek, ctx?.weekClusters).sort(
     (a, b) => (PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority]),
   );
 

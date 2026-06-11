@@ -111,6 +111,20 @@ export const FLIPPED_FLAGS = Object.freeze([
   // moves prescribed kg + the at-cap brake → pinned OFF here so hashOff/hashOn
   // stay frozen; ON is proven on the Daniel probe + loadModel.test.js + #70.
   'dp_load_model_v1',
+  // THE FLIP 2026-06-10 (R6d) — cross-week lumbar dedup defaults ON (a repeat
+  // leg/posterior day demotes the heavy hinge family). Composition surface →
+  // pinned OFF here so the frozen hashes stay byte-for-byte; ON is the exact
+  // RDL+Hyperextension fix from Daniel's real week, demote-only + guarded.
+  'dp_lumbar_dedup_v1',
+  // THE FLIP 2026-06-10 — refusal-memory soft demote defaults ON. Inert in this
+  // harness either way (resetWorld clears localStorage → no refusal entries),
+  // pinned OFF anyway for the all-off-world guarantee.
+  'dp_refusal_memory_v1',
+  // THE FLIP 2026-06-10 (F5) — cross-day lat-iso dedup defaults ON (the upper
+  // day defers a weekly minimum its specialist pull/back days already deliver).
+  // Composition surface → pinned OFF so the frozen hashes stay byte-for-byte;
+  // ON is proven on the resolver suite + the #70 persona matrix.
+  'dp_latiso_dedup_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

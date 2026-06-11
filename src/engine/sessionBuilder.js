@@ -1511,6 +1511,10 @@ export function buildSession(cluster, ctx) {
     const focusResolved = applyFocusPolicy(chosen, {
       focusId: ctx?.focusId,
       daysPerWeek: ctx?.daysPerWeek,
+      // F5 (dp_latiso_dedup_v1) — the active week's derived clusters, threaded
+      // from getDailyWorkout so requirementsFor can defer a weekly minimum to the
+      // week's SPECIALIST days (v-taper lat-iso → Pull owns it, Upper lands at 7).
+      weekClusters: ctx?.weekClusters ?? null,
       cluster,
       pool: candidatePool,
       prNames,

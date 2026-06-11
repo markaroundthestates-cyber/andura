@@ -502,3 +502,57 @@ describe('F6 — focus-weighted accessory ordering on Pull (v-taper)', () => {
     }
   });
 });
+
+describe('F5 — cross-day lat-iso dedup (dp_latiso_dedup_v1, Daniel coach-review 2026-06-10)', () => {
+  // Same fixture as the 1.3-C weekly-translation pin above; the ONLY new input is
+  // ctx.weekClusters (the derived active-week cluster list getDailyWorkout threads
+  // when the flag is ON). v-taper weekly targets at days3to4: lat_isolation 1/wk
+  // (specialists pull/back), rear_delt 2/wk (specialist pull/shoulders).
+  const metaMap = {
+    'DB Shoulder Press': { muscle_target_primary: 'umeri', tier: 1 },
+    'Cable Rear Delt Fly': { muscle_target_primary: 'umeri', tier: 2 },
+    'DB Lateral Raise': { muscle_target_primary: 'umeri', tier: 2 },
+    'Machine Pullover': { muscle_target_primary: 'spate', tier: 2 },
+  };
+  const chosen = [{ name: 'DB Shoulder Press', sets: 3 }];
+  const pool = [
+    { name: 'DB Lateral Raise', meta: metaMap['DB Lateral Raise'] },
+    { name: 'Cable Rear Delt Fly', meta: metaMap['Cable Rear Delt Fly'] },
+    { name: 'Machine Pullover', meta: metaMap['Machine Pullover'] },
+  ];
+
+  it("a week WITH a Pull day → Upper DEFERS the lat-iso (Pullover not injected); rear/side delt stay (Daniel's real week)", () => {
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'v-taper', cluster: 'upper', daysPerWeek: 4, sessionSizeCap: 8,
+      weekClusters: ['push', 'pull', 'upper', 'legs'], // his real Wed/Thu/Fri/Sat
+    }));
+    const names = out.map((e) => e.name);
+    expect(names).not.toContain('Machine Pullover'); // lat_iso 1/wk ≤ 1 pull day → Pull owns it
+    expect(names).toContain('DB Lateral Raise'); // side_delt explicit min — untouched
+    expect(names).toContain('Cable Rear Delt Fly'); // rear_delt 2/wk > 1 specialist day → kept
+  });
+
+  it('a pure Upper/Lower week (NO specialist day) keeps the lat-iso on Upper — the blanket-drop regression guard', () => {
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'v-taper', cluster: 'upper', daysPerWeek: 4, sessionSizeCap: 8,
+      weekClusters: ['upper', 'lower', 'upper', 'lower'],
+    }));
+    expect(out.map((e) => e.name)).toContain('Machine Pullover');
+  });
+
+  it('no weekClusters (flag OFF path) → legacy behavior byte-identical (Pullover injected)', () => {
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'v-taper', cluster: 'upper', daysPerWeek: 4, sessionSizeCap: 8,
+      weekClusters: null,
+    }));
+    expect(out.map((e) => e.name)).toContain('Machine Pullover');
+  });
+
+  it("a SPECIALIST day (pull) never defers — it owns the exposure", () => {
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'v-taper', cluster: 'pull', daysPerWeek: 4, sessionSizeCap: 8,
+      weekClusters: ['push', 'pull', 'upper', 'legs'],
+    }));
+    expect(out.map((e) => e.name)).toContain('Machine Pullover');
+  });
+});

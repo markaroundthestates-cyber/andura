@@ -80,18 +80,45 @@ export function lumbarDedupPenalties({
 }
 
 /**
- * MAX-merge two {name:penalty} maps (either may be null). Mirrors how
- * poolForGroup reads a single penalty channel — the higher demote wins so a
- * lumbar-redundant hinge that is ALSO pain-flagged stays demoted.
+ * The active week's derived cluster list (F5 dp_latiso_dedup_v1, 2026-06-10).
+ * Same cheap re-derivation as the lumbar dedup above: the day→cluster map is
+ * deterministic + pure, so cross-day awareness needs no ledger. Used by the
+ * focus-policy resolver to defer a weekly minimum from the GENERALIST 'upper'
+ * day to the week's SPECIALIST days (pull/back own the lat-iso exposure).
  *
- * @param {Record<string, number> | null} a
- * @param {Record<string, number> | null} b
+ * @param {Object} input
+ * @param {ReadonlyArray<boolean>} input.activeWeek length-7 active flags
+ * @param {string} [input.focusPreset='balanced']
+ * @param {boolean} [input.splitRebalance=false]
+ * @returns {string[]} clusters of the ACTIVE days, in day order
+ */
+export function weekClustersFor({ activeWeek, focusPreset = 'balanced', splitRebalance = false }) {
+  if (!Array.isArray(activeWeek)) return [];
+  const out = [];
+  for (let i = 0; i < activeWeek.length; i++) {
+    if (!activeWeek[i]) continue;
+    out.push(clusterForDay(activeWeek, i, focusPreset, splitRebalance));
+  }
+  return out;
+}
+
+/**
+ * MAX-merge any number of {name:penalty} maps (each may be null). Mirrors how
+ * poolForGroup reads a single penalty channel — the higher demote wins so a
+ * lumbar-redundant hinge that is ALSO pain-flagged stays demoted. Variadic since
+ * 2026-06-10 (pain + refusal-memory + lumbar feed the same channel); a 2-arg
+ * call behaves exactly as before.
+ *
+ * @param {...(Record<string, number> | null | undefined)} maps
  * @returns {Record<string, number> | null}
  */
-export function mergePenalties(a, b) {
-  if (!a) return b ?? null;
-  if (!b) return a;
-  const out = { ...a };
-  for (const [k, v] of Object.entries(b)) out[k] = Math.max(out[k] ?? 0, v);
+export function mergePenalties(...maps) {
+  /** @type {Record<string, number> | null} */
+  let out = null;
+  for (const m of maps) {
+    if (!m) continue;
+    if (!out) { out = { ...m }; continue; }
+    for (const [k, v] of Object.entries(m)) out[k] = Math.max(out[k] ?? 0, v);
+  }
   return out;
 }
