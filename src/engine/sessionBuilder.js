@@ -298,6 +298,17 @@ const COMPOUND_MIN_SETS_EMPHASIZED = 4;
 // never; split across two angles instead (OH triceps 3 + pressdown 2). 4 still
 // clears the arms-band math D3 fixed (1-2 curls × 3-4 sets × days ≥ band floor).
 const ISOLATION_MAX_SETS_EMPHASIZED = 4;
+// REAR-DELT dose cap (Daniel sweep verdict follow-up 2026-06-12 "RevPecDeck 4 →
+// 2-3 + lateral"). The rear delt is a SMALL short-ROM head: even under a shoulder
+// focus, a 4th set of one rear-delt isolation is junk volume — his rule keeps the
+// fly-family at 2-3 and lets the LATERAL carry the emphasized 4th set (it reaches
+// 4 through its own share + the emphasized isolation ceiling above). Plain band
+// (3) already caps non-focus days, so this only bites the emphasized raise.
+const REAR_DELT_ISOLATION_MAX_SETS = 3;
+// The rear-delt isolation family (mirrors exerciseChains rear-delt chain): pec-deck
+// reverse, rear-delt flys, face pulls, pull-aparts. Name-match is on the canonical
+// EN engine names the session carries.
+const REAR_DELT_ISOLATION_RE = /rear delt|reverse pec deck|face pull|pull-apart/i;
 
 /**
  * Per-session set budget for one Big-11 group — the weekly volume target split
@@ -544,7 +555,13 @@ function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasi
     const cFloor = i === anchorIdx ? COMPOUND_MIN_SETS_EMPHASIZED
       : isProtected ? freshCompoundFloor : compoundFloor;
     const lo = isCompound ? cFloor : ISOLATION_MIN_SETS;
-    const hi = isCompound ? compoundCeiling : (isDemoted(e) ? ISOLATION_MAX_SETS : isolationCeiling);
+    // Rear-delt fly-family isolations never take the emphasized 4th set (junk
+    // volume on a small head — Daniel "2-3 + lateral"); the lateral still earns
+    // the raised ceiling through its own share.
+    const isoCeil = typeof e.name === 'string' && REAR_DELT_ISOLATION_RE.test(e.name)
+      ? Math.min(REAR_DELT_ISOLATION_MAX_SETS, isolationCeiling)
+      : isolationCeiling;
+    const hi = isCompound ? compoundCeiling : (isDemoted(e) ? ISOLATION_MAX_SETS : isoCeil);
     return Math.min(hi, Math.max(lo, rounded));
   });
   if (protectIdx >= 0) {
