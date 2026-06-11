@@ -351,6 +351,8 @@
       "egoCap": "Ai sarit prea sus si a fost prea greu - ramanem la {kg} kg sa construim corect",
       "baselineNote": "Prima sesiune - iti construiesc baseline-ul. Recomandarile se adapteaza de la sesiunea urmatoare."
     },
+    "plateHint": "Bara {bar} + {plates} / parte",
+    "plateBarOnly": "Doar bara ({bar} kg)",
     "sessionTitle": {
       "PUSH": "Push (piept si umeri)",
       "PULL": "Pull (spate si biceps)",

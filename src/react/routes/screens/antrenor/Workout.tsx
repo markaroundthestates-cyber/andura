@@ -68,6 +68,8 @@ import { getExerciseCueKey } from '../../../lib/exerciseCues';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { useCountUp } from '../../../hooks/useCountUp';
 import { DP } from '../../../../engine/dp.js';
+import { platesPerSide } from '../../../../engine/plateMath.js';
+import { getExerciseMetadata } from '../../../../engine/exerciseLibrary.js';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { roundToEquipmentWeight } from '../../../../config/weights.js';
 import { ENGINE_WORKOUT_TITLE_FALLBACK, resolveIntensityFactors } from '../../../lib/scheduleAdapterAggregate';
@@ -298,6 +300,21 @@ export function Workout(): JSX.Element {
 
   const [kgInput, setKgInput] = useState<number>(targetKg);
   const [repsInput, setRepsInput] = useState<number>(currentExercise.targetReps);
+  // Plate-math hint (2026-06-10, Daniel-approved): "70 kg" on a barbell is not
+  // actionable on the gym floor — show "Bara 20 + 25 / parte". BARBELL-only by
+  // design (Smith bars vary per gym; stack machines show their own pin) + EXACT
+  // decompositions only (platesPerSide returns null otherwise → no hint, never a
+  // wrong one). Tracks the user's CURRENT entry so editing the kg live-updates.
+  const plateHint = useMemo<string | null>(() => {
+    if (currentExercise.isBodyweight) return null;
+    const engineName = currentExercise.engineName ?? currentExercise.name;
+    if (getExerciseMetadata(engineName)?.equipment_type !== 'barbell') return null;
+    const d = platesPerSide(kgInput);
+    if (!d) return null;
+    return d.perSide.length === 0
+      ? t('workout.plateBarOnly', { bar: d.barKg })
+      : t('workout.plateHint', { bar: d.barKg, plates: d.perSide.join('+') });
+  }, [currentExercise.isBodyweight, currentExercise.engineName, currentExercise.name, kgInput]);
   // #7 metric-set capture — the performed DURATION in seconds for a time/carry
   // exercise (Plank/Dead Hang/Farmer's Walk). Seeded from the prescribed target
   // (currentExercise.targetSec) or a sane default; only consumed when the current
@@ -1508,6 +1525,7 @@ export function Workout(): JSX.Element {
             targetKg={recKg}
             targetReps={recReps}
             isBodyweight={currentExercise.isBodyweight ?? false}
+            plateHint={plateHint}
             // #7 metric-type rendering — a time/carry exercise shows a seconds
             // input (+ a load tile for carries) instead of kg/reps. Reps sets
             // pass 'reps' (the default) → byte-identical kg/reps tiles.

@@ -144,6 +144,11 @@ interface SetLogInputProps {
   // "X reps cu greutatea corpului" and the kg field becomes an optional
   // "+ added weight" input (min 0). Default false = legacy loaded behavior.
   isBodyweight?: boolean;
+  // Plate-math hint (2026-06-10) — pre-formatted "Bara 20 + 15+2.5 / parte"
+  // line the parent computes (platesPerSide on the CURRENT kg entry, barbell
+  // exercises only, exact decompositions only). Absent/null → nothing renders
+  // (byte-identical legacy).
+  plateHint?: string | null;
   // #7 metric type. Default 'reps' (weight × reps — every loaded/bodyweight
   // strength lift; byte-identical to the prior component). 'time' = an isometric
   // hold prescribed/logged in SECONDS (Plank/Dead Hang — no rep target, the reps
@@ -168,6 +173,7 @@ export function SetLogInput({
   onLog,
   onEdit,
   isBodyweight = false,
+  plateHint = null,
   targetKg,
   targetReps,
   metricType = 'reps',
@@ -403,6 +409,19 @@ export function SetLogInput({
             </>
           )}
         </div>
+
+        {/* Plate-math hint (2026-06-10) — actionable loading for barbell lifts:
+            tracks the user's CURRENT kg entry (not just the target), so editing
+            70 → 65 live-updates the per-side plates. Muted one-liner; absent
+            prop → nothing (machines/dumbbells/Smith render exactly as before). */}
+        {plateHint ? (
+          <p
+            className="font-mono text-[11px] text-ink2 text-center -mt-2 mb-3"
+            data-testid="setlog-plate-hint"
+          >
+            {plateHint}
+          </p>
+        ) : null}
 
         <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 mb-2 text-center">
           {t('setLog.askDoneLabel')}
