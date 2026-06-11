@@ -51,6 +51,7 @@ beforeEach(() => {
   try {
     localStorage.setItem('_devFlags', JSON.stringify({
       dp_e1rm_v1: false, dp_strength_kalman_v1: false, dp_ceiling_v1: false,
+      dp_base_lookback_v1: false,
     }));
   } catch { /* jsdom always provides localStorage */ }
 });

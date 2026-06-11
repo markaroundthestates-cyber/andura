@@ -16,8 +16,9 @@
 // + volume redistribution multipliers (recovered=1.00, partial=0.80,
 // fatigued=0.60) cataloged for cross-engine audit gate.
 
-import { getMuscleState, musclesForExercise } from './muscleMap.js';
+import { getMuscleState, musclesForExercise, MUSCLE_HEADS, learnedRecoveryHours } from './muscleMap.js';
 import { MS_PER_DAY, MS_PER_HOUR } from '../constants.js';
+import { isEnabled } from '../util/featureFlags.js';
 import {
   GROUP_HEAD_MAP_BIG11,
   GROUP_LABELS_RO_BIG11,
@@ -39,6 +40,179 @@ export { GROUP_HEAD_MAP_BIG11, GROUP_LABELS_RO_BIG11, BIG11_GROUPS };
 // at peak (no decay, rpe 1.0). Two-three primary hits on same head ~= fatigued.
 const FATIGUED_THRESHOLD = 35;
 const PARTIAL_THRESHOLD  = 12;
+
+// ══ DOSE + UNACCUSTOMED RECOVERY SCALING (dp_recovery_dose_v1) ════════════════
+// The decay window for a head is its recoveryHours in getMuscleState's exponent
+// exp(-K·h/recovH); a LONGER window = a slower decay = the group reads stressed
+// longer. The flat model decays only with TIME — blind to two real drivers of a
+// longer recovery window the founder felt live (2026-06-11): a muscle that took a
+// BIG dose of volume in one session needs longer, and a muscle hit after a LONG
+// layoff has lost its repeated-bout protection so unfamiliar volume bites longer
+// (DOMS prolonged). This scales the window UP (never down) for those two cases,
+// so a typical dose on an accustomed muscle is EXACTLY ×1.0 — byte-identical to
+// the flat model, keeping the QA-F9 calibration (RECOVERY_DECAY_K=1.8 anchors:
+// legs fatigued@24h / Easing@4.3d / recovered by the next legs day; shoulders
+// fatigued the evening after 11 sets) true for the typical-dose / common-muscle
+// case. The stretch only fires at high dose or after a layoff.
+//
+// PURE: derives everything from `logs` (the same persisted sessions the rest of
+// this module reads); injectable `now`; no clock/DB/DOM. OFF (flag off) → no map
+// → getMuscleState runs on the global/learned hours exactly as before.
+
+// Dose: ratio of sets-to-head in the stressful session vs the user's TYPICAL
+// per-head session dose. ×1.0 at typical, ramping to a capped stretch at a big
+// dose. The cap keeps a monster session from pinning a group fatigued forever.
+const DOSE_FACTOR_MAX = 1.6;
+// Floor for "typical dose" so a first/sparse history does not read a normal 3-4
+// set session as a huge multiple of a tiny baseline (→ false stretch). 3 sets is
+// a single working exposure — at or below it, dose is treated as typical (×1.0).
+const TYPICAL_DOSE_FLOOR = 3;
+// How far back to look when learning the user's typical per-head session dose.
+const DOSE_LOOKBACK_DAYS = 42;
+
+// Unaccustomed: days between the stressful session and the head's PREVIOUS
+// exposure. Below MIN the repeated-bout protection still holds (×1.0). Ramps
+// linearly to MAX at FULL days of layoff (repeated-bout effect ~gone at 3+ wks).
+const UNACCUSTOMED_MIN_DAYS = 10;
+const UNACCUSTOMED_FULL_DAYS = 21;
+const UNACCUSTOMED_FACTOR_MAX = 1.4;
+
+// Total window stretch is clamped so the composed factor can never explode.
+const RECOVERY_SCALE_CAP = 1.8;
+
+// Group same-session sets by calendar day (a "session" = one training day). A
+// head touched by N exercise-sets that day = N sets toward that head's dose.
+const _dayKey = (/** @type {number} */ ts) => Math.floor(ts / MS_PER_DAY);
+
+/**
+ * Median of a numeric array (sorted copy; mean of the two middles for even n).
+ * @param {number[]} arr
+ * @returns {number}
+ */
+function _median(arr) {
+  if (!arr.length) return 0;
+  const s = [...arr].sort((a, b) => a - b);
+  const mid = s.length >> 1;
+  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+}
+
+/**
+ * For one muscle head, derive { stressSets, typicalDose, layoffDays } from logs:
+ *   - stressSets  = sets touching the head in its MOST-RECENT training day.
+ *   - typicalDose = median sets/head across that head's training days in the
+ *     DOSE_LOOKBACK_DAYS window (floored at TYPICAL_DOSE_FLOOR).
+ *   - layoffDays  = days between the most-recent day and the PREVIOUS day the
+ *     head was trained (null if there is no prior exposure → cold start).
+ * A set counts when the head is primary OR secondary (same attribution the
+ * decay kernel loads it under). PURE.
+ *
+ * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs
+ * @param {string} head
+ * @param {number} now
+ * @returns {{stressSets: number, typicalDose: number, layoffDays: number|null}|null}
+ *   null when the head was never trained.
+ */
+function _headDoseSignal(logs, head, now) {
+  /** @type {Map<number, number>} */
+  const setsByDay = new Map(); // dayKey → sets touching this head that day
+  for (const log of logs || []) {
+    if (!log || log.baseline || !log.ex) continue;
+    const ms = musclesForExercise(log.ex); // QA-F8: curated OR metadata-derived
+    if (!ms) continue;
+    const touches = (ms.primary || []).includes(head) || (ms.secondary || []).includes(head);
+    if (!touches) continue;
+    const ts = log.ts || (log.date ? new Date(log.date).getTime() : 0);
+    if (!ts) continue;
+    const key = _dayKey(ts);
+    setsByDay.set(key, (setsByDay.get(key) ?? 0) + 1);
+  }
+  if (setsByDay.size === 0) return null;
+
+  const days = [...setsByDay.keys()].sort((a, b) => a - b);
+  const mostRecentDay = days[days.length - 1];
+  const prevDay = days.length >= 2 ? days[days.length - 2] : null;
+
+  const stressSets = setsByDay.get(mostRecentDay) ?? 0;
+  const layoffDays = prevDay === null ? null : mostRecentDay - prevDay;
+
+  // Typical dose: per-day set counts inside the lookback window (excluding the
+  // stress day itself so a single huge day does not inflate its own baseline).
+  const cutoffDay = _dayKey(now) - DOSE_LOOKBACK_DAYS;
+  /** @type {number[]} */
+  const priorDoses = [];
+  for (const d of days) {
+    if (d === mostRecentDay) continue;
+    if (d < cutoffDay) continue;
+    priorDoses.push(setsByDay.get(d) ?? 0);
+  }
+  const typicalDose = Math.max(TYPICAL_DOSE_FLOOR, priorDoses.length ? _median(priorDoses) : 0);
+
+  return { stressSets, typicalDose, layoffDays };
+}
+
+/**
+ * Dose multiplier in [1.0, DOSE_FACTOR_MAX]. Sets at/under the typical dose →
+ * exactly 1.0 (the F9 anchor case). Above typical it ramps linearly with the
+ * excess ratio, capped. PURE.
+ * @param {number} stressSets
+ * @param {number} typicalDose
+ * @returns {number}
+ */
+function _doseFactor(stressSets, typicalDose) {
+  if (!(typicalDose > 0) || !(stressSets > typicalDose)) return 1.0;
+  const ratio = stressSets / typicalDose; // > 1
+  return Math.min(DOSE_FACTOR_MAX, ratio);
+}
+
+/**
+ * Unaccustomed multiplier in [1.0, UNACCUSTOMED_FACTOR_MAX] from the layoff gap.
+ * No prior exposure (null) → 1.0 (cold start: nothing to be un-accustomed to).
+ * < MIN days → 1.0 (protection intact). Linear ramp MIN→FULL, capped. PURE.
+ * @param {number|null} layoffDays
+ * @returns {number}
+ */
+function _unaccustomedFactor(layoffDays) {
+  if (layoffDays === null || layoffDays <= UNACCUSTOMED_MIN_DAYS) return 1.0;
+  if (layoffDays >= UNACCUSTOMED_FULL_DAYS) return UNACCUSTOMED_FACTOR_MAX;
+  const t = (layoffDays - UNACCUSTOMED_MIN_DAYS) / (UNACCUSTOMED_FULL_DAYS - UNACCUSTOMED_MIN_DAYS);
+  return 1.0 + t * (UNACCUSTOMED_FACTOR_MAX - 1.0);
+}
+
+/**
+ * Build the per-head recovery-hours map for getMuscleState's `learnedHours`
+ * arg, applying the dose × unaccustomed window stretch on top of a base-hours
+ * source (the learned map when present, else the MUSCLE_HEADS globals). Each
+ * head's hours = baseHours × clamp(doseFactor × unaccustomedFactor, 1.0, CAP).
+ * A head with no stress signal, or a typical dose on an accustomed muscle, keeps
+ * its base hours UNCHANGED — so when nothing qualifies the returned map equals
+ * the base hours and getMuscleState is byte-identical to its OFF path. PURE.
+ *
+ * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs
+ * @param {number} now
+ * @param {Record<string, number>|null} [baseHours] — base recovery hours per head
+ *   (learned override). Omitted/null → MUSCLE_HEADS globals.
+ * @returns {Record<string, number>} per-head recovery hours (stretched where it applies)
+ */
+export function buildDoseScaledRecoveryHours(logs, now = Date.now(), baseHours = null) {
+  const heads = /** @type {Record<string, {recoveryHours:number}>} */ (MUSCLE_HEADS);
+  const baseFor = (/** @type {string} */ m) =>
+    (baseHours && Number.isFinite(baseHours[m]) && baseHours[m] > 0
+      ? baseHours[m]
+      : heads[m]?.recoveryHours) || 48;
+  /** @type {Record<string, number>} */
+  const out = {};
+  for (const m of Object.keys(heads)) {
+    const base = baseFor(m);
+    const sig = _headDoseSignal(logs, m, now);
+    if (!sig) { out[m] = base; continue; }
+    const mult = Math.min(
+      RECOVERY_SCALE_CAP,
+      _doseFactor(sig.stressSets, sig.typicalDose) * _unaccustomedFactor(sig.layoffDays),
+    );
+    out[m] = base * mult;
+  }
+  return out;
+}
 
 // Pain CDL -> Recovery escalation (ADR-ENGINE-MATH-LOCKED-VALUES section 9).
 // Section 9 wires the consumption but does NOT lock a numeric pain->recovery
@@ -62,10 +236,24 @@ const STATE_BY_RANK = ['recovered', 'partial', 'fatigued'];
  * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs — workout logs (db.js logs shape)
  * @param {Array<{type?: string, region?: string, intensity?: 1|2|3, ts?: number}>} [painEntries] — append-only pain CDL (DB('pain-cdl')), read at I/O boundary
  * @param {number} [now] — reference timestamp (default Date.now); inject for deterministic testing
+ * @param {{doseScaling?: boolean}} [opts] — when `doseScaling` is true AND the
+ *   dp_recovery_dose_v1 flag is enabled, the per-head recovery window is stretched
+ *   by the dose × unaccustomed factors (see buildDoseScaledRecoveryHours). Omitted
+ *   / flag OFF → no stretch → byte-identical to the time-only decay.
  * @returns {{[group:string]: 'recovered'|'partial'|'fatigued'}}
  */
-export function getRecoveryByGroup(logs, painEntries, now = Date.now()) {
-  const headState = /** @type {Record<string, number>} */ (getMuscleState(logs, now));
+export function getRecoveryByGroup(logs, painEntries, now = Date.now(), opts) {
+  // Stretch over the SAME base getMuscleState would have used: the learned
+  // per-muscle map when dp_learned_recovery_v1 is on (passing scaledHours as the
+  // learnedHours arg SHADOWS getMuscleState's internal learned read — without
+  // this the dose path would silently drop the learned hours), else globals.
+  const scaledHours =
+    opts?.doseScaling && isEnabled('dp_recovery_dose_v1')
+      ? buildDoseScaledRecoveryHours(logs, now, learnedRecoveryHours())
+      : undefined;
+  const headState = /** @type {Record<string, number>} */ (
+    scaledHours ? getMuscleState(logs, now, scaledHours) : getMuscleState(logs, now)
+  );
   /** @type {{[group:string]: 'recovered'|'partial'|'fatigued'}} */
   const groupState = {};
   const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP);
@@ -332,10 +520,12 @@ export function daysSinceGroup(logs, group, now = Date.now()) {
  * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs
  * @param {Array<{type?: string, region?: string, intensity?: 1|2|3, ts?: number}>} [painEntries]
  * @param {number} [now] — reference timestamp (default Date.now); inject for deterministic testing
+ * @param {{doseScaling?: boolean}} [opts] — forwarded to getRecoveryByGroup (dose ×
+ *   unaccustomed window stretch when dp_recovery_dose_v1 is on; OFF → byte-identical)
  * @returns {{[group:string]: {state: 'recovered'|'partial'|'fatigued', elapsedHours: number|null}}}
  */
-export function getGroupRecoveryDetail(logs, painEntries, now = Date.now()) {
-  const groupState = getRecoveryByGroup(logs, painEntries, now);
+export function getGroupRecoveryDetail(logs, painEntries, now = Date.now(), opts) {
+  const groupState = getRecoveryByGroup(logs, painEntries, now, opts);
   /** @type {{[group:string]: {state: 'recovered'|'partial'|'fatigued', elapsedHours: number|null}}} */
   const detail = {};
   for (const group of Object.keys(groupState)) {

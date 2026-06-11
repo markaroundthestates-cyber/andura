@@ -11,8 +11,9 @@
 import { EXERCISE_METADATA, getExerciseMetadata, isActiveMeta } from './exerciseLibrary.js';
 import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT, ISRAETEL_BASELINES } from './periodization/constants.js';
 import { isExcludedMovement } from './movementExclusion.js';
-import { EXERCISE_TIER_RANK, tierSelectScore, TIER_SELECTABLE_SA } from './exerciseTierRank.js';
+import { EXERCISE_TIER_RANK, tierSelectScore, TIER_SELECTABLE_SA, HAS_LOG_BONUS } from './exerciseTierRank.js';
 import { applyFocusPolicy, deriveExerciseTags, focusRelevantTags } from './focusPolicy.js';
+import { isoWeek } from '../util/isoWeek.js';
 // R6d-b (2026-06-11) — the curated lumbar-hinge name lists, shared with the
 // cross-day dedup so the in-session pairing rule never drifts from it. Import is
 // cycle-safe: lumbarDedup → frequencySplit → (constants, focus) only.
@@ -631,6 +632,40 @@ function hashString(str) {
 }
 
 /**
+ * dp_accessory_rotation_v1 — ISO-week PARITY from the existing rotationSeed.
+ *
+ * The live seed is `${uid}|${getWeekStartIso(date)}|${dayIdx}` (getDailyWorkout):
+ * the middle field is the week-start ISO date (Monday, YYYY-MM-DD). We map that date
+ * to its ISO week (isoWeek → 'YYYY-Www') and return the week NUMBER's parity (even→0,
+ * odd→1). Using the WEEK (not the raw seed hash) is what makes the rotation move
+ * exactly once per calendar week — every day of the same week shares the parity, and
+ * consecutive weeks flip it, so a mature account's equal-ish accessories alternate
+ * week-to-week (the whole point). DETERMINISTIC: a pure function of the seed string,
+ * never Date.now(). Returns null when the seed has no parsable 'YYYY-MM-DD' week field
+ * (pure-fn callers pass arbitrary seeds like 'pain-demote-seed') → no rotation.
+ *
+ * @param {unknown} rawSeed - ctx.seed (expected `uid|weekStartIso|dayIdx`)
+ * @returns {0|1|null} ISO-week parity, or null when the week field is unparsable
+ */
+function weekParityFromSeed(rawSeed) {
+  if (typeof rawSeed !== 'string' || rawSeed.length === 0) return null;
+  const parts = rawSeed.split('|');
+  // The week field is the middle segment; require the YYYY-MM-DD shape so an arbitrary
+  // test seed (no '|', or a non-date middle) yields null rather than a bogus parity.
+  const weekField = parts.length >= 2 ? parts[1] : '';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(weekField)) return null;
+  let week;
+  try {
+    week = isoWeek(weekField); // 'YYYY-Www'
+  } catch {
+    return null;
+  }
+  const m = /-W(\d{2})$/.exec(week);
+  if (!m) return null;
+  return (Number(m[1]) % 2 === 0 ? 0 : 1);
+}
+
+/**
  * Tier ceiling per profile tier. Beginner/T0 prefers T1 compound + simple T2;
  * advanced (T2+) unlocks T3 isolation/accessory. null -> conservative T2 cap.
  * @param {string|null|undefined} profileTier - 'T0' | 'T1' | 'T2' | null
@@ -735,9 +770,30 @@ function equipmentOk(meta, available) {
  *   the whole point is spacing the user's OWN heavy logged hinge (Daniel sweep
  *   review 2026-06-11: his logged RDL sailed through the repeat-hinge-day demote via
  *   the PR exemption → RDL heavy 3×/week on a lower-focus week). Never a drop.
+ * @param {boolean} [accessoryRotation] - dp_accessory_rotation_v1. When true the
+ *   FINAL ordered pool runs rotateAccessoryHead: among the TOP isolation (tier>1)
+ *   candidates, when the first two are score-equal-ish AND BOTH carry PR/log history,
+ *   their order alternates on the ISO-week parity (weekParity) — so a mature account
+ *   (everything logged → PR-stickiness made every week identical) alternates its
+ *   logged accessories week-to-week while ANCHORS (tier-1 compounds) repeat. Demote
+ *   (refusal/structural) is preserved — a demoted lift is never a rotation candidate.
+ *   Default falsy → no rotation → byte-identical pool order.
+ * @param {0|1|null} [weekParity] - ISO-week parity (even→0, odd→1) derived from the
+ *   EXISTING rotationSeed (ctx.seed = `uid|weekStartIso|dayIdx`) by buildSession, NOT
+ *   Date.now(). Drives which of the two equal-ish logged accessories leads. Null /
+ *   absent → no rotation (defensive: a caller without a parsable week seed).
+ * @param {Set<string>|null} [progressingNames] - #42 PROGRESSION-CONDITIONED selection
+ *   bonus (dp_progression_bonus_v1). When the tier-select score model is active, a
+ *   candidate the user is DEMONSTRABLY progressing on (dp/progressionSignal) earns the
+ *   bounded RECENT_PROGRESS_BONUS (+5) — strictly SMALLER than a selection band (20),
+ *   so an ACTIVE logged progression edges ahead of an equal-band sidegrade WITHOUT
+ *   jumping a band (the Cable Curl 23→27→32 keeps its slot). CONDITIONAL by design:
+ *   only progressing lifts qualify, never every logged lift (a blanket bonus was
+ *   measured to tank cohort convergence — exerciseTierRank §hasLog). Null/empty (flag
+ *   OFF / pure-fn callers) → no progression term → byte-identical scoring.
  * @returns {Array<{name: string, meta: object}>}
  */
-export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties) {
+export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties, accessoryRotation, weekParity, progressingNames) {
   // ACTIVE visibility gate (Daniel SSOT 2026-06-05, supersedes 2026-06-03 CORE+
   // FALLBACK gate): auto-selection draws ONLY from the curated ACTIVE catalog
   // (CORE_AUTO — see isActiveMeta / ACTIVE_STATUSES) plus PR-history continuity.
@@ -885,11 +941,17 @@ export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed,
     // the last-option guards (D-removal / exclusion) + the +10 log bonus keeping a
     // logged lift competitive — it just no longer trumps a far better unlogged pick.
     // Higher score first; squat-primacy (quads only) is a tiebreak above the seed.
-    // PROGRESSION-CONTINUITY (Daniel live 2026-06-11): the +10 bonus can't lift a
-    // logged-A progression over an unlogged-S sidegrade — the proper fix is a
-    // progression-CONDITIONED bonus (backlog #42/#43), NOT a blanket raise (measured
-    // to tank cohort convergence). Tracked there; this path stays the Wave-1.1 model.
-    const scoreOf = (name) => tierSelectScore(name, { hasLog: prNames.has(name) });
+    // PROGRESSION-CONDITIONED bonus (#42, dp_progression_bonus_v1): a logged lift the
+    // user is DEMONSTRABLY progressing on (progressingNames, dp/progressionSignal) adds
+    // the bounded RECENT_PROGRESS_BONUS (+5) on top of band+log — strictly smaller than
+    // a band step (20), so an ACTIVE progression edges ahead of an equal-ish sidegrade
+    // WITHOUT jumping a band (Cable Curl 23→27→32 keeps its slot; an unlogged-S still
+    // beats a logged-A). CONDITIONAL by construction — a stagnant logged lift is NOT in
+    // the set, so this is NOT the blanket raise that tanked cohort convergence
+    // (exerciseTierRank §hasLog). Null/empty set → progressing=false → byte-identical.
+    const isProgressing = (name) => !!progressingNames && progressingNames.has(name);
+    const scoreOf = (name) =>
+      tierSelectScore(name, { hasLog: prNames.has(name), progressing: isProgressing(name) });
     core.sort((a, b) => {
       const sa = squatPrimacy(a.name, a.meta);
       const sb = squatPrimacy(b.name, b.meta);
@@ -943,7 +1005,126 @@ export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed,
   // Guidelines / populationPrior), never in pick quality. sexBias is no longer
   // threaded into poolForGroup. Daniel's expert tier list (danielTierSelect) is the
   // sex-agnostic quality signal that supersedes it.
+
+  // dp_accessory_rotation_v1 — ANCHOR/ACCESSORY rotation (Daniel "monotonia tampa"
+  // 2026-06-11). On a MATURE account everything is logged, so PR-stickiness made
+  // every program identical week-to-week. Policy: ANCHORS repeat (tier-1 compounds +
+  // the lifts the user progresses on), ACCESSORIES rotate (tier 2-3 isolations). This
+  // is the FINAL step on the fully-ordered pool: it alternates the two top equal-ish
+  // LOGGED isolations on the ISO-week parity. It runs LAST (after the tier-select sort
+  // AND the penalty/structural demote partition) so a refusal/structural demote — by
+  // construction already at the BACK of `ordered` — is never a rotation candidate; the
+  // demote stays strictly stronger than the rotation (a refused lift can NOT return via
+  // rotation before its half-life decays it back under the 0.5 cutoff). OFF (falsy
+  // flag / null parity / pure-fn callers) → no reorder → byte-identical.
+  if (accessoryRotation && (weekParity === 0 || weekParity === 1)) {
+    return rotateAccessoryHead(ordered, {
+      weekParity, seed, prNames, penalties, structuralPenalties, danielTierSelect,
+    });
+  }
   return ordered;
+}
+
+// dp_accessory_rotation_v1 — "equal-ish" rank threshold. Under danielTierSelect (the
+// live default) the pool is scored by tierSelectScore: a one-BAND gap is 20 pts
+// (S100→A80), a PR/log bonus is +10 (HAS_LOG_BONUS). Two candidates are rotatable
+// only when they are the SAME selection band — i.e. the score delta is driven solely
+// by the (≤10) log bonus, NEVER by a band difference. Threshold = HAS_LOG_BONUS so a
+// same-band pair (real delta 0 once BOTH are logged, the rule's precondition) rotates
+// while a cross-band pair (≥20) does not: rotation only ever swaps options the coach
+// rates QUALITATIVELY EQUIVALENT, never trades a better lift for a worse one. On the
+// legacy (flag-OFF) ordering the pool is rank()-banded; there the same-rank head is
+// already adjacent so the threshold is applied on the band score (0 within a rank).
+const ROTATION_SCORE_EPSILON = HAS_LOG_BONUS;
+
+/**
+ * Selection score used to judge "equal-ish" for rotation. Mirrors the score the
+ * pool was SORTED by so the rotation never disagrees with the ordering: the Daniel
+ * tier-select score when that path is on, else the legacy commonness rank() mapped
+ * to a higher-is-better scale (so two same-rank lifts read as a 0 delta).
+ * @param {string} name
+ * @param {Set<string>} prNames
+ * @param {boolean} danielTierSelect
+ * @returns {number} higher = preferred (same scale as the active sort)
+ */
+function rotationScoreOf(name, prNames, danielTierSelect) {
+  return danielTierSelect
+    ? tierSelectScore(name, { hasLog: prNames.has(name) })
+    : -rank(name, prNames); // legacy: lower rank = better → negate so higher = better
+}
+
+/**
+ * ANCHOR/ACCESSORY rotation head-swap (dp_accessory_rotation_v1).
+ *
+ * Operates ONLY on the very front of the already-ordered pool. Finds the first two
+ * ISOLATION (tier > 1) entries; if they are score-equal-ish (|Δ| <= ROTATION_SCORE_
+ * EPSILON), BOTH carry PR/log history (the user actually trains both — so each
+ * progresses on its OWN history in the weeks it leads, exactly what a coach does),
+ * and NEITHER is a demote candidate (refusal/structural penalty ≥ the 0.5 cutoff, or
+ * a structural demote at any level), then their relative order ALTERNATES on the ISO-
+ * week parity: even weeks keep A→B, odd weeks swap to B→A. Deterministic (parity is a
+ * pure function of the existing seed). Never touches a tier-1 ANCHOR, a single
+ * candidate, a demoted lift, or anything past the head pair. A pure, allocation-light
+ * reorder (swaps two array slots at most); returns a new array so `ordered` is intact.
+ *
+ * NOTE on focus REQUIREMENTS: the focus-policy resolver runs AFTER selection on the
+ * `chosen` list and injects its own required slots from the pool, so rotation never
+ * creates a ping-pong with it — rotation only reorders equal-ish siblings the focus
+ * is indifferent between (a focus that REQUIRES a specific tag injects that exercise
+ * regardless of which equal-ish sibling rotation surfaced first).
+ *
+ * @param {Array<{name: string, meta: object}>} ordered - the fully-ordered pool
+ * @param {{weekParity: 0|1, seed: number, prNames: Set<string>,
+ *   penalties: Record<string, number>|null, structuralPenalties: Record<string, number>|null,
+ *   danielTierSelect: boolean}} ctx
+ * @returns {Array<{name: string, meta: object}>}
+ */
+function rotateAccessoryHead(ordered, ctx) {
+  if (!Array.isArray(ordered) || ordered.length < 2) return ordered;
+  const { weekParity, prNames, penalties, structuralPenalties, danielTierSelect } = ctx;
+  const DEMOTE = 0.5; // SAME cutoff the penalty partition uses — keep in lock-step.
+  // A lift is rotation-eligible only if it is NOT demoted. Refusal/skip/pain ride
+  // `penalties` (PR-exempt — a logged lift's soft penalty is 0 there too, mirroring
+  // the partition), structural (lumbar) demotes pierce the PR exemption → both checked
+  // at the SAME ≥0.5 cutoff so the rotation candidate set never includes a back-of-pool
+  // demote (the demote stays strictly stronger than the rotation).
+  const isDemoted = (name) => {
+    const soft = prNames.has(name) ? 0 : (penalties?.[name] ?? 0);
+    const structural = structuralPenalties?.[name] ?? 0;
+    return Math.max(soft, structural) >= DEMOTE;
+  };
+  // Find the FIRST TWO ISOLATION (tier>1) entries in pool order — i.e. the literal
+  // TOP of the accessory band ("the first two candidates"). We do NOT skip past a
+  // better-ranked isolation to find a logged one: if the top isolation is an UNLOGGED
+  // sidegrade it leads on its quality and there is nothing to alternate (the rule is
+  // "the top two are equal-ish AND BOTH logged"). The eligibility checks (both logged,
+  // neither demoted, equal-ish) are then applied to exactly that head pair.
+  let iA = -1;
+  let iB = -1;
+  for (let i = 0; i < ordered.length; i++) {
+    if ((ordered[i].meta?.tier ?? 2) <= COMPOUND_TIER) continue; // skip tier-1 anchors
+    if (iA === -1) { iA = i; continue; }
+    iB = i;
+    break;
+  }
+  if (iA === -1 || iB === -1) return ordered; // <2 isolations (single candidate) → no rotation
+  const a = ordered[iA];
+  const b = ordered[iB];
+  // BOTH top isolations must be LOGGED (the user trains both → each progresses on its
+  // own history in its weeks) and NEITHER demoted (refusal/structural stays stronger).
+  if (!prNames.has(a.name) || !prNames.has(b.name)) return ordered;
+  if (isDemoted(a.name) || isDemoted(b.name)) return ordered;
+  const sA = rotationScoreOf(a.name, prNames, danielTierSelect);
+  const sB = rotationScoreOf(b.name, prNames, danielTierSelect);
+  if (Math.abs(sA - sB) > ROTATION_SCORE_EPSILON) return ordered; // not equal-ish → keep quality order
+  // Even week → keep the sorted lead (A first); odd week → swap so B leads. Only the
+  // two head slots move; everything else (incl. the rest of the family, which the
+  // movement-dedup will collapse anyway) keeps its position.
+  if (weekParity === 0) return ordered;
+  const out = ordered.slice();
+  out[iA] = b;
+  out[iB] = a;
+  return out;
 }
 
 /**
@@ -1173,6 +1354,9 @@ export function movementKey(name, meta) {
  *   daysPerWeek?: number,
  *   structuralPenalties?: Record<string, number>|null,
  *   lumbarPairDedup?: boolean,
+ *   accessoryRotation?: boolean,
+ *   progressionBonus?: boolean,
+ *   progressingNames?: Set<string>|null,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  *
@@ -1197,6 +1381,15 @@ export function buildSession(cluster, ctx) {
   const maxSkill = skillCeiling(ctx?.profileTier);
   const prNames = new Set(ctx?.prNames ?? []);
   const seed = hashString(String(ctx?.seed ?? ''));
+  // dp_accessory_rotation_v1 — ISO-week parity for the anchor/accessory rotation,
+  // derived from the EXISTING rotationSeed (ctx.seed = `uid|weekStartIso|dayIdx`, the
+  // SAME string buildSession already hashes for selection — NOT Date.now()). The
+  // middle field is the week-start ISO date (getWeekStartIso → Monday YYYY-MM-DD), so
+  // weekParityFromSeed maps it to its ISO week then even→0 / odd→1. Null when the flag
+  // is off OR the seed has no parsable week field (pure-fn callers like the unit tests
+  // pass arbitrary seeds) → poolForGroup performs no rotation → byte-identical.
+  const accessoryRotation = ctx?.accessoryRotation === true;
+  const weekParity = accessoryRotation ? weekParityFromSeed(ctx?.seed) : null;
   // #8/D per-exercise pain/skip penalties (engineName → 0..1). Null/empty (the
   // common case + flag off) → poolForGroup order is byte-identical.
   const penalties = ctx?.exercisePenalties ?? null;
@@ -1222,11 +1415,21 @@ export function buildSession(cluster, ctx) {
   // anti-patterns. Default absent (flag OFF / pure-fn callers) → false → the legacy
   // anchor/common/seeded ordering, no D removal → byte-identical pool.
   const danielTierSelect = ctx?.danielTierSelect === true;
+  // #42 PROGRESSION-CONDITIONED selection bonus (dp_progression_bonus_v1, default
+  // OFF → null → no progression term → byte-identical scoring). When ON, the I/O
+  // boundary (getDailyWorkout) computes the set of EN names the user is demonstrably
+  // PROGRESSING on (dp/progressionSignal over DP.getLogs) and threads it here; a
+  // candidate in the set earns the bounded +5 in poolForGroup's tier-select score
+  // (never a band step). Gated on ctx.progressionBonus so the set is only consulted
+  // when the flag is on (a stray set without the gate is ignored).
+  const progressingNames = (ctx?.progressionBonus === true && ctx?.progressingNames instanceof Set)
+    ? ctx.progressingNames
+    : null;
 
   // Pools per target group (ordered: PR-anchored -> anchor -> new, seeded-stable).
   const pools = targets.map((g) => ({
     group: g,
-    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties),
+    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties, accessoryRotation, weekParity, progressingNames),
   }));
 
   // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the user's

@@ -49,11 +49,27 @@ export const GROUP_HEAD_MAP_BIG11: Record<string, string[]>;
 export const BIG11_GROUPS: readonly string[];
 export const PAIN_REGION_GROUP_MAP: Record<string, string[]>;
 
+export interface RecoveryOpts {
+  /** Stretch per-head recovery window by dose × unaccustomed factors when the
+   *  dp_recovery_dose_v1 flag is on. Omitted / flag OFF → time-only decay. */
+  doseScaling?: boolean;
+}
+
 export function getRecoveryByGroup(
   logs: LogEntry[],
   painEntries?: PainCdlEntry[],
-  now?: number
+  now?: number,
+  opts?: RecoveryOpts
 ): Record<string, RecoveryState>;
+
+/** Per-head recovery hours for getMuscleState's `learnedHours` arg, with the
+ *  dose × unaccustomed window stretch applied over a base-hours source (learned
+ *  map or MUSCLE_HEADS globals). Heads with no qualifying signal keep base hours. */
+export function buildDoseScaledRecoveryHours(
+  logs: LogEntry[],
+  now?: number,
+  baseHours?: Record<string, number> | null
+): Record<string, number>;
 export function daysSinceGroup(logs: LogEntry[], group: string, now?: number): number | null;
 export function hoursSinceGroup(logs: LogEntry[], group: string, now?: number): number | null;
 
@@ -64,7 +80,8 @@ export interface GroupRecoveryDetail {
 export function getGroupRecoveryDetail(
   logs: LogEntry[],
   painEntries?: PainCdlEntry[],
-  now?: number
+  now?: number,
+  opts?: RecoveryOpts
 ): Record<string, GroupRecoveryDetail>;
 export function groupForExerciseBig11(engineName: string | null | undefined): string[];
 export function getLaggingMuscles(

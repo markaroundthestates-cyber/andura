@@ -163,12 +163,13 @@ describe('DP.checkInSessionAdjust — per-set reps autoregulation (CUT/masa phas
     expect(r.newReps).toBeUndefined(); // weight-first now, not the rep target
   });
 
-  it('cold-start greu (no working load) trims reps, not weight', () => {
-    // Fallback: with no prior history (lastW 0) there is no reliable load to step
-    // down from, so a hard set trims the rep target (−2 hypertrophy, floored) and
-    // keeps the conservative starting load. loggedKg present so the early gate passes.
+  it('cold-start greu at the lightest load trims reps (no lower step to drop to)', () => {
+    // STICKY (gym-log arc 2026-06-11) eases the WEIGHT off the just-logged load even
+    // cold-start — so the rep-trim fallback only remains when there is NO lower step
+    // to drop to: the user is already at the lightest rung. Here lastW 0 + logged 5kg
+    // (the bailib floor) → weight cannot drop → trim the rep target (−2, floored to 8).
     DP.getState = vi.fn(() => ({ lastW: 0 }));
-    const r = DP.checkInSessionAdjust('Lat Pulldown', [10], [10], { recKg: 60, recReps: 10, loggedKg: 60 });
+    const r = DP.checkInSessionAdjust('Lat Pulldown', [10], [10], { recKg: 5, recReps: 10, loggedKg: 5 });
     expect(r.adjust).toBe(true);
     expect(r.dir).toBe('down');
     expect(r.newReps).toBe(8);

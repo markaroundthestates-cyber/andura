@@ -2,7 +2,7 @@
 // Per-machine weight stacks based on real gym equipment (Matrix + Bailib + plates)
 
 import { isEnabled } from '../util/featureFlags.js';
-import { learnedStep } from '../engine/dp/equipmentLadder.js';
+import { learnedStep, snapToLadder } from '../engine/dp/equipmentLadder.js';
 
 export const EQUIPMENT_WEIGHTS = {
   // Matrix Dual Adjustable Pulley (helcometru) — incremente ~4.5kg
@@ -375,12 +375,26 @@ export function getPrevWeight(current, exerciseName) {
 /**
  * @param {number} weight
  * @param {string} exerciseName
+ * @param {{ladderAware?:boolean, curatedSteps?:ReadonlyArray<number>}} [ctx]
+ *   OPTIONAL ladder-aware path. OMITTED → byte-identical legacy (the generic
+ *   reduce below) — every existing caller + test is unaffected. When provided AND
+ *   the dp_equipment_ladder_v1 flag is on, the weight is snapped to the user's
+ *   LEARNED per-machine template (matched from their logged loads) — or a photo-
+ *   curated ladder (ctx.curatedSteps, future seam, wins) — with this generic
+ *   rounding as the GUARANTEED fallback (curated > matched > generic, never
+ *   regresses). With no learned/curated ladder this returns the generic result
+ *   too, so it is safe to always pass ctx once wired.
  */
-export function roundToEquipmentWeight(weight, exerciseName) {
+export function roundToEquipmentWeight(weight, exerciseName, ctx) {
   const list = getList(exerciseName);
-  return list.reduce((prev, curr) =>
+  const generic = () => list.reduce((prev, curr) =>
     Math.abs(curr - weight) < Math.abs(prev - weight) ? curr : prev
   , list[0] ?? weight);
+  // Back-compat: no ctx → legacy generic rounding, byte-identical.
+  if (!ctx || !ctx.ladderAware || !isEnabled('dp_equipment_ladder_v1')) return generic();
+  // Ladder-aware: snapToLadder applies curated > matched-template precedence and
+  // falls back to `generic` itself when the user has no learned/curated ladder.
+  return snapToLadder(exerciseName, weight, generic, ctx.curatedSteps);
 }
 
 /** @param {string} exerciseName */

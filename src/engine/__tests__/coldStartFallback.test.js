@@ -182,7 +182,8 @@ describe('cold-start cable/barbell compounds are no longer seeded absurdly low (
   });
 
   it('Face Pull (canonical CORE_AUTO name) is no longer the ~0.11 umeri-iso fallback', () => {
-    // Was: umeri-iso 0.16 × cable 0.70 ≈ 0.11 (≈9kg). Now explicit 0.16 (≈14kg).
+    // Was: umeri-iso 0.16 × cable 0.70 ≈ 0.11 (≈9kg). Raised to explicit 0.20 after
+    // the gym-log (CEO real 27-36kg): 0.20 × 85 ≈ 17kg at the intermediate MID profile.
     const w = suggestStartWeight('Face Pull', 'intermediate', MID);
     expect(w).toBeGreaterThanOrEqual(11);
   });
@@ -232,4 +233,62 @@ describe('the default Leg Press is the 45deg sled (loads higher than horizontal)
     expect(w).toBeLessThanOrEqual(260);
     expect(w).toBeGreaterThanOrEqual(180);
   });
+});
+
+// ══ GYM-LOG ANCHORS — real CEO working loads (bw108 advanced) ════════════════
+// _GYMLOG_FINDINGS_2026-06-11: two real sessions exposed the per-equipment×pattern
+// cold-start miscalibration. These anchor the coldStartGuidelines `suggestStartWeight`
+// table (the no-bodyweight FLAT + the bodyweight-scaled path) to the CEO's REAL
+// working loads at his profile (bw108, advanced, m), with a one-step tolerance on
+// each band. NOTE: the LIVE seed for a user WITH bodyweight actually comes from
+// populationPrior.js (dp_population_prior_v1 ON) — these guard the COLDSTART-GUIDELINES
+// contract (no-bodyweight users + the documented fallback); the populationPrior +
+// dp.js in-workout fixes are a separate SPEC (see the report). DB loads are PER HAND.
+describe('cold-start seeds match the CEO gym-log bands (bw108 advanced)', () => {
+  const CEO = { bodyweightKg: 108, sex: 'm' };
+  // [exercise, realLow, realHigh] — the empirical band + a one-equipment-step margin.
+  const ANCHORS = /** @type {Array<[string, number, number]>} */ ([
+    ['Seated DB Press', 18, 27],  // real 20-25/hand
+    ['Incline DB Press', 24, 32], // real 25-30/hand (fraction unchanged, still in band)
+    ['Face Pull', 22, 34],        // real 27-36 (cable); seed conservative-low end OK
+    ['Bayesian Curl', 11, 18],    // real 14-18
+    ['Reverse Pec Deck', 17, 26], // real 24
+    ['DB Lateral Raise', 8, 13],  // real 9-12.5/hand
+  ]);
+  for (const [ex, lo, hi] of ANCHORS) {
+    it(`${ex} opens within the CEO real band [${lo}, ${hi}]`, () => {
+      const w = suggestStartWeight(ex, 'advanced', CEO);
+      expect(w).toBeGreaterThanOrEqual(lo);
+      expect(w).toBeLessThanOrEqual(hi);
+    });
+  }
+});
+
+// ══ BEGINNER SAFETY — a light 60kg female stays small/safe on the same lifts ═══
+// The raised cable/Seated-DB fractions must never overshoot a light beginner: the
+// flat prior + the female (0.78) × beginner (0.7) factors keep the seed small, and
+// the equipment snap stays near the floor. (Brief sanity anchor.)
+describe('cold-start seeds stay light for a 60kg beginner female', () => {
+  const NOVICE = { bodyweightKg: 60, sex: 'f' };
+  // raw seed ceilings (pre-snap) — comfortably small for each movement.
+  const CAPS = /** @type {Array<[string, number]>} */ ([
+    ['Seated DB Press', 12],
+    ['Face Pull', 12],
+    ['Bayesian Curl', 12],
+    ['Reverse Pec Deck', 10],
+    ['DB Lateral Raise', 6],
+  ]);
+  for (const [ex, cap] of CAPS) {
+    it(`${ex} stays <= ${cap}kg for a light beginner female`, () => {
+      const w = suggestStartWeight(ex, 'beginner', NOVICE);
+      expect(w).toBeGreaterThan(0);
+      expect(w).toBeLessThanOrEqual(cap);
+    });
+    it(`${ex} snaps to a real light equipment value for the novice`, () => {
+      const raw = suggestStartWeight(ex, 'beginner', NOVICE);
+      const snapped = roundToEquipmentWeight(raw, ex);
+      expect(snapped).toBeGreaterThan(0);
+      expect(snapped).toBeLessThanOrEqual(cap + 3); // one step of slack on the snap
+    });
+  }
 });

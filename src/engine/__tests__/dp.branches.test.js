@@ -57,6 +57,11 @@ beforeEach(() => {
       // at-cap brake these branch tests assert in the LEGACY load world. Pin OFF;
       // ON is covered by dp/__tests__/loadModel.test.js + the Daniel probe.
       dp_load_model_v1: false,
+      // dp_base_lookback_v1 defaults ON (2026-06-11) — multi-session lookback
+      // reshapes the demonstrated working load and routes a top-reps history through
+      // the find-your-weight CATCH UP before these raw branches; pin OFF so the
+      // classic INCREASE/STAGNANT/ON-TARGET/rating-gate branches stay exercised.
+      dp_base_lookback_v1: false,
     }));
   } catch { /* jsdom always provides localStorage */ }
 });
@@ -233,13 +238,15 @@ describe('DP._recommendRaw — branch coverage', () => {
     expect(compound.rir).toBe(3);
     expect(compound.progressionStage).toBe(0);
 
-    // Snapping gate (Bug B): the conservative isolation start (10) is snapped to
-    // the exercise's real equipment stack. Cable Curl = matrix_cable [5,9,14,...]
-    // → nearest to 10 is 9 (10 is NOT a loadable value on that cable). The bare
-    // 10 was an un-snapped leak; 9 is what the machine can actually do.
+    // FIX B (2026-06-11): INIT now seeds the isolation start from
+    // suggestStartWeight(ex,'beginner') instead of the bare 10. Cable Curl base 10 ×
+    // beginner mult 0.7 = 7, snapped to the matrix_cable stack [5,9,14,...] → 5 (the
+    // 7 ties 5 vs 9 and snapping breaks to the lower, more conservative rung). This
+    // is the deliberately conservative beginner cold-start; it recalibrates after the
+    // first real set.
     const iso = DP._recommendRaw('Cable Curl');
     expect(iso.status).toBe('INIT');
-    expect(iso.kg).toBe(9);
+    expect(iso.kg).toBe(5);
   });
 
   it('SCALE BACK: lastReps below ceil(rMin*0.5) drops one equipment step', () => {

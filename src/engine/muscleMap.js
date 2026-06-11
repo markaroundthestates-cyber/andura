@@ -305,9 +305,14 @@ export function bodyweightTrendRecoveryFactor(weightsSeries, phase) {
 /**
  * Flag-gated read of the persisted learned recovery constants as a flat
  * {muscle: hours} map. OFF or empty -> null -> getMuscleState uses the globals.
+ * EXPORTED (gym-log arc 2026-06-11) for muscleRecovery's dose-scaling path: the
+ * scaled map is passed as getMuscleState's learnedHours arg, which SHADOWS this
+ * internal read — so the dose builder must stretch over the SAME learned base
+ * (when the flag is on) rather than silently dropping it. Pure read, no
+ * behavioral change here.
  * @returns {Record<string, number>|null}
  */
-function _learnedRecoveryHours() {
+export function learnedRecoveryHours() {
   if (!isEnabled('dp_learned_recovery_v1')) return null;
   const raw = /** @type {any} */ (DB.get(RECOVERY_CONSTANTS_KEY));
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
@@ -354,7 +359,7 @@ export function getMuscleState(logs, now = Date.now(), learnedHours) {
 
   // recoveryHours_user[m] ?? MUSCLE_HEADS[m].recoveryHours (F3 §5c). When no
   // override is passed, resolve the flag-gated learned map (OFF → null → globals).
-  const learned = learnedHours !== undefined ? learnedHours : _learnedRecoveryHours();
+  const learned = learnedHours !== undefined ? learnedHours : learnedRecoveryHours();
   const recovHoursFor = (/** @type {string} */ m) =>
     (learned && Number.isFinite(learned[m]) && learned[m] > 0
       ? learned[m]

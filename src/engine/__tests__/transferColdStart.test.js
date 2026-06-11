@@ -5,9 +5,12 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { DP } from '../dp.js';
-import { getTransferSources } from '../exerciseMapping.js';
+import { getTransferSources, getSimilarityMultiplier } from '../exerciseMapping.js';
 import { getExerciseMetadata } from '../exerciseLibrary.js';
 import { DB } from '../../db.js';
+
+// The injected equipment_type accessor the live dp.js call-site will pass (#11).
+const eqType = (n) => getExerciseMetadata(n)?.equipment_type;
 
 const RPE = { usor: 6.5, potrivit: 7.5, greu: 8.5 };
 
@@ -50,6 +53,73 @@ describe('getTransferSources — ordered related-lift resolution', () => {
       : { muscle_target_primary: 'biceps' };
     const out = getTransferSources('NEW', fakeMeta); // no pool
     expect(out).toHaveLength(0);
+  });
+});
+
+describe('getSimilarityMultiplier — #11 unit-aware equipment conversion', () => {
+  // Library equipment_alternatives links Flat Barbell Bench → Flat DB Press DIRECTLY
+  // across equipment, but DB loads are PER HAND and barbell loads are TOTAL — the old
+  // 0.9 default seeded nonsense. The conversion layer fixes the unit skew.
+  it('curated per-pair ratio wins over the equipment layer', () => {
+    // Incline DB Press → DB Shoulder Press is a curated 1.25 (both dumbbell anyway).
+    expect(getSimilarityMultiplier('Incline DB Press', 'DB Shoulder Press', eqType)).toBe(1.25);
+  });
+
+  it('barbell SOURCE → dumbbell TARGET converts per-hand (×0.40, NOT 0.9)', () => {
+    // Flat DB Press (dumbbell, per-hand) seeded FROM Flat Barbell Bench (barbell total).
+    expect(getSimilarityMultiplier('Flat DB Press', 'Flat Barbell Bench', eqType)).toBe(0.40);
+  });
+
+  it('dumbbell SOURCE → barbell TARGET is the inverse (×2.50)', () => {
+    expect(getSimilarityMultiplier('Flat Barbell Bench', 'Flat DB Press', eqType)).toBe(2.50);
+  });
+
+  it('same-equipment cross still uses the legacy default (no spurious conversion)', () => {
+    // Two cables, no curated pair → default 0.9 (layer only fires cross-equipment).
+    expect(getSimilarityMultiplier('Cable Fly', 'Face Pull', eqType)).toBe(0.9);
+  });
+
+  it('no equipment accessor → byte-identical legacy default (back-compat)', () => {
+    expect(getSimilarityMultiplier('Flat DB Press', 'Flat Barbell Bench')).toBe(0.9);
+  });
+
+  it('machine↔barbell stays conservative (×1.0 — no unit skew)', () => {
+    // Smith lifts carry equipment_type 'machine' (no 'smith' type) → machine↔barbell
+    // resolves to a conservative 1.0 (the ~8% free-bar gap is intentionally NOT
+    // modelled — see EQUIP_CONVERSION note). No unit skew machine↔barbell.
+    expect(getSimilarityMultiplier('Smith Machine Bench', 'Flat Barbell Bench', eqType)).toBe(1.0);
+  });
+});
+
+describe('DP.coldStartTransfer — #11 cross-equipment seed lands on the right ladder', () => {
+  beforeEach(() => {
+    try { localStorage.clear(); } catch { /* jsdom */ }
+  });
+
+  it("BB bench 60 → DB seed is per-hand (~22-26/hand), NOT ~54 (Daniel's anchor)", () => {
+    // dp_transfer_coldstart_v1 must be ON for the transfer path (else suggestStartWeight).
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_transfer_coldstart_v1: true }));
+    DB.set('logs', [
+      // reps >= the rt floor so _bestE1RM accepts the set (it skips sub-target reps).
+      { ex: 'Flat Barbell Bench', w: 60, reps: 10, rpe: 7.5, ts: 1_700_000_000_000 },
+    ]);
+    const seed = DP.coldStartTransfer('Flat DB Press', 10);
+    expect(seed).not.toBeNull();
+    expect(seed.source).toBe('Flat Barbell Bench');
+    expect(seed.kg).toBeGreaterThanOrEqual(20);
+    expect(seed.kg).toBeLessThanOrEqual(27); // a real dumbbell rung, his rack carries it
+  });
+
+  it("DB bench 30/hand → BB seed is a barbell total (~70-75), NOT ~27 (Daniel's anchor)", () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_transfer_coldstart_v1: true }));
+    DB.set('logs', [
+      { ex: 'Flat DB Press', w: 30, reps: 10, rpe: 7.5, ts: 1_700_000_000_000 },
+    ]);
+    const seed = DP.coldStartTransfer('Flat Barbell Bench', 10);
+    expect(seed).not.toBeNull();
+    expect(seed.source).toBe('Flat DB Press');
+    expect(seed.kg).toBeGreaterThanOrEqual(65);
+    expect(seed.kg).toBeLessThanOrEqual(80);
   });
 });
 

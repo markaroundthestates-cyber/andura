@@ -22,6 +22,18 @@ const BASE_WEIGHTS = {
   'Lat Pulldown': 30,
   'Cable Row': 30,
   'Face Pulls': 10,
+  // Canonical CORE_AUTO 'Face Pull' (singular — the live emitted name; the legacy
+  // 'Face Pulls' plural never matched). Gym-log calibration 2026-06-11 (CEO, bw108
+  // advanced): real working load 27-36kg on the dual cable, the seed sat ~9-14
+  // (cohort) / ~22 (no-bw prior). Pin a realistic cable-rear-delt prior so the
+  // no-bodyweight flat path opens nearer reality, not the umeri-iso fallback ~8.
+  'Face Pull': 14,
+  // Seated DB Press — was UNLISTED, so the flat path fell to the umeri-PRESS
+  // fallback (0.25 × dumbbell 0.40 ≈ 0.10 → ~14kg/hand at 108kg). The composer
+  // emits this exact name (it is a tier-1 OHP variant). Pin an explicit per-hand
+  // prior between DB Shoulder Press (10) and the heavier Incline DB Press, anchored
+  // to the CEO log (real 20-25/hand at bw108 advanced — gym-log 2026-06-11).
+  'Seated DB Press': 12,
   'Bayesian Curl': 8,
   'Incline DB Curl': 5,
   'Overhead Triceps': 10,
@@ -91,11 +103,24 @@ const BW_FRACTION = /** @type {Record<string, number>} */ ({
   'Lat Pulldown': 0.72,
   'Cable Row': 0.72,
   'Chest-Supported Row': 0.62,
-  // Rear-delt / rotator cable compound-ish pull (canonical CORE_AUTO name)
-  'Face Pull': 0.16,
-  // Compound upper — DB presses (PER HAND)
+  // Rear-delt / rotator cable compound-ish pull (canonical CORE_AUTO name).
+  // Gym-log 2026-06-11 (CEO bw108 advanced): real Face Pull 27-36kg on the dual
+  // cable — the 0.16 fraction opened it ~22 (still under-priced). Raised to 0.20
+  // (108 × 0.20 × 1.3 ≈ 28 → snaps to the ~27 cable rung) while a light beginner
+  // stays safe (60F beginner ≈ 6-7kg → snaps to the 9kg cable floor).
+  'Face Pull': 0.20,
+  // Compound upper — DB presses (PER HAND). NOTE these per-hand fractions are
+  // calibrated for THIS table's flat/scaled path; the LIVE cold-start seed for a
+  // user WITH bodyweight comes from populationPrior.js (dp_population_prior_v1 ON)
+  // and over-prices DB presses (Seated DB ~30, Incline DB ~49 at bw108) — a
+  // separate fix (see _GYMLOG report SPEC: COLDSTART_EQUIP_AXIS.dumbbell). Here
+  // Incline DB 0.20 already lands ~27-28 at bw108 (real 25-30) — left unchanged.
   'Flat DB Press': 0.22,
   'Incline DB Press': 0.20,
+  // Seated DB Press (tier-1 OHP, PER HAND) — was UNLISTED → umeri-press fallback
+  // ~0.10. Explicit per-hand fraction anchored to the CEO log (real 20-25/hand at
+  // bw108 advanced): 0.16 × 108 × 1.3 ≈ 22.5. Sits just above DB Shoulder Press.
+  'Seated DB Press': 0.16,
   'DB Shoulder Press': 0.14,
   'Pec Deck': 0.30,
   // Chest-fly ISOLATIONS — keyed on the EXACT engineNames the composer emits
@@ -113,8 +138,11 @@ const BW_FRACTION = /** @type {Record<string, number>} */ ({
   'Cable Curl': 0.16,
   // Rear-delt / rotator small isolation (NOT a compound-row share)
   'Face Pulls': 0.10,
-  // Small isolation (DB per hand / fine cable)
-  'Bayesian Curl': 0.13,
+  // Small isolation (DB per hand / fine cable). Gym-log 2026-06-11 (CEO bw108
+  // advanced): real Bayesian Curl 14-18kg on the cable — 0.13 opened it ~18
+  // (top of band / slightly high). Trimmed to 0.10 (108 × 0.10 × 1.3 ≈ 14, the
+  // bottom of the real band; the first set's RIR climbs it if light).
+  'Bayesian Curl': 0.10,
   'Incline DB Curl': 0.085,
   'Preacher Curl': 0.13,
   'Lateral Raises': 0.075,
@@ -132,7 +160,11 @@ const BW_FRACTION = /** @type {Record<string, number>} */ ({
   // in weights.js so the snap stays light, never the 18kg pec_deck floor).
   'DB Rear Delt Fly': 0.06,
   'Cable Rear Delt Fly': 0.06,
-  'Reverse Pec Deck': 0.12,
+  // Reverse Pec Deck (machine selector). Gym-log 2026-06-11 (CEO bw108 advanced):
+  // real 24kg on the machine stack — 0.12 opened it ~17 (under). Raised to 0.15
+  // (108 × 0.15 × 1.3 ≈ 21 → snaps to the 20-22 cable/machine rung). DB Lateral
+  // (0.075) already lands ~10 at bw108 (real 9-12.5) — left unchanged.
+  'Reverse Pec Deck': 0.15,
   'DB Lateral Raise': 0.075,
   'Cable Lateral Raise': 0.075,
   'Machine Lateral Raise': 0.10,

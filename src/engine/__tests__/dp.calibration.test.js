@@ -46,14 +46,16 @@ function equipListFor(ex) {
 describe('checkInSessionAdjust — first-ever session calibrates intra-session', () => {
   it('a hard (greu) set eases the NEXT set even with ZERO prior history', () => {
     // No logs at all → dpState.lastW is 0. Old gate returned {adjust:false}.
-    // Now: the user logged 56 kg and rated it greu → ease the next set's reps.
+    // STICKY (gym-log arc 2026-06-11): the user moved 56 kg TODAY and rated it greu,
+    // so even cold-start the next set eases the WEIGHT one step off the just-logged
+    // load (weight-first, not a rep trim — holding kg reads as "coach did nothing").
     store['logs'] = [];
     const r = DP.checkInSessionAdjust('Cable Row', [10], [10], {
       recKg: 56, recReps: 10, loggedKg: 56, setIdx: 1,
     });
     expect(r.adjust).toBe(true);
     expect(r.dir).toBe('down');
-    expect(r.newReps).toBeLessThan(10); // eased
+    expect(r.newKg).toBeLessThan(56); // eased off the just-logged load
   });
 
   it('beating the target on a first session nudges the next set up (small step)', () => {
@@ -98,19 +100,26 @@ describe('per-session bucketed bias', () => {
     DP.checkInSessionAdjust('Cable Row', [6.5], [12], {
       recKg: 40, recReps: 10, loggedKg: 60, setIdx: 0,
     });
-    // Cable Curl = isolation/small/medium bucket → unbiased. Its INIT start is
-    // the snapped conservative isolation floor (10 → matrix_cable 9), unchanged.
+    // Cable Curl = isolation/small/medium bucket → unbiased. Its INIT start is the
+    // conservative beginner cold-start (FIX B 2026-06-11: suggestStartWeight beginner,
+    // base 10 × 0.7 = 7, snapped to matrix_cable → 5), unchanged by the compound bias.
     const curlStart = DP._recommendRaw('Cable Curl');
     expect(curlStart.status).toBe('INIT');
-    expect(curlStart.kg).toBe(9);
+    expect(curlStart.kg).toBe(5);
   });
 
   it('a hard/under-performed compound/large set eases the START of other compound/large lifts', () => {
     store['logs'] = [];
-    // Rec 40, only managed 28 kg, felt hard → bucket bias down.
-    DP.checkInSessionAdjust('Cable Row', [10], [6], {
-      recKg: 40, recReps: 10, loggedKg: 28, setIdx: 0,
-    });
+    // Rec 40, only managed 28 kg, felt hard → bucket bias down. The DOWN clamp is
+    // deliberately gentler than the UP one (dev floored at 0.7 vs ceiled at 1.4 — a
+    // bad set should never crater the next lift), so two under-performed sets are
+    // what move the EMA enough to visibly drop the Lat Pulldown start (base 30×0.7=21)
+    // past the 20 rung to 15. (One mild set holds at 20 by design.)
+    for (let i = 0; i < 2; i++) {
+      DP.checkInSessionAdjust('Cable Row', [10], [6], {
+        recKg: 40, recReps: 10, loggedKg: 28, setIdx: i,
+      });
+    }
     const latStart = DP._recommendRaw('Lat Pulldown');
     expect(latStart.status).toBe('INIT');
     // Eased below the bare 20 kg floor (snapped to the bailib stack: 15).

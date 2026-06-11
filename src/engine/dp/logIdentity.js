@@ -38,3 +38,53 @@ export function loggedRowMatcher(ex) {
 export function canonicalLoggedName(name) {
   return resolveExerciseName(name) ?? name;
 }
+
+// ── Phase 2b read-side: case-insensitive log-row match by CANONICAL identity ───
+// stagnationDetector.weeklyProgression matches a log row by
+// `l.ex.toLowerCase() === exerciseName.toLowerCase()` — the SAME stranding bug as
+// getLogs (a renamed lift's old-named rows fall out of the window → false "no
+// progression"). This is the matcher for that call site: the query resolves once,
+// a row matches when its `l.ex` resolves to the same canonical name. The
+// case-insensitive `===` is kept as the cheap first hop AND the back-compat path
+// for an unknown query (resolve null → CI exact match only, never a false merge).
+// @param {string} ex - the query exercise (name | id | alias)
+// @returns {(rowEx: string | undefined) => boolean}
+export function loggedNameMatchesCI(ex) {
+  const canon = resolveExerciseName(ex);
+  const lc = typeof ex === 'string' ? ex.toLowerCase() : '';
+  return canon
+    ? (rowEx) => typeof rowEx === 'string' &&
+        (rowEx.toLowerCase() === lc || resolveExerciseName(rowEx) === canon)
+    : (rowEx) => typeof rowEx === 'string' && rowEx.toLowerCase() === lc;
+}
+
+/**
+ * Collapse a name-keyed record onto CANONICAL keys, folding entries that share a
+ * canonical identity (a historical alias + the current name) into ONE under that
+ * canonical name. THE Phase-2b read-side primitive for the producer maps
+ * (refusal penalties, pain swaps): the engine reads ONE correct value per
+ * movement even when a rename stranded part of the history under the old name.
+ *
+ * - Unknown keys (not in the library) keep themselves verbatim — a brand-new or
+ *   off-library name is never lost (matches loggedRowMatcher's back-compat path).
+ * - `combine(prev, next, key)` merges two entries colliding on the same canonical
+ *   key; it is NOT called for the first entry. Caller owns the semantic
+ *   (sum / max / latest-wins) and documents it at the call site.
+ * - Iteration order is the source's; `combine` receives (accumulated, incoming).
+ *
+ * Pure given (obj, combine). Non-object input → {}.
+ * @template V
+ * @param {Record<string, V> | null | undefined} obj
+ * @param {(prev: V, next: V, canonKey: string) => V} combine
+ * @returns {Record<string, V>}
+ */
+export function canonicalizeNameKeyedMap(obj, combine) {
+  /** @type {Record<string, V>} */
+  const out = {};
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return out;
+  for (const [k, v] of Object.entries(obj)) {
+    const canon = canonicalLoggedName(k);
+    out[canon] = canon in out ? combine(out[canon], v, canon) : v;
+  }
+  return out;
+}

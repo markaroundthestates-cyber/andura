@@ -98,6 +98,28 @@ describe('painMemory — pure module', () => {
     a['Flat Barbell Bench'] = /** @type {any} */ ({ tampered: true });
     expect(getPainPins()['Flat Barbell Bench'].region).toBe('piept');
   });
+
+  // ── ID-MIGRATION Phase 2b: painSwapMap reads on CANONICAL identity ──────────
+  // Real alias from exercises.json: "Chest Fly" → canonical "Cable Fly". A pin set
+  // under the old name + the new name = ONE movement; the swap map collapses onto
+  // the canonical key with the LATEST pin's substitute (a pin is singular, not
+  // additive). Seeded directly to control both pinnedTs values precisely.
+  it('painSwapMap folds an alias-keyed pin onto the canonical key (latest pin wins)', () => {
+    DB.set(PAIN_MEMORY_KEY, {
+      'Chest Fly': { region: 'piept', pinnedTs: NOW, substitute: 'Old Sub' },
+      'Cable Fly': { region: 'piept', pinnedTs: NOW + 86400000, substitute: 'New Sub' },
+    });
+    const map = painSwapMap();
+    expect(map['Cable Fly']).toBe('New Sub'); // freshest pin's substitute
+    expect(map['Chest Fly']).toBeUndefined(); // alias folded in, not a phantom
+  });
+
+  it('painSwapMap keeps an off-library pin under its own name (no false merge)', () => {
+    DB.set(PAIN_MEMORY_KEY, {
+      'Some Custom Movement': { region: 'piept', pinnedTs: NOW, substitute: 'A Sub' },
+    });
+    expect(painSwapMap()['Some Custom Movement']).toBe('A Sub');
+  });
 });
 
 describe('buildSession composition — proactive swap (F7 §1d acceptance)', () => {

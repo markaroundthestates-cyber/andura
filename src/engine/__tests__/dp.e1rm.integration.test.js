@@ -44,8 +44,12 @@ const ON = () => localStorage.setItem('_devFlags', JSON.stringify({ dp_e1rm_v1: 
 // dp_e1rm_v1 now DEFAULTS ON (THE FLIP 2026-06-08), so "no _devFlags" no longer
 // means OFF — the OFF arm must force the flag off explicitly (same pattern as the
 // full-path-sim FLIPPED_FLAGS all-off baseline).
+// dp_base_lookback_v1 also defaults ON now and reshapes _demoWorkingW (multi-session
+// lookback → no longer "stuck at the raw heaviest") — pin it OFF too so the raw path
+// is the heaviest single set.
 const OFF = () => localStorage.setItem('_devFlags', JSON.stringify({
-  dp_e1rm_v1: false, dp_strength_kalman_v1: false, dp_ceiling_v1: false, dp_load_model_v1: false,
+  dp_e1rm_v1: false, dp_strength_kalman_v1: false, dp_ceiling_v1: false,
+  dp_load_model_v1: false, dp_base_lookback_v1: false,
 }));
 
 describe('dp_e1rm_v1 — value path on a realistic high-rep history', () => {

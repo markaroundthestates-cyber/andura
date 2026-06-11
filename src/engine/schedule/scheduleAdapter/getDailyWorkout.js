@@ -18,6 +18,8 @@ import { buildSession } from '../../sessionBuilder.js';
 import { buildExclusionTokens, contraindicatedGroupsFromPainCdl } from '../../movementExclusion.js';
 import { isEnabled } from '../../../util/featureFlags.js';
 import { exercisePenaltyMap } from '../../dp/exercisePain.js';
+import { DP } from '../../dp.js';
+import { progressingNames } from '../../dp/progressionSignal.js';
 import { lumbarDedupPenalties, mergePenalties, weekClustersFor } from './lumbarDedup.js';
 import { getRefusalPenalties } from './refusalFlowStorage.js';
 import { painSwapMap } from '../../dp/painMemory.js';
@@ -330,7 +332,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     isEnabled('dp_weekly_recovery_alloc_v1') && baseVolumeTargetsRaw && recoveryLogs.length > 0
       ? allocateWeeklyVolumeByRecovery(
           baseVolumeTargetsRaw,
-          getRecoveryByGroup(recoveryLogs, undefined, date.getTime()),
+          // dp_recovery_dose_v1 (gym-log arc 2026-06-11): the recovery window
+          // stretches with dose × unaccustomedness, so a big-volume session on
+          // a long-rested muscle reads 'partial' (real DOMS) instead of fresh.
+          getRecoveryByGroup(recoveryLogs, undefined, date.getTime(), {
+            doseScaling: isEnabled('dp_recovery_dose_v1'),
+          }),
         )
       : baseVolumeTargetsRaw;
 
@@ -481,7 +488,11 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // recovery-cut cause attribution (a spin class vs a heavy session). Both
   // recompute cheaply + deterministically under the same clock the plan used.
   const resistanceState =
-    recoveryLogs.length > 0 ? getRecoveryByGroup(recoveryLogs, undefined, date.getTime()) : {};
+    recoveryLogs.length > 0
+      ? getRecoveryByGroup(recoveryLogs, undefined, date.getTime(), {
+          doseScaling: isEnabled('dp_recovery_dose_v1'),
+        })
+      : {};
   const mergedState = aerobicSessions
     ? mergeAerobicRecovery(resistanceState, aerobicSessions, date.getTime())
     : resistanceState;
@@ -654,6 +665,11 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // 4d-lower Thursday stacked Squat + RDL + Hyperextension). sessionBuilder
     // drops the back-extension, minSession-guarded.
     lumbarPairDedup: isEnabled('dp_lumbar_dedup_v1'),
+    // dp_accessory_rotation_v1 — anchor/accessory rotation. poolForGroup
+    // alternates the top two equal-ish LOGGED isolations on the ISO-week parity
+    // (derived from `seed` above), so a mature account's accessories rotate
+    // weekly while tier-1 anchors repeat. OFF → byte-identical pool order.
+    accessoryRotation: isEnabled('dp_accessory_rotation_v1'),
     // #64 PERSISTENT pain memory PROACTIVE swap (dp_pain_memory_v1, default OFF →
     // null → byte-identical pool). When ON, a user-PINNED painful exercise is
     // REPLACED in poolForGroup by its persisted curated chain substitute (held
@@ -749,6 +765,16 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // so the engine prescribes from HIS ranked list per muscle ("Andura picks like
     // Daniel"). PR-history continuity (band 0) + squat-primacy + all gates intact.
     danielTierSelect: isEnabled('dp_daniel_tier_select_v1'),
+    // #42 progression-conditioned selection bonus (dp_progression_bonus_v1, gym-
+    // log arc 2026-06-11). ONLY exercises with a real upward e1RM trend earn the
+    // +5 tierSelectScore `progressing` bonus (sub-band — never jumps a tier).
+    // The blanket logged-bonus form was MEASURED harmful and refused; this is the
+    // conditional form, PROBE-gated at the validation burst. OFF → null →
+    // byte-identical.
+    progressionBonus: isEnabled('dp_progression_bonus_v1'),
+    progressingNames: isEnabled('dp_progression_bonus_v1')
+      ? progressingNames(DP._loggedExerciseNames(), (name) => DP.getLogs(name, 12), null)
+      : null,
     // Wave 1.3-B focus-policy resolver (dp_focus_policy_v1, default OFF →
     // byte-identical). When ON, buildSession applies the per-focus LOCAL
     // constraint policy (sessionCaps + sessionRequirements from FOCUS_RULES):

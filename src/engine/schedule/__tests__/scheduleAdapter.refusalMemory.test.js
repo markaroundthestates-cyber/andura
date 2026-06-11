@@ -8,6 +8,8 @@ import {
   incrementRefusal,
   getRefusalCounter,
   getRefusalPenalties,
+  getSkippedExercises,
+  setSkippedExercises,
   resetRefusalCounter,
   REFUSAL_COUNTER_KEY,
 } from '../scheduleAdapter/refusalFlowStorage.js';
@@ -66,6 +68,46 @@ describe('getRefusalPenalties — decay + stacking (real demote cutoff = 0.5)', 
     resetRefusalCounter('Smith OHP');
     expect(getRefusalCounter()).toEqual({});
     expect(getRefusalPenalties(T0)).toEqual({});
+  });
+});
+
+// ── ID-MIGRATION Phase 2b: refusal penalties read on CANONICAL identity ───────
+// Real alias from exercises.json: "Chest Fly" → canonical "Cable Fly" (cable-fly).
+// A refusal under the old name + one under the new name = the SAME movement pushed
+// away twice → ONE canonical entry, counts SUMMED, decay off the LATEST refusal.
+describe('getRefusalPenalties — canonical alias merge (Phase 2b)', () => {
+  it('refusal under alias + refusal under current name → ONE canonical entry, summed', () => {
+    incrementRefusal('Chest Fly', T0 - DAY); // logged under the old name
+    incrementRefusal('Cable Fly', T0);       // and again under the current name
+    const pen = getRefusalPenalties(T0);
+    // Only the canonical key is present (the alias is folded in, not a phantom).
+    expect(Object.keys(pen)).toEqual(['Cable Fly']);
+    // n summed to 2 → base 0.9, decay off the LATEST ts (T0) → 0.9 today.
+    expect(pen['Cable Fly']).toBeCloseTo(0.9, 5);
+    expect(pen['Chest Fly']).toBeUndefined();
+  });
+
+  it('decay clock uses the latest refusal across the rename (freshest ts wins)', () => {
+    incrementRefusal('Chest Fly', T0);             // old refusal
+    incrementRefusal('Cable Fly', T0 + 20 * DAY);  // fresher refusal under new name
+    // Evaluated at the fresh ts: n=2 → 0.9 (not decayed from the stale ts).
+    expect(getRefusalPenalties(T0 + 20 * DAY)['Cable Fly']).toBeCloseTo(0.9, 5);
+  });
+
+  it('an off-library refused name keeps itself (no false canonical merge)', () => {
+    incrementRefusal('Totally Made Up Lift', T0);
+    expect(getRefusalPenalties(T0)['Totally Made Up Lift']).toBeCloseTo(0.6, 5);
+  });
+});
+
+describe('getSkippedExercises — canonical alias dedupe (Phase 2b)', () => {
+  it('a movement skipped under alias + current name yields ONE canonical entry', () => {
+    setSkippedExercises(['Chest Fly', 'Cable Fly', 'Lat Pulldown']);
+    const skipped = getSkippedExercises();
+    expect(skipped).toContain('Cable Fly');
+    expect(skipped).not.toContain('Chest Fly'); // folded into the canonical
+    expect(skipped).toContain('Lat Pulldown');  // already-canonical untouched
+    expect(skipped.filter((s) => s === 'Cable Fly')).toHaveLength(1);
   });
 });
 

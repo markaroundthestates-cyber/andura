@@ -24,6 +24,7 @@ import { DB } from '../../db.js';
 import { getExerciseMetadata } from '../exerciseLibrary.js';
 import { getTransferSources } from '../exerciseMapping.js';
 import { PAIN_REGION_GROUP_MAP } from '../muscleRecoveryConstants.js';
+import { canonicalizeNameKeyedMap } from './logIdentity.js';
 
 export const PAIN_MEMORY_KEY = 'dp-pain-memory';
 
@@ -139,7 +140,16 @@ export function isPinnedPainful(engineName) {
  * @returns {Record<string, string>}
  */
 export function painSwapMap() {
-  const all = _getAll();
+  // Phase-2b read-side: collapse the pin store onto CANONICAL keys so a pin set
+  // under a historical alias AND the current name resolves to ONE swap the
+  // (untouched) pool boundary matches against the canonical engineName. Merge
+  // semantic = LATEST pin wins (a pin is a singular durable state "hold the sub",
+  // not additive); the freshest pinnedTs carries the substitute the user last
+  // chose. Off-library names keep themselves. Pins persist raw (Phase-3 writes id).
+  const all = canonicalizeNameKeyedMap(
+    _getAll(),
+    (a, b) => ((Number(b && b.pinnedTs) || 0) >= (Number(a && a.pinnedTs) || 0) ? b : a),
+  );
   const map = /** @type {Record<string, string>} */ ({});
   for (const engineName of Object.keys(all)) {
     const sub = all[engineName] && all[engineName].substitute;

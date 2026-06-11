@@ -7,6 +7,8 @@
 //   - REFUSAL_COUNTER_KEY    → ephemeral counter cross-session per-exercise (threshold-triggered "permanent?" modal)
 // Co-CTO bias REFUSAL_COUNTER_THRESHOLD = 3 (Gigel sweet spot anti-paternalism).
 
+import { canonicalLoggedName, canonicalizeNameKeyedMap } from '../../dp/logIdentity.js';
+
 export const SKIPPED_EXERCISES_KEY = 'wv2-skipped-exercises';
 export const REFUSAL_COUNTER_KEY   = 'wv2-refusal-counter';
 export const REFUSAL_COUNTER_THRESHOLD = 3;
@@ -15,7 +17,13 @@ export const REFUSAL_COUNTER_THRESHOLD = 3;
  * Read permanently-skipped exercises list from localStorage. Dedupes + filters
  * to non-empty strings. Safe against malformed JSON / non-array / disabled storage.
  *
- * @returns {string[]} exercise names marked permanent skip
+ * Phase-2b read-side: each name is collapsed to its CANONICAL identity
+ * (canonicalLoggedName) before the dedupe, so a movement skipped under a
+ * historical alias AND its current name yields ONE entry the (untouched)
+ * consumer matches against the canonical engineName. Off-library names keep
+ * themselves verbatim. SET is left raw (Phase-3 stamps canonical on write).
+ *
+ * @returns {string[]} exercise names (canonical) marked permanent skip
  */
 export function getSkippedExercises() {
   let raw = null;
@@ -24,7 +32,9 @@ export function getSkippedExercises() {
   let parsed = null;
   try { parsed = JSON.parse(raw); } catch { return []; }
   if (!Array.isArray(parsed)) return [];
-  return [...new Set(parsed.filter(e => typeof e === 'string' && e.length > 0))];
+  return [...new Set(parsed
+    .filter(e => typeof e === 'string' && e.length > 0)
+    .map(canonicalLoggedName))];
 }
 
 /**
@@ -139,7 +149,16 @@ const REFUSAL_HALF_LIFE_DAYS = 28;
  * @returns {Record<string, number>} engineName → penalty (0..0.9); only entries > 0.05
  */
 export function getRefusalPenalties(now = Date.now()) {
-  const entries = _readRefusalEntries();
+  // Phase-2b: fold alias + current-name entries onto ONE canonical key BEFORE the
+  // decay math. Merge semantic = SUM the counts + take the LATEST refusal ts: a
+  // movement refused under a historical alias AND its current name has been pushed
+  // away that-many times total (the count drives the demote strength), and the
+  // freshest refusal drives the decay clock. The existing 0.9 cap (below) keeps the
+  // summed count in-band, and the downstream mergePenalties max-merge is unaffected.
+  const entries = canonicalizeNameKeyedMap(
+    _readRefusalEntries(),
+    (a, b) => ({ n: a.n + b.n, ts: Math.max(a.ts, b.ts) }),
+  );
   /** @type {Record<string, number>} */
   const out = {};
   for (const [name, { n, ts }] of Object.entries(entries)) {

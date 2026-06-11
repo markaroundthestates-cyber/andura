@@ -22,9 +22,12 @@
  *
  * @param {string} exercise - exercise name (matched case-sensitively against history.ex)
  * @param {{ w: number, reps: number }} set - set being logged
- * @param {Array<{ ex?: string, w?: number, reps?: number, baseline?: boolean }>} history
+ * @param {Array<{ ex?: string, w?: number, reps?: number, baseline?: boolean, calibration?: boolean }>} history
  *        Prior log entries for this user. Baseline-injected entries are
- *        ignored (per existing extractAndSavePRs convention).
+ *        ignored (per existing extractAndSavePRs convention); CALIBRATION sets
+ *        (gym-log arc 2026-06-11 — a manual benchmark over a cold-start rec,
+ *        not a beaten record) are excluded the same way, so a false anchor
+ *        (Daniel's real Face Pull 9→27→36 climb) never becomes the prevBest.
  * @returns {{ type: 'weight'|'reps'|'volume', kg: number, reps: number, prevBest: object|null }|null}
  */
 export function detectPR(exercise, set, history) {
@@ -35,7 +38,7 @@ export function detectPR(exercise, set, history) {
   if (!Number.isFinite(reps) || reps <= 0) return null;
 
   const prior = history.filter(e =>
-    e && e.ex === exercise && !e.baseline &&
+    e && e.ex === exercise && !e.baseline && !e.calibration &&
     Number(e.w) > 0 && Number(e.reps) > 0,
   );
 

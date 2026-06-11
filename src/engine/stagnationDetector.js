@@ -4,6 +4,7 @@
 
 import { brzycki1RM } from './weaknessDetector.js';
 import { isoWeek } from '../util/isoWeek.js';
+import { loggedNameMatchesCI } from './dp/logIdentity.js';
 
 /**
  * @typedef {Object} StagnationLog
@@ -35,9 +36,14 @@ function avg1RM(logs) {
 export function weeklyProgression(exerciseName, logs) {
   /** @type {Map<string, Array<StagnationLog>>} */
   const byWeek = new Map();
+  // Phase-2b read-side: match rows by CANONICAL identity, not the raw display name.
+  // Without this a renamed lift's old-named rows (logs are append-only history) fall
+  // out of the window → a false "no progression" right after a rename — the same
+  // stranding bug getLogs fixed. Unknown/already-canonical query → case-insensitive
+  // exact match (byte-identical to the prior behavior).
+  const matches = loggedNameMatchesCI(exerciseName);
   for (const log of logs) {
-    const ex = log.ex;
-    if (!ex || ex.toLowerCase() !== exerciseName.toLowerCase()) continue;
+    if (!matches(log.ex)) continue;
     const ts = log.ts ?? (log.date ? new Date(log.date).getTime() : null);
     if (!ts) continue;
     const week = isoWeek(ts);

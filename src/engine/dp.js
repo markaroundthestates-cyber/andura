@@ -28,7 +28,8 @@ import { populationPriorE1RM } from './dp/populationPrior.js';
 import { sanityCheckSet, logOutlier } from './dp/anomalyGuard.js';
 import { quarantineSet, isQuarantined } from './dp/logQuarantine.js';
 import { isEgoJump, egoCappedKg } from './dp/egoCap.js';
-import { manualOverrideDownTarget } from './dp/inSessionOverride.js';
+import { manualOverrideTarget } from './dp/inSessionOverride.js';
+import { lookbackBaseE1RM } from './dp/baseLookback.js';
 import { classifyAndIntervene } from './dp/plateauIntervention.js';
 import { temperamentBias, temperamentBiasFromLogs, saveTemperament, GLOBAL_KEY as TEMPERAMENT_GLOBAL_KEY } from './dp/temperament.js';
 import { behaviorRirOffset } from './dp/behaviorDistill.js';
@@ -102,12 +103,16 @@ export const DP = {
   },
 
   // Rotunjeste greutatea la cea mai apropiata valoare din lista reala a echipamentului
+  // Gym-log arc 2026-06-11: ladder-aware when dp_equipment_ladder_v1 is ON — the
+  // per-user learned/template ladder snaps to the rungs that physically EXIST on
+  // the user's machine (Daniel's Lat Pulldown "60" → 59 on his 10lb stack), with
+  // the generic table as the guaranteed fallback. OFF → byte-identical.
   /**
    * @param {number} kg
    * @param {string} ex
    */
   roundToStep(kg, ex) {
-    return roundToEquipmentWeight(kg, ex);
+    return roundToEquipmentWeight(kg, ex, { ladderAware: isEnabled('dp_equipment_ladder_v1') });
   },
 
   // Microload increments (o treapta pe echipamentul respectiv)
@@ -814,8 +819,10 @@ export const DP = {
     // Group eligible sets per exercise (oldest-first per exercise for a stable fold).
     const byEx = /** @type {Record<string, Array<any>>} */ ({});
     for (const l of logs) {
-      const ex = l.ex;
-      if (typeof ex !== 'string' || !ex) continue;
+      // ID-migration Phase 2b: group on CANONICAL identity so a rename does not
+      // split one lift's temperament history into two entries (dp/logIdentity.js).
+      const ex = typeof l.ex === 'string' && l.ex ? canonicalLoggedName(l.ex) : null;
+      if (!ex) continue;
       if (!this._e1rmEligible(ex)) continue;
       if (!(Number(l.w) > 0)) continue;
       (byEx[ex] ??= []).push(l);
@@ -1071,6 +1078,17 @@ export const DP = {
       if (e > 0) return e;
       // e1RM produced nothing (cold start / ineligible) → raw path, never a regression.
     }
+    // #43 base lookback (gym-log arc 2026-06-11): the demonstrated base was
+    // last-session-shaped — one weak day reset it (Daniel's real Lat Pulldown 45).
+    // Max-of-medians over the last 3 distinct sessions, clamped to +5% above the
+    // LATEST (a layoff still lowers the base WITH the user). dp/baseLookback.js.
+    if (isEnabled('dp_base_lookback_v1') && this._e1rmEligible(ex)) {
+      const e1rm = lookbackBaseE1RM(this.getLogs(ex, 12), (w, reps, rpe) => this.e1RMForSet(w, reps, rpe, ex));
+      if (e1rm > 0) {
+        const kg = this._kgFromE1RM(e1rm, rMin ?? 8);
+        if (kg > 0) return kg;
+      }
+    }
     return this._demonstratedWorkingW(ex, rMin);
   },
 
@@ -1135,7 +1153,10 @@ export const DP = {
     for (const src of sources) {
       const srcE1RM = this._bestE1RM(src, rt);
       if (srcE1RM <= 0) continue;
-      const ratio = getSimilarityMultiplier(ex, src);
+      // #11 — pass the equipment_type accessor so a cross-equipment transfer
+      // (DB per-hand ↔ barbell total, smith↔barbell, …) is unit-converted, not the
+      // unit-blind 0.9 default. Same-equipment / curated pairs are unaffected.
+      const ratio = getSimilarityMultiplier(ex, src, (n) => getExerciseMetadata(n)?.equipment_type);
       const seededE1RM = srcE1RM * ratio;
       const kg = this.roundToStep(this._kgFromE1RM(seededE1RM, rt), ex);
       if (kg > 0) return { kg, source: src, ratio };
@@ -1531,11 +1552,28 @@ export const DP = {
 
     // No history → start conservative
     if (!state.logs.length) {
+      // FIX B (gym-log arc 2026-06-11): this INIT used a FLAT 20/10 — divorced
+      // from every calibrated seed (Daniel's real Face Pull rec'd 9 in-workout
+      // while the curated prior says ~14 and his real load is 27+). Use the
+      // intelligence dp already owns: transfer from a related LOGGED lift first
+      // (unit-aware), then the curated per-movement start table; the flat
+      // default only as last resort. Clamped by the effective cap so an INIT
+      // can never open above the plafond. Profile-scaled seeding (bodyweight/
+      // sex) stays on the getSmartRecommendation path — no profile plumbing here.
+      let baseDefault = COMPOUND_EX.includes(ex) ? 20 : 10;
+      if (isEnabled('dp_transfer_coldstart_v1')) {
+        const t = this.coldStartTransfer(ex, rMin + 1);
+        if (t && t.kg > 0) baseDefault = t.kg;
+      }
+      if (baseDefault === (COMPOUND_EX.includes(ex) ? 20 : 10)) {
+        const curated = suggestStartWeight(ex, 'beginner');
+        if (Number.isFinite(curated) && curated > 0) baseDefault = curated;
+      }
+      if (maxKg && baseDefault > maxKg) baseDefault = maxKg;
       // Apply the learned per-session bucket bias to the STARTING estimate, then
       // snap to a real equipment value (the bare 20/10 floor is not on every
       // stack — e.g. pec_deck starts at 18). recommend()'s final gate snaps too,
       // but snapping here keeps progressionNote text and the returned kg aligned.
-      const baseDefault = COMPOUND_EX.includes(ex) ? 20 : 10;
       const defaultKg = roundToEquipmentWeight(this._applySessionBias(ex, baseDefault, nowMs), ex);
       return {
         kg: defaultKg, repsTarget: rMin, rir: 3,
@@ -1606,6 +1644,20 @@ export const DP = {
 
     // ── CAP CHECK: at or above max sensible weight for this exercise
     if (maxKg && lastW >= maxKg) {
+      // OVER the cap (gym-log arc 2026-06-11, Daniel's real Y Raise: logged 25
+      // manually vs cap 18): the brake used to HOLD lastW, ENTRENCHING the
+      // ego-load forever — once past the plafond it never pulled back. Clamp to
+      // the cap with an honest note instead.
+      if (lastW > maxKg) {
+        return {
+          kg: maxKg, repsTarget: rMax, rir: 2,
+          status: 'CAP',
+          statusColor: 'var(--accent)',
+          statusLabel: '🟡 Peste plafon',
+          progressionNote: `${lastW} kg e peste plafonul sigur (${maxKg} kg) pe acest exercitiu. Revenim la ${maxKg} kg.`,
+          progressionStage: 1
+        };
+      }
       // Weight is the progression lever — but we are capped, so fill reps to the
       // TOP of the hypertrophy range and stop there. Never escalate a (often
       // heavy/compound) lift to 20+ reps: once at rMax at the cap we maintain and
@@ -2277,9 +2329,15 @@ export const DP = {
     const setIdx = Number(ctx.setIdx);
     const lateSet = Number.isFinite(setIdx) && setIdx >= 2;
 
-    // (a0) F1 manual-override DOWN anchor (dp/inSessionOverride.js; no override → null → legacy).
-    const overrideDown = manualOverrideDownTarget({ wasManualOverride: ctx.wasManualOverride, haveRec, loggedKg, recKg, lastRPE, ex }, { getPrevWeight, roundToStep: (kg, e) => this.roundToStep(kg, e), t });
-    if (overrideDown) return overrideDown;
+    // (a0) F1 manual-override recalibration — bidirectional (DOWN anchor + UP on
+    // demonstrated e1RM capacity). dp/inSessionOverride.js; no override → null →
+    // legacy. Reasons off the JUST-LOGGED load (not dpState.lastW, empty all
+    // session on a cold-start lift) so an override is honored on the first session.
+    const override = manualOverrideTarget(
+      { wasManualOverride: ctx.wasManualOverride, haveRec, loggedKg, loggedReps, recKg, recReps, lastRPE, ex },
+      { getPrevWeight, getNextWeight, roundToStep: (kg, e) => this.roundToStep(kg, e), e1RMForSet: (w, reps, rpe, e) => this.e1RMForSet(w, reps, rpe, e), t },
+    );
+    if (override) return override;
 
     // GREU (single hard set) → ease the NEXT set MODESTLY.
     if (lastRPE >= 9.5) {
@@ -2295,6 +2353,19 @@ export const DP = {
       // exists — holding kg and trimming reps reads as "coach did nothing". DOWN only.
       if (dpState.lastW > 0) {
         const easedKg = getPrevWeight(baseKg, ex);
+        if (easedKg < baseKg) {
+          return { adjust: true, dir: 'down', newKg: easedKg, msg: t('workout.adjust.greuWeight', { kg: easedKg }) };
+        }
+      }
+      // Gym-log arc 2026-06-11 (STICKY root cause): a COLD-START exercise has
+      // lastW=0 (logs persist at session-finish, not per-set), so the visible
+      // weight-ease above never fired in-session — Daniel's real Straight-Arm
+      // Lat Pulldown failed 3 sets straight (50×9/45×10/41×8, all greu) while
+      // the rec HELD 50×12. The set just LOGGED is a real load signal: when the
+      // user moved weight TODAY (loggedKg > 0), ease one step below what they
+      // actually did, even without persisted history.
+      if (loggedKg > 0) {
+        const easedKg = getPrevWeight(loggedKg, ex);
         if (easedKg < baseKg) {
           return { adjust: true, dir: 'down', newKg: easedKg, msg: t('workout.adjust.greuWeight', { kg: easedKg }) };
         }
@@ -2761,7 +2832,9 @@ export function getInitialRecommendation(exerciseName, ctx) {
   for (const similarName of similarList) {
     const lastLog = _findLastLog(similarName, recentLogs);
     if (lastLog && lastLog.weight) {
-      const multiplier = getSimilarityMultiplier(exerciseName, similarName);
+      // #11 — unit-aware cross-equipment conversion (raw-kg legacy path). Without
+      // the accessor a DB↔BB similar pair scaled raw-kg by 0.9 (unit-blind).
+      const multiplier = getSimilarityMultiplier(exerciseName, similarName, (n) => getExerciseMetadata(n)?.equipment_type);
       const estimated = lastLog.weight * multiplier;
       const rounded = roundToEquipmentWeight(estimated, exerciseName);
       return {

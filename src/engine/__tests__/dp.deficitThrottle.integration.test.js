@@ -22,9 +22,13 @@ const ON = () => localStorage.setItem('_devFlags', JSON.stringify({ dp_deficit_t
 // history through the find-your-weight CATCH UP before the stagnation reframe is
 // reached, masking the branch under test — so force the e1RM cluster OFF here (the
 // throttle on the e1RM find-your-weight climb is covered by the easy-run block).
+// dp_base_lookback_v1 (default ON) reshapes the demonstrated-load starting state and
+// would route the top-reps stagnation history through find-your-weight before the
+// stagnation reframe — same masking as the e1RM cluster, so pin it OFF here too.
 const ON_STAG = () => localStorage.setItem('_devFlags', JSON.stringify({
   dp_deficit_throttle_v1: true,
   dp_e1rm_v1: false, dp_strength_kalman_v1: false, dp_ceiling_v1: false,
+  dp_base_lookback_v1: false,
 }));
 
 // A coach-follower easy-run history: the SAME light load taken to target reps and

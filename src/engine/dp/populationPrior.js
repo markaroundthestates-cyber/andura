@@ -85,6 +85,27 @@ export const COLDSTART_EQUIP_AXIS = Object.freeze({
   barbell: 1.0, machine: 0.90, cable: 0.80, dumbbell: 0.45, band: 0.40, bodyweight: 1.0,
 });
 
+// PATTERN×EQUIPMENT axis overrides (gym-log arc 2026-06-11). A single per-equipment
+// factor is too coarse — Daniel's two real sessions proved it in BOTH directions:
+//   - DB PRESSES seeded HIGH (Seated DB 30/hand vs real 20-25; Incline DB 40 vs
+//     25-30): the press ratios are barbell-TOTAL 1RMs; per-hand dumbbell work runs
+//     ≈ 75-85% of the bar split across two hands MINUS a stability tax → ≈0.36,
+//     not the generic 0.45.
+//   - CABLE/MACHINE REAR-DELT class seeded LOW 2-4× (Face Pull 9-16 vs real 27-36;
+//     Reverse Pec Deck 12.5-18 vs real 24): the `lateral` ratio is calibrated on
+//     strict DB lateral raises; rope/stack rear-delt machinery (both hands, better
+//     leverage) carries far MORE than a DB lateral — these overrides RAISE the
+//     axis above the generic cable/machine damp (a deliberate, documented
+//     exception to "damps only lower"; bounded, and the 60F-beginner floor stays
+//     coach-sane: face pull ≈ 6-7kg).
+// Keyed `pattern|equipment_type`; everything absent falls to COLDSTART_EQUIP_AXIS.
+export const COLDSTART_PATTERN_EQUIP_AXIS = Object.freeze({
+  'benchpress|dumbbell': 0.36,
+  'ohp|dumbbell': 0.36,
+  'lateral|cable': 1.30,
+  'lateral|machine': 1.20,
+});
+
 const EXPERIENCE_KEYS = ['beginner', 'intermediate', 'advanced'];
 
 /**
@@ -127,9 +148,14 @@ export function populationPriorE1RM(ex, profile) {
   // equipment → neutral 1.0 → byte-identical to the prior raw seed.
   const ageF = coldStartAgeFactor(profile ? profile.age : undefined);
   const meta = getExerciseMetadata(ex);
-  const eqF = (meta && COLDSTART_EQUIP_AXIS[meta.equipment_type] != null)
-    ? COLDSTART_EQUIP_AXIS[meta.equipment_type]
-    : 0.80; // unknown equipment → the conservative cable-level axis
+  // Pattern×equipment override first (gym-log arc 2026-06-11 — presses-per-hand
+  // down, cable/machine rear-delt class up), then the per-equipment axis.
+  const eqOverride = meta ? COLDSTART_PATTERN_EQUIP_AXIS[`${pattern}|${meta.equipment_type}`] : undefined;
+  const eqF = eqOverride != null
+    ? eqOverride
+    : (meta && COLDSTART_EQUIP_AXIS[meta.equipment_type] != null)
+      ? COLDSTART_EQUIP_AXIS[meta.equipment_type]
+      : 0.80; // unknown equipment → the conservative cable-level axis
   const e1rm = ratio * bw * sexF * ageF * COLDSTART_CONFIDENCE_PENALTY * eqF;
   if (!(e1rm > 0)) return null;
   return { e1rm, sigma: POPULATION_SIGMA, pattern };
