@@ -23,7 +23,7 @@
 // entrance fade is a short CSS transition the global motion cap tames.
 
 import { useEffect, type JSX } from 'react';
-import { Trophy } from 'lucide-react';
+import { Trophy, Target } from 'lucide-react';
 import { ConfettiBurst } from '../ConfettiBurst';
 import { haptic } from '../../lib/motion';
 import { t } from '../../../i18n/index.js';
@@ -37,50 +37,71 @@ interface PrFlashProps {
   onClose: () => void;
   /** Auto-dismiss delay in ms (default 2600 — matches the mockup). */
   durationMs?: number;
+  /**
+   * (8) 'pr' (default) = a real record over a valid history — full confetti
+   * celebration. 'calibration' = a first-rep / massive-manual-jump over a bad
+   * cold-start seed: NOT a record, so we show a calm "level set" reper instead of
+   * the confetti so the user (and the engine) is never told a calibration is a PR.
+   */
+  variant?: 'pr' | 'calibration';
 }
 
-export function PrFlash({ exercise, deltaKg, onClose, durationMs = 2600 }: PrFlashProps): JSX.Element {
+export function PrFlash({ exercise, deltaKg, onClose, durationMs = 2600, variant = 'pr' }: PrFlashProps): JSX.Element {
+  const isCalibration = variant === 'calibration';
+  // Calibration uses the steady volt token (a "we now know your level" signal);
+  // a real PR keeps the ember celebration. The icon + copy + confetti follow suit.
+  const accent = isCalibration ? 'var(--volt)' : 'var(--ember)';
   useEffect(() => {
     // Triple-buzz celebration pattern (mockup vibrate([20,40,30])). haptic()
     // guards desktop + reduced-motion internally; pass the peak pulse length.
-    haptic(40);
+    // Calibration is informational, not a win — a single gentler buzz.
+    haptic(isCalibration ? 18 : 40);
     const tid = window.setTimeout(onClose, durationMs);
     return () => window.clearTimeout(tid);
-  }, [onClose, durationMs]);
+  }, [onClose, durationMs, isCalibration]);
 
   return (
     <div
       className="animate-fade-in fixed inset-0 z-[48] grid place-items-center p-8 text-center"
       data-testid="pr-flash"
+      data-variant={variant}
       role="status"
-      aria-label={t('workout.prFlash.ariaLabel')}
+      aria-label={isCalibration ? t('workout.calibrationFlash.ariaLabel') : t('workout.prFlash.ariaLabel')}
       onClick={onClose}
       style={{
-        background:
-          'radial-gradient(120% 90% at 50% 40%, color-mix(in oklab, var(--ember) 20%, var(--paper)) 0%, color-mix(in oklab, var(--paper) 92%, transparent) 75%)',
+        background: `radial-gradient(120% 90% at 50% 40%, color-mix(in oklab, ${accent} 20%, var(--paper)) 0%, color-mix(in oklab, var(--paper) 92%, transparent) 75%)`,
       }}
     >
-      {/* Confetti spawns from this relative host's center. */}
-      <span aria-hidden="true" className="relative">
-        <ConfettiBurst count={56} />
-      </span>
+      {/* Confetti spawns from this relative host's center — a real PR only; a
+          calibration reper is calm (no confetti spray). */}
+      {!isCalibration && (
+        <span aria-hidden="true" className="relative">
+          <ConfettiBurst count={56} />
+        </span>
+      )}
       <div className="animate-scale-in relative">
         <div
           aria-hidden="true"
           className="mx-auto w-24 h-24 rounded-full grid place-items-center"
           style={{
-            background: 'color-mix(in oklab, var(--ember) 16%, transparent)',
-            border: '2px solid color-mix(in oklab, var(--ember) 45%, transparent)',
-            boxShadow: '0 0 50px -6px var(--ember)',
+            background: `color-mix(in oklab, ${accent} 16%, transparent)`,
+            border: `2px solid color-mix(in oklab, ${accent} 45%, transparent)`,
+            boxShadow: `0 0 50px -6px ${accent}`,
           }}
         >
-          <Trophy className="w-12 h-12" aria-hidden="true" style={{ color: 'var(--ember)' }} />
+          {isCalibration ? (
+            <Target className="w-12 h-12" aria-hidden="true" style={{ color: accent }} />
+          ) : (
+            <Trophy className="w-12 h-12" aria-hidden="true" style={{ color: accent }} />
+          )}
         </div>
-        <p className="font-display text-3xl font-bold mt-4" style={{ color: 'var(--ember)' }}>
-          {t('workout.prFlash.title')}
+        <p className="font-display text-3xl font-bold mt-4" style={{ color: accent }}>
+          {isCalibration ? t('workout.calibrationFlash.title') : t('workout.prFlash.title')}
         </p>
         <p className="text-base text-ink mt-2" data-testid="pr-flash-detail">
-          {t('workout.prFlash.detail', { exercise, deltaKg })}
+          {isCalibration
+            ? t('workout.calibrationFlash.detail', { exercise })
+            : t('workout.prFlash.detail', { exercise, deltaKg })}
         </p>
       </div>
     </div>

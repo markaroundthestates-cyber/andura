@@ -79,6 +79,12 @@ export interface ExerciseHistoryEntry {
   // Istoric. Same finish-time-independence rationale as engineName. Optional for
   // backward compat.
   exerciseName?: string;
+  // CALIBRATION set (gym-log arc 2026-06-11): a benchmark over a cold-start rec
+  // OR a massive manual jump (>= 1.5x rec) — a level-set, NOT a beaten record.
+  // Rides into the durable `logs` row so detectPR (prEngine) excludes it from
+  // prevBest (like `baseline`), keeping false anchors out of the PR wall.
+  // Absent on normal sets → every existing consumer unchanged.
+  calibration?: boolean;
 }
 
 // Phase 4 task_10/18: PR detection payload (engineWrappers.getPRDelta result).
@@ -130,6 +136,9 @@ export interface SessionExerciseBreakdown {
     // isPR boolean when dp_rep_volume_pr_v1 is ON (spec §1b.1). Additive +
     // optional — every pre-flag fixture stays valid; OFF readers ignore it.
     prType?: 'weight' | 'reps' | 'volume';
+    // Gym-log arc 2026-06-11: calibration level-set marker (rides history →
+    // breakdown → durable logs row; detectPR excludes it from prevBest).
+    calibration?: boolean;
   }>;
   totalVolume: number; // sum(kg*reps)
   peakOneRM: number; // max Epley estimate across sets, 1 decimal

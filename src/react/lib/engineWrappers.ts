@@ -755,7 +755,11 @@ export function getCoachRestReason(): CoachRestReason | null {
     const readiness = getUserReadinessScore();
     const sessions = useWorkoutStore.getState().sessionsHistory;
     const logs = flattenSessionsToEngineLogs(sessions);
-    const groupState = getRecoveryByGroup(logs, readPainCdl());
+    // dp_recovery_dose_v1: dose×unaccustomed window stretch — the UI tells the
+    // same truth the composer uses (Daniel live: "fresh" pe DOMS real).
+    const groupState = getRecoveryByGroup(logs, readPainCdl(), undefined, {
+      doseScaling: isEnabled('dp_recovery_dose_v1'),
+    });
     const fatigued: string[] = [];
     for (const [group, state] of Object.entries(groupState)) {
       if (state === 'fatigued') {
@@ -893,7 +897,9 @@ export function getCoachTodayQuote(): CoachTodayQuote | null {
     const sessions = useWorkoutStore.getState().sessionsHistory;
     const logs = flattenSessionsToEngineLogs(sessions);
     if (logs.length === 0) return null;
-    const groupState = getRecoveryByGroup(logs, readPainCdl());
+    const groupState = getRecoveryByGroup(logs, readPainCdl(), undefined, {
+      doseScaling: isEnabled('dp_recovery_dose_v1'),
+    });
     // Iterate groups; pick first recovered group cu daysSince in window.
     // hours = the REAL elapsed gap (sub-day precise); days = the floored bucket
     // used for the recently-trained window guard (1..COACH_TODAY_QUOTE_MAX_DAYS).

@@ -176,7 +176,11 @@ export interface PlannedWorkoutOutput {
   // warmup blueprint absent (rest day / pipeline halt → composer returns null
   // entire output; never reaches this field). Consumer WorkoutPreview renders
   // warmup row only when non-null per mockup andura-clasic.html#L935 FIX 1.
-  warmup?: { line: string; durationMin: number } | null;
+  // warmupSets — per-set ascending ramp (50/70/90% of the working load) for the
+  // day's OPENING compound, ADDITIVE + behind dp_warmup_ramp_v1 (default OFF). Absent
+  // when the flag is off / no qualifying tier-1 opener / load below the ramp
+  // threshold. Each entry is an equipment-snapped primer {kg, reps, pct}.
+  warmup?: { line: string; durationMin: number; warmupSets?: Array<{ kg: number; reps: number; pct: number }> } | null;
   // F2 #3 — Tempo session-level form/tempo cue (Tempo engine preSetIntro +
   // notation). UNIFORM across the session: per-exercise movementId is a Faza-3
   // input dep (meta.movementId unset → one generic cue), so it is a session-level

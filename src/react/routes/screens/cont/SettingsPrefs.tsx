@@ -77,14 +77,18 @@ export function SettingsPrefs(): JSX.Element {
     setCollectOn(next);
   }
 
-  async function handleCopyDebugLog(): Promise<void> {
+  // Gym-log arc 2026-06-11 (Daniel: "sa nu citesc 100 antrenamente pana la bug"):
+  // the copy button defaults to the LAST WORKOUT slice (no navigation taps);
+  // 'last3' / 'all' stay on-demand. Storage + engine learning are untouched —
+  // only what the button copies is scoped.
+  async function handleCopyDebugLog(scope: 'last' | 'last3' | 'all' = 'last'): Promise<void> {
     // Export now reads the durable IDB store (async).
     const events = await debugLog.snapshot();
     if (events.length === 0) {
       toast.show({ message: t('settings.prefs.advanced.debugLogEmpty'), variant: 'info' });
       return;
     }
-    const json = await debugLog.exportJson();
+    const json = await debugLog.exportJson(scope);
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       void navigator.clipboard
         .writeText(json)
@@ -330,6 +334,26 @@ export function SettingsPrefs(): JSX.Element {
             </div>
             <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink2" strokeWidth={1.6} aria-hidden="true" />
           </button>
+          {/* Scope variants (on-demand): the default button above copies the LAST
+              workout; these copy the last 3 / the full raw history. */}
+          <div className="flex gap-2 px-4 pb-3.5">
+            <button
+              type="button"
+              onClick={() => void handleCopyDebugLog('last3')}
+              data-testid="advanced-debug-copy-last3"
+              className="flex-1 text-xs text-ink2 border border-line rounded-lg py-2"
+            >
+              {t('settings.prefs.advanced.debugLogCopyLast3')}
+            </button>
+            <button
+              type="button"
+              onClick={() => void handleCopyDebugLog('all')}
+              data-testid="advanced-debug-copy-all"
+              className="flex-1 text-xs text-ink2 border border-line rounded-lg py-2"
+            >
+              {t('settings.prefs.advanced.debugLogCopyAll')}
+            </button>
+          </div>
         </div>
       </div>
     </section>

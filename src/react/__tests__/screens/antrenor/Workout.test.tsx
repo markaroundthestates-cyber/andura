@@ -1266,6 +1266,20 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
     resetStore();
   });
 
+  // (8) 2026-06-11 — a real PR is one over VALID history. Seed durable Bench Press
+  // history (DP.getState lastW != 0) so the markPRHit assertions below exercise the
+  // genuine-record path, not the new cold-start CALIBRATION path (which suppresses
+  // markPRHit + confetti — covered by the dedicated PR-vs-calibration describe).
+  // Per-test (not beforeEach): seeding history also arms the in-session autoreg,
+  // which would perturb the getPRDelta call-arg tests (set 2 rec), so only the
+  // PR-result tests opt in. Backdated so the prior load reads as real history.
+  function seedRealHistory(): void {
+    DB.set('logs', [
+      { ex: 'Bench Press', w: 20, reps: 10, set: 1, ts: Date.now() - 200_000 },
+      { ex: 'Bench Press', w: 20, reps: 10, set: 1, ts: Date.now() - 300_000 },
+    ]);
+  }
+
   it('logSet calls getPRDelta cu exercise + set + history', async () => {
     await renderWorkoutAndWait();
     logSet('Potrivit');
@@ -1285,6 +1299,7 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
   });
 
   it('markPRHit cu prData cand getPRDelta returns weight PR', async () => {
+    seedRealHistory(); // (8) over valid history → a real PR, not a calibration reper
     vi.mocked(getPRDelta).mockReturnValue({
       type: 'weight',
       kg: 25,
@@ -1310,12 +1325,13 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
   });
 
   it('markPRHit deltaKg propagated din delta payload (NU re-derive)', async () => {
+    seedRealHistory(); // (8) over valid history → a real PR
     vi.mocked(getPRDelta).mockReturnValue({
       type: 'weight',
       kg: 22.5,
       reps: 10,
-      prevBest: null,
-      // task_18 first ever set: deltaKg = kg full baseline 0, deltaPct = 0
+      prevBest: { ex: 'Bench Press', w: 20, reps: 10 },
+      // task_18: PR over the seeded 20 kg history. deltaKg from the mock is honoured.
       deltaKg: 22.5,
       deltaPct: 0,
       oneRMEstimate: 30,
@@ -1327,6 +1343,7 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
   });
 
   it('volume PR type propagated correctly', async () => {
+    seedRealHistory(); // (8) over valid history → a real PR
     vi.mocked(getPRDelta).mockReturnValue({
       type: 'volume',
       kg: 22.5,
@@ -1342,6 +1359,7 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
   });
 
   it('reps PR type propagated correctly', async () => {
+    seedRealHistory(); // (8) over valid history → a real PR
     vi.mocked(getPRDelta).mockReturnValue({
       type: 'reps',
       kg: 22.5,
@@ -1372,6 +1390,141 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
       { w: 22.5, reps: 10 },
       [{ ex: 'Bench Press', w: 22.5, reps: 10 }] // 1st set in history
     );
+  });
+});
+
+// ── (6) 2026-06-11 — wasManualOverride is DETERMINISTIC ──────────────────────
+// The `log` telemetry's wasManualOverride used `inputDirty` ("the field was
+// touched this set"). The input carries the PRIOR set's value as a prefill, so a
+// sticky 24 over a 22.5 rec read override:false (untouched), while re-confirming
+// the exact rec read override:true (touched). It now decides on the discrepancy:
+// >= half the equipment step around the rec, or reps differ.
+describe('Workout — (6) deterministic wasManualOverride in the log event', async () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  const lastLogEvent = (): Record<string, unknown> | undefined => {
+    const spy = vi.mocked(debugLog.event);
+    const calls = spy.mock.calls.filter((c) => c[0] === 'log');
+    return calls.length ? (calls[calls.length - 1]![1] as Record<string, unknown>) : undefined;
+  };
+
+  it('confirming the exact rec (touched but unchanged) is NOT an override', async () => {
+    const spy = vi.spyOn(debugLog, 'event');
+    await renderWorkoutAndWait();
+    // Touch the field but keep the prescribed 22.5 kg / 10 reps (the prefill value).
+    fireEvent.change(screen.getByTestId('setlog-tinta-kg-input'), { target: { value: '22.5' } });
+    fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
+    fireEvent.click(screen.getByRole('button', { name: EN_RATING_LABEL.Potrivit }));
+    const ev = lastLogEvent();
+    expect(ev?.enteredKg).toBe(22.5);
+    expect(ev?.wasManualOverride).toBe(false); // touched, but identical to the rec
+    spy.mockRestore();
+  });
+
+  it('a load >= half a step off the rec IS an override (RevPecDeck 24 vs 22.5)', async () => {
+    // Reverse Pec Deck → light_iso_cable ladder (step 2.5 → half = 1.25). The gym
+    // log's exact case: prescribed 22.5, entered 24, |24-22.5|=1.5 >= 1.25.
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce({
+      ...PHASE_5_FIXTURE,
+      exercises: [
+        { id: 'rpd', name: 'Reverse Pec Deck', engineName: 'Reverse Pec Deck', sets: 3, targetReps: 12, targetKg: 22.5, restSec: 60 },
+      ],
+    });
+    const spy = vi.spyOn(debugLog, 'event');
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
+    fireEvent.change(screen.getByTestId('setlog-tinta-kg-input'), { target: { value: '24' } });
+    fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
+    fireEvent.click(screen.getByRole('button', { name: EN_RATING_LABEL.Potrivit }));
+    const ev = lastLogEvent();
+    expect(ev?.enteredKg).toBe(24);
+    expect(ev?.wasManualOverride).toBe(true);
+    spy.mockRestore();
+  });
+
+  it('matching the rec load but changing the reps IS an override', async () => {
+    const spy = vi.spyOn(debugLog, 'event');
+    await renderWorkoutAndWait();
+    // Keep 22.5 kg (== rec) but log 8 reps (rec 10) → reps differ → override.
+    fireEvent.click(screen.getByTestId('setlog-tinta-log-btn'));
+    fireEvent.click(screen.getByTestId('setlog-postlog-edit'));
+    fireEvent.change(screen.getByTestId('reps-input'), { target: { value: '8' } });
+    fireEvent.click(screen.getByRole('button', { name: EN_RATING_LABEL.Potrivit }));
+    const ev = lastLogEvent();
+    expect(ev?.enteredReps).toBe(8);
+    expect(ev?.wasManualOverride).toBe(true);
+    spy.mockRestore();
+  });
+});
+
+// ── (8) 2026-06-11 — PR vs CALIBRATION ───────────────────────────────────────
+// A "PR" detected over a bad cold-start seed (no real history) or via a massive
+// manual jump is NOT a record — it is the user calibrating Andura. It must show a
+// calm "level calibrated" reper (no confetti) and must NOT write the durable PR
+// record (markPRHit) — a fake PR-wall anchor would poison future progression. A
+// real PR over valid history is unchanged (confetti + markPRHit).
+describe('Workout — (8) PR vs calibration', async () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  function seedRealHistory(): void {
+    DB.set('logs', [
+      { ex: 'Bench Press', w: 20, reps: 10, set: 1, ts: Date.now() - 200_000 },
+      { ex: 'Bench Press', w: 20, reps: 10, set: 1, ts: Date.now() - 300_000 },
+    ]);
+  }
+
+  const weightPr = (kg: number, prevKg: number) => ({
+    type: 'weight' as const,
+    kg,
+    reps: 10,
+    prevBest: { ex: 'Bench Press', w: prevKg, reps: 10 },
+    deltaKg: kg - prevKg,
+    deltaPct: 0,
+    oneRMEstimate: kg,
+  });
+
+  it('a PR on a COLD-START exercise shows the calibration reper, NOT a PR record', async () => {
+    // No seeded history → DP.getState lastW === 0 → cold-start. Even if the PR
+    // engine reports a "record", it is a calibration, not a confetti PR.
+    vi.mocked(getPRDelta).mockReturnValue(weightPr(25, 22.5));
+    const spy = vi.spyOn(debugLog, 'event');
+    await renderWorkoutAndWait();
+    logSetWithEdit('Potrivit', { kg: '25' });
+    // No durable PR record (no PR-wall anchor from a cold-start calibration).
+    expect(useWorkoutStore.getState().prHit).toBe(false);
+    // The flash is the calm calibration variant (no confetti — see PrFlash, which
+    // only mounts ConfettiBurst for the 'pr' variant).
+    const flash = await screen.findByTestId('pr-flash');
+    expect(flash).toHaveAttribute('data-variant', 'calibration');
+    expect(flash.querySelector('.andura-confetti-particle')).toBeNull();
+    spy.mockRestore();
+  });
+
+  it('a MASSIVE manual jump (>= 1.5x rec) over history is still a calibration', async () => {
+    seedRealHistory(); // history exists, but the manual jump is enormous
+    vi.mocked(getPRDelta).mockReturnValue(weightPr(40, 22.5)); // 40 >= 22.5*1.5
+    await renderWorkoutAndWait();
+    logSetWithEdit('Potrivit', { kg: '40' });
+    // 40 vs rec 22.5 = +78% > 40% → the over-recommendation friction modal fires;
+    // the user insists (force-continue) so the set commits + the PR path runs.
+    fireEvent.click(screen.getByTestId('aa-friction-continue'));
+    expect(useWorkoutStore.getState().prHit).toBe(false);
+    expect(await screen.findByTestId('pr-flash')).toHaveAttribute('data-variant', 'calibration');
+  });
+
+  it('a real PR over VALID history (modest delta) stays a confetti PR record', async () => {
+    seedRealHistory();
+    vi.mocked(getPRDelta).mockReturnValue(weightPr(25, 22.5)); // 25 < 22.5*1.5, has history
+    await renderWorkoutAndWait();
+    logSetWithEdit('Potrivit', { kg: '25' });
+    // The durable PR record fires + the celebratory PR flash (confetti).
+    expect(useWorkoutStore.getState().prHit).toBe(true);
+    const flash = await screen.findByTestId('pr-flash');
+    expect(flash).toHaveAttribute('data-variant', 'pr');
   });
 });
 
@@ -1652,15 +1805,43 @@ describe('Workout — in-session responsive autoregulation wire', () => {
     expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
   });
 
-  it('no adjustment when the user has no prior history (engine returns adjust:false)', async () => {
+  it('cold-start greu eases the next set off the just-logged load (STICKY)', async () => {
     await renderWorkoutAndWait();
-    // No seedBenchHistory → DP.getState('Bench Press').lastW = 0 → no recalibration.
+    // No seedBenchHistory → DP.getState('Bench Press').lastW = 0. The gym-log STICKY
+    // rule (2026-06-11) still eases the WEIGHT off the load the user actually moved
+    // this session, even with no durable history — so a hard set DOES surface a real
+    // in-session correction on the first session (was: silently did nothing).
     logSet('Greu');
     fireEvent.click(screen.getByTestId('rest-skip'));
     backdateFirstSet();
     logSet('Greu');
     fireEvent.click(screen.getByTestId('rest-skip'));
-    expect(screen.queryByTestId('insession-adjust-notice')).not.toBeInTheDocument();
+    expect(screen.getByTestId('insession-adjust-notice')).toBeInTheDocument();
+  });
+
+  // (7) 2026-06-11 — after an in-session correction fires, the NEXT set's rec was
+  // produced by that adjustment, so its telemetry source must read
+  // 'in_session_adjustment', not the durable-state-derived 'coldstart'/'history'
+  // (DP state is only written at session finish, so mid-session it would mislabel).
+  it('the rec after an in-session adjust is sourced in_session_adjustment', async () => {
+    const spy = vi.spyOn(debugLog, 'event');
+    await renderWorkoutAndWait();
+    seedBenchHistory(); // lastW != 0 → the Greu eases the next set (a real adjust)
+    logSet('Greu');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    // The adjust surfaced (proves a correction fired, so the next rec is its child).
+    expect(screen.getByTestId('insession-adjust-notice')).toBeInTheDocument();
+
+    const recEvents = spy.mock.calls
+      .filter((c) => c[0] === 'rec')
+      .map((c) => c[1] as { exercise: string; setIdx: number; source?: string });
+    const set2Rec = recEvents.filter((e) => e.exercise === 'Bench Press' && e.setIdx === 2);
+    expect(set2Rec.length).toBeGreaterThan(0);
+    expect(set2Rec[set2Rec.length - 1]!.source).toBe('in_session_adjustment');
+    // Set 1's rec is NOT mislabelled (it predates any adjustment).
+    const set1Rec = recEvents.filter((e) => e.exercise === 'Bench Press' && e.setIdx === 1);
+    for (const e of set1Rec) expect(e.source).not.toBe('in_session_adjustment');
+    spy.mockRestore();
   });
 });
 

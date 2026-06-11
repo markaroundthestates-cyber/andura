@@ -15,10 +15,11 @@
 import type { JSX } from 'react';
 import { formatMMSS } from '../../lib/format';
 
-// Audit-spec urgent hex (#ff4757). Component-scoped const — kept here vs
-// global.css pentru localized signature usage (single-component); promote
-// la vault palette dacă reused future cross-component.
-const RING_URGENT_COLOR = '#ff4757';
+// Urgent ring color — TOKENIZED to the Pulse palette urgency red (design-pass
+// follow-up 2026-06-11: the audit-spec #ff4757 was a near-duplicate of
+// --ember-red living OUTSIDE the token system; one urgency red, one source —
+// the token + its hard-asserting test moved together, per the follow-up rule).
+const RING_URGENT_COLOR = 'var(--ember-red)';
 
 interface SVGCountdownRingProps {
   totalSec: number;

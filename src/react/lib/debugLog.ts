@@ -35,9 +35,12 @@ export const FLAG_KEY = 'andura-debug';
 export const COLLECT_KEY = 'andura-behavior-collect';
 
 // Rolling retention window (D107 §2 / P-2): keep the last N days on-device.
-// 180 ≈ 6-month returner horizon. Prune throttled to once/minute (PRUNE_MIN_MS)
-// to avoid per-event churn.
-export const RETENTION_DAYS = 180;
+// 180 → 45 (Daniel 2026-06-11, disk hygiene): the engine consumers are safe with
+// a 45-day raw window — behaviorDistill is PURE over the rows' own `t` (no fixed
+// horizon) and every dp half-life is ≤ 28 days, so distilled signal never depends
+// on raw rows older than the window. Readability of the founder export is solved
+// by SCOPE SLICING (exportJson scope), not by retention.
+export const RETENTION_DAYS = 45;
 const PRUNE_MIN_MS = 60_000;
 const DAY_MS = 86_400_000;
 
@@ -226,14 +229,44 @@ async function snapshot(): Promise<BehaviorEvent[]> {
   }
 }
 
-/** Pretty-printed JSON of the full durable log wrapped with light metadata — the
+/** Export scope (Daniel 2026-06-11 "sa nu citesc 100 antrenamente pana la bug"):
+ *  'last' = the most recent WORKOUT only (default — the readable debug slice),
+ *  'last3' = the 3 most recent workouts, 'all' = the full raw dump (on demand). */
+export type ExportScope = 'last' | 'last3' | 'all';
+
+/** Pretty-printed JSON of the durable log wrapped with light metadata — the
  *  string copied to the clipboard by the Settings export button. Async (IDB).
- *  Envelope `v:2` (durable IDB era; v:1 was the localStorage ring). */
-async function exportJson(): Promise<string> {
+ *  Envelope `v:2` (durable IDB era; v:1 was the localStorage ring).
+ *
+ *  SCOPE SLICING: workouts are identified by the `session` field (the
+ *  sessionGroupStart stamp every engine-grade row carries). A sliced export
+ *  keeps every NON-TAP event from the chosen sessions' time window — `swap`
+ *  rows lack `session` but live inside the window, so the window (oldest kept
+ *  session start − 60s) is the membership test, not the field. Navigation
+ *  `tap` noise (~70% of a raw dump) is excluded from slices; 'all' keeps it. */
+async function exportJson(scope: ExportScope = 'last'): Promise<string> {
   try {
-    const events = await snapshot();
+    const all = await snapshot();
+    let events = all;
+    let sessions: number[] = [];
+    if (scope !== 'all') {
+      const ids = [
+        ...new Set(
+          all.map((e) => e.session).filter((s): s is number => typeof s === 'number'),
+        ),
+      ].sort((a, b) => b - a);
+      sessions = ids.slice(0, scope === 'last' ? 1 : 3).sort((a, b) => a - b);
+      const oldestKept = sessions[0];
+      if (oldestKept !== undefined) {
+        const windowStart = oldestKept - 60_000;
+        events = all.filter((e) => e.kind !== 'tap' && e.t >= windowStart);
+      } else {
+        // No workout rows yet — fall back to the semantic events only.
+        events = all.filter((e) => e.kind !== 'tap');
+      }
+    }
     return JSON.stringify(
-      { v: 2, exportedAt: Date.now(), count: events.length, events },
+      { v: 2, scope, exportedAt: Date.now(), count: events.length, sessions, events },
       null,
       2,
     );

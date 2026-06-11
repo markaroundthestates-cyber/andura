@@ -97,10 +97,13 @@ describe('SVGCountdownRing - F-workout-09 color states + last-10% pulse', () => 
     expect(getRingColor(0.89)).toBe('var(--warn)');
   });
 
-  it('getRingColor returns urgent hex pe last-10% (progressRatio >= 0.9)', () => {
-    expect(getRingColor(0.9)).toBe('#ff4757');
-    expect(getRingColor(0.95)).toBe('#ff4757');
-    expect(getRingColor(1)).toBe('#ff4757');
+  it('getRingColor returns the urgent TOKEN pe last-10% (progressRatio >= 0.9)', () => {
+    // Tokenized 2026-06-11 (design-pass follow-up): the urgent red is the Pulse
+    // palette's --ember-red, not a component-local hex — the contract asserted
+    // here moves WITH the token (one urgency red, one source).
+    expect(getRingColor(0.9)).toBe('var(--ember-red)');
+    expect(getRingColor(0.95)).toBe('var(--ember-red)');
+    expect(getRingColor(1)).toBe('var(--ember-red)');
   });
 
   it('ring stroke is --brick at start (full ring, progressRatio 0)', () => {
@@ -119,7 +122,7 @@ describe('SVGCountdownRing - F-workout-09 color states + last-10% pulse', () => 
   it('ring stroke transitions la urgent red cand remaining drops sub 10% (progressRatio >= 0.9)', () => {
     // totalSec=120, remainingSec=10 → progressRatio = 1 - 10/120 ≈ 0.917 → urgent.
     render(<SVGCountdownRing totalSec={120} remainingSec={10} />);
-    expect(screen.getByTestId('rest-ring-progress').getAttribute('stroke')).toBe('#ff4757');
+    expect(screen.getByTestId('rest-ring-progress').getAttribute('stroke')).toBe('var(--ember-red)');
     expect(screen.getByTestId('rest-ring-progress').getAttribute('data-ring-state')).toBe('urgent');
   });
 

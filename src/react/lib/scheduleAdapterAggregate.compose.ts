@@ -23,6 +23,7 @@ import { isEnabled } from '../../util/featureFlags.js';
 import { suggestStartWeight } from '../../engine/coldStartGuidelines.js';
 import { resolveMaxKg } from '../../engine/dp/loadModel.js';
 import { roundToEquipmentWeight } from '../../config/weights.js';
+import { warmupRampFor } from '../../engine/warmupRamp.js';
 import { isBodyweightExercise, bodyweightFraction } from '../../engine/bodyweightLoad.js';
 import { getMetricType } from '../../engine/metricType.js';
 import { getCurrentWeightKg } from './userTdee';
@@ -1160,6 +1161,30 @@ export async function composePlannedWorkoutToday(
       ? scaleSetsByEnergy(readinessScaled, energyMod.volumeFactor, emphasizedRoGroups)
       : readinessScaled;
     const exercises = trimSessionToTimeBudget(energyScaled, warmup?.durationMin ?? 0, timeCapMin);
+    // WARM-UP RAMP (dp_warmup_ramp_v1, default OFF). The session-level warm-up LINE
+    // above ("Incalzire ~X min") is what a clipboard says; a real coach also ramps
+    // the day's OPENING compound with ascending primer sets (50/70/90% of the working
+    // load). Compute the ramp from the FINAL first exercise (the lead lift survives
+    // the tail-first trim, idx 0 keeps its 3-set floor) — ONLY when it is a tier-1,
+    // reps-metric, NON-bodyweight lift (a bodyweight/time/carry opener has no working
+    // kg to ramp toward). warmupRampFor itself returns [] below its load thresholds.
+    // Attached ADDITIVELY to the warmup object (the only consumer is WorkoutPreview;
+    // the PlannedExercise rows are untouched, so substitution/volume/duration are
+    // byte-identical). Flag OFF / no qualifying opener / empty ramp → field omitted →
+    // byte-identical output.
+    const lead = exercises[0];
+    const leadTier =
+      lead != null
+        ? (getExerciseMetadata(lead.engineName ?? lead.name) as { tier?: number } | null)?.tier
+        : undefined;
+    const warmupSets =
+      isEnabled('dp_warmup_ramp_v1') &&
+      lead != null &&
+      leadTier === 1 &&
+      !lead.isBodyweight &&
+      getMetricType(lead.engineName ?? lead.name) === 'reps'
+        ? warmupRampFor(Number(lead.targetKg), { exerciseName: lead.engineName ?? lead.name })
+        : [];
     // Deload engine emits intensity_modifier object always (IDLE state =
     // {rir_increment:0, intensity_pct_decrement:0}). 'minus' only when
     // ACTIVE deload (any non-zero modifier field). Phase 7+ wires 'plus'
@@ -1221,7 +1246,13 @@ export async function composePlannedWorkoutToday(
       intensityMod: hasActiveDeload ? 'minus' : 'normal',
       exercises,
       volumeKg: volumeKg ?? plan.volumeKg ?? 0,
-      warmup,
+      // Warm-up blueprint. The session-level {line, durationMin} unchanged; the
+      // per-set ramp is folded in ADDITIVELY only when it fired (flag ON + a
+      // qualifying tier-1 opener above the load threshold). Empty ramp → warmup is
+      // the untouched original object (byte-identical). A null warmup with a ramp
+      // (no engine line but a qualifying opener) still surfaces the ramp.
+      warmup:
+        warmupSets.length > 0 ? { ...(warmup ?? { line: '', durationMin: 0 }), warmupSets } : warmup,
       // F2 #3 — session-level tempo/form cue (uniform; display only). Null → the
       // render boundary omits the cue row (graceful, byte-identical to pre-feature).
       tempoCue,

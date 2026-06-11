@@ -225,6 +225,11 @@ export function PostRpe(): JSX.Element {
             reps: s.reps,
             rating: s.rating,
             timestamp: s.timestamp ?? Date.now(),
+            // Gym-log arc 2026-06-11: the CALIBRATION flag (level-set over a
+            // cold-start rec / massive manual jump, stamped at log time) rides
+            // through to the durable logs row so detectPR excludes it from
+            // prevBest. Absent on normal sets → shape unchanged.
+            ...(s.calibration ? { calibration: true } : {}),
           };
         });
         return {

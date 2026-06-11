@@ -71,7 +71,7 @@ import { DP } from '../../../../engine/dp.js';
 import { platesPerSide } from '../../../../engine/plateMath.js';
 import { getExerciseMetadata } from '../../../../engine/exerciseLibrary.js';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
-import { roundToEquipmentWeight } from '../../../../config/weights.js';
+import { roundToEquipmentWeight, getNextWeight, getPrevWeight } from '../../../../config/weights.js';
 import { ENGINE_WORKOUT_TITLE_FALLBACK, resolveIntensityFactors } from '../../../lib/scheduleAdapterAggregate';
 import { clearTodayReadiness } from '../../../../engine/readiness.js';
 import { t } from '../../../../i18n/index.js';
@@ -390,7 +390,10 @@ export function Workout(): JSX.Element {
   // second detection path); cleared on overlay dismiss. Carries the exercise +
   // positive kg delta the mockup PrFlash shows. The PostSummary PR banner stays
   // the durable record — this is the in-the-moment hit only.
-  const [prFlash, setPrFlash] = useState<{ exercise: string; deltaKg: number } | null>(null);
+  // kind 'pr' = a real record over valid history (confetti); 'calibration' (8) = a
+  // first-rep / massive-manual-jump over a bad cold-start — a calm "level set" reper,
+  // never a confetti record and never a PR-wall anchor.
+  const [prFlash, setPrFlash] = useState<{ exercise: string; deltaKg: number; kind: 'pr' | 'calibration' } | null>(null);
   // Design ADDENDUM 1 — exercise demo accordion open/close (presentation-only).
   // The demo media is no longer a static card; it lives behind a pulse-card row
   // (play icon + eyebrow + secondary line + chevron) that slides the placeholder
@@ -515,40 +518,61 @@ export function Workout(): JSX.Element {
   // (autoreg may have bumped it). Pick the synced value on a transition, dedupe by
   // (exIdx,setIdx,kg,reps) so the post-reset re-render does not emit the same slot
   // twice → exactly one rec event per set, never stale.
-  const recEmitRef = useRef<{ exIdx: number; sig: string }>({ exIdx: -1, sig: '' });
+  //
+  // (5) 2026-06-11 — a SWAP replaces exercises[safeExIdx] IN PLACE, so the index
+  // is UNCHANGED while the exercise identity (and targetKg) flips. Keying the
+  // transition on safeExIdx alone made isTransition=false on a swap → the first
+  // rec emitted the PREVIOUS exercise's stale recKg (Y Raise "rec 40x6" = Incline
+  // DB's value), then the reset effect re-rendered with the correct value (double
+  // emit, first stale). Key the transition on the exercise IDENTITY (index + engine
+  // key) so a swap-in-place is a transition too → the first (and only) rec carries
+  // the swapped exercise's own synced target.
+  const recEmitRef = useRef<{ identity: string; sig: string }>({ identity: '', sig: '' });
+  // (7) 2026-06-11 — set by performLogSet when checkInSessionAdjust returned a real
+  // in-session correction; the NEXT set's rec was produced by that adjustment, so its
+  // source is 'in_session_adjustment' (not 'coldstart'). Read + cleared on emit.
+  const recFromInSessionRef = useRef(false);
+  const currentEngineKey = currentExercise.engineName ?? currentExercise.name;
   useEffect(() => {
     if (!hasWorkout) return;
-    const isTransition = safeExIdx !== recEmitRef.current.exIdx;
+    const identity = `${safeExIdx}:${currentEngineKey}`;
+    const isTransition = identity !== recEmitRef.current.identity;
     const shownKg = isTransition ? targetKg : recKg;
     const shownReps = isTransition ? currentExercise.targetReps : recReps;
-    const sig = `${safeExIdx}:${currentSetIdx}:${shownKg}:${shownReps}`;
+    const sig = `${identity}:${currentSetIdx}:${shownKg}:${shownReps}`;
     if (sig === recEmitRef.current.sig) return; // post-reset re-render — already logged
-    recEmitRef.current = { exIdx: safeExIdx, sig };
+    recEmitRef.current = { identity, sig };
     // source = whether this starting rec is a cold-start (no prior engine state
     // for this exercise → lastW===0) vs adapted from history. Cheap: DP.getState
     // on the ENGINE key is already read for noExerciseHistory above. Bodyweight
     // has no external-load state, so it reports 'history' (its rep flow adapts).
-    // 'calibrated' is not cheaply derivable from DP state → not surfaced here.
-    let source: 'coldstart' | 'history' = 'history';
+    // 'in_session_adjustment' (7) wins when the rec for this set was the engine's
+    // live correction from the set just logged — the flag is consumed here so it
+    // labels exactly one rec then falls back to the durable coldstart/history read.
+    let source: 'coldstart' | 'history' | 'in_session_adjustment' = 'history';
     try {
       if (!currentExercise.isBodyweight && currentExercise.name !== '') {
         source =
-          DP.getState(currentExercise.engineName ?? currentExercise.name).lastW === 0
-            ? 'coldstart'
-            : 'history';
+          DP.getState(currentEngineKey).lastW === 0 ? 'coldstart' : 'history';
       }
     } catch {
       /* omit on any failure — capture must never break the screen */
     }
+    // An in-session correction only labels the next set of the SAME exercise (not a
+    // transition, where the flag is stale from the previous exercise).
+    if (recFromInSessionRef.current && !isTransition) {
+      source = 'in_session_adjustment';
+    }
+    recFromInSessionRef.current = false;
     debugLog.event(
       'rec',
       { exercise: currentExercise.name, setIdx: currentSetIdx + 1, recKg: shownKg, recReps: shownReps, source },
       { route: '/app/antrenor/workout', exercise: currentExercise.name, setIdx: currentSetIdx + 1, shownKg, shownReps },
       sessionStart ?? undefined,
-      currentExercise.engineName ?? currentExercise.name,
+      currentEngineKey,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [safeExIdx, currentSetIdx, recKg, recReps]);
+  }, [safeExIdx, currentEngineKey, currentSetIdx, recKg, recReps]);
 
   // Phase 4 task_15 §A: inactivity watch (interval 30s + > 7 min prompt) +
   // bumpActivity reset — extracted to useInactivityWatch (behavior preserved,
@@ -589,10 +613,59 @@ export function Workout(): JSX.Element {
           ) / 2,
         )
       : kgInput;
+
+    // (6) 2026-06-11 — DETERMINISTIC manual-override. `inputDirty` only means "the
+    // field was touched THIS set", but the input carries the PRIOR set's value as a
+    // prefill, so re-logging an untouched 24 (over a 22.5 rec) read override:false
+    // even though the entry differed from the prescription. Decide at LOG TIME on
+    // the actual discrepancy instead: the load is overridden when it differs from
+    // the recommended load by AT LEAST HALF the equipment increment around the rec
+    // (a sub-half-step rounding wobble is NOT an override), OR the reps differ from
+    // the prescription. Bodyweight has no load ladder → fall back to the reps diff +
+    // the touched-field signal. Used for BOTH the telemetry `wasManualOverride` and
+    // the engine's in-session DOWN anchor (which still gates on below-rec itself).
+    const overrideThresholdKg = (() => {
+      try {
+        if (currentExercise.isBodyweight || !(recKg > 0)) return Infinity;
+        const ex = currentExercise.engineName ?? currentExercise.name;
+        const up = getNextWeight(recKg, ex) - recKg;
+        const down = recKg - getPrevWeight(recKg, ex);
+        const step = Math.min(up > 0 ? up : Infinity, down > 0 ? down : Infinity);
+        return Number.isFinite(step) && step > 0 ? step / 2 : Infinity;
+      } catch {
+        return Infinity; // never block logging on a ladder lookup failure
+      }
+    })();
+    const kgIsOverride =
+      Number.isFinite(overrideThresholdKg) && Math.abs(effKg - recKg) >= overrideThresholdKg;
+    const repsIsOverride = recReps > 0 && repsInput !== recReps;
+    // Bodyweight (no load ladder) keeps the touched-field signal as the load proxy.
+    const wasManualOverride = currentExercise.isBodyweight
+      ? inputDirty || repsIsOverride
+      : kgIsOverride || repsIsOverride;
+
+    // CALIBRATION signal, computed ONCE at log time (gym-log arc 2026-06-11):
+    // a benchmark set over a cold-start rec (no durable engine state yet) or a
+    // massive manual jump (>= 1.5x rec) is a LEVEL-SET, not a beaten record. The
+    // flag rides the logged entry into the durable `logs` row so detectPR
+    // (prEngine) excludes it from prevBest — a false anchor (Face Pull 9→27→36)
+    // never becomes the record to beat. The PR-flash block below reuses this.
+    let setIsCalibration = false;
+    if (!currentExercise.isBodyweight) {
+      try {
+        const coldStartNow = DP.getState(currentExercise.engineName ?? currentExercise.name).lastW === 0;
+        const massiveJump = recKg > 0 && effKg >= recKg * 1.5;
+        setIsCalibration = coldStartNow || massiveJump;
+      } catch {
+        /* treat as not-calibration on any failure — never break logging */
+      }
+    }
+
     logSet(safeExIdx, {
       kg: effKg,
       reps: repsInput,
       rating,
+      ...(setIsCalibration ? { calibration: true } : {}),
       // Capture the engine identity AT LOG TIME from the live screen (authoritative
       // here). This frees PostRpe's logs writeback from re-deriving the engine key
       // via a fresh getTodayWorkout() at finish — which drifted (midnight null
@@ -630,7 +703,10 @@ export function Workout(): JSX.Element {
         rating,
         deltaKg: effKg - recKg,
         deltaReps: repsInput - recReps,
-        wasManualOverride: inputDirty,
+        // (6) deterministic: differs from the rec by >= half the equipment step, or
+        // the reps differ — not merely "the field was touched" (which a prefill
+        // satisfied even when the value matched the prescription).
+        wasManualOverride,
         // Pre-workout readiness bucket (energy traffic-light derived from the live
         // intensityMod) — the missing fatigue-aware context field. Raw bucket, not
         // a reverse-mapped RPE (a future engine isn't locked to today's mapping).
@@ -671,20 +747,43 @@ export function Workout(): JSX.Element {
       exerciseHistory
     );
     if (delta) {
-      markPRHit({
-        exercise: exerciseName,
-        deltaKg: delta.deltaKg,
-        kg: delta.kg,
-        type: delta.type,
-        deltaPct: delta.deltaPct,
-        oneRMEstimate: delta.oneRMEstimate,
-      });
-      // Pulse C3-c — fire the mid-session PR celebration at the SAME detection
-      // moment (no second path). The mockup PrFlash shows a positive kg delta,
-      // so we surface it for weight PRs with a real kg gain; volume/reps PRs
-      // (deltaKg 0) still flow to the PostSummary banner via markPRHit above.
-      if (delta.deltaKg > 0) {
-        setPrFlash({ exercise: exerciseName, deltaKg: delta.deltaKg });
+      // (8) PR vs CALIBRATION — a "PR" detected when the rec had NO real history
+      // (cold-start) or the user typed a huge manual jump over it is NOT a record:
+      // it is the user calibrating Andura's bad seed (Face Pull 9->27->32->36 fired
+      // 3 false confetti PRs because the cold-start was 3-4x too low). A cold-start
+      // PR-wall anchor would also poison future progression (the fake record becomes
+      // the bar to beat). So: skip the durable PR record (markPRHit) AND show a calm
+      // "calibrated level" badge instead of the confetti, leaving REAL PRs (over a
+      // valid history, modest deviation) fully intact.
+      //   - coldStart: no durable engine state for this lift (lastW===0; written
+      //     only at session finish, so it reflects PRIOR sessions, not this one).
+      //   - massiveOverride: the user manually typed >= 1.5x the recommended load.
+      // (8) computed ONCE above (the hoisted setIsCalibration, which also rides
+      // the logged entry into the durable logs row for prEngine's prevBest
+      // exclusion) — coldStart (lastW===0, written only at session finish) OR a
+      // massive manual jump (>= 1.5x rec, judged by magnitude, not inputDirty).
+      const isCalibration = setIsCalibration;
+      if (isCalibration) {
+        // Calibration reper, not a record — no PR-wall anchor, no confetti.
+        if (delta.deltaKg > 0) {
+          setPrFlash({ exercise: exerciseName, deltaKg: delta.deltaKg, kind: 'calibration' });
+        }
+      } else {
+        markPRHit({
+          exercise: exerciseName,
+          deltaKg: delta.deltaKg,
+          kg: delta.kg,
+          type: delta.type,
+          deltaPct: delta.deltaPct,
+          oneRMEstimate: delta.oneRMEstimate,
+        });
+        // Pulse C3-c — fire the mid-session PR celebration at the SAME detection
+        // moment (no second path). The mockup PrFlash shows a positive kg delta,
+        // so we surface it for weight PRs with a real kg gain; volume/reps PRs
+        // (deltaKg 0) still flow to the PostSummary banner via markPRHit above.
+        if (delta.deltaKg > 0) {
+          setPrFlash({ exercise: exerciseName, deltaKg: delta.deltaKg, kind: 'pr' });
+        }
       }
     }
 
@@ -718,9 +817,12 @@ export function Workout(): JSX.Element {
         recKg,
         recReps,
         loggedKg: effKg, // the load the user ACTUALLY logged this set
-        // F1 — did the user MANUALLY type this set's load (vs an untouched prefill)?
-        // A deliberate lower entry is the DOWN signal the in-session adjust honors.
-        wasManualOverride: inputDirty,
+        // F1 — did the user MANUALLY set a load that DIFFERS from the prescription?
+        // (6) deterministic (>= half-step or reps diff), not the touched-field
+        // signal — a sticky prefill that differed from the rec read as no-override
+        // before, so the engine never saw the deliberate deviation. The engine's
+        // DOWN anchor still gates on entered being below rec itself.
+        wasManualOverride,
         setIdx: currentSetIdx + 1,
         // #5/A — when the user explicitly confirmed a flagged outlier, let the
         // engine learn from it; otherwise the engine self-skips calibration on a
@@ -735,6 +837,15 @@ export function Workout(): JSX.Element {
         msg?: string;
       };
       if (adjust.adjust) {
+        // (7) a real UP/DOWN correction makes the next set's rec the engine's live
+        // in-session value — flag it so the rec-emit effect labels that rec
+        // `in_session_adjustment` (not the stale `coldstart`/`history` derived from
+        // durable DP state, only written at session finish). Gated on dir so a
+        // no-direction no-op never sets a flag that would mislabel a later set;
+        // consumed + cleared on the next emit.
+        if (adjust.dir === 'up' || adjust.dir === 'down') {
+          recFromInSessionRef.current = true;
+        }
         // Update the SHARED current-recommended-load first — this is the single
         // source of truth that the next set's AaFriction over-recommendation
         // check evaluates against (so the friction boundary moves with the
@@ -1642,9 +1753,10 @@ export function Workout(): JSX.Element {
           exercise so back-to-back PRs each re-trigger the burst. */}
       {prFlash && (
         <PrFlash
-          key={prFlash.exercise}
+          key={`${prFlash.kind}:${prFlash.exercise}`}
           exercise={prFlash.exercise}
           deltaKg={prFlash.deltaKg}
+          variant={prFlash.kind}
           onClose={() => setPrFlash(null)}
         />
       )}

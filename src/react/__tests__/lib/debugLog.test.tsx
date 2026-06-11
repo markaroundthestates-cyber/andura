@@ -205,3 +205,72 @@ describe('useDebugCapture — universal tap listener', () => {
     expect(typeof e.snap?.route).toBe('string');
   });
 });
+
+// ── Export scope slicing (Daniel 2026-06-11: "sa nu citesc 100 antrenamente") ──
+// Rows are written straight to the IDB table (the public event() stamps its own
+// Date.now(), so explicit timestamps need the direct path — same technique the
+// prune test uses). Shape mirrors the REAL founder export: taps lack `session`;
+// `swap` rows lack `session` but live inside the workout's time window.
+describe('debugLog — exportJson scope slicing', () => {
+  const S1 = 1_000_000; // older workout (sessionGroupStart)
+  const S2 = 2_000_000; // newest workout
+
+  async function seedTwoWorkouts(): Promise<void> {
+    const rows = [
+      // workout S1: rec + swap (no session field) + log + an in-workout tap
+      { id: 't1', t: S1 + 100, kind: 'rec', session: S1, exEngine: 'Bench', payload: { recKg: 60 } },
+      { id: 't2', t: S1 + 150, kind: 'swap', exEngine: 'Bench', payload: { from: 'Bench', to: 'DB Press' } },
+      { id: 't3', t: S1 + 200, kind: 'log', session: S1, exEngine: 'DB Press', payload: { kg: 25 } },
+      { id: 't4', t: S1 + 300, kind: 'tap', payload: { testid: 'rest-skip' } },
+      // navigation noise BETWEEN workouts
+      { id: 't5', t: 1_500_000, kind: 'tap', payload: { testid: 'cont-row-prefs' } },
+      // workout S2
+      { id: 't6', t: S2 + 100, kind: 'rec', session: S2, exEngine: 'Lat Pulldown', payload: { recKg: 60 } },
+      { id: 't7', t: S2 + 150, kind: 'swap', exEngine: 'Lat Pulldown', payload: { from: 'A', to: 'B' } },
+      { id: 't8', t: S2 + 200, kind: 'log', session: S2, exEngine: 'Lat Pulldown', payload: { kg: 59 } },
+      { id: 't9', t: S2 + 300, kind: 'tap', payload: { testid: 'rest-skip' } },
+      // trailing navigation noise
+      { id: 't10', t: 2_500_000, kind: 'tap', payload: { testid: 'advanced-debug-copy' } },
+    ];
+    const db = getDb();
+    for (const r of rows) await db.table(STORES.BEHAVIOR_TIER1).put(r);
+  }
+
+  it("default scope 'last' → ONLY the newest workout's semantic rows, zero taps", async () => {
+    await seedTwoWorkouts();
+    const out = JSON.parse(await debugLog.exportJson());
+    expect(out.v).toBe(2);
+    expect(out.scope).toBe('last');
+    expect(out.sessions).toEqual([S2]);
+    expect(out.events.map((e: { id: string }) => e.id)).toEqual(['t6', 't7', 't8']);
+    expect(out.events.some((e: { kind: string }) => e.kind === 'tap')).toBe(false);
+  });
+
+  it("'last3' → both workouts' semantic rows (window from the oldest kept), zero taps", async () => {
+    await seedTwoWorkouts();
+    const out = JSON.parse(await debugLog.exportJson('last3'));
+    expect(out.sessions).toEqual([S1, S2]);
+    expect(out.events.map((e: { id: string }) => e.id)).toEqual(['t1', 't2', 't3', 't6', 't7', 't8']);
+  });
+
+  it("'all' → the full raw dump, taps included", async () => {
+    await seedTwoWorkouts();
+    const out = JSON.parse(await debugLog.exportJson('all'));
+    expect(out.scope).toBe('all');
+    expect(out.count).toBe(10);
+    expect(out.events.some((e: { kind: string }) => e.kind === 'tap')).toBe(true);
+  });
+
+  it('empty store → parseable envelope with empty events', async () => {
+    const out = JSON.parse(await debugLog.exportJson());
+    expect(out.events).toEqual([]);
+    expect(out.sessions).toEqual([]);
+  });
+
+  it('no workout rows yet (taps only) → slice falls back to semantic-only (empty)', async () => {
+    const db = getDb();
+    await db.table(STORES.BEHAVIOR_TIER1).put({ id: 'x1', t: 123, kind: 'tap', payload: { testid: 'a' } });
+    const out = JSON.parse(await debugLog.exportJson());
+    expect(out.events).toEqual([]);
+  });
+});

@@ -444,6 +444,11 @@
       "title": "Record nou!",
       "detail": "{exercise} · +{deltaKg} kg"
     },
+    "calibrationFlash": {
+      "ariaLabel": "Nivel calibrat",
+      "title": "Nivel calibrat",
+      "detail": "Reper nou pentru {exercise}"
+    },
     "whyAriaLabel": "De ce acest exercitiu?",
     "whyTitle": "De ce {exercise}?",
     "whyDismiss": "Am inteles",
@@ -525,6 +530,9 @@
       "warmupAriaLabel": "Incalzire azi",
       "tempoAriaLabel": "Indiciu de tempo azi",
       "warmupLine": "Incalzire ~{min} min",
+      "warmupRampLabel": "Incalzire:",
+      "warmupRampStep": "{kg} kg x {reps}",
+      "warmupRampAriaLabel": "Seturi de incalzire pentru primul exercitiu",
       "exercisesHeading": "Exercitii",
       "swappedPrefix": "Inlocuit · {reason}",
       "exerciseDetail": "{sets} seturi - {kg} kg - {reps} reps",
@@ -1508,7 +1516,9 @@
         "debugLog": "Jurnal debug",
         "debugLogDesc": "Inregistreaza tap-urile pentru raportari bug (se aplica la urmatoarea pornire)",
         "debugLogCopy": "Copiaza jurnal debug",
-        "debugLogCopyDesc": "Copiaza evenimentele inregistrate ca JSON",
+        "debugLogCopyDesc": "Copiaza ULTIMUL antrenament ca JSON (fara tap-uri de navigare)",
+        "debugLogCopyLast3": "Ultimele 3 antrenamente",
+        "debugLogCopyAll": "Tot istoricul (brut)",
         "debugLogCopied": "Jurnal debug copiat",
         "debugLogEmpty": "Jurnalul debug e gol",
         "collect": "Imbunatateste antrenamentul (pe dispozitiv)",

@@ -53,6 +53,7 @@ vi.mock('../../../lib/engineWrappers', async () => {
 import { Workout } from '../../../routes/screens/antrenor/Workout';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { toast } from '../../../lib/toast';
+import { debugLog } from '../../../lib/debugLog';
 import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function renderWorkout() {
@@ -206,5 +207,40 @@ describe('Workout swap — drop + retrieve', () => {
     await waitFor(() => {
       expect(screen.getByTestId('wv2-exname').textContent).toContain('inclinat cu bara');
     });
+  });
+});
+
+// ── (5) 2026-06-11 — a swap-in-place must not double-emit a STALE rec ─────────
+// F3 deduped the rec on an exercise-INDEX transition, but a swap replaces
+// exercises[idx] IN PLACE (index unchanged), so isTransition read false and the
+// first rec carried the PREVIOUS exercise's stale recKg (the gym log showed
+// "Y Raise rec 40x6" = the Incline DB value), then the reset effect re-rendered
+// the correct value — a stale double-emit. The transition is now keyed on the
+// exercise IDENTITY (index + engine key), so a swap is a transition too.
+describe('Workout swap — (5) one rec per set, never the pre-swap stale load', () => {
+  it('the swapped-in exercise never emits a rec carrying the pre-swap 60 kg', async () => {
+    const spy = vi.spyOn(debugLog, 'event');
+    await renderAndWait();
+    // ex0 = Incline Barbell Bench @ 60 kg (the pre-swap load that must NOT leak).
+    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+    const row0 = await screen.findByTestId('swap-pick-row-0');
+    fireEvent.click(row0);
+    // The current exercise changed in-place (same slot 0).
+    await waitFor(() => {
+      expect(screen.getByTestId('wv2-exname').textContent).not.toContain('inclinat cu bara');
+    });
+
+    const recEvents = spy.mock.calls
+      .filter((c) => c[0] === 'rec')
+      .map((c) => c[1] as { exercise: string; setIdx: number; recKg: number });
+    // The swapped-in exercise's recs (any exercise that is NOT the original).
+    const swappedRecs = recEvents.filter((e) => e.exercise !== 'inclinat cu bara');
+    expect(swappedRecs.length).toBeGreaterThan(0);
+    // NONE of them carry the pre-swap 60 kg (the stale-emit signature).
+    for (const e of swappedRecs) expect(e.recKg).not.toBe(60);
+    // Exactly one rec per (exercise,set) slot across the whole session — no double.
+    const slots = recEvents.map((e) => `${e.exercise}:${e.setIdx}`);
+    expect(new Set(slots).size).toBe(slots.length);
+    spy.mockRestore();
   });
 });

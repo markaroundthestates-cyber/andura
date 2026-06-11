@@ -9,7 +9,7 @@ import { archiveSession } from '../lib/dexieMigration';
 import { isEnabled } from '../../util/featureFlags.js';
 import { learnRecovery, saveRecoveryConstants, RECOVERY_CONSTANTS_KEY, bodyweightTrendRecoveryFactor } from '../../engine/muscleMap.js';
 import { resolveActivePhase } from '../lib/phaseResolution';
-import { learnedStepFromLogs, saveLearnedStep } from '../../engine/dp/equipmentLadder.js';
+import { learnedStepFromLogs, saveLearnedStep, observeLoggedWeight } from '../../engine/dp/equipmentLadder.js';
 import { learnVolumeLandmarks, saveLearnedVolume, LEARNED_VOLUME_KEY } from '../../engine/periodization/learnedVolume.js';
 import { learnFatigueCurve, saveFatigueCurve, FATIGUE_CURVE_KEY } from '../../engine/dp/fatigueCurve.js';
 import { distillAndPersistBehaviorTuning } from '../../engine/dp/behaviorDistill.js';
@@ -157,6 +157,10 @@ export function buildLogEntriesFromSummary(
         ts,
         session: sessionStart,
         ...(s.isPR ? { isPR: true } : {}),
+        // Gym-log arc 2026-06-11: CALIBRATION marker (level-set, not a record) —
+        // detectPR excludes these rows from prevBest (like baseline), so a false
+        // anchor never becomes the record to beat.
+        ...(s.calibration ? { calibration: true } : {}),
         // Per-set RPE from this set's OWN coarse rating (spread-conditional keeps
         // the entry clean when rating absent on a legacy breakdown).
         ...(s.rating ? { rpe: RATING_TO_RPE[s.rating] } : {}),
@@ -214,6 +218,18 @@ export function persistSessionLogs(
       for (const [ex, loads] of Object.entries(loadsByEx)) {
         const step = learnedStepFromLogs(loads);
         if (step > 0) saveLearnedStep(ex, step, new Set(loads).size);
+      }
+    }
+    // Gym-log arc 2026-06-11 — equipment-ladder TEMPLATE observations (flag
+    // dp_equipment_ladder_v1). Every logged weight feeds the per-exercise
+    // observation set (`dp-equipment-obs`); 2-3 distinct values matching a common
+    // commercial stack/dumbbell/plate template resolve the machine's WHOLE ladder
+    // (Daniel: "daca omu logheaza x, sa stie ca aparatul are greutatile y").
+    // Same authoritative write site as the learned-step above; fail-silent.
+    if (isEnabled('dp_equipment_ladder_v1')) {
+      for (const l of merged as Array<{ ex?: string; w?: number }>) {
+        if (typeof l.ex !== 'string' || !l.ex || !(Number(l.w) > 0)) continue;
+        observeLoggedWeight(l.ex, Number(l.w));
       }
     }
     // F4 #3/F — learn the per-user temperament RIR bias (sandbagger vs grinder)

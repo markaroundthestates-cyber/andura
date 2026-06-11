@@ -458,6 +458,26 @@ export function WorkoutPreview(): JSX.Element {
                 </div>
               )}
               <div className="text-xs text-ink3 font-mono mt-0.5">{item.detail}</div>
+              {/* WARM-UP RAMP (dp_warmup_ramp_v1) — a discreet per-set primer ladder
+                  under the day's OPENING lift only (idx 0). Engine attaches the snapped
+                  50/70/90% sets on workout.warmup.warmupSets; renders ONLY when present
+                  (flag OFF / no qualifying opener → omitted, nothing changes). Quiet
+                  Pulse idiom: a Flame glyph + a thin arrow-joined mono line, NOT a card. */}
+              {item.idx === 0 && (workout?.warmup?.warmupSets?.length ?? 0) > 0 && (
+                <div
+                  className="flex items-center gap-1.5 mt-1 text-[11px] text-ink3"
+                  data-testid="warmup-ramp"
+                  aria-label={t('workout.preview.warmupRampAriaLabel')}
+                >
+                  <Flame className="w-3 h-3 text-brick flex-shrink-0" aria-hidden="true" />
+                  <span className="font-semibold not-italic">{t('workout.preview.warmupRampLabel')}</span>
+                  <span className="font-mono">
+                    {workout!.warmup!.warmupSets!
+                      .map((s) => t('workout.preview.warmupRampStep', { kg: s.kg, reps: s.reps }))
+                      .join(' → ')}
+                  </span>
+                </div>
+              )}
             </div>
           </li>
         ))}

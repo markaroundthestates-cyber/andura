@@ -444,6 +444,11 @@
       "title": "New record!",
       "detail": "{exercise} · +{deltaKg} kg"
     },
+    "calibrationFlash": {
+      "ariaLabel": "Level calibrated",
+      "title": "Level calibrated",
+      "detail": "New baseline for {exercise}"
+    },
     "whyAriaLabel": "Why this exercise?",
     "whyTitle": "Why {exercise}?",
     "whyDismiss": "Got it",
@@ -525,6 +530,9 @@
       "warmupAriaLabel": "Warm-up today",
       "tempoAriaLabel": "Tempo cue today",
       "warmupLine": "Warm-up ~{min} min",
+      "warmupRampLabel": "Warm-up:",
+      "warmupRampStep": "{kg} kg x {reps}",
+      "warmupRampAriaLabel": "Warm-up sets for the first exercise",
       "exercisesHeading": "Exercises",
       "swappedPrefix": "Swapped · {reason}",
       "exerciseDetail": "{sets} sets - {kg} kg - {reps} reps",
@@ -1508,7 +1516,9 @@
         "debugLog": "Debug log",
         "debugLogDesc": "Record taps for bug reports (applies on next launch)",
         "debugLogCopy": "Copy debug log",
-        "debugLogCopyDesc": "Copy the recorded events as JSON",
+        "debugLogCopyDesc": "Copy the LAST workout as JSON (no navigation taps)",
+        "debugLogCopyLast3": "Last 3 workouts",
+        "debugLogCopyAll": "Full raw history",
         "debugLogCopied": "Debug log copied",
         "debugLogEmpty": "Debug log is empty",
         "collect": "Improve my training (on-device)",

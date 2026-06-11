@@ -36,6 +36,7 @@ import {
   type PainCdlEntry,
 } from '../../../engine/muscleRecovery.js';
 import { DB } from '../../../db.js';
+import { isEnabled } from '../../../util/featureFlags.js';
 import { Ring } from '../pulse/Ring';
 import { t } from '../../../i18n/index.js';
 
@@ -139,7 +140,11 @@ export function useMuscleRecoveryGroups(): RecoveryGroup[] {
   return useMemo(() => {
     try {
       const logs = flattenSessionsToLogs(sessionsHistory);
-      const resistanceState = getRecoveryByGroup(logs, readPainCdl());
+      // dp_recovery_dose_v1: dose×unaccustomed stretch — the body map tells the
+      // truth Daniel asked for ("functional dar nu fresh" dupa volum mare + pauza).
+      const resistanceState = getRecoveryByGroup(logs, readPainCdl(), undefined, {
+        doseScaling: isEnabled('dp_recovery_dose_v1'),
+      });
       const state = mergeAerobicRecovery(resistanceState, aerobicSessions);
       return Object.entries(state).map(([group, st]) => ({
         group,
