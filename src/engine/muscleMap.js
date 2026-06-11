@@ -144,7 +144,15 @@ export function musclesForExercise(ex) {
     const secondaryGroups = Array.isArray(meta.muscle_target_secondary) ? meta.muscle_target_secondary : [];
     const secondary = [...new Set(secondaryGroups.flatMap((g) => headsForGroup(String(g), ex)))]
       .filter((h) => !primary.includes(h));
-    out = primary.length ? { primary, secondary } : null;
+    // A primary group with NO modelled recovery head (today: 'antebrate' — forearms
+    // are not a Big-11 recovery group, line ~117) used to return null even when a
+    // SECONDARY group does load a modelled head (Daniel coach-review 2026-06-11: his
+    // logged Reverse Curl EZ-bar loads biceps; Farmer's Walk loads spate — both were
+    // invisible to recovery/imbalance). Resolve via the secondary heads when the
+    // primary has none, so the major muscle the lift actually trains is tracked. A
+    // pure-grip isometric (Wrist Roller / Plate Pinch / Dead Hang — antebrate-only,
+    // no secondary) still resolves to null: it loads no modelled recovery head.
+    out = (primary.length || secondary.length) ? { primary, secondary } : null;
   }
   _derivedMusclesCache.set(ex, out);
   return out;

@@ -346,6 +346,15 @@ export const TIER_RANK_EXCLUDE = 5;
 // but not absurdly. Higher score = picked first. progress / staleness / userPreference
 // are HOOKS (default 0 — no live source threaded yet) so the model is correct +
 // extensible without fabricating signal. Used ONLY on the tier-select path.
+//
+// NOTE (Daniel live coach-review 2026-06-11): the +10 bonus buries an ACTIVE A-band
+// progression under every unlogged-S (90 < 100) — his Cable Curl 23→27→32 displaced
+// by 3 cold-start curls; Leg Press 230 by Smith Squat. The CORRECT fix is to make
+// the bonus CONDITIONAL on demonstrated progression (a progressing logged lift earns
+// the extra band step; a stagnant one does not), wired through a progressingNames
+// signal — backlog #42/#43. A blanket +20 was measured to TANK the full-path cohort
+// convergence (13.6%→1%, craters 53→69) by making EVERY logged lift sticky, so the
+// blanket form is intentionally NOT taken; the conditional form is a dedicated round.
 /** @type {Readonly<Record<'S'|'A'|'B'|'C', number>>} */
 export const TIER_SELECT_SCORE = Object.freeze({ S: 100, A: 80, B: 60, C: 35 });
 /** hasLog bounded bonus (a logged lift is preferred, but never an absolute override). */

@@ -11,7 +11,7 @@
 import { EXERCISE_METADATA, getExerciseMetadata, isActiveMeta } from './exerciseLibrary.js';
 import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT, ISRAETEL_BASELINES } from './periodization/constants.js';
 import { isExcludedMovement } from './movementExclusion.js';
-import { EXERCISE_TIER_RANK, tierRankOf, tierSelectScore, TIER_SELECTABLE_SA } from './exerciseTierRank.js';
+import { EXERCISE_TIER_RANK, tierSelectScore, TIER_SELECTABLE_SA } from './exerciseTierRank.js';
 import { applyFocusPolicy, deriveExerciseTags, focusRelevantTags } from './focusPolicy.js';
 
 // buildSession's first param is now a Big-6 CLUSTER id (push/pull/legs/upper/
@@ -830,6 +830,10 @@ export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed,
     // the last-option guards (D-removal / exclusion) + the +10 log bonus keeping a
     // logged lift competitive — it just no longer trumps a far better unlogged pick.
     // Higher score first; squat-primacy (quads only) is a tiebreak above the seed.
+    // PROGRESSION-CONTINUITY (Daniel live 2026-06-11): the +10 bonus can't lift a
+    // logged-A progression over an unlogged-S sidegrade — the proper fix is a
+    // progression-CONDITIONED bonus (backlog #42/#43), NOT a blanket raise (measured
+    // to tank cohort convergence). Tracked there; this path stays the Wave-1.1 model.
     const scoreOf = (name) => tierSelectScore(name, { hasLog: prNames.has(name) });
     core.sort((a, b) => {
       const sa = squatPrimacy(a.name, a.meta);

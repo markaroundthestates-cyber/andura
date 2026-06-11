@@ -73,6 +73,7 @@
  * @property {number} [sessionRequirements.minRearDeltSlots]
  * @property {number} [sessionRequirements.minVerticalPullSlots]
  * @property {number} [sessionRequirements.minHorizontalRowSlots]
+ * @property {number} [sessionRequirements.minChestPressSlots] - chest-capable days only (push/upper/chest)
  * @property {boolean} [sessionRequirements.requireLatIsolationIfBackDay]
  * @property {boolean} [sessionRequirements.requireFlyeIfChestDay]
  * @property {boolean} [sessionRequirements.requireOverheadTricepsIfArmsOrPush]
@@ -106,10 +107,18 @@ export const FOCUS_RULES = Object.freeze({
     sessionCaps: Object.freeze({
       maxVerticalPress: 1,        // umeri::press — one overhead press per session
       maxTotalPressPatterns: 2,   // press budget redirected toward width isolation
+      // Daniel live coach-review 2026-06-11: his v-taper Saturday stacked Smith
+      // Squat + RDL + Hip Thrust (3 heavy lower compounds) — the de-emphasized
+      // lower region is MAINTENANCE, so one squat + ONE hinge/thrust is the day.
+      maxHeavyLowerCompounds: 2,
     }),
     sessionRequirements: Object.freeze({
       minSideDeltSlots: 1,        // umeri::lateral-raise — the #1 width movement
       minRearDeltSlots: 1,        // umeri::rear-delt|face-pull|fly (rear)
+      // Daniel live coach-review 2026-06-11: his Upper day had ZERO chest press
+      // (only a 2x18 fly) — an upper/push day must anchor at least one press.
+      // Chest-capable days only (the resolver gates on push/upper/chest).
+      minChestPressSlots: 1,
     }),
     weeklyMinimums: Object.freeze([
       Object.freeze({
@@ -326,11 +335,17 @@ export const FOCUS_RULES = Object.freeze({
     sessionCaps: Object.freeze({
       maxVerticalPress: 1,
       maxTotalPressPatterns: 3,   // chest press(es) + one overhead press on an upper day
+      // Mirror of v-taper (2026-06-11): the de-emphasized lower region is
+      // maintenance — one squat + ONE hinge/thrust per leg day, never three.
+      maxHeavyLowerCompounds: 2,
     }),
     sessionRequirements: Object.freeze({
       minSideDeltSlots: 1,
       minVerticalPullSlots: 1,
       minHorizontalRowSlots: 1,
+      // 2026-06-11: an upper day must anchor at least one chest press (the
+      // Daniel live week composed an Upper with only a light fly for chest).
+      minChestPressSlots: 1,
     }),
     weeklyMinimums: Object.freeze([
       Object.freeze({
@@ -373,6 +388,7 @@ const REQ_KEY_TAGS = Object.freeze({
   minRearDeltSlots: ['rear_delt'],
   minVerticalPullSlots: ['vertical_pull'],
   minHorizontalRowSlots: ['horizontal_row'],
+  minChestPressSlots: ['chest_press'],
   requireFlyeIfChestDay: ['flye'],
   requireLatIsolationIfBackDay: ['lat_isolation', 'pullover', 'straight_arm_pulldown'],
   requireOverheadTricepsIfArmsOrPush: ['overhead_triceps'],
@@ -678,6 +694,12 @@ function requirementsFor(rule, cluster, daysPerWeek, weekClusters) {
   const isChest = cluster === 'chest' || cluster === 'push' || cluster === 'upper';
   const isBack = cluster === 'back' || cluster === 'pull' || cluster === 'upper';
   const isArms = cluster === 'arms';
+
+  // minChestPressSlots (2026-06-11) — chest-capable days only: an upper/push day
+  // anchors >=1 chest press (HIGH: a press is structural, not an accessory). A
+  // pull/legs day never demands one (no piept pool there → graceful no-op anyway).
+  if (typeof reqs.minChestPressSlots === 'number' && isChest)
+    merge('chest_press', reqs.minChestPressSlots, 'high', true);
 
   if (reqs.requireFlyeIfChestDay && isChest)
     merge('flye', 1, 'medium', true);

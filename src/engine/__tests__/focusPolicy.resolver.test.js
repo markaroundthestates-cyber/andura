@@ -10,7 +10,6 @@ import { deriveExerciseTags, applyFocusPolicy, focusRelevantTags } from '../focu
 import { buildSession, movementKey } from '../sessionBuilder.js';
 import { getExerciseMetadata } from '../exerciseLibrary.js';
 
-const mk = (name, meta) => movementKey(name, meta ?? getExerciseMetadata(name));
 const tagsOf = (name) => deriveExerciseTags(name, getExerciseMetadata(name), movementKey);
 
 describe('deriveExerciseTags — grounded on the real CORE_AUTO pool', () => {
@@ -554,5 +553,122 @@ describe('F5 — cross-day lat-iso dedup (dp_latiso_dedup_v1, Daniel coach-revie
       weekClusters: ['push', 'pull', 'upper', 'legs'],
     }));
     expect(out.map((e) => e.name)).toContain('Machine Pullover');
+  });
+});
+
+describe('minChestPressSlots — an upper/push day anchors a chest press (Daniel live coach-review 2026-06-11)', () => {
+  // His real v-taper Friday (Upper) composed ZERO chest presses — chest was a
+  // lone 2x18 fly. The new explicit requirement injects a press on chest-capable
+  // days only; it is NEVER deferred (explicit, not weekly-translated).
+  const metaMap = {
+    'Smith OHP': { muscle_target_primary: 'umeri', tier: 1 },
+    'Cable Row': { muscle_target_primary: 'spate', tier: 1 },
+    'Cable Fly': { muscle_target_primary: 'piept', tier: 2 },
+    'Incline Chest Press Machine': { muscle_target_primary: 'piept', tier: 1 },
+    'DB Lateral Raise': { muscle_target_primary: 'umeri', tier: 2 },
+    'Reverse Pec Deck': { muscle_target_primary: 'umeri', tier: 2 },
+    '45° Hyperextension': { muscle_target_primary: 'spate', tier: 2 },
+  };
+  const pool = [
+    { name: 'Incline Chest Press Machine', meta: metaMap['Incline Chest Press Machine'] },
+  ];
+
+  it('v-taper UPPER day without a press → the pool press is injected (fly alone is not chest)', () => {
+    const chosen = [
+      { name: 'Smith OHP', sets: 3 },
+      { name: 'Cable Row', sets: 3 },
+      { name: 'Cable Fly', sets: 2 },
+    ];
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'v-taper', cluster: 'upper', daysPerWeek: 4, sessionSizeCap: 8,
+      weekClusters: ['push', 'pull', 'upper', 'legs'], // his real week — explicit reqs never defer
+    }));
+    expect(out.map((e) => e.name)).toContain('Incline Chest Press Machine');
+    // The press budget stays inside the v-taper cap (OHP + 1 chest press = 2).
+    const presses = out.filter((e) =>
+      deriveExerciseTags(e.name, metaMap[e.name], movementKey).has('chest_press') ||
+      deriveExerciseTags(e.name, metaMap[e.name], movementKey).has('vertical_press'));
+    expect(presses.length).toBeLessThanOrEqual(2);
+  });
+
+  it('at the slot ceiling the press REPLACES the lowest-value non-required accessory (the hyperextension)', () => {
+    const chosen = [
+      { name: 'Smith OHP', sets: 3 },
+      { name: 'Cable Row', sets: 3 },
+      { name: 'DB Lateral Raise', sets: 2 },
+      { name: 'Reverse Pec Deck', sets: 2 },
+      { name: 'Cable Fly', sets: 2 },
+      { name: '45° Hyperextension', sets: 2 },
+    ];
+    const scoreOf = (n) => ({
+      'Smith OHP': 100, 'Cable Row': 100, 'DB Lateral Raise': 90,
+      'Reverse Pec Deck': 90, 'Cable Fly': 80, '45° Hyperextension': 10,
+    })[n] ?? 0;
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'v-taper', cluster: 'upper', daysPerWeek: 4, sessionSizeCap: 6, scoreOf,
+    }));
+    expect(out.length).toBe(6);
+    expect(out.map((e) => e.name)).toContain('Incline Chest Press Machine');
+    expect(out.map((e) => e.name)).not.toContain('45° Hyperextension');
+    // side/rear delt requirement carriers are untouched.
+    expect(out.map((e) => e.name)).toContain('DB Lateral Raise');
+    expect(out.map((e) => e.name)).toContain('Reverse Pec Deck');
+  });
+
+  it('a PULL day never demands a chest press (gated on chest-capable clusters)', () => {
+    const chosen = [
+      { name: 'Cable Row', sets: 3 },
+      { name: '45° Hyperextension', sets: 2 },
+    ];
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'v-taper', cluster: 'pull', daysPerWeek: 4, sessionSizeCap: 8,
+    }));
+    expect(out.map((e) => e.name)).not.toContain('Incline Chest Press Machine');
+  });
+});
+
+describe('v-taper maxHeavyLowerCompounds — one squat + ONE hinge/thrust per leg day (2026-06-11)', () => {
+  // His real v-taper Saturday: Smith Squat 3 + RDL 3 + Hip Thrust 3 (+ Abduction)
+  // — three heavy lower compounds on a DE-EMPHASIZED (maintenance) region. The cap
+  // prunes to 2; his logged RDL (PR continuity) is never the one pruned.
+  const metaMap = {
+    'Smith Machine Squat': { muscle_target_primary: 'picioare-quads', tier: 1 },
+    'Romanian Deadlift': { muscle_target_primary: 'picioare-hamstrings', tier: 1 },
+    'Plate-Loaded Hip Thrust Machine': { muscle_target_primary: 'fese', tier: 1 },
+    'Leg Extension': { muscle_target_primary: 'picioare-quads', tier: 2 },
+    'Leg Curl': { muscle_target_primary: 'picioare-hamstrings', tier: 2 },
+  };
+  const chosen = [
+    { name: 'Smith Machine Squat', sets: 3 },
+    { name: 'Romanian Deadlift', sets: 3 },
+    { name: 'Plate-Loaded Hip Thrust Machine', sets: 3 },
+    { name: 'Leg Extension', sets: 2 },
+    { name: 'Leg Curl', sets: 2 },
+  ];
+
+  it('prunes the third heavy lower compound; the logged RDL survives', () => {
+    const scoreOf = (n) => ({
+      'Smith Machine Squat': 100, 'Romanian Deadlift': 100,
+      'Plate-Loaded Hip Thrust Machine': 100, 'Leg Extension': 90, 'Leg Curl': 90,
+    })[n] ?? 0;
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, [], {
+      focusId: 'v-taper', cluster: 'legs', daysPerWeek: 4, sessionSizeCap: 8,
+      scoreOf, prNames: new Set(['Romanian Deadlift']),
+    }));
+    const heavy = out.filter((e) =>
+      deriveExerciseTags(e.name, metaMap[e.name], movementKey).has('heavy_lower_compound'));
+    expect(heavy.length).toBe(2);
+    expect(out.map((e) => e.name)).toContain('Romanian Deadlift'); // logged → protected
+    // The isolations are untouched (the cap thins ONLY the heavy pattern).
+    expect(out.map((e) => e.name)).toContain('Leg Extension');
+    expect(out.map((e) => e.name)).toContain('Leg Curl');
+  });
+
+  it('two heavy compounds are already within the cap → no-op', () => {
+    const two = chosen.filter((e) => e.name !== 'Plate-Loaded Hip Thrust Machine');
+    const out = applyFocusPolicy(two, makeCtx(metaMap, [], {
+      focusId: 'v-taper', cluster: 'legs', daysPerWeek: 4, sessionSizeCap: 8,
+    }));
+    expect(out.map((e) => e.name)).toEqual(two.map((e) => e.name));
   });
 });

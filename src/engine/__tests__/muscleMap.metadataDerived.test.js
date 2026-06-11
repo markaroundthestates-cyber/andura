@@ -6,7 +6,7 @@
 // actually did (Seated DB Press / DB Lateral Raise / Face Pull / Reverse Pec
 // Deck) and the decay kept 34% of a monster leg session alive at h=recoveryHours.
 import { describe, it, expect } from 'vitest';
-import { musclesForExercise, getMuscleState, EXERCISE_MUSCLES } from '../muscleMap.js';
+import { musclesForExercise, EXERCISE_MUSCLES } from '../muscleMap.js';
 import { getRecoveryByGroup } from '../muscleRecovery.js';
 
 const H = 3600000;

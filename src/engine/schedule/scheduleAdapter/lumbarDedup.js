@@ -26,12 +26,26 @@ import { clusterForDay } from './frequencySplit.js';
 // lives here): legs / lower / full. push/pull/upper do not anchor a heavy hinge.
 const HINGE_CLUSTERS = new Set(['legs', 'lower', 'full']);
 
+// Clusters whose SPATE pool can offer a back-extension accessory (the S-band
+// 45° Hyperextension is muscle_target_primary 'spate', so it competes on every
+// back-capable day — Daniel's real week stacked it Thu pull + Fri upper + RDL Sat).
+const BACK_ACCESSORY_CLUSTERS = new Set(['pull', 'upper', 'back']);
+
 // Curated heavy-lumbar hip-hinge engineNames (CORE_AUTO). Penalizing a name that
 // is not selected today is a harmless no-op, so the set can be inclusive.
 export const LUMBAR_HINGES = Object.freeze([
   // Hip-hinge deadlift family (heavy erector/posterior-chain load)
   'Romanian Deadlift', 'Stiff-Leg Deadlift', 'Conventional Deadlift', 'Barbell Good Morning',
   // Back-extension / hyperextension family (direct erector loading)
+  'Roman Chair Back Extension', '45° Hyperextension', 'GHD Back Extension',
+  'Weighted Hyperextension', 'Hyperextension Machine',
+]);
+
+// The back-extension SUBSET of LUMBAR_HINGES — the only members that can surface
+// on a pull/upper/back day (the deadlift family anchors leg/posterior days; it is
+// not offered from the spate accessory pool, so demoting it there is a no-op we
+// deliberately avoid widening to).
+export const BACK_EXTENSION_FAMILY = Object.freeze([
   'Roman Chair Back Extension', '45° Hyperextension', 'GHD Back Extension',
   'Weighted Hyperextension', 'Hyperextension Machine',
 ]);
@@ -60,6 +74,27 @@ export function lumbarDedupPenalties({
 }) {
   if (!flagOn) return null;
   if (!Array.isArray(activeWeek)) return null;
+  // ── Back-extension cross-day dedup (Daniel live coach-review 2026-06-11) ──
+  // His real week: 45° Hyperextension on Thu (pull) AND Fri (upper) with the RDL
+  // on Sat — three consecutive lumbar-loaded days. The hinge branch below never
+  // saw it (pull/upper are not hinge clusters). Same first-day-keeps shape: the
+  // FIRST back-capable day of the week keeps its (single) back-extension; every
+  // SUBSEQUENT pull/upper/back day demotes the family so a non-lumbar spate
+  // accessory (pullover / shrug / row variant) leads. Demote-only via the same
+  // penalty channel → last-option guarded, never a ban.
+  if (BACK_ACCESSORY_CLUSTERS.has(todayCluster)) {
+    let priorBackDays = 0;
+    for (let i = 0; i < dayIdx; i++) {
+      if (!activeWeek[i]) continue;
+      if (BACK_ACCESSORY_CLUSTERS.has(clusterForDay(activeWeek, i, focusPreset, splitRebalance))) {
+        priorBackDays += 1;
+      }
+    }
+    if (priorBackDays < 1) return null; // first back-capable day keeps it
+    const penalties = {};
+    for (const name of BACK_EXTENSION_FAMILY) penalties[name] = 1.0;
+    return penalties;
+  }
   // Only a leg/posterior (hinge-capable) day can carry a redundant hinge.
   if (!HINGE_CLUSTERS.has(todayCluster)) return null;
   // Count active hinge-cluster days scheduled BEFORE today this week.
