@@ -13,7 +13,9 @@
       "triceps"
     ],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-shoulder-press",
+    "aliases": []
   },
   "Incline DB Press": {
     "nameRo": "Impins inclinat cu gantere",
@@ -31,7 +33,9 @@
       "triceps"
     ],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "incline-db-press",
+    "aliases": []
   },
   "Flat DB Press": {
     "nameRo": "Impins plat cu gantere",
@@ -48,7 +52,9 @@
       "triceps"
     ],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "flat-db-press",
+    "aliases": []
   },
   "Flat Barbell Bench": {
     "nameRo": "Impins din piept plat cu bara",
@@ -65,7 +71,9 @@
       "triceps"
     ],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "flat-barbell-bench",
+    "aliases": []
   },
   "Lat Pulldown": {
     "nameRo": "Lat Pulldown",
@@ -81,7 +89,9 @@
       "biceps"
     ],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "lat-pulldown",
+    "aliases": []
   },
   "Cable Row": {
     "nameRo": "Ramat la cablu",
@@ -98,7 +108,9 @@
       "biceps"
     ],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-row",
+    "aliases": []
   },
   "Chest-Supported Row": {
     "nameRo": "Ramat cu piept sprijinit",
@@ -115,7 +127,9 @@
       "biceps"
     ],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "chest-supported-row",
+    "aliases": []
   },
   "Romanian Deadlift": {
     "nameRo": "Romanian Deadlift",
@@ -131,7 +145,9 @@
       "spate"
     ],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "romanian-deadlift",
+    "aliases": []
   },
   "Leg Press": {
     "nameRo": "Presa de picioare la 45 grade",
@@ -146,7 +162,9 @@
     "muscle_target_primary": "picioare-quads",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "leg-press",
+    "aliases": []
   },
   "Lateral Raises": {
     "nameRo": "Ridicari laterale",
@@ -159,7 +177,9 @@
     "tier": 2,
     "muscle_target_primary": "umeri",
     "muscle_target_secondary": [],
-    "skill_level": "beginner"
+    "skill_level": "beginner",
+    "id": "lateral-raises",
+    "aliases": []
   },
   "Lateral Raises (cable)": {
     "nameRo": "Ridicari laterale (cable)",
@@ -172,7 +192,9 @@
     "tier": 2,
     "muscle_target_primary": "umeri",
     "muscle_target_secondary": [],
-    "skill_level": "beginner"
+    "skill_level": "beginner",
+    "id": "lateral-raises-cable",
+    "aliases": []
   },
   "Rear Delt Fly": {
     "nameRo": "Fluturari deltoid posterior",
@@ -185,7 +207,9 @@
     "tier": 2,
     "muscle_target_primary": "umeri",
     "muscle_target_secondary": [],
-    "skill_level": "beginner"
+    "skill_level": "beginner",
+    "id": "rear-delt-fly",
+    "aliases": []
   },
   "Rear Delt Cable": {
     "nameRo": "Deltoid posterior la cablu",
@@ -198,7 +222,9 @@
     "tier": 2,
     "muscle_target_primary": "umeri",
     "muscle_target_secondary": [],
-    "skill_level": "beginner"
+    "skill_level": "beginner",
+    "id": "rear-delt-cable",
+    "aliases": []
   },
   "Pec Deck / Cable Fly": {
     "nameRo": "Fluturari Pec Deck sau cablu",
@@ -213,7 +239,9 @@
     "muscle_target_primary": "piept",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "pec-deck-cable-fly",
+    "aliases": []
   },
   "Cable Fly": {
     "nameRo": "Fluturari la cablu",
@@ -227,7 +255,11 @@
     "muscle_target_primary": "piept",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-fly",
+    "aliases": [
+      "Chest Fly"
+    ]
   },
   "Incline DB Curl": {
     "nameRo": "Flexii inclinate cu gantere",
@@ -242,7 +274,9 @@
     "muscle_target_primary": "biceps",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "incline-db-curl",
+    "aliases": []
   },
   "Bayesian Curl": {
     "nameRo": "Flexii biceps la cablu in spate",
@@ -257,7 +291,9 @@
     "muscle_target_primary": "biceps",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "bayesian-curl",
+    "aliases": []
   },
   "Cable Curl": {
     "nameRo": "Flexii la cablu",
@@ -272,7 +308,9 @@
     "muscle_target_primary": "biceps",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-curl",
+    "aliases": []
   },
   "Preacher Curl": {
     "nameRo": "Flexii la pupitru",
@@ -286,7 +324,9 @@
     "tier": 2,
     "muscle_target_primary": "biceps",
     "muscle_target_secondary": [],
-    "skill_level": "beginner"
+    "skill_level": "beginner",
+    "id": "preacher-curl",
+    "aliases": []
   },
   "Hammer Curl": {
     "nameRo": "Hammer Curl",
@@ -299,7 +339,9 @@
     "tier": 2,
     "muscle_target_primary": "biceps",
     "muscle_target_secondary": [],
-    "skill_level": "beginner"
+    "skill_level": "beginner",
+    "id": "hammer-curl",
+    "aliases": []
   },
   "Overhead Triceps": {
     "nameRo": "Extensii triceps peste cap",
@@ -312,7 +354,9 @@
     "tier": 2,
     "muscle_target_primary": "triceps",
     "muscle_target_secondary": [],
-    "skill_level": "beginner"
+    "skill_level": "beginner",
+    "id": "overhead-triceps",
+    "aliases": []
   },
   "Pushdown": {
     "nameRo": "Extensii triceps la cablu jos",
@@ -325,7 +369,9 @@
     "tier": 2,
     "muscle_target_primary": "triceps",
     "muscle_target_secondary": [],
-    "skill_level": "beginner"
+    "skill_level": "beginner",
+    "id": "pushdown",
+    "aliases": []
   },
   "Leg Curl": {
     "nameRo": "Flexii femurale",
@@ -339,7 +385,9 @@
     "muscle_target_primary": "picioare-hamstrings",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "leg-curl",
+    "aliases": []
   },
   "Leg Extension": {
     "nameRo": "Extensii cvadriceps",
@@ -353,7 +401,9 @@
     "muscle_target_primary": "picioare-quads",
     "muscle_target_secondary": [],
     "skill_level": "beginner",
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "leg-extension",
+    "aliases": []
   },
   "Face Pulls": {
     "nameRo": "Face Pulls",
@@ -366,7 +416,9 @@
     "tier": 3,
     "muscle_target_primary": "umeri",
     "muscle_target_secondary": [],
-    "skill_level": "beginner"
+    "skill_level": "beginner",
+    "id": "face-pulls",
+    "aliases": []
   },
   "Calf Raises": {
     "nameRo": "Ridicari pe varfuri",
@@ -377,7 +429,9 @@
     "tier": 3,
     "muscle_target_primary": "gambe",
     "muscle_target_secondary": [],
-    "skill_level": "beginner"
+    "skill_level": "beginner",
+    "id": "calf-raises",
+    "aliases": []
   },
   "Incline Barbell Bench": {
     "nameRo": "Impins din piept inclinat cu bara",
@@ -420,7 +474,9 @@
         "exercise_id": "Wall Push-up Incline"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "incline-barbell-bench",
+    "aliases": []
   },
   "Decline Barbell Bench": {
     "nameRo": "Impins inclinat negativ cu bara",
@@ -461,7 +517,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "decline-barbell-bench",
+    "aliases": []
   },
   "Close-Grip Bench Press": {
     "nameRo": "Bench Press priza ingusta",
@@ -503,7 +561,9 @@
         "exercise_id": "Knee Diamond Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "close-grip-bench-press",
+    "aliases": []
   },
   "Wide-Grip Bench Press": {
     "nameRo": "Bench Press priza larga",
@@ -544,7 +604,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Wide Push-up"
       }
-    ]
+    ],
+    "id": "wide-grip-bench-press",
+    "aliases": []
   },
   "Paused Bench Press": {
     "nameRo": "Bench Press cu pauza",
@@ -586,7 +648,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "paused-bench-press",
+    "aliases": []
   },
   "Board Press": {
     "nameRo": "Impins cu placa la piept",
@@ -627,7 +691,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Diamond Push-up"
       }
-    ]
+    ],
+    "id": "board-press",
+    "aliases": []
   },
   "Floor Press Barbell": {
     "nameRo": "Impins de la sol cu bara",
@@ -669,7 +735,9 @@
         "exercise_id": "Knee Diamond Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "floor-press-barbell",
+    "aliases": []
   },
   "Reverse-Grip Bench Press": {
     "nameRo": "Bench Press priza inversa",
@@ -710,7 +778,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Decline Push-up"
       }
-    ]
+    ],
+    "id": "reverse-grip-bench-press",
+    "aliases": []
   },
   "Decline DB Press": {
     "nameRo": "Impins inclinat negativ cu gantere",
@@ -751,7 +821,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "decline-db-press",
+    "aliases": []
   },
   "Neutral Grip DB Press": {
     "nameRo": "Impins din piept priza neutra gantere",
@@ -792,7 +864,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "neutral-grip-db-press",
+    "aliases": []
   },
   "Single-Arm DB Press": {
     "nameRo": "Impins din piept un brat gantera",
@@ -833,7 +907,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Single-Arm Push-up"
       }
-    ]
+    ],
+    "id": "single-arm-db-press",
+    "aliases": []
   },
   "Low-Incline DB Press": {
     "nameRo": "Impins inclinat jos cu gantere",
@@ -875,7 +951,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Decline Push-up"
       }
-    ]
+    ],
+    "id": "low-incline-db-press",
+    "aliases": []
   },
   "High-Incline DB Press": {
     "nameRo": "Impins inclinat sus cu gantere",
@@ -917,7 +995,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "high-incline-db-press",
+    "aliases": []
   },
   "Floor Press DB": {
     "nameRo": "Impins de la sol cu gantere",
@@ -958,7 +1038,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Diamond Push-up"
       }
-    ]
+    ],
+    "id": "floor-press-db",
+    "aliases": []
   },
   "DB Squeeze Press": {
     "nameRo": "Impins cu strangere gantere",
@@ -999,7 +1081,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Diamond Push-up"
       }
-    ]
+    ],
+    "id": "db-squeeze-press",
+    "aliases": []
   },
   "Incline DB Press 45": {
     "nameRo": "Impins inclinat 45 cu gantere",
@@ -1041,7 +1125,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Decline Push-up"
       }
-    ]
+    ],
+    "id": "incline-db-press-45",
+    "aliases": []
   },
   "Alternating DB Press": {
     "nameRo": "Impins din piept alternativ gantere",
@@ -1082,7 +1168,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "alternating-db-press",
+    "aliases": []
   },
   "Larsen Press DB": {
     "nameRo": "Impins Larsen cu gantere",
@@ -1123,7 +1211,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "larsen-press-db",
+    "aliases": []
   },
   "Smith Machine Bench": {
     "nameRo": "Impins din piept la Smith",
@@ -1166,7 +1256,9 @@
         "exercise_id": "Knee Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "smith-machine-bench",
+    "aliases": []
   },
   "Smith Incline Bench": {
     "nameRo": "Impins inclinat la Smith",
@@ -1209,7 +1301,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "smith-incline-bench",
+    "aliases": []
   },
   "Smith Decline Bench": {
     "nameRo": "Impins inclinat negativ la Smith",
@@ -1250,7 +1344,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "smith-decline-bench",
+    "aliases": []
   },
   "Flat Chest Press Machine": {
     "nameRo": "Impins din piept plat la aparat",
@@ -1292,7 +1388,9 @@
         "exercise_id": "Knee Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "flat-chest-press-machine",
+    "aliases": []
   },
   "Incline Chest Press Machine": {
     "nameRo": "Impins din piept inclinat la aparat",
@@ -1335,7 +1433,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "incline-chest-press-machine",
+    "aliases": []
   },
   "Decline Chest Press Machine": {
     "nameRo": "Impins din piept inclinat negativ",
@@ -1376,7 +1476,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "decline-chest-press-machine",
+    "aliases": []
   },
   "Hammer Press Machine": {
     "nameRo": "Impins la aparat priza ciocan",
@@ -1417,7 +1519,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "hammer-press-machine",
+    "aliases": []
   },
   "Hammer Incline Press": {
     "nameRo": "Impins inclinat priza ciocan",
@@ -1459,7 +1563,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "hammer-incline-press",
+    "aliases": []
   },
   "Hammer Decline Press": {
     "nameRo": "Impins inclinat negativ priza ciocan",
@@ -1500,7 +1606,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "hammer-decline-press",
+    "aliases": []
   },
   "Single-Arm Chest Press Machine": {
     "nameRo": "Impins din piept un brat aparat",
@@ -1541,7 +1649,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Single-Arm Push-up"
       }
-    ]
+    ],
+    "id": "single-arm-chest-press-machine",
+    "aliases": []
   },
   "Converging Chest Press": {
     "nameRo": "Impins din piept convergent",
@@ -1583,7 +1693,9 @@
         "exercise_id": "Knee Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "converging-chest-press",
+    "aliases": []
   },
   "Pec Deck Rear": {
     "nameRo": "Pec Deck deltoid posterior",
@@ -1622,7 +1734,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "pec-deck-rear",
+    "aliases": []
   },
   "Pec Deck Plate-Loaded": {
     "nameRo": "Pec Deck cu discuri",
@@ -1661,7 +1775,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "pec-deck-plate-loaded",
+    "aliases": []
   },
   "Cable Chest Press": {
     "nameRo": "Impins din piept la cablu",
@@ -1702,7 +1818,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "cable-chest-press",
+    "aliases": []
   },
   "Cable Incline Press": {
     "nameRo": "Impins inclinat la cablu",
@@ -1744,7 +1862,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "cable-incline-press",
+    "aliases": []
   },
   "Cable Crossover High-to-Low": {
     "nameRo": "Fluturari la cablu de sus in jos",
@@ -1784,7 +1904,9 @@
         "exercise_id": "Knee Decline Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-crossover-high-to-low",
+    "aliases": []
   },
   "Cable Fly Low-to-High": {
     "nameRo": "Fluturari la cablu de jos in sus",
@@ -1823,7 +1945,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "cable-fly-low-to-high",
+    "aliases": []
   },
   "Cable Fly Mid": {
     "nameRo": "Fluturari la cablu la mijloc",
@@ -1862,7 +1986,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "cable-fly-mid",
+    "aliases": []
   },
   "Single-Arm Cable Fly": {
     "nameRo": "Fluturari la cablu cu un brat",
@@ -1901,7 +2027,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "single-arm-cable-fly",
+    "aliases": []
   },
   "Incline Cable Fly": {
     "nameRo": "Fluturari la cablu inclinat",
@@ -1942,7 +2070,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "incline-cable-fly",
+    "aliases": []
   },
   "Decline Cable Fly": {
     "nameRo": "Fluturari la cablu inclinat negativ",
@@ -1981,7 +2111,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "decline-cable-fly",
+    "aliases": []
   },
   "Kneeling Cable Crossover": {
     "nameRo": "Fluturari la cablu in genunchi",
@@ -2020,7 +2152,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "kneeling-cable-crossover",
+    "aliases": []
   },
   "Cable Crossover Standing": {
     "nameRo": "Fluturari incrucisate la cablu",
@@ -2059,7 +2193,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "cable-crossover-standing",
+    "aliases": []
   },
   "Cable Pec Deck": {
     "nameRo": "Pec Deck la cablu",
@@ -2098,7 +2234,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "cable-pec-deck",
+    "aliases": []
   },
   "Cable Squeeze Press": {
     "nameRo": "Impins cu strangere la cablu",
@@ -2139,7 +2277,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Diamond Push-up"
       }
-    ]
+    ],
+    "id": "cable-squeeze-press",
+    "aliases": []
   },
   "DB Fly": {
     "nameRo": "Fluturari cu gantere",
@@ -2179,7 +2319,9 @@
         "exercise_id": "Knee Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-fly",
+    "aliases": []
   },
   "Incline DB Fly": {
     "nameRo": "Fluturari inclinat cu gantere",
@@ -2220,7 +2362,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "incline-db-fly",
+    "aliases": []
   },
   "Decline DB Fly": {
     "nameRo": "Fluturari inclinat negativ gantere",
@@ -2259,7 +2403,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "decline-db-fly",
+    "aliases": []
   },
   "Floor DB Fly": {
     "nameRo": "Fluturari la sol cu gantere",
@@ -2298,7 +2444,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "floor-db-fly",
+    "aliases": []
   },
   "Single-Arm DB Fly": {
     "nameRo": "Fluturari un brat cu gantera",
@@ -2337,7 +2485,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "single-arm-db-fly",
+    "aliases": []
   },
   "DB Pullover": {
     "nameRo": "Pullover cu gantera",
@@ -2378,7 +2528,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "db-pullover",
+    "aliases": []
   },
   "Dip": {
     "nameRo": "Flotari la paralele",
@@ -2420,7 +2572,9 @@
         "exercise_id": "Bench Dip Feet-on-Floor"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "dip",
+    "aliases": []
   },
   "Dip Bodyweight": {
     "nameRo": "Flotari la paralele fara greutate",
@@ -2461,7 +2615,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip Feet-on-Floor"
       }
-    ]
+    ],
+    "id": "dip-bodyweight",
+    "aliases": []
   },
   "Assisted Dip Machine": {
     "nameRo": "Flotari la paralele asistate aparat",
@@ -2503,7 +2659,9 @@
         "exercise_id": "Bench Dip Feet-on-Floor"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "assisted-dip-machine",
+    "aliases": []
   },
   "Bench Dip": {
     "nameRo": "Flotari triceps pe banca",
@@ -2544,7 +2702,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip Knees-Bent"
       }
-    ]
+    ],
+    "id": "bench-dip",
+    "aliases": []
   },
   "Weighted Dip": {
     "nameRo": "Flotari la paralele cu greutate",
@@ -2585,7 +2745,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip Feet-on-Floor"
       }
-    ]
+    ],
+    "id": "weighted-dip",
+    "aliases": []
   },
   "Band-Assisted Dip": {
     "nameRo": "Flotari la paralele asistate cu banda",
@@ -2626,7 +2788,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip Feet-on-Floor"
       }
-    ]
+    ],
+    "id": "band-assisted-dip",
+    "aliases": []
   },
   "Bench Dip Feet-on-Floor": {
     "nameRo": "Flotari triceps pe banca picioare jos",
@@ -2667,7 +2831,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip Knees-Bent"
       }
-    ]
+    ],
+    "id": "bench-dip-feet-on-floor",
+    "aliases": []
   },
   "Bench Dip Knees-Bent": {
     "nameRo": "Flotari triceps pe banca genunchi indoit",
@@ -2705,7 +2871,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "bench-dip-knees-bent",
+    "aliases": []
   },
   "Push-up": {
     "nameRo": "Flotari",
@@ -2748,7 +2916,9 @@
         "exercise_id": "Wall Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "push-up",
+    "aliases": []
   },
   "Knee Push-up": {
     "nameRo": "Flotari pe genunchi",
@@ -2790,7 +2960,9 @@
         "exercise_id": "Wall Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "knee-push-up",
+    "aliases": []
   },
   "Wall Push-up": {
     "nameRo": "Flotari la perete",
@@ -2830,7 +3002,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up Incline"
       }
-    ]
+    ],
+    "id": "wall-push-up",
+    "aliases": []
   },
   "Wall Push-up Incline": {
     "nameRo": "Flotari la perete inclinat",
@@ -2868,7 +3042,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "wall-push-up-incline",
+    "aliases": []
   },
   "Diamond Push-up": {
     "nameRo": "Flotari diamant",
@@ -2910,7 +3086,9 @@
         "exercise_id": "Knee Diamond Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "diamond-push-up",
+    "aliases": []
   },
   "Knee Diamond Push-up": {
     "nameRo": "Flotari diamant pe genunchi",
@@ -2950,7 +3128,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "knee-diamond-push-up",
+    "aliases": []
   },
   "Wide Push-up": {
     "nameRo": "Flotari priza larga",
@@ -2991,7 +3171,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "wide-push-up",
+    "aliases": []
   },
   "Knee Wide Push-up": {
     "nameRo": "Flotari larg pe genunchi",
@@ -3029,7 +3211,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "knee-wide-push-up",
+    "aliases": []
   },
   "Decline Push-up": {
     "nameRo": "Flotari inclinate negativ",
@@ -3071,7 +3255,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "decline-push-up",
+    "aliases": []
   },
   "Knee Decline Push-up": {
     "nameRo": "Flotari pe genunchi inclinat negativ",
@@ -3111,7 +3297,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "knee-decline-push-up",
+    "aliases": []
   },
   "Incline Push-up": {
     "nameRo": "Flotari inclinate",
@@ -3153,7 +3341,9 @@
         "exercise_id": "Wall Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "incline-push-up",
+    "aliases": []
   },
   "Pike Push-up": {
     "nameRo": "Flotari pike pentru umeri",
@@ -3196,7 +3386,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "pike-push-up",
+    "aliases": []
   },
   "Wall Pike Push-up": {
     "nameRo": "Flotari pike la perete umeri",
@@ -3236,7 +3428,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "wall-pike-push-up",
+    "aliases": []
   },
   "Plyometric Push-up": {
     "nameRo": "Flotari pliometrice",
@@ -3278,7 +3472,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "plyometric-push-up",
+    "aliases": []
   },
   "Clap Push-up": {
     "nameRo": "Flotari cu bataie palme",
@@ -3320,7 +3516,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "clap-push-up",
+    "aliases": []
   },
   "Archer Push-up": {
     "nameRo": "Flotari archer",
@@ -3361,7 +3559,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "archer-push-up",
+    "aliases": []
   },
   "Single-Arm Push-up Assisted": {
     "nameRo": "Flotari un brat asistate",
@@ -3402,7 +3602,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Single-Arm Push-up"
       }
-    ]
+    ],
+    "id": "single-arm-push-up-assisted",
+    "aliases": []
   },
   "Knee Single-Arm Push-up": {
     "nameRo": "Flotari pe genunchi un brat",
@@ -3442,7 +3644,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "knee-single-arm-push-up",
+    "aliases": []
   },
   "Spoto Press": {
     "nameRo": "Impins Spoto cu pauza",
@@ -3483,7 +3687,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "spoto-press",
+    "aliases": []
   },
   "Slow Push-up": {
     "nameRo": "Flotari lente",
@@ -3524,7 +3730,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "slow-push-up",
+    "aliases": []
   },
   "Pin Press": {
     "nameRo": "Impins din pini la piept",
@@ -3565,7 +3773,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Diamond Push-up"
       }
-    ]
+    ],
+    "id": "pin-press",
+    "aliases": []
   },
   "Smith Pin Press": {
     "nameRo": "Impins din pini la Smith",
@@ -3606,7 +3816,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Diamond Push-up"
       }
-    ]
+    ],
+    "id": "smith-pin-press",
+    "aliases": []
   },
   "Smith Floor Press": {
     "nameRo": "Impins de la sol la Smith",
@@ -3647,7 +3859,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Diamond Push-up"
       }
-    ]
+    ],
+    "id": "smith-floor-press",
+    "aliases": []
   },
   "Chest Press Machine Partial": {
     "nameRo": "Impins din piept partial aparat",
@@ -3688,7 +3902,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Diamond Push-up"
       }
-    ]
+    ],
+    "id": "chest-press-machine-partial",
+    "aliases": []
   },
   "Chest Press Machine Lockout": {
     "nameRo": "Impins din piept lockout aparat",
@@ -3729,7 +3945,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Diamond Push-up"
       }
-    ]
+    ],
+    "id": "chest-press-machine-lockout",
+    "aliases": []
   },
   "Smith Machine Bench Paused": {
     "nameRo": "Impins din piept la Smith cu pauza",
@@ -3771,7 +3989,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "smith-machine-bench-paused",
+    "aliases": []
   },
   "Chest Press Machine Slow": {
     "nameRo": "Impins din piept lent la aparat",
@@ -3812,7 +4032,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "chest-press-machine-slow",
+    "aliases": []
   },
   "Smith Wide-Grip Bench": {
     "nameRo": "Impins priza larga la Smith",
@@ -3853,7 +4075,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Wide Push-up"
       }
-    ]
+    ],
+    "id": "smith-wide-grip-bench",
+    "aliases": []
   },
   "Chest Press Machine Wide": {
     "nameRo": "Impins din piept larg la aparat",
@@ -3894,7 +4118,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Wide Push-up"
       }
-    ]
+    ],
+    "id": "chest-press-machine-wide",
+    "aliases": []
   },
   "Smith Close-Grip Bench": {
     "nameRo": "Impins priza ingusta la Smith",
@@ -3936,7 +4162,9 @@
         "exercise_id": "Knee Diamond Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "smith-close-grip-bench",
+    "aliases": []
   },
   "Triceps Press Machine": {
     "nameRo": "Impins triceps la aparat",
@@ -3978,7 +4206,9 @@
         "exercise_id": "Knee Diamond Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "triceps-press-machine",
+    "aliases": []
   },
   "Smith Reverse-Grip Bench": {
     "nameRo": "Impins priza inversa la Smith",
@@ -4019,7 +4249,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Decline Push-up"
       }
-    ]
+    ],
+    "id": "smith-reverse-grip-bench",
+    "aliases": []
   },
   "Cable Pullover": {
     "nameRo": "Pullover la cablu",
@@ -4060,7 +4292,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "cable-pullover",
+    "aliases": []
   },
   "Pull-up": {
     "nameRo": "Tractiuni",
@@ -4102,7 +4336,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "pull-up",
+    "aliases": []
   },
   "Wide-Grip Pull-up": {
     "nameRo": "Tractiuni priza larga",
@@ -4143,7 +4379,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "wide-grip-pull-up",
+    "aliases": []
   },
   "Close-Grip Pull-up": {
     "nameRo": "Tractiuni priza ingusta",
@@ -4184,7 +4422,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "close-grip-pull-up",
+    "aliases": []
   },
   "Neutral-Grip Pull-up": {
     "nameRo": "Tractiuni priza neutra",
@@ -4225,7 +4465,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "neutral-grip-pull-up",
+    "aliases": []
   },
   "Weighted Pull-up": {
     "nameRo": "Tractiuni cu greutate",
@@ -4267,7 +4509,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "weighted-pull-up",
+    "aliases": []
   },
   "Plyometric Pull-up": {
     "nameRo": "Tractiuni pliometrice",
@@ -4308,7 +4552,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "plyometric-pull-up",
+    "aliases": []
   },
   "Archer Pull-up": {
     "nameRo": "Tractiuni archer",
@@ -4349,7 +4595,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Bar"
       }
-    ]
+    ],
+    "id": "archer-pull-up",
+    "aliases": []
   },
   "One-Arm Pull-up Progression": {
     "nameRo": "Progresie tractiuni un brat",
@@ -4390,7 +4638,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Bar"
       }
-    ]
+    ],
+    "id": "one-arm-pull-up-progression",
+    "aliases": []
   },
   "Chest-to-Bar Pull-up": {
     "nameRo": "Tractiuni pana la piept",
@@ -4431,7 +4681,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "chest-to-bar-pull-up",
+    "aliases": []
   },
   "Sternum Pull-up": {
     "nameRo": "Tractiuni la stern",
@@ -4472,7 +4724,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "sternum-pull-up",
+    "aliases": []
   },
   "Dead-Hang Pull-up": {
     "nameRo": "Tractiuni din atarnare",
@@ -4513,7 +4767,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "dead-hang-pull-up",
+    "aliases": []
   },
   "Band-Assisted Pull-up": {
     "nameRo": "Tractiuni asistate cu banda",
@@ -4555,7 +4811,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "band-assisted-pull-up",
+    "aliases": []
   },
   "Chin-up": {
     "nameRo": "Tractiuni priza supinata",
@@ -4597,7 +4855,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "chin-up",
+    "aliases": []
   },
   "Weighted Chin-up": {
     "nameRo": "Tractiuni priza supinata cu greutate",
@@ -4638,7 +4898,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "weighted-chin-up",
+    "aliases": []
   },
   "Paused Chin-up": {
     "nameRo": "Tractiuni priza supinata cu pauza",
@@ -4679,7 +4941,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "paused-chin-up",
+    "aliases": []
   },
   "Close-Grip Chin-up": {
     "nameRo": "Tractiuni priza supinata priza ingusta",
@@ -4720,7 +4984,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "close-grip-chin-up",
+    "aliases": []
   },
   "Archer Chin-up": {
     "nameRo": "Tractiuni archer supinate",
@@ -4761,7 +5027,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Bar Underhand"
       }
-    ]
+    ],
+    "id": "archer-chin-up",
+    "aliases": []
   },
   "One-Arm Chin-up Progression": {
     "nameRo": "Progresie tractiuni supinate un brat",
@@ -4802,7 +5070,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Bar Underhand"
       }
-    ]
+    ],
+    "id": "one-arm-chin-up-progression",
+    "aliases": []
   },
   "L-Sit Chin-up": {
     "nameRo": "Tractiuni supinate in L-sit",
@@ -4843,7 +5113,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "l-sit-chin-up",
+    "aliases": []
   },
   "Wide-Grip Lat Pulldown": {
     "nameRo": "Lat Pulldown priza larga",
@@ -4885,7 +5157,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "wide-grip-lat-pulldown",
+    "aliases": []
   },
   "Close-Grip Lat Pulldown": {
     "nameRo": "Lat Pulldown priza ingusta",
@@ -4926,7 +5200,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "close-grip-lat-pulldown",
+    "aliases": []
   },
   "Neutral-Grip Lat Pulldown": {
     "nameRo": "Lat Pulldown priza neutra",
@@ -4968,7 +5244,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "neutral-grip-lat-pulldown",
+    "aliases": []
   },
   "V-Bar Lat Pulldown": {
     "nameRo": "Lat Pulldown cu maner V",
@@ -5010,7 +5288,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "v-bar-lat-pulldown",
+    "aliases": []
   },
   "Lat Pulldown Underhand": {
     "nameRo": "Lat Pulldown priza supinata",
@@ -5051,7 +5331,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "lat-pulldown-underhand",
+    "aliases": []
   },
   "Close-Grip Lat Pulldown Underhand": {
     "nameRo": "Lat Pulldown ingust supinat",
@@ -5092,7 +5374,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "close-grip-lat-pulldown-underhand",
+    "aliases": []
   },
   "Single-Arm Lat Pulldown": {
     "nameRo": "Lat Pulldown cu un brat",
@@ -5133,7 +5417,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "single-arm-lat-pulldown",
+    "aliases": []
   },
   "Single-Arm Lat Pulldown Underhand": {
     "nameRo": "Lat Pulldown un brat supinat",
@@ -5174,7 +5460,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "single-arm-lat-pulldown-underhand",
+    "aliases": []
   },
   "Hammer Strength Lat Pulldown": {
     "nameRo": "Lat Pulldown la aparat Hammer",
@@ -5215,7 +5503,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "hammer-strength-lat-pulldown",
+    "aliases": []
   },
   "Straight-Arm Lat Pulldown": {
     "nameRo": "Lat Pulldown cu brate intinse",
@@ -5255,7 +5545,9 @@
         "exercise_id": "Prone Y Raise"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "straight-arm-lat-pulldown",
+    "aliases": []
   },
   "Barbell Row": {
     "nameRo": "Ramat cu bara",
@@ -5298,7 +5590,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "barbell-row",
+    "aliases": []
   },
   "Yates Row": {
     "nameRo": "Ramat Yates cu bara",
@@ -5339,7 +5633,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "yates-row",
+    "aliases": []
   },
   "T-Bar Row": {
     "nameRo": "Ramat la T-bar",
@@ -5380,7 +5676,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "t-bar-row",
+    "aliases": []
   },
   "Pendlay Row": {
     "nameRo": "Ramat Pendlay cu bara",
@@ -5422,7 +5720,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "pendlay-row",
+    "aliases": []
   },
   "Paused Barbell Row": {
     "nameRo": "Ramat cu bara cu pauza",
@@ -5463,7 +5763,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "paused-barbell-row",
+    "aliases": []
   },
   "Snatch-Grip Barbell Row": {
     "nameRo": "Ramat cu bara priza smuls",
@@ -5504,7 +5806,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "snatch-grip-barbell-row",
+    "aliases": []
   },
   "Meadows Row": {
     "nameRo": "Ramat Meadows landmine",
@@ -5545,7 +5849,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "meadows-row",
+    "aliases": []
   },
   "Landmine T-Bar Row": {
     "nameRo": "Ramat la T-bar landmine",
@@ -5587,7 +5893,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "landmine-t-bar-row",
+    "aliases": []
   },
   "DB Row": {
     "nameRo": "Ramat cu gantera",
@@ -5629,7 +5937,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-row",
+    "aliases": []
   },
   "Chest-Supported DB Row": {
     "nameRo": "Ramat cu piept sprijinit gantere",
@@ -5671,7 +5981,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "chest-supported-db-row",
+    "aliases": []
   },
   "DB Row Underhand": {
     "nameRo": "Ramat cu gantera priza supinata",
@@ -5712,7 +6024,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "db-row-underhand",
+    "aliases": []
   },
   "Kroc Row": {
     "nameRo": "Ramat Kroc cu gantera",
@@ -5753,7 +6067,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "kroc-row",
+    "aliases": []
   },
   "DB Row Heavy": {
     "nameRo": "Ramat greu cu gantera",
@@ -5794,7 +6110,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "db-row-heavy",
+    "aliases": []
   },
   "Cable Row Slow": {
     "nameRo": "Ramat la cablu lent",
@@ -5835,7 +6153,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "cable-row-slow",
+    "aliases": []
   },
   "Wide-Grip Cable Row": {
     "nameRo": "Ramat la cablu priza larga",
@@ -5876,7 +6196,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "wide-grip-cable-row",
+    "aliases": []
   },
   "Close-Grip Cable Row": {
     "nameRo": "Ramat la cablu priza ingusta",
@@ -5917,7 +6239,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "close-grip-cable-row",
+    "aliases": []
   },
   "V-Bar Cable Row": {
     "nameRo": "Ramat la cablu cu maner V",
@@ -5959,7 +6283,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "v-bar-cable-row",
+    "aliases": []
   },
   "Cable Row Underhand": {
     "nameRo": "Ramat la cablu priza supinata",
@@ -6000,7 +6326,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "cable-row-underhand",
+    "aliases": []
   },
   "Close-Grip Cable Row Underhand": {
     "nameRo": "Ramat la cablu ingust supinat",
@@ -6041,7 +6369,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "close-grip-cable-row-underhand",
+    "aliases": []
   },
   "Single-Arm Cable Row": {
     "nameRo": "Ramat la cablu cu un brat",
@@ -6083,7 +6413,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "single-arm-cable-row",
+    "aliases": []
   },
   "High Cable Row": {
     "nameRo": "Ramat la cablu de sus",
@@ -6124,7 +6456,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "high-cable-row",
+    "aliases": []
   },
   "Kneeling Cable Row": {
     "nameRo": "Ramat la cablu in genunchi",
@@ -6165,7 +6499,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "kneeling-cable-row",
+    "aliases": []
   },
   "Hammer Strength Row": {
     "nameRo": "Ramat la aparat Hammer",
@@ -6207,7 +6543,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "hammer-strength-row",
+    "aliases": []
   },
   "Hammer Strength Iso-Lateral High Row": {
     "nameRo": "Ramat iso-lateral sus la aparat",
@@ -6248,7 +6586,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "hammer-strength-iso-lateral-high-row",
+    "aliases": []
   },
   "Hammer Strength Iso-Lateral Low Row": {
     "nameRo": "Ramat iso-lateral jos la aparat",
@@ -6289,7 +6629,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "hammer-strength-iso-lateral-low-row",
+    "aliases": []
   },
   "Hammer Strength Iso-Lateral Mid Row": {
     "nameRo": "Ramat iso-lateral mediu la aparat",
@@ -6330,7 +6672,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "hammer-strength-iso-lateral-mid-row",
+    "aliases": []
   },
   "Hammer Strength Chest-Supported Row": {
     "nameRo": "Ramat cu piept sprijinit la aparat",
@@ -6371,7 +6715,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "hammer-strength-chest-supported-row",
+    "aliases": []
   },
   "T-Bar Row Machine": {
     "nameRo": "Ramat la T-bar la aparat",
@@ -6413,7 +6759,9 @@
         "exercise_id": "Inverted Row Table Low"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "t-bar-row-machine",
+    "aliases": []
   },
   "Smith Machine Row": {
     "nameRo": "Ramat la Smith",
@@ -6454,7 +6802,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "smith-machine-row",
+    "aliases": []
   },
   "Chest-Supported Row Wide": {
     "nameRo": "Ramat cu piept sprijinit larg",
@@ -6495,7 +6845,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "chest-supported-row-wide",
+    "aliases": []
   },
   "Face Pull Bench": {
     "nameRo": "Face Pull pe banca",
@@ -6536,7 +6888,9 @@
         "type": "light_variant",
         "exercise_id": "Band Face Pull"
       }
-    ]
+    ],
+    "id": "face-pull-bench",
+    "aliases": []
   },
   "Kneeling Face Pull": {
     "nameRo": "Face Pull in genunchi",
@@ -6577,7 +6931,9 @@
         "type": "light_variant",
         "exercise_id": "Band Face Pull"
       }
-    ]
+    ],
+    "id": "kneeling-face-pull",
+    "aliases": []
   },
   "Band Face Pull": {
     "nameRo": "Face Pull cu banda",
@@ -6617,7 +6973,9 @@
         "type": "light_variant",
         "exercise_id": "Prone Y Raise"
       }
-    ]
+    ],
+    "id": "band-face-pull",
+    "aliases": []
   },
   "Rope Face Pull": {
     "nameRo": "Face Pull cu coarda",
@@ -6658,7 +7016,9 @@
         "type": "light_variant",
         "exercise_id": "Band Face Pull"
       }
-    ]
+    ],
+    "id": "rope-face-pull",
+    "aliases": []
   },
   "Single-Arm Face Pull": {
     "nameRo": "Face Pull cu un brat",
@@ -6699,7 +7059,9 @@
         "type": "light_variant",
         "exercise_id": "Band Face Pull"
       }
-    ]
+    ],
+    "id": "single-arm-face-pull",
+    "aliases": []
   },
   "EZ Bar Pullover": {
     "nameRo": "Pullover cu bara EZ",
@@ -6740,7 +7102,9 @@
         "type": "light_variant",
         "exercise_id": "Knee Push-up"
       }
-    ]
+    ],
+    "id": "ez-bar-pullover",
+    "aliases": []
   },
   "Machine Pullover": {
     "nameRo": "Pullover la aparat",
@@ -6782,7 +7146,9 @@
         "exercise_id": "Prone Y Raise"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "machine-pullover",
+    "aliases": []
   },
   "BB Shrug": {
     "nameRo": "Ridicari de umeri cu bara",
@@ -6822,7 +7188,9 @@
         "exercise_id": "Band Face Pull"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "bb-shrug",
+    "aliases": []
   },
   "DB Shrug": {
     "nameRo": "Ridicari de umeri cu gantere",
@@ -6862,7 +7230,9 @@
         "exercise_id": "Band Face Pull"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-shrug",
+    "aliases": []
   },
   "Trap Bar Shrug": {
     "nameRo": "Ridicari de umeri cu trap bar",
@@ -6901,7 +7271,9 @@
         "type": "light_variant",
         "exercise_id": "Band Face Pull"
       }
-    ]
+    ],
+    "id": "trap-bar-shrug",
+    "aliases": []
   },
   "Cable Shrug": {
     "nameRo": "Ridicari de umeri la cablu",
@@ -6940,7 +7312,9 @@
         "type": "light_variant",
         "exercise_id": "Band Face Pull"
       }
-    ]
+    ],
+    "id": "cable-shrug",
+    "aliases": []
   },
   "Machine Shrug": {
     "nameRo": "Ridicari de umeri la aparat",
@@ -6979,7 +7353,9 @@
         "type": "light_variant",
         "exercise_id": "Band Face Pull"
       }
-    ]
+    ],
+    "id": "machine-shrug",
+    "aliases": []
   },
   "Smith Machine Shrug": {
     "nameRo": "Ridicari de umeri la Smith",
@@ -7018,7 +7394,9 @@
         "type": "light_variant",
         "exercise_id": "Band Face Pull"
       }
-    ]
+    ],
+    "id": "smith-machine-shrug",
+    "aliases": []
   },
   "Behind-Back BB Shrug": {
     "nameRo": "Ridicari de umeri cu bara la spate",
@@ -7057,7 +7435,9 @@
         "type": "light_variant",
         "exercise_id": "Band Face Pull"
       }
-    ]
+    ],
+    "id": "behind-back-bb-shrug",
+    "aliases": []
   },
   "Plate Shrug": {
     "nameRo": "Ridicari de umeri cu disc",
@@ -7095,7 +7475,9 @@
         "type": "light_variant",
         "exercise_id": "Band Face Pull"
       }
-    ]
+    ],
+    "id": "plate-shrug",
+    "aliases": []
   },
   "Roman Chair Back Extension": {
     "nameRo": "Extensii lombare la scaun roman",
@@ -7136,7 +7518,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "roman-chair-back-extension",
+    "aliases": []
   },
   "45° Hyperextension": {
     "nameRo": "Extensii lombare la 45 grade",
@@ -7177,7 +7561,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "45-hyperextension",
+    "aliases": []
   },
   "GHD Back Extension": {
     "nameRo": "Extensii lombare la GHD",
@@ -7218,7 +7604,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "ghd-back-extension",
+    "aliases": []
   },
   "Weighted Hyperextension": {
     "nameRo": "Extensii lombare cu greutate",
@@ -7259,7 +7647,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "weighted-hyperextension",
+    "aliases": []
   },
   "Reverse Hyperextension": {
     "nameRo": "Extensii lombare inverse",
@@ -7300,7 +7690,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "reverse-hyperextension",
+    "aliases": []
   },
   "BB Good Morning": {
     "nameRo": "Good Morning cu bara",
@@ -7341,7 +7733,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "bb-good-morning",
+    "aliases": []
   },
   "Banded Good Morning": {
     "nameRo": "Good Morning cu banda",
@@ -7383,7 +7777,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "banded-good-morning",
+    "aliases": []
   },
   "Seated Good Morning": {
     "nameRo": "Good Morning sezand",
@@ -7425,7 +7821,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "seated-good-morning",
+    "aliases": []
   },
   "Single-Leg RDL": {
     "nameRo": "Romanian Deadlift pe un picior",
@@ -7467,7 +7865,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "single-leg-rdl",
+    "aliases": []
   },
   "Single-Leg RDL Bodyweight": {
     "nameRo": "Romanian Deadlift un picior liber",
@@ -7509,7 +7909,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "single-leg-rdl-bodyweight",
+    "aliases": []
   },
   "Inverted Row Bar": {
     "nameRo": "Ramat orizontal la bara",
@@ -7551,7 +7953,9 @@
         "exercise_id": "Prone Y Raise"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "inverted-row-bar",
+    "aliases": []
   },
   "Inverted Row Bar Wide": {
     "nameRo": "Ramat orizontal priza larga",
@@ -7592,7 +7996,9 @@
         "type": "light_variant",
         "exercise_id": "Prone Y Raise"
       }
-    ]
+    ],
+    "id": "inverted-row-bar-wide",
+    "aliases": []
   },
   "Inverted Row Bar Close": {
     "nameRo": "Ramat orizontal priza ingusta",
@@ -7633,7 +8039,9 @@
         "type": "light_variant",
         "exercise_id": "Prone Y Raise"
       }
-    ]
+    ],
+    "id": "inverted-row-bar-close",
+    "aliases": []
   },
   "Inverted Row Bar Neutral": {
     "nameRo": "Ramat orizontal priza neutra",
@@ -7674,7 +8082,9 @@
         "type": "light_variant",
         "exercise_id": "Prone Y Raise"
       }
-    ]
+    ],
+    "id": "inverted-row-bar-neutral",
+    "aliases": []
   },
   "Inverted Row Bar Underhand": {
     "nameRo": "Ramat orizontal priza supinata",
@@ -7715,7 +8125,9 @@
         "type": "light_variant",
         "exercise_id": "Prone Y Raise"
       }
-    ]
+    ],
+    "id": "inverted-row-bar-underhand",
+    "aliases": []
   },
   "Inverted Row Bar Close Underhand": {
     "nameRo": "Ramat orizontal ingust supinat",
@@ -7756,7 +8168,9 @@
         "type": "light_variant",
         "exercise_id": "Prone Y Raise"
       }
-    ]
+    ],
+    "id": "inverted-row-bar-close-underhand",
+    "aliases": []
   },
   "Inverted Row Bar Slow": {
     "nameRo": "Ramat orizontal lent",
@@ -7797,7 +8211,9 @@
         "type": "light_variant",
         "exercise_id": "Prone Y Raise"
       }
-    ]
+    ],
+    "id": "inverted-row-bar-slow",
+    "aliases": []
   },
   "Inverted Row Table Low": {
     "nameRo": "Ramat orizontal sub masa",
@@ -7838,7 +8254,9 @@
         "type": "light_variant",
         "exercise_id": "Prone Y Raise"
       }
-    ]
+    ],
+    "id": "inverted-row-table-low",
+    "aliases": []
   },
   "Superman": {
     "nameRo": "Superman extensie spate la sol",
@@ -7876,7 +8294,9 @@
         "type": "light_variant",
         "exercise_id": "Prone Y Raise"
       }
-    ]
+    ],
+    "id": "superman",
+    "aliases": []
   },
   "Prone Y Raise": {
     "nameRo": "Ridicari in Y la pronatie",
@@ -7916,7 +8336,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "prone-y-raise",
+    "aliases": []
   },
   "Prone T Raise": {
     "nameRo": "Ridicari in T la pronatie",
@@ -7956,7 +8378,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "prone-t-raise",
+    "aliases": []
   },
   "Scapular Pull-up": {
     "nameRo": "Tractiuni scapulare",
@@ -7995,7 +8419,9 @@
         "type": "light_variant",
         "exercise_id": "Prone Y Raise"
       }
-    ]
+    ],
+    "id": "scapular-pull-up",
+    "aliases": []
   },
   "Rack Pull": {
     "nameRo": "Indreptari partiale din rack",
@@ -8036,7 +8462,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg RDL Bodyweight"
       }
-    ]
+    ],
+    "id": "rack-pull",
+    "aliases": []
   },
   "Conventional Deadlift": {
     "nameRo": "Indreptari clasice",
@@ -8078,7 +8506,9 @@
         "exercise_id": "Glute Bridge"
       }
     ],
-    "status": "MANUAL_ADVANCED"
+    "status": "MANUAL_ADVANCED",
+    "id": "conventional-deadlift",
+    "aliases": []
   },
   "OHP": {
     "nameRo": "Impins militar",
@@ -8121,7 +8551,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "ohp",
+    "aliases": []
   },
   "Push Press": {
     "nameRo": "Push Press",
@@ -8163,7 +8595,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "push-press",
+    "aliases": []
   },
   "Behind-the-Neck Press": {
     "nameRo": "Impins din spatele cefei",
@@ -8204,7 +8638,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "behind-the-neck-press",
+    "aliases": []
   },
   "Pin OHP": {
     "nameRo": "Impins militar din pini",
@@ -8245,7 +8681,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "pin-ohp",
+    "aliases": []
   },
   "Paused OHP": {
     "nameRo": "Impins militar cu pauza",
@@ -8286,7 +8724,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "paused-ohp",
+    "aliases": []
   },
   "Z Press": {
     "nameRo": "Impins sezand pe sol",
@@ -8327,7 +8767,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "z-press",
+    "aliases": []
   },
   "Bradford Press": {
     "nameRo": "Impins Bradford peste cap",
@@ -8368,7 +8810,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "bradford-press",
+    "aliases": []
   },
   "Klokov Press": {
     "nameRo": "Impins Klokov priza larga",
@@ -8409,7 +8853,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "klokov-press",
+    "aliases": []
   },
   "Snatch-Grip Push Press": {
     "nameRo": "Push Press priza smuls",
@@ -8451,7 +8897,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "snatch-grip-push-press",
+    "aliases": []
   },
   "Seated DB Press": {
     "nameRo": "Impins umeri sezand cu gantere",
@@ -8493,7 +8941,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "seated-db-press",
+    "aliases": []
   },
   "Standing DB Press": {
     "nameRo": "Impins umeri in picioare gantere",
@@ -8534,7 +8984,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "standing-db-press",
+    "aliases": []
   },
   "Single-Arm DB Press Shoulder": {
     "nameRo": "Impins umeri un brat cu gantera",
@@ -8575,7 +9027,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "single-arm-db-press-shoulder",
+    "aliases": []
   },
   "Arnold Press": {
     "nameRo": "Impins Arnold cu gantere",
@@ -8616,7 +9070,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "arnold-press",
+    "aliases": []
   },
   "Neutral Grip DB Shoulder Press": {
     "nameRo": "Impins umeri priza neutra gantere",
@@ -8657,7 +9113,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "neutral-grip-db-shoulder-press",
+    "aliases": []
   },
   "Cuban Press": {
     "nameRo": "Impins cuban umeri",
@@ -8696,7 +9154,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "cuban-press",
+    "aliases": []
   },
   "Bradford Press DB": {
     "nameRo": "Impins Bradford cu gantere",
@@ -8737,7 +9197,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "bradford-press-db",
+    "aliases": []
   },
   "Z Press DB": {
     "nameRo": "Impins sezand pe sol cu gantere",
@@ -8778,7 +9240,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "z-press-db",
+    "aliases": []
   },
   "Half-Kneeling DB Press": {
     "nameRo": "Impins umeri intr-un genunchi gantere",
@@ -8819,7 +9283,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "half-kneeling-db-press",
+    "aliases": []
   },
   "Alternating DB Press Shoulder": {
     "nameRo": "Impins umeri alternativ gantere",
@@ -8860,7 +9326,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "alternating-db-press-shoulder",
+    "aliases": []
   },
   "Smith OHP": {
     "nameRo": "Impins militar la Smith",
@@ -8902,7 +9370,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "smith-ohp",
+    "aliases": []
   },
   "Smith OHP Seated": {
     "nameRo": "Impins militar sezand la Smith",
@@ -8943,7 +9413,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "smith-ohp-seated",
+    "aliases": []
   },
   "Smith Behind-Neck Press": {
     "nameRo": "Impins din spatele cefei la Smith",
@@ -8984,7 +9456,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "smith-behind-neck-press",
+    "aliases": []
   },
   "Hammer Strength OHP": {
     "nameRo": "Impins militar la aparat",
@@ -9025,7 +9499,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "hammer-strength-ohp",
+    "aliases": []
   },
   "Hammer Strength Lateral": {
     "nameRo": "Ridicari laterale Hammer Strength",
@@ -9064,7 +9540,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "hammer-strength-lateral",
+    "aliases": []
   },
   "Machine Shoulder Press": {
     "nameRo": "Impins umeri la aparat",
@@ -9106,7 +9584,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "machine-shoulder-press",
+    "aliases": []
   },
   "Machine Shoulder Press Neutral": {
     "nameRo": "Impins umeri priza neutra aparat",
@@ -9147,7 +9627,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "machine-shoulder-press-neutral",
+    "aliases": []
   },
   "Machine Shoulder Press Slow": {
     "nameRo": "Impins umeri lent la aparat",
@@ -9188,7 +9670,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "machine-shoulder-press-slow",
+    "aliases": []
   },
   "Single-Arm Machine Shoulder Press": {
     "nameRo": "Impins umeri un brat la aparat",
@@ -9229,7 +9713,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "single-arm-machine-shoulder-press",
+    "aliases": []
   },
   "Converging Shoulder Press": {
     "nameRo": "Impins umeri convergent la aparat",
@@ -9270,7 +9756,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "converging-shoulder-press",
+    "aliases": []
   },
   "DB Lateral Raise": {
     "nameRo": "Ridicari laterale cu gantere",
@@ -9310,7 +9798,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-lateral-raise",
+    "aliases": []
   },
   "Cable Lateral Raise": {
     "nameRo": "Ridicari laterale la cablu",
@@ -9350,7 +9840,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-lateral-raise",
+    "aliases": []
   },
   "Machine Lateral Raise": {
     "nameRo": "Ridicari laterale la aparat",
@@ -9390,7 +9882,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "machine-lateral-raise",
+    "aliases": []
   },
   "Seated DB Lateral": {
     "nameRo": "Ridicari laterale sezand gantere",
@@ -9429,7 +9923,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "seated-db-lateral",
+    "aliases": []
   },
   "Leaning Lateral Raise": {
     "nameRo": "Ridicari laterale inclinat",
@@ -9469,7 +9965,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "leaning-lateral-raise",
+    "aliases": []
   },
   "21s Lateral": {
     "nameRo": "Ridicari laterale 21",
@@ -9508,7 +10006,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "21s-lateral",
+    "aliases": []
   },
   "Y Raise": {
     "nameRo": "Ridicari in Y umeri",
@@ -9550,7 +10050,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "y-raise",
+    "aliases": []
   },
   "Iron Cross": {
     "nameRo": "Fluturari laterale jos la cablu",
@@ -9589,7 +10091,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "iron-cross",
+    "aliases": []
   },
   "Lu Raise": {
     "nameRo": "Ridicari Lu pentru umeri",
@@ -9628,7 +10132,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "lu-raise",
+    "aliases": []
   },
   "Partial Lateral": {
     "nameRo": "Ridicari laterale partiale",
@@ -9667,7 +10173,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "partial-lateral",
+    "aliases": []
   },
   "Behind-the-Back Cable Lateral": {
     "nameRo": "Ridicari laterale la cablu din spate",
@@ -9706,7 +10214,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "behind-the-back-cable-lateral",
+    "aliases": []
   },
   "Lateral Raise Drop Set": {
     "nameRo": "Ridicari laterale drop set",
@@ -9745,7 +10255,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "lateral-raise-drop-set",
+    "aliases": []
   },
   "DB Front Raise": {
     "nameRo": "Ridicari frontale cu gantere",
@@ -9784,7 +10296,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "db-front-raise",
+    "aliases": []
   },
   "Cable Front Raise": {
     "nameRo": "Ridicari frontale la cablu",
@@ -9823,7 +10337,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "cable-front-raise",
+    "aliases": []
   },
   "Barbell Front Raise": {
     "nameRo": "Ridicari frontale cu bara",
@@ -9862,7 +10378,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "barbell-front-raise",
+    "aliases": []
   },
   "Plate Front Raise": {
     "nameRo": "Ridicari frontale cu disc",
@@ -9903,7 +10421,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "plate-front-raise",
+    "aliases": []
   },
   "Machine Front Raise": {
     "nameRo": "Ridicari frontale la aparat",
@@ -9942,7 +10462,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "machine-front-raise",
+    "aliases": []
   },
   "Single-Arm Front Raise": {
     "nameRo": "Ridicari frontale cu un brat",
@@ -9981,7 +10503,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "single-arm-front-raise",
+    "aliases": []
   },
   "Alternating Front Raise": {
     "nameRo": "Ridicari frontale alternative",
@@ -10020,7 +10544,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "alternating-front-raise",
+    "aliases": []
   },
   "Incline Front Raise": {
     "nameRo": "Ridicari frontale inclinat",
@@ -10059,7 +10585,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "incline-front-raise",
+    "aliases": []
   },
   "Lying Front Raise": {
     "nameRo": "Ridicari frontale culcat",
@@ -10098,7 +10626,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "lying-front-raise",
+    "aliases": []
   },
   "Hammer Curl Front Raise": {
     "nameRo": "Ridicari frontale priza ciocan",
@@ -10139,7 +10669,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "hammer-curl-front-raise",
+    "aliases": []
   },
   "Reverse Pec Deck": {
     "nameRo": "Pec Deck invers deltoid posterior",
@@ -10181,7 +10713,9 @@
         "exercise_id": "Wall Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "reverse-pec-deck",
+    "aliases": []
   },
   "Bent-Over DB Lateral": {
     "nameRo": "Ridicari laterale aplecat gantere",
@@ -10222,7 +10756,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "bent-over-db-lateral",
+    "aliases": []
   },
   "Cable Rear Delt Fly": {
     "nameRo": "Fluturari deltoid posterior la cablu",
@@ -10264,7 +10800,9 @@
         "exercise_id": "Wall Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-rear-delt-fly",
+    "aliases": []
   },
   "Face Pull": {
     "nameRo": "Face Pull",
@@ -10306,7 +10844,9 @@
         "exercise_id": "Wall Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "face-pull",
+    "aliases": []
   },
   "Single-Arm Rear Delt": {
     "nameRo": "Deltoid posterior cu un brat",
@@ -10347,7 +10887,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "single-arm-rear-delt",
+    "aliases": []
   },
   "Seated Rear Delt": {
     "nameRo": "Deltoid posterior sezand",
@@ -10388,7 +10930,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "seated-rear-delt",
+    "aliases": []
   },
   "Lying Rear Delt": {
     "nameRo": "Deltoid posterior culcat",
@@ -10429,7 +10973,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "lying-rear-delt",
+    "aliases": []
   },
   "Standing Cable Rear Delt": {
     "nameRo": "Deltoid posterior la cablu in picioare",
@@ -10470,7 +11016,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "standing-cable-rear-delt",
+    "aliases": []
   },
   "Machine Rear Delt": {
     "nameRo": "Deltoid posterior la aparat",
@@ -10511,7 +11059,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "machine-rear-delt",
+    "aliases": []
   },
   "Band Pull-Apart": {
     "nameRo": "Departare banda elastica umeri",
@@ -10552,7 +11102,9 @@
         "exercise_id": "Wall Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "band-pull-apart",
+    "aliases": []
   },
   "Reverse Cable Crossover": {
     "nameRo": "Fluturari inverse la cablu",
@@ -10593,7 +11145,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "reverse-cable-crossover",
+    "aliases": []
   },
   "DB Rear Delt Fly": {
     "nameRo": "Fluturari deltoid posterior gantere",
@@ -10635,7 +11189,9 @@
         "exercise_id": "Wall Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-rear-delt-fly",
+    "aliases": []
   },
   "Scapular Shrug Overhead": {
     "nameRo": "Ridicari scapulare peste cap",
@@ -10676,7 +11232,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "scapular-shrug-overhead",
+    "aliases": []
   },
   "Y-T-W Raise": {
     "nameRo": "Ridicari Y-T-W umeri",
@@ -10717,7 +11275,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "y-t-w-raise",
+    "aliases": []
   },
   "Scaption": {
     "nameRo": "Ridicari frontale-laterale 45 grade",
@@ -10756,7 +11316,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "scaption",
+    "aliases": []
   },
   "Landmine Shoulder Press": {
     "nameRo": "Impins landmine pentru umeri",
@@ -10798,7 +11360,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "landmine-shoulder-press",
+    "aliases": []
   },
   "Landmine 180": {
     "nameRo": "Landmine 180 grade",
@@ -10839,7 +11403,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "landmine-180",
+    "aliases": []
   },
   "Single-Arm Landmine Press": {
     "nameRo": "Impins landmine cu un brat",
@@ -10880,7 +11446,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "single-arm-landmine-press",
+    "aliases": []
   },
   "Half-Kneeling Landmine Press": {
     "nameRo": "Impins landmine intr-un genunchi",
@@ -10921,7 +11489,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "half-kneeling-landmine-press",
+    "aliases": []
   },
   "Bottoms-Up Press KB": {
     "nameRo": "Impins kettlebell rasturnat",
@@ -10962,7 +11532,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "bottoms-up-press-kb",
+    "aliases": []
   },
   "Handstand Push-up": {
     "nameRo": "Flotari in stand pe maini",
@@ -11003,7 +11575,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "handstand-push-up",
+    "aliases": []
   },
   "Wall-Supported Handstand Push-up": {
     "nameRo": "Flotari in stand la perete",
@@ -11045,7 +11619,9 @@
         "exercise_id": "Wall Pike Push-up"
       }
     ],
-    "status": "MANUAL_ADVANCED"
+    "status": "MANUAL_ADVANCED",
+    "id": "wall-supported-handstand-push-up",
+    "aliases": []
   },
   "Behind-the-Neck Push Press": {
     "nameRo": "Push Press din spatele cefei",
@@ -11087,7 +11663,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "behind-the-neck-push-press",
+    "aliases": []
   },
   "Slow Pike Push-up": {
     "nameRo": "Flotari pike lente umeri",
@@ -11128,7 +11706,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "slow-pike-push-up",
+    "aliases": []
   },
   "Half-Press": {
     "nameRo": "Impins partial umeri",
@@ -11169,7 +11749,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "half-press",
+    "aliases": []
   },
   "Single-Arm OHP": {
     "nameRo": "Impins militar cu un brat",
@@ -11210,7 +11792,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "single-arm-ohp",
+    "aliases": []
   },
   "Y Raise Prone": {
     "nameRo": "Ridicari in Y la pronatie cu gantere",
@@ -11251,7 +11835,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "y-raise-prone",
+    "aliases": []
   },
   "External Rotation Cable": {
     "nameRo": "Rotatie externa umar la cablu",
@@ -11290,7 +11876,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "external-rotation-cable",
+    "aliases": []
   },
   "Internal Rotation Cable": {
     "nameRo": "Rotatie interna umar la cablu",
@@ -11329,7 +11917,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Push-up"
       }
-    ]
+    ],
+    "id": "internal-rotation-cable",
+    "aliases": []
   },
   "Clean and Press": {
     "nameRo": "Aruncare la piept si impins",
@@ -11372,7 +11962,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Pike Push-up"
       }
-    ]
+    ],
+    "id": "clean-and-press",
+    "aliases": []
   },
   "Barbell Back Squat (High Bar)": {
     "nameRo": "Genuflexiuni cu bara sus",
@@ -11414,7 +12006,9 @@
         "exercise_id": "Box Squat Smaller ROM"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "barbell-back-squat-high-bar",
+    "aliases": []
   },
   "Barbell Back Squat (Low Bar)": {
     "nameRo": "Genuflexiuni cu bara jos",
@@ -11455,7 +12049,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "barbell-back-squat-low-bar",
+    "aliases": []
   },
   "Front Squat": {
     "nameRo": "Genuflexiuni frontale",
@@ -11495,7 +12091,9 @@
         "exercise_id": "Box Squat Smaller ROM"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "front-squat",
+    "aliases": []
   },
   "Pause Squat": {
     "nameRo": "Genuflexiuni cu pauza",
@@ -11536,7 +12134,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "pause-squat",
+    "aliases": []
   },
   "Tempo Squat": {
     "nameRo": "Genuflexiuni cu tempo",
@@ -11577,7 +12177,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "tempo-squat",
+    "aliases": []
   },
   "Box Squat": {
     "nameRo": "Genuflexiuni pe cutie",
@@ -11618,7 +12220,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "box-squat",
+    "aliases": []
   },
   "Zercher Squat": {
     "nameRo": "Genuflexiuni Zercher",
@@ -11659,7 +12263,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "zercher-squat",
+    "aliases": []
   },
   "Overhead Squat": {
     "nameRo": "Genuflexiuni deasupra capului",
@@ -11701,7 +12307,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Squat Arms Up"
       }
-    ]
+    ],
+    "id": "overhead-squat",
+    "aliases": []
   },
   "Pin Squat": {
     "nameRo": "Genuflexiuni din pini",
@@ -11742,7 +12350,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "pin-squat",
+    "aliases": []
   },
   "Safety Bar Squat": {
     "nameRo": "Genuflexiuni cu bara safety",
@@ -11783,7 +12393,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "safety-bar-squat",
+    "aliases": []
   },
   "Smith Machine Squat": {
     "nameRo": "Genuflexiuni la Smith",
@@ -11823,7 +12435,9 @@
         "exercise_id": "Box Squat Smaller ROM"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "smith-machine-squat",
+    "aliases": []
   },
   "Smith Front Squat": {
     "nameRo": "Genuflexiuni frontale la Smith",
@@ -11862,7 +12476,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "smith-front-squat",
+    "aliases": []
   },
   "Hack Squat Machine": {
     "nameRo": "Genuflexiuni hack la aparat",
@@ -11902,7 +12518,9 @@
         "exercise_id": "Box Squat Smaller ROM"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "hack-squat-machine",
+    "aliases": []
   },
   "Reverse Hack Squat": {
     "nameRo": "Genuflexiuni hack inverse",
@@ -11941,7 +12559,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "reverse-hack-squat",
+    "aliases": []
   },
   "Belt Squat": {
     "nameRo": "Genuflexiuni la belt squat",
@@ -11981,7 +12601,9 @@
         "exercise_id": "Box Squat Smaller ROM"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "belt-squat",
+    "aliases": []
   },
   "Pendulum Squat": {
     "nameRo": "Genuflexiuni pendulum",
@@ -12021,7 +12643,9 @@
         "exercise_id": "Box Squat Smaller ROM"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "pendulum-squat",
+    "aliases": []
   },
   "Goblet Squat": {
     "nameRo": "Genuflexiuni goblet",
@@ -12061,7 +12685,9 @@
         "exercise_id": "Box Squat Smaller ROM"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "goblet-squat",
+    "aliases": []
   },
   "DB Squat": {
     "nameRo": "Genuflexiuni cu gantere",
@@ -12100,7 +12726,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "db-squat",
+    "aliases": []
   },
   "DB Sumo Squat": {
     "nameRo": "Genuflexiuni sumo cu gantere",
@@ -12139,7 +12767,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Sumo Squat"
       }
-    ]
+    ],
+    "id": "db-sumo-squat",
+    "aliases": []
   },
   "Bulgarian Split Squat": {
     "nameRo": "Genuflexiuni bulgaresti",
@@ -12179,7 +12809,9 @@
         "exercise_id": "Assisted Bulgarian Wall Touch"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "bulgarian-split-squat",
+    "aliases": []
   },
   "DB Pistol Squat Assisted": {
     "nameRo": "Genuflexiuni pe un picior asistate",
@@ -12218,7 +12850,9 @@
         "type": "light_variant",
         "exercise_id": "Assisted Pistol Wall Touch"
       }
-    ]
+    ],
+    "id": "db-pistol-squat-assisted",
+    "aliases": []
   },
   "45-Degree Leg Press": {
     "nameRo": "Presa de picioare la 45 grade",
@@ -12257,7 +12891,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "45-degree-leg-press",
+    "aliases": []
   },
   "Horizontal Leg Press": {
     "nameRo": "Presa de picioare orizontala",
@@ -12296,7 +12932,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "horizontal-leg-press",
+    "aliases": []
   },
   "Leg Press Single-Leg": {
     "nameRo": "Presa de picioare pe un picior",
@@ -12335,7 +12973,9 @@
         "type": "light_variant",
         "exercise_id": "Assisted Single-Leg Wall"
       }
-    ]
+    ],
+    "id": "leg-press-single-leg",
+    "aliases": []
   },
   "Narrow-Stance Leg Press": {
     "nameRo": "Presa de picioare pas ingust",
@@ -12374,7 +13014,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Smaller ROM"
       }
-    ]
+    ],
+    "id": "narrow-stance-leg-press",
+    "aliases": []
   },
   "Wide-Stance Leg Press": {
     "nameRo": "Presa de picioare pas larg",
@@ -12413,7 +13055,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Sumo Squat"
       }
-    ]
+    ],
+    "id": "wide-stance-leg-press",
+    "aliases": []
   },
   "DB Lunge": {
     "nameRo": "Fandari cu gantere",
@@ -12453,7 +13097,9 @@
         "exercise_id": "Assisted Lunge Wall"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-lunge",
+    "aliases": []
   },
   "Walking Lunge": {
     "nameRo": "Fandari mers",
@@ -12493,7 +13139,9 @@
         "exercise_id": "Assisted Lunge Wall"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "walking-lunge",
+    "aliases": []
   },
   "Reverse Lunge": {
     "nameRo": "Fandari inapoi",
@@ -12533,7 +13181,9 @@
         "exercise_id": "Assisted Reverse Lunge Wall"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "reverse-lunge",
+    "aliases": []
   },
   "Lateral Lunge": {
     "nameRo": "Fandari laterale",
@@ -12572,7 +13222,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Lateral Squat"
       }
-    ]
+    ],
+    "id": "lateral-lunge",
+    "aliases": []
   },
   "Curtsy Lunge": {
     "nameRo": "Fandari curtsy",
@@ -12611,7 +13263,9 @@
         "type": "light_variant",
         "exercise_id": "Assisted Curtsy Wall"
       }
-    ]
+    ],
+    "id": "curtsy-lunge",
+    "aliases": []
   },
   "Barbell Lunge": {
     "nameRo": "Fandari cu bara",
@@ -12650,7 +13304,9 @@
         "type": "light_variant",
         "exercise_id": "Assisted Lunge Wall"
       }
-    ]
+    ],
+    "id": "barbell-lunge",
+    "aliases": []
   },
   "Deficit Reverse Lunge": {
     "nameRo": "Fandari inapoi cu deficit",
@@ -12689,7 +13345,9 @@
         "type": "light_variant",
         "exercise_id": "Assisted Reverse Lunge Wall"
       }
-    ]
+    ],
+    "id": "deficit-reverse-lunge",
+    "aliases": []
   },
   "Leg Extension Single-Leg": {
     "nameRo": "Extensii cvadriceps pe un picior",
@@ -12729,7 +13387,9 @@
         "exercise_id": "Wall Single-Leg Squat"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "leg-extension-single-leg",
+    "aliases": []
   },
   "Tempo Leg Extension": {
     "nameRo": "Extensii cvadriceps cu tempo",
@@ -12768,7 +13428,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Squat Static"
       }
-    ]
+    ],
+    "id": "tempo-leg-extension",
+    "aliases": []
   },
   "Cable Leg Extension": {
     "nameRo": "Extensii cvadriceps la cablu",
@@ -12807,7 +13469,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Squat Static"
       }
-    ]
+    ],
+    "id": "cable-leg-extension",
+    "aliases": []
   },
   "Sissy Squat Machine": {
     "nameRo": "Genuflexiuni sissy la aparat",
@@ -12846,7 +13510,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Squat Static"
       }
-    ]
+    ],
+    "id": "sissy-squat-machine",
+    "aliases": []
   },
   "Band Leg Extension": {
     "nameRo": "Extensii cvadriceps cu banda",
@@ -12885,7 +13551,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Squat Static"
       }
-    ]
+    ],
+    "id": "band-leg-extension",
+    "aliases": []
   },
   "Leg Extension Drop Set": {
     "nameRo": "Extensii cvadriceps drop set",
@@ -12924,7 +13592,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Squat Static"
       }
-    ]
+    ],
+    "id": "leg-extension-drop-set",
+    "aliases": []
   },
   "Sissy Squat Bodyweight": {
     "nameRo": "Genuflexiuni sissy fara greutate",
@@ -12963,7 +13633,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Squat Partial Range"
       }
-    ]
+    ],
+    "id": "sissy-squat-bodyweight",
+    "aliases": []
   },
   "DB Step-up": {
     "nameRo": "Pasire pe banca cu gantere",
@@ -13002,7 +13674,9 @@
         "type": "light_variant",
         "exercise_id": "Low Box Step-up"
       }
-    ]
+    ],
+    "id": "db-step-up",
+    "aliases": []
   },
   "Barbell Step-up": {
     "nameRo": "Pasire pe banca cu bara",
@@ -13041,7 +13715,9 @@
         "type": "light_variant",
         "exercise_id": "Low Box Step-up"
       }
-    ]
+    ],
+    "id": "barbell-step-up",
+    "aliases": []
   },
   "Pistol Squat": {
     "nameRo": "Genuflexiuni pe un picior",
@@ -13080,7 +13756,9 @@
         "type": "light_variant",
         "exercise_id": "Box Squat Single-Leg"
       }
-    ]
+    ],
+    "id": "pistol-squat",
+    "aliases": []
   },
   "Wall Sit Static": {
     "nameRo": "Sezut la perete static",
@@ -13119,7 +13797,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Squat Partial Range"
       }
-    ]
+    ],
+    "id": "wall-sit-static",
+    "aliases": []
   },
   "Bodyweight Squat": {
     "nameRo": "Genuflexiuni cu greutatea corpului",
@@ -13159,7 +13839,9 @@
         "exercise_id": "Wall Squat Partial Range"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "bodyweight-squat",
+    "aliases": []
   },
   "Stiff-Leg Deadlift": {
     "nameRo": "Indreptari cu picioare drepte",
@@ -13200,7 +13882,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "stiff-leg-deadlift",
+    "aliases": []
   },
   "Snatch-Grip RDL": {
     "nameRo": "Romanian Deadlift priza smuls",
@@ -13241,7 +13925,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "snatch-grip-rdl",
+    "aliases": []
   },
   "Deficit RDL": {
     "nameRo": "Romanian Deadlift cu deficit",
@@ -13282,7 +13968,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "deficit-rdl",
+    "aliases": []
   },
   "Sumo RDL": {
     "nameRo": "Romanian Deadlift sumo",
@@ -13323,7 +14011,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Sumo Hip Hinge"
       }
-    ]
+    ],
+    "id": "sumo-rdl",
+    "aliases": []
   },
   "Block RDL": {
     "nameRo": "Romanian Deadlift de pe blocuri",
@@ -13364,7 +14054,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "block-rdl",
+    "aliases": []
   },
   "Pause RDL": {
     "nameRo": "Romanian Deadlift cu pauza",
@@ -13405,7 +14097,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "pause-rdl",
+    "aliases": []
   },
   "B-Stance RDL": {
     "nameRo": "Romanian Deadlift B-stance",
@@ -13446,7 +14140,9 @@
         "type": "light_variant",
         "exercise_id": "Assisted Single-Leg RDL Wall"
       }
-    ]
+    ],
+    "id": "b-stance-rdl",
+    "aliases": []
   },
   "Smith RDL": {
     "nameRo": "Romanian Deadlift la Smith",
@@ -13487,7 +14183,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "smith-rdl",
+    "aliases": []
   },
   "Hyperextension Machine": {
     "nameRo": "Extensii lombare la aparat",
@@ -13528,7 +14226,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "hyperextension-machine",
+    "aliases": []
   },
   "Reverse Hyper": {
     "nameRo": "Extensii lombare inverse la aparat",
@@ -13570,7 +14270,9 @@
         "exercise_id": "Wall Hip Hinge"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "reverse-hyper",
+    "aliases": []
   },
   "Glute-Ham Raise": {
     "nameRo": "Glute-ham raise la aparat",
@@ -13610,7 +14312,9 @@
         "exercise_id": "Slider Hamstring Curl"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "glute-ham-raise",
+    "aliases": []
   },
   "Natural Glute-Ham Raise": {
     "nameRo": "Glute-ham raise natural",
@@ -13649,7 +14353,9 @@
         "type": "light_variant",
         "exercise_id": "Slider Hamstring Curl"
       }
-    ]
+    ],
+    "id": "natural-glute-ham-raise",
+    "aliases": []
   },
   "Trap Bar Deadlift": {
     "nameRo": "Indreptari cu trap bar",
@@ -13691,7 +14397,9 @@
         "exercise_id": "Wall Hip Hinge"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "trap-bar-deadlift",
+    "aliases": []
   },
   "DB Romanian Deadlift": {
     "nameRo": "Romanian Deadlift cu gantere",
@@ -13733,7 +14441,9 @@
         "exercise_id": "Wall Hip Hinge"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-romanian-deadlift",
+    "aliases": []
   },
   "DB Single-Leg RDL": {
     "nameRo": "Romanian Deadlift un picior gantere",
@@ -13775,7 +14485,9 @@
         "exercise_id": "Assisted Single-Leg RDL Wall"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-single-leg-rdl",
+    "aliases": []
   },
   "DB B-Stance RDL": {
     "nameRo": "Romanian Deadlift B-stance gantere",
@@ -13814,7 +14526,9 @@
         "type": "light_variant",
         "exercise_id": "Assisted Single-Leg RDL Wall"
       }
-    ]
+    ],
+    "id": "db-b-stance-rdl",
+    "aliases": []
   },
   "DB Stiff-Leg Deadlift": {
     "nameRo": "Indreptari picioare drepte gantere",
@@ -13855,7 +14569,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "db-stiff-leg-deadlift",
+    "aliases": []
   },
   "Kettlebell Swing": {
     "nameRo": "Balans cu kettlebell",
@@ -13896,7 +14612,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "kettlebell-swing",
+    "aliases": []
   },
   "Tempo DB Romanian Deadlift": {
     "nameRo": "Romanian Deadlift cu tempo gantere",
@@ -13935,7 +14653,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "tempo-db-romanian-deadlift",
+    "aliases": []
   },
   "Seated Leg Curl": {
     "nameRo": "Flexii femurale sezand",
@@ -13975,7 +14695,9 @@
         "exercise_id": "Glute Bridge Bodyweight"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "seated-leg-curl",
+    "aliases": []
   },
   "Standing Leg Curl": {
     "nameRo": "Flexii femurale in picioare",
@@ -14015,7 +14737,9 @@
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "standing-leg-curl",
+    "aliases": []
   },
   "Leg Curl Single-Leg": {
     "nameRo": "Flexii femurale pe un picior",
@@ -14054,7 +14778,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
-    ]
+    ],
+    "id": "leg-curl-single-leg",
+    "aliases": []
   },
   "Tempo Leg Curl": {
     "nameRo": "Flexii femurale cu tempo",
@@ -14093,7 +14819,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight"
       }
-    ]
+    ],
+    "id": "tempo-leg-curl",
+    "aliases": []
   },
   "Cable Leg Curl": {
     "nameRo": "Flexii femurale la cablu",
@@ -14132,7 +14860,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight"
       }
-    ]
+    ],
+    "id": "cable-leg-curl",
+    "aliases": []
   },
   "Band Leg Curl": {
     "nameRo": "Flexii femurale cu banda",
@@ -14172,7 +14902,9 @@
         "exercise_id": "Glute Bridge Bodyweight"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "band-leg-curl",
+    "aliases": []
   },
   "Barbell Good Morning": {
     "nameRo": "Good Morning cu bara",
@@ -14213,7 +14945,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "barbell-good-morning",
+    "aliases": []
   },
   "Smith Good Morning": {
     "nameRo": "Good Morning la Smith",
@@ -14254,7 +14988,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "smith-good-morning",
+    "aliases": []
   },
   "Zercher Good Morning": {
     "nameRo": "Good Morning Zercher",
@@ -14295,7 +15031,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "zercher-good-morning",
+    "aliases": []
   },
   "Nordic Hamstring Curl": {
     "nameRo": "Flexii nordice femurale",
@@ -14334,7 +15072,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight"
       }
-    ]
+    ],
+    "id": "nordic-hamstring-curl",
+    "aliases": []
   },
   "Nordic Hamstring Curl Assisted": {
     "nameRo": "Flexii nordice femurale asistate",
@@ -14374,7 +15114,9 @@
         "exercise_id": "Glute Bridge Bodyweight"
       }
     ],
-    "status": "FALLBACK"
+    "status": "FALLBACK",
+    "id": "nordic-hamstring-curl-assisted",
+    "aliases": []
   },
   "Eccentric Nordic Curl": {
     "nameRo": "Flexii nordice excentrice",
@@ -14413,7 +15155,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight"
       }
-    ]
+    ],
+    "id": "eccentric-nordic-curl",
+    "aliases": []
   },
   "Slider Hamstring Curl": {
     "nameRo": "Flexii femurale cu glisor",
@@ -14452,7 +15196,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "slider-hamstring-curl",
+    "aliases": []
   },
   "Razor Curl": {
     "nameRo": "Flexii femurale razor",
@@ -14491,7 +15237,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight"
       }
-    ]
+    ],
+    "id": "razor-curl",
+    "aliases": []
   },
   "Inverse Curl": {
     "nameRo": "Flexii femurale inverse",
@@ -14530,7 +15278,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight"
       }
-    ]
+    ],
+    "id": "inverse-curl",
+    "aliases": []
   },
   "Hip Thrust": {
     "nameRo": "Hip Thrust",
@@ -14572,7 +15322,9 @@
         "exercise_id": "Single-Leg Glute Bridge"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "hip-thrust",
+    "aliases": []
   },
   "Single-Leg Hip Thrust": {
     "nameRo": "Hip Thrust pe un picior",
@@ -14613,7 +15365,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight"
       }
-    ]
+    ],
+    "id": "single-leg-hip-thrust",
+    "aliases": []
   },
   "Hyperextension Bodyweight": {
     "nameRo": "Extensii lombare fara greutate",
@@ -14655,7 +15409,9 @@
         "exercise_id": "Single-Leg Glute Bridge"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "hyperextension-bodyweight",
+    "aliases": []
   },
   "Reverse Hyper Bodyweight": {
     "nameRo": "Extensii lombare inverse fara greutate",
@@ -14694,7 +15450,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "reverse-hyper-bodyweight",
+    "aliases": []
   },
   "Cable Pull-Through": {
     "nameRo": "Trecere printre picioare la cablu",
@@ -14737,7 +15495,9 @@
         "exercise_id": "Wall Hip Hinge"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-pull-through",
+    "aliases": []
   },
   "Banded Pull-Through": {
     "nameRo": "Trecere printre picioare cu banda",
@@ -14779,7 +15539,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Hip Hinge"
       }
-    ]
+    ],
+    "id": "banded-pull-through",
+    "aliases": []
   },
   "Wall Hip Hinge": {
     "nameRo": "Indoire sold la perete",
@@ -14818,7 +15580,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight"
       }
-    ]
+    ],
+    "id": "wall-hip-hinge",
+    "aliases": []
   },
   "Pause Hip Thrust": {
     "nameRo": "Hip Thrust cu pauza",
@@ -14859,7 +15623,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "pause-hip-thrust",
+    "aliases": []
   },
   "Tempo Hip Thrust": {
     "nameRo": "Hip Thrust cu tempo",
@@ -14900,7 +15666,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "tempo-hip-thrust",
+    "aliases": []
   },
   "Deficit Hip Thrust": {
     "nameRo": "Hip Thrust cu deficit",
@@ -14941,7 +15709,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "deficit-hip-thrust",
+    "aliases": []
   },
   "Banded Hip Thrust": {
     "nameRo": "Hip Thrust cu banda",
@@ -14982,7 +15752,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "banded-hip-thrust",
+    "aliases": []
   },
   "Hip Thrust Foot-Elevated": {
     "nameRo": "Hip Thrust picior ridicat",
@@ -15023,7 +15795,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "hip-thrust-foot-elevated",
+    "aliases": []
   },
   "B-Stance Hip Thrust": {
     "nameRo": "Hip Thrust B-stance",
@@ -15064,7 +15838,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
-    ]
+    ],
+    "id": "b-stance-hip-thrust",
+    "aliases": []
   },
   "Pin Hip Thrust": {
     "nameRo": "Hip Thrust din pini",
@@ -15105,7 +15881,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "pin-hip-thrust",
+    "aliases": []
   },
   "Block Hip Thrust": {
     "nameRo": "Hip Thrust de pe blocuri",
@@ -15146,7 +15924,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "block-hip-thrust",
+    "aliases": []
   },
   "Smith Hip Thrust": {
     "nameRo": "Hip Thrust la Smith",
@@ -15188,7 +15968,9 @@
         "exercise_id": "Single-Leg Glute Bridge"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "smith-hip-thrust",
+    "aliases": []
   },
   "Glute Drive Machine": {
     "nameRo": "Aparat glute drive pentru fese",
@@ -15230,7 +16012,9 @@
         "exercise_id": "Single-Leg Glute Bridge"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "glute-drive-machine",
+    "aliases": []
   },
   "Belt Squat Hip Thrust": {
     "nameRo": "Hip Thrust la belt squat",
@@ -15271,7 +16055,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "belt-squat-hip-thrust",
+    "aliases": []
   },
   "Single-Leg Smith Hip Thrust": {
     "nameRo": "Hip Thrust un picior la Smith",
@@ -15312,7 +16098,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
-    ]
+    ],
+    "id": "single-leg-smith-hip-thrust",
+    "aliases": []
   },
   "Smith B-Stance Hip Thrust": {
     "nameRo": "Hip Thrust B-stance la Smith",
@@ -15353,7 +16141,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
-    ]
+    ],
+    "id": "smith-b-stance-hip-thrust",
+    "aliases": []
   },
   "Plate-Loaded Hip Thrust Machine": {
     "nameRo": "Hip Thrust cu discuri la aparat",
@@ -15395,7 +16185,9 @@
         "exercise_id": "Single-Leg Glute Bridge"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "plate-loaded-hip-thrust-machine",
+    "aliases": []
   },
   "DB Hip Thrust": {
     "nameRo": "Hip Thrust cu gantera",
@@ -15437,7 +16229,9 @@
         "exercise_id": "Single-Leg Glute Bridge"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-hip-thrust",
+    "aliases": []
   },
   "Barbell Glute Bridge": {
     "nameRo": "Punte de fese cu bara",
@@ -15478,7 +16272,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "barbell-glute-bridge",
+    "aliases": []
   },
   "DB Glute Bridge": {
     "nameRo": "Punte de fese cu gantere",
@@ -15519,7 +16315,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "db-glute-bridge",
+    "aliases": []
   },
   "Plate Glute Bridge": {
     "nameRo": "Punte de fese cu disc",
@@ -15560,7 +16358,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "plate-glute-bridge",
+    "aliases": []
   },
   "Frog Pump": {
     "nameRo": "Punte fese cu picioarele departate",
@@ -15599,7 +16399,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
-    ]
+    ],
+    "id": "frog-pump",
+    "aliases": []
   },
   "Banded Glute Bridge": {
     "nameRo": "Punte de fese cu banda",
@@ -15640,7 +16442,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "banded-glute-bridge",
+    "aliases": []
   },
   "Frog Pump DB": {
     "nameRo": "Punte fese picioare departate gantera",
@@ -15679,7 +16483,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight"
       }
-    ]
+    ],
+    "id": "frog-pump-db",
+    "aliases": []
   },
   "Cable Glute Kickback": {
     "nameRo": "Extensii sold pentru fese la cablu",
@@ -15719,7 +16525,9 @@
         "exercise_id": "Quadruped Hip Extension"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-glute-kickback",
+    "aliases": []
   },
   "Glute Kickback Machine": {
     "nameRo": "Extensii sold pentru fese aparat",
@@ -15758,7 +16566,9 @@
         "type": "light_variant",
         "exercise_id": "Quadruped Hip Extension"
       }
-    ]
+    ],
+    "id": "glute-kickback-machine",
+    "aliases": []
   },
   "Standing Cable Hip Abduction": {
     "nameRo": "Abductie sold la cablu in picioare",
@@ -15797,7 +16607,9 @@
         "type": "light_variant",
         "exercise_id": "Banded Clamshell"
       }
-    ]
+    ],
+    "id": "standing-cable-hip-abduction",
+    "aliases": []
   },
   "Hip Abduction Machine": {
     "nameRo": "Abductie sold la aparat",
@@ -15837,7 +16649,9 @@
         "exercise_id": "Banded Clamshell"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "hip-abduction-machine",
+    "aliases": []
   },
   "Cable Hip Extension": {
     "nameRo": "Extensie sold la cablu",
@@ -15878,7 +16692,9 @@
         "type": "light_variant",
         "exercise_id": "Quadruped Hip Extension"
       }
-    ]
+    ],
+    "id": "cable-hip-extension",
+    "aliases": []
   },
   "Single-Arm Cable Glute Kickback": {
     "nameRo": "Extensii sold un brat la cablu",
@@ -15917,7 +16733,9 @@
         "type": "light_variant",
         "exercise_id": "Quadruped Hip Extension"
       }
-    ]
+    ],
+    "id": "single-arm-cable-glute-kickback",
+    "aliases": []
   },
   "Sumo Deadlift": {
     "nameRo": "Indreptari sumo",
@@ -15959,7 +16777,9 @@
         "type": "light_variant",
         "exercise_id": "Banded Sumo Deadlift"
       }
-    ]
+    ],
+    "id": "sumo-deadlift",
+    "aliases": []
   },
   "DB Sumo Deadlift": {
     "nameRo": "Indreptari sumo cu gantere",
@@ -16001,7 +16821,9 @@
         "type": "light_variant",
         "exercise_id": "Banded Sumo Deadlift"
       }
-    ]
+    ],
+    "id": "db-sumo-deadlift",
+    "aliases": []
   },
   "Romanian Sumo Deadlift": {
     "nameRo": "Indreptari romanesti sumo",
@@ -16043,7 +16865,9 @@
         "type": "light_variant",
         "exercise_id": "Banded Sumo Deadlift"
       }
-    ]
+    ],
+    "id": "romanian-sumo-deadlift",
+    "aliases": []
   },
   "Smith Sumo Deadlift": {
     "nameRo": "Indreptari sumo la Smith",
@@ -16085,7 +16909,9 @@
         "type": "light_variant",
         "exercise_id": "Banded Sumo Deadlift"
       }
-    ]
+    ],
+    "id": "smith-sumo-deadlift",
+    "aliases": []
   },
   "Banded Sumo Deadlift": {
     "nameRo": "Indreptari sumo cu banda",
@@ -16127,7 +16953,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "banded-sumo-deadlift",
+    "aliases": []
   },
   "Glute-Focus Step-up": {
     "nameRo": "Pasire pe banca focus fese",
@@ -16169,7 +16997,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
-    ]
+    ],
+    "id": "glute-focus-step-up",
+    "aliases": []
   },
   "Glute Walking Lunge": {
     "nameRo": "Fandari mers pentru fese",
@@ -16211,7 +17041,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
-    ]
+    ],
+    "id": "glute-walking-lunge",
+    "aliases": []
   },
   "Reverse Lunge Glute-Focus": {
     "nameRo": "Fandari inapoi focus fese",
@@ -16253,7 +17085,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
-    ]
+    ],
+    "id": "reverse-lunge-glute-focus",
+    "aliases": []
   },
   "Cossack Squat": {
     "nameRo": "Genuflexiuni cazac laterale",
@@ -16295,7 +17129,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
-    ]
+    ],
+    "id": "cossack-squat",
+    "aliases": []
   },
   "Single-Leg Glute Bridge": {
     "nameRo": "Punte de fese pe un picior",
@@ -16337,7 +17173,9 @@
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "single-leg-glute-bridge",
+    "aliases": []
   },
   "Glute Bridge Bodyweight": {
     "nameRo": "Punte de fese fara greutate",
@@ -16379,7 +17217,9 @@
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "glute-bridge-bodyweight",
+    "aliases": []
   },
   "Single-Leg Glute Bridge Foot-Elevated": {
     "nameRo": "Punte fese un picior ridicat",
@@ -16420,7 +17260,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
-    ]
+    ],
+    "id": "single-leg-glute-bridge-foot-elevated",
+    "aliases": []
   },
   "Glute Bridge Bodyweight Single-Leg": {
     "nameRo": "Punte de fese un picior fara greutate",
@@ -16461,7 +17303,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "glute-bridge-bodyweight-single-leg",
+    "aliases": []
   },
   "Glute Bridge March": {
     "nameRo": "Punte de fese cu pasire",
@@ -16502,7 +17346,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
-    ]
+    ],
+    "id": "glute-bridge-march",
+    "aliases": []
   },
   "Quadruped Hip Extension": {
     "nameRo": "Extensie sold in patrupedie",
@@ -16541,7 +17387,9 @@
         "type": "light_variant",
         "exercise_id": "Fire Hydrant"
       }
-    ]
+    ],
+    "id": "quadruped-hip-extension",
+    "aliases": []
   },
   "Donkey Kick": {
     "nameRo": "Lovitura de magar pentru fese",
@@ -16580,7 +17428,9 @@
         "type": "light_variant",
         "exercise_id": "Banded Clamshell"
       }
-    ]
+    ],
+    "id": "donkey-kick",
+    "aliases": []
   },
   "Fire Hydrant": {
     "nameRo": "Abductie sold in patrupedie",
@@ -16619,7 +17469,9 @@
         "type": "light_variant",
         "exercise_id": "Banded Clamshell"
       }
-    ]
+    ],
+    "id": "fire-hydrant",
+    "aliases": []
   },
   "Hip Thrust 1.5 Rep": {
     "nameRo": "Hip Thrust repetare 1.5",
@@ -16660,7 +17512,9 @@
         "type": "light_variant",
         "exercise_id": "Single-Leg Glute Bridge"
       }
-    ]
+    ],
+    "id": "hip-thrust-1-5-rep",
+    "aliases": []
   },
   "Marching Glute Bridge": {
     "nameRo": "Punte de fese cu pasire alternativa",
@@ -16701,7 +17555,9 @@
         "type": "light_variant",
         "exercise_id": "Glute Bridge Bodyweight Single-Leg"
       }
-    ]
+    ],
+    "id": "marching-glute-bridge",
+    "aliases": []
   },
   "Banded Clamshell": {
     "nameRo": "Scoica pentru fese cu banda",
@@ -16740,7 +17596,9 @@
         "type": "light_variant",
         "exercise_id": "Donkey Kick"
       }
-    ]
+    ],
+    "id": "banded-clamshell",
+    "aliases": []
   },
   "Standing Calf Raise Machine": {
     "nameRo": "Ridicari pe varfuri in picioare aparat",
@@ -16780,7 +17638,9 @@
         "exercise_id": "Wall Calf Raise"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "standing-calf-raise-machine",
+    "aliases": []
   },
   "Smith Standing Calf Raise": {
     "nameRo": "Ridicari pe varfuri in picioare Smith",
@@ -16820,7 +17680,9 @@
         "exercise_id": "Wall Calf Raise"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "smith-standing-calf-raise",
+    "aliases": []
   },
   "Leg Press Calf Raise": {
     "nameRo": "Ridicari pe varfuri la presa",
@@ -16860,7 +17722,9 @@
         "exercise_id": "Single-Leg Calf Raise Bodyweight"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "leg-press-calf-raise",
+    "aliases": []
   },
   "Hack Squat Calf Raise": {
     "nameRo": "Ridicari pe varfuri la hack squat",
@@ -16899,7 +17763,9 @@
         "type": "light_variant",
         "exercise_id": "Stair Calf Raise"
       }
-    ]
+    ],
+    "id": "hack-squat-calf-raise",
+    "aliases": []
   },
   "Standing Single-Leg Calf Raise": {
     "nameRo": "Ridicari pe varfuri un picior",
@@ -16938,7 +17804,9 @@
         "type": "light_variant",
         "exercise_id": "Stair Calf Raise"
       }
-    ]
+    ],
+    "id": "standing-single-leg-calf-raise",
+    "aliases": []
   },
   "Standing DB Calf Raise": {
     "nameRo": "Ridicari pe varfuri in picioare gantere",
@@ -16978,7 +17846,9 @@
         "exercise_id": "Wall Calf Raise"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "standing-db-calf-raise",
+    "aliases": []
   },
   "Standing Barbell Calf Raise": {
     "nameRo": "Ridicari pe varfuri in picioare cu bara",
@@ -17017,7 +17887,9 @@
         "type": "light_variant",
         "exercise_id": "Stair Calf Raise"
       }
-    ]
+    ],
+    "id": "standing-barbell-calf-raise",
+    "aliases": []
   },
   "Seated Calf Raise Machine": {
     "nameRo": "Ridicari pe varfuri sezand aparat",
@@ -17057,7 +17929,9 @@
         "exercise_id": "Wall Calf Raise"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "seated-calf-raise-machine",
+    "aliases": []
   },
   "Seated DB Calf Raise": {
     "nameRo": "Ridicari pe varfuri sezand gantere",
@@ -17096,7 +17970,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Calf Raise"
       }
-    ]
+    ],
+    "id": "seated-db-calf-raise",
+    "aliases": []
   },
   "Seated BB Calf Raise": {
     "nameRo": "Ridicari pe varfuri sezand cu bara",
@@ -17135,7 +18011,9 @@
         "type": "light_variant",
         "exercise_id": "Stair Calf Raise"
       }
-    ]
+    ],
+    "id": "seated-bb-calf-raise",
+    "aliases": []
   },
   "Seated Plate Calf Raise": {
     "nameRo": "Ridicari pe varfuri sezand cu disc",
@@ -17174,7 +18052,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Calf Raise"
       }
-    ]
+    ],
+    "id": "seated-plate-calf-raise",
+    "aliases": []
   },
   "Seated Single-Leg Calf Raise": {
     "nameRo": "Ridicari pe varfuri sezand un picior",
@@ -17213,7 +18093,9 @@
         "type": "light_variant",
         "exercise_id": "Stair Calf Raise"
       }
-    ]
+    ],
+    "id": "seated-single-leg-calf-raise",
+    "aliases": []
   },
   "Smith Seated Calf Raise": {
     "nameRo": "Ridicari pe varfuri sezand la Smith",
@@ -17252,7 +18134,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Calf Raise"
       }
-    ]
+    ],
+    "id": "smith-seated-calf-raise",
+    "aliases": []
   },
   "Donkey Calf Raise": {
     "nameRo": "Ridicari pe varfuri donkey",
@@ -17291,7 +18175,9 @@
         "type": "light_variant",
         "exercise_id": "Calf Raise Bodyweight"
       }
-    ]
+    ],
+    "id": "donkey-calf-raise",
+    "aliases": []
   },
   "Smith Donkey Calf Raise": {
     "nameRo": "Ridicari pe varfuri donkey la Smith",
@@ -17330,7 +18216,9 @@
         "type": "light_variant",
         "exercise_id": "Calf Raise Bodyweight"
       }
-    ]
+    ],
+    "id": "smith-donkey-calf-raise",
+    "aliases": []
   },
   "Banded Donkey Calf Raise": {
     "nameRo": "Ridicari pe varfuri donkey cu banda",
@@ -17369,7 +18257,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Calf Raise"
       }
-    ]
+    ],
+    "id": "banded-donkey-calf-raise",
+    "aliases": []
   },
   "Single-Leg Donkey Calf Raise": {
     "nameRo": "Ridicari pe varfuri donkey un picior",
@@ -17408,7 +18298,9 @@
         "type": "light_variant",
         "exercise_id": "Stair Calf Raise"
       }
-    ]
+    ],
+    "id": "single-leg-donkey-calf-raise",
+    "aliases": []
   },
   "Bodyweight Donkey Calf Raise": {
     "nameRo": "Ridicari pe varfuri donkey fara greutate",
@@ -17447,7 +18339,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Calf Raise"
       }
-    ]
+    ],
+    "id": "bodyweight-donkey-calf-raise",
+    "aliases": []
   },
   "Eccentric Slow Calf Raise": {
     "nameRo": "Ridicari pe varfuri excentrice lente",
@@ -17486,7 +18380,9 @@
         "type": "light_variant",
         "exercise_id": "Stair Calf Raise"
       }
-    ]
+    ],
+    "id": "eccentric-slow-calf-raise",
+    "aliases": []
   },
   "Tibialis Raise": {
     "nameRo": "Ridicari tibialis",
@@ -17526,7 +18422,9 @@
         "exercise_id": "Banded Tibialis Raise"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "tibialis-raise",
+    "aliases": []
   },
   "Standing Tibialis Raise": {
     "nameRo": "Ridicari tibialis in picioare",
@@ -17565,7 +18463,9 @@
         "type": "light_variant",
         "exercise_id": "Banded Tibialis Raise"
       }
-    ]
+    ],
+    "id": "standing-tibialis-raise",
+    "aliases": []
   },
   "Reverse Calf Raise": {
     "nameRo": "Ridicari pe varfuri inverse",
@@ -17604,7 +18504,9 @@
         "type": "light_variant",
         "exercise_id": "Banded Tibialis Raise"
       }
-    ]
+    ],
+    "id": "reverse-calf-raise",
+    "aliases": []
   },
   "Cable Tibialis Raise": {
     "nameRo": "Ridicari tibialis la cablu",
@@ -17643,7 +18545,9 @@
         "type": "light_variant",
         "exercise_id": "Reverse Calf Raise"
       }
-    ]
+    ],
+    "id": "cable-tibialis-raise",
+    "aliases": []
   },
   "Banded Tibialis Raise": {
     "nameRo": "Ridicari tibialis cu banda",
@@ -17682,7 +18586,9 @@
         "type": "light_variant",
         "exercise_id": "Reverse Calf Raise"
       }
-    ]
+    ],
+    "id": "banded-tibialis-raise",
+    "aliases": []
   },
   "DB Tibialis Raise": {
     "nameRo": "Ridicari tibialis cu gantere",
@@ -17721,7 +18627,9 @@
         "type": "light_variant",
         "exercise_id": "Reverse Calf Raise"
       }
-    ]
+    ],
+    "id": "db-tibialis-raise",
+    "aliases": []
   },
   "Calf Raise Bodyweight": {
     "nameRo": "Ridicari pe varfuri fara greutate",
@@ -17760,7 +18668,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Calf Raise"
       }
-    ]
+    ],
+    "id": "calf-raise-bodyweight",
+    "aliases": []
   },
   "Single-Leg Calf Raise Bodyweight": {
     "nameRo": "Ridicari pe varfuri pe un picior",
@@ -17800,7 +18710,9 @@
         "exercise_id": "Wall Calf Raise"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "single-leg-calf-raise-bodyweight",
+    "aliases": []
   },
   "Stair Calf Raise": {
     "nameRo": "Ridicari pe varfuri pe scara",
@@ -17839,7 +18751,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Calf Raise"
       }
-    ]
+    ],
+    "id": "stair-calf-raise",
+    "aliases": []
   },
   "Single-Leg Stair Calf Raise": {
     "nameRo": "Ridicari pe varfuri pe scara un picior",
@@ -17878,7 +18792,9 @@
         "type": "light_variant",
         "exercise_id": "Calf Raise Bodyweight"
       }
-    ]
+    ],
+    "id": "single-leg-stair-calf-raise",
+    "aliases": []
   },
   "Cable Calf Raise": {
     "nameRo": "Ridicari pe varfuri la cablu",
@@ -17917,7 +18833,9 @@
         "type": "light_variant",
         "exercise_id": "Wall Calf Raise"
       }
-    ]
+    ],
+    "id": "cable-calf-raise",
+    "aliases": []
   },
   "Plate-Loaded Calf Raise": {
     "nameRo": "Ridicari pe varfuri cu discuri",
@@ -17956,7 +18874,9 @@
         "type": "light_variant",
         "exercise_id": "Stair Calf Raise"
       }
-    ]
+    ],
+    "id": "plate-loaded-calf-raise",
+    "aliases": []
   },
   "Wall Calf Raise": {
     "nameRo": "Ridicari pe varfuri la perete",
@@ -17995,7 +18915,9 @@
         "type": "light_variant",
         "exercise_id": "Stair Calf Raise"
       }
-    ]
+    ],
+    "id": "wall-calf-raise",
+    "aliases": []
   },
   "Barbell Curl Standing": {
     "nameRo": "Flexii cu bara in picioare",
@@ -18035,7 +18957,9 @@
         "exercise_id": "Incline DB Curl"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "barbell-curl-standing",
+    "aliases": []
   },
   "Barbell Curl Wide Grip": {
     "nameRo": "Flexii cu bara priza larga",
@@ -18074,7 +18998,9 @@
         "type": "light_variant",
         "exercise_id": "Incline DB Curl"
       }
-    ]
+    ],
+    "id": "barbell-curl-wide-grip",
+    "aliases": []
   },
   "Barbell Curl Narrow Grip": {
     "nameRo": "Flexii cu bara priza ingusta",
@@ -18113,7 +19039,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Standing"
       }
-    ]
+    ],
+    "id": "barbell-curl-narrow-grip",
+    "aliases": []
   },
   "Drag Curl Barbell": {
     "nameRo": "Flexii drag cu bara",
@@ -18152,7 +19080,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Standing"
       }
-    ]
+    ],
+    "id": "drag-curl-barbell",
+    "aliases": []
   },
   "EZ-bar Curl Standing": {
     "nameRo": "Flexii cu bara EZ in picioare",
@@ -18192,7 +19122,9 @@
         "exercise_id": "Incline DB Curl"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "ez-bar-curl-standing",
+    "aliases": []
   },
   "EZ-bar Curl Wide": {
     "nameRo": "Flexii cu bara EZ priza larga",
@@ -18231,7 +19163,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Standing"
       }
-    ]
+    ],
+    "id": "ez-bar-curl-wide",
+    "aliases": []
   },
   "EZ-bar Curl Narrow": {
     "nameRo": "Flexii cu bara EZ priza ingusta",
@@ -18270,7 +19204,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Standing"
       }
-    ]
+    ],
+    "id": "ez-bar-curl-narrow",
+    "aliases": []
   },
   "EZ-bar Preacher Curl": {
     "nameRo": "Flexii la pupitru cu bara EZ",
@@ -18310,7 +19246,9 @@
         "exercise_id": "Incline DB Curl"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "ez-bar-preacher-curl",
+    "aliases": []
   },
   "Spider Curl Barbell": {
     "nameRo": "Flexii spider cu bara",
@@ -18349,7 +19287,9 @@
         "type": "light_variant",
         "exercise_id": "Incline DB Curl"
       }
-    ]
+    ],
+    "id": "spider-curl-barbell",
+    "aliases": []
   },
   "Spider Curl EZ-bar": {
     "nameRo": "Flexii spider cu bara EZ",
@@ -18388,7 +19328,9 @@
         "type": "light_variant",
         "exercise_id": "Incline DB Curl"
       }
-    ]
+    ],
+    "id": "spider-curl-ez-bar",
+    "aliases": []
   },
   "21s Curl Barbell": {
     "nameRo": "Flexii 21 cu bara",
@@ -18427,7 +19369,9 @@
         "type": "light_variant",
         "exercise_id": "Barbell Curl Standing"
       }
-    ]
+    ],
+    "id": "21s-curl-barbell",
+    "aliases": []
   },
   "Cheat Curl Barbell": {
     "nameRo": "Flexii cu avant cu bara",
@@ -18468,7 +19412,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Standing"
       }
-    ]
+    ],
+    "id": "cheat-curl-barbell",
+    "aliases": []
   },
   "Barbell Concentration Curl Seated": {
     "nameRo": "Flexii concentrate sezand cu bara",
@@ -18507,7 +19453,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Standing"
       }
-    ]
+    ],
+    "id": "barbell-concentration-curl-seated",
+    "aliases": []
   },
   "Barbell Curl Strict Wall Support": {
     "nameRo": "Flexii cu bara stricte la perete",
@@ -18546,7 +19494,9 @@
         "type": "light_variant",
         "exercise_id": "Incline DB Curl"
       }
-    ]
+    ],
+    "id": "barbell-curl-strict-wall-support",
+    "aliases": []
   },
   "DB Curl Standing": {
     "nameRo": "Flexii in picioare cu gantere",
@@ -18586,7 +19536,9 @@
         "exercise_id": "Incline DB Curl"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-curl-standing",
+    "aliases": []
   },
   "DB Curl Standing Alternate": {
     "nameRo": "Flexii alternative in picioare gantere",
@@ -18625,7 +19577,9 @@
         "type": "light_variant",
         "exercise_id": "Incline DB Curl"
       }
-    ]
+    ],
+    "id": "db-curl-standing-alternate",
+    "aliases": []
   },
   "DB Curl Seated Alternate": {
     "nameRo": "Flexii alternative sezand gantere",
@@ -18664,7 +19618,9 @@
         "type": "light_variant",
         "exercise_id": "Incline DB Curl"
       }
-    ]
+    ],
+    "id": "db-curl-seated-alternate",
+    "aliases": []
   },
   "DB Hammer Curl Standing": {
     "nameRo": "Hammer Curl in picioare cu gantere",
@@ -18706,7 +19662,9 @@
         "exercise_id": "DB Cross-Body Hammer"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-hammer-curl-standing",
+    "aliases": []
   },
   "DB Hammer Curl Seated": {
     "nameRo": "Hammer Curl sezand cu gantere",
@@ -18747,7 +19705,9 @@
         "type": "light_variant",
         "exercise_id": "DB Cross-Body Hammer"
       }
-    ]
+    ],
+    "id": "db-hammer-curl-seated",
+    "aliases": []
   },
   "DB Cross-Body Hammer": {
     "nameRo": "Hammer Curl incrucisat cu gantera",
@@ -18788,7 +19748,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Standing"
       }
-    ]
+    ],
+    "id": "db-cross-body-hammer",
+    "aliases": []
   },
   "DB Incline Curl Alternate": {
     "nameRo": "Flexii inclinate alternative gantere",
@@ -18827,7 +19789,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Seated Alternate"
       }
-    ]
+    ],
+    "id": "db-incline-curl-alternate",
+    "aliases": []
   },
   "DB Spider Curl": {
     "nameRo": "Flexii spider cu gantere",
@@ -18866,7 +19830,9 @@
         "type": "light_variant",
         "exercise_id": "Incline DB Curl"
       }
-    ]
+    ],
+    "id": "db-spider-curl",
+    "aliases": []
   },
   "DB Preacher Curl": {
     "nameRo": "Flexii la pupitru cu gantere",
@@ -18905,7 +19871,9 @@
         "type": "light_variant",
         "exercise_id": "Incline DB Curl"
       }
-    ]
+    ],
+    "id": "db-preacher-curl",
+    "aliases": []
   },
   "DB Zottman Curl": {
     "nameRo": "Flexii Zottman cu gantere",
@@ -18946,7 +19914,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Standing Alternate"
       }
-    ]
+    ],
+    "id": "db-zottman-curl",
+    "aliases": []
   },
   "Drag Curl DB": {
     "nameRo": "Flexii drag cu gantere",
@@ -18985,7 +19955,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Standing Alternate"
       }
-    ]
+    ],
+    "id": "drag-curl-db",
+    "aliases": []
   },
   "DB Concentration Curl Standing": {
     "nameRo": "Flexii concentrate in picioare gantere",
@@ -19024,7 +19996,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Standing Alternate"
       }
-    ]
+    ],
+    "id": "db-concentration-curl-standing",
+    "aliases": []
   },
   "DB Concentration Curl Kneeling": {
     "nameRo": "Flexii concentrate in genunchi gantere",
@@ -19063,7 +20037,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Standing Alternate"
       }
-    ]
+    ],
+    "id": "db-concentration-curl-kneeling",
+    "aliases": []
   },
   "DB 21s Alternate": {
     "nameRo": "Flexii 21 alternativ cu gantere",
@@ -19102,7 +20078,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Seated Alternate"
       }
-    ]
+    ],
+    "id": "db-21s-alternate",
+    "aliases": []
   },
   "Cable Curl Standing Straight Bar": {
     "nameRo": "Flexii la cablu cu bara dreapta",
@@ -19141,7 +20119,9 @@
         "type": "light_variant",
         "exercise_id": "Incline DB Curl"
       }
-    ]
+    ],
+    "id": "cable-curl-standing-straight-bar",
+    "aliases": []
   },
   "Cable Curl Standing Rope": {
     "nameRo": "Flexii la cablu cu coarda",
@@ -19182,7 +20162,9 @@
         "type": "light_variant",
         "exercise_id": "DB Hammer Curl Standing"
       }
-    ]
+    ],
+    "id": "cable-curl-standing-rope",
+    "aliases": []
   },
   "Cable Curl Standing EZ-bar Attachment": {
     "nameRo": "Flexii la cablu cu bara EZ",
@@ -19221,7 +20203,9 @@
         "type": "light_variant",
         "exercise_id": "Incline DB Curl"
       }
-    ]
+    ],
+    "id": "cable-curl-standing-ez-bar-attachment",
+    "aliases": []
   },
   "Cable Curl Single-Arm": {
     "nameRo": "Flexii la cablu cu un brat",
@@ -19260,7 +20244,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Seated Alternate"
       }
-    ]
+    ],
+    "id": "cable-curl-single-arm",
+    "aliases": []
   },
   "Cable Curl Seated Behind Body": {
     "nameRo": "Flexii la cablu sezand in spate",
@@ -19299,7 +20285,9 @@
         "type": "light_variant",
         "exercise_id": "DB Curl Seated Alternate"
       }
-    ]
+    ],
+    "id": "cable-curl-seated-behind-body",
+    "aliases": []
   },
   "Cable Hammer Curl Rope": {
     "nameRo": "Hammer Curl la cablu cu coarda",
@@ -19341,7 +20329,9 @@
         "exercise_id": "DB Cross-Body Hammer"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-hammer-curl-rope",
+    "aliases": []
   },
   "Cable Drag Curl": {
     "nameRo": "Flexii drag la cablu",
@@ -19380,7 +20370,9 @@
         "type": "light_variant",
         "exercise_id": "Drag Curl DB"
       }
-    ]
+    ],
+    "id": "cable-drag-curl",
+    "aliases": []
   },
   "Cable Curl Lying on Bench": {
     "nameRo": "Flexii la cablu culcat pe banca",
@@ -19419,7 +20411,9 @@
         "type": "light_variant",
         "exercise_id": "DB Incline Curl Alternate"
       }
-    ]
+    ],
+    "id": "cable-curl-lying-on-bench",
+    "aliases": []
   },
   "Machine Preacher Curl": {
     "nameRo": "Flexii la pupitru la aparat",
@@ -19458,7 +20452,9 @@
         "type": "light_variant",
         "exercise_id": "Incline DB Curl"
       }
-    ]
+    ],
+    "id": "machine-preacher-curl",
+    "aliases": []
   },
   "Machine Seated Curl": {
     "nameRo": "Flexii la aparat sezand",
@@ -19498,7 +20494,9 @@
         "exercise_id": "Incline DB Curl"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "machine-seated-curl",
+    "aliases": []
   },
   "Cable Curl Cross-Body Single": {
     "nameRo": "Flexii la cablu incrucisate un brat",
@@ -19537,7 +20535,9 @@
         "type": "light_variant",
         "exercise_id": "DB Concentration Curl Standing"
       }
-    ]
+    ],
+    "id": "cable-curl-cross-body-single",
+    "aliases": []
   },
   "Cable Concentration Curl": {
     "nameRo": "Flexii concentrate la cablu",
@@ -19576,7 +20576,9 @@
         "type": "light_variant",
         "exercise_id": "DB Spider Curl"
       }
-    ]
+    ],
+    "id": "cable-concentration-curl",
+    "aliases": []
   },
   "Chin-Up Underhand Strict": {
     "nameRo": "Tractiuni priza supinata stricte",
@@ -19617,7 +20619,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Underhand"
       }
-    ]
+    ],
+    "id": "chin-up-underhand-strict",
+    "aliases": []
   },
   "Chin-Up Underhand Close Grip": {
     "nameRo": "Tractiuni priza supinata ingusta",
@@ -19658,7 +20662,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Underhand"
       }
-    ]
+    ],
+    "id": "chin-up-underhand-close-grip",
+    "aliases": []
   },
   "Chin-Up Neutral Grip": {
     "nameRo": "Chin-Up priza neutra",
@@ -19700,7 +20706,9 @@
         "type": "light_variant",
         "exercise_id": "Chin-Up Negatives Eccentric Only"
       }
-    ]
+    ],
+    "id": "chin-up-neutral-grip",
+    "aliases": []
   },
   "Chin-Up Negatives Eccentric Only": {
     "nameRo": "Tractiuni supinate excentrice",
@@ -19741,7 +20749,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Underhand"
       }
-    ]
+    ],
+    "id": "chin-up-negatives-eccentric-only",
+    "aliases": []
   },
   "Chin-Up Assisted Band": {
     "nameRo": "Tractiuni supinate asistate cu banda",
@@ -19782,7 +20792,9 @@
         "type": "light_variant",
         "exercise_id": "Chin-Up Negatives Eccentric Only"
       }
-    ]
+    ],
+    "id": "chin-up-assisted-band",
+    "aliases": []
   },
   "Chin-Up Assisted Machine": {
     "nameRo": "Tractiuni supinate asistate la aparat",
@@ -19823,7 +20835,9 @@
         "type": "light_variant",
         "exercise_id": "Chin-Up Negatives Eccentric Only"
       }
-    ]
+    ],
+    "id": "chin-up-assisted-machine",
+    "aliases": []
   },
   "Inverted Row Underhand": {
     "nameRo": "Ramat orizontal priza supinata",
@@ -19864,7 +20878,9 @@
         "type": "light_variant",
         "exercise_id": "Cable Row"
       }
-    ]
+    ],
+    "id": "inverted-row-underhand",
+    "aliases": []
   },
   "Towel Chin-Up": {
     "nameRo": "Tractiuni supinate cu prosop",
@@ -19906,7 +20922,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Underhand"
       }
-    ]
+    ],
+    "id": "towel-chin-up",
+    "aliases": []
   },
   "L-sit Chin-Up": {
     "nameRo": "Tractiuni supinate in L-sit",
@@ -19947,7 +20965,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Underhand"
       }
-    ]
+    ],
+    "id": "l-sit-chin-up-2",
+    "aliases": []
   },
   "Commando Pull-Up": {
     "nameRo": "Tractiuni comando priza incrucisata",
@@ -19988,7 +21008,9 @@
         "type": "light_variant",
         "exercise_id": "Chin-Up Negatives Eccentric Only"
       }
-    ]
+    ],
+    "id": "commando-pull-up",
+    "aliases": []
   },
   "Lying Triceps Extension Barbell": {
     "nameRo": "Extensii triceps culcat cu bara",
@@ -20027,7 +21049,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "lying-triceps-extension-barbell",
+    "aliases": []
   },
   "Lying Triceps Extension EZ-bar": {
     "nameRo": "Extensii triceps culcat cu bara EZ",
@@ -20067,7 +21091,9 @@
         "exercise_id": "Bench Dip"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "lying-triceps-extension-ez-bar",
+    "aliases": []
   },
   "Decline Triceps Extension Barbell": {
     "nameRo": "Extensii triceps inclinat negativ bara",
@@ -20106,7 +21132,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "decline-triceps-extension-barbell",
+    "aliases": []
   },
   "Seated Overhead Triceps Extension Barbell": {
     "nameRo": "Extensii triceps sezand cu bara",
@@ -20145,7 +21173,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "seated-overhead-triceps-extension-barbell",
+    "aliases": []
   },
   "Seated Overhead Triceps Extension EZ-bar": {
     "nameRo": "Extensii triceps sezand cu bara EZ",
@@ -20184,7 +21214,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "seated-overhead-triceps-extension-ez-bar",
+    "aliases": []
   },
   "Standing Overhead Triceps Extension EZ-bar": {
     "nameRo": "Extensii triceps in picioare bara EZ",
@@ -20223,7 +21255,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "standing-overhead-triceps-extension-ez-bar",
+    "aliases": []
   },
   "JM Press": {
     "nameRo": "Impins JM triceps",
@@ -20264,7 +21298,9 @@
         "type": "light_variant",
         "exercise_id": "Lying Triceps Extension EZ-bar"
       }
-    ]
+    ],
+    "id": "jm-press",
+    "aliases": []
   },
   "Cable Triceps Pushdown Straight Bar": {
     "nameRo": "Extensii triceps la cablu bara dreapta",
@@ -20304,7 +21340,9 @@
         "exercise_id": "Bench Dip"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-triceps-pushdown-straight-bar",
+    "aliases": []
   },
   "Cable Triceps Pushdown V-bar": {
     "nameRo": "Extensii triceps la cablu cu maner V",
@@ -20344,7 +21382,9 @@
         "exercise_id": "Bench Dip"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-triceps-pushdown-v-bar",
+    "aliases": []
   },
   "Cable Triceps Pushdown Rope": {
     "nameRo": "Extensii triceps la cablu cu coarda",
@@ -20384,7 +21424,9 @@
         "exercise_id": "Bench Dip"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-triceps-pushdown-rope",
+    "aliases": []
   },
   "Cable Triceps Pushdown Reverse Grip": {
     "nameRo": "Extensii triceps la cablu priza inversa",
@@ -20423,7 +21465,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "cable-triceps-pushdown-reverse-grip",
+    "aliases": []
   },
   "Cable Overhead Triceps Extension Rope": {
     "nameRo": "Extensii triceps peste cap cu coarda",
@@ -20463,7 +21507,11 @@
         "exercise_id": "Bench Dip"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-overhead-triceps-extension-rope",
+    "aliases": [
+      "Overhead Triceps Extension"
+    ]
   },
   "Cable Overhead Triceps Extension EZ-bar": {
     "nameRo": "Extensii triceps peste cap bara EZ",
@@ -20502,7 +21550,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "cable-overhead-triceps-extension-ez-bar",
+    "aliases": []
   },
   "Cable Triceps Kickback Rope": {
     "nameRo": "Extensii triceps inapoi cu coarda",
@@ -20541,7 +21591,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "cable-triceps-kickback-rope",
+    "aliases": []
   },
   "Cable Crossover Triceps Extension": {
     "nameRo": "Extensii triceps incrucisate la cablu",
@@ -20580,7 +21632,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "cable-crossover-triceps-extension",
+    "aliases": []
   },
   "Cable Triceps Pushdown Single-Arm": {
     "nameRo": "Extensii triceps la cablu cu un brat",
@@ -20620,7 +21674,9 @@
         "exercise_id": "Bench Dip"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-triceps-pushdown-single-arm",
+    "aliases": []
   },
   "DB Lying Triceps Extension": {
     "nameRo": "Extensii triceps culcat cu gantere",
@@ -20659,7 +21715,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "db-lying-triceps-extension",
+    "aliases": []
   },
   "DB Lying Triceps Extension Cross-Body": {
     "nameRo": "Extensii triceps culcat incrucisat",
@@ -20698,7 +21756,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "db-lying-triceps-extension-cross-body",
+    "aliases": []
   },
   "DB Overhead Triceps Extension Two-Hand": {
     "nameRo": "Extensii triceps peste cap doua maini",
@@ -20738,7 +21798,9 @@
         "exercise_id": "Bench Dip"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "db-overhead-triceps-extension-two-hand",
+    "aliases": []
   },
   "DB Overhead Triceps Extension Single-Arm Seated": {
     "nameRo": "Extensii triceps peste cap un brat sezand",
@@ -20777,7 +21839,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "db-overhead-triceps-extension-single-arm-seated",
+    "aliases": []
   },
   "DB Overhead Triceps Extension Single-Arm Standing": {
     "nameRo": "Extensii triceps peste cap in picioare",
@@ -20816,7 +21880,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "db-overhead-triceps-extension-single-arm-standing",
+    "aliases": []
   },
   "DB Kickback Standing": {
     "nameRo": "Extensii triceps inapoi in picioare",
@@ -20855,7 +21921,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "db-kickback-standing",
+    "aliases": []
   },
   "DB Kickback Bench Support": {
     "nameRo": "Extensii triceps inapoi sprijinit",
@@ -20894,7 +21962,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "db-kickback-bench-support",
+    "aliases": []
   },
   "DB Tate Press": {
     "nameRo": "Impins Tate cu gantere triceps",
@@ -20935,7 +22005,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "db-tate-press",
+    "aliases": []
   },
   "DB Floor Press Close-Grip": {
     "nameRo": "Impins de la sol priza ingusta gantere",
@@ -20976,7 +22048,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "db-floor-press-close-grip",
+    "aliases": []
   },
   "DB Single-Arm Overhead Triceps Extension Kneeling": {
     "nameRo": "Extensii triceps peste cap in genunchi",
@@ -21015,7 +22089,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "db-single-arm-overhead-triceps-extension-kneeling",
+    "aliases": []
   },
   "DB Triceps Extension Lying Cross-Body Single-Arm": {
     "nameRo": "Extensii triceps culcat incrucisat un brat",
@@ -21054,7 +22130,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "db-triceps-extension-lying-cross-body-single-arm",
+    "aliases": []
   },
   "Triceps Dip Parallel Bars": {
     "nameRo": "Flotari la paralele triceps",
@@ -21095,7 +22173,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip Feet-on-Floor"
       }
-    ]
+    ],
+    "id": "triceps-dip-parallel-bars",
+    "aliases": []
   },
   "Triceps Dip Weighted": {
     "nameRo": "Flotari la paralele triceps cu greutate",
@@ -21136,7 +22216,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip"
       }
-    ]
+    ],
+    "id": "triceps-dip-weighted",
+    "aliases": []
   },
   "Triceps Dip Machine": {
     "nameRo": "Flotari triceps la aparat",
@@ -21177,7 +22259,9 @@
         "type": "light_variant",
         "exercise_id": "Bench Dip Feet-on-Floor"
       }
-    ]
+    ],
+    "id": "triceps-dip-machine",
+    "aliases": []
   },
   "Cable Single-Arm Overhead Triceps Extension": {
     "nameRo": "Extensii triceps peste cap la cablu",
@@ -21217,7 +22301,9 @@
         "exercise_id": "Bench Dip"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-single-arm-overhead-triceps-extension",
+    "aliases": []
   },
   "Wrist Curl Barbell Seated Palms-Up": {
     "nameRo": "Flexii incheietura cu bara sezand sus",
@@ -21256,7 +22342,9 @@
         "type": "light_variant",
         "exercise_id": "Wrist Roller"
       }
-    ]
+    ],
+    "id": "wrist-curl-barbell-seated-palms-up",
+    "aliases": []
   },
   "Wrist Curl Barbell Seated Palms-Down": {
     "nameRo": "Flexii incheietura cu bara sezand jos",
@@ -21295,7 +22383,9 @@
         "type": "light_variant",
         "exercise_id": "Wrist Roller"
       }
-    ]
+    ],
+    "id": "wrist-curl-barbell-seated-palms-down",
+    "aliases": []
   },
   "Wrist Curl DB Seated Palms-Up": {
     "nameRo": "Flexii incheietura gantere palme sus",
@@ -21334,7 +22424,9 @@
         "type": "light_variant",
         "exercise_id": "Wrist Roller"
       }
-    ]
+    ],
+    "id": "wrist-curl-db-seated-palms-up",
+    "aliases": []
   },
   "Wrist Curl DB Seated Palms-Down": {
     "nameRo": "Flexii incheietura gantere palme jos",
@@ -21373,7 +22465,9 @@
         "type": "light_variant",
         "exercise_id": "Wrist Roller"
       }
-    ]
+    ],
+    "id": "wrist-curl-db-seated-palms-down",
+    "aliases": []
   },
   "Wrist Curl Barbell Standing Behind Back": {
     "nameRo": "Flexii incheietura cu bara la spate",
@@ -21412,7 +22506,9 @@
         "type": "light_variant",
         "exercise_id": "Wrist Roller"
       }
-    ]
+    ],
+    "id": "wrist-curl-barbell-standing-behind-back",
+    "aliases": []
   },
   "Reverse Wrist Curl Barbell Seated": {
     "nameRo": "Flexii inverse incheietura cu bara",
@@ -21451,7 +22547,9 @@
         "type": "light_variant",
         "exercise_id": "Wrist Roller"
       }
-    ]
+    ],
+    "id": "reverse-wrist-curl-barbell-seated",
+    "aliases": []
   },
   "Reverse Wrist Curl DB Seated": {
     "nameRo": "Flexii inverse incheietura cu gantere",
@@ -21490,7 +22588,9 @@
         "type": "light_variant",
         "exercise_id": "Wrist Roller"
       }
-    ]
+    ],
+    "id": "reverse-wrist-curl-db-seated",
+    "aliases": []
   },
   "Reverse Wrist Curl Cable": {
     "nameRo": "Flexii inverse incheietura la cablu",
@@ -21529,7 +22629,9 @@
         "type": "light_variant",
         "exercise_id": "Wrist Roller"
       }
-    ]
+    ],
+    "id": "reverse-wrist-curl-cable",
+    "aliases": []
   },
   "Cable Wrist Curl": {
     "nameRo": "Flexii incheietura la cablu",
@@ -21568,7 +22670,9 @@
         "type": "light_variant",
         "exercise_id": "Wrist Roller"
       }
-    ]
+    ],
+    "id": "cable-wrist-curl",
+    "aliases": []
   },
   "Wrist Roller": {
     "nameRo": "Rulator incheietura antebrate",
@@ -21609,7 +22713,9 @@
       }
     ],
     "status": "CORE_AUTO",
-    "metric_type": "time"
+    "metric_type": "time",
+    "id": "wrist-roller",
+    "aliases": []
   },
   "Plate Pinch Hold": {
     "nameRo": "Mentinere prindere disc antebrate",
@@ -21650,7 +22756,9 @@
       }
     ],
     "status": "CORE_AUTO",
-    "metric_type": "time"
+    "metric_type": "time",
+    "id": "plate-pinch-hold",
+    "aliases": []
   },
   "Farmer's Walk DB": {
     "nameRo": "Mers fermierului cu gantere",
@@ -21693,7 +22801,9 @@
       }
     ],
     "status": "CORE_AUTO",
-    "metric_type": "carry"
+    "metric_type": "carry",
+    "id": "farmer-s-walk-db",
+    "aliases": []
   },
   "Farmer's Walk Trap Bar": {
     "nameRo": "Mers fermierului cu trap bar",
@@ -21736,7 +22846,9 @@
       }
     ],
     "status": "CORE_AUTO",
-    "metric_type": "carry"
+    "metric_type": "carry",
+    "id": "farmer-s-walk-trap-bar",
+    "aliases": []
   },
   "Farmer's Walk Kettlebell": {
     "nameRo": "Mers fermierului cu kettlebell",
@@ -21777,7 +22889,9 @@
         "type": "light_variant",
         "exercise_id": "Towel Hang"
       }
-    ]
+    ],
+    "id": "farmer-s-walk-kettlebell",
+    "aliases": []
   },
   "Towel Hang": {
     "nameRo": "Atarnare cu prosop la bara",
@@ -21816,7 +22930,9 @@
         "type": "light_variant",
         "exercise_id": "Wrist Curl DB Seated Palms-Up"
       }
-    ]
+    ],
+    "id": "towel-hang",
+    "aliases": []
   },
   "Dead Hang": {
     "nameRo": "Atarnare pasiva la bara",
@@ -21857,7 +22973,9 @@
       }
     ],
     "status": "CORE_AUTO",
-    "metric_type": "time"
+    "metric_type": "time",
+    "id": "dead-hang",
+    "aliases": []
   },
   "Bar Hang Single-Arm": {
     "nameRo": "Atarnare la bara cu un brat",
@@ -21896,7 +23014,9 @@
         "type": "light_variant",
         "exercise_id": "Towel Hang"
       }
-    ]
+    ],
+    "id": "bar-hang-single-arm",
+    "aliases": []
   },
   "Captains of Crush Gripper": {
     "nameRo": "Strangere gripper antebrate",
@@ -21935,7 +23055,9 @@
         "type": "light_variant",
         "exercise_id": "Towel Hang"
       }
-    ]
+    ],
+    "id": "captains-of-crush-gripper",
+    "aliases": []
   },
   "Reverse Curl Barbell": {
     "nameRo": "Flexii inverse cu bara",
@@ -21976,7 +23098,9 @@
         "type": "light_variant",
         "exercise_id": "Reverse Curl DB"
       }
-    ]
+    ],
+    "id": "reverse-curl-barbell",
+    "aliases": []
   },
   "Reverse Curl EZ-bar": {
     "nameRo": "Flexii inverse cu bara EZ",
@@ -22018,7 +23142,9 @@
         "exercise_id": "Reverse Curl DB"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "reverse-curl-ez-bar",
+    "aliases": []
   },
   "Reverse Curl Cable": {
     "nameRo": "Flexii inverse la cablu",
@@ -22059,7 +23185,9 @@
         "type": "light_variant",
         "exercise_id": "Reverse Curl DB"
       }
-    ]
+    ],
+    "id": "reverse-curl-cable",
+    "aliases": []
   },
   "Reverse Curl DB": {
     "nameRo": "Flexii inverse cu gantere",
@@ -22100,7 +23228,9 @@
         "type": "light_variant",
         "exercise_id": "Wrist Curl DB Seated Palms-Up"
       }
-    ]
+    ],
+    "id": "reverse-curl-db",
+    "aliases": []
   },
   "Pinwheel Curl DB": {
     "nameRo": "Flexii pinwheel cu gantere",
@@ -22141,7 +23271,9 @@
         "type": "light_variant",
         "exercise_id": "DB Cross-Body Hammer"
       }
-    ]
+    ],
+    "id": "pinwheel-curl-db",
+    "aliases": []
   },
   "Suitcase Carry DB": {
     "nameRo": "Carat valiza cu gantera",
@@ -22182,7 +23314,9 @@
         "type": "light_variant",
         "exercise_id": "Towel Hang"
       }
-    ]
+    ],
+    "id": "suitcase-carry-db",
+    "aliases": []
   },
   "Plate Curl": {
     "nameRo": "Flexii cu disc",
@@ -22221,7 +23355,9 @@
         "type": "light_variant",
         "exercise_id": "Towel Hang"
       }
-    ]
+    ],
+    "id": "plate-curl",
+    "aliases": []
   },
   "Sledgehammer Levering": {
     "nameRo": "Parghie cu baros antebrate",
@@ -22260,7 +23396,9 @@
         "type": "light_variant",
         "exercise_id": "Towel Hang"
       }
-    ]
+    ],
+    "id": "sledgehammer-levering",
+    "aliases": []
   },
   "Hammer Strength Incline Press": {
     "nameRo": "Impins inclinat la aparat",
@@ -22303,7 +23441,9 @@
         "type": "light_variant",
         "exercise_id": "Pec Deck / Cable Fly"
       }
-    ]
+    ],
+    "id": "hammer-strength-incline-press",
+    "aliases": []
   },
   "Hammer Strength Decline Press": {
     "nameRo": "Impins inclinat negativ la aparat",
@@ -22345,7 +23485,9 @@
         "type": "light_variant",
         "exercise_id": "Cable Fly"
       }
-    ]
+    ],
+    "id": "hammer-strength-decline-press",
+    "aliases": []
   },
   "Hammer Strength Flat Press": {
     "nameRo": "Impins plat la aparat",
@@ -22388,7 +23530,9 @@
         "type": "light_variant",
         "exercise_id": "Pec Deck / Cable Fly"
       }
-    ]
+    ],
+    "id": "hammer-strength-flat-press",
+    "aliases": []
   },
   "Hammer Strength Iso-Lateral Bench Press": {
     "nameRo": "Impins din piept iso-lateral aparat",
@@ -22430,7 +23574,9 @@
         "type": "light_variant",
         "exercise_id": "Pec Deck / Cable Fly"
       }
-    ]
+    ],
+    "id": "hammer-strength-iso-lateral-bench-press",
+    "aliases": []
   },
   "Smith Split Squat": {
     "nameRo": "Genuflexiuni split la Smith",
@@ -22471,7 +23617,9 @@
         "type": "light_variant",
         "exercise_id": "Reverse Lunge"
       }
-    ]
+    ],
+    "id": "smith-split-squat",
+    "aliases": []
   },
   "Smith Bulgarian Split Squat": {
     "nameRo": "Genuflexiuni bulgaresti la Smith",
@@ -22512,7 +23660,9 @@
         "type": "light_variant",
         "exercise_id": "Reverse Lunge"
       }
-    ]
+    ],
+    "id": "smith-bulgarian-split-squat",
+    "aliases": []
   },
   "Smith Bent-Over Row": {
     "nameRo": "Ramat aplecat la Smith",
@@ -22553,7 +23703,9 @@
         "type": "light_variant",
         "exercise_id": "Cable Row"
       }
-    ]
+    ],
+    "id": "smith-bent-over-row",
+    "aliases": []
   },
   "Smith Reverse Lunge": {
     "nameRo": "Fandari inapoi la Smith",
@@ -22594,7 +23746,9 @@
         "type": "light_variant",
         "exercise_id": "Deficit Reverse Lunge"
       }
-    ]
+    ],
+    "id": "smith-reverse-lunge",
+    "aliases": []
   },
   "Smith Inverted Row": {
     "nameRo": "Ramat orizontal la Smith",
@@ -22635,7 +23789,9 @@
         "type": "light_variant",
         "exercise_id": "Inverted Row Table Low"
       }
-    ]
+    ],
+    "id": "smith-inverted-row",
+    "aliases": []
   },
   "Vertical Hack Squat": {
     "nameRo": "Genuflexiuni hack verticale",
@@ -22676,7 +23832,9 @@
         "type": "light_variant",
         "exercise_id": "45-Degree Leg Press"
       }
-    ]
+    ],
+    "id": "vertical-hack-squat",
+    "aliases": []
   },
   "Cable Triceps Kickback Single-Arm": {
     "nameRo": "Extensii triceps inapoi cu un brat",
@@ -22715,7 +23873,9 @@
         "type": "light_variant",
         "exercise_id": "DB Kickback Bench Support"
       }
-    ]
+    ],
+    "id": "cable-triceps-kickback-single-arm",
+    "aliases": []
   },
   "Cable Preacher Curl": {
     "nameRo": "Flexii la pupitru la cablu",
@@ -22755,7 +23915,9 @@
         "type": "light_variant",
         "exercise_id": "Cable Curl Standing Straight Bar"
       }
-    ]
+    ],
+    "id": "cable-preacher-curl",
+    "aliases": []
   },
   "Reverse-Grip Preacher Curl": {
     "nameRo": "Flexii la pupitru priza inversa",
@@ -22797,7 +23959,9 @@
         "type": "light_variant",
         "exercise_id": "Reverse Curl DB"
       }
-    ]
+    ],
+    "id": "reverse-grip-preacher-curl",
+    "aliases": []
   },
   "Spider Curl Cable": {
     "nameRo": "Flexii spider la cablu",
@@ -22837,7 +24001,9 @@
         "type": "light_variant",
         "exercise_id": "Cable Curl Lying on Bench"
       }
-    ]
+    ],
+    "id": "spider-curl-cable",
+    "aliases": []
   },
   "Trap Bar Row": {
     "nameRo": "Ramat cu trap bar",
@@ -22878,7 +24044,9 @@
         "type": "light_variant",
         "exercise_id": "Cable Row"
       }
-    ]
+    ],
+    "id": "trap-bar-row",
+    "aliases": []
   },
   "Trap Bar RDL": {
     "nameRo": "Romanian Deadlift cu trap bar",
@@ -22920,7 +24088,9 @@
         "type": "light_variant",
         "exercise_id": "DB Romanian Deadlift"
       }
-    ]
+    ],
+    "id": "trap-bar-rdl",
+    "aliases": []
   },
   "Kettlebell Goblet Squat": {
     "nameRo": "Genuflexiuni goblet kettlebell",
@@ -22962,7 +24132,9 @@
         "type": "light_variant",
         "exercise_id": "Goblet Squat"
       }
-    ]
+    ],
+    "id": "kettlebell-goblet-squat",
+    "aliases": []
   },
   "Kettlebell Single-Arm Press": {
     "nameRo": "Impins umeri un brat kettlebell",
@@ -23003,7 +24175,9 @@
         "type": "light_variant",
         "exercise_id": "Lateral Raises"
       }
-    ]
+    ],
+    "id": "kettlebell-single-arm-press",
+    "aliases": []
   },
   "Kettlebell Single-Arm Row": {
     "nameRo": "Ramat un brat kettlebell",
@@ -23044,7 +24218,9 @@
         "type": "light_variant",
         "exercise_id": "Cable Row"
       }
-    ]
+    ],
+    "id": "kettlebell-single-arm-row",
+    "aliases": []
   },
   "Kettlebell Romanian Deadlift": {
     "nameRo": "Romanian Deadlift cu kettlebell",
@@ -23085,7 +24261,9 @@
         "type": "light_variant",
         "exercise_id": "DB Romanian Deadlift"
       }
-    ]
+    ],
+    "id": "kettlebell-romanian-deadlift",
+    "aliases": []
   },
   "Kettlebell Front Rack Carry": {
     "nameRo": "Carat kettlebell la piept",
@@ -23126,7 +24304,9 @@
         "type": "light_variant",
         "exercise_id": "Towel Hang"
       }
-    ]
+    ],
+    "id": "kettlebell-front-rack-carry",
+    "aliases": []
   },
   "SSB Squat": {
     "nameRo": "Genuflexiuni cu bara safety",
@@ -23167,7 +24347,9 @@
         "type": "light_variant",
         "exercise_id": "Goblet Squat"
       }
-    ]
+    ],
+    "id": "ssb-squat",
+    "aliases": []
   },
   "SSB Good Morning": {
     "nameRo": "Good Morning cu bara safety",
@@ -23208,7 +24390,9 @@
         "type": "light_variant",
         "exercise_id": "DB Romanian Deadlift"
       }
-    ]
+    ],
+    "id": "ssb-good-morning",
+    "aliases": []
   },
   "SSB Lunge": {
     "nameRo": "Fandari cu bara safety",
@@ -23249,7 +24433,9 @@
         "type": "light_variant",
         "exercise_id": "Reverse Lunge"
       }
-    ]
+    ],
+    "id": "ssb-lunge",
+    "aliases": []
   },
   "Cambered Bar Squat": {
     "nameRo": "Genuflexiuni cu bara curbata",
@@ -23290,7 +24476,9 @@
         "type": "light_variant",
         "exercise_id": "Goblet Squat"
       }
-    ]
+    ],
+    "id": "cambered-bar-squat",
+    "aliases": []
   },
   "Cambered Bar RDL": {
     "nameRo": "Romanian Deadlift cu bara curbata",
@@ -23331,7 +24519,9 @@
         "type": "light_variant",
         "exercise_id": "DB Romanian Deadlift"
       }
-    ]
+    ],
+    "id": "cambered-bar-rdl",
+    "aliases": []
   },
   "Power Clean": {
     "nameRo": "Aruncare la piept exploziva",
@@ -23373,7 +24563,9 @@
         "type": "light_variant",
         "exercise_id": "Hang Clean"
       }
-    ]
+    ],
+    "id": "power-clean",
+    "aliases": []
   },
   "Hang Clean": {
     "nameRo": "Aruncare la piept din atarnare",
@@ -23415,7 +24607,9 @@
         "type": "light_variant",
         "exercise_id": "Push Press"
       }
-    ]
+    ],
+    "id": "hang-clean",
+    "aliases": []
   },
   "Push Jerk": {
     "nameRo": "Impins cu fandare push jerk",
@@ -23456,7 +24650,9 @@
         "type": "light_variant",
         "exercise_id": "Push Press"
       }
-    ]
+    ],
+    "id": "push-jerk",
+    "aliases": []
   },
   "Fat Grip Hold": {
     "nameRo": "Mentinere priza groasa antebrate",
@@ -23495,7 +24691,9 @@
         "type": "light_variant",
         "exercise_id": "Towel Hang"
       }
-    ]
+    ],
+    "id": "fat-grip-hold",
+    "aliases": []
   },
   "Fat Grip Barbell Curl": {
     "nameRo": "Flexii cu bara priza groasa",
@@ -23536,7 +24734,9 @@
         "type": "light_variant",
         "exercise_id": "Reverse Curl DB"
       }
-    ]
+    ],
+    "id": "fat-grip-barbell-curl",
+    "aliases": []
   },
   "Hammer Holds": {
     "nameRo": "Mentinere gantere priza neutra",
@@ -23575,7 +24775,9 @@
         "type": "light_variant",
         "exercise_id": "Towel Hang"
       }
-    ]
+    ],
+    "id": "hammer-holds",
+    "aliases": []
   },
   "Wrist Extension Cable Standing": {
     "nameRo": "Extensii incheietura la cablu",
@@ -23614,7 +24816,9 @@
         "type": "light_variant",
         "exercise_id": "Cable Wrist Curl"
       }
-    ]
+    ],
+    "id": "wrist-extension-cable-standing",
+    "aliases": []
   },
   "Plank": {
     "nameRo": "Plank",
@@ -23658,7 +24862,9 @@
       }
     ],
     "status": "CORE_AUTO",
-    "metric_type": "time"
+    "metric_type": "time",
+    "id": "plank",
+    "aliases": []
   },
   "Side Plank": {
     "nameRo": "Plank lateral",
@@ -23702,7 +24908,9 @@
       }
     ],
     "status": "CORE_AUTO",
-    "metric_type": "time"
+    "metric_type": "time",
+    "id": "side-plank",
+    "aliases": []
   },
   "Plank with Shoulder Tap": {
     "nameRo": "Plank cu atingere umar",
@@ -23743,7 +24951,9 @@
         "type": "light_variant",
         "exercise_id": "Plank"
       }
-    ]
+    ],
+    "id": "plank-with-shoulder-tap",
+    "aliases": []
   },
   "Plank to Push-up": {
     "nameRo": "Plank in flotare",
@@ -23785,7 +24995,9 @@
         "type": "light_variant",
         "exercise_id": "Plank"
       }
-    ]
+    ],
+    "id": "plank-to-push-up",
+    "aliases": []
   },
   "Side Plank Dip": {
     "nameRo": "Plank lateral cu coborare sold",
@@ -23827,7 +25039,9 @@
         "type": "light_variant",
         "exercise_id": "Side Plank"
       }
-    ]
+    ],
+    "id": "side-plank-dip",
+    "aliases": []
   },
   "Plank with Reach": {
     "nameRo": "Plank cu intindere brat",
@@ -23869,7 +25083,9 @@
         "type": "light_variant",
         "exercise_id": "Plank"
       }
-    ]
+    ],
+    "id": "plank-with-reach",
+    "aliases": []
   },
   "Copenhagen Plank": {
     "nameRo": "Plank Copenhaga (adductori)",
@@ -23911,7 +25127,9 @@
         "type": "light_variant",
         "exercise_id": "Side Plank"
       }
-    ]
+    ],
+    "id": "copenhagen-plank",
+    "aliases": []
   },
   "Scapular Plank": {
     "nameRo": "Plank scapular",
@@ -23952,7 +25170,9 @@
         "type": "light_variant",
         "exercise_id": "Plank"
       }
-    ]
+    ],
+    "id": "scapular-plank",
+    "aliases": []
   },
   "Pallof Press Cable Standing": {
     "nameRo": "Anti-rotatie Pallof la cablu",
@@ -23995,7 +25215,9 @@
       }
     ],
     "status": "CORE_AUTO",
-    "metric_type": "time"
+    "metric_type": "time",
+    "id": "pallof-press-cable-standing",
+    "aliases": []
   },
   "Pallof Press Half-Kneeling": {
     "nameRo": "Anti-rotatie Pallof in genunchi",
@@ -24036,7 +25258,9 @@
         "type": "light_variant",
         "exercise_id": "Pallof Press Band"
       }
-    ]
+    ],
+    "id": "pallof-press-half-kneeling",
+    "aliases": []
   },
   "Pallof Press Band": {
     "nameRo": "Anti-rotatie Pallof cu banda",
@@ -24077,7 +25301,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "pallof-press-band",
+    "aliases": []
   },
   "Cable Woodchop High-to-Low": {
     "nameRo": "Taietura de lemn la cablu sus-jos",
@@ -24120,7 +25346,9 @@
         "exercise_id": "Med Ball Woodchop"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-woodchop-high-to-low",
+    "aliases": []
   },
   "Cable Woodchop Low-to-High": {
     "nameRo": "Taietura de lemn la cablu jos-sus",
@@ -24162,7 +25390,9 @@
         "type": "light_variant",
         "exercise_id": "Med Ball Woodchop"
       }
-    ]
+    ],
+    "id": "cable-woodchop-low-to-high",
+    "aliases": []
   },
   "Med Ball Woodchop": {
     "nameRo": "Taietura de lemn cu minge medicinala",
@@ -24203,7 +25433,9 @@
         "type": "light_variant",
         "exercise_id": "Plate Russian Twist"
       }
-    ]
+    ],
+    "id": "med-ball-woodchop",
+    "aliases": []
   },
   "Dead Bug": {
     "nameRo": "Dead bug (gandac mort)",
@@ -24243,7 +25475,9 @@
         "exercise_id": "Bird Dog"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "dead-bug",
+    "aliases": []
   },
   "Dead Bug with Resistance Band": {
     "nameRo": "Dead bug cu banda",
@@ -24284,7 +25518,9 @@
         "type": "light_variant",
         "exercise_id": "Dead Bug"
       }
-    ]
+    ],
+    "id": "dead-bug-with-resistance-band",
+    "aliases": []
   },
   "Bird Dog": {
     "nameRo": "Bird dog (caine de vanatoare)",
@@ -24326,7 +25562,9 @@
         "type": "light_variant",
         "exercise_id": "Dead Bug"
       }
-    ]
+    ],
+    "id": "bird-dog",
+    "aliases": []
   },
   "Bird Dog with Resistance Band": {
     "nameRo": "Bird dog cu banda",
@@ -24368,7 +25606,9 @@
         "type": "light_variant",
         "exercise_id": "Bird Dog"
       }
-    ]
+    ],
+    "id": "bird-dog-with-resistance-band",
+    "aliases": []
   },
   "Hollow Body Hold": {
     "nameRo": "Mentinere corp scobit",
@@ -24407,7 +25647,9 @@
         "type": "light_variant",
         "exercise_id": "Dead Bug"
       }
-    ]
+    ],
+    "id": "hollow-body-hold",
+    "aliases": []
   },
   "Hollow Body Rock": {
     "nameRo": "Balansare corp scobit",
@@ -24446,7 +25688,9 @@
         "type": "light_variant",
         "exercise_id": "Dead Bug"
       }
-    ]
+    ],
+    "id": "hollow-body-rock",
+    "aliases": []
   },
   "Reverse Crunch": {
     "nameRo": "Crunch invers abdomen",
@@ -24486,7 +25730,9 @@
         "exercise_id": "Heel Tap"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "reverse-crunch",
+    "aliases": []
   },
   "Reverse Crunch Decline Bench": {
     "nameRo": "Crunch invers pe banca inclinata",
@@ -24525,7 +25771,9 @@
         "type": "light_variant",
         "exercise_id": "Reverse Crunch"
       }
-    ]
+    ],
+    "id": "reverse-crunch-decline-bench",
+    "aliases": []
   },
   "Stability Ball Stir the Pot": {
     "nameRo": "Amestecare in oala cu minge fitness",
@@ -24566,7 +25814,9 @@
         "type": "light_variant",
         "exercise_id": "Plank"
       }
-    ]
+    ],
+    "id": "stability-ball-stir-the-pot",
+    "aliases": []
   },
   "Ab Wheel Rollout": {
     "nameRo": "Rulare cu roata abdomen",
@@ -24609,7 +25859,9 @@
         "exercise_id": "Stability Ball Rollout"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "ab-wheel-rollout",
+    "aliases": []
   },
   "Barbell Rollout": {
     "nameRo": "Rulare cu bara abdomen",
@@ -24651,7 +25903,9 @@
         "type": "light_variant",
         "exercise_id": "Stability Ball Rollout"
       }
-    ]
+    ],
+    "id": "barbell-rollout",
+    "aliases": []
   },
   "Stability Ball Rollout": {
     "nameRo": "Rulare cu minge fitness",
@@ -24692,7 +25946,9 @@
         "type": "light_variant",
         "exercise_id": "Plank"
       }
-    ]
+    ],
+    "id": "stability-ball-rollout",
+    "aliases": []
   },
   "Hanging Leg Raise": {
     "nameRo": "Ridicari picioare la bara",
@@ -24735,7 +25991,9 @@
         "exercise_id": "Reverse Crunch"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "hanging-leg-raise",
+    "aliases": []
   },
   "Hanging Knee Raise": {
     "nameRo": "Ridicari genunchi la bara",
@@ -24777,7 +26035,9 @@
         "exercise_id": "Heel Tap"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "hanging-knee-raise",
+    "aliases": []
   },
   "Captains Chair Knee Raise": {
     "nameRo": "Ridicari genunchi la scaun roman",
@@ -24816,7 +26076,9 @@
         "type": "light_variant",
         "exercise_id": "Heel Tap"
       }
-    ]
+    ],
+    "id": "captains-chair-knee-raise",
+    "aliases": []
   },
   "Captains Chair Leg Raise": {
     "nameRo": "Ridicari picioare la scaun roman",
@@ -24856,7 +26118,9 @@
         "exercise_id": "Reverse Crunch"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "captains-chair-leg-raise",
+    "aliases": []
   },
   "Toes-to-Bar": {
     "nameRo": "Varfuri la bara abdomen",
@@ -24898,7 +26162,9 @@
         "type": "light_variant",
         "exercise_id": "Hanging Knee Raise"
       }
-    ]
+    ],
+    "id": "toes-to-bar",
+    "aliases": []
   },
   "L-Sit Hold Parallel Bars": {
     "nameRo": "Mentinere L-sit la bare paralele",
@@ -24940,7 +26206,9 @@
         "type": "light_variant",
         "exercise_id": "Hollow Body Hold"
       }
-    ]
+    ],
+    "id": "l-sit-hold-parallel-bars",
+    "aliases": []
   },
   "L-Sit Hold Floor": {
     "nameRo": "Mentinere L-sit la sol",
@@ -24981,7 +26249,9 @@
         "type": "light_variant",
         "exercise_id": "Hollow Body Hold"
       }
-    ]
+    ],
+    "id": "l-sit-hold-floor",
+    "aliases": []
   },
   "Cable Russian Twist": {
     "nameRo": "Rotiri ruse la cablu",
@@ -25022,7 +26292,9 @@
         "type": "light_variant",
         "exercise_id": "Med Ball Russian Twist"
       }
-    ]
+    ],
+    "id": "cable-russian-twist",
+    "aliases": []
   },
   "Cable Side Bend": {
     "nameRo": "Indoiri laterale la cablu",
@@ -25061,7 +26333,9 @@
         "type": "light_variant",
         "exercise_id": "Side Plank Dip"
       }
-    ]
+    ],
+    "id": "cable-side-bend",
+    "aliases": []
   },
   "Med Ball Slam": {
     "nameRo": "Trantire minge medicinala",
@@ -25103,7 +26377,9 @@
         "type": "light_variant",
         "exercise_id": "Med Ball Russian Twist"
       }
-    ]
+    ],
+    "id": "med-ball-slam",
+    "aliases": []
   },
   "Med Ball Russian Twist": {
     "nameRo": "Rotiri ruse cu minge medicinala",
@@ -25142,7 +26418,9 @@
         "type": "light_variant",
         "exercise_id": "Bicycle Crunch"
       }
-    ]
+    ],
+    "id": "med-ball-russian-twist",
+    "aliases": []
   },
   "Decline Sit-up": {
     "nameRo": "Abdomene pe banca inclinata negativ",
@@ -25181,7 +26459,9 @@
         "type": "light_variant",
         "exercise_id": "Bicycle Crunch"
       }
-    ]
+    ],
+    "id": "decline-sit-up",
+    "aliases": []
   },
   "Bench Sit-up": {
     "nameRo": "Abdomene pe banca",
@@ -25220,7 +26500,9 @@
         "type": "light_variant",
         "exercise_id": "Heel Tap"
       }
-    ]
+    ],
+    "id": "bench-sit-up",
+    "aliases": []
   },
   "Weighted Sit-up": {
     "nameRo": "Abdomene cu greutate",
@@ -25259,7 +26541,9 @@
         "type": "light_variant",
         "exercise_id": "V-Up"
       }
-    ]
+    ],
+    "id": "weighted-sit-up",
+    "aliases": []
   },
   "Roman Chair Sit-up": {
     "nameRo": "Abdomene la scaun roman",
@@ -25298,7 +26582,9 @@
         "type": "light_variant",
         "exercise_id": "Bicycle Crunch"
       }
-    ]
+    ],
+    "id": "roman-chair-sit-up",
+    "aliases": []
   },
   "Cable Crunch Kneeling": {
     "nameRo": "Crunch la cablu in genunchi",
@@ -25338,7 +26624,9 @@
         "exercise_id": "Bicycle Crunch"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "cable-crunch-kneeling",
+    "aliases": []
   },
   "Cable Crunch Standing": {
     "nameRo": "Crunch la cablu in picioare",
@@ -25377,7 +26665,9 @@
         "type": "light_variant",
         "exercise_id": "Bicycle Crunch"
       }
-    ]
+    ],
+    "id": "cable-crunch-standing",
+    "aliases": []
   },
   "V-Up": {
     "nameRo": "Pliere in V abdomen",
@@ -25416,7 +26706,9 @@
         "type": "light_variant",
         "exercise_id": "Heel Tap"
       }
-    ]
+    ],
+    "id": "v-up",
+    "aliases": []
   },
   "Heel Tap": {
     "nameRo": "Atingeri calcaie abdomen",
@@ -25455,7 +26747,9 @@
         "type": "light_variant",
         "exercise_id": "Dead Bug"
       }
-    ]
+    ],
+    "id": "heel-tap",
+    "aliases": []
   },
   "Bicycle Crunch": {
     "nameRo": "Crunch bicicleta abdomen",
@@ -25495,7 +26789,9 @@
         "exercise_id": "Heel Tap"
       }
     ],
-    "status": "CORE_AUTO"
+    "status": "CORE_AUTO",
+    "id": "bicycle-crunch",
+    "aliases": []
   },
   "Stability Ball Crunch": {
     "nameRo": "Crunch cu minge fitness",
@@ -25534,7 +26830,9 @@
         "type": "light_variant",
         "exercise_id": "Bicycle Crunch"
       }
-    ]
+    ],
+    "id": "stability-ball-crunch",
+    "aliases": []
   },
   "Stability Ball Pike": {
     "nameRo": "Pliere cu minge fitness",
@@ -25575,7 +26873,9 @@
         "type": "light_variant",
         "exercise_id": "Plank"
       }
-    ]
+    ],
+    "id": "stability-ball-pike",
+    "aliases": []
   },
   "Plate Crunch": {
     "nameRo": "Crunch cu disc",
@@ -25614,7 +26914,9 @@
         "type": "light_variant",
         "exercise_id": "Bicycle Crunch"
       }
-    ]
+    ],
+    "id": "plate-crunch",
+    "aliases": []
   },
   "Plate Russian Twist": {
     "nameRo": "Rotiri ruse cu disc",
@@ -25653,7 +26955,9 @@
         "type": "light_variant",
         "exercise_id": "Bicycle Crunch"
       }
-    ]
+    ],
+    "id": "plate-russian-twist",
+    "aliases": []
   },
   "Plate Side Bend": {
     "nameRo": "Indoiri laterale cu disc",
@@ -25692,7 +26996,9 @@
         "type": "light_variant",
         "exercise_id": "Side Plank Dip"
       }
-    ]
+    ],
+    "id": "plate-side-bend",
+    "aliases": []
   },
   "Garhammer Raise": {
     "nameRo": "Ridicari genunchi partiale abdomen",
@@ -25733,7 +27039,9 @@
         "type": "light_variant",
         "exercise_id": "Reverse Crunch"
       }
-    ]
+    ],
+    "id": "garhammer-raise",
+    "aliases": []
   },
   "Front Rack Carry Barbell": {
     "nameRo": "Carat cu bara la piept",
@@ -25775,7 +27083,9 @@
         "type": "light_variant",
         "exercise_id": "Plank"
       }
-    ]
+    ],
+    "id": "front-rack-carry-barbell",
+    "aliases": []
   },
   "Overhead Carry DB": {
     "nameRo": "Carat peste cap cu gantera",
@@ -25817,7 +27127,9 @@
         "type": "light_variant",
         "exercise_id": "Plank"
       }
-    ]
+    ],
+    "id": "overhead-carry-db",
+    "aliases": []
   },
   "Dragon Flag": {
     "nameRo": "Dragon Flag abdomen",
@@ -25859,7 +27171,9 @@
         "type": "light_variant",
         "exercise_id": "Hollow Body Hold"
       }
-    ]
+    ],
+    "id": "dragon-flag",
+    "aliases": []
   },
   "Windshield Wiper": {
     "nameRo": "Stergatoare de parbriz abdomen",
@@ -25901,7 +27215,9 @@
         "type": "light_variant",
         "exercise_id": "Hanging Knee Raise"
       }
-    ]
+    ],
+    "id": "windshield-wiper",
+    "aliases": []
   },
   "Body Saw Plank": {
     "nameRo": "Plank cu alunecare",
@@ -25942,6 +27258,8 @@
         "type": "light_variant",
         "exercise_id": "Plank"
       }
-    ]
+    ],
+    "id": "body-saw-plank",
+    "aliases": []
   }
 }

@@ -110,6 +110,62 @@ export function getExerciseMetadata(exerciseName) {
   };
 }
 
+// ── ID-MIGRATION Phase 1 (2026-06-11; design: 04-architecture/ID-MIGRATION-
+// DESIGN_2026-06-10.md) ───────────────────────────────────────────────────────
+// Exercise identity = the canonical EN key TODAY; renames have repeatedly
+// stranded persisted data (logs remap 2026-06-10, Wide-Stance vs Leg Press,
+// recovery map). Every entry now carries a STABLE `id` (kebab slug snapshot —
+// never changes after assignment) + `aliases` (historical names). This resolver
+// accepts any of {canonical name, id, alias} and returns the canonical name —
+// Phase 2 routes every name-keyed READ through it; Phase 3 stamps ids on writes.
+// Tolerant of entries without id/aliases (pre-generator data) → name-only index.
+
+/** @type {Map<string, string> | null} ref (name|id|alias) → canonical name */
+let _identityIndex = null;
+
+function _buildIdentityIndex() {
+  /** @type {Map<string, string>} */
+  const idx = new Map();
+  for (const name of Object.keys(EXERCISE_METADATA)) {
+    // Canonical name always resolves to itself (and wins any collision).
+    idx.set(name, name);
+  }
+  for (const [name, meta] of Object.entries(EXERCISE_METADATA)) {
+    const m = /** @type {{id?: string, aliases?: string[]}} */ (meta);
+    if (typeof m.id === 'string' && m.id.length > 0 && !idx.has(m.id)) idx.set(m.id, name);
+    for (const a of Array.isArray(m.aliases) ? m.aliases : []) {
+      if (typeof a === 'string' && a.length > 0 && !idx.has(a)) idx.set(a, name);
+    }
+  }
+  return idx;
+}
+
+/**
+ * Resolve any exercise reference (canonical name, stable id, or historical
+ * alias) to the CANONICAL name. Unknown → null (caller decides the fallback —
+ * unlike getExerciseMetadata this never invents a sentinel).
+ * @param {string|null|undefined} ref
+ * @returns {string|null}
+ */
+export function resolveExerciseName(ref) {
+  if (typeof ref !== 'string' || ref.length === 0) return null;
+  if (_identityIndex === null) _identityIndex = _buildIdentityIndex();
+  return _identityIndex.get(ref) ?? null;
+}
+
+/**
+ * The stable id of an exercise (accepts name/id/alias). Null when the entry is
+ * unknown or (pre-generator) has no id yet.
+ * @param {string|null|undefined} ref
+ * @returns {string|null}
+ */
+export function exerciseIdOf(ref) {
+  const name = resolveExerciseName(ref);
+  if (!name) return null;
+  const id = /** @type {{id?: string}} */ (EXERCISE_METADATA[name]).id;
+  return typeof id === 'string' && id.length > 0 ? id : null;
+}
+
 /**
  * Filter alternatives by tier-aware constraints (per §36.37 Smart-Routing).
  * Tier 1 forta: alternatives DOAR cu force_demand: 'high' (strict).

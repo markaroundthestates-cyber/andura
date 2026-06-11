@@ -87,6 +87,14 @@ export interface CascadeStep {
 }
 
 export interface ExerciseMetadata {
+  /**
+   * STABLE identity (ID-MIGRATION Phase 1, 2026-06-11): kebab slug snapshot of
+   * the canonical EN name at assignment. NEVER changes after — renames touch
+   * only display names. Resolver: exerciseLibrary.resolveExerciseName/exerciseIdOf.
+   */
+  id?: string;
+  /** Historical names this entry was known by (resolve to this entry). */
+  aliases?: string[];
   /** Romanian display name, no diacritics (D-LEGACY-064). */
   nameRo?: string;
   /** canonical English key echoed as a field (identity). */
@@ -202,6 +210,17 @@ export function validateExercise(name: string, entry: unknown): string[] {
   }
   if (e.metric_type !== undefined && !METRIC_TYPES.has(e.metric_type as string)) {
     errors.push(`"${name}": invalid metric_type "${String(e.metric_type)}"`);
+  }
+  // ID-MIGRATION Phase 1 (2026-06-11): stable identity fields. `id` = kebab slug
+  // snapshot of the canonical EN name at assignment time (NEVER changes after);
+  // `aliases` = historical names this entry was known by. Optional while the
+  // generator rolls out; uniqueness/collision is enforced by the identity lint
+  // test (cross-entry checks don't belong in a per-entry validator).
+  if (e.id !== undefined && (typeof e.id !== 'string' || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(e.id))) {
+    errors.push(`"${name}": id must be a kebab-case slug when present`);
+  }
+  if (e.aliases !== undefined && !isStringArray(e.aliases)) {
+    errors.push(`"${name}": aliases must be string[] when present`);
   }
   if (e.fallback_cascade !== undefined) {
     if (!Array.isArray(e.fallback_cascade)) {
