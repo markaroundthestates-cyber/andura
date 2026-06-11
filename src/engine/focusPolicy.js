@@ -719,7 +719,13 @@ function requirementsFor(rule, cluster, daysPerWeek, weekClusters) {
   // resolver owns the cluster→condition mapping; an unmet condition → not applicable.
   const isPush = cluster === 'push' || cluster === 'upper';
   const isPull = cluster === 'pull' || cluster === 'upper';
-  const isChest = cluster === 'chest' || cluster === 'push' || cluster === 'upper';
+  const isFull = cluster === 'full' || cluster === 'fullbody';
+  // A CHEST-focus full-body day is chest-capable too (gates finding 2026-06-11:
+  // minChestPressSlots skipped 'full', so a chest-focus 1-3d week had NO press
+  // guarantee — it relied on natural selection). Other focuses keep full days
+  // ungated (v-taper/upper CAP presses; balanced full days select a press naturally).
+  const isChest = cluster === 'chest' || cluster === 'push' || cluster === 'upper'
+    || (isFull && rule.id === 'chest');
   const isBack = cluster === 'back' || cluster === 'pull' || cluster === 'upper';
   const isArms = cluster === 'arms';
 

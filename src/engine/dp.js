@@ -6,6 +6,7 @@ import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../const
 import { roundToEquipmentWeight, getPrevWeight, getNextWeight } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier, getTransferSources } from './exerciseMapping.js';
 import { getExerciseMetadata } from './exerciseLibrary.js';
+import { loggedRowMatcher, canonicalLoggedName } from './dp/logIdentity.js';
 import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
@@ -504,6 +505,8 @@ export const DP = {
   getLogs(ex, n=10) {
     /** @type {Array<{ex?: string, w?: number, reps?: number | string, rpe?: number, ts?: number}>} */
     const logs = /** @type {any} */ (DB.get('logs')) || [];
+    // ID-migration Phase 2: match rows by canonical identity (dp/logIdentity.js).
+    const matches = loggedRowMatcher(ex);
     // Order-independent: sort by timestamp DESC (newest first) so logs[0] is
     // genuinely the latest and slice(0,3) is the latest 3 regardless of how the
     // DB stored them (writers prepend newest-first, but the firebase remote
@@ -511,7 +514,7 @@ export const DP = {
     // `ts` (legacy logs) fall back to 0 → sort to the end; stable sort keeps
     // their relative insertion order. Sort a copy — never mutate the DB array.
     return logs
-      .filter((l) => l.ex === ex && Number.isFinite(l.w) && l.w > 0) // F-4: reject negative/NaN weights
+      .filter((l) => matches(l) && Number.isFinite(l.w) && l.w > 0) // F-4: reject negative/NaN weights
       .sort((a, b) => (b.ts || 0) - (a.ts || 0))
       .slice(0, n);
   },
@@ -1088,7 +1091,8 @@ export const DP = {
   _loggedExerciseNames() {
     const logs = /** @type {Array<{ex?: string, w?: number}>} */ (DB.get('logs')) || [];
     const names = new Set();
-    for (const l of logs) { if (l && l.ex && l.w) names.add(l.ex); }
+    // ID-migration Phase 2: collapse aliases to canonical (dp/logIdentity.js).
+    for (const l of logs) { if (l && l.ex && l.w) names.add(canonicalLoggedName(l.ex)); }
     return [...names];
   },
 
