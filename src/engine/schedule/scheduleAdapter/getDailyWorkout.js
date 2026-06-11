@@ -612,15 +612,18 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // Distinct from weakGroups (auto-detected lagging): emphasis is the USER'S
     // explicit look choice. balanced → empty array → no-op (byte-identical).
     emphasizedGroups: [...emphSet],
+    // De-emphasized Big-11 RO groups (focus.deEmphasize) — threaded so the
+    // full-body slot crunch on a 1-3-day FOCUS week resolves toward the focus
+    // (Daniel sweep review 2026-06-11): a de-emphasized region is MAINTENANCE
+    // (ONE compound), so on a slot-starved full-body day its SURPLUS leg
+    // compounds may yield to the focus's width work, and the maintenance-floor
+    // guarantees the de-emphasized region at REGION level (>=1), not per-group.
+    // balanced → empty → byte-identical (no de-emphasis, no yield).
+    deEmphasizedGroups: [...deEmphSet],
     // #8/D pain/injury per-exercise deprioritize (dp_pain_deprioritize_v1, default
     // OFF → empty map → byte-identical pool order). When ON, a repeatedly-skipped /
     // recently-painful SPECIFIC exercise is demoted in poolForGroup so a same-muscle
     // sibling is preferred; never a hard ban (poolForGroup keeps the last option).
-    // #R6d cross-week lumbar dedup (dp_lumbar_dedup_v1, default OFF → merges null
-    // → byte-identical) merged into the SAME demote channel: a REPEAT leg/posterior
-    // day this week demotes the heavy lumbar hinge family so a non-hinge sibling
-    // leads (RDL on the first leg day, leg curl on the second — Daniel's "two
-    // lumbar hinges/week" audit). Demote-only, last-option guarded → never strands.
     // Refusal-memory (dp_refusal_memory_v1, Daniel 2026-06-10): a "nu vreau"
     // swap-away DEMOTES that exercise here with a 28-day-half-life decay — it
     // comes back on its own (reversible) and swap PICK-LISTS are untouched (the
@@ -630,15 +633,27 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     exercisePenalties: mergePenalties(
       isEnabled('dp_pain_deprioritize_v1') ? exercisePenaltyMap() : null,
       isEnabled('dp_refusal_memory_v1') ? getRefusalPenalties(date.getTime()) : null,
-      lumbarDedupPenalties({
-        flagOn: isEnabled('dp_lumbar_dedup_v1'),
-        activeWeek,
-        dayIdx,
-        todayCluster: cluster,
-        focusPreset,
-        splitRebalance,
-      }),
     ),
+    // #R6d cross-week lumbar dedup (dp_lumbar_dedup_v1) — moved OUT of the soft
+    // pain/refusal channel to its OWN structural channel (Daniel focus-sweep
+    // review 2026-06-11): unlike pain/refusal it must PIERCE the PR-continuity
+    // exemption (the heavy hinge it spaces IS the user's logged RDL — the soft
+    // channel's PR pass-through made the demote a no-op for exactly its target)
+    // and it threads into the set distribution (a repeat-day hinge that still
+    // lands trains LIGHT, isolation band). Demote-only, last-option guarded.
+    structuralPenalties: lumbarDedupPenalties({
+      flagOn: isEnabled('dp_lumbar_dedup_v1'),
+      activeWeek,
+      dayIdx,
+      todayCluster: cluster,
+      focusPreset,
+      splitRebalance,
+    }),
+    // R6d-b in-session lumbar pairing (same flag seam): a heavy deadlift-family
+    // hinge and a back-extension accessory must not share ONE session (his
+    // 4d-lower Thursday stacked Squat + RDL + Hyperextension). sessionBuilder
+    // drops the back-extension, minSession-guarded.
+    lumbarPairDedup: isEnabled('dp_lumbar_dedup_v1'),
     // #64 PERSISTENT pain memory PROACTIVE swap (dp_pain_memory_v1, default OFF →
     // null → byte-identical pool). When ON, a user-PINNED painful exercise is
     // REPLACED in poolForGroup by its persisted curated chain substitute (held

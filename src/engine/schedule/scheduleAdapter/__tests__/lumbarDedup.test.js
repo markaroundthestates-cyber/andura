@@ -109,6 +109,17 @@ describe('R6d — lumbarDedupPenalties', () => {
       dayIdx: 0, todayCluster: 'legs', focusPreset: 'balanced', splitRebalance: false,
     })).toBeNull();
   });
+
+  it('2026-06-11 list-gap fix: the bodyweight + reverse hyperextension variants are family members', () => {
+    // 'Hyperextension Bodyweight' is hams-PRIMARY in the library, so it surfaces
+    // from the HAMSTRINGS pool on legs/lower days — the Daniel focus-sweep showed
+    // it landing on 2-3 days of a lower-focus week, untouched by the old curated
+    // list (which only named the 45°/Roman-chair/GHD/weighted/machine variants).
+    for (const name of ['Hyperextension Bodyweight', 'Reverse Hyperextension']) {
+      expect(LUMBAR_HINGES, `${name} in LUMBAR_HINGES`).toContain(name);
+      expect(BACK_EXTENSION_FAMILY, `${name} in BACK_EXTENSION_FAMILY`).toContain(name);
+    }
+  });
 });
 
 describe('R6d — mergePenalties', () => {

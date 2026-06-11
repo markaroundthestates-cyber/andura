@@ -4,7 +4,7 @@
   "nProfiles": 8,
   "weeks": 6,
   "hashOff": "a92e79ca19f5a59b08bd993ed95c0c6943617c6931b5f768843f6f8713fb0ab8",
-  "hashOn": "125f55c53ff5a715187d44b7665aa431f4ac47281aa9644050e3af8169af3afd",
+  "hashOn": "39682ee4989070bab3325d1dec3954299601129575c4e5ea84f8eaf6f3a63012",
   "sessionOff": {
     "plannedSessions": 192,
     "emptySessions": 0,
@@ -17,7 +17,7 @@
   "sessionOn": {
     "plannedSessions": 192,
     "emptySessions": 0,
-    "meanExerciseCount": 6.63,
+    "meanExerciseCount": 6.62,
     "meanSetTotal": 12.03,
     "meanDurationMin": 46.2,
     "meanVolumeKg": 1416,
@@ -49,5 +49,6 @@
   },
   "craterOff": 65,
   "craterOn": 53,
+  "_rebaseline_note_2026-06-11": "Re-frozen for the focus fine-tune batch (Daniel sweep review). ONLY hashOn moved (hashOff BYTE-IDENTICAL a92e79ca → every change is flag-gated ON-only). WHY hashOn shifts: the CONCENTRATION CAP — an emphasized group's per-exercise COMPOUND ceiling is now 4 whenever the group is the FOCUS (was 5 when the group sat at/above MAV, where the volume-boost path was disabled and the ceiling reverted to the legacy 5). His exact complaint: v-taper 4d Smith OHP 5×2days=10/wk. The surplus redistributes onto a 2nd variation/isolation (umeri 5/3/3 → 4/4/4), so the prescription STREAM changes but the aggregate QUALITY is byte-identical to the prior freeze: craterOn 53=53, absurd ON 30=30, oscillation 0=0, convergence ON 13.6%=13.6%, meanFinalAbsErr 0.536=0.536. Only meanExerciseCount drifts 6.63→6.62 (the set redistribution). VERIFIED DETERMINISTIC (two fresh ON runs reproduce 39682ee4 identically; §A fresh-OFF-reproduces passes). §C self-relative HOLDS (craterOn≤craterOff, osc 0=0, absurd 30≤32, convergence in band). Persona-matrix #70 stays 26/26 incl. the Gigel 2d UPPER maintenance gate (the focus-policy full-body changes are gated daysPerWeek≤1 so multi-day is byte-identical). The other batch changes — 'full'-cluster focus minimums, lumbar list-gap + structural channel, split anti-adjacency — are pinned OFF in the fp cohort or only fire on full-body focus days absent from it, so they do not move the hash beyond this cap.",
   "_rebaseline_note": "Re-frozen 2026-06-10 for FIXWAVE-C (QA-F8 recovery metadata-mapping + QA-F9 decay K=1.8), on top of the FIX-A freeze. WHY the hash shifts (BOTH OFF and ON): recovery state feeds session composition (the recovery-redistribute pass in getDailyWorkout shifts freed volume between same-session muscles, and imbalance/weakness read the same map). QA-F8 made musclesForExercise resolve the WHOLE library (curated wins, else metadata-derived) instead of only ~27 curated names, so many sessions now register recovery/imbalance signal they previously ignored (UNGATED structural correctness, not a flag). QA-F9 set the decay time-constant K=1.8 (was implicitly 1) so a session clears its recovery window on a realistic curve (a 16-set leg day reads recovered by the next leg day instead of lingering 'Loaded' 5-6 days — the founder's live complaint). VERIFIED DETERMINISTIC (two fresh runs reproduce a92e79ca / 125f55c5 within the same run; the section-A fresh-OFF-reproduces-itself test passes -> no RNG/clock leak) and SAFER than the FIX-A baseline on every absolute metric: craterOff 70->65, craterOn 54->53, absurd OFF 35->32 / ON 35->30 (recovery seeing the whole library + the faster-clearing decay reduce stale over-stress that drove absurd loads), oscillation 0=0, convergence ON 12.2%->13.6%. Section-C self-relative ON-vs-OFF HOLDS (craterOn<=craterOff, osc 0=0, absurd in band, convergence in band). Persona-matrix #70 stays green. meanExerciseCount drifts 6.71->6.53 OFF as the recovery-redistribute reflects the corrected per-muscle load."
 }

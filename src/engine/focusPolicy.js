@@ -88,12 +88,19 @@
  * @type {Readonly<Record<FocusId, FocusRule>>}
  */
 export const FOCUS_RULES = Object.freeze({
-  // DEFAULT — no pattern policy (mirrors balanced's empty volume preset). Light/
-  // empty caps so the resolver is a no-op for the default user (byte-identical).
+  // DEFAULT — minimal pattern policy (mirrors balanced's empty volume preset).
+  // Daniel focus-sweep review 2026-06-11: ONE structural requirement applies to
+  // EVERY focus, balanced included — a chest-capable day (push/upper/chest) must
+  // anchor at least one chest press. The sweep's balanced 4d Upper composed with
+  // Close-Grip Bench (triceps-primary) + a light fly as the only "chest" work —
+  // the same fly-only-upper bug his live v-taper week surfaced. isChest-gated in
+  // the resolver, so full/pull/leg days are untouched.
   balanced: Object.freeze({
     id: 'balanced',
     sessionCaps: Object.freeze({}),
-    sessionRequirements: Object.freeze({}),
+    sessionRequirements: Object.freeze({
+      minChestPressSlots: 1,
+    }),
     weeklyMinimums: Object.freeze([]),
   }),
 
@@ -124,7 +131,10 @@ export const FOCUS_RULES = Object.freeze({
       Object.freeze({
         key: 'side_delt_slots',
         targetByDays: Object.freeze({ days1to2: 1, days3to4: 2, days5plus: 3 }),
-        applicableClusters: Object.freeze(['push', 'upper', 'shoulders']),
+        // 'full'/'fullbody' added 2026-06-11 (Daniel sweep review): a 1-3-day week
+        // is ALL full-body days — v-taper width work (the WHOLE point of the focus)
+        // never qualified there, so his 1-3d programs had zero direct lateral/rear.
+        applicableClusters: Object.freeze(['push', 'upper', 'shoulders', 'full', 'fullbody']),
         // DERIVABLE: umeri + movementKey 'lateral-raise' (4 CORE_AUTO: DB/Cable/
         // Machine/Leaning Lateral Raise). 'side_delt' is a label, not a metadata tag.
         matchingTags: Object.freeze(['side_delt', 'lateral_raise']),
@@ -134,7 +144,7 @@ export const FOCUS_RULES = Object.freeze({
       Object.freeze({
         key: 'rear_delt_slots',
         targetByDays: Object.freeze({ days1to2: 1, days3to4: 2, days5plus: 2 }),
-        applicableClusters: Object.freeze(['pull', 'upper', 'shoulders']),
+        applicableClusters: Object.freeze(['pull', 'upper', 'shoulders', 'full', 'fullbody']),
         // DERIVABLE: umeri + movementKey 'rear-delt'|'face-pull'|'fly' (4 CORE_AUTO:
         // Cable/DB Rear Delt Fly, Face Pull, Reverse Pec Deck).
         matchingTags: Object.freeze(['rear_delt']),
@@ -144,7 +154,7 @@ export const FOCUS_RULES = Object.freeze({
       Object.freeze({
         key: 'lat_isolation',
         targetByDays: Object.freeze({ days1to2: 0, days3to4: 1, days5plus: 1 }),
-        applicableClusters: Object.freeze(['pull', 'upper', 'back']),
+        applicableClusters: Object.freeze(['pull', 'upper', 'back', 'full', 'fullbody']),
         // DERIVABLE (thin): spate + 'pullover' (Machine Pullover) or name
         // 'straight-arm' (Straight-Arm Lat Pulldown) — only 2 CORE_AUTO. The
         // 'lat_isolation'/'straight_arm_pulldown'/'pullover' label set maps onto
@@ -166,12 +176,16 @@ export const FOCUS_RULES = Object.freeze({
     sessionRequirements: Object.freeze({
       requireOverheadTricepsIfArmsOrPush: true, // long-head stretch (triceps overhead ext)
       requireStretchCurlIfArmsOrPull: true,     // stretched-position curl (preacher/incline)
+      minChestPressSlots: 1, // 2026-06-11 sweep review: every focus's push/upper day anchors a press
     }),
     weeklyMinimums: Object.freeze([
       Object.freeze({
         key: 'direct_biceps_slots',
         targetByDays: Object.freeze({ days1to2: 1, days3to4: 2, days5plus: 3 }),
-        applicableClusters: Object.freeze(['pull', 'upper', 'arms']),
+        // 'full'/'fullbody' added 2026-06-11 (Daniel sweep review): his ARMS-focus
+        // 1-day program composed with ZERO direct curls (the full-body day never
+        // qualified for this minimum) — an arms focus with no curl is broken.
+        applicableClusters: Object.freeze(['pull', 'upper', 'arms', 'full', 'fullbody']),
         // DERIVABLE: biceps + movementKey 'curl'|'hammer-curl' (10 CORE_AUTO).
         matchingTags: Object.freeze(['direct_biceps']),
         priority: 'high',
@@ -180,7 +194,7 @@ export const FOCUS_RULES = Object.freeze({
       Object.freeze({
         key: 'direct_triceps_slots',
         targetByDays: Object.freeze({ days1to2: 1, days3to4: 2, days5plus: 3 }),
-        applicableClusters: Object.freeze(['push', 'upper', 'arms']),
+        applicableClusters: Object.freeze(['push', 'upper', 'arms', 'full', 'fullbody']),
         // DERIVABLE: muscle_target_primary 'triceps' (12 CORE_AUTO: pushdown/
         // extension/press/dip variants).
         matchingTags: Object.freeze(['direct_triceps']),
@@ -200,12 +214,15 @@ export const FOCUS_RULES = Object.freeze({
     }),
     sessionRequirements: Object.freeze({
       requireFlyeIfChestDay: true, // piept + 'fly' token (3 CORE_AUTO)
+      minChestPressSlots: 1, // 2026-06-11 sweep review: a CHEST focus of all focuses anchors a press
     }),
     weeklyMinimums: Object.freeze([
       Object.freeze({
         key: 'chest_flye_slots',
         targetByDays: Object.freeze({ days1to2: 1, days3to4: 1, days5plus: 2 }),
-        applicableClusters: Object.freeze(['push', 'upper', 'chest']),
+        // 'full'/'fullbody' added 2026-06-11 (Daniel sweep review): chest-focus
+        // 1-3d weeks are full-body days — the flye stretch must qualify there.
+        applicableClusters: Object.freeze(['push', 'upper', 'chest', 'full', 'fullbody']),
         // DERIVABLE: piept + movementKey 'fly' (3 CORE_AUTO: Pec Deck/Cable Fly,
         // Cable Fly, DB Fly).
         matchingTags: Object.freeze(['flye']),
@@ -226,12 +243,16 @@ export const FOCUS_RULES = Object.freeze({
     sessionRequirements: Object.freeze({
       minSideDeltSlots: 1,
       minRearDeltSlots: 1,
+      minChestPressSlots: 1, // 2026-06-11 sweep review: shoulders' upper days composed press-less
     }),
     weeklyMinimums: Object.freeze([
       Object.freeze({
         key: 'side_delt_slots',
         targetByDays: Object.freeze({ days1to2: 1, days3to4: 2, days5plus: 3 }),
-        applicableClusters: Object.freeze(['push', 'upper', 'shoulders']),
+        // 'full'/'fullbody' added 2026-06-11 (Daniel sweep review): at 1-3 days
+        // the week is ALL full-body days, so width work must qualify there too —
+        // his shoulders 1-3d programs were OHP-only with zero direct lateral/rear.
+        applicableClusters: Object.freeze(['push', 'upper', 'shoulders', 'full', 'fullbody']),
         matchingTags: Object.freeze(['side_delt', 'lateral_raise']),
         priority: 'high',
         relaxable: true,
@@ -239,7 +260,7 @@ export const FOCUS_RULES = Object.freeze({
       Object.freeze({
         key: 'rear_delt_slots',
         targetByDays: Object.freeze({ days1to2: 1, days3to4: 1, days5plus: 2 }),
-        applicableClusters: Object.freeze(['push', 'pull', 'upper', 'shoulders']),
+        applicableClusters: Object.freeze(['push', 'pull', 'upper', 'shoulders', 'full', 'fullbody']),
         matchingTags: Object.freeze(['rear_delt']),
         priority: 'high',
         relaxable: true,
@@ -272,12 +293,16 @@ export const FOCUS_RULES = Object.freeze({
       minVerticalPullSlots: 1,
       minHorizontalRowSlots: 1,
       requireLatIsolationIfBackDay: true, // thin pool — resolver relaxes if unmet
+      minChestPressSlots: 1, // 2026-06-11 sweep review: every focus's push/upper day anchors a press
     }),
     weeklyMinimums: Object.freeze([
       Object.freeze({
         key: 'vertical_pull_slots',
         targetByDays: Object.freeze({ days1to2: 1, days3to4: 2, days5plus: 2 }),
-        applicableClusters: Object.freeze(['pull', 'upper', 'back']),
+        // 'full'/'fullbody' added 2026-06-11 (Daniel sweep review): back-focus 1-2d
+        // full-body days carried a SINGLE back anchor — both pull patterns must
+        // qualify on full days so vertical + row coexist at low frequency.
+        applicableClusters: Object.freeze(['pull', 'upper', 'back', 'full', 'fullbody']),
         // DERIVABLE: spate + movementKey 'pulldown'|'pull-up'|'chin-up' (9 CORE_AUTO).
         matchingTags: Object.freeze(['vertical_pull']),
         priority: 'high',
@@ -286,7 +311,7 @@ export const FOCUS_RULES = Object.freeze({
       Object.freeze({
         key: 'horizontal_row_slots',
         targetByDays: Object.freeze({ days1to2: 1, days3to4: 2, days5plus: 2 }),
-        applicableClusters: Object.freeze(['pull', 'upper', 'back']),
+        applicableClusters: Object.freeze(['pull', 'upper', 'back', 'full', 'fullbody']),
         // DERIVABLE: spate + movementKey 'row' (12 CORE_AUTO).
         matchingTags: Object.freeze(['horizontal_row']),
         priority: 'high',
@@ -295,7 +320,7 @@ export const FOCUS_RULES = Object.freeze({
       Object.freeze({
         key: 'lat_isolation',
         targetByDays: Object.freeze({ days1to2: 0, days3to4: 1, days5plus: 1 }),
-        applicableClusters: Object.freeze(['pull', 'upper', 'back']),
+        applicableClusters: Object.freeze(['pull', 'upper', 'back', 'full', 'fullbody']),
         // DERIVABLE (thin, 2 CORE_AUTO): spate + 'pullover' or name 'straight-arm'.
         matchingTags: Object.freeze(['lat_isolation', 'straight_arm_pulldown', 'pullover']),
         priority: 'medium',
@@ -312,7 +337,9 @@ export const FOCUS_RULES = Object.freeze({
     sessionCaps: Object.freeze({
       maxHeavyLowerCompounds: 2,  // squat|deadlift|leg-press|hip-thrust T1 (16 CORE_AUTO)
     }),
-    sessionRequirements: Object.freeze({}),
+    sessionRequirements: Object.freeze({
+      minChestPressSlots: 1, // 2026-06-11 sweep review: every focus's push/upper day anchors a press
+    }),
     weeklyMinimums: Object.freeze([
       Object.freeze({
         key: 'heavy_lower_compound_slots',
@@ -351,7 +378,8 @@ export const FOCUS_RULES = Object.freeze({
       Object.freeze({
         key: 'side_delt_slots',
         targetByDays: Object.freeze({ days1to2: 1, days3to4: 2, days5plus: 2 }),
-        applicableClusters: Object.freeze(['push', 'upper', 'shoulders']),
+        // 'full'/'fullbody' added 2026-06-11 (Daniel sweep review) — see v-taper.
+        applicableClusters: Object.freeze(['push', 'upper', 'shoulders', 'full', 'fullbody']),
         matchingTags: Object.freeze(['side_delt', 'lateral_raise']),
         priority: 'high',
         relaxable: true,
@@ -359,7 +387,7 @@ export const FOCUS_RULES = Object.freeze({
       Object.freeze({
         key: 'vertical_pull_slots',
         targetByDays: Object.freeze({ days1to2: 1, days3to4: 2, days5plus: 2 }),
-        applicableClusters: Object.freeze(['pull', 'upper', 'back']),
+        applicableClusters: Object.freeze(['pull', 'upper', 'back', 'full', 'fullbody']),
         matchingTags: Object.freeze(['vertical_pull']),
         priority: 'high',
         relaxable: true,
@@ -367,7 +395,7 @@ export const FOCUS_RULES = Object.freeze({
       Object.freeze({
         key: 'horizontal_row_slots',
         targetByDays: Object.freeze({ days1to2: 1, days3to4: 1, days5plus: 2 }),
-        applicableClusters: Object.freeze(['pull', 'upper', 'back']),
+        applicableClusters: Object.freeze(['pull', 'upper', 'back', 'full', 'fullbody']),
         matchingTags: Object.freeze(['horizontal_row']),
         priority: 'medium',
         relaxable: true,
@@ -778,6 +806,14 @@ export function applyFocusPolicy(chosen, ctx) {
   const scoreOf = typeof ctx?.scoreOf === 'function' ? ctx.scoreOf : () => 0;
   const prNames = ctx?.prNames instanceof Set ? ctx.prNames : new Set();
   const cluster = ctx?.cluster ?? '';
+  // De-emphasized Big-11 RO groups (Daniel sweep review 2026-06-11). On a
+  // slot-starved full-body FOCUS day a de-emphasized region (v-taper: legs) is
+  // MAINTENANCE — its SURPLUS compound (a 2nd/3rd leg compound) may yield to a
+  // HIGH focus requirement, keeping >=1. Empty (balanced / dedicated split with
+  // room) → the displacement rule is the pre-2026-06-11 accessory-only behavior.
+  const deEmph = new Set(
+    Array.isArray(ctx?.deEmphasizedGroups) ? ctx.deEmphasizedGroups : [],
+  );
 
   // Work on a mutable copy of the selected list, enriched with derived tags. Order
   // is the selection order = the priority order (earlier = higher value).
@@ -847,7 +883,17 @@ export function applyFocusPolicy(chosen, ctx) {
         // At ceiling: REPLACE the lowest-value NON-required exercise. "Non-required"
         // = does not itself satisfy a still-needed requirement (required coverage)
         // and is not a logged PR (continuity).
-        const replaceIdx = lowestValueReplaceable(session, reqs, prNames, scoreOf);
+        // PASS 1 — displace the lowest-value NON-PR exercise under coverage rules
+        // (accessory whose group stays covered, OR a de-emphasized region's surplus
+        // compound). PASS 2 (HIGH reqs only) — PR-CONTINUITY FALLBACK: a seasoned
+        // user's full-body day can be 100% logged-PR lifts (his real account: all
+        // 8 slots), so pass 1 finds nothing and a HIGH focus requirement used to
+        // die silently. Pass 2 may displace a logged-PR victim under the SAME
+        // coverage rules (Daniel sweep review 2026-06-11 — "focus dies at low freq").
+        let replaceIdx = displaceableIndex(session, reqs, scoreOf, getMeta, deEmph, prNames, false);
+        if (replaceIdx < 0 && req.priority === 'high') {
+          replaceIdx = displaceableIndex(session, reqs, scoreOf, getMeta, deEmph, prNames, true);
+        }
         if (replaceIdx < 0) break; // nothing safe to displace → graceful no-op
         const removed = session[replaceIdx];
         inMovement.delete(mkOf(removed));
@@ -923,20 +969,62 @@ function isRequirementCarrier(e, requiredTags, session) {
   return false;
 }
 
-/** Index of the lowest-value session entry safe to displace for a required inject,
- * or -1 if none. Safe = not a logged PR (continuity) and not a still-needed
- * requirement carrier (required coverage). A non-critical singleton MAY be
- * displaced — the only coverage that matters at the inject step is REQUIRED
- * coverage (isRequirementCarrier), not every uniquely-keyed accessory. Lowest
- * score + latest idx (lowest priority) wins. */
-function lowestValueReplaceable(session, reqs, prNames, scoreOf) {
+/**
+ * Index of the lowest-value session entry safe to displace for a required inject,
+ * or -1 if none (Daniel sweep review 2026-06-11 — unified pass 1 + PR fallback).
+ *
+ * A victim is eligible when ALL hold:
+ *   (1) not a still-needed requirement carrier (REQUIRED coverage — never strand
+ *       a movement the focus itself needs);
+ *   (2) not a logged PR, UNLESS `allowPR` (pass 2, HIGH reqs only — a full-body
+ *       day can be 100% PR lifts, which used to mute the focus permanently);
+ *   (3) COVERAGE preserved — for a NON-yield group, its muscle_target_primary keeps
+ *       >= 2 slots OR another chosen exercise lists it as a SECONDARY (the SAME rule
+ *       maintenanceFloorGuarantee uses, so inject + floor never tug-of-war). For a
+ *       YIELD group (`deEmph` — the collapsed leg region), coverage is REGION-level:
+ *       the de-emphasized region keeps >= 1 slot after removal (region holds >= 2
+ *       now), so the 2nd/3rd leg compound yields while ONE stays — a per-group check
+ *       would wrongly protect a single-hams RDL even when a squat already covers legs.
+ *   (4) TIER rule — an ACCESSORY (tier > 1) is displaceable; a COMPOUND anchor
+ *       (tier <= 1) is PROTECTED, EXCEPT a YIELD-region compound (region-covered).
+ *
+ * Lowest score, then latest selection order (lowest priority) — deterministic.
+ */
+function displaceableIndex(session, reqs, scoreOf, getMeta, deEmph, prNames, allowPR) {
   const requiredTags = new Set(reqs.map((r) => r.tag));
+  const groupCount = {};
+  for (const e of session) {
+    const g = getMeta(e.name)?.muscle_target_primary;
+    if (g) groupCount[g] = (groupCount[g] || 0) + 1;
+  }
+  // Total slots across the YIELD region (the collapsed leg region) — region-level
+  // coverage so the surplus leg compound yields while exactly ONE stays.
+  const yieldRegionSlots = [...deEmph].reduce((n, g) => n + (groupCount[g] || 0), 0);
+  const coveredBySecondary = (group, exceptName) =>
+    session.some((o) => {
+      if (o.name === exceptName) return false;
+      const sec = getMeta(o.name)?.muscle_target_secondary;
+      return Array.isArray(sec) && sec.includes(group);
+    });
   const candidates = session
     .map((e, i) => ({ e, i }))
-    .filter(({ e }) =>
-      !prNames.has(e.name) &&
-      !isRequirementCarrier(e, requiredTags, session),
-    )
+    .filter(({ e }) => {
+      if (!allowPR && prNames.has(e.name)) return false;
+      if (isRequirementCarrier(e, requiredTags, session)) return false;
+      const meta = getMeta(e.name) || {};
+      const g = meta.muscle_target_primary;
+      const inYield = !!g && deEmph.has(g);
+      const covered = !g
+        ? true
+        : inYield
+          ? yieldRegionSlots >= 2 // region keeps >= 1 after removal
+          : (groupCount[g] || 0) >= 2 || coveredBySecondary(g, e.name);
+      if (!covered) return false; // never strand a group / region with no maintenance
+      const isCompound = (meta.tier ?? 2) <= 1;
+      if (!isCompound) return true; // accessory — free to displace (covered above)
+      // Compound: protected, unless a de-emphasized region's SURPLUS (covered ⇒ ≥1 stays).
+      return !!g && deEmph.has(g);
+    })
     .sort((a, b) => (scoreOf(a.e.name) - scoreOf(b.e.name)) || (b.e.idx - a.e.idx));
   return candidates.length ? candidates[0].i : -1;
 }

@@ -13,6 +13,10 @@ import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT, ISRAETEL_BASELINES } 
 import { isExcludedMovement } from './movementExclusion.js';
 import { EXERCISE_TIER_RANK, tierSelectScore, TIER_SELECTABLE_SA } from './exerciseTierRank.js';
 import { applyFocusPolicy, deriveExerciseTags, focusRelevantTags } from './focusPolicy.js';
+// R6d-b (2026-06-11) — the curated lumbar-hinge name lists, shared with the
+// cross-day dedup so the in-session pairing rule never drifts from it. Import is
+// cycle-safe: lumbarDedup → frequencySplit → (constants, focus) only.
+import { LUMBAR_HINGES, BACK_EXTENSION_FAMILY } from './schedule/scheduleAdapter/lumbarDedup.js';
 
 // buildSession's first param is now a Big-6 CLUSTER id (push/pull/legs/upper/
 // lower/full) — the target muscle groups + their session-slot bias come from the
@@ -250,7 +254,19 @@ const COMPOUND_TIER = 1;
 // specialization quantum, policy §3) — bounded by MRV upstream + this hard ceiling
 // so it never blows out. Flag OFF → the emphasis ceiling is never used → the
 // [3,5] clamp is byte-identical to today.
-const COMPOUND_MAX_SETS_EMPHASIZED = 6;
+//
+// CAPPED 6 → 4 (Daniel focus-sweep verdict 2026-06-11). The sweep (8 focuses ×
+// 1-7 days) surfaced 5-set anchors everywhere the emphasis fired (Smith OHP 5×2
+// days = 10/wk vertical press on v-taper/shoulders; Close-Grip Bench 5) and his
+// coach verdict was consistent across every focus: an emphasized lift carries
+// 3-4 working sets, and the SURPLUS budget belongs in a SECOND variation/angle
+// (3+2), not in a 5th-6th set of the same movement (his shoulders band: press
+// 6-8/wk total). With the floor below at 4 the emphasized anchor is now PINNED
+// at 4 — visibly above the balanced 3, never a 5-6-set monolith. (The
+// non-emphasized COMPOUND_MAX_SETS stays 5 — a legacy band the unemphasized
+// budget rarely reaches; emphasis concentrates into MORE VARIATIONS, not more
+// sets per lift.)
+const COMPOUND_MAX_SETS_EMPHASIZED = 4;
 // The emphasized COMPOUND floor — raised from COMPOUND_MIN_SETS (3) to 4 so the
 // emphasized anchor lift VISIBLY carries more working sets than a balanced one.
 // DIAG #2: emphasis added slots + front-position but the per-exercise set count
@@ -273,7 +289,14 @@ const COMPOUND_MIN_SETS_EMPHASIZED = 4;
 // arm work reaches the band (the +2-6 sets specialization quantum, policy §3),
 // bounded by MAV upstream + this hard ceiling. Flag OFF / not emphasized → the
 // [2,3] clamp is byte-identical.
-const ISOLATION_MAX_SETS_EMPHASIZED = 5;
+//
+// CAPPED 5 → 4 (Daniel focus-sweep verdict 2026-06-11). The 5-set isolation was
+// the sweep's clearest smell: Reverse Pec Deck 5× on a 1-day UPPER ("absurd"),
+// Cable OH Triceps 5×, Hip Abduction 5× on generic lower. His rule: an isolation
+// is 2-3 sets, 4 tolerable when slots are scarce — five sets of one isolation
+// never; split across two angles instead (OH triceps 3 + pressdown 2). 4 still
+// clears the arms-band math D3 fixed (1-2 curls × 3-4 sets × days ≥ band floor).
+const ISOLATION_MAX_SETS_EMPHASIZED = 4;
 
 /**
  * Per-session set budget for one Big-11 group — the weekly volume target split
@@ -418,9 +441,17 @@ function coherentDayBudget(perSessionBudget, actualExCount) {
  * @param {boolean} [novice] - dp_tier_compound_floor_v1: T0 beginner → fresh compound floor may drop to 2
  * @returns {number[]} set count per exercise, index-aligned with exsInGroup
  */
-function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasized, trimFn, novice, anchorProtect) {
+function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasized, trimFn, novice, anchorProtect, structuralDemotes, emphasizedCeiling) {
   const n = exsInGroup.length;
   if (n === 0) return [];
+  // R6d-b structural demote (Daniel focus-sweep review 2026-06-11): an exercise
+  // the week-structure demoted (a REPEAT-day heavy hinge — lumbarDedupPenalties)
+  // that still made the session must train LIGHT: it loses anchor status (no
+  // emphasized floor/protection) and clamps to the PLAIN isolation band (2-3
+  // sets, never the emphasized raise) — "the second weekly hinge exposure is
+  // light", never RDL 4 sets × 3 days. Null/absent → byte-identical.
+  const isDemoted = (e) =>
+    !!structuralDemotes && typeof e.name === 'string' && structuralDemotes.has(e.name);
   // #19 V3 DOSE — the effective-reps TRIM is combined with the fatigue-curve adjust
   // into the SAME per-exercise integer adjust. The trim is clamped ≤0 (trim-only;
   // it can never ADD a set), so the worst it does is offset a maintainer's +1 — a
@@ -445,9 +476,11 @@ function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasi
   }
 
   // Weight compounds higher than isolation so the anchor earns the volume.
+  // A structurally-demoted compound (repeat-day hinge) weighs like an isolation —
+  // the budget concentrates on the day's CLEAN movers instead.
   const COMPOUND_WEIGHT = 2;
   const ISOLATION_WEIGHT = 1;
-  const weightOf = (e) => (e.tier === COMPOUND_TIER ? COMPOUND_WEIGHT : ISOLATION_WEIGHT);
+  const weightOf = (e) => (e.tier === COMPOUND_TIER && !isDemoted(e) ? COMPOUND_WEIGHT : ISOLATION_WEIGHT);
   const totalWeight = exsInGroup.reduce((s, e) => s + weightOf(e), 0);
 
   // A non-recovered group: lower the compound floor (so the cut can reach below
@@ -466,15 +499,29 @@ function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasi
   // to the anchor alone, NOT every compound, so a group that already gets many
   // weekly slots is not multiplied past its weekly budget (policy §3 coupling).
   const emphasizeRecovered = emphasized && !nonRecovered;
-  const compoundCeiling = emphasized ? COMPOUND_MAX_SETS_EMPHASIZED : COMPOUND_MAX_SETS;
-  const anchorIdx = emphasizeRecovered ? exsInGroup.findIndex((e) => e.tier === COMPOUND_TIER) : -1;
+  // CONCENTRATION CAP (Daniel sweep verdict 2026-06-11). The emphasized per-exercise
+  // ceiling (4) applies whenever the group is the user's FOCUS — NOT only when the
+  // volume boost fires. When an emphasized group is already AT/above MAV the boost
+  // path is disabled (no headroom), but WITHOUT this its compound reverted to the
+  // legacy ceiling 5 → his exact complaint: v-taper 4d Smith OHP 5 × 2 days = 10/wk.
+  // Capping at 4 regardless of headroom spreads the surplus to a 2nd variation /
+  // isolation (umeri 5/3/3 → 4/4/4), never a 5-6-set monolith. The FLOOR boost stays
+  // headroom-gated (emphasizeRecovered). emphasizedCeiling false (non-focus group /
+  // flag off) → the legacy 5 ceiling (byte-identical).
+  const emphCeil = emphasized || emphasizedCeiling;
+  const compoundCeiling = emphCeil ? COMPOUND_MAX_SETS_EMPHASIZED : COMPOUND_MAX_SETS;
+  const anchorIdx = emphasizeRecovered
+    ? exsInGroup.findIndex((e) => e.tier === COMPOUND_TIER && !isDemoted(e))
+    : -1;
   // #70-D3 — an emphasized RECOVERED group raises its ISOLATION ceiling too, so a
   // SMALL isolation-only group (biceps/triceps — no compound in the library) can
   // reach the band on its direct arm work instead of being capped at 3 sets/lift.
   // The compound-band raise above is inert for these groups (no tier-1 anchor);
   // this is the lever that delivers the arms-emphasis +sets. Non-emphasized /
   // non-recovered → the normal [2,3] band (byte-identical).
-  const isolationCeiling = emphasizeRecovered ? ISOLATION_MAX_SETS_EMPHASIZED : ISOLATION_MAX_SETS;
+  // Isolation ceiling rises to 4 for a focus group too — so the surplus shaved off
+  // the capped compound (5→4) lands on a 2nd isolation instead of being lost.
+  const isolationCeiling = (emphasizeRecovered || emphasizedCeiling) ? ISOLATION_MAX_SETS_EMPHASIZED : ISOLATION_MAX_SETS;
 
   // R4 anchor-protective shave (dp_anchor_sets_v1 via ctx.anchorProtect, Daniel
   // coach audit 2026-06-10): on a NON-RECOVERED group the 1-set shave + lowered
@@ -483,10 +530,12 @@ function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasi
   // anchor's spared set is re-shaved from the BACK of the group so the group
   // total is preserved). OFF / recovered → protectIdx -1 → byte-identical.
   const protectIdx = anchorProtect === true && nonRecovered
-    ? exsInGroup.findIndex((e) => e.tier === COMPOUND_TIER)
+    ? exsInGroup.findIndex((e) => e.tier === COMPOUND_TIER && !isDemoted(e))
     : -1;
   const counts = exsInGroup.map((e, i) => {
-    const isCompound = e.tier === COMPOUND_TIER;
+    // A structurally-demoted compound is banded as an ISOLATION (plain band — it
+    // never takes the emphasized raise): the repeat-day hinge trains 2-3 light.
+    const isCompound = e.tier === COMPOUND_TIER && !isDemoted(e);
     const share = (budget * weightOf(e)) / totalWeight;
     const isProtected = i === protectIdx;
     const rounded = Math.round(share) - (isProtected ? 0 : setShave) + adjustOf(e);
@@ -494,7 +543,7 @@ function distributeGroupSets(exsInGroup, budget, state, fatigueAdjustFn, emphasi
     const cFloor = i === anchorIdx ? COMPOUND_MIN_SETS_EMPHASIZED
       : isProtected ? freshCompoundFloor : compoundFloor;
     const lo = isCompound ? cFloor : ISOLATION_MIN_SETS;
-    const hi = isCompound ? compoundCeiling : isolationCeiling;
+    const hi = isCompound ? compoundCeiling : (isDemoted(e) ? ISOLATION_MAX_SETS : isolationCeiling);
     return Math.min(hi, Math.max(lo, rounded));
   });
   if (protectIdx >= 0) {
@@ -680,9 +729,15 @@ function equipmentOk(meta, available) {
  *   the within-band tiebreak, and squat-primacy + all gates are intact. A D-band
  *   pick is HARD-EXCLUDED from the pool (like a contraindication) UNLESS removing it
  *   would empty the muscle (last-option guard). Default false → byte-identical.
+ * @param {Record<string, number>|null} [structuralPenalties] - R6d-b WEEK-STRUCTURE
+ *   demotes (the lumbar repeat-day hinge spacing). Same demote-only semantics as
+ *   `penalties` with ONE deliberate difference: they apply to PR-history lifts too —
+ *   the whole point is spacing the user's OWN heavy logged hinge (Daniel sweep
+ *   review 2026-06-11: his logged RDL sailed through the repeat-hinge-day demote via
+ *   the PR exemption → RDL heavy 3×/week on a lower-focus week). Never a drop.
  * @returns {Array<{name: string, meta: object}>}
  */
-export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect) {
+export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties) {
   // ACTIVE visibility gate (Daniel SSOT 2026-06-05, supersedes 2026-06-03 CORE+
   // FALLBACK gate): auto-selection draws ONLY from the curated ACTIVE catalog
   // (CORE_AUTO — see isActiveMeta / ACTIVE_STATUSES) plus PR-history continuity.
@@ -859,18 +914,23 @@ export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed,
 
   // #8/D pain/skip demotion: a penalized NON-PR exercise sinks to the back of the
   // pool (STABLE partition, relative order preserved) so a clean same-muscle
-  // sibling leads. PR-history lifts (continuity) are NEVER demoted. Nothing is
-  // dropped — the penalized exercise is still selectable if it is the only option
-  // (the downstream slot-fill can still reach it). Empty/absent penalties → the
-  // partition is a no-op (the predicate is always false) → byte-identical order.
+  // sibling leads. PR-history lifts (continuity) are NEVER demoted by the SOFT
+  // (pain/skip/refusal) channel. Nothing is dropped — the penalized exercise is
+  // still selectable if it is the only option (the downstream slot-fill can still
+  // reach it). Empty/absent penalties → the partition is a no-op → byte-identical.
+  //
+  // R6d-b STRUCTURAL channel (2026-06-11): week-structure demotes (lumbar repeat-
+  // day spacing) PIERCE the PR exemption by design — the heavy hinge they space is
+  // precisely the user's logged lift. Same demote-only partition, never a drop.
   let ordered = core;
-  if (penalties) {
+  if (penalties || structuralPenalties) {
     const PENALTY_DEMOTE = 0.5; // ≥ → demote (a single skip/mild pain stays in place)
     const clean = [];
     const demoted = [];
     for (const e of ordered) {
-      const p = prNames.has(e.name) ? 0 : (penalties[e.name] ?? 0);
-      (p >= PENALTY_DEMOTE ? demoted : clean).push(e);
+      const soft = prNames.has(e.name) ? 0 : (penalties?.[e.name] ?? 0);
+      const structural = structuralPenalties?.[e.name] ?? 0;
+      (Math.max(soft, structural) >= PENALTY_DEMOTE ? demoted : clean).push(e);
     }
     ordered = clean.concat(demoted);
   }
@@ -1111,6 +1171,8 @@ export function movementKey(name, meta) {
  *   focusPolicy?: boolean,
  *   focusId?: string,
  *   daysPerWeek?: number,
+ *   structuralPenalties?: Record<string, number>|null,
+ *   lumbarPairDedup?: boolean,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  *
@@ -1138,6 +1200,15 @@ export function buildSession(cluster, ctx) {
   // #8/D per-exercise pain/skip penalties (engineName → 0..1). Null/empty (the
   // common case + flag off) → poolForGroup order is byte-identical.
   const penalties = ctx?.exercisePenalties ?? null;
+  // R6d-b structural (week-structure) penalties — the lumbar repeat-day demote.
+  // Unlike pain/skip these apply to PR lifts too (poolForGroup) AND thread into
+  // the set distribution: a demoted hinge that still makes the session (thin
+  // pool / multi-slot group) trains LIGHT (isolation band) instead of anchoring
+  // 4 sets — Daniel sweep review 2026-06-11 ("RDL heavy 1-2×/week, not 3").
+  const structuralPenalties = ctx?.structuralPenalties ?? null;
+  const structuralDemoteSet = structuralPenalties
+    ? new Set(Object.keys(structuralPenalties).filter((n) => (structuralPenalties[n] ?? 0) >= 0.5))
+    : null;
   // #64 PERSISTENT pain memory proactive swap (engineName → substitute). Null/empty
   // (the common case + flag off) → poolForGroup makes no swap → byte-identical.
   const painSwaps = ctx?.painSwaps ?? null;
@@ -1155,7 +1226,7 @@ export function buildSession(cluster, ctx) {
   // Pools per target group (ordered: PR-anchored -> anchor -> new, seeded-stable).
   const pools = targets.map((g) => ({
     group: g,
-    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect),
+    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties),
   }));
 
   // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the user's
@@ -1494,6 +1565,57 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  // R6d-b (Daniel focus-sweep review 2026-06-11) — IN-SESSION lumbar pairing.
+  // The cross-day dedup (lumbarDedupPenalties) spaces hinge exposures across the
+  // week, but a single leg/lower day could still stack a HEAVY hip-hinge (the
+  // deadlift family) WITH a back-extension accessory — double systemic lumbar
+  // load in one session (his 4d-lower Thursday: BB Squat + RDL 4 sets +
+  // Hyperextension in the same workout). When a deadlift-family hinge is chosen,
+  // drop the back-extension-family accessory (one removal, no refill — the same
+  // shape as the #2 arm de-dup above; minSession-guarded). Gated on the same
+  // dp_lumbar_dedup_v1 seam (ctx.lumbarPairDedup); OFF → byte-identical.
+  if (ctx?.lumbarPairDedup === true && chosen.length > minSession) {
+    const backExt = new Set(BACK_EXTENSION_FAMILY);
+    const hasHeavyHinge = chosen.some(
+      (e) => LUMBAR_HINGES.includes(e.name) && !backExt.has(e.name),
+    );
+    const extIdx = chosen.findIndex((e) => backExt.has(e.name));
+    if (hasHeavyHinge && extIdx >= 0) {
+      const removed = chosen[extIdx];
+      const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+      chosenNames.delete(removed.name);
+      chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+      if (rg && groupCount[rg]) groupCount[rg] -= 1;
+      chosen.splice(extIdx, 1);
+    }
+  }
+
+  // Full-body FOCUS slot-crunch yield set (Daniel sweep review 2026-06-11). On a
+  // SINGLE-day-per-week full-body FOCUS week the 8 slots cannot hold all four lower
+  // majors (quads+hams+glutes+calves) AND the focus's width/curl minimums AND
+  // chest+back — so the LEG region (quads+hams+glutes) collapses to ONE maintenance
+  // compound (legs not the focus), its surplus slots yielding to the focus's HIGH
+  // minimums. Used by BOTH the focus-policy resolver (a surplus leg compound is
+  // displaceable) and the maintenance-floor (the leg region is guaranteed at REGION
+  // level, not per-group).
+  //
+  // GATED ON daysPerWeek <= 1 — the ONLY genuinely slot-starved case. At 2+ days
+  // there are 16+ weekly slots: the legs are maintained per-group (the Gigel 2d
+  // UPPER "de-emphasis = maintenance, not zero" gate) AND the focus width fits via
+  // the 'full'-cluster minimums (added to applicableClusters above) without any
+  // collapse → byte-identical to today (fp-hash frozen, the maintenance gate holds).
+  // On a true 1-day week, weekly maintenance IS that one day, and Daniel's explicit
+  // 1-day asks prioritize the focus signature over a 4th leg slot.
+  const LEG_REGION_GROUPS = ['picioare-quads', 'picioare-hamstrings', 'fese'];
+  const focusActive = emphSet.size > 0;
+  const legsEmphasized = LEG_REGION_GROUPS.some((g) => emphSet.has(g));
+  const fullBodyCrunch = (Number(ctx?.daysPerWeek) || 1) <= 1;
+  const yieldGroups = new Set();
+  if (fullBodyCrunch && focusActive) {
+    for (const g of (ctx?.deEmphasizedGroups ?? [])) yieldGroups.add(g);
+    if (!legsEmphasized) for (const g of LEG_REGION_GROUPS) yieldGroups.add(g);
+  }
+
   // Wave 1.3-B FOCUS-POLICY resolver (ctx.focusPolicy, dp_focus_policy_v1). When
   // the flag is ON, apply the per-focus LOCAL constraint policy (sessionCaps +
   // sessionRequirements from FOCUS_RULES) to the selected list: prune excess over a
@@ -1515,6 +1637,11 @@ export function buildSession(cluster, ctx) {
     const focusResolved = applyFocusPolicy(chosen, {
       focusId: ctx?.focusId,
       daysPerWeek: ctx?.daysPerWeek,
+      // Yieldable regions (Daniel sweep review 2026-06-11) — explicit preset
+      // de-emphasis ∪ the collapsed leg region on a non-leg full-body focus day. A
+      // surplus compound of these groups may yield to a HIGH focus requirement (the
+      // region keeps >=1). balanced / no focus → empty → no yield (byte-identical).
+      deEmphasizedGroups: [...yieldGroups],
       // F5 (dp_latiso_dedup_v1) — the active week's derived clusters, threaded
       // from getDailyWorkout so requirementsFor can defer a weekly minimum to the
       // week's SPECIALIST days (v-taper lat-iso → Pull owns it, Upper lands at 7).
@@ -1567,9 +1694,40 @@ export function buildSession(cluster, ctx) {
       const g = groupOfName(e.name);
       if (g) liveCount[g] = (liveCount[g] || 0) + 1;
     }
+    // De-emphasized region (Daniel sweep review 2026-06-11). When a FOCUS de-
+    // emphasizes a multi-group region (v-taper → legs = quads+hams+glutes), the
+    // per-GROUP guarantee forces THREE leg slots on a full-body day, leaving no
+    // room for the focus's width work — and then it tug-of-wars the width that
+    // focus-policy just injected. On a focus day the de-emphasized region is
+    // MAINTENANCE (ONE compound, not one PER sub-group), so guarantee it at REGION
+    // level: a de-emphasized major is skipped here once ANOTHER de-emphasized group
+    // already holds a slot (the region is present). The FIRST de-emphasized group
+    // still gets its slot (legs never zeroed). Empty deEmph (balanced / no focus) →
+    // every major is its own region → byte-identical per-group behavior.
+    const deEmphMajors = new Set(
+      [...yieldGroups].filter((g) => MAJOR_MUSCLES_SLOT_GUARANTEE.includes(g)),
+    );
+    const deEmphRegionSlots = () =>
+      [...deEmphMajors].reduce((n, g) => n + (liveCount[g] || 0), 0);
     const majorsToTrain = MAJOR_MUSCLES_SLOT_GUARANTEE.filter((g) => targets.includes(g));
     for (const major of majorsToTrain) {
       if ((liveCount[major] || 0) > 0) continue; // already has a slot
+      // Region-level guarantee for a de-emphasized region: skip this group if the
+      // region already holds ≥1 slot (maintenance met; the rest yields to focus).
+      if (deEmphMajors.has(major) && deEmphRegionSlots() > 0) continue;
+      // 2026-06-11 (Daniel focus-sweep review) — INDIRECT coverage counts: a major
+      // with zero PRIMARY slots that is a SECONDARY target of a chosen exercise is
+      // already maintained (a Glute Drive maintains hams; a press maintains
+      // triceps). Injecting a dedicated slot anyway both crowded the day AND
+      // tug-of-warred with the focus-policy PR-fallback, which frees a slot for a
+      // HIGH focus minimum under the SAME coverage rule — aligned, they never
+      // undo each other. Truly-uncovered majors (Gigel 2d UPPER: hams/glutes/
+      // calves on a press/row day) still inject exactly as before.
+      const coveredBySecondary = chosen.some((e) => {
+        const sec = getExerciseMetadata(e.name)?.muscle_target_secondary;
+        return Array.isArray(sec) && sec.includes(major);
+      });
+      if (coveredBySecondary) continue;
       const pool = pools.find((p) => p.group === major)?.pool ?? [];
       const inject = pool.find((e) => !isTaken(e));
       if (!inject) continue; // library can't supply this group under the constraints
@@ -1587,23 +1745,51 @@ export function buildSession(cluster, ctx) {
       // from the back so the lowest selection-priority slot of the biggest group
       // goes first; among groups tied on count, the one whose lowest slot is latest
       // (most expendable) wins. Deterministic.
+      //
+      // FOCUS-PROTECT (Daniel sweep review 2026-06-11): a non-focus maintenance
+      // major (e.g. calves on a SHOULDERS day) must NOT displace the FOCUS region
+      // or a focus-relevant width/curl the focus-policy just injected — the focus
+      // HIGH requirement outranks a small muscle's maintenance floor. When the only
+      // displaceable victim would be focus-protected, the maintenance major YIELDS
+      // (removeIdx stays -1 → no inject; maintained across the week via volume).
+      // focusPolicy OFF / balanced (emphSet empty, no focus tags) → never protects
+      // → byte-identical.
+      // FOCUS-PROTECT applies ONLY in the single-day full-body crunch (the same
+      // gate as the leg-region collapse): there, the focus's HIGH minimum outranks
+      // a small muscle's maintenance for the marginal slot. At 2+ days the
+      // maintenance floor is UNCHANGED (it may displace a focus slot to keep a major
+      // ≥ MEV — the Gigel 2d UPPER gate), and the focus width still fits via the
+      // 'full'-cluster minimums. fullBodyCrunch false → never protects → byte-identical.
+      const focusTags = (fullBodyCrunch && ctx?.focusPolicy === true)
+        ? focusRelevantTags(ctx?.focusId) : new Set();
+      const isFocusProtected = (name) => {
+        if (!fullBodyCrunch) return false;
+        const g = getExerciseMetadata(name).muscle_target_primary;
+        if (g && emphSet.has(g)) return true; // the focus region itself
+        if (focusTags.size === 0) return false;
+        const tg = deriveExerciseTags(name, getExerciseMetadata(name), movementKey);
+        for (const t of tg) if (focusTags.has(t)) return true; // injected width/curl
+        return false;
+      };
       const majorSet = new Set(majorsToTrain);
       let removeIdx = -1;
-      let bestOverflow = 1;
       for (let i = chosen.length - 1; i >= 0; i--) {
         const g = getExerciseMetadata(chosen[i].name).muscle_target_primary;
-        const cnt = liveCount[g] || 0;
-        if (cnt > bestOverflow) { bestOverflow = cnt; removeIdx = i; }
+        if ((liveCount[g] || 0) <= 1) continue;          // not over-slotted
+        if (isFocusProtected(chosen[i].name)) continue;  // never displace the focus
+        removeIdx = i; break; // lowest-priority (highest-index) over-slotted non-focus slot
       }
-      // No over-slotted group to thin (every group at exactly 1) — then a major
-      // muscle is being crowded out by a NON-MAJOR group (arms/abs/forearms). A
-      // major (a big mover the user de-emphasized to MAINTENANCE) outranks a small
-      // isolation group for the last slot, so displace the lowest-priority
-      // single-slot NON-MAJOR exercise. Majors already placed are never touched.
+      // No over-slotted non-focus group to thin — then a major muscle is being
+      // crowded out by a NON-MAJOR group (arms/abs/forearms). A major outranks a
+      // small isolation group for the last slot, so displace the lowest-priority
+      // single-slot NON-MAJOR exercise — but still never the focus (region/relevant).
+      // Majors already placed are never touched.
       if (removeIdx === -1) {
         for (let i = chosen.length - 1; i >= 0; i--) {
           const g = getExerciseMetadata(chosen[i].name).muscle_target_primary;
-          if (!majorSet.has(g)) { removeIdx = i; break; }
+          if (majorSet.has(g)) continue;
+          if (isFocusProtected(chosen[i].name)) continue;
+          removeIdx = i; break;
         }
       }
       if (removeIdx >= 0) {
@@ -1720,6 +1906,12 @@ export function buildSession(cluster, ctx) {
         ? weeklyForGroup < ceilingLandmark
         : true; // no signal → don't block the lift (the few-slot emphasis case)
     const isEmphasized = emphasisSetsBoost && emphSet.has(g) && belowCeiling;
+    // CONCENTRATION CAP (2026-06-11) — the emphasized per-exercise CEILING (4)
+    // applies whenever the group is the FOCUS, independent of the belowCeiling
+    // headroom gate that controls the volume BOOST. An at-MAV focus group thus
+    // still caps its compound at 4 (surplus → a 2nd variation) instead of the
+    // legacy 5 (his v-taper 4d OHP 5×2=10/wk). Same flag as the boost.
+    const isEmphasizedGroup = emphasisSetsBoost && emphSet.has(g);
     // #71 — pin a STABLE per-exercise dose so the same lift no longer swings with
     // however many slots this day's cluster gave the group (DIAG #3). OFF or no
     // usable budget → the legacy weekly/freq budget (byte-identical).
@@ -1738,6 +1930,7 @@ export function buildSession(cluster, ctx) {
     const counts = distributeGroupSets(
       exs, budget, recoveryState[g], ctx?.fatigueSetsAdjust, isEmphasized,
       ctx?.effectiveRepsSetsTrim, noviceCompoundFloor, ctx?.anchorProtect === true,
+      structuralDemoteSet, isEmphasizedGroup,
     );
     exs.forEach((e, i) => { setsByName[e.name] = counts[i]; });
   }

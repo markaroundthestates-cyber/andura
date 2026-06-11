@@ -90,7 +90,10 @@ describe('#72 emphasis raises per-exercise sets (dp_emphasis_specialization_v1)'
     const anchorOff = backOff[0];
     const anchorOn = backOn.find((e) => e.name === anchorOff.name);
     expect(anchorOn.sets).toBeGreaterThan(anchorOff.sets); // visible +sets on the focus anchor
-    expect(anchorOn.sets).toBeLessThanOrEqual(6);          // bounded by the emphasized ceiling
+    // Bounded by the emphasized ceiling — CAPPED at 4 (Daniel focus-sweep verdict
+    // 2026-06-11: an emphasized lift carries 3-4 working sets; the surplus budget
+    // goes to a second variation, never a 5th-6th set of the same movement).
+    expect(anchorOn.sets).toBeLessThanOrEqual(4);
   });
 
   it('a group already AT/ABOVE its MAV is NOT lifted (no band over-shoot, policy §3)', () => {

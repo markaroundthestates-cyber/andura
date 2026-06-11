@@ -69,7 +69,7 @@ describe('getRefusalPenalties — decay + stacking (real demote cutoff = 0.5)', 
   });
 });
 
-describe('mergePenalties — variadic max-merge (pain + refusal + lumbar share one channel)', () => {
+describe('mergePenalties — variadic max-merge (pain + refusal share the soft channel; lumbar moved to its own STRUCTURAL channel 2026-06-11)', () => {
   it('merges three maps with max-wins; null sources skipped', () => {
     expect(mergePenalties({ A: 0.3 }, { A: 0.6, B: 1 }, null, { B: 0.2, C: 0.9 }))
       .toEqual({ A: 0.6, B: 1, C: 0.9 });

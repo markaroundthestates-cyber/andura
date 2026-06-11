@@ -39,6 +39,11 @@ export const LUMBAR_HINGES = Object.freeze([
   // Back-extension / hyperextension family (direct erector loading)
   'Roman Chair Back Extension', '45° Hyperextension', 'GHD Back Extension',
   'Weighted Hyperextension', 'Hyperextension Machine',
+  // Daniel focus-sweep review 2026-06-11: these two library variants escaped the
+  // curated list — 'Hyperextension Bodyweight' is hams-PRIMARY (tier 2), so it
+  // surfaces from the hamstrings pool on legs/lower days and landed on 2-3 days
+  // of a lower-focus week, untouched by the demote that caught its 45° sibling.
+  'Hyperextension Bodyweight', 'Reverse Hyperextension',
 ]);
 
 // The back-extension SUBSET of LUMBAR_HINGES — the only members that can surface
@@ -48,6 +53,8 @@ export const LUMBAR_HINGES = Object.freeze([
 export const BACK_EXTENSION_FAMILY = Object.freeze([
   'Roman Chair Back Extension', '45° Hyperextension', 'GHD Back Extension',
   'Weighted Hyperextension', 'Hyperextension Machine',
+  // 2026-06-11 sweep review — same list-gap fix as LUMBAR_HINGES above.
+  'Hyperextension Bodyweight', 'Reverse Hyperextension',
 ]);
 
 /**

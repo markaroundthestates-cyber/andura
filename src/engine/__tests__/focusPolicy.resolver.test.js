@@ -176,13 +176,18 @@ describe('applyFocusPolicy — sessionRequirements inject', () => {
 
   it('replaces the lowest-value non-required exercise when at the slot ceiling', () => {
     const metaMap = {
-      'DB Shoulder Press': { muscle_target_primary: 'umeri', tier: 1 },
+      // 2026-06-11: the press carries triceps as a SECONDARY (it does in reality),
+      // so the displacement's group-COVERAGE rule sees triceps maintained when the
+      // pushdown is displaced (otherwise the new rule would protect it as an
+      // uncovered singleton — see the dedicated coverage test below).
+      'DB Shoulder Press': { muscle_target_primary: 'umeri', tier: 1, muscle_target_secondary: ['triceps'] },
       'Cable Rear Delt Fly': { muscle_target_primary: 'umeri', tier: 2 },
       'Cable Triceps Pushdown Rope': { muscle_target_primary: 'triceps', tier: 2 },
       'DB Lateral Raise': { muscle_target_primary: 'umeri', tier: 2 },
     };
     // sessionSizeCap 3, session full, no lateral → inject by replacing the lowest-
-    // value non-required exercise (the triceps pushdown, lowest score).
+    // value non-required exercise (the triceps pushdown, lowest score; triceps stays
+    // covered by the press's secondary, so the coverage rule allows the displace).
     const chosen = [
       { name: 'DB Shoulder Press', sets: 3 },
       { name: 'Cable Rear Delt Fly', sets: 3 },
@@ -445,9 +450,128 @@ describe('focusRelevantTags — derived from the focus rules', () => {
     expect(tags.has('pullover')).toBe(true);
   });
 
-  it('balanced / unknown focus → empty set (ordering becomes a no-op)', () => {
-    expect(focusRelevantTags('balanced').size).toBe(0);
+  it('balanced → chest_press only (2026-06-11 universal press anchor); unknown → empty', () => {
+    // Daniel focus-sweep review 2026-06-11: EVERY focus's chest-capable day must
+    // anchor a press, balanced included — so balanced now references exactly one tag.
+    expect([...focusRelevantTags('balanced')]).toEqual(['chest_press']);
     expect(focusRelevantTags('definitely-not-a-focus').size).toBe(0);
+  });
+});
+
+// ══ 2026-06-11 — Daniel focus-sweep review additions ══════════════════════════
+// (a) the universal chest-press anchor on chest-capable days (all 8 focuses);
+// (b) the PR-CONTINUITY FALLBACK: a HIGH focus requirement may displace a
+//     logged-PR ACCESSORY when the whole session is PR lifts (the seasoned-user
+//     full-body day that silently muted the focus), under strict coverage rules.
+describe('2026-06-11 sweep review — universal chest press + PR fallback', () => {
+  it('balanced: a press-less upper day gains a chest press from the pool', () => {
+    const metaMap = {
+      'Close-Grip Bench Press': { muscle_target_primary: 'triceps', tier: 1 },
+      'Lat Pulldown': { muscle_target_primary: 'spate', tier: 1 },
+      'Cable Fly': { muscle_target_primary: 'piept', tier: 2 },
+      'Flat DB Press': { muscle_target_primary: 'piept', tier: 1 },
+    };
+    // The sweep's real shape: balanced 4d Upper = Close-Grip (triceps-primary) +
+    // fly as the only "chest" work — no actual press pattern.
+    const chosen = [
+      { name: 'Close-Grip Bench Press', sets: 3 },
+      { name: 'Lat Pulldown', sets: 3 },
+      { name: 'Cable Fly', sets: 2 },
+    ];
+    const pool = [{ name: 'Flat DB Press', meta: metaMap['Flat DB Press'] }];
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, { focusId: 'balanced', cluster: 'upper' }));
+    expect(out.map((e) => e.name)).toContain('Flat DB Press');
+  });
+
+  it('balanced: a PULL day never demands a press (isChest gate)', () => {
+    const metaMap = {
+      'Cable Row': { muscle_target_primary: 'spate', tier: 1 },
+      'Flat DB Press': { muscle_target_primary: 'piept', tier: 1 },
+    };
+    const chosen = [{ name: 'Cable Row', sets: 3 }];
+    const pool = [{ name: 'Flat DB Press', meta: metaMap['Flat DB Press'] }];
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, { focusId: 'balanced', cluster: 'pull' }));
+    expect(out).toEqual([{ name: 'Cable Row', sets: 3 }]);
+  });
+
+  it("v-taper: an ALL-PR full-body day still gains the width slots (PR accessories displaced under coverage rules)", () => {
+    // Daniel's real account shape: every slot a logged-PR lift → the old pass-1
+    // found nothing displaceable and side/rear delt died silently at 1-3 days.
+    const metaMap = {
+      'Machine Shoulder Press': { muscle_target_primary: 'umeri', tier: 1, muscle_target_secondary: ['triceps'] },
+      'Lat Pulldown': { muscle_target_primary: 'spate', tier: 1, muscle_target_secondary: ['biceps'] },
+      'Hip Thrust': { muscle_target_primary: 'fese', tier: 1, muscle_target_secondary: ['picioare-hamstrings'] },
+      'Bulgarian Split Squat': { muscle_target_primary: 'picioare-quads', tier: 1 },
+      'Cable Overhead Triceps Extension Rope': { muscle_target_primary: 'triceps', tier: 2 },
+      'Seated Leg Curl': { muscle_target_primary: 'picioare-hamstrings', tier: 2 },
+      'Cable Fly': { muscle_target_primary: 'piept', tier: 2 },
+      'Standing Calf Raise': { muscle_target_primary: 'gambe', tier: 2 },
+      'DB Lateral Raise': { muscle_target_primary: 'umeri', tier: 2 },
+      'Cable Rear Delt Fly': { muscle_target_primary: 'umeri', tier: 2 },
+    };
+    const chosen = [
+      { name: 'Machine Shoulder Press', sets: 3 },
+      { name: 'Lat Pulldown', sets: 3 },
+      { name: 'Hip Thrust', sets: 3 },
+      { name: 'Bulgarian Split Squat', sets: 3 },
+      { name: 'Cable Overhead Triceps Extension Rope', sets: 2 },
+      { name: 'Seated Leg Curl', sets: 2 },
+      { name: 'Cable Fly', sets: 2 },
+      { name: 'Standing Calf Raise', sets: 2 },
+    ];
+    const prNames = new Set(chosen.map((e) => e.name)); // EVERYTHING is a PR lift
+    const pool = [
+      { name: 'DB Lateral Raise', meta: metaMap['DB Lateral Raise'] },
+      { name: 'Cable Rear Delt Fly', meta: metaMap['Cable Rear Delt Fly'] },
+    ];
+    const scoreOf = (n) => ({
+      'Cable Overhead Triceps Extension Rope': 50, 'Seated Leg Curl': 60,
+      'Cable Fly': 70, 'Standing Calf Raise': 40,
+    })[n] ?? 100;
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'v-taper', cluster: 'full', daysPerWeek: 1, prNames, scoreOf, sessionSizeCap: 8,
+    }));
+    const names = out.map((e) => e.name);
+    // The HIGH side/rear-delt minimums land (the focus shows on the 1-day week)…
+    expect(names).toContain('DB Lateral Raise');
+    expect(names).toContain('Cable Rear Delt Fly');
+    // …by displacing PR ACCESSORIES whose groups stay covered: triceps is a
+    // secondary of the shoulder press, hams a secondary of the hip thrust.
+    expect(names).not.toContain('Cable Overhead Triceps Extension Rope');
+    expect(names).not.toContain('Seated Leg Curl');
+    // Compound anchors are NEVER displaced by the fallback…
+    for (const anchor of ['Machine Shoulder Press', 'Lat Pulldown', 'Hip Thrust', 'Bulgarian Split Squat']) {
+      expect(names).toContain(anchor);
+    }
+    // …and an UNCOVERED singleton accessory survives (piept/gambe have no
+    // secondary coverage here — even the cheap-score calf stays).
+    expect(names).toContain('Cable Fly');
+    expect(names).toContain('Standing Calf Raise');
+    expect(out.length).toBe(8); // ceiling respected — displaced, not appended
+  });
+
+  it('PR-fallback: when every PR accessory is an uncovered singleton, the requirement gracefully no-ops', () => {
+    const metaMap = {
+      'Machine Shoulder Press': { muscle_target_primary: 'umeri', tier: 1 },
+      'Lat Pulldown': { muscle_target_primary: 'spate', tier: 1 },
+      'Cable Fly': { muscle_target_primary: 'piept', tier: 2 },
+      'Standing Calf Raise': { muscle_target_primary: 'gambe', tier: 2 },
+      'DB Lateral Raise': { muscle_target_primary: 'umeri', tier: 2 },
+    };
+    const chosen = [
+      { name: 'Machine Shoulder Press', sets: 3 },
+      { name: 'Lat Pulldown', sets: 3 },
+      { name: 'Cable Fly', sets: 2 },
+      { name: 'Standing Calf Raise', sets: 2 },
+    ];
+    const prNames = new Set(chosen.map((e) => e.name));
+    const pool = [{ name: 'DB Lateral Raise', meta: metaMap['DB Lateral Raise'] }];
+    const out = applyFocusPolicy(chosen, makeCtx(metaMap, pool, {
+      focusId: 'v-taper', cluster: 'full', daysPerWeek: 1, prNames, sessionSizeCap: 4,
+    }));
+    // No eligible victim (compounds protected; fly/calf are uncovered singletons)
+    // → never invent/force: the session is returned intact.
+    expect(out.map((e) => e.name)).toEqual(chosen.map((e) => e.name));
   });
 });
 

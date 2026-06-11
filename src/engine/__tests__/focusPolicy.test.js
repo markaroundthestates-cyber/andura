@@ -43,10 +43,15 @@ describe('FOCUS_RULES — table shape + immutability', () => {
     }
   });
 
-  it('balanced is the empty no-op policy (default user → resolver is inert)', () => {
+  it('balanced is minimal: no caps/weekly minimums, ONE universal requirement (2026-06-11)', () => {
+    // Daniel focus-sweep review 2026-06-11: a chest-capable day (push/upper/chest)
+    // of ANY focus must anchor a chest press — balanced included (the sweep's
+    // balanced 4d Upper composed Close-Grip (triceps-primary) + a light fly only).
+    // Everything else stays empty: the resolver is inert on pull/leg/full days.
     const b = FOCUS_RULES.balanced;
     expect(Object.keys(b.sessionCaps ?? {})).toHaveLength(0);
-    expect(Object.keys(b.sessionRequirements ?? {})).toHaveLength(0);
+    expect(Object.keys(b.sessionRequirements ?? {})).toEqual(['minChestPressSlots']);
+    expect(b.sessionRequirements.minChestPressSlots).toBe(1);
     expect(b.weeklyMinimums ?? []).toHaveLength(0);
   });
 });
