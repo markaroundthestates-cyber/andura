@@ -495,6 +495,14 @@
       "finishEarly": "Termina mai devreme",
       "discard": "Renunta la progres"
     },
+    "warmupCard": {
+      "title": "Incalzire",
+      "ariaLabel": "Seturi de incalzire inainte de primul exercitiu",
+      "stepDone": "Am facut {kg} kg x {reps}",
+      "resting": "Pauza scurta: {sec}s",
+      "skipRest": "Sar pauza",
+      "dismiss": "Sar peste"
+    },
     "preview": {
       "title": "Antrenamentul tau",
       "loading": "Construim planul de azi...",

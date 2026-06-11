@@ -57,6 +57,7 @@ import { PrFlash } from '../../../components/Workout/PrFlash';
 import { TransitionScreen } from '../../../components/Workout/TransitionScreen';
 import { WhyExerciseModal } from '../../../components/Workout/WhyExerciseModal';
 import { SetHistoryChips } from '../../../components/Workout/SetHistoryChips';
+import { WarmupRampCard, type WarmupStep } from '../../../components/Workout/WarmupRampCard';
 import { QuarantineNotice } from '../../../components/Workout/QuarantineNotice';
 import { ExerciseActionsRow } from '../../../components/Workout/ExerciseActionsRow';
 import { CoachNote } from '../../../components/Workout/CoachNote';
@@ -150,11 +151,17 @@ export function Workout(): JSX.Element {
   // the engine emits no adjustment → the scale keeps its legacy constant.
   const [energyAdjustment, setEnergyAdjustment] =
     useState<PlannedWorkoutOutput['energyAdjustment']>(null);
+  // WARM-UP RAMP (in-workout, gym-log arc follow-up 2026-06-12). The engine's
+  // primer ladder (warmup.warmupSets, behind dp_warmup_ramp_v1) was preview-only
+  // text; WarmupRampCard below walks it set-by-set with SHORT own rests. Empty
+  // when the flag is off / no ramp emitted → the card never renders.
+  const [warmupSets, setWarmupSets] = useState<ReadonlyArray<WarmupStep>>([]);
   useEffect(() => {
     let cancelled = false;
     getTodayWorkout().then((planned) => {
       if (!cancelled) {
         setExercises(planned?.exercises ?? []);
+        setWarmupSets(planned?.warmup?.warmupSets ?? []);
         // No real engine title (sentinel) → derive the localized title from the
         // engine SESSION TYPE (PUSH/PULL/...), so a paused PULL session reads
         // "Pull" in ResumeSessionCard instead of a generic label (and never the
@@ -1577,6 +1584,19 @@ export function Workout(): JSX.Element {
                 ))}
               </div>
             </div>
+          )}
+
+          {/* WARM-UP RAMP card (gym-log arc follow-up 2026-06-12) — the engine's
+              primer ladder, now actionable in-session: step-by-step with its own
+              SHORT rests (30/45/60s, never the working restSec — founder rule).
+              Self-contained (own stepper+countdown, zero FSM/logSet/DP touch — a
+              50%×10 primer must never feed calibration). Shown only on the FIRST
+              exercise before any working set is logged; done/dismiss is
+              per-session (sessionStorage keyed on sessionStart). */}
+          {phase === 'logging' && safeExIdx === 0
+            && (history[safeExIdx]?.length ?? 0) === 0
+            && warmupSets.length > 0 && sessionStart !== null && (
+            <WarmupRampCard steps={warmupSets} sessionKey={sessionStart} />
           )}
 
           {/* Bug 2 — "Up next" hint on the LAST set of the current exercise (and
