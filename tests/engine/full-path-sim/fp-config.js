@@ -125,6 +125,19 @@ export const FLIPPED_FLAGS = Object.freeze([
   // Composition surface → pinned OFF so the frozen hashes stay byte-for-byte;
   // ON is proven on the resolver suite + the #70 persona matrix.
   'dp_latiso_dedup_v1',
+  // THE FLIP 2026-06-11 (gym-log arc) — four composition/load surfaces default
+  // ON; pinned OFF here so the frozen hashes stay byte-for-byte. transfer/ladder
+  // are load-path (cohort logs adherently → mostly inert, pinned for the all-off
+  // guarantee); rotation is inert in-harness anyway (resetWorld clears logged
+  // PRs → no rotatable pair).
+  'dp_transfer_coldstart_v1',
+  'dp_learned_ladder_v1',
+  'dp_equipment_ladder_v1',
+  'dp_accessory_rotation_v1',
+  'dp_warmup_ramp_v1',
+  'dp_progression_bonus_v1',
+  'dp_base_lookback_v1',
+  'dp_recovery_dose_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

@@ -79,7 +79,12 @@ export const FLAGS = Object.freeze({
   // in e1RM space (so the rep scheme normalizes). OFF → suggestStartWeight only
   // (current). Depends on #1's e1RM; degrades to suggestStartWeight when no related
   // e1RM exists. Only the first session of a new exercise (no history to regress).
-  dp_transfer_coldstart_v1: { rollout: 0, default: false },
+  // FLIPPED ON 2026-06-11 (gym-log arc): the swap-coldstart hole from Daniel's
+  // real session (DB Shoulder Press history 22.5 → swap Seated DB Press came back
+  // a generic 30 coldstart) traced HERE — the transfer path existed but was
+  // dormant. Safe to light now: getSimilarityMultiplier is equipment/unit-aware
+  // (DB per-hand ↔ BB total ×0.4/×2.5, anchored on Daniel's real DB30↔BB60).
+  dp_transfer_coldstart_v1: { rollout: 1, default: true },
 
   // #5 per-user learned recovery (RISK MED — shifts the fatigue map / which days
   // + muscles get trained, path A). When ON, getMuscleState reads a per-muscle
@@ -174,7 +179,63 @@ export const FLAGS = Object.freeze({
   // LADDER_MIN_DISTINCT distinct loads) and ONLY refines FINER than the hard-coded
   // spacing (never coarsens). Persists `dp-equipment-ladder` (sync, quota-guarded).
   // OFF → the hard-coded table (byte-identical). No F3 flag dependency.
-  dp_learned_ladder_v1: { rollout: 0, default: false },
+  // FLIPPED ON 2026-06-11 (gym-log arc): refine-only (never coarsens) and slow —
+  // safe; pairs with the NEW template layer below for full ladder snapping.
+  dp_learned_ladder_v1: { rollout: 1, default: true },
+
+  // Equipment-ladder TEMPLATE layer (gym-log arc 2026-06-11, Daniel: "daca omu
+  // logheaza x, sa stie ca aparatul are greutatile y"). Per-USER per-EXERCISE:
+  // logged weights accumulate as observations (`dp-equipment-obs`); 2-3 distinct
+  // values matching a COMMON commercial stack/dumbbell/plate template (
+  // equipmentTemplates.js — Daniel's gym seeded the first three) resolve the
+  // WHOLE ladder instantly, and rounding snaps to real rungs (Lat Pulldown 60 →
+  // 59 on his 10lb stack). Precedence: curated (future photo) > matched template
+  // > the generic rounding (untouched fallback). OFF → byte-identical.
+  dp_equipment_ladder_v1: { rollout: 1, default: true },
+
+  // dp_accessory_rotation_v1 (2026-06-11, Daniel "monotonia tampa") — ANCHOR/
+  // ACCESSORY rotation. On a mature account everything is logged → PR-stickiness
+  // made every week identical. Policy: anchors (tier-1 compounds) REPEAT,
+  // accessories (tier 2-3 isolations) ROTATE weekly. sessionBuilder.poolForGroup
+  // alternates the top two equal-ish LOGGED isolations on the ISO-week parity
+  // (derived from the existing seed `uid|weekStartIso|dayIdx`, NOT Date.now()).
+  // Refusal/structural demotes stay stronger (a demoted lift is never a rotation
+  // candidate). OFF → byte-identical pool order.
+  dp_accessory_rotation_v1: { rollout: 1, default: true },
+
+  // Warm-up ramp (gym-log arc 2026-06-11, design-pass deferred item). The opening
+  // tier-1 compound gets REAL warm-up sets (50%×10 → 70%×6 → 90%×3, depth by
+  // working load: <25 none / <40 one / <60 two / else three), snapped on the
+  // exercise's own equipment ladder, threaded ADDITIVELY as warmup.warmupSets
+  // (engine warmupRamp.js → compose.ts → WorkoutPreview discreet line). Primers
+  // are not working sets: no volume/PR/log impact. OFF → field omitted →
+  // byte-identical.
+  dp_warmup_ramp_v1: { rollout: 1, default: true },
+
+  // #42 progression-conditioned selection bonus (gym-log arc 2026-06-11). The
+  // blanket "+20 for anything logged" was MEASURED harmful (full-path convergence
+  // 13.6%→1%, craters 53→69) and refused; THIS is the conditional form: only
+  // exercises with a REAL upward e1RM trend (3%+ over the last 5 exposures, >=3
+  // sets, single bad day tolerated) earn a +5 selection bonus — under the +10
+  // log-bonus, can never jump a tier band. PROBE-GATED at the validation burst
+  // (same metrics as the historical refusal); flipped down if the cohort regresses.
+  dp_progression_bonus_v1: { rollout: 1, default: true },
+
+  // #43 demonstrated-base lookback (gym-log arc 2026-06-11). The demonstrated
+  // working base read ONE session (last-session-only) — a single weak day reset
+  // the base (his real Lat Pulldown 45 case). Now: max-of-medians over the last
+  // 3 distinct sessions, clamped to +5% above the LATEST session (a long layoff
+  // still lowers the base WITH the user — never forces an old number instantly).
+  dp_base_lookback_v1: { rollout: 1, default: true },
+
+  // Recovery window stretched by DOSE × UNACCUSTOMEDNESS (gym-log arc 2026-06-11,
+  // Daniel live: "legs fresh" per Andura, real = lingering DOMS after a big-volume
+  // session + a long no-legs gap). The flat per-head window scales ×[1.0..1.8]:
+  // dose (session sets vs the user's typical, cap 1.6) × unaccustomed (days since
+  // the PREVIOUS exposure, ramp 10→21d, cap 1.4). Typical dose on an accustomed
+  // muscle → ×1.0 EXACT (the QA-F9 K=1.8 anchors hold byte-identically). Stretch-
+  // only — never makes a muscle look fresher than reality.
+  dp_recovery_dose_v1: { rollout: 1, default: true },
 
   // #2/C plateau → intervention (RISK LOW-MED — the near_ceiling branch only
   // narrates + rotates a same-muscle variation, reversible, no kg crater; the
