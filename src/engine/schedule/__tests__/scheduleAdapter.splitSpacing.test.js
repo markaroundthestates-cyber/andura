@@ -118,3 +118,38 @@ describe('v-taper split is spacing-safe across the full MANUAL range (1..7)', ()
     }
   });
 });
+
+// W-Split REBALANCE path (dp_split_rebalance_v1 — the LIVE default). Daniel
+// focus-sweep review 2026-06-11: the day-mix lean's blind first-slot flip broke
+// the spaced template's alternation at 6 days — push/pull/push/pull/push/legs
+// became PULL/PULL/push/pull/push/legs ("Pull + Pull back-to-back e prost ca
+// split automat"). The lean now repairs adjacency (spaceOutSplit): same
+// day-type counts, alternation restored.
+describe('v-taper REBALANCED split (lean) is spacing-safe (2026-06-11)', () => {
+  it('v-taper @ 6 days rebalanced: pull-lean keeps the day-type mix AND the alternation', () => {
+    const split = frequencyToSplit(6, 'v-taper', true);
+    // The lean's intended mix: the focus region LEADS the week (3 pull / 2 push / 1 legs)…
+    const counts = split.reduce((m, c) => ((m[c] = (m[c] || 0) + 1), m), {});
+    expect(counts).toEqual({ pull: 3, push: 2, legs: 1 });
+    // …with NO same-cluster back-to-back (6-7 active days are consecutive calendar days).
+    for (let k = 0; k < split.length - 1; k++) {
+      expect(split[k], `position ${k}->${k + 1} in ${split.join('/')}`).not.toBe(split[k + 1]);
+    }
+  });
+
+  it('rebalanced v-taper @ 5..7: no adjacent positions share a muscle (full×N exempt)', () => {
+    for (const n of [5, 6, 7]) {
+      const split = frequencyToSplit(n, 'v-taper', true);
+      expect(split.length).toBe(n);
+      for (let k = 0; k < split.length - 1; k++) {
+        if (split[k] === 'full' && split[k + 1] === 'full') continue;
+        const conflict = sharesMuscle(split[k], split[k + 1]);
+        expect(
+          conflict,
+          `rebalanced v-taper @ ${n}d: ${split[k]} -> ${split[k + 1]} share a ` +
+            `muscle on adjacent days. Split: ${split.join('/')}`,
+        ).toBe(false);
+      }
+    }
+  });
+});

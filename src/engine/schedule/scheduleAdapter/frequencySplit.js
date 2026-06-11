@@ -89,10 +89,60 @@ function focusDayMixLean(preset) {
   return null;
 }
 
+/** Count same-cluster ADJACENT pairs in a split (the back-to-back smell). */
+function adjacencyCount(split) {
+  let n = 0;
+  for (let i = 1; i < split.length; i++) if (split[i] === split[i - 1]) n += 1;
+  return n;
+}
+
+/**
+ * Deterministic anti-adjacency reorder (Daniel focus-sweep review 2026-06-11).
+ * Greedy round-robin: place the cluster with the MOST remaining slots that
+ * differs from the previous placement; ties break on first appearance in the
+ * input (stable, no randomness). Same multiset of clusters, spaced out — for
+ * v-taper @6d the lean's {pull:3, push:2, legs:1} becomes
+ * pull/push/pull/push/pull/legs instead of pull/pull/... When spacing is
+ * mathematically impossible (e.g. 5×same + 1), the leftover adjacency lands at
+ * the END (the greedy exhausts alternatives first) — still minimal.
+ */
+function spaceOutSplit(split) {
+  const counts = new Map();
+  split.forEach((c, i) => counts.set(c, (counts.get(c) || 0) + 1));
+  const out = [];
+  let prev = '';
+  for (let k = 0; k < split.length; k++) {
+    let pick = '';
+    for (const [c, n] of counts) {
+      if (n <= 0 || c === prev) continue;
+      // Map iteration = insertion = first-appearance order → ties keep it.
+      if (!pick || n > counts.get(pick)) pick = c;
+    }
+    if (!pick) {
+      // Only the prev cluster remains (degenerate) — place it anyway.
+      for (const [c, n] of counts) { if (n > 0) { pick = c; break; } }
+    }
+    out.push(pick);
+    counts.set(pick, counts.get(pick) - 1);
+    prev = pick;
+  }
+  return out;
+}
+
 /**
  * Apply the focus day-mix lean to a split: convert ONE `away`-region day into a
  * `toward`-region day, but only when the split has a surplus of the away region
  * (>1, so the away region is never abandoned). Pure; first matching slot only.
+ *
+ * ADJACENCY REPAIR (Daniel focus-sweep review 2026-06-11): the blind first-slot
+ * flip could break a spaced template's alternation — v-taper @6d turned
+ * push/pull/push/pull/push/legs into PULL/PULL/push/pull/push/legs (same
+ * primary pattern two consecutive training days; at 6-7 days the active days
+ * are truly consecutive calendar days). NO single flip slot avoids it (every
+ * push neighbors a pull in a strict alternation), so when the flip CREATES a
+ * new same-cluster adjacency the whole split is re-spaced (spaceOutSplit) —
+ * same day-type counts, alternation restored. A flip that creates no adjacency
+ * returns unchanged (byte-identical to the old path).
  */
 function applyDayMixLean(split, lean) {
   if (!lean) return split;
@@ -105,6 +155,7 @@ function applyDayMixLean(split, lean) {
   for (let i = 0; i < out.length; i++) {
     if (awaySet.includes(out[i])) { out[i] = lean.toward; break; }
   }
+  if (adjacencyCount(out) > adjacencyCount(split)) return spaceOutSplit(out);
   return out;
 }
 
