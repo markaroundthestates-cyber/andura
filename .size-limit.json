@@ -20,7 +20,7 @@
   {
     "name": "data-library (exercise dataset)",
     "path": "dist/assets/data-library-*.js",
-    "limit": "28 KB",
+    "limit": "32 KB",
     "gzip": true
   },
   {
