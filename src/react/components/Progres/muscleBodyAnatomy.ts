@@ -8,8 +8,9 @@
 //   - FEMALE : narrower shoulders, defined waist taper, wider hip ratio.
 //
 // Both views together paint EVERY Big-11 group on a body (front view cannot show
-// spate / fese / picioare-hamstrings — the back view adds them), so no group is
-// legend-only. Group keys are the engine's canonical Big-11 keys verbatim.
+// spate / fese / picioare-hamstrings / gambe — the back view adds them; gambe
+// moved back-only 2026-06-11: the front patch read as a green SHIN — Daniel live),
+// so no group is legend-only. Group keys are the engine's canonical Big-11 keys.
 //
 // Region paths are intentionally drawn as muscle-belly shapes (not just outline
 // patches) so a per-region radial gradient reads as anatomical depth in the
@@ -63,9 +64,7 @@ const MALE_FRONT: BodyFigure = {
     // QUADS — front of thighs.
     { group: 'picioare-quads', path: 'M54 182 Q47 206 50 246 Q55 262 64 260 Q68 222 68 184 Q61 180 54 182 Z' },
     { group: 'picioare-quads', path: 'M86 182 Q93 206 90 246 Q85 262 76 260 Q72 222 72 184 Q79 180 86 182 Z' },
-    // CALVES — lower legs (front shin/calf mass).
-    { group: 'gambe', path: 'M54 264 Q49 286 54 310 Q58 320 64 318 Q66 290 65 266 Q60 262 54 264 Z' },
-    { group: 'gambe', path: 'M86 264 Q91 286 86 310 Q82 320 76 318 Q74 290 75 266 Q80 262 86 264 Z' },
+    // CALVES — back view only (the front patch sat on the SHIN — Daniel 2026-06-11).
   ],
 };
 
@@ -131,9 +130,7 @@ const FEMALE_FRONT: BodyFigure = {
     // QUADS — front of thighs (wider hip origin, taper to knee).
     { group: 'picioare-quads', path: 'M55 178 Q48 202 51 244 Q56 260 65 258 Q68 220 67 180 Q61 176 55 178 Z' },
     { group: 'picioare-quads', path: 'M85 178 Q92 202 89 244 Q84 260 75 258 Q72 220 73 180 Q79 176 85 178 Z' },
-    // CALVES — lower legs.
-    { group: 'gambe', path: 'M55 262 Q50 284 55 308 Q59 318 65 316 Q67 288 66 264 Q61 260 55 262 Z' },
-    { group: 'gambe', path: 'M85 262 Q90 284 85 308 Q81 318 75 316 Q73 288 74 264 Q79 260 85 262 Z' },
+    // CALVES — back view only (the front patch sat on the SHIN — Daniel 2026-06-11).
   ],
 };
 
@@ -207,8 +204,10 @@ export interface GlowRegion {
 const MALE_FRONT_GLOWS: GlowRegion[] = [
   // Shoulders: enlarged + seated on the deltoid cap (the small outboard blob read
   // as "uncolored" over the bright delt under the screen blend — Daniel live).
-  { group: 'umeri', cx: 0.32, cy: 0.285, r: 0.1 },
-  { group: 'umeri', cx: 0.68, cy: 0.285, r: 0.1 },
+  // cy 0.285→0.24 (Daniel live 2026-06-11: glow sat ~0.3cm low on the delt/biceps
+  // boundary; the cap center reads ≈0.24 on the male render).
+  { group: 'umeri', cx: 0.32, cy: 0.24, r: 0.1 },
+  { group: 'umeri', cx: 0.68, cy: 0.24, r: 0.1 },
   { group: 'piept', cx: 0.431, cy: 0.256, r: 0.095 },
   { group: 'piept', cx: 0.564, cy: 0.256, r: 0.095 },
   { group: 'biceps', cx: 0.326, cy: 0.32, r: 0.06 },
@@ -220,8 +219,9 @@ const MALE_FRONT_GLOWS: GlowRegion[] = [
   { group: 'core', cx: 0.5, cy: 0.364, r: 0.1 },
   { group: 'picioare-quads', cx: 0.402, cy: 0.552, r: 0.085 },
   { group: 'picioare-quads', cx: 0.592, cy: 0.551, r: 0.085 },
-  { group: 'gambe', cx: 0.382, cy: 0.751, r: 0.055 },
-  { group: 'gambe', cx: 0.611, cy: 0.75, r: 0.055 },
+  // CALVES — intentionally NOT painted on the front (Daniel live 2026-06-11: the
+  // front blob read as a green TIBIA; gambe paints on the BACK view, which keeps
+  // every Big-11 group on a body).
 ];
 
 const MALE_BACK_GLOWS: GlowRegion[] = [
@@ -250,8 +250,10 @@ const MALE_BACK_GLOWS: GlowRegion[] = [
 
 const FEMALE_FRONT_GLOWS: GlowRegion[] = [
   // Shoulders: enlarged + seated on the deltoid (see MALE_FRONT note).
-  { group: 'umeri', cx: 0.34, cy: 0.305, r: 0.095 },
-  { group: 'umeri', cx: 0.66, cy: 0.305, r: 0.095 },
+  // cy 0.305→0.26 (same ~0.3cm lift as male — the cap center reads ≈0.25-0.26 on
+  // the female render; the sampled paint wrapped low).
+  { group: 'umeri', cx: 0.34, cy: 0.26, r: 0.095 },
+  { group: 'umeri', cx: 0.66, cy: 0.26, r: 0.095 },
   { group: 'piept', cx: 0.44, cy: 0.258, r: 0.095 },
   { group: 'piept', cx: 0.554, cy: 0.256, r: 0.095 },
   { group: 'biceps', cx: 0.347, cy: 0.308, r: 0.06 },
@@ -263,8 +265,7 @@ const FEMALE_FRONT_GLOWS: GlowRegion[] = [
   { group: 'core', cx: 0.5, cy: 0.369, r: 0.1 },
   { group: 'picioare-quads', cx: 0.402, cy: 0.543, r: 0.085 },
   { group: 'picioare-quads', cx: 0.592, cy: 0.542, r: 0.085 },
-  { group: 'gambe', cx: 0.396, cy: 0.757, r: 0.055 },
-  { group: 'gambe', cx: 0.591, cy: 0.758, r: 0.055 },
+  // CALVES — intentionally NOT painted on the front (see MALE_FRONT_GLOWS note).
 ];
 
 const FEMALE_BACK_GLOWS: GlowRegion[] = [
