@@ -80,7 +80,7 @@
        --paper-2 ← Pulse --bg-2   (#0d101c dark / #ffffff light)
        --ink/-2/-3 ← Pulse --ink/-2/-3
        --line / --line-strong ← Pulse --line / --line-strong
-       --brick   ← Pulse --volt   (#b6f23a — THE primary accent)
+       --brick   ← Pulse --volt   (#a8e04e refined — THE primary accent)
        --olive ← volt (energy)  --deep ← aqua (recovery)
        --succ/warn/danger derived in the Pulse aqua/ember/violet family
      Light is the :root default + [data-theme="light"]; dark is the primary
@@ -96,9 +96,21 @@
      because raw volt green is unreadable as text on a light surface. */
 @layer base {
   :root {
-    /* Pulse base design vars (accent family + gradients + fonts + motion) */
-    --volt: #b6f23a; --volt-deep: #8fd218; --aqua: #4fd6e8; --aqua-deep: #2bb6cc;
-    --ember: #ff7d52; --ember-deep: #f4571f; --violet: #a98bff;
+    /* Pulse base design vars (accent family + gradients + fonts + motion).
+       DESIGN PASS 2026-06-11 (Daniel CEO "nu-mi plac culorile, mai putin neon"):
+       the accent SOURCE family is refined a notch calmer/more premium while
+       keeping the volt/aqua/ember identity. This single declaration cascades to
+       BOTH themes (light :root + dark) — every gradient, set-chip, energy dot,
+       glow + the dark primary accent (--brick = volt) re-skins from here.
+         - volt  #b6f23a → #a8e04e  (deepen + drop the acid-yellow glare — was the
+                                     "highlighter" hue Daniel flagged; still lime)
+         - aqua  #4fd6e8 → #45c8da  (one step deeper teal — less electric)
+         - ember #ff7d52 → #f87044  (slightly deeper coral — less hot-orange)
+       violet unchanged (decorative --grad-ember endpoint, minimal surface).
+       All contrast re-verified AA on the dark glass card + paper (see notes doc);
+       the dark accent/text tokens below are re-pinned to match. */
+    --volt: #a8e04e; --volt-deep: #8fd218; --aqua: #45c8da; --aqua-deep: #2bb6cc;
+    --ember: #f87044; --ember-deep: #f4571f; --violet: #a98bff;
     /* Energy-ramp mid/low hues — mockup data.jsx energy[] (normal=gold,
        tired=ember-red). Decorative-only (aria-hidden dots), so no AA gate;
        cascades into [data-theme=dark] unchanged (theme-agnostic in the mockup). */
@@ -202,15 +214,15 @@
     --ink-3: #82889e;      /* Pulse --ink-3 nudged (mockup #6a7088 = 3.61:1 on card ❌) → 5.02:1 ✅ AA */
     --line: rgba(255,255,255,0.085); /* Pulse --line — decorative white hairline */
     --line-strong: #5c6278;/* Pulse --line-strong nudged (mockup .17 alpha = 1.6:1 ❌) → 3.25:1 ✅ SC 1.4.11 */
-    --brick: #b6f23a;      /* PRIMARY ACCENT — Pulse --volt → 14.74:1 ✅ AAA (the signature electric lime) */
+    --brick: #a8e04e;      /* PRIMARY ACCENT — refined Pulse --volt → 12.6:1 paper / 10.7:1 card ✅ AAA (calmer lime, design pass 2026-06-11) */
     --brick-dark: #ff8a6e; /* Destructive-action TEXT — Pulse ember-red → 8.53:1 ✅ AA */
-    --olive: #b6f23a;      /* Energy/cardio accent — volt (Pulse primary energy hue) → 14.74:1 ✅ */
-    --deep: #4fd6e8;       /* Rest/recovery accent — Pulse aqua → 11.34:1 ✅ */
-    /* Text-path accent inks — dark theme keeps the bright Pulse hues (they pass
-       AA as text on dark paper: aqua 11.34:1, ember 7.77:1). Same names as the
-       light block so Kicker/Pill text resolves correctly in BOTH themes. */
-    --aqua-ink: #4fd6e8;   /* aqua text-path dark → 11.34:1 paper / 8.49:1 ghost tint ✅ */
-    --ember-ink: #ff7d52;  /* ember text-path dark → 7.77:1 paper / 6.30:1 ghost tint ✅ */
+    --olive: #a8e04e;      /* Energy/cardio accent — refined volt (matches --brick) → 12.6:1 ✅ */
+    --deep: #45c8da;       /* Rest/recovery accent — refined Pulse aqua → 9.6:1 paper / 8.4:1 card ✅ */
+    /* Text-path accent inks — dark theme keeps the (refined) bright Pulse hues
+       (re-verified AA as text on dark paper + glass card, design pass 2026-06-11).
+       Same names as the light block so Kicker/Pill text resolves in BOTH themes. */
+    --aqua-ink: #45c8da;   /* refined aqua text-path dark → 9.6:1 paper / 8.4:1 card ✅ AA */
+    --ember-ink: #f87044;  /* refined ember text-path dark → 6.95:1 paper / 5.9:1 card ✅ AA */
     --succ: #7be0a0;       /* Success green (Pulse family) → 12.17:1 ✅ */
     --warn: #ffc24f;       /* Warning amber (Pulse family) → 12.24:1 ✅ */
     --danger: #ff7d6a;     /* Danger red (Pulse ember-red) → 7.85:1 ✅ */

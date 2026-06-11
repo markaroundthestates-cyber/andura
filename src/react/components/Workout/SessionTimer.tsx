@@ -171,11 +171,18 @@ function SessionTimerImpl({
               })()}
             </span>
           </div>
-          <div className="h-1 bg-paper2 rounded-sm overflow-hidden">
+          {/* Design pass 2026-06-11 — the session progress was a 1px hairline
+              (barely perceptible). Bumped to a rounded 6px track with a soft
+              volt glow on the fill so "how far through the session am I" reads
+              at a glance, without dominating the header. */}
+          <div className="h-1.5 bg-paper2 rounded-full overflow-hidden">
             <span
               data-testid="workout-progress-fill"
-              className="block h-full bg-brick transition-all duration-300"
-              style={{ width: `${fillPct}%` }}
+              className="block h-full bg-brick rounded-full transition-all duration-300"
+              style={{
+                width: `${fillPct}%`,
+                boxShadow: '0 0 8px -1px color-mix(in oklab, var(--brick) 70%, transparent)',
+              }}
             />
           </div>
         </div>

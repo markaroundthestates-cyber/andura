@@ -1286,7 +1286,7 @@ export function Workout(): JSX.Element {
               perf isolation stay intact. aria-hidden: the number is ambient
               motivation, not a screen-reader announcement (sets/reps already
               read). */}
-          <div className="flex items-center justify-between mb-4" aria-hidden="true">
+          <div className="flex items-center justify-between mb-2.5" aria-hidden="true">
             <Kicker color="var(--aqua)">
               {t('workout.progress.exercisesLabel_other', {
                 done: safeExIdx + 1,
@@ -1303,34 +1303,58 @@ export function Workout(): JSX.Element {
 
           {/* §F-workout-05 — current exercise name + "why this exercise?"
               help-circle (mockup andura-clasic.html#L1447-1451 wv2-exname →
-              openWhyExercise). Surfaces whyEngine categorical explainer. */}
-          <div className="mb-4" data-testid="wv2-exname">
+              openWhyExercise). Surfaces whyEngine categorical explainer.
+
+              Design pass 2026-06-11 (Daniel CEO "ecranul sa respire") — the
+              current exercise is now the unmistakable HERO of the screen: a
+              larger display name + the "Set X/Y" progress moved UP beside it as
+              a clear pill, so "what am I doing + which set" read together at a
+              glance on the gym floor. The why-trigger keeps its 44px touch
+              target. Secondary chrome (demo / swap / volume) sits quieter below.
+              testids + the canonical setLabel text are preserved. */}
+          <div className="mb-5" data-testid="wv2-exname">
             <Kicker color="var(--aqua)">{t('workout.currentExercise')}</Kicker>
-            <div className="flex items-center gap-2 mt-1">
-              <h2 className="font-display text-2xl font-bold text-ink">{currentExercise.name}</h2>
+            <div className="flex items-start gap-2 mt-1.5">
+              <h2 className="flex-1 min-w-0 font-display text-[1.75rem] leading-[1.12] font-bold text-ink">
+                {currentExercise.name}
+              </h2>
               <button
                 type="button"
                 onClick={handleOpenWhy}
                 aria-label={t('workout.whyAriaLabel')}
                 data-testid="wv2-why-trigger"
-                className="w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-full"
+                className="mt-0.5 w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full transition-transform active:scale-90"
                 style={{
                   color: 'var(--aqua)',
                   background: 'color-mix(in oklab, var(--aqua) 16%, transparent)',
                   border: '1px solid color-mix(in oklab, var(--aqua) 40%, transparent)',
                 }}
               >
-                <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
+                <HelpCircle className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
             {/* Subtitle (equipment/setup) under the exercise name per mockup
                 andura-clasic.html#L1450 wv2-ex-sub. Rendered only cand the
                 planned exercise carries a display sub (RO display map). */}
             {currentExercise.sub && (
-              <p className="text-sm text-ink2 mt-0.5" data-testid="wv2-ex-sub">
+              <p className="text-sm text-ink2 mt-1" data-testid="wv2-ex-sub">
                 {currentExercise.sub}
               </p>
             )}
+            {/* Set progress, elevated into the hero (was a faint line above the
+                log card). A small volt-tinted pill so "Set X/Y" is perceptible
+                at arm's length. Canonical setLabel text preserved for the RTL
+                contract (log-zone contains "Set 1/4"). */}
+            <p
+              className="inline-flex items-center mt-3 px-3 py-1 rounded-full font-mono text-[11px] tracking-[0.08em] uppercase"
+              style={{
+                color: 'var(--brick)',
+                background: 'color-mix(in oklab, var(--brick) 12%, transparent)',
+                border: '1px solid color-mix(in oklab, var(--brick) 28%, transparent)',
+              }}
+            >
+              {t('workout.setLabel', { current: currentSetIdx + 1, total: currentExercise.sets })}
+            </p>
           </div>
 
           {/* Design ADDENDUM 1 — exercise demo accordion. Collapsed = a pulse-card
@@ -1443,10 +1467,6 @@ export function Workout(): JSX.Element {
               </div>
             </div>
           )}
-
-          <p className="text-sm text-ink2 mb-2">
-            {t('workout.setLabel', { current: currentSetIdx + 1, total: currentExercise.sets })}
-          </p>
 
           {/* Bug 2 — "Up next" hint on the LAST set of the current exercise (and
               not the final exercise of the session). Lets the user walk to the
