@@ -1590,26 +1590,33 @@ export function buildSession(cluster, ctx) {
     }
   }
 
-  // Full-body FOCUS slot-crunch yield set (Daniel sweep review 2026-06-11). On a
-  // SINGLE-day-per-week full-body FOCUS week the 8 slots cannot hold all four lower
-  // majors (quads+hams+glutes+calves) AND the focus's width/curl minimums AND
-  // chest+back — so the LEG region (quads+hams+glutes) collapses to ONE maintenance
-  // compound (legs not the focus), its surplus slots yielding to the focus's HIGH
-  // minimums. Used by BOTH the focus-policy resolver (a surplus leg compound is
-  // displaceable) and the maintenance-floor (the leg region is guaranteed at REGION
-  // level, not per-group).
+  // Full-body FOCUS slot-crunch yield set (Daniel sweep review 2026-06-11; the
+  // 1-3-day extension approved 2026-06-11 eve — his external review + his "ok",
+  // option 1: "focus minimums must win over full lower preservation for non-lower
+  // focuses"). On a 1-3-day full-body FOCUS week the 8 slots/session cannot hold
+  // all lower majors AND the focus's width/curl minimums AND chest+back — so the
+  // LEG region (quads+hams+glutes) yields its SURPLUS slots to the focus's HIGH
+  // minimums, down to a REGION floor. Used by BOTH the focus-policy resolver (a
+  // surplus leg compound/accessory is displaceable) and the maintenance-floor
+  // (the leg region is guaranteed at REGION level, not per-group).
   //
-  // GATED ON daysPerWeek <= 1 — the ONLY genuinely slot-starved case. At 2+ days
-  // there are 16+ weekly slots: the legs are maintained per-group (the Gigel 2d
-  // UPPER "de-emphasis = maintenance, not zero" gate) AND the focus width fits via
-  // the 'full'-cluster minimums (added to applicableClusters above) without any
-  // collapse → byte-identical to today (fp-hash frozen, the maintenance gate holds).
-  // On a true 1-day week, weekly maintenance IS that one day, and Daniel's explicit
-  // 1-day asks prioritize the focus signature over a 4th leg slot.
+  // REGION FLOOR: 1 slot/session on a true 1-day week (weekly maintenance IS that
+  // one day; the focus signature outranks a 4th leg slot — Daniel's explicit 1-day
+  // call), 2 slots/session at 2-3 days (legs stay PROMINENT-maintained: 4-6 region
+  // slots/week; the freed slot carries the lateral/rear/curl the focus demands).
+  // POLICY NOTE: this consciously relaxes the 2026-06-10 Gigel "per-group never
+  // zero at 2d" rule to REGION+coverage for FOCUS users — a de-emphasized group
+  // may ride secondary coverage (Glute Drive maintains hams) within a maintained
+  // region; the gate test asserts the new contract. balanced (emphSet empty) and
+  // leg-emphasized focuses (lower) never collapse; calves (gambe) are OUTSIDE the
+  // region and keep the per-group guarantee. 4+ days → split days carry the focus
+  // → no collapse (byte-identical).
   const LEG_REGION_GROUPS = ['picioare-quads', 'picioare-hamstrings', 'fese'];
   const focusActive = emphSet.size > 0;
   const legsEmphasized = LEG_REGION_GROUPS.some((g) => emphSet.has(g));
-  const fullBodyCrunch = (Number(ctx?.daysPerWeek) || 1) <= 1;
+  const daysPerWeekN = Number(ctx?.daysPerWeek) || 1;
+  const fullBodyCrunch = daysPerWeekN <= 3;
+  const legRegionFloor = daysPerWeekN <= 1 ? 1 : 2;
   const yieldGroups = new Set();
   if (fullBodyCrunch && focusActive) {
     for (const g of (ctx?.deEmphasizedGroups ?? [])) yieldGroups.add(g);
@@ -1639,9 +1646,11 @@ export function buildSession(cluster, ctx) {
       daysPerWeek: ctx?.daysPerWeek,
       // Yieldable regions (Daniel sweep review 2026-06-11) — explicit preset
       // de-emphasis ∪ the collapsed leg region on a non-leg full-body focus day. A
-      // surplus compound of these groups may yield to a HIGH focus requirement (the
-      // region keeps >=1). balanced / no focus → empty → no yield (byte-identical).
+      // surplus compound of these groups may yield to a HIGH focus requirement,
+      // down to the REGION floor (1 at 1d, 2 at 2-3d). balanced / no focus →
+      // empty → no yield (byte-identical).
       deEmphasizedGroups: [...yieldGroups],
+      deEmphRegionFloor: legRegionFloor,
       // F5 (dp_latiso_dedup_v1) — the active week's derived clusters, threaded
       // from getDailyWorkout so requirementsFor can defer a weekly minimum to the
       // week's SPECIALIST days (v-taper lat-iso → Pull owns it, Upper lands at 7).
@@ -1710,24 +1719,55 @@ export function buildSession(cluster, ctx) {
     const deEmphRegionSlots = () =>
       [...deEmphMajors].reduce((n, g) => n + (liveCount[g] || 0), 0);
     const majorsToTrain = MAJOR_MUSCLES_SLOT_GUARANTEE.filter((g) => targets.includes(g));
-    for (const major of majorsToTrain) {
-      if ((liveCount[major] || 0) > 0) continue; // already has a slot
-      // Region-level guarantee for a de-emphasized region: skip this group if the
-      // region already holds ≥1 slot (maintenance met; the rest yields to focus).
-      if (deEmphMajors.has(major) && deEmphRegionSlots() > 0) continue;
-      // 2026-06-11 (Daniel focus-sweep review) — INDIRECT coverage counts: a major
-      // with zero PRIMARY slots that is a SECONDARY target of a chosen exercise is
-      // already maintained (a Glute Drive maintains hams; a press maintains
-      // triceps). Injecting a dedicated slot anyway both crowded the day AND
-      // tug-of-warred with the focus-policy PR-fallback, which frees a slot for a
-      // HIGH focus minimum under the SAME coverage rule — aligned, they never
-      // undo each other. Truly-uncovered majors (Gigel 2d UPPER: hams/glutes/
-      // calves on a press/row day) still inject exactly as before.
-      const coveredBySecondary = chosen.some((e) => {
+    // INDIRECT coverage (2026-06-11 sweep review): a major with zero PRIMARY slots
+    // that is a SECONDARY target of a chosen exercise is already maintained (a Glute
+    // Drive maintains hams; a press maintains triceps). Used as a skip below and by
+    // the region coverage-swap.
+    const coveredBySecondaryOf = (major) =>
+      chosen.some((e) => {
         const sec = getExerciseMetadata(e.name)?.muscle_target_secondary;
         return Array.isArray(sec) && sec.includes(major);
       });
-      if (coveredBySecondary) continue;
+    for (const major of majorsToTrain) {
+      if ((liveCount[major] || 0) > 0) continue; // already has a slot
+      // A secondary-covered major is maintained — skip (aligned with focus-policy
+      // PR-fallback's coverage rule, so inject + floor never tug-of-war).
+      if (coveredBySecondaryOf(major)) continue;
+      // Region-level guarantee for a de-emphasized region: when the region already
+      // holds the FLOOR (1 at 1d, 2 at 2-3d) the surplus yields to the focus. But a
+      // major that is WHOLLY uncovered at the floor (no primary, no secondary) would
+      // be abandoned — two leg ISOLATIONS (Leg Ext + Leg Curl) cannot cover three
+      // leg majors, and a coach maintains the region with COMPOUNDS. COVERAGE-
+      // PRESERVING SWAP: replace a region isolation X (primary G) with a pool
+      // COMPOUND Y whose primary is THIS major AND whose secondary still covers G —
+      // slot count stays at the floor while every region major gains coverage
+      // (Leg Curl[hams] -> Glute Drive[fese+hams]). No such Y -> accept the gap
+      // (the genuine 2-in-3 limit Daniel signed off on for focus weeks).
+      if (deEmphMajors.has(major) && deEmphRegionSlots() >= legRegionFloor) {
+        const compoundPool = (pools.find((p) => p.group === major)?.pool ?? [])
+          .filter((e) => (getExerciseMetadata(e.name)?.tier ?? 2) <= 1 && !isTaken(e));
+        for (const cand of compoundPool) {
+          const candSec = getExerciseMetadata(cand.name)?.muscle_target_secondary;
+          const candCovers = Array.isArray(candSec) ? candSec : [];
+          const victimIdx = chosen.findIndex((e) => {
+            const m = getExerciseMetadata(e.name) || {};
+            const g = m.muscle_target_primary;
+            return !!g && LEG_REGION_GROUPS.includes(g) && (m.tier ?? 2) > 1 && candCovers.includes(g);
+          });
+          if (victimIdx < 0) continue;
+          const victim = chosen[victimIdx];
+          const vg = getExerciseMetadata(victim.name).muscle_target_primary;
+          chosenNames.delete(victim.name);
+          chosenMovements.delete(movementKey(victim.name, getExerciseMetadata(victim.name)));
+          if (vg && liveCount[vg]) liveCount[vg] -= 1;
+          chosen.splice(victimIdx, 1, { name: cand.name, sets: DEFAULT_SETS });
+          chosenNames.add(cand.name);
+          chosenMovements.add(movementKey(cand.name, cand.meta));
+          liveCount[major] = (liveCount[major] || 0) + 1;
+          break;
+        }
+        continue; // region at floor — swapped for coverage, or true 2-in-3 limit
+      }
       const pool = pools.find((p) => p.group === major)?.pool ?? [];
       const inject = pool.find((e) => !isTaken(e));
       if (!inject) continue; // library can't supply this group under the constraints

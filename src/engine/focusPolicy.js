@@ -814,6 +814,10 @@ export function applyFocusPolicy(chosen, ctx) {
   const deEmph = new Set(
     Array.isArray(ctx?.deEmphasizedGroups) ? ctx.deEmphasizedGroups : [],
   );
+  // Region floor for the yield region (2026-06-11 eve, 2-3-day extension): the
+  // de-emphasized region keeps at least this many slots per session (1 on a
+  // 1-day week, 2 at 2-3 days). Absent → 1 (the original 1-day behavior).
+  const deEmphFloor = Math.max(1, Number(ctx?.deEmphRegionFloor) || 1);
 
   // Work on a mutable copy of the selected list, enriched with derived tags. Order
   // is the selection order = the priority order (earlier = higher value).
@@ -890,9 +894,9 @@ export function applyFocusPolicy(chosen, ctx) {
         // 8 slots), so pass 1 finds nothing and a HIGH focus requirement used to
         // die silently. Pass 2 may displace a logged-PR victim under the SAME
         // coverage rules (Daniel sweep review 2026-06-11 — "focus dies at low freq").
-        let replaceIdx = displaceableIndex(session, reqs, scoreOf, getMeta, deEmph, prNames, false);
+        let replaceIdx = displaceableIndex(session, reqs, scoreOf, getMeta, deEmph, deEmphFloor, prNames, false);
         if (replaceIdx < 0 && req.priority === 'high') {
-          replaceIdx = displaceableIndex(session, reqs, scoreOf, getMeta, deEmph, prNames, true);
+          replaceIdx = displaceableIndex(session, reqs, scoreOf, getMeta, deEmph, deEmphFloor, prNames, true);
         }
         if (replaceIdx < 0) break; // nothing safe to displace → graceful no-op
         const removed = session[replaceIdx];
@@ -990,7 +994,7 @@ function isRequirementCarrier(e, requiredTags, session) {
  *
  * Lowest score, then latest selection order (lowest priority) — deterministic.
  */
-function displaceableIndex(session, reqs, scoreOf, getMeta, deEmph, prNames, allowPR) {
+function displaceableIndex(session, reqs, scoreOf, getMeta, deEmph, deEmphFloor, prNames, allowPR) {
   const requiredTags = new Set(reqs.map((r) => r.tag));
   const groupCount = {};
   for (const e of session) {
@@ -998,7 +1002,8 @@ function displaceableIndex(session, reqs, scoreOf, getMeta, deEmph, prNames, all
     if (g) groupCount[g] = (groupCount[g] || 0) + 1;
   }
   // Total slots across the YIELD region (the collapsed leg region) — region-level
-  // coverage so the surplus leg compound yields while exactly ONE stays.
+  // coverage: the surplus leg slot yields while the region keeps >= deEmphFloor
+  // (1 on a 1-day week, 2 at 2-3 days — the 2026-06-11 eve extension).
   const yieldRegionSlots = [...deEmph].reduce((n, g) => n + (groupCount[g] || 0), 0);
   const coveredBySecondary = (group, exceptName) =>
     session.some((o) => {
@@ -1017,7 +1022,7 @@ function displaceableIndex(session, reqs, scoreOf, getMeta, deEmph, prNames, all
       const covered = !g
         ? true
         : inYield
-          ? yieldRegionSlots >= 2 // region keeps >= 1 after removal
+          ? yieldRegionSlots >= deEmphFloor + 1 // region keeps >= floor after removal
           : (groupCount[g] || 0) >= 2 || coveredBySecondary(g, e.name);
       if (!covered) return false; // never strand a group / region with no maintenance
       const isCompound = (meta.tier ?? 2) <= 1;
