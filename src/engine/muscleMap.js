@@ -49,7 +49,6 @@ export const EXERCISE_MUSCLES = {
   'Flat DB Press':          { primary: ['chest_mid'], secondary: ['delt_front','tri_lateral'] },
   'Pec Deck / Cable Fly':   { primary: ['chest_mid','chest_upper'], secondary: [] },
   'Cable Fly':              { primary: ['chest_mid','chest_upper'], secondary: [] },
-  'Incline DB Press pump':  { primary: ['chest_upper'], secondary: ['delt_front','tri_lateral'] },
   'DB Shoulder Press':      { primary: ['delt_front','delt_mid'], secondary: ['tri_lateral','core'] },
   'Lateral Raises':         { primary: ['delt_mid'], secondary: [] },
   'Lateral Raises (cable)': { primary: ['delt_mid'], secondary: [] },
