@@ -40,14 +40,19 @@ vi.mock('../../db.js', () => ({
 
 import { DP } from '../dp.js';
 import { EQUIPMENT_WEIGHTS, EXERCISE_EQUIPMENT_MAP } from '../../config/weights.js';
+import { resolveRealStack } from '../dp/realMachineStacks.js';
 
 beforeEach(() => {
   store = {};
   store['phase-override'] = 'BULK'; // masa-like; deterministic, no CUT date branch
 });
 
-/** The equipment list a given exercise snaps onto (mirrors weights.js getList). */
+/** The equipment list a given exercise snaps onto (mirrors weights.js getList).
+ *  dp_real_ladder_snap_v1: Cable Row now snaps to his real row stack (6..90),
+ *  so the calibration shift lands on those rungs — check against them. */
 function equipListFor(ex) {
+  const real = resolveRealStack(ex);
+  if (real) return real;
   const type = EXERCISE_EQUIPMENT_MAP[ex] || 'bailib_stack';
   return EQUIPMENT_WEIGHTS[type] || EQUIPMENT_WEIGHTS['bailib_stack'];
 }

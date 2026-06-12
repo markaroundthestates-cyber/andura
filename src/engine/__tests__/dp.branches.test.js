@@ -829,8 +829,11 @@ describe('getInitialRecommendation', () => {
 
   it('cold-start exact-match output is byte-identical (golden — must NOT drift)', () => {
     const ctx = { recentLogs: [{ logs: [{ ex: 'Cable Row', w: 50, reps: 10 }] }] };
+    // dp_real_ladder_snap_v1: Cable Row snaps to his real row stack (6..90), so a
+    // logged 50 yields a rec of 48 (nearest rung, tie rounds down). The rationale
+    // still cites what he LIFTED (50); kg/weight are the on-grid suggestion.
     expect(getInitialRecommendation('Cable Row', ctx)).toEqual({
-      kg: 50, weight: 50, repsTarget: 8, reps: 8, sets: 3, rir: 2,
+      kg: 48, weight: 48, repsTarget: 8, reps: 8, sets: 3, rir: 2,
       status: 'CONSOLIDATE', statusColor: 'var(--accent)', statusLabel: '🟡 Continuam',
       isInitial: false, rationale: 'Pornim de la ultima sesiune: 50 kg', confidence: 0.9,
     });

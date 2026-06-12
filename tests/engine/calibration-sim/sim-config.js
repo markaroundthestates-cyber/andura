@@ -37,7 +37,14 @@ export function resetStore() {
     // at-cap reps-brake and the increment this sim's hash freezes. Same path-B
     // reasoning — pin OFF here; ON behavior is covered by loadModel.test.js + the
     // Daniel real-exercise probe + the #70 persona-matrix.
-    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false, dp_load_model_v1: false }));
+    // dp_real_ladder_snap_v1 defaults ON (THE FLIP 2026-06-12, founder live gym):
+    // it snaps a rec for the founder's named pin stations (Cable Row / Reverse Pec
+    // Deck / Shoulder Press machine / Smith OHP / Pec Deck / Leg Curl) onto his
+    // MEASURED step-6 stack at the roundToEquipmentWeight gate — a path-B kg change
+    // this dp.js-direct sim DOES see (its cohort uses those lifts). Pin OFF here to
+    // keep the frozen baseline byte-for-byte; the ON snap is covered by
+    // realMachineStacks.test.js (the real off-grid values) + the #70 persona-matrix.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false, dp_load_model_v1: false, dp_real_ladder_snap_v1: false }));
   } catch {
     /* jsdom always provides localStorage */
   }

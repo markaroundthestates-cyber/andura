@@ -45,6 +45,7 @@
 // flag (dp_warmup_ramp_v1, default OFF), so wiring it changes no current output.
 
 import { roundToEquipmentWeight } from '../config/weights.js';
+import { getExerciseMetadata } from './exerciseLibrary.js';
 
 // ── Thresholds (kg of WORKING load) — see header rationale ──────────────────────
 /** At/below this the working set is itself the primer → no ramp. */
@@ -53,6 +54,36 @@ export const NO_RAMP_KG = 25;
 export const MIN_RAMP_KG = 40;
 /** At/above this → the 90% step is included (full 3-step ramp). */
 export const HEAVY_KG = 60;
+
+// ── SHOULDER / OVERHEAD gentler ramp (founder live 2026-06-12, _LADDER_SNAP) ────
+// The 25/40/60 bands + 50/70/90 % are calibrated against the BARBELL bench/squat
+// (empty bar 20kg). Overhead pressing is a SMALL movement with lighter working loads
+// and a vulnerable shoulder/cuff entry, so the bench ladder rides too steep: the
+// founder's Smith OHP (he works ~25-30) got a 50%×10 → 70%×6 primer toward an
+// inflated coldstart, felt brutal. For an overhead/shoulder LEAD lift:
+//   - NO_RAMP floor raised to OHP_NO_RAMP_KG (40): an overhead working set ≤40kg IS
+//     its own warm-up (no separate ramp), so a sane ~25-30 OHP gets none at all.
+//   - the first primer drops to OHP_FIRST_PCT (40%) — a gentler movement rehearsal
+//     than 50% for the small muscles.
+//   - depth caps at 2 (no near-max 90% triple on a press the rotator cuff guards).
+/** Overhead/shoulder lead: at/below this the working set is itself the primer. */
+export const OHP_NO_RAMP_KG = 40;
+/** Overhead/shoulder lead: gentler first-primer percentage (vs 50% for a barbell). */
+const OHP_FIRST_PCT = 40;
+/** Overhead/shoulder lead: max ramp depth (drop the 90% near-max step). */
+const OHP_MAX_DEPTH = 2;
+
+/**
+ * Is this lead lift an overhead/shoulder press (gentler ramp)? By the library's
+ * primary muscle group (umeri) — robust across the many OHP/press variants. Defensive:
+ * bad name / missing metadata → false (the standard barbell ramp). @param {string} name
+ */
+function isOverheadLead(name) {
+  if (typeof name !== 'string' || !name) return false;
+  let m;
+  try { m = getExerciseMetadata(name); } catch { return false; }
+  return !!m && m.muscle_target_primary === 'umeri';
+}
 
 // ── Standard ramp steps (percent of working load + a target rep count) ──────────
 // Ordered light→heavy. `tier` marks how heavy the working load must be for the step
@@ -66,9 +97,17 @@ const RAMP_STEPS = [
 /**
  * How many ramp steps the working load earns (0 / 1 / 2 / 3).
  * @param {number} workingKg
+ * @param {boolean} [overhead] overhead/shoulder lead → gentler (no-ramp ≤40, cap 2)
  * @returns {0|1|2|3}
  */
-function rampDepth(workingKg) {
+function rampDepth(workingKg, overhead) {
+  if (overhead) {
+    // Overhead/shoulder: a ≤40kg press IS its own warm-up; otherwise cap at 2 steps
+    // (never the 90% near-max triple on a cuff-guarded press).
+    if (workingKg < OHP_NO_RAMP_KG) return 0;
+    if (workingKg < HEAVY_KG) return 1; // single gentle primer (40-60kg overhead)
+    return /** @type {2} */ (OHP_MAX_DEPTH); // 60kg+ overhead → two steps, no 90%
+  }
   if (workingKg < NO_RAMP_KG) return 0;
   if (workingKg < MIN_RAMP_KG) return 1; // single 50% primer
   if (workingKg < HEAVY_KG) return 2; // 50% + 70%
@@ -92,10 +131,13 @@ export function warmupRampFor(workingKg, opts) {
   if (typeof workingKg !== 'number' || !Number.isFinite(workingKg) || workingKg <= 0) return [];
   const kg = workingKg;
 
-  const depth = rampDepth(kg);
-  if (depth === 0) return [];
-
   const name = opts && typeof opts.exerciseName === 'string' ? opts.exerciseName : '';
+  // Overhead/shoulder presses get a gentler ramp (higher no-ramp floor, gentler first
+  // %, depth cap 2). Resolved from the lead's primary muscle group; no name → standard.
+  const overhead = isOverheadLead(name);
+
+  const depth = rampDepth(kg, overhead);
+  if (depth === 0) return [];
   // Snap each primer to the SAME ladder the working set uses (so the primer is a real
   // rack/stack weight). No name → nearest 0.5kg (a sane generic for a barbell add).
   const snap = (w) => {
@@ -111,13 +153,16 @@ export function warmupRampFor(workingKg, opts) {
   let lastKg = null;
   for (const step of RAMP_STEPS) {
     if (depth < step.minTier) continue;
-    const primerKg = snap((kg * step.pct) / 100);
+    // Overhead/shoulder: gentler first primer (40% vs 50%) — a lighter movement
+    // rehearsal for the small, cuff-guarded muscles. Later steps keep their %.
+    const pct = overhead && step.minTier === 1 ? OHP_FIRST_PCT : step.pct;
+    const primerKg = snap((kg * pct) / 100);
     // Guard: a primer must be a real load (> 0) and strictly below the working set —
     // on a coarse stack a high % can snap up to the working weight (then it isn't a
     // warm-up). Also dedup when two %-steps snap to the same physical weight.
     if (!(primerKg > 0) || primerKg >= kg) continue;
     if (lastKg !== null && primerKg === lastKg) continue;
-    out.push({ kg: primerKg, reps: step.reps, pct: step.pct });
+    out.push({ kg: primerKg, reps: step.reps, pct });
     lastKg = primerKg;
   }
   return out;

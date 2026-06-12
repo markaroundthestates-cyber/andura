@@ -138,6 +138,12 @@ export const FLIPPED_FLAGS = Object.freeze([
   'dp_transfer_coldstart_v1',
   'dp_learned_ladder_v1',
   'dp_equipment_ladder_v1',
+  // THE FLIP 2026-06-12 (founder live gym session) — real-machine-stack snap defaults
+  // ON. Load-path (snaps a rec onto the founder's measured pin stack). The cohort
+  // exercises route through the GENERIC ladders not the founder's named stations, so
+  // it is mostly inert in-harness, but pinned OFF here for the all-off-world guarantee
+  // (the frozen prescription hashes stay byte-for-byte).
+  'dp_real_ladder_snap_v1',
   'dp_accessory_rotation_v1',
   'dp_warmup_ramp_v1',
   'dp_progression_bonus_v1',

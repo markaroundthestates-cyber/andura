@@ -3,6 +3,26 @@
 
 import { isEnabled } from '../util/featureFlags.js';
 import { learnedStep, snapToLadder } from '../engine/dp/equipmentLadder.js';
+import { resolveRealStack } from '../engine/dp/realMachineStacks.js';
+
+/** Snap a generic-rounded weight onto the founder's REAL pin-machine stack when one
+ *  of his CONFIRMED stations matches (dp_real_ladder_snap_v1). PURE + defensive: no
+ *  real stack / flag off / bad input → the generic value UNCHANGED (byte-identical).
+ *  Nearest rung; a tie rounds DOWN (the lighter, safer load). The four explicit
+ *  founder stacks live in realMachineStacks.js. */
+function _snapToRealStack(weight, exerciseName, generic) {
+  if (!isEnabled('dp_real_ladder_snap_v1')) return generic;
+  const stack = resolveRealStack(exerciseName);
+  if (!stack || stack.length < 1 || !Number.isFinite(weight)) return generic;
+  let bestRung = stack[0];
+  let bestDist = Math.abs(stack[0] - weight);
+  for (let i = 1; i < stack.length; i++) {
+    const d = Math.abs(stack[i] - weight);
+    // strictly-less keeps the FIRST (lower) rung on a tie → round DOWN for safety.
+    if (d < bestDist - 1e-9) { bestDist = d; bestRung = stack[i]; }
+  }
+  return bestRung;
+}
 
 export const EQUIPMENT_WEIGHTS = {
   // Matrix Dual Adjustable Pulley (helcometru) — incremente ~4.5kg
@@ -390,11 +410,18 @@ export function roundToEquipmentWeight(weight, exerciseName, ctx) {
   const generic = () => list.reduce((prev, curr) =>
     Math.abs(curr - weight) < Math.abs(prev - weight) ? curr : prev
   , list[0] ?? weight);
-  // Back-compat: no ctx → legacy generic rounding, byte-identical.
-  if (!ctx || !ctx.ladderAware || !isEnabled('dp_equipment_ladder_v1')) return generic();
+  // Back-compat: no ctx → legacy generic rounding. dp_real_ladder_snap_v1 then snaps
+  // the result onto the founder's REAL pin-machine stack (Cable Row / Reverse Pec
+  // Deck / Shoulder Press machine / Leg Curl / Pec Deck) so a cold-start AND a
+  // history rec land on a rung the machine actually has — flag OFF → byte-identical.
+  if (!ctx || !ctx.ladderAware || !isEnabled('dp_equipment_ladder_v1')) {
+    return _snapToRealStack(weight, exerciseName, generic());
+  }
   // Ladder-aware: snapToLadder applies curated > matched-template precedence and
-  // falls back to `generic` itself when the user has no learned/curated ladder.
-  return snapToLadder(exerciseName, weight, generic, ctx.curatedSteps);
+  // falls back to `generic` itself when the user has no learned/curated ladder. The
+  // founder's measured real stack is the AUTHORITATIVE source, so it snaps last
+  // (over the matched template too) — flag OFF → snapToLadder result unchanged.
+  return _snapToRealStack(weight, exerciseName, snapToLadder(exerciseName, weight, generic, ctx.curatedSteps));
 }
 
 /** @param {string} exerciseName */

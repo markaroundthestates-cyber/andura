@@ -8,6 +8,7 @@ import {
   NO_RAMP_KG,
   MIN_RAMP_KG,
   HEAVY_KG,
+  OHP_NO_RAMP_KG,
 } from '../warmupRamp.js';
 import { roundToEquipmentWeight } from '../../config/weights.js';
 
@@ -113,5 +114,50 @@ describe('warmupRampFor — determinism & defensive guards', () => {
       { kg: 70, reps: 6, pct: 70 },
       { kg: 90, reps: 3, pct: 90 },
     ]);
+  });
+});
+
+// ── SHOULDER / OVERHEAD gentler ramp (founder live 2026-06-12) ──────────────────
+// The Smith OHP coldstart felt brutal: a 50/70% ramp toward an inflated load on a
+// small, cuff-guarded press. An overhead lead (primary muscle = umeri) gets a higher
+// no-ramp floor, a gentler first %, and a 2-step cap (no 90% near-max triple).
+describe('warmupRampFor — overhead/shoulder gentler ramp', () => {
+  it('a working OHP at his real ~25-30 gets NO ramp (the set is the primer)', () => {
+    // Below OHP_NO_RAMP_KG (40) an overhead press needs no separate ramp — the brutal
+    // 50%×10 → 70%×6 the founder saw on Smith OHP is gone once the load is sane.
+    expect(warmupRampFor(28, { exerciseName: 'Smith OHP' })).toEqual([]);
+    expect(warmupRampFor(30, { exerciseName: 'Machine Shoulder Press' })).toEqual([]);
+    expect(warmupRampFor(35, { exerciseName: 'OHP' })).toEqual([]);
+  });
+
+  it('the SAME light load on a BENCH (chest) still ramps — only overhead is gentler', () => {
+    // 30kg Flat Barbell Bench (piept) → the standard single 50% primer fires.
+    expect(warmupRampFor(30, { exerciseName: 'Flat Barbell Bench' }).map((s) => s.pct)).toEqual([50]);
+  });
+
+  it('a moderate overhead (40-60) gets a SINGLE gentle 40% primer', () => {
+    const ramp = warmupRampFor(50, { exerciseName: 'OHP' });
+    expect(ramp.length).toBe(1);
+    expect(ramp[0].pct).toBe(40); // gentler than the 50% a bench gets
+  });
+
+  it('a heavy overhead (≥60) caps at 2 steps — no 90% near-max triple', () => {
+    const ramp = warmupRampFor(70, { exerciseName: 'OHP' });
+    expect(ramp.length).toBeLessThanOrEqual(2);
+    expect(ramp.map((s) => s.pct)).not.toContain(90);
+    // first step is the gentler 40%, second is the standard 70%.
+    expect(ramp[0].pct).toBe(40);
+  });
+
+  it('OHP_NO_RAMP_KG is above the standard NO_RAMP_KG (overhead floor is higher)', () => {
+    expect(OHP_NO_RAMP_KG).toBeGreaterThan(NO_RAMP_KG);
+  });
+
+  it('every overhead primer is still a real rung below the working load', () => {
+    const ramp = warmupRampFor(72, { exerciseName: 'Machine Shoulder Press' });
+    for (const step of ramp) {
+      expect(step.kg).toBeLessThan(72);
+      expect(step.kg).toBeGreaterThan(0);
+    }
   });
 });

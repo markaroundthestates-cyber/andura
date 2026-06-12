@@ -193,6 +193,29 @@ export const FLAGS = Object.freeze({
   // > the generic rounding (untouched fallback). OFF → byte-identical.
   dp_equipment_ladder_v1: { rollout: 1, default: true },
 
+  // Real-machine-stack SNAP (founder LIVE gym session 2026-06-12, _LADDER_SNAP_
+  // 2026-06-12.md). The dp_equipment_ladder_v1 template layer LEARNS a real ladder
+  // from logged loads but needs >= 2 distinct matching logs first, so a cold-start
+  // (and any under-logged PIN station) still surfaced OFF-GRID recs from the GENERIC
+  // EQUIPMENT_WEIGHTS placeholder grids: Cable Row's bailib_stack [..70,75,80] (his
+  // real "ramat" is 6,12..90 → 70/73/75 do not exist), Reverse Pec Deck's 22.5 (his
+  // pec-deck is step-6 → 24), Smith OHP / Machine Shoulder Press / Pec Deck / Leg
+  // Curl likewise. When ON, the prescribed rec (BOTH cold-start AND history paths,
+  // at the roundToEquipmentWeight gate) snaps to the nearest rung on the founder's
+  // MEASURED step-6 stack (realMachineStacks.js — Cable Row 6..90, Pec Deck +
+  // Shoulder 6..96, Leg Curl 6..66; an unmapped pin machine → a generic 6kg-step
+  // grid), with a tie rounding DOWN for safety. The four explicit stacks are the
+  // AUTHORITATIVE source (they snap OVER the learned template too). The user's LOGGED
+  // entry is NEVER snapped — only the coach's SUGGESTION. DUMBBELL / CABLE / BARBELL
+  // / BODYWEIGHT recs are untouched (their generic ladders already snap correctly).
+  // OFF → roundToEquipmentWeight returns the generic / template result unchanged →
+  // byte-identical (pinned OFF in fp-config FLIPPED_FLAGS so the fp hash holds).
+  // FLIPPED ON 2026-06-12 — the off-grid recs were a P0 founder bug ("il omoram pe
+  // Gigel"); refine-only (snaps an existing rec onto a real rung, never invents a
+  // load) → safe to light. Mappings not in the explicit four (generic fallback) are
+  // flagged in the report for founder confirmation next round.
+  dp_real_ladder_snap_v1: { rollout: 1, default: true },
+
   // dp_accessory_rotation_v1 (2026-06-11, Daniel "monotonia tampa") — ANCHOR/
   // ACCESSORY rotation. On a mature account everything is logged → PR-stickiness
   // made every week identical. Policy: anchors (tier-1 compounds) REPEAT,
