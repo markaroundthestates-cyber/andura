@@ -42,6 +42,9 @@ const FOCUS_FLAGS = Object.freeze([
   'dp_focus_policy_v1', 'dp_split_rebalance_v1', 'dp_latiso_dedup_v1',
   'dp_biceps_guarantee_v1', 'dp_lumbar_dedup_v1', 'dp_rep_class_v1',
   'dp_anchor_sets_v1', 'dp_load_model_v1', 'dp_metric_types_v1',
+  // focus-contracts arc (2026-06-12): the per-focus WEEKLY volume contracts + the
+  // sub-bucket OHP/shrug/close-grip caps + the shrug/lower-back selection demotion.
+  'dp_focus_contracts_v1',
 ]);
 
 function setFlags(ids) {
@@ -324,6 +327,168 @@ describe('focus-signature gate — lower signature (1-6 days)', () => {
     it(`lower @ ${freq}d: calves present`, async () => {
       const w = await getWeek('lower', freq);
       expect(setsForGroup(w, 'gambe'), `calves sets (weekly=${JSON.stringify(w.weekly)})`).toBeGreaterThan(0);
+    }, 120000);
+  }
+});
+
+// ══ FOCUS VOLUME CONTRACTS (focus-contracts arc 2026-06-12, dp_focus_contracts_v1) ══
+// The founder-approved per-focus WEEKLY group-volume + sub-bucket RELATIONSHIPS, made
+// permanent here on the REAL composer output (fresh intermediate male, the gate basis).
+// Each contract = an INVARIANT that must hold at the offending frequencies. Where a
+// contract is split-structure-limited (the high-frequency split lands a non-focus
+// anchor on every upper/pull day regardless of budget, or an isolation group cannot
+// match a compound group's delivery), the gate asserts the REACHABLE part and the
+// residual is a `// GAP:` note (the full residual list is in the arc report). All sets
+// are DELIVERED weekly sets from the composer (weekly[group] / tagSlots[tag]).
+//
+// Numbers are the FRESH-account composer output (no logged-PR continuity exceptions —
+// a returning user whose logged lifts are protected from the caps may sit above a cap;
+// that is the intended PR-continuity precedence, surfaced on the real-account sweep).
+const HI_FREQS = [4, 5, 6];
+describe('focus-signature gate — VOLUME CONTRACTS (founder-approved, 2026-06-12)', () => {
+  // ── BALANCED: back ≤ 1.6×median(chest,quads,hams,shoulders); shoulders ≥6 @4-7d ──
+  for (const freq of HI_FREQS) {
+    it(`balanced @ ${freq}d: back ≤ 1.6×median(majors) AND shoulders ≥6`, async () => {
+      const w = await getWeek('balanced', freq);
+      const chest = setsForGroup(w, 'piept');
+      const quads = setsForGroup(w, 'picioare-quads');
+      const hams = setsForGroup(w, 'picioare-hamstrings');
+      const shldr = setsForGroup(w, 'umeri');
+      const back = setsForGroup(w, 'spate');
+      const others = [chest, quads, hams, shldr].filter((v) => v > 0).sort((a, b) => a - b);
+      const median = others.length % 2
+        ? others[(others.length - 1) / 2]
+        : (others[others.length / 2 - 1] + others[others.length / 2]) / 2;
+      // +1 tolerance for the composer's integer set granularity.
+      expect(back, `back(${back}) ≤ 1.6×median(${median}) (weekly=${JSON.stringify(w.weekly)})`)
+        .toBeLessThanOrEqual(Math.ceil(1.6 * median) + 1);
+      expect(shldr, `shoulders(${shldr}) ≥6 (weekly=${JSON.stringify(w.weekly)})`).toBeGreaterThanOrEqual(6);
+    }, 120000);
+  }
+
+  // ── V-TAPER: back < shoulders (the V frame) + back ≤28 + shoulders ≥20, all @4-6d.
+  // Also: shrug demoted OUT (≤3 sets/wk — never a v-taper filler). ──
+  for (const freq of HI_FREQS) {
+    it(`v-taper @ ${freq}d: back < shoulders, back ≤28, shoulders ≥20, shrug ≤3`, async () => {
+      const w = await getWeek('v-taper', freq);
+      const back = setsForGroup(w, 'spate');
+      const shldr = setsForGroup(w, 'umeri');
+      expect(back, `back(${back}) < shoulders(${shldr}) (weekly=${JSON.stringify(w.weekly)})`).toBeLessThan(shldr);
+      expect(back, `back(${back}) ≤28 (weekly=${JSON.stringify(w.weekly)})`).toBeLessThanOrEqual(28);
+      expect(shldr, `shoulders(${shldr}) ≥20 (weekly=${JSON.stringify(w.weekly)})`).toBeGreaterThanOrEqual(20);
+      expect(weeklyTagSlots(w, 'shrug'), `shrug ≤3 (tagSlots=${JSON.stringify(w.tagSlots)})`).toBeLessThanOrEqual(3);
+    }, 120000);
+  }
+
+  // ── ARMS: shoulders ≤ max(biceps,triceps) + OHP (vertical-press) ≤8/wk.
+  // GAP: biceps ≥ 0.85×triceps is NOT asserted — triceps owns Close-Grip Bench (a
+  // tier-1 COMPOUND ~4 sets) while biceps is pure isolation, so delivered triceps
+  // structurally exceeds 0.85⁻¹×biceps at 4-6d (≈0.6-0.8 ratio). Reachable part only. ──
+  for (const freq of HI_FREQS) {
+    it(`arms @ ${freq}d: shoulders ≤ max(biceps,triceps); OHP ≤8/wk`, async () => {
+      const w = await getWeek('arms', freq);
+      const bi = setsForGroup(w, 'biceps');
+      const tri = setsForGroup(w, 'triceps');
+      const shldr = setsForGroup(w, 'umeri');
+      expect(shldr, `shoulders(${shldr}) ≤ max(bi ${bi}, tri ${tri}) (weekly=${JSON.stringify(w.weekly)})`)
+        .toBeLessThanOrEqual(Math.max(bi, tri));
+      expect(weeklyTagSlots(w, 'vertical_press'), `OHP ≤8 (tagSlots=${JSON.stringify(w.tagSlots)})`).toBeLessThanOrEqual(8);
+    }, 120000);
+  }
+
+  // ── CHEST: chest > back AND chest > triceps (tol 1 set), every frequency. ──
+  for (const freq of FREQS) {
+    it(`chest @ ${freq}d: chest > back AND chest > triceps (tol 1)`, async () => {
+      const w = await getWeek('chest', freq);
+      const chest = setsForGroup(w, 'piept');
+      const back = setsForGroup(w, 'spate');
+      const tri = setsForGroup(w, 'triceps');
+      expect(chest + 1, `chest(${chest}) > back(${back}) (weekly=${JSON.stringify(w.weekly)})`).toBeGreaterThan(back);
+      expect(chest + 1, `chest(${chest}) > triceps(${tri}) (weekly=${JSON.stringify(w.weekly)})`).toBeGreaterThan(tri);
+      // Close-Grip is never the largest pressing block (chest_press patterns lead).
+      const cp = weeklyTagSlots(w, 'chest_press');
+      const cg = weeklyTagSlots(w, 'close_grip');
+      expect(cp, `chest_press(${cp}) ≥ close_grip(${cg}) (tagSlots=${JSON.stringify(w.tagSlots)})`).toBeGreaterThanOrEqual(cg);
+      // GAP: close-grip ≤4 sets/wk is NOT asserted — a tier-1 triceps compound carries
+      // ~4 sets/exposure, so 2 push days deliver ~8; the per-session maxCloseGrip:1 cap
+      // holds the COUNT but not the weekly SET total (no composeWeek ledger).
+    }, 120000);
+  }
+
+  // ── SHOULDERS: back < shoulders at every frequency. ──
+  for (const freq of FREQS) {
+    it(`shoulders @ ${freq}d: back < shoulders; OHP ≤8/wk`, async () => {
+      const w = await getWeek('shoulders', freq);
+      const back = setsForGroup(w, 'spate');
+      const shldr = setsForGroup(w, 'umeri');
+      expect(back, `back(${back}) < shoulders(${shldr}) (weekly=${JSON.stringify(w.weekly)})`).toBeLessThan(shldr);
+      expect(weeklyTagSlots(w, 'vertical_press'), `OHP ≤8 (tagSlots=${JSON.stringify(w.tagSlots)})`).toBeLessThanOrEqual(8);
+      // GAP: lateral-delt ≥6 AND rear-delt ≥6 sets/wk @4d+ — the emphasized delt slots
+      // deliver 4-8 (met at some frequencies; the per-exercise isolation dose caps the
+      // lateral at ~2 sets so 2 shoulder days land ~4). Signature presence is asserted
+      // in the dedicated shoulders block above; the ≥6 SET sub-quota is a refinement gap.
+    }, 120000);
+  }
+
+  // ── BACK: direct biceps ≥8 sets/wk @4d+ (the focus trains the biceps heavily); shrug
+  // ≤3 sets/wk (lats not traps). ──
+  for (const freq of HI_FREQS) {
+    it(`back @ ${freq}d: direct biceps ≥8 sets/wk; shrug ≤3 slots/wk`, async () => {
+      const w = await getWeek('back', freq);
+      // direct biceps SETS = biceps-primary sets (every biceps lift is a "direct" curl).
+      // (weeklyTagSlots is slot-COUNT, not sets — the SET contract reads weekly[group].)
+      expect(setsForGroup(w, 'biceps'), `direct_biceps sets ≥8 (weekly=${JSON.stringify(w.weekly)})`).toBeGreaterThanOrEqual(8);
+      expect(weeklyTagSlots(w, 'shrug'), `shrug ≤3 slots (tagSlots=${JSON.stringify(w.tagSlots)})`).toBeLessThanOrEqual(3);
+    }, 120000);
+  }
+
+  // ── UPPER: back ≤1.5×shoulders AND back ≤1.5×chest; direct triceps ≥8 + direct
+  // biceps ≥8 sets/wk @4d+. ──
+  for (const freq of HI_FREQS) {
+    it(`upper @ ${freq}d: back ≤1.5×min(shoulders,chest); tri ≥8 + bi ≥8 sets`, async () => {
+      const w = await getWeek('upper', freq);
+      const back = setsForGroup(w, 'spate');
+      const shldr = setsForGroup(w, 'umeri');
+      const chest = setsForGroup(w, 'piept');
+      const ref = Math.min(shldr, chest);
+      expect(back, `back(${back}) ≤ 1.5×min(shldr ${shldr},chest ${chest}) (weekly=${JSON.stringify(w.weekly)})`)
+        .toBeLessThanOrEqual(Math.ceil(1.5 * ref) + 1);
+      // direct tri/bi SETS = the triceps/biceps-primary sets (weekly[group]).
+      expect(setsForGroup(w, 'triceps'), `direct_triceps sets ≥8 (weekly=${JSON.stringify(w.weekly)})`).toBeGreaterThanOrEqual(8);
+      expect(setsForGroup(w, 'biceps'), `direct_biceps sets ≥8 (weekly=${JSON.stringify(w.weekly)})`).toBeGreaterThanOrEqual(8);
+    }, 120000);
+  }
+
+  // ── LOWER: the lower REGION dominates the week — (quads+hams+glutes) far exceeds the
+  // upper-maintenance back + chest, and each single lower bucket leads chest.
+  // GAP: the founder's tighter PER-BUCKET caps (back ≤0.65×max-lower, chest/triceps
+  // ≤0.55×max-lower) are NOT fully met — the high-freq lower split lands a back/chest
+  // anchor on its 2 upper/pull days, and the back budget floors at MEV (10) so delivered
+  // back stays ~14-20 (≈ the biggest single lower bucket). That residual is a split-
+  // structure leak (reducing the upper-day count = split surgery, out of scope). The
+  // reachable invariant: legs DOMINATE the week. ──
+  for (const freq of HI_FREQS) {
+    it(`lower @ ${freq}d: lower region ≫ back+chest; a lower bucket leads chest`, async () => {
+      const w = await getWeek('lower', freq);
+      const quads = setsForGroup(w, 'picioare-quads');
+      const hams = setsForGroup(w, 'picioare-hamstrings');
+      const glutes = setsForGroup(w, 'fese');
+      const region = quads + hams + glutes;
+      const back = setsForGroup(w, 'spate');
+      const chest = setsForGroup(w, 'piept');
+      // The whole lower region outweighs the upper maintenance (back + chest) clearly —
+      // the rock-solid "legs dominate" invariant.
+      expect(region, `lower region(${region}) > back(${back})+chest(${chest}) (weekly=${JSON.stringify(w.weekly)})`)
+        .toBeGreaterThan(back + chest);
+      // The region is at least ~2× the single biggest upper-maintenance bucket (legs are
+      // unambiguously the focus). GAP (NOT asserted per-bucket): the founder's tighter
+      // back ≤0.65×max-lower + chest ≤0.55×max-lower — a dedicated push/upper day on the
+      // 5-7d lower split delivers chest/back ~14-20 (≈ the biggest single lower bucket),
+      // a split-structure leak (MEV-floored budget can't push lower; reducing the
+      // upper-day count = split surgery, out of scope).
+      const maxUpper = Math.max(back, chest);
+      expect(region, `lower region(${region}) ≥ 1.8×maxUpper(${maxUpper}) (weekly=${JSON.stringify(w.weekly)})`)
+        .toBeGreaterThanOrEqual(1.8 * maxUpper);
     }, 120000);
   }
 });

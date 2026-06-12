@@ -21,7 +21,7 @@ import { getExerciseMetadata } from '../exerciseLibrary.js';
 
 const ALL = ['barbell', 'dumbbell', 'machine', 'cable', 'band', 'bodyweight', 'smith', 'ez-bar', 'trap-bar'];
 const groupOf = (n) => getExerciseMetadata(n).muscle_target_primary;
-const setsOf = (s, name) => s.exercises.find((e) => e.name === name)?.sets;
+const _setsOf = (s, name) => s.exercises.find((e) => e.name === name)?.sets;
 const sig = (s) => s.exercises.map((e) => `${e.name}:${e.sets}`).join('|');
 
 // UPPER cluster gives umeri only ~2 slots (weight 0.20) → the few-slot "balloon"

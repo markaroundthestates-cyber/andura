@@ -43,16 +43,21 @@ describe('FOCUS_RULES — table shape + immutability', () => {
     }
   });
 
-  it('balanced is minimal: no caps/weekly minimums, ONE universal requirement (2026-06-11)', () => {
+  it('balanced is minimal: no caps, ONE universal requirement + ONE contract minimum', () => {
     // Daniel focus-sweep review 2026-06-11: a chest-capable day (push/upper/chest)
     // of ANY focus must anchor a chest press — balanced included (the sweep's
     // balanced 4d Upper composed Close-Grip (triceps-primary) + a light fly only).
-    // Everything else stays empty: the resolver is inert on pull/leg/full days.
+    // Focus-contracts arc 2026-06-12: balanced also carries ONE `_contract` weekly
+    // minimum (a side-delt slot) so the delivered shoulders reach the ≥6/wk balance
+    // promise — gated off when dp_focus_contracts_v1 is off (the resolver skips
+    // `_contract` minimums). No caps; the resolver stays inert on pull/leg/full days.
     const b = FOCUS_RULES.balanced;
     expect(Object.keys(b.sessionCaps ?? {})).toHaveLength(0);
     expect(Object.keys(b.sessionRequirements ?? {})).toEqual(['minChestPressSlots']);
     expect(b.sessionRequirements.minChestPressSlots).toBe(1);
-    expect(b.weeklyMinimums ?? []).toHaveLength(0);
+    expect(b.weeklyMinimums ?? []).toHaveLength(1);
+    expect(b.weeklyMinimums[0].key).toBe('side_delt_slots');
+    expect(b.weeklyMinimums[0]._contract).toBe(true);
   });
 });
 

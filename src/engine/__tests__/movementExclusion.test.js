@@ -11,7 +11,6 @@ import {
   buildExclusionTokens,
   isExcludedMovement,
   INJURY_PATTERN_EXCLUSIONS,
-  REFUSAL_PATTERN_TOKENS,
   OVERHEAD_PRESS_SENTINEL,
 } from '../movementExclusion.js';
 

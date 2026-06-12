@@ -13,7 +13,7 @@ import { buildSession } from '../sessionBuilder.js';
 import { getExerciseMetadata } from '../exerciseLibrary.js';
 
 const ALL = ['barbell', 'dumbbell', 'machine', 'cable', 'band', 'bodyweight', 'smith', 'ez-bar', 'trap-bar'];
-const groupOf = (n) => getExerciseMetadata(n).muscle_target_primary;
+const _groupOf = (n) => getExerciseMetadata(n).muscle_target_primary;
 
 // A LOW weekly leg budget over a 2x/week frequency → a small per-session share so
 // the COMPOUND FLOOR (not the share) decides the compound's set count.

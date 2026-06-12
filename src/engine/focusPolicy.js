@@ -101,7 +101,23 @@ export const FOCUS_RULES = Object.freeze({
     sessionRequirements: Object.freeze({
       minChestPressSlots: 1,
     }),
-    weeklyMinimums: Object.freeze([]),
+    weeklyMinimums: Object.freeze([
+      // CONTRACT (dp_focus_contracts_v1, 2026-06-12): a side-delt slot on a balanced
+      // push/upper/full day. balanced front-loads chest/back/legs and trains the side
+      // delt only via cluster weight (~1 thin slot/day → shldr 4/wk @4d) — below the
+      // ≥6/wk @4d+ balance promise. The cross-day minimum injects a lateral on each
+      // qualifying day; the shoulder volume floor (focusVolumeContracts balanced) sizes
+      // the dose. _contract-gated (balanced is byte-identical pre-arc when off).
+      Object.freeze({
+        key: 'side_delt_slots',
+        _contract: true,
+        targetByDays: Object.freeze({ days1to2: 0, days3to4: 1, days5plus: 1 }),
+        applicableClusters: Object.freeze(['push', 'upper', 'shoulders', 'full', 'fullbody']),
+        matchingTags: Object.freeze(['side_delt', 'lateral_raise']),
+        priority: 'medium',
+        relaxable: true,
+      }),
+    ]),
   }),
 
   // V-TAPER — Daniel's worked example (shoulders + back UP for the V; lower relaxed).
@@ -118,6 +134,19 @@ export const FOCUS_RULES = Object.freeze({
       // Squat + RDL + Hip Thrust (3 heavy lower compounds) — the de-emphasized
       // lower region is MAINTENANCE, so one squat + ONE hinge/thrust is the day.
       maxHeavyLowerCompounds: 2,
+      // CONTRACT (dp_focus_contracts_v1, 2026-06-12): shrug ≤2-3 sets/wk — a shrug is
+      // NEVER a v-taper focus-filler (it builds traps UP, narrowing the V illusion).
+      // One shrug/session × the pull days stays ≤3; the freed slots carry the width
+      // (lateral/rear/lat-iso) the focus demands. lower-back stays in the existing
+      // lumbar channel (lumbarDedup) — not capped here. _contract-gated.
+      maxShrug: 1,
+      // CONTRACT (dp_focus_contracts_v1): ONE vertical pull per session — a pull-heavy
+      // v-taper week (3 pull days at 6-7d) otherwise stacks Lat Pulldown + Pull-up
+      // (both vertical_pull) + Row + Pullover = 4 back exercises/day → back 35/wk. One
+      // vertical pull keeps the day to ~3 back exercises (Pulldown OR Pull-up, + Row +
+      // Pullover) → back lands ≤28, the freed slot carries rear-delt width. Distinct
+      // contract key (NOT the back-focus maxVerticalPulls) so the gate is clean.
+      maxFocusVerticalPull: 1,
     }),
     sessionRequirements: Object.freeze({
       minSideDeltSlots: 1,        // umeri::lateral-raise — the #1 width movement
@@ -172,6 +201,13 @@ export const FOCUS_RULES = Object.freeze({
     id: 'arms',
     sessionCaps: Object.freeze({
       maxDirectArmExercises: 6,   // a dedicated arm day can stack arm work
+      // CONTRACT (dp_focus_contracts_v1, 2026-06-12): vertical-press (OHP family) cap
+      // ≤8 sets/wk on an arms focus (the sweep ran Smith OHP 4×2 days). One overhead
+      // press per session × the arms split's push days stays ≤8; this hard-stops a
+      // 2nd OHP from stealing a curl/extension slot. Distinct key (maxArmVerticalPress)
+      // — NOT the pre-arc maxVerticalPress — so the contract gate is clean (arms had no
+      // press cap before this arc). _contract → gated by the flag.
+      maxArmVerticalPress: 1,
     }),
     sessionRequirements: Object.freeze({
       requireOverheadTricepsIfArmsOrPush: true, // long-head stretch (triceps overhead ext)
@@ -211,6 +247,20 @@ export const FOCUS_RULES = Object.freeze({
     id: 'chest',
     sessionCaps: Object.freeze({
       maxChestPressPatterns: 2,   // flat + incline (incline-press is a distinct key)
+      // CONTRACT (dp_focus_contracts_v1, 2026-06-12): Close-Grip family ≤4 sets/wk on a
+      // chest focus AND never the largest pressing block. One Close-Grip/session × the
+      // push days stays ≤4; the chest_press patterns (flat/incline, not Close-Grip)
+      // remain the bigger block. _contract-gated.
+      maxCloseGrip: 1,
+      // CONTRACT: thin the NON-FOCUS back work so the DELIVERED chest leads back (the
+      // chest split's pull/upper days otherwise stack a row + a vertical pull → back
+      // 19-22 > chest @6-7d). maxBackLatWork caps the COMBINED lat work (row OR vertical
+      // pull) to ONE exercise per session on a chest focus — back is maintenance here,
+      // one lat anchor/day is plenty — so the delivered back stays below the emphasized
+      // chest. The lumbar + shrug demote (focusContractDemotions) clears the trap/erector
+      // junk on top. _contract-gated.
+      maxBackLatWork: 1,
+      maxShrug: 1,
     }),
     sessionRequirements: Object.freeze({
       requireFlyeIfChestDay: true, // piept + 'fly' token (3 CORE_AUTO)
@@ -288,12 +338,24 @@ export const FOCUS_RULES = Object.freeze({
     sessionCaps: Object.freeze({
       maxVerticalPulls: 2,
       maxHorizontalRows: 2,
+      // CONTRACT (dp_focus_contracts_v1, 2026-06-12): shrug ≤3 sets/wk — a back focus
+      // is lats/upper-back WIDTH, not traps. One shrug/session × the pull days stays
+      // ≤3; this stops a 2nd shrug stacking trap junk over a row. _contract-gated.
+      maxShrug: 1,
     }),
     sessionRequirements: Object.freeze({
       minVerticalPullSlots: 1,
       minHorizontalRowSlots: 1,
       requireLatIsolationIfBackDay: true, // thin pool — resolver relaxes if unmet
       minChestPressSlots: 1, // 2026-06-11 sweep review: every focus's push/upper day anchors a press
+      // CONTRACT (dp_focus_contracts_v1, 2026-06-12): direct biceps on a back-focus
+      // pull/back day — back trains the biceps heavily; a back focus with bi 4-6/wk
+      // (the sweep) under-serves them. TWO curls on the qualifying days: the biceps is
+      // NOT in emphSet (no per-exercise dose boost), so a single 2-set curl × 2 days
+      // delivers only ~4/wk — a 2nd curl slot doubles it to ≥8/wk @4d+. (The biceps is
+      // genuine pull-day work on a back focus, not crowding.) The volume floor
+      // (focusVolumeContracts back→biceps) backs the dose.
+      minDirectBicepsSlots: 2,
     }),
     weeklyMinimums: Object.freeze([
       Object.freeze({
@@ -306,6 +368,18 @@ export const FOCUS_RULES = Object.freeze({
         // DERIVABLE: spate + movementKey 'pulldown'|'pull-up'|'chin-up' (9 CORE_AUTO).
         matchingTags: Object.freeze(['vertical_pull']),
         priority: 'high',
+        relaxable: true,
+      }),
+      // CONTRACT (dp_focus_contracts_v1): direct biceps ≥8/wk @4d+ — the cross-day
+      // weekly minimum the per-session minDirectBicepsSlots delivers on each pull/back
+      // day. _contract-gated (requirementsFor skips _contract minimums when off).
+      Object.freeze({
+        key: 'direct_biceps_slots',
+        _contract: true,
+        targetByDays: Object.freeze({ days1to2: 0, days3to4: 1, days5plus: 1 }),
+        applicableClusters: Object.freeze(['pull', 'upper', 'back', 'full', 'fullbody']),
+        matchingTags: Object.freeze(['direct_biceps']),
+        priority: 'medium',
         relaxable: true,
       }),
       Object.freeze({
@@ -365,6 +439,13 @@ export const FOCUS_RULES = Object.freeze({
       // Mirror of v-taper (2026-06-11): the de-emphasized lower region is
       // maintenance — one squat + ONE hinge/thrust per leg day, never three.
       maxHeavyLowerCompounds: 2,
+      // CONTRACT (dp_focus_contracts_v1, 2026-06-12): ONE vertical pull per session —
+      // the pull-heavy upper week (back 33-36/wk @6-7d) otherwise stacks two vertical
+      // pulls + row + pullover. One vertical pull keeps back ≤1.5×shoulders, the freed
+      // slot carries chest/shoulder width. _contract-gated (distinct key).
+      maxFocusVerticalPull: 1,
+      // CONTRACT: shrug ≤3/wk on upper too (traps are not the upper-body width signal).
+      maxShrug: 1,
     }),
     sessionRequirements: Object.freeze({
       minSideDeltSlots: 1,
@@ -373,6 +454,13 @@ export const FOCUS_RULES = Object.freeze({
       // 2026-06-11: an upper day must anchor at least one chest press (the
       // Daniel live week composed an Upper with only a light fly for chest).
       minChestPressSlots: 1,
+      // CONTRACT (dp_focus_contracts_v1, 2026-06-12): direct triceps + biceps on an
+      // upper-focus push/pull/upper day — the sweep ran tri 4-6/wk. TWO of each on the
+      // qualifying days (arms not in emphSet → no per-exercise dose boost, one 2-set
+      // slot under-delivers); the volume floors (focusVolumeContracts upper) back the
+      // dose so each lands ≥8/wk @4d+. _contract-gated.
+      minDirectTricepsSlots: 2,
+      minDirectBicepsSlots: 2,
     }),
     weeklyMinimums: Object.freeze([
       Object.freeze({
@@ -400,6 +488,26 @@ export const FOCUS_RULES = Object.freeze({
         priority: 'medium',
         relaxable: true,
       }),
+      // CONTRACT (dp_focus_contracts_v1): direct triceps + biceps ≥8/wk @4d+ — the
+      // cross-day minimums the per-session reqs deliver on each push/pull/upper day.
+      Object.freeze({
+        key: 'direct_triceps_slots',
+        _contract: true,
+        targetByDays: Object.freeze({ days1to2: 0, days3to4: 1, days5plus: 1 }),
+        applicableClusters: Object.freeze(['push', 'upper', 'arms', 'full', 'fullbody']),
+        matchingTags: Object.freeze(['direct_triceps']),
+        priority: 'medium',
+        relaxable: true,
+      }),
+      Object.freeze({
+        key: 'direct_biceps_slots',
+        _contract: true,
+        targetByDays: Object.freeze({ days1to2: 0, days3to4: 1, days5plus: 1 }),
+        applicableClusters: Object.freeze(['pull', 'upper', 'arms', 'full', 'fullbody']),
+        matchingTags: Object.freeze(['direct_biceps']),
+        priority: 'medium',
+        relaxable: true,
+      }),
     ]),
     frequencyCap: Object.freeze({ days1to2: 2, days3to4: 4, days5plus: 5 }),
   }),
@@ -417,11 +525,26 @@ const REQ_KEY_TAGS = Object.freeze({
   minVerticalPullSlots: ['vertical_pull'],
   minHorizontalRowSlots: ['horizontal_row'],
   minChestPressSlots: ['chest_press'],
+  minDirectBicepsSlots: ['direct_biceps'],   // CONTRACT (dp_focus_contracts_v1)
+  minDirectTricepsSlots: ['direct_triceps'], // CONTRACT (dp_focus_contracts_v1)
   requireFlyeIfChestDay: ['flye'],
   requireLatIsolationIfBackDay: ['lat_isolation', 'pullover', 'straight_arm_pulldown'],
   requireOverheadTricepsIfArmsOrPush: ['overhead_triceps'],
   requireStretchCurlIfArmsOrPull: ['stretch_curl', 'preacher'],
 });
+
+/** sessionCaps keys that exist ONLY for the focus-contracts arc — applied by the
+ *  resolver only when ctx.contractsOn (dp_focus_contracts_v1). The pre-arc caps
+ *  (maxVerticalPress on v-taper/shoulders/upper, etc.) are NOT here, so the
+ *  dp_focus_policy_v1-only path is byte-identical to before this arc. NOTE: arms'
+ *  maxVerticalPress IS contract-only (arms had no press cap pre-arc) but the key name
+ *  collides with the pre-arc cap on other focuses — so the gate is per-RULE below
+ *  (a rule's _contract caps are listed in its own contractCapKeys), not a global set
+ *  by key name. This set is the union for the cap-loop's quick membership test, used
+ *  together with the rule-level whitelist. */
+const CONTRACT_CAP_KEYS = Object.freeze(new Set([
+  'maxShrug', 'maxCloseGrip', 'maxArmVerticalPress', 'maxFocusVerticalPull', 'maxBackLatWork',
+]));
 
 /**
  * F6 (Daniel coach audit 2026-06-10) — the Set of policy tags a focus CARES about,
@@ -541,6 +664,16 @@ export function deriveExerciseTags(name, meta, movementKey) {
       tags.add('pullover');
       tags.add('straight_arm_pulldown');
     }
+    // SUB-BUCKET awareness (focus-contracts arc 2026-06-12): the spate group bundles
+    // lat-width/row work WITH the traps (shrugs) and the lower-back family
+    // (hyperextension / back extension / good-morning). A FOCUS signature minimum
+    // (back-focus "vertical_pull + horizontal_row", v-taper "the V frame") must NOT be
+    // satisfiable by a trap shrug or a lower-back hyperext — those are NOT the lats.
+    // Name-matched (all spate-primary): Shrug → traps; Hyperextension / Back Extension /
+    // Good Morning → lower-back. The contract layer demotes/caps these via the EXISTING
+    // selection penalty + sessionCaps channels (never a hard delete from the pool).
+    if (/\bshrug\b/.test(lower)) tags.add('shrug');
+    if (/hyperext|back extension|good[-\s]?morning/.test(lower)) tags.add('lower_back');
   }
 
   // ── Triceps ──
@@ -550,6 +683,10 @@ export function deriveExerciseTags(name, meta, movementKey) {
     // Triceps Extension). The token is 'extension'/'press' so name-match is the
     // grounded signal.
     if (/overhead/.test(lower)) tags.add('overhead_triceps');
+    // Close-Grip family (triceps-primary, NOT a chest press — kept off chest_press
+    // by design). Tagged so a CHEST focus can CAP it (≤4/wk) and keep it off the
+    // largest-pressing-block role. Name-match (Close-Grip Bench / Smith Close-Grip).
+    if (/close[-\s]?grip/.test(lower)) tags.add('close_grip');
   }
 
   // ── Biceps ──
@@ -630,6 +767,8 @@ const DERIVABLE_TAGS = new Set([
   'lat_isolation', 'pullover', 'straight_arm_pulldown',
   'direct_triceps', 'overhead_triceps', 'direct_biceps', 'stretch_curl',
   'heavy_lower_compound',
+  // CONTRACT (dp_focus_contracts_v1, 2026-06-12) sub-buckets.
+  'shrug', 'lower_back', 'close_grip',
 ]);
 
 /** Pick the day-band key for a weekly target from the user's training days/week. */
@@ -673,13 +812,14 @@ function canonicalWeeklyTag(matchingTags) {
  * — the exact regression the blanket drop would have caused. Null/absent → no
  * deferral (byte-identical legacy).
  */
-function requirementsFor(rule, cluster, daysPerWeek, weekClusters) {
+function requirementsFor(rule, cluster, daysPerWeek, weekClusters, contractsOn) {
   // F5 deferral set — computed from the weekly targets BEFORE the merge loop.
   /** @type {Set<string>} */
   const deferToSpecialist = new Set();
   if (cluster === 'upper' && Array.isArray(weekClusters) && weekClusters.length > 0) {
     const bandKey = dayBandKey(daysPerWeek);
     for (const wt of rule.weeklyMinimums || []) {
+      if (wt._contract && !contractsOn) continue; // contract-only minimum, flag off
       const tag = canonicalWeeklyTag(wt.matchingTags);
       if (!tag) continue;
       const weeklyTarget = wt.targetByDays?.[bandKey];
@@ -744,10 +884,25 @@ function requirementsFor(rule, cluster, daysPerWeek, weekClusters) {
   if (reqs.requireStretchCurlIfArmsOrPull && (isArms || isPull))
     merge('stretch_curl', 1, 'medium', true);
 
+  // CONTRACT (dp_focus_contracts_v1) — direct arm-work injection on the qualifying
+  // cluster (biceps on a pull/upper/arms/full day; triceps on a push/upper/arms/full
+  // day). MEDIUM/relaxable: a curl/extension is structural for a back/upper/arms focus
+  // but yields before a HIGH width/press requirement. Only when contracts are ON
+  // (off → these keys never existed in the pre-arc path → byte-identical).
+  if (contractsOn) {
+    if (typeof reqs.minDirectBicepsSlots === 'number' && (isPull || isArms || isFull))
+      merge('direct_biceps', reqs.minDirectBicepsSlots, 'medium', true);
+    if (typeof reqs.minDirectTricepsSlots === 'number' && (isPush || isArms || isFull))
+      merge('direct_triceps', reqs.minDirectTricepsSlots, 'medium', true);
+  }
+
   // ── 1.3-C: translated weeklyMinimums (one per-session exposure on a qualifying
   // cluster day; MAX-merged with any explicit min above, NEVER summed) ──
   const band = dayBandKey(daysPerWeek);
   for (const wt of rule.weeklyMinimums || []) {
+    // CONTRACT-only weekly minimum (focus-contracts arc) → skipped unless the flag is
+    // ON, so the dp_focus_policy_v1-only path is byte-identical to the pre-arc table.
+    if (wt._contract && !contractsOn) continue;
     // (1) cluster not applicable → graceful no-op.
     if (!Array.isArray(wt.applicableClusters) || !wt.applicableClusters.includes(cluster)) continue;
     // (2) weekly target for this band is 0 → no-op.
@@ -776,6 +931,12 @@ function capMatchers() {
     maxTotalPressPatterns: (tags) => tags.has('vertical_press') || tags.has('chest_press'),
     maxVerticalPulls: (tags) => tags.has('vertical_pull'),
     maxHorizontalRows: (tags) => tags.has('horizontal_row'),
+    // CONTRACT (dp_focus_contracts_v1) sub-bucket caps.
+    maxShrug: (tags) => tags.has('shrug'),
+    maxCloseGrip: (tags) => tags.has('close_grip'),
+    maxArmVerticalPress: (tags) => tags.has('vertical_press'),
+    maxFocusVerticalPull: (tags) => tags.has('vertical_pull'),
+    maxBackLatWork: (tags) => tags.has('vertical_pull') || tags.has('horizontal_row'),
     maxHeavyLowerCompounds: (tags) => tags.has('heavy_lower_compound'),
     maxDirectBicepsExercises: (tags) => tags.has('direct_biceps'),
     maxDirectTricepsExercises: (tags) => tags.has('direct_triceps'),
@@ -856,16 +1017,39 @@ export function applyFocusPolicy(chosen, ctx) {
   // Sort requirements so HIGH (least relaxable) is satisfied first; MEDIUM next;
   // LOW last. Within a priority, a stable order (declaration order) — deterministic.
   const PRIORITY_RANK = { high: 0, medium: 1, low: 2 };
-  const reqs = requirementsFor(rule, cluster, ctx?.daysPerWeek, ctx?.weekClusters).sort(
+  // CONTRACT GATE (dp_focus_contracts_v1) — the focus-contracts arc's NEW per-session
+  // requirements (direct arm-work injection) + caps (shrug/close-grip/arm-OHP) are
+  // honored only when ctx.contractsOn. Off → byte-identical to the pre-arc resolver.
+  const contractsOn = ctx?.contractsOn === true;
+  const reqs = requirementsFor(rule, cluster, ctx?.daysPerWeek, ctx?.weekClusters, contractsOn).sort(
     (a, b) => (PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority]),
   );
 
   // The pool of injection candidates (already past every upstream HARD exclude),
   // not already in the session, each enriched with derived tags + a score. Ordered
-  // best-first (score desc, then stable by name for determinism).
+  // best-first (score desc). The EQUAL-SCORE tiebreak preserves the POOL ORDER (the
+  // candidate's index in ctx.pool) rather than an alphabetical name compare, so the
+  // selection levers already baked into that order survive the inject step — in
+  // particular the intra-week (dp_rotation_intraweek_v1) + cross-week
+  // (dp_accessory_rotation_v1) accessory ROTATIONS, which reorder equal-score
+  // unlogged/logged isolation siblings in the pool. With an alphabetical tiebreak a
+  // REQUIRED-slot inject (e.g. the v-taper / shoulders side-delt lateral) always
+  // re-picked the same name (Behind-the-Back < Cable < Machine), masking the rotation
+  // on every resolver-injected slot; honoring pool order lets the rotated variant lead.
+  // Deterministic (the pool order is itself deterministic) and gate-neutral: the score
+  // band is unchanged, so the tag still gets a carrier — only WHICH equal-score variant
+  // is injected follows the pool. ctx.poolOrder maps name → its first pool index.
   const inSession = new Set(session.map((e) => e.name));
   const inMovement = new Set(session.map((e) => mkOf(e)));
-  const candidates = (Array.isArray(ctx?.pool) ? ctx.pool : [])
+  const poolArr = Array.isArray(ctx?.pool) ? ctx.pool : [];
+  /** name → first index in the pool (stable equal-score tiebreak = pool order). */
+  const poolOrder = new Map();
+  for (let i = 0; i < poolArr.length; i++) {
+    const nm = poolArr[i] && poolArr[i].name;
+    if (typeof nm === 'string' && !poolOrder.has(nm)) poolOrder.set(nm, i);
+  }
+  const orderOf = (name) => (poolOrder.has(name) ? poolOrder.get(name) : Number.MAX_SAFE_INTEGER);
+  const candidates = poolArr
     .filter((c) => c && c.name && !inSession.has(c.name))
     .map((c) => ({
       name: c.name,
@@ -873,7 +1057,7 @@ export function applyFocusPolicy(chosen, ctx) {
       tags: deriveExerciseTags(c.name, c.meta ?? getMeta(c.name), movementKey),
       score: scoreOf(c.name),
     }))
-    .sort((a, b) => (b.score - a.score) || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    .sort((a, b) => (b.score - a.score) || (orderOf(a.name) - orderOf(b.name)));
 
   for (const req of reqs) {
     let have = tagCount(req.tag);
@@ -928,6 +1112,9 @@ export function applyFocusPolicy(chosen, ctx) {
   const matchers = capMatchers();
   const requiredTags = new Set(reqs.map((r) => r.tag));
   for (const [capKey, capVal] of Object.entries(caps)) {
+    // CONTRACT GATE — a focus-contracts-arc cap (shrug/close-grip/arm-OHP) is applied
+    // only when the flag is ON. Pre-arc caps are untouched → byte-identical when off.
+    if (CONTRACT_CAP_KEYS.has(capKey) && !contractsOn) continue;
     const match = matchers[capKey];
     if (!match || typeof capVal !== 'number') continue;
     let offenders = session.filter((e) => match(e.tags));

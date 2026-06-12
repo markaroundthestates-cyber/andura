@@ -203,6 +203,23 @@ export const FLAGS = Object.freeze({
   // candidate). OFF → byte-identical pool order.
   dp_accessory_rotation_v1: { rollout: 1, default: true },
 
+  // dp_rotation_intraweek_v1 (2026-06-12, isolation-rotation arc — extends the
+  // CROSS-week dp_accessory_rotation_v1 to the INTRA-week dimension). The sweep
+  // flagged 43 "repetate adiacent" signals: ADJACENT training days repeat the SAME
+  // exercises. Founder verdict: ANCHORS (logged DP-tracked lifts + tier-1 compounds)
+  // repeat BY DESIGN (DP continuity needs stable anchors), but UNLOGGED isolations of
+  // equal-ish standing should VARY on adjacent days. When ON, sessionBuilder.poolForGroup
+  // rotates the top equal-ish UNLOGGED isolation head by the training-day ordinal WITHIN
+  // the week (intraWeekDayOrdinal, derived from the active-week split — NOT Date.now()),
+  // so consecutive training days surface a DIFFERENT equivalent-role variant of the same
+  // family. SAFE SET = unlogged only (no DP history to disrupt; cold-start seeds transfer
+  // cleanly via the fixed transfer layer); a LOGGED isolation is an anchor and STAYS.
+  // Never violates refusal/structural demotes, the focus contracts, PR-protection, or the
+  // maintenance floors; when no equivalent exists the repeat STAYS (a repeat beats a worse
+  // lift). Runs BEFORE the cross-week dp_accessory_rotation_v1 head-swap on a DISJOINT set
+  // (unlogged vs logged), so the two never interact. OFF → byte-identical pool order.
+  dp_rotation_intraweek_v1: { rollout: 1, default: true },
+
   // Warm-up ramp (gym-log arc 2026-06-11, design-pass deferred item). The opening
   // tier-1 compound gets REAL warm-up sets (50%×10 → 70%×6 → 90%×3, depth by
   // working load: <25 none / <40 one / <60 two / else three), snapped on the
@@ -834,6 +851,25 @@ export const FLAGS = Object.freeze({
   // (no consumer imports FOCUS_RULES this step). OFF → the table is never read →
   // byte-identical to today. The resolver (a LATER Wave 1.3 step) flips this on.
   dp_focus_policy_v1: { rollout: 1, default: true },
+
+  // Focus VOLUME CONTRACTS (2026-06-12 focus-contracts arc) — a per-focus WEEKLY
+  // group-volume cap/floor layer (applyFocusVolumeContracts, focusVolumeContracts.js),
+  // applied to the weekly volume budget AFTER the maintenance floor and BEFORE the
+  // intra-week makeup / recovery cut. It enforces the founder-approved volume
+  // CONTRACTS the per-session focus-policy resolver cannot reach (cross-group
+  // relationships): balanced back ≤1.6×median(other majors) + shoulders floor; upper
+  // back ≤1.5×shoulders/chest + arms floors; arms biceps≥0.85×triceps + shoulders cap;
+  // shoulders back<shoulders; chest chest>back & chest>triceps; v-taper back cap +
+  // shoulders floor; back biceps floor; lower upper-maintenance caps. Pure +
+  // deterministic (median/ratio math on the budget map, no Math.random/Date.now);
+  // every touched group is clamped to [MEV, MRV] so a cap never starves a group and a
+  // floor never exceeds MRV — the maintenance floor stays supreme. OFF (pinned OFF in
+  // the fp cohorts via FLIPPED_FLAGS) → the budget passes through untouched →
+  // byte-identical (the full-path-sim hash holds). The sub-bucket caps (OHP/shrug/
+  // close-grip) ride the existing dp_focus_policy_v1 resolver via new derived tags +
+  // FOCUS_RULES entries — those are gated by THIS flag at the resolver call so the
+  // whole contract behavior flips together.
+  dp_focus_contracts_v1: { rollout: 1, default: true },
 
   // A2.1 consolidated honest DECISION TRACE (audit-grade, additive). When ON, the
   // compose seam attaches a `decisionTrace` field — a structured array of the REAL

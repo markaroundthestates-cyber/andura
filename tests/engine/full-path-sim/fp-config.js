@@ -138,6 +138,22 @@ export const FLIPPED_FLAGS = Object.freeze([
   'dp_progression_bonus_v1',
   'dp_base_lookback_v1',
   'dp_recovery_dose_v1',
+  // THE FLIP 2026-06-12 (focus-contracts arc) — per-focus WEEKLY volume contracts
+  // (back caps, biceps/triceps/shoulder floors, cross-group ratio caps) + the
+  // sub-bucket OHP/shrug/close-grip caps default ON. Composition/volume surface →
+  // pinned OFF here so the frozen prescription hashes stay byte-for-byte; ON behavior
+  // is proven on the focus×frequency sweep + the focus-signature gate, NOT in this
+  // determinism stream.
+  'dp_focus_contracts_v1',
+  // THE FLIP 2026-06-12 (isolation-rotation arc) — INTRA-WEEK isolation rotation
+  // defaults ON (adjacent training days vary the equal-ish UNLOGGED isolation by the
+  // training-day ordinal). UNLIKE the cross-week dp_accessory_rotation_v1 this is NOT
+  // inert in-harness: the cohort's UNLOGGED isolations ARE present even though
+  // resetWorld clears logged PRs, so the rotation WOULD reorder the pool head. Pinned
+  // OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so BOTH frozen hashes stay
+  // byte-for-byte; ON behavior is proven on the new sessionBuilder.intraWeekRotation
+  // suite + the sweep adjacency drop, NOT in this determinism stream.
+  'dp_rotation_intraweek_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

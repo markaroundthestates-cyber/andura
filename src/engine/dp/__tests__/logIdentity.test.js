@@ -84,7 +84,7 @@ describe('canonicalizeNameKeyedMap', () => {
     expect(out).toEqual({ 'My Custom Lift': 9 });
   });
   it('non-object input → {}', () => {
-    expect(canonicalizeNameKeyedMap(null, (a, b) => a)).toEqual({});
-    expect(canonicalizeNameKeyedMap([1, 2], (a, b) => a)).toEqual({});
+    expect(canonicalizeNameKeyedMap(null, (a, _b) => a)).toEqual({});
+    expect(canonicalizeNameKeyedMap([1, 2], (a, _b) => a)).toEqual({});
   });
 });

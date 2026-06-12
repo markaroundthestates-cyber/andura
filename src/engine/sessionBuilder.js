@@ -808,9 +808,23 @@ function equipmentOk(meta, available) {
  *   only progressing lifts qualify, never every logged lift (a blanket bonus was
  *   measured to tank cohort convergence — exerciseTierRank §hasLog). Null/empty (flag
  *   OFF / pure-fn callers) → no progression term → byte-identical scoring.
+ * @param {boolean} [intraWeekRotation] - dp_rotation_intraweek_v1. When true the FINAL
+ *   ordered pool runs rotateIntraWeekHead (BEFORE the cross-week rotateAccessoryHead):
+ *   among the TOP equal-ish UNLOGGED isolations (tier>1, NOT in prNames, NOT demoted) it
+ *   rotates which variant leads by the TRAINING-DAY ORDINAL within the week
+ *   (intraWeekDayOrdinal), so ADJACENT training days surface a DIFFERENT equivalent-role
+ *   sibling of the same family. UNLOGGED-only by design (a logged isolation is a DP anchor
+ *   → stays); the demote (refusal/structural) stays stronger; no equivalent → the repeat
+ *   stays. Operates on a DISJOINT set from rotateAccessoryHead (unlogged vs logged), so the
+ *   two never interact. Default falsy → no rotation → byte-identical pool order.
+ * @param {number|null} [intraWeekDayOrdinal] - 0-based ordinal of TODAY among the active
+ *   training days of the week (the SAME `position` clusterForDay computes: count of active
+ *   days before dayIdx), derived by buildSession's caller from the active-week split — NOT
+ *   Date.now(). Drives which equal-ish unlogged variant leads so consecutive ordinals
+ *   differ. Null/absent (flag off / pure-fn callers) → no intra-week rotation (defensive).
  * @returns {Array<{name: string, meta: object}>}
  */
-export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties, accessoryRotation, weekParity, progressingNames) {
+export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties, accessoryRotation, weekParity, progressingNames, intraWeekRotation, intraWeekDayOrdinal) {
   // ACTIVE visibility gate (Daniel SSOT 2026-06-05, supersedes 2026-06-03 CORE+
   // FALLBACK gate): auto-selection draws ONLY from the curated ACTIVE catalog
   // (CORE_AUTO — see isActiveMeta / ACTIVE_STATUSES) plus PR-history continuity.
@@ -1034,6 +1048,23 @@ export function poolForGroup(group, available, maxTier, maxSkill, prNames, seed,
   // demote stays strictly stronger than the rotation (a refused lift can NOT return via
   // rotation before its half-life decays it back under the 0.5 cutoff). OFF (falsy
   // flag / null parity / pure-fn callers) → no reorder → byte-identical.
+  // dp_rotation_intraweek_v1 — INTRA-WEEK isolation rotation (isolation-rotation arc
+  // 2026-06-12). Extends the SAME anchor/accessory philosophy to the WITHIN-week
+  // dimension: adjacent training days repeat the same UNLOGGED isolations (the sweep's
+  // "repetate adiacent" info signals). Policy (founder-approved): ANCHORS repeat (logged
+  // DP-tracked lifts + tier-1 compounds — DP continuity needs them stable), UNLOGGED
+  // isolations of equal-ish standing VARY on adjacent days. This runs on the fully-
+  // ordered pool BEFORE the cross-week rotateAccessoryHead, on a DISJOINT candidate set
+  // (UNLOGGED here vs LOGGED there) so the two rotations never fight: the unlogged head
+  // intra-week step surfaces is invisible to the logged-pair cross-week step. The demote
+  // partition already moved a refused/structural lift to the BACK, so (like the cross-week
+  // step) a demote is never a rotation candidate. OFF (falsy flag / null ordinal / pure-fn
+  // callers) → no reorder → byte-identical.
+  if (intraWeekRotation && typeof intraWeekDayOrdinal === 'number' && intraWeekDayOrdinal >= 0) {
+    ordered = rotateIntraWeekHead(ordered, {
+      dayOrdinal: intraWeekDayOrdinal, seed, prNames, penalties, structuralPenalties, danielTierSelect,
+    });
+  }
   if (accessoryRotation && (weekParity === 0 || weekParity === 1)) {
     return rotateAccessoryHead(ordered, {
       weekParity, seed, prNames, penalties, structuralPenalties, danielTierSelect,
@@ -1142,6 +1173,104 @@ function rotateAccessoryHead(ordered, ctx) {
   out[iA] = b;
   out[iB] = a;
   return out;
+}
+
+/**
+ * INTRA-WEEK isolation rotation head-swap (dp_rotation_intraweek_v1, isolation-rotation
+ * arc 2026-06-12).
+ *
+ * Sibling of rotateAccessoryHead, one dimension over: that step rotates the top two
+ * equal-ish LOGGED isolations CROSS-week (binary ISO-week parity); THIS step rotates the
+ * top equal-ish UNLOGGED isolations WITHIN the week so ADJACENT training days surface a
+ * DIFFERENT equivalent-role variant of the same family. The two are disjoint by
+ * construction — logged vs unlogged — so they never compete for the same head.
+ *
+ * Mechanism: find the FIRST UNLOGGED isolation (tier>1, NOT in prNames, NOT demoted) in
+ * pool order — the literal top of the rotatable-accessory band — then gather the run of
+ * subsequent isolations that are ALSO unlogged + undemoted + score-EQUAL-ISH to that head
+ * (|Δ| <= ROTATION_SCORE_EPSILON, the SAME equal-ish notion accessoryRotation uses). Those
+ * are the interchangeable equivalent-role candidates (same group + slot role; the pool sort
+ * already grouped same-band siblings adjacently, and the round-robin + movementKey dedup
+ * collapse the family to ONE slot, so whichever leads fills it). The candidate at
+ * (dayOrdinal mod k) is rotated to the FRONT of the group, the rest keep relative order —
+ * a deterministic cyclic shift by the training-day ordinal, so consecutive training days
+ * (ordinal d, d+1) lead with consecutive variants (the adjacent-day variety). Only those
+ * equal-ish unlogged SLOTS are permuted; anchors (tier-1 / logged), demoted lifts, and any
+ * lower-ranked candidate keep their positions.
+ *
+ * NEVER rotates when: <2 equal-ish unlogged candidates exist (a single option / a logged
+ * anchor head → the repeat STAYS, never forcing a worse lift); the head is logged (DP
+ * continuity — a logged isolation is an anchor); a candidate is demoted (refusal/structural
+ * stays strictly stronger — the demote partition already sank it to the back, exactly as in
+ * rotateAccessoryHead). A pure, allocation-light reorder; returns a new array so `ordered`
+ * is intact. Like the cross-week step it only reorders equal-ish siblings the focus is
+ * indifferent between — a focus REQUIREMENT injects its specific tag regardless (the
+ * resolver runs AFTER selection on `chosen`), so this never ping-pongs the contracts.
+ *
+ * @param {Array<{name: string, meta: object}>} ordered - the fully-ordered pool
+ * @param {{dayOrdinal: number, seed: number, prNames: Set<string>,
+ *   penalties: Record<string, number>|null, structuralPenalties: Record<string, number>|null,
+ *   danielTierSelect: boolean}} ctx
+ * @returns {Array<{name: string, meta: object}>}
+ */
+function rotateIntraWeekHead(ordered, ctx) {
+  if (!Array.isArray(ordered) || ordered.length < 2) return ordered;
+  const { dayOrdinal, prNames, penalties, structuralPenalties, danielTierSelect } = ctx;
+  if (!Number.isFinite(dayOrdinal) || dayOrdinal < 0) return ordered;
+  const DEMOTE = 0.5; // SAME cutoff the penalty partition + rotateAccessoryHead use.
+  const isDemoted = (name) => {
+    const soft = prNames.has(name) ? 0 : (penalties?.[name] ?? 0);
+    const structural = structuralPenalties?.[name] ?? 0;
+    return Math.max(soft, structural) >= DEMOTE;
+  };
+  // A rotatable candidate is an UNLOGGED isolation (tier>1) that is not demoted. Logged
+  // isolations are anchors (DP continuity) and are excluded — so this set is disjoint from
+  // rotateAccessoryHead's logged set.
+  const eligible = (e) =>
+    (e.meta?.tier ?? 2) > COMPOUND_TIER && !prNames.has(e.name) && !isDemoted(e.name);
+
+  // Group the eligible candidates by EQUIVALENT ROLE = movementKey (muscle_target_primary +
+  // movement-pattern token). A lateral and a rear-delt fly are both unlogged umeri
+  // isolations but DIFFERENT roles (umeri::lateral-raise vs umeri::rear-delt), so swapping
+  // one for the other is NOT an equivalent-role variation — only same-role siblings rotate.
+  // This matches the round-robin, which collapses a family to ONE slot by exactly this key,
+  // so each role's slot varies independently across adjacent days (e.g. the lateral slot
+  // AND the rear-delt slot both rotate, not just whichever isolation leads the pool).
+  // Walk in pool order so each role's "lead" is its highest-ranked member (the sorted head),
+  // and equal-ish is judged against that lead.
+  /** @type {Map<string, number[]>} role movementKey → candidate indices (pool order) */
+  const roleSlots = new Map();
+  for (let i = 0; i < ordered.length; i++) {
+    const e = ordered[i];
+    if (!eligible(e)) continue;
+    const key = movementKey(e.name, e.meta);
+    const arr = roleSlots.get(key);
+    if (arr) arr.push(i);
+    else roleSlots.set(key, [i]);
+  }
+  if (roleSlots.size === 0) return ordered; // no unlogged isolation → nothing to rotate
+
+  let out = null; // lazily cloned on the first actual swap (else byte-identical return)
+  for (const indices of roleSlots.values()) {
+    // The role's lead is its first (highest-ranked) member; keep only the equal-ish run.
+    const leadName = ordered[indices[0]].name;
+    const leadScore = rotationScoreOf(leadName, prNames, danielTierSelect);
+    const slots = indices.filter(
+      (idx) => Math.abs(rotationScoreOf(ordered[idx].name, prNames, danielTierSelect) - leadScore) <= ROTATION_SCORE_EPSILON,
+    );
+    const k = slots.length;
+    if (k < 2) continue; // a single equal-ish equivalent → no rotation (repeat stays)
+    // Cyclic shift so the (dayOrdinal mod k)-th equal-ish variant leads; the rest keep
+    // relative order — a stable rotation, so consecutive ordinals lead with consecutive
+    // variants. ordinal aligning with the sorted lead (off 0) → this role is unchanged.
+    const off = ((dayOrdinal % k) + k) % k;
+    if (off === 0) continue;
+    if (out === null) out = ordered.slice();
+    const picks = slots.map((idx) => out[idx]);
+    const rotated = picks.slice(off).concat(picks.slice(0, off));
+    for (let j = 0; j < slots.length; j++) out[slots[j]] = rotated[j];
+  }
+  return out === null ? ordered : out;
 }
 
 /**
@@ -1372,6 +1501,8 @@ export function movementKey(name, meta) {
  *   structuralPenalties?: Record<string, number>|null,
  *   lumbarPairDedup?: boolean,
  *   accessoryRotation?: boolean,
+ *   rotationIntraWeek?: boolean,
+ *   intraWeekDayOrdinal?: number|null,
  *   progressionBonus?: boolean,
  *   progressingNames?: Set<string>|null,
  * } | null | undefined} ctx
@@ -1407,6 +1538,18 @@ export function buildSession(cluster, ctx) {
   // pass arbitrary seeds) → poolForGroup performs no rotation → byte-identical.
   const accessoryRotation = ctx?.accessoryRotation === true;
   const weekParity = accessoryRotation ? weekParityFromSeed(ctx?.seed) : null;
+  // dp_rotation_intraweek_v1 — INTRA-WEEK isolation rotation. The training-day ordinal
+  // WITHIN the week (0-based: the SAME `position` clusterForDay computes — count of active
+  // days before today's dayIdx) is supplied by the caller (getDailyWorkout, which holds the
+  // active-week split) via ctx.intraWeekDayOrdinal; it is NOT Date.now(). poolForGroup uses
+  // it to rotate the top equal-ish UNLOGGED isolation by the ordinal so adjacent training
+  // days vary. Off (flag absent) / no ordinal (pure-fn callers pass none) → null → no
+  // intra-week rotation → byte-identical pool order.
+  const intraWeekRotation = ctx?.rotationIntraWeek === true;
+  const intraWeekDayOrdinal =
+    intraWeekRotation && typeof ctx?.intraWeekDayOrdinal === 'number' && ctx.intraWeekDayOrdinal >= 0
+      ? ctx.intraWeekDayOrdinal
+      : null;
   // #8/D per-exercise pain/skip penalties (engineName → 0..1). Null/empty (the
   // common case + flag off) → poolForGroup order is byte-identical.
   const penalties = ctx?.exercisePenalties ?? null;
@@ -1446,7 +1589,7 @@ export function buildSession(cluster, ctx) {
   // Pools per target group (ordered: PR-anchored -> anchor -> new, seeded-stable).
   const pools = targets.map((g) => ({
     group: g,
-    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties, accessoryRotation, weekParity, progressingNames),
+    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties, accessoryRotation, weekParity, progressingNames, intraWeekRotation, intraWeekDayOrdinal),
   }));
 
   // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the user's
@@ -1864,6 +2007,10 @@ export function buildSession(cluster, ctx) {
     const focusResolved = applyFocusPolicy(chosen, {
       focusId: ctx?.focusId,
       daysPerWeek: ctx?.daysPerWeek,
+      // dp_focus_contracts_v1 — gate the focus-contracts-arc additions (direct
+      // arm-work injection + shrug/close-grip/arm-OHP sub-bucket caps) inside the
+      // resolver. OFF → the resolver is byte-identical to the pre-arc behavior.
+      contractsOn: ctx?.focusContracts === true,
       // Yieldable regions (Daniel sweep review 2026-06-11) — explicit preset
       // de-emphasis ∪ the collapsed leg region on a non-leg full-body focus day. A
       // surplus compound of these groups may yield to a HIGH focus requirement,

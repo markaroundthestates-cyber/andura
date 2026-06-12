@@ -450,10 +450,14 @@ describe('focusRelevantTags — derived from the focus rules', () => {
     expect(tags.has('pullover')).toBe(true);
   });
 
-  it('balanced → chest_press only (2026-06-11 universal press anchor); unknown → empty', () => {
-    // Daniel focus-sweep review 2026-06-11: EVERY focus's chest-capable day must
-    // anchor a press, balanced included — so balanced now references exactly one tag.
-    expect([...focusRelevantTags('balanced')]).toEqual(['chest_press']);
+  it('balanced → chest_press + side-delt (contract); unknown → empty', () => {
+    // Daniel focus-sweep review 2026-06-11: EVERY focus's chest-capable day must anchor
+    // a press, balanced included. Focus-contracts arc 2026-06-12: balanced also gained a
+    // `_contract` side-delt weekly minimum (the ≥6/wk shoulder balance), so its relevant
+    // tags now include the side-delt set (focusRelevantTags is ORDERING-only — it sorts
+    // a focus-relevant accessory forward; both focus flags ship ON together, and the fp
+    // cohorts pin both OFF, so this never moves a frozen baseline).
+    expect([...focusRelevantTags('balanced')].sort()).toEqual(['chest_press', 'lateral_raise', 'side_delt']);
     expect(focusRelevantTags('definitely-not-a-focus').size).toBe(0);
   });
 });

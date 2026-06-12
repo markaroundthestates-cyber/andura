@@ -108,7 +108,7 @@ function adjacencyCount(split) {
  */
 function spaceOutSplit(split) {
   const counts = new Map();
-  split.forEach((c, i) => counts.set(c, (counts.get(c) || 0) + 1));
+  split.forEach((c) => counts.set(c, (counts.get(c) || 0) + 1));
   const out = [];
   let prev = '';
   for (let k = 0; k < split.length; k++) {

@@ -49,6 +49,7 @@ import { weeklySessionsPerGroup } from './weeklySessions.js';
 import { resolveExperienceId } from '../../periodization/volumeLandmarks.js';
 import { flattenSessionsToRecoveryLogs } from './recoveryLogs.js';
 import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias } from './focus.js';
+import { applyFocusVolumeContracts, focusContractDemotions } from './focusVolumeContracts.js';
 import {
   laggingGroupsFromLogs,
   applyWeaknessAmplification,
@@ -239,6 +240,20 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   const cluster = wantDifferentMuscle
     ? pickAlternativeCluster(scheduledCluster, overrideRecoveryState)
     : scheduledCluster;
+  // dp_rotation_intraweek_v1 — TRAINING-DAY ORDINAL within the week (0-based). This is
+  // the SAME `position` clusterForDay computes: today's index among the active days, or —
+  // when today is not itself active — the count of active days strictly before it. It is
+  // the canonical "Nth training day of the week", a pure function of the active-week split
+  // + dayIdx (NOT Date.now()), so the intra-week rotation is deterministic and stable
+  // across recompositions of the same day. Threaded into buildSession so poolForGroup
+  // rotates the top equal-ish UNLOGGED isolation by the ordinal → adjacent training days
+  // surface a different equivalent-role variant (the sweep's "repetate adiacent" fix).
+  const activeIdxsForOrdinal = [];
+  for (let i = 0; i < 7; i++) if (activeWeek[i]) activeIdxsForOrdinal.push(i);
+  const activePos = activeIdxsForOrdinal.indexOf(dayIdx);
+  const intraWeekDayOrdinal = activePos >= 0
+    ? activePos
+    : activeIdxsForOrdinal.filter((i) => i < dayIdx).length;
   const split = frequencyToSplit(activeWeek.filter(Boolean).length || 1, focusPreset, splitRebalance);
   // DE-EMPHASIZED divisor fix (D-focus-divisor 2026-06-06): the per-session set
   // budget = weeklyBudget / weeklySessionsPerGroup[group]. A v-taper collapses the
@@ -436,9 +451,27 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // (a de-emphasis collapse, the 72yo's back) back UP to MEV so no big mover ~0s.
   // Applied AFTER the beginner cap so the floor sits inside [MEV, MAV/MRV]; small
   // groups (biceps/triceps/calves) are untouched (a focus trade may relax them).
-  const balancedTargets = splitRebalance
+  const balancedFlooredTargets = splitRebalance
     ? applyMaintenanceFloor(balancedCappedTargets)
     : balancedCappedTargets;
+  // FOCUS VOLUME CONTRACTS (dp_focus_contracts_v1, 2026-06-12) — the per-focus WEEKLY
+  // group-volume cap/floor layer (cross-group relationships the per-session resolver
+  // cannot reach: back ≤1.6×median on balanced, biceps≈triceps on arms, chest>back,
+  // shoulders floors, lower upper-maintenance caps, …). Applied AFTER the maintenance
+  // floor (so the floor stays supreme; every contract write is [MEV,MRV]-clamped) and
+  // BEFORE the intra-week makeup + recovery cut (the contract shapes weekly INTENT;
+  // recovery/time still govern the day below). The contracted map becomes the weekly
+  // SSOT (balancedTargets) every downstream step reads. daysPerWeek selects the band
+  // (some contracts only bite at ≥4 training days). OFF / balanced-with-no-contract /
+  // pure-fn callers → passthrough → byte-identical (the fp hash holds; pinned OFF in
+  // the fp cohorts).
+  const balancedTargets = isEnabled('dp_focus_contracts_v1')
+    ? applyFocusVolumeContracts(
+        balancedFlooredTargets,
+        focusPreset,
+        activeWeek.filter(Boolean).length || 1,
+      )
+    : balancedFlooredTargets;
 
   // ── INTRA-WEEK DEFICIT RECOVERY (D-intra-week 2026-06-04) ────────────────
   // What was already done EARLIER this microcycle (skipped / early-ended sessions)
@@ -652,14 +685,22 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // channel's PR pass-through made the demote a no-op for exactly its target)
     // and it threads into the set distribution (a repeat-day hinge that still
     // lands trains LIGHT, isolation band). Demote-only, last-option guarded.
-    structuralPenalties: lumbarDedupPenalties({
-      flagOn: isEnabled('dp_lumbar_dedup_v1'),
-      activeWeek,
-      dayIdx,
-      todayCluster: cluster,
-      focusPreset,
-      splitRebalance,
-    }),
+    // Merged: the cross-week lumbar dedup (above) UNION the focus-contract shrug +
+    // lower-back demotion (dp_focus_contracts_v1) — both demote-only, max-unioned by
+    // mergePenalties so a name in both keeps the stricter (1.0). The focus demote keeps
+    // traps/erectors off a v-taper/back/upper focus's lat-width slots (contracts 6+7).
+    // OFF / non-demote focus → empty map → byte-identical to the lumbar-only channel.
+    structuralPenalties: mergePenalties(
+      lumbarDedupPenalties({
+        flagOn: isEnabled('dp_lumbar_dedup_v1'),
+        activeWeek,
+        dayIdx,
+        todayCluster: cluster,
+        focusPreset,
+        splitRebalance,
+      }),
+      isEnabled('dp_focus_contracts_v1') ? focusContractDemotions(focusPreset) : null,
+    ),
     // R6d-b in-session lumbar pairing (same flag seam): a heavy deadlift-family
     // hinge and a back-extension accessory must not share ONE session (his
     // 4d-lower Thursday stacked Squat + RDL + Hyperextension). sessionBuilder
@@ -670,6 +711,15 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // (derived from `seed` above), so a mature account's accessories rotate
     // weekly while tier-1 anchors repeat. OFF → byte-identical pool order.
     accessoryRotation: isEnabled('dp_accessory_rotation_v1'),
+    // dp_rotation_intraweek_v1 — INTRA-WEEK isolation rotation (extends the cross-week
+    // sibling above one dimension over). poolForGroup rotates the top equal-ish UNLOGGED
+    // isolation by the training-day ordinal WITHIN the week (intraWeekDayOrdinal, derived
+    // from the active-week split above) so ADJACENT training days surface a different
+    // equivalent-role variant — the sweep's "repetate adiacent" info signals on unlogged
+    // accessories. LOGGED isolations are DP anchors and STAY (disjoint from the cross-week
+    // step). OFF → null ordinal path / byte-identical pool order.
+    rotationIntraWeek: isEnabled('dp_rotation_intraweek_v1'),
+    intraWeekDayOrdinal,
     // #64 PERSISTENT pain memory PROACTIVE swap (dp_pain_memory_v1, default OFF →
     // null → byte-identical pool). When ON, a user-PINNED painful exercise is
     // REPLACED in poolForGroup by its persisted curated chain substitute (held
@@ -784,6 +834,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // requirements > caps > score precedence. The focus id keys FOCUS_RULES; the
     // active-day count is the 1.3-C weekly-ledger hook (read, not enforced here).
     focusPolicy: isEnabled('dp_focus_policy_v1'),
+    // dp_focus_contracts_v1 — gates the focus-contracts-arc resolver additions
+    // (direct arm-work injection on back/upper/arms days + the shrug/close-grip/
+    // arm-OHP sub-bucket caps). The WEEKLY volume contracts ride volumeTargets
+    // (applyFocusVolumeContracts above); this is the SLOT-side half. OFF → the
+    // resolver is byte-identical to the pre-arc behavior.
+    focusContracts: isEnabled('dp_focus_contracts_v1'),
     focusId: focusPreset,
     daysPerWeek: activeWeek.filter(Boolean).length || 1,
   };
