@@ -1509,7 +1509,11 @@
       "general": "General",
       "privacy": "Date si confidentialitate",
       "danger": "Deconectare si Stergere",
-      "help": "Ajutor"
+      "help": "Ajutor",
+      "antrenament": "Antrenament",
+      "aplicatie": "Aplicatie",
+      "dateLegal": "Date si legal",
+      "ajutor": "Ajutor"
     },
     "rows": {
       "profile": "Profil si tinte",
@@ -1526,7 +1530,34 @@
       "support": "Suport",
       "about": "Despre Andura",
       "faq": "FAQ",
-      "exerciseLibrary": "Biblioteca de exercitii"
+      "exerciseLibrary": "Biblioteca de exercitii",
+      "exercitiiEchipament": "Exercitii si echipament",
+      "dateleMele": "Datele mele",
+      "confidentialitateTermeni": "Confidentialitate si termeni",
+      "ajutorDespre": "Ajutor si despre"
+    },
+    "hubs": {
+      "exercitiiEchipament": {
+        "title": "Exercitii si echipament",
+        "segBiblioteca": "Biblioteca",
+        "segEchipament": "Echipament lipsa",
+        "segAria": "Sectiuni exercitii si echipament"
+      },
+      "dateleMele": {
+        "title": "Datele mele",
+        "segExport": "Export",
+        "segImport": "Import",
+        "segAria": "Sectiuni datele mele"
+      },
+      "confidentialitateTermeni": {
+        "title": "Confidentialitate si termeni",
+        "segConfidentialitate": "Confidentialitate",
+        "segTermeni": "Termeni",
+        "segAria": "Sectiuni confidentialitate si termeni"
+      },
+      "ajutorDespre": {
+        "title": "Ajutor si despre"
+      }
     },
     "appearance": {
       "heading": "Aspect",

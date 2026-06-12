@@ -13,18 +13,22 @@ import { t } from '../../../../i18n/index.js';
 
 const SUPPORT_EMAIL = 'support@andura.app';
 
-export function SettingsSupport(): JSX.Element {
+// Account-regroup 2026-06-12 — `embedded` strips the SubHeader + full-screen
+// root so the stacked "Ajutor & despre" hub can host this body as a section.
+export function SettingsSupport({ embedded = false }: { embedded?: boolean } = {}): JSX.Element {
   const navigate = useNavigate();
 
   return (
-    <section className="min-h-screen flex flex-col" data-testid="settings-support">
-      <SubHeader
-        title={t('settings.support.title')}
-        onBack={() => navigate(gotoPath('cont'))}
-        testIdBack="settings-support-back"
-      />
+    <section className={embedded ? '' : 'min-h-screen flex flex-col'} data-testid="settings-support">
+      {!embedded && (
+        <SubHeader
+          title={t('settings.support.title')}
+          onBack={() => navigate(gotoPath('cont'))}
+          testIdBack="settings-support-back"
+        />
+      )}
 
-      <div className="flex-1 overflow-y-auto p-5">
+      <div className={embedded ? 'p-5' : 'flex-1 overflow-y-auto p-5'}>
         <p className="text-sm text-ink2 mb-4 leading-relaxed">
           {t('settings.support.intro')}
         </p>

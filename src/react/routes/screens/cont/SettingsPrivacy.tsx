@@ -39,7 +39,9 @@ function ToggleRow({ testId, title, desc, checked, onToggle }: ToggleRowProps): 
   );
 }
 
-export function SettingsPrivacy(): JSX.Element {
+// Account-regroup 2026-06-12 — `embedded` strips the SubHeader + full-screen
+// root so the "Confidentialitate & termeni" hub can host this body.
+export function SettingsPrivacy({ embedded = false }: { embedded?: boolean } = {}): JSX.Element {
   const navigate = useNavigate();
   const dataExport = useSettingsStore((s) => s.dataExportConsent);
   const telemetry = useSettingsStore((s) => s.telemetryOptIn);
@@ -51,14 +53,16 @@ export function SettingsPrivacy(): JSX.Element {
   const rightsItems = tArray('settings.privacy.policy.rightsItems');
 
   return (
-    <section className="min-h-screen flex flex-col" data-testid="settings-privacy">
-      <SubHeader
-        title={t('settings.privacy.title')}
-        onBack={() => navigate(gotoPath('cont'))}
-        testIdBack="settings-privacy-back"
-      />
+    <section className={embedded ? '' : 'min-h-screen flex flex-col'} data-testid="settings-privacy">
+      {!embedded && (
+        <SubHeader
+          title={t('settings.privacy.title')}
+          onBack={() => navigate(gotoPath('cont'))}
+          testIdBack="settings-privacy-back"
+        />
+      )}
 
-      <div className="flex-1 overflow-y-auto p-5">
+      <div className={embedded ? 'p-5' : 'flex-1 overflow-y-auto p-5'}>
         <div className="flex items-center gap-2.5 mb-4">
           <ShieldCheck className="w-5 h-5 text-brick" aria-hidden="true" />
           <p className="text-sm text-ink2 leading-snug">

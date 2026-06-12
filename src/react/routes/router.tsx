@@ -80,22 +80,26 @@ const IstoricDetail = lazy(() => import('./screens/istoric/IstoricDetail').then(
 // PARITY-MISSING-SCREENS Wave 2e — PR Wall full-screen (PAR-001)
 const PrWall = lazy(() => import('./screens/istoric/PrWall').then((m) => ({ default: m.PrWall })));
 
+// Account regroup 2026-06-12 — grouped Account hubs (each merges 2-3 former
+// settings rows behind one segmented/stacked screen). The hub modules import
+// the existing screen bodies (embedded), so no body code is duplicated.
+const ExercitiiEchipament = lazy(() => import('./screens/cont/hubs/ExercitiiEchipament').then((m) => ({ default: m.ExercitiiEchipament })));
+const DateleMele = lazy(() => import('./screens/cont/hubs/DateleMele').then((m) => ({ default: m.DateleMele })));
+const ConfidentialitateTermeni = lazy(() => import('./screens/cont/hubs/ConfidentialitateTermeni').then((m) => ({ default: m.ConfidentialitateTermeni })));
+const AjutorDespre = lazy(() => import('./screens/cont/hubs/AjutorDespre').then((m) => ({ default: m.AjutorDespre })));
+
 // §B007 lazy — Cont sub-screens (9 settings routes)
 const SettingsProfile = lazy(() => import('./screens/cont/SettingsProfile').then((m) => ({ default: m.SettingsProfile })));
 const SettingsNotifications = lazy(() => import('./screens/cont/SettingsNotifications').then((m) => ({ default: m.SettingsNotifications })));
 const SettingsSubscription = lazy(() => import('./screens/cont/SettingsSubscription').then((m) => ({ default: m.SettingsSubscription })));
 const SettingsAppearance = lazy(() => import('./screens/cont/SettingsAppearance').then((m) => ({ default: m.SettingsAppearance })));
 const SettingsPrefs = lazy(() => import('./screens/cont/SettingsPrefs').then((m) => ({ default: m.SettingsPrefs })));
-// Exercise Library — Cont › General drill-down (CORE_AUTO by muscle group).
-const ExerciseLibrary = lazy(() => import('./screens/cont/ExerciseLibrary').then((m) => ({ default: m.ExerciseLibrary })));
-const SettingsPrivacy = lazy(() => import('./screens/cont/SettingsPrivacy').then((m) => ({ default: m.SettingsPrivacy })));
-const SettingsTerms = lazy(() => import('./screens/cont/SettingsTerms').then((m) => ({ default: m.SettingsTerms })));
-const SettingsExport = lazy(() => import('./screens/cont/SettingsExport').then((m) => ({ default: m.SettingsExport })));
-const SettingsImport = lazy(() => import('./screens/cont/SettingsImport').then((m) => ({ default: m.SettingsImport })));
+// NOTE (Account regroup 2026-06-12) — ExerciseLibrary / SettingsPrivacy /
+// SettingsTerms / SettingsExport / SettingsImport / SettingsAbout /
+// SettingsSupport / SettingsFaq are no longer referenced directly here: their
+// routes (new + legacy) now render the grouped hubs, which import the bodies
+// (embedded) internally. They remain individually importable for tests.
 const SettingsDanger = lazy(() => import('./screens/cont/SettingsDanger').then((m) => ({ default: m.SettingsDanger })));
-const SettingsAbout = lazy(() => import('./screens/cont/SettingsAbout').then((m) => ({ default: m.SettingsAbout })));
-const SettingsSupport = lazy(() => import('./screens/cont/SettingsSupport').then((m) => ({ default: m.SettingsSupport })));
-const SettingsFaq = lazy(() => import('./screens/cont/SettingsFaq').then((m) => ({ default: m.SettingsFaq })));
 // §D047 RIP-OUT drill-down screens — A003 ConfirmModal replacement (Stage 1 NEW screens)
 const LogoutConfirm = lazy(() => import('./screens/cont/LogoutConfirm').then((m) => ({ default: m.LogoutConfirm })));
 const DeleteAccountConfirm = lazy(() => import('./screens/cont/DeleteAccountConfirm').then((m) => ({ default: m.DeleteAccountConfirm })));
@@ -224,15 +228,23 @@ export const router = createBrowserRouter([
           { path: 'settings-subscription', element: <LazyRoute><SettingsSubscription /></LazyRoute> },
           { path: 'settings-appearance', element: <LazyRoute><SettingsAppearance /></LazyRoute> },
           { path: 'settings-prefs', element: <LazyRoute><SettingsPrefs /></LazyRoute> },
-          { path: 'exercise-library', element: <LazyRoute><ExerciseLibrary /></LazyRoute> },
-          { path: 'settings-privacy', element: <LazyRoute><SettingsPrivacy /></LazyRoute> },
-          { path: 'settings-terms', element: <LazyRoute><SettingsTerms /></LazyRoute> },
-          { path: 'settings-export', element: <LazyRoute><SettingsExport /></LazyRoute> },
-          { path: 'settings-import', element: <LazyRoute><SettingsImport /></LazyRoute> },
+          // Account regroup 2026-06-12 — NEW grouped hubs (Cont rows point here).
+          { path: 'exercitii-echipament', element: <LazyRoute><ExercitiiEchipament /></LazyRoute> },
+          { path: 'datele-mele', element: <LazyRoute><DateleMele /></LazyRoute> },
+          { path: 'confidentialitate-termeni', element: <LazyRoute><ConfidentialitateTermeni /></LazyRoute> },
+          { path: 'ajutor-despre', element: <LazyRoute><AjutorDespre /></LazyRoute> },
+          // Legacy routes STAY ALIVE (deep-links + tutorial anchors + tests) —
+          // each now renders its hub with the matching segment preselected, so an
+          // old bookmark lands on the grouped view with the right tab open.
+          { path: 'exercise-library', element: <LazyRoute><ExercitiiEchipament defaultSeg="biblioteca" /></LazyRoute> },
+          { path: 'settings-privacy', element: <LazyRoute><ConfidentialitateTermeni defaultSeg="confidentialitate" /></LazyRoute> },
+          { path: 'settings-terms', element: <LazyRoute><ConfidentialitateTermeni defaultSeg="termeni" /></LazyRoute> },
+          { path: 'settings-export', element: <LazyRoute><DateleMele defaultSeg="export" /></LazyRoute> },
+          { path: 'settings-import', element: <LazyRoute><DateleMele defaultSeg="import" /></LazyRoute> },
           { path: 'settings-danger', element: <LazyRoute><SettingsDanger /></LazyRoute> },
-          { path: 'settings-about', element: <LazyRoute><SettingsAbout /></LazyRoute> },
-          { path: 'settings-support', element: <LazyRoute><SettingsSupport /></LazyRoute> },
-          { path: 'settings-faq', element: <LazyRoute><SettingsFaq /></LazyRoute> },
+          { path: 'settings-about', element: <LazyRoute><AjutorDespre /></LazyRoute> },
+          { path: 'settings-support', element: <LazyRoute><AjutorDespre /></LazyRoute> },
+          { path: 'settings-faq', element: <LazyRoute><AjutorDespre /></LazyRoute> },
           // §D047 RIP-OUT drill-down screens — A003 ConfirmModal migrate Stage 1
           { path: 'logout-confirm', element: <LazyRoute><LogoutConfirm /></LazyRoute> },
           { path: 'delete-account-confirm', element: <LazyRoute><DeleteAccountConfirm /></LazyRoute> },

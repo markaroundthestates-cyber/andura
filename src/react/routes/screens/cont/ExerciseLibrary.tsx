@@ -89,7 +89,12 @@ function equipmentLabel(key: string | undefined): string {
   return t(`exerciseLibrary.equipment.${key}`);
 }
 
-export function ExerciseLibrary(): JSX.Element {
+// Account-regroup 2026-06-12 — `embedded` hosts this inside the "Exercitii &
+// echipament" hub (Biblioteca segment). At Level 1 the hub owns the header so
+// the inner SubHeader is hidden; at Level 2 (a group is open) the inner
+// SubHeader stays as the drill-UP bar (group name + back-to-groups), preserving
+// the existing two-level navigation without rewriting internals.
+export function ExerciseLibrary({ embedded = false }: { embedded?: boolean } = {}): JSX.Element {
   const navigate = useNavigate();
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -115,10 +120,12 @@ export function ExerciseLibrary(): JSX.Element {
   const title = current ? muscleLabel(current.key) : t('exerciseLibrary.title');
 
   return (
-    <section className="bg-paper min-h-screen flex flex-col" data-testid="exercise-library">
-      <SubHeader title={title} onBack={handleBack} testIdBack="exercise-library-back" />
+    <section className={embedded ? '' : 'bg-paper min-h-screen flex flex-col'} data-testid="exercise-library">
+      {(!embedded || selectedGroup !== null) && (
+        <SubHeader title={title} onBack={handleBack} testIdBack="exercise-library-back" />
+      )}
 
-      <div className="flex-1 overflow-y-auto p-5">
+      <div className={embedded ? 'p-5' : 'flex-1 overflow-y-auto p-5'}>
         {current === null ? (
           // ── LEVEL 1 — muscle-group list ──────────────────────────────────
           <>

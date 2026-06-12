@@ -135,7 +135,11 @@ function triggerDownload(filename: string, content: string): void {
   }
 }
 
-export function SettingsExport(): JSX.Element {
+// Account-regroup 2026-06-12 — when `embedded`, this screen renders only its
+// BODY (no SubHeader, no min-h-screen root) so the "Datele mele" hub can host
+// it under the hub's single header + segmented control. Standalone route +
+// every existing direct-mount test keep the default (non-embedded) full screen.
+export function SettingsExport({ embedded = false }: { embedded?: boolean } = {}): JSX.Element {
   const navigate = useNavigate();
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [size, setSize] = useState<number>(0);
@@ -156,14 +160,16 @@ export function SettingsExport(): JSX.Element {
   const contentItems = tArray('settings.export.contentItems');
 
   return (
-    <section className="min-h-screen flex flex-col" data-testid="settings-export">
-      <SubHeader
-        title={t('settings.export.title')}
-        onBack={() => navigate(gotoPath('cont'))}
-        testIdBack="settings-export-back"
-      />
+    <section className={embedded ? '' : 'min-h-screen flex flex-col'} data-testid="settings-export">
+      {!embedded && (
+        <SubHeader
+          title={t('settings.export.title')}
+          onBack={() => navigate(gotoPath('cont'))}
+          testIdBack="settings-export-back"
+        />
+      )}
 
-      <div className="flex-1 overflow-y-auto p-5">
+      <div className={embedded ? 'p-5' : 'flex-1 overflow-y-auto p-5'}>
         <p className="text-sm text-ink leading-relaxed mb-4">
           {t('settings.export.intro')}
         </p>

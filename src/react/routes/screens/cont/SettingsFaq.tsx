@@ -51,7 +51,9 @@ const FAQ: ReadonlyArray<FaqSection> = [
   },
 ];
 
-export function SettingsFaq(): JSX.Element {
+// Account-regroup 2026-06-12 — `embedded` strips the SubHeader + full-screen
+// root so the stacked "Ajutor & despre" hub can host this accordion on top.
+export function SettingsFaq({ embedded = false }: { embedded?: boolean } = {}): JSX.Element {
   const navigate = useNavigate();
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -60,14 +62,16 @@ export function SettingsFaq(): JSX.Element {
   }
 
   return (
-    <section className="min-h-screen flex flex-col" data-testid="settings-faq">
-      <SubHeader
-        title={t('settings.faq.title')}
-        onBack={() => navigate(gotoPath('cont'))}
-        testIdBack="settings-faq-back"
-      />
+    <section className={embedded ? '' : 'min-h-screen flex flex-col'} data-testid="settings-faq">
+      {!embedded && (
+        <SubHeader
+          title={t('settings.faq.title')}
+          onBack={() => navigate(gotoPath('cont'))}
+          testIdBack="settings-faq-back"
+        />
+      )}
 
-      <div className="flex-1 overflow-y-auto p-5">
+      <div className={embedded ? 'p-5' : 'flex-1 overflow-y-auto p-5'}>
         <p className="text-sm text-ink2 mb-4 leading-relaxed">
           {t('settings.faq.header')}
         </p>

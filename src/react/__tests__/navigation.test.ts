@@ -98,6 +98,23 @@ describe('Navigation helper — Phase 3 Antrenor sub-screens nested', () => {
     expect(gotoPath('post-summary')).toBe('/app/antrenor/post-summary');
   });
 
+  // Account regroup 2026-06-12 — grouped Account hub paths.
+  it('cont-exercitii-echipament → /app/cont/exercitii-echipament', () => {
+    expect(gotoPath('cont-exercitii-echipament')).toBe('/app/cont/exercitii-echipament');
+  });
+
+  it('cont-datele-mele → /app/cont/datele-mele', () => {
+    expect(gotoPath('cont-datele-mele')).toBe('/app/cont/datele-mele');
+  });
+
+  it('cont-confidentialitate-termeni → /app/cont/confidentialitate-termeni', () => {
+    expect(gotoPath('cont-confidentialitate-termeni')).toBe('/app/cont/confidentialitate-termeni');
+  });
+
+  it('cont-ajutor-despre → /app/cont/ajutor-despre', () => {
+    expect(gotoPath('cont-ajutor-despre')).toBe('/app/cont/ajutor-despre');
+  });
+
   it('throws pentru unknown screen (runtime fallback)', () => {
     expect(() =>
       // @ts-expect-error testing runtime fallback la unknown screen

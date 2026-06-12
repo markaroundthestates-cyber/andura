@@ -1509,7 +1509,11 @@
       "general": "General",
       "privacy": "Data & privacy",
       "danger": "Logout & delete",
-      "help": "Help"
+      "help": "Help",
+      "antrenament": "Training",
+      "aplicatie": "App",
+      "dateLegal": "Data & legal",
+      "ajutor": "Help"
     },
     "rows": {
       "profile": "Profile",
@@ -1526,7 +1530,34 @@
       "support": "Support",
       "about": "About Andura",
       "faq": "FAQ",
-      "exerciseLibrary": "Exercise library"
+      "exerciseLibrary": "Exercise library",
+      "exercitiiEchipament": "Exercises & equipment",
+      "dateleMele": "My data",
+      "confidentialitateTermeni": "Privacy & terms",
+      "ajutorDespre": "Help & about"
+    },
+    "hubs": {
+      "exercitiiEchipament": {
+        "title": "Exercises & equipment",
+        "segBiblioteca": "Library",
+        "segEchipament": "Missing equipment",
+        "segAria": "Exercises and equipment sections"
+      },
+      "dateleMele": {
+        "title": "My data",
+        "segExport": "Export",
+        "segImport": "Import",
+        "segAria": "My data sections"
+      },
+      "confidentialitateTermeni": {
+        "title": "Privacy & terms",
+        "segConfidentialitate": "Privacy",
+        "segTermeni": "Terms",
+        "segAria": "Privacy and terms sections"
+      },
+      "ajutorDespre": {
+        "title": "Help & about"
+      }
     },
     "appearance": {
       "heading": "Appearance",

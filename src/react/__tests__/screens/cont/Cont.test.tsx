@@ -65,34 +65,49 @@ describe('Cont landing — Phase 5 task_13', () => {
     expect(screen.queryByTestId('cont-account-email')).toBeNull();
   });
 
-  it('§F-cont-05 "Aparate lipsa" row in General section is enabled cu target aparate-lipsa', () => {
+  // Account regroup 2026-06-12 — "Aparate lipsa" is no longer a top-level row;
+  // it lives inside the "Exercitii & echipament" hub. The hub row replaces it.
+  it('Exercitii & echipament hub row is enabled cu target cont-exercitii-echipament', () => {
     renderCont();
-    const row = screen.getByTestId('cont-row-aparate-lipsa');
+    const row = screen.getByTestId('cont-row-exercitii-echipament');
     expect(row).not.toBeDisabled();
+    // The old standalone aparate-lipsa + exercise-library rows are gone.
+    expect(screen.queryByTestId('cont-row-aparate-lipsa')).toBeNull();
+    expect(screen.queryByTestId('cont-row-exercise-library')).toBeNull();
   });
 
-  it('renders 5 sections mockup verbatim (stable English ids post-i18n)', () => {
+  it('renders 6 sections + danger (regroup 2026-06-12, stable English ids)', () => {
     renderCont();
-    // §i18n 2026-05-28 — section testids now stable English keys (independent
+    // §i18n 2026-05-28 — section testids are stable English keys (independent
     // of locale). Visible label localizes via t('cont.sections.*').
     expect(screen.getByTestId('cont-section-cont')).toBeInTheDocument();
-    expect(screen.getByTestId('cont-section-general')).toBeInTheDocument();
-    expect(screen.getByTestId('cont-section-privacy')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-section-antrenament')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-section-aplicatie')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-section-date-legal')).toBeInTheDocument();
+    expect(screen.getByTestId('cont-section-ajutor')).toBeInTheDocument();
     expect(screen.getByTestId('cont-section-danger')).toBeInTheDocument();
-    expect(screen.getByTestId('cont-section-help')).toBeInTheDocument();
+    // Old section ids are gone.
+    expect(screen.queryByTestId('cont-section-general')).toBeNull();
+    expect(screen.queryByTestId('cont-section-privacy')).toBeNull();
+    expect(screen.queryByTestId('cont-section-help')).toBeNull();
   });
 
-  it('renders all 12 rows total per mockup', () => {
+  it('renders all 9 rows total (regroup 2026-06-12)', () => {
     renderCont();
     const rows = [
-      'profile', 'notifications', 'subscription',
-      'appearance', 'aparate-lipsa', 'prefs',
-      'privacy', 'terms', 'export',
+      'profile', 'subscription',
+      'prefs', 'exercitii-echipament',
+      'appearance', 'notifications',
+      'datele-mele', 'confidentialitate-termeni',
+      'ajutor-despre',
       'danger',
-      'support', 'about', 'faq',
     ];
     rows.forEach((id) => {
       expect(screen.getByTestId(`cont-row-${id}`)).toBeInTheDocument();
+    });
+    // The four merged-away standalone rows no longer exist on the home list.
+    ['export', 'import', 'privacy', 'terms', 'support', 'about', 'faq'].forEach((id) => {
+      expect(screen.queryByTestId(`cont-row-${id}`)).toBeNull();
     });
   });
 

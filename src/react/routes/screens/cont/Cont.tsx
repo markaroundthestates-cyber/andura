@@ -42,17 +42,12 @@ import {
   Bell,
   Sparkles,
   Palette,
-  Library,
-  XOctagon,
   SlidersHorizontal,
   ShieldCheck,
-  FileText,
-  Download,
-  Upload,
+  Dumbbell,
+  Database,
   AlertTriangle,
   LifeBuoy,
-  Info,
-  HelpCircle,
   ChevronRight,
   Flame,
   Pencil,
@@ -70,43 +65,59 @@ interface ContRow {
 
 interface ContSection {
   /** Stable English-id for testid + heading marker (kept stable across locales). */
-  id: 'cont' | 'general' | 'privacy' | 'danger' | 'help';
+  id: 'cont' | 'antrenament' | 'aplicatie' | 'date-legal' | 'ajutor' | 'danger';
   /** i18n key under `cont.sections.*` for the visible heading. */
   titleKey: string;
   rows: ContRow[];
   danger?: boolean;
 }
 
-// Mockup verbatim copy andura-clasic.html#L1839-1888 (now i18n-keyed; the
-// English+Romanian labels live in src/i18n/{en,ro}.json under cont.*).
+// Account regroup 2026-06-12 (founder: "ar trebui sa fie mai putine butoane si
+// grupate") — 6 logical sections + danger, 9 rows total (was 5 sections / 15
+// rows). Four rows are NEW grouped HUBS that each merge 2-3 former rows behind
+// one screen + segmented/stacked control (exercise-library + aparate-lipsa →
+// Exercitii & echipament; export + import → Datele mele; privacy + terms →
+// Confidentialitate & termeni; support + faq + about → Ajutor & despre). The
+// profile/subscription/appearance/notifications/prefs rows are only REGROUPED —
+// their target screens are untouched. Labels via t() (en + ro under cont.*).
 const SECTIONS: readonly ContSection[] = [
   {
     id: 'cont',
     titleKey: 'cont.sections.cont',
     rows: [
       { id: 'profile', labelKey: 'cont.rows.profile', Icon: User, target: 'settings-profile' },
-      { id: 'notifications', labelKey: 'cont.rows.notifications', Icon: Bell, target: 'settings-notifications' },
       { id: 'subscription', labelKey: 'cont.rows.subscription', Icon: Sparkles, target: 'settings-subscription' },
     ],
   },
   {
-    id: 'general',
-    titleKey: 'cont.sections.general',
+    id: 'antrenament',
+    titleKey: 'cont.sections.antrenament',
     rows: [
-      { id: 'appearance', labelKey: 'cont.rows.appearance', Icon: Palette, target: 'settings-appearance' },
-      { id: 'exercise-library', labelKey: 'cont.rows.exerciseLibrary', Icon: Library, target: 'settings-exercise-library' },
-      { id: 'aparate-lipsa', labelKey: 'cont.rows.aparateLipsa', Icon: XOctagon, target: 'aparate-lipsa' },
       { id: 'prefs', labelKey: 'cont.rows.prefs', Icon: SlidersHorizontal, target: 'settings-prefs' },
+      { id: 'exercitii-echipament', labelKey: 'cont.rows.exercitiiEchipament', Icon: Dumbbell, target: 'cont-exercitii-echipament' },
     ],
   },
   {
-    id: 'privacy',
-    titleKey: 'cont.sections.privacy',
+    id: 'aplicatie',
+    titleKey: 'cont.sections.aplicatie',
     rows: [
-      { id: 'privacy', labelKey: 'cont.rows.privacy', Icon: ShieldCheck, target: 'settings-privacy' },
-      { id: 'terms', labelKey: 'cont.rows.terms', Icon: FileText, target: 'settings-terms' },
-      { id: 'export', labelKey: 'cont.rows.export', Icon: Download, target: 'settings-export' },
-      { id: 'import', labelKey: 'cont.rows.import', Icon: Upload, target: 'settings-import' },
+      { id: 'appearance', labelKey: 'cont.rows.appearance', Icon: Palette, target: 'settings-appearance' },
+      { id: 'notifications', labelKey: 'cont.rows.notifications', Icon: Bell, target: 'settings-notifications' },
+    ],
+  },
+  {
+    id: 'date-legal',
+    titleKey: 'cont.sections.dateLegal',
+    rows: [
+      { id: 'datele-mele', labelKey: 'cont.rows.dateleMele', Icon: Database, target: 'cont-datele-mele' },
+      { id: 'confidentialitate-termeni', labelKey: 'cont.rows.confidentialitateTermeni', Icon: ShieldCheck, target: 'cont-confidentialitate-termeni' },
+    ],
+  },
+  {
+    id: 'ajutor',
+    titleKey: 'cont.sections.ajutor',
+    rows: [
+      { id: 'ajutor-despre', labelKey: 'cont.rows.ajutorDespre', Icon: LifeBuoy, target: 'cont-ajutor-despre' },
     ],
   },
   {
@@ -114,15 +125,6 @@ const SECTIONS: readonly ContSection[] = [
     titleKey: 'cont.sections.danger',
     danger: true,
     rows: [{ id: 'danger', labelKey: 'cont.rows.danger', Icon: AlertTriangle, danger: true, target: 'settings-danger' }],
-  },
-  {
-    id: 'help',
-    titleKey: 'cont.sections.help',
-    rows: [
-      { id: 'support', labelKey: 'cont.rows.support', Icon: LifeBuoy, target: 'settings-support' },
-      { id: 'about', labelKey: 'cont.rows.about', Icon: Info, target: 'settings-about' },
-      { id: 'faq', labelKey: 'cont.rows.faq', Icon: HelpCircle, target: 'settings-faq' },
-    ],
   },
 ];
 

@@ -13,7 +13,11 @@ import { t, tArray } from '../../../../i18n/index.js';
 
 type ActiveDoc = 'tc' | 'medical';
 
-export function SettingsTerms(): JSX.Element {
+// Account-regroup 2026-06-12 — `embedded` strips the SubHeader + full-screen
+// root so the "Confidentialitate & termeni" hub can host this body. The inner
+// T&C/Medical sticky offset (tuned to the standalone SubHeader height) is
+// dropped when embedded since the hub owns the sticky header above it.
+export function SettingsTerms({ embedded = false }: { embedded?: boolean } = {}): JSX.Element {
   const navigate = useNavigate();
   const [active, setActive] = useState<ActiveDoc>('tc');
 
@@ -21,16 +25,18 @@ export function SettingsTerms(): JSX.Element {
   const medicalItems = tArray('settings.terms.medicalItems');
 
   return (
-    <section className="min-h-screen flex flex-col" data-testid="settings-terms">
-      <SubHeader
-        title={t('settings.terms.title')}
-        onBack={() => navigate(gotoPath('cont'))}
-        testIdBack="settings-terms-back"
-      />
+    <section className={embedded ? '' : 'min-h-screen flex flex-col'} data-testid="settings-terms">
+      {!embedded && (
+        <SubHeader
+          title={t('settings.terms.title')}
+          onBack={() => navigate(gotoPath('cont'))}
+          testIdBack="settings-terms-back"
+        />
+      )}
 
       {/* Pulse segmented control (interfata-noua/ .seg) — --surface-2 track,
           active half = volt fill + on-accent ink (NOT a brick underline). */}
-      <div className="px-5 pt-4 pb-2 sticky top-[57px] z-10">
+      <div className={embedded ? 'px-5 pt-4 pb-2' : 'px-5 pt-4 pb-2 sticky top-[57px] z-10'}>
         <div
           className="flex gap-1 rounded-[14px] p-1 border border-line"
           style={{ background: 'var(--surface-2)' }}
@@ -63,7 +69,7 @@ export function SettingsTerms(): JSX.Element {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 pb-5">
+      <div className={embedded ? 'px-5 pb-5' : 'flex-1 overflow-y-auto px-5 pb-5'}>
         {active === 'tc' ? (
           <article data-testid="terms-tc-content" className="pulse-card p-[18px] text-sm text-ink2 leading-relaxed">
             <h2 className="font-display text-base font-bold text-ink mb-2">{t('settings.terms.tcHeading')}</h2>

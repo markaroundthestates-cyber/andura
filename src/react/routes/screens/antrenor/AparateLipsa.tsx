@@ -65,7 +65,12 @@ const EQUIPMENT_ITEMS: readonly EquipmentItem[] = [
   { id: 'banda-elastica' },
 ];
 
-export function AparateLipsa(): JSX.Element {
+// Account-regroup 2026-06-12 — `embedded` hosts this inside the "Exercitii &
+// echipament" hub (Echipament lipsa segment): the hub owns the header, so the
+// inner SubHeader is hidden. Save still persists + leaves to Cont (the settings
+// path, since the hub passes no workout `from` state). The in-session workout
+// route (/app/antrenor/aparate-lipsa) keeps the full standalone screen.
+export function AparateLipsa({ embedded = false }: { embedded?: boolean } = {}): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
   // Origin discriminator: workout flow (CevaNuMerge) pasaza `from: 'workout'`
@@ -128,12 +133,14 @@ export function AparateLipsa(): JSX.Element {
   }
 
   return (
-    <section className="min-h-screen flex flex-col" data-testid="aparate-lipsa">
-      <SubHeader
-        title={t('aparatLipsa.subHeaderTitle')}
-        onBack={handleBack}
-        testIdBack="aparate-lipsa-back"
-      />
+    <section className={embedded ? '' : 'min-h-screen flex flex-col'} data-testid="aparate-lipsa">
+      {!embedded && (
+        <SubHeader
+          title={t('aparatLipsa.subHeaderTitle')}
+          onBack={handleBack}
+          testIdBack="aparate-lipsa-back"
+        />
+      )}
       {/* Pulse reskin (ADDENDUM 7 2026-06-01) — aurora-transparent root (no
           bg-paper fill); the body scroll area pads its bottom by
           --app-bottom-chrome (64px nav + breathing + safe-area) so the last

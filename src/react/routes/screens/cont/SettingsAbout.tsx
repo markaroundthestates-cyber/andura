@@ -13,18 +13,23 @@ import { t } from '../../../../i18n/index.js';
 const APP_VERSION = 'v1.0.0';
 const APP_BUILD = '2026.05.22';
 
-export function SettingsAbout(): JSX.Element {
+// Account-regroup 2026-06-12 — `embedded` strips the SubHeader + full-screen
+// root so the stacked "Ajutor & despre" hub can host this About block at the
+// bottom of the stack.
+export function SettingsAbout({ embedded = false }: { embedded?: boolean } = {}): JSX.Element {
   const navigate = useNavigate();
 
   return (
-    <section className="min-h-screen flex flex-col" data-testid="settings-about">
-      <SubHeader
-        title={t('settings.about.title')}
-        onBack={() => navigate(gotoPath('cont'))}
-        testIdBack="settings-about-back"
-      />
+    <section className={embedded ? '' : 'min-h-screen flex flex-col'} data-testid="settings-about">
+      {!embedded && (
+        <SubHeader
+          title={t('settings.about.title')}
+          onBack={() => navigate(gotoPath('cont'))}
+          testIdBack="settings-about-back"
+        />
+      )}
 
-      <div className="flex-1 overflow-y-auto px-6 py-6 text-center">
+      <div className={embedded ? 'px-6 py-6 text-center' : 'flex-1 overflow-y-auto px-6 py-6 text-center'}>
         {/* Pulse mark tile (mockup 11-cont-SettingsAbout.png) — the brand
             waveform on a dark --surface-solid tile with a hairline --line
             border, replacing the foreign white "A" square. */}
