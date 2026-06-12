@@ -62,36 +62,38 @@ export function RestOverlay({
 }: RestOverlayProps): JSX.Element {
   return (
     <div
-      className="animate-scale-in fixed left-3.5 right-3.5 bottom-[78px] z-40 flex items-center gap-3.5 rounded-[18px] px-4 py-3.5 shadow-[0_8px_24px_rgba(0,0,0,0.22)] bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick"
+      className="animate-scale-in fixed left-3 right-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom,0px))] z-40 flex items-center gap-5 rounded-[24px] px-5 py-6 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.22)] bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick"
       data-testid="rest-overlay"
       role="dialog"
       aria-label={t('restOverlay.ariaLabel')}
     >
-      {/* Wave C3 (2026-05-28) — breath cadence wraps the ring (5s in / 5s out
-          loop = a calm rest tempo the user can sync to). Subtle scale (0.96 → 1)
-          keeps the timer mm:ss legible. Auto-collapses under reduced-motion.
-          Pulse arc 2026-05-29 (blueprint C3-d) — the countdown ring is enlarged
-          (the mockup's prominent ring) WITHOUT breaking the deliberate
-          bottom-pinned non-modal layout (BUG #7+#8): the card stays a bottom
-          band so the header X + ⋯ remain clickable during rest. */}
-      <div className="animate-breath">
+      {/* V2 COACH RAIL (design-pass 2026-06-12, mockup 02-coach-insession.html
+          Variant 2 rest-demo) — the rest treatment is the "big, unmissable
+          countdown" of the founder spec: a much larger ring (120px, 38px-class
+          timer) + a serif recovery line + the next-exercise + a prominent "Skip
+          rest". STILL a bottom-pinned NON-MODAL band (NOT inset-0): the header
+          X + ⋯ stay clickable mid-rest (RestOverlay BUG #7+#8 contract — asserted
+          by RestOverlay.test). The band now reserves the bottom safe-area itself
+          (the old bottom-[78px] cleared a BottomNav that Layout HIDES in-session,
+          so it was dead space). */}
+      <div className="animate-breath flex-shrink-0">
         <SVGCountdownRing
           totalSec={initialRestSec}
           remainingSec={countdownSec}
-          diameter={84}
-          strokeWidth={6}
+          diameter={120}
+          strokeWidth={9}
           timeColorClass="text-paper dark:text-ink"
         />
       </div>
       <div className="flex-1 min-w-0">
         <p
-          className="text-[10px] font-bold uppercase tracking-[0.1em] text-brick"
+          className="text-[11px] font-bold uppercase tracking-[0.14em] text-brick"
         >
           {t('restOverlay.kicker')}
         </p>
         {currentExerciseName && (
           <p
-            className="font-serif italic text-[13px] leading-snug mt-0.5 text-paper dark:text-ink"
+            className="font-serif italic text-[15px] leading-snug mt-1 text-paper dark:text-ink"
             data-testid="rest-context-line"
           >
             {t('restOverlay.recovering', { name: currentExerciseName })}
@@ -99,26 +101,26 @@ export function RestOverlay({
         )}
         {nextExerciseName && (
           <p
-            className="text-[11px] font-semibold leading-snug mt-1 text-paper dark:text-ink"
+            className="text-[12px] font-semibold leading-snug mt-1.5 text-paper dark:text-ink"
             data-testid="rest-up-next"
           >
             {t('workout.upNext', { name: nextExerciseName })}
           </p>
         )}
+        <button
+          type="button"
+          onClick={onSkip}
+          data-testid="rest-skip"
+          className="mt-3.5 inline-flex items-center gap-2 rounded-[12px] border px-4 py-2.5 text-sm font-semibold text-paper dark:text-ink active:scale-[.97] transition-transform"
+          style={{
+            background: 'rgba(255,255,255,0.12)',
+            borderColor: 'rgba(255,255,255,0.35)',
+          }}
+        >
+          <SkipForward className="w-4 h-4" aria-hidden="true" />
+          {t('restOverlay.skipCta')}
+        </button>
       </div>
-      <button
-        type="button"
-        onClick={onSkip}
-        data-testid="rest-skip"
-        className="flex-shrink-0 flex items-center gap-1.5 rounded-[10px] border px-3 py-2.5 text-xs font-semibold text-paper dark:text-ink"
-        style={{
-          background: 'rgba(255,255,255,0.12)',
-          borderColor: 'rgba(255,255,255,0.35)',
-        }}
-      >
-        <SkipForward className="w-3.5 h-3.5" aria-hidden="true" />
-        {t('restOverlay.skipCta')}
-      </button>
     </div>
   );
 }

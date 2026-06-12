@@ -26,12 +26,16 @@
 // confirm-screen gating), the JWT profile wiring are unchanged.
 
 import type { JSX } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import type { GotoScreen } from '../../../lib/navigation';
 import { getUserProfileDisplay } from './userProfile';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { useSettingsStore } from '../../../stores/settingsStore';
 import { Pill } from '../../../components/pulse/Pill';
+import { UserAvatar } from '../../../components/Avatar/UserAvatar';
+import { AvatarPicker } from '../../../components/Avatar/AvatarPicker';
 import { t } from '../../../../i18n/index.js';
 import {
   User,
@@ -51,6 +55,7 @@ import {
   HelpCircle,
   ChevronRight,
   Flame,
+  Pencil,
 } from 'lucide-react';
 
 interface ContRow {
@@ -174,6 +179,14 @@ export function Cont(): JSX.Element {
   const streak = useWorkoutStore((s) => s.streak);
   const streakUnit = streak === 1 ? t('stats.streakUnit_one') : t('stats.streakUnit_other');
 
+  // Account avatar (illustrated preset set) — chosen id lives in settingsStore
+  // (persisted + synced per-UID like accent/theme). Selecting applies instantly;
+  // the picker grid expands inline under the hero (no route change). The hero
+  // falls back to the gradient initial when no preset is picked.
+  const avatarId = useSettingsStore((s) => s.avatarId);
+  const setAvatar = useSettingsStore((s) => s.setAvatar);
+  const [pickerOpen, setPickerOpen] = useState(false);
+
   return (
     <section className="pt-4 px-5 pb-6 min-h-screen" data-testid="cont-home">
       {/* Pulse header (interfata-noua/screens-tabs.jsx:331) — display wordmark.
@@ -188,20 +201,34 @@ export function Cont(): JSX.Element {
         className="pulse-card pulse-shine p-[18px] mb-4 flex items-center gap-3.5 animate-card-rise delay-75"
         data-testid="cont-account-card"
       >
-        {/* Avatar — Pulse gradient pebble (interfata-noua/screens-tabs.jsx:335
-            `.avatar`): volt→aqua --grad-pulse fill + aqua glow halo, 54x54,
-            22px display initial in --on-accent ink. */}
-        <div
-          className="w-[54px] h-[54px] rounded-full font-display flex items-center justify-center text-[22px] font-bold relative overflow-hidden"
-          data-testid="cont-account-initial"
-          style={{
-            background: 'var(--grad-pulse)',
-            boxShadow: '0 0 26px -6px var(--aqua)',
-            color: 'var(--on-accent)',
-          }}
+        {/* Avatar — illustrated preset (Avatar/UserAvatar) or the gradient
+            initial fallback when none picked. Tapping toggles the inline preset
+            picker below; a small edit badge cues that it is changeable. Aqua
+            glow halo + 54x54 to match the prior Pulse pebble rhythm. */}
+        <button
+          type="button"
+          onClick={() => setPickerOpen((v) => !v)}
+          aria-expanded={pickerOpen}
+          aria-controls="cont-avatar-picker"
+          data-testid="cont-account-avatar"
+          className="relative flex-shrink-0 rounded-full press-feedback"
+          style={{ boxShadow: '0 0 26px -6px var(--aqua)', borderRadius: '50%' }}
         >
-          <span className="relative">{profile.initial}</span>
-        </div>
+          <UserAvatar
+            avatarId={avatarId}
+            size={54}
+            initial={profile.initial}
+            initialTestId="cont-account-initial"
+            label={t('cont.avatar.heroLabel')}
+          />
+          <span
+            className="absolute -bottom-0.5 -right-0.5 w-[22px] h-[22px] rounded-full grid place-items-center"
+            style={{ background: 'var(--grad-pulse)', boxShadow: '0 0 0 3px var(--paper)' }}
+            aria-hidden="true"
+          >
+            <Pencil className="w-3 h-3" strokeWidth={2.4} style={{ color: 'var(--on-accent)' }} />
+          </span>
+        </button>
         <div className="flex-1 min-w-0">
           <p className="font-display font-bold text-ink truncate" data-testid="cont-account-name">{primaryLine}</p>
           {subtitle && (
@@ -212,6 +239,43 @@ export function Cont(): JSX.Element {
           <Flame className="w-3 h-3" aria-hidden="true" />
           {streak} {streakUnit}
         </Pill>
+      </div>
+
+      {/* Avatar preset picker — expands inline under the account card (tapping
+          the hero avatar or this "Schimba avatarul" header toggles it). Selecting
+          a preset applies instantly + persists (settingsStore.avatarId). Kept off
+          the always-visible surface so the Account home stays a clean list. */}
+      <div className="pulse-card p-1 overflow-hidden mb-4 animate-card-rise" id="cont-avatar-picker">
+        <button
+          type="button"
+          onClick={() => setPickerOpen((v) => !v)}
+          aria-expanded={pickerOpen}
+          aria-controls="cont-avatar-grid"
+          data-testid="cont-avatar-toggle"
+          className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink"
+        >
+          <span className="w-9 h-9 rounded-[11px] grid place-items-center flex-shrink-0 bg-paper">
+            <Pencil className="w-5 h-5" aria-hidden="true" />
+          </span>
+          <span className="flex-1 text-sm font-semibold">{t('cont.avatar.change')}</span>
+          <ChevronRight
+            className={`w-5 h-5 flex-shrink-0 text-ink3 transition-transform ${pickerOpen ? 'rotate-90' : ''}`}
+            strokeWidth={1.6}
+            aria-hidden="true"
+          />
+        </button>
+        {pickerOpen && (
+          <div className="px-4 pt-1 pb-4 border-t border-line" id="cont-avatar-grid">
+            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink3 mb-3 mt-3">
+              {t('cont.avatar.pickerLabel')}
+            </p>
+            <AvatarPicker
+              selectedId={avatarId}
+              onSelect={(id) => setAvatar(avatarId === id ? null : id)}
+            />
+            <p className="text-[11px] text-ink3 mt-3 leading-relaxed">{t('cont.avatar.hint')}</p>
+          </div>
+        )}
       </div>
 
       {SECTIONS.map((section) => (

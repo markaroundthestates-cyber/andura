@@ -111,6 +111,19 @@ describe('SetLogInput — §F-pass2-setloginput-01 tinta mode (pre-log)', () => 
     expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('22.5 kg');
   });
 
+  // Audit 2026-06-12 — dumbbell loads are PER HAND engine-wide; the target must
+  // SAY so. Real case: Hammer Curl 12.5/hand misread as a 25 two-dumbbell total.
+  it('labels the tinta kg "/hand" when perHandLoad (dumbbell convention)', () => {
+    renderInput({ mode: 'tinta', kg: 12.5, perHandLoad: true });
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('12.5 kg/hand');
+  });
+
+  it('keeps the plain "kg" suffix when perHandLoad is absent (legacy default)', () => {
+    renderInput({ mode: 'tinta', kg: 60 });
+    expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('60 kg');
+    expect(screen.getByTestId('setlog-tinta-kg').textContent).not.toContain('/hand');
+  });
+
   it('renders target kicker label (EN default "Target")', () => {
     renderInput({ mode: 'tinta' });
     expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('Target');

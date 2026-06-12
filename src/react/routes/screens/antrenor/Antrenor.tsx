@@ -51,8 +51,12 @@ import { PRNotificationBanner } from '../../../components/Antrenor/PRNotificatio
 import { PatternsBanner } from '../../../components/Antrenor/PatternsBanner';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
 import { Calendar7Day } from '../../../components/Calendar7Day';
+import { TutorialGate } from '../../../components/Tutorial/TutorialGate';
 import { ReadinessOrb } from '../../../components/pulse/ReadinessOrb';
 import { PulseMark } from '../../../components/pulse/PulseMark';
+import { UserAvatar } from '../../../components/Avatar/UserAvatar';
+import { useSettingsStore } from '../../../stores/settingsStore';
+import { getUserProfileDisplay } from '../cont/userProfile';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { Pill } from '../../../components/pulse/Pill';
 import { getTodayReadiness } from '../../../../engine/readiness.js';
@@ -111,6 +115,12 @@ export function Antrenor(): JSX.Element {
   // inherit persona scaling. Antrenor section keeps local class for explicit
   // testid contract + redundant inheritance harmless (same class chain).
   const persona = useCoachStore((s) => s.persona);
+  // Account avatar in the home header (mockup 04-avatar.html — small avatar beside
+  // PulseMark, top-right, tap → Cont). Reads the picked preset id (settingsStore)
+  // + the profile initial for the fallback. Decorative-but-actionable: a labeled
+  // button that routes to the Account tab.
+  const avatarId = useSettingsStore((s) => s.avatarId);
+  const profileInitial = getUserProfileDisplay().initial;
   const reactivateDismissed = useCoachStore((s) => s.reactivateDismissed);
   const dismissReactivate = useCoachStore((s) => s.dismissReactivate);
   // Smoke #6 schedule-reactivity — coach aggregate (isRestDay / plannedWorkout)
@@ -224,7 +234,19 @@ export function Antrenor(): JSX.Element {
           <h1 className="font-display text-3xl font-bold text-ink">
             {t('tabs.antrenor.title')}
           </h1>
-          <PulseMark size={34} />
+          <div className="flex items-center gap-2.5">
+            <PulseMark size={34} />
+            {/* Account avatar — small (32px), tap → Cont (mockup placement). */}
+            <button
+              type="button"
+              onClick={() => navigate(gotoPath('cont'))}
+              aria-label={t('cont.avatar.headerLabel')}
+              data-testid="antrenor-header-avatar"
+              className="rounded-full press-feedback"
+            >
+              <UserAvatar avatarId={avatarId} size={32} initial={profileInitial} />
+            </button>
+          </div>
         </div>
         <p className="font-serif italic text-ink2 text-sm mt-0.5">
           {t('antrenor.subtitle')}
@@ -386,6 +408,12 @@ export function Antrenor(): JSX.Element {
           "Sesiune usoara" + "Vreau totusi antrenament" pair (rest day). Each
           surface already owns its own start affordance in the right context;
           this orphan button below PRWallRecent was visual noise. Removed. */}
+
+      {/* First-session coach-marks (founder pick 2026-06-12). Self-gating: shows
+          once for a never-trained user who hasn't seen it; skip/complete persists
+          settingsStore.tutorialSeen. Renders nothing for everyone else. Mounted
+          here so its anchors (energy CTA + start CTA) live on the same screen. */}
+      <TutorialGate />
     </section>
   );
 }

@@ -162,6 +162,10 @@ interface SetLogInputProps {
   onDurationChange?: (n: number) => void;
   // Prescribed duration in seconds (the time/carry target shown read-only).
   targetSec?: number;
+  // Dumbbell convention (audit 2026-06-12): loads are PER HAND engine-wide.
+  // True → the read-only target renders "X kg/mana" (i18n) so a DB target can
+  // never read as the two-dumbbell total. Default false = legacy "X kg".
+  perHandLoad?: boolean;
 }
 
 export function SetLogInput({
@@ -180,6 +184,7 @@ export function SetLogInput({
   durationSec = 0,
   onDurationChange,
   targetSec,
+  perHandLoad = false,
 }: SetLogInputProps): JSX.Element {
   // #7 metric branches. 'time' = a hold logged in seconds, no load tile (a
   // weighted plank would carry a load, but the curated time entries are
@@ -404,7 +409,7 @@ export function SetLogInput({
                 className="font-display text-2xl font-bold text-ink ml-2"
                 data-testid="setlog-tinta-kg"
               >
-                {displayTargetKg} kg
+                {perHandLoad ? t('setLog.kgPerHand', { kg: displayTargetKg }) : `${displayTargetKg} kg`}
               </span>
             </>
           )}

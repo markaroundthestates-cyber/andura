@@ -175,3 +175,12 @@ export function toExerciseDisplay(engineName: string): ExerciseDisplay {
   if (nameRo) return { name: nameRo };
   return { name: engineName };
 }
+
+// ── Per-hand load labeling (Daniel 2026-06-12, din auditul extern) ──────────
+// Dumbbell loads are PER HAND end-to-end (engine seeds, logs, ladder obs all
+// use the value the user enters per dumbbell). The UI must SAY so — "25 kg" on
+// a DB row reads as total and "the engine looks drunk at dumbbells". Pure
+// metadata read; bodyweight rows never call this (no external load to label).
+export function isPerHandLoad(engineName: string): boolean {
+  return getExerciseMetadata(engineName).equipment_type === 'dumbbell';
+}

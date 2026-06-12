@@ -596,4 +596,23 @@ describe('WorkoutPreview — exercise list (T4)', () => {
       expect(list.textContent).toMatch(/60\s*kg/i);
     });
   });
+
+  // Audit 2026-06-12 — dumbbell loads are per hand engine-wide; the row detail
+  // must label them. Real library metadata drives the branch (Hammer Curl =
+  // dumbbell -> "kg/hand"; the cable row stays plain "kg").
+  it('labels dumbbell rows kg/hand via engineName metadata, others stay plain', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout({
+      exercises: [
+        { id: 'ex-1', name: 'Curl ciocan', engineName: 'Hammer Curl', sets: 2, targetReps: 10, targetKg: 12.5, restSec: 60 },
+        { id: 'ex-2', name: 'Trageri verticale', engineName: 'Lat Pulldown', sets: 3, targetReps: 8, targetKg: 60, restSec: 120 },
+      ],
+      exerciseCount: 2,
+    }));
+    renderPreview();
+    await waitFor(() => {
+      const list = screen.getByTestId('preview-exercise-list');
+      expect(list.textContent).toMatch(/12\.5\s*kg\/hand/i);
+      expect(list.textContent).toMatch(/60\s*kg(?!\/)/i);
+    });
+  });
 });

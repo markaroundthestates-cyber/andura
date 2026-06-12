@@ -525,6 +525,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
               haptic(12);
               onStart();
             }}
+            data-testid="coach-today-start-cta"
             className="btn-primary-lift press-feedback pulse-grad-bg pulse-shine relative overflow-hidden w-full mt-4 rounded-full py-[15px] font-semibold flex items-center justify-center gap-2"
             style={{ color: 'var(--on-accent)' }}
           >

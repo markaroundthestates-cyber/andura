@@ -338,7 +338,7 @@ const SYNCED: SyncedStore[] = [
         setTheme: _a, setAccent: _b, toggleNotifications: _c, setNotificationFrequency: _d,
         toggleNotificationDay: _e, setNotificationTime: _f, setUnitSystem: _g, setWeekStart: _h,
         setTelemetryOptIn: _i, setDataExportConsent: _j, setBottomNavStyle: _k, acceptDisclaimer: _l,
-        reset: _m, ...data
+        setAvatar: _n, setTutorialSeen: _o, reset: _m, ...data
       } = st;
       return data;
     },

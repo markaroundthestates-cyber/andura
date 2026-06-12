@@ -568,6 +568,7 @@
       "exercisesHeading": "Exercitii",
       "swappedPrefix": "Inlocuit · {reason}",
       "exerciseDetail": "{sets} seturi - {kg} kg - {reps} reps",
+      "exerciseDetailPerHand": "{sets} seturi - {kg} kg/mana - {reps} reps",
       "exerciseDetailBodyweight": "{sets} seturi - greutatea corpului - {reps} reps",
       "exerciseDetailBodyweightAdded": "{sets} seturi - greutatea corpului +{kg} kg - {reps} reps",
       "exerciseTimedDetail": "{sets} seturi - {seconds} sec",
@@ -1336,6 +1337,7 @@
   "setLog": {
     "targetLabel": "Tinta",
     "targetReps": "repetari",
+    "kgPerHand": "{kg} kg/mana",
     "askDoneLabel": "Cate ai facut?",
     "kgLabel": "kg",
     "repsLabel": "Repetari",
@@ -1462,6 +1464,36 @@
     "swapPreviewSuffix": "in loc de {original}",
     "continueCta": "Continui adaptat"
   },
+  "tutorial": {
+    "stepCounter": "pasul {current} din {total}",
+    "controls": {
+      "next": "Mai departe",
+      "done": "Gata",
+      "skip": "sari peste tutorial"
+    },
+    "steps": {
+      "energy": {
+        "title": "Spune-i lui Andura cum te simti",
+        "body": "Apasa aici inainte de antrenament. Regleaza greutatile dupa energia ta de azi."
+      },
+      "start": {
+        "title": "Gata? Incepe sesiunea",
+        "body": "Andura ti-a pregatit antrenamentul. Te ghideaza exercitiu cu exercitiu."
+      },
+      "log": {
+        "title": "Logheaza ce ai facut",
+        "body": "Andura iti propune greutatea. Schimb-o din +/- daca a fost altfel, apoi confirma setul."
+      },
+      "rate": {
+        "title": "Cum a fost setul?",
+        "body": "Din Usor / Potrivit / Greu, Andura regleaza singura setul urmator. Fii sincer."
+      },
+      "done": {
+        "title": "Asta e tot!",
+        "body": "Restul il descoperi singur. Progresul si istoricul stau in celelalte taburi."
+      }
+    }
+  },
   "cont": {
     "sections": {
       "cont": "Cont",
@@ -1497,6 +1529,39 @@
       "modeLabel": "Mod",
       "modeDark": "Intunecat",
       "modeLight": "Luminos"
+    },
+    "avatar": {
+      "change": "Schimba avatarul",
+      "pickerLabel": "Alege un avatar",
+      "heroLabel": "Avatarul tau",
+      "headerLabel": "Cont",
+      "hint": "Salvat pe acest cont. Zero upload, zero poza.",
+      "presets": {
+        "ai-01": "Avatar 1",
+        "ai-02": "Avatar 2",
+        "ai-03": "Avatar 3",
+        "ai-04": "Avatar 4",
+        "ai-05": "Avatar 5",
+        "ai-06": "Avatar 6",
+        "ai-07": "Avatar 7",
+        "ai-08": "Avatar 8",
+        "ai-09": "Avatar 9",
+        "ai-10": "Avatar 10",
+        "ai-11": "Avatar 11",
+        "ai-12": "Avatar 12",
+        "ai-13": "Avatar 13",
+        "ai-14": "Avatar 14",
+        "ai-15": "Avatar 15",
+        "ai-16": "Avatar 16",
+        "heartbeat": "Puls",
+        "target": "Tinta",
+        "bolt": "Fulger",
+        "mountain": "Varf",
+        "leaf": "Mladita",
+        "orbit": "Orbita",
+        "prism": "Prisma",
+        "spark": "Scanteie"
+      }
     },
     "accountFallback": "Utilizator",
     "emailFallback": "Profilul tau Andura",

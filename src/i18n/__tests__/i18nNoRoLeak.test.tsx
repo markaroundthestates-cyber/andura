@@ -1380,7 +1380,6 @@ describe('Engine-origin i18n — Tempo cue renders RO-clean under RO locale', ()
       tier: 'T0',
     });
     const presc = composeTempoPrescription({ cueText: formCue.cueText, persona: 'gigica' });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockedGetTodayWorkout.mockResolvedValue({
       workoutTitle: 'Push',
       sessionType: 'PUSH',
@@ -1395,7 +1394,9 @@ describe('Engine-origin i18n — Tempo cue renders RO-clean under RO locale', ()
         cueId: formCue.cueId ?? null,
         persona: formCue.persona ?? null,
       },
-    } as any);
+      // Typed through the mock's own parameter shape (no `any`): the fixture
+      // carries only the fields this render path reads.
+    } as unknown as Parameters<typeof mockedGetTodayWorkout.mockResolvedValue>[0]);
     const { container } = render(
       withRouter('/app/antrenor/workout-preview', <WorkoutPreview />),
     );

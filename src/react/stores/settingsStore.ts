@@ -16,6 +16,15 @@ export type WeekDayFlags = readonly [boolean, boolean, boolean, boolean, boolean
 interface SettingsState {
   theme: Theme;
   accent: Accent;
+  // Account avatar — the picked preset id from the illustrated set
+  // (Avatar/registry.ts), or null = initials fallback. A user preference like
+  // accent/theme; synced per-UID via the storeSync settings node (LWW).
+  avatarId: string | null;
+  // First-session coach-marks tutorial — true once the user has finished or
+  // skipped the guided bubbles (founder pick 2026-06-12). A user preference like
+  // avatarId/accent: persisted + synced per-UID via storeSync. Default false →
+  // the overlay shows once for a user who has never trained; never re-shows.
+  tutorialSeen: boolean;
   notificationsEnabled: boolean;
   notificationFrequency: NotificationFrequency;
   notificationDays: WeekDayFlags; // active days
@@ -32,6 +41,8 @@ interface SettingsState {
 interface SettingsActions {
   setTheme: (t: Theme) => void;
   setAccent: (a: Accent) => void;
+  setAvatar: (id: string | null) => void;
+  setTutorialSeen: (v: boolean) => void;
   toggleNotifications: () => void;
   setNotificationFrequency: (f: NotificationFrequency) => void;
   toggleNotificationDay: (dayIdx: number) => void;
@@ -51,6 +62,10 @@ const DEFAULTS: SettingsState = {
   theme: 'dark',
   // Pulse primary accent — default Volt (the signature electric lime / --brick).
   accent: 'volt',
+  // No preset chosen by default → initials fallback (UserAvatar).
+  avatarId: null,
+  // Tutorial unseen by default — a fresh user gets the first-session coach-marks.
+  tutorialSeen: false,
   notificationsEnabled: true,
   notificationFrequency: 'zilnic',
   notificationDays: [true, true, true, true, true, false, false], // L-V active
@@ -70,6 +85,8 @@ export const useSettingsStore = create<SettingsState & SettingsActions>()(
       ...DEFAULTS,
       setTheme: (theme) => set({ theme }),
       setAccent: (accent) => set({ accent }),
+      setAvatar: (avatarId) => set({ avatarId }),
+      setTutorialSeen: (tutorialSeen) => set({ tutorialSeen }),
       toggleNotifications: () =>
         set((s) => ({ notificationsEnabled: !s.notificationsEnabled })),
       setNotificationFrequency: (notificationFrequency) => set({ notificationFrequency }),
@@ -100,6 +117,8 @@ export const useSettingsStore = create<SettingsState & SettingsActions>()(
       partialize: (state) => ({
         theme: state.theme,
         accent: state.accent,
+        avatarId: state.avatarId,
+        tutorialSeen: state.tutorialSeen,
         notificationsEnabled: state.notificationsEnabled,
         notificationFrequency: state.notificationFrequency,
         notificationDays: state.notificationDays,

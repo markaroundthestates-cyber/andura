@@ -22,6 +22,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Clock, Layers, TrendingUp, Flame, Check, Zap } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
+import { isPerHandLoad } from '../../../lib/exerciseDisplay';
 import { coachPick } from '../../../lib/coachVoice';
 import { getTodayWorkout, resolveSessionTitle } from '../../../lib/engineWrappers';
 import type { PlannedWorkoutOutput } from '../../../lib/engineWrappers';
@@ -450,6 +451,10 @@ export function WorkoutPreview(): JSX.Element {
                 ? ex.targetKg > 0
                   ? t('workout.preview.exerciseDetailBodyweightAdded', { sets: ex.sets, kg: ex.targetKg, reps: ex.repsBand ?? ex.targetReps })
                   : t('workout.preview.exerciseDetailBodyweight', { sets: ex.sets, reps: ex.repsBand ?? ex.targetReps })
+                // Dumbbell loads are per hand engine-wide — label them (audit 2026-06-12)
+                // so "25 kg" on a DB row cannot read as the two-dumbbell total.
+                : isPerHandLoad(ex.engineName ?? ex.name)
+                ? t('workout.preview.exerciseDetailPerHand', { sets: ex.sets, kg: ex.targetKg, reps: ex.repsBand ?? ex.targetReps })
                 : t('workout.preview.exerciseDetail', { sets: ex.sets, kg: ex.targetKg, reps: ex.repsBand ?? ex.targetReps }),
               idx: i,
             })).map((item) => (

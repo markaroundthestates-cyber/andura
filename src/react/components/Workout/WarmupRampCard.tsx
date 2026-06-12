@@ -66,10 +66,15 @@ export function WarmupRampCard({ steps, sessionKey }: WarmupRampCardProps): JSX.
   const [done, setDone] = useState(() => isDone(sessionKey));
   const intervalRef = useRef<number | null>(null);
 
+  // Whether a post-primer rest is RUNNING. Extracted (not inline in the dep
+  // array) so the effect re-runs only on the boolean FLIP, never per tick —
+  // the interval must survive across countdown updates (lint ratchet 2026-06-12).
+  const resting = restLeft > 0;
+
   // Tick the short rest countdown; when it hits 0 advance to the next primer
   // (or finish after the last one).
   useEffect(() => {
-    if (restLeft <= 0) return undefined;
+    if (!resting) return undefined;
     intervalRef.current = window.setInterval(() => {
       setRestLeft((s) => {
         if (s <= 1) {
@@ -90,12 +95,11 @@ export function WarmupRampCard({ steps, sessionKey }: WarmupRampCardProps): JSX.
     return () => {
       if (intervalRef.current !== null) window.clearInterval(intervalRef.current);
     };
-  }, [restLeft > 0, steps.length, sessionKey]);
+  }, [resting, steps.length, sessionKey]);
 
   if (done || steps.length === 0) return null;
 
   const step = steps[stepIdx]!;
-  const resting = restLeft > 0;
 
   const completeStep = (): void => {
     // Last primer's rest still runs (60s before the working set — the part the

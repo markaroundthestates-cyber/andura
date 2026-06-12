@@ -97,32 +97,33 @@
 @layer base {
   :root {
     /* Pulse base design vars (accent family + gradients + fonts + motion).
-       DESIGN PASS 2026-06-11 (Daniel CEO "nu-mi plac culorile, mai putin neon"):
-       the accent SOURCE family is refined a notch calmer/more premium while
-       keeping the volt/aqua/ember identity. This single declaration cascades to
-       BOTH themes (light :root + dark) — every gradient, set-chip, energy dot,
+       PALETTE B "EMERALD PULSE" 2026-06-12 (Daniel pick din design-pass mockup
+       01-palette.html varianta B — green-teal core, warm-amber spark). The
+       accent SOURCE family swaps hue family (lime→emerald, coral→amber) while
+       keeping the Pulse identity. This single declaration cascades to BOTH
+       themes (light :root + dark) — every gradient, set-chip, energy dot,
        glow + the dark primary accent (--brick = volt) re-skins from here.
-         - volt  #b6f23a → #a8e04e  (deepen + drop the acid-yellow glare — was the
-                                     "highlighter" hue Daniel flagged; still lime)
-         - aqua  #4fd6e8 → #45c8da  (one step deeper teal — less electric)
-         - ember #ff7d52 → #f87044  (slightly deeper coral — less hot-orange)
-       violet unchanged (decorative --grad-ember endpoint, minimal surface).
-       All contrast re-verified AA on the dark glass card + paper (see notes doc);
-       the dark accent/text tokens below are re-pinned to match. */
-    --volt: #a8e04e; --volt-deep: #8fd218; --aqua: #45c8da; --aqua-deep: #2bb6cc;
-    --ember: #f87044; --ember-deep: #f4571f; --violet: #a98bff;
+         - volt  #a8e04e → #5fe39a  (emerald — 12.09:1 dark paper / 10.21 card)
+         - aqua  #45c8da → #46d4c4  (teal — 10.72:1 / 9.06 card)
+         - ember #f87044 → #ffa24d  (warm amber — 9.83:1 / 8.31 card)
+       Deep variants re-derived in-hue (decorative gradient/wash duty, no AA
+       text gate). Light-theme TEXT-path derivatives re-pinned below. */
+    --volt: #5fe39a; --volt-deep: #3ecb7e; --aqua: #46d4c4; --aqua-deep: #2fbcab;
+    --ember: #ffa24d; --ember-deep: #f08a2a; --violet: #9b8bff;
     /* Energy-ramp mid/low hues — mockup data.jsx energy[] (normal=gold,
        tired=ember-red). Decorative-only (aria-hidden dots), so no AA gate;
-       cascades into [data-theme=dark] unchanged (theme-agnostic in the mockup). */
-    --gold: #e8c84d; --ember-red: #ff5d6c;
+       cascades into [data-theme=dark] unchanged (theme-agnostic in the mockup).
+       Palette B values (warmer gold, salmon red). */
+    --gold: #ffd76a; --ember-red: #ff6f7e;
     --grad-pulse: linear-gradient(135deg, var(--volt) 0%, var(--aqua) 100%);
     --grad-ember: linear-gradient(135deg, var(--ember) 0%, var(--violet) 120%);
     --font-display: 'Space Grotesk Variable', 'Inter', system-ui, sans-serif;
     --font-body: 'Manrope Variable', 'Inter', system-ui, sans-serif;
     --font-mono: 'Space Mono', ui-monospace, monospace;
     --motion: 1; --radius: 22px; --radius-sm: 14px;
-    /* On-accent ink (text sitting on a --brick/--accent fill). Pulse near-black. */
-    --on-accent: #0a0c14;
+    /* On-accent ink (text sitting on a --brick/--accent fill). Palette B
+       greenish near-black (mockup .pal-b --on-accent). */
+    --on-accent: #04130c;
 
     /* ── PULSE LIGHT (default :root) — Pulse --bg/--bg-2 light values ──────── */
     --paper: #eef0f6;     /* Pulse --bg light — cool off-white L≈0.85 */
@@ -132,16 +133,16 @@
     --ink-3: #5f6479;     /* Pulse --ink-3 darkened (was #686e82 = 4.45:1, just under AA for 11px mono captions) → 5.14:1 vs paper ✅ AA. Cool-grey identity preserved; stays lighter than --ink-2 (5.75:1) so the ink hierarchy holds. */
     --line: rgba(12, 16, 30, 0.09); /* Pulse --line light — decorative hairline */
     --line-strong: #787e92; /* Pulse --line-strong nudged (mockup .16 alpha = 1.41:1 ❌) → 3.55:1 vs paper ✅ SC 1.4.11 */
-    --brick: #477006;     /* PRIMARY ACCENT — Pulse volt-deep as light-readable text → 5.14:1 vs paper ✅ AA (raw volt #b6f23a = 1.17:1 unusable as text on light) */
+    --brick: #0f6e44;     /* PRIMARY ACCENT — Palette B emerald-deep as light-readable text → 5.53:1 vs paper / 6.30 white ✅ AA (raw volt #5fe39a = 1.83:1 unusable as text on light) */
     --brick-dark: #bd3a28;/* Destructive-action TEXT light — warm red → 4.85:1 ✅ AA */
-    --olive: #557428;     /* Energy/cardio accent light — volt-family deep green → 4.71:1 ✅ AA */
-    --deep: #1d6b7d;      /* Rest/recovery accent light — aqua-family teal → 5.34:1 ✅ AA */
+    --olive: #1f7548;     /* Energy/cardio accent light — emerald-family deep green → 4.99:1 ✅ AA */
+    --deep: #0f6e63;      /* Rest/recovery accent light — teal-family deep → 5.37:1 ✅ AA */
     /* Text-path accent inks — the bright --aqua/--ember are wash/glow/border ONLY
-       (1.5:1 / 2.2:1 as text on light paper = AA FAIL). These darkened in-hue
+       (raw B teal/amber fail as text on light paper). These darkened in-hue
        variants are AA as TEXT on light surfaces (paper #eef0f6, white card #fff,
        and the 16% ghost-Pill tint). Bright --aqua/--ember stay unchanged. */
-    --aqua-ink: #176577;  /* aqua text-path light → 5.82:1 paper / 5.41:1 ghost tint ✅ AA */
-    --ember-ink: #a83817; /* ember text-path light → 5.68:1 paper / 5.00:1 ghost tint ✅ AA */
+    --aqua-ink: #0e6358;  /* teal text-path light → 6.26:1 paper / 7.13 white ✅ AA */
+    --ember-ink: #9a5505; /* amber text-path light → 5.01:1 paper / 5.71 white ✅ AA */
     --succ: #2d7642;      /* Success green → 4.87:1 ✅ AA */
     --warn: #8f6210;      /* Warning amber → 4.70:1 ✅ AA */
     --danger: #bd3a28;    /* Danger red → 4.85:1 ✅ AA */
@@ -190,7 +191,7 @@
        Pulse light: teal quote + cool muted sub-text + amber lagging + muted
        override hint. AA verified vs paper-2 #ffffff (lora 6.08:1, meta 5.07:1,
        lagging 5.35:1, override 6.55:1). */
-    --coach-lora: #1d6b7d;            /* italic quote — Pulse aqua-deep teal */
+    --coach-lora: #0f6e63;            /* italic quote — Palette B teal-deep (= --deep light) */
     --coach-meta: #686e82;            /* sub-meta (duration/count) — cool muted (= ink-3) */
     --coach-lagging: #8f6210;         /* secondary weakness line — amber */
     --coach-override: #565d72;        /* "Vrei altceva azi?" CTA — muted (= ink-2) */
@@ -207,25 +208,25 @@
      ink>ink-2>ink-3>line-strong>line preserved. Light --on-accent inherits
      from :root (#0a0c14) — text-paper on a volt fill reads as near-black ink. */
   [data-theme="dark"] {
-    --paper: #090b13;      /* Pulse --bg — phone bg near-black blue */
-    --paper-2: #0d101c;    /* Pulse --bg-2 — secondary surface dark */
-    --ink: #f3f5fc;        /* Pulse --ink → 18.0:1 ✅ AAA */
-    --ink-2: #a7adc4;      /* Pulse --ink-2 → 8.81:1 ✅ AAA */
-    --ink-3: #82889e;      /* Pulse --ink-3 nudged (mockup #6a7088 = 3.61:1 on card ❌) → 5.02:1 ✅ AA */
-    --line: rgba(255,255,255,0.085); /* Pulse --line — decorative white hairline */
-    --line-strong: #5c6278;/* Pulse --line-strong nudged (mockup .17 alpha = 1.6:1 ❌) → 3.25:1 ✅ SC 1.4.11 */
-    --brick: #a8e04e;      /* PRIMARY ACCENT — refined Pulse --volt → 12.6:1 paper / 10.7:1 card ✅ AAA (calmer lime, design pass 2026-06-11) */
-    --brick-dark: #ff8a6e; /* Destructive-action TEXT — Pulse ember-red → 8.53:1 ✅ AA */
-    --olive: #a8e04e;      /* Energy/cardio accent — refined volt (matches --brick) → 12.6:1 ✅ */
-    --deep: #45c8da;       /* Rest/recovery accent — refined Pulse aqua → 9.6:1 paper / 8.4:1 card ✅ */
-    /* Text-path accent inks — dark theme keeps the (refined) bright Pulse hues
-       (re-verified AA as text on dark paper + glass card, design pass 2026-06-11).
+    --paper: #080c10;      /* Palette B --bg — phone bg near-black green */
+    --paper-2: #0c1216;    /* Palette B --bg-2 — secondary surface dark */
+    --ink: #eef6f2;        /* Palette B --ink → 17.84:1 ✅ AAA */
+    --ink-2: #9fb4ac;      /* Palette B --ink-2 → 8.97:1 ✅ AAA */
+    --ink-3: #7c9088;      /* Palette B --ink-3 → 5.79:1 paper / 4.89:1 card ✅ AA */
+    --line: rgba(190,255,225,0.09); /* Palette B --line — decorative mint hairline */
+    --line-strong: #566860;/* Palette B --line-strong → 3.31:1 vs paper ✅ SC 1.4.11 */
+    --brick: #5fe39a;      /* PRIMARY ACCENT — Palette B emerald --volt → 12.09:1 paper / 10.21:1 card ✅ AAA */
+    --brick-dark: #ff8a7a; /* Destructive-action TEXT — Palette B salmon → 8.57:1 ✅ AA */
+    --olive: #5fe39a;      /* Energy/cardio accent — emerald (matches --brick) → 12.09:1 ✅ */
+    --deep: #46d4c4;       /* Rest/recovery accent — Palette B teal → 10.72:1 paper / 9.06:1 card ✅ */
+    /* Text-path accent inks — dark theme keeps the bright Palette B hues
+       (re-verified AA as text on dark paper + glass card, 2026-06-12).
        Same names as the light block so Kicker/Pill text resolves in BOTH themes. */
-    --aqua-ink: #45c8da;   /* refined aqua text-path dark → 9.6:1 paper / 8.4:1 card ✅ AA */
-    --ember-ink: #f87044;  /* refined ember text-path dark → 6.95:1 paper / 5.9:1 card ✅ AA */
-    --succ: #7be0a0;       /* Success green (Pulse family) → 12.17:1 ✅ */
-    --warn: #ffc24f;       /* Warning amber (Pulse family) → 12.24:1 ✅ */
-    --danger: #ff7d6a;     /* Danger red (Pulse ember-red) → 7.85:1 ✅ */
+    --aqua-ink: #46d4c4;   /* teal text-path dark → 10.72:1 paper / 9.06:1 card ✅ AA */
+    --ember-ink: #ffa24d;  /* amber text-path dark → 9.83:1 paper / 8.31:1 card ✅ AA */
+    --succ: #5fe39a;       /* Success green (= emerald volt) → 12.09:1 ✅ */
+    --warn: #ffd76a;       /* Warning amber (Palette B gold) → 14.18:1 ✅ */
+    --danger: #ff8a7a;     /* Danger red (Palette B salmon) → 8.57:1 ✅ */
 
     /* ── PULSE GLASS SURFACES + DEPTH (1:1 parity port 2026-05-29) ──────────
        Verbatim from mockup interfata-noua/index.html :root,[data-theme=dark].
@@ -233,10 +234,10 @@
        mockup floats translucent glass over the living aurora. --surface is the
        card fill (.pulse-card), --bg-grad the page wash, --shadow-card/--glow the
        depth. Pulse motion/radius vars too so ported components resolve. */
-    --surface: rgba(24, 29, 46, 0.72);   /* glass card fill — aurora shows through */
-    --surface-2: rgba(33, 39, 60, 0.78); /* elevated/nested glass */
-    --surface-solid: #141826;            /* opaque fallback (no-backdrop contexts) */
-    --bg-grad: radial-gradient(120% 80% at 50% -10%, #131830 0%, #090b13 60%);
+    --surface: rgba(20, 34, 32, 0.74);   /* glass card fill — aurora shows through (Palette B green glass) */
+    --surface-2: rgba(28, 44, 41, 0.80); /* elevated/nested glass */
+    --surface-solid: #14211f;            /* opaque fallback (no-backdrop contexts) */
+    --bg-grad: radial-gradient(120% 80% at 50% -10%, #0e2622 0%, #080c10 62%);
     --shadow-card: 0 1px 0 rgba(255,255,255,0.04) inset, 0 24px 48px -28px rgba(0,0,0,0.85);
     --glow: 0 0 0 1px var(--line), 0 18px 40px -18px rgba(0,0,0,0.8);
     --grain-opacity: 0.05;
@@ -251,12 +252,12 @@
     --status-danger-bg: #2e1410;
     --status-danger-border: #5c2820;
     --status-danger-text: #ff9580;
-    --status-neutral-bg: #1a2030;
-    --status-neutral-border: #333b52;
-    --status-neutral-text: #c4cae0;
-    --status-info-bg: #0e2030;
-    --status-info-border: #1f3b52;
-    --status-info-text: #8fd4e8;
+    --status-neutral-bg: #182420;
+    --status-neutral-border: #32443c;
+    --status-neutral-text: #c2d4ca;   /* 10.34:1 vs neutral-bg ✅ AAA (Palette B green-grey retint) */
+    --status-info-bg: #0c2624;
+    --status-info-border: #1e4a42;
+    --status-info-text: #82dcc8;      /* 9.88:1 vs info-bg ✅ AAA (Palette B teal retint) */
 
     /* Dark overlay: dial up alpha — Pulse-dark already low-luma, need a
        stronger backdrop to keep modals visually separated from page bg. */
@@ -276,10 +277,10 @@
 
     /* CoachTodayCard accent tokens — Pulse dark. AA verified vs card #0d101c
        (lora 12.29:1, meta 5.38:1, lagging 10.92:1, override 8.50:1). */
-    --coach-lora: #7fdfe8;            /* italic quote — Pulse aqua (bright on dark) */
-    --coach-meta: #82889e;            /* sub-meta (duration/count) — cool muted (= ink-3) */
-    --coach-lagging: #ffb38f;         /* secondary weakness line — Pulse ember-soft */
-    --coach-override: #a7adc4;        /* "Vrei altceva azi?" CTA — muted (= ink-2) */
+    --coach-lora: #6fe2d4;            /* italic quote — Palette B teal bright → 12.62:1 ✅ */
+    --coach-meta: #7c9088;            /* sub-meta (duration/count) — green-grey muted (= ink-3) */
+    --coach-lagging: #ffc28a;         /* secondary weakness line — Palette B amber-soft → 12.46:1 ✅ */
+    --coach-override: #9fb4ac;        /* "Vrei altceva azi?" CTA — muted (= ink-2) */
   }
 
   /* Light theme — Pulse light. The :root above is already the Pulse-light
@@ -296,10 +297,10 @@
     --ink-3: #5f6479;     /* mirror :root light — darkened to 5.14:1 vs paper ✅ AA (was #686e82 = 4.45:1) */
     --line: rgba(12, 16, 30, 0.09);
     --line-strong: #787e92;
-    --brick: #477006;
+    --brick: #0f6e44;
     --brick-dark: #bd3a28;
-    --olive: #557428;
-    --deep: #1d6b7d;
+    --olive: #1f7548;
+    --deep: #0f6e63;
     --succ: #2d7642;
     --warn: #8f6210;
     --danger: #bd3a28;
@@ -331,7 +332,7 @@
     --heat-recovery: #fbeedc;
     --heat-recovery-border: #f0d8a8;
     --rating-usor: #9cd0ac;
-    --coach-lora: #1d6b7d;
+    --coach-lora: #0f6e63;
     --coach-meta: #686e82;
     --coach-lagging: #8f6210;
     --coach-override: #565d72;
@@ -961,6 +962,20 @@
   @keyframes pulse-glow-breath { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
   @keyframes pulse-ring { 0% { transform: scale(0.82); opacity: 0.55; } 70%, 100% { transform: scale(1.25); opacity: 0; } }
 
+  /* Tutorial coach-mark spotlight — breathes the volt ring around the target.
+     Animates ONLY the inner ring's box-shadow spread (the outer 9999px dim
+     shadow stays fixed), so there is NO transform and NO layout shift — safe
+     against the fixed-positioning golden rule. The component also suppresses
+     this class under prefers-reduced-motion (JS guard); the global * cap below
+     is the belt-and-suspenders fallback for the keyframe itself. */
+  @keyframes tutorial-spot-breath {
+    0%, 100% { box-shadow: 0 0 0 3px var(--volt), 0 0 0 9999px rgba(5,6,10,0.74); }
+    50%      { box-shadow: 0 0 0 5px var(--volt), 0 0 0 9999px rgba(5,6,10,0.74); }
+  }
+  .tutorial-spot-pulse {
+    animation: tutorial-spot-breath calc(2.2s / max(var(--motion), 0.4)) ease-in-out infinite;
+  }
+
   /* Animated gradient text/fill (volt→aqua). Pair with bg-clip:text for a
      headline, or use .pulse-grad-bg for a filled element. */
   .pulse-gradtext {
@@ -1039,7 +1054,9 @@ html, body {
    background-attachment anchors the glow to the top while content scrolls.
    (Legacy Luxury + Living Body body-glow rules retired with their palettes.) */
 [data-theme="dark"] body {
-  background: radial-gradient(120% 80% at 50% -10%, #131830 0%, #090b13 60%);
+  /* Palette B 2026-06-12: read the gradient from the token (--bg-grad) so the
+     body glow re-skins with the theme instead of pinning a stale hex pair. */
+  background: var(--bg-grad, radial-gradient(120% 80% at 50% -10%, #0e2622 0%, #080c10 62%));
   background-attachment: fixed;
 }
 
@@ -1073,21 +1090,32 @@ html, body {
    a real DEVICE ON A STAGE, not a stretched web column. Mobile (<768px) stays
    edge-to-edge (PWA invariant) — this whole block is desktop-only.
 
-   SOLVING the sticky/fixed alignment that blocked a physical frame before
-   (prior NOTE: a containing block on #root made BottomNav/SessionPill pin to
-   #root and scroll off): here that is the DESIRED behavior. #root becomes the
-   device SCREEN — a fixed-size (var(--device-w/h)), centered, internally-
-   scrolling surface (overflow-y:auto). Giving it `transform: translateZ(0)`
-   makes #root the containing block for its `position: fixed` descendants, so:
-     - BottomNav (.app-fixed-column, fixed bottom-0) pins to the SCREEN bottom
-       and stays put while inner content scrolls ✓
-     - SubHeader (sticky top-0) sticks to the #root scroll container top ✓
-     - .app-fixed-column centering (left:50%/translateX) is overridden to span
-       the screen edge-to-edge (left/right:0) since #root IS the column now ✓
-   The bezel itself is drawn by #root::before (the dark frame ring + outer
-   shadow, sitting behind the screen via a larger inset) and the notch by
-   #root::after (pill on top of the screen). The screen clips its content with
-   border-radius + overflow-hidden so rounded corners read like glass. */
+   SOLVING the sticky/fixed alignment that blocked a physical frame before —
+   THE POC MECHANISM (04-architecture/mockups/design-pass-2026-06-12/
+   03-phone-bezel.html). THE GOLDEN RULE: NO transform / filter / backdrop-
+   filter / contain / will-change on #root or ANY ancestor of the app viewport.
+   A transform/filter on #root creates a new containing block for BOTH
+   position:fixed AND clips, but the project's prior pain (border-radius +
+   overflow + transform broke sticky/fixed) traces to exactly that ancestor
+   transform — so this bezel is built WITHOUT it:
+     - #root is the device SCREEN: fixed-size (var(--device-w/h)), centered,
+       position:relative (NOT transformed), border-radius + overflow:hidden so
+       the rounded corners clip like glass. position:relative alone makes #root
+       the containing block for its position:ABSOLUTE descendants (and, with
+       overflow:hidden, clips the absolute AuroraBackground to the screen) — no
+       transform needed for either.
+     - The inner .app-scroll wrapper is the ONLY scroll surface (overflow-y:auto).
+       SubHeader (sticky top-0) sticks to .app-scroll's top ✓
+     - The app's "fixed" chrome (BottomNav/SessionPill/banners/Workout dock) all
+       carry .app-fixed-column. On desktop that class is flipped to
+       position:ABSOLUTE pinned to #root (the POC's "fixed becomes absolute
+       within the viewport" — rule 3), so the chrome anchors to the SCREEN, not
+       the browser window, with ZERO ancestor transform. On a real phone (mobile
+       path, <768px) the SAME nodes stay position:fixed and the viewport == the
+       window — one codepath, both contexts.
+   The bezel metal is drawn by #root's own layered box-shadow ring (paints only,
+   no transform/clip on an ancestor) and the notch by #root::after (an absolute
+   pill pinned to the screen top). */
 @media (min-width: 768px) {
   html, body {
     /* Stage: center the device in the viewport, hide overflow so the bezel
@@ -1116,17 +1144,15 @@ html, body {
     background: var(--paper);
     border-radius: var(--screen-radius);
     /* #root is the DEVICE SCREEN: it clips its rounded corners (overflow:hidden)
-       and is the containing block for fixed chrome (BottomNav/SessionPill) via
-       transform:translateZ(0) — but it is NOT the scroll surface. The inner
-       .app-scroll wrapper scrolls; #root stays put so the "fixed" BottomNav
-       pins to the screen bottom instead of scrolling off with content
-       (desktop BottomNav freeze fix). */
+       but is NOT the scroll surface. The inner .app-scroll wrapper scrolls;
+       #root stays put. #root is position:relative (base rule + above) → the
+       containing block for its position:ABSOLUTE descendants, and overflow:hidden
+       clips the absolute AuroraBackground to the screen. The app chrome anchors
+       to #root via position:absolute (the .app-fixed-column desktop override
+       below), so NO transform is needed here — keeping the POC golden rule that
+       no ancestor of the viewport carries a transform/filter/contain that would
+       have re-broken sticky/fixed (the historical phone-frame pain). */
     overflow: hidden;
-    /* Establish a containing block for fixed descendants (BottomNav/chrome)
-       so they pin to the SCREEN, not the viewport. This is the deliberate
-       reversal of the 2026-05-28 removal — now #root IS the device, so the
-       chrome SHOULD pin to it. */
-    transform: translateZ(0);
     /* Bezel ring (drawn via outline-like box-shadow spread) + outer depth +
        accent halo. The dark ring spread = --bezel; the inset highlight gives
        the metal edge sheen (mockup bezel gradient #23262f→#0a0b10). */
@@ -1156,13 +1182,14 @@ html, body {
   }
   .app-scroll::-webkit-scrollbar { width: 0; height: 0; }
   /* Notch — pill on top of the screen (mockup .notch 120×30, speaker + cam).
-     #root has transform:translateZ(0) so it is the containing block for its
-     fixed descendants: a fixed pseudo at top:0/left:50% pins to the SCREEN
-     top-center (not the viewport) and stays put as inner content scrolls.
-     pointer-events:none so it never blocks taps on the chrome beneath it. */
+     #root is position:relative (no transform), so an ABSOLUTE pseudo at
+     top:0/left:50% pins to #root's top-center (the SCREEN) and stays put as the
+     inner .app-scroll content scrolls underneath. (absolute, not fixed — the
+     golden rule keeps #root transform-free, and a fixed pseudo would otherwise
+     anchor to the window.) pointer-events:none so it never blocks taps. */
   #root::after {
     content: '';
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -1307,14 +1334,23 @@ nav[data-nav-style]::before {
   padding-bottom: var(--app-bottom-chrome);
 }
 
-/* Desktop bezel (≥768px) — #root is the device screen + the containing block
-   for these `position: fixed` chrome elements (it has transform:translateZ(0)),
-   so they already pin to the SCREEN, not the viewport. Anchor them edge-to-edge
-   across the screen (left/right:0, no translateX) so BottomNav + the inset pill
-   align to the device width without the viewport-centering math. The screen's
-   border-radius + overflow-hidden keeps the bottom nav corners inside the glass. */
+/* Desktop bezel (≥768px) — THE POC MECHANISM for "fixed" chrome (BottomNav,
+   SessionPill, Toasts, banners, InstallPrompt, the Workout in-session dock —
+   every element carrying .app-fixed-column). On mobile these are position:fixed
+   to the window (Tailwind `fixed`, base .app-fixed-column rule). On desktop we
+   flip them to position:ABSOLUTE so they anchor to #root (the device screen,
+   position:relative, NO transform) instead of the browser window — the POC's
+   "fixed becomes absolute within the viewport" (rule 3). This is what lets the
+   bezel keep the golden rule: #root needs NO transform to be the containing
+   block for these (relative is enough for absolute), so nothing re-breaks the
+   sticky SubHeader. Edge-to-edge across the screen (left/right:0, no translateX,
+   no viewport-centering math); #root's border-radius + overflow-hidden keep the
+   bottom-nav corners inside the glass.
+   Tailwind `.fixed` (position:fixed) lives in @layer utilities; these unlayered
+   rules win the cascade, so position:absolute applies without !important. */
 @media (min-width: 768px) {
   .app-fixed-column {
+    position: absolute;
     left: 0;
     right: 0;
     transform: none;
@@ -1322,6 +1358,7 @@ nav[data-nav-style]::before {
     width: 100%;
   }
   .app-fixed-column--inset {
+    position: absolute;
     left: 0;
     right: 0;
     transform: none;

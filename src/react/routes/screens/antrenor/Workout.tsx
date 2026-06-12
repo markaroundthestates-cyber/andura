@@ -28,6 +28,7 @@
 
 import type { JSX } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { HelpCircle, Images, ChevronDown } from 'lucide-react';
 import { AparatLipsaSheet } from '../../../components/Workout/AparatLipsaSheet';
@@ -36,6 +37,7 @@ import { useWorkoutStore, getCurrentMode, energyLightForIntensityMod } from '../
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { INSESSION_RATING_TO_RPE } from '../../../stores/workoutStore.logic';
 import { coachPick } from '../../../lib/coachVoice';
+import { isPerHandLoad } from '../../../lib/exerciseDisplay';
 import { getTodayWorkout, getPRDelta, getWhyExerciseSummary, resolveSessionTitle } from '../../../lib/engineWrappers';
 import type { PlannedExercise, PlannedWorkoutOutput } from '../../../lib/engineWrappers';
 import { gotoPath } from '../../../lib/navigation';
@@ -540,6 +542,30 @@ export function Workout(): JSX.Element {
   // source is 'in_session_adjustment' (not 'coldstart'). Read + cleared on emit.
   const recFromInSessionRef = useRef(false);
   const currentEngineKey = currentExercise.engineName ?? currentExercise.name;
+  // Dumbbell loads are per hand (engine-wide convention) — label the target so
+  // "12.5 kg" on a DB lift cannot read as the two-dumbbell total (audit 2026-06-12).
+  const perHandLoad = !currentExercise.isBodyweight && isPerHandLoad(currentEngineKey);
+  // V2 dock height, MEASURED (Daniel live 2026-06-12: the rail's last card —
+  // e.g. the disclaimer — was clipped under the dock; the 210px estimate only
+  // covered the compact 'tinta' mode, the editable-steppers dock is ~330px).
+  // ResizeObserver keeps the rail's bottom padding equal to the real dock at
+  // every mode/viewport; jsdom (tests) has no RO → keep the 210 fallback.
+  const [dockH, setDockH] = useState(210);
+  const dockRO = useRef<ResizeObserver | null>(null);
+  const attachDock = useCallback((el: HTMLDivElement | null) => {
+    dockRO.current?.disconnect();
+    dockRO.current = null;
+    if (el) {
+      if (typeof ResizeObserver !== 'undefined') {
+        const ro = new ResizeObserver(() => {
+          if (el.offsetHeight > 0) setDockH(el.offsetHeight);
+        });
+        ro.observe(el);
+        dockRO.current = ro;
+      }
+      if (el.offsetHeight > 0) setDockH(el.offsetHeight);
+    }
+  }, []);
   useEffect(() => {
     if (!hasWorkout) return;
     const identity = `${safeExIdx}:${currentEngineKey}`;
@@ -1395,9 +1421,45 @@ export function Workout(): JSX.Element {
         exerciseTotal={exercises.length}
       />
 
-      {/* Log zone */}
+      {/* Log zone — V2 COACH RAIL (design-pass 2026-06-12, mockup
+          02-coach-insession.html Variant 2 "Coach Rail"). Founder verbatim
+          "Varianta 2 imi place mai mult". Presentation-only restructure of the
+          SAME logging FSM: a SCROLLING context rail (warm-up first, then the
+          exercise hero, set history, demo, swap) flows under a FIXED bottom
+          LOGGING DOCK that keeps "target + steppers + Confirm" always thumb-
+          reachable. The dock + scroll rail are both children of #log-zone so
+          every existing testid + the canonical "Set X/Y" text stay under it
+          (Workout.test contract); the dock is position:fixed so it visually
+          lifts to the bottom thumb zone. BottomNav is HIDDEN on this route
+          (Layout `!inSession && <BottomNav/>`), so the dock owns the bottom edge
+          (+ safe-area) with no collision.
+          The viewport-ancestor transform/filter/contain lesson (bezel) is kept:
+          the dock uses plain `fixed` + the existing `.app-fixed-column` centering
+          (no new transform on an ancestor). */}
       {(phase === 'logging' || phase === 'idle' || phase === 'rating') && (
-        <div className="p-6" data-testid="log-zone">
+        <div className="relative" data-testid="log-zone">
+        {/* ── SCROLLING CONTEXT RAIL ─────────────────────────────────────────
+            Padded bottom by the MEASURED dock height (+ breathing room +
+            safe-area) so the last context card always clears the fixed dock —
+            the dock grows to ~330px in editable-steppers mode, so a hardcoded
+            estimate clipped the rail's last card (Daniel live 2026-06-12). */}
+        <div
+          className="px-6 pt-6"
+          style={{ paddingBottom: `calc(${dockH + 24}px + env(safe-area-inset-bottom, 0px))` }}
+        >
+          {/* WARM-UP RAMP card SURFACES FIRST (mockup Variant 2 idea (b): the
+              warm-up is the first card in the flow, before the working sets —
+              "exact unde o cauti"). Self-contained (own stepper+countdown, zero
+              FSM/logSet/DP touch). Shown only on the FIRST exercise before any
+              working set is logged; done/dismiss is per-session (sessionStorage
+              keyed on sessionStart). Was previously mid-rail; moved to the top
+              of the context rail per the Coach Rail hierarchy. */}
+          {phase === 'logging' && safeExIdx === 0
+            && (history[safeExIdx]?.length ?? 0) === 0
+            && warmupSets.length > 0 && sessionStart !== null && (
+            <WarmupRampCard steps={warmupSets} sessionKey={sessionStart} />
+          )}
+
           {/* Pulse arc 2026-05-29 (blueprint C3-g) — live volume count-up chip.
               Σ kg×reps so far, mono-styled like the mockup header stat. Lives in
               the log-zone (re-renders per set) so SessionTimer's React.memo +
@@ -1586,19 +1648,6 @@ export function Workout(): JSX.Element {
             </div>
           )}
 
-          {/* WARM-UP RAMP card (gym-log arc follow-up 2026-06-12) — the engine's
-              primer ladder, now actionable in-session: step-by-step with its own
-              SHORT rests (30/45/60s, never the working restSec — founder rule).
-              Self-contained (own stepper+countdown, zero FSM/logSet/DP touch — a
-              50%×10 primer must never feed calibration). Shown only on the FIRST
-              exercise before any working set is logged; done/dismiss is
-              per-session (sessionStorage keyed on sessionStart). */}
-          {phase === 'logging' && safeExIdx === 0
-            && (history[safeExIdx]?.length ?? 0) === 0
-            && warmupSets.length > 0 && sessionStart !== null && (
-            <WarmupRampCard steps={warmupSets} sessionKey={sessionStart} />
-          )}
-
           {/* Bug 2 — "Up next" hint on the LAST set of the current exercise (and
               not the final exercise of the session). Lets the user walk to the
               next machine before finishing this set. Gated so it shows only when
@@ -1657,11 +1706,48 @@ export function Workout(): JSX.Element {
               a one-tap "that was real" that re-feeds it to learning. Renders
               nothing when the ledger is empty (the common case). */}
           <QuarantineNotice engineName={currentExercise.engineName ?? currentExercise.name} />
+        </div>
+        {/* ── END SCROLLING CONTEXT RAIL ─────────────────────────────────── */}
 
+        {/* ── FIXED LOGGING DOCK (mockup Variant 2 idea (a)) ─────────────────
+            The single most important action — "target + steppers + Confirm" —
+            is pinned to the bottom thumb zone, ALWAYS reachable, while the
+            context above scrolls under it.
+
+            PORTALED TO document.body (constraint #3 — the bezel lesson). The
+            routed content is wrapped by Layout in `.animate-page-enter`, whose
+            page-enter animation leaves a `transform` (even at the identity
+            matrix) that establishes a containing block for `position:fixed`
+            descendants — so a `fixed` dock INSIDE the route would anchor to that
+            wrapper's box (full content height), not the viewport, and at a short
+            (740px) viewport it pushed the Confirm CTA below the fold. Rendering
+            at body level (the SAME tier as the Layout BottomNav/SessionPill,
+            which is why THEY pin correctly) makes `fixed` resolve to the true
+            viewport. No transform/filter/contain is added on any ancestor.
+            The portal is transparent to the test suite (jsdom `screen` queries
+            the whole document, so every setlog / rating testid stays reachable);
+            "Set X/Y" lives in the hero (scroll rail), not here, so #log-zone keeps
+            its asserted text. BottomNav is hidden in-session → no collision; the
+            dock owns the bottom edge + safe-area. */}
+        {createPortal(
+        <div
+          ref={attachDock}
+          className="app-fixed-column app-fixed-column--inset fixed bottom-0 z-30 px-1 pt-4 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] [&>*:last-child]:mb-0"
+          data-testid="log-dock"
+          style={{
+            // Soft top-fade into the page surface so the dock reads as part of
+            // the glass (mirrors the BottomNav fade), plus a faint top-edge
+            // shadow lifting it above the scrolling context.
+            background: 'linear-gradient(180deg, transparent, var(--paper) 26%)',
+            boxShadow: '0 -10px 30px -16px color-mix(in oklab, var(--paper) 80%, black)',
+          }}
+        >
           {/* §F-pass2-setloginput-02 — mockup wv2 two-step (andura-clasic.html
               #L1463-1485). Pre-log `tinta` (target + Logheaza CTA) → post-log
               readonly "Tu ai facut..." + pencil revise + rating row. `editing`
-              = pencil escape to editable inputs. */}
+              = pencil escape to editable inputs. SetLogInput renders its OWN
+              pulse-card (per mode) so it IS the dock card — no extra wrapper card
+              (no card-in-card, keeps the dock compact). */}
           <SetLogInput
             kg={kgInput}
             reps={repsInput}
@@ -1675,6 +1761,7 @@ export function Workout(): JSX.Element {
             // edited their logged numbers — the coach is seen reacting.
             targetKg={recKg}
             targetReps={recReps}
+            perHandLoad={perHandLoad}
             isBodyweight={currentExercise.isBodyweight ?? false}
             plateHint={plateHint}
             // #7 metric-type rendering — a time/carry exercise shows a seconds
@@ -1712,6 +1799,10 @@ export function Workout(): JSX.Element {
           {/* Rating row appears only after Logheaza (post-log) or while revising
               (editing). Pre-log tinta hides it per mockup wv2. */}
           {(setLogged || editing) && <SetRatingButtons onRate={handleLogSet} />}
+        </div>,
+        document.body,
+        )}
+        {/* ── END FIXED LOGGING DOCK (portaled to body) ───────────────────── */}
         </div>
       )}
 
