@@ -16,7 +16,7 @@ export const USER_DATA_KEYS = [
   // start-over semantic as dp-cal-factors. `tombstones` is the soft-delete ledger
   // (synced) — stale residue after a start-over, cleared for the same parity reason.
   'dp-strength-posterior', 'dp-recovery-constants', 'dp-exercise-pain',
-  'dp-pain-memory', 'dp-log-quarantine', 'dp-equipment-ladder', 'dp-temperament',
+  'dp-pain-memory', 'dp-log-quarantine', 'dp-equipment-ladder', 'dp-equipment-obs', 'dp-temperament',
   'dp-fatigue-curve', 'dp-learned-volume', 'dp-pivot-prompts',
   'dp-nof1-preference', 'dp-nof1-experiment', 'dp-behavior-tuning', 'tombstones'
 ];
@@ -148,6 +148,7 @@ export const SYNC_CLASSIFICATION = Object.freeze({
   'dp-pain-memory': 'mutable',
   'dp-log-quarantine': 'mutable',
   'dp-equipment-ladder': 'mutable',
+  'dp-equipment-obs': 'mutable',
   'dp-temperament': 'mutable',
   'dp-fatigue-curve': 'mutable',
   'dp-learned-volume': 'mutable',

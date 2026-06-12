@@ -226,8 +226,11 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
   // count when the engine exposes one; otherwise phrased WITHOUT a number.
   const calibrationLine = useMemo<string | null>(() => {
     if (calibrationSig === null) return null;
+    // withCount vs noCount keep distinct warm copy; the count itself is no longer
+    // surfaced (founder 2026-06-12 — the "N more sessions" number scared users), so
+    // the line is chosen by maturity tier, not by injecting a number.
     return calibrationSig.sessionsToNext != null
-      ? t('coachCalibration.withCount', { n: calibrationSig.sessionsToNext })
+      ? t('coachCalibration.withCount')
       : t('coachCalibration.noCount');
   }, [calibrationSig]);
 

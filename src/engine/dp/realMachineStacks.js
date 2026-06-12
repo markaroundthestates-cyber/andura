@@ -56,7 +56,8 @@ const ROW_STACK = Object.freeze([6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 
 
 // ── Explicit name → stack map (canonical EN names the composer + engine key on) ──
 // Only the founder's CONFIRMED stations + their canonical variants. Everything else
-// falls through to the equipment_type-keyed generic step-6 grid (resolveRealStack).
+// returns null from resolveRealStack → weights.js keeps its EXISTING generic ladder
+// (no blind step-6 guess — see the pin-vs-plate note above).
 const STACK_BY_NAME = Object.freeze({
   // Row machine ("ramat") — his measured 6..90.
   'Cable Row': ROW_STACK,

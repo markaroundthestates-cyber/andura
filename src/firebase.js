@@ -108,6 +108,7 @@ export const SYNC_KEYS = ['weights','kcals','prots','waters','wellbeing','logs',
   'dp-pain-memory', // dp-pain-memory — F7 #64 PERSISTENT pain pin + proactive substitute (object engineName -> {region,intensity,pinnedTs,substitute}); non-decaying, held until cleared; name-keyed object-merge sync (NAME_KEYED_SYNC_KEYS), learned per-UID, durable across sessions/devices
   'dp-log-quarantine', // dp-log-quarantine — F7 #65 reversible log-outlier ledger (object engineName -> [{ts,w,reps,z}]); outlier sets excluded from learning but kept in logs; "asta a fost real" reverts; name-keyed object-merge sync (NAME_KEYED_SYNC_KEYS), per-UID, durable across sessions/devices
   'dp-equipment-ladder', // dp-equipment-ladder — F4 #10 learned per-gym load increment (object engineName -> {step,n}); name-keyed object-merge sync, learned per-UID, durable across sessions/devices
+  'dp-equipment-obs', // dp-equipment-obs — F4 #10/E template-match accumulator feeding the learned ladder (object engineName -> {observed loads}); name-keyed object-merge sync (audit 2026-06-12: was device-local while its comment claimed synced → the per-gym learning reset on device-switch; now durable like its sibling dp-equipment-ladder)
   'dp-temperament', // dp-temperament — F4 #3 per-user temperament RIR bias sandbagger vs grinder (object engineName|'global' -> {bias,n}); name-keyed object-merge sync (the reserved 'global' key carries the cross-lift trait), learned per-UID, durable across sessions/devices
   'dp-fatigue-curve', // dp-fatigue-curve — F6a #20 per-user per-exercise reps-drop-off curve (object engineName -> {dropIndex,n}); name-keyed object-merge sync, learned per-UID, durable across sessions/devices
   'dp-learned-volume', // dp-learned-volume — F6b V1 #10 per-user learned per-muscle productive volume band (object ISRAETEL-EN-muscle -> {mev,mav,n}); muscle keys are EN tokens (Firebase-safe, NOT name-keyed, same as dp-recovery-constants); object-merge sync, learned per-UID, durable
@@ -153,7 +154,7 @@ export function fbKey(localKey) {
 // `dp-cal-factors` is the only one (pr-records/coach-decisions/logs are arrays;
 // step-streaks/sf.userConfig are fixed-key objects). Listed so any future
 // name-keyed map opts in by key name alone.
-export const NAME_KEYED_SYNC_KEYS = Object.freeze(['dp-cal-factors', 'dp-strength-posterior', 'dp-exercise-pain', 'dp-pain-memory', 'dp-log-quarantine', 'dp-equipment-ladder', 'dp-temperament', 'dp-fatigue-curve', 'dp-nof1-preference']);
+export const NAME_KEYED_SYNC_KEYS = Object.freeze(['dp-cal-factors', 'dp-strength-posterior', 'dp-exercise-pain', 'dp-pain-memory', 'dp-log-quarantine', 'dp-equipment-ladder', 'dp-equipment-obs', 'dp-temperament', 'dp-fatigue-curve', 'dp-nof1-preference']);
 
 // Reserved sentinel key for the scalar/array wrapper (audit 2026-06-07 L-1).
 // A non-object value is wrapped under this key instead of the ambiguous `value`

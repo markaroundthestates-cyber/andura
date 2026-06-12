@@ -34,10 +34,12 @@
 //     near-working triple disguised as warm-up.
 //
 // SNAPPING: every primer weight is snapped to the SAME equipment ladder the working
-// set uses (roundToEquipmentWeight(kg, name) — the 2-arg legacy/generic path, byte-
-// identical, flag-independent), so a primer is a weight that actually exists on the
-// rack/stack (no "42.5kg" on a 5kg pin). Dedup-after-snap: if two %-steps snap to the
-// same physical weight (common at low loads on coarse stacks), keep one.
+// set uses (roundToEquipmentWeight(kg, name) — the 2-arg path), so a primer is a
+// weight that actually exists on the rack/stack (no "42.5kg" on a 5kg pin). That path
+// now also honours the real-stack + per-user ladder snap (dp_real_ladder_snap_v1 /
+// dp_user_ladder_v1) — by design, so primers land on the user's real rungs too.
+// Dedup-after-snap: if two %-steps snap to the same physical weight (common at low
+// loads on coarse stacks), keep one.
 //
 // PURE + DETERMINISTIC + ZERO THROW: same workingKg + name → identical array. A bad
 // input (non-finite / ≤ 0 workingKg, non-string name) → [] (no ramp), never throws.

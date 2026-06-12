@@ -203,9 +203,11 @@ export const FLAGS = Object.freeze({
   // Curl likewise. When ON, the prescribed rec (BOTH cold-start AND history paths,
   // at the roundToEquipmentWeight gate) snaps to the nearest rung on the founder's
   // MEASURED step-6 stack (realMachineStacks.js — Cable Row 6..90, Pec Deck +
-  // Shoulder 6..96, Leg Curl 6..66; an unmapped pin machine → a generic 6kg-step
-  // grid), with a tie rounding DOWN for safety. The four explicit stacks are the
-  // AUTHORITATIVE source (they snap OVER the learned template too). The user's LOGGED
+  // Shoulder 6..96, Leg Curl 6..66; an unmapped pin machine keeps its EXISTING
+  // generic ladder — no blind step-6 guess), tie rounding DOWN for safety. These
+  // stacks are the founder SEED / cold-start prior; per-user learned ladder
+  // (dp_user_ladder_v1) snaps OVER them once a user has their own logged rungs. The
+  // user's LOGGED
   // entry is NEVER snapped — only the coach's SUGGESTION. DUMBBELL / CABLE / BARBELL
   // / BODYWEIGHT recs are untouched (their generic ladders already snap correctly).
   // OFF → roundToEquipmentWeight returns the generic / template result unchanged →

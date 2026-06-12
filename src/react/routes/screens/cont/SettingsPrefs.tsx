@@ -137,10 +137,10 @@ export function SettingsPrefs(): JSX.Element {
         </p>
 
         {/* Week-start control removed (founder pick 2026-06-12) — weeks always
-            start on Monday; settingsStore.weekStart stays at its 'L' default and
-            consumers (Calendar/heatmap/scheduleAdapter) read that value unchanged.
-            The toggle is hidden, not just pinned, since Sunday-start is not an
-            offered option. */}
+            start on Monday; settingsStore.weekStart stays at its 'L' default. It has
+            NO runtime consumer (Calendar/heatmap use the independent Monday-hardcoded
+            weekStartIso()), so hiding the toggle is zero-risk. Hidden, not just
+            pinned, since Sunday-start is not an offered option. */}
 
         {/* §i18n 2026-05-28 — LIVE language toggle (Daniel CEO directive
             "schimbam complet limba default in engleza si lasam romana ca
