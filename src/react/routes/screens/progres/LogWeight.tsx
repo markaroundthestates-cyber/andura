@@ -162,7 +162,10 @@ export function LogWeight(): JSX.Element {
           {t('progres.logWeight.helper')}
         </p>
 
-        <div className="flex-1" />
+        {/* CTA-FOLD FIX (2026-06-12, founder live phone) — dropped the `flex-1`
+            spacer that pushed Save to the bottom of the min-h-screen column,
+            leaving a long dead gap under the two short fields. The button now
+            flows under the helper text, visible without scrolling. */}
 
         <button
           type="button"

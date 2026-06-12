@@ -109,6 +109,30 @@ export function resolveCueText({ movementId, movementCategory }) {
 }
 
 /**
+ * Resolve a STABLE cue id (i18n key suffix) mirroring resolveCueText's
+ * priority: top-30 compound override movementId > base library category.
+ *
+ * The render boundary localizes the prose via `workout.tempoCue.cues.<id>`
+ * (en.json + ro.json) instead of surfacing the engine's RO `cueText` raw —
+ * the cue text stays RO-native here only as a back-compat fallback. Returned
+ * ids are stable contract keys ('compound' | 'isolation' | a TOP_COMPOUND id
+ * like 'back_squat'), not localized copy.
+ *
+ * @param {Object} input
+ * @param {string} [input.movementId]
+ * @param {string} [input.movementCategory]   - 'compound' | 'isolation'
+ * @returns {string} Stable cue id ('compound' | 'isolation' | top-compound movementId)
+ */
+export function resolveCueId({ movementId, movementCategory }) {
+  if (getTopCompoundOverride(movementId ?? '') !== null) {
+    return /** @type {string} */ (movementId).toLowerCase();
+  }
+  return movementCategory === MOVEMENT_CATEGORY.ISOLATION
+    ? MOVEMENT_CATEGORY.ISOLATION
+    : MOVEMENT_CATEGORY.COMPOUND;
+}
+
+/**
  * Apply persona-aware tone per Cluster D18 Q18=D verbatim:
  *   Maria rationale-first: "De ce X? Pentru a Y."
  *   Gigica suggestion: "Sugerez X."
@@ -190,6 +214,10 @@ export function composeFormCue({ movementId, movementCategory, persona, tier }) 
 
   return {
     cueText:    tonedCue,
+    // Stable i18n key suffix (NOT localized prose) — the render boundary maps
+    // it to `workout.tempoCue.cues.<cueId>` so the cue surfaces in the active
+    // locale instead of leaking the RO `cueText`. See resolveCueId.
+    cueId:      resolveCueId({ movementId, movementCategory }),
     category:   movementCategory === MOVEMENT_CATEGORY.ISOLATION
                   ? MOVEMENT_CATEGORY.ISOLATION
                   : MOVEMENT_CATEGORY.COMPOUND,

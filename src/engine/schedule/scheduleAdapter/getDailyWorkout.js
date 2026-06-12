@@ -826,11 +826,18 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // and we do NOT fake per-exercise movement. null when the blueprint is absent.
     tempoCue: blueprints.tempo
       ? {
+          // `line` = the engine's pre-composed RO text. Kept as a back-compat
+          // fallback ONLY — the render boundary prefers the structured fields
+          // below (cueId + persona + notation) and localizes via i18n so the
+          // cue surfaces in the active locale (anti RO-leak under EN).
           line:
             blueprints.tempo.tempo_prescription?.preSetIntro ??
             blueprints.tempo.form_cue?.cueText ??
             null,
           notation: blueprints.tempo.tempo_prescription?.notation ?? null,
+          // Structured, locale-neutral fields for the render boundary.
+          cueId: blueprints.tempo.form_cue?.cueId ?? null,
+          persona: blueprints.tempo.form_cue?.persona ?? null,
         }
       : null,
     // F2 #2 — Goal Adaptation rep + RIR modifiers (goalAdaptation/index.js:176-177).

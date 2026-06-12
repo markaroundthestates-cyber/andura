@@ -443,15 +443,43 @@ describe('WorkoutPreview — tempo cue row (F2 #3)', () => {
     expect(screen.queryByTestId('preview-tempo-row')).not.toBeInTheDocument();
   });
 
-  it('tempo row renders the engine cue line cand workout.tempoCue non-null', async () => {
+  it('tempo row localizes the engine cue under EN (cueId → EN prose, no RO leak)', async () => {
+    // The engine emits a stable cueId + persona + notation (locale-neutral); the
+    // render boundary resolves the cue prose via i18n. Under EN the row must NOT
+    // surface the RO `line` — that was the live leak ("Sugerez: controleaza
+    // coborarea..."). The notation passes through (locale-neutral digits).
     mockedGetTodayWorkout.mockResolvedValue(makeWorkout({
-      tempoCue: { line: 'Tempo 2-1-2-0, controleaza coborarea', notation: '2-1-2-0' },
+      tempoCue: {
+        line: 'Tempo 2-1-2-0, Sugerez: controleaza coborarea, pastreaza tensiunea.',
+        notation: '2-1-2-0',
+        cueId: 'compound',
+        persona: 'gigica',
+      },
     }));
     renderPreview();
     await waitFor(() => {
       const row = screen.getByTestId('preview-tempo-row');
       expect(row).toBeInTheDocument();
-      expect(row.textContent).toMatch(/2-1-2-0/);
+      const text = row.textContent ?? '';
+      expect(text).toMatch(/2-1-2-0/);
+      // EN prose surfaces; RO leak words do NOT.
+      expect(text).toMatch(/control the descent/i);
+      expect(text).toMatch(/Suggestion:/i);
+      expect(text).not.toMatch(/controleaza|pastreaza|Sugerez/i);
+    });
+  });
+
+  it('tempo row falls back to the raw line when cueId is absent (old/partial shape)', async () => {
+    // Defensive path: a persisted/partial shape with no cueId → the boundary
+    // renders the engine `line` verbatim (better than nothing). Guards the
+    // fallback branch of localizeTempoCue.
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout({
+      tempoCue: { line: 'Tempo 3-1-1-0, slow eccentric', notation: '3-1-1-0', cueId: null, persona: null },
+    }));
+    renderPreview();
+    await waitFor(() => {
+      const row = screen.getByTestId('preview-tempo-row');
+      expect(row.textContent).toMatch(/slow eccentric/i);
     });
   });
 });

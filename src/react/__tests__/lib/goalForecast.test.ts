@@ -172,6 +172,52 @@ describe('goalForecast — projectLiftStrength (strength trajectory)', () => {
   });
 });
 
+// ══ Cut-awareness (Daniel live 2026-06-12) ══════════════════════════════════
+// A cutting user (goalId 'slabire' = weight loss / caloric deficit) must NOT be
+// promised strength GAINS — "sunt in cut si ma bucur daca imi pastrez forta".
+// projectLiftStrength HOLDS (projected == current) + framing 'cut-hold' for a cut,
+// regardless of the trajectory flag (a deficit caps growth either way).
+describe('goalForecast — projectLiftStrength cut-awareness (slabire → hold, not gain)', () => {
+  // A genuinely rising lift — without the cut gate this would project a GAIN.
+  function risingSamples() {
+    return [
+      { ts: NOW - 21 * DAY_MS, oneRm: 100 },
+      { ts: NOW - 14 * DAY_MS, oneRm: 102 },
+      { ts: NOW - 7 * DAY_MS, oneRm: 104 },
+      { ts: NOW, oneRm: 105.3 },
+    ];
+  }
+
+  it('cut goal (shipped, flag-off path) → hold (projected == current), framing cut-hold', () => {
+    const f = projectLiftStrength({ name: 'Cable Row', samples: risingSamples(), goalId: 'slabire' });
+    expect(f).not.toBeNull();
+    expect(f!.framing).toBe('cut-hold');
+    // No +gain promise: projected equals the current best (his ~105 row holds).
+    expect(f!.projectedOneRm).toBe(f!.currentOneRm);
+    expect(f!.projectedOneRm).toBe(105.3);
+  });
+
+  it('cut goal (trajectory path) → also holds (cut gate precedes the ceiling math)', () => {
+    const f = projectLiftStrength({
+      name: 'Cable Row',
+      samples: risingSamples(),
+      trajectory: true,
+      ceiling: 140,
+      goalId: 'slabire',
+    });
+    expect(f).not.toBeNull();
+    expect(f!.framing).toBe('cut-hold');
+    expect(f!.projectedOneRm).toBe(f!.currentOneRm);
+  });
+
+  it('non-cut goal (e.g. hipertrofie) still projects a GAIN — gate is cut-specific', () => {
+    const f = projectLiftStrength({ name: 'Cable Row', samples: risingSamples(), goalId: 'hipertrofie' });
+    expect(f).not.toBeNull();
+    expect(f!.framing).toBeUndefined();
+    expect(f!.projectedOneRm).toBeGreaterThan(f!.currentOneRm);
+  });
+});
+
 // ══ BUILD F6b V5 #27 — trajectory planner (ceiling-aware + goal-aware) ════════
 // The `trajectory` opt switches the deeper projection on (the I/O boundary derives
 // + injects ceiling/goal/flag). OFF (opt absent) → today's linear + flat-% (byte-

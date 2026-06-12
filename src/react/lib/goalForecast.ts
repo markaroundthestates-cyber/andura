@@ -139,6 +139,16 @@ export const STRENGTH_TRAJECTORY_WEEKS = 8; // the deeper arc (vs the naive 4)
 // the onboarding maintenance literals). A user on maintenance is not promised PRs.
 export const TRAJECTORY_HOLD_GOALS = Object.freeze(['sanatate', 'mentenanta', 'longevitate']);
 
+// ── Cut-awareness (Daniel live 2026-06-12) ───────────────────────────────────
+// A user in a caloric DEFICIT (goal = weight loss / `slabire`) should NOT be
+// promised strength GAINS — in a cut "hold your strength" is the honest, good
+// outcome (Daniel: "sunt in cut si ma bucur daca imi pastrez forta"). Unlike the
+// maintenance hold above (which is gated behind dp_trajectory_v1), the cut hold
+// applies to BOTH projection paths — a deficit caps growth regardless of which
+// math runs — so it is checked before either branch. resolveGoalId normalizes
+// the onboarding `slabire` + legacy `definire` + EN `weight-loss`/`fat-loss` here.
+export const CUT_HOLD_GOALS = Object.freeze(['slabire']);
+
 /** One logged working set for a lift: estimated 1RM at a point in time. */
 export interface LiftSamplePoint {
   /** Timestamp (ms) of the set. */
@@ -170,6 +180,13 @@ export interface StrengthForecast {
   projectedOneRm: number;
   /** Horizon echoed for the copy (weeks). */
   weeks: number;
+  /**
+   * Copy framing. 'gain' (default) → the "~{kg} kg in ~{weeks} wks" growth line.
+   * 'cut-hold' → a conservative maintenance line ("realistic in a cut: hold ~{kg}
+   * kg"): the user is in a deficit (CUT_HOLD_GOALS), so we promise holding strength,
+   * never a gain. projectedOneRm == currentOneRm in the cut-hold case.
+   */
+  framing?: 'gain' | 'cut-hold';
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -220,6 +237,24 @@ export function projectLiftStrength(history: LiftHistory): StrengthForecast | nu
   // Current best = the max recent estimated 1RM (the strongest the user has shown).
   const currentOneRm = Math.max(...ys);
 
+  // ── Cut-awareness (Daniel 2026-06-12) — gate BEFORE either projection path ──
+  // A deficit caps growth physiologically, so a cutting user is never promised
+  // gains regardless of the dp_trajectory_v1 flag. The slope may still be positive
+  // (a recent strength uptick in a cut is real but not a credible 4-week trend), so
+  // we project HOLD (projected == current) + a 'cut-hold' framing so the copy reads
+  // "realistic in a cut: hold ~X kg" instead of a +gain promise. Returns here so the
+  // honest hold also applies to the shipped (flag-off) forecast, not just trajectory.
+  const goalId = typeof history.goalId === 'string' ? history.goalId : '';
+  if (CUT_HOLD_GOALS.includes(goalId)) {
+    return {
+      name: history.name,
+      currentOneRm: round1(currentOneRm),
+      projectedOneRm: round1(currentOneRm),
+      weeks: history.trajectory ? STRENGTH_TRAJECTORY_WEEKS : STRENGTH_FORECAST_WEEKS,
+      framing: 'cut-hold',
+    };
+  }
+
   // ── BUILD F6b V5 #27 — ceiling-aware + goal-aware deepening (dp_trajectory_v1) ──
   // When ON, replace the flat % cap with a per-week DECAYED walk from currentOneRm
   // toward the ceiling: each future week adds slope × gainDecay(mu, ceiling), so the
@@ -231,7 +266,7 @@ export function projectLiftStrength(history: LiftHistory): StrengthForecast | nu
     const ceiling = Number(history.ceiling);
     const hasCeiling = Number.isFinite(ceiling) && ceiling > 0;
     // Maintenance goal → hold current (don't promise gains to a maintenance user).
-    const goalId = typeof history.goalId === 'string' ? history.goalId : '';
+    // `goalId` resolved above (the cut check uses the same value).
     if (TRAJECTORY_HOLD_GOALS.includes(goalId)) {
       return {
         name: history.name,
@@ -387,15 +422,19 @@ export function readStrengthForecasts(now: number): StrengthForecast[] {
   // goal-aware inputs ONCE at the boundary (pure math stays flag-free). OFF → the
   // inputs are absent → projectLiftStrength runs today's linear + flat-% (byte-identical).
   const trajectory = isEnabled('dp_trajectory_v1');
+  // goalId is resolved UNCONDITIONALLY (cheap pure call) — the cut-awareness hold
+  // in projectLiftStrength applies in BOTH the trajectory and the shipped flag-off
+  // path, so it must be threaded even when dp_trajectory_v1 is off. The remaining
+  // ceiling inputs (bw/sex/trainingAge) stay trajectory-only (only ceilingE1RM uses them).
+  const onbData = useOnboardingStore.getState().data;
+  const goalId =
+    typeof onbData.goal === 'string' ? resolveGoalId({ goal: onbData.goal }) : resolveGoalId({});
   let bwKg = 0;
   let sex = 'm';
-  let goalId = '';
   let trainingAge = 0;
   if (trajectory) {
-    const data = useOnboardingStore.getState().data;
-    bwKg = getCurrentWeightKg() ?? data.weight ?? 0;
-    sex = typeof data.sex === 'string' ? data.sex : 'm';
-    goalId = typeof data.goal === 'string' ? resolveGoalId({ goal: data.goal }) : resolveGoalId({});
+    bwKg = getCurrentWeightKg() ?? onbData.weight ?? 0;
+    sex = typeof onbData.sex === 'string' ? onbData.sex : 'm';
     // Training age ≈ distinct training-day sessions logged (the ceiling's ageFraction
     // input) — the recency-windowed session count is a safe, monotone proxy.
     trainingAge = new Set(
@@ -409,8 +448,11 @@ export function readStrengthForecasts(now: number): StrengthForecast[] {
   for (const [name, samples] of byLift) {
     const ceiling =
       trajectory && bwKg > 0 ? ceilingE1RM(engineKeyByLift.get(name) || name, bwKg, sex, trainingAge) : 0;
+    // goalId threaded in BOTH paths so the cut-awareness hold fires regardless of
+    // the trajectory flag (a deficit caps growth either way). Trajectory adds the
+    // ceiling-aware inputs on top.
     const f = projectLiftStrength(
-      trajectory ? { name, samples, trajectory, ceiling, goalId } : { name, samples }
+      trajectory ? { name, samples, trajectory, ceiling, goalId } : { name, samples, goalId }
     );
     if (f) forecasts.push(f);
   }

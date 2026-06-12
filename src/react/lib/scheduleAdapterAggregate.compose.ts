@@ -1060,11 +1060,23 @@ export async function composePlannedWorkoutToday(
     // session narration (per-exercise movementId is a Faza-3 input dep — the
     // engine emits one generic cue, so a per-exercise cue would be faked). Display
     // only — touches NO weight/sets/reps. Null when the line is empty/absent.
-    const tempoRaw = plan.tempoCue as { line?: string | null; notation?: string | null } | null;
+    const tempoRaw = plan.tempoCue as {
+      line?: string | null;
+      notation?: string | null;
+      cueId?: string | null;
+      persona?: string | null;
+    } | null;
     const tempoLine = typeof tempoRaw?.line === 'string' ? tempoRaw.line : '';
     const tempoCue =
       tempoRaw !== null && tempoLine.length > 0
-        ? { line: tempoLine, notation: typeof tempoRaw?.notation === 'string' ? tempoRaw.notation : null }
+        ? {
+            line: tempoLine,
+            notation: typeof tempoRaw?.notation === 'string' ? tempoRaw.notation : null,
+            // Structured fields for locale-aware rendering (the render boundary
+            // localizes cueId via i18n; `line` is the back-compat fallback only).
+            cueId: typeof tempoRaw?.cueId === 'string' ? tempoRaw.cueId : null,
+            persona: typeof tempoRaw?.persona === 'string' ? tempoRaw.persona : null,
+          }
         : null;
     // F2 #4 — Energy Adjustment reconcile passthrough (direction + tier-gated
     // magnitude). Surfaced unchanged so Workout.tsx can use the engine magnitude

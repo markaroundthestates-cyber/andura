@@ -184,7 +184,10 @@ describe('Progres — redesign layout (2026-05-30 locked)', () => {
     expect(recovery.compareDocumentPosition(compozitie) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  it('moves the Weight & BF trend to the BOTTOM (after actions)', () => {
+  // Reorder 2026-06-12 (Daniel live): the weight CHART (trend) now sits ABOVE the
+  // actions zone (which holds the "Log weight today" CTA) — Daniel wanted to see
+  // the trend before the log button.
+  it('places the Weight & BF trend ABOVE the actions zone (chart over Log weight today)', () => {
     useProgresStore.setState({
       weightLog: [
         { kg: 80, date: '2026-05-10', ts: 1 },
@@ -192,9 +195,14 @@ describe('Progres — redesign layout (2026-05-30 locked)', () => {
       ],
     });
     renderProgres();
-    const actiuni = screen.getByTestId('progres-zone-actiuni');
     const tendinta = screen.getByTestId('progres-zone-tendinta');
-    expect(actiuni.compareDocumentPosition(tendinta) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const actiuni = screen.getByTestId('progres-zone-actiuni');
+    // tendinta now precedes actiuni in the DOM.
+    expect(tendinta.compareDocumentPosition(actiuni) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // And specifically the trend sits above the log-weight CTA.
+    const trend = screen.getByTestId('progres-trend-sparkline');
+    const cta = screen.getByTestId('cta-log-weight');
+    expect(trend.compareDocumentPosition(cta) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it('shows the honest "sharpens as you log" microcopy after logging today', async () => {

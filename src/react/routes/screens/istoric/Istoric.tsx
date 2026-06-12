@@ -20,8 +20,6 @@ import { CalendarHeatmap } from '../../../components/Istoric/CalendarHeatmap';
 import { RatingsStrip90Day } from '../../../components/Istoric/RatingsStrip90Day';
 import { VirtualSessionList } from '../../../components/Istoric/VirtualSessionList';
 import { useCountUp } from '../../../hooks/useCountUp';
-import { Kicker } from '../../../components/pulse/Kicker';
-import { gotoPath } from '../../../lib/navigation';
 import { t } from '../../../../i18n/index.js';
 
 // §F-istoric-08 — weekday + month labels via i18n bundle.
@@ -68,6 +66,15 @@ export function Istoric(): JSX.Element {
     showAllRecords || prHistory.length <= LIST_PREVIEW
       ? prHistory
       : prHistory.slice(0, LIST_PREVIEW);
+
+  // IA change 2026-06-12 (Daniel live) — the separate Records + Sessions sections
+  // collapse into ONE segmented view: a single control toggles between the records
+  // body and the sessions body (the dashboard header — stats + calendar + ratings —
+  // stays shared above both). Default 'sessions' (the chronological log is the
+  // primary "history" read; records are one tap away). The standalone /app/istoric/
+  // pr-wall route is preserved for deep-links, but the in-screen segment is now the
+  // primary path to records (the old "See all" jump is gone — redundant).
+  const [tab, setTab] = useState<'sessions' | 'records'>('sessions');
 
   return (
     <section
@@ -117,126 +124,178 @@ export function Istoric(): JSX.Element {
       {/* F-istoric-03 signature: 90-day ratings strip + categorical aggregate */}
       <RatingsStrip90Day />
 
-      {/* Phase 6 task_23: PR Wall full list. PAR-001 Wave 2e — "Vezi toate"
-          link drill la /app/istoric/pr-wall standalone screen. */}
-      {prHistory.length > 0 && (
+      {/* IA change 2026-06-12 (Daniel live) — ONE segmented control replaces the
+          two separate Records + Sessions sections. The dashboard header above
+          (stats + calendar + ratings) is shared; this control switches the body
+          between the records list and the sessions list. Pulse pill-group idiom
+          (same as WeightTimeline range tabs): active fills with --volt. */}
+      <div
+        className="flex gap-1 p-1 rounded-full border border-line bg-[var(--surface-2)] mb-4"
+        role="tablist"
+        aria-label={t('istoric.landing.segAriaLabel')}
+        data-testid="istoric-segment"
+      >
+        {(['sessions', 'records'] as const).map((seg) => {
+          const active = tab === seg;
+          return (
+            <button
+              key={seg}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              data-testid={`istoric-segment-${seg}`}
+              onClick={() => setTab(seg)}
+              className={`flex-1 py-2 rounded-full text-xs font-semibold font-mono transition-colors ${
+                active ? 'text-[var(--on-accent)]' : 'text-ink2'
+              }`}
+              style={active ? { background: 'var(--volt)' } : undefined}
+            >
+              {t(seg === 'sessions' ? 'istoric.landing.segSessions' : 'istoric.landing.segRecords')}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── RECORDS segment — reuses the PR list body (getPRHistoryAll). The old
+          standalone /pr-wall jump ("See all") is gone; this IS the records view.
+          Empty-state mirrors the sessions empty pattern. */}
+      {tab === 'records' && (
         <section className="mb-6" data-testid="istoric-pr-wall">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-base font-semibold text-ink flex items-center gap-2">
-              <Trophy className="w-4 h-4" style={{ color: 'var(--ember)' }} aria-hidden="true" />
-              {t('istoric.landing.recordsHeading', { n: prHistory.length })}
-            </h2>
-            <button
-              type="button"
-              onClick={() => navigate(gotoPath('pr-wall'))}
-              data-testid="istoric-pr-wall-see-all"
-              className="text-sm font-semibold text-brickdark press-feedback"
+          {prHistory.length === 0 ? (
+            <div
+              className="flex flex-col items-center justify-center py-12 text-center animate-card-rise"
+              data-testid="istoric-records-empty"
             >
-              {t('istoric.landing.seeAll')}
-            </button>
-          </div>
-          {/* Founder UX 2026-06-06 — records are COLLAPSED by default: each row
-              shows just the exercise name + a chevron, so a 10+ record wall no
-              longer makes the page endless. Tapping a row reveals its detail
-              (kg x reps ~1RM). All data stays accessible, just one tap deeper. */}
-          <ul className="flex flex-col gap-2">
-            {visiblePr.map((pr, idx) => {
-              const open = openRecord === idx;
-              return (
-                <li
-                  key={`${pr.exerciseId}-${pr.sessionTs}-${idx}`}
-                  data-testid={`pr-row-${idx}`}
-                  className="pulse-card pulse-card-tight overflow-hidden"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setOpenRecord(open ? null : idx)}
-                    data-testid={`pr-row-toggle-${idx}`}
-                    aria-expanded={open}
-                    className="w-full flex justify-between items-center gap-2 p-3 text-left"
-                  >
-                    <span className="text-sm font-medium text-ink truncate">{pr.exerciseName}</span>
-                    <ChevronDown
-                      className={`w-4 h-4 flex-shrink-0 text-ink3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
-                      strokeWidth={1.8}
-                      aria-hidden="true"
-                    />
-                  </button>
-                  {open && (
-                    <p
-                      data-testid={`pr-row-detail-${idx}`}
-                      className="font-mono text-[13px] text-ink2 px-3 pb-3 -mt-1 animate-fade-in-up"
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+                style={{
+                  background:
+                    'radial-gradient(circle, color-mix(in oklab, var(--brick) 18%, transparent), transparent 70%)',
+                }}
+              >
+                <Trophy className="w-7 h-7 text-brick" aria-hidden="true" />
+              </div>
+              <p className="text-base font-semibold text-ink mb-1">
+                {t('istoric.prWallScreen.emptyTitle')}
+              </p>
+              <p className="text-sm text-ink2 max-w-[280px]">
+                {t('istoric.prWallScreen.emptyBody')}
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center mb-2">
+                <h2 className="text-base font-semibold text-ink flex items-center gap-2">
+                  <Trophy className="w-4 h-4" style={{ color: 'var(--ember)' }} aria-hidden="true" />
+                  {t('istoric.landing.recordsHeading', { n: prHistory.length })}
+                </h2>
+              </div>
+              {/* Founder UX 2026-06-06 — records are COLLAPSED by default: each row
+                  shows just the exercise name + a chevron, so a 10+ record wall no
+                  longer makes the page endless. Tapping a row reveals its detail
+                  (kg x reps ~1RM). All data stays accessible, just one tap deeper. */}
+              <ul className="flex flex-col gap-2">
+                {visiblePr.map((pr, idx) => {
+                  const open = openRecord === idx;
+                  return (
+                    <li
+                      key={`${pr.exerciseId}-${pr.sessionTs}-${idx}`}
+                      data-testid={`pr-row-${idx}`}
+                      className="pulse-card pulse-card-tight overflow-hidden"
                     >
-                      {t('istoric.landing.recordSummary', { kg: pr.kg, reps: pr.reps, oneRM: pr.oneRMEstimate })}
-                    </p>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-          {prHistory.length > LIST_PREVIEW && (
-            <button
-              type="button"
-              onClick={() => setShowAllRecords((v) => !v)}
-              data-testid="istoric-records-toggle"
-              aria-expanded={showAllRecords}
-              className="mt-3 w-full flex items-center justify-center gap-1.5 text-sm font-semibold text-brickdark press-feedback"
-            >
-              {showAllRecords
-                ? t('istoric.landing.showLess')
-                : t('istoric.landing.showAllCount', { n: prHistory.length })}
-              <ChevronDown
-                className={`w-4 h-4 transition-transform duration-200 ${showAllRecords ? 'rotate-180' : ''}`}
-                strokeWidth={1.8}
-                aria-hidden="true"
-              />
-            </button>
+                      <button
+                        type="button"
+                        onClick={() => setOpenRecord(open ? null : idx)}
+                        data-testid={`pr-row-toggle-${idx}`}
+                        aria-expanded={open}
+                        className="w-full flex justify-between items-center gap-2 p-3 text-left"
+                      >
+                        <span className="text-sm font-medium text-ink truncate">{pr.exerciseName}</span>
+                        <ChevronDown
+                          className={`w-4 h-4 flex-shrink-0 text-ink3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+                          strokeWidth={1.8}
+                          aria-hidden="true"
+                        />
+                      </button>
+                      {open && (
+                        <p
+                          data-testid={`pr-row-detail-${idx}`}
+                          className="font-mono text-[13px] text-ink2 px-3 pb-3 -mt-1 animate-fade-in-up"
+                        >
+                          {t('istoric.landing.recordSummary', { kg: pr.kg, reps: pr.reps, oneRM: pr.oneRMEstimate })}
+                        </p>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+              {prHistory.length > LIST_PREVIEW && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllRecords((v) => !v)}
+                  data-testid="istoric-records-toggle"
+                  aria-expanded={showAllRecords}
+                  className="mt-3 w-full flex items-center justify-center gap-1.5 text-sm font-semibold text-brickdark press-feedback"
+                >
+                  {showAllRecords
+                    ? t('istoric.landing.showLess')
+                    : t('istoric.landing.showAllCount', { n: prHistory.length })}
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${showAllRecords ? 'rotate-180' : ''}`}
+                    strokeWidth={1.8}
+                    aria-hidden="true"
+                  />
+                </button>
+              )}
+            </>
           )}
         </section>
       )}
 
-      <div className="mb-3">
-        <Kicker>{t('istoric.landing.sessionsHeading')}</Kicker>
-      </div>
-      {sorted.length === 0 ? (
-        /* UX polish 2026-05-28 — empty state lifted: accent-tinted icon
-           halo (color-mix --brick) + heading line + softer body copy +
-           tasteful card-rise on mount. Reads as "we've got space waiting
-           for your first session" rather than a flat error message. */
-        <div
-          className="flex flex-col items-center justify-center py-12 text-center animate-card-rise"
-          data-testid="istoric-empty"
-        >
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
-            style={{
-              background:
-                'radial-gradient(circle, color-mix(in oklab, var(--brick) 18%, transparent), transparent 70%)',
-            }}
-          >
-            <History className="w-7 h-7 text-brick" aria-hidden="true" />
-          </div>
-          <p className="text-base font-semibold text-ink mb-1">
-            {t('istoric.landing.emptyTitle')}
-          </p>
-          <p className="text-sm text-ink2 max-w-[280px]">
-            {t('istoric.landing.emptyBody')}
-          </p>
+      {/* ── SESSIONS segment — the chronological session log (default view). */}
+      {tab === 'sessions' && (
+        <div data-testid="istoric-sessions">
+          {sorted.length === 0 ? (
+            /* UX polish 2026-05-28 — empty state lifted: accent-tinted icon
+               halo (color-mix --brick) + heading line + softer body copy +
+               tasteful card-rise on mount. Reads as "we've got space waiting
+               for your first session" rather than a flat error message. */
+            <div
+              className="flex flex-col items-center justify-center py-12 text-center animate-card-rise"
+              data-testid="istoric-empty"
+            >
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+                style={{
+                  background:
+                    'radial-gradient(circle, color-mix(in oklab, var(--brick) 18%, transparent), transparent 70%)',
+                }}
+              >
+                <History className="w-7 h-7 text-brick" aria-hidden="true" />
+              </div>
+              <p className="text-base font-semibold text-ink mb-1">
+                {t('istoric.landing.emptyTitle')}
+              </p>
+              <p className="text-sm text-ink2 max-w-[280px]">
+                {t('istoric.landing.emptyBody')}
+              </p>
+            </div>
+          ) : (
+            // §35-M2 perf — windowed list (window-scroll virtualization) pentru
+            // liste lungi. Comportament vizibil identic: ordering, drill-down nav
+            // la originalIdx, testid-uri rand neschimbate.
+            <VirtualSessionList
+              sorted={sorted}
+              formatDate={formatDate}
+              // Preview the first 3 sessions + "Show all" expand (Daniel 2026-06-07).
+              previewCount={LIST_PREVIEW}
+              // Navigate by stable session `ts`, NOT array index (Daniel audit
+              // 2026-06-05) — index pointed at the wrong session after a
+              // delete/reorder and broke deep-links.
+              onSelect={(ts) => navigate(`/app/istoric/${ts}`)}
+            />
+          )}
         </div>
-      ) : (
-        // §35-M2 perf — windowed list (window-scroll virtualization) pentru
-        // liste lungi. Comportament vizibil identic: ordering, drill-down nav
-        // la originalIdx, testid-uri rand neschimbate.
-        <VirtualSessionList
-          sorted={sorted}
-          formatDate={formatDate}
-          // Preview the first 3 sessions + "Show all" expand (Daniel 2026-06-07).
-          previewCount={LIST_PREVIEW}
-          // Navigate by stable session `ts`, NOT array index (Daniel audit
-          // 2026-06-05) — index pointed at the wrong session after a
-          // delete/reorder and broke deep-links.
-          onSelect={(ts) => navigate(`/app/istoric/${ts}`)}
-        />
       )}
     </section>
   );

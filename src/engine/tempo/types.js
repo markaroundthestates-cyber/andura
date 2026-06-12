@@ -67,7 +67,8 @@
  * Form cue emit per Cluster A1 + Cluster B2 + B3 + D18 verbatim.
  *
  * @typedef {Object} FormCue
- * @property {string} cueText                  - Native RO text per persona-aware tone Q18=D
+ * @property {string} cueText                  - Native RO text per persona-aware tone Q18=D (render boundary localizes via cueId; cueText = back-compat fallback only)
+ * @property {string} cueId                    - Stable i18n key suffix ('compound' | 'isolation' | top-compound movementId) → `workout.tempoCue.cues.<cueId>`
  * @property {string} category                 - Movement category (compound/isolation)
  * @property {string} movementId               - Movement ID (squat / bench / etc.)
  * @property {Persona} persona                 - Resolved persona Maria/Gigica/Marius

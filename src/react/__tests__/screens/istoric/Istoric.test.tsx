@@ -62,8 +62,10 @@ describe('Istoric — empty state', () => {
 
   it('renders heading + empty state cand sessionsHistory empty (EN default post 2026-05-28)', () => {
     renderIstoric();
-    // Default locale flipped to EN — heading is "History".
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('History');
+    // IA rename 2026-06-12 — the screen h1 is "Training History" (EN) / "Istoric
+    // antrenamente" (RO). The bottom-nav tab label stays short ("History").
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Training History');
+    // Sessions is the default segment → its empty state shows.
     expect(screen.getByTestId('istoric-empty')).toBeInTheDocument();
     expect(screen.getByText(/Your first session is waiting/i)).toBeInTheDocument();
   });
@@ -77,7 +79,7 @@ describe('Istoric — empty state', () => {
   // page h1 (skip h2). Trebuie h2 ca sa nu sara nivelul.
   it('no heading-order skip — calendar month label is h2 under page h1', () => {
     renderIstoric();
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('History');
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Training History');
     const calLabel = screen.getByTestId('cal-month-label');
     expect(calLabel.tagName).toBe('H2');
     // zero h3 imediat sub h1 fara h2 intermediar
@@ -468,8 +470,15 @@ describe('Istoric — Records section collapse-by-default', () => {
     try { DB.set('pr-records', []); } catch { /* noop */ }
   });
 
+  // IA change 2026-06-12 — records now live behind the segmented control (default
+  // segment is Sessions), so activate the Records segment before asserting rows.
+  function showRecords(): void {
+    fireEvent.click(screen.getByTestId('istoric-segment-records'));
+  }
+
   it('renders a row per record but NO detail preview by default', () => {
     renderIstoric();
+    showRecords();
     expect(screen.getByTestId('pr-row-0')).toBeInTheDocument();
     expect(screen.getByTestId('pr-row-1')).toBeInTheDocument();
     // Collapsed: the kg x reps detail is not in the tree.
@@ -481,6 +490,7 @@ describe('Istoric — Records section collapse-by-default', () => {
 
   it('tapping a row expands ONLY that record detail', () => {
     renderIstoric();
+    showRecords();
     fireEvent.click(screen.getByTestId('pr-row-toggle-0'));
     expect(screen.getByTestId('pr-row-detail-0')).toBeInTheDocument();
     expect(screen.getByTestId('pr-row-toggle-0')).toHaveAttribute('aria-expanded', 'true');
@@ -492,11 +502,24 @@ describe('Istoric — Records section collapse-by-default', () => {
 
   it('tapping an open row collapses it again', () => {
     renderIstoric();
+    showRecords();
     const toggle = screen.getByTestId('pr-row-toggle-0');
     fireEvent.click(toggle);
     expect(screen.getByTestId('pr-row-detail-0')).toBeInTheDocument();
     fireEvent.click(toggle);
     expect(screen.queryByTestId('pr-row-detail-0')).not.toBeInTheDocument();
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('segmented control switches between Sessions (default) and Records', () => {
+    renderIstoric();
+    // Default = Sessions segment active; records body not mounted yet.
+    expect(screen.getByTestId('istoric-segment-sessions')).toHaveAttribute('aria-selected', 'true');
+    expect(screen.queryByTestId('pr-row-0')).not.toBeInTheDocument();
+    // Switch to Records → rows mount, sessions body unmounts.
+    showRecords();
+    expect(screen.getByTestId('istoric-segment-records')).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByTestId('pr-row-0')).toBeInTheDocument();
+    expect(screen.queryByTestId('istoric-sessions')).not.toBeInTheDocument();
   });
 });

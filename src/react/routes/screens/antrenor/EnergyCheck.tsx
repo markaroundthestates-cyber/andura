@@ -162,9 +162,16 @@ export function EnergyCheck(): JSX.Element {
           );
         })}
       </div>
-      <div className="flex-1" />
       {/* #69 explicit Continue CTA — commits the self-report + routes (minus →
-          energy-cause, otherwise back to the hub). Disabled until a level is picked. */}
+          energy-cause, otherwise back to the hub). Disabled until a level is picked.
+          CTA-FOLD FIX (2026-06-12, founder live phone) — the prior `flex-1`
+          spacer here shoved this button to the very bottom of the min-h-screen
+          column, so after picking an energy level the user faced a long dead gap
+          and had to reach/scroll down to Continue. Dropped the spacer so the CTA
+          flows directly under the options (matching EnergyCause/PainButton/
+          EquipmentSwap), visible in-viewport the moment a level is chosen. The
+          mt-6 keeps a comfortable gap; the section still scrolls if the 5 cards
+          ever overflow a very short device. */}
       <button
         type="button"
         onClick={handleContinue}

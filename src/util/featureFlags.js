@@ -415,7 +415,11 @@ export const FLAGS = Object.freeze({
   // is unusable — the forecast just stays naive, never breaks). The 8-week horizon is
   // a DESIGN PROPOSAL (spec §7) — Daniel sanity check before flip. LOWER over-promise
   // risk than today's uncapped linear (the ceiling clamp reduces it).
-  dp_trajectory_v1: { rollout: 0, default: false },
+  // FLIPPED ON 2026-06-12 — Daniel live (post sweep audit): "forta nu creste la fel
+  // de repede la infinit" = the sanity check the flip was waiting for. The naive
+  // linear+flat-cap path he saw ("~105.3 in ~4 wks" while cutting) is exactly the
+  // over-promise this kills: decayed walk to the ceiling + cut/maintenance holds.
+  dp_trajectory_v1: { rollout: 1, default: true },
 
   // #20 per-set fatigue curve (RISK LOW-MED — nudges SET COUNT by +/-1 within the
   // existing clamp, never kg). When ON, learnFatigueCurve classifies a user-per-

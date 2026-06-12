@@ -95,7 +95,10 @@ export function TimeBudget(): JSX.Element {
             {t('energyCheck.timeBudget.noLimit')}
           </button>
         </div>
-        <div className="flex-1" />
+        {/* CTA-FOLD FIX (2026-06-12, founder live phone) — dropped the `flex-1`
+            spacer that pinned Continue to the bottom of the min-h-screen column
+            (long dead gap below the time chips). The button now flows directly
+            under the chips like EnergyCause/EquipmentSwap, visible without scroll. */}
         <button
           type="button"
           onClick={handleContinue}

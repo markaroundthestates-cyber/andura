@@ -16,7 +16,8 @@
 //   7. PRNotificationBanner (F11 conditional prHit) — BUG #4 top per mockup
 //   8. CoachTodayCard SAU CoachRestCard (swap by coachStore.schedContext)
 //   9. Calendar7Day
-//  10. PRWallRecent (Phase 6 task_06 — top 3 din getPRHistoryAll)
+//  (PRWallRecent "Recent PRs" removed 2026-06-12 — redundant with History ›
+//   Records; the aggregate field coach.prWallRecent is retained, just unsurfaced.)
 //  (Item "Incepe antrenament" CTA removed 2026-05-28 — duplicate of
 //   CoachTodayCard "Incepe sesiunea" / CoachRestCard buttons, no extra signal.)
 //  (ObiectivSelector relocated 2026-05-28 to Progres > ObiectivGoalCard per
@@ -49,7 +50,6 @@ import { ReadinessVerdict } from '../../../components/Antrenor/ReadinessVerdict'
 import { PRNotificationBanner } from '../../../components/Antrenor/PRNotificationBanner';
 import { PatternsBanner } from '../../../components/Antrenor/PatternsBanner';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
-import { PRWallRecent } from '../../../components/Antrenor/PRWallRecent';
 import { Calendar7Day } from '../../../components/Calendar7Day';
 import { ReadinessOrb } from '../../../components/pulse/ReadinessOrb';
 import { PulseMark } from '../../../components/pulse/PulseMark';
@@ -375,7 +375,10 @@ export function Antrenor(): JSX.Element {
           goal pick now lives la Progres > ObiectivGoalCard (top of tab, near
           target weight). Antrenor ramane focused pe "today's session" context. */}
 
-      <PRWallRecent records={coach?.prWallRecent ?? []} />
+      {/* PRWallRecent ("Recent PRs") removed 2026-06-12 (Daniel live) — redundant
+          with History › Records (PrWall). The Coach tab stays focused on today's
+          session; all-time records live in History. coach.prWallRecent (aggregate)
+          is retained but no longer surfaced here. */}
 
       {/* Daniel smoke 2026-05-28 verbatim "ala de incepe antrenament trebuie sa
           dispara ca nu ii vad sensul" — bottom CTA was a redundant duplicate of

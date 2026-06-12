@@ -43,7 +43,7 @@
 //                   useMuscleRecoveryGroups data).
 //   3. OBIECTIV   — ObiectivCard (Target Weight + ETA) fast-visible near the top;
 //                   ObiectivGoalCard (5 goal pills) sits with it (both "objective").
-//   4. COMPOZITIE — body-composition group: BodyFat + Projection + Weight (7 days).
+//   4. COMPOZITIE — body-composition group: BodyFat + Projection + Goal forecast.
 //   5. ACTIUNI    — AlertsBanner + log-weight CTA + timeline CTA. (The
 //                   "Last weigh-in" recap card was struck out 2026-05-30.)
 //   6. TENDINTA   — "Weight & BF trend" Sparkline card, moved to the BOTTOM.
@@ -62,9 +62,7 @@ import { gotoPath } from '../../../lib/navigation';
 import { TDEEStrip } from '../../../components/Progres/TDEEStrip';
 import { ProjectionStrip } from '../../../components/Progres/ProjectionStrip';
 import { GoalForecastBlock } from '../../../components/Progres/GoalForecastBlock';
-import { StimulusBlock } from '../../../components/Progres/StimulusBlock';
 import { BodyFatStrip } from '../../../components/Progres/BodyFatStrip';
-import { HeatMapWeekly } from '../../../components/Progres/HeatMapWeekly';
 import { useMuscleRecoveryGroups } from '../../../components/Progres/MuscleRecoveryGrid';
 import { MuscleBodyMap } from '../../../components/Progres/MuscleBodyMap';
 import { ObiectivCard } from '../../../components/Progres/ObiectivCard';
@@ -126,7 +124,7 @@ export function Progres(): JSX.Element {
   // Pulse TREND: feed the shared Sparkline primitive the full weight history
   // mapped to its {day,kg} shape (interfata-noua/screens-tabs.jsx:63). Sparkline
   // returns null on <2 points, so the card only renders the line once there's a
-  // trend to draw; the precise latest/delta numbers stay in HeatMapWeekly below.
+  // trend to draw; the precise latest/delta numbers live on the Weight Timeline.
   const sparkData = useMemo(
     () => weightLog.map((w) => ({ day: w.date, kg: w.kg })),
     [weightLog],
@@ -193,59 +191,20 @@ export function Progres(): JSX.Element {
         <ProjectionStrip />
         {/* Goal forecast — date-anchored weight ETA + strength trajectory (honest, hedged). */}
         <GoalForecastBlock />
-        {/* V3 #19 — effective-reps "real stimulus this week" (flag-gated, null when OFF). */}
-        <StimulusBlock />
-        <HeatMapWeekly />
+        {/* Removed 2026-06-12 (Daniel live): the "Real stimulus this week" block
+            (StimulusBlock) — redundant with the History calendar; and the
+            "Weight (7 days)" snapshot (HeatMapWeekly) — redundant with the
+            TENDINTA trend chart below + the Weight Timeline screen. */}
       </div>
 
-      {/* ── ZONE 5: ACTIUNI — alerts + log/measure CTAs + last-entry recap. ─
-          Alerts banner heads the zone (urgent items first). Then CTAs to log
-          weight + view trend, each followed by its "last entry" recap. Test
-          contract preserved: alerts-banner is BEFORE cta-log-weight. */}
-      <div data-testid="progres-zone-actiuni" className="animate-card-rise delay-300">
-        <ZoneHeading testId="progres-zone-actiuni-heading">{t('progres.zone.actiuni')}</ZoneHeading>
-        {alerts.length > 0 && (
-          <p data-testid="alerte-azi-label" className="text-xs text-ink2 uppercase tracking-wide font-semibold mb-2">
-            {t('progres.alertsToday')}
-          </p>
-        )}
-        <AlertsBanner alerts={alerts} />
-        <button
-          type="button"
-          onClick={() => navigate(gotoPath('log-weight'))}
-          data-testid="cta-log-weight"
-          className="btn-primary-lift w-full flex items-center gap-3 p-4 mb-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
-        >
-          <Scale className="w-5 h-5" aria-hidden="true" />
-          {t('progres.logWeightToday')}
-        </button>
-        {/* Progress redesign (Daniel 2026-05-30): the "Last weigh-in" recap card
-            was struck out — the log-weight CTA above + the trend zone below
-            already cover "what + where". Only the CTAs remain in ACTIUNI. */}
-        {/* PAR-004 Wave 2e — Weight Timeline drill-down (chart view). */}
-        {lastWeight && (
-          <button
-            type="button"
-            onClick={() => navigate(gotoPath('weight-timeline'))}
-            data-testid="cta-weight-timeline"
-            className="btn-secondary-lift w-full flex items-center gap-3 p-4 mb-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-base font-semibold"
-          >
-            <LineChart className="w-5 h-5" aria-hidden="true" />
-            {t('progres.viewWeightTrend')}
-          </button>
-        )}
-        {/* §progress-v2 — masuratorile corporale (talie/gat/sold) care alimenteaza
-            BF% s-au consolidat in Cont > Profil (alaturi de greutate + BF auto/
-            skinfold). Ecranul dedicat "Masuratori corp" (circumferinte
-            piept/biceps/coapsa = noise muscular, NU grasime) a fost eliminat. */}
-      </div>
-
-      {/* ── ZONE 6: TENDINTA — "Weight & BF trend", moved to the BOTTOM. ─────
-          The long-range trend line (weight + BF over time) is the deepest read
-          — answers "where am I going overall" — so it closes the screen. Renders
-          only with >=2 weight points (Sparkline self-guards to null). */}
+      {/* ── ZONE 5: TENDINTA — "Weight & BF trend" chart. ───────────────────
+          Reorder 2026-06-12 (Daniel live): the weight CHART now sits ABOVE the
+          "Log weight today" CTA (it previously closed the screen below the
+          actions; Daniel wanted to see the trend before the log button). Renders
+          only with >=2 weight points (Sparkline self-guards to null). Testids
+          + contents unchanged — pure reorder. */}
       {sparkData.length >= 2 && (
-        <div data-testid="progres-zone-tendinta" className="animate-card-rise delay-375">
+        <div data-testid="progres-zone-tendinta" className="animate-card-rise delay-300">
           <ZoneHeading testId="progres-zone-tendinta-heading">{t('progres.zone.tendinta')}</ZoneHeading>
           <div
             data-testid="progres-trend-sparkline"
@@ -265,6 +224,49 @@ export function Progres(): JSX.Element {
           </div>
         </div>
       )}
+
+      {/* ── ZONE 6: ACTIUNI — alerts + log/measure CTAs. ────────────────────
+          Alerts banner heads the zone (urgent items first). Then CTAs to log
+          weight + view trend. Test contract preserved: alerts-banner is BEFORE
+          cta-log-weight. Reorder 2026-06-12: now sits BELOW the trend chart
+          (Daniel live — chart above "Log weight today"). */}
+      <div data-testid="progres-zone-actiuni" className="animate-card-rise delay-375">
+        <ZoneHeading testId="progres-zone-actiuni-heading">{t('progres.zone.actiuni')}</ZoneHeading>
+        {alerts.length > 0 && (
+          <p data-testid="alerte-azi-label" className="text-xs text-ink2 uppercase tracking-wide font-semibold mb-2">
+            {t('progres.alertsToday')}
+          </p>
+        )}
+        <AlertsBanner alerts={alerts} />
+        <button
+          type="button"
+          onClick={() => navigate(gotoPath('log-weight'))}
+          data-testid="cta-log-weight"
+          className="btn-primary-lift w-full flex items-center gap-3 p-4 mb-3 bg-brick text-paper rounded-[14px] text-base font-semibold"
+        >
+          <Scale className="w-5 h-5" aria-hidden="true" />
+          {t('progres.logWeightToday')}
+        </button>
+        {/* Progress redesign (Daniel 2026-05-30): the "Last weigh-in" recap card
+            was struck out — the log-weight CTA above + the trend zone above
+            already cover "what + where". Only the CTAs remain in ACTIUNI. */}
+        {/* PAR-004 Wave 2e — Weight Timeline drill-down (chart view). */}
+        {lastWeight && (
+          <button
+            type="button"
+            onClick={() => navigate(gotoPath('weight-timeline'))}
+            data-testid="cta-weight-timeline"
+            className="btn-secondary-lift w-full flex items-center gap-3 p-4 mb-3 bg-paper2 border border-lineStrong text-ink rounded-xl text-base font-semibold"
+          >
+            <LineChart className="w-5 h-5" aria-hidden="true" />
+            {t('progres.viewWeightTrend')}
+          </button>
+        )}
+        {/* §progress-v2 — masuratorile corporale (talie/gat/sold) care alimenteaza
+            BF% s-au consolidat in Cont > Profil (alaturi de greutate + BF auto/
+            skinfold). Ecranul dedicat "Masuratori corp" (circumferinte
+            piept/biceps/coapsa = noise muscular, NU grasime) a fost eliminat. */}
+      </div>
     </section>
   );
 }

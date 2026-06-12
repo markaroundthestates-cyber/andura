@@ -84,6 +84,39 @@ function formatVolume(kg: number): string {
   return kg.toLocaleString('ro-RO').replace(/,/g, ' ').replace(/\./g, ' ');
 }
 
+// F2 #3 i18n — localize the Tempo engine's session cue at the render boundary
+// (anti RO-leak under EN). The engine emits a stable `cueId`
+// ('compound' | 'isolation' | a top-compound movementId) + `persona` +
+// `notation` (locale-neutral); we resolve the cue prose via
+// `workout.tempoCue.cues.<cueId>`, wrap it in the persona tone template
+// (Maria = no notation; Gigica/Marius prepend "Tempo <notation>"), and join.
+// Falls back to the engine's pre-composed `line` (RO) only when cueId/copy is
+// absent (old persisted/partial shapes — defensive, same idiom as the warmup
+// row's durationMin fallback above).
+function localizeTempoCue(tempoCue: {
+  line: string;
+  notation: string | null;
+  cueId: string | null;
+  persona: string | null;
+}): string {
+  const { cueId, persona, notation, line } = tempoCue;
+  if (!cueId) return line;
+  const cueKey = `workout.tempoCue.cues.${cueId}`;
+  const cue = t(cueKey);
+  // t() returns the key itself when missing — fall back to the raw line then.
+  if (!cue || cue === cueKey) return line;
+  // Maria persona: zero notation strict (engine Cluster B3 Q3). Gigica/Marius
+  // get the notation-prefixed form.
+  const useNotation = persona !== 'maria' && typeof notation === 'string' && notation.length > 0;
+  const body = useNotation
+    ? t('workout.tempoCue.line', { notation, cue })
+    : cue;
+  // Persona tone wrapper (Sugerez/Execute/etc.) localized; default = neutral.
+  const personaKey = `workout.tempoCue.persona.${persona ?? 'gigica'}`;
+  const toned = t(personaKey, { body });
+  return toned && toned !== personaKey ? toned : body;
+}
+
 // A3 honest-fallback — the old hardcoded 5-exercise "Push" demo list was
 // removed (it posed a fabricated plan as a real coach decision). When the
 // engine emits 0 exercises (rare — full-path-sim asserts non-empty) the UI
@@ -331,7 +364,10 @@ export function WorkoutPreview(): JSX.Element {
           exercise movementId is a Faza-3 input dep), so it shows once for the
           whole session, NOT per lift. Display only — no weight/sets/reps. Renders
           ONLY cand the engine emits a non-empty cue (workout.tempoCue != null).
-          Idiom mirror warmup row above. The line is engine-native RO copy. */}
+          Idiom mirror warmup row above. The engine emits a stable cueId +
+          persona + notation; localizeTempoCue resolves the cue prose in the
+          active locale (anti RO-leak under EN), falling back to the raw RO
+          `line` only on old/partial shapes. */}
       {workout?.tempoCue && (
         <div
           className="pulse-card flex items-center gap-2.5 p-3 mb-4 animate-card-rise delay-100"
@@ -341,7 +377,7 @@ export function WorkoutPreview(): JSX.Element {
         >
           <Clock className="w-4 h-4 text-brick flex-shrink-0" aria-hidden="true" />
           <span className="coach-quote font-serif italic text-ink2 text-sm flex-1 leading-relaxed">
-            {workout.tempoCue.line}
+            {localizeTempoCue(workout.tempoCue)}
           </span>
         </div>
       )}

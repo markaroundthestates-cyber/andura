@@ -169,7 +169,7 @@
       "subtitle": "Body composition. Calibrated estimates."
     },
     "istoric": {
-      "title": "History"
+      "title": "Training History"
     },
     "cont": {
       "title": "Account"
@@ -438,6 +438,30 @@
       "legExtension": "Back supported, extend your knees under control and squeeze your quads, lower slowly.",
       "legCurl": "Hips pressed into the pad, curl your knees under control squeezing your hamstrings, return slowly.",
       "calfRaise": "Rise onto your toes as high as you can, brief pause at the top, lower under control for a full stretch."
+    },
+    "tempoCue": {
+      "line": "Tempo {notation}, {cue}",
+      "persona": {
+        "maria": "Why like this? For control: {body}.",
+        "gigica": "Suggestion: {body}.",
+        "marius": "{body}. Execute."
+      },
+      "cues": {
+        "compound": "control the descent, keep the tension",
+        "isolation": "focus on the target muscle, slow movement",
+        "back_squat": "chest up, knees over your toes, descend under control below parallel",
+        "front_squat": "elbows high, torso vertical, descend under control",
+        "deadlift": "neutral back, push through the floor, hips and knees together",
+        "romanian_deadlift": "hips back, neutral back, feel the hamstrings",
+        "bench_press": "shoulder blades pinched, elbows at 45 degrees, touch your chest under control",
+        "incline_bench_press": "shoulder blades pinched, moderate elbows, control the descent",
+        "overhead_press": "glutes braced, elbows under the bar, press straight up",
+        "barbell_row": "neutral back, pull with your elbows, touch your stomach",
+        "pull_up": "shoulder blades engaged, pull with your back NOT your arms",
+        "hip_thrust": "chin to chest, squeeze your glutes at the top, control the descent",
+        "lunge": "knee over your toes, torso vertical, control the return",
+        "bulgarian_split_squat": "back foot raised, descend vertically, control your balance"
+      }
     },
     "prFlash": {
       "ariaLabel": "New personal record",
@@ -723,10 +747,6 @@
     "logWeightCta": "Log weight",
     "history": "History",
     "noData": "Log your weight to see progress.",
-    "stimulus": {
-      "heading": "Real stimulus this week",
-      "line": "~{stimulus} hard sets of real stimulus, from {raw} logged."
-    },
     "bodyFat": {
       "label": "Body fat",
       "estimate": "~{pct}%",
@@ -804,12 +824,6 @@
       "logCta": "Log weight",
       "deltaSince": "{delta} kg since last week",
       "noEntries": "No weight logged yet.",
-      "snapshotAriaLabel": "Weight last 7 days",
-      "snapshotTitle": "Weight (7 days)",
-      "snapshotEmpty": "No entries yet. The snapshot appears here after your first weigh-in.",
-      "snapshotHint": "For deep analysis → see History › Weight and BF",
-      "verifyValue": "Check the value",
-      "dayBarAriaLabel": "Day {n} weight {kg} kg",
       "trendTitle": "Weight & BF trend",
       "trendAriaLabel": "Weight and body fat trend over time"
     },
@@ -910,7 +924,8 @@
       "offTrack": "Not on track for your goal at the current pace.",
       "reached": "You're already at your goal weight.",
       "strengthHeading": "Strength — trajectory",
-      "strengthLine": "{lift}: ~{kg} kg in ~{weeks} wks."
+      "strengthLine": "{lift}: ~{kg} kg in ~{weeks} wks.",
+      "strengthLineCut": "{lift}: realistic in a cut, hold ~{kg} kg."
     },
     "nutritionInline": {
       "sectionHeading": "Nutrition · today",
@@ -1011,11 +1026,6 @@
       "exercises_other": "{n} exercises",
       "volume": "{kg} kg volume"
     },
-    "prWall": {
-      "title": "Recent PRs",
-      "empty": "No personal records yet — log a few sessions.",
-      "recordLine": "{exercise}: {kg} kg × {reps}"
-    },
     "weightLog": {
       "title": "Weight log",
       "empty": "No weight entries yet."
@@ -1036,6 +1046,9 @@
       "showLess": "Show less",
       "seeDetails": "See details",
       "sessionsHeading": "Sessions",
+      "segAriaLabel": "Records or sessions",
+      "segSessions": "Sessions",
+      "segRecords": "Records",
       "emptyTitle": "Your first session is waiting",
       "emptyBody": "Finish a workout and it'll show up here with all the details.",
       "recordSummary": "{kg} kg x {reps} (~{oneRM} kg 1RM)",

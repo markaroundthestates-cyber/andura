@@ -169,7 +169,7 @@
       "subtitle": "Body composition · estimari calibrate."
     },
     "istoric": {
-      "title": "Istoric"
+      "title": "Istoric antrenamente"
     },
     "cont": {
       "title": "Cont"
@@ -438,6 +438,30 @@
       "legExtension": "Spate sprijinit, intinde genunchii controlat si strange cvadricepsul, coboara incet.",
       "legCurl": "Solduri lipite de banca, indoaie genunchii controlat strangand muschii din spatele coapsei, revino incet.",
       "calfRaise": "Ridica-te pe varfuri cat de sus poti, pauza scurta sus, coboara controlat pentru intindere completa."
+    },
+    "tempoCue": {
+      "line": "Tempo {notation}, {cue}",
+      "persona": {
+        "maria": "De ce asa? Pentru control: {body}.",
+        "gigica": "Sugerez: {body}.",
+        "marius": "{body}. Execute."
+      },
+      "cues": {
+        "compound": "controleaza coborarea, pastreaza tensiunea",
+        "isolation": "concentreaza-te pe muschiul tinta, miscare lenta",
+        "back_squat": "piept sus, genunchii peste varfurile picioarelor, coboara controlat sub paralel",
+        "front_squat": "coate sus, vertical torso, coboara controlat",
+        "deadlift": "spate neutru, impinge prin podea, solduri si genunchi simultan",
+        "romanian_deadlift": "solduri inapoi, spate neutru, simte hamstring-ii",
+        "bench_press": "omoplati stransi, coatele 45 grade, atinge controlat pieptul",
+        "incline_bench_press": "omoplati stransi, coatele moderate, controleaza coborarea",
+        "overhead_press": "fund strans, coate sub bara, impinge vertical",
+        "barbell_row": "spate neutru, trage cu coatele, atinge abdomenul",
+        "pull_up": "omoplati activi, trage cu spatele NU cu bratele",
+        "hip_thrust": "barbie in piept, contracta fesieri in varf, controleaza coborarea",
+        "lunge": "genunchi peste varful piciorului, torso vertical, controleaza revenirea",
+        "bulgarian_split_squat": "piciorul din spate sus, coboara vertical, controleaza echilibrul"
+      }
     },
     "prFlash": {
       "ariaLabel": "Record personal nou",
@@ -723,10 +747,6 @@
     "logWeightCta": "Logheaza greutatea",
     "history": "Istoric",
     "noData": "Logheaza-ti greutatea ca sa vezi progresul.",
-    "stimulus": {
-      "heading": "Stimul real saptamana asta",
-      "line": "~{stimulus} seturi grele de stimul real, din {raw} logate."
-    },
     "bodyFat": {
       "label": "Grasime corporala",
       "estimate": "~{pct}%",
@@ -804,12 +824,6 @@
       "logCta": "Logheaza greutatea",
       "deltaSince": "{delta} kg fata de saptamana trecuta",
       "noEntries": "Nu ai logat greutatea inca.",
-      "snapshotAriaLabel": "Greutate ultimele 7 zile",
-      "snapshotTitle": "Greutate (7 zile)",
-      "snapshotEmpty": "Nu ai loguri inca. Snapshot-ul apare aici dupa prima cantarire.",
-      "snapshotHint": "Pentru analiza profunda → vezi Istoric › Greutate si BF",
-      "verifyValue": "Verifica valoarea",
-      "dayBarAriaLabel": "Ziua {n} greutate {kg} kg",
       "trendTitle": "Evolutie greutate si BF",
       "trendAriaLabel": "Evolutia greutatii si a grasimii in timp"
     },
@@ -910,7 +924,8 @@
       "offTrack": "La ritmul curent nu esti pe drumul spre tinta.",
       "reached": "Esti deja la tinta de greutate.",
       "strengthHeading": "Forta - traiectorie",
-      "strengthLine": "{lift}: ~{kg} kg in ~{weeks} sapt."
+      "strengthLine": "{lift}: ~{kg} kg in ~{weeks} sapt.",
+      "strengthLineCut": "{lift}: realist in cut, pastrezi ~{kg} kg."
     },
     "nutritionInline": {
       "sectionHeading": "Nutritie · azi",
@@ -1011,11 +1026,6 @@
       "exercises_other": "{n} exercitii",
       "volume": "{kg} kg volum"
     },
-    "prWall": {
-      "title": "Recorduri recente",
-      "empty": "Niciun record personal inca — logheaza cateva sesiuni.",
-      "recordLine": "{exercise}: {kg} kg × {reps}"
-    },
     "weightLog": {
       "title": "Istoric greutate",
       "empty": "Nu ai inregistrari de greutate inca."
@@ -1036,6 +1046,9 @@
       "showLess": "Arata mai putin",
       "seeDetails": "Vezi tot",
       "sessionsHeading": "Sesiuni",
+      "segAriaLabel": "Recorduri sau sesiuni",
+      "segSessions": "Sesiuni",
+      "segRecords": "Recorduri",
       "emptyTitle": "Prima ta sesiune te asteapta",
       "emptyBody": "Termina un antrenament si apare aici cu toate detaliile.",
       "recordSummary": "{kg} kg x {reps} (~{oneRM} kg 1RM)",

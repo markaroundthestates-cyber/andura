@@ -206,7 +206,13 @@ export function Onboarding(): JSX.Element {
         )}
       </div>
 
-      <div className="flex-1" />
+      {/* CTA-FOLD FIX (2026-06-12, founder live phone) — the `flex-1` spacer
+          here pushed the Continue/Back row to the very bottom of the
+          min-h-screen column, so on the short numeric steps (age/weight/height,
+          a single big-number field) the user picked a value then faced a long
+          dead gap before Continue. Dropped the spacer so the button row flows
+          right under each step body; the section still scrolls on the taller
+          summary step. mt-6 keeps the gap comfortable. */}
 
       <div className="flex gap-3 mt-6">
         {stepNum > 1 && (

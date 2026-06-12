@@ -186,7 +186,12 @@ export interface PlannedWorkoutOutput {
   // input dep (meta.movementId unset → one generic cue), so it is a session-level
   // narration string, NOT a per-exercise faked-movement cue. Touches NO
   // weight/sets/reps. Null when the blueprint is absent (cold start / rest day).
-  tempoCue?: { line: string; notation: string | null } | null;
+  // `line` is the engine's pre-composed RO text — a back-compat fallback only.
+  // The render boundary prefers cueId + persona + notation and localizes the cue
+  // via i18n (`workout.tempoCue.*`) so EN surfaces an EN cue, not the RO leak.
+  // cueId / persona are null on old persisted/partial shapes → boundary falls
+  // back to `line`.
+  tempoCue?: { line: string; notation: string | null; cueId: string | null; persona: string | null } | null;
   // F2 #4 — Energy Adjustment direction + tier-gated magnitude. RECONCILE input
   // for the in-session ±% scale: Workout.tsx uses this engine magnitude in place
   // of the flat ×0.8/×1.15 constants (NOT a third channel — the same single

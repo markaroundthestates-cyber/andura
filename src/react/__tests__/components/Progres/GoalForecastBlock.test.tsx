@@ -76,6 +76,49 @@ describe('GoalForecastBlock — strength trajectory', () => {
     expect(lines[0]!.textContent).toMatch(/104 kg/);
     expect(lines[0]!.textContent).toMatch(/4 wks/);
   });
+
+  // BUG (Daniel live 2026-06-12): fmtKg forced ro-RO then replaced the decimal
+  // comma with a SPACE, so "105.3" rendered as "105 3" ("cine nu stie o sa creada
+  // ca face lat pulldowns cu 876 kg"). The decimal separator must survive — EN dot.
+  it('keeps the decimal separator on fractional kg (105.3, not "105 3")', async () => {
+    mockForecast({
+      weightEta: null,
+      strength: [
+        { name: 'Cable Row', currentOneRm: 102, projectedOneRm: 105.3, weeks: 4 },
+        { name: 'Lat Pulldown', currentOneRm: 84, projectedOneRm: 87.6, weeks: 4 },
+      ],
+    });
+    render(<GoalForecastBlock />);
+    await waitFor(() => {
+      expect(screen.getAllByTestId('goal-forecast-strength-line')).toHaveLength(2);
+    });
+    const lines = screen.getAllByTestId('goal-forecast-strength-line');
+    expect(lines[0]!.textContent).toMatch(/105\.3 kg/);
+    expect(lines[0]!.textContent).not.toMatch(/105 3/);
+    expect(lines[1]!.textContent).toMatch(/87\.6 kg/);
+    expect(lines[1]!.textContent).not.toMatch(/87 6/);
+  });
+
+  // CUT-AWARENESS (Daniel live 2026-06-12): in a deficit the projection must NOT
+  // promise +kg — it frames "hold ~X kg". The engine returns framing 'cut-hold'
+  // with projected == current; the component swaps to the maintenance copy.
+  it('renders a maintenance "hold" line (no +gain) when framing is cut-hold', async () => {
+    mockForecast({
+      weightEta: null,
+      strength: [
+        { name: 'Cable Row', currentOneRm: 105.3, projectedOneRm: 105.3, weeks: 4, framing: 'cut-hold' },
+      ],
+    });
+    render(<GoalForecastBlock />);
+    const line = await screen.findByTestId('goal-forecast-strength-line');
+    // EN copy — "Cable Row: realistic in a cut, hold ~105.3 kg."
+    expect(line.textContent).toMatch(/realistic in a cut/i);
+    expect(line.textContent).toMatch(/hold/i);
+    expect(line.textContent).toMatch(/105\.3 kg/);
+    expect(line.getAttribute('data-framing')).toBe('cut-hold');
+    // Never the "in ~N wks" growth phrasing for a cut.
+    expect(line.textContent).not.toMatch(/wks/);
+  });
 });
 
 describe('GoalForecastBlock — graceful empty', () => {

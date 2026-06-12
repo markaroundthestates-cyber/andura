@@ -22,8 +22,16 @@ import { useWorkoutStore } from '../../stores/workoutStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { t, getCurrentLocale } from '../../../i18n/index.js';
 
+// Locale-aware kg with one decimal. The prior implementation forced 'ro-RO'
+// (decimal comma) then `.replace(/,/g,' ')` — which turned the decimal SEPARATOR
+// into a SPACE, so "105.3" rendered as "105 3" (Daniel live 2026-06-12: "cine nu
+// stie o sa creada ca face lat pulldowns cu 876 kg"). Format in the active locale
+// instead — EN keeps the dot ("105.3"), RO keeps its comma ("105,3"), consistent
+// with fmtEtaDate + the rest of the app's number style. No grouping to strip at kg
+// magnitudes (1-decimal bodyweights/lifts never hit thousands separators).
 function fmtKg(n: number): string {
-  return n.toLocaleString('ro-RO', { maximumFractionDigits: 1 }).replace(/,/g, ' ');
+  const locale = getCurrentLocale() === 'ro' ? 'ro-RO' : 'en-US';
+  return n.toLocaleString(locale, { maximumFractionDigits: 1, useGrouping: false });
 }
 
 // Locale-aware short date (e.g. "Aug 14" / "14 aug.") for the ETA — the engine
@@ -120,12 +128,21 @@ export function GoalForecastBlock(): JSX.Element | null {
                   key={s.name}
                   className="text-sm font-semibold text-ink"
                   data-testid="goal-forecast-strength-line"
+                  data-framing={s.framing ?? 'gain'}
                 >
-                  {t('bodyComp.goalForecast.strengthLine', {
-                    lift: s.name,
-                    kg: fmtKg(s.projectedOneRm),
-                    weeks: s.weeks,
-                  })}
+                  {/* Cut-awareness (Daniel 2026-06-12): a cutting user is promised
+                      HOLDING strength, never a gain (the engine returns projected ==
+                      current + framing 'cut-hold'). Otherwise the standard +gain line. */}
+                  {s.framing === 'cut-hold'
+                    ? t('bodyComp.goalForecast.strengthLineCut', {
+                        lift: s.name,
+                        kg: fmtKg(s.projectedOneRm),
+                      })
+                    : t('bodyComp.goalForecast.strengthLine', {
+                        lift: s.name,
+                        kg: fmtKg(s.projectedOneRm),
+                        weeks: s.weeks,
+                      })}
                 </li>
               ))}
             </ul>

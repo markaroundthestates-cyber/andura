@@ -24,7 +24,7 @@
 
 import type { JSX } from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { setLocale, _resetI18nCache } from '../index.js';
 import { useWorkoutStore } from '../../react/stores/workoutStore';
@@ -32,7 +32,6 @@ import { useCoachStore } from '../../react/stores/coachStore';
 import { useOnboardingStore } from '../../react/stores/onboardingStore';
 import { useScheduleStore } from '../../react/stores/scheduleStore';
 import type { LastSessionSummary, SessionExerciseBreakdown } from '../../react/stores/workoutStore';
-import type { PRRecord } from '../../react/lib/prHistoryAggregate';
 
 // ── Mocks for async aggregates so screens render synchronously ──────────────
 vi.mock('../../react/lib/coachDirectorAggregate', () => ({
@@ -88,7 +87,6 @@ import { Calendar7Day } from '../../react/components/Calendar7Day';
 import { CalendarHeatmap } from '../../react/components/Istoric/CalendarHeatmap';
 import { RatingsStrip90Day } from '../../react/components/Istoric/RatingsStrip90Day';
 import { VirtualSessionList } from '../../react/components/Istoric/VirtualSessionList';
-import { PRWallRecent } from '../../react/components/Antrenor/PRWallRecent';
 import { Istoric } from '../../react/routes/screens/istoric/Istoric';
 import { IstoricDetail } from '../../react/routes/screens/istoric/IstoricDetail';
 import { PrWall } from '../../react/routes/screens/istoric/PrWall';
@@ -138,6 +136,13 @@ import { SessionTimer } from '../../react/components/Workout/SessionTimer';
 import { SubHeader } from '../../react/components/SubHeader';
 import { ExerciseMedia } from '../../react/components/ExerciseMedia';
 import { ScheduleOverride } from '../../react/routes/screens/antrenor/ScheduleOverride';
+// ── Engine-origin leak guard (founder live bug 2026-06-12) — drive the REAL
+// Tempo engine cue table through the real WorkoutPreview render boundary
+// (WorkoutPreview already imported above in the Wave E1 block) ────────────────
+import { getTodayWorkout } from '../../react/lib/engineWrappers';
+import { composeFormCue } from '../../engine/tempo/formCues.js';
+import { composeTempoPrescription } from '../../engine/tempo/tempoPrescription.js';
+import { TOP_COMPOUND_MOVEMENTS, MOVEMENT_CATEGORY } from '../../engine/tempo/constants.js';
 
 // ── Forbidden tokens (RO-only signals) ──────────────────────────────────────
 //
@@ -462,27 +467,6 @@ const WAVE_E3_SESSION: LastSessionSummary = {
   exercises: [WAVE_E3_EXERCISE],
 };
 
-const WAVE_E3_PR_RECORDS: readonly PRRecord[] = [
-  {
-    exerciseId: 'bench-press',
-    exerciseName: 'Bench Press',
-    kg: 100,
-    reps: 5,
-    oneRMEstimate: 117,
-    sessionTs: Date.now() - 86400000,
-    sessionTitle: 'Push',
-  },
-  {
-    exerciseId: 'squat',
-    exerciseName: 'Squat',
-    kg: 140,
-    reps: 5,
-    oneRMEstimate: 163,
-    sessionTs: Date.now() - 2 * 86400000,
-    sessionTitle: 'Legs',
-  },
-];
-
 function resetStores(): void {
   useWorkoutStore.setState({
     exIdx: 0,
@@ -737,11 +721,6 @@ describe('Wave E3 i18n — no RO leak on calendar + Istoric tab', () => {
       />,
     );
     assertNoRoLeak('VirtualSessionList', container.textContent ?? '');
-  });
-
-  it('PRWallRecent (Antrenor home top-3 slice) — populated', () => {
-    const { container } = render(<PRWallRecent records={WAVE_E3_PR_RECORDS} />);
-    assertNoRoLeak('PRWallRecent', container.textContent ?? '');
   });
 
   it('Istoric landing — empty state has no RO leak', () => {
@@ -1282,6 +1261,152 @@ describe('Wave F1 i18n — components surface EN-clean under EN locale', () => {
     // Mobility + Cardio options were REMOVED (no dead buttons) — assert a
     // surviving real option renders EN-clean instead.
     expect(text).toContain('Different group');
+  });
+});
+
+// ── ENGINE-ORIGIN LEAK GUARD (founder live bug 2026-06-12) ──────────────────
+// The static-extraction screen sweeps above CANNOT catch this class: the Tempo
+// engine composes a Romanian cue sentence AT RUNTIME ("Tempo 2-1-2-0, Sugerez:
+// controleaza coborarea, pastreaza tensiunea.") that only enters the DOM once a
+// plan exists. The fix moved the prose into i18n (`workout.tempoCue.*`); this
+// guard drives the REAL engine cue table (composeFormCue from the live
+// BASE_LIBRARY_RO + TOP_COMPOUND_OVERRIDES_RO) through the REAL WorkoutPreview
+// render boundary under EN and asserts zero RO leak — so adding a new RO cue
+// without its EN translation fails here.
+describe('Engine-origin i18n — Tempo cue table renders EN-clean through WorkoutPreview', () => {
+  const mockedGetTodayWorkout = vi.mocked(getTodayWorkout);
+
+  // Build the tempoCue shape EXACTLY as getDailyWorkout.js does (preSetIntro +
+  // notation + cueId + persona) from the real engine, for a given movement.
+  function tempoCueFromEngine(
+    movementId: string,
+    movementCategory: 'compound' | 'isolation',
+    persona: 'maria' | 'gigica' | 'marius',
+  ): { line: string; notation: string | null; cueId: string | null; persona: string | null } {
+    const formCue = composeFormCue({ movementId, movementCategory, persona, tier: 'T0' });
+    const presc = composeTempoPrescription({ cueText: formCue.cueText, persona });
+    return {
+      line: presc.preSetIntro,
+      notation: presc.notation ?? null,
+      cueId: formCue.cueId ?? null,
+      persona: formCue.persona ?? null,
+    };
+  }
+
+  function makePlannedWorkout(tempoCue: ReturnType<typeof tempoCueFromEngine>) {
+    return {
+      workoutTitle: 'Push',
+      sessionType: 'PUSH',
+      exerciseCount: 0,
+      estimatedDuration: 45,
+      intensityMod: 'normal' as const,
+      exercises: [],
+      volumeKg: 1000,
+      tempoCue,
+    };
+  }
+
+  async function renderPreviewWithTempo(
+    tempoCue: ReturnType<typeof tempoCueFromEngine>,
+  ): Promise<string> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockedGetTodayWorkout.mockResolvedValue(makePlannedWorkout(tempoCue) as any);
+    const view = render(withRouter('/app/antrenor/workout-preview', <WorkoutPreview />));
+    // Scope the wait to THIS render's container (the loop renders several
+    // instances; a global findByTestId would match multiple tempo rows).
+    await waitFor(() => {
+      expect(view.container.querySelector('[data-testid="preview-tempo-row"]')).not.toBeNull();
+    });
+    const text = view.container.textContent ?? '';
+    view.unmount();
+    return text;
+  }
+
+  // The session-level case the engine actually emits in production (movementId
+  // unset → base library compound/isolation), plus EVERY top-compound override
+  // id, across all three persona tones.
+  const CASES: ReadonlyArray<[string, string, 'compound' | 'isolation']> = [
+    ['', '', MOVEMENT_CATEGORY.COMPOUND],
+    ['', '', MOVEMENT_CATEGORY.ISOLATION],
+    ...TOP_COMPOUND_MOVEMENTS.map(
+      (id) => [id, id, MOVEMENT_CATEGORY.COMPOUND] as [string, string, 'compound'],
+    ),
+  ];
+
+  it.each(CASES)(
+    'cue movement "%s" (cat %s) renders EN-clean for all personas',
+    async (movementId, _label, category) => {
+      for (const persona of ['maria', 'gigica', 'marius'] as const) {
+        const tempoCue = tempoCueFromEngine(movementId, category, persona);
+        // Sanity — the engine `line` IS Romanian (the thing we must NOT render).
+        const text = await renderPreviewWithTempo(tempoCue);
+        assertNoRoLeak(
+          `WorkoutPreview tempo cue [${movementId || category}/${persona}]`,
+          text,
+        );
+      }
+    },
+  );
+
+  it('compound cue surfaces real EN prose (positive assertion, not just absence)', async () => {
+    const tempoCue = tempoCueFromEngine('', MOVEMENT_CATEGORY.COMPOUND, 'gigica');
+    const text = await renderPreviewWithTempo(tempoCue);
+    expect(text).toMatch(/control the descent/i);
+    expect(text).toMatch(/Suggestion:/i);
+  });
+
+  it('engine `line` is genuinely Romanian (guards the fixture is meaningful)', () => {
+    // If this ever stops being RO, the leak guard above would pass vacuously.
+    const tempoCue = tempoCueFromEngine('', MOVEMENT_CATEGORY.COMPOUND, 'gigica');
+    expect(tempoCue.line).toMatch(/controleaza|pastreaza|Sugerez/i);
+  });
+});
+
+// ── ENGINE-ORIGIN — RO opt-in spot-check (reverse direction) ────────────────
+// Under RO, the same boundary must surface the RO cue (the engine source
+// wording), and an EN-marker phrase must NOT leak. Mirrors the EN-into-RO
+// concern (ReadinessVerdict "Normal session" etc.) for the tempo surface.
+describe('Engine-origin i18n — Tempo cue renders RO-clean under RO locale', () => {
+  const mockedGetTodayWorkout = vi.mocked(getTodayWorkout);
+
+  it('compound cue surfaces RO prose under RO (no EN marker leak)', async () => {
+    setLocale('ro');
+    _resetI18nCache();
+    setLocale('ro');
+    const formCue = composeFormCue({
+      movementId: '',
+      movementCategory: MOVEMENT_CATEGORY.COMPOUND,
+      persona: 'gigica',
+      tier: 'T0',
+    });
+    const presc = composeTempoPrescription({ cueText: formCue.cueText, persona: 'gigica' });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockedGetTodayWorkout.mockResolvedValue({
+      workoutTitle: 'Push',
+      sessionType: 'PUSH',
+      exerciseCount: 0,
+      estimatedDuration: 45,
+      intensityMod: 'normal',
+      exercises: [],
+      volumeKg: 1000,
+      tempoCue: {
+        line: presc.preSetIntro,
+        notation: presc.notation ?? null,
+        cueId: formCue.cueId ?? null,
+        persona: formCue.persona ?? null,
+      },
+    } as any);
+    const { container } = render(
+      withRouter('/app/antrenor/workout-preview', <WorkoutPreview />),
+    );
+    await waitFor(() => {
+      expect(container.querySelector('[data-testid="preview-tempo-row"]')).not.toBeNull();
+    });
+    const text = container.textContent ?? '';
+    expect(text).toMatch(/controleaza coborarea/i);
+    expect(text).toMatch(/Sugerez/i);
+    // EN cue prose must NOT leak under RO.
+    expect(text).not.toMatch(/control the descent|Suggestion:/i);
   });
 });
 
