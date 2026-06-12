@@ -32,7 +32,10 @@ import { test, expect } from '@playwright/test';
 // (chunk load failures, uncaught app exceptions) should fail the check.
 const NON_FATAL = /favicon|sourcemap\.map|\.map\b|ERR_ABORTED/i;
 
-test.describe('Andura production critical paths (Checkly synthetic)', () => {
+// NOTE 2026-06-12: NO test.describe wrapper — the Checkly CLI bundles its own
+// @playwright/test runtime; a describe() registered against the project-local
+// 1.59 instance threw "did not expect test.describe() to be called here" at
+// deploy bundling (dual-instance hazard). Top-level test() calls bundle clean.
   test('1. App shell boots on / (Splash paints, no fatal error)', async ({ page }) => {
     const errors: string[] = [];
     const failedRequests: string[] = [];
@@ -143,4 +146,4 @@ test.describe('Andura production critical paths (Checkly synthetic)', () => {
   // Authenticated paths can't be probed without a real session. When a synthetic
   // login fixture exists, add checks for: Antrenor hub render (/app/antrenor),
   // workout flow cold-start, Firestore write latency budget (Cluster B5 SLO).
-});
+
