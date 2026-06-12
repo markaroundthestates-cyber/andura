@@ -31,7 +31,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { HelpCircle, Images, ChevronDown } from 'lucide-react';
-import { AparatLipsaSheet } from '../../../components/Workout/AparatLipsaSheet';
+import { MissingEquipmentConfirmSheet } from '../../../components/Workout/MissingEquipmentConfirmSheet';
 import { SwapPickSheet } from '../../../components/Workout/SwapPickSheet';
 import { useWorkoutStore, getCurrentMode, energyLightForIntensityMod } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
@@ -125,6 +125,8 @@ export function Workout(): JSX.Element {
   const dropExercise = useWorkoutStore((s) => s.dropExercise);
   const restoreExercise = useWorkoutStore((s) => s.restoreExercise);
   const droppedExercises = useWorkoutStore((s) => s.droppedExercises);
+  // Founder Busy/Missing redesign 2026-06-12 — defer (busy = move to later slot).
+  const deferExercise = useWorkoutStore((s) => s.deferExercise);
   // Daniel smoke 2026-05-28 (#2 + #6) — per-exIdx refusal-tried set + mutation.
   const refusalTriedByEx = useWorkoutStore((s) => s.refusalTriedByEx);
   const markRefusalTried = useWorkoutStore((s) => s.markRefusalTried);
@@ -1177,16 +1179,16 @@ export function Workout(): JSX.Element {
   // or drops the exercise (handleDropExercise). Aparat lipsa stays a direct
   // equipment swap. All useCallback/useState (no effects) so effect order holds.
   const {
-    aparatLipsaSheetOpen,
+    missingConfirmOpen,
     pickSheet,
     handleOcupat,
     handleNuVreau: handleRefusalSwap,
     handlePickRow,
     handleDropExercise,
     handleClosePick,
-    handleOpenAparatLipsa,
-    handleCloseAparatLipsa,
-    handleAparatLipsaConfirm,
+    handleOpenMissingConfirm,
+    handleCancelMissing,
+    handleConfirmMissing,
   } = useWorkoutSwap({
     exercises,
     safeExIdx,
@@ -1195,7 +1197,9 @@ export function Workout(): JSX.Element {
     markRefusalTried,
     swapExercise,
     dropExercise,
+    deferExercise,
     setExercises,
+    currentSetIdx,
     bumpActivity,
     advanceOrFinish,
     navigate,
@@ -1443,7 +1447,7 @@ export function Workout(): JSX.Element {
   //   - exitSheetOpen    exit / pause / discard / finish sheet (ExitConfirmSheet, z-50)
   //   - aaModalOpen      aggressive-load friction modal        (AaFrictionModal)
   //   - anomalyResult    fat-finger / outlier confirm          (AnomalyConfirmModal, z-60)
-  //   - aparatLipsaSheetOpen  in-session "aparat lipsa" picker (AparatLipsaSheet, z-50)
+  //   - missingConfirmOpen    in-session "aparat lipsa" confirm (MissingEquipmentConfirmSheet, z-50)
   //   - pickSheet.open   swap / "Nu vreau" alternatives picker (SwapPickSheet, z-50)
   //   - whyText !== null "why this exercise?" explainer sheet  (WhyExerciseModal, z-50)
   //   - prFlash          mid-session PR celebration burst       (PrFlash, z-48)
@@ -1460,7 +1464,7 @@ export function Workout(): JSX.Element {
     exitSheetOpen ||
     aaModalOpen ||
     anomalyResult !== null ||
-    aparatLipsaSheetOpen ||
+    missingConfirmOpen ||
     pickSheet.open ||
     whyText !== null ||
     prFlash !== null;
@@ -1728,7 +1732,7 @@ export function Workout(): JSX.Element {
               kept short ("Lipsa") so the row stays single-line on Gigel's phone. */}
           <ExerciseActionsRow
             onOcupat={handleOcupat}
-            onLipsa={handleOpenAparatLipsa}
+            onLipsa={handleOpenMissingConfirm}
             onNuVreau={handleNuVreau}
           />
 
@@ -2016,14 +2020,16 @@ export function Workout(): JSX.Element {
         }}
       />
 
-      {/* Daniel smoke 2026-05-28 #17 — in-session Aparat lipsa picker. Saves
-          to wv2-missing-equipment so Cont → AparateLipsa hydrates fresh on
-          its next mount; if the new list blocks this exercise's equipment,
-          handleAparatLipsaConfirm swaps it in-place (resolveMissingSwap). */}
-      <AparatLipsaSheet
-        open={aparatLipsaSheetOpen}
-        onConfirm={handleAparatLipsaConfirm}
-        onClose={handleCloseAparatLipsa}
+      {/* Founder Busy/Missing redesign 2026-06-12 — in-session "Aparat lipsa" is
+          now an anti-misclick CONFIRM (no picker). On confirm the exercise's
+          equipment is remembered as missing (per-UID, name-keyed → future sessions
+          exclude it; undo only in Account › Echipament lipsa) and it is AUTO-
+          replaced now with the best same-muscle alternative. */}
+      <MissingEquipmentConfirmSheet
+        open={missingConfirmOpen}
+        exerciseName={currentExercise.name}
+        onConfirm={handleConfirmMissing}
+        onCancel={handleCancelMissing}
       />
 
       {/* Founder swap redesign 2026-06-05 — manual swap pick-list. "Aparat

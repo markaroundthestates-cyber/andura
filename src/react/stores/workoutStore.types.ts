@@ -445,6 +445,18 @@ export interface WorkoutActions {
   restoreExercise: (exIdx: number) => void;
 
   /**
+   * Founder Busy/Missing redesign 2026-06-12 — DEFER the exercise at `fromIdx` to
+   * a LATER slot `toIdx` (in-session "Ocupat"). STORE-side half of the screen's
+   * local exercises-array reorder: remaps EVERY index-keyed map (history /
+   * performedExercises / refusalTriedByEx / droppedExercises) under the forward
+   * rotation [fromIdx..toIdx] so no slot's state desyncs from its new position
+   * (the index-keyed invariant). `exIdx`/`setIdx` are LEFT unchanged — the cursor
+   * stays at fromIdx, which now holds the formerly-next pending exercise, so it
+   * becomes current immediately. No-op unless `toIdx > fromIdx >= 0`.
+   */
+  deferExercise: (fromIdx: number, toIdx: number) => void;
+
+  /**
    * Resets ACTIVE-session runtime state only — NOT cumulative history.
    *
    * Cleared: `exIdx`, `setIdx`, `phase`, `prHit`, `prData`, `history`,

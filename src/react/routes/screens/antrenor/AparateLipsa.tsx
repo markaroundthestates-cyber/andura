@@ -31,15 +31,18 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Check } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { t } from '../../../../i18n/index.js';
 import {
   getMissingEquipment,
   setMissingEquipment,
+  getMissingEquipmentExercises,
+  removeMissingEquipmentExercise,
 } from '../../../../engine/schedule/scheduleAdapter.js';
 import { translateMissingToCoarse } from '../../../../engine/equipmentMap.js';
+import { toExerciseDisplay } from '../../../lib/exerciseDisplay';
 
 interface EquipmentItem {
   /** Stable persistence/engine id (wv2-missing-equipment); label localized
@@ -74,6 +77,18 @@ export function AparateLipsa(): JSX.Element {
   const [missing, setMissing] = useState<Set<string>>(
     () => new Set(getMissingEquipment())
   );
+
+  // Founder Busy/Missing redesign 2026-06-12 — the PER-EXERCISE equipment-missing
+  // memory (the in-session "Aparat lipsa" confirm writes EN canonical names here).
+  // This is the ONLY place the user manages it: a remembered exercise is excluded
+  // from future composition until removed here (= "I got the equipment back").
+  const [missingExercises, setMissingExercises] = useState<readonly string[]>(
+    () => getMissingEquipmentExercises()
+  );
+
+  function removeExercise(engineName: string): void {
+    setMissingExercises(removeMissingEquipmentExercise(engineName));
+  }
 
   function toggle(itemId: string): void {
     setMissing((prev) => {
@@ -190,6 +205,46 @@ export function AparateLipsa(): JSX.Element {
       <p className="text-sm text-ink3 italic font-serif mb-6 leading-relaxed">
         {t('aparatLipsa.learnNote')}
       </p>
+
+      {/* Founder Busy/Missing redesign 2026-06-12 — per-EXERCISE equipment-missing
+          list. Each entry was remembered from an in-session "Aparat lipsa" confirm
+          (a specific exercise whose machine the user lacks). The coach excludes it
+          from future sessions; removing it here makes it available again. Shown
+          only when there is at least one entry (no empty section). */}
+      {missingExercises.length > 0 && (
+        <div className="mb-6" data-testid="equip-missing-exercises">
+          <h2 className="text-sm font-bold text-ink mb-1">
+            {t('aparatLipsa.exercisesTitle')}
+          </h2>
+          <p className="text-sm text-ink3 mb-3">{t('aparatLipsa.exercisesIntro')}</p>
+          <div className="flex flex-col gap-2">
+            {missingExercises.map((engineName) => (
+              <div
+                key={engineName}
+                data-testid={`equip-missing-row-${engineName}`}
+                className="pulse-card pulse-card-tight flex items-center gap-3 p-3.5"
+              >
+                <span className="flex-1 text-sm font-semibold text-ink2 truncate">
+                  {toExerciseDisplay(engineName).name}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => removeExercise(engineName)}
+                  data-testid={`equip-missing-remove-${engineName}`}
+                  aria-label={t('aparatLipsa.exerciseRemoveAria', {
+                    name: toExerciseDisplay(engineName).name,
+                  })}
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-brick min-h-[36px]"
+                >
+                  <X className="w-4 h-4" aria-hidden="true" />
+                  {t('aparatLipsa.exerciseRemoveCta')}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <button
         type="button"
         onClick={handleSave}

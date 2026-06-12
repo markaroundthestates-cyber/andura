@@ -507,9 +507,16 @@
       "pickEmpty": "I don't have another {group} exercise. You can skip this one.",
       "swappedPick": "Replaced {original} with {alt}",
       "dropped": "Removed {name} from today's session.",
+      "deferred": "Busy — moved {name} later in the session.",
       "skippedTitle": "Skipped exercises",
       "skippedRestore": "Add back",
       "restored": "Added {name} back."
+    },
+    "missingConfirm": {
+      "title": "Missing equipment?",
+      "body": "Confirm you don't have the equipment for {name}. The coach will swap it now and stop suggesting it. You can undo this in Account.",
+      "confirmCta": "Yes, I don't have it",
+      "cancelCta": "Cancel"
     },
     "exit": {
       "title": "Leave the session?",
@@ -1412,6 +1419,10 @@
     "introPost": ". The coach picks alternatives and won't suggest them again.",
     "intro2": "You can come back any time to remove items from the list if you get the equipment.",
     "learnNote": "The coach learns from your choices. If several machines are missing, it suggests bodyweight sessions or alternatives.",
+    "exercisesTitle": "Exercises you can't do",
+    "exercisesIntro": "Equipment you marked missing during a workout. The coach won't suggest these. Remove one if you get the equipment back.",
+    "exerciseRemoveCta": "Remove",
+    "exerciseRemoveAria": "Remove {name} from the missing list",
     "saveCta": "Save the setting"
   },
   "equipmentList": {

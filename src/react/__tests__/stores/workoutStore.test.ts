@@ -1242,3 +1242,60 @@ describe('dropExercise — index-stable drop with recovery', () => {
     expect(useWorkoutStore.getState().exIdx).toBe(5); // unchanged
   });
 });
+
+// ══ deferExercise — founder Busy/Missing redesign 2026-06-12 (index remap) ════
+describe('deferExercise — forward index remap keeps every map aligned', () => {
+  beforeEach(() => {
+    resetStore();
+  });
+
+  it('moves the slot state to toIdx + shifts leapfrogged slots down by one', () => {
+    // 3-exercise session, defer slot 0 → 2 (past slots 1 and 2). Seed every
+    // index-keyed map so the full remap is exercised.
+    useWorkoutStore.setState({
+      history: {
+        0: [{ kg: 50, reps: 8, rating: 'potrivit' }],
+        1: [{ kg: 60, reps: 6, rating: 'greu' }],
+        2: [{ kg: 30, reps: 12, rating: 'usor' }],
+      },
+      performedExercises: { 0: { id: 'a', name: 'A' }, 1: { id: 'b', name: 'B' } },
+      refusalTriedByEx: { 0: ['A-orig'], 2: ['C-orig'] },
+      droppedExercises: {},
+      exIdx: 0,
+      setIdx: 0,
+    });
+    useWorkoutStore.getState().deferExercise(0, 2);
+    const s = useWorkoutStore.getState();
+    // slot 0's state landed at index 2; old 1→0, old 2→1.
+    expect(s.history[2]).toEqual([{ kg: 50, reps: 8, rating: 'potrivit' }]); // was 0
+    expect(s.history[0]).toEqual([{ kg: 60, reps: 6, rating: 'greu' }]); // was 1
+    expect(s.history[1]).toEqual([{ kg: 30, reps: 12, rating: 'usor' }]); // was 2
+    expect(s.performedExercises[2]).toEqual({ id: 'a', name: 'A' }); // was 0
+    expect(s.performedExercises[0]).toEqual({ id: 'b', name: 'B' }); // was 1
+    expect(s.refusalTriedByEx[2]).toEqual(['A-orig']); // was 0
+    expect(s.refusalTriedByEx[1]).toEqual(['C-orig']); // was 2
+    // The cursor is LEFT untouched — slot 0 now holds the formerly-next exercise.
+    expect(s.exIdx).toBe(0);
+    expect(s.setIdx).toBe(0);
+  });
+
+  it('no-op when toIdx <= fromIdx (defer must move strictly forward)', () => {
+    useWorkoutStore.setState({ history: { 0: [{ kg: 1, reps: 1, rating: 'usor' }] } });
+    useWorkoutStore.getState().deferExercise(2, 1); // backwards
+    expect(useWorkoutStore.getState().history).toEqual({ 0: [{ kg: 1, reps: 1, rating: 'usor' }] });
+    useWorkoutStore.getState().deferExercise(1, 1); // equal
+    expect(useWorkoutStore.getState().history).toEqual({ 0: [{ kg: 1, reps: 1, rating: 'usor' }] });
+  });
+
+  it('a single-step defer (fromIdx → fromIdx+1) swaps just the two slots', () => {
+    useWorkoutStore.setState({
+      history: { 0: [{ kg: 9, reps: 9, rating: 'greu' }], 1: [{ kg: 8, reps: 8, rating: 'usor' }] },
+      exIdx: 0,
+    });
+    useWorkoutStore.getState().deferExercise(0, 1);
+    const s = useWorkoutStore.getState();
+    expect(s.history[1]).toEqual([{ kg: 9, reps: 9, rating: 'greu' }]); // moved
+    expect(s.history[0]).toEqual([{ kg: 8, reps: 8, rating: 'usor' }]); // shifted down
+    expect(s.exIdx).toBe(0);
+  });
+});

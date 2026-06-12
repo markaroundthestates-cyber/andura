@@ -507,9 +507,16 @@
       "pickEmpty": "Nu am alt exercitiu pentru {group}. Poti sari exercitiul.",
       "swappedPick": "Inlocuit {original} cu {alt}",
       "dropped": "Am scos {name} din sesiunea de azi.",
+      "deferred": "Ocupat — am mutat {name} mai tarziu in sesiune.",
       "skippedTitle": "Exercitii sarite",
       "skippedRestore": "Adauga la loc",
       "restored": "Ai adaugat {name} inapoi."
+    },
+    "missingConfirm": {
+      "title": "Aparat lipsa?",
+      "body": "Confirma ca nu ai aparatul pentru {name}. Coach-ul il inlocuieste acum si nu il mai propune. Poti anula din Cont.",
+      "confirmCta": "Da, nu il am",
+      "cancelCta": "Anuleaza"
     },
     "exit": {
       "title": "Iesi din sesiune?",
@@ -1412,6 +1419,10 @@
     "introPost": ". Coach-ul va alege exercitii alternative si nu le va propune in viitor.",
     "intro2": "Poti reveni oricand sa scoti din lista daca ai acum aparatul.",
     "learnNote": "Coach-ul invata din selectiile tale. Daca lipsesc mai multe aparate, propune sesiuni bodyweight sau cu alternative.",
+    "exercisesTitle": "Exercitii pe care nu le poti face",
+    "exercisesIntro": "Aparate marcate lipsa in timpul unui antrenament. Coach-ul nu le mai propune. Scoate unul daca ai din nou aparatul.",
+    "exerciseRemoveCta": "Scoate",
+    "exerciseRemoveAria": "Scoate {name} din lista de aparate lipsa",
     "saveCta": "Salveaza setarea"
   },
   "equipmentList": {

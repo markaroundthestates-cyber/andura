@@ -894,29 +894,112 @@ describe('Workout — in-workout substitution row (F-workout-03)', async () => {
     );
   });
 
-  it('"Lipsa" opens the in-session AparatLipsaSheet (no navigation away)', async () => {
-    // Daniel smoke 2026-05-28 #17 — Aparat lipsa stays IN-SESSION (sheet over
-    // the log zone). Persists wv2-missing-equipment so Cont -> AparateLipsa
-    // hydrates the new state on next mount.
+  it('"Lipsa" opens the anti-misclick confirm step (no navigation, no picker)', async () => {
+    // Founder Busy/Missing redesign 2026-06-12 — the old 10-item picker is GONE;
+    // "Aparat lipsa" now opens a small CONFIRM (anti-misclick) over the log zone.
     await renderWorkoutAndWait();
-    expect(screen.queryByTestId('aparat-lipsa-sheet')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('missing-confirm-sheet')).not.toBeInTheDocument();
     fireEvent.click(screen.getByTestId('wv2-ex-action-lipsa'));
-    expect(screen.getByTestId('aparat-lipsa-sheet')).toBeInTheDocument();
-    // No navigation — workout testid still mounted (would unmount on navigate
-    // because the test routes target the other paths via LocationProbe).
+    expect(screen.getByTestId('missing-confirm-sheet')).toBeInTheDocument();
+    // The old picker must NOT appear.
+    expect(screen.queryByTestId('aparat-lipsa-sheet')).not.toBeInTheDocument();
+    // No navigation — still on the workout.
     expect(screen.getByTestId('workout')).toBeInTheDocument();
   });
 
-  it('saving the sheet persists wv2-missing-equipment + closes the sheet', async () => {
+  it('cancelling the confirm remembers nothing', async () => {
     await renderWorkoutAndWait();
     fireEvent.click(screen.getByTestId('wv2-ex-action-lipsa'));
-    // Mark gantere as missing
-    fireEvent.click(screen.getByTestId('aparat-lipsa-sheet-item-gantere'));
-    fireEvent.click(screen.getByTestId('aparat-lipsa-sheet-save'));
-    expect(screen.queryByTestId('aparat-lipsa-sheet')).not.toBeInTheDocument();
-    const raw = localStorage.getItem('wv2-missing-equipment');
+    fireEvent.click(screen.getByTestId('missing-confirm-cancel'));
+    expect(screen.queryByTestId('missing-confirm-sheet')).not.toBeInTheDocument();
+    expect(localStorage.getItem('wv2-equipment-missing-exercises')).toBeNull();
+  });
+});
+
+// Founder Busy/Missing redesign 2026-06-12 — distinct Busy (defer) + Missing
+// (confirm→remember→auto-replace) behaviors. These use a fixture with REAL
+// engineName values so the engine reads (equipment_type, same-muscle ranking) fire
+// instead of the no-engineName navigate fallback.
+describe('Workout — Busy/Missing redesign (founder 2026-06-12)', () => {
+  // piept session: Cable Fly (cable) busy → Flat DB Press (dumbbell, different
+  // equipment) is next, so the defer lands the busy exercise AFTER it. Leg
+  // Extension is the MISSING-equipment target (machine quads).
+  const REDESIGN_FIXTURE = {
+    workoutTitle: 'Test',
+    exerciseCount: 3,
+    estimatedDuration: 50,
+    intensityMod: 'normal' as const,
+    volumeKg: 1000,
+    exercises: [
+      { id: 'cable-fly', name: 'Cable Fly', engineName: 'Cable Fly', sets: 3, targetReps: 12, targetKg: 15, restSec: 75 },
+      { id: 'flat-db', name: 'Flat DB Press', engineName: 'Flat DB Press', sets: 3, targetReps: 10, targetKg: 22.5, restSec: 90 },
+      { id: 'incline-bb', name: 'Incline Barbell Bench', engineName: 'Incline Barbell Bench', sets: 3, targetReps: 8, targetKg: 40, restSec: 120 },
+    ],
+  };
+
+  beforeEach(() => {
+    resetStore();
+    vi.mocked(getTodayWorkout).mockResolvedValue(REDESIGN_FIXTURE);
+  });
+  // Restore the file-default fixture impl so this block's persistent override does
+  // not leak into the later describe blocks (which expect PHASE_5_FIXTURE).
+  afterEach(() => {
+    vi.mocked(getTodayWorkout).mockImplementation(async () => PHASE_5_FIXTURE);
+  });
+
+  it('Busy DEFERS in-session: the busy exercise moves later, the next one becomes current (no sheet)', async () => {
+    await renderWorkoutAndWait();
+    // Current exercise = Cable Fly (the busy one).
+    expect(screen.getByTestId('wv2-exname')).toHaveTextContent('Cable Fly');
+    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+    // No sheet opened (defer, not swap).
+    expect(screen.queryByTestId('swap-pick-sheet')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('missing-confirm-sheet')).not.toBeInTheDocument();
+    // The next pending exercise is now current immediately.
+    await waitFor(() => {
+      expect(screen.getByTestId('wv2-exname')).toHaveTextContent('Flat DB Press');
+    });
+    // Cable Fly is NOT dropped (it returns later) — no skipped strip entry.
+    expect(screen.queryByTestId('skipped-strip')).not.toBeInTheDocument();
+  });
+
+  it('Busy on the LAST pending exercise falls back to the swap pick-list', async () => {
+    // One-exercise session → nothing pending behind → defer is meaningless → sheet.
+    vi.mocked(getTodayWorkout).mockResolvedValue({
+      ...REDESIGN_FIXTURE,
+      exerciseCount: 1,
+      exercises: [REDESIGN_FIXTURE.exercises[0]!],
+    });
+    await renderWorkoutAndWait();
+    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+    expect(await screen.findByTestId('swap-pick-sheet')).toBeInTheDocument();
+  });
+
+  it('Missing confirm → remembers the exercise + auto-replaces it now (no list)', async () => {
+    // Move to the LAST slot (Leg-Extension-style machine quad swap is simplest on a
+    // machine-typed exercise; here Incline Barbell Bench is the slot we mark missing).
+    vi.mocked(getTodayWorkout).mockResolvedValue({
+      ...REDESIGN_FIXTURE,
+      exerciseCount: 1,
+      exercises: [
+        { id: 'leg-ext', name: 'Leg Extension', engineName: 'Leg Extension', sets: 3, targetReps: 12, targetKg: 40, restSec: 75 },
+      ],
+    });
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('wv2-exname')).toHaveTextContent('Leg Extension');
+    fireEvent.click(screen.getByTestId('wv2-ex-action-lipsa'));
+    fireEvent.click(screen.getByTestId('missing-confirm-yes'));
+    // Confirm closed.
+    expect(screen.queryByTestId('missing-confirm-sheet')).not.toBeInTheDocument();
+    // Persisted: Leg Extension remembered as equipment-missing.
+    const raw = localStorage.getItem('wv2-equipment-missing-exercises');
     expect(raw).not.toBeNull();
-    expect(JSON.parse(raw!)).toContain('gantere');
+    expect(JSON.parse(raw!)).toContain('Leg Extension');
+    // Auto-replaced: a different same-muscle (quads) exercise is now current.
+    await waitFor(() => {
+      expect(screen.getByTestId('wv2-exname')).not.toHaveTextContent('Leg Extension');
+    });
+    expect(screen.getByTestId('wv2-exname').textContent ?? '').not.toBe('');
   });
 });
 

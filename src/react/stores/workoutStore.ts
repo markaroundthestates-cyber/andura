@@ -336,6 +336,53 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           };
         }),
 
+      // Founder Busy/Missing redesign 2026-06-12 — DEFER the exercise at `fromIdx`
+      // to a LATER slot `toIdx` (in-session "Ocupat": the machine is busy, move it
+      // back and surface it again later — maybe it freed up). This is the STORE-side
+      // half of an array reorder the Workout screen performs on its local exercises
+      // list; here we keep every index-keyed map (history / performedExercises /
+      // refusalTriedByEx / droppedExercises) ALIGNED to the new positions so no
+      // slot's logged sets / tried-set / drop marker desync (the central invariant —
+      // see workoutStore.types WorkoutState doc). The move is a forward rotation of
+      // [fromIdx..toIdx]: element fromIdx → toIdx, every index in (fromIdx, toIdx]
+      // shifts DOWN by one. `exIdx`/`setIdx` are LEFT untouched — the cursor stays at
+      // fromIdx, which now holds what used to be the next pending exercise, so it
+      // becomes current immediately with its own progress intact. No-op when the
+      // indices are out of order / equal (defer must move strictly forward). Pure
+      // index arithmetic; never touches sessionStart/streak/history of unaffected
+      // slots. The screen only ever defers a NOT-yet-started current exercise behind
+      // PENDING ones, so in practice the shifted range carries empty history — but the
+      // remap is total so a refusal-tried / partially-logged slot would survive too.
+      deferExercise: (fromIdx, toIdx) =>
+        set((s) => {
+          if (
+            !Number.isInteger(fromIdx) ||
+            !Number.isInteger(toIdx) ||
+            toIdx <= fromIdx ||
+            fromIdx < 0
+          ) {
+            return {};
+          }
+          // Remap one index-keyed map under the forward rotation [fromIdx..toIdx].
+          const remap = <V,>(m: Record<number, V>): Record<number, V> => {
+            const next: Record<number, V> = {};
+            for (const [k, v] of Object.entries(m)) {
+              const i = Number(k);
+              let ni = i;
+              if (i === fromIdx) ni = toIdx; // the moved slot lands at toIdx
+              else if (i > fromIdx && i <= toIdx) ni = i - 1; // leapfrogged slots shift down
+              next[ni] = v;
+            }
+            return next;
+          };
+          return {
+            history: remap(s.history),
+            performedExercises: remap(s.performedExercises),
+            refusalTriedByEx: remap(s.refusalTriedByEx),
+            droppedExercises: remap(s.droppedExercises),
+          };
+        }),
+
       markPRHit: (data) => set({ prHit: true, prData: data ?? null }),
 
       setLastRating: (rating) => set({ lastRating: rating }),

@@ -9,6 +9,8 @@ import { AparateLipsa } from '../../../routes/screens/antrenor/AparateLipsa';
 import {
   getMissingEquipment,
   setMissingEquipment,
+  getMissingEquipmentExercises,
+  addMissingEquipmentExercise,
 } from '../../../../engine/schedule/scheduleAdapter.js';
 // i18n locale pin — these specs assert RO equipment labels (Banca inclinata /
 // Gantere / etc) + RO chrome. Force RO so the i18n indirection resolves to the
@@ -198,5 +200,34 @@ describe('AparateLipsa — Romanian no-diacritics rule (D-LEGACY-064)', () => {
     const { container } = renderLipsa();
     const text = container.textContent ?? '';
     expect(/[ăâîșțĂÂÎȘȚ]/.test(text)).toBe(false);
+  });
+});
+
+// Founder Busy/Missing redesign 2026-06-12 — per-EXERCISE equipment-missing list.
+describe('AparateLipsa — per-exercise equipment-missing list', () => {
+  it('hides the section when nothing is remembered', () => {
+    renderLipsa();
+    expect(screen.queryByTestId('equip-missing-exercises')).not.toBeInTheDocument();
+  });
+
+  it('lists remembered-missing exercises (engineName-keyed rows)', () => {
+    addMissingEquipmentExercise('Leg Extension');
+    renderLipsa();
+    expect(screen.getByTestId('equip-missing-exercises')).toBeInTheDocument();
+    expect(screen.getByTestId('equip-missing-row-Leg Extension')).toBeInTheDocument();
+  });
+
+  it('remove drops the entry from the list + from storage (available again)', () => {
+    addMissingEquipmentExercise('Leg Extension');
+    addMissingEquipmentExercise('Pec Deck / Cable Fly');
+    renderLipsa();
+    fireEvent.click(screen.getByTestId('equip-missing-remove-Leg Extension'));
+    // Removed from the rendered list...
+    expect(screen.queryByTestId('equip-missing-row-Leg Extension')).not.toBeInTheDocument();
+    // ...the other entry stays...
+    expect(screen.getByTestId('equip-missing-row-Pec Deck / Cable Fly')).toBeInTheDocument();
+    // ...and persistence reflects it.
+    expect(getMissingEquipmentExercises()).not.toContain('Leg Extension');
+    expect(getMissingEquipmentExercises()).toContain('Pec Deck / Cable Fly');
   });
 });

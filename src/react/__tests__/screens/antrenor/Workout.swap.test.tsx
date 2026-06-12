@@ -54,6 +54,7 @@ import { Workout } from '../../../routes/screens/antrenor/Workout';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { toast } from '../../../lib/toast';
 import { debugLog } from '../../../lib/debugLog';
+import { getTodayWorkout } from '../../../lib/engineWrappers';
 import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function renderWorkout() {
@@ -103,45 +104,39 @@ afterEach(() => {
   _resetI18nCache();
 });
 
-describe('Workout swap — "Aparat ocupat" opens the manual pick-list', () => {
-  it('opens a SHORT ranked sheet with a pre-pick (no navigate, no auto-swap)', async () => {
+// Founder Busy/Missing redesign 2026-06-12 — "Aparat ocupat" no longer opens the
+// pick-list: it DEFERS the exercise to a later slot (the machine may free up) and
+// advances to the next pending exercise immediately. It falls back to the pick-list
+// ONLY on the last pending exercise (deferring is meaningless there).
+describe('Workout swap — "Aparat ocupat" DEFERS in-session', () => {
+  it('moves the busy exercise later + makes the next one current (no sheet, no navigate)', async () => {
     await renderAndWait();
     const exname = screen.getByTestId('wv2-exname');
     expect(exname.textContent).toContain('inclinat cu bara');
 
     fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
 
-    // Sheet opens (NOT a navigate, NOT an immediate swap toast).
-    const sheet = await screen.findByTestId('swap-pick-sheet');
-    expect(sheet).toBeInTheDocument();
+    // NO pick-list sheet, NO navigate.
+    expect(screen.queryByTestId('swap-pick-sheet')).not.toBeInTheDocument();
     expect(screen.queryByTestId('probe-eq')).not.toBeInTheDocument();
-    expect(toast.getSnapshot().length).toBe(0);
-
-    // Row 0 is the pre-pick (the smart default), and the list is SHORT (<=5).
-    const row0 = screen.getByTestId('swap-pick-row-0');
-    expect(row0.getAttribute('data-prepick')).toBe('true');
-    const rows = screen.queryAllByTestId(/^swap-pick-row-\d+$/);
-    expect(rows.length).toBeGreaterThanOrEqual(2);
-    expect(rows.length).toBeLessThanOrEqual(5);
+    // The next pending exercise (Incline DB) is now current.
+    await waitFor(() => {
+      expect(screen.getByTestId('wv2-exname').textContent).toContain('Impins inclinat');
+    });
+    // Not dropped (it returns later) — no skipped strip.
+    expect(screen.queryByTestId('skipped-strip')).not.toBeInTheDocument();
   });
 
-  it('picking the pre-pick row swaps the current exercise in-place + toasts the name', async () => {
+  it('on the LAST pending exercise it falls back to the pick-list (defer is meaningless)', async () => {
+    // Single-exercise session → nothing pending behind → defer is meaningless → sheet.
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce({
+      ...SWAP_FIXTURE,
+      exerciseCount: 1,
+      exercises: [SWAP_FIXTURE.exercises[0]!],
+    });
     await renderAndWait();
     fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
-    const row0 = await screen.findByTestId('swap-pick-row-0');
-    const pickedName = row0.textContent ?? '';
-    fireEvent.click(row0);
-
-    await waitFor(() => {
-      expect(toast.getSnapshot().length).toBeGreaterThan(0);
-    });
-    expect(toast.getSnapshot()[0]!.message).toContain('Inlocuit');
-    // The current exercise changed (in-place), the original is gone.
-    await waitFor(() => {
-      expect(screen.getByTestId('wv2-exname').textContent).not.toContain('inclinat cu bara');
-    });
-    // The swapped-in exercise is the one the user picked.
-    expect(pickedName.length).toBeGreaterThan(0);
+    expect(await screen.findByTestId('swap-pick-sheet')).toBeInTheDocument();
   });
 });
 
@@ -174,7 +169,8 @@ describe('Workout swap — drop + retrieve', () => {
     await renderAndWait();
     expect(screen.getByTestId('wv2-exname').textContent).toContain('inclinat cu bara');
 
-    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+    // "Nu vreau" opens the pick-list (busy now defers); the drop row lives there.
+    fireEvent.click(screen.getByTestId('wv2-ex-action-nuvreau'));
     const dropBtn = await screen.findByTestId('swap-pick-drop');
     fireEvent.click(dropBtn);
 
@@ -192,7 +188,7 @@ describe('Workout swap — drop + retrieve', () => {
 
   it('a dropped exercise is RETRIEVABLE — restore brings it back to its slot', async () => {
     await renderAndWait();
-    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+    fireEvent.click(screen.getByTestId('wv2-ex-action-nuvreau'));
     fireEvent.click(await screen.findByTestId('swap-pick-drop'));
 
     await waitFor(() => {
@@ -222,7 +218,8 @@ describe('Workout swap — (5) one rec per set, never the pre-swap stale load', 
     const spy = vi.spyOn(debugLog, 'event');
     await renderAndWait();
     // ex0 = Incline Barbell Bench @ 60 kg (the pre-swap load that must NOT leak).
-    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+    // "Nu vreau" opens the pick-list (busy now defers) — the in-place swap path.
+    fireEvent.click(screen.getByTestId('wv2-ex-action-nuvreau'));
     const row0 = await screen.findByTestId('swap-pick-row-0');
     fireEvent.click(row0);
     // The current exercise changed in-place (same slot 0).
