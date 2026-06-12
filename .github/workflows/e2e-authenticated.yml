@@ -9,9 +9,11 @@ name: Authenticated E2E (core loop)
 #   - This is a SEPARATE workflow. The Deploy + QA Report + CI workflows do NOT
 #     `needs:` it and are completely unaware of it — its result can NEVER block a
 #     release. The prod deploy gate stays exactly as safe as before.
-#   - The test step is additionally `continue-on-error: true` so a flaky authed
-#     E2E surfaces a report (artifact + step annotation) without ever turning the
-#     run red on the commit. Treat as advisory regression signal, not a gate.
+#   - HONEST RED (2026-06-12): the test step's continue-on-error swallow is GONE.
+#     It hid a REAL regression (the dock intercepting "Aparat ocupat" clicks) —
+#     the run stayed green-on-the-commit and the failure surfaced only when the
+#     founder read the step log. A red run here still gates NOTHING (separate
+#     workflow), it just stops lying. Same false-green purge as Stryker + Checkly.
 #
 # TARGET = LOCAL PREVIEW OF THE CI-BUILT DIST (not live andura.app):
 #   The aerobic #45 backdated date-picker + the latest workout fixes need the
@@ -79,10 +81,11 @@ jobs:
       # The authed setup + deep specs. auth.setup.ts reads FIREBASE_SERVICE_ACCOUNT
       # inline (JSON or base64) — no temp file, no GOOGLE_APPLICATION_CREDENTIALS
       # needed. The 'setup' Playwright project mints the session; core-loop +
-      # aerobic reuse its storageState. continue-on-error keeps this advisory.
+      # aerobic reuse its storageState. NO continue-on-error: a failure turns
+      # THIS run red (honest signal) — wipe/surface/upload below keep running
+      # via if:always(), and no release workflow depends on this one.
       - name: Run authenticated core-loop + aerobic E2E (preview of current build)
         id: authed
-        continue-on-error: true
         # list → console output visible in the run log; html → writes
         # playwright-report/ so the upload step has the report to attach when a
         # spec FAILS (was list-only → "no files found" warning + no failure report).
