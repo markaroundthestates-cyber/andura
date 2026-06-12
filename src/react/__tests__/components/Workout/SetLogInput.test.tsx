@@ -224,6 +224,67 @@ describe('SetLogInput — §F-pass2-setloginput-01 tinta mode (pre-log)', () => 
   });
 });
 
+// Founder restyle 2026-06-12 (#4/#5/#8) — the Target line is PURE DISPLAY: it no
+// longer dominates by SIZE (the editable tile numbers shrank, the Target font is
+// slightly smaller still), it pops by being CENTERED + an accent COLOR, and it
+// reads in kg × reps order — the SAME order as the KG (left) / REPS (right) tiles.
+describe('SetLogInput — founder dock restyle (#4/#5/#8 order + center + accent + shrink)', () => {
+  it('#8 ORDER — the Target reads kg before reps (matches KG-left / REPS-right tiles)', () => {
+    renderInput({ mode: 'tinta', kg: 40, reps: 8, targetKg: 40, targetReps: 8 });
+    const target = screen.getByTestId('setlog-tinta-target-display');
+    const text = target.textContent ?? '';
+    // Spatial + logical order identical at both places: "40 kg" precedes "8".
+    expect(text.indexOf('40 kg')).toBeGreaterThanOrEqual(0);
+    expect(text.indexOf('40 kg')).toBeLessThan(text.indexOf('8'));
+    // The kg target node comes BEFORE the reps target node in the DOM (the tiles
+    // are also kg-then-reps left→right), so the order is consistent at both places.
+    const kgNode = screen.getByTestId('setlog-tinta-kg');
+    const repsNode = screen.getByTestId('setlog-tinta-reps');
+    expect(kgNode.compareDocumentPosition(repsNode) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('the kg tile sits to the LEFT of the reps tile (the order the Target now mirrors)', () => {
+    renderInput({ mode: 'tinta', kg: 40, reps: 8 });
+    const kgTileInput = screen.getByTestId('setlog-tinta-kg-input');
+    const repsTileInput = screen.getByTestId('setlog-tinta-reps-input');
+    expect(
+      kgTileInput.compareDocumentPosition(repsTileInput) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('#5 CENTER — the Target line is horizontally centered (justify-center)', () => {
+    renderInput({ mode: 'tinta', kg: 40, reps: 8 });
+    expect(screen.getByTestId('setlog-tinta-target-display').className).toContain('justify-center');
+  });
+
+  it('#5 COLOR — the Target uses the AA-safe accent ink token (var(--aqua-ink))', () => {
+    renderInput({ mode: 'tinta', kg: 40, reps: 8 });
+    // Inline style carries the accent so the recommendation pops by color, not size.
+    expect(screen.getByTestId('setlog-tinta-target-display').getAttribute('style') ?? '')
+      .toContain('var(--aqua-ink)');
+  });
+
+  it('#4 SHRINK — the Target font (10px) is SMALLER than the shrunk tile numbers (11px)', () => {
+    renderInput({ mode: 'tinta', kg: 40, reps: 8 });
+    // Tile numbers shrank 18px → 11px (~61% of original); the Target is 10px,
+    // ~91% of the new tile number, so it ends up slightly smaller than the tiles.
+    expect(screen.getByTestId('setlog-tinta-target-display').className).toContain('text-[10px]');
+    expect(screen.getByTestId('setlog-tinta-kg-input').className).toContain('text-[11px]');
+    expect(screen.getByTestId('setlog-tinta-reps-input').className).toContain('text-[11px]');
+  });
+
+  it('bodyweight Target keeps reps-then-bodyweight order + the accent/center treatment', () => {
+    renderInput({ mode: 'tinta', kg: 0, reps: 6, targetReps: 12, isBodyweight: true });
+    const target = screen.getByTestId('setlog-tinta-target-display');
+    expect(target.className).toContain('justify-center');
+    expect(target.getAttribute('style') ?? '').toContain('var(--aqua-ink)');
+    // No "×" / kg for a bodyweight target (no external load); reps + bw word only.
+    expect(screen.getByTestId('setlog-tinta-reps')).toHaveTextContent('12');
+    expect(screen.getByTestId('setlog-tinta-bw')).toBeInTheDocument();
+    expect(screen.queryByTestId('setlog-tinta-kg')).toBeNull();
+  });
+});
+
 // DECOUPLED prescribed-target vs actual-entry (Daniel P0 2026-06-05 "coach is a
 // notepad"): the read-only "Tinta" must show the engine's PRESCRIBED target
 // (targetKg/targetReps), NOT the editable kg/reps the user logs. The editable

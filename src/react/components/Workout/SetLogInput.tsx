@@ -392,31 +392,41 @@ export function SetLogInput({
     // hint line are preserved; the kg/reps inputs + confirm flow are untouched.
     return (
       <div className="pulse-card p-3 mb-0" data-testid="setlog-tinta">
-        {/* TARGET — one slim inline line (small-caps "Tinta" + "8 × 40 kg"),
-            replacing the old two display-size numbers stacked on a centered row
-            (that block alone was ~64px). The kg/reps shown are the PRESCRIBED
-            target (displayTargetReps/Kg), NOT the editable actual-entry below — so
-            the coach's recommendation stays visible after the user edits what they
-            really lifted. Testids preserved (setlog-tinta-reps / -kg / -bw). */}
+        {/* TARGET — one slim inline line, founder restyle 2026-06-12 (#4/#5/#8):
+            the recommendation does NOT dominate by SIZE — it pops by being CENTERED
+            on the card + an accent COLOR (var(--aqua-ink), the AA-safe teal text
+            token: 7.13:1 white card / 9.06:1 dark card). Its font is ~92% of the
+            (now-shrunk) tile numbers so it ends up SLIGHTLY smaller than them.
+            #8 ORDER CONSISTENCY — read "40 kg × 8" (kg × reps), the SAME order as
+            the KG (left) / REPS (right) tiles below; the reps × kg form is retired so
+            the logical + spatial order match at both places. The kg/reps shown are
+            the PRESCRIBED target (displayTargetReps/Kg), NOT the editable actual-
+            entry below. Testids preserved (setlog-tinta-reps / -kg / -bw). */}
         <div
-          className="flex items-baseline gap-1.5 text-[14px] leading-tight"
+          className="flex items-baseline justify-center gap-1.5 text-[10px] leading-tight"
           data-testid="setlog-tinta-target-display"
+          style={{ color: 'var(--aqua-ink)' }}
         >
-          <span className="font-mono text-[10px] tracking-[0.16em] uppercase" style={{ color: 'var(--aqua)' }}>
+          <span className="font-mono tracking-[0.16em] uppercase">
             {t('setLog.targetLabel')}
           </span>
-          <span className="font-semibold text-ink" data-testid="setlog-tinta-reps">
-            {displayTargetReps}
-          </span>
           {isBodyweight ? (
-            <span className="text-ink2 text-[13px]" data-testid="setlog-tinta-bw">
-              {t('setLog.bodyweightTargetReps')}
-            </span>
+            <>
+              <span className="font-semibold" data-testid="setlog-tinta-reps">
+                {displayTargetReps}
+              </span>
+              <span data-testid="setlog-tinta-bw">
+                {t('setLog.bodyweightTargetReps')}
+              </span>
+            </>
           ) : (
             <>
-              <span className="text-ink2 text-[13px]">×</span>
-              <span className="font-semibold text-ink" data-testid="setlog-tinta-kg">
+              <span className="font-semibold" data-testid="setlog-tinta-kg">
                 {perHandLoad ? t('setLog.kgPerHand', { kg: displayTargetKg }) : `${displayTargetKg} kg`}
+              </span>
+              <span>×</span>
+              <span className="font-semibold" data-testid="setlog-tinta-reps">
+                {displayTargetReps}
               </span>
             </>
           )}
@@ -455,7 +465,11 @@ export function SetLogInput({
               value={kg}
               onChange={onKgChange}
               testId="setlog-tinta-kg-input"
-              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-0.5 mt-1 font-display text-[18px] leading-[1.3] font-bold text-ink text-center focus:outline-none"
+              /* Founder restyle 2026-06-12 (#4/#5) — the editable tile numbers shrink
+                 to ~61% (18px → 11px): the user still taps them (±) but they become
+                 visually SECONDARY to the centered, colored Target above. Layout +
+                 testid + logic byte-identical; font-size only. */
+              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-0.5 mt-1 font-display text-[11px] leading-[1.3] font-bold text-ink text-center focus:outline-none"
             />
             <div className="flex items-center justify-between gap-2 mt-1.5">
               <DialButton
@@ -489,7 +503,9 @@ export function SetLogInput({
               value={reps}
               onChange={onRepsChange}
               testId="setlog-tinta-reps-input"
-              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-0.5 mt-1 font-display text-[18px] leading-[1.3] font-bold text-ink text-center focus:outline-none"
+              /* Founder restyle 2026-06-12 (#4/#5) — tile number shrunk to ~61%
+                 (18px → 11px), secondary to the centered colored Target. Font only. */
+              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-0.5 mt-1 font-display text-[11px] leading-[1.3] font-bold text-ink text-center focus:outline-none"
             />
             <div className="flex items-center justify-between gap-2 mt-1.5">
               <DialButton

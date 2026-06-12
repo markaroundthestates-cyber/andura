@@ -318,7 +318,11 @@
     "ariaLabel": "Pauza activa",
     "kicker": "Pauza",
     "recovering": "{name} recupereaza",
-    "skipCta": "Sari pauza"
+    "skipCta": "Sari pauza",
+    "nextSet": "Urmeaza: {set}",
+    "nextSetLoad": "{kg} × {reps}",
+    "nextSetBodyweight": "{reps} repetari",
+    "upNextWithSet": "Urmeaza: {name} — {set}"
   },
   "coachRest": {
     "ariaLabel": "Coach-ul recomanda azi - recuperare",

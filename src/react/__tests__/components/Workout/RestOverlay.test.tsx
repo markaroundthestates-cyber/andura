@@ -156,3 +156,101 @@ describe('RestOverlay - next-exercise preview (last-set rest cue)', () => {
     expect(next.textContent ?? '').toContain('Cable Row');
   });
 });
+
+// Founder UX #2 (2026-06-12) — next-set load under the timer.
+describe('RestOverlay - next-set load preview (founder #2)', () => {
+  it('rest-next-set ABSENT when no next-set load provided', () => {
+    render(
+      <RestOverlay
+        countdownSec={60}
+        initialRestSec={90}
+        onSkip={vi.fn()}
+        currentExerciseName="Bench Press"
+      />,
+    );
+    expect(screen.queryByTestId('rest-next-set')).toBeNull();
+  });
+
+  it('intermediate-set rest shows the next set load "kg x reps" (no exercise name)', () => {
+    render(
+      <RestOverlay
+        countdownSec={60}
+        initialRestSec={90}
+        onSkip={vi.fn()}
+        currentExerciseName="Bench Press"
+        nextSetKg={40}
+        nextSetReps={8}
+      />,
+    );
+    const line = screen.getByTestId('rest-next-set');
+    expect(line).toBeInTheDocument();
+    // kg x reps order (matches the dock): "40 kg" before "8".
+    expect(line.textContent ?? '').toBe('Urmeaza: 40 kg × 8');
+    // No spurious next-exercise line on an intermediate-set rest.
+    expect(screen.queryByTestId('rest-up-next')).toBeNull();
+  });
+
+  it('bodyweight next set reads "{reps} repetari" with no kg', () => {
+    render(
+      <RestOverlay
+        countdownSec={60}
+        initialRestSec={90}
+        onSkip={vi.fn()}
+        currentExerciseName="Pull-up"
+        nextSetKg={0}
+        nextSetReps={10}
+        nextSetIsBodyweight
+      />,
+    );
+    expect(screen.getByTestId('rest-next-set').textContent ?? '').toBe('Urmeaza: 10 repetari');
+  });
+
+  it('per-hand next set load reads "{kg} kg/mana x reps"', () => {
+    render(
+      <RestOverlay
+        countdownSec={60}
+        initialRestSec={90}
+        onSkip={vi.fn()}
+        currentExerciseName="DB Curl"
+        nextSetKg={12.5}
+        nextSetReps={12}
+        nextSetPerHand
+      />,
+    );
+    expect(screen.getByTestId('rest-next-set').textContent ?? '').toBe('Urmeaza: 12.5 kg/mana × 12');
+  });
+
+  it('inter-exercise rest folds the next exercise OPENING load into the up-next line', () => {
+    render(
+      <RestOverlay
+        countdownSec={60}
+        initialRestSec={90}
+        onSkip={vi.fn()}
+        currentExerciseName="Lat Pulldown"
+        nextExerciseName="Cable Row"
+        nextSetKg={50}
+        nextSetReps={10}
+      />,
+    );
+    const next = screen.getByTestId('rest-up-next');
+    // Name + opening load, kg x reps order: "Urmeaza: Cable Row — 50 kg × 10".
+    expect(next.textContent ?? '').toBe('Urmeaza: Cable Row — 50 kg × 10');
+    // The standalone next-set line is NOT also rendered (folded into up-next).
+    expect(screen.queryByTestId('rest-next-set')).toBeNull();
+  });
+
+  it('next-set preview preserves the no-diacritics rule', () => {
+    render(
+      <RestOverlay
+        countdownSec={60}
+        initialRestSec={90}
+        onSkip={vi.fn()}
+        currentExerciseName="Bench Press"
+        nextSetKg={60}
+        nextSetReps={5}
+      />,
+    );
+    const root = screen.getByTestId('rest-overlay');
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(root.textContent ?? '')).toBe(false);
+  });
+});

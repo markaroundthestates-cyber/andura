@@ -1402,6 +1402,25 @@ export function Workout(): JSX.Element {
   // (a dropped trailing slot is skipped, never previewed).
   const nextExercise = nextActiveIdx >= 0 ? exercises[nextActiveIdx] : undefined;
 
+  // Founder UX #2 (2026-06-12) — the NEXT exercise's OPENING set load, previewed
+  // on an inter-exercise rest. Peek nextExercise.targetKg/targetReps (the engine's
+  // opening recommendation from the pipeline — coldstart or history) and scale it
+  // through the SAME session intensityMod ±% as the current exercise's targetKg, so
+  // the preview equals what the user will actually see when they arrive there. Snap
+  // to the real equipment grid (roundToEquipmentWeight) exactly like targetKg above;
+  // bodyweight passes the added weight straight through (no ±% on a 0-added target).
+  const nextExerciseOpenKg = nextExercise
+    ? nextExercise.isBodyweight
+      ? nextExercise.targetKg
+      : intensityMod === 'minus'
+      ? roundToEquipmentWeight(nextExercise.targetKg * minusFactor, nextExercise.engineName ?? nextExercise.name)
+      : intensityMod === 'plus'
+      ? roundToEquipmentWeight(nextExercise.targetKg * plusFactor, nextExercise.engineName ?? nextExercise.name)
+      : nextExercise.targetKg
+    : undefined;
+  const nextExercisePerHand =
+    !!nextExercise && !nextExercise.isBodyweight && isPerHandLoad(nextExercise.engineName ?? nextExercise.name);
+
   // P-11 (LOW) — global progress (SessionTimer wv2-progress block). setsTotal =
   // sum planned sets; setsDone = current ordinal advancing through the session.
   //
@@ -1957,6 +1976,18 @@ export function Workout(): JSX.Element {
           // logged, pendingAdvanceRef set) show the NEXT exercise so the user knows
           // what's coming; intermediate-set rests pass undefined (no spurious next).
           nextExerciseName={pendingAdvanceRef.current ? nextExercise?.name : undefined}
+          // Founder UX #2 (2026-06-12) — the next set's prescribed load under the
+          // timer. INTER-EXERCISE rest → the NEXT exercise's opening recommendation
+          // (nextExerciseOpenKg/targetReps, scaled like the live target); folded into
+          // the up-next line with the name. INTERMEDIATE-set rest → the SAME
+          // exercise's next set = the live recommended load (recKg/recReps, which the
+          // in-session adjustment already moved for the upcoming set).
+          nextSetKg={pendingAdvanceRef.current ? nextExerciseOpenKg : recKg}
+          nextSetReps={pendingAdvanceRef.current ? nextExercise?.targetReps : recReps}
+          nextSetIsBodyweight={
+            pendingAdvanceRef.current ? nextExercise?.isBodyweight : currentExercise.isBodyweight
+          }
+          nextSetPerHand={pendingAdvanceRef.current ? nextExercisePerHand : perHandLoad}
         />
       )}
 

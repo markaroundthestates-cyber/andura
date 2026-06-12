@@ -51,6 +51,19 @@ interface RestOverlayProps {
   // knows where to go in the gym. Rendered only when non-empty; intermediate-set
   // rests pass undefined (no spurious "next" mid-exercise).
   nextExerciseName?: string | undefined;
+  // Founder UX #2 (2026-06-12) — under the timer, show the NEXT set's prescribed
+  // load (kg × reps) so the user knows what's coming. On an INTERMEDIATE-set rest
+  // it is the same exercise's next set (no name needed); on an INTER-EXERCISE rest
+  // it is the next exercise's OPENING set (folded into the up-next line with the
+  // name). kg × reps order matches the logging dock (kg tile left, reps right).
+  // Undefined / non-finite → nothing renders (defensive; bodyweight passes
+  // nextSetIsBodyweight so the line reads "{reps} reps" with no kg).
+  nextSetKg?: number | undefined;
+  nextSetReps?: number | undefined;
+  nextSetIsBodyweight?: boolean | undefined;
+  // Dumbbell convention (audit 2026-06-12) — loads are PER HAND engine-wide; true
+  // renders "{kg} kg/mana" so a DB next-set load can never read as the two-hand total.
+  nextSetPerHand?: boolean | undefined;
 }
 
 export function RestOverlay({
@@ -59,7 +72,25 @@ export function RestOverlay({
   onSkip,
   currentExerciseName,
   nextExerciseName,
+  nextSetKg,
+  nextSetReps,
+  nextSetIsBodyweight,
+  nextSetPerHand,
 }: RestOverlayProps): JSX.Element {
+  // Compact next-set load string, kg × reps order (matches the dock). Bodyweight
+  // has no external kg → just the reps. Built only when both numbers are finite.
+  const hasNextSet =
+    Number.isFinite(nextSetKg) && Number.isFinite(nextSetReps) && (nextSetReps as number) > 0;
+  const nextSetLoad = hasNextSet
+    ? nextSetIsBodyweight
+      ? t('restOverlay.nextSetBodyweight', { reps: nextSetReps as number })
+      : t('restOverlay.nextSetLoad', {
+          kg: nextSetPerHand
+            ? t('setLog.kgPerHand', { kg: nextSetKg as number })
+            : `${nextSetKg as number} kg`,
+          reps: nextSetReps as number,
+        })
+    : null;
   return (
     <div
       className="animate-scale-in fixed left-3 right-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom,0px))] z-40 flex items-center gap-5 rounded-[24px] px-5 py-6 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.22)] bg-ink text-paper dark:bg-paper2 dark:text-ink dark:border dark:border-brick"
@@ -104,7 +135,22 @@ export function RestOverlay({
             className="text-[12px] font-semibold leading-snug mt-1.5 text-paper dark:text-ink"
             data-testid="rest-up-next"
           >
-            {t('workout.upNext', { name: nextExerciseName })}
+            {/* Inter-exercise rest — name + the next exercise's OPENING set load
+                ("Next: <exercise> — <kg> × <reps>"), so the user knows what is
+                coming next, not just where to go. */}
+            {nextSetLoad
+              ? t('restOverlay.upNextWithSet', { name: nextExerciseName, set: nextSetLoad })
+              : t('workout.upNext', { name: nextExerciseName })}
+          </p>
+        )}
+        {/* Intermediate-set rest (same exercise, no next-exercise name) — show
+            just the next set's prescribed load under the timer. One compact line. */}
+        {!nextExerciseName && nextSetLoad && (
+          <p
+            className="text-[12px] font-semibold leading-snug mt-1.5 text-paper dark:text-ink"
+            data-testid="rest-next-set"
+          >
+            {t('restOverlay.nextSet', { set: nextSetLoad })}
           </p>
         )}
         <button

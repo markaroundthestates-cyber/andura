@@ -318,7 +318,11 @@
     "ariaLabel": "Active rest",
     "kicker": "Rest",
     "recovering": "{name} is recovering",
-    "skipCta": "Skip rest"
+    "skipCta": "Skip rest",
+    "nextSet": "Next: {set}",
+    "nextSetLoad": "{kg} × {reps}",
+    "nextSetBodyweight": "{reps} reps",
+    "upNextWithSet": "Up next: {name} — {set}"
   },
   "coachRest": {
     "ariaLabel": "Coach recommendation today — recovery",
