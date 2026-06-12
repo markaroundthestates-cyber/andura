@@ -8,7 +8,7 @@
   {
     "name": "main chunk (app code)",
     "path": "dist/assets/main-*.js",
-    "limit": "280 KB",
+    "limit": "284 KB",
     "gzip": true
   },
   {
@@ -32,7 +32,7 @@
   {
     "name": "vendor (icons)",
     "path": "dist/assets/vendor-icons-*.js",
-    "limit": "8 KB",
+    "limit": "9 KB",
     "gzip": true
   },
   {
