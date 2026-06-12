@@ -232,6 +232,13 @@ export function WarmupRampCard({ steps, sessionKey, onResolved }: WarmupRampCard
           {t('workout.warmupCard.stepDone', { kg: step.kg, reps: step.reps })}
         </button>
       )}
+
+      {/* Founder 2026-06-12 — the working-set dock stays hidden until the warm-up
+          resolves (warm-up gating), so tell the user WHY: finish or skip to
+          proceed. Shown in both the primer + rest states. */}
+      <p className="text-[11px] text-ink3 text-center mt-2" data-testid="warmup-proceed-hint">
+        {t('workout.warmupCard.proceedHint')}
+      </p>
     </div>
   );
 }

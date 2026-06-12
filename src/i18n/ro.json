@@ -536,7 +536,8 @@
       "stepDone": "Am facut {kg} kg x {reps}",
       "resting": "Pauza scurta: {sec}s",
       "skipRest": "Sar pauza",
-      "dismiss": "Sar peste"
+      "dismiss": "Sar peste",
+      "proceedHint": "Termina sau sari peste incalzire ca sa incepi seturile de lucru"
     },
     "preview": {
       "title": "Antrenamentul tau",

@@ -536,7 +536,8 @@
       "stepDone": "Did {kg} kg x {reps}",
       "resting": "Short rest: {sec}s",
       "skipRest": "Skip rest",
-      "dismiss": "Skip warm-up"
+      "dismiss": "Skip warm-up",
+      "proceedHint": "Finish or skip the warm-up to start your working sets"
     },
     "preview": {
       "title": "Your workout",
