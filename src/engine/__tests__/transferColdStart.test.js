@@ -7,10 +7,13 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { DP } from '../dp.js';
 import { getTransferSources, getSimilarityMultiplier } from '../exerciseMapping.js';
 import { getExerciseMetadata } from '../exerciseLibrary.js';
+import { classifyPattern } from '../dp/ceiling.js';
 import { DB } from '../../db.js';
 
 // The injected equipment_type accessor the live dp.js call-site will pass (#11).
 const eqType = (n) => getExerciseMetadata(n)?.equipment_type;
+// The injected classifyPattern accessor the live dp.js call-site will pass (#12).
+const pat = (n) => classifyPattern(n);
 
 const RPE = { usor: 6.5, potrivit: 7.5, greu: 8.5 };
 
@@ -88,6 +91,130 @@ describe('getSimilarityMultiplier — #11 unit-aware equipment conversion', () =
     // resolves to a conservative 1.0 (the ~8% free-bar gap is intentionally NOT
     // modelled — see EQUIP_CONVERSION note). No unit skew machine↔barbell.
     expect(getSimilarityMultiplier('Smith Machine Bench', 'Flat Barbell Bench', eqType)).toBe(1.0);
+  });
+
+  it('per-hand DB target seeded FROM a two-arm cable stack converts ×0.45 (gym-log 2026-06-12)', () => {
+    // A two-arm cable stack pulls BOTH hands → its pin load ≈ a DB TOTAL, not per-hand.
+    // Hammer Curl (dumbbell) seeded FROM Cable Curl (cable stack) → ×0.45 (was a
+    // unit-wrong 1.00 that seeded a 27.5/hand hammer curl off a 32 stack).
+    expect(getSimilarityMultiplier('Hammer Curl', 'Cable Curl', eqType)).toBe(0.45);
+  });
+
+  it('two-arm cable target seeded FROM a per-hand DB is the inverse (×2.20)', () => {
+    expect(getSimilarityMultiplier('Cable Curl', 'Hammer Curl', eqType)).toBe(2.20);
+  });
+
+  // ── #12 movement-pattern conversion (intra-family mechanical skew) ──────────
+  it('squat target seeded FROM a leg-press source converts ×0.45, NOT machine_barbell 1.0 (gym-log 2026-06-12)', () => {
+    // Back Squat (barbell, pattern squat) FROM Leg Press (machine, pattern legpress):
+    // the equipment layer would give machine_barbell 1.00 (DANGER — leg press ≫ squat).
+    // The pattern layer wins with 0.45 (the founder-P0 Gigel-safe leg-press→squat ratio).
+    expect(getSimilarityMultiplier('Barbell Back Squat (High Bar)', 'Leg Press', eqType, pat)).toBe(0.45);
+    // Hack Squat (machine, pattern squat) FROM Leg Press — same pattern pair → 0.45
+    // (would otherwise be the machine↔machine default 0.9).
+    expect(getSimilarityMultiplier('Hack Squat Machine', 'Leg Press', eqType, pat)).toBe(0.45);
+  });
+
+  it('the pattern layer ONLY fires for a listed cross-pattern pair (legiso→squat is NOT it)', () => {
+    // Pendulum Squat (squat) FROM Leg Extension (legiso) is a DIFFERENT pair — no
+    // pattern-conversion entry → falls through to the equipment/default layer (0.9),
+    // unchanged. This is why Pendulum Squat must NOT move off its legiso seed.
+    expect(getSimilarityMultiplier('Pendulum Squat', 'Leg Extension', eqType, pat)).toBe(0.9);
+  });
+
+  it('no pattern accessor → the #12 layer is inert (back-compat, equipment layer still applies)', () => {
+    // Without getPattern, leg-press→squat falls to the equipment layer (machine_barbell
+    // 1.00) — the OLD behavior, proving the new layer is purely additive + opt-in.
+    expect(getSimilarityMultiplier('Barbell Back Squat (High Bar)', 'Leg Press', eqType)).toBe(1.0);
+  });
+});
+
+describe('DP.coldStartTransfer — dumbbell↔cable unit + movement-family guard (gym-log 2026-06-12)', () => {
+  beforeEach(() => {
+    try { localStorage.clear(); } catch { /* jsdom */ }
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_transfer_coldstart_v1: true }));
+  });
+
+  it("Hammer Curl seeded from a 32kg Cable Curl stack lands ~12-15/hand, NOT ~27", () => {
+    // Daniel's real anchor: Cable Curl 32 stack ↔ Hammer Curl 12.5-15/hand.
+    DB.set('logs', [
+      { ex: 'Cable Curl', w: 32, reps: 10, rpe: RPE.greu, ts: 1_700_000_000_000 },
+    ]);
+    const seed = DP.coldStartTransfer('Hammer Curl', 10);
+    expect(seed).not.toBeNull();
+    expect(seed.source).toBe('Cable Curl');
+    expect(seed.ratio).toBe(0.45);
+    expect(seed.kg).toBeGreaterThanOrEqual(10);
+    expect(seed.kg).toBeLessThanOrEqual(16); // his real DB hammer band, not a 27.5 ego load
+  });
+
+  it("Smith OHP does NOT seed from a rear-delt fly (Reverse Pec Deck) — wrong movement class", () => {
+    // A rear-delt fly (pattern 'lateral') shares the umeri muscle but is not a press.
+    // The movement-family guard must REJECT it so the bad cross-movement seed cannot
+    // win (pre-fix it seeded Smith OHP at 20 off a 24kg rear-delt fly).
+    DB.set('logs', [
+      { ex: 'Reverse Pec Deck', w: 24, reps: 10, rpe: RPE.potrivit, ts: 1_700_000_000_000 },
+    ]);
+    const seed = DP.coldStartTransfer('Smith OHP', 10);
+    // No press-class source logged → transfer finds nothing → null (caller falls to
+    // the population prior, the sane ~45-50 ohp value). The rear-delt fly is rejected.
+    expect(seed).toBeNull();
+  });
+
+  it("a chest PRESS does NOT seed from a cable FLY — wrong movement class", () => {
+    // Cable Fly (chestfly) shares the piept muscle but is an isolation, not a press.
+    DB.set('logs', [
+      { ex: 'Cable Fly', w: 23, reps: 10, rpe: RPE.potrivit, ts: 1_700_000_000_000 },
+    ]);
+    const seed = DP.coldStartTransfer('Converging Chest Press', 10);
+    expect(seed).toBeNull(); // fly rejected; no logged press source here
+  });
+
+  it("Back Squat seeded from a 230kg Leg Press lands ~80-110 (Gigel-safe), NOT ~220 (founder P0)", () => {
+    // Daniel's REAL data: Leg Press 230×8 (e1RM ~280). Pre-fix the legs-family gate
+    // (round 1) correctly allowed legs→legs but the machine_barbell 1.00 unit ratio
+    // seeded Barbell Back Squat at 220 kg — a load that would CRUSH a novice ("daca
+    // faci leg press cu 220kg nu faci squats cu 220, il omoram pe Gigel"). The #12
+    // pattern layer caps leg-press→squat at 0.45 → a conservative ~100 kg.
+    DB.set('logs', [
+      { ex: 'Leg Press', w: 230, reps: 8, rpe: RPE.greu, ts: 1_700_000_000_000 },
+      { ex: 'Leg Press', w: 210, reps: 8, rpe: RPE.greu, ts: 1_700_000_100_000 },
+    ]);
+    // Squat strength range floor is ~6 reps; seed there as the live recommend does.
+    const seed = DP.coldStartTransfer('Barbell Back Squat (High Bar)', 7);
+    expect(seed).not.toBeNull();
+    expect(seed.source).toBe('Leg Press');
+    expect(seed.ratio).toBe(0.45);
+    expect(seed.kg).toBeGreaterThanOrEqual(80);
+    expect(seed.kg).toBeLessThanOrEqual(110); // a number Gigel survives, NOT 220
+  });
+
+  it("Hack Squat seeded from a 230kg Leg Press is materially below 200 (founder P0)", () => {
+    DB.set('logs', [
+      { ex: 'Leg Press', w: 230, reps: 8, rpe: RPE.greu, ts: 1_700_000_000_000 },
+      { ex: 'Leg Press', w: 210, reps: 8, rpe: RPE.greu, ts: 1_700_000_100_000 },
+    ]);
+    const seed = DP.coldStartTransfer('Hack Squat Machine', 7);
+    expect(seed).not.toBeNull();
+    expect(seed.source).toBe('Leg Press');
+    expect(seed.ratio).toBe(0.45);
+    expect(seed.kg).toBeLessThan(160); // materially below the pre-fix 200
+  });
+
+  it("two sibling chest-press machines seed from the SAME press source (deterministic)", () => {
+    // With a logged DB press, both Converging Chest Press and Flat Chest Press Machine
+    // resolve from Flat DB Press (benchpress) ×2.50 → the SAME load. Pre-fix they
+    // diverged (one took a fly ×0.9, the other Flat DB Press ×2.5 → 20 vs 75).
+    DB.set('logs', [
+      { ex: 'Flat DB Press', w: 30, reps: 10, rpe: RPE.potrivit, ts: 1_700_000_000_000 },
+    ]);
+    const a = DP.coldStartTransfer('Converging Chest Press', 10);
+    const b = DP.coldStartTransfer('Flat Chest Press Machine', 10);
+    expect(a).not.toBeNull();
+    expect(b).not.toBeNull();
+    expect(a.source).toBe('Flat DB Press');
+    expect(b.source).toBe('Flat DB Press');
+    expect(a.kg).toBe(b.kg); // identical — no sibling nondeterminism
   });
 });
 

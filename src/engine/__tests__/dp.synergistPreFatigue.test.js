@@ -206,3 +206,50 @@ describe('getSmartRecommendation — biceps curl after back compounds is discoun
     expect(afterBack.synergistDiscount).toBeGreaterThan(0);
   });
 });
+
+describe('getSmartRecommendation — synergist discount NEVER drops below the PR floor (gym-log 2026-06-12)', () => {
+  // THE Bayesian Curl founder bug: history said 14/18 kg but the composed plan
+  // prescribed 9 kg. Cause = the DEFECT-1 "drop one step" on a COARSE cable ladder
+  // (Bayesian Curl 18→14→9): a 12% haircut off a floored 14 snapped back to 14, then
+  // dropped a FULL step to 9 — a 36% crater BELOW the DEMONSTRATED 14, violating the
+  // PR-floor invariant recommend() enforces. The discount must lighten WITHIN proven
+  // capacity, never below it. Needs e1RM ON so the demonstrated floor is real (the
+  // live sweep runs the e1RM cluster ON), unlike the raw-load tests above.
+  it("Bayesian Curl logged 14×10 / 18×7 is NOT dropped to 9 by pre-fatigue — clamps at the proven floor", () => {
+    try {
+      localStorage.setItem('_devFlags', JSON.stringify({
+        dp_e1rm_v1: true, dp_transfer_coldstart_v1: true,
+      }));
+    } catch { /* jsdom */ }
+    // His REAL backfill rows (2026-06-03): 14×10 potrivit, 18×7 (PR), 14×10 potrivit.
+    const ts = Date.now() - 24 * 3600 * 1000;
+    store['logs'] = [
+      { ex: 'Bayesian Curl', w: 14, kg: 14, reps: '10', rpe: 7.5, ts, session: ts },
+      { ex: 'Bayesian Curl', w: 18, kg: 18, reps: '7', rpe: 8.5, ts: ts - 1, session: ts - 1, isPR: true },
+      { ex: 'Bayesian Curl', w: 14, kg: 14, reps: '10', rpe: 7.5, ts: ts - 2, session: ts - 2 },
+    ];
+    // After back compounds (Cable Row + Lat Pulldown load biceps) the discount fires,
+    // but the demonstrated floor (14, from the 14×10 sets at the 10-rep target) blocks
+    // the coarse-ladder full-step drop to 9.
+    const afterBack = DP.getSmartRecommendation('Bayesian Curl', null, null, undefined, null, BACK_COMPOUNDS);
+    expect(afterBack.kg).toBeGreaterThanOrEqual(14); // proven capacity, NOT 9
+    expect(afterBack.kg).toBeLessThanOrEqual(16);    // history band, not an ego climb
+  });
+
+  it('the PR-floor clamp leaves a genuine above-floor discount intact (no over-correction)', () => {
+    // A user logged a HEAVY proven 27 kg cable curl (sets at the rep target). A modest
+    // pre-fatigue haircut that stays AT/ABOVE the demonstrated floor is still honored —
+    // the clamp only blocks a drop BELOW proven capacity, it does not disable the
+    // discount wholesale. With e1RM ON the floor is ~27, so a discount toward 27 holds.
+    try { localStorage.setItem('_devFlags', JSON.stringify({ dp_e1rm_v1: true })); } catch { /* jsdom */ }
+    const ts = Date.now() - 24 * 3600 * 1000;
+    store['logs'] = [
+      { ex: 'Cable Curl', w: 27, kg: 27, reps: '12', rpe: 7.5, ts, session: ts },
+      { ex: 'Cable Curl', w: 27, kg: 27, reps: '12', rpe: 7.5, ts: ts - 1, session: ts - 1 },
+      { ex: 'Cable Curl', w: 27, kg: 27, reps: '12', rpe: 7.5, ts: ts - 2, session: ts - 2 },
+    ];
+    const afterBack = DP.getSmartRecommendation('Cable Curl', null, null, undefined, null, BACK_COMPOUNDS);
+    // Never below the demonstrated 27 (the floor); a real cable rung at/above it.
+    expect(afterBack.kg).toBeGreaterThanOrEqual(27);
+  });
+});

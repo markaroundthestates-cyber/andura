@@ -110,8 +110,18 @@ export const SIMILARITY_RATIO = {
 //                             per-hand is 40% of the barbell total (75-85% rule
 //                             /2). Anchored on Daniel's DB30 ↔ BB60-75 bench.
 //   barbell_dumbbell  2.50  — seed a barbell total FROM a per-hand DB (1/0.40).
-//   cable↔dumbbell    1.00  — isolation cables and per-hand dumbbells sit at ~the
-//                             same working load for the same single-joint movement.
+//   dumbbell_cable    0.45  — seed a per-hand DB lift FROM a CABLE STACK load. A
+//   cable_dumbbell    2.20    two-arm cable stack pulls ~BOTH hands at once, so its
+//                             pin load ≈ a DB TOTAL (both hands), not a per-hand DB.
+//                             Anchor (gym-log 2026-06-11, Daniel's real data): Cable
+//                             Curl 32 kg stack ↔ Hammer Curl 12.5-15 kg/hand (15×10
+//                             Hard, 12.5×10 Just-right) → per-hand ≈ 0.45 × stack
+//                             (12.5-15 / 32 ≈ 0.39-0.47, mid 0.45). Inverse stack ≈
+//                             2.20 × per-hand DB. (The pre-fix 1.00 equated a both-
+//                             hands stack with a per-hand DB → Hammer Curl 27.5/hand
+//                             off a 32 stack — absurd.) NB this models the common
+//                             TWO-ARM cable; a rare single-arm cable↔DB pair sits
+//                             nearer 1.0 and would need a per-pair SIMILARITY_RATIO.
 //   machine↔barbell   1.00  — conservative: a plate-loaded machine's pin/plate load
 //                             ≈ a barbell total for the same pattern (no unit skew).
 //                             NB: SMITH lifts carry equipment_type 'machine' in the
@@ -133,33 +143,76 @@ export const SIMILARITY_RATIO = {
 // the convention + the machine rows + Daniel's real anchor.
 const EQUIP_CONVERSION = /** @type {Record<string, number>} */ ({
   'dumbbell_barbell': 0.40, 'barbell_dumbbell': 2.50,
-  'cable_dumbbell': 1.00, 'dumbbell_cable': 1.00,
+  'cable_dumbbell': 2.20, 'dumbbell_cable': 0.45,
   'machine_barbell': 1.00, 'barbell_machine': 1.00,
   'machine_dumbbell': 2.50, 'dumbbell_machine': 0.40,
+});
+
+// ══ #12 MOVEMENT-PATTERN CONVERSION LAYER (intra-family, mechanics-aware) ══════
+// The MOVEMENT_FAMILY gate (dp/ceiling.js) lets a same-family lift seed across
+// MOVEMENTS (legs→legs), and the EQUIP_CONVERSION layer above handles the UNIT
+// skew (per-hand vs total). Neither captures a within-family MECHANICAL skew: a
+// LEG PRESS moves ~2× the absolute load of a back squat (the machine removes the
+// trunk/stabilizer demand), so transferring a leg-press e1RM 1:1 (machine_barbell
+// 1.00) seeded Barbell Back Squat 220 kg from a 230 kg leg press (gym-log
+// 2026-06-12, founder P0 DANGER: "leg press 220 ≠ squat 220 — il omoram pe Gigel").
+//
+// Keys are `targetPattern_srcPattern` (classifyPattern tokens, same Target_Source
+// convention). This layer is MORE specific than the equipment layer (it knows the
+// movement, not just the hardware) so it WINS over it; a curated NAME pair is more
+// specific still and wins over BOTH. Resolved via an injected `getPattern`
+// accessor (classifyPattern), keeping this module free of the ceiling.js import.
+//   squat_legpress  0.45  — seed a free/hack SQUAT FROM a leg-press e1RM. Real-world
+//                           back squat ≈ 0.40-0.55 × leg press (hack ≈ 0.50-0.65);
+//                           0.45 is the conservative Gigel-safe value across the
+//                           whole squat family (a 230 leg press → ~100 kg squat at
+//                           ~7 reps, a load Gigel survives). NB a hack-squat-specific
+//                           pair could justify ~0.55; 0.45 is chosen single-value
+//                           because founder P0 is SAFETY (the floor) and both
+//                           sentinels (back squat 80-110, hack materially < 200)
+//                           pass at 0.45 — the extra precision is not worth a second
+//                           constant near a danger surface.
+const PATTERN_CONVERSION = /** @type {Record<string, number>} */ ({
+  'squat_legpress': 0.45,
 });
 
 /**
  * Multiplier on the SOURCE exercise's e1RM to seed the TARGET. Precedence:
  *   (1) a CURATED per-pair ratio (SIMILARITY_RATIO[target_source]) — most specific;
- *   (2) the EQUIPMENT-TYPE conversion layer — only when `getEquipType` is supplied
+ *   (2) the MOVEMENT-PATTERN conversion layer (PATTERN_CONVERSION[targetPat_srcPat])
+ *       — only when `getPattern` is supplied AND the patterns DIFFER. Captures a
+ *       within-family MECHANICAL skew the equipment layer cannot (leg press ≫ squat);
+ *   (3) the EQUIPMENT-TYPE conversion layer — only when `getEquipType` is supplied
  *       AND both equipment types are known AND they DIFFER (cross-equipment). This
  *       is the unit-aware fix (DB per-hand ↔ barbell total, machine ↔ DB, …);
- *   (3) the legacy `default` (0.9) — same as before for any same-type pair or when
- *       no equipment accessor is passed (byte-identical for callers that omit it).
+ *   (4) the legacy `default` (0.9) — same as before for any same-type pair or when
+ *       no accessor is passed (byte-identical for callers that omit it).
  *
- * PURE — `getEquipType` is the injected `(name)=>equipment_type` accessor (library
- * metadata), keeping this module free of the library import.
+ * PURE — `getEquipType`/`getPattern` are injected `(name)=>…` accessors (library
+ * metadata / classifyPattern), keeping this module free of those imports.
  *
  * @param {string} target
  * @param {string} source
  * @param {(name:string)=>(string|null|undefined)} [getEquipType] library equipment_type accessor
+ * @param {(name:string)=>(string|null|undefined)} [getPattern] classifyPattern accessor
  * @returns {number}
  */
-export function getSimilarityMultiplier(target, source, getEquipType) {
+export function getSimilarityMultiplier(target, source, getEquipType, getPattern) {
   const ratios = /** @type {Record<string, number>} */ (SIMILARITY_RATIO);
   const curated = ratios[target + '_' + source];
   if (typeof curated === 'number') return curated; // (1) curated pair wins
-  // (2) equipment-type conversion layer (cross-equipment only).
+  // (2) movement-pattern conversion layer (intra-family mechanical skew, e.g.
+  // leg press ≫ squat) — wins over the equipment layer (knows the movement, not
+  // just the hardware). Only fires for a cross-pattern pair with a listed ratio.
+  if (typeof getPattern === 'function') {
+    const tPat = getPattern(target);
+    const sPat = getPattern(source);
+    if (tPat && sPat && tPat !== sPat) {
+      const pconv = PATTERN_CONVERSION[tPat + '_' + sPat];
+      if (typeof pconv === 'number') return pconv;
+    }
+  }
+  // (3) equipment-type conversion layer (cross-equipment only).
   if (typeof getEquipType === 'function') {
     const tEq = getEquipType(target);
     const sEq = getEquipType(source);
@@ -168,7 +221,7 @@ export function getSimilarityMultiplier(target, source, getEquipType) {
       if (typeof conv === 'number') return conv;
     }
   }
-  return ratios['default'] || 0.9; // (3) legacy default
+  return ratios['default'] || 0.9; // (4) legacy default
 }
 
 // ══ F3 #4 — ordered transfer-source resolution (cross-exercise cold-start) ════

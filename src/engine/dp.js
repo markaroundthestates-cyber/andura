@@ -23,7 +23,7 @@ import {
   advanceExperiment as advanceNof1Experiment,
   NOF1_ARMS,
 } from './dp/nof1.js';
-import { ceilingE1RM, gainDecay, deficitClimbFactor, tendonLoadRateCap } from './dp/ceiling.js';
+import { ceilingE1RM, gainDecay, deficitClimbFactor, tendonLoadRateCap, classifyPattern, isTransferCompatible } from './dp/ceiling.js';
 import { populationPriorE1RM } from './dp/populationPrior.js';
 import { sanityCheckSet, logOutlier } from './dp/anomalyGuard.js';
 import { quarantineSet, isQuarantined } from './dp/logQuarantine.js';
@@ -1150,13 +1150,19 @@ export const DP = {
     if (!this._e1rmEligible(ex)) return null;
     const rt = repTarget ?? 10;
     const sources = getTransferSources(ex, getExerciseMetadata, this._loggedExerciseNames());
+    // Movement-family guard (gym-log 2026-06-12 — isTransferCompatible in dp/ceiling.js):
+    // skip a same-muscle wrong-MOVEMENT source (rear-delt fly → Smith OHP, cable fly →
+    // chest press) so its meaningless cross-movement e1RM cannot seed the load.
+    const targetPattern = classifyPattern(ex);
     for (const src of sources) {
+      if (!isTransferCompatible(targetPattern, classifyPattern(src))) continue;
       const srcE1RM = this._bestE1RM(src, rt);
       if (srcE1RM <= 0) continue;
-      // #11 — pass the equipment_type accessor so a cross-equipment transfer
-      // (DB per-hand ↔ barbell total, smith↔barbell, …) is unit-converted, not the
-      // unit-blind 0.9 default. Same-equipment / curated pairs are unaffected.
-      const ratio = getSimilarityMultiplier(ex, src, (n) => getExerciseMetadata(n)?.equipment_type);
+      // #11 equipment_type accessor (unit-aware cross-equipment) + #12 classifyPattern
+      // accessor (within-family MECHANICAL skew: leg press ≫ squat → 0.45, not the
+      // machine_barbell 1.00 that seeded Back Squat 220 off a 230 leg press, founder P0).
+      const ratio = getSimilarityMultiplier(ex, src,
+        (n) => getExerciseMetadata(n)?.equipment_type, (n) => classifyPattern(n));
       const seededE1RM = srcE1RM * ratio;
       const kg = this.roundToStep(this._kgFromE1RM(seededE1RM, rt), ex);
       if (kg > 0) return { kg, source: src, ratio };
@@ -2533,8 +2539,15 @@ export const DP = {
         const prevKg = getPrevWeight(preKg, ex);
         if (prevKg < preKg) discountedKg = prevKg;
       }
-      // Commit only if the load actually moved DOWN (we never report a discount we
-      // did not apply — e.g. already at the equipment floor).
+      // PR-FLOOR (gym-log 2026-06-12): the discount must NEVER push the load below the
+      // DEMONSTRATED working capacity — the SAME floor recommend() enforces, which the
+      // DEFECT-1 coarse-ladder full-step drop silently violated (Bayesian Curl 14→9
+      // below proven 14). Clamp up to the floor: pre-fatigue lightens WITHIN proven
+      // capacity, never below it (a return-deload is moot here — its block below wins).
+      const synFloorW = this._demoWorkingW(ex, result.repsTarget ?? 8);
+      if (synFloorW > 0 && discountedKg < synFloorW) discountedKg = this.roundToStep(synFloorW, ex);
+      // Commit only if the load actually moved DOWN (never report a discount we did
+      // not apply — at the equipment floor, or the PR-floor pinned it back to preKg).
       if (discountedKg < preKg) {
         result.kg = discountedKg;
         result.synergistDiscount = discountFraction;
@@ -2832,9 +2845,10 @@ export function getInitialRecommendation(exerciseName, ctx) {
   for (const similarName of similarList) {
     const lastLog = _findLastLog(similarName, recentLogs);
     if (lastLog && lastLog.weight) {
-      // #11 — unit-aware cross-equipment conversion (raw-kg legacy path). Without
-      // the accessor a DB↔BB similar pair scaled raw-kg by 0.9 (unit-blind).
-      const multiplier = getSimilarityMultiplier(exerciseName, similarName, (n) => getExerciseMetadata(n)?.equipment_type);
+      // #11 unit-aware cross-equipment + #12 classifyPattern within-family skew (leg
+      // press ≫ squat) on this legacy raw-kg path too, for parity with coldStartTransfer.
+      const multiplier = getSimilarityMultiplier(exerciseName, similarName,
+        (n) => getExerciseMetadata(n)?.equipment_type, (n) => classifyPattern(n));
       const estimated = lastLog.weight * multiplier;
       const rounded = roundToEquipmentWeight(estimated, exerciseName);
       return {

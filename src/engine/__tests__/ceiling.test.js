@@ -10,6 +10,7 @@ import {
   ageFraction,
   classifyPattern,
   classifyPlateau,
+  isTransferCompatible,
   AGE_FRACTION_FLOOR,
   AGE_FRACTION_CEIL,
 } from '../dp/ceiling.js';
@@ -53,6 +54,44 @@ describe('classifyPattern', () => {
     expect(classifyPattern('Flat Barbell Bench')).toBe('benchpress');
     expect(classifyPattern('DB Lateral Raise')).toBe('lateral');
     expect(classifyPattern('Cable Triceps Pushdown Rope')).toBe('tricep');
+  });
+
+  it('a chest-muscle press MACHINE is benchpress, not tricep (gym-log 2026-06-12)', () => {
+    // 'Flat Chest Press Machine' / 'Hammer Press Machine' contain 'press machine'
+    // (the old tricep token) but are mtp='piept' chest presses — they must classify
+    // as benchpress so the transfer guard treats them as a pressing movement.
+    expect(classifyPattern('Flat Chest Press Machine')).toBe('benchpress');
+    expect(classifyPattern('Hammer Press Machine')).toBe('benchpress');
+    expect(classifyPattern('Converging Chest Press')).toBe('benchpress');
+  });
+
+  it('a true triceps machine stays tricep (no over-correction)', () => {
+    // mtp is NOT 'piept' for these → the chest-press guard does not fire.
+    expect(classifyPattern('Cable Triceps Pushdown Straight Bar')).toBe('tricep');
+    expect(classifyPattern('Cable OH Triceps Rope')).toBe('tricep');
+  });
+});
+
+describe('isTransferCompatible — cold-start movement-family guard', () => {
+  it('admits same pattern and same family (presses, pulls, legs)', () => {
+    expect(isTransferCompatible('ohp', 'ohp')).toBe(true);
+    expect(isTransferCompatible('benchpress', 'ohp')).toBe(true);   // both push
+    expect(isTransferCompatible('row', 'pulldown')).toBe(true);     // both pull
+    expect(isTransferCompatible('squat', 'legiso')).toBe(true);     // Bulgarian ← Leg Extension
+    expect(isTransferCompatible('squat', 'legpress')).toBe(true);
+  });
+
+  it('rejects a press seeding from a fly / rear-delt isolation (the bug)', () => {
+    expect(isTransferCompatible('ohp', 'lateral')).toBe(false);       // Smith OHP ✗ Reverse Pec Deck
+    expect(isTransferCompatible('benchpress', 'chestfly')).toBe(false); // Converging ✗ Cable Fly
+    expect(isTransferCompatible('benchpress', 'lateral')).toBe(false);
+  });
+
+  it('an unfamilied isolation only transfers to its own pattern', () => {
+    expect(isTransferCompatible('bicep', 'bicep')).toBe(true);
+    expect(isTransferCompatible('bicep', 'tricep')).toBe(false);
+    expect(isTransferCompatible('chestfly', 'benchpress')).toBe(false);
+    expect(isTransferCompatible('generic', 'ohp')).toBe(false); // generic ≠ any family
   });
 });
 

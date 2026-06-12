@@ -84,11 +84,46 @@ export function classifyPattern(ex) {
   if (/pulldown|pull-?up|chin-?up/i.test(n)) return 'pulldown';
   if (/row/i.test(n)) return 'row';
   if (/curl/i.test(n) || muscle === 'biceps') return 'bicep';
+  // A chest-muscle press (e.g. 'Flat Chest Press Machine', 'Converging Chest
+  // Press', 'Hammer Press Machine') is a benchpress, NOT a tricep — it must beat
+  // the generic `press machine`→tricep rule below. Guarded on muscle==='piept' so
+  // a true triceps machine (mtp 'triceps'/'unknown') is untouched.
+  if (/press/i.test(n) && muscle === 'piept') return 'benchpress';
   if (/triceps|pushdown|press machine/i.test(n) || muscle === 'triceps') return 'tricep';
   if (/pec deck|cable fly|\bfly\b/i.test(n)) return 'chestfly';
   if (/bench|chest press|dip/i.test(n) || muscle === 'piept') return 'benchpress';
   if (muscle === 'picioare-quads' || muscle === 'fese' || muscle === 'picioare-hamstrings') return 'squat';
   return 'generic';
+}
+
+// ── transfer movement-family guard (cold-start source gate) ──────────────────
+// Movement FAMILIES that may seed each other in a cross-exercise e1RM transfer.
+// Patterns NOT listed in any family only ever transfer to/from their OWN pattern.
+// This stops a wrong-class same-muscle last-resort from seeding a load: a rear-delt
+// FLY (pattern 'lateral') must never seed a Smith overhead PRESS ('ohp'), and a
+// cable FLY ('chestfly') must never seed a chest PRESS ('benchpress') — both are
+// in the same MUSCLE (umeri / piept) but a different MOVEMENT, so the raw e1RM is
+// meaningless across them. Presses seed only from presses/compound pushes; pulls
+// from pulls; lower-body compounds + machine leg iso seed within legs.
+export const MOVEMENT_FAMILY = Object.freeze({
+  benchpress: 'push', ohp: 'push',
+  row: 'pull', pulldown: 'pull',
+  squat: 'legs', legpress: 'legs', legiso: 'legs', deadlift: 'legs', hipthrust: 'legs',
+});
+
+/**
+ * Whether a source lift's movement pattern may seed a target lift's load. True when
+ * the two patterns are identical, OR both belong to the same MOVEMENT_FAMILY. An
+ * unfamilied pattern (bicep / tricep / lateral / chestfly / calf / generic) admits
+ * only its own pattern — a hard movement-class wall for isolations. PURE.
+ * @param {string} targetPattern classifyPattern token of the new (target) lift
+ * @param {string} srcPattern classifyPattern token of the candidate source lift
+ * @returns {boolean}
+ */
+export function isTransferCompatible(targetPattern, srcPattern) {
+  if (targetPattern === srcPattern) return true;
+  const tf = MOVEMENT_FAMILY[targetPattern];
+  return !!tf && tf === MOVEMENT_FAMILY[srcPattern];
 }
 
 /**
