@@ -13,6 +13,9 @@ import {
   planDynamicPrefixKeys,
   dryRunAllStores,
   migrateObjectKeyStore,
+  migrateRowFieldStore,
+  migrateDynamicPrefixKeys,
+  runIdMigrationOnce,
   NAME_KEYED_STORES,
   SCHEMA_VERSION_KEY,
   TARGET_SCHEMA_VERSION,
@@ -162,5 +165,105 @@ describe('migrateObjectKeyStore — backup-first, idempotent, merge (guarded app
 
   it('absent store → safe no-op', () => {
     expect(migrateObjectKeyStore('dp-cal-factors', sum).status).toBe('absent');
+  });
+});
+
+// ── F3 apply layer (2026-06-12) — row-field + dynamic + one-shot runner ───────
+// Real production names throughout (test-real-values rule): Daniel's actual
+// pending remaps were 'Overhead Triceps Extension' → 'Cable Overhead Triceps
+// Extension Rope' (7 log rows) + 'Chest Fly' → 'Cable Fly' (PR rows).
+
+describe('migrateRowFieldStore — logs/pr-records apply (backup-first, idempotent)', () => {
+  it('rewrites legacy ex fields to canonical, backs up first, keeps row count', () => {
+    DB.set('logs', [
+      { ex: 'Overhead Triceps Extension', kg: 32, reps: 9, w: 32 },
+      { ex: 'Cable Row', kg: 73, reps: 8, w: 73 },
+      { ex: 'Chest Fly', kg: 15, reps: 10, w: 15 },
+    ]);
+    const res = migrateRowFieldStore('logs', 'ex', { now: 1750000000000 });
+    expect(res.ok).toBe(true);
+    expect(res.status).toBe('migrated');
+    expect(res.changed).toBe(2);
+    const rows = DB.get('logs');
+    expect(rows).toHaveLength(3);
+    expect(rows[0].ex).toBe('Cable Overhead Triceps Extension Rope');
+    expect(rows[0].kg).toBe(32); // payload untouched
+    expect(rows[1].ex).toBe('Cable Row'); // already canonical — untouched
+    expect(rows[2].ex).toBe('Cable Fly');
+    // backup carries the ORIGINAL rows verbatim
+    const backup = DB.get(res.backupKey);
+    expect(backup[0].ex).toBe('Overhead Triceps Extension');
+  });
+
+  it('is idempotent — second run is a no-op without a second backup', () => {
+    DB.set('logs', [{ ex: 'Chest Fly', kg: 15, reps: 10, w: 15 }]);
+    const first = migrateRowFieldStore('logs', 'ex', { now: 1750000000001 });
+    expect(first.changed).toBe(1);
+    const second = migrateRowFieldStore('logs', 'ex', { now: 1750000000002 });
+    expect(second.status).toBe('migrated');
+    expect(second.changed).toBe(0);
+    expect(second.backupKey).toBeNull();
+  });
+
+  it('dryRun plans without writing', () => {
+    DB.set('pr-records', [{ ex: 'Chest Fly', kg: 23, reps: 7 }]);
+    const res = migrateRowFieldStore('pr-records', 'ex', { dryRun: true });
+    expect(res.status).toBe('planned');
+    expect(res.changed).toBe(1);
+    expect(DB.get('pr-records')[0].ex).toBe('Chest Fly'); // untouched
+  });
+
+  it('absent store → safe no-op', () => {
+    expect(migrateRowFieldStore('logs', 'ex').status).toBe('absent');
+  });
+});
+
+describe('migrateDynamicPrefixKeys — collision-averse rename', () => {
+  it('moves a legacy-named key to canonical and removes the old one', () => {
+    localStorage.setItem('ex-extra-sets-Chest Fly', '2');
+    const res = migrateDynamicPrefixKeys();
+    expect(res.moved).toBe(1);
+    expect(localStorage.getItem('ex-extra-sets-Cable Fly')).toBe('2');
+    expect(localStorage.getItem('ex-extra-sets-Chest Fly')).toBeNull();
+  });
+
+  it('NEVER clobbers an existing canonical key — skips and reports', () => {
+    localStorage.setItem('ex-extra-sets-Chest Fly', '2');
+    localStorage.setItem('ex-extra-sets-Cable Fly', '5'); // newer data already there
+    const res = migrateDynamicPrefixKeys();
+    expect(res.moved).toBe(0);
+    expect(res.skipped).toHaveLength(1);
+    expect(localStorage.getItem('ex-extra-sets-Cable Fly')).toBe('5'); // kept
+    expect(localStorage.getItem('ex-extra-sets-Chest Fly')).toBe('2'); // left in place
+  });
+});
+
+describe('runIdMigrationOnce — one-shot boot entry (collision-averse orchestration)', () => {
+  it('migrates row stores + object stores, reports totals, second run no-ops', () => {
+    DB.set('logs', [{ ex: 'Overhead Triceps Extension', kg: 32, reps: 9, w: 32 }]);
+    DB.set('dp-cal-factors', { 'Chest Fly': { kgFactor: 1.1, n: 4 } });
+    const first = runIdMigrationOnce({ now: 1750000000003 });
+    expect(first.changed).toBeGreaterThanOrEqual(2);
+    expect(first.migrated).toContain('logs');
+    expect(first.migrated).toContain('dp-cal-factors');
+    expect(first.errors).toHaveLength(0);
+    expect(DB.get('logs')[0].ex).toBe('Cable Overhead Triceps Extension Rope');
+    expect(DB.get('dp-cal-factors')['Cable Fly']).toEqual({ kgFactor: 1.1, n: 4 });
+    const second = runIdMigrationOnce({ now: 1750000000004 });
+    expect(second.changed).toBe(0);
+    expect(second.migrated).toHaveLength(0);
+  });
+
+  it('SKIPS an object store with pending merges (never silently folds two keys)', () => {
+    // Both the alias AND its canonical present → a merge would be required.
+    DB.set('dp-cal-factors', {
+      'Chest Fly': { kgFactor: 1.1, n: 4 },
+      'Cable Fly': { kgFactor: 1.3, n: 9 },
+    });
+    const res = runIdMigrationOnce({ now: 1750000000005 });
+    expect(res.skippedMerges).toContain('dp-cal-factors');
+    // Store untouched — both keys still there, no backup churn.
+    expect(DB.get('dp-cal-factors')['Chest Fly']).toEqual({ kgFactor: 1.1, n: 4 });
+    expect(DB.get('dp-cal-factors')['Cable Fly']).toEqual({ kgFactor: 1.3, n: 9 });
   });
 });

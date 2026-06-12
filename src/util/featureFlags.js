@@ -871,6 +871,40 @@ export const FLAGS = Object.freeze({
   // whole contract behavior flips together.
   dp_focus_contracts_v1: { rollout: 1, default: true },
 
+  // CROSS-DAY WEEK LEDGER (2026-06-12 focus-contracts arc, closing the 4 GAP notes) —
+  // extends the established deterministic day→cluster derivation (weekClustersFor /
+  // weekSessionSpreadByGroup) into a per-group SET + per-sub-bucket SLOT projection of
+  // the week's PRIOR days (computeWeekLedger, weekLedger.js), so day N can react to what
+  // days 0..N-1 already delivered — the cross-day view the focus-contracts layer needs
+  // for the 4 contracts a per-day pass cannot reach: (1) ARMS biceps≥0.85×triceps over
+  // the WEEK (a second direct-biceps slot is injected when the projected week biceps
+  // trails 0.85×triceps; close-grip stays protected); (2) CHEST close-grip ≤4 sets/wk (a
+  // later push day's maxCloseGrip tightens to 0 once the prior days projected the quota);
+  // (3) SHOULDERS lateral≥6 & rear≥6 sets/wk @4d+ (a SECOND lateral/rear slot is added on
+  // a later shoulder day when the week still owes the quota — not an impossible 5-set
+  // dose); (4) LOWER back ≤0.65×max-lower @4d+ (the upper days of a lower-focus week shave
+  // their back allocation toward the cap reading the ledger, never below MEV). Pure +
+  // deterministic (clusterForDay + budget/session division — no Math.random/Date.now/log
+  // read), O(active days). MEV floors + coverage + PR-protection + DP anchors all keep
+  // precedence (a cap never drops below MEV; a LOGGED lift is never displaced). OFF
+  // (pinned OFF in the fp cohorts via FLIPPED_FLAGS) → the ledger is never built → null
+  // threaded → byte-identical (the full-path-sim hash holds).
+  dp_week_ledger_v1: { rollout: 1, default: true },
+
+  // F3 ID-MIGRATION APPLY (2026-06-12, manager) — one-shot per boot AFTER
+  // hydrate (reactBoot.runPostAuthSync): re-keys legacy exercise names onto
+  // canonical engine names in every name-keyed store (logs/pr-records rows,
+  // objectKey stores, ex-extra-sets-* dynamic keys) ON THE DEVICE, then the
+  // sync layer pushes canonical names up. THE durable half of the fix: the
+  // 06-10 server-side remap was clobbered by a device pushing stale local
+  // state back; device-side migration converges every replica regardless of
+  // sync direction. Idempotent (clean store = no-op), collision-AVERSE (a
+  // store needing an alias↔canonical MERGE is skipped + reported, never
+  // auto-folded), backup-first per store, fail-silent at the boot call site
+  // (the read-shim keeps resolving legacy names either way). OFF → boot does
+  // nothing (runner never called) → byte-identical.
+  dp_id_migration_apply_v1: { rollout: 1, default: true },
+
   // A2.1 consolidated honest DECISION TRACE (audit-grade, additive). When ON, the
   // compose seam attaches a `decisionTrace` field — a structured array of the REAL
   // multi-factor reasons that shaped THIS session's plan (phase / readiness /

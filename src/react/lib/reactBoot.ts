@@ -56,6 +56,8 @@ import { useAppStore } from '../stores/appStore';
 import { hydrateStoresFromCloud, startStoreSyncSubscriptions } from './storeSync';
 import { migrateAnonymousToAuth } from '../../storage/migrateAnonymousToAuth.js';
 import { readDeletionMarker } from './accountDeletion';
+import { runIdMigrationOnce } from '../../engine/idMigration.js';
+import { isEnabled } from '../../util/featureFlags.js';
 
 // Module-level idempotency guards. React 18 StrictMode double-invokes effects
 // in dev, and main.tsx + a returning-user path could both reach boot — these
@@ -266,6 +268,26 @@ export async function runPostAuthSync(): Promise<void> {
         await hydrateStoresFromCloud();
       } catch (err) {
         logger.warn('[Sync] wv2 store hydrate failed:', err);
+      }
+      // F3 ID-migration apply (2026-06-12, dp_id_migration_apply_v1) — ONE-SHOT
+      // per boot, AFTER hydrate so the local stores carry the freshest state
+      // (cloud or device, whichever won) before re-keying legacy exercise names
+      // onto canonical engine names. THIS is the durable half of the fix: the
+      // 06-10 server-side remap got clobbered by a device pushing its stale
+      // local copy back up — migrating ON the device then letting sync push
+      // canonical names converges every replica. Idempotent (no-op when clean),
+      // collision-averse (merge-pending stores are skipped, never auto-merged),
+      // backup-first per store, fail-silent (a migration error never blocks
+      // boot — the read-shim keeps resolving legacy names regardless).
+      try {
+        if (isEnabled('dp_id_migration_apply_v1')) {
+          const r = runIdMigrationOnce();
+          if (r.changed > 0 || r.errors.length > 0) {
+            logger.info('[IdMigration] applied:', JSON.stringify(r));
+          }
+        }
+      } catch (err) {
+        logger.warn('[IdMigration] apply threw (non-fatal):', err);
       }
       _postAuthDoneForUid = uid;
     } catch (err) {

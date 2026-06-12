@@ -249,3 +249,113 @@ export function migrateObjectKeyStore(key, mergeColliding, opts = {}) {
   if (wr && wr.ok === false) return { ok: false, status: 'write_failed', changed: 0, backupKey, error: wr.error };
   return { ok: true, status: 'migrated', changed: plan.changed, backupKey };
 }
+
+/**
+ * Migrate ONE row-field store (Array<{[field]: name}> — `logs`, `pr-records`):
+ * rewrite every renamable name field onto its canonical engine name. Backup FIRST
+ * (same `<key>-backup-pre-id-migration-<ts>` convention), IDEMPOTENT (a store with
+ * zero pending rewrites is a no-op — arrays carry no schema stamp; the plan IS the
+ * stamp), quota-guarded (failed write leaves the original + backup intact). Rows
+ * never merge — a rename only changes the `field` value, row count is invariant.
+ * F3 write-side (design §3) — the piece the dormant apply layer was missing: the
+ * 06-10 server-side remap got clobbered by device sync (old local copy pushed
+ * back), so the durable fix is each DEVICE migrating its own store then syncing
+ * canonical names up (manager decision 2026-06-12, Daniel "fa tot").
+ *
+ * @param {string} key
+ * @param {string} field
+ * @param {{ now?: number, dryRun?: boolean }} [opts]
+ * @returns {{ ok: boolean, status: string, changed: number, backupKey: string|null, error?: string }}
+ */
+export function migrateRowFieldStore(key, field, opts = {}) {
+  const value = DB.get(key);
+  const plan = planRowFieldStore(key, value, field);
+  if (plan.status === 'absent' || plan.status === 'unsupported') {
+    return { ok: true, status: plan.status, changed: 0, backupKey: null };
+  }
+  if (plan.changed === 0) {
+    return { ok: true, status: 'migrated', changed: 0, backupKey: null };
+  }
+  if (opts.dryRun) return { ok: true, status: 'planned', changed: plan.changed, backupKey: null };
+  const rows = /** @type {Array<Record<string, unknown>>} */ (value);
+  const next = rows.map((row) => {
+    if (!row || typeof row !== 'object') return row;
+    const name = row[field];
+    if (typeof name !== 'string' || !name) return row;
+    const canon = resolveExerciseName(name) ?? name;
+    return canon === name ? row : { ...row, [field]: canon };
+  });
+  const backupKey = `${key}-backup-pre-id-migration-${opts.now ?? Date.now()}`;
+  const bk = DB.set(backupKey, value);
+  if (bk && bk.ok === false) return { ok: false, status: 'backup_failed', changed: 0, backupKey: null, error: bk.error };
+  const wr = DB.set(key, next);
+  if (wr && wr.ok === false) return { ok: false, status: 'write_failed', changed: 0, backupKey, error: wr.error };
+  return { ok: true, status: 'migrated', changed: plan.changed, backupKey };
+}
+
+/**
+ * Rename dynamic-prefix localStorage keys onto canonical names. Collision-AVERSE:
+ * when the canonical key already exists, the OLD key is left in place untouched
+ * and reported (never clobbers newer data with stale). Otherwise value moves to
+ * the canonical key and the old key is removed (the move itself is the backup —
+ * nothing is destroyed, only re-keyed). SSR/Node-safe.
+ * @returns {{ moved: number, skipped: Array<{ lsKey: string, to: string }> }}
+ */
+export function migrateDynamicPrefixKeys() {
+  const planned = planDynamicPrefixKeys();
+  let moved = 0;
+  /** @type {Array<{ lsKey: string, to: string }>} */
+  const skipped = [];
+  let ls;
+  try { ls = localStorage; } catch { return { moved, skipped }; }
+  for (const p of planned) {
+    const prefix = NAME_KEYED_DYNAMIC_PREFIXES.find((x) => p.lsKey.startsWith(x));
+    if (!prefix) continue;
+    const targetKey = prefix + p.to;
+    try {
+      if (ls.getItem(targetKey) != null) { skipped.push({ lsKey: p.lsKey, to: targetKey }); continue; }
+      const v = ls.getItem(p.lsKey);
+      if (v == null) continue;
+      ls.setItem(targetKey, v);
+      ls.removeItem(p.lsKey);
+      moved++;
+    } catch { /* quota/SSR — leave the old key, read-shim still resolves it */ }
+  }
+  return { moved, skipped };
+}
+
+/**
+ * ONE-SHOT full apply across the inventory — the deliberate F3 entry point the
+ * boot wiring calls behind `dp_id_migration_apply_v1`. Collision-AVERSE: an
+ * objectKey store with pending MERGES (two source keys folding onto one
+ * canonical) is SKIPPED + reported, never silently merged — merge semantics are
+ * per-store judgment (design §3) and no real account has shown one (Daniel
+ * dry-run 2026-06-11: zero collisions). Idempotent end-to-end: second run is
+ * all no-ops. Pure orchestration over the tested primitives.
+ * @param {{ now?: number }} [opts]
+ * @returns {{ changed: number, migrated: string[], skippedMerges: string[], dynamicMoved: number, errors: Array<{ key: string, error?: string }> }}
+ */
+export function runIdMigrationOnce(opts = {}) {
+  /** @type {string[]} */
+  const migrated = [];
+  /** @type {string[]} */
+  const skippedMerges = [];
+  /** @type {Array<{ key: string, error?: string }>} */
+  const errors = [];
+  let changed = 0;
+  for (const d of NAME_KEYED_STORES) {
+    if (d.kind === 'objectKey') {
+      const plan = planObjectKeyStore(d.key, DB.get(d.key));
+      if (plan.merges.length > 0) { skippedMerges.push(d.key); continue; }
+      const r = migrateObjectKeyStore(d.key, (_c, entries) => entries[0], opts);
+      if (!r.ok) errors.push({ key: d.key, error: r.error });
+      else if (r.changed > 0) { migrated.push(d.key); changed += r.changed; }
+    } else {
+      const r = migrateRowFieldStore(d.key, /** @type {string} */ (d.field), opts);
+      if (!r.ok) errors.push({ key: d.key, error: r.error });
+      else if (r.changed > 0) { migrated.push(d.key); changed += r.changed; }
+    }
+  }
+  const dyn = migrateDynamicPrefixKeys();
+  return { changed, migrated, skippedMerges, dynamicMoved: dyn.moved, errors };
+}
