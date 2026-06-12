@@ -264,11 +264,17 @@ export function CalendarHeatmap(): JSX.Element {
               {(dotColor || hasAerobic || isRestDay) && (
                 <span className="flex items-center gap-[3px]" aria-hidden="true">
                   {isRestDay && (
-                    // Rest-day glyph — empty square matching the legend's rest
-                    // swatch (bg-paper2 + lineStrong border), sized like the dot.
+                    // Rest-day glyph — soft gray-green square matching the
+                    // legend's rest swatch (founder 2026-06-12: "rest nu negru
+                    // ca nu suntem la inmormantare" — bg-paper2 read as a black
+                    // hole; a translucent ink-3 wash reads as a gentle pause).
                     <span
                       data-testid={`cal-rest-${cell.day}`}
-                      className="w-1.5 h-1.5 rounded-[3px] bg-paper2 border border-lineStrong"
+                      className="w-1.5 h-1.5 rounded-[3px] border"
+                      style={{
+                        background: 'color-mix(in oklab, var(--ink-3) 32%, transparent)',
+                        borderColor: 'var(--line-strong)',
+                      }}
                     />
                   )}
                   {dotColor && (
@@ -279,13 +285,14 @@ export function CalendarHeatmap(): JSX.Element {
                     />
                   )}
                   {hasAerobic && (
-                    // Aerobic-class marker — hollow aqua ring (vs the solid gym
-                    // intensity dot) so a 'both' day reads as two distinct marks
-                    // and aqua never collides with the gym-normal solid dot.
+                    // Aerobic-class marker — hollow VIOLET ring (founder
+                    // 2026-06-12 "Aerobic mov"): aqua collided with the
+                    // gym-normal solid dot, so the legend read as duplicates.
+                    // Violet is unused by any tier → every mark has its own hue.
                     <span
                       data-testid={`cal-aerobic-${cell.day}`}
                       className="w-1.5 h-1.5 rounded-full border-[1.5px] bg-transparent"
-                      style={{ borderColor: 'var(--aqua)', boxShadow: '0 0 6px var(--aqua)' }}
+                      style={{ borderColor: 'var(--violet)', boxShadow: '0 0 6px var(--violet)' }}
                     />
                   )}
                 </span>
@@ -306,36 +313,22 @@ export function CalendarHeatmap(): JSX.Element {
         {t('calendar.heatmap.monthAnnounce', { month: monthLabel, year: calY })}
       </div>
 
-      {/* Pulse reskin (GROUP E) — legend mirrors the cell marks: glowing dots in
-          the session-state tokens (easy=volt / normal=aqua / hard=ember). Rest
-          keeps its real token (no Pulse glow — not a logged session). Order
-          follows the mockup: easy → normal → hard → rest. */}
+      {/* Legend rewrite (founder 2026-06-12 "culorile nu le inteleg mai deloc"):
+          the old legend had GYM=volt dot next to EASY=volt square and
+          AEROBIC=aqua ring next to NORMAL=aqua square — 6 entries, 2 hues
+          duplicated = unreadable. Now every entry has its OWN hue and the
+          swatch SHAPE mirrors the cell mark 1:1: easy/normal/hard = round
+          glowing dots (volt/aqua/ember — exactly what tierDotColor paints),
+          aerobic = hollow VIOLET ring, rest = soft gray square. The GYM entry
+          is gone (founder "gym - scos"): the three intensity dots ARE the gym
+          days, a 4th synonym swatch only added noise. */}
       <div
         className="flex items-center gap-3.5 flex-wrap pt-3.5 mt-3.5 border-t border-line"
         data-testid="cal-legend"
       >
-        {/* Source legend (2026-05-30) — gym (solid intensity dot) vs aerobic
-            class (hollow aqua ring). Self-explains the two day-marker shapes so
-            a 'both'-mode user reads the calendar correctly. */}
-        <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2" data-testid="cal-legend-gym">
-          <span
-            className="inline-block w-2.5 h-2.5 rounded-full"
-            style={{ background: 'var(--volt)', boxShadow: '0 0 6px var(--volt)' }}
-            aria-hidden="true"
-          />
-          {t('calendar.heatmap.legend.gym')}
-        </span>
-        <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2" data-testid="cal-legend-aerobic">
-          <span
-            className="inline-block w-2.5 h-2.5 rounded-full border-[1.5px] bg-transparent"
-            style={{ borderColor: 'var(--aqua)', boxShadow: '0 0 6px var(--aqua)' }}
-            aria-hidden="true"
-          />
-          {t('calendar.heatmap.legend.aerobic')}
-        </span>
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
           <span
-            className="inline-block w-2.5 h-2.5 rounded-[3px]"
+            className="inline-block w-2.5 h-2.5 rounded-full"
             style={{ background: 'var(--volt)', boxShadow: '0 0 6px var(--volt)' }}
             aria-hidden="true"
           />
@@ -343,7 +336,7 @@ export function CalendarHeatmap(): JSX.Element {
         </span>
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
           <span
-            className="inline-block w-2.5 h-2.5 rounded-[3px]"
+            className="inline-block w-2.5 h-2.5 rounded-full"
             style={{ background: 'var(--aqua)', boxShadow: '0 0 6px var(--aqua)' }}
             aria-hidden="true"
           />
@@ -351,19 +344,27 @@ export function CalendarHeatmap(): JSX.Element {
         </span>
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
           <span
-            className="inline-block w-2.5 h-2.5 rounded-[3px]"
+            className="inline-block w-2.5 h-2.5 rounded-full"
             style={{ background: 'var(--ember)', boxShadow: '0 0 6px var(--ember)' }}
             aria-hidden="true"
           />
           {t('calendar.heatmap.legend.hard')}
         </span>
-        {/* Audit 2026-06-07 (LOW-2): the "recovery"/violet legend swatch was
-            removed — tierDotColor only ever paints volt/aqua/ember (l1/l2/l3),
-            so no cell ever showed a recovery mark; the legend advertised a swatch
-            users would never see. */}
+        <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2" data-testid="cal-legend-aerobic">
+          <span
+            className="inline-block w-2.5 h-2.5 rounded-full border-[1.5px] bg-transparent"
+            style={{ borderColor: 'var(--violet)', boxShadow: '0 0 6px var(--violet)' }}
+            aria-hidden="true"
+          />
+          {t('calendar.heatmap.legend.aerobic')}
+        </span>
         <span className="flex items-center gap-1.5 font-mono text-[10px] text-ink2">
           <span
-            className="inline-block w-2.5 h-2.5 rounded-[3px] bg-paper2 border border-lineStrong"
+            className="inline-block w-2.5 h-2.5 rounded-[3px] border"
+            style={{
+              background: 'color-mix(in oklab, var(--ink-3) 32%, transparent)',
+              borderColor: 'var(--line-strong)',
+            }}
             aria-hidden="true"
           />
           {t('calendar.heatmap.legend.rest')}

@@ -238,13 +238,18 @@ describe('CalendarHeatmap — aerobic-class overlay (2026-05-30)', () => {
     expect(screen.getByTestId('cal-dot-12')).toBeInTheDocument();
   });
 
-  it('renders Sala + Aerobic source legend entries', () => {
+  it('legend has NO gym entry (founder 2026-06-12) and keeps the violet aerobic ring', () => {
     setLocale('ro');
     _resetI18nCache();
     setLocale('ro');
     render(<CalendarHeatmap />);
-    expect(screen.getByTestId('cal-legend-gym').textContent).toContain('Sala');
-    expect(screen.getByTestId('cal-legend-aerobic').textContent).toContain('Aerobic');
+    // "gym - scos": the intensity dots ARE the gym days; the synonym swatch
+    // duplicated easy's volt and made the legend unreadable.
+    expect(screen.queryByTestId('cal-legend-gym')).not.toBeInTheDocument();
+    const aerobic = screen.getByTestId('cal-legend-aerobic');
+    expect(aerobic.textContent).toContain('Aerobic');
+    // Aerobic moved aqua → violet so it can never read as "normal".
+    expect(aerobic.innerHTML).toContain('--violet');
   });
 });
 
