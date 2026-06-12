@@ -1,30 +1,31 @@
 // Track 7 §7.7 — Checkly synthetic prod config for live andura.app.
 //
-// DEPLOY-READY (2026-06-12, "ne apucam de tot"). Founder activation = 3 steps:
-//   1. Create a Checkly account (Free/Hobby) → app.checklyhq.com
-//   2. Create an API key + grab the Account ID (User Settings → API keys /
-//      Account settings → General). Export them locally:
-//        export CHECKLY_API_KEY=cu_xxx
-//        export CHECKLY_ACCOUNT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-//   3. npx checkly test     (dry-run against Checkly infra — needs the creds)
-//      npx checkly deploy    (creates the checks live on the account)
-// Full runbook + free-tier math: salafull/_CHECKLY_ACTIVATION_2026-06-12.md
+// ACTIVE (2026-06-12). Secrets CHECKLY_API_KEY + CHECKLY_ACCOUNT_ID live as
+// GitHub repo secrets (uploaded by Daniel 2026-05-19); deploy.yml's
+// checkly-deploy job runs `npx checkly deploy --force` on every push to main.
 //
-// Free-tier math (Hobby):
-//   1 browser check × frequency 10min × 2 locations
-//     = 6 runs/h × 24h × 30d × 2 loc = 8,640 check-runs/mo.
-//   Hobby includes generous browser-check runs for a single check at this
-//   cadence; 10min (vs 5min = 17,280/mo) halves consumption and is the
-//   recommended starting cadence. Bump to 5min later only if needed.
+// API CHECKS ONLY (2026-06-12 decision): the original browser-check spec hit
+// the @playwright/test dual-instance hazard inside Checkly's jiti bundler
+// ("Playwright Test did not expect test.describe() to be called here" — the
+// repo ships BOTH `playwright` and `@playwright/test` for its own E2E, and the
+// CLI's loader resolves a second runner instance; founder verdict: monitors
+// must be green with zero asterisks). ApiChecks need no Playwright at all =
+// the hazard class is gone. Coverage trade-off (honest): no JS execution —
+// console errors / SW behavior are NOT probed; uptime, HTML shell, and asset
+// integrity ARE. A browser check can return when the playwright versions are
+// consolidated.
 //
-// Alert channel: EmailAlertChannel → support@andura.app (below). Slack/webhook
-// channels, if wanted, are added in the Checkly UI (sensitive — not in code).
+// Free-tier math (Hobby): 3 API checks × 10min × 1 location
+//   = 6/h × 24h × 30d × 3 = 12,960 API-check runs/mo — well inside the free
+//   10k browser + 50k API allowance class; API checks are the cheap kind.
+//
+// Alert channel: EmailAlertChannel → support@andura.app (verification mail on
+// first deploy; confirm once). Slack/webhook channels via UI if wanted.
 
 import { defineConfig } from 'checkly';
-import { EmailAlertChannel } from 'checkly/constructs';
+import { ApiCheck, AssertionBuilder, EmailAlertChannel } from 'checkly/constructs';
 
-// Email alerts on failure + recovery to the founder inbox. Checkly sends a
-// verification mail to this address on first deploy; confirm it once.
+// Email alerts on failure + recovery to the founder inbox.
 const emailChannel = new EmailAlertChannel('andura-prod-email', {
   address: 'support@andura.app',
   sendFailure: true,
@@ -32,32 +33,68 @@ const emailChannel = new EmailAlertChannel('andura-prod-email', {
   sendDegraded: false,
 });
 
+// ── 1. App shell — the SPA HTML serves and contains the Vite entry. ─────────
+new ApiCheck('andura-shell', {
+  name: 'andura.app — app shell serves (HTML + entry script)',
+  request: {
+    method: 'GET',
+    url: 'https://andura.app/',
+    followRedirects: true,
+    assertions: [
+      AssertionBuilder.statusCode().equals(200),
+      // The built index.html always carries the module entry + the app mount.
+      AssertionBuilder.body().contains('<div id="root">'),
+      AssertionBuilder.body().contains('type="module"'),
+    ],
+  },
+  maxResponseTime: 10000,
+  degradedResponseTime: 5000,
+});
+
+// ── 2. PWA manifest — installability surface stays intact. ──────────────────
+new ApiCheck('andura-manifest', {
+  name: 'andura.app — PWA manifest serves',
+  request: {
+    method: 'GET',
+    url: 'https://andura.app/manifest.webmanifest',
+    followRedirects: true,
+    assertions: [
+      AssertionBuilder.statusCode().equals(200),
+      AssertionBuilder.body().contains('"name"'),
+      AssertionBuilder.body().contains('standalone'),
+    ],
+  },
+  maxResponseTime: 10000,
+  degradedResponseTime: 5000,
+});
+
+// ── 3. Legal page — static scrollable /terms route serves (SPA fallback). ───
+new ApiCheck('andura-terms', {
+  name: 'andura.app — /terms route serves',
+  request: {
+    method: 'GET',
+    url: 'https://andura.app/terms',
+    followRedirects: true,
+    assertions: [
+      AssertionBuilder.statusCode().equals(200),
+      AssertionBuilder.body().contains('<div id="root">'),
+    ],
+  },
+  maxResponseTime: 10000,
+  degradedResponseTime: 5000,
+});
+
 export default defineConfig({
   projectName: 'andura',
   logicalId: 'andura',
   repoUrl: 'https://github.com/markaroundthestates-cyber/andura',
   checks: {
-    // 10min cadence = free-tier-friendly (see math above). EU-only locations,
-    // closest to the Romanian user base. Latest runtime (Playwright + browser
-    // binaries) per Checkly docs.
+    // 10min cadence, EU-only locations (RO proximity).
     frequency: 10,
-    locations: ['eu-west-1', 'eu-central-1'], // Ireland + Frankfurt (RO proximity)
+    locations: ['eu-west-1', 'eu-central-1'], // Ireland + Frankfurt
     runtimeId: '2025.04',
     tags: ['andura', 'production-smoke', 'track-7'],
     alertChannels: [emailChannel],
-    playwrightConfig: {
-      use: {
-        baseURL: 'https://andura.app',
-        ignoreHTTPSErrors: false,
-        actionTimeout: 15000,
-      },
-    },
-    // Browser checks are discovered from __checks__/*.spec.ts.
-    checkMatch: '**/__checks__/**/*.spec.ts',
-    browserChecks: {
-      frequency: 10,
-      testMatch: '**/__checks__/**/*.spec.ts',
-    },
   },
   cli: {
     runLocation: 'eu-west-1',
