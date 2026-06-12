@@ -1046,6 +1046,10 @@ html, body {
      (state loss unless paused). overscroll-behavior: contain stops scroll
      chain propagation to browser-level pull-to-refresh gesture. */
   overscroll-behavior: contain;
+  /* Mobile scroll surface = the document. Programmatic scrolls (scrollIntoView,
+     incl. Playwright pre-click) must clear the fixed in-session dock; Workout
+     sets --dock-clearance to the dock's measured height while mounted. */
+  scroll-padding-bottom: var(--dock-clearance, 0px);
 }
 
 /* Pulse-dark ambient — radial glow behind the app column (mockup
@@ -1165,7 +1169,12 @@ html, body {
   }
   /* The shell <div> (#root's only child) must fill the fixed-height screen so
      its flex child .app-scroll resolves a bounded height to scroll within
-     (min-h-screen would otherwise overflow the device). */
+     (min-h-screen would otherwise overflow the device).
+     TRAP (2026-06-12): anything PORTALED into #root becomes a second child and
+     inherits height:100% — the in-session log dock did, turning into a
+     full-screen click-shield pinned to the top on desktop. Portaled chrome
+     must opt out with inline height:auto (the dock does); keep this in mind
+     for any future #root portal. */
   #root > * {
     min-height: 0;
     height: 100%;
@@ -1179,6 +1188,10 @@ html, body {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    /* Programmatic scrolls (scrollIntoView — incl. Playwright pre-click) must
+       clear the fixed in-session dock; Workout sets --dock-clearance to the
+       dock's measured height while it is mounted. 0 when absent. */
+    scroll-padding-bottom: var(--dock-clearance, 0px);
   }
   .app-scroll::-webkit-scrollbar { width: 0; height: 0; }
   /* Notch — pill on top of the screen (mockup .notch 120×30, speaker + cam).

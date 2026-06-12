@@ -574,14 +574,26 @@ export function Workout(): JSX.Element {
     dockRO.current?.disconnect();
     dockRO.current = null;
     if (el) {
+      const apply = () => {
+        if (el.offsetHeight > 0) {
+          setDockH(el.offsetHeight);
+          // scroll-padding clearance (founder live + CI E2E 2026-06-12): native
+          // scrollIntoView — and Playwright's pre-click scroll — aims the target
+          // at the viewport EDGE, which the fixed dock covers, so a mid-rail tap
+          // (e.g. "Aparat ocupat") landed under the dock and the dock swallowed
+          // it. html + .app-scroll consume this var as scroll-padding-bottom so
+          // every programmatic scroll clears the dock by its REAL height.
+          document.documentElement.style.setProperty('--dock-clearance', `${el.offsetHeight + 12}px`);
+        }
+      };
       if (typeof ResizeObserver !== 'undefined') {
-        const ro = new ResizeObserver(() => {
-          if (el.offsetHeight > 0) setDockH(el.offsetHeight);
-        });
+        const ro = new ResizeObserver(apply);
         ro.observe(el);
         dockRO.current = ro;
       }
-      if (el.offsetHeight > 0) setDockH(el.offsetHeight);
+      apply();
+    } else {
+      document.documentElement.style.removeProperty('--dock-clearance');
     }
   }, []);
   useEffect(() => {
@@ -1844,9 +1856,19 @@ export function Workout(): JSX.Element {
         {dockVisible && createPortal(
         <div
           ref={attachDock}
-          className="app-fixed-column app-fixed-column--inset fixed bottom-0 z-10 px-1 pt-4 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] [&>*:last-child]:mb-0"
+          className="app-fixed-column app-fixed-column--inset fixed bottom-0 z-10 px-1 pt-4 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] [&>*:last-child]:mb-0 pointer-events-none [&>*]:pointer-events-auto"
           data-testid="log-dock"
           style={{
+            // height:auto OPTS OUT of the desktop bezel rule `#root > * {
+            // height:100% }` (written when the shell was #root's ONLY child) —
+            // without it the portaled dock became a full-screen child: card
+            // pinned to the TOP, opaque gradient blacking the page, and the
+            // div swallowing every click (founder desktop screenshot + the CI
+            // E2E "log-dock intercepts pointer events" red, 2026-06-12). The
+            // pointer-events none/auto split (className) keeps the pt-4 fade
+            // strip + gutters click-through; only the real cards catch taps.
+            height: 'auto',
+            minHeight: 0,
             // Soft top-fade into the page surface so the dock reads as part of
             // the glass (mirrors the BottomNav fade), plus a faint top-edge
             // shadow lifting it above the scrolling context.
