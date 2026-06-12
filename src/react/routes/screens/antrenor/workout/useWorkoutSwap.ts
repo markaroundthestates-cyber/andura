@@ -14,7 +14,45 @@ import {
   addMissingEquipmentExercise,
 } from '../../../../../engine/schedule/scheduleAdapter.js';
 import { getExerciseMetadata } from '../../../../../engine/exerciseLibrary.js';
+import { musclesForExercise } from '../../../../../engine/muscleMap.js';
 import { t } from '../../../../../i18n/index.js';
+
+// ── Busy-defer muscle-safety helper (founder 2026-06-12) ─────────────────────
+// The defer placement must not land the busy lift right behind an exercise that
+// PRE-FATIGUED its prime movers / synergists (a chest press dropped just after
+// intense triceps or front-delt work hits a pre-tired engine — founder: "sa nu
+// mute piept dupa ce am lucrat triceps intensiv sau din astea").
+//
+// SYNERGIST-CONFLICT definition (deterministic muscle-overlap, both sides read
+// via musclesForExercise = curated heads OR library-metadata-derived heads,
+// primary + secondary/synergist):
+//   - The busy lift's "engine" = its prime movers UNION its synergists
+//     (primary ∪ secondary). For a compound that secondary set is the synergist
+//     chain (chest press → front-delt + triceps; row/pulldown → biceps;
+//     squat/leg-press → the quads/glutes/hams it leans on).
+//   - A preceding exercise CONFLICTS when ANY muscle it trains (its primary ∪
+//     secondary) intersects the busy lift's engine set. So a triceps pushdown or
+//     overhead-triceps before a chest press conflicts (shared triceps heads); a
+//     biceps curl before a row/pulldown conflicts (shared biceps); a leg
+//     extension before a leg press conflicts (shared quad). A light isolation
+//     behind an isolation of an UNRELATED muscle has no overlap → no conflict.
+//   - Unknown muscles on either side (musclesForExercise → null) → NOT a
+//     conflict (we never block on missing data — "ghidam, nu blocam").
+/** All recovery heads (prime movers + synergists) a lift loads, as a Set. */
+function muscleSetFor(name: string | undefined): Set<string> {
+  const m = name ? musclesForExercise(name) : null;
+  if (!m) return new Set();
+  return new Set([...(m.primary ?? []), ...(m.secondary ?? [])]);
+}
+
+/** True when `predecessor` pre-fatigues any prime mover / synergist of `busy`
+ *  (their loaded-muscle sets intersect). Empty set on either side → false. */
+function preFatigues(busyEngine: Set<string>, predecessorName: string | undefined): boolean {
+  if (busyEngine.size === 0) return false;
+  const pred = muscleSetFor(predecessorName);
+  for (const h of pred) if (busyEngine.has(h)) return true;
+  return false;
+}
 
 export interface UseWorkoutSwapArgs {
   exercises: readonly PlannedExercise[] | null;
@@ -144,13 +182,26 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
 
   // Founder Busy/Missing redesign 2026-06-12 — "Ocupat" = DEFER in-session.
   //
-  // PLACEMENT RULE (deterministic, reads well on the gym floor): move the busy
-  // exercise to a slot AFTER the first following exercise that uses DIFFERENT
-  // equipment than the busy machine — so the user is sent to a different station
-  // next and the busy machine has time to free before the deferred lift comes
-  // back. If no following exercise uses different equipment (or equipment is
-  // unknown), defer behind just the NEXT slot (the minimum meaningful move). The
-  // advance loop (nextActiveIdx) already skips any dropped/completed slot the
+  // PLACEMENT RULE (deterministic, reads well on the gym floor): pick the
+  // EARLIEST following slot whose landing is BOTH
+  //   (a) after an exercise on DIFFERENT equipment than the busy machine (keep
+  //       the "machine frees up" intent — the user is sent to another station),
+  //       AND
+  //   (b) MUSCLE-SAFE — the busy lift does NOT land immediately after an exercise
+  //       that pre-fatigued its prime movers / synergists (preFatigues() above:
+  //       e.g. a chest press must not drop right behind a triceps / front-delt
+  //       exercise; a row/pulldown not right behind a biceps curl; a squat/leg-
+  //       press not right behind an isolation of the quads/glutes it relies on).
+  // Earliest slot satisfying both = minimum sensible defer.
+  //
+  // FALLBACK PRECEDENCE when no slot satisfies BOTH (never block — always land
+  // forward, "ghidam, nu blocam"):
+  //   1. EARLIEST muscle-SAFE landing (even if same equipment) — a pre-fatigued
+  //      compound is worse than the same machine maybe-still-busy.
+  //   2. else EARLIEST different-equipment landing (muscle conflict unavoidable,
+  //      at least honour the station change).
+  //   3. else just behind the NEXT slot (minimum meaningful move).
+  // The advance loop (nextActiveIdx) already skips any dropped/completed slot the
   // deferred exercise lands behind, so the placement stays robust regardless.
   //
   // FALLBACK to the existing swap pick-list (current behaviour) when:
@@ -177,6 +228,10 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
       return;
     }
     const busyType = getExerciseMetadata(currentExercise.engineName)?.equipment_type;
+    // The busy lift's prime movers + synergists (engine set) — what a predecessor
+    // must NOT have just pre-fatigued. Empty when muscles are unknown → the
+    // muscle-safe predicate is vacuously true (we never block on missing data).
+    const busyEngine = muscleSetFor(currentExercise.engineName ?? undefined);
     // Slots strictly AFTER the current one.
     const following: number[] = [];
     for (let i = safeExIdx + 1; i < list.length; i++) {
@@ -187,16 +242,36 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
       openPickList('equipment-swap');
       return;
     }
-    // Prefer to land just AFTER the first following exercise on DIFFERENT
-    // equipment; else just after the next slot (minimum defer).
-    let anchor = following[0]!;
-    for (const i of following) {
+    // For a candidate landing slot `i`, the busy lift lands immediately AFTER the
+    // exercise currently at `i` (the forward rotation shifts it to i-1). So both
+    // predicates are evaluated on THAT predecessor (list[i]).
+    const equipDifferent = (i: number): boolean => {
       const t2 = getExerciseMetadata(list[i]!.engineName ?? list[i]!.name)?.equipment_type;
-      if (typeof t2 === 'string' && t2 !== busyType) {
-        anchor = i;
-        break;
-      }
+      return typeof t2 === 'string' && t2 !== busyType;
+    };
+    const muscleSafe = (i: number): boolean =>
+      !preFatigues(busyEngine, list[i]!.engineName ?? list[i]!.name);
+
+    // Earliest slot that is BOTH different-equipment AND muscle-safe (best);
+    // else earliest muscle-safe (fallback 1); else earliest different-equipment
+    // (fallback 2); else the next slot (fallback 3 — minimum defer). Single
+    // earliest-first pass records all three candidates at once.
+    let anchorBoth = -1;
+    let anchorSafe = -1;
+    let anchorEquip = -1;
+    for (const i of following) {
+      const diff = equipDifferent(i);
+      const safe = muscleSafe(i);
+      if (diff && safe && anchorBoth === -1) anchorBoth = i;
+      if (safe && anchorSafe === -1) anchorSafe = i;
+      if (diff && anchorEquip === -1) anchorEquip = i;
+      if (anchorBoth !== -1) break; // best found at the earliest index — done
     }
+    const anchor =
+      anchorBoth !== -1 ? anchorBoth
+      : anchorSafe !== -1 ? anchorSafe
+      : anchorEquip !== -1 ? anchorEquip
+      : following[0]!;
     // After the forward rotation [safeExIdx..anchor], the busy exercise sits at
     // `anchor` (its old neighbours having shifted down by one). Reorder the local
     // list to match, then remap the store's index-keyed maps the same way.

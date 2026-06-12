@@ -241,3 +241,134 @@ describe('Workout swap — (5) one rec per set, never the pre-swap stale load', 
     spy.mockRestore();
   });
 });
+
+// ══ MUSCLE-AWARE "Aparat ocupat" defer placement (founder 2026-06-12) ════════
+// The defer placement used to be equipment-ONLY: it landed the busy lift just
+// after the first following exercise on a DIFFERENT machine — BLIND to muscle,
+// so it could drop a chest press right behind intense triceps work (pre-fatigued
+// synergists). Founder: "sa nu mute piept dupa ce am lucrat triceps intensiv".
+// The rule is now BOTH different-equipment AND muscle-safe (the busy lift must
+// not land immediately after an exercise that pre-fatigued its prime movers /
+// synergists), earliest such slot = minimum sensible defer.
+//
+// We assert the RESULTING ORDER of the session after one defer by walking it via
+// the ⋯ menu "skip current exercise" (advanceExercise → exIdx+1, no set logging),
+// reading wv2-exname at each linear step. REAL library engine names so
+// musclesForExercise resolves concrete heads (chest press → chest + front-delt +
+// triceps synergists; pulldown → lat + biceps; leg press → quads/glutes/hams).
+function ex(id: string, name: string, engineName: string) {
+  return { id, name, engineName, sets: 3, targetReps: 8, targetKg: 40, restSec: 90 };
+}
+
+// Walk the session linearly from the current cursor, collecting each exercise's
+// display name as it becomes current (skip = advanceExercise, raw exIdx+1). The
+// first entry is the already-current exercise; we then skip exerciseCount-1 times.
+async function walkOrder(count: number): Promise<string[]> {
+  const seen: string[] = [];
+  for (let step = 0; step < count; step++) {
+    await waitFor(() => {
+      expect(screen.queryByTestId('workout-loading')).not.toBeInTheDocument();
+    });
+    seen.push(screen.getByTestId('wv2-exname').textContent ?? '');
+    if (step < count - 1) {
+      fireEvent.click(screen.getByTestId('workout-menu-trigger'));
+      fireEvent.click(await screen.findByTestId('workout-menu-skip'));
+    }
+  }
+  return seen;
+}
+
+describe('Workout swap — "Aparat ocupat" defer is MUSCLE-AWARE', () => {
+  it('a chest press SKIPS PAST triceps work and lands after a leg exercise', async () => {
+    // [chest press (busy, barbell) , triceps pushdown (cable) , leg press (machine)].
+    // Equipment-only would land it after the pushdown (different machine) — but the
+    // pushdown pre-fatigues the press's triceps synergists, so it must skip to the
+    // leg press (different machine AND muscle-safe).
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce({
+      ...SWAP_FIXTURE,
+      exerciseCount: 3,
+      exercises: [
+        ex('inc-bb-0', 'inclinat cu bara', 'Incline Barbell Bench'),
+        ex('pushdown-1', 'extensii triceps', 'Pushdown'),
+        ex('legpress-2', 'presa picioare', 'Leg Press'),
+      ],
+    });
+    await renderAndWait();
+    expect(screen.getByTestId('wv2-exname').textContent).toContain('inclinat cu bara');
+
+    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+
+    // No sheet, no navigate — it deferred in-session.
+    expect(screen.queryByTestId('swap-pick-sheet')).not.toBeInTheDocument();
+    // Resulting order: triceps + leg press leapfrog, chest press lands LAST (after
+    // the leg press), NOT in slot 1 right behind the triceps pushdown.
+    const order = await walkOrder(3);
+    expect(order[0]).toContain('extensii triceps'); // pushdown is current now
+    expect(order[1]).toContain('presa picioare'); // leg press next
+    expect(order[2]).toContain('inclinat cu bara'); // chest press landed after legs
+  });
+
+  it('a back lift (pulldown) SKIPS PAST a biceps curl and lands after legs', async () => {
+    // [lat pulldown (busy, cable) , cable curl (cable) , leg extension (machine)].
+    // The curl pre-fatigues the pulldown's biceps synergist → skip past it; the leg
+    // extension is muscle-safe + different equipment → land there.
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce({
+      ...SWAP_FIXTURE,
+      exerciseCount: 3,
+      exercises: [
+        ex('pulldown-0', 'tractiuni la helcometru', 'Lat Pulldown'),
+        ex('curl-1', 'flexii cu cablu', 'Cable Curl'),
+        ex('legext-2', 'extensii cvadriceps', 'Leg Extension'),
+      ],
+    });
+    await renderAndWait();
+    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+
+    const order = await walkOrder(3);
+    expect(order[0]).toContain('flexii cu cablu'); // curl current
+    expect(order[1]).toContain('extensii cvadriceps'); // leg ext next
+    expect(order[2]).toContain('tractiuni la helcometru'); // pulldown landed after legs
+  });
+
+  it('a pure isolation behind an UNRELATED isolation lands minimally (no conflict)', async () => {
+    // [calf raises (busy, machine) , cable curl (cable) , leg extension (machine)].
+    // Calf vs biceps = no muscle overlap → the first different-equipment slot is
+    // already safe → minimum defer (land right behind the cable curl).
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce({
+      ...SWAP_FIXTURE,
+      exerciseCount: 3,
+      exercises: [
+        ex('calf-0', 'ridicari pe varfuri', 'Calf Raises'),
+        ex('curl-1', 'flexii cu cablu', 'Cable Curl'),
+        ex('legext-2', 'extensii cvadriceps', 'Leg Extension'),
+      ],
+    });
+    await renderAndWait();
+    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+
+    const order = await walkOrder(3);
+    expect(order[0]).toContain('flexii cu cablu'); // curl current
+    expect(order[1]).toContain('ridicari pe varfuri'); // calf landed right behind it (minimum)
+    expect(order[2]).toContain('extensii cvadriceps'); // leg ext untouched at the tail
+  });
+
+  it('NO-conflict case is the minimum defer after different equipment (unchanged)', async () => {
+    // [leg extension (busy, machine) , cable curl (cable)]. Quad vs biceps = no
+    // overlap, cable != machine → land right after the curl (slot 1), exactly the
+    // pre-change behaviour.
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce({
+      ...SWAP_FIXTURE,
+      exerciseCount: 2,
+      exercises: [
+        ex('legext-0', 'extensii cvadriceps', 'Leg Extension'),
+        ex('curl-1', 'flexii cu cablu', 'Cable Curl'),
+      ],
+    });
+    await renderAndWait();
+    fireEvent.click(screen.getByTestId('wv2-ex-action-ocupat'));
+
+    const order = await walkOrder(2);
+    expect(order[0]).toContain('flexii cu cablu'); // curl current
+    expect(order[1]).toContain('extensii cvadriceps'); // leg ext landed right behind it
+  });
+});
