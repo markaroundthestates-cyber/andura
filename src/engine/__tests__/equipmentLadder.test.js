@@ -17,6 +17,10 @@ import {
   snapToLadder,
   activeTemplateId,
   EQUIPMENT_OBS_KEY,
+  learnUserLadderFromLogs,
+  saveUserLadder,
+  learnedUserLadder,
+  USER_LADDER_MIN_DISTINCT,
 } from '../dp/equipmentLadder.js';
 import { getNextWeight, roundToEquipmentWeight } from '../../config/weights.js';
 import { DB } from '../../db.js';
@@ -215,5 +219,143 @@ describe('roundToEquipmentWeight — ladder-aware ctx (back-compat + gated)', ()
   it('ctx + flag ON but NO learned ladder → generic fallback (byte-identical)', () => {
     vi.spyOn(flags, 'isEnabled').mockImplementation((id) => id === 'dp_equipment_ladder_v1');
     expect(roundToEquipmentWeight(60.4, EX, { ladderAware: true })).toBe(60);
+  });
+});
+
+// ══ PER-USER STATION LADDER (founder goal 2026-06-12) ════════════════════════════
+// "Andura must know, after 2-3-4 logs, the user's REAL rungs on THAT station — PER
+// USER." The hard-coded realMachineStacks are the FOUNDER's gym (keyed by name only),
+// so a DIFFERENT user got the founder's rungs. These lock: (a) Mark (a different gym,
+// a different increment) learns HIS ladder + snaps to it, not the founder's 6..90;
+// (b) the founder cold-start (no logs) still uses his seed; (c) below threshold →
+// fallback unchanged; (d) flag OFF → byte-identical; (e) same-weight-repeated → no
+// false learning; (f) the founder's own on-grid history converges to his real 6..90.
+
+describe('learnUserLadderFromLogs — pure inference (friendlier per-user rule)', () => {
+  it('learns step+range from 4 distinct rungs (Mark 5kg metric stack)', () => {
+    const s = learnUserLadderFromLogs([40, 45, 50, 55]);
+    expect(s).toEqual({ step: 5, min: 40, max: 55, nDistinct: 4, modalGaps: 3 });
+  });
+
+  it('learns from EXACTLY 3 distinct rungs (responsive after ~3 logs)', () => {
+    // 3 distinct → 2 gaps, both 5kg → corroborated (>= USER_LADDER_MIN_MODAL_GAPS).
+    const s = learnUserLadderFromLogs([45, 50, 55]);
+    expect(s).toBeTruthy();
+    expect(s.step).toBe(5);
+    expect(s.nDistinct).toBe(USER_LADDER_MIN_DISTINCT);
+    expect(s.modalGaps).toBe(2);
+  });
+
+  it('2 distinct (a single gap = a guess) is NOT trusted', () => {
+    expect(learnUserLadderFromLogs([50, 55])).toBeNull();
+  });
+
+  it('same-weight-repeated (1 distinct, 0 gaps) → no false learning', () => {
+    expect(learnUserLadderFromLogs([50, 50, 50, 50, 50])).toBeNull();
+  });
+
+  it('3 distinct but only 1 modal gap (inconsistent rungs) is NOT trusted', () => {
+    // gaps 5 then 8 → no gap reaches >= 2 corroboration → not trusted.
+    expect(learnUserLadderFromLogs([45, 50, 58])).toBeNull();
+  });
+});
+
+describe('learnedUserLadder — the user station ladder (synced, range-walked)', () => {
+  beforeEach(() => localStorage.clear());
+
+  it("Mark's 5kg stack: range 40..55 → walked 30..65 at step 5 (anchored on real rungs)", () => {
+    expect(saveUserLadder('Cable Row', [40, 45, 50, 55]).learned).toBe(true);
+    expect(learnedUserLadder('Cable Row')).toEqual([30, 35, 40, 45, 50, 55, 60, 65]);
+  });
+
+  it('an old {step,n}-only record (no range) is NOT a trusted user ladder → null', () => {
+    saveLearnedStep('Cable Row', 5, 6); // legacy 3-arg write, no range fields
+    expect(learnedUserLadder('Cable Row')).toBeNull();
+  });
+
+  it('below the distinct threshold → not persisted → null', () => {
+    expect(saveUserLadder('Cable Row', [50, 55]).learned).toBe(false);
+    expect(learnedUserLadder('Cable Row')).toBeNull();
+  });
+
+  it("the founder's on-grid Cable Row history converges to his real 6..90 span", () => {
+    // Once dp_real_ladder_snap_v1 snaps his recs onto the 6-step stack he LOGS on-grid
+    // (60/66/72/78). The learned user ladder must AGREE with his real stack rungs.
+    saveUserLadder('Cable Row', [60, 66, 72, 78]);
+    const ladder = learnedUserLadder('Cable Row');
+    expect(ladder).toEqual([48, 54, 60, 66, 72, 78, 84, 90]);
+    // every learned rung is a real founder-stack rung (subset of 6..90 step-6).
+    const realStack = [6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90];
+    for (const r of ladder) expect(realStack).toContain(r);
+  });
+});
+
+describe('roundToEquipmentWeight — per-user ladder PRIMACY over the founder stacks', () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(() => vi.restoreAllMocks());
+
+  it('(a) Mark snaps to HIS gym, not the founder 6..90: 52 → 50 (real-stack would say 54)', () => {
+    // both flags ON: per-user ladder must WIN over the founder real-stack snap.
+    vi.spyOn(flags, 'isEnabled').mockImplementation(
+      (id) => id === 'dp_user_ladder_v1' || id === 'dp_real_ladder_snap_v1',
+    );
+    saveUserLadder('Cable Row', [40, 45, 50, 55]); // Mark's 5kg gym
+    // founder ROW_STACK (6..90) would snap 52 → 54; Mark's own ladder snaps 52 → 50.
+    expect(roundToEquipmentWeight(52, 'Cable Row')).toBe(50);
+  });
+
+  it('(b) founder COLD-START (no user logs) still uses his seed stack: 52 → 54', () => {
+    vi.spyOn(flags, 'isEnabled').mockImplementation(
+      (id) => id === 'dp_user_ladder_v1' || id === 'dp_real_ladder_snap_v1',
+    );
+    // no saveUserLadder → no trusted user ladder → falls through to the founder seed.
+    expect(roundToEquipmentWeight(52, 'Cable Row')).toBe(54);
+  });
+
+  it('(c) BELOW threshold (2 distinct) → user ladder inert → founder seed unchanged', () => {
+    vi.spyOn(flags, 'isEnabled').mockImplementation(
+      (id) => id === 'dp_user_ladder_v1' || id === 'dp_real_ladder_snap_v1',
+    );
+    saveUserLadder('Cable Row', [50, 55]); // not trusted
+    expect(roundToEquipmentWeight(52, 'Cable Row')).toBe(54); // founder seed
+  });
+
+  it('(d) user-ladder flag OFF → byte-identical (founder seed only): 52 → 54', () => {
+    vi.spyOn(flags, 'isEnabled').mockImplementation((id) => id === 'dp_real_ladder_snap_v1');
+    saveUserLadder('Cable Row', [40, 45, 50, 55]); // present but flag off
+    expect(roundToEquipmentWeight(52, 'Cable Row')).toBe(54);
+  });
+
+  it('(d2) ALL ladder flags OFF → byte-identical legacy generic rounding', () => {
+    vi.spyOn(flags, 'isEnabled').mockReturnValue(false);
+    saveUserLadder('Cable Row', [40, 45, 50, 55]);
+    // legacy bailib_stack nearest rung for 52 = 50 (rungs ...45,50,55...).
+    expect(roundToEquipmentWeight(52, 'Cable Row')).toBe(50);
+  });
+
+  it('(e) same-weight-repeated → no false ladder → founder seed unchanged', () => {
+    vi.spyOn(flags, 'isEnabled').mockImplementation(
+      (id) => id === 'dp_user_ladder_v1' || id === 'dp_real_ladder_snap_v1',
+    );
+    saveUserLadder('Cable Row', [55, 55, 55, 55]); // flat → no ladder
+    expect(roundToEquipmentWeight(52, 'Cable Row')).toBe(54); // founder seed
+  });
+
+  it('(f) founder no-regress: his on-grid history snaps 70 → 72 (== his real stack)', () => {
+    vi.spyOn(flags, 'isEnabled').mockImplementation(
+      (id) => id === 'dp_user_ladder_v1' || id === 'dp_real_ladder_snap_v1',
+    );
+    saveUserLadder('Cable Row', [60, 66, 72, 78]);
+    // his learned ladder AND the founder real-stack both put 70 on 72 — no regression.
+    expect(roundToEquipmentWeight(70, 'Cable Row')).toBe(72);
+  });
+
+  it('per-user ladder works WITHOUT the founder seed (a non-founder station): 52 → 50', () => {
+    // Lat Pulldown is NOT a founder realMachineStacks station → only the user ladder
+    // applies. A user with a 5kg gym snaps to it; flag-off → generic.
+    vi.spyOn(flags, 'isEnabled').mockImplementation((id) => id === 'dp_user_ladder_v1');
+    saveUserLadder('Lat Pulldown', [40, 45, 50, 55]);
+    expect(roundToEquipmentWeight(52, 'Lat Pulldown')).toBe(50);
+    expect(roundToEquipmentWeight(63, 'Lat Pulldown')).toBe(65); // walked to 65
   });
 });

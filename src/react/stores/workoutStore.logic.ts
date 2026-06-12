@@ -9,7 +9,7 @@ import { archiveSession } from '../lib/dexieMigration';
 import { isEnabled } from '../../util/featureFlags.js';
 import { learnRecovery, saveRecoveryConstants, RECOVERY_CONSTANTS_KEY, bodyweightTrendRecoveryFactor } from '../../engine/muscleMap.js';
 import { resolveActivePhase } from '../lib/phaseResolution';
-import { learnedStepFromLogs, saveLearnedStep, observeLoggedWeight } from '../../engine/dp/equipmentLadder.js';
+import { learnedStepFromLogs, saveLearnedStep, observeLoggedWeight, saveUserLadder } from '../../engine/dp/equipmentLadder.js';
 import { learnVolumeLandmarks, saveLearnedVolume, LEARNED_VOLUME_KEY } from '../../engine/periodization/learnedVolume.js';
 import { learnFatigueCurve, saveFatigueCurve, FATIGUE_CURVE_KEY } from '../../engine/dp/fatigueCurve.js';
 import { distillAndPersistBehaviorTuning } from '../../engine/dp/behaviorDistill.js';
@@ -209,15 +209,31 @@ export function persistSessionLogs(
     // byte-identical). Same authoritative per-session write site as recovery
     // above. The inference needs the full distinct-load history per exercise, so
     // it reads from `merged` (the just-updated log). Quota-guarded + fail-silent.
-    if (isEnabled('dp_learned_ladder_v1')) {
+    if (isEnabled('dp_learned_ladder_v1') || isEnabled('dp_user_ladder_v1')) {
       const loadsByEx: Record<string, number[]> = {};
       for (const l of merged as Array<{ ex?: string; w?: number }>) {
         if (typeof l.ex !== 'string' || !l.ex || !(Number(l.w) > 0)) continue;
         (loadsByEx[l.ex] ??= []).push(Number(l.w));
       }
       for (const [ex, loads] of Object.entries(loadsByEx)) {
-        const step = learnedStepFromLogs(loads);
-        if (step > 0) saveLearnedStep(ex, step, new Set(loads).size);
+        // Per-user STATION LADDER (founder goal 2026-06-12, flag dp_user_ladder_v1):
+        // learn THIS user's real rungs (step + observed range) from their distinct
+        // logged loads on THIS station, responsive after ~3 distinct logs, so the
+        // rec snaps to THEIR gym — never the founder's hard-coded stacks. Writes the
+        // range fields into the SAME synced dp-equipment-ladder record. When ON this
+        // SUPERSEDES the strict modal-step-only write below (it records {step,range}).
+        // OFF → only the legacy step-only write runs → byte-identical.
+        let userLadderWritten = false;
+        if (isEnabled('dp_user_ladder_v1')) {
+          userLadderWritten = saveUserLadder(ex, loads).learned;
+        }
+        // Legacy modal-step-only learn (dp_learned_ladder_v1) — only refines the step
+        // granularity. Skip when the user-ladder write already recorded this record
+        // (it carries the step too) to avoid clobbering the range fields.
+        if (isEnabled('dp_learned_ladder_v1') && !userLadderWritten) {
+          const step = learnedStepFromLogs(loads);
+          if (step > 0) saveLearnedStep(ex, step, new Set(loads).size);
+        }
       }
     }
     // Gym-log arc 2026-06-11 — equipment-ladder TEMPLATE observations (flag

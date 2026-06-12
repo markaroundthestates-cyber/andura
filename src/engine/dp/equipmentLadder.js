@@ -18,7 +18,7 @@ import { DB } from '../../db.js';
 export const EQUIPMENT_LADDER_KEY = 'dp-equipment-ladder';
 
 // ── Tuning (no Daniel knob needed — fully learned, conservative) ─────────────
-// Distinct logged loads required before the learned step is trusted.
+// Distinct logged loads required before the learned STEP (modal gap) is trusted.
 export const LADDER_MIN_DISTINCT = 4;
 // Sane learned-step bounds (kg): below this is sub-plate noise, above it is a gap
 // from missed sessions / big jumps, not the station's true increment.
@@ -26,6 +26,29 @@ const STEP_MIN = 0.5;
 const STEP_MAX = 25;
 // Round a learned step to a clean rung (0.5kg granularity) so 2.4kg → 2.5kg.
 const round05 = (x) => Math.round(x * 2) / 2;
+
+// ── Per-user STATION-LADDER trust rule (BUILD user-ladder, founder goal 2026-06-12) ──
+// "After 2-3-4 logs Andura must know the user's REAL rungs on THAT station." The
+// modal-step gate above (LADDER_MIN_DISTINCT=4 DISTINCT loads) is stricter than that —
+// it needs FOUR DIFFERENT weights. The per-user ladder uses a friendlier, still-
+// conservative gate so a real station is learned after ~3 distinct logs WITHOUT
+// trusting a single-gap inference:
+//   (a) USER_LADDER_MIN_DISTINCT (3) distinct logged rungs, AND
+//   (b) USER_LADDER_MIN_MODAL_GAPS (2) of the adjacent gaps equal the modal step
+//       (within the 0.5kg bucket) — i.e. the increment is CORROBORATED, not guessed
+//       from one pair. 2 distinct loads = 1 gap = a guess → NEVER trusted.
+// If the user logs the SAME weight repeatedly (0 distinct rungs after the first → 0
+// gaps) no step can be inferred → the ladder is NOT trusted and the seed/generic
+// rounding stays (honest: a flat log carries no ladder information). The learned
+// ladder also requires the modal step to be FINER-OR-EQUAL the inferred range so a
+// thin, noisy history can never coarsen a real station.
+export const USER_LADDER_MIN_DISTINCT = 3;
+export const USER_LADDER_MIN_MODAL_GAPS = 2;
+// Extend the observed [min,max] of real logs by this many learned-step rungs each
+// side, so a rec just above/below the logged span still lands on a real rung (the
+// user rarely logs the exact floor/ceiling of a station). Bounded — never invents a
+// whole stack, only the immediate neighbours of what was actually used.
+const USER_LADDER_EXTEND_RUNGS = 2;
 
 /** @returns {Record<string, {step:number, n:number}>} */
 function _getAll() {
@@ -68,18 +91,98 @@ export function learnedStepFromLogs(loggedLoads) {
 }
 
 /**
- * Persist the learned step for one exercise. Additive + QUOTA-GUARDED (mirrors
- * strengthKalman.savePosterior). Synced per-UID (dp-equipment-ladder in SYNC_KEYS).
+ * Infer the USER'S STATION LADDER (step + observed range) from a list of logged loads,
+ * under the FRIENDLIER per-user trust rule (responsive after ~3 distinct logs; see the
+ * §user-ladder trust rule constants). PURE. Returns the summary persisted into the
+ * synced record, or null when the data is not trusted yet:
+ *   - >= USER_LADDER_MIN_DISTINCT distinct positive loads, AND
+ *   - the modal adjacent gap is corroborated by >= USER_LADDER_MIN_MODAL_GAPS gaps
+ *     (a single gap = a guess → not trusted), AND
+ *   - the modal step is in the sane [STEP_MIN, STEP_MAX] band.
+ * Same-weight-repeated (1 distinct → 0 gaps) → null (a flat log carries no ladder).
+ * @param {ReadonlyArray<number>} loggedLoads
+ * @returns {{step:number, min:number, max:number, nDistinct:number, modalGaps:number}|null}
+ */
+export function learnUserLadderFromLogs(loggedLoads) {
+  if (!Array.isArray(loggedLoads)) return null;
+  const distinct = [...new Set(
+    loggedLoads.map((w) => Number(w)).filter((w) => Number.isFinite(w) && w > 0),
+  )].sort((a, b) => a - b);
+  if (distinct.length < USER_LADDER_MIN_DISTINCT) return null;
+  // Modal gap (rounded to 0.5kg buckets), with its corroboration count.
+  const gaps = {};
+  for (let i = 1; i < distinct.length; i++) {
+    const g = round05(distinct[i] - distinct[i - 1]);
+    if (g >= STEP_MIN && g <= STEP_MAX) gaps[g] = (gaps[g] || 0) + 1;
+  }
+  let step = 0;
+  let modalGaps = 0;
+  for (const [g, c] of Object.entries(gaps)) {
+    const gap = Number(g);
+    if (c > modalGaps || (c === modalGaps && gap < step)) { modalGaps = c; step = gap; }
+  }
+  if (!(step >= STEP_MIN && step <= STEP_MAX)) return null;
+  if (modalGaps < USER_LADDER_MIN_MODAL_GAPS) return null;
+  return {
+    step,
+    min: distinct[0],
+    max: distinct[distinct.length - 1],
+    nDistinct: distinct.length,
+    modalGaps,
+  };
+}
+
+/**
+ * Persist a learned USER station ladder (step + range) into the synced record so
+ * learnedUserLadder can rebuild it. Thin durable wrapper over saveLearnedStep that
+ * carries the range fields. Additive + QUOTA-GUARDED. Synced per-UID (dp-equipment-
+ * ladder). @param {string} engineName @param {ReadonlyArray<number>} loggedLoads
+ * @returns {{ok:boolean, error?:string, learned:boolean}}
+ */
+export function saveUserLadder(engineName, loggedLoads) {
+  const summary = learnUserLadderFromLogs(loggedLoads);
+  if (!summary) return { ok: true, learned: false };
+  const res = saveLearnedStep(engineName, summary.step, summary.nDistinct, loggedLoads);
+  return { ...res, learned: res.ok !== false };
+}
+
+/**
+ * Persist the learned step (+ optionally the observed RANGE) for one exercise.
+ * Additive + QUOTA-GUARDED (mirrors strengthKalman.savePosterior). Synced per-UID
+ * (dp-equipment-ladder in SYNC_KEYS + NAME_KEYED_SYNC_KEYS, classified mutable). The
+ * optional `loads` extends the SAME synced record with {min,max,nDistinct,modalGaps}
+ * so learnedUserLadder can rebuild the user's STATION ladder (range walked at the
+ * step) — back-compat: omitting `loads` writes only {step,n} exactly as before, so
+ * every existing caller/test is unaffected.
  * @param {string} engineName EN canonical name
  * @param {number} step learned step kg
  * @param {number} n distinct loads it was inferred from
+ * @param {ReadonlyArray<number>} [loads] the raw logged loads (to record the range)
  * @returns {{ok:boolean, error?:string}}
  */
-export function saveLearnedStep(engineName, step, n) {
+export function saveLearnedStep(engineName, step, n, loads) {
   if (typeof engineName !== 'string' || !engineName) return { ok: false, error: 'bad_key' };
   if (!(Number(step) > 0)) return { ok: false, error: 'bad_step' };
   const all = _getAll();
-  all[engineName] = { step: Number(step), n: Number(n) || 0 };
+  /** @type {{step:number, n:number, min?:number, max?:number, nDistinct?:number, modalGaps?:number}} */
+  const rec = { step: Number(step), n: Number(n) || 0 };
+  if (Array.isArray(loads)) {
+    const distinct = [...new Set(
+      loads.map((w) => Number(w)).filter((w) => Number.isFinite(w) && w > 0),
+    )].sort((a, b) => a - b);
+    if (distinct.length >= 1) {
+      rec.min = distinct[0];
+      rec.max = distinct[distinct.length - 1];
+      rec.nDistinct = distinct.length;
+      // count adjacent gaps that equal the learned step (within the 0.5kg bucket).
+      let modalGaps = 0;
+      for (let i = 1; i < distinct.length; i++) {
+        if (round05(distinct[i] - distinct[i - 1]) === round05(Number(step))) modalGaps += 1;
+      }
+      rec.modalGaps = modalGaps;
+    }
+  }
+  all[engineName] = rec;
   const res = DB.set(EQUIPMENT_LADDER_KEY, all);
   return res && res.ok === false ? res : { ok: true };
 }
@@ -94,6 +197,48 @@ export function learnedStep(engineName) {
   const rec = _getAll()[engineName];
   if (!rec || !(Number(rec.step) > 0)) return 0;
   return Number(rec.step);
+}
+
+/**
+ * Build THE USER'S real station ladder from the synced learned-ladder record (the
+ * range walked at the learned step, anchored on a real logged rung), or null when the
+ * record is not TRUSTED. PURE except the single DB read. Trust gate (see the §user-
+ * ladder trust rule above): >= USER_LADDER_MIN_DISTINCT distinct rungs AND >=
+ * USER_LADDER_MIN_MODAL_GAPS corroborating modal-step gaps AND a sane step. The
+ * walked range is the observed [min,max] extended USER_LADDER_EXTEND_RUNGS rungs each
+ * side (floored at the step itself so it never crosses 0), anchored so every rung
+ * lands on min + k·step (a REAL logged rung). NULL → the caller keeps its existing
+ * source (founder seed / generic — byte-identical).
+ * @param {string} engineName EN canonical name
+ * @returns {number[]|null} the user's station rungs (ascending), or null
+ */
+export function learnedUserLadder(engineName) {
+  if (typeof engineName !== 'string' || !engineName) return null;
+  const rec = _getAll()[engineName];
+  if (!rec) return null;
+  const step = round05(Number(rec.step));
+  const min = Number(rec.min);
+  const max = Number(rec.max);
+  const nDistinct = Number(rec.nDistinct);
+  const modalGaps = Number(rec.modalGaps);
+  // Trust gate — every condition must hold (an old {step,n}-only record has no
+  // min/max → fails here → null → byte-identical to the seed/generic path).
+  if (!(step >= STEP_MIN && step <= STEP_MAX)) return null;
+  if (!(Number.isFinite(min) && Number.isFinite(max) && max >= min)) return null;
+  if (!(nDistinct >= USER_LADDER_MIN_DISTINCT)) return null;
+  if (!(modalGaps >= USER_LADDER_MIN_MODAL_GAPS)) return null;
+  // Walk the extended range at the step, anchored on the real rung `min` (so the
+  // ladder passes through every logged rung). Extend a couple of rungs each side.
+  const hi = max + USER_LADDER_EXTEND_RUNGS * step;
+  // lowest anchored rung min−k·step that stays > 0 and within the extended floor.
+  const loTarget = min - USER_LADDER_EXTEND_RUNGS * step;
+  let start = min;
+  while (start - step > 0 && start - step >= loTarget - 1e-9) start -= step;
+  const ladder = [];
+  for (let w = round05(start); w <= hi + 1e-9 && ladder.length <= 256; w = round05(w + step)) {
+    if (w > 0) ladder.push(w);
+  }
+  return ladder.length >= 2 ? ladder : null;
 }
 
 // ══ ROUNDING-UNIVERSAL — template MATCH + snap-to-ladder (CEO design 2026-06-11) ══

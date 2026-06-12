@@ -2,26 +2,49 @@
 // Per-machine weight stacks based on real gym equipment (Matrix + Bailib + plates)
 
 import { isEnabled } from '../util/featureFlags.js';
-import { learnedStep, snapToLadder } from '../engine/dp/equipmentLadder.js';
+import { learnedStep, snapToLadder, learnedUserLadder } from '../engine/dp/equipmentLadder.js';
 import { resolveRealStack } from '../engine/dp/realMachineStacks.js';
+
+/** Snap a weight onto a discrete ladder: nearest rung, a tie rounding DOWN (the
+ *  lighter, safer load). PURE. `ladder` must be a non-empty ascending number[]. */
+function _nearestRung(weight, ladder) {
+  let bestRung = ladder[0];
+  let bestDist = Math.abs(ladder[0] - weight);
+  for (let i = 1; i < ladder.length; i++) {
+    const d = Math.abs(ladder[i] - weight);
+    // strictly-less keeps the FIRST (lower) rung on a tie → round DOWN for safety.
+    if (d < bestDist - 1e-9) { bestDist = d; bestRung = ladder[i]; }
+  }
+  return bestRung;
+}
+
+/** Snap a generic-rounded weight onto THE USER'S OWN learned station ladder when one
+ *  is TRUSTED for this exercise (dp_user_ladder_v1). PER-USER — built from THIS user's
+ *  distinct logged loads on THIS station (equipmentLadder.learnedUserLadder), so a
+ *  different gym snaps to ITS real rungs, never the founder's. Takes PRECEDENCE over
+ *  the founder's hard-coded realMachineStacks (which becomes a cold-start SEED, not a
+ *  global override). PURE + defensive: no trusted ladder / flag off / bad input → the
+ *  passed-through value UNCHANGED (byte-identical). */
+function _snapToUserLadder(weight, exerciseName, fallback) {
+  if (!isEnabled('dp_user_ladder_v1')) return fallback;
+  if (!Number.isFinite(weight) || typeof exerciseName !== 'string' || !exerciseName) return fallback;
+  const ladder = learnedUserLadder(exerciseName);
+  if (!Array.isArray(ladder) || ladder.length < 1) return fallback;
+  return _nearestRung(weight, ladder);
+}
 
 /** Snap a generic-rounded weight onto the founder's REAL pin-machine stack when one
  *  of his CONFIRMED stations matches (dp_real_ladder_snap_v1). PURE + defensive: no
  *  real stack / flag off / bad input → the generic value UNCHANGED (byte-identical).
  *  Nearest rung; a tie rounds DOWN (the lighter, safer load). The four explicit
- *  founder stacks live in realMachineStacks.js. */
+ *  founder stacks live in realMachineStacks.js. This is the SEED/fallback prior — the
+ *  per-user learned ladder (_snapToUserLadder) overrides it once the user has trusted
+ *  data, so it only ever fires at cold-start or for an under-logged founder station. */
 function _snapToRealStack(weight, exerciseName, generic) {
   if (!isEnabled('dp_real_ladder_snap_v1')) return generic;
   const stack = resolveRealStack(exerciseName);
   if (!stack || stack.length < 1 || !Number.isFinite(weight)) return generic;
-  let bestRung = stack[0];
-  let bestDist = Math.abs(stack[0] - weight);
-  for (let i = 1; i < stack.length; i++) {
-    const d = Math.abs(stack[i] - weight);
-    // strictly-less keeps the FIRST (lower) rung on a tie → round DOWN for safety.
-    if (d < bestDist - 1e-9) { bestDist = d; bestRung = stack[i]; }
-  }
-  return bestRung;
+  return _nearestRung(weight, stack);
 }
 
 export const EQUIPMENT_WEIGHTS = {
@@ -410,18 +433,26 @@ export function roundToEquipmentWeight(weight, exerciseName, ctx) {
   const generic = () => list.reduce((prev, curr) =>
     Math.abs(curr - weight) < Math.abs(prev - weight) ? curr : prev
   , list[0] ?? weight);
-  // Back-compat: no ctx → legacy generic rounding. dp_real_ladder_snap_v1 then snaps
-  // the result onto the founder's REAL pin-machine stack (Cable Row / Reverse Pec
-  // Deck / Shoulder Press machine / Leg Curl / Pec Deck) so a cold-start AND a
-  // history rec land on a rung the machine actually has — flag OFF → byte-identical.
+  // Back-compat: no ctx → legacy generic rounding. PRECEDENCE (founder goal 2026-06-12):
+  //   per-user learned ladder (_snapToUserLadder, dp_user_ladder_v1) — THIS user's real
+  //   rungs from THEIR own logs — wins, THEN the founder's measured stack as a cold-start
+  //   SEED (_snapToRealStack, dp_real_ladder_snap_v1). So a different gym snaps to ITS
+  //   rungs once it has trusted data; with none, the founder seed / generic is unchanged.
+  //   Both flags OFF → byte-identical generic rounding. This is the LIVE compose-path
+  //   call site (scheduleAdapterAggregate.compose.ts passes no ctx).
   if (!ctx || !ctx.ladderAware || !isEnabled('dp_equipment_ladder_v1')) {
-    return _snapToRealStack(weight, exerciseName, generic());
+    return _snapToUserLadder(weight, exerciseName, _snapToRealStack(weight, exerciseName, generic()));
   }
   // Ladder-aware: snapToLadder applies curated > matched-template precedence and
   // falls back to `generic` itself when the user has no learned/curated ladder. The
-  // founder's measured real stack is the AUTHORITATIVE source, so it snaps last
-  // (over the matched template too) — flag OFF → snapToLadder result unchanged.
-  return _snapToRealStack(weight, exerciseName, snapToLadder(exerciseName, weight, generic, ctx.curatedSteps));
+  // per-user LEARNED-from-logs ladder snaps OVER the matched template + the founder
+  // seed; the founder's measured stack stays the seed under it — flag OFF →
+  // snapToLadder/real-stack results unchanged (byte-identical).
+  return _snapToUserLadder(
+    weight,
+    exerciseName,
+    _snapToRealStack(weight, exerciseName, snapToLadder(exerciseName, weight, generic, ctx.curatedSteps)),
+  );
 }
 
 /** @param {string} exerciseName */

@@ -44,7 +44,13 @@ export function resetStore() {
     // this dp.js-direct sim DOES see (its cohort uses those lifts). Pin OFF here to
     // keep the frozen baseline byte-for-byte; the ON snap is covered by
     // realMachineStacks.test.js (the real off-grid values) + the #70 persona-matrix.
-    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false, dp_load_model_v1: false, dp_real_ladder_snap_v1: false }));
+    // dp_user_ladder_v1 defaults ON (THE FLIP 2026-06-12, founder goal — per-user
+    // station ladder): roundToEquipmentWeight snaps a rec onto THE USER's own learned-
+    // from-logs station ladder (precedence over the founder stacks) — another path-B
+    // kg change this dp.js-direct sim sees. Pin OFF here to keep the frozen baseline
+    // byte-for-byte; the ON behavior is covered by equipmentLadder.test.js (Mark's
+    // distinct gym + the founder-no-regress convergence) + the #70 persona-matrix.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false, dp_load_model_v1: false, dp_real_ladder_snap_v1: false, dp_user_ladder_v1: false }));
   } catch {
     /* jsdom always provides localStorage */
   }

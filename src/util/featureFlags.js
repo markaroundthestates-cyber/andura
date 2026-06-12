@@ -216,6 +216,27 @@ export const FLAGS = Object.freeze({
   // flagged in the report for founder confirmation next round.
   dp_real_ladder_snap_v1: { rollout: 1, default: true },
 
+  // PER-USER station ladder (founder goal 2026-06-12: "andura sa stie pentru fiecare
+  // om dupa 2-3-4 logari ce weights are omul pe aparate"). The dp_real_ladder_snap_v1
+  // stacks above are the FOUNDER's hard-coded gym, keyed only by exercise name — so a
+  // DIFFERENT user (Mark, a different gym) snapped to the founder's rungs. When ON,
+  // equipmentLadder.learnedUserLadder builds THIS user's real station ladder (the
+  // increment + observed RANGE) from THEIR OWN distinct logged loads (saveUserLadder,
+  // synced into the SAME dp-equipment-ladder record) and roundToEquipmentWeight snaps
+  // the rec to it with PRECEDENCE over the founder stacks — which become a cold-start
+  // SEED / fallback prior, not a global override. Trust gate (conservative, friendly):
+  // >= 3 distinct logged rungs AND >= 2 corroborating modal-step gaps (a single gap is
+  // a guess → not trusted; same-weight-repeated → never learns). The user's LOGGED
+  // entry is NEVER snapped — only the coach's SUGGESTION. With no trusted user ladder
+  // the founder seed → generic is unchanged. OFF → no user-ladder write + the snap
+  // helper early-returns → BYTE-IDENTICAL (pinned OFF in fp-config FLIPPED_FLAGS +
+  // calibration sim-config so both frozen hashes hold). FLIPPED ON 2026-06-12 — the
+  // founder's explicit ask; refine-only (snaps an existing rec onto the user's real
+  // rung, never invents a load) → safe to light. The founder's own history converges
+  // to his real 6..90 etc. (his on-grid logs once dp_real_ladder_snap_v1 snaps them),
+  // so he never regresses; until then the seed holds.
+  dp_user_ladder_v1: { rollout: 1, default: true },
+
   // dp_accessory_rotation_v1 (2026-06-11, Daniel "monotonia tampa") — ANCHOR/
   // ACCESSORY rotation. On a mature account everything is logged → PR-stickiness
   // made every week identical. Policy: anchors (tier-1 compounds) REPEAT,

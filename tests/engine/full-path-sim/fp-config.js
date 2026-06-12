@@ -144,6 +144,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   // it is mostly inert in-harness, but pinned OFF here for the all-off-world guarantee
   // (the frozen prescription hashes stay byte-for-byte).
   'dp_real_ladder_snap_v1',
+  // THE FLIP 2026-06-12 (founder goal — per-user station ladder) — dp_user_ladder_v1
+  // defaults ON. Load-path (snaps a rec onto THE USER's own learned-from-logs station
+  // ladder, with precedence over the founder stacks). The cohort logs adherently and
+  // routes through the generic ladders, so it is mostly inert in-harness, but pinned
+  // OFF here for the all-off-world guarantee (the frozen prescription hashes stay
+  // byte-for-byte; if a hash moved, the gating would be leaking).
+  'dp_user_ladder_v1',
   'dp_accessory_rotation_v1',
   'dp_warmup_ramp_v1',
   'dp_progression_bonus_v1',
