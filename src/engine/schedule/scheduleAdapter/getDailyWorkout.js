@@ -36,6 +36,7 @@ import { buildSessionSignalTrace, APPLIED_MAP } from './signalBus.core.js';
 import { mapDateToIndex, getWeekStartIso } from './dateHelpers.js';
 import { getCalendarOverride } from './calendarOverrideStorage.js';
 import { getMissingEquipment } from './missingEquipmentStorage.js';
+import { getMissingEquipmentExercises } from './equipmentMemoryStorage.js';
 import {
   frequencyToSplit,
   activeWeekForFrequency,
@@ -773,6 +774,20 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // poolForGroup REMOVES the contraindicated movement pattern (last-option guarded)
     // so a safe same-muscle sibling leads. Null (no injury + no refusal) → no-op.
     excludedMovements,
+    // EQUIPMENT-MEMORY hard exclusion (founder Busy/Missing redesign 2026-06-12,
+    // dp_equipment_memory_v1, default ON). The SPECIFIC EN canonical exercise names
+    // the user told the coach are equipment-missing (in-session "Aparat lipsa" →
+    // confirm → wv2-equipment-missing-exercises). buildSession HARD-removes exactly
+    // these names from each group's pool (last-option guarded — never an empty
+    // muscle). Distinct from the COARSE missing-equipment TYPE filter above
+    // (availableCoarse) and from the SOFT refusal demote (exercisePenalties): a
+    // missing machine is a hard, name-level, non-decaying constraint until the user
+    // removes it in Account. Empty list (the common case + every sim) → empty array
+    // → byte-identical composition. Flag OFF → empty array → byte-identical (the
+    // full-path-sim hash holds; pinned OFF in the fp cohorts).
+    equipmentMissingNames: isEnabled('dp_equipment_memory_v1')
+      ? getMissingEquipmentExercises()
+      : [],
     // F6a #20 per-set fatigue curve (dp_fatigue_curve_v1, default OFF → null →
     // distributeGroupSets applies adjust 0 → byte-identical). When ON, the learned
     // per-exercise drop-off index (persisted dp-fatigue-curve, name-keyed on the EN

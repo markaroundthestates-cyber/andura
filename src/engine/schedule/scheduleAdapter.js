@@ -45,6 +45,15 @@ export {
 } from './scheduleAdapter/missingEquipmentStorage.js';
 
 export {
+  EQUIPMENT_MISSING_EXERCISES_KEY,
+  getMissingEquipmentExercises,
+  setMissingEquipmentExercises,
+  addMissingEquipmentExercise,
+  removeMissingEquipmentExercise,
+  isEquipmentMissingExercise,
+} from './scheduleAdapter/equipmentMemoryStorage.js';
+
+export {
   SKIPPED_EXERCISES_KEY,
   REFUSAL_COUNTER_KEY,
   REFUSAL_COUNTER_THRESHOLD,

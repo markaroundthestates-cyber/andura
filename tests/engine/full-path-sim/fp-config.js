@@ -120,6 +120,11 @@ export const FLIPPED_FLAGS = Object.freeze([
   // harness either way (resetWorld clears localStorage → no refusal entries),
   // pinned OFF anyway for the all-off-world guarantee.
   'dp_refusal_memory_v1',
+  // THE FLIP 2026-06-12 (founder Busy/Missing redesign) — equipment-memory HARD
+  // exclusion defaults ON. Inert in this harness either way (resetWorld clears
+  // localStorage → no remembered-missing exercises), pinned OFF anyway for the
+  // all-off-world guarantee (the frozen composition hashes stay byte-for-byte).
+  'dp_equipment_memory_v1',
   // THE FLIP 2026-06-10 (F5) — cross-day lat-iso dedup defaults ON (the upper
   // day defers a weekly minimum its specialist pull/back days already deliver).
   // Composition surface → pinned OFF so the frozen hashes stay byte-for-byte;

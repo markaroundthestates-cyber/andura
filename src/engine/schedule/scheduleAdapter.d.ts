@@ -116,6 +116,13 @@ export function resetWeekOverride(): void;
 export function getMissingEquipment(): string[];
 export function setMissingEquipment(list: string[]): void;
 export function toggleMissingEquipment(equipmentId: string): string[];
+// Founder Busy/Missing redesign 2026-06-12 — per-EXERCISE equipment-missing memory.
+export const EQUIPMENT_MISSING_EXERCISES_KEY: string;
+export function getMissingEquipmentExercises(): string[];
+export function setMissingEquipmentExercises(list: string[]): void;
+export function addMissingEquipmentExercise(exerciseName: string): string[];
+export function removeMissingEquipmentExercise(exerciseName: string): string[];
+export function isEquipmentMissingExercise(exerciseName: string): boolean;
 export function getSkippedExercises(): string[];
 export function setSkippedExercises(list: string[]): void;
 export function toggleSkippedExercise(exerciseName: string): string[];

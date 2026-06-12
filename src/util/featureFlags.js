@@ -1051,6 +1051,20 @@ export const FLAGS = Object.freeze({
   // counter is not in SYNC_KEYS).
   dp_refusal_memory_v1: { rollout: 1, default: true },
 
+  // Equipment-memory HARD exclusion (founder Busy/Missing redesign 2026-06-12).
+  // The in-session "Aparat lipsa" → confirm flow PERSISTS the specific exercise
+  // whose machine/station the user does not have (wv2-equipment-missing-exercises,
+  // a per-EXERCISE name set distinct from the COARSE 10-item wv2-missing-equipment
+  // picker). When ON, getDailyWorkout HARD-excludes those exact EN canonical names
+  // from future composition (sessionBuilder, last-option guarded — never an empty
+  // muscle). UNLIKE the refusal soft-demote (dp_refusal_memory_v1) this is a HARD
+  // filter, NOT a decaying demote: a missing machine stays missing until the user
+  // removes it from the Account list. Empty store (the common case + every sim /
+  // fresh user) → empty set → byte-identical composition. Device-local v1 (NOT in
+  // SYNC_KEYS). Pinned OFF in the full-path-sim FLIPPED_FLAGS so the all-off A/B
+  // baseline stays byte-for-byte (resetWorld clears localStorage → inert anyway).
+  dp_equipment_memory_v1: { rollout: 1, default: true },
+
   // F5 cross-day lat-iso dedup (Daniel coach-review 2026-06-10 + the D117 #2
   // "Upper 8→7" intent). The v-taper lat_isolation weekly minimum (1/wk) was
   // translated into a per-session requirement on EVERY qualifying day → Machine

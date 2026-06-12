@@ -1586,10 +1586,35 @@ export function buildSession(cluster, ctx) {
     ? ctx.progressingNames
     : null;
 
+  // EQUIPMENT-MEMORY hard exclusion (founder Busy/Missing redesign 2026-06-12,
+  // dp_equipment_memory_v1). The SPECIFIC EN canonical exercise names the user
+  // remembered as equipment-missing (in-session "Aparat lipsa" → confirm). A
+  // NAME-level hard remove — distinct from the coarse equipment_type availability
+  // gate (a missing Leg-Extension machine must drop ONLY Leg Extension, not the
+  // whole `machine` bucket) and from the SOFT pain/refusal demote (those reorder;
+  // this removes). Applied as a post-filter on each group's pool with the SAME
+  // last-option guard the #81 / D-band hard removals use: never empty a muscle —
+  // if every option for a group is remembered-missing, the originals are kept
+  // (the user still gets a session; the in-session swap can move it). Empty set
+  // (the common case + every sim) → the predicate is always false → byte-identical.
+  const equipmentMissingSet = Array.isArray(ctx?.equipmentMissingNames)
+    ? new Set(ctx.equipmentMissingNames.filter((n) => typeof n === 'string' && n.length > 0))
+    : null;
+  const dropEquipmentMissing = (pool) => {
+    if (!equipmentMissingSet || equipmentMissingSet.size === 0) return pool;
+    const kept = pool.filter((e) => !equipmentMissingSet.has(e.name));
+    // Last-option guard — never hand back an empty group (round-robin would just
+    // redistribute its slots, but keeping the originals is the conservative choice
+    // matching the #81/D-band removals above).
+    return kept.length > 0 && kept.length < pool.length ? kept : pool;
+  };
+
   // Pools per target group (ordered: PR-anchored -> anchor -> new, seeded-stable).
   const pools = targets.map((g) => ({
     group: g,
-    pool: poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties, accessoryRotation, weekParity, progressingNames, intraWeekRotation, intraWeekDayOrdinal),
+    pool: dropEquipmentMissing(
+      poolForGroup(g, available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties, accessoryRotation, weekParity, progressingNames, intraWeekRotation, intraWeekDayOrdinal),
+    ),
   }));
 
   // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the user's
