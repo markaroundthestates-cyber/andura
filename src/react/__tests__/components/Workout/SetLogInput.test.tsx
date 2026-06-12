@@ -129,9 +129,13 @@ describe('SetLogInput — §F-pass2-setloginput-01 tinta mode (pre-log)', () => 
     expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('Target');
   });
 
-  it('renders "reps" sep label (EN default)', () => {
+  // SMALLER DOCK (founder live 2026-06-12) — the target is now ONE slim inline
+  // line "Target  10 × 22.5 kg" (the old two-display-numbers block + the "reps"
+  // separator word were dropped to compact the dock). The reps entry tile still
+  // carries the "Reps" label, so the reps concept stays labeled for entry.
+  it('labels the reps entry tile (EN default "Reps")', () => {
     renderInput({ mode: 'tinta' });
-    expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('reps');
+    expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('Reps');
   });
 
   it('renders confirm-set CTA button (EN default, smoke #4: confirmare obligatorie)', () => {
@@ -141,9 +145,16 @@ describe('SetLogInput — §F-pass2-setloginput-01 tinta mode (pre-log)', () => 
     expect(btn).toHaveTextContent('Confirm set');
   });
 
-  it('renders "How many did you do?" label deasupra inputs (EN default, smoke #4)', () => {
-    renderInput({ mode: 'tinta' });
-    expect(screen.getByTestId('setlog-tinta')).toHaveTextContent('How many did you do?');
+  // SMALLER DOCK (founder live 2026-06-12) — the separate "How many did you do?"
+  // prompt row was dropped to compact the dock; the kg/reps entry tiles (each
+  // labeled) + the "Confirm set" CTA carry the confirmation affordance (smoke #4
+  // "obliga sa confirmi" intact — the user still types/accepts then taps Confirm).
+  // The target now reads as one inline line carrying BOTH reps and kg.
+  it('renders the compact inline target with reps and kg on one line (smaller dock)', () => {
+    renderInput({ mode: 'tinta', kg: 22.5, reps: 10 });
+    const target = screen.getByTestId('setlog-tinta-target-display');
+    expect(target).toHaveTextContent('10');
+    expect(target).toHaveTextContent('22.5 kg');
   });
 
   it('tinta kg input pre-completat cu recomandarea', () => {

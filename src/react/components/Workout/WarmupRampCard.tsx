@@ -29,6 +29,19 @@ import { useEffect, useRef, useState, type JSX } from 'react';
 import { Flame, Check } from 'lucide-react';
 import { t } from '../../../i18n/index.js';
 
+/**
+ * Read the per-session done flag WITHOUT mounting the card. The parent (Workout)
+ * uses this to seed its `warmupPending` gate on the very FIRST render — before
+ * the card has had a chance to fire onResolved — so the logging dock is correctly
+ * hidden-or-shown from mount (founder: "daca user o vede inainte de warmup nu mai
+ * face warmup"; the dock must not flash under a fresh warm-up card). sessionKey
+ * may be null pre-session → treat as not-done (the gate also requires a session).
+ */
+export function isWarmupResolved(sessionKey: number | null): boolean {
+  if (sessionKey === null) return false;
+  return isDone(sessionKey);
+}
+
 /** Short inter-primer rest seconds by primer intensity (pct of working load). */
 const REST_BY_PCT: Record<number, number> = { 50: 30, 70: 45, 90: 60 };
 const DEFAULT_REST_SEC = 30;
@@ -44,6 +57,16 @@ interface WarmupRampCardProps {
   steps: ReadonlyArray<WarmupStep>;
   /** sessionStart ms — keys the per-session done/dismiss memory. */
   sessionKey: number;
+  /**
+   * Fired the instant the warm-up RESOLVES in-session (last primer done, or
+   * skip-past-the-last, or "Sar peste" dismiss) — i.e. when the card collapses to
+   * null. The parent (Workout) flips its `warmupPending` gate so the logging dock
+   * appears. Z-WAR / warm-up-gating (founder live 2026-06-12): the dock must NOT
+   * render while the card is active. Optional/noop default keeps the component's
+   * standalone behavior (and its tests) byte-identical. Initial-mount done state
+   * is covered separately by the parent via isWarmupResolved (no flash).
+   */
+  onResolved?: () => void;
 }
 
 const storageKey = (sessionKey: number): string => `wu-done-${sessionKey}`;
@@ -59,12 +82,26 @@ function markDone(sessionKey: number): void {
   catch { /* private mode — the card may reappear on remount; harmless */ }
 }
 
-export function WarmupRampCard({ steps, sessionKey }: WarmupRampCardProps): JSX.Element | null {
+export function WarmupRampCard({ steps, sessionKey, onResolved }: WarmupRampCardProps): JSX.Element | null {
   const [stepIdx, setStepIdx] = useState(0);
   // Seconds left in the post-primer rest; 0 = no rest running (logging the step).
   const [restLeft, setRestLeft] = useState(0);
   const [done, setDone] = useState(() => isDone(sessionKey));
   const intervalRef = useRef<number | null>(null);
+
+  // Z-WAR / warm-up-gating (2026-06-12) — notify the parent the FRAME the card
+  // resolves so it can show the logging dock. Fired from a `done`-watching effect
+  // (not inline at each call site) so the interval-driven last-primer completion,
+  // skip, and dismiss all funnel through one notification with no double-fire.
+  // Skips the initial done case (the parent seeds that via isWarmupResolved); the
+  // ref guards against a re-fire on re-render after resolution.
+  const resolvedNotifiedRef = useRef(isDone(sessionKey));
+  useEffect(() => {
+    if (done && !resolvedNotifiedRef.current) {
+      resolvedNotifiedRef.current = true;
+      onResolved?.();
+    }
+  }, [done, onResolved]);
 
   // Whether a post-primer rest is RUNNING. Extracted (not inline in the dep
   // array) so the effect re-runs only on the boolean FLIP, never per tick —

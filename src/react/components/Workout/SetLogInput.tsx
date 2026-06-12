@@ -104,7 +104,11 @@ function DialButton({ dir, onPress, ariaLabel, testId }: DialButtonProps): JSX.E
       }}
       aria-label={ariaLabel}
       data-testid={testId}
-      className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-[10px] text-ink transition-transform active:scale-[.92]"
+      // SMALLER DOCK (founder live 2026-06-12 "e mult prea mare") — the ± dials
+      // slimmed 44→36px tall (40px wide) to compact the whole dock; the free-type
+      // number field stays the primary large target for Maria, so the dials can
+      // shed height without hurting the core tap.
+      className="flex-shrink-0 w-10 h-9 flex items-center justify-center rounded-[9px] text-ink transition-transform active:scale-[.92]"
       style={{
         background: 'var(--surface)',
         border: '1px solid var(--line)',
@@ -381,76 +385,69 @@ export function SetLogInput({
     // recomandarea (tap fara modificare) sau sa o corecteze (modifica
     // valorile, apoi tap). Valoarea logata = ce e in inputuri la tap,
     // pasata prin onKgChange/onRepsChange in store-ul parintelui.
+    // SMALLER DOCK (founder live 2026-06-12 "e mult prea mare") — the whole tinta
+    // dock is compacted to ~one slim line of target + slimmer steppers + slimmer
+    // Confirm, so the default logging state needs NO scroll at 360×740. Changes
+    // are PURELY presentational: every testid + the per-hand label + the plate-
+    // hint line are preserved; the kg/reps inputs + confirm flow are untouched.
     return (
-      <div className="pulse-card p-[18px] mb-6" data-testid="setlog-tinta">
-        <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-center" style={{ color: 'var(--aqua)' }}>
-          {t('setLog.targetLabel')}
-        </p>
-        <div className="flex items-baseline justify-center gap-2 mt-2 mb-4" data-testid="setlog-tinta-target-display">
-          <span
-            className="font-display text-2xl font-bold text-ink"
-            data-testid="setlog-tinta-reps"
-          >
+      <div className="pulse-card p-3 mb-0" data-testid="setlog-tinta">
+        {/* TARGET — one slim inline line (small-caps "Tinta" + "8 × 40 kg"),
+            replacing the old two display-size numbers stacked on a centered row
+            (that block alone was ~64px). The kg/reps shown are the PRESCRIBED
+            target (displayTargetReps/Kg), NOT the editable actual-entry below — so
+            the coach's recommendation stays visible after the user edits what they
+            really lifted. Testids preserved (setlog-tinta-reps / -kg / -bw). */}
+        <div
+          className="flex items-baseline gap-1.5 text-[14px] leading-tight"
+          data-testid="setlog-tinta-target-display"
+        >
+          <span className="font-mono text-[10px] tracking-[0.16em] uppercase" style={{ color: 'var(--aqua)' }}>
+            {t('setLog.targetLabel')}
+          </span>
+          <span className="font-semibold text-ink" data-testid="setlog-tinta-reps">
             {displayTargetReps}
           </span>
-          {/* Bodyweight: target is reps "cu greutatea corpului", NO barbell-
-              style kg target. Loaded: "reps + Y kg" as before. The kg/reps
-              shown here are the PRESCRIBED target (displayTargetReps/Kg), not
-              the editable actual-entry below — so the coach's recommendation
-              stays visible even after the user edits what they really lifted. */}
           {isBodyweight ? (
-            <span className="text-sm text-ink2" data-testid="setlog-tinta-bw">
+            <span className="text-ink2 text-[13px]" data-testid="setlog-tinta-bw">
               {t('setLog.bodyweightTargetReps')}
             </span>
           ) : (
             <>
-              <span className="text-sm text-ink2">{t('setLog.targetReps')}</span>
-              <span
-                className="font-display text-2xl font-bold text-ink ml-2"
-                data-testid="setlog-tinta-kg"
-              >
+              <span className="text-ink2 text-[13px]">×</span>
+              <span className="font-semibold text-ink" data-testid="setlog-tinta-kg">
                 {perHandLoad ? t('setLog.kgPerHand', { kg: displayTargetKg }) : `${displayTargetKg} kg`}
               </span>
             </>
           )}
         </div>
 
-        {/* Plate-math hint (2026-06-10) — actionable loading for barbell lifts:
-            tracks the user's CURRENT kg entry (not just the target), so editing
-            70 → 65 live-updates the per-side plates. Muted one-liner; absent
-            prop → nothing (machines/dumbbells/Smith render exactly as before). */}
+        {/* Plate-math hint (2026-06-10) — actionable loading for barbell lifts,
+            tracks the CURRENT kg entry. Muted one-liner; absent → nothing. */}
         {plateHint ? (
           <p
-            className="font-mono text-[11px] text-ink2 text-center -mt-2 mb-3"
+            className="font-mono text-[10.5px] text-ink2 mt-0.5"
             data-testid="setlog-plate-hint"
           >
             {plateHint}
           </p>
         ) : null}
 
-        <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 mb-2 text-center">
-          {t('setLog.askDoneLabel')}
-        </p>
-        {/* Pulse NumDial pair (mockup interfata-noua/screens-workout.jsx NumDial)
-            — each control is a --surface-2 tile: mono Kicker label on top, the
-            big value on its OWN row (option B, never clips), the − / + steppers
-            on a row below. The free-type <input> is PRESERVED as the big value
-            (Maria 65 types); the ± dials are the thumb add. */}
-        <div className="flex gap-3 mb-4">
+        {/* NumDial pair — slimmer tiles (p-2, 18px number, ± row tightened). The
+            free-type <input> stays the big value (Maria 65 types); the ± dials are
+            the thumb add. Labels (kg / Repetari) double as the "what to enter" cue
+            so the old separate "Cate ai facut?" line is dropped (saved a row). */}
+        <div className="flex gap-2.5 mt-2.5 mb-2.5">
           <div
-            className="flex-1 text-center rounded-2xl p-3"
+            className="flex-1 text-center rounded-xl p-2"
             style={{ background: 'var(--surface-2)', border: '1px solid var(--line)' }}
           >
             <label
-              className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 block"
+              className="font-mono text-[10px] tracking-[0.16em] uppercase text-ink2 block"
               htmlFor="setlog-tinta-kg-input"
             >
               {isBodyweight ? t('setLog.addedWeightLabel') : t('setLog.kgLabel')}
             </label>
-            {/* Option B (Daniel 2026-06-02): the number owns its OWN full-tile
-                row (centered) so a 3+ digit / decimal value (186.5) can NEVER be
-                clipped by the flanking buttons; the ± steppers sit on a row
-                BELOW it. */}
             <NumberField
               id="setlog-tinta-kg-input"
               inputMode="decimal"
@@ -458,9 +455,9 @@ export function SetLogInput({
               value={kg}
               onChange={onKgChange}
               testId="setlog-tinta-kg-input"
-              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 mt-2 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-0.5 mt-1 font-display text-[18px] leading-[1.3] font-bold text-ink text-center focus:outline-none"
             />
-            <div className="flex items-center justify-between gap-2 mt-2">
+            <div className="flex items-center justify-between gap-2 mt-1.5">
               <DialButton
                 dir="down"
                 onPress={() => onKgChange(stepValue(kg, -0.5, 0, 500))}
@@ -476,16 +473,15 @@ export function SetLogInput({
             </div>
           </div>
           <div
-            className="flex-1 text-center rounded-2xl p-3"
+            className="flex-1 text-center rounded-xl p-2"
             style={{ background: 'var(--surface-2)', border: '1px solid var(--line)' }}
           >
             <label
-              className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink2 block"
+              className="font-mono text-[10px] tracking-[0.16em] uppercase text-ink2 block"
               htmlFor="setlog-tinta-reps-input"
             >
               {t('setLog.repsLabel')}
             </label>
-            {/* Option B — number on its own full-tile row, ± below (never clips). */}
             <NumberField
               id="setlog-tinta-reps-input"
               inputMode="numeric"
@@ -493,9 +489,9 @@ export function SetLogInput({
               value={reps}
               onChange={onRepsChange}
               testId="setlog-tinta-reps-input"
-              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-1 mt-2 font-display text-[22px] leading-[1.35] font-bold text-ink text-center focus:outline-none"
+              className="numdial-input w-full min-w-0 bg-transparent border-none px-0 py-0.5 mt-1 font-display text-[18px] leading-[1.3] font-bold text-ink text-center focus:outline-none"
             />
-            <div className="flex items-center justify-between gap-2 mt-2">
+            <div className="flex items-center justify-between gap-2 mt-1.5">
               <DialButton
                 dir="down"
                 onPress={() => onRepsChange(stepValue(reps, -1, 0, 100))}
@@ -512,12 +508,9 @@ export function SetLogInput({
           </div>
         </div>
 
-        {/* Wave C3 (2026-05-28) — the "Confirma setul" CTA is the single most
-            important tap in a workout. Layered feedback: (1) Ripple from tap
-            point, (2) press-feedback scale-0.94, (3) brief haptic buzz on
-            release (Android only), (4) the success-burst halo bloom sits behind
-            the icon for a 600ms confirmation. Daniel "go wild" — but only the
-            buttons that earn it (set logging is the ritual heartbeat). */}
+        {/* "Confirma setul" — the ritual heartbeat tap. Slimmer (py-2.5, 15px) but
+            keeps the layered feedback (Ripple + press-scale + haptic + success
+            bloom) and the 44px min tap height. */}
         <button
           type="button"
           onClick={() => {
@@ -526,10 +519,10 @@ export function SetLogInput({
           }}
           disabled={!Number.isFinite(reps) || reps < 1}
           data-testid="setlog-tinta-log-btn"
-          className="btn-primary-lift btn-grad press-feedback relative overflow-hidden w-full flex items-center justify-center gap-2 p-3 rounded-full text-base font-semibold min-h-[44px] disabled:opacity-50"
+          className="btn-primary-lift btn-grad press-feedback relative overflow-hidden w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-full text-[15px] font-semibold min-h-[44px] disabled:opacity-50"
         >
           <Ripple color="rgba(255,255,255,0.55)" />
-          <Check className="w-5 h-5 relative" aria-hidden="true" />
+          <Check className="w-4 h-4 relative" aria-hidden="true" />
           <span className="relative">{t('setLog.confirmSetCta')}</span>
         </button>
         {NUMDIAL_SPIN_RESET}

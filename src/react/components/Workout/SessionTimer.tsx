@@ -70,6 +70,14 @@ interface SessionTimerProps {
   setsTotal?: number;
   exerciseCount?: number; // 1-indexed display number (e.g. 2 of 5)
   exerciseTotal?: number;
+  // Z-WAR fix (founder live 2026-06-12) — the ⋯ "Optiuni sesiune" sheet (z-50)
+  // is a BLOCKING surface the in-session logging dock must yield to (the dock is
+  // the LOWEST chrome layer; it never covers an interactive surface). The menu's
+  // open/close is local state here, so the parent can't derive its `overlayOpen`
+  // predicate without this signal. Fired on every open→close flip so Workout.tsx
+  // auto-hides the dock while the menu is up. Optional/noop default keeps every
+  // other callsite byte-identical.
+  onMenuOpenChange?: (open: boolean) => void;
 }
 
 function SessionTimerImpl({
@@ -89,11 +97,20 @@ function SessionTimerImpl({
   setsTotal,
   exerciseCount,
   exerciseTotal,
+  onMenuOpenChange,
 }: SessionTimerProps): JSX.Element {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Z-WAR (2026-06-12) — mirror every open/close to the parent so it can fold the
+  // logging dock away while the sheet is up (the dock yields to all overlays).
+  function openMenu(): void {
+    setMenuOpen(true);
+    onMenuOpenChange?.(true);
+  }
+
   function closeMenu(): void {
     setMenuOpen(false);
+    onMenuOpenChange?.(false);
   }
 
   function handleAction(action?: () => void): void {
@@ -137,7 +154,7 @@ function SessionTimerImpl({
           </button>
           <button
             type="button"
-            onClick={() => setMenuOpen(true)}
+            onClick={openMenu}
             aria-label={t('workout.timer.menuAriaLabel')}
             data-testid="workout-menu-trigger"
             aria-haspopup="dialog"

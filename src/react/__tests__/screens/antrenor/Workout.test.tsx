@@ -48,6 +48,7 @@ import { useWorkoutStore } from '../../../stores/workoutStore';
 import { getPRDelta, getTodayWorkout, getWhyExerciseSummary } from '../../../lib/engineWrappers';
 import { debugLog } from '../../../lib/debugLog';
 import { DB } from '../../../../db.js';
+import { saveReadiness, getTodayReadiness } from '../../../../engine/readiness.js';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -2028,5 +2029,120 @@ describe('Workout — shared current-recommended-load (autoreg + AaFriction)', (
     fireEvent.change(screen.getByTestId('setlog-tinta-kg-input'), { target: { value: '8' } });
     expect((screen.getByTestId('setlog-tinta-kg-input') as HTMLInputElement).value).toBe('8');
     expect(screen.getByTestId('setlog-tinta-kg')).toHaveTextContent('50 kg');
+  });
+});
+
+// ══ IN-SESSION UX BATCH (founder live 2026-06-12) — the dock is the LOWEST chrome
+// layer: it yields to every overlay (auto-hide + z-floor) and never renders before
+// the warm-up is resolved. The FSM/log flow is untouched; these assert the render
+// GATING only. ════════════════════════════════════════════════════════════════
+const WARMUP_FIXTURE = {
+  ...PHASE_5_FIXTURE,
+  // planned.warmup.warmupSets drives WarmupRampCard (gym-log arc). The card
+  // surfaces FIRST on exercise 1 before any set is logged; the dock is hidden
+  // until it resolves (founder: "daca user o vede inainte de warmup nu mai face
+  // warmup").
+  warmup: {
+    line: 'Incalzire: 50 → 70 → 90 kg',
+    durationMin: 6,
+    warmupSets: [
+      { kg: 50, reps: 10, pct: 50 },
+      { kg: 70, reps: 6, pct: 70 },
+      { kg: 90, reps: 3, pct: 90 },
+    ],
+  },
+};
+
+describe('Workout — in-session UX batch (dock yields + warm-up gating)', () => {
+  beforeEach(() => {
+    resetStore();
+    sessionStorage.clear(); // per-session warm-up memory must start fresh
+  });
+
+  it('WARM-UP GATING: the logging dock does NOT render while the warm-up card is active', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(WARMUP_FIXTURE);
+    renderWorkout();
+    await waitFor(() => {
+      expect(screen.queryByTestId('workout-loading')).not.toBeInTheDocument();
+    });
+    // The warm-up card is up...
+    expect(screen.getByTestId('warmup-ramp-card')).toBeInTheDocument();
+    // ...so the dock (and its Confirm button) must be absent.
+    expect(screen.queryByTestId('log-dock')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('setlog-tinta-log-btn')).not.toBeInTheDocument();
+  });
+
+  it('WARM-UP GATING: dismissing the warm-up ("Sar peste") unmounts it and reveals the dock', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(WARMUP_FIXTURE);
+    renderWorkout();
+    await waitFor(() => {
+      expect(screen.queryByTestId('workout-loading')).not.toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByTestId('warmup-dismiss'));
+    // Card gone (zero residue), dock now present.
+    expect(screen.queryByTestId('warmup-ramp-card')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('log-dock')).toBeInTheDocument();
+    });
+    expect(screen.getByTestId('setlog-tinta-log-btn')).toBeInTheDocument();
+  });
+
+  it('NO-WARMUP (common case): an empty ramp renders the dock immediately, no gating', async () => {
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce(PHASE_5_FIXTURE); // no warmup
+    await renderWorkoutAndWait();
+    expect(screen.queryByTestId('warmup-ramp-card')).not.toBeInTheDocument();
+    expect(screen.getByTestId('log-dock')).toBeInTheDocument();
+  });
+
+  it('DOCK YIELDS: opening the header ⋯ menu auto-hides the dock; closing it restores the dock', async () => {
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('log-dock')).toBeInTheDocument();
+    // Open the ⋯ "Optiuni sesiune" sheet (a blocking surface).
+    fireEvent.click(screen.getByTestId('workout-menu-trigger'));
+    expect(screen.getByTestId('workout-menu-sheet')).toBeInTheDocument();
+    // Dock unmounted while the sheet is up.
+    expect(screen.queryByTestId('log-dock')).not.toBeInTheDocument();
+    // Close via the backdrop → dock returns.
+    fireEvent.click(screen.getByTestId('workout-menu-backdrop'));
+    await waitFor(() => {
+      expect(screen.getByTestId('log-dock')).toBeInTheDocument();
+    });
+  });
+
+  it('DOCK YIELDS: opening the exit menu auto-hides the dock (founder evidence #1)', async () => {
+    await renderWorkoutAndWait();
+    expect(screen.getByTestId('log-dock')).toBeInTheDocument();
+    // The exit (X) menu was the founder's #1 evidence — the dock covered it.
+    fireEvent.click(screen.getByTestId('workout-exit-trigger'));
+    expect(screen.getByTestId('exit-sheet')).toBeInTheDocument();
+    expect(screen.queryByTestId('log-dock')).not.toBeInTheDocument();
+  });
+
+  it('Z-FLOOR: the dock sits at z-10 (strictly below every in-session overlay z-40..60)', async () => {
+    await renderWorkoutAndWait();
+    const dock = screen.getByTestId('log-dock');
+    // Belt #2 (belt-and-suspenders with the auto-hide): the dock can never tie or
+    // cover an overlay even if a future overlay shares its stacking context.
+    expect(dock.className).toContain('z-10');
+    expect(dock.className).not.toContain('z-30');
+  });
+
+  it('READINESS SURVIVES CANCEL: cancelling a started session keeps today\'s confirmed readiness', async () => {
+    // The user confirmed their energy-check today (day-keyed readiness). Founder
+    // flow: readiness → start → cancel → MUST NOT re-prompt the same day. The
+    // cancel path (⋯ menu → "Renunta la sesiune" → discard) must NOT clear the
+    // day-keyed readiness (the prior clearTodayReadiness() here was the re-prompt
+    // bug — Antrenor's energyCheckDone gate reads getTodayReadiness()).
+    saveReadiness(4);
+    expect(getTodayReadiness()).toBe(4);
+    await renderWorkoutAndWait();
+    // Open the ⋯ menu and cancel the session.
+    fireEvent.click(screen.getByTestId('workout-menu-trigger'));
+    fireEvent.click(screen.getByTestId('workout-menu-cancel'));
+    // Routed back to the hub, session discarded — but today's readiness PERSISTS.
+    await waitFor(() => {
+      expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/app/antrenor');
+    });
+    expect(getTodayReadiness()).toBe(4);
   });
 });

@@ -59,7 +59,7 @@ import { PrFlash } from '../../../components/Workout/PrFlash';
 import { TransitionScreen } from '../../../components/Workout/TransitionScreen';
 import { WhyExerciseModal } from '../../../components/Workout/WhyExerciseModal';
 import { SetHistoryChips } from '../../../components/Workout/SetHistoryChips';
-import { WarmupRampCard, type WarmupStep } from '../../../components/Workout/WarmupRampCard';
+import { WarmupRampCard, isWarmupResolved, type WarmupStep } from '../../../components/Workout/WarmupRampCard';
 import { QuarantineNotice } from '../../../components/Workout/QuarantineNotice';
 import { ExerciseActionsRow } from '../../../components/Workout/ExerciseActionsRow';
 import { CoachNote } from '../../../components/Workout/CoachNote';
@@ -76,7 +76,6 @@ import { getExerciseMetadata } from '../../../../engine/exerciseLibrary.js';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { roundToEquipmentWeight, getNextWeight, getPrevWeight } from '../../../../config/weights.js';
 import { ENGINE_WORKOUT_TITLE_FALLBACK, resolveIntensityFactors } from '../../../lib/scheduleAdapterAggregate';
-import { clearTodayReadiness } from '../../../../engine/readiness.js';
 import { t } from '../../../../i18n/index.js';
 import { useWakeLock } from './workout/useWakeLock';
 import { useWhyModalA11y } from './workout/useWhyModalA11y';
@@ -414,6 +413,25 @@ export function Workout(): JSX.Element {
   useEffect(() => {
     setDemoOpen(false);
   }, [safeExIdx]);
+  // ── Z-WAR + warm-up-gating dock state (founder live 2026-06-12) ────────────
+  // The logging dock is the LOWEST chrome layer — it must NEVER cover an
+  // interactive surface and must NOT render before the warm-up is resolved. Two
+  // signals the dock-render gate (overlayOpen + warmupResolved) needs but which
+  // live inside children:
+  //   (1) headerMenuOpen — the ⋯ "Optiuni sesiune" sheet's open state is local to
+  //       SessionTimer; mirrored here via onMenuOpenChange so the dock yields.
+  const [headerMenuOpen, setHeaderMenuOpen] = useState(false);
+  //   (2) warmupResolved — the WarmupRampCard owns its own done/dismiss memory
+  //       (sessionStorage, keyed on sessionStart). Seed from isWarmupResolved so
+  //       the dock is correctly hidden-or-shown from the FIRST render (no flash of
+  //       the dock under a fresh warm-up card — founder: "daca user o vede inainte
+  //       de warmup nu mai face warmup"); the card's onResolved flips it on the
+  //       in-session done/skip/dismiss. Re-seeded when the session changes so a NEW
+  //       session re-gates on its fresh warm-up.
+  const [warmupResolved, setWarmupResolved] = useState(() => isWarmupResolved(sessionStart));
+  useEffect(() => {
+    setWarmupResolved(isWarmupResolved(sessionStart));
+  }, [sessionStart]);
   // Init session on mount when there is NO live or paused session to continue.
   // §44-C1 originally started only on 'idle', but a returning user always has a
   // prior `lastSession`, which makes getCurrentMode report 'finished' (NOT idle)
@@ -1277,12 +1295,16 @@ export function Workout(): JSX.Element {
       navigate(gotoPath('finish-early-confirm'));
       return;
     }
-    // Bugatti truth — un workout pornit-apoi-anulat NU lasa date. EnergyCheck a
-    // persistat raspunsul de energie (saveReadiness) la intrarea in flow; discard
-    // sterge si acel semnal de readiness de azi, altfel Coach-ul ar afisa un scor
-    // de readiness fabricat (ex. 85) desi nu exista nicio sesiune reala. Doar o
-    // sesiune COMPLETATA (finishSession) lasa semnal de readiness.
-    clearTodayReadiness();
+    // READINESS SURVIVES CANCEL (founder live 2026-06-12) — the CONFIRMED
+    // energy-check is a DAY-keyed fact (readiness.js keys by tod()), independent
+    // of the session lifecycle: the user genuinely reported their energy today, so
+    // cancelling a started workout must NOT re-prompt them the same day. We
+    // therefore DO NOT clear today's readiness on discard (the prior
+    // clearTodayReadiness() here was the re-prompt bug — Antrenor's energyCheckDone
+    // gate reads getTodayReadiness(), so wiping it forced a second prompt). The
+    // value persists for the calendar day; a NEW day re-prompts; recovery /
+    // recommendation shaping read the persisted score. discardSession() still
+    // clears the transient session/sessionEnergy slice.
     discardSession();
     navigate(gotoPath('antrenor'));
   }, [pauseSession, workoutTitle, navigate, discardSession]);
@@ -1394,6 +1416,76 @@ export function Workout(): JSX.Element {
   // count edges like a re-render race after the final navigate).
   const setsDone = Math.min(setsTotal, loggedSoFar + (isMidSet ? 1 : 0));
 
+  // ── DOCK YIELDS TO EVERYTHING (Z-WAR fix, founder live 2026-06-12) ──────────
+  // The fixed logging dock is the LOWEST chrome layer: it must NEVER cover an
+  // interactive surface. Belt #1 is THIS auto-hide predicate — while ANY blocking
+  // surface is open, the dock unmounts entirely (belt #2 is the z-index floor:
+  // dock z-10, every overlay z-40..60 — see the dock + RestOverlay/sheets). The
+  // founder evidence (dock covering the exit menu, the "Nu vreau" alternatives
+  // list, and the extended-rest button) all trace to the dock outliving these.
+  //
+  // overlayOpen = the EXHAUSTIVE list of in-session blocking surfaces. NEXT
+  // OVERLAY AUTHOR: when you add a sheet/menu/dialog that should sit ABOVE the
+  // dock, add its open-state flag HERE (and give it z-40+). The surfaces today:
+  //   - headerMenuOpen   ⋯ "Optiuni sesiune" sheet            (SessionTimer, z-50)
+  //   - exitSheetOpen    exit / pause / discard / finish sheet (ExitConfirmSheet, z-50)
+  //   - aaModalOpen      aggressive-load friction modal        (AaFrictionModal)
+  //   - anomalyResult    fat-finger / outlier confirm          (AnomalyConfirmModal, z-60)
+  //   - aparatLipsaSheetOpen  in-session "aparat lipsa" picker (AparatLipsaSheet, z-50)
+  //   - pickSheet.open   swap / "Nu vreau" alternatives picker (SwapPickSheet, z-50)
+  //   - whyText !== null "why this exercise?" explainer sheet  (WhyExerciseModal, z-50)
+  //   - prFlash          mid-session PR celebration burst       (PrFlash, z-48)
+  // NOT in this list (deliberate):
+  //   - RestOverlay — the REST PHASE itself hides the dock (the dock only renders
+  //     in logging/idle/rating, never phase==='rest'), so the dock is already gone.
+  //   - InactivityPrompt — a small NON-blocking floating nudge (z-50, above the
+  //     dock via the z-floor); the user is MEANT to keep logging to dismiss it
+  //     (tapping the dock's Confirm bumps activity → prompt closes), so hiding the
+  //     dock would remove that affordance. The z-floor keeps it from being covered.
+  //   - demo accordion (demoOpen) — INLINE in the scroll rail, not an overlay.
+  const overlayOpen =
+    headerMenuOpen ||
+    exitSheetOpen ||
+    aaModalOpen ||
+    anomalyResult !== null ||
+    aparatLipsaSheetOpen ||
+    pickSheet.open ||
+    whyText !== null ||
+    prFlash !== null;
+
+  // ── WARM-UP GATING (founder: "daca user o vede inainte de warmup nu mai face
+  // warmup") ─────────────────────────────────────────────────────────────────
+  // While the WarmupRampCard is ACTIVELY rendered (the SAME condition as its
+  // render below) and NOT yet resolved, the dock does not render at all. On
+  // done OR skip OR dismiss the card unmounts and warmupResolved flips → the dock
+  // appears. The card-render condition is hoisted here (single source) so the
+  // gate and the card can never disagree.
+  const warmupCardShown =
+    phase === 'logging' &&
+    safeExIdx === 0 &&
+    (history[safeExIdx]?.length ?? 0) === 0 &&
+    warmupSets.length > 0 &&
+    sessionStart !== null;
+  const warmupActive = warmupCardShown && !warmupResolved;
+
+  // The dock renders only when NOTHING is blocking it (no overlay up, warm-up
+  // resolved/absent). Belt-and-suspenders with the z-floor below.
+  const dockVisible = !overlayOpen && !warmupActive;
+
+  // DESKTOP MONSTER fix (founder live 2026-06-12, his irony: "pe desktop fa-o sa-mi
+  // acopere toate 3 monitoarele") — portal the dock into #root, NOT document.body.
+  // #root is the device-screen element (transform-free; position:relative on
+  // desktop ≥768px). Mobile: #root has no transform → position:fixed still pins to
+  // the viewport (byte-identical phone). Desktop: .app-fixed-column flips fixed→
+  // absolute and now anchors to #root (the 402px bezel frame) instead of the whole
+  // browser window — so the dock sits INSIDE the phone, not spanning the monitor.
+  // #root is also ABOVE Layout's .animate-page-enter wrapper, so the dock STILL
+  // escapes that wrapper's transform (the original reason it was portaled out of
+  // the route). Fallback to document.body for jsdom (no #root) so RTL `screen`
+  // queries still reach the dock. The body branch only runs in tests.
+  const dockPortalTarget =
+    (typeof document !== 'undefined' && document.getElementById('root')) || document.body;
+
   return (
     <section
       className="min-h-screen relative"
@@ -1414,6 +1506,9 @@ export function Workout(): JSX.Element {
         onSkipExercise={handleSkipExercise}
         onFinishEarly={handleGoFinishEarly}
         onCancelSession={handleCancelSession}
+        // Z-WAR (2026-06-12) — mirror the ⋯ menu open/close so the logging dock
+        // yields (overlayOpen predicate) while the "Optiuni sesiune" sheet is up.
+        onMenuOpenChange={setHeaderMenuOpen}
         // P-11 (LOW) — global progress bar (seturi cumulate + exercitiu curent).
         setsDone={setsDone}
         setsTotal={setsTotal}
@@ -1454,10 +1549,15 @@ export function Workout(): JSX.Element {
               working set is logged; done/dismiss is per-session (sessionStorage
               keyed on sessionStart). Was previously mid-rail; moved to the top
               of the context rail per the Coach Rail hierarchy. */}
-          {phase === 'logging' && safeExIdx === 0
-            && (history[safeExIdx]?.length ?? 0) === 0
-            && warmupSets.length > 0 && sessionStart !== null && (
-            <WarmupRampCard steps={warmupSets} sessionKey={sessionStart} />
+          {warmupCardShown && sessionStart !== null && (
+            <WarmupRampCard
+              steps={warmupSets}
+              sessionKey={sessionStart}
+              // Warm-up-gating (2026-06-12): the card owns its done/skip/dismiss
+              // memory; this flips the parent's warmupResolved so the LOGGING DOCK
+              // (hidden while warm-up is active) appears the instant warm-up ends.
+              onResolved={() => setWarmupResolved(true)}
+            />
           )}
 
           {/* Pulse arc 2026-05-29 (blueprint C3-g) — live volume count-up chip.
@@ -1714,25 +1814,37 @@ export function Workout(): JSX.Element {
             is pinned to the bottom thumb zone, ALWAYS reachable, while the
             context above scrolls under it.
 
-            PORTALED TO document.body (constraint #3 — the bezel lesson). The
-            routed content is wrapped by Layout in `.animate-page-enter`, whose
-            page-enter animation leaves a `transform` (even at the identity
-            matrix) that establishes a containing block for `position:fixed`
-            descendants — so a `fixed` dock INSIDE the route would anchor to that
-            wrapper's box (full content height), not the viewport, and at a short
-            (740px) viewport it pushed the Confirm CTA below the fold. Rendering
-            at body level (the SAME tier as the Layout BottomNav/SessionPill,
-            which is why THEY pin correctly) makes `fixed` resolve to the true
-            viewport. No transform/filter/contain is added on any ancestor.
-            The portal is transparent to the test suite (jsdom `screen` queries
-            the whole document, so every setlog / rating testid stays reachable);
-            "Set X/Y" lives in the hero (scroll rail), not here, so #log-zone keeps
-            its asserted text. BottomNav is hidden in-session → no collision; the
-            dock owns the bottom edge + safe-area. */}
-        {createPortal(
+            PORTALED TO #root (constraint #3 — the bezel lesson; founder live
+            2026-06-12 DESKTOP MONSTER fix). The routed content is wrapped by
+            Layout in `.animate-page-enter`, whose page-enter animation leaves a
+            `transform` (even at the identity matrix) that establishes a containing
+            block for `position:fixed` descendants — so a `fixed` dock INSIDE the
+            route would anchor to that wrapper's box (full content height), not the
+            viewport, and at a short (740px) viewport it pushed the Confirm CTA
+            below the fold. #root sits ABOVE that wrapper, so the dock still escapes
+            the transform; and because #root is the device-screen element (relative,
+            transform-free on desktop), the .app-fixed-column fixed→absolute desktop
+            flip anchors the dock INSIDE the 402px bezel frame instead of spanning
+            the whole monitor (the founder's "3 monitoare" bug — it was portaled to
+            document.body, which has no positioned ancestor → absolute spanned the
+            window). Mobile keeps position:fixed → viewport-pinned, byte-identical.
+            The portal is transparent to the test suite (jsdom has no #root → the
+            dockPortalTarget fallback is document.body, so every setlog / rating
+            testid stays reachable); "Set X/Y" lives in the hero (scroll rail), not
+            here, so #log-zone keeps its asserted text. BottomNav is hidden in-
+            session → no collision; the dock owns the bottom edge + safe-area.
+
+            Z-WAR (founder live 2026-06-12): the dock is the LOWEST chrome layer.
+            (1) AUTO-HIDE — gated on `dockVisible` (= !overlayOpen && !warmupActive)
+            so it UNMOUNTS while any blocking surface (exit menu, "Nu vreau" picker,
+            rest, ⋯ menu, …) is up or warm-up is pending. (2) Z-FLOOR — z-10 (was
+            z-30), strictly BELOW every in-session overlay (RestOverlay z-40,
+            sheets/menus z-50, anomaly z-60), so even if a future overlay shares the
+            dock's stacking context it can never tie/cover it. */}
+        {dockVisible && createPortal(
         <div
           ref={attachDock}
-          className="app-fixed-column app-fixed-column--inset fixed bottom-0 z-30 px-1 pt-4 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] [&>*:last-child]:mb-0"
+          className="app-fixed-column app-fixed-column--inset fixed bottom-0 z-10 px-1 pt-4 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] [&>*:last-child]:mb-0"
           data-testid="log-dock"
           style={{
             // Soft top-fade into the page surface so the dock reads as part of
@@ -1800,9 +1912,9 @@ export function Workout(): JSX.Element {
               (editing). Pre-log tinta hides it per mockup wv2. */}
           {(setLogged || editing) && <SetRatingButtons onRate={handleLogSet} />}
         </div>,
-        document.body,
+        dockPortalTarget,
         )}
-        {/* ── END FIXED LOGGING DOCK (portaled to body) ───────────────────── */}
+        {/* ── END FIXED LOGGING DOCK (portaled to #root) ──────────────────── */}
         </div>
       )}
 

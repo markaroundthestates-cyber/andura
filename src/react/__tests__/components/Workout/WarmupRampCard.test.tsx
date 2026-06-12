@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { WarmupRampCard } from '../../../components/Workout/WarmupRampCard';
+import { WarmupRampCard, isWarmupResolved } from '../../../components/Workout/WarmupRampCard';
 
 // The real 100kg-bench ramp warmupRampFor emits (50/70/90%, bar-snapped).
 const STEPS = [
@@ -95,5 +95,43 @@ describe('WarmupRampCard', () => {
   it('renders nothing for an empty ramp (flag off / light load)', () => {
     render(<WarmupRampCard steps={[]} sessionKey={SESSION} />);
     expect(screen.queryByTestId('warmup-ramp-card')).not.toBeInTheDocument();
+  });
+
+  // ── onResolved + isWarmupResolved (warm-up-gating lift, founder 2026-06-12) ──
+  // The card owns its done/skip/dismiss memory; the parent (Workout) lifts the
+  // RESOLVED state so it can show the logging dock the instant warm-up ends (the
+  // dock is hidden while warm-up is active).
+  it('isWarmupResolved reflects the per-session sessionStorage flag', () => {
+    expect(isWarmupResolved(SESSION)).toBe(false);
+    sessionStorage.setItem(`wu-done-${SESSION}`, '1');
+    expect(isWarmupResolved(SESSION)).toBe(true);
+    // A null sessionKey (no live session) is never resolved.
+    expect(isWarmupResolved(null)).toBe(false);
+  });
+
+  it('onResolved fires once when the card is dismissed', () => {
+    const onResolved = vi.fn();
+    render(<WarmupRampCard steps={STEPS} sessionKey={SESSION} onResolved={onResolved} />);
+    fireEvent.click(screen.getByTestId('warmup-dismiss'));
+    expect(onResolved).toHaveBeenCalledTimes(1);
+  });
+
+  it('onResolved fires once when the last primer completes (full walk)', () => {
+    const onResolved = vi.fn();
+    render(<WarmupRampCard steps={STEPS} sessionKey={SESSION} onResolved={onResolved} />);
+    fireEvent.click(screen.getByTestId('warmup-step-done'));
+    fireEvent.click(screen.getByTestId('warmup-rest-skip'));
+    fireEvent.click(screen.getByTestId('warmup-step-done'));
+    fireEvent.click(screen.getByTestId('warmup-rest-skip'));
+    fireEvent.click(screen.getByTestId('warmup-step-done'));
+    act(() => { vi.advanceTimersByTime(60_000); });
+    expect(onResolved).toHaveBeenCalledTimes(1);
+  });
+
+  it('onResolved does NOT fire on mount when already done (parent seeds via isWarmupResolved)', () => {
+    sessionStorage.setItem(`wu-done-${SESSION}`, '1');
+    const onResolved = vi.fn();
+    render(<WarmupRampCard steps={STEPS} sessionKey={SESSION} onResolved={onResolved} />);
+    expect(onResolved).not.toHaveBeenCalled();
   });
 });

@@ -47,6 +47,27 @@ async function dismissDisclaimer(page: Page): Promise<void> {
     .catch(() => {});
 }
 
+// ANCHOR CHANGE (in-session UX batch 2026-06-12) — the in-session WARM-UP RAMP
+// card now GATES the logging dock: on the first exercise (before any set is
+// logged) the dock (and its setlog-tinta-log-btn) does NOT render until the
+// warm-up is resolved (founder: "daca user o vede inainte de warmup nu mai face
+// warmup"). The OLD build showed the dock + warm-up simultaneously, so this spec
+// could log immediately; with the new gating it must first dismiss the warm-up.
+// This skip is the minimal, legitimate flow step the new UX requires — it mirrors
+// the real user tapping "Sar peste" (or completing the ramp). No-op when no ramp
+// is present (light loads / non-first exercise), so it's safe to call on every
+// workout entry. Without it the dock never appears → finishSession's
+// waitForURL(/post-rpe/) never fires (the exact CI failure this batch fixes).
+async function skipWarmupIfPresent(page: Page): Promise<void> {
+  const dismiss = page.getByTestId('warmup-dismiss');
+  await dismiss.waitFor({ state: 'visible', timeout: 4000 }).catch(() => {});
+  if (await dismiss.count()) {
+    await dismiss.click({ timeout: 3000 }).catch(() => {});
+    // Wait for the card to detach so the dock has mounted before we look for it.
+    await page.getByTestId('warmup-ramp-card').waitFor({ state: 'detached', timeout: 4000 }).catch(() => {});
+  }
+}
+
 // Drive an active workout to its post-RPE handoff: for each planned exercise,
 // for each of its sets, (optionally override the kg), log + rate. The Workout
 // FSM navigates to /app/antrenor/post-rpe after the final set. `overrideKg` is
@@ -165,6 +186,8 @@ test.describe('Core authenticated loop — the automated gym test', () => {
     // deterministic entry (GymOnlyRoute) — the CTA funnel is covered separately.
     await page.goto('/app/antrenor/workout');
     await dismissDisclaimer(page);
+    // The warm-up ramp gates the dock on the first exercise — resolve it first.
+    await skipWarmupIfPresent(page);
 
     const logBtn = page.getByTestId('setlog-tinta-log-btn');
     await logBtn.waitFor({ state: 'visible', timeout: 20000 });
@@ -199,6 +222,7 @@ test.describe('Core authenticated loop — the automated gym test', () => {
     await page.reload();
     await page.goto('/app/antrenor/workout');
     await dismissDisclaimer(page);
+    await skipWarmupIfPresent(page);
 
     const logBtn2 = page.getByTestId('setlog-tinta-log-btn');
     await logBtn2.waitFor({ state: 'visible', timeout: 20000 });
@@ -224,6 +248,7 @@ test.describe('Core authenticated loop — the automated gym test', () => {
   test('swap an exercise via "Aparat ocupat" pick-list', async ({ page }) => {
     await page.goto('/app/antrenor/workout');
     await dismissDisclaimer(page);
+    await skipWarmupIfPresent(page);
     await page.getByTestId('setlog-tinta-log-btn').waitFor({ state: 'visible', timeout: 20000 });
 
     const originalName =
@@ -247,6 +272,7 @@ test.describe('Core authenticated loop — the automated gym test', () => {
   test('skip ("Nu vreau") removes an exercise from today', async ({ page }) => {
     await page.goto('/app/antrenor/workout');
     await dismissDisclaimer(page);
+    await skipWarmupIfPresent(page);
     await page.getByTestId('setlog-tinta-log-btn').waitFor({ state: 'visible', timeout: 20000 });
 
     // "Nu vreau" = I'm done with this one. It drops/advances the current slot.

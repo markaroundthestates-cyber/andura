@@ -173,6 +173,24 @@ describe('SessionTimer — §F-pass2-sessiontimer-01 menu button + sheet', () =>
     expect(onPain).not.toHaveBeenCalled();
   });
 
+  // Z-WAR (founder live 2026-06-12) — the menu open/close is mirrored to the
+  // parent so the in-session logging dock yields (auto-hides) while the sheet is
+  // up. Fires true on open, false on close (action OR backdrop).
+  it('onMenuOpenChange fires true on open, false on close (action + backdrop)', () => {
+    const onMenuOpenChange = vi.fn();
+    renderTimer({ onMenuOpenChange, onPain: vi.fn() });
+    fireEvent.click(screen.getByTestId('workout-menu-trigger'));
+    expect(onMenuOpenChange).toHaveBeenLastCalledWith(true);
+    // Close via an action.
+    fireEvent.click(screen.getByTestId('workout-menu-pain'));
+    expect(onMenuOpenChange).toHaveBeenLastCalledWith(false);
+    // Re-open then close via the backdrop.
+    fireEvent.click(screen.getByTestId('workout-menu-trigger'));
+    expect(onMenuOpenChange).toHaveBeenLastCalledWith(true);
+    fireEvent.click(screen.getByTestId('workout-menu-backdrop'));
+    expect(onMenuOpenChange).toHaveBeenLastCalledWith(false);
+  });
+
   it('click inside sheet does NOT dismiss via backdrop (stopPropagation)', () => {
     renderTimer();
     fireEvent.click(screen.getByTestId('workout-menu-trigger'));
