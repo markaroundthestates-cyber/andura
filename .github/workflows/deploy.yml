@@ -222,7 +222,7 @@ jobs:
       - name: Wait for GitHub Pages propagation
         run: sleep 45
       - name: Lighthouse CI live URL
-        run: npx lhci autorun --collect.url=https://andura.app || echo "::notice::Lighthouse advisory run non-blocking — exit ignored (no red annotation)"
+        run: npx lhci autorun --collect.url=https://andura.app || echo "[lighthouse] advisory run non-blocking — exit ignored (plain log, no annotation)"
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
         continue-on-error: true

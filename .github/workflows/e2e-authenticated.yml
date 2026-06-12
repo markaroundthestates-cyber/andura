@@ -114,7 +114,7 @@ jobs:
         if: always()
         run: |
           if [ "${{ steps.authed.outcome }}" = "success" ]; then
-            echo "::notice::Authenticated core-loop E2E passed."
+            echo "[e2e] Authenticated core-loop E2E passed."
           else
             echo "::warning::Authenticated core-loop E2E did not pass (advisory, non-blocking) — see the HTML report artifact."
           fi

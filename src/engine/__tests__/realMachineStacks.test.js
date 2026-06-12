@@ -6,7 +6,7 @@
 // using the REAL off-grid values from his debug log, and prove the flag-OFF path is
 // byte-identical (the generic rounder result unchanged).
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import { resolveRealStack, REAL_STACKS } from '../dp/realMachineStacks.js';
 import { roundToEquipmentWeight } from '../../config/weights.js';
 import * as flags from '../../util/featureFlags.js';
