@@ -245,7 +245,7 @@ test.describe('Core authenticated loop — the automated gym test', () => {
     }
   });
 
-  test('swap an exercise via "Aparat ocupat" pick-list', async ({ page }) => {
+  test('"Aparat ocupat" defers the exercise in-session (no pick-list)', async ({ page }) => {
     await page.goto('/app/antrenor/workout');
     await dismissDisclaimer(page);
     await skipWarmupIfPresent(page);
@@ -254,19 +254,32 @@ test.describe('Core authenticated loop — the automated gym test', () => {
     const originalName =
       (await page.getByTestId('wv2-exname').textContent().catch(() => '')) ?? '';
 
-    // Open the same-muscle pick-list, choose the first offered alternative (row 0
-    // = the smart pre-pick). SwapPickSheet renders swap-pick-row-{idx} rows.
+    // Busy redesign (founder 2026-06-12): tapping "Ocupat" DEFERS the exercise
+    // to a later slot (the machine may free up) and the next pending exercise
+    // becomes current immediately — NO pick-list. The sheet only appears as a
+    // fallback when there is nothing to defer behind (last pending exercise) —
+    // on a fresh multi-exercise session that fallback must not trigger, but we
+    // handle it defensively so the spec holds on any account state.
     await page.getByTestId('wv2-ex-action-ocupat').click();
-    await page.getByTestId('swap-pick-sheet').waitFor({ state: 'visible', timeout: 8000 });
-    await page.getByTestId('swap-pick-row-0').click();
+    const fallbackSheet = await page
+      .getByTestId('swap-pick-sheet')
+      .waitFor({ state: 'visible', timeout: 3000 })
+      .then(() => true)
+      .catch(() => false);
+    if (fallbackSheet) {
+      // Last-exercise fallback: complete the swap so the session stays active.
+      await page.getByTestId('swap-pick-row-0').click();
+    }
 
-    // The active exercise name changed (the swap took effect) OR the swap sheet
-    // closed cleanly back to an active set — either proves the swap path is live.
+    // The active exercise changed (defer advanced to the next pending one, or
+    // the fallback swap replaced it) and a set is loggable again.
     await page.getByTestId('setlog-tinta-log-btn').waitFor({ state: 'visible', timeout: 10000 });
     const afterName =
       (await page.getByTestId('wv2-exname').textContent().catch(() => '')) ?? '';
-    expect.soft(afterName.length, 'an exercise is active after swap').toBeGreaterThan(0);
-    expect.soft(afterName, `swap changed exercise from "${originalName}"`).not.toBe('');
+    expect.soft(afterName.length, 'an exercise is active after busy').toBeGreaterThan(0);
+    expect
+      .soft(afterName, `busy moved on from "${originalName}" (deferred, not stuck)`)
+      .not.toBe(originalName);
   });
 
   test('skip ("Nu vreau") removes an exercise from today', async ({ page }) => {
@@ -275,8 +288,22 @@ test.describe('Core authenticated loop — the automated gym test', () => {
     await skipWarmupIfPresent(page);
     await page.getByTestId('setlog-tinta-log-btn').waitFor({ state: 'visible', timeout: 20000 });
 
-    // "Nu vreau" = I'm done with this one. It drops/advances the current slot.
+    // "Nu vreau" opens the alternatives PICKER first (browse-first UX — founder
+    // 2026-06-11: refuza→vede lista→alege/inapoi). The true skip is the
+    // picker's "Nu vreau sa-l fac" drop action (swap-pick-drop). When the pool
+    // has no alternatives the picker can be bypassed and the slot drops
+    // directly — handle both. (The old spec tapped nuvreau and raced for
+    // advancement immediately, encoding the pre-picker semantics; it passed
+    // only when the session state happened to bypass the sheet.)
     await page.getByTestId('wv2-ex-action-nuvreau').click();
+    const sheetShown = await page
+      .getByTestId('swap-pick-sheet')
+      .waitFor({ state: 'visible', timeout: 8000 })
+      .then(() => true)
+      .catch(() => false);
+    if (sheetShown) {
+      await page.getByTestId('swap-pick-drop').click();
+    }
     // The skipped strip appears, OR the session advanced to the next exercise /
     // post-rpe — any of those proves the skip path is wired end-to-end.
     const advanced = await Promise.race([
