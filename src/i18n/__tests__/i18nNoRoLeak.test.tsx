@@ -112,6 +112,7 @@ import { SettingsExport } from '../../react/routes/screens/cont/SettingsExport';
 import { SettingsFaq } from '../../react/routes/screens/cont/SettingsFaq';
 import { SettingsImport } from '../../react/routes/screens/cont/SettingsImport';
 import { SettingsNotifications } from '../../react/routes/screens/cont/SettingsNotifications';
+import { Noutati } from '../../react/routes/screens/cont/Noutati';
 import { SettingsPrefs } from '../../react/routes/screens/cont/SettingsPrefs';
 import { SettingsPrivacy } from '../../react/routes/screens/cont/SettingsPrivacy';
 import { SettingsProfile } from '../../react/routes/screens/cont/SettingsProfile';
@@ -956,6 +957,7 @@ describe('Wave E4 i18n — Settings sub-screens render EN-clean under EN locale'
     ['SettingsFaq',           '/app/cont/settings-faq',           <SettingsFaq />],
     ['SettingsImport',        '/app/cont/settings-import',        <SettingsImport />],
     ['SettingsNotifications', '/app/cont/settings-notifications', <SettingsNotifications />],
+    ['Noutati',               '/app/cont/noutati',                <Noutati />],
     ['SettingsPrefs',         '/app/cont/settings-prefs',         <SettingsPrefs />],
     ['SettingsPrivacy',       '/app/cont/settings-privacy',       <SettingsPrivacy />],
     ['SettingsProfile',       '/app/cont/settings-profile',       <SettingsProfile />],

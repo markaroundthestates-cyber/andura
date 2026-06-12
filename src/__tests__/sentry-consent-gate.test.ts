@@ -1,7 +1,9 @@
-// §SECURITY-HIGH-1-SENTRY-FIX (DIM 10 SECURITY-AUDIT-DEEPER chat 5) —
-// Consent gate verification pentru initSentry. Pre-fix: initSentry pornit
-// unconditional in main.tsx, ignora telemetryOptIn (default FALSE per
-// settingsStore §51). Post-fix: initSentry pornit DOAR la opt-in explicit.
+// §SECURITY-HIGH-1-SENTRY-FIX (DIM 10 SECURITY-AUDIT-DEEPER chat 5) +
+// founder pick 2026-06-12 (crash reporting DEFAULT-ON, opt-out). The gate is
+// still telemetryOptIn-driven; only the DEFAULT changed from FALSE → TRUE. So a
+// fresh user reports crashes; a user who opts OUT (telemetryOptIn=false) keeps
+// initSentry un-fired. The gate condition + subscribe lazy-init logic are
+// unchanged — these tests cover that the gate respects the flag value either way.
 //
 // Tests exercita pattern logic direct (gate condition + subscribe behavior)
 // fara a importa main.tsx (care porneste full React tree). Daca pattern
@@ -23,29 +25,33 @@ afterEach(() => {
 });
 
 describe('Sentry consent gate — telemetryOptIn default behavior', () => {
-  it('telemetryOptIn default este FALSE per settingsStore spec', () => {
-    expect(useSettingsStore.getState().telemetryOptIn).toBe(false);
+  it('telemetryOptIn default este TRUE per settingsStore spec (founder 2026-06-12)', () => {
+    expect(useSettingsStore.getState().telemetryOptIn).toBe(true);
   });
 
-  it('cu telemetryOptIn=FALSE, gate condition NU declanseaza initSentry', () => {
+  it('cu default ON, gate condition declanseaza initSentry (fresh user)', () => {
     // Replica gate logic main.tsx §SECURITY-HIGH-1-SENTRY-FIX.
-    if (useSettingsStore.getState().telemetryOptIn) {
-      initSentryMock();
-    }
-    expect(initSentryMock).not.toHaveBeenCalled();
-  });
-
-  it('cu telemetryOptIn=TRUE pre-set, gate condition declanseaza initSentry', () => {
-    useSettingsStore.getState().setTelemetryOptIn(true);
     if (useSettingsStore.getState().telemetryOptIn) {
       initSentryMock();
     }
     expect(initSentryMock).toHaveBeenCalledTimes(1);
   });
+
+  it('cu telemetryOptIn=FALSE (opt-out), gate condition NU declanseaza initSentry', () => {
+    useSettingsStore.getState().setTelemetryOptIn(false);
+    if (useSettingsStore.getState().telemetryOptIn) {
+      initSentryMock();
+    }
+    expect(initSentryMock).not.toHaveBeenCalled();
+  });
 });
 
 describe('Sentry consent gate — subscribe toggle false->true triggers init', () => {
   it('subscribe declanseaza initSentry cand telemetryOptIn devine TRUE', () => {
+    // Default is now ON; opt OUT first so the re-opt-in is a real false->true
+    // transition (the mid-session lazy-init path).
+    useSettingsStore.getState().setTelemetryOptIn(false);
+
     // Replica subscribe logic main.tsx §SECURITY-HIGH-1-SENTRY-FIX.
     const unsub = useSettingsStore.subscribe((state, prevState) => {
       if (state.telemetryOptIn && !prevState.telemetryOptIn) {
@@ -55,7 +61,7 @@ describe('Sentry consent gate — subscribe toggle false->true triggers init', (
 
     expect(initSentryMock).not.toHaveBeenCalled();
 
-    // User opt-in via SettingsPrivacy toggle.
+    // User re-opts-in via SettingsPrivacy toggle.
     useSettingsStore.getState().setTelemetryOptIn(true);
 
     expect(initSentryMock).toHaveBeenCalledTimes(1);

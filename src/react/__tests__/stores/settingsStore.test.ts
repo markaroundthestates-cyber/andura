@@ -49,3 +49,26 @@ describe('settingsStore — task_18', () => {
     expect(useSettingsStore.getState().acceptedDisclaimer).toBe(false);
   });
 });
+
+// #6 fix 2026-06-12 — crash reporting (telemetryOptIn) DEFAULT-ON + opt-out that
+// survives reload/PWA-update (persisted, not reset to off on a cold bundle).
+describe('settingsStore — crash reporting default-ON + opt-out persistence', () => {
+  it('telemetryOptIn defaults to true (crash reporting ON by default)', () => {
+    expect(useSettingsStore.getState().telemetryOptIn).toBe(true);
+  });
+
+  it('opt-out is persisted to localStorage (survives a cold/updated bundle)', () => {
+    useSettingsStore.getState().setTelemetryOptIn(false);
+    // The zustand persist payload is what a fresh bundle rehydrates from on the
+    // next load. A cold bundle must read this stored `false`, NOT reset to ON.
+    const persisted = JSON.parse(localStorage.getItem('wv2-settings-store') ?? '{}');
+    expect(persisted.state.telemetryOptIn).toBe(false);
+  });
+
+  it('opt-back-in is persisted too (toggle round-trips)', () => {
+    useSettingsStore.getState().setTelemetryOptIn(false);
+    useSettingsStore.getState().setTelemetryOptIn(true);
+    const persisted = JSON.parse(localStorage.getItem('wv2-settings-store') ?? '{}');
+    expect(persisted.state.telemetryOptIn).toBe(true);
+  });
+});

@@ -48,11 +48,13 @@ import {
   Database,
   AlertTriangle,
   LifeBuoy,
+  Megaphone,
   ChevronRight,
   Flame,
   Pencil,
   Check,
 } from 'lucide-react';
+import { getUnseenCount } from '../../../lib/announcements';
 
 interface ContRow {
   id: string;
@@ -61,6 +63,8 @@ interface ContRow {
   Icon: typeof User;
   danger?: boolean;
   target?: GotoScreen;
+  /** When true, show an unseen-count dot driven by the announcements cache. */
+  unseenBadge?: boolean;
 }
 
 interface ContSection {
@@ -85,6 +89,10 @@ const SECTIONS: readonly ContSection[] = [
     id: 'cont',
     titleKey: 'cont.sections.cont',
     rows: [
+      // Noutati — founder→users announcements / patch notes. Top of Account so
+      // official news is SEEN, not buried (founder 2026-06-12). Unseen-dot cues
+      // new entries since the user last opened the screen.
+      { id: 'noutati', labelKey: 'cont.rows.noutati', Icon: Megaphone, target: 'cont-noutati', unseenBadge: true },
       { id: 'profile', labelKey: 'cont.rows.profile', Icon: User, target: 'settings-profile' },
       { id: 'subscription', labelKey: 'cont.rows.subscription', Icon: Sparkles, target: 'settings-subscription' },
     ],
@@ -214,6 +222,11 @@ export function Cont(): JSX.Element {
     setPickerOpen(false);
   };
 
+  // Announcements unseen-dot — count of cached entries newer than last-seen.
+  // Read once on render from the local cache (no network on Account mount); the
+  // dot clears after the user opens the Noutati screen (markAnnouncementsSeen).
+  const unseenAnnouncements = getUnseenCount();
+
   return (
     <section className="pt-4 px-5 pb-6 min-h-screen" data-testid="cont-home">
       {/* Pulse header (interfata-noua/screens-tabs.jsx:331) — display wordmark.
@@ -321,9 +334,21 @@ export function Cont(): JSX.Element {
                   className={`w-full flex items-center gap-3 px-4 py-3.5 text-left disabled:opacity-50 disabled:cursor-not-allowed ${!isLast ? 'border-b border-line' : ''} ${row.danger ? 'text-brickdark' : 'text-ink'}`}
                 >
                   {/* Pulse row icon chip (interfata-noua/screens-tabs.jsx
-                      .cont-ico) — small tinted square behind the glyph. */}
-                  <span className="w-9 h-9 rounded-[11px] grid place-items-center flex-shrink-0 bg-paper">
+                      .cont-ico) — small tinted square behind the glyph. An
+                      unseen-badge row (Noutati) carries a small accent dot on
+                      the chip when there are new announcements. */}
+                  <span className="relative w-9 h-9 rounded-[11px] grid place-items-center flex-shrink-0 bg-paper">
                     <Icon className="w-5 h-5" aria-hidden="true" />
+                    {row.unseenBadge && unseenAnnouncements > 0 && (
+                      <span
+                        className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full grid place-items-center text-[10px] font-bold leading-none"
+                        style={{ background: 'var(--grad-pulse)', color: 'var(--on-accent)', boxShadow: '0 0 0 2px var(--paper)' }}
+                        data-testid={`cont-row-${row.id}-unseen`}
+                        aria-label={t('announcements.unseenBadge', { count: unseenAnnouncements })}
+                      >
+                        {unseenAnnouncements}
+                      </span>
+                    )}
                   </span>
                   <span className="flex-1 text-sm font-semibold">{t(row.labelKey)}</span>
                   <ChevronRight className="w-5 h-5 flex-shrink-0 text-ink3" strokeWidth={1.6} aria-hidden="true" />

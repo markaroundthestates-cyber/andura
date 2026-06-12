@@ -10,7 +10,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RotateCcw, ChevronRight, RefreshCcw, GitBranch, DownloadCloud, Bug, ClipboardCopy } from 'lucide-react';
 import { useSettingsStore } from '../../../stores/settingsStore';
-import type { WeekStart } from '../../../stores/settingsStore';
 import { gotoPath } from '../../../lib/navigation';
 import { checkForUpdatesAndApply } from '../../../lib/swUpdate';
 import { debugLog, isDebugEnabled, setDebugEnabled, isCollectEnabled, setCollectEnabled } from '../../../lib/debugLog';
@@ -18,14 +17,11 @@ import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
 import { getCurrentLocale, setLocale, t } from '../../../../i18n/index.js';
 
+// Founder pick 2026-06-12 — kg-only. Pounds (lb) is hidden entirely (not just
+// disabled) so kg is the single visible + stored unit; lb conversion stays
+// post-Beta. Single-option array keeps the toggle-group markup unchanged.
 const UNIT_OPTIONS: ReadonlyArray<{ value: 'kg' | 'lb'; labelKey: string }> = [
   { value: 'kg', labelKey: 'settings.prefs.units.kg' },
-  { value: 'lb', labelKey: 'settings.prefs.units.lb' },
-];
-
-const WEEK_START_OPTIONS: ReadonlyArray<{ value: WeekStart; labelKey: string }> = [
-  { value: 'L', labelKey: 'settings.prefs.weekStart.monday' },
-  { value: 'D', labelKey: 'settings.prefs.weekStart.sunday' },
 ];
 
 type Locale = 'en' | 'ro';
@@ -38,8 +34,6 @@ const LANGUAGE_OPTIONS: ReadonlyArray<{ value: Locale; labelKey: string }> = [
 export function SettingsPrefs(): JSX.Element {
   const navigate = useNavigate();
   const setUnitSystem = useSettingsStore((s) => s.setUnitSystem);
-  const weekStart = useSettingsStore((s) => s.weekStart);
-  const setWeekStart = useSettingsStore((s) => s.setWeekStart);
 
   // §i18n 2026-05-28 — live language switch. setLocale() persists to
   // localStorage (`sf.locale`), syncs `<html lang>`, and updates the cached
@@ -120,9 +114,8 @@ export function SettingsPrefs(): JSX.Element {
         >
           {UNIT_OPTIONS.map((opt) => {
             // Honest V1: app shows weights in kg everywhere; lb conversion is
-            // post-Beta. kg is the effective active unit regardless of any
-            // legacy persisted value; lb is disabled (no false "switched" state).
-            const disabled = opt.value === 'lb';
+            // post-Beta. kg is the only offered option (lb hidden, founder pick
+            // 2026-06-12) so it is always the selected active unit.
             const selected = opt.value === 'kg';
             return (
               <button
@@ -130,9 +123,8 @@ export function SettingsPrefs(): JSX.Element {
                 type="button"
                 data-testid={`unit-${opt.value}`}
                 aria-pressed={selected}
-                disabled={disabled}
-                onClick={() => !disabled && setUnitSystem(opt.value)}
-                className={`flex-1 min-h-[44px] py-2.5 rounded-[11px] text-sm font-semibold transition-colors ${disabled ? 'text-ink2 opacity-60 cursor-not-allowed' : selected ? '' : 'text-ink2'}`}
+                onClick={() => setUnitSystem(opt.value)}
+                className={`flex-1 min-h-[44px] py-2.5 rounded-[11px] text-sm font-semibold transition-colors ${selected ? '' : 'text-ink2'}`}
                 style={selected ? { background: 'var(--grad-pulse)', color: 'var(--on-accent)' } : undefined}
               >
                 {t(opt.labelKey)}
@@ -144,32 +136,11 @@ export function SettingsPrefs(): JSX.Element {
           {t('settings.prefs.units.note')}
         </p>
 
-        <p className="font-mono text-[11px] uppercase tracking-[0.14em] font-semibold text-ink3 mb-3">
-          {t('settings.prefs.weekStart.heading')}
-        </p>
-        <div
-          className="flex gap-1.5 rounded-[14px] p-1 mb-4"
-          style={{ background: 'var(--surface-2)' }}
-          role="group"
-          aria-label={t('settings.prefs.weekStart.heading')}
-        >
-          {WEEK_START_OPTIONS.map((opt) => {
-            const selected = weekStart === opt.value;
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                data-testid={`week-start-${opt.value}`}
-                aria-pressed={selected}
-                onClick={() => setWeekStart(opt.value)}
-                className={`flex-1 min-h-[44px] py-2.5 rounded-[11px] text-sm font-semibold transition-colors ${selected ? '' : 'text-ink2'}`}
-                style={selected ? { background: 'var(--grad-pulse)', color: 'var(--on-accent)' } : undefined}
-              >
-                {t(opt.labelKey)}
-              </button>
-            );
-          })}
-        </div>
+        {/* Week-start control removed (founder pick 2026-06-12) — weeks always
+            start on Monday; settingsStore.weekStart stays at its 'L' default and
+            consumers (Calendar/heatmap/scheduleAdapter) read that value unchanged.
+            The toggle is hidden, not just pinned, since Sunday-start is not an
+            offered option. */}
 
         {/* §i18n 2026-05-28 — LIVE language toggle (Daniel CEO directive
             "schimbam complet limba default in engleza si lasam romana ca

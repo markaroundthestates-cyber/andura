@@ -17,11 +17,22 @@ import { useNavigate } from 'react-router-dom';
 import { Sparkles, Gift } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { isBetaNotified, recordBetaNotifyInterest } from '../../../lib/betaNotify';
 import { t } from '../../../../i18n/index.js';
 
 export function SettingsSubscription(): JSX.Element {
   const navigate = useNavigate();
-  const [notified, setNotified] = useState(false);
+  // #3 fix 2026-06-12 — initialize from the persisted local flag so the CTA
+  // stays in its done-state across reloads (was lost-on-reload local state).
+  const [notified, setNotified] = useState(() => isBetaNotified());
+
+  // On tap: flip local UI immediately, then best-effort record the interest to
+  // RTDB (`/betaNotify/<uid>`) for the founder to read. recordBetaNotifyInterest
+  // persists the local flag + never throws (graceful when signed-out/offline).
+  function handleNotify(): void {
+    setNotified(true);
+    void recordBetaNotifyInterest();
+  }
 
   return (
     <section className="min-h-screen flex flex-col" data-testid="settings-subscription">
@@ -56,7 +67,7 @@ export function SettingsSubscription(): JSX.Element {
 
         <button
           type="button"
-          onClick={() => setNotified(true)}
+          onClick={handleNotify}
           data-testid="subscription-notify-cta"
           className="text-sm font-semibold underline disabled:no-underline"
           style={{ color: 'var(--aqua)' }}

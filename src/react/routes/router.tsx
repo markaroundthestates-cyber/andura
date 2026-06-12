@@ -94,6 +94,8 @@ const SettingsNotifications = lazy(() => import('./screens/cont/SettingsNotifica
 const SettingsSubscription = lazy(() => import('./screens/cont/SettingsSubscription').then((m) => ({ default: m.SettingsSubscription })));
 const SettingsAppearance = lazy(() => import('./screens/cont/SettingsAppearance').then((m) => ({ default: m.SettingsAppearance })));
 const SettingsPrefs = lazy(() => import('./screens/cont/SettingsPrefs').then((m) => ({ default: m.SettingsPrefs })));
+// Noutati — founder→users announcements / patch notes (read-only, 2026-06-12).
+const Noutati = lazy(() => import('./screens/cont/Noutati').then((m) => ({ default: m.Noutati })));
 // NOTE (Account regroup 2026-06-12) — ExerciseLibrary / SettingsPrivacy /
 // SettingsTerms / SettingsExport / SettingsImport / SettingsAbout /
 // SettingsSupport / SettingsFaq are no longer referenced directly here: their
@@ -228,6 +230,8 @@ export const router = createBrowserRouter([
           { path: 'settings-subscription', element: <LazyRoute><SettingsSubscription /></LazyRoute> },
           { path: 'settings-appearance', element: <LazyRoute><SettingsAppearance /></LazyRoute> },
           { path: 'settings-prefs', element: <LazyRoute><SettingsPrefs /></LazyRoute> },
+          // Noutati — founder→users announcements / patch notes (read-only).
+          { path: 'noutati', element: <LazyRoute><Noutati /></LazyRoute> },
           // Account regroup 2026-06-12 — NEW grouped hubs (Cont rows point here).
           { path: 'exercitii-echipament', element: <LazyRoute><ExercitiiEchipament /></LazyRoute> },
           { path: 'datele-mele', element: <LazyRoute><DateleMele /></LazyRoute> },

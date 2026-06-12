@@ -25,18 +25,19 @@ applyInitialPalette();
 // via Cont > Setari > Limba). Pre-mount so the initial HTML reflects choice.
 syncHtmlLang();
 
-// §SECURITY-HIGH-1-SENTRY-FIX (DIM 10 SECURITY-AUDIT-DEEPER chat 5) —
-// GDPR Art. 7 consent gate. Sentry init pornit DOAR daca user opt-in
-// explicit via SettingsPrivacy "Raportare erori" toggle (storage key
-// telemetryOptIn, default FALSE per settingsStore §51). Toggle gates ONLY
-// Sentry crash/error monitoring (PII-scrubbed) — NU usage metrics, NU
-// k-anonimat. Pre-fix unconditional call ignora consent = drift fata de
-// PrivacyPolicy claim "Implicit oprit". Subscribe lazy-init pe toggle false->true pentru a porni
-// Sentry mid-session dupa opt-in. NOTE: NU putem un-init Sentry runtime
-// (Sentry SDK limit) — daca user revoca post-init, scope ramane active
-// duration session, dar NO new envelopes envoit post-toggle false
-// inseamna user trebuie reload pentru full disable (TODO future:
-// Sentry.close()).
+// §SECURITY-HIGH-1-SENTRY-FIX (DIM 10 SECURITY-AUDIT-DEEPER chat 5) +
+// founder pick 2026-06-12 (crash reporting DEFAULT-ON, opt-out). Sentry init is
+// gated on the persisted `telemetryOptIn` flag (SettingsPrivacy "Crash reporting"
+// toggle). The default is now TRUE (settingsStore DEFAULTS) so a fresh / cold /
+// PWA-updated bundle reports crashes unless the user has explicitly opted OUT —
+// the persisted `false` survives reload + bundle update (zustand persist hydrates
+// the stored value synchronously before this read). The gate still reads the live
+// store value, so a user who turned it OFF keeps Sentry uninitialized. Toggle gates
+// ONLY Sentry crash/error monitoring (PII-scrubbed sentry.js beforeSend) — NU usage
+// metrics. Subscribe lazy-inits on a false->true flip so a user who opts back in
+// mid-session starts reporting without a reload. NOTE: NU putem un-init Sentry
+// runtime (Sentry SDK limit) — opting OUT post-init stops NEW envelopes only on the
+// next reload (TODO future: Sentry.close()).
 if (useSettingsStore.getState().telemetryOptIn) {
   initSentry();
 }

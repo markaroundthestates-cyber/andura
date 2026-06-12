@@ -48,16 +48,16 @@ describe('SettingsPrefs — render + interactions', () => {
     expect(screen.getByRole('heading', { name: 'Setari', level: 1 })).toBeInTheDocument();
   });
 
-  it('renders kg active + lb disabled (lb conversion post-Beta)', () => {
+  it('renders kg active + pounds (lb) hidden entirely (founder pick 2026-06-12)', () => {
     renderScreen();
     expect(screen.getByTestId('unit-kg')).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByTestId('unit-lb')).toHaveAttribute('aria-pressed', 'false');
-    expect(screen.getByTestId('unit-lb')).toBeDisabled();
+    // Pounds is removed from the option set — not merely disabled.
+    expect(screen.queryByTestId('unit-lb')).toBeNull();
   });
 
-  it('lb disabled → click is a no-op, store stays kg (no false switch)', () => {
+  it('kg is the stored value (only offered unit)', () => {
     renderScreen();
-    fireEvent.click(screen.getByTestId('unit-lb'));
+    fireEvent.click(screen.getByTestId('unit-kg'));
     expect(useSettingsStore.getState().unitSystem).toBe('kg');
   });
 
@@ -66,16 +66,12 @@ describe('SettingsPrefs — render + interactions', () => {
     expect(screen.getByText(/Momentan doar kilograme/)).toBeInTheDocument();
   });
 
-  it('renders week start L/D + default L', () => {
+  it('week-start control hidden (Monday-only, founder pick 2026-06-12)', () => {
     renderScreen();
-    expect(screen.getByTestId('week-start-L')).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByTestId('week-start-D')).toHaveAttribute('aria-pressed', 'false');
-  });
-
-  it('week start D click → store updated', () => {
-    renderScreen();
-    fireEvent.click(screen.getByTestId('week-start-D'));
-    expect(useSettingsStore.getState().weekStart).toBe('D');
+    // The Monday/Sunday toggle is gone; weekStart stays at its 'L' (Monday) default.
+    expect(screen.queryByTestId('week-start-L')).toBeNull();
+    expect(screen.queryByTestId('week-start-D')).toBeNull();
+    expect(useSettingsStore.getState().weekStart).toBe('L');
   });
 
   // §i18n 2026-05-28 paradigm flip — language toggle is live (Daniel CEO

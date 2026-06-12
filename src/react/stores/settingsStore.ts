@@ -72,7 +72,13 @@ const DEFAULTS: SettingsState = {
   notificationTime: '18:00',
   unitSystem: 'kg',
   weekStart: 'L',
-  telemetryOptIn: false,
+  // Crash reporting DEFAULT-ON (founder pick 2026-06-12) — always-on Sentry
+  // crash/error reporting; the user opts OUT via the Privacy toggle. Persisted
+  // (partialize below) so a cold/PWA-updated bundle reads the stored value
+  // instead of resetting to off. PII is stripped before any envelope is sent
+  // (sentry.js beforeSend). Field name kept (`telemetryOptIn`) to avoid a
+  // store/sync migration; the user-facing label is "Crash reporting".
+  telemetryOptIn: true,
   dataExportConsent: true,
   bottomNavStyle: 'comfortable',
   acceptedDisclaimer: false,

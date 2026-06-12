@@ -64,20 +64,12 @@ beforeEach(() => {
 });
 
 describe('SettingsPrefs — toggle button aria-pressed §6-M3 revert', () => {
-  it('unit kg/lb buttons have aria-pressed reflecting selection', () => {
+  it('unit kg button has aria-pressed reflecting selection (lb hidden 2026-06-12)', () => {
     const { container } = renderPrefs();
     const unitKg = container.querySelector('[data-testid="unit-kg"]');
-    const unitLb = container.querySelector('[data-testid="unit-lb"]');
     expect(unitKg?.getAttribute('aria-pressed')).toBe('true');
-    expect(unitLb?.getAttribute('aria-pressed')).toBe('false');
-  });
-
-  it('week start L/D buttons have aria-pressed reflecting selection', () => {
-    const { container } = renderPrefs();
-    const wsL = container.querySelector('[data-testid="week-start-L"]');
-    const wsD = container.querySelector('[data-testid="week-start-D"]');
-    expect(wsL?.getAttribute('aria-pressed')).toBe('true');
-    expect(wsD?.getAttribute('aria-pressed')).toBe('false');
+    // Pounds (lb) removed from the option set — founder pick 2026-06-12.
+    expect(container.querySelector('[data-testid="unit-lb"]')).toBeNull();
   });
 
   it('no role=radio applied to toggle buttons (revert validation)', () => {

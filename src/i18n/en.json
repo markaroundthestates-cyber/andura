@@ -1539,7 +1539,8 @@
       "exercitiiEchipament": "Exercises & equipment",
       "dateleMele": "My data",
       "confidentialitateTermeni": "Privacy & terms",
-      "ajutorDespre": "Help & about"
+      "ajutorDespre": "Help & about",
+      "noutati": "What's new"
     },
     "hubs": {
       "exercitiiEchipament": {
@@ -1613,6 +1614,21 @@
     "emailFallback": "Your Andura profile",
     "version": "Andura v1.0.0",
     "versionTagline": "Training with brain."
+  },
+  "announcements": {
+    "title": "What's new",
+    "intro": "Official announcements and patch notes from the Andura team.",
+    "pinned": "Pinned",
+    "loading": "Loading announcements…",
+    "unseenBadge": "{count} new announcements",
+    "emptyTitle": "Nothing new yet",
+    "emptyBody": "Updates and patch notes will show up here. Check back soon.",
+    "error": {
+      "title": "Couldn't load announcements",
+      "staleTitle": "Showing saved announcements",
+      "body": "Check your connection and try again.",
+      "retry": "Try again"
+    }
   },
   "settings": {
     "prefs": {
@@ -1776,8 +1792,8 @@
       "exportToggleTitle": "Allow data export",
       "exportToggleDesc": "I can download my data anytime from the Download data screen.",
       "telemetryToggleTitle": "Crash reporting",
-      "telemetryToggleDesc": "Automatically send crash reports so we can fix issues. Off by default.",
-      "footerNote": "We use Sentry only for crash reports, and only if you opt in. Personal data (email, identifiers) is stripped before sending. We don't collect usage metrics. You can revoke anytime.",
+      "telemetryToggleDesc": "Automatically send crash reports so we can fix issues. On by default - turn it off anytime.",
+      "footerNote": "We use Sentry only for crash reports, on by default - turn it off above anytime. Personal data (email, identifiers) is stripped before sending. We don't collect usage metrics.",
       "policy": {
         "title": "Privacy policy",
         "collectHeading": "What we collect",
@@ -1799,7 +1815,7 @@
           "Access + portability: export all your data as JSON from Account > Download data",
           "Erasure: clear everything from Account > Logout and delete > Delete account",
           "Rectification: edit your profile directly in Account > Profile",
-          "Objection: crash reporting toggle above (off by default)",
+          "Objection: crash reporting toggle above (on by default, turn it off anytime)",
           "Restricted processing: disable the Firebase backup (sign out)"
         ],
         "storageHeading": "Storage + retention",
@@ -1807,7 +1823,7 @@
         "sensitiveHeading": "Sensitive data (GDPR Art. 9)",
         "sensitiveBody": "Andura is a fitness app, NOT a medical device. Body weight, measurements, or pain reported via the Pain Button are strictly sporting data, NOT medical. We don't collect diagnoses, treatments, prescriptions, or other GDPR Art. 9 special categories. If you have medical conditions, see your doctor first (see Medical disclaimer in Terms of service).",
         "subprocessorsHeading": "Sub-processors",
-        "subprocessorsBody": "To run the service we use two sub-processors: Google Firebase (auth + RTDB backup, EU europe-west1 region) and Sentry (app error reporting, opt-in, with personal data stripped). ZERO third-party analytics, ZERO advertising, ZERO data brokers.",
+        "subprocessorsBody": "To run the service we use two sub-processors: Google Firebase (auth + RTDB backup, EU europe-west1 region) and Sentry (app error reporting, on by default with an opt-out, personal data stripped). ZERO third-party analytics, ZERO advertising, ZERO data brokers.",
         "contactHeading": "Contact + complaints",
         "contactBody": "For GDPR questions or complaints: {email}. You also have the right to file a complaint with your national data protection authority.",
         "version": "Beta version - updated 2026-05-22. Data controller: Andura PWA, solo developer Daniel. Data stored in the EU (Firebase europe-west1)."
@@ -1827,7 +1843,7 @@
         "Andura offers recommendations, NOT medical prescriptions.",
         "You're responsible for your own safety in the gym.",
         "The Firebase backup is optional (Magic Link sign-in) and encrypts data in transit (HTTPS).",
-        "Crash reporting is opt-in (off by default), with personal data stripped before sending.",
+        "Crash reporting is on by default with an opt-out, with personal data stripped before sending.",
         "Andura is in free Beta. Features may change or be added without notice until V1 launch."
       ],
       "tcVersion": "Beta version - updated 2026-05-18. Full text available online at",
@@ -2321,7 +2337,7 @@
           "Andura offers recommendations, NOT medical prescriptions.",
           "You're responsible for your own safety in the gym.",
           "Firebase backup is optional and encrypts data in transit (HTTPS).",
-          "Crash reporting is opt-in (off by default), with personal data stripped.",
+          "Crash reporting is on by default with an opt-out, with personal data stripped.",
           "Andura is in free Beta; features may change until V1."
         ]
       },
@@ -2596,7 +2612,7 @@
     "termsBackupHeading": "Backup and security",
     "termsBackupBody": "Firebase backup is optional (magic-link authentication, no password) and encrypts data in transit over HTTPS.",
     "termsErrorsHeading": "Error reporting",
-    "termsErrorsBody": "Error reporting (crashes) is opt-in (off by default) and uses Sentry, with personal data stripped before sending. We don't collect usage metrics. You can turn it on or off anytime.",
+    "termsErrorsBody": "Error reporting (crashes) is on by default with an opt-out and uses Sentry, with personal data stripped before sending. We don't collect usage metrics. You can turn it on or off anytime.",
     "termsBetaHeading": "Free Beta",
     "termsBetaBody": "Andura is in free Beta. Features may be changed or added without prior notice until the V1 launch.",
     "termsWarrantyHeading": "Provided \"as is\"",

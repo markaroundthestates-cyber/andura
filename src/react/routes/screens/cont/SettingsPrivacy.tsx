@@ -1,7 +1,8 @@
 // ══ SETTINGS PRIVACY — Phase 6 task_14 Cont Sub-Screen ═══════════════════
-// Data export consent + telemetry opt-in toggles. Anti-paternalism:
-// telemetry opt-in default FALSE (Daniel Bugatti craft — user explicit
-// consent required). Data export consent default TRUE (user can revoke).
+// Data export consent + crash-reporting toggles. Crash reporting (telemetryOptIn)
+// is DEFAULT-ON (founder pick 2026-06-12) — always-on PII-scrubbed Sentry crash
+// reports; the user opts OUT here. Data export consent default TRUE (user can
+// revoke). Both persist + survive reload/PWA-update via settingsStore.
 
 import type { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';

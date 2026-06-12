@@ -115,6 +115,11 @@ describe('Navigation helper — Phase 3 Antrenor sub-screens nested', () => {
     expect(gotoPath('cont-ajutor-despre')).toBe('/app/cont/ajutor-despre');
   });
 
+  // Noutati — founder→users announcements (read-only, 2026-06-12).
+  it('cont-noutati → /app/cont/noutati', () => {
+    expect(gotoPath('cont-noutati')).toBe('/app/cont/noutati');
+  });
+
   it('throws pentru unknown screen (runtime fallback)', () => {
     expect(() =>
       // @ts-expect-error testing runtime fallback la unknown screen

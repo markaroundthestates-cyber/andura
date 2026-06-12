@@ -61,9 +61,9 @@ describe('SettingsPrivacy — render + toggles', () => {
     expect(screen.getByTestId('privacy-data-export-toggle')).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('renders telemetry toggle + default false (anti-paternalism)', () => {
+  it('renders crash-reporting toggle + default ON (founder pick 2026-06-12)', () => {
     renderScreen();
-    expect(screen.getByTestId('privacy-telemetry-toggle')).toHaveAttribute('aria-checked', 'false');
+    expect(screen.getByTestId('privacy-telemetry-toggle')).toHaveAttribute('aria-checked', 'true');
   });
 
   it('data export toggle flip → store updated', () => {
@@ -72,13 +72,14 @@ describe('SettingsPrivacy — render + toggles', () => {
     expect(useSettingsStore.getState().dataExportConsent).toBe(false);
   });
 
-  it('telemetry toggle flip → store updated', () => {
+  it('crash-reporting toggle flip → opt-OUT (store false)', () => {
     renderScreen();
+    // Default ON → first click is the opt-out.
     fireEvent.click(screen.getByTestId('privacy-telemetry-toggle'));
-    expect(useSettingsStore.getState().telemetryOptIn).toBe(true);
+    expect(useSettingsStore.getState().telemetryOptIn).toBe(false);
   });
 
-  it('renders honest error-reporting hint (Sentry, no usage metrics)', () => {
+  it('renders honest crash-reporting hint (Sentry, no usage metrics)', () => {
     renderScreen();
     expect(screen.getByText(/Folosim Sentry doar pentru rapoarte de eroare/i)).toBeInTheDocument();
     expect(screen.getByText(/Nu colectam metrici de utilizare/i)).toBeInTheDocument();

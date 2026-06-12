@@ -47,6 +47,8 @@ export type GotoScreen =
   // Each hub merges 2-3 former rows behind one screen + segmented control.
   | 'cont-exercitii-echipament' | 'cont-datele-mele'
   | 'cont-confidentialitate-termeni' | 'cont-ajutor-despre'
+  // Noutati — founder→users announcements / patch notes (read-only, 2026-06-12).
+  | 'cont-noutati'
   // §D047 RIP-OUT drill-down confirm screens (A003 ConfirmModal replacement)
   | 'logout-confirm' | 'delete-account-confirm' | 'reset-data-confirm'
   // §B002 D047 Stage 3 — Avansat section drill-downs
@@ -117,6 +119,7 @@ export function gotoPath(screen: GotoScreen): string {
   if (screen === 'cont-datele-mele') return '/app/cont/datele-mele';
   if (screen === 'cont-confidentialitate-termeni') return '/app/cont/confidentialitate-termeni';
   if (screen === 'cont-ajutor-despre') return '/app/cont/ajutor-despre';
+  if (screen === 'cont-noutati') return '/app/cont/noutati';
 
   // Phase 6 Cont sub-screens (task_09-17, nested sub /app/cont)
   if (

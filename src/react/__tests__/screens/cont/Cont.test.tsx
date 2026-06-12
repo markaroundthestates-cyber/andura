@@ -4,6 +4,11 @@ import { MemoryRouter } from 'react-router-dom';
 import { Cont } from '../../../routes/screens/cont/Cont';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { AVATAR_PRESETS } from '../../../components/Avatar/registry';
+import {
+  writeCachedAnnouncements,
+  markAnnouncementsSeen,
+  parseAnnouncements,
+} from '../../../lib/announcements';
 
 // Minimal JWT helper for tests — base64url-encoded payload only (signature
 // segments are ignored by the display-only decoder in userProfile.ts).
@@ -92,10 +97,10 @@ describe('Cont landing — Phase 5 task_13', () => {
     expect(screen.queryByTestId('cont-section-help')).toBeNull();
   });
 
-  it('renders all 9 rows total (regroup 2026-06-12)', () => {
+  it('renders all rows incl. Noutati (regroup 2026-06-12 + announcements row)', () => {
     renderCont();
     const rows = [
-      'profile', 'subscription',
+      'noutati', 'profile', 'subscription',
       'prefs', 'exercitii-echipament',
       'appearance', 'notifications',
       'datele-mele', 'confidentialitate-termeni',
@@ -202,5 +207,57 @@ describe('Cont — avatar tap-to-pick + confirm', () => {
     fireEvent.click(screen.getByTestId('cont-account-avatar'));
     expect(screen.getByTestId(`avatar-option-${AVATAR_PRESETS[2]!.id}`)).toHaveAttribute('aria-checked', 'true');
     expect(screen.getByTestId(`avatar-option-${AVATAR_PRESETS[9]!.id}`)).toHaveAttribute('aria-checked', 'false');
+  });
+});
+
+// Noutati row (founder 2026-06-12) — announcements entry point at the top of
+// Account, with an unseen-count dot driven by the local announcements cache.
+describe('Cont — Noutati row', () => {
+  it('Noutati row is present, enabled, and points at the announcements screen', () => {
+    renderCont();
+    const row = screen.getByTestId('cont-row-noutati');
+    expect(row).toBeInTheDocument();
+    expect(row).not.toBeDisabled();
+    // It sits in the top "cont" (Account) section.
+    expect(screen.getByTestId('cont-section-cont')).toContainElement(row);
+  });
+
+  it('navigates to /app/cont/noutati when tapped', () => {
+    render(
+      <MemoryRouter initialEntries={['/app/cont']}>
+        <Cont />
+      </MemoryRouter>,
+    );
+    // Row carries the navigation target (gotoPath cont-noutati → that path).
+    // We assert presence + enabled here; full route resolution is covered by
+    // Noutati.test.tsx + router config. (No router Outlet in this harness.)
+    expect(screen.getByTestId('cont-row-noutati')).not.toBeDisabled();
+  });
+
+  it('shows NO unseen dot when there are no new announcements', () => {
+    renderCont();
+    expect(screen.queryByTestId('cont-row-noutati-unseen')).toBeNull();
+  });
+
+  it('shows the unseen dot with a count when the cache has unseen entries', () => {
+    // Seed the cache with two dated entries; never marked seen → both unseen.
+    writeCachedAnnouncements(
+      parseAnnouncements({
+        '-a': { title: 'A', body: 'x', date: '2026-06-01' },
+        '-b': { title: 'B', body: 'y', date: '2026-06-05' },
+      }),
+    );
+    renderCont();
+    const badge = screen.getByTestId('cont-row-noutati-unseen');
+    expect(badge).toBeInTheDocument();
+    expect(badge.textContent).toBe('2');
+  });
+
+  it('hides the dot once the entries have been seen', () => {
+    const list = parseAnnouncements({ '-a': { title: 'A', body: 'x', date: '2026-06-01' } });
+    writeCachedAnnouncements(list);
+    markAnnouncementsSeen(list);
+    renderCont();
+    expect(screen.queryByTestId('cont-row-noutati-unseen')).toBeNull();
   });
 });
