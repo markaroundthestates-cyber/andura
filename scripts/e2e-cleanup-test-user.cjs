@@ -16,7 +16,6 @@
 //   FIREBASE_SERVICE_ACCOUNT        inline Admin SA JSON (raw or base64) — CI path.
 //   GOOGLE_APPLICATION_CREDENTIALS  SA file path — local path (~/.andura-admin/).
 //   PLAYWRIGHT_AUTH_TEST_UID        the test uid to wipe (CI secret).
-/* eslint-disable no-console */
 const admin = require('firebase-admin');
 
 function loadServiceAccount() {

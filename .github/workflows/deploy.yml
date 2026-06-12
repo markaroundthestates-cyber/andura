@@ -230,7 +230,7 @@ jobs:
   # Track 7 §7.7 + §7.6-activate — Checkly synthetic prod deploy refresh.
   # CHECKLY_API_KEY + CHECKLY_ACCOUNT_ID uploaded by Daniel + verified GREEN
   # per SETUP_VERIFICATION.md. Job-level if-condition removed since secrets
-  # always present. continue-on-error preserved la step pentru robustness.
+  # always present. (continue-on-error REMOVED 2026-06-12 — see step note.)
   checkly-deploy:
     needs: deploy
     runs-on: ubuntu-latest
@@ -241,9 +241,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --ignore-scripts
+      # NO continue-on-error + no exit swallow (false-green audit 2026-06-12,
+      # same rule as the Stryker nightly): this step ran "green" while the
+      # deploy actually failed on a stale spec for weeks. The app deploy is a
+      # SEPARATE upstream job (needs: deploy) — a red here is pure monitor
+      # signal and never blocks the site going live.
       - name: Checkly deploy (synthetic monitor refresh)
-        run: npx checkly deploy --force || echo "::notice::Checkly advisory deploy non-blocking — exit ignored (no red annotation)"
+        run: npx checkly deploy --force
         env:
           CHECKLY_API_KEY: ${{ secrets.CHECKLY_API_KEY }}
           CHECKLY_ACCOUNT_ID: ${{ secrets.CHECKLY_ACCOUNT_ID }}
-        continue-on-error: true

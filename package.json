@@ -23,7 +23,7 @@
     "test:e2e:smoke": "playwright test tests/smoke-react.spec.ts tests/magic-link.spec.ts",
     "test:visual": "playwright test tests/visual-regression.spec.ts",
     "test:all": "npm run test:run && npm run test:e2e",
-    "mutation:engine": "stryker run --testRunner vitest --mutate 'src/engine/**/*.ts,src/engine/**/*.js'",
+    "mutation:engine": "stryker run --testRunner vitest --mutate 'src/engine/**/*.ts,src/engine/**/*.js,!src/engine/**/*.d.ts'",
     "exploration": "node scripts/nightly-exploration.mjs",
     "coach:replay": "vitest run scripts/coach-replay/cli.test.mjs",
     "simulation:c": "playwright test tests/simulation/parallel-fuzz.spec.js",

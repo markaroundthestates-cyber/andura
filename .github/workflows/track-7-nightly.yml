@@ -36,9 +36,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --ignore-scripts
+      # NO continue-on-error (false-green audit 2026-06-12): a Stryker CRASH
+      # (config/parse/infra — e.g. the .d.ts BABEL_PARSE_ERROR that ran silent-
+      # green for weeks) must paint the job RED. The mutation SCORE itself stays
+      # informative-only (no thresholds.break) — red here means "the monitor is
+      # broken", not "the score dipped".
       - name: Run Stryker mutation engine subset
         run: npm run mutation:engine
-        continue-on-error: true
       - name: Upload Stryker HTML report
         if: always()
         uses: actions/upload-artifact@v7

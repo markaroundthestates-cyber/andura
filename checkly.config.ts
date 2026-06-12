@@ -1,46 +1,61 @@
-// Track 7 §7.7 — Checkly synthetic prod config per master spec §2.
+// Track 7 §7.7 — Checkly synthetic prod config for live andura.app.
 //
-// READY-TO-ACTIVATE skeleton. Daniel manual activation steps per
-// 📥_inbox/SETUP_DANIEL_TRACK_7.md §A.1:
-//   1. Sign up Checkly Free Hobby (1,500 browser checks/lună sufficient solo dev)
-//   2. Generate CHECKLY_API_KEY + CHECKLY_ACCOUNT_ID
-//   3. npm i -D checkly @checkly/cli (installs framework)
-//   4. Upload secrets la GitHub repo Settings → Actions secrets
-//   5. Run `npx checkly deploy` locally pentru first-push synthetic monitors
+// DEPLOY-READY (2026-06-12, "ne apucam de tot"). Founder activation = 3 steps:
+//   1. Create a Checkly account (Free/Hobby) → app.checklyhq.com
+//   2. Create an API key + grab the Account ID (User Settings → API keys /
+//      Account settings → General). Export them locally:
+//        export CHECKLY_API_KEY=cu_xxx
+//        export CHECKLY_ACCOUNT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+//   3. npx checkly test     (dry-run against Checkly infra — needs the creds)
+//      npx checkly deploy    (creates the checks live on the account)
+// Full runbook + free-tier math: salafull/_CHECKLY_ACTIVATION_2026-06-12.md
 //
-// Once activated:
-//   - Frequency 5min EU CDN regions = ~8,640 checks/lună (peste Free Hobby
-//     1,500 limit → upgrade to $40/mo paid tier OR reduce frequency 30min
-//     = ~1,440 checks/lună sub limit)
-//   - Slack alert routing via webhook URL (Daniel adds în Checkly UI alert
-//     channels, NU în code — sensitive config)
-//   - Rocky AI auto-triage (early 2026 feature) per master spec §2
+// Free-tier math (Hobby):
+//   1 browser check × frequency 10min × 2 locations
+//     = 6 runs/h × 24h × 30d × 2 loc = 8,640 check-runs/mo.
+//   Hobby includes generous browser-check runs for a single check at this
+//   cadence; 10min (vs 5min = 17,280/mo) halves consumption and is the
+//   recommended starting cadence. Bump to 5min later only if needed.
+//
+// Alert channel: EmailAlertChannel → support@andura.app (below). Slack/webhook
+// channels, if wanted, are added in the Checkly UI (sensitive — not in code).
 
 import { defineConfig } from 'checkly';
+import { EmailAlertChannel } from 'checkly/constructs';
+
+// Email alerts on failure + recovery to the founder inbox. Checkly sends a
+// verification mail to this address on first deploy; confirm it once.
+const emailChannel = new EmailAlertChannel('andura-prod-email', {
+  address: 'support@andura.app',
+  sendFailure: true,
+  sendRecovery: true,
+  sendDegraded: false,
+});
 
 export default defineConfig({
-  projectName: 'Andura PWA',
-  logicalId: 'andura-pwa',
+  projectName: 'andura',
+  logicalId: 'andura',
   repoUrl: 'https://github.com/markaroundthestates-cyber/andura',
   checks: {
-    // Default frequency 5min — adjust to 30min if Free Hobby tier insufficient.
-    // Override per-check via frequency: option în spec files.
-    frequency: 5,
-    locations: ['eu-west-1', 'eu-central-1'], // Romania CDN proximity
-    runtimeId: '2024.02',
-    tags: ['andura', 'track-7-§7.7', 'production-smoke'],
+    // 10min cadence = free-tier-friendly (see math above). EU-only locations,
+    // closest to the Romanian user base. Latest runtime (Playwright + browser
+    // binaries) per Checkly docs.
+    frequency: 10,
+    locations: ['eu-west-1', 'eu-central-1'], // Ireland + Frankfurt (RO proximity)
+    runtimeId: '2025.04',
+    tags: ['andura', 'production-smoke', 'track-7'],
+    alertChannels: [emailChannel],
     playwrightConfig: {
       use: {
         baseURL: 'https://andura.app',
-        // Inherit Track 7 §7.2 stability principles
         ignoreHTTPSErrors: false,
         actionTimeout: 15000,
       },
     },
-    // Browser checks discover din __checks__/*.spec.ts
+    // Browser checks are discovered from __checks__/*.spec.ts.
     checkMatch: '**/__checks__/**/*.spec.ts',
     browserChecks: {
-      frequency: 5,
+      frequency: 10,
       testMatch: '**/__checks__/**/*.spec.ts',
     },
   },
