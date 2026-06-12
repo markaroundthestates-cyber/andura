@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Cont } from '../../../routes/screens/cont/Cont';
 import { useSettingsStore } from '../../../stores/settingsStore';
+import { AVATAR_PRESETS } from '../../../components/Avatar/registry';
 
 // Minimal JWT helper for tests — base64url-encoded payload only (signature
 // segments are ignored by the display-only decoder in userProfile.ts).
@@ -123,5 +124,68 @@ describe('Cont landing — Phase 5 task_13', () => {
     expect(screen.queryByTestId('cont-theme-dark')).toBeNull();
     // The tappable Appearance row remains (opens the sub-screen).
     expect(screen.getByTestId('cont-row-appearance')).toBeInTheDocument();
+  });
+});
+
+// §avatar-tap-pick (founder 2026-06-12 "user sa poata apasa pe avatar, sa isi
+// aleaga avatarul si sa apese confirm") — the avatar IS the entry point (the
+// old "Schimba avatarul" toggle row is gone), selection is a draft, and an
+// explicit Confirm commits it.
+describe('Cont — avatar tap-to-pick + confirm', () => {
+  it('the old "Schimba avatarul" toggle row is removed', () => {
+    renderCont();
+    expect(screen.queryByTestId('cont-avatar-toggle')).toBeNull();
+  });
+
+  it('the picker is closed until the avatar is tapped', () => {
+    renderCont();
+    expect(screen.queryByTestId('cont-avatar-picker')).toBeNull();
+    fireEvent.click(screen.getByTestId('cont-account-avatar'));
+    expect(screen.getByTestId('cont-avatar-picker')).toBeInTheDocument();
+    expect(screen.getByTestId('avatar-picker')).toBeInTheDocument();
+  });
+
+  it('tapping the avatar toggles aria-expanded', () => {
+    renderCont();
+    const avatarBtn = screen.getByTestId('cont-account-avatar');
+    expect(avatarBtn).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(avatarBtn);
+    expect(avatarBtn).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('selecting a preset does NOT apply until Confirm is pressed (draft)', () => {
+    renderCont();
+    fireEvent.click(screen.getByTestId('cont-account-avatar'));
+    const pick = AVATAR_PRESETS[4]!;
+    fireEvent.click(screen.getByTestId(`avatar-option-${pick.id}`));
+    // Staged only — store still null.
+    expect(useSettingsStore.getState().avatarId).toBeNull();
+    // The draft cell is marked selected in the grid.
+    expect(screen.getByTestId(`avatar-option-${pick.id}`)).toHaveAttribute('aria-checked', 'true');
+  });
+
+  it('Confirm commits the staged pick to the store + closes the picker', () => {
+    renderCont();
+    fireEvent.click(screen.getByTestId('cont-account-avatar'));
+    const pick = AVATAR_PRESETS[6]!;
+    fireEvent.click(screen.getByTestId(`avatar-option-${pick.id}`));
+    fireEvent.click(screen.getByTestId('cont-avatar-confirm'));
+    expect(useSettingsStore.getState().avatarId).toBe(pick.id);
+    expect(screen.queryByTestId('cont-avatar-picker')).toBeNull();
+  });
+
+  it('re-opening the picker re-seeds the draft from the committed id (discard works)', () => {
+    useSettingsStore.getState().setAvatar(AVATAR_PRESETS[2]!.id);
+    renderCont();
+    // open → stage a different pick → close WITHOUT confirm (tap avatar again)
+    fireEvent.click(screen.getByTestId('cont-account-avatar'));
+    fireEvent.click(screen.getByTestId(`avatar-option-${AVATAR_PRESETS[9]!.id}`));
+    fireEvent.click(screen.getByTestId('cont-account-avatar')); // toggle closed
+    // committed id unchanged (draft discarded)
+    expect(useSettingsStore.getState().avatarId).toBe(AVATAR_PRESETS[2]!.id);
+    // re-open: the grid reflects the committed id, not the abandoned draft
+    fireEvent.click(screen.getByTestId('cont-account-avatar'));
+    expect(screen.getByTestId(`avatar-option-${AVATAR_PRESETS[2]!.id}`)).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByTestId(`avatar-option-${AVATAR_PRESETS[9]!.id}`)).toHaveAttribute('aria-checked', 'false');
   });
 });

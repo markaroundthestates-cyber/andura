@@ -1264,12 +1264,10 @@
         "futureSuffix": ", data viitoare"
       },
       "legend": {
-        "gym": "Sala",
         "aerobic": "Aerobic",
         "hard": "Greu",
         "normal": "Normal",
         "easy": "Usor",
-        "recovery": "Recuperare",
         "rest": "Zi libera"
       }
     }
@@ -1532,6 +1530,7 @@
     },
     "avatar": {
       "change": "Schimba avatarul",
+      "confirm": "Confirma",
       "pickerLabel": "Alege un avatar",
       "heroLabel": "Avatarul tau",
       "headerLabel": "Cont",

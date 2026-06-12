@@ -56,6 +56,7 @@ import {
   ChevronRight,
   Flame,
   Pencil,
+  Check,
 } from 'lucide-react';
 
 interface ContRow {
@@ -180,12 +181,36 @@ export function Cont(): JSX.Element {
   const streakUnit = streak === 1 ? t('stats.streakUnit_one') : t('stats.streakUnit_other');
 
   // Account avatar (illustrated preset set) — chosen id lives in settingsStore
-  // (persisted + synced per-UID like accent/theme). Selecting applies instantly;
-  // the picker grid expands inline under the hero (no route change). The hero
-  // falls back to the gradient initial when no preset is picked.
+  // (persisted + synced per-UID like accent/theme). The hero falls back to the
+  // gradient initial when no preset is picked.
+  //
+  // §avatar-tap-pick (founder 2026-06-12 "nu vad rostul la Change Avatar ca
+  // buton... user sa poata apasa pe avatar, sa isi aleaga avatarul si sa apese
+  // confirm"): the ENTRY POINT is the avatar itself (tapping it opens the inline
+  // picker — the separate "Schimba avatarul" toggle row was removed). Selection
+  // is a DRAFT (local state) that applies only on an explicit Confirm; tapping a
+  // preset no longer writes the store immediately. The draft re-seeds from the
+  // committed id each time the picker opens.
   const avatarId = useSettingsStore((s) => s.avatarId);
   const setAvatar = useSettingsStore((s) => s.setAvatar);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [draftAvatar, setDraftAvatar] = useState<string | null>(avatarId);
+
+  const openPicker = (): void => {
+    setDraftAvatar(avatarId);
+    setPickerOpen(true);
+  };
+  const togglePicker = (): void => {
+    if (pickerOpen) {
+      setPickerOpen(false);
+    } else {
+      openPicker();
+    }
+  };
+  const confirmAvatar = (): void => {
+    setAvatar(draftAvatar);
+    setPickerOpen(false);
+  };
 
   return (
     <section className="pt-4 px-5 pb-6 min-h-screen" data-testid="cont-home">
@@ -207,9 +232,10 @@ export function Cont(): JSX.Element {
             glow halo + 54x54 to match the prior Pulse pebble rhythm. */}
         <button
           type="button"
-          onClick={() => setPickerOpen((v) => !v)}
+          onClick={togglePicker}
           aria-expanded={pickerOpen}
           aria-controls="cont-avatar-picker"
+          aria-label={t('cont.avatar.change')}
           data-testid="cont-account-avatar"
           className="relative flex-shrink-0 rounded-full press-feedback"
           style={{ boxShadow: '0 0 26px -6px var(--aqua)', borderRadius: '50%' }}
@@ -241,42 +267,37 @@ export function Cont(): JSX.Element {
         </Pill>
       </div>
 
-      {/* Avatar preset picker — expands inline under the account card (tapping
-          the hero avatar or this "Schimba avatarul" header toggles it). Selecting
-          a preset applies instantly + persists (settingsStore.avatarId). Kept off
-          the always-visible surface so the Account home stays a clean list. */}
-      <div className="pulse-card p-1 overflow-hidden mb-4 animate-card-rise" id="cont-avatar-picker">
-        <button
-          type="button"
-          onClick={() => setPickerOpen((v) => !v)}
-          aria-expanded={pickerOpen}
-          aria-controls="cont-avatar-grid"
-          data-testid="cont-avatar-toggle"
-          className="w-full flex items-center gap-3 px-4 py-3.5 text-left text-ink"
+      {/* Avatar preset picker — expands inline under the account card when the
+          hero avatar is tapped (the only entry point; the old "Schimba avatarul"
+          toggle row was removed per founder 2026-06-12). A preset tap stages a
+          DRAFT; the explicit "Confirma" button commits it (settingsStore.avatarId)
+          + closes the picker. Kept off the always-visible surface so the Account
+          home stays a clean list. */}
+      {pickerOpen && (
+        <div
+          className="pulse-card px-4 pt-1 pb-4 overflow-hidden mb-4 animate-card-rise"
+          id="cont-avatar-picker"
+          data-testid="cont-avatar-picker"
         >
-          <span className="w-9 h-9 rounded-[11px] grid place-items-center flex-shrink-0 bg-paper">
-            <Pencil className="w-5 h-5" aria-hidden="true" />
-          </span>
-          <span className="flex-1 text-sm font-semibold">{t('cont.avatar.change')}</span>
-          <ChevronRight
-            className={`w-5 h-5 flex-shrink-0 text-ink3 transition-transform ${pickerOpen ? 'rotate-90' : ''}`}
-            strokeWidth={1.6}
-            aria-hidden="true"
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink3 mb-3 mt-3">
+            {t('cont.avatar.pickerLabel')}
+          </p>
+          <AvatarPicker
+            selectedId={draftAvatar}
+            onSelect={(id) => setDraftAvatar(draftAvatar === id ? null : id)}
           />
-        </button>
-        {pickerOpen && (
-          <div className="px-4 pt-1 pb-4 border-t border-line" id="cont-avatar-grid">
-            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink3 mb-3 mt-3">
-              {t('cont.avatar.pickerLabel')}
-            </p>
-            <AvatarPicker
-              selectedId={avatarId}
-              onSelect={(id) => setAvatar(avatarId === id ? null : id)}
-            />
-            <p className="text-[11px] text-ink3 mt-3 leading-relaxed">{t('cont.avatar.hint')}</p>
-          </div>
-        )}
-      </div>
+          <p className="text-[11px] text-ink3 mt-3 leading-relaxed">{t('cont.avatar.hint')}</p>
+          <button
+            type="button"
+            onClick={confirmAvatar}
+            data-testid="cont-avatar-confirm"
+            className="btn-grad btn-primary-lift press-feedback w-full mt-3.5 py-2.5 rounded-full text-sm font-semibold flex items-center justify-center gap-2"
+          >
+            <Check className="w-4 h-4" aria-hidden="true" />
+            {t('cont.avatar.confirm')}
+          </button>
+        </div>
+      )}
 
       {SECTIONS.map((section) => (
         <div key={section.id} data-testid={`cont-section-${section.id}`}>

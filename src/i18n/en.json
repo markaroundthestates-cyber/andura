@@ -1264,12 +1264,10 @@
         "futureSuffix": ", upcoming date"
       },
       "legend": {
-        "gym": "Gym",
         "aerobic": "Aerobic",
         "hard": "Hard",
         "normal": "Normal",
         "easy": "Easy",
-        "recovery": "Recovery",
         "rest": "Rest day"
       }
     }
@@ -1532,6 +1530,7 @@
     },
     "avatar": {
       "change": "Change avatar",
+      "confirm": "Confirm",
       "pickerLabel": "Choose an avatar",
       "heroLabel": "Your avatar",
       "headerLabel": "Account",

@@ -21,6 +21,8 @@ import { DB } from '../../../../db.js';
 import { gotoPath } from '../../../lib/navigation';
 import { toast } from '../../../lib/toast';
 import { SubHeader } from '../../../components/SubHeader';
+import { UserAvatar } from '../../../components/Avatar/UserAvatar';
+import { useSettingsStore } from '../../../stores/settingsStore';
 import { getUserProfileDisplay } from './userProfile';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
 import { estimateBF_USNavy } from '../../../../engine/usNavyBF.js';
@@ -37,6 +39,17 @@ import { PreferencesSection } from './settingsProfile/PreferencesSection';
 // (ObiectivGoalCard). GOAL_LABELS dropped din SettingsProfile (Frecventa +
 // Experienta raman aici — setup-once params, NU progress-tracking goal).
 // frequencyLabel + EXPERIENCE_LABEL_KEYS moved to settingsProfile/TrainingSection.
+
+// §body-measure-bounds — sane per-field circumference ranges (cm) shared by the
+// save gate (hard block) AND the live inline error (BodyCompSection). Single
+// source so the two never drift. Generous-but-human; neck<waist is enforced
+// separately (the swapped-fields signature). Hip applies to women only (US-Navy
+// female formula). These match the pre-existing save-gate values 1:1.
+const BODY_MEASURE_BOUNDS = {
+  neck: { min: 25, max: 60 },
+  waist: { min: 50, max: 200 },
+  hip: { min: 50, max: 200 },
+} as const;
 
 export function SettingsProfile(): JSX.Element {
   const navigate = useNavigate();
@@ -63,6 +76,11 @@ export function SettingsProfile(): JSX.Element {
   // §F-cont-01 user-wire (HIGH-BETA chat 4) — read avatar initial din id_token
   // JWT claims. Cumulative cu Cont.tsx wire pentru parity across screens.
   const profile = getUserProfileDisplay();
+  // §avatar-profile-view fix (founder 2026-06-12 "avatarul nu e vizibil cand
+  // user apasa pe butonul de profile din cont") — header arata acelasi avatar
+  // ales ca pe ecranul Cont (settingsStore.avatarId). Inainte randa un pebble
+  // gradient hardcodat doar cu initiala, ignorand preset-ul ales.
+  const avatarId = useSettingsStore((s) => s.avatarId);
 
   // Draft state pentru edit apoi save commit (avoid live store thrash)
   const [draft, setDraft] = useState<OnboardingData>(data);
@@ -162,6 +180,40 @@ export function SettingsProfile(): JSX.Element {
   const bfNavyIncomplete =
     !bfManual && bfSkinfold == null && bfNavy == null && (!neck || !waist || !draft.height);
 
+  // §body-measure-inline (founder 2026-06-12 "am pus waist 1000 cm si neck 430
+  // cm si andura ma lasa") — the save gate below already BLOCKS out-of-range
+  // body measurements, but it only surfaced a toast on the save attempt. Mirror
+  // the same bounds (BODY_MEASURE_BOUNDS) into a LIVE inline check so an absurd
+  // value (waist 1000 / neck 430) flags the field + shows a friendly message as
+  // the user types — same pattern as the BF override error. Save stays the hard
+  // block; this is the visible feedback. Only fields the user typed are checked.
+  const measureOutOfRange = (raw: string, lo: number, hi: number): boolean => {
+    if (!raw.trim()) return false;
+    const n = Number(raw);
+    return Number.isFinite(n) && (n < lo || n > hi);
+  };
+  const waistInvalid = measureOutOfRange(waist, BODY_MEASURE_BOUNDS.waist.min, BODY_MEASURE_BOUNDS.waist.max);
+  const neckInvalid = measureOutOfRange(neck, BODY_MEASURE_BOUNDS.neck.min, BODY_MEASURE_BOUNDS.neck.max);
+  const hipInvalid =
+    draft.sex === 'f' && measureOutOfRange(hip, BODY_MEASURE_BOUNDS.hip.min, BODY_MEASURE_BOUNDS.hip.max);
+  // Neck >= waist (swapped-fields signature) — only when both are present + in
+  // their bands (an out-of-range value is flagged by the range error first).
+  const neckN = Number(neck);
+  const waistN = Number(waist);
+  const neckWaistSwapped =
+    !waistInvalid &&
+    !neckInvalid &&
+    neck.trim() !== '' &&
+    waist.trim() !== '' &&
+    Number.isFinite(neckN) &&
+    Number.isFinite(waistN) &&
+    neckN >= waistN;
+  const bodyMeasureError = neckWaistSwapped
+    ? t('settings.profile.bodyMeasureNeckWaist')
+    : waistInvalid || neckInvalid || hipInvalid
+      ? t('settings.profile.bodyMeasureRange')
+      : '';
+
   // §obiectiv-tinta 2026-05-28 — Daniel smoke #8 ("tot ce e la Obiectiv trebuie
   // mutat la progres undeva"): "Tinte personale" (greutate tinta + pana in +
   // ETA + safety verdict) RELOCATED to Progres tab as ObiectivCard. Persistence
@@ -217,9 +269,9 @@ export function SettingsProfile(): JSX.Element {
     const waistNum = numOrNull(waist);
     const hipNum = numOrNull(hip);
     const outOfRange =
-      (neckNum !== null && (neckNum < 25 || neckNum > 60)) ||
-      (waistNum !== null && (waistNum < 50 || waistNum > 200)) ||
-      (draft.sex === 'f' && hipNum !== null && (hipNum < 50 || hipNum > 200));
+      (neckNum !== null && (neckNum < BODY_MEASURE_BOUNDS.neck.min || neckNum > BODY_MEASURE_BOUNDS.neck.max)) ||
+      (waistNum !== null && (waistNum < BODY_MEASURE_BOUNDS.waist.min || waistNum > BODY_MEASURE_BOUNDS.waist.max)) ||
+      (draft.sex === 'f' && hipNum !== null && (hipNum < BODY_MEASURE_BOUNDS.hip.min || hipNum > BODY_MEASURE_BOUNDS.hip.max));
     if (outOfRange) {
       toast.show({ message: t('settings.profile.bodyMeasureRange'), variant: 'warning' });
       return;
@@ -332,20 +384,20 @@ export function SettingsProfile(): JSX.Element {
 
       <div className="flex-1 overflow-y-auto p-5">
         <div className="flex flex-col items-center gap-2.5 pt-2 pb-5">
-          {/* Avatar — Pulse gradient pebble (interfata-noua/screens-tabs.jsx
-              `.avatar`, matched to Cont.tsx): volt->aqua --grad-pulse fill +
-              aqua glow halo, display initial in --on-accent ink. */}
-          <div
-            className="w-20 h-20 rounded-full font-display flex items-center justify-center text-3xl font-bold relative overflow-hidden"
-            data-testid="settings-profile-initial"
-            style={{
-              background: 'var(--grad-pulse)',
-              boxShadow: '0 0 28px -6px var(--aqua)',
-              color: 'var(--on-accent)',
-            }}
-          >
-            <span className="relative">{profile.initial}</span>
-          </div>
+          {/* Avatar — chosen preset (Avatar/UserAvatar, settingsStore.avatarId)
+              or the gradient-initial fallback when none picked. Matches the Cont
+              hero so the profile view shows the SAME avatar the user picked
+              (§avatar-profile-view fix). 80px + aqua glow halo keeps the prior
+              pebble rhythm. The initial-fallback branch preserves the
+              `settings-profile-initial` testid contract. */}
+          <UserAvatar
+            avatarId={avatarId}
+            size={80}
+            initial={profile.initial}
+            initialTestId="settings-profile-initial"
+            label={t('cont.avatar.heroLabel')}
+            className="shadow-[0_0_28px_-6px_var(--aqua)]"
+          />
         </div>
 
         <PersonalSection draft={draft} update={update} />
@@ -366,6 +418,10 @@ export function SettingsProfile(): JSX.Element {
           bfOverride={bfOverride}
           setBfOverride={setBfOverride}
           bfNavyIncomplete={bfNavyIncomplete}
+          waistInvalid={waistInvalid}
+          neckInvalid={neckInvalid}
+          hipInvalid={hipInvalid}
+          bodyMeasureError={bodyMeasureError}
         />
 
         <SkinfoldSection

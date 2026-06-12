@@ -27,6 +27,13 @@ interface BodyCompSectionProps {
   bfOverride: string;
   setBfOverride: (v: string) => void;
   bfNavyIncomplete: boolean;
+  /** Live out-of-range flags (mark the offending input). */
+  waistInvalid: boolean;
+  neckInvalid: boolean;
+  hipInvalid: boolean;
+  /** Friendly inline message when a body measurement is out of range / swapped
+   *  (empty string = no error). */
+  bodyMeasureError: string;
 }
 
 export function BodyCompSection({
@@ -45,6 +52,10 @@ export function BodyCompSection({
   bfOverride,
   setBfOverride,
   bfNavyIncomplete,
+  waistInvalid,
+  neckInvalid,
+  hipInvalid,
+  bodyMeasureError,
 }: BodyCompSectionProps): JSX.Element {
   // BF override out-of-range feedback (2026-05-31) — the save path accepts only
   // 3-60% and previously DROPPED an out-of-range value silently (90 → cleared,
@@ -70,8 +81,9 @@ export function BodyCompSection({
             autoComplete="off"
             value={waist}
             onChange={(e) => setWaist(e.target.value)}
+            aria-invalid={waistInvalid || undefined}
             data-testid="profile-waist-input"
-            className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
+            className={`pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm ${waistInvalid ? '!border-brick' : ''}`}
           />
         </LabelRow>
         <LabelRow label={t('settings.profile.neck')}>
@@ -84,8 +96,9 @@ export function BodyCompSection({
             autoComplete="off"
             value={neck}
             onChange={(e) => setNeck(e.target.value)}
+            aria-invalid={neckInvalid || undefined}
             data-testid="profile-neck-input"
-            className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
+            className={`pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm ${neckInvalid ? '!border-brick' : ''}`}
           />
         </LabelRow>
         {/* §progress-v2 — sold intra in US Navy DOAR pentru femei. Input afisat
@@ -101,8 +114,9 @@ export function BodyCompSection({
               autoComplete="off"
               value={hip}
               onChange={(e) => setHip(e.target.value)}
+              aria-invalid={hipInvalid || undefined}
               data-testid="profile-hip-input"
-              className="pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm"
+              className={`pulse-field w-20 px-2.5 py-1.5 text-right rounded-xl text-sm ${hipInvalid ? '!border-brick' : ''}`}
             />
           </LabelRow>
         )}
@@ -164,6 +178,15 @@ export function BodyCompSection({
           </span>
         </SelectRow>
       </div>
+      {bodyMeasureError && (
+        <p
+          className="text-xs text-brick mb-1 px-1 leading-snug"
+          role="status"
+          data-testid="profile-body-measure-error"
+        >
+          {bodyMeasureError}
+        </p>
+      )}
       {bfOutOfRange && (
         <p
           className="text-xs text-brick mb-1 px-1 leading-snug"

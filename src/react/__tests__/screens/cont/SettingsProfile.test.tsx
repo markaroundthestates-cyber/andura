@@ -8,6 +8,8 @@ import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { SettingsProfile } from '../../../routes/screens/cont/SettingsProfile';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { useProgresStore } from '../../../stores/progresStore';
+import { useSettingsStore } from '../../../stores/settingsStore';
+import { AVATAR_PRESETS } from '../../../components/Avatar/registry';
 import {
   getCurrentWeightKg,
   readUserWeightKg,
@@ -55,6 +57,7 @@ beforeEach(() => {
     completedAt: Date.now(),
   });
   localStorage.clear(); __resetI18n(); __setLocale("ro"); // Wave E4 RO pin
+  useSettingsStore.getState().reset(); // §avatar-profile-view — no avatarId bleed across tests
   toast.clear();
 });
 
@@ -123,6 +126,43 @@ describe('SettingsProfile — render', () => {
   it('renders Confirma editare CTA', () => {
     renderScreen();
     expect(screen.getByTestId('settings-profile-save')).toBeInTheDocument();
+  });
+});
+
+// §avatar-profile-view (founder 2026-06-12 "avatarul nu e vizibil cand user
+// apasa pe butonul de profile din cont") — the profile header must show the
+// SAME chosen avatar as the Cont hero (settingsStore.avatarId), not just an
+// initial. Pre-fix it rendered a hardcoded gradient pebble that ignored the
+// picked preset.
+describe('SettingsProfile — chosen avatar renders in the header', () => {
+  it('falls back to the gradient initial when no preset is picked', () => {
+    useSettingsStore.getState().reset();
+    renderScreen();
+    // Initials branch keeps the settings-profile-initial testid contract.
+    expect(screen.getByTestId('settings-profile-initial')).toBeInTheDocument();
+    expect(screen.getByTestId('avatar-initials')).toBeInTheDocument();
+    expect(screen.queryByTestId('avatar-svg')).toBeNull();
+    expect(screen.queryByTestId('avatar-image')).toBeNull();
+  });
+
+  it('renders the chosen svg-preset avatar (not the initial) when one is picked', () => {
+    const svgPreset = AVATAR_PRESETS.find((p) => p.kind === 'svg')!;
+    useSettingsStore.getState().setAvatar(svgPreset.id);
+    renderScreen();
+    const cell = screen.getByTestId('avatar-svg');
+    expect(cell).toBeInTheDocument();
+    expect(cell.getAttribute('data-avatar-id')).toBe(svgPreset.id);
+    // No initial rendered when a preset is active.
+    expect(screen.queryByTestId('settings-profile-initial')).toBeNull();
+  });
+
+  it('renders the chosen image-preset avatar when one is picked', () => {
+    const imgPreset = AVATAR_PRESETS.find((p) => p.kind === 'image')!;
+    useSettingsStore.getState().setAvatar(imgPreset.id);
+    renderScreen();
+    const cell = screen.getByTestId('avatar-image');
+    expect(cell).toBeInTheDocument();
+    expect(cell.querySelector('img')?.getAttribute('src')).toBe(imgPreset.src);
   });
 });
 
@@ -340,6 +380,53 @@ describe('SettingsProfile — Compozitie corporala (§F-pass2-settings-profile-0
     const last = useProgresStore.getState().bodyData.at(-1);
     expect(last?.waistCm).toBe(101);
     expect(last?.neckCm).toBe(43);
+  });
+
+  // §body-measure-inline (founder live 2026-06-12 "am pus waist 1000 cm si neck
+  // 430 cm si andura ma lasa... deci sunt hulk") — the absurd values must (1)
+  // flag the inputs + show a friendly inline message LIVE as typed, and (2)
+  // block the save (bodyData untouched, no saved status). No silent clamp.
+  it('waist 1000 + neck 430 → inline error shown LIVE + inputs aria-invalid (no clamp)', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-waist-input'), { target: { value: '1000' } });
+    fireEvent.change(screen.getByTestId('profile-neck-input'), { target: { value: '430' } });
+    // Inline error visible BEFORE any save click.
+    const err = screen.getByTestId('profile-body-measure-error');
+    expect(err).toBeInTheDocument();
+    expect(err.textContent).toMatch(/Verifica masuratorile/);
+    // No diacritics (D-LEGACY-064).
+    expect(/[ăâîșțĂÂÎȘȚ]/.test(err.textContent ?? '')).toBe(false);
+    // Offending inputs flagged + values NOT clamped (still the raw entry).
+    expect((screen.getByTestId('profile-waist-input') as HTMLInputElement).getAttribute('aria-invalid')).toBe('true');
+    expect((screen.getByTestId('profile-neck-input') as HTMLInputElement).getAttribute('aria-invalid')).toBe('true');
+    expect((screen.getByTestId('profile-waist-input') as HTMLInputElement).value).toBe('1000');
+  });
+
+  it('waist 1000 + neck 430 → save blocked (bodyData untouched + no saved status)', async () => {
+    const { useProgresStore } = await import('../../../stores/progresStore');
+    useProgresStore.getState().reset();
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-waist-input'), { target: { value: '1000' } });
+    fireEvent.change(screen.getByTestId('profile-neck-input'), { target: { value: '430' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(useProgresStore.getState().bodyData.length).toBe(0);
+    expect(screen.queryByTestId('settings-profile-saved')).not.toBeInTheDocument();
+  });
+
+  it('valid in-range measurements → no inline error + inputs not flagged', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-waist-input'), { target: { value: '85' } });
+    fireEvent.change(screen.getByTestId('profile-neck-input'), { target: { value: '38' } });
+    expect(screen.queryByTestId('profile-body-measure-error')).not.toBeInTheDocument();
+    expect((screen.getByTestId('profile-waist-input') as HTMLInputElement).getAttribute('aria-invalid')).toBeNull();
+  });
+
+  it('neck>=waist (both in band) → inline swapped-fields message LIVE', () => {
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-waist-input'), { target: { value: '52' } });
+    fireEvent.change(screen.getByTestId('profile-neck-input'), { target: { value: '55' } });
+    const err = screen.getByTestId('profile-body-measure-error');
+    expect(err.textContent).toMatch(/Gatul trebuie sa fie mai mic/);
   });
 
   // §progress-v2 — skinfold avansat optional: collapsed default, toggle reveals.
