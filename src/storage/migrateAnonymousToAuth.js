@@ -58,9 +58,7 @@ function _open(dbName) {
     [STORES.MIGRATION_EVENTS]: '++id, ts, kind, status',
   });
   // v3 — D107 behavior_tier1 (mirror db.js _defineSchema; additive-only). The
-  // store must be addressable so the handle opens at the current schema version,
-  // but behavior rows are NOT migrated anon→auth (device-local behavioral
-  // history, like the per-namespace migration_events audit trail).
+  // store must be addressable so the handle opens at the current schema version.
   db.version(3).stores({
     [STORES.BEHAVIOR_TIER1]: 'id, t, kind, session',
   });
@@ -69,8 +67,21 @@ function _open(dbName) {
 
 /** Stores whose entries carry a client-supplied `id` primary key — those merge
  *  by union-on-id. `migration_events` is an auto-increment audit log, NOT
- *  migrated (per-namespace audit trail, no cross-namespace identity). */
-const ID_KEYED_STORES = [STORES.CDL_TIER1, STORES.LOGS_TIER1, STORES.APPLIED_PATTERNS_TIER1];
+ *  migrated (per-namespace audit trail, no cross-namespace identity).
+ *
+ *  behavior_tier1 (D107) IS migrated (2026-06-12 fix): the durable behavior log
+ *  is per-DEVICE-USER, and a user who trained while still anonymous on a device
+ *  (capture lands in `andura_anonymous_<deviceId>`) then signed up would lose
+ *  every captured event the instant getNamespace() flips to `andura_<uid>` — the
+ *  authed export read an empty `andura_<uid>` store ("empty on desktop"). It is
+ *  `id`-keyed (epoch-ms + counter) so the same union-on-id / dest-wins / never-
+ *  delete merge applies cleanly; the days-window prune still bounds it after. */
+const ID_KEYED_STORES = [
+  STORES.CDL_TIER1,
+  STORES.LOGS_TIER1,
+  STORES.APPLIED_PATTERNS_TIER1,
+  STORES.BEHAVIOR_TIER1,
+];
 
 /**
  * Merge anonymous Tier-1 IndexedDB into the authed user's namespace.

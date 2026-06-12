@@ -273,4 +273,31 @@ describe('debugLog — exportJson scope slicing', () => {
     const out = JSON.parse(await debugLog.exportJson());
     expect(out.events).toEqual([]);
   });
+
+  // 2026-06-12 fix — the Copy button must NEVER return an empty slice over a
+  // non-empty log. Semantic rows with NO `session` field (no workout grouping)
+  // previously fell outside the session window → 'last' copied [] silently.
+  it('semantic rows without a session field → slice falls back to the full semantic set', async () => {
+    const db = getDb();
+    await db.table(STORES.BEHAVIOR_TIER1).put({ id: 's1', t: 100, kind: 'log', payload: { kg: 60 } });
+    await db.table(STORES.BEHAVIOR_TIER1).put({ id: 's2', t: 200, kind: 'swap', payload: { from: 'A', to: 'B' } });
+    const out = JSON.parse(await debugLog.exportJson('last'));
+    // No session field anywhere → no window → fallback keeps every non-tap row.
+    expect(out.events.map((e: { id: string }) => e.id)).toEqual(['s1', 's2']);
+  });
+});
+
+describe('debugLog — collection default-ON survives a simulated reload', () => {
+  it('absent key after a reload (new module state) still reads ON → capture works', async () => {
+    // Simulate a fresh app load / PWA-update: the collect key was never written
+    // (the user never opted out). localStorage.clear() mimics the absent-key
+    // boot; the global setup re-sets it OFF, so remove it to assert the real
+    // prod default (durable always-on across reloads — no re-enable needed).
+    localStorage.removeItem(COLLECT_KEY);
+    expect(isCollectEnabled()).toBe(true);
+    setCollectEnabled(true);
+    debugLog.event('log', { exercise: 'Deadlift', kg: 100 }, undefined, 7, 'Deadlift');
+    await flush();
+    expect(await debugLog.snapshot()).toHaveLength(1);
+  });
 });

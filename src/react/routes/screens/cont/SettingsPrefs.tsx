@@ -61,8 +61,8 @@ export function SettingsPrefs(): JSX.Element {
   const [debugOn, setDebugOn] = useState<boolean>(() => isDebugEnabled());
 
   // D107 — durable behavioral-log COLLECTION gate (distinct from the founder's
-  // debug verbosity above). Default-OFF for now (the default-ON decision is
-  // Daniel's, pending). Honest user-facing OFF switch = trust.
+  // debug verbosity above). DEFAULT-ON (Daniel decision 2026-06-07): always-on
+  // capture, the user opts OUT here. Honest user-facing OFF switch = trust.
   const [collectOn, setCollectOn] = useState<boolean>(() => isCollectEnabled());
 
   function handleToggleDebug(next: boolean): void {

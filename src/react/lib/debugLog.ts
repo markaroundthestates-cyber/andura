@@ -12,11 +12,13 @@
 //
 // TWO GATES (D107 §3):
 //   - COLLECT_KEY (`andura-behavior-collect`) — the durable engine-grade signal
-//     (rec/log/adjust/swap/skip). Default-OFF FOR NOW (the default-ON decision is
-//     Daniel's, pending — see DEFAULT-ON one-liner note below). Flipping the
-//     default later is a ONE-LINE change in `isCollectEnabled()`.
-//   - FLAG_KEY (`andura-debug`) — the founder's noisy `tap` capture + export
-//     verbosity. Default-OFF, unchanged.
+//     (rec/log/adjust/swap/skip). DEFAULT-ON (Daniel decision 2026-06-07, commit
+//     bfd96267): absent/unset = enabled; only an explicit 'false' disables. The
+//     user opts OUT via Settings; capture is otherwise always-on across reloads/
+//     PWA-updates (the key is plain localStorage, never reset by a SW update).
+//   - FLAG_KEY (`andura-debug`) — the founder's noisy `tap` capture (universal
+//     click listener). Default-OFF: taps are debug-grade noise, opt-in only. The
+//     engine-grade semantic events above do NOT depend on this flag.
 //
 // PRIVACY: kept OUT of firebase.js SYNC_KEYS and the storeSync wv2 channel — it
 // is local-only by construction (the IDB tier is a local archive). No PII / free
@@ -263,6 +265,15 @@ async function exportJson(scope: ExportScope = 'last'): Promise<string> {
       } else {
         // No workout rows yet — fall back to the semantic events only.
         events = all.filter((e) => e.kind !== 'tap');
+      }
+      // NEVER copy a silently-empty slice (2026-06-12 fix): if the store HAS
+      // semantic rows but the session-windowed slice excluded them all (e.g. rows
+      // captured with no `session` field, or only `swap`/`skip` outside the
+      // window), fall back to the full non-tap set so the founder's Copy button
+      // never returns an empty payload over a non-empty log. 'all' is unaffected.
+      if (events.length === 0) {
+        const semantic = all.filter((e) => e.kind !== 'tap');
+        if (semantic.length > 0) events = semantic;
       }
     }
     return JSON.stringify(

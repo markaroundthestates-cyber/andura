@@ -25,6 +25,11 @@ function openWithSchema(name) {
     [STORES.APPLIED_PATTERNS_TIER1]: 'id, ts, type',
     [STORES.MIGRATION_EVENTS]: '++id, ts, kind',
   });
+  // v3 — behavior_tier1 must be addressable to seed/read the D107 store in tests.
+  db.version(3).stores({
+    [STORES.MIGRATION_EVENTS]: '++id, ts, kind, status',
+    [STORES.BEHAVIOR_TIER1]: 'id, t, kind, session',
+  });
   return db;
 }
 
@@ -122,5 +127,29 @@ describe('migrateAnonymousToAuth', () => {
     const res = await migrateAnonymousToAuth('');
     expect(res.migrated).toBe(false);
     expect(res.reason).toBe('no_uid');
+  });
+
+  // 2026-06-12 fix — the D107 behavior log (behavior_tier1) must survive the
+  // anon→auth handover, else events captured while anonymous on a device (the
+  // "empty on desktop" report) are orphaned when getNamespace() flips to the uid.
+  it('migrates behavior_tier1 (D107) events into the auth namespace', async () => {
+    const anon = openWithSchema(ANON_NAME);
+    await anon.open();
+    await anon.table(STORES.BEHAVIOR_TIER1).bulkPut([
+      { id: 'b1', t: 100, kind: 'rec', session: 100, payload: { recKg: 60 } },
+      { id: 'b2', t: 200, kind: 'log', session: 100, payload: { kg: 62.5 } },
+    ]);
+    anon.close();
+
+    const res = await migrateAnonymousToAuth(UID);
+    expect(res.migrated).toBe(true);
+    expect(res.copied).toBe(2);
+
+    const auth = openWithSchema(AUTH_NAME);
+    await auth.open();
+    const rows = await auth.table(STORES.BEHAVIOR_TIER1).toArray();
+    auth.close();
+    expect(rows.map((r) => r.id).sort()).toEqual(['b1', 'b2']);
+    expect(rows.find((r) => r.id === 'b2')?.payload?.kg).toBe(62.5);
   });
 });
