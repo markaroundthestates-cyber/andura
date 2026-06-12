@@ -208,6 +208,15 @@ export const FOCUS_RULES = Object.freeze({
       // — NOT the pre-arc maxVerticalPress — so the contract gate is clean (arms had no
       // press cap before this arc). _contract → gated by the flag.
       maxArmVerticalPress: 1,
+      // CONTRACT (dp_week_ledger_v1, 2026-06-12): Close-Grip Bench ≤1/session AND — via
+      // the cross-day ledger — ZERO on a LATER triceps day once the week already carried
+      // one. Triceps owns the Close-Grip COMPOUND (~4 sets/exposure); 2 exposures (upper +
+      // push) push delivered triceps to ~16 and break the biceps≥0.85×triceps parity that
+      // the curl-pool taxonomy caps at ~12 (only 2 distinct biceps movement keys). Thinning
+      // the 2nd close-grip drops triceps toward parity (the direct extensions still carry
+      // the triceps focus). The per-session cap (1) holds the count; the ledger override
+      // (ledgerContractAdjust → maxCloseGrip 0 on a later day) closes the WEEK. _contract.
+      maxCloseGrip: 1,
     }),
     sessionRequirements: Object.freeze({
       requireOverheadTricepsIfArmsOrPush: true, // long-head stretch (triceps overhead ext)
@@ -410,6 +419,11 @@ export const FOCUS_RULES = Object.freeze({
     id: 'lower',
     sessionCaps: Object.freeze({
       maxHeavyLowerCompounds: 2,  // squat|deadlift|leg-press|hip-thrust T1 (16 CORE_AUTO)
+      // NOTE: the LOWER back-lat maintenance cap (≤1 lat/session on the upper/pull days)
+      // is NOT a static cap here — it is injected by the cross-day LEDGER override
+      // (ledgerContractAdjust → maxBackLatWork:1) only when the week ledger projects the
+      // back above the founder's ≤0.65×max-lower cap, so it rides dp_week_ledger_v1 (NOT
+      // the already-landed dp_focus_contracts_v1). See ledgerContractAdjust gap 4.
     }),
     sessionRequirements: Object.freeze({
       minChestPressSlots: 1, // 2026-06-11 sweep review: every focus's push/upper day anchors a press
@@ -936,12 +950,185 @@ function capMatchers() {
     maxCloseGrip: (tags) => tags.has('close_grip'),
     maxArmVerticalPress: (tags) => tags.has('vertical_press'),
     maxFocusVerticalPull: (tags) => tags.has('vertical_pull'),
-    maxBackLatWork: (tags) => tags.has('vertical_pull') || tags.has('horizontal_row'),
+    // ALL direct back-width work — vertical pull, row, AND the lat-isolation pullover/
+    // straight-arm. The lower-focus maintenance cap thins the back accessory STACK
+    // (pulldown+row+pullover) on its upper/pull days; counting the pullover too lets the
+    // cap reach the founder's back ceiling instead of leaving a 3rd lat lift uncapped.
+    maxBackLatWork: (tags) => tags.has('vertical_pull') || tags.has('horizontal_row')
+      || tags.has('lat_isolation') || tags.has('pullover') || tags.has('straight_arm_pulldown'),
     maxHeavyLowerCompounds: (tags) => tags.has('heavy_lower_compound'),
     maxDirectBicepsExercises: (tags) => tags.has('direct_biceps'),
     maxDirectTricepsExercises: (tags) => tags.has('direct_triceps'),
     maxDirectArmExercises: (tags) => tags.has('direct_biceps') || tags.has('direct_triceps'),
   };
+}
+
+// ══ CROSS-DAY LEDGER CONTRACT ADJUSTMENTS (dp_week_ledger_v1, 2026-06-12) ════════════
+// The four founder contracts a per-day pass cannot reach (the gate's `// GAP:` notes)
+// become reachable once the resolver can read the week LEDGER (computeWeekLedger) — the
+// deterministic projection of what the week's PRIOR days delivered. This helper turns
+// that projection into two day-level levers the existing resolver already applies:
+//   • requirement-COUNT bumps  (inject a SECOND slot today when the week still OWES a
+//     weekly SET quota the per-exercise dose cannot reach in one slot/day) — gaps 1+3;
+//   • effective-CAP overrides   (tighten a per-session cap to 0 on a LATER qualifying
+//     day once the week's prior days already projected the quota) — gap 2.
+// Pure: reads only the ledger's numbers + the focus rule. Returns inert ({} / no bump)
+// when the ledger is absent or the focus has no cross-day contract → byte-identical to
+// the per-day-only resolver.
+
+/** Founder weekly SET quotas the ledger unlocks, per focus. Keyed by the per-session
+ *  requirement TAG the resolver injects. `weeklySets` = the founder's ≥N sets/week;
+ *  `exposureCeiling` = the max per-EXERCISE sets the carrier isolation can take (the
+ *  junk-volume guard — 3 for a delt). The ledger lifts the delivered total to the quota
+ *  by (a) ensuring ≥2 carrier SLOTS across the qualifying days and (b) flooring each
+ *  carrier's dose toward exposureCeiling (ledgerSetFloors). Fires only at ≥4 days — at
+ *  ≤3d the full-body week meets these naturally and a 2nd same-pattern slot is junk. */
+const LEDGER_SET_QUOTAS = Object.freeze({
+  shoulders: Object.freeze([
+    { tag: 'side_delt', weeklySets: 6, exposureCeiling: 3 },
+    { tag: 'rear_delt', weeklySets: 6, exposureCeiling: 3 },
+  ]),
+  'v-taper': Object.freeze([
+    { tag: 'side_delt', weeklySets: 6, exposureCeiling: 3 },
+  ]),
+});
+
+/** Sets a single direct-arm isolation (curl) exposure delivers — the per-curl dose the
+ *  bi:tri parity bump uses to size how many extra curls clear the weekly floor. */
+const DIRECT_ARM_ISO_DOSE = 3;
+
+/** The ledger sub-bucket key a requirement tag maps onto (the projection's vocabulary). */
+const TAG_TO_LEDGER_SUB = Object.freeze({
+  side_delt: 'lateral',
+  rear_delt: 'rear',
+  direct_biceps: 'direct_biceps',
+  direct_triceps: 'direct_triceps',
+  close_grip: 'close_grip',
+});
+
+/**
+ * Compute the ledger-driven contract adjustments for the day being composed.
+ *
+ * @param {string} focusId - FOCUS_RULES key
+ * @param {string} cluster - the day's cluster id
+ * @param {number} daysPerWeek - training days/week (band gate)
+ * @param {import('../schedule/scheduleAdapter/weekLedger.js').WeekLedger|null|undefined} ledger
+ * @returns {{ reqBumps: Map<string, number>, capOverrides: Map<string, number> }}
+ *   reqBumps: tag → MINIMUM per-session count to enforce today (≥ the rule's own min);
+ *   capOverrides: sessionCaps key → tightened cap value (e.g. maxCloseGrip → 0).
+ */
+function ledgerContractAdjust(focusId, cluster, daysPerWeek, ledger) {
+  /** @type {{ reqBumps: Map<string, number>, capOverrides: Map<string, number> }} */
+  const out = { reqBumps: new Map(), capOverrides: new Map() };
+  if (!ledger || typeof ledger !== 'object') return out;
+  if (!(Number(daysPerWeek) >= 4)) return out; // the cross-day contracts bite at ≥4 days
+
+  // ── gap 3 (SHOULDERS / V-TAPER lateral & rear ≥6 sets/wk): when the week's PROJECTED
+  // delivery for a delt sub-bucket trails the founder quota, bump TODAY's per-session
+  // requirement to 2 SLOTS. A delt week has multiple DISTINCT delt isolations (lateral +
+  // rear-fly + reverse-pec-deck — different movement keys), so a second slot can land
+  // (unlike a duplicate same-key lateral). The slot ADD here, combined with the per-
+  // exercise dose floor (ledgerSetFloors below, applied post-distribution), lifts the
+  // delivered total to the quota. Only while the projection is short → never over-injects.
+  const quotas = LEDGER_SET_QUOTAS[focusId] || [];
+  for (const q of quotas) {
+    const sub = TAG_TO_LEDGER_SUB[q.tag];
+    const projectedWeekSets = ledger.weekSubSets?.[sub] || 0;
+    if (projectedWeekSets < q.weeklySets && (ledger.weekSlotDays?.[sub] || 0) > 0) {
+      out.reqBumps.set(q.tag, 2);
+    }
+  }
+
+  // ── gap 1 (ARMS biceps ≥ 0.85×triceps over the WEEK): triceps owns the protected
+  // tier-1 Close-Grip compound, so per-day parity loses. Read the delivery-aware
+  // PROJECTION (weekSubSets — triceps carries the compound dose) and, when projected
+  // biceps trails 0.85×triceps, inject a 2nd direct-biceps slot today (a DISTINCT curl
+  // movementKey is available, so it lands). Close-grip stays protected — we ADD biceps,
+  // never cut triceps.
+  if (focusId === 'arms') {
+    const sub = ledger.weekSubSets || {};
+    const bi = sub.direct_biceps || 0;
+    const tri = sub.direct_triceps || 0;
+    const need = 0.85 * tri;
+    // Raise the per-session direct-biceps minimum on EVERY biceps-capable day. The inject
+    // loop then ADDS extra curls (a distinct movementKey) on whichever days have slot
+    // HEADROOM (a dedicated pull/arms day, a full-body day) and gracefully no-ops on a
+    // packed upper day — it never displaces a focus press for a MEDIUM curl. Close-grip
+    // stays protected (we ADD biceps, never cut triceps). The count tops a day up by the
+    // curls needed to clear the weekly parity (~3 sets/curl), capped at 3 (never curl-only).
+    const isBicepsDay = cluster === 'pull' || cluster === 'upper' || cluster === 'arms'
+      || cluster === 'full' || cluster === 'fullbody';
+    if (tri > 0 && bi < need && isBicepsDay) {
+      const extraCurls = Math.ceil((need - bi) / DIRECT_ARM_ISO_DOSE);
+      out.reqBumps.set('direct_biceps', Math.min(3, 2 + extraCurls));
+    }
+  }
+
+  // ── gap 2 (CHEST Close-Grip ≤4 SETS/week) + the ARMS bi:tri denominator: a close-grip
+  // exposure carries ~4 sets, so the FIRST push day's exposure already projects the whole
+  // 4-set quota; every SUBSEQUENT close-grip-capable day must carry ZERO close-grip.
+  // Tighten maxCloseGrip → 0 once the week's PRIOR days already projected ≥4 close-grip
+  // sets (the per-session maxCloseGrip:1 still holds the first day's count). On CHEST this
+  // caps the weekly close-grip set total; on ARMS it thins the 2nd triceps compound so
+  // delivered triceps falls toward the curl-capped biceps (closing biceps≥0.85×triceps).
+  if (focusId === 'chest' || focusId === 'arms') {
+    const priorCloseGripSets = ledger.priorSubSets?.close_grip || 0;
+    if (priorCloseGripSets >= 4) out.capOverrides.set('maxCloseGrip', 0);
+  }
+
+  // ── gap 4 (LOWER back ≤0.65×max-lower @4d+, slot side): on a lower focus the upper/pull
+  // days otherwise stack 3 back lifts (pulldown + row + pullover ≈ 8 sets/day → back ~16),
+  // above the founder cap. When the week ledger projects the back over the cap, thin the
+  // back lat STACK on a back-capable maintenance day to ONE lat (maxBackLatWork:1) — the
+  // upper/pull days of a lower focus carry NO required back PATTERN (only a chest press),
+  // so the stack thins without stranding a requirement. Paired with the BACK-BUDGET shave
+  // (applyLedgerLowerBackCap) this lands delivered back ~6 ≤ 0.65×max-lower. The MEV floor
+  // still guarantees back coverage (the single retained lat is the maintenance dose).
+  if (focusId === 'lower') {
+    const wk = ledger.weekSetsByGroup || {};
+    const lowerMax = Math.max(wk.quads || 0, wk.hamstrings || 0, wk.glutes || 0);
+    const back = wk.back || 0;
+    const isBackCapable = cluster === 'pull' || cluster === 'upper' || cluster === 'back'
+      || cluster === 'full' || cluster === 'fullbody';
+    if (lowerMax > 0 && back > 0.65 * lowerMax && isBackCapable) {
+      out.capOverrides.set('maxBackLatWork', 1);
+    }
+  }
+
+  return out;
+}
+
+/**
+ * Per-exercise SET FLOORS the week ledger requires today (gap 3): when the week's
+ * projected delivery for a delt sub-bucket trails the founder quota, the carrier
+ * isolation must train at its full per-exercise ceiling (not the thin 2-set default) so
+ * the slots that DO exist add up to the quota. Returns a tag → minSets map the
+ * distributor applies as a post-pass floor (bounded by the isolation ceiling there).
+ * Empty when the ledger is absent / no delt contract / quota already met.
+ *
+ * @param {string} focusId
+ * @param {number} daysPerWeek
+ * @param {import('../schedule/scheduleAdapter/weekLedger.js').WeekLedger|null|undefined} ledger
+ * @returns {Record<string, number>} sub-bucket tag → minimum per-exercise sets
+ */
+export function ledgerSetFloors(focusId, daysPerWeek, ledger) {
+  /** @type {Record<string, number>} */
+  const out = {};
+  if (!ledger || typeof ledger !== 'object') return out;
+  if (!(Number(daysPerWeek) >= 4)) return out;
+  const quotas = LEDGER_SET_QUOTAS[focusId] || [];
+  for (const q of quotas) {
+    const sub = TAG_TO_LEDGER_SUB[q.tag];
+    const projectedWeekSets = ledger.weekSubSets?.[sub] || 0;
+    const exposureDays = ledger.weekSlotDays?.[sub] || 0;
+    if (projectedWeekSets < q.weeklySets && exposureDays > 0) {
+      // Floor each carrier to the dose that, summed over the week's exposure days, meets
+      // the quota — capped at the per-exercise ceiling (3 for delts, junk-volume guard).
+      const needPerDay = Math.ceil(q.weeklySets / exposureDays);
+      out[q.tag] = Math.min(q.exposureCeiling, needPerDay);
+    }
+  }
+  return out;
 }
 
 /**
@@ -1024,6 +1211,36 @@ export function applyFocusPolicy(chosen, ctx) {
   const reqs = requirementsFor(rule, cluster, ctx?.daysPerWeek, ctx?.weekClusters, contractsOn).sort(
     (a, b) => (PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority]),
   );
+
+  // CROSS-DAY LEDGER ADJUSTMENTS (dp_week_ledger_v1) — when the week ledger is threaded
+  // (contracts ON), translate the projection into requirement-count bumps + tightened
+  // cap overrides that close the 4 GAP contracts a per-day pass cannot reach. A bump
+  // RAISES an existing requirement's count (e.g. side_delt 1→2 to inject a second
+  // lateral on a later shoulder day that still owes the ≥6-set quota) or ADDS the
+  // requirement when the day qualifies but the rule listed none for this cluster. The
+  // cap overrides tighten a per-session cap (e.g. maxCloseGrip→0 on a later push day once
+  // the week's prior days projected the ≤4-set quota). Ledger absent / no contract for
+  // this focus → empty maps → byte-identical to the per-day-only resolver. Bumps respect
+  // the SAME inject machinery below (graceful no-op when no candidate, never displaces a
+  // logged PR unless the displaceable rules allow it — identical precedence).
+  const ledgerAdj = contractsOn
+    ? ledgerContractAdjust(ctx?.focusId, cluster, ctx?.daysPerWeek, ctx?.weeklyLedger)
+    : { reqBumps: new Map(), capOverrides: new Map() };
+  if (ledgerAdj.reqBumps.size > 0) {
+    for (const [tag, count] of ledgerAdj.reqBumps) {
+      const existing = reqs.find((r) => r.tag === tag);
+      if (existing) {
+        existing.count = Math.max(existing.count, count);
+      } else {
+        // The day qualifies for the tag but the rule had no per-session min for this
+        // cluster — add a MEDIUM/relaxable req so it yields before a HIGH width/press
+        // need and never strands (the inject loop's graceful no-op still applies).
+        reqs.push({ tag, count, priority: 'medium', relaxable: true });
+      }
+    }
+    // Re-sort: a freshly-added medium req must slot into the priority order.
+    reqs.sort((a, b) => (PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority]));
+  }
 
   // The pool of injection candidates (already past every upstream HARD exclude),
   // not already in the session, each enriched with derived tags + a score. Ordered
@@ -1111,10 +1328,23 @@ export function applyFocusPolicy(chosen, ctx) {
   const caps = rule.sessionCaps || {};
   const matchers = capMatchers();
   const requiredTags = new Set(reqs.map((r) => r.tag));
-  for (const [capKey, capVal] of Object.entries(caps)) {
+  // Iterate the UNION of the rule's static caps AND any LEDGER-injected cap key (gap 4's
+  // maxBackLatWork on a lower focus is ledger-only — not a static rule cap — so it must be
+  // visited here even though `caps` does not list it).
+  const capKeys = new Set([...Object.keys(caps), ...ledgerAdj.capOverrides.keys()]);
+  for (const capKey of capKeys) {
+    const ruleCapVal = caps[capKey];
+    const hasOverride = ledgerAdj.capOverrides.has(capKey);
     // CONTRACT GATE — a focus-contracts-arc cap (shrug/close-grip/arm-OHP) is applied
     // only when the flag is ON. Pre-arc caps are untouched → byte-identical when off.
     if (CONTRACT_CAP_KEYS.has(capKey) && !contractsOn) continue;
+    // CROSS-DAY LEDGER override (dp_week_ledger_v1) — a tightened cap (e.g. maxCloseGrip
+    // → 0 on a later push day; maxBackLatWork → 1 on a lower-focus maintenance day). Only
+    // ever LOWERS (the min of the rule cap + override), so it can only prune MORE, never
+    // less. A ledger-ONLY key (no static rule cap) uses the override value directly.
+    const capVal = hasOverride
+      ? (typeof ruleCapVal === 'number' ? Math.min(ruleCapVal, ledgerAdj.capOverrides.get(capKey)) : ledgerAdj.capOverrides.get(capKey))
+      : ruleCapVal;
     const match = matchers[capKey];
     if (!match || typeof capVal !== 'number') continue;
     let offenders = session.filter((e) => match(e.tags));

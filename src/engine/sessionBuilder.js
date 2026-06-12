@@ -12,7 +12,7 @@ import { EXERCISE_METADATA, getExerciseMetadata, isActiveMeta } from './exercise
 import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT, ISRAETEL_BASELINES } from './periodization/constants.js';
 import { isExcludedMovement } from './movementExclusion.js';
 import { EXERCISE_TIER_RANK, tierSelectScore, TIER_SELECTABLE_SA, HAS_LOG_BONUS } from './exerciseTierRank.js';
-import { applyFocusPolicy, deriveExerciseTags, focusRelevantTags } from './focusPolicy.js';
+import { applyFocusPolicy, deriveExerciseTags, focusRelevantTags, ledgerSetFloors } from './focusPolicy.js';
 import { isoWeek } from '../util/isoWeek.js';
 // R6d-b (2026-06-11) — the curated lumbar-hinge name lists, shared with the
 // cross-day dedup so the in-session pairing rule never drifts from it. Import is
@@ -2022,6 +2022,12 @@ export function buildSession(cluster, ctx) {
       // from getDailyWorkout so requirementsFor can defer a weekly minimum to the
       // week's SPECIALIST days (v-taper lat-iso → Pull owns it, Upper lands at 7).
       weekClusters: ctx?.weekClusters ?? null,
+      // CROSS-DAY WEEK LEDGER (dp_week_ledger_v1) — the projection of the week's prior
+      // days, threaded so requirementsFor + the cap-loop can enforce the cross-day SLOT
+      // contracts (close-grip weekly set cap, lateral/rear second-slot quota, biceps:
+      // triceps weekly parity). Null → the contract gates degrade to the per-day-only
+      // behaviour (byte-identical to the pre-ledger resolver).
+      weeklyLedger: ctx?.weeklyLedger ?? null,
       cluster,
       pool: candidatePool,
       prNames,
@@ -2345,6 +2351,28 @@ export function buildSession(cluster, ctx) {
     name: e.name,
     sets: setsByName[e.name] ?? DEFAULT_SETS,
   }));
+
+  // CROSS-DAY LEDGER SET FLOORS (gap 3, dp_week_ledger_v1) — when the week ledger
+  // projects a delt sub-bucket (lateral / rear) BELOW the founder's ≥6-set weekly quota,
+  // the carrier isolation on THIS qualifying day must train at its full per-exercise
+  // dose (not the thin 2-set default) so the slots that exist across the week add up to
+  // the quota. This is a per-exercise FLOOR (only ever RAISES a too-thin dose, bounded
+  // by the junk-volume ceiling baked into the floor value), applied AFTER distribution so
+  // it does not perturb the budget math. Ledger absent / no delt contract / quota already
+  // met → empty map → no-op (byte-identical). Determinism: reads only the ledger numbers.
+  const setFloors = ctx?.weeklyLedger
+    ? ledgerSetFloors(ctx?.focusId, ctx?.daysPerWeek, ctx.weeklyLedger)
+    : {};
+  if (Object.keys(setFloors).length > 0) {
+    exercises = exercises.map((e) => {
+      const tags = deriveExerciseTags(e.name, getExerciseMetadata(e.name), movementKey);
+      let floor = 0;
+      for (const [tag, minSets] of Object.entries(setFloors)) {
+        if (tags.has(tag) && minSets > floor) floor = minSets;
+      }
+      return floor > e.sets ? { ...e, sets: floor } : e;
+    });
+  }
 
   // W-Split GAP 4 — SENIOR / COLD-START per-session VOLUME CAP. A senior beginner
   // must not get ~20+ sets in session 1 (oracle grid: 68-72yo novice). ctx.

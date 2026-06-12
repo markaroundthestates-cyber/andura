@@ -49,7 +49,8 @@ import { weeklySessionsPerGroup } from './weeklySessions.js';
 import { resolveExperienceId } from '../../periodization/volumeLandmarks.js';
 import { flattenSessionsToRecoveryLogs } from './recoveryLogs.js';
 import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias } from './focus.js';
-import { applyFocusVolumeContracts, focusContractDemotions } from './focusVolumeContracts.js';
+import { applyFocusVolumeContracts, focusContractDemotions, applyLedgerLowerBackCap } from './focusVolumeContracts.js';
+import { computeWeekLedger } from './weekLedger.js';
 import {
   laggingGroupsFromLogs,
   applyWeaknessAmplification,
@@ -465,13 +466,43 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // (some contracts only bite at ≥4 training days). OFF / balanced-with-no-contract /
   // pure-fn callers → passthrough → byte-identical (the fp hash holds; pinned OFF in
   // the fp cohorts).
-  const balancedTargets = isEnabled('dp_focus_contracts_v1')
+  const contractedTargets = isEnabled('dp_focus_contracts_v1')
     ? applyFocusVolumeContracts(
         balancedFlooredTargets,
         focusPreset,
         activeWeek.filter(Boolean).length || 1,
       )
     : balancedFlooredTargets;
+
+  // CROSS-DAY WEEK LEDGER (dp_week_ledger_v1, 2026-06-12) — re-derive what the week's
+  // PRIOR days (0..dayIdx-1) projected (per-group SETS + per-sub-bucket SLOTS), the SAME
+  // deterministic way the plan derives the day→cluster sequence (clusterForDay). Built
+  // from the CONTRACTED weekly budget (the stable weekly SSOT every day shares) so the
+  // projection matches what each day actually divides. Threaded into the resolver below
+  // (ctx.weeklyLedger) for the slot-side contracts (close-grip cap, lateral/rear second
+  // slot, biceps:triceps weekly parity) AND read HERE for the LOWER back-cap: the upper/
+  // pull days of a lower-focus week shave their back budget toward the founder's
+  // ≤0.65×max-lower cap once the ledger shows the lower buckets dominate — never below
+  // MEV (the maintenance floor stays supreme). OFF / pure-fn caller → null → byte-
+  // identical (the fp hash holds; pinned OFF in the fp cohorts).
+  const weekLedger = isEnabled('dp_week_ledger_v1')
+    ? computeWeekLedger({
+        activeWeek,
+        dayIdx,
+        focusPreset,
+        splitRebalance,
+        volumeTargetsEN: contractedTargets,
+      })
+    : null;
+  const balancedTargets =
+    weekLedger && isEnabled('dp_focus_contracts_v1')
+      ? applyLedgerLowerBackCap(
+          contractedTargets,
+          focusPreset,
+          activeWeek.filter(Boolean).length || 1,
+          weekLedger,
+        )
+      : contractedTargets;
 
   // ── INTRA-WEEK DEFICIT RECOVERY (D-intra-week 2026-06-04) ────────────────
   // What was already done EARLIER this microcycle (skipped / early-ended sessions)
@@ -649,6 +680,16 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     weekClusters: isEnabled('dp_latiso_dedup_v1')
       ? weekClustersFor({ activeWeek, focusPreset, splitRebalance })
       : null,
+    // CROSS-DAY WEEK LEDGER (dp_week_ledger_v1, 2026-06-12) — the projection of what
+    // the week's PRIOR days delivered (per-group sets + per-sub-bucket slot days/sets),
+    // so the focus-policy resolver can enforce the cross-day SLOT contracts a per-day
+    // pass cannot reach: tighten close-grip once the week's prior push days already
+    // projected the ≤4-set quota; inject a SECOND lateral/rear slot on a later shoulder
+    // day when the week still owes the ≥6-set quota; inject extra direct-biceps when the
+    // projected WEEK biceps trails 0.85×triceps. The SAME ledger object built at the
+    // budget seam above (shared, not recomputed). OFF → null → byte-identical (the
+    // resolver's contract gates all degrade to no-op without it).
+    weeklyLedger: weekLedger,
     // Focus EMPHASIS surfacing (D-focus-visible 2026-06-05) — the emphasized
     // Big-11 RO groups earn an EXTRA exercise slot (over the cluster-weight cap)
     // AND front-of-session ordering, so the preset's volume intent shows as a

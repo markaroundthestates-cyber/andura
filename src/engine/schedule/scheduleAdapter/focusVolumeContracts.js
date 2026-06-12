@@ -290,3 +290,52 @@ export function applyFocusVolumeContracts(volumeTargetsEN, focusPreset, daysPerW
   fn(out, band(daysPerWeek));
   return out;
 }
+
+// ── LOWER back-cap via the cross-day week LEDGER (gap 4, dp_week_ledger_v1) ─────────
+// The per-day `lower` contract above caps the back BUDGET to (0.65×max-lower)/over-
+// deliver, but the founder's DELIVERED ≤0.65×max-lower cap still leaked: the lower
+// split lands a back anchor on its 2 upper/pull days, and the MEV-floored back budget
+// (10) over-delivers there to ~14-20 (≈ the biggest single lower bucket). The budget
+// cap alone cannot push below that because it does not SEE the week's projected delivery.
+//
+// With the LEDGER we read the PROJECTED week-back vs the projected biggest lower bucket
+// and shave the back budget HARDER when the projection still exceeds the cap — down to
+// (but never below) back MEV. This is the SAME displaceable logic the focus resolver
+// uses: the MEV floor is supreme (never breached), so the cap is enforced as far as the
+// maintenance floor allows and the residual (if MEV itself sits above the cap) is the
+// honest, documented limit. Only fires at ≥4 training days (the band where the split
+// carries dedicated upper/pull days); ≤3d full-body rides along untouched.
+const LOWER_BUCKETS = Object.freeze(['quads', 'hamstrings', 'glutes']);
+
+/**
+ * Shave the LOWER focus's back budget toward the founder's ≤0.65×max-lower DELIVERED
+ * cap using the week ledger's projection — never below back MEV. Returns a NEW map (a
+ * shallow clone when not applicable). Pure + deterministic.
+ *
+ * @param {Record<string, number>|null|undefined} volumeTargetsEN - the contracted budget
+ * @param {string|null|undefined} focusPreset - must be 'lower' to fire
+ * @param {number|null|undefined} daysPerWeek - ≥4 to fire (the split carries upper days)
+ * @param {import('./weekLedger.js').WeekLedger|null|undefined} ledger - computeWeekLedger output
+ * @returns {Record<string, number>|null} the back-shaved budget (null passes through)
+ */
+export function applyLedgerLowerBackCap(volumeTargetsEN, focusPreset, daysPerWeek, ledger) {
+  if (!volumeTargetsEN || typeof volumeTargetsEN !== 'object') return volumeTargetsEN ?? null;
+  const out = { ...volumeTargetsEN };
+  if (focusPreset !== 'lower' || band(daysPerWeek) !== 'hi') return out;
+  if (!ledger || typeof ledger.weekSetsByGroup !== 'object') return out;
+  const wk = ledger.weekSetsByGroup;
+  const lowerMaxDelivered = Math.max(
+    0, ...LOWER_BUCKETS.map((g) => wk[g] || 0),
+  );
+  if (lowerMaxDelivered <= 0) return out;
+  const backDelivered = wk.back || 0;
+  const cap = 0.65 * lowerMaxDelivered;          // founder's DELIVERED ceiling
+  if (backDelivered <= cap) return out;          // already within the cap → no shave
+  // The projected delivered back exceeds the cap. Scale the BUDGET down by the SAME
+  // ratio the delivery overshoots (delivered tracks budget monotonically), MEV-clamped.
+  const curBudget = out.back;
+  if (typeof curBudget !== 'number' || !(curBudget > 0)) return out;
+  const scaled = curBudget * (cap / backDelivered);
+  capTo(out, 'back', scaled); // capTo clamps to [MEV, MRV] — MEV stays supreme
+  return out;
+}

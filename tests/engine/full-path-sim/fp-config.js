@@ -145,6 +145,12 @@ export const FLIPPED_FLAGS = Object.freeze([
   // is proven on the focus×frequency sweep + the focus-signature gate, NOT in this
   // determinism stream.
   'dp_focus_contracts_v1',
+  // THE FLIP 2026-06-12 (focus-contracts arc — week-ledger closure) — the cross-day week
+  // ledger (per-group SET + per-sub-bucket SLOT projection of the week's prior days)
+  // defaults ON. Composition surface → pinned OFF here so the frozen prescription hashes
+  // stay byte-for-byte; ON behavior is proven on the focus-signature gate (the 4 closed
+  // GAP asserts) + the focus/frequency sweep, NOT in this determinism stream.
+  'dp_week_ledger_v1',
   // THE FLIP 2026-06-12 (isolation-rotation arc) — INTRA-WEEK isolation rotation
   // defaults ON (adjacent training days vary the equal-ish UNLOGGED isolation by the
   // training-day ordinal). UNLIKE the cross-week dp_accessory_rotation_v1 this is NOT
