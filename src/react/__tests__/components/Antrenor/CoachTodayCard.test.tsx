@@ -238,7 +238,7 @@ describe('CoachTodayCard — calibration honesty line', () => {
     useWorkoutStore.setState({ sessionsHistory: [] });
   });
 
-  it('renders the honest count copy while the model is still immature', () => {
+  it('renders an encouraging calibration line (no scary countdown) while the model is immature', () => {
     vi.spyOn(engineWrappers, 'getCalibrationMaturity').mockReturnValue({
       tierId: 0,
       tierName: 'cold_start',
@@ -248,9 +248,10 @@ describe('CoachTodayCard — calibration honesty line', () => {
     renderCard();
     const line = screen.getByTestId('coach-calibration-line');
     expect(line).toBeInTheDocument();
-    // EN default — names the real "sessions remaining" count, never a fake one.
-    expect(line.textContent).toMatch(/Still learning you/i);
-    expect(line.textContent).toMatch(/3 more sessions/i);
+    // Founder 2026-06-12: the old "about N more sessions to dial this in" scared
+    // new users (N can be ~26). Reframed warm + forward — never a daunting count.
+    expect(line.textContent).toMatch(/Already adapting to you/i);
+    expect(line.textContent).not.toMatch(/\d+ more sessions/i);
   });
 
   it('phrases WITHOUT a number when the engine exposes no count (no fabrication)', () => {
@@ -262,7 +263,7 @@ describe('CoachTodayCard — calibration honesty line', () => {
     });
     renderCard();
     const line = screen.getByTestId('coach-calibration-line');
-    expect(line.textContent).toMatch(/Still getting to know you/i);
+    expect(line.textContent).toMatch(/Getting to know you/i);
     // No fabricated session count when none is available.
     expect(line.textContent).not.toMatch(/\d+ more sessions/i);
   });

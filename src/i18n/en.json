@@ -293,8 +293,8 @@
     }
   },
   "coachCalibration": {
-    "withCount": "Still learning you — about {n} more sessions to dial this in.",
-    "noCount": "Still getting to know you — the plan keeps sharpening with every session."
+    "withCount": "Already adapting to you — I get sharper every session.",
+    "noCount": "Getting to know you — the plan sharpens with every session."
   },
   "coachReturn": {
     "line_one": "Welcome back — I've rebalanced the rest of your week around the missed session. No stress, the plan adapted.",

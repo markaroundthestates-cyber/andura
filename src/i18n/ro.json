@@ -293,8 +293,8 @@
     }
   },
   "coachCalibration": {
-    "withCount": "Inca te invat - cam {n} sesiuni si te calibrez complet.",
-    "noCount": "Inca te cunosc - planul se ascute cu fiecare sesiune."
+    "withCount": "Ma adaptez deja la tine - devin mai bun cu fiecare sesiune.",
+    "noCount": "Te cunosc tot mai bine - planul se ajusteaza cu fiecare sesiune."
   },
   "coachReturn": {
     "line_one": "Bine ai revenit - am reechilibrat restul saptamanii dupa antrenamentul sarit. Fara stres, planul s-a adaptat.",
