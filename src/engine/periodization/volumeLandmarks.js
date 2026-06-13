@@ -152,6 +152,11 @@ export function recoveryGreenMultiplier(ctx) {
  * @param {number} input.blockScaling     - 1.00 / 1.10 / 1.15 per macrocycle
  * @param {number} input.phaseVolumeMul   - 0.55 (DELOAD) sau 1.00 (LOAD/LOAD+/PEAK)
  * @param {'incepator'|'intermediar'|'avansat'} [input.experienceId] - omitted → avansat (full dose, MEV floor off)
+ * @param {number} [input.beginnerScalar] - §beginner-volume-v2 (dp_beginner_volume_v2):
+ *   when a finite value is passed AND experienceId === 'incepator', it OVERRIDES
+ *   EXPERIENCE_MODIFIERS.incepator (0.70) with the lower v2 beginner scalar (resolved
+ *   by the caller from the flag + age). Omitted / non-beginner → the static modifier
+ *   (byte-identical). The MEV floor still binds (the override is always < 1.0).
  * @param {boolean} [input.recoveryGreen]
  * @param {'low'|'high'} [input.recoveryStrength]
  * @param {Record<string, {mev:number, mav:number}>} [input.learned] - F6b V1 #10: per-user
@@ -167,6 +172,7 @@ export function computeMuscleVolumeTarget({
   blockScaling,
   phaseVolumeMul,
   experienceId,
+  beginnerScalar,
   recoveryGreen,
   recoveryStrength,
   learned,
@@ -192,7 +198,15 @@ export function computeMuscleVolumeTarget({
   // §experience-volume — the modifier defaults to 1.0 (avansat / full dose) when
   // experience is absent OR explicitly avansat, so the legacy + advanced path is
   // byte-identical to today. A value <1.0 means a genuine experience CUT.
-  const experience = typeof experienceId === 'string' ? (EXPERIENCE_MODIFIERS[experienceId] ?? 1.0) : 1.0;
+  // §beginner-volume-v2 — a finite `beginnerScalar` (resolved by the caller from
+  // dp_beginner_volume_v2 + age) OVERRIDES the static incepator 0.70 for a BEGINNER
+  // only; every other tier + the omitted/OFF beginner path keep the static modifier
+  // → byte-identical. Always < 1.0 → the experience CUT + MEV floor stay engaged.
+  const staticModifier = typeof experienceId === 'string' ? (EXPERIENCE_MODIFIERS[experienceId] ?? 1.0) : 1.0;
+  const experience =
+    experienceId === 'incepator' && Number.isFinite(beginnerScalar)
+      ? beginnerScalar
+      : staticModifier;
   const experienceCuts = experience < 1.0;
 
   // PRE-DELOAD dose — everything EXCEPT the periodization phase multiplier. The MRV
@@ -227,8 +241,9 @@ export function computeMuscleVolumeTarget({
  * Compute full volume map across all 11 Israetel muscle groups.
  *
  * @param {Object} input - same shape as computeMuscleVolumeTarget without
- *   muscleGroup (incl. the optional §experience-volume `experienceId` + the F6b V1
- *   optional `learned` per-muscle landmark override — both spread through unchanged).
+ *   muscleGroup (incl. the optional §experience-volume `experienceId`, the
+ *   §beginner-volume-v2 optional `beginnerScalar`, + the F6b V1 optional `learned`
+ *   per-muscle landmark override — all spread through unchanged).
  * @returns {Object<string, number>}  - muscleGroup → sets/week
  */
 export function computeVolumeMap(input) {

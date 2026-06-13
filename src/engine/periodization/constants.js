@@ -113,6 +113,40 @@ export const EXPERIENCE_MODIFIERS = Object.freeze({
 });
 
 /**
+ * §beginner-volume-v2 2026-06-13 (eval p1/p10 over-volume defect) — a LOWER
+ * beginner experience scalar gated behind `dp_beginner_volume_v2` (default ON).
+ * The original EXPERIENCE_MODIFIERS.incepator (0.70) lands a high-frequency
+ * novice at ~88-96 total / ~14-22 emphasized weekly sets (chest MAV 14 × 0.70
+ * pre-amplification = 10, then focus/weakness amplify toward MRV) — above the
+ * evidence-based beginner band (~10-12 emphasized / ~60-70 total). Beginners
+ * grow on LOW volume + linear LOAD progression + recovery margin, not raw set
+ * count (Israetel baselines are explicitly "intermediate-to-advanced target
+ * zones"). 0.55 sinks the marius/hipertrofie base map to ~86 total / 10 max-
+ * emphasized (chest 14×0.55=7.7 → floored to MEV 8); `older` (age ≥ 60) trims
+ * one notch more for the conservative-volume older-trainee case (Maria-65,
+ * Florin-60). The per-group MEV floor (computeMuscleVolumeTarget, engaged when
+ * the modifier <1.0) STILL protects the minimum — neither value can sink a
+ * worked muscle below MEV. Flag-OFF → EXPERIENCE_MODIFIERS.incepator (0.70) →
+ * byte-identical to today (fp pins the flag OFF in FLIPPED_FLAGS).
+ *
+ * @type {Readonly<{default: number, older: number}>}
+ */
+export const BEGINNER_VOLUME_V2_MODIFIERS = Object.freeze({
+  default: 0.55,
+  older:   0.50,
+});
+
+/**
+ * Age threshold (years) at/above which a BEGINNER uses the more conservative
+ * `older` beginner volume scalar (§beginner-volume-v2). Distinct from the
+ * persona boundaries above (those map age → recovery persona; this only picks
+ * the older-beginner volume notch).
+ *
+ * @type {number}
+ */
+export const BEGINNER_OLDER_AGE_MIN = 60;
+
+/**
  * Maria 65 Dual-Layer functional → Israetel mapping. Per §9.4 + §45.3 Q19
  * LOCKED: 6 movement patterns map to Israetel muscle groups.
  *

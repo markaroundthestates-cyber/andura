@@ -219,6 +219,17 @@ export const FLIPPED_FLAGS = Object.freeze([
   // occurrences drop sharply, avg exercises/day UNCHANGED) + the new selectionDedup
   // regression suite, NOT in this determinism stream.
   'dp_selection_dedup_v1',
+  // THE FLIP 2026-06-13 (beginner volume v2) — dp_beginner_volume_v2 defaults ON.
+  // It lowers the BEGINNER experience scalar (0.70 → 0.55, 0.50 for age ≥ 60) so a
+  // novice's weekly volume lands in the evidence-based band. The fp cohort DOES
+  // include incepator journeys (resolveExperienceId reads user.experience), and the
+  // ON behavior WOULD shrink their base periodization volume map → move the frozen
+  // prescription hashes. Pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so
+  // the beginner scalar stays 0.70 in both A/B arms → BOTH frozen baselines
+  // (hashOff/hashOn) stay byte-for-byte. ON behavior is proven on the eval grid
+  // (p1/p10 totals + max-emphasized into band, no muscle below MEV) + the new
+  // volumeLandmarks beginner-v2 regression suite, NOT in this determinism stream.
+  'dp_beginner_volume_v2',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

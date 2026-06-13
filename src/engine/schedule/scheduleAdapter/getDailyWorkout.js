@@ -890,6 +890,19 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // byte-identical). When ON, a beginner's NON-focus groups are capped to keep a
     // high-frequency novice week in the MEV/low-MAV band (experience anchoring).
     beginnerVolumeCap: isEnabled('dp_learned_volume_v1'),
+    // §beginner-volume-v2 (dp_beginner_volume_v2, default ON; pinned OFF in fp) —
+    // when ON, buildSession applies a FINAL clamp that caps a BEGINNER's EMPHASIZED-
+    // group ISOLATIONS at MEV (2 sets). The prior delivered path rode a novice's
+    // single-muscle emphasis to ~20-22 weekly DELIVERED sets (= advanced MRV): the
+    // focus signature surfaces press + lateral + rear width SLOTS on each training
+    // day and the cross-day delt-quota ledger floor handed those isolations 3 sets.
+    // The clamp keeps the SLOTS (the look choice / width promise stays visible) but
+    // trims the per-exercise junk 3rd set so the emphasized muscle lands toward the
+    // ~10-14 beginner band; the COMPOUND anchor + isolation-ONLY emphasized groups
+    // (arms) are exempt so nothing sinks below MEV. OFF → no clamp → byte-identical
+    // (fp holds — pinned OFF in FLIPPED_FLAGS). The name is historical (the slot-cap
+    // lever it once gated was retired for sinking non-focus majors below MEV).
+    beginnerEmphasisSlotCap: isEnabled('dp_beginner_volume_v2'),
     // Daniel expert tier-list SELECTION (dp_daniel_tier_select_v1, default OFF →
     // byte-identical). When ON, poolForGroup orders each muscle's auto-pool by
     // Daniel's hand-ranked S/A/B/C/D selection band (exerciseTierRank.js) as the

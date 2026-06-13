@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import {
   resolvePersonaId,
   resolveGoalId,
@@ -14,7 +14,10 @@ import {
   RECOVERY_GREEN_BONUS,
   GOAL_MODIFIERS,
   EXPERIENCE_MODIFIERS,
+  BEGINNER_VOLUME_V2_MODIFIERS,
+  BEGINNER_OLDER_AGE_MIN,
 } from '../constants.js';
+import { evaluate } from '../index.js';
 
 describe('resolvePersonaId — §9.4 persona resolution + ADR 017 personas', () => {
   it('explicit user.persona wins case-insensitive', () => {
@@ -233,6 +236,123 @@ describe('experience volume scaling — beginner starts lower than advanced (aud
     // 14 × 1.0(persona) × 1.0(goal) × 0.70(experience) = 9.8 → 10.
     expect(beg.sets).toBe(Math.round(ISRAETEL_BASELINES.chest.MAV * EXPERIENCE_MODIFIERS.incepator));
     expect(beg.sets).toBe(10);
+  });
+});
+
+// §beginner-volume-v2 2026-06-13 (eval p1/p10 over-volume defect) — a LOWER
+// beginner experience scalar (BEGINNER_VOLUME_V2_MODIFIERS: 0.55 default / 0.50
+// age≥60) gated behind dp_beginner_volume_v2 (default ON), threaded into
+// computeVolumeMap via the optional `beginnerScalar`. Brings a beginner's weekly
+// BASE budget into the evidence-based band (~10-12 emphasized / ~60-70 total)
+// without sinking any worked muscle below MEV (the floor still binds). Flag-OFF →
+// the static EXPERIENCE_MODIFIERS.incepator (0.70) → byte-identical (fp pins OFF).
+describe('beginner-volume-v2 — lower beginner scalar, MEV floor holds (eval p1/p10)', () => {
+  const emphasized = ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'quads', 'hamstrings', 'glutes'];
+  const sumMap = (m) => Object.values(m).reduce((a, b) => a + b, 0);
+  const maxEmph = (m) => Math.max(...emphasized.map((g) => m[g] || 0));
+
+  it('pure layer: beginnerScalar OVERRIDES the static incepator 0.70 for a beginner', () => {
+    const base = { muscleGroup: 'chest', personaId: 'marius', goalId: 'hipertrofie', blockScaling: 1.0, phaseVolumeMul: 1.0 };
+    const v1 = computeMuscleVolumeTarget({ ...base, experienceId: 'incepator' });
+    const v2 = computeMuscleVolumeTarget({ ...base, experienceId: 'incepator', beginnerScalar: BEGINNER_VOLUME_V2_MODIFIERS.default });
+    // chest MAV 14: v1 = round(14×0.70) = 10; v2 = round(14×0.55) = 7.7 → floored to MEV 8.
+    expect(v1.sets).toBe(10);
+    expect(v2.sets).toBe(ISRAETEL_BASELINES.chest.MEV); // 8 — lower, and MEV-floored
+    expect(v2.sets).toBeLessThan(v1.sets);
+  });
+
+  it('beginnerScalar is IGNORED for non-beginner tiers (intermediar/avansat byte-identical)', () => {
+    const base = { muscleGroup: 'chest', personaId: 'marius', goalId: 'hipertrofie', blockScaling: 1.0, phaseVolumeMul: 1.0 };
+    for (const exp of ['intermediar', 'avansat']) {
+      const noScalar = computeMuscleVolumeTarget({ ...base, experienceId: exp });
+      const withScalar = computeMuscleVolumeTarget({ ...base, experienceId: exp, beginnerScalar: 0.40 });
+      expect(withScalar.sets).toBe(noScalar.sets); // the override only applies to a beginner
+    }
+  });
+
+  it('beginnerScalar absent → static incepator 0.70 (byte-identical to today, flag-OFF path)', () => {
+    const base = { personaId: 'marius', goalId: 'hipertrofie', blockScaling: 1.0, phaseVolumeMul: 1.0 };
+    const off = computeVolumeMap({ ...base, experienceId: 'incepator' });
+    const offExplicit = computeVolumeMap({ ...base, experienceId: 'incepator', beginnerScalar: undefined });
+    expect(offExplicit).toEqual(off);
+    // and the static dose anchor is unchanged.
+    expect(sumMap(off)).toBe(105);
+  });
+
+  it('beginner v2 map is STRICTLY lower than v1, and no worked muscle sinks below MEV', () => {
+    const base = { personaId: 'marius', goalId: 'hipertrofie', blockScaling: 1.0, phaseVolumeMul: 1.0 };
+    const v1 = computeVolumeMap({ ...base, experienceId: 'incepator' });
+    const v2 = computeVolumeMap({ ...base, experienceId: 'incepator', beginnerScalar: BEGINNER_VOLUME_V2_MODIFIERS.default });
+    expect(sumMap(v2)).toBeLessThan(sumMap(v1)); // 86 < 105
+    for (const group of Object.keys(v2)) {
+      const mev = ISRAETEL_BASELINES[group].MEV;
+      // The MEV floor must hold for every WORKED group (MEV > 0).
+      if (mev > 0) expect(v2[group]).toBeGreaterThanOrEqual(mev);
+    }
+    // Base map lands in-band: max-emphasized ~10 (down from 13), total ~86.
+    expect(maxEmph(v2)).toBeLessThanOrEqual(12);
+    expect(maxEmph(v2)).toBeLessThan(maxEmph(v1));
+  });
+
+  it('older beginner scalar (0.50) ≤ default beginner scalar (0.55) per group', () => {
+    const base = { personaId: 'marius', goalId: 'hipertrofie', blockScaling: 1.0, phaseVolumeMul: 1.0 };
+    const def = computeVolumeMap({ ...base, experienceId: 'incepator', beginnerScalar: BEGINNER_VOLUME_V2_MODIFIERS.default });
+    const older = computeVolumeMap({ ...base, experienceId: 'incepator', beginnerScalar: BEGINNER_VOLUME_V2_MODIFIERS.older });
+    for (const group of Object.keys(def)) {
+      expect(older[group]).toBeLessThanOrEqual(def[group]);
+    }
+    expect(BEGINNER_VOLUME_V2_MODIFIERS.older).toBeLessThan(BEGINNER_VOLUME_V2_MODIFIERS.default);
+  });
+
+  it('constants frozen + in the conservative beginner band', () => {
+    expect(Object.isFrozen(BEGINNER_VOLUME_V2_MODIFIERS)).toBe(true);
+    expect(BEGINNER_VOLUME_V2_MODIFIERS.default).toBe(0.55);
+    expect(BEGINNER_VOLUME_V2_MODIFIERS.older).toBe(0.50);
+    // Both strictly below the static 0.70 they replace.
+    expect(BEGINNER_VOLUME_V2_MODIFIERS.default).toBeLessThan(EXPERIENCE_MODIFIERS.incepator);
+    expect(BEGINNER_OLDER_AGE_MIN).toBe(60);
+  });
+});
+
+// Flag-threaded path through periodization/evaluate — proves the dp_beginner_volume_v2
+// gate (a) lowers a beginner's base budget when ON, (b) is byte-identical OFF, (c)
+// picks the older notch for age≥60, (d) never touches a non-beginner. The _devFlags
+// override (the SAME path featureFlags.isEnabled honors first) drives the A/B.
+describe('beginner-volume-v2 — flag gate through periodization.evaluate', () => {
+  const sumMap = (m) => Object.values(m).reduce((a, b) => a + b, 0);
+  const setFlag = (v) => localStorage.setItem('_devFlags', JSON.stringify({ dp_beginner_volume_v2: v }));
+  afterEach(() => { try { localStorage.removeItem('_devFlags'); } catch { /* jsdom */ } });
+
+  it('flag ON lowers a beginner base budget; flag OFF is byte-identical to the static 0.70', async () => {
+    const user = { age: 19, sex: 'm', goal: 'masa', experience: 'incepator' };
+    setFlag(false);
+    const off = await evaluate({ user });
+    setFlag(true);
+    const on = await evaluate({ user });
+    expect(off.trace.beginnerScalar).toBe(null);          // gate closed → static path
+    expect(on.trace.beginnerScalar).toBe(BEGINNER_VOLUME_V2_MODIFIERS.default); // 0.55 (age<60)
+    expect(sumMap(off.meta.volume_target_pct)).toBe(105);  // static incepator 0.70 dose
+    expect(sumMap(on.meta.volume_target_pct)).toBeLessThan(sumMap(off.meta.volume_target_pct)); // 86 < 105
+    // MEV floor holds on the flagged path too (every worked group ≥ MEV).
+    for (const [g, sets] of Object.entries(on.meta.volume_target_pct)) {
+      const mev = ISRAETEL_BASELINES[g]?.MEV ?? 0;
+      if (mev > 0) expect(sets).toBeGreaterThanOrEqual(mev);
+    }
+  });
+
+  it('flag ON picks the OLDER notch (0.50) for an age≥60 beginner', async () => {
+    const user = { age: 65, sex: 'f', goal: 'mentenanta', experience: 'incepator' };
+    setFlag(true);
+    const on = await evaluate({ user });
+    expect(on.trace.beginnerScalar).toBe(BEGINNER_VOLUME_V2_MODIFIERS.older);
+  });
+
+  it('flag ON does NOT thread a scalar for a non-beginner (intermediar/avansat)', async () => {
+    setFlag(true);
+    for (const exp of ['intermediar', 'avansat']) {
+      const res = await evaluate({ user: { age: 30, goal: 'masa', experience: exp } });
+      expect(res.trace.beginnerScalar).toBe(null);
+    }
   });
 });
 

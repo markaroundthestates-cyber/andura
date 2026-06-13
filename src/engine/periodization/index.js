@@ -21,6 +21,7 @@ import {
   computeVolumeMap,
 } from './volumeLandmarks.js';
 import { readLearnedVolume } from './learnedVolume.js';
+import { BEGINNER_VOLUME_V2_MODIFIERS, BEGINNER_OLDER_AGE_MIN } from './constants.js';
 import { isEnabled } from '../../util/featureFlags.js';
 import {
   computeMacrocycleBlock,
@@ -99,9 +100,23 @@ export async function evaluate(ctx) {
   // experience so a beginner starts near MEV (recovery + adherence room) instead
   // of the full advanced dose. Composed multiplicatively with persona + goal.
   const experienceId = resolveExperienceId(user);
+  // §beginner-volume-v2 2026-06-13 (dp_beginner_volume_v2, default ON) — a LOWER
+  // beginner volume scalar so a high-frequency novice lands in the evidence-based
+  // band (~10-12 emphasized / ~60-70 total weekly sets) instead of the 0.70-driven
+  // ~88-96 total. Resolved here (the only computeVolumeMap caller) so the static
+  // EXPERIENCE_MODIFIERS table is untouched (fp pins the flag OFF → 0.70 →
+  // byte-identical). Only fed for a BEGINNER; older beginners (age ≥ 60) take the
+  // more conservative `older` notch. The per-group MEV floor still binds below.
+  const beginnerScalar =
+    experienceId === 'incepator' && isEnabled('dp_beginner_volume_v2')
+      ? (Number(user.age) >= BEGINNER_OLDER_AGE_MIN
+          ? BEGINNER_VOLUME_V2_MODIFIERS.older
+          : BEGINNER_VOLUME_V2_MODIFIERS.default)
+      : undefined;
   trace.personaId = personaId;
   trace.goalId = goalId;
   trace.experienceId = experienceId;
+  trace.beginnerScalar = beginnerScalar ?? null;
 
   // Macrocycle position from elapsed weeks (orchestrator passes via meta)
   const weeksElapsed = Number(meta.weeksElapsed);
@@ -185,6 +200,7 @@ export async function evaluate(ctx) {
     personaId,
     goalId,
     experienceId,
+    beginnerScalar,
     blockScaling: scaling,
     phaseVolumeMul: phaseVolMul,
     recoveryGreen,

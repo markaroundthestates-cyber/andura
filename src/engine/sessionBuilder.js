@@ -147,6 +147,20 @@ const MIN_SESSION_TRAINED = 5;
 // beginner = MEV/low-MAV, no peak). 2 keeps a beginner's per-group week in the
 // novice band even on a 3×/week group frequency. Trained tiers are uncapped here.
 const BEGINNER_MAX_SLOTS_PER_GROUP = 2;
+// §beginner-volume-v2 — a BEGINNER's EMPHASIZED-group ISOLATION per-exercise set
+// ceiling (applied as a FINAL clamp at the end of buildSession, after the cross-day
+// ledger delt-quota floor that would otherwise re-raise them). The focus signature
+// (shoulders/back/v-taper) legitimately surfaces press + lateral + rear (+ a
+// cross-day 2nd rear) on each of the 2 days the split trains the emphasized muscle —
+// those SLOTS are a focus contract we keep. But the budget-share rounding + the delt
+// quota handed several of those isolations 3 sets, stacking the muscle to ~20 weekly
+// (above the ~10-14 beginner emphasized band). A novice's accessory isolation grows
+// fine at 2 sets (MEV) — the EXTRA 3rd set is junk volume on a small head. Clamp a
+// beginner's emphasized-group ISOLATIONS to 2; the COMPOUND anchor (press/row) is
+// untouched, and an ISOLATION-ONLY emphasized group (biceps/triceps/calves) is EXEMPT
+// so the arms/calves emphasis stays ABOVE its MEV. Gated on the v2 flag; OFF → the
+// normal emphasized isolation band → byte-identical.
+const BEGINNER_EMPHASIS_ISOLATION_MAX_SETS = 2;
 
 // W-Split GAP 4 — MAJOR muscles that must never be slot-starved to ZERO on a
 // full-body day (the big movers). The per-major-muscle WEEKLY maintenance floor
@@ -2612,6 +2626,34 @@ export function buildSession(cluster, ctx) {
         if (tags.has(tag) && minSets > floor) floor = minSets;
       }
       return floor > e.sets ? { ...e, sets: floor } : e;
+    });
+  }
+  // §beginner-volume-v2 — the cross-day ledger delt-quota floor (above) RAISES a
+  // beginner's emphasized lateral/rear isolations back to the ≥6-set weekly dose,
+  // re-inflating the focus muscle to ~20/wk (the over-volume the eval flagged). For a
+  // novice the WIDTH SLOTS are what matter (the exposure the focus promises) — keep
+  // them, but cap each emphasized-group ISOLATION at MEV (2): the weekly quota is met
+  // by the slot COUNT (3 slots × 2 = 6), not a 3-set-per-lift dose. The COMPOUND
+  // (press) is exempt (it stays at the distribution floor). Gated on the v2 ctx flag +
+  // T0; OFF / trained → no clamp → byte-identical (the ledger floor stands). This is
+  // the last pass that the ledger floor can no longer undo.
+  if (ctx?.beginnerEmphasisSlotCap === true && ctx?.profileTier === 'T0' && emphSet.size > 0) {
+    // An emphasized group is clampable ONLY when it has a COMPOUND in the session
+    // (the press/row carries the dose) — an isolation-only emphasized group
+    // (biceps/triceps/calves) is EXEMPT so the focus stays ABOVE its MEV.
+    const emphGroupHasCompound = new Set();
+    for (const e of exercises) {
+      const m = getExerciseMetadata(e.name);
+      const g = m?.muscle_target_primary;
+      if (g && emphSet.has(g) && (m?.tier ?? 2) === COMPOUND_TIER) emphGroupHasCompound.add(g);
+    }
+    exercises = exercises.map((e) => {
+      const meta = getExerciseMetadata(e.name);
+      const g = meta?.muscle_target_primary;
+      const isIsolation = (meta?.tier ?? 2) > COMPOUND_TIER;
+      return g && emphSet.has(g) && emphGroupHasCompound.has(g) && isIsolation && e.sets > BEGINNER_EMPHASIS_ISOLATION_MAX_SETS
+        ? { ...e, sets: BEGINNER_EMPHASIS_ISOLATION_MAX_SETS }
+        : e;
     });
   }
 

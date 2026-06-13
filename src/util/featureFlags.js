@@ -439,6 +439,23 @@ export const FLAGS = Object.freeze({
   // (spec §7) — sim sweep + Daniel review before flip (volume dose is a felt change).
   dp_learned_volume_v1: { rollout: 1, default: true },
 
+  // BEGINNER volume v2 (2026-06-13, eval p1/p10 over-volume defect). The
+  // experience-volume modifier shipped a beginner at EXPERIENCE_MODIFIERS.incepator
+  // = 0.70 of the advanced Israetel target — which lands a high-frequency novice
+  // (p1 Andrei 19; p10 Maria-65) at ~88-96 total / ~14-22 emphasized weekly sets,
+  // ABOVE the evidence-based beginner band (~10-12 emphasized / ~60-70 total). The
+  // /10 eval repeatedly capped the beginner for over-volume ("cap the beginner near
+  // 10-12 emphasized / ~60-70 total; let LOAD progression drive growth, not raw set
+  // count"; for the 65yo "cap volume + frequency"). When ON, periodization/evaluate
+  // resolves a LOWER beginner scalar (BEGINNER_VOLUME_V2_MODIFIERS: 0.55 default,
+  // 0.50 for age ≥ 60) and threads it into computeVolumeMap, so the base weekly
+  // budget drops into the band; the per-group MEV floor (computeMuscleVolumeTarget,
+  // engaged when the modifier <1.0) STILL protects the minimum so no worked muscle
+  // sinks below MEV, and intermediate/advanced volume is untouched. OFF → the static
+  // EXPERIENCE_MODIFIERS.incepator (0.70) → BYTE-IDENTICAL to today (pinned OFF in
+  // fp-config FLIPPED_FLAGS so the fp incepator journeys keep the frozen hashes).
+  dp_beginner_volume_v2: { rollout: 1, default: true },
+
   // V4 #15 auto-pivot near ceiling (RISK MED — PROPOSES a goal pivot, never auto-
   // switches: worst case is a dismissable banner). The classifier (classifyPlateau)
   // + the per-lift intervention (near_ceiling → variation rotation) already ship
