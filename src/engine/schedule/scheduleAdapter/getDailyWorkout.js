@@ -897,6 +897,14 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // so the engine prescribes from HIS ranked list per muscle ("Andura picks like
     // Daniel"). PR-history continuity (band 0) + squat-primacy + all gates intact.
     danielTierSelect: isEnabled('dp_daniel_tier_select_v1'),
+    // FINER sub-family selection dedup (dp_selection_dedup_v1, default ON →
+    // SWAP-not-add). When ON, the in-session movement dedup keys with deepFamily=true
+    // so a "bench" resolves to its chest-press sub-family: two FLAT presses (e.g.
+    // Smith Machine Bench + Flat Chest Press Machine) collapse onto ONE press slot
+    // and the freed slot fills with the in-pool complementary INCLINE — same exercise
+    // count, no orphaned muscle. OFF → byte-identical movementKey (pinned OFF in
+    // fp-config so the frozen full-path hashes hold).
+    selectionDedup: isEnabled('dp_selection_dedup_v1'),
     // #42 progression-conditioned selection bonus (dp_progression_bonus_v1, gym-
     // log arc 2026-06-11). ONLY exercises with a real upward e1RM trend earn the
     // +5 tierSelectScore `progressing` bonus (sub-band — never jumps a tier).

@@ -207,6 +207,18 @@ export const FLIPPED_FLAGS = Object.freeze([
   // <=35min) + the trimSessionToTimeBudget unit suite, NOT in this determinism
   // stream.
   'dp_hard_time_cap_v1',
+  // THE FLIP 2026-06-13 (finer sub-family selection dedup) — dp_selection_dedup_v1
+  // defaults ON. It keys the in-session movement dedup with deepFamily=true so a
+  // "bench" resolves to its chest-press sub-family (two flat presses collapse to one
+  // press slot; the freed slot fills with the in-pool complementary incline = a SWAP,
+  // never an add). Composition/selection surface → the ON behavior WOULD move the
+  // frozen full-path prescription hashes (a chest day re-keys + swaps), so it is
+  // pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) → deepFamily false →
+  // movementKey is byte-identical → BOTH frozen baselines (hashOff/hashOn) stay
+  // byte-for-byte. ON behavior is proven on the eval grid (chest flat-press duplicate
+  // occurrences drop sharply, avg exercises/day UNCHANGED) + the new selectionDedup
+  // regression suite, NOT in this determinism stream.
+  'dp_selection_dedup_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

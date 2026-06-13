@@ -338,7 +338,10 @@ describe('REPLAY-REAL — founder real history vs live engine', () => {
     // the _DIAG focus×freq sweep. Mon-Sun 2026-06-15..21; his schedule pattern
     // [rest,rest,training,training,training,training,rest] → Wed-Sat train.
     const WEEK_MON = Date.UTC(2026, 5, 15, 6, 0, 0);
-    const CHEST_PRESS = (name, g) => g === 'piept' && /press|dip/i.test(name);
+    // 'bench' counts: a chest-primary "...Bench" (flat/incline/decline) IS a press
+    // (the name carries no literal "press"). Same blind-spot dp_selection_dedup_v1
+    // closed in movementKey — a bench is a chest press, not a fly.
+    const CHEST_PRESS = (name, g) => g === 'piept' && /press|dip|bench/i.test(name);
     const LUMBAR = /romanian deadlift|deadlift|hyperextension|back extension|good morning/i;
 
     // collect the composed training days once (compose is async)

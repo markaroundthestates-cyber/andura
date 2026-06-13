@@ -784,6 +784,30 @@ export const FLAGS = Object.freeze({
   // sim A/B. See _REF_gold_vtaper_cut_2026-06-08 + _ENGINE_volume_policy §73.
   dp_smart_selection_v1: { rollout: 0, default: false },
 
+  // FINER sub-family selection dedup (Daniel, eval 2026-06-13) (RISK LOW —
+  // composition SWAP, path A; never kg, never +1 exercise). The in-session movement
+  // dedup (sessionBuilder.movementKey -> chosenMovements) collapses same-TOKEN dups,
+  // but the base token list has NO "bench" entry, so "Smith Machine Bench" / "Smith
+  // Incline Bench" match nothing -> fall to a per-NAME unique key and SLIP PAST the
+  // dedup: a PUSH/chest day pairs "Smith Machine Bench" (name-key) WITH "Flat Chest
+  // Press Machine" (piept::press) = TWO flat presses (the /10 eval "two of three
+  // slots are the same flat press"). When ON, movementKey resolves a "bench" as a
+  // chest PRESS with the SAME incline/decline angle split, so the two FLAT presses
+  // collapse onto ONE piept::press slot and the freed slot fills with the next in-
+  // pool chest candidate -- the complementary INCLINE (piept::incline-press, a
+  // DISTINCT sub-family that is KEPT). LEAN by construction: a SWAP at a FIXED slot
+  // count (the round-robin fill targets effectiveSessionSize either way), NEVER an
+  // add; never orphans a muscle (no complementary sibling in pool -> the single best
+  // press stays -- the last-option is never dropped). Only the dedup-set keying
+  // changes (deepFamily=true at chosenMovements add/has/delete); rotation / squat-
+  // primacy / back-coverage / big-lower / exclusion-token consumers stay on the
+  // plain key -> unchanged. OFF (pinned OFF in fp-config FLIPPED_FLAGS) ->
+  // deepFamily false -> movementKey is byte-identical -> the frozen fp hashes hold.
+  // FLIPPED ON 2026-06-13 -- refine-only (collapses two redundant flats onto one,
+  // swaps in an in-pool complementary), proven on the eval grid (chest flat-press
+  // duplicate occurrences drop sharply, avg exercises/day UNCHANGED = swap not add).
+  dp_selection_dedup_v1: { rollout: 1, default: true },
+
   // #74 goal-realism push-back layer (engine-wiring 2026-06-08) (RISK LOW —
   // pure detection + a reframe MESSAGE; never blocks, never touches kg/sets,
   // surfaced ONCE at goal-set with an anti-spam cooldown). Andura today just

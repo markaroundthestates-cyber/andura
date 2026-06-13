@@ -1429,6 +1429,20 @@ const MOVEMENT_TOKEN_RES = MOVEMENT_TOKEN_DEFS.map(([pattern, token]) => ({
   re: new RegExp(`(?:^|[^a-z])${pattern.replace(/[-]/g, '[-\\s]')}(?:$|[^a-z])`),
 }));
 
+// dp_selection_dedup_v1 — FINER sub-family dedup (Daniel, eval 2026-06-13). The
+// base token list above has NO "bench" entry, so "Smith Machine Bench" / "Smith
+// Incline Bench" match nothing → fall to a per-NAME unique key and slip past the
+// in-session movement dedup: a PUSH/chest day pairs "Smith Machine Bench" (name-
+// key) WITH "Flat Chest Press Machine" (piept::press) = TWO flat presses (the /10
+// eval's "two of three slots are the same flat press"). Recognizing "bench" as a
+// chest PRESS — and reusing the SAME incline/decline angle carve-out — collapses
+// the two flat presses onto ONE piept::press slot, while a Smith INCLINE bench
+// keys as piept::incline-press (a DISTINCT, complementary sub-family that is KEPT,
+// so the freed slot fills with the in-pool incline = a SWAP, never a drop). Off →
+// the base list only → byte-identical key. Single extra matcher (cheaper than
+// re-deriving the whole list) appended ONLY when deepFamily is on.
+const BENCH_TOKEN_RE = new RegExp('(?:^|[^a-z])bench(?:$|[^a-z])');
+
 /**
  * Coarse movement-pattern key for an exercise: muscle_target_primary + the first
  * matching movement token in the name (word-boundary match, most-specific first).
@@ -1440,9 +1454,13 @@ const MOVEMENT_TOKEN_RES = MOVEMENT_TOKEN_DEFS.map(([pattern, token]) => ({
  *
  * @param {string} name - engine/library exercise name
  * @param {{muscle_target_primary?: string}} meta
+ * @param {boolean} [deepFamily=false] - dp_selection_dedup_v1: also resolve "bench"
+ *   as a press sub-family (flat/incline/decline) so two flat presses can't co-occur.
+ *   Default false → byte-identical to the pre-flag key (used by every NON-dedup
+ *   consumer — rotation / squat-primacy / back-coverage — which stay unchanged).
  * @returns {string}
  */
-export function movementKey(name, meta) {
+export function movementKey(name, meta, deepFamily = false) {
   const group = meta?.muscle_target_primary ?? 'unknown';
   const lower = String(name).toLowerCase();
   for (const { token, re } of MOVEMENT_TOKEN_RES) {
@@ -1456,6 +1474,15 @@ export function movementKey(name, meta) {
       }
       return `${group}::${token}`;
     }
+  }
+  // dp_selection_dedup_v1 finer pass — a "bench" with no base-list token is a chest
+  // press; honor the SAME angle split so a flat bench collapses with the flat press
+  // and an incline/decline bench keys to its own complementary sub-family.
+  if (deepFamily && BENCH_TOKEN_RE.test(lower)) {
+    if (/(?:^|[^a-z])(incline|decline)(?:$|[^a-z])/.test(lower)) {
+      return `${group}::${lower.includes('decline') ? 'decline' : 'incline'}-press`;
+    }
+    return `${group}::press`;
   }
   return `${group}::name:${lower}`;
 }
@@ -1494,6 +1521,7 @@ export function movementKey(name, meta) {
  *   coherentAlloc?: boolean,
  *   tierCompoundFloor?: boolean,
  *   lateralRaiseGuarantee?: boolean,
+ *   selectionDedup?: boolean,
  *   danielTierSelect?: boolean,
  *   focusPolicy?: boolean,
  *   focusId?: string,
@@ -1688,12 +1716,23 @@ export function buildSession(cluster, ctx) {
 
   const chosen = [];
   const chosenNames = new Set();
+  // dp_selection_dedup_v1 (Daniel, eval 2026-06-13) — the FINER sub-family dedup
+  // switch. When ON, the in-session movement dedup keys with deepFamily=true so a
+  // "bench" resolves to its chest-press sub-family (flat collapses with the flat
+  // press; incline/decline stay distinct = the complementary swap). EVERY
+  // chosenMovements add/has/delete below goes through `dedupKey` so the key is
+  // CONSISTENT within the session (an add+delete under mismatched keys would leak a
+  // ghost). NON-dedup movementKey consumers (rotation / squat-primacy / back-
+  // coverage / big-lower / exclusion-token) stay on the plain key → unchanged.
+  // OFF (default-absent / pure-fn callers) → deepFamily false → byte-identical.
+  const deepFamilyDedup = ctx?.selectionDedup === true;
+  const dedupKey = (name, meta) => movementKey(name, meta, deepFamilyDedup);
   // BUG 5 — dedup by MOVEMENT (muscle + movement token), not exact name, so two
   // same-movement variants (e.g. two chest flyes under different names) can never
   // both land in one plan. chosenNames stays as the exact-name guard underneath.
   const chosenMovements = new Set();
   const isTaken = (e) =>
-    chosenNames.has(e.name) || chosenMovements.has(movementKey(e.name, e.meta));
+    chosenNames.has(e.name) || chosenMovements.has(dedupKey(e.name, e.meta));
   // #3 (Daniel coach audit 2026-06-10) — a big lower lift = a tier-1 mover on the
   // quad/ham groups (squat/hinge/lunge/press). Cap at MAX_BIG_LOWER_LIFTS per
   // session so a legs/lower/full day never stacks 3+ heavy bilateral compounds.
@@ -1714,7 +1753,7 @@ export function buildSession(cluster, ctx) {
   const take = (e, sets) => {
     chosen.push({ name: e.name, sets });
     chosenNames.add(e.name);
-    chosenMovements.add(movementKey(e.name, e.meta));
+    chosenMovements.add(dedupKey(e.name, e.meta));
     const g = e.meta?.muscle_target_primary;
     if (g) groupCount[g] = (groupCount[g] || 0) + 1;
     if (isBigLower(e)) bigLowerCount += 1;
@@ -1735,7 +1774,7 @@ export function buildSession(cluster, ctx) {
     if (t1Count >= MAX_T1) break;
     const t1 = pool.find((e) => {
       if (e.meta.tier !== 1 || isTaken(e)) return false;
-      const mk = movementKey(e.name, e.meta);
+      const mk = dedupKey(e.name, e.meta);
       const myRank = rank(e.name, prNames);
       // Phase-1 anchor dedup tiebreak. LEGACY (flag OFF) defers a T1 to a
       // strictly-lower-rank (commonness) same-movement variant → byte-identical.
@@ -1749,7 +1788,7 @@ export function buildSession(cluster, ctx) {
         ? tierSelectScore(e.name, { hasLog: prNames.has(e.name) })
         : 0;
       const preferredSameMovement = pool.some((o) =>
-        movementKey(o.name, o.meta) !== mk
+        dedupKey(o.name, o.meta) !== mk
           ? false
           : danielTierSelect
             ? tierSelectScore(o.name, { hasLog: prNames.has(o.name) }) > myScore
@@ -1855,12 +1894,12 @@ export function buildSession(cluster, ctx) {
         if (removeIdx >= 0) {
           const removed = chosen[removeIdx];
           chosenNames.delete(removed.name);
-          chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+          chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
           const rg = getExerciseMetadata(removed.name).muscle_target_primary;
           if (rg && groupCount[rg]) groupCount[rg] -= 1;
           chosen.splice(removeIdx, 1, { name: lateral.name, sets: DEFAULT_SETS });
           chosenNames.add(lateral.name);
-          chosenMovements.add(movementKey(lateral.name, lateral.meta));
+          chosenMovements.add(dedupKey(lateral.name, lateral.meta));
           groupCount.umeri = (groupCount.umeri || 0) + 1;
         } else if (chosen.length < SESSION_SIZE) {
           take(lateral, DEFAULT_SETS);
@@ -1876,12 +1915,12 @@ export function buildSession(cluster, ctx) {
           if (fallbackIdx >= 0) {
             const removed = chosen[fallbackIdx];
             chosenNames.delete(removed.name);
-            chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+            chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
             const rg = getExerciseMetadata(removed.name).muscle_target_primary;
             if (rg && groupCount[rg]) groupCount[rg] -= 1;
             chosen.splice(fallbackIdx, 1, { name: lateral.name, sets: DEFAULT_SETS });
             chosenNames.add(lateral.name);
-            chosenMovements.add(movementKey(lateral.name, lateral.meta));
+            chosenMovements.add(dedupKey(lateral.name, lateral.meta));
             groupCount.umeri = (groupCount.umeri || 0) + 1;
           }
         }
@@ -1918,12 +1957,12 @@ export function buildSession(cluster, ctx) {
           if (removeIdx >= 0) {
             const removed = chosen[removeIdx];
             chosenNames.delete(removed.name);
-            chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+            chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
             const rg = getExerciseMetadata(removed.name).muscle_target_primary;
             if (rg && groupCount[rg]) groupCount[rg] -= 1;
             chosen.splice(removeIdx, 1, { name: biceps.name, sets: DEFAULT_SETS });
             chosenNames.add(biceps.name);
-            chosenMovements.add(movementKey(biceps.name, biceps.meta));
+            chosenMovements.add(dedupKey(biceps.name, biceps.meta));
             groupCount.biceps = (groupCount.biceps || 0) + 1;
           }
         }
@@ -1947,7 +1986,7 @@ export function buildSession(cluster, ctx) {
     if (hasBiceps && triIdx >= 0 && chosen.length > minSession) {
       const removed = chosen[triIdx];
       chosenNames.delete(removed.name);
-      chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+      chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
       if (groupCount.triceps) groupCount.triceps -= 1;
       chosen.splice(triIdx, 1);
     }
@@ -1972,7 +2011,7 @@ export function buildSession(cluster, ctx) {
       const removed = chosen[extIdx];
       const rg = getExerciseMetadata(removed.name).muscle_target_primary;
       chosenNames.delete(removed.name);
-      chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+      chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
       if (rg && groupCount[rg]) groupCount[rg] -= 1;
       chosen.splice(extIdx, 1);
     }
@@ -2060,7 +2099,14 @@ export function buildSession(cluster, ctx) {
       cluster,
       pool: candidatePool,
       prNames,
-      movementKey,
+      // dp_selection_dedup_v1 — hand the resolver the SAME deep-family keyer the
+      // in-session dedup uses, so its tag derivation (chest_press), its movement
+      // dedup (mkOf/inMovement) and its press caps all see a "bench" as a chest
+      // press. Without this the resolver keys "Smith Machine Bench" as a per-name
+      // key → no chest_press tag → minChestPressSlots:1 thinks the day has no press
+      // and INJECTS a 2nd flat (Flat Chest Press Machine), re-creating the very
+      // duplicate the dedup just removed. OFF → dedupKey === movementKey → unchanged.
+      movementKey: dedupKey,
       getMeta: getExerciseMetadata,
       // Match the Phase-2 selection score (Daniel tier list when ON, else neutral)
       // so the resolver's prune/inject tiebreak agrees with how the session was built.
@@ -2078,7 +2124,7 @@ export function buildSession(cluster, ctx) {
       chosenMovements.clear();
       for (const e of chosen) {
         chosenNames.add(e.name);
-        chosenMovements.add(movementKey(e.name, getExerciseMetadata(e.name)));
+        chosenMovements.add(dedupKey(e.name, getExerciseMetadata(e.name)));
       }
     }
   }
@@ -2160,11 +2206,11 @@ export function buildSession(cluster, ctx) {
           const victim = chosen[victimIdx];
           const vg = getExerciseMetadata(victim.name).muscle_target_primary;
           chosenNames.delete(victim.name);
-          chosenMovements.delete(movementKey(victim.name, getExerciseMetadata(victim.name)));
+          chosenMovements.delete(dedupKey(victim.name, getExerciseMetadata(victim.name)));
           if (vg && liveCount[vg]) liveCount[vg] -= 1;
           chosen.splice(victimIdx, 1, { name: cand.name, sets: DEFAULT_SETS });
           chosenNames.add(cand.name);
-          chosenMovements.add(movementKey(cand.name, cand.meta));
+          chosenMovements.add(dedupKey(cand.name, cand.meta));
           liveCount[major] = (liveCount[major] || 0) + 1;
           break;
         }
@@ -2209,7 +2255,7 @@ export function buildSession(cluster, ctx) {
         const g = getExerciseMetadata(name).muscle_target_primary;
         if (g && emphSet.has(g)) return true; // the focus region itself
         if (focusTags.size === 0) return false;
-        const tg = deriveExerciseTags(name, getExerciseMetadata(name), movementKey);
+        const tg = deriveExerciseTags(name, getExerciseMetadata(name), dedupKey);
         for (const t of tg) if (focusTags.has(t)) return true; // injected width/curl
         return false;
       };
@@ -2238,11 +2284,11 @@ export function buildSession(cluster, ctx) {
         const removed = chosen[removeIdx];
         const rg = getExerciseMetadata(removed.name).muscle_target_primary;
         chosenNames.delete(removed.name);
-        chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+        chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
         if (rg && liveCount[rg]) liveCount[rg] -= 1;
         chosen.splice(removeIdx, 1, { name: inject.name, sets: DEFAULT_SETS });
         chosenNames.add(inject.name);
-        chosenMovements.add(movementKey(inject.name, inject.meta));
+        chosenMovements.add(dedupKey(inject.name, inject.meta));
         liveCount[major] = (liveCount[major] || 0) + 1;
       }
     }
@@ -2315,12 +2361,12 @@ export function buildSession(cluster, ctx) {
         if (removeIdx >= 0) {
           const removed = chosen[removeIdx];
           chosenNames.delete(removed.name);
-          chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+          chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
           const rg = getExerciseMetadata(removed.name).muscle_target_primary;
           if (rg && groupCount[rg]) groupCount[rg] -= 1;
           chosen.splice(removeIdx, 1, { name: triceps.name, sets: DEFAULT_SETS });
           chosenNames.add(triceps.name);
-          chosenMovements.add(movementKey(triceps.name, triceps.meta));
+          chosenMovements.add(dedupKey(triceps.name, triceps.meta));
           groupCount.triceps = (groupCount.triceps || 0) + 1;
         } else if (chosen.length < SESSION_SIZE) {
           // No over-slotted isolation to swap, but the session has room — add the slot.
@@ -2398,12 +2444,12 @@ export function buildSession(cluster, ctx) {
         if (removeIdx >= 0) {
           const removed = chosen[removeIdx];
           chosenNames.delete(removed.name);
-          chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+          chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
           const rg = getExerciseMetadata(removed.name).muscle_target_primary;
           if (rg && groupCount[rg]) groupCount[rg] -= 1;
           chosen.splice(removeIdx, 1, { name: legCurl.name, sets: DEFAULT_SETS });
           chosenNames.add(legCurl.name);
-          chosenMovements.add(movementKey(legCurl.name, legCurl.meta));
+          chosenMovements.add(dedupKey(legCurl.name, legCurl.meta));
           groupCount['picioare-hamstrings'] = (groupCount['picioare-hamstrings'] || 0) + 1;
         } else if (chosen.length < SESSION_SIZE) {
           // No over-slotted isolation to swap, but the session has room — add the slot.
@@ -2560,7 +2606,7 @@ export function buildSession(cluster, ctx) {
     : {};
   if (Object.keys(setFloors).length > 0) {
     exercises = exercises.map((e) => {
-      const tags = deriveExerciseTags(e.name, getExerciseMetadata(e.name), movementKey);
+      const tags = deriveExerciseTags(e.name, getExerciseMetadata(e.name), dedupKey);
       let floor = 0;
       for (const [tag, minSets] of Object.entries(setFloors)) {
         if (tags.has(tag) && minSets > floor) floor = minSets;
@@ -2639,7 +2685,7 @@ export function buildSession(cluster, ctx) {
       const isFocusAccessory = (name) => {
         const meta = getExerciseMetadata(name);
         if ((meta?.tier ?? 2) <= COMPOUND_TIER) return false; // accessories only
-        for (const tag of deriveExerciseTags(name, meta, movementKey)) {
+        for (const tag of deriveExerciseTags(name, meta, dedupKey)) {
           if (relevant.has(tag)) return true;
         }
         return false;
