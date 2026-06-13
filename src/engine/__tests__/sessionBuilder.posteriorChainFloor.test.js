@@ -51,24 +51,29 @@ function setFlags(ids) {
   localStorage.setItem(DEV_FLAGS_KEY, JSON.stringify(o));
 }
 
-async function composeFullBodyWeek(posteriorFloorOn) {
+async function composeFullBodyWeek(posteriorFloorOn, focusPreset = 'chest') {
   resetWorld();
   setPathAFlags(false);
   const flags = [...BASE_ON];
   if (posteriorFloorOn) flags.push('dp_posterior_chain_floor_v1');
+  // The arms-focus signature (umeri demoted, biceps/triceps floored) must be ON for
+  // the arms focus-preservation assertion to reflect the live arms behaviour.
+  if (focusPreset === 'arms') flags.push('dp_arms_signature_v1');
   setFlags(flags);
   localStorage.setItem(SCHEDULE_STORE_KEY, JSON.stringify({ state: { days: SCHEDULE_3D } }));
   world.useOnboardingStore.setState({
     data: {
       age: 26, sex: 'm', goal: 'masa', experience: 'avansat', weight: 80, height: 180,
-      frequency: '3', focusPreset: 'chest', focusPresetPickedAt: N0 - 7 * MS_DAY,
+      frequency: '3', focusPreset, focusPresetPickedAt: N0 - 7 * MS_DAY,
     },
     completed: true,
     completedAt: N0,
   });
-  // Per-week PRIMARY-slot counts by leg sub-group + the set of session types.
+  // Per-week PRIMARY-slot counts by leg sub-group + per-group weekly SET volume + the
+  // set of session types (the volume map drives the focus-preservation assertion).
   let quad = 0; let hams = 0; let glutes = 0;
   const types = [];
+  const volume = {};
   for (const off of ACTIVE_3D) {
     let plan = null;
     try { plan = await world.composePlannedWorkoutToday(new Date(N0 + off * MS_DAY)); } catch { plan = null; }
@@ -79,9 +84,10 @@ async function composeFullBodyWeek(posteriorFloorOn) {
       if (p === QUAD) quad += 1;
       else if (p === HAMS) hams += 1;
       else if (p === GLUTES) glutes += 1;
+      if (p) volume[p] = (volume[p] || 0) + (e.sets || 0);
     }
   }
-  return { quad, hams, glutes, posterior: hams + glutes, types };
+  return { quad, hams, glutes, posterior: hams + glutes, types, volume };
 }
 
 describe('LEG floor — full-body posterior+quad (full path, freq-3 chest)', () => {
@@ -105,6 +111,39 @@ describe('LEG floor — full-body posterior+quad (full path, freq-3 chest)', () 
     const on = await composeFullBodyWeek(true);
     expect(on.quad).toBeGreaterThanOrEqual(off.quad);
     expect(on.posterior).toBeGreaterThanOrEqual(off.posterior);
+  });
+
+  // FOCUS-PRESERVATION (Daniel eval 2026-06-13 regression fix). On an UPPER-biased
+  // focus the floor must NOT seat legs by displacing the FOCUS muscle's own slot —
+  // that was the regression (p1_arms_2d biceps→4, p6_back_1d back no longer leads).
+  // The fix makes the victim-selection focus-safe: a focus slot is displaceable ONLY
+  // while its group retains a STRICT slot lead afterward; else the leg YIELDs (a
+  // defensible covered trade). So the focus group's weekly volume under ON must be
+  // >= its OFF value (never clawed back), and the focus group must still LEAD.
+  const leads = (vol, group) => {
+    const v = vol[group] || 0;
+    return v > 0 && Object.entries(vol).every(([g, n]) => g === group || n <= v);
+  };
+  it('arms focus ON → biceps & triceps are NOT displaced by the leg floor (signature preserved)', async () => {
+    const off = await composeFullBodyWeek(false, 'arms');
+    const on = await composeFullBodyWeek(true, 'arms');
+    // The floor must never claw back the emphasized arm volume to seat a leg.
+    expect(on.volume.biceps || 0, `biceps ON=${on.volume.biceps} OFF=${off.volume.biceps}`)
+      .toBeGreaterThanOrEqual(off.volume.biceps || 0);
+    expect(on.volume.triceps || 0, `triceps ON=${on.volume.triceps} OFF=${off.volume.triceps}`)
+      .toBeGreaterThanOrEqual(off.volume.triceps || 0);
+    // The arms signature: an arm muscle (biceps or triceps) leads the week.
+    expect(leads(on.volume, 'biceps') || leads(on.volume, 'triceps'),
+      `arms ON volume=${JSON.stringify(on.volume)}`).toBe(true);
+  });
+  it('back focus ON → back (spate) is NOT displaced and still LEADS the week', async () => {
+    const off = await composeFullBodyWeek(false, 'back');
+    const on = await composeFullBodyWeek(true, 'back');
+    // Back is the focus → its volume must not be reduced to seat a leg.
+    expect(on.volume.spate || 0, `spate ON=${on.volume.spate} OFF=${off.volume.spate}`)
+      .toBeGreaterThanOrEqual(off.volume.spate || 0);
+    // And back still leads the week's volume (the focus signature).
+    expect(leads(on.volume, 'spate'), `back ON volume=${JSON.stringify(on.volume)}`).toBe(true);
   });
 });
 
