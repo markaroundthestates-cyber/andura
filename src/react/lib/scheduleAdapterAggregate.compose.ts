@@ -675,7 +675,26 @@ function buildFocusFloorDropGuard(
   const region = [...resolveDeEmphasizedGroups(focusPreset)];
   // Per-group protected signatures: arms keeps biceps + triceps individually.
   const perGroup = focusPreset === 'arms' ? [...ARMS_SIGNATURE_GROUPS] : [];
-  if (region.length === 0 && perGroup.length === 0) return null;
+  // EMPHASIZED-SIGNATURE LEAD (2026-06-13) — the user's emphasized look groups must
+  // remain the day's volume signature, so the blind tail-first trim never drops the
+  // emphasized width work below a NON-focus competitor. A shoulders focus's UPPER/PUSH
+  // day otherwise loses its lateral + rear-delt (the tail, behind the compounds) to the
+  // trim while two back compounds survive → back ~12 out-volumes umeri ~6 (eval p7/p9
+  // @4-5d INVERTED). The emphasized group's slot is held whenever dropping it would let
+  // its count fall to OR below the largest non-emphasized group's count, so the focus
+  // leads on slot-count (and thus weekly volume). Non-focus tail accessories are dropped
+  // instead; the cap is still met via set-shaves.
+  //
+  // SCOPED to the UPPER-BODY emphasized groups (umeri/piept/spate) — the only ones that
+  // compete on an UPPER/PUSH day where this trim runs. A LEG-emphasized focus (lower)
+  // earns its lead from the SPLIT's day allocation (more leg days), NOT the trim, and
+  // protecting legs on a lower-focus FULL day would instead drop the sole delt slot
+  // (zeroing a non-focus major) — so leg groups are deliberately excluded here. RO keys.
+  const UPPER_BODY_EMPH = new Set(['umeri', 'piept', 'spate']);
+  const emphSet = new Set(
+    [...resolveEmphasizedGroups(focusPreset)].filter((g) => UPPER_BODY_EMPH.has(g)),
+  );
+  if (region.length === 0 && perGroup.length === 0 && emphSet.size === 0) return null;
   const groupOf = (ex: TrimmableExercise): string | undefined =>
     (getExerciseMetadata(ex.engineName ?? ex.name) as
       { muscle_target_primary?: string } | null)?.muscle_target_primary;
@@ -696,6 +715,25 @@ function buildFocusFloorDropGuard(
         return n + (eg && regionSet.has(eg) ? 1 : 0);
       }, 0);
       if (regionCount <= 1) return true;
+    }
+    // (c) emphasized-signature lead: an emphasized group keeps enough slots to stay
+    //     the day's volume leader — hold its slot while dropping it would tie/trail
+    //     the largest NON-emphasized group on the current list. (A surplus emphasized
+    //     slot beyond that lead still yields, so the cap can be met.)
+    if (emphSet.has(g)) {
+      const counts = new Map<string, number>();
+      for (const e of list) {
+        const eg = groupOf(e);
+        if (eg) counts.set(eg, (counts.get(eg) ?? 0) + 1);
+      }
+      const emphCount = counts.get(g) ?? 0;
+      let maxNonEmph = 0;
+      for (const [grp, n] of counts) {
+        if (!emphSet.has(grp) && n > maxNonEmph) maxNonEmph = n;
+      }
+      // Dropping this slot → emphCount-1; protect while that would not stay strictly
+      // above the largest non-focus group (the emphasized region must LEAD).
+      if (emphCount - 1 <= maxNonEmph) return true;
     }
     return false;
   };
@@ -1262,18 +1300,21 @@ export async function composePlannedWorkoutToday(
     const energyScaled = energyMod
       ? scaleSetsByEnergy(readinessScaled, energyMod.volumeFactor, emphasizedRoGroups)
       : readinessScaled;
-    // FOCUS-FLOOR DROP-GUARD (dp_split_rebalance_v1) — on a full-body FOCUS day the
-    // BLIND tail-first time-trim dropped the sole maintained leg / sole biceps slot
-    // (the slot-guarantee places them but they sit in the tail behind the focus
-    // compounds). Build the drop-guard so those FLOOR slots survive the trim. Gated on
-    // the split-rebalance flag (forced OFF in fp → undefined → byte-identical) AND a
-    // FULL session (the only day type a freq≤3 focus week produces — the slot-crunch
-    // case); UPPER/PUSH/PULL/LEGS days at freq≥4 carry the region on their own day so
-    // no guard is needed there. balanced / no de-emphasis & not arms → null → no guard.
+    // FOCUS-FLOOR DROP-GUARD (dp_split_rebalance_v1) — on a slot-limited FOCUS day the
+    // BLIND tail-first time-trim dropped the sole maintained leg / sole biceps slot OR
+    // the emphasized width work (slot-guarantee + focus-policy place them, but they sit
+    // in the tail behind the lead compounds). Build the drop-guard so those FLOOR slots
+    // survive the trim. Gated on the split-rebalance flag (forced OFF in fp → undefined
+    // → byte-identical). Applies on FULL days (the de-emphasis/region floor — the freq≤3
+    // slot-crunch) AND on UPPER/PUSH days (the EMPHASIZED-signature lead — a freq≥4
+    // shoulders/chest UPPER day whose lateral/flye otherwise loses to a non-focus 2nd
+    // back compound under a tight time cap). PULL/LEGS carry no emphasized upper-body
+    // signature, so the guard adds nothing there. balanced / no focus → null → no guard.
+    const guardDayType =
+      typeof plan.sessionType === 'string' ? plan.sessionType.toUpperCase() : '';
     const dropGuard =
       isEnabled('dp_split_rebalance_v1') &&
-      typeof plan.sessionType === 'string' &&
-      plan.sessionType.toUpperCase() === 'FULL'
+      (guardDayType === 'FULL' || guardDayType === 'UPPER' || guardDayType === 'PUSH')
         ? buildFocusFloorDropGuard(useOnboardingStore.getState().data.focusPreset)
         : null;
     const exercises = trimSessionToTimeBudget(

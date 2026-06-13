@@ -286,15 +286,35 @@ const FOCUS_LOWER_DEEMPH_SPLITS = Object.freeze({
 // retained upper work non-overlapping). Day-counts absent here keep the balanced
 // template (the volume stage still biases the emphasized groups up).
 const FOCUS_LOWER_EMPH_SPLITS = Object.freeze({
-  // 4 days L/Ma/J/V: lower/upper/legs/upper → TWO lower-region days (lower+legs),
-  // upper split across two non-adjacent days. (balanced was upper/lower/upper/lower
-  // = 2 lower already, so 4-day lower focus is fine — omitted; the volume bias leads.)
-  // 5 days: legs/upper/lower/push/pull → THREE lower-region hits (legs+lower) lead,
-  // upper carried by upper+push+pull spaced; legs(Mon)/lower(Wed) non-adjacent.
-  5: Object.freeze(['legs', 'upper', 'lower', 'push', 'pull']),
-  // 6/7 (manual calendar) — lead with two lower-region days, upper spaced after.
-  6: Object.freeze(['legs', 'upper', 'lower', 'push', 'pull', 'legs']),
-  7: Object.freeze(['legs', 'upper', 'lower', 'push', 'pull', 'legs', 'upper']),
+  // 4 days L/Ma/J/V (active [0,1,3,4]): the two calendar-consecutive pairs are
+  // pos0-1 and pos2-3, so a THIRD lower-region day would force a leg/leg (or
+  // leg/full) adjacency on one constrained pair → a fried back-to-back leg
+  // session. 4-day lower thus stays at 2 lower : 2 upper (omitted here = the
+  // balanced upper/lower/upper/lower); the per-exercise volume bias still leads.
+  // 5 days L/Ma/Mi/V/S (active [0,1,2,4,5]): legs/upper/lower/push/legs → THREE
+  // lower-region days (legs+lower+legs) LEAD vs TWO upper-region (upper+push), so
+  // the legs are the week's volume signature (was legs/upper/lower/push/pull = 2
+  // lower : 3 upper → upper out-volumed the focused legs). The retained upper-region
+  // day is PUSH (not pull): an intermediate's upper day can compose back+chest with
+  // NO delt slot (lower focus has no shoulder contract to force one), which orphaned
+  // umeri once the push day was dropped — push guarantees the shoulder + chest
+  // maintenance exposure, and the `upper` day carries back. legs(Mon)/lower(Wed)/
+  // legs(Sat) are non-adjacent across the constrained pairs (pos0-1,1-2,3-4).
+  5: Object.freeze(['legs', 'upper', 'lower', 'push', 'legs']),
+  // 6 days L..S (active [0..5], every day consecutive): three NON-adjacent lower
+  // slots (pos0,2,4) is the spacing maximum — a 4th lower day forces a leg/leg
+  // adjacency — so 6-day lower is 3 lower : 3 upper. The three leg-dedicated days
+  // (legs+lower+legs) out-volume the three upper days, so the legs still lead on
+  // weekly sets; upper+push+upper maintain all upper majors (push guarantees the
+  // shoulder exposure the back-heavy upper days can skip). (was legs/upper/lower/
+  // push/pull/legs — same 3:3 day count but pull-dependent shoulder coverage.)
+  6: Object.freeze(['legs', 'upper', 'lower', 'push', 'legs', 'upper']),
+  // 7 days L..D (active [0..6], all consecutive): legs/upper/lower/push/legs/upper/
+  // lower → FOUR lower-region days (legs+lower+legs+lower) lead vs THREE upper
+  // (upper+push+upper), the clear leg signature (was 3 lower : 4 upper → inverted).
+  // Lower slots pos0,2,4,6 are all non-adjacent; the push day guarantees shoulder +
+  // chest maintenance, the two upper days carry back+chest.
+  7: Object.freeze(['legs', 'upper', 'lower', 'push', 'legs', 'upper', 'lower']),
 });
 
 /**
