@@ -111,6 +111,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   // Path-A selection surface → pinned OFF here so the frozen composition hashes
   // stay byte-for-byte.
   'dp_triceps_fullbody_guarantee_v1',
+  // THE FLIP 2026-06-13 (arms-signature eval ceiling) — the arms-focus volume/slot
+  // signature (umeri demoted out of the emphasize list + biceps/triceps weekly volume
+  // floors) defaults ON. `arms` IS in this harness's EMPHASIS_PRESETS, so the ON
+  // behavior WOULD move the frozen prescription hashes — pinned OFF here so hashOff/
+  // hashOn stay byte-for-byte; ON is proven on the eval grid + the focus-signature gate
+  // + the arms-signature regression suite, NOT in this determinism stream.
+  'dp_arms_signature_v1',
   // THE FLIP 2026-06-10 (R5) — metadata-derived load model defaults ON (a derived
   // maxKg cap + equipment step fills the ~uncapped exercises; curated wins). It
   // moves prescribed kg + the at-cap brake → pinned OFF here so hashOff/hashOn

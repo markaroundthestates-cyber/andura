@@ -217,6 +217,17 @@ export const FOCUS_RULES = Object.freeze({
       // the triceps focus). The per-session cap (1) holds the count; the ledger override
       // (ledgerContractAdjust → maxCloseGrip 0 on a later day) closes the WEEK. _contract.
       maxCloseGrip: 1,
+      // ARMS SIGNATURE (dp_arms_signature_v1, 2026-06-13): back is MAINTENANCE on an arms
+      // focus but a pull/upper day otherwise stacks a row + a vertical pull (+ a pullover)
+      // → delivered back ~13-22 @4-7d, OUT-VOLUMING the arms it should subordinate. Cap the
+      // COMBINED back lat work (row OR vertical pull OR lat-iso pullover) to ONE per session
+      // so the pull/upper days carry ONE back anchor (maintenance) and the freed slot is
+      // available for the arms. NEVER 0 (the cap keeps exactly 1 → back is never orphaned;
+      // the MEV budget floor keeps the weekly back ≥ MEV). Gated by armsSignatureCapKeys
+      // below so it applies ONLY under dp_arms_signature_v1 (OFF → never applied → arms is
+      // byte-identical to the pre-flag rule). Reuses the same maxBackLatWork matcher the
+      // lower-focus ledger cap uses.
+      maxBackLatWork: 1,
     }),
     sessionRequirements: Object.freeze({
       requireOverheadTricepsIfArmsOrPush: true, // long-head stretch (triceps overhead ext)
@@ -560,6 +571,12 @@ const CONTRACT_CAP_KEYS = Object.freeze(new Set([
   'maxShrug', 'maxCloseGrip', 'maxArmVerticalPress', 'maxFocusVerticalPull', 'maxBackLatWork',
 ]));
 
+/** sessionCaps keys gated by dp_arms_signature_v1 (the arms-focus back-lat maintenance
+ *  cap). Applied only when ctx.armsSignatureOn — OFF → never applied → the arms rule is
+ *  byte-identical to the pre-flag table. maxBackLatWork on arms is STATIC here (distinct
+ *  from the lower-focus LEDGER override of the same key, which rides dp_week_ledger_v1). */
+const ARMS_SIGNATURE_CAP_KEYS = Object.freeze(new Set(['maxBackLatWork']));
+
 /**
  * F6 (Daniel coach audit 2026-06-10) — the Set of policy tags a focus CARES about,
  * derived from its FOCUS_RULES (sessionRequirements field names + every weekly
@@ -826,7 +843,7 @@ function canonicalWeeklyTag(matchingTags) {
  * — the exact regression the blanket drop would have caused. Null/absent → no
  * deferral (byte-identical legacy).
  */
-function requirementsFor(rule, cluster, daysPerWeek, weekClusters, contractsOn) {
+function requirementsFor(rule, cluster, daysPerWeek, weekClusters, contractsOn, armsSignatureOn) {
   // F5 deferral set — computed from the weekly targets BEFORE the merge loop.
   /** @type {Set<string>} */
   const deferToSpecialist = new Set();
@@ -931,6 +948,21 @@ function requirementsFor(rule, cluster, daysPerWeek, weekClusters, contractsOn) 
     // (5)/(6) MAX-merge carries priority + relaxable so relaxation treats a low/
     // medium weekly target as relaxable before a high explicit requirement.
     merge(tag, 1, wt.priority, wt.relaxable);
+  }
+
+  // ── ARMS SIGNATURE (dp_arms_signature_v1, 2026-06-13) — raise the per-session direct-arm
+  // minimum to 2 on the arms-focus's qualifying day so biceps + triceps become the week's
+  // VOLUME leaders (the eval signature). With umeri demoted out of the emphasis + back lat
+  // capped to one anchor, the freed slots carry a SECOND curl (biceps day: arms/pull/upper/
+  // full) and a SECOND extension (triceps day: arms/push/upper/full). HIGH priority so the
+  // arm work leads the back-maintenance lat for a freed slot; relaxable + graceful no-op when
+  // no distinct curl/extension movementKey remains (never invents/forces). The ledger parity
+  // bump (ledgerContractAdjust arms) can raise biceps further toward bi≥0.85×tri on top.
+  if (armsSignatureOn && rule.id === 'arms') {
+    if (isArms || isFull || isPull || isPush || cluster === 'upper') {
+      if (isArms || isFull || isPull || cluster === 'upper') merge('direct_biceps', 2, 'high', true);
+      if (isArms || isFull || isPush || cluster === 'upper') merge('direct_triceps', 2, 'high', true);
+    }
   }
 
   return [...byTag.values()];
@@ -1208,7 +1240,11 @@ export function applyFocusPolicy(chosen, ctx) {
   // requirements (direct arm-work injection) + caps (shrug/close-grip/arm-OHP) are
   // honored only when ctx.contractsOn. Off → byte-identical to the pre-arc resolver.
   const contractsOn = ctx?.contractsOn === true;
-  const reqs = requirementsFor(rule, cluster, ctx?.daysPerWeek, ctx?.weekClusters, contractsOn).sort(
+  // ARMS SIGNATURE (dp_arms_signature_v1) — gates the arms-only back-lat maintenance cap +
+  // the raised direct-arm weekly minimums. OFF → the arms rule is byte-identical to the
+  // pre-flag table. Other focuses ignore it.
+  const armsSignatureOn = ctx?.armsSignatureOn === true;
+  const reqs = requirementsFor(rule, cluster, ctx?.daysPerWeek, ctx?.weekClusters, contractsOn, armsSignatureOn).sort(
     (a, b) => (PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority]),
   );
 
@@ -1338,6 +1374,13 @@ export function applyFocusPolicy(chosen, ctx) {
     // CONTRACT GATE — a focus-contracts-arc cap (shrug/close-grip/arm-OHP) is applied
     // only when the flag is ON. Pre-arc caps are untouched → byte-identical when off.
     if (CONTRACT_CAP_KEYS.has(capKey) && !contractsOn) continue;
+    // ARMS-SIGNATURE GATE — the STATIC arms maxBackLatWork cap (rule.sessionCaps, NOT a
+    // ledger override) applies only under dp_arms_signature_v1. OFF → skip it for arms so
+    // the arms rule is byte-identical to the pre-flag table. (The lower-focus maxBackLatWork
+    // comes via ledgerAdj.capOverrides, not the static rule cap, so hasOverride bypasses
+    // this gate — only the arms rule's STATIC maxBackLatWork is gated here.)
+    if (ARMS_SIGNATURE_CAP_KEYS.has(capKey) && rule.id === 'arms'
+        && typeof ruleCapVal === 'number' && !armsSignatureOn && !hasOverride) continue;
     // CROSS-DAY LEDGER override (dp_week_ledger_v1) — a tightened cap (e.g. maxCloseGrip
     // → 0 on a later push day; maxBackLatWork → 1 on a lower-focus maintenance day). Only
     // ever LOWERS (the min of the rule cap + override), so it can only prune MORE, never

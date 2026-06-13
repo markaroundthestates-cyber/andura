@@ -1085,6 +1085,32 @@ export const FLAGS = Object.freeze({
   // FLIPPED_FLAGS baseline (path-A composition surface).
   dp_triceps_fullbody_guarantee_v1: { rollout: 1, default: true },
 
+  // ARMS SIGNATURE (elite-coach eval ceiling 2026-06-13) — make biceps + triceps the
+  // week's CLEAR top-two by VOLUME on an `arms` focus, the founder signature the judges
+  // capped 25/57 arms configs at <=5.5 for ("focus muscles present but NOT the volume
+  // leaders"). TWO data-only levers, applied ONLY on the arms focus's VOLUME/SLOT path
+  // (the split is untouched — arms already returns a null day-mix lean whether or not
+  // umeri is emphasized, so frequencyToSplit/clusterForDay are byte-identical):
+  //   (1) DEMOTE umeri (shoulders) from the arms preset's emphasize list to its
+  //       de-emphasize list — shoulders was lerped toward MRV + earned an extra
+  //       exercise slot + front-of-session, so it OUT-VOLUMED the arms it is only a
+  //       SECONDARY to. De-emphasized → relaxed toward MEV (maintenance, MEV-clamped,
+  //       NEVER 0) + no extra slot + M2/M3 auto-signals suppressed for it. biceps stays
+  //       emphasize[0] (primaryEmphasizedGroup → biceps; the specialization target is
+  //       unchanged). triceps stays emphasized.
+  //   (2) FLOOR the arms biceps + triceps weekly volume budget toward the level-scaled
+  //       signature band (delivered ~8-10 beginner / ~10-14 intermediate / ~14-18
+  //       advanced) so they DELIVER above back (back MEV 10 → ~15 delivered) and clearly
+  //       lead. MRV-clamped (never above MRV); the maintenance floor stays supreme so no
+  //       non-focus group (shoulders/back/chest/legs) is starved below MEV.
+  // OFF → the arms preset reads its pre-flag emphasize=[biceps,triceps,umeri] + no arm
+  // floors → byte-identical (the fp hash holds; pinned OFF in the fp cohorts via
+  // FLIPPED_FLAGS — arms IS in fp's EMPHASIS_PRESETS so any arms behavior change WOULD
+  // move the hash unless gated OFF there). Composition/volume surface, deterministic
+  // (data lerp on the budget map, no Math.random/Date.now). Only the `arms` focus is
+  // touched; balanced + every other focus is byte-identical even with the flag ON.
+  dp_arms_signature_v1: { rollout: 1, default: true },
+
   // #R6d cross-week lumbar redundancy dedup (Daniel coach audit 2026-06-10 "RDL +
   // Hyperextension aceeasi saptamana") (RISK MED — trims session COMPOSITION; OFF
   // by default pending Daniel A/B because cluster-granularity can occasionally

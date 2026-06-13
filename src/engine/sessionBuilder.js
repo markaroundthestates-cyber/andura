@@ -2036,6 +2036,10 @@ export function buildSession(cluster, ctx) {
       // arm-work injection + shrug/close-grip/arm-OHP sub-bucket caps) inside the
       // resolver. OFF → the resolver is byte-identical to the pre-arc behavior.
       contractsOn: ctx?.focusContracts === true,
+      // dp_arms_signature_v1 — gate the arms-only signature additions inside the
+      // resolver (back-lat maintenance cap + raised direct-arm per-session minimums) so
+      // biceps + triceps lead the week's volume. OFF → the arms rule is byte-identical.
+      armsSignatureOn: ctx?.armsSignature === true,
       // Yieldable regions (Daniel sweep review 2026-06-11) — explicit preset
       // de-emphasis ∪ the collapsed leg region on a non-leg full-body focus day. A
       // surplus compound of these groups may yield to a HIGH focus requirement,

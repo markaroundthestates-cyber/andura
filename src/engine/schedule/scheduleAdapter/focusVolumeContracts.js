@@ -129,7 +129,7 @@ const CONTRACTS = Object.freeze({
   // below the delivered arms. Floor biceps toward triceps parity (best-effort — the
   // Close-Grip compound on triceps is a structural ceiling the budget can't fully close;
   // the residual bi:tri ratio gap @6-7d is reported, not forced).
-  arms(out) {
+  arms(out, b, armsSignatureOn) {
     const tri = out.triceps;
     if (typeof tri === 'number' && tri > 0) {
       floorTo(out, 'biceps', tri); // push biceps budget to triceps parity (MRV-clamped)
@@ -141,6 +141,50 @@ const CONTRACTS = Object.freeze({
     // delivered ~14 lands at/below the delivered triceps. The arm-OHP cap
     // (maxArmVerticalPress) holds the press side; this holds the volume side.
     capTo(out, 'shoulders', (ISRAETEL_BASELINES.shoulders?.MEV ?? 8));
+
+    // ── ARMS SIGNATURE (dp_arms_signature_v1, 2026-06-13) ──────────────────────────
+    // The cap above + the umeri demotion (focus.js) drop shoulders below the arms, but
+    // BACK still out-volumes the arms in ~half the configs (back MEV-floored to 10 over-
+    // delivers to ~13-15, while direct biceps/triceps deliver ≈1:1 their budget). To make
+    // biceps + triceps the CLEAR top-two by volume (the eval signature) the arm BUDGETS
+    // must be floored above what back DELIVERS. The floors are LEVEL-SCALED via the
+    // group's own MAV/MRV landmarks (a beginner's base budget is lower, so the lerp lands
+    // a smaller absolute dose) + the day-band (`hi` = 4-7d, the only band where a back
+    // anchor lands on every upper/pull day): push each arm toward MRV so delivered biceps/
+    // triceps clear the ~15 delivered back. Every write is MRV-clamped (floorTo); the
+    // maintenance floor (applyMaintenanceFloor, run BEFORE this) keeps every non-focus
+    // group ≥ MEV — these floors only RAISE the arms, they never lower another group.
+    if (armsSignatureOn) {
+      const biMAV = ISRAETEL_BASELINES.biceps?.MAV ?? 14;
+      const biMRV = ISRAETEL_BASELINES.biceps?.MRV ?? 26;
+      const triMAV = ISRAETEL_BASELINES.triceps?.MAV ?? 12;
+      const triMRV = ISRAETEL_BASELINES.triceps?.MRV ?? 22;
+      // Floor the arm BUDGETS toward the signature band so biceps + triceps DELIVER above
+      // the maintenance back. The budget is the weekly SSOT divided across the week's arm
+      // exposures; the floor lets each curl/extension reach the emphasized isolation ceiling
+      // (4 sets) on its arm-capable days. LEVEL-SCALED: the per-exercise ceiling (4) + the
+      // available curl/extension SLOTS bound the delivered dose, so a beginner with few arm
+      // slots lands a smaller absolute total than an advanced split with more — the floor is
+      // the same intent, the slots scale it. MAV is the productive signature ceiling (a
+      // higher near-MRV floor MEASURED worse: the coherent weekly allocator spread the larger
+      // budget across more thin-set exercises, LOWERING the delivered arms — 27/57 → 22/57).
+      // `hi` (4-7d) lerps toward MRV (more arm slots to fill); 1-3d full-body weeks stay at
+      // MAV. floorTo never lowers + is MRV-clamped.
+      const biFloor = b === 'hi' ? Math.round((biMAV + biMRV) / 2) : biMAV; // ~20 / 14
+      const triFloor = b === 'hi' ? Math.round((triMAV + triMRV) / 2) : triMAV; // ~17 / 12
+      floorTo(out, 'biceps', biFloor);
+      floorTo(out, 'triceps', triFloor);
+      // NOTE on BACK (maintenance on an arms focus): back is thinned only at the SLOT
+      // altitude (the arms-signature maxBackLatWork session cap in FOCUS_RULES.arms holds
+      // the pull/upper days to ONE back lat where it is not PR-protected, never to 0 →
+      // never orphaned). A BUDGET cap toward MEV was MEASURED net-negative (26/57 vs 27/57):
+      // back over-delivers ~1.5× its budget so a budget shave does not reach delivery, and it
+      // disturbs the coherent allocator's per-exercise dose. Residual: a LOGGED-PR back lat
+      // is PR-protected (the slot cap cannot trim it) + the Upper/Lower split at 4d gives the
+      // arms few slots, so on heavily-back-logged personas the delivered back can still exceed
+      // the slot-limited arms — a split-structure + PR-continuity limit, documented, NOT
+      // forced (we never strip a logged lift, never drop a group below MEV).
+    }
   },
 
   // CHEST — chest > back AND chest > triceps (tol 1 set; the sweep ran back 19-22 ≥
@@ -280,14 +324,17 @@ export function focusContractDemotions(focusPreset) {
  * @param {Record<string, number>|null|undefined} volumeTargetsEN - Big-11 EN sets/week budget
  * @param {string|null|undefined} focusPreset - FOCUS_PRESETS id (balanced/v-taper/...)
  * @param {number|null|undefined} daysPerWeek - training days/week (selects the band)
+ * @param {boolean} [armsSignatureOn=false] - dp_arms_signature_v1 (arms biceps/triceps
+ *   volume floors). OFF → the arms contract runs its pre-flag body only (byte-identical);
+ *   only the `arms` focus reads this. Other focuses ignore it.
  * @returns {Record<string, number>|null} the contracted budget (null passes through)
  */
-export function applyFocusVolumeContracts(volumeTargetsEN, focusPreset, daysPerWeek) {
+export function applyFocusVolumeContracts(volumeTargetsEN, focusPreset, daysPerWeek, armsSignatureOn = false) {
   if (!volumeTargetsEN || typeof volumeTargetsEN !== 'object') return volumeTargetsEN ?? null;
   const fn = CONTRACTS[focusPreset];
   const out = { ...volumeTargetsEN };
   if (typeof fn !== 'function') return out;
-  fn(out, band(daysPerWeek));
+  fn(out, band(daysPerWeek), armsSignatureOn);
   return out;
 }
 

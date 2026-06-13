@@ -87,6 +87,37 @@ export const FOCUS_PRESETS = Object.freeze({
 /** Valid focusPreset ids (the keys of FOCUS_PRESETS). */
 export const FOCUS_PRESET_IDS = Object.freeze(Object.keys(FOCUS_PRESETS));
 
+// ── ARMS SIGNATURE override (dp_arms_signature_v1, 2026-06-13) ────────────────────
+// On an `arms` focus the elite-coach eval capped 25/57 configs at <=5.5 for "focus
+// muscles present but NOT the volume leaders": umeri (shoulders) was EMPHASIZED too, so
+// it competed with the arms for volume + slots and OUT-VOLUMED them. This override
+// DEMOTES umeri from arms's emphasize list to its de-emphasize list (shoulders → MEV
+// maintenance, no extra slot, M2/M3 suppressed) so biceps + triceps become the clear
+// top-two — keeping biceps emphasize[0] (the specialization target is unchanged) and
+// triceps emphasized. Applied ONLY to the VOLUME/SLOT path (the split is byte-identical:
+// arms returns a null day-mix lean whether or not umeri is emphasized, since biceps/
+// triceps drive the split signal). Gated at the call site (getDailyWorkout) by the flag;
+// OFF → the caller passes the original `arms` preset → byte-identical.
+const ARMS_SIGNATURE_PRESET = Object.freeze({
+  emphasize: Object.freeze(['biceps', 'triceps']),       // umeri removed (biceps stays first)
+  deEmphasize: Object.freeze(['umeri']),                 // shoulders → MEV maintenance
+});
+
+/**
+ * The EFFECTIVE arms-focus emphasis spec under dp_arms_signature_v1. When the flag is
+ * ON and the focus is `arms`, returns the umeri-demoted variant; otherwise resolves the
+ * preset normally (byte-identical). Pure. The volume/emphasis path in getDailyWorkout
+ * threads this; the split path keeps reading the raw focusPreset string (unchanged).
+ *
+ * @param {string|null|undefined} focusPreset
+ * @param {boolean} armsSignatureOn - dp_arms_signature_v1 enabled
+ * @returns {{emphasize: ReadonlyArray<string>, deEmphasize: ReadonlyArray<string>}}
+ */
+export function effectiveFocusPreset(focusPreset, armsSignatureOn) {
+  if (armsSignatureOn && focusPreset === 'arms') return ARMS_SIGNATURE_PRESET;
+  return resolveFocusPreset(focusPreset);
+}
+
 /**
  * Resolve a focusPreset id to its emphasis spec. Unknown/missing/`balanced` →
  * the balanced no-op (graceful degradation, ADR 025). Pure.
@@ -105,10 +136,13 @@ export function resolveFocusPreset(focusPreset) {
  * auto-balance). `balanced`/unknown → empty (no suppression). Pure.
  *
  * @param {string|null|undefined} focusPreset
+ * @param {{emphasize: ReadonlyArray<string>, deEmphasize: ReadonlyArray<string>}} [presetOverride]
+ *   - the resolved preset to use INSTEAD of resolving focusPreset (dp_arms_signature_v1
+ *     threads the umeri-demoted arms variant here). Absent → resolve normally.
  * @returns {Set<string>} Big-11 RO de-emphasized group ids
  */
-export function deEmphasizedGroups(focusPreset) {
-  return new Set(resolveFocusPreset(focusPreset).deEmphasize);
+export function deEmphasizedGroups(focusPreset, presetOverride) {
+  return new Set((presetOverride ?? resolveFocusPreset(focusPreset)).deEmphasize);
 }
 
 /**
@@ -121,10 +155,13 @@ export function deEmphasizedGroups(focusPreset) {
  * Pure.
  *
  * @param {string|null|undefined} focusPreset
+ * @param {{emphasize: ReadonlyArray<string>, deEmphasize: ReadonlyArray<string>}} [presetOverride]
+ *   - the resolved preset to use INSTEAD of resolving focusPreset (dp_arms_signature_v1
+ *     threads the umeri-demoted arms variant here). Absent → resolve normally.
  * @returns {Set<string>} Big-11 RO emphasized group ids
  */
-export function emphasizedGroups(focusPreset) {
-  return new Set(resolveFocusPreset(focusPreset).emphasize);
+export function emphasizedGroups(focusPreset, presetOverride) {
+  return new Set((presetOverride ?? resolveFocusPreset(focusPreset)).emphasize);
 }
 
 /**
@@ -160,11 +197,15 @@ export function primaryEmphasizedGroup(focusPreset) {
  *   in weakGroups), so the emphasize loop here is SKIPPED to avoid a double-lerp.
  *   The de-emphasize→MEV branch is unaffected (v-taper/upper lower-region relax).
  *   Default false → byte-identical to the pre-feature emphasize+de-emphasize.
+ * @param {{emphasize: ReadonlyArray<string>, deEmphasize: ReadonlyArray<string>}} [presetOverride]
+ *   - the resolved preset to use INSTEAD of resolving focusPreset (dp_arms_signature_v1
+ *     threads the umeri-demoted arms variant here so shoulders relaxes toward MEV instead
+ *     of lerping toward MRV). Absent → resolve focusPreset normally (byte-identical).
  * @returns {Object<string, number>|null} biased EN-keyed budget (null passes through)
  */
-export function applyFocusBias(volumeMapEN, focusPreset, suppressEmphasizeUp = false) {
+export function applyFocusBias(volumeMapEN, focusPreset, suppressEmphasizeUp = false, presetOverride) {
   if (!volumeMapEN || typeof volumeMapEN !== 'object') return volumeMapEN ?? null;
-  const preset = resolveFocusPreset(focusPreset);
+  const preset = presetOverride ?? resolveFocusPreset(focusPreset);
   if (preset.emphasize.length === 0 && preset.deEmphasize.length === 0) {
     return { ...volumeMapEN };
   }

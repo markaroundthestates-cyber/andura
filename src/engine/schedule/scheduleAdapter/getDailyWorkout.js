@@ -49,7 +49,7 @@ import { pickAlternativeCluster } from './alternativeCluster.js';
 import { weeklySessionsPerGroup } from './weeklySessions.js';
 import { resolveExperienceId } from '../../periodization/volumeLandmarks.js';
 import { flattenSessionsToRecoveryLogs } from './recoveryLogs.js';
-import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias } from './focus.js';
+import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias, effectiveFocusPreset } from './focus.js';
 import { applyFocusVolumeContracts, focusContractDemotions, applyLedgerLowerBackCap } from './focusVolumeContracts.js';
 import { computeWeekLedger } from './weekLedger.js';
 import {
@@ -206,7 +206,16 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     typeof userState?.user?.focusPreset === 'string' && FOCUS_PRESETS[userState.user.focusPreset]
       ? userState.user.focusPreset
       : 'balanced';
-  const deEmphSet = deEmphasizedGroups(focusPreset);
+  // ARMS SIGNATURE (dp_arms_signature_v1, 2026-06-13) — on an arms focus, demote umeri
+  // (shoulders) from the emphasize list to de-emphasize so biceps + triceps become the
+  // week's clear top-two by volume (the eval-capped signature). effectiveFocusPreset
+  // returns the umeri-demoted variant ONLY for arms when the flag is ON; otherwise the
+  // raw preset (byte-identical). Threaded ONLY into the VOLUME/EMPHASIS path below — the
+  // SPLIT path keeps reading the raw `focusPreset` string (arms's split is byte-identical
+  // either way: it returns a null day-mix lean whether or not umeri is emphasized).
+  const armsSignatureOn = isEnabled('dp_arms_signature_v1');
+  const effectivePreset = effectiveFocusPreset(focusPreset, armsSignatureOn);
+  const deEmphSet = deEmphasizedGroups(focusPreset, effectivePreset);
   // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the preset
   // raises. Threaded into buildSession so the emphasis surfaces as MORE exercise
   // slots + front-of-session on the day the group is trained — NOT just a weekly
@@ -216,7 +225,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // exercise-for-exercise clones of balanced because only v-taper changed the
   // SPLIT; emphasis-only presets need an in-session lever). balanced → empty set →
   // byte-identical to pre-feature.
-  const emphSet = emphasizedGroups(focusPreset);
+  const emphSet = emphasizedGroups(focusPreset, effectivePreset);
   // W-Split (dp_split_rebalance_v1) — gate the week-level split rebalance
   // (minimal-freq full-body + focus day-mix lean + back≥chest antagonist floor).
   // OFF → frequencyToSplit/clusterForDay run their legacy reshape → byte-identical.
@@ -428,7 +437,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // toward MRV. The de-emphasize→MEV branch of applyFocusBias is KEPT (v-taper/
   // upper lower-region relax). Flag-OFF / not active → suppressEmphasizeUp is
   // false → applyFocusBias is byte-identical to today.
-  const focusBiasedTargets = applyFocusBias(baseVolumeTargets, focusPreset, emphasisActive);
+  const focusBiasedTargets = applyFocusBias(baseVolumeTargets, focusPreset, emphasisActive, effectivePreset);
   const amplifiedTargets = applyWeaknessAmplification(focusBiasedTargets, weakGroups);
   // T6 REST-DOWN — relax every non-emphasized group toward MEV by the engine's
   // otherGroupsReductionPct (the zero-sum trade's down half). Protect the
@@ -472,6 +481,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
         balancedFlooredTargets,
         focusPreset,
         activeWeek.filter(Boolean).length || 1,
+        armsSignatureOn,
       )
     : balancedFlooredTargets;
 
@@ -902,6 +912,10 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // (applyFocusVolumeContracts above); this is the SLOT-side half. OFF → the
     // resolver is byte-identical to the pre-arc behavior.
     focusContracts: isEnabled('dp_focus_contracts_v1'),
+    // dp_arms_signature_v1 — gates the resolver's arms-only signature additions (back-lat
+    // maintenance cap + raised direct-arm per-session minimums). OFF → the arms rule is
+    // byte-identical to the pre-flag table; only the `arms` focus reads it.
+    armsSignature: armsSignatureOn,
     focusId: focusPreset,
     daysPerWeek: activeWeek.filter(Boolean).length || 1,
   };
