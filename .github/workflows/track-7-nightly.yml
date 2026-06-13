@@ -28,7 +28,11 @@ jobs:
   stryker-mutation-engine:
     name: Stryker Mutation Engine
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    # 60→180 (2026-06-12): the dry-run timeout fix (engine-only vitest config)
+    # lets Stryker actually reach the ~61k engine mutants now — give the full
+    # mutate pass headroom on the 2-vCPU runner. Nightly/off-hours, well under
+    # the 360-min GH ceiling. A real crash still goes red (no continue-on-error).
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
