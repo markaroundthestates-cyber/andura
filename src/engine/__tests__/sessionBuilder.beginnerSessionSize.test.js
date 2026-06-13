@@ -148,4 +148,68 @@ describe('dp_beginner_session_size_v1 — beginner session-size cap', () => {
     const b = buildSession('full', fullCtx({ beginnerSessionSize: 5 }));
     expect(a).toEqual(b);
   });
+
+  // ── BAND-AWARE refine (2026-06-14) — focus stays IN the beginner weekly band ──────
+  // The 5-slot cap concentrated the focus into ~2 slots/day; ×3-5 training days the
+  // focus's WEEKLY delivered sets overshot the novice band (chest_3d 18, back_3d 20).
+  // The focus weekly-band SET clamp bounds each emphasized group's THIS-SESSION total
+  // to floor(CEIL / sessions/week) so the WEEKLY sum lands ≤ ~12: at sessions=3 that is
+  // floor(12/3)=4 sets/session for the focus group (×3 days = 12, in band — not 18-20).
+  function focusGroupSets(session, roGroup) {
+    return session.exercises
+      .filter((e) => getExerciseMetadata(e.name)?.muscle_target_primary === roGroup)
+      .reduce((n, e) => n + (e.sets || 0), 0);
+  }
+
+  it('ON CHEST focus at 3×/wk → chest per-session sets land in the weekly band (×3 ≈ 12, not 18)', () => {
+    const on = buildSession('full', fullCtx({
+      beginnerSessionSize: 5, emphasizedGroups: ['piept', 'triceps'], focusId: 'chest',
+    }));
+    const chestSets = focusGroupSets(on, 'piept');
+    // floor(12 / 3) = 4 sets/session ceiling → ×3 days ≈ 12 (the band), never the 18 the
+    // judge capped. Still >= MEV per session (the focus is never gutted).
+    expect(chestSets, `chest sets this session: ${chestSets}`).toBeLessThanOrEqual(4);
+    expect(chestSets).toBeGreaterThanOrEqual(2);
+  });
+
+  it('ON SHOULDERS focus at 3×/wk → shoulders per-session sets in band (×3 ≈ 12, not 18)', () => {
+    const on = buildSession('full', fullCtx({
+      beginnerSessionSize: 5, emphasizedGroups: ['umeri'], focusId: 'shoulders',
+    }));
+    const umeriSets = focusGroupSets(on, 'umeri');
+    expect(umeriSets, `shoulders sets this session: ${umeriSets}`).toBeLessThanOrEqual(4);
+    expect(umeriSets).toBeGreaterThanOrEqual(2);
+  });
+
+  it('ON LOWER focus → no UPPER major orphaned (a press + a pull/secondary keep chest/back/shoulders covered)', () => {
+    const on = buildSession('full', fullCtx({
+      beginnerSessionSize: 5,
+      emphasizedGroups: ['fese', 'picioare-quads', 'picioare-hamstrings', 'gambe'],
+      focusId: 'lower',
+    }));
+    expect(on.exercises.length).toBeLessThanOrEqual(5);
+    const cov = coverage(on);
+    // The regression: a lower-focus day filled all 5 slots with legs → chest/back/
+    // shoulders ALL at 0 (orphan cap). Every upper major must now be covered directly
+    // OR via a chosen compound's secondary (the press carries umeri/triceps; RDL covers
+    // back) — no true upper orphan.
+    for (const u of UPPER) {
+      expect(cov.coveredUpper(u), `${u} orphaned on lower focus: ${on.exercises.map((e) => e.name).join(', ')}`).toBe(true);
+    }
+    // Legs still LEAD the day (the focus signature is intact at the cap).
+    const v = weeklyVolumeByMuscle(on);
+    const legSets = (v.quads || 0) + (v.hams || 0) + (v.glutes || 0) + (v.calves || 0);
+    const upperSets = (v.chest || 0) + (v.back || 0) + (v.shoulders || 0);
+    expect(legSets, `legs must lead: legs=${legSets} upper=${upperSets}`).toBeGreaterThan(upperSets);
+  });
+
+  it('ON LOWER focus → the focus signature LEADS (top group is a leg group)', () => {
+    const on = buildSession('full', fullCtx({
+      beginnerSessionSize: 5,
+      emphasizedGroups: ['fese', 'picioare-quads', 'picioare-hamstrings', 'gambe'],
+      focusId: 'lower',
+    }));
+    const v = weeklyVolumeByMuscle(on);
+    expect(LEG, `top group: ${topGroup(v)} (${JSON.stringify(v)})`).toContain(topGroup(v));
+  });
 });
