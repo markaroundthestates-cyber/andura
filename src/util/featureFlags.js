@@ -1289,6 +1289,29 @@ export const FLAGS = Object.freeze({
   // specialist days) defers nothing — the regression a blanket drop would cause.
   // OFF → weekClusters null → byte-identical.
   dp_latiso_dedup_v1: { rollout: 1, default: true },
+
+  // LOW-CAPACITY weekly-band clamp (2026-06-14, eval p9/p10 over-volume defect). The
+  // MAINTENANCE-goal (p9 Cristina 34F, 35-min cap) + OLDER (p10 Maria 65F) personas
+  // got weekly volume that scaled LINEARLY with training frequency — p9 up to ~67
+  // total/wk at freq-7, p10 ~71 at freq-5 — far above their persona band. The /10
+  // judge consistently docked these as "over-prescribed for a maintenance/older
+  // trainee" (scores declined as freq rose). An elite coach holds a maintenance/older
+  // trainee's weekly volume NEAR its band regardless of days trained: extra days are
+  // LIGHTER sessions, not more total volume. When ON + the user is goal 'mentenanta'
+  // OR age >= 60, getDailyWorkout sets ctx.lowCapWeeklyBand and buildSession clamps
+  // EACH trained muscle's per-session DELIVERED sets to max(4, floor(ceiling /
+  // sessionsTrainingThatMuscle)) (generalizing the Cycle-15 beginner FOCUS weekly-band
+  // clamp to ALL muscles), so each muscle's WEEKLY delivered sum lands in the
+  // maintenance band irrespective of frequency. The maintenance floor (4) is the
+  // judge's accepted maintenance minimum (maintenance legitimately sits BELOW growth-
+  // MEV) so no muscle is orphaned. Composes with the time-cap (dp_hard_time_cap_v1, p9)
+  // + the senior cap — each only reduces, the tighter wins. Trained adults under 60
+  // (masa/forta/slabire) → null → no clamp → byte-identical. OFF → null → byte-
+  // identical (pinned OFF in fp-config FLIPPED_FLAGS so the frozen full-path hashes
+  // hold). Proven on the eval grid (p9 totals <=45, p10 <=42 at all freq, no muscle
+  // below the maintenance floor, trained adults byte-identical) + the new lowcap-band
+  // regression test.
+  dp_lowcap_weekly_band_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

@@ -284,6 +284,13 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // day's volume ≤ a balanced leg day, never more. EMPHASIZED + neutral groups are
   // untouched; balanced (deEmphSet empty) → identical to pre-fix.
   const sessionsPerGroup = weeklySessionsPerGroup(split);
+  // TRUE per-group weekly training frequency (snapshot BEFORE the de-emphasis divisor
+  // inflation below). The low-capacity weekly-band clamp must divide its ceiling by the
+  // REAL number of days a muscle is trained — the de-emph fix below RAISES the divisor
+  // for a de-emphasized group (so its weekly budget is not dumped on the lone day),
+  // which would make the clamp under-trim... no, OVER-trim a de-emphasized major that is
+  // truly trained once. Capturing the real count keeps weekly ≥ the maintenance floor.
+  const trueSessionsPerGroup = { ...sessionsPerGroup };
   if (deEmphSet.size > 0) {
     const balancedSessionsPerGroup = weeklySessionsPerGroup(
       frequencyToSplit(activeWeek.filter(Boolean).length || 1, 'balanced', splitRebalance),
@@ -663,6 +670,21 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     seniorSessionCap: splitRebalance
       ? seniorSessionVolumeCap(userState?.user?.age, resolveExperienceId(userState?.user))
       : null,
+    // LOW-CAPACITY WEEKLY-BAND CLAMP (dp_lowcap_weekly_band_v1, 2026-06-14, default ON).
+    // A MAINTENANCE-goal (goal 'mentenanta') or OLDER (age >=60) trainee must NOT get
+    // weekly volume that scales linearly with frequency (the eval defect: p9 ~67/wk at
+    // freq-7, p10 ~71/wk at freq-5 — over-prescribed for a maintenance/older trainee).
+    // When set, buildSession clamps EACH trained muscle's per-session DELIVERED sets so
+    // its WEEKLY sum lands in the maintenance band (perMuscleCeiling), regardless of how
+    // many days they train — extra days become lighter sessions, not more total volume.
+    // Reuses ctx.weeklySessionsPerGroup (above) for the per-muscle frequency. NULL for a
+    // trained adult under 60 → no clamp → byte-identical (pinned OFF in the fp cohorts).
+    lowCapWeeklyBand:
+      isEnabled('dp_lowcap_weekly_band_v1')
+      && (userState?.user?.goal === 'mentenanta'
+        || (typeof userState?.user?.age === 'number' && userState.user.age >= 60))
+        ? { perMuscleCeiling: 5, sessionsPerGroup: trueSessionsPerGroup }
+        : null,
     // W-Split GAP 4 — MAJOR-MUSCLE SLOT GUARANTEE (dp_split_rebalance_v1, default
     // OFF → false → buildSession never runs the guarantee, byte-identical). The
     // slot-side complement of applyMaintenanceFloor: the weekly floor keeps every

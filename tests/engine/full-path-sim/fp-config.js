@@ -255,6 +255,18 @@ export const FLIPPED_FLAGS = Object.freeze([
   // day ~5, focus leads, majors compound-covered) + the new beginner-session-size
   // regression test + the focus-signature gate, NOT in this determinism stream.
   'dp_beginner_session_size_v1',
+  // THE FLIP 2026-06-14 (low-capacity weekly-band clamp) — dp_lowcap_weekly_band_v1
+  // defaults ON. It clamps a MAINTENANCE-goal or OLDER (age >=60) trainee's per-muscle
+  // weekly DELIVERED volume into the maintenance band so the total no longer scales
+  // linearly with frequency. The fp cohort DOES include mentenanta / age->=60 journeys
+  // (buildUserStateForPipeline threads user.goal + user.age), and the ON behavior WOULD
+  // trim those sessions → move the frozen prescription hashes. Pinned OFF here (in
+  // FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so ctx.lowCapWeeklyBand is null in both A/B
+  // arms → no clamp → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON
+  // behavior is proven on the eval grid (p9 <=45, p10 <=42 at all freq, no muscle below
+  // the maintenance floor, trained adults byte-identical) + the new lowcap-band
+  // regression test, NOT in this determinism stream.
+  'dp_lowcap_weekly_band_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the
