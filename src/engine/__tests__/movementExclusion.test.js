@@ -44,6 +44,19 @@ describe('#81 movementExclusion — pure descriptor + predicate', () => {
     expect(isExcludedMovement('Leg Curl', 'leg-curl', excl)).toBe(false);
   });
 
+  it('isExcludedMovement: knee — deep-flexion/shear patterns excluded, leg-press/curl kept', () => {
+    // genunchi → picioare-quads + picioare-hamstrings (PAIN_REGION_GROUP_MAP).
+    const excl = buildExclusionTokens(['picioare-quads', 'picioare-hamstrings'], []);
+    expect(isExcludedMovement('Hack Squat Machine', 'squat', excl)).toBe(true);
+    expect(isExcludedMovement('Bulgarian Split Squat', 'squat', excl)).toBe(true);
+    expect(isExcludedMovement('Glute Walking Lunge', 'lunge', excl)).toBe(true);
+    expect(isExcludedMovement('Leg Extension', 'leg-extension', excl)).toBe(true);
+    // knee-safe siblings stay in pool.
+    expect(isExcludedMovement('45-Degree Leg Press', 'leg-press', excl)).toBe(false);
+    expect(isExcludedMovement('Seated Leg Curl', 'leg-curl', excl)).toBe(false);
+    expect(isExcludedMovement('Romanian Deadlift', 'deadlift', excl)).toBe(false);
+  });
+
   it('isExcludedMovement: overhead press (name-based OHP) excluded under shoulder', () => {
     const excl = buildExclusionTokens(['umeri'], []);
     expect(excl.tokens.has(OVERHEAD_PRESS_SENTINEL)).toBe(true);
@@ -67,6 +80,21 @@ describe('#81 buildSession — HARD exclusion in selection', () => {
     }
     // routed to safe machines — at least one of leg-press / leg-curl / leg-extension.
     expect(toks.some((t) => ['leg-press', 'leg-curl', 'leg-extension', 'lunge'].includes(t))).toBe(true);
+  });
+
+  it('knee injury: legs cluster has ZERO squat/lunge/leg-extension, routed to knee-safe, non-empty', () => {
+    const excl = buildExclusionTokens(['picioare-quads', 'picioare-hamstrings'], []);
+    const session = buildSession('legs', ctx({ excludedMovements: excl }));
+    expect(session.exercises.length).toBeGreaterThan(0);
+    const toks = tokensOf(session);
+    for (const t of ['squat', 'lunge', 'leg-extension']) {
+      expect(toks, `knee must exclude '${t}'`).not.toContain(t);
+    }
+    // quads still trained — routed to the knee-safe closed-chain leg press.
+    const quadCount = session.exercises.filter(
+      (e) => getExerciseMetadata(e.name).muscle_target_primary === 'picioare-quads',
+    ).length;
+    expect(quadCount).toBeGreaterThan(0);
   });
 
   it('refusal squat+deadlift: legs cluster ZERO squat/deadlift, glutes via hip-thrust/kickback', () => {

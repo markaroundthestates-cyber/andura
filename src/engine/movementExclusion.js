@@ -94,6 +94,19 @@ export const INJURY_PATTERN_EXCLUSIONS = Object.freeze({
   // OHP key as `name:ohp` not the `press` token) + the bare `press` token + upright
   // row. The landmine/neutral carve-out keeps a safe vertical-push option.
   umeri: Object.freeze([OVERHEAD_PRESS_SENTINEL, 'press', 'upright-row']),
+  // Knee (genunchi → picioare-quads + picioare-hamstrings, PAIN_REGION_GROUP_MAP):
+  // kill the deep-flexion / high-patellofemoral-shear leg patterns — loaded SQUAT
+  // (back/front/hack/goblet AND split-squat, which all key as the `squat` token),
+  // walking LUNGE, and open-chain LEG-EXTENSION (terminal-range shear). Routes to
+  // the knee-safe same-muscle siblings already ACTIVE in each pool: Leg Press
+  // (closed-chain, controlled ROM — the spate path already proves it stays in-pool),
+  // Leg Curl / Seated Leg Curl (hamstrings, no knee shear), Hip Thrust / Glute Drive
+  // / Hip Abduction (glutes, no knee load), Romanian Deadlift (hip hinge). The
+  // #81 audit + the /10 eval (Gigica-knee 84% capped) flagged the knee persona
+  // STILL getting Hack Squat + Bulgarian Split Squat + Walking Lunge + Leg Extension
+  // on every leg day — the contraindication map covered spate/umeri but NOT knee.
+  'picioare-quads': Object.freeze(['squat', 'lunge', 'leg-extension']),
+  'picioare-hamstrings': Object.freeze(['squat', 'lunge', 'leg-extension']),
 });
 
 /**
