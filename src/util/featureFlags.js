@@ -1073,6 +1073,18 @@ export const FLAGS = Object.freeze({
   // fp-config FLIPPED_FLAGS baseline (path-A composition surface).
   dp_biceps_guarantee_v1: { rollout: 1, default: true },
 
+  // #R6a-T full-body triceps guarantee (arms-under-served eval ceiling 2026-06-13)
+  // (RISK LOW — selection only, never kg). Mirror of the biceps guarantee, but
+  // scoped to the `full` cluster ONLY. On an all-full-body week (freq<=3) every day
+  // is the 'full' cluster — there is NO separate Push day, so direct triceps rounds
+  // to 0 sets/week on most configs even though `full` weights triceps 0.10. The
+  // upper-day triceps de-dup (#2) DELIBERATELY drops triceps on `upper` (there IS a
+  // Push day) and is NOT touched. When ON, a triceps-PRIMARY movement is injected on
+  // a full-body day if none landed (add if room, else replace the lowest-priority
+  // non-anchor isolation). OFF → byte-identical. Pinned OFF in the fp-config
+  // FLIPPED_FLAGS baseline (path-A composition surface).
+  dp_triceps_fullbody_guarantee_v1: { rollout: 1, default: true },
+
   // #R6d cross-week lumbar redundancy dedup (Daniel coach audit 2026-06-10 "RDL +
   // Hyperextension aceeasi saptamana") (RISK MED — trims session COMPOSITION; OFF
   // by default pending Daniel A/B because cluster-granularity can occasionally

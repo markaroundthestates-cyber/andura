@@ -854,6 +854,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // must include >=1 biceps movement — Daniel's real Upper day rounded biceps
     // (0.15 weight) out entirely. OFF → byte-identical (never injects).
     bicepsGuarantee: isEnabled('dp_biceps_guarantee_v1'),
+    // #R6a-T full-body triceps guarantee (dp_triceps_fullbody_guarantee_v1,
+    // default ON). Scoped to the `full` cluster ONLY: an all-full-body week
+    // (freq<=3) has no separate Push day, so direct triceps rounds to 0 sets/wk
+    // even though `full` weights triceps 0.10. Inject one if none landed. The
+    // upper-day triceps de-dup (#2) is NOT touched. OFF → byte-identical.
+    tricepsFullbodyGuarantee: isEnabled('dp_triceps_fullbody_guarantee_v1'),
     // #70-D2 — COMPOUND-FIRST guarantee on an emphasis/weak-reordered session
     // (dp_emphasis_specialization_v1, default OFF → byte-identical). When ON, the
     // weak/emphasis front-loader is prevented from leading the day with an ISOLATION

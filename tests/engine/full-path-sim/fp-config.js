@@ -106,6 +106,11 @@ export const FLIPPED_FLAGS = Object.freeze([
   // that trains biceps injects one if selection rounded it out). Path-A selection
   // surface → pinned OFF here so the frozen composition hashes stay byte-for-byte.
   'dp_biceps_guarantee_v1',
+  // THE FLIP 2026-06-13 (R6a-T) — full-body triceps guarantee defaults ON (a
+  // full-body day injects one direct-triceps lift if selection rounded it out).
+  // Path-A selection surface → pinned OFF here so the frozen composition hashes
+  // stay byte-for-byte.
+  'dp_triceps_fullbody_guarantee_v1',
   // THE FLIP 2026-06-10 (R5) — metadata-derived load model defaults ON (a derived
   // maxKg cap + equipment step fills the ~uncapped exercises; curated wins). It
   // moves prescribed kg + the at-cap brake → pinned OFF here so hashOff/hashOn

@@ -2244,6 +2244,89 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  // #R6a-T FULL-BODY TRICEPS GUARANTEE (ctx.tricepsFullbodyGuarantee,
+  // dp_triceps_fullbody_guarantee_v1). Elite-coach eval ceiling 2026-06-13: the #1
+  // "not-a-9" complaint on full-body weeks is "arms under-served — add 3-4 direct
+  // triceps sets, there's room". Direct triceps landed at 0 sets/week on most
+  // freq<=3 FULL-BODY configs even though `full` weights triceps 0.10 — the low
+  // slot share rounds it out AND the MAJOR-MUSCLE maintenance floor above (which
+  // does NOT list arms as majors) preferentially displaces a naturally-selected
+  // triceps to seat a missing major. The biceps guarantee already protects biceps,
+  // so a full-body day guaranteed biceps but NOT triceps — an asymmetry the eval
+  // flagged. Mirror that guarantee, SCOPED TO `full` ONLY: on upper/push/pull/lower
+  // there IS a Push day, so direct triceps gets indirect pressing coverage across
+  // the week and the deliberate #2 upper-day triceps de-dup HOLDS — untouched. An
+  // all-full-body week (freq<=3) has no separate Push day, so triceps needs the
+  // guarantee.
+  //
+  // PLACEMENT: runs AFTER the maintenance floor (the prior "final word on slot
+  // membership") so the floor cannot undo the inject. ORPHAN-SAFE + LENGTH-STABLE:
+  // it PREFERS to REPLACE an OVER-slotted group's lowest-priority non-anchor
+  // isolation (a group keeping >=1 slot after removal — so no muscle is orphaned,
+  // and the session exercise COUNT is unchanged so the downstream time-budget trim
+  // is not perturbed for a time-capped user). Only when NO over-slotted isolation
+  // exists does it ADD a slot, and only if the session has room; otherwise it
+  // accepts the gap (a genuinely single-slotted, saturated day) rather than orphan a
+  // muscle. OFF / non-full cluster / no triceps target → never runs → byte-identical.
+  if (
+    ctx?.tricepsFullbodyGuarantee === true
+    && cluster === 'full'
+    && targets.includes('triceps')
+  ) {
+    const primaryOfName = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+    const hasTriceps = chosen.some((e) => primaryOfName(e.name) === 'triceps');
+    if (!hasTriceps) {
+      const tricepsPool = pools.find((p) => p.group === 'triceps')?.pool ?? [];
+      const triceps = tricepsPool.find((e) => !isTaken(e));
+      if (triceps) {
+        // Per-group slot census so a REPLACE only ever targets an OVER-slotted group.
+        const slotCount = {};
+        for (const e of chosen) {
+          const g = primaryOfName(e.name);
+          if (g) slotCount[g] = (slotCount[g] || 0) + 1;
+        }
+        // Largest NON-emphasized group's slot count — the bar an emphasized group must
+        // stay strictly above to remain the day's volume LEAD (mirrors the downstream
+        // time-trim's emphasized-signature guard). An emphasized group may yield a
+        // SURPLUS slot (umeri 3 → 2 still leads vs 1) but not its lead slot (umeri 2 →
+        // 1 ties): yielding the lead would demote the focus AND the trim would drop the
+        // injected triceps anyway. balanced (emphSet empty) → no restriction.
+        let maxNonEmph = 0;
+        for (const [g, n] of Object.entries(slotCount)) {
+          if (!emphSet.has(g) && n > maxNonEmph) maxNonEmph = n;
+        }
+        // Lowest-priority (highest-index) non-anchor (tier >= 2) isolation whose group
+        // still has another slot — replacing it never orphans + keeps the count. An
+        // EMPHASIZED group is only displaceable while it would STILL strictly lead
+        // (its surplus, not its signature slot); else ADD/accept-gap below.
+        let removeIdx = -1;
+        for (let i = chosen.length - 1; i >= 0; i--) {
+          if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+          const g = primaryOfName(chosen[i].name);
+          if (!g || (slotCount[g] || 0) <= 1) continue; // would orphan g
+          if (emphSet.has(g) && (slotCount[g] - 1) <= maxNonEmph) continue; // keep focus lead
+          removeIdx = i;
+          break;
+        }
+        if (removeIdx >= 0) {
+          const removed = chosen[removeIdx];
+          chosenNames.delete(removed.name);
+          chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+          const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+          if (rg && groupCount[rg]) groupCount[rg] -= 1;
+          chosen.splice(removeIdx, 1, { name: triceps.name, sets: DEFAULT_SETS });
+          chosenNames.add(triceps.name);
+          chosenMovements.add(movementKey(triceps.name, triceps.meta));
+          groupCount.triceps = (groupCount.triceps || 0) + 1;
+        } else if (chosen.length < SESSION_SIZE) {
+          // No over-slotted isolation to swap, but the session has room — add the slot.
+          take(triceps, DEFAULT_SETS);
+        }
+        // else: saturated + every group single-slotted → accept the gap (no orphan).
+      }
+    }
+  }
+
   const metaOf = (name) => getExerciseMetadata(name);
   const groupOf = (name) => metaOf(name).muscle_target_primary;
 
