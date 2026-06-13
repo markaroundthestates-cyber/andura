@@ -29,7 +29,10 @@ import { getMetricType } from '../../engine/metricType.js';
 import { getCurrentWeightKg } from './userTdee';
 import { resolveActivePhase, resolveEnergyMagnitude } from './engineWrappers.nutrition';
 import { energyVolumeFactor } from '../../engine/dp/ceiling.js';
-import { emphasizedGroups as resolveEmphasizedGroups } from '../../engine/schedule/scheduleAdapter/focus.js';
+import {
+  emphasizedGroups as resolveEmphasizedGroups,
+  deEmphasizedGroups as resolveDeEmphasizedGroups,
+} from '../../engine/schedule/scheduleAdapter/focus.js';
 import { experienceToEngine } from './scheduleAdapterAggregate.session';
 import {
   buildUserStateForPipeline,
@@ -648,6 +651,56 @@ function trimSetFloor(ex: TrimmableExercise, idx: number): number {
   return idx === 0 ? COMPOUND_MIN_SETS : compoundSetFloor(ex);
 }
 
+// FOCUS-FLOOR DROP-GUARD (dp_split_rebalance_v1) — build the predicate the time-budget
+// trim consults so a slot-starved full-body FOCUS day never gets a maintained MAJOR
+// region zeroed by the BLIND tail-first drop. The buildSession slot-guarantee places a
+// floor slot for each de-emphasized major region + each emphasized arm head, but those
+// land in the TAIL (compounds lead), so the time-trim was dropping the sole leg / sole
+// biceps slot — the exact orphan the /10 eval flagged (v-taper legs=0, arms biceps=0).
+//
+// Two protected notions, each evaluated against the trim's CURRENT list so a region with
+// a SURPLUS still yields it (only the LAST slot is held):
+//  • a de-emphasized REGION (v-taper/upper → legs = quads+hams+glutes+calves) keeps ≥1
+//    slot of the WHOLE region;
+//  • a SIGNATURE GROUP kept individually (arms → biceps + triceps, so the 2nd arm head
+//    is never squeezed out by the 1st).
+// The group of an exercise is its library muscle_target_primary (RO Big-11). Returns
+// null when there is nothing to protect (balanced / no de-emphasis & not arms) → the
+// trim runs byte-identical. RO group keys.
+const ARMS_SIGNATURE_GROUPS: ReadonlyArray<string> = ['biceps', 'triceps'];
+function buildFocusFloorDropGuard(
+  focusPreset: string | null | undefined,
+): ((list: ReadonlyArray<TrimmableExercise>, idx: number) => boolean) | null {
+  // Region = the de-emphasized groups as ONE protected region (keep ≥1 of the set).
+  const region = [...resolveDeEmphasizedGroups(focusPreset)];
+  // Per-group protected signatures: arms keeps biceps + triceps individually.
+  const perGroup = focusPreset === 'arms' ? [...ARMS_SIGNATURE_GROUPS] : [];
+  if (region.length === 0 && perGroup.length === 0) return null;
+  const groupOf = (ex: TrimmableExercise): string | undefined =>
+    (getExerciseMetadata(ex.engineName ?? ex.name) as
+      { muscle_target_primary?: string } | null)?.muscle_target_primary;
+  const regionSet = new Set(region);
+  return (list, idx) => {
+    const g = groupOf(list[idx]!);
+    if (!g) return false;
+    // (a) per-group signature floor: this group's LAST slot is protected.
+    if (perGroup.includes(g)) {
+      const count = list.reduce((n, e) => n + (groupOf(e) === g ? 1 : 0), 0);
+      if (count <= 1) return true;
+    }
+    // (b) de-emphasized region floor: the region's LAST slot (any region group) is
+    //     protected — dropping it would zero the whole maintained region.
+    if (regionSet.has(g)) {
+      const regionCount = list.reduce((n, e) => {
+        const eg = groupOf(e);
+        return n + (eg && regionSet.has(eg) ? 1 : 0);
+      }, 0);
+      if (regionCount <= 1) return true;
+    }
+    return false;
+  };
+}
+
 /**
  * Bound a built session by a persona-aware TIME budget (rest-inclusive).
  *
@@ -688,6 +741,17 @@ export function trimSessionToTimeBudget(
   exercises: ReadonlyArray<TrimmableExercise>,
   warmupMin: number,
   capMin: number,
+  // FOCUS-FLOOR DROP-GUARD (dp_split_rebalance_v1) — when supplied, an exercise that
+  // is the LAST remaining carrier of a protected MAJOR-muscle REGION (a de-emphasized
+  // region the slot-guarantee maintained at its floor) or a protected SIGNATURE GROUP
+  // (arms → biceps/triceps) must NOT be dropped by step 3: dropping the sole leg /
+  // sole biceps slot on a slot-starved full-body FOCUS day is exactly the orphan the
+  // /10 eval flagged. The guard ONLY blocks the DROP step (sets can still be shaved to
+  // the floor); the trim still meets the time cap via set-shaves + dropping NON-protected
+  // tail work. undefined (flag OFF / balanced / no de-emphasis) → no protection →
+  // byte-identical to the pre-guard trim. `dropProtected(list, idx)` returns true when
+  // removing list[idx] would orphan a protected region/group in the CURRENT list.
+  dropProtected?: (list: ReadonlyArray<TrimmableExercise>, idx: number) => boolean,
 ): TrimmableExercise[] {
   const out: TrimmableExercise[] = exercises.map((e) => ({ ...e }));
   if (out.length === 0) return out;
@@ -696,6 +760,12 @@ export function trimSessionToTimeBudget(
   // candidate instead of strictly the positional last (denser remaining session).
   // OFF → strict tail-first (out.pop) → byte-identical.
   const stimulusTrimOn = isEnabled('dp_stimulus_per_min_v1');
+  // No guard supplied (flag OFF / no focus) → a predicate that protects NOTHING, so
+  // every branch below is byte-identical to the pre-guard trim.
+  const isDropProtected =
+    typeof dropProtected === 'function'
+      ? dropProtected
+      : () => false;
 
   // computeEstimatedDurationMin returns null only for an empty/zero session;
   // the floor protects that (we never trim a session already at/under floor).
@@ -753,6 +823,11 @@ export function trimSessionToTimeBudget(
     //    accessory) instead of crushing the front compounds, but never below
     //    the exercise floor. This is what keeps the front sets healthy.
     if (out.length > MIN_EXERCISES_FLOOR) {
+      // FOCUS-FLOOR DROP-GUARD — never DROP an exercise whose removal would orphan a
+      // protected de-emphasized region / signature group (the last leg / last biceps
+      // slot the slot-guarantee maintained). dropProtected reads the CURRENT list so a
+      // region with TWO slots still yields its surplus; only the floor slot is held.
+      // OFF (no guard) → isDropProtected is always false → identical drop selection.
       // F6c #12 — STIMULUS-per-minute drop: instead of strictly the positional
       // last, drop the LOWEST stimulus/min candidate among the TRIMMABLE TAIL
       // (positions >= MIN_EXERCISES_FLOOR — the FRONT prefix that the floor keeps
@@ -760,18 +835,33 @@ export function trimSessionToTimeBudget(
       // is denser. Behind dp_stimulus_per_min_v1 (default OFF) → strict tail-first
       // (out.pop()) → byte-identical. A density tie → the positionally-last (keeps
       // the legacy ordering deterministic).
+      let dropIdx = -1;
       if (stimulusTrimOn) {
-        let dropIdx = out.length - 1;
-        let lowest = stimulusPerMin(out[dropIdx]!);
+        let lowest = Infinity;
         for (let i = out.length - 1; i >= MIN_EXERCISES_FLOOR; i -= 1) {
+          if (isDropProtected(out, i)) continue; // floor slot — never dropped
           const spm = stimulusPerMin(out[i]!);
+          // strict < keeps the positionally-last on a density tie (legacy determinism).
           if (spm < lowest) { lowest = spm; dropIdx = i; }
         }
-        out.splice(dropIdx, 1);
+        // No guard supplied → the loop always finds a candidate (identical to before);
+        // the default `last` baseline is set only when nothing was protected-out.
+        if (dropIdx < 0 && typeof dropProtected !== 'function') dropIdx = out.length - 1;
       } else {
-        out.pop();
+        // Strict tail-first: drop the LAST non-protected exercise in the trimmable tail.
+        for (let i = out.length - 1; i >= MIN_EXERCISES_FLOOR; i -= 1) {
+          if (isDropProtected(out, i)) continue;
+          dropIdx = i; break;
+        }
+        if (dropIdx < 0 && typeof dropProtected !== 'function') dropIdx = out.length - 1;
       }
-      continue;
+      if (dropIdx >= 0) {
+        out.splice(dropIdx, 1);
+        continue;
+      }
+      // Every trimmable-tail candidate is a protected floor slot → do NOT force a drop
+      // that would orphan a region. Fall through to step 4 (shave a set) so the cap is
+      // still pursued without zeroing a maintained major.
     }
 
     // 4) At BOTH floors (exercise floor + last exercise at set floor). Last
@@ -1172,7 +1262,26 @@ export async function composePlannedWorkoutToday(
     const energyScaled = energyMod
       ? scaleSetsByEnergy(readinessScaled, energyMod.volumeFactor, emphasizedRoGroups)
       : readinessScaled;
-    const exercises = trimSessionToTimeBudget(energyScaled, warmup?.durationMin ?? 0, timeCapMin);
+    // FOCUS-FLOOR DROP-GUARD (dp_split_rebalance_v1) — on a full-body FOCUS day the
+    // BLIND tail-first time-trim dropped the sole maintained leg / sole biceps slot
+    // (the slot-guarantee places them but they sit in the tail behind the focus
+    // compounds). Build the drop-guard so those FLOOR slots survive the trim. Gated on
+    // the split-rebalance flag (forced OFF in fp → undefined → byte-identical) AND a
+    // FULL session (the only day type a freq≤3 focus week produces — the slot-crunch
+    // case); UPPER/PUSH/PULL/LEGS days at freq≥4 carry the region on their own day so
+    // no guard is needed there. balanced / no de-emphasis & not arms → null → no guard.
+    const dropGuard =
+      isEnabled('dp_split_rebalance_v1') &&
+      typeof plan.sessionType === 'string' &&
+      plan.sessionType.toUpperCase() === 'FULL'
+        ? buildFocusFloorDropGuard(useOnboardingStore.getState().data.focusPreset)
+        : null;
+    const exercises = trimSessionToTimeBudget(
+      energyScaled,
+      warmup?.durationMin ?? 0,
+      timeCapMin,
+      dropGuard ?? undefined,
+    );
     // WARM-UP RAMP (dp_warmup_ramp_v1, default OFF). The session-level warm-up LINE
     // above ("Incalzire ~X min") is what a clipboard says; a real coach also ramps
     // the day's OPENING compound with ascending primer sets (50/70/90% of the working
