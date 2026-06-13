@@ -870,6 +870,16 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // even though `full` weights triceps 0.10. Inject one if none landed. The
     // upper-day triceps de-dup (#2) is NOT touched. OFF → byte-identical.
     tricepsFullbodyGuarantee: isEnabled('dp_triceps_fullbody_guarantee_v1'),
+    // #R6b spate-injury hamstring leg-curl guarantee (dp_legcurl_guarantee_v1,
+    // default ON). SAFETY-paired with the disc/lower-back exclusion: spate kills the
+    // whole spinal-loading hinge family (RDL/deadlift/good-morning/hip-thrust/squat +
+    // the GHR/Nordic/hyperextension erector family via the LUMBAR_HINGE sentinel),
+    // which would orphan hamstrings on slot-limited full-body days. When ON, a cluster
+    // that trains hamstrings under a spate exclusion injects a spine-neutral Leg Curl
+    // (knee flexion, no axial load) if none landed — the backfill that makes the GHR
+    // exclusion safe. Only fires WITH a spate injury signal (the sentinel is in the
+    // exclusion set); no injury → null excludedMovements → never runs → byte-identical.
+    legCurlGuarantee: isEnabled('dp_legcurl_guarantee_v1'),
     // #70-D2 — COMPOUND-FIRST guarantee on an emphasis/weak-reordered session
     // (dp_emphasis_specialization_v1, default OFF → byte-identical). When ON, the
     // weak/emphasis front-loader is prevented from leading the day with an ISOLATION

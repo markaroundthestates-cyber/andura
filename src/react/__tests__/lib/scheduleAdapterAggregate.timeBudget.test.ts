@@ -29,6 +29,7 @@ import {
 import type { PlannedExercise } from '../../lib/engineWrappers';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
+import { DB } from '../../../db.js';
 
 const TUESDAY_2026_05_19 = new Date(2026, 4, 19);
 
@@ -768,5 +769,89 @@ describe('trimSessionToTimeBudget — HARD user time-cap floor pierce (dp_hard_t
     const a = trimSessionToTimeBudget(heavySession(), 0, 35, undefined, true);
     const b = trimSessionToTimeBudget(heavySession(), 0, 35, undefined, true);
     expect(a).toEqual(b);
+  });
+});
+
+// ══ #R6b — spate (disc) leg-curl drop-guard survives the composer time-trim ═════
+// The hamstring leg-curl backfill (sessionBuilder #R6b) seats a spine-neutral Leg
+// Curl as the ONLY safe hamstring mover under a disc exclusion, but it lands in the
+// TAIL (an isolation behind the lead compounds). The blind tail-first time-trim was
+// dropping it → re-orphaning hamstrings (the 14/32 p7 hams=0). buildFocusFloorDropGuard
+// now holds the last leg-curl slot when a spate injury is active. These integration
+// tests stub getDailyWorkout so they isolate the COMPOSER trim + drop-guard wiring.
+describe('composePlannedWorkoutToday — spate leg-curl drop-guard (#R6b)', () => {
+  const STUB_BASE = {
+    type: 'training' as const,
+    sessionType: 'LOWER', // a leg day — fatigue factor 0.80 → tight cap forces a trim
+    warmup: null,
+    intensityModifier: null,
+    volumeTargets: null,
+    restTimeRange: [120, 180] as [number, number],
+    specializationTarget: null,
+    deloadState: 'IDLE',
+    workoutTitle: 'Antrenament azi',
+    estimatedDurationMin: 50,
+    volumeKg: 1000,
+  };
+  // A LOWER session whose lead is a quad compound, with the spine-neutral Leg Curl
+  // (the protected hamstring backfill) positioned DEAD LAST in the tail — so the
+  // blind tail-first trim drops IT first unless the guard holds it. A non-protected
+  // calf isolation sits just before it as the alternative drop candidate.
+  const SPATE_LOWER_PLAN = [
+    { name: 'Leg Press', sets: 5 },          // lead quad compound (front, never dropped)
+    { name: 'Leg Extension', sets: 5 },      // quad isolation
+    { name: 'Glute Drive Machine', sets: 5 },// glute compound (secondary-covers hams)
+    { name: 'Standing Calf Raise Machine', sets: 5 }, // non-protected isolation (tail)
+    { name: 'Seated Leg Curl', sets: 5 },    // PROTECTED hamstring backfill — DEAD LAST
+  ];
+
+  function setSpatePersona(): void {
+    // Ion-lowback-like: intermediate male, low-back disc.
+    useOnboardingStore.setState({
+      data: { age: 58, sex: 'm', goal: 'forta', frequency: '4', experience: 'intermediar', weight: 92, height: 179 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    // A recent lower-back (lombar → spate) pain report drives the exclusion + guard.
+    DB.set('pain-cdl', [
+      { type: 'pain', region: 'lombar', intensity: 3, ts: TUESDAY_2026_05_19.getTime() - 2 * 86400000 },
+    ]);
+  }
+
+  it('keeps the dead-last Leg Curl through the trim (hamstrings not re-orphaned)', async () => {
+    setSpatePersona();
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_BASE,
+      exercises: SPATE_LOWER_PLAN.map((e) => ({ ...e })),
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    const names = out!.exercises.map((e) => e.engineName ?? e.name);
+    // The protected hamstring backfill survived even though it sat DEAD LAST (the
+    // blind tail-first trim would drop it first; the spate guard held it).
+    expect(names).toContain('Seated Leg Curl');
+  });
+
+  it('NO spate signal → the dead-last leg curl is dropped by the blind trim (control)', async () => {
+    // Same plan + persona but NO pain report → no spate → no leg-curl hold → the
+    // blind tail-first trim drops the dead-last item (the leg curl). This is the
+    // discriminating control: it proves the survival above is the GUARD, not luck.
+    useOnboardingStore.setState({
+      data: { age: 58, sex: 'm', goal: 'forta', frequency: '4', experience: 'intermediar', weight: 92, height: 179 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    // no DB pain-cdl → contraindicatedGroupsFromPainCdl returns [] → spateInjured false.
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB_BASE,
+      exercises: SPATE_LOWER_PLAN.map((e) => ({ ...e })),
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    const names = out!.exercises.map((e) => e.engineName ?? e.name);
+    expect(out!.exercises.length).toBeLessThan(5);
+    expect(names).not.toContain('Seated Leg Curl');
   });
 });

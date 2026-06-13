@@ -12,6 +12,7 @@ import {
   isExcludedMovement,
   INJURY_PATTERN_EXCLUSIONS,
   OVERHEAD_PRESS_SENTINEL,
+  LUMBAR_HINGE_SENTINEL,
 } from '../movementExclusion.js';
 
 const allEquip = ['barbell', 'dumbbell', 'machine', 'cable', 'band'];
@@ -22,6 +23,9 @@ const ctx = (over = {}) => ({
   prNames: over.prNames ?? [],
   seed: over.seed ?? 'user-1|2026-05-25|0',
   excludedMovements: over.excludedMovements ?? null,
+  ...('legCurlGuarantee' in over ? { legCurlGuarantee: over.legCurlGuarantee } : {}),
+  ...('volumeTargets' in over ? { volumeTargets: over.volumeTargets } : {}),
+  ...('weeklySessionsPerGroup' in over ? { weeklySessionsPerGroup: over.weeklySessionsPerGroup } : {}),
 });
 
 const tokensOf = (session) =>
@@ -142,5 +146,117 @@ describe('#81 buildSession — HARD exclusion in selection', () => {
       expect(withNull).toEqual(base);
       expect(withEmpty).toEqual(base);
     }
+  });
+});
+
+// ══ #R6b — disc (spate) LUMBAR-HINGE sentinel + paired leg-curl backfill ════════
+// Proves the SAFETY pair: (1) the name-based LUMBAR_HINGE sentinel excludes the
+// erector-extension family (GHR / Nordic / hyperextension / back-extension) that the
+// token list cannot reach, while keeping the spine-neutral leg curl; (2) under a spate
+// exclusion the hamstring leg-curl guarantee seats a Leg Curl on a hams-training
+// cluster (the backfill that makes excluding GHR safe — no re-orphaned hamstrings);
+// (3) the GHR exclusion + backfill never re-introduce a contraindicated hinge.
+describe('#R6b LUMBAR_HINGE sentinel — name-based erector-extension exclusion', () => {
+  it('spate exclusion carries the LUMBAR_HINGE sentinel', () => {
+    const excl = buildExclusionTokens(['spate'], []);
+    expect(excl.tokens.has(LUMBAR_HINGE_SENTINEL)).toBe(true);
+    expect(INJURY_PATTERN_EXCLUSIONS.spate).toContain(LUMBAR_HINGE_SENTINEL);
+  });
+
+  it('GHR / Nordic / hyperextension / back-extension excluded BY NAME, leg curl kept', () => {
+    const excl = buildExclusionTokens(['spate'], []);
+    // GHR keys as `raise`, Nordic as `curl`, the hypers as `name:<...>` — none caught
+    // by a token match, all caught by the name sentinel.
+    expect(isExcludedMovement('Glute-Ham Raise', 'raise', excl)).toBe(true);
+    expect(isExcludedMovement('Natural Glute-Ham Raise', 'raise', excl)).toBe(true);
+    expect(isExcludedMovement('Nordic Hamstring Curl', 'curl', excl)).toBe(true);
+    expect(isExcludedMovement('45° Hyperextension', 'name:45° hyperextension', excl)).toBe(true);
+    expect(isExcludedMovement('Roman Chair Back Extension', 'extension', excl)).toBe(true);
+    expect(isExcludedMovement('GHD Back Extension', 'extension', excl)).toBe(true);
+    expect(isExcludedMovement('Reverse Hyper', 'name:reverse hyper', excl)).toBe(true);
+    expect(isExcludedMovement('Hyperextension Machine', 'name:hyperextension machine', excl)).toBe(true);
+    // the spine-NEUTRAL leg curl (knee flexion) is the safe backfill — never excluded.
+    expect(isExcludedMovement('Seated Leg Curl', 'leg-curl', excl)).toBe(false);
+    expect(isExcludedMovement('Leg Curl', 'leg-curl', excl)).toBe(false);
+    expect(isExcludedMovement('Standing Leg Curl', 'leg-curl', excl)).toBe(false);
+  });
+
+  it('sentinel is spate-only — a non-spate user (no sentinel) keeps GHR allowed', () => {
+    const kneeExcl = buildExclusionTokens(['picioare-quads', 'picioare-hamstrings'], []);
+    expect(kneeExcl.tokens.has(LUMBAR_HINGE_SENTINEL)).toBe(false);
+    expect(isExcludedMovement('Glute-Ham Raise', 'raise', kneeExcl)).toBe(false);
+  });
+});
+
+describe('#R6b leg-curl GUARANTEE — backfill seats under a spate exclusion', () => {
+  const excl = () => buildExclusionTokens(['spate'], []);
+
+  it('hams-training cluster lands a spine-neutral leg curl, ZERO GHR / hinge', () => {
+    for (const cluster of ['legs', 'lower', 'full']) {
+      const session = buildSession(
+        cluster,
+        ctx({ excludedMovements: excl(), legCurlGuarantee: true }),
+      );
+      const hamsPrimary = session.exercises.filter(
+        (e) => getExerciseMetadata(e.name).muscle_target_primary === 'picioare-hamstrings',
+      );
+      expect(hamsPrimary.length, `${cluster}: hamstrings must not be orphaned`).toBeGreaterThan(0);
+      // the seated hamstring mover is a spine-neutral leg curl (knee flexion).
+      const hamsTokens = hamsPrimary.map(
+        (e) => movementKey(e.name, getExerciseMetadata(e.name)).split('::')[1],
+      );
+      expect(hamsTokens, `${cluster}: hams via leg-curl`).toContain('leg-curl');
+      // no contraindicated hinge / erector-extension anywhere in the session.
+      const BAD = /glute.?ham|nordic|hyperext|back extension|good.?morning|deadlift|romanian|stiff.?leg|roman chair|\bghd\b|reverse hyper|conventional|squat|hip thrust/i;
+      for (const e of session.exercises) {
+        expect(BAD.test(e.name), `${cluster}: '${e.name}' is contraindicated`).toBe(false);
+      }
+    }
+  });
+
+  it('a slot-crunched (small budget) lower day still seats a leg curl, never orphans another muscle', () => {
+    // Tiny per-session budget → the round-robin would round hamstrings out; the
+    // guarantee swaps an over-slotted isolation for the leg curl (length-stable).
+    const session = buildSession(
+      'lower',
+      ctx({
+        excludedMovements: excl(),
+        legCurlGuarantee: true,
+        volumeTargets: { quadriceps: 6, hamstrings: 4, glutes: 6, calves: 4 },
+        weeklySessionsPerGroup: { 'picioare-quads': 2, 'picioare-hamstrings': 2, fese: 2, gambe: 2 },
+      }),
+    );
+    const hams = session.exercises.filter(
+      (e) => getExerciseMetadata(e.name).muscle_target_primary === 'picioare-hamstrings',
+    );
+    expect(hams.length).toBeGreaterThan(0);
+    // every muscle that has a slot keeps ≥1 (the swap never zeroed a victim group).
+    const counts = {};
+    for (const e of session.exercises) {
+      const g = getExerciseMetadata(e.name).muscle_target_primary;
+      counts[g] = (counts[g] || 0) + 1;
+    }
+    for (const [g, n] of Object.entries(counts)) {
+      expect(n, `${g} must keep ≥1 slot`).toBeGreaterThan(0);
+    }
+  });
+
+  it('OFF (no legCurlGuarantee) — exclusion still applies but no inject (byte-identical gate)', () => {
+    // With the guarantee OFF the spate exclusion still removes the hinge family; the
+    // guarantee is purely additive (it never runs without the flag).
+    const on = buildSession('lower', ctx({ excludedMovements: excl(), legCurlGuarantee: true }));
+    const off = buildSession('lower', ctx({ excludedMovements: excl(), legCurlGuarantee: false }));
+    // both never contain a contraindicated hinge (the exclusion is flag-independent).
+    const BAD = /glute.?ham|nordic|deadlift|romanian|good.?morning|squat|hip thrust|hyperext/i;
+    for (const s of [on, off]) {
+      for (const e of s.exercises) expect(BAD.test(e.name)).toBe(false);
+    }
+  });
+
+  it('no spate exclusion → guarantee never fires (gate requires the sentinel)', () => {
+    // legCurlGuarantee ON but NO spate signal (null exclusion) → byte-identical to OFF.
+    const guardOn = buildSession('lower', ctx({ legCurlGuarantee: true, excludedMovements: null }));
+    const guardOff = buildSession('lower', ctx({ legCurlGuarantee: false, excludedMovements: null }));
+    expect(guardOn).toEqual(guardOff);
   });
 });

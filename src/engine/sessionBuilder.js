@@ -10,7 +10,7 @@
 
 import { EXERCISE_METADATA, getExerciseMetadata, isActiveMeta } from './exerciseLibrary.js';
 import { BIG11_RO_TO_EN_MAP, CLUSTER_BIG6_TO_BIG11_WEIGHT, ISRAETEL_BASELINES } from './periodization/constants.js';
-import { isExcludedMovement } from './movementExclusion.js';
+import { isExcludedMovement, LUMBAR_HINGE_SENTINEL } from './movementExclusion.js';
 import { EXERCISE_TIER_RANK, tierSelectScore, TIER_SELECTABLE_SA, HAS_LOG_BONUS } from './exerciseTierRank.js';
 import { applyFocusPolicy, deriveExerciseTags, focusRelevantTags, ledgerSetFloors } from './focusPolicy.js';
 import { isoWeek } from '../util/isoWeek.js';
@@ -2325,6 +2325,89 @@ export function buildSession(cluster, ctx) {
         } else if (chosen.length < SESSION_SIZE) {
           // No over-slotted isolation to swap, but the session has room — add the slot.
           take(triceps, DEFAULT_SETS);
+        }
+        // else: saturated + every group single-slotted → accept the gap (no orphan).
+      }
+    }
+  }
+
+  // #R6b SPATE-INJURY HAMSTRING LEG-CURL GUARANTEE (ctx.legCurlGuarantee,
+  // dp_legcurl_guarantee_v1). The disc/lower-back ('spate') exclusion removes the
+  // entire spinal-loading hinge family (RDL / deadlift / good-morning / hip-thrust /
+  // squat via tokens, + the GHR / Nordic / hyperextension erector-extension family
+  // via the LUMBAR_HINGE sentinel) — which leaves hamstrings with NO slotted primary
+  // mover on the slot-limited full-body days (the 14/32 p7 hams=0 orphan, 2026-06-13).
+  // The spine-NEUTRAL option — Seated/Lying/Standing Leg Curl (knee flexion, no axial
+  // load) — IS in the pool but is a deprioritized isolation the slot allocation does
+  // not reliably seat. When a cluster TRAINS hamstrings (full/lower/legs/pull → targets
+  // includes 'picioare-hamstrings') AND the spate hinge family is excluded (the sentinel
+  // is in the exclusion set — spate-specific) AND no PRIMARY hamstring movement landed,
+  // inject a spine-neutral leg curl. This is the BACKFILL that makes re-adding the GHR
+  // exclusion safe (without it, excluding GHR would orphan hams).
+  //
+  // Mirrors the #R6a biceps / #R6a-T triceps guarantee — ORPHAN-SAFE + LENGTH-STABLE:
+  // PREFER to REPLACE an over-slotted NON-FOCUS isolation (a group keeping >=1 slot,
+  // so no muscle is orphaned + the count is unchanged so the time-budget trim is not
+  // perturbed); only ADD when no such victim exists AND there is room; else accept the
+  // gap (a genuinely saturated single-slotted day) rather than orphan a muscle. Runs
+  // AFTER the maintenance floor (the prior "final word on slot membership") so the
+  // floor cannot undo the inject. OFF / no hams target / no spate exclusion → never
+  // runs → byte-identical.
+  if (
+    ctx?.legCurlGuarantee === true
+    && targets.includes('picioare-hamstrings')
+    && excludedMovements?.tokens?.has?.(LUMBAR_HINGE_SENTINEL)
+  ) {
+    const primaryOfName = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+    const hasHams = chosen.some((e) => primaryOfName(e.name) === 'picioare-hamstrings');
+    if (!hasHams) {
+      // Spine-neutral leg curl ONLY (movementKey token `leg-curl` = knee flexion, no
+      // axial load) — from the (already spate-filtered) hamstrings pool, so the heavy
+      // hinge family is gone and we never re-seat a contraindicated mover.
+      const hamsPool = pools.find((p) => p.group === 'picioare-hamstrings')?.pool ?? [];
+      const legCurl = hamsPool.find(
+        (e) => !isTaken(e) && movementKey(e.name, e.meta).split('::')[1] === 'leg-curl',
+      );
+      if (legCurl) {
+        // Per-group slot census so a REPLACE only ever targets an OVER-slotted group.
+        const slotCount = {};
+        for (const e of chosen) {
+          const g = primaryOfName(e.name);
+          if (g) slotCount[g] = (slotCount[g] || 0) + 1;
+        }
+        // Largest NON-emphasized group's slot count — the bar an emphasized group must
+        // stay strictly above to remain the day's volume LEAD (mirrors the triceps
+        // guarantee's emphasized-signature guard). balanced (emphSet empty) → 0.
+        let maxNonEmph = 0;
+        for (const [g, n] of Object.entries(slotCount)) {
+          if (!emphSet.has(g) && n > maxNonEmph) maxNonEmph = n;
+        }
+        // Lowest-priority (highest-index) non-anchor isolation whose group still has
+        // another slot — replacing it never orphans + keeps the count. An EMPHASIZED
+        // group is only displaceable while it would STILL strictly lead (its surplus,
+        // not its signature slot).
+        let removeIdx = -1;
+        for (let i = chosen.length - 1; i >= 0; i--) {
+          if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+          const g = primaryOfName(chosen[i].name);
+          if (!g || (slotCount[g] || 0) <= 1) continue; // would orphan g
+          if (emphSet.has(g) && (slotCount[g] - 1) <= maxNonEmph) continue; // keep focus lead
+          removeIdx = i;
+          break;
+        }
+        if (removeIdx >= 0) {
+          const removed = chosen[removeIdx];
+          chosenNames.delete(removed.name);
+          chosenMovements.delete(movementKey(removed.name, getExerciseMetadata(removed.name)));
+          const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+          if (rg && groupCount[rg]) groupCount[rg] -= 1;
+          chosen.splice(removeIdx, 1, { name: legCurl.name, sets: DEFAULT_SETS });
+          chosenNames.add(legCurl.name);
+          chosenMovements.add(movementKey(legCurl.name, legCurl.meta));
+          groupCount['picioare-hamstrings'] = (groupCount['picioare-hamstrings'] || 0) + 1;
+        } else if (chosen.length < SESSION_SIZE) {
+          // No over-slotted isolation to swap, but the session has room — add the slot.
+          take(legCurl, DEFAULT_SETS);
         }
         // else: saturated + every group single-slotted → accept the gap (no orphan).
       }

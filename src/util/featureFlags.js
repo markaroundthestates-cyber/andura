@@ -1107,6 +1107,20 @@ export const FLAGS = Object.freeze({
   // FLIPPED_FLAGS baseline (path-A composition surface).
   dp_triceps_fullbody_guarantee_v1: { rollout: 1, default: true },
 
+  // #R6b spate-injury hamstring leg-curl guarantee (disc orphaned-hamstrings fix
+  // 2026-06-13) (RISK LOW — selection only, never kg). SAFETY-paired with the
+  // disc/lower-back ('spate') movement exclusion: spate removes the entire spinal-
+  // loading hinge family (RDL/deadlift/good-morning/hip-thrust/squat via tokens +
+  // GHR/Nordic/hyperextension erector-extension via the LUMBAR_HINGE name sentinel),
+  // which left hamstrings with no slotted primary mover on the slot-limited full-body
+  // days (14/32 p7 hams=0). When ON, a cluster that trains hamstrings UNDER a spate
+  // exclusion injects a spine-NEUTRAL Leg Curl (knee flexion, no axial load) if none
+  // landed (add if room, else replace the lowest-priority non-focus isolation; never
+  // orphan another muscle). Only fires when a spate injury signal is present (the
+  // sentinel is in the exclusion set) — no injury → null exclusion → never runs.
+  // OFF → byte-identical. Pinned OFF in the fp-config FLIPPED_FLAGS baseline.
+  dp_legcurl_guarantee_v1: { rollout: 1, default: true },
+
   // ARMS SIGNATURE (elite-coach eval ceiling 2026-06-13) — make biceps + triceps the
   // week's CLEAR top-two by VOLUME on an `arms` focus, the founder signature the judges
   // capped 25/57 arms configs at <=5.5 for ("focus muscles present but NOT the volume

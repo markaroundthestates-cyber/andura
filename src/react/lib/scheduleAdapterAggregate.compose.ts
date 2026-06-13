@@ -33,6 +33,8 @@ import {
   emphasizedGroups as resolveEmphasizedGroups,
   deEmphasizedGroups as resolveDeEmphasizedGroups,
 } from '../../engine/schedule/scheduleAdapter/focus.js';
+import { contraindicatedGroupsFromPainCdl } from '../../engine/movementExclusion.js';
+import { movementKey } from '../../engine/sessionBuilder.js';
 import { experienceToEngine } from './scheduleAdapterAggregate.session';
 import {
   buildUserStateForPipeline,
@@ -690,6 +692,13 @@ function trimSetFloor(ex: TrimmableExercise, idx: number, hardCap: boolean): num
 const ARMS_SIGNATURE_GROUPS: ReadonlyArray<string> = ['biceps', 'triceps'];
 function buildFocusFloorDropGuard(
   focusPreset: string | null | undefined,
+  // #R6b — spate (disc/lower-back) injury active this session. When true, the
+  // hamstring leg-curl guarantee (sessionBuilder) seated a spine-neutral Leg Curl as
+  // the ONLY safe hamstring mover (the whole hinge/erector family is excluded). It
+  // lands in the tail (an isolation behind the lead compounds), so the blind tail-
+  // first time-trim would drop it → re-orphan hamstrings (the 14/32 p7 hams=0). Hold
+  // its LAST hams slot here so the backfill survives the trim. Off → no extra hold.
+  spateInjured = false,
 ): ((list: ReadonlyArray<TrimmableExercise>, idx: number) => boolean) | null {
   // Region = the de-emphasized groups as ONE protected region (keep ≥1 of the set).
   const region = [...resolveDeEmphasizedGroups(focusPreset)];
@@ -714,13 +723,31 @@ function buildFocusFloorDropGuard(
   const emphSet = new Set(
     [...resolveEmphasizedGroups(focusPreset)].filter((g) => UPPER_BODY_EMPH.has(g)),
   );
-  if (region.length === 0 && perGroup.length === 0 && emphSet.size === 0) return null;
+  if (region.length === 0 && perGroup.length === 0 && emphSet.size === 0 && !spateInjured) {
+    return null;
+  }
   const groupOf = (ex: TrimmableExercise): string | undefined =>
     (getExerciseMetadata(ex.engineName ?? ex.name) as
       { muscle_target_primary?: string } | null)?.muscle_target_primary;
+  // #R6b — a spine-neutral leg curl (movementKey token `leg-curl` = knee flexion, no
+  // axial load) is the ONLY safe hamstring mover under a spate exclusion. Detected by
+  // the SAME movementKey vocabulary buildSession uses so the protection never drifts.
+  const isLegCurl = (ex: TrimmableExercise): boolean => {
+    const name = ex.engineName ?? ex.name;
+    const meta = getExerciseMetadata(name);
+    return movementKey(name, meta).split('::')[1] === 'leg-curl';
+  };
   const regionSet = new Set(region);
   return (list, idx) => {
     const g = groupOf(list[idx]!);
+    // (d) spate-injury hamstring backfill: protect the LAST spine-neutral leg-curl
+    //     slot so the trim cannot re-orphan hamstrings (a surplus 2nd leg curl still
+    //     yields). Evaluated before the group gate so it holds regardless of how the
+    //     leg curl's primary group resolves in the library.
+    if (spateInjured && isLegCurl(list[idx]!)) {
+      const legCurlCount = list.reduce((n, e) => n + (isLegCurl(e) ? 1 : 0), 0);
+      if (legCurlCount <= 1) return true;
+    }
     if (!g) return false;
     // (a) per-group signature floor: this group's LAST slot is protected.
     if (perGroup.includes(g)) {
@@ -1365,11 +1392,24 @@ export async function composePlannedWorkoutToday(
     // signature, so the guard adds nothing there. balanced / no focus → null → no guard.
     const guardDayType =
       typeof plan.sessionType === 'string' ? plan.sessionType.toUpperCase() : '';
-    const dropGuard =
-      isEnabled('dp_split_rebalance_v1') &&
-      (guardDayType === 'FULL' || guardDayType === 'UPPER' || guardDayType === 'PUSH')
-        ? buildFocusFloorDropGuard(useOnboardingStore.getState().data.focusPreset)
-        : null;
+    // #R6b — spate (disc/lower-back) injury active this session (read with the SAME
+    // injected clock getDailyWorkout's exclusion uses, so they agree). When ON, the
+    // drop-guard ALSO holds the spine-neutral leg-curl backfill through the trim — and
+    // because that hold is independent of focus, it builds the guard on a LEG day too
+    // (LOWER/LEGS), where a disc user's only safe hamstring mover is most at risk of
+    // being trimmed. Gated on dp_legcurl_guarantee_v1 (pinned OFF in fp). No injury →
+    // false → byte-identical guard.
+    const spateInjured =
+      isEnabled('dp_legcurl_guarantee_v1') &&
+      contraindicatedGroupsFromPainCdl(now.getTime()).includes('spate');
+    const wantsDropGuard =
+      (isEnabled('dp_split_rebalance_v1') &&
+        (guardDayType === 'FULL' || guardDayType === 'UPPER' || guardDayType === 'PUSH')) ||
+      (spateInjured &&
+        (guardDayType === 'FULL' || guardDayType === 'LOWER' || guardDayType === 'LEGS'));
+    const dropGuard = wantsDropGuard
+      ? buildFocusFloorDropGuard(useOnboardingStore.getState().data.focusPreset, spateInjured)
+      : null;
     const exercises = trimSessionToTimeBudget(
       energyScaled,
       warmup?.durationMin ?? 0,

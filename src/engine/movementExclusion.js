@@ -41,6 +41,19 @@ const MS_DAY = 86400000;
 export const OVERHEAD_PRESS_SENTINEL = '__overhead_press__';
 // Overhead vertical-push press by NAME (the aggravator under shoulder impingement).
 const OVERHEAD_PRESS_NAME_RE = /\bohp\b|overhead\s*press|shoulder\s*press|military\s*press|push\s*press|arnold\s*press/i;
+// Sentinel token marking a NAME-BASED lumbar-hinge / erector-extension exclusion
+// for the disc/lower-back ('spate') persona. The deadlift/good-morning/squat/hip-
+// thrust tokens already cover the heavy axial-hinge family, but the ERECTOR-EXTENSION
+// family escapes a token match: Glute-Ham Raise keys as `raise`, Nordic as `curl`
+// (both tokens shared with safe movements, so excluding the token would over-reach),
+// and the hyperextension/back-extension variants key as `name:<...>`. These all load
+// the lumbar erectors directly → contraindicated for a disc. isExcludedMovement
+// detects them by NAME when this sentinel is in the exclusion set (mirrors the
+// OVERHEAD_PRESS_SENTINEL). The spine-NEUTRAL leg curl (knee flexion, no axial load)
+// is the safe backfill the leg-curl guarantee seats in their place.
+export const LUMBAR_HINGE_SENTINEL = '__lumbar_hinge__';
+// Erector-extension / GHR / Nordic family by NAME (direct lumbar-erector load).
+const LUMBAR_HINGE_NAME_RE = /glute.?ham|nordic|hyperext|back\s*extension|roman\s*chair|\bghd\b|reverse\s*hyper/i;
 // Lookback for a Pain CDL report to count as a CURRENT contraindication. Matches
 // INJURY_LOOKBACK_DAYS (scheduleAdapterAggregate.injury.ts) so the exclusion + the
 // pipeline injury gate agree on "recent".
@@ -89,7 +102,15 @@ export function contraindicatedGroupsFromPainCdl(now) {
  */
 export const INJURY_PATTERN_EXCLUSIONS = Object.freeze({
   // Disc / lower-back: kill the spinal-loading patterns across the leg/glute groups.
-  spate: Object.freeze(['deadlift', 'good-morning', 'squat', 'hip-thrust']),
+  // The deadlift/good-morning/squat/hip-thrust tokens cover the heavy AXIAL HINGE +
+  // SQUAT + loaded hip-thrust. The LUMBAR_HINGE sentinel (name-based) ALSO kills the
+  // erector-EXTENSION family (Glute-Ham Raise / Nordic / hyperextension / back-
+  // extension / Roman chair / GHD / reverse hyper) — they load the lumbar erectors
+  // directly, contraindicated for a disc, but escape a token match (GHR keys `raise`,
+  // Nordic `curl`, the hypers `name:<...>`). Excluding them is SAFE only because the
+  // leg-curl guarantee (sessionBuilder #R6b) backfills a spine-neutral Leg Curl in
+  // their place — without the backfill, removing GHR would orphan hamstrings.
+  spate: Object.freeze([LUMBAR_HINGE_SENTINEL, 'deadlift', 'good-morning', 'squat', 'hip-thrust']),
   // Shoulder impingement: the OVERHEAD_PRESS sentinel (name-based, since OHP/Smith
   // OHP key as `name:ohp` not the `press` token) + the bare `press` token + upright
   // row. The landmine/neutral carve-out keeps a safe vertical-push option.
@@ -176,6 +197,13 @@ export function isExcludedMovement(name, movementToken, excl) {
   // NAME-BASED overhead-press (OHP / Smith OHP / Arnold / Push Press) — caught even
   // though its token is `name:ohp`. Honors the landmine/neutral carve-out.
   if (excl.tokens.has(OVERHEAD_PRESS_SENTINEL) && OVERHEAD_PRESS_NAME_RE.test(lower) && !allowed) {
+    return true;
+  }
+  // NAME-BASED lumbar erector-extension (GHR / Nordic / hyperextension / back-
+  // extension / Roman chair / GHD / reverse hyper) — caught even though its token is
+  // `raise` / `curl` / `name:<...>` (token-excluding those would over-reach onto safe
+  // movements). Disc-contraindicated; the leg-curl guarantee seats a safe substitute.
+  if (excl.tokens.has(LUMBAR_HINGE_SENTINEL) && LUMBAR_HINGE_NAME_RE.test(lower)) {
     return true;
   }
   if (!excl.tokens.has(movementToken)) return false;

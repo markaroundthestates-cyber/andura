@@ -111,6 +111,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   // Path-A selection surface → pinned OFF here so the frozen composition hashes
   // stay byte-for-byte.
   'dp_triceps_fullbody_guarantee_v1',
+  // THE FLIP 2026-06-13 (R6b) — spate-injury hamstring leg-curl guarantee defaults
+  // ON (a disc/lower-back user whose hinge family is excluded gets a spine-neutral
+  // leg curl injected if hamstrings were orphaned). INERT in this harness either way
+  // (the fp journeys seed NO spate/lower-back pain → null excludedMovements → the
+  // sentinel gate is never satisfied), pinned OFF anyway for the all-off-world
+  // guarantee (the frozen composition hashes stay byte-for-byte).
+  'dp_legcurl_guarantee_v1',
   // THE FLIP 2026-06-13 (arms-signature eval ceiling) — the arms-focus volume/slot
   // signature (umeri demoted out of the emphasize list + biceps/triceps weekly volume
   // floors) defaults ON. `arms` IS in this harness's EMPHASIS_PRESETS, so the ON
