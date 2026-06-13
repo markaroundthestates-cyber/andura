@@ -1176,6 +1176,24 @@ export const FLAGS = Object.freeze({
   // OFF → byte-identical. Pinned OFF in the fp-config FLIPPED_FLAGS baseline.
   dp_legcurl_guarantee_v1: { rollout: 1, default: true },
 
+  // #LEG posterior+quad floor (orphaned-legs fix 2026-06-13) (RISK LOW — selection
+  // only, never kg). Elite-coach invariant: a FULL-BODY day ALWAYS trains quads AND the
+  // posterior chain. On freq 1-3 all-full-body weeks under an upper-biased focus (v-taper
+  // / chest / shoulders / upper / back) the focus zeroes the leg weights, so the leg
+  // majors drop out of `targets` and the maintenance-floor guarantee skips them, the
+  // 2-in-3 region floor leaves hams+glutes at 0 while quads hold the floor, and focus-
+  // protect denies legs the marginal slot — 88 grid configs had weekly posterior=0, 38
+  // quads=0, 17 all-three=0 (e.g. a chest program that NEVER trained legs). When ON,
+  // buildSession enforces (cluster === 'full' ONLY) >=1 quad-primary slot AND >=1
+  // posterior (hams|glutes)-primary slot AFTER all other slot logic — adding when there
+  // is room, else displacing the focus's lowest-priority surplus upper isolation (the
+  // single case where leg maintenance OVERRIDES focus-protect; the displaced upper group
+  // keeps >=1 slot so no new orphan and the focus stays the volume lead). U/L split
+  // upper days are untouched (an UPPER day legitimately has 0 legs; the Lower day trains
+  // them). OFF → ctx.posteriorChainFloor false → never runs → byte-identical. Pinned OFF
+  // in the fp-config FLIPPED_FLAGS baseline.
+  dp_posterior_chain_floor_v1: { rollout: 1, default: true },
+
   // ARMS SIGNATURE (elite-coach eval ceiling 2026-06-13) — make biceps + triceps the
   // week's CLEAR top-two by VOLUME on an `arms` focus, the founder signature the judges
   // capped 25/57 arms configs at <=5.5 for ("focus muscles present but NOT the volume

@@ -699,6 +699,16 @@ function buildFocusFloorDropGuard(
   // first time-trim would drop it → re-orphan hamstrings (the 14/32 p7 hams=0). Hold
   // its LAST hams slot here so the backfill survives the trim. Off → no extra hold.
   spateInjured = false,
+  // #LEG posterior+quad floor (dp_posterior_chain_floor_v1, FULL day). The
+  // sessionBuilder floor seats a quad AND a posterior (hams|glutes) mover so a
+  // full-body day never zeroes legs under an upper focus. Both land in the tail
+  // (isolations/secondary compounds behind the lead presses), so the de-emphasized
+  // REGION guard above (which holds only the region's single LAST slot) would yield
+  // one of them and the time-trim would re-orphan it (the quad: it sorts positionally
+  // last → dropped while the glute drive survives). When true, protect the LAST quad
+  // slot AND the LAST posterior slot INDEPENDENTLY so the trim keeps both halves of
+  // the posterior chain. false → no extra hold → byte-identical.
+  posteriorFloorFull = false,
 ): ((list: ReadonlyArray<TrimmableExercise>, idx: number) => boolean) | null {
   // Region = the de-emphasized groups as ONE protected region (keep ≥1 of the set).
   const region = [...resolveDeEmphasizedGroups(focusPreset)];
@@ -723,7 +733,10 @@ function buildFocusFloorDropGuard(
   const emphSet = new Set(
     [...resolveEmphasizedGroups(focusPreset)].filter((g) => UPPER_BODY_EMPH.has(g)),
   );
-  if (region.length === 0 && perGroup.length === 0 && emphSet.size === 0 && !spateInjured) {
+  if (
+    region.length === 0 && perGroup.length === 0 && emphSet.size === 0
+    && !spateInjured && !posteriorFloorFull
+  ) {
     return null;
   }
   const groupOf = (ex: TrimmableExercise): string | undefined =>
@@ -749,6 +762,37 @@ function buildFocusFloorDropGuard(
       if (legCurlCount <= 1) return true;
     }
     if (!g) return false;
+    // #LEG posterior+quad floor: on a FULL day under the floor, hold the LAST QUAD
+    // slot AND the LAST POSTERIOR (hams|glutes) slot INDEPENDENTLY (not collapsed into
+    // the one-slot region guard) so the trim cannot re-orphan either half. A surplus
+    // 2nd quad / 2nd posterior slot still yields. Evaluated before the de-emphasized
+    // region gate (which would otherwise treat the two leg halves as interchangeable).
+    if (posteriorFloorFull) {
+      if (g === 'picioare-quads') {
+        const quadCount = list.reduce((n, e) => n + (groupOf(e) === 'picioare-quads' ? 1 : 0), 0);
+        if (quadCount <= 1) return true;
+      }
+      if (g === 'picioare-hamstrings' || g === 'fese') {
+        const postCount = list.reduce((n, e) => {
+          const eg = groupOf(e);
+          return n + (eg === 'picioare-hamstrings' || eg === 'fese' ? 1 : 0);
+        }, 0);
+        if (postCount <= 1) return true;
+      }
+      // SYMMETRY (no NEW orphan): seating the quad + posterior floor on a slot-starved
+      // micro full-body day (1-2 day weeks: effectiveSessionSize 5-6) can push the
+      // session one slot over its size; the time-trim then drops the lowest-priority
+      // TAIL — which would be a small UPPER major's ONLY slot (a chest-focus 2d day's
+      // sole rear-delt / sole back row). The legs floor must NEVER cost another major
+      // its last slot. So under the floor, also hold the LAST slot of each trained UPPER
+      // MAJOR (chest / back / shoulders); the trim drops a genuine SURPLUS (a 2nd chest
+      // press) instead, and if none exists the session is left slightly over the cap
+      // (the documented MIN_SESSION_MIN / step-4 fallback) rather than orphan a major.
+      if (g === 'piept' || g === 'spate' || g === 'umeri') {
+        const majorCount = list.reduce((n, e) => n + (groupOf(e) === g ? 1 : 0), 0);
+        if (majorCount <= 1) return true;
+      }
+    }
     // (a) per-group signature floor: this group's LAST slot is protected.
     if (perGroup.includes(g)) {
       const count = list.reduce((n, e) => n + (groupOf(e) === g ? 1 : 0), 0);
@@ -1402,13 +1446,20 @@ export async function composePlannedWorkoutToday(
     const spateInjured =
       isEnabled('dp_legcurl_guarantee_v1') &&
       contraindicatedGroupsFromPainCdl(now.getTime()).includes('spate');
+    // #LEG posterior+quad floor — protect the FULL-day quad + posterior slots the
+    // sessionBuilder floor seated from the tail-first time-trim (else the quad re-orphans).
+    const posteriorFloorFull =
+      isEnabled('dp_posterior_chain_floor_v1') && guardDayType === 'FULL';
     const wantsDropGuard =
       (isEnabled('dp_split_rebalance_v1') &&
         (guardDayType === 'FULL' || guardDayType === 'UPPER' || guardDayType === 'PUSH')) ||
       (spateInjured &&
-        (guardDayType === 'FULL' || guardDayType === 'LOWER' || guardDayType === 'LEGS'));
+        (guardDayType === 'FULL' || guardDayType === 'LOWER' || guardDayType === 'LEGS')) ||
+      posteriorFloorFull;
     const dropGuard = wantsDropGuard
-      ? buildFocusFloorDropGuard(useOnboardingStore.getState().data.focusPreset, spateInjured)
+      ? buildFocusFloorDropGuard(
+        useOnboardingStore.getState().data.focusPreset, spateInjured, posteriorFloorFull,
+      )
       : null;
     const exercises = trimSessionToTimeBudget(
       energyScaled,

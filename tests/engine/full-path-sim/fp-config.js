@@ -124,6 +124,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   // sentinel gate is never satisfied), pinned OFF anyway for the all-off-world
   // guarantee (the frozen composition hashes stay byte-for-byte).
   'dp_legcurl_guarantee_v1',
+  // THE FLIP 2026-06-13 (orphaned-legs fix) — the FULL-BODY posterior+quad floor
+  // defaults ON (a freq 1-3 full-body day under an upper-biased focus that would
+  // otherwise zero legs gets a quad slot + a posterior slot guaranteed). Pinned OFF here
+  // so ctx.posteriorChainFloor is false → the new block never runs → the frozen
+  // composition hashes stay byte-for-byte. ON is proven on the eval grid + the
+  // posteriorChainFloor regression suite + the focus-signature gate, NOT in this stream.
+  'dp_posterior_chain_floor_v1',
   // THE FLIP 2026-06-13 (arms-signature eval ceiling) — the arms-focus volume/slot
   // signature (umeri demoted out of the emphasize list + biceps/triceps weekly volume
   // floors) defaults ON. `arms` IS in this harness's EMPHASIS_PRESETS, so the ON

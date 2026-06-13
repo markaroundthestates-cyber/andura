@@ -2557,6 +2557,154 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  // #LEG FULL-BODY POSTERIOR+QUAD FLOOR (ctx.posteriorChainFloor,
+  // dp_posterior_chain_floor_v1, default ON). Elite-coach invariant: a FULL-BODY day
+  // ALWAYS trains quads AND the posterior chain. On freq 1-3 all-full-body weeks under
+  // an upper-biased focus (v-taper / chest / shoulders / upper / back) the focus zeroes
+  // the leg weights, so the leg majors fall out of `targets`; the MAJOR-MUSCLE SLOT
+  // GUARANTEE above therefore SKIPS them (majorsToTrain filters on targets), the 2-in-3
+  // region floor leaves hams+glutes at 0 once quads alone hold legRegionFloor, and
+  // FOCUS-PROTECT denies legs the marginal slot — 88 grid configs had weekly posterior=0,
+  // 38 quads=0, 17 all-three=0 (a chest program that NEVER trained legs). This block is
+  // the FINAL word on slot membership for legs: it runs AFTER fill + focus-policy + the
+  // maintenance floor + every later guarantee, and for these TWO specific leg slots it
+  // OVERRIDES focus-protect (the entire point — a coach never zeroes legs on a full-body
+  // day, focus or not). Scoped `cluster === 'full'` ONLY: a U/L split's `upper` day
+  // legitimately has 0 legs (the Lower day trains them), so it is untouched. Deterministic
+  // (fixed walk order). OFF / non-full cluster → never runs → byte-identical.
+  if (ctx?.posteriorChainFloor === true && cluster === 'full') {
+    const QUAD = 'picioare-quads';
+    const HAMS = 'picioare-hamstrings';
+    const GLUTES = 'fese';
+    const POSTERIOR = [HAMS, GLUTES];
+    const primaryOfName = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+    // Live per-group slot census off `chosen` (every prior block may have rebuilt it).
+    const liveCount = {};
+    for (const e of chosen) {
+      const g = primaryOfName(e.name);
+      if (g) liveCount[g] = (liveCount[g] || 0) + 1;
+    }
+    // Displace the lowest-priority (highest-index) NON-ANCHOR slot of the MOST over-
+    // slotted UPPER group — the focus's surplus 3rd back/chest/shoulder isolation. The
+    // victim's group must keep >=1 slot after removal (never orphan; never take a major's
+    // only slot), must NOT be a leg group (we are ADDING legs, not robbing them), and
+    // prefers a non-compound (tier > COMPOUND_TIER) so an anchor survives. Returns the
+    // chosen index to displace, or -1 when no genuine surplus exists.
+    const findUpperSurplusVictim = () => {
+      // Candidate upper groups carrying > 1 slot, by descending slot count (most over-
+      // slotted first), then by group name for a deterministic tiebreak.
+      const overSlottedUpper = Object.entries(liveCount)
+        .filter(([g, n]) => n > 1 && !LEG_REGION_GROUPS.includes(g))
+        .sort((a, b) => (b[1] - a[1]) || (a[0] < b[0] ? -1 : 1))
+        .map(([g]) => g);
+      if (overSlottedUpper.length === 0) return -1;
+      const overSet = new Set(overSlottedUpper);
+      // Pass 1: lowest-priority NON-anchor (tier > COMPOUND_TIER) slot of an over-slotted
+      // upper group. Pass 2 (fallback): any non-anchor slot of an over-slotted upper
+      // group regardless of tier ordering — already covered by pass 1's tier filter, so
+      // pass 2 drops the tier filter to accept a tier<=COMPOUND_TIER surplus only if the
+      // group still keeps >=1 slot. Walk from the back for lowest selection priority.
+      for (let i = chosen.length - 1; i >= 0; i--) {
+        const g = primaryOfName(chosen[i].name);
+        if (!overSet.has(g)) continue;
+        if ((liveCount[g] || 0) <= 1) continue; // would orphan g
+        if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+        return i;
+      }
+      for (let i = chosen.length - 1; i >= 0; i--) {
+        const g = primaryOfName(chosen[i].name);
+        if (!overSet.has(g)) continue;
+        if ((liveCount[g] || 0) <= 1) continue; // would orphan g
+        return i;
+      }
+      return -1;
+    };
+    // Seat `inject` (a pool entry {name, meta}) for leg group `targetGroup`. LENGTH-
+    // STABLE FIRST (mirrors the triceps / leg-curl guarantees): PREFER to DISPLACE a
+    // genuine UPPER SURPLUS slot so the session COUNT is unchanged — the downstream
+    // time-trim is then not perturbed and cannot sacrifice another major's only slot to
+    // restore the count. Only when there is NO upper surplus AND the session is still
+    // BELOW its true per-day size (effectiveSessionSize, NOT the SESSION_SIZE ceiling —
+    // padding to the ceiling would force the time-trim to drop a real upper major) does
+    // it ADD. Otherwise ACCEPT THE GAP: on a micro-session (1-2 day full-body) where
+    // every upper group is single-slotted, seating a leg would necessarily orphan an
+    // upper major, so the leg yields here and is maintained across the week. Mirrors the
+    // maintenance-floor swap bookkeeping (chosen / chosenNames / chosenMovements /
+    // liveCount).
+    const seatLeg = (inject, targetGroup) => {
+      if (!inject) return;
+      const victimIdx = findUpperSurplusVictim();
+      if (victimIdx >= 0) {
+        const removed = chosen[victimIdx];
+        const rg = primaryOfName(removed.name);
+        chosenNames.delete(removed.name);
+        chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
+        if (rg && liveCount[rg]) liveCount[rg] -= 1;
+        chosen.splice(victimIdx, 1, { name: inject.name, sets: DEFAULT_SETS });
+        chosenNames.add(inject.name);
+        chosenMovements.add(dedupKey(inject.name, inject.meta));
+        liveCount[targetGroup] = (liveCount[targetGroup] || 0) + 1;
+        return;
+      }
+      if (chosen.length < effectiveSessionSize) {
+        take(inject, DEFAULT_SETS);
+        liveCount[targetGroup] = (liveCount[targetGroup] || 0) + 1;
+      }
+      // else: no upper surplus + at day size → accept the gap (seating would orphan a major).
+    };
+    // QUAD FLOOR — >=1 quad-primary slot. Prefer a tier<=COMPOUND_TIER compound (leg
+    // press / hack squat); fall back to any available quad.
+    if ((liveCount[QUAD] || 0) === 0) {
+      const quadPool = pools.find((p) => p.group === QUAD)?.pool ?? [];
+      const compound = quadPool.find(
+        (e) => !isTaken(e) && (getExerciseMetadata(e.name)?.tier ?? 2) <= COMPOUND_TIER,
+      );
+      const inject = compound || quadPool.find((e) => !isTaken(e));
+      seatLeg(inject, QUAD);
+    }
+    // POSTERIOR FLOOR — >=1 (hams|glutes)-primary slot. Prefer a COMPOUND that covers
+    // BOTH (RDL / hip-thrust / glute-drive — primary in one posterior group, secondary
+    // covering the other, e.g. a `fese` compound with `picioare-hamstrings` secondary).
+    // Walk hams then glutes for a deterministic fixed order. Fall back to any available
+    // posterior compound, then any available posterior movement.
+    const posteriorSlots = POSTERIOR.reduce((n, g) => n + (liveCount[g] || 0), 0);
+    if (posteriorSlots === 0) {
+      const coversBoth = (e) => {
+        const m = getExerciseMetadata(e.name) || {};
+        const sec = Array.isArray(m.muscle_target_secondary) ? m.muscle_target_secondary : [];
+        return POSTERIOR.some((p) => p !== m.muscle_target_primary && sec.includes(p));
+      };
+      let inject = null;
+      // Pass A — a compound (tier<=COMPOUND_TIER) covering both posterior sub-groups.
+      for (const g of POSTERIOR) {
+        const pool = pools.find((p) => p.group === g)?.pool ?? [];
+        inject = pool.find(
+          (e) => !isTaken(e) && (getExerciseMetadata(e.name)?.tier ?? 2) <= COMPOUND_TIER && coversBoth(e),
+        );
+        if (inject) break;
+      }
+      // Pass B — any compound on either posterior sub-group.
+      if (!inject) {
+        for (const g of POSTERIOR) {
+          const pool = pools.find((p) => p.group === g)?.pool ?? [];
+          inject = pool.find(
+            (e) => !isTaken(e) && (getExerciseMetadata(e.name)?.tier ?? 2) <= COMPOUND_TIER,
+          );
+          if (inject) break;
+        }
+      }
+      // Pass C — any available posterior movement.
+      if (!inject) {
+        for (const g of POSTERIOR) {
+          const pool = pools.find((p) => p.group === g)?.pool ?? [];
+          inject = pool.find((e) => !isTaken(e));
+          if (inject) break;
+        }
+      }
+      if (inject) seatLeg(inject, primaryOfName(inject.name));
+    }
+  }
+
   const metaOf = (name) => getExerciseMetadata(name);
   const groupOf = (name) => metaOf(name).muscle_target_primary;
 

@@ -897,6 +897,19 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // exclusion safe. Only fires WITH a spate injury signal (the sentinel is in the
     // exclusion set); no injury → null excludedMovements → never runs → byte-identical.
     legCurlGuarantee: isEnabled('dp_legcurl_guarantee_v1'),
+    // #LEG POSTERIOR+QUAD FLOOR (dp_posterior_chain_floor_v1, default ON). Elite-coach
+    // invariant: a FULL-BODY day ALWAYS trains quads AND the posterior chain. On freq
+    // 1-3 all-full-body weeks under an upper-biased focus (v-taper / chest / shoulders /
+    // upper / back) the focus zeroes the leg weights, so the leg majors are not in
+    // `targets` and the maintenance-floor guarantee + 2-in-3 region floor + focus-protect
+    // let legs fall to ZERO slots (88 configs posterior=0, 38 quads=0 in the grid). When
+    // ON, buildSession enforces (FULL cluster only) >=1 quad-primary slot AND >=1
+    // posterior (hams|glutes)-primary slot AFTER all other slot logic, displacing the
+    // focus's surplus upper isolation if needed (the one case where leg maintenance
+    // OVERRIDES focus-protect). Scoped `cluster === 'full'` inside buildSession — U/L
+    // split upper days legitimately have 0 legs (the Lower day trains them). OFF →
+    // ctx.posteriorChainFloor false → block never runs → byte-identical.
+    posteriorChainFloor: isEnabled('dp_posterior_chain_floor_v1'),
     // #70-D2 — COMPOUND-FIRST guarantee on an emphasis/weak-reordered session
     // (dp_emphasis_specialization_v1, default OFF → byte-identical). When ON, the
     // weak/emphasis front-loader is prevented from leading the day with an ISOLATION
