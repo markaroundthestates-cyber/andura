@@ -920,6 +920,21 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // byte-identical). When ON, a beginner's NON-focus groups are capped to keep a
     // high-frequency novice week in the MEV/low-MAV band (experience anchoring).
     beginnerVolumeCap: isEnabled('dp_learned_volume_v1'),
+    // BEGINNER session-size cap (dp_beginner_session_size_v1, default ON). The
+    // elite-coach rubric wants a novice at <=4-5 exercises/session (compound-first,
+    // few patterns mastered); the /10 eval docked the beginner for 8/session on
+    // EVERY config. When ON + the user is a BEGINNER (resolveExperienceId reads
+    // user.experience), this is the effective session-size cap (5) buildSession uses
+    // IN PLACE OF SESSION_SIZE — the fill loop targets 5, selection stays compound-
+    // first (focus still leads >=2 slots), and the iso guarantees relax so a major is
+    // COVERED by a compound's primary/secondary rather than forcing a separate slot
+    // above the cap. Null (flag OFF / non-beginner) → buildSession uses SESSION_SIZE
+    // = 8 as today → byte-identical (pinned OFF in fp-config FLIPPED_FLAGS).
+    beginnerSessionSize:
+      isEnabled('dp_beginner_session_size_v1')
+      && resolveExperienceId(userState?.user) === 'incepator'
+        ? 5
+        : null,
     // §beginner-volume-v2 (dp_beginner_volume_v2, default ON; pinned OFF in fp) —
     // when ON, buildSession applies a FINAL clamp that caps a BEGINNER's EMPHASIZED-
     // group ISOLATIONS at MEV (2 sets). The prior delivered path rode a novice's

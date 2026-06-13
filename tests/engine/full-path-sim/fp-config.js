@@ -243,6 +243,18 @@ export const FLIPPED_FLAGS = Object.freeze([
   // (p1/p10 totals + max-emphasized into band, no muscle below MEV) + the new
   // volumeLandmarks beginner-v2 regression suite, NOT in this determinism stream.
   'dp_beginner_volume_v2',
+  // THE FLIP 2026-06-13 (beginner session-size cap) — dp_beginner_session_size_v1
+  // defaults ON. It caps a BEGINNER's session at ~5 compound-first exercises (in
+  // place of SESSION_SIZE=8) so a novice gets the elite-coach <=4-5 movements/day.
+  // The fp cohort DOES include incepator journeys (resolveExperienceId reads
+  // user.experience), and the ON behavior WOULD shrink their session fill + relax
+  // the iso guarantees → move the frozen prescription hashes. Pinned OFF here (in
+  // FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so ctx.beginnerSessionSize is null → the
+  // builder uses SESSION_SIZE=8 in both A/B arms → BOTH frozen baselines (hashOff/
+  // hashOn) stay byte-for-byte. ON behavior is proven on the eval grid (p1/p10 ex/
+  // day ~5, focus leads, majors compound-covered) + the new beginner-session-size
+  // regression test + the focus-signature gate, NOT in this determinism stream.
+  'dp_beginner_session_size_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the
