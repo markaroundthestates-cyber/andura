@@ -1148,6 +1148,20 @@ export const FLAGS = Object.freeze({
   // FLIPPED_FLAGS baseline (path-A composition surface).
   dp_triceps_fullbody_guarantee_v1: { rollout: 1, default: true },
 
+  // #R6a-T2 split-day (UPPER/LOWER) triceps guarantee (triceps-orphan eval ceiling
+  // 2026-06-13) (RISK LOW — selection only, never kg). Mirror of the biceps guarantee,
+  // scoped to an `upper` day on a week with NO push day. On a pure UPPER/LOWER 4-day
+  // split (upper/lower/upper/lower) there is no separate Push day, so the deliberate
+  // #2 upper-day triceps de-dup (justified by "triceps already hit by the Push day")
+  // orphans direct triceps → 0 sets/week. When ON, on an upper day of a no-push week the
+  // #2 de-dup STILL RUNS (it frees the redundant-arm slot for a weak/emphasized group)
+  // and a triceps-PRIMARY movement is then restored ORPHAN-SAFELY + SURFACE-SAFELY (swap
+  // an over-slotted, non-surfaced isolation — never claw back a weak/focus group's slot;
+  // add if room; else accept the gap). Splits WITH a push day (5d/6d/7d) keep the de-dup
+  // untouched → byte-identical. OFF → byte-identical. Pinned OFF in the fp-config
+  // FLIPPED_FLAGS baseline (path-A composition surface).
+  dp_triceps_split_guarantee_v1: { rollout: 1, default: true },
+
   // #R6b spate-injury hamstring leg-curl guarantee (disc orphaned-hamstrings fix
   // 2026-06-13) (RISK LOW — selection only, never kg). SAFETY-paired with the
   // disc/lower-back ('spate') movement exclusion: spate removes the entire spinal-

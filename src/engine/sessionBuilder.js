@@ -1992,6 +1992,16 @@ export function buildSession(cluster, ctx) {
   // redundant standalone TRICEPS isolation → the day lands at 7 focused lifts. Scoped to
   // 'upper' (pull is biceps-led, full-body needs breadth) and EXEMPT when triceps is the
   // user's emphasis (arms/triceps focus keeps its direct work). One removal, no refill.
+  //
+  // #R6a-T2 (2026-06-13): the "+ the Push day" premise is FALSE on a pure UPPER/LOWER
+  // split (no push day) — there the de-dup ORPHANS direct triceps to 0 sets/wk. When
+  // ctx.tricepsSplitGuarantee is true (upper day on a no-push week + flag ON) the de-dup
+  // STILL RUNS — it frees the redundant-arm slot so a WEAK/EMPHASIZED group (M2 weakness
+  // amplification, focus) can claim it FIRST — and the #R6a-T2 GUARANTEE below restores a
+  // direct-triceps lift ORPHAN-SAFELY (swap an OVER-slotted, non-surfaced isolation; never
+  // drop a major/surfaced group below its slot). So a no-push upper day lands BOTH the
+  // amplified weak group AND a direct-triceps lift. Push-day week / flag OFF → de-dup runs
+  // + the guarantee never fires → byte-identical.
   if (cluster === 'upper' && !emphSet.has('triceps')) {
     const primaryOf = (n) => getExerciseMetadata(n)?.muscle_target_primary;
     const isIso = (n) => (getExerciseMetadata(n)?.tier ?? 2) > COMPOUND_TIER;
@@ -2387,6 +2397,79 @@ export function buildSession(cluster, ctx) {
           take(triceps, DEFAULT_SETS);
         }
         // else: saturated + every group single-slotted → accept the gap (no orphan).
+      }
+    }
+  }
+
+  // #R6a-T2 SPLIT-DAY (UPPER/LOWER) TRICEPS GUARANTEE (ctx.tricepsSplitGuarantee,
+  // dp_triceps_split_guarantee_v1). Triceps-orphan eval ceiling 2026-06-13: on a pure
+  // UPPER/LOWER 4-day split (upper/lower/upper/lower) direct triceps landed at 0 sets/wk
+  // in 48 configs. Root cause: the #2 upper-day de-dup (above) removes the standalone
+  // triceps on `upper` justified by "the Push day already covers triceps" — FALSE for a
+  // U/L split (no push day). The full-body guarantee (#R6a-T) only fires on `full`, and
+  // the biceps guarantee (#R6a) has no triceps mirror — so on U/L weeks triceps falls
+  // through every net. ctx.tricepsSplitGuarantee is true ONLY on an `upper` day of a
+  // NO-PUSH week (gated in getDailyWorkout).
+  //
+  // PLACEMENT (mirrors #R6a-T): runs AFTER the focus-policy rebuild (which wipes + rebuilds
+  // `chosen`) AND the maintenance floor, so neither can undo the inject — the early biceps
+  // guarantee survives only because biceps is focus-relevant; triceps under a shoulders/
+  // back focus is not, so it MUST restore here. ORPHAN-SAFE + LENGTH-STABLE + SURFACE-SAFE:
+  // PREFER to REPLACE an OVER-slotted (group keeps >=1 slot), NON-SURFACED (not weak/
+  // emphasized) isolation — so no muscle is orphaned, the count is unchanged, and the M2
+  // weakness / focus amplification slot is never clawed back. Only when no such victim
+  // exists does it ADD (if room); else accept the gap. OFF / push-day week / no triceps
+  // target / triceps already present → never runs → byte-identical.
+  if (ctx?.tricepsSplitGuarantee === true && targets.includes('triceps')) {
+    const primaryOfName = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+    const hasTriceps = chosen.some((e) => primaryOfName(e.name) === 'triceps');
+    if (!hasTriceps) {
+      const tricepsPool = pools.find((p) => p.group === 'triceps')?.pool ?? [];
+      const triceps = tricepsPool.find((e) => !isTaken(e));
+      if (triceps) {
+        // Per-group slot census so a REPLACE only ever targets an OVER-slotted group.
+        const slotCount = {};
+        for (const e of chosen) {
+          const g = primaryOfName(e.name);
+          if (g) slotCount[g] = (slotCount[g] || 0) + 1;
+        }
+        // Largest NON-surfaced group's slot count — the bar a surfaced (weak/emphasized)
+        // group must stay strictly above to remain the day's volume LEAD (mirrors the
+        // #R6a-T full-body guarantee). A surfaced group may yield a SURPLUS slot (umeri
+        // 4 → 3 still leads vs spate 2) but not its lead slot, so the M2 weakness /
+        // focus signature is preserved. balanced (surfaceSet empty) → no restriction.
+        let maxNonSurfaced = 0;
+        for (const [g, n] of Object.entries(slotCount)) {
+          if (!surfaceSet.has(g) && n > maxNonSurfaced) maxNonSurfaced = n;
+        }
+        // Lowest-priority (highest-index) non-anchor (tier >= 2) isolation whose group
+        // still has another slot (no orphan). A SURFACED group is displaceable only while
+        // it would STILL strictly lead after the yield (its surplus, not its signature
+        // slot) — so the weak/focus lead is never clawed back.
+        let removeIdx = -1;
+        for (let i = chosen.length - 1; i >= 0; i--) {
+          if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+          const g = primaryOfName(chosen[i].name);
+          if (!g || (slotCount[g] || 0) <= 1) continue; // would orphan g
+          if (surfaceSet.has(g) && (slotCount[g] - 1) <= maxNonSurfaced) continue; // keep lead
+          removeIdx = i;
+          break;
+        }
+        if (removeIdx >= 0) {
+          const removed = chosen[removeIdx];
+          chosenNames.delete(removed.name);
+          chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
+          const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+          if (rg && groupCount[rg]) groupCount[rg] -= 1;
+          chosen.splice(removeIdx, 1, { name: triceps.name, sets: DEFAULT_SETS });
+          chosenNames.add(triceps.name);
+          chosenMovements.add(dedupKey(triceps.name, triceps.meta));
+          groupCount.triceps = (groupCount.triceps || 0) + 1;
+        } else if (chosen.length < SESSION_SIZE) {
+          // No over-slotted non-surfaced isolation to swap, but there is room — add it.
+          take(triceps, DEFAULT_SETS);
+        }
+        // else: saturated + every group single-slotted/surfaced → accept the gap.
       }
     }
   }

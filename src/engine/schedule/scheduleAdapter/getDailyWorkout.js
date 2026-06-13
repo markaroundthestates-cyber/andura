@@ -266,6 +266,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     ? activePos
     : activeIdxsForOrdinal.filter((i) => i < dayIdx).length;
   const split = frequencyToSplit(activeWeek.filter(Boolean).length || 1, focusPreset, splitRebalance);
+  // #R6a-T2 — does THIS week's split contain a separate Push day? (clusters are
+  // lowercase: 'upper'/'lower'/'push'/'pull'/'legs'/'full'). A pure UPPER/LOWER split
+  // (4d: upper/lower/upper/lower) has NONE — so the #2 upper-day triceps de-dup (which
+  // assumes "the Push day already covers triceps") orphans direct triceps to 0 sets/wk.
+  // 5d/6d/7d hybrids DO contain 'push' → the de-dup stays correct (byte-identical).
+  const weekHasPushDay = split.includes('push');
   // DE-EMPHASIZED divisor fix (D-focus-divisor 2026-06-06): the per-session set
   // budget = weeklyBudget / weeklySessionsPerGroup[group]. A v-taper collapses the
   // lower body from 2 leg days → 1, dropping the leg divisor 2→1, so the (already
@@ -870,6 +876,17 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // even though `full` weights triceps 0.10. Inject one if none landed. The
     // upper-day triceps de-dup (#2) is NOT touched. OFF → byte-identical.
     tricepsFullbodyGuarantee: isEnabled('dp_triceps_fullbody_guarantee_v1'),
+    // #R6a-T2 split-day (UPPER/LOWER) triceps guarantee (dp_triceps_split_guarantee_v1,
+    // default ON). Scoped to an `upper` day on a week with NO push day (a pure
+    // UPPER/LOWER 4-day split). The #2 upper-day triceps de-dup drops direct triceps on
+    // `upper` justified by "the Push day already covers it" — FALSE on a U/L split (no
+    // push day) → triceps orphaned to 0 sets/wk. When true, buildSession restores a
+    // direct-triceps lift AFTER the de-dup, orphan-safely + surface-safely (swap an
+    // over-slotted non-surfaced isolation; never claw back a weak/emphasized group's
+    // slot). Splits WITH a push day (5d/6d/7d) → false → de-dup holds → byte-identical.
+    // OFF → byte-identical.
+    tricepsSplitGuarantee:
+      isEnabled('dp_triceps_split_guarantee_v1') && cluster === 'upper' && !weekHasPushDay,
     // #R6b spate-injury hamstring leg-curl guarantee (dp_legcurl_guarantee_v1,
     // default ON). SAFETY-paired with the disc/lower-back exclusion: spate kills the
     // whole spinal-loading hinge family (RDL/deadlift/good-morning/hip-thrust/squat +

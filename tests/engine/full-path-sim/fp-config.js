@@ -111,6 +111,12 @@ export const FLIPPED_FLAGS = Object.freeze([
   // Path-A selection surface → pinned OFF here so the frozen composition hashes
   // stay byte-for-byte.
   'dp_triceps_fullbody_guarantee_v1',
+  // THE FLIP 2026-06-13 (R6a-T2) — split-day (UPPER/LOWER) triceps guarantee defaults
+  // ON (an upper day on a no-push week suppresses the #2 triceps de-dup AND injects one
+  // direct-triceps lift if selection rounded it out). Path-A selection surface → pinned
+  // OFF here so the frozen composition hashes stay byte-for-byte (OFF → de-dup runs
+  // unchanged + the guarantee never fires → byte-identical baseline).
+  'dp_triceps_split_guarantee_v1',
   // THE FLIP 2026-06-13 (R6b) — spate-injury hamstring leg-curl guarantee defaults
   // ON (a disc/lower-back user whose hinge family is excluded gets a spine-neutral
   // leg curl injected if hamstrings were orphaned). INERT in this harness either way
