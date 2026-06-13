@@ -190,6 +190,16 @@ export const FLIPPED_FLAGS = Object.freeze([
   // byte-for-byte; ON behavior is proven on the new sessionBuilder.intraWeekRotation
   // suite + the sweep adjacency drop, NOT in this determinism stream.
   'dp_rotation_intraweek_v1',
+  // THE FLIP 2026-06-13 (hard user time-cap fit) — dp_hard_time_cap_v1 defaults ON.
+  // It lets a USER-SET sessionTimeBudgetMin pierce the trim floor so the session
+  // actually fits the stated minutes. This harness's `tight_time` trait DOES set
+  // sessionTimeBudgetMin:40 (fp-run applyTraitSignals), so the ON behavior WOULD
+  // shrink that journey's sessions below the floor and move the frozen hashes —
+  // pinned OFF here so BOTH frozen baselines stay byte-for-byte (the tight_time
+  // journey keeps its floor-bounded trim). ON is proven on the eval grid (p9
+  // <=35min) + the trimSessionToTimeBudget unit suite, NOT in this determinism
+  // stream.
+  'dp_hard_time_cap_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

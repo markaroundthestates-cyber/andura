@@ -625,17 +625,26 @@ describe('composePlannedWorkoutToday — user pre-session TIME budget', () => {
     return out!;
   }
 
-  it('user picks 30 min → session compresses to ~30 (or floor) + fewer exercises vs no-limit', async () => {
+  it('user picks 30 min → session ACTUALLY FITS the hard cap (floor pierces) + fewer exercises', async () => {
+    // HARD-CAP FIT (dp_hard_time_cap_v1) — the user EXPLICITLY stated 30 min, so the
+    // persona floor (>=4 ex / >=25 min) is allowed to PIERCE down to the hard-cap floor
+    // (>=3 ex / >=2 sets / >=20 min) so the session actually fits the stated minutes.
+    // Pre-fix, eight 180s-rest compounds floored at ~4 ex / 3 sets ≈ 52min — ~50% over a
+    // 35-min budget (the /10 eval defect). With the fix the session lands AT/UNDER the cap.
     const noLimit = await composeWith(null);
     const limited = await composeWith(30);
-    // The shortened session is no longer than the user's budget (the floor may
-    // hold it slightly above if 30 is impossibly short — still <= the no-limit).
+    // The shortened session is no longer than the user's budget (still <= the no-limit).
     expect(limited.estimatedDuration!).toBeLessThanOrEqual(noLimit.estimatedDuration!);
     // 30 min is well under marius 90 → the trim engaged: fewer total exercises.
     expect(limited.exerciseCount).toBeLessThanOrEqual(noLimit.exerciseCount);
-    // Honest floor: never gutted below the ~4 exercise / 25 min minimum.
-    expect(limited.exercises.length).toBeGreaterThanOrEqual(4);
-    expect(limited.estimatedDuration!).toBeGreaterThanOrEqual(25);
+    // THE FIX: the session ACTUALLY FITS the user's stated cap (a small estimator-
+    // rounding overshoot is tolerated, but never the old ~50%-over stub). 180s-rest
+    // compounds at 3 ex × 2 sets ≈ 28min — the hard cap is genuinely met.
+    expect(limited.estimatedDuration!).toBeLessThanOrEqual(35);
+    // Hard-cap floor — never gutted below a real compound-dense session (3 ex / 2 sets).
+    expect(limited.exercises.length).toBeGreaterThanOrEqual(3);
+    for (const e of limited.exercises) expect(e.sets).toBeGreaterThanOrEqual(2);
+    expect(limited.estimatedDuration!).toBeGreaterThanOrEqual(20);
   });
 
   it('skip / no time budget (null) → BYTE-IDENTICAL to the current persona-derived plan', async () => {
@@ -676,5 +685,88 @@ describe('composePlannedWorkoutToday — user pre-session TIME budget', () => {
     const b = await composeWith(45);
     expect(a.estimatedDuration).toBe(b.estimatedDuration);
     expect(a.exerciseCount).toBe(b.exerciseCount);
+  });
+});
+
+// ── dp_hard_time_cap_v1 — a HARD user cap ACTUALLY fits (eval p9 defect) ──────────
+// The /10 eval's Cristina persona (35-min HARD cap) repeatedly capped at "52 and 49
+// minutes against a hard 35-min cap — ~50% over budget, a stated-constraint failure".
+// Root: trimSessionToTimeBudget floored at MIN_EXERCISES_FLOOR(4)/COMPOUND_MIN_SETS(3)/
+// MIN_SESSION_MIN(25) so 4 compounds at 3 sets with 180s rests (~52min) never reached
+// 35. When dp_hard_time_cap_v1 is ON AND the user EXPLICITLY set sessionTimeBudgetMin
+// (the binding cap), the floor pierces to HARDCAP_MIN_EXERCISES(3)/HARDCAP_MIN_SETS(2)/
+// HARDCAP_MIN_SESSION_MIN(20) so the session FITS — without orphaning the focus, and
+// while leaving the persona-cap path (no explicit user budget) byte-identical.
+describe('trimSessionToTimeBudget — HARD user time-cap floor pierce (dp_hard_time_cap_v1)', () => {
+  // 8 heavy compounds at 5 sets / 180s rest — the worst case the persona floor leaves
+  // ~52min for. tag rides the name so we can assert which positions survived.
+  function heavySession(): PlannedExercise[] {
+    return Array.from({ length: 8 }, (_, i) => ex(`comp${i}`, 5, 180));
+  }
+
+  it('HARD cap (35) FITS — pierces the persona floor to <= 35min', () => {
+    // hardCap=true → the trim shaves toward 2 sets + drops below the 4-ex floor to 3.
+    const trimmed = trimSessionToTimeBudget(heavySession(), 0, 35, undefined, true);
+    const dur = computeEstimatedDurationMin(trimmed, 0)!;
+    expect(dur).toBeLessThanOrEqual(35); // the /10 eval defect: was ~52 (50% over)
+    // A real compound-dense session, not a stub: floors held at 3 ex / 2 sets.
+    expect(trimmed.length).toBeGreaterThanOrEqual(3);
+    for (const e of trimmed) expect(e.sets).toBeGreaterThanOrEqual(2);
+    // The FRONT priority/focus compound (idx 0) is never dropped — it survives the shrink.
+    expect(trimmed[0]!.name).toBe('comp0');
+  });
+
+  it('PERSONA cap (no hardCap flag) is BYTE-IDENTICAL — floor unchanged (>= 4 ex / idx0 >= 3)', () => {
+    // hardCap defaults false (the persona-derived cap) → the SAME 35 request stops at the
+    // persona floor (>=4 ex, idx 0 compound >=3) exactly as before the fix.
+    const personaTrim = trimSessionToTimeBudget(heavySession(), 0, 35);
+    const explicitFalse = trimSessionToTimeBudget(heavySession(), 0, 35, undefined, false);
+    expect(explicitFalse).toEqual(personaTrim); // omitting the param == passing false
+    // The persona floor is NOT pierced (this is the byte-identical guarantee).
+    expect(personaTrim.length).toBeGreaterThanOrEqual(4);
+    expect(personaTrim[0]!.sets).toBeGreaterThanOrEqual(3);
+  });
+
+  it('a hardCap session goes LOWER than the same persona-cap session', () => {
+    const persona = trimSessionToTimeBudget(heavySession(), 0, 35);
+    const hard = trimSessionToTimeBudget(heavySession(), 0, 35, undefined, true);
+    const personaDur = computeEstimatedDurationMin(persona, 0)!;
+    const hardDur = computeEstimatedDurationMin(hard, 0)!;
+    // The persona path can't reach 35 (floor); the hard-cap path does → strictly shorter.
+    expect(hardDur).toBeLessThan(personaDur);
+    expect(hardDur).toBeLessThanOrEqual(35);
+  });
+
+  it('hardCap respects the focus drop-guard — a protected slot is never orphaned', () => {
+    // A FULL-day-style mix where idx 5 is the SOLE carrier of a "leg" region the guard
+    // protects. The guard blocks DROPPING that slot even under the deeper hard-cap floor;
+    // the cap is still pursued via set-shaves elsewhere. Build a guard that protects idx 5
+    // (its removal would leave zero of that tagged region in the list).
+    const session = [
+      ex('back0', 3, 120),
+      ex('back1', 3, 120),
+      ex('chest0', 3, 120),
+      ex('chest1', 3, 120),
+      ex('shoulder0', 3, 120),
+      ex('leg0', 3, 120), // the SOLE leg slot — protected
+    ];
+    const guard = (list: ReadonlyArray<PlannedExercise>, idx: number): boolean => {
+      const isLeg = (e: PlannedExercise): boolean => e.name.startsWith('leg');
+      if (!isLeg(list[idx]!)) return false;
+      const legCount = list.reduce((n, e) => n + (isLeg(e) ? 1 : 0), 0);
+      return legCount <= 1; // the last leg slot is protected
+    };
+    const trimmed = trimSessionToTimeBudget(session, 0, 30, guard, true);
+    // The sole protected leg slot survived the hard-cap trim (focus not orphaned).
+    expect(trimmed.some((e) => e.name.startsWith('leg'))).toBe(true);
+    // Floors still hold.
+    expect(trimmed.length).toBeGreaterThanOrEqual(3);
+    for (const e of trimmed) expect(e.sets).toBeGreaterThanOrEqual(2);
+  });
+
+  it('determinism — same hardCap inputs twice → identical result', () => {
+    const a = trimSessionToTimeBudget(heavySession(), 0, 35, undefined, true);
+    const b = trimSessionToTimeBudget(heavySession(), 0, 35, undefined, true);
+    expect(a).toEqual(b);
   });
 });

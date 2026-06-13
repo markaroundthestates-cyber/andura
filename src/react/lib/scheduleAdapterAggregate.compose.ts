@@ -538,6 +538,18 @@ const MIN_SETS_PER_EX = 2;     // never below MIN_SETS (matches chassis clamp)
 const MIN_SESSION_MIN = 25;    // never trim below a ~25min session
 const COMPOUND_MIN_SETS = 3;   // last-resort floor for the TOP compound (idx 0)
 
+// HARD user time-cap floor (dp_hard_time_cap_v1) — when the USER explicitly states
+// a tight session budget (workoutStore.sessionTimeBudgetMin), the persona floor
+// above stops the trim short of the stated minutes (4 heavy compounds at 3 sets
+// with 180s rests is ~52min and never reaches a 35-min cap). For a USER-SET hard
+// cap ONLY, the floor is allowed to pierce DOWN to these tighter bounds so the
+// session actually fits: a real compound-dense ~35-min session is 3 exercises at
+// ~2 sets (supersets), NOT 1 token lift. The FOCUS is still protected by the
+// focus-floor drop-guard; these are the absolute lower bounds the trim respects.
+const HARDCAP_MIN_EXERCISES = 3; // user-hard-cap floor — never below 3 exercises
+const HARDCAP_MIN_SETS = 2;      // user-hard-cap floor — never below 2 working sets
+const HARDCAP_MIN_SESSION_MIN = 20; // user-hard-cap session floor (a real 3x2 superset day)
+
 /** Resolve the per-persona HARD time cap (minutes) — the absolute ceiling the
  * trim guarantees. Unknown persona → gigica (conservative). Pure. */
 export function personaTimeCapMin(personaId: string | null | undefined): number {
@@ -647,7 +659,15 @@ function compoundSetFloor(ex: TrimmableExercise): number {
 }
 // The trim's per-position floor: idx 0 (the day's lead compound) always 3; any other
 // tier-1 compound also 3; isolations MIN_SETS_PER_EX.
-function trimSetFloor(ex: TrimmableExercise, idx: number): number {
+//
+// hardCap (dp_hard_time_cap_v1, user-set sessionTimeBudgetMin) — when a USER explicitly
+// states a tight budget, the compound's 3-set floor stops the trim short of the stated
+// minutes (4 compounds × 3 sets × 180s rest ≈ 52min never reaches 35). For a user hard
+// cap ONLY, EVERY position floors at HARDCAP_MIN_SETS (2) — including the lead compound —
+// so the session can shave to a real ~2-set superset density that fits the user's minutes.
+// hardCap=false → the persona-cap behavior is byte-identical (idx 0 / tier-1 → 3).
+function trimSetFloor(ex: TrimmableExercise, idx: number, hardCap: boolean): number {
+  if (hardCap) return HARDCAP_MIN_SETS;
   return idx === 0 ? COMPOUND_MIN_SETS : compoundSetFloor(ex);
 }
 
@@ -790,9 +810,26 @@ export function trimSessionToTimeBudget(
   // byte-identical to the pre-guard trim. `dropProtected(list, idx)` returns true when
   // removing list[idx] would orphan a protected region/group in the CURRENT list.
   dropProtected?: (list: ReadonlyArray<TrimmableExercise>, idx: number) => boolean,
+  // HARD USER TIME-CAP (dp_hard_time_cap_v1) — true when `capMin` is a USER-STATED hard
+  // budget (workoutStore.sessionTimeBudgetMin), distinct from the persona-derived cap.
+  // The persona cap keeps a comfortable floor (>=4 ex / per-position sets / >=25min) so a
+  // high-volume day trims to a REAL session, never a stub — a GOOD default. But that floor
+  // STOPS the trim short of a tight user budget (4 heavy compounds at 3 sets, 180s rests
+  // ≈ 52min never reaches 35), the /10 eval's "~50% over a hard 35-min cap" defect. When
+  // true, the floors PIERCE down to HARDCAP_MIN_EXERCISES (3) / HARDCAP_MIN_SETS (2) /
+  // HARDCAP_MIN_SESSION_MIN (20) so the session actually FITS the user's minutes — a real
+  // compound-dense ~35-min superset day, not a stub. The FOCUS is still protected: the
+  // drop-guard above keeps the focus / maintained-major's last slot present even in the
+  // shrunk session. false / omitted → the persona-cap floor (byte-identical pre-fix trim).
+  hardCap: boolean = false,
 ): TrimmableExercise[] {
   const out: TrimmableExercise[] = exercises.map((e) => ({ ...e }));
   if (out.length === 0) return out;
+
+  // Hard-cap-aware floors: a USER-stated tight budget pierces the persona floor so the
+  // session fits the stated minutes; otherwise the persona floor holds (byte-identical).
+  const minExercises = hardCap ? HARDCAP_MIN_EXERCISES : MIN_EXERCISES_FLOOR;
+  const minSessionMin = hardCap ? HARDCAP_MIN_SESSION_MIN : MIN_SESSION_MIN;
 
   // F6c #12 — when ON, the DROP step (3) removes the lowest stimulus/min tail
   // candidate instead of strictly the positional last (denser remaining session).
@@ -821,8 +858,9 @@ export function trimSessionToTimeBudget(
   while (duration(out) > capMin && guard < maxIterations) {
     guard += 1;
 
-    // 1) Never trim below the chassis minimum session.
-    if (duration(out) <= MIN_SESSION_MIN) break;
+    // 1) Never trim below the chassis minimum session (the user-hard-cap path uses
+    //    a tighter floor so a stated 35-min budget is actually reachable).
+    if (duration(out) <= minSessionMin) break;
 
     const last = out.length - 1;
 
@@ -838,8 +876,8 @@ export function trimSessionToTimeBudget(
     if (stimulusTrimOn) {
       let shaveIdx = -1;
       let lowest = Infinity;
-      for (let i = out.length - 1; i >= MIN_EXERCISES_FLOOR; i -= 1) {
-        if (out[i]!.sets > trimSetFloor(out[i]!, i)) {
+      for (let i = out.length - 1; i >= minExercises; i -= 1) {
+        if (out[i]!.sets > trimSetFloor(out[i]!, i, hardCap)) {
           const spm = stimulusPerMin(out[i]!);
           if (spm < lowest) { lowest = spm; shaveIdx = i; }
         }
@@ -852,15 +890,17 @@ export function trimSessionToTimeBudget(
         continue;
       }
     }
-    if (out[last]!.sets > trimSetFloor(out[last]!, last)) {
+    if (out[last]!.sets > trimSetFloor(out[last]!, last, hardCap)) {
       out[last] = { ...out[last]!, sets: out[last]!.sets - 1 };
       continue;
     }
 
     // 3) Last exercise already at the set floor — DROP it (a whole tail
     //    accessory) instead of crushing the front compounds, but never below
-    //    the exercise floor. This is what keeps the front sets healthy.
-    if (out.length > MIN_EXERCISES_FLOOR) {
+    //    the exercise floor. This is what keeps the front sets healthy. (The
+    //    user-hard-cap path may drop to a tighter 3-exercise floor so a stated
+    //    tight budget is reachable; the focus drop-guard still protects the focus.)
+    if (out.length > minExercises) {
       // FOCUS-FLOOR DROP-GUARD — never DROP an exercise whose removal would orphan a
       // protected de-emphasized region / signature group (the last leg / last biceps
       // slot the slot-guarantee maintained). dropProtected reads the CURRENT list so a
@@ -876,7 +916,7 @@ export function trimSessionToTimeBudget(
       let dropIdx = -1;
       if (stimulusTrimOn) {
         let lowest = Infinity;
-        for (let i = out.length - 1; i >= MIN_EXERCISES_FLOOR; i -= 1) {
+        for (let i = out.length - 1; i >= minExercises; i -= 1) {
           if (isDropProtected(out, i)) continue; // floor slot — never dropped
           const spm = stimulusPerMin(out[i]!);
           // strict < keeps the positionally-last on a density tie (legacy determinism).
@@ -887,7 +927,7 @@ export function trimSessionToTimeBudget(
         if (dropIdx < 0 && typeof dropProtected !== 'function') dropIdx = out.length - 1;
       } else {
         // Strict tail-first: drop the LAST non-protected exercise in the trimmable tail.
-        for (let i = out.length - 1; i >= MIN_EXERCISES_FLOOR; i -= 1) {
+        for (let i = out.length - 1; i >= minExercises; i -= 1) {
           if (isDropProtected(out, i)) continue;
           dropIdx = i; break;
         }
@@ -910,7 +950,7 @@ export function trimSessionToTimeBudget(
     //    re-balance over the week).
     let shaved = false;
     for (let i = out.length - 1; i >= 0; i -= 1) {
-      const setFloor = trimSetFloor(out[i]!, i);
+      const setFloor = trimSetFloor(out[i]!, i, hardCap);
       if (out[i]!.sets > setFloor) {
         out[i] = { ...out[i]!, sets: out[i]!.sets - 1 };
         shaved = true;
@@ -1274,10 +1314,23 @@ export async function composePlannedWorkoutToday(
     // → byte-identical to the prior persona+fatigue-derived cap. The trim floor
     // (>=4 ex / >=2 sets / >=25 min) still protects an impossibly-short pick.
     const userTimeMin = useWorkoutStore.getState().sessionTimeBudgetMin;
-    const timeCapMin =
-      typeof userTimeMin === 'number' && Number.isFinite(userTimeMin) && userTimeMin > 0
-        ? Math.min(personaFatigueCap, userTimeMin)
-        : personaFatigueCap;
+    const hasUserTimeCap =
+      typeof userTimeMin === 'number' && Number.isFinite(userTimeMin) && userTimeMin > 0;
+    const timeCapMin = hasUserTimeCap
+      ? Math.min(personaFatigueCap, userTimeMin as number)
+      : personaFatigueCap;
+    // HARD USER TIME-CAP fit (dp_hard_time_cap_v1) — the persona-derived floor (>=4 ex /
+    // per-position sets / >=25min) stops the trim short of a tight USER budget (4 heavy
+    // compounds at 3 sets, 180s rests ≈ 52min never reaches a stated 35-min cap — the
+    // /10 eval's "~50% over a hard cap" defect). The hard-cap floor-pierce is armed ONLY
+    // when (a) the user EXPLICITLY set sessionTimeBudgetMin AND (b) that user budget is
+    // the BINDING cap (tighter than the persona/fatigue ceiling — a generous user pick
+    // never pierces) AND (c) the flag is ON. Persona-cap-only sessions keep their floor
+    // byte-identical; the focus drop-guard still protects the focus in the shrunk session.
+    const userHardCap =
+      hasUserTimeCap &&
+      (userTimeMin as number) <= personaFatigueCap &&
+      isEnabled('dp_hard_time_cap_v1');
     // F2 #1 — scale set counts by the readiness verdict's graded volumeMultiplier
     // (LIGHT 0.7 / MODERATE 0.85 / NORMAL 1.0 / PR 1.1), floored at MIN_SETS_PER_EX.
     // This consumes the dropped readiness ramp (Path A — sets, not weight); the
@@ -1322,6 +1375,7 @@ export async function composePlannedWorkoutToday(
       warmup?.durationMin ?? 0,
       timeCapMin,
       dropGuard ?? undefined,
+      userHardCap,
     );
     // WARM-UP RAMP (dp_warmup_ramp_v1, default OFF). The session-level warm-up LINE
     // above ("Incalzire ~X min") is what a clipboard says; a real coach also ramps

@@ -676,6 +676,28 @@ export const FLAGS = Object.freeze({
   // research sanity-check before flip (the shape is verified, the constants tunable).
   dp_stimulus_per_min_v1: { rollout: 1, default: true },
 
+  // HARD user time-cap fit (2026-06-13, eval p9 Cristina "35-min hard cap" defect).
+  // The persona-derived time cap keeps a comfortable floor (>=4 ex / per-position
+  // sets / >=25min) so a high-volume day trims to a REAL session, never a stub — a
+  // GOOD default. But when the USER EXPLICITLY states a tight budget
+  // (workoutStore.sessionTimeBudgetMin, EnergyCheck "I only have N min"), the floor
+  // STOPS the trim short of the stated minutes: 4 heavy compounds at 3 sets with
+  // 180s rests is ~52min and never reaches a 35-min cap (the /10 eval's repeated
+  // "~50% over budget, a stated-constraint failure"). When ON, a USER-SET hard cap
+  // (NOT the persona-derived cap) is allowed to PIERCE the floor — shave sets toward
+  // 2 (including the lead compound) and drop below the 4-exercise floor to a hard
+  // floor of 3 — so the session actually FITS the user's minutes. The FOCUS is still
+  // protected: the focus-floor drop-guard (dp_split_rebalance_v1) keeps the focus /
+  // maintained-major's last slot present even in the shrunk session, and a hard
+  // lower bound (HARDCAP_MIN_EXERCISES 3 / MIN_SETS_PER_EX 2) keeps it a real
+  // compound-dense session, not 1 token lift. SCOPED to the user-hard-cap path only:
+  // the persona-derived cap (no explicit user budget) keeps its CURRENT floor
+  // byte-identical. OFF → the floor is never pierced → byte-identical to the
+  // pre-fix trim (pinned OFF in fp-config FLIPPED_FLAGS so the fp tight_time journey
+  // — which DOES set sessionTimeBudgetMin:40 — stays byte-for-byte). Proven on the
+  // eval grid (p9 day durations drop to <=35) + the trim's unit suite.
+  dp_hard_time_cap_v1: { rollout: 1, default: true },
+
   // #34 N-of-1 self-experiment (RISK HIGH — deliberately perturbs prescription to
   // learn the user's OWN response; the guardrails are the safety envelope). The
   // MEASUREMENT half is fully REUSED from #31 (trendDirection's noise-aware Kalman
