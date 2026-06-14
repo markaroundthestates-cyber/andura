@@ -941,6 +941,25 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // split upper days legitimately have 0 legs (the Lower day trains them). OFF →
     // ctx.posteriorChainFloor false → block never runs → byte-identical.
     posteriorChainFloor: isEnabled('dp_posterior_chain_floor_v1'),
+    // #HAMS HYPERTROPHY/STRENGTH HAMSTRING FLOOR (dp_hamstring_floor_v1, default ON). The
+    // Cycle-11 posterior floor treats hams∪glutes as ONE region (a Glute Drive alone
+    // satisfies it → hams stays 0); the Cycle-7 leg-curl guarantee only fires on the spate
+    // exclusion path. So on a masa v-taper (legs de-emphasized) glutes get covered but
+    // HAMSTRINGS — a major prime mover — stay zeroed (62 masa/forta grid configs had
+    // hams=0). De-emphasis must mean MAINTENANCE (MEV), never zero, for a GROWTH goal. When
+    // ON + goal is hypertrophy/strength (masa/forta), buildSession guarantees >=1 hamstring-
+    // primary slot on a leg-training cluster (full/lower/legs): a hinge (RDL/GHR) preferred,
+    // a leg curl fallback, via a length-stable swap of a surplus non-focus/non-leg slot. The
+    // spate (disc) path is DEFERRED inside buildSession to the Cycle-7 spine-neutral leg-curl
+    // guarantee (no double-inject, no contraindicated hinge). GOAL-GATED here: mentenanta /
+    // slabire / age>=60 are NOT included (reduced lower volume is correct for them, left to
+    // the existing floors) — a MASS program must not zero a hamstring. OFF / non-masa-forta /
+    // age>=60 → false → block never runs → byte-identical (pinned OFF in the fp-config
+    // FLIPPED_FLAGS so the frozen full-path hashes hold).
+    hamstringFloor:
+      isEnabled('dp_hamstring_floor_v1')
+      && (userState?.user?.goal === 'masa' || userState?.user?.goal === 'forta')
+      && !(typeof userState?.user?.age === 'number' && userState.user.age >= 60),
     // #70-D2 — COMPOUND-FIRST guarantee on an emphasis/weak-reordered session
     // (dp_emphasis_specialization_v1, default OFF → byte-identical). When ON, the
     // weak/emphasis front-loader is prevented from leading the day with an ISOLATION

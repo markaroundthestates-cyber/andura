@@ -1196,6 +1196,29 @@ export const FLAGS = Object.freeze({
   // OFF → byte-identical. Pinned OFF in the fp-config FLIPPED_FLAGS baseline.
   dp_legcurl_guarantee_v1: { rollout: 1, default: true },
 
+  // #HAMS hypertrophy/strength hamstring floor (orphaned-hamstrings fix 2026-06-14)
+  // (RISK LOW — selection only, never kg). A MASS-BUILDING / STRENGTH program (goal masa /
+  // forta) must NEVER zero HAMSTRINGS — a major prime mover. The Cycle-11 posterior floor
+  // (dp_posterior_chain_floor_v1) treats hams∪glutes as ONE region: a GLUTE movement alone
+  // (Glute Drive) satisfies it and leaves hamstrings at 0, while the Cycle-7 leg-curl
+  // guarantee (dp_legcurl_guarantee_v1) only fires on the lower-back ('spate') exclusion
+  // path. So on a masa v-taper (legs de-emphasized) glutes get covered but hams stay zero
+  // (62 masa/forta grid configs had weekly hams=0 — e.g. p4/p5/p8_v-taper_3d glutes present,
+  // hams 0; the judge caps these "hamstrings ORPHANED" with a ±3-4 variance swing). When ON
+  // + the goal is masa/forta + the cluster trains legs (full/lower/legs → targets includes
+  // hamstrings) + no hamstring-primary slot landed, buildSession injects ONE hamstring-
+  // primary movement — a HINGE (RDL / Glute-Ham Raise — a tier<=COMPOUND_TIER hams compound)
+  // preferred, a machine LEG CURL fallback — via a length-stable swap of a surplus NON-FOCUS,
+  // NON-LEG isolation (group keeps >=1 slot; a focus surplus only while it STILL strictly
+  // leads; ADD only with room within the cap, incl. the beginner 5-cap; else accept the gap —
+  // never orphan a major). INJURY-COMPOSED: a spate (disc/lower-back) signal DEFERS this block
+  // to the Cycle-7 spine-neutral leg-curl guarantee (no double-inject, no contraindicated
+  // hinge); knee injury keeps the leg-curl fallback knee-friendly. GOAL-GATED: mentenanta /
+  // slabire / age>=60 are NOT forced (reduced lower volume is correct for them — left to the
+  // existing floors). OFF / non-masa-forta / non-leg cluster / spate exclusion → never runs →
+  // byte-identical. Pinned OFF in the fp-config FLIPPED_FLAGS baseline.
+  dp_hamstring_floor_v1: { rollout: 1, default: true },
+
   // #LEG posterior+quad floor (orphaned-legs fix 2026-06-13) (RISK LOW — selection
   // only, never kg). Elite-coach invariant: a FULL-BODY day ALWAYS trains quads AND the
   // posterior chain. On freq 1-3 all-full-body weeks under an upper-biased focus (v-taper

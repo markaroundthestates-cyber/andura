@@ -2981,6 +2981,130 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  // #HAMS HYPERTROPHY/STRENGTH HAMSTRING FLOOR (ctx.hamstringFloor,
+  // dp_hamstring_floor_v1, default ON). A MASS-BUILDING / STRENGTH program (goal masa /
+  // forta) must NEVER zero a hamstring — a major prime mover. The Cycle-11 posterior
+  // floor above treats hams∪glutes as ONE region, so a GLUTE movement alone (Glute Drive)
+  // satisfies it and leaves HAMSTRINGS at 0; the Cycle-7 leg-curl guarantee only fires on
+  // the lower-back ('spate') exclusion path. So on a masa v-taper (legs de-emphasized) the
+  // glutes get covered but hams stay zero (62 masa/forta grid configs had hams=0 — e.g.
+  // p4/p5/p8_v-taper_3d glutes present, hams 0). De-emphasis means MAINTENANCE (MEV), never
+  // zero, for a growth goal. When ON + the cluster TRAINS legs (full/lower/legs → targets
+  // includes hamstrings) + no hamstring-primary slot landed, inject ONE hamstring-primary
+  // movement: PREFER a hinge (RDL / Glute-Ham Raise — a tier<=COMPOUND_TIER hams compound),
+  // fall back to a machine LEG CURL. INJURY-COMPOSED: when a spate (disc/lower-back) signal
+  // is present the dedicated Cycle-7 leg-curl guarantee already owns this path (a spine-
+  // neutral leg curl, no axial-load hinge) — this block DEFERS so it never double-injects
+  // and never seats a contraindicated hinge. Knee injury (p6) keeps leg curl knee-friendly
+  // (it is in the already-filtered pool). ORPHAN-SAFE + LENGTH-STABLE (mirrors the leg-curl
+  // guarantee): PREFER to REPLACE an over-slotted NON-FOCUS isolation (group keeps >=1
+  // slot, count unchanged so the time-trim is not perturbed); a FOCUS surplus is only
+  // displaceable while its group STILL strictly leads (never drop the focus below its lead);
+  // only ADD when no victim exists AND there is room (within effectiveCap — respects the
+  // beginner 5-cap); else accept the gap (a saturated single-slotted day) rather than orphan
+  // a major. Runs AFTER the posterior floor (the prior final word on leg slots) so a glute-
+  // only posterior cover can no longer leave hams at 0. Scope is goal-gated at the seam:
+  // mentenanta / slabire / age>=60 are NOT here (reduced lower volume is correct for them —
+  // left to the existing floors). OFF / non-leg cluster / spate exclusion → never runs →
+  // byte-identical.
+  if (
+    ctx?.hamstringFloor === true
+    && targets.includes('picioare-hamstrings')
+    && !excludedMovements?.tokens?.has?.(LUMBAR_HINGE_SENTINEL)
+  ) {
+    const primaryOfName = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+    const hasHams = chosen.some((e) => primaryOfName(e.name) === 'picioare-hamstrings');
+    if (!hasHams) {
+      const hamsPool = pools.find((p) => p.group === 'picioare-hamstrings')?.pool ?? [];
+      // PREFER a hinge — a tier<=COMPOUND_TIER hams compound (RDL / Glute-Ham Raise /
+      // trap-bar); FALL BACK to a machine leg curl (movementKey token `leg-curl`); then any
+      // available hams movement. (On a spate persona this block has already DEFERRED, so a
+      // contraindicated hinge can never be reached here.)
+      const inject =
+        hamsPool.find(
+          (e) => !isTaken(e) && (getExerciseMetadata(e.name)?.tier ?? 2) <= COMPOUND_TIER,
+        )
+        || hamsPool.find(
+          (e) => !isTaken(e) && movementKey(e.name, e.meta).split('::')[1] === 'leg-curl',
+        )
+        || hamsPool.find((e) => !isTaken(e));
+      if (inject) {
+        // Per-group slot census so a REPLACE only ever targets an OVER-slotted group.
+        const slotCount = {};
+        for (const e of chosen) {
+          const g = primaryOfName(e.name);
+          if (g) slotCount[g] = (slotCount[g] || 0) + 1;
+        }
+        // Largest NON-emphasized group's slot count — the bar an emphasized group must stay
+        // strictly above to remain the day's volume LEAD (mirrors the leg-curl guarantee).
+        let maxNonEmph = 0;
+        for (const [g, n] of Object.entries(slotCount)) {
+          if (!emphSet.has(g) && n > maxNonEmph) maxNonEmph = n;
+        }
+        // Lowest-priority (highest-index) non-anchor isolation whose group still has another
+        // slot — replacing it never orphans + keeps the count. PREFER an UPPER NON-FOCUS
+        // surplus (pass 1) so the focus is never thinned while a non-focus accessory exists;
+        // then a FOCUS upper surplus (pass 2). A FOCUS group is displaceable only while it
+        // keeps a per-day CO-LEAD after the trade (>= the day's max non-focus): on a full-body
+        // day the focus is the WEEK's volume lead across its OTHER days, so trading ONE surplus
+        // focus isolation down to a tie (never below) leaves the focus the week lead while a
+        // missing PRIME MOVER (hams) is restored — the elite-coach trade. Excludes LEG groups
+        // in passes 1-2 (handled by pass 3).
+        let removeIdx = -1;
+        for (const focusOk of [false, true]) {
+          for (let i = chosen.length - 1; i >= 0; i--) {
+            if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+            const g = primaryOfName(chosen[i].name);
+            if (!g || LEG_REGION_GROUPS.includes(g)) continue;    // upper isolations only here
+            if ((slotCount[g] || 0) <= 1) continue;                // would orphan g
+            if (emphSet.has(g) !== focusOk) continue;              // non-focus surplus first
+            if (emphSet.has(g) && (slotCount[g] - 1) < maxNonEmph) continue; // keep focus co-lead
+            removeIdx = i;
+            break;
+          }
+          if (removeIdx >= 0) break;
+        }
+        // Pass 3 — when NO upper surplus exists (the at-cap masa full-body case: the contracts/
+        // dedup flags single-slot every upper group and the posterior floor already seated a
+        // glute + quad), trade an OVER-SLOTTED QUAD or GLUTE's 2nd slot for the hamstring (the
+        // prompt-sanctioned "over-slotted quad's 2nd slot" swap). For a masa goal the posterior
+        // chain is over-weighted on quads/glutes while hams is ZERO — rebalancing one surplus
+        // quad/glute slot into a hamstring is the correct length-stable trade. Never the group's
+        // LAST slot (no orphan); prefer the lowest-priority (highest-index) ISOLATION, then any
+        // surplus slot. Walk fese (glutes) before quads so a quad compound anchor is preferred-
+        // kept; never touch a hams slot (it is the target).
+        if (removeIdx < 0) {
+          const SURPLUS_LEG_PREFERENCE = ['fese', 'picioare-quads'];
+          for (const onlyIso of [true, false]) {
+            for (let i = chosen.length - 1; i >= 0 && removeIdx < 0; i--) {
+              const g = primaryOfName(chosen[i].name);
+              if (!SURPLUS_LEG_PREFERENCE.includes(g)) continue;   // quad/glute surplus only
+              if ((slotCount[g] || 0) <= 1) continue;               // never a leg's last slot
+              if (onlyIso && (getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+              removeIdx = i;
+            }
+            if (removeIdx >= 0) break;
+          }
+        }
+        if (removeIdx >= 0) {
+          const removed = chosen[removeIdx];
+          chosenNames.delete(removed.name);
+          chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
+          const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+          if (rg && groupCount[rg]) groupCount[rg] -= 1;
+          chosen.splice(removeIdx, 1, { name: inject.name, sets: DEFAULT_SETS });
+          chosenNames.add(inject.name);
+          chosenMovements.add(dedupKey(inject.name, inject.meta));
+          groupCount['picioare-hamstrings'] = (groupCount['picioare-hamstrings'] || 0) + 1;
+        } else if (chosen.length < effectiveCap) {
+          // No over-slotted non-leg isolation to swap, but the session has room — add.
+          take(inject, DEFAULT_SETS);
+        }
+        // else: saturated + every non-leg group single-slotted → accept the gap (no orphan).
+      }
+    }
+  }
+
   const metaOf = (name) => getExerciseMetadata(name);
   const groupOf = (name) => metaOf(name).muscle_target_primary;
 

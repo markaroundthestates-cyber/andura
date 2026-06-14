@@ -124,6 +124,16 @@ export const FLIPPED_FLAGS = Object.freeze([
   // sentinel gate is never satisfied), pinned OFF anyway for the all-off-world
   // guarantee (the frozen composition hashes stay byte-for-byte).
   'dp_legcurl_guarantee_v1',
+  // THE FLIP 2026-06-14 (orphaned-hamstrings fix) — the masa/forta HAMSTRING floor defaults
+  // ON (a hypertrophy/strength program never zeroes hamstrings on a leg-training cluster: a
+  // hinge/leg-curl is injected via a length-stable swap when hams would be 0). The fp cohort
+  // DOES include masa/forta journeys on full/lower/legs clusters, so the ON behavior WOULD
+  // move the frozen composition hashes — pinned OFF here (in FLIPPED_FLAGS only, NOT
+  // PATH_A_FLAGS) so ctx.hamstringFloor is false → the new block never runs → BOTH frozen
+  // baselines (hashOff/hashOn) stay byte-for-byte. ON is proven on the eval grid (masa/forta
+  // hams==0 → ~0, focus still leads, p7/spate uses leg curl not RDL, maintenance/older
+  // unchanged) + the new hamstring-floor regression test, NOT in this determinism stream.
+  'dp_hamstring_floor_v1',
   // THE FLIP 2026-06-13 (orphaned-legs fix) — the FULL-BODY posterior+quad floor
   // defaults ON (a freq 1-3 full-body day under an upper-biased focus that would
   // otherwise zero legs gets a quad slot + a posterior slot guaranteed). Pinned OFF here
