@@ -213,3 +213,56 @@ describe('LEG floor — pure buildSession scoping', () => {
     expect(a).toEqual(b);
   });
 });
+
+// ── Part C — dp_fullbody_leg_floor_v1: a freq-1 (week's ONLY day) full-body session
+// must not orphan the major movers for the WHOLE week. The posterior+quad floor's
+// accessory-trade (today beginner-only) ALSO fires for a freq-1 non-beginner so a leg
+// MAJOR outranks a small arm/core accessory on the only training day. ───────────────
+describe('LEG floor — single-day full-body (dp_fullbody_leg_floor_v1)', () => {
+  // A v-taper-style upper focus on the ONLY day, with enough upper-arm/core accessory
+  // volume to saturate the session so findUpperSurplusVictim finds no major surplus.
+  const ctx1 = (over = {}) => ({
+    equipment: { available: allEquip },
+    weakGroups: [],
+    profileTier: 'T2',
+    prNames: [],
+    seed: 'user-1d|2026-06-14|0',
+    volumeTargets: {
+      chest: 12, back: 14, shoulders: 12, biceps: 8, triceps: 8,
+      quads: 0, hamstrings: 0, glutes: 0, calves: 0, abs: 4, forearms: 4,
+    },
+    weeklySessionsPerGroup: SESSIONS_PER_GROUP,
+    focusPolicy: true,
+    focusId: 'v-taper',
+    emphasizedGroups: ['umeri', 'spate'],
+    daysPerWeek: 1,
+    posteriorChainFloor: true,
+    ...over,
+  });
+
+  it('OFF (fullBodyLegFloor false) on a freq-1 full-body day → legacy accept-the-gap is preserved', () => {
+    const a = buildSession('full', ctx1({ fullBodyLegFloor: false }));
+    const b = buildSession('full', ctx1({ fullBodyLegFloor: false }));
+    expect(a).toEqual(b); // deterministic + byte-identical to the legacy path
+  });
+
+  it('ON → a freq-1 full-body day lands a leg MAJOR (quad OR posterior), not orphaned for the week', () => {
+    const on = buildSession('full', ctx1({ fullBodyLegFloor: true }));
+    const c = legCounts(on);
+    expect(c.quad + c.posterior, `freq-1 legs orphaned: ${JSON.stringify(c)}`).toBeGreaterThanOrEqual(1);
+  });
+
+  it('ON ⊇ OFF on a freq-1 day → the single-day floor only ADDS leg coverage', () => {
+    const off = buildSession('full', ctx1({ fullBodyLegFloor: false }));
+    const on = buildSession('full', ctx1({ fullBodyLegFloor: true }));
+    expect(legCounts(on).quad + legCounts(on).posterior)
+      .toBeGreaterThanOrEqual(legCounts(off).quad + legCounts(off).posterior);
+  });
+
+  it('ON on a MULTI-day week (daysPerWeek 3) → no single-day extension (legacy behavior)', () => {
+    // daysPerWeek > 1 → the new freq-1 branch never fires; legs are maintained across days.
+    const multi = buildSession('full', ctx1({ fullBodyLegFloor: true, daysPerWeek: 3 }));
+    const legacy = buildSession('full', ctx1({ fullBodyLegFloor: false, daysPerWeek: 3 }));
+    expect(multi).toEqual(legacy);
+  });
+});

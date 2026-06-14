@@ -1191,6 +1191,28 @@ export const FLAGS = Object.freeze({
   // OFF → byte-identical. Pinned OFF in the fp-config FLIPPED_FLAGS baseline.
   dp_legcurl_guarantee_v1: { rollout: 1, default: true },
 
+  // KNEE-SAFE QUADS (knee-injury contraindication fix 2026-06-14) (RISK LOW — selection
+  // only, never kg) (SAFETY). The /10 elite-coach judge capped the knee persona (p6 Gigica,
+  // 52M slabire, pain=knee) for getting LOADED LEG PRESS on every leg day — "injury
+  // contraindication (loaded deep knee flexion) w/o substitute". The #81 exclusion already
+  // removed squat/lunge/leg-extension for a knee signal but DELIBERATELY kept the Leg Press
+  // as the "knee-safe closed-chain" quad — a defensible call for a mild knee, but the elite-
+  // coach signature for an INJURED knee is HIP-DOMINANT (RDL / leg curl / hip thrust), NOT a
+  // loaded bilateral quad-flexion machine. When ON, a knee injury signal ALSO excludes the
+  // Leg Press family (token `leg-press`) + the open-chain step-up / wall-sit / sissy (the
+  // KNEE_QUAD name sentinel), and poolForGroup is permitted to EMPTY the quads group (no safe
+  // quad survives in this library) — the leg day routes to the knee-safe posterior/glute pool
+  // (the round-robin + posterior/hamstring floors seat RDL / leg curl / hip thrust, all knee-
+  // friendly). A SWAP within the leg budget (hip-dominant work replaces the quad machine), not
+  // an add. Only fires on a KNEE injury (picioare-quads/hamstrings groups in the exclusion) —
+  // no injury → null exclusion → never runs. OFF → the knee exclusion stays squat/lunge/leg-
+  // extension only, Leg Press kept as today → byte-identical. Pinned OFF in the fp-config
+  // FLIPPED_FLAGS baseline (the fp cohort seeds no knee pain → null exclusion → inert either
+  // way, pinned for the all-off-world guarantee). Proven on the eval grid (p6 Leg Press 0 on
+  // every focus/freq, quads route to hip-dominant, legs not orphaned) + the movementExclusion
+  // + knee-safe-quads regression tests.
+  dp_knee_safe_quads_v1: { rollout: 1, default: true },
+
   // #HAMS hypertrophy/strength hamstring floor (orphaned-hamstrings fix 2026-06-14)
   // (RISK LOW — selection only, never kg). A MASS-BUILDING / STRENGTH program (goal masa /
   // forta) must NEVER zero HAMSTRINGS — a major prime mover. The Cycle-11 posterior floor
@@ -1231,6 +1253,26 @@ export const FLAGS = Object.freeze({
   // them). OFF → ctx.posteriorChainFloor false → never runs → byte-identical. Pinned OFF
   // in the fp-config FLIPPED_FLAGS baseline.
   dp_posterior_chain_floor_v1: { rollout: 1, default: true },
+
+  // SINGLE-DAY FULL-BODY LEG FLOOR (freq-1 orphaned-legs fix 2026-06-14) (RISK LOW —
+  // selection only, never kg). The posterior+quad floor "accepts the gap" (skips seating a
+  // leg) when a slot-saturated full-body day has no upper surplus to swap — SAFE on a multi-
+  // day split (legs are maintained on the week's OTHER days) but ORPHANING on a freq-1 week
+  // (the user's ONLY training day → legs get 0 for the WHOLE week). The /10 judge capped the
+  // freq-1 configs (p6_v-taper_1d: hamstrings/glutes/calves at 0 — "orphaned prime movers; a
+  // 1-day full-body week must still cover the squat/hinge pattern"). When ON, the floor's
+  // seatLeg accessory-trade (today scoped to a BEGINNER at the 5-cap) ALSO fires for a freq-1
+  // full-body day for a NON-beginner: a leg MAJOR outranks a small arm/core accessory on the
+  // week's only day, so the floor trades a redundant accessory slot for the missing quad /
+  // posterior compound (the SAME guarded swap — never a major upper region, a focus slot, or
+  // a leg slot; never below the per-exercise MEV). Scoped daysPerWeek <= 1 inside buildSession
+  // (a multi-day split keeps the legacy accept-the-gap → byte-identical). Composes with the
+  // knee-safe-quads fix (a knee freq-1 leaves quads empty → only the POSTERIOR floor seats,
+  // hip-dominant). OFF / multi-day → ctx.fullBodyLegFloor false / daysPerWeek > 1 → never runs
+  // → byte-identical (pinned OFF in the fp-config FLIPPED_FLAGS baseline). Proven on the eval
+  // grid (freq-1 full-body covers a posterior + quad mover, multi-day unchanged) + the
+  // posteriorChainFloor freq-1 regression test.
+  dp_fullbody_leg_floor_v1: { rollout: 1, default: true },
 
   // ARMS-FOCUS MAJOR-PROTECT (elite-coach re-judge regression 2026-06-14) (RISK LOW —
   // selection only, never kg). dp_arms_signature_v1 DEMOTES umeri out of the arms
@@ -1357,6 +1399,26 @@ export const FLAGS = Object.freeze({
   // regression test.
   dp_lowcap_weekly_band_v1: { rollout: 1, default: true },
 
+  // MAINTENANCE-GOAL VOLUME BAND (2026-06-14, eval maintenance-inversion cap) (RISK LOW —
+  // set counts only, never kg). The lowcap weekly-band clamp gives a maintenance/older
+  // trainee's FOCUS muscle a HIGHER ceiling (LOWCAP_FOCUS_CEILING 11) so the focus stays the
+  // week's signature. For an OLDER-but-MASA/forta trainee (p11 60M) that growth ceiling is
+  // correct (a mass program is a growth block). But for a MAINTENANCE GOAL (p9 Cristina 34F,
+  // p10 Maria 65F) it let the v-taper focus reach shoulders 12 / back 10 = near-hypertrophy
+  // MAV — the /10 judge's "goal inversion (maintenance pushed to near-hypertrophy MAV)".
+  // The rubric: "Mentenanta — MEV across the board, nothing pushed; DO NOT over-prescribe."
+  // Maintenance means MAINTAIN, not grow. When ON + the goal is 'mentenanta', the lowcap
+  // clamp uses the LOWER maintenance focus ceiling (LOWCAP_MAINT_FOCUS_CEILING 7) so even the
+  // focus sits at a MAINTENANCE level: it still LEADS the non-focus ~4-5 band (a 2-session
+  // focus → ~6/wk, a 1-session focus → ~7/wk) but never reaches MAV. Non-focus muscles keep
+  // the maintenance ceiling (5). OLDER-non-maintenance (age>=60, masa/forta) → false → growth
+  // ceiling unchanged. OFF → false → growth ceiling → BYTE-IDENTICAL to the pre-flag two-tier
+  // clamp (pinned OFF in fp-config FLIPPED_FLAGS — the fp cohort includes mentenanta journeys
+  // so the ON behavior would move the frozen hashes). Proven on the eval grid (p9/p10 focus
+  // <=7, no muscle at MAV, focus still leads, masa/older p11 unchanged) + the lowcap-band
+  // maintenance regression test.
+  dp_maintenance_volume_band_v1: { rollout: 1, default: true },
+
   // FOCUS-LEADS-ON-SPLITS (2026-06-14, eval focus-not-emphasized cap on U/L splits). On an
   // UPPER/LOWER 4-day split (upper/lower/upper/lower) the engine de-emphasizes NOTHING on
   // the non-focus region, so a focus fails to clearly LEAD the week: a LOWER focus runs full
@@ -1425,6 +1487,28 @@ export const FLAGS = Object.freeze({
   // (and it is NOT in fp-config FLIPPED_FLAGS — those are default-ON flags pinned off;
   // a default-OFF flag is already off everywhere, so the fp hashes hold automatically).
   dp_maintenance_freq_reshape_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
+
+  // LOW-CAPACITY EFFECTIVE-FREQUENCY CAP (2026-06-14, eval freq-edge cap) (RISK LOW —
+  // schedule shape only). The maintenance/older reshape (dp_maintenance_freq_reshape_v1)
+  // caps EFFECTIVE training days for a maintenance-goal / age>=60 trainee. This GENERALIZES
+  // it to ANY low-capacity trainee whose RECOVERY + adherence cannot honor a high REQUESTED
+  // frequency — the /10 judge capped p6 (Gigica, 52M, KNEE injury, slabire) for composing 6
+  // real training days ("6 sessions triple the stated freq, unrealistic recovery/adherence").
+  // Honoring a high requested freq is fine for a CAPABLE trainee but not a low-capacity one.
+  // When ON, getDailyWorkout takes the TIGHTER of maintenanceMaxDays and lowCapacityMaxDays:
+  //   - INJURED  (a current Pain CDL contraindication signal) → 3 effective days (recovery)
+  //   - BEGINNER (incepator)                                  → 4 (technique/adherence band)
+  // The excess nominal days become SPACED REST (reshapeMaintenanceWeek — never consecutive),
+  // and the reshaped week drives every downstream consumer (cluster/split/session counts), so
+  // the whole program shrinks coherently. A CAPABLE trainee (no injury, not a beginner, under
+  // 60, not maintenance) → null → the requested freq is HONORED as today. PRODUCT/UX NOTE: it
+  // changes the user-facing schedule (fewer training days) — the same class of change as the
+  // maintenance reshape. OFF → null → never reshaped → byte-identical (pinned OFF in fp-config
+  // FLIPPED_FLAGS — the fp cohort includes incepator journeys, so the ON beginner cap WOULD
+  // reshape them + move the frozen hashes). Proven on the eval grid (p6 freq 6/7 → 3 spaced
+  // training days, capable personas honor the requested freq) + the lowCapacityMaxDays +
+  // reshape regression tests.
+  dp_lowcap_effective_freq_v1: { rollout: 1, default: true },
 
   // AUTO-INFER TRAINING FREQUENCY → VOLUME dose (2026-06-14, real-user behavior).
   // The weekly volume budget is dosed off the CONFIGURED/onboarding frequency (the

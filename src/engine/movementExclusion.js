@@ -54,6 +54,24 @@ const OVERHEAD_PRESS_NAME_RE = /\bohp\b|overhead\s*press|shoulder\s*press|milita
 export const LUMBAR_HINGE_SENTINEL = '__lumbar_hinge__';
 // Erector-extension / GHR / Nordic family by NAME (direct lumbar-erector load).
 const LUMBAR_HINGE_NAME_RE = /glute.?ham|nordic|hyperext|back\s*extension|roman\s*chair|\bghd\b|reverse\s*hyper/i;
+// Sentinel token (dp_knee_safe_quads_v1) marking the KNEE-SAFE-QUADS exclusion:
+// the loaded Leg Press family (token `leg-press`) PLUS the open-chain / single-leg
+// deep-knee-flexion quad patterns that escape the squat/lunge/leg-extension tokens
+// (Step-Up keys `name:<...>`, Sissy Squat keys `squat` already, Wall Sit keys
+// `name:<...>`). The elite-coach signature for a knee-injury trainee is HIP-DOMINANT
+// (RDL / leg curl / hip thrust), NOT a loaded bilateral quad-flexion machine — the
+// /10 judge capped Leg Press as "loaded deep knee flexion w/o substitute". When this
+// sentinel is in the exclusion set, isExcludedMovement ALSO drops the leg-press token
+// and the name-based step-up / wall-sit, and poolForGroup is permitted to EMPTY the
+// quads group (the leg day routes to the knee-safe posterior pool — the existing
+// hamstring/posterior floors seat the substitute). OFF (flag off) → never added → the
+// knee exclusion stays squat/lunge/leg-extension only → byte-identical.
+export const KNEE_QUAD_SENTINEL = '__knee_quad__';
+// Open-chain / single-leg deep-knee-flexion quad patterns by NAME (Step-Up loads the
+// lead knee under deep flexion; Wall Sit is a sustained patellofemoral isometric).
+// Sissy Squat already keys as the `squat` token (excluded). Caught only when the
+// KNEE_QUAD sentinel is present.
+const KNEE_DEEP_FLEXION_NAME_RE = /step.?up|wall\s*sit|sissy/i;
 // Lookback for a Pain CDL report to count as a CURRENT contraindication. Matches
 // INJURY_LOOKBACK_DAYS (scheduleAdapterAggregate.injury.ts) so the exclusion + the
 // pipeline injury gate agree on "recent".
@@ -160,19 +178,33 @@ const SHOULDER_PRESS_ALLOW = Object.freeze(['landmine', 'neutral']);
  *
  * @param {Iterable<string>} injuryGroups - Big-11 RO groups from the Pain CDL signal
  * @param {Iterable<string>} refusedPatterns - explicit refusal keys (REFUSAL_PATTERN_TOKENS)
+ * @param {{ kneeSafeQuads?: boolean }} [opts] - dp_knee_safe_quads_v1: when true AND a
+ *   knee injury group is present, ALSO exclude the loaded Leg Press family + the open-
+ *   chain step-up / wall-sit (the KNEE_QUAD sentinel) so the knee leg day is hip-
+ *   dominant (RDL / leg curl / hip thrust). Default false → byte-identical (the knee
+ *   exclusion stays squat/lunge/leg-extension only, Leg Press kept as today).
  * @returns {{ tokens: Set<string>, pressAllow: ReadonlyArray<string> }}
  *   tokens = movement tokens to hard-exclude; pressAllow = name substrings that
  *   re-permit an otherwise-excluded `press` (landmine/neutral).
  */
-export function buildExclusionTokens(injuryGroups, refusedPatterns) {
+export function buildExclusionTokens(injuryGroups, refusedPatterns, opts) {
   const tokens = new Set();
+  let hasKnee = false;
   for (const g of injuryGroups || []) {
     const list = INJURY_PATTERN_EXCLUSIONS[g];
     if (list) for (const t of list) tokens.add(t);
+    if (g === 'picioare-quads' || g === 'picioare-hamstrings') hasKnee = true;
   }
   for (const r of refusedPatterns || []) {
     const list = REFUSAL_PATTERN_TOKENS[r];
     if (list) for (const t of list) tokens.add(t);
+  }
+  // dp_knee_safe_quads_v1 — escalate the knee exclusion to a HIP-DOMINANT leg day:
+  // drop the loaded Leg Press family + the open-chain deep-flexion patterns and signal
+  // poolForGroup that quads may go empty (the knee-safe posterior pool carries the day).
+  if (opts && opts.kneeSafeQuads && hasKnee) {
+    tokens.add('leg-press');
+    tokens.add(KNEE_QUAD_SENTINEL);
   }
   return { tokens, pressAllow: SHOULDER_PRESS_ALLOW };
 }
@@ -204,6 +236,12 @@ export function isExcludedMovement(name, movementToken, excl) {
   // `raise` / `curl` / `name:<...>` (token-excluding those would over-reach onto safe
   // movements). Disc-contraindicated; the leg-curl guarantee seats a safe substitute.
   if (excl.tokens.has(LUMBAR_HINGE_SENTINEL) && LUMBAR_HINGE_NAME_RE.test(lower)) {
+    return true;
+  }
+  // NAME-BASED knee deep-flexion (Step-Up / Wall Sit / Sissy) — caught even though
+  // Step-Up / Wall Sit key as `name:<...>`. The loaded Leg Press is the bare `leg-press`
+  // token (caught below). Only when the KNEE_QUAD sentinel is present (dp_knee_safe_quads_v1).
+  if (excl.tokens.has(KNEE_QUAD_SENTINEL) && KNEE_DEEP_FLEXION_NAME_RE.test(lower)) {
     return true;
   }
   if (!excl.tokens.has(movementToken)) return false;

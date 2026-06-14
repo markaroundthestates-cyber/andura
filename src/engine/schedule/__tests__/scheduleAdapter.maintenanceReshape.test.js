@@ -18,6 +18,7 @@ import { world, resetWorld, setPathAFlags } from '../../../../tests/engine/full-
 import { DEV_FLAGS_KEY } from '../../../util/featureFlags.js';
 import {
   maintenanceMaxDays,
+  lowCapacityMaxDays,
   reshapeMaintenanceWeek,
 } from '../scheduleAdapter/frequencySplit.js';
 
@@ -54,6 +55,31 @@ describe('maintenanceMaxDays — goal/age → effective day cap', () => {
     expect(maintenanceMaxDays('forta', 45)).toBeNull();
     expect(maintenanceMaxDays('slabire', 28)).toBeNull();
     expect(maintenanceMaxDays(undefined, undefined)).toBeNull();
+  });
+});
+
+// ── LOW-CAPACITY effective-frequency cap (dp_lowcap_effective_freq_v1) ─────────
+describe('lowCapacityMaxDays — injured/beginner low-capacity cap', () => {
+  it('injured → 3 (recovery-limited)', () => {
+    expect(lowCapacityMaxDays({ injured: true })).toBe(3);
+  });
+  it('beginner → 4 (technique/adherence band)', () => {
+    expect(lowCapacityMaxDays({ beginner: true })).toBe(4);
+  });
+  it('injured + beginner → 3 (the tighter signal wins)', () => {
+    expect(lowCapacityMaxDays({ injured: true, beginner: true })).toBe(3);
+  });
+  it('capable trainee (no signal) → null (requested freq honored)', () => {
+    expect(lowCapacityMaxDays({})).toBeNull();
+    expect(lowCapacityMaxDays({ injured: false, beginner: false })).toBeNull();
+    expect(lowCapacityMaxDays(null)).toBeNull();
+    expect(lowCapacityMaxDays(undefined)).toBeNull();
+  });
+  it('composes with maintenanceMaxDays — an injured maintenance trainee caps at min(4,3)=3', () => {
+    // The caller takes min(maintenanceMaxDays, lowCapacityMaxDays).
+    const maint = maintenanceMaxDays('mentenanta', 34); // 4
+    const low = lowCapacityMaxDays({ injured: true }); // 3
+    expect(Math.min(maint, low)).toBe(3);
   });
 });
 

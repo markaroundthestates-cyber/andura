@@ -182,3 +182,63 @@ describe('dp_lowcap_weekly_band_v1 — low-capacity per-muscle weekly-band clamp
     expect(bad).toEqual(off);
   });
 });
+
+// ══ dp_maintenance_volume_band_v1 — a MAINTENANCE GOAL holds even the focus at MEV ══
+// The /10 judge capped a MAINTENANCE-goal persona (p9 Cristina, p10 Maria-65) whose
+// v-taper focus reached shoulders 12 / back 10 = near-hypertrophy MAV — "goal inversion".
+// Rubric: "Mentenanta — MEV across the board, nothing pushed." When lowCapWeeklyBand
+// carries maintenanceGoal:true, the FOCUS muscle uses the LOWER maintenance focus ceiling
+// (7) + the MEV per-session floor (2) + slot-drop, so even the focus sits at maintenance.
+// An OLDER-but-MASA trainee (maintenanceGoal:false) keeps the growth focus ceiling (11).
+describe('dp_maintenance_volume_band_v1 — maintenance focus held at MEV (no MAV)', () => {
+  it('maintenanceGoal → the FOCUS muscle is bounded into the maintenance band (well below growth-MAV)', () => {
+    const growth = buildSession('upper', ctxBase({
+      lowCapWeeklyBand: band({ emphasizedGroups: ['umeri', 'spate'] }),
+      emphasizedGroups: ['umeri', 'spate'], focusId: 'v-taper',
+    }));
+    const maint = buildSession('upper', ctxBase({
+      lowCapWeeklyBand: band({ emphasizedGroups: ['umeri', 'spate'], maintenanceGoal: true }),
+      emphasizedGroups: ['umeri', 'spate'], focusId: 'v-taper',
+    }));
+    // maintenance trims the focus pillars vs the growth focus path.
+    expect(groupSets(maint, 'spate')).toBeLessThanOrEqual(groupSets(growth, 'spate'));
+    expect(groupSets(maint, 'umeri')).toBeLessThanOrEqual(groupSets(growth, 'umeri'));
+    // and lands them in the maintenance band (no muscle at near-hypertrophy MAV ~10-12).
+    // per-session focus ceiling floor(7/2)=3, MEV floor 2 → a 2-session focus lands <= ~6.
+    expect(groupSets(maint, 'spate'), 'maintenance focus at MAV').toBeLessThanOrEqual(7);
+    expect(groupSets(maint, 'umeri'), 'maintenance focus at MAV').toBeLessThanOrEqual(7);
+  });
+
+  it('maintenanceGoal → the focus is STILL present (the look choice stays visible, never orphaned)', () => {
+    const maint = buildSession('upper', ctxBase({
+      lowCapWeeklyBand: band({ emphasizedGroups: ['umeri', 'spate'], maintenanceGoal: true }),
+      emphasizedGroups: ['umeri', 'spate'], focusId: 'v-taper',
+    }));
+    expect(groupSets(maint, 'spate'), 'focus orphaned').toBeGreaterThan(0);
+    expect(groupSets(maint, 'umeri'), 'focus orphaned').toBeGreaterThan(0);
+  });
+
+  it('maintenanceGoal:false (older-but-masa) keeps the growth focus ceiling — byte-identical to today', () => {
+    const noField = buildSession('upper', ctxBase({
+      lowCapWeeklyBand: band({ emphasizedGroups: ['umeri', 'spate'] }),
+      emphasizedGroups: ['umeri', 'spate'], focusId: 'v-taper',
+    }));
+    const falseField = buildSession('upper', ctxBase({
+      lowCapWeeklyBand: band({ emphasizedGroups: ['umeri', 'spate'], maintenanceGoal: false }),
+      emphasizedGroups: ['umeri', 'spate'], focusId: 'v-taper',
+    }));
+    expect(falseField).toEqual(noField);
+  });
+
+  it('maintenanceGoal still only REDUCES (never adds) + never drops a muscle to zero', () => {
+    const off = buildSession('full', ctxBase());
+    const maint = buildSession('full', ctxBase({
+      lowCapWeeklyBand: band({ emphasizedGroups: ['umeri', 'spate'], maintenanceGoal: true }),
+      emphasizedGroups: ['umeri', 'spate'], focusId: 'v-taper',
+    }));
+    expect(totalSets(maint)).toBeLessThanOrEqual(totalSets(off));
+    for (const g of presentGroups(maint)) {
+      expect(groupSets(maint, g), `${g} below MEV`).toBeGreaterThanOrEqual(2);
+    }
+  });
+});

@@ -13,6 +13,7 @@ import {
   INJURY_PATTERN_EXCLUSIONS,
   OVERHEAD_PRESS_SENTINEL,
   LUMBAR_HINGE_SENTINEL,
+  KNEE_QUAD_SENTINEL,
 } from '../movementExclusion.js';
 
 const allEquip = ['barbell', 'dumbbell', 'machine', 'cable', 'band'];
@@ -185,6 +186,76 @@ describe('#R6b LUMBAR_HINGE sentinel — name-based erector-extension exclusion'
     const kneeExcl = buildExclusionTokens(['picioare-quads', 'picioare-hamstrings'], []);
     expect(kneeExcl.tokens.has(LUMBAR_HINGE_SENTINEL)).toBe(false);
     expect(isExcludedMovement('Glute-Ham Raise', 'raise', kneeExcl)).toBe(false);
+  });
+});
+
+// ══ dp_knee_safe_quads_v1 — KNEE escalates to a HIP-DOMINANT leg day ════════════
+// Proves: with the flag ON (opts.kneeSafeQuads), a knee injury ALSO excludes the
+// loaded Leg Press family + open-chain step-up/wall-sit/sissy (the KNEE_QUAD
+// sentinel), and buildSession EMPTIES the quads group (no safe quad survives) — the
+// leg day routes to the knee-safe posterior/glute pool with ZERO Leg Press. With the
+// flag OFF (no opts), the legacy behavior holds (Leg Press kept) — byte-identical.
+describe('dp_knee_safe_quads_v1 — knee → hip-dominant leg day', () => {
+  const kneeOn = () =>
+    buildExclusionTokens(['picioare-quads', 'picioare-hamstrings'], [], { kneeSafeQuads: true });
+
+  it('flag ON: leg-press token + KNEE_QUAD sentinel added; step-up/wall-sit excluded by name', () => {
+    const excl = kneeOn();
+    expect(excl.tokens.has('leg-press')).toBe(true);
+    expect(excl.tokens.has(KNEE_QUAD_SENTINEL)).toBe(true);
+    expect(isExcludedMovement('45-Degree Leg Press', 'leg-press', excl)).toBe(true);
+    expect(isExcludedMovement('Wide-Stance Leg Press', 'leg-press', excl)).toBe(true);
+    expect(isExcludedMovement('DB Step-Up', 'name:db step-up', excl)).toBe(true);
+    expect(isExcludedMovement('Wall Sit', 'name:wall sit static', excl)).toBe(true);
+    // squat/lunge/leg-extension still excluded (the base knee set).
+    expect(isExcludedMovement('Hack Squat Machine', 'squat', excl)).toBe(true);
+    // knee-safe HIP-DOMINANT substitutes still allowed.
+    expect(isExcludedMovement('Seated Leg Curl', 'leg-curl', excl)).toBe(false);
+    expect(isExcludedMovement('Romanian Deadlift', 'deadlift', excl)).toBe(false);
+    expect(isExcludedMovement('Plate-Loaded Hip Thrust Machine', 'hip-thrust', excl)).toBe(false);
+  });
+
+  it('flag OFF (no opts): Leg Press kept, no sentinel — legacy byte-identical', () => {
+    const excl = buildExclusionTokens(['picioare-quads', 'picioare-hamstrings'], []);
+    expect(excl.tokens.has('leg-press')).toBe(false);
+    expect(excl.tokens.has(KNEE_QUAD_SENTINEL)).toBe(false);
+    expect(isExcludedMovement('45-Degree Leg Press', 'leg-press', excl)).toBe(false);
+  });
+
+  it('sentinel is knee-only — a spate/shoulder user never gets the knee sentinel', () => {
+    for (const grp of ['spate', 'umeri']) {
+      const excl = buildExclusionTokens([grp], [], { kneeSafeQuads: true });
+      expect(excl.tokens.has(KNEE_QUAD_SENTINEL)).toBe(false);
+    }
+  });
+
+  it('buildSession: knee leg day has ZERO Leg Press + ZERO loaded quad-flexion, hip-dominant', () => {
+    for (const cluster of ['legs', 'lower', 'full']) {
+      const session = buildSession(cluster, ctx({ excludedMovements: kneeOn() }));
+      expect(session.exercises.length, `${cluster}: non-empty`).toBeGreaterThan(0);
+      const BAD = /leg\s*press|hack\s*squat|\bsquat\b|lunge|leg\s*extension|step.?up|wall\s*sit|sissy/i;
+      for (const e of session.exercises) {
+        expect(BAD.test(e.name), `${cluster}: '${e.name}' is contraindicated for a knee`).toBe(false);
+      }
+      // the leg day is still trained — knee-safe posterior / glute work landed.
+      const legPrimary = session.exercises.filter((e) =>
+        ['picioare-hamstrings', 'fese', 'gambe'].includes(
+          getExerciseMetadata(e.name).muscle_target_primary,
+        ),
+      );
+      expect(legPrimary.length, `${cluster}: knee-safe legs trained`).toBeGreaterThan(0);
+    }
+  });
+
+  it('byte-identical: flag OFF knee leg day keeps Leg Press (legacy behavior preserved)', () => {
+    const off = buildSession('legs', ctx({
+      excludedMovements: buildExclusionTokens(['picioare-quads', 'picioare-hamstrings'], []),
+    }));
+    const quads = off.exercises.filter(
+      (e) => getExerciseMetadata(e.name).muscle_target_primary === 'picioare-quads',
+    );
+    // legacy: quads still trained (via the kept Leg Press) — the OLD knee-safe routing.
+    expect(quads.length).toBeGreaterThan(0);
   });
 });
 

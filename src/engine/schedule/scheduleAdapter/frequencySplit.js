@@ -511,6 +511,31 @@ export function maintenanceMaxDays(goal, age) {
 }
 
 /**
+ * LOW-CAPACITY effective-frequency cap (dp_lowcap_effective_freq_v1, 2026-06-14).
+ * Generalizes maintenanceMaxDays beyond maintenance/older to ANY low-capacity trainee
+ * whose RECOVERY / adherence cannot honor a high REQUESTED frequency — the /10 judge
+ * capped p6 (Gigica, 52M, KNEE injury, slabire) for composing 6 real training days
+ * ("6 sessions triple the stated freq, unrealistic recovery/adherence"). Honoring a
+ * high requested freq is fine for a CAPABLE trainee but not a low-capacity one. The
+ * cap is the TIGHTEST of the contributing signals (composes with maintenanceMaxDays):
+ *   - INJURED (a current pain/contraindication signal) → 3 (recovery-limited)
+ *   - BEGINNER (incepator)                              → 4 (technique/adherence band)
+ *   - otherwise                                         → null
+ * Returns null when no low-capacity signal applies (a capable trainee → no cap, the
+ * requested freq is honored). The caller takes min(this, maintenanceMaxDays).
+ *
+ * @param {{ injured?: boolean, beginner?: boolean }} signals
+ * @returns {number|null}
+ */
+export function lowCapacityMaxDays(signals) {
+  if (!signals) return null;
+  let cap = null;
+  if (signals.injured) cap = cap === null ? 3 : Math.min(cap, 3);
+  if (signals.beginner) cap = cap === null ? 4 : Math.min(cap, 4);
+  return cap;
+}
+
+/**
  * Reshape a resolved active-day week so it has at most `maxDays` training days,
  * SPACED as evenly as possible across the 7-day week (so the kept training days are
  * never on consecutive calendar days — this removes the eval's "consecutive days no

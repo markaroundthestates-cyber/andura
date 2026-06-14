@@ -124,6 +124,12 @@ export const FLIPPED_FLAGS = Object.freeze([
   // sentinel gate is never satisfied), pinned OFF anyway for the all-off-world
   // guarantee (the frozen composition hashes stay byte-for-byte).
   'dp_legcurl_guarantee_v1',
+  // THE FLIP 2026-06-14 (knee-safe quads) — a KNEE injury also excludes the loaded Leg
+  // Press family + step-up/wall-sit (hip-dominant leg day). INERT in this harness either
+  // way (the fp journeys seed NO knee pain → null excludedMovements → the sentinel gate is
+  // never satisfied), pinned OFF anyway for the all-off-world guarantee (the frozen
+  // composition hashes stay byte-for-byte).
+  'dp_knee_safe_quads_v1',
   // THE FLIP 2026-06-14 (orphaned-hamstrings fix) — the masa/forta HAMSTRING floor defaults
   // ON (a hypertrophy/strength program never zeroes hamstrings on a leg-training cluster: a
   // hinge/leg-curl is injected via a length-stable swap when hams would be 0). The fp cohort
@@ -141,6 +147,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   // composition hashes stay byte-for-byte. ON is proven on the eval grid + the
   // posteriorChainFloor regression suite + the focus-signature gate, NOT in this stream.
   'dp_posterior_chain_floor_v1',
+  // THE FLIP 2026-06-14 (freq-1 orphaned-legs fix) — the SINGLE-DAY full-body leg floor
+  // defaults ON (a freq-1 full-body day trades a redundant accessory for the missing quad/
+  // posterior compound so legs are not orphaned for the whole week). The fp cohort journeys
+  // run multi-day weeks (N_WEEKS sessions), so daysPerWeek > 1 → the new freq-1 branch never
+  // fires → already inert, pinned OFF anyway (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) for the
+  // all-off-world guarantee (the frozen composition hashes stay byte-for-byte).
+  'dp_fullbody_leg_floor_v1',
   // THE FLIP 2026-06-13 (arms-signature eval ceiling) — the arms-focus volume/slot
   // signature (umeri demoted out of the emphasize list + biceps/triceps weekly volume
   // floors) defaults ON. `arms` IS in this harness's EMPHASIS_PRESETS, so the ON
@@ -287,6 +300,15 @@ export const FLIPPED_FLAGS = Object.freeze([
   // the maintenance floor, trained adults byte-identical) + the new lowcap-band
   // regression test, NOT in this determinism stream.
   'dp_lowcap_weekly_band_v1',
+  // THE FLIP 2026-06-14 (maintenance volume band) — a MAINTENANCE GOAL's focus muscle uses
+  // the LOWER maintenance focus ceiling (7, not the growth 11) so even the focus sits at
+  // maintenance. The fp cohort DOES include mentenanta journeys, so the ON behavior WOULD
+  // trim those focus sessions → move the frozen hashes — pinned OFF here (in FLIPPED_FLAGS
+  // only, NOT PATH_A_FLAGS) so lowCapBand.maintenanceGoal is false in both A/B arms → the
+  // growth focus ceiling holds → BOTH frozen baselines stay byte-for-byte. ON is proven on
+  // the eval grid (p9/p10 focus <=7, no MAV, masa/older p11 unchanged) + the lowcap-band
+  // maintenance regression test, NOT in this determinism stream.
+  'dp_maintenance_volume_band_v1',
   // THE FLIP 2026-06-14 (focus-leads-on-splits) — dp_focus_lead_splits_v1 defaults ON. On
   // a pure UPPER/LOWER split where a lower/arms focus does NOT clearly lead, it trims the
   // non-focus majors toward MEV (+ for arms guarantees a 2nd arm slot) so the focus leads.
@@ -337,6 +359,14 @@ export const FLIPPED_FLAGS = Object.freeze([
   'dp_ego_cap_v1', 'dp_temperament_v1', 'dp_trend_signal_v1', 'dp_load_transition_v1',
   'dp_log_outlier_v1', 'dp_behavior_distill_v1', 'dp_subrecovery_drift_v1', 'dp_dip_classifier_v1',
   'dp_nof1_v1', 'dp_library_chains_v1', 'dp_strength_bw_ratio_v1', 'dp_maintenance_freq_reshape_v1',
+  // THE FLIP 2026-06-14 (low-capacity effective-frequency cap) — extends the maintenance/older
+  // day-cap to INJURED (3) / BEGINNER (4) trainees so a high requested freq isn't honored for a
+  // low-capacity trainee. The fp cohort includes incepator journeys (resolveExperienceId reads
+  // user.experience), so the ON beginner cap WOULD reshape their week → move the frozen hashes —
+  // pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so lowCapacityMaxDays is never
+  // consulted in either A/B arm → BOTH frozen baselines stay byte-for-byte. ON is proven on the
+  // eval grid (p6 freq 6/7 → 3 spaced days) + the lowCapacityMaxDays regression test, NOT here.
+  'dp_lowcap_effective_freq_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the
