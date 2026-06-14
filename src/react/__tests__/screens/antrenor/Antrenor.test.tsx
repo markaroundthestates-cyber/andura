@@ -41,6 +41,19 @@ import { getCoachToday } from '../../../lib/coachDirectorAggregate';
 import { getReadiness, getFatigue } from '../../../lib/engineWrappers';
 import { saveReadiness } from '../../../../engine/readiness.js';
 
+// Monday-first today index (JS Sun=0 → Mon=0..Sun=6) — matches Antrenor /
+// Calendar7Day. The card swap is driven by the LIVE calendar (scheduleDays
+// [todayIdx]), so tests that assert a specific card must set TODAY's slot
+// deterministically regardless of the real weekday the suite runs on.
+const TODAY_IDX = (new Date().getDay() + 6) % 7;
+
+/** A 7-day schedule with TODAY forced to `kind` (the rest of the week 'rest'). */
+function weekWithToday(kind: 'training' | 'rest'): WeekDays {
+  const base: ('training' | 'rest')[] = ['rest', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'];
+  base[TODAY_IDX] = kind;
+  return base as unknown as WeekDays;
+}
+
 function resetStores(): void {
   useWorkoutStore.setState({
     exIdx: 0,
@@ -60,8 +73,12 @@ function resetStores(): void {
     persona: 'gigica',
     reactivateDismissed: false,
   });
+  // Default: TODAY is a training day so the base render shows CoachTodayCard
+  // (the prior fixed ['training','rest',...] week was date-dependent once the
+  // card swap began reading the live calendar). Tests asserting a rest day set
+  // weekWithToday('rest') explicitly.
   useScheduleStore.setState({
-    days: ['training', 'rest', 'training', 'rest', 'training', 'training', 'rest'] as const satisfies WeekDays,
+    days: weekWithToday('training'),
     editMode: false,
   });
   localStorage.clear();
@@ -145,9 +162,12 @@ describe('Antrenor home — base render', () => {
     expect(screen.getByText(/6 exercises/i)).toBeInTheDocument();
   });
 
-  it('§A002 engine-driven isRestDay wins over schedContext fallback', async () => {
-    // schedContext='workout' default, but engine signals isRestDay=true →
-    // CoachRestCard wins (engine-driven primary, store fallback only).
+  it('§A002 live calendar rest day wins over schedContext fallback', async () => {
+    // schedContext='workout' default, but the LIVE weekly calendar marks today
+    // as rest → CoachRestCard wins (the calendar is the single control for
+    // "training today", 2026-06-13; the store schedContext is only a defensive
+    // fallback when the live schedule is unavailable).
+    useScheduleStore.setState({ days: weekWithToday('rest') });
     vi.mocked(getCoachToday).mockResolvedValueOnce({
       readiness: null,
       fatigue: null,
@@ -164,8 +184,8 @@ describe('Antrenor home — base render', () => {
     expect(await screen.findByText(/Active recovery day/i)).toBeInTheDocument();
   });
 
-  it('renders CoachRestCard cand schedContext=rest — EN default', () => {
-    useCoachStore.getState().setSchedContext('rest');
+  it('renders CoachRestCard cand today is a calendar rest day — EN default', () => {
+    useScheduleStore.setState({ days: weekWithToday('rest') });
     renderAntrenor();
     expect(screen.getByText(/Active recovery day/i)).toBeInTheDocument();
   });
@@ -561,11 +581,14 @@ describe('Antrenor home — navigation', () => {
 });
 
 describe('Antrenor home — rest-day override routes to calendar (2026-06-13)', () => {
-  // The default getCoachToday mock returns isRestDay:true → CoachRestCard renders.
-  // The override link no longer force-starts a session; it enables the weekly
-  // calendar edit mode + scrolls the calendar into view so the user SELECTS today.
+  // CoachRestCard renders because TODAY is a calendar rest day (the live schedule
+  // drives the card swap). The override link no longer force-starts a session; it
+  // enables the weekly calendar edit mode + scrolls the calendar into view so the
+  // user SELECTS today.
   beforeEach(() => {
     resetStores();
+    // Today = rest in the live calendar → CoachRestCard surfaces.
+    useScheduleStore.setState({ days: weekWithToday('rest') });
     vi.mocked(getReadiness).mockReturnValue(null);
     vi.mocked(getFatigue).mockReturnValue(null);
     // scrollIntoView is undefined in jsdom — stub so the handler runs cleanly.
@@ -740,5 +763,69 @@ describe('Antrenor home — Smoke #6 schedule reactivity', () => {
     expect(screen.getByText(/Active recovery day/i)).toBeInTheDocument();
     // Confirm the aggregate was re-derived (mount + post-edit).
     expect(vi.mocked(getCoachToday).mock.calls.length).toBeGreaterThanOrEqual(2);
+  });
+
+  // REAL-TIME card swap (owner P0, 2026-06-13) — the card-swap decision is driven
+  // by the LIVE weekly calendar (scheduleDays[todayIdx]), NOT only by the async
+  // coach aggregate (which reads the COMMITTED override, stale until save). This is
+  // the production bug: a bare edit-mode toggle (toggleDay) updates the live store
+  // but NOT the committed override, so coach.isRestDay stayed unchanged and the
+  // Start card did not swap until save/remount. Here the aggregate is PINNED to a
+  // single stale value (isRestDay:false, the committed state) for the WHOLE test —
+  // so a fix that relied on the aggregate would never swap. The toggle drives the
+  // swap purely through the live store, BOTH directions, with no remount/no save.
+  it('toggling today via the store swaps the card in real time BOTH directions (aggregate pinned stale)', async () => {
+    // Pin the aggregate to the COMMITTED state for every fetch: today is a
+    // training day with a real plan. A correct fix must NOT depend on this value
+    // changing — the live calendar toggle is what flips the card.
+    vi.mocked(getCoachToday).mockResolvedValue({
+      readiness: null,
+      fatigue: null,
+      plannedWorkout: {
+        workoutTitle: 'Push (piept si umeri)',
+        exerciseCount: 6,
+        estimatedDuration: 52,
+        intensityMod: 'normal',
+        exercises: [],
+        volumeKg: 0,
+      },
+      isRestDay: false,
+      patternsBanner: [],
+      prWallRecent: [],
+      alerts: [],
+      restReason: null,
+      source: 'engine',
+    });
+
+    // Start on a TRAINING today → CoachTodayCard + Start visible.
+    useScheduleStore.setState({ days: weekWithToday('training'), editMode: false });
+    renderAntrenor();
+    expect(await screen.findByRole('button', { name: /Start session/i })).toBeInTheDocument();
+    expect(screen.queryByText(/Active recovery day/i)).not.toBeInTheDocument();
+
+    // Enter edit mode and toggle TODAY to rest via the store action (exactly what
+    // tapping today in Calendar7Day does) — no save, no remount.
+    act(() => {
+      useScheduleStore.getState().setEditMode(true);
+      useScheduleStore.getState().toggleDay(TODAY_IDX);
+    });
+
+    // Instant swap: Start gone, CoachRestCard surfaced.
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: /Start session/i })).not.toBeInTheDocument();
+    });
+    expect(screen.getByText(/Active recovery day/i)).toBeInTheDocument();
+    // Sanity: today really flipped to rest in the live store.
+    expect(useScheduleStore.getState().days[TODAY_IDX]).toBe('rest');
+
+    // Toggle TODAY back to training — CoachTodayCard + Start return instantly.
+    act(() => {
+      useScheduleStore.getState().toggleDay(TODAY_IDX);
+    });
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Start session/i })).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/Active recovery day/i)).not.toBeInTheDocument();
+    expect(useScheduleStore.getState().days[TODAY_IDX]).toBe('training');
   });
 });

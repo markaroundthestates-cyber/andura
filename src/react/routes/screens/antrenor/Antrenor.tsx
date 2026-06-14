@@ -187,9 +187,33 @@ export function Antrenor(): JSX.Element {
     !reactivateDismissed &&
     pausedSnap === null;
 
-  // §B018 audit fix (CODE-REVIEW L-8) — extract ternary readability:
-  // engine signal preferred when aggregate loaded, fallback user override (§A002).
-  const showWorkoutCard = coach !== null ? !coach.isRestDay : schedContext === 'workout';
+  // Which card to show is driven by the LIVE weekly calendar (owner intent
+  // 2026-06-13: "the calendar is the single control for training today"). The
+  // async coach aggregate reads the COMMITTED calendar override
+  // (scheduleAdapter.getCalendarOverride, written only by saveWeekly), so a
+  // bare toggle in edit mode (toggleDay → live store, NOT committed) left
+  // coach.isRestDay stale until a save/remount — the Start card did not swap in
+  // real time. We instead derive WHICH card shows from the reactive store day
+  // (scheduleDays[todayIdx]) so the swap is instant in BOTH directions:
+  //   training → rest: CoachRestCard the moment the toggle flips today to rest.
+  //   rest → training: CoachTodayCard (with the real Start) the moment it flips
+  //                     back, even before the async aggregate finishes — the card
+  //                     renders its generic title + Start CTA, then the aggregate
+  //                     fills in the real plan content (CoachTodayCard tolerates
+  //                     workout=null). The coach aggregate still drives CONTENT
+  //                     (workout title/plan + restReason) on whichever card shows.
+  // Monday-first today index (JS Sun=0 → Mon=0..Sun=6), matching Calendar7Day.
+  const todayIdx = (new Date().getDay() + 6) % 7;
+  const liveTodayIsRest = scheduleDays[todayIdx] === 'rest';
+  // §B018 audit fix (CODE-REVIEW L-8) — extract ternary readability. Live
+  // calendar is authoritative for the card swap; the coach aggregate / store
+  // schedContext only feed when the live store is unavailable (defensive).
+  const showWorkoutCard =
+    Array.isArray(scheduleDays) && scheduleDays.length === 7
+      ? !liveTodayIsRest
+      : coach !== null
+        ? !coach.isRestDay
+        : schedContext === 'workout';
 
   // Step 2: START (#69 pre-workout reframe — Daniel UX LOCK 2026-06-08). When
   // today's energy-check is DONE, Start opens the dedicated "how much time today"
