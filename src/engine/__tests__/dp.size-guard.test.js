@@ -42,6 +42,15 @@
 //     irreducible 2-line guard (a _demoWorkingW read + a clamp) inside getSmartRecommendation's
 //     discount block; it depends on DP state (logs/flags via _demoWorkingW) so it cannot
 //     leave dp.js without passing the whole log stream out. Ratchet-down-only resumes from 2941.
+//
+// FIFTH documented exception 2026-06-14 (2941→2942): the H1 sex-ceiling safety fix. A
+// woman's strength CEILING was computed with the MALE factor — 4 dp.js call sites passed a
+// literal 'm' to ceilingE1RM. The factor LOGIC stays in ceiling.js (CEILING_SEX_FACTOR,
+// untouched); the +1 here is the irreducible CALL-SITE WIRING — one instance-set of
+// this._sex from opts in getSmartRecommendation (the 4 sites then read this._sex; absent →
+// ceilingE1RM falls back to male = byte-identical). The file was already AT ceiling so the
+// real cost is +1. Ratchet-down-only resumes from 2942. (Per audit BUILD-CI-DEPS-06 the
+// standing fix is to extract dp.js logic to submodules and claw this ceiling back DOWN.)
 
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
@@ -50,9 +59,9 @@ import { resolve, dirname } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Ceiling = current line count. Ratchet DOWN only (four documented exceptions
-// 2026-06-11/12 for call-site wiring — see header).
-const DP_LINE_CEILING = 2941;
+// Ceiling = current line count. Ratchet DOWN only (five documented exceptions
+// 2026-06-11/12/14 for call-site wiring — see header).
+const DP_LINE_CEILING = 2942;
 
 const dpSrc = readFileSync(resolve(__dirname, '../dp.js'), 'utf8');
 // Under a Stryker mutation dry-run the on-disk source is INSTRUMENTED (stryMutAct_*

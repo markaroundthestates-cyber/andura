@@ -695,7 +695,7 @@ export const DP = {
     if (!this._e1rmEligible(ex)) return 0;
     const bw = this._currentBodyweightKg();
     if (bw <= 0) return 0;
-    const ceilE1RM = ceilingE1RM(ex, bw, 'm', this._trainingAge(ex));
+    const ceilE1RM = ceilingE1RM(ex, bw, this._sex, this._trainingAge(ex));
     if (!(ceilE1RM > 0)) return 0;
     return this._kgFromE1RM(ceilE1RM, repTarget ?? 8);
   },
@@ -1768,7 +1768,7 @@ export const DP = {
       if (!provenCatchUp && isEnabled('dp_ceiling_v1')) {
         const curE1RM = this.e1RMForSet(lastW, lastReps, lastRPE, ex); // ex → #3/F bias (flag-gated)
         const bw = this._currentBodyweightKg();
-        const ceilE1RM = bw > 0 ? ceilingE1RM(ex, bw, 'm', this._trainingAge(ex)) : 0;
+        const ceilE1RM = bw > 0 ? ceilingE1RM(ex, bw, this._sex, this._trainingAge(ex)) : 0;
         if (curE1RM != null && ceilE1RM > 0) {
           stepFrac *= gainDecay(curE1RM, ceilE1RM);
         }
@@ -2466,6 +2466,7 @@ export const DP = {
     // logic for the tendon load-rate cap. Absent/invalid → neutral; behind
     // dp_tendon_cap_v1 (default OFF) → no-op.
     const ageYears = opts && Number.isFinite(Number(opts.ageYears)) ? Number(opts.ageYears) : undefined;
+    if (opts && (opts.sex === 'm' || opts.sex === 'f')) this._sex = opts.sex; // H1: real sex -> ceiling factor (absent -> ceilingE1RM male default = byte-identical)
     const base = this.recommend(ex, nowMs, energyPhase, ageYears);
     /** @type {Record<string, any>} */
     let result = { ...base };
@@ -2624,7 +2625,7 @@ export const DP = {
         const rMinC = rMin ?? 8;
         const mu = this._bestE1RM(ex, rMinC);
         const ceil = this._ceilingKg(ex, rMinC) > 0
-          ? ceilingE1RM(ex, this._currentBodyweightKg(), 'm', this._trainingAge(ex))
+          ? ceilingE1RM(ex, this._currentBodyweightKg(), this._sex, this._trainingAge(ex))
           : (resolveMaxKg({ curated: /** @type {Record<string, number>} */ (this.MAX_KG)[ex], meta: getExerciseMetadata(ex), flagOn: isEnabled('dp_load_model_v1') }) || 0);
         const intervention = classifyAndIntervene({
           stagnationWeeks: stag, mu, ceiling: ceil, ex,
@@ -2707,7 +2708,7 @@ export const DP = {
       const candKgs = [greedyKg, plus1, plus2].filter((v, i, a) => a.indexOf(v) === i && v >= greedyKg);
       const ceilKg = this._ceilingKg(ex, rTarget);
       const ceilE1RM = ceilKg > 0
-        ? ceilingE1RM(ex, this._currentBodyweightKg(), 'm', this._trainingAge(ex))
+        ? ceilingE1RM(ex, this._currentBodyweightKg(), this._sex, this._trainingAge(ex))
         : 0;
       // Candidate e1RMs at the rep target (the model's currency).
       const candE1RMs = candKgs.map((kg) => this.e1RMForSet(kg, rTarget, 7.5, ex)).filter((e) => e != null);

@@ -218,6 +218,11 @@ function toPlannedExercise(
     isEnabled('dp_tendon_cap_v1') && typeof ageRaw === 'number' && Number.isFinite(ageRaw)
       ? ageRaw
       : undefined;
+  // H1 (2026-06-14): pass the real onboarding sex so the strength CEILING uses the
+  // female factor (ceiling.js CEILING_SEX_FACTOR f=0.78) for women instead of the
+  // male default. Always passed (the ceiling runs under dp_ceiling_v1, already ON);
+  // absent/invalid → omitted → ceilingE1RM falls back to male = byte-identical legacy.
+  const sexRaw = useOnboardingStore.getState().data.sex;
   const rec = DP.getSmartRecommendation(
     engineEx.name,
     readinessScore,
@@ -231,6 +236,7 @@ function toPlannedExercise(
       intensityCorridor: goalModifiers.intensityCorridor ?? null,
       energyPhase,
       ...(ageYears !== undefined ? { ageYears } : {}),
+      ...(sexRaw === 'm' || sexRaw === 'f' ? { sex: sexRaw } : {}),
     },
   ) as DpRecommendation | null;
   const hasHistory = DP.getLogs(engineEx.name, 1).length > 0;
