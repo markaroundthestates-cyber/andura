@@ -44,6 +44,8 @@ import {
   activeWeekFromScheduleStore,
   clusterForDay,
   CLUSTER_TO_SESSION_TAG,
+  maintenanceMaxDays,
+  reshapeMaintenanceWeek,
 } from './frequencySplit.js';
 import { pickAlternativeCluster } from './alternativeCluster.js';
 import { weeklySessionsPerGroup } from './weeklySessions.js';
@@ -231,10 +233,41 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // (minimal-freq full-body + focus day-mix lean + back≥chest antagonist floor).
   // OFF → frequencyToSplit/clusterForDay run their legacy reshape → byte-identical.
   const splitRebalance = isEnabled('dp_split_rebalance_v1');
-  const activeWeek =
+  const resolvedActiveWeek =
     activeWeekFromOverride(override) ??
     activeWeekFromScheduleStore() ??
     activeWeekForFrequency(userState?.user?.frequency);
+  // MAINTENANCE / OLDER effective-frequency RESHAPE (dp_maintenance_freq_reshape_v1,
+  // DEFAULT OFF). A maintenance-goal OR older (age>=60) trainee at high nominal
+  // frequency is held to a goal-appropriate MAX effective training days (maintenance
+  // 4 / older 3 / older+maintenance 3): the excess nominal days become SPACED REST so
+  // the kept training days are never consecutive (removing the eval's structure cap).
+  // The reshaped week REPLACES the resolved week for EVERY downstream consumer below
+  // (cluster resolution, intra-week ordinal, split, per-group session counts, the
+  // cross-day ledger, makeup spread), so the whole program shrinks coherently to the
+  // capped day count. Gated on the flag AND (goal maintenance OR age>=60) AND a week
+  // that actually EXCEEDS the cap → otherwise reshapeMaintenanceWeek returns the input
+  // unchanged. OFF → reshape never runs → activeWeek === resolvedActiveWeek →
+  // byte-identical (the flag is default OFF, so this is inert in every normal path).
+  const maintMaxDays =
+    isEnabled('dp_maintenance_freq_reshape_v1')
+      ? maintenanceMaxDays(userState?.user?.goal, userState?.user?.age)
+      : null;
+  const activeWeek =
+    maintMaxDays !== null
+      ? reshapeMaintenanceWeek(resolvedActiveWeek, maintMaxDays)
+      : resolvedActiveWeek;
+  // A day the reshape turned from nominal-training into REST is now a real rest day:
+  // return null (the same contract the calendar-override rest-day check uses above).
+  // When the flag is OFF / not applicable, activeWeek === resolvedActiveWeek and this
+  // never fires for a day that was active → byte-identical.
+  if (
+    maintMaxDays !== null &&
+    resolvedActiveWeek[dayIdx] === true &&
+    activeWeek[dayIdx] !== true
+  ) {
+    return null;
+  }
   const scheduledCluster = clusterForDay(activeWeek, dayIdx, focusPreset, splitRebalance);
   // "Different group" override — Andura picks the most-recovered ALTERNATIVE
   // cluster (≠ today's scheduled one) from the recovery state already derivable

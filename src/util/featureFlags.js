@@ -1383,6 +1383,27 @@ export const FLAGS = Object.freeze({
   // surface). Proven on the eval grid (v-taper/shoulders OHP-only 28 -> ~0, focus still
   // leads, no double-OHP, other focuses byte-identical) + a new regression test.
   dp_lateral_delt_guarantee_v1: { rollout: 1, default: true },
+
+  // MAINTENANCE / OLDER effective-frequency RESHAPE (2026-06-14, eval p9/p10 STRUCTURE
+  // cap) — DEFAULT OFF. A maintenance-goal (p9 Cristina 34F) or older (p10 Maria 65F)
+  // trainee at high nominal frequency gets judge-capped for STRUCTURE, not volume: a
+  // maintenance/older trainee trained 6-7 days = goal inversion / consecutive days with
+  // no rest — a SCHEDULE shape the lowcap weekly-band clamp (which keeps every nominal
+  // day but lighter) cannot fix. An elite coach holds such a trainee to ~3-4 EFFECTIVE
+  // training days/week regardless of days available, using the rest as recovery. When
+  // ON + the user is goal 'mentenanta' OR age >= 60, getDailyWorkout caps the EFFECTIVE
+  // active-week day count (maintenance 4 / older>=60 3 / older+maintenance 3) and
+  // RESHAPES the active week so the excess nominal days become REST, the kept training
+  // days SPACED evenly (endpoint-even: k=3 Mon/Thu/Sun, k=4 Mon/Wed/Fri/Sun — never
+  // consecutive). The reshaped week then drives cluster resolution + the per-group
+  // session counts, so a nominal freq-7 maintenance week composes a real 3-4-day
+  // program with rest days, removing the consecutive-no-rest cap. Trained adults under
+  // 60 (masa/forta/slabire) → never reshaped. DEFAULT OFF because it changes the
+  // user-facing schedule (fewer training days) — a PRODUCT/UX decision the owner
+  // makes; OFF → the reshape never runs in any normal path → BYTE-IDENTICAL to today
+  // (and it is NOT in fp-config FLIPPED_FLAGS — those are default-ON flags pinned off;
+  // a default-OFF flag is already off everywhere, so the fp hashes hold automatically).
+  dp_maintenance_freq_reshape_v1: { rollout: 0, default: false },
 });
 
 /** localStorage key holding the dev override JSON map. */

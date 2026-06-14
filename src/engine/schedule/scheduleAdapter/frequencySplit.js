@@ -476,6 +476,75 @@ export function activeWeekFromScheduleStore() {
   return days.map((d) => d === 'training');
 }
 
+// ── MAINTENANCE / OLDER effective-frequency reshape (dp_maintenance_freq_reshape_v1,
+// 2026-06-14, DEFAULT OFF) ───────────────────────────────────────────────────────
+// A maintenance-goal OR older (age>=60) trainee should train ~3-4 EFFECTIVE days/week
+// regardless of how many days they nominally have available — an elite coach uses the
+// extra days as RECOVERY, not more sessions. The eval STRUCTURE cap (p9 freq 6-7,
+// p10 freq 4-5: "maintenance/older trained 6-7 days = goal inversion / consecutive
+// days no rest") is a SCHEDULE shape volume reduction alone cannot fix: the
+// lowcap weekly-band clamp keeps every nominal day but makes each lighter — this
+// instead REDUCES the day count and SPACES the kept days so there is real rest.
+//
+// PRODUCT/UX NOTE: this changes the user-facing schedule (fewer training days), so it
+// is DEFAULT OFF — the owner flips it after a product decision. OFF → never reached →
+// byte-identical.
+
+/**
+ * Goal-appropriate MAXIMUM effective training days/week for a maintenance/older
+ * trainee. Returns null for a trainee this reshape does not apply to (the caller
+ * also gates on the goal/age, so this is a defensive double-check).
+ *   - older (age>=60) AND maintenance → 3 (the most conservative)
+ *   - older (age>=60)                 → 3
+ *   - maintenance (any age)           → 4
+ *   - otherwise                       → null (no reshape)
+ * @param {string|undefined} goal - onboarding goal id
+ * @param {number|undefined} age - onboarding age (years)
+ * @returns {number|null}
+ */
+export function maintenanceMaxDays(goal, age) {
+  const isMaintenance = goal === 'mentenanta';
+  const isOlder = typeof age === 'number' && age >= 60;
+  if (isOlder) return 3; // older (with or without maintenance) → the conservative cap
+  if (isMaintenance) return 4;
+  return null;
+}
+
+/**
+ * Reshape a resolved active-day week so it has at most `maxDays` training days,
+ * SPACED as evenly as possible across the 7-day week (so the kept training days are
+ * never on consecutive calendar days — this removes the eval's "consecutive days no
+ * rest" cap). Pure + deterministic (no Math.random / Date.now).
+ *
+ * When the week already has <= maxDays training days the input is returned UNCHANGED
+ * (a fresh copy when reshaped, the original reference when not — callers treat it
+ * read-only). The kept days are placed at endpoint-even indices round(i*6/(k-1)) for
+ * k in [1,maxDays], which yields zero consecutive-day adjacency (k=3 → Mon/Thu/Sun,
+ * k=4 → Mon/Wed/Fri/Sun), the rest false.
+ *
+ * @param {ReadonlyArray<boolean>} activeWeek - length-7 active flags (Monday=0)
+ * @param {number} maxDays - goal-appropriate max effective training days (>=1)
+ * @returns {boolean[]} length-7 reshaped active week (or the input unchanged)
+ */
+export function reshapeMaintenanceWeek(activeWeek, maxDays) {
+  if (!Array.isArray(activeWeek) || activeWeek.length !== 7) return activeWeek;
+  const nominal = activeWeek.filter(Boolean).length;
+  const k = Math.max(1, Math.min(7, Math.round(maxDays)));
+  if (nominal <= k) return activeWeek; // already within the cap → no reshape
+  const out = [false, false, false, false, false, false, false];
+  if (k <= 1) {
+    out[0] = true; // single day → Monday
+    return out;
+  }
+  // Endpoint-even spread across [0,6]: round(i*6/(k-1)) for i in 0..k-1. Guaranteed
+  // distinct (monotonic, span 6 over k-1 steps for k<=7) and non-adjacent.
+  for (let i = 0; i < k; i++) {
+    const idx = Math.round((i * 6) / (k - 1));
+    out[Math.min(6, idx)] = true;
+  }
+  return out;
+}
+
 /**
  * Resolve the cluster for a given weekday index from an active-day week +
  * frequency split. The cluster is template[ position-of-dayIdx-among-active ].
