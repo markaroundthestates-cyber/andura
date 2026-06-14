@@ -2288,6 +2288,21 @@ export function buildSession(cluster, ctx) {
       // resolver (back-lat maintenance cap + raised direct-arm per-session minimums) so
       // biceps + triceps lead the week's volume. OFF → the arms rule is byte-identical.
       armsSignatureOn: ctx?.armsSignature === true,
+      // STRICTLY-PARETO GATE (2026-06-15) — the arms-signature AGGRESSIVE TRIM (the
+      // chest-press-pattern cap + heavy-lower trim + back-lat cap, ARMS_SIGNATURE_CAP_KEYS)
+      // only DELIVERS an arms-led week on a FULL-BODY day, where freeing a press/leg slot
+      // re-seats DIRECT ARM work and the arms genuinely become the week's signature. On a
+      // U/L `upper` day the freed press slot has only ONE extra arm pattern to absorb (the
+      // 2-curl-key library ceiling) so it backfills a 3rd TRICEPS and THINS biceps below
+      // its flag-OFF level (p4/p2/p12 arms_4d: bi 14→10) — arms do NOT lead, biceps got
+      // WORSE. And a senior / low-capacity trainee under the dp_lowcap_weekly_band_v1 clamp
+      // cannot raise arms without breaching the senior-volume invariant (p11 detrained:
+      // the trim thins everything, triceps stuck at MEV). So thread the day's cluster + the
+      // low-cap band so the resolver can FIRE the trim only on a full-body day AND only when
+      // NOT under the low-cap clamp; otherwise it falls back to the flag-OFF allocation for
+      // those caps (biceps stays ~14 on U/L, p11 stays balanced). OFF → armsSignatureOn
+      // false → the whole arms branch is inert → byte-identical regardless of these.
+      lowCapWeeklyBand: ctx?.lowCapWeeklyBand ?? null,
       // Yieldable regions (Daniel sweep review 2026-06-11) — explicit preset
       // de-emphasis ∪ the collapsed leg region on a non-leg full-body focus day. A
       // surplus compound of these groups may yield to a HIGH focus requirement,
@@ -3105,6 +3120,20 @@ export function buildSession(cluster, ctx) {
         // focus would tie/lose the lead, this YIELDs (the floor then accepts the gap rather than
         // un-emphasize the focus — the posterior chain stays covered via the glute compound's
         // hams secondary). Excludes LEG groups in passes 1-2 (handled by pass 3).
+        // ORPHAN GUARD (dp_arms_signature_v1, 2026-06-15) — on an ARMS-signature FULL-BODY
+        // day the arms hold 2 iso slots each (the high arm floor) while every non-focus major
+        // is single-slotted (maxNonEmph=1), so the STRICT-slot-lead guard below (a focus may
+        // yield only while it stays > maxNonEmph) BLOCKS the trade: dropping a 2nd arm iso to 1
+        // would TIE at the SLOT level → the floor accepts the gap and HAMSTRINGS stay ZERO for
+        // the whole week WHILE biceps shows ~20 sets (p4_arms_3d, p11 detrained). But a SLOT tie
+        // is NOT a VOLUME tie: the arms-signature trim raised each arm iso to ~3-4 sets, so even
+        // after a 2nd-arm-iso yields the arm group's DELIVERED volume stays the clear week leader
+        // (>> a 2-3 set hamstring). A hamstring is a PRIME MOVER a mass/strength coach never
+        // zeroes. So on an arms-signature day relax the strict-SLOT-lead to allow a focus arm ISO
+        // (never the arm COMPOUND, never the arm's LAST slot) to yield down to a slot TIE to seat
+        // the missing hamstring. Scoped to the arms focus under the flag → OFF / non-arms → the
+        // strict guard is unchanged → byte-identical.
+        const armsHamsRelax = ctx?.armsSignature === true && ctx?.focusId === 'arms';
         let removeIdx = -1;
         for (const focusOk of [false, true]) {
           for (let i = chosen.length - 1; i >= 0; i--) {
@@ -3113,7 +3142,9 @@ export function buildSession(cluster, ctx) {
             if (!g || LEG_REGION_GROUPS.includes(g)) continue;    // upper isolations only here
             if ((slotCount[g] || 0) <= 1) continue;                // would orphan g
             if (emphSet.has(g) !== focusOk) continue;              // non-focus surplus first
-            if (emphSet.has(g) && (slotCount[g] - 1) <= maxNonEmph) continue; // keep STRICT focus lead
+            // keep STRICT focus lead — EXCEPT the arms-signature hamstring relax, where a focus
+            // arm iso may yield to a slot TIE (its raised per-slot dose keeps the VOLUME lead).
+            if (emphSet.has(g) && (slotCount[g] - 1) <= maxNonEmph && !armsHamsRelax) continue;
             removeIdx = i;
             break;
           }

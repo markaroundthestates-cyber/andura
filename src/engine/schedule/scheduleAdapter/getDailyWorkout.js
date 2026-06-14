@@ -219,18 +219,22 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // SPLIT path keeps reading the raw `focusPreset` string (arms's split is byte-identical
   // either way: it returns a null day-mix lean whether or not umeri is emphasized).
   const armsSignatureOn = isEnabled('dp_arms_signature_v1');
-  const effectivePreset = effectiveFocusPreset(focusPreset, armsSignatureOn);
-  const deEmphSet = deEmphasizedGroups(focusPreset, effectivePreset);
-  // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the preset
-  // raises. Threaded into buildSession so the emphasis surfaces as MORE exercise
-  // slots + front-of-session on the day the group is trained — NOT just a weekly
-  // volume bump the SESSION_SIZE clamp + cluster-weight slot caps silently absorb.
-  // This is what makes arms/chest produce a VISIBLY different session than balanced
-  // (Daniel: "whatever I pick I get the v-taper workout" — arms/chest were
-  // exercise-for-exercise clones of balanced because only v-taper changed the
-  // SPLIT; emphasis-only presets need an in-session lever). balanced → empty set →
-  // byte-identical to pre-feature.
-  const emphSet = emphasizedGroups(focusPreset, effectivePreset);
+  // STRICTLY-PARETO GATE for the arms signature on a SENIOR / LOW-CAPACITY trainee
+  // (2026-06-15). A senior (age >=60) / maintenance-goal trainee runs under the
+  // dp_lowcap_weekly_band_v1 clamp. There the whole arms-signature aggression — the umeri
+  // demotion + the arm-budget floor (bi/tri MAV→MRV) + the per-session trim — thins
+  // EVERYTHING toward the low-cap band while triceps is stuck at MEV: the arms can NOT be
+  // raised to lead without breaching the senior-volume invariant, so the flag DEGRADES the
+  // config below its flag-OFF baseline (p11 detrained 8.0/8.8 → 4.6/6.6). So under the
+  // low-cap clamp (AND on a pure U/L split, resolved below) the arms-signature falls back to
+  // flag-OFF (the BALANCED arms shape) — those configs keep their balanced pre-flag score.
+  // Mirrors the SAME age/goal predicate that sets ctx.lowCapWeeklyBand below.
+  // armsSignatureActive (resolved AFTER `split`, below) is the flag every downstream arms-
+  // signature consumer reads. OFF → false → byte-identical.
+  const underLowCapBand =
+    isEnabled('dp_lowcap_weekly_band_v1')
+    && (userState?.user?.goal === 'mentenanta'
+      || (typeof userState?.user?.age === 'number' && userState.user.age >= 60));
   // W-Split (dp_split_rebalance_v1) — gate the week-level split rebalance
   // (minimal-freq full-body + focus day-mix lean + back≥chest antagonist floor).
   // OFF → frequencyToSplit/clusterForDay run their legacy reshape → byte-identical.
@@ -323,6 +327,33 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     ? activePos
     : activeIdxsForOrdinal.filter((i) => i < dayIdx).length;
   const split = frequencyToSplit(activeWeek.filter(Boolean).length || 1, focusPreset, splitRebalance);
+  // ARMS-SIGNATURE resolved flag (strictly-Pareto gate, 2026-06-15) — resolved HERE because
+  // it folds in the pure UPPER/LOWER split test (needs `split`). A pure U/L split gives the
+  // arms NO day of their own: the umeri demotion frees an OHP slot that the arm-slot guarantee
+  // backfills with a 3rd TRICEPS (only 2 curl movement keys exist, so no 3rd curl), thinning
+  // BICEPS below flag-OFF (p4/p2/p12 arms_4d: bi 14→10) — arms NOT more-led, biceps WORSE. And
+  // a senior / low-capacity trainee (underLowCapBand) cannot raise arms without breaching the
+  // senior-volume invariant. On EITHER → the arms-signature falls back to flag-OFF (the BALANCED
+  // arms shape) so the config keeps its pre-flag balance. On a FULL-BODY / hybrid-with-an-arm-day
+  // split (freq 1-3 full, 5d+ PPL hybrids) the trim genuinely makes the arms the week's signature
+  // → fires. armsSignatureOn false → inert regardless. effectivePreset/emphSet/deEmphSet read
+  // this resolved flag so the umeri demotion + emphasis follow the same fall-back.
+  const isPureUpperLower =
+    split.length > 0 && split.every((c) => c === 'upper' || c === 'lower');
+  const armsSignatureActive =
+    armsSignatureOn && !underLowCapBand && !(focusPreset === 'arms' && isPureUpperLower);
+  const effectivePreset = effectiveFocusPreset(focusPreset, armsSignatureActive);
+  const deEmphSet = deEmphasizedGroups(focusPreset, effectivePreset);
+  // Focus EMPHASIS (D-focus-visible 2026-06-05) — the Big-11 RO groups the preset
+  // raises. Threaded into buildSession so the emphasis surfaces as MORE exercise
+  // slots + front-of-session on the day the group is trained — NOT just a weekly
+  // volume bump the SESSION_SIZE clamp + cluster-weight slot caps silently absorb.
+  // This is what makes arms/chest produce a VISIBLY different session than balanced
+  // (Daniel: "whatever I pick I get the v-taper workout" — arms/chest were
+  // exercise-for-exercise clones of balanced because only v-taper changed the
+  // SPLIT; emphasis-only presets need an in-session lever). balanced → empty set →
+  // byte-identical to pre-feature.
+  const emphSet = emphasizedGroups(focusPreset, effectivePreset);
   // #R6a-T2 — does THIS week's split contain a separate Push day? (clusters are
   // lowercase: 'upper'/'lower'/'push'/'pull'/'legs'/'full'). A pure UPPER/LOWER split
   // (4d: upper/lower/upper/lower) has NONE — so the #2 upper-day triceps de-dup (which
@@ -585,7 +616,10 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
         balancedFlooredTargets,
         focusPreset,
         activeWeek.filter(Boolean).length || 1,
-        armsSignatureOn,
+        // BUDGET floor gated by the low-cap band (strictly-Pareto, 2026-06-15): a senior /
+        // maintenance trainee falls back to the balanced arm budget so the flag never drags
+        // the config below its flag-OFF score. Non-low-cap → armsSignatureOn unchanged.
+        armsSignatureActive,
       )
     : balancedFlooredTargets;
 
@@ -979,7 +1013,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
         focusPreset,
         splitRebalance,
       }),
-      isEnabled('dp_focus_contracts_v1') ? focusContractDemotions(focusPreset, armsSignatureOn) : null,
+      isEnabled('dp_focus_contracts_v1') ? focusContractDemotions(focusPreset, armsSignatureActive) : null,
     ),
     // R6d-b in-session lumbar pairing (same flag seam): a heavy deadlift-family
     // hinge and a back-extension accessory must not share ONE session (his
@@ -1113,7 +1147,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
         && (focusPreset === 'v-taper' || focusPreset === 'shoulders')
         && emphSet.has('umeri'))
       || (focusPreset === 'arms'
-        && armsSignatureOn
+        && armsSignatureActive
         && isEnabled('dp_arms_protect_majors_v1')),
     // #R6a upper-day biceps guarantee (dp_biceps_guarantee_v1, default ON). A
     // cluster that trains biceps (upper/pull/full → targets includes 'biceps')
@@ -1272,8 +1306,10 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     focusContracts: isEnabled('dp_focus_contracts_v1'),
     // dp_arms_signature_v1 — gates the resolver's arms-only signature additions (back-lat
     // maintenance cap + raised direct-arm per-session minimums). OFF → the arms rule is
-    // byte-identical to the pre-flag table; only the `arms` focus reads it.
-    armsSignature: armsSignatureOn,
+    // byte-identical to the pre-flag table; only the `arms` focus reads it. armsSignatureActive
+    // (NOT the raw flag) so a senior / low-capacity trainee falls fully back to the balanced
+    // arms shape (strictly-Pareto gate above) — the SLOT trim is split-gated in applyFocusPolicy.
+    armsSignature: armsSignatureActive,
     // dp_arms_protect_majors_v1 (2026-06-14) — repairs the CHEST starvation arms-signature
     // causes: the high arm floor + maxBackLatWork cap crowd the per-session slots so chest
     // drops to a single weekly exposure (~3 sets < MEV) on the slot-limited U/L-split arms
@@ -1283,7 +1319,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // → never runs → byte-identical.
     armsChestFloor:
       focusPreset === 'arms'
-      && armsSignatureOn
+      && armsSignatureActive
       && isEnabled('dp_arms_protect_majors_v1'),
     focusId: focusPreset,
     daysPerWeek: activeWeek.filter(Boolean).length || 1,
