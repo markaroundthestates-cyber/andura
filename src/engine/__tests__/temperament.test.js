@@ -105,6 +105,9 @@ describe('DP._rirFromRpe — temperament consumer', () => {
   afterEach(() => vi.restoreAllMocks());
 
   it('FLAG OFF (default) — the legacy 3/1/0 map (byte-identical)', () => {
+    // dp_temperament_v1 flipped default-ON (Wave 2026-06-14); pin it OFF to assert
+    // the legacy 3/1/0 map (no learned bias) explicitly.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_temperament_v1: false }));
     saveTemperament('Barbell Bench Press', { bias: 1.5, n: 10 }); // present but flag off
     expect(DP._rirFromRpe(RPE.greu, 'Barbell Bench Press')).toBe(0);
     expect(DP._rirFromRpe(RPE.potrivit, 'Barbell Bench Press')).toBe(1);

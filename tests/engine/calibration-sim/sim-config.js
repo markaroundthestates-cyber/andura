@@ -54,7 +54,7 @@ export function resetStore() {
     // pin OFF here so this dp.js-direct kg-convergence baseline stays frozen byte-for-byte
     // (plateau rep_shift / fatigue ±set / learned-recovery would move the prescription).
     // ON behavior is validated on the persona-matrix + eval-grid, NOT this determinism gate.
-    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false, dp_load_model_v1: false, dp_real_ladder_snap_v1: false, dp_user_ladder_v1: false, dp_behavioral_tier_v1: false, dp_tier_compound_floor_v1: false, dp_fatigue_curve_v1: false, dp_smart_selection_v1: false, dp_learned_recovery_v1: false, dp_plateau_intervention_v1: false }));
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false, dp_load_model_v1: false, dp_real_ladder_snap_v1: false, dp_user_ladder_v1: false, dp_behavioral_tier_v1: false, dp_tier_compound_floor_v1: false, dp_fatigue_curve_v1: false, dp_smart_selection_v1: false, dp_learned_recovery_v1: false, dp_plateau_intervention_v1: false, dp_ego_cap_v1: false, dp_temperament_v1: false, dp_trend_signal_v1: false, dp_load_transition_v1: false, dp_log_outlier_v1: false, dp_behavior_distill_v1: false, dp_subrecovery_drift_v1: false, dp_dip_classifier_v1: false, dp_nof1_v1: false, dp_library_chains_v1: false, dp_strength_bw_ratio_v1: false }));
   } catch {
     /* jsdom always provides localStorage */
   }

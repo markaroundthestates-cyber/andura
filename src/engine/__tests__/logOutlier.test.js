@@ -110,6 +110,9 @@ describe('POISON TEST — a log outlier never moves learning (F7 §2d)', () => {
   }
 
   it('flag OFF → an over-log still calibrates (byte-identical legacy)', () => {
+    // dp_log_outlier_v1 flipped default-ON (Wave 2026-06-14); pin it OFF to assert
+    // the legacy (outlier-guard-inert) path explicitly.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_log_outlier_v1: false }));
     // Flag off (default): a 130kg log (inside the ×4 fat-finger jump from 60) feeds
     // calibration as before — the outlier guard is inert.
     DP.checkInSessionAdjust(EX, [7.5], [10], {

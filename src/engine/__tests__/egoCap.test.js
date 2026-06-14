@@ -47,6 +47,9 @@ describe('ego-cap wired into checkInSessionAdjust', () => {
   }
 
   it('FLAG OFF (default) — an ego jump is NOT capped and DOES calibrate (byte-identical legacy)', () => {
+    // dp_ego_cap_v1 flipped default-ON (Wave 2026-06-14); pin it OFF to assert the
+    // legacy (no-cap, calibration-runs) path explicitly.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_ego_cap_v1: false }));
     // greu ego jump: rec 60, logged 90 (×1.5), rated greu. Flag off → no egoCap msg,
     // factor learns the 90 (legacy behavior).
     const r = DP.checkInSessionAdjust(EX, [10], [6], {

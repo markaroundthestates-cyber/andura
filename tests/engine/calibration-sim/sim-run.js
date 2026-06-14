@@ -39,12 +39,18 @@ function recommendFor(E, profile, ex, sessionIdx, priorExercises, nowMs, lastSes
  * object (no file write). nProfiles defaults to the full N_PROFILES; tests may
  * pass a smaller count for speed (the determinism + invariants hold at any N).
  */
-export function runCohort(nProfiles = N_PROFILES, seed = SEED) {
+export async function runCohort(nProfiles = N_PROFILES, seed = SEED) {
   const E = engine;
   const cohort = buildCohort(nProfiles, seed);
   const perProfile = [];
 
   for (const profile of cohort) {
+    // Yield the event loop between profiles. The brain-on flag defaults made this cohort
+    // run ~60s under the full parallel suite; a single 60s SYNC block starves the vitest
+    // worker so the main thread's onTaskUpdate RPC times out -> false-red exit 1 (all
+    // tests still pass). Yielding keeps the worker responsive. Deterministic: identical
+    // compute order -> byte-identical hash (the determinism gate is unchanged).
+    await new Promise((res) => setTimeout(res, 0));
     resetStore();
     const r = rng(profile._seed);
     const sessions = [];

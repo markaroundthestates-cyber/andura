@@ -228,6 +228,9 @@ describe('DP._rirFromRpe — behavior-distill consumer', () => {
   afterEach(() => vi.restoreAllMocks());
 
   it('FLAG OFF (default) — the legacy 3/1/0 map (byte-identical)', () => {
+    // dp_behavior_distill_v1 flipped default-ON (Wave 2026-06-14); pin it OFF to
+    // assert the legacy 3/1/0 map (no learned offset) explicitly.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_behavior_distill_v1: false }));
     saveBehaviorTuning({ ratingRirOffset: { offset: 1.5, n: 10 } }); // present but flag off
     expect(DP._rirFromRpe(RPE.greu, 'Flat DB Press')).toBe(0);
     expect(DP._rirFromRpe(RPE.potrivit, 'Flat DB Press')).toBe(1);

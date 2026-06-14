@@ -102,7 +102,7 @@ export const FLAGS = Object.freeze({
   // unify (F2 deferred it here pending e1RM). Applied as the LAST load step, EXEMPT
   // during a return-deload comeback. OFF / no corridor → no-op. Depends on #1 + #2
   // (needs mu). The last + riskiest sub-build — must ride green #1+#2 sims first.
-  dp_intensity_corridor_v1: { rollout: 0, default: false },
+  dp_intensity_corridor_v1: { rollout: 0, default: false }, // HELD 2026-06-14 (needs Daniel/careful validation — see report)
 
   // W-Goal — coherent STRENGTH goal (RISK HIGH — makes goal=forta a REAL strength
   // prescription, not hypertrophy-with-long-rest). ONE flag that flips BOTH levers
@@ -132,7 +132,7 @@ export const FLAGS = Object.freeze({
   // kg doesn't bake into the factor). OFF → no cap (the existing SCALE-BACK /
   // EASE-BACK reactive brakes only). Independent of the F3 flags (works on raw kg;
   // sharper on the e1RM jump when dp_e1rm_v1 ON).
-  dp_ego_cap_v1: { rollout: 0, default: false },
+  dp_ego_cap_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // #65 log OUTLIER detector vs the user's OWN posterior band (RISK MED — changes
   // WHAT the engine learns from, path B). When ON, a logged set whose RIR-corrected
@@ -146,7 +146,7 @@ export const FLAGS = Object.freeze({
   // byte-identical. ON-but-dp_strength_kalman_v1-OFF → no posterior → degrades to the
   // fat-finger guard only (still safe, just not personalized). Distinct from the ×10
   // fat-finger guard (anomalyGuard.sanityCheckSet) which is a physical/typo check.
-  dp_log_outlier_v1: { rollout: 0, default: false },
+  dp_log_outlier_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // #8/D pain/injury per-exercise deprioritize (RISK MED — changes session
   // COMPOSITION, path A). When ON, repeated skip (durable synced `dp-exercise-pain`
@@ -319,7 +319,7 @@ export const FLAGS = Object.freeze({
   // failure (don't over-climb). Slow EMA, clamped. Persists `dp-temperament` (sync,
   // quota-guarded). OFF → the global RATING_TO_RIR (byte-identical). Depends on
   // dp_e1rm_v1 (RIR is the lever it tunes); inert when e1RM is off.
-  dp_temperament_v1: { rollout: 0, default: false },
+  dp_temperament_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // #59 D107 behavioral-log distillation → per-user rating-semantic offset (RISK
   // MED — discounts the user's own rating, like temperament; the clamp band + the
@@ -337,7 +337,7 @@ export const FLAGS = Object.freeze({
   // log, so even ON it is neutral on the sim). Deterministic (the only time used is
   // each event's own `t`). This is the FIRST distilled signal; the loop is
   // extensible (a sibling field in distillBehavior). Daniel-flag.
-  dp_behavior_distill_v1: { rollout: 0, default: false },
+  dp_behavior_distill_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // #1/H active probing when uncertain (RISK MED-HIGH — deliberately prescribes a
   // single set ABOVE the smoothed mu to gather a high-information observation, so it
@@ -346,7 +346,7 @@ export const FLAGS = Object.freeze({
   // (readiness >= HIGH), non-hard last set offers a deliberate calibration test set
   // that shrinks sigma. OFF → no probe (byte-identical). Depends on
   // dp_strength_kalman_v1 (needs sigma; meaningless on raw kg).
-  dp_active_probing_v1: { rollout: 0, default: false },
+  dp_active_probing_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // #4/I MPC — model-predictive progression (RISK HIGH — changes how the next load
   // is CHOSEN, path B). When ON, a small bounded set of candidate next-loads is
@@ -356,7 +356,7 @@ export const FLAGS = Object.freeze({
   // picked, but ONLY where it would change the greedy decision (common case → same
   // step, golden-safe). OFF → the greedy one-step double-progression (byte-identical).
   // Depends on dp_e1rm_v1 + dp_strength_kalman_v1 + dp_ceiling_v1 (its forward model).
-  dp_mpc_v1: { rollout: 0, default: false },
+  dp_mpc_v1: { rollout: 0, default: false }, // HELD 2026-06-14 (needs Daniel/careful validation — see report)
 
   // ── F emphasis = specialization-phase (engine-wiring 2026-06-07) — wires the
   // EXISTING src/engine/specialization/ engine's already-computed volume_modifier
@@ -393,7 +393,7 @@ export const FLAGS = Object.freeze({
   // PARTIAL deload-telemetry boundary (spec §7) — this build ships the pure
   // detector + the narration read only. OFF → the detector is never invoked →
   // byte-identical. Degrades to rating-drift-only when dp_e1rm_v1 is OFF.
-  dp_subrecovery_drift_v1: { rollout: 0, default: false },
+  dp_subrecovery_drift_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // ── F6b Volume/Progress-intelligence cluster (engine-wiring 2026-06-08) —
   // volume + the SHAPE of progress: half path-A (sets), half narration of what
@@ -475,7 +475,7 @@ export const FLAGS = Object.freeze({
   // proximity otherwise). PIVOT_SHARE_THRESHOLD + the targets/wording are DESIGN
   // PROPOSALS (spec §7) — Daniel's product/UX call before flip. The live render-
   // surface wiring (the banner/modal consumer) is a UX moment DEFERRED for Daniel.
-  dp_auto_pivot_v1: { rollout: 0, default: false },
+  dp_auto_pivot_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // V5 #27 trajectory planner (RISK LOW-MED — read-only narration; the module never
   // alters a prescription). goalForecast.projectLiftStrength already projects a per-
@@ -565,7 +565,7 @@ export const FLAGS = Object.freeze({
   // to gap-vs-fatigue only (no LIFE_DIP) when #5/#26 are OFF (null inputs). OFF →
   // never called → _returnDeload + the deload hierarchy + the <60 hold run
   // independently as today → byte-identical.
-  dp_dip_classifier_v1: { rollout: 0, default: false },
+  dp_dip_classifier_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // ── F6c Personalization cluster (engine-wiring 2026-06-08) — a thin layer that
   // SPENDS the F3 substrate (Kalman {mu,sigma}, ceiling, learned recovery, the
@@ -586,7 +586,7 @@ export const FLAGS = Object.freeze({
   // identical). Reads the existing dp-strength-posterior; no new persistence. TREND_Z
   // is a DESIGN PROPOSAL (spec §9) — Daniel/sim sanity-check before flip. Degrades to
   // FLAT/unconfident (legacy path) when the Kalman fold yields nothing (cold start).
-  dp_trend_signal_v1: { rollout: 0, default: false },
+  dp_trend_signal_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // #33 population-prior cold-start (RISK LOW — first-session-only, no related lift).
   // F3 #4 transfer seeds a NEW lift from a RELATED one the user already has e1RM for;
@@ -655,7 +655,7 @@ export const FLAGS = Object.freeze({
   // gets no BW nudge → byte-identical. Composes with #37 (both read the phase) but is
   // independently flagged. Depends on F3 #2 (mu) + #5 (recovery EMA). No new
   // persistence (reuses dp-recovery-constants). Optional Daniel-flag.
-  dp_strength_bw_ratio_v1: { rollout: 0, default: false },
+  dp_strength_bw_ratio_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // #35 age-scaled tendon load-rate cap (RISK MED — slows LOAD progression for
   // older users; bounded — only caps the up-step, never the PR-floor). gainDecay
@@ -757,7 +757,7 @@ export const FLAGS = Object.freeze({
   // Daniel's review (the consumer-bias half IS fully wired). New persistence:
   // dp-nof1-preference (EN-name-keyed sync) + dp-nof1-experiment (in-flight state,
   // sync). Daniel-flag (the most novel + moat-personalization item).
-  dp_nof1_v1: { rollout: 0, default: false },
+  dp_nof1_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian
   // Nutrition Kalman 1D enable. Daniel CEO directive verbatim 2026-05-21:
@@ -784,7 +784,7 @@ export const FLAGS = Object.freeze({
   // only HELPS the legacy/RO-display fallback path and never the canonical path.
   // OFF → engineKey derivation is byte-identical to pre-#6 (ex.engineName ??
   // ex.exerciseName, unresolved) → determinism hash + sim unchanged.
-  dp_library_chains_v1: { rollout: 0, default: false },
+  dp_library_chains_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // #7 per-exercise metric types (RISK MED — changes the PRESCRIPTION SHAPE for a
   // non-reps movement, the only correctness-fix half of #7). The metric_type DATA
@@ -876,7 +876,7 @@ export const FLAGS = Object.freeze({
   // validation gate). Flip ON is a human gate (Daniel) AFTER the sim A/B. The
   // thresholds (10% / 2-3 exposures / 7% e1RM tolerance) are DESIGN PROPOSALS from
   // _ENGINE_progression_rir_rest_count_policy_2026-06-08 §1 `load_transition_window`.
-  dp_load_transition_v1: { rollout: 0, default: false },
+  dp_load_transition_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // #63 coach-confidence subtle line (RISK LOW — pure narration, no prescription
   // path). Surfaces the per-exercise Kalman posterior UNCERTAINTY (sigma) carried
@@ -1055,7 +1055,7 @@ export const FLAGS = Object.freeze({
   // at_floor / within_sustainable) surfaced on the output. OFF → no coached
   // override, kcal == the math target → BYTE-IDENTICAL to today (the nutrition
   // snapshots + safety tests hold flag-OFF). Flip ON is a human gate (Daniel).
-  dp_nutrition_coached_v1: { rollout: 0, default: false },
+  dp_nutrition_coached_v1: { rollout: 0, default: false }, // HELD 2026-06-14 (needs Daniel/careful validation — see report)
 
   // W-Split (oracle grid GAP 1 + GAP 4, 2026-06-09) — WEEK-LEVEL split + safety
   // wiring, all behind THIS one flag. Five coupled fixes that the per-exercise
@@ -1398,7 +1398,7 @@ export const FLAGS = Object.freeze({
   // makes; OFF → the reshape never runs in any normal path → BYTE-IDENTICAL to today
   // (and it is NOT in fp-config FLIPPED_FLAGS — those are default-ON flags pinned off;
   // a default-OFF flag is already off everywhere, so the fp hashes hold automatically).
-  dp_maintenance_freq_reshape_v1: { rollout: 0, default: false },
+  dp_maintenance_freq_reshape_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // AUTO-INFER TRAINING FREQUENCY → VOLUME dose (2026-06-14, real-user behavior).
   // The weekly volume budget is dosed off the CONFIGURED/onboarding frequency (the

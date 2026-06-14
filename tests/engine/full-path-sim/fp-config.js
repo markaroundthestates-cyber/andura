@@ -320,6 +320,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   // validated on the persona-matrix + the final eval-grid judge, NOT in this stream.
   'dp_behavioral_tier_v1', 'dp_tier_compound_floor_v1', 'dp_fatigue_curve_v1',
   'dp_smart_selection_v1', 'dp_learned_recovery_v1', 'dp_plateau_intervention_v1',
+  // THE FLIP 2026-06-14 (Wave C/D brain-on) — kg-path + learning + schedule flags default ON;
+  // pinned OFF here so hashOff/hashOn stay byte-for-byte (ON is validated on the calibration-sim
+  // convergence + persona-matrix + the eval judge, NOT this determinism stream). Note: the §B
+  // dark-primitive tests still set #26/#32 ON explicitly for their own behavior assertions.
+  'dp_ego_cap_v1', 'dp_temperament_v1', 'dp_trend_signal_v1', 'dp_load_transition_v1',
+  'dp_log_outlier_v1', 'dp_behavior_distill_v1', 'dp_subrecovery_drift_v1', 'dp_dip_classifier_v1',
+  'dp_nof1_v1', 'dp_library_chains_v1', 'dp_strength_bw_ratio_v1', 'dp_maintenance_freq_reshape_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

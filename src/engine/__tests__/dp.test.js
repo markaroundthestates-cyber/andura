@@ -21,9 +21,25 @@ import { DP } from '../dp.js';
 // arm (curated-or-[8,12] + the CUT isolation cap) so the cut-cap mechanic + the
 // progression branches that read the capped range stay individually exercised.
 // The ON arm is covered by dp/repRange.test.js (unit) + persona-matrix + fp-sim.
+// Wave B 2026-06-14: the value-changing intelligence flags flipped default-ON
+// (brain-on). They overlay their own behavior on top of the BASE dp arms these
+// CORE tests assert, so pin them OFF here to keep the base-behavior tests
+// deterministic. Each flag's ON behavior is covered by its dedicated ON test
+// (egoCap/temperament/trendSignal/loadTransition/logOutlier/nof1/behaviorDistill/
+// activeProbing .test.js) + the persona-matrix — NOT this base-arm gate.
 beforeEach(() => {
   try {
-    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false }));
+    localStorage.setItem('_devFlags', JSON.stringify({
+      dp_rep_class_v1: false,
+      dp_ego_cap_v1: false,
+      dp_temperament_v1: false,
+      dp_trend_signal_v1: false,
+      dp_load_transition_v1: false,
+      dp_log_outlier_v1: false,
+      dp_nof1_v1: false,
+      dp_behavior_distill_v1: false,
+      dp_active_probing_v1: false,
+    }));
   } catch { /* jsdom always provides localStorage */ }
 });
 

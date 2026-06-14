@@ -13,7 +13,10 @@ const BASE = Date.UTC(2026, 0, 1);
 const DAY = 86400000;
 
 function on() { localStorage.setItem('_devFlags', JSON.stringify({ dp_load_transition_v1: true })); }
-function off() { localStorage.removeItem('_devFlags'); }
+// dp_load_transition_v1 flipped default-ON (Wave 2026-06-14); off() now pins it
+// explicitly OFF (was: remove → relied on the old default-OFF) so the OFF arm
+// asserts the legacy EASE-BACK path deterministically.
+function off() { localStorage.setItem('_devFlags', JSON.stringify({ dp_load_transition_v1: false })); }
 
 beforeEach(() => { off(); DB.set('logs', []); });
 afterEach(() => { off(); DB.set('logs', []); });

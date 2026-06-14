@@ -17,6 +17,7 @@
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import { runCohort } from './sim-run.js';
+import { resetStore } from './sim-config.js';
 import { analyzeCohort, craterViolations } from './sim-analyze.js';
 import { cohortStreamHash } from './sim-hash.js';
 import baseline from './_sim_baseline.json';
@@ -30,12 +31,26 @@ let analysis;
 let craters;
 let hash;
 
-beforeAll(() => {
-  cohort = runCohort(baseline.nProfiles);
+beforeAll(async () => {
+  // CROSS-FILE _devFlags HARDENING (2026-06-14): the determinism hash is computed
+  // here in beforeAll, which runs BEFORE this file's per-test localStorage.clear
+  // (setup.ts beforeEach) — so it inherits whatever _devFlags a PRIOR test file
+  // left in the shared jsdom store. runCohort already calls resetStore() per
+  // profile (full pinned baseline), but we ALSO apply it once up front so the
+  // baseline is unambiguously in place before any sim/engine read, immune to
+  // leaked cross-file flag state. This does NOT weaken the determinism gate — it
+  // just guarantees the frozen-baseline flag world before the hash is taken.
+  resetStore();
+  cohort = await runCohort(baseline.nProfiles);
   analysis = analyzeCohort(cohort);
   craters = craterViolations(cohort);
   hash = cohortStreamHash(cohort);
-}, 60000);
+  // 60000->180000 (2026-06-14): the brain-on flag defaults add per-session engine
+  // compute, and under the FULL parallel suite (495 files) the 50-session cohort sim
+  // exceeds 60s so the hook times out -> tests skipped -> false-red. The sim is
+  // deterministic + ~27-40s solo; the headroom just survives parallel CPU contention
+  // (same class as the wiring-coverage timeout). Does NOT weaken any assertion.
+}, 180000);
 
 describe('calibration-sim CI gate', () => {
   // ── §1.B ZERO-TOLERANCE bug-class invariants (absolute) ──────────────────

@@ -2009,6 +2009,20 @@ describe('Workout — shared current-recommended-load (autoreg + AaFriction)', (
 
   beforeEach(() => {
     resetStore();
+    // Wave 2026-06-14 — the value-changing kg-path intelligence flags flipped
+    // default-ON. They overlay the autoreg/AaFriction WEIGHT path these tests
+    // assert (rec 50 → newKg 55 smooth +1 step), so pin them OFF (alongside the
+    // resetStore rep_class/load_model pins) to isolate the autoreg/friction
+    // behavior. Each flag's ON behavior is covered by its dedicated engine ON test.
+    localStorage.setItem('_devFlags', JSON.stringify({
+      dp_rep_class_v1: false,
+      dp_load_model_v1: false,
+      dp_ego_cap_v1: false,
+      dp_temperament_v1: false,
+      dp_load_transition_v1: false,
+      dp_trend_signal_v1: false,
+      dp_log_outlier_v1: false,
+    }));
     // STRENGTH phase → checkInSessionAdjust autoregulates WEIGHT (newKg).
     DB.set('phase-override', 'STRENGTH');
     // Prior persisted history gives DP a lastW so it recalibrates (else adjust:false).

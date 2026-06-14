@@ -75,6 +75,9 @@ describe('DP.getSmartRecommendation — active-probe consumer', () => {
   afterEach(() => vi.restoreAllMocks());
 
   it('FLAG OFF (default) — no activeProbe descriptor (byte-identical)', () => {
+    // dp_active_probing_v1 flipped default-ON (Wave 2026-06-14); pin it OFF to
+    // assert the legacy byte-identical (no-descriptor) path explicitly.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_active_probing_v1: false }));
     const r = DP.getSmartRecommendation(EX, 90, null, now);
     expect(r.activeProbe).toBeUndefined();
   });

@@ -92,8 +92,16 @@ describe('#6 canonical writeback — RO/legacy display name resolves to the engi
 });
 
 describe('#6 writeback flag OFF (default) — byte-identical legacy derivation', () => {
+  // dp_library_chains_v1 flipped default-ON (Wave 2026-06-14); pin ONLY it OFF via
+  // the _devFlags override (was: rely on the old default-OFF) so the legacy-
+  // derivation arm is deterministic. Using localStorage (not a spy) leaves every
+  // OTHER flag at its real default, so nothing else in the derivation is perturbed.
+  beforeEach(() => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_library_chains_v1: false }));
+  });
+
   it('does NOT resolve a legacy synonym when dp_library_chains_v1 is OFF', () => {
-    // Default flag state (no mock) → OFF → the raw ex.engineName ?? exerciseName.
+    // dp_library_chains_v1 pinned OFF above → the raw ex.engineName ?? exerciseName.
     const entries = buildLogEntriesFromSummary(
       summaryWith({ exerciseName: 'Pushdown' }),
       SESSION

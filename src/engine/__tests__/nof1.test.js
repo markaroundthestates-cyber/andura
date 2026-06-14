@@ -179,9 +179,13 @@ describe('dp_nof1_v1 — consumer setsAdjust bias', () => {
   beforeEach(() => { localStorage.clear(); seed(); });
 
   it('flag OFF: a decided preference is NEVER read → byte-identical', () => {
+    // dp_nof1_v1 flipped default-ON (Wave 2026-06-14); pin it OFF to assert the
+    // legacy (preference-never-read) path explicitly.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_nof1_v1: false }));
     savePreference(EX, { arm: 'volume', decidedTs: 1, slopeA: 9, slopeB: 1 });
     const r = smart();
     expect(r.nof1Bias).toBeUndefined();
+    localStorage.removeItem('_devFlags');
   });
 
   it('flag ON + NULL preference: byte-identical (no bias applied)', () => {
