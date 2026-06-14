@@ -78,7 +78,9 @@ describe('plateau intervention wired into getSmartRecommendation', () => {
   });
   afterEach(() => vi.restoreAllMocks());
 
-  it('FLAG OFF (default) — no plateauIntervention annotation', () => {
+  it('FLAG OFF — no plateauIntervention annotation', () => {
+    // default flipped ON 2026-06-14 (Wave B) → pin OFF explicitly to keep the OFF path covered
+    vi.spyOn(flags, 'isEnabled').mockImplementation(() => false);
     const r = DP.getSmartRecommendation(EX, null, null, Date.UTC(2026, 1, 16), null, []);
     expect(r.plateauIntervention).toBeUndefined();
   });

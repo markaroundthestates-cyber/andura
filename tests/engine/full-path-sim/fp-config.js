@@ -311,6 +311,15 @@ export const FLIPPED_FLAGS = Object.freeze([
   // on the new inferFrequency regression suite (mismatch configured-5/logged-3 → inferred
   // 3 → delivered weekly volume drops to the 3-day level), NOT in this determinism stream.
   'dp_auto_infer_frequency_v1',
+  // THE FLIP 2026-06-14 (Wave B brain-on) — six composition/path-A flags default ON:
+  // behavioral-tier (tier override → session count/volume), tier-compound-floor (T0
+  // fresh floor 3->2), fatigue-curve (±1 set; already in ANDURA_ON_FLAGS), smart-
+  // selection (lateral-raise guarantee), learned-recovery (per-muscle recovery map),
+  // plateau-intervention (rep_shift on stagnation). All move the frozen composition/kg
+  // hashes, so pinned OFF here so hashOff/hashOn stay byte-for-byte. ON behavior is
+  // validated on the persona-matrix + the final eval-grid judge, NOT in this stream.
+  'dp_behavioral_tier_v1', 'dp_tier_compound_floor_v1', 'dp_fatigue_curve_v1',
+  'dp_smart_selection_v1', 'dp_learned_recovery_v1', 'dp_plateau_intervention_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

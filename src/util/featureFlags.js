@@ -93,7 +93,7 @@ export const FLAGS = Object.freeze({
   // behavioral log), blended toward the global prior via a slow EMA and clamped to
   // [0.5x, 2x] of the global. Persists `dp-recovery-constants` (sync, quota-
   // guarded). OFF → the fixed MUSCLE_HEADS globals (current). Independent of #1.
-  dp_learned_recovery_v1: { rollout: 0, default: false },
+  dp_learned_recovery_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave B; per-muscle learned recovery, clamped [0.5x,2x], cold-start = global)
 
   // #6 intensity corridor as an e1RM band (RISK HIGH — directly bounds prescribed
   // kg BOTH ways). When ON, the periodization %1RM corridor {floor,ceiling} bounds
@@ -309,7 +309,7 @@ export const FLAGS = Object.freeze({
   // today's double-progression. OFF → no classification, no intervention
   // (byte-identical: the overlay is never reached). Depends on dp_ceiling_v1 for
   // the real EXPECTED/PROBLEM split (degrades to a flat-MAX_KG ceiling otherwise).
-  dp_plateau_intervention_v1: { rollout: 0, default: false },
+  dp_plateau_intervention_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave B; problem-plateau rep_shift +1 bounded; near-ceiling rotation narration)
 
   // #3/F temperament: sandbagger vs grinder (RISK MED — deliberately discounts the
   // user's own rating, so a mis-detection could push a true grinder too hard → the
@@ -510,7 +510,7 @@ export const FLAGS = Object.freeze({
   // curve` (sync, name-keyed, quota-guarded). OFF → the learner is never invoked +
   // setsAdjust 0 → byte-identical distributeGroupSets. Degrades to raw-reps drop-off
   // when dp_e1rm_v1 is OFF.
-  dp_fatigue_curve_v1: { rollout: 0, default: false },
+  dp_fatigue_curve_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave B; already in persona-matrix ANDURA_ON_FLAGS, ±1 set bounded)
 
   // #5 ACWR readiness (RISK MED — adjusts the readiness SCORE, an existing driver,
   // path B). When ON, computeACWR (the rolling acute:chronic workload ratio, reusing
@@ -813,7 +813,7 @@ export const FLAGS = Object.freeze({
   // calibration-sim hash is path-B/orthogonal + stays green; the full-path-sim OFF
   // arm unchanged). Flip ON is a human gate (Daniel) AFTER the sim A/B. See
   // _REF_gold_vtaper_cut_2026-06-08 + _ENGINE_volume_policy §73.
-  dp_smart_selection_v1: { rollout: 0, default: false },
+  dp_smart_selection_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave B; lateral-raise guarantee, broader than the narrower lateral_delt flag)
 
   // FINER sub-family selection dedup (Daniel, eval 2026-06-13) (RISK LOW —
   // composition SWAP, path A; never kg, never +1 exercise). The in-session movement
@@ -925,7 +925,7 @@ export const FLAGS = Object.freeze({
   // report). Changes session COMPOSITION (path A), NOT per-exercise kg — the
   // calibration-sim hash is orthogonal + stays green flag-OFF. The bands +
   // hysteresis knobs are DESIGN PROPOSALS — Daniel/research review before flip.
-  dp_behavioral_tier_v1: { rollout: 0, default: false },
+  dp_behavioral_tier_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave B; behavior-inferred tier overrides self-report, hysteresis-guarded)
 
   // tier-aware FRESH compound set floor (engine-wiring) (RISK LOW — only ever
   // RAISES a fresh compound's floor from 2→3 for a trained lifter, bounded by the
@@ -942,7 +942,7 @@ export const FLAGS = Object.freeze({
   // (the calibration-sim hash is path-B/orthogonal + stays green). Threaded into
   // distributeGroupSets via ctx.tierCompoundFloor (resolved at the getDailyWorkout
   // seam). Flip ON is a human gate (Daniel) AFTER the sim A/B.
-  dp_tier_compound_floor_v1: { rollout: 0, default: false },
+  dp_tier_compound_floor_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave B; T0 fresh compound floor 3->2 = MEV, bounded)
 
   // Daniel expert tier-list SELECTION (Wave 1, 2026-06-09) (RISK MED — changes
   // session COMPOSITION, path A; never kg). Wires the founder's hand-ranked
