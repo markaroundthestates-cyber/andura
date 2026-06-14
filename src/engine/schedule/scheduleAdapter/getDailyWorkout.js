@@ -751,6 +751,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
         // ALSO exclude the loaded Leg Press family + open-chain step-up/wall-sit so a
         // knee-injury trainee never gets loaded deep-knee-flexion (the /10 judge cap).
         kneeSafeQuads: isEnabled('dp_knee_safe_quads_v1'),
+        // dp_shoulder_safe_v1 — a SHOULDER-impingement injury (umeri) escalates: ALSO
+        // exclude deep DIPs + the behind-the-back/behind-neck lateral + behind-neck press
+        // so a shoulder-injury trainee never gets an impingement aggravator (the /10
+        // judge cap). Routes to the in-pool scapular-plane lateral / face pull / neutral
+        // press. No shoulder injury → inert (umeri not in injuryGroups).
+        shoulderSafe: isEnabled('dp_shoulder_safe_v1'),
       })
       : null;
 

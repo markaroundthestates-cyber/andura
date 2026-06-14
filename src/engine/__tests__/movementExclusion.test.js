@@ -14,6 +14,7 @@ import {
   OVERHEAD_PRESS_SENTINEL,
   LUMBAR_HINGE_SENTINEL,
   KNEE_QUAD_SENTINEL,
+  SHOULDER_IMPINGE_SENTINEL,
 } from '../movementExclusion.js';
 
 const allEquip = ['barbell', 'dumbbell', 'machine', 'cable', 'band'];
@@ -329,5 +330,72 @@ describe('#R6b leg-curl GUARANTEE — backfill seats under a spate exclusion', (
     const guardOn = buildSession('lower', ctx({ legCurlGuarantee: true, excludedMovements: null }));
     const guardOff = buildSession('lower', ctx({ legCurlGuarantee: false, excludedMovements: null }));
     expect(guardOn).toEqual(guardOff);
+  });
+});
+
+// ── dp_shoulder_safe_v1 — shoulder-impingement aggravator exclusion ───────────
+// Proves: with the flag ON (opts.shoulderSafe), a shoulder injury (umeri) ALSO excludes
+// deep DIPs (the `dip` token) + the behind-the-back / behind-neck lateral + behind-neck
+// press (the SHOULDER_IMPINGE sentinel, name-based) — even though the BTB lateral keys as
+// the SAFE `lateral-raise` token. The safe scapular-plane lateral / face pull / neutral
+// press stay. With the flag OFF (no opts), the legacy behavior holds (Dip + BTB-lateral
+// kept) — byte-identical.
+describe('dp_shoulder_safe_v1 — shoulder impingement → joint-friendly substitution', () => {
+  const shoulderOn = () => buildExclusionTokens(['umeri'], [], { shoulderSafe: true });
+
+  it('flag ON: dip token + SHOULDER_IMPINGE sentinel added; BTB-lateral/Dip excluded', () => {
+    const excl = shoulderOn();
+    expect(excl.tokens.has('dip')).toBe(true);
+    expect(excl.tokens.has(SHOULDER_IMPINGE_SENTINEL)).toBe(true);
+    // Dip (deep, anterior-capsule load) — bare token.
+    expect(isExcludedMovement('Dip', 'dip', excl)).toBe(true);
+    expect(isExcludedMovement('Weighted Dip', 'dip', excl)).toBe(true);
+    // Behind-the-Back Cable Lateral — NAME-based (its token is the SAFE `lateral-raise`).
+    expect(isExcludedMovement('Behind-the-Back Cable Lateral', 'lateral-raise', excl)).toBe(true);
+    // Behind-neck press — NAME-based.
+    expect(isExcludedMovement('Behind-the-Neck Press', 'press', excl)).toBe(true);
+    // base umeri set still excluded (OHP / press / upright-row).
+    expect(isExcludedMovement('Overhead Press', 'name:ohp', excl)).toBe(true);
+    expect(isExcludedMovement('Upright Row', 'upright-row', excl)).toBe(true);
+    // joint-friendly substitutes still allowed: scapular-plane lateral, face pull,
+    // rear-delt, neutral/landmine press.
+    expect(isExcludedMovement('Machine Lateral Raise', 'lateral-raise', excl)).toBe(false);
+    expect(isExcludedMovement('Cable Lateral Raise', 'lateral-raise', excl)).toBe(false);
+    expect(isExcludedMovement('Face Pull', 'face-pull', excl)).toBe(false);
+    expect(isExcludedMovement('Cable Rear Delt Fly', 'rear-delt', excl)).toBe(false);
+    expect(isExcludedMovement('Landmine Press', 'press', excl)).toBe(false);
+    expect(isExcludedMovement('Neutral-Grip DB Press', 'press', excl)).toBe(false);
+  });
+
+  it('flag OFF (no opts): Dip + BTB-lateral kept, no sentinel — legacy byte-identical', () => {
+    const excl = buildExclusionTokens(['umeri'], []);
+    expect(excl.tokens.has('dip')).toBe(false);
+    expect(excl.tokens.has(SHOULDER_IMPINGE_SENTINEL)).toBe(false);
+    expect(isExcludedMovement('Dip', 'dip', excl)).toBe(false);
+    expect(isExcludedMovement('Behind-the-Back Cable Lateral', 'lateral-raise', excl)).toBe(false);
+  });
+
+  it('sentinel is shoulder-only — a knee/spate user never gets the shoulder sentinel', () => {
+    for (const grp of ['picioare-quads', 'spate']) {
+      const excl = buildExclusionTokens([grp], [], { shoulderSafe: true });
+      expect(excl.tokens.has(SHOULDER_IMPINGE_SENTINEL)).toBe(false);
+      expect(excl.tokens.has('dip')).toBe(false);
+    }
+  });
+
+  it('buildSession: shoulder push/upper/full day has ZERO Dip / BTB-lateral, lands a safe option', () => {
+    for (const cluster of ['push', 'upper', 'full']) {
+      const session = buildSession(cluster, ctx({ excludedMovements: shoulderOn() }));
+      expect(session.exercises.length, `${cluster}: non-empty`).toBeGreaterThan(0);
+      const BAD = /\bdip\b|behind.?the.?back|behind.?the.?neck|behind.?neck/i;
+      for (const e of session.exercises) {
+        expect(BAD.test(e.name), `${cluster}: '${e.name}' aggravates impingement`).toBe(false);
+      }
+      // shoulders still trained — a joint-friendly umeri option landed.
+      const umeri = session.exercises.filter(
+        (e) => getExerciseMetadata(e.name).muscle_target_primary === 'umeri',
+      );
+      expect(umeri.length, `${cluster}: shoulders still trained safely`).toBeGreaterThan(0);
+    }
   });
 });

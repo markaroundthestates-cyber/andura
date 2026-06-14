@@ -1213,6 +1213,29 @@ export const FLAGS = Object.freeze({
   // + knee-safe-quads regression tests.
   dp_knee_safe_quads_v1: { rollout: 1, default: true },
 
+  // #SHOULDER impingement-safe pressing/lateral exclusion (shoulder-contraindication
+  // fix 2026-06-14) (RISK LOW — selection only, never kg). The ANALOGUE of
+  // dp_knee_safe_quads_v1 for a shoulder-impingement ('umeri' pain) trainee. The base
+  // umeri exclusion (INJURY_PATTERN_EXCLUSIONS.umeri) already kills the OVERHEAD press +
+  // the `press` token + upright-row, but the /10 elite-coach judge still surfaced two
+  // impingement AGGRAVATORS that escape those tokens: "Behind-the-Back Cable Lateral"
+  // (keys as the `lateral-raise` token — a SAFE scapular-plane lateral, so the token
+  // can't be blanket-excluded without killing the WIDTH driver the lateral-delt guarantee
+  // needs) and "Dip" (keys as the `dip` token — deep dips load the anterior capsule under
+  // impingement). When ON + a shoulder injury group (umeri) is present, this ALSO excludes
+  // the `dip` token + the NAME-based behind-the-back / behind-neck lateral + behind-neck
+  // press (the SHOULDER_IMPINGE sentinel). The poolForGroup last-option guard + the already
+  // in-pool joint-friendly siblings (scapular-plane lateral / face pull / rear-delt /
+  // neutral-grip / landmine press, all impingement-safe) carry the substitution — a SWAP,
+  // not an add. Only fires on a shoulder injury (umeri in the exclusion) — no injury → null
+  // exclusion → never runs. OFF → the umeri exclusion stays OHP/press/upright-row only,
+  // Dip + BTB-lateral kept as today → byte-identical. Pinned OFF in the fp-config
+  // FLIPPED_FLAGS baseline (the fp cohort seeds no shoulder pain → null exclusion → inert
+  // either way, pinned for the all-off-world guarantee). Proven on the eval grid (p8 Radu:
+  // no Behind-the-Back Cable Lateral / Dip on any focus/freq, lateral routes to the safe
+  // scapular-plane variant) + the movementExclusion regression test.
+  dp_shoulder_safe_v1: { rollout: 1, default: true },
+
   // #HAMS hypertrophy/strength hamstring floor (orphaned-hamstrings fix 2026-06-14)
   // (RISK LOW — selection only, never kg). A MASS-BUILDING / STRENGTH program (goal masa /
   // forta) must NEVER zero HAMSTRINGS — a major prime mover. The Cycle-11 posterior floor

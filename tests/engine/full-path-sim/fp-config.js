@@ -130,6 +130,12 @@ export const FLIPPED_FLAGS = Object.freeze([
   // never satisfied), pinned OFF anyway for the all-off-world guarantee (the frozen
   // composition hashes stay byte-for-byte).
   'dp_knee_safe_quads_v1',
+  // THE FLIP 2026-06-14 (shoulder-impingement safe) — a SHOULDER injury (umeri) also excludes
+  // deep Dips + the behind-the-back/behind-neck lateral + behind-neck press (joint-friendly
+  // substitution). INERT in this harness either way (the fp journeys seed NO shoulder pain →
+  // null excludedMovements → the sentinel gate is never satisfied), pinned OFF anyway for the
+  // all-off-world guarantee (the frozen composition hashes stay byte-for-byte).
+  'dp_shoulder_safe_v1',
   // THE FLIP 2026-06-14 (orphaned-hamstrings fix) — the masa/forta HAMSTRING floor defaults
   // ON (a hypertrophy/strength program never zeroes hamstrings on a leg-training cluster: a
   // hinge/leg-curl is injected via a length-stable swap when hams would be 0). The fp cohort

@@ -72,6 +72,23 @@ export const KNEE_QUAD_SENTINEL = '__knee_quad__';
 // Sissy Squat already keys as the `squat` token (excluded). Caught only when the
 // KNEE_QUAD sentinel is present.
 const KNEE_DEEP_FLEXION_NAME_RE = /step.?up|wall\s*sit|sissy/i;
+// Sentinel token (dp_shoulder_safe_v1) marking the SHOULDER-IMPINGEMENT escalation: the
+// base umeri exclusion (OVERHEAD_PRESS_SENTINEL + `press` + upright-row) misses two
+// impingement AGGRAVATORS — the BEHIND-THE-BACK / behind-neck lateral (keys as the
+// `lateral-raise` token, which is otherwise a SAFE scapular-plane lateral that the
+// lateral-delt guarantee depends on, so the token cannot be blanket-excluded) and a
+// BEHIND-NECK press (keys as `name:<...>` or the angle-split, not the bare overhead-press
+// name). When this sentinel is in the exclusion set, isExcludedMovement ALSO drops those
+// by NAME. The `dip` token (deep dips, anterior-capsule load) is added directly in
+// buildExclusionTokens (a real token match). Routes to the in-pool joint-friendly siblings
+// (scapular-plane lateral / face pull / rear-delt / neutral-grip / landmine press). OFF
+// (flag off) → never added → byte-identical.
+export const SHOULDER_IMPINGE_SENTINEL = '__shoulder_impinge__';
+// Behind-the-back / behind-neck lateral + behind-neck press by NAME (the impingement
+// aggravators that the `lateral-raise` token / overhead-press name miss). "Behind-the-Back
+// Cable Lateral" and any "behind-the-neck" / "behind neck" variant. Caught only when the
+// SHOULDER_IMPINGE sentinel is present.
+const SHOULDER_IMPINGE_NAME_RE = /behind.?the.?back|behind.?the.?neck|behind.?neck/i;
 // Lookback for a Pain CDL report to count as a CURRENT contraindication. Matches
 // INJURY_LOOKBACK_DAYS (scheduleAdapterAggregate.injury.ts) so the exclusion + the
 // pipeline injury gate agree on "recent".
@@ -178,11 +195,15 @@ const SHOULDER_PRESS_ALLOW = Object.freeze(['landmine', 'neutral']);
  *
  * @param {Iterable<string>} injuryGroups - Big-11 RO groups from the Pain CDL signal
  * @param {Iterable<string>} refusedPatterns - explicit refusal keys (REFUSAL_PATTERN_TOKENS)
- * @param {{ kneeSafeQuads?: boolean }} [opts] - dp_knee_safe_quads_v1: when true AND a
- *   knee injury group is present, ALSO exclude the loaded Leg Press family + the open-
- *   chain step-up / wall-sit (the KNEE_QUAD sentinel) so the knee leg day is hip-
- *   dominant (RDL / leg curl / hip thrust). Default false → byte-identical (the knee
- *   exclusion stays squat/lunge/leg-extension only, Leg Press kept as today).
+ * @param {{ kneeSafeQuads?: boolean, shoulderSafe?: boolean }} [opts] -
+ *   dp_knee_safe_quads_v1: when true AND a knee injury group is present, ALSO exclude the
+ *   loaded Leg Press family + the open-chain step-up / wall-sit (the KNEE_QUAD sentinel) so
+ *   the knee leg day is hip-dominant (RDL / leg curl / hip thrust). Default false →
+ *   byte-identical (the knee exclusion stays squat/lunge/leg-extension only, Leg Press kept
+ *   as today). dp_shoulder_safe_v1: when true AND a shoulder injury group (umeri) is
+ *   present, ALSO exclude the `dip` token (deep dips) + the NAME-based behind-the-back /
+ *   behind-neck lateral + behind-neck press (the SHOULDER_IMPINGE sentinel). Default false
+ *   → the umeri exclusion stays OHP/press/upright-row only, Dip + BTB-lateral kept as today.
  * @returns {{ tokens: Set<string>, pressAllow: ReadonlyArray<string> }}
  *   tokens = movement tokens to hard-exclude; pressAllow = name substrings that
  *   re-permit an otherwise-excluded `press` (landmine/neutral).
@@ -190,10 +211,12 @@ const SHOULDER_PRESS_ALLOW = Object.freeze(['landmine', 'neutral']);
 export function buildExclusionTokens(injuryGroups, refusedPatterns, opts) {
   const tokens = new Set();
   let hasKnee = false;
+  let hasShoulder = false;
   for (const g of injuryGroups || []) {
     const list = INJURY_PATTERN_EXCLUSIONS[g];
     if (list) for (const t of list) tokens.add(t);
     if (g === 'picioare-quads' || g === 'picioare-hamstrings') hasKnee = true;
+    if (g === 'umeri') hasShoulder = true;
   }
   for (const r of refusedPatterns || []) {
     const list = REFUSAL_PATTERN_TOKENS[r];
@@ -205,6 +228,15 @@ export function buildExclusionTokens(injuryGroups, refusedPatterns, opts) {
   if (opts && opts.kneeSafeQuads && hasKnee) {
     tokens.add('leg-press');
     tokens.add(KNEE_QUAD_SENTINEL);
+  }
+  // dp_shoulder_safe_v1 — escalate the shoulder-impingement exclusion: drop deep DIPs (a
+  // real `dip` token match) + signal isExcludedMovement to NAME-drop the behind-the-back /
+  // behind-neck lateral + behind-neck press (the SHOULDER_IMPINGE sentinel). The safe
+  // scapular-plane lateral / face pull / rear-delt / neutral-grip / landmine press are
+  // already in-pool, so removing the aggravators routes to a joint-friendly substitute.
+  if (opts && opts.shoulderSafe && hasShoulder) {
+    tokens.add('dip');
+    tokens.add(SHOULDER_IMPINGE_SENTINEL);
   }
   return { tokens, pressAllow: SHOULDER_PRESS_ALLOW };
 }
@@ -242,6 +274,15 @@ export function isExcludedMovement(name, movementToken, excl) {
   // Step-Up / Wall Sit key as `name:<...>`. The loaded Leg Press is the bare `leg-press`
   // token (caught below). Only when the KNEE_QUAD sentinel is present (dp_knee_safe_quads_v1).
   if (excl.tokens.has(KNEE_QUAD_SENTINEL) && KNEE_DEEP_FLEXION_NAME_RE.test(lower)) {
+    return true;
+  }
+  // NAME-BASED shoulder-impingement aggravators (Behind-the-Back Cable Lateral / behind-
+  // neck lateral / behind-neck press) — caught even though the BTB lateral keys as the
+  // SAFE `lateral-raise` token (a scapular-plane lateral the lateral-delt guarantee needs,
+  // so the token can't be blanket-excluded) and a behind-neck press keys as `name:<...>`.
+  // The `dip` token is the bare token (caught below). Only when the SHOULDER_IMPINGE
+  // sentinel is present (dp_shoulder_safe_v1).
+  if (excl.tokens.has(SHOULDER_IMPINGE_SENTINEL) && SHOULDER_IMPINGE_NAME_RE.test(lower)) {
     return true;
   }
   if (!excl.tokens.has(movementToken)) return false;
