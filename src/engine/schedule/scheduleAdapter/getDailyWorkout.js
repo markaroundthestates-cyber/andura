@@ -859,9 +859,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
           // emphasized" cap. Empty (balanced) → every muscle uses perMuscleCeiling.
           emphasizedGroups: [...emphSet],
           // dp_maintenance_volume_band_v1 (2026-06-14) — a MAINTENANCE GOAL uses the LOWER
-          // maintenance focus ceiling in buildSession (even the focus sits at maintenance,
-          // not growth-MAV — the judge's "maintenance pushed to near-hypertrophy MAV" cap on
-          // p9/p10 v-taper shoulders 12). An OLDER-but-masa/forta trainee (lowCapBand set by
+          // maintenance focus ceiling in buildSession so the focus stays the RELATIVE leader
+          // at MAINTENANCE dose (top of the band, NOT growth-MAV — the judge caps BOTH
+          // "maintenance pushed to near-hypertrophy MAV" AND "focus not emphasized" on p9/p10
+          // v-taper). buildSession collapses the focus to ONE concentrated exposure/day then
+          // doses that lead slot to the band cap, so the focus leads the non-focus ~4-6 band
+          // without multiplying to MAV. An OLDER-but-masa/forta trainee (lowCapBand set by
           // age>=60, this false) keeps the growth focus ceiling — a mass program IS a growth
           // block. OFF → false → growth ceiling → byte-identical to the pre-flag two-tier clamp.
           maintenanceGoal:

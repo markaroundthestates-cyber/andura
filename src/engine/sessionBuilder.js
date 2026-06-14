@@ -228,13 +228,18 @@ const LOWCAP_FOCUS_CEILING = 11;    // per-MUSCLE WEEKLY ceiling for FOCUS / emp
 // focus reached shoulders 12 / back 10 = near-hypertrophy MAV — "goal inversion
 // (maintenance pushed to near-hypertrophy MAV)". The rubric: "Mentenanta — MEV across the
 // board, nothing pushed; DO NOT over-prescribe." Maintenance means MAINTAIN, not grow — so
-// even the focus must sit at a MAINTENANCE level, not the growth-focus 11. This LOWER
-// ceiling keeps the focus the week's SIGNATURE (it still LEADS the non-focus ~4-5 band) but
-// out of MAV: a 2-session focus → floor(7/2)=3/session → ~6/wk (leads, vs non-focus ~4-5);
-// a 1-session focus → ~7/wk. Used IN PLACE OF LOWCAP_FOCUS_CEILING ONLY for a MAINTENANCE
-// goal (an OLDER-but-MASA/forta trainee — p11 60M masa — keeps the growth 11: a mass program
-// is a growth block, not maintenance). Distinguished by ctx.lowCapWeeklyBand.maintenanceGoal.
-const LOWCAP_MAINT_FOCUS_CEILING = 7; // per-MUSCLE WEEKLY focus ceiling for a MAINTENANCE goal
+// even the focus must sit at a MAINTENANCE level, not the growth-focus 11. But the rubric
+// ALSO caps "focus muscle not emphasized / not the signature" — so the focus must still
+// LEAD. This LOWER ceiling (9 = the TOP of the maintenance band) keeps the focus the week's
+// SIGNATURE — clearly above the non-focus ~4-6 (which sit at the perMuscleCeiling 5 BOTTOM
+// of band) — while out of MAV: a 2-session focus → floor(9/2)=4/session → ~8/wk (leads, vs
+// non-focus ~4-6); a 3-session focus → floor(9/3)=3/session → ~9/wk; a 1-session focus →
+// ~9/wk. (The 9, not 8: at freq-3 a focus trained 3× needs floor(ceiling/3)≥3/day to clear
+// the non-focus MEV-floored 6 — floor(8/3)=2 would TIE; floor(9/3)=3 → 9 leads.) Used IN
+// PLACE OF LOWCAP_FOCUS_CEILING ONLY for a MAINTENANCE goal (an OLDER-but-MASA/forta trainee
+// — p11 60M masa — keeps the growth 11: a mass program is a growth block, not maintenance).
+// Distinguished by ctx.lowCapWeeklyBand.maintenanceGoal.
+const LOWCAP_MAINT_FOCUS_CEILING = 9; // per-MUSCLE WEEKLY focus ceiling for a MAINTENANCE goal
 const LOWCAP_FOCUS_PER_SESSION_MIN = 3; // per-SESSION focus floor (> non-focus MEV 2 → focus leads)
 // ACCESSORY RO groups whose STRUCTURAL weekly session count OVER-counts their realized
 // exposures: they are weight-map keys of several clusters (upper/pull/push count
@@ -3678,23 +3683,36 @@ export function buildSession(cluster, ctx) {
     const focusGroups = new Set(
       Array.isArray(lowCapBand.emphasizedGroups) ? lowCapBand.emphasizedGroups : [],
     );
-    // dp_maintenance_volume_band_v1 — a MAINTENANCE GOAL holds even the focus at the
-    // maintenance band ("MEV across the board, nothing pushed" — the judge's "maintenance
-    // pushed to near-hypertrophy MAV" cap on p9/p10 v-taper shoulders 12). The focus uses the
-    // LOWER maintenance focus ceiling (LOWCAP_MAINT_FOCUS_CEILING 7) as a HARD WEEKLY cap and
-    // its per-session floor drops to MEV (2, not 3) so a focus trained on many days does not
-    // multiply to MAV (4 sessions × the 3-floor = 12). The focus keeps its extra SLOT (the
-    // emphSet surfacing → still visible) but its weekly SETS sit at maintenance — it still
-    // edges the non-focus ~4-5 band without reaching growth volume. An OLDER-but-MASA/forta
-    // trainee (lowCapBand set by age>=60, maintenanceGoal false) keeps the growth focus
-    // ceiling 11 + the 3-floor (a mass program IS a growth block). Off → growth → unchanged.
+    // dp_maintenance_volume_band_v1 — a MAINTENANCE GOAL keeps the focus the week's RELATIVE
+    // SIGNATURE (it must still LEAD the non-focus groups — the judge ALSO caps "focus muscle
+    // not emphasized / not the signature") while holding the ABSOLUTE volume in maintenance
+    // territory (nothing pushed to growth-MAV — the judge's "maintenance pushed to near-
+    // hypertrophy MAV" cap on the pre-fix v-taper shoulders 12). BOTH must hold: a maintenance
+    // v-taper week = shoulders/back clearly > chest/legs (the taper signature preserved), but
+    // the focus at the TOP of the maintenance band (~8-9) and non-focus at the BOTTOM (~4-6),
+    // NOT everything flat at ~6. So the focus uses the LOWER maintenance focus ceiling
+    // (LOWCAP_MAINT_FOCUS_CEILING 9 — top of band, well below the growth-focus 11 / MAV) as a
+    // HARD WEEKLY cap with its growth-band per-session floor (LOWCAP_FOCUS_PER_SESSION_MIN 3 >
+    // the non-focus MEV 2); a high-frequency focus is collapsed to ONE concentrated exposure/
+    // day (the slot-drop below) whose lead slot is then dosed to the band cap (the LEAD-SLOT
+    // FLOOR below) — so it leads without multiplying to MAV. The earlier over-flatten — dropping
+    // the focus floor to MEV(2) AND slot-dropping to a SINGLE MEV slot — collapsed the focus to
+    // ~4-6, TYING the non-focus band → "focus not emphasized" (p9 v-taper_4d shoulders/back 4 vs
+    // quads 5 / biceps 6; v-taper_3d everything flat at 6). An OLDER-but-MASA/forta trainee
+    // (lowCapBand set by age>=60, maintenanceGoal false) keeps the growth focus ceiling 11 — a
+    // mass program IS a growth block. Off → growth → unchanged.
     const isMaintenanceBand = lowCapBand.maintenanceGoal === true;
     const focusCeiling = isMaintenanceBand
       ? LOWCAP_MAINT_FOCUS_CEILING
       : LOWCAP_FOCUS_CEILING;
-    const focusPerSessionFloor = isMaintenanceBand
-      ? LOWCAP_PER_SESSION_MEV
-      : LOWCAP_FOCUS_PER_SESSION_MIN;
+    // BOTH bands keep the focus per-session floor STRICTLY above the non-focus MEV (3 > 2) so
+    // the focus leads at every frequency. The bands differ only in the WEEKLY CEILING (growth
+    // 11 vs maintenance 9) and in how a high-frequency focus is bounded: GROWTH keeps every
+    // emphasis slot (multi-slot signature day = it WANTS the multiplied weekly volume);
+    // MAINTENANCE collapses to ONE concentrated exposure/day (the slot-drop above) then DOSES
+    // that lead slot to the band cap (the LEAD-SLOT FLOOR below), so the focus stays the RELATIVE
+    // leader (per-session 3-4 > the non-focus MEV 2) WITHOUT multiplying to growth-MAV.
+    const focusPerSessionFloor = LOWCAP_FOCUS_PER_SESSION_MIN;
     const dropped = new Set();
     // Group this session's exercises by their primary muscle.
     const byMuscle = /** @type {Record<string, number[]>} */ ({});
@@ -3767,26 +3785,45 @@ export function buildSession(cluster, ctx) {
       // least ONE slot for the muscle (never orphan) and never the lead/lowest-index
       // slot. A maintenance trainee needs one exposure of a muscle per session, not
       // several — this is the slot-side complement of the set trim.
-      // EXCEPTION — a FOCUS group's multi-slot day IS the week's signature (GROWTH band).
-      // Dropping its 2nd slot (when both are already at MEV and only ~1 over the divisor cap)
-      // collapses the focus to a single MEV exposure → it ties/loses the lead vs the non-focus
-      // MEV floor (the freq-3 regression: v-taper umeri 12→6). STEP 1 already bounded its per-
-      // exercise sets and the FOCUS per-session floor keeps a single surviving slot above the
-      // non-focus MEV; the focus keeps its slots so it LEADS. Non-focus groups still slot-drop
-      // (extra days SHOULD be lighter, not more volume). The residual freq 4-5 total overflow
-      // is the FREQUENCY/STRUCTURE reshape — out of scope.
-      // dp_maintenance_volume_band_v1 — a MAINTENANCE GOAL is the one case where even the FOCUS
-      // slot-drops: a multi-slot shoulder day (3 lateral/press slots × 2 days = 12) is exactly
-      // the "maintenance pushed to MAV" cap. For maintenance the focus does NOT need to strongly
-      // LEAD (maintenance = MEV across the board), so its per-session sets are clamped into band
-      // like any muscle — keeping >=1 slot (never orphan, the look choice stays visible), just
-      // not a stacked multi-slot growth day.
-      const dropFocus = isMaintenanceBand;
-      while ((!isFocusGroup || dropFocus) && totalOf() > maxGroupSets && idxs.length > 1) {
+      // EXCEPTION — a GROWTH FOCUS group's multi-slot day IS the week's signature. Dropping its
+      // 2nd slot (when both are already at MEV and only ~1 over the divisor cap) collapses the
+      // focus to a single MEV exposure → it ties/loses the lead vs the non-focus MEV floor (the
+      // freq-3 regression: v-taper umeri 12→6). STEP 1 already bounded its per-exercise sets and
+      // the FOCUS per-session floor keeps a single surviving slot above the non-focus MEV; the
+      // growth focus keeps its slots so it LEADS. Non-focus groups still slot-drop (extra days
+      // SHOULD be lighter, not more volume).
+      // dp_maintenance_volume_band_v1 — a MAINTENANCE GOAL slot-drops the focus too: keeping a
+      // high-frequency focus's every emphasis slot multiplied it to growth-MAV (the pre-fix
+      // shoulders 12 = the "maintenance pushed to MAV" cap). The focus collapses to ONE
+      // concentrated exposure per day — but the LEAD-SLOT FLOOR below then DOSES that surviving
+      // slot up to the per-session band cap (maxGroupSets, ≥ the focus per-session min 3 > the
+      // non-focus MEV 2), so the focus stays the RELATIVE SIGNATURE (shoulders/back clearly >
+      // chest/legs) at maintenance dose — NOT a stacked multi-slot growth day, NOT a flat MEV
+      // tie. (The earlier over-flatten dropped to a SINGLE MEV slot → focus 2/day = the
+      // non-focus band → "focus not emphasized" at freq-3: 6 vs 6.)
+      while ((!isFocusGroup || isMaintenanceBand) && totalOf() > maxGroupSets && idxs.length > 1) {
         // Drop the LAST (lowest-priority by session order) remaining slot of the group.
         const drop = idxs[idxs.length - 1];
         dropped.add(drop);
         idxs.pop();
+      }
+      // LEAD-SLOT FLOOR (maintenance focus only) — STEP 1 trims toward the per-exercise MEV (2)
+      // and STEP 2 collapses the focus to one slot, so a focus spread over MANY low-dose days
+      // (freq-3: shoulders on all 3 days) lands its single surviving slot at MEV (2) → focus
+      // 6/wk = the non-focus band. DOSE the surviving LEAD slot UP to the per-session band cap
+      // (maxGroupSets = floor(focusCeiling/sessions), ≥ the focus per-session min 3) so the
+      // focus carries a real emphasis dose every day it trains — weekly = maxGroupSets ×
+      // sessions ≈ the focus ceiling (top of the maintenance band, ABOVE the non-focus ~4-6,
+      // BELOW growth-MAV). RAISE-only, bounded by maxGroupSets, never invents a slot (only the
+      // surviving lead slot is dosed). Off for non-focus and for the growth band (those keep
+      // their multi-slot signature untouched).
+      if (isFocusGroup && isMaintenanceBand && idxs.length > 0) {
+        const lead = idxs[0];
+        const others = idxs.slice(1).reduce((n, i) => n + (exercises[i].sets || 0), 0);
+        const leadTarget = maxGroupSets - others; // dose so the GROUP total reaches the cap
+        if (leadTarget > (exercises[lead].sets || 0)) {
+          exercises[lead] = { ...exercises[lead], sets: leadTarget };
+        }
       }
     }
     if (dropped.size > 0) {
