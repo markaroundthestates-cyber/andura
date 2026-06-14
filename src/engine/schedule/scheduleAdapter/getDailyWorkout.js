@@ -683,7 +683,16 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       isEnabled('dp_lowcap_weekly_band_v1')
       && (userState?.user?.goal === 'mentenanta'
         || (typeof userState?.user?.age === 'number' && userState.user.age >= 60))
-        ? { perMuscleCeiling: 5, sessionsPerGroup: trueSessionsPerGroup }
+        ? {
+          perMuscleCeiling: 5,
+          sessionsPerGroup: trueSessionsPerGroup,
+          // FOCUS-AWARE two-tier ceiling (2026-06-14 refine): the focus / emphasized-region
+          // muscles (v-taper = BOTH umeri AND spate) get a HIGHER ceiling in buildSession so
+          // the focus stays EMPHASIZED and LEADS the maintenance week — the flat ceiling had
+          // clamped the focus to the non-focus band, firing the judge's "focus not
+          // emphasized" cap. Empty (balanced) → every muscle uses perMuscleCeiling.
+          emphasizedGroups: [...emphSet],
+        }
         : null,
     // W-Split GAP 4 — MAJOR-MUSCLE SLOT GUARANTEE (dp_split_rebalance_v1, default
     // OFF → false → buildSession never runs the guarantee, byte-identical). The

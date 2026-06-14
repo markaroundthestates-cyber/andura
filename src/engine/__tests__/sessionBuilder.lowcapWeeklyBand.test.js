@@ -130,6 +130,52 @@ describe('dp_lowcap_weekly_band_v1 — low-capacity per-muscle weekly-band clamp
     expect(presentGroups(on).has('spate')).toBe(true);
   });
 
+  it('TWO-TIER ceiling → a FOCUS muscle clears the non-focus maintenance band (stays emphasized, not clamped to ~5)', () => {
+    // Without emphasizedGroups the flat ceiling clamps spate to the maintenance band (~5/wk
+    // → ~2-3/session). With spate as the band's FOCUS group it gets the higher focus ceiling
+    // so it leads — the regression fix (p9 v-taper back was clamped to 4 = "not emphasized").
+    const flat = buildSession('pull', ctxBase({ lowCapWeeklyBand: band() }));
+    const focused = buildSession('pull', ctxBase({
+      lowCapWeeklyBand: band({ emphasizedGroups: ['spate'] }),
+      emphasizedGroups: ['spate'], focusId: 'back',
+    }));
+    // The focus exemption RAISES the focus muscle above the flat maintenance clamp.
+    expect(groupSets(focused, 'spate')).toBeGreaterThan(groupSets(flat, 'spate'));
+    // spate trained 2x, focus ceiling 11 → floor(11/2)=5/session → leads a non-focus group.
+    expect(groupSets(focused, 'spate'), 'focus not emphasized').toBeGreaterThanOrEqual(4);
+  });
+
+  it('TWO-TIER ceiling → a MULTI-muscle focus (v-taper: umeri + spate) emphasizes BOTH pillars', () => {
+    // v-taper emphasizes shoulders AND back — both must clear the non-focus band so the
+    // taper signature is intact (the regression: back was clamped to 4 while it is a pillar).
+    const on = buildSession('upper', ctxBase({
+      lowCapWeeklyBand: band({ emphasizedGroups: ['umeri', 'spate'] }),
+      emphasizedGroups: ['umeri', 'spate'], focusId: 'v-taper',
+    }));
+    const nonFocusMax = Math.max(
+      groupSets(on, 'piept'), groupSets(on, 'biceps'), groupSets(on, 'triceps'),
+    );
+    expect(groupSets(on, 'spate'), 'back pillar not emphasized').toBeGreaterThan(nonFocusMax);
+    expect(groupSets(on, 'umeri'), 'shoulder pillar not emphasized').toBeGreaterThan(nonFocusMax);
+  });
+
+  it('TWO-TIER ceiling → NON-focus muscles still drop to the maintenance band (total stays bounded)', () => {
+    // The focus exemption must NOT re-inflate non-focus muscles — they keep perMuscleCeiling.
+    const focused = buildSession('pull', ctxBase({
+      lowCapWeeklyBand: band({ emphasizedGroups: ['spate'] }),
+      emphasizedGroups: ['spate'], focusId: 'back',
+    }));
+    // biceps (non-focus over-counted accessory) stays at the maintenance dose, not raised.
+    const bi = groupSets(focused, 'biceps');
+    if (bi > 0) expect(bi, `non-focus biceps inflated: ${bi}`).toBeLessThanOrEqual(5);
+  });
+
+  it('TWO-TIER ceiling → empty emphasizedGroups is identical to the flat clamp (balanced)', () => {
+    const flat = buildSession('full', ctxBase({ lowCapWeeklyBand: band() }));
+    const empty = buildSession('full', ctxBase({ lowCapWeeklyBand: band({ emphasizedGroups: [] }) }));
+    expect(empty).toEqual(flat);
+  });
+
   it('a malformed band ({} / missing perMuscleCeiling) → no clamp (defensive no-op)', () => {
     const off = buildSession('pull', ctxBase());
     const bad = buildSession('pull', ctxBase({ lowCapWeeklyBand: {} }));

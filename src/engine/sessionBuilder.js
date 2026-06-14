@@ -211,6 +211,19 @@ const BEGINNER_EMPHASIS_ISOLATION_MAX_SETS = 2;
 // null → no-op → byte-identical.
 const LOWCAP_MAINT_FLOOR = 4;       // per-MUSCLE WEEKLY maintenance minimum (judge-accepted)
 const LOWCAP_PER_SESSION_MEV = 2;   // per-EXERCISE / per-session MEV (never trim a slot below this)
+// FOCUS exemption ceiling for the low-cap weekly-band clamp (dp_lowcap_weekly_band_v1
+// two-tier refine, 2026-06-14). A maintenance/older trainee WITH a focus still emphasizes
+// that focus — it must LEAD / be the week's signature — just at a modest overall volume.
+// The flat perMuscleCeiling (~5) clamped the FOCUS muscle to the NON-focus maintenance
+// band too, destroying the signature (the judge's "focus muscle not emphasized" cap: p9
+// v-taper back→4, p9 chest→clamped). So the FOCUS / emphasized-region muscles (the band's
+// emphasizedGroups — for v-taper BOTH umeri AND spate) get a HIGHER ceiling so the focus
+// stays EMPHASIZED and clearly LEADS, while still WELL below hypertrophy-MAV (maintenance-
+// with-a-focus, not a growth block). Non-focus muscles keep perMuscleCeiling → drop to
+// maintenance, bounding total. 11: a 2-session focus → floor(11/2)=5/session → ~10/wk
+// (leads, vs non-focus ~4-5), a 1-session focus → ~11/wk — both modest, total stays bounded.
+const LOWCAP_FOCUS_CEILING = 11;    // per-MUSCLE WEEKLY ceiling for FOCUS / emphasized groups
+const LOWCAP_FOCUS_PER_SESSION_MIN = 3; // per-SESSION focus floor (> non-focus MEV 2 → focus leads)
 // ACCESSORY RO groups whose STRUCTURAL weekly session count OVER-counts their realized
 // exposures: they are weight-map keys of several clusters (upper/pull/push count
 // biceps/triceps/shoulders) but only earn a real slot on ONE concentrated arm/shoulder
@@ -3215,6 +3228,15 @@ export function buildSession(cluster, ctx) {
   if (lowCapBand && typeof lowCapBand === 'object'
     && typeof lowCapBand.perMuscleCeiling === 'number') {
     const ceiling = lowCapBand.perMuscleCeiling;
+    // TWO-TIER ceiling (focus-aware refine): the FOCUS / emphasized-region muscles get the
+    // higher LOWCAP_FOCUS_CEILING so the focus stays EMPHASIZED and LEADS the week, while
+    // non-focus muscles keep perMuscleCeiling (drop to maintenance, bounding the total). The
+    // band's emphasizedGroups are the RO group ids the focus emphasizes (v-taper = BOTH umeri
+    // AND spate) — the same emphSet the getDailyWorkout seam threads. Empty / balanced →
+    // every group uses perMuscleCeiling → identical to the pre-refine flat clamp.
+    const focusGroups = new Set(
+      Array.isArray(lowCapBand.emphasizedGroups) ? lowCapBand.emphasizedGroups : [],
+    );
     const dropped = new Set();
     // Group this session's exercises by their primary muscle.
     const byMuscle = /** @type {Record<string, number[]>} */ ({});
@@ -3240,8 +3262,16 @@ export function buildSession(cluster, ctx) {
       // day) it is held at the maintenance dose instead. A PRIMARY MOVER's session count
       // is realized accurately (the splits slot it every counted day) → it uses the
       // divisor cap below and a 2x major correctly lands ~4-6 weekly (light per day).
+      // A FOCUS / emphasized-region muscle uses the HIGHER focus ceiling so it stays the
+      // week's signature (it must LEAD). A focus muscle is NOT treated as an over-counted
+      // accessory (umeri is an over-counted accessory key, but on a v-taper it is a FOCUS
+      // pillar that must be emphasized, not floored to maintenance) — it divides the focus
+      // ceiling like a primary mover so a 2-session focus lands ~10/wk (leads), not 4.
+      const isFocusGroup = focusGroups.has(g);
+      const groupCeiling = isFocusGroup ? LOWCAP_FOCUS_CEILING : ceiling;
       const protectAccessory =
-        LOWCAP_OVERCOUNTED_ACCESSORIES.has(g) && idxsAll.length >= 2;
+        !isFocusGroup
+        && LOWCAP_OVERCOUNTED_ACCESSORIES.has(g) && idxsAll.length >= 2;
       // A PRIMARY MOVER is realized accurately by the structural session count: its band
       // cap = floor(ceiling/sessions) (a 2-session major → ~2/session → ~4-6/wk; a 1-
       // session major → the ceiling), floored at the per-session MEV (2) so a single
@@ -3251,9 +3281,14 @@ export function buildSession(cluster, ctx) {
       // concentrated arm/shoulder day), so on that concentrated day it is held at exactly
       // the maintenance dose (its single realized exposure stays ≥ the floor, not crushed
       // to MEV by the inflated divisor) — cap == floor == maintFloor.
+      // A FOCUS group's per-session cap floors at LOWCAP_FOCUS_PER_SESSION_MIN (3) so it
+      // stays STRICTLY above the non-focus per-session MEV (2) at EVERY frequency — the
+      // signature leads even when the divisor (floor(ceiling/sessions)) would otherwise
+      // collapse it to MEV at freq >=4. A non-focus / primary mover floors at MEV.
+      const perSessionFloor = isFocusGroup ? LOWCAP_FOCUS_PER_SESSION_MIN : LOWCAP_PER_SESSION_MEV;
       const maxGroupSets = protectAccessory
         ? LOWCAP_MAINT_FLOOR
-        : Math.max(LOWCAP_PER_SESSION_MEV, Math.floor(ceiling / sessions));
+        : Math.max(perSessionFloor, Math.floor(groupCeiling / sessions));
       const idxs = idxsAll.slice();
       const totalOf = () => idxs.reduce((n, i) => n + (exercises[i].sets || 0), 0);
       // STEP 1 — trim the group's highest-set exercise down toward the per-exercise MEV
@@ -3274,7 +3309,15 @@ export function buildSession(cluster, ctx) {
       // least ONE slot for the muscle (never orphan) and never the lead/lowest-index
       // slot. A maintenance trainee needs one exposure of a muscle per session, not
       // several — this is the slot-side complement of the set trim.
-      while (totalOf() > maxGroupSets && idxs.length > 1) {
+      // EXCEPTION — a FOCUS group's multi-slot day IS the week's signature. Dropping its
+      // 2nd slot (when both are already at MEV and only ~1 over the divisor cap) collapses
+      // the focus to a single MEV exposure → it ties/loses the lead vs the non-focus MEV
+      // floor (the freq-3 regression: v-taper umeri 12→6). STEP 1 already bounded its per-
+      // exercise sets and the FOCUS per-session floor (LOWCAP_FOCUS_PER_SESSION_MIN) keeps a
+      // single surviving slot above the non-focus MEV; the focus keeps its slots so it LEADS.
+      // Non-focus groups still slot-drop (extra days SHOULD be lighter, not more volume). The
+      // residual freq 4-5 total overflow is the FREQUENCY/STRUCTURE reshape — out of scope.
+      while (!isFocusGroup && totalOf() > maxGroupSets && idxs.length > 1) {
         // Drop the LAST (lowest-priority by session order) remaining slot of the group.
         const drop = idxs[idxs.length - 1];
         dropped.add(drop);
