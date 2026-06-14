@@ -54,10 +54,16 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // 2026-06-11/12 for call-site wiring — see header).
 const DP_LINE_CEILING = 2941;
 
+const dpSrc = readFileSync(resolve(__dirname, '../dp.js'), 'utf8');
+// Under a Stryker mutation dry-run the on-disk source is INSTRUMENTED (stryMutAct_*
+// helpers + per-mutant branches), which inflates the line count ~2940 -> ~4300 and
+// would false-fail this source-hygiene moratorium. The ceiling is about the REAL
+// source, meaningless on instrumented code -> skip when instrumentation is present.
+const isInstrumented = /stryMutAct_|stryNamespace|stryCov_/.test(dpSrc);
+
 describe('dp.js growth moratorium', () => {
-  it('dp.js stays at or below the line ceiling (extract new logic to dp/<submodule>)', () => {
-    const src = readFileSync(resolve(__dirname, '../dp.js'), 'utf8');
-    const lineCount = src.split('\n').length;
+  (isInstrumented ? it.skip : it)('dp.js stays at or below the line ceiling (extract new logic to dp/<submodule>)', () => {
+    const lineCount = dpSrc.split('\n').length;
     expect(lineCount).toBeLessThanOrEqual(DP_LINE_CEILING);
   });
 });
