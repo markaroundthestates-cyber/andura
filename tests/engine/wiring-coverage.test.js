@@ -103,6 +103,14 @@ const SOURCE_FILES = collectSourceFiles(SRC_ROOT).filter(
   (f) => !f.endsWith(join('src', REGISTRY_REL)) // the definition site is not a caller
 );
 
+// Read every source file's text ONCE up front. The previous per-flag re-read made
+// liveGateSites O(flags × files) DISK reads; as the engine grew (+5.5k LOC, 2026-06)
+// the headline test (which scans all flags twice) crossed the 10s vitest timeout
+// under parallel disk/CPU contention and flaked red in husky/CI while passing
+// single-threaded. Caching the contents drops it to O(files) reads — identical
+// matching semantics, just no redundant I/O.
+const SOURCE_TEXTS = SOURCE_FILES.map((file) => [file, readFileSync(file, 'utf8')]);
+
 // A flag is WIRED iff some shipped (non-registry, non-test) source file gates on it
 // via a literal `isEnabled('<flag>')` / `isEnabled("<flag>")` call. Returns the
 // list of files that gate it (empty ⇒ DARK).
@@ -110,8 +118,7 @@ function liveGateSites(flagId) {
   const needleSingle = `isEnabled('${flagId}')`;
   const needleDouble = `isEnabled("${flagId}")`;
   const sites = [];
-  for (const file of SOURCE_FILES) {
-    const text = readFileSync(file, 'utf8');
+  for (const [file, text] of SOURCE_TEXTS) {
     if (text.includes(needleSingle) || text.includes(needleDouble)) sites.push(file);
   }
   return sites;
