@@ -228,30 +228,6 @@ export const FOCUS_RULES = Object.freeze({
       // byte-identical to the pre-flag rule). Reuses the same maxBackLatWork matcher the
       // lower-focus ledger cap uses.
       maxBackLatWork: 1,
-      // ARMS SIGNATURE (dp_arms_signature_v1, 2026-06-13b): chest is MAINTENANCE on an arms
-      // focus, but the arms split's PUSH day otherwise stacks 3 chest-press compounds
-      // (flat + incline + dip, each floored at 3 sets) + a fly → delivered chest ~14,
-      // TYING the focus triceps and DWARFING the biceps (the eval "focus muscle NOT
-      // emphasized" cap). The MEV BUDGET cap alone cannot reach this — delivery is driven
-      // by the per-session SLOT count × the per-exercise compound floor (3), not the budget.
-      // Cap the chest-press PATTERN to ONE per session (a single maintenance press, which
-      // ALSO satisfies the minChestPressSlots:1 requirement → chest is never orphaned), so
-      // the push/upper days carry ONE press + (optionally) the fly the chest_press matcher
-      // does not count — delivered chest drops to ~6-8 (MEV maintenance). The freed press
-      // slots are reallocated to the day's arm work (the LEAN rule: realloc, never add).
-      // Gated by ARMS_SIGNATURE_CAP_KEYS below so it applies ONLY under dp_arms_signature_v1
-      // (OFF → never applied → arms is byte-identical to the pre-flag rule).
-      maxChestPressPatterns: 1,
-      // ARMS SIGNATURE (dp_arms_signature_v1, 2026-06-13b): LEGS are MAINTENANCE on an arms
-      // specialization. A high-frequency arms week (the balanced split → 2 leg-template days
-      // at 5d) otherwise stacks a heavy quad squat + a hinge (+ a hip-thrust) per leg day,
-      // each floored at 3-4 sets, so delivered quads ~12 OUT-VOLUMES the taxonomy-capped
-      // biceps (~10, only 2 curl movementKeys). Cap the heavy lower COMPOUND to ONE per
-      // session — the single highest-value leg compound (the squat/leg-press anchor) is the
-      // maintenance dose; the 2nd/3rd heavy compound yields. Non-orphaning: the per-major
-      // MEV maintenance floor + the leg-curl/extension accessory keep hams/glutes ≥ MEV.
-      // Gated by ARMS_SIGNATURE_CAP_KEYS so OFF → byte-identical to the pre-flag rule.
-      maxHeavyLowerCompounds: 1,
     }),
     sessionRequirements: Object.freeze({
       requireOverheadTricepsIfArmsOrPush: true, // long-head stretch (triceps overhead ext)
@@ -599,7 +575,7 @@ const CONTRACT_CAP_KEYS = Object.freeze(new Set([
  *  cap). Applied only when ctx.armsSignatureOn — OFF → never applied → the arms rule is
  *  byte-identical to the pre-flag table. maxBackLatWork on arms is STATIC here (distinct
  *  from the lower-focus LEDGER override of the same key, which rides dp_week_ledger_v1). */
-const ARMS_SIGNATURE_CAP_KEYS = Object.freeze(new Set(['maxBackLatWork', 'maxChestPressPatterns', 'maxHeavyLowerCompounds']));
+const ARMS_SIGNATURE_CAP_KEYS = Object.freeze(new Set(['maxBackLatWork']));
 
 /**
  * F6 (Daniel coach audit 2026-06-10) — the Set of policy tags a focus CARES about,
@@ -701,20 +677,6 @@ export function deriveExerciseTags(name, meta, movementKey) {
   if (group === 'piept') {
     // Chest press = a press (flat/incline/decline) or a dip (Dip keys piept::dip).
     if (token === 'press' || token === 'incline-press' || token === 'decline-press' || token === 'dip') {
-      tags.add('chest_press');
-    }
-    // NAME fallback (2026-06-13b): a piept-primary BENCH press whose movementKey fell to a
-    // `name:` token (e.g. "Smith Machine Bench" → piept::name:smith machine bench,
-    // "Smith Incline Bench" → piept::name:smith incline bench) is STILL a chest press. The
-    // canonical-token test above missed it, so EVERY chest-press consumer (the arms-signature
-    // maxChestPressPatterns cap, the minChestPressSlots requirement, the armsChestFloor
-    // guarantee, the focus-signature gate) failed to recognize a bench as a press — the
-    // arms-signature chest trim could not bite (delivered chest stayed ~11-14 on the slot-
-    // floored push day). Name-match the bench family (mirrors the existing close_grip /
-    // straight-arm / overhead name fallbacks) so the taxonomy has ONE source of truth.
-    // group==='piept' already excludes the triceps-primary Close-Grip (kept off chest_press
-    // by design).
-    else if (/\bbench\b/.test(lower)) {
       tags.add('chest_press');
     }
     if (token === 'fly') tags.add('flye');
@@ -1000,13 +962,6 @@ function requirementsFor(rule, cluster, daysPerWeek, weekClusters, contractsOn, 
     if (isArms || isFull || isPull || isPush || cluster === 'upper') {
       if (isArms || isFull || isPull || cluster === 'upper') merge('direct_biceps', 2, 'high', true);
       if (isArms || isFull || isPush || cluster === 'upper') merge('direct_triceps', 2, 'high', true);
-      // PUSH day = a triceps day primarily, but on an ARMS specialization a single curl
-      // superset belongs here too (2026-06-13b): a PPL-style arms week trains biceps only on
-      // the pull/upper days (~2 exposures → delivered ~10), leaving it BELOW the maintenance
-      // legs (quads ~12) so biceps is not a clear top-2. ONE curl on the push day adds a 3rd
-      // weekly biceps exposure → delivered biceps clears the legs. Count 1 (a superset, not a
-      // biceps day) — relaxable + graceful no-op when no distinct curl movementKey remains.
-      if (isPush) merge('direct_biceps', 1, 'high', true);
     }
   }
 
@@ -1237,10 +1192,6 @@ export function applyFocusPolicy(chosen, ctx) {
   const scoreOf = typeof ctx?.scoreOf === 'function' ? ctx.scoreOf : () => 0;
   const prNames = ctx?.prNames instanceof Set ? ctx.prNames : new Set();
   const cluster = ctx?.cluster ?? '';
-  // ARMS SIGNATURE (dp_arms_signature_v1) — gates the arms-only back-lat maintenance cap +
-  // the raised direct-arm weekly minimums + the bench-press session-tag augmentation below.
-  // OFF → the arms rule is byte-identical to the pre-flag table. Other focuses ignore it.
-  const armsSignatureOn = ctx?.armsSignatureOn === true;
   // De-emphasized Big-11 RO groups (Daniel sweep review 2026-06-11). On a
   // slot-starved full-body FOCUS day a de-emphasized region (v-taper: legs) is
   // MAINTENANCE — its SURPLUS compound (a 2nd/3rd leg compound) may yield to a
@@ -1289,7 +1240,10 @@ export function applyFocusPolicy(chosen, ctx) {
   // requirements (direct arm-work injection) + caps (shrug/close-grip/arm-OHP) are
   // honored only when ctx.contractsOn. Off → byte-identical to the pre-arc resolver.
   const contractsOn = ctx?.contractsOn === true;
-  // (armsSignatureOn is resolved above — used by the session-tag augmentation + here.)
+  // ARMS SIGNATURE (dp_arms_signature_v1) — gates the arms-only back-lat maintenance cap +
+  // the raised direct-arm weekly minimums. OFF → the arms rule is byte-identical to the
+  // pre-flag table. Other focuses ignore it.
+  const armsSignatureOn = ctx?.armsSignatureOn === true;
   const reqs = requirementsFor(rule, cluster, ctx?.daysPerWeek, ctx?.weekClusters, contractsOn, armsSignatureOn).sort(
     (a, b) => (PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority]),
   );

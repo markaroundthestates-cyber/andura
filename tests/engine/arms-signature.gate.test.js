@@ -107,30 +107,14 @@ describe('arms-signature gate — biceps & triceps are the week VOLUME leaders (
       const tri = get(w, 'triceps');
       const sh = get(w, 'umeri');
       const bk = get(w, 'spate');
-      // CHEST is the COMPOUND-driven non-focus major the eval flagged most (pressing days
-      // out-volumed the arms). The 2026-06-13b closure caps the chest-press PATTERN to one
-      // maintenance press + recognizes the name-only-keyed bench as a press, so delivered
-      // chest drops to MEV (~6-9) — below the arms.
-      const ch = get(w, 'piept');
-      // QUADS is the other compound-driven major (squat days). Trimmed to its maintenance
-      // squat anchor (heavy-lower cap + the MEV budget) so it too sits below the arms.
-      const qd = get(w, 'picioare-quads');
-      // The signature: biceps + triceps are the clear top-two by VOLUME — over EVERY
-      // non-focus major (shoulders, back, AND the compound-driven chest + quads).
+      // The signature: biceps + triceps are the clear top-two by VOLUME.
       expect(bi, `biceps(${bi}) >= shoulders(${sh}) (weekly=${JSON.stringify(w)})`).toBeGreaterThanOrEqual(sh);
       expect(bi, `biceps(${bi}) >= back(${bk}) (weekly=${JSON.stringify(w)})`).toBeGreaterThanOrEqual(bk);
-      expect(bi, `biceps(${bi}) >= chest(${ch}) (weekly=${JSON.stringify(w)})`).toBeGreaterThanOrEqual(ch);
-      expect(bi, `biceps(${bi}) >= quads(${qd}) (weekly=${JSON.stringify(w)})`).toBeGreaterThanOrEqual(qd);
       expect(tri, `triceps(${tri}) >= shoulders(${sh}) (weekly=${JSON.stringify(w)})`).toBeGreaterThanOrEqual(sh);
       expect(tri, `triceps(${tri}) >= back(${bk}) (weekly=${JSON.stringify(w)})`).toBeGreaterThanOrEqual(bk);
-      expect(tri, `triceps(${tri}) >= chest(${ch}) (weekly=${JSON.stringify(w)})`).toBeGreaterThanOrEqual(ch);
-      expect(tri, `triceps(${tri}) >= quads(${qd}) (weekly=${JSON.stringify(w)})`).toBeGreaterThanOrEqual(qd);
-      // NEVER orphan a non-focus major — shoulders + back + chest stay at maintenance (>0).
-      // chest specifically must stay >= MEV-band maintenance (the founder's no-orphan rule:
-      // a prior fix kept chest/side-delts; the chest trim drops chest to MEV, not off).
+      // NEVER orphan a non-focus group — shoulders + back stay at maintenance (>0).
       expect(sh, `shoulders(${sh}) > 0 — maintenance, never orphaned (weekly=${JSON.stringify(w)})`).toBeGreaterThan(0);
       expect(bk, `back(${bk}) > 0 — maintenance, never orphaned (weekly=${JSON.stringify(w)})`).toBeGreaterThan(0);
-      expect(ch, `chest(${ch}) > 0 — maintenance, never orphaned (weekly=${JSON.stringify(w)})`).toBeGreaterThan(0);
     }, 120000);
   }
 

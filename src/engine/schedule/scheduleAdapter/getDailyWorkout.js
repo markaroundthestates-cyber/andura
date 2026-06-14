@@ -979,7 +979,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
         focusPreset,
         splitRebalance,
       }),
-      isEnabled('dp_focus_contracts_v1') ? focusContractDemotions(focusPreset, armsSignatureOn) : null,
+      isEnabled('dp_focus_contracts_v1') ? focusContractDemotions(focusPreset) : null,
     ),
     // R6d-b in-session lumbar pairing (same flag seam): a heavy deadlift-family
     // hinge and a back-extension accessory must not share ONE session (his
