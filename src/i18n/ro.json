@@ -1167,9 +1167,7 @@
   },
   "patterns": {
     "stagnation": "Stagnare la {exercise}",
-    "lowAdherence": "Aderenta scazuta saptamana asta",
-    "stagnationWeeks": "Stagnare {weeks} saptamani. Coach ajusteaza intensitatea.",
-    "lowAdherenceFull": "Adherenta scazuta saptamana asta. Reia ritmul cu o sesiune scurta."
+    "stagnationWeeks": "Stagnare {weeks} saptamani. Coach ajusteaza intensitatea."
   },
   "proactive": {
     "proteinDeficit": "Proteina medie ultimele {days} zile: {avg}g. Tinta: {target}g. Creste aportul.",

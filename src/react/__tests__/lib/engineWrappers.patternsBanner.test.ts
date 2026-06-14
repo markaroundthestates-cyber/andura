@@ -109,37 +109,46 @@ describe('engineWrappers — getPatternsBanner Option B composer', () => {
     expect(getPatternsBanner()).toEqual([]);
   });
 
-  it('LOW_ADHERENCE banner cand weekly workout adherence low (sessions stale)', () => {
-    // ≥3 sessions (gate) but none in the last 7 days → behind on a freq=4 plan.
+  // LOW_ADHERENCE banner removed 2026-06-13 (owner P0: paternalistic/nagging).
+  // The composer must NEVER emit a LOW_ADHERENCE banner now, even when the
+  // underlying weekly-adherence signal is low. The engine signal itself stays
+  // available via the pure isLowWeeklyWorkoutAdherence function (tested above).
+  it('LOW_ADHERENCE banner NEVER emitted even when weekly workout adherence is low (invisibility guarantee)', () => {
+    // ≥3 stale sessions on a freq=4 plan → signal is low, but NO banner.
     useWorkoutStore.setState({ sessionsHistory: oldSessions(3) });
+    // Confirm the engine signal IS low for this exact input (the invisibility
+    // is intentional suppression, not an absent signal).
+    expect(
+      isLowWeeklyWorkoutAdherence(oldSessions(3).map((s) => s.ts), 4, NOW),
+    ).toBe(true);
     const banners = getPatternsBanner();
-    expect(banners).toHaveLength(1);
-    expect(banners[0]!.id).toBe('LOW_ADHERENCE');
-    expect(banners[0]!.severity).toBe('info');
-    expect(banners[0]!.text).toMatch(/Adherenta scazuta/);
+    expect(banners.find((b) => b.id === 'LOW_ADHERENCE')).toBeUndefined();
+    // No stagnation mocked → composer returns no banners at all.
+    expect(banners).toEqual([]);
   });
 
-  it('LOW_ADHERENCE banner NU triggered cand user trained on plan this week', () => {
-    // default beforeEach = 3 recent sessions, target 4 → adherent.
-    expect(getPatternsBanner().find((b) => b.id === 'LOW_ADHERENCE')).toBeUndefined();
-  });
-
-  it('LOW_ADHERENCE NU triggered for a gym-only user with no frequency plan (fail-safe)', () => {
+  it('LOW_ADHERENCE never emitted across session-count / frequency variations', () => {
+    // Fresh, partial, and ≥3-stale users — all must never surface the banner.
+    for (const history of [[], oldSessions(2), oldSessions(3), oldSessions(5)]) {
+      useWorkoutStore.setState({ sessionsHistory: history });
+      expect(getPatternsBanner().find((b) => b.id === 'LOW_ADHERENCE')).toBeUndefined();
+    }
+    // Gym-only user with no frequency plan: still never.
     useWorkoutStore.setState({ sessionsHistory: oldSessions(3) });
     useOnboardingStore.setState((s) => ({ data: { ...s.data, frequency: null } }));
     expect(getPatternsBanner().find((b) => b.id === 'LOW_ADHERENCE')).toBeUndefined();
   });
 
-  it('both banners stacked cand both triggers active (STAGNATION first, LOW_ADHERENCE second)', () => {
+  it('only STAGNATION emits cand its trigger active (LOW_ADHERENCE gone)', () => {
     vi.mocked(detectGlobalStagnation).mockReturnValue({
       maxStagnationWeeks: 4,
       byExercise: { 'Squat': 4 },
     });
     useWorkoutStore.setState({ sessionsHistory: oldSessions(3) });
     const banners = getPatternsBanner();
-    expect(banners).toHaveLength(2);
+    expect(banners).toHaveLength(1);
     expect(banners[0]!.id).toBe('STAGNATION');
-    expect(banners[1]!.id).toBe('LOW_ADHERENCE');
+    expect(banners.find((b) => b.id === 'LOW_ADHERENCE')).toBeUndefined();
   });
 
   it('defensive: stagnationDetector throws → graceful empty banner skip', () => {
@@ -148,36 +157,8 @@ describe('engineWrappers — getPatternsBanner Option B composer', () => {
     });
     useWorkoutStore.setState({ sessionsHistory: oldSessions(3) });
     const banners = getPatternsBanner();
-    // STAGNATION skipped, LOW_ADHERENCE still emit
-    expect(banners.find((b) => b.id === 'STAGNATION')).toBeUndefined();
-    expect(banners.find((b) => b.id === 'LOW_ADHERENCE')).toBeDefined();
-  });
-
-  it('Gigel-friendly: LOW_ADHERENCE gated until ≥3 sessions logged', () => {
-    // Fresh user with 0-2 sessions: even when behind, no banner.
-    useWorkoutStore.setState({ sessionsHistory: [] });
-    expect(getPatternsBanner().find((b) => b.id === 'LOW_ADHERENCE')).toBeUndefined();
-
-    useWorkoutStore.setState({ sessionsHistory: oldSessions(2) });
-    expect(getPatternsBanner().find((b) => b.id === 'LOW_ADHERENCE')).toBeUndefined();
-
-    // User with ≥3 sessions (stale) → banner fires.
-    useWorkoutStore.setState({ sessionsHistory: oldSessions(3) });
-    expect(getPatternsBanner().find((b) => b.id === 'LOW_ADHERENCE')).toBeDefined();
-  });
-
-  it('defensive: adherence read throws → graceful empty banner skip', () => {
-    vi.mocked(detectGlobalStagnation).mockReturnValue({
-      maxStagnationWeeks: 3,
-      byExercise: { 'Bench Press': 3 },
-    });
-    useWorkoutStore.setState({ sessionsHistory: oldSessions(3) });
-    vi.spyOn(useOnboardingStore, 'getState').mockImplementation(() => {
-      throw new Error('onboarding boom');
-    });
-    const banners = getPatternsBanner();
-    expect(banners.find((b) => b.id === 'STAGNATION')).toBeDefined();
-    expect(banners.find((b) => b.id === 'LOW_ADHERENCE')).toBeUndefined();
+    // STAGNATION skipped → empty (LOW_ADHERENCE no longer emitted at all).
+    expect(banners).toEqual([]);
   });
 
   it('text wording NO_DIACRITICS_RULE compliance', () => {

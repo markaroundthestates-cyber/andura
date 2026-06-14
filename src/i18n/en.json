@@ -1167,9 +1167,7 @@
   },
   "patterns": {
     "stagnation": "Stagnation on {exercise}",
-    "lowAdherence": "Low adherence this week",
-    "stagnationWeeks": "Stagnation for {weeks} weeks. Coach is adjusting the intensity.",
-    "lowAdherenceFull": "Low adherence this week. Get back in rhythm with a short session."
+    "stagnationWeeks": "Stagnation for {weeks} weeks. Coach is adjusting the intensity."
   },
   "proactive": {
     "proteinDeficit": "Average protein over the last {days} days: {avg}g. Target: {target}g. Increase your intake.",

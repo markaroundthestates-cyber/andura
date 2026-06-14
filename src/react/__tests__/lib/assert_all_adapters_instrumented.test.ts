@@ -30,9 +30,8 @@ const ENGINE_WRAPPERS_PATH = resolve(__dirname, '../../lib/engineWrappers.ts');
 // Big 11 adapters per D063 LOCK V1 §2 — must each have `adapter: '<name>'`
 // tag inside a `captureException(...)` call within its function body.
 //
-// getPatternsBanner has 2 catch paths (STAGNATION + LOW_ADHERENCE) per
-// witness suite line 17 comment — counted as 1 adapter, 2 captureException
-// sites. Total expected sites = 11 + 1 = 12.
+// getPatternsBanner has 1 catch path (STAGNATION) — the LOW_ADHERENCE banner
+// + its catch were removed 2026-06-13 (owner P0: paternalistic/nagging).
 const REQUIRED_ADAPTERS = [
   'getReadiness',
   'getFatigue',
@@ -63,7 +62,7 @@ const REQUIRED_ADAPTERS = [
   'getGoalPivotProposal',
 ] as const;
 
-const EXPECTED_CAPTURE_EXCEPTION_SITES = 19; // 11 Big-11 + getPatternsBanner extra sub-path + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare) + getWorkoutForDay (schedule day-preview) + getCalibrationMaturity (calibration honesty) + getReturnAfterMissSignal (no-shame return) + getGoalPivotProposal (#15 auto-pivot) + writePivotPrompts (#15 prompt-bookkeeping write fallback)
+const EXPECTED_CAPTURE_EXCEPTION_SITES = 18; // 11 Big-11 (getPatternsBanner now single STAGNATION catch — LOW_ADHERENCE removed 2026-06-13) + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare) + getWorkoutForDay (schedule day-preview) + getCalibrationMaturity (calibration honesty) + getReturnAfterMissSignal (no-shame return) + getGoalPivotProposal (#15 auto-pivot) + writePivotPrompts (#15 prompt-bookkeeping write fallback)
 
 describe('Sentry adapter coverage anti-drift gate (D063 LOCK V1)', () => {
   const source = readFileSync(ENGINE_WRAPPERS_PATH, 'utf-8');
@@ -81,7 +80,7 @@ describe('Sentry adapter coverage anti-drift gate (D063 LOCK V1)', () => {
     expect(missing, `Adapters missing Sentry tag: ${missing.join(', ')}`).toEqual([]);
   });
 
-  it('captureException invocation count matches 12 expected sites (11 + getPatternsBanner extra)', () => {
+  it('captureException invocation count matches EXPECTED_CAPTURE_EXCEPTION_SITES', () => {
     // Match function-call form `captureException(` — excludes import lines,
     // type annotations, comments referencing the symbol.
     const matches = source.match(/captureException\s*\(/g) ?? [];

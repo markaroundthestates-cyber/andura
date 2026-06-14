@@ -585,8 +585,6 @@ export function getAdherenceOutput(): AdherenceOutput {
  */
 export const STAGNATION_WEEKS_THRESHOLD = 2;
 
-const LOW_ADHERENCE_MIN_SESSIONS_GATE = 3; // Gigel-friendly: fresh user (<3 sessions) sees no adherence-low banner
-
 /**
  * Weekly WORKOUT adherence (Daniel P0 2026-06-05). The banner previously read
  * getAdherenceScore() — a TODAY score that is 75% nutrition (kcal/protein/
@@ -650,38 +648,11 @@ export function getPatternsBanner(): PatternBanner[] {
     });
   }
 
-  // Pattern 2: LOW_ADHERENCE via adherence engine (gated on user with
-  // history — fresh T0 user with 0-2 sessions sees ZERO adherence pattern
-  // since "adherence" requires a baseline to fall below. Gigel-friendly:
-  // first-time user sees encouragement, not "you slacked").
-  try {
-    const sessionsHistory = useWorkoutStore.getState().sessionsHistory;
-    if (sessionsHistory.length >= LOW_ADHERENCE_MIN_SESSIONS_GATE) {
-      // Workout adherence, NOT the nutrition-weighted daily getAdherenceScore:
-      // a gym-only user who trains as planned must never read "low adherence".
-      const frequencyTarget = parseInt(
-        String(useOnboardingStore.getState().data.frequency ?? ''),
-        10,
-      );
-      const lowAdherence = isLowWeeklyWorkoutAdherence(
-        sessionsHistory.map((s) => s.ts),
-        frequencyTarget,
-        Date.now(),
-      );
-      if (lowAdherence) {
-        banners.push({
-          id: 'LOW_ADHERENCE',
-          severity: 'info',
-          text: __t('patterns.lowAdherenceFull'),
-        });
-      }
-    }
-  } catch (e) {
-    logger.warn('[engineWrappers] getPatternsBanner LOW_ADHERENCE failed:', e);
-    captureException(e, {
-      tags: { source: 'engine-adapter-fallback', adapter: 'getPatternsBanner', pattern: 'LOW_ADHERENCE' },
-    });
-  }
+  // Pattern 2 LOW_ADHERENCE removed 2026-06-13 (owner P0): the proactive
+  // "low adherence this week" banner was paternalistic/nagging and must NEVER
+  // be shown to the user. The engine SIGNAL stays available via the exported
+  // pure function `isLowWeeklyWorkoutAdherence` (engine-internal use only) —
+  // ZERO user-facing emission here.
 
   return banners;
 }

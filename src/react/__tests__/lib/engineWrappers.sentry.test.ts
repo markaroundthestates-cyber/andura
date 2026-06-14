@@ -13,8 +13,9 @@
 // engine throw → assert helper called with adapter + source tags.
 //
 // ENGINE-DEEPER-AUDIT chat 5 extension: 6 adapter paths missing witness
-// coverage. Extended la 11 adapter labels (12 witnesses — getPatternsBanner
-// has 2 catch paths STAGNATION + LOW_ADHERENCE).
+// coverage. Extended la 11 adapter labels. getPatternsBanner now has a single
+// STAGNATION catch path — its LOW_ADHERENCE banner + catch were removed
+// 2026-06-13 (owner P0: paternalistic/nagging).
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
@@ -239,15 +240,16 @@ describe('engineWrappers §48-H1 Sentry instrumentation', () => {
     );
   });
 
-  it('getPatternsBanner LOW_ADHERENCE catch: captureException called cu pattern tag', () => {
-    seedSessions(3); // satisface LOW_ADHERENCE_MIN_SESSIONS_GATE
-    // STAGNATION sub-block returns benign zero-stagnation → guard < threshold, no banner, no capture
+  it('getPatternsBanner LOW_ADHERENCE removed: onboarding read never throws into a banner catch', () => {
+    // LOW_ADHERENCE banner removed 2026-06-13 (owner P0). getPatternsBanner no
+    // longer reads onboarding frequency, so an onboarding-read throw must NOT
+    // produce any LOW_ADHERENCE capture. With benign zero-stagnation the
+    // composer returns [] and Sentry is never invoked.
+    seedSessions(3);
     vi.mocked(detectGlobalStagnation).mockReturnValue({
       maxStagnationWeeks: 0,
       byExercise: {},
     });
-    // LOW_ADHERENCE now reads the onboarding frequency target (workout-based
-    // adherence, post 2026-06-05) — force that read to throw to exercise the catch.
     const onboardingSpy = vi
       .spyOn(useOnboardingStore, 'getState')
       .mockImplementation(() => {
@@ -255,17 +257,7 @@ describe('engineWrappers §48-H1 Sentry instrumentation', () => {
       });
     expect(getPatternsBanner()).toEqual([]);
     onboardingSpy.mockRestore();
-    expect(captureException).toHaveBeenCalledTimes(1);
-    expect(captureException).toHaveBeenCalledWith(
-      expect.any(Error),
-      expect.objectContaining({
-        tags: {
-          source: 'engine-adapter-fallback',
-          adapter: 'getPatternsBanner',
-          pattern: 'LOW_ADHERENCE',
-        },
-      }),
-    );
+    expect(captureException).not.toHaveBeenCalled();
   });
 
   it('getCoachRestReason catch: captureException called cu adapter tag', () => {
