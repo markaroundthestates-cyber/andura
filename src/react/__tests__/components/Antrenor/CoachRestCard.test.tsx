@@ -6,8 +6,8 @@
 // fake readiness numeric ('32/100'). Coach truth invariant — engine-
 // driven specific claims OR generic non-claim fallback only.
 
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { CoachRestCard } from '../../../components/Antrenor/CoachRestCard';
 import type { CoachRestReason } from '../../../lib/engineWrappers';
 
@@ -104,5 +104,33 @@ describe('CoachRestCard — Bugatti truth fallback', () => {
       />,
     );
     expect(screen.getByTestId('coach-rest-duration')).toHaveTextContent('15');
+  });
+});
+
+describe('CoachRestCard — CTA wiring (override routes to calendar, 2026-06-13)', () => {
+  it('light-session CTA fires onLightSession (active recovery start preserved)', () => {
+    const onLightSession = vi.fn();
+    const onOverride = vi.fn();
+    render(
+      <CoachRestCard onLightSession={onLightSession} onOverride={onOverride} restReason={null} />,
+    );
+    // EN default → "Light mobility session".
+    fireEvent.click(screen.getByRole('button', { name: /Light mobility session/i }));
+    expect(onLightSession).toHaveBeenCalledTimes(1);
+    expect(onOverride).not.toHaveBeenCalled();
+  });
+
+  it('override CTA fires onOverride only (NOT a session start) + EN copy routes to calendar', () => {
+    const onLightSession = vi.fn();
+    const onOverride = vi.fn();
+    render(
+      <CoachRestCard onLightSession={onLightSession} onOverride={onOverride} restReason={null} />,
+    );
+    // EN default copy reflects calendar-routing intent, not "I still want to train".
+    const overrideBtn = screen.getByRole('button', { name: /pick the day in the calendar/i });
+    expect(overrideBtn).toBeInTheDocument();
+    fireEvent.click(overrideBtn);
+    expect(onOverride).toHaveBeenCalledTimes(1);
+    expect(onLightSession).not.toHaveBeenCalled();
   });
 });

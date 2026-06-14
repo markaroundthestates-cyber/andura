@@ -560,6 +560,52 @@ describe('Antrenor home — navigation', () => {
   });
 });
 
+describe('Antrenor home — rest-day override routes to calendar (2026-06-13)', () => {
+  // The default getCoachToday mock returns isRestDay:true → CoachRestCard renders.
+  // The override link no longer force-starts a session; it enables the weekly
+  // calendar edit mode + scrolls the calendar into view so the user SELECTS today.
+  beforeEach(() => {
+    resetStores();
+    vi.mocked(getReadiness).mockReturnValue(null);
+    vi.mocked(getFatigue).mockReturnValue(null);
+    // scrollIntoView is undefined in jsdom — stub so the handler runs cleanly.
+    Element.prototype.scrollIntoView = vi.fn();
+  });
+
+  it('light-session CTA still routes to a session start (active recovery preserved)', async () => {
+    seedEnergyCheckToday();
+    renderAntrenor();
+    // Wait for the rest card to surface (async aggregate).
+    const lightBtn = await screen.findByRole('button', { name: /Light mobility session/i });
+    fireEvent.click(lightBtn);
+    // Energy-check done → start goes to the time-budget step.
+    expect(screen.getByText('TimeBudgetStub')).toBeInTheDocument();
+  });
+
+  it('override CTA enables schedule edit mode + does NOT navigate to a session start', async () => {
+    seedEnergyCheckToday();
+    renderAntrenor();
+    const overrideBtn = await screen.findByRole('button', { name: /pick the day in the calendar/i });
+    expect(useScheduleStore.getState().editMode).toBe(false);
+    fireEvent.click(overrideBtn);
+    // Edit mode now ON (calendar becomes tappable so the user selects today).
+    expect(useScheduleStore.getState().editMode).toBe(true);
+    // No force-start: neither energy-check nor time-budget route was entered.
+    expect(screen.queryByText('EnergyCheckStub')).not.toBeInTheDocument();
+    expect(screen.queryByText('TimeBudgetStub')).not.toBeInTheDocument();
+  });
+
+  it('override CTA scrolls the calendar anchor into view', async () => {
+    const scrollSpy = vi.fn();
+    Element.prototype.scrollIntoView = scrollSpy;
+    seedEnergyCheckToday();
+    renderAntrenor();
+    const overrideBtn = await screen.findByRole('button', { name: /pick the day in the calendar/i });
+    fireEvent.click(overrideBtn);
+    expect(scrollSpy).toHaveBeenCalled();
+  });
+});
+
 describe('Antrenor home — HIGH-CODE-07 defense-in-depth promise catch', () => {
   // HIGH-CODE-07 (code-review v2 chat 5 post-Wave 10): getCoachToday().then
   // chain lacked .catch — engine throw past wrapper would silently swallow

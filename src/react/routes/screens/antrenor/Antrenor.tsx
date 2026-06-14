@@ -30,7 +30,7 @@
 //   - mockup andura-clasic.html lines 735-825
 
 import type { JSX } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import { useCoachStore } from '../../../stores/coachStore';
@@ -134,6 +134,12 @@ export function Antrenor(): JSX.Element {
   // the re-fetch fires after the commit, reading the fresh override.
   const scheduleDays = useScheduleStore((s) => s.days);
   const scheduleEditMode = useScheduleStore((s) => s.editMode);
+  const setScheduleEditMode = useScheduleStore((s) => s.setEditMode);
+  // Calendar container ref — the rest-day "train today" override scrolls the
+  // weekly calendar into view (see handleOverrideToCalendar) so the user can tap
+  // today to activate it. The reactive schedule flow then swaps CoachRestCard →
+  // CoachTodayCard (the real full-session Start).
+  const calendarRef = useRef<HTMLDivElement>(null);
 
   // Phase 6 task_06: single source coach aggregate consume async pipeline.
   // Per DECISIONS.md §D027 Option C cascade + Option B composer pure-function
@@ -199,6 +205,19 @@ export function Antrenor(): JSX.Element {
 
   const handleReactivateStart = (): void => {
     navigate(gotoPath(energyCheckDoneToday ? 'time-budget' : 'energy-check'));
+  };
+
+  // Rest-day full-session override (Daniel UX 2026-06-13) — the calendar is the
+  // single control for "am I training today". Instead of force-starting a full
+  // session, the override enables the weekly-calendar edit mode and scrolls it
+  // into view so the user SELECTS today as a training day. Tapping today
+  // (Calendar7Day → toggleDay) flips the schedule, which reactively swaps
+  // CoachRestCard → CoachTodayCard with the real Start CTA. We do NOT auto-toggle
+  // today — the user explicitly picks the day. The light-session path stays as-is.
+  const handleOverrideToCalendar = (): void => {
+    setScheduleEditMode(true);
+    // scrollIntoView is undefined in jsdom — guard so the handler stays testable.
+    calendarRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
   };
 
   // Re-run the check on demand — tapping the readiness hero (orb/verdict)
@@ -380,12 +399,14 @@ export function Antrenor(): JSX.Element {
       ) : (
         <CoachRestCard
           onLightSession={handleStart}
-          onOverride={handleStart}
+          onOverride={handleOverrideToCalendar}
           restReason={coach?.restReason ?? null}
         />
       )}
 
-      <Calendar7Day />
+      <div ref={calendarRef} data-testid="antrenor-calendar-anchor">
+        <Calendar7Day />
+      </div>
 
       {/* 'both' mode (Daniel spec 2026-05-30) — gym PLUS the ability to log an
           aerobic class. The card opens the same logger as the aerobic-only
