@@ -38,9 +38,19 @@ export default {
   disableTypeChecks: false,
 
   // Headroom over the 5-min default so a slow CI runner can finish the dry-run
-  // even as the engine test count grows. Job timeout is 60 min (track-7-nightly).
+  // even as the engine test count grows. Job timeout is 330 min (track-7-nightly).
   dryRunTimeoutMinutes: 20,
   timeoutMS: 15000,
+
+  // INCREMENTAL (2026-06-14): the engine grew +5.5k LOC in one night (gym-log arc
+  // + focus-volume contracts + inferFrequency + weekLedger) → a full mutate pass
+  // overran the 180-min job and got timeout-cancelled. Incremental re-uses prior
+  // mutant results for files+covering-tests that didn't change, so steady-state
+  // nights only re-test what moved. The CI workflow caches this file across runs
+  // (actions/cache). A cold cache (first run / post-big-refactor) is still a full
+  // pass — that's what the 330-min job headroom is for.
+  incremental: true,
+  incrementalFile: 'reports/stryker-incremental.json',
 
   // GitHub-hosted runner = 2 vCPU; keep the runners modest to avoid IPC thrash.
   concurrency: 2,

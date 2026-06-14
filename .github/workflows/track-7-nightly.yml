@@ -32,7 +32,10 @@ jobs:
     # lets Stryker actually reach the ~61k engine mutants now — give the full
     # mutate pass headroom on the 2-vCPU runner. Nightly/off-hours, well under
     # the 360-min GH ceiling. A real crash still goes red (no continue-on-error).
-    timeout-minutes: 180
+    # 180→330 (2026-06-14): +5.5k engine LOC in one night pushed a COLD full pass
+    # past 180 min (timeout-cancelled). 330 gives the cold pass headroom under the
+    # 360-min ceiling; warm passes are fast via the cached incremental file below.
+    timeout-minutes: 330
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -40,6 +43,18 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --ignore-scripts
+      # Stryker incremental cache (2026-06-14): persist the mutant-result file so
+      # steady-state nights only re-test files (and covering tests) that changed,
+      # instead of a full ~5h cold pass every time. Saved per-sha, restored from
+      # the most recent prior run. A cold cache just means a full pass (covered by
+      # the 330-min job timeout above).
+      - name: Restore Stryker incremental cache
+        uses: actions/cache@v4
+        with:
+          path: reports/stryker-incremental.json
+          key: stryker-incremental-${{ github.sha }}
+          restore-keys: |
+            stryker-incremental-
       # NO continue-on-error (false-green audit 2026-06-12): a Stryker CRASH
       # (config/parse/infra — e.g. the .d.ts BABEL_PARSE_ERROR that ran silent-
       # green for weeks) must paint the job RED. The mutation SCORE itself stays
