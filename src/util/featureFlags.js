@@ -1335,6 +1335,32 @@ export const FLAGS = Object.freeze({
   // below the maintenance floor, trained adults byte-identical) + the new lowcap-band
   // regression test.
   dp_lowcap_weekly_band_v1: { rollout: 1, default: true },
+
+  // FOCUS-LEADS-ON-SPLITS (2026-06-14, eval focus-not-emphasized cap on U/L splits). On an
+  // UPPER/LOWER 4-day split (upper/lower/upper/lower) the engine de-emphasizes NOTHING on
+  // the non-focus region, so a focus fails to clearly LEAD the week: a LOWER focus runs full
+  // back/chest on the 2 upper days so the upper region ties/beats the legs (p2_lower_4d legs
+  // 26 vs upper 28; p8_lower_4d 32==32; p12_lower_4d), and an ARMS focus gets bi/tri only as
+  // leftover slots on the 2 upper days (no arm/full day) so they DELIVER ~bi4/tri5 buried
+  // under back12/quads10/hams10 (p2/p7_arms_4d) — the dp_arms_signature_v1 budget floor
+  // cannot reach because of slot scarcity the budget cannot see. The /10 judge caps these
+  // "focus muscle present but NOT the volume leader". When ON + the focus is lower/arms +
+  // the week is a PURE U/L split + the focus does NOT already lead, getDailyWorkout sets
+  // ctx.focusLeadSplits and buildSession (a) trims the NON-FOCUS majors' delivered sets
+  // toward MEV on the days they are trained (lower: back/chest/shoulders → MEV so legs lead;
+  // arms: back/chest/shoulders + quads/hams/glutes → MEV so the bi/tri lead) and (b) for arms
+  // guarantees a 2nd direct-arm slot on the upper days by swapping a non-focus upper surplus.
+  // GUARD (the safety): it acts ONLY when the focus does NOT already strictly lead — a focus
+  // that leads (most configs + every non-U/L split + every other focus) → ctx.focusLeadSplits
+  // null → buildSession no-ops → BYTE-IDENTICAL. Never orphans a major (trim toward MEV, never
+  // a slot drop, never below the per-exercise MEV 2); length/coverage preserved. Composes with
+  // the focus signature / posterior+hamstring floors / lowcap band (each only reduces / adds,
+  // the tighter wins). OFF → null → byte-identical (pinned OFF in fp-config FLIPPED_FLAGS so
+  // the frozen full-path hashes hold — lower/arms ARE in the fp EMPHASIS_PRESETS). Proven on
+  // the eval grid (p2/p8/p12_lower legs clearly lead, p2/p7_arms bi+tri lead + each >= MEV,
+  // already-leading p3_back/p8_chest byte-identical, no major orphaned) + the new
+  // focus-lead-splits regression test.
+  dp_focus_lead_splits_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

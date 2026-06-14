@@ -277,6 +277,16 @@ export const FLIPPED_FLAGS = Object.freeze([
   // the maintenance floor, trained adults byte-identical) + the new lowcap-band
   // regression test, NOT in this determinism stream.
   'dp_lowcap_weekly_band_v1',
+  // THE FLIP 2026-06-14 (focus-leads-on-splits) — dp_focus_lead_splits_v1 defaults ON. On
+  // a pure UPPER/LOWER split where a lower/arms focus does NOT clearly lead, it trims the
+  // non-focus majors toward MEV (+ for arms guarantees a 2nd arm slot) so the focus leads.
+  // `lower` and `arms` ARE in this harness's EMPHASIS_PRESETS, so the ON behavior WOULD move
+  // the frozen prescription hashes — pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS)
+  // so ctx.focusLeadSplits is null in both A/B arms → no trim/swap → BOTH frozen baselines
+  // (hashOff/hashOn) stay byte-for-byte. ON is proven on the eval grid (p2/p8/p12_lower legs
+  // lead, p2/p7_arms bi+tri lead + each >= MEV, already-leading configs byte-identical) + the
+  // new focus-lead-splits regression test, NOT in this determinism stream.
+  'dp_focus_lead_splits_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

@@ -1621,6 +1621,7 @@ export function movementKey(name, meta, deepFamily = false) {
  *   intraWeekDayOrdinal?: number|null,
  *   progressionBonus?: boolean,
  *   progressingNames?: Set<string>|null,
+ *   focusLeadSplits?: {focus: string, nonFocusMevCeilings: Record<string, number>, sessionsPerGroup?: Record<string, number>, armSlotGuarantee?: boolean}|null,
  * } | null | undefined} ctx
  * @returns {{ type: string, exercises: Array<{name: string, sets: number}> }}
  *
@@ -3105,6 +3106,73 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  // #FOCUS-LEAD ARMS SLOT GUARANTEE (ctx.focusLeadSplits, dp_focus_lead_splits_v1).
+  // On an ARMS-focus UPPER/LOWER split the arms get NO day of their own — they ride one
+  // leftover slot per upper day, so direct biceps/triceps DELIVER ~bi4/tri5 while back/
+  // legs lead (p2/p7_arms_4d). The dp_arms_signature_v1 budget floor cannot help: the
+  // slot scarcity caps delivery below the budget. Here, on an upper day, GUARANTEE that
+  // each direct-arm group (biceps/triceps) reaches a SECOND slot by REPLACING an over-
+  // slotted NON-FOCUS UPPER surplus (back/chest — group keeps >=1 slot, count unchanged
+  // so the time-trim is undisturbed); never orphan a major, never the focus's own slot.
+  // The non-focus set-trim below then drops the surplus majors toward MEV so bi+tri lead.
+  // Only fires on an `upper` cluster (the lower day carries no arms). OFF / non-arms /
+  // non-upper → never runs → byte-identical.
+  if (
+    ctx?.focusLeadSplits
+    && ctx.focusLeadSplits.focus === 'arms'
+    && ctx.focusLeadSplits.armSlotGuarantee === true
+    && cluster === 'upper'
+  ) {
+    const primaryOfName = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+    for (const armGroup of ['biceps', 'triceps']) {
+      // Per-group slot census (recomputed each pass — a prior swap changes the counts).
+      const slotCount = {};
+      for (const e of chosen) {
+        const g = primaryOfName(e.name);
+        if (g) slotCount[g] = (slotCount[g] || 0) + 1;
+      }
+      if ((slotCount[armGroup] || 0) >= 2) continue; // already has a 2nd arm slot
+      // A 2nd direct-arm exercise from the group's pool, not already taken.
+      const inject = (pools.find((p) => p.group === armGroup)?.pool ?? []).find(
+        (e) => !isTaken(e),
+      );
+      if (!inject) continue; // no distinct 2nd arm movement available — accept the gap
+      // Replace an OVER-SLOTTED NON-FOCUS UPPER lift whose group keeps >=1 slot (never
+      // orphan). UPPER non-arm majors only (back/chest/shoulders) — never a leg (the lower
+      // day owns those) and never an arm group. PREFER an ISOLATION (pass 1, lowest-priority
+      // first); fall back to a non-focus COMPOUND surplus (pass 2 — on a pull-heavy upper day
+      // both back slots can be vertical-pull/row COMPOUNDS, so a 2nd back compound is the only
+      // surplus; trading it for the missing focus arm is the elite-coach call — back keeps its
+      // other slot). Never the group's LAST slot (no orphan).
+      const NONFOCUS_UPPER = new Set(['spate', 'piept', 'umeri']);
+      let removeIdx = -1;
+      for (const isoOnly of [true, false]) {
+        for (let i = chosen.length - 1; i >= 0; i--) {
+          const isCompound = (getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER;
+          if (isoOnly && isCompound) continue;          // pass 1: spare compounds
+          const g = primaryOfName(chosen[i].name);
+          if (!g || !NONFOCUS_UPPER.has(g)) continue;
+          if ((slotCount[g] || 0) <= 1) continue;       // would orphan g
+          removeIdx = i;
+          break;
+        }
+        if (removeIdx >= 0) break;
+      }
+      if (removeIdx >= 0) {
+        const removed = chosen[removeIdx];
+        chosenNames.delete(removed.name);
+        chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
+        const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+        if (rg && groupCount[rg]) groupCount[rg] -= 1;
+        chosen.splice(removeIdx, 1, { name: inject.name, sets: DEFAULT_SETS });
+        chosenNames.add(inject.name);
+        chosenMovements.add(dedupKey(inject.name, inject.meta));
+        groupCount[armGroup] = (groupCount[armGroup] || 0) + 1;
+      }
+      // else: no over-slotted non-focus upper surplus → accept the gap (never orphan).
+    }
+  }
+
   const metaOf = (name) => getExerciseMetadata(name);
   const groupOf = (name) => metaOf(name).muscle_target_primary;
 
@@ -3450,6 +3518,71 @@ export function buildSession(cluster, ctx) {
     }
     if (dropped.size > 0) {
       exercises = exercises.filter((_, i) => !dropped.has(i));
+    }
+  }
+
+  // #FOCUS-LEAD NON-FOCUS REGION TRIM (ctx.focusLeadSplits, dp_focus_lead_splits_v1).
+  // On a focus-emphasis UPPER/LOWER split where the focus region does NOT clearly lead,
+  // bound EACH non-focus MAJOR group's WEEKLY delivered volume toward its MEV so the focus
+  // region strictly leads (lower focus: upper back/chest/shoulders → MEV so legs lead;
+  // arms focus: back/chest/shoulders/quads/hams/glutes → MEV so the floored bi/tri lead).
+  // Mirrors the lowcap weekly-band technique: bound each group's THIS-SESSION delivered
+  // sets to floor(MEV / sessions/week) (its weekly sum lands ~MEV), trimming the group's
+  // HIGHEST-set exercise first toward the per-exercise MEV (2). SLOT-PRESERVING: never
+  // drops a slot (no orphan, length/coverage preserved) — only trims sets, never below the
+  // per-exercise MEV (2). The maintenance MEV is the supreme floor (de-emphasis means
+  // MAINTENANCE, never zero). Composes with lowcap/senior/time caps (each only reduces, the
+  // tighter wins). Null (focus leads / not a U/L split / flag OFF) → no-op → byte-identical.
+  const focusLead = ctx?.focusLeadSplits;
+  if (focusLead && typeof focusLead === 'object'
+    && focusLead.nonFocusMevCeilings && typeof focusLead.nonFocusMevCeilings === 'object') {
+    const FL_PER_EX_MEV = 2; // per-exercise MEV — never trim a slot below this
+    const ceilings = focusLead.nonFocusMevCeilings;
+    const flSessions = focusLead.sessionsPerGroup;
+    // ARMS — floor each direct-arm exercise's dose on the upper days so the WEEKLY
+    // bi/tri delivery reaches at least its MEV (the slot guarantee adds the slots; this
+    // floors the per-slot SETS so 1-2 slots × the two upper days clear MEV). Bounded by
+    // the dp_arms_signature_v1 budget floor (bi 22 / tri 18 — well above this), so it
+    // surfaces intended volume, never invents it. Runs BEFORE the non-focus trim so the
+    // arms rise while the non-focus majors fall. Only fires on the arms focus + an upper
+    // day (cluster trains the arms). RAISE-only (never lowers a higher dose).
+    if (focusLead.focus === 'arms' && cluster === 'upper') {
+      const FL_ARM_FLOOR = 3; // per-exercise floor so 2 upper days × 1-2 slots ≥ MEV
+      exercises = exercises.map((e) => {
+        const g = getExerciseMetadata(e.name)?.muscle_target_primary;
+        return (g === 'biceps' || g === 'triceps') && e.sets < FL_ARM_FLOOR
+          ? { ...e, sets: FL_ARM_FLOOR }
+          : e;
+      });
+    }
+    // Group this session's exercises by primary muscle.
+    const byMuscle = /** @type {Record<string, number[]>} */ ({});
+    exercises.forEach((e, i) => {
+      const g = getExerciseMetadata(e.name)?.muscle_target_primary;
+      if (!g) return;
+      (byMuscle[g] = byMuscle[g] || []).push(i);
+    });
+    for (const [g, idxs] of Object.entries(byMuscle)) {
+      const mev = ceilings[g];
+      if (typeof mev !== 'number' || mev <= 0) continue; // only the listed non-focus majors
+      const sessions = Math.max(
+        1,
+        Number(flSessions?.[g] ?? ctx?.weeklySessionsPerGroup?.[g]) || 1,
+      );
+      // The per-session delivered cap whose weekly sum lands ~MEV, floored at the
+      // per-exercise MEV so a single exposure stays trained (never zeroed).
+      const maxGroupSets = Math.max(FL_PER_EX_MEV, Math.floor(mev / sessions));
+      const totalOf = () => idxs.reduce((n, i) => n + (exercises[i].sets || 0), 0);
+      // Trim the group's highest-set exercise first toward the per-exercise MEV.
+      while (totalOf() > maxGroupSets) {
+        let pick = -1;
+        for (const i of idxs) {
+          if ((exercises[i].sets || 0) <= FL_PER_EX_MEV) continue;
+          if (pick < 0 || exercises[i].sets > exercises[pick].sets) pick = i;
+        }
+        if (pick < 0) break; // every slot at MEV — slot-preserving, no drop
+        exercises[pick] = { ...exercises[pick], sets: exercises[pick].sets - 1 };
+      }
     }
   }
 
