@@ -367,7 +367,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
       </div>
       <div
         className="relative font-serif italic mt-2 leading-relaxed text-sm"
-        style={{ color: 'var(--volt)' }}
+        style={{ color: 'var(--coach-lora)' }}
         data-testid="coach-today-quote"
       >
         &ldquo;{coachQuote}&rdquo;
@@ -377,7 +377,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
           data-testid="coach-today-lagging"
           className="relative font-serif italic mt-2 leading-relaxed text-xs pt-2 border-t border-dashed"
           style={{
-            color: 'var(--ember)',
+            color: 'var(--coach-lagging)',
             borderColor: 'color-mix(in oklab, var(--ember) 35%, transparent)',
           }}
         >

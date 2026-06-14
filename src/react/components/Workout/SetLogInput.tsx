@@ -255,7 +255,7 @@ export function SetLogInput({
       <div className="pulse-card p-[18px] mb-6" data-testid={isTinta ? 'setlog-tinta' : 'setlog-metric'}>
         {isTinta && (
           <>
-            <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-center" style={{ color: 'var(--aqua)' }}>
+            <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-center" style={{ color: 'var(--aqua-ink)' }}>
               {t('setLog.targetLabel')}
             </p>
             <div className="flex items-baseline justify-center gap-2 mt-2 mb-4" data-testid="setlog-metric-target">

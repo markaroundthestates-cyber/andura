@@ -33,18 +33,21 @@ interface SetRatingButtonsProps {
 
 interface RatingMeta {
   rating: SetRating;
-  accent: string; // CSS var token — volt (easy) / aqua (right) / ember (hard)
+  accent: string; // CSS var token — volt (easy) / aqua (right) / ember (hard) — dot + glow (decorative)
+  textAccent: string; // AA-safe ink token for the LABEL text (bright accents <2:1 on light --paper)
   labelKey: string;
 }
 
 // Labels resolved at render time via t() so the locale flip surfaces EN
 // copy under default + RO opt-in. Rating IDs stay the canonical engine
 // keys (usor/potrivit/greu) consumed by the workoutStore + history. Accent
-// tokens map the mockup's feel-card colors: Easy=volt, Right=aqua, Hard=ember.
+// tokens map the mockup's feel-card colors: Easy=volt, Right=aqua, Hard=ember
+// (dot + glow). The LABEL text uses the AA-safe ink-path tokens (--brick /
+// --aqua-ink / --ember-ink) which resolve >=4.5:1 on BOTH light + dark.
 const RATING_META: readonly RatingMeta[] = [
-  { rating: 'usor', accent: 'var(--volt)', labelKey: 'setRating.options.usor' },
-  { rating: 'potrivit', accent: 'var(--aqua)', labelKey: 'setRating.options.potrivit' },
-  { rating: 'greu', accent: 'var(--ember)', labelKey: 'setRating.options.greu' },
+  { rating: 'usor', accent: 'var(--volt)', textAccent: 'var(--brick)', labelKey: 'setRating.options.usor' },
+  { rating: 'potrivit', accent: 'var(--aqua)', textAccent: 'var(--aqua-ink)', labelKey: 'setRating.options.potrivit' },
+  { rating: 'greu', accent: 'var(--ember)', textAccent: 'var(--ember-ink)', labelKey: 'setRating.options.greu' },
 ];
 
 export function SetRatingButtons({ onRate }: SetRatingButtonsProps): JSX.Element {
@@ -74,7 +77,7 @@ export function SetRatingButtons({ onRate }: SetRatingButtonsProps): JSX.Element
               className="w-2.5 h-2.5 rounded-full"
               style={{ background: opt.accent }}
             />
-            <span className="font-display font-bold text-base" style={{ color: opt.accent }}>
+            <span className="font-display font-bold text-base" style={{ color: opt.textAccent }}>
               {t(opt.labelKey)}
             </span>
           </button>

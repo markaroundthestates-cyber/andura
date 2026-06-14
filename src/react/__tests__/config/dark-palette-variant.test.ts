@@ -85,9 +85,10 @@ describe('global.css — legacy override palettes retired', () => {
 });
 
 describe('global.css — CoachTodayCard --coach-* tokens defined on BOTH Pulse themes', () => {
-  // CoachTodayCard.tsx reads var(--coach-lora|meta|lagging|override, <hex>).
+  // CoachTodayCard.tsx colors its quote text via var(--coach-lora) and its
+  // lagging-signal text via var(--coach-lagging) (the AA-safe text-path tokens).
   // With the override palettes retired, the cream-on-dark hex fallbacks would
-  // be near-invisible on Pulse LIGHT. So the four tokens are now defined on the
+  // be near-invisible on Pulse LIGHT. So these tokens are now defined on the
   // base Pulse themes (:root light + [data-theme="dark"]) so the card re-skins
   // AA on both surfaces, like every other tokenized component.
   const tokens = ['--coach-lora', '--coach-meta', '--coach-lagging', '--coach-override'];
@@ -107,5 +108,16 @@ describe('global.css — CoachTodayCard --coach-* tokens defined on BOTH Pulse t
   it('[data-theme="dark"] (Pulse dark) defines all four --coach-* tokens', () => {
     const block = themeBlock('[data-theme="dark"]');
     tokens.forEach((t) => expect(block).toContain(`${t}:`));
+  });
+
+  it('CoachTodayCard.tsx actually consumes the AA-safe coach text tokens', () => {
+    const cardSource = readFileSync(
+      resolve(root, 'src/react/components/Antrenor/CoachTodayCard.tsx'),
+      'utf-8',
+    );
+    // Quote text + lagging-signal text must use the ink-path tokens, not the
+    // raw accents (var(--volt)/var(--ember)) which fail AA as text on LIGHT.
+    expect(cardSource).toContain('var(--coach-lora)');
+    expect(cardSource).toContain('var(--coach-lagging)');
   });
 });
