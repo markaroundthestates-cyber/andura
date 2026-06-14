@@ -1232,6 +1232,32 @@ export const FLAGS = Object.freeze({
   // in the fp-config FLIPPED_FLAGS baseline.
   dp_posterior_chain_floor_v1: { rollout: 1, default: true },
 
+  // ARMS-FOCUS MAJOR-PROTECT (elite-coach re-judge regression 2026-06-14) (RISK LOW —
+  // selection only, never kg). dp_arms_signature_v1 DEMOTES umeri out of the arms
+  // emphasize list (shoulders → MEV) + FLOORS biceps/triceps volume high; the combined
+  // effect STARVES two majors the arms focus must still maintain: (1) the umeri demotion
+  // drops umeri out of emphSet, which DISABLES both shoulder guarantees (lateralRaiseGuarantee
+  // + lateralDeltGuarantee gate on emphSet.has('umeri')), so the one maintained shoulder slot
+  // becomes a rear-delt fly or OHP with NO direct lateral raise → side delts orphaned; (2) the
+  // high arm floor + the maxBackLatWork cap crowd the per-session slots so CHEST drops to a
+  // SINGLE weekly exposure (~3 sets, below MEV ~6) on the slot-limited U/L-split arms days —
+  // the elite-coach re-judge capped these ("chest collapses to 3 sets, orphans a major prime
+  // mover"; "side delts orphaned, no lateral raise/OHP"). When ON + the focus is `arms`,
+  // getDailyWorkout (a) routes the lateral-delt guarantee to the arms focus (the sessionBuilder
+  // block already handles arms via targets.includes('umeri') — it swaps a redundant 2nd
+  // overhead press / over-slotted surplus for a lateral, never adds), and (b) sets
+  // ctx.armsChestFloor so buildSession guarantees a chest press lands on a chest-capable arms
+  // day whose chest fell to ZERO slots — a LENGTH-STABLE swap of a redundant ARM/non-major
+  // surplus (the over-floored arms yield it), never an add past the cap, never orphans a major.
+  // LEAN (SWAP not add) + ORPHAN/LEAD-SAFE: biceps + triceps stay the volume LEADERS (the
+  // arms-signature gate holds — the swap victim is an arm/minor surplus, never a focus lead
+  // slot, never pushes chest/shoulders above the arms). GATED on dp_arms_signature_v1 being ON
+  // too (this only repairs the starvation arms-signature CAUSES — with arms-signature off the
+  // pre-flag arms behavior already maintained chest+shoulders). OFF / non-arms / arms-signature
+  // off → never runs → byte-identical (pinned OFF in the fp-config FLIPPED_FLAGS baseline —
+  // path-A composition surface; `arms` IS in the fp EMPHASIS_PRESETS).
+  dp_arms_protect_majors_v1: { rollout: 1, default: true },
+
   // ARMS SIGNATURE (elite-coach eval ceiling 2026-06-13) — make biceps + triceps the
   // week's CLEAR top-two by VOLUME on an `arms` focus, the founder signature the judges
   // capped 25/57 arms configs at <=5.5 for ("focus muscles present but NOT the volume

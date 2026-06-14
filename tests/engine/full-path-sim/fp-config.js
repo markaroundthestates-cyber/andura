@@ -148,6 +148,16 @@ export const FLIPPED_FLAGS = Object.freeze([
   // hashOn stay byte-for-byte; ON is proven on the eval grid + the focus-signature gate
   // + the arms-signature regression suite, NOT in this determinism stream.
   'dp_arms_signature_v1',
+  // THE FLIP 2026-06-14 (arms-focus major-protect re-judge regression) — the arms-focus
+  // CHEST + lateral-delt guarantees (repairing the chest/shoulder starvation arms-signature
+  // causes) default ON. `arms` IS in this harness's EMPHASIS_PRESETS and it only fires WITH
+  // dp_arms_signature_v1, so the ON behavior WOULD move the frozen prescription hashes —
+  // pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so ctx.armsChestFloor +
+  // ctx.lateralDeltGuarantee(arms) are false in both A/B arms → the new blocks never run →
+  // BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is proven on the eval grid
+  // (arms chest >= MEV + a lateral lands, bi/tri still lead) + the arms-protect regression
+  // test + the arms-signature gate, NOT in this determinism stream.
+  'dp_arms_protect_majors_v1',
   // THE FLIP 2026-06-10 (R5) — metadata-derived load model defaults ON (a derived
   // maxKg cap + equipment step fills the ~uncapped exercises; curated wins). It
   // moves prescribed kg + the at-cap brake → pinned OFF here so hashOff/hashOn

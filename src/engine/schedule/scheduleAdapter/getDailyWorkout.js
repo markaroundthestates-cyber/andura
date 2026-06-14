@@ -1054,10 +1054,22 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // + shoulders only — upper/back also emphasize umeri but are NOT width-look focuses, so
     // they keep the pre-flag behavior (byte-identical). OFF → false → never runs →
     // byte-identical (pinned OFF in the fp-config FLIPPED_FLAGS baseline).
+    //
+    // ARMS-FOCUS ROUTE (dp_arms_protect_majors_v1, 2026-06-14): the arms-signature umeri
+    // demotion drops umeri out of emphSet, so the v-taper/shoulders gate above (and the
+    // lateralRaiseGuarantee, both keyed on emphSet.has('umeri')) skip arms — leaving the one
+    // maintained shoulder slot as a rear-delt fly / OHP with NO direct lateral (side delts
+    // orphaned). When dp_arms_protect_majors_v1 + dp_arms_signature_v1 are BOTH on and the
+    // focus is `arms`, route the same lateral-delt guarantee to arms (the sessionBuilder block
+    // already handles it via targets.includes('umeri') — a length-stable swap of a redundant
+    // press / over-slotted surplus, never an add). OFF / non-arms → unchanged.
     lateralDeltGuarantee:
-      isEnabled('dp_lateral_delt_guarantee_v1')
-      && (focusPreset === 'v-taper' || focusPreset === 'shoulders')
-      && emphSet.has('umeri'),
+      (isEnabled('dp_lateral_delt_guarantee_v1')
+        && (focusPreset === 'v-taper' || focusPreset === 'shoulders')
+        && emphSet.has('umeri'))
+      || (focusPreset === 'arms'
+        && armsSignatureOn
+        && isEnabled('dp_arms_protect_majors_v1')),
     // #R6a upper-day biceps guarantee (dp_biceps_guarantee_v1, default ON). A
     // cluster that trains biceps (upper/pull/full → targets includes 'biceps')
     // must include >=1 biceps movement — Daniel's real Upper day rounded biceps
@@ -1204,6 +1216,17 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // maintenance cap + raised direct-arm per-session minimums). OFF → the arms rule is
     // byte-identical to the pre-flag table; only the `arms` focus reads it.
     armsSignature: armsSignatureOn,
+    // dp_arms_protect_majors_v1 (2026-06-14) — repairs the CHEST starvation arms-signature
+    // causes: the high arm floor + maxBackLatWork cap crowd the per-session slots so chest
+    // drops to a single weekly exposure (~3 sets < MEV) on the slot-limited U/L-split arms
+    // days. When ON + the focus is `arms` + arms-signature is ON, buildSession guarantees a
+    // chest press lands on a chest-capable day whose chest fell to ZERO slots (length-stable
+    // swap of a redundant arm/non-major surplus). OFF / non-arms / arms-signature off → false
+    // → never runs → byte-identical.
+    armsChestFloor:
+      focusPreset === 'arms'
+      && armsSignatureOn
+      && isEnabled('dp_arms_protect_majors_v1'),
     focusId: focusPreset,
     daysPerWeek: activeWeek.filter(Boolean).length || 1,
   };
