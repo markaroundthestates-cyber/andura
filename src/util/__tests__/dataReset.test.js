@@ -101,6 +101,17 @@ describe('clearUserDataKeys', () => {
     expect(localStorage.getItem('andura-debug')).toBeNull();
     expect(localStorage.getItem('andura-behavior-collect')).toBeNull();
   });
+
+  // PDL-04: id-migration backups (`<key>-backup-pre-id-migration-<ts>`) carry a
+  // full snapshot of the pre-migration user data and matched no reset prefix, so
+  // "Reseteaza toate datele" left the wiped data alive inside the backup.
+  it('clears id-migration backups (PDL-04 — wiped data must not survive in a backup)', () => {
+    localStorage.setItem('dp-cal-factors-backup-pre-id-migration-123', JSON.stringify({ v: 1 }));
+    localStorage.setItem('logs-backup-pre-id-migration-456', 'snapshot');
+    clearUserDataKeys();
+    expect(localStorage.getItem('dp-cal-factors-backup-pre-id-migration-123')).toBeNull();
+    expect(localStorage.getItem('logs-backup-pre-id-migration-456')).toBeNull();
+  });
 });
 
 // ── XCUT-1 reset cloud-clear — RESET must delete the wv2 cloud subtree ────────

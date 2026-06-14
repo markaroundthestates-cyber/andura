@@ -78,6 +78,11 @@ export function clearUserDataKeys() {
     if (PRESERVE_PREFIXES.some((p) => key.startsWith(p))) continue;
     if (key.startsWith('wv2-')) { toRemove.add(key); continue; }
     if (DYNAMIC_KEY_PREFIXES.some((p) => key.startsWith(p))) { toRemove.add(key); continue; }
+    // PDL-04 — id-migration backups (`<key>-backup-pre-id-migration-<ts>`) carry
+    // a full snapshot of the user's pre-migration data. They matched no reset
+    // prefix/registry, so "Reseteaza toate datele" left them alive (the wiped
+    // data survived in the backup). Scan + wipe so the reset is honest.
+    if (key.includes('-backup-pre-id-migration-')) { toRemove.add(key); continue; }
   }
 
   // 2. Canonical unprefixed user-data keys (present or not — set dedupes).

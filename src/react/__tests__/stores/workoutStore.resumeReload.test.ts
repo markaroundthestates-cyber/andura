@@ -6,7 +6,7 @@
 // prHit/prData) so a reload resumes the session. These tests assert the persist
 // payload carries those fields and that the restored state reads as 'active'.
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useWorkoutStore, getCurrentMode } from '../../stores/workoutStore';
 
 const PERSIST_KEY = 'wv2-workout-store';
@@ -81,5 +81,61 @@ describe('workoutStore live-session persistence (08.063)', () => {
     const ps = persistedState();
     expect(ps.sessionStart).toBeNull();
     expect(ps.history).toEqual({});
+  });
+});
+
+// ── APP-LIFECYCLE-01 — stale live session discarded on rehydrate (merge hook) ──
+// The 08.063 resume is correct for an accidental refresh, but a session
+// abandoned hours ago (tab closed overnight, PWA OS-killed mid-set) would
+// rehydrate a ghost "live session" pill (getCurrentMode reads it as 'active').
+// The persist `merge` hook resets the in-progress fields when the rehydrated
+// sessionStart is older than MAX_LIVE_SESSION_MS (6h), KEEPING sessionsHistory /
+// streak / lastSession. Re-importing the module re-runs create()+merge against
+// the localStorage snapshot we plant first.
+describe('workoutStore stale-session discard on rehydrate (APP-LIFECYCLE-01)', () => {
+  /** Plant a persisted snapshot then re-import the store so merge() runs against it. */
+  async function rehydrateWith(state: Record<string, unknown>) {
+    localStorage.setItem(PERSIST_KEY, JSON.stringify({ state, version: 0 }));
+    vi.resetModules();
+    const mod = await import('../../stores/workoutStore');
+    return mod.useWorkoutStore.getState();
+  }
+
+  it('discards an in-progress session older than 6h (ghost pill fix)', async () => {
+    const stale = Date.now() - 7 * 60 * 60 * 1000; // 7h ago
+    const s = await rehydrateWith({
+      sessionStart: stale, exIdx: 2, setIdx: 3, phase: 'logging',
+      history: { 0: [{ kg: 80, reps: 8, rating: 'potrivit' }] },
+      prHit: true, prData: { exName: 'Bench', kg: 100 },
+      // Durable history MUST survive the discard.
+      sessionsHistory: [{ title: 'Old', meta: '', ts: 111 }],
+      streak: 5, lastStreakDate: '2026-06-10',
+      lastSession: { title: 'Old', meta: '', ts: 111 },
+    });
+    // In-progress fields reset to idle defaults.
+    expect(s.sessionStart).toBeNull();
+    expect(s.exIdx).toBe(0);
+    expect(s.setIdx).toBe(0);
+    expect(s.phase).toBe('idle');
+    expect(s.history).toEqual({});
+    expect(s.prHit).toBe(false);
+    expect(s.prData).toBeNull();
+    // Durable fields preserved.
+    expect(s.sessionsHistory).toHaveLength(1);
+    expect(s.streak).toBe(5);
+    expect(s.lastStreakDate).toBe('2026-06-10');
+    expect(s.lastSession).toEqual({ title: 'Old', meta: '', ts: 111 });
+  });
+
+  it('KEEPS a fresh in-progress session (younger than 6h resumes normally)', async () => {
+    const fresh = Date.now() - 30 * 60 * 1000; // 30min ago
+    const s = await rehydrateWith({
+      sessionStart: fresh, exIdx: 1, setIdx: 2, phase: 'logging',
+      history: { 0: [{ kg: 60, reps: 10, rating: 'usor' }] },
+    });
+    expect(s.sessionStart).toBe(fresh);
+    expect(s.exIdx).toBe(1);
+    expect(s.phase).toBe('logging');
+    expect(s.history[0]).toHaveLength(1);
   });
 });

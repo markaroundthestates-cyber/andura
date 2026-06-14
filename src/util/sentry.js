@@ -111,6 +111,27 @@ export async function initSentry() {
 }
 
 /**
+ * Stop Sentry at runtime so opting OUT mid-session stops NEW envelopes WITHOUT
+ * a reload. `Sentry.close(timeout)` flushes the queue then disables the client
+ * (public @sentry/browser API). Best-effort + non-fatal: a close failure must
+ * never throw into the settings subscribe. Nulls the module handles so a later
+ * opt-in re-init starts clean (initSentry's `_initialized` guard is cleared).
+ *
+ * @returns {Promise<void>}
+ */
+export async function stopSentry() {
+  if (!_initialized || !_Sentry) return;
+  const Sentry = _Sentry;
+  try {
+    await Sentry.close(2000);
+  } catch {
+    // close failure = best-effort (offline flush / SDK quirk) — still disable locally.
+  }
+  _initialized = false;
+  _Sentry = null;
+}
+
+/**
  * Capture an exception manually from critical paths.
  *
  * @param {unknown} error

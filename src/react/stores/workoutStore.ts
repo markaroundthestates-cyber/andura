@@ -93,6 +93,15 @@ import {
   nextStreak,
 } from './workoutStore.logic';
 
+// APP-LIFECYCLE-01 — max age of a persisted in-progress live session before it
+// is treated as stale on rehydrate. 08.063 persists the in-progress session
+// (sessionStart + exIdx/setIdx/phase/history/prHit/prData) so an accidental
+// reload resumes it; but a session abandoned hours ago (closed tab overnight,
+// PWA OS-killed mid-set) rehydrates a ghost "live session" pill that getCurrentMode
+// reads as 'active'. Discard the in-progress fields (KEEP sessionsHistory/streak/
+// lastSession) when the rehydrated sessionStart is older than this window.
+const MAX_LIVE_SESSION_MS = 6 * 60 * 60 * 1000; // 6h
+
 export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
   persist(
     (set) => ({
@@ -474,6 +483,30 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         prHit: state.prHit,
         prData: state.prData,
       }) as Partial<WorkoutState & WorkoutActions>,
+      // APP-LIFECYCLE-01 — discard a STALE in-progress session on rehydrate so a
+      // workout abandoned hours ago doesn't resurrect a ghost "live session" pill.
+      // The 08.063 persist resumes an in-progress session across reload; that is
+      // correct for an accidental refresh, but a session whose sessionStart is
+      // older than MAX_LIVE_SESSION_MS (tab closed overnight, PWA OS-killed) must
+      // reset to idle. Only the in-progress fields are cleared — sessionsHistory /
+      // streak / lastStreakDate / lastSession / pausedSnapshot / deletedSessionTs
+      // survive untouched (idle defaults match the create(...) initial state).
+      merge: (persisted, current) => {
+        const merged = { ...current, ...(persisted as Partial<WorkoutState>) };
+        if (
+          merged.sessionStart !== null
+          && Date.now() - merged.sessionStart > MAX_LIVE_SESSION_MS
+        ) {
+          merged.sessionStart = null;
+          merged.exIdx = 0;
+          merged.setIdx = 0;
+          merged.phase = 'idle';
+          merged.history = {};
+          merged.prHit = false;
+          merged.prData = null;
+        }
+        return merged;
+      },
     }
   )
 );

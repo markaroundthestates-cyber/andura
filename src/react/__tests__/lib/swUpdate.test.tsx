@@ -149,3 +149,29 @@ describe('swUpdate — Account "Check for updates & apply" button', () => {
     expect(toast.getSnapshot()).toHaveLength(0);
   });
 });
+
+describe('swUpdate — re-arms on remount (APP-LIFECYCLE-02)', () => {
+  it('a genuine unmount/remount registers the SW again (auto-update survives logout->login)', async () => {
+    let registerCount = 0;
+    vi.doMock('virtual:pwa-register', () => ({
+      registerSW: () => {
+        registerCount += 1;
+        return vi.fn(async () => {});
+      },
+    }));
+    const { useSwUpdate } = await loadFresh();
+    const Host = makeHost(useSwUpdate);
+
+    // First mount (e.g. Layout on first login) registers once.
+    const first = render(<Host />);
+    await waitFor(() => expect(registerCount).toBe(1));
+
+    // Logout unmounts Layout → cleanup must re-arm the `registered` guard.
+    first.unmount();
+
+    // Next login remounts Layout → must register AGAIN (pre-fix it bailed at the
+    // stale `registered` guard and auto-update silently died until a reload).
+    render(<Host />);
+    await waitFor(() => expect(registerCount).toBe(2));
+  });
+});

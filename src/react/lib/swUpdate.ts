@@ -159,6 +159,12 @@ export function useSwUpdate(): void {
       cancelled = true;
       if (intervalId !== undefined) clearInterval(intervalId);
       document.removeEventListener('visibilitychange', handleVisibility);
+      // APP-LIFECYCLE-02 — re-arm the singleton guard on unmount so a genuine
+      // remount (e.g. Layout unmounts on logout, remounts on the next login)
+      // re-runs the registerSW + periodic-check wiring. Without this the remount
+      // bails at `if (registered) return` and auto-update silently dies until a
+      // full page reload.
+      registered = false;
     };
   }, []);
 }

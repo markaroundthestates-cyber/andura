@@ -7,7 +7,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './react/routes/router';
-import { initSentry, captureException } from './util/sentry.js';
+import { initSentry, stopSentry, captureException } from './util/sentry.js';
 import { applyInitialTheme, ThemeSync } from './react/lib/themeSync';
 import { applyInitialPalette, PaletteSync } from './react/lib/paletteSync';
 import { useSettingsStore } from './react/stores/settingsStore';
@@ -35,15 +35,19 @@ syncHtmlLang();
 // store value, so a user who turned it OFF keeps Sentry uninitialized. Toggle gates
 // ONLY Sentry crash/error monitoring (PII-scrubbed sentry.js beforeSend) — NU usage
 // metrics. Subscribe lazy-inits on a false->true flip so a user who opts back in
-// mid-session starts reporting without a reload. NOTE: NU putem un-init Sentry
-// runtime (Sentry SDK limit) — opting OUT post-init stops NEW envelopes only on the
-// next reload (TODO future: Sentry.close()).
+// mid-session starts reporting without a reload; a true->false flip calls
+// stopSentry() (Sentry.close) so opting OUT stops NEW envelopes immediately,
+// without waiting for the next reload (SECURITY-PRIVACY-03).
 if (useSettingsStore.getState().telemetryOptIn) {
   initSentry();
 }
 useSettingsStore.subscribe((state, prevState) => {
   if (state.telemetryOptIn && !prevState.telemetryOptIn) {
     initSentry();
+  } else if (!state.telemetryOptIn && prevState.telemetryOptIn) {
+    // Opt OUT mid-session — stop NEW envelopes immediately (Sentry.close) instead
+    // of waiting for the next reload (SECURITY-PRIVACY-03). Fire-and-forget.
+    void stopSentry();
   }
 });
 
