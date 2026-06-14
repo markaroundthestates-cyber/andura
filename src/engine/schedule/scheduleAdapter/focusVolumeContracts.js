@@ -174,6 +174,30 @@ const CONTRACTS = Object.freeze({
       const triFloor = b === 'hi' ? Math.round((triMAV + triMRV) / 2) : triMAV; // ~17 / 12
       floorTo(out, 'biceps', biFloor);
       floorTo(out, 'triceps', triFloor);
+
+      // ── NON-FOCUS COMPOUND TRIM (arms-signature closure, 2026-06-13b) ────────────
+      // The bi/tri floors above raised the ARMS, but the eval still capped these
+      // configs ("focus muscle NOT emphasized") because the COMPOUND-driven groups —
+      // chest (pressing) and quads (squat/press) — were NEVER de-emphasized: arms only
+      // emphasizes biceps/triceps/umeri and de-emphasizes umeri, so chest/quads passed
+      // through at their full base budget (MAV ~14) and DELIVERED ≈1× (chest 14 ties
+      // triceps, quads 9-12 beats the under-delivering biceps). An elite coach
+      // programming an ARMS SPECIALIZATION drops every non-focus mover to MAINTENANCE so
+      // the arms are the unambiguous signature. Cap the non-focus COMPOUND budgets to
+      // their MEV (chest 8, quads 8, hams 6, glutes 6) — delivered ≈MEV, well under the
+      // arms — WITHOUT orphaning anything (capTo is MEV-clamped + the maintenance floor,
+      // run BEFORE this, keeps each ≥ MEV; the net is each pinned EXACTLY at MEV, never
+      // below). chest is the founder's explicit no-orphan group: at MEV 8 it delivers
+      // ~6-8, the "kept at maintenance, not abandoned" target. BACK is intentionally
+      // NOT budget-trimmed here (a back budget shave was MEASURED net-negative — back
+      // over-delivers ~1.5× from the upper/pull split slot structure, so the cap never
+      // reaches delivery and it disturbs the coherent allocator; back is held at the SLOT
+      // altitude by maxBackLatWork:1 above, keeping ONE maintenance lat/day). Every write
+      // is MEV-clamped (capTo) so no group can drop below maintenance.
+      capTo(out, 'chest', ISRAETEL_BASELINES.chest?.MEV ?? 8);
+      capTo(out, 'quads', ISRAETEL_BASELINES.quads?.MEV ?? 8);
+      capTo(out, 'hamstrings', ISRAETEL_BASELINES.hamstrings?.MEV ?? 6);
+      capTo(out, 'glutes', ISRAETEL_BASELINES.glutes?.MEV ?? 6);
       // NOTE on BACK (maintenance on an arms focus): back is thinned only at the SLOT
       // altitude (the arms-signature maxBackLatWork session cap in FOCUS_RULES.arms holds
       // the pull/upper days to ONE back lat where it is not PR-protected, never to 0 →
@@ -281,6 +305,15 @@ const CONTRACTS = Object.freeze({
 // maintenance must stay minimal (a shrug/hyperext on a lower week's upper day eats the
 // back maintenance cap). All five demote shrug + lower-back to last-option in selection.
 const DEMOTE_FOCUSES = Object.freeze(new Set(['v-taper', 'back', 'upper', 'chest', 'lower']));
+// ARMS SIGNATURE (dp_arms_signature_v1, 2026-06-13b): `arms` joins the demote set ONLY
+// under the arms-signature flag (threaded in at the call site). On an arms week back is
+// MAINTENANCE — the maxBackLatWork:1 cap thins the LAT work to one anchor, but a DB Shrug
+// (trap, spate-primary, NOT lat work → the cap misses it) still landed ~2 sets on each
+// pull/upper day, keeping delivered back ~12 (≈ the arms it should subordinate). Demoting
+// the shrug + lower-back family to last-option clears that trap junk so the freed pull/
+// upper slot carries arm work and delivered back drops below the arms. Gated by the flag
+// (NOT in the static DEMOTE_FOCUSES set) so OFF → arms is byte-identical to the pre-flag rule.
+const ARMS_SIGNATURE_DEMOTE_FOCUS = 'arms';
 /** Shrug family (traps) — spate-primary, name-matched to deriveExerciseTags 'shrug'. */
 const SHRUG_FAMILY = Object.freeze([
   'BB Shrug', 'DB Shrug', 'Trap Bar Shrug', 'Cable Shrug', 'Machine Shrug',
@@ -305,12 +338,16 @@ const LOWER_BACK_FAMILY = Object.freeze([
  * — a full demote-to-last-option, never a removal.
  *
  * @param {string|null|undefined} focusPreset
+ * @param {boolean} [armsSignatureOn=false] - dp_arms_signature_v1. When ON, the `arms`
+ *   focus ALSO demotes the shrug/lower-back family (back is maintenance on an arms week).
+ *   OFF → arms is NOT in the demote set → byte-identical to the pre-flag rule.
  * @returns {Record<string, number>} engineName → 1.0
  */
-export function focusContractDemotions(focusPreset) {
+export function focusContractDemotions(focusPreset, armsSignatureOn = false) {
   /** @type {Record<string, number>} */
   const out = {};
-  if (!DEMOTE_FOCUSES.has(focusPreset)) return out;
+  const armsDemote = armsSignatureOn && focusPreset === ARMS_SIGNATURE_DEMOTE_FOCUS;
+  if (!DEMOTE_FOCUSES.has(focusPreset) && !armsDemote) return out;
   for (const n of SHRUG_FAMILY) out[n] = 1.0;
   for (const n of LOWER_BACK_FAMILY) out[n] = 1.0;
   return out;

@@ -158,7 +158,14 @@ describe('phase bound — at week >= 4 the modifier is zeros → composed sessio
   it('specializationWeeksElapsed = 4 → the spec volume_modifier is zeros → no rest-down trade', async () => {
     setFlag(false);
     const balanced = await getDailyWorkout(balancedState(), MONDAY);
-    setFlag(true);
+    // Isolate the SPEC auto-return: pin dp_arms_signature_v1 OFF (registry default is ON)
+    // so the arms-focus VOLUME CONTRACT (which trims chest to MEV maintenance on ANY arms
+    // week, independent of the 4-week spec mesocycle — that is its intended persistent
+    // behavior) does not confound this test's subject = the emphasis-specialization
+    // rest-down trade auto-returning at week >= 4. With arms-signature ON, piept would stay
+    // at its maintenance cap (8) by design even after the spec phase exits; that is covered
+    // by arms-signature.gate.test.js, not here.
+    localStorage.setItem('_devFlags', JSON.stringify({ [FLAG]: true, dp_arms_signature_v1: false }));
     // weeksElapsed 0 → ACTIVE trade (modifier non-zero) → rest relaxes.
     const active = await getDailyWorkout(emphasisState('arms', 'biceps', 0), MONDAY);
     expect(weeklyVol(active, 'piept')).toBeLessThan(weeklyVol(balanced, 'piept'));
