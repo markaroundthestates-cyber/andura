@@ -1361,6 +1361,28 @@ export const FLAGS = Object.freeze({
   // already-leading p3_back/p8_chest byte-identical, no major orphaned) + the new
   // focus-lead-splits regression test.
   dp_focus_lead_splits_v1: { rollout: 1, default: true },
+
+  // LATERAL-DELT GUARANTEE (2026-06-14, eval v-taper/shoulders OHP-only width cap)
+  // (RISK LOW — selection only, never kg). The side delt is the #1 v-taper WIDTH driver,
+  // but on a v-taper/shoulders focus at low frequency (2-3 days = all full-body, 2-3
+  // shoulder slots) the engine fills the slots with overhead PRESSES (OHP) and at most a
+  // rear-delt (Reverse Pec Deck) — the focus-policy resolver's HIGH side_delt requirement
+  // does inject correctly given an umeri pool, but the slot-starved low-freq full-body
+  // pool reaches it without a lateral landing, so 28/114 v-taper+shoulders configs were
+  // OHP-only (zero direct lateral). The /10 judge repeatedly caps/dings these ("shoulders
+  // 100% pressing, half the v-taper signature is under-built"; configs WITH Machine
+  // Lateral Raise score 8.5-9.0). When ON + the focus is v-taper/shoulders + the session
+  // TRAINS umeri but has NO direct lateral-raise (side_delt), buildSession injects ONE via
+  // a length-stable swap: PREFER to displace a redundant 2nd overhead PRESS (the lateral
+  // is the missing width driver, not more pressing); else an over-slotted non-surfaced
+  // surplus; never orphan a major; never drop a surfaced (focus) group below its lead; add
+  // only if room. Mirrors the #R6a biceps / #R6a-T triceps guarantees, runs AFTER the
+  // focus-policy rebuild so it cannot be undone. A LATERAL raise (machine/cable, ~90deg)
+  // is shoulder-impingement-safe — never a contraindicated overhead press. OFF → byte-
+  // identical (pinned OFF in the fp-config FLIPPED_FLAGS baseline — path-A composition
+  // surface). Proven on the eval grid (v-taper/shoulders OHP-only 28 -> ~0, focus still
+  // leads, no double-OHP, other focuses byte-identical) + a new regression test.
+  dp_lateral_delt_guarantee_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

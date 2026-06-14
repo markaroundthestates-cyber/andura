@@ -35,6 +35,7 @@ import {
 } from '../../engine/schedule/scheduleAdapter/focus.js';
 import { contraindicatedGroupsFromPainCdl } from '../../engine/movementExclusion.js';
 import { movementKey } from '../../engine/sessionBuilder.js';
+import { deriveExerciseTags } from '../../engine/focusPolicy.js';
 import { experienceToEngine } from './scheduleAdapterAggregate.session';
 import {
   buildUserStateForPipeline,
@@ -709,6 +710,15 @@ function buildFocusFloorDropGuard(
   // slot AND the LAST posterior slot INDEPENDENTLY so the trim keeps both halves of
   // the posterior chain. false → no extra hold → byte-identical.
   posteriorFloorFull = false,
+  // #WIDTH lateral-delt guarantee (dp_lateral_delt_guarantee_v1). On a v-taper/shoulders
+  // focus the sessionBuilder guarantee seats a direct LATERAL raise (the #1 width driver)
+  // when the umeri work was OHP-only. It lands in the TAIL (a tier-2 isolation behind the
+  // lead press), and the emphasized-umeri guard below only holds ONE umeri slot — which the
+  // OHP (placed first) already satisfies, so the blind tail-first trim drops the lateral and
+  // re-creates the OHP-only day. When true, protect the LAST lateral-raise slot specifically
+  // (a surplus 2nd lateral still yields) so the width driver survives the trim. Mirrors the
+  // #R6b leg-curl hold. false → no extra hold → byte-identical.
+  lateralDeltGuard = false,
 ): ((list: ReadonlyArray<TrimmableExercise>, idx: number) => boolean) | null {
   // Region = the de-emphasized groups as ONE protected region (keep ≥1 of the set).
   const region = [...resolveDeEmphasizedGroups(focusPreset)];
@@ -735,7 +745,7 @@ function buildFocusFloorDropGuard(
   );
   if (
     region.length === 0 && perGroup.length === 0 && emphSet.size === 0
-    && !spateInjured && !posteriorFloorFull
+    && !spateInjured && !posteriorFloorFull && !lateralDeltGuard
   ) {
     return null;
   }
@@ -750,8 +760,22 @@ function buildFocusFloorDropGuard(
     const meta = getExerciseMetadata(name);
     return movementKey(name, meta).split('::')[1] === 'leg-curl';
   };
+  // #WIDTH — a direct LATERAL raise (the side-delt width driver) detected by the SAME
+  // side_delt tag derivation buildSession's guarantee uses, so the protection never drifts.
+  const isLateral = (ex: TrimmableExercise): boolean => {
+    const name = ex.engineName ?? ex.name;
+    const meta = getExerciseMetadata(name);
+    return deriveExerciseTags(name, meta, movementKey).has('side_delt');
+  };
   const regionSet = new Set(region);
   return (list, idx) => {
+    // #WIDTH lateral-delt hold: protect the LAST direct lateral-raise slot so the
+    // sessionBuilder width-driver guarantee survives the tail-first trim (a surplus 2nd
+    // lateral still yields). Evaluated first so it holds regardless of group resolution.
+    if (lateralDeltGuard && isLateral(list[idx]!)) {
+      const lateralCount = list.reduce((n, e) => n + (isLateral(e) ? 1 : 0), 0);
+      if (lateralCount <= 1) return true;
+    }
     const g = groupOf(list[idx]!);
     // (d) spate-injury hamstring backfill: protect the LAST spine-neutral leg-curl
     //     slot so the trim cannot re-orphan hamstrings (a surplus 2nd leg curl still
@@ -1450,15 +1474,24 @@ export async function composePlannedWorkoutToday(
     // sessionBuilder floor seated from the tail-first time-trim (else the quad re-orphans).
     const posteriorFloorFull =
       isEnabled('dp_posterior_chain_floor_v1') && guardDayType === 'FULL';
+    // #WIDTH lateral-delt guarantee (dp_lateral_delt_guarantee_v1) — on a v-taper/shoulders
+    // focus the sessionBuilder seats a direct lateral raise; hold it through the tail-first
+    // trim so the OHP-only day is not re-created. Scoped to v-taper/shoulders (the only
+    // width-look focuses the guarantee fires for). false → byte-identical guard.
+    const guardFocusPreset = useOnboardingStore.getState().data.focusPreset;
+    const lateralDeltGuard =
+      isEnabled('dp_lateral_delt_guarantee_v1') &&
+      (guardFocusPreset === 'v-taper' || guardFocusPreset === 'shoulders');
     const wantsDropGuard =
       (isEnabled('dp_split_rebalance_v1') &&
         (guardDayType === 'FULL' || guardDayType === 'UPPER' || guardDayType === 'PUSH')) ||
       (spateInjured &&
         (guardDayType === 'FULL' || guardDayType === 'LOWER' || guardDayType === 'LEGS')) ||
-      posteriorFloorFull;
+      posteriorFloorFull ||
+      lateralDeltGuard;
     const dropGuard = wantsDropGuard
       ? buildFocusFloorDropGuard(
-        useOnboardingStore.getState().data.focusPreset, spateInjured, posteriorFloorFull,
+        guardFocusPreset, spateInjured, posteriorFloorFull, lateralDeltGuard,
       )
       : null;
     const exercises = trimSessionToTimeBudget(

@@ -974,6 +974,22 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // pick quality. So sexBias is no longer threaded into buildSession/poolForGroup.
     lateralRaiseGuarantee:
       isEnabled('dp_smart_selection_v1') && emphSet.has('umeri'),
+    // LATERAL-DELT GUARANTEE (dp_lateral_delt_guarantee_v1, default ON). The side delt
+    // is the #1 v-taper WIDTH driver, but a v-taper/shoulders focus at low frequency
+    // (2-3 days = all full-body) fills the 2-3 shoulder slots with overhead PRESSES (and
+    // at most a rear-delt) and the slot-starved pool reaches the resolver without a lateral
+    // landing → 28/114 v-taper+shoulders configs were OHP-only (zero direct lateral). When
+    // ON + the focus is v-taper/shoulders (emphSet has umeri), buildSession guarantees >=1
+    // direct lateral-raise on an umeri-training session — preferring to displace a redundant
+    // 2nd overhead press (the lateral is the missing width driver, not more pressing). A
+    // lateral (~90deg, machine/cable) is shoulder-impingement-safe (p8). SCOPED to v-taper
+    // + shoulders only — upper/back also emphasize umeri but are NOT width-look focuses, so
+    // they keep the pre-flag behavior (byte-identical). OFF → false → never runs →
+    // byte-identical (pinned OFF in the fp-config FLIPPED_FLAGS baseline).
+    lateralDeltGuarantee:
+      isEnabled('dp_lateral_delt_guarantee_v1')
+      && (focusPreset === 'v-taper' || focusPreset === 'shoulders')
+      && emphSet.has('umeri'),
     // #R6a upper-day biceps guarantee (dp_biceps_guarantee_v1, default ON). A
     // cluster that trains biceps (upper/pull/full → targets includes 'biceps')
     // must include >=1 biceps movement — Daniel's real Upper day rounded biceps

@@ -1609,6 +1609,7 @@ export function movementKey(name, meta, deepFamily = false) {
  *   coherentAlloc?: boolean,
  *   tierCompoundFloor?: boolean,
  *   lateralRaiseGuarantee?: boolean,
+ *   lateralDeltGuarantee?: boolean,
  *   selectionDedup?: boolean,
  *   danielTierSelect?: boolean,
  *   focusPolicy?: boolean,
@@ -3102,6 +3103,119 @@ export function buildSession(cluster, ctx) {
           take(inject, DEFAULT_SETS);
         }
         // else: saturated + every non-leg group single-slotted → accept the gap (no orphan).
+      }
+    }
+  }
+
+  // #WIDTH LATERAL-DELT GUARANTEE (ctx.lateralDeltGuarantee, dp_lateral_delt_guarantee_v1).
+  // v-taper/shoulders OHP-only eval ceiling 2026-06-14: the SIDE DELT is the #1 v-taper
+  // WIDTH driver, but at low frequency (2-3 days = all full-body, 2-3 umeri slots) the
+  // session fills those slots with overhead PRESSES (and at most a rear-delt) and the
+  // slot-starved pool reaches the focus-policy resolver without a lateral landing → 28/114
+  // v-taper+shoulders configs were OHP-only (zero direct lateral). The /10 judge caps these
+  // ("shoulders 100% pressing — half the v-taper signature under-built"); configs WITH a
+  // Machine Lateral Raise score 8.5-9.0. Mirror of the #R6a biceps / #R6a-T triceps
+  // guarantees — gated v-taper/shoulders only (set in getDailyWorkout).
+  //
+  // PLACEMENT: runs AFTER the focus-policy rebuild AND the posterior+quad / hamstring leg
+  // floors — those floors run LAST on slot membership and DISPLACE the most over-slotted
+  // upper surplus to seat legs, so a lateral injected EARLIER (e.g. beside the biceps/triceps
+  // guarantees) is the over-slotted umeri surplus they rob right back. Seating the lateral
+  // here, after legs are final, makes the inject durable; only the set-distribution + ordering
+  // + the time-trim drop-guard (which holds the lateral) run after.
+  //
+  // LENGTH-STABLE + ORPHAN-SAFE + LEAD-SAFE: when the umeri-training session has NO direct
+  // lateral (side_delt tag), inject one — PREFER to displace a REDUNDANT 2nd overhead press
+  // (umeri::press; the lateral is the missing width driver, more pressing is redundant — one
+  // press anchor always stays, and because the removed slot is itself umeri the umeri lead is
+  // unchanged); else an OVER-slotted NON-SURFACED, NON-LEG isolation (group keeps >=1, never
+  // the surfaced/focus lead, never robs the legs the floors just seated, mirrors the triceps
+  // guarantee); else ADD if room. A LATERAL (~90deg, machine/cable) is shoulder-impingement-
+  // safe — never a contraindicated overhead movement (p8). OFF / non-v-taper-shoulders / no
+  // umeri target / lateral already present → never runs → byte-identical.
+  if (ctx?.lateralDeltGuarantee === true && targets.includes('umeri')) {
+    const hasLateral = chosen.some(
+      (e) => deriveExerciseTags(e.name, getExerciseMetadata(e.name), movementKey).has('side_delt'),
+    );
+    if (!hasLateral) {
+      const umeriPool = pools.find((p) => p.group === 'umeri')?.pool ?? [];
+      const lateral = umeriPool.find(
+        (e) => deriveExerciseTags(e.name, e.meta, movementKey).has('side_delt') && !isTaken(e),
+      );
+      if (lateral) {
+        const primaryOfName = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+        // Per-group slot census so a REPLACE only ever targets an over-slotted group.
+        const slotCount = {};
+        for (const e of chosen) {
+          const g = primaryOfName(e.name);
+          if (g) slotCount[g] = (slotCount[g] || 0) + 1;
+        }
+        // PASS 1 — REDUNDANT 2nd overhead press: displace the LOWEST-priority umeri::press
+        // slot WHEN umeri carries >=2 presses (one press anchor always stays). The LEAN swap
+        // the spec wants — redundant pressing yields to the width driver; umeri lead unchanged.
+        let removeIdx = -1;
+        const umeriPressCount = chosen.filter(
+          (e) => primaryOfName(e.name) === 'umeri' && movementKey(e.name, getExerciseMetadata(e.name)) === 'umeri::press',
+        ).length;
+        if (umeriPressCount >= 2) {
+          for (let i = chosen.length - 1; i >= 0; i--) {
+            if (primaryOfName(chosen[i].name) !== 'umeri') continue;
+            if (movementKey(chosen[i].name, getExerciseMetadata(chosen[i].name)) !== 'umeri::press') continue;
+            removeIdx = i;
+            break;
+          }
+        }
+        // PASS 2 — over-slotted NON-SURFACED, NON-LEG isolation (no orphan; never the focus
+        // lead; never rob the legs the floors just seated). Mirrors the #R6a-T2 victim rule.
+        if (removeIdx < 0) {
+          let maxNonSurfaced = 0;
+          for (const [g, n] of Object.entries(slotCount)) {
+            if (!surfaceSet.has(g) && g !== 'umeri' && n > maxNonSurfaced) maxNonSurfaced = n;
+          }
+          for (let i = chosen.length - 1; i >= 0; i--) {
+            if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+            const g = primaryOfName(chosen[i].name);
+            if (!g || g === 'umeri' || (slotCount[g] || 0) <= 1) continue; // no orphan; umeri is the lateral's own group
+            if (LEG_REGION_GROUPS.includes(g)) continue; // never rob the freshly-seated legs
+            if (surfaceSet.has(g) && (slotCount[g] - 1) <= maxNonSurfaced) continue; // keep lead
+            removeIdx = i;
+            break;
+          }
+        }
+        // PASS 3 — the saturated low-freq full-body day: every group is single-slotted, so
+        // PASS 2 finds no surplus and the session is at cap. On a WIDTH focus the lateral IS
+        // the signature, so it outranks an INCIDENTAL MINOR isolation (a biceps/triceps the
+        // arm guarantees seated as a 0.10-0.15 accessory) — displace the lowest-priority
+        // NON-FOCUS, NON-LEG, NON-MAJOR (minor) isolation. Never a MAJOR (piept/spate/umeri/
+        // legs/calves), never a surfaced/focus group, never a leg — so the only victims are
+        // incidental arms/forearms/core: the day trades an incidental arm slot for the width
+        // driver (LEAN swap, no major orphaned). No such minor → accept the gap.
+        if (removeIdx < 0) {
+          for (let i = chosen.length - 1; i >= 0; i--) {
+            if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+            const g = primaryOfName(chosen[i].name);
+            if (!g || g === 'umeri') continue;
+            if (LEG_REGION_GROUPS.includes(g)) continue;
+            if (surfaceSet.has(g)) continue; // never the focus / weak-surfaced groups
+            if (MAJOR_MUSCLES_SLOT_GUARANTEE.includes(g)) continue; // never orphan a major
+            removeIdx = i;
+            break;
+          }
+        }
+        if (removeIdx >= 0) {
+          const removed = chosen[removeIdx];
+          chosenNames.delete(removed.name);
+          chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
+          const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+          if (rg && groupCount[rg]) groupCount[rg] -= 1;
+          chosen.splice(removeIdx, 1, { name: lateral.name, sets: DEFAULT_SETS });
+          chosenNames.add(lateral.name);
+          chosenMovements.add(dedupKey(lateral.name, lateral.meta));
+          groupCount.umeri = (groupCount.umeri || 0) + 1;
+        } else if (chosen.length < effectiveCap) {
+          take(lateral, DEFAULT_SETS);
+        }
+        // else: saturated + no redundant press / over-slotted non-leg victim → accept the gap.
       }
     }
   }

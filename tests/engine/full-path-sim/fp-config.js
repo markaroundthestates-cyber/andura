@@ -287,6 +287,16 @@ export const FLIPPED_FLAGS = Object.freeze([
   // lead, p2/p7_arms bi+tri lead + each >= MEV, already-leading configs byte-identical) + the
   // new focus-lead-splits regression test, NOT in this determinism stream.
   'dp_focus_lead_splits_v1',
+  // THE FLIP 2026-06-14 (lateral-delt guarantee) — dp_lateral_delt_guarantee_v1 defaults ON.
+  // On a v-taper/shoulders focus the umeri-training session guarantees >=1 direct lateral
+  // raise (the #1 width driver), preferring to displace a redundant 2nd overhead press.
+  // `v-taper` IS in this harness's EMPHASIS_PRESETS, so the ON behavior WOULD move the frozen
+  // prescription hashes — pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so
+  // ctx.lateralDeltGuarantee is false in both A/B arms → the new block never runs → BOTH
+  // frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is proven on the eval grid
+  // (v-taper/shoulders OHP-only 28 -> ~0, focus still leads, no double-OHP, other focuses
+  // byte-identical) + the new lateral-delt-guarantee regression test, NOT in this stream.
+  'dp_lateral_delt_guarantee_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the
