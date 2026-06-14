@@ -601,17 +601,6 @@ const CONTRACT_CAP_KEYS = Object.freeze(new Set([
  *  from the lower-focus LEDGER override of the same key, which rides dp_week_ledger_v1). */
 const ARMS_SIGNATURE_CAP_KEYS = Object.freeze(new Set(['maxBackLatWork', 'maxChestPressPatterns', 'maxHeavyLowerCompounds']));
 
-/** The AGGRESSIVE-TRIM subset of ARMS_SIGNATURE_CAP_KEYS that is FURTHER gated to a
- *  full-body day + non-low-cap trainee (strictly-Pareto gate, 2026-06-15). The chest-press-
- *  pattern cap + the heavy-lower cap free a press/leg slot that only re-seats DIRECT ARM
- *  work usefully on a FULL-BODY day; on a U/L `upper` day the freed press slot backfills a
- *  3rd TRICEPS (the 2-curl-key library ceiling blocks a 3rd curl) and thins BICEPS below
- *  flag-OFF — so these two fall back to flag-OFF on a U/L day. maxBackLatWork is NOT here:
- *  the back-lat maintenance cap KEEPS firing on U/L (capping the 2nd lat to one anchor is
- *  what holds back at maintenance so the arms keep their slot — gating it lets back climb
- *  and re-steal an arm slot, e.g. p2_arms_4d). */
-const ARMS_SIGNATURE_FULLBODY_ONLY_KEYS = Object.freeze(new Set(['maxChestPressPatterns', 'maxHeavyLowerCompounds']));
-
 /**
  * F6 (Daniel coach audit 2026-06-10) — the Set of policy tags a focus CARES about,
  * derived from its FOCUS_RULES (sessionRequirements field names + every weekly
@@ -1252,23 +1241,6 @@ export function applyFocusPolicy(chosen, ctx) {
   // the raised direct-arm weekly minimums + the bench-press session-tag augmentation below.
   // OFF → the arms rule is byte-identical to the pre-flag table. Other focuses ignore it.
   const armsSignatureOn = ctx?.armsSignatureOn === true;
-  // STRICTLY-PARETO GATE for the arms-signature AGGRESSIVE TRIM (2026-06-15). The three
-  // ARMS_SIGNATURE_CAP_KEYS caps (chest-press-pattern + heavy-lower + back-lat) raise the
-  // arms to the week's SIGNATURE only on a FULL-BODY day — a freed press/leg slot there
-  // re-seats DIRECT ARM work. On a U/L `upper` day the freed press slot has only ONE spare
-  // arm pattern to absorb (2 curl movement keys = the library ceiling) so it backfills a
-  // 3rd TRICEPS and thins BICEPS below flag-OFF (p4/p2/p12 arms_4d: bi 14→10, arms NOT
-  // led). And a senior / low-capacity trainee under dp_lowcap_weekly_band_v1 cannot raise
-  // arms without breaching the senior-volume invariant (p11 detrained). So the trim FIRES
-  // only on a full-body cluster AND only when NOT under the low-cap band; otherwise it
-  // falls back to the flag-OFF allocation for those caps (the focus-relevant biceps/triceps
-  // minimums + the orphan-guard still run — they never thin biceps below OFF). Other
-  // arms-signature additions (raised arm minimums, bench tag, the never-orphan back/chest
-  // floor) are NOT gated here — they help on every split. armsSignatureOn false → the whole
-  // arms branch is inert anyway → byte-identical regardless of this flag.
-  const armsTrimFullBody = cluster === 'full' || cluster === 'fullbody';
-  const armsTrimNotLowCap = ctx?.lowCapWeeklyBand == null;
-  const armsSignatureTrimOn = armsSignatureOn && armsTrimFullBody && armsTrimNotLowCap;
   // De-emphasized Big-11 RO groups (Daniel sweep review 2026-06-11). On a
   // slot-starved full-body FOCUS day a de-emphasized region (v-taper: legs) is
   // MAINTENANCE — its SURPLUS compound (a 2nd/3rd leg compound) may yield to a
@@ -1448,22 +1420,13 @@ export function applyFocusPolicy(chosen, ctx) {
     // CONTRACT GATE — a focus-contracts-arc cap (shrug/close-grip/arm-OHP) is applied
     // only when the flag is ON. Pre-arc caps are untouched → byte-identical when off.
     if (CONTRACT_CAP_KEYS.has(capKey) && !contractsOn) continue;
-    // ARMS-SIGNATURE GATE — the STATIC arms caps (maxBackLatWork + maxChestPressPatterns +
-    // maxHeavyLowerCompounds, rule.sessionCaps, NOT a ledger override) apply only under
-    // dp_arms_signature_v1. Flag OFF → skip for arms → byte-identical to the pre-flag table.
-    // (The lower-focus maxBackLatWork comes via ledgerAdj.capOverrides, not the static rule
-    // cap, so hasOverride bypasses this gate — only the arms rule's STATIC caps are gated here.)
+    // ARMS-SIGNATURE GATE — the STATIC arms maxBackLatWork cap (rule.sessionCaps, NOT a
+    // ledger override) applies only under dp_arms_signature_v1. OFF → skip it for arms so
+    // the arms rule is byte-identical to the pre-flag table. (The lower-focus maxBackLatWork
+    // comes via ledgerAdj.capOverrides, not the static rule cap, so hasOverride bypasses
+    // this gate — only the arms rule's STATIC maxBackLatWork is gated here.)
     if (ARMS_SIGNATURE_CAP_KEYS.has(capKey) && rule.id === 'arms'
         && typeof ruleCapVal === 'number' && !armsSignatureOn && !hasOverride) continue;
-    // STRICTLY-PARETO SUB-GATE — the AGGRESSIVE trim (chest-press-pattern + heavy-lower) fires
-    // only where it can make the arms genuinely LEAD: a full-body day, not under the low-cap
-    // band (armsSignatureTrimOn). On a U/L `upper` day OR a senior/low-capacity trainee these
-    // two fall back to flag-OFF (un-trimmed) — the freed press/leg slot would otherwise backfill
-    // a 3rd triceps (2-curl-key ceiling) and thin biceps below OFF (p4/p2/p12 arms_4d). The
-    // back-lat cap is NOT in this subset → it keeps firing on U/L (holding back at maintenance
-    // so the arms keep their slot). armsSignatureOn already passed above, so this only narrows.
-    if (ARMS_SIGNATURE_FULLBODY_ONLY_KEYS.has(capKey) && rule.id === 'arms'
-        && typeof ruleCapVal === 'number' && !armsSignatureTrimOn && !hasOverride) continue;
     // CROSS-DAY LEDGER override (dp_week_ledger_v1) — a tightened cap (e.g. maxCloseGrip
     // → 0 on a later push day; maxBackLatWork → 1 on a lower-focus maintenance day). Only
     // ever LOWERS (the min of the rule cap + override), so it can only prune MORE, never
