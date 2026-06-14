@@ -312,21 +312,61 @@ describe('i18n leak harness — no RO string literals in src/react/**/*.tsx (inc
   });
 });
 
-// ── (B) RO literals in the banner-feeding engine + composer sources ──────────
+// ── (B) RO literals across the WHOLE engine tree + the React composer ────────
 //
 // Catches audit 09.200 (proactiveEngine.js `message` templates) + 09.205
-// (engineWrappers.ts banner text). These files compose user-facing banner copy
-// outside the .tsx tree, so the AST gate never reads them. They must emit a
-// semantic key resolved by t() at the render boundary — ZERO RO copy in source.
+// (engineWrappers.ts banner text) AND every other engine `.js` that composes
+// user-facing copy outside the .tsx tree. The AST gate never reads .js, so a
+// banner string committed into ANY engine module escapes it. Previously this
+// scanned a HARDCODED 2-file list (proactiveEngine + engineWrappers), so a new
+// engine module with RO banner copy slipped through. Now it GLOBS the engine
+// tree (test files excluded) + the React composer, scanned with the same
+// machinery. Engines/composers must emit a semantic i18n key resolved by t()
+// at the render boundary — ZERO RO copy in source.
+//
+// CARRIED-FORWARD DEBT (KNOWN_ENGINE_RO): widening the scan from 2 files to the
+// whole engine tree surfaced 12 PRE-EXISTING RO source literals (4 modules).
+// They are the engine-side RO source wording that the React render boundary is
+// expected to resolve to i18n keys (mirrors the documented Tempo-cue pattern in
+// i18nNoRoLeak.test.tsx). They are recorded here so the widened scan guards the
+// whole tree against NEW leaks WITHOUT false-failing on this pre-existing debt.
+// Adding a row is a conscious admission of debt, NOT a way to silence a fresh
+// leak — new RO copy in an engine module must become a t() key, never a new row.
+// TRIAGE: each of these should be keyed (engine emits a semantic key, t()
+// resolves it at render) and its row removed as the keying lands.
+const KNOWN_ENGINE_RO: ReadonlyArray<{ file: string; includes: string; why: string }> = [
+  // src/engine/bayesianNutrition/observationFilter.js — import-context UI message
+  { file: 'src/engine/bayesianNutrition/observationFilter.js', includes: 'zile cu sub', why: 'pre-existing: getKcalFloorImportInformativeMessage RO sentence' },
+  { file: 'src/engine/bayesianNutrition/observationFilter.js', includes: 'Coach exclude acele zile', why: 'pre-existing: import informative message RO' },
+  // src/engine/deload/constants.js — WORDING_RO banners + buildUiLabel
+  { file: 'src/engine/deload/constants.js', includes: 'recuperare programata', why: 'pre-existing: WORDING_RO.linear deload banner' },
+  { file: 'src/engine/deload/constants.js', includes: 'Reglam intensitatea', why: 'pre-existing: WORDING_RO.aa deload banner' },
+  { file: 'src/engine/deload/constants.js', includes: 'Saptamana de recuperare', why: 'pre-existing: buildUiLabel deload UI label' },
+  // src/engine/tempo/formCues.js — BASE_LIBRARY_RO cue (resolved to key at render)
+  { file: 'src/engine/tempo/formCues.js', includes: 'muschiul tinta', why: 'pre-existing: BASE_LIBRARY_RO isolation cue (tempoCue render-boundary keyed)' },
+  // src/engine/warmup/constants.js — RO warmup exercise pools
+  { file: 'src/engine/warmup/constants.js', includes: 'greutate proprie', why: 'pre-existing: warmup exercise pool RO labels' },
+  { file: 'src/engine/warmup/constants.js', includes: 'Plank usor', why: 'pre-existing: warmup core exercise RO label' },
+];
+function isKnownEngineRo(file: string, text: string): boolean {
+  return KNOWN_ENGINE_RO.some((k) => k.file === file && (k.includes === '' || text.includes(k.includes)));
+}
 const BANNER_SOURCE_FILES = [
-  'src/engine/proactiveEngine.js',
+  ...gitFiles('src/engine/**/*.js').filter(
+    (f) => !f.split('/').includes('__tests__') && !f.split('/').includes('tests') && !/\.(test|spec)\./.test(f),
+  ),
   'src/react/lib/engineWrappers.ts',
 ];
 describe('i18n leak harness — banner-feeding sources carry no RO copy', () => {
-  it('proactiveEngine + engineWrappers emit keys, not Romanian strings', () => {
+  it('the engine tree + engineWrappers emit keys, not Romanian strings', () => {
+    expect(BANNER_SOURCE_FILES.length).toBeGreaterThan(50); // sanity: the tree was found
     const hits: LeakHit[] = [];
     for (const rel of BANNER_SOURCE_FILES) {
-      hits.push(...scanSourceRoLiterals(resolve(REPO_ROOT, rel.split('/').join(sep)), rel, false));
+      hits.push(
+        ...scanSourceRoLiterals(resolve(REPO_ROOT, rel.split('/').join(sep)), rel, false).filter(
+          (h) => !isKnownEngineRo(h.file, h.text),
+        ),
+      );
     }
     if (hits.length > 0) {
       const report = hits.map((h) => `  ${h.file}:${h.line} "${h.text}"`).join('\n');

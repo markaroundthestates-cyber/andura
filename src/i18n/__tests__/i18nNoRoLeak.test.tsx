@@ -26,7 +26,7 @@ import type { JSX } from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { setLocale, _resetI18nCache } from '../index.js';
+import { setLocale, _resetI18nCache, _getBundle } from '../index.js';
 import { useWorkoutStore } from '../../react/stores/workoutStore';
 import { useCoachStore } from '../../react/stores/coachStore';
 import { useOnboardingStore } from '../../react/stores/onboardingStore';
@@ -1424,4 +1424,71 @@ describe('Wave C2 i18n — RO opt-in still works (Cont > Setari > Limba honored)
     await Promise.resolve();
     expect(container.textContent ?? '').toContain('Antrenor');
   });
+});
+
+// ── ENGINE-KEY BUNDLE-PRESENCE GUARD (anti-drift for the RO-label fallback) ──
+// StatsGrid / FatigueStrip / ReadinessVerdict resolve the engine's semantic
+// verdict `key` through i18n (coachEngine.readiness.labels.* /
+// coachEngine.fatigue.*.label) and FALL BACK to the engine's canonical RO
+// `label` when the i18n key is missing. That fallback is silent: a missing EN
+// key means the RO engine label leaks under EN with NO render test failing (the
+// component renders SOMETHING). This unit guard removes the silence — it asserts
+// EVERY readiness status key + EVERY fatigue key resolves to a PRESENT
+// coachEngine.* value in BOTH the en AND ro bundles. The key lists are the REAL
+// engine enums (verified against src/engine/readiness.js getReadinessVerdict +
+// src/engine/fatigue.js calculateFatigueScore), and the mapping mirrors the
+// components' own (INSUFFICIENT_DATA → .fatigue.insufficient.label).
+describe('Engine-key i18n presence — every verdict key resolves in BOTH bundles', () => {
+  // Every `key` getReadinessVerdict can emit (CUT path + normal path).
+  const READINESS_KEYS = [
+    'SOLID', 'NORMAL', 'MODERATE', 'LIGHT', 'REST', 'REST_RECOVER', 'PR_DAY',
+  ] as const;
+  // Every `key` calculateFatigueScore can emit. INSUFFICIENT_DATA maps to the
+  // `.insufficient.label` slot (the rest map to `.<KEY>.label`) — same as the
+  // StatsGrid/FatigueStrip resolution.
+  const FATIGUE_KEYS = [
+    'HIGH_FATIGUE', 'MODERATE_FATIGUE', 'PEAK_FORM', 'NORMAL', 'INSUFFICIENT_DATA',
+  ] as const;
+
+  function readinessI18nKey(k: string): string {
+    return `coachEngine.readiness.labels.${k}`;
+  }
+  function fatigueI18nKey(k: string): string {
+    return k === 'INSUFFICIENT_DATA'
+      ? 'coachEngine.fatigue.insufficient.label'
+      : `coachEngine.fatigue.${k}.label`;
+  }
+
+  /** Resolve a dotted path against a raw bundle object → string | undefined. */
+  function resolveInBundle(bundle: unknown, path: string): string | undefined {
+    let cur: unknown = bundle;
+    for (const part of path.split('.')) {
+      if (cur == null || typeof cur !== 'object') return undefined;
+      cur = (cur as Record<string, unknown>)[part];
+    }
+    return typeof cur === 'string' ? cur : undefined;
+  }
+
+  const LOCALES = ['en', 'ro'] as const;
+
+  for (const locale of LOCALES) {
+    const bundle = _getBundle(locale);
+    it(`[${locale}] bundle was loaded`, () => {
+      expect(bundle).not.toBeNull();
+    });
+
+    for (const k of READINESS_KEYS) {
+      it(`[${locale}] readiness key "${k}" → present non-empty coachEngine value`, () => {
+        const val = resolveInBundle(bundle, readinessI18nKey(k));
+        expect(val, `missing ${readinessI18nKey(k)} in ${locale}.json`).toBeTruthy();
+      });
+    }
+
+    for (const k of FATIGUE_KEYS) {
+      it(`[${locale}] fatigue key "${k}" → present non-empty coachEngine value`, () => {
+        const val = resolveInBundle(bundle, fatigueI18nKey(k));
+        expect(val, `missing ${fatigueI18nKey(k)} in ${locale}.json`).toBeTruthy();
+      });
+    }
+  }
 });

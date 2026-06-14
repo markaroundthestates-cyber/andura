@@ -90,8 +90,19 @@ jobs:
             const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.payload.workflow_run.id}`;
             const artifactUrl = `${runUrl}#artifacts`;
 
+            // Zero-test guard: a run that parsed 0 passed + 0 failed means the
+            // Playwright run itself crashed (config error, no browser, all
+            // skipped) — the old code posted GREEN on this. Treat it as a hard
+            // FAILURE so a broken smoke can never look like a passing one.
+            const zeroTests = total === 0;
+
             let body = '';
-            if (failed === 0) {
+            if (zeroTests) {
+              body = `## ❌ QA Automat — Zero teste rulate\n\n` +
+                `**🔴 CRITIC** — rularea Playwright a produs **0 teste** (passed + failed = 0). ` +
+                `Run-ul a esuat sa porneasca, sau toate testele au fost skip-uite.\n\n` +
+                `📊 [Raport HTML complet](${artifactUrl}) | 🔗 [Run CI](${runUrl})`;
+            } else if (failed === 0) {
               body = `## ✅ QA Automat — Toate testele trec\n\n` +
                 `**${passed}/${total} teste au trecut** în ${new Date().toLocaleTimeString('ro-RO')}.\n\n` +
                 `📊 [Raport HTML complet](${artifactUrl})`;
@@ -126,19 +137,24 @@ jobs:
               body += `\n📊 [Raport HTML complet](${artifactUrl}) | 🔗 [Run CI](${runUrl})`;
             }
 
+            // A run is healthy ONLY when at least one test ran AND none failed.
+            const ok = !zeroTests && failed === 0;
+
             // Post as commit status
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
               sha,
-              state: failed === 0 ? 'success' : 'failure',
-              description: failed === 0 ? `Toate ${total} teste trec` : `${failed}/${total} teste picate`,
+              state: ok ? 'success' : 'failure',
+              description: zeroTests
+                ? 'Zero teste rulate — Playwright a esuat'
+                : ok ? `Toate ${total} teste trec` : `${failed}/${total} teste picate`,
               context: 'QA / Playwright',
               target_url: runUrl,
             });
 
-            // Post commit comment only on failure
-            if (failed > 0) {
+            // Post commit comment only on failure (failed tests OR zero-test run)
+            if (!ok) {
               await github.rest.repos.createCommitComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -147,7 +163,9 @@ jobs:
               });
             }
 
-            // Fail the job if tests failed
-            if (failed > 0) {
+            // Fail the job on a failed test OR a zero-test (broken) run
+            if (zeroTests) {
+              core.setFailed('QA produced zero tests — playwright run likely failed or all skipped');
+            } else if (failed > 0) {
               core.setFailed(`${failed} test(e) picate`);
             }

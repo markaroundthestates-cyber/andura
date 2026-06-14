@@ -34,9 +34,11 @@ test.describe('Magic Link UI smoke', () => {
       page.locator('input[type="email"]'),
     ];
     let found = false;
+    let foundCandidate: (typeof candidates)[number] | null = null;
     for (const c of candidates) {
       if (await c.count()) {
         found = true;
+        foundCandidate = c;
         break;
       }
     }
@@ -46,6 +48,10 @@ test.describe('Magic Link UI smoke', () => {
         'magic-link email entry not present in current UI build — Magic Link flow lives în Cont tab post-auth in some configs',
       );
     }
+    // Found-path assertion: the entry point must not just EXIST in the DOM, it
+    // must be VISIBLE to the user — otherwise "reachable" is unverified (the
+    // test previously asserted nothing on this branch).
+    await expect(foundCandidate!.first()).toBeVisible();
   });
 
   test('email input + send button accept valid email — network dispatch intercepted', async ({
@@ -95,7 +101,12 @@ test.describe('Magic Link UI smoke', () => {
       .catch(() => null);
     await sendButton.first().click({ timeout: 5000 });
     await dispatchPromise;
-    expect.soft(dispatched.length >= 0).toBe(true);
+    // Meaningful contract: clicking send EITHER fired a Firebase auth dispatch
+    // OR surfaced a client-side validation message (invalid/email). The old
+    // `>= 0` assert was a tautology (a length is always >= 0) and could never
+    // fail. Soft so the WCAG case below still runs even if this regresses.
+    const validationVisible = await page.getByText(/invalid|email/i).count();
+    expect.soft(dispatched.length > 0 || validationVisible > 0).toBe(true);
   });
 
   test('Magic Link entry page passes axe-core WCAG 2.1 AA (zero critical/serious)', async ({

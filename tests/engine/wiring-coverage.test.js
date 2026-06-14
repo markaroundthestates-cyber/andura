@@ -126,6 +126,18 @@ function liveGateSites(flagId) {
 
 const SCOPED_FLAGS = Object.keys(FLAGS).filter(IN_SCOPE).sort();
 
+// ── SECOND SIGNAL: does a wired call-site actually REACH production? ──────────
+// A live `isEnabled('<flag>')` gate proves a CONSUMER exists, NOT that the flag
+// is ON for any real user. A flag with rollout:0 + default:false is gated but
+// PERMANENTLY OFF in prod → its engine output never reaches a real session even
+// though it is "wired". This is the same "computed-but-discarded" failure mode,
+// one layer down (wired-but-dark-in-prod). We REPORT it informationally (never
+// fail on it — rollout is a deliberate staged-release lever, not a regression).
+function reachableInProd(flagId) {
+  const f = FLAGS[flagId];
+  return !!f && (f.rollout > 0 || f.default === true);
+}
+
 describe('wiring-coverage guard (#40) — engine output must reach the live session', () => {
   it('the scoped engine-flag universe is non-empty (the scan actually ran)', () => {
     expect(SCOPED_FLAGS.length).toBeGreaterThan(0);
@@ -133,7 +145,7 @@ describe('wiring-coverage guard (#40) — engine output must reach the live sess
 
   // ── CORE: every scoped flag is EITHER wired OR a documented known-dark ───────
   for (const flagId of SCOPED_FLAGS) {
-    it(`${flagId} has a live consumer (or is a documented known-dark primitive)`, () => {
+    it(`${flagId} has a live call-site (or is a documented known-dark primitive)`, () => {
       const sites = liveGateSites(flagId);
       const wired = sites.length > 0;
       const allowed = Object.prototype.hasOwnProperty.call(KNOWN_DARK_ALLOWLIST, flagId);
@@ -179,8 +191,10 @@ describe('wiring-coverage guard (#40) — engine output must reach the live sess
     }
   });
 
-  // ── coverage headline: the live-driven share of the motor (informational gate) ─
-  it('reports the wired-share of the engine-flag motor (and the known-dark count)', () => {
+  // ── coverage headline: the call-site share of the motor (informational gate) ─
+  // "wired" here = a call-site EXISTS in shipped src. It does NOT assert the flag
+  // is ON in prod — see the second headline below for the rollout-reach signal.
+  it('reports the call-site share of the engine-flag motor (and the known-dark count)', () => {
     const wired = SCOPED_FLAGS.filter((f) => liveGateSites(f).length > 0);
     const dark = SCOPED_FLAGS.filter((f) => liveGateSites(f).length === 0);
     // Every dark flag must be accounted for by the allow-list (redundant with the
@@ -191,5 +205,29 @@ describe('wiring-coverage guard (#40) — engine output must reach the live sess
     // The allow-list may not be LARGER than the actually-dark set (no phantom entries).
     expect(Object.keys(KNOWN_DARK_ALLOWLIST).length).toBe(dark.length);
     expect(wired.length + dark.length).toBe(SCOPED_FLAGS.length);
+  });
+
+  // ── SECOND headline (INFORMATIONAL — never fails): reaches-prod share ─────────
+  // A flag can have a call-site (per-flag test green) yet be PERMANENTLY OFF in
+  // prod (rollout:0 + default:false), so its engine output still never reaches a
+  // real user. This surfaces that "wired-but-dark-in-prod" count so the call-site
+  // headline above is never misread as "% of the motor that reaches the car". It
+  // is purely reporting — rollout staging is a deliberate lever, not a regression,
+  // so this asserts only an invariant that can never break (count is in-range).
+  it('reports wired-but-dark-in-prod flags (call-site exists but rollout:0/default:false)', () => {
+    const wired = SCOPED_FLAGS.filter((f) => liveGateSites(f).length > 0);
+    const wiredButDarkInProd = wired.filter((f) => !reachableInProd(f));
+    const reachesProd = wired.filter((f) => reachableInProd(f));
+    // eslint-disable-next-line no-console
+    console.log(
+      `[wiring-coverage] call-site-wired=${wired.length}/${SCOPED_FLAGS.length} | ` +
+        `reaches-prod=${reachesProd.length} | wired-but-dark-in-prod=${wiredButDarkInProd.length}` +
+        (wiredButDarkInProd.length
+          ? `\n  dark-in-prod: ${wiredButDarkInProd.join(', ')}`
+          : ''),
+    );
+    // Informational: every wired flag is either prod-reachable or prod-dark, and
+    // the two partitions sum to the wired set. (Cannot fail — it documents state.)
+    expect(reachesProd.length + wiredButDarkInProd.length).toBe(wired.length);
   });
 });
