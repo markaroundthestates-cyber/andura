@@ -18,8 +18,7 @@
 import { classifyPattern } from './ceiling.js';
 import { getExerciseMetadata } from '../exerciseLibrary.js';
 
-// ── UNVERIFIED DESIGN PROPOSAL (spec §9) — research / Daniel sanity-check before
-//    dp_population_prior_v1 flips ON ──
+// ── POPULATION PRIOR (spec §9) — LIVE: dp_population_prior_v1 is ON (rollout 1) ──
 // e1RM as a MULTIPLE OF BODYWEIGHT, per movement pattern, for a TYPICAL lifter at
 // each experience tier (reference MALE — the sex factor is applied separately).
 // These are POPULATION-TYPICAL (not elite): the same movement taxonomy as

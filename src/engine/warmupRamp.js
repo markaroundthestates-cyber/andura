@@ -43,8 +43,8 @@
 //
 // PURE + DETERMINISTIC + ZERO THROW: same workingKg + name → identical array. A bad
 // input (non-finite / ≤ 0 workingKg, non-string name) → [] (no ramp), never throws.
-// INERT BY DEFAULT: this module computes a ramp but the COMPOSER attaches it behind a
-// flag (dp_warmup_ramp_v1, default OFF), so wiring it changes no current output.
+// LIVE: this module computes a ramp and the Workout / WorkoutPreview screens render
+// it behind a flag (dp_warmup_ramp_v1, ON — rollout 1), so the ramp ships.
 
 import { roundToEquipmentWeight } from '../config/weights.js';
 import { getExerciseMetadata } from './exerciseLibrary.js';

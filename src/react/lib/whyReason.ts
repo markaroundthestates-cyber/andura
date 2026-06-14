@@ -29,7 +29,8 @@ export function whyForStatus(status: string | null | undefined): string | null {
 
 // Every status the engine can emit (dp.js status enum) → one why.reason.* key.
 // CATCH UP folds into INCREASE's "climbing toward your real weight" framing;
-// ON TARGET / PEAK / CAP REPS share the "sweet spot, hold and build" framing;
+// ON TARGET / PEAK / CAP REPS / CAP share the "sweet spot, hold and build" framing
+// (CAP = the over-cap clamp dp.js emits when working load hits its ceiling);
 // TECHNIQUE / SCALE BACK share the "one step back for two forward" framing.
 const WHY_REASON_KEY: Readonly<Record<string, string>> = {
   INCREASE: 'why.reason.increase',
@@ -41,6 +42,7 @@ const WHY_REASON_KEY: Readonly<Record<string, string>> = {
   'ON TARGET': 'why.reason.onTarget',
   PEAK: 'why.reason.onTarget',
   'CAP REPS': 'why.reason.onTarget',
+  CAP: 'why.reason.onTarget',
   'STAGNANT +SET': 'why.reason.stagnantSet',
   TECHNIQUE: 'why.reason.technique',
   'SCALE BACK': 'why.reason.technique',

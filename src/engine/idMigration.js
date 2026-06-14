@@ -1,4 +1,4 @@
-// ══ ID-MIGRATION Phase 3 — write-canonical migrator (DORMANT / dry-run only) ═══
+// ══ ID-MIGRATION Phase 3 — write-canonical migrator (ACTIVE — wired at boot) ═══
 // Design: 04-architecture/ID-MIGRATION-DESIGN_2026-06-10.md §3 (Faza 3) + §4.
 //
 // Phase 1 (inert): id + aliases in the library + resolveExerciseName/exerciseIdOf.
@@ -10,16 +10,15 @@
 //   rewrites persisted name-keyed stores onto the canonical name and stamps the
 //   stable `exerciseId`, bumping a per-store `_schemaVersion` 1→2.
 //
-// ⚠ DORMANT BY DESIGN. This module is PURE PLANNING + a guarded apply that NOTHING
-// calls yet. ACTIVATING it on live user data (running `migrateAllStores`) is a
-// deliberate manager+CEO decision on a dedicated Opus window with a backup window —
-// NOT wired here. `dryRunAllStores` is safe to call ANYTIME (read-only, no writes)
-// to inspect what a migration WOULD do against the real local data.
+// ✅ ACTIVE — wired. `runIdMigrationOnce` runs once per authed boot from
+// reactBoot.ts (behind dp_id_migration_apply_v1, ON): backup-first, idempotent,
+// fail-silent. A second run is all no-ops. `dryRunAllStores` is still safe to call
+// ANYTIME (read-only, no writes) to inspect what a migration WOULD do.
 //
 // Why read-shim FIRST then this: Phase 2b means the app already behaves correctly
 // pre-migration; this only collapses the stored representation so Phase 4 can drop
-// the legacy fallbacks after clean telemetry. Until activation, removing Phase 2b
-// would re-open the bug — Phase 3 is additive, never a prerequisite for correctness.
+// the legacy fallbacks after clean telemetry. Phase 2b stays REQUIRED until that
+// telemetry is clean — Phase 3 is additive, never a prerequisite for correctness.
 
 import { DB } from '../db.js';
 import { resolveExerciseName, exerciseIdOf } from './exerciseLibrary.js';

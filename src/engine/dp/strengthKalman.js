@@ -23,7 +23,7 @@
 //
 // Pure-ish: the fold (computePosteriorFromLogs) is a pure function of its inputs;
 // only loadPosterior/savePosterior touch DB. The consumer (dp.js _demoWorkingW)
-// reads mu only behind dp_strength_kalman_v1 (default OFF) -> byte-identical legacy.
+// reads mu behind dp_strength_kalman_v1 (ON — rollout 1), so the posterior is LIVE.
 
 import { DB } from '../../db.js';
 import { kalmanUpdate1D, validateKalmanState } from '../bayesianNutrition/kalmanFilter.js';

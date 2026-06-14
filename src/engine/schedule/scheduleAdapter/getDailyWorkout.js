@@ -1185,8 +1185,8 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     progressingNames: isEnabled('dp_progression_bonus_v1')
       ? progressingNames(DP._loggedExerciseNames(), (name) => DP.getLogs(name, 12), null)
       : null,
-    // Wave 1.3-B focus-policy resolver (dp_focus_policy_v1, default OFF →
-    // byte-identical). When ON, buildSession applies the per-focus LOCAL
+    // Wave 1.3-B focus-policy resolver (dp_focus_policy_v1, ON → LIVE). When ON
+    // (the live default), buildSession applies the per-focus LOCAL
     // constraint policy (sessionCaps + sessionRequirements from FOCUS_RULES):
     // prune press/arm/pull excess over a cap, inject a missing required slot
     // (side/rear delt, flye, lat-isolation, overhead-triceps, stretch-curl) when a

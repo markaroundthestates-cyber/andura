@@ -84,7 +84,7 @@
 
 /**
  * Frozen per-focus policy table keyed by the live FOCUS_PRESETS focus id.
- * DATA ONLY — inert until the Wave 1.3 resolver (dp_focus_policy_v1) reads it.
+ * LIVE — the Wave 1.3 resolver applyFocusPolicy (dp_focus_policy_v1, ON) reads it.
  * @type {Readonly<Record<FocusId, FocusRule>>}
  */
 export const FOCUS_RULES = Object.freeze({

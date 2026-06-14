@@ -18,6 +18,7 @@ const ALL_STATUSES = [
   'ON TARGET',
   'PEAK',
   'CAP REPS',
+  'CAP',
   'STAGNANT +SET',
   'TECHNIQUE',
   'SCALE BACK',

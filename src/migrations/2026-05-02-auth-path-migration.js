@@ -86,9 +86,10 @@ export async function runAuthPathMigration(opts = {}) {
       }
     }
 
-    // 2. Read source legacy path. NOTE: read uses auth token, but legacy
-    // path predates per-uid rules so the open-rules period (ADR 007 pre-
-    // amendment) allows the read regardless of uid.
+    // 2. Read source legacy path with the auth token. Rules are now STRICT
+    // per-uid (database.rules.json: auth.uid === $uid), so a uid != "daniel"
+    // reading users/daniel 403s -> source_http_403 below (handled gracefully);
+    // no cross-account exposure. The dest write is always self (users/<uid>).
     const sourceUrl = await buildAuthUrl(sourcePath);
     const sourceResp = await fetcher(sourceUrl, { cache: 'no-store' });
     if (!sourceResp.ok) {

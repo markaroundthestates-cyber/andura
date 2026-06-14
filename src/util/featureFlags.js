@@ -801,24 +801,18 @@ export const FLAGS = Object.freeze({
   // targetSec to the consumer; the dedicated timer input lands at the UI pass.
   dp_metric_types_v1: { rollout: 1, default: true },
 
-  // #73 goal/sex-aware exercise SELECTION (engine-wiring 2026-06-08) (RISK MED —
-  // changes session COMPOSITION, path A; never kg). Two biases, both default OFF →
-  // the chosen exercise list is BYTE-IDENTICAL to today. When ON:
+  // #73 goal-aware exercise SELECTION (engine-wiring 2026-06-08) (RISK MED —
+  // changes session COMPOSITION, path A; never kg). Default OFF → the chosen
+  // exercise list is BYTE-IDENTICAL to today. When ON:
   //  (1) LATERAL-RAISE GUARANTEE — when the focus emphasizes the shoulders (umeri
   //      in emphasizedGroups: v-taper / upper / shoulders) and the cluster trains
   //      umeri, the session is guaranteed to include a lateral raise (the #1 width
   //      movement) — the DIAG miss where selection picked press + rear-delt but NO
   //      lateral raise, leaving the v-taper delts at ~16 instead of the 17-20 band.
-  //  (2) SEX/COMMONNESS BIAS — a man's leg-day accessory pool prefers the lifts
-  //      common for men (RDL / leg extension / leg curl / squat / leg press / hip
-  //      abductor / calf) and DEMOTES moves common for women + rare for men (cable
-  //      glute kickback / hip thrust / cable-ankle); women → inverse (no demotion).
-  //      A pure REORDER (poolForGroup), never a hard ban — every option stays
-  //      reachable if nothing else fits (anti-paternalism, last-option safety).
-  // OFF → no umeri injection + sexBias null → byte-identical pool order +
-  // composition (the calibration-sim hash is path-B/orthogonal + stays green; the
-  // full-path-sim OFF arm unchanged). Flip ON is a human gate (Daniel) AFTER the
-  // sim A/B. See _REF_gold_vtaper_cut_2026-06-08 + _ENGINE_volume_policy §73.
+  // OFF → no umeri injection → byte-identical pool order + composition (the
+  // calibration-sim hash is path-B/orthogonal + stays green; the full-path-sim OFF
+  // arm unchanged). Flip ON is a human gate (Daniel) AFTER the sim A/B. See
+  // _REF_gold_vtaper_cut_2026-06-08 + _ENGINE_volume_policy §73.
   dp_smart_selection_v1: { rollout: 0, default: false },
 
   // FINER sub-family selection dedup (Daniel, eval 2026-06-13) (RISK LOW —
@@ -972,13 +966,14 @@ export const FLAGS = Object.freeze({
   // library add — NOT this flag.
   dp_daniel_tier_select_v1: { rollout: 1, default: true },
 
-  // Wave 1.3 focus-policy (DATA ONLY — INERT until its resolver lands). Per-focus
-  // PATTERN policy (session caps, per-session requirements, cross-day weekly
-  // minimums, frequency caps) lives as the frozen FOCUS_RULES table in
-  // src/engine/focusPolicy.js. This flag GATES the future resolver that will read
-  // that table at the compose seam — it is NOT YET wired to sessionBuilder/compose
-  // (no consumer imports FOCUS_RULES this step). OFF → the table is never read →
-  // byte-identical to today. The resolver (a LATER Wave 1.3 step) flips this on.
+  // Wave 1.3 focus-policy (LIVE + ON). Per-focus PATTERN policy (session caps,
+  // per-session requirements, cross-day weekly minimums, frequency caps) lives as
+  // the frozen FOCUS_RULES table in src/engine/focusPolicy.js, and the resolver
+  // applyFocusPolicy READS it at the compose seam — wired into sessionBuilder.js
+  // (imported :15, applied :2244 + :3767, gated on ctx.focusPolicy === true). ON →
+  // the per-focus local constraint policy is applied to the selected list (prune
+  // excess over a cap, inject a missing required slot when a candidate is in pool),
+  // under safety/recovery/coverage > requirements > caps > score precedence.
   dp_focus_policy_v1: { rollout: 1, default: true },
 
   // Focus VOLUME CONTRACTS (2026-06-12 focus-contracts arc) — a per-focus WEEKLY

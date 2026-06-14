@@ -109,7 +109,7 @@ export function resolveActivePhase(): PhaseToken | null {
 
   // (b) established Engine #2 detector (weight-trend + sex-aware body-comp).
   const trendKey = detectAutoPhaseKey();
-  return trendKey === 'CUT' || trendKey === 'BULK' || trendKey === 'STRENGTH'
+  return trendKey === 'CUT' || trendKey === 'BULK'
     ? (trendKey as PhaseToken)
     : 'MAINTENANCE';
 }

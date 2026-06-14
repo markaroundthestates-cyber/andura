@@ -83,7 +83,8 @@ export function t(key, vars = {}) {
 
 /**
  * Auto-detect locale: localStorage `sf.locale` override → `navigator.language`
- * → fallback `'ro'`. Cached after first call (use `_resetI18nCache()` for tests).
+ * → fallback `'en'` (DEFAULT_LOCALE). Cached after first call (use
+ * `_resetI18nCache()` for tests).
  *
  * @returns {'ro' | 'en'}
  */
@@ -101,8 +102,8 @@ export function getCurrentLocale() {
   } catch { /* private mode etc — ignore */ }
 
   // 2. navigator.language prefix match — doar locale auto-selectable
-  // (AUTO_DETECT_LOCALES). `en` exclus: placeholder neterminat, NU se
-  // auto-detecteaza din browser en-US (altfel leak TODO_EN user-facing).
+  // (AUTO_DETECT_LOCALES = ['en', 'ro'] — ambele auto-detectabile acum ca EN e
+  // tradus complet; vechiul excludere `en` nu mai e necesara).
   try {
     const nav = typeof navigator !== 'undefined' ? navigator.language : null;
     if (nav) {
