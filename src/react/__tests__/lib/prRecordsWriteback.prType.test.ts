@@ -86,12 +86,12 @@ describe('F6b V2 #14 — PR type carried past the flat isPR boolean', () => {
     expect('prType' in firstSet(out)).toBe(false);
   });
 
-  it('no flag set at all → today behavior (flat isPR, no prType)', () => {
+  it('no flag set at all → default flipped ON 2026-06-14 → prType carried', () => {
     const out = enrichExercisesWithPR(oneSet('Squat', 100, 8), [
       { ex: 'Squat', w: 100, reps: 5 },
     ]);
     expect(firstSet(out).isPR).toBe(true);
-    expect('prType' in firstSet(out)).toBe(false);
+    expect('prType' in firstSet(out)).toBe(true);
   });
 
   it('non-PR set is untouched (no isPR, no prType) even flag ON', () => {

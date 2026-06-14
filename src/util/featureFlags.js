@@ -409,7 +409,7 @@ export const FLAGS = Object.freeze({
   // badge renders a per-type i18n label so a rep/volume PR is first-class (the
   // PRs that keep coming for a near-ceiling user, where load-PRs dry up). OFF or
   // a set with no prType → today's flat " PR" badge → byte-identical.
-  dp_rep_volume_pr_v1: { rollout: 0, default: false },
+  dp_rep_volume_pr_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave A narration: per-type PR badge; never touches kg)
 
   // V3 #19 effective-reps / stimulus model (RISK LOW-MED — narration first).
   // effectiveReps(set) weights a set by proximity-to-failure via the existing
@@ -855,7 +855,7 @@ export const FLAGS = Object.freeze({
   // ON is a human gate (Daniel) AFTER review. The band/zone constants are
   // calibrated from _ENGINE_load_bf_rate_policy_2026-06-08 §3 + §4 (verified
   // physiology — Helms/ISSN/Aragon). See spec §4.
-  dp_goal_realism_v1: { rollout: 0, default: false },
+  dp_goal_realism_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave A: goal-realism reframe advisory; never blocks/kg)
 
   // #75 load-transition-window + reason-derivation (engine-wiring 2026-06-08)
   // (RISK MED — changes how dp.js READS reps right after a forced load change,
@@ -890,7 +890,7 @@ export const FLAGS = Object.freeze({
   // weight or set count. OFF → the parent gate returns null → no extra DOM, the
   // Workout screen is byte-identical. No new persistence (reads dp-strength-
   // posterior via the carried confidence field). Optional Daniel-flag.
-  dp_coach_confidence_v1: { rollout: 0, default: false },
+  dp_coach_confidence_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave A narration: confidence tier line; no kg path)
 
   // #56 moat "why?" on-tap one-liner (RISK LOW — read-only narration). Upgrades the
   // "why this exercise?" explainer's data source from the coarse kg-vs-last re-guess
@@ -901,7 +901,7 @@ export const FLAGS = Object.freeze({
   // available ON TAP, never auto-pushed. OFF → handleOpenWhy uses the existing
   // categorical summary → byte-identical (no new DOM, no behavior change). No new
   // persistence. Optional Daniel-flag.
-  dp_moat_why_v1: { rollout: 0, default: false },
+  dp_moat_why_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave A narration: real decision-reason on the why-tap; read-only)
 
   // behavioral tier auto-detect (engine-wiring) (RISK MED — overrides the user's
   // self-reported experience, which then drives session COUNT / volume / slot caps
@@ -1085,7 +1085,7 @@ export const FLAGS = Object.freeze({
   // false → phaseRirShift never called, the band passes through unchanged → the
   // full-path-sim hash + golden gate hold (NOT in the fp ON cohort). Flip ON is a
   // human gate (Daniel) after a focused multi-week ON review.
-  dp_meso_rir_v1: { rollout: 0, default: false },
+  dp_meso_rir_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave A: mesocycle RIR display band; label only, never kg/reps)
 
   // Metadata-derived rep-range resolver (Daniel coach audit 2026-06-10) (RISK
   // MED — the band feeds EVERY consumer coherently: prescription + live-adjust

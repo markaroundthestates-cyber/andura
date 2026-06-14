@@ -230,8 +230,10 @@ describe('ObiectivCard — #74 goal-realism reframe (dp_goal_realism_v1)', () =>
     try { localStorage.removeItem('goalRealism-shown'); } catch { /* ignore */ }
   });
 
-  it('flag OFF (default) → NO reframe renders even on an unrealistic goal (byte-identical)', () => {
+  it('flag OFF → NO reframe renders even on an unrealistic goal (byte-identical)', () => {
     // 81 -> 63 by a near deadline = ~2.5%/wk (unrealistic) — yet flag OFF = silent.
+    // (default flipped ON 2026-06-14; pin OFF explicitly to keep the OFF path covered)
+    vi.spyOn(flags, 'isEnabled').mockImplementation(() => false);
     useProgresStore.getState().setTargetObiectiv({ weightKg: 63, month: '2026-08-07' });
     renderCard();
     expect(screen.queryByTestId('goal-realism-reframe')).toBeNull();

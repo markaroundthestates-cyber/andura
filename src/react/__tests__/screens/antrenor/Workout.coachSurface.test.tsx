@@ -95,7 +95,9 @@ afterEach(() => {
 });
 
 describe('#63 coach confidence — flag dp_coach_confidence_v1', () => {
-  it('OFF (default): NO confidence line in the DOM (byte-identical)', async () => {
+  it('OFF: NO confidence line in the DOM (byte-identical)', async () => {
+    // default flipped ON 2026-06-14 → pin OFF via _devFlags to keep the OFF path covered
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_coach_confidence_v1: false }));
     await renderAndStart();
     expect(screen.queryByTestId('coach-confidence-note')).not.toBeInTheDocument();
   });
@@ -114,7 +116,9 @@ describe('#63 coach confidence — flag dp_coach_confidence_v1', () => {
 });
 
 describe('#56 moat "why?" — flag dp_moat_why_v1', () => {
-  it('OFF (default): the "why?" modal shows the categorical re-guess, NOT the real reason', async () => {
+  it('OFF: the "why?" modal shows the categorical re-guess, NOT the real reason', async () => {
+    // default flipped ON 2026-06-14 → pin OFF via _devFlags to keep the OFF path covered
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_moat_why_v1: false }));
     await renderAndStart();
     fireEvent.click(screen.getByTestId('wv2-why-trigger'));
     const text = await screen.findByTestId('why-modal-text');
