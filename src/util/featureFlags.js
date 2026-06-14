@@ -1404,6 +1404,40 @@ export const FLAGS = Object.freeze({
   // (and it is NOT in fp-config FLIPPED_FLAGS — those are default-ON flags pinned off;
   // a default-OFF flag is already off everywhere, so the fp hashes hold automatically).
   dp_maintenance_freq_reshape_v1: { rollout: 0, default: false },
+
+  // AUTO-INFER TRAINING FREQUENCY → VOLUME dose (2026-06-14, real-user behavior).
+  // The weekly volume budget is dosed off the CONFIGURED/onboarding frequency (the
+  // schedule's active-day count). But a user who configured 5 days yet ACTUALLY
+  // trains ~3 should get volume for 3 — recovery-limited reality, not the optimistic
+  // configured number (the same logs DP + ACWR already read rolling for loads +
+  // readiness). When ON, getDailyWorkout INFERS the real cadence from the SAME
+  // flattened recovery logs (recoveryLogs = flattenSessionsToRecoveryLogs(
+  // userState.recentSessions)) via inferTrainingFrequency (distinct training DAYS in
+  // a rolling 21-day window, span-normalized, rounded, clamped [1,7]) and — when it
+  // falls SHORT of the configured frequency — scales the WEEKLY BUDGET by inferred/
+  // configured (MEV-floored). The periodization budget does NOT vary with frequency
+  // (persona×goal×experience×phase); frequency is only a per-session divisor
+  // downstream, so scaling the BUDGET is the ONLY injection point that moves the
+  // DELIVERED weekly total (the per-session floors otherwise absorb a freq change and
+  // the weekly sum is unchanged). VOLUME ONLY — the user's chosen training-day
+  // SCHEDULE (which days, cluster-per-day, weeklySessionsPerGroup, daysPerWeek) is
+  // UNTOUCHED; only the volume-target magnitude scales. Smoothed (rolling window,
+  // span-normalized) + anti-whiplash clamped (inferred deviates from configured by
+  // at most ~2 steps) + degrade-safe (malformed/missing logs → null → fall back to
+  // configured). COLD-START SAFETY (every new user + the eval grid): < ~2 weeks of
+  // history span OR < a few logged sessions → inferTrainingFrequency returns null →
+  // the scaler is never invoked → EXACTLY the configured-frequency behavior (byte-
+  // identical). The eval grid seeds DP load logs (DB 'logs', path B) but NOT
+  // sessionsHistory, so recentSessions is empty there → recoveryLogs empty → null →
+  // byte-identical regardless of the default. OFF → never inferred → byte-identical.
+  // Pinned OFF in fp-config FLIPPED_FLAGS: the fp cohort DOES build real multi-week
+  // sessionsHistory (the journeys log adherently), so the inferred-vs-configured
+  // ratio WOULD fire and move the frozen full-path hashes — pinned OFF keeps both
+  // hashOff/hashOn byte-for-byte. Proven on a new inferFrequency regression suite
+  // (mismatch configured-5/logged-3 → inferred 3 → DELIVERED weekly volume drops to
+  // the 3-day level; matched → unchanged; <2wk → cold-start fallback; malformed →
+  // fallback) + the eval-grid byte-identity gate.
+  dp_auto_infer_frequency_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

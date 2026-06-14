@@ -51,6 +51,7 @@ import { pickAlternativeCluster } from './alternativeCluster.js';
 import { weeklySessionsPerGroup } from './weeklySessions.js';
 import { resolveExperienceId } from '../../periodization/volumeLandmarks.js';
 import { flattenSessionsToRecoveryLogs } from './recoveryLogs.js';
+import { resolveVolumeFrequency, scaleWeeklyVolumeByInferredFrequency } from './inferFrequency.js';
 import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias, effectiveFocusPreset } from './focus.js';
 import { applyFocusVolumeContracts, focusContractDemotions, applyLedgerLowerBackCap } from './focusVolumeContracts.js';
 import { computeWeekLedger } from './weekLedger.js';
@@ -401,7 +402,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // (default OFF) → the allocator is never invoked → baseVolumeTargets is the raw
   // periodization budget → byte-identical positional split + intra-day M1 path.
   // Even ON, an all-recovered / no-history week self-no-ops to a clone.
-  const baseVolumeTargets =
+  const baseVolumeTargetsAllocated =
     isEnabled('dp_weekly_recovery_alloc_v1') && baseVolumeTargetsRaw && recoveryLogs.length > 0
       ? allocateWeeklyVolumeByRecovery(
           baseVolumeTargetsRaw,
@@ -413,6 +414,40 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
           }),
         )
       : baseVolumeTargetsRaw;
+
+  // AUTO-INFER FREQUENCY → VOLUME dose (dp_auto_infer_frequency_v1, 2026-06-14,
+  // DEFAULT ON). The weekly volume budget is dosed off the CONFIGURED frequency
+  // (the schedule's active-day count below); but a user who configured 5 days yet
+  // actually trains ~3 should get volume for 3 (recovery-limited reality), not 5.
+  // We INFER the real cadence from the SAME logged sessions ACWR/DP/recovery read
+  // (recoveryLogs above) and, when it falls SHORT of the configured frequency,
+  // scale the WEEKLY BUDGET by inferred/configured (MEV-floored). The periodization
+  // budget does NOT vary with frequency (persona×goal×experience×phase) — frequency
+  // is only a per-session divisor downstream — so scaling the BUDGET is the only
+  // injection point that moves the DELIVERED weekly total (otherwise the per-session
+  // floors absorb the change and the weekly sum is unchanged). VOLUME ONLY: the
+  // schedule (which days, the cluster-per-day, weeklySessionsPerGroup, daysPerWeek)
+  // is UNTOUCHED — only the volume-target magnitude scales. Cold start (no/sparse
+  // logs → resolveVolumeFrequency null) → scaler is never invoked → byte-identical
+  // (the eval grid seeds DP load logs but NOT sessionsHistory → recoveryLogs empty
+  // → null → byte-identical regardless of the default). Smoothed (rolling 21-day,
+  // span-normalized) + clamped (≤2 steps from configured) + degrade-safe (malformed
+  // logs → null → fallback). OFF → byte-identical (pinned OFF in the fp cohorts via
+  // FLIPPED_FLAGS — the fp journeys DO build real sessionsHistory, so it would fire).
+  const configuredVolumeFreq = resolvedActiveWeek.filter(Boolean).length || 1;
+  const inferredVolumeFreq =
+    isEnabled('dp_auto_infer_frequency_v1') && baseVolumeTargetsAllocated && recoveryLogs.length > 0
+      ? resolveVolumeFrequency(recoveryLogs, date.getTime(), configuredVolumeFreq)
+      : null;
+  const baseVolumeTargets =
+    inferredVolumeFreq !== null
+      ? scaleWeeklyVolumeByInferredFrequency(
+          baseVolumeTargetsAllocated,
+          inferredVolumeFreq,
+          configuredVolumeFreq,
+          ISRAETEL_BASELINES,
+        )
+      : baseVolumeTargetsAllocated;
 
   // ── M2: weakness amplifies REAL volume toward MRV (the substance, not just
   // reordering). Weak groups are layered, graceful (ADR 025):

@@ -297,6 +297,20 @@ export const FLIPPED_FLAGS = Object.freeze([
   // (v-taper/shoulders OHP-only 28 -> ~0, focus still leads, no double-OHP, other focuses
   // byte-identical) + the new lateral-delt-guarantee regression test, NOT in this stream.
   'dp_lateral_delt_guarantee_v1',
+  // THE FLIP 2026-06-14 (auto-infer frequency) — dp_auto_infer_frequency_v1 defaults
+  // ON. It scales a user's WEEKLY volume budget down when their logged training cadence
+  // falls SHORT of the configured frequency (inferred-vs-configured ratio, MEV-floored).
+  // This harness's journeys DO build real multi-week sessionsHistory (the cohort logs
+  // adherently via persistSessionLogs), so recentSessions is NON-empty and the inferred
+  // frequency WOULD fire and scale the budget → move the frozen prescription hashes.
+  // Pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so the inference is never
+  // invoked in either A/B arm → baseVolumeTargets is the raw periodization budget → BOTH
+  // frozen baselines (hashOff/hashOn) stay byte-for-byte. ON behavior is a REAL-USER
+  // behavior feature (NOT eval-measurable: the eval grid is cold-start — it seeds DP load
+  // logs but NOT sessionsHistory → recentSessions empty → null → byte-identical), proven
+  // on the new inferFrequency regression suite (mismatch configured-5/logged-3 → inferred
+  // 3 → delivered weekly volume drops to the 3-day level), NOT in this determinism stream.
+  'dp_auto_infer_frequency_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the
