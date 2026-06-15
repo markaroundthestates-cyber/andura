@@ -133,14 +133,38 @@ export function scaleWeeklyVolumeByInferredFrequency(
   }
   // Only ever LOWER (shortfall) — inferred >= configured keeps the budget.
   if (inf >= cfg) return { ...volumeTargets };
-  const ratio = inf / cfg;
+  return scaleWeeklyVolumeByRatio(volumeTargets, inf / cfg, israetelBaselines);
+}
+
+/**
+ * Scale a weekly per-group VOLUME budget by an arbitrary shortfall RATIO, MEV-
+ * clamped. The per-target scale + MEV-floor loop extracted from
+ * scaleWeeklyVolumeByInferredFrequency so BOTH the inferred-frequency path and the
+ * chronic-low-adherence path (dp_adherence_volume_v1) apply the SAME single
+ * discount under the SAME floor (the two combine by MIN of their ratios BEFORE
+ * this call — never a doubled discount).
+ *
+ * Only ever LOWERS: ratio >= 1 (or a bad ratio) → passthrough clone (we never
+ * inflate; over-execution / extra cadence is governed by the recovery/MRV layers).
+ *
+ * @param {Record<string, number>|null|undefined} volumeTargets - Big-11 EN -> sets/week
+ * @param {number} ratio - the combined shortfall ratio in (0,1] (>=1 → no scaling)
+ * @param {Readonly<Object<string,{MEV:number}>>} israetelBaselines - EN-keyed MEV table
+ * @returns {Record<string, number>} a NEW scaled map (input never mutated), or the
+ *   input clone when no scaling applies.
+ */
+export function scaleWeeklyVolumeByRatio(volumeTargets, ratio, israetelBaselines) {
+  if (!volumeTargets || typeof volumeTargets !== 'object') return volumeTargets;
+  const r = Number(ratio);
+  // ratio >= 1 / malformed → never inflate → passthrough clone.
+  if (!Number.isFinite(r) || r <= 0 || r >= 1) return { ...volumeTargets };
   const out = {};
   for (const [enKey, weekly] of Object.entries(volumeTargets)) {
     if (typeof weekly !== 'number' || !Number.isFinite(weekly)) {
       out[enKey] = weekly;
       continue;
     }
-    const scaled = weekly * ratio;
+    const scaled = weekly * r;
     const mev =
       israetelBaselines && israetelBaselines[enKey] && typeof israetelBaselines[enKey].MEV === 'number'
         ? israetelBaselines[enKey].MEV
@@ -150,6 +174,49 @@ export function scaleWeeklyVolumeByInferredFrequency(
     out[enKey] = weekly <= mev ? scaled : Math.max(mev, scaled);
   }
   return out;
+}
+
+// ── Chronic-low-adherence VOLUME ratio (dp_adherence_volume_v1, 2026-06-16) ─────
+// A user who SHOWS UP but chronically UNDER-EXECUTES (executed << proposed) with NO
+// 3-week per-exercise gap (so _returnDeload never fires) and a normal cadence (so
+// the inferred-frequency path never fires) had their dose UNREDUCED. computeAdherence
+// already measures this — its score already weights partials (executed×1 + partial
+// ×0.5)/proposed — so the adherence ratio is simply score/100, guarded for cold start.
+//
+// The ratio NEVER zeroes volume: it is clamped to the SAME MEV-floor contract the
+// inferred-frequency scaler enforces (scaleWeeklyVolumeByRatio MEV-floors each group),
+// and additionally floored away from 0 here so a 0%-adherence reading still doses the
+// minimum (the user re-engaging must not face an empty plan). VOLUME ONLY.
+
+// Below this many proposed sessions in-window the score is too noisy to dose on
+// (one missed session out of two is not "chronic") → treat as cold start.
+const ADHERENCE_MIN_PROPOSED = 4;
+// Never let the adherence ratio crater the budget below this fraction; the per-group
+// MEV floor (scaleWeeklyVolumeByRatio) is the real safety, this just bounds the ratio
+// itself so a near-zero score can't drive every above-MEV group to its MEV at once.
+const ADHERENCE_MIN_RATIO = 0.5;
+
+/**
+ * Derive a VOLUME shortfall ratio from a recent-window adherence reading.
+ * Cold-start guarded → 1 (no effect): null score (no proposed sessions) OR fewer
+ * than ADHERENCE_MIN_PROPOSED proposed sessions. Otherwise score/100, floored at
+ * ADHERENCE_MIN_RATIO so it never zeroes the dose.
+ *
+ * @param {number|null} score - computeAdherence().score (0..100, or null at cold start)
+ * @param {number} proposed - computeAdherence().proposed (in-window proposed sessions)
+ * @returns {number} a ratio in [ADHERENCE_MIN_RATIO, 1]; exactly 1 when inert (no effect)
+ */
+export function adherenceVolumeRatio(score, proposed) {
+  const p = Number(proposed);
+  // Cold start: no measurement / too few proposed sessions → inert (ratio 1).
+  if (score === null || score === undefined || !Number.isFinite(p) || p < ADHERENCE_MIN_PROPOSED) {
+    return 1;
+  }
+  const s = Number(score);
+  if (!Number.isFinite(s) || s >= 100) return 1; // full adherence → no effect
+  const ratio = s / 100;
+  // Clamp into [MIN_RATIO, 1] — never inflate, never zero.
+  return Math.max(ADHERENCE_MIN_RATIO, Math.min(1, ratio));
 }
 
 /**

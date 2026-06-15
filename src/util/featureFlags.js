@@ -1664,6 +1664,26 @@ export const FLAGS = Object.freeze({
   // the 3-day level; matched → unchanged; <2wk → cold-start fallback; malformed →
   // fallback) + the eval-grid byte-identity gate.
   dp_auto_infer_frequency_v1: { rollout: 1, default: true },
+
+  // Chronic-low-adherence VOLUME dose (dp_adherence_volume_v1, 2026-06-16, DEFAULT
+  // ON). The sibling above (dp_auto_infer_frequency_v1) only catches FEWER-DISTINCT-
+  // DAYS-than-configured (coarse, clamped, cold-start-gated); _returnDeload only
+  // catches a hard >= 3-week per-exercise GAP (weight). The UNCOVERED case: a user
+  // who SHOWS UP but CHRONICALLY under-executes (executed << proposed) with NO
+  // 3-week gap and ACWR normal — dosing was NOT reduced at all. computeAdherence
+  // ALREADY measures this (it weights partials) but only fed display + the deload-
+  // suppressor, never the dose. When ON, the recent-window adherence score/100 (21d)
+  // becomes a VOLUME ratio folded into the SAME weekly-volume scaling auto-infer
+  // uses (getDailyWorkout) — combined with the inferred-frequency ratio by the MIN
+  // (a user who is BOTH low-cadence AND low-execution gets a SINGLE discount, never
+  // a doubled one), then MEV-floored by the SAME clamp. VOLUME ONLY: the schedule
+  // (which days, day-pattern, daysPerWeek) is UNTOUCHED. Cold-start guarded
+  // (score===null OR proposed below a small minimum → ratio 1 → no effect), so a new
+  // user + the eval grid (no CDL entries → proposed 0 → null) are byte-identical.
+  // OFF → ratio forced to 1 → the seam is unchanged → byte-identical (pinned OFF in
+  // fp-config FLIPPED_FLAGS — the fp cohort logs adherently → executed==proposed →
+  // ratio 1 → inert, but pinned OFF so both frozen baselines stay byte-for-byte).
+  dp_adherence_volume_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

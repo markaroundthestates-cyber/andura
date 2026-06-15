@@ -379,6 +379,20 @@ export const FLIPPED_FLAGS = Object.freeze([
   // on the new inferFrequency regression suite (mismatch configured-5/logged-3 → inferred
   // 3 → delivered weekly volume drops to the 3-day level), NOT in this determinism stream.
   'dp_auto_infer_frequency_v1',
+  // THE FLIP 2026-06-16 (chronic-low-adherence volume) — dp_adherence_volume_v1 defaults
+  // ON. It scales a user's WEEKLY volume budget down when their recent-window adherence
+  // (computeAdherence score/100, 21d) shows chronic UNDER-EXECUTION (executed << proposed)
+  // with no 3-week gap, combined with the inferred-frequency ratio by the MIN (a single
+  // discount, never doubled), MEV-floored. The fp cohort logs ADHERENTLY (every scheduled
+  // session is executed via persistSessionLogs → executed == proposed → score 100 → ratio
+  // 1), so it is INERT in this harness either way — but pinned OFF here (in FLIPPED_FLAGS
+  // only, NOT PATH_A_FLAGS) so the adherence ratio is forced to 1 in both A/B arms → the
+  // weekly-volume seam is unchanged → BOTH frozen baselines (hashOff/hashOn) stay
+  // byte-for-byte even if a journey's adherence ever drifted. ON behavior is a REAL-USER
+  // behavior feature (NOT eval-measurable: the eval grid is cold-start — no CDL entries →
+  // proposed 0 → null → ratio 1 → byte-identical), proven on the new adherence-volume
+  // regression suite, NOT in this determinism stream.
+  'dp_adherence_volume_v1',
   // THE FLIP 2026-06-14 (Wave B brain-on) — six composition/path-A flags default ON:
   // behavioral-tier (tier override → session count/volume), tier-compound-floor (T0
   // fresh floor 3->2), fatigue-curve (±1 set; already in ANDURA_ON_FLAGS), smart-

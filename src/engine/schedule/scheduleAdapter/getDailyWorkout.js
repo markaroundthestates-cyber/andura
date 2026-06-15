@@ -52,7 +52,12 @@ import { pickAlternativeCluster } from './alternativeCluster.js';
 import { weeklySessionsPerGroup } from './weeklySessions.js';
 import { resolveExperienceId } from '../../periodization/volumeLandmarks.js';
 import { flattenSessionsToRecoveryLogs } from './recoveryLogs.js';
-import { resolveVolumeFrequency, scaleWeeklyVolumeByInferredFrequency } from './inferFrequency.js';
+import {
+  resolveVolumeFrequency,
+  scaleWeeklyVolumeByRatio,
+  adherenceVolumeRatio,
+} from './inferFrequency.js';
+import { computeAdherence } from '../../adherence.js';
 import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias, effectiveFocusPreset } from './focus.js';
 import { applyFocusVolumeContracts, focusContractDemotions, applyLedgerLowerBackCap } from './focusVolumeContracts.js';
 import { computeWeekLedger } from './weekLedger.js';
@@ -484,12 +489,38 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     isEnabled('dp_auto_infer_frequency_v1') && baseVolumeTargetsAllocated && recoveryLogs.length > 0
       ? resolveVolumeFrequency(recoveryLogs, date.getTime(), configuredVolumeFreq)
       : null;
+  // The inferred-frequency SHORTFALL ratio (1 = no shortfall / cold start). Only a
+  // genuine shortfall (inferred < configured) lowers it — matches the old scaler's
+  // internal inf>=cfg passthrough guard exactly.
+  const freqVolumeRatio =
+    inferredVolumeFreq !== null && inferredVolumeFreq < configuredVolumeFreq
+      ? inferredVolumeFreq / configuredVolumeFreq
+      : 1;
+
+  // CHRONIC-LOW-ADHERENCE → VOLUME dose (dp_adherence_volume_v1, 2026-06-16,
+  // DEFAULT ON). The inferred-frequency path above only catches FEWER-DISTINCT-DAYS-
+  // than-configured; _returnDeload only catches a hard >= 3-week per-exercise GAP.
+  // The uncovered case: a user who SHOWS UP but chronically UNDER-EXECUTES (executed
+  // << proposed) with NO 3-week gap and ACWR normal — the dose was unreduced.
+  // computeAdherence already MEASURES this (its score weights partials) over a recent
+  // window (21d); the ratio is score/100, cold-start guarded (null score / too few
+  // proposed → 1 = inert). We combine it with the inferred-frequency ratio by the MIN
+  // (a user who is BOTH low-cadence AND low-execution gets a SINGLE discount, never a
+  // doubled one) and apply the SAME MEV-floored weekly-volume scaler. VOLUME ONLY —
+  // the schedule is UNTOUCHED. OFF → ratio forced to 1 → seam unchanged → byte-
+  // identical (pinned OFF in fp-config FLIPPED_FLAGS so both frozen baselines hold).
+  const adherenceVolRatio = isEnabled('dp_adherence_volume_v1')
+    ? (() => {
+        const adh = computeAdherence({ windowDays: 21, nowMs: date.getTime() });
+        return adherenceVolumeRatio(adh.score, adh.proposed);
+      })()
+    : 1;
+  const effectiveVolumeRatio = Math.min(freqVolumeRatio, adherenceVolRatio);
   const baseVolumeTargets =
-    inferredVolumeFreq !== null
-      ? scaleWeeklyVolumeByInferredFrequency(
+    effectiveVolumeRatio < 1 && baseVolumeTargetsAllocated
+      ? scaleWeeklyVolumeByRatio(
           baseVolumeTargetsAllocated,
-          inferredVolumeFreq,
-          configuredVolumeFreq,
+          effectiveVolumeRatio,
           ISRAETEL_BASELINES,
         )
       : baseVolumeTargetsAllocated;
