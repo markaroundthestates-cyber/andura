@@ -502,9 +502,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // than-configured; _returnDeload only catches a hard >= 3-week per-exercise GAP.
   // The uncovered case: a user who SHOWS UP but chronically UNDER-EXECUTES (executed
   // << proposed) with NO 3-week gap and ACWR normal — the dose was unreduced.
-  // computeAdherence already MEASURES this (its score weights partials) over a recent
-  // window (21d); the ratio is score/100, cold-start guarded (null score / too few
-  // proposed → 1 = inert). We combine it with the inferred-frequency ratio by the MIN
+  // computeAdherence already MEASURES this over a recent window (21d); the ratio is
+  // EXECUTION-ONLY — (executed + 0.5×partial)/(executed+partial+skipped) — which
+  // EXCLUDES plan-deviation (a session trained on a reshuffled day) from BOTH terms,
+  // so a fully-trained-but-reshuffled user is NOT cut. Cold-start guarded (null score /
+  // too few execution-relevant sessions → 1 = inert). We combine it with the
+  // inferred-frequency ratio by the MIN
   // (a user who is BOTH low-cadence AND low-execution gets a SINGLE discount, never a
   // doubled one) and apply the SAME MEV-floored weekly-volume scaler. VOLUME ONLY —
   // the schedule is UNTOUCHED. OFF → ratio forced to 1 → seam unchanged → byte-
@@ -512,7 +515,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   const adherenceVolRatio = isEnabled('dp_adherence_volume_v1')
     ? (() => {
         const adh = computeAdherence({ windowDays: 21, nowMs: date.getTime() });
-        return adherenceVolumeRatio(adh.score, adh.proposed);
+        return adherenceVolumeRatio(adh);
       })()
     : 1;
   const effectiveVolumeRatio = Math.min(freqVolumeRatio, adherenceVolRatio);

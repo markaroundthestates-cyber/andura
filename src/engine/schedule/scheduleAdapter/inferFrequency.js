@@ -179,17 +179,25 @@ export function scaleWeeklyVolumeByRatio(volumeTargets, ratio, israetelBaselines
 // ── Chronic-low-adherence VOLUME ratio (dp_adherence_volume_v1, 2026-06-16) ─────
 // A user who SHOWS UP but chronically UNDER-EXECUTES (executed << proposed) with NO
 // 3-week per-exercise gap (so _returnDeload never fires) and a normal cadence (so
-// the inferred-frequency path never fires) had their dose UNREDUCED. computeAdherence
-// already measures this — its score already weights partials (executed×1 + partial
-// ×0.5)/proposed — so the adherence ratio is simply score/100, guarded for cold start.
+// the inferred-frequency path never fires) had their dose UNREDUCED.
+//
+// The dose must reflect EXECUTION ONLY, NOT plan-DEVIATION. computeAdherence().score
+// counts `deviation:true` entries in the denominator while contributing 0 to the
+// numerator (adherence.js:128-141) — a user who trained ALL their sessions but on a
+// reshuffled day-pattern (deviated, but DID train) would have score/100 < 1 and get
+// their volume cut despite full effort. That is wrong: deviation neither helps nor
+// hurts the DOSE. So the ratio excludes `deviated` from BOTH numerator and denominator:
+//   (executed + 0.5×partial) / (executed + partial + skipped)
+// — penalize chronic UNDER-EXECUTION (skipped/incomplete) ONLY.
 //
 // The ratio NEVER zeroes volume: it is clamped to the SAME MEV-floor contract the
 // inferred-frequency scaler enforces (scaleWeeklyVolumeByRatio MEV-floors each group),
 // and additionally floored away from 0 here so a 0%-adherence reading still doses the
 // minimum (the user re-engaging must not face an empty plan). VOLUME ONLY.
 
-// Below this many proposed sessions in-window the score is too noisy to dose on
-// (one missed session out of two is not "chronic") → treat as cold start.
+// Below this many EXECUTION-relevant sessions in-window (executed+partial+skipped, i.e.
+// excluding deviations) the signal is too noisy to dose on (one missed session out of
+// two is not "chronic") → treat as cold start.
 const ADHERENCE_MIN_PROPOSED = 4;
 // Never let the adherence ratio crater the budget below this fraction; the per-group
 // MEV floor (scaleWeeklyVolumeByRatio) is the real safety, this just bounds the ratio
@@ -197,24 +205,35 @@ const ADHERENCE_MIN_PROPOSED = 4;
 const ADHERENCE_MIN_RATIO = 0.5;
 
 /**
- * Derive a VOLUME shortfall ratio from a recent-window adherence reading.
- * Cold-start guarded → 1 (no effect): null score (no proposed sessions) OR fewer
- * than ADHERENCE_MIN_PROPOSED proposed sessions. Otherwise score/100, floored at
- * ADHERENCE_MIN_RATIO so it never zeroes the dose.
+ * Derive a VOLUME shortfall ratio from a recent-window adherence reading,
+ * reflecting EXECUTION ONLY (skipped/incomplete) and EXCLUDING plan-deviation.
  *
- * @param {number|null} score - computeAdherence().score (0..100, or null at cold start)
- * @param {number} proposed - computeAdherence().proposed (in-window proposed sessions)
+ * A `deviated` session is one the user DID train, just on a different day-pattern
+ * than proposed — it neither helps nor hurts the DOSE, so it is excluded from BOTH
+ * numerator and denominator (unlike computeAdherence().score, which counts it in the
+ * denominator → would cut the dose of a fully-trained-but-reshuffled user).
+ *
+ *   ratio = (executed + 0.5×partial) / (executed + partial + skipped)
+ *
+ * Cold-start guarded → 1 (no effect): null score (no proposed sessions) OR fewer
+ * than ADHERENCE_MIN_PROPOSED execution-relevant sessions (executed+partial+skipped).
+ * Otherwise floored at ADHERENCE_MIN_RATIO so it never zeroes the dose.
+ *
+ * @param {{score: number|null, executed: number, partial: number, skipped: number}} adh
+ *   the computeAdherence() result object
  * @returns {number} a ratio in [ADHERENCE_MIN_RATIO, 1]; exactly 1 when inert (no effect)
  */
-export function adherenceVolumeRatio(score, proposed) {
-  const p = Number(proposed);
-  // Cold start: no measurement / too few proposed sessions → inert (ratio 1).
-  if (score === null || score === undefined || !Number.isFinite(p) || p < ADHERENCE_MIN_PROPOSED) {
-    return 1;
-  }
-  const s = Number(score);
-  if (!Number.isFinite(s) || s >= 100) return 1; // full adherence → no effect
-  const ratio = s / 100;
+export function adherenceVolumeRatio(adh) {
+  // Cold start: no measurement at all → inert (ratio 1).
+  if (!adh || adh.score === null || adh.score === undefined) return 1;
+  const executed = Number(adh.executed) || 0;
+  const partial = Number(adh.partial) || 0;
+  const skipped = Number(adh.skipped) || 0;
+  const denom = executed + partial + skipped; // deviated excluded from BOTH
+  // Cold start: too few execution-relevant sessions → inert (ratio 1).
+  if (denom < ADHERENCE_MIN_PROPOSED) return 1;
+  const ratio = (executed + 0.5 * partial) / denom;
+  if (!Number.isFinite(ratio) || ratio >= 1) return 1; // full execution → no effect
   // Clamp into [MIN_RATIO, 1] — never inflate, never zero.
   return Math.max(ADHERENCE_MIN_RATIO, Math.min(1, ratio));
 }

@@ -1,19 +1,23 @@
-// dp_adherence_volume_v1 — scale weekly VOLUME on CHRONIC LOW ADHERENCE.
+// dp_adherence_volume_v1 — scale weekly VOLUME on CHRONIC UNDER-EXECUTION.
 //
 // THE GAP this closes: dp_auto_infer_frequency_v1 only catches FEWER-DISTINCT-DAYS-
 // than-configured; _returnDeload only catches a hard >= 3-week per-exercise GAP. A
-// user who SHOWS UP but chronically UNDER-EXECUTES (executed << proposed) with NO
-// 3-week gap and ACWR normal had their dose UNREDUCED. computeAdherence already
-// MEASURES this (its score weights partials) — this feature folds score/100 into the
-// SAME weekly-volume scaler the inferred-frequency path uses, combined by the MIN of
-// the two ratios (a single discount, never doubled), MEV-floored. VOLUME ONLY.
+// user who SHOWS UP but chronically UNDER-EXECUTES (skipped/incomplete) with NO
+// 3-week gap and ACWR normal had their dose UNREDUCED. The ratio is EXECUTION-ONLY —
+// (executed + 0.5×partial)/(executed+partial+skipped) — which EXCLUDES plan-DEVIATION
+// (a session TRAINED on a reshuffled day) from BOTH terms, so a fully-trained-but-
+// reshuffled user is NOT cut. It folds into the SAME weekly-volume scaler the
+// inferred-frequency path uses, combined by the MIN of the two ratios (a single
+// discount, never doubled), MEV-floored. VOLUME ONLY.
 //
 // REAL production values throughout (project rule): the Israetel MEV table, real CDL
-// executed/skipped patterns producing real computeAdherence scores (e.g. 4/8 → 50).
+// executed/skipped/deviated patterns (e.g. 4 exec + 4 skip → 0.5; 5 exec + 3 deviated
+// → 1, no cut).
 //
 // Covered:
-//   1. adherenceVolumeRatio PURE: full adherence → 1; cold start (null / too few
-//      proposed) → 1; chronic-low 50% → 0.5; near-zero → floored at MIN_RATIO 0.5.
+//   1. adherenceVolumeRatio PURE: full execution → 1; cold start (null / too few
+//      execution-relevant) → 1; chronic-low 50% → 0.5; near-zero → floored 0.5;
+//      REGRESSION trained-but-deviated → 1 (deviation excluded from the dose).
 //   2. scaleWeeklyVolumeByRatio PURE: ratio<1 scales + MEV-floors; ratio>=1 passthrough.
 //   3. MIN-not-PRODUCT: a user BOTH low-cadence AND low-execution gets the SINGLE
 //      smaller discount, never the doubled (product) one.
@@ -41,37 +45,75 @@ const MS_DAY = 86400000;
 const NOW = Date.UTC(2026, 5, 15, 6, 0, 0); // Mon 2026-06-15 06:00 UTC
 
 // ── PURE helper: adherenceVolumeRatio ────────────────────────────────────────
+// adherenceVolumeRatio now takes the WHOLE computeAdherence() result and reflects
+// EXECUTION ONLY — (executed + 0.5×partial)/(executed+partial+skipped) — EXCLUDING
+// plan-deviation from BOTH terms. `score` is still required (null → cold-start inert)
+// but no longer drives the ratio; the counts do.
 describe('adherenceVolumeRatio (pure)', () => {
-  it('full adherence (score 100) → 1 (no effect)', () => {
-    expect(adherenceVolumeRatio(100, 12)).toBe(1);
+  it('full adherence (all executed) → 1 (no effect)', () => {
+    expect(adherenceVolumeRatio({ score: 100, executed: 12, partial: 0, skipped: 0, deviated: 0 })).toBe(1);
   });
 
   it('cold start — null score → 1 (no effect)', () => {
-    expect(adherenceVolumeRatio(null, 0)).toBe(1);
+    expect(adherenceVolumeRatio({ score: null, executed: 0, partial: 0, skipped: 0, deviated: 0 })).toBe(1);
   });
 
-  it('cold start — too few proposed sessions → 1 (no effect)', () => {
-    // 3 proposed < ADHERENCE_MIN_PROPOSED (4): too noisy to dose on.
-    expect(adherenceVolumeRatio(50, 3)).toBe(1);
+  it('cold start — too few execution-relevant sessions → 1 (no effect)', () => {
+    // executed+partial+skipped = 3 < ADHERENCE_MIN_PROPOSED (4): too noisy to dose on.
+    expect(adherenceVolumeRatio({ score: 50, executed: 2, partial: 0, skipped: 1, deviated: 0 })).toBe(1);
   });
 
-  it('chronic low (score 50, proposed 8) → 0.5', () => {
-    expect(adherenceVolumeRatio(50, 8)).toBeCloseTo(0.5);
+  it('REGRESSION — trained every session but DEVIATED (reshuffled days) → 1 (NOT cut)', () => {
+    // 8 proposed, 5 executed, 3 deviated, 0 skipped, 0 partial. The user trained ALL
+    // 8 sessions (the 3 deviated ones were still TRAINED, just on a different day-
+    // pattern). computeAdherence().score would read 5/8×100 = 63 (deviated counted in
+    // the denominator) → the OLD score/100 path cut volume to 0.63 despite FULL effort.
+    // Execution-only: deviated excluded from BOTH terms → 5/(5+0+0) = 1 → no cut.
+    expect(
+      adherenceVolumeRatio({ score: 63, executed: 5, partial: 0, skipped: 0, deviated: 3 }),
+    ).toBe(1);
   });
 
-  it('chronic low (score 75, proposed 8) → 0.75', () => {
-    expect(adherenceVolumeRatio(75, 8)).toBeCloseTo(0.75);
+  it('chronic low (4 executed, 4 skipped → 0.5)', () => {
+    expect(
+      adherenceVolumeRatio({ score: 50, executed: 4, partial: 0, skipped: 4, deviated: 0 }),
+    ).toBeCloseTo(0.5);
   });
 
-  it('near-zero adherence (score 0) is floored — never zeroes the dose', () => {
-    // score 0 → raw ratio 0, clamped to the MIN_RATIO floor (0.5), never 0.
-    expect(adherenceVolumeRatio(0, 8)).toBe(0.5);
+  it('chronic low (6 executed, 2 skipped → 0.75)', () => {
+    expect(
+      adherenceVolumeRatio({ score: 75, executed: 6, partial: 0, skipped: 2, deviated: 0 }),
+    ).toBeCloseTo(0.75);
   });
 
-  it('degrade-safe — malformed score / proposed → 1', () => {
-    expect(adherenceVolumeRatio(undefined, 8)).toBe(1);
-    expect(adherenceVolumeRatio(NaN, 8)).toBe(1);
-    expect(adherenceVolumeRatio(50, NaN)).toBe(1);
+  it('partials count half — (2 executed + 4 partial)/8 = 0.5', () => {
+    // executed 2 + 0.5×partial 4 = 4; denom 2+4+2 = 8 → 0.5.
+    expect(
+      adherenceVolumeRatio({ score: 50, executed: 2, partial: 4, skipped: 2, deviated: 0 }),
+    ).toBeCloseTo(0.5);
+  });
+
+  it('deviation does NOT crater a mostly-skipping user — only execution counts', () => {
+    // 2 executed, 6 skipped, 4 deviated. Execution-only: 2/(2+0+6) = 0.25 → floored 0.5.
+    // The 4 deviated are irrelevant to the dose.
+    expect(
+      adherenceVolumeRatio({ score: 25, executed: 2, partial: 0, skipped: 6, deviated: 4 }),
+    ).toBe(0.5);
+  });
+
+  it('near-zero execution (all skipped) is floored — never zeroes the dose', () => {
+    // 0 executed, 8 skipped → raw ratio 0, clamped to the MIN_RATIO floor (0.5), never 0.
+    expect(
+      adherenceVolumeRatio({ score: 0, executed: 0, partial: 0, skipped: 8, deviated: 0 }),
+    ).toBe(0.5);
+  });
+
+  it('degrade-safe — undefined / malformed input → 1', () => {
+    expect(adherenceVolumeRatio(undefined)).toBe(1);
+    expect(adherenceVolumeRatio(null)).toBe(1);
+    expect(
+      adherenceVolumeRatio({ score: 50, executed: NaN, partial: 0, skipped: 0, deviated: 0 }),
+    ).toBe(1);
   });
 });
 
@@ -155,14 +197,19 @@ function recentSessionsForCadence(daysPerWeek, weeks, nowMs) {
 }
 
 // Real CDL entries (the shape computeAdherence.readAllActive returns) for an
-// adherence reading: `exec` executed + `skip` skipped, all in-window + non-synthetic.
-function cdlEntries(exec, skip) {
+// adherence reading: `exec` executed + `skip` skipped (+ optional `dev` deviated, i.e.
+// TRAINED but on a reshuffled day-pattern), all in-window + non-synthetic.
+function cdlEntries(exec, skip, dev = 0) {
   const out = [];
   for (let i = 0; i < exec; i++) {
     out.push({ date: '2026-06-10', synthetic: false, outcome: { executed: true } });
   }
   for (let i = 0; i < skip; i++) {
     out.push({ date: '2026-06-10', synthetic: false, outcome: { executed: false } });
+  }
+  for (let i = 0; i < dev; i++) {
+    // deviation:true → the user DID train, just != proposed sessionType. Must NOT cut.
+    out.push({ date: '2026-06-10', synthetic: false, outcome: { deviation: true, executed: true } });
   }
   return out;
 }
@@ -245,6 +292,18 @@ describe('getDailyWorkout — chronic-low-adherence → delivered volume', () =>
     mockReadAllActive.mockReturnValue(cdlEntries(8, 0)); // 8/8 → score 100 → ratio 1
     const full = await deliveredWeeklyVolume(4, [], WEEK_START);
     expect(full).toBe(cold);
+  });
+
+  it('ON + trained-every-session-but-DEVIATED → delivery UNCHANGED (regression)', async () => {
+    // The user TRAINED all 8 sessions but 3 were on a reshuffled day-pattern
+    // (deviation:true). Execution-only ratio excludes deviated → 5/5 = 1 → no cut,
+    // despite computeAdherence().score reading 5/8 = 63 (deviated in denominator).
+    localStorage.setItem('_devFlags', devFlags());
+    mockReadAllActive.mockReturnValue([]); // cold = full dose
+    const full = await deliveredWeeklyVolume(4, [], WEEK_START);
+    mockReadAllActive.mockReturnValue(cdlEntries(5, 0, 3)); // 5 exec, 0 skip, 3 deviated
+    const deviated = await deliveredWeeklyVolume(4, [], WEEK_START);
+    expect(deviated).toBe(full); // full effort → NOT cut for reshuffling the week
   });
 
   it('ON + cold-start (too few proposed) → delivery UNCHANGED', async () => {
