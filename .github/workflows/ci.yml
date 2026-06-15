@@ -192,11 +192,11 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PATH }}
           PLAYWRIGHT_AUTH_TEST_UID: ${{ secrets.PLAYWRIGHT_AUTH_TEST_UID }}
 
-      # Track 7 §7.3 + §7.6-activate — Lighthouse CI HARD GATE.
-      # Thresholds ratcheted din master spec aspirational (perf 85) la realistic
-      # first-CI-run baseline (perf 60) în lighthouserc.js. Daniel ratchets UP
-      # post real measurement în PR review.
-      - name: Lighthouse CI (local preview)
-        run: npx lhci autorun
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+      # Lighthouse REMOVED from the CI smoke (2026-06-15). The local-preview lhci
+      # audited the CI dist, which is INTENTIONALLY non-functional: the prod build
+      # fail-fasts (throws) when Firebase secrets are absent (auth.js API-key guard +
+      # the RTDB-URL guard), and the Validate build does NOT inject them -> the
+      # previewed app is blank -> deterministic NO_FCP regardless of the audited URL.
+      # The AUTHORITATIVE Lighthouse runs in deploy.yml (`lighthouse-live`) against the
+      # deployed andura.app with real secrets (it is green). Re-add a pre-deploy gate
+      # only by giving the Validate build the VITE_FIREBASE_* secrets first.
