@@ -177,6 +177,17 @@ export const FLIPPED_FLAGS = Object.freeze([
   // (arms chest >= MEV + a lateral lands, bi/tri still lead) + the arms-protect regression
   // test + the arms-signature gate, NOT in this determinism stream.
   'dp_arms_protect_majors_v1',
+  // THE FLIP 2026-06-16 (lower-focus 5d back-orphan fix) — the back maintenance floor defaults
+  // ON. On a LOWER-emphasis 5/6/7d split (legs/upper/lower/PUSH/legs…) chest gets a 2nd weekly
+  // exposure (the push day) while back rides the lone `upper` day, so on a slot-starved upper
+  // session back collapses below maintenance; ON swaps one surplus upper-day chest press for a
+  // back row. `lower` IS in this harness's EMPHASIS_PRESETS, so the ON behavior WOULD move the
+  // frozen prescription hashes — pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so
+  // ctx.backMaintenanceFloor is false in both A/B → the new block never runs → BOTH frozen
+  // baselines (hashOff/hashOn) stay byte-for-byte. ON is proven on the eval grid (p2/p3/p5_
+  // lower_5d back 3 -> 6 toward MV, chest stays >= MEV, p4/p12 untouched) + the back-maintenance-
+  // floor regression test, NOT in this determinism stream.
+  'dp_back_maintenance_floor_v1',
   // THE FLIP 2026-06-10 (R5) — metadata-derived load model defaults ON (a derived
   // maxKg cap + equipment step fills the ~uncapped exercises; curated wins). It
   // moves prescribed kg + the at-cap brake → pinned OFF here so hashOff/hashOn

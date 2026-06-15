@@ -357,6 +357,12 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // assumes "the Push day already covers triceps") orphans direct triceps to 0 sets/wk.
   // 5d/6d/7d hybrids DO contain 'push' → the de-dup stays correct (byte-identical).
   const weekHasPushDay = split.includes('push');
+  // BACK MAINTENANCE FLOOR (dp_back_maintenance_floor_v1) — does THIS week's split
+  // contain a PULL day? The lower-emphasis 5/6/7d split retains a PUSH day (chest's 2nd
+  // weekly exposure) but NO pull day, so back has only the `upper` day → it can collapse
+  // below maintenance on a slot-starved upper session. A week WITH a pull day already
+  // gives back a 2nd exposure → no orphan → the floor must not fire (byte-identical).
+  const weekHasPullDay = split.includes('pull');
   // DE-EMPHASIZED divisor fix (D-focus-divisor 2026-06-06): the per-session set
   // budget = weeklyBudget / weeklySessionsPerGroup[group]. A v-taper collapses the
   // lower body from 2 leg days → 1, dropping the leg divisor 2→1, so the (already
@@ -1373,6 +1379,25 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       focusPreset === 'arms'
       && armsSignatureOn
       && isEnabled('dp_arms_protect_majors_v1'),
+    // dp_back_maintenance_floor_v1 (2026-06-16) — the LOWER-emphasis 5/6/7d split keeps the
+    // retained upper-region day as PUSH (not pull), so chest gets a 2nd weekly exposure the
+    // push day delivers while back rides the `upper` day alone and can fall below MAINTENANCE
+    // on a slot-starved upper session (advanced/strength → back lands a SINGLE pulldown slot,
+    // ~3 sets < MV). When ON + a non-back, non-balanced focus + the week has a PUSH day but
+    // NO PULL day + back is trained on FEWER days than chest, set this on the `upper` day so
+    // buildSession, when back ended orphaned (a single slot) while chest has a surplus, swaps
+    // ONE surplus chest press for a back row (length-stable; chest keeps a slot + its push-day
+    // exposure → weekly chest stays >= MEV). Scoped to cluster === 'upper' (the day that
+    // carries back). OFF / focus back|balanced / no-push-or-with-pull / back-not-under-served /
+    // non-upper day → false → never runs → byte-identical.
+    backMaintenanceFloor:
+      isEnabled('dp_back_maintenance_floor_v1')
+      && focusPreset !== 'back'
+      && focusPreset !== 'balanced'
+      && cluster === 'upper'
+      && weekHasPushDay
+      && !weekHasPullDay
+      && (sessionsPerGroup.spate ?? 0) < (sessionsPerGroup.piept ?? 0),
     focusId: focusPreset,
     daysPerWeek: activeWeek.filter(Boolean).length || 1,
   };

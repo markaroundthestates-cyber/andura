@@ -1375,6 +1375,32 @@ export const FLAGS = Object.freeze({
   // path-A composition surface; `arms` IS in the fp EMPHASIS_PRESETS).
   dp_arms_protect_majors_v1: { rollout: 1, default: true },
 
+  // BACK MAINTENANCE FLOOR (lower-focus 5d back-orphan fix 2026-06-16) (RISK LOW — selection
+  // only, never kg). The LOWER-emphasis split that trades a leg day for an upper-region day
+  // keeps the retained upper day as PUSH (not pull): FOCUS_LOWER_EMPH_SPLITS[5/6/7] =
+  // legs/upper/lower/PUSH/legs(/...). chest therefore gets TWO weekly exposures (the `upper`
+  // day + the `push` day) while back gets ONE (the `upper` day only) — and on a SLOT-STARVED
+  // upper session (advanced/strength → ~5 lifts → back lands a SINGLE pulldown slot) back
+  // weekly collapses to ~3 sets while chest sits at 12-14. A non-focus MAJOR must stay at
+  // MAINTENANCE (~MV 6) on a focus block — sub-MV back slowly detrains (eval grid p2/p3/p5
+  // _lower_5d: back=3, chest=12-14, MEV back 10). When ON + the focus is NOT `back` and NOT
+  // `balanced` + the week has a PUSH day but NO PULL day (the structural over-serve of chest)
+  // + back is trained on FEWER days than chest (sessionsPerGroup.spate < .piept), getDailyWorkout
+  // sets ctx.backMaintenanceFloor on the `upper` day so buildSession, when back ended ORPHANED
+  // (a SINGLE back slot) while chest holds a SURPLUS (>=2 chest slots), SWAPS exactly one
+  // surplus chest press for a back row/pulldown — a LENGTH-STABLE, set-stable trade: back rises
+  // toward MV, chest keeps a slot on the upper day PLUS its full push-day exposure (weekly chest
+  // stays >= MEV — collateral-free). DONOR-GUARDED: only fires when the upper day has a removable
+  // surplus chest slot; if chest is single-slotted (already at maintenance) it does NOTHING
+  // (leaves back as-is, never breaks chest). Mirrors dp_arms_protect_majors_v1's chest-floor swap
+  // (a non-focus major floored by trading a same-day surplus, never an add past the cap, never
+  // orphaning the donor). Back-already-OK upper days (p4/p8/p12 shape: back lands 3 slots on a
+  // 7-lift upper session) are UNTOUCHED — the single-back-slot gate never trips. OFF / focus
+  // back|balanced / no push-or-with-pull / back-not-under-served → ctx.backMaintenanceFloor false
+  // → never runs → byte-identical (pinned OFF in the fp-config FLIPPED_FLAGS baseline — `lower`
+  // IS in the fp EMPHASIS_PRESETS so ON would move the frozen hashes unless gated OFF there).
+  dp_back_maintenance_floor_v1: { rollout: 1, default: true },
+
   // ARMS SIGNATURE (elite-coach eval ceiling 2026-06-13) — make biceps + triceps the
   // week's CLEAR top-two by VOLUME on an `arms` focus, the founder signature the judges
   // capped 25/57 arms configs at <=5.5 for ("focus muscles present but NOT the volume

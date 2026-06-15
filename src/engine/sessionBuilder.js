@@ -326,6 +326,11 @@ const MAX_T1 = 2;
 // Per-exercise set-count fallback when no engine volume signal is supplied
 // (keeps pure-function callers without periodization context stable).
 const DEFAULT_SETS = 3;
+// #BACK MAINTENANCE FLOOR (dp_back_maintenance_floor_v1) — the maintenance-volume (MV) total
+// the back-floor swap doses the back group to on the upper day. ~MV (well below back's MEV 10):
+// a non-focus major held at maintenance on a focus block, NOT a full back day. Keeps the swap
+// TIME-NEUTRAL vs the single-slot OFF delivery so the React time-trim never drops a tail slot.
+const BACK_MAINTENANCE_SETS = 6;
 // Tier-scoped per-exercise clamps for the in-group distribution. A COMPOUND
 // (tier 1, the group's anchor lift) earns the bulk of the volume; ISOLATION
 // (tier 2/3) is trimmed. Within a session a compound must NEVER carry fewer
@@ -3376,6 +3381,84 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  // #BACK MAINTENANCE FLOOR (ctx.backMaintenanceFloor, dp_back_maintenance_floor_v1). The
+  // LOWER-emphasis 5/6/7d split (legs/upper/lower/PUSH/legs…) keeps the retained upper-region
+  // day as PUSH (not pull): chest gets a 2nd weekly exposure (upper + push) while back rides
+  // the `upper` day ALONE. On a SLOT-STARVED upper session (advanced/strength → ~5 lifts) the
+  // single back exposure lands a LONE pulldown (~3 sets) → weekly back collapses below
+  // MAINTENANCE (MV ~6) while chest sits at 12-14 (eval grid p2/p3/p5_lower_5d: back=3,
+  // chest=12-14). A non-focus MAJOR must stay at maintenance on a focus block — sub-MV back
+  // slowly detrains. Mirror of the #ARMS CHEST FLOOR above: a non-focus major (here back),
+  // orphaned to a single slot while a non-focus press (chest) holds a SURPLUS, gets a slot by a
+  // LENGTH-STABLE, set-stable SWAP of one surplus chest press for a back row/pulldown.
+  //
+  // ctx.backMaintenanceFloor is set ONLY on the `upper` day of a non-back, non-balanced focus
+  // whose week has a PUSH day but NO PULL day and where back is trained on fewer days than
+  // chest — so this NEVER fires on a back/balanced focus, a U/L (no push) split, a push-and-pull
+  // week, or any non-upper day. The remaining gate here is SLOT-LEVEL (the orphan is a delivery
+  // fact the budget cannot see): fire ONLY when back ended with EXACTLY ONE slot (orphaned to
+  // ~3 sets — a back-already-OK upper day lands 3 back slots → never trips) AND chest holds a
+  // REMOVABLE SURPLUS (>=2 chest slots, so the donor keeps a slot). COLLATERAL-FREE: the chest
+  // donor keeps its remaining upper slot PLUS its full push-day exposure → weekly chest stays
+  // >= MEV; if chest is single-slotted (already at maintenance) DO NOTHING (leave back as-is,
+  // never break chest). NEVER an add (always a same-length swap), never below MEV. OFF / non-
+  // upper / back-not-orphaned / no chest surplus → never runs → byte-identical.
+  // Set by the swap below → consumed by the post-distribution maintenance clamp (the floor
+  // delivers back at MV, NOT its full per-session budget, so the swap is TIME-NEUTRAL — see
+  // the clamp note). null when the floor did not fire → clamp is a no-op (byte-identical).
+  let backMaintSwapRowName = null;
+  let backMaintSwapDonorSets = 0;
+  if (ctx?.backMaintenanceFloor === true) {
+    const primaryOfName = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+    const slotCount = {};
+    for (const e of chosen) {
+      const g = primaryOfName(e.name);
+      if (g) slotCount[g] = (slotCount[g] || 0) + 1;
+    }
+    // Orphan gate: back at a SINGLE slot (~3 sets, sub-MV) AND chest carries a removable
+    // surplus (>=2 slots, so the swap leaves chest >=1 upper slot + its push-day exposure).
+    if ((slotCount.spate || 0) === 1 && (slotCount.piept || 0) >= 2) {
+      const backPool = dropEquipmentMissing(
+        poolForGroup('spate', available, maxTier, maxSkill, prNames, seed, penalties, painSwaps, excludedMovements, danielTierSelect, structuralPenalties, accessoryRotation, weekParity, progressingNames, intraWeekRotation, intraWeekDayOrdinal),
+      );
+      // A back COMPOUND row/pulldown (vertical_pull or horizontal_row) — the maintenance mover,
+      // not a lat-isolation/shrug/lower-back accessory. Not already taken.
+      const backRow = backPool.find((e) => {
+        if (isTaken(e)) return false;
+        if ((getExerciseMetadata(e.name).tier ?? 2) > COMPOUND_TIER) return false;
+        const tags = deriveExerciseTags(e.name, e.meta, movementKey);
+        return tags.has('vertical_pull') || tags.has('horizontal_row');
+      });
+      if (backRow) {
+        // Displace ONE surplus chest PRESS (lowest-priority first) — chest keeps >=1 slot.
+        // A chest PRESS = a piept-primary COMPOUND (tier <= COMPOUND_TIER): presses are tier 1,
+        // flyes/iso are tier 2, so the tier test catches every bench/press (incl. Smith/Machine
+        // benches whose name carries no `press` token → no chest_press tag) while sparing a flye.
+        let removeIdx = -1;
+        for (let i = chosen.length - 1; i >= 0; i--) {
+          if (primaryOfName(chosen[i].name) !== 'piept') continue;
+          if ((getExerciseMetadata(chosen[i].name).tier ?? 2) > COMPOUND_TIER) continue;
+          removeIdx = i;
+          break;
+        }
+        if (removeIdx >= 0) {
+          const removed = chosen[removeIdx];
+          backMaintSwapDonorSets = removed.sets || DEFAULT_SETS; // the donor press's sets (pre-distribution)
+          chosenNames.delete(removed.name);
+          chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
+          const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+          if (rg && groupCount[rg]) groupCount[rg] -= 1;
+          chosen.splice(removeIdx, 1, { name: backRow.name, sets: DEFAULT_SETS });
+          chosenNames.add(backRow.name);
+          chosenMovements.add(dedupKey(backRow.name, backRow.meta));
+          groupCount.spate = (groupCount.spate || 0) + 1;
+          backMaintSwapRowName = backRow.name;
+        }
+        // else: no removable chest press (chest at maintenance) → accept the gap (never break chest).
+      }
+    }
+  }
+
   // #FOCUS-LEAD ARMS SLOT GUARANTEE (ctx.focusLeadSplits, dp_focus_lead_splits_v1).
   // On an ARMS-focus UPPER/LOWER split the arms get NO day of their own — they ride one
   // leftover slot per upper day, so direct biceps/triceps DELIVER ~bi4/tri5 while back/
@@ -3575,6 +3658,35 @@ export function buildSession(cluster, ctx) {
     name: e.name,
     sets: setsByName[e.name] ?? DEFAULT_SETS,
   }));
+
+  // #BACK MAINTENANCE FLOOR — TIME-NEUTRAL set clamp (dp_back_maintenance_floor_v1). The swap
+  // above gave back a 2nd slot; the set-distributor then doses BOTH back slots from back's full
+  // per-session budget (a major's budget is high), so back balloons (~10 sets) — that EXTRA time
+  // pushes a tight upper session over its time budget and the React time-trim drops the TAIL
+  // (the lone biceps slot → biceps weekly 0, a non-focus orphan). The floor's intent is
+  // MAINTENANCE, not a full back day: dose the back group to ~MV total so the swap is
+  // TIME-NEUTRAL vs the single-slot OFF delivery (no time-trim, no collateral). Spread MV across
+  // back's slots (the new row + the original pulldown), compound-first, never below the donor
+  // press's sets per slot (so the swapped slot is a real working set, not a token). Only runs
+  // when the swap fired (backMaintSwapRowName set); OFF / no-swap → no-op → byte-identical.
+  if (backMaintSwapRowName) {
+    const backIdxs = [];
+    for (let i = 0; i < exercises.length; i++) {
+      if (getExerciseMetadata(exercises[i].name)?.muscle_target_primary === 'spate') backIdxs.push(i);
+    }
+    const backTotal = backIdxs.reduce((n, i) => n + (exercises[i].sets || 0), 0);
+    if (backIdxs.length > 0 && backTotal > BACK_MAINTENANCE_SETS) {
+      // Even maintenance dose across the back slots (remainder to the leading slot), each slot
+      // >= the donor press's sets so the swapped-in row is a real working set (not trimmed thin).
+      const perSlotFloor = Math.max(DEFAULT_SETS, backMaintSwapDonorSets);
+      const base = Math.max(perSlotFloor, Math.floor(BACK_MAINTENANCE_SETS / backIdxs.length));
+      let remainder = Math.max(0, BACK_MAINTENANCE_SETS - base * backIdxs.length);
+      backIdxs.forEach((i, k) => {
+        const extra = k === 0 ? remainder : 0;
+        exercises[i] = { ...exercises[i], sets: base + extra };
+      });
+    }
+  }
 
   // CROSS-DAY LEDGER SET FLOORS (gap 3, dp_week_ledger_v1) — when the week ledger
   // projects a delt sub-bucket (lateral / rear) BELOW the founder's ≥6-set weekly quota,
