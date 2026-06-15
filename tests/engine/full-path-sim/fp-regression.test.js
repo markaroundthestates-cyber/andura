@@ -20,7 +20,7 @@
 // Files into tests/engine/** → runs under `npm run test:run` (CI Unit Tests),
 // no workflow edit. Deterministic + offline (no API).
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import {
   runFullPathCohortAsync,
   acwrRealClockFullPath,
@@ -36,11 +36,37 @@ import { exerciseDipClassifier, exerciseAutoPivot, DIP_CLASS } from './fp-darkpr
 import { SEED } from './fp-config.js';
 import baseline from './_fp_baseline.json';
 
+// ── DATE-STABLE GATE ────────────────────────────────────────────────────────
+// This gate composes the WHOLE seam, and parts of the engine resolve "today"
+// against the WALL clock (db.tod() = new Date(), readiness.js, the ACWR
+// acute(7d)/chronic(28d) windows, the real-clock probes below). The cohort
+// journey injects a fixed COHORT_START date, but those wall-clock reads still
+// leak the real date in — so the frozen prescription hashes drifted whenever the
+// system date crossed an ACWR window edge (e.g. 2026-06-14 → 2026-06-15 shifted
+// a seeded log across the acute/chronic boundary → the ratio moved → the hash
+// moved → baseline mismatch, even with zero code change).
+//
+// FIX: freeze the wall clock to a FIXED instant for the whole gate so every
+// new Date()/Date.now() in the driven path resolves deterministically regardless
+// of the real date. FIXED_NOW is 2026-06-14T12:00:00Z — the instant the current
+// baseline was frozen at (verified: this instant reproduces the frozen hashOff/
+// hashOn byte-for-byte, so the baseline stays unchanged). Any instant on or
+// before 2026-06-14 reproduces the freeze; 2026-06-15 is the first that drifts —
+// pinning the clock removes the date as an input entirely.
+//
+// We fake ONLY Date (toFake:['Date']), leaving setTimeout real: the orchestrator
+// budget guard (coach/orchestrator/utilities/budget.js) does Promise.race against
+// a real setTimeout, so faking timers would deadlock the compose. Date-only fake
+// is sufficient — the leak is the clock, not the timers.
+const FIXED_NOW = Date.UTC(2026, 5, 14, 12, 0, 0); // 2026-06-14T12:00:00Z (baseline freeze instant)
+
 // CI tier: the frozen baseline's nProfiles + weeks (the full 24×16 ~ minutes; the
 // determinism + deltas hold at any size, mirroring the calibration-sim CI tier).
 let off, on, aOff, aOn, hashOff, hashOn, crOff, crOn;
 
 beforeAll(async () => {
+  vi.useFakeTimers({ toFake: ['Date'] }); // freeze Date only; setTimeout stays real (budget-race)
+  vi.setSystemTime(FIXED_NOW);
   off = await runFullPathCohortAsync(false, baseline.nProfiles, SEED, baseline.weeks);
   on = await runFullPathCohortAsync(true, baseline.nProfiles, SEED, baseline.weeks);
   aOff = analyzeFullPath(off);
@@ -50,6 +76,10 @@ beforeAll(async () => {
   crOff = craterViolations(off).length;
   crOn = craterViolations(on).length;
 }, 300000);
+
+afterAll(() => {
+  vi.useRealTimers(); // restore the wall clock for any sibling suite
+});
 
 describe('full-path-sim CI gate', () => {
   // ── §A DETERMINISM ────────────────────────────────────────────────────────
