@@ -40,16 +40,16 @@ updates:
         update-types:
           - "minor"
           - "patch"
-    # 2026-06-15: ignore MAJOR bumps of the Vite build toolchain. Vite 8 re-chunks
-    # the bundle wholesale (main 288->200 kB, vendor-icons over budget) and
-    # @vitejs/plugin-react 6 breaks vite.config loading — both need a real build
-    # migration + deployed-PWA smoke (SW/vite-plugin-pwa, lazy routes). Low ROI on a
-    # PWA being ported to RN/Expo. Minor/patch (incl. CVE) still flow. Un-ignore when
-    # the build toolchain is intentionally upgraded.
+    # 2026-06-15: pin MAJOR npm bumps — implements the "Major-tag pin policy" stated
+    # in this file's header (which the original config never actually enforced, so
+    # breaking majors leaked through as individual red PRs every week). Majors
+    # routinely break the build/config and need a deliberate migration + deployed-PWA
+    # smoke: Vite 8 re-chunks the bundle wholesale, @vitejs/plugin-react 6 breaks
+    # vite.config loading, Tailwind 4 swaps the engine/config format. Low ROI on a PWA
+    # being ported to RN/Expo. Minor/patch (incl. CVE) still flow grouped above; major
+    # upgrades are done deliberately by relaxing this rule.
     ignore:
-      - dependency-name: "vite"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@vitejs/plugin-react"
+      - dependency-name: "*"
         update-types: ["version-update:semver-major"]
     open-pull-requests-limit: 5
     commit-message:
