@@ -1379,6 +1379,22 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       focusPreset === 'arms'
       && armsSignatureOn
       && isEnabled('dp_arms_protect_majors_v1'),
+    // dp_arms_fullday_swap_v1 (2026-06-16) — the focus-lead arm-slot guarantee (focusLeadSplits)
+    // only fires on a U/L `upper` day and is null for full-body splits, so an ARMS focus whose
+    // week runs FULL-body days (an advanced/injured arms split → all-full week) never converts
+    // its redundant chest work to arms. arms has NO maxChestPressPatterns cap, so 2 chest PRESSES
+    // stack on the same full day and chest OUT-VOLUMES the focus arms (eval grid p7_arms_3d/4d/5d:
+    // chest 15 vs biceps 8 / triceps 9 → arms not the signature → the /10 judge "focus not
+    // emphasized" cap ~4.5). When ON + the focus is `arms`, set this on a `full` day so buildSession,
+    // when the day stacked a REMOVABLE surplus chest press (>=2 chest presses), swaps ONE surplus
+    // press for an under-served direct-arm movement — length-stable; chest keeps a press that day
+    // (weekly chest stays >= MEV — collateral-free). Scoped to cluster === 'full' (the U/L upper day
+    // is handled by the focus-lead guarantee). OFF / non-arms / non-full day → false → never runs →
+    // byte-identical.
+    armsFulldaySwap:
+      isEnabled('dp_arms_fullday_swap_v1')
+      && focusPreset === 'arms'
+      && cluster === 'full',
     // dp_back_maintenance_floor_v1 (2026-06-16) — the LOWER-emphasis 5/6/7d split keeps the
     // retained upper-region day as PUSH (not pull), so chest gets a 2nd weekly exposure the
     // push day delivers while back rides the `upper` day alone and can fall below MAINTENANCE

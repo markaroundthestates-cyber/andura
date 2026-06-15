@@ -1401,6 +1401,28 @@ export const FLAGS = Object.freeze({
   // IS in the fp EMPHASIS_PRESETS so ON would move the frozen hashes unless gated OFF there).
   dp_back_maintenance_floor_v1: { rollout: 1, default: true },
 
+  // ARMS FULL-DAY CHEST→ARM SWAP (arms full-day signature fix 2026-06-16) (RISK LOW — selection
+  // only, never kg). The focus-lead arm-slot guarantee (dp_focus_lead_splits_v1) only fires on a
+  // U/L `upper` day and ctx.focusLeadSplits is null for full-body splits, so an ARMS focus whose
+  // week runs FULL-body days (an advanced/injured arms split → all-full week) gets NO conversion of
+  // its redundant chest work to arms. FOCUS_RULES.arms has NO maxChestPressPatterns cap, so 2 chest
+  // PRESSES stack on the SAME full day and chest OUT-VOLUMES the focus arms (eval grid p7_arms_3d/
+  // 4d/5d: chest 15 from 2 presses/day vs biceps 8 / triceps 9; p2_arms_3d a milder chest 12 > arms)
+  // → arms are not the signature → the /10 judge applies the "focus muscle NOT emphasized" cap
+  // (~4.5). When ON + the focus is `arms`, getDailyWorkout sets ctx.armsFulldaySwap on a `full` day
+  // so buildSession, when the day stacked a REMOVABLE surplus chest press (>=2 chest PRESS patterns),
+  // SWAPS exactly one surplus chest press for an under-served direct-arm (biceps/triceps) movement —
+  // a LENGTH-STABLE, set-stable trade: the under-served arm rises toward MAV, chest keeps a press on
+  // that full day (weekly chest stays >= MEV — collateral-free). DONOR-GUARDED: only fires when the
+  // full day has >=2 chest presses; a single-press day (chest already at maintenance for the day) is
+  // left untouched (never breaks chest). ONE swap per session, targeting the MORE under-served arm
+  // group (never both → never the day's last press). Mirrors dp_back_maintenance_floor_v1's surplus-
+  // press → under-served-major swap. Scoped to cluster === 'full' (the U/L upper day is handled by
+  // the focus-lead guarantee — no double-firing). OFF / non-arms / non-full day → ctx.armsFulldaySwap
+  // false → never runs → byte-identical (pinned OFF in the fp-config FLIPPED_FLAGS baseline — `arms`
+  // IS in the fp EMPHASIS_PRESETS so ON would move the frozen hashes unless gated OFF there).
+  dp_arms_fullday_swap_v1: { rollout: 1, default: true },
+
   // ARMS SIGNATURE (elite-coach eval ceiling 2026-06-13) — make biceps + triceps the
   // week's CLEAR top-two by VOLUME on an `arms` focus, the founder signature the judges
   // capped 25/57 arms configs at <=5.5 for ("focus muscles present but NOT the volume
