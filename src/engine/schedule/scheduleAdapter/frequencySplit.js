@@ -506,7 +506,7 @@ export function maintenanceMaxDays(goal, age) {
   const isMaintenance = goal === 'mentenanta';
   const isOlder = typeof age === 'number' && age >= 60;
   if (isOlder) return 3; // older (with or without maintenance) → the conservative cap
-  if (isMaintenance) return 4;
+  if (isMaintenance) return 4; // maintenance → 4 (full-cohort re-judge: tightening to 3 is NET -2.1; chest-focus craters 7->4.8 with no room to express focus, outweighs shoulders/balanced gains)
   return null;
 }
 
