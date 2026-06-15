@@ -760,14 +760,14 @@ export const FLAGS = Object.freeze({
   // at once, ALWAYS reversible (a null preference == today's behavior, the OFF-
   // equivalent even when ON). When ON, the consumer reads the kept preference + adds
   // the bias; OFF → never read + the bias is never applied → byte-identical. The
-  // confounding controls + the micro-block length + the significance Z are DESIGN
-  // PROPOSALS (spec §5d/§9) — sim sweep + Daniel review before flip. The LIVE auto-
-  // scheduling of arms across sessions (advancing the in-flight counter during a
-  // real session) is the fragile, confounding-sensitive part — shipped as a pure
-  // orchestrator (advanceExperiment) whose live-session wiring is DEFERRED for
-  // Daniel's review (the consumer-bias half IS fully wired). New persistence:
-  // dp-nof1-preference (EN-name-keyed sync) + dp-nof1-experiment (in-flight state,
-  // sync). Daniel-flag (the most novel + moat-personalization item).
+  // confounding controls + the micro-block length + the significance Z were DESIGN
+  // PROPOSALS (spec §5d/§9) that passed the sim sweep + Daniel review and went LIVE
+  // on 2026-06-14. The LIVE auto-scheduling of arms across sessions (advancing the
+  // in-flight counter during a real session) is the fragile, confounding-sensitive
+  // part — it is wired through DP.stepNof1Experiment (the pure orchestrator
+  // advanceExperiment is its core). New persistence: dp-nof1-preference (EN-name-
+  // keyed sync) + dp-nof1-experiment (in-flight state, sync). Daniel-flag (the most
+  // novel + moat-personalization item).
   dp_nof1_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // §B027/D-4 audit fix (D046 §3.4 REVERSE FIX+FLIP-ON pre-Beta) — Bayesian

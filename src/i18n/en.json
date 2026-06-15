@@ -767,7 +767,14 @@
     "streakLine": "— keep the rhythm!",
     "streakLabel_one": "{n} day in a row",
     "streakLabel_other": "{n} days in a row",
-    "finishCta": "Done"
+    "finishCta": "Done",
+    "nof1": {
+      "line": "You respond better to {respondsTo} on {exercise} — noted.",
+      "arm": {
+        "volume": "volume",
+        "intensity": "intensity"
+      }
+    }
   },
   "progres": {
     "heading": "Progress",

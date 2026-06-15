@@ -40,8 +40,10 @@
 //   - mockup andura-clasic.html L1629-1695 screen-post-summary
 
 import type { JSX } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trophy, Check } from 'lucide-react';
+import { DB } from '../../../../db.js';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useCoachStore } from '../../../stores/coachStore';
 import { coachPick, type CoachVoiceEndSessionRating } from '../../../lib/coachVoice';
@@ -174,6 +176,29 @@ export function PostSummary(): JSX.Element {
   const reset = useWorkoutStore((s) => s.reset);
   const persona = useCoachStore((s) => s.persona);
 
+  // A3 — n-of-1 winner narration. When an experiment CONCLUDED on this session's
+  // finish, persistSessionLogs stashed a one-shot record (dp-nof1-narration). Read
+  // it ONCE (lazy initializer) + CLEAR it so it shows on this summary only, then is
+  // gone. READ-ONLY narration of a decision the engine already made + persisted —
+  // never recomputes / changes the plan. Fail-silent (DB unavailable → no line).
+  const [nof1Line] = useState<string | null>(() => {
+    try {
+      const rec = DB.get('dp-nof1-narration') as
+        | { exercise?: string; arm?: string }
+        | null;
+      if (!rec || typeof rec.exercise !== 'string' || !rec.exercise) return null;
+      if (rec.arm !== 'volume' && rec.arm !== 'intensity') return null;
+      DB.set('dp-nof1-narration', null); // one-shot — consumed here
+      const respondsTo = t(`postSummary.nof1.arm.${rec.arm}`);
+      return t('postSummary.nof1.line', {
+        respondsTo,
+        exercise: rec.exercise,
+      });
+    } catch {
+      return null;
+    }
+  });
+
   // Phase 4 task_10: prefer numeric fields cand present (avoid parseMeta
   // regex); fallback la parseMeta(meta) pentru sesiuni persisted pre-
   // migration backward compat.
@@ -239,6 +264,17 @@ export function PostSummary(): JSX.Element {
             data-testid="summary-coach-line"
           >
             “{coachLine}”
+          </p>
+        )}
+        {nof1Line && (
+          /* A3 — n-of-1 winner narration. The experiment for one of your lifts just
+             concluded; tell you which arm (volume / intensity) you respond to better.
+             Shown on this summary once, then cleared. */
+          <p
+            className="text-sm text-ink2 mt-2"
+            data-testid="summary-nof1-line"
+          >
+            {nof1Line}
           </p>
         )}
       </div>

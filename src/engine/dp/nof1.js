@@ -21,13 +21,12 @@
 //     downstream in dp.js — the bias only shifts SET COUNT, path A, never the kg).
 //
 // CONFOUNDING CONTROLS (one lift / non-cut / non-beginner / reversible / the
-// micro-block length + the slope-significance Z) are a DESIGN PROPOSAL (spec §9 +
-// §5d) — they need a sim sweep + Daniel review before dp_nof1_v1 flips ON. This module
-// ships the pure measurement + eligibility + winner-decision + reversible-bias core,
-// fully tested; the LIVE auto-scheduling of arms across sessions (advancing the
-// in-flight counter during a real session) is the fragile, confounding-sensitive part
-// — it is provided as a pure orchestrator (advanceExperiment) whose live-session
-// wiring is DEFERRED for Daniel's review (mirrors F6a's deferred deload-timing).
+// micro-block length + the slope-significance Z) were a DESIGN PROPOSAL (spec §9 +
+// §5d) that passed the sim sweep + Daniel review and went LIVE with dp_nof1_v1 on
+// 2026-06-14. This module ships the pure measurement + eligibility + winner-decision
+// + reversible-bias core, fully tested; the LIVE auto-scheduling of arms across
+// sessions (advancing the in-flight counter during a real session) is wired through
+// DP.stepNof1Experiment (the pure orchestrator advanceExperiment below is its core).
 
 import { DB } from '../../db.js';
 import { now as clockNow } from '../clock.js'; // M-3 audit: injectable clock
@@ -35,7 +34,7 @@ import { now as clockNow } from '../clock.js'; // M-3 audit: injectable clock
 export const NOF1_PREFERENCE_KEY = 'dp-nof1-preference';   // EN-name-keyed, synced
 export const NOF1_EXPERIMENT_KEY = 'dp-nof1-experiment';   // single in-flight state, synced
 
-// ── Tunables (DESIGN PROPOSALS — spec §9, Daniel sanity-check before flip) ─────
+// ── Tunables (sim-swept + Daniel-reviewed; LIVE since dp_nof1_v1 ON 2026-06-14) ─
 export const NOF1_BLOCK_SESSIONS = 3;   // sessions per arm (arm A then arm B)
 export const NOF1_SIGNIFICANCE_Z = 1.0; // slope diff must clear Z·sigma to pick a winner
 export const NOF1_MIN_TRAINING_AGE = 8; // distinct-day sessions on the lift = "established"
@@ -201,8 +200,8 @@ export function nof1SetBias(preference) {
  *
  * NOTE: the LIVE wiring of this into the real session loop (calling it on each
  * session completion, sourcing the per-arm slopes) is the fragile, confounding-
- * sensitive part DEFERRED for Daniel's review (spec §5d / §9). This pure stepper is
- * shipped + tested so that wiring is a thin, reviewable boundary, not new logic.
+ * sensitive part — it went LIVE with dp_nof1_v1 on 2026-06-14 through the thin,
+ * reviewable boundary DP.stepNof1Experiment (this pure stepper is its core logic).
  *
  * @param {{exercise:string, arm:string, sessionsInArm:number, slopeArmA:number|null}} state
  * @param {number} currentSlope the lift's slope measured over the CURRENT arm's block

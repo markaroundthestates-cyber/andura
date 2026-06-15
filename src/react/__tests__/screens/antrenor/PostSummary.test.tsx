@@ -621,3 +621,51 @@ describe('PostSummary — §F-post-summary-04 Detaliu Marius persona-gated', () 
     expect(screen.getByTestId('summary-marius-detail').textContent).not.toMatch(/RPE/i);
   });
 });
+
+// ── A3 — n-of-1 winner narration (one-shot, read + cleared on this summary) ──
+describe('PostSummary — n-of-1 winner narration', () => {
+  beforeEach(() => {
+    seedNormalSession();
+  });
+
+  it('renders the winner line cand dp-nof1-narration record present (EN default)', () => {
+    localStorage.setItem(
+      'dp-nof1-narration',
+      JSON.stringify({ exercise: 'Bench Press', arm: 'volume', ts: Date.now() }),
+    );
+    renderSummary();
+    const line = screen.getByTestId('summary-nof1-line');
+    expect(line).toBeInTheDocument();
+    // EN: "You respond better to volume on Bench Press — noted."
+    expect(line).toHaveTextContent(/respond better to volume on Bench Press/i);
+  });
+
+  it('CLEARS the record after reading (one-shot — gone on a fresh mount)', () => {
+    localStorage.setItem(
+      'dp-nof1-narration',
+      JSON.stringify({ exercise: 'Squat', arm: 'intensity', ts: Date.now() }),
+    );
+    const first = renderSummary();
+    expect(screen.getByTestId('summary-nof1-line')).toBeInTheDocument();
+    // The localStorage record is consumed → a fresh mount shows nothing.
+    expect(localStorage.getItem('dp-nof1-narration')).toBe('null');
+    first.unmount();
+    renderSummary();
+    expect(screen.queryByTestId('summary-nof1-line')).not.toBeInTheDocument();
+  });
+
+  it('renders NOTHING cand no record / inconclusive (no arm)', () => {
+    // No record at all.
+    renderSummary();
+    expect(screen.queryByTestId('summary-nof1-line')).not.toBeInTheDocument();
+  });
+
+  it('ignores an inconclusive record (arm null → no narration)', () => {
+    localStorage.setItem(
+      'dp-nof1-narration',
+      JSON.stringify({ exercise: 'Deadlift', arm: null, ts: Date.now() }),
+    );
+    renderSummary();
+    expect(screen.queryByTestId('summary-nof1-line')).not.toBeInTheDocument();
+  });
+});

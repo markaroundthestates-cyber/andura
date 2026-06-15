@@ -767,7 +767,14 @@
     "streakLine": "— mentine ritmul!",
     "streakLabel_one": "{n} zi consecutiva",
     "streakLabel_other": "{n} zile consecutive",
-    "finishCta": "Terminat"
+    "finishCta": "Terminat",
+    "nof1": {
+      "line": "Raspunzi mai bine la {respondsTo} pe {exercise} — am retinut.",
+      "arm": {
+        "volume": "volum",
+        "intensity": "intensitate"
+      }
+    }
   },
   "progres": {
     "heading": "Progres",

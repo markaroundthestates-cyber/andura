@@ -2777,16 +2777,16 @@ export const DP = {
       }
     }
 
-    // ── F6c #34 N-of-1 SELF-EXPERIMENT bias (dp_nof1_v1, default OFF) ────────────
+    // ── F6c #34 N-of-1 SELF-EXPERIMENT bias (dp_nof1_v1, ON 2026-06-14) ─────────
     // A DECIDED per-lift preference (the user's OWN response from a completed micro-
     // block A/B) biases this lift's SET COUNT: +1 for a 'volume' winner, −1 for an
     // 'intensity' winner, applied additively on the EXISTING setsAdjust channel (the
     // schedule layer clamps it against its own MIN floor — never below 1 working set).
     // Bounded to ±1 set → it can never produce an unsafe load (the kg is untouched;
     // ego/anomaly caps already applied above). A NULL/absent preference → 0 bias →
-    // today's behavior even when the flag is ON (the reversible default). EXEMPT
-    // during a return-deload comeback (never perturb the ramp). OFF → never read →
-    // byte-identical.
+    // today's behavior even with the flag ON (the reversible default — most lifts
+    // never have a decided preference). EXEMPT during a return-deload comeback (never
+    // perturb the ramp). The bias is read ONLY when a real preference was decided.
     if (isEnabled('dp_nof1_v1') && !result.returnDeload) {
       const bias = nof1SetBias(loadNof1Preference(ex));
       if (bias !== 0) {

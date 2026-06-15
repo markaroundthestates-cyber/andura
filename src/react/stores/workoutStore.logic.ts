@@ -296,9 +296,10 @@ export function persistSessionLogs(
       void distillAndPersistBehaviorTuning(() => debugLog.snapshot());
     }
     // F6c #34 — advance the live N-of-1 self-experiment by ONE on this session
-    // completion (flag dp_nof1_v1, default OFF → skipped → byte-identical: no
-    // experiment is ever scheduled + the preference is never written). Same
-    // authoritative per-session write site as the learners above. DP owns the
+    // completion (flag dp_nof1_v1, ON 2026-06-14 → the experiment scheduler runs;
+    // OFF would skip it → byte-identical, no experiment scheduled, no preference
+    // written — the reversible default). Same authoritative per-session write site
+    // as the learners above. DP owns the
     // signal reads (the in-flight state, the per-arm #31 slope, the posterior
     // sigma) + the persistence; this seam supplies ONLY the lifts logged this
     // session (EN-canonical, from `newEntries[].ex`) + the two guardrail inputs
@@ -308,10 +309,23 @@ export function persistSessionLogs(
     if (isEnabled('dp_nof1_v1')) {
       const loggedExNames = [...new Set(newEntries.map((e) => e.ex).filter(Boolean))];
       const experience = experienceToEngine(useOnboardingStore.getState().data.experience);
-      DP.stepNof1Experiment(loggedExNames, {
+      const step = DP.stepNof1Experiment(loggedExNames, {
         phaseToken: resolveActivePhase(),
         isBeginner: experience === 'beginner',
       });
+      // A3 — narrate the WINNER. When an experiment just CONCLUDED with a real
+      // decided arm ('volume'|'intensity', null = inconclusive → no narration),
+      // stash a one-shot record the post-session coach surface reads + clears.
+      // READ-ONLY narration of the decision DP already made/persisted above — NOT
+      // in the compose path, never touches the prescription → fp-regression unmoved.
+      // Quota-guarded + fail-silent (same try as the step itself).
+      if (step && step.action === 'decide' && step.arm && step.exercise) {
+        DB.set('dp-nof1-narration', {
+          exercise: step.exercise,
+          arm: step.arm,
+          ts: Date.now(),
+        });
+      }
     }
   } catch {
     // Soft-fail — storage quota / SSR jsdom edge. Engine adapters tolerate
