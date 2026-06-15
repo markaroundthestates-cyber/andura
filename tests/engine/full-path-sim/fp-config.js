@@ -373,6 +373,19 @@ export const FLIPPED_FLAGS = Object.freeze([
   // consulted in either A/B arm → BOTH frozen baselines stay byte-for-byte. ON is proven on the
   // eval grid (p6 freq 6/7 → 3 spaced days) + the lowCapacityMaxDays regression test, NOT here.
   'dp_lowcap_effective_freq_v1',
+  // THE FLIP 2026-06-15 (single-day focus concentration) — dp_single_day_focus_v1 defaults ON.
+  // On a freq=1 (one active training day) week with a non-balanced focus, it trims the non-focus
+  // accessories toward maintenance and reallocates the freed budget into the focus group so the
+  // single full-body day reads as a focused session. This harness's EMPHASIS_PRESETS focuses
+  // (arms/v-taper/lower) + any freq=1 journey in the cohort WOULD have their freq=1 sessions
+  // concentrated → move the frozen prescription hashes. Pinned OFF here (in FLIPPED_FLAGS only,
+  // NOT PATH_A_FLAGS) so ctx.singleDayFocus is null in both A/B arms → the concentration pass
+  // never runs → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. CONTAINED to
+  // activeDays === 1: at freq >= 2 the seam resolves singleDayFocus to null regardless of the
+  // flag, so every freq >= 2 config is byte-identical even with the flag ON. ON behavior is
+  // proven on the eval grid (freq=1 focus configs lift toward 6-7, focus leads at a real dose;
+  // 0 freq>=2 configs changed) + the new single-day-focus regression test, NOT in this stream.
+  'dp_single_day_focus_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

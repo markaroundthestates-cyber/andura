@@ -878,6 +878,19 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
             && userState?.user?.goal === 'mentenanta',
         }
         : null,
+    // SINGLE-DAY FOCUS CONCENTRATION (dp_single_day_focus_v1, 2026-06-15). Resolved at the
+    // seam from the active-day count + the emphasized groups. NULL unless the resolved active
+    // week has EXACTLY ONE training day AND a non-balanced focus is active AND the flag is ON
+    // → buildSession never runs the concentration pass → freq>=2 + balanced + flag-OFF all
+    // BYTE-IDENTICAL. When set, buildSession trims the non-focus accessories toward maintenance
+    // and reallocates the freed budget into the focus group so the single full-body day reads
+    // as a focused session, not a flat full-body (the eval freq=1 focus-not-emphasized cap).
+    singleDayFocus:
+      isEnabled('dp_single_day_focus_v1')
+      && (activeWeek.filter(Boolean).length || 1) === 1
+      && emphSet.size > 0
+        ? { emphasizedGroups: [...emphSet] }
+        : null,
     // FOCUS-LEADS-ON-SPLITS (dp_focus_lead_splits_v1, 2026-06-14). Resolved at the seam
     // (the GUARD has the full weekly budget + the split). Null when the focus already
     // leads / not a U/L split / flag OFF → buildSession no-ops → byte-identical. When set,

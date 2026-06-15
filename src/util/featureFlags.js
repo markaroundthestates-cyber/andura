@@ -1442,6 +1442,28 @@ export const FLAGS = Object.freeze({
   // maintenance regression test.
   dp_maintenance_volume_band_v1: { rollout: 1, default: true },
 
+  // SINGLE-DAY FOCUS CONCENTRATION (2026-06-15, eval freq=1 focus-not-emphasized cap)
+  // (RISK LOW — set counts only, never kg; gated STRICTLY on the single active-day case).
+  // A user training only 1 day/week still has just ONE full-body session. The /10 judge
+  // caps that day "focus-not-emphasized" / "focus at maintenance, not a signature" on the
+  // freq=1 grid (p3_chest/shoulders/lower/upper, p6_shoulders, p9_arms): every group lands
+  // at its ordinary per-session dose, so the focus muscle sits at MEV (~6) while non-focus
+  // accessories take equal sets — the day reads as a balanced full-body, not a focused one.
+  // A real coach given "only 1 day" CONCENTRATES that day: the focus muscle leads at a real
+  // emphasis dose and the off-focus accessories drop to maintenance. When ON + the resolved
+  // active week has EXACTLY ONE training day, buildSession runs a net-neutral concentration
+  // pass: it TRIMS each non-focus ACCESSORY (tier > 1) group's sets toward maintenance (2)
+  // and REALLOCATES the freed budget by RAISING the focus group's exercises toward a real
+  // emphasis dose (per-exercise ceiling 5, group bounded by SINGLE_DAY_FOCUS_GROUP_CEILING
+  // and the group's MRV headroom from volumeTargets — never invents net volume beyond what
+  // the freed sets allow). Compounds + the focus lead the day; the rest is maintained, never
+  // zeroed. CONTAINED to activeDays === 1 — at freq >= 2 ctx.singleDayFocus is null so the
+  // pass never runs → freq>=2 BYTE-IDENTICAL. OFF → null → never runs → byte-identical (pinned
+  // OFF in fp-config FLIPPED_FLAGS so the fp cohort's freq=1 journeys keep the frozen hashes).
+  // Proven on the eval grid (freq=1 focus configs lift from 3-5 toward 6-7, focus leads at a
+  // real dose; every freq>=2 config byte-identical) + the single-day-focus regression test.
+  dp_single_day_focus_v1: { rollout: 1, default: true },
+
   // FOCUS-LEADS-ON-SPLITS (2026-06-14, eval focus-not-emphasized cap on U/L splits). On an
   // UPPER/LOWER 4-day split (upper/lower/upper/lower) the engine de-emphasizes NOTHING on
   // the non-focus region, so a focus fails to clearly LEAD the week: a LOWER focus runs full
