@@ -138,7 +138,20 @@ function LazyRoute({ children }: { children: ReactNode }): JSX.Element {
 function TopLevelRoute({ children }: { children: ReactNode }): JSX.Element {
   return (
     <ErrorBoundary>
-      <LazyRoute>{children}</LazyRoute>
+      {/* DESKTOP-SCROLL FIX (2026-06-15, founder live) — top-level routes render
+          OUTSIDE Layout, so they lacked Layout's .app-scroll surface. On the
+          desktop phone-bezel (#root = fixed-height device screen, overflow:hidden)
+          a tall screen — the onboarding summary step, Terms/Privacy legal text —
+          was clipped with no way to scroll to the bottom CTA. Mirror Layout's
+          shell: a min-h-screen flex column (→ height:100% inside the bezel via the
+          global `#root > *` rule) whose .app-scroll child is the only scroll
+          surface. Mobile (<768px): .app-scroll has no styles (desktop-only @media)
+          → transparent passthrough, the viewport scrolls as before. */}
+      <div className="min-h-screen flex flex-col">
+        <div className="app-scroll flex-1 flex flex-col">
+          <LazyRoute>{children}</LazyRoute>
+        </div>
+      </div>
     </ErrorBoundary>
   );
 }
