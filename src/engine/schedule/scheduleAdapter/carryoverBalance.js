@@ -20,11 +20,7 @@
 // is returned unchanged → byte-identical to today. Flag-gated at the call site
 // (dp_carryover_balance_v1); the OFF arm never builds owed → empty → byte-identical.
 
-import {
-  clusterForDay,
-  adjacencyCount,
-  spaceOutSplit,
-} from './frequencySplit.js';
+import { clusterForDay } from './frequencySplit.js';
 import { getExerciseMetadata } from '../../exerciseLibrary.js';
 import { CLUSTER_BIG6_TO_BIG11_WEIGHT } from '../../periodization/constants.js';
 
@@ -160,72 +156,4 @@ export function detectOwedClusters({
     if (!received) owed.push(cluster);
   }
   return owed;
-}
-
-/**
- * Reorder a split so each OWED cluster sitting in a LATE slot (especially the
- * last) moves to the EARLIEST position that does NOT increase same-cluster
- * adjacency. PLACEMENT only — the multiset of clusters is unchanged (same
- * day-type counts), only the ORDER moves so the skipped region is trained fresh.
- *
- * GUARD — only an owed cluster whose EARLIEST current occurrence sits in the LATE
- * half of the week is front-loaded. A cluster that ALREADY appears early (its
- * first slot is in the front half, e.g. balanced upper/lower/upper/lower trains
- * lower at slot 1) is already trained fresh — moving its last occurrence to the
- * front would be gratuitous churn that displaces an equally-fresh day. The
- * founder problem is the SINGLE-late-slot case (v-taper push/pull/upper/lower:
- * lower ONLY at the last slot), which this guard targets exactly.
- *
- * Reuses adjacencyCount + spaceOutSplit from frequencySplit.js to validate
- * spacing. Legs (lower/legs) are region-disjoint from push/pull/upper so they
- * move freely; an owed push/pull goes to the earliest non-adjacency-worsening
- * slot. Empty owed → the split is returned UNCHANGED (byte-identical). Pure,
- * deterministic, stable (no random tie-breaks).
- *
- * @param {string[]} split - ordered Big-6 cluster ids
- * @param {string[]} owedClusters - cluster ids owed (front-load these)
- * @returns {string[]} a reordered copy (or the input reference when no change)
- */
-export function reorderSplitForCarryover(split, owedClusters) {
-  if (!Array.isArray(split) || split.length === 0) return split;
-  if (!Array.isArray(owedClusters) || owedClusters.length === 0) return split;
-  const owedSet = new Set(owedClusters);
-  // A cluster is "trained fresh enough" when its FIRST slot is in the front half —
-  // front-loading only the LATE-only owed clusters (the founder single-last-slot case).
-  const frontHalfEnd = Math.floor(split.length / 2);
-  let out = [...split];
-  let moved = false;
-  // Process owed clusters in the order they appear in owedClusters (stable) so the
-  // result is deterministic. For each owed cluster, take its LAST occurrence (the
-  // one most in need of front-loading) and reinsert it at the earliest slot that
-  // does not worsen adjacency.
-  for (const owed of owedClusters) {
-    if (!owedSet.has(owed)) continue;
-    const firstIdx = out.indexOf(owed);
-    if (firstIdx < 0) continue; // not present
-    if (firstIdx < frontHalfEnd) continue; // already trained early → no churn
-    const lastIdx = out.lastIndexOf(owed);
-    if (lastIdx <= 0) continue; // already first → nothing earlier to move to
-    const baseAdj = adjacencyCount(out);
-    // Try every earlier insertion position; pick the EARLIEST that does not
-    // increase same-cluster adjacency vs the current arrangement.
-    let bestPos = -1;
-    for (let pos = 0; pos < lastIdx; pos++) {
-      const candidate = out.filter((_, i) => i !== lastIdx);
-      candidate.splice(pos, 0, owed);
-      if (adjacencyCount(candidate) <= baseAdj) { bestPos = pos; break; }
-    }
-    if (bestPos >= 0) {
-      const candidate = out.filter((_, i) => i !== lastIdx);
-      candidate.splice(bestPos, 0, owed);
-      out = candidate;
-      moved = true;
-    }
-  }
-  if (!moved) return split;
-  // Final safety: if the move somehow worsened overall adjacency vs the original,
-  // re-space the multiset deterministically (same day-type counts, alternation
-  // restored) — never return a more-clustered week than we started with.
-  if (adjacencyCount(out) > adjacencyCount(split)) return spaceOutSplit(out);
-  return out;
 }

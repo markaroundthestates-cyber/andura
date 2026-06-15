@@ -6,11 +6,8 @@
 // time comes from the injected clock, never Date.now().
 
 import { describe, it, expect } from 'vitest';
-import {
-  detectOwedClusters,
-  reorderSplitForCarryover,
-} from '../scheduleAdapter/carryoverBalance.js';
-import { clusterForDay, frequencyToSplit } from '../scheduleAdapter/frequencySplit.js';
+import { detectOwedClusters } from '../scheduleAdapter/carryoverBalance.js';
+import { clusterForDay, frequencyToSplit, reorderSplitForCarryover } from '../scheduleAdapter/frequencySplit.js';
 
 // A fixed planning clock (Thu 2026-06-04, LOCAL). resolveWeekStartMs derives the
 // LOCAL MONDAY 00:00 of nowMs's week (the Monday-anchored microcycle boundary, like
