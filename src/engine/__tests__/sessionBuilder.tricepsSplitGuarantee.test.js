@@ -17,7 +17,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { world, resetWorld, setPathAFlags, FLIPPED_FLAGS } from '../../../tests/engine/full-path-sim/fp-config.js';
+import { resetWorld, setPathAFlags, FLIPPED_FLAGS } from '../../../tests/engine/full-path-sim/fp-config.js';
 import { buildSession } from '../sessionBuilder.js';
 import { getExerciseMetadata } from '../exerciseLibrary.js';
 import { DEV_FLAGS_KEY } from '../../util/featureFlags.js';

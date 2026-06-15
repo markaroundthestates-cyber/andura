@@ -232,7 +232,7 @@ export async function recomputeWeeklyDelivered({ activeWeek, composeDay }) {
  */
 export function resolveMrvCeilingDirective({ weekDelivered, ceilings }) {
   if (!weekDelivered || !ceilings || !weekDelivered.total) return null;
-  const { total, perDay, perDayIso } = weekDelivered;
+  const { total, perDayIso } = weekDelivered;
   /** @type {Record<string, Record<number, number>>} */
   const isoDayTargets = {};
   let anyTrim = false;

@@ -110,7 +110,6 @@ export function Noutati(): JSX.Element {
   useEffect(() => {
     void load();
     // Mount-once: the screen fetches on open. Re-fetch is via the retry button.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const isEmpty = state === 'loaded' && list.length === 0;
