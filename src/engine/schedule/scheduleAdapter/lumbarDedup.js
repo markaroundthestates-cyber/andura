@@ -69,6 +69,7 @@ export const BACK_EXTENSION_FAMILY = Object.freeze([
  * @param {string} input.todayCluster today's effective cluster
  * @param {string} [input.focusPreset='balanced']
  * @param {boolean} [input.splitRebalance=false]
+ * @param {string[]} [input.owedClusters=[]] clusters front-loaded (dp_carryover_balance_v1)
  * @returns {Record<string, number> | null} demote map ({name:1}) or null (no-op)
  */
 export function lumbarDedupPenalties({
@@ -78,6 +79,7 @@ export function lumbarDedupPenalties({
   todayCluster,
   focusPreset = 'balanced',
   splitRebalance = false,
+  owedClusters = [],
 }) {
   if (!flagOn) return null;
   if (!Array.isArray(activeWeek)) return null;
@@ -93,7 +95,7 @@ export function lumbarDedupPenalties({
     let priorBackDays = 0;
     for (let i = 0; i < dayIdx; i++) {
       if (!activeWeek[i]) continue;
-      if (BACK_ACCESSORY_CLUSTERS.has(clusterForDay(activeWeek, i, focusPreset, splitRebalance))) {
+      if (BACK_ACCESSORY_CLUSTERS.has(clusterForDay(activeWeek, i, focusPreset, splitRebalance, owedClusters))) {
         priorBackDays += 1;
       }
     }
@@ -108,7 +110,7 @@ export function lumbarDedupPenalties({
   let priorHingeDays = 0;
   for (let i = 0; i < dayIdx; i++) {
     if (!activeWeek[i]) continue;
-    if (HINGE_CLUSTERS.has(clusterForDay(activeWeek, i, focusPreset, splitRebalance))) {
+    if (HINGE_CLUSTERS.has(clusterForDay(activeWeek, i, focusPreset, splitRebalance, owedClusters))) {
       priorHingeDays += 1;
     }
   }
@@ -132,14 +134,15 @@ export function lumbarDedupPenalties({
  * @param {ReadonlyArray<boolean>} input.activeWeek length-7 active flags
  * @param {string} [input.focusPreset='balanced']
  * @param {boolean} [input.splitRebalance=false]
+ * @param {string[]} [input.owedClusters=[]] clusters front-loaded (dp_carryover_balance_v1)
  * @returns {string[]} clusters of the ACTIVE days, in day order
  */
-export function weekClustersFor({ activeWeek, focusPreset = 'balanced', splitRebalance = false }) {
+export function weekClustersFor({ activeWeek, focusPreset = 'balanced', splitRebalance = false, owedClusters = [] }) {
   if (!Array.isArray(activeWeek)) return [];
   const out = [];
   for (let i = 0; i < activeWeek.length; i++) {
     if (!activeWeek[i]) continue;
-    out.push(clusterForDay(activeWeek, i, focusPreset, splitRebalance));
+    out.push(clusterForDay(activeWeek, i, focusPreset, splitRebalance, owedClusters));
   }
   return out;
 }

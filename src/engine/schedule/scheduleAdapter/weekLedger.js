@@ -160,6 +160,7 @@ const TRICEPS_CLUSTERS = new Set(['push', 'upper', 'arms', 'full', 'fullbody']);
  * @param {number} input.dayIdx - 0..6, the weekday being composed
  * @param {string} [input.focusPreset='balanced'] - focus preset id (split reshape)
  * @param {boolean} [input.splitRebalance=false] - W-Split flag (dp_split_rebalance_v1)
+ * @param {string[]} [input.owedClusters=[]] - clusters front-loaded (dp_carryover_balance_v1)
  * @param {Record<string, number>|null|undefined} input.volumeTargetsEN - the day's
  *        EN-keyed weekly budget (the contracted/floored map — the stable weekly SSOT)
  * @returns {WeekLedger} the projected ledger (always a well-formed object)
@@ -179,6 +180,7 @@ export function computeWeekLedger({
   dayIdx,
   focusPreset = 'balanced',
   splitRebalance = false,
+  owedClusters = [],
   volumeTargetsEN,
 }) {
   /** @type {WeekLedger} */
@@ -201,7 +203,7 @@ export function computeWeekLedger({
   const activeClusters = [];
   for (let i = 0; i < 7; i++) {
     if (activeWeek[i]) {
-      activeClusters.push({ day: i, cluster: clusterForDay(activeWeek, i, focusPreset, splitRebalance) });
+      activeClusters.push({ day: i, cluster: clusterForDay(activeWeek, i, focusPreset, splitRebalance, owedClusters) });
     }
   }
   ledger.totalActiveDays = activeClusters.length;

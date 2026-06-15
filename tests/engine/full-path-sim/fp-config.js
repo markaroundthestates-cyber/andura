@@ -240,6 +240,15 @@ export const FLIPPED_FLAGS = Object.freeze([
   // stay byte-for-byte; ON behavior is proven on the focus-signature gate (the 4 closed
   // GAP asserts) + the focus/frequency sweep, NOT in this determinism stream.
   'dp_week_ledger_v1',
+  // THE FLIP 2026-06-15 (cross-week carryover balance) — dp_carryover_balance_v1 defaults
+  // ON (a region scheduled last microcycle that got ZERO real sets is front-loaded to the
+  // earliest spacing-safe slot this week — placement only, no volume cram). The fp cohort
+  // logs adherently (every scheduled cluster gets real sets), so owed is normally [] and it
+  // is mostly inert in-harness, but pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS)
+  // for the all-off-world guarantee so BOTH frozen hashes (hashOff/hashOn) stay byte-for-byte
+  // even if a journey ever skipped a region. ON behavior is proven on the new carryoverBalance
+  // unit suite (the founder v-taper @4d skipped-lower case), NOT in this determinism stream.
+  'dp_carryover_balance_v1',
   // THE FLIP 2026-06-15 (persona-aware MRV ceiling) — dp_mrv_ceiling_v1 defaults ON. It
   // caps the DELIVERED weekly per-muscle total at the persona MRV by trimming the above-
   // MRV excess (an EXACT weekly recompute decides WHICH muscles are over). Composition/

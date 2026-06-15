@@ -102,7 +102,7 @@ export const FOCUS_PRESET_IDS: readonly FocusPreset[];
 // engine as the user-picked TARGET when dp_emphasis_specialization_v1 is on.
 export function primaryEmphasizedGroup(focusPreset?: string | null): string | null;
 
-export function frequencyToSplit(n: number, focusPreset?: string): string[];
+export function frequencyToSplit(n: number, focusPreset?: string, rebalance?: boolean, owedClusters?: string[]): string[];
 export function weeklySessionsPerGroup(split: string[]): Record<string, number>;
 
 export function mapDateToIndex(date: Date): number;

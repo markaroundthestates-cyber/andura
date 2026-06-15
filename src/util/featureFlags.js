@@ -1015,6 +1015,26 @@ export const FLAGS = Object.freeze({
   // threaded → byte-identical (the full-path-sim hash holds).
   dp_week_ledger_v1: { rollout: 1, default: true },
 
+  // CROSS-WEEK CARRYOVER BALANCE (2026-06-15) — the weekly split is a STATIC
+  // deterministic template (frequencyToSplit / clusterForDay). A focus that
+  // de-emphasizes a region collapses it to ONE day placed LAST (v-taper @4d:
+  // FOCUS_LOWER_DEEMPH_SPLITS[4] = push/pull/upper/lower), so if the user skips the
+  // end of the week they skip that region ENTIRELY — and nothing reacts: the template
+  // is identical next week (no cross-week carryover), and the intra-week makeup only
+  // recovers VOLUME within the SAME week (it cannot rescue a region whose only/last day
+  // WAS the skipped one). When ON, detectOwedClusters (carryoverBalance.js) reads the
+  // real recovery logs over the 7 days BEFORE this microcycle and flags any cluster
+  // SCHEDULED last week that got ZERO real working sets; reorderSplitForCarryover then
+  // moves that cluster to the EARLIEST spacing-safe slot (never last) THIS week, threaded
+  // through clusterForDay/frequencyToSplit + every downstream day→cluster consumer
+  // (ledger, makeup, lumbar) so the whole week is consistent. PLACEMENT ONLY — last
+  // week's missed VOLUME is NEVER crammed forward (RP junk/injury rule; the existing
+  // intra-week +30% makeup stays within-week). Pure + deterministic (the injected
+  // planning clock is the ONLY time source — no Math.random / Date.now). OFF / cold-start
+  // (no logs / no in-window rows) → owed [] → every consumer byte-identical (pinned OFF in
+  // the fp cohorts via FLIPPED_FLAGS only — NOT PATH_A_FLAGS — so the frozen hashes hold).
+  dp_carryover_balance_v1: { rollout: 1, default: true },
+
   // PERSONA-AWARE MRV CEILING (2026-06-15) — a Pareto-by-construction ceiling on the
   // DELIVERED weekly per-muscle hard-set total. The per-group weekly BUDGET is already
   // MRV-clamped, but an OVER-TRAINED group DELIVERS ~1.3-1.8× its budget (the split-

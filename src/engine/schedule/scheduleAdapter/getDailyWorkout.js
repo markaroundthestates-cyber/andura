@@ -56,6 +56,7 @@ import { resolveVolumeFrequency, scaleWeeklyVolumeByInferredFrequency } from './
 import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias, effectiveFocusPreset } from './focus.js';
 import { applyFocusVolumeContracts, focusContractDemotions, applyLedgerLowerBackCap } from './focusVolumeContracts.js';
 import { computeWeekLedger } from './weekLedger.js';
+import { detectOwedClusters } from './carryoverBalance.js';
 import { ISRAETEL_BASELINES } from '../../periodization/constants.js';
 import {
   laggingGroupsFromLogs,
@@ -291,7 +292,29 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   ) {
     return null;
   }
-  const scheduledCluster = clusterForDay(activeWeek, dayIdx, focusPreset, splitRebalance);
+  // CROSS-WEEK CARRYOVER BALANCE (dp_carryover_balance_v1, 2026-06-15) — a region
+  // SCHEDULED last microcycle that got ZERO real working sets (the user skipped the
+  // end of the week, so e.g. v-taper's single LAST lower day was missed) is
+  // FRONT-LOADED this week: detectOwedClusters reads the same real recovery logs the
+  // M1 cut uses, over the 7 days BEFORE this microcycle start, and the owed cluster
+  // ids are threaded into clusterForDay/frequencyToSplit (and every downstream
+  // consumer that derives the week's day→cluster sequence — ledger, makeup, lumbar)
+  // so the WHOLE week is consistent: reorderSplitForCarryover moves the skipped
+  // cluster to the earliest spacing-safe slot (never last). PLACEMENT only — last
+  // week's missed VOLUME is NEVER crammed forward (the intra-week +30% makeup stays
+  // within-week). Deterministic: the injected planning clock (date.getTime()) is the
+  // ONLY time source — never Date.now(). OFF / cold-start (no logs, no in-window
+  // rows) → owed [] → every consumer is byte-identical to today.
+  const owedClusters = isEnabled('dp_carryover_balance_v1')
+    ? detectOwedClusters({
+      recoveryLogs: flattenSessionsToRecoveryLogs(userState?.recentSessions),
+      activeWeek,
+      focusPreset,
+      splitRebalance,
+      nowMs: date.getTime(),
+    })
+    : [];
+  const scheduledCluster = clusterForDay(activeWeek, dayIdx, focusPreset, splitRebalance, owedClusters);
   // "Different group" override — Andura picks the most-recovered ALTERNATIVE
   // cluster (≠ today's scheduled one) from the recovery state already derivable
   // from the user's logged sessions. Recovery flatten + state are pure + cheap;
@@ -322,7 +345,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   const intraWeekDayOrdinal = activePos >= 0
     ? activePos
     : activeIdxsForOrdinal.filter((i) => i < dayIdx).length;
-  const split = frequencyToSplit(activeWeek.filter(Boolean).length || 1, focusPreset, splitRebalance);
+  const split = frequencyToSplit(activeWeek.filter(Boolean).length || 1, focusPreset, splitRebalance, owedClusters);
   // #R6a-T2 — does THIS week's split contain a separate Push day? (clusters are
   // lowercase: 'upper'/'lower'/'push'/'pull'/'legs'/'full'). A pure UPPER/LOWER split
   // (4d: upper/lower/upper/lower) has NONE — so the #2 upper-day triceps de-dup (which
@@ -606,6 +629,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
         dayIdx,
         focusPreset,
         splitRebalance,
+        owedClusters,
         volumeTargetsEN: contractedTargets,
       })
     : null;
@@ -649,7 +673,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
           ? weekContext.volumeDone
           : {},
         split,
-        weekSessionSpreadByGroup(activeWeek, dayIdx, focusPreset, splitRebalance),
+        weekSessionSpreadByGroup(activeWeek, dayIdx, focusPreset, splitRebalance, owedClusters),
       )
     : { added: {}, behind: {} };
   const madeUpTargets = applyMakeupToVolumeBudget(balancedTargets, intraWeekMakeup.added);
@@ -930,7 +954,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // exposure, Upper lands at 7 lifts — Daniel's coach-review + the D117 intent).
     // OFF → null → byte-identical (no deferral).
     weekClusters: isEnabled('dp_latiso_dedup_v1')
-      ? weekClustersFor({ activeWeek, focusPreset, splitRebalance })
+      ? weekClustersFor({ activeWeek, focusPreset, splitRebalance, owedClusters })
       : null,
     // CROSS-DAY WEEK LEDGER (dp_week_ledger_v1, 2026-06-12) — the projection of what
     // the week's PRIOR days delivered (per-group sets + per-sub-bucket slot days/sets),
@@ -991,6 +1015,7 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
         todayCluster: cluster,
         focusPreset,
         splitRebalance,
+        owedClusters,
       }),
       isEnabled('dp_focus_contracts_v1') ? focusContractDemotions(focusPreset) : null,
     ),

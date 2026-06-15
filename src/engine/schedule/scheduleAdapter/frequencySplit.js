@@ -13,6 +13,7 @@
 
 import { SCHEDULE_STORE_KEY } from './constants.js';
 import { resolveFocusPreset } from './focus.js';
+import { reorderSplitForCarryover } from './carryoverBalance.js';
 
 const FREQUENCY_SPLITS = Object.freeze({
   1: Object.freeze(['full']),
@@ -90,7 +91,7 @@ function focusDayMixLean(preset) {
 }
 
 /** Count same-cluster ADJACENT pairs in a split (the back-to-back smell). */
-function adjacencyCount(split) {
+export function adjacencyCount(split) {
   let n = 0;
   for (let i = 1; i < split.length; i++) if (split[i] === split[i - 1]) n += 1;
   return n;
@@ -106,7 +107,7 @@ function adjacencyCount(split) {
  * mathematically impossible (e.g. 5×same + 1), the leftover adjacency lands at
  * the END (the greedy exhausts alternatives first) — still minimal.
  */
-function spaceOutSplit(split) {
+export function spaceOutSplit(split) {
   const counts = new Map();
   split.forEach((c) => counts.set(c, (counts.get(c) || 0) + 1));
   const out = [];
@@ -390,17 +391,26 @@ function reshapeSplitForFocus(split, preset) {
  * minimal-freq full-body + focus day-mix lean + the back≥chest antagonist floor.
  * Default false → ZERO change (the legacy reshape path runs unchanged).
  *
+ * `owedClusters` (cross-week carryover, dp_carryover_balance_v1) front-loads any
+ * cluster SCHEDULED last microcycle that got ZERO real sets: reorderSplitForCarryover
+ * moves it to the earliest spacing-safe slot AFTER the focus/rebalance split is
+ * produced (placement only — same day-type multiset). Default [] → unchanged
+ * (byte-identical to the pre-feature reshape/rebalance result).
+ *
  * @param {number} n - active training days that week
  * @param {string} [focusPreset='balanced'] - focus preset id
  * @param {boolean} [rebalance=false] - W-Split flag (dp_split_rebalance_v1)
+ * @param {string[]} [owedClusters=[]] - clusters to front-load (dp_carryover_balance_v1)
  * @returns {string[]} ordered Big-6 cluster ids
  */
-export function frequencyToSplit(n, focusPreset = 'balanced', rebalance = false) {
+export function frequencyToSplit(n, focusPreset = 'balanced', rebalance = false, owedClusters = []) {
   const clamped = Math.min(7, Math.max(1, Number.isFinite(n) ? Math.round(n) : 1));
   const base = [...(FREQUENCY_SPLITS[clamped] || FREQUENCY_SPLITS[1])];
   const preset = resolveFocusPreset(focusPreset);
-  if (rebalance) return rebalanceSplit(clamped, base, preset);
-  return reshapeSplitForFocus(base, preset);
+  const split = rebalance ? rebalanceSplit(clamped, base, preset) : reshapeSplitForFocus(base, preset);
+  // Cross-week carryover front-load (applied AFTER focus/rebalance). Empty owed →
+  // reorderSplitForCarryover returns the split unchanged → byte-identical.
+  return reorderSplitForCarryover(split, owedClusters);
 }
 
 // Cluster id → uppercase session-type title tag (the OUTPUT field consumers
@@ -585,13 +595,14 @@ export function reshapeMaintenanceWeek(activeWeek, maxDays) {
  * @param {number} dayIdx - 0..6
  * @param {string} [focusPreset='balanced'] - focus preset id
  * @param {boolean} [rebalance=false] - W-Split flag (dp_split_rebalance_v1)
+ * @param {string[]} [owedClusters=[]] - clusters to front-load (dp_carryover_balance_v1)
  * @returns {string} cluster id
  */
-export function clusterForDay(activeWeek, dayIdx, focusPreset = 'balanced', rebalance = false) {
+export function clusterForDay(activeWeek, dayIdx, focusPreset = 'balanced', rebalance = false, owedClusters = []) {
   const activeIdxs = [];
   for (let i = 0; i < 7; i++) if (activeWeek[i]) activeIdxs.push(i);
   const n = activeIdxs.length;
-  const split = frequencyToSplit(n > 0 ? n : 1, focusPreset, rebalance);
+  const split = frequencyToSplit(n > 0 ? n : 1, focusPreset, rebalance, owedClusters);
   const pos = activeIdxs.indexOf(dayIdx);
   // dayIdx active → its ordinal position; otherwise slot by active-days-before-it.
   const position = pos >= 0
