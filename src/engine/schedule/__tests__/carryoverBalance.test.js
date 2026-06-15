@@ -12,8 +12,6 @@ import {
 } from '../scheduleAdapter/carryoverBalance.js';
 import { clusterForDay, frequencyToSplit } from '../scheduleAdapter/frequencySplit.js';
 
-const DAY_MS = 86400000;
-
 // A fixed planning clock (Thu 2026-06-04, LOCAL). resolveWeekStartMs derives the
 // LOCAL MONDAY 00:00 of nowMs's week (the Monday-anchored microcycle boundary, like
 // getWeekStartIso / mapDateToIndex) — Monday 2026-06-01 local — so the prior window
