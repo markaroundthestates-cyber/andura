@@ -175,9 +175,15 @@ jobs:
         run: npx playwright install chromium --with-deps
 
       # Track 7 §7.9 — vanilla legacy tests/e2e/smoke/ deleted; Track 7 §7.2 NEW
-      # specs (magic-link + smoke-react) + §7.3 (visual-regression) replace it.
-      - name: Run E2E smoke tests (Track 7 §7.2 + §7.3)
-        run: npx playwright test tests/smoke-react.spec.ts tests/magic-link.spec.ts tests/visual-regression.spec.ts tests/e2e/v2-4-taburi-smoke.spec.js --reporter=line
+      # specs (magic-link + smoke-react) replace it. §7.3 visual-regression is
+      # LOCAL-OPT-IN ONLY: no platform-matched baselines are committed (CI=linux,
+      # dev=win32), so toHaveScreenshot has nothing to compare and ALWAYS fails here
+      # (missing-snapshot, not a real diff). EXCLUDED from the blocking smoke to match
+      # qa-report.yml's --grep-invert + the spec's own header. Run locally via
+      # `npm run test:visual`; promote to a CI gate post-Beta once the design is
+      # frozen and linux baselines are generated + committed.
+      - name: Run E2E smoke tests (Track 7 §7.2)
+        run: npx playwright test tests/smoke-react.spec.ts tests/magic-link.spec.ts tests/e2e/v2-4-taburi-smoke.spec.js --reporter=line
         timeout-minutes: 15
         env:
           # Track 7 §7.2 — auth.setup activates when SA env set (Daniel uploads
