@@ -49,7 +49,7 @@ jobs:
       # the most recent prior run. A cold cache just means a full pass (covered by
       # the 330-min job timeout above).
       - name: Restore Stryker incremental cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: reports/stryker-incremental.json
           key: stryker-incremental-${{ github.sha }}
