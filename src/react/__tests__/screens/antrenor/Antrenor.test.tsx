@@ -377,7 +377,8 @@ describe('Antrenor home — F4 readiness verdict', () => {
     const verdict = await screen.findByRole('status', { name: /Verdict readiness|Readiness verdict/i });
     expect(verdict).toBeInTheDocument();
     expect(verdict).toHaveTextContent('Zi de PR');
-    expect(verdict).toHaveTextContent('85/100');
+    // C1: qualitative label is primary; the raw NN/100 is no longer surfaced.
+    expect(verdict).not.toHaveTextContent('85/100');
   });
 
   it('hides verdict cand readiness null', async () => {
@@ -446,7 +447,10 @@ describe('Antrenor home — F4 readiness verdict', () => {
     });
     renderAntrenor();
     const verdict = await screen.findByRole('status', { name: /Verdict readiness|Readiness verdict/i });
-    expect(verdict).toHaveTextContent('85/100');
+    // C1: verdict widget shows the qualitative band, not raw NN/100. The raw
+    // score still lives in the orb (readiness-orb-score), asserted below.
+    expect(verdict).toHaveTextContent('Zi de PR');
+    expect(verdict).not.toHaveTextContent('85/100');
     const orb = screen.getByTestId('readiness-orb');
     // Real-score mode: not empty, no em-dash, no placeholder microcopy. (The orb
     // count-up digits tween 0→85 via rAF in a live browser; jsdom never flushes

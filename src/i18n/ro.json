@@ -336,7 +336,7 @@
     "genericLine": "Astazi e zi de recuperare - corpul are nevoie de odihna.",
     "musclesRecovering": "Muschii recupereaza",
     "groupsRecovering": "{groups} inca recupereaza",
-    "readinessSuffix": " · readiness {score}/100",
+    "readinessSuffix": " · readiness {label}",
     "andJoiner": " si "
   },
   "workout": {

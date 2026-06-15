@@ -336,7 +336,7 @@
     "genericLine": "Today is a recovery day — your body needs the rest.",
     "musclesRecovering": "Muscles are still recovering",
     "groupsRecovering": "{groups} still recovering",
-    "readinessSuffix": " · readiness {score}/100",
+    "readinessSuffix": " · readiness {label}",
     "andJoiner": " and "
   },
   "workout": {

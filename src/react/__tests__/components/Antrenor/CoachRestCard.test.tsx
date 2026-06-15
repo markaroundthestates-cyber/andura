@@ -64,10 +64,13 @@ describe('CoachRestCard — Bugatti truth fallback', () => {
       />,
     );
     // Wave C2 i18n: EN default uses " and " joiner + "still recovering".
+    // C1: readiness suffix is now qualitative (band label), not raw NN/100.
+    // score 48 → LIGHT band → EN "Light session". No bare /100 anymore.
     expect(
       screen.getByText(/Pieptul and Quadricepsul still recovering/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/readiness 48\/100/i)).toBeInTheDocument();
+    expect(screen.getByText(/readiness Light session/i)).toBeInTheDocument();
+    expect(screen.queryByText(/readiness 48\/100/i)).not.toBeInTheDocument();
   });
 
   it('renders generic "Muscles are still recovering" cand fatiguedGroups=[] + readiness null — EN default', () => {

@@ -22,6 +22,26 @@
 import type { JSX } from 'react';
 import type { CoachRestReason } from '../../lib/engineWrappers';
 import { t } from '../../../i18n/index.js';
+import {
+  READINESS_PR,
+  READINESS_HIGH,
+  READINESS_MED,
+  READINESS_LOW,
+} from '../../../engine/readiness.js';
+
+/**
+ * Map a raw readiness score to the engine's qualitative band `key` so the rest
+ * card surfaces a label (reusing coachEngine.readiness.labels.*) instead of a
+ * bare NN/100. Same band thresholds as getReadinessVerdict — no parallel scheme.
+ * Rest context never PRs, so the top band resolves to SOLID, not PR_DAY.
+ */
+function readinessBandKey(score: number): string {
+  if (score >= READINESS_PR) return 'SOLID';
+  if (score >= READINESS_HIGH) return 'NORMAL';
+  if (score >= READINESS_MED) return 'MODERATE';
+  if (score >= READINESS_LOW) return 'LIGHT';
+  return 'REST_RECOVER';
+}
 
 interface Props {
   onLightSession: () => void;
@@ -50,7 +70,13 @@ function composeCoachLine(restReason: CoachRestReason | null | undefined): strin
   const readinessPart =
     readinessScore === null
       ? ''
-      : t('coachRest.readinessSuffix', { score: readinessScore });
+      : (() => {
+          const labelKey = `coachEngine.readiness.labels.${readinessBandKey(readinessScore)}`;
+          const label = t(labelKey);
+          return t('coachRest.readinessSuffix', {
+            label: label && label !== labelKey ? label : '',
+          });
+        })();
   return `${groupsPart}${readinessPart}.`;
 }
 

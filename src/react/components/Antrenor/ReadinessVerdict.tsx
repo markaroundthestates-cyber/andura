@@ -1,6 +1,8 @@
 // ══ READINESS VERDICT — F4 Pre-Session Core Coach Value ═══════════════════
 // Per mockup §F4 audit-driven V1 feature.
-// Show readiness label + score + volume modifier hint.
+// Show the qualitative readiness band (label) as the primary signal + the
+// optional PR-day suffix. The raw NN/100 score is intentionally NOT surfaced
+// here — Gigel reads "Zi de PR" / "Sesiune normala", not a bare number.
 //
 // Returns null daca readiness null (NU log readiness astazi).
 
@@ -40,11 +42,11 @@ export function ReadinessVerdict({ readiness }: Props): JSX.Element | null {
       >
         {resolvedLabel}
       </span>
-      {' '}
-      <span className="text-ink2">
-        ({readiness.score}/100
-        {readiness.canPR ? t('coachEngine.readiness.canPrSuffix') : ''})
-      </span>
+      {readiness.canPR ? (
+        <span className="text-ink2">
+          {t('coachEngine.readiness.canPrSuffix')}
+        </span>
+      ) : null}
     </div>
   );
 }
