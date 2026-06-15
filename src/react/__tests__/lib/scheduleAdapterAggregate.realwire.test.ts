@@ -32,7 +32,7 @@ import { suggestStartWeight } from '../../../engine/coldStartGuidelines.js';
 import { resolveMaxKg } from '../../../engine/dp/loadModel.js';
 import { getExerciseMetadata } from '../../../engine/exerciseLibrary.js';
 import { isBodyweightExercise } from '../../../engine/bodyweightLoad.js';
-import { isEnabled } from '../../../util/featureFlags.js';
+import { isEnabled, DEV_FLAGS_KEY } from '../../../util/featureFlags.js';
 import { DP } from '../../../engine/dp.js';
 
 const TUESDAY_2026_05_19 = new Date(2026, 4, 19); // dayIdx 1 (M, PULL session)
@@ -812,5 +812,132 @@ describe('scheduleAdapterAggregate — FIX #3 periodization weeksElapsed advance
     expect(weekZero!.intensityMod).toBe('normal');
     expect(weekFour!.intensityMod).toBe('minus');
     expect(weekFour!.intensityMod).not.toBe(weekZero!.intensityMod);
+  });
+});
+
+// ── dp_lifedip_inputs_v1: REAL closed-days + kcal-shortfall into the #32 classifier ──
+// The #32 LIFE_DIP classifier reads lifestyle.closedDaysRecent (>=2 missed sessions →
+// trigger) + lifestyle.kcalShortfall (a real deficit → trigger), but the builder fed
+// both HARD-CODED zeros, so 2 of its 3 lifestyle triggers were DEAD — only the
+// in-fatigue sleep trigger could ever fire. This flag threads the REAL signals
+// (computeAdherence skipped-count + a CUT-with-deficit flag) through the builder, and
+// the wiring is observable on userState.meta.suppressReactiveDeload (set true ONLY when
+// the classifier returns a LIFE_DIP, which suppresses the reactive deload).
+//
+// The scenario isolates the NEW inputs: a dip is present via 4 FATIGUE notes
+// (recommend='deload', sleepBad=0 — so the sleep trigger is NOT the cause), at LOW
+// volume (steady 4-week logs → ACWR ~1.0 ≤ LIFEDIP_MAX, not the FATIGUE guard), with no
+// systemic drift. With closedDaysRecent fed REAL (>=2 skipped CDL outcomes) the cause is
+// lifestyle → LIFE_DIP → suppress; fed the OLD zero it is plain FATIGUE → no suppress.
+describe('scheduleAdapterAggregate — dp_lifedip_inputs_v1 real LIFE_DIP inputs (#32 wiring)', () => {
+  // dp_dip_classifier_v1 must be ON for the telemetry to compute at all; this suite
+  // toggles ONLY the new dp_lifedip_inputs_v1 (real-vs-zero inputs), keeping every
+  // other flag at its registry default — the A/B isolates exactly the new wiring.
+  function setLifedipFlag(on: boolean): void {
+    localStorage.setItem(
+      DEV_FLAGS_KEY,
+      JSON.stringify({ dp_dip_classifier_v1: true, dp_lifedip_inputs_v1: on }),
+    );
+  }
+
+  // A CUT user (goal 'slabire' → resolveActivePhase 'CUT'); with no target the default
+  // 20% deficit (CUT_DEFICIT_FRACTION_DEFAULT) → severity ~0.20 ≥ the 0.10 threshold →
+  // kcalShortfall true when the flag is ON. Real per-user maintenance TDEE derives from
+  // these onboarding stats (readUserMaintenanceTDEE), so resolveEnergyMagnitude is non-null.
+  function setCutUser(): void {
+    useOnboardingStore.setState({
+      data: { age: 30, sex: 'm', goal: 'slabire', frequency: '4', experience: 'intermediar', weight: 80, height: 178 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+  }
+
+  // Steady, evenly-spread 4-week log history at a FIXED working load → ACWR ~1.0 (a real
+  // chronic baseline, NOT the >=1.5 spike that forces FATIGUE), and the 4 most-recent
+  // sessions each carry a 'fatigue' note (fatigue>=4 → calculateFatigueScore recommend
+  // 'deload', sleepBad 0 — the dip is present but NOT sleep-sourced). 'Lat Pulldown' is a
+  // real curated CORE_AUTO lift (spate primary) so computeACWR sees its muscle map →
+  // steady 8-session/3.5d history yields ACWR exactly 1.0 (<= ACWR_LIFEDIP_MAX). session
+  // keys group the logs for calculateFatigueScore; no gap → DP._returnDeload stays null
+  // (not DETRAINING), so the gap branch does not pre-empt the LIFE_DIP classification.
+  function seedLowVolumeFatiguedHistory(now: number): void {
+    const logs: Array<Record<string, unknown>> = [];
+    // 8 sessions across ~25 days (every ~3.5d) at the SAME load → steady volume.
+    for (let i = 0; i < 8; i++) {
+      const ts = now - Math.round(i * 3.5 * MS_PER_DAY) - MS_PER_DAY; // all in the past
+      const recent = i < 4; // the 4 newest sessions carry the fatigue note
+      logs.push({
+        ex: 'Lat Pulldown',
+        session: `s${i}`,
+        w: 60,
+        reps: '8',
+        rpe: 8,
+        set: 1,
+        ts,
+        date: new Date(ts).toLocaleDateString('sv'),
+        ...(recent ? { notes: ['fatigue'] } : {}),
+      });
+    }
+    DB.set('logs', logs);
+  }
+
+  // Seed N recent SKIPPED coach-decision outcomes inside the 14-day adherence window so
+  // computeAdherence({ windowDays: 14 }).skipped === N (closedDaysRecent). Real CDL shape:
+  // a non-synthetic, non-superseded entry with outcome.executed === false counts as skipped.
+  function seedSkippedCdl(n: number, now: number): void {
+    const entries = [];
+    for (let i = 0; i < n; i++) {
+      const ts = now - (i + 1) * MS_PER_DAY; // 1..n days ago (well inside 14d)
+      entries.push({
+        id: `cdl-skip-${i}`,
+        ts,
+        date: new Date(ts).toLocaleDateString('sv'),
+        synthetic: false,
+        superseded: false,
+        proposed: {},
+        outcome: { executed: false },
+      });
+    }
+    DB.set('coach-decisions', entries);
+  }
+
+  it('flag OFF → closedDaysRecent fed 0 (byte-identical) → plain FATIGUE, NO suppression', () => {
+    const now = Date.now();
+    setCutUser();
+    seedLowVolumeFatiguedHistory(now);
+    seedSkippedCdl(3, now); // 3 real skips exist — but OFF must IGNORE them (zeros)
+    setLifedipFlag(false);
+
+    expect(isEnabled('dp_lifedip_inputs_v1')).toBe(false);
+    const state = buildUserStateForPipeline();
+    // OFF threads { closedDaysRecent: 0, kcalShortfall: false } → no lifestyle source →
+    // the dip stays FATIGUE → suppressReactiveDeload is never set (undefined).
+    expect((state.meta as { suppressReactiveDeload?: boolean }).suppressReactiveDeload).toBeUndefined();
+  });
+
+  it('flag ON → real >=2 skipped sessions thread closedDaysRecent → LIFE_DIP suppresses the deload', () => {
+    const now = Date.now();
+    setCutUser();
+    seedLowVolumeFatiguedHistory(now);
+    seedSkippedCdl(3, now); // computeAdherence({windowDays:14}).skipped === 3 (>= 2)
+    setLifedipFlag(true);
+
+    expect(isEnabled('dp_lifedip_inputs_v1')).toBe(true);
+    const state = buildUserStateForPipeline();
+    // ON threads the REAL closedDaysRecent (3) → lifestyleSourced at low ACWR + no drift
+    // → classifyPerformanceDip returns LIFE_DIP → meta.suppressReactiveDeload === true.
+    expect((state.meta as { suppressReactiveDeload?: boolean }).suppressReactiveDeload).toBe(true);
+  });
+
+  it('flag ON → a CUT user with a real deficit threads kcalShortfall → LIFE_DIP suppresses (no skips)', () => {
+    const now = Date.now();
+    setCutUser();                 // CUT phase, ~20% default deficit → severity ~0.20 ≥ 0.10
+    seedLowVolumeFatiguedHistory(now);
+    DB.set('coach-decisions', []); // NO skipped sessions → closedDaysRecent 0; kcal is the trigger
+    setLifedipFlag(true);
+
+    const state = buildUserStateForPipeline();
+    // kcalShortfall (a real CUT deficit) alone sources the LIFE_DIP at low volume.
+    expect((state.meta as { suppressReactiveDeload?: boolean }).suppressReactiveDeload).toBe(true);
   });
 });

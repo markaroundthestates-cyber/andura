@@ -24,6 +24,7 @@ import { detectSubRecoveryDrift } from '../../engine/dp/subRecoveryDrift.js';
 import { classifyPerformanceDip } from '../../engine/dp/dipClassifier.js';
 import { computeACWR } from '../../engine/muscleRecovery.js';
 import { calculateFatigueScore } from '../../engine/fatigue.js';
+import { computeAdherence } from '../../engine/adherence.js';
 import { energyVolumeFactor } from '../../engine/dp/ceiling.js';
 import { resolveEnergyMagnitude } from './engineWrappers.nutrition';
 import { DP } from '../../engine/dp.js';
@@ -262,6 +263,11 @@ function goalPhaseForGoal(goal: unknown): 'BULK' | 'CUT' | 'MAINTAIN' | undefine
 function buildDeloadTriggerTelemetry(
   logs: ReadonlyArray<{ ex?: string; w?: number; reps?: number | string; rpe?: number; ts?: number }>,
   now: number,
+  // #32 LIFE_DIP lifestyle inputs. The caller resolves the REAL signals only when
+  // dp_lifedip_inputs_v1 is ON (computeAdherence skipped-count + nutrition deficit);
+  // when OFF it passes EXACTLY { closedDaysRecent: 0, kcalShortfall: false } so the
+  // classifier sees today's blind inputs → byte-identical (the seam's OFF contract).
+  lifestyle: { closedDaysRecent: number; kcalShortfall: boolean },
 ): { aaMarkerDirectActive?: boolean; suppressReactiveDeload?: boolean } {
   const driftOn = isEnabled('dp_subrecovery_drift_v1');
   const dipOn = isEnabled('dp_dip_classifier_v1');
@@ -312,7 +318,7 @@ function buildDeloadTriggerTelemetry(
       acwr,
       drift: { systemic: !!drift.systemic },
       fatigue,
-      lifestyle: { closedDaysRecent: 0, kcalShortfall: false },
+      lifestyle,
     });
     if (dip.suppressDeload) out.suppressReactiveDeload = true;
   }
@@ -500,12 +506,37 @@ export function buildUserStateForPipeline(): {
   // F1 T1 — Specialization weakness-detector inputs (lifetimeLogs + recentLogs).
   // Same persisted `logs` channel, native shape, passed through unchanged.
   const { lifetime: lifetimeLogs, recent: recentLogs } = loggedSetsForWeakness();
+  // #32 LIFE_DIP lifestyle inputs (dp_lifedip_inputs_v1, 2026-06-15). The classifier
+  // reads closedDaysRecent (>=2 missed → trigger) + kcalShortfall (a real deficit →
+  // trigger), but both were fed HARD-CODED zeros at the builder seam, so 2 of its 3
+  // lifestyle triggers were DEAD. When ON, resolve the REAL signals here:
+  //   - closedDaysRecent = computeAdherence({windowDays:14}).skipped — the recent
+  //     missed-session count over the same 2-week window the dip looks back across.
+  //   - kcalShortfall = a CUT phase with a meaningful deficit. resolveEnergyMagnitude
+  //     returns severity = |kcalTarget − maintenance| / maintenance (a fraction of
+  //     maintenance), so the threshold is in deficit-fraction units. 0.10 (~10% under
+  //     maintenance) is the principled floor: below ~10% the deficit is negligible
+  //     recovery-wise (within day-to-day kcal noise), while a sustained ≥10% deficit
+  //     is where impaired recovery / a lifestyle-sourced dip becomes plausible — the
+  //     same magnitude band the energy-volume policy (§11) treats as a real cut.
+  // OFF → keep EXACTLY { closedDaysRecent: 0, kcalShortfall: false } (byte-identical).
+  const KCAL_SHORTFALL_DEFICIT_MIN = 0.1; // ~10% under maintenance → a real cut
+  const lifestyle = isEnabled('dp_lifedip_inputs_v1')
+    ? (() => {
+        const skipped = computeAdherence({ windowDays: 14, nowMs: now }).skipped;
+        const mag = resolveEnergyMagnitude();
+        const kcalShortfall =
+          mag !== null && mag.phase === 'CUT' && mag.severity >= KCAL_SHORTFALL_DEFICIT_MIN;
+        return { closedDaysRecent: skipped, kcalShortfall };
+      })()
+    : { closedDaysRecent: 0, kcalShortfall: false };
   // F6a — composite deload-trigger telemetry (the PARTIAL seam). Both flags OFF →
   // {} → meta byte-identical. #26 sets aaMarkerDirectActive (drift pre-empt), #32
   // sets suppressReactiveDeload (LIFE_DIP suppress). Pure read of `logs`.
   const deloadTelemetry = buildDeloadTriggerTelemetry(
     lifetimeLogs as ReadonlyArray<{ ex?: string; w?: number; reps?: number | string; rpe?: number; ts?: number }>,
     now,
+    lifestyle,
   );
   // #76 deloadBias → deload CADENCE (dp_energy_volume_v1). energyVolumeFactor
   // surfaces deloadBias ∈ [0,1] (deeper/sustained deficit → deloads sooner). The

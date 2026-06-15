@@ -392,6 +392,18 @@ export const FLIPPED_FLAGS = Object.freeze([
   // consulted in either A/B arm → BOTH frozen baselines stay byte-for-byte. ON is proven on the
   // eval grid (p6 freq 6/7 → 3 spaced days) + the lowCapacityMaxDays regression test, NOT here.
   'dp_lowcap_effective_freq_v1',
+  // THE FLIP 2026-06-15 (LIFE_DIP real inputs) — dp_lifedip_inputs_v1 defaults ON. It
+  // feeds the #32 dip classifier the REAL closedDaysRecent (computeAdherence skipped
+  // count) + kcalShortfall (a CUT-with-deficit flag) instead of the hard-coded zeros.
+  // The fp cohort logs adherently (every scheduled session is executed via
+  // persistSessionLogs → skipped is normally 0), so closedDaysRecent stays inert, but a
+  // CUT journey under a real deficit COULD set kcalShortfall=true and move a hash via the
+  // LIFE_DIP suppress path. Pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so
+  // the builder threads EXACTLY { closedDaysRecent: 0, kcalShortfall: false } in both A/B
+  // arms → the classifier sees today's blind inputs → BOTH frozen baselines (hashOff/
+  // hashOn) stay byte-for-byte. ON behavior is proven on the dipClassifier unit suite
+  // (real skipped/CUT-deficit inputs thread a LIFE_DIP), NOT in this determinism stream.
+  'dp_lifedip_inputs_v1',
   // THE FLIP 2026-06-15 (single-day focus concentration) — dp_single_day_focus_v1 defaults ON.
   // On a freq=1 (one active training day) week with a non-balanced focus, it trims the non-focus
   // accessories toward maintenance and reallocates the freed budget into the focus group so the

@@ -567,6 +567,17 @@ export const FLAGS = Object.freeze({
   // independently as today → byte-identical.
   dp_dip_classifier_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
+  // LIFE_DIP real inputs (2026-06-15) — the #32 classifier above was running BLIND:
+  // 2 of its 3 lifestyle triggers (closedDaysRecent + kcalShortfall) were fed
+  // HARD-CODED zeros at the builder seam, so only the sleep trigger could ever fire.
+  // When ON, buildUserStateForPipeline threads the REAL signals into the classifier
+  // ctx: closedDaysRecent = computeAdherence({windowDays:14}).skipped (recent missed
+  // sessions) + kcalShortfall = resolveEnergyMagnitude() phase==='CUT' && severity >=
+  // a ~10% deficit threshold. OFF → the builder keeps EXACTLY {closedDaysRecent:0,
+  // kcalShortfall:false} → the classifier sees today's blind inputs → byte-identical
+  // (pinned OFF in fp-config FLIPPED_FLAGS so a CUT journey can never move the fp hash).
+  dp_lifedip_inputs_v1: { rollout: 1, default: true },
+
   // ── F6c Personalization cluster (engine-wiring 2026-06-08) — a thin layer that
   // SPENDS the F3 substrate (Kalman {mu,sigma}, ceiling, learned recovery, the
   // nutrition phase) on personalization beyond the population. Each defaults OFF

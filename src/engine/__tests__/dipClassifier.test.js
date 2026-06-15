@@ -7,7 +7,11 @@
 //   - degrade → null ACWR/drift (#5/#26 OFF) → gap-vs-fatigue only, no LIFE_DIP.
 
 import { describe, it, expect } from 'vitest';
-import { classifyPerformanceDip, DIP_CLASS } from '../dp/dipClassifier.js';
+import {
+  classifyPerformanceDip,
+  DIP_CLASS,
+  ACWR_LIFEDIP_MAX,
+} from '../dp/dipClassifier.js';
 
 describe('F6a #32 dip classifier', () => {
   it('GAP detected → DETRAINING, no suppression (ramp owns it)', () => {
@@ -87,5 +91,49 @@ describe('F6a #32 dip classifier', () => {
     });
     expect(r.class).toBe(DIP_CLASS.LIFE_DIP);
     expect(r.suppressDeload).toBe(true);
+  });
+
+  // dp_lifedip_inputs_v1 — the REAL inputs the builder now threads (closedDaysRecent
+  // from computeAdherence.skipped + kcalShortfall from a CUT deficit) must each fire the
+  // LIFE_DIP branch ALONE, with sleepBad 0 (proving they are NOT riding the sleep
+  // trigger). Uses the production volume boundary (ACWR_LIFEDIP_MAX) + the real engine
+  // outputs' shape, NOT round convenience numbers.
+  it('real closedDaysRecent ALONE (sleepBad 0, at the ACWR_LIFEDIP_MAX boundary) → LIFE_DIP', () => {
+    const r = classifyPerformanceDip({
+      returnDeload: null,
+      acwr: { acwr: ACWR_LIFEDIP_MAX }, // exactly the volume-not-high boundary (<=)
+      drift: { systemic: false },
+      fatigue: { recommend: 'deload', sleepBad: 0 }, // dip present, NOT sleep-sourced
+      lifestyle: { closedDaysRecent: 2, kcalShortfall: false }, // missed sessions are the cause
+    });
+    expect(r.class).toBe(DIP_CLASS.LIFE_DIP);
+    expect(r.suppressDeload).toBe(true);
+  });
+
+  it('real kcalShortfall ALONE (no skips, sleepBad 0) → LIFE_DIP', () => {
+    const r = classifyPerformanceDip({
+      returnDeload: null,
+      acwr: { acwr: 1.0 },
+      drift: { systemic: false },
+      fatigue: { recommend: 'deload', sleepBad: 0 },
+      lifestyle: { closedDaysRecent: 0, kcalShortfall: true }, // a real CUT deficit is the cause
+    });
+    expect(r.class).toBe(DIP_CLASS.LIFE_DIP);
+    expect(r.suppressDeload).toBe(true);
+  });
+
+  // The OFF-path contract the builder honors: the hard-coded zeros (closedDaysRecent 0 +
+  // kcalShortfall false) leave NO lifestyle source, so the SAME low-volume dip stays a
+  // plain FATIGUE (deload fires) — this is the byte-identical baseline the flag preserves.
+  it('builder OFF-path zeros (no lifestyle source) → FATIGUE, deload NOT suppressed', () => {
+    const r = classifyPerformanceDip({
+      returnDeload: null,
+      acwr: { acwr: 1.0 },
+      drift: { systemic: false },
+      fatigue: { recommend: 'deload', sleepBad: 0 },
+      lifestyle: { closedDaysRecent: 0, kcalShortfall: false }, // the hard-coded zeros
+    });
+    expect(r.class).toBe(DIP_CLASS.FATIGUE);
+    expect(r.suppressDeload).toBe(false);
   });
 });
