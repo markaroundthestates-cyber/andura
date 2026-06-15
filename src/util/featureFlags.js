@@ -1547,11 +1547,14 @@ export const FLAGS = Object.freeze({
   // consecutive). The reshaped week then drives cluster resolution + the per-group
   // session counts, so a nominal freq-7 maintenance week composes a real 3-4-day
   // program with rest days, removing the consecutive-no-rest cap. Trained adults under
-  // 60 (masa/forta/slabire) → never reshaped. DEFAULT OFF because it changes the
-  // user-facing schedule (fewer training days) — a PRODUCT/UX decision the owner
-  // makes; OFF → the reshape never runs in any normal path → BYTE-IDENTICAL to today
-  // (and it is NOT in fp-config FLIPPED_FLAGS — those are default-ON flags pinned off;
-  // a default-OFF flag is already off everywhere, so the fp hashes hold automatically).
+  // 60 (masa/forta/slabire) → never reshaped. DEFAULT ON since Wave C/D (2026-06-14):
+  // eval-positive (high-freq low-capacity personas reshaped to recovery-feasible 3-4
+  // spaced days; the /10 judge credits the delivered week, no longer dings over-freq).
+  // It DOES change the user-facing schedule (a maintenance/older user who sets 7 days
+  // gets 3-4 training + rest) — a deliberate, coach-correct UX choice; flip default:false
+  // to revert to honoring the raw requested frequency. Not in fp-config FLIPPED_FLAGS:
+  // the fp cohort has no maintenance/older-60 persona, so the reshape never fires there →
+  // fp hashes hold automatically even with the flag ON.
   dp_maintenance_freq_reshape_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
 
   // LOW-CAPACITY EFFECTIVE-FREQUENCY CAP (2026-06-14, eval freq-edge cap) (RISK LOW —
