@@ -1397,5 +1397,10 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // Signal-bus computed-vs-applied trace (observation only, additive). The
     // React layer reads this and feeds the dev-gated sink; no engine→React import.
     __signalTrace,
+    // The RESOLVED active week + this plan's weekday index (additive, observation
+    // only — never read by the prescription hash). The React MRV-ceiling seam reads
+    // these to re-compose the week's sibling days for the exact delivered recompute.
+    __activeWeek: activeWeek,
+    __dayIdx: dayIdx,
   };
 }

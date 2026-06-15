@@ -240,6 +240,16 @@ export const FLIPPED_FLAGS = Object.freeze([
   // stay byte-for-byte; ON behavior is proven on the focus-signature gate (the 4 closed
   // GAP asserts) + the focus/frequency sweep, NOT in this determinism stream.
   'dp_week_ledger_v1',
+  // THE FLIP 2026-06-15 (persona-aware MRV ceiling) — dp_mrv_ceiling_v1 defaults ON. It
+  // caps the DELIVERED weekly per-muscle total at the persona MRV by trimming the above-
+  // MRV excess (an EXACT weekly recompute decides WHICH muscles are over). Composition/
+  // volume surface → the ON behavior WOULD trim an over-MRV cohort journey's session and
+  // move the frozen prescription hashes — pinned OFF here (in FLIPPED_FLAGS only, NOT
+  // PATH_A_FLAGS) so ctx.mrvCeiling is null in both A/B arms → BOTH frozen baselines
+  // (hashOff/hashOn) stay byte-for-byte. ON behavior is proven on the eval grid (only
+  // over-MRV configs change, all genuinely over) + the focus/persona gates, NOT in this
+  // determinism stream.
+  'dp_mrv_ceiling_v1',
   // THE FLIP 2026-06-12 (isolation-rotation arc) — INTRA-WEEK isolation rotation
   // defaults ON (adjacent training days vary the equal-ish UNLOGGED isolation by the
   // training-day ordinal). UNLIKE the cross-week dp_accessory_rotation_v1 this is NOT

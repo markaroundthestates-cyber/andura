@@ -43,6 +43,12 @@ import {
 } from './scheduleAdapterAggregate.builder';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
 import { phaseRirShift } from '../../engine/periodization/mesocycle.js';
+import {
+  personaMrvCeilings,
+  recomputeWeeklyDelivered,
+  resolveMrvCeilingDirective,
+  applyMrvCeilingScale,
+} from '../../engine/schedule/scheduleAdapter/mrvCeiling.js';
 
 // Engine workout-title fallback SENTINEL — a non-localized machine marker the
 // adapter emits when the pipeline produces no real title. The render boundaries
@@ -1218,7 +1224,7 @@ export function shiftRirBand(
  */
 export async function composePlannedWorkoutToday(
   now: Date = new Date(),
-  options: { differentMuscle?: boolean } = {},
+  options: { differentMuscle?: boolean; _mrvRecompute?: boolean } = {},
 ): Promise<PlannedWorkoutOutput | null> {
   try {
     const userState = buildUserStateForPipeline();
@@ -1500,13 +1506,56 @@ export async function composePlannedWorkoutToday(
         guardFocusPreset, spateInjured, posteriorFloorFull, lateralDeltGuard,
       )
       : null;
-    const exercises = trimSessionToTimeBudget(
+    const trimmedExercises = trimSessionToTimeBudget(
       energyScaled,
       warmup?.durationMin ?? 0,
       timeCapMin,
       dropGuard ?? undefined,
       userHardCap,
     );
+    // ══ PERSONA-AWARE MRV CEILING (dp_mrv_ceiling_v1, 2026-06-15) ══════════════════════
+    // No muscle's TRUE DELIVERED weekly hard-set total may exceed its persona MRV. The
+    // budget is already MRV-clamped, but an OVER-TRAINED group DELIVERS ~1.3-1.8× its
+    // budget (the split-asymmetry leak), so a high-frequency focus still lands above the
+    // persona-feasible MRV (eval p4/p5/p12_shoulders_5d deliver 28 vs the persona shoulder
+    // ceiling ~20-24, p3_lower_7d hams 28 vs 20). Here at the COMPOSE seam — AFTER the
+    // readiness/energy scale + the time-budget trim — `trimmedExercises` is the FINAL plan
+    // the judge counts, so this is the only altitude that reads the TRUE delivered total
+    // (an engine-only ceiling reads the PRE-trim sets and over-counts → false-trims a
+    // config the time-cap already shrank under MRV). We re-compose every active day of THIS
+    // week through the SAME seam (composePlannedWorkoutToday, _mrvRecompute=true so it does
+    // NOT recurse), sum the FINAL delivered by primary muscle, and DOWN-SCALE today's
+    // exercises ONLY for muscles whose true weekly delivered exceeds the persona ceiling.
+    // PARETO BY CONSTRUCTION: a config where every muscle is already <= ceiling resolves to
+    // null → trimmedExercises is returned unchanged (byte-identical). _mrvRecompute pass →
+    // skipped (returns the pre-ceiling delivered). Flag OFF → skipped → byte-identical.
+    let exercises = trimmedExercises;
+    if (isEnabled('dp_mrv_ceiling_v1') && options._mrvRecompute !== true) {
+      const planActiveWeek = (plan as { __activeWeek?: boolean[] }).__activeWeek;
+      const planDayIdx = (plan as { __dayIdx?: number }).__dayIdx;
+      if (Array.isArray(planActiveWeek) && typeof planDayIdx === 'number') {
+        const ceilings = personaMrvCeilings({
+          experience: useOnboardingStore.getState().data.experience,
+          sex: coldStartProfile.sex,
+        });
+        const mondayMs = now.getTime() - planDayIdx * 86400000;
+        const composeDay = async (dIdx: number) => {
+          // A sibling day == today → reuse the already-built final plan (no recompose).
+          if (dIdx === planDayIdx) return { exercises: trimmedExercises };
+          const sib = await composePlannedWorkoutToday(new Date(mondayMs + dIdx * 86400000), {
+            ...options,
+            _mrvRecompute: true,
+          });
+          return sib ? { exercises: sib.exercises } : null;
+        };
+        const weekDelivered = await recomputeWeeklyDelivered({
+          activeWeek: planActiveWeek,
+          composeDay,
+        });
+        const dayTargets = resolveMrvCeilingDirective({ weekDelivered, ceilings });
+        if (dayTargets) exercises = applyMrvCeilingScale(trimmedExercises, dayTargets, planDayIdx);
+      }
+    }
     // WARM-UP RAMP (dp_warmup_ramp_v1, default OFF). The session-level warm-up LINE
     // above ("Incalzire ~X min") is what a clipboard says; a real coach also ramps
     // the day's OPENING compound with ascending primer sets (50/70/90% of the working
