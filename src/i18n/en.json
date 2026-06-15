@@ -280,6 +280,21 @@
         "forearms": "forearms",
         "abs": "abs"
       }
+    },
+    "decisionTrace": {
+      "toggle": "Why today's plan",
+      "ariaLabel": "The reasons behind today's plan",
+      "factor": {
+        "phase": "Phase",
+        "readiness": "Readiness",
+        "recovery": "Recovery",
+        "emphasis": "Emphasis",
+        "deload": "Deload",
+        "focusPolicy": "Focus",
+        "timeBudget": "Time",
+        "dp": "Weights",
+        "finalDecision": "Final decision"
+      }
     }
   },
   "coachInsight": {

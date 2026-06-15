@@ -148,6 +148,7 @@ export type {
   GoalPivotProposal,
   CoachAdaptation,
   CoachAdaptationKind,
+  DecisionTraceEntry,
 } from './engineWrappers.types';
 // Nutrition / kcal coherence + AUTO phase (public surface):
 export { resolveActivePhase, getAutoDetectedPhaseLabelRo } from './engineWrappers.nutrition';

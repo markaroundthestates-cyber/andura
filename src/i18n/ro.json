@@ -280,6 +280,21 @@
         "forearms": "antebrate",
         "abs": "abdomen"
       }
+    },
+    "decisionTrace": {
+      "toggle": "De ce planul de azi",
+      "ariaLabel": "Motivele din spatele planului de azi",
+      "factor": {
+        "phase": "Faza",
+        "readiness": "Readiness",
+        "recovery": "Recuperare",
+        "emphasis": "Accent",
+        "deload": "Deload",
+        "focusPolicy": "Focus",
+        "timeBudget": "Timp",
+        "dp": "Greutati",
+        "finalDecision": "Decizia finala"
+      }
     }
   },
   "coachInsight": {

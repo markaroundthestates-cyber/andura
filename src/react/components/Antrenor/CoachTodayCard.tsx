@@ -340,6 +340,19 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     navigate(gotoPath('schedule-override'));
   };
 
+  // B4 — honest "de ce planul de azi" trace. decisionTrace is already built +
+  // attached on the composed output (dp_decision_trace_v1 ON, hash-invisible);
+  // here we just RENDER it — collapsed by default, never auto-open. Each row is
+  // a localized factor label + the engine's own value token (unfired factors are
+  // already OMITTED upstream — honesty enforced at build time, nothing to filter).
+  // Display-only: no engine call, no derivation that could move the plan.
+  const decisionTrace = Array.isArray(workout?.decisionTrace) ? workout.decisionTrace : [];
+  const factorLabel = (factor: string): string => {
+    const k = `coachToday.decisionTrace.factor.${factor}`;
+    const label = t(k);
+    return label === k ? factor : label;
+  };
+
   return (
     <div
       className="pulse-card pulse-card-glow overflow-hidden p-[18px] mb-2.5 animate-card-rise"
@@ -461,6 +474,34 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
           />
           <span>{weekMakeupNote}</span>
         </div>
+      )}
+      {decisionTrace.length > 0 && (
+        /* B4 — "de ce planul de azi" honest decision trace. COLLAPSED by default
+           (native <details>, never auto-open) so it never crowds the card. Each
+           row is a localized factor label + the engine's own value token. Hidden
+           entirely when the trace is empty (flag off / cold start). */
+        <details className="relative mt-3.5" data-testid="coach-today-trace">
+          <summary
+            className="text-xs font-medium text-ink3 cursor-pointer list-none select-none"
+            aria-label={t('coachToday.decisionTrace.ariaLabel')}
+          >
+            {t('coachToday.decisionTrace.toggle')}
+          </summary>
+          <dl className="mt-2 flex flex-col gap-1.5 text-xs leading-relaxed">
+            {decisionTrace.map((entry, i) => (
+              <div
+                key={`${entry.factor}-${i}`}
+                data-testid="coach-today-trace-row"
+                className="flex gap-2"
+              >
+                <dt className="shrink-0 font-medium text-ink2">
+                  {factorLabel(entry.factor)}
+                </dt>
+                <dd className="text-ink3">{String(entry.value)}</dd>
+              </div>
+            ))}
+          </dl>
+        </details>
       )}
       {todaySession ? (
         /* A gym session is already logged TODAY → the normal start CTA is

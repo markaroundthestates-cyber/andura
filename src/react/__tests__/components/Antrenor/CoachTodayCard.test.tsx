@@ -13,7 +13,11 @@ import { MemoryRouter } from 'react-router-dom';
 import { CoachTodayCard } from '../../../components/Antrenor/CoachTodayCard';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import * as engineWrappers from '../../../lib/engineWrappers';
-import type { PlannedWorkoutOutput, CoachAdaptation } from '../../../lib/engineWrappers';
+import type {
+  PlannedWorkoutOutput,
+  CoachAdaptation,
+  DecisionTraceEntry,
+} from '../../../lib/engineWrappers';
 import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
 
 function renderCard(onStart: () => void = () => {}) {
@@ -640,5 +644,76 @@ describe('CoachTodayCard — session-logged-today start guard', () => {
       screen.getByTestId('coach-session-add-second').click();
     });
     expect(onStart).toHaveBeenCalledTimes(1);
+  });
+});
+
+// ── B4 — decision trace rows ("de ce planul de azi") ───────────────────────
+describe('CoachTodayCard — decision trace (de ce azi)', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    useWorkoutStore.setState({ sessionsHistory: [] });
+  });
+
+  function workoutWithTrace(
+    decisionTrace: DecisionTraceEntry[],
+  ): PlannedWorkoutOutput {
+    return {
+      workoutTitle: '__engine_workout_title_fallback__',
+      sessionType: 'PUSH',
+      exerciseCount: 5,
+      estimatedDuration: 48,
+      intensityMod: 'normal',
+      exercises: [],
+      volumeKg: 0,
+      coachAdaptations: [],
+      decisionTrace,
+    };
+  }
+
+  function renderWithTrace(decisionTrace: DecisionTraceEntry[]) {
+    return render(
+      <MemoryRouter>
+        <CoachTodayCard onStart={() => {}} workout={workoutWithTrace(decisionTrace)} />
+      </MemoryRouter>,
+    );
+  }
+
+  it('renders nothing cand decisionTrace absent', () => {
+    render(
+      <MemoryRouter>
+        <CoachTodayCard onStart={() => {}} workout={workoutWith([])} />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByTestId('coach-today-trace')).not.toBeInTheDocument();
+  });
+
+  it('renders a COLLAPSED trace with one row per entry — localized factor + raw value', () => {
+    renderWithTrace([
+      { factor: 'readiness', value: 85 },
+      { factor: 'recovery', value: 'cut chest' },
+      { factor: 'finalDecision', value: 'PUSH session, 5 exercises' },
+    ]);
+    const details = screen.getByTestId('coach-today-trace');
+    expect(details).toBeInTheDocument();
+    // Collapsed by default — native <details> has no `open` attribute.
+    expect(details).not.toHaveAttribute('open');
+    expect(screen.getAllByTestId('coach-today-trace-row')).toHaveLength(3);
+    // EN default factor labels + the engine's own value tokens.
+    expect(screen.getByText('Readiness')).toBeInTheDocument();
+    expect(screen.getByText('85')).toBeInTheDocument();
+    expect(screen.getByText('Recovery')).toBeInTheDocument();
+    expect(screen.getByText('cut chest')).toBeInTheDocument();
+    expect(screen.getByText('Final decision')).toBeInTheDocument();
+  });
+
+  it('RO locale localizes the factor labels', () => {
+    setLocale('ro');
+    try {
+      renderWithTrace([{ factor: 'finalDecision', value: 'PUSH session, 5 exercises' }]);
+      expect(screen.getByText('Decizia finala')).toBeInTheDocument();
+    } finally {
+      setLocale('en');
+      _resetI18nCache();
+    }
   });
 });
