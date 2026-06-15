@@ -813,7 +813,23 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     const isPureUpperLower =
       split.length > 0
       && split.every((c) => c === 'upper' || c === 'lower');
-    if (!isPureUpperLower) return null;
+    // ARMS — relax the scope to ALSO fire on a non-U/L split that still gives the arms NO
+    // day of their own (dp_focus_lead_arms_nonul_v1, 2026-06-15). The 5-day arms split
+    // (['upper','lower','push','pull','legs']) is NOT pure U/L yet has NO dedicated arm/full
+    // day where bi/tri could accumulate — the EXACT structural condition the U/L guard
+    // targets ("the arms get no day of their own"). When the flag is ON + the focus is arms
+    // + the split has no arm/full day, continue past the pure-U/L gate; the SAME downstream
+    // trim + arm-slot guarantee then apply per-cluster (the trim caps each non-focus major
+    // toward MEV on whatever day it lands, the arm slot/floor fire on the upper day). Pure
+    // U/L is a subset of "no arm/full day", so the flag never narrows the existing path. OFF
+    // (or a split WITH an arm/full day) → fall through to the pure-U/L gate → byte-identical.
+    const armsNonUL =
+      focusPreset === 'arms'
+      && isEnabled('dp_focus_lead_arms_nonul_v1')
+      && split.length > 0
+      && !split.includes('arms')
+      && !split.includes('full');
+    if (!isPureUpperLower && !armsNonUL) return null;
     if (focusPreset === 'lower') {
       // GUARD: on a pure U/L split the upper days run FULL back/chest and the leg region
       // (delivered) never CLEARLY leads — the structural U/L condition above IS the guard

@@ -344,6 +344,17 @@ export const FLIPPED_FLAGS = Object.freeze([
   // lead, p2/p7_arms bi+tri lead + each >= MEV, already-leading configs byte-identical) + the
   // new focus-lead-splits regression test, NOT in this determinism stream.
   'dp_focus_lead_splits_v1',
+  // THE FLIP 2026-06-15 (arms focus-lead on non-U/L splits) — dp_focus_lead_arms_nonul_v1
+  // defaults ON. It relaxes dp_focus_lead_splits_v1's pure-U/L scope guard so the arms trim +
+  // arm-slot guarantee ALSO fire on a 5-day arms split (['upper','lower','push','pull','legs'])
+  // which has no dedicated arm/full day. `arms` IS in this harness's EMPHASIS_PRESETS, so an
+  // arms-ish 5-day-style journey ON would move the frozen prescription hashes — pinned OFF here
+  // (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so ctx.focusLeadSplits stays null on non-U/L arms
+  // splits in both A/B arms → no trim/swap → BOTH frozen baselines (hashOff/hashOn) stay
+  // byte-for-byte. ON is proven on the eval grid (5-day arms: non-focus majors → MEV, bi/tri
+  // get their slots + lead; 4-day arms + non-arms focuses byte-identical) + the new arms-non-U/L
+  // regression test, NOT in this determinism stream.
+  'dp_focus_lead_arms_nonul_v1',
   // THE FLIP 2026-06-14 (lateral-delt guarantee) — dp_lateral_delt_guarantee_v1 defaults ON.
   // On a v-taper/shoulders focus the umeri-training session guarantees >=1 direct lateral
   // raise (the #1 width driver), preferring to displace a redundant 2nd overhead press.

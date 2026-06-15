@@ -1542,6 +1542,27 @@ export const FLAGS = Object.freeze({
   // focus-lead-splits regression test.
   dp_focus_lead_splits_v1: { rollout: 1, default: true },
 
+  // ARMS focus-lead on NON-U/L splits (2026-06-15, eval 5-day arms gap). The
+  // dp_focus_lead_splits_v1 scope guard fires ONLY on a PURE upper/lower split, so a
+  // 4-day arms focus (['upper','lower','upper','lower']) leads (arms get their guaranteed
+  // slots + non-focus majors → MEV) but a 5-day arms focus (['upper','lower','push','pull',
+  // 'legs']) does NOT: the split is not pure U/L → focusLeadSplits returns null → back/chest/
+  // legs run full while bi/tri ride leftover slots, the same defect the trim was built to fix.
+  // The dp_focus_lead_splits_v1 rationale ("on a U/L split the arms get no day of their own")
+  // is EQUALLY true on the 5-day push/pull/legs split — it too has no arm/full day where the
+  // arms could accumulate. When ON + the focus is arms + the split has NO dedicated arm/full
+  // day (covers the 5-day push/pull/legs case), getDailyWorkout ALSO sets ctx.focusLeadSplits
+  // (the SAME object + the SAME downstream trim + arm-slot guarantee, VERBATIM — the per-cluster
+  // trim caps each non-focus major toward MEV on whatever day it lands, and the arm-slot
+  // guarantee + arm floor fire on the upper day). SCOPED TO ARMS only: lower is already covered
+  // by the FOCUS_LOWER_EMPH_SPLITS reshape (it gets MORE leg days, not a U/L split), and no
+  // other focus is touched. OFF → the arms-on-non-U/L path is never entered → today's EXACT
+  // behavior (only the pure-U/L split fires) → BYTE-IDENTICAL (pinned OFF in fp-config
+  // FLIPPED_FLAGS so the frozen full-path hashes hold — arms IS in the fp EMPHASIS_PRESETS).
+  // Proven on the eval grid (5-day arms: non-focus majors → MEV, bi/tri get their slots + lead;
+  // 4-day arms + every non-arms focus byte-identical) + the new arms-non-U/L regression test.
+  dp_focus_lead_arms_nonul_v1: { rollout: 1, default: true },
+
   // LATERAL-DELT GUARANTEE (2026-06-14, eval v-taper/shoulders OHP-only width cap)
   // (RISK LOW — selection only, never kg). The side delt is the #1 v-taper WIDTH driver,
   // but on a v-taper/shoulders focus at low frequency (2-3 days = all full-body, 2-3
