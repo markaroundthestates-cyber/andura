@@ -20,6 +20,10 @@ env:
 
 jobs:
   security:
+    # Skip on Dependabot PRs: they run with the restricted Dependabot secret store and
+    # cannot read secrets.ANTHROPIC_API_KEY, so the action hard-fails ("API key not set").
+    # Version bumps don't need an AI security review anyway.
+    if: ${{ github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
