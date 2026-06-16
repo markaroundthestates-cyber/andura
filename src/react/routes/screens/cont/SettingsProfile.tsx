@@ -287,6 +287,9 @@ export function SettingsProfile(): JSX.Element {
     // commit ca sa detectam o schimbare reala (NU scriem un weigh-in fantoma in
     // timeline cand user-ul a editat doar goal/sex/etc).
     const priorWeight = getCurrentWeightKg();
+    // §freq-edit-reseed — captureaza frecventa INAINTE de commit ca sa stim daca
+    // s-a schimbat (data e valoarea live din store la render, draft = editarea).
+    const priorFrequency = data.frequency;
     (Object.keys(draft) as Array<keyof OnboardingData>).forEach((key) => {
       setField(key, draft[key]);
     });
@@ -297,6 +300,25 @@ export function SettingsProfile(): JSX.Element {
     // onboarding finalize and never advanced on a profile edit, so a profile change
     // (e.g. balanced→v-taper) was silently overwritten back on every app open.
     useOnboardingStore.setState({ completedAt: Date.now() });
+    // §freq-edit-reseed — onboarding seedeaza calendarul saptamanal din frequency
+    // (scheduleStore.resetWeekly → defaultWeekForFrequency). Engine-ul rezolva
+    // saptamana activa cu precedenta override ?? scheduleStore ?? frequency, deci
+    // `days` persistat din scheduleStore CASTIGA peste user.frequency. Cand
+    // frecventa se editeaza aici fara re-seed, engine-ul construia in continuare
+    // programul cu vechea frecventa (zile + split gresit) pana la urmatoarea Luni.
+    // Re-derivam calendarul din noua frecventa — DAR doar cand userul NU si-a
+    // personalizat manual calendarul (un override de saptamana curenta), ca sa nu
+    // ii suprascriem alegerea explicita. Lazy import rupe ciclul scheduleStore→
+    // onboardingStore (oglindeste onboardingStore.finalize). Best-effort.
+    if (draft.frequency !== priorFrequency) {
+      void import('../../../../engine/schedule/scheduleAdapter.js')
+        .then((m) => {
+          if (m.getCalendarOverride()) return; // calendar personalizat — pastreaza-l
+          return import('../../../stores/scheduleStore')
+            .then((s) => s.useScheduleStore.getState().resetWeekly());
+        })
+        .catch(() => { /* schedule re-seed best-effort */ });
+    }
     // §weight-continuity — greutatea editata in profil devine autoritara: upsert
     // intrarea de AZI in weightLog (sursa canonica getCurrentWeightKg) cand
     // greutatea s-a schimbat. addWeightEntry face upsert-by-date (progresStore

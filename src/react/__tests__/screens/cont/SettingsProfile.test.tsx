@@ -755,6 +755,103 @@ describe('SettingsProfile — weight continuity (onboarding -> profil edit autor
   });
 });
 
+// §freq-edit-reseed — editing frequency post-onboarding must re-seed the weekly
+// calendar so the engine builds the NEW-frequency program immediately. Onboarding
+// seeds scheduleStore.days from frequency; the engine resolves the active week as
+// override ?? scheduleStore ?? frequency, so the persisted scheduleStore `days`
+// WIN over the edited user.frequency. Pre-fix handleSave wrote the new frequency
+// WITHOUT re-seeding → activeWeekFromScheduleStore() returned the STALE
+// onboarding-frequency days, so the engine kept building the OLD-frequency program
+// until the next Monday rollover. The fix re-seeds resetWeekly() on a frequency
+// change UNLESS a manual calendar override (current-week wv2-calendar-override)
+// exists — then the user's explicit calendar is preserved.
+describe('SettingsProfile — frequency edit re-seeds the calendar (freq-edit-reseed)', () => {
+  const SCHEDULE_STORE_KEY = 'wv2-schedule-store';
+  const CALENDAR_OVERRIDE_KEY = 'wv2-calendar-override';
+
+  /** Active-day tuple the engine reads from scheduleStore (`days` → training bool). */
+  async function engineActiveWeek(): Promise<boolean[] | null> {
+    const mod = await import('../../../../engine/schedule/scheduleAdapter/frequencySplit.js');
+    return mod.activeWeekFromScheduleStore();
+  }
+
+  function persistedDays(): string[] {
+    const raw = localStorage.getItem(SCHEDULE_STORE_KEY);
+    if (!raw) return [];
+    return ((JSON.parse(raw).state?.days) ?? []) as string[];
+  }
+
+  /** Let the handleSave async (dynamic import + resetWeekly) settle. */
+  async function flush(): Promise<void> {
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+  }
+
+  it('edit 3 -> 5 with NO override re-seeds days to a 5-day week (engine builds 5)', async () => {
+    // Onboarding-shaped starting point: frequency 3 seeded into scheduleStore.
+    useOnboardingStore.getState().setField('frequency', '3');
+    const sched = await import('../../../stores/scheduleStore');
+    sched.useScheduleStore.getState().resetWeekly();
+    expect(persistedDays().filter((d) => d === 'training')).toHaveLength(3);
+
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-frequency-select'), { target: { value: '5' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    await flush();
+
+    // Calendar re-derived from the new frequency: 5 training days.
+    expect(persistedDays().filter((d) => d === 'training')).toHaveLength(5);
+    const active = await engineActiveWeek();
+    expect(active?.filter(Boolean)).toHaveLength(5);
+    expect(useOnboardingStore.getState().data.frequency).toBe('5');
+  });
+
+  it('edit frequency WITH a manual override present preserves the user calendar (no clobber)', async () => {
+    useOnboardingStore.getState().setField('frequency', '3');
+    const sched = await import('../../../stores/scheduleStore');
+    sched.useScheduleStore.getState().resetWeekly();
+    const daysBefore = persistedDays();
+
+    // User has manually customized the calendar for THIS week (current-week override).
+    const adapter = await import('../../../../engine/schedule/scheduleAdapter.js');
+    const weekIso = adapter.getWeekStartIso(new Date());
+    localStorage.setItem(CALENDAR_OVERRIDE_KEY, JSON.stringify({
+      selectedDays: [
+        { day: 'L', active: true }, { day: 'M', active: true }, { day: 'M2', active: false },
+        { day: 'J', active: false }, { day: 'V', active: false }, { day: 'S', active: false },
+        { day: 'D', active: false },
+      ],
+      weekStartIso: weekIso,
+      committedAt: new Date().toISOString(),
+    }));
+    expect(adapter.getCalendarOverride()).not.toBeNull();
+
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-frequency-select'), { target: { value: '5' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    await flush();
+
+    // resetWeekly was NOT called → scheduleStore.days unchanged (override preserved).
+    expect(persistedDays()).toEqual(daysBefore);
+    // The override itself is intact.
+    expect(adapter.getCalendarOverride()).not.toBeNull();
+  });
+
+  it('edit a NON-frequency field does NOT re-seed the calendar', async () => {
+    useOnboardingStore.getState().setField('frequency', '3');
+    const sched = await import('../../../stores/scheduleStore');
+    sched.useScheduleStore.getState().resetWeekly();
+    const daysBefore = persistedDays();
+
+    renderScreen();
+    fireEvent.change(screen.getByTestId('profile-experience-select'), { target: { value: 'avansat' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    await flush();
+
+    expect(persistedDays()).toEqual(daysBefore);
+  });
+});
+
 describe('SettingsProfile — Romanian no-diacritics rule (D-LEGACY-064)', () => {
   it('no diacritics in UI rendered text', () => {
     const { container } = renderScreen();
