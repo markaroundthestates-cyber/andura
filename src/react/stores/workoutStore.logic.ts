@@ -357,7 +357,9 @@ export function purgeDeletedSessionLogs(
   try {
     const logs = DB.get<LogEntry[]>('logs') ?? [];
     if (logs.length === 0) {
-      refreshPRRecordsFromLogs();
+      // merge:false — a genuine delete must be able to REMOVE a PR (a merge would
+      // re-keep the deleted record, making deletions impossible). Force a rebuild.
+      refreshPRRecordsFromLogs({ merge: false });
       return;
     }
     // Collect the deleted session's set timestamps (primary correlation key).
@@ -371,7 +373,10 @@ export function purgeDeletedSessionLogs(
       (l) => !setTimestamps.has(l.ts) && l.session !== ts,
     );
     if (surviving.length !== logs.length) DB.set('logs', surviving);
-    refreshPRRecordsFromLogs();
+    // merge:false — recompute from the SURVIVING logs only so a deleted-session PR
+    // is genuinely removed (the finish path uses the default merge:true to survive
+    // the 5000-log prune; deletion must override that to allow removal).
+    refreshPRRecordsFromLogs({ merge: false });
   } catch {
     // Soft-fail — storage / SSR jsdom edge. Leaving the logs as-is is safe; the
     // tombstone already removed the session from History. Zero-throw at the

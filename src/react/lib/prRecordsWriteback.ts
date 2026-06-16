@@ -141,11 +141,37 @@ function epleyE1RM(kg: number, reps: number): number {
   return kg * (1 + reps / 30);
 }
 
-export function refreshPRRecordsFromLogs(): PRRecordEntry[] {
+/**
+ * @param merge When true (DEFAULT — the finish path), MERGE into the existing
+ *   pr-records: per exercise keep the higher-e1RM of {existing record, best in the
+ *   current logs window}. logs is capped at LOGS_MAX=5000 (oldest dropped), so a
+ *   destructive rebuild REGRESSED an all-time PR the moment its source log row aged
+ *   out (120kg → 100kg). pr-records is a tiny one-row-per-exercise store, so
+ *   retaining a record whose source log was pruned is correct + cheap.
+ *
+ *   When false (the deleteSession recompute path, purgeDeletedSessionLogs), FORCE a
+ *   full rebuild from the surviving logs only — a genuinely-deleted PR must be
+ *   removable (a merge would make deletions impossible). This preserves the legacy
+ *   destructive behavior for that path exactly.
+ */
+export function refreshPRRecordsFromLogs(
+  { merge = true }: { merge?: boolean } = {},
+): PRRecordEntry[] {
   try {
     const logs = DB.get<LogEntry[]>('logs') ?? [];
     const prMap: Record<string, PRRecordEntry> = {};
     const e1rmMap: Record<string, number> = {};
+    // MERGE: seed the map with the existing all-time records so a PR whose source
+    // log has been pruned out of the 5000-window survives. The deleteSession path
+    // (merge=false) skips this seed → a full rebuild that can drop a deleted PR.
+    if (merge) {
+      const prior = DB.get<PRRecordEntry[]>('pr-records') ?? [];
+      for (const r of prior) {
+        if (!r || typeof r.ex !== 'string' || !r.kg) continue;
+        prMap[r.ex] = r;
+        e1rmMap[r.ex] = epleyE1RM(r.kg, r.reps || 1);
+      }
+    }
     for (const l of logs) {
       if (!l || !l.w || !l.reps || (l as { baseline?: boolean }).baseline) continue;
       const reps = parseInt(l.reps, 10) || 1;
