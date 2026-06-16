@@ -266,6 +266,59 @@ describe('composeCoachInsight — plan-allocation reconciliation', () => {
     expect(line).toContain('hamstrings');
     expect(line).toContain('balance');
   });
+
+  // ── Same-muscle contradiction guard (cycle-7 BLOCKER) ────────────────────
+  // A single fatigued-AND-lagging group can emit BOTH a recovery-cut (M1) and a
+  // weakness-amp (M2) for the SAME muscle → without a guard the combined line
+  // says "Lighter on your chest — still recovering. Pushing your chest harder —
+  // it's been lagging." (same muscle, opposite directions). Recovery (same-day
+  // physiological fact) WINS over weakness-amp (a trend claim) for that group.
+  it('SUPPRESSES a contradictory same-muscle weakness-amp (recovery wins)', () => {
+    // Chest allocated but NOT a focus (1 chest set vs back-heavy focus) → the
+    // recovery-cut for chest survives the allocation gate, and the weakness-amp
+    // for chest would too (chest is allocated). Mature model → trend not gated.
+    const alloc = getPlanAllocationByGroup([
+      ex('Cable Row', 4),
+      ex('Lat Pulldown', 4),
+      ex('Flat DB Press', 1),
+    ]);
+    const line = composeCoachInsight(
+      [
+        { kind: 'weakness-amp', group: 'piept' },
+        { kind: 'recovery-cut', group: 'piept', cause: 'resistance' },
+      ],
+      { allocation: alloc, calibrationImmature: false },
+    );
+    expect(line).not.toBeNull();
+    // Chest named exactly ONCE, in the recovery direction — no contradiction.
+    expect(line).toContain('chest');
+    expect((line!.match(/chest/g) ?? []).length).toBe(1);
+    expect(line).toContain('still recovering');
+    expect(line).not.toContain('lagging');
+  });
+
+  it('KEEPS both clauses when recovery-cut and weakness-amp name DIFFERENT groups', () => {
+    // Distinct groups → no collision; both survive and combine. Back is the
+    // focus (weakness-amp allocated), chest is allocated-but-not-focus (1 set)
+    // so the recovery-cut for chest survives its allocation gate too.
+    const alloc = getPlanAllocationByGroup([
+      ex('Cable Row', 4),
+      ex('Lat Pulldown', 4),
+      ex('Flat DB Press', 1),
+    ]);
+    const line = composeCoachInsight(
+      [
+        { kind: 'weakness-amp', group: 'spate' },
+        { kind: 'recovery-cut', group: 'piept', cause: 'resistance' },
+      ],
+      { allocation: alloc, calibrationImmature: false },
+    );
+    expect(line).not.toBeNull();
+    expect(line).toContain('chest');
+    expect(line).toContain('back');
+    expect(line).toContain('still recovering');
+    expect(line).toContain('lagging');
+  });
 });
 
 describe('composeCoachInsight — calibration-maturity gate (trend vs still-learning)', () => {

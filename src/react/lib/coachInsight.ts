@@ -198,6 +198,15 @@ function clauseSupportedBy(adapt: CoachAdaptation, ctx: CoachInsightContext): bo
  * salience rank; ties keep input order). Truth-gated by `ctx`: an adaptation the
  * live plan/maturity does not support is dropped BEFORE selection (so it never
  * consumes a slot).
+ *
+ * Group-collision guard: per-KIND de-dupe alone can let two surviving clauses
+ * name the SAME group in OPPOSITE directions — a 'recovery-cut' ("lighter on
+ * your chest — still recovering") AND a 'weakness-amp' ("pushing your chest
+ * harder — it's been lagging") for the same fatigued-AND-lagging group → one
+ * self-contradicting sentence. When a group already carries a recovery-cut
+ * clause, drop the weakness-amp clause for THAT group: recovery is a same-day
+ * physiological fact and WINS over weakness-amp (a multi-session trend claim),
+ * mirroring the recovery-precedence in clauseSupportedBy.
  */
 function selectSalient(
   adaptations: readonly CoachAdaptation[],
@@ -208,6 +217,16 @@ function selectSalient(
     if (!a || !(a.kind in SALIENCE)) continue;
     if (!clauseSupportedBy(a, ctx)) continue;
     if (!firstPerKind.has(a.kind)) firstPerKind.set(a.kind, a);
+  }
+  // Group-collision guard: recovery-cut wins over weakness-amp for the same group.
+  const recoveryCutGroup = firstPerKind.get('recovery-cut')?.group;
+  const weaknessAmp = firstPerKind.get('weakness-amp');
+  if (
+    recoveryCutGroup &&
+    weaknessAmp &&
+    weaknessAmp.group === recoveryCutGroup
+  ) {
+    firstPerKind.delete('weakness-amp');
   }
   return [...firstPerKind.values()]
     .sort((a, b) => SALIENCE[a.kind] - SALIENCE[b.kind])
