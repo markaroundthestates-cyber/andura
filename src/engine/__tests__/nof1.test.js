@@ -3,7 +3,7 @@
 // round-trip, plus the DP consumer integration (flag-OFF byte-identical; a NULL
 // preference is byte-identical even ON; a decided preference biases setsAdjust ±1).
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   loadPreference,
   savePreference,
@@ -272,6 +272,37 @@ describe('DP.stepNof1Experiment — live arm-scheduling', () => {
     // now biases the lift via the existing consumer (+1 set).
     expect(pref?.arm).toBe('volume');
     expect(nof1SetBias(pref)).toBe(NOF1_SET_BIAS);
+  });
+
+  it('does NOT re-decide / re-narrate when the slot-clear FAILS (quota edge)', () => {
+    // Drive to the deciding session (climbing arm A vs flat arm B → conclusive).
+    DP.stepNof1Experiment([EX], MAINT); // start
+    for (let i = 0; i < NOF1_BLOCK_SESSIONS; i++) DP.stepNof1Experiment([EX], MAINT); // → arm B
+    const flat = [];
+    for (let i = 0; i < 6; i++) flat.push({ ex: EX, w: 60, reps: 10, rpe: 7.5, ts: BASE + (100 + i) * DAY });
+    localStorage.setItem('logs', JSON.stringify(flat));
+    for (let i = 0; i < NOF1_BLOCK_SESSIONS - 1; i++) DP.stepNof1Experiment([EX], MAINT);
+
+    // On THIS (deciding) session, make the slot-clear (`setItem('dp-nof1-experiment',
+    // 'null')`) hit quota → DB.set returns {ok:false} → the experiment stays in flight.
+    const realSet = Storage.prototype.setItem;
+    const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (k, v) {
+      if (k === 'dp-nof1-experiment' && v === 'null') {
+        const err = new Error('quota'); err.name = 'QuotaExceededError'; throw err;
+      }
+      return realSet.call(this, k, v);
+    });
+
+    const last = DP.stepNof1Experiment([EX], MAINT);
+    spy.mockRestore();
+
+    // The clear failed → report 'none' (NOT 'decide') so the one-shot winner
+    // narration is not re-emitted, and the experiment is NOT lost — it stays in
+    // flight for the next session to retry the clear.
+    expect(last.action).toBe('none');
+    expect(loadExperiment()?.exercise).toBe(EX); // still in flight (clear failed)
+    // The winner preference was still (idempotently) persisted before the clear.
+    expect(loadPreference(EX)?.arm).toBe('volume');
   });
 
   it('NEVER experiments in a CUT (a deficit confounds)', () => {

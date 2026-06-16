@@ -51,6 +51,14 @@
 // ceilingE1RM falls back to male = byte-identical). The file was already AT ceiling so the
 // real cost is +1. Ratchet-down-only resumes from 2942. (Per audit BUILD-CI-DEPS-06 the
 // standing fix is to extract dp.js logic to submodules and claw this ceiling back DOWN.)
+//
+// SIXTH documented exception 2026-06-16 (2942→2946): the nof1 quota-edge re-decide
+// guard (audit LOW). The persistence LOGIC stays in dp/nof1.js (saveExperiment already
+// returns {ok}, untouched); the +4 here is the irreducible CALL-SITE WIRING inside
+// stepNof1Experiment — capture the slot-clear result + a one-line guarded early-return
+// (a 3-line breadcrumb) so a failed clear does not re-decide/re-narrate every session.
+// It depends on the in-flight in-method state so it cannot leave dp.js. Ratchet-down-
+// only resumes from 2946.
 
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
@@ -59,9 +67,9 @@ import { resolve, dirname } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Ceiling = current line count. Ratchet DOWN only (five documented exceptions
-// 2026-06-11/12/14 for call-site wiring — see header).
-const DP_LINE_CEILING = 2942;
+// Ceiling = current line count. Ratchet DOWN only (six documented exceptions
+// 2026-06-11/12/14/16 for call-site wiring — see header).
+const DP_LINE_CEILING = 2946;
 
 const dpSrc = readFileSync(resolve(__dirname, '../dp.js'), 'utf8');
 // Under a Stryker mutation dry-run the on-disk source is INSTRUMENTED (stryMutAct_*

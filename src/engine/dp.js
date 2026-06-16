@@ -1033,7 +1033,11 @@ export const DP = {
       if (decided) {
         // Both arms measured → keep the winner (or the NULL = reversible default).
         saveNof1Preference(running.exercise, decided);
-        saveNof1Experiment(null); // free the single slot (one lift at a time)
+        const cleared = saveNof1Experiment(null); // free the single slot (one at a time)
+        // Clear FAILED (quota edge — {ok:false}, no throw): the experiment is still in
+        // flight, so 'decide' would re-decide + re-narrate every session. Preference is
+        // already persisted → report 'none' and let the clear retry next session.
+        if (cleared && cleared.ok === false) return { action: 'none' };
         return { action: 'decide', exercise: running.exercise, arm: decided.arm };
       }
       saveNof1Experiment(next);
