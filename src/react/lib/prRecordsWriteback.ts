@@ -115,33 +115,51 @@ export function enrichExercisesWithPR(
 }
 
 /**
- * Refresh pr-records hash from current DB.logs. Mirrors legacy
- * src/pages/coach/pr.js#extractAndSavePRs semantics — scan all non-baseline
- * logs, compute max score (kg × reps) per exercise, persist sorted
- * desc by ts.
+ * Refresh pr-records hash from current DB.logs. Scan all non-baseline logs,
+ * keep the per-exercise set with the highest DEMONSTRATED e1RM (Epley
+ * kg*(1+reps/30)) — the user's best, the same definition IstoricDetail's
+ * peakOneRM uses. Persist sorted desc by ts.
+ *
+ * Was: max SCORE (kg × reps). That curated the max-VOLUME set, so a high-rep
+ * back-off (62.5×12, score 750) beat a heavier low-rep set (100×5, score 500)
+ * with a HIGHER e1RM — the Istoric landing PR row then rendered Epley of the
+ * volume set (~87.5kg) while IstoricDetail showed the session's peak e1RM
+ * (~116.7kg) for the very same exercise (two surfaces, one truth, disagreeing).
+ * Curating by e1RM makes the recorded set the best-e1RM set, so the landing
+ * "~X kg 1RM" == IstoricDetail "1RM est: X kg" == the demonstrated peak, and
+ * the displayed kg×reps belong to that same set (no within-row contradiction).
+ * Also corrects the MMI peak-weight lookup (engineWrappers.mmi.ts reads
+ * pr-records[].kg as peak-pre-pause): the heaviest demonstrated set, not a
+ * lighter volume set. `score` stays = kg*reps of the recorded set (truthful).
  *
  * Soft-fail: any DB throw is swallowed. Preserves zero-throw render
  * contract Zustand action boundary downstream.
  *
  * @returns Array of PR records that were persisted (or [] on failure).
  */
+function epleyE1RM(kg: number, reps: number): number {
+  return kg * (1 + reps / 30);
+}
+
 export function refreshPRRecordsFromLogs(): PRRecordEntry[] {
   try {
     const logs = DB.get<LogEntry[]>('logs') ?? [];
     const prMap: Record<string, PRRecordEntry> = {};
+    const e1rmMap: Record<string, number> = {};
     for (const l of logs) {
       if (!l || !l.w || !l.reps || (l as { baseline?: boolean }).baseline) continue;
       const reps = parseInt(l.reps, 10) || 1;
-      const score = l.w * reps;
+      const e1rm = epleyE1RM(l.w, reps);
       const existing = prMap[l.ex];
-      if (!existing || score > existing.score) {
+      if (!existing || e1rm > (e1rmMap[l.ex] ?? 0)) {
+        e1rmMap[l.ex] = e1rm;
         prMap[l.ex] = {
           ex: l.ex,
           kg: l.w,
           reps,
           date: l.date,
           ts: l.ts,
-          score,
+          score: l.w * reps,
         };
       }
     }

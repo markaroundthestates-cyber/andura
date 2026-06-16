@@ -37,6 +37,7 @@ import {
   refreshPRRecordsFromLogs,
 } from '../../../lib/prRecordsWriteback';
 import type { PRRecordEntry } from '../../../lib/prRecordsWriteback';
+import { getPRHistoryAll } from '../../../lib/prHistoryAggregate';
 import type { SessionExerciseBreakdown } from '../../../stores/workoutStore';
 
 function LocationProbe(): JSX.Element {
@@ -364,7 +365,7 @@ describe('refreshPRRecordsFromLogs — pure helper unit tests', () => {
     expect(DB.get<PRRecordEntry[]>('pr-records')).toEqual([]);
   });
 
-  it('computes max score per exercise from logs', () => {
+  it('curates per exercise by max demonstrated e1RM (not max volume)', () => {
     const logs: LogEntry[] = [
       { date: '2026-05-23', ex: 'Bench Press', w: 22.5, kg: 22.5, set: 1, sets: 1, reps: '10', ts: 1000, session: 1000 },
       { date: '2026-05-23', ex: 'Bench Press', w: 25, kg: 25, set: 2, sets: 1, reps: '8', ts: 2000, session: 1000 },
@@ -374,9 +375,12 @@ describe('refreshPRRecordsFromLogs — pure helper unit tests', () => {
     const result = refreshPRRecordsFromLogs();
     expect(result.length).toBe(2);
     const benchPR = result.find((r) => r.ex === 'Bench Press');
-    // Bench: 22.5×10=225 vs 25×8=200. Max score = 225 wins.
-    expect(benchPR!.kg).toBe(22.5);
-    expect(benchPR!.score).toBe(225);
+    // Bench: 22.5×10 (Epley 30.0, score 225) vs 25×8 (Epley 31.7, score 200).
+    // Max e1RM wins → the heavier 25×8 set is recorded (the demonstrated best),
+    // NOT the higher-volume 22.5×10. score stays = kg*reps of the recorded set.
+    expect(benchPR!.kg).toBe(25);
+    expect(benchPR!.reps).toBe(8);
+    expect(benchPR!.score).toBe(200);
   });
 
   it('excludes baseline-marked log entries', () => {
@@ -409,5 +413,58 @@ describe('refreshPRRecordsFromLogs — pure helper unit tests', () => {
     const result = refreshPRRecordsFromLogs();
     expect(result).toEqual([]);
     (DB as { get: typeof origGet }).get = origGet;
+  });
+});
+
+describe('PR record 1RM == IstoricDetail peak (two-surface agreement)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  // IstoricDetail renders ex.peakOneRM = MAX Epley across the session sets,
+  // computed exactly like PostRpe.tsx (peakOneRM). Mirror it here.
+  function detailPeakOneRM(sets: { kg: number; reps: number }[]): number {
+    let peak = 0;
+    for (const s of sets) {
+      const e = s.kg * (1 + s.reps / 30);
+      if (e > peak) peak = e;
+    }
+    return Math.round(peak * 10) / 10;
+  }
+
+  it('squat 100x5 + 62.5x12: landing PR 1RM == detail peak == 116.7 (not 87.5)', () => {
+    // Repro: a heavy low-rep set (100x5, Epley 116.7, score 500) + a high-rep
+    // back-off (62.5x12, Epley 87.5, score 750). The OLD max-score curation
+    // recorded the volume set, so the Istoric landing PR row rendered ~87.5kg
+    // 1RM while IstoricDetail showed ~116.7kg for the same session.
+    const squatSets = [
+      { kg: 100, reps: 5 },
+      { kg: 62.5, reps: 12 },
+    ];
+    const logs: LogEntry[] = [
+      { date: '2026-06-15', ex: 'Squat', w: 100, kg: 100, set: 1, sets: 1, reps: '5', ts: 1000, session: 1000 },
+      { date: '2026-06-15', ex: 'Squat', w: 62.5, kg: 62.5, set: 2, sets: 1, reps: '12', ts: 2000, session: 1000 },
+    ];
+    DB.set('logs', logs);
+    refreshPRRecordsFromLogs();
+
+    // Path 2 (IstoricDetail tile): max Epley across the session sets.
+    const detailPeak = detailPeakOneRM(squatSets);
+    expect(detailPeak).toBeCloseTo(116.7, 1);
+
+    // Path 1 (Istoric landing PR row): getPRHistoryAll renders Epley of the
+    // curated record set. Must now equal the detail peak — same demonstrated set.
+    const squatRow = getPRHistoryAll().find((p) => p.exerciseId === 'Squat');
+    expect(squatRow).toBeDefined();
+    expect(squatRow!.oneRMEstimate).toBeCloseTo(116.7, 1);
+    // The two surfaces agree, and on the demonstrated peak (NOT the 87.5 of the
+    // volume set).
+    expect(squatRow!.oneRMEstimate).toBe(detailPeak);
+    expect(squatRow!.oneRMEstimate).not.toBeCloseTo(87.5, 1);
+
+    // No within-row contradiction: the displayed kg x reps belong to the SAME
+    // set whose Epley is shown (the heavy 100x5, not the volume 62.5x12).
+    expect(squatRow!.kg).toBe(100);
+    expect(squatRow!.reps).toBe(5);
   });
 });
