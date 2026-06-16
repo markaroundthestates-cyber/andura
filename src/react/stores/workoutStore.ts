@@ -135,6 +135,12 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           prHit: false,
           prData: null,
           history: {},
+          // A fresh start SUPERSEDES any abandoned pause — the user tapped Start
+          // for a NEW workout, so the lingering pausedSnapshot (which would make
+          // getCurrentMode report 'paused' and dead-end the Workout mount) is
+          // dropped. Without this clear, a paused-but-not-resumed/discarded user
+          // could never train again (BLOCKER 2026-06-13).
+          pausedSnapshot: null,
           // Daniel smoke 2026-05-28 (#2 + #6) — fresh refusal slate per session.
           refusalTriedByEx: {},
           performedExercises: {},

@@ -434,15 +434,22 @@ export function Workout(): JSX.Element {
   useEffect(() => {
     setWarmupResolved(isWarmupResolved(sessionStart));
   }, [sessionStart]);
-  // Init session on mount when there is NO live or paused session to continue.
+  // Init session on mount when there is NO genuinely-live session to continue.
   // §44-C1 originally started only on 'idle', but a returning user always has a
   // prior `lastSession`, which makes getCurrentMode report 'finished' (NOT idle)
   // → startSession never fired → sessionStart stayed null → persistSessionLogs
   // early-returned at finish → the engine `logs` key was NEVER written for ANY
   // returning user (Daniel P0 2026-06-05: "coach never adapts" — DP/recovery ran
   // permanently input-starved). A stale finished session must NOT block a new
-  // one. Resume case is mode=paused/active — Antrenor calls resumeSession()
-  // before navigate, so mount-time mode is active → we keep the live session.
+  // one. A LINGERING pause must not either: a user who paused without resuming/
+  // discarding, then tapped Start for a fresh workout, arrives in mode='paused'
+  // (sessionStart null) — the OLD gate skipped startSession → the log zone never
+  // rendered → could not train (BLOCKER 2026-06-13). startSession now also clears
+  // pausedSnapshot, so a fresh start supersedes the abandoned pause.
+  // The NO-start branch is reserved strictly for a genuinely-live session
+  // (mode 'active'/'resting', i.e. sessionStart !== null). Resume is exactly
+  // that: Antrenor calls resumeSession() (sets sessionStart + clears the
+  // snapshot) BEFORE navigate, so mount-time mode is 'active' → we keep it.
   useEffect(() => {
     const mountMode = getCurrentMode({
       phase,
@@ -451,7 +458,7 @@ export function Workout(): JSX.Element {
       lastSession,
       exIdx,
     });
-    if (mountMode.kind === 'idle' || mountMode.kind === 'finished') {
+    if (mountMode.kind === 'idle' || mountMode.kind === 'finished' || mountMode.kind === 'paused') {
       startSession(Date.now());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
