@@ -173,6 +173,23 @@ export default defineConfig({
               expiration: { maxEntries: 8, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },
+          // §C6 audit fix — exercise demo images (public/exercise-media/*.webp) are
+          // EXCLUDED from the install precache (workbox globIgnores exercise-media/**,
+          // exerciseMedia.ts header) so they never bloat the bundle. Without a runtime
+          // cache they only worked online — the header's "then runtime-cached" intent
+          // was never wired. CacheFirst (the asset for a movement is immutable; a new
+          // photo lands under a new deploy) so a once-viewed demo shows offline + on
+          // repeat visits with zero refetch. Small cap so the image cache can never grow
+          // unbounded; does NOT touch the JS precache or size budget.
+          {
+            urlPattern: ({ url, sameOrigin }) =>
+              sameOrigin && /\/exercise-media\//.test(url.pathname),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'exercise-media',
+              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 60 },
+            },
+          },
         ],
       },
       devOptions: { enabled: false },

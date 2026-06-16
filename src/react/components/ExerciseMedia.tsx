@@ -81,6 +81,13 @@ export function ExerciseMedia({
   // dual-frame card counts loaded frames via the updater closure; the value
   // itself is never read, so it stays out of the destructure (no unused var).
   const [, setFramesLoaded] = useState(0);
+  // §C6 audit fix — a failed/offline image used to only clear the skeleton, so a
+  // broken <img> glyph showed through. On any frame's onError we flip hadError and
+  // render the designed muscle-group placeholder instead (the same branch the
+  // no-media case uses) so a failed load degrades gracefully, never a broken glyph.
+  // For the dual-frame card EITHER frame erroring flips it (one missing frame is
+  // already a broken card).
+  const [hadError, setHadError] = useState(false);
 
   // Shimmer overlay shown over a media frame until it finishes loading. Absolute,
   // pointer-events-none, fades out on load so it never blocks interaction.
@@ -92,7 +99,8 @@ export function ExerciseMedia({
     />
   ) : null;
 
-  if (!media) {
+  // No asset for this movement OR the asset failed to load → designed placeholder.
+  if (!media || hadError) {
     // Placeholder — muscle-group icon on accent-washed paper2 surface. The
     // radial wash (top-left, brick accent at 12%) matches the StatsGrid
     // polish, so the placeholder reads as intentional design, not a broken
@@ -159,9 +167,10 @@ export function ExerciseMedia({
           playsInline
           aria-label={alt}
           onLoadedData={() => setMediaLoaded(true)}
-          // Clear the skeleton on a failed video load too (mirror the <img>
-          // branches) so a broken URL never leaves the shimmer up forever.
-          onError={() => setMediaLoaded(true)}
+          // A failed video load degrades to the designed placeholder (mirror the
+          // <img> branches) so a broken URL never leaves the shimmer up forever
+          // nor shows a broken-media glyph.
+          onError={() => setHadError(true)}
         />
       </div>
     );
@@ -186,8 +195,8 @@ export function ExerciseMedia({
         aria-label={alt}
       >
         {skeleton}
-        <img className="w-full h-full object-cover" src={media.url} alt={`${alt} (1)`} loading="lazy" decoding="async" onLoad={onFrameLoad} onError={onFrameLoad} />
-        <img className="w-full h-full object-cover" src={media.url2} alt={`${alt} (2)`} loading="lazy" decoding="async" onLoad={onFrameLoad} onError={onFrameLoad} />
+        <img className="w-full h-full object-cover" src={media.url} alt={`${alt} (1)`} loading="lazy" decoding="async" onLoad={onFrameLoad} onError={() => setHadError(true)} />
+        <img className="w-full h-full object-cover" src={media.url2} alt={`${alt} (2)`} loading="lazy" decoding="async" onLoad={onFrameLoad} onError={() => setHadError(true)} />
       </div>
     );
   }
@@ -204,7 +213,7 @@ export function ExerciseMedia({
         loading="lazy"
         decoding="async"
         onLoad={() => setMediaLoaded(true)}
-        onError={() => setMediaLoaded(true)}
+        onError={() => setHadError(true)}
       />
     </div>
   );

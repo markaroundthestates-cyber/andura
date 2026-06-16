@@ -34,12 +34,27 @@ describe('ExerciseMedia — loading skeleton', () => {
     expect(screen.queryByTestId('em-skeleton')).not.toBeInTheDocument();
   });
 
-  it('clears the skeleton on image error (no permanent shimmer)', () => {
+  it('degrades to the placeholder on image error (no broken-image glyph, no shimmer)', () => {
     getExerciseMedia.mockReturnValue({ url: '/x.webp', type: 'image' });
     render(<ExerciseMedia engineName="Bench Press" variant="card" testId="em" />);
     expect(screen.getByTestId('em-skeleton')).toBeInTheDocument();
+    // §C6 audit fix — a failed load must render the designed muscle-group
+    // placeholder, NOT a broken <img>: the img is gone + the placeholder is shown.
     fireEvent.error(screen.getByTestId('em'));
     expect(screen.queryByTestId('em-skeleton')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('em')).not.toBeInTheDocument();
+    expect(screen.getByTestId('em-placeholder')).toBeInTheDocument();
+  });
+
+  it('dual-frame card degrades to the placeholder if EITHER frame errors', () => {
+    getExerciseMedia.mockReturnValue({ url: '/a.webp', url2: '/b.webp', type: 'image' });
+    render(<ExerciseMedia engineName="Bench Press" variant="card" testId="em" />);
+    const frames = Array.from(screen.getByTestId('em').querySelectorAll('img'));
+    expect(frames).toHaveLength(2);
+    // Second frame fails (e.g. offline) → whole card flips to the placeholder.
+    fireEvent.error(frames[1]!);
+    expect(screen.queryByTestId('em')).not.toBeInTheDocument();
+    expect(screen.getByTestId('em-placeholder')).toBeInTheDocument();
   });
 
   it('dual-frame card clears the skeleton only after BOTH frames load', () => {
@@ -67,12 +82,13 @@ describe('ExerciseMedia — loading skeleton', () => {
 
   // Audit 2026-06-07 (LOW-3): a failed video load must clear the skeleton too
   // (mirror the <img> error path), else a broken URL leaves the shimmer forever.
-  it('clears the skeleton on video error (no permanent shimmer)', () => {
+  it('degrades to the placeholder on video error (no broken-media glyph, no shimmer)', () => {
     getExerciseMedia.mockReturnValue({ url: '/x.mp4', type: 'video' });
     render(<ExerciseMedia engineName="Bench Press" variant="card" testId="em" />);
     expect(screen.getByTestId('em-skeleton')).toBeInTheDocument();
     fireEvent.error(screen.getByTestId('em'));
     expect(screen.queryByTestId('em-skeleton')).not.toBeInTheDocument();
+    expect(screen.getByTestId('em-placeholder')).toBeInTheDocument();
   });
 
   it('no skeleton on the placeholder (no media)', () => {
