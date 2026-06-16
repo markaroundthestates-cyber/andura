@@ -96,6 +96,35 @@ interface ScheduleDayPreviewSheetProps {
 // Same bodyweight-aware detail copy as WorkoutPreview (kept local so the preview
 // sheet stays self-contained + read-only; identical i18n keys → identical copy).
 function exerciseDetail(ex: PlannedExercise): string {
+  // #7 metric-types — a time/carry hold prescribes a DURATION, not reps
+  // (dp_metric_types_v1 ON sets targetReps=0; without this branch the row read a
+  // phantom "0 reps"). targetSec is present ONLY when the duration prescription is
+  // active, so it is the precise gate; carry rides a load (farmer's-walk
+  // "kg/mana"), a weighted plank shows "+kg". Mirrors Workout.tsx/SetLogInput.
+  if (ex.targetSec != null) {
+    if (ex.metricType === 'carry') {
+      return ex.targetKg > 0
+        ? t('workout.preview.exerciseDetailCarryWeighted', {
+            sets: ex.sets,
+            seconds: ex.targetSec,
+            kg: ex.targetKg,
+          })
+        : t('workout.preview.exerciseDetailCarry', {
+            sets: ex.sets,
+            seconds: ex.targetSec,
+          });
+    }
+    return ex.targetKg > 0
+      ? t('workout.preview.exerciseDetailTimeAdded', {
+          sets: ex.sets,
+          seconds: ex.targetSec,
+          kg: ex.targetKg,
+        })
+      : t('workout.preview.exerciseDetailTime', {
+          sets: ex.sets,
+          seconds: ex.targetSec,
+        });
+  }
   // R6c — show the rep BAND ("10–15 reps") when the engine carries one.
   const reps = ex.repsBand ?? ex.targetReps;
   if (ex.isBodyweight) {

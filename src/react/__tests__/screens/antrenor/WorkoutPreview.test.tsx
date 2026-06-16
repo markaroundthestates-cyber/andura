@@ -615,4 +615,40 @@ describe('WorkoutPreview — exercise list (T4)', () => {
       expect(list.textContent).toMatch(/60\s*kg(?!\/)/i);
     });
   });
+
+  // #7 metric-types — dp_metric_types_v1 ON sets targetReps=0 + targetSec for a
+  // time/carry hold; the preview row must show a DURATION, never a phantom
+  // "0 reps" (the symptom: a Plank read "3 seturi - greutatea corpului - 0 reps").
+  it('renders a DURATION for a time hold (Plank, bodyweight) — NOT "0 reps"', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout({
+      exercises: [
+        { id: 'ex-1', name: 'Plank', engineName: 'Plank', sets: 3, targetReps: 0, targetKg: 0, restSec: 60, isBodyweight: true, metricType: 'time', targetSec: 30 },
+      ],
+      exerciseCount: 1,
+    }));
+    renderPreview();
+    await waitFor(() => {
+      const list = screen.getByTestId('preview-exercise-list');
+      expect(list.textContent).toMatch(/Plank/i);
+      expect(list.textContent).toMatch(/30s/);     // duration prescribed
+      expect(list.textContent).not.toMatch(/0\s*reps/i); // no phantom reps
+    });
+  });
+
+  it('renders a DURATION + per-hand load for a carry (Farmer\'s Walk, weighted)', async () => {
+    mockedGetTodayWorkout.mockResolvedValue(makeWorkout({
+      exercises: [
+        { id: 'ex-1', name: 'Farmer Walk', engineName: "Farmer's Walk", sets: 3, targetReps: 0, targetKg: 24, restSec: 90, metricType: 'carry', targetSec: 40 },
+      ],
+      exerciseCount: 1,
+    }));
+    renderPreview();
+    await waitFor(() => {
+      const list = screen.getByTestId('preview-exercise-list');
+      expect(list.textContent).toMatch(/Farmer/i);
+      expect(list.textContent).toMatch(/40s/);          // duration prescribed
+      expect(list.textContent).toMatch(/24\s*kg\/hand/i); // carry load per hand
+      expect(list.textContent).not.toMatch(/0\s*reps/i);  // no phantom reps
+    });
+  });
 });

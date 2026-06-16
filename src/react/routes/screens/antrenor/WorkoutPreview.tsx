@@ -443,11 +443,25 @@ export function WorkoutPreview(): JSX.Element {
               // reason in the sub slot ("Inlocuit · {motiv}") so the user SEES
               // it was replaced; otherwise the normal equipment/setup sub.
               sub: ex.swapReason ? t('workout.preview.swappedPrefix', { reason: ex.swapReason }) : ex.sub,
-              // Bodyweight: show "greutatea corpului" instead of "0 kg" (the
-              // symptom Daniel flagged); append "+X kg" only when added > 0.
-              // R6c — show the rep BAND ("10–15 reps") when the engine carries
-              // one (dp_rep_class_v1 class bands); single target otherwise.
-              detail: ex.isBodyweight
+              // #7 metric-types — a time/carry hold prescribes a DURATION, not reps
+              // (dp_metric_types_v1 ON sets targetReps=0; without this branch the row
+              // read a phantom "0 reps"). targetSec is present ONLY when the duration
+              // prescription is active, so it is the precise gate; carry rides a load
+              // (farmer's-walk "kg/mana"), a weighted plank shows "+kg". Mirrors how
+              // Workout.tsx/SetLogInput consume metricType + targetSec in-session.
+              detail: ex.targetSec != null
+                ? ex.metricType === 'carry'
+                  ? ex.targetKg > 0
+                    ? t('workout.preview.exerciseDetailCarryWeighted', { sets: ex.sets, seconds: ex.targetSec, kg: ex.targetKg })
+                    : t('workout.preview.exerciseDetailCarry', { sets: ex.sets, seconds: ex.targetSec })
+                  : ex.targetKg > 0
+                    ? t('workout.preview.exerciseDetailTimeAdded', { sets: ex.sets, seconds: ex.targetSec, kg: ex.targetKg })
+                    : t('workout.preview.exerciseDetailTime', { sets: ex.sets, seconds: ex.targetSec })
+                // Bodyweight: show "greutatea corpului" instead of "0 kg" (the
+                // symptom Daniel flagged); append "+X kg" only when added > 0.
+                // R6c — show the rep BAND ("10–15 reps") when the engine carries
+                // one (dp_rep_class_v1 class bands); single target otherwise.
+                : ex.isBodyweight
                 ? ex.targetKg > 0
                   ? t('workout.preview.exerciseDetailBodyweightAdded', { sets: ex.sets, kg: ex.targetKg, reps: ex.repsBand ?? ex.targetReps })
                   : t('workout.preview.exerciseDetailBodyweight', { sets: ex.sets, reps: ex.repsBand ?? ex.targetReps })

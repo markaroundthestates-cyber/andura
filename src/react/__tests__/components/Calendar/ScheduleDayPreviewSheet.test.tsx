@@ -140,6 +140,38 @@ describe('ScheduleDayPreviewSheet — non-edit tap opens preview', () => {
     expect(screen.getByTestId('schedule-day-preview-close')).toBeInTheDocument();
   });
 
+  // #7 metric-types — dp_metric_types_v1 ON sets targetReps=0 + a targetSec for a
+  // time/carry hold; the preview row must show a DURATION, never a phantom
+  // "0 reps" (a Plank read "3 seturi - greutatea corpului - 0 reps" before).
+  it('renders a DURATION for a time/carry hold — NOT a phantom "0 reps"', async () => {
+    getWorkoutForDayMock.mockResolvedValue({
+      ...SESSION,
+      exerciseCount: 2,
+      exercises: [
+        {
+          id: 'plank-0', name: 'Plank', engineName: 'Plank',
+          sets: 3, targetReps: 0, targetKg: 0, restSec: 60,
+          isBodyweight: true, bwFraction: 0, metricType: 'time', targetSec: 30,
+        },
+        {
+          id: 'farmer-1', name: 'Farmer Walk', engineName: "Farmer's Walk",
+          sets: 3, targetReps: 0, targetKg: 24, restSec: 90,
+          metricType: 'carry', targetSec: 40,
+        },
+      ],
+    });
+    render(<Calendar7Day />);
+    fireEvent.click(screen.getByTestId('calendar-day-0'));
+    const sheet = await screen.findByTestId('schedule-day-preview-sheet');
+    await waitFor(() => {
+      expect(screen.getAllByTestId('schedule-day-preview-exercise')).toHaveLength(2);
+    });
+    expect(sheet.textContent).toMatch(/30s/);          // plank duration
+    expect(sheet.textContent).toMatch(/40s/);          // carry duration
+    expect(sheet.textContent).toMatch(/24\s*kg\/hand/i); // carry per-hand load
+    expect(sheet.textContent).not.toMatch(/0\s*reps/i);  // no phantom reps
+  });
+
   it('recomputes from the live engine each open (re-fetches on re-open)', async () => {
     render(<Calendar7Day />);
     fireEvent.click(screen.getByTestId('calendar-day-0'));
