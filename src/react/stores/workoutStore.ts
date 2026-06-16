@@ -114,6 +114,9 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       prData: null,
       history: {},
       sessionStart: null,
+      restEndsAt: null,
+      restInitialSec: 0,
+      pendingAdvance: false,
       lastRating: null,
       pausedSnapshot: null,
       lastSession: null,
@@ -137,6 +140,10 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           prHit: false,
           prData: null,
           history: {},
+          // Fresh start — no rest carried from any prior/abandoned session.
+          restEndsAt: null,
+          restInitialSec: 0,
+          pendingAdvance: false,
           // A fresh start SUPERSEDES any abandoned pause — the user tapped Start
           // for a NEW workout, so the lingering pausedSnapshot (which would make
           // getCurrentMode report 'paused' and dead-end the Workout mount) is
@@ -167,10 +174,21 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
                   phase: s.phase,
                   history: s.history,
                   sessionStart: s.sessionStart,
+                  // Carry the live rest timer into the snapshot so resume mid-rest
+                  // rehydrates it (instead of resolving instantly + skipping the
+                  // exercise advance). Absolute restEndsAt survives the pause gap.
+                  restEndsAt: s.restEndsAt,
+                  restInitialSec: s.restInitialSec,
+                  pendingAdvance: s.pendingAdvance,
                 }
               : null,
             phase: 'idle',
             sessionStart: null,
+            // Live rest fields go idle alongside the live session (they live on
+            // the snapshot now; resumeSession restores them).
+            restEndsAt: null,
+            restInitialSec: 0,
+            pendingAdvance: false,
           };
         }),
 
@@ -183,6 +201,11 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
                 phase: s.pausedSnapshot.phase,
                 history: s.pausedSnapshot.history,
                 sessionStart: s.pausedSnapshot.sessionStart,
+                // Rehydrate the rest timer captured at pause (legacy snapshots
+                // lacking these fields → no rest, idle defaults).
+                restEndsAt: s.pausedSnapshot.restEndsAt ?? null,
+                restInitialSec: s.pausedSnapshot.restInitialSec ?? 0,
+                pendingAdvance: s.pausedSnapshot.pendingAdvance ?? false,
                 pausedSnapshot: null,
               }
             : {}
@@ -195,6 +218,9 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           setIdx: 0,
           history: {},
           sessionStart: null,
+          restEndsAt: null,
+          restInitialSec: 0,
+          pendingAdvance: false,
           prHit: false,
           prData: null,
           pausedSnapshot: null,
@@ -230,6 +256,9 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           return {
             phase: 'idle' as WorkoutPhase,
             sessionStart: null,
+            restEndsAt: null,
+            restInitialSec: 0,
+            pendingAdvance: false,
             lastSession: summary,
             // Phase 4 task_21: append la sessionsHistory cumulative list
             // pentru Istoric tab. Newest tail (reverse-chrono UI iter pe display).
@@ -247,6 +276,11 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         }),
 
       setPhase: (phase) => set({ phase }),
+
+      // Persist the live rest-countdown so a mid-rest re-mount rehydrates it
+      // (cycle-7 fix). Workout.tsx calls this on every rest enter/extend/exit.
+      setRestState: ({ restEndsAt, restInitialSec, pendingAdvance }) =>
+        set({ restEndsAt, restInitialSec, pendingAdvance }),
 
       logSet: (exIdx, entry) =>
         set((s) => ({
@@ -450,6 +484,9 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           prData: null,
           history: {},
           sessionStart: null,
+          restEndsAt: null,
+          restInitialSec: 0,
+          pendingAdvance: false,
           lastRating: null,
           pausedSnapshot: null,
           sessionContext: null,
@@ -497,6 +534,13 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         history: state.history,
         prHit: state.prHit,
         prData: state.prData,
+        // Live rest countdown — persisted so a reload / re-mount mid-rest
+        // rehydrates the timer instead of resolving rest instantly (which would
+        // skip/reset the exercise advance). restEndsAt is absolute epoch ms so
+        // the remaining time is correct no matter how long the reload took.
+        restEndsAt: state.restEndsAt,
+        restInitialSec: state.restInitialSec,
+        pendingAdvance: state.pendingAdvance,
       }) as Partial<WorkoutState & WorkoutActions>,
       // APP-LIFECYCLE-01 — discard a STALE in-progress session on rehydrate so a
       // workout abandoned hours ago doesn't resurrect a ghost "live session" pill.
@@ -519,6 +563,9 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           merged.history = {};
           merged.prHit = false;
           merged.prData = null;
+          merged.restEndsAt = null;
+          merged.restInitialSec = 0;
+          merged.pendingAdvance = false;
         }
         return merged;
       },

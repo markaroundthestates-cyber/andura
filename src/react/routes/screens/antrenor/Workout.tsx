@@ -116,6 +116,12 @@ export function Workout(): JSX.Element {
   const startSession = useWorkoutStore((s) => s.startSession);
   const logSet = useWorkoutStore((s) => s.logSet);
   const setPhase = useWorkoutStore((s) => s.setPhase);
+  // Rest-countdown persistence (cycle-7) — the live rest timer + pending advance
+  // now live in the store too, so a re-mount mid-rest (tab-switch / background →
+  // resume via SessionPill) rehydrates them instead of resetting to 0 (which
+  // resolved rest instantly + skipped the exercise advance). Read once for the
+  // mount-seed; written via setRestState on every rest enter/extend/exit.
+  const setRestState = useWorkoutStore((s) => s.setRestState);
   const advanceExercise = useWorkoutStore((s) => s.advanceExercise);
   const pauseSession = useWorkoutStore((s) => s.pauseSession);
   const discardSession = useWorkoutStore((s) => s.discardSession);
@@ -348,7 +354,17 @@ export function Workout(): JSX.Element {
   // Perf isolation: the per-second elapsed clock no longer lives here (it drove
   // a whole-subtree re-render once a second). It now lives in the
   // <SessionElapsed> leaf inside SessionTimer, fed the raw sessionStart.
-  const [restCountdown, setRestCountdown] = useState(0);
+  //
+  // Rest-countdown persistence (cycle-7) — seed the LOCAL countdown from the
+  // store's persisted restEndsAt so a re-mount mid-rest rehydrates the remaining
+  // time (derive remaining = max(0, restEndsAt - now)) instead of starting at 0
+  // (which made the countdown effect resolve rest instantly + skip the advance).
+  // Lazy initializer reads the (already-rehydrated) store once at mount.
+  const [restCountdown, setRestCountdown] = useState(() => {
+    const s = useWorkoutStore.getState();
+    if (s.phase !== 'rest' || s.restEndsAt == null) return 0;
+    return Math.max(0, Math.ceil((s.restEndsAt - Date.now()) / 1000));
+  });
   // Bug 1 — inter-exercise rest. The LAST set of an exercise now also earns a
   // real, skip-able rest (the just-finished exercise's restSec), instead of
   // jumping straight to the transition splash. This ref marks that the rest
@@ -356,11 +372,28 @@ export function Workout(): JSX.Element {
   // the user skips, the screen must run the transition + advanceExercise()
   // flow rather than returning to logging on the SAME exercise. A ref (not
   // state) so the countdown effect reads the live value without re-subscribing.
-  const pendingAdvanceRef = useRef(false);
+  // Seeded from the store so a mid-rest re-mount restores the inter-exercise
+  // advance intent (else an inter-exercise rest would resolve back to logging).
+  const pendingAdvanceRef = useRef(
+    useWorkoutStore.getState().phase === 'rest'
+      ? useWorkoutStore.getState().pendingAdvance
+      : false,
+  );
   // F-pass2-restoverlay-01 — initial rest total seconds at moment rest phase
   // entered (drives SVGCountdownRing progress ratio). Reset alongside
-  // setRestCountdown so ring shows full track at rest entry.
-  const [restInitialSec, setRestInitialSec] = useState(0);
+  // setRestCountdown so ring shows full track at rest entry. Seeded from the
+  // store on a mid-rest re-mount so the ring ratio stays correct.
+  const [restInitialSec, setRestInitialSec] = useState(() => {
+    const s = useWorkoutStore.getState();
+    return s.phase === 'rest' && s.restEndsAt != null ? s.restInitialSec : 0;
+  });
+  // Rest-rehydrate guard (cycle-7) — true once the countdown effect has begun
+  // ticking for the current rest. On a FRESH mount in phase:'rest' the local
+  // countdown is seeded from restEndsAt, but if that seed is 0 (a genuinely
+  // expired persisted rest) the effect must still run normally. The guard keeps
+  // the effect from instant-resolving on the FIRST render before the seed is
+  // observed — it lets the seeded value drive the first tick, never a stale 0.
+  const restMountSeededRef = useRef(false);
   const [exitSheetOpen, setExitSheetOpen] = useState(false);
   // Phase 4 task_14: LOCK 9 aaFrictionModal state — pending rating cand
   // triggered + reason pentru REASON_LABEL display în modal.
@@ -476,17 +509,71 @@ export function Workout(): JSX.Element {
   // pendingAdvanceRef cleared first so it can never double-fire advanceExercise.
   const runTransitionToNext = useCallback((): void => {
     pendingAdvanceRef.current = false;
+    // Rest is over → clear the persisted rest so a re-mount during the
+    // transition doesn't rehydrate a finished countdown.
+    setRestState({ restEndsAt: null, restInitialSec: 0, pendingAdvance: false });
     setPhase('transition');
     window.setTimeout(() => {
       advanceExercise();
     }, 1500);
-  }, [setPhase, advanceExercise]);
+  }, [setPhase, advanceExercise, setRestState]);
+
+  // Rest-countdown persistence (cycle-7) — enter a rest of `sec` seconds. Sets
+  // BOTH the local timer (drives the live UI) AND the persisted store rest state
+  // (restEndsAt absolute epoch + initial + pendingAdvance) so a re-mount mid-rest
+  // rehydrates instead of resolving instantly. `advance` marks an inter-exercise
+  // rest (on end → transition+advance, not back to logging). Single source so no
+  // entry point can write the local timer without persisting it.
+  const enterRest = useCallback(
+    (sec: number, advance: boolean): void => {
+      pendingAdvanceRef.current = advance;
+      setRestCountdown(sec);
+      setRestInitialSec(sec);
+      restMountSeededRef.current = true; // a fresh in-session rest is already hydrated
+      setRestState({
+        restEndsAt: Date.now() + sec * 1000,
+        restInitialSec: sec,
+        pendingAdvance: advance,
+      });
+      setPhase('rest');
+    },
+    [setPhase, setRestState],
+  );
+
+  // Clear the persisted rest (rest skipped / resolved back to logging) so a
+  // re-mount can't rehydrate a stale countdown.
+  const clearRestState = useCallback((): void => {
+    setRestState({ restEndsAt: null, restInitialSec: 0, pendingAdvance: false });
+  }, [setRestState]);
 
   // Rest countdown — when it reaches 0, either advance to the next exercise (an
   // inter-exercise rest, pendingAdvanceRef) or return to logging on the same
   // exercise (an intermediate-set rest).
+  //
+  // Rest-rehydrate guard (cycle-7) — on a FRESH mount in phase:'rest' the local
+  // countdown/initial were seeded from the persisted restEndsAt, but if a
+  // re-mount races ahead of that seed (or a legacy persisted session carries
+  // phase=rest with NO restEndsAt), the local countdown could be a stale 0 →
+  // the interval's prev<=1 branch would resolve rest INSTANTLY and, for an
+  // inter-exercise rest, advance/skip with no actual rest. So before starting
+  // the interval, REHYDRATE once from the store: if a live restEndsAt exists,
+  // recompute the remaining seconds (+ initial + pendingAdvance) from it; only
+  // when there is genuinely no persisted rest do we let it resolve.
   useEffect(() => {
     if (phase !== 'rest') return;
+    if (!restMountSeededRef.current) {
+      restMountSeededRef.current = true;
+      const s = useWorkoutStore.getState();
+      if (s.restEndsAt != null) {
+        const remaining = Math.max(0, Math.ceil((s.restEndsAt - Date.now()) / 1000));
+        pendingAdvanceRef.current = s.pendingAdvance;
+        if (s.restInitialSec > 0) setRestInitialSec(s.restInitialSec);
+        // Commit the hydrated remaining synchronously — the interval's first tick
+        // fires 1s later, by which time React has committed this value, so the
+        // functional updater's `prev` is the hydrated remaining, never a stale 0.
+        setRestCountdown(remaining);
+      }
+    }
     const interval = setInterval(() => {
       setRestCountdown((prev) => {
         if (prev <= 1) {
@@ -494,6 +581,9 @@ export function Workout(): JSX.Element {
           if (pendingAdvanceRef.current) {
             runTransitionToNext();
           } else {
+            // Intermediate-set rest resolved → clear the persisted rest so a
+            // re-mount can't rehydrate a finished countdown, then back to logging.
+            clearRestState();
             setPhase('logging');
           }
           return 0;
@@ -502,7 +592,7 @@ export function Workout(): JSX.Element {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [phase, setPhase, runTransitionToNext]);
+  }, [phase, setPhase, runTransitionToNext, clearRestState]);
 
   // Wake lock acquire on mount + release on unmount (+ visibilitychange
   // re-acquire) — fail silent. Extracted to useWakeLock (behavior preserved).
@@ -974,18 +1064,13 @@ export function Workout(): JSX.Element {
       }
       // Bug 1 — the LAST set of a (non-final) exercise now earns a real,
       // skip-able rest first (the just-finished exercise's restSec), then the
-      // transition reveal + advance. Mark pendingAdvanceRef so the rest end (or
-      // rest skip) runs runTransitionToNext instead of returning to logging.
-      pendingAdvanceRef.current = true;
-      setRestCountdown(currentExercise.restSec);
-      setRestInitialSec(currentExercise.restSec);
-      setPhase('rest');
+      // transition reveal + advance. advance=true so the rest end (or rest skip)
+      // runs runTransitionToNext instead of returning to logging. enterRest
+      // persists the timer so a re-mount mid-rest rehydrates + still advances.
+      enterRest(currentExercise.restSec, true);
       return;
     }
-    pendingAdvanceRef.current = false;
-    setRestCountdown(currentExercise.restSec);
-    setRestInitialSec(currentExercise.restSec);
-    setPhase('rest');
+    enterRest(currentExercise.restSec, false);
   }
 
   function handleLogSet(rating: SetRating): void {
@@ -1099,6 +1184,19 @@ export function Workout(): JSX.Element {
       const extendedRest = currentExercise.restSec + 30;
       setRestCountdown(extendedRest);
       setRestInitialSec(extendedRest);
+      // Rest-countdown persistence (cycle-7) — re-persist the extended rest only
+      // when performLogSet actually entered a rest this tick (intermediate set →
+      // store.restEndsAt is now set). Preserve the pendingAdvance it chose (the
+      // last-set inter-exercise rest keeps advancing). Last-exercise navigate path
+      // left restEndsAt null → nothing to extend (matches the local no-op).
+      const restNow = useWorkoutStore.getState();
+      if (restNow.restEndsAt != null) {
+        setRestState({
+          restEndsAt: Date.now() + extendedRest * 1000,
+          restInitialSec: extendedRest,
+          pendingAdvance: restNow.pendingAdvance,
+        });
+      }
     }
   }
 
@@ -1139,9 +1237,13 @@ export function Workout(): JSX.Element {
     // next exercise (not return to logging on the finished one). Intermediate-set
     // skip behaves as before (back to logging).
     if (pendingAdvanceRef.current) {
+      // runTransitionToNext clears the persisted rest itself.
       runTransitionToNext();
       return;
     }
+    // Intermediate-set skip → clear the persisted rest so a re-mount can't
+    // rehydrate the skipped countdown, then back to logging.
+    clearRestState();
     setPhase('logging');
   }
 

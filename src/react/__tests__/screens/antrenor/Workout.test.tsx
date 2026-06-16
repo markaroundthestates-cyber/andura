@@ -139,6 +139,9 @@ function resetStore(): void {
     prData: null,
     history: {},
     sessionStart: null,
+    restEndsAt: null,
+    restInitialSec: 0,
+    pendingAdvance: false,
     lastRating: null,
     pausedSnapshot: null,
     lastSession: null,
@@ -546,6 +549,103 @@ describe('Workout — state machine transition + advance exercise', async () => 
     // Advances exactly once (exIdx 0 → 1), never skips a whole exercise.
     expect(useWorkoutStore.getState().exIdx).toBe(1);
     expect(useWorkoutStore.getState().phase).toBe('logging');
+  });
+});
+
+// ── Rest-countdown persistence on re-mount (cycle-7) ──────────────────────────
+// The rest countdown + pending inter-exercise advance used to live ONLY in
+// Workout.tsx local state; only `phase` was persisted. Re-entering phase:'rest'
+// (tab-switch/background then resume via SessionPill) reset the local countdown
+// to 0 → the effect resolved rest INSTANTLY and, for an inter-exercise rest,
+// dumped the user back on the already-completed exercise WITHOUT advancing. The
+// rest state now persists (restEndsAt + restInitialSec + pendingAdvance) so a
+// re-mount rehydrates the timer AND still performs the advance.
+describe('Workout — rest persistence rehydrates on re-mount', async () => {
+  beforeEach(() => {
+    resetStore();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // Seed a mid-INTER-EXERCISE rest: Bench Press (exIdx 0) fully logged (4/4),
+  // phase=rest, pendingAdvance=true, 60s left of the 90s rest. This is exactly
+  // the state a re-mount would rehydrate after a tab-switch during the rest that
+  // bridges Bench Press → Overhead Press.
+  function seedMidInterExerciseRest(remainingSec: number): void {
+    const now = Date.now();
+    useWorkoutStore.setState({
+      sessionStart: now - 600_000, // 10 min in, a genuinely-live session
+      exIdx: 0,
+      setIdx: 0,
+      phase: 'rest',
+      history: {
+        0: Array.from({ length: 4 }, () => ({
+          kg: 22.5,
+          reps: 10,
+          rating: 'potrivit' as const,
+          timestamp: now - 300_000,
+        })),
+      },
+      restEndsAt: now + remainingSec * 1000,
+      restInitialSec: 90,
+      pendingAdvance: true,
+    });
+  }
+
+  // Phase 6 task_02 — wait for the async getTodayWorkout() to resolve (loading
+  // unmount), then for the RestOverlay to render. The log-zone tinta is hidden
+  // during phase='rest', so renderWorkoutAndWait's tinta wait does not apply.
+  async function renderRestAndWait(): Promise<void> {
+    renderWorkout();
+    await waitFor(() => {
+      expect(screen.queryByTestId('workout-loading')).not.toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(screen.queryByTestId('rest-overlay')).toBeInTheDocument();
+    });
+  }
+
+  it('re-mount mid inter-exercise rest rehydrates the countdown (NOT 0)', async () => {
+    seedMidInterExerciseRest(60);
+    await renderRestAndWait();
+    // The rest overlay is shown and the countdown rehydrated to ~1:00, not 0:00
+    // (which would have resolved rest instantly).
+    expect(screen.getByTestId('rest-overlay')).toBeInTheDocument();
+    expect(screen.getByTestId('rest-countdown')).toHaveTextContent('1:00');
+    // The session was NOT restarted (sessionStart preserved → mode 'resting').
+    expect(useWorkoutStore.getState().phase).toBe('rest');
+    expect(useWorkoutStore.getState().exIdx).toBe(0);
+  });
+
+  it('re-mount mid inter-exercise rest still advances to the NEXT exercise on rest end', async () => {
+    seedMidInterExerciseRest(60);
+    await renderRestAndWait();
+    expect(useWorkoutStore.getState().exIdx).toBe(0);
+    // Let the rehydrated 60s rest elapse → transition (not an instant resolve).
+    act(() => {
+      vi.advanceTimersByTime(60000);
+    });
+    expect(useWorkoutStore.getState().phase).toBe('transition');
+    expect(useWorkoutStore.getState().exIdx).toBe(0);
+    // Transition 1.5s → advanceExercise lands on the NEXT exercise (Overhead
+    // Press, exIdx 1), NOT back on the completed Bench Press.
+    act(() => {
+      vi.advanceTimersByTime(1500);
+    });
+    expect(useWorkoutStore.getState().exIdx).toBe(1);
+    expect(useWorkoutStore.getState().phase).toBe('logging');
+  });
+
+  it('does NOT instant-resolve a genuine rest on the very first render', async () => {
+    // A fresh inter-exercise rest with the full 90s left: on mount the countdown
+    // must read 1:30, never collapse to 0 + skip the exercise.
+    seedMidInterExerciseRest(90);
+    await renderRestAndWait();
+    expect(screen.getByTestId('rest-countdown')).toHaveTextContent('1:30');
+    expect(useWorkoutStore.getState().exIdx).toBe(0);
+    expect(useWorkoutStore.getState().phase).toBe('rest');
   });
 });
 

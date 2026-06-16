@@ -112,6 +112,15 @@ export interface PausedSession {
   phase: WorkoutPhase;
   history: Record<number, ExerciseHistoryEntry[]>;
   sessionStart: number;
+  // Rest-countdown state captured at pause so resuming MID-REST rehydrates the
+  // timer instead of resolving rest instantly (which would skip/reset the
+  // exercise advance). epoch ms the rest ends at (remaining = max(0, restEndsAt
+  // - now)); restInitialSec drives the ring; pendingAdvance marks an
+  // inter-exercise rest (on end → transition+advance, not back to logging).
+  // Optional — legacy snapshots (pre-fix) lack them → resume treats as no rest.
+  restEndsAt?: number | null;
+  restInitialSec?: number;
+  pendingAdvance?: boolean;
 }
 
 // Phase 5 task_03: per-exercise breakdown saved cu sessionsHistory pentru
@@ -211,6 +220,22 @@ export interface WorkoutState {
   prData: PRData | null; // Phase 4 task_10: details despre PR detected (NU just flag)
   history: Record<number, ExerciseHistoryEntry[]>;
   sessionStart: number | null;
+  // Rest-countdown persistence (cycle-7 fix) — the live rest timer + the
+  // pending inter-exercise advance lived ONLY in Workout.tsx local state; only
+  // `phase` survived a re-mount. Re-entering phase:'rest' (tab-switch/background
+  // then resume via SessionPill) reset the local countdown to 0 → the effect
+  // resolved rest INSTANTLY and, for an inter-exercise rest, dumped the user back
+  // on the already-completed exercise WITHOUT advancing. Persist the rest state so
+  // a re-mount rehydrates:
+  //   restEndsAt   — epoch ms the rest ends (remaining = max(0, restEndsAt - now));
+  //                  null = not resting.
+  //   restInitialSec — total rest seconds at entry (drives the SVG ring ratio).
+  //   pendingAdvance — true when this is an INTER-EXERCISE rest (on end → run the
+  //                    transition + advanceExercise, not back to logging).
+  // Cleared on every session teardown (start/pause/resume/discard/finish/reset).
+  restEndsAt: number | null;
+  restInitialSec: number;
+  pendingAdvance: boolean;
   lastRating: 'usoara' | 'normala' | 'grea' | null;
   pausedSnapshot: PausedSession | null;
   lastSession: LastSessionSummary | null;
@@ -360,6 +385,18 @@ export interface WorkoutActions {
   discardSession: () => void;
   finishSession: (summary: LastSessionSummary) => void;
   setPhase: (phase: WorkoutPhase) => void;
+  /**
+   * Persist the live rest-countdown state so a mid-rest re-mount rehydrates the
+   * timer (instead of resolving rest instantly + skipping the advance). Called by
+   * Workout.tsx whenever it enters / extends / exits a rest. `restEndsAt` null
+   * clears the rest (remaining = max(0, restEndsAt - now)). See WorkoutState
+   * restEndsAt/restInitialSec/pendingAdvance.
+   */
+  setRestState: (rest: {
+    restEndsAt: number | null;
+    restInitialSec: number;
+    pendingAdvance: boolean;
+  }) => void;
   logSet: (exIdx: number, entry: ExerciseHistoryEntry) => void;
   advanceExercise: () => void;
   markPRHit: (data?: PRData) => void;

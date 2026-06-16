@@ -175,6 +175,107 @@ describe('workoutStore — lifecycle actions', () => {
   });
 });
 
+// Rest-countdown persistence (cycle-7) — the live rest timer + pending advance
+// now live in the store so a re-mount mid-rest rehydrates instead of resolving
+// rest instantly (which skipped/reset the exercise advance).
+describe('workoutStore — rest-countdown persistence', () => {
+  beforeEach(resetStore);
+
+  it('default rest state is idle (null restEndsAt, 0 initial, no pendingAdvance)', () => {
+    const s = useWorkoutStore.getState();
+    expect(s.restEndsAt).toBeNull();
+    expect(s.restInitialSec).toBe(0);
+    expect(s.pendingAdvance).toBe(false);
+  });
+
+  it('setRestState persists restEndsAt + initial + pendingAdvance', () => {
+    const ends = Date.now() + 90_000;
+    useWorkoutStore.getState().setRestState({ restEndsAt: ends, restInitialSec: 90, pendingAdvance: true });
+    const s = useWorkoutStore.getState();
+    expect(s.restEndsAt).toBe(ends);
+    expect(s.restInitialSec).toBe(90);
+    expect(s.pendingAdvance).toBe(true);
+  });
+
+  it('pauseSession captures the live rest state into the snapshot', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    const ends = Date.now() + 60_000;
+    useWorkoutStore.getState().setRestState({ restEndsAt: ends, restInitialSec: 60, pendingAdvance: true });
+    useWorkoutStore.getState().pauseSession('Push');
+    const snap = useWorkoutStore.getState().pausedSnapshot;
+    expect(snap?.restEndsAt).toBe(ends);
+    expect(snap?.restInitialSec).toBe(60);
+    expect(snap?.pendingAdvance).toBe(true);
+    // Live rest fields go idle alongside the paused session.
+    expect(useWorkoutStore.getState().restEndsAt).toBeNull();
+    expect(useWorkoutStore.getState().pendingAdvance).toBe(false);
+  });
+
+  it('resumeSession rehydrates the rest state from the snapshot', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    const ends = Date.now() + 45_000;
+    useWorkoutStore.getState().setRestState({ restEndsAt: ends, restInitialSec: 45, pendingAdvance: true });
+    useWorkoutStore.getState().pauseSession('Push');
+    useWorkoutStore.getState().resumeSession();
+    const s = useWorkoutStore.getState();
+    expect(s.restEndsAt).toBe(ends);
+    expect(s.restInitialSec).toBe(45);
+    expect(s.pendingAdvance).toBe(true);
+  });
+
+  it('resumeSession tolerates a legacy snapshot with no rest fields', () => {
+    useWorkoutStore.getState().startSession(Date.now());
+    useWorkoutStore.getState().pauseSession('Push');
+    // Simulate a pre-fix persisted snapshot lacking the rest fields.
+    const snap = useWorkoutStore.getState().pausedSnapshot!;
+    useWorkoutStore.setState({
+      pausedSnapshot: {
+        title: snap.title,
+        meta: snap.meta,
+        exIdx: snap.exIdx,
+        setIdx: snap.setIdx,
+        phase: snap.phase,
+        history: snap.history,
+        sessionStart: snap.sessionStart,
+      },
+    });
+    useWorkoutStore.getState().resumeSession();
+    const s = useWorkoutStore.getState();
+    expect(s.restEndsAt).toBeNull();
+    expect(s.restInitialSec).toBe(0);
+    expect(s.pendingAdvance).toBe(false);
+  });
+
+  it('startSession + discardSession + finishSession + reset all clear the rest state', () => {
+    const seed = (): void =>
+      useWorkoutStore
+        .getState()
+        .setRestState({ restEndsAt: Date.now() + 30_000, restInitialSec: 30, pendingAdvance: true });
+    const expectCleared = (): void => {
+      const s = useWorkoutStore.getState();
+      expect(s.restEndsAt).toBeNull();
+      expect(s.restInitialSec).toBe(0);
+      expect(s.pendingAdvance).toBe(false);
+    };
+
+    seed();
+    useWorkoutStore.getState().startSession(Date.now());
+    expectCleared();
+
+    seed();
+    useWorkoutStore.getState().discardSession();
+    expectCleared();
+
+    seed();
+    useWorkoutStore.getState().finishSession({ title: 'Pull', meta: '', ts: 1 });
+    expectCleared();
+
+    seed();
+    useWorkoutStore.getState().reset();
+    expectCleared();
+  });
+});
+
 describe('workoutStore — state machine transitions', () => {
   beforeEach(resetStore);
 
