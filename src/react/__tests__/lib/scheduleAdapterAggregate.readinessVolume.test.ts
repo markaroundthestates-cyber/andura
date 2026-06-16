@@ -103,3 +103,31 @@ describe('scaleSetsByReadiness — no PR-day set boost during a CUT', () => {
     expect(scaleSetsByReadiness([ex('Squat', 4)], 60, false)[0]!.sets).toBe(3);
   });
 });
+
+// ── Cycle-9 cluster 4 — hasHistory gates the PR-day SET boost ──
+// scaleSetsByReadiness called getReadinessVerdict with NO hasHistory → defaulted
+// true → a NO-HISTORY user at PR readiness silently got the PR_DAY ×1.1 set boost
+// (+1 set on >=5-set lifts) while the card (getReadiness, which DOES thread
+// hasHistory) showed NORMAL. The hasHistory param mirrors the card's gate.
+describe('scaleSetsByReadiness — hasHistory gates the PR-day boost', () => {
+  it('NO history at PR readiness (95) → no ×1.1 boost (NORMAL → sets unchanged)', () => {
+    // 11 working sets × 1.1 = 12.1 → 12 WITH history; with NO history the verdict is
+    // NORMAL (1.0) → 11 (no phantom boost while the card reads NORMAL).
+    const noHist = scaleSetsByReadiness([ex('Cable Row', 11)], 95, false, false);
+    expect(noHist[0]!.sets).toBe(11);
+  });
+
+  it('WITH history at PR readiness (95) → ×1.1 boost applies', () => {
+    const withHist = scaleSetsByReadiness([ex('Cable Row', 11)], 95, false, true);
+    expect(withHist[0]!.sets).toBe(12);
+    // Default (omitted hasHistory) keeps the historical engine-caller behavior.
+    const dflt = scaleSetsByReadiness([ex('Cable Row', 11)], 95, false);
+    expect(dflt[0]!.sets).toBe(12);
+  });
+
+  it('NO history does NOT change the SUB-PR bands (a MODERATE day still cuts 0.85)', () => {
+    // 7 × 0.85 = 5.95 → 6 regardless of history (only the PR band is history-gated).
+    expect(scaleSetsByReadiness([ex('Cable Row', 7)], 60, false, false)[0]!.sets).toBe(6);
+    expect(scaleSetsByReadiness([ex('Cable Row', 7)], 60, false, true)[0]!.sets).toBe(6);
+  });
+});

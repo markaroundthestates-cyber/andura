@@ -1116,13 +1116,19 @@ export function resolveIntensityFactors(
  *   is the exact case the readiness model suppresses; getReadinessVerdict already
  *   maps a high-readiness CUT to SOLID 1.0, not PR_DAY 1.1). Default false →
  *   byte-identical to the prior no-opt call.
+ * @param hasHistory the user has at least one finished session. Default true (engine
+ *   callers) so existing behavior is unchanged. When false, getReadinessVerdict does
+ *   NOT promote PR_DAY (a PR-day claim is dishonest with no history to beat) — so a
+ *   no-history user no longer silently gets the PR_DAY ×1.1 set BOOST while the card
+ *   shows NORMAL (the card consumer getReadiness already threads hasHistory).
  */
 export function scaleSetsByReadiness(
   exercises: ReadonlyArray<TrimmableExercise>,
   readinessScore: number | null,
   isInCut = false,
+  hasHistory = true,
 ): TrimmableExercise[] {
-  const { volumeMultiplier } = getReadinessVerdict(readinessScore, { isInCut });
+  const { volumeMultiplier } = getReadinessVerdict(readinessScore, { isInCut, hasHistory });
   // 1.0 (NORMAL / no-score) or a non-positive/non-finite guard → no-op
   // (REST = 0 is a rest day the pipeline already filters upstream; never gut to
   // zero here). Identity keeps the common case byte-identical.
@@ -1455,7 +1461,12 @@ export async function composePlannedWorkoutToday(
     // identical, pinned OFF in fp).
     const readinessInCut =
       isEnabled('dp_readiness_cut_no_prboost_v1') && resolveActivePhase() === 'CUT';
-    const readinessScaled = scaleSetsByReadiness(mapped, readinessScore, readinessInCut);
+    // hasHistory — a no-history user must NOT silently get the PR_DAY ×1.1 set boost
+    // (the card via getReadiness already gates PR-day on history; this seam dropped it,
+    // defaulting hasHistory=true → a phantom boost while the card showed NORMAL). Same
+    // source the card consumer reads (useWorkoutStore.sessionsHistory).
+    const readinessHasHistory = useWorkoutStore.getState().sessionsHistory.length > 0;
+    const readinessScaled = scaleSetsByReadiness(mapped, readinessScore, readinessInCut, readinessHasHistory);
     // #76 — energy → VOLUME modulation (magnitude-aware), applied AFTER the readiness
     // scale (composes MIN-style on its already-reduced sets, so the two never double-
     // cut below the MEV floor) and BEFORE the time-budget trim (so the trim measures
