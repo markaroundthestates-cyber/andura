@@ -112,6 +112,16 @@ describe('clearUserDataKeys', () => {
     expect(localStorage.getItem('dp-nof1-narration')).toBeNull();
   });
 
+  // session-bias cross-user leak: the per-user learned kg multipliers (dp.js
+  // _recordSessionBias/_applySessionBias) matched no wipe set, so on a shared device
+  // user A's learned loads could leak into user B's starting recommendations (4h TTL
+  // bounded but real). Reset must clear it. Local-only (never cloud-synced).
+  it('clears the learned session-bias kg multipliers (cross-user leak on shared device)', () => {
+    localStorage.setItem('session-bias', JSON.stringify({ chest_compound: { kgFactor: 1.1, n: 3 }, ts: 1 }));
+    clearUserDataKeys();
+    expect(localStorage.getItem('session-bias')).toBeNull();
+  });
+
   // PDL-04: id-migration backups (`<key>-backup-pre-id-migration-<ts>`) carry a
   // full snapshot of the pre-migration user data and matched no reset prefix, so
   // "Reseteaza toate datele" left the wiped data alive inside the backup.

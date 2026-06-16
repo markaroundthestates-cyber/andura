@@ -43,12 +43,20 @@ import {
 // shared device it could leak from user A to user B (B sees A's "winner" line until
 // the next session consumes it). Local-only + never cloud-synced (deliberately out
 // of SYNC_KEYS) — same category as the entries above.
+//
+// `session-bias` = the per-user learned kg multipliers per exercise bucket (written
+// dp.js _recordSessionBias, read dp.js _applySessionBias). It matched no
+// reset/logout/account-switch wipe set, so on a shared device it could leak user A's
+// learned loads into user B's starting recommendations (bounded by a 4h TTL, but
+// real within that window). Local-only + never cloud-synced (deliberately out of
+// SYNC_KEYS) — same category as the entries above.
 const EXTRA_DATA_KEYS = Object.freeze([
   'pain-cdl',
   'andura-debug-log',
   'andura-debug',
   'andura-behavior-collect',
   'dp-nof1-narration',
+  'session-bias',
 ]);
 
 /**
