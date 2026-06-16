@@ -1329,6 +1329,16 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       && resolveExperienceId(userState?.user) === 'incepator'
         ? 5
         : null,
+    // BEGINNER CALF RESCUE (dp_beginner_calf_rescue_v1, default ON). At the beginner
+    // 5-slot cap a balanced full-body day seats chest/back/quads + shoulders-iso +
+    // hams-iso, so calves (gambe) get ZERO sets all week (no exercise tags gambe as a
+    // secondary, the leg-coverage trade excludes gambe, and the non-leg-major trade
+    // needs a leg surplus that does not exist). When ON + a beginner full-body day
+    // ends with calves at zero, buildSession seats ONE calf slot via a SWAP (displace
+    // a secondary-covered or non-major iso, never a compound/leg/focus) bounded by the
+    // cap. Null/false (flag OFF / non-beginner) → never runs → byte-identical (pinned
+    // OFF in fp-config FLIPPED_FLAGS).
+    beginnerCalfRescue: isEnabled('dp_beginner_calf_rescue_v1'),
     // §beginner-volume-v2 (dp_beginner_volume_v2, default ON; pinned OFF in fp) —
     // when ON, buildSession applies a FINAL clamp that caps a BEGINNER's EMPHASIZED-
     // group ISOLATIONS at MEV (2 sets). The prior delivered path rode a novice's

@@ -802,6 +802,26 @@ export const FLAGS = Object.freeze({
   // journeys keep the frozen hashes).
   dp_beginner_session_size_v1: { rollout: 1, default: true },
 
+  // BEGINNER CALF RESCUE (cycle-13 audit 2026-06-16). The beginner 5-slot cap
+  // (dp_beginner_session_size_v1) seats the most-coverage majors first — on a
+  // balanced full-body day that is chest/back/quads + shoulders-iso + hams-iso, so
+  // calves (gambe, the 6th major) never land a slot and get ZERO sets ALL WEEK.
+  // MAJOR_MUSCLES_SLOT_GUARANTEE lists gambe as a must-have major, but no
+  // displacement path seats it for a balanced beginner: NO exercise tags gambe as a
+  // secondary (so secondary-coverage cannot rescue it), the leg-coverage trade only
+  // covers the quads/hams/glutes region (gambe excluded), and the non-leg-major
+  // trade needs a leg surplus that does not exist at the cap. Result contradicts
+  // the engine's own slot-guarantee + the "de-emphasized -> MAINTENANCE (MEV),
+  // never zero" policy (acute for the elderly — calf/ankle strength is balance +
+  // fall-prevention). When ON + a beginner full-body day ends with calves at zero,
+  // seat ONE calf slot by DISPLACING the lowest-priority single-slot ISOLATION whose
+  // primary major is STILL covered by a chosen compound's secondary (no orphan),
+  // else a non-major/non-leg accessory iso — never a compound, a leg-region group, or
+  // the focus. A SWAP bounded by the cap (stays at 5, never grows). OFF / non-
+  // beginner / non-full cluster -> never runs -> byte-identical (pinned OFF in
+  // fp-config FLIPPED_FLAGS so the fp incepator journeys keep the frozen hashes).
+  dp_beginner_calf_rescue_v1: { rollout: 1, default: true },
+
   // #34 N-of-1 self-experiment (RISK HIGH — deliberately perturbs prescription to
   // learn the user's OWN response; the guardrails are the safety envelope). The
   // MEASUREMENT half is fully REUSED from #31 (trendDirection's noise-aware Kalman

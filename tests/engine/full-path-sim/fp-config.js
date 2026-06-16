@@ -346,6 +346,18 @@ export const FLIPPED_FLAGS = Object.freeze([
   // day ~5, focus leads, majors compound-covered) + the new beginner-session-size
   // regression test + the focus-signature gate, NOT in this determinism stream.
   'dp_beginner_session_size_v1',
+  // THE FLIP 2026-06-16 (beginner calf rescue) — dp_beginner_calf_rescue_v1 defaults
+  // ON. At the beginner 5-slot cap a balanced full-body day seats chest/back/quads +
+  // a shoulders-iso + a hams-iso, so calves (gambe) got ZERO sets all week. When ON,
+  // buildSession seats one calf slot via a SWAP (displace a secondary-covered or non-
+  // major iso, never a compound/leg/focus). The fp cohort includes incepator full-body
+  // journeys, so the ON swap WOULD move their frozen prescription hashes — pinned OFF
+  // here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so ctx.beginnerCalfRescue is false
+  // → the rescue never runs in either A/B arm → BOTH frozen baselines (hashOff/hashOn)
+  // stay byte-for-byte. ON behavior is proven on the beginnerCalfRescue gate test
+  // (Maria-65 + young beginner get calves; intermediate control unchanged), NOT in
+  // this determinism stream. Selection-only (no dp.js load math) → no sim-config pin.
+  'dp_beginner_calf_rescue_v1',
   // THE FLIP 2026-06-14 (low-capacity weekly-band clamp) — dp_lowcap_weekly_band_v1
   // defaults ON. It clamps a MAINTENANCE-goal or OLDER (age >=60) trainee's per-muscle
   // weekly DELIVERED volume into the maintenance band so the total no longer scales

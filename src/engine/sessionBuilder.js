@@ -3049,6 +3049,88 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  // BEGINNER CALF RESCUE (ctx.beginnerCalfRescue, dp_beginner_calf_rescue_v1, default
+  // ON). The beginner 5-slot cap seats the most-coverage majors first — on a balanced
+  // full-body day that is chest/back/quads (compounds) + a shoulders-iso + a hams-iso,
+  // so calves (gambe, the 6th MAJOR) never land a slot and get ZERO sets ALL WEEK.
+  // MAJOR_MUSCLES_SLOT_GUARANTEE lists gambe as a must-have major, but no displacement
+  // path seats it for a balanced beginner: (a) NO exercise tags gambe as a SECONDARY
+  // (so secondary-coverage cannot rescue it), (b) the leg-coverage trade above covers
+  // only LEG_REGION_GROUPS (gambe excluded), (c) the non-leg-major trade needs a leg
+  // SURPLUS that does not exist at the cap (every leg group at the floor). A calf raise
+  // is a single-joint ISO that pairs fine with a compound-first novice session and
+  // never competes with a leg compound — so seat ONE calf slot via a SWAP (never grow
+  // past the cap): displace the lowest-priority single-slot ISOLATION whose primary
+  // major is STILL covered by a chosen COMPOUND's secondary (no orphan — e.g. the
+  // lateral raise when a chest press also hits umeri), else a non-major/non-leg
+  // accessory iso (biceps/triceps/abs/forearm). NEVER displace a compound, a leg-region
+  // group, or the focus; if no safe victim exists, accept the gap (calves stay
+  // maintained across the week's other days). Beginner FULL-BODY only — an U/L split's
+  // upper day legitimately omits calves. OFF / non-beginner / non-full cluster → never
+  // runs → byte-identical (pinned OFF in fp-config FLIPPED_FLAGS).
+  if (ctx?.beginnerCalfRescue === true && beginnerCap !== null && cluster === 'full') {
+    const CALF = 'gambe';
+    const primaryOf = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+    // Live per-group slot census off `chosen` (every prior block may have rebuilt it).
+    const liveCount = {};
+    for (const e of chosen) {
+      const g = primaryOf(e.name);
+      if (g) liveCount[g] = (liveCount[g] || 0) + 1;
+    }
+    const majorSet = new Set(MAJOR_MUSCLES_SLOT_GUARANTEE);
+    // gambe orphaned + the cluster actually trains it + the library can supply it.
+    if ((liveCount[CALF] || 0) === 0 && targets.includes(CALF)) {
+      const calfPool = pools.find((p) => p.group === CALF)?.pool ?? [];
+      const inject = calfPool.find((e) => !isTaken(e));
+      if (inject) {
+        // A chosen exercise covers `g` as a SECONDARY of a COMPOUND (so the displaced
+        // primary stays maintained — the existing coveredBySecondaryCompound idiom).
+        const coveredBySecondaryCompound = (g) =>
+          chosen.some((e) => {
+            const m = getExerciseMetadata(e.name) || {};
+            if ((m.tier ?? 2) > COMPOUND_TIER) return false; // compound coverage only
+            const sec = Array.isArray(m.muscle_target_secondary) ? m.muscle_target_secondary : [];
+            return sec.includes(g);
+          });
+        let removeIdx = -1;
+        // Pass 1 — a single-slot ISOLATION (tier > COMPOUND_TIER) whose primary major
+        //   stays covered by a compound's secondary → a true no-orphan swap.
+        // Pass 2 — a single-slot NON-MAJOR, NON-LEG accessory iso (arms/abs/forearm)
+        //   the cap piled on — the audit's literal victim.
+        for (const pass of [1, 2]) {
+          for (let i = chosen.length - 1; i >= 0; i--) {
+            const g = primaryOf(chosen[i].name);
+            if (!g) continue;
+            if (LEG_REGION_GROUPS.includes(g)) continue;                  // never a leg-region slot
+            if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue; // never a compound
+            if (emphSet.has(g)) continue;                                 // never the active focus
+            if ((liveCount[g] || 0) !== 1) continue;                      // single-slot only
+            if (pass === 1) {
+              if (!majorSet.has(g) || !coveredBySecondaryCompound(g)) continue;
+            } else if (majorSet.has(g)) {
+              continue;                                                   // pass 2: non-major only
+            }
+            removeIdx = i;
+            break;
+          }
+          if (removeIdx >= 0) break;
+        }
+        if (removeIdx >= 0) {
+          const removed = chosen[removeIdx];
+          const rg = primaryOf(removed.name);
+          chosenNames.delete(removed.name);
+          chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
+          if (rg && liveCount[rg]) liveCount[rg] -= 1;
+          chosen.splice(removeIdx, 1, { name: inject.name, sets: DEFAULT_SETS });
+          chosenNames.add(inject.name);
+          chosenMovements.add(dedupKey(inject.name, inject.meta));
+          liveCount[CALF] = (liveCount[CALF] || 0) + 1;
+        }
+        // else: no safe victim → accept the gap (calves maintained across the week).
+      }
+    }
+  }
+
   // #HAMS HYPERTROPHY/STRENGTH HAMSTRING FLOOR (ctx.hamstringFloor,
   // dp_hamstring_floor_v1, default ON). A MASS-BUILDING / STRENGTH program (goal masa /
   // forta) must NEVER zero a hamstring — a major prime mover. The Cycle-11 posterior
