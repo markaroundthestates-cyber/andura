@@ -373,6 +373,10 @@ export async function wipeUserDB(uid) {
   try {
     await closeDb();
     await Dexie.delete(dbName);
+    // cycle-10: the overflow archive is a SEPARATE per-UID DB (AnduraArchive_<sanitizedUid>,
+    // same namespace sanitizer) — delete it too on account deletion, else the deleted user's
+    // archived sessions remain device-resident (GDPR Art.17 residue). Best-effort + non-fatal.
+    try { await Dexie.delete(`AnduraArchive_${sanitizedUid}`); } catch { /* non-fatal */ }
     // §S-18 — sweep anonymous residue on the same device (best-effort).
     await wipeAnonymousDBs();
     return { deleted: true, dbName };

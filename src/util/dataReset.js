@@ -127,6 +127,11 @@ export async function clearUserIndexedDB() {
     await dbModule.closeDb();
     const Dexie = (await import('dexie')).default;
     await Dexie.delete(`${dbModule.DB_NAME_PREFIX}_${ns}`);
+    // cycle-10: the overflow archive is a SEPARATE per-UID DB (AnduraArchive_<ns>) — wipe
+    // it too, else A's archived sessions survive A's reset/logout/account-switch and leak
+    // into the next user's GDPR export on a shared device (cross-UID leak + Art.17 residue).
+    const archive = await import('../react/lib/dexieMigration');
+    await archive.deleteArchiveDb();
   } catch {
     // IndexedDB unavailable / delete blocked — non-fatal; local keys still wiped.
   }
