@@ -27,8 +27,7 @@ import { fbGetUserChild, fbPatchUserChild } from '../../firebase.js';
 import { DB } from '../../db.js';
 import {
   mergeArrayUnion,
-  mergeMaxScalar,
-  mergeMaxIsoDate,
+  mergeStreakPair,
   mergeLastWriteWins,
   mergeObjectUnion,
 } from './storeMerge';
@@ -151,8 +150,15 @@ const SYNCED: SyncedStore[] = [
       const sessionsHistory = mergedSessions.map((s) =>
         Number.isFinite(s?.ts) ? s : { ...s, ts: 0 },
       );
-      const streak = mergeMaxScalar(local.streak, d.streak);
-      const lastStreakDate = mergeMaxIsoDate(local.lastStreakDate, d.lastStreakDate);
+      // Streak + its day-key are a COUPLED pair (count means "N days, last earned
+      // on date") — merging them INDEPENDENTLY (max count + max date) could graft
+      // an old high count onto a newer date → an inflated streak the user never
+      // earned. mergeStreakPair takes the freshest day's count wholesale (same-day
+      // race keeps the higher count).
+      const { streak, date: lastStreakDate } = mergeStreakPair(
+        { streak: local.streak, date: local.lastStreakDate },
+        { streak: d.streak, date: d.lastStreakDate },
+      );
       // lastSession LWW by its own ts (the finish timestamp) — but never restore a
       // tombstoned session as the post-summary surface.
       const mergedLastSession = mergeLastWriteWins(

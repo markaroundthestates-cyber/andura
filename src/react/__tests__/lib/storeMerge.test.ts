@@ -8,6 +8,7 @@ import {
   mergeArrayUnion,
   mergeMaxScalar,
   mergeMaxIsoDate,
+  mergeStreakPair,
   mergeLastWriteWins,
   mergeObjectUnion,
 } from '../../lib/storeMerge';
@@ -134,6 +135,41 @@ describe('mergeMaxIsoDate — newest day-key wins', () => {
     expect(mergeMaxIsoDate(null, '2026-05-20')).toBe('2026-05-20');
     expect(mergeMaxIsoDate('2026-05-20', null)).toBe('2026-05-20');
     expect(mergeMaxIsoDate(null, null)).toBeNull();
+  });
+});
+
+describe('mergeStreakPair — coupled count+date (no inflated streak)', () => {
+  it('newer date wins WHOLESALE — an old high count does NOT graft onto a newer date', () => {
+    // The regression: independent max(count)+max(date) would yield {10,'2026-06-16'}.
+    const r = mergeStreakPair(
+      { streak: 10, date: '2026-06-01' },
+      { streak: 3, date: '2026-06-16' },
+    );
+    expect(r).toEqual({ streak: 3, date: '2026-06-16' });
+  });
+  it('symmetric — local is the newer side', () => {
+    const r = mergeStreakPair(
+      { streak: 3, date: '2026-06-16' },
+      { streak: 10, date: '2026-06-01' },
+    );
+    expect(r).toEqual({ streak: 3, date: '2026-06-16' });
+  });
+  it('same calendar day → take the larger count (same-day cross-device race)', () => {
+    const r = mergeStreakPair(
+      { streak: 4, date: '2026-06-16' },
+      { streak: 7, date: '2026-06-16' },
+    );
+    expect(r).toEqual({ streak: 7, date: '2026-06-16' });
+  });
+  it('only one side dated → the dated side carries the only earnable streak', () => {
+    expect(mergeStreakPair({ streak: 9, date: null }, { streak: 2, date: '2026-06-16' }))
+      .toEqual({ streak: 2, date: '2026-06-16' });
+    expect(mergeStreakPair({ streak: 5, date: '2026-06-10' }, { streak: 8, date: null }))
+      .toEqual({ streak: 5, date: '2026-06-10' });
+  });
+  it('both undated → degenerate legacy state keeps the higher count, null date', () => {
+    expect(mergeStreakPair({ streak: 4, date: null }, { streak: 6, date: undefined }))
+      .toEqual({ streak: 6, date: null });
   });
 });
 

@@ -162,3 +162,41 @@ export function mergeMaxIsoDate(
   if (r === null) return l;
   return r > l ? r : l;
 }
+
+/**
+ * Merge the streak COUNT and its day-key as a COUPLED pair. The count and date
+ * are NOT independent: a streak of N means "N consecutive days, last earned on
+ * `date`". Merging them separately (max(count) + max(date) independently) could
+ * graft an OLD high count onto a NEWER date — fabricating a streak the user
+ * never earned (e.g. local {10, '2026-06-01'} + remote {3, '2026-06-16'} →
+ * {10, '2026-06-16'} is a lie; the user's most recent reality is the 3-streak).
+ *
+ * Rule: choose the side whose `date` is the most recent (count+date TOGETHER);
+ * only when the two dates are the SAME calendar day take max(count) (a device
+ * may have logged more that day before syncing). A side with no date carries no
+ * earnable streak — the dated side wins; both undated → max(count) with a null
+ * date (degenerate legacy state, mirrors the old behavior). This keeps the
+ * "don't regress today's streak" intent: the freshest day's count is preserved,
+ * and a same-day race keeps the higher count.
+ */
+export function mergeStreakPair(
+  local: { streak: number | null | undefined; date: string | null | undefined },
+  remote: { streak: number | null | undefined; date: string | null | undefined },
+): { streak: number; date: string | null } {
+  const lDate = typeof local.date === 'string' && local.date.length > 0 ? local.date : null;
+  const rDate = typeof remote.date === 'string' && remote.date.length > 0 ? remote.date : null;
+  const lStreak = mergeMaxScalar(local.streak, null); // coerce to finite (0 when absent)
+  const rStreak = mergeMaxScalar(remote.streak, null);
+  // No dates on either side — degenerate legacy state: keep the higher count.
+  if (lDate === null && rDate === null) {
+    return { streak: mergeMaxScalar(lStreak, rStreak), date: null };
+  }
+  // Only one side is dated → it carries the only earnable streak.
+  if (lDate === null) return { streak: rStreak, date: rDate };
+  if (rDate === null) return { streak: lStreak, date: lDate };
+  // Both dated: the most-recent day wins wholesale (count+date together); on the
+  // SAME day take the larger count (a same-day cross-device race).
+  if (rDate > lDate) return { streak: rStreak, date: rDate };
+  if (lDate > rDate) return { streak: lStreak, date: lDate };
+  return { streak: Math.max(lStreak, rStreak), date: lDate };
+}
