@@ -86,7 +86,16 @@ export function ProtectedRoute({ children }: Props): JSX.Element {
   if (pendingDeletionRestore && location.pathname !== '/app/cont/restore-account') {
     return <Navigate to="/app/cont/restore-account" replace />;
   }
-  if (!onboardingCompleted) {
+  // §C6 audit fix — the restore intercept must PRECEDE the onboarding gate. A
+  // soft-delete resets onboarding (completed:false) AND runPostAuthSync returns
+  // early on the deletion marker BEFORE hydrate, so completed stays false. On the
+  // restore path guard 2 above is skipped (path matches), so without this guard
+  // the !onboardingCompleted redirect below would fire and force the user through
+  // full re-onboarding before the RestoreAccount screen ever mounts — recovery
+  // unreachable. While a deletion is pending, bypass the onboarding gate so the
+  // RestoreAccount screen mounts; choosing Restore hydrates the cloud profile
+  // (re-sets completed), Delete-now clears the marker — both then re-gate normally.
+  if (!onboardingCompleted && !pendingDeletionRestore) {
     return <Navigate to="/onboarding/1" replace />;
   }
   return <>{children}</>;
