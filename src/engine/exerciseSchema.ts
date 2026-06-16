@@ -39,7 +39,7 @@ export type SkillLevel = 'beginner' | 'intermediate' | 'advanced';
  *   - 'reps':     weight × repetitions (the default — every loaded/bodyweight
  *                 strength movement). Absent → treated as 'reps' (safe default).
  *   - 'time':     an isometric HOLD prescribed in seconds (Plank, Side Plank,
- *                 Dead Hang, Pallof, Dead Bug, Wrist Roller). A load may still
+ *                 Dead Hang, Pallof, Plate Pinch Hold, Wrist Roller). A load may still
  *                 ride (a weighted plank) but the working axis is SECONDS, NOT
  *                 reps — so it must never get an "8 × 60kg reps" prescription.
  *   - 'distance': prescribed in meters (none in the curated 143 today; reserved
