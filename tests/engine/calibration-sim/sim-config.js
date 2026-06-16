@@ -58,7 +58,13 @@ export function resetStore() {
     // over-cap kg back to the safety ceiling, a path-B kg change this dp.js-direct sim sees
     // (its cohort logs over-cap loads WITH learned calibration). Pin OFF here to keep the
     // frozen baseline byte-for-byte; the ON re-clamp is covered by dp.calibration.test.js.
-    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false, dp_load_model_v1: false, dp_real_ladder_snap_v1: false, dp_user_ladder_v1: false, dp_behavioral_tier_v1: false, dp_tier_compound_floor_v1: false, dp_fatigue_curve_v1: false, dp_smart_selection_v1: false, dp_learned_recovery_v1: false, dp_plateau_intervention_v1: false, dp_ego_cap_v1: false, dp_temperament_v1: false, dp_trend_signal_v1: false, dp_load_transition_v1: false, dp_log_outlier_v1: false, dp_behavior_distill_v1: false, dp_subrecovery_drift_v1: false, dp_dip_classifier_v1: false, dp_nof1_v1: false, dp_library_chains_v1: false, dp_strength_bw_ratio_v1: false, dp_cap_after_calib_v1: false }));
+    // dp_ladder_snap_reconcile_v1 (cycle-10 2026-06-16) defaults ON — recommend() reconciles
+    // the FINAL kg with the real ladder (ease/down → a real rung that moved; PR-floor restore
+    // → nearest real rung >= proven; up-step → next real rung), a path-B kg change this
+    // dp.js-direct sim sees even with the snap flags off (roundToStep's nearest snap can still
+    // collapse a down/up step). Pin OFF here to keep the frozen baseline byte-for-byte; the ON
+    // reconcile is covered by dp.ladderReconcile.test.js + the #70 persona-matrix.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_rep_class_v1: false, dp_load_model_v1: false, dp_real_ladder_snap_v1: false, dp_user_ladder_v1: false, dp_behavioral_tier_v1: false, dp_tier_compound_floor_v1: false, dp_fatigue_curve_v1: false, dp_smart_selection_v1: false, dp_learned_recovery_v1: false, dp_plateau_intervention_v1: false, dp_ego_cap_v1: false, dp_temperament_v1: false, dp_trend_signal_v1: false, dp_load_transition_v1: false, dp_log_outlier_v1: false, dp_behavior_distill_v1: false, dp_subrecovery_drift_v1: false, dp_dip_classifier_v1: false, dp_nof1_v1: false, dp_library_chains_v1: false, dp_strength_bw_ratio_v1: false, dp_cap_after_calib_v1: false, dp_ladder_snap_reconcile_v1: false }));
   } catch {
     /* jsdom always provides localStorage */
   }

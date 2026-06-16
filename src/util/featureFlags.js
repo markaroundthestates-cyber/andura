@@ -239,6 +239,28 @@ export const FLAGS = Object.freeze({
   // so he never regresses; until then the seed holds.
   dp_user_ladder_v1: { rollout: 1, default: true },
 
+  // LADDER-SNAP RECONCILE (cycle-10 audit 2026-06-16) — closes the seam between the
+  // GENERIC progression ladder (getNextWeight/getPrevWeight walk EQUIPMENT_WEIGHTS) and
+  // the REAL pin-stack the FINAL rec snaps onto (roundToStep → realMachineStacks /
+  // user ladder, under dp_real_ladder_snap_v1 + dp_user_ladder_v1). Two coupled defects:
+  // (C1) EASE-BACK / down-step picked the next-lower GENERIC rung (e.g. Cable Row 42→40),
+  // but 40 snaps back UP to 42 on the real 6..90 stack → the move silently no-ops AND the
+  // note (frozen from the pre-snap 40) contradicts the prescribed 42 (re-introduced the
+  // Gigel P0 the ease-back fix 142c1c7c killed: rate too heavy → handed the same load).
+  // (C2) the PR-FLOOR restored the proven load via roundToStep(floorW), re-snapping the
+  // proven floor through the COARSE barbell grid that craters it (squat 105 → 100, 5kg
+  // BELOW demonstrated capacity), the floor's own invariant violated by its restore snap.
+  // When ON, recommend() reconciles the FINAL kg with the real ladder: an ease/down move
+  // that collapsed to >= lastW steps DOWN to a real rung strictly below lastW (or holds +
+  // trims reps at the real floor); the PR-floor restores to the nearest real rung >= the
+  // proven load (never below); an up-move that collapsed to <= lastW bumps to the next
+  // real rung; and the progressionNote is regenerated from the FINAL kg so weight + words
+  // never diverge. OFF → the original pre-snap-derived kg/note (byte-identical). Lives
+  // entirely behind the ladder-snap regime (no real-stack divergence exists when those
+  // flags are off) → pinned OFF in fp-config FLIPPED_FLAGS so the frozen hashes hold;
+  // ships ON (default:true) — the off-grid contradiction is a P0 user-facing bug.
+  dp_ladder_snap_reconcile_v1: { rollout: 1, default: true },
+
   // dp_accessory_rotation_v1 (2026-06-11, Daniel "monotonia tampa") — ANCHOR/
   // ACCESSORY rotation. On a mature account everything is logged → PR-stickiness
   // made every week identical. Policy: anchors (tier-1 compounds) REPEAT,

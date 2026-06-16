@@ -7,6 +7,7 @@ import { roundToEquipmentWeight, getPrevWeight, getNextWeight } from '../config/
 import { SIMILAR_EXERCISES, getSimilarityMultiplier, getTransferSources } from './exerciseMapping.js';
 import { getExerciseMetadata } from './exerciseLibrary.js';
 import { loggedRowMatcher, canonicalLoggedName } from './dp/logIdentity.js';
+import { reconcileLadderStep } from './dp/ladderReconcile.js';
 import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
@@ -1543,6 +1544,48 @@ export const DP = {
             result.statusColor = 'var(--green)';
             result.statusLabel = '🟢 La nivelul tau';
             result.progressionNote = `${result.kg} kg · nivelul pe care l-ai demonstrat deja, peste plafonul implicit.`;
+          }
+        }
+      }
+
+      // ── CLUSTER 1 (cycle-10, dp/ladderReconcile.js) ───────────────────────────
+      // _recommendRaw picks the next/prev rung on the GENERIC ladder + bakes the note
+      // from it; recommend() then snaps result.kg onto the REAL stack. When the ladders
+      // disagree, a down-step can re-snap UP onto the load the user just did (Cable Row
+      // 42→generic 40→real 42, note still "coboram la 40") and an up-step can re-snap
+      // back DOWN onto lastW. reconcileLadderStep lands on a real rung that actually
+      // MOVED + regenerates the note so weight + words agree. Runs AFTER the PR-floor +
+      // gated on a genuine lastW (no return-deload). OFF → byte-identical. The floor it
+      // honors is the RAW demonstrated load (a load truly owned), NOT the e1RM estimate.
+      if (isEnabled('dp_ladder_snap_reconcile_v1') && result && result.kg > 0
+          && this._returnDeload(ex, nowMs) == null) {
+        const lastW = this.getState(ex).lastW || 0;
+        if (lastW > 0) {
+          const phO = /** @type {string} */ (DB.get('phase-override')) || 'AUTO';
+          const rMinFloor = (this.getPhaseAwareRepRange(ex, this._isInCut(phO, nowMs))[0]) ?? 8;
+          const dec = reconcileLadderStep({
+            status: result.status, kg: result.kg, repsTarget: result.repsTarget,
+            progressionStage: result.progressionStage,
+            lastW, ex, rMinFloor,
+            rawFloor: this._demonstratedWorkingW(ex, rMinFloor),
+            effectiveMaxKg: this._effectiveMaxKg(ex, result.repsTarget ?? 12),
+            roundToStep: (k, e) => this.roundToStep(k, e), getPrevWeight, getNextWeight,
+          });
+          if (dec) {
+            // Submodule decided kg/reps + a semantic noteKind; dp.js (unscanned by the
+            // i18n leak harness, like every sibling note) composes the RO progressionNote
+            // so weight + words never diverge.
+            result.kg = dec.kg;
+            result.repsTarget = dec.repsTarget;
+            if (dec.noteKind === 'ease-down') {
+              result.progressionNote = `A fost greu · coboram la ${result.kg} kg ca sa stapanesti miscarea.`;
+            } else if (dec.noteKind === 'ease-hold-trim') {
+              result.progressionNote = `A fost greu · ramanem la ${result.kg} kg dar tintim ${result.repsTarget} reps.`;
+            } else if (dec.noteKind === 'climb-catchup') {
+              result.progressionNote = `Te descurci usor → urcam la ${result.kg} kg, catre nivelul tau real.`;
+            } else if (dec.noteKind === 'climb-up') {
+              result.progressionNote = `Ai progresat → urcam la ${result.kg} kg.`;
+            }
           }
         }
       }

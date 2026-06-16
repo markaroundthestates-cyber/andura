@@ -244,6 +244,17 @@ export const FLIPPED_FLAGS = Object.freeze([
   // OFF here for the all-off-world guarantee (the frozen prescription hashes stay
   // byte-for-byte; if a hash moved, the gating would be leaking).
   'dp_user_ladder_v1',
+  // THE FLIP 2026-06-16 (cycle-10 ladder-snap reconcile) — dp_ladder_snap_reconcile_v1
+  // defaults ON. recommend() reconciles the FINAL kg with the real ladder so a down/up
+  // step that the snap collapsed onto the same rung lands on a real rung that MOVED, and
+  // the PR-floor restore snaps UP to the nearest real rung >= the proven load (never
+  // below). It is load-path (a kg change the full-path stream could see — roundToStep's
+  // nearest snap can collapse a step even on the generic ladder), pinned OFF here (in
+  // FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so BOTH A/B arms force the legacy pre-snap kg/
+  // note → the frozen full-path hashes (hashOff/hashOn) stay byte-for-byte. ON behavior
+  // (Cable Row eases to a real lower rung; squat floor restores to 110 not 100) is proven
+  // on the dp.ladderReconcile cluster-10 regression suite, NOT this determinism stream.
+  'dp_ladder_snap_reconcile_v1',
   'dp_accessory_rotation_v1',
   'dp_warmup_ramp_v1',
   'dp_progression_bonus_v1',
