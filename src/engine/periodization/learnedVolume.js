@@ -41,6 +41,11 @@ export const LEARNED_VOLUME_CLAMP_LO = 0.6;   // learned landmark floored at 0.6
 export const LEARNED_VOLUME_CLAMP_HI = 1.6;   // ceiled at 1.6× the prior
 const LEARNED_VOLUME_MIN_WEEKS = 4;           // need ≥4 observed (week→nextWeek 1RM) deltas to learn
 const STALL_EPS = 0.005;                      // ±0.5% weekly 1RM delta = "flat" (response saturated)
+// LV-3 — a week at/below this fraction of the trailing-median set count AND with a
+// dropped working load reads as a scheduled DELOAD (DELOAD_MULTIPLIERS.volumeMul =
+// 0.55 → a deload sits ~0.55× the load weeks). 0.7 catches the design −45% volume cut
+// with margin while never flagging a normal week's noise.
+const DELOAD_SETS_FRACTION = 0.7;
 
 /**
  * Sum the weekly set count a muscle group received in one ISO-week's logs. When
@@ -57,6 +62,28 @@ function weeklySetWeight(sets, useEffective) {
   let w = 0;
   for (const s of sets) w += effectiveReps(s) / 5; // EFFECTIVE_WINDOW = 5 (effectiveReps.js)
   return w;
+}
+
+/**
+ * Median of a numeric array (0 when empty). PURE helper for the LV-3 deload detector.
+ * @param {number[]} arr
+ * @returns {number}
+ */
+function median(arr) {
+  if (!arr.length) return 0;
+  const s = [...arr].sort((a, b) => a - b);
+  const mid = s.length >> 1;
+  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+}
+
+/**
+ * The week's representative working load = the median of its sets' loads. Used by
+ * LV-3 to tell a DELOAD (lighter load) from a normal low-volume week. PURE.
+ * @param {Array<{ w?: number }>} sets
+ * @returns {number}
+ */
+function medianLoad(sets) {
+  return median((sets || []).map((s) => Number(s.w)).filter((w) => Number.isFinite(w) && w > 0));
 }
 
 /**
@@ -79,7 +106,10 @@ function weeklySetWeight(sets, useEffective) {
  * @param {Record<string, {mev:number, mav:number, n:number}>} [prior] existing learned
  *   landmarks to EMA-continue (the persisted `dp-learned-volume`); absent → seed
  *   from the Israetel prior.
- * @param {{ effective?: boolean }} [opts] effective: learn on stimulus volume (V3 dose link)
+ * @param {{ effective?: boolean, fixInversions?: boolean }} [opts] effective: learn on
+ *   stimulus volume (V3 dose link). fixInversions (dp_learned_volume_fix_v1): apply the
+ *   cycle-9 LV-1/LV-2/LV-3 corrections (deload exclusion + low-dose-only MEV + true-
+ *   plateau MAV). OFF → the original (pre-fix) landmark math, byte-identical.
  * @returns {Record<string, {mev:number, mav:number, n:number}>} keyed on ISRAETEL EN muscle
  */
 export function learnVolumeLandmarks(logs, prior, opts) {
@@ -88,6 +118,7 @@ export function learnVolumeLandmarks(logs, prior, opts) {
   const rows = Array.isArray(logs) ? logs.filter((l) => l && l.ex && Number(l.w) > 0) : [];
   if (rows.length === 0) return out;
   const useEffective = !!(opts && opts.effective);
+  const fixInversions = !!(opts && opts.fixInversions);
 
   // Bucket per (EN muscle, ISO-week) → { sets[], best1RM }.
   /** @type {Record<string, Map<string, { sets: any[], best: number }>>} */
@@ -114,37 +145,70 @@ export function learnVolumeLandmarks(logs, prior, opts) {
     const baseline = ISRAETEL_BASELINES[enMuscle];
     const weeks = [...perMuscle[enMuscle].entries()]
       .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([, cell]) => ({ sets: weeklySetWeight(cell.sets, useEffective), best: cell.best }))
+      .map(([, cell]) => ({ sets: weeklySetWeight(cell.sets, useEffective), best: cell.best, load: medianLoad(cell.sets) }))
       .filter((w) => w.best > 0);
     if (weeks.length < LEARNED_VOLUME_MIN_WEEKS + 1) continue;
 
+    // LV-3 (dp_learned_volume_fix_v1) — a scheduled DELOAD week (DELOAD_MULTIPLIERS:
+    // volumeMul 0.55 → ~45% fewer sets, intensityMul 0.875 → lighter load → a
+    // mechanically lower best-1RM) is reduced BY DESIGN, not a real volume response.
+    // Feeding it into the curve manufactures a spurious "regressed at high volume" (the
+    // post-deload pair's low prevBest reads as a jump) / "stalled at low volume"
+    // artifact. Flag a week whose set count is well below the trailing median AND whose
+    // working load dropped below it (the deload signature) so it can be excluded from
+    // the response curve. Pure — detected from the logs themselves (the meso phase is
+    // not carried per log row). OFF → empty mask → the original curve (byte-identical).
+    const isDeload = weeks.map((w, i) => {
+      if (!fixInversions || i === 0) return false; // need trailing context to call a deload
+      const trail = weeks.slice(0, i);
+      const medSets = median(trail.map((t) => t.sets));
+      const medLoad = median(trail.map((t) => t.load).filter((x) => x > 0));
+      return medSets > 0 && w.sets <= medSets * DELOAD_SETS_FRACTION
+        && medLoad > 0 && w.load > 0 && w.load < medLoad;
+    });
+
     // Response curve: each week's set count vs the FORWARD 1RM delta (next week).
+    // LV-3 — skip any pair touching a deload week (its dragged set count as the source
+    // OR its lower best as the prevBest both poison the curve), so a history that
+    // differs ONLY by inserting recommended deload weeks learns the SAME band.
     /** @type {Array<{ sets:number, delta:number }>} */
     const pts = [];
     for (let i = 1; i < weeks.length; i++) {
+      if (isDeload[i] || isDeload[i - 1]) continue;
       const prevBest = weeks[i - 1].best;
       if (prevBest <= 0) continue;
       pts.push({ sets: weeks[i - 1].sets, delta: (weeks[i].best - prevBest) / prevBest });
     }
     if (pts.length < LEARNED_VOLUME_MIN_WEEKS) continue;
 
-    // personalMAV = smallest weekly-set count whose forward delta has saturated
-    // (≤ STALL_EPS) — past here, more sets stop paying off (junk volume).
-    const stalled = pts.filter((p) => p.delta <= STALL_EPS).map((p) => p.sets);
-    // personalMEV = largest weekly-set count that still REGRESSED (delta < 0) —
-    // below/at this dose the muscle failed to even maintain (under-dosing).
-    const regressed = pts.filter((p) => p.delta < -STALL_EPS).map((p) => p.sets);
-
     const start = prior && prior[enMuscle] ? prior[enMuscle] : { mev: baseline.MEV, mav: baseline.MAV };
     let mav = Number.isFinite(start.mav) ? start.mav : baseline.MAV;
     let mev = Number.isFinite(start.mev) ? start.mev : baseline.MEV;
+
+    // personalMAV = the saturation dose (more sets stop paying off → junk volume).
+    // LV-2 (dp_learned_volume_fix_v1): a TRUE plateau only (|delta| ≤ STALL_EPS — a
+    // NEGATIVE delta is a regression / a deload, NOT saturation). OFF → the original
+    // `delta ≤ EPS`, which counted a DROP as a plateau → a low/deload week dragged MAV
+    // down to ~MEV (advanced 14 → 8). The deload weeks are now excluded upstream (LV-3);
+    // the [0.6×,1.6×] clamp bounds any genuine low-dose plateau.
+    const stalled = pts
+      .filter((p) => (fixInversions ? Math.abs(p.delta) <= STALL_EPS : p.delta <= STALL_EPS))
+      .map((p) => p.sets);
+    // personalMEV = the under-dosing landmark. LV-1 (dp_learned_volume_fix_v1): only a
+    // LOW-dose regression (sets ≤ the current MAV band) is under-dosing — a drop at HIGH
+    // set count is over-reaching, not under-dosing — and the LOWEST such dose (Math.min).
+    // OFF → the original Math.max over ALL regressions, which read over-reaching as MEV
+    // (a beginner who over-reached reached 13, +60%).
+    const regressed = pts
+      .filter((p) => p.delta < -STALL_EPS && (!fixInversions || p.sets <= mav))
+      .map((p) => p.sets);
 
     if (stalled.length) {
       const observedMav = Math.min(...stalled);
       mav = mav + LEARNED_VOLUME_EMA_ALPHA * (observedMav - mav);
     }
     if (regressed.length) {
-      const observedMev = Math.max(...regressed);
+      const observedMev = fixInversions ? Math.min(...regressed) : Math.max(...regressed);
       mev = mev + LEARNED_VOLUME_EMA_ALPHA * (observedMev - mev);
     }
     // Only emit when at least one signal moved the band this learn (else leave to prior).

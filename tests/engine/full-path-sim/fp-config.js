@@ -484,6 +484,17 @@ export const FLIPPED_FLAGS = Object.freeze([
   // last-occurrence drop runs → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is
   // proven on the lateralDeltGuarantee fatigue-survival regression test, NOT in this stream.
   'dp_fatigue_drop_guarantee_aware_v1',
+  // THE FLIP 2026-06-16 (learned-volume inversion fix) — dp_learned_volume_fix_v1
+  // defaults ON. It corrects three coupled defects INSIDE the dp_learned_volume_v1
+  // response curve (LV-3 deload exclusion, LV-1 low-dose-only MEV, LV-2 true-plateau
+  // MAV). dp_learned_volume_v1 IS in PATH_A_FLAGS (the hashOn arm turns it ON), so the
+  // corrected landmark math WOULD move the frozen full-path hashOn — pinned OFF here (in
+  // FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so the persistSessionLogs call site threads
+  // fixInversions:false in both A/B arms → the original learned-volume math runs → BOTH
+  // frozen baselines (hashOff/hashOn) stay byte-for-byte. ON behavior is proven on the
+  // learnedVolume cluster-9 regression suite (deload-insertion invariant + LV-1/LV-2),
+  // NOT in this determinism stream.
+  'dp_learned_volume_fix_v1',
   // THE FLIP 2026-06-16 (no PR-day set boost in a CUT) — dp_readiness_cut_no_prboost_v1
   // defaults ON. scaleSetsByReadiness threaded isInCut into getReadinessVerdict so a high-
   // readiness user in an active CUT no longer gets the PR_DAY ×1.1 SET boost (+~10% volume in a

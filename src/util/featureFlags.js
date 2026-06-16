@@ -439,6 +439,23 @@ export const FLAGS = Object.freeze({
   // (spec §7) — sim sweep + Daniel review before flip (volume dose is a felt change).
   dp_learned_volume_v1: { rollout: 1, default: true },
 
+  // V1 #10 learned-volume INVERSION fix (cycle-9 audit 2026-06-16) — three coupled
+  // defects inside the (already-gated) dp_learned_volume_v1 response curve: (LV-3) a
+  // scheduled DELOAD week (volume -45% / intensity -12.5% by design) was fed in as a
+  // normal point, manufacturing a spurious "regressed at high volume" artifact; (LV-1)
+  // MEV (the UNDER-dose landmark) was learned from Math.max over ALL regressions, so a
+  // drop at HIGH set count (over-reaching) inflated MEV (beginner reached 13, +60%);
+  // (LV-2) MAV (saturation) counted NEGATIVE deltas as "stalled" and Math.min dragged
+  // it to ~MEV (advanced 14 -> 8, -43%). When ON, learnVolumeLandmarks excludes deload
+  // weeks from the curve, only treats low-dose regressions as under-dosing (Math.min),
+  // and counts only TRUE plateaus (|delta| <= EPS) for MAV. OFF -> the original learned-
+  // volume math (byte-identical to the frozen learned-volume behavior). Threaded via
+  // opts.fixInversions at the persistSessionLogs call site; pinned OFF in fp-config
+  // FLIPPED_FLAGS so the frozen full-path hashOn (which exercises dp_learned_volume_v1)
+  // stays byte-for-byte. Lives entirely inside the dp_learned_volume_v1 path -> no new
+  // user surface; ships the correction to users (default:true).
+  dp_learned_volume_fix_v1: { rollout: 1, default: true },
+
   // BEGINNER volume v2 (2026-06-13, eval p1/p10 over-volume defect). The
   // experience-volume modifier shipped a beginner at EXPERIENCE_MODIFIERS.incepator
   // = 0.70 of the advanced Israetel target — which lands a high-frequency novice

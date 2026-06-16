@@ -268,7 +268,7 @@ export function persistSessionLogs(
       const learnedVol = learnVolumeLandmarks(
         merged as unknown as Parameters<typeof learnVolumeLandmarks>[0],
         priorVol,
-        { effective: isEnabled('dp_effective_reps_v1') }
+        { effective: isEnabled('dp_effective_reps_v1'), fixInversions: isEnabled('dp_learned_volume_fix_v1') }
       );
       if (Object.keys(learnedVol).length) saveLearnedVolume(learnedVol);
     }

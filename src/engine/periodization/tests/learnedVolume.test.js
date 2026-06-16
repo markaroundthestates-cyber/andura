@@ -110,6 +110,94 @@ describe('F6b V1 #10 — learnVolumeLandmarks', () => {
   });
 });
 
+// ── Cycle-9 cluster 1 — learned-volume inversions (LV-1/LV-2/LV-3) ──
+// A week of `nSets` Leg Extension sets at a real working load (non-round) + real
+// rating literals + ISO-week spacing — production-shaped, NOT the round helper above.
+function quadWeekW(wk, nSets, topW, reps, rating = 'potrivit') {
+  const rows = [];
+  const ts = T0 + wk * MS_WEEK;
+  for (let s = 0; s < nSets; s++) {
+    rows.push({ ex: 'Leg Extension', w: topW, reps, ts: ts + s * 61000, rating });
+  }
+  return rows;
+}
+function buildW(profile) {
+  let logs = [];
+  let wk = 0;
+  for (const [n, w, r, rating] of profile) { logs = logs.concat(quadWeekW(wk, n, w, r, rating)); wk++; }
+  return logs;
+}
+
+describe('cycle9 cluster1 — learned-volume inversions', () => {
+  const FIX = { fixInversions: true }; // dp_learned_volume_fix_v1 ON (ships to users)
+
+  it('LV-3 — inserting recommended DELOAD weeks yields byte-identical landmarks', () => {
+    // Advanced lifter plateaus at 14 sets (flat 1RM) across the block. The training
+    // weeks are identical; the only difference is a scheduled deload (volume -45% ->
+    // 7 sets, intensity -12.5% -> lighter 67.5kg) inserted mid-block.
+    const noDeload = [
+      [14, 82.5, 8], [14, 82.5, 8], [14, 82.5, 8], [14, 82.5, 8], [14, 82.5, 8], [14, 82.5, 8],
+    ];
+    const withDeload = [
+      [14, 82.5, 8], [14, 82.5, 8], [14, 82.5, 8],
+      [7, 67.5, 10, 'usor'],   // DELOAD inserted (fewer sets + lighter by design)
+      [14, 82.5, 8], [14, 82.5, 8], [14, 82.5, 8],
+    ];
+    const base = learnVolumeLandmarks(buildW(noDeload), undefined, FIX).quads;
+    const variant = learnVolumeLandmarks(buildW(withDeload), undefined, FIX).quads;
+    // Both learn the SAME band — the deload does not manufacture a spurious signal.
+    expect(variant).toEqual(base);
+    // Flag OFF (pre-fix) — the deload DID move the landmark (the defect this proves).
+    const variantOff = learnVolumeLandmarks(buildW(withDeload)).quads;
+    expect(variantOff).not.toEqual(base);
+  });
+
+  it('LV-2 — a plateau-then-DELOAD advanced lifter keeps MAV ~14 (no collapse to 8)', () => {
+    // Plateau at 14 (flat 1RM), then a deload at 8 sets / lighter load. Pre-fix the
+    // deload-8 week read as a "stalled" point and Math.min dragged MAV down to ~8.
+    const logs = buildW([
+      [14, 82.5, 8], [14, 82.5, 8], [14, 82.5, 8], [14, 82.5, 8],
+      [8, 70.0, 8, 'usor'],   // deload at low dose
+      [14, 82.5, 8], [14, 82.5, 8],
+    ]);
+    const learned = learnVolumeLandmarks(logs, undefined, FIX).quads;
+    expect(learned).toBeDefined();
+    // MAV stays near the prior plateau dose, never collapses toward MEV (8): the
+    // deload-8 week is excluded (LV-3) and a NEGATIVE/low delta is no longer counted
+    // as a "stalled" saturation point (LV-2).
+    expect(learned.mav).toBeGreaterThanOrEqual(13);
+  });
+
+  it('LV-1 — a regression at HIGH dose (over-reaching) does NOT inflate MEV', () => {
+    // Good progress at a moderate 8 sets, then the 1RM REGRESSES while volume is
+    // PUSHED to 16 sets (over-reaching). A drop at high volume is over-reaching, not
+    // under-dosing — MEV must stay at the prior 8, never rise toward 16.
+    const logs = buildW([
+      [8, 57.5, 12], [8, 60.0, 11], [8, 62.5, 10],
+      [16, 62.5, 10], [16, 60.0, 10], [16, 57.5, 10],
+    ]);
+    const learned = learnVolumeLandmarks(logs, undefined, FIX).quads;
+    expect(learned).toBeDefined();
+    // MEV is NOT dragged up by the high-dose regression (pre-fix Math.max(...regressed)
+    // = 16 inflated it toward 16; now only low-dose regressions, Math.min).
+    expect(learned.mev).toBeLessThanOrEqual(ISRAETEL_BASELINES.quads.MEV);
+    // Pre-fix (flag OFF) the same history INFLATED MEV above the prior.
+    const off = learnVolumeLandmarks(logs).quads;
+    expect(off.mev).toBeGreaterThan(ISRAETEL_BASELINES.quads.MEV);
+  });
+
+  it('LV-1 — a genuine LOW-dose regression still RAISES MEV (under-dosing preserved)', () => {
+    // The muscle is trained at a LOW 4 sets and the 1RM DROPS each week → real
+    // under-dosing → MEV must move DOWN toward 4 from the prior 8 (the legit signal).
+    const logs = buildW([
+      [4, 72.5, 9], [4, 70.0, 9], [4, 67.5, 9], [4, 65.0, 9], [4, 62.5, 9], [4, 60.0, 9],
+    ]);
+    const learned = learnVolumeLandmarks(logs, undefined, FIX).quads;
+    expect(learned).toBeDefined();
+    expect(learned.mev).toBeLessThan(ISRAETEL_BASELINES.quads.MEV);
+  });
+});
+
 describe('F6b V1 #10 — computeMuscleVolumeTarget off-byte-identical', () => {
   const base = {
     muscleGroup: 'quads',
