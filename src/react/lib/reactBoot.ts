@@ -54,6 +54,7 @@ import { runAuthPathMigration } from '../../migrations/2026-05-02-auth-path-migr
 import { enforceDataOwner } from '../../util/dataReset.js';
 import { useAppStore } from '../stores/appStore';
 import { hydrateStoresFromCloud, startStoreSyncSubscriptions } from './storeSync';
+import { resetInMemoryStores } from './resetStores';
 import { migrateAnonymousToAuth } from '../../storage/migrateAnonymousToAuth.js';
 import { readDeletionMarker } from './accountDeletion';
 import { runIdMigrationOnce } from '../../engine/idMigration.js';
@@ -233,6 +234,17 @@ export async function runPostAuthSync(): Promise<void> {
         dataSwitch = await enforceDataOwner(uid);
       } catch (err) {
         logger.warn('[Auth] data-owner guard threw:', err);
+      }
+      // Account-switch in-memory wipe — enforceDataOwner clears localStorage +
+      // IndexedDB on a switch (a DIFFERENT account authenticated on a still-authed
+      // browser with NO page reload), but NOT the in-memory Zustand stores, which
+      // still hold the PRIOR user's state. Without this reset, the hydrate below
+      // would mergeArrayUnion A's in-memory sessions/history with B's cloud → A's
+      // data leaks into B's UI AND gets pushed up to B's cloud node (permanent
+      // contamination). Reset BEFORE the hydrate so the merge lands on an EMPTY
+      // local baseline (B's cloud → empty).
+      if (dataSwitch) {
+        resetInMemoryStores();
       }
       // 08.047 — anon → auth IndexedDB Tier-1 handover. When a user trained
       // anonymously then signed up on THIS device (not an account switch), the
