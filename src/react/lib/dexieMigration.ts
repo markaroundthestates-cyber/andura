@@ -158,6 +158,23 @@ export async function getArchivedSessions(): Promise<ArchivedSession[]> {
   }
 }
 
+/**
+ * Count the CURRENT user's archived sessions (the SESSIONS_HISTORY_MAX overflow).
+ * Dexie .count() reads the index only (no full row materialization), so the
+ * "Total Sessions" lifetime tile can add this to sessionsHistory.length without
+ * the cap freezing the true lifetime at 500. Soft-fail to 0 (no IDB / SSR).
+ */
+export async function getArchivedSessionCount(): Promise<number> {
+  const db = getDb();
+  if (db === null) return 0;
+  try {
+    await migrateLegacyIfNeeded(db, _dbNs as string);
+    return await db.sessions.count();
+  } catch {
+    return 0;
+  }
+}
+
 /** Clear the CURRENT user's archive (admin/dev helper + teardown). */
 export async function clearArchive(): Promise<void> {
   const db = getDb();

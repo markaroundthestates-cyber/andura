@@ -14,7 +14,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import 'fake-indexeddb/auto';
 import Dexie from 'dexie';
-import { archiveSession, getArchivedSessions, _resetArchiveCacheForTest, ARCHIVE_DB_NAME } from '../../lib/dexieMigration';
+import { archiveSession, getArchivedSessions, getArchivedSessionCount, _resetArchiveCacheForTest, ARCHIVE_DB_NAME } from '../../lib/dexieMigration';
 import { clearUserDataKeys, clearUserIndexedDB, wipeUserDataOnLogout, enforceDataOwner } from '../../../util/dataReset';
 import { _resetNamespaceCache, closeDb, getNamespace } from '../../../storage/db.js';
 import type { LastSessionSummary } from '../../stores/workoutStore';
@@ -115,6 +115,35 @@ describe('archive is namespaced per-UID + survives no teardown path', () => {
     await dbMod.wipeUserDB(ns); // sanitized(ns) === ns → deletes AnduraArchive_<ns>
     _resetArchiveCacheForTest();
     expect(await getArchivedSessions()).toEqual([]);
+  });
+});
+
+describe('C16-PR-002 — Total Sessions counts the archived overflow (true lifetime)', () => {
+  it('getArchivedSessionCount returns the per-UID archive count', async () => {
+    await asUser('devA');
+    expect(await getArchivedSessionCount()).toBe(0);
+    await archiveSession(sessionA());
+    await archiveSession(sessionB());
+    expect(await getArchivedSessionCount()).toBe(2);
+  });
+
+  it('lifetime total = in-memory sessionsHistory length + archived overflow (cap no longer freezes it)', async () => {
+    await asUser('devA');
+    // The store keeps at most SESSIONS_HISTORY_MAX=500 in memory; the rest is archived.
+    const inMemory = 500;
+    await archiveSession(sessionA());
+    await archiveSession(sessionB());
+    const archived = await getArchivedSessionCount(); // N = 2 overflow sessions
+    // Istoric composes totalSessionsLifetime = stats.totalSessions + archivedCount.
+    expect(inMemory + archived).toBe(502);
+  });
+
+  it('count is per-UID isolated (user B does not see user A overflow)', async () => {
+    await asUser('devA');
+    await archiveSession(sessionA());
+    expect(await getArchivedSessionCount()).toBe(1);
+    await asUser('devB');
+    expect(await getArchivedSessionCount()).toBe(0);
   });
 });
 

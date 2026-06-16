@@ -11,11 +11,12 @@
 // <mon>" pentru cititor casnic; numeric DD.MM.YYYY retras (jargon-numeric).
 
 import type { JSX } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { History, Flame, Trophy, ChevronDown, type LucideIcon } from 'lucide-react';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { getPRHistoryAll, getStreakStats } from '../../../lib/prHistoryAggregate';
+import { getArchivedSessionCount } from '../../../lib/dexieMigration';
 import { CalendarHeatmap } from '../../../components/Istoric/CalendarHeatmap';
 import { RatingsStrip90Day } from '../../../components/Istoric/RatingsStrip90Day';
 import { VirtualSessionList } from '../../../components/Istoric/VirtualSessionList';
@@ -53,6 +54,19 @@ export function Istoric(): JSX.Element {
   // Phase 6 task_23 enrich aggregates
   const stats = getStreakStats();
   const prHistory = getPRHistoryAll();
+
+  // C16-PR-002 — sessionsHistory is capped at SESSIONS_HISTORY_MAX=500 (overflow
+  // archived to the per-UID AnduraArchive, never counted), so stats.totalSessions
+  // froze at 500. Add the archived overflow count (Dexie .count(), index-only) so
+  // the "Total Sessions" tile shows the TRUE lifetime. Async (IDB) → load once on
+  // mount; 0 until resolved (the in-memory length still shows immediately).
+  const [archivedCount, setArchivedCount] = useState(0);
+  useEffect(() => {
+    let alive = true;
+    getArchivedSessionCount().then((n) => { if (alive) setArchivedCount(n); }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  const totalSessionsLifetime = stats.totalSessions + archivedCount;
 
   // Founder UX 2026-06-06 — which record row is expanded (collapsed by default
   // so the records list stays compact). Single-open accordion; null = all closed.
@@ -103,7 +117,7 @@ export function Istoric(): JSX.Element {
         <HistStat
           icon={History}
           color="var(--aqua)"
-          value={stats.totalSessions}
+          value={totalSessionsLifetime}
           label={t('istoric.landing.statTotalSessions')}
           testId="stats-total"
           delayCls="delay-75"
