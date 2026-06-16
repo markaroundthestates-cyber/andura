@@ -205,6 +205,37 @@ describe('Progres — redesign layout (2026-05-30 locked)', () => {
     expect(trend.compareDocumentPosition(cta) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
+  // Cycle-5 audit (MEDIUM): the TREND zone must read weightLog CHRONOLOGICALLY
+  // (by date), not by array position. addWeightEntry appends regardless of date,
+  // LogWeight allows back-dated entries, and cloud merge appends remote entries
+  // unsorted — so a back-dated weigh-in inserted AFTER a newer one would, under
+  // positional reads, invert the delta sign (a loss shown as a gain) + scramble
+  // the sparkline. Sorting by `date` (ts tiebreaker) keeps it honest.
+  it('reads the trend chronologically by date — back-dated entry does not invert the delta', () => {
+    // 80 kg today (logged first), then 82 kg a week earlier inserted LATER (higher
+    // ts). Positionally: first=80, last=82 → +2 (wrong, gain). By date: first=82
+    // (older), last=80 (today) → -2 (correct, loss).
+    useProgresStore.setState({
+      weightLog: [
+        { kg: 80, date: '2026-05-24', ts: 100 }, // today, logged first
+        { kg: 82, date: '2026-05-17', ts: 200 }, // a week ago, inserted later
+      ],
+    });
+    renderProgres();
+    // The trend Pill renders the signed delta — must show the loss (-2 kg).
+    const tendinta = screen.getByTestId('progres-zone-tendinta');
+    expect(tendinta.textContent ?? '').toMatch(/-2\s*kg/);
+    expect(tendinta.textContent ?? '').not.toMatch(/\+2\s*kg/);
+    // Sparkline drawn chronologically: first point = oldest (82 = max → top of
+    // chart = smallest y) and the glowing last dot sits at the latest (80 = min →
+    // bottom = largest y). So the line's first y < its last y (older heavier, now
+    // lighter), proving the series is ordered old→new, not reversed/scrambled.
+    const linePath = screen.getByTestId('pulse-sparkline-line').getAttribute('d') ?? '';
+    const ys = [...linePath.matchAll(/[ML]\s*[\d.]+\s+([\d.]+)/g)].map((m) => parseFloat(m[1]!));
+    expect(ys).toHaveLength(2);
+    expect(ys[0]!).toBeLessThan(ys[1]!);
+  });
+
   it('shows the honest "sharpens as you log" microcopy after logging today', async () => {
     renderProgres();
     fireEvent.click(screen.getByTestId('nutri-kcal-edit'));

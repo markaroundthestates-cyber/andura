@@ -104,7 +104,25 @@ export function Progres(): JSX.Element {
     return () => { cancelled = true; };
   }, []);
 
-  const lastWeight = weightLog[weightLog.length - 1];
+  // Chronological view — weightLog is NOT date-sorted (addWeightEntry appends
+  // regardless of date, LogWeight allows back-dated entries, cloud merge appends
+  // remote entries unsorted). Reading it positionally (weightLog[0]/[last])
+  // INVERTS the trend delta sign on a back-dated weigh-in or cloud merge (a loss
+  // shown as a gain) + scrambles the sparkline. Sort by `date` (YYYY-MM-DD,
+  // lexicographic) with `ts` tiebreaker — same idiom as latestBodyMeasurements /
+  // getCurrentWeightKg (`ts` has mixed semantics: live=Date.now() vs imported=
+  // Date.UTC(date), so `date` is the robust key). WeightTimeline + getCurrentWeightKg
+  // agree on this ordering.
+  const sortedWeightLog = useMemo(
+    () =>
+      [...weightLog].sort((a, b) => {
+        const dateCmp = (a.date ?? '').localeCompare(b.date ?? '');
+        if (dateCmp !== 0) return dateCmp;
+        return (a.ts ?? 0) - (b.ts ?? 0);
+      }),
+    [weightLog],
+  );
+  const lastWeight = sortedWeightLog[sortedWeightLog.length - 1];
   const alerts = coach?.alerts ?? [];
   // Gate the RECUPERARE zone (heading + grid) on the recovery engine actually
   // returning groups — a fresh T0 user (no logged sets) otherwise sees a lone
@@ -126,12 +144,12 @@ export function Progres(): JSX.Element {
   // returns null on <2 points, so the card only renders the line once there's a
   // trend to draw; the precise latest/delta numbers live on the Weight Timeline.
   const sparkData = useMemo(
-    () => weightLog.map((w) => ({ day: w.date, kg: w.kg })),
-    [weightLog],
+    () => sortedWeightLog.map((w) => ({ day: w.date, kg: w.kg })),
+    [sortedWeightLog],
   );
-  const firstWeight = weightLog[0];
+  const firstWeight = sortedWeightLog[0];
   const trendDelta =
-    lastWeight && firstWeight && weightLog.length >= 2
+    lastWeight && firstWeight && sortedWeightLog.length >= 2
       ? +(lastWeight.kg - firstWeight.kg).toFixed(1)
       : null;
 
