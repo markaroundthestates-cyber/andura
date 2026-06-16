@@ -42,6 +42,10 @@ interface PriorHistoryEntry {
   w?: number;
   reps?: number;
   baseline?: boolean;
+  // cycle16-calib-enrich-strip: detectPR excludes BOTH baseline AND calibration
+  // from prevBest (prEngine.js). The enrich path must carry calibration too, or a
+  // prior calibration anchor is read as a real prevBest (HIDING a genuine PR).
+  calibration?: boolean;
 }
 
 interface RawLogEntry {
@@ -49,6 +53,7 @@ interface RawLogEntry {
   w?: number;
   reps?: number | string;
   baseline?: boolean;
+  calibration?: boolean;
 }
 
 function coercePriorHistory(logs: RawLogEntry[]): PriorHistoryEntry[] {
@@ -59,6 +64,7 @@ function coercePriorHistory(logs: RawLogEntry[]): PriorHistoryEntry[] {
     if (l.w !== undefined) entry.w = l.w;
     if (reps !== undefined) entry.reps = reps;
     if (l.baseline !== undefined) entry.baseline = l.baseline;
+    if (l.calibration !== undefined) entry.calibration = l.calibration;
     return entry;
   });
 }
@@ -103,9 +109,13 @@ export function enrichExercisesWithPR(
       // detectPR contract: { w, reps }. Returns null when no PR.
       const detection = detectPR(prKey, { w: s.kg, reps: s.reps }, acc);
       // Add this set to accumulator AFTER detection (so within-session
-      // progressive overload can produce multiple PRs on same exercise).
-      acc.unshift({ ex: prKey, w: s.kg, reps: s.reps });
-      if (!detection) return s;
+      // progressive overload can produce multiple PRs on same exercise). Carry the
+      // calibration flag so a within-session calibration set is excluded from later
+      // sets' prevBest (matches detectPR's calibration exclusion).
+      acc.unshift({ ex: prKey, w: s.kg, reps: s.reps, ...(s.calibration ? { calibration: true } : {}) });
+      // A calibration set is a level-set anchor, NOT a contested attempt — never
+      // stamp it as a PR (a false PR badge would persist on the user's own anchor).
+      if (!detection || s.calibration) return s;
       return typedPR
         ? { ...s, isPR: true, prType: detection.type }
         : { ...s, isPR: true };

@@ -103,3 +103,40 @@ describe('F6b V2 #14 — PR type carried past the flat isPR boolean', () => {
     expect(firstSet(out).prType).toBeUndefined();
   });
 });
+
+// ── cycle16-calib-enrich-strip — calibration honored in the enrich path ──────
+describe('cycle16-calib-enrich-strip — calibration flag survives coercion', () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(() => localStorage.clear());
+
+  it('a prior CALIBRATION anchor does NOT hide a genuine PR (isPR surfaces)', () => {
+    // Prior history: a heavy CALIBRATION anchor (100kg, a manual level-set, NOT a
+    // beaten record) + a real worked set (80kg). The current 90kg beats the real
+    // 80kg → a genuine weight PR. Before the fix, coercePriorHistory stripped the
+    // calibration flag, so detectPR read the 100kg anchor as prevBest (90<100 → no
+    // PR, the genuine PR HIDDEN). With the flag carried, the anchor is excluded.
+    const out = enrichExercisesWithPR(oneSet('Squat', 90, 5), [
+      { ex: 'Squat', w: 100, reps: 5, calibration: true },
+      { ex: 'Squat', w: 80, reps: 5 },
+    ]);
+    expect(firstSet(out).isPR).toBe(true);
+  });
+
+  it('a CURRENT calibration set is never stamped isPR (no false PR badge)', () => {
+    // The logged set is itself a calibration anchor (heavier than any prior real
+    // set). detectPR would flag it, but a calibration set must never carry a PR
+    // badge (it is the user's own level-set, not a contested record).
+    const calSet: SessionExerciseBreakdown[] = [
+      {
+        exerciseId: 'x1',
+        exerciseName: 'Squat',
+        engineName: 'Squat',
+        sets: [{ kg: 120, reps: 5, rating: 'potrivit', timestamp: 0, calibration: true }],
+        totalVolume: 600,
+        peakOneRM: 120,
+      },
+    ];
+    const out = enrichExercisesWithPR(calSet, [{ ex: 'Squat', w: 80, reps: 5 }]);
+    expect(firstSet(out).isPR).toBeUndefined();
+  });
+});
