@@ -541,6 +541,23 @@ export const FLAGS = Object.freeze({
   // UNVERIFIED thresholds (spec §7) — Daniel/research review before flip.
   dp_acwr_readiness_v1: { rollout: 1, default: true },
 
+  // ACWR uncoupling + cold-start guard (cycle-9 audit 2026-06-16) — two coupled
+  // defects in computeACWR's denominator. (1) COUPLING: the chronic denominator spanned
+  // the FULL 28-day window, which INCLUDES the 7-day acute window, scaled by a fixed
+  // 7/28 — so a returning user (or week-1 user) with ALL load in the last 7 days read
+  // acute==chronicTotal → acwr = 28/7 = 4.0, structurally pinned to the max penalty →
+  // could NEVER reach the 85 "Zi de PR" threshold. (2) COLD-START: the fixed 7/28
+  // divisor with only chronicTotal>0 as the guard made a steady 2-3-week user read a
+  // false acute:chronic SPIKE (2.0 at 2wk) → unearned penalty → at feel-tired it
+  // crossed the <60 dp.js weight-HOLD cliff. When ON, the chronic baseline is the load
+  // OUTSIDE the acute window (days [7,28]) scaled to a 7-day window (canonical uncoupled
+  // ACWR ~1.0 at steady volume), and computeACWR returns null until there is real
+  // pre-acute history (span >= ~2x the acute window AND non-trivial pre-acute load) —
+  // mirroring the existing cold-start null-return + the readiness hasHistory honesty.
+  // OFF → the original coupled 28-day / 7-28 math (byte-identical). Pinned OFF in
+  // fp-config FLIPPED_FLAGS so the frozen full-path hashes (the fp ACWR personas) hold.
+  dp_acwr_uncoupled_v1: { rollout: 1, default: true },
+
   // #30 weekly volume distribution by recovery (RISK MED — changes WHICH DAY a
   // group is trained, path A scheduling; never kg). When ON,
   // allocateWeeklyVolumeByRecovery re-skins the EXISTING M1 redistribution at the

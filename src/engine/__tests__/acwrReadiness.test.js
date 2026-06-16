@@ -82,3 +82,57 @@ describe('F6a #5 ACWR readiness', () => {
     expect(on).toBeLessThan(off);
   });
 });
+
+// ── Cycle-9 cluster 2 — ACWR uncoupling + cold-start false-spike ──
+describe('cycle9 cluster2 — ACWR uncoupled (dp_acwr_uncoupled_v1)', () => {
+  const ON = () => localStorage.setItem('_devFlags', JSON.stringify({ dp_acwr_uncoupled_v1: true }));
+  const OFF = () => localStorage.setItem('_devFlags', JSON.stringify({ dp_acwr_uncoupled_v1: false }));
+
+  it('returning user (all load in the last 7d) is NOT pinned to acwr 4.0 → null', () => {
+    // A user back after a >28d break crams their first week in. The legacy coupled
+    // denominator (28d total includes the acute 7d) read acute==chronicTotal → 28/7
+    // = 4.0, the max penalty, so the score could never reach the 85 "Zi de PR".
+    const returning = [
+      { ex: 'Flat DB Press', w: 27.5, reps: '10', rpe: 8, ts: NOW - 1 * DAY },
+      { ex: 'Flat DB Press', w: 27.5, reps: '9', rpe: 7.5, ts: NOW - 3 * DAY },
+      { ex: 'Flat DB Press', w: 25.0, reps: '11', rpe: 8.5, ts: NOW - 5 * DAY },
+    ];
+    OFF();
+    const off = computeACWR(returning, NOW);
+    expect(off).not.toBeNull();
+    expect(off.acwr).toBeCloseTo(4.0, 2); // the legacy structural pin
+    ON();
+    // No pre-acute baseline → honest null (no penalty) instead of a fabricated 4.0.
+    expect(computeACWR(returning, NOW)).toBeNull();
+  });
+
+  it('steady 2-week user does NOT read a false spike → null (no unearned hold)', () => {
+    // Even cadence over the last ~13 days — a stable trainee, no spike. The legacy
+    // fixed 7/28 divisor with only chronicTotal>0 as the guard read a false ~2.0
+    // acute:chronic spike → an unearned penalty crossing the <60 dp.js HOLD cliff.
+    const steady = logsOver('Flat DB Press', 62.5, 13, 2, 1);
+    OFF();
+    const off = computeACWR(steady, NOW);
+    expect(off).not.toBeNull();
+    expect(off.acwr).toBeGreaterThan(ACWR_HIGH); // the legacy false spike
+    ON();
+    // Span < 2x the acute window of real PRE-acute history → honest null.
+    expect(computeACWR(steady, NOW)).toBeNull();
+  });
+
+  it('a steady ~4-week trainee reads ~1.0 (no penalty), real spike still penalized', () => {
+    ON();
+    const steady = logsOver('Flat DB Press', 62.5, 28, 2, 1); // even cadence over 28d
+    const a = computeACWR(steady, NOW);
+    expect(a).not.toBeNull();
+    expect(a.acwr).toBeGreaterThan(0.7);
+    expect(a.acwr).toBeLessThan(1.4);
+    expect(acwrReadinessPenalty(a)).toBe(0);
+    // A genuine recent spike on top of a real chronic baseline still trips the penalty.
+    const spike = [...logsOver('Flat DB Press', 62.5, 28, 7, 1), ...logsOver('Flat DB Press', 62.5, 5, 1, 5)];
+    const s = computeACWR(spike, NOW);
+    expect(s).not.toBeNull();
+    expect(s.acwr).toBeGreaterThan(ACWR_HIGH);
+    expect(acwrReadinessPenalty(s)).toBeGreaterThan(0);
+  });
+});

@@ -673,11 +673,40 @@ function _loadUnits(logs, now, days) {
 }
 
 /**
- * Systemic acute:chronic workload ratio. PURE. Acute = the last ACWR_ACUTE_DAYS
- * load; chronic = the last ACWR_CHRONIC_DAYS load scaled to the SAME window length
- * (chronic_per_acute_window = chronicTotal × acuteDays/chronicDays) so the ratio is
- * ~1.0 at steady volume. Returns null when there is not enough chronic history to
- * form an honest denominator (cold start → the caller leaves readiness untouched).
+ * The earliest qualifying (non-baseline, real-load) log timestamp within
+ * [now - days, now], or +Infinity when none. PURE. Used by the cold-start guard to
+ * measure how much pre-acute history actually exists.
+ * @param {ReadonlyArray<{ex?:string, baseline?:boolean, w?:number, ts?:number, date?:string}>} logs
+ * @param {number} now
+ * @param {number} days
+ * @returns {number}
+ */
+function _earliestLogTs(logs, now, days) {
+  const cutoff = now - days * MS_PER_DAY;
+  let earliest = Infinity;
+  for (const l of Array.isArray(logs) ? logs : []) {
+    if (!l || l.baseline || !l.ex) continue;
+    const w = Number(l.w);
+    if (!Number.isFinite(w) || w <= 0) continue;
+    const ts = Number(l.ts) || (l.date ? new Date(l.date).getTime() : 0);
+    if (!Number.isFinite(ts) || ts < cutoff || ts > now) continue;
+    if (ts < earliest) earliest = ts;
+  }
+  return earliest;
+}
+
+/**
+ * Systemic acute:chronic workload ratio. PURE. Acute = the last ACWR_ACUTE_DAYS load.
+ *
+ * Chronic (dp_acwr_uncoupled_v1 ON — canonical uncoupled ACWR): the load in the
+ * PRE-ACUTE band [ACWR_ACUTE_DAYS, ACWR_CHRONIC_DAYS] scaled to the SAME 7-day window
+ * length, so the ratio is ~1.0 at steady volume and a returning/week-1 user is NOT
+ * structurally pinned to 28/7 = 4.0. Returns null until there is a real chronic
+ * baseline (pre-acute span >= ~2x the acute window AND non-trivial pre-acute load),
+ * mirroring the existing cold-start null-return.
+ *
+ * Chronic (flag OFF — legacy): the last ACWR_CHRONIC_DAYS load scaled by a fixed
+ * acuteDays/chronicDays — which INCLUDES the acute window (coupled).
  * @param {ReadonlyArray<{ex?:string, baseline?:boolean, w?:number, rpe?:number, ts?:number, date?:string}>} logs
  * @param {number} [now]
  * @returns {{acwr:number, acute:number, chronic:number}|null}
@@ -688,6 +717,23 @@ export function computeACWR(logs, now = Date.now()) {
   // Need a real chronic baseline: at least the acute window's worth of history
   // beyond the acute window itself, else the ratio is undefined (cold start).
   if (!(chronicTotal > 0)) return null;
+
+  if (isEnabled('dp_acwr_uncoupled_v1')) {
+    // Pre-acute load = the chronic-window load OUTSIDE the acute window (days [7,28]).
+    const preAcute = chronicTotal - acute;
+    // Cold start: no honest denominator without a real baseline BEFORE the acute window.
+    // Require both non-trivial pre-acute load AND a span of >= ~2x the acute window from
+    // the earliest in-window log to now (a steady 2-week user reads ~1.0, not a spike).
+    if (!(preAcute > 0)) return null;
+    const earliest = _earliestLogTs(logs, now, ACWR_CHRONIC_DAYS);
+    if (!Number.isFinite(earliest) || now - earliest < 2 * ACWR_ACUTE_DAYS * MS_PER_DAY) return null;
+    // Scale the pre-acute (21-day) load to a 7-day window so acute/chronic is dimensionless.
+    const chronicPerWindow = preAcute * (ACWR_ACUTE_DAYS / (ACWR_CHRONIC_DAYS - ACWR_ACUTE_DAYS));
+    if (!(chronicPerWindow > 0)) return null;
+    const acwr = acute / chronicPerWindow;
+    return { acwr: Math.round(acwr * 1000) / 1000, acute: Math.round(acute), chronic: Math.round(chronicTotal) };
+  }
+
   const chronicPerWindow = chronicTotal * (ACWR_ACUTE_DAYS / ACWR_CHRONIC_DAYS);
   if (!(chronicPerWindow > 0)) return null;
   const acwr = acute / chronicPerWindow;

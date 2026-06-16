@@ -484,6 +484,18 @@ export const FLIPPED_FLAGS = Object.freeze([
   // last-occurrence drop runs → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is
   // proven on the lateralDeltGuarantee fatigue-survival regression test, NOT in this stream.
   'dp_fatigue_drop_guarantee_aware_v1',
+  // THE FLIP 2026-06-16 (ACWR uncoupling) — dp_acwr_uncoupled_v1 defaults ON. It
+  // uncouples computeACWR's chronic denominator (pre-acute band [7,28] scaled to a
+  // 7-day window) + a real cold-start guard. The simulated-date cohort never reaches
+  // readiness (readiness.js resolves the WALL clock), so the frozen §A hashes are
+  // unaffected either way; the ACWR path is exercised by acwrRealClockFullPath (§B).
+  // Pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so BOTH A/B arms force
+  // the LEGACY coupled ACWR math explicitly → the frozen baselines (hashOff/hashOn)
+  // are guaranteed byte-for-byte regardless of how the cohort exercises ACWR, and the
+  // §B real-clock spike test rides the legacy denominator. ON behavior (returning/
+  // week-1 users no longer pinned to 4.0, steady 2-3wk users no false spike) is proven
+  // on the acwrReadiness cluster-9 regression suite, NOT in this determinism stream.
+  'dp_acwr_uncoupled_v1',
   // THE FLIP 2026-06-16 (learned-volume inversion fix) — dp_learned_volume_fix_v1
   // defaults ON. It corrects three coupled defects INSIDE the dp_learned_volume_v1
   // response curve (LV-3 deload exclusion, LV-1 low-dose-only MEV, LV-2 true-plateau
