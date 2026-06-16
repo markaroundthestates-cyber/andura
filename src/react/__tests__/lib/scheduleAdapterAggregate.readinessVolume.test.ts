@@ -75,3 +75,31 @@ describe('scaleSetsByReadiness — graded readiness ramp on SETS', () => {
     expect(input.map((e) => e.sets)).toEqual([3, 3, 3, 3]);
   });
 });
+
+// ── CUT-AWARE PR-DAY BOOST SUPPRESSION (dp_readiness_cut_no_prboost_v1) ────────
+// scaleSetsByReadiness called getReadinessVerdict with no opts, so a high-readiness
+// user in an active CUT got the PR_DAY ×1.1 SET boost — +~10% volume in a deficit,
+// the exact case the readiness model suppresses (getReadinessVerdict's isInCut path
+// maps a CUT-high to SOLID 1.0). The isInCut param threads the cut state through.
+describe('scaleSetsByReadiness — no PR-day set boost during a CUT', () => {
+  it('CUT user at PR readiness (95) → no ×1.1 boost (SOLID 1.0 → sets unchanged)', () => {
+    // 10 sets × 1.1 = 11 when NOT in cut; in a cut the verdict is SOLID (1.0) → 10.
+    const inCut = scaleSetsByReadiness([ex('Squat', 10)], 95, true);
+    expect(inCut[0]!.sets).toBe(10); // no boost in a deficit
+  });
+
+  it('non-cut user at PR readiness (95) → ×1.1 boost still applies', () => {
+    const notCut = scaleSetsByReadiness([ex('Squat', 10)], 95, false);
+    expect(notCut[0]!.sets).toBe(11); // boost preserved outside a cut
+    // And the default (omitted isInCut) matches the non-cut path → byte-identical.
+    const dflt = scaleSetsByReadiness([ex('Squat', 10)], 95);
+    expect(dflt[0]!.sets).toBe(11);
+  });
+
+  it('CUT does not gut the SUB-PR bands — a MODERATE cut day still cuts (0.85)', () => {
+    // 4 × 0.85 = 3.4 → 3 in both cut and non-cut (the cut path only changes the
+    // PR band; MODERATE/LIGHT multipliers are identical in/out of a cut).
+    expect(scaleSetsByReadiness([ex('Squat', 4)], 60, true)[0]!.sets).toBe(3);
+    expect(scaleSetsByReadiness([ex('Squat', 4)], 60, false)[0]!.sets).toBe(3);
+  });
+});

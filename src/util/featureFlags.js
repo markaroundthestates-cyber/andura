@@ -1764,6 +1764,20 @@ export const FLAGS = Object.freeze({
   // aware redirect moves a victim → pin OFF). Proven on the lateralDeltGuarantee
   // fatigue-survival regression test.
   dp_fatigue_drop_guarantee_aware_v1: { rollout: 1, default: true },
+
+  // No PR-day set boost during a CUT (dp_readiness_cut_no_prboost_v1, 2026-06-16,
+  // DEFAULT ON). scaleSetsByReadiness called getReadinessVerdict with NO opts, so a
+  // high-readiness user in an active CUT got the PR_DAY ×1.1 SET multiplier — +~10%
+  // volume in a deficit, the exact case the readiness model suppresses elsewhere
+  // (getReadinessVerdict's isInCut path maps a CUT-high to SOLID 1.0, not PR_DAY 1.1).
+  // When ON the compose seam resolves isInCut (resolveActivePhase()==='CUT') and
+  // threads it into scaleSetsByReadiness → getReadinessVerdict, so a cut user at PR-
+  // readiness keeps multiplier 1.0 (no boost); a non-cut PR-readiness user still gets
+  // the ×1.1. OFF → isInCut false → the old boost-in-cut (byte-identical). Pinned OFF
+  // in fp-config FLIPPED_FLAGS so both frozen prescription baselines stay byte-for-byte
+  // (a fp journey that is BOTH in a CUT AND at PR readiness would drop the ×1.1 set
+  // boost → move a hash → pin OFF). Proven on the scaleSetsByReadiness cut-aware test.
+  dp_readiness_cut_no_prboost_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

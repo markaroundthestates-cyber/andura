@@ -484,6 +484,15 @@ export const FLIPPED_FLAGS = Object.freeze([
   // last-occurrence drop runs → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is
   // proven on the lateralDeltGuarantee fatigue-survival regression test, NOT in this stream.
   'dp_fatigue_drop_guarantee_aware_v1',
+  // THE FLIP 2026-06-16 (no PR-day set boost in a CUT) — dp_readiness_cut_no_prboost_v1
+  // defaults ON. scaleSetsByReadiness threaded isInCut into getReadinessVerdict so a high-
+  // readiness user in an active CUT no longer gets the PR_DAY ×1.1 SET boost (+~10% volume in a
+  // deficit). A fp journey that is BOTH in a CUT AND at PR readiness would drop that ×1.1 set
+  // boost → move a frozen prescription hash. Pinned OFF here (in FLIPPED_FLAGS only, NOT
+  // PATH_A_FLAGS) so readinessInCut is forced false in both A/B arms → the old boost-in-cut runs
+  // → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is proven on the
+  // scaleSetsByReadiness cut-aware regression test, NOT in this determinism stream.
+  'dp_readiness_cut_no_prboost_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

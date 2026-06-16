@@ -1112,12 +1112,17 @@ export function resolveIntensityFactors(
  *
  * @param exercises planned exercises (sets to scale)
  * @param readinessScore live readiness score, or null (no energy-check today)
+ * @param isInCut active CUT phase — suppresses the PR_DAY ×1.1 set boost (a deficit
+ *   is the exact case the readiness model suppresses; getReadinessVerdict already
+ *   maps a high-readiness CUT to SOLID 1.0, not PR_DAY 1.1). Default false →
+ *   byte-identical to the prior no-opt call.
  */
 export function scaleSetsByReadiness(
   exercises: ReadonlyArray<TrimmableExercise>,
   readinessScore: number | null,
+  isInCut = false,
 ): TrimmableExercise[] {
-  const { volumeMultiplier } = getReadinessVerdict(readinessScore);
+  const { volumeMultiplier } = getReadinessVerdict(readinessScore, { isInCut });
   // 1.0 (NORMAL / no-score) or a non-positive/non-finite guard → no-op
   // (REST = 0 is a rest day the pipeline already filters upstream; never gut to
   // zero here). Identity keeps the common case byte-identical.
@@ -1443,7 +1448,14 @@ export async function composePlannedWorkoutToday(
     // This consumes the dropped readiness ramp (Path A — sets, not weight); the
     // dp.js < 60 HOLD cliff still owns the load. Applied BEFORE the trim so the
     // time budget measures the readiness-scaled session. 1.0 → byte-identical.
-    const readinessScaled = scaleSetsByReadiness(mapped, readinessScore);
+    // CUT-AWARE (dp_readiness_cut_no_prboost_v1): in an active CUT a high-readiness
+    // user must NOT get the PR_DAY ×1.1 set BOOST (+~10% volume in a deficit — the
+    // exact case the readiness model suppresses; getReadinessVerdict maps a CUT-high
+    // to SOLID 1.0). OFF → isInCut false → the prior boost-in-cut behavior (byte-
+    // identical, pinned OFF in fp).
+    const readinessInCut =
+      isEnabled('dp_readiness_cut_no_prboost_v1') && resolveActivePhase() === 'CUT';
+    const readinessScaled = scaleSetsByReadiness(mapped, readinessScore, readinessInCut);
     // #76 — energy → VOLUME modulation (magnitude-aware), applied AFTER the readiness
     // scale (composes MIN-style on its already-reduced sets, so the two never double-
     // cut below the MEV floor) and BEFORE the time-budget trim (so the trim measures
