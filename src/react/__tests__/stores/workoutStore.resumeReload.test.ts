@@ -138,4 +138,66 @@ describe('workoutStore stale-session discard on rehydrate (APP-LIFECYCLE-01)', (
     expect(s.phase).toBe('logging');
     expect(s.history[0]).toHaveLength(1);
   });
+
+  it('clears droppedExercises + performedExercises on a stale (>6h) reset', async () => {
+    const stale = Date.now() - 7 * 60 * 60 * 1000; // 7h ago
+    const s = await rehydrateWith({
+      sessionStart: stale, exIdx: 1, setIdx: 0, phase: 'logging',
+      history: { 0: [{ kg: 80, reps: 8, rating: 'potrivit' }] },
+      droppedExercises: { 2: { id: 'leg-press', name: 'Leg Press', engineName: 'Leg Press' } },
+      performedExercises: { 1: { id: 'incline-db', name: 'Incline DB Press', engineName: 'Incline DB Press' } },
+    });
+    // Stale session discarded → structural-decision maps reset to idle defaults.
+    expect(s.droppedExercises).toEqual({});
+    expect(s.performedExercises).toEqual({});
+  });
+});
+
+// ── In-session structural decisions survive a mid-session reload (cycle15) ────
+// dropExercise + swapExercise record the user's explicit in-session structural
+// decisions in two index-keyed maps. Pre-fix partialize OMITTED them, so a
+// mid-session reload resumed 'active' but reset both to {} → a DROPPED exercise
+// resurrected as pending and a SWAPPED slot reverted to the original plan (while
+// the substitute's sets stayed in history under that slot → engine-key mixing on
+// continued logging). The fix persists both maps alongside the in-progress
+// fields; the >6h stale-reset clears them to {} (covered above). These tests run
+// the REAL partialize (persistedState) and the REAL merge (rehydrateWith).
+describe('workoutStore in-session structural decisions persist (cycle15)', () => {
+  /** Plant a persisted snapshot then re-import the store so merge() runs against it. */
+  async function rehydrateWith(state: Record<string, unknown>) {
+    localStorage.setItem(PERSIST_KEY, JSON.stringify({ state, version: 0 }));
+    vi.resetModules();
+    const mod = await import('../../stores/workoutStore');
+    return mod.useWorkoutStore.getState();
+  }
+
+  it('persists droppedExercises + performedExercises after a drop + swap', () => {
+    const store = useWorkoutStore.getState();
+    store.startSession(123456);
+    store.logSet(0, { kg: 80, reps: 8, rating: 'potrivit' });
+    // User swaps the slot they are on (substitute actually performed) ...
+    store.swapExercise(0, { id: 'incline-db', name: 'Incline DB Press', engineName: 'Incline DB Press' });
+    // ... and drops a later slot they don't want (busy machine, "nu vreau").
+    store.dropExercise(2, { id: 'leg-press', name: 'Leg Press', engineName: 'Leg Press' });
+
+    const ps = persistedState();
+    const dropped = ps.droppedExercises as Record<string, unknown>;
+    const performed = ps.performedExercises as Record<string, unknown>;
+    expect(dropped['2']).toEqual({ id: 'leg-press', name: 'Leg Press', engineName: 'Leg Press' });
+    expect(performed['0']).toEqual({ id: 'incline-db', name: 'Incline DB Press', engineName: 'Incline DB Press' });
+  });
+
+  it('a fresh reload restores the drop marker + swap substitute (no resurrect/revert)', async () => {
+    const fresh = Date.now() - 20 * 60 * 1000; // 20min ago — within the resume window
+    const s = await rehydrateWith({
+      sessionStart: fresh, exIdx: 0, setIdx: 1, phase: 'logging',
+      history: { 0: [{ kg: 80, reps: 8, rating: 'potrivit' }] },
+      droppedExercises: { 2: { id: 'leg-press', name: 'Leg Press', engineName: 'Leg Press' } },
+      performedExercises: { 0: { id: 'incline-db', name: 'Incline DB Press', engineName: 'Incline DB Press' } },
+    });
+    // Session resumes active AND the structural decisions survive.
+    expect(s.sessionStart).toBe(fresh);
+    expect(s.droppedExercises[2]).toEqual({ id: 'leg-press', name: 'Leg Press', engineName: 'Leg Press' });
+    expect(s.performedExercises[0]).toEqual({ id: 'incline-db', name: 'Incline DB Press', engineName: 'Incline DB Press' });
+  });
 });

@@ -534,6 +534,15 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
         history: state.history,
         prHit: state.prHit,
         prData: state.prData,
+        // In-session STRUCTURAL decisions — index-keyed maps aligned with the
+        // persisted history/exIdx, so they restore consistently on resume. Without
+        // them a mid-session reload (1) resurrects a DROPPED exercise as pending
+        // (the advance skip-loop no longer skips it) and (2) reverts a SWAPPED slot
+        // to the original plan while the substitute's sets live under that slot —
+        // mixing engine keys on continued logging. refusalTriedByEx/sessionContext
+        // stay runtime-only (adaptation hints, not user decisions).
+        droppedExercises: state.droppedExercises,
+        performedExercises: state.performedExercises,
         // Live rest countdown — persisted so a reload / re-mount mid-rest
         // rehydrates the timer instead of resolving rest instantly (which would
         // skip/reset the exercise advance). restEndsAt is absolute epoch ms so
@@ -566,6 +575,11 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           merged.restEndsAt = null;
           merged.restInitialSec = 0;
           merged.pendingAdvance = false;
+          // The in-session structural-decision maps belong to the discarded
+          // session — clear them to the idle defaults too (they are meaningless
+          // once the in-progress fields above reset).
+          merged.droppedExercises = {};
+          merged.performedExercises = {};
         }
         return merged;
       },
