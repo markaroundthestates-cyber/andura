@@ -297,6 +297,51 @@ describe('composeCoachInsight — plan-allocation reconciliation', () => {
     expect(line).not.toContain('lagging');
   });
 
+  // cycle-11: the SAME guard must also cover imbalance-fix. A group that is both
+  // antagonist-imbalanced (M3 imbalance-fix → "adding volume to balance you out")
+  // AND fatigued (M1 recovery-cut → "lighter — still recovering") would otherwise
+  // merge into one sentence telling the user to go BOTH lighter and heavier.
+  it('SUPPRESSES a contradictory same-muscle imbalance-fix (recovery wins)', () => {
+    const alloc = getPlanAllocationByGroup([
+      ex('Cable Row', 4),
+      ex('Lat Pulldown', 4),
+      ex('Flat DB Press', 1),
+    ]);
+    const line = composeCoachInsight(
+      [
+        { kind: 'imbalance-fix', group: 'piept' },
+        { kind: 'recovery-cut', group: 'piept', cause: 'resistance' },
+      ],
+      { allocation: alloc, calibrationImmature: false },
+    );
+    expect(line).not.toBeNull();
+    // Chest named exactly ONCE, in the recovery direction — no contradiction.
+    expect(line).toContain('chest');
+    expect((line!.match(/chest/g) ?? []).length).toBe(1);
+    expect(line).toContain('still recovering');
+    expect(line).not.toContain('balance');
+  });
+
+  it('KEEPS imbalance-fix when recovery-cut names a DIFFERENT group', () => {
+    // Distinct groups → no collision; both survive. Chest allocated-but-not-focus
+    // keeps its recovery-cut; back (focus) keeps its imbalance-fix.
+    const alloc = getPlanAllocationByGroup([
+      ex('Cable Row', 4),
+      ex('Lat Pulldown', 4),
+      ex('Flat DB Press', 1),
+    ]);
+    const line = composeCoachInsight(
+      [
+        { kind: 'imbalance-fix', group: 'spate' },
+        { kind: 'recovery-cut', group: 'piept', cause: 'resistance' },
+      ],
+      { allocation: alloc, calibrationImmature: false },
+    );
+    expect(line).not.toBeNull();
+    expect(line).toContain('balance');
+    expect(line).toContain('still recovering');
+  });
+
   it('KEEPS both clauses when recovery-cut and weakness-amp name DIFFERENT groups', () => {
     // Distinct groups → no collision; both survive and combine. Back is the
     // focus (weakness-amp allocated), chest is allocated-but-not-focus (1 set)

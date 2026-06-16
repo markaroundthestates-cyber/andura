@@ -218,15 +218,21 @@ function selectSalient(
     if (!clauseSupportedBy(a, ctx)) continue;
     if (!firstPerKind.has(a.kind)) firstPerKind.set(a.kind, a);
   }
-  // Group-collision guard: recovery-cut wins over weakness-amp for the same group.
+  // Group-collision guard: recovery-cut wins over weakness-amp AND imbalance-fix
+  // for the same group. Both 'push harder' (weakness-amp, a multi-session trend)
+  // and 'add volume to balance' (imbalance-fix, a structural claim) contradict
+  // a same-day recovery-cut ("lighter today — still recovering") for that group;
+  // recovery is the dominant same-day physiological fact, so it wins.
   const recoveryCutGroup = firstPerKind.get('recovery-cut')?.group;
-  const weaknessAmp = firstPerKind.get('weakness-amp');
-  if (
-    recoveryCutGroup &&
-    weaknessAmp &&
-    weaknessAmp.group === recoveryCutGroup
-  ) {
-    firstPerKind.delete('weakness-amp');
+  if (recoveryCutGroup) {
+    const weaknessAmp = firstPerKind.get('weakness-amp');
+    if (weaknessAmp && weaknessAmp.group === recoveryCutGroup) {
+      firstPerKind.delete('weakness-amp');
+    }
+    const imbalanceFix = firstPerKind.get('imbalance-fix');
+    if (imbalanceFix && imbalanceFix.group === recoveryCutGroup) {
+      firstPerKind.delete('imbalance-fix');
+    }
   }
   return [...firstPerKind.values()]
     .sort((a, b) => SALIENCE[a.kind] - SALIENCE[b.kind])
