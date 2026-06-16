@@ -34,7 +34,10 @@ import {
   availableCoarseTypes,
   COARSE_EQUIPMENT_TYPES,
 } from '../../engine/equipmentMap.js';
-import { getMissingEquipment } from '../../engine/schedule/scheduleAdapter.js';
+import {
+  getMissingEquipment,
+  isEquipmentMissingExercise,
+} from '../../engine/schedule/scheduleAdapter.js';
 import { toExerciseDisplay } from './exerciseDisplay';
 import { buildSwappedExercise } from './scheduleAdapterAggregate';
 import type { PlannedExercise } from './engineWrappers';
@@ -300,7 +303,17 @@ export function resolveSwapPickList(
     return { rows: [], originalName, muscleGroup: '' };
   }
 
-  const rows: SwapPickRow[] = items.map((it) => ({
+  // §C6 audit fix — subtract the per-exercise equipment-missing set (the SPECIFIC
+  // names the user marked "Aparat lipsa", canonical-aware via
+  // isEquipmentMissingExercise) so the swap never re-offers an exercise the
+  // composition pipeline (getDailyWorkout under dp_equipment_memory_v1) hard-
+  // excludes. LAST-OPTION guarded, mirroring buildSession: if filtering empties
+  // the pool (the muscle has ONLY equipment-missing candidates), keep the
+  // unfiltered list rather than strand the user with no row.
+  const offerable = items.filter((it) => !isEquipmentMissingExercise(it.name));
+  const usable = offerable.length > 0 ? offerable : items;
+
+  const rows: SwapPickRow[] = usable.map((it) => ({
     exercise: buildSwappedExercise(it.name, exIdx, 'Schimbat la cerere'),
     engineName: it.name,
     displayName: toExerciseDisplay(it.name).name,

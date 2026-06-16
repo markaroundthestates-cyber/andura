@@ -15,6 +15,7 @@ import {
 } from '../../lib/substitution';
 import { movementKey } from '../../../engine/sessionBuilder.js';
 import { getExerciseMetadata } from '../../../engine/exerciseLibrary.js';
+import { setMissingEquipmentExercises } from '../../../engine/schedule/scheduleAdapter.js';
 import type { PlannedExercise } from '../../lib/engineWrappers';
 
 beforeEach(() => {
@@ -299,5 +300,35 @@ describe('resolveSwapPickList — manual pick-list rows', () => {
     const { rows, muscleGroup } = resolveSwapPickList('Totally Fake Exercise', 0);
     expect(rows).toEqual([]);
     expect(muscleGroup).toBe('');
+  });
+
+  // §C6 audit fix — the swap pick-list must not re-offer an exercise the user
+  // marked "Aparat lipsa" (the composition pipeline hard-excludes it under
+  // dp_equipment_memory_v1). Last-option guarded: only excluded when it is NOT
+  // the sole same-muscle option.
+  it('excludes an equipment-missing exercise from the pick-list', () => {
+    // Take an actual non-pre-pick candidate the engine returns, mark its
+    // equipment as missing, and assert it disappears from the rebuilt list.
+    const before = resolveSwapPickList('Flat Barbell Bench', 0);
+    const victim = before.rows.find((r) => !r.prePick)?.engineName;
+    expect(victim).toBeTruthy();
+    setMissingEquipmentExercises([victim!]);
+    const after = resolveSwapPickList('Flat Barbell Bench', 0);
+    const names = after.rows.map((r) => r.engineName);
+    expect(names).not.toContain(victim!);
+    // Still a usable list (chest has many same-muscle options).
+    expect(after.rows.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('LAST-OPTION guard: keeps an equipment-missing exercise when it is the ONLY option', () => {
+    // Mark EVERY candidate the engine surfaces as equipment-missing → the filter
+    // would empty the list; the guard must keep the unfiltered rows so the user
+    // is never stranded (mirrors buildSession last-option behaviour).
+    const before = resolveSwapPickList('Flat Barbell Bench', 0);
+    const allNames = before.rows.map((r) => r.engineName);
+    expect(allNames.length).toBeGreaterThan(0);
+    setMissingEquipmentExercises(allNames);
+    const after = resolveSwapPickList('Flat Barbell Bench', 0);
+    expect(after.rows.length).toBeGreaterThan(0);
   });
 });
