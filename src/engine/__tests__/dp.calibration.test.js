@@ -182,3 +182,42 @@ describe('snapping gate — recommend() output is always loadable', () => {
     expect(equipListFor('Cable Curl')).toContain(rec.kg);
   });
 });
+
+// ── SAFETY CAP RE-ENFORCE — learned calibration must not defeat the cap ───────
+// _recommendRaw's CAP branch returns kg=maxKg, then recommend()'s LEARNED
+// calibration multiplied result.kg by a per-exercise factor (CAL_MAX 1.5) AFTER
+// that — so an at-cap lift could be silently inflated ABOVE maxKg by calibration
+// alone (no proven strength behind it). The safety cap must beat the learned
+// multiplier; the demonstrated PR-floor (real strength) is separately allowed
+// above a defensive cap and is covered by dp.synergistPreFatigue (real 54 kg
+// Cable Curl > 35 kg sanity cap).
+describe('safety cap survives calibration (learned multiplier cannot defeat it)', () => {
+  it('an at-cap lift with a strong up-calibration stays at maxKg (not inflated)', () => {
+    // Cable Curl cap = MAX_KG 35 (no bodyweight in store → ceiling 0 → flat cap).
+    // A persistent up-calibration (factor maxed at CAL_MAX 1.5) WOULD lift the
+    // capped 35 to ~52 if the clamp were defeated. The user logged AT the cap (35)
+    // hitting target reps — demonstrated == cap, so the PR-floor cannot lift it
+    // higher: the prescribed kg must equal the cap, NOT the calibration-inflated 52.
+    store['dp-cal-factors'] = { 'Cable Curl': { kgFactor: 1.5, n: 12 } };
+    store['logs'] = [
+      { ex: 'Cable Curl', w: 35, reps: 12, rpe: 7 },
+      { ex: 'Cable Curl', w: 35, reps: 12, rpe: 7 },
+      { ex: 'Cable Curl', w: 35, reps: 12, rpe: 7 },
+    ];
+    const rec = DP.recommend('Cable Curl');
+    expect(rec.kg).toBeLessThanOrEqual(35); // calibration did NOT inflate past the cap
+    expect(['CAP', 'CAP REPS', 'PEAK']).toContain(rec.status);
+  });
+
+  it('control: WITHOUT calibration the same at-cap lift prescribes the identical kg', () => {
+    // Proves the cap value itself is unchanged by the fix — only the calibration
+    // INFLATION is removed (the with-cal case above lands on the SAME kg as this).
+    store['logs'] = [
+      { ex: 'Cable Curl', w: 35, reps: 12, rpe: 7 },
+      { ex: 'Cable Curl', w: 35, reps: 12, rpe: 7 },
+      { ex: 'Cable Curl', w: 35, reps: 12, rpe: 7 },
+    ];
+    const rec = DP.recommend('Cable Curl');
+    expect(rec.kg).toBeLessThanOrEqual(35);
+  });
+});

@@ -1732,6 +1732,21 @@ export const FLAGS = Object.freeze({
   // fp-config FLIPPED_FLAGS — the fp cohort logs adherently → executed==proposed →
   // ratio 1 → inert, but pinned OFF so both frozen baselines stay byte-for-byte).
   dp_adherence_volume_v1: { rollout: 1, default: true },
+
+  // Safety-cap re-enforce after calibration (dp_cap_after_calib_v1, 2026-06-16,
+  // DEFAULT ON). recommend()'s learned calibration step ran AFTER _recommendRaw's
+  // CAP-over branch already returned kg=maxKg (note "Revenim la {maxKg} kg") and
+  // could MULTIPLY result.kg ABOVE maxKg (CAL_MAX 1.5) — so the prescribed kg
+  // silently EXCEEDED the safety ceiling the note quoted. When ON, the cap is
+  // re-clamped AFTER calibration + BEFORE the PR-floor: the SAFETY cap beats the
+  // learned multiplier (the PR-floor = demonstrated strength is separately allowed
+  // above a defensive cap — a real 54 kg Cable Curl). OFF → the old calibrate-past-
+  // cap behavior (byte-identical). Pinned OFF in calibration-sim sim-config _devFlags
+  // + fp-config FLIPPED_FLAGS so both frozen prescription baselines stay byte-for-byte
+  // (the sim cohort logs over-cap loads WITH learned calibration → the ON re-clamp
+  // moves a prescribed kg → pin OFF). ON is proven on the dp.calibration safety-cap
+  // regression test, NOT the determinism streams.
+  dp_cap_after_calib_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

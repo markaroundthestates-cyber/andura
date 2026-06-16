@@ -59,6 +59,16 @@
 // (a 3-line breadcrumb) so a failed clear does not re-decide/re-narrate every session.
 // It depends on the in-flight in-method state so it cannot leave dp.js. Ratchet-down-
 // only resumes from 2946.
+//
+// SEVENTH documented exception 2026-06-16 (2946→2962): the safety-cap re-enforce-after-
+// calibration fix (cycle-2 audit HIGH safety). recommend()'s learned calibration ran AFTER
+// the CAP-over branch returned kg=maxKg, silently inflating the prescribed kg ABOVE the
+// safety ceiling the note quoted. The +16 here is the irreducible CALL-SITE clamp inside
+// recommend() (flag-guarded, between the calibration step + the PR-floor): it reads the raw
+// cap status + result.kg + rt that already live in this method, so it cannot leave dp.js
+// without passing the whole in-flight rec out. Gated behind dp_cap_after_calib_v1 (default
+// ON, pinned OFF in the calibration-sim + fp frozen baselines). Ratchet-down-only resumes
+// from 2962.
 
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
@@ -67,9 +77,9 @@ import { resolve, dirname } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Ceiling = current line count. Ratchet DOWN only (six documented exceptions
+// Ceiling = current line count. Ratchet DOWN only (seven documented exceptions
 // 2026-06-11/12/14/16 for call-site wiring — see header).
-const DP_LINE_CEILING = 2946;
+const DP_LINE_CEILING = 2962;
 
 const dpSrc = readFileSync(resolve(__dirname, '../dp.js'), 'utf8');
 // Under a Stryker mutation dry-run the on-disk source is INSTRUMENTED (stryMutAct_*

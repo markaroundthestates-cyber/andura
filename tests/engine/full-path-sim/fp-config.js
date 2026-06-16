@@ -464,6 +464,15 @@ export const FLIPPED_FLAGS = Object.freeze([
   // proven on the eval grid (freq=1 focus configs lift toward 6-7, focus leads at a real dose;
   // 0 freq>=2 configs changed) + the new single-day-focus regression test, NOT in this stream.
   'dp_single_day_focus_v1',
+  // THE FLIP 2026-06-16 (safety-cap re-enforce) — dp_cap_after_calib_v1 defaults ON. It re-
+  // clamps a calibration-inflated over-cap kg back to the exercise safety ceiling AFTER the
+  // calibration step (the CAP-over note quoted maxKg but the prescribed kg silently exceeded
+  // it). INERT in this harness either way (resetWorld clears localStorage → empty dp-cal-factors
+  // → calibration is identity → result.kg never exceeds the cap → the re-clamp never fires),
+  // pinned OFF anyway (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) for the all-off-world guarantee
+  // so BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is proven on the
+  // dp.calibration safety-cap regression test, NOT in this determinism stream.
+  'dp_cap_after_calib_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

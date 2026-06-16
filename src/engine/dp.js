@@ -1473,6 +1473,10 @@ export const DP = {
   recommend(ex, nowMs, energyPhase, ageYears) {
     const result = this._recommendRaw(ex, nowMs, energyPhase, ageYears);
     if (result && result.kg) {
+      // A cap-status raw return (CAP/CAP REPS/PEAK) set result.kg to the safety ceiling +
+      // a "Revenim la {kg} kg" note → that raw kg is the cap the calibration must not exceed.
+      const cappedAtKg = (result.status === 'CAP' || result.status === 'CAP REPS' || result.status === 'PEAK') ? result.kg : 0;
+
       // Calibration factor (identity at no data → golden-safe), bounded to the user's OWN
       // demonstrated capacity — lifts a sub-proof base UP to proven load, never compounds
       // past it (Daniel bug 2026-06-10: 96×10/e1RM128 → 110×15). Raw e1RM + raw-W fallback (@821).
@@ -1480,6 +1484,18 @@ export const DP = {
       const demoCap = this._demonstratedWorkingW_e1rm(ex, rt, true) || this._demonstratedWorkingW(ex, rt);
       const calibrated = clampCalibratedToDemonstrated(this._applyCalibration(ex, result.kg), result.kg, demoCap);
       result.kg = this.roundToStep(calibrated, ex);
+
+      // SAFETY-CAP re-enforce (dp_cap_after_calib_v1, see featureFlags): the safety cap must
+      // beat the learned calibration multiplier (the PR-floor below = DEMONSTRATED strength is
+      // separately allowed above a defensive cap). AFTER calibration, BEFORE the PR-floor.
+      if (isEnabled('dp_cap_after_calib_v1') && Number.isFinite(result.kg)) {
+        const safeCap = cappedAtKg > 0 ? cappedAtKg : this._effectiveMaxKg(ex, rt);
+        if (safeCap > 0 && result.kg > safeCap) {
+          // cap-status → the exact note kg; other rows → effective cap snapped DOWN (never up).
+          const snapped = cappedAtKg > 0 ? cappedAtKg : this.roundToStep(safeCap, ex);
+          result.kg = snapped <= safeCap ? snapped : getPrevWeight(snapped, ex);
+        }
+      }
 
       // ── PR-FLOOR (Daniel decision #6, part a) — FIRM ─────────────────────────
       // The rec must NEVER drop below the user's demonstrated working capacity (the
