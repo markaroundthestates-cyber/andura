@@ -470,6 +470,56 @@ describe('CoachTodayCard — intra-week make-up note', () => {
     const note = screen.getByTestId('coach-week-makeup-note');
     expect(note.textContent).toMatch(/piept/);
   });
+
+  // Cross-line contradiction gate (cycle-7 HIGH): a group both behind-on-week
+  // (makeup +X) AND fatigued (recovery cut) must not get "Added a little {group}"
+  // AND "Lighter on your {group}...recovering" across the two lines. The recovery
+  // cut wins → the makeup note omits that group.
+  function renderCardWithMakeupAndAdaptations(
+    weekMakeup: WeekMakeup,
+    coachAdaptations: CoachAdaptation[],
+    exercises: PlannedWorkoutOutput['exercises'] = PLAN_CHEST_SHOULDERS_BACK,
+  ) {
+    const workout: PlannedWorkoutOutput = {
+      workoutTitle: '__engine_workout_title_fallback__',
+      sessionType: 'PUSH',
+      exerciseCount: 5,
+      estimatedDuration: 48,
+      intensityMod: 'normal',
+      exercises,
+      volumeKg: 0,
+      coachAdaptations,
+      weekMakeup,
+    };
+    return render(
+      <MemoryRouter>
+        <CoachTodayCard onStart={() => {}} workout={workout} />
+      </MemoryRouter>,
+    );
+  }
+
+  it('OMITS a makeup group that the why-line already flags as a recovery cut', () => {
+    // chest is behind-on-week (makeup +2) AND fatigued (recovery cut). The
+    // why-line says "lighter on chest"; the makeup note must NOT also say "added
+    // chest" for the same muscle → chest dropped, only back survives.
+    renderCardWithMakeupAndAdaptations(
+      { added: { chest: 2, back: 3 }, behind: {} },
+      [{ kind: 'recovery-cut', group: 'piept', cause: 'resistance' }],
+    );
+    const note = screen.getByTestId('coach-week-makeup-note');
+    expect(note.textContent).toMatch(/spate/);
+    expect(note.textContent).not.toMatch(/piept/);
+  });
+
+  it('SUPPRESSES the makeup note entirely when its only group is a recovery cut', () => {
+    // chest is the lone makeup group AND it has a recovery cut → nothing left to
+    // say in the makeup note (the why-line carries the chest message instead).
+    renderCardWithMakeupAndAdaptations(
+      { added: { chest: 2 }, behind: {} },
+      [{ kind: 'recovery-cut', group: 'piept', cause: 'resistance' }],
+    );
+    expect(screen.queryByTestId('coach-week-makeup-note')).not.toBeInTheDocument();
+  });
 });
 
 // Plan-allocation truth reconciliation (chest-heavy-plan bug, 2026-06-05). The

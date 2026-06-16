@@ -287,11 +287,28 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
         const roGroup = BIG11_EN_TO_RO_MAP[enGroup] ?? enGroup;
         return allocated.has(roGroup);
       };
+      // Cross-line contradiction gate (cycle-7): a group can be BOTH behind on
+      // the week (makeup +X) AND fatigued (recovery cut -Y). The why-line already
+      // says "Lighter on your {group} - still recovering"; the makeup note must NOT
+      // then say "Added a little {group} today" for the SAME muscle (opposite
+      // directions across two lines). The recovery cut is the more-recent dominant
+      // truth → exclude any recovery-cut group from the makeup note. recovery-cut
+      // adaptations carry RO group keys; makeup keys are EN → translate before set.
+      const recoveryCutGroupsRo = new Set<string>(
+        (workout?.coachAdaptations ?? [])
+          .filter((a) => a?.kind === 'recovery-cut' && typeof a.group === 'string')
+          .map((a) => a.group as string),
+      );
+      const isRecoveryCutToday = (enGroup: string): boolean => {
+        const roGroup = BIG11_EN_TO_RO_MAP[enGroup] ?? enGroup;
+        return recoveryCutGroupsRo.has(roGroup);
+      };
       const positive = (m: Record<string, number>): string[] =>
         Object.entries(m)
           .filter(([, v]) => typeof v === 'number' && v > 0)
           .map(([g]) => g)
-          .filter(isAllocatedToday);
+          .filter(isAllocatedToday)
+          .filter((g) => !isRecoveryCutToday(g));
       const joinGroups = (groups: string[]): string =>
         groups.map(labelOf).join(t('coachToday.weekMakeup.groupsJoin'));
 
@@ -310,7 +327,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     } catch {
       return null;
     }
-  }, [workout?.weekMakeup, planAllocation]);
+  }, [workout?.weekMakeup, workout?.coachAdaptations, planAllocation]);
 
   // START-side double-session guard (counterpart to the PostRpe finish-side
   // confirm shipped dc9400d6). When a gym session is already logged TODAY we
