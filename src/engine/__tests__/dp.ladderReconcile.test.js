@@ -31,7 +31,6 @@ vi.mock('../../db.js', () => ({
 }));
 
 import { DP } from '../dp.js';
-import { getPrevWeight } from '../../config/weights.js';
 
 // REAL coarse cross-session rating→RPE map (workoutStore.logic.ts RATING_TO_RPE).
 const RPE = { usor: 6.5, potrivit: 7.5, greu: 8.5 };
