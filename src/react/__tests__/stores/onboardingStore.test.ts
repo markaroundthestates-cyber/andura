@@ -9,7 +9,7 @@
 // Source: 📤_outbox/audit-nuclear-2026-05-19/findings-§30.md §30-C1 +
 //         RECON_CRIT_OPEN_chat-4.md cluster BETA + DECISIONS.md D046 §28-H5.
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   useOnboardingStore,
   validateOnboardingField,
@@ -544,5 +544,70 @@ describe('onboardingStore — trainingType', () => {
     });
     useOnboardingStore.getState().finalize();
     expect(useOnboardingStore.getState().completed).toBe(true);
+  });
+});
+
+// OB-WIRE-1 — focusPresetPickedAt is the 4-week emphasis mesocycle clock
+// (dp_emphasis_specialization_v1; computeMesocycleProgress exits at >=4wk →
+// auto-return to balanced). SettingsProfile.handleSave loops setField over EVERY
+// draft key, so re-stamping on an UNCHANGED focusPreset (the old behavior) pushed
+// the clock forward on every profile save → the meso never auto-returned. The
+// clock must advance ONLY on an actual focusPreset change.
+describe('onboardingStore — focusPreset emphasis clock (OB-WIRE-1)', () => {
+  beforeEach(() => {
+    useOnboardingStore.getState().reset();
+    localStorage.clear();
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('setting a non-balanced focus stamps pickedAt at the pick time', () => {
+    vi.setSystemTime(new Date('2026-06-01T00:00:00Z'));
+    const t0 = Date.now();
+    useOnboardingStore.getState().setField('focusPreset', 'arms');
+    const s = useOnboardingStore.getState().data;
+    expect(s.focusPreset).toBe('arms');
+    expect(s.focusPresetPickedAt).toBe(t0);
+  });
+
+  it('re-setting the SAME value does NOT re-stamp pickedAt (the meso clock holds)', () => {
+    vi.setSystemTime(new Date('2026-06-01T00:00:00Z'));
+    const t0 = Date.now();
+    useOnboardingStore.getState().setField('focusPreset', 'arms');
+    expect(useOnboardingStore.getState().data.focusPresetPickedAt).toBe(t0);
+
+    // A profile save days later re-applies the unchanged focusPreset. The clock
+    // must NOT move (otherwise the 4-week emphasis meso never auto-returns).
+    vi.setSystemTime(new Date('2026-06-08T00:00:00Z'));
+    useOnboardingStore.getState().setField('focusPreset', 'arms');
+    expect(useOnboardingStore.getState().data.focusPreset).toBe('arms');
+    expect(useOnboardingStore.getState().data.focusPresetPickedAt).toBe(t0); // still T0
+  });
+
+  it('changing to a DIFFERENT focus re-stamps pickedAt (a new meso starts)', () => {
+    vi.setSystemTime(new Date('2026-06-01T00:00:00Z'));
+    const t0 = Date.now();
+    useOnboardingStore.getState().setField('focusPreset', 'arms');
+    expect(useOnboardingStore.getState().data.focusPresetPickedAt).toBe(t0);
+
+    vi.setSystemTime(new Date('2026-06-08T00:00:00Z'));
+    const t1 = Date.now();
+    useOnboardingStore.getState().setField('focusPreset', 'chest');
+    expect(useOnboardingStore.getState().data.focusPreset).toBe('chest');
+    expect(useOnboardingStore.getState().data.focusPresetPickedAt).toBe(t1); // re-stamped
+    expect(t1).not.toBe(t0);
+  });
+
+  it('reverting to balanced clears pickedAt (no active emphasis)', () => {
+    vi.setSystemTime(new Date('2026-06-01T00:00:00Z'));
+    useOnboardingStore.getState().setField('focusPreset', 'arms');
+    expect(useOnboardingStore.getState().data.focusPresetPickedAt).not.toBeNull();
+
+    vi.setSystemTime(new Date('2026-06-08T00:00:00Z'));
+    useOnboardingStore.getState().setField('focusPreset', 'balanced');
+    expect(useOnboardingStore.getState().data.focusPreset).toBe('balanced');
+    expect(useOnboardingStore.getState().data.focusPresetPickedAt).toBeNull();
   });
 });

@@ -342,8 +342,19 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
         // consumed downstream when dp_emphasis_specialization_v1 is on; otherwise
         // an inert extra field (persisted, ignored).
         if (key === 'focusPreset') {
-          const pickedAt = value === 'balanced' ? null : Date.now();
-          set((s) => ({ data: { ...s.data, focusPreset: value as FocusPreset, focusPresetPickedAt: pickedAt } }));
+          set((s) => {
+            // Only re-stamp the meso clock when the value ACTUALLY changes. A
+            // profile save (SettingsProfile.handleSave) loops setField over every
+            // draft key, so re-stamping on an unchanged focusPreset would push the
+            // 4-week emphasis clock forward on each save and the specialization
+            // phase would never auto-return to balanced. On no-change, keep the
+            // existing pickedAt; on a real change, start (or clear, for balanced)
+            // the clock — co-set in the same update so the pair never drifts.
+            const pickedAt = s.data.focusPreset === value
+              ? s.data.focusPresetPickedAt ?? null
+              : value === 'balanced' ? null : Date.now();
+            return { data: { ...s.data, focusPreset: value as FocusPreset, focusPresetPickedAt: pickedAt } };
+          });
           return;
         }
         set((s) => ({ data: { ...s.data, [key]: value } }));
