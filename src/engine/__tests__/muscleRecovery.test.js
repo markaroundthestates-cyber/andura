@@ -13,7 +13,7 @@ import {
   BIG11_GROUPS,
 } from '../muscleRecovery.js';
 import { PAIN_REGION_GROUP_MAP } from '../muscleRecoveryConstants.js';
-import { MUSCLE_HEADS } from '../muscleMap.js';
+import { MUSCLE_HEADS, getMuscleState } from '../muscleMap.js';
 
 const now = Date.now();
 const hoursAgo = (h) => now - h * MS_PER_HOUR;
@@ -431,6 +431,40 @@ describe('injectable now — deterministic recovery (E-02)', () => {
     // groups => empty result. Proves cutoff is driven by injected now.
     const shifted = getLaggingMuscles({ logs, lookbackDays: 14, now: FIXED + 30 * MS_PER_DAY });
     expect(shifted).toEqual([]);
+  });
+});
+
+// ── Cycle-9 cluster 3 — future-dated log guard (clock skew / timezone) ──
+describe('cycle9 cluster3 — future-dated log does not inflate recovery', () => {
+  const NOW = Date.UTC(2026, 5, 1, 12);
+  const H = (h) => NOW - h * MS_PER_HOUR;
+  // A real recent chest session 6h ago + a FUTURE-dated set (clock skew: 5h ahead).
+  const realSet = { ex: 'Flat DB Press', w: 32.5, reps: 8, rpe: 8, ts: H(6) };
+  const futureSet = { ex: 'Flat DB Press', w: 32.5, reps: 8, rpe: 8, ts: H(-5) };
+
+  it('getMuscleState ignores a future-dated log (no decay>1 stress inflation)', () => {
+    const normal = getMuscleState([realSet], NOW);
+    const withFuture = getMuscleState([realSet, futureSet], NOW);
+    // The future set must NOT add inflated stress (pre-fix it nearly doubled it).
+    expect(withFuture).toEqual(normal);
+    // And no head exceeds the single-set peak (pre-fix a future set read decay>1).
+    const peak = Math.max(...Object.values(normal));
+    expect(Math.max(...Object.values(withFuture))).toBeCloseTo(peak, 6);
+  });
+
+  it('getGroupRecoveryDetail reports a non-negative elapsedHours for a future-dated log', () => {
+    const detail = getGroupRecoveryDetail([realSet, futureSet], undefined, NOW);
+    // Elapsed is the real last-trained set (6h), never the future one (-5h).
+    expect(detail.piept.elapsedHours).toBeGreaterThanOrEqual(0);
+    expect(detail.piept.elapsedHours).toBeCloseTo(6, 5);
+  });
+
+  it('a lone future-dated log reads as untrained (no negative elapsed, no stress)', () => {
+    const detail = getGroupRecoveryDetail([futureSet], undefined, NOW);
+    expect(detail.piept.elapsedHours).toBeNull();
+    expect(detail.piept.state).toBe('recovered');
+    const state = getMuscleState([futureSet], NOW);
+    expect(Math.max(...Object.values(state))).toBe(0);
   });
 });
 

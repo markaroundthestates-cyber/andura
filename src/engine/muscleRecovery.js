@@ -451,9 +451,11 @@ function applyPainEscalation(groupState, painEntries, now = Date.now()) {
  *
  * @param {Array<{ex?: string, baseline?: boolean, ts?: number, date?: string}>} logs
  * @param {string} group
+ * @param {number} [now] — reference timestamp; future-dated logs (ts > now, clock
+ *   skew / timezone) are ignored so a downstream elapsed-hours never goes negative.
  * @returns {number|null} — epoch ms of the last-trained session, or null if never trained
  */
-function lastTrainedTsForGroup(logs, group) {
+function lastTrainedTsForGroup(logs, group, now = Date.now()) {
   const headMap = /** @type {Record<string, string[]>} */ (GROUP_HEAD_MAP);
   const heads = new Set(headMap[group] || []);
   if (heads.size === 0) return null;
@@ -466,6 +468,7 @@ function lastTrainedTsForGroup(logs, group) {
       .some(h => heads.has(h));
     if (!touchesGroup) continue;
     const ts = log.ts || (log.date ? new Date(log.date).getTime() : 0);
+    if (ts > now) continue; // skip a future-dated log (would yield negative elapsedHours)
     if (ts > latest) latest = ts;
   }
   return latest === 0 ? null : latest;
@@ -485,7 +488,7 @@ function lastTrainedTsForGroup(logs, group) {
  * @returns {number|null} — elapsed hours (float), or null if never trained
  */
 export function hoursSinceGroup(logs, group, now = Date.now()) {
-  const latest = lastTrainedTsForGroup(logs, group);
+  const latest = lastTrainedTsForGroup(logs, group, now);
   if (latest === null) return null;
   return (now - latest) / MS_PER_HOUR;
 }
@@ -501,7 +504,7 @@ export function hoursSinceGroup(logs, group, now = Date.now()) {
  * @returns {number|null} — null if never trained
  */
 export function daysSinceGroup(logs, group, now = Date.now()) {
-  const latest = lastTrainedTsForGroup(logs, group);
+  const latest = lastTrainedTsForGroup(logs, group, now);
   if (latest === null) return null;
   return Math.floor((now - latest) / MS_PER_DAY);
 }

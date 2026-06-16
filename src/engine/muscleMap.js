@@ -370,6 +370,11 @@ export function getMuscleState(logs, now = Date.now(), learnedHours) {
     const ms = musclesForExercise(l.ex); // QA-F8: curated OR metadata-derived (was: curated-only, ~630 names skipped)
     if (!ms) return;
     const logTime = l.ts || new Date(l.date ?? '').getTime();
+    // Skip a FUTURE-dated log (clock skew / timezone): hoursAgo < 0 → decay =
+    // exp(-K·hoursAgo/recovH) > 1 would inflate stress above peak (and surface a
+    // negative elapsedHours in getGroupRecoveryDetail). Mirrors the siblings
+    // getAerobicRecoveryContribution (`hoursAgo < 0`) + _loadUnits (`ts > now`).
+    if (logTime > now) return;
     const rpeContrib = l.rpe ? Math.min(l.rpe / 10, 1) : 0.7;
     ms.primary.forEach(/** @param {string} m */ (m) => {
       const recovH = recovHoursFor(m);
