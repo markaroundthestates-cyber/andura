@@ -69,11 +69,13 @@ describe('WeightTimeline — Greutate trend screen', () => {
 
   it('KPI shows latest weight + delta', () => {
     const now = Date.now();
+    const iso = (daysAgo: number) =>
+      new Date(now - daysAgo * 86400000).toLocaleDateString('sv');
     useProgresStore.setState({
       weightLog: [
-        { kg: 84.0, date: '2026-04-15', ts: now - 10 * 86400000 },
-        { kg: 82.5, date: '2026-05-01', ts: now - 5 * 86400000 },
-        { kg: 81.5, date: '2026-05-15', ts: now - 1 * 86400000 },
+        { kg: 84.0, date: iso(10), ts: now - 10 * 86400000 },
+        { kg: 82.5, date: iso(5), ts: now - 5 * 86400000 },
+        { kg: 81.5, date: iso(1), ts: now - 1 * 86400000 },
       ],
       bodyData: [],
     });
@@ -84,10 +86,12 @@ describe('WeightTimeline — Greutate trend screen', () => {
 
   it('chart renders dots for filtered entries', () => {
     const now = Date.now();
+    const iso = (daysAgo: number) =>
+      new Date(now - daysAgo * 86400000).toLocaleDateString('sv');
     useProgresStore.setState({
       weightLog: [
-        { kg: 82.0, date: '2026-05-01', ts: now - 10 * 86400000 },
-        { kg: 81.0, date: '2026-05-15', ts: now - 1 * 86400000 },
+        { kg: 82.0, date: iso(10), ts: now - 10 * 86400000 },
+        { kg: 81.0, date: iso(1), ts: now - 1 * 86400000 },
       ],
       bodyData: [],
     });
@@ -98,12 +102,14 @@ describe('WeightTimeline — Greutate trend screen', () => {
 
   it('range filter applies cu cutoff', () => {
     const now = Date.now();
+    const iso = (daysAgo: number) =>
+      new Date(now - daysAgo * 86400000).toLocaleDateString('sv');
     useProgresStore.setState({
       weightLog: [
         // 100 days ago - outside 30/60/90, inside 'all'
-        { kg: 90.0, date: '2026-02-10', ts: now - 100 * 86400000 },
+        { kg: 90.0, date: iso(100), ts: now - 100 * 86400000 },
         // 10 days ago - inside all ranges
-        { kg: 82.0, date: '2026-05-12', ts: now - 10 * 86400000 },
+        { kg: 82.0, date: iso(10), ts: now - 10 * 86400000 },
       ],
       bodyData: [],
     });
@@ -139,5 +145,39 @@ describe('WeightTimeline — Greutate trend screen', () => {
     });
     const { container } = renderScreen();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+
+  // PROG-1 regression — a back-dated weigh-in (newest `ts`, OLDER `date`) must
+  // NOT surface as the KPI current weight, must NOT invert the delta sign, and
+  // must NOT plot at the chart far-right. Ordering keys on `date`, not `ts`,
+  // matching getCurrentWeightKg + Progres sparkline. Dates are relative to today
+  // so all fall inside the default 30-day range.
+  it('back-dated weigh-in does not hijack KPI / delta / chart order (PROG-1)', () => {
+    const now = Date.now();
+    const iso = (daysAgo: number) =>
+      new Date(now - daysAgo * 86400000).toLocaleDateString('sv');
+    useProgresStore.setState({
+      weightLog: [
+        { kg: 90.0, date: iso(4), ts: now - 4 * 86400000 },
+        { kg: 89.6, date: iso(3), ts: now - 3 * 86400000 },
+        { kg: 89.2, date: iso(2), ts: now - 2 * 86400000 },
+        { kg: 89.0, date: iso(1), ts: now - 1 * 86400000 },
+        { kg: 88.5, date: iso(0), ts: now },
+        // back-dated: 6 days ago BY DATE but logged just now (newest ts).
+        { kg: 91.0, date: iso(6), ts: now + 1000 },
+      ],
+      bodyData: [],
+    });
+    renderScreen();
+    // KPI current weight = latest BY DATE (88.5), NOT the back-dated 91.0.
+    expect(screen.getByTestId('weight-timeline-kpi-value')).toHaveTextContent('88.5');
+    // Delta = loss (88.5 - 91.0 = -2.5), sign matches the sparkline — NOT +1.0.
+    expect(screen.getByTestId('weight-timeline-kpi-delta')).toHaveTextContent('-2.5');
+    // Chart x-axis in date order → last dot (rightmost) is the latest BY DATE.
+    const dots = screen.getAllByTestId(/^weight-timeline-chart-dot-/);
+    expect(dots).toHaveLength(6);
+    const xs = dots.map((d) => Number(d.getAttribute('cx')));
+    const sortedXs = [...xs].sort((a, b) => a - b);
+    expect(xs).toEqual(sortedXs); // monotonic non-decreasing x
   });
 });

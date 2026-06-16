@@ -16,6 +16,7 @@ import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { t } from '../../../../i18n/index.js';
+import { todDate } from '../../../../db.js';
 
 type RangeKey = '30' | '60' | '90' | 'all';
 
@@ -47,7 +48,15 @@ function buildChart(
   padding: number,
 ): { points: ChartPoint[]; polyline: string } {
   if (entries.length === 0) return { points: [], polyline: '' };
-  const ascending = [...entries].sort((a, b) => a.ts - b.ts);
+  // Chronological by entry `date` (YYYY-MM-DD lexicographic) with `ts` tiebreaker
+  // — same idiom as getCurrentWeightKg + Progres.tsx sparkline. A back-dated
+  // weigh-in has the newest `ts` but an older `date`, so ts-ordering plots it at
+  // the far right and inverts the trend; date-ordering keeps the x-axis correct.
+  const ascending = [...entries].sort((a, b) => {
+    const dateCmp = (a.date ?? '').localeCompare(b.date ?? '');
+    if (dateCmp !== 0) return dateCmp;
+    return (a.ts ?? 0) - (b.ts ?? 0);
+  });
   const minKg = Math.min(...ascending.map((e) => e.kg));
   const maxKg = Math.max(...ascending.map((e) => e.kg));
   const range = maxKg - minKg || 1;
@@ -76,12 +85,23 @@ export function WeightTimeline(): JSX.Element {
   const filtered = useMemo(() => {
     const tab = RANGES.find((r) => r.key === range);
     if (!tab || tab.days === null) return weightLog;
-    const cutoff = Date.now() - tab.days * MS_PER_DAY;
-    return weightLog.filter((e) => e.ts >= cutoff);
+    // Cut on entry `date`, NOT `ts` — a back-dated weigh-in has a recent `ts` but
+    // belongs in an older window. Local YYYY-MM-DD cutoff (todDate) compared
+    // lexicographically, consistent with the date-keyed ordering above.
+    const cutoffDate = todDate(new Date(Date.now() - tab.days * MS_PER_DAY));
+    return weightLog.filter((e) => e.date >= cutoffDate);
   }, [weightLog, range]);
 
+  // Newest-first by `date` (YYYY-MM-DD) with `ts` tiebreaker → KPI "current
+  // weight" + delta read the latest BY DATE, matching getCurrentWeightKg + the
+  // Progres sparkline. ts-ordering surfaced a back-dated entry as "today".
   const sortedDesc = useMemo(
-    () => [...filtered].sort((a, b) => b.ts - a.ts),
+    () =>
+      [...filtered].sort((a, b) => {
+        const dateCmp = (b.date ?? '').localeCompare(a.date ?? '');
+        if (dateCmp !== 0) return dateCmp;
+        return (b.ts ?? 0) - (a.ts ?? 0);
+      }),
     [filtered],
   );
 

@@ -35,8 +35,15 @@ function formatDate(iso: string): string {
 export function WeightLogList(): JSX.Element {
   const navigate = useNavigate();
   const weightLog = useProgresStore((s) => s.weightLog);
-  // Reverse-chrono — newest first
-  const sorted = [...weightLog].sort((a, b) => b.ts - a.ts);
+  // Reverse-chrono — newest first BY DATE (YYYY-MM-DD) with `ts` tiebreaker.
+  // ts-ordering surfaced a back-dated weigh-in (newest `ts`, older `date`) as the
+  // highlighted latest row; date-ordering matches getCurrentWeightKg + Progres +
+  // WeightTimeline. `ts` has mixed semantics (live=Date.now() vs imported=Date.UTC).
+  const sorted = [...weightLog].sort((a, b) => {
+    const dateCmp = (b.date ?? '').localeCompare(a.date ?? '');
+    if (dateCmp !== 0) return dateCmp;
+    return (b.ts ?? 0) - (a.ts ?? 0);
+  });
 
   return (
     <section className="min-h-screen flex flex-col" data-testid="weight-log-list">

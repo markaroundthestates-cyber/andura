@@ -85,4 +85,26 @@ describe('WeightLogList — Loguri greutate screen', () => {
     const { container } = renderScreen();
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
   });
+
+  // PROG-1 regression — a back-dated weigh-in (newest `ts`, OLDER `date`) must
+  // NOT be highlighted as the latest row. Rows order by `date`, not `ts`.
+  it('back-dated weigh-in does not highlight as latest row (PROG-1)', () => {
+    const now = Date.now();
+    useProgresStore.setState({
+      weightLog: [
+        { kg: 90.0, date: '2026-06-12', ts: now - 4 * 86400000 },
+        { kg: 88.5, date: '2026-06-16', ts: now - 1 * 86400000 },
+        // back-dated: 2026-06-10 BY DATE but logged just now (newest ts).
+        { kg: 91.0, date: '2026-06-10', ts: now + 1000 },
+      ],
+      bodyData: [],
+    });
+    renderScreen();
+    const rows = screen.getAllByTestId(/^weight-log-row-/);
+    expect(rows).toHaveLength(3);
+    // Newest BY DATE first (88.5 @ 06-16), back-dated 91.0 sinks to the bottom.
+    expect(rows[0]).toHaveTextContent('88.5 kg');
+    expect(rows[1]).toHaveTextContent('90.0 kg');
+    expect(rows[2]).toHaveTextContent('91.0 kg');
+  });
 });
