@@ -718,11 +718,17 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     : { added: {}, behind: {} };
   const madeUpTargets = applyMakeupToVolumeBudget(balancedTargets, intraWeekMakeup.added);
 
+  // M1 seam (2026-06-16): thread the SAME dose-scaling the redistribution's mergedState
+  // uses (lines below) so the recovery CUT classifies recovery from the IDENTICAL state
+  // the redistribution reads — otherwise the cut ran a NON-dose state while the
+  // redistribution used the dose-scaled mergedState, and the freed volume was mis-
+  // allocated. dp_recovery_dose_v1 OFF → both are non-dose already → byte-identical.
   const recoveredTargets = applyRecoveryToVolumeBudget(
     madeUpTargets,
     recoveryLogs,
     date.getTime(),
     aerobicSessions,
+    { doseScaling: isEnabled('dp_recovery_dose_v1') },
   );
 
   // Coach Voice — derive the structured adaptations log from the SAME maps the
@@ -748,7 +754,9 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // SESSION-LOCAL: balancedTargets (the weekly SSOT) is untouched, so chest is
   // normal again on a fresh day. All-recovered / balanced → freed total is 0 →
   // volumeTargets === recoveredTargets (byte-identical to pre-feature). Uses the
-  // SAME mergedState that drove the cut + the EFFECTIVE cluster the session trains.
+  // SAME mergedState that drove the cut (both dose-scaled identically — M1 seam fix,
+  // see the applyRecoveryToVolumeBudget doseScaling thread above) + the EFFECTIVE
+  // cluster the session trains.
   // Pre-cut reference is madeUpTargets (the budget the recovery cut ran ON) — so a
   // group whose intra-week makeup recovery then trimmed releases the CORRECT freed
   // amount. No makeup → madeUpTargets === balancedTargets clone (identical).

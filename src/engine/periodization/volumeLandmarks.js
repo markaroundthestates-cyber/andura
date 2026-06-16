@@ -336,20 +336,29 @@ export function toCanonicalRO(volumeMap) {
  * stays at its (deeper) resistance state. Absent/empty → byte-identical to the
  * resistance-only path (graceful degradation, ADR 025).
  *
+ * `opts.doseScaling` is forwarded to getRecoveryByGroup so the recovery STATE this
+ * CUT classifies is the SAME dose-scaled state the daily-plan adapter's redistribution
+ * reads (M1 seam fix 2026-06-16): without it the cut ran a NON-dose state while the
+ * redistribution used the dose-scaled mergedState → the two classified recovery
+ * differently → freed volume mis-allocated. Absent/false → the prior non-dose state
+ * (byte-identical; the dose path is itself gated by dp_recovery_dose_v1 inside
+ * getRecoveryByGroup, so OFF is a no-op either way).
+ *
  * @param {Object<string, number>} volumeMap - Big 11 RO keyed → sets/week
  * @param {Array} logs - session logs for Recovery state input
  * @param {number} [now] - reference timestamp (default Date.now); inject for determinism
  * @param {Array<{type?: string, ts?: number, date?: string}>} [aerobicSessions] - aerobicStore sessions (eases fresh groups)
+ * @param {{doseScaling?: boolean}} [opts] - forwarded to getRecoveryByGroup (dose-scaled hours)
  * @returns {Object<string, number>} adjusted volumeMap (RO keyed)
  */
-export function applyRecoveryStateRedistribution(volumeMap, logs, now = Date.now(), aerobicSessions) {
+export function applyRecoveryStateRedistribution(volumeMap, logs, now = Date.now(), aerobicSessions, opts) {
   const safeMap = volumeMap && typeof volumeMap === 'object' ? volumeMap : {};
   const hasAerobic = Array.isArray(aerobicSessions) && aerobicSessions.length > 0;
   // No resistance logs AND no aerobic → nothing to redistribute (unchanged map).
   if ((!Array.isArray(logs) || logs.length === 0) && !hasAerobic) return { ...safeMap };
   // Resistance recovery state (RO keyed). Empty/no logs → {} (all recovered).
   let recoveryState =
-    Array.isArray(logs) && logs.length > 0 ? getRecoveryByGroup(logs, undefined, now) : {};
+    Array.isArray(logs) && logs.length > 0 ? getRecoveryByGroup(logs, undefined, now, opts) : {};
   // Fold aerobic in (eases recovered→partial only) when present — same RO key-space.
   if (hasAerobic) recoveryState = mergeAerobicRecovery(recoveryState, aerobicSessions, now);
   const adjusted = {};

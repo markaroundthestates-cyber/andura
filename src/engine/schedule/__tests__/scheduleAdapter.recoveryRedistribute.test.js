@@ -22,6 +22,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { getDailyWorkout } from '../scheduleAdapter.js';
 import { ISRAETEL_BASELINES } from '../../periodization/constants.js';
+import { applyRecoveryStateRedistribution } from '../../periodization/volumeLandmarks.js';
+import { getRecoveryByGroup } from '../../muscleRecovery.js';
+import { MS_PER_DAY } from '../../../constants.js';
 
 // Wed 2026-05-20 resolves to a PUSH day for marius / freq 5 (piept + umeri +
 // triceps) — the exact split the diagnosis used (fresh = 7 ex / 19 sets).
@@ -158,5 +161,53 @@ describe('scheduleAdapter — recovery redistributes freed volume to fresh same-
     const freshFreshSum = fresh.volumeTargets.shoulders + fresh.volumeTargets.triceps;
     const fatFreshSum = fatigued.volumeTargets.shoulders + fatigued.volumeTargets.triceps;
     expect(fatFreshSum).toBeGreaterThan(freshFreshSum);
+  });
+});
+
+// ── M1 SEAM — the recovery CUT and the recovery REDISTRIBUTION must read the SAME
+// dose-scaled recovery state under dp_recovery_dose_v1 ON ──────────────────────
+// The bug: getDailyWorkout's CUT (applyRecoveryToVolumeBudget → applyRecoveryState
+// Redistribution → getRecoveryByGroup) was NOT threaded the dose opt, so it ran a
+// NON-dose state, while the redistribution's mergedState IS dose-scaled. Under
+// dp_recovery_dose_v1 ON the two classified recovery DIFFERENTLY → freed volume mis-
+// allocated. Fix: thread { doseScaling } so the cut reads the SAME state.
+describe('M1 seam — cut state matches the redistribution dose-scaled state', () => {
+  const FIXED = 1_700_000_000_000;
+  const dAgo = (d) => FIXED - d * MS_PER_DAY;
+  const legSets = (n, dayTs) =>
+    Array.from({ length: n }, () => ({ ex: 'Leg Extension', w: 60, reps: 10, rpe: 9, ts: dayTs }));
+  // CEO anchor (muscleRecoveryDose.test.js): a 6-set quad day 6d ago after a 30d-prior
+  // light day → dose-scaled reads picioare-quads PARTIAL while the flat model reads it
+  // RECOVERED. So WITHOUT the thread the cut sees 'recovered' (no cut) but the
+  // redistribution sees 'partial' (a freed group) — the exact divergence.
+  const ceoLogs = [...legSets(6, dAgo(6)), ...legSets(3, dAgo(30))];
+  // RO-keyed weekly budget covering the quad group (value > 0 so a cut is observable).
+  const roMap = { 'picioare-quads': 20, piept: 20 };
+
+  beforeEach(() => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_recovery_dose_v1: true }));
+  });
+
+  it('under dose ON the CUT classifies quads exactly as getRecoveryByGroup (both partial → cut fires)', () => {
+    // The state the REDISTRIBUTION reads (dose-scaled).
+    const redistState = getRecoveryByGroup(ceoLogs, undefined, FIXED, { doseScaling: true });
+    expect(redistState['picioare-quads']).toBe('partial');
+
+    // The CUT, now threaded the SAME dose opt, must classify quads the SAME way →
+    // a partial group is cut ×0.80 (20 → 16), proving the cut saw 'partial' too.
+    const cutDose = applyRecoveryStateRedistribution(roMap, ceoLogs, FIXED, undefined, {
+      doseScaling: true,
+    });
+    expect(cutDose['picioare-quads']).toBeCloseTo(20 * 0.8, 6);
+  });
+
+  it('regression: WITHOUT the dose thread the cut would diverge (sees recovered → no cut)', () => {
+    // The redistribution still sees the dose-scaled 'partial' (a freed group)...
+    const redistState = getRecoveryByGroup(ceoLogs, undefined, FIXED, { doseScaling: true });
+    expect(redistState['picioare-quads']).toBe('partial');
+    // ...but a NON-dose cut sees 'recovered' → leaves quads UNCUT (20), the mismatch
+    // the fix removes by threading { doseScaling } into the cut.
+    const cutNonDose = applyRecoveryStateRedistribution(roMap, ceoLogs, FIXED, undefined);
+    expect(cutNonDose['picioare-quads']).toBe(20);
   });
 });

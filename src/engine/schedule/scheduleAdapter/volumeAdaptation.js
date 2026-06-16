@@ -258,16 +258,23 @@ export function applyEmphasisDeEmphasis(volumeMapEN, protectedGroupsRO, reductio
  * never deepens) — a hard spin class makes tomorrow's leg budget lighter. Absent
  * → byte-identical resistance-only path.
  *
+ * `opts.doseScaling` is forwarded down to getRecoveryByGroup so the recovery STATE
+ * the CUT classifies matches the dose-scaled state the daily-plan redistribution reads
+ * (M1 seam fix 2026-06-16 — cut + redistribution must classify recovery identically).
+ * Absent/false → the prior non-dose state (byte-identical; the dose path is itself gated
+ * by dp_recovery_dose_v1 inside getRecoveryByGroup, so OFF is a no-op either way).
+ *
  * @param {Object<string, number>|null|undefined} volumeMapEN - Big-11 EN keyed budget
  * @param {Array<{ex: string, ts: number, w: number}>} logs - recovery LogEntry[]
  * @param {number} now - reference timestamp threaded into recovery (determinism)
  * @param {Array<{type?: string, ts?: number, date?: string}>} [aerobicSessions] - aerobicStore sessions
+ * @param {{doseScaling?: boolean}} [opts] - forwarded to getRecoveryByGroup (dose-scaled hours)
  * @returns {Object<string, number>|null} adjusted EN-keyed budget (null passes through)
  */
-export function applyRecoveryToVolumeBudget(volumeMapEN, logs, now, aerobicSessions) {
+export function applyRecoveryToVolumeBudget(volumeMapEN, logs, now, aerobicSessions, opts) {
   if (!volumeMapEN || typeof volumeMapEN !== 'object') return volumeMapEN ?? null;
   const ro = toCanonicalRO(volumeMapEN);
-  const adjustedRo = applyRecoveryStateRedistribution(ro, logs, now, aerobicSessions);
+  const adjustedRo = applyRecoveryStateRedistribution(ro, logs, now, aerobicSessions, opts);
   return toCanonicalEN(adjustedRo);
 }
 
