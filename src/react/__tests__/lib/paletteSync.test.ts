@@ -11,6 +11,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import {
   applyPalette,
   applyInitialPalette,
+  applyAccent,
   PaletteSync,
 } from '../../lib/paletteSync';
 
@@ -19,6 +20,8 @@ const KEY = 'wv2-palette-theme';
 beforeEach(() => {
   localStorage.clear();
   delete document.documentElement.dataset.palette;
+  document.documentElement.style.removeProperty('--brick');
+  document.documentElement.style.removeProperty('--grad-pulse');
 });
 
 describe('applyPalette — always clears documentElement.data-palette (Pulse, no overrides)', () => {
@@ -78,6 +81,31 @@ describe('applyInitialPalette — synchronous pre-mount read from localStorage',
     localStorage.setItem(KEY, 'clasic');
     applyInitialPalette();
     expect(document.documentElement.dataset.palette).toBeUndefined();
+  });
+});
+
+describe('applyAccent — re-tints the primary gradient, not just --brick', () => {
+  it('ember re-tints --grad-pulse to an ember-based gradient (not the default volt/aqua)', () => {
+    applyAccent('ember');
+    const grad = document.documentElement.style.getPropertyValue('--grad-pulse');
+    expect(grad).toContain('#ff7d52'); // the ember hue leads the gradient
+    expect(grad).toContain('linear-gradient(135deg');
+    // --brick still set (the existing behavior is preserved).
+    expect(document.documentElement.style.getPropertyValue('--brick')).toBe('#ff7d52');
+  });
+
+  it('violet re-tints --grad-pulse to a violet-based gradient', () => {
+    applyAccent('violet');
+    const grad = document.documentElement.style.getPropertyValue('--grad-pulse');
+    expect(grad).toContain('#a98bff');
+  });
+
+  it('volt removes the --grad-pulse override (base volt/aqua default restored)', () => {
+    applyAccent('ember'); // set an override first
+    expect(document.documentElement.style.getPropertyValue('--grad-pulse')).not.toBe('');
+    applyAccent('volt');
+    expect(document.documentElement.style.getPropertyValue('--grad-pulse')).toBe('');
+    expect(document.documentElement.style.getPropertyValue('--brick')).toBe('');
   });
 });
 

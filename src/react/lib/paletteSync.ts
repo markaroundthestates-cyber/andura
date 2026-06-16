@@ -47,15 +47,29 @@ const ACCENT_HEX: Record<Exclude<Accent, 'volt'>, string> = {
  * Override the primary accent (--brick) on documentElement. 'volt' (default)
  * clears the override so the base [data-theme] token owns the look. Exported
  * so the Appearance picker can apply live on click.
+ *
+ * Beyond --brick (which re-tints text/icons/borders), the picker must also
+ * re-derive --grad-pulse — the PRIMARY gradient (global.css defines it ONCE as
+ * volt→aqua) that paints every gradient CTA, selected toggle, avatar ring and
+ * notification day-pill. Without this, picking Ember/Violet left every gradient
+ * surface stuck on volt-green→aqua while only --brick-keyed elements re-tinted.
  */
 export function applyAccent(accent: Accent): void {
   if (typeof document === 'undefined') return;
   const el = document.documentElement;
   if (accent === 'volt') {
     el.style.removeProperty('--brick');
+    el.style.removeProperty('--grad-pulse');
     return;
   }
-  el.style.setProperty('--brick', ACCENT_HEX[accent]);
+  const hex = ACCENT_HEX[accent];
+  el.style.setProperty('--brick', hex);
+  // Re-tint the primary gradient from the chosen hue → --aqua (same 135deg shape
+  // as the base --grad-pulse), so gradient CTAs follow the accent, not just brick.
+  el.style.setProperty(
+    '--grad-pulse',
+    `linear-gradient(135deg, ${hex} 0%, color-mix(in oklab, ${hex} 72%, var(--aqua)) 100%)`,
+  );
 }
 
 function readAccent(): Accent {
