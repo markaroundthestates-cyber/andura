@@ -165,4 +165,23 @@ describe('engineWrappers — getLaggingSignal gated by today plan allocation', (
     expect(line).not.toBeNull();
     expect(line).toContain('Biceps'); // RO label for the biceps group
   });
+
+  // cycle-11 cross-line contradiction gate: the why-line says "lighter on {group}
+  // — still recovering" for a group cut for fatigue TODAY. The lagging line must
+  // NOT then say "focus azi pe {group}" for the SAME muscle. recovery wins.
+  it('SUPPRESSES the lagging line when the weak group is recovery-cut today', () => {
+    seedMatureWeakBiceps();
+    expect(getCalibrationMaturity()).toBeNull();
+    const withBiceps = new Set(['piept', 'biceps']);
+    // Sanity: without a recovery-cut, biceps is named.
+    expect(getLaggingSignal({ allocatedGroups: withBiceps })).not.toBeNull();
+    // Biceps is recovery-cut today → the lagging line is suppressed (no contradiction).
+    expect(
+      getLaggingSignal({ allocatedGroups: withBiceps }, new Set(['biceps'])),
+    ).toBeNull();
+    // A recovery-cut on a DIFFERENT group does not suppress the biceps lagging line.
+    expect(
+      getLaggingSignal({ allocatedGroups: withBiceps }, new Set(['umeri'])),
+    ).not.toBeNull();
+  });
 });

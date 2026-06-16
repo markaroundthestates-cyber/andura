@@ -170,13 +170,25 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     () => getPlanAllocationByGroup(workout?.exercises),
     [workout?.exercises],
   );
+  // Recovery-cut RO group set for TODAY — shared by the lagging-line gate AND the
+  // weekMakeup note gate (both must defer to a same-day recovery cut: recovery is
+  // the more-recent dominant truth). recovery-cut adaptations carry RO group keys.
+  const recoveryCutGroupsRo = useMemo<Set<string>>(
+    () =>
+      new Set<string>(
+        (workout?.coachAdaptations ?? [])
+          .filter((a) => a?.kind === 'recovery-cut' && typeof a.group === 'string')
+          .map((a) => a.group as string),
+      ),
+    [workout?.coachAdaptations],
+  );
   const laggingSignal = useMemo<string | null>(() => {
     try {
-      return engineWrappers.getLaggingSignal?.(planAllocation) ?? null;
+      return engineWrappers.getLaggingSignal?.(planAllocation, recoveryCutGroupsRo) ?? null;
     } catch {
       return null;
     }
-  }, [planAllocation]);
+  }, [planAllocation, recoveryCutGroupsRo]);
 
   // Calibration honesty signal — read ONCE here so BOTH the "still learning you"
   // line AND the narrative truth-gate (below) share one source: a confident
@@ -293,12 +305,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
       // then say "Added a little {group} today" for the SAME muscle (opposite
       // directions across two lines). The recovery cut is the more-recent dominant
       // truth → exclude any recovery-cut group from the makeup note. recovery-cut
-      // adaptations carry RO group keys; makeup keys are EN → translate before set.
-      const recoveryCutGroupsRo = new Set<string>(
-        (workout?.coachAdaptations ?? [])
-          .filter((a) => a?.kind === 'recovery-cut' && typeof a.group === 'string')
-          .map((a) => a.group as string),
-      );
+      // group keys are RO (shared memo above); makeup keys are EN → translate before compare.
       const isRecoveryCutToday = (enGroup: string): boolean => {
         const roGroup = BIG11_EN_TO_RO_MAP[enGroup] ?? enGroup;
         return recoveryCutGroupsRo.has(roGroup);
@@ -327,7 +334,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     } catch {
       return null;
     }
-  }, [workout?.weekMakeup, workout?.coachAdaptations, planAllocation]);
+  }, [workout?.weekMakeup, recoveryCutGroupsRo, planAllocation]);
 
   // START-side double-session guard (counterpart to the PostRpe finish-side
   // confirm shipped dc9400d6). When a gym session is already logged TODAY we

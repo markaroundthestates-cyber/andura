@@ -788,6 +788,7 @@ export function getCoachRestReason(): CoachRestReason | null {
  */
 export function getLaggingSignal(
   allocation?: { allocatedGroups: Set<string> } | null,
+  recoveryCutGroups?: ReadonlySet<string> | null,
 ): string | null {
   try {
     const sessions = useWorkoutStore.getState().sessionsHistory;
@@ -811,6 +812,13 @@ export function getLaggingSignal(
     if (getCalibrationMaturity() !== null) return null;
     const topWeak = weakGroups[0];
     if (topWeak === undefined) return null;
+    // Cross-line contradiction gate (cycle-11): the why-line already says
+    // "Lighter on your {group} - still recovering" for a group cut for fatigue
+    // TODAY. This lagging line must NOT then say "focus azi pe {group}" for the
+    // SAME muscle (opposite directions across two card lines). Recovery is the
+    // more-recent dominant truth → suppress the lagging line for any recovery-cut
+    // group. recovery-cut + topWeak both carry RO Big-11 keys, so compare directly.
+    if (recoveryCutGroups && recoveryCutGroups.has(topWeak)) return null;
     // Plan-allocation gate (LLM-judge Pattern A): never claim "focus azi pe
     // {group}" for a group today's plan does not train. Only enforced when the
     // caller passed the plan's allocation (back-compat otherwise).
