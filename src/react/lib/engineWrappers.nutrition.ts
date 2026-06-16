@@ -217,6 +217,13 @@ export function resolveEnergyMagnitude(): { phase: PhaseToken; severity: number 
   if (tdee === null || !Number.isFinite(tdee) || tdee <= 0) return null;
   const coherent = getCoherentKcalToday(tdee);
   if (coherent === null) return null;
+  // NUTR-1 (2026-06-16) — a subponderal user (BMI<=18.5) is fed a healthy-floor
+  // SURPLUS (clampKcalToHealthyFloor raises to TDEE x lean-gain), NOT the raw CUT
+  // deficit. Emitting a CUT severity here would throttle training volume
+  // (dp_energy_volume_v1) for someone the engine is actually feeding to GAIN — a
+  // direct contradiction (deep-cut workout + growth-surplus nutrition same day).
+  // When the guardrail clamps up (subponderal) on a CUT, suppress the modulation.
+  if (phase === 'CUT' && applyHealthyFloorGuardrail(coherent.kcal).clamped) return null;
   // severity = the absolute kcal shift as a fraction of maintenance. A CUT lands
   // below maintenance (deficit), a BULK/STRENGTH above (surplus) — either way the
   // magnitude is |delta|/maintenance, clamped [0,1].
