@@ -1525,6 +1525,24 @@ export const DP = {
             // The floor lifted the catch-up step straight to the demonstrated load —
             // keep the note's kg aligned with the final prescribed kg.
             result.progressionNote = `Te descurci usor → urcam la ${result.kg} kg, catre nivelul tau real.`;
+          } else if (
+            isEnabled('dp_cap_after_calib_v1')
+            && cappedAtKg > 0
+            && result.kg > cappedAtKg
+          ) {
+            // CAP/CAP REPS/PEAK rec whose "Revenim la {cap}" note the PR-floor just
+            // CONTRADICTED by lifting kg to a GENUINELY-DEMONSTRATED load above the cap
+            // (the real Y Raise 25-vs-18 / Cable Curl 54-vs-35 cases — _demoWorkingW
+            // already excludes failed/short ego sets, so only a load the user truly
+            // owned at target reps reaches here). Demonstrated strength IS allowed above
+            // a defensive cap (design), but the stale cap note/status now LIES. Re-tag to
+            // an honest "proven load" so the note matches the prescribed kg. OFF →
+            // byte-identical (pinned OFF in fp + calibration-sim); the safety cap on a
+            // non-demonstrated ego-load (floorW<=cap → no lift) is untouched.
+            result.status = 'ON TARGET';
+            result.statusColor = 'var(--green)';
+            result.statusLabel = '🟢 La nivelul tau';
+            result.progressionNote = `${result.kg} kg · nivelul pe care l-ai demonstrat deja, peste plafonul implicit.`;
           }
         }
       }

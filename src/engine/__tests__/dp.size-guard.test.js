@@ -69,6 +69,19 @@
 // without passing the whole in-flight rec out. Gated behind dp_cap_after_calib_v1 (default
 // ON, pinned OFF in the calibration-sim + fp frozen baselines). Ratchet-down-only resumes
 // from 2962.
+//
+// EIGHTH documented exception 2026-06-16 (2962→2980): the PR-floor / CAP-note reconciliation
+// (cycle-8 audit HIGH). On a CAP-over rec (lastW>maxKg → status CAP, kg=maxKg, "Revenim la
+// {cap}") the PR-floor legitimately lifts result.kg to a GENUINELY-DEMONSTRATED load above the
+// defensive cap (DESIGN: demonstrated strength beats a population ceiling — the real 54 kg
+// Cable Curl / 25 kg Y Raise; _demoWorkingW already excludes failed/short ego sets, so a true
+// ego-load stays capped). But the stale CAP status + "Revenim la {cap}" note then CONTRADICTED
+// the higher prescribed kg. The +18 here is the irreducible CALL-SITE re-tag branch inside the
+// PR-floor block (a third arm beside the EASE-BACK / CATCH-UP re-tags): when the floor lifts a
+// cap-status rec above cappedAtKg, swap the lying note for an honest "proven load above the
+// default ceiling". It reads cappedAtKg + result.status that already live in recommend(), so it
+// cannot leave dp.js. Gated behind dp_cap_after_calib_v1 (default ON, pinned OFF in the
+// calibration-sim + fp frozen baselines). Ratchet-down-only resumes from 2980.
 
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
@@ -77,9 +90,9 @@ import { resolve, dirname } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Ceiling = current line count. Ratchet DOWN only (seven documented exceptions
+// Ceiling = current line count. Ratchet DOWN only (eight documented exceptions
 // 2026-06-11/12/14/16 for call-site wiring — see header).
-const DP_LINE_CEILING = 2962;
+const DP_LINE_CEILING = 2980;
 
 const dpSrc = readFileSync(resolve(__dirname, '../dp.js'), 'utf8');
 // Under a Stryker mutation dry-run the on-disk source is INSTRUMENTED (stryMutAct_*

@@ -221,3 +221,45 @@ describe('safety cap survives calibration (learned multiplier cannot defeat it)'
     expect(rec.kg).toBeLessThanOrEqual(35);
   });
 });
+
+// ── PR-FLOOR vs the CAP note — ego-load capped, demonstrated load gets honest note ─
+// _recommendRaw's CAP-over branch (lastW > maxKg) returns kg=maxKg with a "Revenim
+// la {maxKg} kg" note. The PR-floor below it then floors result.kg to the
+// DEMONSTRATED working load. Two cases must behave differently (dp_cap_after_calib_v1):
+//  (1) a true EGO-load (an over-cap set that did NOT genuinely complete target reps —
+//      failed/short) → _demoWorkingW excludes it → the floor cannot lift → stays AT the
+//      safety cap (the brake holds). The Y Raise 25×4-greu vs 18 case.
+//  (2) a GENUINELY-demonstrated over-cap load (completed at target reps, repeatedly) →
+//      the floor LEGITIMATELY lifts above the defensive cap (design: demonstrated
+//      strength beats a population ceiling — the real 54 kg Cable Curl, covered in
+//      dp.synergistPreFatigue). But the leftover CAP status + "Revenim la {cap}" note
+//      then CONTRADICT the higher prescribed kg. The fix re-tags it to an honest
+//      "proven load" note so the message matches the kg (no more "Revenim la 18" on a
+//      prescribed 25).
+describe('PR-floor + the CAP note (over-cap ego vs demonstrated)', () => {
+  it('an over-cap EGO set (failed/short of target) stays AT the safety cap', () => {
+    // DB Lateral Raise cap = MAX_KG 18. A single ego set 25 kg × 4 reps rated greu
+    // (8.5) — short of the rep target AND hard → _demoWorkingW excludes it (not a
+    // genuine demonstration), so the PR-floor cannot lift above the cap. Capped at 18.
+    store['logs'] = [
+      { ex: 'DB Lateral Raise', w: 25, reps: 4, rpe: 8.5 },
+    ];
+    const rec = DP.recommend('DB Lateral Raise');
+    expect(rec.kg).toBeLessThanOrEqual(18); // brake holds on the ego-load
+  });
+
+  it('a GENUINELY-demonstrated over-cap load keeps its kg but drops the stale CAP note', () => {
+    // DB Lateral Raise cap 18. The user GENUINELY owned 25 kg × 12 (target reps,
+    // potrivit, three sessions) — demonstrated strength the PR-floor is allowed to
+    // honor above the defensive cap. The prescribed kg must be the proven 25, NOT 18,
+    // and the note must NOT still say "Revenim la 18 kg" (that lied about the kg).
+    store['logs'] = [
+      { ex: 'DB Lateral Raise', w: 25, reps: 12, rpe: 7 },
+      { ex: 'DB Lateral Raise', w: 25, reps: 12, rpe: 7 },
+      { ex: 'DB Lateral Raise', w: 25, reps: 12, rpe: 7 },
+    ];
+    const rec = DP.recommend('DB Lateral Raise');
+    expect(rec.kg).toBe(25); // demonstrated strength honored above the cap (design)
+    expect(rec.progressionNote).not.toMatch(/Revenim la/); // stale contradicting note gone
+  });
+});
