@@ -473,6 +473,17 @@ export const FLIPPED_FLAGS = Object.freeze([
   // so BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is proven on the
   // dp.calibration safety-cap regression test, NOT in this determinism stream.
   'dp_cap_after_calib_v1',
+  // THE FLIP 2026-06-16 (M1 fatigued-drop guarantee-awareness) — dp_fatigue_drop_guarantee_aware_v1
+  // defaults ON. buildSession's M1 fatigued exercise-drop removed a fatigued group's LAST slot, but
+  // the focus guarantees inject their SIGNATURE movement (lateral / 2nd-arm) as that last slot — so
+  // a fatigued focus user lost the guarantee. When ON (threaded as ctx.fatigueDropGuaranteeAware) the
+  // drop protects the signature slot (drops a redundant occurrence or shaves sets). The fp cohort
+  // hits the fatigued-drop WITH a focus context (EMPHASIS_PRESETS), so the guarantee-aware victim
+  // redirect MOVES a dropped slot → both frozen hashes shift. Pinned OFF here (in FLIPPED_FLAGS only,
+  // NOT PATH_A_FLAGS) so ctx.fatigueDropGuaranteeAware is false in both A/B arms → the old blind
+  // last-occurrence drop runs → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is
+  // proven on the lateralDeltGuarantee fatigue-survival regression test, NOT in this stream.
+  'dp_fatigue_drop_guarantee_aware_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

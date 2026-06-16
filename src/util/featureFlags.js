@@ -1747,6 +1747,23 @@ export const FLAGS = Object.freeze({
   // moves a prescribed kg → pin OFF). ON is proven on the dp.calibration safety-cap
   // regression test, NOT the determinism streams.
   dp_cap_after_calib_v1: { rollout: 1, default: true },
+
+  // M1 fatigued-drop guarantee-awareness (dp_fatigue_drop_guarantee_aware_v1,
+  // 2026-06-16, DEFAULT ON). buildSession's M1 fatigued exercise-drop (the LAST
+  // slot pass) removed a fatigued group's LAST occurrence to "keep the leading
+  // anchor" — but the focus guarantees (#WIDTH lateral-delt, #73 lateral-raise,
+  // #FOCUS-LEAD 2nd-arm slot) inject their SIGNATURE movement as the group's lowest-
+  // priority (last) slot, so a fatigued v-taper/shoulders user lost the guaranteed
+  // lateral (an OHP-only day, zero direct lateral) and a fatigued arms user lost the
+  // guaranteed 2nd biceps/triceps slot. When ON (threaded as ctx.fatigueDropGuarantee-
+  // Aware) the drop protects the focus-signature slot: it drops a REDUNDANT non-
+  // signature occurrence instead, or shaves sets when the signature is the only
+  // droppable slot. OFF → the old blind last-occurrence drop (byte-identical). Pinned
+  // OFF in fp-config FLIPPED_FLAGS so both frozen prescription baselines stay byte-for-
+  // byte (the fp cohort hits the fatigued-drop with a focus context → the guarantee-
+  // aware redirect moves a victim → pin OFF). Proven on the lateralDeltGuarantee
+  // fatigue-survival regression test.
+  dp_fatigue_drop_guarantee_aware_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

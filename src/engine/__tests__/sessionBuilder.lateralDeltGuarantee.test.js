@@ -141,4 +141,51 @@ describe('#WIDTH — v-taper/shoulders lateral-delt guarantee (pure buildSession
     const b = buildSession('full', ctx({ focusId: 'chest', emphasizedGroups: ['piept'], lateralDeltGuarantee: false }));
     expect(a).toEqual(b);
   });
+
+  // ── GUARANTEE-AWARE M1 FATIGUE DROP ─────────────────────────────────────────
+  // The M1 fatigued exercise-drop (the LAST slot pass) used to remove a fatigued
+  // group's LAST occurrence ("keep the leading anchor"). But the guarantee injects
+  // the lateral as umeri's LOWEST-priority (last) slot — so a fatigued umeri user
+  // lost the guaranteed lateral (an OHP-only fatigued shoulders day, zero direct
+  // lateral — the exact regression the guarantee exists to prevent). The drop is
+  // now guarantee-aware: the focus-SIGNATURE slot survives — a redundant non-
+  // signature slot is dropped, or (when the signature is the only droppable slot)
+  // the drop is skipped and the set-shave lightens the day instead.
+  it('fatigued umeri keeps the guaranteed lateral (drops a redundant slot / shaves sets instead)', () => {
+    baselineFlags();
+    // umeri (the v-taper focus group) is FATIGUED. Its slots = a press anchor + the
+    // injected lateral (the signature). The blind last-occurrence drop would strip
+    // the lateral; guarantee-aware, it must survive.
+    const fatigued = buildSession('full', ctx({
+      lateralDeltGuarantee: true,
+      fatigueDropGuaranteeAware: true,
+      recoveryState: { umeri: 'fatigued' },
+    }));
+    expect(lateralCount(fatigued)).toBeGreaterThanOrEqual(1); // signature survived
+    // The press anchor also survives → umeri is not orphaned, it is lightened.
+    const presses = (fatigued.exercises || []).filter(
+      (e) => primaryOf(e.name) === 'umeri' && movementKey(e.name, getExerciseMetadata(e.name)) === 'umeri::press',
+    ).length;
+    expect(presses).toBeGreaterThanOrEqual(1);
+  });
+
+  it('a fatigued umeri day is still visibly lighter than the fresh guaranteed day (set-shave)', () => {
+    baselineFlags();
+    const fresh = buildSession('full', ctx({ lateralDeltGuarantee: true }));
+    baselineFlags();
+    const fatigued = buildSession('full', ctx({
+      lateralDeltGuarantee: true,
+      fatigueDropGuaranteeAware: true,
+      recoveryState: { umeri: 'fatigued' },
+    }));
+    // The lateral is kept in BOTH (the guarantee holds) but the fatigued umeri group
+    // carries fewer TOTAL sets — the bite reaches the day via the set-shave, not by
+    // stripping the signature movement.
+    expect(groupSlots(fatigued, 'umeri')).toBeGreaterThanOrEqual(1);
+    expect(lateralCount(fatigued)).toBeGreaterThanOrEqual(1);
+    const umeriSets = (s) => (s.exercises || [])
+      .filter((e) => primaryOf(e.name) === 'umeri')
+      .reduce((a, e) => a + e.sets, 0);
+    expect(umeriSets(fatigued)).toBeLessThan(umeriSets(fresh));
+  });
 });

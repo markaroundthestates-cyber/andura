@@ -3633,10 +3633,40 @@ export function buildSession(cluster, ctx) {
     );
     if (dropLastFor.size > 0) {
       const lastIndexByGroup = {};
-      chosen.forEach((e, i) => {
-        const g = groupOf(e.name);
-        if (dropLastFor.has(g)) lastIndexByGroup[g] = i;
-      });
+      // GUARANTEE-AWARE victim pick (ctx.fatigueDropGuaranteeAware, default ON): the focus
+      // guarantees (#WIDTH lateral-delt, #73 lateral-raise, #FOCUS-LEAD 2nd-arm slot) inject
+      // their SIGNATURE movement as the group's lowest-priority (LAST) slot — so the blind
+      // "drop the last occurrence" would strip the guaranteed lateral / 2nd-arm slot off a
+      // fatigued focus user (an OHP-only shoulders day, a 1-biceps arms day). Prefer dropping
+      // a REDUNDANT (non-focus-relevant) occurrence; protect the focus-signature slot when an
+      // alternative exists. If the group's ONLY droppable slot is the guaranteed one, skip the
+      // drop — the non-recovered set-shave below already lightens the day, so the fatigued
+      // muscle keeps its signature movement at a lighter dose. focusGroupOf(name) is non-null
+      // when the name is focus-relevant (emphSet group OR a focusRelevantTags signature). OFF /
+      // no focus context → the old blind last-occurrence drop (byte-identical, pinned OFF in fp).
+      if (ctx?.fatigueDropGuaranteeAware === true) {
+        const lastRedundantByGroup = {};
+        chosen.forEach((e, i) => {
+          const g = groupOf(e.name);
+          if (!dropLastFor.has(g)) return;
+          lastIndexByGroup[g] = i;
+          if (focusGroupOf(e.name) == null) lastRedundantByGroup[g] = i; // not a signature slot
+        });
+        // Per group: drop the last REDUNDANT slot if one exists; else (only signature slots
+        // droppable) protect it — skip the drop (set-shave lightens instead).
+        for (const g of dropLastFor) {
+          if (lastRedundantByGroup[g] != null) {
+            lastIndexByGroup[g] = lastRedundantByGroup[g];
+          } else if (focusGroupOf(chosen[lastIndexByGroup[g]].name) != null) {
+            delete lastIndexByGroup[g]; // guaranteed-only → keep the signature slot
+          }
+        }
+      } else {
+        chosen.forEach((e, i) => {
+          const g = groupOf(e.name);
+          if (dropLastFor.has(g)) lastIndexByGroup[g] = i;
+        });
+      }
       // Tier-aware floor guard: the fatigued exercise-drop must NEVER push the
       // session below minSession (the ordering bug that let a 1-day-fatigue case
       // fall to 2 exercises). Apply only as many drops as keep chosen.length at or

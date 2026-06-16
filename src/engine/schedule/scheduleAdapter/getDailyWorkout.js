@@ -1012,6 +1012,16 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // drove the M1 budget cut above (resistance + aerobic) — NOT a new penalty,
     // it only makes the existing cut visible. Empty state (no logs) → no-op.
     recoveryState: mergedState,
+    // M1 fatigued-drop GUARANTEE-AWARENESS (dp_fatigue_drop_guarantee_aware_v1,
+    // default ON). The fatigued exercise-drop removed a fatigued group's LAST slot,
+    // but the focus guarantees (#WIDTH lateral-delt / #73 lateral-raise / #FOCUS-LEAD
+    // 2nd-arm) inject their SIGNATURE movement as the group's lowest-priority (last)
+    // slot — so a fatigued v-taper/shoulders or arms user lost the guaranteed lateral /
+    // 2nd-arm slot (an OHP-only fatigued shoulders day). When true, buildSession drops a
+    // REDUNDANT non-signature slot instead, or shaves sets when the signature is the only
+    // droppable one. OFF → the old blind last-occurrence drop (byte-identical, pinned OFF
+    // in fp FLIPPED_FLAGS so both frozen baselines stay byte-for-byte).
+    fatigueDropGuaranteeAware: isEnabled('dp_fatigue_drop_guarantee_aware_v1'),
     // F5 (dp_latiso_dedup_v1, 2026-06-10) — the active week's derived clusters,
     // so the focus-policy resolver can defer a weekly minimum from the GENERALIST
     // 'upper' day to the week's SPECIALIST days (v-taper: Pull owns the lat-iso
