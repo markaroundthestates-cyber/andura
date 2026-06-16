@@ -1538,11 +1538,19 @@ export async function composePlannedWorkoutToday(
           experience: useOnboardingStore.getState().data.experience,
           sex: coldStartProfile.sex,
         });
-        const mondayMs = now.getTime() - planDayIdx * 86400000;
+        // CALENDAR-day stepping (not fixed 86400000ms): mapDateToIndex reads LOCAL
+        // getDay(), so across a DST transition a fixed-ms Monday + sibling offsets
+        // disagree with the local-day index and mis-attribute a day's volume. Build
+        // Monday + each sibling via setDate (the same idiom as getWeekStartIso).
+        const monday = new Date(now);
+        monday.setDate(monday.getDate() - planDayIdx);
+        monday.setHours(0, 0, 0, 0);
         const composeDay = async (dIdx: number) => {
           // A sibling day == today → reuse the already-built final plan (no recompose).
           if (dIdx === planDayIdx) return { exercises: trimmedExercises };
-          const sib = await composePlannedWorkoutToday(new Date(mondayMs + dIdx * 86400000), {
+          const d = new Date(monday);
+          d.setDate(monday.getDate() + dIdx);
+          const sib = await composePlannedWorkoutToday(d, {
             ...options,
             _mrvRecompute: true,
           });
