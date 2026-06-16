@@ -79,6 +79,14 @@ export interface SwapPickSheetState {
   rows: readonly SwapPickRow[];
   muscleGroup: string;
   originalName: string;
+  /**
+   * §C6 audit fix — WHY the pick-list was opened. 'refusal' = taste decision
+   * ("Nu vreau") → the pick increments the refusal counter (soft ~10-day compose
+   * demote). 'busy' = equipment-busy fallback ("Ocupat" with nothing to defer
+   * behind / mid-exercise) → a HARD blocker, NOT a taste refusal, so the pick
+   * must NOT touch the refusal counter. Threaded so handlePickRow can gate it.
+   */
+  reason: 'busy' | 'refusal';
 }
 
 export interface UseWorkoutSwap {
@@ -104,6 +112,7 @@ const CLOSED_PICK: SwapPickSheetState = {
   rows: [],
   muscleGroup: '',
   originalName: '',
+  reason: 'refusal',
 };
 
 // Founder Busy/Missing redesign 2026-06-12 — the three in-session action buttons
@@ -175,7 +184,12 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         excludeNames,
         triedNames,
       );
-      setPickSheet({ open: true, rows, muscleGroup, originalName });
+      // §C6 audit fix — the busy fallback ('equipment-swap') is a HARD blocker,
+      // not a taste refusal; only the 'Nu vreau' path ('ceva-nu-merge') counts as
+      // a refusal. handlePickRow reads this to gate incrementRefusal.
+      const reason: 'busy' | 'refusal' =
+        fallbackPath === 'equipment-swap' ? 'busy' : 'refusal';
+      setPickSheet({ open: true, rows, muscleGroup, originalName, reason });
     },
     [bumpActivity, currentExercise.engineName, otherSessionNames, refusalTriedByEx, safeExIdx, navigate],
   );
@@ -326,7 +340,15 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
       bumpActivity();
       const engineName = currentExercise.engineName;
       if (typeof engineName === 'string' && engineName.length > 0) {
-        incrementRefusal(engineName);
+        // §C6 audit fix — only a TASTE refusal ('Nu vreau') increments the refusal
+        // counter (the {n,ts} getRefusalPenalties turns into a ~10-day soft compose
+        // demote). A busy-equipment swap is a HARD blocker, not "I dislike this" —
+        // it must NOT demote the exercise. markRefusalTried still runs both ways:
+        // it only feeds the per-slot diversify-modality ranking + no-re-offer set,
+        // never the penalty.
+        if (pickSheet.reason === 'refusal') {
+          incrementRefusal(engineName);
+        }
         markRefusalTried(safeExIdx, engineName);
       }
       const swapped = row.exercise;
@@ -365,7 +387,7 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         variant: 'success',
       });
     },
-    [bumpActivity, currentExercise.engineName, markRefusalTried, safeExIdx, setExercises, swapExercise, pickSheet.originalName],
+    [bumpActivity, currentExercise.engineName, markRefusalTried, safeExIdx, setExercises, swapExercise, pickSheet.originalName, pickSheet.reason],
   );
 
   // Drop the WHOLE exercise from today's session (pick-list "I don't want to do
