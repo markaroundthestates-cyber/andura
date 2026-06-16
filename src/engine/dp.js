@@ -39,6 +39,7 @@ import { chooseCandidate } from './dp/mpc.js';
 import { deriveLoadTransition } from './dp/loadTransition.js';
 import { isPinnedPainful } from './dp/painMemory.js';
 import { detectStagnation } from './stagnationDetector.js';
+import { getMetricType } from './metricType.js';
 import { getUserConfig } from '../config/user.js';
 import { t } from '../i18n/index.js';
 
@@ -1693,6 +1694,10 @@ export const DP = {
     const { lastW, lastReps, lastRPE, isStagnant, atTopReps, extraSets,
       consecutiveGreu, lastRepsBelowTarget, consecutiveEasyHit } = state;
 
+    // C16-METRIC-KG-SPIRAL: a time/carry metric set logs reps:0 (completed hold, not a
+    // failed short set) — gates the reps-only SCALE BACK below so the load never spirals.
+    const isRepsMetric = getMetricType(ex) === 'reps';
+
     // ── #75 LOAD-TRANSITION WINDOW (dp_load_transition_v1, default OFF) ──────────
     // After a forced load change ≥10%, raw reps are misread: an UP-jump rep DROP is
     // e1RM continuity (NOT regression → suppress the ease-back); a DOWN move rep
@@ -1736,8 +1741,8 @@ export const DP = {
       : { transition_active: false, direction: null, reason: null, load_change_pct: 0,
           suppress_regression: false, cap_rebound: false, window: 0, exposuresInWindow: 0, asked: false };
 
-    // ── SCALE BACK: ≤50% of minimum reps → drop one step on equipment list
-    if (lastReps < Math.ceil(rMin * 0.5)) {
+    // ── SCALE BACK: ≤50% of minimum reps → drop one step on equipment list (reps-only)
+    if (isRepsMetric && lastReps < Math.ceil(rMin * 0.5)) {
       const prevKg = getPrevWeight(lastW, ex);
       return {
         kg: prevKg, repsTarget: rMin, rir: 3,

@@ -112,6 +112,17 @@
 // retag block right below composes the note from the resolved kg, so the glue cannot leave
 // dp.js). Gated behind the same dp_ladder_snap_reconcile_v1 (default ON, pinned OFF in the
 // calibration-sim + fp frozen baselines). Ratchet-down-only resumes from 3042.
+//
+// ELEVENTH documented exception 2026-06-17 (3042→3047): the C16-METRIC-KG-SPIRAL fix
+// (cycle-16 audit HIGH). A time/carry metric exercise logs reps:0 (no rep axis), and
+// the reps-shortfall SCALE BACK gate read that as a failed short set, dropping the load
+// one step EVERY session (24→22.5→20… a weight death-spiral). The classification LOGIC
+// already lives in its own submodule per the rule (engine/metricType.js: getMetricType,
+// untouched); the +5 here is the irreducible CALL-SITE WIRING in _recommendRaw — one
+// import line + the isRepsMetric const (it reads `ex` which only lives in this method)
+// + the `isRepsMetric &&` guard on the existing SCALE BACK if + a 2-line breadcrumb. It
+// cannot leave dp.js without fragmenting the recommend decision flow. fp/calibration-sim
+// baselines stay byte-identical (no flag needed). Ratchet-down-only resumes from 3047.
 
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
@@ -120,9 +131,9 @@ import { resolve, dirname } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Ceiling = current line count. Ratchet DOWN only (ten documented exceptions
-// 2026-06-11/12/14/16 for call-site wiring — see header).
-const DP_LINE_CEILING = 3042;
+// Ceiling = current line count. Ratchet DOWN only (eleven documented exceptions
+// 2026-06-11/12/14/16/17 for call-site wiring — see header).
+const DP_LINE_CEILING = 3047;
 
 const dpSrc = readFileSync(resolve(__dirname, '../dp.js'), 'utf8');
 // Under a Stryker mutation dry-run the on-disk source is INSTRUMENTED (stryMutAct_*
