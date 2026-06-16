@@ -14,6 +14,7 @@ import { learnVolumeLandmarks, saveLearnedVolume, LEARNED_VOLUME_KEY } from '../
 import { learnFatigueCurve, saveFatigueCurve, FATIGUE_CURVE_KEY } from '../../engine/dp/fatigueCurve.js';
 import { distillAndPersistBehaviorTuning } from '../../engine/dp/behaviorDistill.js';
 import { debugLog } from '../lib/debugLog';
+import { refreshPRRecordsFromLogs } from '../lib/prRecordsWriteback';
 import { DP } from '../../engine/dp.js';
 import { resolveCanonical } from '../../engine/exerciseAliases.js';
 import { useOnboardingStore } from './onboardingStore';
@@ -331,6 +332,50 @@ export function persistSessionLogs(
     // Soft-fail — storage quota / SSR jsdom edge. Engine adapters tolerate
     // missing logs (return 'DATE INSUFICIENTE' baseline). Preserves zero-
     // throw render contract Zustand action boundary.
+  }
+}
+
+// Cycle-5 audit (LOW) — when a mislogged session is DELETED, its per-set log
+// rows must also leave DB('logs') and the pr-records hash must be recomputed.
+// Otherwise a PR from a later-deleted session lingers on the PR Wall + inflates
+// the Records count (the session vanishes from History but its logs persist).
+//
+// Correlation: the durable log row's `ts` IS the set's own timestamp
+// (buildLogEntriesFromSummary: `ts = s.timestamp`), the SAME value carried on the
+// deleted summary's `exercises[*].sets[*].timestamp`. That is the robust key —
+// `LogEntry.session` is `sessionStart` (session START), which differs from the
+// summary's `ts` (session FINISH) for a normal session, so matching on session-ts
+// alone would miss the rows. We additionally drop rows whose `l.session === ts`
+// as a belt-and-suspenders for the null-sessionStart fallback path (finishSession
+// then writes `session: summary.ts`). After pruning, refreshPRRecordsFromLogs()
+// recomputes pr-records from the SURVIVING logs. Soft-fail (same zero-throw
+// render contract as persistSessionLogs). Pure on the store side.
+export function purgeDeletedSessionLogs(
+  summary: LastSessionSummary | undefined,
+  ts: number,
+): void {
+  try {
+    const logs = DB.get<LogEntry[]>('logs') ?? [];
+    if (logs.length === 0) {
+      refreshPRRecordsFromLogs();
+      return;
+    }
+    // Collect the deleted session's set timestamps (primary correlation key).
+    const setTimestamps = new Set<number>();
+    for (const ex of summary?.exercises ?? []) {
+      for (const s of ex.sets) {
+        if (typeof s.timestamp === 'number') setTimestamps.add(s.timestamp);
+      }
+    }
+    const surviving = logs.filter(
+      (l) => !setTimestamps.has(l.ts) && l.session !== ts,
+    );
+    if (surviving.length !== logs.length) DB.set('logs', surviving);
+    refreshPRRecordsFromLogs();
+  } catch {
+    // Soft-fail — storage / SSR jsdom edge. Leaving the logs as-is is safe; the
+    // tombstone already removed the session from History. Zero-throw at the
+    // Zustand action boundary.
   }
 }
 

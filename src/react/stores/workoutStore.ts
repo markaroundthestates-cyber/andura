@@ -76,6 +76,7 @@ export {
   buildLogEntriesFromSummary,
   persistSessionLogs,
   archiveOverflowSessions,
+  purgeDeletedSessionLogs,
   diffCalendarDays,
   nextStreak,
 } from './workoutStore.logic';
@@ -90,6 +91,7 @@ import {
   SESSIONS_HISTORY_MAX,
   persistSessionLogs,
   archiveOverflowSessions,
+  purgeDeletedSessionLogs,
   nextStreak,
 } from './workoutStore.logic';
 
@@ -295,7 +297,14 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       deleteSession: (ts) =>
         set((s) => {
           if (!Number.isFinite(ts)) return {};
-          if (!s.sessionsHistory.some((sess) => sess.ts === ts)) return {};
+          const deleted = s.sessionsHistory.find((sess) => sess.ts === ts);
+          if (!deleted) return {};
+          // Cycle-5 audit (LOW): also remove the deleted session's per-set log rows
+          // from DB('logs') + recompute pr-records from the SURVIVING logs, so a PR
+          // from a mislogged (now-deleted) session doesn't linger on the PR Wall +
+          // inflate the Records count. Side-effect at the action boundary (same
+          // pattern as finishSession→persistSessionLogs); soft-fail inside.
+          purgeDeletedSessionLogs(deleted, ts);
           return {
             sessionsHistory: s.sessionsHistory.filter((sess) => sess.ts !== ts),
             deletedSessionTs: s.deletedSessionTs.includes(ts)

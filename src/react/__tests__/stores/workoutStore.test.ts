@@ -11,6 +11,9 @@ import {
   PAUSED_SESSION_UNTITLED,
 } from '../../stores/workoutStore';
 import type { WorkoutMode, LastSessionSummary } from '../../stores/workoutStore';
+import { DB } from '../../../db.js';
+import { refreshPRRecordsFromLogs } from '../../lib/prRecordsWriteback';
+import { getPRHistoryAll, getStreakStats } from '../../lib/prHistoryAggregate';
 
 function resetStore(): void {
   useWorkoutStore.setState({
@@ -1193,6 +1196,48 @@ describe('workoutStore — deleteSession (delete a mislogged workout)', () => {
     useWorkoutStore.getState().deleteSession(999999);
     expect(useWorkoutStore.getState().sessionsHistory).toHaveLength(1);
     expect(useWorkoutStore.getState().deletedSessionTs).toHaveLength(0);
+  });
+
+  // Cycle-5 audit (LOW): deleting a session must also remove its log rows from
+  // DB('logs') + recompute pr-records, so a PR from the deleted session no longer
+  // shows on the PR Wall (getPRHistoryAll) nor inflates the Records count (prCount).
+  it('removes the deleted session PR from the PR Wall + recomputes pr-records', () => {
+    const setTs = 50_500; // the session's single set timestamp (= log row ts)
+    // A logged PR session: one heavy Squat set. The durable log row's `ts` IS the
+    // set timestamp; the summary carries the same timestamp on its set.
+    DB.set('logs', [
+      { date: '2026-06-15', ex: 'Squat', w: 140, kg: 140, set: 1, sets: 1, reps: '5', ts: setTs, session: 50_000 },
+    ]);
+    refreshPRRecordsFromLogs(); // populate pr-records from that log
+    expect(getPRHistoryAll().some((r) => r.exerciseId === 'Squat')).toBe(true);
+    expect(getStreakStats().prCount).toBe(1);
+
+    // The session in History, with the matching set timestamp on its breakdown.
+    const session: LastSessionSummary = {
+      title: 'Legs',
+      meta: '',
+      ts: 51_000, // session FINISH ts (differs from set ts + the log row session)
+      exercises: [
+        {
+          exerciseId: 'squat',
+          exerciseName: 'Genuflexiuni',
+          engineName: 'Squat',
+          sets: [{ kg: 140, reps: 5, rating: 'potrivit', timestamp: setTs }],
+          totalVolume: 700,
+          peakOneRM: 163.3,
+        },
+      ],
+    };
+    useWorkoutStore.setState({ sessionsHistory: [session] });
+
+    useWorkoutStore.getState().deleteSession(51_000);
+
+    // PR gone from the Wall + Records count back to 0, logs row purged.
+    expect(getPRHistoryAll().some((r) => r.exerciseId === 'Squat')).toBe(false);
+    expect(getStreakStats().prCount).toBe(0);
+    expect(DB.get('logs')).toEqual([]);
+    // Tombstone still recorded (cloud sync can't resurrect it).
+    expect(useWorkoutStore.getState().deletedSessionTs).toContain(51_000);
   });
 });
 
