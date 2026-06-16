@@ -106,7 +106,23 @@ function normalizeDate(raw: string): string | null {
     // ISO YYYY-MM-DD (cu posibil timestamp dupa) → slice primii 10
     dateStr = v.slice(0, 10);
   }
-  return /^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? dateStr : null;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return null;
+  // Valideaza si VALOAREA, nu doar forma: o data imposibila (luna 13/45,
+  // 2026-99-99, Feb 30) trece de regex dar e o data inexistenta. Persistata,
+  // fiind lexicografic mai mare ca orice 2026-06-xx real, ar deturna
+  // getCurrentWeightKg (max pe string-ul de data) → BMR/TDEE/proteina gresite.
+  // Round-trip in UTC: daca componenta normalizata nu se intoarce identic →
+  // data nu exista → null → randul cade pe calea 'invalidDate' (vazut in preview).
+  // Pozitii fixe garantate de regex (YYYY-MM-DD) → slice direct (number plin,
+  // nu number|undefined ca la split() sub noUncheckedIndexedAccess).
+  const y = Number(dateStr.slice(0, 4));
+  const m = Number(dateStr.slice(5, 7));
+  const d = Number(dateStr.slice(8, 10));
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d) {
+    return null;
+  }
+  return dateStr;
 }
 
 /** Parseaza un numar tolerant la spatii / ghilimele / separator mii. Returns NaN invalid. */

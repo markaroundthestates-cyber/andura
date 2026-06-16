@@ -92,6 +92,35 @@ describe('parseHistoryImportCSV — weight form + kg/lb detect', () => {
     expect(r.weightEntries).toHaveLength(1);
     expect(r.skipped.length).toBe(1);
   });
+
+  it('sare o data US imposibila (13/45/2026) ca invalidDate, nu o persista', () => {
+    // O data US imposibila trece de forma regex (13/45 → "2026-13-45") dar nu
+    // exista in calendar. Fiind lexicografic > orice 2026-06-xx real, ar deturna
+    // getCurrentWeightKg (max pe string-ul de data) → BMR/TDEE/proteine gresite.
+    const csv = [
+      'Date,Weight,Units',
+      '06/14/2026,81,kg',
+      '06/15/2026,81.2,kg',
+      '13/45/2026,55,kg',
+    ].join('\n');
+    const r = parseHistoryImportCSV(csv);
+    // Randul imposibil cade pe calea de skip, NU intra in weightEntries.
+    expect(r.weightEntries).toHaveLength(2);
+    expect(r.weightEntries.map((w) => w.date)).toEqual(['2026-06-14', '2026-06-15']);
+    expect(r.weightEntries.some((w) => w.kg === 55)).toBe(false);
+    // Surfacing in preview: un rand sarit cu motivul semantic invalidDate.
+    expect(r.skipped).toHaveLength(1);
+    expect(r.skipped[0]!.reason).toBe('invalidDate');
+  });
+
+  it('sare o data ISO imposibila (2026-99-99) ca invalidDate', () => {
+    const csv = ['Date,Weight', '2026-06-14,81', '2026-99-99,55'].join('\n');
+    const r = parseHistoryImportCSV(csv);
+    expect(r.weightEntries).toHaveLength(1);
+    expect(r.weightEntries[0]!.date).toBe('2026-06-14');
+    expect(r.skipped).toHaveLength(1);
+    expect(r.skipped[0]!.reason).toBe('invalidDate');
+  });
 });
 
 describe('parseHistoryImportCSV — edge cases', () => {
