@@ -284,6 +284,17 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     try {
       const mk = workout?.weekMakeup;
       if (!mk) return null;
+      // Deload precedence gate (cycle-13): a deload week is "lighter on purpose"
+      // (intensity-only — it does not cut the volume budget makeup is measured
+      // against, so a skipped session can still leave a makeup deficit). The
+      // why-line already voices "Saptamana asta e mai usoara intentionat - deload";
+      // the makeup note must NOT then say "Am adaugat putin {muscle} azi" (direct
+      // contradiction for Gigel). Deload = the dominant week-level truth → suppress
+      // the whole makeup note (mirrors the recovery-cut-wins precedent below).
+      const isDeloadToday = (workout?.coachAdaptations ?? []).some(
+        (a) => a?.kind === 'deload',
+      );
+      if (isDeloadToday) return null;
       const labelOf = (g: string): string => {
         const k = `coachToday.weekMakeup.label.${g}`;
         const ro = t(k);
@@ -334,7 +345,7 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     } catch {
       return null;
     }
-  }, [workout?.weekMakeup, recoveryCutGroupsRo, planAllocation]);
+  }, [workout?.weekMakeup, workout?.coachAdaptations, recoveryCutGroupsRo, planAllocation]);
 
   // START-side double-session guard (counterpart to the PostRpe finish-side
   // confirm shipped dc9400d6). When a gym session is already logged TODAY we

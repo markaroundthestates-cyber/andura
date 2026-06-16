@@ -520,6 +520,29 @@ describe('CoachTodayCard — intra-week make-up note', () => {
     );
     expect(screen.queryByTestId('coach-week-makeup-note')).not.toBeInTheDocument();
   });
+
+  // Deload precedence gate (cycle-13 MED): a deload week is "lighter on purpose"
+  // (intensity-only — it does not cut the volume budget makeup is measured
+  // against), so a skipped session can still leave a makeup deficit → BOTH the
+  // why-line ("deload — lighter intentionally") and the makeup note ("Am adaugat
+  // putin piept azi") co-render: a direct contradiction. Deload is the dominant
+  // week-level truth → the makeup note is suppressed entirely on a deload day.
+  it('SUPPRESSES the makeup added-note on a deload day (contradicts deload why-line)', () => {
+    renderCardWithMakeupAndAdaptations(
+      { added: { chest: 2 }, behind: {} },
+      [{ kind: 'deload' }],
+    );
+    expect(screen.queryByTestId('coach-week-makeup-note')).not.toBeInTheDocument();
+  });
+
+  it('CONTROL: makeup added-note still shows when NOT a deload day', () => {
+    renderCardWithMakeupAndAdaptations(
+      { added: { chest: 2 }, behind: {} },
+      [],
+    );
+    const note = screen.getByTestId('coach-week-makeup-note');
+    expect(note.textContent).toMatch(/piept/);
+  });
 });
 
 // Plan-allocation truth reconciliation (chest-heavy-plan bug, 2026-06-05). The
