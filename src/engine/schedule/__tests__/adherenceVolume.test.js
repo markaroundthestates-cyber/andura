@@ -43,7 +43,6 @@ vi.mock('../../../util/coachDecisionLog.js', () => ({
 }));
 
 const MS_DAY = 86400000;
-const NOW = Date.UTC(2026, 5, 15, 6, 0, 0); // Mon 2026-06-15 06:00 UTC
 
 // ── PURE helper: adherenceVolumeRatio ────────────────────────────────────────
 // adherenceVolumeRatio now takes the WHOLE computeAdherence() result and reflects
