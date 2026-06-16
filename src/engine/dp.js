@@ -3,11 +3,11 @@
 // src/engine/__tests__/dp.size-guard.test.js (ratchet ceiling blocks growth).
 import { DB } from '../db.js';
 import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../constants.js';
-import { roundToEquipmentWeight, getPrevWeight, getNextWeight } from '../config/weights.js';
+import { roundToEquipmentWeight, getPrevWeight, getNextWeight, getEquipmentType } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier, getTransferSources } from './exerciseMapping.js';
 import { getExerciseMetadata } from './exerciseLibrary.js';
 import { loggedRowMatcher, canonicalLoggedName } from './dp/logIdentity.js';
-import { reconcileLadderStep } from './dp/ladderReconcile.js';
+import { reconcileFloorUp, reconcileLadderStep } from './dp/ladderReconcile.js';
 import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
@@ -1514,7 +1514,26 @@ export const DP = {
         const rng = this.getPhaseAwareRepRange(ex, inCut);
         const floorW = this._demoWorkingW(ex, rng[0] ?? 8);
         if (floorW > 0 && Number.isFinite(result.kg) && result.kg > 0 && result.kg < floorW) {
-          result.kg = this.roundToStep(floorW, ex);
+          // CLUSTER 2 (cycle-10, dp/ladderReconcile.js): roundToStep(floorW) is NEAREST,
+          // so on a COARSE barbell PLATE grid it snaps the proven load DOWN below the floor
+          // it protects (squat 105 → 100, Barbell Row 115 → 110). When gated, reconcileFloorUp
+          // bumps to the nearest real rung >= the RAW demonstrated load — but ONLY for a
+          // barbell PLATE-loaded lift (barbell_heavy / barbell_plates), where ANY plate combo
+          // is achievable so the off-grid proven load is genuine and the GRID craters it. A
+          // fixed-rack DUMBBELL (17.5/20) or a pin STACK has discrete rungs that ARE the
+          // physical reality, so an off-rung log (18 kg DB) is a mis-log → snap DOWN, no bump.
+          // OFF → the legacy nearest snap (byte-identical). The retag block below builds the
+          // note from the resolved kg.
+          const snappedFloor = this.roundToStep(floorW, ex);
+          const equipType = getEquipmentType(ex);
+          result.kg = isEnabled('dp_ladder_snap_reconcile_v1')
+            ? reconcileFloorUp({
+              snappedFloor,
+              rawDemoW: this._demonstratedWorkingW(ex, rng[0] ?? 8),
+              plateLoaded: equipType === 'barbell_heavy' || equipType === 'barbell_plates',
+              ex, roundToStep: (k, e) => this.roundToStep(k, e), getNextWeight,
+            })
+            : snappedFloor;
           // Re-tag a down-ratchet status as a floor HOLD so the note matches the kg
           // (EASE BACK / SCALE BACK can no longer claim to lighten below proven kg).
           if (result.status === 'EASE BACK' || result.status === 'SCALE BACK') {

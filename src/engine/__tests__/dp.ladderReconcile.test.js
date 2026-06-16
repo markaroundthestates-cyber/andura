@@ -1,17 +1,21 @@
-// ══ DP ENGINE — cycle-10 ladder-snap reconcile (cluster 1: ease/climb) ════════
+// ══ DP ENGINE — cycle-10 ladder-snap reconcile (clusters 1 & 2) ══════════════
 //
 // The GENERIC progression ladder (getNextWeight/getPrevWeight over EQUIPMENT_WEIGHTS)
 // and the REAL pin-stack the FINAL rec snaps onto (roundToStep → realMachineStacks /
 // user ladder, flags dp_real_ladder_snap_v1 + dp_user_ladder_v1, default ON) were
-// misaligned, so an EASE-BACK down-step picked the next-lower GENERIC rung (Cable Row
-// 42 → 40), but 40 re-snaps UP to 42 on the real 6..90 stack → the ease silently
-// no-ops AND the note (frozen from the pre-snap 40, "coboram la 40 kg") contradicts
-// the prescribed 42. Re-introduced the Gigel P0 the ease-back fix (142c1c7c) killed.
+// misaligned, so:
+//   C1 — an EASE-BACK down-step picked the next-lower GENERIC rung (Cable Row 42 → 40),
+//        but 40 re-snaps UP to 42 on the real 6..90 stack → the ease silently no-ops
+//        AND the note (frozen from the pre-snap 40, "coboram la 40 kg") contradicts the
+//        prescribed 42. Re-introduced the Gigel P0 the ease-back fix (142c1c7c) killed.
+//   C2 — the PR-FLOOR restored the proven load via roundToStep(floorW), re-snapping it
+//        through the COARSE plate grid that craters it (squat 105 → 100, Barbell Row
+//        115 → 110) — BELOW the demonstrated capacity the floor is meant to protect.
 //
-// Production-shaped inputs (reps 8-12, the REAL coarse rating→RPE literals usor=6.5/
-// potrivit=7.5/greu=8.5, ISO-week-spaced sessions so no return-deload fires). Flags
-// default ON (production). The behavior is gated behind dp_ladder_snap_reconcile_v1;
-// toggling it OFF reproduces the pre-fix off-grid no-op.
+// Production-shaped inputs (non-round plate loads 102.5/115, reps 8-12, the REAL coarse
+// rating→RPE literals usor=6.5/potrivit=7.5/greu=8.5, ISO-week-spaced sessions so no
+// return-deload fires). Flags default ON (production). The behavior is gated behind
+// dp_ladder_snap_reconcile_v1; toggling it OFF reproduces the pre-fix contradiction.
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
@@ -72,6 +76,42 @@ describe('C1 — ease-back lands on a REAL lower rung (no off-grid no-op + note 
     const r = DP.recommend('Cable Row', NOW);
     // The defect: the snap collapsed the ease back onto 42 (the very load just rated greu).
     expect(r.kg).toBe(42);
+  });
+});
+
+describe('C2 — PR-floor never restores BELOW demonstrated capacity on a coarse grid', () => {
+  it('Barbell Row proven 115 (off the plate grid) is not cratered to 110', () => {
+    // barbell_plates grid: ...105,110,120 — 115 is a real plate load (bar+2×20+2×7.5/side)
+    // but roundToStep(115)=110. Proven at potrivit → a HOLD-class rec that the floor restores.
+    seed('Barbell Row', [
+      { w: 115, reps: 9, rpe: RPE.potrivit },
+      { w: 115, reps: 9, rpe: RPE.potrivit },
+      { w: 115, reps: 9, rpe: RPE.potrivit },
+    ]);
+    const r = DP.recommend('Barbell Row', NOW);
+    expect(r.kg).toBeGreaterThanOrEqual(115); // never below demonstrated capacity
+  });
+
+  it('Barbell Bench proven 102.5 holds at-or-above proven (not snapped down to 100)', () => {
+    // barbell_plates HAS 102.5; this guards the fine-grid case stays honest (no over-bump).
+    seed('Flat Barbell Bench', [
+      { w: 102.5, reps: 8, rpe: RPE.potrivit },
+      { w: 102.5, reps: 8, rpe: RPE.potrivit },
+      { w: 102.5, reps: 8, rpe: RPE.potrivit },
+    ]);
+    const r = DP.recommend('Flat Barbell Bench', NOW);
+    expect(r.kg).toBeGreaterThanOrEqual(102.5);
+  });
+
+  it('OFF (pre-fix) the off-grid proven Barbell Row 115 is cratered below 115', () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_ladder_snap_reconcile_v1: false }));
+    seed('Barbell Row', [
+      { w: 115, reps: 9, rpe: RPE.potrivit },
+      { w: 115, reps: 9, rpe: RPE.potrivit },
+      { w: 115, reps: 9, rpe: RPE.potrivit },
+    ]);
+    const r = DP.recommend('Barbell Row', NOW);
+    expect(r.kg).toBeLessThan(115); // the defect: floor restored through the coarse grid
   });
 });
 

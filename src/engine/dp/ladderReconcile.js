@@ -64,6 +64,29 @@ export function realRungAbove(ref, ex, roundToStep, getNextWeight) {
 }
 
 /**
+ * C2 — restore the PR-floor onto a real rung >= the DEMONSTRATED load. PURE (no copy):
+ * returns the resolved kg; the caller's existing PR-floor retag block builds the note.
+ * roundToStep(floorW) is NEAREST, so on a COARSE plate grid it can land BELOW the proven
+ * load (squat 105 -> 100, Barbell Row 115 -> 110). Bump UP to the nearest real rung
+ * at-or-above the RAW demonstrated load -- but ONLY when the caller says plateLoaded
+ * (a barbell PLATE grid: barbell_heavy / barbell_plates), where any plate combo is
+ * achievable so an off-grid proven load is genuine and the grid craters it. A fixed-rack
+ * DUMBBELL or a PIN stack has discrete rungs that ARE the physical reality, so an off-rung
+ * log is a mis-log and the down-snap is correct (no bump). rawDemoW==0 (sub-target
+ * distress, no proven rung) -> no bump either.
+ * @param {{snappedFloor:number, rawDemoW:number, plateLoaded:boolean, ex:string,
+ *   roundToStep:(kg:number,ex:string)=>number, getNextWeight:(kg:number,ex:string)=>number}} ctx
+ * @returns {number}
+ */
+export function reconcileFloorUp({ snappedFloor, rawDemoW, plateLoaded, ex, roundToStep, getNextWeight }) {
+  if (rawDemoW > 0 && plateLoaded && snappedFloor < rawDemoW) {
+    const up = realRungAbove(snappedFloor, ex, roundToStep, getNextWeight);
+    return (up > 0 && up >= rawDemoW) ? up : snappedFloor;
+  }
+  return snappedFloor;
+}
+
+/**
  * C1 — decide how an ease/climb step that the real-stack snap collapsed onto lastW
  * should be reconciled. PURE + i18n-clean: returns a STRUCTURED decision (the new kg
  * / repsTarget + a semantic noteKind), the caller (dp.js, unscanned by the i18n leak

@@ -99,6 +99,19 @@
 // rep-range that already live in this method, so the glue cannot leave dp.js without passing
 // the whole in-flight rec out. Gated behind dp_ladder_snap_reconcile_v1 (default ON, pinned
 // OFF in the calibration-sim + fp frozen baselines). Ratchet-down-only resumes from 3023.
+//
+// TENTH documented exception 2026-06-16 (3023→3042): cluster-2 ladder-snap reconcile
+// (cycle-10 audit HIGH, same flag). The PR-floor restored the proven load via
+// roundToStep(floorW) — NEAREST — so on a COARSE plate grid it cratered the proven load
+// BELOW the floor it protects (squat 105 → 100, Barbell Row 115 → 110, BELOW demonstrated
+// capacity — the floor's own invariant violated by its restore snap). The DECISION LOGIC
+// went to the SAME submodule per the rule (dp/ladderReconcile.js: reconcileFloorUp, pure,
+// returns the resolved kg). The +19 here is the irreducible CALL-SITE WIRING inside the
+// PR-floor block: the getEquipmentType import + the reconcileFloorUp swap (it reads floorW
+// + the rng/rep-range + the equip type that already live in this method, and the existing
+// retag block right below composes the note from the resolved kg, so the glue cannot leave
+// dp.js). Gated behind the same dp_ladder_snap_reconcile_v1 (default ON, pinned OFF in the
+// calibration-sim + fp frozen baselines). Ratchet-down-only resumes from 3042.
 
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
@@ -107,9 +120,9 @@ import { resolve, dirname } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Ceiling = current line count. Ratchet DOWN only (nine documented exceptions
+// Ceiling = current line count. Ratchet DOWN only (ten documented exceptions
 // 2026-06-11/12/14/16 for call-site wiring — see header).
-const DP_LINE_CEILING = 3023;
+const DP_LINE_CEILING = 3042;
 
 const dpSrc = readFileSync(resolve(__dirname, '../dp.js'), 'utf8');
 // Under a Stryker mutation dry-run the on-disk source is INSTRUMENTED (stryMutAct_*
