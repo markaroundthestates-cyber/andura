@@ -121,6 +121,75 @@ describe('detectOwedClusters — detection', () => {
   });
 });
 
+describe('detectOwedClusters — DST-safe prior-microcycle window (CAL-DST-01)', () => {
+  // The prior window MUST step back 7 CALENDAR days, not a fixed 7*86400000ms. A
+  // fixed-ms step drifts an hour across a DST transition, so the window edge lands
+  // an hour off the true local Monday 00:00 and mis-attributes a skipped cluster.
+  //
+  // Discriminating case (current microcycle start = Mon 2026-03-30 00:00 LOCAL, the
+  // Monday after the EU spring-forward on Sun 2026-03-29):
+  //   calendar window  = [Mon 2026-03-23 00:00, Mon 2026-03-30 00:00)  ← correct
+  //   fixed-ms window  = [Sun 2026-03-22 23:00, ...)                   ← drifted -1h
+  // A 'lower' log at Sun 2026-03-22 23:30 LOCAL belongs to the week BEFORE last:
+  //   calendar → EXCLUDED → lower stays owed   (correct, ['lower'])
+  //   fixed-ms → wrongly INCLUDED → lower falsely rescued → owed []   (the bug)
+  const DST_START = new Date(2026, 2, 30, 0, 0, 0, 0).getTime(); // Mon 2026-03-30 00:00 local
+  // Only the EXACT divergence holds on a DST-observing TZ; guard so the behavioral
+  // assertion is meaningful (and the idiom is still locked below regardless).
+  const fixedMsStart = DST_START - 7 * 86400000;
+  const calDayEdge = (() => { const d = new Date(DST_START); d.setDate(d.getDate() - 7); d.setHours(0, 0, 0, 0); return d.getTime(); })();
+  const windowsDiverge = fixedMsStart !== calDayEdge;
+
+  it('window edge is local-midnight-7-days-prior (locks the setDate idiom)', () => {
+    // Holds on every TZ: a normal week's prior-window start is the LOCAL 00:00 of
+    // the day exactly 7 calendar days before the microcycle start.
+    const expected = (() => { const d = new Date(WEEK_START); d.setDate(d.getDate() - 7); d.setHours(0, 0, 0, 0); return d.getTime(); })();
+    // Mon 2026-06-01 - 7d = Mon 2026-05-25 00:00 local; a log just inside that edge
+    // rescues its cluster, a log just before it does not.
+    const justInside = expected + 60 * 1000; // +1 min, inside the prior window
+    const justBefore = expected - 60 * 1000; // -1 min, the week before last
+    const owedInside = detectOwedClusters({
+      recoveryLogs: [log(EX.chest, justInside), log(EX.back, justInside), log(EX.shoulders, justInside), log(EX.biceps, justInside), log(EX.quads, justInside), log(EX.hams, justInside)],
+      activeWeek: VTAPER_WEEK, focusPreset: 'v-taper', weekStartMs: WEEK_START,
+    });
+    const owedBefore = detectOwedClusters({
+      recoveryLogs: [log(EX.chest, justInside), log(EX.back, justInside), log(EX.shoulders, justInside), log(EX.biceps, justInside), log(EX.quads, justBefore), log(EX.hams, justBefore)],
+      activeWeek: VTAPER_WEEK, focusPreset: 'v-taper', weekStartMs: WEEK_START,
+    });
+    expect(owedInside).toEqual([]); // lower trained inside the window → not owed
+    expect(owedBefore).toEqual(['lower']); // lower log fell before the edge → owed
+  });
+
+  it('a log in the DST-drift hour is attributed to the correct microcycle', () => {
+    if (!windowsDiverge) {
+      // Non-DST runner: the two windows coincide, so there is no drift hour to
+      // discriminate. The idiom-lock test above still guards the calendar stepping.
+      expect(fixedMsStart).toBe(calDayEdge);
+      return;
+    }
+    // 'lower' logged Sun 2026-03-22 23:30 local — the prior-PRIOR week. Upper-body
+    // trained inside the true prior window (Mon 2026-03-23 12:00).
+    const driftHourLog = new Date(2026, 2, 22, 23, 30, 0, 0).getTime(); // in fixed-ms window, NOT calendar
+    const truePriorLog = new Date(2026, 2, 23, 12, 0, 0, 0).getTime(); // inside both windows
+    const owed = detectOwedClusters({
+      recoveryLogs: [
+        log(EX.chest, truePriorLog),
+        log(EX.back, truePriorLog),
+        log(EX.shoulders, truePriorLog),
+        log(EX.biceps, truePriorLog),
+        log(EX.quads, driftHourLog), // calendar EXCLUDES → lower not rescued
+        log(EX.hams, driftHourLog),
+      ],
+      activeWeek: VTAPER_WEEK,
+      focusPreset: 'v-taper',
+      weekStartMs: DST_START,
+    });
+    // Calendar window correctly excludes the drift-hour lower log → lower owed.
+    // (The old fixed-ms window would wrongly include it → owed [].)
+    expect(owed).toEqual(['lower']);
+  });
+});
+
 describe('reorderSplitForCarryover — placement', () => {
   it("owed 'lower' last in [push,pull,upper,lower] → moved earlier, NOT last, multiset preserved", () => {
     const split = ['push', 'pull', 'upper', 'lower'];

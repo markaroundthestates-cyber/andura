@@ -24,9 +24,6 @@ import { clusterForDay } from './frequencySplit.js';
 import { getExerciseMetadata } from '../../exerciseLibrary.js';
 import { CLUSTER_BIG6_TO_BIG11_WEIGHT } from '../../periodization/constants.js';
 
-/** One day in ms — the prior-window width is exactly 7 of these (one microcycle). */
-const DAY_MS = 86400000;
-
 /**
  * Derive the current 7-day microcycle START (ms) deterministically from `nowMs`
  * when no finite weekStartMs is supplied. Floors `nowMs` to the start of its
@@ -114,7 +111,15 @@ export function detectOwedClusters({
   if (!Array.isArray(activeWeek) || !Array.isArray(recoveryLogs)) return [];
   const start = resolveWeekStartMs(weekStartMs, nowMs);
   if (start === null) return []; // no derivable window → cold-start no-op
-  const windowStart = start - 7 * DAY_MS;
+  // DST-safe prior-microcycle start: stepping back a FIXED 7*86400000ms drifts by
+  // an hour across a DST transition, mis-attributing a skipped cluster (exact
+  // sibling of the cycle-3 MRV fix). Step back by calendar days instead (same
+  // setDate idiom resolveWeekStartMs uses) so the window edge lands on the true
+  // local day boundary regardless of a spring-forward/fall-back in between.
+  const ws = new Date(start);
+  ws.setDate(ws.getDate() - 7);
+  ws.setHours(0, 0, 0, 0);
+  const windowStart = ws.getTime();
   const windowEnd = start; // [windowStart, windowEnd)
 
   // Last week's SCHEDULED clusters (distinct, in day order) — the static template.
