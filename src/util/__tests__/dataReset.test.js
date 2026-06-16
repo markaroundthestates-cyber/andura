@@ -102,6 +102,16 @@ describe('clearUserDataKeys', () => {
     expect(localStorage.getItem('andura-behavior-collect')).toBeNull();
   });
 
+  // nof1 narration cross-user leak: the one-shot N-of-1 winner record
+  // (`dp-nof1-narration`, written workoutStore.logic.ts, read+cleared by
+  // PostSummary) matched no wipe set, so on a shared device it leaked from user A to
+  // user B. Reset must clear it. Local-only (never cloud-synced).
+  it('clears the one-shot nof1 narration record (cross-user leak on shared device)', () => {
+    localStorage.setItem('dp-nof1-narration', JSON.stringify({ exercise: 'Barbell Bench Press', arm: 'volume', ts: 1 }));
+    clearUserDataKeys();
+    expect(localStorage.getItem('dp-nof1-narration')).toBeNull();
+  });
+
   // PDL-04: id-migration backups (`<key>-backup-pre-id-migration-<ts>`) carry a
   // full snapshot of the pre-migration user data and matched no reset prefix, so
   // "Reseteaza toate datele" left the wiped data alive inside the backup.
@@ -212,6 +222,12 @@ describe('wipeUserDataOnLogout', () => {
     localStorage.setItem(DATA_OWNER_UID_KEY, 'uid-A');
     await wipeUserDataOnLogout();
     expect(localStorage.getItem(DATA_OWNER_UID_KEY)).toBeNull();
+  });
+
+  it('clears the nof1 narration record so it cannot leak to the next user', async () => {
+    localStorage.setItem('dp-nof1-narration', JSON.stringify({ exercise: 'Squat', arm: 'intensity', ts: 1 }));
+    await wipeUserDataOnLogout();
+    expect(localStorage.getItem('dp-nof1-narration')).toBeNull();
   });
 
   it('is cloud-SAFE — preserves firebase-* tokens (signOut clears them separately)', async () => {

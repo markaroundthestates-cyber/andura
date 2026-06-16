@@ -36,11 +36,19 @@ import {
 // here so a reset also clears any residual ring from a pre-migration build.
 // `andura-debug` (debug verbosity) + `andura-behavior-collect` (collection gate)
 // are the flag keys — wiped so reset = fresh start. None are cloud-synced.
+//
+// `dp-nof1-narration` = the one-shot N-of-1 winner record (written
+// workoutStore.logic.ts on a concluded experiment, read+cleared by the PostSummary
+// coach surface). It matched no reset/logout/account-switch wipe set, so on a
+// shared device it could leak from user A to user B (B sees A's "winner" line until
+// the next session consumes it). Local-only + never cloud-synced (deliberately out
+// of SYNC_KEYS) — same category as the entries above.
 const EXTRA_DATA_KEYS = Object.freeze([
   'pain-cdl',
   'andura-debug-log',
   'andura-debug',
   'andura-behavior-collect',
+  'dp-nof1-narration',
 ]);
 
 /**
