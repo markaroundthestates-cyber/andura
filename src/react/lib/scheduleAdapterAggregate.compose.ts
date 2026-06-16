@@ -1545,13 +1545,21 @@ export async function composePlannedWorkoutToday(
         const monday = new Date(now);
         monday.setDate(monday.getDate() - planDayIdx);
         monday.setHours(0, 0, 0, 0);
+        // The TODAY-ONLY 'Alta grupa' override (options.differentMuscle) must NOT leak
+        // into the sibling recompose: spreading it into every sibling day builds a
+        // PHANTOM week where all 7 days are the overridden cluster, so the weekly-
+        // delivered baseline (which decides today's MRV ceiling) is computed off a
+        // fictional week. Strip it — the siblings revert to their REAL persisted
+        // schedule. Today's own day (dIdx===planDayIdx) still reuses trimmedExercises
+        // above, so today keeps the swap; only the sibling BASELINE is the schedule's.
+        const { differentMuscle: _omitToday, ...baseOpts } = options;
         const composeDay = async (dIdx: number) => {
           // A sibling day == today → reuse the already-built final plan (no recompose).
           if (dIdx === planDayIdx) return { exercises: trimmedExercises };
           const d = new Date(monday);
           d.setDate(monday.getDate() + dIdx);
           const sib = await composePlannedWorkoutToday(d, {
-            ...options,
+            ...baseOpts,
             _mrvRecompute: true,
           });
           return sib ? { exercises: sib.exercises } : null;
