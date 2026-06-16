@@ -14,6 +14,7 @@ import { wipeUserDB } from '../../../../storage/db.js';
 import { markAccountForDeletion } from '../../../lib/accountDeletion';
 import { useAerobicStore } from '../../../stores/aerobicStore';
 import { useCoachStore } from '../../../stores/coachStore';
+import { useProgresStore } from '../../../stores/progresStore';
 
 // Wave E4 i18n locale pin — these specs were written against RO copy;
 // force RO locale so existing assertions keep their semantics. EN coverage
@@ -152,6 +153,26 @@ describe('DeleteAccountConfirm — D047 drill-down', () => {
     expect(useAerobicStore.getState().sessions).toEqual([]);
     expect(useCoachStore.getState().reactivateDismissed).toBe(false);
     expect(useCoachStore.getState().persona).toBe('gigica');
+  });
+
+  // GDPR (cycle-7) — the inline wipe used to OMIT useProgresStore, so deleted
+  // weight/body history survived in memory and resurrected on a same-uid SPA
+  // re-login (mergeArrayUnion → PATCH back). The wipe now routes through the
+  // shared resetInMemoryStores() which includes progres.
+  it('GDPR — confirm wipes useProgresStore (weightLog/bodyData/targetObiectiv) in memory', async () => {
+    useProgresStore.setState({
+      weightLog: [{ kg: 82, date: '2026-06-01', ts: 1 }],
+      bodyData: [{ waist: 90, ts: 2 } as never],
+      targetObiectiv: { weightKg: 78, month: '2026-09' },
+    });
+    renderScreen();
+    fireEvent.click(screen.getByTestId('delete-confirm-accept'));
+    await waitFor(() => {
+      expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/auth');
+    });
+    expect(useProgresStore.getState().weightLog).toEqual([]);
+    expect(useProgresStore.getState().bodyData).toEqual([]);
+    expect(useProgresStore.getState().targetObiectiv).toEqual({ weightKg: null, month: null });
   });
 
   it('A016 — confirm cu auth NU fresh forces re-auth redirect', () => {

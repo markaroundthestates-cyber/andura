@@ -13,6 +13,7 @@ import { hydrateStoresFromCloud } from '../../../lib/storeSync';
 import { initFirebaseSync } from '../../../../firebase.js';
 import { signOut as authSignOut } from '../../../../auth.js';
 import { wipeUserDB } from '../../../../storage/db.js';
+import { useProgresStore } from '../../../stores/progresStore';
 
 import { setLocale as __setLocale, _resetI18nCache as __resetI18n } from '../../../../i18n/index.js';
 
@@ -121,6 +122,27 @@ describe('RestoreAccount — soft-delete grace choice', () => {
     expect(useAppStore.getState().pendingDeletionRestore).toBeNull();
     expect(localStorage.getItem('wv2-workout-store')).toBeNull();
     expect((window as { _suppressFirebaseSync?: boolean })._suppressFirebaseSync).toBe(true);
+  });
+
+  // GDPR (cycle-7) — the inline wipe used to OMIT useProgresStore, so a
+  // "Delete now" followed by a same-uid SPA re-login resurrected deleted
+  // weight/body history. The wipe now routes through resetInMemoryStores().
+  it('GDPR — Delete-now wipes useProgresStore (weightLog/bodyData/targetObiectiv) in memory', async () => {
+    localStorage.setItem(AUTH_KEYS.uid, 'u1');
+    localStorage.setItem(AUTH_KEYS.idToken, 'tok');
+    useProgresStore.setState({
+      weightLog: [{ kg: 82, date: '2026-06-01', ts: 1 }],
+      bodyData: [{ waist: 90, ts: 2 } as never],
+      targetObiectiv: { weightKg: 78, month: '2026-09' },
+    });
+    renderScreen();
+    fireEvent.click(screen.getByTestId('restore-account-delete-now'));
+    await waitFor(() => {
+      expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/auth');
+    });
+    expect(useProgresStore.getState().weightLog).toEqual([]);
+    expect(useProgresStore.getState().bodyData).toEqual([]);
+    expect(useProgresStore.getState().targetObiectiv).toEqual({ weightKg: null, month: null });
   });
 
   it('Delete-now issues the cloud DELETE while the session token is still valid', async () => {

@@ -16,13 +16,7 @@ import { RotateCcw } from 'lucide-react';
 import { logger } from '../../../../util/logger.js';
 import { useAppStore } from '../../../stores/appStore';
 import { SubHeader } from '../../../components/SubHeader';
-import { useWorkoutStore } from '../../../stores/workoutStore';
-import { useNutritionStore } from '../../../stores/nutritionStore';
-import { useOnboardingStore } from '../../../stores/onboardingStore';
-import { useSettingsStore } from '../../../stores/settingsStore';
-import { useScheduleStore } from '../../../stores/scheduleStore';
-import { useAerobicStore } from '../../../stores/aerobicStore';
-import { useCoachStore } from '../../../stores/coachStore';
+import { resetInMemoryStores } from '../../../lib/resetStores';
 import { signOut as authSignOut, getAuthState } from '../../../../auth.js';
 import { clearDeletionMarker, hardDeleteCloudUser } from '../../../lib/accountDeletion';
 import { hydrateStoresFromCloud } from '../../../lib/storeSync';
@@ -35,15 +29,14 @@ const CLOUD_OP_TIMEOUT_MS = 8000;
 
 function wipeAllLocalData(): void {
   try {
-    useWorkoutStore.getState().reset();
-    useWorkoutStore.getState().resetStreak();
-    useWorkoutStore.setState({ lastSession: null, sessionsHistory: [] });
-    useNutritionStore.getState().reset();
-    useOnboardingStore.getState().reset();
-    useSettingsStore.getState().reset();
-    useScheduleStore.getState().resetWeekly();
-    useAerobicStore.getState().reset();
-    useCoachStore.setState({ schedContext: 'workout', persona: 'gigica', reactivateDismissed: false });
+    // GDPR Art. 17 — reset EVERY in-memory wv2 store via the canonical shared
+    // helper. The prior hand-rolled list here OMITTED useProgresStore
+    // (weightLog/bodyData/targetObiectiv), so a "Delete now" followed by a
+    // SAME-uid re-login within the SPA session mergeArrayUnion'd the stale
+    // in-memory progres data with the empty cloud and PATCHed it back —
+    // resurrecting deleted weight/body history. The shared helper covers progres
+    // (the F2 fix) and stays in lock-step with every future store.
+    resetInMemoryStores();
     localStorage.clear();
     localStorage.setItem('__suppressFirebaseSyncUntil', String(Date.now() + 10000));
   } catch (e) {

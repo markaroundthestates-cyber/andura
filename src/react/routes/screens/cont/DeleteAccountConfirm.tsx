@@ -18,13 +18,7 @@ import { Trash2 } from 'lucide-react';
 import { logger } from '../../../../util/logger.js';
 import { useAppStore } from '../../../stores/appStore';
 import { SubHeader } from '../../../components/SubHeader';
-import { useWorkoutStore } from '../../../stores/workoutStore';
-import { useNutritionStore } from '../../../stores/nutritionStore';
-import { useOnboardingStore } from '../../../stores/onboardingStore';
-import { useSettingsStore } from '../../../stores/settingsStore';
-import { useScheduleStore } from '../../../stores/scheduleStore';
-import { useAerobicStore } from '../../../stores/aerobicStore';
-import { useCoachStore } from '../../../stores/coachStore';
+import { resetInMemoryStores } from '../../../lib/resetStores';
 import { isAuthFresh, signOut as authSignOut, getAuthState } from '../../../../auth.js';
 import { markAccountForDeletion } from '../../../lib/accountDeletion';
 import { gotoPath } from '../../../lib/navigation';
@@ -39,18 +33,14 @@ const REMOTE_MARK_TIMEOUT_MS = 8000;
 
 function wipeAllLocalData(): void {
   try {
-    useWorkoutStore.getState().reset();
-    useWorkoutStore.getState().resetStreak();
-    useWorkoutStore.setState({ lastSession: null, sessionsHistory: [] });
-    useNutritionStore.getState().reset();
-    useOnboardingStore.getState().reset();
-    useSettingsStore.getState().reset();
-    useScheduleStore.getState().resetWeekly();
-    // XCUT-2 — aerobicStore + coachStore added AFTER this wipe was built; reset
-    // them in memory too so a pure-SPA delete (no reload) leaves nothing of the
-    // prior user's aerobic classes / coach win-back state on this shared device.
-    useAerobicStore.getState().reset();
-    useCoachStore.setState({ schedContext: 'workout', persona: 'gigica', reactivateDismissed: false });
+    // GDPR Art. 17 — reset EVERY in-memory wv2 store via the canonical shared
+    // helper. The prior hand-rolled list here OMITTED useProgresStore
+    // (weightLog/bodyData/targetObiectiv), so after a delete a SAME-uid re-login
+    // within the SPA session mergeArrayUnion'd the stale in-memory progres data
+    // with the empty cloud and PATCHed it back — resurrecting deleted weight/body
+    // history (the F2 in-memory-reset bug, fixed once in resetInMemoryStores).
+    // Using the shared helper keeps this in lock-step with every future store.
+    resetInMemoryStores();
     // S-01 audit fix (AUDIT-3 §S-01 CRIT, GDPR Art. 17) — account delete must
     // erase ALL local data. The prior wv2-* prefix loop left ~38 unprefixed
     // legacy keys on device (logs/weights/coach-decisions/pr-records/pain-cdl/
