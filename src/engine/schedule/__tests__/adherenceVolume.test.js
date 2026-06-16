@@ -31,7 +31,8 @@ import {
   adherenceVolumeRatio,
   scaleWeeklyVolumeByRatio,
 } from '../scheduleAdapter/inferFrequency.js';
-import { ISRAETEL_BASELINES } from '../../periodization/constants.js';
+import { ISRAETEL_BASELINES, BIG11_RO_TO_EN_MAP } from '../../periodization/constants.js';
+import { getExerciseMetadata } from '../../exerciseLibrary.js';
 
 // CDL entries computeAdherence reads (readAllActive) — mocked so the in-window
 // adherence reading is deterministic, mirroring src/engine/__tests__/adherence.test.js.
@@ -133,6 +134,16 @@ describe('scaleWeeklyVolumeByRatio (pure)', () => {
     // chest 9 × 0.5 = 4.5, must floor to chest MEV 8.
     const out = scaleWeeklyVolumeByRatio({ chest: 9 }, 0.5, ISRAETEL_BASELINES);
     expect(out.chest).toBe(ISRAETEL_BASELINES.chest.MEV);
+  });
+
+  it('a group EXACTLY at its MEV is FLOORED at MEV (boundary — was halved)', () => {
+    // C2-boundary regression: an isolation group whose weekly budget == its MEV
+    // (triceps MEV 6) at ratio < 1. The old `weekly <= mev` treated == as
+    // "below MEV → scale freely" → 6 × 0.5 = 3 (half-MEV) reached the plan.
+    // Must floor at MEV, never below.
+    const out = scaleWeeklyVolumeByRatio({ triceps: 6 }, 0.5, ISRAETEL_BASELINES);
+    expect(out.triceps).toBeGreaterThanOrEqual(ISRAETEL_BASELINES.triceps.MEV);
+    expect(out.triceps).toBe(ISRAETEL_BASELINES.triceps.MEV); // 6, not 3
   });
 
   it('ratio >= 1 → passthrough clone (only ever lowers)', () => {
@@ -247,6 +258,27 @@ async function deliveredWeeklyVolume(frequency, recentSessions, weekStart) {
   return total;
 }
 
+// Sum DELIVERED working sets across the whole week, bucketed by Big-11 EN group
+// (via the library's muscle_target_primary → BIG11_RO_TO_EN_MAP), so a test can
+// assert the PER-GROUP weekly dose, not just a session-level "ex.sets >= 1".
+async function deliveredWeeklyByGroup(frequency, recentSessions, weekStart) {
+  const week = activeWeekForFrequency(String(frequency));
+  const byGroup = {};
+  for (let i = 0; i < 7; i++) {
+    if (!week[i]) continue;
+    const dayDate = new Date(weekStart + i * MS_DAY);
+    const plan = await getDailyWorkout(buildUserState(frequency, recentSessions), dayDate);
+    if (!plan || !Array.isArray(plan.exercises)) continue;
+    for (const ex of plan.exercises) {
+      const meta = getExerciseMetadata(ex.name);
+      const en = meta && BIG11_RO_TO_EN_MAP[meta.muscle_target_primary];
+      if (!en) continue;
+      byGroup[en] = (byGroup[en] || 0) + (ex.sets || 0);
+    }
+  }
+  return byGroup;
+}
+
 describe('getDailyWorkout — chronic-low-adherence → delivered volume', () => {
   const WEEK_START = Date.UTC(2026, 5, 15, 6, 0, 0); // Mon (active-week offsets map cleanly)
 
@@ -337,6 +369,33 @@ describe('getDailyWorkout — chronic-low-adherence → delivered volume', () =>
     // Every exercise still carries a real set count (never zeroed by the discount).
     for (const ex of plan.exercises) {
       expect(ex.sets).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  it('ON + chronic low adherence → PER-GROUP weekly dose holds the ratio floor', async () => {
+    // Strengthen "ex.sets >= 1" to a PER-GROUP weekly invariant. The ratio floor is
+    // MIN_RATIO (0.5), so the floored weekly dose for EVERY worked group must hold at
+    // >= half its cold-start (full-dose) weekly volume AND never reach zero — the
+    // discount is a single, bounded, MEV-aware scale, not a per-group crater. (The
+    // delivered total is split/time-cap shaped, so an absolute weekly-MEV assertion
+    // is not the right altitude — the scaler's MEV floor is asserted directly on the
+    // pure helper above; here we assert the integrated PER-GROUP proportion.)
+    localStorage.setItem('_devFlags', devFlags());
+    mockReadAllActive.mockReturnValue([]); // cold = full dose
+    const cold = await deliveredWeeklyByGroup(4, [], WEEK_START);
+    mockReadAllActive.mockReturnValue(cdlEntries(0, 8)); // 0/8 → ratio floored 0.5
+    const floored = await deliveredWeeklyByGroup(4, [], WEEK_START);
+    // Scope to MAINTENANCE-requiring groups (MEV > 0): a zero-MEV group (abs/
+    // forearms) carries no floor and may drop out under the per-day selection/trim,
+    // which is orthogonal to the volume discount. Every MEV-bearing worked group,
+    // though, must SURVIVE the discount and hold >= half its full-dose weekly volume.
+    const mevGroups = Object.keys(cold).filter(
+      (g) => ISRAETEL_BASELINES[g] && ISRAETEL_BASELINES[g].MEV > 0,
+    );
+    expect(mevGroups.length).toBeGreaterThan(0);
+    for (const g of mevGroups) {
+      expect(floored[g]).toBeGreaterThan(0); // never zeroed by the discount
+      expect(floored[g]).toBeGreaterThanOrEqual(0.5 * cold[g]); // holds the ratio floor
     }
   });
 

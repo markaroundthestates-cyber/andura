@@ -170,8 +170,10 @@ export function scaleWeeklyVolumeByRatio(volumeTargets, ratio, israetelBaselines
         ? israetelBaselines[enKey].MEV
         : 0;
     // Floor at MEV but never RAISE a group that was already below MEV (defensive:
-    // a budget already under MEV stays as-is, scaled — we never inflate).
-    out[enKey] = weekly <= mev ? scaled : Math.max(mev, scaled);
+    // a budget already under MEV stays as-is, scaled — we never inflate). A group
+    // EXACTLY at its MEV must take the Math.max floor (strict `<`), else a budget
+    // == MEV scaled freely (e.g. biceps 8 × 0.5 → 4) and reached the plan sub-MEV.
+    out[enKey] = weekly < mev ? scaled : Math.max(mev, scaled);
   }
   return out;
 }
