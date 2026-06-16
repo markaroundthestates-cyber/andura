@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { findAlternatives, findRefusalPool, getFallbackCascade, buildSwapPickList } from '../alternativeFinder.js';
-import { getExerciseMetadata } from '../exerciseLibrary.js';
+import { getExerciseMetadata, EXERCISE_METADATA, isActiveExercise } from '../exerciseLibrary.js';
 
 // Ported from archived smart-routing/__tests__/smartRouting.test.js (WP-2 MOAT revive).
 // The archived handleEquipmentBusy case is NOT ported — v1 equipment-detection module
@@ -70,11 +70,18 @@ describe('getFallbackCascade §5.1 (cascade traversal)', () => {
     expect(r.original).toBe('Incline Barbell Bench');
   });
 
-  it('skips unavailable steps and lands on bodyweight step when only bodyweight available', () => {
+  it('skips a cross-muscle cascade tail and lands a same-muscle bodyweight alt (SWAP-001)', () => {
+    // Incline Barbell Bench is piept; its terminal bodyweight cascade step is
+    // Pike Push-up (umeri) — a degrade-to-anything authoring tail. The moat
+    // forbids a cross-muscle swap, so that step is SKIPPED and traversal falls
+    // through to the same-muscle broad-library degradation, which finds a piept
+    // bodyweight movement (Dip). Never a shoulder press for a chest press.
     const r = getFallbackCascade('Incline Barbell Bench', ['bodyweight']);
     expect(r.isAlternative).toBe(true);
-    expect(r.cascadeStep).toBe('bodyweight');
-    expect(r.exercise).toBe('Pike Push-up');
+    expect(r.noAlt).toBeFalsy();
+    expect(getExerciseMetadata(r.exercise).muscle_target_primary).toBe(
+      getExerciseMetadata('Incline Barbell Bench').muscle_target_primary,
+    );
   });
 
   it('muscle_group_compose step returns an all-active exercises array (1-2 exercises)', () => {
@@ -169,6 +176,43 @@ describe('getFallbackCascade §5.1 (cascade traversal)', () => {
     const r = getFallbackCascade('Pike Push-up', []);
     expect(r.isAlternative).toBe(false);
     expect(r.exercise).toBe('Pike Push-up');
+  });
+
+  // SWAP-001 moat sweep — for EVERY active exercise, a busy/missing swap must NOT
+  // cross muscle groups whenever a same-muscle performable alternative exists. The
+  // bug: a curated fallback_cascade's terminal bodyweight/light_variant step (a
+  // degrade-to-anything authoring tail) pointed at a DIFFERENT primary muscle, and
+  // because bodyweight is always performable it short-circuited the same-muscle
+  // degradations. Sweep with bodyweight-only availability (the case that surfaced
+  // every proven cross-muscle leak) and assert: when any same-muscle active
+  // bodyweight option exists, the resolved swap shares muscle_target_primary.
+  it('never returns a cross-muscle swap when a same-muscle option exists (SWAP-001 sweep)', () => {
+    const avail = ['bodyweight'];
+    const performable = (m) =>
+      m && (m.equipment_type === 'bodyweight' || avail.includes(m.equipment_type));
+    const offenders = [];
+    for (const [name, meta] of Object.entries(EXERCISE_METADATA)) {
+      if (!isActiveExercise(name)) continue;
+      if (!meta || meta.muscle_target_primary === 'unknown') continue;
+      // Is there ANY same-muscle active alternative performable with `avail`?
+      const hasSameMuscleOption = Object.entries(EXERCISE_METADATA).some(
+        ([n, m]) =>
+          n !== name &&
+          isActiveExercise(n) &&
+          m.muscle_target_primary === meta.muscle_target_primary &&
+          performable(m),
+      );
+      if (!hasSameMuscleOption) continue;
+      const r = getFallbackCascade(name, avail);
+      const offered = r.exercises ?? (r.exercise ? [r.exercise] : []);
+      for (const ex of offered) {
+        const exMuscle = EXERCISE_METADATA[ex]?.muscle_target_primary;
+        if (exMuscle !== meta.muscle_target_primary) {
+          offenders.push(`${name}[${meta.muscle_target_primary}] -> ${ex}[${exMuscle}] (step ${r.cascadeStep})`);
+        }
+      }
+    }
+    expect(offenders).toEqual([]);
   });
 });
 

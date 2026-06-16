@@ -221,11 +221,24 @@ export function getFallbackCascade(exerciseName, availableTypes = []) {
   // SKIPPED; traversal falls through to the gated ranking / broad-library
   // degradation below (both active-only), which coverage proves always lands an
   // active same-muscle swap for every group that has one available.
+  // SWAP-001 (moat) — a cascade step is only taken when its target shares the
+  // SOURCE's muscle_target_primary. Some curated cascades end in a degrade-to-
+  // anything tail (Floor Press Barbell:piept -> bodyweight Diamond Push-up:triceps;
+  // Smith Incline Bench:piept -> Pike Push-up:umeri; Seated Leg Curl:hamstrings ->
+  // Glute Bridge:fese). Because bodyweight is always performable, that cross-muscle
+  // tail short-circuited and PREEMPTED the same-muscle ranking / broad-library
+  // degradations below — breaking the documented "never cross-muscle" moat that
+  // resolveBusySwap / resolveMissingSwap / EquipmentSwap rely on. Skipping a
+  // cross-muscle step makes traversal fall through to those same-muscle paths, so
+  // a genuinely-available same-muscle alternative is always preferred over a
+  // cross-muscle cascade tail. A compose step must have ALL its ids same-muscle.
+  const srcMuscle = meta ? meta.muscle_target_primary : undefined;
+  const sameMuscle = (id) => EXERCISE_METADATA[id]?.muscle_target_primary === srcMuscle;
   const cascade = (meta && Array.isArray(meta.fallback_cascade)) ? meta.fallback_cascade : [];
   for (const step of cascade) {
     if (step.type === 'muscle_group_compose') {
       const ids = step.exercise_ids || [];
-      if (ids.length && ids.every(id => offerable(id) && isExerciseAvailable(id, availableTypes))) {
+      if (ids.length && ids.every(id => sameMuscle(id) && offerable(id) && isExerciseAvailable(id, availableTypes))) {
         return {
           exercises: ids,
           isAlternative: true,
@@ -235,7 +248,7 @@ export function getFallbackCascade(exerciseName, availableTypes = []) {
       }
     } else {
       const id = step.exercise_id;
-      if (id && offerable(id) && isExerciseAvailable(id, availableTypes)) {
+      if (id && sameMuscle(id) && offerable(id) && isExerciseAvailable(id, availableTypes)) {
         return {
           exercise: id,
           isAlternative: true,
