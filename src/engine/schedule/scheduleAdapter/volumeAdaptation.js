@@ -378,7 +378,11 @@ export function redistributeRecoveredVolumeToFreshSessionGroups(
 // week's set targets flow to the days a group is freshest, instead of wherever the
 // positional split lands them. It RE-SKINS the existing redistribution kernel; no
 // new redistribution math, no net volume (the freed total is conserved, MRV-capped,
-// never below MEV, never zeroes a trained group).
+// never below MEV, never zeroes a trained group). The MRV cap is the HARD safety
+// invariant — NO group ever exceeds its Israetel MRV, even the conservation
+// hand-back. In the rare systemically-under-recovered week where the freed volume
+// cannot be placed anywhere without breaching MRV, the unplaceable surplus is
+// DROPPED (a tiny conservation loss) rather than dumped over a group's MRV.
 //
 // NO-OP PASS-THROUGH CONTRACT (mirrors applyEmphasisDeEmphasis): the caller gates
 // this behind dp_weekly_recovery_alloc_v1 (default OFF) AND it self-no-ops when no
@@ -398,6 +402,10 @@ export function allocateWeeklyVolumeByRecovery(weeklyTargetsEN, recoveryStateRO)
   let freed = 0;
   let freshWeightTotal = 0;
   const freshGroupsRO = [];
+  // The trimmed groups (most-trimmed-first by give) + their PRE-TRIM EN value, so
+  // an unplaceable remainder is handed back to where it came from, each capped at
+  // its own pre-trim value (and MRV) — never restoring MORE than it gave up.
+  const trimmedEN = [];
   const out = { ...weeklyTargetsEN };
   const TRIM = { partial: 0.20, fatigued: 0.40 };
   // Walk every RO group that maps into the budget.
@@ -414,6 +422,7 @@ export function allocateWeeklyVolumeByRecovery(weeklyTargetsEN, recoveryStateRO)
       if (give > 0) {
         out[enKey] = current - give;
         freed += give;
+        trimmedEN.push({ enKey, preTrim: current });
       }
     } else {
       // weight a fresh group by its room-to-MRV so the deferred volume lands where
@@ -445,19 +454,35 @@ export function allocateWeeklyVolumeByRecovery(weeklyTargetsEN, recoveryStateRO)
     out[enKey] = current + add;
     placed += add;
   }
-  // Conservation: any remainder that could not be placed (everyone at MRV) is
-  // returned to the trimmed groups so the week's total is never reduced.
-  if (placed < freed - 1e-9) {
-    const remainder = freed - placed;
-    // hand it back to the first trimmed group with headroom (simple, deterministic).
-    for (const [roGroup, enKey] of Object.entries(BIG11_RO_TO_EN_MAP)) {
-      const groupState = state[roGroup] ?? 'recovered';
-      const isTrimmed = groupState === 'partial' || groupState === 'fatigued';
-      if (isTrimmed && typeof out[enKey] === 'number') {
-        out[enKey] += remainder;
-        break;
+  // Conservation: any remainder that could not be placed (everyone fresh at MRV)
+  // is returned to the trimmed groups it came from so the week's total is not
+  // reduced. SAFETY INVARIANT (was: dump the WHOLE remainder on the FIRST trimmed
+  // group, no clamp → a systemically under-recovered week, freed >> fresh room,
+  // pushed one group ~2x past MRV, prescribing overtraining on a recovery week).
+  // FIX: SPREAD the remainder across the trimmed groups, each restored only up to
+  // min(its pre-trim value, its MRV). The MRV cap is the HARD invariant — never
+  // exceed it — and never restore more than the group gave up. If surplus is still
+  // unplaceable (every trimmed group at its cap), DROP it (tiny conservation loss
+  // accepted — the MRV cap outranks exact conservation).
+  if (placed < freed - 1e-9 && trimmedEN.length > 0) {
+    let remainder = freed - placed;
+    for (const { enKey, preTrim } of trimmedEN) {
+      if (remainder <= 1e-9) break;
+      const current = out[enKey];
+      if (typeof current !== 'number' || !Number.isFinite(current)) continue;
+      const lm = ISRAETEL_BASELINES[enKey];
+      const mrv = lm && typeof lm.MRV === 'number' ? lm.MRV : Infinity;
+      // Ceiling for this group: never above MRV, never above what it had pre-trim.
+      const ceiling = Math.min(mrv, preTrim);
+      const room = Math.max(0, ceiling - current);
+      const give = Math.min(room, remainder);
+      if (give > 0) {
+        out[enKey] = current + give;
+        remainder -= give;
       }
     }
+    // Any remainder still unplaceable (all trimmed groups at their cap) is DROPPED
+    // — the MRV cap is the safety invariant; total conservation is secondary.
   }
   return out;
 }

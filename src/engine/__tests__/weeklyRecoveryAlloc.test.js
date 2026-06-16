@@ -52,4 +52,34 @@ describe('F6a #30 weekly recovery allocation', () => {
       expect(v, `${en} above MRV`).toBeLessThanOrEqual(lm.MRV + 1e-6);
     }
   });
+
+  // ── REGRESSION (safety): systemically under-recovered week ──────────────────
+  // Many groups fatigued (large freed pool), the lone fresh group already near its
+  // MRV (almost no room to absorb). The conservation hand-back used to dump the
+  // ENTIRE unplaceable remainder on the FIRST trimmed group with NO MRV clamp,
+  // pushing it ~2x past Israetel MRV (prescribing overtraining on a recovery week).
+  // The fix clamps every group at its MRV: NO group may exceed it after allocation.
+  it('NEVER pushes a group past MRV when the freed pool cannot be placed (regression)', () => {
+    // chest fresh at 21 (MRV 22 → room 1); everything else fatigued at/above its
+    // MAV so trimming frees far more than the lone fresh chest can ever absorb.
+    const week = {
+      chest: 21,       // fresh, room-to-MRV = 1
+      back: 24,        // fatigued (MRV 25)
+      quads: 19,       // fatigued (MRV 20)
+      shoulders: 24,   // fatigued (MRV 26)
+      biceps: 24,      // fatigued (MRV 26)
+      triceps: 20,     // fatigued (MRV 22)
+    };
+    const state = {
+      piept: 'recovered',
+      spate: 'fatigued', 'picioare-quads': 'fatigued', umeri: 'fatigued',
+      biceps: 'fatigued', triceps: 'fatigued',
+    };
+    const out = allocateWeeklyVolumeByRecovery(week, state);
+    for (const [en, v] of Object.entries(out)) {
+      const lm = ISRAETEL_BASELINES[en];
+      if (!lm) continue;
+      expect(v, `${en} = ${v} exceeds MRV ${lm.MRV}`).toBeLessThanOrEqual(lm.MRV + 1e-6);
+    }
+  });
 });
