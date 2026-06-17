@@ -358,6 +358,17 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // assumes "the Push day already covers triceps") orphans direct triceps to 0 sets/wk.
   // 5d/6d/7d hybrids DO contain 'push' → the de-dup stays correct (byte-identical).
   const weekHasPushDay = split.includes('push');
+  // C21-FREQ-01 (cycle-21 rebalance) — how MANY push days does this week's split have?
+  // At freq 5/6/7 the split has EXACTLY ONE push day (5d: upper/lower/push/pull/legs;
+  // 6d/7d: push/pull/legs/upper/lower/full[/full]), so weekHasPushDay is true → the #2
+  // upper-day triceps de-dup strips the standalone direct-triceps on the `upper` day(s)
+  // but the restore guarantee (gated `!weekHasPushDay`) never fires → direct triceps
+  // lands at 1x / ~2-3 sets/wk (below its direct MEV 6) while biceps gets 3-4x / 11-13.
+  // The SINGLE-push-day week needs the restore just as much as the no-push week: the lone
+  // push day covers triceps ONCE, the de-dup'd upper day(s) are the only other direct-
+  // triceps chance. So the gate widens to pushDayCount <= 1 (0 OR 1 push day → restore an
+  // upper-day direct-triceps slot). 2+ push days → triceps is covered enough → de-dup holds.
+  const pushDayCount = split.filter((c) => c === 'push').length;
   // BACK MAINTENANCE FLOOR (dp_back_maintenance_floor_v1) — does THIS week's split
   // contain a PULL day? The lower-emphasis 5/6/7d split retains a PUSH day (chest's 2nd
   // weekly exposure) but NO pull day, so back has only the `upper` day → it can collapse
@@ -1265,16 +1276,21 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // upper-day triceps de-dup (#2) is NOT touched. OFF → byte-identical.
     tricepsFullbodyGuarantee: isEnabled('dp_triceps_fullbody_guarantee_v1'),
     // #R6a-T2 split-day (UPPER/LOWER) triceps guarantee (dp_triceps_split_guarantee_v1,
-    // default ON). Scoped to an `upper` day on a week with NO push day (a pure
-    // UPPER/LOWER 4-day split). The #2 upper-day triceps de-dup drops direct triceps on
-    // `upper` justified by "the Push day already covers it" — FALSE on a U/L split (no
-    // push day) → triceps orphaned to 0 sets/wk. When true, buildSession restores a
-    // direct-triceps lift AFTER the de-dup, orphan-safely + surface-safely (swap an
-    // over-slotted non-surfaced isolation; never claw back a weak/emphasized group's
-    // slot). Splits WITH a push day (5d/6d/7d) → false → de-dup holds → byte-identical.
-    // OFF → byte-identical.
+    // default ON). Scoped to an `upper` (or `full`) day on a week with AT MOST ONE push day.
+    // The #2 upper-day triceps de-dup drops direct triceps on `upper` justified by "the Push
+    // day already covers it" — FALSE on a U/L split (no push day) AND under-covered on a
+    // SINGLE-push-day week (the lone push day covers triceps once, the de-dup'd upper day(s)
+    // are the only other direct chance) → triceps orphaned to 0-1x / below MEV (C21-FREQ-01:
+    // freq 5/6/7 has exactly 1 push day → direct triceps 2-3 sets/wk vs biceps 11-13). When
+    // true, buildSession restores a direct-triceps lift AFTER the de-dup, orphan-safely +
+    // surface-safely (swap an over-slotted non-surfaced isolation; never claw back a weak/
+    // emphasized group's slot). pushDayCount widened from the binary !weekHasPushDay to <= 1
+    // so a single push day still restores. Splits with 2+ push days → false → de-dup holds →
+    // triceps already covered enough. OFF → byte-identical.
     tricepsSplitGuarantee:
-      isEnabled('dp_triceps_split_guarantee_v1') && cluster === 'upper' && !weekHasPushDay,
+      isEnabled('dp_triceps_split_guarantee_v1')
+      && (cluster === 'upper' || cluster === 'full')
+      && pushDayCount <= 1,
     // #R6b spate-injury hamstring leg-curl guarantee (dp_legcurl_guarantee_v1,
     // default ON). SAFETY-paired with the disc/lower-back exclusion: spate kills the
     // whole spinal-loading hinge family (RDL/deadlift/good-morning/hip-thrust/squat +
