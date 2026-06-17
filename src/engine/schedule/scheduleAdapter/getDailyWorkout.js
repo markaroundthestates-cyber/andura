@@ -358,6 +358,20 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // assumes "the Push day already covers triceps") orphans direct triceps to 0 sets/wk.
   // 5d/6d/7d hybrids DO contain 'push' → the de-dup stays correct (byte-identical).
   const weekHasPushDay = split.includes('push');
+  // C21-FREQ-01 (cycle-21 ARM-IMBALANCE rebalance, LEAN redo) — how MANY push days does
+  // this week's split have? At freq 5/6/7 the split has EXACTLY ONE push day (5d:
+  // upper/lower/push/pull/legs; 6d/7d: push/pull/legs/upper/lower/full[/full]), so
+  // weekHasPushDay is true → the #2 upper-day triceps de-dup strips the standalone
+  // direct-triceps on the `upper` day(s) but the restore guarantee (gated `!weekHasPushDay`
+  // = ZERO push days) never fires → direct triceps lands at 1x / ~3 sets/wk (below its
+  // direct MEV 6) while biceps gets 3-4x / 10-13 (an ARM IMBALANCE: biceps over-served,
+  // triceps under). The SINGLE-push-day week needs the restore as much as the no-push
+  // week: the lone push day covers triceps ONCE, the de-dup'd upper day is the only other
+  // direct chance. So the gate widens to pushDayCount <= 1 (0 OR 1 push day). 2+ push days
+  // (v-taper/upper focus at freq 5-7) → triceps already covered → de-dup holds (byte-
+  // identical). The restore is a LEAN INTRA-ARM SWAP (sessionBuilder #R6a-T2): displace one
+  // over-served BICEPS slot, never an ADD — and only when biceps stays >= its MEV after.
+  const pushDayCount = split.filter((c) => c === 'push').length;
   // BACK MAINTENANCE FLOOR (dp_back_maintenance_floor_v1) — does THIS week's split
   // contain a PULL day? The lower-emphasis 5/6/7d split retains a PUSH day (chest's 2nd
   // weekly exposure) but NO pull day, so back has only the `upper` day → it can collapse
@@ -1297,17 +1311,29 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // even though `full` weights triceps 0.10. Inject one if none landed. The
     // upper-day triceps de-dup (#2) is NOT touched. OFF → byte-identical.
     tricepsFullbodyGuarantee: isEnabled('dp_triceps_fullbody_guarantee_v1'),
-    // #R6a-T2 split-day (UPPER/LOWER) triceps guarantee (dp_triceps_split_guarantee_v1,
-    // default ON). Scoped to an `upper` day on a week with NO push day (a pure
-    // UPPER/LOWER 4-day split). The #2 upper-day triceps de-dup drops direct triceps on
-    // `upper` justified by "the Push day already covers it" — FALSE on a U/L split (no
-    // push day) → triceps orphaned to 0 sets/wk. When true, buildSession restores a
-    // direct-triceps lift AFTER the de-dup, orphan-safely + surface-safely (swap an
-    // over-slotted non-surfaced isolation; never claw back a weak/emphasized group's
-    // slot). Splits WITH a push day (5d/6d/7d) → false → de-dup holds → byte-identical.
+    // #R6a-T2 split-day triceps guarantee (dp_triceps_split_guarantee_v1, default ON).
+    // Scoped to an `upper` day on a week with AT MOST ONE push day. The #2 upper-day
+    // triceps de-dup drops direct triceps on `upper` justified by "the Push day already
+    // covers it" — FALSE on a U/L split (NO push day → triceps orphaned to 0 sets/wk) AND
+    // under-covered on a SINGLE-push-day week (C21-FREQ-01: freq 5/6/7 has exactly 1 push
+    // day → direct triceps 1x / ~3 sets/wk vs biceps 3-4x / 10-13 — an ARM IMBALANCE).
+    // When true, buildSession restores a direct-triceps lift AFTER the de-dup, LEAN: it
+    // PREFERS an over-slotted non-surfaced iso (length-stable swap), then targets an
+    // over-served BICEPS slot (the imbalance source) — but ONLY while biceps stays >= its
+    // MEV after yielding the slot; else it accepts the orphan (NEVER an ADD, NEVER pushes
+    // biceps below MEV). pushDayCount widened from the binary !weekHasPushDay to <= 1 so a
+    // single push day still restores. 2+ push days → false → de-dup holds → byte-identical.
     // OFF → byte-identical.
     tricepsSplitGuarantee:
-      isEnabled('dp_triceps_split_guarantee_v1') && cluster === 'upper' && !weekHasPushDay,
+      isEnabled('dp_triceps_split_guarantee_v1') && cluster === 'upper' && pushDayCount <= 1,
+    // C21-FREQ-01 — distinguish the NEW single-push-day case (exactly 1 push day) from the
+    // ORIGINAL no-push U/L case. The no-push U/L guarantee keeps its shipped behavior
+    // (swap an over-slotted iso, else ADD if room — direct triceps was 0 there, an add is
+    // the only restore). The single-push-day case is an ARM IMBALANCE (biceps over-served),
+    // so its restore is the LEAN intra-arm SWAP only: displace an over-served biceps slot
+    // (guarded so biceps stays >= MEV), else accept the orphan — NEVER an add (the reverted
+    // a256e086 fell to add → +1 slot). True ONLY when there IS exactly one push day.
+    tricepsRestoreLean: weekHasPushDay && pushDayCount <= 1,
     // #R6b spate-injury hamstring leg-curl guarantee (dp_legcurl_guarantee_v1,
     // default ON). SAFETY-paired with the disc/lower-back exclusion: spate kills the
     // whole spinal-loading hinge family (RDL/deadlift/good-morning/hip-thrust/squat +

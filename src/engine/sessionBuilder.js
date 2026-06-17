@@ -2685,30 +2685,91 @@ export function buildSession(cluster, ctx) {
         // still has another slot (no orphan). A SURFACED group is displaceable only while
         // it would STILL strictly lead after the yield (its surplus, not its signature
         // slot) — so the weak/focus lead is never clawed back.
+        // The generic over-slotted-iso swap is the ORIGINAL no-push U/L restore. For the
+        // single-push-day LEAN case (tricepsRestoreLean) it is SKIPPED: that case is an
+        // ARM IMBALANCE (biceps over-served), so the only sanctioned victim is an
+        // over-served biceps slot (below) — a generic swap there risks a non-arm group's
+        // slot being eaten by a downstream floor (a net -1 = non-LEAN). So lean → biceps
+        // swap or orphan ONLY; no-push U/L → generic swap / add / gap (byte-identical).
         let removeIdx = -1;
-        for (let i = chosen.length - 1; i >= 0; i--) {
-          if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
-          const g = primaryOfName(chosen[i].name);
-          if (!g || (slotCount[g] || 0) <= 1) continue; // would orphan g
-          if (surfaceSet.has(g) && (slotCount[g] - 1) <= maxNonSurfaced) continue; // keep lead
-          removeIdx = i;
-          break;
+        if (ctx?.tricepsRestoreLean !== true) {
+          for (let i = chosen.length - 1; i >= 0; i--) {
+            if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+            const g = primaryOfName(chosen[i].name);
+            if (!g || (slotCount[g] || 0) <= 1) continue; // would orphan g
+            if (surfaceSet.has(g) && (slotCount[g] - 1) <= maxNonSurfaced) continue; // keep lead
+            removeIdx = i;
+            break;
+          }
         }
-        if (removeIdx >= 0) {
-          const removed = chosen[removeIdx];
+        // C21-FREQ-01 LEAN INTRA-ARM SWAP (ctx.tricepsRestoreLean — the single-push-day
+        // case ONLY). At freq 5/6/7 (exactly 1 push day) the upper-day arm de-dup leaves
+        // direct triceps starved (1x / ~3 sets vs MEV 6) while biceps is over-served (3-4x
+        // / 10-13). The biceps here is the day's ONLY biceps slot (#R6a seated it), so the
+        // over-slotted victim loop above finds no swap → the original code fell to ADD (+1
+        // slot = NON-LEAN, the reverted a256e086 bug). Instead displace ONE over-served
+        // BICEPS slot (the imbalance source) and seat triceps in its place — slot count
+        // UNCHANGED. GUARD: only when biceps stays >= its MEV (8) after yielding the slot —
+        // biceps' WEEKLY target (ctx.volumeTargets, the planning SSOT) minus the freed sets
+        // must still cover MEV (p3 masa/avansat: target 13/11.7 → 10/8.7 >= 8, FIRES; p2
+        // forta: 10.4/9.3 → 7.4/6.3 < 8, does NOT fire → accept orphan). NEVER push biceps
+        // below MEV, NEVER add a slot. The ORIGINAL no-push U/L case (tricepsRestoreLean
+        // false) keeps its shipped restore: swap, else ADD if room (triceps was 0 there, an
+        // add is the only restore), else accept the gap — byte-identical.
+        let swapIdx = removeIdx;
+        if (removeIdx < 0 && ctx?.tricepsRestoreLean === true) {
+          const biEN = BIG11_RO_TO_EN_MAP['biceps'] ?? 'biceps';
+          const bicepsWeeklyTarget = ctx?.volumeTargets ? ctx.volumeTargets[biEN] : undefined;
+          const bicepsExposures = ctx?.weeklySessionsPerGroup
+            ? ctx.weeklySessionsPerGroup.biceps
+            : undefined;
+          const bicepsMEV = ISRAETEL_BASELINES.biceps?.MEV ?? 8;
+          // Lowest-priority (highest-index) biceps ISOLATION (never an anchor compound).
+          for (let i = chosen.length - 1; i >= 0; i--) {
+            if (primaryOfName(chosen[i].name) !== 'biceps') continue;
+            if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+            const freed = chosen[i].sets || DEFAULT_SETS;
+            // GUARD (don't break biceps below MEV) — BOTH must hold so DELIVERED biceps,
+            // not just the TARGET, stays >= MEV after the yield:
+            //  (1) TARGET-side: weekly biceps SSOT target minus the freed sets >= MEV.
+            //  (2) DELIVERED-side: the remaining biceps EXPOSURES (this upper exposure is
+            //      the one we drop) each deliver at least `freed` sets, so
+            //      (exposures-1) * freed >= MEV. The target overshoots delivery when biceps
+            //      has too few weekly exposures to land it (p3 freq-6: target 13 but only 3
+            //      exposures deliver 10 → after a 3-set yield delivered 7 < 8 → DECLINE),
+            //      so the exposure guard catches what the target guard misses. p3 freq-6
+            //      (3 exp → 2*3=6 < 8) DECLINES (accept orphan); a 4-exposure week
+            //      (3*3=9 >= 8) would fire. p2 freq-6 (target 10.4 → 7.4 < 8) declines on
+            //      the target guard too. NEVER an add; NEVER biceps below MEV.
+            const targetSafe =
+              typeof bicepsWeeklyTarget === 'number'
+              && Number.isFinite(bicepsWeeklyTarget)
+              && bicepsWeeklyTarget - freed >= bicepsMEV;
+            const deliverySafe =
+              typeof bicepsExposures === 'number'
+              && Number.isFinite(bicepsExposures)
+              && (bicepsExposures - 1) * freed >= bicepsMEV;
+            if (targetSafe && deliverySafe) swapIdx = i;
+            break; // only the lowest-priority biceps slot is a candidate
+          }
+        }
+        if (swapIdx >= 0) {
+          const removed = chosen[swapIdx];
           chosenNames.delete(removed.name);
           chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
           const rg = getExerciseMetadata(removed.name).muscle_target_primary;
           if (rg && groupCount[rg]) groupCount[rg] -= 1;
-          chosen.splice(removeIdx, 1, { name: triceps.name, sets: DEFAULT_SETS });
+          chosen.splice(swapIdx, 1, { name: triceps.name, sets: DEFAULT_SETS });
           chosenNames.add(triceps.name);
           chosenMovements.add(dedupKey(triceps.name, triceps.meta));
           groupCount.triceps = (groupCount.triceps || 0) + 1;
-        } else if (chosen.length < effectiveCap) {
-          // No over-slotted non-surfaced isolation to swap, but there is room — add it.
+        } else if (chosen.length < effectiveCap && ctx?.tricepsRestoreLean !== true) {
+          // ORIGINAL no-push U/L restore: no over-slotted non-surfaced isolation to swap,
+          // but there is room — add it. (LEAN single-push-day case never adds: the swap
+          // above already ran or biceps could not give a slot → accept the orphan.)
           take(triceps, DEFAULT_SETS);
         }
-        // else: saturated + every group single-slotted/surfaced → accept the gap.
+        // else: saturated / no safe victim → accept the gap (LEAN: no add, no biceps-break).
       }
     }
   }
