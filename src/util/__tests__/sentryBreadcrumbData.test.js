@@ -28,7 +28,6 @@ beforeEach(async () => {
   if (!match) throw new Error('Could not extract beforeSend from sentry.js — source structure changed');
   // Strip JSDoc /** @type {string} */ casts (not valid runtime JS).
   const body = match[1].replace(/\/\*\*[\s\S]*?\*\//g, '');
-  // eslint-disable-next-line no-new-func
   prodBeforeSend = new Function('event', body);
 });
 
