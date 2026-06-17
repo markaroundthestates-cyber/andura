@@ -852,6 +852,65 @@ describe('SettingsProfile — frequency edit re-seeds the calendar (freq-edit-re
   });
 });
 
+// C17-CROSSSTORE-01 — the DIVERGENT case the prior weight-continuity suite never
+// covered: onboarding.weight (110, stale — never updated when the user logs in
+// Progres) DIFFERS from the canonical log (95, the real current weight). Pre-fix
+// the draft seeded from raw onboarding (110) so (1) the Profil field showed the
+// STALE 110 while Progres showed 95, and (2) handleSave's continuity guard
+// (draft.weight 110 !== priorWeight 95) fired on ANY save → it wrote a phantom 110
+// weigh-in that silently REVERTED the canonical 95→110, corrupting TDEE/BMR/BF%/
+// protein. Fix: seed the draft weight from getCurrentWeightKg() (canonical), so the
+// field shows 95 and the guard no longer misfires on an unrelated save.
+describe('SettingsProfile — C17-CROSSSTORE-01 stale onboarding weight must not revert canonical', () => {
+  beforeEach(() => {
+    // onboarding.weight = 110 (stale), but the running log's latest is 95 (the
+    // real current weight the user logged in Progres). The two DIVERGE.
+    useOnboardingStore.setState({
+      data: {
+        age: 30,
+        sex: 'm',
+        goal: 'masa',
+        frequency: '4',
+        experience: 'intermediar',
+        weight: 110,
+        height: 180,
+      },
+      completed: true,
+      completedAt: Date.now(),
+    });
+    useProgresStore.getState().reset();
+    // Seed the running log: an old 110 then a more-recent 95 → canonical = 95.
+    useProgresStore.getState().addWeightEntry({ kg: 110, date: '2026-05-01' });
+    useProgresStore.getState().addWeightEntry({ kg: 95, date: '2026-06-01' });
+  });
+
+  it('the Profil weight field seeds to the canonical 95 (NOT the stale onboarding 110)', () => {
+    expect(getCurrentWeightKg()).toBe(95);
+    renderScreen();
+    expect(screen.getByTestId('profile-weight-input')).toHaveValue(95);
+  });
+
+  it('saving an UNRELATED field does NOT add a weigh-in and canonical stays 95 (no revert)', () => {
+    renderScreen();
+    const before = useProgresStore.getState().weightLog.length;
+    fireEvent.change(screen.getByTestId('profile-experience-select'), { target: { value: 'avansat' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    // No phantom weigh-in written; canonical untouched at 95 (was reverting to 110).
+    expect(useProgresStore.getState().weightLog.length).toBe(before);
+    expect(getCurrentWeightKg()).toBe(95);
+    expect(useOnboardingStore.getState().data.experience).toBe('avansat');
+  });
+
+  it('editing the weight field to 97 DOES add a 97 weigh-in (real edit honored)', () => {
+    renderScreen();
+    const before = useProgresStore.getState().weightLog.length;
+    fireEvent.change(screen.getByTestId('profile-weight-input'), { target: { value: '97' } });
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    expect(useProgresStore.getState().weightLog.length).toBe(before + 1);
+    expect(getCurrentWeightKg()).toBe(97);
+  });
+});
+
 describe('SettingsProfile — Romanian no-diacritics rule (D-LEGACY-064)', () => {
   it('no diacritics in UI rendered text', () => {
     const { container } = renderScreen();

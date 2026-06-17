@@ -82,8 +82,20 @@ export function SettingsProfile(): JSX.Element {
   // gradient hardcodat doar cu initiala, ignorand preset-ul ales.
   const avatarId = useSettingsStore((s) => s.avatarId);
 
-  // Draft state pentru edit apoi save commit (avoid live store thrash)
-  const [draft, setDraft] = useState<OnboardingData>(data);
+  // Draft state pentru edit apoi save commit (avoid live store thrash).
+  // §weight-canonical-seed (C17-CROSSSTORE-01) — greutatea are DOUA copii:
+  // onboarding.data.weight (NU se actualizeaza cand userul logheaza in Progres) si
+  // progresStore.weightLog (log-ul curent). getCurrentWeightKg = sursa canonica
+  // (ultima logata > onboarding) pe care o citeste TOATA app-ul. Seeduind draft
+  // din `data` brut, campul arata vechea valoare onboarding (ex 110) desi Progres
+  // arata 95 reala — si handleSave (priorWeight = getCurrentWeightKg() = 95) vedea
+  // draft.weight 110 != 95 la ORICE save → scria un weigh-in fantoma 110 care
+  // revertea greutatea canonica 95→110. Seed campul din canonica ca afiseze
+  // greutatea curenta reala si guard-ul de continuitate sa nu mai declanseze fals.
+  const [draft, setDraft] = useState<OnboardingData>(() => ({
+    ...data,
+    weight: getCurrentWeightKg() ?? data.weight,
+  }));
   const [saved, setSaved] = useState(false);
 
   // §F-pass2-settings-profile-03 — Compozitie corporala (mockup L2034-2047).
