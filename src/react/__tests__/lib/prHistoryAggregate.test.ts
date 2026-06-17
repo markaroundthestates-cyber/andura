@@ -103,6 +103,29 @@ describe('getPRHistoryAll — reads pr-records SSOT', () => {
     // 50 * (1 + 5/30) = 58.3
     expect(prs[0]!.oneRMEstimate).toBeCloseTo(58.3, 1);
   });
+
+  // cycle26b (MEDIUM, edge) — cross-device sync can merge TWO pr-records entries
+  // for the same exercise (each device pushed its PR at a distinct ts, so the
+  // firebase ts-uniqueness array merge keeps both). The display read must collapse
+  // by `ex` keeping the higher Epley e1RM so the Wall shows it once + the count is
+  // not inflated.
+  it('dedups two entries for the same exercise → one (higher e1RM)', () => {
+    seedPrRecords([
+      // Same ex, two distinct ts (the cross-device duplicate). e1RM: 60*(1+5/30)=70
+      // vs 65*(1+5/30)=75.83 → the 65kg entry wins.
+      { ex: 'Bench Press', kg: 60, reps: 5, date: '2026-06-01', ts: 1000, score: 300 },
+      { ex: 'Bench Press', kg: 65, reps: 5, date: '2026-06-03', ts: 3000, score: 325 },
+      { ex: 'Cable Row', kg: 45, reps: 8, date: '2026-06-02', ts: 2000, score: 360 },
+    ]);
+    const prs = getPRHistoryAll();
+    const bench = prs.filter((p) => p.exerciseId === 'Bench Press');
+    expect(bench).toHaveLength(1);
+    expect(bench[0]!.kg).toBe(65); // the higher e1RM record is kept
+    // Distinct exercises unaffected.
+    expect(prs).toHaveLength(2);
+    // Records count counts the deduped exercise once.
+    expect(getStreakStats().prCount).toBe(2);
+  });
 });
 
 describe('getStreakStats — prCount reads pr-records SSOT', () => {

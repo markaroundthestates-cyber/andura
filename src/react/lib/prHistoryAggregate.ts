@@ -52,11 +52,38 @@ function setOneRMEstimate(kg: number, reps: number): number {
   return Math.round(kg * (1 + reps / 30) * 10) / 10;
 }
 
-/** Read the curated `pr-records` store (SSOT). Soft-fail to [] on any DB error. */
+/**
+ * Collapse pr-records to ONE entry per exercise, keeping the higher Epley e1RM.
+ * Cross-device sync can merge two `pr-records` entries for the SAME `ex` (each
+ * device pushed its own PR at a distinct `ts`, so the ts-uniqueness array merge
+ * in firebase.js keeps both). Without this dedup the PR Wall shows the exercise
+ * twice and the Records count is inflated. Robust at the DISPLAY boundary so the
+ * Wall + count are always deduped regardless of how the store got two entries.
+ */
+function dedupByExerciseMaxE1RM(records: PRRecordEntry[]): PRRecordEntry[] {
+  const byEx = new Map<string, PRRecordEntry>();
+  for (const r of records) {
+    if (!r || typeof r.ex !== 'string' || r.ex.length === 0) continue;
+    const prev = byEx.get(r.ex);
+    if (!prev) {
+      byEx.set(r.ex, r);
+      continue;
+    }
+    // Keep the higher e1RM; tie → keep the newer ts (stable, recency-preferring).
+    const a = setOneRMEstimate(r.kg, r.reps);
+    const b = setOneRMEstimate(prev.kg, prev.reps);
+    if (a > b || (a === b && (r.ts || 0) > (prev.ts || 0))) byEx.set(r.ex, r);
+  }
+  return [...byEx.values()];
+}
+
+/** Read the curated `pr-records` store (SSOT), deduped by exercise (higher e1RM
+ * wins) so a cross-device sync that duplicated a record never double-shows.
+ * Soft-fail to [] on any DB error. */
 function readPrRecords(): PRRecordEntry[] {
   try {
     const raw = DB.get<PRRecordEntry[]>('pr-records');
-    return Array.isArray(raw) ? raw : [];
+    return Array.isArray(raw) ? dedupByExerciseMaxE1RM(raw) : [];
   } catch {
     return [];
   }

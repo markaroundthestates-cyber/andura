@@ -205,6 +205,25 @@ export function decodeNameKeyed(arr) {
   return out;
 }
 
+// Collapse a pr-records array to ONE entry per exercise (`ex`), keeping the higher
+// Epley e1RM (kg*(1+reps/30)); tie → newer ts. The cross-device array merge dedups
+// by `ts`, so two devices that each set a PR for the same exercise (distinct ts)
+// both survive — this restores the store's one-per-exercise curation invariant.
+function dedupPrRecordsByEx(records) {
+  if (!Array.isArray(records)) return records;
+  const byEx = new Map();
+  const e1rm = (kg, reps) => (kg > 0 && reps > 0 ? kg * (1 + reps / 30) : 0);
+  for (const r of records) {
+    if (!r || typeof r.ex !== 'string' || r.ex.length === 0) continue;
+    const prev = byEx.get(r.ex);
+    if (!prev) { byEx.set(r.ex, r); continue; }
+    const a = e1rm(r.kg, r.reps);
+    const b = e1rm(prev.kg, prev.reps);
+    if (a > b || (a === b && (r.ts || 0) > (prev.ts || 0))) byEx.set(r.ex, r);
+  }
+  return [...byEx.values()];
+}
+
 function getDeviceId() {
   let id = localStorage.getItem('device-id');
   if (!id) { id = 'dev-' + Math.random().toString(36).slice(2,10); localStorage.setItem('device-id', id); }
@@ -500,7 +519,13 @@ export async function syncFromFirebase() {
           const merged = [...localArr];
           remoteArr.forEach(e => { if (!tsSet.has(e.ts)) merged.push(e); });
           merged.sort((a, b) => (b.ts || 0) - (a.ts || 0));
-          DB.set(k, merged.slice(0, 5000));
+          // pr-records is curated as ONE entry per exercise; the ts-uniqueness
+          // merge above can keep two entries for the same `ex` (each device pushed
+          // its own PR at a distinct ts). Collapse by `ex` keeping the higher Epley
+          // e1RM so the stored curation invariant survives cross-device sync. (The
+          // display read also dedups defensively — this keeps the store itself clean.)
+          const out = k === 'pr-records' ? dedupPrRecordsByEx(merged) : merged;
+          DB.set(k, out.slice(0, 5000));
         } else {
           // Scalar — keep local
         }
