@@ -123,6 +123,18 @@
 // + the `isRepsMetric &&` guard on the existing SCALE BACK if + a 2-line breadcrumb. It
 // cannot leave dp.js without fragmenting the recommend decision flow. fp/calibration-sim
 // baselines stay byte-identical (no flag needed). Ratchet-down-only resumes from 3047.
+//
+// TWELFTH documented exception 2026-06-17 (3047→3073): the coherent completion of the
+// C16-METRIC fix (cycle-20b audit HIGH) — metric progression made BIDIRECTIONAL. The
+// classification LOGIC already lives in engine/metricType.js (getMetricType, untouched);
+// the +25 here is irreducible CALL-SITE WIRING inside _recommendRaw: (A) a metric-aware
+// `sustainedHard` ternary so a metric set does NOT ease on the reps:0 phantom (it reads
+// the in-method lastRepsBelowTarget/consecutiveGreu/hitTargetReps), and (B) a metric EASY
+// weight-climb branch (getNextWeight, cap-respected) because atTop is unreachable at
+// reps:0 (it reads the in-method lastW/ex/maxKg). Neither can leave dp.js without passing
+// the whole in-flight recommend state out. fp/calibration-sim baselines stay byte-
+// identical (metric exercises are not in those cohorts; no flag needed). Ratchet-down-only
+// resumes from 3073.
 
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
@@ -131,9 +143,9 @@ import { resolve, dirname } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Ceiling = current line count. Ratchet DOWN only (eleven documented exceptions
+// Ceiling = current line count. Ratchet DOWN only (twelve documented exceptions
 // 2026-06-11/12/14/16/17 for call-site wiring — see header).
-const DP_LINE_CEILING = 3047;
+const DP_LINE_CEILING = 3073;
 
 const dpSrc = readFileSync(resolve(__dirname, '../dp.js'), 'utf8');
 // Under a Stryker mutation dry-run the on-disk source is INSTRUMENTED (stryMutAct_*

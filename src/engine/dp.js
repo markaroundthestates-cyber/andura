@@ -1999,7 +1999,15 @@ export const DP = {
     // case demotes the load they just demonstrated and drives the saw-tooth. Both
     // fall through to standard double-progression (HOLD weight, MEDIUM path).
     const hitTargetReps = lastReps >= (rMin ?? 8);
-    const sustainedHard = lastRepsBelowTarget || (consecutiveGreu >= 2 && !hitTargetReps);
+    // C16-METRIC-EASEBACK-SPIRAL: a metric set logs reps:0, so reps:0 < rMin makes
+    // BOTH lastRepsBelowTarget AND !hitTargetReps spuriously true → sustainedHard fires
+    // on ANY single greu → EASE-BACK craters a held load one step/session (~42% over 5
+    // holds). For a metric the reps-shortfall is a phantom; ease only on a SUSTAINED
+    // signal (2+ consecutive greu). reps exercises unchanged (cycle-16 gated the SCALE-
+    // BACK door; this is the second door).
+    const sustainedHard = isRepsMetric
+      ? lastRepsBelowTarget || (consecutiveGreu >= 2 && !hitTargetReps)
+      : consecutiveGreu >= 2;
     // #75 — SUPPRESS the ease-back when an UP-jump's rep drop is e1RM continuity,
     // not regression (8kg×20 ≈ 10kg×12). loadTransition.suppress_regression is only
     // true inside an UP window WITH e1RM continuity (flag ON); OFF → always false →
@@ -2072,6 +2080,24 @@ export const DP = {
           progressionNote: `In definire mentinem ${lastW} kg la nivelul tau · nu fortam un PR nou acum.`,
           progressionStage: 0
         };
+      }
+      // C16-METRIC-CLIMB: a metric set logs reps:0, so atTop is NEVER true → the EASY
+      // path below always hits the rep-bump (no-op for a metric) and the getNextWeight
+      // weight-climb door is unreachable → an easy metric load is FROZEN. Climb the
+      // WEIGHT one equipment step (cap-respected); a bodyweight metric (lastW=0) snaps
+      // back and falls through to HOLD below.
+      if (!isRepsMetric) {
+        const metricKg = getNextWeight(lastW, ex);
+        if (metricKg > lastW && !(maxKg && metricKg > maxKg)) {
+          return {
+            kg: metricKg, repsTarget: rMin, rir: 3,
+            status: 'INCREASE',
+            statusColor: 'var(--green)',
+            statusLabel: '🟢 Crestem greutatea',
+            progressionNote: `Usor data trecuta → urcam la ${metricKg} kg.`,
+            progressionStage: 2
+          };
+        }
       }
       if (!atTop) {
         // STRENGTH phase: aggressive — drive the WEIGHT up on an easy set even

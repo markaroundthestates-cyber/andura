@@ -75,13 +75,50 @@ describe('DP carry/time metric progression — no weight death-spiral', () => {
     expect(kg).toBeGreaterThanOrEqual(12);
   });
 
-  it('a genuinely-HARD metric hold (high RPE) still EASES per RPE', () => {
-    // reps:0 + a hard rating (rpe 9) is real distress on the hold → the RPE-driven
-    // ease must still lighten the load one step (the safety path stays alive).
-    store['logs'] = [log(CARRY, 24, 0, 9)];
+  it('a SINGLE greu metric hold HOLDS — does NOT ease (phantom reps-shortfall)', () => {
+    // C16-METRIC-EASEBACK-SPIRAL: a loaded carry at 30 kg held + rated greu once.
+    // reps:0 made BOTH lastRepsBelowTarget and !hitTargetReps true → the old gate
+    // EASED on a single greu, cratering the load the user just held. A single greu
+    // is normal working intensity → HOLD (CONSOLIDATE), never ease.
+    store['logs'] = [log(CARRY, 30, 0, 8.5)];
     const rec = DP.recommend(CARRY);
-    expect(rec.kg).toBeLessThan(24); // eased one equipment step down
+    expect(rec.status).not.toBe('EASE BACK');
+    expect(rec.kg).toBeGreaterThanOrEqual(30); // held the demonstrated load
+  });
+
+  it('FIVE successive single-greu metric holds do NOT crater the load', () => {
+    // The death-spiral lesson: a loaded carry rated greu each session used to
+    // crater 30→27.5→25→22.5→20→17.5 (~42%) across 5 SUCCESSFULLY-held sessions.
+    // Each single greu must HOLD — the load never decays.
+    let kg = 30;
+    for (let s = 0; s < 5; s++) {
+      store['logs'] = [log(CARRY, kg, 0, 8.5)];
+      const rec = DP.recommend(CARRY);
+      expect(rec.status, `session ${s}`).not.toBe('EASE BACK');
+      expect(rec.kg, `session ${s} must not drop below ${kg}`).toBeGreaterThanOrEqual(kg);
+      kg = rec.kg;
+    }
+    expect(kg).toBeGreaterThanOrEqual(30); // no monotone decay over 5 held sessions
+  });
+
+  it('a SUSTAINED-hard metric hold (2+ consecutive greu) DOES ease one step', () => {
+    // Two consecutive greu on the hold is a real sustained too-heavy trend → the
+    // anti-saw-tooth gate fires and the load eases one equipment step (safety path
+    // stays alive; only the single-greu phantom is suppressed).
+    store['logs'] = [log(CARRY, 30, 0, 8.5), log(CARRY, 30, 0, 8.5)];
+    const rec = DP.recommend(CARRY);
     expect(rec.status).toBe('EASE BACK');
+    expect(rec.kg).toBeLessThan(30); // eased one equipment step down
+  });
+
+  it('an EASY metric hold CLIMBS one equipment step (was frozen)', () => {
+    // C16-METRIC-CLIMB: a loaded carry held easily (reps:0) used to be FROZEN — the
+    // atTop weight-climb door was unreachable at reps:0. An easy metric load must
+    // climb one equipment step via getNextWeight, the decisive forward step.
+    store['logs'] = [log(CARRY, 30, 0, 6.5)];
+    const rec = DP.recommend(CARRY);
+    expect(rec.status).toBe('INCREASE');
+    expect(rec.kg).toBeGreaterThan(30); // climbed one carry-load step
   });
 
   it('a REPS exercise with low reps STILL scales back (control — unchanged)', () => {
