@@ -188,6 +188,9 @@ const SYNCED: SyncedStore[] = [
         weightLog: st.weightLog,
         bodyData: st.bodyData,
         targetObiectiv: st.targetObiectiv,
+        // cyc23-rest-01 — push the goal's real write timestamp so the cross-device
+        // LWW below can compare it against the remote device's stamp.
+        targetObiectivUpdatedAt: st.targetObiectivUpdatedAt,
       };
     },
     apply: (remote) => {
@@ -199,17 +202,31 @@ const SYNCED: SyncedStore[] = [
       // distinct measurements so keys on ts.
       const weightLog = mergeArrayUnion(local.weightLog, d.weightLog, 'date');
       const bodyData = mergeArrayUnion(local.bodyData, d.bodyData, 'ts');
-      // Goals = last-write-wins by the envelope updatedAt. A local non-empty
-      // target is preserved over a missing/older remote (never clobber a goal
-      // the user set on this device with an undated remote).
-      const localHasTarget = local.targetObiectiv?.weightKg != null || local.targetObiectiv?.month != null;
+      // Goals = last-write-wins by a REAL per-write timestamp (cyc23-rest-01).
+      // The pre-fix synthetic `Date.now() - 1` for the local side meant local
+      // ALWAYS won the LWW, so a goal set on device B never converged to device
+      // A. Now each device stamps targetObiectivUpdatedAt when the goal is set
+      // (progresStore.setTargetObiectiv) and we compare those stamps directly —
+      // whichever device actually set the goal most recently wins. Legacy data
+      // with no stamp is treated as oldest (0) so a real remote stamp wins.
+      const localTargetAt = typeof local.targetObiectivUpdatedAt === 'number' ? local.targetObiectivUpdatedAt : 0;
+      // Legacy migration: a goal written by a PRE-FIX device has no per-write
+      // stamp — fall back to the envelope updatedAt (best proxy for when that
+      // remote node was last written) so a real remote goal still wins a new
+      // device that never set one (local stamp 0). A local goal with no stamp
+      // stays 0 (oldest) so a real remote stamp can win it.
+      const remoteTargetAt =
+        typeof d.targetObiectivUpdatedAt === 'number'
+          ? d.targetObiectivUpdatedAt
+          : (typeof remote?.updatedAt === 'number' ? remote.updatedAt : 0);
       const targetObiectiv = mergeLastWriteWins(
         local.targetObiectiv,
         d.targetObiectiv,
-        localHasTarget ? Date.now() - 1 : 0, // local treated as recent only if set
-        remote?.updatedAt,
+        localTargetAt,
+        remoteTargetAt,
       );
-      useProgresStore.setState({ weightLog, bodyData, targetObiectiv });
+      const targetObiectivUpdatedAt = Math.max(localTargetAt, remoteTargetAt);
+      useProgresStore.setState({ weightLog, bodyData, targetObiectiv, targetObiectivUpdatedAt });
     },
   },
   // ── onboardingStore: profile data + completed flag (LWW by envelope updatedAt).

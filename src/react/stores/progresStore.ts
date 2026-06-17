@@ -53,6 +53,11 @@ export interface ProgresState {
   bodyData: BodyDataEntry[];
   /** §obiectiv-tinta — user-set Obiectiv target. null on cold-start. */
   targetObiectiv: TargetObiectiv;
+  /** cyc23-rest-01 — epoch ms of the last real goal write on THIS device. The
+   *  storeSync targetObiectiv LWW keys on this so whichever device actually set
+   *  the goal most recently wins (was a synthetic Date.now()-1 → local always
+   *  won → a goal set on device B never converged to device A). 0 = never set. */
+  targetObiectivUpdatedAt: number;
 }
 
 /**
@@ -149,6 +154,7 @@ export const useProgresStore = create<ProgresState & ProgresActions>()(
       weightLog: [],
       bodyData: [],
       targetObiectiv: EMPTY_TARGET,
+      targetObiectivUpdatedAt: 0,
       // U-10 — upsert by date (aliniat cu nutritionStore.upsertEntry). Logare
       // de 2 ori in aceeasi zi suprascrie intrarea zilei in loc sa creeze un
       // rand duplicat (cantarire dimineata + seara → o singura valoare/zi).
@@ -185,7 +191,9 @@ export const useProgresStore = create<ProgresState & ProgresActions>()(
             next.month =
               typeof m === 'string' && /^\d{4}-\d{2}(-\d{2})?$/.test(m) ? m : null;
           }
-          return { targetObiectiv: next };
+          // cyc23-rest-01 — stamp a real per-write timestamp so the cross-device
+          // LWW in storeSync converges (the most recent setter wins).
+          return { targetObiectiv: next, targetObiectivUpdatedAt: Date.now() };
         }),
       // BUG #5 — seed o singura intrare din greutatea de onboarding cand
       // weightLog e gol. Idempotent (gol → seed; altfel no-op) ca sa NU
@@ -196,7 +204,7 @@ export const useProgresStore = create<ProgresState & ProgresActions>()(
           if (!Number.isFinite(kg) || kg <= 0 || !date) return s;
           return { weightLog: [{ kg, date, ts: Date.now() }] };
         }),
-      reset: () => set({ weightLog: [], bodyData: [], targetObiectiv: EMPTY_TARGET }),
+      reset: () => set({ weightLog: [], bodyData: [], targetObiectiv: EMPTY_TARGET, targetObiectivUpdatedAt: 0 }),
     }),
     {
       name: 'wv2-progres-store',
@@ -209,6 +217,7 @@ export const useProgresStore = create<ProgresState & ProgresActions>()(
         weightLog: state.weightLog,
         bodyData: state.bodyData,
         targetObiectiv: state.targetObiectiv,
+        targetObiectivUpdatedAt: state.targetObiectivUpdatedAt,
       }) as Partial<ProgresState & ProgresActions>,
     }
   )

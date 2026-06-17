@@ -321,3 +321,92 @@ describe('hydrateStoresFromCloud — NO CLOBBER (local edits survive)', () => {
     expect(useNutritionStore.getState().dailyLog.find((e) => e.dateISO === '2026-05-25')?.kcal).toBe(1500);
   });
 });
+
+// cyc23-rest-01 — weight goal converges cross-device. Pre-fix the local side of
+// the targetObiectiv LWW used a synthetic `Date.now() - 1`, so local ALWAYS won
+// and a goal set on device B never propagated to device A. Now both sides key on
+// the real per-write stamp targetObiectivUpdatedAt (set in setTargetObiectiv).
+describe('hydrateStoresFromCloud — weight goal cross-device convergence (cyc23-rest-01)', () => {
+  it('device A goal (t1) loses to a newer remote goal set on device B (t2 > t1)', async () => {
+    seedAuth();
+    // Device A set its goal first.
+    useProgresStore.setState({
+      targetObiectiv: { weightKg: 80, month: '2026-09' },
+      targetObiectivUpdatedAt: 1000, // t1
+    });
+    // Device B set a different goal LATER (t2 > t1) — must win.
+    stubFetch({
+      progres: {
+        data: {
+          weightLog: [], bodyData: [],
+          targetObiectiv: { weightKg: 72, month: '2026-12' },
+          targetObiectivUpdatedAt: 2000, // t2
+        },
+        updatedAt: 2000,
+      },
+    });
+
+    await hydrateStoresFromCloud();
+
+    const st = useProgresStore.getState();
+    expect(st.targetObiectiv.weightKg).toBe(72); // B converges onto A
+    expect(st.targetObiectiv.month).toBe('2026-12');
+    expect(st.targetObiectivUpdatedAt).toBe(2000);
+  });
+
+  it("device A's later edit (t3 > t2) wins the next sync over a stale remote", async () => {
+    seedAuth();
+    // A edits AGAIN, now newer than the last remote.
+    useProgresStore.setState({
+      targetObiectiv: { weightKg: 75, month: '2026-10' },
+      targetObiectivUpdatedAt: 3000, // t3
+    });
+    stubFetch({
+      progres: {
+        data: {
+          weightLog: [], bodyData: [],
+          targetObiectiv: { weightKg: 72, month: '2026-12' },
+          targetObiectivUpdatedAt: 2000, // t2 < t3 — stale
+        },
+        updatedAt: 2000,
+      },
+    });
+
+    await hydrateStoresFromCloud();
+
+    const st = useProgresStore.getState();
+    expect(st.targetObiectiv.weightKg).toBe(75); // local newer write wins
+    expect(st.targetObiectivUpdatedAt).toBe(3000);
+  });
+
+  it('legacy/no-goal local does NOT spuriously clobber a real remote goal', async () => {
+    seedAuth();
+    // Fresh device — no goal set yet (cold-start stamp 0).
+    expect(useProgresStore.getState().targetObiectivUpdatedAt).toBe(0);
+    expect(useProgresStore.getState().targetObiectiv.weightKg).toBeNull();
+    stubFetch({
+      progres: {
+        data: {
+          weightLog: [], bodyData: [],
+          targetObiectiv: { weightKg: 70, month: '2026-08' },
+          targetObiectivUpdatedAt: 1500,
+        },
+        updatedAt: 1500,
+      },
+    });
+
+    await hydrateStoresFromCloud();
+
+    const st = useProgresStore.getState();
+    expect(st.targetObiectiv.weightKg).toBe(70); // remote real goal adopted
+    expect(st.targetObiectivUpdatedAt).toBe(1500);
+  });
+
+  it('setTargetObiectiv stamps a real targetObiectivUpdatedAt (not 0)', () => {
+    const before = Date.now();
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 68, month: '2026-11' });
+    const at = useProgresStore.getState().targetObiectivUpdatedAt;
+    expect(at).toBeGreaterThanOrEqual(before);
+    expect(at).toBeGreaterThan(0);
+  });
+});
