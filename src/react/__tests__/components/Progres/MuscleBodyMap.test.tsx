@@ -20,6 +20,7 @@ import { MuscleBodyMap } from '../../../components/Progres/MuscleBodyMap';
 import { getFatigue } from '../../../lib/engineWrappers';
 import { useWorkoutStore } from '../../../stores/workoutStore';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
+import { useAerobicStore } from '../../../stores/aerobicStore';
 import { BIG11_GROUPS } from '../../../../engine/muscleRecovery.js';
 
 function setSex(sex: 'm' | 'f' | null): void {
@@ -77,10 +78,18 @@ function mockMatchMedia(reduced: boolean): void {
 beforeEach(() => {
   setSessions([]);
   setSex('m');
+  // No aerobic bleed across tests — the cold path keys partly off aerobic state.
+  useAerobicStore.setState({ sessions: [] });
   localStorage.clear();
   mockMatchMedia(false);
   vi.mocked(getFatigue).mockReturnValue(null);
 });
+
+/** Local ISO date for today (mirror aerobicStore/progresStore todayIso). */
+function todayIso(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -395,5 +404,43 @@ describe('MuscleBodyMap', () => {
     render(<MuscleBodyMap />);
     expect(screen.getByTestId('recovery-fatigue-line').textContent).toMatch(/1\/10/);
     expect(screen.getByTestId('recovery-fatigue-line').textContent).toMatch(/Fresh/);
+  });
+
+  // ── cycle17-bodymap-cold-readout-leak ─────────────────────────────────────
+  // useMuscleRecoveryGroups merges aerobicStore sessions, so a 'both' user who
+  // logged a recent cardio class (but no gym session) has genuine 'partial'
+  // (Easing) states. Pre-fix isCold keyed ONLY off sessionsHistory.length, so
+  // the body+dots were neutralized + the "no recovery data yet" note showed
+  // WHILE the readout TEXT still said "Easing" — a contradiction. Cold must now
+  // account for aerobic touch.
+  describe('cardio-only "both" user is NOT cold (no contradictory readout)', () => {
+    it('a recent cardio class (empty gym history) → not cold + no empty note + real states', () => {
+      // 'both' user, no resistance sessions, but a cardio class TODAY eases
+      // core/legs/fese to 'partial' via mergeAerobicRecovery.
+      useOnboardingStore.setState((s) => ({ data: { ...s.data, trainingType: 'both' } }));
+      setSessions([]);
+      useAerobicStore.setState({
+        sessions: [{ date: todayIso(), type: 'aerobic', minutes: 45, kcal: 300, ts: Date.now() }],
+      });
+      render(<MuscleBodyMap />);
+      // NOT cold — the body/dots/text/note are all consistent with the real states.
+      expect(screen.getByTestId('muscle-body-map')).not.toHaveAttribute('data-cold', 'true');
+      // The "no recovery data yet" note is gone (it contradicted the Easing text).
+      expect(screen.queryByTestId('body-map-empty')).not.toBeInTheDocument();
+      // At least one eased group's readout dot is its REAL state, not neutral
+      // (core is a cardio-dominant group → 'partial').
+      const coreRow = screen.getByTestId('body-readout-core');
+      expect(coreRow).toHaveAttribute('data-recovery-state', 'partial');
+    });
+
+    it('a truly-empty user (no gym, no cardio) stays cold — neutral readout + empty note', () => {
+      setSessions([]);
+      useAerobicStore.setState({ sessions: [] });
+      render(<MuscleBodyMap />);
+      expect(screen.getByTestId('muscle-body-map')).toHaveAttribute('data-cold', 'true');
+      expect(screen.getByTestId('body-map-empty')).toBeInTheDocument();
+      // Every readout dot is neutral (no fabricated recovery).
+      expect(screen.getByTestId('body-readout-core')).toHaveAttribute('data-recovery-state', 'neutral');
+    });
   });
 });

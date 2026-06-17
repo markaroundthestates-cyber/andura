@@ -116,7 +116,18 @@ export function MuscleBodyMap(): JSX.Element | null {
   // 'recovered' by baseline, which would paint a fully-green body that
   // OVER-claims recovery for someone who never trained. Detect the empty case
   // and render neutral instead (data honesty — Pulse blueprint flag).
-  const isCold = !Array.isArray(sessionsHistory) || sessionsHistory.length === 0;
+  //
+  // cycle17-bodymap-cold-readout-leak — `groups` (useMuscleRecoveryGroups) ALSO
+  // merges aerobicStore sessions, so a trainingType:'both' user who logged a
+  // recent cardio class but no gym session yet has genuine 'partial'/'Easing'
+  // states. Keying cold OFF sessionsHistory alone neutralized the dots + showed
+  // "no recovery data yet" WHILE the readout text still said "Easing" — a
+  // contradiction. Cold only when there is NEITHER resistance history NOR any
+  // non-recovered (cardio-eased) group, so body+dots+text+note stay consistent;
+  // a truly-empty user (everything 'recovered') stays cold.
+  const isCold =
+    (!Array.isArray(sessionsHistory) || sessionsHistory.length === 0) &&
+    !groups.some((g) => g.state !== 'recovered');
 
   // Quick lookup: group → state.
   const stateByGroup = useMemo(() => {
