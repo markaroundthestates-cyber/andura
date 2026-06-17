@@ -19,7 +19,7 @@ import { readGoalForecast } from '../../lib/goalForecast';
 import type { GoalForecastResult } from '../../lib/goalForecast';
 import { useNutritionStore } from '../../stores/nutritionStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
-import { useOnboardingStore } from '../../stores/onboardingStore';
+import { useProgresStore } from '../../stores/progresStore';
 import { t, getCurrentLocale } from '../../../i18n/index.js';
 
 // Locale-aware kg with one decimal. The prior implementation forced 'ro-RO'
@@ -45,10 +45,13 @@ export function GoalForecastBlock(): JSX.Element | null {
   const [forecast, setForecast] = useState<GoalForecastResult | null>(null);
   const [loaded, setLoaded] = useState(false);
   // Recompute on the signals the forecasts depend on: intake (ETA pace), logged
-  // sessions (strength history), and the goal/target weight (ETA target).
+  // sessions (strength history), and the goal/target weight (ETA target). The
+  // goal comes from the canonical progresStore.targetObiectiv (what readGoalForecast
+  // now reads), NOT the dead onboarding targetWeight — so changing the goal in
+  // ObiectivCard recomputes the ETA.
   const dailyLog = useNutritionStore((s) => s.dailyLog);
   const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
-  const targetWeight = useOnboardingStore((s) => s.data.targetWeight);
+  const targetWeight = useProgresStore((s) => s.targetObiectiv.weightKg);
 
   useEffect(() => {
     let cancelled = false;

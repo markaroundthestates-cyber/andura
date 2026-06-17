@@ -319,6 +319,7 @@ function round1(n: number): number {
 
 import { useNutritionStore } from '../stores/nutritionStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
+import { useProgresStore } from '../stores/progresStore';
 import { useWorkoutStore } from '../stores/workoutStore';
 import { readBayesianNutritionContext } from './nutritionObservations';
 import { readTdeeEstimateKcal } from './engineWrappers';
@@ -363,7 +364,12 @@ export async function readGoalForecast(now: number = Date.now()): Promise<GoalFo
     const dailyLog = useNutritionStore.getState().dailyLog;
     const avgIntakeKcal = avgRecentLoggedIntake(dailyLog, now);
     const currentWeightKg = getCurrentWeightKg();
-    const goalWeightKg = useOnboardingStore.getState().data.targetWeight ?? null;
+    // Goal weight = the canonical progresStore target the kcal-target engine +
+    // ObiectivCard already read (engineWrappers.nutrition.ts:289). The onboarding
+    // `data.targetWeight` this used to read is NEVER written when the user sets a
+    // goal in-app (§obiectiv-tinta relocated it to progresStore.targetObiectiv),
+    // so the ETA was dead/empty for every in-app goal. Canonical-first.
+    const goalWeightKg = useProgresStore.getState().targetObiectiv?.weightKg ?? null;
     weightEta = projectWeightEta({
       currentWeightKg,
       goalWeightKg,
