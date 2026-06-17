@@ -245,6 +245,26 @@ describe('SettingsProfile — focus selector', () => {
     expect(screen.queryByTestId('profile-focus-deemph-note')).toBeNull();
   });
 
+  it('switching emphasis on save RE-STAMPS focusPresetPickedAt (does NOT revert the meso clock)', () => {
+    // §focus-clock regression (cycle-18): mount with a STALE non-balanced pick-time
+    // (an arms emphasis picked ~20 days ago — its 4-week meso already weeks deep).
+    const staleAt = Date.now() - 20 * 24 * 3600 * 1000;
+    useOnboardingStore.setState((s) => ({
+      data: { ...s.data, focusPreset: 'arms', focusPresetPickedAt: staleAt },
+    }));
+    renderScreen();
+    // The user switches the emphasis to a DIFFERENT preset and saves.
+    fireEvent.change(screen.getByTestId('profile-focus-select'), { target: { value: 'chest' } });
+    const beforeSave = Date.now();
+    fireEvent.click(screen.getByTestId('settings-profile-save'));
+    const after = useOnboardingStore.getState().data;
+    expect(after.focusPreset).toBe('chest');
+    // The clock must be RE-STAMPED to ~now, NOT reverted to the 20-day-old value —
+    // so the new emphasis's mesocycle starts at week 1 (weeksElapsed 0), not deep.
+    expect(after.focusPresetPickedAt).toBeGreaterThanOrEqual(beforeSave);
+    expect(after.focusPresetPickedAt).not.toBe(staleAt);
+  });
+
   it('heads-up note SHOWS for a de-emphasizing preset (v-taper), calm + RO no-diacritics', () => {
     renderScreen();
     fireEvent.change(screen.getByTestId('profile-focus-select'), { target: { value: 'v-taper' } });

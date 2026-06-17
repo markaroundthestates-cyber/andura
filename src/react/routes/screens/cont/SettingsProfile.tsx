@@ -303,6 +303,14 @@ export function SettingsProfile(): JSX.Element {
     // s-a schimbat (data e valoarea live din store la render, draft = editarea).
     const priorFrequency = data.frequency;
     (Object.keys(draft) as Array<keyof OnboardingData>).forEach((key) => {
+      // §focus-clock fix (cycle-18) — focusPresetPickedAt is a DERIVED clock the
+      // focusPreset setter co-stamps (Date.now() on a real focus change, kept
+      // otherwise). The draft carries the STALE mount-time value, and because
+      // focusPreset is committed BEFORE it in key order, looping it here would stamp
+      // pickedAt=now (correct) then immediately OVERWRITE it back to stale — so a new
+      // emphasis inherited the old pick-time and its 4-week specialization meso was
+      // already weeks deep / auto-returned early. Skip it: the setter owns the stamp.
+      if (key === 'focusPresetPickedAt') return;
       setField(key, draft[key]);
     });
     // §focus-revert fix (BUG split 2026-06-03) — advance the onboarding edit clock so
