@@ -368,7 +368,18 @@ export const FLAGS = Object.freeze({
   // (readiness >= HIGH), non-hard last set offers a deliberate calibration test set
   // that shrinks sigma. OFF → no probe (byte-identical). Depends on
   // dp_strength_kalman_v1 (needs sigma; meaningless on raw kg).
-  dp_active_probing_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
+  //
+  // HELD OFF (cycle-19b audit): unlike dp_auto_pivot_v1 (whose descriptor IS consumed
+  // by the dp-pivot-prompts persistence), active-probing's result.activeProbe is a
+  // DEAD descriptor — getSmartRecommendation computes it but NOTHING consumes it
+  // (compose.ts never reads rec.activeProbe, PlannedExercise has no activeProbe field,
+  // the RO note lives only in dp.js). The intended consumer — an opt-in "set de
+  // calibrare" affordance in Workout/WorkoutPreview — is the RENDER-SURFACE and is a
+  // UX moment DEFERRED for Daniel (same defer pattern as dp_auto_pivot_v1's banner).
+  // Shipping it ON only emitted a descriptor no surface renders. Flip back ON once the
+  // opt-in calibration-set UX is built (result.kg is unchanged either way → flipping
+  // OFF is byte-identical; activeProbing.test.js force-enables the flag in-test).
+  dp_active_probing_v1: { rollout: 0, default: false }, // HELD 2026-06-16 (dead descriptor — render-surface pending Daniel)
 
   // #4/I MPC — model-predictive progression (RISK HIGH — changes how the next load
   // is CHOSEN, path B). When ON, a small bounded set of candidate next-loads is
