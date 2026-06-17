@@ -6,7 +6,7 @@
 // core dominant, legs heavy, upper light, arms light isometric; spinning is
 // legs+core dominant with minimal upper. NOTHING is fully untouched.
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { MS_PER_HOUR } from '../../constants.js';
 import {
   getRecoveryByGroup,
@@ -19,6 +19,10 @@ import {
 const now = Date.now();
 const hoursAgo = (h) => now - h * MS_PER_HOUR;
 const aero = (type, ts) => ({ type, ts });
+
+beforeEach(() => {
+  localStorage.clear();
+});
 
 describe('getAerobicRecoveryContribution', () => {
   it('returns {} for empty / non-array sessions', () => {
@@ -88,6 +92,76 @@ describe('getAerobicRecoveryContribution', () => {
     const out = getAerobicRecoveryContribution([{ type: 'aerobic', date: iso, ts: now }], now);
     expect(out.core).toBe('partial');
     expect(out['picioare-quads']).toBe('partial');
+  });
+});
+
+// FIX 3 (dp_aerobic_load_cap_v1) — the cardio→ease is intended for legs/core, but the
+// upper-body classification over-fired AND stacking classes ACCUMULATED, pushing upper
+// groups (shoulders/back/chest) into eased and cutting a both-user's push/pull volume.
+describe('getAerobicRecoveryContribution — upper-body false-ease cap (FIX 3)', () => {
+  const setFlag = (on) =>
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_aerobic_load_cap_v1: on }));
+  const clearFlag = () => localStorage.removeItem('_devFlags');
+
+  it('flag OFF (legacy): N stacked generic classes FALSELY ease the upper body (the bug)', () => {
+    setFlag(false);
+    // 3 same-day generic classes — the additive accumulation pushes shoulders/back
+    // (gradient 0.35/0.30) well past the 0.35 ease threshold.
+    const out = getAerobicRecoveryContribution(
+      [aero('aerobic', hoursAgo(0.5)), aero('aerobic', hoursAgo(0.5)), aero('aerobic', hoursAgo(0.5))],
+      now,
+    );
+    clearFlag();
+    // The defect: upper groups read 'partial' from stacked generic cardio.
+    expect(out.umeri).toBe('partial');
+    expect(out.spate).toBe('partial');
+  });
+
+  it('flag ON: one generic class eases legs+core, leaves the upper body untouched', () => {
+    setFlag(true);
+    const out = getAerobicRecoveryContribution([aero('aerobic', hoursAgo(0.5))], now);
+    clearFlag();
+    // legs + core eased (the legitimate cardio touch)
+    expect(out.core).toBe('partial');
+    expect(out['picioare-quads']).toBe('partial');
+    expect(out.fese).toBe('partial');
+    // upper body NOT eased (generic class → legs+core only)
+    expect(out.umeri).toBeUndefined();
+    expect(out.piept).toBeUndefined();
+    expect(out.spate).toBeUndefined();
+    expect(out.triceps).toBeUndefined();
+  });
+
+  it('flag ON: N stacked generic classes STILL leave the upper body untouched (Math.max cap)', () => {
+    setFlag(true);
+    const out = getAerobicRecoveryContribution(
+      [aero('aerobic', hoursAgo(0.5)), aero('aerobic', hoursAgo(0.5)), aero('aerobic', hoursAgo(0.5))],
+      now,
+    );
+    clearFlag();
+    expect(out.umeri).toBeUndefined();
+    expect(out.spate).toBeUndefined();
+    expect(out.piept).toBeUndefined();
+    // legs/core still eased — but never deepened past 'partial' (cardio caps at partial).
+    expect(out.core).toBe('partial');
+    expect(out['picioare-quads']).toBe('partial');
+  });
+
+  it('flag ON: spinning (leg-dominant) still eases legs+core, no false upper ease', () => {
+    setFlag(true);
+    const out = getAerobicRecoveryContribution([aero('spinning', hoursAgo(0.5))], now);
+    clearFlag();
+    expect(out['picioare-quads']).toBe('partial');
+    expect(out.core).toBe('partial');
+    expect(out.piept).toBeUndefined();
+    expect(out.umeri).toBeUndefined();
+  });
+
+  it('flag ON: no aerobic sessions (resistance-only user) → unchanged (empty)', () => {
+    setFlag(true);
+    const out = getAerobicRecoveryContribution([], now);
+    clearFlag();
+    expect(out).toEqual({});
   });
 });
 

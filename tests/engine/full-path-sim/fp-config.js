@@ -576,6 +576,20 @@ export const FLIPPED_FLAGS = Object.freeze([
   // proven on the getDailyWorkout deload-suppress-amp regression test + the
   // coachAdaptations narration test, NOT in this determinism stream.
   'dp_deload_suppress_amp_v1',
+  // THE FLIP 2026-06-17 (aerobic upper-body false-ease) — dp_aerobic_load_cap_v1
+  // defaults ON. getAerobicRecoveryContribution over-fired the upper-body aerobic
+  // classification (a generic class's gradient umeri=0.35 sat AT the ease threshold)
+  // AND accumulated across stacked classes (load[g] += ...) so N classes pushed upper
+  // groups into 'partial', cutting a both-user's push/pull resistance volume ~20%. When
+  // ON, a generic class eases only legs+core and each group's aerobic load is capped at
+  // the single-class max (Math.max). This changes the recovery state → the compose-time
+  // volume cut. The fp cohort seeds aerobic sessions on 'both' journeys, so the ON
+  // behavior WOULD change which groups read 'partial' → move the frozen prescription
+  // hashes — pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so the legacy
+  // additive full-gradient accumulation runs in both A/B arms → BOTH frozen baselines
+  // (hashOff/hashOn) stay byte-for-byte. ON is proven on the muscleRecovery aerobic-cap
+  // regression test, NOT in this determinism stream.
+  'dp_aerobic_load_cap_v1',
   // THE FLIP 2026-06-17 (readiness×energy MIN-compose) — dp_readiness_energy_min_v1
   // defaults ON. The compose seam composed the readiness volumeMultiplier + the energy
   // volumeFactor with a single MIN (applied ONCE) instead of running the two scalers

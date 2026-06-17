@@ -331,6 +331,18 @@ const AEROBIC_RECOVERY_WINDOW_HOURS = 24;
 // barely taxes the upper body.
 const AEROBIC_EASE_THRESHOLD = 0.35;
 
+// UPPER-BODY groups a GENERIC full-body class (aerobic/step/zumba/alta) should NOT
+// ease (dp_aerobic_load_cap_v1). A generic studio class genuinely taxes legs+core,
+// not chest/back/shoulders/arms — the gradient's upper weights (e.g. aerobic umeri
+// 0.35) sit AT the ease threshold, so a single such class would wrongly read the
+// upper body as eased and cut a both-user's push/pull resistance volume. The
+// classification is tightened so generic classes only ease legs + core.
+const AEROBIC_UPPER_GROUPS = new Set(['umeri', 'piept', 'triceps', 'spate', 'biceps', 'antebrate']);
+// Generic full-body class types whose upper-body touch is over-fired. Spinning is
+// EXCLUDED (its upper weights are already 0.15-0.20, well below the threshold, and
+// it is legitimately leg-dominant) so its honest minimal touch is preserved.
+const AEROBIC_GENERIC_TYPES = new Set(['aerobic', 'step', 'zumba', 'alta']);
+
 /**
  * Per-group "Easing" contribution from recent aerobic CLASSES. Pure. Returns a
  * partial map: only groups the recent cardio actually eased appear (value
@@ -375,8 +387,23 @@ export function getAerobicRecoveryContribution(sessions, now = Date.now()) {
     // Linear fade across the 24h window (light + fast: a class eases most right
     // after, and is gone by the next day).
     const decay = 1 - (now - ts) / windowMs;
+    // dp_aerobic_load_cap_v1 (cycle-25b): two coupled corrections for the upper-body
+    // false-ease (a both-user's push/pull resistance volume cut ~20% when it shouldn't):
+    //   (a) a GENERIC full-body class (aerobic/step/zumba/alta) only eases legs+core —
+    //       its upper-body touch is dropped so a single such class can't ease the upper
+    //       body (the gradient's umeri 0.35 sat AT the threshold), and
+    //   (b) each group's accumulated load is CAPPED at the single-class max (Math.max,
+    //       not +=) so STACKING N classes can never push a group past one class's
+    //       genuine touch (N spin classes no longer accumulate the torso into eased).
+    // OFF → the original additive accumulation over the full gradient (byte-identical).
+    const capOn = isEnabled('dp_aerobic_load_cap_v1');
+    const generic = capOn && AEROBIC_GENERIC_TYPES.has(s.type);
     for (const [group, weight] of Object.entries(gradient)) {
-      load[group] = (load[group] ?? 0) + weight * decay;
+      if (generic && AEROBIC_UPPER_GROUPS.has(group)) continue; // generic class: legs+core only
+      const contribution = weight * decay;
+      load[group] = capOn
+        ? Math.max(load[group] ?? 0, contribution) // cap at one class's genuine touch
+        : (load[group] ?? 0) + contribution;       // legacy: additive accumulation
     }
   }
   /** @type {{[group:string]: 'partial'}} */

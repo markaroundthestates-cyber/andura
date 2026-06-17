@@ -2016,6 +2016,24 @@ export const FLAGS = Object.freeze({
   // carrying a reactive deload WITH a lagging group would clamp the amplified budget →
   // move a hash → pin OFF). Proven on the getDailyWorkout deload-suppress-amp test.
   dp_deload_suppress_amp_v1: { rollout: 1, default: true },
+
+  // AEROBIC upper-body false-ease fix (dp_aerobic_load_cap_v1, cycle-25b audit
+  // 2026-06-17, DEFAULT ON). For trainingType:'both' users, recent aerobic classes
+  // fold into resistance recovery and cut the daily volume budget. The cardio→ease is
+  // intended for legs/core, but getAerobicRecoveryContribution (1) over-fired the
+  // upper-body classification (a generic class's gradient umeri=0.35 sits AT the ease
+  // threshold) and (2) ACCUMULATED across stacked classes (load[g] += ...) so N classes
+  // pushed upper groups (shoulders/back/chest) into 'partial', cutting a both-user's
+  // push/pull resistance volume ~20% when it shouldn't. When ON: a GENERIC full-body
+  // class (aerobic/step/zumba/alta) only eases legs+core (upper-body groups skipped),
+  // and each group's accumulated aerobic load is CAPPED at the single-class max
+  // (Math.max, not +=) so stacking can never exceed one class's genuine touch. Spinning
+  // is unaffected (its upper weights already sit below threshold; legs/core ease intact).
+  // OFF → the original additive accumulation over the full gradient (byte-identical).
+  // This changes recovery → compose → pinned OFF in fp-config FLIPPED_FLAGS so the
+  // frozen full-path hashes stay byte-for-byte. Proven on the muscleRecovery aerobic-cap
+  // regression test.
+  dp_aerobic_load_cap_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */
