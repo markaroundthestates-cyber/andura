@@ -277,6 +277,11 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  // Notification / external deep-links use the bare tab path (e.g. a push tap
+  // -> '/antrenor'); the real tab lives under /app/antrenor. Redirect the bare
+  // tab path to its /app home so a push tap lands on the tab, not the 404
+  // catch-all (C27 regression guard for the notif deep-link). Must precede '*'.
+  { path: 'antrenor', element: <Navigate to="/app/antrenor" replace /> },
   // Audit MED — catch-all 404. Orice path nepotrivit → ecran "pagina negasita"
   // cu link spre acasa (inainte: white screen pe URL gresit).
   { path: '*', element: <TopLevelRoute><NotFound /></TopLevelRoute> },

@@ -83,11 +83,11 @@ describe('FCM SW — notificationclick (cycle26b §notif-tap)', () => {
       openWindow,
     });
 
-    fireTap(handler, '/antrenor');
+    fireTap(handler, '/app/antrenor');
     await waited;
 
     expect(closed).toBe(true); // notification closed
-    expect(navigate).toHaveBeenCalledWith('/antrenor'); // routed to the deep-link
+    expect(navigate).toHaveBeenCalledWith('/app/antrenor'); // routed to the deep-link
     expect(focus).toHaveBeenCalled(); // focused the existing window
     expect(openWindow).not.toHaveBeenCalled(); // no new window when one is open
   });
@@ -99,10 +99,10 @@ describe('FCM SW — notificationclick (cycle26b §notif-tap)', () => {
       openWindow,
     });
 
-    fireTap(handler, '/antrenor');
+    fireTap(handler, '/app/antrenor');
     await waited;
 
-    expect(openWindow).toHaveBeenCalledWith('/antrenor');
+    expect(openWindow).toHaveBeenCalledWith('/app/antrenor');
   });
 
   it('defaults to the app root when the payload carries no link', async () => {
@@ -128,7 +128,7 @@ describe('FCM SW — notificationclick (cycle26b §notif-tap)', () => {
       openWindow,
     });
 
-    fireTap(handler, '/antrenor');
+    fireTap(handler, '/app/antrenor');
     await waited;
 
     expect(focus).toHaveBeenCalled();

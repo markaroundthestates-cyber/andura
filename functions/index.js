@@ -50,7 +50,7 @@ async function sendAndPrune(uid, tokens, message) {
     // §notif-tap — deep-link carried on data.link; the FCM SW
     // (public/firebase-messaging-sw.js notificationclick) routes the tap to the
     // Antrenor tab (daily-coach nudge) instead of being a dead tap.
-    data: { link: '/antrenor' },
+    data: { link: '/app/antrenor' },
   });
 
   const deletions = {};
