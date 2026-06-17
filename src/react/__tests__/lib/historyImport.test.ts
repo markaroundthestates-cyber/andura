@@ -64,6 +64,67 @@ describe('parseHistoryImportCSV — nutrition form', () => {
   });
 });
 
+describe('parseHistoryImportCSV — C22-IMPORT-MFP per-meal aggregation', () => {
+  it('o zi MFP cu 4 mese (acelasi Date) → o intrare = SUMA (2100 kcal / 145 g)', () => {
+    // MFP exporta un rand per masa (Breakfast/Lunch/Dinner/Snacks) cu aceeasi
+    // Date. Inainte: 4 entries → merge last-wins pastra doar ultima (300/45) →
+    // ~1/3 din aportul real. Acum: insumate intr-o intrare = 2100 / 145.
+    const csv = [
+      'Date,Meal,Calories,Protein',
+      '05/01/2026,Breakfast,500,40',
+      '05/01/2026,Lunch,700,50',
+      '05/01/2026,Dinner,600,40',
+      '05/01/2026,Snacks,300,15',
+    ].join('\n');
+    const r = parseHistoryImportCSV(csv);
+    expect(r.detected).toBe('nutrition');
+    expect(r.dailyEntries).toHaveLength(1);
+    expect(r.dailyEntries[0]).toEqual({ dateISO: '2026-05-01', kcal: 2100, protein: 145 });
+  });
+
+  it('o zi cu o singura masa ramane neschimbata (no regression)', () => {
+    const csv = ['Date,Meal,Calories,Protein', '05/02/2026,All Day,1850,140'].join('\n');
+    const r = parseHistoryImportCSV(csv);
+    expect(r.dailyEntries).toHaveLength(1);
+    expect(r.dailyEntries[0]).toEqual({ dateISO: '2026-05-02', kcal: 1850, protein: 140 });
+  });
+
+  it('mese pe zile diferite → cate o intrare insumata per zi, ordine pastrata', () => {
+    const csv = [
+      'Date,Meal,Calories,Protein',
+      '05/01/2026,Breakfast,500,40',
+      '05/02/2026,Breakfast,400,30',
+      '05/01/2026,Dinner,700,60',
+      '05/02/2026,Dinner,800,50',
+    ].join('\n');
+    const r = parseHistoryImportCSV(csv);
+    expect(r.dailyEntries).toHaveLength(2);
+    expect(r.dailyEntries[0]).toEqual({ dateISO: '2026-05-01', kcal: 1200, protein: 100 });
+    expect(r.dailyEntries[1]).toEqual({ dateISO: '2026-05-02', kcal: 1200, protein: 80 });
+  });
+
+  it('mese cu protein lipsa pe unele randuri → protein null tratat ca 0 cand exista valoare', () => {
+    const csv = [
+      'Date,Meal,Calories,Protein',
+      '05/01/2026,Breakfast,500,40',
+      '05/01/2026,Snacks,300,', // protein lipsa pe acest rand
+    ].join('\n');
+    const r = parseHistoryImportCSV(csv);
+    expect(r.dailyEntries).toHaveLength(1);
+    // kcal 500+300=800, protein 40 + (lipsa→0) = 40
+    expect(r.dailyEntries[0]).toEqual({ dateISO: '2026-05-01', kcal: 800, protein: 40 });
+  });
+
+  it('weight: randuri pe aceeasi data raman last-wins (NU sumate)', () => {
+    // Greutatea e o-per-zi; sumarea ar fi gresita. Ultima cantarire a zilei castiga.
+    const csv = ['Date,Weight', '2026-05-01,80.5', '2026-05-01,80.2'].join('\n');
+    const r = parseHistoryImportCSV(csv);
+    expect(r.detected).toBe('weight');
+    expect(r.weightEntries).toHaveLength(2); // parser pastreaza ambele randuri brute
+    // store merge (mergeWeightEntries) dedup last-wins pe data — verificat separat.
+  });
+});
+
 describe('parseHistoryImportCSV — weight form + kg/lb detect', () => {
   it('parseaza Date,Weight ca kg (valori plauzibile)', () => {
     const csv = ['Date,Weight', '2026-05-01,80.5', '2026-05-08,79.8'].join('\n');
@@ -152,12 +213,14 @@ describe('parseHistoryImportFiles — merge multi-file', () => {
     expect(r.weightEntries).toHaveLength(1);
   });
 
-  it('dedup pe data — ultima zi castiga', () => {
+  it('C22-IMPORT-MFP — aceeasi data in 2 fisiere → ADITIV (mese in fisiere separate)', () => {
+    // MFP poate exporta mesele aceleiasi zile in fisiere separate; cross-file
+    // ADITIV (NU last-wins, care ar pastra doar al 2-lea fisier → ~1/2 din aport).
     const a = ['Date,Calories', '2026-05-01,2000'].join('\n');
     const b = ['Date,Calories', '2026-05-01,2200'].join('\n');
     const r = parseHistoryImportFiles([a, b]);
     expect(r.dailyEntries).toHaveLength(1);
-    expect(r.dailyEntries[0]!.kcal).toBe(2200);
+    expect(r.dailyEntries[0]!.kcal).toBe(4200);
   });
 });
 

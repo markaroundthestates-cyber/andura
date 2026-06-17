@@ -177,6 +177,17 @@ export function parseHistoryImportCSV(text: string): ParseResult {
   const dailyEntries: ParsedDailyEntry[] = [];
   const skipped: SkippedRow[] = [];
 
+  // C22-IMPORT-MFP — MyFitnessPal exporta UN RAND PER MASA (Breakfast/Lunch/
+  // Dinner/Snacks) cu aceeasi Date. Inainte: un entry per rand → merge last-wins
+  // pastra DOAR ultima masa → ~1/3 din aportul zilnic real → strica istoricul +
+  // bootstrap-ul Bayesian TDEE. Acum: agregam pe data normalizata in parser,
+  // SUMAND kcal + protein peste toate randurile aceleiasi zile. null → 0 doar
+  // cand cel putin un rand al zilei are valoare (altfel ramane null = lipsa).
+  const nutritionByDate = new Map<
+    string,
+    { kcal: number | null; protein: number | null }
+  >();
+
   // Pentru detectia kg/lb pe forma weight: colectam intai valorile + units,
   // apoi decidem conversia o singura data (mediana plauzibilitate).
   interface RawWeight {
@@ -208,7 +219,15 @@ export function parseHistoryImportCSV(text: string): ParseResult {
         skipped.push({ line: lineNo, reason: 'noNutrition' });
         continue;
       }
-      dailyEntries.push({ dateISO: date, kcal, protein });
+      // C22-IMPORT-MFP — agregare per zi: SUMAM peste randurile (mese) aceleiasi
+      // date. null + valoare = valoare (null tratat ca 0 DOAR cand exista macar
+      // o valoare reala pentru acea zi); null + null ramane null (lipsa).
+      const prev = nutritionByDate.get(date);
+      nutritionByDate.set(date, {
+        kcal: kcal == null ? (prev?.kcal ?? null) : (prev?.kcal ?? 0) + kcal,
+        protein:
+          protein == null ? (prev?.protein ?? null) : (prev?.protein ?? 0) + protein,
+      });
     } else {
       // weight form
       const val = weightIdx !== -1 ? parseNum(parts[weightIdx]) : NaN;
@@ -219,6 +238,13 @@ export function parseHistoryImportCSV(text: string): ParseResult {
       const unit = unitsIdx !== -1 ? (parts[unitsIdx] ?? '').toLowerCase() : '';
       rawWeights.push({ line: lineNo, date, val, unit });
     }
+  }
+
+  // C22-IMPORT-MFP — flush agregatul per zi in dailyEntries (o intrare per data,
+  // kcal + protein insumate peste mesele zilei). Ordinea de insertie = ordinea
+  // primei aparitii a fiecarei zile in fisier (Map pastreaza insertion order).
+  for (const [dateISO, agg] of nutritionByDate) {
+    dailyEntries.push({ dateISO, kcal: agg.kcal, protein: agg.protein });
   }
 
   if (detected === 'weight' && rawWeights.length > 0) {
@@ -266,11 +292,16 @@ export function parseHistoryImportFiles(texts: ReadonlyArray<string>): ParseResu
     for (const w of r.weightEntries) weightByDate.set(w.date, w);
     for (const d of r.dailyEntries) {
       const prev = dailyByDate.get(d.dateISO);
-      // merge kcal + protein (un fisier poate avea doar kcal, altul protein)
+      // C22-IMPORT-MFP — cross-file ADITIV pe aceeasi data: MFP poate exporta
+      // mesele aceleiasi zile in fisiere separate, deci insumam kcal + protein
+      // intre fisiere (NU last-wins, care ar pastra doar ultimul fisier). null +
+      // valoare = valoare; null + null = null (un fisier doar kcal, altul doar
+      // protein se combina corect prin sumare term-cu-term).
       dailyByDate.set(d.dateISO, {
         dateISO: d.dateISO,
-        kcal: d.kcal ?? prev?.kcal ?? null,
-        protein: d.protein ?? prev?.protein ?? null,
+        kcal: d.kcal == null ? (prev?.kcal ?? null) : (prev?.kcal ?? 0) + d.kcal,
+        protein:
+          d.protein == null ? (prev?.protein ?? null) : (prev?.protein ?? 0) + d.protein,
       });
     }
     for (const s of r.skipped) skipped.push(s);
