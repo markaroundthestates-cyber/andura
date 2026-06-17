@@ -262,3 +262,42 @@ export function resolveVolumeFrequency(logs, nowMs, configuredFreq) {
   const hi = Math.min(7, cfg + MAX_DEVIATION_FROM_CONFIGURED);
   return Math.max(lo, Math.min(hi, inferred));
 }
+
+// ── REACTIVE-deload VOLUME ratio (dp_deload_volume_depth_v1; cycle-19b regression) ──
+// The Deload engine emits TWO distinct numbers in its blueprint:
+//   • depth_pct      = the Final_Depth SEVERITY composite MAX(scheduled 45, reactive
+//                      60, behavioral 30) — "how severe is this deload", NOT a cut.
+//   • volume_cut_pct = the spec's FIXED reactive volume cut (30%, "Volume CUT 30%
+//                      obligatoriu" ADR 026 §9.8.2 B4) — the actual set-count reduction.
+// The cycle-18 wiring (c932ccb0) wrongly folded depth_pct into the volume scaler as
+// (1 - depth_pct/100), so a REAL reactive deload (depth_pct=60) cut 60% of volume —
+// DOUBLE the spec, and HARSHER than a full scheduled deload (×0.55). This helper folds
+// the SEPARATE volume_cut_pct instead (30 → 0.70), clamped to be no deeper than a
+// scheduled deload. A SCHEDULED deload week (periodization mesocycle_phase === 'DELOAD')
+// returns 1 here — its volume was already cut in the periodization budget, so a second
+// cut would over-reduce. Pure: identical inputs → identical ratio.
+export const SCHEDULED_DELOAD_VOL_RATIO_FLOOR = 0.55; // a full scheduled deload ×0.55 = hardest allowed cut
+
+/**
+ * Resolve the weekly-volume ratio a REACTIVE deload should apply to set counts.
+ *
+ * @param {object|null} deloadBlueprint        - blueprints.deload (engine emit)
+ * @param {object|null} periodizationBlueprint - blueprints.periodization (engine emit)
+ * @returns {number} ratio in [SCHEDULED_DELOAD_VOL_RATIO_FLOOR, 1]; exactly 1 when inert
+ */
+export function reactiveDeloadVolumeRatio(deloadBlueprint, periodizationBlueprint) {
+  const dMod = deloadBlueprint?.intensity_modifier ?? null;
+  const dActive =
+    dMod !== null &&
+    ((dMod.rir_increment ?? 0) > 0 || (dMod.intensity_pct_decrement ?? 0) > 0);
+  // Only a REACTIVE deload folds a cut here; a SCHEDULED-week deload is excluded to
+  // avoid a double cut on top of the periodization volume reduction.
+  const isScheduledDeloadWeek = periodizationBlueprint?.mesocycle_phase === 'DELOAD';
+  // The SEPARATE volume cut — NOT the severity depth_pct (a depth_pct=60 reactive
+  // deload must still only cut its 30% volume, never 60%).
+  const volumeCutPct = Number(deloadBlueprint?.volume_cut_pct) || 0;
+  if (!dActive || isScheduledDeloadWeek || volumeCutPct <= 0 || volumeCutPct >= 100) return 1;
+  const ratio = 1 - volumeCutPct / 100;
+  // Never deeper than a full scheduled deload — defensive clamp.
+  return Math.max(ratio, SCHEDULED_DELOAD_VOL_RATIO_FLOOR);
+}

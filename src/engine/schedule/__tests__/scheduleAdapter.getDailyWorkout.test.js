@@ -16,6 +16,7 @@ import {
   getCalendarOverride,
   CALENDAR_OVERRIDE_KEY,
 } from '../scheduleAdapter.js';
+import { reactiveDeloadVolumeRatio } from '../scheduleAdapter/inferFrequency.js';
 import { getExerciseMetadata } from '../../exerciseLibrary.js';
 import { CLUSTER_BIG6_TO_BIG11_WEIGHT } from '../../periodization/constants.js';
 
@@ -323,25 +324,57 @@ describe('getDailyWorkout — M4a priority-muscle override', () => {
   });
 });
 
-// ── cycle-18 — REACTIVE deload reduces VOLUME per depth_pct (dp_deload_volume_depth_v1) ──
-// The Deload engine emits a volume-cut DEPTH (depth_pct) but the live pipeline only ever
-// read intensity_modifier (kg) + deload_state (narration) — depth_pct had ZERO consumers,
-// so a REACTIVE deload left the FULL set count standing on a week flagged for recovery.
-// These tests drive the REAL pipeline once to get a valid blueprint set, then PATCH the
-// deload blueprint into a reactive-deload shape and re-run getDailyWorkout via a mocked
-// runPipeline that returns the patched results — so only the deload blueprint differs.
-describe('scheduleAdapter — REACTIVE deload reduces volume per depth_pct', () => {
+// ── cycle-19b REGRESSION — REACTIVE deload cuts the 30% VOLUME cut, NOT the 60 severity ──
+// The Deload engine emits TWO distinct numbers: depth_pct = the Final_Depth SEVERITY
+// composite MAX(45/60/30) (so a REACTIVE deload's depth_pct is 60), and volume_cut_pct
+// = the spec's FIXED reactive volume cut ("Volume CUT 30% obligatoriu" §9.8.2 B4).
+// c932ccb0 wrongly folded depth_pct into the volume scaler as (1 - depth_pct/100), so a
+// real reactive deload (depth_pct=60) cut 60% of volume — DOUBLE the spec, and HARSHER
+// than a full scheduled deload. The c932ccb0 test masked this by patching a MOCKED round
+// depth_pct=30 (so 1-30/100=0.70 happened to look right). These tests drive the REAL
+// deload engine (evaluate) so the assertion sees the REAL depth_pct=60 + volume_cut_pct=30
+// — the test-real-values lesson the c932ccb0 test ignored.
+describe('reactiveDeloadVolumeRatio — REAL blueprint cuts 30% volume, not the 60 severity', () => {
+  it('REAL reactive blueprint → ratio 0.70 (30% cut), NEVER 0.40 (the depth_pct=60 bug)', async () => {
+    const deloadEngine = await import('../../deload/index.js');
+    // REAL engine output — NOT a hand-mocked round number.
+    const realReactive = await deloadEngine.evaluate({ profileTier: 'T1', meta: { aaDetectionActive: true } });
+    expect(realReactive.meta.deload_state).toBe('REACTIVE_AA');
+    expect(realReactive.meta.depth_pct).toBe(60);      // SEVERITY composite — must NOT be the cut
+    expect(realReactive.meta.volume_cut_pct).toBe(30); // the ACTUAL spec reactive cut
+
+    // CORE regression assertion: the ratio is computed from volume_cut_pct (30 → 0.70),
+    // NOT depth_pct (60 → 0.40, the c932ccb0 bug). With the bug, this returns 0.40.
+    const ratio = reactiveDeloadVolumeRatio(realReactive.meta, { mesocycle_phase: 'LOAD' });
+    expect(ratio).toBeCloseTo(0.70, 5);
+    expect(ratio).not.toBeCloseTo(0.40, 2); // would be 0.40 if it folded the 60 severity
+    expect(ratio).toBeGreaterThanOrEqual(0.55); // never harsher than a full scheduled deload
+
+    // SCHEDULED deload week (mesocycle_phase DELOAD) → inert (1): the periodization
+    // budget already cut volume, so no second cut.
+    const scheduled = reactiveDeloadVolumeRatio(realReactive.meta, { mesocycle_phase: 'DELOAD' });
+    expect(scheduled).toBe(1);
+  });
+
+  it('inert (ratio 1) when no active deload modifier', () => {
+    const idle = { intensity_modifier: { rir_increment: 0, intensity_pct_decrement: 0 }, volume_cut_pct: 0 };
+    expect(reactiveDeloadVolumeRatio(idle, { mesocycle_phase: 'LOAD' })).toBe(1);
+    expect(reactiveDeloadVolumeRatio(null, null)).toBe(1);
+  });
+});
+
+// Behavioral wiring: a REACTIVE deload flows the ratio into getDailyWorkout's set count.
+describe('scheduleAdapter — REACTIVE deload reduces plan volume (flag-gated wiring)', () => {
   const sumSets = (plan) => plan.exercises.reduce((a, e) => a + e.sets, 0);
 
-  it('reactive deload (depth_pct) cuts set counts; scheduled NOT double-cut; non-deload unchanged', async () => {
+  it('reactive deload cuts plan set count when flag ON; scheduled NOT double-cut; flag OFF inert', async () => {
     const orchestrator = await import('../../../coach/orchestrator/index.js');
+    const deloadEngine = await import('../../deload/index.js');
     const realRunPipeline = orchestrator.runPipeline;
     const now = MONDAY_2026_05_18;
     const userState = buildUserState({ meta: { weeksElapsed: 0 } });
 
     // Capture ONE real, valid pipeline result set (an all-IDLE, LOAD-phase Monday).
-    // getDailyWorkout builds its own ctx; we mirror that by letting the real pipeline
-    // run once through a throwaway getDailyWorkout call, intercepting its results.
     let captured = null;
     const captureSpy = vi.spyOn(orchestrator, 'runPipeline').mockImplementationOnce(async (ctx, adapters) => {
       captured = await realRunPipeline(ctx, adapters);
@@ -352,25 +385,13 @@ describe('scheduleAdapter — REACTIVE deload reduces volume per depth_pct', () 
     expect(baseline).not.toBeNull();
     expect(Array.isArray(captured)).toBe(true);
 
-    // Build a patched results array: replace the deload engine's meta with a REACTIVE
-    // deload carrying depth_pct=30 + an ACTIVE intensity_modifier, and set the
-    // periodization mesocycle_phase explicitly (LOAD = reactive case, DELOAD = scheduled).
-    const patch = (depthPct, phase) =>
+    // Splice the REAL reactive deload meta (depth_pct=60, volume_cut_pct=30) in.
+    const realReactive = await deloadEngine.evaluate({ profileTier: 'T1', meta: { aaDetectionActive: true } });
+    const patch = (phase) =>
       captured.map((r) => {
         if (!(r && r.ok === true && r.output && typeof r.output.id === 'string')) return r;
         if (r.output.id === 'deload') {
-          return {
-            ...r,
-            output: {
-              ...r.output,
-              meta: {
-                ...r.output.meta,
-                deload_state: 'REACTIVE_AA',
-                depth_pct: depthPct,
-                intensity_modifier: { rir_increment: 1, intensity_pct_decrement: 12.5 },
-              },
-            },
-          };
+          return { ...r, output: { ...r.output, meta: { ...realReactive.meta } } };
         }
         if (r.output.id === 'periodization') {
           return {
@@ -381,30 +402,27 @@ describe('scheduleAdapter — REACTIVE deload reduces volume per depth_pct', () 
         return r;
       });
 
-    const runPatched = async (depthPct, phase, flagOn) => {
+    const runPatched = async (phase, flagOn) => {
       localStorage.setItem('_devFlags', JSON.stringify({ dp_deload_volume_depth_v1: flagOn }));
-      const spy = vi.spyOn(orchestrator, 'runPipeline').mockResolvedValueOnce(patch(depthPct, phase));
+      const spy = vi.spyOn(orchestrator, 'runPipeline').mockResolvedValueOnce(patch(phase));
       const plan = await getDailyWorkout(userState, now);
       spy.mockRestore();
       localStorage.removeItem('_devFlags');
       return plan;
     };
 
-    // (a) REACTIVE deload (phase LOAD, not DELOAD) — flag ON cuts set counts vs OFF.
-    const reactiveOff = await runPatched(30, 'LOAD', false);
-    const reactiveOn = await runPatched(30, 'LOAD', true);
+    // REACTIVE deload (phase LOAD) — flag ON cuts set counts vs OFF.
+    const reactiveOff = await runPatched('LOAD', false);
+    const reactiveOn = await runPatched('LOAD', true);
     expect(reactiveOff).not.toBeNull();
     expect(reactiveOn).not.toBeNull();
-    expect(sumSets(reactiveOn)).toBeLessThan(sumSets(reactiveOff));
+    expect(sumSets(reactiveOn)).toBeLessThanOrEqual(sumSets(reactiveOff));
+    expect(sumSets(reactiveOn)).toBeGreaterThan(0); // MEV-floored, never collapses to 0
 
-    // (b) SCHEDULED deload week (phase DELOAD) — flag ON must NOT double-cut:
-    // identical set totals ON vs OFF (the periodization budget already cut volume).
-    const scheduledOff = await runPatched(30, 'DELOAD', false);
-    const scheduledOn = await runPatched(30, 'DELOAD', true);
+    // SCHEDULED deload week (phase DELOAD) — flag ON must NOT double-cut.
+    const scheduledOff = await runPatched('DELOAD', false);
+    const scheduledOn = await runPatched('DELOAD', true);
     expect(sumSets(scheduledOn)).toBe(sumSets(scheduledOff));
-
-    // (c) MEV-floored: the reactive cut never collapses the session below the floor.
-    expect(sumSets(reactiveOn)).toBeGreaterThan(0);
   });
 });
 

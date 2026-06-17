@@ -154,6 +154,7 @@ export const NOTIFICATION_TIER = Object.freeze({
  *   depthReactivePct: number,
  *   depthBehavioralPct: number,
  *   depthExtensionPreservePct: number,
+ *   reactiveVolumeCutPct: number,
  *   behavioralModifiersCapPct: number,
  *   rirIncrement: number,
  *   intensityPctDecrement: number,
@@ -172,6 +173,7 @@ export const SCHEMA_CONSTANTS = Object.freeze({
   depthReactivePct:                60,    // Source 1 verbatim B5 — Reactive overrides scheduled (60% > 45%)
   depthBehavioralPct:              30,    // Source 1 verbatim B5 — Behavioral_Modifiers baseline
   depthExtensionPreservePct:       60,    // Source 1 verbatim B9 — atrophy literature limit Schoenfeld/Helms
+  reactiveVolumeCutPct:            30,    // Source 1 verbatim B4 — "Volume CUT 30% obligatoriu" AA-driven mechanic (SEPARAT de depth_pct severity composite)
   behavioralModifiersCapPct:       15,    // V1 conservative cap additive max (Bugatti craft anti-cascade preserve)
   rirIncrement:                    1,     // Source 1 verbatim B4 — RIR ↑ obligatoriu
   intensityPctDecrement:           12.5,  // Source 1 verbatim B4 + §9.1 Cluster 2.1 deload classic Linear

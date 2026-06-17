@@ -195,7 +195,8 @@
  *
  * @typedef {Object} DeloadBlueprint
  * @property {DeloadState} deload_state                       - IDLE / SCHEDULED_LINEAR / REACTIVE_COMPOSITE / REACTIVE_AA / EXTENSION_FLAGGED / RESOLVING
- * @property {number} depth_pct                               - Final_Depth formula B5 computed
+ * @property {number} depth_pct                               - Final_Depth SEVERITY composite MAX(45/60/30) B5 — NU volume cut
+ * @property {number} volume_cut_pct                          - Spec FIXED reactive volume cut (30% B4 "Volume CUT 30% obligatoriu"); 0 for scheduled/idle
  * @property {number} duration_weeks                          - 1 scheduled / 1-2 reactive adaptive
  * @property {IntensityModifier} intensity_modifier           - { rir_increment, intensity_pct_decrement } obligatoriu B4
  * @property {ReadonlyArray<string>|null} partial_scope       - null full-body / muscle group list per-muscle MRV

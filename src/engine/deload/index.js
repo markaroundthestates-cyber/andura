@@ -169,6 +169,7 @@ function buildIdleBlueprint(state = DELOAD_STATE.IDLE) {
   return {
     deload_state:         state,
     depth_pct:            0,
+    volume_cut_pct:       0,
     duration_weeks:       0,
     intensity_modifier:   Object.freeze({
       rir_increment:           0,
@@ -371,6 +372,22 @@ export async function evaluate(ctx) {
   trace.intensityModifier = intensityModifier;
   signals.push('deload_aa_driven_volume_cut_30_rir_up_intensity_down_b4_obligatoriu');
 
+  // Cluster B4 — Volume CUT obligatoriu, emitted as a SEPARATE field from the
+  // depth_pct SEVERITY composite (depth_pct = MAX(45/60/30) ranks how severe the
+  // deload is; the volume cut is the spec's FIXED 30% AA-driven reduction —
+  // "Volume CUT 30% obligatoriu" §9.8.2 B4 — applied to a REACTIVE deload's set
+  // count). Reactive states (REACTIVE_COMPOSITE / REACTIVE_AA / EXTENSION_FLAGGED)
+  // carry the 30% cut; SCHEDULED_LINEAR / RESOLVING emit 0 here because a
+  // calendar/periodization deload week already carries its own volume reduction in
+  // the periodization budget (double-cutting would over-reduce). Distinct from
+  // depth_pct so a downstream consumer never mistakes severity (60) for the cut (30).
+  const isReactiveState =
+    triggerDecision.resolvedState === DELOAD_STATE.REACTIVE_COMPOSITE
+    || triggerDecision.resolvedState === DELOAD_STATE.REACTIVE_AA
+    || triggerDecision.resolvedState === DELOAD_STATE.EXTENSION_FLAGGED;
+  const volumeCutPct = isReactiveState ? SCHEMA_CONSTANTS.reactiveVolumeCutPct : 0;
+  trace.volumeCutPct = volumeCutPct;
+
   // ── Cluster B6+B7+B8 — Duration + Hard Reset + Extension ─────────────────
 
   const durationDecision = computeDuration({
@@ -460,6 +477,7 @@ export async function evaluate(ctx) {
   const blueprint = {
     deload_state:        triggerDecision.resolvedState,
     depth_pct:           finalDepthPct,
+    volume_cut_pct:      volumeCutPct,
     duration_weeks:      durationDecision.durationWeeks,
     intensity_modifier:  intensityModifier,
     partial_scope:       partialScopeDecision.affectedMuscleGroups,
