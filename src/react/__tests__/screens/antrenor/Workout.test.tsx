@@ -2027,6 +2027,47 @@ describe('Workout — in-session responsive autoregulation wire', () => {
     for (const e of set1Rec) expect(e.source).not.toBe('in_session_adjustment');
     spy.mockRestore();
   });
+
+  // cycle-18 (C18-PROFILE metric rep-notice) — a non-bodyweight time/carry METRIC set
+  // (Farmer's Walk) seeds repsInput 0 (honorMetric) but kgInput>0, so the USOR branch
+  // used to emit a meaningless "urcam la 1 reps" notice for a seconds/carry set AND
+  // prefill the next set's reps 0->1. The in-session rep-axis autoregulation has no
+  // meaning for a metric set — the gate now excludes metric the same way it excludes
+  // bodyweight, so an easy carry set surfaces NO rep-axis notice.
+  it('an easy time/carry metric set produces NO in-session rep notice (mirrors BW exclusion)', async () => {
+    // A 4-set loaded carry. Seed prior history so the engine HAS a load to adjust
+    // from — proving it is the metric gate (not lack of data) that suppresses the
+    // rep-axis notice.
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce({
+      ...PHASE_5_FIXTURE,
+      exercises: [
+        {
+          id: 'farmers-walk', name: "Farmer's Walk", engineName: "Farmer's Walk",
+          sets: 4, targetReps: 0, targetKg: 40, restSec: 90,
+          metricType: 'carry', targetSec: 40,
+        },
+      ],
+    });
+    DB.set('logs', [
+      { ex: "Farmer's Walk", w: 40, reps: 0, set: 1, ts: Date.now() - 1000, durationSec: 40 },
+      { ex: "Farmer's Walk", w: 40, reps: 0, set: 1, ts: Date.now() - 2000, durationSec: 40 },
+    ]);
+    // A metric exercise renders a seconds tile (not a kg target line), so the
+    // reps-oriented renderWorkoutAndWait gate does not apply — wait for the metric
+    // log button instead.
+    renderWorkout();
+    await waitFor(() => {
+      expect(screen.queryByTestId('workout-loading')).not.toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(screen.queryByTestId('setlog-tinta-log-btn')).not.toBeNull();
+    });
+    // Log set 1 as Easy (the branch that previously emitted "urcam la 1 reps").
+    logSet('Usor');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    // NO rep-axis in-session notice for a metric set.
+    expect(screen.queryByTestId('insession-adjust-notice')).not.toBeInTheDocument();
+  });
 });
 
 // ── First-session "building your baseline" note ──────────────────────────────

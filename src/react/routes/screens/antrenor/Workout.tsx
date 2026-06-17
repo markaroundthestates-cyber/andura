@@ -962,7 +962,12 @@ export function Workout(): JSX.Element {
     // EXTERNAL load — it doesn't translate to a bodyweight movement (where the
     // adjustment is fewer reps). Skip the weight pre-fill + notice for BW so we
     // never tell a user doing 0-added push-ups to "switch to 50 kg".
-    if (!isLastSetOfExercise && !currentExercise.isBodyweight) {
+    // #7 — a time/carry/distance METRIC set seeds repsInput 0 (honorMetric) but
+    // kgInput>0, so the USOR (easy) branch emitted a meaningless "urcam la 1 reps"
+    // notice AND prefilled the next set's reps 0->1, corrupting the logged reps.
+    // The rep-axis autoregulation has no meaning for a seconds/carry set — mirror
+    // the bodyweight exclusion (same family as the metric anomaly/AA skips above).
+    if (!isLastSetOfExercise && !currentExercise.isBodyweight && !isMetricExercise) {
       const ratedSets = [...(history[safeExIdx] ?? []), { kg: kgInput, reps: repsInput, rating }];
       const recentRPEs = ratedSets.map((s) => INSESSION_RATING_TO_RPE[s.rating]);
       const recentReps = ratedSets.map((s) => s.reps);
