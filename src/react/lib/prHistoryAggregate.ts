@@ -16,8 +16,9 @@
 // display name at the React boundary via toExerciseDisplay (the same resolver
 // the workout flow uses), so the user-facing name matches the rest of the app.
 
-import { DB } from '../../db.js';
+import { DB, todTs } from '../../db.js';
 import { useWorkoutStore } from '../stores/workoutStore';
+import { diffCalendarDays } from '../stores/workoutStore.logic';
 import { toExerciseDisplay } from './exerciseDisplay';
 import type { PRRecordEntry } from './prRecordsWriteback';
 
@@ -93,8 +94,18 @@ export function getStreakStats(): StreakStats {
   const prCount = readPrRecords().filter(
     (r) => r && typeof r.ex === 'string' && r.ex.length > 0,
   ).length;
+  // VIEW-TIME DECAY: streak is only mutated at finishSession, so a user who took a
+  // rest gap still reads the OLD count as an ACTIVE streak until their next session.
+  // Compute the DISPLAYED streak at view time the same way the next finishSession
+  // would (diffCalendarDays via todTs day-key) — a gap > 1 calendar day means the
+  // streak is already broken → show 0. Persisted state is left untouched (display-only).
+  let currentStreak = state.streak;
+  if (state.lastStreakDate) {
+    const delta = diffCalendarDays(state.lastStreakDate, todTs(now));
+    if (!Number.isFinite(delta) || delta < 0 || delta > 1) currentStreak = 0;
+  }
   return {
-    currentStreak: state.streak,
+    currentStreak,
     totalSessions: sessions.length,
     prCount,
     thisWeekSessions,

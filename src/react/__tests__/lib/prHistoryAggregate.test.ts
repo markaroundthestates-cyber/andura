@@ -138,3 +138,32 @@ describe('getStreakStats — prCount reads pr-records SSOT', () => {
     expect(s.prCount).toBe(2);
   });
 });
+
+describe('getStreakStats — view-time streak decay (rest gap)', () => {
+  // The streak is only mutated at finishSession; without view-time decay a user who
+  // took a rest gap reads the OLD count as an ACTIVE streak until their next session.
+  const dayKey = (offsetDays: number): string =>
+    new Date(Date.now() - offsetDays * 86_400_000).toLocaleDateString('sv');
+
+  it('lastStreakDate=today → shown as-is (still active)', () => {
+    useWorkoutStore.setState({ streak: 4, lastStreakDate: dayKey(0) });
+    expect(getStreakStats().currentStreak).toBe(4);
+  });
+
+  it('lastStreakDate=yesterday → still active (gap exactly 1 day)', () => {
+    useWorkoutStore.setState({ streak: 4, lastStreakDate: dayKey(1) });
+    expect(getStreakStats().currentStreak).toBe(4);
+  });
+
+  it('lastStreakDate=2 days ago → shown 0 (streak broken at view time)', () => {
+    useWorkoutStore.setState({ streak: 4, lastStreakDate: dayKey(2) });
+    expect(getStreakStats().currentStreak).toBe(0);
+    // persisted state is untouched (display-only decay)
+    expect(useWorkoutStore.getState().streak).toBe(4);
+  });
+
+  it('lastStreakDate=null → no decay (falls back to persisted streak)', () => {
+    useWorkoutStore.setState({ streak: 3, lastStreakDate: null });
+    expect(getStreakStats().currentStreak).toBe(3);
+  });
+});
