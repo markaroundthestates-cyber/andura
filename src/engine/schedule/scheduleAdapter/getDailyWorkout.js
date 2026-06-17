@@ -1330,6 +1330,18 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       isEnabled('dp_hamstring_floor_v1')
       && (userState?.user?.goal === 'masa' || userState?.user?.goal === 'forta')
       && !(typeof userState?.user?.age === 'number' && userState.user.age >= 60),
+    // POSTERIOR MAINTENANCE FLOOR on masa/forta (dp_posterior_maint_floor_v1, default ON).
+    // On a masa/forta UPPER-biased full-body day the only session surplus is a 2nd focus
+    // COMPOUND (a 2nd chest press), which the posterior + hamstring victim searches refuse to
+    // displace → BOTH hams AND glutes land at 0. When ON + goal masa/forta, the posterior floor
+    // requires a GLUTE slot AND a HAMSTRING slot separately, and both floors add a final pass
+    // that displaces a REDUNDANT same-group compound (keeping that group >=1 slot) to seat the
+    // leg maintenance slot. Same goal/age gate as hamstringFloor. OFF / non-masa-forta → false →
+    // never runs → byte-identical (pinned OFF in fp-config FLIPPED_FLAGS).
+    posteriorMaintFloor:
+      isEnabled('dp_posterior_maint_floor_v1')
+      && (userState?.user?.goal === 'masa' || userState?.user?.goal === 'forta')
+      && !(typeof userState?.user?.age === 'number' && userState.user.age >= 60),
     // #70-D2 — COMPOUND-FIRST guarantee on an emphasis/weak-reordered session
     // (dp_emphasis_specialization_v1, default OFF → byte-identical). When ON, the
     // weak/emphasis front-loader is prevented from leading the day with an ISOLATION

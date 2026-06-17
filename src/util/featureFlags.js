@@ -1434,6 +1434,27 @@ export const FLAGS = Object.freeze({
   // byte-identical. Pinned OFF in the fp-config FLIPPED_FLAGS baseline.
   dp_hamstring_floor_v1: { rollout: 1, default: true },
 
+  // POSTERIOR MAINTENANCE FLOOR on masa/forta (cycle-21b north-star audit 2026-06-17)
+  // (RISK LOW — selection only, never kg). dp_hamstring_floor_v1 + dp_posterior_chain_floor_v1
+  // both seat a missing leg slot by DISPLACING a SURPLUS NON-focus / NON-leg isolation; but on
+  // a masa/forta UPPER-biased full-body day (focus = upper → piept/spate/umeri emphasized) the
+  // session's only surplus is a 2nd FOCUS-COMPOUND (a 2nd chest press), which both victim
+  // searches REFUSE to displace (a focus group can only yield a slot while it keeps a strict
+  // lead, and a non-focus surplus does not exist) — so they ACCEPT THE GAP and BOTH hamstrings
+  // AND glutes land at ZERO weekly (verified: masa/forta upper f3 hams=0 glutes=0, vs balanced
+  // hams 2-3 / glutes 6-9). De-emphasis must mean MAINTENANCE (>= MEV), never zero, for a GROWTH
+  // goal — a prime mover with no indirect coverage on a press/pull/squat day. When ON + goal is
+  // masa/forta: (1) the posterior floor requires a GLUTE slot AND a HAMSTRING slot separately
+  // (not hams∪glutes as one region); (2) BOTH the posterior floor's seatLeg and the hamstring
+  // floor add a FINAL victim pass that — when no non-focus/non-leg surplus exists and the day is
+  // at cap — displaces a REDUNDANT same-group COMPOUND occurrence (a 2nd chest press / 2nd same-
+  // pattern, the group keeps >=1 slot so no major is orphaned, the upper REGION still leads) to
+  // seat the leg maintenance slot. Net slots unchanged. GOAL-GATED (masa/forta only; mentenanta/
+  // slabire/age>=60 keep the existing floors). OFF / non-masa-forta → ctx.posteriorMaintFloor
+  // false → the new requirement + the redundant-compound pass never run → byte-identical (pinned
+  // OFF in the fp-config FLIPPED_FLAGS baseline).
+  dp_posterior_maint_floor_v1: { rollout: 1, default: true },
+
   // #LEG posterior+quad floor (orphaned-legs fix 2026-06-13) (RISK LOW — selection
   // only, never kg). Elite-coach invariant: a FULL-BODY day ALWAYS trains quads AND the
   // posterior chain. On freq 1-3 all-full-body weeks under an upper-biased focus (v-taper

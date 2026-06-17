@@ -578,6 +578,20 @@ export const FLIPPED_FLAGS = Object.freeze([
   // regression test, NOT in this determinism stream. Selection/slot-side (no dp.js load math) →
   // no sim-config pin.
   'dp_calf_delivery_floor_v1',
+  // THE FLIP 2026-06-17 (posterior maintenance floor on masa/forta) — dp_posterior_maint_floor_v1
+  // defaults ON. On a masa/forta UPPER-biased full-body day the only surplus is a 2nd focus
+  // COMPOUND, which the hamstring + posterior victim searches refuse to displace → BOTH hams AND
+  // glutes land at 0. When ON, the posterior floor requires a GLUTE slot AND a HAMSTRING slot
+  // separately, and both floors add a final pass that displaces a REDUNDANT same-group compound
+  // (keeping that group >=1 slot) to seat the leg maintenance slot. The fp cohort DOES include
+  // masa/forta journeys on full/lower/legs clusters, so the ON behavior WOULD move the frozen
+  // composition hashes — pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so
+  // ctx.posteriorMaintFloor is false in both A/B arms → the new requirement + the redundant-
+  // compound pass never run → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is
+  // proven on the eval grid (masa/forta upper hams 0 -> >= MEV, glutes maintained, the upper
+  // region still leads, balanced byte-identical) + the new posterior-maint-floor regression test,
+  // NOT in this determinism stream. Selection/slot-side (no dp.js load math) → no sim-config pin.
+  'dp_posterior_maint_floor_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

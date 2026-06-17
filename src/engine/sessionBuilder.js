@@ -2885,6 +2885,33 @@ export function buildSession(cluster, ctx) {
           return i;
         }
       }
+      // POSTERIOR MAINTENANCE FLOOR final pass (ctx.posteriorMaintFloor, masa/forta). On an
+      // UPPER-biased masa/forta full-body day the ONLY surplus is a 2nd FOCUS COMPOUND (a 2nd
+      // chest press) — the passes above reject it (a focus group can yield only while it keeps a
+      // STRICT lead, which a 2-slot focus group does not). De-emphasis must mean MAINTENANCE for
+      // a growth goal, so here the floor displaces a REDUNDANT same-group COMPOUND occurrence:
+      // the lowest-priority (highest-index) slot of an UPPER group carrying >=2 COMPOUND slots
+      // (keeping it >=1 — no major orphaned; the upper REGION still leads with its other
+      // compounds). This is the one case where seating the missing posterior maintenance slot
+      // outranks a redundant focus-compound duplicate. Walk from the back for lowest priority.
+      if (ctx?.posteriorMaintFloor === true) {
+        const compoundCount = {};
+        for (const e of chosen) {
+          const g = primaryOfName(e.name);
+          if (!g || LEG_REGION_GROUPS.includes(g)) continue;
+          if ((getExerciseMetadata(e.name).tier ?? 2) <= COMPOUND_TIER) {
+            compoundCount[g] = (compoundCount[g] || 0) + 1;
+          }
+        }
+        for (let i = chosen.length - 1; i >= 0; i--) {
+          const g = primaryOfName(chosen[i].name);
+          if (!g || LEG_REGION_GROUPS.includes(g)) continue;       // upper groups only
+          if ((getExerciseMetadata(chosen[i].name).tier ?? 2) > COMPOUND_TIER) continue; // compound only
+          if ((compoundCount[g] || 0) < 2) continue;               // a REDUNDANT 2nd+ compound
+          if ((liveCount[g] || 0) <= 1) continue;                  // never orphan the group
+          return i;
+        }
+      }
       return -1;
     };
     // Seat `inject` (a pool entry {name, meta}) for leg group `targetGroup`. LENGTH-
@@ -3010,17 +3037,33 @@ export function buildSession(cluster, ctx) {
     // covering the other, e.g. a `fese` compound with `picioare-hamstrings` secondary).
     // Walk hams then glutes for a deterministic fixed order. Fall back to any available
     // posterior compound, then any available posterior movement.
+    //
+    // POSTERIOR MAINTENANCE FLOOR (ctx.posteriorMaintFloor, masa/forta): the hams∪glutes
+    // single-region requirement lets a GLUTE alone (or its secondary cover) satisfy the floor
+    // and leave GLUTES itself at 0 on an upper-focus day whose posterior is fully orphaned. For
+    // a growth goal the floor instead requires a GLUTE slot SPECIFICALLY (glutes==0 → seat one);
+    // the dedicated hamstring floor below owns the separate HAMSTRING slot. OFF / non-masa-forta
+    // → the legacy hams∪glutes region trigger (byte-identical).
     const posteriorSlots = POSTERIOR.reduce((n, g) => n + (liveCount[g] || 0), 0);
     const posteriorCoveredBySecondary = POSTERIOR.some((g) => coveredBySecondaryCompound(g));
-    if (posteriorSlots === 0 && !posteriorCoveredBySecondary) {
+    const gluteNeedsSeat =
+      (liveCount[GLUTES] || 0) === 0 && !coveredBySecondaryCompound(GLUTES);
+    const posteriorNeedsSeat = ctx?.posteriorMaintFloor === true
+      ? gluteNeedsSeat
+      : (posteriorSlots === 0 && !posteriorCoveredBySecondary);
+    if (posteriorNeedsSeat) {
       const coversBoth = (e) => {
         const m = getExerciseMetadata(e.name) || {};
         const sec = Array.isArray(m.muscle_target_secondary) ? m.muscle_target_secondary : [];
         return POSTERIOR.some((p) => p !== m.muscle_target_primary && sec.includes(p));
       };
+      // Under the masa/forta posterior maintenance floor the dedicated hamstring floor below
+      // owns the HAMSTRING slot, so here we seat a GLUTE specifically (walk fese first); the
+      // legacy region path walks hams-then-glutes (byte-identical when OFF).
+      const POSTERIOR_WALK = ctx?.posteriorMaintFloor === true ? [GLUTES, HAMS] : POSTERIOR;
       let inject = null;
       // Pass A — a compound (tier<=COMPOUND_TIER) covering both posterior sub-groups.
-      for (const g of POSTERIOR) {
+      for (const g of POSTERIOR_WALK) {
         const pool = pools.find((p) => p.group === g)?.pool ?? [];
         inject = pool.find(
           (e) => !isTaken(e) && (getExerciseMetadata(e.name)?.tier ?? 2) <= COMPOUND_TIER && coversBoth(e),
@@ -3029,7 +3072,7 @@ export function buildSession(cluster, ctx) {
       }
       // Pass B — any compound on either posterior sub-group.
       if (!inject) {
-        for (const g of POSTERIOR) {
+        for (const g of POSTERIOR_WALK) {
           const pool = pools.find((p) => p.group === g)?.pool ?? [];
           inject = pool.find(
             (e) => !isTaken(e) && (getExerciseMetadata(e.name)?.tier ?? 2) <= COMPOUND_TIER,
@@ -3039,7 +3082,7 @@ export function buildSession(cluster, ctx) {
       }
       // Pass C — any available posterior movement.
       if (!inject) {
-        for (const g of POSTERIOR) {
+        for (const g of POSTERIOR_WALK) {
           const pool = pools.find((p) => p.group === g)?.pool ?? [];
           inject = pool.find((e) => !isTaken(e));
           if (inject) break;
@@ -3335,6 +3378,33 @@ export function buildSession(cluster, ctx) {
               removeIdx = i;
             }
             if (removeIdx >= 0) break;
+          }
+        }
+        // Pass 4 — POSTERIOR MAINTENANCE FLOOR (ctx.posteriorMaintFloor, masa/forta). On an
+        // UPPER-biased masa/forta full-body day NO leg surplus exists (the posterior floor just
+        // seated a glute + quad at 1 slot each) and every upper group is single-slotted EXCEPT
+        // the focus, whose only surplus is a 2nd COMPOUND (a 2nd chest press) — Passes 1-3 reject
+        // it. De-emphasis must mean MAINTENANCE for a growth goal, so displace a REDUNDANT same-
+        // group upper COMPOUND occurrence (a group with >=2 compound slots, keeping it >=1 so no
+        // major is orphaned + the upper region still leads with its other compounds) to seat the
+        // hamstring. Walk from the back for lowest priority; never a leg group (the target side).
+        if (removeIdx < 0 && ctx?.posteriorMaintFloor === true) {
+          const upperCompoundCount = {};
+          for (const e of chosen) {
+            const g = primaryOfName(e.name);
+            if (!g || LEG_REGION_GROUPS.includes(g)) continue;
+            if ((getExerciseMetadata(e.name).tier ?? 2) <= COMPOUND_TIER) {
+              upperCompoundCount[g] = (upperCompoundCount[g] || 0) + 1;
+            }
+          }
+          for (let i = chosen.length - 1; i >= 0; i--) {
+            const g = primaryOfName(chosen[i].name);
+            if (!g || LEG_REGION_GROUPS.includes(g)) continue;       // upper groups only
+            if ((getExerciseMetadata(chosen[i].name).tier ?? 2) > COMPOUND_TIER) continue; // compound only
+            if ((upperCompoundCount[g] || 0) < 2) continue;          // a REDUNDANT 2nd+ compound
+            if ((slotCount[g] || 0) <= 1) continue;                  // never orphan the group
+            removeIdx = i;
+            break;
           }
         }
         if (removeIdx >= 0) {
