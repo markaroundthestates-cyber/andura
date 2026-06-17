@@ -96,10 +96,20 @@ export async function initSentry() {
         if (Array.isArray(event.breadcrumbs)) {
           for (const bc of event.breadcrumbs) {
             if (bc.message) bc.message = /** @type {string} */ (scrubMsg(bc.message));
-            // §S2.1 — breadcrumb.data.url is where Sentry default fetch
-            // integration parks every fbGet/fbSet URL (uid in /users/ path).
-            if (bc.data && typeof bc.data === 'object' && typeof bc.data.url === 'string') {
-              bc.data.url = /** @type {string} */ (scrubMsg(bc.data.url));
+            // §SEC-23-01 (audit) — §SEC-22-01 scrubbed only bc.data.url (the fetch/
+            // xhr integration key), but the default Breadcrumbs integration records
+            // NAVIGATION breadcrumbs with the URL under bc.data.from + bc.data.to,
+            // which beforeSend never touched. On /auth-callback?...&oobCode=&email=
+            // those nav crumbs (page-load history + the verify-fail
+            // navigate('/auth?error=...') with NO replaceState) ship the single-use
+            // sign-in oobCode + email in cleartext. Scrub EVERY string-valued field
+            // under bc.data (closes the whole class — a future crumb key can't leak).
+            if (bc.data && typeof bc.data === 'object') {
+              for (const k of Object.keys(bc.data)) {
+                if (typeof bc.data[k] === 'string') {
+                  bc.data[k] = /** @type {string} */ (scrubMsg(bc.data[k]));
+                }
+              }
             }
           }
         }
