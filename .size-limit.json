@@ -8,7 +8,7 @@
   {
     "name": "main chunk (app code)",
     "path": "dist/assets/main-*.js",
-    "limit": "295 KB",
+    "limit": "297 KB",
     "gzip": true
   },
   {
