@@ -342,7 +342,7 @@ export function saveRecoveryConstants(learned) {
 }
 
 /**
- * @typedef {{ baseline?: boolean, ex?: string, w?: number, ts?: number, date?: string, rpe?: number, [k: string]: unknown }} MuscleLog
+ * @typedef {{ baseline?: boolean, ex?: string, w?: number, durationSec?: number, ts?: number, date?: string, rpe?: number, [k: string]: unknown }} MuscleLog
  *
  * @param {MuscleLog[]} logs
  * @param {number} [now] — reference timestamp for time-decay (default Date.now);
@@ -365,7 +365,12 @@ export function getMuscleState(logs, now = Date.now(), learnedHours) {
       ? learned[m]
       : (/** @type {Record<string, { recoveryHours: number, label: string }>} */ (MUSCLE_HEADS))[m]?.recoveryHours) || 48;
 
-  const recentLogs = (logs || []).filter(l => !l.baseline && l.ex && l.w);
+  // C16-METRIC-RECOVERY: a BODYWEIGHT metric hold (Plank, Side Plank, Dead Hang —
+  // equipment bodyweight, w=0) carries durationSec (the cycle-17 authoritative
+  // marker) but a falsy w → the old `&& l.w` filter DROPPED it, so 6 hard plank sets
+  // drove ZERO core stress and the body-map read 'recovered'. Admit a performed set
+  // with positive w OR positive durationSec; a loaded set is unchanged.
+  const recentLogs = (logs || []).filter(l => !l.baseline && l.ex && (l.w || l.durationSec));
   recentLogs.forEach(l => {
     const ms = musclesForExercise(l.ex); // QA-F8: curated OR metadata-derived (was: curated-only, ~630 names skipped)
     if (!ms) return;
@@ -375,7 +380,15 @@ export function getMuscleState(logs, now = Date.now(), learnedHours) {
     // negative elapsedHours in getGroupRecoveryDetail). Mirrors the siblings
     // getAerobicRecoveryContribution (`hoursAgo < 0`) + _loadUnits (`ts > now`).
     if (logTime > now) return;
-    const rpeContrib = l.rpe ? Math.min(l.rpe / 10, 1) : 0.7;
+    // Stress driver (same magnitude band as a loaded set, 0.7-1.0): the felt-effort
+    // rpeContrib when an rpe is present (authoritative for both loaded + held work);
+    // a bodyweight metric hold WITHOUT an rpe falls back to a duration-normalized
+    // isometric unit (a 60s+ hold = full band; a short hold scales down) so an
+    // unrated plank still registers real core stress instead of dropping out.
+    const durSec = typeof l.durationSec === 'number' ? l.durationSec : 0;
+    const rpeContrib = l.rpe
+      ? Math.min(l.rpe / 10, 1)
+      : (durSec > 0 ? Math.min(durSec / 60, 1) : 0.7);
     ms.primary.forEach(/** @param {string} m */ (m) => {
       const recovH = recovHoursFor(m);
       const hoursAgo = (now - logTime) / MS_PER_HOUR;

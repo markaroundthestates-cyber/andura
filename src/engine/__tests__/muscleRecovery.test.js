@@ -554,3 +554,38 @@ describe('getRecoveryByGroup pain CDL escalation (43-H2)', () => {
     }
   });
 });
+
+describe('C16 — bodyweight metric holds register muscle fatigue (was w-gated)', () => {
+  // A bodyweight metric hold (Plank — equipment bodyweight, w=0) carries durationSec
+  // (cycle-17 marker) but no load. The old `&& l.w` recentLogs filter DROPPED it, so
+  // hard plank work drove ZERO core stress and the body-map read 'recovered'. The fix
+  // admits a performed set with positive w OR positive durationSec.
+  it('6 plank holds (w=0, durationSec) mark core fatigued, not recovered', () => {
+    const logs = Array.from({ length: 6 }, () => ({
+      ex: 'Plank', w: 0, reps: 0, durationSec: 60, rpe: 8.5, ts: hoursAgo(2),
+    }));
+    const state = getRecoveryByGroup(logs);
+    expect(state.core).not.toBe('recovered');
+    // raw head-state confirms real stress accrued (was 0 under the w-gate)
+    const heads = getMuscleState(logs);
+    expect(heads.core).toBeGreaterThan(0);
+  });
+
+  it('an unrated plank still registers core stress via duration normalization', () => {
+    // No rpe — the duration-normalized isometric unit (60s = full band) drives stress.
+    const logs = Array.from({ length: 6 }, () => ({
+      ex: 'Plank', w: 0, reps: 0, durationSec: 60, ts: hoursAgo(2),
+    }));
+    expect(getMuscleState(logs).core).toBeGreaterThan(0);
+  });
+
+  it('a no-history user reads all groups recovered (no false fatigue)', () => {
+    const state = getRecoveryByGroup([]);
+    Object.values(state).forEach(s => expect(s).toBe('recovered'));
+  });
+
+  it('a loaded set is unchanged (w present → same stress path)', () => {
+    const loaded = getMuscleState([{ ex: 'Cable Row', w: 50, reps: 8, rpe: 8.5, ts: hoursAgo(2) }]);
+    expect(Object.values(loaded).filter(v => v > 0).length).toBeGreaterThan(0);
+  });
+});
