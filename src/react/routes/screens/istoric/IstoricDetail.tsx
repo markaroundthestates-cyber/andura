@@ -193,7 +193,22 @@ export function IstoricDetail(): JSX.Element {
           <div className="mb-2.5">
             <Kicker>{t('istoric.detail.exercisesHeading')}</Kicker>
           </div>
-          {session.exercises.map((ex) => (
+          {session.exercises.map((ex) => {
+            // C18-ISTORIC-METRIC-HEADER — a time/carry set persists reps:0 + durationSec,
+            // so its breakdown totalVolume=0 (kg*reps) and peakOneRM=kg. Rendering the
+            // reps-based header for it fabricated a "1RM est: 40 kg" + a "Volum: 0 kg"
+            // for a real loaded carry. Detect a metric exercise from the persisted data
+            // (every set carries durationSec — the cycle-17 fix made this authoritative)
+            // and show a duration/load summary instead. A carry (any set with a load)
+            // shows "Max {kg} kg · {seconds} s"; a pure time hold (no load) omits the kg.
+            const isMetric = ex.sets.length > 0 && ex.sets.every((s) => s.durationSec != null);
+            const maxSeconds = isMetric
+              ? Math.max(...ex.sets.map((s) => Number(s.durationSec) || 0))
+              : 0;
+            const maxLoad = isMetric
+              ? Math.max(...ex.sets.map((s) => Number(s.kg) || 0))
+              : 0;
+            return (
             <div
               key={ex.exerciseId}
               data-testid={`detail-ex-${ex.exerciseId}`}
@@ -201,15 +216,28 @@ export function IstoricDetail(): JSX.Element {
             >
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-ink text-sm">{ex.exerciseName}</h3>
-                <span className="text-xs text-ink2 font-mono" data-testid="detail-ex-1rm">
-                  {t('istoric.detail.exerciseOneRm', { kg: formatKg(ex.peakOneRM) })}
-                </span>
+                {!isMetric && (
+                  <span className="text-xs text-ink2 font-mono" data-testid="detail-ex-1rm">
+                    {t('istoric.detail.exerciseOneRm', { kg: formatKg(ex.peakOneRM) })}
+                  </span>
+                )}
               </div>
               <div className="text-xs text-ink2 mb-2" data-testid="detail-ex-volume">
-                {t('istoric.detail.exerciseVolumeSets', {
-                  kg: formatKg(ex.totalVolume),
-                  setsLabel: formatSetsLabel(ex.sets.length),
-                })}
+                {isMetric
+                  ? (maxLoad > 0
+                    ? t('istoric.detail.exerciseMetricSummary', {
+                        kg: formatKg(maxLoad),
+                        seconds: maxSeconds,
+                        setsLabel: formatSetsLabel(ex.sets.length),
+                      })
+                    : t('istoric.detail.exerciseMetricSummaryNoLoad', {
+                        seconds: maxSeconds,
+                        setsLabel: formatSetsLabel(ex.sets.length),
+                      }))
+                  : t('istoric.detail.exerciseVolumeSets', {
+                      kg: formatKg(ex.totalVolume),
+                      setsLabel: formatSetsLabel(ex.sets.length),
+                    })}
               </div>
               <table className="w-full text-sm">
                 <thead>
@@ -243,7 +271,8 @@ export function IstoricDetail(): JSX.Element {
                 </tbody>
               </table>
             </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <p

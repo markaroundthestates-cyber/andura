@@ -1112,6 +1112,8 @@
       "exercisesHeading": "Exercitii",
       "exerciseOneRm": "1RM est: {kg} kg",
       "exerciseVolumeSets": "Volum: {kg} kg · {setsLabel}",
+      "exerciseMetricSummary": "Max {kg} kg · {seconds} s · {setsLabel}",
+      "exerciseMetricSummaryNoLoad": "Max {seconds} s · {setsLabel}",
       "exerciseSets_one": "{n} set",
       "exerciseSets_other": "{n} seturi",
       "table": {

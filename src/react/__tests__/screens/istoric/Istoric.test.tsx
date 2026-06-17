@@ -326,6 +326,46 @@ describe('IstoricDetail — per-exercise breakdown (task_03)', () => {
     expect(screen.getByTestId('detail-set-bench-press-1').textContent).toMatch(/Just right/);
   });
 
+  it('C18 — a metric (carry) exercise shows duration/load, NOT a fake 1RM + 0 volume', () => {
+    // A Farmer's Walk persists reps:0 + durationSec, so the breakdown carries
+    // totalVolume=0 (kg*reps) + peakOneRM=kg. The detail header must NOT render the
+    // fabricated "1RM est: 40 kg" / "Volum: 0 kg · 3 seturi"; instead a load·seconds
+    // summary derived from the persisted durationSec (cycle-17 made it authoritative).
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        {
+          title: 'Carry',
+          meta: '3 seturi · 12 min · 0 kg',
+          ts: 1717000050000,
+          exercises: [
+            {
+              exerciseId: 'farmers-walk',
+              exerciseName: "Farmer's Walk",
+              engineName: "Farmer's Walk",
+              sets: [
+                { kg: 40, reps: 0, rating: 'potrivit', timestamp: Date.now(), durationSec: 50 },
+                { kg: 40, reps: 0, rating: 'potrivit', timestamp: Date.now(), durationSec: 60 },
+                { kg: 40, reps: 0, rating: 'greu', timestamp: Date.now(), durationSec: 55 },
+              ],
+              totalVolume: 0,
+              peakOneRM: 40,
+            },
+          ],
+        },
+      ],
+    });
+    renderIstoric('/app/istoric/1717000050000');
+    expect(screen.getByTestId('detail-ex-farmers-walk')).toBeInTheDocument();
+    // No fabricated 1RM line.
+    expect(screen.queryByTestId('detail-ex-1rm')).not.toBeInTheDocument();
+    const summary = screen.getByTestId('detail-ex-volume').textContent ?? '';
+    // No zero-volume tonnage; instead a max-load + max-seconds summary.
+    expect(summary).not.toMatch(/Volum: 0 kg/i);
+    expect(summary).not.toMatch(/Volume: 0 kg/i);
+    expect(summary).toMatch(/40 kg/);
+    expect(summary).toMatch(/60 s/); // max of 50/60/55
+  });
+
   it('marks PR sets visual (PR label)', () => {
     useWorkoutStore.setState({
       sessionsHistory: [
