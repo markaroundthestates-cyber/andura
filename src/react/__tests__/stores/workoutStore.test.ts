@@ -1,7 +1,7 @@
 // ══ WORKOUT STORE TESTS — Zustand State Machine V2 ════════════════════════
 // Per spec task_02 §4 A — pure-function actions + persist middleware.
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   useWorkoutStore,
   getCurrentMode,
@@ -412,6 +412,91 @@ describe('workoutStore — nextStreak / diffCalendarDays (U-05)', () => {
 
   it('nextStreak data viitoare/corupta = 1 (defensiv)', () => {
     expect(nextStreak(5, '2026-05-25', '2026-05-20')).toBe(1); // negative delta
+  });
+});
+
+// cycle26b (MEDIUM, every-user) — schedule-aware streak. The engine's OWN default
+// schedules put REST days between sessions (freq3 = Mon/Wed/Fri), so a strictly
+// calendar-consecutive streak resets to 1 EVERY session on perfect adherence. The
+// streak now counts consecutive COMPLETED SCHEDULED training days: a gap that only
+// crosses scheduled rest days is UNBROKEN; a MISSED scheduled session breaks it.
+describe('workoutStore — schedule-aware streak (cycle26b)', () => {
+  // freq3 active week: Mon/Wed/Fri (Monday=0) = [T,F,T,F,T,F,F].
+  const FREQ3 = [true, false, true, false, true, false, false];
+
+  it('freq3 perfect adherence climbs 1,2,3,4,5,6 (was stuck at 1)', () => {
+    // Mon 06-15, Wed 06-17, Fri 06-19, Mon 06-22, Wed 06-24, Fri 06-26.
+    const days = ['2026-06-15', '2026-06-17', '2026-06-19', '2026-06-22', '2026-06-24', '2026-06-26'];
+    const seq: number[] = [];
+    let streak = 0;
+    let last: string | null = null;
+    for (const d of days) {
+      streak = nextStreak(streak, last, d, FREQ3);
+      seq.push(streak);
+      last = d;
+    }
+    expect(seq).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  it('a genuinely MISSED scheduled session breaks the streak', () => {
+    // Mon 06-15 → Wed 06-17 = +2 (rest-day gap, unbroken). Then SKIP Fri 06-19,
+    // train the next Mon 06-22 → the missed Friday breaks it → reset to 1.
+    let streak = nextStreak(0, null, '2026-06-15', FREQ3); // 1
+    streak = nextStreak(streak, '2026-06-15', '2026-06-17', FREQ3); // 2
+    streak = nextStreak(streak, '2026-06-17', '2026-06-22', FREQ3); // skipped Fri
+    expect(streak).toBe(1);
+  });
+
+  it('2 sessions same calendar day NU double-count (U-05 preserved)', () => {
+    expect(nextStreak(4, '2026-06-15', '2026-06-15', FREQ3)).toBe(4);
+  });
+
+  it('no activeWeek → legacy calendar-consecutive (back-compat)', () => {
+    // Same-day / +1 unchanged; a >1 calendar gap with no schedule resets to 1.
+    expect(nextStreak(3, '2026-06-15', '2026-06-16')).toBe(4);
+    expect(nextStreak(3, '2026-06-15', '2026-06-17')).toBe(1);
+  });
+});
+
+// cycle26b FIX 1b — Cont (profile chip) and Istoric (StreakStats) read the SAME
+// schedule-aware view-time streak, so they never disagree after a rest-day gap.
+describe('workoutStore — streak cross-screen agreement (cycle26b FIX 1b)', () => {
+  beforeEach(() => {
+    resetStore();
+    // Calendar = freq3 (Mon/Wed/Fri) via the schedule store the engine reads.
+    localStorage.setItem(
+      'wv2-schedule-store',
+      JSON.stringify({
+        state: {
+          days: ['training', 'rest', 'training', 'rest', 'training', 'rest', 'rest'],
+        },
+        version: 0,
+      }),
+    );
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('after a scheduled REST day the streak stays alive (not 0) and both surfaces agree', () => {
+    // Trained Wed 06-17 (lastStreakDate), persisted streak = 5. Viewing on Thu
+    // 06-18 (a scheduled REST day): the streak is UNBROKEN — Thu carries no
+    // scheduled session. getStreakStats reads Date.now() → pin the clock to Thu.
+    useWorkoutStore.setState({ streak: 5, lastStreakDate: '2026-06-17' });
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-18T08:00:00Z'));
+    // Both Cont (getStreakStats().currentStreak) and Istoric read THIS value.
+    expect(getStreakStats().currentStreak).toBe(5);
+  });
+
+  it('after a MISSED scheduled day the streak breaks to 0 (both surfaces)', () => {
+    // Trained Wed 06-17, persisted streak = 5. Viewing on Mon 06-22 after SKIPPING
+    // the scheduled Fri 06-19 → broken → 0.
+    useWorkoutStore.setState({ streak: 5, lastStreakDate: '2026-06-17' });
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-22T08:00:00Z'));
+    expect(getStreakStats().currentStreak).toBe(0);
   });
 });
 

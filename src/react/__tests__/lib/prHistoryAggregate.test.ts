@@ -4,7 +4,7 @@
 // These tests seed `pr-records` and assert: correct .kg, one entry per record
 // (no dupes), count matches the store, English key resolves to a display name.
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { getPRHistoryAll, getStreakStats } from '../../lib/prHistoryAggregate';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { DB } from '../../../db.js';
@@ -139,24 +139,51 @@ describe('getStreakStats — prCount reads pr-records SSOT', () => {
   });
 });
 
-describe('getStreakStats — view-time streak decay (rest gap)', () => {
+describe('getStreakStats — view-time streak decay (SCHEDULE-AWARE, rest gap)', () => {
   // The streak is only mutated at finishSession; without view-time decay a user who
   // took a rest gap reads the OLD count as an ACTIVE streak until their next session.
-  const dayKey = (offsetDays: number): string =>
-    new Date(Date.now() - offsetDays * 86_400_000).toLocaleDateString('sv');
+  // cycle26b: the decay is now SCHEDULE-AWARE (in sync with nextStreak) — a calendar
+  // gap that only crossed scheduled REST days stays ALIVE; it breaks only when a
+  // scheduled TRAINING day was missed. Tests pin the clock + an explicit freq3
+  // (Mon/Wed/Fri) schedule for determinism.
+  const FREQ3_STORE = JSON.stringify({
+    state: { days: ['training', 'rest', 'training', 'rest', 'training', 'rest', 'rest'] },
+    version: 0,
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // Anchor "now" to a fixed weekday so the gap math is deterministic.
+  function pinNow(iso: string): void {
+    localStorage.setItem('wv2-schedule-store', FREQ3_STORE);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(`${iso}T08:00:00Z`));
+  }
 
   it('lastStreakDate=today → shown as-is (still active)', () => {
-    useWorkoutStore.setState({ streak: 4, lastStreakDate: dayKey(0) });
+    pinNow('2026-06-17'); // Wed
+    useWorkoutStore.setState({ streak: 4, lastStreakDate: '2026-06-17' });
     expect(getStreakStats().currentStreak).toBe(4);
   });
 
-  it('lastStreakDate=yesterday → still active (gap exactly 1 day)', () => {
-    useWorkoutStore.setState({ streak: 4, lastStreakDate: dayKey(1) });
+  it('gap of exactly 1 calendar day → still active', () => {
+    pinNow('2026-06-18'); // Thu
+    useWorkoutStore.setState({ streak: 4, lastStreakDate: '2026-06-17' }); // Wed
     expect(getStreakStats().currentStreak).toBe(4);
   });
 
-  it('lastStreakDate=2 days ago → shown 0 (streak broken at view time)', () => {
-    useWorkoutStore.setState({ streak: 4, lastStreakDate: dayKey(2) });
+  it('rest-day gap (Wed→Fri, Thu scheduled rest) → STAYS active (cycle26b)', () => {
+    pinNow('2026-06-19'); // Fri (scheduled training)
+    useWorkoutStore.setState({ streak: 4, lastStreakDate: '2026-06-17' }); // Wed
+    expect(getStreakStats().currentStreak).toBe(4); // Thu was a scheduled rest → unbroken
+    expect(useWorkoutStore.getState().streak).toBe(4); // persisted untouched (display-only)
+  });
+
+  it('MISSED scheduled day (skip Fri, view Mon) → shown 0 (broken)', () => {
+    pinNow('2026-06-22'); // Mon, after skipping scheduled Fri 06-19
+    useWorkoutStore.setState({ streak: 4, lastStreakDate: '2026-06-17' }); // Wed
     expect(getStreakStats().currentStreak).toBe(0);
     // persisted state is untouched (display-only decay)
     expect(useWorkoutStore.getState().streak).toBe(4);

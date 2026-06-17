@@ -18,7 +18,11 @@
 
 import { DB, todTs } from '../../db.js';
 import { useWorkoutStore } from '../stores/workoutStore';
-import { diffCalendarDays } from '../stores/workoutStore.logic';
+import {
+  diffCalendarDays,
+  scheduledTrainingDaysMissed,
+  resolveStreakActiveWeek,
+} from '../stores/workoutStore.logic';
 import { toExerciseDisplay } from './exerciseDisplay';
 import type { PRRecordEntry } from './prRecordsWriteback';
 
@@ -97,12 +101,22 @@ export function getStreakStats(): StreakStats {
   // VIEW-TIME DECAY: streak is only mutated at finishSession, so a user who took a
   // rest gap still reads the OLD count as an ACTIVE streak until their next session.
   // Compute the DISPLAYED streak at view time the same way the next finishSession
-  // would (diffCalendarDays via todTs day-key) — a gap > 1 calendar day means the
-  // streak is already broken → show 0. Persisted state is left untouched (display-only).
+  // would — SCHEDULE-AWARE (in sync with nextStreak): a calendar gap that only
+  // crossed SCHEDULED REST days (e.g. freq3 Mon/Wed/Fri) keeps the streak ALIVE;
+  // it is only broken when a scheduled training day was MISSED. Persisted state is
+  // left untouched (display-only).
   let currentStreak = state.streak;
   if (state.lastStreakDate) {
-    const delta = diffCalendarDays(state.lastStreakDate, todTs(now));
-    if (!Number.isFinite(delta) || delta < 0 || delta > 1) currentStreak = 0;
+    const todayIso = todTs(now);
+    const delta = diffCalendarDays(state.lastStreakDate, todayIso);
+    if (!Number.isFinite(delta) || delta < 0) {
+      currentStreak = 0; // corrupt/future date
+    } else if (delta > 1) {
+      const missed = scheduledTrainingDaysMissed(resolveStreakActiveWeek(), state.lastStreakDate, todayIso);
+      // missed === 0 → only rest days crossed → streak still alive (show persisted).
+      // missed === -1 → no schedule available → legacy calendar-consecutive break.
+      if (missed !== 0) currentStreak = 0;
+    }
   }
   return {
     currentStreak,

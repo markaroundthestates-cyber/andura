@@ -32,6 +32,7 @@ import { gotoPath } from '../../../lib/navigation';
 import type { GotoScreen } from '../../../lib/navigation';
 import { getUserProfileDisplay } from './userProfile';
 import { useWorkoutStore } from '../../../stores/workoutStore';
+import { getStreakStats } from '../../../lib/prHistoryAggregate';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { Pill } from '../../../components/pulse/Pill';
 import { UserAvatar } from '../../../components/Avatar/UserAvatar';
@@ -185,9 +186,13 @@ export function Cont(): JSX.Element {
       : t('cont.emailFallback');
 
   // Pulse profile streak Pill (interfata-noua/screens-tabs.jsx:340) — the
-  // mockup shows a flame day-streak chip beside the avatar. Reuses the real
-  // streak from the workout store (same source as the Coach StatsGrid).
-  const streak = useWorkoutStore((s) => s.streak);
+  // mockup shows a flame day-streak chip beside the avatar. Reads the SAME
+  // schedule-aware view-time streak as Istoric (getStreakStats().currentStreak)
+  // so the two surfaces never disagree after a rest-day gap. Subscribe to the
+  // persisted streak fields so the chip re-renders when they change.
+  useWorkoutStore((s) => s.streak);
+  useWorkoutStore((s) => s.lastStreakDate);
+  const streak = getStreakStats().currentStreak;
   const streakUnit = streak === 1 ? t('stats.streakUnit_one') : t('stats.streakUnit_other');
 
   // Account avatar (illustrated preset set) — chosen id lives in settingsStore

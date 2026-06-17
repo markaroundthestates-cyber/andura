@@ -79,6 +79,8 @@ export {
   purgeDeletedSessionLogs,
   diffCalendarDays,
   nextStreak,
+  scheduledTrainingDaysMissed,
+  resolveStreakActiveWeek,
 } from './workoutStore.logic';
 
 import type {
@@ -93,6 +95,7 @@ import {
   archiveOverflowSessions,
   purgeDeletedSessionLogs,
   nextStreak,
+  resolveStreakActiveWeek,
 } from './workoutStore.logic';
 
 // APP-LIFECYCLE-01 — max age of a persisted in-progress live session before it
@@ -474,7 +477,10 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
       incrementStreak: (now = Date.now()) =>
         set((s) => {
           const todayIso = todTs(now);
-          const updated = nextStreak(s.streak, s.lastStreakDate, todayIso);
+          // Schedule-aware: a rest-day gap on the user's calendar (e.g. freq3
+          // Mon/Wed/Fri) is UNBROKEN — only a missed scheduled session resets.
+          const activeWeek = resolveStreakActiveWeek();
+          const updated = nextStreak(s.streak, s.lastStreakDate, todayIso, activeWeek);
           return { streak: updated, lastStreakDate: todayIso };
         }),
 

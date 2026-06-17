@@ -19,6 +19,12 @@ import { DP } from '../../engine/dp.js';
 import { resolveCanonical } from '../../engine/exerciseAliases.js';
 import { useOnboardingStore } from './onboardingStore';
 import { experienceToEngine } from '../lib/scheduleAdapterAggregate.session';
+import {
+  activeWeekFromOverride,
+  activeWeekFromScheduleStore,
+  activeWeekForFrequency,
+} from '../../engine/schedule/scheduleAdapter/frequencySplit.js';
+import { getCalendarOverride } from '../../engine/schedule/scheduleAdapter/calendarOverrideStorage.js';
 import type {
   SessionIntensityMod,
   EnergyLight,
@@ -420,15 +426,73 @@ export function diffCalendarDays(fromIso: string, toIso: string): number {
   return Math.round((to - from) / 86_400_000);
 }
 
+// Weekday index (Monday=0 .. Sunday=6) for an ISO day-key "YYYY-MM-DD". UTC-parsed
+// to match diffCalendarDays' day-key math (getUTCDay of T00:00:00Z = the weekday of
+// that calendar date). Mirrors the engine's mapDateToIndex convention (dateHelpers.js).
+function weekdayFromIso(iso: string): number {
+  const t = Date.parse(`${iso}T00:00:00Z`);
+  if (!Number.isFinite(t)) return -1;
+  const jsDow = new Date(t).getUTCDay(); // Sunday=0 .. Saturday=6
+  return jsDow === 0 ? 6 : jsDow - 1; // → Monday=0
+}
+
+// Count SCHEDULED training days that fall STRICTLY BETWEEN fromIso and toIso
+// (exclusive of both endpoints), per the user's active-week tuple (length 7,
+// Monday=0, true = training day). A non-zero count means the user skipped a
+// scheduled session in the gap → the streak is broken. activeWeek absent → -1
+// (caller falls back to plain calendar-consecutive behavior).
+export function scheduledTrainingDaysMissed(
+  activeWeek: ReadonlyArray<boolean> | null | undefined,
+  fromIso: string,
+  toIso: string,
+): number {
+  if (!Array.isArray(activeWeek) || activeWeek.length !== 7) return -1;
+  const delta = diffCalendarDays(fromIso, toIso);
+  if (!Number.isFinite(delta) || delta <= 1) return 0; // adjacent / same day → none skipped
+  const fromWd = weekdayFromIso(fromIso);
+  if (fromWd < 0) return -1;
+  let missed = 0;
+  // Days strictly between: offsets 1 .. delta-1 from fromIso.
+  for (let offset = 1; offset < delta; offset++) {
+    const wd = (fromWd + offset) % 7;
+    if (activeWeek[wd] === true) missed++;
+  }
+  return missed;
+}
+
 export function nextStreak(
   prevStreak: number,
   lastStreakDate: string | null,
   todayIso: string,
+  activeWeek?: ReadonlyArray<boolean> | null,
 ): number {
   if (lastStreakDate === null) return 1;
   const delta = diffCalendarDays(lastStreakDate, todayIso);
   if (!Number.isFinite(delta) || delta < 0) return 1; // corrupt/future date → reset
-  if (delta === 0) return prevStreak; // aceeasi zi → no-op
+  if (delta === 0) return prevStreak; // aceeasi zi → no-op (U-05: 2 sesiuni/zi != 2 zile)
   if (delta === 1) return prevStreak + 1; // ziua urmatoare → +1
-  return 1; // gap > 1 zi → reset la 1
+  // Gap > 1 CALENDAR day. Schedule-aware: an UNBROKEN streak when NO scheduled
+  // training day was missed in the gap (e.g. Mon→Wed with Tue a scheduled rest).
+  // Only a genuinely MISSED scheduled session breaks it. No activeWeek → -1 →
+  // legacy calendar-consecutive reset (back-compat for callers without schedule).
+  const missed = scheduledTrainingDaysMissed(activeWeek, lastStreakDate, todayIso);
+  if (missed === 0) return prevStreak + 1; // rest-day gap, perfect adherence → +1
+  return 1; // a scheduled session was skipped → reset la 1
+}
+
+// Resolve the user's active-week tuple the SAME way the engine does
+// (getDailyWorkout.js: override → schedule-store → frequency default), so the
+// streak's "scheduled training day" notion matches the calendar the user sees.
+// Soft-fails to null on any error → streak falls back to calendar-consecutive.
+export function resolveStreakActiveWeek(): ReadonlyArray<boolean> | null {
+  try {
+    const frequency = useOnboardingStore.getState().data.frequency;
+    return (
+      activeWeekFromOverride(getCalendarOverride()) ??
+      activeWeekFromScheduleStore() ??
+      activeWeekForFrequency(frequency)
+    );
+  } catch {
+    return null;
+  }
 }
