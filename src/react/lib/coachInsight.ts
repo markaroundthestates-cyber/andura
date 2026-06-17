@@ -223,14 +223,22 @@ function selectSalient(
   // and 'add volume to balance' (imbalance-fix, a structural claim) contradict
   // a same-day recovery-cut ("lighter today — still recovering") for that group;
   // recovery is the dominant same-day physiological fact, so it wins.
-  const recoveryCutGroup = firstPerKind.get('recovery-cut')?.group;
-  if (recoveryCutGroup) {
+  // ALL recovery-cut groups (not just firstPerKind's first cut): deriveCoachAdaptations
+  // can emit multiple recovery-cut groups, and a same-group weakness-amp/imbalance-fix
+  // on a NON-first cut group would otherwise survive with its opposite-direction clause.
+  // Mirrors the card-level recoveryCutGroupsRo gate (CoachTodayCard).
+  const recoveryCutGroups = new Set<string>(
+    adaptations
+      .filter((a) => a?.kind === 'recovery-cut' && typeof a.group === 'string')
+      .map((a) => a.group as string),
+  );
+  if (recoveryCutGroups.size > 0) {
     const weaknessAmp = firstPerKind.get('weakness-amp');
-    if (weaknessAmp && weaknessAmp.group === recoveryCutGroup) {
+    if (weaknessAmp && weaknessAmp.group && recoveryCutGroups.has(weaknessAmp.group)) {
       firstPerKind.delete('weakness-amp');
     }
     const imbalanceFix = firstPerKind.get('imbalance-fix');
-    if (imbalanceFix && imbalanceFix.group === recoveryCutGroup) {
+    if (imbalanceFix && imbalanceFix.group && recoveryCutGroups.has(imbalanceFix.group)) {
       firstPerKind.delete('imbalance-fix');
     }
   }

@@ -364,6 +364,59 @@ describe('composeCoachInsight — plan-allocation reconciliation', () => {
     expect(line).toContain('still recovering');
     expect(line).toContain('lagging');
   });
+
+  // cycle-24b: the guard must cover ANY recovery-cut group, not just the FIRST.
+  // deriveCoachAdaptations can emit MULTIPLE recovery-cut groups; the old guard
+  // read only firstPerKind.get('recovery-cut')?.group (= chest here), so a
+  // weakness-amp on the SECOND cut group (back) slipped through with its
+  // opposite-direction "push harder" clause — overstating a group trimmed today.
+  it('SUPPRESSES a weakness-amp on a NON-FIRST recovery-cut group', () => {
+    // Quads is the heavy focus (Leg Press 10 sets). Chest/back/biceps are each
+    // allocated-but-not-focus (1 set < 0.6x10) so both recovery-cuts survive their
+    // allocation gate and the biceps weakness-amp would survive its gate too.
+    const alloc = getPlanAllocationByGroup([
+      ex('Leg Press', 10),
+      ex('Cable Row', 1), // back
+      ex('Flat DB Press', 1), // chest
+      ex('Hammer Curl', 1), // biceps
+    ]);
+    const line = composeCoachInsight(
+      [
+        { kind: 'recovery-cut', group: 'piept', cause: 'resistance' }, // first cut
+        { kind: 'recovery-cut', group: 'spate', cause: 'resistance' }, // second cut
+        { kind: 'weakness-amp', group: 'spate' }, // collides with the SECOND cut
+      ],
+      { allocation: alloc, calibrationImmature: false },
+    );
+    expect(line).not.toBeNull();
+    // Recovery-cut (chest, the salient cut) is voiced; the back weakness-amp is
+    // dropped (back is a recovery-cut group today) → no "push harder" clause.
+    expect(line).toContain('still recovering');
+    expect(line).not.toContain('lagging');
+  });
+
+  it('KEEPS a weakness-amp on a NON-cut group while dropping the cut-group one', () => {
+    // Two recovery-cuts (chest, back) + a weakness-amp on biceps (NOT a cut group)
+    // → the biceps amp survives (no collision) and combines with the recovery-cut.
+    const alloc = getPlanAllocationByGroup([
+      ex('Leg Press', 10),
+      ex('Cable Row', 1), // back
+      ex('Flat DB Press', 1), // chest
+      ex('Hammer Curl', 1), // biceps
+    ]);
+    const line = composeCoachInsight(
+      [
+        { kind: 'recovery-cut', group: 'piept', cause: 'resistance' },
+        { kind: 'recovery-cut', group: 'spate', cause: 'resistance' },
+        { kind: 'weakness-amp', group: 'biceps' }, // a NON-cut group → survives
+      ],
+      { allocation: alloc, calibrationImmature: false },
+    );
+    expect(line).not.toBeNull();
+    expect(line).toContain('still recovering');
+    expect(line).toContain('lagging');
+    expect(line).toContain('biceps');
+  });
 });
 
 describe('composeCoachInsight — calibration-maturity gate (trend vs still-learning)', () => {
