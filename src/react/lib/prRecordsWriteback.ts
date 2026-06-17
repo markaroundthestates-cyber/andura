@@ -16,6 +16,7 @@
 //   - src/react/lib/engineWrappers.ts#buildSilentMmiContext (MMI input)
 
 import { detectPR } from '../../engine/prEngine.js';
+import { getMetricType } from '../../engine/metricType.js';
 import { isEnabled } from '../../util/featureFlags.js';
 import { DB } from '../../db.js';
 import type {
@@ -184,6 +185,15 @@ export function refreshPRRecordsFromLogs(
     }
     for (const l of logs) {
       if (!l || !l.w || !l.reps || (l as { baseline?: boolean }).baseline) continue;
+      // C19-CARRY-PRWALL-FABRICATED — a metric set (time/carry: Plank, Farmer's Walk,
+      // Suitcase Carry) persists w=load>0 + reps:"0" (a TRUTHY string the !l.reps guard
+      // misses) + durationSec. parseInt("0",10)||1 then coerces reps→1 and records a
+      // bogus "{load} kg x 1 reps" PR — inflating the Records count and polluting the
+      // coach prWallRecent slice. A kg PR is a weight×reps concept; a metric set has no
+      // reps axis. Skip any non-reps metric row (engine-canonical getMetricType on the
+      // ENGLISH log key — the same signal the prescription + IstoricDetail honor), with
+      // durationSec as a robust fallback for any row whose name doesn't resolve.
+      if (getMetricType(l.ex) !== 'reps' || l.durationSec != null) continue;
       const reps = parseInt(l.reps, 10) || 1;
       const e1rm = epleyE1RM(l.w, reps);
       const existing = prMap[l.ex];
