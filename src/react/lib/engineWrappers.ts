@@ -53,6 +53,7 @@ import { getAdherenceScore } from '../../engine/adherence.js';
 import { runProactiveChecks } from '../../engine/proactiveEngine.js';
 import {
   getRecoveryByGroup,
+  mergeAerobicRecovery,
   daysSinceGroup,
   hoursSinceGroup,
   GROUP_LABELS_RO_BIG11,
@@ -63,6 +64,7 @@ import { detectCalibrationLevel, CALIBRATION_LEVELS } from '../../engine/calibra
 import { useWorkoutStore } from '../stores/workoutStore';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { useScheduleStore, weekStartIso } from '../stores/scheduleStore';
+import { useAerobicStore } from '../stores/aerobicStore';
 import { composePlannedWorkoutToday } from './scheduleAdapterAggregate';
 // Piesa 1 nutrition-brain fix — real per-user maintenance TDEE base (omoara
 // baza flat 2640). Multiplicatorul de faza se aplica pe TDEE-ul real per-user.
@@ -877,9 +879,19 @@ export function getCoachTodayQuote(): CoachTodayQuote | null {
     const sessions = useWorkoutStore.getState().sessionsHistory;
     const logs = flattenSessionsToEngineLogs(sessions);
     if (logs.length === 0) return null;
-    const groupState = getRecoveryByGroup(logs, readPainCdl(), undefined, {
-      doseScaling: isEnabled('dp_recovery_dose_v1'),
-    });
+    // C18-AEROBIC-QUOTE-BLIND — fold aerobic recovery the SAME way the body-map
+    // (useMuscleRecoveryGroups) + the composer's volume cut do, so the today-quote
+    // does not narrate a cardio-EASED group as fresh/recovered ("Core-ul recupereaza
+    // din ieri") while the body map shows that same group as 'partial' (eased). Two
+    // consumers of the same recovery brain must agree on aerobic. mergeAerobicRecovery
+    // only RAISES a 'recovered' group toward 'partial' (cardio is a light touch, never
+    // resistance fatigue), so an eased group falls out of the recovered pick below.
+    const groupState = mergeAerobicRecovery(
+      getRecoveryByGroup(logs, readPainCdl(), undefined, {
+        doseScaling: isEnabled('dp_recovery_dose_v1'),
+      }),
+      useAerobicStore.getState().sessions,
+    );
     // Iterate groups; pick first recovered group cu daysSince in window.
     // hours = the REAL elapsed gap (sub-day precise); days = the floored bucket
     // used for the recently-trained window guard (1..COACH_TODAY_QUOTE_MAX_DAYS).

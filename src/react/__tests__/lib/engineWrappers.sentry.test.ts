@@ -58,6 +58,9 @@ vi.mock('../../../engine/stagnationDetector.js', () => ({
 
 vi.mock('../../../engine/muscleRecovery.js', () => ({
   getRecoveryByGroup: vi.fn(),
+  // getCoachTodayQuote now folds aerobic recovery (C18-AEROBIC-QUOTE-BLIND); with no
+  // aerobic sessions in these Sentry tests the fold is an identity passthrough.
+  mergeAerobicRecovery: vi.fn((state) => state),
   daysSinceGroup: vi.fn(),
   hoursSinceGroup: vi.fn(),
   GROUP_LABELS_RO_BIG11: {},

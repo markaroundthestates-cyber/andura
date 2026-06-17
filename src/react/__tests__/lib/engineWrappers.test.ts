@@ -26,10 +26,13 @@ import {
   getPRDelta,
   getTodayWorkout,
   getWhyExerciseSummary,
+  getCoachTodayQuote,
 } from '../../lib/engineWrappers';
 import { getComputedReadinessScore, getReadinessVerdict } from '../../../engine/readiness.js';
 import { calculateFatigueScore } from '../../../engine/fatigue.js';
 import { detectPR } from '../../../engine/prEngine.js';
+import { useWorkoutStore } from '../../stores/workoutStore';
+import { useAerobicStore } from '../../stores/aerobicStore';
 
 describe('engineWrappers — getReadiness', () => {
   beforeEach(() => {
@@ -327,5 +330,69 @@ describe('engineWrappers — getTodayWorkout (Phase 6 task_02 Option C real wire
       expect(typeof w.volumeKg).toBe('number');
       expect(w.volumeKg).toBeGreaterThanOrEqual(0);
     }
+  });
+});
+
+// ── C18-AEROBIC-QUOTE-BLIND — getCoachTodayQuote folds aerobic recovery ───────
+// The body-map (useMuscleRecoveryGroups) + the composer's volume cut fold aerobic
+// via mergeAerobicRecovery, but getCoachTodayQuote read getRecoveryByGroup WITHOUT
+// it — so it could narrate a cardio-EASED group as recovered/fresh while the body-map
+// shows that same group as 'partial'. The quote now folds aerobic the SAME way.
+describe('engineWrappers — getCoachTodayQuote folds aerobic recovery', () => {
+  const NOW = Date.now();
+  const HOUR = 3_600_000;
+
+  beforeEach(() => {
+    useWorkoutStore.setState({ sessionsHistory: [] as never });
+    useAerobicStore.setState({ sessions: [] });
+  });
+
+  // A core session ~3 days ago → core reads 'recovered' (decayed). Production-shaped
+  // session breakdown (the shape sessionsHistory carries).
+  function seedCoreSession(): void {
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        {
+          title: 'Core',
+          meta: '',
+          ts: NOW - 72 * HOUR,
+          exercises: [
+            {
+              exerciseId: 'cable-crunch',
+              exerciseName: 'Cable Crunch Kneeling',
+              engineName: 'Cable Crunch Kneeling',
+              totalVolume: 0,
+              peakOneRM: 0,
+              sets: [
+                { kg: 30, reps: 12, rating: 'potrivit', timestamp: NOW - 72 * HOUR },
+                { kg: 30, reps: 12, rating: 'potrivit', timestamp: NOW - 72 * HOUR },
+              ],
+            },
+          ],
+        },
+      ] as never,
+    });
+  }
+
+  it('without cardio, the recovered core group IS picked (baseline)', () => {
+    seedCoreSession();
+    const quote = getCoachTodayQuote();
+    expect(quote).not.toBeNull();
+    // The only recently-trained recovered group is core → it is the pick.
+    expect(quote?.recoveredLabel).toBeTruthy();
+  });
+
+  it('a cardio class that eased core → core is NOT narrated as fresh (agrees with body-map)', () => {
+    seedCoreSession();
+    // A today aerobic class eases core (gradient 1.0) to 'partial' via
+    // mergeAerobicRecovery — the SAME fold the body-map applies.
+    useAerobicStore.setState({
+      sessions: [{ date: '2026-06-17', type: 'aerobic', minutes: 45, kcal: 300, ts: NOW - 2 * HOUR }],
+    });
+    const quote = getCoachTodayQuote();
+    // Core was the only trained group and it is now eased (partial), so the quote
+    // does NOT fabricate a fresh/recovered core pick — it returns null (no other
+    // recovered+recently-trained group exists).
+    expect(quote).toBeNull();
   });
 });
