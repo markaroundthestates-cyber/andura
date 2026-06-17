@@ -148,13 +148,22 @@ function buildSilentMmiContext(): MmiSilentContext | null {
  * Per-exercise: when pr-records lacks peak for exercise → adapter returns
  * recommendation unchanged (no fabricated cap). Preserves all other fields
  * (id, name, sets, targetReps, restSec) via spread.
+ *
+ * EN-canonical key (fix 2026-06-17): peakPrePauseKgPerExercise is keyed on the
+ * ENGLISH canonical name (pr-records `ex` is EN), but `ex.name` is the RO display
+ * form. Keying the lookup on `ex.name` made the peak MISS for every RO-locale
+ * returnee → the MMI cap was DEAD (same EN/RO key-mismatch class fixed before for
+ * coach-logs + DP). compose.ts always sets engineName (the EN canonical), so key
+ * on `ex.engineName ?? ex.name` (the fallback keeps any pre-engineName fixture
+ * working). The adapter's own roundToStep uses the SAME EN key.
  */
 export function applyMmiCapToWorkout(workout: PlannedWorkoutOutput): PlannedWorkoutOutput {
   const mmiContext = buildSilentMmiContext();
   if (!mmiContext) return workout;
   const cappedExercises = workout.exercises.map((ex) => {
+    const engineKey = ex.engineName ?? ex.name;
     const recommendation = { kg: ex.targetKg };
-    const capped = applyMuscleMemoryUpgrade(recommendation, ex.name, mmiContext, DP) as {
+    const capped = applyMuscleMemoryUpgrade(recommendation, engineKey, mmiContext, DP) as {
       kg: number;
       _muscleMemoryApplied?: boolean;
     };

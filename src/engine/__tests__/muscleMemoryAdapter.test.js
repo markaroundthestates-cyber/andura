@@ -67,59 +67,66 @@ describe('applyMuscleMemoryUpgrade() — no-op paths', () => {
   });
 });
 
-describe('applyMuscleMemoryUpgrade() — accepted path', () => {
-  it('peak=100, pauseMonths=8, week=0 → 100×0.80×1.25 = 100 kg', () => {
-    const rec = { kg: 60 };
+describe('applyMuscleMemoryUpgrade() — TRUE CAP (option c, 2026-06-17)', () => {
+  // The MMI return weight is now a Math.min CAP: it can only ever LOWER the
+  // incoming DP rec, never raise it above DP's own return-deload. A high incoming
+  // rec is capped DOWN to the MMI weight; a rec already at/below the MMI weight is
+  // left unchanged (no forensic flags, since no cap bit).
+
+  it('CAP bites: incoming 130 > MMI 100 (peak=100, 8mo, wk0) → capped to 100', () => {
+    const rec = { kg: 130 };
     const out = applyMuscleMemoryUpgrade(rec, 'Bench', makeContext(), FAKE_DP);
-    // 100 * 0.80 = 80; * 1.25 = 100; rounded → 100
+    // MMI return = 100 * 0.80 * 1.25 = 100; min(130, 100) = 100 → cap bites.
     expect(out.kg).toBe(100);
     expect(out._muscleMemoryApplied).toBe(true);
-    expect(out._mmiOriginalKg).toBe(60);
+    expect(out._mmiOriginalKg).toBe(130);
     expect(out._mmiPeakPrePauseKg).toBe(100);
     expect(out._mmiStartMultiplier).toBe(0.80);
     expect(out._mmiBoostMultiplier).toBe(1.25);
   });
 
-  it('peak=100, pauseMonths=8, week=3 → 80 kg (boost ended)', () => {
+  it('NO-OP: incoming 60 < MMI 100 → left UNCHANGED (cap never raises)', () => {
+    // This is the option-c contract: DP's safer ~0.60x deload (60) is BELOW the
+    // ~0.77x MMI start, so min wins → the rec stays at 60, NEVER raised to 100.
     const rec = { kg: 60 };
-    const ctx = makeContext({ weeksSinceResume: 3 });
-    const out = applyMuscleMemoryUpgrade(rec, 'Bench', ctx, FAKE_DP);
-    // 100 * 0.80 = 80; * 1.00 = 80
-    expect(out.kg).toBe(80);
-    expect(out._mmiBoostMultiplier).toBe(1.0);
+    const out = applyMuscleMemoryUpgrade(rec, 'Bench', makeContext(), FAKE_DP);
+    expect(out.kg).toBe(60);
+    expect(out._muscleMemoryApplied).toBeUndefined();
+    expect(out).toBe(rec); // unchanged reference (no fabricated cap)
   });
 
-  it('peak=100, pauseMonths=18 (12-24 bucket), week=0 → 100×0.70×1.10 = 77 → 77', () => {
-    const rec = { kg: 50 };
-    const ctx = makeContext({ pauseMonths: 18 });
-    const out = applyMuscleMemoryUpgrade(rec, 'Bench', ctx, FAKE_DP);
-    // 100 * 0.70 = 70; * 1.10 = 77; rounded to step (0.5) → 77
-    expect(out.kg).toBe(77);
-    expect(out._mmiStartMultiplier).toBe(0.70);
-    expect(out._mmiBoostMultiplier).toBe(1.10);
-  });
-
-  it('peak=100, pauseMonths=36 (24+ bucket), week=0 → 100×0.60×1.00 = 60', () => {
-    const rec = { kg: 50 };
+  it('CAP bites at 24+ bucket: incoming 90 > MMI 60 (peak=100, 36mo) → 60', () => {
+    const rec = { kg: 90 };
     const ctx = makeContext({ pauseMonths: 36 });
     const out = applyMuscleMemoryUpgrade(rec, 'Bench', ctx, FAKE_DP);
+    // MMI return = 100 * 0.60 * 1.00 = 60; min(90, 60) = 60.
     expect(out.kg).toBe(60);
     expect(out._mmiStartMultiplier).toBe(0.60);
     expect(out._mmiBoostMultiplier).toBe(1.00);
   });
 
-  it('forensic flags preserve audit trail (ADR 011 §append-only)', () => {
-    const rec = { kg: 60, repsTarget: 8 };
+  it('CAP bites: 12-24 bucket incoming 120 > MMI 77 (peak=100, 18mo) → 77', () => {
+    const rec = { kg: 120 };
+    const ctx = makeContext({ pauseMonths: 18 });
+    const out = applyMuscleMemoryUpgrade(rec, 'Bench', ctx, FAKE_DP);
+    // MMI return = 100 * 0.70 * 1.10 = 77; min(120, 77) = 77.
+    expect(out.kg).toBe(77);
+    expect(out._mmiStartMultiplier).toBe(0.70);
+    expect(out._mmiBoostMultiplier).toBe(1.10);
+  });
+
+  it('forensic flags preserve audit trail when the cap bites (ADR 011)', () => {
+    const rec = { kg: 130, repsTarget: 8 };
     const out = applyMuscleMemoryUpgrade(rec, 'Bench', makeContext(), FAKE_DP);
     expect(out._muscleMemoryApplied).toBe(true);
-    expect(out._mmiOriginalKg).toBe(60);
+    expect(out._mmiOriginalKg).toBe(130);
     expect(out._mmiPeakPrePauseKg).toBe(100);
     expect(out._mmiBucket).toBeDefined();
     expect(out._mmiBucket.startMultiplier).toBe(0.80);
   });
 
-  it('preserves all other recommendation fields (shape passthrough)', () => {
-    const rec = { kg: 60, repsTarget: 8, status: 'NORMAL', statusLabel: 'x', progressionStage: 1 };
+  it('preserves all other recommendation fields when the cap bites', () => {
+    const rec = { kg: 130, repsTarget: 8, status: 'NORMAL', statusLabel: 'x', progressionStage: 1 };
     const out = applyMuscleMemoryUpgrade(rec, 'Bench', makeContext(), FAKE_DP);
     expect(out.repsTarget).toBe(8);
     expect(out.status).toBe('NORMAL');
@@ -128,22 +135,22 @@ describe('applyMuscleMemoryUpgrade() — accepted path', () => {
   });
 
   it('does NOT mutate input recommendation (immutability)', () => {
-    const rec = { kg: 60 };
+    const rec = { kg: 130 };
     const before = JSON.stringify(rec);
     applyMuscleMemoryUpgrade(rec, 'Bench', makeContext(), FAKE_DP);
     expect(JSON.stringify(rec)).toBe(before);
   });
 
   it('idempotent — same input → same output (ADR 018 §2)', () => {
-    const rec = { kg: 60 };
+    const rec = { kg: 130 };
     const ctx = makeContext();
     const o1 = applyMuscleMemoryUpgrade(rec, 'Bench', ctx, FAKE_DP);
     const o2 = applyMuscleMemoryUpgrade(rec, 'Bench', ctx, FAKE_DP);
     expect(o1).toEqual(o2);
   });
 
-  it('missing dpEngine → returns unrounded but still upgraded', () => {
-    const rec = { kg: 60 };
+  it('missing dpEngine → caps (unrounded) when the MMI weight is below the rec', () => {
+    const rec = { kg: 130 };
     const out = applyMuscleMemoryUpgrade(rec, 'Bench', makeContext(), null);
     expect(out._muscleMemoryApplied).toBe(true);
     expect(out.kg).toBeCloseTo(100, 5);
