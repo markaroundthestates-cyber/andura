@@ -592,6 +592,19 @@ export const FLIPPED_FLAGS = Object.freeze([
   // region still leads, balanced byte-identical) + the new posterior-maint-floor regression test,
   // NOT in this determinism stream. Selection/slot-side (no dp.js load math) → no sim-config pin.
   'dp_posterior_maint_floor_v1',
+  // THE FLIP 2026-06-17 (forta posterior balance / hinge) — dp_forta_posterior_balance_v1 defaults
+  // ON. A forta balanced full-body freq-3 day has NO hip-hinge (quad-dominant squats + a lone leg-
+  // curl); when ON it SWAPS in an RDL/GHR hinge (displacing a redundant 2nd quad squat / upgrading
+  // the lone leg-curl / a glute-secondary-covered slot) so the posterior chain anchors on a hinge,
+  // the quad:posterior ratio improves, and hams rises — count-neutral. The fp cohort DOES include
+  // forta journeys on full/lower/legs clusters, so the ON swap WOULD move their frozen composition
+  // hashes — pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS) so ctx.fortaPosteriorBalance
+  // is false in both A/B arms → the new block never runs → BOTH frozen baselines (hashOff/hashOn)
+  // stay byte-for-byte. ON is proven on the eval grid (forta f3 hinge present, hams up, glutes not
+  // regressed, quads >= MEV, slots unchanged; freq 4-5 + non-forta byte-identical) + the new
+  // forta-posterior-balance regression test, NOT in this determinism stream. Selection/slot-side
+  // (no dp.js load math) → no sim-config pin.
+  'dp_forta_posterior_balance_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

@@ -3243,30 +3243,28 @@ export function buildSession(cluster, ctx) {
         return -1;
       };
       const calfPool = pools.find((p) => p.group === CALF)?.pool ?? [];
-      // Seat up to targetSlots calf slots: SWAP a redundant leg iso (count-neutral) first,
-      // else ADD if the session is below its effective size; else accept the gap.
+      // Seat up to targetSlots calf slots by a strictly COUNT-NEUTRAL SWAP of a redundant leg
+      // iso (the prompt's "swap a redundant 2nd quad / 3rd quad-ham iso"). NO ADD branch — the
+      // floor is LEAN by construction (total slot count never changes); when no redundant leg
+      // iso exists (every leg group single-slotted) the calf yields here and is maintained
+      // across the week's other leg days (accept-the-gap). This keeps the floor independent of
+      // session-size headroom interactions with the other leg floors.
       while ((liveCount[CALF] || 0) < targetSlots) {
         const inject = calfPool.find((e) => !isTaken(e));
         if (!inject) break;
         const victimIdx = findRedundantLegIsoVictim();
-        if (victimIdx >= 0) {
-          const removed = chosen[victimIdx];
-          const rg = primaryOfName(removed.name);
-          chosenNames.delete(removed.name);
-          chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
-          if (rg && liveCount[rg]) liveCount[rg] -= 1;
-          if (rg && groupCount[rg]) groupCount[rg] -= 1;
-          chosen.splice(victimIdx, 1, { name: inject.name, sets: DEFAULT_SETS });
-          chosenNames.add(inject.name);
-          chosenMovements.add(dedupKey(inject.name, inject.meta));
-          liveCount[CALF] = (liveCount[CALF] || 0) + 1;
-          groupCount[CALF] = (groupCount[CALF] || 0) + 1;
-        } else if (chosen.length < effectiveSessionSize) {
-          take(inject, DEFAULT_SETS);
-          liveCount[CALF] = (liveCount[CALF] || 0) + 1;
-        } else {
-          break; // no redundant leg iso + at session size → accept the gap
-        }
+        if (victimIdx < 0) break; // no redundant leg iso → accept the gap (LEAN, never an add)
+        const removed = chosen[victimIdx];
+        const rg = primaryOfName(removed.name);
+        chosenNames.delete(removed.name);
+        chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
+        if (rg && liveCount[rg]) liveCount[rg] -= 1;
+        if (rg && groupCount[rg]) groupCount[rg] -= 1;
+        chosen.splice(victimIdx, 1, { name: inject.name, sets: DEFAULT_SETS });
+        chosenNames.add(inject.name);
+        chosenMovements.add(dedupKey(inject.name, inject.meta));
+        liveCount[CALF] = (liveCount[CALF] || 0) + 1;
+        groupCount[CALF] = (groupCount[CALF] || 0) + 1;
       }
     }
   }
@@ -3422,6 +3420,106 @@ export function buildSession(cluster, ctx) {
           take(inject, DEFAULT_SETS);
         }
         // else: saturated + every non-leg group single-slotted → accept the gap (no orphan).
+      }
+    }
+  }
+
+  // FORTA full-body POSTERIOR BALANCE / HINGE (ctx.fortaPosteriorBalance,
+  // dp_forta_posterior_balance_v1, default ON, FORTA goal only). A balanced full-body strength
+  // day under-doses the posterior chain: quads land 3 SQUAT slots (~12 weekly) while hamstrings
+  // get ONE machine LEG CURL iso (~2 weekly, below MEV 6) and there is NO hip-HINGE compound
+  // (RDL/deadlift/GHR) anywhere — the posterior + hamstring floors only fire at ZERO, so a
+  // below-MEV hams with a single iso slips through. An elite strength coach never builds a leg
+  // day on quad-dominant squats + a lone curl with no hinge. When ON + a leg-training cluster +
+  // quads is OVER-DOMINANT (>= 3 quad slots OR a 2nd+ SQUAT compound) + hams below its MEV-by-
+  // slots proxy + NO hinge already present, SWAP the lowest-priority redundant quad SQUAT for a
+  // HINGE (RDL / Glute-Ham Raise — a hams-primary tier<=COMPOUND_TIER compound, NOT a leg curl)
+  // that credits BOTH hams (primary) AND glutes (secondary) — lifting the posterior chain toward
+  // MEV WITHOUT adding a slot (quads keep >= 2 slots = MEV 8). INJURY-COMPOSED: a spate (disc)
+  // exclusion DEFERS (no axial-load hinge — the leg-curl guarantee owns that path). Runs AFTER
+  // the hamstring floor (which owns the hams==0 case) so the two never double-seat. OFF /
+  // non-forta / non-leg cluster / spate exclusion / hinge present → never runs → byte-identical.
+  if (
+    ctx?.fortaPosteriorBalance === true
+    && (cluster === 'full' || cluster === 'lower' || cluster === 'legs')
+    && targets.includes('picioare-hamstrings')
+    && !excludedMovements?.tokens?.has?.(LUMBAR_HINGE_SENTINEL)
+  ) {
+    const primaryOfName = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+    const HAMS = 'picioare-hamstrings';
+    const QUAD = 'picioare-quads';
+    const GLUTES = 'fese';
+    // A hams-primary HINGE = a tier<=COMPOUND_TIER hams compound that is NOT a leg curl
+    // (knee-flexion iso). RDL / Romanian Deadlift / Glute-Ham Raise / good-morning.
+    const isHamsHinge = (name) => {
+      const m = getExerciseMetadata(name) || {};
+      if (m.muscle_target_primary !== HAMS) return false;
+      if ((m.tier ?? 2) > COMPOUND_TIER) return false;
+      return movementKey(name, m).split('::')[1] !== 'leg-curl';
+    };
+    const hingeAlready = chosen.some((e) => isHamsHinge(e.name));
+    // Live per-group slot census + glute-secondary helper (an RDL/GHR hinge credits glutes
+    // as a SECONDARY, so swapping a glute slot for the hinge keeps glutes covered).
+    const slotCount = {};
+    for (const e of chosen) {
+      const g = primaryOfName(e.name);
+      if (g) slotCount[g] = (slotCount[g] || 0) + 1;
+    }
+    const isSquat = (name) =>
+      movementKey(name, getExerciseMetadata(name)).split('::')[1] === 'squat';
+    const hingeCoversGlutes = (name) => {
+      const m = getExerciseMetadata(name) || {};
+      const sec = Array.isArray(m.muscle_target_secondary) ? m.muscle_target_secondary : [];
+      return sec.includes('fese');
+    };
+    // ELITE-COACH INVARIANT: a forta leg-training day must include a hip-HINGE (the posterior
+    // chain's prime movement). The defect is the WEEKLY hams deficit (a lone leg-curl ~2/wk on
+    // a quad-squat day) — addressed per-day by guaranteeing a hinge on each forta leg day, which
+    // also rebalances the quad:posterior ratio. Fires when no hams hinge is present this session.
+    if (!hingeAlready) {
+      const hamsPool = pools.find((p) => p.group === HAMS)?.pool ?? [];
+      const hinge = hamsPool.find((e) => !isTaken(e) && isHamsHinge(e.name));
+      if (hinge) {
+        const hingeName = hinge.name;
+        const hingeGlute = hingeCoversGlutes(hingeName);
+        let removeIdx = -1;
+        // Pass 1 — a REDUNDANT 2nd+ quad SQUAT (quads keep >= 2 slots / MEV 8). The
+        // prompt-sanctioned "3rd squat / redundant quad exposure → hinge" swap.
+        for (let i = chosen.length - 1; i >= 0 && removeIdx < 0; i--) {
+          if (primaryOfName(chosen[i].name) !== QUAD || !isSquat(chosen[i].name)) continue;
+          if ((slotCount[QUAD] || 0) <= 2) continue;
+          removeIdx = i;
+        }
+        // Pass 2 — the day's hams LEG-CURL iso: UPGRADE the iso to the hinge compound (same
+        // group, count-neutral) so the lone curl becomes a real posterior prime mover.
+        if (removeIdx < 0) {
+          for (let i = chosen.length - 1; i >= 0 && removeIdx < 0; i--) {
+            if (primaryOfName(chosen[i].name) !== HAMS) continue;
+            if (movementKey(chosen[i].name, getExerciseMetadata(chosen[i].name)).split('::')[1] !== 'leg-curl') continue;
+            removeIdx = i;
+          }
+        }
+        // Pass 3 — a GLUTE slot the hinge's SECONDARY keeps covered (the day has a glute but no
+        // hams: trade the glute-only movement for an RDL that trains BOTH). Only when the hinge
+        // credits glutes secondary (else glutes would drop). Lowest-priority glute slot.
+        if (removeIdx < 0 && hingeGlute && (slotCount[GLUTES] || 0) >= 1) {
+          for (let i = chosen.length - 1; i >= 0 && removeIdx < 0; i--) {
+            if (primaryOfName(chosen[i].name) !== GLUTES) continue;
+            removeIdx = i;
+          }
+        }
+        if (removeIdx >= 0) {
+          const removed = chosen[removeIdx];
+          const rg = primaryOfName(removed.name);
+          chosenNames.delete(removed.name);
+          chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
+          if (rg && groupCount[rg]) groupCount[rg] -= 1;
+          chosen.splice(removeIdx, 1, { name: hingeName, sets: DEFAULT_SETS });
+          chosenNames.add(hingeName);
+          chosenMovements.add(dedupKey(hingeName, hinge.meta));
+          groupCount[HAMS] = (groupCount[HAMS] || 0) + 1;
+        }
+        // else: no safe victim → accept the gap (the floors maintain hams across the week).
       }
     }
   }

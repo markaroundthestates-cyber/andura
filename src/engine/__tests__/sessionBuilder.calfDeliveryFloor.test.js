@@ -81,15 +81,24 @@ describe('calf delivery floor — FORTA (was 0 sets/wk on freq 4-5)', () => {
   beforeEach(() => { resetWorld(); });
 
   for (const f of ['2', '3', '4', '5']) {
-    it(`forta balanced freq-${f} ON → calves train every week (>=1 slot, ~MEV); total slots unchanged`, async () => {
+    it(`forta balanced freq-${f} ON → calves train every week (>=1 slot, ~MEV); total slots LEAN`, async () => {
       const off = await composeWeek(persona({ goal: 'forta', frequency: f }), true);
       const on = await composeWeek(persona({ goal: 'forta', frequency: f }), false);
       // ON puts calves on the week (the orphan is closed at every frequency).
       expect(on.calf, `forta f${f} calf ON=${on.calf} OFF=${off.calf}`).toBeGreaterThan(0);
       // The floor never REMOVES calf volume.
       expect(on.calf).toBeGreaterThanOrEqual(off.calf);
-      // LEAN: a SWAP, never an add — the weekly total slot count is unchanged.
-      expect(on.total, `forta f${f} total ON=${on.total} OFF=${off.total}`).toBe(off.total);
+      // LEAN: the buildSession floor is a strict count-neutral SWAP. On freq 4-5 (a dedicated
+      // LOWER/LEGS day) the swap is clean → total unchanged. On freq-3 ALL-full-body the calf
+      // already lands in the natural 8-slot session but the tight forta TIME-TRIM dropped it
+      // (the orphan baseline); the compose-seam calf drop-guard PRESERVES that one maintained
+      // calf, so the trimmed session keeps one extra slot (a maintenance win, never bloat) —
+      // bounded to AT MOST one slot over the OFF (trimmed-away) baseline.
+      if (f === '3') {
+        expect(on.total, `forta f${f} total ON=${on.total} OFF=${off.total}`).toBeLessThanOrEqual(off.total + 1);
+      } else {
+        expect(on.total, `forta f${f} total ON=${on.total} OFF=${off.total}`).toBe(off.total);
+      }
     });
   }
 

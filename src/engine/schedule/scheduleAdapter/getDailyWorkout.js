@@ -1342,6 +1342,17 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       isEnabled('dp_posterior_maint_floor_v1')
       && (userState?.user?.goal === 'masa' || userState?.user?.goal === 'forta')
       && !(typeof userState?.user?.age === 'number' && userState.user.age >= 60),
+    // FORTA full-body POSTERIOR BALANCE / hinge (dp_forta_posterior_balance_v1, default ON).
+    // A forta balanced full-body day under-doses hamstrings (3 quad squats ~12 weekly, hams a
+    // lone leg-curl ~2 weekly below MEV, NO hinge anywhere). When ON + goal forta + a leg
+    // cluster, buildSession swaps the lowest-priority redundant quad SQUAT for an RDL/GHR hinge
+    // (credits hams + glutes) so the posterior chain reaches MEV without adding a slot. Composes
+    // with posteriorMaintFloor (which fires only at hams==0). FORTA-gated (masa uses the existing
+    // floors). OFF / non-forta → false → never runs → byte-identical (pinned OFF in fp-config).
+    fortaPosteriorBalance:
+      isEnabled('dp_forta_posterior_balance_v1')
+      && userState?.user?.goal === 'forta'
+      && !(typeof userState?.user?.age === 'number' && userState.user.age >= 60),
     // #70-D2 — COMPOUND-FIRST guarantee on an emphasis/weak-reordered session
     // (dp_emphasis_specialization_v1, default OFF → byte-identical). When ON, the
     // weak/emphasis front-loader is prevented from leading the day with an ISOLATION

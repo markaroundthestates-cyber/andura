@@ -1455,6 +1455,24 @@ export const FLAGS = Object.freeze({
   // OFF in the fp-config FLIPPED_FLAGS baseline).
   dp_posterior_maint_floor_v1: { rollout: 1, default: true },
 
+  // FORTA full-body POSTERIOR BALANCE / hinge (cycle-21b north-star audit 2026-06-17)
+  // (RISK LOW — selection only, never kg). A balanced full-body STRENGTH (forta) program
+  // under-doses the posterior chain: quads land 3 SQUAT slots (~12 weekly) while hamstrings
+  // get ONE machine LEG CURL iso (~2 weekly, below MEV 6) and there is NO hip-HINGE compound
+  // (RDL/deadlift) anywhere — the posterior floor + hamstring floor only fire when a group is
+  // at ZERO, so a below-MEV hams with a single iso slips through. An elite strength coach never
+  // builds a leg day on quad-dominant squats + a lone curl with no hinge. When ON + goal forta
+  // + a leg-training cluster (full/lower/legs) + quads is over-dominant (>= 3 quad slots, or a
+  // 2nd+ redundant SQUAT) + hamstrings below MEV, buildSession SWAPS the lowest-priority
+  // redundant quad SQUAT for a HINGE compound (Romanian Deadlift / Glute-Ham Raise) that credits
+  // BOTH hams (primary) and glutes (secondary) — lifting the posterior chain toward MEV WITHOUT
+  // adding a slot (quads stay >= MEV 8). Composes with dp_posterior_maint_floor_v1 (that fires
+  // only when hams==0; this owns the hams-present-but-under-dosed case → no double-seat). GOAL-
+  // GATED forta only (masa keeps the existing floors; mentenanta/slabire/age>=60 untouched).
+  // OFF / non-forta / non-leg cluster → ctx.fortaPosteriorBalance false → never runs →
+  // byte-identical (pinned OFF in the fp-config FLIPPED_FLAGS baseline).
+  dp_forta_posterior_balance_v1: { rollout: 1, default: true },
+
   // #LEG posterior+quad floor (orphaned-legs fix 2026-06-13) (RISK LOW — selection
   // only, never kg). Elite-coach invariant: a FULL-BODY day ALWAYS trains quads AND the
   // posterior chain. On freq 1-3 all-full-body weeks under an upper-biased focus (v-taper
