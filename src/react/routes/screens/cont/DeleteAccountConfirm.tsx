@@ -21,7 +21,11 @@ import { useAppStore } from '../../../stores/appStore';
 import { SubHeader } from '../../../components/SubHeader';
 import { resetInMemoryStores } from '../../../lib/resetStores';
 import { isAuthFresh, signOut as authSignOut, getAuthState } from '../../../../auth.js';
-import { markAccountForDeletion } from '../../../lib/accountDeletion';
+import {
+  markAccountForDeletion,
+  POST_AUTH_RETURN_KEY,
+  POST_AUTH_RETURN_DELETE,
+} from '../../../lib/accountDeletion';
 import { gotoPath } from '../../../lib/navigation';
 import { t } from '../../../../i18n/index.js';
 
@@ -91,6 +95,11 @@ export function DeleteAccountConfirm(): JSX.Element {
     setError(null);
     // §A016 — destructive action gate: require recent re-auth.
     if (!isAuthFresh()) {
+      // FIX 6 — remember WHY we are forcing re-auth so the post-auth landing
+      // (AuthCallback postAuthLanding) returns the user to THIS delete flow
+      // instead of dead-ending at the app home (the `reason` param alone was
+      // orphaned — consumed nowhere). sessionStorage: scoped to this re-auth round.
+      try { sessionStorage.setItem(POST_AUTH_RETURN_KEY, POST_AUTH_RETURN_DELETE); } catch { /* ignore */ }
       authSignOut();
       setAuthenticated(false);
       navigate('/auth?reason=reauth_required_for_delete');

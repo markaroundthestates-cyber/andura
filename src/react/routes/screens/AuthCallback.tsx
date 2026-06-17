@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../stores/appStore';
 import { verifyMagicLink, parseMagicLinkUrl, getPendingEmail, signInWithGoogleIdToken, AUTH_STORAGE_KEYS } from '../../../auth.js';
 import { runPostAuthSync } from '../../lib/reactBoot';
+import { POST_AUTH_RETURN_KEY, POST_AUTH_RETURN_DELETE } from '../../lib/accountDeletion';
 import { t } from '../../../i18n/index.js';
 
 // §56.5.2 soft-delete — post-restore landing target. When the cloud sync found
@@ -20,9 +21,22 @@ import { t } from '../../../i18n/index.js';
 // (not via a hook) so the just-settled sync state is observed.
 const APP_HOME = '/app/antrenor';
 const RESTORE_ROUTE = '/app/cont/restore-account';
+const DELETE_CONFIRM_ROUTE = '/app/cont/delete-account-confirm';
 
 function postAuthLanding(): string {
-  return useAppStore.getState().pendingDeletionRestore ? RESTORE_ROUTE : APP_HOME;
+  // A pending-deletion RESTORE (soft-delete marker found) takes precedence — the
+  // user must choose Restore vs Delete-now before entering the app.
+  if (useAppStore.getState().pendingDeletionRestore) return RESTORE_ROUTE;
+  // FIX 6 — the destructive-action gate forced this re-auth to RESUME a delete the
+  // user explicitly started. Consume the one-shot return intent and route back to
+  // the delete flow instead of dead-ending at the app home.
+  try {
+    if (sessionStorage.getItem(POST_AUTH_RETURN_KEY) === POST_AUTH_RETURN_DELETE) {
+      sessionStorage.removeItem(POST_AUTH_RETURN_KEY);
+      return DELETE_CONFIRM_ROUTE;
+    }
+  } catch { /* ignore */ }
+  return APP_HOME;
 }
 
 // §B005/D-2 audit fix — Google OAuth fragment parse helper. Google returns

@@ -32,6 +32,15 @@ export const DELETION_GRACE_MS = 30 * 24 * 60 * 60 * 1000;
 export const DELETION_MARKER_NODE = 'account';
 export const DELETION_MARKER_FIELD = 'deletionRequestedAt';
 
+// Re-auth-for-delete return intent. When the destructive-action gate forces the
+// user out to /auth to re-authenticate, this sessionStorage key remembers WHY so
+// the post-auth landing can return them to the delete flow instead of dead-ending
+// at the app home (the re-auth otherwise has no visible purpose). Cleared on
+// consume. sessionStorage (not local): the intent is scoped to this tab's re-auth
+// round-trip and must not survive a full app restart.
+export const POST_AUTH_RETURN_KEY = 'postAuthReturn';
+export const POST_AUTH_RETURN_DELETE = 'delete-account-confirm';
+
 export interface DeletionMarker {
   /** epoch ms when deletion was requested */
   requestedAt: number;

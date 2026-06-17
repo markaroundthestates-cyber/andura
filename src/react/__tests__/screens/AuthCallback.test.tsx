@@ -78,6 +78,8 @@ function renderCallback(): ReturnType<typeof render> {
         <Route path="/auth-callback" element={<AuthCallback />} />
         <Route path="/auth" element={<LocationSentinel />} />
         <Route path="/app/antrenor" element={<LocationSentinel />} />
+        <Route path="/app/cont/delete-account-confirm" element={<LocationSentinel />} />
+        <Route path="/app/cont/restore-account" element={<LocationSentinel />} />
       </Routes>
     </MemoryRouter>
   );
@@ -88,6 +90,8 @@ const ORIGINAL_LOCATION = window.location;
 beforeEach(() => {
   useAppStore.getState().setAuthenticated(false);
   localStorage.clear();
+  try { sessionStorage.clear(); } catch { /* noop */ }
+  useAppStore.setState({ pendingDeletionRestore: null });
   // Copy assertions below check the RO wording — pin RO locale so t() resolves
   // the authCallback.* keys to Romanian (default locale is EN post 2026-05-28).
   setLocale('ro');
@@ -180,6 +184,49 @@ describe('AuthCallback — Magic Link success path', () => {
       'maria65@example.com',
       'valid-code'
     );
+  });
+});
+
+// FIX 6 — when the destructive-action gate forced a re-auth to RESUME a delete, the
+// post-auth landing must return the user to the delete flow, not dead-end at home.
+describe('AuthCallback — returns to the delete flow after a re-auth-for-delete', () => {
+  it('postAuthReturn=delete-account-confirm -> lands on the delete confirm (not home)', async () => {
+    sessionStorage.setItem('postAuthReturn', 'delete-account-confirm');
+    stubLocation('?oobCode=valid-code&email=gigel%40example.com');
+    renderCallback();
+    await waitFor(() => {
+      expect(screen.getByTestId('location-sentinel')).toHaveAttribute(
+        'data-pathname',
+        '/app/cont/delete-account-confirm'
+      );
+    });
+    // One-shot: the intent is consumed so a later normal sign-in lands at home.
+    expect(sessionStorage.getItem('postAuthReturn')).toBeNull();
+  });
+
+  it('no return intent -> normal sign-in lands at the app home', async () => {
+    stubLocation('?oobCode=valid-code&email=gigel%40example.com');
+    renderCallback();
+    await waitFor(() => {
+      expect(screen.getByTestId('location-sentinel')).toHaveAttribute(
+        'data-pathname',
+        '/app/antrenor'
+      );
+    });
+  });
+
+  it('a pending-deletion RESTORE takes precedence over the return intent', async () => {
+    sessionStorage.setItem('postAuthReturn', 'delete-account-confirm');
+    useAppStore.setState({ pendingDeletionRestore: { requestedAt: Date.now(), expired: false } });
+    stubLocation('?oobCode=valid-code&email=gigel%40example.com');
+    renderCallback();
+    await waitFor(() => {
+      expect(screen.getByTestId('location-sentinel')).toHaveAttribute(
+        'data-pathname',
+        '/app/cont/restore-account'
+      );
+    });
+    useAppStore.setState({ pendingDeletionRestore: null });
   });
 });
 
