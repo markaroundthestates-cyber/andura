@@ -32,6 +32,7 @@ const ADAPT_EPSILON = 0.01;
  * @param {{[group:string]: 'recovered'|'partial'|'fatigued'}} args.resistanceState - RO recovery state (resistance only)
  * @param {{[group:string]: 'recovered'|'partial'|'fatigued'}} args.mergedState - RO recovery state (resistance + aerobic)
  * @param {boolean} args.deloadActive - true when an ACTIVE deload modifier is in play
+ * @param {boolean} [args.suppressAmpDuringDeload] - true → suppress the weakness-amp + imbalance-fix tokens during an active deload (the budget clamp already prevents a deload-cut group from rising, so a "boosted" token would contradict the "recovery week" line)
  * @returns {Array<{kind: 'recovery-cut'|'weakness-amp'|'imbalance-fix'|'deload', group?: string, cause?: 'aerobic'|'resistance'}>}
  */
 export function deriveCoachAdaptations({
@@ -43,6 +44,7 @@ export function deriveCoachAdaptations({
   resistanceState,
   mergedState,
   deloadActive,
+  suppressAmpDuringDeload = false,
 }) {
   // The recovery cut runs on the post-makeup budget (intra-week deficit recovery
   // adds volume BEFORE the cut). Compare the FINAL budget against the budget the
@@ -78,8 +80,11 @@ export function deriveCoachAdaptations({
   }
 
   // Weakness amplification (M2) — groups whose budget was raised above the
-  // base periodization budget toward MRV.
-  if (baseTargets && amplifiedTargets) {
+  // base periodization budget toward MRV. Suppressed during an active deload (when
+  // the suppression flag threads it): the deload clamp keeps the amplified budget at
+  // or below the pre-deload baseline, so claiming a "boost" would contradict the
+  // "recovery week" signal already pushed above.
+  if (baseTargets && amplifiedTargets && !(deloadActive && suppressAmpDuringDeload)) {
     for (const [enKey, amp] of Object.entries(amplifiedTargets)) {
       const base = baseTargets[enKey];
       if (typeof base !== 'number' || typeof amp !== 'number') continue;
@@ -90,8 +95,9 @@ export function deriveCoachAdaptations({
   }
 
   // Imbalance correction (M3) — groups raised above the amplified budget to
-  // close an antagonist/pattern imbalance.
-  if (amplifiedTargets && balancedTargets) {
+  // close an antagonist/pattern imbalance. Suppressed during an active deload (same
+  // reason as weakness-amp above) so the recovery-week line is not contradicted.
+  if (amplifiedTargets && balancedTargets && !(deloadActive && suppressAmpDuringDeload)) {
     for (const [enKey, balanced] of Object.entries(balancedTargets)) {
       const amp = amplifiedTargets[enKey];
       if (typeof amp !== 'number' || typeof balanced !== 'number') continue;

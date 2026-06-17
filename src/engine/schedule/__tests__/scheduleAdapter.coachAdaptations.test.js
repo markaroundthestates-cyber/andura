@@ -218,3 +218,52 @@ describe('scheduleAdapter — coachAdaptations structured log (Coach Voice)', ()
     expect(a.coachAdaptations).toEqual(b.coachAdaptations);
   });
 });
+
+// FIX 2 (dp_deload_suppress_amp_v1) — a deload-week lagging group must NOT also
+// emit a weakness-amp token. Before the fix, deriveCoachAdaptations pushed BOTH a
+// deload AND a weakness-amp entry → a contradictory coach line ("recovery week" +
+// "we boosted your chest") while the deload had actually cut that group's volume.
+describe('coachAdaptations — weakness-amp suppressed during an active deload', () => {
+  // SCHEDULED_LINEAR deload (weeksElapsed 3 → mesocycle week 4) is an ACTIVE deload
+  // (non-zero intensity modifier), the same deloadActive signal the reactive path
+  // sets — combined with lagging-chest history that otherwise forces a weakness-amp.
+  function deloadLaggingState() {
+    return buildUserState({
+      meta: { weeksElapsed: 3 },
+      recentSessions: laggingChestSessions(MONDAY_2026_05_18.getTime()),
+    });
+  }
+
+  it('flag ON → a deload token, NO weakness-amp/imbalance-fix (coherent recovery line)', async () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_deload_suppress_amp_v1: true }));
+    const plan = await getDailyWorkout(deloadLaggingState(), MONDAY_2026_05_18);
+    localStorage.removeItem('_devFlags');
+    expect(plan).not.toBeNull();
+    expect(plan.coachAdaptations.some((a) => a.kind === 'deload')).toBe(true);
+    expect(plan.coachAdaptations.some((a) => a.kind === 'weakness-amp')).toBe(false);
+    expect(plan.coachAdaptations.some((a) => a.kind === 'imbalance-fix')).toBe(false);
+  });
+
+  it('flag OFF → the legacy contradictory deload + weakness-amp both emit (the bug)', async () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_deload_suppress_amp_v1: false }));
+    const plan = await getDailyWorkout(deloadLaggingState(), MONDAY_2026_05_18);
+    localStorage.removeItem('_devFlags');
+    expect(plan).not.toBeNull();
+    expect(plan.coachAdaptations.some((a) => a.kind === 'deload')).toBe(true);
+    // The defect: a weakness-amp token alongside the deload (the inversion's narration).
+    expect(plan.coachAdaptations.some((a) => a.kind === 'weakness-amp')).toBe(true);
+  });
+
+  it('NON-deload week with the same lagging history STILL amplifies normally', async () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_deload_suppress_amp_v1: true }));
+    const plan = await getDailyWorkout(
+      buildUserState({ recentSessions: laggingChestSessions(MONDAY_2026_05_18.getTime()) }),
+      MONDAY_2026_05_18,
+    );
+    localStorage.removeItem('_devFlags');
+    expect(plan).not.toBeNull();
+    expect(plan.coachAdaptations.some((a) => a.kind === 'deload')).toBe(false);
+    // Outside a deload the suppression never engages → weakness-amp still fires.
+    expect(plan.coachAdaptations.some((a) => a.kind === 'weakness-amp' && a.group === 'piept')).toBe(true);
+  });
+});

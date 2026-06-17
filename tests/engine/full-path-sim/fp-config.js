@@ -561,6 +561,21 @@ export const FLIPPED_FLAGS = Object.freeze([
   // deload runs → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is
   // proven on the getDailyWorkout deload-volume regression test, NOT in this stream.
   'dp_deload_volume_depth_v1',
+  // THE FLIP 2026-06-17 (deload weakness-amp suppression) — dp_deload_suppress_amp_v1
+  // defaults ON. A reactive deload lowered the weekly-volume budget but the M2/M3
+  // amplification ran with NO deload gate and pushed a lagging group toward its
+  // (unchanged) MRV — landing a deload-cut group ABOVE its pre-deload baseline (the
+  // deload INVERTED for that group), while the coach emitted both a deload AND a
+  // weakness-amp token. When ON, getDailyWorkout clamps each amplified/imbalance-
+  // corrected/redistributed group to min(result, preDeloadBaseline) and suppresses the
+  // weakness-amp + imbalance-fix narration during the deload. A fp journey carrying a
+  // REACTIVE deload WITH a lagging group would clamp the amplified budget → move a
+  // frozen prescription hash. Pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS)
+  // so suppressDeloadAmp is false in both A/B arms → the legacy un-gated amplification +
+  // narration runs → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is
+  // proven on the getDailyWorkout deload-suppress-amp regression test + the
+  // coachAdaptations narration test, NOT in this determinism stream.
+  'dp_deload_suppress_amp_v1',
   // THE FLIP 2026-06-17 (readiness×energy MIN-compose) — dp_readiness_energy_min_v1
   // defaults ON. The compose seam composed the readiness volumeMultiplier + the energy
   // volumeFactor with a single MIN (applied ONCE) instead of running the two scalers

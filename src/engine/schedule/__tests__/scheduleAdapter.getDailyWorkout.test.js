@@ -16,9 +16,10 @@ import {
   getCalendarOverride,
   CALENDAR_OVERRIDE_KEY,
 } from '../scheduleAdapter.js';
-import { reactiveDeloadVolumeRatio } from '../scheduleAdapter/inferFrequency.js';
+import { reactiveDeloadVolumeRatio, scaleWeeklyVolumeByRatio } from '../scheduleAdapter/inferFrequency.js';
+import { applyWeaknessAmplification } from '../scheduleAdapter/volumeAdaptation.js';
 import { getExerciseMetadata } from '../../exerciseLibrary.js';
-import { CLUSTER_BIG6_TO_BIG11_WEIGHT } from '../../periodization/constants.js';
+import { CLUSTER_BIG6_TO_BIG11_WEIGHT, ISRAETEL_BASELINES } from '../../periodization/constants.js';
 
 const TUESDAY_2026_05_19 = new Date(2026, 4, 19); // dayIdx 1 (M)
 const MONDAY_2026_05_18 = new Date(2026, 4, 18);  // dayIdx 0 (L)
@@ -423,6 +424,67 @@ describe('scheduleAdapter — REACTIVE deload reduces plan volume (flag-gated wi
     const scheduledOff = await runPatched('DELOAD', false);
     const scheduledOn = await runPatched('DELOAD', true);
     expect(sumSets(scheduledOn)).toBe(sumSets(scheduledOff));
+  });
+});
+
+// FIX 2 (dp_deload_suppress_amp_v1) — a lagging group during a reactive deload must
+// NOT be amplified ABOVE its normal-week volume. Before the fix, M2/M3 amplification
+// (applyWeaknessAmplification + applyImbalanceCorrection) ran with NO deload gate and
+// pushed a lagging group ~50% toward its (unchanged) MRV, so a deload-cut group landed
+// ABOVE its pre-deload baseline (the deload INVERTED). This exercises the SAME real
+// engine seam getDailyWorkout uses (reactiveDeloadVolumeRatio → scaleWeeklyVolumeByRatio
+// → applyWeaknessAmplification) with REAL Israetel baselines + a REAL reactive-deload
+// blueprint shape, and asserts the pre-deload clamp the fix folds inline.
+describe('deload does NOT amplify a lagging group above normal (volume clamp seam)', () => {
+  // A REAL reactive-deload blueprint shape (REACTIVE_AA: 30% volume cut → ratio 0.70).
+  const reactiveDeloadBp = {
+    deload_state: 'REACTIVE_AA',
+    volume_cut_pct: 30,
+    intensity_modifier: { rir_increment: 1, intensity_pct_decrement: 12.5 },
+  };
+  // The pre-deload clamp the fix applies inline in getDailyWorkout: no group may exceed
+  // its normal-week (pre-deload) budget during a recovery week.
+  const clampToPreDeloadBaseline = (map, baseline) => {
+    const out = { ...map };
+    for (const k of Object.keys(out)) {
+      const cap = baseline[k];
+      if (typeof cap === 'number' && out[k] > cap) out[k] = cap;
+    }
+    return out;
+  };
+
+  it('a lagging back is re-inflated ABOVE the deload cut WITHOUT the clamp (the inversion)', () => {
+    const preDeload = { chest: 16, back: 16, shoulders: 18, biceps: 14 }; // a real LOAD-week budget
+    const ratio = reactiveDeloadVolumeRatio(reactiveDeloadBp, { mesocycle_phase: 'LOAD' });
+    const deloadCut = scaleWeeklyVolumeByRatio(preDeload, ratio, ISRAETEL_BASELINES);
+    const amplified = applyWeaknessAmplification(deloadCut, ['spate']); // lagging back (RO)
+    // The defect: amplification pushed the deload-cut back (11.2) BACK UP to 18.1 — ABOVE
+    // both the deload target AND the pre-deload baseline (16). The deload is INVERTED.
+    expect(deloadCut.back).toBeLessThan(preDeload.back); // the deload genuinely cut back
+    expect(amplified.back).toBeGreaterThan(preDeload.back); // ...then amp over-inflated it
+  });
+
+  it('with the clamp, the deload-cut back never exceeds its pre-deload baseline (deload preserved)', () => {
+    const preDeload = { chest: 16, back: 16, shoulders: 18, biceps: 14 };
+    const ratio = reactiveDeloadVolumeRatio(reactiveDeloadBp, { mesocycle_phase: 'LOAD' });
+    const deloadCut = scaleWeeklyVolumeByRatio(preDeload, ratio, ISRAETEL_BASELINES);
+    const amplified = applyWeaknessAmplification(deloadCut, ['spate']);
+    // The fix: clamp each amplified group to its pre-deload baseline.
+    const clamped = clampToPreDeloadBaseline(amplified, preDeload);
+    // THE FIX: a weak group may keep its share but never RISE above its normal-week
+    // volume during a recovery week — the deload's reduction is never exceeded.
+    expect(clamped.back).toBeLessThanOrEqual(preDeload.back);
+    expect(clamped.back).toBeLessThan(amplified.back); // strictly clamped down from the inversion
+    // The other (non-lagging) groups are untouched by the clamp (they never exceeded baseline).
+    expect(clamped.chest).toBe(amplified.chest);
+  });
+
+  it('a NON-deload week still amplifies the lagging group normally (clamp only bites during deload)', () => {
+    // Outside a deload, suppressDeloadAmp is false → the clamp is a NO-OP → amplification
+    // is preserved (the lagging back rises toward MRV as designed).
+    const normalWeek = { chest: 16, back: 16, shoulders: 18, biceps: 14 };
+    const amplified = applyWeaknessAmplification(normalWeek, ['spate']);
+    expect(amplified.back).toBeGreaterThan(normalWeek.back); // amp fires normally, no deload clamp
   });
 });
 

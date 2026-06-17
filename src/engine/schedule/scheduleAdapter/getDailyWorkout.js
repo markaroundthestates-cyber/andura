@@ -630,8 +630,36 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // toward MRV. The de-emphasize→MEV branch of applyFocusBias is KEPT (v-taper/
   // upper lower-region relax). Flag-OFF / not active → suppressEmphasizeUp is
   // false → applyFocusBias is byte-identical to today.
+  // DELOAD INVERSION FIX (dp_deload_suppress_amp_v1, cycle-25b 2026-06-17). An ACTIVE
+  // (reactive) deload lowered the weekly-volume budget (effectiveVolumeRatio MIN,
+  // ~0.70) but the M2/M3 amplification below ran with NO deload gate and pushed a
+  // lagging group ~50% toward its (unchanged) MRV — so a deload-cut group landed ABOVE
+  // its pre-deload baseline (the deload was INVERTED for that group). Compute
+  // deloadActive HERE (BEFORE the chain — the SAME check that was at the coachAdaptations
+  // call site below, hoisted) so a recovery week's amplified result can be clamped to
+  // never exceed each group's pre-deload normal-week budget (baseVolumeTargetsAllocated):
+  // a weak group may keep its share but never rise above its normal-week volume during a
+  // recovery week. OFF → no clamp → byte-identical (pinned OFF in fp).
+  const deloadMod = blueprints.deload?.intensity_modifier ?? null;
+  const deloadActive =
+    deloadMod !== null &&
+    ((deloadMod.rir_increment ?? 0) > 0 || (deloadMod.intensity_pct_decrement ?? 0) > 0);
+  const suppressDeloadAmp = isEnabled('dp_deload_suppress_amp_v1') && deloadActive;
+  // Clamp each group to its PRE-deload baseline (the normal-week budget before the
+  // deload cut) so amplification can never push a deload-cut group above normal.
+  const clampToPreDeloadBaseline = (map) => {
+    if (!suppressDeloadAmp || !map || !baseVolumeTargetsAllocated) return map;
+    const out = { ...map };
+    for (const k of Object.keys(out)) {
+      const cap = baseVolumeTargetsAllocated[k];
+      if (typeof cap === 'number' && typeof out[k] === 'number' && out[k] > cap) out[k] = cap;
+    }
+    return out;
+  };
   const focusBiasedTargets = applyFocusBias(baseVolumeTargets, focusPreset, emphasisActive, effectivePreset);
-  const amplifiedTargets = applyWeaknessAmplification(focusBiasedTargets, weakGroups);
+  const amplifiedTargets = clampToPreDeloadBaseline(
+    applyWeaknessAmplification(focusBiasedTargets, weakGroups),
+  );
   // T6 REST-DOWN — relax every non-emphasized group toward MEV by the engine's
   // otherGroupsReductionPct (the zero-sum trade's down half). Protect the
   // emphasized set (the target rode UP via amplification above). Gated on
@@ -640,7 +668,9 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   const tradedTargets = emphasisActive
     ? applyEmphasisDeEmphasis(amplifiedTargets, emphSet, specVol.otherGroupsReductionPct)
     : amplifiedTargets;
-  const balancedTargetsRaw = applyImbalanceCorrection(tradedTargets, imbalances);
+  const balancedTargetsRaw = clampToPreDeloadBaseline(
+    applyImbalanceCorrection(tradedTargets, imbalances),
+  );
   // #70-D5 — BEGINNER per-group weekly volume CAP (experience anchoring, behind
   // dp_learned_volume_v1, default OFF → byte-identical). A beginner (T0) is hard-
   // capped at each group's MAV no matter the day count, so a high-frequency ask
@@ -786,20 +816,19 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
   // Pre-cut reference is madeUpTargets (the budget the recovery cut ran ON) — so a
   // group whose intra-week makeup recovery then trimmed releases the CORRECT freed
   // amount. No makeup → madeUpTargets === balancedTargets clone (identical).
-  const volumeTargets = redistributeRecoveredVolumeToFreshSessionGroups(
-    madeUpTargets,
-    recoveredTargets,
-    cluster,
-    mergedState,
+  // deloadActive + the pre-deload clamp are hoisted ABOVE the amplification chain
+  // (see the DELOAD INVERSION FIX block) so M2/M3 amplification can't out-run the cut.
+  // Also clamp the session-local recovery REDISTRIBUTION: freed volume reallocated to
+  // a FRESH group must not lift it above its normal-week baseline during a recovery
+  // week either. OFF → no clamp → byte-identical.
+  const volumeTargets = clampToPreDeloadBaseline(
+    redistributeRecoveredVolumeToFreshSessionGroups(
+      madeUpTargets,
+      recoveredTargets,
+      cluster,
+      mergedState,
+    ),
   );
-  // ACTIVE deload = any non-zero intensity modifier (mirrors the React-side
-  // hasActiveDeload check in scheduleAdapterAggregate.compose: the IDLE blueprint
-  // emits a zero modifier, every real deload state — SCHEDULED_LINEAR /
-  // REACTIVE_* — a non-zero one).
-  const deloadMod = blueprints.deload?.intensity_modifier ?? null;
-  const deloadActive =
-    deloadMod !== null &&
-    ((deloadMod.rir_increment ?? 0) > 0 || (deloadMod.intensity_pct_decrement ?? 0) > 0);
   const coachAdaptations = deriveCoachAdaptations({
     // weakness-amp (M2) is the amplified-vs-focusBiased delta — so a focus-bias
     // bump is NOT mislabeled as weakness amplification (focus is intent, not a
@@ -820,6 +849,10 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     resistanceState,
     mergedState,
     deloadActive,
+    // Suppress the weakness-amp + imbalance-fix tokens during an active deload (when
+    // the suppression flag is ON) so the coach line stays coherent ("recovery week"
+    // only) instead of also claiming it "boosted" a group whose volume the deload cut.
+    suppressAmpDuringDeload: suppressDeloadAmp,
   });
 
   // #81 HARD movement-pattern EXCLUSION (contraindicated injury / explicit refusal).

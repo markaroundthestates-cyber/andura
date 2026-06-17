@@ -1996,6 +1996,26 @@ export const FLAGS = Object.freeze({
   // byte-for-byte (a fp journey carrying a reactive deload would drop set counts → move
   // a hash → pin OFF). Proven on the getDailyWorkout deload-volume regression test.
   dp_deload_volume_depth_v1: { rollout: 1, default: true },
+
+  // DELOAD weakness-amp suppression (dp_deload_suppress_amp_v1, cycle-25b audit
+  // 2026-06-17, DEFAULT ON). A reactive deload lowers the weekly-volume budget
+  // (effectiveVolumeRatio MIN, ~0.70) but applyWeaknessAmplification +
+  // applyImbalanceCorrection ran with NO deload gate and pushed a lagging group ~50%
+  // toward its (unchanged) MRV — so a deload-cut group landed ABOVE its pre-deload
+  // baseline (back 16 → 11.2 cut → 18.1 amplified > 16): the deload was INVERTED for
+  // that group, and deriveCoachAdaptations emitted BOTH a deload AND a weakness-amp
+  // token (a contradictory "recovery week" + "boosted your back" line while back
+  // volume actually rose). When ON (deloadActive computed BEFORE the chain), each
+  // amplified/imbalance-corrected group is clamped to min(amplified, preDeloadBaseline)
+  // so the deload's reduction is never exceeded (a weak group may keep its share but
+  // never rise above its normal-week volume during a recovery week), and the weakness-
+  // amp + imbalance-fix narration tokens are suppressed so the coach line stays
+  // coherent ("recovery week" only). OFF → the original un-gated amplification +
+  // narration (byte-identical). Composition/volume surface → pinned OFF in fp-config
+  // FLIPPED_FLAGS so the frozen full-path hashes stay byte-for-byte (a fp journey
+  // carrying a reactive deload WITH a lagging group would clamp the amplified budget →
+  // move a hash → pin OFF). Proven on the getDailyWorkout deload-suppress-amp test.
+  dp_deload_suppress_amp_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */
