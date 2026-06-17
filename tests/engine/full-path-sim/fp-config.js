@@ -199,6 +199,17 @@ export const FLIPPED_FLAGS = Object.freeze([
   // U/L upper-day path + non-arms focuses byte-identical) + the new arms-fullday-swap regression
   // test, NOT in this determinism stream.
   'dp_arms_fullday_swap_v1',
+  // THE FLIP 2026-06-17 (arms push/upper-day consolidate, C21-SEL-02) — the arms push/upper-day
+  // chest→arm consolidation defaults ON. On an ARMS focus whose week has a dedicated PUSH day (the
+  // 5-day arms split), redundant tier-1 chest PRESSES stack (3-4/day across flat/incline/dip sub-
+  // families) so chest out-volumes the focus arms; ON keeps one best chest press (MEV) and swaps each
+  // surplus press for an under-served direct-arm movement. `arms` IS in this harness's EMPHASIS_PRESETS,
+  // so the ON behavior WOULD move the frozen prescription hashes — pinned OFF here (in FLIPPED_FLAGS
+  // only, NOT PATH_A_FLAGS) so ctx.armsPushdaySwap is false in both A/B arms → the new block never runs
+  // → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is proven on the eval grid (arms
+  // 5d push day: 3 presses → 1 press + arm work, chest stays >= MEV, bi/tri rise; non-arms + full-day
+  // arms path byte-identical) + the new arms-pushday-consolidate regression test, NOT in this stream.
+  'dp_arms_pushday_consolidate_v1',
   // THE FLIP 2026-06-10 (R5) — metadata-derived load model defaults ON (a derived
   // maxKg cap + equipment step fills the ~uncapped exercises; curated wins). It
   // moves prescribed kg + the at-cap brake → pinned OFF here so hashOff/hashOn

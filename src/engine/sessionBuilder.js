@@ -4033,6 +4033,82 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  // #ARMS PUSH/UPPER-DAY CHEST→ARM CONSOLIDATE (ctx.armsPushdaySwap, dp_arms_pushday_consolidate_v1).
+  // The armsFulldaySwap above is scoped cluster === 'full' ONLY, so a 5-day arms split's dedicated
+  // PUSH day (cluster 'push') escapes it. focusLeadSplits caps chest weekly SETS toward MEV, but the
+  // engine spreads that capped chest volume across THREE tier-1 chest-press SUB-FAMILIES (flat /
+  // incline / dip — distinct movementKeys, so the in-session dedup keeps all three) at 2-3 sets each
+  // → the arms push day stacks 3-4 chest-press SLOTS (6-9 chest sets) on a NON-FOCUS maintenance
+  // muscle while the focus triceps gets a single tier-1 slot (live probe p3 arms 5d push day: 3
+  // presses + a fly → chest 11 on one day).
+  //
+  // LEAN SLOT-LEVEL CONSOLIDATION: trim the chest-press SLOTS down to <= 2 and SWAP each surplus
+  // (3rd, 4th…) chest-press slot for the highest-band under-served direct-arm (biceps/triceps)
+  // movement — a LENGTH-STABLE, set-stable trade (count-neutral, the inject gets DEFAULT_SETS).
+  // COLLATERAL-FREE — chest held at MEV: each removed press's SETS are TRANSFERRED onto a KEPT best
+  // press (capped at the compound ceiling) so the day's chest DOSE is conserved on the kept presses
+  // (the surplus is the redundant SLOTS, not the chest VOLUME) → weekly chest never drops below MEV.
+  // Two presses stay (a flat + an incline IS coherent chest work on a focus-arms push day — the
+  // redundancy is the 3rd/4th press), so chest keeps a real two-press exposure that day. Targets the
+  // MORE under-served arm group first (fewest current slots → lags MAV most), re-evaluated per swap.
+  // A chest FLYE / isolation (tier 2) is never touched. Scoped to push/upper (full is the
+  // armsFulldaySwap path — no double-firing). OFF / non-arms / <= 2 chest presses → byte-identical.
+  if (ctx?.armsPushdaySwap === true) {
+    const primaryOfName = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+    const isChestPress = (name) =>
+      primaryOfName(name) === 'piept' && (getExerciseMetadata(name).tier ?? 2) <= COMPOUND_TIER;
+    const liveSlotCount = () => {
+      const c = {};
+      for (const e of chosen) { const g = primaryOfName(e.name); if (g) c[g] = (c[g] || 0) + 1; }
+      return c;
+    };
+    // COLLATERAL-FREE GUARD: only act when chest is genuinely OVER-budgeted — its WEEKLY budget must
+    // sit at least one minimum press (COMPOUND_MIN_SETS) ABOVE chest MEV, so giving up a redundant
+    // press still leaves chest >= MEV. A thin-chest persona (p2/p7: budget ~10 ≈ MEV → chest is NOT
+    // the surplus, it is barely maintained AND already trails the focus arms) is a NO-OP (byte-
+    // identical, no net-negative trim); only a genuinely over-budgeted chest (p3/masa: budget 13+,
+    // delivers 14 → out-volumes the focus) yields the redundant 3rd press. Reads ctx.volumeTargets
+    // (the SAME weekly budget the set distribution below consumes).
+    const chestWeeklyBudget = ctx?.volumeTargets && typeof ctx.volumeTargets === 'object'
+      ? Number(ctx.volumeTargets.chest) : NaN;
+    const CHEST_MEV = ISRAETEL_BASELINES.chest?.MEV ?? 8;
+    const chestSurplus = Number.isFinite(chestWeeklyBudget)
+      && chestWeeklyBudget >= CHEST_MEV + COMPOUND_MIN_SETS;
+    // Trim down to <= 2 chest presses ONLY when chest is over-budgeted (collateral-free): each pass
+    // swaps the lowest-priority surplus chest press for the most under-served arm. Slot-only (set
+    // distribution runs below). Not surplus → never trims → byte-identical.
+    let guard = 0;
+    while (chestSurplus && guard < 4) {
+      guard += 1;
+      const chestPressIdxs = [];
+      for (let i = 0; i < chosen.length; i++) if (isChestPress(chosen[i].name)) chestPressIdxs.push(i);
+      if (chestPressIdxs.length <= 2) break; // two presses left → coherent chest exposure, stop
+      const slotCount = liveSlotCount();
+      // MORE under-served arm group first (fewest slots → lags MAV most). Both arms are in
+      // `targets` on a push/upper day. Re-evaluated each pass so the swaps stay balanced.
+      const armGroups = ['biceps', 'triceps'].filter((g) => targets.includes(g));
+      armGroups.sort((a, b) => (slotCount[a] || 0) - (slotCount[b] || 0));
+      const inject = (() => {
+        for (const g of armGroups) {
+          const ex = (pools.find((p) => p.group === g)?.pool ?? []).find((e) => !isTaken(e));
+          if (ex) return { ex, g };
+        }
+        return null;
+      })();
+      if (!inject) break; // no distinct under-served arm movement available → accept the gap
+      const removeIdx = chestPressIdxs[chestPressIdxs.length - 1]; // lowest-priority surplus press
+      const removed = chosen[removeIdx];
+      chosenNames.delete(removed.name);
+      chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
+      const rg = getExerciseMetadata(removed.name).muscle_target_primary;
+      if (rg && groupCount[rg]) groupCount[rg] -= 1;
+      chosen.splice(removeIdx, 1, { name: inject.ex.name, sets: DEFAULT_SETS });
+      chosenNames.add(inject.ex.name);
+      chosenMovements.add(dedupKey(inject.ex.name, inject.ex.meta));
+      groupCount[inject.g] = (groupCount[inject.g] || 0) + 1;
+    }
+  }
+
   const metaOf = (name) => getExerciseMetadata(name);
   const groupOf = (name) => metaOf(name).muscle_target_primary;
 

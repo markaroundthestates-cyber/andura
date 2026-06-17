@@ -1508,6 +1508,22 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       isEnabled('dp_arms_fullday_swap_v1')
       && focusPreset === 'arms'
       && cluster === 'full',
+    // dp_arms_pushday_consolidate_v1 (cycle-21 rebalance 2026-06-17, C21-SEL-02) — the
+    // armsFulldaySwap above is cluster === 'full' ONLY, so a 5-day arms split's dedicated PUSH
+    // day (cluster 'push') is never trimmed: focusLeadSplits caps chest weekly SETS toward MEV
+    // but the engine spreads that capped volume across THREE tier-1 chest-press sub-families
+    // (flat/incline/dip — distinct movementKeys → the dedup keeps all three) → 3-4 chest-press
+    // slots (6-9 chest sets) on a non-focus muscle while the focus triceps gets a single tier-1
+    // slot. When ON + focusLeadSplits.focus === 'arms' + a chest-pressing cluster (push/upper),
+    // set this so buildSession keeps the single best chest press (MEV) and swaps each surplus
+    // chest-press slot (>= 2 tier-1 presses) for an under-served direct-arm movement — length-
+    // stable; chest held at MEV (collateral-free). Scoped push/upper (full is the armsFulldaySwap
+    // path — no double-fire). OFF / non-arms-focusLeadSplits / non-push-upper → false → never
+    // runs → byte-identical.
+    armsPushdaySwap:
+      isEnabled('dp_arms_pushday_consolidate_v1')
+      && focusLeadSplits?.focus === 'arms'
+      && (cluster === 'push' || cluster === 'upper'),
     // dp_back_maintenance_floor_v1 (2026-06-16) — the LOWER-emphasis 5/6/7d split keeps the
     // retained upper-region day as PUSH (not pull), so chest gets a 2nd weekly exposure the
     // push day delivers while back rides the `upper` day alone and can fall below MAINTENANCE

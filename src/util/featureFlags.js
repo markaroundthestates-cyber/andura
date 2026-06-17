@@ -1600,6 +1600,27 @@ export const FLAGS = Object.freeze({
   // IS in the fp EMPHASIS_PRESETS so ON would move the frozen hashes unless gated OFF there).
   dp_arms_fullday_swap_v1: { rollout: 1, default: true },
 
+  // ARMS PUSH/UPPER-DAY CHEST→ARM CONSOLIDATE (cycle-21 rebalance 2026-06-17, C21-SEL-02)
+  // (RISK LOW — selection only, never kg). The dp_arms_fullday_swap_v1 swap above fires ONLY
+  // on cluster === 'full', so on a 5-day arms split (['upper','lower','push','pull','legs'])
+  // the dedicated PUSH day (cluster 'push') is NEVER trimmed. focusLeadSplits caps chest
+  // weekly SETS toward MEV, but the engine spreads that capped chest volume across THREE
+  // tier-1 chest-press SUB-FAMILIES (flat / incline / dip — distinct movementKeys, so the
+  // in-session dedup keeps all three) at 2-3 sets each → the arms push day allocates 3-4
+  // chest-press slots (6-9 chest sets) to a NON-FOCUS maintenance muscle while the focus
+  // triceps gets a single tier-1 slot (live probe p3 arms 5d push day: 3 presses + a fly =
+  // chest 11, vs the focus arms getting their work elsewhere — wasteful slot allocation on
+  // the arm-adjacent day). When ON + ctx.focusLeadSplits.focus === 'arms' + a chest-pressing
+  // cluster (push/upper), buildSession KEEPS the single best chest press (its MEV sets) and
+  // SWAPS each surplus chest-press slot (when the session held >= 2 tier-1 chest presses) for
+  // the highest-band under-served direct-arm (biceps/triceps) movement — LENGTH-STABLE
+  // (count-neutral, the inject gets DEFAULT_SETS), chest held at MEV (the >= 2 gate keeps a
+  // press on the day, never zeroed). Mirror of dp_arms_fullday_swap_v1 extended to push/upper.
+  // OFF / non-arms-focusLeadSplits / non-push-upper / < 2 chest presses → ctx.armsPushdaySwap
+  // false → never runs → byte-identical (pinned OFF in the fp-config FLIPPED_FLAGS — `arms` IS
+  // in the fp EMPHASIS_PRESETS so ON would move the frozen hashes unless gated OFF there).
+  dp_arms_pushday_consolidate_v1: { rollout: 1, default: true },
+
   // ARMS SIGNATURE (elite-coach eval ceiling 2026-06-13) — make biceps + triceps the
   // week's CLEAR top-two by VOLUME on an `arms` focus, the founder signature the judges
   // capped 25/57 arms configs at <=5.5 for ("focus muscles present but NOT the volume
