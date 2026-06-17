@@ -16,8 +16,12 @@ const admin = require('firebase-admin');
 const {
   isDueNow,
   isWeeklySummaryDue,
+  isDailyCoachDue,
+  isSessionMissedDue,
   DAILY_REMINDER,
   WEEKLY_SUMMARY,
+  DAILY_COACH,
+  SESSION_MISSED,
 } = require('./scheduler');
 
 const { selectExpiredUids } = require('./deletionGrace');
@@ -85,6 +89,8 @@ exports.scheduledPushNotifications = onSchedule(
     const jobs = [];
     let dueDaily = 0;
     let dueWeekly = 0;
+    let dueCoach = 0;
+    let dueMissed = 0;
 
     for (const uid of Object.keys(users)) {
       const user = users[uid];
@@ -98,11 +104,23 @@ exports.scheduledPushNotifications = onSchedule(
       const tokens = Object.keys(tokenMap).filter((t) => tokenMap[t] === true);
       if (!tokens.length) continue;
 
+      // logs is a SYNC_KEY (users/{uid}/logs) — needed for the session-missed
+      // signal. Array of session rows, each carrying a 'date' ('YYYY-MM-DD').
+      const logs = Array.isArray(user.logs) ? user.logs : [];
+
+      // else-if chain: never double-notify a user in the same tick. The fixed
+      // slots cannot collide (daily-coach 07:30 vs weekly-summary Sun 19:00 vs
+      // the user's reminder time vs reminder+grace), but the chain is the safety.
       if (isDueNow(prefs, now)) {
         dueDaily++;
         jobs.push(sendAndPrune(uid, tokens, DAILY_REMINDER));
+      } else if (isDailyCoachDue(prefs, now)) {
+        dueCoach++;
+        jobs.push(sendAndPrune(uid, tokens, DAILY_COACH));
+      } else if (isSessionMissedDue(prefs, now, logs)) {
+        dueMissed++;
+        jobs.push(sendAndPrune(uid, tokens, SESSION_MISSED));
       } else if (isWeeklySummaryDue(prefs, now)) {
-        // else-if: never double-notify a user in the same tick.
         dueWeekly++;
         jobs.push(sendAndPrune(uid, tokens, WEEKLY_SUMMARY));
       }
@@ -112,6 +130,8 @@ exports.scheduledPushNotifications = onSchedule(
     logger.info('fcm-scheduler tick done', {
       users: Object.keys(users).length,
       dueDaily,
+      dueCoach,
+      dueMissed,
       dueWeekly,
     });
   }

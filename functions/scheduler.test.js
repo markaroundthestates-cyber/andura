@@ -6,6 +6,10 @@ const assert = require('node:assert/strict');
 const {
   isDueNow,
   isWeeklySummaryDue,
+  isDailyCoachDue,
+  isSessionMissedDue,
+  inQuietHours,
+  hasSessionLoggedToday,
   parseTimeToMinutes,
   firstActiveDayIndex,
   bucharestParts,
@@ -38,6 +42,8 @@ function basePrefs(overrides = {}) {
     ...overrides,
   };
 }
+
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 test('bucharestParts: winter UTC+2 maps Monday 18:05 correctly', () => {
   const now = localWinter(2026, 0, 5, 18, 5); // Mon 18:05 local
@@ -181,4 +187,157 @@ test('weekly summary: event toggle off = false', () => {
   const prefs = basePrefs({ events: { 'weekly-summary': false } });
   const sun = localWinter(2026, 0, 11, 19, 0);
   assert.equal(isWeeklySummaryDue(prefs, sun), false);
+});
+
+// ── QUIET HOURS (Nu deranja) [22:00, 07:00) ──────────────────────────────────
+
+test('inQuietHours: boundaries of the fixed [22:00, 07:00) window', () => {
+  assert.equal(inQuietHours(21 * 60 + 59), false); // 21:59 outside
+  assert.equal(inQuietHours(22 * 60), true); // 22:00 start (inclusive)
+  assert.equal(inQuietHours(23 * 60 + 30), true); // 23:30 inside
+  assert.equal(inQuietHours(2 * 60), true); // 02:00 inside (wraps midnight)
+  assert.equal(inQuietHours(6 * 60 + 59), true); // 06:59 inside
+  assert.equal(inQuietHours(7 * 60), false); // 07:00 end (exclusive)
+  assert.equal(inQuietHours(7 * 60 + 30), false); // 07:30 outside
+});
+
+test('quiet hours: a reminder set at 23:00 is SUPPRESSED (Nu deranja)', () => {
+  // FAILS before the quiet-hours enforcement: 23:00 is an active day at the
+  // matching tick, so isDueNow returned true and the user got pinged at night.
+  const prefs = basePrefs({ time: '23:00' });
+  const now = localWinter(2026, 0, 5, 23, 0); // Mon 23:00 inside quiet hours
+  assert.equal(isDueNow(prefs, now), false);
+});
+
+test('quiet hours: a reminder set at 06:30 is SUPPRESSED (early morning)', () => {
+  const prefs = basePrefs({ time: '06:30' });
+  const now = localWinter(2026, 0, 5, 6, 30); // Mon 06:30 inside quiet hours
+  assert.equal(isDueNow(prefs, now), false);
+});
+
+test('quiet hours: a reminder at 18:00 (outside) still fires', () => {
+  const prefs = basePrefs({ time: '18:00' });
+  const now = localWinter(2026, 0, 5, 18, 0);
+  assert.equal(isDueNow(prefs, now), true);
+});
+
+// ── DAILY COACH (07:30 morning nudge, default ON) ────────────────────────────
+
+test('daily-coach: fires at 07:30 on an active day (default ON, absent toggle)', () => {
+  // FAILS before the daily-coach branch existed: nothing fired the morning nudge.
+  const prefs = basePrefs({ events: { 'session-reminder': true } }); // no daily-coach key
+  const now = localWinter(2026, 0, 5, 7, 30); // Mon 07:30
+  assert.equal(isDailyCoachDue(prefs, now), true);
+});
+
+test('daily-coach: 07:30 tick window (07:30 in [07:30, 07:45)) = true', () => {
+  const prefs = basePrefs();
+  const now = localWinter(2026, 0, 5, 7, 30);
+  assert.equal(isDailyCoachDue(prefs, now), true);
+});
+
+test('daily-coach: wrong tick (08:00) = false', () => {
+  const prefs = basePrefs();
+  const now = localWinter(2026, 0, 5, 8, 0);
+  assert.equal(isDailyCoachDue(prefs, now), false);
+});
+
+test('daily-coach: explicit toggle off = false', () => {
+  const prefs = basePrefs({ events: { 'daily-coach': false } });
+  const now = localWinter(2026, 0, 5, 7, 30);
+  assert.equal(isDailyCoachDue(prefs, now), false);
+});
+
+test('daily-coach: inactive day = false', () => {
+  const prefs = basePrefs({ days: mondayOnly });
+  const tue = localWinter(2026, 0, 6, 7, 30); // Tuesday not active
+  assert.equal(isDailyCoachDue(prefs, tue), false);
+});
+
+test('daily-coach: saptamanal fires only on the FIRST active day', () => {
+  const days = [false, false, true, false, true, false, false]; // Wed, Fri
+  const prefs = basePrefs({ frequency: 'saptamanal', days });
+  assert.equal(isDailyCoachDue(prefs, localWinter(2026, 0, 7, 7, 30)), true); // Wed (first)
+  assert.equal(isDailyCoachDue(prefs, localWinter(2026, 0, 9, 7, 30)), false); // Fri later
+});
+
+test('daily-coach: off frequency = false', () => {
+  const prefs = basePrefs({ frequency: 'off' });
+  const now = localWinter(2026, 0, 5, 7, 30);
+  assert.equal(isDailyCoachDue(prefs, now), false);
+});
+
+// ── SESSION MISSED (opt-in, real missed signal) ──────────────────────────────
+
+test('hasSessionLoggedToday: matches today Europe/Bucharest date', () => {
+  const now = localWinter(2026, 0, 5, 20, 0); // Mon 2026-01-05 local
+  assert.equal(hasSessionLoggedToday([{ date: '2026-01-05' }], now), true);
+  assert.equal(hasSessionLoggedToday([{ date: '2026-01-04' }], now), false);
+  assert.equal(hasSessionLoggedToday([], now), false);
+  assert.equal(hasSessionLoggedToday(null, now), false);
+});
+
+test('session-missed: opt-in + scheduled day + grace passed + NO log today = true', () => {
+  // FAILS before the session-missed branch existed: the toggle fired nothing.
+  // Reminder 18:00 + 90min grace => check tick 19:30. No log for today.
+  const prefs = basePrefs({
+    time: '18:00',
+    events: { 'session-reminder': true, 'session-missed': true },
+  });
+  const now = localWinter(2026, 0, 5, 19, 30); // Mon, 90min after 18:00
+  assert.equal(isSessionMissedDue(prefs, now, []), true);
+});
+
+test('session-missed: a session WAS logged today = false (no miss)', () => {
+  const prefs = basePrefs({
+    time: '18:00',
+    events: { 'session-missed': true },
+  });
+  const now = localWinter(2026, 0, 5, 19, 30);
+  assert.equal(isSessionMissedDue(prefs, now, [{ date: '2026-01-05' }]), false);
+});
+
+test('session-missed: DEFAULT OFF (absent toggle) = false', () => {
+  const prefs = basePrefs({ time: '18:00' }); // no session-missed key
+  const now = localWinter(2026, 0, 5, 19, 30);
+  assert.equal(isSessionMissedDue(prefs, now, []), false);
+});
+
+test('session-missed: explicit false = false', () => {
+  const prefs = basePrefs({ time: '18:00', events: { 'session-missed': false } });
+  const now = localWinter(2026, 0, 5, 19, 30);
+  assert.equal(isSessionMissedDue(prefs, now, []), false);
+});
+
+test('session-missed: before the grace tick (18:00 itself) = false', () => {
+  const prefs = basePrefs({ time: '18:00', events: { 'session-missed': true } });
+  const now = localWinter(2026, 0, 5, 18, 0); // exactly reminder time, grace not elapsed
+  assert.equal(isSessionMissedDue(prefs, now, []), false);
+});
+
+test('session-missed: inactive day = false', () => {
+  const prefs = basePrefs({
+    days: mondayOnly,
+    time: '18:00',
+    events: { 'session-missed': true },
+  });
+  const tue = localWinter(2026, 0, 6, 19, 30); // Tuesday not scheduled
+  assert.equal(isSessionMissedDue(prefs, tue, []), false);
+});
+
+test('session-missed: suppressed in quiet hours even if opted in + missed', () => {
+  // Reminder 22:00 + 90min grace => 23:30 check tick, inside quiet hours.
+  const prefs = basePrefs({ time: '22:00', events: { 'session-missed': true } });
+  const now = localWinter(2026, 0, 5, 23, 30);
+  assert.equal(isSessionMissedDue(prefs, now, []), false);
+});
+
+test('session-missed: yesterday log does NOT count as today (real signal)', () => {
+  const prefs = basePrefs({ time: '18:00', events: { 'session-missed': true } });
+  const now = localWinter(2026, 0, 5, 19, 30);
+  const yesterday = new Date(now.getTime() - DAY_MS);
+  const yKey = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Bucharest', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(yesterday);
+  assert.equal(isSessionMissedDue(prefs, now, [{ date: yKey }]), true);
 });
