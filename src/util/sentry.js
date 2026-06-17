@@ -62,6 +62,18 @@ export async function initSentry() {
           // breadcrumb.data.url, leaking the bearer token. Redact the token
           // value (kept prefix for queryability) up to next query delimiter.
           out = out.replace(/([?&]auth=)[^&\s"'<]+/gi, '$1[REDACTED]');
+          // §SEC-22-01 (audit) — magic-link sign-in: on /auth-callback the live
+          // URL (...&oobCode=<token>&...) sits in window.location until
+          // replaceState (success path only). Any exception in that window
+          // auto-populates event.request.url + breadcrumbs from window.location,
+          // shipping the single-use Firebase email-sign-in credential. An actor
+          // with the oobCode before it's consumed signs in AS the user. Redact
+          // the token value (mirror the auth= rule), kept prefix for queryability.
+          out = out.replace(/([?&]oobCode=)[^&\s"'<]+/gi, '$1[REDACTED]');
+          // §SEC-22-01 — URL-encoded email param (email=...%40... / continueUrl
+          // reflection) isn't caught by the plain-email regex below (needs a
+          // literal @). Redact the param value when it carries an encoded @.
+          out = out.replace(/([?&](?:email|continueUrl)=)[^&\s"'<]*%40[^&\s"'<]*/gi, '$1[REDACTED]');
           // Email: \b prefix prevents stripping preceding word
           // (e.g., 'User user@example.com' kept 'User' instead of consuming it).
           out = out.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<EMAIL>');

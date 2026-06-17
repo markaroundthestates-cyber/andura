@@ -177,4 +177,25 @@ describe('Sentry beforeSend — behavioral scrub via production source extractio
     expect(prodScrubMsg(`https://rtdb/x.json?print=pretty&auth=${jwt}&shallow=true`))
       .toBe('https://rtdb/x.json?print=pretty&auth=[REDACTED]&shallow=true');
   });
+
+  it('PROD scrubMsg redacts magic-link oobCode (§SEC-22-01 leak fix)', () => {
+    // Single-use Firebase email-sign-in token sitting in /auth-callback URL.
+    const oob = 'ABCdef123_THE_REAL_SIGNIN_TOKEN_xyz789';
+    expect(prodScrubMsg(`https://andura.app/auth-callback?mode=signIn&oobCode=${oob}&apiKey=K`))
+      .toBe('https://andura.app/auth-callback?mode=signIn&oobCode=[REDACTED]&apiKey=K');
+  });
+
+  it('PROD scrubMsg redacts URL-encoded email param (§SEC-22-01)', () => {
+    // email=gigel%40example.com — the plain-email regex needs a literal @, so
+    // the encoded param survived pre-fix. Redact the whole param value.
+    expect(prodScrubMsg('https://andura.app/auth-callback?email=gigel%40example.com&lang=en'))
+      .toBe('https://andura.app/auth-callback?email=[REDACTED]&lang=en');
+  });
+
+  it('PROD scrubMsg redacts oobCode + encoded email together, keeps trailing param', () => {
+    const oob = 'ABCdef123_THE_REAL_SIGNIN_TOKEN_xyz789';
+    const url = `https://andura.app/auth-callback?mode=signIn&oobCode=${oob}&apiKey=K&lang=en&email=gigel%40example.com`;
+    expect(prodScrubMsg(url))
+      .toBe('https://andura.app/auth-callback?mode=signIn&oobCode=[REDACTED]&apiKey=K&lang=en&email=[REDACTED]');
+  });
 });

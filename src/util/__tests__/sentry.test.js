@@ -368,6 +368,41 @@ describe('beforeSend hook — PII scrub aplicat la event fields', () => {
     expect(result.message).toBe('mail <EMAIL>');
     expect(result.breadcrumbs[0].message).toBe('path /users/<UID>');
   });
+
+  // §SEC-22-01 — magic-link sign-in leak. On /auth-callback the live URL with
+  // the single-use oobCode + (encoded) email sits in window.location until
+  // replaceState (success path). Any exception in that window auto-fills
+  // request.url + breadcrumbs from window.location → ships the credential.
+  it('§SEC-22-01 scrub oobCode + encoded email in request.url + breadcrumb.data.url', () => {
+    const OOB = 'ABCdef123_THE_REAL_SIGNIN_TOKEN_xyz789';
+    const liveUrl =
+      `https://andura.app/auth-callback?mode=signIn&oobCode=${OOB}&apiKey=AIzaSyFAKE&lang=en&email=gigel%40example.com`;
+    const event = {
+      exception: { values: [{ value: `TypeError at ${liveUrl}` }] },
+      request: { url: liveUrl },
+      breadcrumbs: [
+        { category: 'navigation', data: { url: liveUrl } },
+        { category: 'fetch', message: `GET ${liveUrl} failed`, data: { url: liveUrl } },
+      ],
+    };
+    const result = beforeSend(event);
+    // The one-time sign-in token + email must NOT survive in ANY channel.
+    for (const channel of [
+      result.request.url,
+      result.exception.values[0].value,
+      result.breadcrumbs[0].data.url,
+      result.breadcrumbs[1].data.url,
+      result.breadcrumbs[1].message,
+    ]) {
+      expect(channel).not.toContain(OOB);
+      expect(channel).toContain('oobCode=[REDACTED]');
+      expect(channel).not.toContain('gigel%40example.com');
+      expect(channel).toContain('email=[REDACTED]');
+    }
+    // Non-sensitive params preserved for queryability.
+    expect(result.request.url).toContain('mode=signIn');
+    expect(result.request.url).toContain('lang=en');
+  });
 });
 
 describe('captureException — manual exception dispatch', () => {
