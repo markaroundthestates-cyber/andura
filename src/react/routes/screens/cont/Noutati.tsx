@@ -41,12 +41,21 @@ const MONTH_EN_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 
 
 /** ISO date → "12 Jun 2026" (EN) / "12 iun 2026" (RO). Empty/invalid → ''. */
 function formatDate(iso: string): string {
+  // Parse the date-only ISO by string split (NO new Date(iso)) — mirrors
+  // WeightLogList.formatDate. `new Date('2026-06-17')` is UTC-midnight, so any
+  // user west of UTC rendered the PREVIOUS day. Build the label from the literal
+  // y-m-d parts so it is timezone-independent.
   if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
+  const parts = iso.split('-');
+  const y = parts[0];
+  const m = parts[1];
+  const d = parts[2];
+  if (!y || !m || !d) return '';
+  const monthIdx = Number(m) - 1;
+  if (monthIdx < 0 || monthIdx > 11) return '';
   const months = getCurrentLocale() === 'en' ? MONTH_EN_SHORT : MONTH_RO_SHORT;
-  const month = months[d.getMonth()] ?? '';
-  return `${d.getDate()} ${month} ${d.getFullYear()}`;
+  const month = months[monthIdx] ?? '';
+  return `${Number(d)} ${month} ${Number(y)}`;
 }
 
 type LoadState = 'loading' | 'loaded' | 'error';

@@ -5,7 +5,7 @@
 // Settings-screen specs); EN-clean rendering is covered by the i18n no-leak gate.
 
 import type { JSX } from 'react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Noutati } from '../../../routes/screens/cont/Noutati';
@@ -163,5 +163,71 @@ describe('Noutati — navigation', () => {
     mockFetch.mockResolvedValue(result({ list: [] }));
     renderScreen();
     expect(screen.getByRole('heading', { name: 'Noutati', level: 1 })).toBeInTheDocument();
+  });
+});
+
+// Off-by-one west of UTC: pre-fix formatDate did `new Date('2026-06-17')` (which
+// is UTC-midnight) then read getDate()/getMonth() — so any user west of UTC saw
+// the PREVIOUS day. The fix parses the date-only ISO by string split (no
+// new Date(iso)), so the label is timezone-independent. This test simulates a
+// negative-offset (west-of-UTC) runtime by stubbing the global Date so a
+// date-only string lands one local day earlier (exactly what a real west-of-UTC
+// engine does) — the rendered card must still show the literal calendar day.
+describe('Noutati — date renders timezone-independently (off-by-one west of UTC)', () => {
+  const RealDate = Date;
+
+  beforeEach(() => {
+    setLocale('en'); // assert against EN month tokens for a stable label
+    // Stub: `new Date('YYYY-MM-DD')` (date-only) → an instance whose LOCAL
+    // accessors (getDate/getMonth/getFullYear) report the day BEFORE the literal
+    // — exactly what a real west-of-UTC engine returns for a UTC-midnight value.
+    // Forced explicitly (not via host TZ) so the test is deterministic on any
+    // machine, including this east-of-UTC dev box. Any other Date use passes
+    // through to RealDate unchanged. The fix avoids new Date(iso) entirely, so
+    // the stub never affects its output (passes); pre-fix reads these accessors
+    // (fails — shows the prior day).
+    vi.stubGlobal('Date', class extends RealDate {
+      _west?: { d: number; m: number; y: number };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(...args: any[]) {
+        if (args.length === 1 && typeof args[0] === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(args[0])) {
+          super(args[0]);
+          // Compute the day-before of the literal parts (1-indexed month input).
+          const parts = args[0].split('-');
+          const yy = Number(parts[0]);
+          const mm = Number(parts[1]);
+          const dd = Number(parts[2]);
+          const prior = new RealDate(RealDate.UTC(yy, mm - 1, dd));
+          prior.setUTCDate(prior.getUTCDate() - 1);
+          this._west = { d: prior.getUTCDate(), m: prior.getUTCMonth(), y: prior.getUTCFullYear() };
+          return;
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        super(...(args as [any]));
+      }
+      override getDate(): number { return this._west ? this._west.d : super.getDate(); }
+      override getMonth(): number { return this._west ? this._west.m : super.getMonth(); }
+      override getFullYear(): number { return this._west ? this._west.y : super.getFullYear(); }
+    } as unknown as DateConstructor);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    setLocale('ro');
+  });
+
+  it("renders '17 Jun 2026' for date '2026-06-17' (not 16) under a west-of-UTC runtime", async () => {
+    mockFetch.mockResolvedValue(result({ list: [mk({ id: 'tz', title: 'TZ', date: '2026-06-17' })] }));
+    renderScreen();
+    const card = await screen.findByTestId('announcement-card-tz');
+    expect(card.textContent).toContain('17 Jun 2026');
+    expect(card.textContent).not.toContain('16 Jun');
+  });
+
+  it('renders a normal date correctly under the same runtime', async () => {
+    mockFetch.mockResolvedValue(result({ list: [mk({ id: 'norm', title: 'N', date: '2026-01-10' })] }));
+    renderScreen();
+    const card = await screen.findByTestId('announcement-card-norm');
+    expect(card.textContent).toContain('10 Jan 2026');
   });
 });
