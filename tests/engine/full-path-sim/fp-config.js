@@ -605,6 +605,19 @@ export const FLIPPED_FLAGS = Object.freeze([
   // forta-posterior-balance regression test, NOT in this determinism stream. Selection/slot-side
   // (no dp.js load math) → no sim-config pin.
   'dp_forta_posterior_balance_v1',
+  // THE FLIP 2026-06-17 (glute-focus delivery) — dp_glute_focus_delivery_v1 defaults ON. On a
+  // LOWER focus fese (glutes) is emphasize[0] with a raised budget but DELIVERY halves it (the
+  // region tail) while hams over-deliver; when ON it (1) exempts fese from the hamstring floor's
+  // SURPLUS_LEG_PREFERENCE donor walk and (2) swaps a redundant over-slotted hams/quad slot so
+  // glutes LEAD the lower region. `lower` IS in this harness's EMPHASIS_PRESETS, so the ON behavior
+  // WOULD move the frozen composition hashes — pinned OFF here (in FLIPPED_FLAGS only, NOT
+  // PATH_A_FLAGS) so ctx.gluteFocusDelivery is false in both A/B arms → the donor walk keeps the
+  // legacy fese-first order + the glute-lead block never runs → BOTH frozen baselines (hashOff/
+  // hashOn) stay byte-for-byte. ON is proven on the eval grid (lower focus glutes 6 -> ~16, the
+  // lower-region leader, >= raised budget; balanced + v-taper byte-identical) + the new glute-
+  // focus-delivery regression test, NOT in this determinism stream. Selection/slot-side (no dp.js
+  // load math) → no sim-config pin.
+  'dp_glute_focus_delivery_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

@@ -1473,6 +1473,23 @@ export const FLAGS = Object.freeze({
   // byte-identical (pinned OFF in the fp-config FLIPPED_FLAGS baseline).
   dp_forta_posterior_balance_v1: { rollout: 1, default: true },
 
+  // GLUTE-FOCUS DELIVERY (cycle-21b north-star audit 2026-06-17) (RISK LOW — selection
+  // only, never kg). On a LOWER focus, fese (glutes) is the PRIMARY emphasized group
+  // (FOCUS_PRESETS.lower.emphasize[0]) and applyFocusBias correctly RAISES the glute weekly
+  // BUDGET (12→14). But DELIVERY inverts it: glutes get ~6 sets / 2 slots (~43% of the 14
+  // budget) while hamstrings OVER-deliver at ~14 / 5 slots and quads ~12 / 4 — the focus CUTS
+  // its own #1 muscle to the LOWEST of the lower region. Two delivery defects: (a) the hamstring
+  // floor's SURPLUS_LEG_PREFERENCE walks fese FIRST as the slot donor, so a glute slot is robbed
+  // to seat hams even when fese is the focus; (b) the leg-day slot allocation never lifts glutes
+  // to LEAD. When ON + the focus emphasizes fese as emphasis[0]: (1) fese is REMOVED from the
+  // hamstring floor's SURPLUS_LEG_PREFERENCE (donate from quads only — a glute slot is never
+  // robbed); (2) on a leg day where glutes does NOT lead the lower region, buildSession SWAPS a
+  // redundant OVER-slotted hams/quad slot for a glute so glutes LEADS (>= its raised budget, the
+  // volume leader of the lower region). Count-neutral (total slots unchanged). OFF / non-glute-
+  // focus → ctx.gluteFocusDelivery false → never runs → byte-identical (pinned OFF in the
+  // fp-config FLIPPED_FLAGS baseline).
+  dp_glute_focus_delivery_v1: { rollout: 1, default: true },
+
   // #LEG posterior+quad floor (orphaned-legs fix 2026-06-13) (RISK LOW — selection
   // only, never kg). Elite-coach invariant: a FULL-BODY day ALWAYS trains quads AND the
   // posterior chain. On freq 1-3 all-full-body weeks under an upper-biased focus (v-taper

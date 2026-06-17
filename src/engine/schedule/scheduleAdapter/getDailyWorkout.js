@@ -1353,6 +1353,15 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
       isEnabled('dp_forta_posterior_balance_v1')
       && userState?.user?.goal === 'forta'
       && !(typeof userState?.user?.age === 'number' && userState.user.age >= 60),
+    // GLUTE-FOCUS DELIVERY (dp_glute_focus_delivery_v1, default ON). On a LOWER focus fese
+    // (glutes) is emphasize[0] and the budget is raised, but DELIVERY gives glutes ~half its
+    // budget (the lowest of the lower region) while hams over-deliver. When ON + the focus
+    // emphasizes fese as emphasis[0], buildSession (1) exempts fese from the hamstring floor's
+    // SURPLUS_LEG_PREFERENCE donor walk and (2) swaps a redundant over-slotted hams/quad slot so
+    // glutes LEAD the lower region. Gated on the primary emphasis being fese ([...emphSet][0]).
+    // OFF / non-glute-focus → false → never runs → byte-identical (pinned OFF in fp-config).
+    gluteFocusDelivery:
+      isEnabled('dp_glute_focus_delivery_v1') && [...emphSet][0] === 'fese',
     // #70-D2 — COMPOUND-FIRST guarantee on an emphasis/weak-reordered session
     // (dp_emphasis_specialization_v1, default OFF → byte-identical). When ON, the
     // weak/emphasis front-loader is prevented from leading the day with an ISOLATION

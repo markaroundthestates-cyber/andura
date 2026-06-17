@@ -3366,7 +3366,13 @@ export function buildSession(cluster, ctx) {
         // surplus slot. Walk fese (glutes) before quads so a quad compound anchor is preferred-
         // kept; never touch a hams slot (it is the target).
         if (removeIdx < 0) {
-          const SURPLUS_LEG_PREFERENCE = ['fese', 'picioare-quads'];
+          // GLUTE-FOCUS DELIVERY (ctx.gluteFocusDelivery, dp_glute_focus_delivery_v1): when fese
+          // is the PRIMARY focus emphasis ([0]), REMOVE it from the donor walk — a glute slot is
+          // never robbed to seat hams (the focus must never cut its own #1 muscle). Donate from
+          // quads only. OFF / non-glute-focus → the legacy fese-then-quads walk (byte-identical).
+          const SURPLUS_LEG_PREFERENCE = ctx?.gluteFocusDelivery === true
+            ? ['picioare-quads']
+            : ['fese', 'picioare-quads'];
           for (const onlyIso of [true, false]) {
             for (let i = chosen.length - 1; i >= 0 && removeIdx < 0; i--) {
               const g = primaryOfName(chosen[i].name);
@@ -3521,6 +3527,81 @@ export function buildSession(cluster, ctx) {
         }
         // else: no safe victim → accept the gap (the floors maintain hams across the week).
       }
+    }
+  }
+
+  // GLUTE-FOCUS DELIVERY — glutes must LEAD the lower region (ctx.gluteFocusDelivery,
+  // dp_glute_focus_delivery_v1). On a LOWER focus fese (glutes) is emphasize[0] and the BUDGET
+  // is raised (~14), but DELIVERY gives glutes ~half (the lowest of the lower region) while hams
+  // OVER-deliver (~5 slots / 14 sets) — the focus CUTS its own #1 muscle. The SURPLUS_LEG_
+  // PREFERENCE exemption above stops a glute being ROBBED; this block RAISES glutes to LEAD: on a
+  // leg-training day where glutes does NOT out-slot the lower region (quads/hams), SWAP a
+  // redundant OVER-slotted hams/quad ISOLATION (that group keeps >=1 slot, never a leg's last
+  // slot, never a compound anchor) for a glute so glutes becomes the lower-region volume LEADER.
+  // Count-neutral. Runs AFTER all other leg floors (their slots are final). OFF / non-glute-focus
+  // / non-leg cluster → never runs → byte-identical (pinned OFF in fp-config FLIPPED_FLAGS).
+  if (
+    ctx?.gluteFocusDelivery === true
+    && (cluster === 'full' || cluster === 'lower' || cluster === 'legs')
+    && targets.includes('fese')
+  ) {
+    const primaryOfName = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+    const GLUTES = 'fese';
+    const QUAD = 'picioare-quads';
+    const HAMS = 'picioare-hamstrings';
+    const glutePool = pools.find((p) => p.group === GLUTES)?.pool ?? [];
+    // Census of the lower-region slots.
+    const liveCount = () => {
+      const c = {};
+      for (const e of chosen) {
+        const g = primaryOfName(e.name);
+        if (g) c[g] = (c[g] || 0) + 1;
+      }
+      return c;
+    };
+    // Find a redundant OVER-slotted hams/quad ISOLATION to donate (prefer the group with the
+    // MOST slots; never its last slot; iso first, then a non-anchor). Returns chosen index or -1.
+    const findLegDonor = (count) => {
+      // Donor groups by descending slot count (the most over-slotted yields first), then a
+      // deterministic name tiebreak (hams before quads).
+      const donors = [HAMS, QUAD]
+        .filter((g) => (count[g] || 0) >= 2)
+        .sort((a, b) => (count[b] - count[a]) || (a < b ? -1 : 1));
+      for (const onlyIso of [true, false]) {
+        for (const dg of donors) {
+          for (let i = chosen.length - 1; i >= 0; i--) {
+            if (primaryOfName(chosen[i].name) !== dg) continue;
+            if ((count[dg] || 0) <= 1) continue;                  // never the group's last slot
+            if (onlyIso && (getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue;
+            return i;
+          }
+        }
+      }
+      return -1;
+    };
+    // Seat glute slots while glutes does NOT strictly LEAD the lower region (out-slots BOTH
+    // quads and hams) AND a redundant leg donor + an available glute movement exist. Bounded by
+    // the donor supply (count-neutral, never grows). A small guard caps iterations defensively.
+    let guard = 0;
+    while (guard < 4) {
+      guard += 1;
+      const count = liveCount();
+      const gluteSlots = count[GLUTES] || 0;
+      const lowerRivalMax = Math.max(count[QUAD] || 0, count[HAMS] || 0);
+      if (gluteSlots > lowerRivalMax) break; // glutes already lead the lower region
+      const inject = glutePool.find((e) => !isTaken(e));
+      if (!inject) break;
+      const donorIdx = findLegDonor(count);
+      if (donorIdx < 0) break; // no redundant leg donor → accept (no orphan, never an add)
+      const removed = chosen[donorIdx];
+      const rg = primaryOfName(removed.name);
+      chosenNames.delete(removed.name);
+      chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
+      if (rg && groupCount[rg]) groupCount[rg] -= 1;
+      chosen.splice(donorIdx, 1, { name: inject.name, sets: DEFAULT_SETS });
+      chosenNames.add(inject.name);
+      chosenMovements.add(dedupKey(inject.name, inject.meta));
+      groupCount[GLUTES] = (groupCount[GLUTES] || 0) + 1;
     }
   }
 
