@@ -20,3 +20,19 @@ export function formatMMSS(seconds: number): string {
   const s = seconds % 60;
   return `${m}:${String(s).padStart(2, '0')}`;
 }
+
+/**
+ * Format a kilogram tonnage with the RO thousands separator (a space) — the
+ * shared form every tonnage surface uses (PostSummary, IstoricDetail). ro-RO
+ * groups with a dot + decimals with a comma; we swap the dot→space + comma→dot
+ * so 12450 → "12 450" and 12.5 → "12.5". Mirrors PostSummary/IstoricDetail's
+ * local formatKg so all tonnage displays match (the session-card had an en-US
+ * comma, "12,450").
+ *
+ * Examples:
+ *   formatKg(12450) → "12 450"
+ *   formatKg(20.4)  → "20.4"
+ */
+export function formatKg(kg: number): string {
+  return kg.toLocaleString('ro-RO').replace(/\./g, ' ').replace(/,/g, '.');
+}

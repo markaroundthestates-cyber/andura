@@ -66,6 +66,19 @@ describe('VirtualSessionList — collapse-by-default (accordion)', () => {
     expect(screen.queryByTestId('istoric-session-1-detail')).not.toBeInTheDocument();
   });
 
+  it('C18 — expanded card volume uses the RO separator (space, NOT en-US comma)', () => {
+    // A structured row carrying volumeKg renders the tonnage in the expanded card.
+    // The session-card once formatted it en-US ("12,450"); every other tonnage
+    // surface uses the RO space separator ("12 450").
+    renderList([
+      { title: 'Push', meta: '', ts: 1_700_000_000_000, sets: 20, durationMin: 50, volumeKg: 12450 },
+    ]);
+    fireEvent.click(screen.getByTestId('istoric-session-0'));
+    const detail = screen.getByTestId('istoric-session-0-detail');
+    expect(detail.textContent ?? '').toMatch(/12 450/);
+    expect(detail.textContent ?? '').not.toMatch(/12,450/);
+  });
+
   it('tap pe randul deschis il colapseaza la loc', () => {
     renderList(makeSessions(3));
     const row = screen.getByTestId('istoric-session-0');

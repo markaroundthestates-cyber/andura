@@ -27,6 +27,7 @@ import { Trophy, ChevronDown, ChevronRight } from 'lucide-react';
 import { Pill } from '../pulse/Pill';
 import { deriveSessionRating } from '../../lib/sessionRating';
 import type { SessionRating } from '../../lib/sessionRating';
+import { formatKg } from '../../lib/format';
 import { t } from '../../../i18n/index.js';
 
 export interface SessionRow {
@@ -165,7 +166,7 @@ function SessionCard({
               )}
               {session.volumeKg !== undefined && (
                 <span>
-                  <b className="font-mono text-ink">{session.volumeKg.toLocaleString('en-US')}</b>{' '}
+                  <b className="font-mono text-ink">{formatKg(session.volumeKg)}</b>{' '}
                   {t('istoric.landing.cardKg')}
                 </span>
               )}
