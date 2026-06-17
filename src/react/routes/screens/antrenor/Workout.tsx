@@ -65,7 +65,7 @@ import { ExerciseActionsRow } from '../../../components/Workout/ExerciseActionsR
 import { CoachNote } from '../../../components/Workout/CoachNote';
 import { isEnabled } from '../../../../util/featureFlags.js';
 import { confidenceTier, confidenceTierKey } from '../../../lib/coachConfidence';
-import { whyForStatus } from '../../../lib/whyReason';
+import { whyForStatus, whyForStatusMetric } from '../../../lib/whyReason';
 import { ExerciseMedia } from '../../../components/ExerciseMedia';
 import { getExerciseCueKey } from '../../../lib/exerciseCues';
 import { Kicker } from '../../../components/pulse/Kicker';
@@ -1388,7 +1388,13 @@ export function Workout(): JSX.Element {
     // coarse kg-vs-last re-guess. One plain sentence, on tap, never invented:
     // an unmapped/absent status falls through to the existing categorical summary.
     if (isEnabled('dp_moat_why_v1')) {
-      const reasonKey = whyForStatus(currentExercise.recReason?.status);
+      // C16-METRIC-WHY: a time/carry hold is prescribed in seconds, so the weight-
+      // framed why.reason.* copy ("urc greutatea") contradicts its seconds-only
+      // prescription. Use the seconds/hold/carry-framed why.reasonMetric.* set for a
+      // metric exercise; a reps exercise keeps the weight-framed copy unchanged.
+      const reasonKey = isMetricExercise
+        ? whyForStatusMetric(currentExercise.recReason?.status)
+        : whyForStatus(currentExercise.recReason?.status);
       if (reasonKey !== null) {
         setWhyText(t(reasonKey, { exercise: currentExercise.name }));
         return;

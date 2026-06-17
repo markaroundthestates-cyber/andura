@@ -24,6 +24,17 @@
       "onTarget": "You're right in the sweet spot — we hold and build the base.",
       "stagnantSet": "You've stalled here a few times, so I add a set instead of weight.",
       "technique": "Easing down to work on form — one step back for two forward."
+    },
+    "reasonMetric": {
+      "increase": "You held it easily last time, so I'm nudging the challenge up.",
+      "catchUp": "You're handling this easily — climbing toward your real level.",
+      "easeBack": "It's been hard a few times, so I'm easing off so you own the hold.",
+      "consolidate": "You're not fully recovered, so today we hold the same target.",
+      "init": "Still getting to know you — this is a starting point, I'll tune it after your first hold.",
+      "maintain": "You're cutting, so we maintain the target — no need to chase a record now.",
+      "onTarget": "You're right in the sweet spot — we hold and build the base.",
+      "stagnantSet": "You've stalled here a few times, so I adjust the hold target.",
+      "technique": "Easing up today to work on the hold — one step back for two forward."
     }
   },
   "coachConfidence": {

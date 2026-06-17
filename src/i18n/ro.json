@@ -24,6 +24,17 @@
       "onTarget": "Esti fix in zona buna — mentinem si construim baza.",
       "stagnantSet": "Te-ai blocat aici de cateva ori, asa ca adaug o serie in loc de greutate.",
       "technique": "Cobor putin ca sa lucram pe forma — un pas inapoi pentru doi inainte."
+    },
+    "reasonMetric": {
+      "increase": "Ai tinut usor ultima data, asa ca urc putin provocarea.",
+      "catchUp": "Te descurci usor — urc catre nivelul tau real.",
+      "easeBack": "A fost greu de cateva ori, asa ca usurez putin ca sa stapanesti tinuta.",
+      "consolidate": "Nu esti complet refacut, asa ca azi ramanem la aceeasi tinta.",
+      "init": "Inca te cunosc — asta e un punct de pornire, il reglez dupa prima tinuta.",
+      "maintain": "Esti in definire, asa ca mentinem tinta — nu fortam un record acum.",
+      "onTarget": "Esti fix in zona buna — mentinem si construim baza.",
+      "stagnantSet": "Te-ai blocat aici de cateva ori, asa ca ajustez tinta tinutei.",
+      "technique": "Mai usor azi ca sa lucram pe tinuta — un pas inapoi pentru doi inainte."
     }
   },
   "coachConfidence": {

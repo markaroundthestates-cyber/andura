@@ -27,6 +27,18 @@ export function whyForStatus(status: string | null | undefined): string | null {
   return key ?? null;
 }
 
+// C16-METRIC-WHY: a time/carry metric exercise is prescribed in SECONDS, never
+// weight × reps, so the weight-framed why.reason.* copy ("urc greutatea", "adaug o
+// serie in loc de greutate") LIES on a hold/carry. This returns the seconds/hold/
+// carry-framed why.reasonMetric.* key for the same engine status. Mirrors whyForStatus
+// exactly (same status enum → same set of distinct reasons) but in metric language;
+// absent/unknown status → null so the caller degrades to the honest fallback ladder.
+export function whyForStatusMetric(status: string | null | undefined): string | null {
+  const key = whyForStatus(status);
+  if (key === null) return null;
+  return key.replace('why.reason.', 'why.reasonMetric.');
+}
+
 // Every status the engine can emit (dp.js status enum) → one why.reason.* key.
 // CATCH UP folds into INCREASE's "climbing toward your real weight" framing;
 // ON TARGET / PEAK / CAP REPS / CAP share the "sweet spot, hold and build" framing

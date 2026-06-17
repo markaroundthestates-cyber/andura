@@ -4,7 +4,7 @@
 // why.reason.* copy in BOTH locales is jargon-free.
 
 import { describe, it, expect } from 'vitest';
-import { whyForStatus, WHY_REASON_KEYS } from '../../lib/whyReason';
+import { whyForStatus, whyForStatusMetric, WHY_REASON_KEYS } from '../../lib/whyReason';
 import { _getBundle } from '../../../i18n/index.js';
 
 // The full engine status enum (dp.js): every value must resolve to a non-null key.
@@ -49,6 +49,37 @@ describe('whyForStatus — real engine reason, never a re-guess', () => {
   });
 });
 
+describe('whyForStatusMetric — seconds/hold framing, no weight talk', () => {
+  it('maps every engine status to a why.reasonMetric.* key', () => {
+    for (const s of ALL_STATUSES) {
+      const key = whyForStatusMetric(s);
+      expect(key, `status ${s}`).toMatch(/^why\.reasonMetric\./);
+    }
+  });
+
+  it('absent / unknown status → null (caller degrades to the honest fallback)', () => {
+    expect(whyForStatusMetric(undefined)).toBeNull();
+    expect(whyForStatusMetric('SOMETHING ELSE')).toBeNull();
+  });
+
+  it('a metric why-line is NEVER weight-framed (en + ro)', () => {
+    // The defect: a time/carry hold got the weight-framed why.reason copy ("urc
+    // greutatea" / "nudging the weight up"). Every metric copy must avoid weight talk.
+    const WEIGHT_TALK = /greutate|greutatea|weight/i;
+    for (const locale of ['en', 'ro'] as const) {
+      const bundle = _getBundle(locale) as Record<string, Record<string, Record<string, string>>>;
+      const block = bundle.why!.reasonMetric;
+      expect(block, `${locale} reasonMetric block`).toBeTruthy();
+      for (const s of ALL_STATUSES) {
+        const leaf = whyForStatusMetric(s)!.replace('why.reasonMetric.', '');
+        const copy = block![leaf]!;
+        expect(typeof copy, `${locale} ${s}`).toBe('string');
+        expect(WEIGHT_TALK.test(copy), `${locale} ${s}: ${copy}`).toBe(false);
+      }
+    }
+  });
+});
+
 // GIGEL rule — no numbers/jargon in any why.reason copy, either locale.
 const BANNED = /\d|RPE|RIR|e1RM|1RM|sigma|MEV|MAV|MRV|kalman/i;
 
@@ -58,16 +89,20 @@ describe('why.reason i18n — no-jargon ban (en + ro)', () => {
       const bundle = _getBundle(locale) as Record<string, Record<string, Record<string, string>>>;
       const block = bundle.why!.reason;
       expect(block).toBeTruthy();
-      // Every distinct key the mapper can emit must exist in the bundle.
+      const metricBlock = bundle.why!.reasonMetric;
+      expect(metricBlock).toBeTruthy();
+      // Every distinct key the mapper can emit must exist in BOTH the reps + metric
+      // bundles, jargon-free, with only {exercise}/{kg} placeholders.
       for (const fullKey of WHY_REASON_KEYS) {
         const leaf = fullKey.replace('why.reason.', '');
-        const copy = block![leaf]!;
-        expect(typeof copy, fullKey).toBe('string');
-        expect(copy.length).toBeGreaterThan(0);
-        expect(BANNED.test(copy), `${fullKey}: ${copy}`).toBe(false);
-        const placeholders = copy.match(/\{[^}]+\}/g) ?? [];
-        for (const p of placeholders) {
-          expect(['{exercise}', '{kg}']).toContain(p);
+        for (const copy of [block![leaf]!, metricBlock![leaf]!]) {
+          expect(typeof copy, fullKey).toBe('string');
+          expect(copy.length).toBeGreaterThan(0);
+          expect(BANNED.test(copy), `${fullKey}: ${copy}`).toBe(false);
+          const placeholders = copy.match(/\{[^}]+\}/g) ?? [];
+          for (const p of placeholders) {
+            expect(['{exercise}', '{kg}']).toContain(p);
+          }
         }
       }
     });
