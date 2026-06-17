@@ -2100,7 +2100,8 @@
       "body1": "Your data on this device is erased right away and you are signed out.",
       "body2": "Your cloud backup is kept for 30 days. Sign back in within 30 days to restore your account, or it is permanently deleted.",
       "acceptCta": "Delete account",
-      "cancelCta": "Cancel"
+      "cancelCta": "Cancel",
+      "errorRetry": "We could not reach the server to delete your account. Check your connection and try again."
     },
     "restoreAccount": {
       "title": "Account scheduled for deletion",

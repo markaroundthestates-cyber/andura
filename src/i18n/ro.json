@@ -2100,7 +2100,8 @@
       "body1": "Datele tale de pe acest dispozitiv sunt sterse imediat si esti deconectat.",
       "body2": "Copia din cloud este pastrata 30 de zile. Conecteaza-te din nou in 30 de zile ca sa iti recuperezi contul, altfel este sters definitiv.",
       "acceptCta": "Sterge contul",
-      "cancelCta": "Anuleaza"
+      "cancelCta": "Anuleaza",
+      "errorRetry": "Nu am putut contacta serverul ca sa iti stergem contul. Verifica conexiunea si incearca din nou."
     },
     "restoreAccount": {
       "title": "Cont programat pentru stergere",

@@ -283,6 +283,56 @@ describe('DeleteAccountConfirm — soft-delete marker write', () => {
   });
 });
 
+// ── FIX 4 — marker WRITE failure must surface a retry error (not a silent no-op) ──
+// handleConfirm awaited markAccountForDeletion() but ignored its return; on a
+// resolved false (offline / 5xx / expired token) NO marker landed in the cloud yet
+// the flow still wiped local + presented "deleted" → the cloud data resurrected on
+// re-login. The fix: a resolved false aborts the wipe + shows a retry error.
+describe('DeleteAccountConfirm — marker write failure surfaces a retry error', () => {
+  function seedAuth() {
+    localStorage.setItem(AUTH_KEYS.uid, 'uid-fail-1');
+    localStorage.setItem(AUTH_KEYS.idToken, 'tok-fail');
+    localStorage.setItem(AUTH_KEYS.refreshToken, 'rt');
+    localStorage.setItem(AUTH_KEYS.expiry, String(Date.now() + 3_600_000));
+  }
+
+  it('marker write returns false → error shown, NO local wipe, stays on the delete screen', async () => {
+    seedAuth();
+    localStorage.setItem('wv2-workout-store', 'data'); // must NOT be wiped
+    vi.mocked(markAccountForDeletion).mockResolvedValue(false);
+
+    renderScreen();
+    fireEvent.click(screen.getByTestId('delete-confirm-accept'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('delete-confirm-error')).toBeInTheDocument();
+    });
+    // Did NOT navigate away (no "deleted" outcome).
+    expect(screen.queryByTestId('probe')).toBeNull();
+    // Local data intact + session still authed (the user can retry).
+    expect(localStorage.getItem('wv2-workout-store')).toBe('data');
+    expect(localStorage.getItem(AUTH_KEYS.idToken)).toBe('tok-fail');
+    // The Tier 1 IDB wipe never fired (nothing landed in the cloud).
+    expect(wipeUserDB).not.toHaveBeenCalled();
+  });
+
+  it('marker write returns true → normal delete proceeds (wipe + navigate /auth)', async () => {
+    seedAuth();
+    localStorage.setItem('wv2-workout-store', 'data');
+    vi.mocked(markAccountForDeletion).mockResolvedValue(true);
+
+    renderScreen();
+    fireEvent.click(screen.getByTestId('delete-confirm-accept'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('probe')).toHaveAttribute('data-pathname', '/auth');
+    });
+    expect(screen.queryByTestId('delete-confirm-error')).toBeNull();
+    expect(localStorage.getItem('wv2-workout-store')).toBeNull();
+    expect(wipeUserDB).toHaveBeenCalledWith('uid-fail-1');
+  });
+});
+
 // ── RE-S-02 (MED) — delete path sets the Firebase sync-suppression guards ─────
 describe('DeleteAccountConfirm — RE-S-02 sync suppression', () => {
   function seedAuth() {

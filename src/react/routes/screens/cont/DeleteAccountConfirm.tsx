@@ -13,6 +13,7 @@
 // the privacy-policy "30-day grace" claim accurate.
 
 import type { JSX } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2 } from 'lucide-react';
 import { logger } from '../../../../util/logger.js';
@@ -26,10 +27,18 @@ import { t } from '../../../../i18n/index.js';
 
 // §56.5.2 — upper bound on the awaited cloud marker WRITE so a hung network
 // never traps the user on the delete screen. The local wipe + sign-out +
-// navigation still proceed after this window even if the PATCH has not resolved
-// (a stale-but-valid token re-authorizes the marker write for up to ~1h, and the
-// grace function is a backstop, so the soft-delete still lands on reconnect).
+// navigation still proceed after this window even if the PATCH has NOT resolved
+// (the grace function is a backstop, so the soft-delete still lands on reconnect).
+// A marker write that RESOLVES false (genuine offline/5xx/expired-token failure)
+// within this window is a different case: we surface a retry error and do NOT wipe,
+// because nothing landed in the cloud — proceeding would let the cloud data
+// resurrect on the next sign-in while the user believes they deleted (the silent
+// no-op bug this fix repairs).
 const REMOTE_MARK_TIMEOUT_MS = 8000;
+
+// Sentinel for "the marker write did not resolve before REMOTE_MARK_TIMEOUT_MS"
+// (the timeout race won) — distinct from a resolved boolean (true=wrote, false=failed).
+const MARK_TIMED_OUT = Symbol('mark-timed-out');
 
 function wipeAllLocalData(): void {
   try {
@@ -76,8 +85,10 @@ async function wipeLocalDeviceDB(uid: string): Promise<void> {
 export function DeleteAccountConfirm(): JSX.Element {
   const navigate = useNavigate();
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleConfirm(): Promise<void> {
+    setError(null);
     // §A016 — destructive action gate: require recent re-auth.
     if (!isAuthFresh()) {
       authSignOut();
@@ -105,13 +116,28 @@ export function DeleteAccountConfirm(): JSX.Element {
     // inside wipeAllLocalData (set after localStorage.clear()).
     const authState = getAuthState();
     if (authState?.uid) {
-      await Promise.race([
-        (async () => {
-          await markAccountForDeletion();
-          await wipeLocalDeviceDB(authState.uid);
-        })(),
-        new Promise<void>((resolve) => setTimeout(resolve, REMOTE_MARK_TIMEOUT_MS)),
+      // Race the marker WRITE against the timeout so a hung network can't trap the
+      // user. Capture the marker result: a RESOLVED false (genuine failure) must
+      // block the local wipe, but a TIMEOUT (write still in flight) proceeds (the
+      // grace function backstops it).
+      const marked: boolean | typeof MARK_TIMED_OUT = await Promise.race([
+        markAccountForDeletion(),
+        new Promise<typeof MARK_TIMED_OUT>((resolve) =>
+          setTimeout(() => resolve(MARK_TIMED_OUT), REMOTE_MARK_TIMEOUT_MS),
+        ),
       ]);
+      if (marked === false) {
+        // The cloud erasure marker WRITE genuinely failed (offline / 5xx / expired
+        // token). Nothing landed in the cloud, so wiping local + presenting a
+        // "deleted" outcome would silently NO-OP the deletion (the cloud data
+        // resurrects on the next sign-in). Surface a retry error and stop — the
+        // user stays authed with their data intact and can retry.
+        logger.warn('[DeleteAccountConfirm] marker write failed — aborting delete, surfacing retry');
+        setError(t('confirm.deleteAccount.errorRetry'));
+        return;
+      }
+      // marked === true (wrote) OR MARK_TIMED_OUT (still in flight) → proceed.
+      await wipeLocalDeviceDB(authState.uid);
     }
     window._suppressFirebaseSync = true;
     wipeAllLocalData();
@@ -155,6 +181,16 @@ export function DeleteAccountConfirm(): JSX.Element {
           <p className="text-sm text-ink2 leading-relaxed mb-2">
             {t('confirm.deleteAccount.body2')}
           </p>
+
+          {error && (
+            <p
+              className="text-sm text-danger leading-relaxed mt-3"
+              role="alert"
+              data-testid="delete-confirm-error"
+            >
+              {error}
+            </p>
+          )}
 
           <div className="w-full mt-8 flex flex-col gap-3">
             <button
