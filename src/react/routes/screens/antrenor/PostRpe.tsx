@@ -230,6 +230,11 @@ export function PostRpe(): JSX.Element {
             // through to the durable logs row so detectPR excludes it from
             // prevBest. Absent on normal sets → shape unchanged.
             ...(s.calibration ? { calibration: true } : {}),
+            // C17-METRIC-DURATION-LOST — carry the PERFORMED seconds for a
+            // time/carry set into the breakdown (was dropped here → durable row
+            // stored reps:0, losing the user's real timed work). Absent on reps
+            // sets → shape unchanged.
+            ...(s.durationSec ? { durationSec: s.durationSec } : {}),
           };
         });
         return {

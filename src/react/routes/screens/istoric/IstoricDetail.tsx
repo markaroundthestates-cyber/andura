@@ -229,7 +229,14 @@ export function IstoricDetail(): JSX.Element {
                     >
                       <td className="py-1">{idx + 1}{s.isPR ? prBadgeLabel(s.prType) : ''}</td>
                       <td className="py-1">{s.kg}</td>
-                      <td className="py-1">{s.reps}</td>
+                      {/* C17-METRIC-DURATION-LOST — a time/carry set persisted its
+                          performed seconds (durationSec); show "60 s" instead of the
+                          phantom 0-reps. Reps sets (no durationSec) render reps. */}
+                      <td className="py-1">
+                        {s.durationSec
+                          ? t('istoric.detail.table.secondsCell', { seconds: s.durationSec })
+                          : s.reps}
+                      </td>
                       <td className="py-1">{ratingLabel(s.rating)}</td>
                     </tr>
                   ))}

@@ -1118,7 +1118,8 @@
         "set": "Set",
         "kg": "Kg",
         "reps": "Reps",
-        "rating": "How it felt"
+        "rating": "How it felt",
+        "secondsCell": "{seconds} s"
       },
       "prBadge": {
         "weight": "PR",

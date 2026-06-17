@@ -148,6 +148,12 @@ export interface SessionExerciseBreakdown {
     // Gym-log arc 2026-06-11: calibration level-set marker (rides history →
     // breakdown → durable logs row; detectPR excludes it from prevBest).
     calibration?: boolean;
+    // C17-METRIC-DURATION-LOST — the PERFORMED seconds for a time/carry set
+    // (Plank, Farmer's Walk, etc.). Captured live (ExerciseHistoryEntry.durationSec)
+    // but was dropped at writeback, leaving the durable row at reps:0. Carried
+    // through breakdown → LogEntry so Istoric shows the real held seconds. Additive
+    // + optional — absent on reps sets → every existing consumer unchanged.
+    durationSec?: number;
   }>;
   totalVolume: number; // sum(kg*reps)
   peakOneRM: number; // max Epley estimate across sets, 1 decimal
@@ -210,6 +216,11 @@ export interface LogEntry {
   // them). dp.getState reads `lastLog.rpe || 7`; fatigue reads `l.rpe` (top-2
   // avg/session) — both default neutral 7 when absent (no crash, no fabrication).
   rpe?: number;
+  // C17-METRIC-DURATION-LOST — the PERFORMED seconds for a time/carry set, carried
+  // from the breakdown so the durable log row records the real held work (was lost
+  // as reps:0). Absent on reps/weight sets → engine consumers (PR/volume/DP read
+  // w/kg/reps) unchanged.
+  durationSec?: number;
 }
 
 export interface WorkoutState {

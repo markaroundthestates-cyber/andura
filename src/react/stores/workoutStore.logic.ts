@@ -162,6 +162,10 @@ export function buildLogEntriesFromSummary(
         // detectPR excludes these rows from prevBest (like baseline), so a false
         // anchor never becomes the record to beat.
         ...(s.calibration ? { calibration: true } : {}),
+        // C17-METRIC-DURATION-LOST — persist the PERFORMED seconds for a
+        // time/carry set so the durable log row records the real held work (was
+        // lost as reps:0). Absent on reps sets → kg/reps consumers unchanged.
+        ...(s.durationSec ? { durationSec: s.durationSec } : {}),
         // Per-set RPE from this set's OWN coarse rating (spread-conditional keeps
         // the entry clean when rating absent on a legacy breakdown).
         ...(s.rating ? { rpe: RATING_TO_RPE[s.rating] } : {}),
