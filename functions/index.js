@@ -47,6 +47,10 @@ async function sendAndPrune(uid, tokens, message) {
   const res = await admin.messaging().sendEachForMulticast({
     tokens,
     notification: { title: message.title, body: message.body },
+    // §notif-tap — deep-link carried on data.link; the FCM SW
+    // (public/firebase-messaging-sw.js notificationclick) routes the tap to the
+    // Antrenor tab (daily-coach nudge) instead of being a dead tap.
+    data: { link: '/antrenor' },
   });
 
   const deletions = {};

@@ -66,3 +66,27 @@ if (FCM_CONFIGURED) {
     });
   });
 }
+
+// §notif-tap — handle a notification tap: focus an already-open Andura window (and
+// route it to the deep-link if the payload carried one), otherwise open a new one.
+// Registered at SW top-level (independent of FCM config) so a delivered push is
+// never a dead tap. The deep-link comes from data.link (e.g. daily-coach ->
+// '/antrenor'); falls back to the app root. Single-arg navigate() per spec.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.link) || '/';
+  event.waitUntil(
+    self.clients
+      .matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        for (const client of clientList) {
+          if ('focus' in client) {
+            return 'navigate' in client
+              ? client.navigate(url).then(() => client.focus())
+              : client.focus();
+          }
+        }
+        return self.clients.openWindow(url);
+      }),
+  );
+});
