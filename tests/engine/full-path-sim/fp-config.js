@@ -550,6 +550,19 @@ export const FLIPPED_FLAGS = Object.freeze([
   // deload runs → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is
   // proven on the getDailyWorkout deload-volume regression test, NOT in this stream.
   'dp_deload_volume_depth_v1',
+  // THE FLIP 2026-06-17 (readiness×energy MIN-compose) — dp_readiness_energy_min_v1
+  // defaults ON. The compose seam composed the readiness volumeMultiplier + the energy
+  // volumeFactor with a single MIN (applied ONCE) instead of running the two scalers
+  // back-to-back (which MULTIPLIED the cuts, ~40% vs the documented ~30% floor). The fp
+  // cohort logs no energy-check survey (readinessScoreForUser → null → volumeMultiplier
+  // 1.0), so minCompose's `readinessVolMult < 1` guard is never met → the seam is INERT
+  // in this harness either way. Pinned OFF here (in FLIPPED_FLAGS only, NOT PATH_A_FLAGS)
+  // anyway for the all-off-world guarantee, so even if a future journey ever logged BOTH
+  // a readiness cut AND an energy cut the seam is forced OFF in both A/B arms → the old
+  // back-to-back multiply runs → BOTH frozen baselines (hashOff/hashOn) stay byte-for-
+  // byte. ON behavior (the deeper of the two stressors governs, never their product) is
+  // proven on the compose readiness×energy MIN regression test, NOT in this stream.
+  'dp_readiness_energy_min_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

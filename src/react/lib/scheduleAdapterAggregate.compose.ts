@@ -1466,13 +1466,6 @@ export async function composePlannedWorkoutToday(
     // defaulting hasHistory=true → a phantom boost while the card showed NORMAL). Same
     // source the card consumer reads (useWorkoutStore.sessionsHistory).
     const readinessHasHistory = useWorkoutStore.getState().sessionsHistory.length > 0;
-    const readinessScaled = scaleSetsByReadiness(mapped, readinessScore, readinessInCut, readinessHasHistory);
-    // #76 — energy → VOLUME modulation (magnitude-aware), applied AFTER the readiness
-    // scale (composes MIN-style on its already-reduced sets, so the two never double-
-    // cut below the MEV floor) and BEFORE the time-budget trim (so the trim measures
-    // the energy-scaled session). A deep deficit cuts toward −30% volume; a surplus
-    // allows up to +10%. KEEP-LOAD: only sets move, the prescribed kg is untouched.
-    // energyMod null (flag OFF / no magnitude) → factor 1.0 → byte-identical.
     // #70-D1 — the emphasized focus groups (the user's look preset) so the energy
     // cut FLOORS them at their pre-cut sets (preserve the priority muscle in a
     // deficit) instead of dragging the emphasized region below its band. balanced /
@@ -1480,9 +1473,38 @@ export async function composePlannedWorkoutToday(
     const emphasizedRoGroups = energyMod
       ? resolveEmphasizedGroups(useOnboardingStore.getState().data.focusPreset)
       : null;
-    const energyScaled = energyMod
-      ? scaleSetsByEnergy(readinessScaled, energyMod.volumeFactor, emphasizedRoGroups)
-      : readinessScaled;
+    // NUTR-VOL-1 (dp_readiness_energy_min_v1) — the readiness verdict's volumeMultiplier
+    // and the energy magnitude's volumeFactor are BOTH Path-A volume cuts. Running the
+    // two scalers back-to-back MULTIPLIED them (0.85×0.70 = 0.595, ~40% loss) — but both
+    // the compose.ts + ceiling.js docstrings DOCUMENT a MIN-style ~30% never-double-cut
+    // floor. When ON, the two cuts compose with a single MIN applied ONCE (the deeper
+    // stressor governs, never their product). A SURPLUS (energyVol > 1) keeps the prior
+    // sequential apply (a surplus must stay MRV-bounded + must NOT cancel a readiness
+    // cut). OFF → the prior back-to-back multiply (byte-identical, pinned OFF in fp).
+    const readinessVolMult = getReadinessVerdict(readinessScore, {
+      isInCut: readinessInCut, hasHistory: readinessHasHistory,
+    }).volumeMultiplier;
+    const energyVolFactor = energyMod ? energyMod.volumeFactor : 1;
+    const minCompose =
+      isEnabled('dp_readiness_energy_min_v1') &&
+      Number.isFinite(readinessVolMult) && readinessVolMult > 0 && readinessVolMult < 1 &&
+      Number.isFinite(energyVolFactor) && energyVolFactor > 0 && energyVolFactor < 1;
+    let energyScaled: TrimmableExercise[];
+    if (minCompose) {
+      // Both are cuts → apply the deeper one ONCE via scaleSetsByEnergy (which carries
+      // the emphasis/compound floors), starting from the UNSCALED sets so the total cut
+      // is MIN(readiness, energy), never their product.
+      energyScaled = scaleSetsByEnergy(mapped, Math.min(readinessVolMult, energyVolFactor), emphasizedRoGroups);
+    } else {
+      // #76 — energy → VOLUME modulation applied AFTER the readiness scale (surplus /
+      // single-stressor / flag-OFF path) and BEFORE the time-budget trim. KEEP-LOAD:
+      // only sets move, the prescribed kg is untouched. energyMod null → factor 1.0 →
+      // byte-identical to the readiness-scaled session.
+      const readinessScaled = scaleSetsByReadiness(mapped, readinessScore, readinessInCut, readinessHasHistory);
+      energyScaled = energyMod
+        ? scaleSetsByEnergy(readinessScaled, energyMod.volumeFactor, emphasizedRoGroups)
+        : readinessScaled;
+    }
     // FOCUS-FLOOR DROP-GUARD (dp_split_rebalance_v1) — on a slot-limited FOCUS day the
     // BLIND tail-first time-trim dropped the sole maintained leg / sole biceps slot OR
     // the emphasized width work (slot-guarantee + focus-policy place them, but they sit

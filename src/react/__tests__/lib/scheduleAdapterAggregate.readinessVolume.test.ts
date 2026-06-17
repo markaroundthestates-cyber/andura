@@ -9,7 +9,8 @@
 // dropped -> applied for a non-pipeline engine, per F2 spec §2 Test).
 
 import { describe, it, expect } from 'vitest';
-import { scaleSetsByReadiness } from '../../lib/scheduleAdapterAggregate';
+import { scaleSetsByReadiness, scaleSetsByEnergy } from '../../lib/scheduleAdapterAggregate';
+import { getReadinessVerdict } from '../../../engine/readiness.js';
 import type { PlannedExercise } from '../../lib/engineWrappers';
 
 const MIN_SETS_PER_EX = 2; // mirror of the compose-module floor
@@ -129,5 +130,59 @@ describe('scaleSetsByReadiness — hasHistory gates the PR-day boost', () => {
     // 7 × 0.85 = 5.95 → 6 regardless of history (only the PR band is history-gated).
     expect(scaleSetsByReadiness([ex('Cable Row', 7)], 60, false, false)[0]!.sets).toBe(6);
     expect(scaleSetsByReadiness([ex('Cable Row', 7)], 60, false, true)[0]!.sets).toBe(6);
+  });
+});
+
+// ── NUTR-VOL-1 readiness×energy MIN-compose (dp_readiness_energy_min_v1) ───────
+// The compose seam ran scaleSetsByReadiness THEN scaleSetsByEnergy back-to-back, so
+// the two Path-A volume cuts MULTIPLIED — but both the compose.ts + ceiling.js
+// docstrings DOCUMENT a MIN-style ~30% never-double-cut floor. The fix composes the
+// two factors with a single MIN applied ONCE. These tests use REAL band values and
+// REAL scaler functions to prove the contract (the deeper stressor governs, never the
+// product) on the exact two-factor logic the compose site now performs.
+describe('readiness × energy compose MIN, not multiplicative (per contract)', () => {
+  // A MODERATE readiness day (score 60 → 0.85) on a deep deficit (energyVol 0.70).
+  const MODERATE = 60;
+  const DEEP = 0.7;
+  it('verdict band sanity: score 60 → 0.85 multiplier', () => {
+    expect(getReadinessVerdict(MODERATE, {}).volumeMultiplier).toBeCloseTo(0.85);
+  });
+
+  it('light-readiness + deep-deficit user is cut by MIN (0.70) once, not 0.85×0.70', () => {
+    const start = [ex('Squat', 10)];
+    // OLD (multiplicative): readiness 0.85 → round(8.5)=9, then energy 0.70 →
+    // round(6.3)=6 sets (~40% cut, the double-cut defect).
+    const readinessFirst = scaleSetsByReadiness(start, MODERATE);
+    const multiply = scaleSetsByEnergy(readinessFirst, DEEP);
+    expect(multiply[0]!.sets).toBe(6);
+    // NEW (MIN-compose): MIN(0.85, 0.70) = 0.70 applied ONCE → round(7.0)=7 sets
+    // (~30% cut, the documented muscle-preserving floor).
+    const minMult = Math.min(getReadinessVerdict(MODERATE, {}).volumeMultiplier, DEEP);
+    const minCompose = scaleSetsByEnergy(start, minMult);
+    expect(minCompose[0]!.sets).toBe(7);
+    // The MIN-compose preserves MORE volume than the multiply (never double-cuts).
+    expect(minCompose[0]!.sets).toBeGreaterThan(multiply[0]!.sets);
+  });
+
+  it('single-stressor user is unchanged (readiness 1.0 → energy alone governs)', () => {
+    const start = [ex('Squat', 10)];
+    // NORMAL readiness (1.0) + a 0.70 deficit → MIN(1.0, 0.70) = 0.70 → round(7)=7,
+    // identical to energy-alone (no readiness cut to compose with).
+    const energyAlone = scaleSetsByEnergy(start, DEEP);
+    const minMult = Math.min(getReadinessVerdict(70, {}).volumeMultiplier, DEEP);
+    const minCompose = scaleSetsByEnergy(start, minMult);
+    expect(minCompose[0]!.sets).toBe(energyAlone[0]!.sets);
+  });
+
+  it('surplus user is not over-raised above the unscaled session (MRV-bounded)', () => {
+    const start = [ex('Squat', 10)];
+    // A surplus (energyVol > 1) is NOT a cut → the MIN-compose guard does not engage
+    // (it requires BOTH factors < 1); the surplus rides the EXISTING sequential path on
+    // the readiness-cut sets. It is MRV-bounded — it may partially restore toward the
+    // original dose but must never inflate volume ABOVE the unscaled session.
+    const readinessCut = scaleSetsByReadiness(start, MODERATE); // 0.85 → 9
+    const surplusOnCut = scaleSetsByEnergy(readinessCut, 1.1);  // 9 × 1.1 = 9.9 → 10
+    expect(surplusOnCut[0]!.sets).toBeLessThanOrEqual(start[0]!.sets); // never above 10
+    expect(surplusOnCut[0]!.sets).toBeGreaterThanOrEqual(readinessCut[0]!.sets); // sequential surplus on the cut
   });
 });

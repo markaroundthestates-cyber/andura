@@ -719,6 +719,21 @@ export const FLAGS = Object.freeze({
   // deloads, load untouched) is the verified principle. No new persistence.
   dp_energy_volume_v1: { rollout: 1, default: true },
 
+  // NUTR-VOL-1 readiness×energy MIN-compose (cycle-20b audit MEDIUM) — the compose
+  // seam ran scaleSetsByReadiness THEN scaleSetsByEnergy back-to-back, so the two
+  // volume cuts MULTIPLIED (a light-readiness 0.85 + deep-deficit 0.70 user lost
+  // 0.85×0.70 = 0.595, ~40%, e.g. 15→9 sets). Both the code's own docstrings
+  // (compose.ts "Composes MIN-style ... so the two never double-cut" + ceiling.js
+  // "composed ... never double-cut") DOCUMENT a MIN-style ~30% muscle-preserving
+  // floor — the back-to-back apply violated the stated contract. When ON, the two
+  // Path-A volume factors compose with a single MIN (Math.min(readiness.volumeMult,
+  // energy.volumeFactor)) applied ONCE, so the deeper of the two stressors governs,
+  // never their product. A SURPLUS (energyVol > 1) keeps the existing sequential
+  // behavior (a surplus must stay MRV-bounded and must NOT cancel a readiness cut).
+  // OFF → the prior back-to-back multiply (byte-identical, pinned OFF in fp so the
+  // frozen full-path hashOn stays byte-for-byte). KEEP-LOAD intact — sets only.
+  dp_readiness_energy_min_v1: { rollout: 1, default: true },
+
   // #21 strength/bodyweight + cut/bulk aware (RISK MED — shifts the fatigue map for
   // users whose bodyweight is changing, path A; bounded by the existing recovery
   // clamp + slow EMA). relativeStrength(mu, bw) = mu/bw is a one-line derivation from
