@@ -344,7 +344,12 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             deletedSessionTs: s.deletedSessionTs.includes(ts)
               ? s.deletedSessionTs
               : [...s.deletedSessionTs, ts],
-            ...(s.lastSession?.ts === ts ? { lastSession: null } : {}),
+            // When the deleted session IS the last one, clear the post-summary
+            // surface — incl. the Home "PR last session" banner (prHit/prData),
+            // otherwise deleting the PR-earning session leaves a stale PR banner.
+            ...(s.lastSession?.ts === ts
+              ? { lastSession: null, prHit: false, prData: null }
+              : {}),
           };
         }),
 

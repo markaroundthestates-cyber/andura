@@ -1286,6 +1286,35 @@ describe('workoutStore — deleteSession (delete a mislogged workout)', () => {
     expect(useWorkoutStore.getState().lastSession?.ts).toBe(2000);
   });
 
+  // FIX 5 — deleting the session that earned a PR must also clear the Home "PR last
+  // session" banner flags (prHit/prData), not just lastSession; otherwise the banner
+  // lingers pointing at a now-deleted session.
+  it('clears the PR banner flags (prHit/prData) when the deleted session IS the last one', () => {
+    useWorkoutStore.setState({
+      sessionsHistory: [SESSION(1000)],
+      lastSession: SESSION(1000),
+      prHit: true,
+      prData: { exercise: 'Squat', deltaKg: 5, kg: 140, type: 'weight' },
+    });
+    useWorkoutStore.getState().deleteSession(1000);
+    expect(useWorkoutStore.getState().lastSession).toBeNull();
+    expect(useWorkoutStore.getState().prHit).toBe(false);
+    expect(useWorkoutStore.getState().prData).toBeNull();
+  });
+
+  it('leaves the PR banner flags untouched when a DIFFERENT session is deleted', () => {
+    useWorkoutStore.setState({
+      sessionsHistory: [SESSION(1000), SESSION(2000)],
+      lastSession: SESSION(2000),
+      prHit: true,
+      prData: { exercise: 'Squat', deltaKg: 5, kg: 140, type: 'weight' },
+    });
+    useWorkoutStore.getState().deleteSession(1000);
+    expect(useWorkoutStore.getState().lastSession?.ts).toBe(2000);
+    expect(useWorkoutStore.getState().prHit).toBe(true);
+    expect(useWorkoutStore.getState().prData).not.toBeNull();
+  });
+
   it('does NOT rewind the streak on delete (forward-only counter)', () => {
     useWorkoutStore.setState({ sessionsHistory: [SESSION(1000)], streak: 7 });
     useWorkoutStore.getState().deleteSession(1000);
