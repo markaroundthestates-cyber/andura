@@ -2898,12 +2898,8 @@ export const DP = {
         // Only surface a probe that is a REAL step above the working load (on a
         // coarse stack the bounded overload can round back to the same rung → skip).
         if (probeKg > result.kg) {
-          result.activeProbe = {
-            kg: probeKg,
-            reps: rTarget,
-            sigma,
-            note: 'Set de calibrare — da tot ce poti, ne ajuta sa te citim corect.',
-          };
+          // noteKind = structured token; UI resolves the i18n copy (workout.activeProbe.*).
+          result.activeProbe = { kg: probeKg, reps: rTarget, sigma, noteKind: 'calibration' };
         }
       }
     }

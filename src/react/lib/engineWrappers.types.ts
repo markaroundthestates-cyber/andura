@@ -137,6 +137,15 @@ export interface PlannedExercise {
   // the posterior. Feeds the coach-confidence tier (#63) + the replay trace (#66).
   // CARRIED ONLY — nothing consumes this yet.
   confidence?: { sigma: number | null; n: number };
+  // #1/H active-probing calibration set (flag dp_active_probing_v1). When the
+  // Kalman posterior is WIDE + the user is FRESH, DP.getSmartRecommendation offers
+  // a deliberate high-information "set de calibrare" (a single heavier all-out set
+  // that shrinks sigma). DESCRIPTOR ONLY — it does NOT change targetKg/sets (the
+  // main prescription is byte-identical whether or not a probe is offered); the UI
+  // renders it as an OPT-IN affordance. `noteKind` is a structured token (the UI
+  // resolves the localized copy via i18n — dp.js never emits RO copy). Absent when
+  // the flag is off / posterior narrow / fatigued → no prompt.
+  activeProbe?: { kg: number; reps: number; sigma?: number; noteKind?: string };
 }
 
 // Coach Voice — structured, machine-readable record of an adaptation the

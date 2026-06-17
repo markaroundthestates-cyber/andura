@@ -98,7 +98,10 @@ describe('DP.getSmartRecommendation — active-probe consumer', () => {
     // A probe IS offered (wide sigma + fresh), heavier than the working load.
     expect(r.activeProbe).toBeDefined();
     expect(r.activeProbe.kg).toBeGreaterThan(r.kg);
-    expect(typeof r.activeProbe.note).toBe('string');
+    // The note is now a STRUCTURED token (i18n resolves the copy) — dp.js emits
+    // noteKind, NOT a hardcoded RO string (i18n-leak rule).
+    expect(r.activeProbe.noteKind).toBe('calibration');
+    expect(r.activeProbe.note).toBeUndefined();
   });
 
   it('FLAG ON but FATIGUED (low readiness) — no probe', () => {

@@ -382,6 +382,13 @@
       "egoCap": "Ai sarit prea sus si a fost prea greu - ramanem la {kg} kg sa construim corect",
       "baselineNote": "Prima sesiune - iti construiesc baseline-ul. Recomandarile se adapteaza de la sesiunea urmatoare."
     },
+    "activeProbe": {
+      "prompt": "Vrei un set de calibrare?",
+      "calibration": "Set de calibrare - da tot ce poti, ne ajuta sa te citim corect.",
+      "suggested": "Sugestie: {kg} kg x {reps} - un singur set, optional.",
+      "accept": "Da, incerc",
+      "dismiss": "Nu acum"
+    },
     "plateHint": "Bara {bar} + {plates} / parte",
     "plateBarOnly": "Doar bara ({bar} kg)",
     "sessionTitle": {

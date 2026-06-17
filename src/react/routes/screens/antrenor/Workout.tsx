@@ -63,6 +63,7 @@ import { WarmupRampCard, isWarmupResolved, type WarmupStep } from '../../../comp
 import { QuarantineNotice } from '../../../components/Workout/QuarantineNotice';
 import { ExerciseActionsRow } from '../../../components/Workout/ExerciseActionsRow';
 import { CoachNote } from '../../../components/Workout/CoachNote';
+import { ActiveProbePrompt } from '../../../components/Workout/ActiveProbePrompt';
 import { isEnabled } from '../../../../util/featureFlags.js';
 import { confidenceTier, confidenceTierKey } from '../../../lib/coachConfidence';
 import { whyForStatus, whyForStatusMetric } from '../../../lib/whyReason';
@@ -238,6 +239,14 @@ export function Workout(): JSX.Element {
     const tier = confidenceTier(conf.sigma, conf.n);
     return t(confidenceTierKey(tier), { exercise: currentExercise.name });
   }, [hasWorkout, currentExercise.confidence, currentExercise.name]);
+
+  // #1/H active-probing calibration set (flag dp_active_probing_v1). When DP carried
+  // an activeProbe descriptor for THIS exercise (wide posterior + fresh), offer an
+  // OPT-IN "set de calibrare" affordance — never forced, never blocks the normal set
+  // (it is descriptor-only; targetKg/sets are untouched). Shown once per exercise
+  // (on its FIRST set), gated by the flag; null → nothing renders (byte-identical).
+  const activeProbe =
+    hasWorkout && isEnabled('dp_active_probing_v1') ? currentExercise.activeProbe ?? null : null;
   // Apply the ENGINE intensityMod baseline (deload output) to target kg. This
   // is the COARSE deload-state modifier (±%), distinct from readiness: as of
   // the wiring fix, today's readiness already shapes the per-exercise targetKg
@@ -1941,6 +1950,16 @@ export function Workout(): JSX.Element {
               OFF or no posterior is carried → byte-identical. ZERO number/jargon. */}
           {confidenceLine !== null && (
             <CoachNote testId="coach-confidence-note" message={confidenceLine} />
+          )}
+
+          {/* #1/H active-probing calibration set (flag dp_active_probing_v1). An
+              OPT-IN "Vrei un set de calibrare?" prompt when DP is uncertain about
+              this lift (wide posterior + fresh). Shown once per exercise (on its
+              FIRST set) so it doesn't nag every set; dismissable + never blocks the
+              normal set (descriptor-only — targetKg/sets are untouched). Parent-
+              gated: null when the flag is off / no probe carried → byte-identical. */}
+          {activeProbe !== null && currentSetIdx === 0 && (
+            <ActiveProbePrompt probe={activeProbe} />
           )}
 
           {/* Set history previous — re-skinned to the mockup .set-chip glowing

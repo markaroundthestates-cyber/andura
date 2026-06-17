@@ -135,6 +135,11 @@
 // the whole in-flight recommend state out. fp/calibration-sim baselines stay byte-
 // identical (metric exercises are not in those cohorts; no flag needed). Ratchet-down-only
 // resumes from 3073.
+//
+// RATCHET DOWN 2026-06-17 (3073→3069): the active-probing UX build (#1/H) emits a
+// STRUCTURED noteKind token instead of the hardcoded RO note, and collapsed the
+// result.activeProbe object literal to one line — a net -4. No new dp.js logic (the
+// RO copy moved OUT to i18n). Locking the win per the ratchet-down-only rule.
 
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
@@ -144,8 +149,8 @@ import { resolve, dirname } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Ceiling = current line count. Ratchet DOWN only (twelve documented exceptions
-// 2026-06-11/12/14/16/17 for call-site wiring — see header).
-const DP_LINE_CEILING = 3073;
+// 2026-06-11/12/14/16/17 for call-site wiring — see header; 2026-06-17 ratchet down).
+const DP_LINE_CEILING = 3069;
 
 const dpSrc = readFileSync(resolve(__dirname, '../dp.js'), 'utf8');
 // Under a Stryker mutation dry-run the on-disk source is INSTRUMENTED (stryMutAct_*

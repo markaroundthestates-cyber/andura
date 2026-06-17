@@ -382,6 +382,13 @@
       "egoCap": "You jumped up a lot and it got heavy - staying at {kg} kg to build it right",
       "baselineNote": "First session - building your baseline. Recommendations start adapting from your next session."
     },
+    "activeProbe": {
+      "prompt": "Want a calibration set?",
+      "calibration": "Calibration set - give it everything, it helps us read you right.",
+      "suggested": "Suggested: {kg} kg x {reps} - a single set, optional.",
+      "accept": "Yes, I'll try",
+      "dismiss": "Not now"
+    },
     "plateHint": "Bar {bar} + {plates} / side",
     "plateBarOnly": "Bar only ({bar} kg)",
     "sessionTitle": {

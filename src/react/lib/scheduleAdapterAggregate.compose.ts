@@ -78,6 +78,10 @@ interface DpRecommendation {
   // branch instead of re-guessing.
   status?: string;
   progressionNote?: string;
+  // #1/H active-probing calibration set (flag dp_active_probing_v1). DESCRIPTOR
+  // only — getSmartRecommendation attaches it WITHOUT changing kg/sets, so it never
+  // affects the prescription. noteKind is a structured token (UI resolves the copy).
+  activeProbe?: { kg: number; reps: number; sigma?: number; noteKind?: string };
 }
 
 // Fix #4 — default rest fallback (the prior hardcode) used only when the engine
@@ -396,6 +400,14 @@ function toPlannedExercise(
     // PRESCRIPTION (kg/reps/sets) above is untouched. CARRIED ONLY — nothing
     // consumes confidence yet.
     ...(rec ? { confidence: DP._posteriorConfidence(engineEx.name) } : {}),
+    // #1/H — carry the active-probing calibration-set descriptor (flag
+    // dp_active_probing_v1). DESCRIPTOR ONLY: getSmartRecommendation attaches
+    // rec.activeProbe WITHOUT changing kg/reps/sets, so the prescription above is
+    // byte-identical whether or not a probe is offered. The Workout UI renders it as
+    // an OPT-IN affordance. Absent when the flag is off / posterior narrow / fatigued.
+    ...(rec && rec.activeProbe
+      ? { activeProbe: rec.activeProbe }
+      : {}),
   };
 }
 
