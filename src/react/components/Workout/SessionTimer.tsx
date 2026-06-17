@@ -35,7 +35,7 @@
 // workout-progress-bar / workout-progress-sets / workout-progress-ex /
 // workout-progress-fill.
 
-import { memo, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import type { JSX } from 'react';
 import { X, MoreHorizontal, AlertCircle, SkipForward, Flag, Volume2, VolumeX, XCircle } from 'lucide-react';
 import { SessionElapsed } from './SessionElapsed';
@@ -100,6 +100,9 @@ function SessionTimerImpl({
   onMenuOpenChange,
 }: SessionTimerProps): JSX.Element {
   const [menuOpen, setMenuOpen] = useState(false);
+  // a11y (audit) — the ⋯ trigger + first menu item, for focus management.
+  const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const firstMenuItemRef = useRef<HTMLButtonElement | null>(null);
 
   // Z-WAR (2026-06-12) — mirror every open/close to the parent so it can fold the
   // logging dock away while the sheet is up (the dock yields to all overlays).
@@ -112,6 +115,54 @@ function SessionTimerImpl({
     setMenuOpen(false);
     onMenuOpenChange?.(false);
   }
+
+  // a11y (audit) — the "Optiuni sesiune" sheet self-identifies as role="dialog"
+  // but, unlike every sister dialog (ExitConfirmSheet, SwapPickSheet,
+  // AparatLipsaSheet, AnomalyConfirmModal, WhyExerciseModal, CoachMarks), had NO
+  // Escape handler and NO focus management — a keyboard user who opened it
+  // mid-session was trapped (no way to dismiss without a mouse). Mirror the
+  // sister-sheet idiom (ExitConfirmSheet.tsx): Escape closes WITHOUT taking any
+  // session action, focus moves to the first item on open and restores to the ⋯
+  // trigger on close, Tab cycles within the menu (focus trap).
+  useEffect(() => {
+    if (!menuOpen) return;
+    // Capture the trigger node now (stable while the menu is open) so the
+    // cleanup restores focus to the SAME element React rendered — avoids the
+    // ref-in-cleanup staleness lint.
+    const triggerEl = menuTriggerRef.current;
+    firstMenuItemRef.current?.focus();
+    function onKey(e: KeyboardEvent): void {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeMenu();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const items = document.querySelectorAll<HTMLButtonElement>(
+        '[data-testid="workout-menu-sheet"] button',
+      );
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (!first || !last) return;
+      const active = document.activeElement;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      triggerEl?.focus();
+    };
+    // closeMenu is stable per render; menuOpen is the only reactive dep that
+    // should re-run this effect (mount listener on open, tear down on close).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [menuOpen]);
 
   function handleAction(action?: () => void): void {
     closeMenu();
@@ -153,6 +204,7 @@ function SessionTimerImpl({
             <X className="w-5 h-5" aria-hidden="true" />
           </button>
           <button
+            ref={menuTriggerRef}
             type="button"
             onClick={openMenu}
             aria-label={t('workout.timer.menuAriaLabel')}
@@ -223,6 +275,7 @@ function SessionTimerImpl({
             </p>
 
             <button
+              ref={firstMenuItemRef}
               type="button"
               onClick={() => handleAction(onPain)}
               data-testid="workout-menu-pain"

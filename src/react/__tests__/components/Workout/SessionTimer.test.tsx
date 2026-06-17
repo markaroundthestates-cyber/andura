@@ -221,6 +221,56 @@ describe('SessionTimer — §F-pass2-sessiontimer-01 menu button + sheet', () =>
   });
 });
 
+describe('SessionTimer — a11y: Escape closes menu + restores focus (keyboard trap fix)', () => {
+  it('Escape closes the open menu without firing any session action', () => {
+    const onPain = vi.fn();
+    const onSkipExercise = vi.fn();
+    const onFinishEarly = vi.fn();
+    const onCancelSession = vi.fn();
+    renderTimer({ onPain, onSkipExercise, onFinishEarly, onCancelSession });
+    fireEvent.click(screen.getByTestId('workout-menu-trigger'));
+    expect(screen.getByTestId('workout-menu-sheet')).toBeInTheDocument();
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    expect(screen.queryByTestId('workout-menu-sheet')).not.toBeInTheDocument();
+    // Escape is a SAFE close — no session action may fire.
+    expect(onPain).not.toHaveBeenCalled();
+    expect(onSkipExercise).not.toHaveBeenCalled();
+    expect(onFinishEarly).not.toHaveBeenCalled();
+    expect(onCancelSession).not.toHaveBeenCalled();
+  });
+
+  it('Escape mirrors close to parent via onMenuOpenChange(false)', () => {
+    const onMenuOpenChange = vi.fn();
+    renderTimer({ onMenuOpenChange });
+    fireEvent.click(screen.getByTestId('workout-menu-trigger'));
+    expect(onMenuOpenChange).toHaveBeenLastCalledWith(true);
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(onMenuOpenChange).toHaveBeenLastCalledWith(false);
+  });
+
+  it('focuses the first menu item on open, restores focus to the trigger on close', () => {
+    renderTimer();
+    const trigger = screen.getByTestId('workout-menu-trigger');
+    fireEvent.click(trigger);
+    // First action row receives focus on open.
+    expect(document.activeElement).toBe(screen.getByTestId('workout-menu-pain'));
+    // Escape closes → focus returns to the ⋯ trigger (no keyboard dead-end).
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  it('no keydown effect when menu closed (Escape on a closed menu is inert)', () => {
+    const onMenuOpenChange = vi.fn();
+    renderTimer({ onMenuOpenChange });
+    // Menu never opened — Escape must do nothing (no false close signal).
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(onMenuOpenChange).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('workout-menu-sheet')).not.toBeInTheDocument();
+  });
+});
+
 describe('SessionTimer — §F-pass2-sessiontimer-02 workoutTitle center label', () => {
   it('renders exerciseName fallback cand workoutTitle absent (backward compat)', () => {
     renderTimer();
