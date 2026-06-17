@@ -1854,6 +1854,26 @@ export const FLAGS = Object.freeze({
   // (a fp journey that is BOTH in a CUT AND at PR readiness would drop the ×1.1 set
   // boost → move a hash → pin OFF). Proven on the scaleSetsByReadiness cut-aware test.
   dp_readiness_cut_no_prboost_v1: { rollout: 1, default: true },
+
+  // REACTIVE-deload volume cut (dp_deload_volume_depth_v1, cycle-18 audit 2026-06-16,
+  // DEFAULT ON). The Deload engine emits a volume-cut DEPTH (blueprint.depth_pct: 45%
+  // scheduled / 30% reactive / 60% extension) but getDailyWorkout only ever read the
+  // intensity_modifier (the kg cut) + deload_state (narration) — depth_pct had ZERO
+  // consumers in the live pipeline. So a REACTIVE deload (REACTIVE_AA /
+  // REACTIVE_COMPOSITE / EXTENSION_FLAGGED — the engine deciding the user needs to
+  // recover from FATIGUE) cut load ×0.875 but left the FULL set count standing: the
+  // user got a full-VOLUME week on a week the engine flagged for recovery. When ON,
+  // getDailyWorkout folds (1 - depth_pct/100) into the SAME MEV-floored weekly-volume
+  // scaler (scaleWeeklyVolumeByRatio) as the freq/adherence ratios, composed by the
+  // SAME MIN (deepest single cut, never a stacked over-cut). SCHEDULED deload weeks
+  // (mesocycle_phase === 'DELOAD') are EXCLUDED — the periodization budget already cut
+  // their volume, so double-cutting would over-reduce. The per-exercise
+  // COMPOUND_MIN_SETS/ISOLATION_MIN_SETS floors downstream keep every lift at its
+  // minimum effective dose. OFF → ratio forced to 1 → seam unchanged → byte-identical.
+  // Pinned OFF in fp-config FLIPPED_FLAGS so both frozen prescription baselines stay
+  // byte-for-byte (a fp journey carrying a reactive deload would drop set counts → move
+  // a hash → pin OFF). Proven on the getDailyWorkout deload-volume regression test.
+  dp_deload_volume_depth_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

@@ -323,6 +323,91 @@ describe('getDailyWorkout — M4a priority-muscle override', () => {
   });
 });
 
+// ── cycle-18 — REACTIVE deload reduces VOLUME per depth_pct (dp_deload_volume_depth_v1) ──
+// The Deload engine emits a volume-cut DEPTH (depth_pct) but the live pipeline only ever
+// read intensity_modifier (kg) + deload_state (narration) — depth_pct had ZERO consumers,
+// so a REACTIVE deload left the FULL set count standing on a week flagged for recovery.
+// These tests drive the REAL pipeline once to get a valid blueprint set, then PATCH the
+// deload blueprint into a reactive-deload shape and re-run getDailyWorkout via a mocked
+// runPipeline that returns the patched results — so only the deload blueprint differs.
+describe('scheduleAdapter — REACTIVE deload reduces volume per depth_pct', () => {
+  const sumSets = (plan) => plan.exercises.reduce((a, e) => a + e.sets, 0);
+
+  it('reactive deload (depth_pct) cuts set counts; scheduled NOT double-cut; non-deload unchanged', async () => {
+    const orchestrator = await import('../../../coach/orchestrator/index.js');
+    const realRunPipeline = orchestrator.runPipeline;
+    const now = MONDAY_2026_05_18;
+    const userState = buildUserState({ meta: { weeksElapsed: 0 } });
+
+    // Capture ONE real, valid pipeline result set (an all-IDLE, LOAD-phase Monday).
+    // getDailyWorkout builds its own ctx; we mirror that by letting the real pipeline
+    // run once through a throwaway getDailyWorkout call, intercepting its results.
+    let captured = null;
+    const captureSpy = vi.spyOn(orchestrator, 'runPipeline').mockImplementationOnce(async (ctx, adapters) => {
+      captured = await realRunPipeline(ctx, adapters);
+      return captured;
+    });
+    const baseline = await getDailyWorkout(userState, now);
+    captureSpy.mockRestore();
+    expect(baseline).not.toBeNull();
+    expect(Array.isArray(captured)).toBe(true);
+
+    // Build a patched results array: replace the deload engine's meta with a REACTIVE
+    // deload carrying depth_pct=30 + an ACTIVE intensity_modifier, and set the
+    // periodization mesocycle_phase explicitly (LOAD = reactive case, DELOAD = scheduled).
+    const patch = (depthPct, phase) =>
+      captured.map((r) => {
+        if (!(r && r.ok === true && r.output && typeof r.output.id === 'string')) return r;
+        if (r.output.id === 'deload') {
+          return {
+            ...r,
+            output: {
+              ...r.output,
+              meta: {
+                ...r.output.meta,
+                deload_state: 'REACTIVE_AA',
+                depth_pct: depthPct,
+                intensity_modifier: { rir_increment: 1, intensity_pct_decrement: 12.5 },
+              },
+            },
+          };
+        }
+        if (r.output.id === 'periodization') {
+          return {
+            ...r,
+            output: { ...r.output, meta: { ...r.output.meta, mesocycle_phase: phase } },
+          };
+        }
+        return r;
+      });
+
+    const runPatched = async (depthPct, phase, flagOn) => {
+      localStorage.setItem('_devFlags', JSON.stringify({ dp_deload_volume_depth_v1: flagOn }));
+      const spy = vi.spyOn(orchestrator, 'runPipeline').mockResolvedValueOnce(patch(depthPct, phase));
+      const plan = await getDailyWorkout(userState, now);
+      spy.mockRestore();
+      localStorage.removeItem('_devFlags');
+      return plan;
+    };
+
+    // (a) REACTIVE deload (phase LOAD, not DELOAD) — flag ON cuts set counts vs OFF.
+    const reactiveOff = await runPatched(30, 'LOAD', false);
+    const reactiveOn = await runPatched(30, 'LOAD', true);
+    expect(reactiveOff).not.toBeNull();
+    expect(reactiveOn).not.toBeNull();
+    expect(sumSets(reactiveOn)).toBeLessThan(sumSets(reactiveOff));
+
+    // (b) SCHEDULED deload week (phase DELOAD) — flag ON must NOT double-cut:
+    // identical set totals ON vs OFF (the periodization budget already cut volume).
+    const scheduledOff = await runPatched(30, 'DELOAD', false);
+    const scheduledOn = await runPatched(30, 'DELOAD', true);
+    expect(sumSets(scheduledOn)).toBe(sumSets(scheduledOff));
+
+    // (c) MEV-floored: the reactive cut never collapses the session below the floor.
+    expect(sumSets(reactiveOn)).toBeGreaterThan(0);
+  });
+});
+
 // ── frequencyToSplit — pure helper (volume-driven program 2026-06-02) ─────
 describe('frequencyToSplit — frequency-appropriate cluster template', () => {
   // Daniel-LOCKED templates. The real win each must satisfy: a lower-body day

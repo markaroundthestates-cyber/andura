@@ -524,7 +524,38 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
         return adherenceVolumeRatio(adh);
       })()
     : 1;
-  const effectiveVolumeRatio = Math.min(freqVolumeRatio, adherenceVolRatio);
+  // REACTIVE-DELOAD → VOLUME dose (dp_deload_volume_depth_v1, cycle-18 audit
+  // 2026-06-16, DEFAULT ON). The Deload engine computes a volume-cut DEPTH
+  // (blueprint.depth_pct: 45% scheduled / 30% reactive / 60% extension) but the live
+  // pipeline only read intensity_modifier (the kg cut) + deload_state (narration) —
+  // so a REACTIVE deload (REACTIVE_AA / REACTIVE_COMPOSITE / EXTENSION_FLAGGED, the
+  // engine deciding the user needs recovery from FATIGUE) cut load ×0.875 but left the
+  // FULL set count standing (the user got a full-volume week the engine flagged for
+  // recovery). We fold its depth into the SAME MEV-floored weekly-volume scaler as a
+  // (1 - depth_pct/100) ratio. SCHEDULED deloads are NOT cut here: a calendar/
+  // periodization DELOAD week already carries its own volume cut in the periodization
+  // budget (mesocycle_phase === 'DELOAD'), so double-cutting it would over-reduce —
+  // we gate on mesocycle_phase !== 'DELOAD'. Composed by the SAME MIN as the freq/
+  // adherence ratios (the user takes the DEEPEST single cut, never a stacked over-cut)
+  // and run through scaleWeeklyVolumeByRatio (MEV-floored per group); the per-exercise
+  // COMPOUND_MIN_SETS/ISOLATION_MIN_SETS floors downstream keep every lift at its
+  // minimum effective dose. OFF → ratio forced to 1 → seam unchanged → byte-identical
+  // (pinned OFF in fp-config FLIPPED_FLAGS so both frozen baselines hold).
+  const deloadVolRatio = (() => {
+    if (!isEnabled('dp_deload_volume_depth_v1')) return 1;
+    const dMod = blueprints.deload?.intensity_modifier ?? null;
+    const dActive =
+      dMod !== null &&
+      ((dMod.rir_increment ?? 0) > 0 || (dMod.intensity_pct_decrement ?? 0) > 0);
+    // Only a REACTIVE deload (the periodization budget did NOT already cut this week's
+    // volume) folds a depth here; a SCHEDULED-week deload is excluded to avoid a double
+    // cut on top of the periodization volume reduction.
+    const isScheduledDeloadWeek = blueprints.periodization?.mesocycle_phase === 'DELOAD';
+    const depthPct = Number(blueprints.deload?.depth_pct) || 0;
+    if (!dActive || isScheduledDeloadWeek || depthPct <= 0 || depthPct >= 100) return 1;
+    return 1 - depthPct / 100;
+  })();
+  const effectiveVolumeRatio = Math.min(freqVolumeRatio, adherenceVolRatio, deloadVolRatio);
   const baseVolumeTargets =
     effectiveVolumeRatio < 1 && baseVolumeTargetsAllocated
       ? scaleWeeklyVolumeByRatio(

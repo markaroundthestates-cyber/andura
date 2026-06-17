@@ -539,6 +539,17 @@ export const FLIPPED_FLAGS = Object.freeze([
   // → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is proven on the
   // scaleSetsByReadiness cut-aware regression test, NOT in this determinism stream.
   'dp_readiness_cut_no_prboost_v1',
+  // THE FLIP 2026-06-16 (reactive-deload volume cut) — dp_deload_volume_depth_v1
+  // defaults ON. getDailyWorkout now folds the Deload engine's depth_pct (a REACTIVE
+  // deload's volume-cut depth, previously DEAD: no live consumer) into the MEV-floored
+  // weekly-volume scaler, so a reactive-deload week's SET counts drop alongside the kg
+  // cut. A fp journey carrying a REACTIVE deload (REACTIVE_AA / REACTIVE_COMPOSITE /
+  // EXTENSION_FLAGGED while mesocycle_phase !== 'DELOAD') would drop set counts → move
+  // a frozen prescription hash. Pinned OFF here (in FLIPPED_FLAGS only, NOT
+  // PATH_A_FLAGS) so deloadVolRatio is forced to 1 in both A/B arms → the old load-only
+  // deload runs → BOTH frozen baselines (hashOff/hashOn) stay byte-for-byte. ON is
+  // proven on the getDailyWorkout deload-volume regression test, NOT in this stream.
+  'dp_deload_volume_depth_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the
