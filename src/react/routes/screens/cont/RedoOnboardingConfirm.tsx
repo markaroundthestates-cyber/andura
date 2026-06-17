@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { gotoPath } from '../../../lib/navigation';
+import { pushStoreNow } from '../../../lib/storeSync';
 import { SubHeader } from '../../../components/SubHeader';
 import { t } from '../../../../i18n/index.js';
 
@@ -19,6 +20,12 @@ export function RedoOnboardingConfirm(): JSX.Element {
 
   function handleConfirm(): void {
     useOnboardingStore.getState().reset();
+    // FIX 7 — push the reset (completed:false) to the cloud SYNCHRONOUSLY, bypassing
+    // the 3s debounce. Otherwise a cloud hydrate before the debounced push lands
+    // resurrects the OLD remote profile + flips completed back to true mid-flow
+    // (the onboarding apply() is monotonic sticky-true). Fire-and-forget: the reset
+    // is already applied locally; the synchronous PATCH just makes the cloud agree.
+    void pushStoreNow('onboarding');
     navigate('/onboarding/1');
   }
 

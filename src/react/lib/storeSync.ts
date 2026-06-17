@@ -437,6 +437,27 @@ function _schedulePush(s: SyncedStore): void {
 }
 
 /**
+ * Flush ONE store's push to the cloud SYNCHRONOUSLY, bypassing the 3s debounce.
+ * Used by destructive/reset flows (Redo onboarding) where the local state change
+ * MUST reach the cloud before any subsequent hydrate — otherwise the debounced
+ * push has not landed yet and a hydrate resurrects the OLD remote node, undoing
+ * the reset (e.g. onboarding completed flips back to true mid-flow). Cancels any
+ * pending debounced push for that node, then issues the PATCH immediately with a
+ * fresh `updatedAt` (so its LWW timestamp wins). Returns the PATCH promise (the
+ * caller may await it). No-op for an unknown node. Auth-gated via fbPatchUserChild.
+ */
+export function pushStoreNow(node: string): Promise<boolean> {
+  const s = SYNCED.find((x) => x.node === node);
+  if (!s) return Promise.resolve(false);
+  const existing = _timers.get(s.node);
+  if (existing) { clearTimeout(existing); _timers.delete(s.node); }
+  const data = s.select(s.store.getState());
+  const updatedAt = Date.now();
+  if (s.node === 'settings') _localPrefsUpdatedAt = updatedAt;
+  return fbPatchUserChild(`wv2/${s.node}`, { data, updatedAt });
+}
+
+/**
  * Subscribe each synced store → debounced PATCH on change. Idempotent: a second
  * call tears down the prior subscriptions first (e.g. account switch). Returns a
  * teardown fn. The subscriptions only PATCH when authenticated (fbPatchUserChild

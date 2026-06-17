@@ -6,7 +6,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AUTH_STORAGE_KEYS } from '../../../auth.js';
-import { hydrateStoresFromCloud, __resetStoreSyncForTest } from '../../lib/storeSync';
+import { hydrateStoresFromCloud, pushStoreNow, __resetStoreSyncForTest } from '../../lib/storeSync';
 import { DB } from '../../../db.js';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useProgresStore } from '../../stores/progresStore';
@@ -408,5 +408,62 @@ describe('hydrateStoresFromCloud — weight goal cross-device convergence (cyc23
     const at = useProgresStore.getState().targetObiectivUpdatedAt;
     expect(at).toBeGreaterThanOrEqual(before);
     expect(at).toBeGreaterThan(0);
+  });
+});
+
+// FIX 7 — pushStoreNow flushes a store to the cloud SYNCHRONOUSLY (bypassing the 3s
+// debounce) so a redo-onboarding reset (completed:false) reaches the cloud before any
+// hydrate can resurrect the OLD completed profile.
+describe('pushStoreNow — synchronous reset push (redo-onboarding survives a hydrate)', () => {
+  /** Capture every PATCH body keyed by node path. */
+  function stubPatchCapture(): { patches: Array<{ url: string; body: unknown }> } {
+    const patches: Array<{ url: string; body: unknown }> = [];
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+      const method = (init?.method || 'GET').toUpperCase();
+      if (method === 'PATCH') {
+        patches.push({ url, body: JSON.parse(String(init?.body ?? '{}')) });
+        return { ok: true, json: async () => ({}) } as Response;
+      }
+      return { ok: true, json: async () => null } as Response;
+    }));
+    return { patches };
+  }
+
+  it('PATCHes the onboarding node immediately with completed:false (no debounce wait)', async () => {
+    seedAuth();
+    const { patches } = stubPatchCapture();
+    // Simulate the redo-onboarding reset: profile cleared, completed false (the
+    // store's own reset sets data:{...EMPTY}, completed:false, completedAt:null).
+    useOnboardingStore.getState().reset();
+
+    const ok = await pushStoreNow('onboarding');
+    expect(ok).toBe(true);
+
+    const onboardingPatch = patches.find((p) => p.url.includes(`users/${UID}/wv2/onboarding`));
+    expect(onboardingPatch).toBeDefined();
+    const body = onboardingPatch!.body as { data?: { completed?: boolean }; updatedAt?: number };
+    // The cloud now reflects the reset — a subsequent hydrate reads completed:false.
+    expect(body.data?.completed).toBe(false);
+    expect(typeof body.updatedAt).toBe('number');
+  });
+
+  it('a hydrate AFTER the synchronous push does NOT resurrect the old completed profile', async () => {
+    seedAuth();
+    // The local reset is in place (completed:false). The cloud has been flushed by
+    // pushStoreNow to completed:false, so the remote node now mirrors the reset —
+    // a hydrate reading that node keeps completed false (no resurrection).
+    useOnboardingStore.getState().reset();
+    const resetData = useOnboardingStore.getState().data;
+    stubFetch({
+      onboarding: { data: { data: resetData, completed: false, completedAt: null }, updatedAt: Date.now() },
+    });
+    await hydrateStoresFromCloud();
+    expect(useOnboardingStore.getState().completed).toBe(false);
+  });
+
+  it('returns false for an unknown node (no-op)', async () => {
+    seedAuth();
+    stubPatchCapture();
+    expect(await pushStoreNow('not-a-real-node')).toBe(false);
   });
 });
