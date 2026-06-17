@@ -848,6 +848,27 @@ export const FLAGS = Object.freeze({
   // fp-config FLIPPED_FLAGS so the fp incepator journeys keep the frozen hashes).
   dp_beginner_calf_rescue_v1: { rollout: 1, default: true },
 
+  // CALF DELIVERY FLOOR (cycle-21b north-star audit 2026-06-17). The calf weekly
+  // BUDGET is already floored to MEV via applyMaintenanceFloor (gambe is in
+  // MAJOR_MUSCLES_RO), but the DELIVERY ignores it for a TRAINED lifter: on forta
+  // (the 0.70 goal modifier + the low 0.15 leg-cluster calf weight round calves
+  // out) a balanced freq-4/5 U/L or PPL week seats NO calf slot at all (calves 0
+  // sets/wk), and on a balanced MASS freq-4/5 week each leg day seats only ONE
+  // calf iso (clamped to 3 sets) so 2 leg days deliver ~6 — BELOW MEV 8 AND non-
+  // monotonic vs the freq-3 full-body week (9). Calves have ~no indirect coverage
+  // (no exercise tags gambe as a secondary), so a missed slot is a true orphan.
+  // When ON + a leg-training cluster (full/lower/legs) trains calves, buildSession
+  // HONORS the floored budget at delivery: it seats >=1 calf slot whenever the
+  // floored calf budget > 0, and a SECOND calf slot when the single-slot weekly
+  // projection (calfFreq x the isolation set ceiling) would fall below MEV — each
+  // via a LENGTH-STABLE SWAP of a redundant 2nd/3rd quad/glute/ham ISOLATION (never
+  // a compound, the focus, or a leg's last slot; total slot count unchanged). The
+  // de-balloon set-budget is also made SYMMETRIC for a small major below its floored
+  // share (it no longer SHRINKS calves' already-thin per-day budget). OFF / non-leg
+  // cluster -> ctx.calfDeliveryFloor false -> never runs -> byte-identical (pinned
+  // OFF in fp-config FLIPPED_FLAGS so the frozen full-path hashes hold).
+  dp_calf_delivery_floor_v1: { rollout: 1, default: true },
+
   // #34 N-of-1 self-experiment (RISK HIGH — deliberately perturbs prescription to
   // learn the user's OWN response; the guardrails are the safety envelope). The
   // MEASUREMENT half is fully REUSED from #31 (trendDirection's noise-aware Kalman

@@ -1365,6 +1365,17 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // cap. Null/false (flag OFF / non-beginner) → never runs → byte-identical (pinned
     // OFF in fp-config FLIPPED_FLAGS).
     beginnerCalfRescue: isEnabled('dp_beginner_calf_rescue_v1'),
+    // CALF DELIVERY FLOOR (dp_calf_delivery_floor_v1, default ON). The beginner calf
+    // rescue above only fires at the 5-slot novice cap; a TRAINED lifter's leg day on a
+    // balanced forta freq-4/5 split seats NO calf slot (calves 0/wk) and a balanced mass
+    // freq-4/5 split delivers ~6 (below MEV 8, non-monotonic vs the freq-3 full-body 9).
+    // When ON, buildSession honors the (already MEV-floored) calf budget at DELIVERY on a
+    // leg-training cluster (full/lower/legs): >=1 calf slot whenever the floored budget>0,
+    // a 2nd calf slot when the single-slot weekly projection (calfFreq x iso ceiling) is
+    // below MEV — each via a length-stable SWAP of a redundant quad/glute/ham isolation
+    // (total slots unchanged). OFF → ctx.calfDeliveryFloor false → never runs →
+    // byte-identical (pinned OFF in fp-config FLIPPED_FLAGS).
+    calfDeliveryFloor: isEnabled('dp_calf_delivery_floor_v1'),
     // §beginner-volume-v2 (dp_beginner_volume_v2, default ON; pinned OFF in fp) —
     // when ON, buildSession applies a FINAL clamp that caps a BEGINNER's EMPHASIZED-
     // group ISOLATIONS at MEV (2 sets). The prior delivered path rode a novice's

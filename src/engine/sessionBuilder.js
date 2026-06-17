@@ -3131,6 +3131,103 @@ export function buildSession(cluster, ctx) {
     }
   }
 
+  // CALF DELIVERY FLOOR (ctx.calfDeliveryFloor, dp_calf_delivery_floor_v1, default ON).
+  // The calf weekly BUDGET is already MEV-floored upstream (applyMaintenanceFloor lists
+  // gambe in MAJOR_MUSCLES_RO), but DELIVERY ignored it for a TRAINED lifter: on a
+  // balanced forta freq-4/5 U/L or PPL week NO calf slot lands at all (the 0.70 goal
+  // modifier + the low 0.15 leg-cluster calf weight round calves out → gambe never wins a
+  // slot), and on a balanced MASS freq-4/5 week each leg day seats only ONE calf iso
+  // (clamped to 3 sets) so 2 leg days deliver ~6 — below MEV 8 AND non-monotonic vs the
+  // freq-3 full-body week's 9. Calves have ~no indirect coverage (no exercise tags gambe
+  // as a secondary), so a missed slot is a TRUE orphan. This block HONORS the floored
+  // budget at delivery on a leg-training cluster (full/lower/legs): it seats >=1 calf slot
+  // whenever the floored calf budget>0, AND a 2nd calf slot when the single-slot weekly
+  // projection (calfFreq x ISOLATION_MAX_SETS) would fall below MEV (calfFreq=1-2 → 3-6 <
+  // 8 → 2/day so 2 leg days clear MEV monotonically; calfFreq>=3 full-body → already >=9 →
+  // stays 1/day = byte-identical). Each slot via a LENGTH-STABLE SWAP of a redundant 2nd/
+  // 3rd quad/glute/ham ISOLATION (never a compound, the focus, or a leg's last slot) so the
+  // total slot count is unchanged; only when no redundant leg iso exists AND there is room
+  // does it ADD; else it accepts the gap. Runs AFTER the posterior+quad floor + beginner
+  // rescue (their slots are final). beginnerCalfRescue (the 5-cap novice case) already owns
+  // the beginner path → this block defers when beginnerCap!==null to avoid a double-seat.
+  // OFF / non-leg cluster → never runs → byte-identical (pinned OFF in fp-config).
+  if (
+    ctx?.calfDeliveryFloor === true
+    && beginnerCap === null
+    && (cluster === 'full' || cluster === 'lower' || cluster === 'legs')
+    && targets.includes('gambe')
+  ) {
+    const CALF = 'gambe';
+    const enCalf = BIG11_RO_TO_EN_MAP[CALF] ?? CALF;
+    const calfMev = ISRAETEL_BASELINES[enCalf]?.MEV ?? 0;
+    const rawCalfBudget = ctx?.volumeTargets && typeof ctx.volumeTargets === 'object'
+      ? ctx.volumeTargets[enCalf]
+      : undefined;
+    // Floored weekly calf budget (defensive — upstream already floors it to MEV).
+    const flooredCalfBudget = Math.max(
+      typeof rawCalfBudget === 'number' && Number.isFinite(rawCalfBudget) ? rawCalfBudget : 0,
+      calfMev,
+    );
+    if (flooredCalfBudget > 0 && calfMev > 0) {
+      const primaryOfName = (name) => getExerciseMetadata(name)?.muscle_target_primary;
+      const liveCount = {};
+      for (const e of chosen) {
+        const g = primaryOfName(e.name);
+        if (g) liveCount[g] = (liveCount[g] || 0) + 1;
+      }
+      // Per-day calf SLOT target: enough so the WEEK clears MEV. With a single slot/day a
+      // calf iso clamps to ISOLATION_MAX_SETS, so the week delivers ~calfFreq x that — when
+      // that is below MEV a 2nd slot is warranted. Capped at 2 (calves never need >2/day).
+      const calfFreq = Math.max(
+        1,
+        Number(ctx?.weeklySessionsPerGroup?.[CALF]) || daysPerWeekN || 1,
+      );
+      const oneSlotWeeklyProjection = calfFreq * ISOLATION_MAX_SETS;
+      const targetSlots = oneSlotWeeklyProjection < calfMev ? 2 : 1;
+      // Redundant leg ISOLATION victim: the lowest-priority (highest-index) tier>COMPOUND
+      // 2nd+ slot of an OVER-slotted quad/glute/ham group — keeps that group >=1 slot (no
+      // orphan), never a compound, never a leg's last slot, never the focus, never gambe.
+      const LEG_DONORS = ['picioare-quads', 'fese', 'picioare-hamstrings'];
+      const findRedundantLegIsoVictim = () => {
+        for (let i = chosen.length - 1; i >= 0; i--) {
+          const g = primaryOfName(chosen[i].name);
+          if (!g || !LEG_DONORS.includes(g)) continue;        // quad/glute/ham donors only
+          if ((liveCount[g] || 0) <= 1) continue;             // never a leg's last slot
+          if ((getExerciseMetadata(chosen[i].name).tier ?? 2) <= COMPOUND_TIER) continue; // iso only
+          if (emphSet.has(g)) continue;                       // never the active focus
+          return i;
+        }
+        return -1;
+      };
+      const calfPool = pools.find((p) => p.group === CALF)?.pool ?? [];
+      // Seat up to targetSlots calf slots: SWAP a redundant leg iso (count-neutral) first,
+      // else ADD if the session is below its effective size; else accept the gap.
+      while ((liveCount[CALF] || 0) < targetSlots) {
+        const inject = calfPool.find((e) => !isTaken(e));
+        if (!inject) break;
+        const victimIdx = findRedundantLegIsoVictim();
+        if (victimIdx >= 0) {
+          const removed = chosen[victimIdx];
+          const rg = primaryOfName(removed.name);
+          chosenNames.delete(removed.name);
+          chosenMovements.delete(dedupKey(removed.name, getExerciseMetadata(removed.name)));
+          if (rg && liveCount[rg]) liveCount[rg] -= 1;
+          if (rg && groupCount[rg]) groupCount[rg] -= 1;
+          chosen.splice(victimIdx, 1, { name: inject.name, sets: DEFAULT_SETS });
+          chosenNames.add(inject.name);
+          chosenMovements.add(dedupKey(inject.name, inject.meta));
+          liveCount[CALF] = (liveCount[CALF] || 0) + 1;
+          groupCount[CALF] = (groupCount[CALF] || 0) + 1;
+        } else if (chosen.length < effectiveSessionSize) {
+          take(inject, DEFAULT_SETS);
+          liveCount[CALF] = (liveCount[CALF] || 0) + 1;
+        } else {
+          break; // no redundant leg iso + at session size → accept the gap
+        }
+      }
+    }
+  }
+
   // #HAMS HYPERTROPHY/STRENGTH HAMSTRING FLOOR (ctx.hamstringFloor,
   // dp_hamstring_floor_v1, default ON). A MASS-BUILDING / STRENGTH program (goal masa /
   // forta) must NEVER zero a hamstring — a major prime mover. The Cycle-11 posterior
@@ -3835,7 +3932,24 @@ export function buildSession(cluster, ctx) {
     // its 1-2 lifts CONCENTRATE the volume toward the band (bounded by the raised
     // isolation ceiling + the weekly MRV cap). Groups with a compound keep #71.
     const skipDeballoon = isEmphasized && !hasCompoundThisSession;
-    const budget = coherentAlloc && !skipDeballoon
+    // CALF DELIVERY FLOOR — SYMMETRIC de-balloon (ctx.calfDeliveryFloor,
+    // dp_calf_delivery_floor_v1). coherentDayBudget only LOWERS a ballooned group; for a
+    // SMALL MAJOR (gambe) whose weekly budget sits AT its MEV floor, the de-balloon then
+    // shrinks its already-thin per-day share when the day landed fewer calf slots than the
+    // dose's expected count — sinking the maintained calf below its floored share. So when
+    // the flag is on AND this is the calf group AND its weekly budget is at/below MEV (the
+    // floored maintenance case), skip the de-balloon SHRINK and keep the full per-session
+    // budget so the placed calf slot(s) carry their floored dose. OFF / non-calf group →
+    // skipCalfDeballoon false → byte-identical to the #71 de-balloon.
+    const enKeyForDeballoon = BIG11_RO_TO_EN_MAP[g] ?? g;
+    const groupMev = ISRAETEL_BASELINES[enKeyForDeballoon]?.MEV;
+    const skipCalfDeballoon =
+      ctx?.calfDeliveryFloor === true
+      && g === 'gambe'
+      && typeof weeklyForGroup === 'number'
+      && typeof groupMev === 'number'
+      && weeklyForGroup <= groupMev;
+    const budget = coherentAlloc && !skipDeballoon && !skipCalfDeballoon
       ? (coherentDayBudget(perSessionBudget, exs.length) ?? perSessionBudget)
       : perSessionBudget;
     const counts = distributeGroupSets(

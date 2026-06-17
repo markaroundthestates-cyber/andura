@@ -731,6 +731,14 @@ function buildFocusFloorDropGuard(
   // (a surplus 2nd lateral still yields) so the width driver survives the trim. Mirrors the
   // #R6b leg-curl hold. false → no extra hold → byte-identical.
   lateralDeltGuard = false,
+  // CALF DELIVERY FLOOR (dp_calf_delivery_floor_v1, LEG day). The sessionBuilder calf
+  // floor seats >=1 calf slot on a leg-training day to honor the MEV-floored budget, but a
+  // calf raise is a tail ISOLATION (behind the lead leg compounds) so on a tight-time forta
+  // leg day the blind tail-first trim drops it → re-orphans calves (forta freq-4/5 calves 0
+  // even after the seat). When true, protect the LAST calf slot (a surplus 2nd calf still
+  // yields) so the maintained calf survives the trim. Mirrors the #R6b leg-curl /
+  // posterior-floor holds. false → no extra hold → byte-identical.
+  calfDeliveryGuard = false,
 ): ((list: ReadonlyArray<TrimmableExercise>, idx: number) => boolean) | null {
   // Region = the de-emphasized groups as ONE protected region (keep ≥1 of the set).
   const region = [...resolveDeEmphasizedGroups(focusPreset)];
@@ -757,7 +765,7 @@ function buildFocusFloorDropGuard(
   );
   if (
     region.length === 0 && perGroup.length === 0 && emphSet.size === 0
-    && !spateInjured && !posteriorFloorFull && !lateralDeltGuard
+    && !spateInjured && !posteriorFloorFull && !lateralDeltGuard && !calfDeliveryGuard
   ) {
     return null;
   }
@@ -789,6 +797,12 @@ function buildFocusFloorDropGuard(
       if (lateralCount <= 1) return true;
     }
     const g = groupOf(list[idx]!);
+    // CALF delivery floor hold: protect the LAST calf (gambe) slot so the sessionBuilder
+    // calf-delivery floor survives the tail-first trim (a surplus 2nd calf still yields).
+    if (calfDeliveryGuard && g === 'gambe') {
+      const calfCount = list.reduce((n, e) => n + (groupOf(e) === 'gambe' ? 1 : 0), 0);
+      if (calfCount <= 1) return true;
+    }
     // (d) spate-injury hamstring backfill: protect the LAST spine-neutral leg-curl
     //     slot so the trim cannot re-orphan hamstrings (a surplus 2nd leg curl still
     //     yields). Evaluated before the group gate so it holds regardless of how the
@@ -1539,16 +1553,24 @@ export async function composePlannedWorkoutToday(
     const lateralDeltGuard =
       isEnabled('dp_lateral_delt_guarantee_v1') &&
       (guardFocusPreset === 'v-taper' || guardFocusPreset === 'shoulders');
+    // CALF delivery floor (dp_calf_delivery_floor_v1) — on a LEG-training day (FULL/LOWER/
+    // LEGS) the sessionBuilder calf floor seats a calf slot; hold its last slot through the
+    // tail-first trim so a tight-time forta leg day does not re-orphan calves. false →
+    // byte-identical guard.
+    const calfDeliveryGuard =
+      isEnabled('dp_calf_delivery_floor_v1') &&
+      (guardDayType === 'FULL' || guardDayType === 'LOWER' || guardDayType === 'LEGS');
     const wantsDropGuard =
       (isEnabled('dp_split_rebalance_v1') &&
         (guardDayType === 'FULL' || guardDayType === 'UPPER' || guardDayType === 'PUSH')) ||
       (spateInjured &&
         (guardDayType === 'FULL' || guardDayType === 'LOWER' || guardDayType === 'LEGS')) ||
       posteriorFloorFull ||
-      lateralDeltGuard;
+      lateralDeltGuard ||
+      calfDeliveryGuard;
     const dropGuard = wantsDropGuard
       ? buildFocusFloorDropGuard(
-        guardFocusPreset, spateInjured, posteriorFloorFull, lateralDeltGuard,
+        guardFocusPreset, spateInjured, posteriorFloorFull, lateralDeltGuard, calfDeliveryGuard,
       )
       : null;
     const trimmedExercises = trimSessionToTimeBudget(

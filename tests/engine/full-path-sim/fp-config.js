@@ -563,6 +563,21 @@ export const FLIPPED_FLAGS = Object.freeze([
   // byte. ON behavior (the deeper of the two stressors governs, never their product) is
   // proven on the compose readiness×energy MIN regression test, NOT in this stream.
   'dp_readiness_energy_min_v1',
+  // THE FLIP 2026-06-17 (calf delivery floor) — dp_calf_delivery_floor_v1 defaults ON. It
+  // honors the MEV-floored calf budget at DELIVERY on a leg-training cluster (full/lower/legs):
+  // >=1 calf slot whenever the floored calf budget>0, a 2nd calf slot when the single-slot weekly
+  // projection (calfFreq x the iso ceiling) falls below MEV — each via a length-stable SWAP of a
+  // redundant quad/glute/ham iso (total slots unchanged), plus a compose-seam drop-guard that
+  // holds the calf through the time-trim + a symmetric de-balloon for the floored small major.
+  // The fp cohort DOES include forta/masa balanced leg-training journeys, so the ON swap WOULD
+  // move their frozen prescription hashes — pinned OFF here (in FLIPPED_FLAGS only, NOT
+  // PATH_A_FLAGS) so ctx.calfDeliveryFloor is false in both A/B arms → the new block + the calf
+  // drop-guard + the symmetric de-balloon never run → BOTH frozen baselines (hashOff/hashOn) stay
+  // byte-for-byte. ON behavior is proven on the eval grid (forta calves 0 → ~MEV at all freq, mass
+  // calves >= MEV + monotonic vs freq-3, total slots unchanged) + the new calf-delivery-floor
+  // regression test, NOT in this determinism stream. Selection/slot-side (no dp.js load math) →
+  // no sim-config pin.
+  'dp_calf_delivery_floor_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the
