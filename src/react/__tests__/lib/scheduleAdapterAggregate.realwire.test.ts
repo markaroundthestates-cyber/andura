@@ -687,6 +687,11 @@ describe('scheduleAdapterAggregate — FIX #4 engine-sourced rest time', () => {
 // assembled here and stays DEFERRED (see final report).
 describe('scheduleAdapterAggregate — FIX #6 reactive deload (energy-down sustained)', () => {
   // A persisted session with a red energy traffic-light (builder maps red->DOWN).
+  // dp_deload_self_feed_fix_v1 (default ON): a red counts as DOWN only when it came
+  // from the user's REAL EnergyCheck (energyUserReported). This fixture models a
+  // GENUINE sustained user low-energy → the legit reactive-deload path stays intact.
+  // (A deload-DERIVED red without provenance no longer self-feeds the deload — the
+  // loop fix, covered in scheduleAdapterAggregate.builder.test.ts case A.)
   function redSessionAt(daysAgo: number): LastSessionSummary {
     const ts = Date.now() - daysAgo * MS_PER_DAY;
     return {
@@ -695,6 +700,7 @@ describe('scheduleAdapterAggregate — FIX #6 reactive deload (energy-down susta
       ts,
       energyEmoji: 'red',
       energy: 'red',
+      energyUserReported: true,
       exercises: [
         {
           exerciseId: 'lat-pulldown',

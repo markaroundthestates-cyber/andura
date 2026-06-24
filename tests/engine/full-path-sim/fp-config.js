@@ -234,6 +234,9 @@ export const FLIPPED_FLAGS = Object.freeze([
   // the missing-equipment picker set is empty → no 'smith' → empty Smith union),
   // pinned OFF anyway for the all-off-world guarantee (frozen hashes byte-for-byte).
   'equipment_smith_avoid_v1',
+  // Real-data coaching fixes 2026-06-24 (founder behavior-log) — default ON,
+  // composition surfaces → pinned OFF so the frozen full-path hashes stay byte-for-byte.
+  'dp_deload_self_feed_fix_v1', 'dp_coldstart_press_class_v1',
   // THE FLIP 2026-06-10 (F5) — cross-day lat-iso dedup defaults ON (the upper
   // day defers a weekly minimum its specialist pull/back days already deliver).
   // Composition surface → pinned OFF so the frozen hashes stay byte-for-byte;

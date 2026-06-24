@@ -1700,6 +1700,24 @@ export const FLAGS = Object.freeze({
   // empty under resetWorld → inert anyway).
   equipment_smith_avoid_v1: { rollout: 1, default: true },
 
+  // ── Real-data coaching fixes (founder behavior-log debugging 2026-06-24) ──
+  // #1 DELOAD SELF-FEED — the logged "readiness" red = intensityMod 'minus' (a
+  // deload), and a deload session persisted energyEmoji:red which the deload
+  // trigger read back as fresh "energy DOWN" → 3 reds re-arm the deload forever
+  // (self-feeding loop; the founder's PRs never break it). When ON, the persisted
+  // energy signal that feeds the deload trigger comes ONLY from the real EnergyCheck
+  // self-report, NOT from the engine's own deload output → the loop can't self-sustain.
+  // Pinned OFF in fp (composition surface) → byte-identical.
+  dp_deload_self_feed_fix_v1: { rollout: 1, default: true },
+
+  // #3 COLDSTART PRESS-CLASS — press-pattern compounds with a triceps PRIMARY
+  // (Close-Grip Bench etc.) fall to the triceps-iso fallback fraction (0.17) and
+  // cold-start ~25kg for a 50kg presser. When ON, the named barbell presses seed at
+  // a chest-press grade (PRESS_CLASS_FRACTION). Scoped to those names. Pinned OFF in
+  // fp → byte-identical. (#2 dp_demo_floor_subfloor_v1 + #4 dp_cable_row_real_stack_v1
+  // deferred 2026-06-24 — broke synergist-discount / ladder-reconcile; need rework.)
+  dp_coldstart_press_class_v1: { rollout: 1, default: true },
+
   // F5 cross-day lat-iso dedup (Daniel coach-review 2026-06-10 + the D117 #2
   // "Upper 8→7" intent). The v-taper lat_isolation weekly minimum (1/wk) was
   // translated into a per-session requirement on EVERY qualifying day → Machine

@@ -190,10 +190,15 @@ describe('buildUserStateForPipeline — trainingWeeks reaches newbie detection',
 
 describe('buildUserStateForPipeline — energyDirection reaches deload AA-trigger', () => {
   it('3 consecutive red sessions → energyDirection DOWN → isEnergyDownSustained true', () => {
+    // dp_deload_self_feed_fix_v1 (default ON) — a red only counts as DOWN when it
+    // came from the user's REAL EnergyCheck report (energyUserReported). These reds
+    // represent a genuine sustained user low-energy → the legit deload path stays
+    // intact. (Deload-derived reds without provenance are covered by the self-feed
+    // describe block below, case A.)
     seedSessions([
-      sessionAt(3, 'potrivit', 'red'),
-      sessionAt(2, 'potrivit', 'red'),
-      sessionAt(1, 'potrivit', 'red'),
+      { ...sessionAt(3, 'potrivit', 'red'), energyUserReported: true },
+      { ...sessionAt(2, 'potrivit', 'red'), energyUserReported: true },
+      { ...sessionAt(1, 'potrivit', 'red'), energyUserReported: true },
     ]);
     const state = buildUserStateForPipeline();
     const sessions = state.recentSessions as Array<{ energyDirection?: string }>;
@@ -238,6 +243,84 @@ describe('buildUserStateForPipeline — energyDirection reaches deload AA-trigge
     const state = buildUserStateForPipeline();
     const sessions = state.recentSessions as Array<Record<string, unknown>>;
     expect('energyDirection' in sessions[0]!).toBe(false);
+  });
+});
+
+describe('buildUserStateForPipeline — dp_deload_self_feed_fix_v1 severs the deload self-feed', () => {
+  // The deload AA-trigger reads recentSessions[*].energyDirection; a session's red
+  // is stamped DOWN. But a deload session persists energyEmoji:red (intensityMod
+  // 'minus' → red) which, fed back, re-arms the very deload that stamped it — a
+  // closed loop the user's PRs can't break (founder: red on 100% of sets while
+  // PRing). The fix gates the DOWN stamping on energyUserReported (provenance:
+  // the red came from the user's REAL EnergyCheck, not the deload band).
+  //   - flag default ON (rollout 1) unless _devFlags forces OFF.
+  //   - localStorage.clear() in beforeEach wipes any prior _devFlags override.
+  function forceFlag(value: boolean): void {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_deload_self_feed_fix_v1: value }));
+  }
+  // A session whose red came from the ENGINE deload (no real EnergyCheck) carries
+  // energyEmoji:red but NO energyUserReported marker.
+  function deloadRedSession(daysAgo: number): LastSessionSummary {
+    return sessionAt(daysAgo, 'usor', 'red'); // usor = PR-easy sets, yet red persisted
+  }
+  // A session whose red came from a GENUINE user low-energy EnergyCheck report.
+  function userRedSession(daysAgo: number): LastSessionSummary {
+    return { ...sessionAt(daysAgo, 'potrivit', 'red'), energyUserReported: true };
+  }
+
+  it('(A) flag ON — 3 deload-derived reds (no user report) → NOT DOWN → loop broken', () => {
+    forceFlag(true);
+    seedSessions([deloadRedSession(3), deloadRedSession(2), deloadRedSession(1)]);
+    const state = buildUserStateForPipeline();
+    const sessions = state.recentSessions as Array<{ energyDirection?: string }>;
+    // The self-feed red is NOT stamped DOWN → energyDirection omitted.
+    expect(sessions.every((s) => s.energyDirection !== 'DOWN')).toBe(true);
+    expect(
+      isEnergyDownSustained(
+        state.recentSessions as Parameters<typeof isEnergyDownSustained>[0],
+      ),
+    ).toBe(false);
+  });
+
+  it('(B) flag ON — 3 genuine user low-energy reports → DOWN → deload STILL triggers', () => {
+    forceFlag(true);
+    seedSessions([userRedSession(3), userRedSession(2), userRedSession(1)]);
+    const state = buildUserStateForPipeline();
+    const sessions = state.recentSessions as Array<{ energyDirection?: string }>;
+    // The legitimate path is preserved — real user reds still stamp DOWN.
+    expect(sessions.every((s) => s.energyDirection === 'DOWN')).toBe(true);
+    expect(
+      isEnergyDownSustained(
+        state.recentSessions as Parameters<typeof isEnergyDownSustained>[0],
+      ),
+    ).toBe(true);
+  });
+
+  it('(C) flag OFF — legacy: any red → DOWN (loop intact, byte-identical)', () => {
+    forceFlag(false);
+    seedSessions([deloadRedSession(3), deloadRedSession(2), deloadRedSession(1)]);
+    const state = buildUserStateForPipeline();
+    const sessions = state.recentSessions as Array<{ energyDirection?: string }>;
+    // Legacy behavior: provenance ignored, every red stamps DOWN.
+    expect(sessions.every((s) => s.energyDirection === 'DOWN')).toBe(true);
+    expect(
+      isEnergyDownSustained(
+        state.recentSessions as Parameters<typeof isEnergyDownSustained>[0],
+      ),
+    ).toBe(true);
+  });
+
+  it('flag ON — UP/NONE unaffected (only the self-feeding DOWN path is gated)', () => {
+    forceFlag(true);
+    // Green/yellow sessions never carried energyUserReported, yet must still map.
+    seedSessions([
+      sessionAt(3, 'potrivit', 'green'),
+      sessionAt(2, 'potrivit', 'yellow'),
+    ]);
+    const state = buildUserStateForPipeline();
+    const sessions = state.recentSessions as Array<{ energyDirection?: string }>;
+    // green → UP, yellow → NONE: both preserved without a provenance marker.
+    expect(sessions.map((s) => s.energyDirection)).toEqual(['NONE', 'UP']);
   });
 });
 

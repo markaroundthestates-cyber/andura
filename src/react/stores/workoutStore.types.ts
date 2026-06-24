@@ -184,6 +184,16 @@ export interface LastSessionSummary {
   // no-signal baseline. NU fabricate green when absent.
   energyEmoji?: 'green' | 'yellow' | 'red';
   energy?: 'green' | 'yellow' | 'red';
+  // dp_deload_self_feed_fix_v1 — PROVENANCE of energyEmoji. true ONLY when the
+  // persisted traffic-light came from the user's REAL EnergyCheck self-report
+  // (sessionEnergy present at finish). Absent when the energyEmoji is merely the
+  // engine's own deload band reflected back (no fresh user check). The deload
+  // AA-trigger reads a session's red as a fresh "energy DOWN" data point; a
+  // deload-derived red feeding the deload that produced it is the self-feeding
+  // loop (the founder logged red on 100% of sets while PRing). The builder gates
+  // the DOWN→deload stamping on this flag so only a user-reported red counts.
+  // Optional + only written when the fix flag is ON → flag OFF byte-identical.
+  energyUserReported?: boolean;
 }
 
 // ── Logs writeback shim (CRIT #2 shape-check audit chat 5) ─────────────────

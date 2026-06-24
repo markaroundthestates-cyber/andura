@@ -41,6 +41,7 @@ import {
   refreshPRRecordsFromLogs,
 } from '../../../lib/prRecordsWriteback';
 import { DB, todTs } from '../../../../db.js';
+import { isEnabled } from '../../../../util/featureFlags.js';
 import { toast } from '../../../lib/toast';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { t } from '../../../../i18n/index.js';
@@ -82,6 +83,10 @@ export function PostRpe(): JSX.Element {
   const history = useWorkoutStore((s) => s.history);
   const sessionStart = useWorkoutStore((s) => s.sessionStart);
   const sessionContext = useWorkoutStore((s) => s.sessionContext);
+  // dp_deload_self_feed_fix_v1 — the genuine user EnergyCheck self-report (null
+  // when the user entered Antrenor directly OR the session ran on the engine's
+  // deload band only). Its presence is what marks a persisted red as USER-reported.
+  const sessionEnergy = useWorkoutStore((s) => s.sessionEnergy);
   const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
   const setLastRating = useWorkoutStore((s) => s.setLastRating);
   const finishSession = useWorkoutStore((s) => s.finishSession);
@@ -265,6 +270,18 @@ export function PostRpe(): JSX.Element {
         ? energyLightForIntensityMod(sessionContext.intensityMod)
         : undefined;
 
+    // dp_deload_self_feed_fix_v1 — PROVENANCE marker. The persisted energyEmoji is
+    // derived from sessionContext.intensityMod, which can carry the engine's own
+    // deload band ('minus' → red) rather than a fresh user signal. Stamp the
+    // energy as USER-reported ONLY when a real EnergyCheck self-report exists
+    // (sessionEnergy present). The deload AA-trigger then counts a red as a fresh
+    // "energy DOWN" data point only for user-reported reds — severing the
+    // deload→red→deload self-feed (the loop that kept the founder in a permanent
+    // deload while he PR'd every set). Flag OFF → field never written →
+    // byte-identical legacy.
+    const energyUserReported =
+      isEnabled('dp_deload_self_feed_fix_v1') && energy !== undefined && sessionEnergy !== null;
+
     finishSession({
       title,
       meta,
@@ -274,6 +291,7 @@ export function PostRpe(): JSX.Element {
       volumeKg: volume,
       exercises,
       ...(energy !== undefined ? { energyEmoji: energy, energy } : {}),
+      ...(energyUserReported ? { energyUserReported: true } : {}),
     });
     incrementStreak();
 

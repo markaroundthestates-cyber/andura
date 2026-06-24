@@ -403,7 +403,21 @@ export function buildUserStateForPipeline(): {
       // energyDirection from the persisted energyEmoji → deload isEnergyDownSustained.
       const direction =
         typeof s.energyEmoji === 'string' ? EMOJI_TO_DIRECTION[s.energyEmoji] : undefined;
-      if (direction !== undefined) overlay.energyDirection = direction;
+      // dp_deload_self_feed_fix_v1 — SEVER the deload self-feed. A persisted red
+      // (energyEmoji 'red' → DOWN) is fed back to the deload AA-trigger as a fresh
+      // "energy DOWN" data point; but that red may itself be the engine's own
+      // deload band reflected back (intensityMod 'minus' → red), so 3 stacked
+      // deload reds re-arm the very deload that stamped them — a closed loop the
+      // user's upward PRs can't break (founder logged red on 100% of sets while
+      // PRing). When ON, a DOWN only counts when the red came from the user's REAL
+      // EnergyCheck self-report (energyUserReported). UP/NONE are unaffected — only
+      // the self-feeding DOWN path is gated; a genuine 3× user low-energy report
+      // STILL triggers the deload. Flag OFF → legacy (any red → DOWN), byte-identical.
+      const deDownSelfFeed =
+        direction === EMOJI_TO_DIRECTION.red &&
+        isEnabled('dp_deload_self_feed_fix_v1') &&
+        s.energyUserReported !== true;
+      if (direction !== undefined && !deDownSelfFeed) overlay.energyDirection = direction;
       // weekIdx from the session timeline modulo 4 → mesocycle dual-signal.
       const weekIdx = deriveWeekIdx(Number(s.ts), startTs, now);
       if (weekIdx !== undefined) overlay.weekIdx = weekIdx;

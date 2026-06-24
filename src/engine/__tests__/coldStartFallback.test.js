@@ -5,9 +5,10 @@
 // muscle_target_primary × equipment_type. These tests pin the REAL outputs so a
 // regression back to the floor fails loudly.
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { suggestStartWeight } from '../coldStartGuidelines.js';
 import { roundToEquipmentWeight, getEquipmentType } from '../../config/weights.js';
+import * as flags from '../../util/featureFlags.js';
 
 const HEAVY = { bodyweightKg: 108, sex: 'm' };
 
@@ -291,4 +292,26 @@ describe('cold-start seeds stay light for a 60kg beginner female', () => {
       expect(snapped).toBeLessThanOrEqual(cap + 3); // one step of slack on the snap
     });
   }
+});
+
+describe('coldStartGuidelines — triceps-primary press class (dp_coldstart_press_class_v1)', () => {
+  afterEach(() => vi.restoreAllMocks());
+  const forcePressClass = (on) =>
+    vi.spyOn(flags, 'isEnabled').mockImplementation((id) =>
+      id === 'dp_coldstart_press_class_v1' ? on : false,
+    );
+
+  it('Close-Grip Bench Press seeds as a PRESS when ON, triceps-iso fallback when OFF', () => {
+    // Real founder data: Close-Grip 50kg (bw108 advanced); the legacy triceps-iso
+    // fallback (0.20 × barbell 0.85 ≈ 0.17) cold-started it at ~24kg.
+    forcePressClass(true);
+    const on = suggestStartWeight('Close-Grip Bench Press', 'advanced', HEAVY);
+    vi.restoreAllMocks();
+    forcePressClass(false);
+    const off = suggestStartWeight('Close-Grip Bench Press', 'advanced', HEAVY);
+    expect(off).toBeLessThanOrEqual(32); // legacy triceps-iso ~24
+    expect(on).toBeGreaterThanOrEqual(45); // press grade ~56 (0.40 × 108 × 1.3)
+    expect(on).toBeLessThanOrEqual(65);
+    expect(on).toBeGreaterThan(off * 1.7); // the flag clearly lifts the press
+  });
 });

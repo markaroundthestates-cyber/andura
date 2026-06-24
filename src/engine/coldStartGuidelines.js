@@ -4,6 +4,7 @@
 // scaled by onboarding data (experience, goal, equipment).
 
 import { getExerciseMetadata } from './exerciseLibrary.js';
+import { isEnabled } from '../util/featureFlags.js';
 
 const BASE_WEIGHTS = {
   'DB Shoulder Press': 10,
@@ -171,6 +172,18 @@ const BW_FRACTION = /** @type {Record<string, number>} */ ({
   'Leaning Lateral Raise': 0.075,
 });
 
+// #3 (dp_coldstart_press_class_v1) — triceps-PRIMARY bench presses are chest-PRESS
+// movements, not triceps isolations. Without an explicit BW_FRACTION entry they fall
+// to the triceps-iso fallback (0.20 × barbell 0.85 ≈ 0.17) and cold-start ~25kg for a
+// 50kg presser (founder's real Close-Grip 50kg from his log). These press-grade
+// fractions price them between the triceps-iso 0.17 and the flat-press piept 0.50:
+// 0.40 × 108 × 1.3 ≈ 56 (recalibrates down on the first set's RIR if light). Gated;
+// flag OFF → not consulted → legacy fallback → byte-identical.
+const PRESS_CLASS_FRACTION = /** @type {Record<string, number>} */ ({
+  'Close-Grip Bench Press': 0.40,
+  'Smith Close-Grip Bench': 0.40,
+});
+
 // Generic fraction for exercises with no explicit pattern entry AND no usable
 // metadata — small isolation level (conservative; never aggressive for a truly
 // unknown movement).
@@ -277,7 +290,12 @@ function _profileScaledStart(exerciseName, experience, bodyweightKg, sex) {
   const multMap = /** @type {Record<string, number>} */ (EXPERIENCE_MULTIPLIER);
   const expMult = multMap[experience] ?? 1.0;
   const fracMap = BW_FRACTION;
-  const frac = fracMap[exerciseName] ?? _fallbackFraction(exerciseName);
+  // #3 — a triceps-primary bench press uses its press-grade fraction (when the flag
+  // is on) before the triceps-iso fallback. Off → undefined → legacy fallback.
+  const pressFrac = isEnabled('dp_coldstart_press_class_v1')
+    ? PRESS_CLASS_FRACTION[exerciseName]
+    : undefined;
+  const frac = fracMap[exerciseName] ?? pressFrac ?? _fallbackFraction(exerciseName);
   const sexMap = SEX_FACTOR;
   const sexF = (typeof sex === 'string' && sexMap[sex] != null) ? sexMap[sex] : 1.0;
   return bodyweightKg * frac * sexF * expMult;
