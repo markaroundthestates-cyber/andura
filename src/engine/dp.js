@@ -2338,9 +2338,14 @@ export const DP = {
       // also down-weights this set's calibration so the inflated kg doesn't bake
       // into the per-exercise factor (the prescription cap itself is returned
       // below). Flag-off → egoJump is always false → identical legacy path.
+      // A big jump rated EASY (usor, lastRPE <= 6.5) is demonstrated capacity, NOT
+      // an ego jump — exempt it so the cap + "it got heavy" warning never fires on a
+      // set the user rated easy. Flag OFF → wasEasy:false → byte-identical legacy.
+      const egoCapEasyExempt = isEnabled('dp_ego_cap_easy_exempt_v1');
       const egoJump = isEnabled('dp_ego_cap_v1') && isEgoJump({
         recKg: Number(ctx.recKg), loggedKg, loggedReps, rMin,
         wasHard: lastRPE >= 9.5,
+        wasEasy: egoCapEasyExempt && (lastRPE <= 6.5),
       });
       // #65 log-outlier detector (dp_log_outlier_v1, default OFF → never called →
       // byte-identical): a logged set whose RIR-corrected e1RM is > OUTLIER_Z σ above

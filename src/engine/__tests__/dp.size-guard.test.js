@@ -148,9 +148,11 @@ import { resolve, dirname } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Ceiling = current line count. Ratchet DOWN only (twelve documented exceptions
-// 2026-06-11/12/14/16/17 for call-site wiring — see header; 2026-06-17 ratchet down).
-const DP_LINE_CEILING = 3069;
+// Ceiling = current line count. Ratchet DOWN only (thirteen documented exceptions
+// 2026-06-11/12/14/16/17/24 for call-site wiring — see header; 2026-06-17 ratchet down).
+// 2026-06-24 (3069→3074): egoCap EASY-exempt wiring in checkInSessionAdjust (thread
+// wasEasy behind dp_ego_cap_easy_exempt_v1) — a caller clamp, no extractable logic.
+const DP_LINE_CEILING = 3074;
 
 const dpSrc = readFileSync(resolve(__dirname, '../dp.js'), 'utf8');
 // Under a Stryker mutation dry-run the on-disk source is INSTRUMENTED (stryMutAct_*

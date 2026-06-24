@@ -24,6 +24,23 @@ describe('isEgoJump / egoCappedKg — pure', () => {
   it('does NOT flag an aggressive jump that was easy + hit reps', () => {
     expect(isEgoJump({ recKg: 60, loggedKg: 90, loggedReps: 10, rMin: 8, wasHard: false })).toBe(false);
   });
+
+  // ── easy-exempt (dp_ego_cap_easy_exempt_v1) — EASY = demonstrated capacity ──
+  // Real session: Close-Grip Bench logged ≫ rec, rated USOR, a rep short. The
+  // missed rep alone must NOT make it an ego jump when the user rated it easy.
+  it('does NOT flag a big jump + missed reps when rated EASY (wasEasy true)', () => {
+    expect(isEgoJump({ recKg: 25, loggedKg: 50, loggedReps: 9, rMin: 10, wasHard: false, wasEasy: true })).toBe(false);
+  });
+  it('STILL flags a big jump + missed reps when NOT easy (wasEasy false — unchanged)', () => {
+    expect(isEgoJump({ recKg: 25, loggedKg: 50, loggedReps: 9, rMin: 10, wasHard: false, wasEasy: false })).toBe(true);
+  });
+  it('STILL flags a big jump rated HARD even if wasEasy is somehow true (wasHard wins)', () => {
+    expect(isEgoJump({ recKg: 60, loggedKg: 90, loggedReps: 5, rMin: 8, wasHard: true, wasEasy: true })).toBe(true);
+  });
+  it('a jump within ratio is NOT an ego jump regardless of wasEasy', () => {
+    expect(isEgoJump({ recKg: 60, loggedKg: 70, loggedReps: 5, rMin: 8, wasHard: false, wasEasy: false })).toBe(false);
+  });
+
   it('egoCappedKg = rec × ratio', () => {
     expect(egoCappedKg(60)).toBeCloseTo(60 * EGO_JUMP_RATIO, 6);
   });

@@ -463,6 +463,10 @@ export const FLIPPED_FLAGS = Object.freeze([
   // convergence + persona-matrix + the eval judge, NOT this determinism stream). Note: the §B
   // dark-primitive tests still set #26/#32 ON explicitly for their own behavior assertions.
   'dp_ego_cap_v1', 'dp_temperament_v1', 'dp_trend_signal_v1', 'dp_load_transition_v1',
+  // dp_ego_cap_easy_exempt_v1 (easy-exempt refinement of #6/B) → pinned OFF here so
+  // both A/B arms pass wasEasy:false → isEgoJump is byte-identical legacy → the frozen
+  // full-path hashes (hashOff/hashOn) stay byte-for-byte.
+  'dp_ego_cap_easy_exempt_v1',
   'dp_log_outlier_v1', 'dp_behavior_distill_v1', 'dp_subrecovery_drift_v1', 'dp_dip_classifier_v1',
   'dp_nof1_v1', 'dp_library_chains_v1', 'dp_strength_bw_ratio_v1', 'dp_maintenance_freq_reshape_v1',
   // THE FLIP 2026-06-14 (low-capacity effective-frequency cap) — extends the maintenance/older

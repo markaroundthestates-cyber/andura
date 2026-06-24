@@ -133,6 +133,8 @@ export const FLAGS = Object.freeze({
   // EASE-BACK reactive brakes only). Independent of the F3 flags (works on raw kg;
   // sharper on the e1RM jump when dp_e1rm_v1 ON).
   dp_ego_cap_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
+  // egoCap does NOT cap a big jump rated EASY — easy = demonstrated capacity, not ego
+  dp_ego_cap_easy_exempt_v1: { rollout: 1, default: true },
 
   // #65 log OUTLIER detector vs the user's OWN posterior band (RISK MED — changes
   // WHAT the engine learns from, path B). When ON, a logged set whose RIR-corrected
