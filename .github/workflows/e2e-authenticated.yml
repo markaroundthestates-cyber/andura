@@ -54,7 +54,7 @@ jobs:
     # Don't bother when the deploy itself was skipped (docs-only pushes etc.).
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion != 'skipped' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v6
         with:
