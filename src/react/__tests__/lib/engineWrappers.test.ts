@@ -386,8 +386,14 @@ describe('engineWrappers — getCoachTodayQuote folds aerobic recovery', () => {
     seedCoreSession();
     // A today aerobic class eases core (gradient 1.0) to 'partial' via
     // mergeAerobicRecovery — the SAME fold the body-map applies.
+    // Date derived from the session ts (today), not hardcoded — getAerobicRecoveryContribution
+    // (muscleRecovery.js sameDay) keys the fold on the LOCAL calendar day of ts; a frozen
+    // date string went stale once the wall clock moved past it (was '2026-06-17').
+    const aerobicTs = NOW - 2 * HOUR;
+    const ad = new Date(aerobicTs);
+    const aerobicDate = `${ad.getFullYear()}-${String(ad.getMonth() + 1).padStart(2, '0')}-${String(ad.getDate()).padStart(2, '0')}`;
     useAerobicStore.setState({
-      sessions: [{ date: '2026-06-17', type: 'aerobic', minutes: 45, kcal: 300, ts: NOW - 2 * HOUR }],
+      sessions: [{ date: aerobicDate, type: 'aerobic', minutes: 45, kcal: 300, ts: aerobicTs }],
     });
     const quote = getCoachTodayQuote();
     // Core was the only trained group and it is now eased (partial), so the quote
