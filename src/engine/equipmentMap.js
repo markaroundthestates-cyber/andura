@@ -1,6 +1,9 @@
 // ══ EQUIPMENT MAP — Coarse equipment_type canonical SoT (WP-3 MOAT revive) ══
 // Pure data + pure helpers: zero I/O, zero app-state import.
 //
+// (Exception: smithExerciseNames derives its set from the library SoT
+//  EXERCISE_METADATA — still pure, just a name-level read over loaded data.)
+//
 // D081 LOCKED V1: the library's coarse `equipment_type` (exerciseLibrary.js) is
 // the single source of truth for equipment. The fine-grained sala-pilot IDs
 // (matrix_cable / bailib_stack / pec_deck / leg_machine / leg_press_plates) are
@@ -20,6 +23,8 @@
 // Cross-refs:
 //   - 📥_inbox/wiring-audit-2026-05-26/P3-MOAT-DESIGN.md §3.2, §4 (design)
 //   - DECISIONS.md §D081 (coarse equipment_type = SoT, abandon fine-grained)
+
+import { EXERCISE_METADATA } from './exerciseLibrary.js';
 
 /**
  * The 6 coarse equipment types — library `equipment_type` domain. This is the
@@ -157,4 +162,35 @@ export function availableCoarseTypes(missingUserIds) {
   const blocked = new Set(translateMissingToCoarse(missingUserIds));
   blocked.delete('bodyweight'); // bodyweight is never unavailable
   return COARSE_EQUIPMENT_TYPES.filter((t) => !blocked.has(t));
+}
+
+/**
+ * The user-facing missing-equipment picker id for the Smith machine. The founder
+ * hates the Smith machine; this lets it be excluded WITHOUT also dropping every
+ * free-barbell + non-Smith machine lift (which 'power-rack' → ['barbell','machine']
+ * does). It deliberately does NOT appear in USER_EQUIPMENT_TO_COARSE — Smith
+ * exercises are equipment_type:'machine' and retagging them would ripple through
+ * seeding/transfer/plateMath. Instead this id drives an ADDITIVE name-based
+ * exclusion (smithExerciseNames below), unioned into the existing per-exercise
+ * equipment-missing list at the getDailyWorkout seam.
+ * @type {'smith'}
+ */
+export const SMITH_MISSING_ID = 'smith';
+
+/**
+ * Canonical engine (EN) names of every Smith-machine exercise in the library —
+ * the SINGLE SOURCE OF TRUTH for the 'smith' missing-equipment toggle. Derived
+ * from the library metadata (any name containing the word "Smith"), so adding a
+ * new Smith variant to exercises.json self-extends this set with zero edits here.
+ *
+ * Every entry is equipment_type:'machine' (asserted in the unit test). The set is
+ * used ADDITIVELY: when the user marks 'smith' as missing equipment, these names
+ * are unioned into the already-consumed equipmentMissingNames exclusion (the
+ * last-option-guarded sessionBuilder.dropEquipmentMissing path). equipment_type
+ * is left untouched.
+ *
+ * @returns {string[]} canonical EN names whose word "Smith" marks them Smith-machine
+ */
+export function smithExerciseNames() {
+  return Object.keys(EXERCISE_METADATA).filter((name) => /\bsmith\b/i.test(name));
 }

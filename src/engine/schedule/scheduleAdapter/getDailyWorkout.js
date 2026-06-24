@@ -25,7 +25,7 @@ import { getRefusalPenalties } from './refusalFlowStorage.js';
 import { painSwapMap } from '../../dp/painMemory.js';
 import { fatigueSetsAdjust } from '../../dp/fatigueCurve.js';
 import { effectiveRepsSetsTrim } from '../../dp/effectiveReps.js';
-import { availableCoarseTypes } from '../../equipmentMap.js';
+import { availableCoarseTypes, smithExerciseNames, SMITH_MISSING_ID } from '../../equipmentMap.js';
 import {
   getRecoveryByGroup,
   mergeAerobicRecovery,
@@ -1208,9 +1208,20 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // removes it in Account. Empty list (the common case + every sim) → empty array
     // → byte-identical composition. Flag OFF → empty array → byte-identical (the
     // full-path-sim hash holds; pinned OFF in the fp cohorts).
-    equipmentMissingNames: isEnabled('dp_equipment_memory_v1')
-      ? getMissingEquipmentExercises()
-      : [],
+    // SMITH-MACHINE avoid (equipment_smith_avoid_v1, default ON — founder hates the
+    // Smith machine, 2026-06-24). When the user's missing-equipment PICKER set
+    // (missingUserIds, from getMissingEquipment) contains 'smith', UNION the ~30
+    // Smith-variant EN names into this SAME exclusion list. Smith exercises are
+    // equipment_type:'machine' (NOT retagged — that would ripple seeding/transfer/
+    // plateMath); excluding by NAME drops ONLY the Smith variants, keeping free-
+    // barbell + non-Smith machines + cables. 'smith' NOT in the missing set (the
+    // default for everyone) → empty union → byte-identical. Flag OFF → no union.
+    equipmentMissingNames: [
+      ...(isEnabled('dp_equipment_memory_v1') ? getMissingEquipmentExercises() : []),
+      ...(isEnabled('equipment_smith_avoid_v1') && missingUserIds.includes(SMITH_MISSING_ID)
+        ? smithExerciseNames()
+        : []),
+    ],
     // F6a #20 per-set fatigue curve (dp_fatigue_curve_v1, default OFF → null →
     // distributeGroupSets applies adjust 0 → byte-identical). When ON, the learned
     // per-exercise drop-off index (persisted dp-fatigue-curve, name-keyed on the EN

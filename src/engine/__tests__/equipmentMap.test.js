@@ -33,9 +33,12 @@ describe('COARSE_EQUIPMENT_TYPES — library equipment_type domain', () => {
 });
 
 describe('USER_EQUIPMENT_TO_COARSE — every AparateLipsa ID is meaningful', () => {
-  it('covers all 10 user-facing IDs from scheduleAdapter VALID_EQUIPMENT_IDS', () => {
+  it('covers every coarse-mapped user-facing ID from scheduleAdapter VALID_EQUIPMENT_IDS', () => {
     const mapped = Object.keys(USER_EQUIPMENT_TO_COARSE).sort();
-    expect(mapped).toEqual([...VALID_EQUIPMENT_IDS].sort());
+    // 'smith' (2026-06-24) is the deliberate exception: it carries NO coarse mapping
+    // (Smith exercises are equipment_type:'machine'; the toggle drives a name-based
+    // exclusion via equipmentMap.smithExerciseNames, NOT a coarse subtraction).
+    expect(mapped).toEqual([...VALID_EQUIPMENT_IDS].filter((id) => id !== 'smith').sort());
   });
 
   it('every NON-setup user ID resolves to >= 1 EXISTING coarse type (zero dead items)', () => {

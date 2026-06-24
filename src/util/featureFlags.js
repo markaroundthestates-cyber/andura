@@ -1687,6 +1687,19 @@ export const FLAGS = Object.freeze({
   // baseline stays byte-for-byte (resetWorld clears localStorage → inert anyway).
   dp_equipment_memory_v1: { rollout: 1, default: true },
 
+  // Smith-machine avoid toggle (founder hates the Smith machine, 2026-06-24). The
+  // 'smith' missing-equipment picker id (AparateLipsa) marks the Smith machine
+  // gone. When ON + 'smith' is in the user's missing set, getDailyWorkout UNIONS
+  // the ~30 Smith-variant EN names (equipmentMap.smithExerciseNames) into the
+  // SAME equipmentMissingNames list the equipment-memory exclusion already feeds
+  // sessionBuilder (last-option guarded). Excludes ONLY the Smith variants, not
+  // free-barbell / non-Smith machines / cables. No new filter logic, no
+  // equipment_type retag. Default ON but INERT until the user toggles 'smith' off
+  // (missing set empty for everyone else) → byte-identical. Pinned OFF in the
+  // full-path-sim FLIPPED_FLAGS for the all-off A/B baseline (the picker set is
+  // empty under resetWorld → inert anyway).
+  equipment_smith_avoid_v1: { rollout: 1, default: true },
+
   // F5 cross-day lat-iso dedup (Daniel coach-review 2026-06-10 + the D117 #2
   // "Upper 8→7" intent). The v-taper lat_isolation weekly minimum (1/wk) was
   // translated into a per-session requirement on EVERY qualifying day → Machine

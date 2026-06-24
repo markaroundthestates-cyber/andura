@@ -17,8 +17,14 @@ export const DAY_INDICES = Object.freeze({ L: 0, M: 1, M2: 2, J: 3, V: 4, S: 5, 
 export const DAY_LABELS = Object.freeze(['L', 'M', 'M2', 'J', 'V', 'S', 'D']);
 
 // User-facing equipment IDs surfaced in screen-aparate-lipsa picker — parity
-// mockup S1.7 demo JS APARATE_LIPSA_VALID_IDS constant. 10 entries:
+// mockup S1.7 demo JS APARATE_LIPSA_VALID_IDS constant. 11 entries:
+//   'smith' (2026-06-24) — separate Smith-machine toggle so the founder can drop
+//   the ~30 Smith variants WITHOUT 'power-rack' also dropping all barbell+machine.
+//   It carries NO coarse mapping (USER_EQUIPMENT_TO_COARSE) — it drives a name-
+//   based exclusion (equipmentMap.smithExerciseNames) at the getDailyWorkout seam.
+//   Must be listed here or getMissingEquipment() filters it out on read.
 export const VALID_EQUIPMENT_IDS = Object.freeze([
   'banca-inclinata', 'banca-plana', 'bara-halterelor', 'gantere', 'aparat-cablu',
-  'power-rack', 'leg-press', 'aparat-extensii', 'aparat-tractiuni', 'banda-elastica'
+  'power-rack', 'leg-press', 'aparat-extensii', 'aparat-tractiuni', 'banda-elastica',
+  'smith'
 ]);

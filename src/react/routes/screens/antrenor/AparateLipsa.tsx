@@ -59,6 +59,7 @@ const EQUIPMENT_ITEMS: readonly EquipmentItem[] = [
   { id: 'gantere' },
   { id: 'aparat-cablu' },
   { id: 'power-rack' },
+  { id: 'smith' },
   { id: 'leg-press' },
   { id: 'aparat-extensii' },
   { id: 'aparat-tractiuni' },

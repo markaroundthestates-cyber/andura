@@ -65,10 +65,10 @@ describe('AparateLipsa — render', () => {
     expect(screen.getByTestId('aparate-lipsa-back')).toBeInTheDocument();
   });
 
-  it('renders flat 10 checkbox list per Slice 1.7 mockup naming', () => {
+  it('renders flat 11 checkbox list (10 mockup + Smith-machine toggle)', () => {
     renderLipsa();
     const checkboxes = screen.getAllByRole('checkbox');
-    expect(checkboxes.length).toBe(10);
+    expect(checkboxes.length).toBe(11);
   });
 
   it('renders Save button', () => {
@@ -103,7 +103,8 @@ describe('AparateLipsa — render', () => {
     expect(screen.getByLabelText('Banca plana')).toBeInTheDocument();
     expect(screen.getByLabelText('Bara halterelor')).toBeInTheDocument();
     expect(screen.getByLabelText('Gantere')).toBeInTheDocument();
-    expect(screen.getByLabelText('Power rack / Smith machine')).toBeInTheDocument();
+    expect(screen.getByLabelText('Power rack')).toBeInTheDocument();
+    expect(screen.getByLabelText('Aparat Smith')).toBeInTheDocument(); // Smith-machine avoid (2026-06-24)
     expect(screen.getByLabelText('Banda elastica')).toBeInTheDocument();
   });
 });

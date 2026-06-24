@@ -32,10 +32,11 @@ describe('scheduleAdapter — constants', () => {
     expect(DAY_LABELS).toEqual(['L', 'M', 'M2', 'J', 'V', 'S', 'D']);
   });
 
-  it('VALID_EQUIPMENT_IDS contains 10 picker entries', () => {
-    expect(VALID_EQUIPMENT_IDS).toHaveLength(10);
+  it('VALID_EQUIPMENT_IDS contains 11 picker entries', () => {
+    expect(VALID_EQUIPMENT_IDS).toHaveLength(11);
     expect(VALID_EQUIPMENT_IDS).toContain('gantere');
     expect(VALID_EQUIPMENT_IDS).toContain('banda-elastica');
+    expect(VALID_EQUIPMENT_IDS).toContain('smith'); // Smith-machine avoid toggle (2026-06-24)
   });
 
   it('storage keys match mockup S1.7 demo JS', () => {
@@ -263,7 +264,7 @@ describe('scheduleAdapter — translateToEngineEquipment', () => {
     expect(translateToEngineEquipment([])).toEqual([]);
   });
 
-  it('all 10 picker entries map without throwing', () => {
+  it('all 11 picker entries map without throwing (incl. coarse-less smith)', () => {
     expect(() => translateToEngineEquipment([...VALID_EQUIPMENT_IDS])).not.toThrow();
   });
 });
