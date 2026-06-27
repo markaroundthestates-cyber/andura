@@ -419,7 +419,10 @@ export interface WorkoutActions {
     pendingAdvance: boolean;
   }) => void;
   logSet: (exIdx: number, entry: ExerciseHistoryEntry) => void;
-  advanceExercise: () => void;
+  // Bug 4 — optional explicit target slot. No arg keeps the raw exIdx+1 advance;
+  // callers pass nextActiveIdx so the cursor skips dropped / already-completed
+  // slots and never lands a spurious rest before finish.
+  advanceExercise: (toIdx?: number) => void;
   markPRHit: (data?: PRData) => void;
   setLastRating: (rating: 'usoara' | 'normala' | 'grea') => void;
   // U-03 (HIGH) — set session intensity/pain context (WorkoutPreview.handleStart).

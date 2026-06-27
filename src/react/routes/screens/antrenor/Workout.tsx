@@ -322,6 +322,15 @@ export function Workout(): JSX.Element {
         })()
       : -1;
   const isLastExercise = hasWorkout && exercises !== null && nextActiveIdx === -1;
+  // Bug 4 — freshest "next slot with real work" for the ASYNC advance. The
+  // rest-end transition + the ⋯-skip fire on a delay / after commit; reading a
+  // ref (kept synced below) avoids a stale closure so the cursor lands on
+  // nextActiveIdx, never a done/dropped slot that would chain a spurious
+  // pre-finish rest. nextActiveIdx is deterministic + stable across a rest.
+  const nextActiveIdxRef = useRef(nextActiveIdx);
+  useEffect(() => {
+    nextActiveIdxRef.current = nextActiveIdx;
+  }, [nextActiveIdx]);
 
   const [kgInput, setKgInput] = useState<number>(targetKg);
   const [repsInput, setRepsInput] = useState<number>(currentExercise.targetReps);
@@ -523,7 +532,9 @@ export function Workout(): JSX.Element {
     setRestState({ restEndsAt: null, restInitialSec: 0, pendingAdvance: false });
     setPhase('transition');
     window.setTimeout(() => {
-      advanceExercise();
+      // Bug 4 — land on the next slot with REAL work (skips done/dropped),
+      // never a completed slot that would chain a spurious pre-finish rest.
+      advanceExercise(nextActiveIdxRef.current);
     }, 1500);
   }, [setPhase, advanceExercise, setRestState]);
 
@@ -1196,15 +1207,16 @@ export function Workout(): JSX.Element {
       // intermediate sets; override countdown la restSec+30 here. Last set of
       // exercise scenarios (transition / post-rpe navigate) NU touch rest — no-op.
       const extendedRest = currentExercise.restSec + 30;
-      setRestCountdown(extendedRest);
-      setRestInitialSec(extendedRest);
-      // Rest-countdown persistence (cycle-7) — re-persist the extended rest only
-      // when performLogSet actually entered a rest this tick (intermediate set →
-      // store.restEndsAt is now set). Preserve the pendingAdvance it chose (the
-      // last-set inter-exercise rest keeps advancing). Last-exercise navigate path
-      // left restEndsAt null → nothing to extend (matches the local no-op).
+      // Rest-countdown persistence (cycle-7) + Bug 4 — extend the rest ONLY when
+      // performLogSet actually entered a rest this tick (intermediate set → store
+      // .restEndsAt is now set). The last-set / last-exercise path navigates to
+      // post-rpe (or finishes) and leaves restEndsAt null → BOTH the local timer
+      // and the persisted state must stay untouched, else a phantom rest seed
+      // shows after the final set. Preserve the pendingAdvance performLogSet chose.
       const restNow = useWorkoutStore.getState();
       if (restNow.restEndsAt != null) {
+        setRestCountdown(extendedRest);
+        setRestInitialSec(extendedRest);
         setRestState({
           restEndsAt: Date.now() + extendedRest * 1000,
           restInitialSec: extendedRest,
@@ -1272,7 +1284,9 @@ export function Workout(): JSX.Element {
       navigate(gotoPath('post-rpe'));
       return;
     }
-    advanceExercise();
+    // Bug 4 — skip done/dropped slots (nextActiveIdxRef is kept fresh), so the
+    // ⋯ skip / early-finish advance never lands a spurious rest on a done slot.
+    advanceExercise(nextActiveIdxRef.current);
   }, [isLastExercise, navigate, advanceExercise]);
 
   // P-05 (MED) — ⋯ menu "Sari exercitiul curent". Daca e ultimul exercitiu →

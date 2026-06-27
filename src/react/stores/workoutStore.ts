@@ -299,8 +299,16 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           },
         })),
 
-      advanceExercise: () =>
-        set((s) => ({ exIdx: s.exIdx + 1, setIdx: 0, phase: 'logging' })),
+      // Bug 4 — optional explicit target slot. Default (no arg / negative) keeps
+      // the raw exIdx+1 advance, byte-identical to before; callers pass
+      // nextActiveIdx so the cursor skips dropped / already-completed slots and
+      // never lands a spurious rest before finish.
+      advanceExercise: (toIdx) =>
+        set((s) => ({
+          exIdx: typeof toIdx === 'number' && toIdx >= 0 ? toIdx : s.exIdx + 1,
+          setIdx: 0,
+          phase: 'logging',
+        })),
 
       // WP-5 moat substitution — swap exercise at exIdx for an alternative. The
       // list lives in Workout screen local state; here we own only store-side

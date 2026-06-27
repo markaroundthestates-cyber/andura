@@ -550,6 +550,33 @@ describe('Workout — state machine transition + advance exercise', async () => 
     expect(useWorkoutStore.getState().exIdx).toBe(1);
     expect(useWorkoutStore.getState().phase).toBe('logging');
   });
+
+  it('Bug 4 — post-restore done-slot gap: advance lands on the next PENDING slot, no chained rest', async () => {
+    const full = (n: number) =>
+      Array.from({ length: n }, () => ({ kg: 20, reps: 10, rating: 'potrivit' as const }));
+    // Cursor on exercise 0 (4 sets, 3 logged → on its last set). Slots 1 & 2 are
+    // FULLY done (completed earlier, then slot 0 restored); slot 3 still PENDING.
+    // nextActiveIdx skips 1,2 → 3: the DECISION rests (slot 0 is NOT the final
+    // work), but the ADVANCE must land on slot 3, never the done slot 1 (which
+    // would chain a spurious rest right before finish).
+    useWorkoutStore.setState({
+      exIdx: 0,
+      phase: 'logging',
+      history: { 0: full(3), 1: full(4), 2: full(3) },
+      sessionStart: Date.now() - 1000,
+    });
+    await renderWorkoutAndWait();
+    logSet('Potrivit'); // set 4/4 of exercise 0 → real inter-exercise rest (slot 3 pending)
+    expect(useWorkoutStore.getState().phase).toBe('rest');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    expect(useWorkoutStore.getState().phase).toBe('transition');
+    act(() => {
+      vi.advanceTimersByTime(1500);
+    });
+    // Lands on the next PENDING slot (3), NOT the done slot 1 → no chained rest.
+    expect(useWorkoutStore.getState().exIdx).toBe(3);
+    expect(useWorkoutStore.getState().phase).toBe('logging');
+  });
 });
 
 // ── Rest-countdown persistence on re-mount (cycle-7) ──────────────────────────

@@ -313,6 +313,20 @@ describe('workoutStore — state machine transitions', () => {
     expect(useWorkoutStore.getState().phase).toBe('logging');
   });
 
+  it('advanceExercise(toIdx) jumps to the explicit slot (Bug 4 — skip done/dropped)', () => {
+    useWorkoutStore.setState({ exIdx: 0, setIdx: 2, phase: 'rest' });
+    useWorkoutStore.getState().advanceExercise(3);
+    expect(useWorkoutStore.getState().exIdx).toBe(3);
+    expect(useWorkoutStore.getState().setIdx).toBe(0);
+    expect(useWorkoutStore.getState().phase).toBe('logging');
+  });
+
+  it('advanceExercise(negative) falls back to exIdx+1 (defensive guard)', () => {
+    useWorkoutStore.setState({ exIdx: 2, setIdx: 0, phase: 'logging' });
+    useWorkoutStore.getState().advanceExercise(-1);
+    expect(useWorkoutStore.getState().exIdx).toBe(3);
+  });
+
   it('markPRHit sets flag true', () => {
     useWorkoutStore.getState().markPRHit();
     expect(useWorkoutStore.getState().prHit).toBe(true);
