@@ -52,7 +52,10 @@ beforeEach(() => {
 
 describe('C1 — ease-back lands on a REAL lower rung (no off-grid no-op + note match)', () => {
   it('Cable Row sustained greu below target eases to a real rung strictly below lastW', () => {
-    // Cable Row real stack 6..90 by 6. lastW=42; the generic prev (40) re-snaps to 42.
+    // Pin the cable-tower flag OFF so this stays the ROW step-6 vehicle the reconcile
+    // demo was written for (the cable mapping is covered separately). lastW=42; the
+    // generic prev (40) re-snaps to 42 on ROW, so reconcile must walk to a real rung below.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_cable_tower_v1: false }));
     seed('Cable Row', [
       { w: 42, reps: 6, rpe: RPE.greu },
       { w: 42, reps: 6, rpe: RPE.greu },
@@ -66,7 +69,9 @@ describe('C1 — ease-back lands on a REAL lower rung (no off-grid no-op + note 
   });
 
   it('OFF (pre-fix) the same case no-ops back onto the just-used load', () => {
-    localStorage.setItem('_devFlags', JSON.stringify({ dp_ladder_snap_reconcile_v1: false }));
+    // Cable-tower flag OFF too → Cable Row stays the ROW step-6 vehicle, so the
+    // reconcile-OFF no-op defect (generic 40 re-snaps UP to the ROW rung 42) reproduces.
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_ladder_snap_reconcile_v1: false, dp_cable_tower_v1: false }));
     seed('Cable Row', [
       { w: 42, reps: 6, rpe: RPE.greu },
       { w: 42, reps: 6, rpe: RPE.greu },

@@ -263,6 +263,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   // OFF here for the all-off-world guarantee (the frozen prescription hashes stay
   // byte-for-byte; if a hash moved, the gating would be leaking).
   'dp_user_ladder_v1',
+  // CABLE TOWER (Bug 2 2026-06-27) — dp_cable_tower_v1 routes the founder's Cable Row
+  // to the 10lb cable stack instead of ROW step-6. Load-path (the snapped rec kg moves:
+  // Cable Row 73->73 not 72, 68->68 not 66), pinned OFF here (in FLIPPED_FLAGS only,
+  // NOT PATH_A_FLAGS) so BOTH A/B arms force the legacy ROW snap → the frozen full-path
+  // hashes stay byte-for-byte. ON behavior is proven on the realMachineStacks +
+  // dp.machineCalibration suites, not this determinism stream.
+  'dp_cable_tower_v1',
   // THE FLIP 2026-06-16 (cycle-10 ladder-snap reconcile) — dp_ladder_snap_reconcile_v1
   // defaults ON. recommend() reconciles the FINAL kg with the real ladder so a down/up
   // step that the snap collapsed onto the same rung lands on a real rung that MOVED, and

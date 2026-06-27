@@ -241,6 +241,15 @@ export const FLAGS = Object.freeze({
   // so he never regresses; until then the seed holds.
   dp_user_ladder_v1: { rollout: 1, default: true },
 
+  // CABLE TOWER (Bug 2, founder real-data 2026-06-27) — the founder's "Cable Row"
+  // reads on the 10lb cable stack (his logged 59/68/73 are exact rungs there, incl.
+  // 73; NONE land on the step-6 ROW grid). realMachineStacks mapped 'Cable Row' to the
+  // ROW step-6 grid (mis-measured) → his entered 73 got "corrected" down to 72, 68->66.
+  // ON → Cable Row routes to CABLE_10LB at the snap call-site (config/weights.js); the
+  // existing ladderReconcile channel makes recommend FOLLOW the snap (no getList change).
+  // Pinned OFF in fp FLIPPED_FLAGS so the frozen hashes stay byte-identical.
+  dp_cable_tower_v1: { rollout: 1, default: true },
+
   // LADDER-SNAP RECONCILE (cycle-10 audit 2026-06-16) — closes the seam between the
   // GENERIC progression ladder (getNextWeight/getPrevWeight walk EQUIPMENT_WEIGHTS) and
   // the REAL pin-stack the FINAL rec snaps onto (roundToStep → realMachineStacks /

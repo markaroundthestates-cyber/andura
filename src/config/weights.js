@@ -42,7 +42,10 @@ function _snapToUserLadder(weight, exerciseName, fallback) {
  *  data, so it only ever fires at cold-start or for an under-logged founder station. */
 function _snapToRealStack(weight, exerciseName, generic) {
   if (!isEnabled('dp_real_ladder_snap_v1')) return generic;
-  const stack = resolveRealStack(exerciseName);
+  // dp_cable_tower_v1 — route the founder's "Cable Row" onto the 10lb cable stack
+  // (his real station: 59/68/73 are exact rungs) instead of the step-6 ROW grid it
+  // was mis-mapped to; flag OFF → opts ignored → byte-identical (Cable Row keeps ROW).
+  const stack = resolveRealStack(exerciseName, { cableTower: isEnabled('dp_cable_tower_v1') });
   if (!stack || stack.length < 1 || !Number.isFinite(weight)) return generic;
   return _nearestRung(weight, stack);
 }

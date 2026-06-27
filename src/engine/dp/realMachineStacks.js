@@ -42,6 +42,12 @@ const PEC_DECK_STACK = Object.freeze([6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66,
 const LEG_CURL_STACK = Object.freeze([6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66]);
 /** Row machine ("ramat") — 6..90 by 6. */
 const ROW_STACK = Object.freeze([6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90]);
+/** Cable tower 10lb-plate stack (kg) — the founder's REAL "Cable Row" station
+ *  (gym-log: his logged 59 / 68 / 73 are ALL exact rungs here — incl. 73, which the
+ *  generic cable ladder `matrix_cable` lacks — and NONE land on the step-6 ROW grid,
+ *  so his Cable Row is the cable tower, not a pin machine). Mirrors equipmentTemplates
+ *  `cable_10lb_daniel`. Behind dp_cable_tower_v1. */
+const CABLE_10LB = Object.freeze([5, 9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59, 63, 68, 73, 78]);
 
 // ── NO generic step-6 fallback (deliberate — see report) ────────────────────────
 // An earlier draft fell unmapped pin machines back to a generic 6kg-step grid keyed
@@ -74,6 +80,18 @@ const STACK_BY_NAME = Object.freeze({
   'Standing Leg Curl': LEG_CURL_STACK,
 });
 
+// Cable-tower override map (dp_cable_tower_v1) — the founder's "Cable Row" reads on
+// the 10lb cable stack, NOT the step-6 ROW grid it was mis-mapped to (his logged
+// 59/68/73 are exact cable rungs; on ROW his 73 got "corrected" down to 72, 68->66).
+// Consulted ONLY when the caller passes { cableTower:true } (the flag is read at the
+// snap call-site, config/weights.js); flag OFF → never read → byte-identical (Cable
+// Row keeps ROW_STACK). NOTE: Cable Fly already routes to the matrix_cable cable
+// ladder (which carries 18) — its 17.5 rec is a recommend-side under-credit (tracked
+// with the seeding fix), NOT a stack mis-map, so it is deliberately NOT listed here.
+const CABLE_STACK_BY_NAME = Object.freeze({
+  'Cable Row': CABLE_10LB,
+});
+
 /**
  * The real-machine stack rungs for one exercise, or null when none applies.
  * Returns the EXPLICIT founder-measured station mapped by canonical EN name (the four
@@ -82,10 +100,15 @@ const STACK_BY_NAME = Object.freeze({
  * are untouched — byte-identical). PURE + defensive (zero throw): a bad name → null.
  *
  * @param {string} engineName ENGLISH canonical name (the equipment-map key)
+ * @param {{ cableTower?: boolean }} [opts] cableTower (dp_cable_tower_v1) routes the
+ *   founder's Cable Row + Cable Fly to the 10lb cable stack instead of ROW step-6.
  * @returns {ReadonlyArray<number>|null} the real rungs, or null
  */
-export function resolveRealStack(engineName) {
+export function resolveRealStack(engineName, opts) {
   if (typeof engineName !== 'string' || !engineName) return null;
+  if (opts && opts.cableTower && CABLE_STACK_BY_NAME[engineName]) {
+    return CABLE_STACK_BY_NAME[engineName];
+  }
   return STACK_BY_NAME[engineName] || null;
 }
 
@@ -95,5 +118,6 @@ export const REAL_STACKS = Object.freeze({
   PEC_DECK_STACK,
   LEG_CURL_STACK,
   ROW_STACK,
+  CABLE_10LB,
 });
 export { STACK_BY_NAME };

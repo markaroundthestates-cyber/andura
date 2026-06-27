@@ -47,11 +47,12 @@ beforeEach(() => {
   store['phase-override'] = 'BULK'; // masa-like; deterministic, no CUT date branch
 });
 
-/** The equipment list a given exercise snaps onto (mirrors weights.js getList).
- *  dp_real_ladder_snap_v1: Cable Row now snaps to his real row stack (6..90),
- *  so the calibration shift lands on those rungs — check against them. */
+/** The equipment list a given exercise snaps onto (mirrors weights.js getList +
+ *  _snapToRealStack). dp_cable_tower_v1 (default ON, as in production): Cable Row +
+ *  Cable Fly snap to the 10lb cable stack, so the calibration shift lands on THOSE
+ *  rungs — mirror the production cableTower opt so the check matches recommend(). */
 function equipListFor(ex) {
-  const real = resolveRealStack(ex);
+  const real = resolveRealStack(ex, { cableTower: true });
   if (real) return real;
   const type = EXERCISE_EQUIPMENT_MAP[ex] || 'bailib_stack';
   return EQUIPMENT_WEIGHTS[type] || EQUIPMENT_WEIGHTS['bailib_stack'];

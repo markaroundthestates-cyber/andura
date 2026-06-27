@@ -63,6 +63,26 @@ describe('resolveRealStack — only the confirmed stations snap (no blind fallba
   });
 });
 
+describe('resolveRealStack — cable tower opt (dp_cable_tower_v1, founder real-data)', () => {
+  it('cableTower routes Cable Row to the 10lb cable stack (his 59/68/73 are exact rungs)', () => {
+    expect(resolveRealStack('Cable Row', { cableTower: true })).toBe(REAL_STACKS.CABLE_10LB);
+    // 73 exists on the cable stack but NOT on ROW step-6 — the reason for the fix
+    // (his entered 73 used to be "corrected" down to the ROW rung 72).
+    expect(REAL_STACKS.CABLE_10LB).toContain(73);
+    expect(REAL_STACKS.ROW_STACK).not.toContain(73);
+  });
+  it('without the opt, Cable Row keeps ROW step-6 (byte-identical default)', () => {
+    expect(resolveRealStack('Cable Row')).toBe(REAL_STACKS.ROW_STACK);
+    expect(resolveRealStack('Cable Row', {})).toBe(REAL_STACKS.ROW_STACK);
+    expect(resolveRealStack('Cable Row', { cableTower: false })).toBe(REAL_STACKS.ROW_STACK);
+  });
+  it('the opt never touches other stations (shoulder / pec deck / leg curl unchanged)', () => {
+    expect(resolveRealStack('Machine Shoulder Press', { cableTower: true })).toBe(REAL_STACKS.SHOULDER_STACK);
+    expect(resolveRealStack('Reverse Pec Deck', { cableTower: true })).toBe(REAL_STACKS.PEC_DECK_STACK);
+    expect(resolveRealStack('Leg Curl', { cableTower: true })).toBe(REAL_STACKS.LEG_CURL_STACK);
+  });
+});
+
 describe('roundToEquipmentWeight — FLAG ON snaps the rec onto the real stack', () => {
   afterEach(() => vi.restoreAllMocks());
 
@@ -107,6 +127,18 @@ describe('roundToEquipmentWeight — FLAG ON snaps the rec onto the real stack',
     expect(roundToEquipmentWeight(22.5, 'Incline DB Press')).toBe(22.5);
     // Cable Fly (matrix_cable) — 18 already a rung.
     expect(roundToEquipmentWeight(18, 'Cable Fly')).toBe(18);
+  });
+
+  it('Cable Row with cableTower ON keeps his entered 59/68/73 EXACT (not the ROW down-correct)', () => {
+    // dp_cable_tower_v1 — Bug 2: his real Cable Row is the cable tower. On the ROW
+    // step-6 grid his 73 was "corrected" down to 72, 68->66, 59->60 ("pe row scade nu
+    // cu cat e pe aparat"). On the cable stack his entered loads ARE exact rungs.
+    vi.spyOn(flags, 'isEnabled').mockImplementation(
+      (id) => id === 'dp_real_ladder_snap_v1' || id === 'dp_cable_tower_v1',
+    );
+    expect(roundToEquipmentWeight(73, 'Cable Row')).toBe(73);
+    expect(roundToEquipmentWeight(68, 'Cable Row')).toBe(68);
+    expect(roundToEquipmentWeight(59, 'Cable Row')).toBe(59);
   });
 });
 
