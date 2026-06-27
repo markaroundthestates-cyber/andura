@@ -33,7 +33,7 @@ import { useNavigate } from 'react-router-dom';
 import { HelpCircle, Images, ChevronDown } from 'lucide-react';
 import { MissingEquipmentConfirmSheet } from '../../../components/Workout/MissingEquipmentConfirmSheet';
 import { SwapPickSheet } from '../../../components/Workout/SwapPickSheet';
-import { useWorkoutStore, getCurrentMode, energyLightForIntensityMod } from '../../../stores/workoutStore';
+import { useWorkoutStore, getCurrentMode } from '../../../stores/workoutStore';
 import type { ExerciseHistoryEntry } from '../../../stores/workoutStore';
 import { INSESSION_RATING_TO_RPE } from '../../../stores/workoutStore.logic';
 import { coachPick } from '../../../lib/coachVoice';
@@ -889,10 +889,16 @@ export function Workout(): JSX.Element {
         // the reps differ — not merely "the field was touched" (which a prefill
         // satisfied even when the value matched the prescription).
         wasManualOverride,
-        // Pre-workout readiness bucket (energy traffic-light derived from the live
-        // intensityMod) — the missing fatigue-aware context field. Raw bucket, not
-        // a reverse-mapped RPE (a future engine isn't locked to today's mapping).
-        readiness: energyLightForIntensityMod(engineIntensityMod),
+        // Bug 1 — the engine's PRESCRIPTIVE intensity band for this session
+        // ('plus'|'normal'|'minus'), NOT the user's physiological readiness. This
+        // used to be reverse-mapped to a red/yellow/green "readiness" light, so a
+        // periodic CALENDAR deload week (a prescribed recovery week) logged as a
+        // permanent "readiness: red" — conflating "engine prescribed a lighter
+        // week" with "the user is unrecovered", which read as a permanent-red bug.
+        // Logged raw + honestly named; the user's REAL readiness is the EnergyCheck
+        // self-report persisted per session (PostRpe energyEmoji, gated by
+        // dp_deload_self_feed_fix_v1).
+        deloadBand: engineIntensityMod,
         // Keep the phase-1 `kg`/`reps` keys so prior consumers/exports stay readable.
         kg: effKg,
         reps: repsInput,

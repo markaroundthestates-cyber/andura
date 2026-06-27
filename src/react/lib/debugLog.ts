@@ -70,8 +70,9 @@ export type DebugEventKind = 'tap' | 'rec' | 'log' | 'adjust' | 'swap' | 'skip';
 /**
  * BehaviorEvent — the durable row shape (D107 §4), a superset of the legacy
  * DebugEvent so existing export/clear keep working. The future dp.js-calibration
- * engine consumes these; `exEngine` (EN canonical engineName) + `readiness` are
- * the "collect it right now" fields so we never have to re-instrument.
+ * engine consumes these; `exEngine` (EN canonical engineName) + `deloadBand`
+ * (the engine's prescriptive intensity band — NOT user readiness) are the
+ * "collect it right now" fields so we never have to re-instrument.
  */
 export interface BehaviorEvent {
   /** unique row id (epoch ms + counter) — Dexie primary key. */
