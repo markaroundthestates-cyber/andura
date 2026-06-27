@@ -402,3 +402,64 @@ describe('engineWrappers — getCoachTodayQuote folds aerobic recovery', () => {
     expect(quote).toBeNull();
   });
 });
+
+// ── Plan-gate — getCoachTodayQuote narrates ONLY a muscle TODAY's plan trains ──
+// A back day must never say "Pectoralii recupereaza": the recovered pick is now
+// filtered to the groups today's session actually allocates (allowedGroups, the
+// plan's RO Big-11 keys). Locks the wrong-muscle narration fix. Empty/omitted set
+// keeps the legacy no-filter behaviour for existing no-arg callers.
+describe('engineWrappers — getCoachTodayQuote plan-gates the recovered pick', () => {
+  const NOW = Date.now();
+  const HOUR = 3_600_000;
+
+  beforeEach(() => {
+    useWorkoutStore.setState({ sessionsHistory: [] as never });
+    useAerobicStore.setState({ sessions: [] });
+  });
+
+  // A core session ~3 days ago → core reads 'recovered' (decayed), same shape as
+  // the aerobic-fold block above.
+  function seedRecoveredCore(): void {
+    useWorkoutStore.setState({
+      sessionsHistory: [
+        {
+          title: 'Core',
+          meta: '',
+          ts: NOW - 72 * HOUR,
+          exercises: [
+            {
+              exerciseId: 'cable-crunch',
+              exerciseName: 'Cable Crunch Kneeling',
+              engineName: 'Cable Crunch Kneeling',
+              totalVolume: 0,
+              peakOneRM: 0,
+              sets: [
+                { kg: 30, reps: 12, rating: 'potrivit', timestamp: NOW - 72 * HOUR },
+                { kg: 30, reps: 12, rating: 'potrivit', timestamp: NOW - 72 * HOUR },
+              ],
+            },
+          ],
+        },
+      ] as never,
+    });
+  }
+
+  it('today plan OMITS the recovered group → not narrated (back day never says core)', () => {
+    seedRecoveredCore();
+    // Today trains only back ('spate'); core is recovered but NOT in today's plan.
+    expect(getCoachTodayQuote(new Set(['spate']))).toBeNull();
+  });
+
+  it('today plan INCLUDES the recovered group → still narrated', () => {
+    seedRecoveredCore();
+    const quote = getCoachTodayQuote(new Set(['core']));
+    expect(quote).not.toBeNull();
+    expect(quote?.recoveredLabel).toBeTruthy();
+  });
+
+  it('empty / omitted allowedGroups → no filter (back-compat with no-arg callers)', () => {
+    seedRecoveredCore();
+    expect(getCoachTodayQuote(new Set())).not.toBeNull();
+    expect(getCoachTodayQuote()).not.toBeNull();
+  });
+});

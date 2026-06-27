@@ -136,9 +136,18 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
   // LOCAL date so the day-rollover quote recompute fires at LOCAL midnight, not
   // UTC (RO = ~02:00/03:00 local). db.js:35 rule. Audit 2026-06-07 LOW-3.
   const todayDate = tod();
+  // Plan allocation of TODAY's proposed plan — the SAME truth source the why-line
+  // truth-gate + lagging signal use. Declared here so the today-quote is plan-gated
+  // too: a "recupereaza" line must never name a group the plan omits (a back day
+  // must not say "Pectoralii recupereaza").
+  const planAllocation = useMemo(
+    () => getPlanAllocationByGroup(workout?.exercises),
+    [workout?.exercises],
+  );
   const coachQuote = useMemo<string>(() => {
     try {
-      const dynamic = engineWrappers.getCoachTodayQuote?.() ?? null;
+      const dynamic =
+        engineWrappers.getCoachTodayQuote?.(planAllocation.allocatedGroups) ?? null;
       if (dynamic !== null) {
         const whenLabel = formatRecoveredWhen(dynamic.elapsedHours, dynamic.daysSince);
         return t('coachToday.recoveredQuote', { group: dynamic.recoveredLabel, when: whenLabel });
@@ -157,19 +166,12 @@ export function CoachTodayCard({ onStart, workout }: Props): JSX.Element {
     // date rollover signal. eslint-disable warranted — exhaustive-deps
     // lint cannot see indirect engine getState() read pattern.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionsHistory, todayDate]);
+  }, [sessionsHistory, todayDate, planAllocation]);
   // §F-pass2-coachtoday-04 — memo lagging signal so weaknessDetector engine
   // call NU runs every render. Null cand T0 fresh / balanced training.
   // Namespace-imported with optional-chained access: tolerates partial mocks
   // in sibling tests that stub engineWrappers without exporting
   // getLaggingSignal (Antrenor.test pattern pre-HIGH-EPSILON dispatch).
-  // Plan allocation of TODAY's proposed plan — the SAME truth source the why-line
-  // truth-gate uses. Shared so the lagging signal can be plan-gated too (LLM-judge
-  // Pattern A): "focus azi pe {group}" must never name a group the plan omits.
-  const planAllocation = useMemo(
-    () => getPlanAllocationByGroup(workout?.exercises),
-    [workout?.exercises],
-  );
   // Recovery-cut RO group set for TODAY — shared by the lagging-line gate AND the
   // weekMakeup note gate (both must defer to a same-day recovery cut: recovery is
   // the more-recent dominant truth). recovery-cut adaptations carry RO group keys.

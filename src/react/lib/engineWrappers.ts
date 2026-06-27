@@ -873,8 +873,15 @@ const COACH_TODAY_QUOTE_MAX_DAYS = 14; // beyond this, group not "recently train
  * renders safe generic non-claim line via coachPick('preview').
  *
  * Defensive: engine throws → null fallback graceful + Sentry captured.
+ *
+ * @param allowedGroups optional RO Big-11 group keys of TODAY's plan. When
+ *   provided (non-empty), the recovered pick is gated to muscles the session
+ *   actually trains, so a back day never narrates "Pectoralii recupereaza".
+ *   Omitted/empty -> no filter (back-compat for existing callers + tests).
  */
-export function getCoachTodayQuote(): CoachTodayQuote | null {
+export function getCoachTodayQuote(
+  allowedGroups?: ReadonlySet<string>,
+): CoachTodayQuote | null {
   try {
     const sessions = useWorkoutStore.getState().sessionsHistory;
     const logs = flattenSessionsToEngineLogs(sessions);
@@ -898,6 +905,9 @@ export function getCoachTodayQuote(): CoachTodayQuote | null {
     let best: { group: string; days: number; hours: number } | null = null;
     for (const [group, state] of Object.entries(groupState)) {
       if (state !== 'recovered') continue;
+      // Plan-gate (LLM-judge Pattern A): narrate ONLY a muscle TODAY's session
+      // actually trains. No filter when the caller passes nothing (back-compat).
+      if (allowedGroups && allowedGroups.size > 0 && !allowedGroups.has(group)) continue;
       const days = daysSinceGroup(logs, group);
       if (days === null) continue;
       // F-2 fix: gate on real elapsed HOURS, not floored days. The old `days < 1`
