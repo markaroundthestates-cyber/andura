@@ -276,6 +276,11 @@ export const FLIPPED_FLAGS = Object.freeze([
   // legacy snap -> fp hashes byte-identical (the fp world also has empty obs so the guard
   // is unreachable anyway). ON proven on equipmentLadder.test.js.
   'dp_ladder_no_undercredit_v1',
+  // DEMO-FLOOR SUB-FLOOR BRIDGE (Bug 3b 2026-06-28) — dp_demo_floor_subfloor_v1 raises the
+  // recommend PR-floor to credit heavy SUB-FLOOR-rep sets via the e1RM bridge. Load-path
+  // (floorW can rise -> rec kg moves), pinned OFF here (FLIPPED_FLAGS only, NOT PATH_A_FLAGS)
+  // so both arms force the legacy raw floorW -> frozen hashes byte-identical.
+  'dp_demo_floor_subfloor_v1',
   // THE FLIP 2026-06-16 (cycle-10 ladder-snap reconcile) — dp_ladder_snap_reconcile_v1
   // defaults ON. recommend() reconciles the FINAL kg with the real ladder so a down/up
   // step that the snap collapsed onto the same rung lands on a real rung that MOVED, and

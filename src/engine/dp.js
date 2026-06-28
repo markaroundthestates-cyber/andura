@@ -8,6 +8,7 @@ import { SIMILAR_EXERCISES, getSimilarityMultiplier, getTransferSources } from '
 import { getExerciseMetadata } from './exerciseLibrary.js';
 import { loggedRowMatcher, canonicalLoggedName } from './dp/logIdentity.js';
 import { reconcileFloorUp, reconcileLadderStep } from './dp/ladderReconcile.js';
+import { subfloorDemoW } from './dp/demoFloorSubfloor.js';
 import { now as clockNow } from './clock.js';
 import { suggestStartWeight } from './coldStartGuidelines.js';
 import { isEnabled } from '../util/featureFlags.js';
@@ -1511,9 +1512,8 @@ export const DP = {
       // design — the comeback intentionally starts light (decision #3, 344e92a6).
       if (this._returnDeload(ex, nowMs) == null) {
         const phaseOverride = /** @type {string | null} */ (DB.get('phase-override')) || 'AUTO';
-        const inCut = this._isInCut(phaseOverride, nowMs);
-        const rng = this.getPhaseAwareRepRange(ex, inCut);
-        const floorW = this._demoWorkingW(ex, rng[0] ?? 8);
+        const rng = this.getPhaseAwareRepRange(ex, this._isInCut(phaseOverride, nowMs));
+        const floorW = isEnabled('dp_demo_floor_subfloor_v1') ? Math.max(this._demoWorkingW(ex, rng[0] ?? 8), subfloorDemoW(this.getLogs(ex, 12), rng[0] ?? 8, (w, r, p) => this.e1RMForSet(w, r, p, ex), (e, rt) => this._kgFromE1RM(e, rt))) : this._demoWorkingW(ex, rng[0] ?? 8);
         if (floorW > 0 && Number.isFinite(result.kg) && result.kg > 0 && result.kg < floorW) {
           // CLUSTER 2 (cycle-10, dp/ladderReconcile.js): roundToStep(floorW) is NEAREST,
           // so on a COARSE barbell PLATE grid it snaps the proven load DOWN below the floor

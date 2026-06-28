@@ -259,6 +259,15 @@ export const FLAGS = Object.freeze({
   // calibration-sim. Follow-up: matchTemplate family filter for climbs ABOVE logged loads.
   dp_ladder_no_undercredit_v1: { rollout: 1, default: true },
 
+  // DEMO-FLOOR SUB-FLOOR BRIDGE (Bug 3b, founder real-data 2026-06-28) — the recommend
+  // PR-floor (dp.js) read _demoWorkingW, which credits ONLY sets at reps>=floor, so a
+  // lifter who logs heavy ONLY at sub-floor reps (machine OHP 43x6+40x7 vs an 8-rep floor)
+  // got floorW=0 -> PR-floor dead -> the rec drifted below the load he owns. ON -> floorW =
+  // max(raw demoW, subfloorDemoW e1RM bridge over SUB-FLOOR sets only, uncapped). Wired ONLY
+  // at the recommend floor; the synergist floor (dp.js:2684) still uses the RAW helper -> stays
+  // 0 for an iso's own rep range. Pinned OFF in fp + calibration-sim.
+  dp_demo_floor_subfloor_v1: { rollout: 1, default: true },
+
   // LADDER-SNAP RECONCILE (cycle-10 audit 2026-06-16) — closes the seam between the
   // GENERIC progression ladder (getNextWeight/getPrevWeight walk EQUIPMENT_WEIGHTS) and
   // the REAL pin-stack the FINAL rec snaps onto (roundToStep → realMachineStacks /
