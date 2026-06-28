@@ -250,6 +250,15 @@ export const FLAGS = Object.freeze({
   // Pinned OFF in fp FLIPPED_FLAGS so the frozen hashes stay byte-identical.
   dp_cable_tower_v1: { rollout: 1, default: true },
 
+  // NO-UNDER-CREDIT LADDER FLOOR (Bug 3c, founder real-data 2026-06-28) — snapToLadder's
+  // matchTemplate is FAMILY-BLIND, so a CABLE lift (Cable Fly) can match a DUMBBELL 2.5-
+  // cadence template (..15,17.5,20..) and snap a load the user JUST logged DOWN below it
+  // (logged 18 -> rec 17.5). ON -> never snap below the highest load demonstrated on THIS
+  // station that is <= the input (matched-template ladder only; curated rungs authoritative).
+  // Additive (only ever RAISES a snap that fell below an owned load). Pinned OFF in fp +
+  // calibration-sim. Follow-up: matchTemplate family filter for climbs ABOVE logged loads.
+  dp_ladder_no_undercredit_v1: { rollout: 1, default: true },
+
   // LADDER-SNAP RECONCILE (cycle-10 audit 2026-06-16) — closes the seam between the
   // GENERIC progression ladder (getNextWeight/getPrevWeight walk EQUIPMENT_WEIGHTS) and
   // the REAL pin-stack the FINAL rec snaps onto (roundToStep → realMachineStacks /

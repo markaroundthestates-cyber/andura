@@ -14,6 +14,7 @@
 // thin history never overrides the safe hard-coded ladder.
 
 import { DB } from '../../db.js';
+import { isEnabled } from '../../util/featureFlags.js';
 
 export const EQUIPMENT_LADDER_KEY = 'dp-equipment-ladder';
 
@@ -420,6 +421,26 @@ export function snapToLadder(engineName, kg, fallbackRound, curatedSteps) {
   for (let i = 1; i < ladder.length; i++) {
     const d = Math.abs(ladder[i] - w);
     if (d < bestDist - 1e-9) { bestDist = d; bestRung = ladder[i]; }
+  }
+  // 3) no-under-credit floor (dp_ladder_no_undercredit_v1) — matchTemplate is family-
+  // blind, so a CABLE lift can match a DUMBBELL 2.5-cadence template (..15,17.5,20..)
+  // and snap a load the user JUST logged DOWN below it (Cable Fly: logged 18 -> 17.5).
+  // Never snap below the highest load the user demonstrated on THIS station that is
+  // <= the input. Matched-template ladder ONLY (curated photo rungs are authoritative);
+  // flag off / no obs / curated → byte-identical. Additive: only ever RAISES a snap
+  // that fell below an owned load (never lowers, never touches off-rung/cold-start).
+  if (isEnabled('dp_ladder_no_undercredit_v1') && !(curated && curated.length >= 1)
+      && typeof engineName === 'string' && engineName) {
+    const rec = _getAllObs()[engineName];
+    const obs = rec && Array.isArray(rec.loads) ? rec.loads : null;
+    if (obs && obs.length) {
+      let ownFloor = 0;
+      for (const o of obs) {
+        const v = Number(o);
+        if (v > 0 && v <= w + 1e-9 && v > ownFloor) ownFloor = v;
+      }
+      if (ownFloor > 0 && bestRung < ownFloor - 1e-9) bestRung = ownFloor;
+    }
   }
   // Rungs derived from imperial stacks land on noisy kg (130lb → 58.97); snap the
   // returned rung to a displayable 0.5kg granularity so the user sees 59, not 59.02.

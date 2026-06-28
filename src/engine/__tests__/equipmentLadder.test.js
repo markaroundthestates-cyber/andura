@@ -193,6 +193,44 @@ describe('snapToLadder — precedence curated > matched > fallback (findings val
   });
 });
 
+describe('snapToLadder — no-under-credit floor (Bug 3c, dp_ladder_no_undercredit_v1)', () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(() => vi.restoreAllMocks());
+  const fb = (w) => Math.round(w);
+
+  // matchTemplate is FAMILY-BLIND: these cable loads match a DUMBBELL 2.5-cadence
+  // template (..15,17.5,20..); 18 is a load the founder actually logged on the cable
+  // tower → the family-blind snap drops it to 17.5 ("18 -> 17.5" he complained about).
+  function seedCableFly() {
+    for (const w of [12.5, 15, 17.5, 20, 18]) observeLoggedWeight('Cable Fly', w);
+  }
+
+  it('flag OFF: the family-blind snap drops a logged 18 BELOW 18 (the bug)', () => {
+    seedCableFly();
+    vi.spyOn(flags, 'isEnabled').mockReturnValue(false);
+    expect(snapToLadder('Cable Fly', 18, fb)).toBeLessThan(18);
+  });
+
+  it('flag ON: the no-under-credit floor keeps the logged 18 at 18 (never demote a proven load)', () => {
+    seedCableFly();
+    vi.spyOn(flags, 'isEnabled').mockImplementation((id) => id === 'dp_ladder_no_undercredit_v1');
+    expect(snapToLadder('Cable Fly', 18, fb)).toBe(18);
+  });
+
+  it('flag ON: off-rung values BELOW every owned load still snap normally (guard only raises)', () => {
+    seedCableFly();
+    vi.spyOn(flags, 'isEnabled').mockImplementation((id) => id === 'dp_ladder_no_undercredit_v1');
+    // 16.2: highest owned load <= 16.2 is 15, and the nearest rung (15) is not below it
+    // → the guard does NOT lift it; normal snap stands.
+    expect(snapToLadder('Cable Fly', 16.2, fb)).toBe(15);
+  });
+
+  it('flag ON: no obs → byte-identical generic fallback (guard inert)', () => {
+    vi.spyOn(flags, 'isEnabled').mockImplementation((id) => id === 'dp_ladder_no_undercredit_v1');
+    expect(snapToLadder('Cable Fly', 18, fb)).toBe(18); // fb = Math.round(18) = 18, no ladder
+  });
+});
+
 describe('roundToEquipmentWeight — ladder-aware ctx (back-compat + gated)', () => {
   beforeEach(() => localStorage.clear());
   afterEach(() => vi.restoreAllMocks());
