@@ -104,3 +104,31 @@ describe('DP.coldStartPopulationSeed — back-solve to a working kg', () => {
     expect(DP.coldStartPopulationSeed('Leg Press', 10, { bodyweightKg: null })).toBeNull();
   });
 });
+
+describe('coldStartPopulationSeed — machine-press bump (Bug 3a, dp_coldstart_machine_press_v1)', () => {
+  beforeEach(() => { try { localStorage.clear(); } catch { /* jsdom has it */ } });
+  const founder = { bodyweightKg: 75, sex: 'm', experience: 'intermediate' };
+  const seedKg = (ex, prof) => DP.coldStartPopulationSeed(ex, 10, prof)?.kg;
+
+  it('flag ON lifts the founder machine OHP toward his real 36-43 band (was under-seeded)', () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_coldstart_machine_press_v1: false }));
+    const off = seedKg('Machine Shoulder Press', founder);
+    localStorage.clear();
+    const on = seedKg('Machine Shoulder Press', founder);
+    expect(on).toBeGreaterThan(off);       // the +10% machine-press axis bump fires
+    expect(on).toBeGreaterThanOrEqual(34); // no longer under-seeded (was ~30 OFF)
+  });
+
+  it('cross-persona safety: a 60F beginner is NOT over-seeded (machine step absorbs the bump)', () => {
+    const on = seedKg('Machine Shoulder Press', { bodyweightKg: 60, sex: 'f', experience: 'beginner' });
+    expect(on).toBeLessThanOrEqual(20);
+  });
+
+  it('leaves non-machine-press lifts untouched (Barbell Back Squat byte-identical ON vs OFF)', () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_coldstart_machine_press_v1: false }));
+    const off = seedKg('Barbell Back Squat', founder);
+    localStorage.clear();
+    const on = seedKg('Barbell Back Squat', founder);
+    expect(on).toBe(off);
+  });
+});

@@ -17,6 +17,7 @@
 
 import { classifyPattern } from './ceiling.js';
 import { getExerciseMetadata } from '../exerciseLibrary.js';
+import { isEnabled } from '../../util/featureFlags.js';
 
 // ── POPULATION PRIOR (spec §9) — LIVE: dp_population_prior_v1 is ON (rollout 1) ──
 // e1RM as a MULTIPLE OF BODYWEIGHT, per movement pattern, for a TYPICAL lifter at
@@ -105,6 +106,19 @@ export const COLDSTART_PATTERN_EQUIP_AXIS = Object.freeze({
   'lateral|machine': 1.20,
 });
 
+// Bug 3a (founder real-data 2026-06-28) — machine/Smith PRESS axis bump behind
+// dp_coldstart_machine_press_v1. A back-supported, bilaterally-guided machine press
+// carries MORE than the free-weight 'ohp'/'benchpress' barbell-total ratio assumes,
+// so eqF defaulting to the generic machine damp 0.90 under-seeds it (founder machine
+// OHP cold-started ~30kg @bw75 intermediate vs his real 36-43). 1.10 is the tightest
+// bump that lands an experienced presser in-band WITHOUT over-seeding a beginner (the
+// experience ratio + the machine step absorb it: a 60F beginner stays ~18kg). Read ONLY
+// when the flag is on (at the lookup below); off → byte-identical to the generic 0.90 axis.
+const COLDSTART_PATTERN_EQUIP_AXIS_MACHINE_PRESS = Object.freeze({
+  'ohp|machine': 1.10,
+  'benchpress|machine': 1.10,
+});
+
 const EXPERIENCE_KEYS = ['beginner', 'intermediate', 'advanced'];
 
 /**
@@ -149,7 +163,11 @@ export function populationPriorE1RM(ex, profile) {
   const meta = getExerciseMetadata(ex);
   // Pattern×equipment override first (gym-log arc 2026-06-11 — presses-per-hand
   // down, cable/machine rear-delt class up), then the per-equipment axis.
-  const eqOverride = meta ? COLDSTART_PATTERN_EQUIP_AXIS[`${pattern}|${meta.equipment_type}`] : undefined;
+  const eqKey = meta ? `${pattern}|${meta.equipment_type}` : '';
+  const eqOverride = meta
+    ? (COLDSTART_PATTERN_EQUIP_AXIS[eqKey]
+        ?? (isEnabled('dp_coldstart_machine_press_v1') ? COLDSTART_PATTERN_EQUIP_AXIS_MACHINE_PRESS[eqKey] : undefined))
+    : undefined;
   const eqF = eqOverride != null
     ? eqOverride
     : (meta && COLDSTART_EQUIP_AXIS[meta.equipment_type] != null)

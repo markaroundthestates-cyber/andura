@@ -1745,6 +1745,14 @@ export const FLAGS = Object.freeze({
   // deferred 2026-06-24 — broke synergist-discount / ladder-reconcile; need rework.)
   dp_coldstart_press_class_v1: { rollout: 1, default: true },
 
+  // Bug 3a (founder real-data 2026-06-28) — machine/Smith PRESS cold-start seed. The
+  // LIVE cold-start path is populationPrior (NOT coldStartGuidelines); machine presses
+  // had no 'ohp|machine'/'benchpress|machine' axis override so eqF defaulted to the
+  // generic machine damp 0.90 → under-seed (founder machine OHP ~30kg @bw75 intermediate
+  // vs real 36-43). ON → +10% axis bump (populationPrior) → founder in-band, 60F beginner
+  // unchanged (~18kg, the machine step absorbs it). Pinned OFF in fp + calibration-sim.
+  dp_coldstart_machine_press_v1: { rollout: 1, default: true },
+
   // F5 cross-day lat-iso dedup (Daniel coach-review 2026-06-10 + the D117 #2
   // "Upper 8→7" intent). The v-taper lat_isolation weekly minimum (1/wk) was
   // translated into a per-session requirement on EVERY qualifying day → Machine
