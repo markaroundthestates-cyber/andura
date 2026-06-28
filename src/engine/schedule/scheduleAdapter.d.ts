@@ -129,6 +129,7 @@ export function toggleSkippedExercise(exerciseName: string): string[];
 export function getRefusalCounter(): Record<string, number>;
 export function incrementRefusal(exerciseName: string): number;
 export function resetRefusalCounter(exerciseName: string): void;
+export const REFUSAL_COUNTER_THRESHOLD: number;
 export function translateToEngineEquipment(userIds: string[]): string[];
 
 export function getDailyWorkout(

@@ -1332,6 +1332,9 @@ export function Workout(): JSX.Element {
     handleOpenMissingConfirm,
     handleCancelMissing,
     handleConfirmMissing,
+    permanentPrompt,
+    handleConfirmPermanent,
+    handleCancelPermanent,
   } = useWorkoutSwap({
     exercises,
     safeExIdx,
@@ -1616,6 +1619,7 @@ export function Workout(): JSX.Element {
   //   - aaModalOpen      aggressive-load friction modal        (AaFrictionModal)
   //   - anomalyResult    fat-finger / outlier confirm          (AnomalyConfirmModal, z-60)
   //   - missingConfirmOpen    in-session "aparat lipsa" confirm (MissingEquipmentConfirmSheet, z-50)
+  //   - permanentPrompt.open  3-refusal "Nu-ti mai recomand X deloc?" (MissingEquipmentConfirmSheet variant=refusal, z-50)
   //   - pickSheet.open   swap / "Nu vreau" alternatives picker (SwapPickSheet, z-50)
   //   - whyText !== null "why this exercise?" explainer sheet  (WhyExerciseModal, z-50)
   //   - prFlash          mid-session PR celebration burst       (PrFlash, z-48)
@@ -1633,6 +1637,7 @@ export function Workout(): JSX.Element {
     aaModalOpen ||
     anomalyResult !== null ||
     missingConfirmOpen ||
+    permanentPrompt.open ||
     pickSheet.open ||
     whyText !== null ||
     prFlash !== null;
@@ -2220,6 +2225,19 @@ export function Workout(): JSX.Element {
         exerciseName={currentExercise.name}
         onConfirm={handleConfirmMissing}
         onCancel={handleCancelMissing}
+      />
+
+      {/* Founder Pendulum-Squat 2026-06-28 (b1) — after the THIRD "Nu vreau"
+          refusal of the same exercise, a short confirm "Nu-ti mai recomand X
+          deloc?". YES promotes the taste refusal to the HARD equipment-missing
+          exclusion (the user's explicit consent, never silent); NO keeps it in
+          rotation. Gated behind dp_refusal_permanent_prompt_v1 inside the hook. */}
+      <MissingEquipmentConfirmSheet
+        open={permanentPrompt.open}
+        variant="refusal"
+        exerciseName={permanentPrompt.displayName}
+        onConfirm={handleConfirmPermanent}
+        onCancel={handleCancelPermanent}
       />
 
       {/* Founder swap redesign 2026-06-05 — manual swap pick-list. "Aparat

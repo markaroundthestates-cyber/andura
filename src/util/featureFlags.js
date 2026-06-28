@@ -2102,6 +2102,24 @@ export const FLAGS = Object.freeze({
   // frozen full-path hashes stay byte-for-byte. Proven on the muscleRecovery aerobic-cap
   // regression test.
   dp_aerobic_load_cap_v1: { rollout: 1, default: true },
+
+  // REFUSAL → PERMANENT-EXCLUDE prompt (founder Pendulum-Squat 2026-06-28). The
+  // 3-refusal "permanent?" confirm (REFUSAL_COUNTER_THRESHOLD = 3, the long-defined
+  // "Gigel sweet spot") was specced but never wired — getRefusalCounter had only
+  // test callers. When ON, after the THIRD in-session "Nu vreau" refusal of the
+  // SAME exercise, a short confirm "Nu-ti mai recomand {X} deloc?" appears; on YES
+  // the exercise is promoted to the HARD equipment-missing exclusion (
+  // addMissingEquipmentExercise → future composition drops it, reversible only in
+  // Account › Echipament lipsa) and the counter resets; on NO the counter resets
+  // (so it doesn't nag every swap — the reversible soft compose-demote still
+  // applies). A taste refusal is ONLY ever promoted to the hard exclusion via the
+  // user's explicit YES — never silently/automatically; a busy ("Ocupat") swap is
+  // gated OUT of the counter entirely (§C6), so it can never trigger this prompt.
+  // React-UI ONLY — never reaches getSmartRecommendation/getDailyWorkout (no sim-
+  // config entry needed), but pinned OFF in fp-config FLIPPED_FLAGS for the all-off
+  // guarantee. OFF → the prompt never opens (handlePickRow's refusal branch is
+  // byte-identical to today: increment + soft demote only) → fp-regression holds.
+  dp_refusal_permanent_prompt_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

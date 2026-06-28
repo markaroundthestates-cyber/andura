@@ -232,3 +232,54 @@ describe('AparateLipsa — per-exercise equipment-missing list', () => {
     expect(getMissingEquipmentExercises()).toContain('Pec Deck / Cable Fly');
   });
 });
+
+// Founder Pendulum-Squat 2026-06-28 (a) — proactive "+ Adauga exercitiu" control.
+describe('AparateLipsa — proactive add control', () => {
+  it('renders the add section + search input', () => {
+    renderLipsa();
+    expect(screen.getByTestId('equip-missing-add')).toBeInTheDocument();
+    expect(screen.getByTestId('equip-missing-add-input')).toBeInTheDocument();
+  });
+
+  it('empty query shows NO results dropdown (no wall of rows)', () => {
+    renderLipsa();
+    expect(screen.queryByTestId('equip-missing-add-results')).not.toBeInTheDocument();
+  });
+
+  it('typing a query surfaces matching library exercises by RO display name', () => {
+    renderLipsa();
+    // "Presa" matches "Presa de picioare" (Leg Press, CORE_AUTO).
+    fireEvent.change(screen.getByTestId('equip-missing-add-input'), {
+      target: { value: 'Presa' },
+    });
+    expect(screen.getByTestId('equip-missing-add-results')).toBeInTheDocument();
+    expect(screen.getByTestId('equip-missing-add-option-Leg Press')).toBeInTheDocument();
+  });
+
+  it('selecting a match adds it to the list + persists (engine name) + clears the query', () => {
+    renderLipsa();
+    fireEvent.change(screen.getByTestId('equip-missing-add-input'), {
+      target: { value: 'Presa' },
+    });
+    fireEvent.click(screen.getByTestId('equip-missing-add-option-Leg Press'));
+    // Appears in the existing remembered-missing list (engineName-keyed row)...
+    expect(screen.getByTestId('equip-missing-row-Leg Press')).toBeInTheDocument();
+    // ...persisted to the SAME store the engine excludes from (EN canonical)...
+    expect(getMissingEquipmentExercises()).toContain('Leg Press');
+    // ...and the query input is cleared after the pick.
+    expect(screen.getByTestId('equip-missing-add-input')).toHaveValue('');
+  });
+
+  it('already-added exercise is excluded from the search results', () => {
+    addMissingEquipmentExercise('Leg Press');
+    renderLipsa();
+    fireEvent.change(screen.getByTestId('equip-missing-add-input'), {
+      target: { value: 'Presa' },
+    });
+    // It is in the list above but NOT offered as an add option again.
+    expect(screen.getByTestId('equip-missing-row-Leg Press')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('equip-missing-add-option-Leg Press')
+    ).not.toBeInTheDocument();
+  });
+});

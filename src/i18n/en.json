@@ -556,6 +556,13 @@
       "confirmCta": "Yes, I don't have it",
       "cancelCta": "Cancel"
     },
+    "refusalPermanent": {
+      "title": "Stop suggesting this?",
+      "body": "You've passed on {name} a few times. Want me to stop suggesting it entirely? You can undo this any time in Account.",
+      "confirmCta": "Yes, stop suggesting it",
+      "cancelCta": "No, maybe later",
+      "confirmed": "Done, I won't suggest {name} anymore. You can undo this in Account."
+    },
     "exit": {
       "title": "Leave the session?",
       "subtitle": "Pick how you want to handle the progress so far.",
@@ -1474,6 +1481,9 @@
     "exercisesIntro": "Equipment you marked missing during a workout. The coach won't suggest these. Remove one if you get the equipment back.",
     "exerciseRemoveCta": "Remove",
     "exerciseRemoveAria": "Remove {name} from the missing list",
+    "addTitle": "Add exercise",
+    "addIntro": "Search for an exercise you can't do. The coach won't suggest it.",
+    "addPlaceholder": "Search for an exercise...",
     "saveCta": "Save the setting"
   },
   "equipmentList": {

@@ -556,6 +556,13 @@
       "confirmCta": "Da, nu il am",
       "cancelCta": "Anuleaza"
     },
+    "refusalPermanent": {
+      "title": "Nu-ti mai recomand asta?",
+      "body": "Ai refuzat {name} de cateva ori. Vrei sa nu ti-l mai propun deloc? Poti anula oricand din Cont.",
+      "confirmCta": "Da, nu mi-l mai propune",
+      "cancelCta": "Nu, poate alta data",
+      "confirmed": "Gata, nu-ti mai propun {name}. Poti anula din Cont."
+    },
     "exit": {
       "title": "Iesi din sesiune?",
       "subtitle": "Alege cum vrei sa gestionezi progresul de pana acum.",
@@ -1474,6 +1481,9 @@
     "exercisesIntro": "Aparate marcate lipsa in timpul unui antrenament. Coach-ul nu le mai propune. Scoate unul daca ai din nou aparatul.",
     "exerciseRemoveCta": "Scoate",
     "exerciseRemoveAria": "Scoate {name} din lista de aparate lipsa",
+    "addTitle": "Adauga exercitiu",
+    "addIntro": "Cauta un exercitiu pe care nu il poti face. Coach-ul nu il va mai propune.",
+    "addPlaceholder": "Cauta un exercitiu...",
     "saveCta": "Salveaza setarea"
   },
   "equipmentList": {

@@ -688,6 +688,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   // focus-delivery regression test, NOT in this determinism stream. Selection/slot-side (no dp.js
   // load math) → no sim-config pin.
   'dp_glute_focus_delivery_v1',
+  // REFUSAL → PERMANENT-EXCLUDE prompt (founder Pendulum-Squat 2026-06-28) — the
+  // 3-refusal "permanent?" confirm is React-UI only (it never reaches
+  // getSmartRecommendation/getDailyWorkout, so it cannot move a composition hash),
+  // but pinned OFF here for the all-off-world guarantee (the harness can no longer
+  // rely on "no _devFlags ⇒ off"). The refusal store is empty under resetWorld, so
+  // even ON it would be inert in this stream — pinned OFF anyway, no sim-config pin.
+  'dp_refusal_permanent_prompt_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

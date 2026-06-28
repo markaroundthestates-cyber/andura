@@ -23,14 +23,48 @@ interface MissingEquipmentConfirmSheetProps {
   onConfirm: () => void;
   /** Dismiss without remembering anything. */
   onCancel: () => void;
+  /**
+   * Copy variant (founder Pendulum-Squat 2026-06-28). Default 'missing' = the
+   * in-session "Aparat lipsa" confirm (byte-identical to before). 'refusal' = the
+   * 3-refusal "Nu-ti mai recomand X deloc?" prompt (b1) — same a11y shell + sheet
+   * pattern, different i18n copy + test ids so the two confirms never collide.
+   */
+  variant?: 'missing' | 'refusal';
 }
+
+const VARIANT_KEYS = {
+  missing: {
+    title: 'workout.missingConfirm.title',
+    body: 'workout.missingConfirm.body',
+    confirmCta: 'workout.missingConfirm.confirmCta',
+    cancelCta: 'workout.missingConfirm.cancelCta',
+    testBackdrop: 'missing-confirm-backdrop',
+    testSheet: 'missing-confirm-sheet',
+    testTitleId: 'missing-confirm-title',
+    testYes: 'missing-confirm-yes',
+    testCancel: 'missing-confirm-cancel',
+  },
+  refusal: {
+    title: 'workout.refusalPermanent.title',
+    body: 'workout.refusalPermanent.body',
+    confirmCta: 'workout.refusalPermanent.confirmCta',
+    cancelCta: 'workout.refusalPermanent.cancelCta',
+    testBackdrop: 'refusal-permanent-backdrop',
+    testSheet: 'refusal-permanent-sheet',
+    testTitleId: 'refusal-permanent-title',
+    testYes: 'refusal-permanent-yes',
+    testCancel: 'refusal-permanent-cancel',
+  },
+} as const;
 
 export function MissingEquipmentConfirmSheet({
   open,
   exerciseName,
   onConfirm,
   onCancel,
+  variant = 'missing',
 }: MissingEquipmentConfirmSheetProps): JSX.Element | null {
+  const k = VARIANT_KEYS[variant];
   const cancelRef = useRef<HTMLButtonElement | null>(null);
   const confirmRef = useRef<HTMLButtonElement | null>(null);
   const prevFocusRef = useRef<HTMLElement | null>(null);
@@ -73,44 +107,44 @@ export function MissingEquipmentConfirmSheet({
   return (
     <div
       className="animate-fade-in fixed inset-0 bg-overlaySoft flex items-end justify-center z-50"
-      data-testid="missing-confirm-backdrop"
+      data-testid={k.testBackdrop}
       onClick={onCancel}
     >
       <div
         className="animate-slide-up bg-paper rounded-t-2xl pt-4 px-6 pb-6 w-full max-w-md"
-        data-testid="missing-confirm-sheet"
+        data-testid={k.testSheet}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="missing-confirm-title"
+        aria-labelledby={k.testTitleId}
         onClick={(e) => e.stopPropagation()}
       >
         <h2
-          id="missing-confirm-title"
+          id={k.testTitleId}
           className="flex items-center gap-2 text-base font-bold text-ink mb-2"
         >
           <PackageX className="w-5 h-5 shrink-0 text-brick" aria-hidden="true" />
-          {t('workout.missingConfirm.title')}
+          {t(k.title)}
         </h2>
         <p className="text-sm text-ink2 mb-4">
-          {t('workout.missingConfirm.body', { name: exerciseName })}
+          {t(k.body, { name: exerciseName })}
         </p>
         <button
           ref={confirmRef}
           type="button"
           onClick={onConfirm}
-          data-testid="missing-confirm-yes"
+          data-testid={k.testYes}
           className="w-full py-3 bg-ink text-paper dark:bg-brick rounded-xl text-base font-semibold mb-2 transition-transform active:scale-[.97]"
         >
-          {t('workout.missingConfirm.confirmCta')}
+          {t(k.confirmCta)}
         </button>
         <button
           ref={cancelRef}
           type="button"
           onClick={onCancel}
-          data-testid="missing-confirm-cancel"
+          data-testid={k.testCancel}
           className="w-full py-2 text-ink2 text-sm"
         >
-          {t('workout.missingConfirm.cancelCta')}
+          {t(k.cancelCta)}
         </button>
       </div>
     </div>

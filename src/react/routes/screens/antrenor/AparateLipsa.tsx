@@ -29,9 +29,9 @@
 //   - mockup andura-clasic.html#L1050-1101 screen-aparate-lipsa Slice 1.7
 
 import type { JSX } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Check, X } from 'lucide-react';
+import { Check, Plus, X } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { t } from '../../../../i18n/index.js';
@@ -39,8 +39,10 @@ import {
   getMissingEquipment,
   setMissingEquipment,
   getMissingEquipmentExercises,
+  addMissingEquipmentExercise,
   removeMissingEquipmentExercise,
 } from '../../../../engine/schedule/scheduleAdapter.js';
+import { EXERCISE_METADATA } from '../../../../engine/exerciseLibrary.js';
 import { translateMissingToCoarse } from '../../../../engine/equipmentMap.js';
 import { toExerciseDisplay } from '../../../lib/exerciseDisplay';
 
@@ -94,6 +96,41 @@ export function AparateLipsa({ embedded = false }: { embedded?: boolean } = {}):
 
   function removeExercise(engineName: string): void {
     setMissingExercises(removeMissingEquipmentExercise(engineName));
+  }
+
+  // Founder Pendulum-Squat 2026-06-28 (a) — proactive per-exercise add control.
+  // Daniel's gym lacks the machine for a recommended exercise; instead of waiting
+  // for the in-session "Aparat lipsa" confirm, he can pre-exclude it here. Search
+  // is a typeahead over the SAME library source the Biblioteca uses (CORE_AUTO),
+  // by RO display name; selecting one writes the EN canonical engineName to the
+  // SAME store (addMissingEquipmentExercise) so the existing list + next-compose
+  // exclusion pick it up. Built once (the library is static).
+  const [addQuery, setAddQuery] = useState('');
+  const addOptions = useMemo<readonly { engineName: string; display: string }[]>(() => {
+    const out: { engineName: string; display: string }[] = [];
+    for (const [engineName, meta] of Object.entries(EXERCISE_METADATA)) {
+      if ((meta as { status?: string }).status !== 'CORE_AUTO') continue;
+      out.push({ engineName, display: toExerciseDisplay(engineName).name });
+    }
+    out.sort((a, b) => a.display.localeCompare(b.display));
+    return out;
+  }, []);
+
+  // Filtered matches: exclude already-remembered exercises, match the query against
+  // the RO display name (case-insensitive substring). Capped so the list stays
+  // scannable on the gym floor. Empty query → no dropdown (avoid a wall of 600 rows).
+  const addMatches = useMemo<readonly { engineName: string; display: string }[]>(() => {
+    const q = addQuery.trim().toLowerCase();
+    if (q.length === 0) return [];
+    const already = new Set(missingExercises);
+    return addOptions
+      .filter((o) => !already.has(o.engineName) && o.display.toLowerCase().includes(q))
+      .slice(0, 8);
+  }, [addQuery, addOptions, missingExercises]);
+
+  function addExercise(engineName: string): void {
+    setMissingExercises(addMissingEquipmentExercise(engineName));
+    setAddQuery('');
   }
 
   function toggle(itemId: string): void {
@@ -213,6 +250,53 @@ export function AparateLipsa({ embedded = false }: { embedded?: boolean } = {}):
       <p className="text-sm text-ink3 italic font-serif mb-6 leading-relaxed">
         {t('aparatLipsa.learnNote')}
       </p>
+
+      {/* Founder Pendulum-Squat 2026-06-28 (a) — proactive "+ Adauga exercitiu"
+          control. A typeahead over the library (RO display names); selecting one
+          remembers it as equipment-missing (same store the in-session confirm
+          writes), so it joins the list below + is excluded next compose. Placed
+          ABOVE the list so add + remove live in one place. */}
+      <div className="mb-6" data-testid="equip-missing-add">
+        <h2 className="text-sm font-bold text-ink mb-1">
+          {t('aparatLipsa.addTitle')}
+        </h2>
+        <p className="text-sm text-ink3 mb-3">{t('aparatLipsa.addIntro')}</p>
+        <div className="relative">
+          <Plus
+            className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink3 pointer-events-none"
+            aria-hidden="true"
+          />
+          <input
+            type="text"
+            value={addQuery}
+            onChange={(e) => setAddQuery(e.target.value)}
+            data-testid="equip-missing-add-input"
+            placeholder={t('aparatLipsa.addPlaceholder')}
+            aria-label={t('aparatLipsa.addTitle')}
+            className="pulse-card pulse-card-tight w-full pl-9 pr-3 py-3 text-sm text-ink bg-transparent placeholder:text-ink3"
+          />
+        </div>
+        {addMatches.length > 0 && (
+          <ul
+            className="mt-2 flex flex-col gap-1"
+            data-testid="equip-missing-add-results"
+          >
+            {addMatches.map((o) => (
+              <li key={o.engineName}>
+                <button
+                  type="button"
+                  onClick={() => addExercise(o.engineName)}
+                  data-testid={`equip-missing-add-option-${o.engineName}`}
+                  className="pulse-card pulse-card-tight w-full flex items-center gap-2 p-3 text-left text-sm font-semibold text-ink2 transition-colors"
+                >
+                  <Plus className="w-4 h-4 shrink-0 text-brick" aria-hidden="true" />
+                  <span className="truncate">{o.display}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       {/* Founder Busy/Missing redesign 2026-06-12 — per-EXERCISE equipment-missing
           list. Each entry was remembered from an in-session "Aparat lipsa" confirm

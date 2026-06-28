@@ -11,10 +11,14 @@ import { toast } from '../../../../lib/toast';
 import { debugLog } from '../../../../lib/debugLog';
 import {
   incrementRefusal,
+  getRefusalCounter,
+  resetRefusalCounter,
+  REFUSAL_COUNTER_THRESHOLD,
   addMissingEquipmentExercise,
 } from '../../../../../engine/schedule/scheduleAdapter.js';
 import { getExerciseMetadata } from '../../../../../engine/exerciseLibrary.js';
 import { musclesForExercise } from '../../../../../engine/muscleMap.js';
+import { isEnabled } from '../../../../../util/featureFlags.js';
 import { t } from '../../../../../i18n/index.js';
 
 // ── Busy-defer muscle-safety helper (founder 2026-06-12) ─────────────────────
@@ -105,6 +109,15 @@ export interface UseWorkoutSwap {
   handleCancelMissing: () => void;
   /** Confirm: remember this exercise's equipment as missing + auto-replace NOW. */
   handleConfirmMissing: () => void;
+  /** Founder Pendulum-Squat 2026-06-28 (b1) — the 3-refusal "Nu-ti mai recomand X
+   *  deloc?" prompt. `permanentPrompt.open` shows the confirm; `engineName` is the
+   *  EN canonical to hard-exclude on YES; `displayName` is the RO copy fill. Gated
+   *  behind dp_refusal_permanent_prompt_v1 (flag OFF → never opens). */
+  permanentPrompt: { open: boolean; engineName: string; displayName: string };
+  /** YES → hard-exclude (addMissingEquipmentExercise) + reset the counter. */
+  handleConfirmPermanent: () => void;
+  /** NO → reset the counter only (don't nag every swap; soft demote still applies). */
+  handleCancelPermanent: () => void;
 }
 
 const CLOSED_PICK: SwapPickSheetState = {
@@ -151,6 +164,14 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
 
   // Founder Busy/Missing redesign 2026-06-12 — "Aparat lipsa" anti-misclick confirm.
   const [missingConfirmOpen, setMissingConfirmOpen] = useState(false);
+  // Founder Pendulum-Squat 2026-06-28 (b1) — the 3-refusal "permanent?" prompt.
+  // Captures the engineName (engine identity → hard-exclude) + its RO displayName
+  // (the {X} copy fill) at trigger time; both empty while closed.
+  const [permanentPrompt, setPermanentPrompt] = useState<{
+    open: boolean;
+    engineName: string;
+    displayName: string;
+  }>({ open: false, engineName: '', displayName: '' });
   // Founder redesign — manual swap pick-list sheet state ("Nu vreau" + busy fallback).
   const [pickSheet, setPickSheet] = useState<SwapPickSheetState>(CLOSED_PICK);
 
@@ -339,6 +360,10 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
     (row: SwapPickRow): void => {
       bumpActivity();
       const engineName = currentExercise.engineName;
+      // Founder Pendulum-Squat 2026-06-28 (b1) — does THIS pick cross the 3-refusal
+      // threshold? Decided here (refusal branch only) and surfaced AFTER the swap
+      // completes so the prompt overlays the freshly-swapped slot, not the old one.
+      let crossThreshold = false;
       if (typeof engineName === 'string' && engineName.length > 0) {
         // §C6 audit fix — only a TASTE refusal ('Nu vreau') increments the refusal
         // counter (the {n,ts} getRefusalPenalties turns into a ~10-day soft compose
@@ -348,6 +373,13 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         // never the penalty.
         if (pickSheet.reason === 'refusal') {
           incrementRefusal(engineName);
+          // (b1) After the THIRD refusal of the same exercise, offer the permanent
+          // exclude. Gated behind dp_refusal_permanent_prompt_v1 (OFF → byte-identical
+          // to today: increment + soft demote only). A busy swap never reaches here
+          // (reason !== 'refusal'), so it can never trigger this prompt (§C6 invariant).
+          crossThreshold =
+            isEnabled('dp_refusal_permanent_prompt_v1') &&
+            (getRefusalCounter()[engineName] ?? 0) >= REFUSAL_COUNTER_THRESHOLD;
         }
         markRefusalTried(safeExIdx, engineName);
       }
@@ -386,6 +418,16 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         }),
         variant: 'success',
       });
+      // (b1) The third refusal of this exercise — offer the permanent exclude. Opened
+      // AFTER the pick sheet closes so it overlays cleanly. engineName drives the
+      // hard-exclude (engine identity); originalName is the RO copy fill ({X}).
+      if (crossThreshold && typeof engineName === 'string' && engineName.length > 0) {
+        setPermanentPrompt({
+          open: true,
+          engineName,
+          displayName: pickSheet.originalName || row.displayName || engineName,
+        });
+      }
     },
     [bumpActivity, currentExercise.engineName, markRefusalTried, safeExIdx, setExercises, swapExercise, pickSheet.originalName, pickSheet.reason],
   );
@@ -509,6 +551,37 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
     setExercises,
   ]);
 
+  // Founder Pendulum-Squat 2026-06-28 (b1) — the 3-refusal "permanent?" prompt.
+  // YES = PROMOTE the taste refusal to the HARD equipment-missing exclusion (the
+  // ONLY automatic-looking path that does so is still an EXPLICIT user YES — never
+  // silent, §C6) + reset the counter so it starts clean. The exercise was ALREADY
+  // swapped out of today's session by the pick that triggered this; remembering it
+  // just stops future composition from re-surfacing it (reversible in Account ›
+  // Echipament lipsa).
+  const handleConfirmPermanent = useCallback((): void => {
+    setPermanentPrompt((prev) => {
+      if (prev.engineName) {
+        addMissingEquipmentExercise(prev.engineName);
+        resetRefusalCounter(prev.engineName);
+        toast.show({
+          message: t('workout.refusalPermanent.confirmed', { name: prev.displayName }),
+          variant: 'success',
+        });
+      }
+      return { open: false, engineName: '', displayName: '' };
+    });
+  }, []);
+
+  // NO = keep recommending it (the user just didn't want it TODAY) — reset the
+  // counter so the prompt doesn't nag on every subsequent swap; the reversible
+  // soft compose-demote (getRefusalPenalties, ~10-day decay) still applies.
+  const handleCancelPermanent = useCallback((): void => {
+    setPermanentPrompt((prev) => {
+      if (prev.engineName) resetRefusalCounter(prev.engineName);
+      return { open: false, engineName: '', displayName: '' };
+    });
+  }, []);
+
   return {
     pickSheet,
     missingConfirmOpen,
@@ -520,5 +593,8 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
     handleOpenMissingConfirm,
     handleCancelMissing,
     handleConfirmMissing,
+    permanentPrompt,
+    handleConfirmPermanent,
+    handleCancelPermanent,
   };
 }

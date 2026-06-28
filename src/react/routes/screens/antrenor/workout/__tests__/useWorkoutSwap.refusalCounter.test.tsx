@@ -12,7 +12,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 
 import { useWorkoutSwap, type UseWorkoutSwapArgs } from '../useWorkoutSwap';
-import { getRefusalCounter } from '../../../../../../engine/schedule/scheduleAdapter.js';
+import { getRefusalCounter, isEquipmentMissingExercise } from '../../../../../../engine/schedule/scheduleAdapter.js';
 import type { PlannedExercise } from '../../../../../lib/engineWrappers';
 
 // A real CORE_AUTO chest exercise so resolveSwapPickList returns a populated list.
@@ -93,5 +93,65 @@ describe('useWorkoutSwap — busy swap does not touch the refusal counter', () =
 
     // The taste refusal DOES write the penalty for the original.
     expect(getRefusalCounter()[ENGINE_NAME]).toBe(1);
+  });
+});
+
+// ── (b1) 3-refusal permanent-exclude prompt (dp_refusal_permanent_prompt_v1) ──
+// After 3 TASTE "Nu vreau" refusals of the same exercise, offer a permanent
+// exclude. The HARD promotion (taste → equipment-missing) happens ONLY on the
+// user's explicit YES (never silent, §C6). A busy swap never counts.
+describe('useWorkoutSwap — 3-refusal permanent-exclude prompt (b1)', () => {
+  function refuseOnce(result: { current: ReturnType<typeof useWorkoutSwap> }): void {
+    act(() => { result.current.handleNuVreau(); });
+    const row = result.current.pickSheet.rows[0]!;
+    act(() => { result.current.handlePickRow(row); });
+  }
+
+  it('flag ON: the 3rd "Nu vreau" of the same exercise opens the permanent-exclude prompt', () => {
+    const { result } = renderHook(() => useWorkoutSwap(makeArgs()));
+    refuseOnce(result);
+    expect(result.current.permanentPrompt.open).toBe(false);
+    refuseOnce(result);
+    expect(result.current.permanentPrompt.open).toBe(false);
+    refuseOnce(result);
+    expect(result.current.permanentPrompt.open).toBe(true);
+    expect(result.current.permanentPrompt.engineName).toBe(ENGINE_NAME);
+  });
+
+  it('YES → hard-excludes the exercise + resets the counter (taste→equipment only on consent)', () => {
+    const { result } = renderHook(() => useWorkoutSwap(makeArgs()));
+    refuseOnce(result); refuseOnce(result); refuseOnce(result);
+    expect(result.current.permanentPrompt.open).toBe(true);
+    act(() => { result.current.handleConfirmPermanent(); });
+    expect(isEquipmentMissingExercise(ENGINE_NAME)).toBe(true);
+    expect(getRefusalCounter()[ENGINE_NAME]).toBeUndefined();
+    expect(result.current.permanentPrompt.open).toBe(false);
+  });
+
+  it('NO → keeps it in rotation (NOT excluded), still closes the prompt', () => {
+    const { result } = renderHook(() => useWorkoutSwap(makeArgs()));
+    refuseOnce(result); refuseOnce(result); refuseOnce(result);
+    act(() => { result.current.handleCancelPermanent(); });
+    expect(isEquipmentMissingExercise(ENGINE_NAME)).toBe(false);
+    expect(result.current.permanentPrompt.open).toBe(false);
+  });
+
+  it('flag OFF: no prompt even after 3 refusals (byte-identical legacy)', () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_refusal_permanent_prompt_v1: false }));
+    const { result } = renderHook(() => useWorkoutSwap(makeArgs()));
+    refuseOnce(result); refuseOnce(result); refuseOnce(result);
+    expect(result.current.permanentPrompt.open).toBe(false);
+    expect(isEquipmentMissingExercise(ENGINE_NAME)).toBe(false);
+  });
+
+  it('busy "Ocupat" never triggers the prompt (taste != equipment, never counts)', () => {
+    const { result } = renderHook(() => useWorkoutSwap(makeArgs()));
+    for (let i = 0; i < 3; i++) {
+      act(() => { result.current.handleOcupat(); });
+      const row = result.current.pickSheet.rows[0]!;
+      act(() => { result.current.handlePickRow(row); });
+    }
+    expect(result.current.permanentPrompt.open).toBe(false);
+    expect(getRefusalCounter()[ENGINE_NAME]).toBeUndefined();
   });
 });
