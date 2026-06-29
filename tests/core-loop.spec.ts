@@ -195,6 +195,10 @@ test.describe('Core authenticated loop — the automated gym test', () => {
     // Read what the coach prescribed for the very first set BEFORE we override.
     const targetKgText = (await page.getByTestId('setlog-tinta-kg').textContent().catch(() => '')) ?? '';
     const prescribedKg = parseFloat(targetKgText.replace(/[^\d.]/g, ''));
+    // Capture WHICH exercise leads session 1, so the session-2 forward-plan check
+    // only compares like-for-like (the composer can lead session 2 with a DIFFERENT
+    // first lift — rotation / next day-type — whose own cold-start is not a regression).
+    const firstExName1 = ((await page.getByTestId('wv2-exname').textContent().catch(() => '')) ?? '').trim();
 
     // MANUAL OVERRIDE: log a clearly heavier weight than prescribed (a deliberate
     // user correction). +5kg is unmistakable yet modest enough to stay a clean
@@ -229,18 +233,22 @@ test.describe('Core authenticated loop — the automated gym test', () => {
     const nextTargetText =
       (await page.getByTestId('setlog-tinta-kg').textContent().catch(() => '')) ?? '';
     const nextKg = parseFloat(nextTargetText.replace(/[^\d.]/g, ''));
+    const firstExName2 = ((await page.getByTestId('wv2-exname').textContent().catch(() => '')) ?? '').trim();
 
-    // The adapt assertion: the next session is planned from the REAL logged
-    // history (not a cold-start baseline). Hard: the prescribed load is a finite
-    // positive number. Soft directional: having logged at/above prescription rated
-    // "potrivit", the engine's next recommendation should be at least the original
-    // prescription (it plans forward from what was sustained, never silently below
-    // a clean-rated lift). Soft so the heavy E2E surfaces the value if the engine's
-    // forward-planning nuance differs, without masking the hard history proof.
+    // The adapt assertion. Hard: the next prescribed load is a finite positive number
+    // (history hydrated end-to-end, not a crash / cold-start zero).
     expect(Number.isFinite(nextKg) && nextKg > 0, `next target = "${nextTargetText}"`).toBe(true);
-    if (Number.isFinite(prescribedKg) && prescribedKg > 0) {
+    // Soft directional: having logged at/above prescription rated "potrivit", the next
+    // recommendation should plan forward (>= the original prescription), never silently
+    // below a clean-rated lift. GATED on the SAME lift leading both sessions — the
+    // composer can legitimately lead session 2 with a DIFFERENT first exercise (rotation
+    // / next day-type), whose own cold-start is NOT a regression of session 1's lift.
+    // That cross-exercise mismatch was the prior false-positive; only assert like-for-like.
+    const sameLead =
+      firstExName1.length > 0 && firstExName2.length > 0 && firstExName1 === firstExName2;
+    if (sameLead && Number.isFinite(prescribedKg) && prescribedKg > 0) {
       expect
-        .soft(nextKg, `next target ${nextKg} should plan forward from prescribed ${prescribedKg} (logged ${overrideKg} @ potrivit)`)
+        .soft(nextKg, `${firstExName2}: next target ${nextKg} should plan forward from prescribed ${prescribedKg} (logged ${overrideKg} @ potrivit)`)
         .toBeGreaterThanOrEqual(prescribedKg);
     }
   });
