@@ -71,6 +71,11 @@ describe('swUpdate — auto-apply when SAFE (no active session)', () => {
     }));
     const { useSwUpdate, toast } = await loadFresh();
 
+    // Spy on setTimeout to assert the safety-net reload schedule. We call through
+    // (waitFor below relies on real setTimeout to poll) but CANCEL the scheduled
+    // 1200ms window.location.reload() at the end of the test — otherwise it fires
+    // AFTER the env teardown (jsdom gone) → an unhandled "window is not defined"
+    // that flakes the full-suite run depending on worker timing.
     const timeoutSpy = vi.spyOn(window, 'setTimeout');
 
     const Host = makeHost(useSwUpdate);
@@ -85,6 +90,12 @@ describe('swUpdate — auto-apply when SAFE (no active session)', () => {
     expect(toast.getSnapshot().length).toBeGreaterThan(0);
     // Safety-net reload scheduled ~1.2s later (installed-PWA controllerchange flake).
     expect(timeoutSpy).toHaveBeenCalledWith(expect.any(Function), 1200);
+
+    // Cancel every timer this spy scheduled (incl. the 1200ms reload) so none can
+    // fire after the jsdom env is torn down.
+    for (const r of timeoutSpy.mock.results) {
+      clearTimeout(r.value as ReturnType<typeof setTimeout>);
+    }
   });
 });
 
