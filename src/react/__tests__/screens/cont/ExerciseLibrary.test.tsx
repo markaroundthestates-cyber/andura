@@ -9,9 +9,13 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ExerciseLibrary } from '../../../routes/screens/cont/ExerciseLibrary';
 import { setLocale, _resetI18nCache } from '../../../../i18n/index.js';
+import { isEquipmentMissingExercise } from '../../../../engine/schedule/scheduleAdapter.js';
 
 beforeEach(() => {
-  try { localStorage.removeItem('sf.locale'); } catch { /* jsdom */ }
+  try {
+    localStorage.removeItem('sf.locale');
+    localStorage.removeItem('wv2-equipment-missing-exercises');
+  } catch { /* jsdom */ }
   _resetI18nCache();
   setLocale('ro');
 });
@@ -102,5 +106,36 @@ describe('ExerciseLibrary — drill into a group (level 2)', () => {
     fireEvent.click(screen.getByTestId('exercise-library-group-piept'));
     fireEvent.click(screen.getByTestId('exercise-library-item-Flat Barbell Bench'));
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+});
+
+describe('ExerciseLibrary — "Nu pot face asta" per-exercise exclude', () => {
+  function openBenchDetail(): void {
+    renderScreen();
+    fireEvent.click(screen.getByTestId('exercise-library-group-piept'));
+    fireEvent.click(screen.getByTestId('exercise-library-item-Flat Barbell Bench'));
+  }
+
+  it('the inline detail offers a "Nu pot face asta" action', () => {
+    openBenchDetail();
+    const btn = screen.getByTestId('exercise-library-cantdo-Flat Barbell Bench');
+    expect(btn.textContent).toMatch(/Nu pot face asta/);
+  });
+
+  it('tapping it hard-excludes the exercise (store written + UI flips to "Il pun la loc" + row tagged)', () => {
+    openBenchDetail();
+    fireEvent.click(screen.getByTestId('exercise-library-cantdo-Flat Barbell Bench'));
+    expect(isEquipmentMissingExercise('Flat Barbell Bench')).toBe(true);
+    expect(screen.getByTestId('exercise-library-cantdo-Flat Barbell Bench').textContent).toMatch(/pun la loc/);
+    const item = screen.getByTestId('exercise-library-item-Flat Barbell Bench');
+    expect(within(item).getByText(/Exclus din recomandari/)).toBeInTheDocument();
+  });
+
+  it('tapping again puts it back (removed from the store)', () => {
+    openBenchDetail();
+    fireEvent.click(screen.getByTestId('exercise-library-cantdo-Flat Barbell Bench'));
+    expect(isEquipmentMissingExercise('Flat Barbell Bench')).toBe(true);
+    fireEvent.click(screen.getByTestId('exercise-library-cantdo-Flat Barbell Bench'));
+    expect(isEquipmentMissingExercise('Flat Barbell Bench')).toBe(false);
   });
 });

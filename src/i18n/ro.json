@@ -2702,7 +2702,10 @@
       "secondary": "Muschi secundari",
       "equipment": "Echipament",
       "tier": "Nivel",
-      "none": "-"
+      "none": "-",
+      "cantDo": "Nu pot face asta",
+      "canDoAgain": "Il pun la loc",
+      "excludedTag": "Exclus din recomandari"
     },
     "tier": {
       "1": "Esential",

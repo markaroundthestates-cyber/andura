@@ -22,8 +22,13 @@
 import type { JSX } from 'react';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, ChevronDown } from 'lucide-react';
+import { ChevronRight, ChevronDown, Ban, RotateCcw } from 'lucide-react';
 import { EXERCISE_METADATA } from '../../../../engine/exerciseLibrary.js';
+import {
+  addMissingEquipmentExercise,
+  removeMissingEquipmentExercise,
+  getMissingEquipmentExercises,
+} from '../../../../engine/schedule/scheduleAdapter.js';
 import type { ExerciseMetadata } from '../../../../engine/exerciseSchema';
 import { toExerciseDisplay } from '../../../lib/exerciseDisplay';
 import { gotoPath } from '../../../lib/navigation';
@@ -98,6 +103,11 @@ export function ExerciseLibrary({ embedded = false }: { embedded?: boolean } = {
   const navigate = useNavigate();
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
+  // "Nu pot face asta" — per-exercise hard exclude. Writes the SAME store as the
+  // in-session "Aparat lipsa" confirm + the Account typeahead (wv2-equipment-
+  // missing-exercises, consumed by getDailyWorkout). Local mirror so toggling
+  // re-renders the row + button instantly.
+  const [missingList, setMissingList] = useState<string[]>(() => getMissingEquipmentExercises());
 
   const groups = useMemo(() => buildGroups(), []);
   const current = selectedGroup ? groups.find((g) => g.key === selectedGroup) ?? null : null;
@@ -167,6 +177,7 @@ export function ExerciseLibrary({ embedded = false }: { embedded?: boolean } = {
               const display = toExerciseDisplay(entry.engineName);
               const meta = LIBRARY[entry.engineName];
               const isOpen = expanded === entry.engineName;
+              const isMissing = missingList.includes(entry.engineName);
               const isLast = idx === current.items.length - 1;
               const secondary = (meta?.muscle_target_secondary ?? [])
                 .map((m) => muscleLabel(m))
@@ -183,8 +194,12 @@ export function ExerciseLibrary({ embedded = false }: { embedded?: boolean } = {
                     <ExerciseMedia engineName={entry.engineName} variant="thumbnail" />
                     <span className="flex-1 min-w-0">
                       <span className="block text-sm font-semibold truncate">{display.name}</span>
-                      <span className="block text-xs text-ink3 truncate">
-                        {display.sub ?? equipmentLabel(meta?.equipment_type)}
+                      <span className="block text-xs truncate">
+                        {isMissing ? (
+                          <span className="text-danger font-semibold">{t('exerciseLibrary.detail.excludedTag')}</span>
+                        ) : (
+                          <span className="text-ink3">{display.sub ?? equipmentLabel(meta?.equipment_type)}</span>
+                        )}
                       </span>
                     </span>
                     {isOpen ? (
@@ -205,6 +220,27 @@ export function ExerciseLibrary({ embedded = false }: { embedded?: boolean } = {
                         <dt className="font-mono uppercase tracking-wide text-ink3">{t('exerciseLibrary.detail.tier')}</dt>
                         <dd className="text-ink2">{t(`exerciseLibrary.tier.${meta?.tier ?? 2}`)}</dd>
                       </dl>
+                      {isMissing ? (
+                        <button
+                          type="button"
+                          data-testid={`exercise-library-cantdo-${entry.engineName}`}
+                          onClick={() => setMissingList(removeMissingEquipmentExercise(entry.engineName))}
+                          className="mt-3 w-full flex items-center justify-center gap-2 rounded-xl border border-line py-2.5 text-xs font-semibold text-ink2"
+                        >
+                          <RotateCcw className="w-4 h-4 flex-shrink-0" strokeWidth={1.6} aria-hidden="true" />
+                          {t('exerciseLibrary.detail.canDoAgain')}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          data-testid={`exercise-library-cantdo-${entry.engineName}`}
+                          onClick={() => setMissingList(addMissingEquipmentExercise(entry.engineName))}
+                          className="mt-3 w-full flex items-center justify-center gap-2 rounded-xl border border-danger/40 py-2.5 text-xs font-semibold text-danger"
+                        >
+                          <Ban className="w-4 h-4 flex-shrink-0" strokeWidth={1.6} aria-hidden="true" />
+                          {t('exerciseLibrary.detail.cantDo')}
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>

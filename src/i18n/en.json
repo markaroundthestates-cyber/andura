@@ -2702,7 +2702,10 @@
       "secondary": "Secondary muscles",
       "equipment": "Equipment",
       "tier": "Tier",
-      "none": "-"
+      "none": "-",
+      "cantDo": "I can't do this",
+      "canDoAgain": "Put it back",
+      "excludedTag": "Excluded"
     },
     "tier": {
       "1": "Essential",
