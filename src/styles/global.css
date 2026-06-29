@@ -97,24 +97,23 @@
 @layer base {
   :root {
     /* Pulse base design vars (accent family + gradients + fonts + motion).
-       PALETTE B "EMERALD PULSE" 2026-06-12 (Daniel pick din design-pass mockup
-       01-palette.html varianta B — green-teal core, warm-amber spark). The
-       accent SOURCE family swaps hue family (lime→emerald, coral→amber) while
-       keeping the Pulse identity. This single declaration cascades to BOTH
-       themes (light :root + dark) — every gradient, set-chip, energy dot,
-       glow + the dark primary accent (--brick = volt) re-skins from here.
-         - volt  #a8e04e → #5fe39a  (emerald — 12.09:1 dark paper / 10.21 card)
-         - aqua  #45c8da → #46d4c4  (teal — 10.72:1 / 9.06 card)
-         - ember #f87044 → #ffa24d  (warm amber — 9.83:1 / 8.31 card)
-       Deep variants re-derived in-hue (decorative gradient/wash duty, no AA
+       PALETTE A "DEEP VOLT" 2026-06-29 (Daniel pick din design-pass mockup
+       01-palette.html varianta A — volt-lime core calmat + aqua/ember coborate
+       un pas, "scos neonul" pastrand caracterul Pulse). Aceasta declaratie
+       unica cascadeaza in AMBELE teme (light :root + dark) — fiecare gradient,
+       set-chip, energy dot, glow + accentul primar dark (--brick = volt) se
+       re-skineaza de aici.
+         - volt  #5fe39a → #9fd84a  (volt-lime — ~9.9:1 ca text pe card)
+         - aqua  #46d4c4 → #45c8da  (cyan — ~8.4:1 card)
+         - ember #ffa24d → #f5764a  (coral cald — ~6.0:1 card)
+       Deep variants re-derivate in-hue (decorative gradient/wash duty, no AA
        text gate). Light-theme TEXT-path derivatives re-pinned below. */
-    --volt: #5fe39a; --volt-deep: #3ecb7e; --aqua: #46d4c4; --aqua-deep: #2fbcab;
-    --ember: #ffa24d; --ember-deep: #f08a2a; --violet: #9b8bff;
-    /* Energy-ramp mid/low hues — mockup data.jsx energy[] (normal=gold,
-       tired=ember-red). Decorative-only (aria-hidden dots), so no AA gate;
-       cascades into [data-theme=dark] unchanged (theme-agnostic in the mockup).
-       Palette B values (warmer gold, salmon red). */
-    --gold: #ffd76a; --ember-red: #ff6f7e;
+    --volt: #9fd84a; --volt-deep: #86bd3a; --aqua: #45c8da; --aqua-deep: #34b6c8;
+    --ember: #f5764a; --ember-deep: #e05f33; --violet: #a98bff;
+    /* Energy-ramp mid/low hues — decorative-only (aria-hidden dots), so no AA
+       gate; cascades into [data-theme=dark] unchanged (theme-agnostic in the
+       mockup). Palette A values (cooler gold, coral red). */
+    --gold: #e8c84d; --ember-red: #ff5d6c;
     --grad-pulse: linear-gradient(135deg, var(--volt) 0%, var(--aqua) 100%);
     --grad-ember: linear-gradient(135deg, var(--ember) 0%, var(--violet) 120%);
     --font-display: 'Space Grotesk Variable', 'Inter', system-ui, sans-serif;
@@ -123,7 +122,7 @@
     --motion: 1; --radius: 22px; --radius-sm: 14px;
     /* On-accent ink (text sitting on a --brick/--accent fill). Palette B
        greenish near-black (mockup .pal-b --on-accent). */
-    --on-accent: #04130c;
+    --on-accent: #0a0c14;
 
     /* ── PULSE LIGHT (default :root) — Pulse --bg/--bg-2 light values ──────── */
     --paper: #eef0f6;     /* Pulse --bg light — cool off-white L≈0.85 */
@@ -208,25 +207,25 @@
      ink>ink-2>ink-3>line-strong>line preserved. Light --on-accent inherits
      from :root (#0a0c14) — text-paper on a volt fill reads as near-black ink. */
   [data-theme="dark"] {
-    --paper: #080c10;      /* Palette B --bg — phone bg near-black green */
-    --paper-2: #0c1216;    /* Palette B --bg-2 — secondary surface dark */
-    --ink: #eef6f2;        /* Palette B --ink → 17.84:1 ✅ AAA */
-    --ink-2: #9fb4ac;      /* Palette B --ink-2 → 8.97:1 ✅ AAA */
-    --ink-3: #7c9088;      /* Palette B --ink-3 → 5.79:1 paper / 4.89:1 card ✅ AA */
-    --line: rgba(190,255,225,0.09); /* Palette B --line — decorative mint hairline */
-    --line-strong: #566860;/* Palette B --line-strong → 3.31:1 vs paper ✅ SC 1.4.11 */
-    --brick: #5fe39a;      /* PRIMARY ACCENT — Palette B emerald --volt → 12.09:1 paper / 10.21:1 card ✅ AAA */
-    --brick-dark: #ff8a7a; /* Destructive-action TEXT — Palette B salmon → 8.57:1 ✅ AA */
-    --olive: #5fe39a;      /* Energy/cardio accent — emerald (matches --brick) → 12.09:1 ✅ */
-    --deep: #46d4c4;       /* Rest/recovery accent — Palette B teal → 10.72:1 paper / 9.06:1 card ✅ */
-    /* Text-path accent inks — dark theme keeps the bright Palette B hues
-       (re-verified AA as text on dark paper + glass card, 2026-06-12).
-       Same names as the light block so Kicker/Pill text resolves in BOTH themes. */
-    --aqua-ink: #46d4c4;   /* teal text-path dark → 10.72:1 paper / 9.06:1 card ✅ AA */
-    --ember-ink: #ffa24d;  /* amber text-path dark → 9.83:1 paper / 8.31:1 card ✅ AA */
-    --succ: #5fe39a;       /* Success green (= emerald volt) → 12.09:1 ✅ */
-    --warn: #ffd76a;       /* Warning amber (Palette B gold) → 14.18:1 ✅ */
-    --danger: #ff8a7a;     /* Danger red (Palette B salmon) → 8.57:1 ✅ */
+    --paper: #090b13;      /* Palette A --bg — phone bg near-black blue */
+    --paper-2: #0d101c;    /* Palette A --bg-2 — secondary surface dark */
+    --ink: #f3f5fc;        /* Palette A --ink → ~18:1 ✅ AAA */
+    --ink-2: #a7adc4;      /* Palette A --ink-2 → ~10:1 ✅ AAA */
+    --ink-3: #82889e;      /* Palette A --ink-3 → ~5.5:1 paper ✅ AA */
+    --line: rgba(255,255,255,0.085); /* Palette A --line — neutral hairline */
+    --line-strong: #5c6278;/* Palette A --line-strong → ~3.3:1 vs paper ✅ SC 1.4.11 */
+    --brick: #9fd84a;      /* PRIMARY ACCENT — Palette A volt-lime --volt → ~12:1 paper / 9.9:1 card ✅ AAA */
+    --brick-dark: #ff7d6a; /* Destructive-action TEXT — Palette A coral → ~7:1 ✅ AA */
+    --olive: #9fd84a;      /* Energy/cardio accent — volt-lime (matches --brick) ✅ */
+    --deep: #45c8da;       /* Rest/recovery accent — Palette A cyan → ~9:1 paper ✅ */
+    /* Text-path accent inks — dark theme keeps the bright Palette A hues
+       (AA as text on dark paper + glass card). Same names as the light block
+       so Kicker/Pill text resolves in BOTH themes. */
+    --aqua-ink: #45c8da;   /* cyan text-path dark → ~9:1 paper ✅ AA */
+    --ember-ink: #f5764a;  /* coral text-path dark → ~6:1 card ✅ AA */
+    --succ: #7be0a0;       /* Success green → ~13:1 ✅ */
+    --warn: #ffc24f;       /* Warning amber (Palette A gold) → ~12:1 ✅ */
+    --danger: #ff7d6a;     /* Danger red (Palette A coral) → ~7:1 ✅ */
 
     /* ── PULSE GLASS SURFACES + DEPTH (1:1 parity port 2026-05-29) ──────────
        Verbatim from mockup interfata-noua/index.html :root,[data-theme=dark].
@@ -234,10 +233,10 @@
        mockup floats translucent glass over the living aurora. --surface is the
        card fill (.pulse-card), --bg-grad the page wash, --shadow-card/--glow the
        depth. Pulse motion/radius vars too so ported components resolve. */
-    --surface: rgba(20, 34, 32, 0.74);   /* glass card fill — aurora shows through (Palette B green glass) */
-    --surface-2: rgba(28, 44, 41, 0.80); /* elevated/nested glass */
-    --surface-solid: #14211f;            /* opaque fallback (no-backdrop contexts) */
-    --bg-grad: radial-gradient(120% 80% at 50% -10%, #0e2622 0%, #080c10 62%);
+    --surface: rgba(24, 29, 46, 0.72);   /* glass card fill — aurora shows through (Palette A blue glass) */
+    --surface-2: rgba(33, 39, 60, 0.78); /* elevated/nested glass */
+    --surface-solid: #181d2e;            /* opaque fallback (no-backdrop contexts) */
+    --bg-grad: radial-gradient(120% 80% at 50% -10%, #131830 0%, #090b13 60%);
     --shadow-card: 0 1px 0 rgba(255,255,255,0.04) inset, 0 24px 48px -28px rgba(0,0,0,0.85);
     --glow: 0 0 0 1px var(--line), 0 18px 40px -18px rgba(0,0,0,0.8);
     --grain-opacity: 0.05;
@@ -278,9 +277,9 @@
     /* CoachTodayCard accent tokens — Pulse dark. AA verified vs card #0d101c
        (lora 12.29:1, meta 5.38:1, lagging 10.92:1, override 8.50:1). */
     --coach-lora: #6fe2d4;            /* italic quote — Palette B teal bright → 12.62:1 ✅ */
-    --coach-meta: #7c9088;            /* sub-meta (duration/count) — green-grey muted (= ink-3) */
-    --coach-lagging: #ffc28a;         /* secondary weakness line — Palette B amber-soft → 12.46:1 ✅ */
-    --coach-override: #9fb4ac;        /* "Vrei altceva azi?" CTA — muted (= ink-2) */
+    --coach-meta: #82889e;            /* sub-meta (duration/count) — blue-grey muted (= ink-3) */
+    --coach-lagging: #ffc28a;         /* secondary weakness line — amber-soft → AA ✅ */
+    --coach-override: #a7adc4;        /* "Vrei altceva azi?" CTA — muted (= ink-2) */
   }
 
   /* Light theme — Pulse light. The :root above is already the Pulse-light

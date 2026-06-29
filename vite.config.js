@@ -51,11 +51,11 @@ export default defineConfig({
         name: 'Andura',
         short_name: 'Andura',
         description: 'Coach AI personal pentru sala — facut in Romania',
-        // Palette B "Emerald Pulse" (2026-06-12) — match index.html theme-color
-        // #080c10 + global.css --paper dark token (near-black green).
-        // Installed Android splash + status bar render Emerald Pulse.
-        theme_color: '#080c10',
-        background_color: '#080c10',
+        // Palette A "Deep Volt" (2026-06-29) — match index.html theme-color
+        // #090b13 + global.css --paper dark token (near-black blue).
+        // Installed Android splash + status bar render Deep Volt.
+        theme_color: '#090b13',
+        background_color: '#090b13',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
