@@ -710,6 +710,23 @@ describe('DP.checkInSessionAdjust — over-performance ramps + persists', () => 
   });
 });
 
+// ── checkInSessionAdjust — usor up-step climbs from what was LIFTED (F3) ──────
+// Gym-log audit 2026-06-29: an EASY set logged ABOVE a low history rec must nudge
+// UP past what was just lifted, not to/below it. Real founder case: rec 15, lifted
+// 18 @ usor, old branch climbed off rec 15 -> 17.5 (<= 18), narrated "moving up".
+// dp_usor_climb_from_logged_v1 (default ON in this file; absent from the beforeEach
+// pin) climbs from max(recKg, loggedKg) and only emits "up" when it exceeds loggedKg.
+describe('DP.checkInSessionAdjust — usor climbs from loggedKg (F3)', () => {
+  it('STRENGTH usor, logged 18 above rec 15 -> next target strictly ABOVE 18', () => {
+    store['phase-override'] = 'STRENGTH';
+    store['logs'] = [log('Cable Row', 18, 12, 6.5)];
+    const r = DP.checkInSessionAdjust('Cable Row', [6.5], [12], { recKg: 15, recReps: 12, loggedKg: 18, setIdx: 0 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('up');
+    expect(r.newKg).toBeGreaterThan(18); // never lands at/below the 18 he just did easy
+  });
+});
+
 // ── getInitialRecommendation — exact / similar / fallback paths ───────────────
 
 describe('getInitialRecommendation', () => {

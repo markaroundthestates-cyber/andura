@@ -695,6 +695,10 @@ export const FLIPPED_FLAGS = Object.freeze([
   // rely on "no _devFlags ⇒ off"). The refusal store is empty under resetWorld, so
   // even ON it would be inert in this stream — pinned OFF anyway, no sim-config pin.
   'dp_refusal_permanent_prompt_v1',
+  // USOR-CLIMB-FROM-LOGGED (gym-log audit 2026-06-29, F3) — in-session usor up-step now
+  // climbs from max(recKg, loggedKg); pinned OFF so the frozen fp baseline stays byte-
+  // identical (also pinned OFF in calibration-sim sim-config).
+  'dp_usor_climb_from_logged_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

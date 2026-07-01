@@ -32,8 +32,16 @@
 // flag-under-test is toggled per arm via localStorage._devFlags; the rest sit at their registry
 // brain-on defaults. READ-ONLY on src/.
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { world, resetWorld } from '../../../tests/engine/full-path-sim/fp-config.js';
+
+// DE-FLAKE 2026-06-29: each `it` composes up to 12 full weeks through the real
+// 8-engine pipeline (world.composePlannedWorkoutToday) — the LEAN GLOBAL case ran
+// ~9s even LIGHT, right at the 10s default. Under full-suite parallel load it tips
+// past 10s -> a TIMEOUT (not an assertion: composition is deterministic, so it fails
+// a DIFFERENT `it` each run depending on which is slowest, and passes isolated). The
+// logic is sound; the heavy composer just needs headroom. File-scoped 45s timeout.
+vi.setConfig({ testTimeout: 45000, hookTimeout: 45000 });
 import { getExerciseMetadata } from '../exerciseLibrary.js';
 import { DEV_FLAGS_KEY, FLAGS } from '../../util/featureFlags.js';
 import { SCHEDULE_STORE_KEY } from '../schedule/scheduleAdapter/constants.js';

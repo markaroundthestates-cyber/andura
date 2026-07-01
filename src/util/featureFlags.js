@@ -2120,6 +2120,14 @@ export const FLAGS = Object.freeze({
   // guarantee. OFF → the prompt never opens (handlePickRow's refusal branch is
   // byte-identical to today: increment + soft demote only) → fp-regression holds.
   dp_refusal_permanent_prompt_v1: { rollout: 1, default: true },
+
+  // USOR-CLIMB-FROM-LOGGED (gym-log audit 2026-06-29, finding F3) — the in-session
+  // "usor -> nudge UP" strength branch (dp.js:2533) climbed off the STALE recKg, so an
+  // easy set logged ABOVE a low history rec (logged 18 vs rec 15) produced an "up" that
+  // landed AT/BELOW what was just lifted (17.5). ON: climb from max(recKg, loggedKg) + one
+  // step, emit "up" only when it strictly exceeds loggedKg (else hold). OFF -> byte-
+  // identical (climbs off baseKg, guards vs baseKg). Pinned OFF in fp + calibration-sim.
+  dp_usor_climb_from_logged_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

@@ -2530,8 +2530,8 @@ export const DP = {
       const hitTarget = loggedReps == null || loggedReps >= baseReps;
       if (hitTarget && !lateSet) {
         if (isStrength) {
-          const newKg = this.roundToStep(baseKg + inc, ex);
-          if (newKg > baseKg) {
+          const newKg = this.roundToStep((isEnabled('dp_usor_climb_from_logged_v1') ? Math.max(baseKg, loggedKg) : baseKg) + inc, ex);
+          if (newKg > (isEnabled('dp_usor_climb_from_logged_v1') ? loggedKg : baseKg)) {
             return { adjust: true, dir: 'up', newKg, msg: t('workout.adjust.usorWeight', { kg: newKg }) };
           }
         } else {
