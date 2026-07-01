@@ -2494,8 +2494,8 @@ export const DP = {
       // set must VISIBLY ease the WEIGHT one step (getPrevWeight) when prior history
       // exists — holding kg and trimming reps reads as "coach did nothing". DOWN only.
       if (dpState.lastW > 0) {
-        const easedKg = getPrevWeight(baseKg, ex);
-        if (easedKg < baseKg) {
+        const easedKg = getPrevWeight(isEnabled('dp_greu_ease_from_logged_v1') ? Math.max(baseKg, loggedKg) : baseKg, ex);
+        if (easedKg < (isEnabled('dp_greu_ease_from_logged_v1') ? Math.max(baseKg, loggedKg) : baseKg)) {
           return { adjust: true, dir: 'down', newKg: easedKg, msg: t('workout.adjust.greuWeight', { kg: easedKg }) };
         }
       }
@@ -2508,7 +2508,7 @@ export const DP = {
       // actually did, even without persisted history.
       if (loggedKg > 0) {
         const easedKg = getPrevWeight(loggedKg, ex);
-        if (easedKg < baseKg) {
+        if (easedKg < (isEnabled('dp_greu_ease_from_logged_v1') ? loggedKg : baseKg)) {
           return { adjust: true, dir: 'down', newKg: easedKg, msg: t('workout.adjust.greuWeight', { kg: easedKg }) };
         }
       }

@@ -699,6 +699,10 @@ export const FLIPPED_FLAGS = Object.freeze([
   // climbs from max(recKg, loggedKg); pinned OFF so the frozen fp baseline stays byte-
   // identical (also pinned OFF in calibration-sim sim-config).
   'dp_usor_climb_from_logged_v1',
+  // GREU-EASE-FROM-LOGGED (gym-change audit 2026-06-30, G1) — in-session greu ease now
+  // anchors on max(recKg, loggedKg); pinned OFF so the frozen fp baseline stays byte-
+  // identical (also pinned OFF in calibration-sim sim-config).
+  'dp_greu_ease_from_logged_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

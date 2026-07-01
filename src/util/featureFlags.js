@@ -2128,6 +2128,16 @@ export const FLAGS = Object.freeze({
   // step, emit "up" only when it strictly exceeds loggedKg (else hold). OFF -> byte-
   // identical (climbs off baseKg, guards vs baseKg). Pinned OFF in fp + calibration-sim.
   dp_usor_climb_from_logged_v1: { rollout: 1, default: true },
+
+  // GREU-EASE-FROM-LOGGED (gym-change audit 2026-06-30, finding G1) — the DOWN twin
+  // of F3. The in-session "greu -> ease DOWN" branch (dp.js:2497 history + :2511 cold-
+  // start) eased off the STALE recKg, so a HARD set logged well ABOVE a low history rec
+  // (Bayesian Curl: lifted 18 rated greu, rec was 9) dropped the next set to 5 (>70%
+  // below what was lifted) — indefensible. ON: ease from max(recKg, loggedKg) so a hard
+  // set eases one rung below WHAT WAS LIFTED (18 -> 14), never below the stale rec; also
+  // fixes the shadowed cold-start branch guard (was easedKg<baseKg, now <loggedKg). OFF
+  // -> byte-identical. Pinned OFF in fp + calibration-sim.
+  dp_greu_ease_from_logged_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

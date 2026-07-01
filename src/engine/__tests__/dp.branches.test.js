@@ -727,6 +727,24 @@ describe('DP.checkInSessionAdjust — usor climbs from loggedKg (F3)', () => {
   });
 });
 
+// ── checkInSessionAdjust — greu eases from what was LIFTED, not the stale rec (G1) ──
+// Gym-change audit 2026-06-30: a HARD set logged ABOVE a low old-gym rec must ease one
+// rung below WHAT WAS LIFTED, never below the stale rec. Real founder case: Bayesian
+// Curl rec 9 (old-gym history), lifted 18 @ greu, old branch eased off rec 9 ->
+// getPrevWeight(9)=5 (the indefensible "do 5 after you lifted 18"). dp_greu_ease_from_
+// logged_v1 (default ON here) anchors the ease on max(recKg, loggedKg).
+describe('DP.checkInSessionAdjust — greu eases from loggedKg not stale rec (G1)', () => {
+  it('greu logged 18 above rec 9 -> eases below 18 but ABOVE the stale rec (never to 5)', () => {
+    store['phase-override'] = 'BULK';
+    store['logs'] = [log('Bayesian Curl', 9, 11, 7)]; // prior history -> lastW=9 (branch A path)
+    const r = DP.checkInSessionAdjust('Bayesian Curl', [10], [10], { recKg: 9, recReps: 11, loggedKg: 18, setIdx: 0 });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
+    expect(r.newKg).toBeGreaterThan(5);  // NOT the indefensible drop-to-5 (which eased off stale rec 9)
+    expect(r.newKg).toBeLessThan(18);    // a real ease one rung below what he actually lifted
+  });
+});
+
 // ── getInitialRecommendation — exact / similar / fallback paths ───────────────
 
 describe('getInitialRecommendation', () => {
