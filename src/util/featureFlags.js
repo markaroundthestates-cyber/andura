@@ -2138,6 +2138,18 @@ export const FLAGS = Object.freeze({
   // fixes the shadowed cold-start branch guard (was easedKg<baseKg, now <loggedKg). OFF
   // -> byte-identical. Pinned OFF in fp + calibration-sim.
   dp_greu_ease_from_logged_v1: { rollout: 1, default: true },
+
+  // ACTIVE-GYM curated stacks (per-gym feature, founder changed gyms 2026-07-02 —
+  // "Sala mea"). The coach was anchored to the OLD gym in three places (realMachineStacks,
+  // the *_daniel templates, the learned-from-logs ladder), so at a NEW gym it snapped recs
+  // onto trepte the machine does not have ("presupune ca pot mai putin"). ON + an ACTIVE gym
+  // with a stack for the exercise's station -> roundToEquipmentWeight snaps the rec to THAT
+  // real rung OUTRIGHT (wins over learned ladder + founder seed + generic), so a new gym's
+  // real trepte drive from session ONE. No active gym / no stack / flag off / no dp-gyms data
+  // -> falls through -> BYTE-IDENTICAL (also inert in the sims — they seed no dp-gyms — and
+  // pinned OFF in fp FLIPPED_FLAGS + calibration sim-config). Refine-only (snaps an existing
+  // rec onto a real rung, never invents a load).
+  dp_active_gym_ladder_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

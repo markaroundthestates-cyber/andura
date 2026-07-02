@@ -703,6 +703,10 @@ export const FLIPPED_FLAGS = Object.freeze([
   // anchors on max(recKg, loggedKg); pinned OFF so the frozen fp baseline stays byte-
   // identical (also pinned OFF in calibration-sim sim-config).
   'dp_greu_ease_from_logged_v1',
+  // ACTIVE-GYM curated stacks (per-gym "Sala mea" 2026-07-02) — active gym's measured
+  // rungs win the snap; pinned OFF so the frozen fp baseline stays byte-identical (also
+  // inert here — resetWorld seeds no dp-gyms — and pinned OFF in calibration sim-config).
+  'dp_active_gym_ladder_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the

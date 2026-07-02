@@ -4,6 +4,7 @@
 import { isEnabled } from '../util/featureFlags.js';
 import { learnedStep, snapToLadder, learnedUserLadder } from '../engine/dp/equipmentLadder.js';
 import { resolveRealStack } from '../engine/dp/realMachineStacks.js';
+import { activeGymStepsForType } from '../engine/dp/gymProfile.js';
 
 /** Snap a weight onto a discrete ladder: nearest rung, a tie rounding DOWN (the
  *  lighter, safer load). PURE. `ladder` must be a non-empty ascending number[]. */
@@ -436,6 +437,17 @@ export function roundToEquipmentWeight(weight, exerciseName, ctx) {
   const generic = () => list.reduce((prev, curr) =>
     Math.abs(curr - weight) < Math.abs(prev - weight) ? curr : prev
   , list[0] ?? weight);
+  // ACTIVE-GYM curated stack (dp_active_gym_ladder_v1, per-gym "Sala mea" 2026-07-02) —
+  // the user's MEASURED rungs for THIS station on their ACTIVE gym WIN outright over the
+  // learned ladder + founder seed + generic (ground truth, not inference), so a rec snaps
+  // to a REAL rung from session ONE at a new gym (no learning lag, no old-gym pollution).
+  // No active gym / no stack for this station / flag off / no dp-gyms data / bad input →
+  // falls through → byte-identical. Highest precedence — applies to BOTH the ctx + no-ctx
+  // paths.
+  if (isEnabled('dp_active_gym_ladder_v1') && Number.isFinite(weight)) {
+    const gymSteps = activeGymStepsForType(getEquipmentType(exerciseName));
+    if (gymSteps) return _nearestRung(weight, gymSteps);
+  }
   // Back-compat: no ctx → legacy generic rounding. PRECEDENCE (founder goal 2026-06-12):
   //   per-user learned ladder (_snapToUserLadder, dp_user_ladder_v1) — THIS user's real
   //   rungs from THEIR own logs — wins, THEN the founder's measured stack as a cold-start

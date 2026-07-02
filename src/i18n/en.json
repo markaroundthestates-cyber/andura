@@ -1594,6 +1594,7 @@
       "faq": "FAQ",
       "exerciseLibrary": "Exercise library",
       "exercitiiEchipament": "Exercises & equipment",
+      "salaMea": "My Gym",
       "dateleMele": "My data",
       "confidentialitateTermeni": "Privacy & terms",
       "ajutorDespre": "Help & about",
@@ -2740,6 +2741,30 @@
       "cable": "Cable",
       "bodyweight": "Bodyweight",
       "band": "Resistance band"
+    }
+  },
+  "gymProfile": {
+    "title": "My Gym",
+    "intro": "Andura uses your active gym's real weights so it never suggests rungs your machines don't have.",
+    "activeBadge": "Active",
+    "setActive": "Make active",
+    "addGym": "Add gym",
+    "namePlaceholder": "Gym name (e.g. MyGym Domnesti)",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "empty": "No gyms saved yet. Add one so Andura knows the weights on your machines.",
+    "stacksTitle": "Machine weights",
+    "stacksHint": "Enter the real rungs, comma-separated. Empty = Andura learns from your logs.",
+    "rungsCount": "{n} rungs",
+    "usingDefault": "default (learns from logs)",
+    "stations": {
+      "dumbbell": "Dumbbells",
+      "bailib_stack": "Big cable (row / pulldown)",
+      "matrix_cable": "Fine cable (triceps / fly / biceps)",
+      "machine_plates": "Plate-loaded machines (press / row)",
+      "pec_deck": "Pec deck / rear delt",
+      "leg_machine": "Leg extension / leg curl"
     }
   },
   "preferences": {

@@ -46,6 +46,7 @@ import {
   SlidersHorizontal,
   ShieldCheck,
   Dumbbell,
+  Building2,
   Database,
   AlertTriangle,
   LifeBuoy,
@@ -104,6 +105,7 @@ const SECTIONS: readonly ContSection[] = [
     rows: [
       { id: 'prefs', labelKey: 'cont.rows.prefs', Icon: SlidersHorizontal, target: 'settings-prefs' },
       { id: 'exercitii-echipament', labelKey: 'cont.rows.exercitiiEchipament', Icon: Dumbbell, target: 'cont-exercitii-echipament' },
+      { id: 'sala-mea', labelKey: 'cont.rows.salaMea', Icon: Building2, target: 'cont-sala-mea' },
     ],
   },
   {

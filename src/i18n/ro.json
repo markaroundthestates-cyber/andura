@@ -1594,6 +1594,7 @@
       "faq": "FAQ",
       "exerciseLibrary": "Biblioteca de exercitii",
       "exercitiiEchipament": "Exercitii si echipament",
+      "salaMea": "Sala mea",
       "dateleMele": "Datele mele",
       "confidentialitateTermeni": "Confidentialitate si termeni",
       "ajutorDespre": "Ajutor si despre",
@@ -2740,6 +2741,30 @@
       "cable": "Cablu",
       "bodyweight": "Greutate corporala",
       "band": "Banda elastica"
+    }
+  },
+  "gymProfile": {
+    "title": "Sala mea",
+    "intro": "Andura foloseste greutatile reale ale salii tale active ca sa nu-ti recomande trepte care nu exista pe aparatele tale.",
+    "activeBadge": "Activa",
+    "setActive": "Fa-o activa",
+    "addGym": "Adauga sala",
+    "namePlaceholder": "Numele salii (ex: MyGym Domnesti)",
+    "save": "Salveaza",
+    "cancel": "Anuleaza",
+    "delete": "Sterge",
+    "empty": "Nu ai nicio sala salvata. Adauga una ca Andura sa stie ce greutati ai pe aparate.",
+    "stacksTitle": "Greutatile pe aparate",
+    "stacksHint": "Scrie treptele reale, separate prin virgula. Gol = Andura invata singura din logari.",
+    "rungsCount": "{n} trepte",
+    "usingDefault": "implicit (invata din logari)",
+    "stations": {
+      "dumbbell": "Gantere",
+      "bailib_stack": "Scripete mare (ramat / helcometru)",
+      "matrix_cable": "Scripete fin (triceps / fly / biceps)",
+      "machine_plates": "Aparate cu discuri (impins / ramat)",
+      "pec_deck": "Pec deck / rear delt",
+      "leg_machine": "Leg extension / leg curl"
     }
   },
   "preferences": {
