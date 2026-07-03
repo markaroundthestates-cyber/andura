@@ -2150,6 +2150,14 @@ export const FLAGS = Object.freeze({
   // pinned OFF in fp FLIPPED_FLAGS + calibration sim-config). Refine-only (snaps an existing
   // rec onto a real rung, never invents a load).
   dp_active_gym_ladder_v1: { rollout: 1, default: true },
+  // live_sync_poll_v1 — multi-device freshness (2026-07-03). The PUSH side already
+  // reaches the cloud ~3s after any edit; the PULL side only ran at boot/login, so
+  // a phone never saw a PC edit until fully reopened. This flag arms liveSync.ts:
+  // a lightweight re-PULL (idempotent syncFromFirebase + hydrateStoresFromCloud) on
+  // foreground/visibility, a 3-min foreground interval, and network reconnect. Pure
+  // runtime lifecycle — NOT on any engine/compose path, so the fp/calibration sims
+  // never read it (byte-identical regardless). Kill-switch: flip default false.
+  live_sync_poll_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

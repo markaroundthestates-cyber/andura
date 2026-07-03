@@ -54,6 +54,7 @@ import { runAuthPathMigration } from '../../migrations/2026-05-02-auth-path-migr
 import { enforceDataOwner } from '../../util/dataReset.js';
 import { useAppStore } from '../stores/appStore';
 import { hydrateStoresFromCloud, startStoreSyncSubscriptions } from './storeSync';
+import { startLiveSync } from './liveSync';
 import { resetInMemoryStores } from './resetStores';
 import { migrateAnonymousToAuth } from '../../storage/migrateAnonymousToAuth.js';
 import { readDeletionMarker } from './accountDeletion';
@@ -133,6 +134,16 @@ export async function runReactBoot(): Promise<void> {
   //    path, so anonymous edits no-op the network until login. Pre-fix these
   //    stores were localStorage-only → data loss on reinstall / new device.
   startStoreSyncSubscriptions();
+
+  // 3c. Live-sync PULL lifecycle (live_sync_poll_v1, 2026-07-03). The push subs
+  //    above already carry local edits UP to the cloud ~3s after any change, but
+  //    a device only ever pulled DOWN at boot — so a second device (phone vs PC)
+  //    never saw the first's edits until fully reopened. startLiveSync re-pulls
+  //    both channels on foreground/visibility, a 3-min foreground interval, and
+  //    network reconnect (idempotent no-clobber merge). Auth-independent + flag-
+  //    gated: livePullNow self-guards on auth/offline/suppress/throttle, and the
+  //    flag off wires no listeners at all.
+  startLiveSync();
 
   // 4. Restore-on-boot session rehydration. The idToken expires ~1h; the
   //    refresh token is long-lived. Refresh proactively from the stored refresh
