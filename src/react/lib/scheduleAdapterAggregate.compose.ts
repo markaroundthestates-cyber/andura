@@ -88,6 +88,15 @@ interface DpRecommendation {
 // emits no rest range (empty user / goalAdaptation blueprint absent).
 const DEFAULT_REST_SEC = 90;
 
+// Rest floor for the heavy LOWER-BODY / glute barbell-class compounds (squat,
+// deadlift, RDL, leg press, split squat, hip thrust). A cut template caps the
+// compound rest band at 90s — genuinely too short to recover between sets of an
+// 80kg squat, which is a neuromuscular demand a calorie deficit doesn't shorten.
+// 150s (~2.5min) is a sane floor; the goal band still wins when it asks for more
+// (e.g. forta 240s). Only lower/glute compounds are floored — upper-body compounds
+// keep the goal ceiling. (Daniel live audit 2026-07-05: "pauza dupa squats e un joke".)
+const HEAVY_LOWER_REST_FLOOR_SEC = 150;
+
 // Post-session subjective rating of the LAST finished session, persisted by the
 // workout store (PostRpe → setLastRating). Read via getState() (safe outside
 // React). Null when no session has been rated yet (cold start). Mirrors the
@@ -103,11 +112,17 @@ function readLastSessionRating(): 'usoara' | 'normala' | 'grea' | null {
 }
 
 /**
- * Resolve a per-exercise rest in seconds from the engine's goal-adaptation rest
- * range [minSec, maxSec] (template × phase × mode). A real coach rests compounds
- * longer than isolation, so compounds (COMPOUND_EX) take the range MAX, isolation
- * the range MIN. Range absent/malformed → DEFAULT_REST_SEC (prior 90s behavior).
- * Pure.
+ * PLANNING rest — the rest the time-budget trim + duration estimate reason about.
+ * From the engine's goal-adaptation rest range [minSec, maxSec] (template × phase ×
+ * mode): compounds (COMPOUND_EX) take the range MAX, isolation the MIN. Range
+ * absent/malformed → DEFAULT_REST_SEC (90s). Pure.
+ *
+ * This stays the LEGACY classification ON PURPOSE: the heavy-compound rest bump
+ * (displayRestSec) is a TIMER concern, not a planning one. Feeding a longer squat
+ * rest into the duration estimate would inflate the session time → the time-budget
+ * trim would cut working sets to fit the cap → fewer sets + broken composition
+ * invariants (a real regression). Keeping the planner on legacy rest means the
+ * user gets full volume; the session simply runs a little over the shown estimate.
  *
  * @param engineName English canonical exercise name (COMPOUND_EX keys on it)
  * @param restRange engine rest-time prescription [minSec, maxSec] or null
@@ -126,6 +141,47 @@ function resolveRestSec(
   }
   const [minSec, maxSec] = restRange;
   return COMPOUND_EX.includes(engineName) ? maxSec : minSec;
+}
+
+/**
+ * DISPLAY rest — the per-set rest TIMER the user actually sees, applied as the last
+ * transform on the FINAL exercise list (post-trim), so it NEVER moves composition.
+ *
+ * The legacy COMPOUND_EX list named only 9 lifts and OMITTED the barbell squat,
+ * deadlift, split squat, hip thrust — so the single most rest-hungry lift in the
+ * room fell to the isolation MIN band (45-60s in a cut: "pauza dupa squats e un
+ * joke"). This classifies heavy compounds by the library's force_demand ('high' =
+ * the tier-1 barbell-class compounds), unioned with the legacy list so nothing that
+ * already rested long regresses, and floors the lower-body/glute compounds to
+ * HEAVY_LOWER_REST_FLOOR_SEC (an 80kg squat needs ~2.5min regardless of a cut).
+ * Upper-body compounds keep the goal ceiling (the range MAX). Flag OFF → identical
+ * to resolveRestSec (legacy) → byte-identical timer + fp.
+ *
+ * @param engineName English canonical exercise name (library metadata keys on it)
+ * @param restRange engine rest-time prescription [minSec, maxSec] or null
+ */
+export function displayRestSec(
+  engineName: string,
+  restRange: readonly [number, number] | null,
+): number {
+  const planned = resolveRestSec(engineName, restRange);
+  const validRange =
+    Array.isArray(restRange) &&
+    restRange.length >= 2 &&
+    Number.isFinite(restRange[0]) &&
+    Number.isFinite(restRange[1]);
+  if (!isEnabled('dp_rest_heavy_compound_v1') || !validRange) return planned;
+  const [minSec, maxSec] = restRange;
+  const meta = getExerciseMetadata(engineName);
+  const isHeavyCompound =
+    COMPOUND_EX.includes(engineName) || meta?.force_demand === 'high';
+  if (!isHeavyCompound) return minSec;
+  // Floor only the heavy lower-body / glute compounds (squat/deadlift/RDL/leg
+  // press/split squat/hip thrust). Upper-body compounds keep the range MAX.
+  const primary =
+    typeof meta?.muscle_target_primary === 'string' ? meta.muscle_target_primary : '';
+  const isHeavyLower = primary.startsWith('picioare') || primary === 'fese';
+  return isHeavyLower ? Math.max(maxSec, HEAVY_LOWER_REST_FLOOR_SEC) : maxSec;
 }
 
 // #7 metric-type prescription honoring (behind dp_metric_types_v1). Default
@@ -1722,6 +1778,17 @@ export async function composePlannedWorkoutToday(
           estimatedDuration: estimatedDuration ?? plan.estimatedDurationMin ?? 50,
         })
       : null;
+    // DISPLAY rest — apply the heavy-compound rest TIMER as the VERY LAST transform,
+    // AFTER the trim + duration estimate + volume have run on legacy (planning) rest.
+    // This keeps every composition decision (set counts, invariants, fp) byte-identical
+    // while the user sees a real ~2.5min rest on squats/deadlifts. plan.restTimeRange is
+    // the same range the planner used per exercise. Flag OFF → displayRestSec ===
+    // resolveRestSec → outExercises is reference-identical → byte-identical output.
+    const displayRestRange = (plan.restTimeRange as readonly [number, number] | null) ?? null;
+    const outExercises = exercises.map((e) => {
+      const r = displayRestSec(e.engineName ?? e.name, displayRestRange);
+      return r === e.restSec ? e : { ...e, restSec: r };
+    });
     return {
       workoutTitle: plan.workoutTitle ?? ENGINE_WORKOUT_TITLE_FALLBACK,
       // Thread the engine's day-of-week session type so the render boundaries
@@ -1734,7 +1801,7 @@ export async function composePlannedWorkoutToday(
       // engine (?? 50 / ?? 0 in WorkoutPreview). NU mai forteaza 0/50 hardcodat.
       estimatedDuration: estimatedDuration ?? plan.estimatedDurationMin ?? 50,
       intensityMod: hasActiveDeload ? 'minus' : 'normal',
-      exercises,
+      exercises: outExercises,
       volumeKg: volumeKg ?? plan.volumeKg ?? 0,
       // Warm-up blueprint. The session-level {line, durationMin} unchanged; the
       // per-set ramp is folded in ADDITIVELY only when it fired (flag ON + a

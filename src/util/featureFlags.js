@@ -2158,6 +2158,14 @@ export const FLAGS = Object.freeze({
   // runtime lifecycle — NOT on any engine/compose path, so the fp/calibration sims
   // never read it (byte-identical regardless). Kill-switch: flip default false.
   live_sync_poll_v1: { rollout: 1, default: true },
+  // dp_rest_heavy_compound_v1 — per-set REST classification (2026-07-05). The legacy
+  // COMPOUND_EX list omitted the barbell squat/deadlift/split-squat/hip-thrust, so the
+  // heaviest lift got the isolation MIN rest band (45-60s in a cut — "pauza dupa squats
+  // e un joke"). ON: classify heavy compounds by library force_demand ('high') unioned
+  // with COMPOUND_EX (no regression), + a ~150s floor for lower-body/glute compounds.
+  // Rest is NOT scored by the eval judge (composition + kg + reps only), so fp stays
+  // byte-identical without pinning. Kill-switch: flip default false → legacy list.
+  dp_rest_heavy_compound_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

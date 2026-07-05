@@ -707,6 +707,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   // rungs win the snap; pinned OFF so the frozen fp baseline stays byte-identical (also
   // inert here — resetWorld seeds no dp-gyms — and pinned OFF in calibration sim-config).
   'dp_active_gym_ladder_v1',
+  // HEAVY-COMPOUND REST (Daniel live audit 2026-07-05, "pauza dupa squats e un joke") —
+  // per-set restSec now classifies heavy compounds by force_demand ('high') + floors the
+  // lower-body/glute compounds to ~150s. restSec IS in the fp per-exercise record (the fp
+  // cohort composes leg days with squat/RDL/leg-press), so the ON behavior WOULD move the
+  // frozen hashes — pinned OFF here so the fp baseline stays byte-identical. Ships ON to
+  // users; proven by the resolveRestSec unit suite, NOT this determinism stream.
+  'dp_rest_heavy_compound_v1',
 ]);
 
 /** Reset every store + DB the compose path reads, between profiles. Mirrors the
