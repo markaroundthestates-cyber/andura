@@ -1302,6 +1302,13 @@
       "missed": "You didn't train on this day.",
       "performedSet": "{kg} kg x {reps}",
       "performedHeading": "Sets performed",
+      "perSetHeading": "Each set",
+      "plannedSet": "Set {n}: {kg} kg x {reps}",
+      "plannedSetBw": "Set {n}: {reps} reps",
+      "plannedSetTime": "Set {n}: {seconds}s",
+      "plannedSetTimeAdded": "Set {n}: {seconds}s + {kg} kg",
+      "cantDo": "I can't do this",
+      "swapped": "Replaced {name}.",
       "closeCta": "Close"
     },
     "heatmap": {

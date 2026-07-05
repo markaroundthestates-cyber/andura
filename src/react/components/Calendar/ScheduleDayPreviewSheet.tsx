@@ -40,12 +40,13 @@
 
 import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Layers, Clock } from 'lucide-react';
+import { Layers, Clock, ChevronDown, Ban } from 'lucide-react';
 import {
   getWorkoutForDay,
   resolveSessionTitle,
   dateForWeekdayIndex,
 } from '../../lib/engineWrappers';
+import { addMissingEquipmentExercise } from '../../../engine/schedule/scheduleAdapter.js';
 import type { PlannedWorkoutOutput, PlannedExercise } from '../../lib/engineWrappers';
 import { ENGINE_WORKOUT_TITLE_FALLBACK } from '../../lib/scheduleAdapterAggregate';
 import { useWorkoutStore } from '../../stores/workoutStore';
@@ -146,6 +147,25 @@ function exerciseDetail(ex: PlannedExercise): string {
   });
 }
 
+// Per-SET label for the expanded detail (set n of a uniform working prescription).
+// Mirrors exerciseDetail's metric gating so a time/carry HOLD shows a duration, not
+// a phantom "0 reps" — the same targetSec gate the row summary uses.
+function perSetLabel(ex: PlannedExercise, n: number): string {
+  if (ex.targetSec != null) {
+    return ex.targetKg > 0
+      ? t('calendar.dayPreview.plannedSetTimeAdded', {
+          n,
+          seconds: ex.targetSec,
+          kg: ex.targetKg,
+        })
+      : t('calendar.dayPreview.plannedSetTime', { n, seconds: ex.targetSec });
+  }
+  const reps = ex.repsBand ?? ex.targetReps;
+  return ex.isBodyweight
+    ? t('calendar.dayPreview.plannedSetBw', { n, reps })
+    : t('calendar.dayPreview.plannedSet', { n, kg: ex.targetKg, reps });
+}
+
 // Resolve the localized session title the same way WorkoutPreview does — a real
 // engine title passes through; the non-localized sentinel (or legacy fallback)
 // derives from the engine session type (PUSH/PULL/...).
@@ -169,6 +189,13 @@ export function ScheduleDayPreviewSheet({
   const [workout, setWorkout] = useState<PlannedWorkoutOutput | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [loggedSession, setLoggedSession] = useState<LastSessionSummary | null>(null);
+  // Which proposed exercise row is expanded (per-set detail + "can't do"). null = none.
+  const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
+  // Bumped after a "Nu pot face asta" exclusion to force a live recompute so the
+  // engine swaps in an alternative (the exclusion persists in wv2-equipment-missing).
+  const [reloadKey, setReloadKey] = useState<number>(0);
+  // Name of the exercise just excluded, for a transient aria-live confirmation.
+  const [swappedName, setSwappedName] = useState<string | null>(null);
 
   // PAST = read history (what you did); TODAY/FUTURE = live engine proposal.
   // Classified per open/day-change (cheap; the sheet is short-lived).
@@ -217,7 +244,25 @@ export function ScheduleDayPreviewSheet({
     return () => {
       cancelled = true;
     };
-  }, [open, dayIdx, dayKind]);
+  }, [open, dayIdx, dayKind, reloadKey]);
+
+  // Reset the expand + swap-confirmation UI when the previewed day changes or the
+  // sheet opens/closes (but NOT on a reloadKey recompute — the confirmation must
+  // survive the exclusion-triggered recompute so the user sees what was replaced).
+  useEffect(() => {
+    setExpandedIdx(null);
+    setSwappedName(null);
+  }, [dayIdx, open]);
+
+  // "Nu pot face asta" — persistent hard-exclude (wv2-equipment-missing, consumed
+  // by getDailyWorkout, same store as the library + in-session "Aparat lipsa"). Then
+  // bump reloadKey so the proposal recomputes and the engine swaps in an alternative.
+  function handleCantDo(ex: PlannedExercise): void {
+    addMissingEquipmentExercise(ex.engineName ?? ex.name);
+    setSwappedName(ex.name);
+    setExpandedIdx(null);
+    setReloadKey((k) => k + 1);
+  }
 
   // Focus management + Escape close + focus restore (mirror AparatLipsaSheet).
   const closeRef = useRef<HTMLButtonElement | null>(null);
@@ -367,44 +412,102 @@ export function ScheduleDayPreviewSheet({
               className="pulse-card divide-y divide-line overflow-hidden mb-4"
               data-testid="schedule-day-preview-list"
             >
-              {exercises.map((ex, i) => (
-                <li
-                  key={ex.id}
-                  className="flex items-center gap-3 p-3"
-                  data-testid="schedule-day-preview-exercise"
-                >
-                  <div className="relative flex-shrink-0">
-                    <ExerciseMedia
-                      engineName={ex.engineName ?? ex.name}
-                      variant="thumbnail"
-                      testId={`schedule-day-preview-media-${i}`}
-                    />
-                    <span
-                      aria-hidden="true"
-                      className="absolute -bottom-1 -right-1 w-5 h-5 rounded-lg border border-paper flex items-center justify-center font-mono font-bold text-[10px]"
-                      style={{
-                        background:
-                          'color-mix(in oklab, var(--brick) 16%, var(--paper))',
-                        color: 'var(--brick)',
-                      }}
+              {exercises.map((ex, i) => {
+                const isOpen = expandedIdx === i;
+                const setCount = Number.isFinite(ex.sets) && ex.sets > 0 ? ex.sets : 1;
+                return (
+                  <li
+                    key={ex.id}
+                    data-testid="schedule-day-preview-exercise"
+                  >
+                    {/* Tap the row → expand per-set detail + "Nu pot face asta". */}
+                    <button
+                      type="button"
+                      onClick={() => setExpandedIdx(isOpen ? null : i)}
+                      aria-expanded={isOpen}
+                      data-testid={`schedule-day-preview-exercise-toggle-${i}`}
+                      className="w-full flex items-center gap-3 p-3 text-left min-h-[44px]"
                     >
-                      {i + 1}
-                    </span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold text-ink truncate">
-                      {ex.name}
-                    </div>
-                    {ex.sub && (
-                      <div className="text-xs text-ink3 mt-0.5">{ex.sub}</div>
+                      <div className="relative flex-shrink-0">
+                        <ExerciseMedia
+                          engineName={ex.engineName ?? ex.name}
+                          variant="thumbnail"
+                          testId={`schedule-day-preview-media-${i}`}
+                        />
+                        <span
+                          aria-hidden="true"
+                          className="absolute -bottom-1 -right-1 w-5 h-5 rounded-lg border border-paper flex items-center justify-center font-mono font-bold text-[10px]"
+                          style={{
+                            background:
+                              'color-mix(in oklab, var(--brick) 16%, var(--paper))',
+                            color: 'var(--brick)',
+                          }}
+                        >
+                          {i + 1}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-ink truncate">
+                          {ex.name}
+                        </div>
+                        {ex.sub && (
+                          <div className="text-xs text-ink3 mt-0.5">{ex.sub}</div>
+                        )}
+                        <div className="text-xs text-ink3 font-mono mt-0.5">
+                          {exerciseDetail(ex)}
+                        </div>
+                      </div>
+                      <ChevronDown
+                        aria-hidden="true"
+                        className={`w-4 h-4 text-ink3 flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+                    {isOpen && (
+                      <div
+                        className="px-3 pb-3 -mt-1"
+                        data-testid={`schedule-day-preview-detail-${i}`}
+                      >
+                        <div className="mb-1.5">
+                          <Kicker>{t('calendar.dayPreview.perSetHeading')}</Kicker>
+                        </div>
+                        <ul className="flex flex-col gap-0.5 mb-3">
+                          {Array.from({ length: setCount }, (_, si) => (
+                            <li
+                              key={si}
+                              className="text-xs text-ink2 font-mono"
+                              data-testid={`schedule-day-preview-set-${i}-${si}`}
+                            >
+                              {perSetLabel(ex, si + 1)}
+                            </li>
+                          ))}
+                        </ul>
+                        <button
+                          type="button"
+                          onClick={() => handleCantDo(ex)}
+                          data-testid={`schedule-day-preview-cantdo-${i}`}
+                          className="w-full pulse-card pulse-card-tight flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-danger min-h-[44px]"
+                        >
+                          <Ban aria-hidden="true" className="w-4 h-4" />
+                          {t('calendar.dayPreview.cantDo')}
+                        </button>
+                      </div>
                     )}
-                    <div className="text-xs text-ink3 font-mono mt-0.5">
-                      {exerciseDetail(ex)}
-                    </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
+            {/* Transient confirmation after a "Nu pot face asta" swap — the list has
+                already recomputed with the engine's alternative in the excluded slot. */}
+            {swappedName && (
+              <p
+                className="text-sm text-ink2 leading-relaxed mb-3"
+                role="status"
+                aria-live="polite"
+                data-testid="schedule-day-preview-swapped"
+              >
+                {t('calendar.dayPreview.swapped', { name: swappedName })}
+              </p>
+            )}
             {/* Honest live-recompute note — this is a preview, not a plan you can
                 edit; it tracks current recovery/progress each open. */}
             <p

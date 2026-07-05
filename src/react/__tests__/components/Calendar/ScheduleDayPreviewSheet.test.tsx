@@ -345,3 +345,69 @@ describe('ScheduleDayPreviewSheet — temporal awareness (clock)', () => {
     expect(screen.queryByTestId('schedule-day-preview-logged-list')).not.toBeInTheDocument();
   });
 });
+
+// ── Interactive preview: tap for per-set detail + "Nu pot face asta" swap ────────
+describe('ScheduleDayPreviewSheet — tap for detail + swap in advance', () => {
+  it('tapping an exercise expands its per-set detail (one row per working set)', async () => {
+    render(<Calendar7Day />);
+    fireEvent.click(screen.getByTestId('calendar-day-0'));
+    await screen.findByTestId('schedule-day-preview-sheet');
+    await waitFor(() =>
+      expect(screen.getAllByTestId('schedule-day-preview-exercise')).toHaveLength(2),
+    );
+    // Collapsed by default — no detail region.
+    expect(screen.queryByTestId('schedule-day-preview-detail-0')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('schedule-day-preview-exercise-toggle-0'));
+
+    // Flat DB Press has 4 sets → 4 per-set rows, each showing kg x reps.
+    const detail = await screen.findByTestId('schedule-day-preview-detail-0');
+    expect(detail).toBeInTheDocument();
+    for (let si = 0; si < 4; si++) {
+      expect(screen.getByTestId(`schedule-day-preview-set-0-${si}`)).toBeInTheDocument();
+    }
+    expect(screen.getByTestId('schedule-day-preview-set-0-0')).toHaveTextContent('22.5 kg');
+    // A bodyweight hold's per-set row shows reps only (no kg).
+    fireEvent.click(screen.getByTestId('schedule-day-preview-exercise-toggle-1'));
+    expect(await screen.findByTestId('schedule-day-preview-set-1-0')).toBeInTheDocument();
+  });
+
+  it('"Nu pot face asta" excludes the exercise and recomputes the proposal', async () => {
+    // First open → the 2-exercise session; after the exclusion the engine recomputes
+    // and returns a session with the DB press replaced by a machine press.
+    getWorkoutForDayMock.mockReset();
+    getWorkoutForDayMock.mockResolvedValueOnce(SESSION);
+    getWorkoutForDayMock.mockResolvedValue({
+      ...SESSION,
+      exercises: [
+        {
+          id: 'machine-chest-press-0', name: 'Impins la aparat',
+          engineName: 'Machine Chest Press', sets: 4, targetReps: 10,
+          targetKg: 40, restSec: 120,
+        },
+        SESSION.exercises[1],
+      ],
+    });
+
+    render(<Calendar7Day />);
+    fireEvent.click(screen.getByTestId('calendar-day-0'));
+    await screen.findByTestId('schedule-day-preview-sheet');
+    await waitFor(() =>
+      expect(screen.getByText('Impins cu gantere')).toBeInTheDocument(),
+    );
+
+    fireEvent.click(screen.getByTestId('schedule-day-preview-exercise-toggle-0'));
+    fireEvent.click(await screen.findByTestId('schedule-day-preview-cantdo-0'));
+
+    // Recompute fired (>=2 calls) and the alternative replaced the excluded lift.
+    await waitFor(() =>
+      expect(getWorkoutForDayMock.mock.calls.length).toBeGreaterThanOrEqual(2),
+    );
+    expect(await screen.findByText('Impins la aparat')).toBeInTheDocument();
+    expect(screen.queryByText('Impins cu gantere')).not.toBeInTheDocument();
+    // Transient confirmation names what was replaced.
+    expect(screen.getByTestId('schedule-day-preview-swapped')).toHaveTextContent(
+      'Impins cu gantere',
+    );
+  });
+});

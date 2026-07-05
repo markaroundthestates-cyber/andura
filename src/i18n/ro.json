@@ -1302,6 +1302,13 @@
       "missed": "Nu ai antrenat in aceasta zi.",
       "performedSet": "{kg} kg x {reps}",
       "performedHeading": "Seturi efectuate",
+      "perSetHeading": "Fiecare set",
+      "plannedSet": "Set {n}: {kg} kg x {reps}",
+      "plannedSetBw": "Set {n}: {reps} reps",
+      "plannedSetTime": "Set {n}: {seconds}s",
+      "plannedSetTimeAdded": "Set {n}: {seconds}s + {kg} kg",
+      "cantDo": "Nu pot face asta",
+      "swapped": "Am inlocuit {name}.",
       "closeCta": "Inchide"
     },
     "heatmap": {
