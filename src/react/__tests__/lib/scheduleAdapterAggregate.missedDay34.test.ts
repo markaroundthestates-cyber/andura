@@ -18,16 +18,29 @@ import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import type { LastSessionSummary } from '../../stores/workoutStore.types';
 
-// Real weekday dates (Monday=0) in one ISO week.
-const MON = new Date(2026, 4, 18);
-const TUE = new Date(2026, 4, 19);
-const THU = new Date(2026, 4, 21);
-const FRI = new Date(2026, 4, 22);
+// Anchor every fixture to the CURRENT ISO week (Monday=0). The engine's recovery +
+// return-after-gap + day→split mapping all read the REAL Date.now(), so fixtures
+// pinned to a fixed past month drift out of alignment as the wall clock advances —
+// the test tipped over on 2026-07-06 when the gap to the old May session crossed
+// the ~7-week detraining threshold and trimmed a set. Deriving the dates from today
+// keeps the "recent Monday trained, Tuesday leg day missed" scenario calendar-stable.
+function dayOfCurrentWeek(offset: number): Date {
+  const d = new Date();
+  const sinceMonday = (d.getDay() + 6) % 7; // days since this week's Monday
+  d.setHours(12, 0, 0, 0);
+  d.setDate(d.getDate() - sinceMonday + offset);
+  return d;
+}
+const MON = dayOfCurrentWeek(0);
+const TUE = dayOfCurrentWeek(1);
+const THU = dayOfCurrentWeek(3);
+const FRI = dayOfCurrentWeek(4);
+const WEEK_START_ISO = MON.toLocaleDateString('sv'); // YYYY-MM-DD (local, matches the store)
 
 function setScheduleStoreDays(days: string[]): void {
   localStorage.setItem(
     'wv2-schedule-store',
-    JSON.stringify({ state: { weekStartISO: '2026-05-18', days }, version: 0 }),
+    JSON.stringify({ state: { weekStartISO: WEEK_START_ISO, days }, version: 0 }),
   );
 }
 
