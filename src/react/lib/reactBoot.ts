@@ -55,6 +55,7 @@ import { enforceDataOwner } from '../../util/dataReset.js';
 import { useAppStore } from '../stores/appStore';
 import { hydrateStoresFromCloud, startStoreSyncSubscriptions } from './storeSync';
 import { startLiveSync } from './liveSync';
+import { debugLog } from './debugLog';
 import { resetInMemoryStores } from './resetStores';
 import { migrateAnonymousToAuth } from '../../storage/migrateAnonymousToAuth.js';
 import { readDeletionMarker } from './accountDeletion';
@@ -292,6 +293,12 @@ export async function runPostAuthSync(): Promise<void> {
       } catch (err) {
         logger.warn('[Sync] wv2 store hydrate failed:', err);
       }
+      // Mirror THIS device's recent debug slice up (debug_recent_sync_v1) so the
+      // last-3-session debug you ALREADY have syncs cross-device immediately after
+      // login — without waiting for the next workout to fire a debug event. Runs
+      // post-auth so the per-UID IDB is the right one; skips the write when this
+      // device has no local slice (a PC only READS the phone's). Fire-and-forget.
+      void debugLog.mirrorRecent();
       // F3 ID-migration apply (2026-06-12, dp_id_migration_apply_v1) — ONE-SHOT
       // per boot, AFTER hydrate so the local stores carry the freshest state
       // (cloud or device, whichever won) before re-keying legacy exercise names

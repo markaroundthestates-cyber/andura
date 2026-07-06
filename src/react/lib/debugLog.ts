@@ -29,6 +29,19 @@
 // from the sync `event()` boundary) so render is never blocked. jsdom/SSR-safe.
 
 import { getDb, STORES } from '../../storage/db.js';
+import { DB } from '../../db.js';
+import { isEnabled } from '../../util/featureFlags.js';
+
+// Cross-device RECENT slice (flag debug_recent_sync_v1). The durable IDB archive
+// is per-device local-only (a PC you never train on has an empty log), so the
+// last-3-session slice is ALSO mirrored to a flat SYNC_KEY ('debug-recent') as an
+// object KEYED BY EVENT ID — the flat sync's object-merge (Object.assign) then
+// UNIONS ids across devices, so a device that didn't run the workout still shows
+// the recent debug events. Array sync would break (it dedups on `ts`; events carry
+// `t`), hence the id-keyed object. Bounded to the last 3 sessions on write.
+const RECENT_SYNC_KEY = 'debug-recent';
+const MIRROR_DEBOUNCE_MS = 8000;
+let _mirrorTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const FLAG_KEY = 'andura-debug';
 // D107 collection gate — durable semantic-event capture. Distinct from the
@@ -216,19 +229,118 @@ function event(
     if (snap && Object.keys(snap).length > 0) e.snap = snap;
     // Fire-and-forget — never block the caller's render/handler on IDB.
     void appendDurable(e);
+    // Mirror the recent slice cross-device (debounced) — semantic rows only; a
+    // navigation `tap` never changes the last-3-session slice (taps are excluded).
+    if (kind !== 'tap') scheduleMirror();
   } catch {
     /* capture must never break the app */
   }
 }
 
-/** All durable rows oldest → newest. Empty array on any failure. Async (IDB). */
-async function snapshot(): Promise<BehaviorEvent[]> {
+/** THIS device's durable rows oldest → newest (raw IDB, no cross-device merge).
+ *  The mirror reads THIS (never the merged snapshot) so it never re-writes another
+ *  device's events back. Empty array on any failure. Async (IDB). */
+async function localSnapshot(): Promise<BehaviorEvent[]> {
   try {
     const db = getDb();
     const rows = (await db.table(STORES.BEHAVIOR_TIER1).toArray()) as BehaviorEvent[];
     return rows.sort((a, b) => (a.t ?? 0) - (b.t ?? 0));
   } catch {
     return [];
+  }
+}
+
+/** Read the synced cross-device recent slice (object keyed by event id). */
+function readSyncedRecent(): BehaviorEvent[] {
+  try {
+    const raw = DB.get(RECENT_SYNC_KEY);
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return [];
+    return Object.values(raw as Record<string, BehaviorEvent>).filter(
+      (e): e is BehaviorEvent => !!e && typeof e.id === 'string' && typeof e.t === 'number',
+    );
+  } catch {
+    return [];
+  }
+}
+
+/** All durable rows oldest → newest — this device's IDB UNIONED with the synced
+ *  cross-device recent slice (dedup by id, local IDB wins). Async (IDB). Flag OFF
+ *  → local only (byte-identical to the legacy behavior). */
+async function snapshot(): Promise<BehaviorEvent[]> {
+  const rows = await localSnapshot();
+  if (!isEnabled('debug_recent_sync_v1')) return rows;
+  const synced = readSyncedRecent();
+  if (synced.length === 0) return rows;
+  const seen = new Set(rows.map((r) => r.id));
+  const merged = rows.slice();
+  for (const e of synced) {
+    if (!seen.has(e.id)) {
+      merged.push(e);
+      seen.add(e.id);
+    }
+  }
+  return merged.sort((a, b) => (a.t ?? 0) - (b.t ?? 0));
+}
+
+/** The last-N-session NON-TAP slice + the session ids kept. Pure over the rows.
+ *  Shared by the export envelope and the cross-device mirror. */
+function sliceRecent(all: BehaviorEvent[], n: number): { events: BehaviorEvent[]; sessions: number[] } {
+  const ids = [
+    ...new Set(all.map((e) => e.session).filter((s): s is number => typeof s === 'number')),
+  ].sort((a, b) => b - a);
+  const sessions = ids.slice(0, n).sort((a, b) => a - b);
+  const oldestKept = sessions[0];
+  let events: BehaviorEvent[];
+  if (oldestKept !== undefined) {
+    events = all.filter((e) => e.kind !== 'tap' && e.t >= oldestKept - 60_000);
+  } else {
+    events = all.filter((e) => e.kind !== 'tap');
+  }
+  // Never a silently-empty slice over a non-empty log (2026-06-12 fix).
+  if (events.length === 0) {
+    const semantic = all.filter((e) => e.kind !== 'tap');
+    if (semantic.length > 0) events = semantic;
+  }
+  return { events, sessions };
+}
+
+/** Mirror THIS device's last-3-session slice to the debug-recent SYNC_KEY (object
+ *  keyed by event id → the flat object-merge unions it across devices). Best-effort;
+ *  reads LOCAL IDB only. Exported for tests (the app path is the debounced hook). */
+export async function mirrorRecent(): Promise<void> {
+  try {
+    if (!isEnabled('debug_recent_sync_v1')) return;
+    const { events } = sliceRecent(await localSnapshot(), 3);
+    // Never clobber the shared slice with an empty write: a device with no local
+    // debug (e.g. a PC you never train on) must NOT overwrite the phone's synced
+    // slice — it only READS it. Contribute only when this device has its own slice.
+    if (events.length === 0) return;
+    const obj: Record<string, BehaviorEvent> = {};
+    for (const e of events) obj[e.id] = e;
+    DB.set(RECENT_SYNC_KEY, obj);
+  } catch {
+    /* mirror is best-effort — never break capture */
+  }
+}
+
+/** Debounced mirror — coalesces a burst of in-session events into one write ~8s
+ *  after the last event (≈ end of a set/session), so we snapshot once, not per tap. */
+function scheduleMirror(): void {
+  if (typeof setTimeout === 'undefined') return;
+  if (_mirrorTimer) clearTimeout(_mirrorTimer);
+  _mirrorTimer = setTimeout(() => {
+    _mirrorTimer = null;
+    void mirrorRecent();
+  }, MIRROR_DEBOUNCE_MS);
+}
+
+/** Test-only: cancel any pending debounced mirror so a real 8s timer never fires
+ *  after a suite's jsdom teardown (mirrorRecent is fully guarded, but this keeps
+ *  the timer from dangling across files — the swUpdate flake lesson). */
+export function __resetMirrorForTest(): void {
+  if (_mirrorTimer) {
+    clearTimeout(_mirrorTimer);
+    _mirrorTimer = null;
   }
 }
 
@@ -253,29 +365,12 @@ async function exportJson(scope: ExportScope = 'last'): Promise<string> {
     let events = all;
     let sessions: number[] = [];
     if (scope !== 'all') {
-      const ids = [
-        ...new Set(
-          all.map((e) => e.session).filter((s): s is number => typeof s === 'number'),
-        ),
-      ].sort((a, b) => b - a);
-      sessions = ids.slice(0, scope === 'last' ? 1 : 3).sort((a, b) => a - b);
-      const oldestKept = sessions[0];
-      if (oldestKept !== undefined) {
-        const windowStart = oldestKept - 60_000;
-        events = all.filter((e) => e.kind !== 'tap' && e.t >= windowStart);
-      } else {
-        // No workout rows yet — fall back to the semantic events only.
-        events = all.filter((e) => e.kind !== 'tap');
-      }
-      // NEVER copy a silently-empty slice (2026-06-12 fix): if the store HAS
-      // semantic rows but the session-windowed slice excluded them all (e.g. rows
-      // captured with no `session` field, or only `swap`/`skip` outside the
-      // window), fall back to the full non-tap set so the founder's Copy button
-      // never returns an empty payload over a non-empty log. 'all' is unaffected.
-      if (events.length === 0) {
-        const semantic = all.filter((e) => e.kind !== 'tap');
-        if (semantic.length > 0) events = semantic;
-      }
+      // Slice to the last 1 ('last') or 3 ('last3') sessions — the readable debug
+      // window, over the cross-device-merged snapshot (so a PC export shows the
+      // phone's recent events). Shared with the mirror via sliceRecent.
+      const sliced = sliceRecent(all, scope === 'last' ? 1 : 3);
+      events = sliced.events;
+      sessions = sliced.sessions;
     }
     return JSON.stringify(
       { v: 2, scope, exportedAt: Date.now(), count: events.length, sessions, events },
@@ -301,6 +396,7 @@ export const debugLog = {
   event,
   snapshot,
   exportJson,
+  mirrorRecent,
   clear,
   isEnabled: isDebugEnabled,
   setEnabled: setDebugEnabled,

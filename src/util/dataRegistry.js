@@ -18,7 +18,11 @@ export const USER_DATA_KEYS = [
   'dp-strength-posterior', 'dp-recovery-constants', 'dp-exercise-pain',
   'dp-pain-memory', 'dp-log-quarantine', 'dp-equipment-ladder', 'dp-equipment-obs', 'dp-temperament',
   'dp-fatigue-curve', 'dp-learned-volume', 'dp-pivot-prompts',
-  'dp-nof1-preference', 'dp-nof1-experiment', 'dp-behavior-tuning', 'dp-gyms', 'tombstones'
+  'dp-nof1-preference', 'dp-nof1-experiment', 'dp-behavior-tuning', 'dp-gyms', 'tombstones',
+  // debug-recent — synced cross-device RECENT debug slice (2026-07-06). Mirrors the
+  // per-UID behavior archive's last-3-session slice; synced → must reset locally on a
+  // start-over so a prior user's debug events don't bleed on a shared device.
+  'debug-recent'
 ];
 
 // Coach/session transient state — deleted by both resetTestData and fullReset
@@ -134,6 +138,7 @@ export const SYNC_CLASSIFICATION = Object.freeze({
   'session-draft': 'mutable',
   'workout-skips': 'mutable',
   'tombstones': 'mutable', // the soft-delete ledger itself (a merged map)
+  'debug-recent': 'mutable', // cross-device RECENT debug slice (object keyed by event id, unioned via object-merge)
 
   // ── mutable — DP learned per-UID engine state (object-merge LWW on sync) ──
   // All are name-keyed or fixed-key OBJECT maps that the engine learns over time

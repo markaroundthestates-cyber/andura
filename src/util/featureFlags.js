@@ -2166,6 +2166,14 @@ export const FLAGS = Object.freeze({
   // Rest is NOT scored by the eval judge (composition + kg + reps only), so fp stays
   // byte-identical without pinning. Kill-switch: flip default false → legacy list.
   dp_rest_heavy_compound_v1: { rollout: 1, default: true },
+  // debug_recent_sync_v1 — cross-device RECENT debug slice (2026-07-06). The durable
+  // behavior/debug archive (IDB behavior_tier1) is per-device local-only, so a PC you
+  // never train on shows an EMPTY debug export. ON: debugLog mirrors the last-3-session
+  // slice to the 'debug-recent' SYNC_KEY (object keyed by event id → object-merge unions
+  // ids across devices) so the export/view on any device shows the recent events. NOT on
+  // any engine/compose path (debug archive is DARK) → fp byte-identical without pinning.
+  // Kill-switch: flip default false → snapshot returns local IDB only (legacy).
+  debug_recent_sync_v1: { rollout: 1, default: true },
 });
 
 /** localStorage key holding the dev override JSON map. */

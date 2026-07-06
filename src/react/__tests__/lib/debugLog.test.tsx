@@ -26,7 +26,10 @@ import {
   COLLECT_KEY,
   RETENTION_DAYS,
   __resetPruneThrottleForTest,
+  mirrorRecent,
+  __resetMirrorForTest,
 } from '../../lib/debugLog';
+import { DB } from '../../../db.js';
 import { useDebugCapture } from '../../lib/debugCapture';
 import Dexie from 'dexie';
 import { closeDb, _resetNamespaceCache, getDb, getNamespace, DB_NAME_PREFIX, STORES } from '../../../storage/db.js';
@@ -53,6 +56,7 @@ beforeEach(async () => {
 
 afterEach(async () => {
   cleanup();
+  __resetMirrorForTest();
   await freshDb();
   localStorage.clear();
 });
@@ -299,5 +303,52 @@ describe('debugLog — collection default-ON survives a simulated reload', () =>
     debugLog.event('log', { exercise: 'Deadlift', kg: 100 }, undefined, 7, 'Deadlift');
     await flush();
     expect(await debugLog.snapshot()).toHaveLength(1);
+  });
+});
+
+// ── Cross-device recent slice (debug_recent_sync_v1) — the fix for "debug log gol
+// pe PC": the per-device IDB archive doesn't sync, so the last-3-session slice is
+// mirrored to the 'debug-recent' SYNC_KEY and merged back on read. ──────────────
+describe('debugLog — cross-device recent slice', () => {
+  afterEach(() => {
+    try { localStorage.removeItem('_devFlags'); } catch { /* jsdom */ }
+  });
+
+  it('mirrors the last-3-session slice, and a device with an EMPTY IDB reads it', async () => {
+    setCollectEnabled(true);
+    const S = 1783245600000;
+    debugLog.event('rec', { recKg: 80 }, undefined, S, 'Barbell Back Squat (High Bar)');
+    debugLog.event('log', { kg: 80, reps: 8 }, undefined, S, 'Barbell Back Squat (High Bar)');
+    await flush();
+
+    // (this device — the phone) mirror the recent slice to the SYNC_KEY.
+    await mirrorRecent();
+    const mirrored = DB.get('debug-recent') as Record<string, unknown> | null;
+    expect(mirrored && typeof mirrored === 'object').toBe(true);
+    expect(Object.keys(mirrored!)).toHaveLength(2); // keyed by event id
+
+    // (other device — the PC) empty IDB (freshDb wiped it), but the synced slice
+    // sits in localStorage → snapshot merges it back.
+    await freshDb();
+    const seen = await debugLog.snapshot(); // merges the synced slice
+    expect(seen).toHaveLength(2);
+    expect(seen.map((e) => e.kind).sort()).toEqual(['log', 'rec']);
+  });
+
+  it('flag OFF → snapshot returns local IDB only (the synced slice is ignored)', async () => {
+    localStorage.setItem('_devFlags', JSON.stringify({ debug_recent_sync_v1: false }));
+    DB.set('debug-recent', { 'x-1': { id: 'x-1', t: 1, kind: 'log', session: 1 } });
+    expect(await debugLog.snapshot()).toHaveLength(0); // fresh IDB + flag off → empty
+  });
+
+  it('local IDB events win over the synced slice on an id collision (no duplicates)', async () => {
+    setCollectEnabled(true);
+    const S = 1783245600000;
+    debugLog.event('log', { kg: 80 }, undefined, S, 'Squat');
+    await flush();
+    await mirrorRecent(); // debug-recent now holds this device's own event id
+    // snapshot merges local IDB + synced slice, deduped by id → still one row.
+    const seen = await debugLog.snapshot();
+    expect(seen).toHaveLength(1);
   });
 });
