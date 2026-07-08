@@ -707,6 +707,13 @@ export const FLIPPED_FLAGS = Object.freeze([
   // rungs win the snap; pinned OFF so the frozen fp baseline stays byte-identical (also
   // inert here — resetWorld seeds no dp-gyms — and pinned OFF in calibration sim-config).
   'dp_active_gym_ladder_v1',
+  // IN-SESSION GYM STEPS (Daniel live 2026-07-08, "a propus 78 care nu exista pe stack") —
+  // dp_gym_ladder_steps_v1 rebinds the in-session ease-back / manual-override steps in
+  // checkInSessionAdjust onto the active gym ladder (getPrev/NextWeightGym) so an adjusted
+  // set lands on a real rung. Load-path (the adjusted kg can move), pinned OFF here so both
+  // A/B arms keep the generic step → the frozen fp hashes stay byte-identical (also inert —
+  // resetWorld seeds no dp-gyms). ON proven on the checkInSessionAdjust gym-step probe/suite.
+  'dp_gym_ladder_steps_v1',
   // HEAVY-COMPOUND REST (Daniel live audit 2026-07-05, "pauza dupa squats e un joke") —
   // per-set restSec now classifies heavy compounds by force_demand ('high') + floors the
   // lower-body/glute compounds to ~150s. restSec IS in the fp per-exercise record (the fp

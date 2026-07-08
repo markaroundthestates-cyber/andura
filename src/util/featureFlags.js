@@ -2150,6 +2150,17 @@ export const FLAGS = Object.freeze({
   // pinned OFF in fp FLIPPED_FLAGS + calibration sim-config). Refine-only (snaps an existing
   // rec onto a real rung, never invents a load).
   dp_active_gym_ladder_v1: { rollout: 1, default: true },
+  // dp_gym_ladder_steps_v1 — the IN-SESSION twin of dp_active_gym_ladder_v1 (2026-07-08).
+  // roundToEquipmentWeight snaps the COMPOSE-path rec onto the active gym's real rungs,
+  // but dp.checkInSessionAdjust stepped its ease-back / manual-override loads with the
+  // GENERIC getPrev/NextWeight (fine learned/generic ladder) → surfaced off-stack numbers
+  // (Daniel live: Cable Row 79 rated greu → "78 kg", no real rung). ON → those in-session
+  // steps run on getPrev/NextWeightGym = the active gym ladder, so the adjusted set lands
+  // on a REAL rung (79 greu → 73, not 78). No active gym / no stack / flag off → the Gym
+  // steppers delegate to the generic ones → BYTE-IDENTICAL (pinned OFF in fp FLIPPED_FLAGS
+  // + calibration sim-config; recommend path untouched — this only rebinds inside
+  // checkInSessionAdjust).
+  dp_gym_ladder_steps_v1: { rollout: 1, default: true },
   // live_sync_poll_v1 — multi-device freshness (2026-07-03). The PUSH side already
   // reaches the cloud ~3s after any edit; the PULL side only ran at boot/login, so
   // a phone never saw a PC edit until fully reopened. This flag arms liveSync.ts:

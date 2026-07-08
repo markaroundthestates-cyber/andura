@@ -420,6 +420,45 @@ export function getPrevWeight(current, exerciseName) {
 }
 
 /**
+ * ACTIVE-GYM ladder for a lift's equipment type — the user's MEASURED "Sala mea"
+ * rungs (>= 2) for THIS station on their active gym, when dp_gym_ladder_steps_v1 is
+ * ON. Returns the ascending rung array, else null (caller falls back to the generic
+ * ladder → byte-identical). The compose path already snaps a rec via
+ * roundToEquipmentWeight's active-gym branch, but the IN-SESSION ease-back / override
+ * steps (dp.checkInSessionAdjust → getPrev/NextWeightGym) bypassed that choke-point
+ * and stepped on the FINE learned/generic ladder → surfaced off-stack loads (Daniel
+ * live 2026-07-08: Cable Row 79 rated greu → "78 kg", a weight no real stack has).
+ * @param {string} exerciseName
+ * @returns {number[] | null}
+ */
+function _activeGymLadder(exerciseName) {
+  if (!isEnabled('dp_gym_ladder_steps_v1') || typeof exerciseName !== 'string' || !exerciseName) return null;
+  const steps = activeGymStepsForType(getEquipmentType(exerciseName));
+  return Array.isArray(steps) && steps.length >= 2 ? steps : null;
+}
+
+/** getNextWeight that steps on the ACTIVE-GYM ladder when one exists, else
+ *  byte-identical getNextWeight. Above the top rung clamps to it (no extrapolation —
+ *  the machine has no higher pin). @param {number} current @param {string} exerciseName */
+export function getNextWeightGym(current, exerciseName) {
+  const gym = _activeGymLadder(exerciseName);
+  if (!gym) return getNextWeight(current, exerciseName);
+  const idx = gym.findIndex((w) => w > current);
+  return idx === -1 ? (gym[gym.length - 1] ?? current) : gym[idx];
+}
+
+/** getPrevWeight that steps on the ACTIVE-GYM ladder when one exists, else
+ *  byte-identical getPrevWeight. Largest rung strictly below current; at/under the
+ *  floor holds the floor. @param {number} current @param {string} exerciseName */
+export function getPrevWeightGym(current, exerciseName) {
+  const gym = _activeGymLadder(exerciseName);
+  if (!gym) return getPrevWeight(current, exerciseName);
+  let prev = gym[0];
+  for (const w of gym) { if (w < current) prev = w; else break; }
+  return prev;
+}
+
+/**
  * @param {number} weight
  * @param {string} exerciseName
  * @param {{ladderAware?:boolean, curatedSteps?:ReadonlyArray<number>}} [ctx]

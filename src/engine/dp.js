@@ -3,7 +3,7 @@
 // src/engine/__tests__/dp.size-guard.test.js (ratchet ceiling blocks growth).
 import { DB } from '../db.js';
 import { COMPOUND_EX, EX_SETS, EX_REPS as _EX_REPS, TARGET_DATE } from '../constants.js';
-import { roundToEquipmentWeight, getPrevWeight, getNextWeight, getEquipmentType } from '../config/weights.js';
+import { roundToEquipmentWeight, getPrevWeight, getNextWeight, getPrevWeightGym, getNextWeightGym, getEquipmentType } from '../config/weights.js';
 import { SIMILAR_EXERCISES, getSimilarityMultiplier, getTransferSources } from './exerciseMapping.js';
 import { getExerciseMetadata } from './exerciseLibrary.js';
 import { loggedRowMatcher, canonicalLoggedName } from './dp/logIdentity.js';
@@ -2291,7 +2291,7 @@ export const DP = {
     const rMin = range[0] ?? 8;
     const rMax = range[1] ?? 12;
 
-    // Need at least one rated set to respond to.
+    // Need >=1 rated set. Weight steps below use getPrev/NextWeightGym (dp_gym_ladder_steps_v1) → eased/override snaps to a REAL gym rung (Cable Row 79 greu → 73).
     if (!recentRPEs || !recentRPEs.length) return { adjust: false };
 
     const lastRPE = /** @type {number} */ (recentRPEs[recentRPEs.length - 1]);
@@ -2449,7 +2449,7 @@ export const DP = {
       // FAR under (≤0.6× recommended volume) AND it felt hard → ease the next set.
       if (volRatio <= 0.6 && lastRPE >= 8) {
         if (isStrength) {
-          const newKg = getPrevWeight(loggedKg, ex);
+          const newKg = getPrevWeightGym(loggedKg, ex);
           if (newKg < loggedKg) {
             return { adjust: true, dir: 'down', newKg, msg: t('workout.adjust.underWeight', { kg: newKg }) };
           }
@@ -2477,14 +2477,14 @@ export const DP = {
     // session on a cold-start lift) so an override is honored on the first session.
     const override = manualOverrideTarget(
       { wasManualOverride: ctx.wasManualOverride, haveRec, loggedKg, loggedReps, recKg, recReps, lastRPE, ex },
-      { getPrevWeight, getNextWeight, roundToStep: (kg, e) => this.roundToStep(kg, e), e1RMForSet: (w, reps, rpe, e) => this.e1RMForSet(w, reps, rpe, e), t },
+      { getPrevWeight: getPrevWeightGym, getNextWeight: getNextWeightGym, roundToStep: (kg, e) => this.roundToStep(kg, e), e1RMForSet: (w, reps, rpe, e) => this.e1RMForSet(w, reps, rpe, e), t },
     );
     if (override) return override;
 
     // GREU (single hard set) → ease the NEXT set MODESTLY.
     if (lastRPE >= 9.5) {
       if (isStrength) {
-        const newKg = getPrevWeight(baseKg, ex);
+        const newKg = getPrevWeightGym(baseKg, ex);
         if (newKg < baseKg) {
           return { adjust: true, dir: 'down', newKg, msg: t('workout.adjust.greuWeight', { kg: newKg }) };
         }
@@ -2494,7 +2494,7 @@ export const DP = {
       // set must VISIBLY ease the WEIGHT one step (getPrevWeight) when prior history
       // exists — holding kg and trimming reps reads as "coach did nothing". DOWN only.
       if (dpState.lastW > 0) {
-        const easedKg = getPrevWeight(isEnabled('dp_greu_ease_from_logged_v1') ? Math.max(baseKg, loggedKg) : baseKg, ex);
+        const easedKg = getPrevWeightGym(isEnabled('dp_greu_ease_from_logged_v1') ? Math.max(baseKg, loggedKg) : baseKg, ex);
         if (easedKg < (isEnabled('dp_greu_ease_from_logged_v1') ? Math.max(baseKg, loggedKg) : baseKg)) {
           return { adjust: true, dir: 'down', newKg: easedKg, msg: t('workout.adjust.greuWeight', { kg: easedKg }) };
         }
@@ -2507,7 +2507,7 @@ export const DP = {
       // user moved weight TODAY (loggedKg > 0), ease one step below what they
       // actually did, even without persisted history.
       if (loggedKg > 0) {
-        const easedKg = getPrevWeight(loggedKg, ex);
+        const easedKg = getPrevWeightGym(loggedKg, ex);
         if (easedKg < (isEnabled('dp_greu_ease_from_logged_v1') ? loggedKg : baseKg)) {
           return { adjust: true, dir: 'down', newKg: easedKg, msg: t('workout.adjust.greuWeight', { kg: easedKg }) };
         }
