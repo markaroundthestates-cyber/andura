@@ -67,9 +67,16 @@ export default defineConfig({
     retry: 1,
     // §2-C2 — fail when test file has no tests (silent pass mask removed).
     passWithNoTests: false,
+    // LOCAL husky flake tamer: the full ~9k-test suite runs alongside ~23 resident
+    // MCP node procs on a 6-core dev box; vitest's default worker count starves the
+    // main process → an `onTaskUpdate` RPC heartbeat times out ("1 error", 0 test
+    // failures) and flips husky's exit to 1. vitest 3.x defaults to the FORKS pool, so
+    // the VITEST_MAX_THREADS env + a threads cap are BOTH inert — cap maxForks (the pool
+    // actually in use). CI runners are clean + uncontended → leave them uncapped (guard
+    // on process.env.CI) so CI stays fast.
     poolOptions: {
-      threads: { execArgv },
-      forks: { execArgv },
+      threads: { execArgv, ...(process.env.CI ? {} : { maxThreads: 4, minThreads: 1 }) },
+      forks: { execArgv, ...(process.env.CI ? {} : { maxForks: 4, minForks: 1 }) },
     },
     coverage: {
       provider: 'v8',
