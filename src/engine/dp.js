@@ -2484,15 +2484,15 @@ export const DP = {
     // GREU (single hard set) → ease the NEXT set MODESTLY.
     if (lastRPE >= 9.5) {
       if (isStrength) {
-        const newKg = getPrevWeightGym(baseKg, ex);
-        if (newKg < baseKg) {
+        // G1 parity (live 07-10): STRENGTH ease anchors on the heavier LOGGED load too (79 greu -> 73, not 66) — same flag as the hypertrophy branch below.
+        const easeFrom = isEnabled('dp_greu_ease_from_logged_v1') ? Math.max(baseKg, loggedKg) : baseKg;
+        const newKg = getPrevWeightGym(easeFrom, ex);
+        if (newKg < easeFrom) {
           return { adjust: true, dir: 'down', newKg, msg: t('workout.adjust.greuWeight', { kg: newKg }) };
         }
         return { adjust: false };
       }
-      // Daniel 2026-06-06 (Gigel rule, in-session extension of dp-hard-eases): a hard
-      // set must VISIBLY ease the WEIGHT one step (getPrevWeight) when prior history
-      // exists — holding kg and trimming reps reads as "coach did nothing". DOWN only.
+      // Gigel rule 2026-06-06 (dp-hard-eases, in-session): a hard set must VISIBLY ease the WEIGHT one step when prior history exists — holding kg + trimming reps reads as "coach did nothing". DOWN only.
       if (dpState.lastW > 0) {
         const easedKg = getPrevWeightGym(isEnabled('dp_greu_ease_from_logged_v1') ? Math.max(baseKg, loggedKg) : baseKg, ex);
         if (easedKg < (isEnabled('dp_greu_ease_from_logged_v1') ? Math.max(baseKg, loggedKg) : baseKg)) {

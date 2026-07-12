@@ -82,6 +82,31 @@ describe('checkInSessionAdjust — in-session ease lands on a real gym rung', ()
     expect(ROW).toContain(r.newKg);
   });
 
+  // Live 07-10 (founder account runs phase-override STRENGTH): the STRENGTH greu
+  // branch eased from the REC (prevGym(73)=66), ignoring the heavier LOGGED 79 —
+  // the G1 ease-from-logged fix had only covered the hypertrophy branch. With G1
+  // parity the strength ease anchors on max(rec, logged) → 79 greu eases to 73.
+  it('STRENGTH phase: 79 logged greu over rec 73 → eases to 73 (from logged), not 66 (from rec)', () => {
+    seedGym(true);
+    store['phase-override'] = 'STRENGTH';
+    const r = DP.checkInSessionAdjust('Cable Row', [7.5, 10], [10, 8], {
+      recKg: 73, recReps: 8, loggedKg: 79, wasManualOverride: true, setIdx: 2, nowMs: NOW,
+    });
+    expect(r.adjust).toBe(true);
+    expect(r.dir).toBe('down');
+    expect(r.newKg).toBe(73);
+  });
+
+  it('STRENGTH phase legacy (G1 flag OFF) → eases from the rec (66) — frozen legacy', () => {
+    seedGym(true);
+    store['phase-override'] = 'STRENGTH';
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_gym_ladder_steps_v1: true, dp_greu_ease_from_logged_v1: false }));
+    const r = DP.checkInSessionAdjust('Cable Row', [7.5, 10], [10, 8], {
+      recKg: 73, recReps: 8, loggedKg: 79, wasManualOverride: true, setIdx: 2, nowMs: NOW,
+    });
+    expect(r.newKg).toBe(66);
+  });
+
   it('flag OFF → the eased load is NOT forced onto the gym ladder (byte-identical path)', () => {
     seedGym(false);
     const r = DP.checkInSessionAdjust('Cable Row', [10], [9], {
