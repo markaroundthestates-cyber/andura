@@ -4,7 +4,7 @@
 import { isEnabled } from '../util/featureFlags.js';
 import { learnedStep, snapToLadder, learnedUserLadder } from '../engine/dp/equipmentLadder.js';
 import { resolveRealStack } from '../engine/dp/realMachineStacks.js';
-import { activeGymStepsForType } from '../engine/dp/gymProfile.js';
+import { activeGymStepsForType, activeGym } from '../engine/dp/gymProfile.js';
 
 /** Snap a weight onto a discrete ladder: nearest rung, a tie rounding DOWN (the
  *  lighter, safer load). PURE. `ladder` must be a non-empty ascending number[]. */
@@ -48,6 +48,15 @@ function _snapToRealStack(weight, exerciseName, generic) {
   // was mis-mapped to; flag OFF → opts ignored → byte-identical (Cable Row keeps ROW).
   const stack = resolveRealStack(exerciseName, { cableTower: isEnabled('dp_cable_tower_v1') });
   if (!stack || stack.length < 1 || !Number.isFinite(weight)) return generic;
+  // ABOVE-TOP ESCAPE (live 07-12, §D131 "no old-gym pollution"): the founder stacks
+  // describe stations at his OLD gym — their TOP rung is just where that machine
+  // ended, never a capacity ceiling. At a NEW active "Sala mea" gym a weight ABOVE
+  // the old top means a different machine with more rungs; nearest-rung would CLAMP
+  // it to the old top forever (live: Leg Curl demonstrated 100 → clamped to the old
+  // stack's 66 every session). Escape to the generic ladder for that case only —
+  // BELOW the top the old rung spacing stays an authoritative prior (Reverse Pec
+  // Deck etc. unchanged). No active gym / flag off → clamp as before (byte-identical).
+  if (isEnabled('dp_gym_retires_founder_stacks_v1') && weight > (stack[stack.length - 1] ?? Infinity) && activeGym()) return generic;
   return _nearestRung(weight, stack);
 }
 

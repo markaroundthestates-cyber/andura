@@ -714,6 +714,12 @@ export const FLIPPED_FLAGS = Object.freeze([
   // A/B arms keep the generic step → the frozen fp hashes stay byte-identical (also inert —
   // resetWorld seeds no dp-gyms). ON proven on the checkInSessionAdjust gym-step probe/suite.
   'dp_gym_ladder_steps_v1',
+  // FOUNDER-STACK RETIREMENT (live 07-12) — dp_gym_retires_founder_stacks_v1 makes an
+  // ACTIVE "Sala mea" gym retire the founder's old-gym realMachineStacks seed (it was
+  // clamping recs to old rungs at the new gym). Load-path (a snap can move), pinned OFF
+  // here so both A/B arms keep the founder seed → frozen fp hashes byte-identical (also
+  // inert — resetWorld seeds no dp-gyms). ON proven on the weights/gymLadderSteps suites.
+  'dp_gym_retires_founder_stacks_v1',
   // HEAVY-COMPOUND REST (Daniel live audit 2026-07-05, "pauza dupa squats e un joke") —
   // per-set restSec now classifies heavy compounds by force_demand ('high') + floors the
   // lower-body/glute compounds to ~150s. restSec IS in the fp per-exercise record (the fp

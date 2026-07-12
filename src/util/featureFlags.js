@@ -2161,6 +2161,14 @@ export const FLAGS = Object.freeze({
   // + calibration sim-config; recommend path untouched — this only rebinds inside
   // checkInSessionAdjust).
   dp_gym_ladder_steps_v1: { rollout: 1, default: true },
+  // dp_gym_retires_founder_stacks_v1 (2026-07-12, §D131 completion) — the founder's
+  // hardcoded realMachineStacks describe his OLD gym's stations. Live they CLAMPED any
+  // rec onto old rungs at the new gym (Leg Curl: demonstrated 100, old stack tops at
+  // 66 → rec stuck at 66 forever). ON + an ACTIVE "Sala mea" gym → _snapToRealStack
+  // skips the founder seed (measured gym stacks + user-learned + generic govern). No
+  // active gym / OFF → founder seed applies as before (byte-identical; also inert in
+  // the sims — they seed no dp-gyms — and pinned OFF in fp FLIPPED_FLAGS + sim-config).
+  dp_gym_retires_founder_stacks_v1: { rollout: 1, default: true },
   // live_sync_poll_v1 — multi-device freshness (2026-07-03). The PUSH side already
   // reaches the cloud ~3s after any edit; the PULL side only ran at boot/login, so
   // a phone never saw a PC edit until fully reopened. This flag arms liveSync.ts:

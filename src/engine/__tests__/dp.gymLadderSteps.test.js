@@ -22,7 +22,7 @@ vi.mock('../../db.js', () => ({
 }));
 
 import { DP } from '../dp.js';
-import { getPrevWeightGym, getNextWeightGym, getEquipmentType } from '../../config/weights.js';
+import { getPrevWeightGym, getNextWeightGym, getEquipmentType, roundToEquipmentWeight } from '../../config/weights.js';
 
 const NOW = new Date(2026, 6, 8, 12, 0, 0).getTime();
 // His measured row ladder (~7 kg steps): 66 + 73 are BOTH real rungs from the log.
@@ -114,5 +114,34 @@ describe('checkInSessionAdjust — in-session ease lands on a real gym rung', ()
     });
     expect(r.adjust).toBe(true);
     expect(r.newKg).not.toBe(73);
+  });
+});
+
+// ── FOUNDER-STACK ABOVE-TOP ESCAPE (dp_gym_retires_founder_stacks_v1) ──────────
+// Live 07-12: the founder's OLD-gym Leg Curl stack tops at 66, so at the NEW gym
+// every rec got nearest-rung CLAMPED to 66 while the demonstrated load was 100.
+// With an ACTIVE "Sala mea" gym, a weight ABOVE the old stack's top escapes to the
+// generic ladder (the old top is where that machine ended, not a capacity ceiling);
+// BELOW the top the founder rung spacing stays authoritative (no regressions).
+describe('founder-stack above-top escape (active gym)', () => {
+  it('active gym + weight above the old top → generic ladder (100 stays 100, not 66)', () => {
+    seedGym(true); // any active gym (bailib measured); Leg Curl station unmeasured
+    expect(roundToEquipmentWeight(100, 'Leg Curl')).toBe(100); // generic leg_machine rung
+  });
+
+  it('active gym + weight INSIDE the old stack → founder rung kept (no regression)', () => {
+    seedGym(true);
+    expect(roundToEquipmentWeight(50, 'Leg Curl')).toBe(48); // founder rung 48, not generic 50
+  });
+
+  it('no active gym → the old clamp behavior stands (byte-identical legacy)', () => {
+    store = {};
+    expect(roundToEquipmentWeight(100, 'Leg Curl')).toBe(66); // clamped to the old top
+  });
+
+  it('flag OFF → clamp even with an active gym (byte-identical legacy)', () => {
+    seedGym(true);
+    localStorage.setItem('_devFlags', JSON.stringify({ dp_gym_retires_founder_stacks_v1: false }));
+    expect(roundToEquipmentWeight(100, 'Leg Curl')).toBe(66);
   });
 });
