@@ -16,6 +16,10 @@ interface SetHistoryChipsProps {
   loggedSets: readonly ExerciseHistoryEntry[];
   currentSetIdx: number;
   isBodyweight: boolean;
+  // EDIT-LOG (founder 2026-07-15) — when provided, DONE chips become tappable
+  // (mis-log correction): tapping calls back with the set index so the screen
+  // can open its inline kg/reps editor. Absent → chips stay presentational.
+  onEditDone?: (setIdx: number) => void;
 }
 
 export function SetHistoryChips({
@@ -23,6 +27,7 @@ export function SetHistoryChips({
   loggedSets,
   currentSetIdx,
   isBodyweight,
+  onEditDone,
 }: SetHistoryChipsProps): JSX.Element {
   return (
     <div
@@ -42,17 +47,33 @@ export function SetHistoryChips({
               : `${t('setLog.bodyweightLabel')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
             : `${logged.kg} ${t('common.kg')} x ${logged.reps} ${t('common.reps')} - ${logged.rating}`
           : undefined;
+        const label = detail
+          ? `${t('workout.setLabel', { current: i + 1, total: totalSets })}: ${detail}`
+          : t('workout.setLabel', { current: i + 1, total: totalSets });
+        // EDIT-LOG — a DONE chip becomes a real button when the screen wired
+        // onEditDone (tap = open the inline mis-log editor for that set).
+        if (isDone && onEditDone) {
+          return (
+            <button
+              key={i}
+              type="button"
+              onClick={() => onEditDone(i)}
+              className="set-chip set-chip-done"
+              data-testid={`set-history-${i}`}
+              title={`${detail} — ${t('workout.editSet.chipHint')}`}
+              aria-label={`${label} — ${t('workout.editSet.chipHint')}`}
+            >
+              <Check className="w-3.5 h-3.5" aria-hidden="true" strokeWidth={2.6} />
+            </button>
+          );
+        }
         return (
           <div
             key={i}
             className={`set-chip${isDone ? ' set-chip-done' : ''}${isActive ? ' set-chip-active' : ''}`}
             data-testid={isDone ? `set-history-${i}` : undefined}
             title={detail}
-            aria-label={
-              detail
-                ? `${t('workout.setLabel', { current: i + 1, total: totalSets })}: ${detail}`
-                : t('workout.setLabel', { current: i + 1, total: totalSets })
-            }
+            aria-label={label}
           >
             {isDone ? (
               <Check className="w-3.5 h-3.5" aria-hidden="true" strokeWidth={2.6} />

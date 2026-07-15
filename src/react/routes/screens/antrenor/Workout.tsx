@@ -128,6 +128,8 @@ export function Workout(): JSX.Element {
   const discardSession = useWorkoutStore((s) => s.discardSession);
   const markPRHit = useWorkoutStore((s) => s.markPRHit);
   const swapExercise = useWorkoutStore((s) => s.swapExercise);
+  // EDIT-LOG (founder 2026-07-15) — mis-log correction for an already-logged set.
+  const editSessionSet = useWorkoutStore((s) => s.editSessionSet);
   // Founder swap redesign 2026-06-05 — drop/restore exercise (pick-list).
   const dropExercise = useWorkoutStore((s) => s.dropExercise);
   const restoreExercise = useWorkoutStore((s) => s.restoreExercise);
@@ -166,6 +168,13 @@ export function Workout(): JSX.Element {
   // engine's magnitude, not the flat legacy x0.8 (which ran every deload set-1
   // 7.5pp lighter than intended). null = no active deload.
   const [deloadPctDecrement, setDeloadPctDecrement] = useState<number | null>(null);
+  // EDIT-LOG (founder 2026-07-15) — inline editor for a set already logged THIS
+  // session (mis-log correction). Opens from a done SetHistoryChips tap; saving
+  // routes through editSessionSet. Loaded reps exercises only (bodyweight kg is
+  // an EFFECTIVE load and a metric set's axis is seconds — different flows).
+  const [editingSet, setEditingSet] = useState<number | null>(null);
+  const [editSetKg, setEditSetKg] = useState<string>('');
+  const [editSetReps, setEditSetReps] = useState<string>('');
   // WARM-UP RAMP (in-workout, gym-log arc follow-up 2026-06-12). The engine's
   // primer ladder (warmup.warmupSets, behind dp_warmup_ramp_v1) was preview-only
   // text; WarmupRampCard below walks it set-by-set with SHORT own rests. Empty
@@ -363,6 +372,28 @@ export function Workout(): JSX.Element {
 
   const [kgInput, setKgInput] = useState<number>(targetKg);
   const [repsInput, setRepsInput] = useState<number>(currentExercise.targetReps);
+
+  // EDIT-LOG — open/save the inline editor for an already-logged set. Any open
+  // editor closes on exercise change (the indices belong to the old slot).
+  useEffect(() => {
+    setEditingSet(null);
+  }, [safeExIdx]);
+  function startEditLoggedSet(setIdx: number): void {
+    const logged = (history[safeExIdx] ?? [])[setIdx];
+    if (!logged || logged.durationSec) return;
+    setEditingSet(setIdx);
+    setEditSetKg(String(logged.kg));
+    setEditSetReps(String(logged.reps));
+  }
+  function saveEditLoggedSet(): void {
+    if (editingSet === null) return;
+    const kg = Number(editSetKg);
+    const reps = Number(editSetReps);
+    if (Number.isFinite(kg) && kg >= 0 && Number.isInteger(reps) && reps > 0) {
+      editSessionSet(safeExIdx, editingSet, { kg, reps });
+    }
+    setEditingSet(null);
+  }
   // Plate-math hint (2026-06-10, Daniel-approved): "70 kg" on a barbell is not
   // actionable on the gym floor — show "Bara 20 + 25 / parte". BARBELL-only by
   // design (Smith bars vary per gym; stack machines show their own pin) + EXACT
@@ -2027,7 +2058,59 @@ export function Workout(): JSX.Element {
             loggedSets={history[safeExIdx] ?? []}
             currentSetIdx={currentSetIdx}
             isBodyweight={currentExercise.isBodyweight ?? false}
+            {...(isMetricExercise || currentExercise.isBodyweight
+              ? {}
+              : { onEditDone: startEditLoggedSet })}
           />
+
+          {/* EDIT-LOG (founder 2026-07-15) — inline mis-log correction for a set
+              already logged THIS session. Opens from a done chip tap; saving
+              routes through editSessionSet (store history only — the durable
+              logs row is written at finish from the corrected history). */}
+          {editingSet !== null && (
+            <div
+              className="pulse-card pulse-card-tight p-3 mb-4 flex items-center gap-2"
+              data-testid="edit-logged-set"
+            >
+              <span className="text-xs text-ink2 font-mono whitespace-nowrap">
+                {t('workout.editSet.title', { n: editingSet + 1 })}
+              </span>
+              <input
+                type="number" inputMode="decimal" min={0} step="0.5"
+                value={editSetKg}
+                onChange={(e) => setEditSetKg(e.target.value)}
+                aria-label={t('workout.editSet.kgAria')}
+                data-testid="edit-logged-set-kg"
+                className="w-16 px-1.5 py-1 rounded-md border border-line bg-paper text-ink text-sm tabular-nums"
+              />
+              <span className="text-xs text-ink3">{t('common.kg')}</span>
+              <input
+                type="number" inputMode="numeric" min={1} step="1"
+                value={editSetReps}
+                onChange={(e) => setEditSetReps(e.target.value)}
+                aria-label={t('workout.editSet.repsAria')}
+                data-testid="edit-logged-set-reps"
+                className="w-14 px-1.5 py-1 rounded-md border border-line bg-paper text-ink text-sm tabular-nums"
+              />
+              <span className="text-xs text-ink3">{t('common.reps')}</span>
+              <button
+                type="button"
+                onClick={saveEditLoggedSet}
+                data-testid="edit-logged-set-save"
+                className="px-2.5 py-1 rounded-md bg-brick text-paper text-xs font-semibold"
+              >
+                {t('workout.editSet.save')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditingSet(null)}
+                data-testid="edit-logged-set-cancel"
+                className="px-2 py-1 rounded-md border border-line text-ink2 text-xs"
+              >
+                {t('workout.editSet.cancel')}
+              </button>
+            </div>
+          )}
 
           {/* #65 outlier-quarantine surface — a calm, no-guilt note on any set
               the detector quarantined (still in the log; learning suppressed) +

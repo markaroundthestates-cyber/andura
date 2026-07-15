@@ -87,6 +87,7 @@ import type {
   WorkoutPhase,
   WorkoutState,
   WorkoutActions,
+  LogEntry,
 } from './workoutStore.types';
 import {
   PAUSED_SESSION_UNTITLED,
@@ -96,7 +97,10 @@ import {
   purgeDeletedSessionLogs,
   nextStreak,
   resolveStreakActiveWeek,
+  applySetEditToSummary,
+  applySetEditToLogs,
 } from './workoutStore.logic';
+import { DB } from '../../db.js';
 
 // APP-LIFECYCLE-01 — max age of a persisted in-progress live session before it
 // is treated as stale on rehydrate. 08.063 persists the in-progress session
@@ -331,6 +335,49 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
             ...(isCurrent
               ? { setIdx: 0, phase: 'logging' as WorkoutPhase, prHit: false, prData: null }
               : {}),
+          };
+        }),
+
+      // EDIT-LOG (founder 2026-07-15) — correct a mis-logged set IN the live
+      // session. Pure history mutation: kg/reps replaced, rating/timestamp kept
+      // (the durable logs row does not exist until finish). Invalid target/edit
+      // → no-op. The next set's autoregulation reads the corrected history.
+      editSessionSet: (exIdx, setIdx, edit) =>
+        set((s) => {
+          const sets = s.history[exIdx];
+          const target = sets?.[setIdx];
+          if (
+            !target || target.durationSec ||
+            !Number.isFinite(edit.kg) || edit.kg < 0 ||
+            !Number.isFinite(edit.reps) || !Number.isInteger(edit.reps) || edit.reps <= 0
+          ) return {};
+          const newSets = sets!.map((h, i) => (i === setIdx ? { ...h, kg: edit.kg, reps: edit.reps } : h));
+          return { history: { ...s.history, [exIdx]: newSets } };
+        }),
+
+      // EDIT-LOG — correct a mis-logged set in a FINISHED session: summary
+      // (sessionsHistory + lastSession) via applySetEditToSummary + the durable
+      // DB('logs') row via applySetEditToLogs (matched by the set's timestamp;
+      // ts kept → sync-safe local-wins). Invalid target → safe no-op.
+      editHistorySet: (sessionTs, exerciseId, setIdx, edit) =>
+        set((s) => {
+          const pos = s.sessionsHistory.findIndex((sess) => sess.ts === sessionTs);
+          if (pos === -1) return {};
+          const edited = applySetEditToSummary(s.sessionsHistory[pos]!, exerciseId, setIdx, edit);
+          if (edited === null || edited === s.sessionsHistory[pos]) return {};
+          // Durable engine row — matched by the edited set's own timestamp.
+          const setTs = edited.exercises
+            ?.find((e) => e.exerciseId === exerciseId)?.sets[setIdx]?.timestamp;
+          if (Number.isFinite(setTs)) {
+            try {
+              const logs = (DB.get('logs') as LogEntry[] | null) ?? [];
+              const newLogs = applySetEditToLogs(logs, setTs as number, edit);
+              if (newLogs) DB.set('logs', newLogs);
+            } catch { /* logs write must never block the summary fix */ }
+          }
+          return {
+            sessionsHistory: s.sessionsHistory.map((sess, i) => (i === pos ? edited : sess)),
+            ...(s.lastSession?.ts === sessionTs ? { lastSession: edited } : {}),
           };
         }),
 

@@ -84,11 +84,36 @@ export function IstoricDetail(): JSX.Element {
   const { sessionId } = useParams<{ sessionId: string }>();
   const sessionsHistory = useWorkoutStore((s) => s.sessionsHistory);
   const deleteSession = useWorkoutStore((s) => s.deleteSession);
+  const editHistorySet = useWorkoutStore((s) => s.editHistorySet);
 
   // Two-tap inline delete confirm (mislogged workout removal). First tap reveals
   // a "Delete / Keep" confirm row; this guards against an accidental delete
   // without spinning up a separate route (surgical, matches inline aerobic UX).
   const [confirmDelete, setConfirmDelete] = useState(false);
+
+  // EDIT-LOG (founder 2026-07-15) — inline per-set kg/reps correction. One set
+  // editable at a time: tapping a row's edit affordance swaps its kg/reps cells
+  // for number inputs + save/cancel. Saving routes through editHistorySet
+  // (summary + durable logs row); invalid input keeps the row unchanged.
+  const [editing, setEditing] = useState<{ exerciseId: string; setIdx: number } | null>(null);
+  const [editKg, setEditKg] = useState<string>('');
+  const [editReps, setEditReps] = useState<string>('');
+
+  function startEdit(exerciseId: string, setIdx: number, kg: number, reps: number): void {
+    setEditing({ exerciseId, setIdx });
+    setEditKg(String(kg));
+    setEditReps(String(reps));
+  }
+
+  function saveEdit(sessionTs: number): void {
+    if (!editing) return;
+    const kg = Number(editKg);
+    const reps = Number(editReps);
+    if (Number.isFinite(kg) && kg >= 0 && Number.isInteger(reps) && reps > 0) {
+      editHistorySet(sessionTs, editing.exerciseId, editing.setIdx, { kg, reps });
+    }
+    setEditing(null);
+  }
 
   // Resolve by stable `ts`, NOT array index (Daniel audit 2026-06-05). The
   // list links carry the session's ts; an array index pointed at the WRONG
@@ -249,7 +274,55 @@ export function IstoricDetail(): JSX.Element {
                   </tr>
                 </thead>
                 <tbody>
-                  {ex.sets.map((s, idx) => (
+                  {ex.sets.map((s, idx) => {
+                    const isEditing =
+                      editing?.exerciseId === ex.exerciseId && editing.setIdx === idx;
+                    if (isEditing) {
+                      return (
+                        <tr key={idx} data-testid={`detail-set-edit-${ex.exerciseId}-${idx}`} className="text-ink">
+                          <td className="py-1">{idx + 1}</td>
+                          <td className="py-1">
+                            <input
+                              type="number" inputMode="decimal" min={0} step="0.5"
+                              value={editKg}
+                              onChange={(e) => setEditKg(e.target.value)}
+                              aria-label={t('istoric.detail.edit.kgAria')}
+                              data-testid="detail-set-edit-kg"
+                              className="w-16 px-1.5 py-0.5 rounded-md border border-line bg-paper text-ink text-sm tabular-nums"
+                            />
+                          </td>
+                          <td className="py-1">
+                            <input
+                              type="number" inputMode="numeric" min={1} step="1"
+                              value={editReps}
+                              onChange={(e) => setEditReps(e.target.value)}
+                              aria-label={t('istoric.detail.edit.repsAria')}
+                              data-testid="detail-set-edit-reps"
+                              className="w-14 px-1.5 py-0.5 rounded-md border border-line bg-paper text-ink text-sm tabular-nums"
+                            />
+                          </td>
+                          <td className="py-1 whitespace-nowrap">
+                            <button
+                              type="button"
+                              onClick={() => saveEdit(session.ts)}
+                              data-testid="detail-set-edit-save"
+                              className="px-2 py-0.5 mr-1.5 rounded-md bg-brick text-paper text-xs font-semibold"
+                            >
+                              {t('istoric.detail.edit.save')}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditing(null)}
+                              data-testid="detail-set-edit-cancel"
+                              className="px-2 py-0.5 rounded-md border border-line text-ink2 text-xs"
+                            >
+                              {t('istoric.detail.edit.cancel')}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    }
+                    return (
                     <tr
                       key={idx}
                       data-testid={`detail-set-${ex.exerciseId}-${idx}`}
@@ -265,9 +338,26 @@ export function IstoricDetail(): JSX.Element {
                           ? t('istoric.detail.table.secondsCell', { seconds: s.durationSec })
                           : s.reps}
                       </td>
-                      <td className="py-1">{ratingLabel(s.rating)}</td>
+                      <td className="py-1">
+                        {ratingLabel(s.rating)}
+                        {/* EDIT-LOG — reps sets only (a metric set's load axis is
+                            seconds, not this flow). Pencil affordance keeps the row
+                            scannable; opens the inline kg/reps editor above. */}
+                        {!s.durationSec && (
+                          <button
+                            type="button"
+                            onClick={() => startEdit(ex.exerciseId, idx, s.kg, s.reps)}
+                            aria-label={t('istoric.detail.edit.editAria', { n: idx + 1 })}
+                            data-testid={`detail-set-editbtn-${ex.exerciseId}-${idx}`}
+                            className="ml-2 text-ink3 hover:text-ink text-xs underline decoration-dotted"
+                          >
+                            {t('istoric.detail.edit.editLabel')}
+                          </button>
+                        )}
+                      </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

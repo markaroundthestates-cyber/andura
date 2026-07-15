@@ -644,6 +644,14 @@
       "subtitle": "Bifeaza aparatele pe care nu le ai. Coach-ul evita exercitiile lor si le scoate din lista din Cont.",
       "saveCta": "Salveaza",
       "closeCta": "Inchide"
+    },
+    "editSet": {
+      "title": "Corecteaza setul {n}",
+      "kgAria": "Greutatea corectata (kg)",
+      "repsAria": "Repetarile corectate",
+      "save": "Salveaza",
+      "cancel": "Renunta",
+      "chipHint": "apasa pentru corectare"
     }
   },
   "scheduleOverride": {
@@ -1162,7 +1170,15 @@
       "deleteCta": "Sterge aceasta sesiune",
       "deleteConfirmQuestion": "Stergi aceasta sesiune? Actiunea nu poate fi anulata.",
       "deleteConfirmYes": "Sterge",
-      "deleteConfirmNo": "Pastreaza"
+      "deleteConfirmNo": "Pastreaza",
+      "edit": {
+        "editLabel": "corecteaza",
+        "editAria": "Corecteaza setul {n}",
+        "kgAria": "Greutatea corectata (kg)",
+        "repsAria": "Repetarile corectate",
+        "save": "Salveaza",
+        "cancel": "Renunta"
+      }
     },
     "prWallScreen": {
       "title": "Recorduri Personale",

@@ -496,3 +496,82 @@ export function resolveStreakActiveWeek(): ReadonlyArray<boolean> | null {
     return null;
   }
 }
+
+// ══ EDIT-LOG (founder request 2026-07-15: "sa editezi greutatea si reps, in
+// cazul in care loghezi gresit") ══════════════════════════════════════════════
+// Two PURE halves of a mis-log correction. The SUMMARY half rewrites one set in
+// a LastSessionSummary (sessionsHistory / lastSession) and recomputes the
+// exercise aggregates (totalVolume + Epley peakOneRM) so History stays honest.
+// The LOGS half rewrites the matching durable engine row (matched by the set's
+// own timestamp — buildLogEntriesFromSummary stamps ts = set.timestamp, unique
+// per set) so DP/PR read the corrected load next session. An edited set drops
+// its isPR flag when values changed (the celebration is no longer provable);
+// pr-records itself is left to the next writeback (follow-up). Sync-safe: the
+// row keeps its ts, and the firebase array merge is local-wins on equal ts.
+
+/** One-set edit payload. Reps sets only (a durationSec metric set is not editable
+ *  here — its load axis is seconds, a different flow). */
+export interface SetEdit { kg: number; reps: number }
+
+function validSetEdit(edit: SetEdit): boolean {
+  return (
+    Number.isFinite(edit.kg) && edit.kg >= 0 &&
+    Number.isFinite(edit.reps) && Number.isInteger(edit.reps) && edit.reps > 0
+  );
+}
+
+/** Rewrite one set inside a summary + recompute that exercise's aggregates.
+ *  Returns the NEW summary, or null when the target is missing/not editable
+ *  (bad edit, metric set) — callers treat null as no-op. */
+export function applySetEditToSummary(
+  summary: LastSessionSummary,
+  exerciseId: string,
+  setIdx: number,
+  edit: SetEdit,
+): LastSessionSummary | null {
+  if (!validSetEdit(edit)) return null;
+  const exercises = summary.exercises ?? [];
+  const exPos = exercises.findIndex((e) => e.exerciseId === exerciseId);
+  if (exPos === -1) return null;
+  const ex = exercises[exPos]!;
+  const target = ex.sets[setIdx];
+  if (!target || target.durationSec) return null; // metric sets: not this flow
+  const changed = target.kg !== edit.kg || target.reps !== edit.reps;
+  if (!changed) return summary;
+  const newSets = ex.sets.map((s, i) => {
+    if (i !== setIdx) return s;
+    // Drop the PR celebration flags — the record claim is no longer provable.
+    const { isPR: _pr, prType: _pt, ...rest } = s as typeof s & { isPR?: boolean; prType?: string };
+    return { ...rest, kg: edit.kg, reps: edit.reps };
+  });
+  let totalVolume = 0;
+  let peakOneRM = 0;
+  for (const s of newSets) {
+    totalVolume += s.kg * s.reps;
+    const oneRM = s.kg * (1 + s.reps / 30); // Epley — same formula as PostRpe
+    if (oneRM > peakOneRM) peakOneRM = oneRM;
+  }
+  const newEx = { ...ex, sets: newSets, totalVolume, peakOneRM: Math.round(peakOneRM * 10) / 10 };
+  return { ...summary, exercises: exercises.map((e, i) => (i === exPos ? newEx : e)) };
+}
+
+/** Rewrite the durable engine log row for one edited set. Rows are matched by the
+ *  set's OWN timestamp (unique per set — buildLogEntriesFromSummary stamps ts =
+ *  set.timestamp). Keeps ts (sync identity), updates w + kg + reps (string, the
+ *  persisted shape) and drops isPR. Returns the new array, or null when no row
+ *  matched (nothing to persist — e.g. session not yet finished). */
+export function applySetEditToLogs(
+  logs: ReadonlyArray<LogEntry>,
+  setTimestamp: number,
+  edit: SetEdit,
+): LogEntry[] | null {
+  if (!validSetEdit(edit) || !Number.isFinite(setTimestamp)) return null;
+  let touched = false;
+  const out = logs.map((row) => {
+    if (row.ts !== setTimestamp) return row;
+    touched = true;
+    const { isPR: _pr, ...rest } = row as LogEntry & { isPR?: boolean };
+    return { ...rest, w: edit.kg, kg: edit.kg, reps: String(edit.reps) } as LogEntry;
+  });
+  return touched ? out : null;
+}

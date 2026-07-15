@@ -644,6 +644,14 @@
       "subtitle": "Check the equipment you don't have. The coach avoids those exercises and removes them from the list in Account.",
       "saveCta": "Save",
       "closeCta": "Close"
+    },
+    "editSet": {
+      "title": "Fix set {n}",
+      "kgAria": "Corrected weight (kg)",
+      "repsAria": "Corrected reps",
+      "save": "Save",
+      "cancel": "Cancel",
+      "chipHint": "tap to correct"
     }
   },
   "scheduleOverride": {
@@ -1162,7 +1170,15 @@
       "deleteCta": "Delete this session",
       "deleteConfirmQuestion": "Delete this session? This can't be undone.",
       "deleteConfirmYes": "Delete",
-      "deleteConfirmNo": "Keep"
+      "deleteConfirmNo": "Keep",
+      "edit": {
+        "editLabel": "fix",
+        "editAria": "Fix set {n}",
+        "kgAria": "Corrected weight (kg)",
+        "repsAria": "Corrected reps",
+        "save": "Save",
+        "cancel": "Cancel"
+      }
     },
     "prWallScreen": {
       "title": "Personal Records",

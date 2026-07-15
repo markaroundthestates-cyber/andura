@@ -461,6 +461,28 @@ export interface WorkoutActions {
    */
   swapExercise: (exIdx: number, performed?: { id: string; name: string; engineName?: string }) => void;
   /**
+   * EDIT-LOG (founder 2026-07-15) — correct a mis-logged set's kg/reps.
+   *
+   * `editSessionSet` fixes a set logged EARLIER IN THE LIVE SESSION
+   * (history[exIdx][setIdx]; rating/timestamp kept, kg/reps replaced). The
+   * durable logs row does not exist yet (persisted at finish), so the store
+   * mutation is the whole fix. Invalid target/edit → safe no-op.
+   *
+   * `editHistorySet` fixes a set in a FINISHED session: rewrites the summary in
+   * `sessionsHistory` (+ `lastSession` when it is the same session) with
+   * recomputed exercise aggregates, AND the matching durable DB('logs') row
+   * (matched by the set's own timestamp; ts kept → sync-safe, local-wins).
+   * The edited set drops its isPR flag when values changed. Invalid target →
+   * safe no-op.
+   */
+  editSessionSet: (exIdx: number, setIdx: number, edit: { kg: number; reps: number }) => void;
+  editHistorySet: (
+    sessionTs: number,
+    exerciseId: string,
+    setIdx: number,
+    edit: { kg: number; reps: number },
+  ) => void;
+  /**
    * Delete a logged session from `sessionsHistory` by its `ts` (mislogged
    * workout — per-entry remove from Istoric). Records a tombstone
    * (`deletedSessionTs`) so the cloud sync cannot resurrect it on hydrate (the
