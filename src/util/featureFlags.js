@@ -2169,6 +2169,14 @@ export const FLAGS = Object.freeze({
   // active gym / OFF → founder seed applies as before (byte-identical; also inert in
   // the sims — they seed no dp-gyms — and pinned OFF in fp FLIPPED_FLAGS + sim-config).
   dp_gym_retires_founder_stacks_v1: { rollout: 1, default: true },
+  // deload_minus_history_floor_v1 (2026-07-15, "recomanda 6kg desi are istoric") —
+  // React-screen ONLY (Workout.tsx targetKg): during an active deload ('minus') the
+  // scaled set-1 target is floored at ONE real ladder rung below the user's last
+  // LOGGED working weight, so a deload week reads as a visible-modest ease, never as
+  // the coach forgetting history (DB Lateral Raise: lastW 10, x0.8 scale showed 6 →
+  // floored at prevRung(10)=9). Cold start (no lastW) / floor above the engine
+  // target → no-op. NOT on the engine/compose path → no fp/calibration pin needed.
+  deload_minus_history_floor_v1: { rollout: 1, default: true },
   // live_sync_poll_v1 — multi-device freshness (2026-07-03). The PUSH side already
   // reaches the cloud ~3s after any edit; the PULL side only ran at boot/login, so
   // a phone never saw a PC edit until fully reopened. This flag arms liveSync.ts:

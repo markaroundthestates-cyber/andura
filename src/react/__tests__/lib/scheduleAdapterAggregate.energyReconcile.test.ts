@@ -61,3 +61,30 @@ describe('resolveIntensityFactors — energy reconcile (not a third multiplier)'
     expect(resolveIntensityFactors({ direction: 'DOWN', magnitudePct: NaN }).minus).toBe(0.8);
   });
 });
+
+// Live 07-15 root-cause ("recomanda 6kg desi are istoric"): during an ACTIVE deload
+// with no energy adjustment, the minus scale fell back to the flat legacy x0.8 even
+// though the deload engine prescribed intensity_pct_decrement 12.5 — every deload
+// set-1 ran 7.5pp lighter than the engine intended. The deload's own decrement now
+// feeds the fallback; the energy DOWN signal (fresher, per-session) still outranks.
+describe('resolveIntensityFactors — active-deload decrement feeds the minus fallback', () => {
+  it('deload pct 12.5 + no energy signal → minus = 0.875 (engine magnitude, not 0.8)', () => {
+    expect(resolveIntensityFactors(null, 12.5).minus).toBeCloseTo(0.875, 5);
+  });
+
+  it('energy DOWN still outranks the deload decrement (fresher signal wins)', () => {
+    const f = resolveIntensityFactors({ direction: 'DOWN', magnitudePct: -0.15 }, 12.5);
+    expect(f.minus).toBeCloseTo(0.85, 5);
+  });
+
+  it('null/absent/degenerate decrement → legacy 0.8 (byte-identical fallback)', () => {
+    expect(resolveIntensityFactors(null, null).minus).toBe(0.8);
+    expect(resolveIntensityFactors(null, 0).minus).toBe(0.8);
+    expect(resolveIntensityFactors(null, 100).minus).toBe(0.8);
+    expect(resolveIntensityFactors(null, NaN).minus).toBe(0.8);
+  });
+
+  it('plus branch untouched by the deload decrement', () => {
+    expect(resolveIntensityFactors(null, 12.5).plus).toBe(1.15);
+  });
+});

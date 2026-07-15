@@ -178,6 +178,11 @@ export interface PlannedWorkoutOutput {
   exerciseCount: number;
   estimatedDuration: number; // minutes
   intensityMod: 'plus' | 'normal' | 'minus';
+  // The active deload's own prescribed intensity decrement (percent points, e.g.
+  // 12.5) — Workout's resolveIntensityFactors uses it so the 'minus' scale applies
+  // the ENGINE magnitude instead of the flat legacy x0.8. null/absent = no active
+  // deload (factors keep the legacy fallback).
+  deloadPctDecrement?: number | null;
   exercises: PlannedExercise[]; // Phase 4 task_10 — rich aggregate Workout/WorkoutPreview consume
   volumeKg: number; // Phase 4 task_10 — estimated total tonnage planned
   // F-workout-preview/T1 — Engine Warm-up §9.7 blueprint surface (duration_min +

@@ -75,7 +75,7 @@ import { DP } from '../../../../engine/dp.js';
 import { platesPerSide } from '../../../../engine/plateMath.js';
 import { getExerciseMetadata } from '../../../../engine/exerciseLibrary.js';
 import { getCurrentWeightKg } from '../../../lib/userTdee';
-import { roundToEquipmentWeight, getNextWeight, getPrevWeight } from '../../../../config/weights.js';
+import { roundToEquipmentWeight, getNextWeight, getPrevWeight, getPrevWeightGym } from '../../../../config/weights.js';
 import { ENGINE_WORKOUT_TITLE_FALLBACK, resolveIntensityFactors } from '../../../lib/scheduleAdapterAggregate';
 import { t } from '../../../../i18n/index.js';
 import { useWakeLock } from './workout/useWakeLock';
@@ -161,6 +161,11 @@ export function Workout(): JSX.Element {
   // the engine emits no adjustment → the scale keeps its legacy constant.
   const [energyAdjustment, setEnergyAdjustment] =
     useState<PlannedWorkoutOutput['energyAdjustment']>(null);
+  // Live 07-15 — the active deload's OWN prescribed decrement (e.g. 12.5 pct
+  // points). Passed to resolveIntensityFactors so the 'minus' scale applies the
+  // engine's magnitude, not the flat legacy x0.8 (which ran every deload set-1
+  // 7.5pp lighter than intended). null = no active deload.
+  const [deloadPctDecrement, setDeloadPctDecrement] = useState<number | null>(null);
   // WARM-UP RAMP (in-workout, gym-log arc follow-up 2026-06-12). The engine's
   // primer ladder (warmup.warmupSets, behind dp_warmup_ramp_v1) was preview-only
   // text; WarmupRampCard below walks it set-by-set with SHORT own rests. Empty
@@ -184,6 +189,7 @@ export function Workout(): JSX.Element {
         );
         setEngineIntensityMod(planned?.intensityMod ?? 'normal');
         setEnergyAdjustment(planned?.energyAdjustment ?? null);
+        setDeloadPctDecrement(planned?.deloadPctDecrement ?? null);
       }
     });
     return () => { cancelled = true; };
@@ -291,12 +297,35 @@ export function Workout(): JSX.Element {
   // F2 #4 — resolve the ±% scale FACTOR from the engine magnitude (reconcile),
   // with the legacy flat constants as the fallback when the engine emits no
   // matching direction (pure helper resolveIntensityFactors).
-  const { minus: minusFactor, plus: plusFactor } = resolveIntensityFactors(energyAdjustment ?? null);
+  const { minus: minusFactor, plus: plusFactor } = resolveIntensityFactors(
+    energyAdjustment ?? null,
+    deloadPctDecrement,
+  );
+  // Live 07-15 (Daniel: "recomanda 6kg desi are istoric") — HISTORY FLOOR on the
+  // minus scale. A deload week lightens the load, but it must never read as the
+  // coach forgetting what the user lifts: the scaled target is floored at ONE real
+  // ladder rung below the last LOGGED working weight (the same visible-modest-ease
+  // rule every other ease uses). DB Lateral Raise: lastW 10 → x0.8 gave 6; floored
+  // at prevRung(10)=9. Cold start (lastW 0) / floor above the engine target → no-op.
+  const minusFlooredKg = (raw: number): number => {
+    const scaled = roundToEquipmentWeight(raw * minusFactor, currentExercise.engineName ?? currentExercise.name);
+    if (!isEnabled('deload_minus_history_floor_v1')) return scaled;
+    try {
+      const ex = currentExercise.engineName ?? currentExercise.name;
+      const lastW = DP.getState(ex).lastW || 0;
+      if (!(lastW > 0)) return scaled;
+      const floorKg = Number(getPrevWeightGym(lastW, ex));
+      if (!Number.isFinite(floorKg) || floorKg <= 0) return scaled;
+      return Math.min(Math.max(scaled, floorKg), Math.max(raw, scaled));
+    } catch {
+      return scaled; // never block the screen on a ladder/state read failure
+    }
+  };
   const targetKg =
     currentExercise.isBodyweight
       ? currentExercise.targetKg
       : intensityMod === 'minus'
-      ? roundToEquipmentWeight(currentExercise.targetKg * minusFactor, currentExercise.engineName ?? currentExercise.name)
+      ? minusFlooredKg(currentExercise.targetKg)
       : intensityMod === 'plus'
       ? roundToEquipmentWeight(currentExercise.targetKg * plusFactor, currentExercise.engineName ?? currentExercise.name)
       : currentExercise.targetKg;

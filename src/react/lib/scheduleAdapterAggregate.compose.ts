@@ -1164,17 +1164,30 @@ export function trimSessionToTimeBudget(
  * Pure.
  *
  * @param energyAdjustment engine direction + tier-gated magnitude, or null
+ * @param deloadPctDecrement the ACTIVE deload's own intensity_pct_decrement (e.g.
+ *   12.5) from plan.intensityModifier. Live 07-15 root-cause: the 'minus' scale fell
+ *   back to the flat legacy ×0.8 even though the deload engine prescribed −12.5% —
+ *   every set-1 target during a deload week ran 7.5pp lighter than the engine
+ *   intended (60→48 instead of 60→52.5). When provided (>0), the minus factor is
+ *   1 − pct/100; the legacy 0.8 remains the fallback for a minus with no modifier.
  * @returns { minus, plus } the multipliers for the intensityMod 'minus'/'plus' scale
  */
 export function resolveIntensityFactors(
   energyAdjustment: { direction: 'UP' | 'DOWN' | 'NONE'; magnitudePct: number } | null,
+  deloadPctDecrement?: number | null,
 ): { minus: number; plus: number } {
   const mag =
     energyAdjustment && Number.isFinite(energyAdjustment.magnitudePct)
       ? Math.abs(energyAdjustment.magnitudePct)
       : 0;
+  // The deload engine's own prescribed decrement (percent points, e.g. 12.5) wins
+  // over the flat legacy 0.8 whenever an active deload supplied one — the energy
+  // adjustment (a fresher, per-session signal) still outranks both when DOWN.
+  const deloadPct = Number(deloadPctDecrement);
+  const minusFallback =
+    Number.isFinite(deloadPct) && deloadPct > 0 && deloadPct < 100 ? 1 - deloadPct / 100 : 0.8;
   return {
-    minus: energyAdjustment?.direction === 'DOWN' && mag > 0 ? 1 - mag : 0.8,
+    minus: energyAdjustment?.direction === 'DOWN' && mag > 0 ? 1 - mag : minusFallback,
     plus: energyAdjustment?.direction === 'UP' && mag > 0 ? 1 + mag : 1.15,
   };
 }
@@ -1801,6 +1814,11 @@ export async function composePlannedWorkoutToday(
       // engine (?? 50 / ?? 0 in WorkoutPreview). NU mai forteaza 0/50 hardcodat.
       estimatedDuration: estimatedDuration ?? plan.estimatedDurationMin ?? 50,
       intensityMod: hasActiveDeload ? 'minus' : 'normal',
+      // The active deload's own prescribed intensity decrement (percent points).
+      // Consumed by the Workout screen's resolveIntensityFactors so the 'minus'
+      // scale applies the ENGINE's magnitude (e.g. −12.5%) instead of the flat
+      // legacy ×0.8. null when no active deload → factors keep their legacy path.
+      deloadPctDecrement: hasActiveDeload ? (mod?.intensity_pct_decrement ?? null) : null,
       exercises: outExercises,
       volumeKg: volumeKg ?? plan.volumeKg ?? 0,
       // Warm-up blueprint. The session-level {line, durationMin} unchanged; the
