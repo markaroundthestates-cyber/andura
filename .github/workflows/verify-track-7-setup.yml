@@ -261,7 +261,7 @@ jobs:
           echo "PATH: $PATH"
 
       - name: 'Setup Node pentru §6.b firebase-admin check'
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
