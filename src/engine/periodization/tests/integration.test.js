@@ -139,6 +139,22 @@ describe('evaluate — integration end-to-end §9.1 ADR 026', () => {
     expect(result.meta.mesocycle_phase).toBe('PEAK');
   });
 
+  // ── dp_deload_pull_consumes_w4_v1 (founder live 2026-08-28): the W3 pull moves
+  // the deload, it must not ADD one — sustained bias + real W4 = the deload
+  // already happened in W3, so W4 is the post-deload W1-equivalent. ────────────
+  it('sustained bias ≥0.75 on real W4 → W4 CONSUMED (LOAD, no back-to-back deload)', async () => {
+    const result = await evaluate(buildCtx({ persona: 'marius', goal: 'hipertrofie', weeksElapsed: 3, deloadBias: 0.8 }));
+    expect(result.meta.mesocycle_phase).toBe('LOAD');
+    expect(result.meta.deload_window).toBeNull();
+    expect(result.signals).toContain('deload_cadence_w4_consumed_by_w3_pull_no_back_to_back');
+  });
+
+  it('bias below threshold on real W4 → calendar DELOAD unchanged', async () => {
+    const result = await evaluate(buildCtx({ persona: 'marius', goal: 'hipertrofie', weeksElapsed: 3, deloadBias: 0.5 }));
+    expect(result.meta.mesocycle_phase).toBe('DELOAD');
+    expect(result.signals).not.toContain('deload_cadence_w4_consumed_by_w3_pull_no_back_to_back');
+  });
+
   it('Marius dual-signal green at W4 → extension granted, deload_window null', async () => {
     const greenTrail = [];
     for (let w = 1; w <= 4; w++) greenTrail.push({ rir: 1, weekIdx: w });

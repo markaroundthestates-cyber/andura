@@ -454,6 +454,30 @@ export const FLAGS = Object.freeze({
   // detector + the narration read only. OFF → the detector is never invoked →
   // byte-identical. Degrades to rating-drift-only when dp_e1rm_v1 is OFF.
   dp_subrecovery_drift_v1: { rollout: 1, default: true }, // ON 2026-06-14 (Wave C/D activation)
+  // dp_drift_session_window_v1 (2026-08-28, founder "deload permanent din iulie") —
+  // fixes the drift detector's two false-positive machines: (a) NO age cutoff let
+  // months-old rows (a June-only Flat DB Press window) vote REACTIVE_AA deloads
+  // in August; (b) per-SET slopes read within-session fatigue (set 1 fresh vs set
+  // 5 tired at the same kg) as systemic under-recovery. ON: only sets < 21 days
+  // old vote, and both drift signals aggregate PER SESSION (greu-share / best-set
+  // e1RM per session, slope ACROSS sessions). Parent dp_subrecovery_drift_v1 is
+  // pinned OFF in fp/calibration sims → this never runs there (byte-identical).
+  // Kill-switch: default false → legacy per-set reading.
+  dp_drift_session_window_v1: { rollout: 1, default: true },
+  // dp_deload_pull_consumes_w4_v1 (2026-08-28, same founder arc) — the #76 W3
+  // pull-forward previously ADDED a deload week instead of MOVING it: sustained
+  // deficit bias stays high, so W3 deloaded (pulled) and calendar W4 deloaded
+  // again → 2-week back-to-back double-deload every mesocycle on a long cut. ON:
+  // bias high + real W4 → W4 becomes the post-deload W1-equivalent (the deload
+  // already happened in W3). Parent dp_energy_volume_v1 pinned OFF in fp →
+  // byte-identical there. Kill-switch: default false → legacy double week.
+  dp_deload_pull_consumes_w4_v1: { rollout: 1, default: true },
+  // patterns_cut_aware_stagnation_v1 (2026-08-28, founder "pe cut cu 1000 kcal se
+  // astepta sa cresc greutatile?") — the STAGNATION banner in an ACTIVE kcal
+  // deficit reframes to the coaching truth (flat strength on a cut = progress,
+  // severity info) instead of a warning. React-banner only (no engine/compose
+  // path → no fp pin). Kill-switch: default false → legacy warn copy.
+  patterns_cut_aware_stagnation_v1: { rollout: 1, default: true },
 
   // ── F6b Volume/Progress-intelligence cluster (engine-wiring 2026-06-08) —
   // volume + the SHAPE of progress: half path-A (sets), half narration of what

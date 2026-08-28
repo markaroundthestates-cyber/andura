@@ -141,14 +141,27 @@ export async function evaluate(ctx) {
   // to deload) nor W4 (already deload). The deficit-deload still rides the SAME
   // CALENDAR deload machinery + multipliers — it just lands a week sooner.
   const deloadBias = Number(meta.deloadBias);
-  const biasPullsForward =
+  const biasHigh =
     isEnabled('dp_energy_volume_v1') &&
     Number.isFinite(deloadBias) &&
-    deloadBias >= DELOAD_BIAS_PULL_FORWARD &&
-    block.weekInMesocycle === 3;
-  const effectiveWeekInMeso = biasPullsForward ? 4 : block.weekInMesocycle;
+    deloadBias >= DELOAD_BIAS_PULL_FORWARD;
+  const biasPullsForward = biasHigh && block.weekInMesocycle === 3;
+  // dp_deload_pull_consumes_w4_v1 (founder live 2026-08-28) — the W3 pull-forward
+  // means the deload lands a week SOONER, not an EXTRA week: with a sustained
+  // deficit the bias stays high, so W3 deloaded AND then calendar W4 deloaded
+  // again = a 2-week back-to-back double-deload every mesocycle (founder replay:
+  // minus 08-13→08-24 continuous). ON + bias high + real W4 → the deload already
+  // happened in W3 → treat W4 as the post-deload W1-equivalent (LOAD). Flag OFF /
+  // bias low → calendar W4 deloads exactly as before (byte-identical; parent
+  // dp_energy_volume_v1 is pinned OFF in fp, so fp never reaches this branch).
+  const biasConsumedW4 =
+    biasHigh && block.weekInMesocycle === 4 && isEnabled('dp_deload_pull_consumes_w4_v1');
+  const effectiveWeekInMeso = biasPullsForward ? 4 : biasConsumedW4 ? 1 : block.weekInMesocycle;
   if (biasPullsForward) {
     signals.push('deload_cadence_pull_forward_w3_to_w4_energy_deficit_bias_76');
+  }
+  if (biasConsumedW4) {
+    signals.push('deload_cadence_w4_consumed_by_w3_pull_no_back_to_back');
   }
   trace.deloadBias = Number.isFinite(deloadBias) ? deloadBias : null;
   trace.biasPullsForward = biasPullsForward;
