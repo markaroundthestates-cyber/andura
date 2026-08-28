@@ -6,13 +6,17 @@
 // saw the first device's changes until it was fully reopened — the app "felt like
 // it didn't sync between devices."
 //
-// This module adds the missing half: a lightweight re-PULL on three triggers —
+// This module adds the missing half: a lightweight re-PULL on these triggers —
 //   1. visibilitychange → visible  (you switch back to this tab / bring the PWA to
 //      the foreground): the trigger that actually matters for a phone↔PC user, who
 //      switches devices rather than using both at once → feels real-time-on-switch.
-//   2. a foreground interval (default 3 min): the backstop for a device left open
-//      in front of you ("sau macar cu un delay de 5 min").
-//   3. window 'online' (reconnect after a drop): pull the latest immediately.
+//   2. window 'focus' (2026-08-28): alt-tabbing between two WINDOWS on one machine
+//      never fires visibilitychange — the tab stays visible — so the PC browser
+//      next to the PWA had only the interval. This covers it.
+//   3. 'pageshow' — a PWA restored from the back-forward cache.
+//   4. a foreground interval (45s): the backstop for a device left open in front
+//      of you, with BOTH devices awake (the worst case the founder actually hit).
+//   5. window 'online' (reconnect after a drop): pull the latest immediately.
 //
 // The pull re-runs ONLY the two idempotent merge functions — syncFromFirebase()
 // (flat SYNC_KEYS) + hydrateStoresFromCloud() (wv2 stores). Both are explicitly
@@ -34,10 +38,14 @@ import { hydrateStoresFromCloud } from './storeSync';
 import { isEnabled } from '../../util/featureFlags.js';
 import { logger } from '../../util/logger.js';
 
-// Foreground re-pull cadence — the "5 min sau ceva" backstop for a device left
-// open. 3 min balances freshness against RTDB read chatter (one small GET per
-// channel per tick, only while the tab is actually in front).
-export const FOREGROUND_POLL_MS = 180_000;
+// Foreground re-pull cadence for a device left open in front of you. Was 3 min;
+// founder 2026-08-28 ("app pe web nu se sincronizeaza instant cu cea de pe
+// telefon si ar trebuii") — with BOTH devices awake the interval is the only
+// mechanism, so a 3-minute worst case reads as "not syncing". 45s keeps the
+// worst case under a minute while still only running while the tab is in front
+// (two small GETs per tick). True push (an SSE stream on a change-pulse node) is
+// the designed next step — it needs a real-device smoke before it ships.
+export const FOREGROUND_POLL_MS = 45_000;
 
 // Throttle floor — collapse focus + interval + reconnect triggers that fire close
 // together into a single pull, so a rapid tab flap can't hammer the network.
@@ -99,6 +107,20 @@ function _onOnline(): void {
   void livePullNow('reconnect');
 }
 
+// Window FOCUS is a distinct signal from tab visibility: alt-tabbing between two
+// windows on the SAME machine (the founder's PC browser next to the PWA) never
+// fires visibilitychange — the tab stays "visible" the whole time. Without this
+// the only mechanism there was the interval. Throttled like every other trigger.
+function _onFocus(): void {
+  void livePullNow('focus');
+}
+
+// A PWA restored from the mobile back-forward cache fires pageshow (persisted),
+// not always visibilitychange — pull so a resumed app is never stale on arrival.
+function _onPageShow(): void {
+  void livePullNow('pageshow');
+}
+
 /**
  * Start the live-sync lifecycle: pull on foreground/focus, on a foreground
  * interval, and on network reconnect. Idempotent — a second call is a no-op.
@@ -113,6 +135,8 @@ export function startLiveSync(): () => void {
   _started = true;
   document.addEventListener('visibilitychange', _onVisibilityChange);
   window.addEventListener('online', _onOnline);
+  window.addEventListener('focus', _onFocus);
+  window.addEventListener('pageshow', _onPageShow);
   _intervalId = setInterval(() => {
     // Only pull while the tab is actually in the foreground — a backgrounded tab
     // doesn't need fresh data and browsers throttle its timers anyway.
@@ -128,6 +152,8 @@ export function stopLiveSync(): void {
   if (typeof window !== 'undefined') {
     document.removeEventListener('visibilitychange', _onVisibilityChange);
     window.removeEventListener('online', _onOnline);
+    window.removeEventListener('focus', _onFocus);
+    window.removeEventListener('pageshow', _onPageShow);
   }
   if (_intervalId !== null) {
     clearInterval(_intervalId);

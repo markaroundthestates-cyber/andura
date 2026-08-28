@@ -162,6 +162,36 @@ describe('startLiveSync lifecycle', () => {
     expect(syncFromFirebase).toHaveBeenCalledTimes(1);
   });
 
+  // Founder 2026-08-28 — alt-tabbing between two WINDOWS on one machine never
+  // fires visibilitychange (the tab stays visible), so the PC browser sitting
+  // next to the PWA had only the interval. window focus covers that switch.
+  it('pulls on window focus (two windows on one machine)', async () => {
+    startLiveSync();
+    window.dispatchEvent(new Event('focus'));
+    await flushMicrotasks();
+    expect(syncFromFirebase).toHaveBeenCalledTimes(1);
+  });
+
+  it('pulls on pageshow (PWA restored from the back-forward cache)', async () => {
+    startLiveSync();
+    window.dispatchEvent(new Event('pageshow'));
+    await flushMicrotasks();
+    expect(syncFromFirebase).toHaveBeenCalledTimes(1);
+  });
+
+  it('the foreground worst case is under a minute (founder freshness bar)', () => {
+    expect(FOREGROUND_POLL_MS).toBeLessThanOrEqual(60_000);
+  });
+
+  it('focus + visibility firing together still collapse into ONE pull (throttle)', async () => {
+    startLiveSync();
+    window.dispatchEvent(new Event('focus'));
+    setVisibility('visible');
+    document.dispatchEvent(new Event('visibilitychange'));
+    await flushMicrotasks();
+    expect(syncFromFirebase).toHaveBeenCalledTimes(1);
+  });
+
   it('is idempotent — a second start does not double-wire the interval', async () => {
     startLiveSync();
     startLiveSync();
