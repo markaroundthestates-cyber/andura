@@ -74,6 +74,15 @@ export async function runFullPathCohortAsync(flagsOn, nProfiles, seed, weeks) {
   const perProfile = [];
 
   for (const profile of cohort) {
+    // MACROTASK yield (2026-08-28). Every `await` in this cohort resolves on the
+    // MICROtask queue, so a multi-minute journey never lets the worker's event
+    // loop reach the macrotask queue where vitest's IPC lives. The worker then
+    // cannot process the main process's reply to its pending `onTaskUpdate`, and
+    // birpc's 60s timer fires → "[vitest-worker]: Timeout calling onTaskUpdate":
+    // an unhandled error that flips the exit code to 1 while every test PASSES
+    // (chased for four failed commits before it was measured). One real tick per
+    // profile costs ~nothing next to a ~200s sim and keeps IPC drained.
+    await new Promise((r) => setTimeout(r, 0));
     resetWorld();
     setPathAFlags(flagsOn); // dev-flag override AFTER the localStorage clear
 
