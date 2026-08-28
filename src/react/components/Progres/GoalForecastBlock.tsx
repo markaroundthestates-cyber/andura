@@ -135,15 +135,17 @@ export function GoalForecastBlock(): JSX.Element | null {
                 >
                   {/* Cut-awareness (Daniel 2026-06-12): a cutting user is promised
                       HOLDING strength, never a gain (the engine returns projected ==
-                      current + framing 'cut-hold'). Otherwise the standard +gain line. */}
+                      current + framing 'cut-hold'). Otherwise the standard +gain line.
+                      workKg (founder 2026-08-28): show the WORKING-SET equivalent,
+                      never a raw e1RM ("hold ~83.6" read as a working weight). */}
                   {s.framing === 'cut-hold'
                     ? t('bodyComp.goalForecast.strengthLineCut', {
                         lift: s.name,
-                        kg: fmtKg(s.projectedOneRm),
+                        kg: fmtKg(s.workKg ?? s.projectedOneRm),
                       })
                     : t('bodyComp.goalForecast.strengthLine', {
                         lift: s.name,
-                        kg: fmtKg(s.projectedOneRm),
+                        kg: fmtKg(s.workKg ?? s.projectedOneRm),
                         weeks: s.weeks,
                       })}
                 </li>

@@ -106,6 +106,7 @@ import {
   getCoherentKcalToday,
   resolveSafetyLimited,
   getPhaseOverrideKcalToday,
+  resolveEnergyMagnitude,
 } from './engineWrappers.nutrition';
 import type {
   ReadinessOutput,
@@ -636,12 +637,25 @@ export function getPatternsBanner(): PatternBanner[] {
     const logs = flattenSessionsToEngineLogs(sessions);
     const stag = detectGlobalStagnation(logs);
     if (stag && stag.maxStagnationWeeks >= STAGNATION_WEEKS_THRESHOLD) {
+      // Cut-aware reframe (founder 2026-08-28: "la cut cu 1000 kcal se astepta
+      // sa cresc greutatile?") — in an ACTIVE kcal deficit, flat e1RM is the
+      // WIN condition, not a warning. A coach says "you're holding strength
+      // while losing weight", never "stagnation". Real DECLINE still surfaces
+      // through the deload/plateau machinery, which reads loads, not banners.
+      // No inner try/catch — this whole block sits in the instrumented outer
+      // catch (Sentry anti-drift gate D063 requires captureException per catch).
+      const mag = isEnabled('patterns_cut_aware_stagnation_v1')
+        ? resolveEnergyMagnitude()
+        : null;
+      const onCut = mag !== null && mag.phase === 'CUT';
       banners.push({
         id: 'STAGNATION',
-        severity: 'warn',
+        severity: onCut ? 'info' : 'warn',
         // i18n render boundary: resolve to localized copy via t() (engine-side
         // stagnationDetector stays locale-agnostic — it returns a week count).
-        text: __t('patterns.stagnationWeeks', { weeks: stag.maxStagnationWeeks }),
+        text: onCut
+          ? __t('patterns.stagnationCutHold', { weeks: stag.maxStagnationWeeks })
+          : __t('patterns.stagnationWeeks', { weeks: stag.maxStagnationWeeks }),
       });
     }
   } catch (e) {

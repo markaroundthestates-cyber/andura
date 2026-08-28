@@ -997,8 +997,8 @@
       "offTrack": "Not on track for your goal at the current pace.",
       "reached": "You're already at your goal weight.",
       "strengthHeading": "Strength — trajectory",
-      "strengthLine": "{lift}: ~{kg} kg in ~{weeks} wks.",
-      "strengthLineCut": "{lift}: realistic in a cut, hold ~{kg} kg."
+      "strengthLine": "{lift}: ~{kg} kg working weight in ~{weeks} wks.",
+      "strengthLineCut": "{lift}: realistic in a cut, hold ~{kg} kg working weight."
     },
     "nutritionInline": {
       "sectionHeading": "Nutrition · today",
@@ -1238,7 +1238,8 @@
   },
   "patterns": {
     "stagnation": "Stagnation on {exercise}",
-    "stagnationWeeks": "Stagnation for {weeks} weeks. Coach is adjusting the intensity."
+    "stagnationWeeks": "Stagnation for {weeks} weeks. Coach is adjusting the intensity.",
+    "stagnationCutHold": "Strength held for {weeks} weeks in a deficit — on a cut that's progress, not stagnation."
   },
   "proactive": {
     "proteinDeficit": "Average protein over the last {days} days: {avg}g. Target: {target}g. Increase your intake.",

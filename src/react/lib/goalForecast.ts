@@ -178,6 +178,14 @@ export interface StrengthForecast {
   currentOneRm: number;
   /** Projected 1RM (kg, 1 decimal) in STRENGTH_FORECAST_WEEKS at the recent slope. */
   projectedOneRm: number;
+  /**
+   * Display-only WORKING-SET equivalent of projectedOneRm at the lift's typical
+   * recent reps, equipment-snapped (founder 2026-08-28: "hold ~83.6 kg" was the
+   * lat-pulldown e1RM of a 66 kg working set — users read the number as a
+   * working weight, so show one). Derived at the I/O boundary; the math stays
+   * in e1RM space. Absent → the copy falls back to projectedOneRm.
+   */
+  workKg?: number;
   /** Horizon echoed for the copy (weeks). */
   weeks: number;
   /**
@@ -327,6 +335,7 @@ import { getCurrentWeightKg } from './userTdee';
 import { avgRecentLoggedIntake } from './nutritionProjection';
 import { isEnabled } from '../../util/featureFlags.js';
 import { ceilingE1RM } from '../../engine/dp/ceiling.js';
+import { roundToEquipmentWeight } from '../../config/weights.js';
 import { resolveGoalId } from '../../engine/periodization/volumeLandmarks.js';
 
 /** Epley 1RM estimate (kg) — same formula engineWrappers uses for PR deltas. */
@@ -407,6 +416,8 @@ export function readStrengthForecasts(now: number): StrengthForecast[] {
   // without engineName fall back to the display name (mirrors the writeback fallback).
   const engineKeyByLift = new Map<string, string>();
 
+  // Typical recent reps per lift → the working-set display equivalent (workKg).
+  const repsByLift = new Map<string, number[]>();
   for (const session of sessions) {
     if (!session.exercises) continue;
     for (const ex of session.exercises) {
@@ -420,6 +431,10 @@ export function readStrengthForecasts(now: number): StrengthForecast[] {
         if (oneRm <= 0) continue;
         if (!byLift.has(name)) byLift.set(name, []);
         byLift.get(name)!.push({ ts, oneRm });
+        if (Number.isFinite(set.reps) && set.reps > 0) {
+          if (!repsByLift.has(name)) repsByLift.set(name, []);
+          repsByLift.get(name)!.push(set.reps);
+        }
       }
     }
   }
@@ -460,7 +475,19 @@ export function readStrengthForecasts(now: number): StrengthForecast[] {
     const f = projectLiftStrength(
       trajectory ? { name, samples, trajectory, ceiling, goalId } : { name, samples, goalId }
     );
-    if (f) forecasts.push(f);
+    if (f) {
+      // workKg — invert Epley at the lift's MEDIAN recent reps, snapped to the
+      // real equipment grid, so the copy shows a number the user recognizes
+      // from their working sets (never a raw e1RM). No reps → field absent.
+      const reps = (repsByLift.get(name) ?? []).slice().sort((a, b) => a - b);
+      const medReps = reps.length ? reps[Math.floor(reps.length / 2)]! : 0;
+      if (medReps > 0) {
+        const raw = f.projectedOneRm / (1 + medReps / 30);
+        const snapped = Number(roundToEquipmentWeight(raw, engineKeyByLift.get(name) || name));
+        if (Number.isFinite(snapped) && snapped > 0) f.workKg = snapped;
+      }
+      forecasts.push(f);
+    }
   }
   // Most projected absolute gain first (the lift the user is climbing fastest).
   forecasts.sort((a, b) => (b.projectedOneRm - b.currentOneRm) - (a.projectedOneRm - a.currentOneRm));

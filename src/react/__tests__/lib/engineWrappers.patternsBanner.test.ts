@@ -20,6 +20,15 @@ vi.mock('../../../engine/adherence.js', () => ({
   getAdherenceScore: vi.fn(() => ({ score: 75, color: 'var(--accent)', label: 'OK' })),
 }));
 
+// Cut-aware reframe (patterns_cut_aware_stagnation_v1): partial-mock ONLY
+// resolveEnergyMagnitude so tests can pin the deficit signal; everything else in
+// the nutrition module stays real (other adapters import it).
+vi.mock('../../lib/engineWrappers.nutrition', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  resolveEnergyMagnitude: vi.fn(() => null),
+}));
+import { resolveEnergyMagnitude } from '../../lib/engineWrappers.nutrition';
+
 import {
   getPatternsBanner,
   isLowWeeklyWorkoutAdherence,
@@ -51,6 +60,8 @@ beforeEach(() => {
   _resetI18nCache();
   setLocale('ro');
   vi.mocked(detectGlobalStagnation).mockReturnValue({ maxStagnationWeeks: 0, byExercise: {} });
+  // Default: no deficit signal → the legacy warn path (cut tests override).
+  vi.mocked(resolveEnergyMagnitude).mockReturnValue(null);
   // Default: a user training on plan → 3 recent sessions, frequency target 4.
   useWorkoutStore.setState({ sessionsHistory: recentSessions(3) });
   useOnboardingStore.getState().setField('frequency', '4');
@@ -99,6 +110,19 @@ describe('engineWrappers — getPatternsBanner Option B composer', () => {
     expect(banners[0]!.id).toBe('STAGNATION');
     expect(banners[0]!.severity).toBe('warn');
     expect(banners[0]!.text).toMatch(/3 saptamani/);
+  });
+
+  it('STAGNATION pe CUT activ → reframe info "asta e progres" (cut-aware, founder 2026-08-28)', () => {
+    vi.mocked(resolveEnergyMagnitude).mockReturnValue({ phase: 'CUT', severity: 0.3 });
+    vi.mocked(detectGlobalStagnation).mockReturnValue({
+      maxStagnationWeeks: 3,
+      byExercise: { 'Bench Press': 3 },
+    });
+    const banners = getPatternsBanner();
+    expect(banners).toHaveLength(1);
+    expect(banners[0]!.id).toBe('STAGNATION');
+    expect(banners[0]!.severity).toBe('info');
+    expect(banners[0]!.text).toMatch(/progres, nu stagnare/);
   });
 
   it('STAGNATION banner NU triggered cand maxStagnationWeeks < 2', () => {

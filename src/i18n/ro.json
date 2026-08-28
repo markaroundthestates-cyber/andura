@@ -997,8 +997,8 @@
       "offTrack": "La ritmul curent nu esti pe drumul spre tinta.",
       "reached": "Esti deja la tinta de greutate.",
       "strengthHeading": "Forta - traiectorie",
-      "strengthLine": "{lift}: ~{kg} kg in ~{weeks} sapt.",
-      "strengthLineCut": "{lift}: realist in cut, pastrezi ~{kg} kg."
+      "strengthLine": "{lift}: ~{kg} kg la lucru in ~{weeks} sapt.",
+      "strengthLineCut": "{lift}: realist in cut, pastrezi ~{kg} kg la lucru."
     },
     "nutritionInline": {
       "sectionHeading": "Nutritie · azi",
@@ -1238,7 +1238,8 @@
   },
   "patterns": {
     "stagnation": "Stagnare la {exercise}",
-    "stagnationWeeks": "Stagnare {weeks} saptamani. Coach ajusteaza intensitatea."
+    "stagnationWeeks": "Stagnare {weeks} saptamani. Coach ajusteaza intensitatea.",
+    "stagnationCutHold": "Forta stabila de {weeks} saptamani pe deficit — la cut asta e progres, nu stagnare."
   },
   "proactive": {
     "proteinDeficit": "Proteina medie ultimele {days} zile: {avg}g. Tinta: {target}g. Creste aportul.",

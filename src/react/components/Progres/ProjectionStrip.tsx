@@ -47,26 +47,10 @@ export function ProjectionStrip(): JSX.Element | null {
   // Inca incarcam — nu randa nimic (evita flash).
   if (!loaded) return null;
 
-  // Nu putem proiecta (fara intake logat / TDEE / greutate) → hint logare.
-  if (proj === null) {
-    return (
-      <section
-        data-testid="projection-strip-empty"
-        className="pulse-card pulse-card-tight p-4 mb-4 flex items-center gap-4"
-        aria-label={t('bodyComp.projectionStrip.ariaLabel')}
-      >
-        <TrendingUp className="w-6 h-6 text-ink2 flex-shrink-0" aria-hidden="true" />
-        <div className="flex-1 min-w-0">
-          <p className="text-xs uppercase tracking-wide font-semibold text-ink2 mb-1">
-            {t('bodyComp.projectionStrip.label')}
-          </p>
-          <p className="text-sm text-ink2">
-            {t('bodyComp.projectionStrip.emptyHint')}
-          </p>
-        </div>
-      </section>
-    );
-  }
+  // Nu putem proiecta (fara intake logat / TDEE / greutate) → NIMIC. Founder
+  // 2026-08-28: cardul "logheaza mese ca sa proiectez" era un nag permanent
+  // pentru cine nu-si logheaza mesele ("imi e inutila") — empty state scos.
+  if (proj === null) return null;
 
   const weeks = horizonWeeksLabel(proj.horizonDays);
 
