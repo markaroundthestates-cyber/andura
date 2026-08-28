@@ -611,6 +611,13 @@ const PERSONA_TIME_CAP_MIN: Readonly<Record<string, number>> = {
   marius: 90,
 };
 const TIME_TARGET_OFFSET_MIN = 15; // soft target = hard cap − this
+// Absolute sanity ceiling for an EXPLICIT user time budget (founder 2026-08-28:
+// "degeaba ma intreaba andura cat timp am... ca tot imi da sub 60 min"). The
+// persona cap is a DEFAULT for someone who never said anything — once the user
+// states a budget, that is the honest ceiling; only this hard bound still applies
+// (a mis-tap of 600 min must not compose a 10-hour session). Volume safety stays
+// where it belongs downstream: the MRV ceiling + per-muscle budgets.
+const ABSOLUTE_SESSION_CAP_MIN = 120;
 const DEFAULT_PERSONA_TIME_CAP_MIN = PERSONA_TIME_CAP_MIN.gigica ?? 75;
 
 // Trim floor — never gut the session below a real workout. A trimmed group
@@ -1541,8 +1548,18 @@ export async function composePlannedWorkoutToday(
     const userTimeMin = useWorkoutStore.getState().sessionTimeBudgetMin;
     const hasUserTimeCap =
       typeof userTimeMin === 'number' && Number.isFinite(userTimeMin) && userTimeMin > 0;
+    // dp_user_time_budget_extends_v1 — the stated budget governs in BOTH directions.
+    // Legacy took min(persona, user), so an answer LARGER than the persona ceiling
+    // was silently discarded: a 36-year-old resolves to gigica (cap 75, soft target
+    // 60; on a LEGS day 75x0.8 = 60 cap / 45 target), so "I have 90 minutes" changed
+    // nothing and every session still came back under an hour — Andura asked a
+    // question and then ignored the answer. ON: an explicit budget sets the cap,
+    // bounded only by ABSOLUTE_SESSION_CAP_MIN. No budget → the persona cap exactly
+    // as before (byte-identical; the sims never set one).
     const timeCapMin = hasUserTimeCap
-      ? Math.min(personaFatigueCap, userTimeMin as number)
+      ? isEnabled('dp_user_time_budget_extends_v1')
+        ? Math.min(userTimeMin as number, ABSOLUTE_SESSION_CAP_MIN)
+        : Math.min(personaFatigueCap, userTimeMin as number)
       : personaFatigueCap;
     // HARD USER TIME-CAP fit (dp_hard_time_cap_v1) — the persona-derived floor (>=4 ex /
     // per-position sets / >=25min) stops the trim short of a tight USER budget (4 heavy

@@ -672,13 +672,16 @@ describe('composePlannedWorkoutToday — user pre-session TIME budget', () => {
     expect(again).toEqual(baseline);
   });
 
-  it('user time LONGER than the persona cap → persona cap still wins (no extension)', async () => {
+  // REWRITTEN 2026-08-28 (dp_user_time_budget_extends_v1). This spec used to assert
+  // "persona cap still wins (no extension)" — it encoded the founder's complaint as
+  // intended behavior: Andura asked how long he had and then discarded any answer
+  // above the persona ceiling. An EXPLICIT budget now governs both directions; only
+  // the 120-min sanity ceiling still bounds it.
+  it('user time LONGER than the persona cap → the STATED budget governs (bounded at 120)', async () => {
     const noLimit = await composeWith(null);            // marius cap 90
     const generous = await composeWith(180);            // user "I have 3h"
-    // The budget only ever SHRINKS the cap; a value above the persona ceiling
-    // must not extend the session — identical to the persona-derived plan.
-    expect(generous.estimatedDuration).toBe(noLimit.estimatedDuration);
-    expect(generous.exerciseCount).toBe(noLimit.exerciseCount);
+    expect(generous.estimatedDuration).toBeGreaterThan(noLimit.estimatedDuration);
+    expect(generous.estimatedDuration).toBeLessThanOrEqual(120); // sanity ceiling holds
   });
 
   it('determinism — same budget + plan twice → identical duration', async () => {
@@ -853,5 +856,85 @@ describe('composePlannedWorkoutToday — spate leg-curl drop-guard (#R6b)', () =
     const names = out!.exercises.map((e) => e.engineName ?? e.name);
     expect(out!.exercises.length).toBeLessThan(5);
     expect(names).not.toContain('Seated Leg Curl');
+  });
+});
+
+// ══ dp_user_time_budget_extends_v1 (founder live 2026-08-28) ═════════════════
+// "degeaba ma intreaba andura cat timp am pt antrenamentul de azi... ca tot imi
+// da sub 60 min". Legacy took min(persona, user), so a budget ABOVE the persona
+// ceiling was silently discarded. He is 36 → persona gigica → cap 75 / soft
+// target 60; on a LEGS day 75x0.8 = 60 cap / 45 target. Answering "90" changed
+// nothing. The budget must govern in BOTH directions.
+describe('user time budget EXTENDS the cap, not only shrinks it', () => {
+  const STUB = {
+    type: 'training' as const,
+    sessionType: 'UPPER', // fatigue factor 1.0 → the flat persona cap, no interference
+    warmup: null,
+    intensityModifier: null,
+    volumeTargets: null,
+    restTimeRange: [120, 180] as [number, number],
+    specializationTarget: null,
+    deloadState: 'IDLE',
+    workoutTitle: 'Antrenament azi',
+    estimatedDurationMin: 50,
+    volumeKg: 1000,
+  };
+  const BIG_PLAN = [
+    'DB Shoulder Press', 'Incline DB Press', 'Flat DB Press', 'Flat Barbell Bench',
+    'Lat Pulldown', 'Cable Row', 'Chest-Supported Row', 'Romanian Deadlift',
+  ];
+
+  /** The founder: 36 → gigica (cap 75 / target 60). */
+  function setFounder(): void {
+    useOnboardingStore.setState({
+      data: { age: 36, sex: 'm', goal: 'slabire', frequency: '4', experience: 'intermediar', weight: 98, height: 181 },
+      completed: true,
+      completedAt: Date.now(),
+    });
+  }
+
+  async function composeWithBudget(budget: number | null) {
+    setFounder();
+    useWorkoutStore.setState({ sessionTimeBudgetMin: budget });
+    const mod = await import('../../../engine/schedule/scheduleAdapter.js');
+    vi.spyOn(mod, 'getDailyWorkout').mockResolvedValueOnce({
+      ...STUB,
+      exercises: BIG_PLAN.map((name) => ({ name, sets: 4 })),
+    });
+    const out = await composePlannedWorkoutToday(TUESDAY_2026_05_19);
+    expect(out).not.toBeNull();
+    return out!;
+  }
+
+  it('stating 100 min yields a LONGER session than the persona default', async () => {
+    const persona = await composeWithBudget(null);
+    const stated = await composeWithBudget(100);
+    expect(stated.estimatedDuration).toBeGreaterThan(persona.estimatedDuration);
+    expect(stated.exercises.length).toBeGreaterThanOrEqual(persona.exercises.length);
+  });
+
+  it('the stated budget is actually honored (a session that fits ~100 min)', async () => {
+    const out = await composeWithBudget(100);
+    expect(out.estimatedDuration).toBeLessThanOrEqual(100);
+    // ...and it genuinely USES the time rather than stopping at the old 75 ceiling.
+    expect(out.estimatedDuration).toBeGreaterThan(75);
+  });
+
+  it('an absurd budget is still bounded by the 120-min sanity ceiling', async () => {
+    const out = await composeWithBudget(600);
+    expect(out.estimatedDuration).toBeLessThanOrEqual(120);
+  });
+
+  it('a TIGHT budget still shrinks exactly as before (regression guard)', async () => {
+    const tight = await composeWithBudget(30);
+    const persona = await composeWithBudget(null);
+    expect(tight.estimatedDuration).toBeLessThan(persona.estimatedDuration);
+  });
+
+  it('NO budget → the persona cap governs (byte-identical path)', async () => {
+    const a = await composeWithBudget(null);
+    const b = await composeWithBudget(null);
+    expect(a.estimatedDuration).toBe(b.estimatedDuration);
+    expect(a.exercises.length).toBe(b.exercises.length);
   });
 });
