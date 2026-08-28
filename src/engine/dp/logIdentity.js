@@ -10,6 +10,28 @@
 // resolveExerciseName maps name/id/alias/old-name → the current canonical name.
 
 import { resolveExerciseName } from '../exerciseLibrary.js';
+import { gymEquivalentFor } from './gymProfile.js';
+import { isEnabled } from '../../util/featureFlags.js';
+
+/**
+ * The canonical identity of an exercise for READ purposes, with the ACTIVE gym's
+ * equivalences applied first (dp_gym_exercise_equivalents_v1). A gym has ONE
+ * chest-press station, so whichever near-identical library entry the plan
+ * prescribed, its logs describe the same machine — folding them makes the engine
+ * read ONE history instead of several cold-starting fragments.
+ *
+ * The gym hop runs BEFORE the library resolve so the target is itself canonicalised.
+ * Flag OFF / no active gym / no declared equivalence → identical to the plain
+ * library resolve (byte-identical). Returns null for an unknown name, exactly like
+ * resolveExerciseName, so every caller's back-compat branch is preserved.
+ * @param {string|undefined} ex @returns {string|null}
+ */
+function canonicalIdentity(ex) {
+  if (typeof ex !== 'string' || !ex) return null;
+  const viaGym = isEnabled('dp_gym_exercise_equivalents_v1') ? gymEquivalentFor(ex) : null;
+  const base = viaGym ?? ex;
+  return resolveExerciseName(base) ?? (viaGym ? viaGym : null);
+}
 
 /**
  * A predicate matching a stored log row to a query exercise by CANONICAL identity.
@@ -21,9 +43,9 @@ import { resolveExerciseName } from '../exerciseLibrary.js';
  * @returns {(l: {ex?: string}) => boolean}
  */
 export function loggedRowMatcher(ex) {
-  const canon = resolveExerciseName(ex);
+  const canon = canonicalIdentity(ex);
   return canon
-    ? (l) => l.ex === ex || resolveExerciseName(l.ex) === canon
+    ? (l) => l.ex === ex || canonicalIdentity(l.ex) === canon
     : (l) => l.ex === ex;
 }
 
@@ -36,7 +58,7 @@ export function loggedRowMatcher(ex) {
  * @returns {string}
  */
 export function canonicalLoggedName(name) {
-  return resolveExerciseName(name) ?? name;
+  return canonicalIdentity(name) ?? name;
 }
 
 // ── Phase 2b read-side: case-insensitive log-row match by CANONICAL identity ───
@@ -50,11 +72,11 @@ export function canonicalLoggedName(name) {
 // @param {string} ex - the query exercise (name | id | alias)
 // @returns {(rowEx: string | undefined) => boolean}
 export function loggedNameMatchesCI(ex) {
-  const canon = resolveExerciseName(ex);
+  const canon = canonicalIdentity(ex);
   const lc = typeof ex === 'string' ? ex.toLowerCase() : '';
   return canon
     ? (rowEx) => typeof rowEx === 'string' &&
-        (rowEx.toLowerCase() === lc || resolveExerciseName(rowEx) === canon)
+        (rowEx.toLowerCase() === lc || canonicalIdentity(rowEx) === canon)
     : (rowEx) => typeof rowEx === 'string' && rowEx.toLowerCase() === lc;
 }
 

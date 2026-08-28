@@ -2784,6 +2784,10 @@
     "stacksHint": "Enter the real rungs, comma-separated. Empty = Andura learns from your logs.",
     "rungsCount": "{n} rungs",
     "usingDefault": "default (learns from logs)",
+    "sameMachineTitle": "Same machine",
+    "sameMachineHint": "If two exercises are done on the same machine at your gym, link them here. Andura merges their history instead of starting from scratch on each name.",
+    "sameMachineNone": "separate machine",
+    "sameMachineAria": "Which machine {exercise} is the same as",
     "stations": {
       "dumbbell": "Dumbbells",
       "bailib_stack": "Big cable (row / pulldown)",

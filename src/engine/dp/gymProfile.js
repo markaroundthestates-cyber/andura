@@ -24,7 +24,7 @@ import { DB } from '../../db.js';
 
 export const GYMS_KEY = 'dp-gyms';
 
-/** @typedef {{ id:string, name:string, stacks: Record<string, number[]> }} Gym */
+/** @typedef {{ id:string, name:string, stacks: Record<string, number[]>, equivalents?: Record<string,string> }} Gym */
 /** @typedef {{ activeId: string|null, gyms: Record<string, Gym> }} GymsState */
 
 /** Defensive-parsed whole state (never throws; bad shape → empty). @returns {GymsState} */
@@ -40,6 +40,36 @@ export function getGymsState() {
 export function activeGym() {
   const { activeId, gyms } = getGymsState();
   return activeId ? (gyms[activeId] || null) : null;
+}
+
+// ── Per-gym exercise EQUIVALENCE (founder live 2026-08-28) ───────────────────
+// The library carries several near-identical machine entries (Converging Chest
+// Press / Flat Chest Press Machine; Cable Fly / Pec Deck / Cable Fly / Cable Pec
+// Deck). A gym has ONE such station, so whichever entry the plan prescribes, the
+// user walks to the same machine — but the engine keys history per ENTRY, so the
+// history SPLITS and each identity cold-starts on its own. Founder's real logs:
+// his chest press split 15 sets / 6 sets across two names, his pec fly split
+// 15 / 21 / 3 across three, with the fly identities disagreeing 23 kg vs 60 kg
+// on the SAME machine (that is the "rec 12 kg when I proved 55" report).
+//
+// The merge MUST be per-gym: globally a cable fly really is a different exercise
+// from a pec deck. Here it means "at MY gym these prescriptions land on one
+// station", so reads collapse onto one identity. Writes are untouched (logs stay
+// append-only under whatever name was prescribed) → fully reversible.
+/**
+ * The canonical engine name this gym folds `engineName` into, or null when the
+ * active gym declares no equivalence for it. One hop only (a map pointing at
+ * another key is NOT followed) so a malformed cycle can never spin. PURE.
+ * @param {string} engineName @returns {string|null}
+ */
+export function gymEquivalentFor(engineName) {
+  if (typeof engineName !== 'string' || !engineName) return null;
+  const g = activeGym();
+  const map = g && g.equivalents;
+  if (!map || typeof map !== 'object' || Array.isArray(map)) return null;
+  const to = map[engineName];
+  if (typeof to !== 'string' || !to || to === engineName) return null;
+  return to;
 }
 
 /**
@@ -104,6 +134,33 @@ export function setGymStack(id, equipType, steps) {
   )].sort((a, b) => a - b);
   if (clean.length) state.gyms[id].stacks[equipType] = clean;
   else delete state.gyms[id].stacks[equipType];
+  return _save(state);
+}
+
+/**
+ * Declare (or clear, with an empty `toName`) that two library entries are the SAME
+ * physical station at this gym, so their split histories read as one identity.
+ * Rejects a self-map and any target that is itself mapped, keeping the map a flat
+ * one-hop relation (gymEquivalentFor never follows chains).
+ * @param {string} id @param {string} fromName @param {string} [toName]
+ * @returns {{ok:boolean,error?:string}}
+ */
+export function setGymEquivalent(id, fromName, toName) {
+  const state = getGymsState();
+  if (typeof id !== 'string' || !state.gyms[id]) return { ok: false, error: 'unknown_gym' };
+  if (typeof fromName !== 'string' || !fromName) return { ok: false, error: 'bad_name' };
+  const gym = state.gyms[id];
+  const map = (gym.equivalents && typeof gym.equivalents === 'object' && !Array.isArray(gym.equivalents))
+    ? gym.equivalents
+    : {};
+  if (typeof toName === 'string' && toName && toName !== fromName) {
+    if (map[toName]) return { ok: false, error: 'target_is_mapped' }; // no chains
+    map[fromName] = toName;
+  } else {
+    delete map[fromName];
+  }
+  if (Object.keys(map).length) gym.equivalents = map;
+  else delete gym.equivalents;
   return _save(state);
 }
 

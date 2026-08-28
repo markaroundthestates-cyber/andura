@@ -8,15 +8,17 @@
 // ExerciseLibrary drives scheduleAdapter directly. All strings i18n, no diacritics.
 
 import type { JSX } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Check, Trash2, Building2, X } from 'lucide-react';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
 import { t } from '../../../../i18n/index.js';
 import {
-  getGymsState, setActiveGym, upsertGym, setGymStack, removeGym,
+  getGymsState, setActiveGym, upsertGym, setGymStack, removeGym, setGymEquivalent,
 } from '../../../../engine/dp/gymProfile.js';
+import { DB } from '../../../../db.js';
+import { toExerciseDisplay } from '../../../lib/exerciseDisplay';
 
 // Equipment-type stations exposed in the editor (friendly RO label via i18n). Keys
 // mirror config/weights.js EQUIPMENT_WEIGHTS — one stack per station covers every lift
@@ -78,6 +80,21 @@ export function SalaMea(): JSX.Element {
     const s = active?.stacks?.[key];
     return Array.isArray(s) ? s.join(', ') : '';
   };
+  // The RAW logged names (not canonicalised) — the editor must keep showing a name
+  // AFTER it has been folded, otherwise the mapping could never be undone.
+  const loggedNames = useMemo(() => {
+    const logs = (DB.get('logs') as Array<{ ex?: string; w?: number }> | null) ?? [];
+    const names = new Set<string>();
+    for (const l of logs) if (l?.ex && l.w) names.add(l.ex);
+    return [...names].sort();
+  }, []);
+
+  const handleSetEquivalent = (from: string, to: string): void => {
+    if (!activeId) return;
+    setGymEquivalent(activeId, from, to);
+    refresh();
+  };
+
   const commitStack = (key: string): void => {
     if (!activeId || !(key in drafts)) return;
     setGymStack(activeId, key, parseSteps(drafts[key]!));
@@ -232,6 +249,49 @@ export function SalaMea(): JSX.Element {
                       className="pulse-field w-full px-3 py-2 rounded-xl text-sm font-mono"
                       data-testid={`sala-mea-stack-${key}-input`}
                     />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── Same-machine equivalences (founder 2026-08-28) ─────────────
+            The library carries several near-identical machine entries; a gym has
+            ONE such station, so whichever entry the plan prescribes the user walks
+            to the same machine — but history keys per ENTRY, so it SPLITS and each
+            fragment cold-starts alone (his pec fly disagreed 23 kg vs 60 kg with
+            itself). Declaring "these two are one machine here" folds the reads.
+            Only exercises he has actually LOGGED are offered — no library dump. */}
+        {active && loggedNames.length > 1 && (
+          <div className="space-y-2" data-testid="sala-mea-equivalents">
+            <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink3 px-1">
+              {t('gymProfile.sameMachineTitle')}
+            </div>
+            <p className="text-xs text-ink3 px-1 leading-relaxed">{t('gymProfile.sameMachineHint')}</p>
+            <div className="pulse-card p-1 overflow-hidden">
+              {loggedNames.map((name) => {
+                const mappedTo = active.equivalents?.[name] ?? '';
+                // A name that is itself a TARGET cannot also be a source (no chains).
+                const isTarget = Object.values(active.equivalents ?? {}).includes(name);
+                if (isTarget) return null;
+                return (
+                  <div key={name} className="px-4 py-3 border-b border-line last:border-b-0" data-testid={`sala-mea-eq-${name}`}>
+                    <div className="text-sm font-semibold text-ink mb-1.5">{toExerciseDisplay(name).name}</div>
+                    <select
+                      value={mappedTo}
+                      onChange={(e) => handleSetEquivalent(name, e.target.value)}
+                      className="pulse-field w-full px-3 py-2 rounded-xl text-sm"
+                      data-testid={`sala-mea-eq-${name}-select`}
+                      aria-label={t('gymProfile.sameMachineAria', { exercise: toExerciseDisplay(name).name })}
+                    >
+                      <option value="">{t('gymProfile.sameMachineNone')}</option>
+                      {loggedNames
+                        .filter((o) => o !== name && !active.equivalents?.[o])
+                        .map((o) => (
+                          <option key={o} value={o}>{toExerciseDisplay(o).name}</option>
+                        ))}
+                    </select>
                   </div>
                 );
               })}

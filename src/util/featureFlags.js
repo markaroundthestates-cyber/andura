@@ -489,6 +489,31 @@ export const FLAGS = Object.freeze({
   // branch is untouched. Pinned OFF in fp/calibration sims (engine/compose path) →
   // byte-identical there. Kill-switch: default false → legacy blind ramp.
   dp_energy_perf_aware_v1: { rollout: 1, default: true },
+  // dp_gym_exercise_equivalents_v1 (2026-08-28) — the library carries several
+  // near-identical machine entries; a gym has ONE such station, so whichever entry
+  // the plan prescribes the user walks to the same machine — but the engine keys
+  // history per ENTRY, so the history SPLITS and each identity cold-starts alone.
+  // Founder's real logs: chest press split 15/6 sets across two names, pec fly
+  // split 15/21/3 across three, the fly identities disagreeing 23 kg vs 60 kg for
+  // the SAME machine (the "recommends 12 kg when I proved 55" report — mis-blamed
+  // on the ego cap in July). ON: the ACTIVE gym's `equivalents` map folds those
+  // names onto one canonical identity at the READ seam (dp/logIdentity.js), so DP
+  // sees ONE history. Per-GYM by necessity — globally a cable fly really is not a
+  // pec deck. Writes untouched (logs stay append-only under the prescribed name)
+  // → flipping the flag off fully restores the split view. No gym / no declared
+  // equivalence → byte-identical; pinned OFF in fp + calibration sims.
+  dp_gym_exercise_equivalents_v1: { rollout: 1, default: true },
+  // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
+  // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
+  // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer
+  // ABOVE it was silently discarded. A 36-year-old resolves to persona gigica: cap 75
+  // / soft target 60, and on a LEGS day 75x0.8 = 60 cap / 45 target — so "I have 90
+  // minutes" changed nothing and every session came back under an hour. Andura asked
+  // and then ignored the answer. ON: an EXPLICIT budget sets the cap in both
+  // directions, bounded only by the 120-min sanity ceiling; volume safety stays with
+  // the MRV ceiling downstream. No budget set → persona cap (byte-identical, and the
+  // sims never set one). Kill-switch: default false → legacy shrink-only.
+  dp_user_time_budget_extends_v1: { rollout: 1, default: true },
 
   // ── F6b Volume/Progress-intelligence cluster (engine-wiring 2026-06-08) —
   // volume + the SHAPE of progress: half path-A (sets), half narration of what

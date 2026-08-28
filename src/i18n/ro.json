@@ -2784,6 +2784,10 @@
     "stacksHint": "Scrie treptele reale, separate prin virgula. Gol = Andura invata singura din logari.",
     "rungsCount": "{n} trepte",
     "usingDefault": "implicit (invata din logari)",
+    "sameMachineTitle": "Acelasi aparat",
+    "sameMachineHint": "Daca doua exercitii se fac pe acelasi aparat la tine in sala, leaga-le aici. Andura le uneste istoricul si nu mai porneste de la zero pe fiecare nume.",
+    "sameMachineNone": "aparat separat",
+    "sameMachineAria": "Cu ce aparat este identic {exercise}",
     "stations": {
       "dumbbell": "Gantere",
       "bailib_stack": "Scripete mare (ramat / helcometru)",
