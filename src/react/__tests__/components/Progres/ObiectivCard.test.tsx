@@ -224,6 +224,13 @@ describe('ObiectivCard — persistence round-trip (store hydrate)', () => {
 });
 
 // #74 goal-realism push-back (dp_goal_realism_v1, default OFF).
+// Calendar-rot guard (2026-08-28): the realism verdict depends on WEEKS-TO-TARGET
+// from the REAL clock, so fixed target dates rot as time passes (the '2026-07-27'
+// fixture fell into the past and flipped the copy variant). Anchor targets
+// RELATIVE to now — the tests assert pace math, not a calendar date.
+const monthFromNow = (days: number): string =>
+  new Date(Date.now() + days * 86_400_000).toISOString().slice(0, 10);
+
 describe('ObiectivCard — #74 goal-realism reframe (dp_goal_realism_v1)', () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -242,7 +249,7 @@ describe('ObiectivCard — #74 goal-realism reframe (dp_goal_realism_v1)', () =>
   it('flag ON + unrealistic timeline → reframe shows the realistic range', () => {
     vi.spyOn(flags, 'isEnabled').mockImplementation((id: string) => id === 'dp_goal_realism_v1');
     // 81 -> 63 (-18kg) by ~7 weeks out = ~2.5%/wk → unrealistic.
-    useProgresStore.getState().setTargetObiectiv({ weightKg: 63, month: '2026-07-27' });
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 63, month: monthFromNow(49) });
     renderCard();
     const reframe = screen.getByTestId('goal-realism-reframe');
     expect(reframe).toBeInTheDocument();
@@ -253,14 +260,14 @@ describe('ObiectivCard — #74 goal-realism reframe (dp_goal_realism_v1)', () =>
   it('flag ON + realistic plan → no reframe (no nag)', () => {
     vi.spyOn(flags, 'isEnabled').mockImplementation((id: string) => id === 'dp_goal_realism_v1');
     // 81 -> 75 (-6kg) far out → safe pace → silent.
-    useProgresStore.getState().setTargetObiectiv({ weightKg: 75, month: '2027-06-01' });
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 75, month: monthFromNow(300) });
     renderCard();
     expect(screen.queryByTestId('goal-realism-reframe')).toBeNull();
   });
 
   it('flag ON + dismiss → reframe goes away', () => {
     vi.spyOn(flags, 'isEnabled').mockImplementation((id: string) => id === 'dp_goal_realism_v1');
-    useProgresStore.getState().setTargetObiectiv({ weightKg: 63, month: '2026-07-27' });
+    useProgresStore.getState().setTargetObiectiv({ weightKg: 63, month: monthFromNow(49) });
     renderCard();
     fireEvent.click(screen.getByTestId('goal-realism-dismiss'));
     expect(screen.queryByTestId('goal-realism-reframe')).toBeNull();
