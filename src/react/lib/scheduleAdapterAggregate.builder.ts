@@ -26,6 +26,7 @@ import { computeACWR } from '../../engine/muscleRecovery.js';
 import { calculateFatigueScore } from '../../engine/fatigue.js';
 import { computeAdherence } from '../../engine/adherence.js';
 import { energyVolumeFactor } from '../../engine/dp/ceiling.js';
+import { detectStrongPerformance } from '../../engine/dp/performanceSignal.js';
 import { resolveEnergyMagnitude } from './engineWrappers.nutrition';
 import { DP } from '../../engine/dp.js';
 import { resolveBehavioralTier } from '../../coach/orchestrator/utilities/convergenceGuard.js';
@@ -197,6 +198,27 @@ function loggedSetsForWeakness(): { lifetime: LogRow[]; recent: LogRow[] } {
       ? []
       : lifetime.filter((l) => typeof l?.session === 'number' && recentWindow.has(l.session));
   return { lifetime, recent };
+}
+
+/**
+ * I/O boundary for the demonstrated-performance signal (founder live 2026-08-28).
+ * The energy modulation reads only the kcal deficit, so a deep cut applies the
+ * MAXIMUM protection (−30% volume, +2 RIR, deload pulled forward every mesocycle)
+ * even to a user setting PRs and rating most sets `potrivit`. This reads the two
+ * durable channels the verdict needs and delegates to the PURE detector.
+ *
+ * Flag OFF (dp_energy_perf_aware_v1) → null → energyVolumeFactor keeps its legacy
+ * single-argument behaviour (byte-identical). Never throws.
+ */
+export function readStrongPerformanceSignal(now: number): { strong: boolean } | null {
+  if (!isEnabled('dp_energy_perf_aware_v1')) return null;
+  try {
+    const logs = (DB.get('logs') as Array<{ ts?: number; rpe?: number }> | null) ?? [];
+    const prs = (DB.get('pr-records') as Array<{ ts?: number }> | null) ?? [];
+    return detectStrongPerformance(logs, prs, now);
+  } catch {
+    return null; // never block a plan on a telemetry read
+  }
 }
 
 function tierForExperience(experience: unknown): 'T0' | 'T1' | 'T2' | null {
@@ -562,7 +584,10 @@ export function buildUserStateForPipeline(): {
   const energyDeloadBias = isEnabled('dp_energy_volume_v1')
     ? (() => {
         const mag = resolveEnergyMagnitude();
-        return mag ? energyVolumeFactor(mag).deloadBias : 0;
+        // Performance temper: a thriving user's bias drops below the pull-forward
+        // threshold, so the deload stays on its calendar week instead of arriving
+        // early every mesocycle. Flag OFF → null → legacy bias.
+        return mag ? energyVolumeFactor(mag, readStrongPerformanceSignal(now)).deloadBias : 0;
       })()
     : 0;
   // Intra-week deficit recovery (D-intra-week 2026-06-04) — DONE working-set volume

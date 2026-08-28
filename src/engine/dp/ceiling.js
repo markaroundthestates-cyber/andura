@@ -286,6 +286,13 @@ export const VOLUME_FACTOR_MIN = 0.70;        // hard clamp (the policy's deepes
 export const VOLUME_FACTOR_MAX = 1.10;        // hard clamp (the surplus ceiling)
 export const RIR_SHIFT_MAX = 2;               // deep deficit → up to +2 RIR (further from failure)
 export const RIR_SHIFT_SURPLUS_MAX = 1;       // deep surplus → up to −1 RIR (closer to failure)
+// Performance temper (founder live 2026-08-28) — the deficit ramp is blind to how
+// the user is ACTUALLY handling it. With demonstrated-strong performance (a recent
+// PR + a low `greu` share, see dp/performanceSignal.js) the deficit-driven cut is
+// halved: still a real reduction, no longer the MAXIMUM one. Founder case: a 0.52
+// severity saturated every knob (−30% volume, +2 RIR, deloadBias 1.0 → deload
+// pulled forward every mesocycle) while he set 9 PRs in 30 days.
+export const PERF_TEMPER_FACTOR = 0.5;        // strong performance halves the deficit ramp
 
 /**
  * Magnitude-aware energy → session modulation. Returns the VOLUME multiplier
@@ -298,9 +305,13 @@ export const RIR_SHIFT_SURPLUS_MAX = 1;       // deep surplus → up to −1 RIR
  *
  * @param {{ phase: string|null|undefined, severity: number }|null|undefined} magnitude
  *   phase = resolveActivePhase token; severity = |kcalShift|/maintenance in [0,1].
+ * @param {{ strong?: boolean }|null} [performance] demonstrated-performance signal
+ *   (dp/performanceSignal.detectStrongPerformance). `strong` halves the DEFICIT
+ *   ramp only — the surplus branch and every clamp are untouched. Absent/null →
+ *   byte-identical to the legacy single-argument behaviour.
  * @returns {{ volumeFactor: number, rirShift: number, deloadBias: number }}
  */
-export function energyVolumeFactor(magnitude) {
+export function energyVolumeFactor(magnitude, performance) {
   const phase = magnitude && typeof magnitude.phase === 'string' ? magnitude.phase : null;
   const sevRaw = magnitude && Number.isFinite(magnitude.severity) ? Number(magnitude.severity) : 0;
   const severity = Math.min(1, Math.max(0, sevRaw));
@@ -311,7 +322,11 @@ export function energyVolumeFactor(magnitude) {
     if (severity <= ENERGY_DEFICIT_ONSET) return NEUTRAL;
     // Linearly ramp the cut from MIN (at onset) to MAX (at SEVERITY_AT_MAX_CUT), then flat.
     const span = Math.max(1e-9, SEVERITY_AT_MAX_CUT - ENERGY_DEFICIT_ONSET);
-    const t = Math.min(1, (severity - ENERGY_DEFICIT_ONSET) / span);
+    const tRaw = Math.min(1, (severity - ENERGY_DEFICIT_ONSET) / span);
+    // Demonstrated-strong performance halves the ramp (never deepens it) — the
+    // deficit still costs volume, just not the maximum dose for someone who is
+    // visibly recovering. Absent signal → tRaw → byte-identical legacy output.
+    const t = performance?.strong === true ? tRaw * PERF_TEMPER_FACTOR : tRaw;
     const cut = VOLUME_CUT_MIN + t * (VOLUME_CUT_MAX - VOLUME_CUT_MIN);
     const volumeFactor = Math.max(VOLUME_FACTOR_MIN, Math.min(VOLUME_FACTOR_MAX, 1 - cut));
     // Deeper deficit → push further from failure (recovery impaired). 0..RIR_SHIFT_MAX.

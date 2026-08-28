@@ -478,6 +478,17 @@ export const FLAGS = Object.freeze({
   // severity info) instead of a warning. React-banner only (no engine/compose
   // path → no fp pin). Kill-switch: default false → legacy warn copy.
   patterns_cut_aware_stagnation_v1: { rollout: 1, default: true },
+  // dp_energy_perf_aware_v1 (2026-08-28) — the energy modulation read ONLY the kcal
+  // deficit, so a deep cut pinned every knob at MAXIMUM (−30% volume, +2 RIR,
+  // deloadBias 1.0 → deload pulled forward every mesocycle) regardless of how the
+  // user was actually handling it. Founder's real account: severity 0.52 (far past
+  // the 0.30 saturation) while setting 9 PRs in 30 days and rating 83% of sets
+  // `potrivit`. ON: demonstrated-strong performance (a PR in 21d + `greu` share
+  // < 35% + >= 12 sets, see engine/dp/performanceSignal.js) HALVES the deficit ramp
+  // — still a real cut, no longer the maximum dose. Never deepens a cut; the surplus
+  // branch is untouched. Pinned OFF in fp/calibration sims (engine/compose path) →
+  // byte-identical there. Kill-switch: default false → legacy blind ramp.
+  dp_energy_perf_aware_v1: { rollout: 1, default: true },
 
   // ── F6b Volume/Progress-intelligence cluster (engine-wiring 2026-06-08) —
   // volume + the SHAPE of progress: half path-A (sets), half narration of what

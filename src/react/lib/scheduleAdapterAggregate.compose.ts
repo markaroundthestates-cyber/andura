@@ -40,6 +40,7 @@ import { experienceToEngine } from './scheduleAdapterAggregate.session';
 import {
   buildUserStateForPipeline,
   readinessScoreForUser,
+  readStrongPerformanceSignal,
 } from './scheduleAdapterAggregate.builder';
 import { resolvePersonaId } from '../../engine/periodization/volumeLandmarks.js';
 import { phaseRirShift } from '../../engine/periodization/mesocycle.js';
@@ -1393,7 +1394,13 @@ export async function composePlannedWorkoutToday(
     // sessionBuilder/dp never import nutrition; the resolved {phase,severity} token
     // is passed read-only. Flag OFF → null → factor 1.0 + rirShift 0 → byte-identical.
     const energyMagnitude = isEnabled('dp_energy_volume_v1') ? resolveEnergyMagnitude() : null;
-    const energyMod = energyMagnitude ? energyVolumeFactor(energyMagnitude) : null;
+    // Performance temper (founder 2026-08-28): the deficit ramp is halved when the
+    // user demonstrably handles it (recent PR + low `greu` share) — a deep cut no
+    // longer forces the MAXIMUM volume/RIR dose on someone visibly recovering.
+    // Flag OFF → null → byte-identical legacy modulation.
+    const energyMod = energyMagnitude
+      ? energyVolumeFactor(energyMagnitude, readStrongPerformanceSignal(now.getTime()))
+      : null;
     // RIR shift folded into the rir DISPLAY band only (never the kg — KEEP-LOAD). 0
     // shift / no magnitude → the base band unchanged (byte-identical).
     const rirEnergyMod = energyMod
