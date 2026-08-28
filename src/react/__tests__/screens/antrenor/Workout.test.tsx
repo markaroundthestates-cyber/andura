@@ -1586,21 +1586,30 @@ describe('Workout — PR detection pipeline (task_10 §B getPRDelta wire)', asyn
   });
 
   it('history passed la getPRDelta accumulates set 2+ correctly', async () => {
-    await renderWorkoutAndWait();
-    logSet('Usor');
-    fireEvent.click(screen.getByTestId('rest-skip'));
-    vi.mocked(getPRDelta).mockClear();
-    logSet('Potrivit');
-    // Phase 4 task_14 LOCK 9: rapid set click triggers aaFriction fast_sets
-    // (consecutive < 30s real time). Dismiss via "Continui oricum" override
-    // → performLogSet proceeds → getPRDelta invocat cu accumulated history.
-    const continueBtn = screen.queryByTestId('aa-friction-continue');
-    if (continueBtn) fireEvent.click(continueBtn);
-    expect(getPRDelta).toHaveBeenCalledWith(
-      'Bench Press',
-      { w: 22.5, reps: 10 },
-      [{ ex: 'Bench Press', w: 22.5, reps: 10 }] // 1st set in history
-    );
+    // Calendar-rot guard (2026-08-28): the composed set-2 rec is date-dependent
+    // (mesocycle phase off the REAL clock nudged reps 10 → 11 on some dates).
+    // Pin the clock — this test asserts history ACCUMULATION, not composition.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(2026, 5, 15));
+    try {
+      await renderWorkoutAndWait();
+      logSet('Usor');
+      fireEvent.click(screen.getByTestId('rest-skip'));
+      vi.mocked(getPRDelta).mockClear();
+      logSet('Potrivit');
+      // Phase 4 task_14 LOCK 9: rapid set click triggers aaFriction fast_sets
+      // (consecutive < 30s real time). Dismiss via "Continui oricum" override
+      // → performLogSet proceeds → getPRDelta invocat cu accumulated history.
+      const continueBtn = screen.queryByTestId('aa-friction-continue');
+      if (continueBtn) fireEvent.click(continueBtn);
+      expect(getPRDelta).toHaveBeenCalledWith(
+        'Bench Press',
+        { w: 22.5, reps: 10 },
+        [{ ex: 'Bench Press', w: 22.5, reps: 10 }] // 1st set in history
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 
@@ -1867,6 +1876,31 @@ describe('Workout — aaFriction LOCK 9 wire (task_14 §C)', async () => {
     // Ai mers mai greu ca de obicei → pauza normala A EXERCITIULUI + 30s extra
     // (NU 30s flat). Bench Press restSec=90 → 90+30 = 120s = 2:00.
     expect(screen.getByTestId('rest-countdown')).toHaveTextContent('2:00');
+  });
+
+  it('final set of the final exercise → NO aa modal (founder 2026-08-28)', async () => {
+    // "imi da ala de pauza 30 sec extra chiar daca dupa pauza e end of training"
+    // — pacing advice is pointless when nothing follows. Walk the real flow:
+    // sets 2-3 fire fast_sets (< 30s gaps, same trigger as the tests above) and
+    // are pushed through via Continui oricum; set 4 of 4 on the ONLY (thus
+    // final) exercise hits the same trigger — the gate must swallow it.
+    vi.mocked(getTodayWorkout).mockResolvedValueOnce({
+      ...PHASE_5_FIXTURE,
+      exerciseCount: 1,
+      exercises: [PHASE_5_FIXTURE.exercises[0]!],
+    });
+    await renderWorkoutAndWait();
+    logSet('Usor');
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    logSet('Potrivit'); // set 2 → fast_sets modal
+    fireEvent.click(screen.getByTestId('aa-friction-continue'));
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    logSet('Potrivit'); // set 3 → fast_sets modal
+    fireEvent.click(screen.getByTestId('aa-friction-continue'));
+    fireEvent.click(screen.getByTestId('rest-skip'));
+    logSet('Potrivit'); // set 4 = the session's FINAL set → gated, no modal
+    expect(screen.queryByTestId('aa-friction-modal')).not.toBeInTheDocument();
+    expect(useWorkoutStore.getState().history[0]?.length).toBe(4); // logged through
   });
 
   it('triggers modal pe kg_jump pattern (> 20% increase)', async () => {

@@ -1238,16 +1238,22 @@ export function Workout(): JSX.Element {
     // `targetKg`. On set 1 recKg === targetKg, so first-set behaviour is
     // unchanged; on later sets the friction boundary tracks the autoreg-raised
     // rec instead of drifting from it.
-    const check = detectAggressiveLoad(samples, {
-      kg: kgInput,
-      reps: repsInput,
-      timestamp: Date.now(),
-    }, thresholds, recKg);
-    if (check.trigger && check.reason) {
-      setAaReason(check.reason);
-      setAaPendingRating(rating);
-      setAaModalOpen(true);
-      return;
+    // Founder 2026-08-28 — the session's FINAL set gets no pacing interruption:
+    // the modal's advice ("+30s recovery / pace yourself") is meaningless when
+    // nothing follows the set ("imi da ala de pauza 30 sec extra chiar daca dupa
+    // pauza e end of training"). Anomaly/typo guard above still ran.
+    if (!(isLastSetOfExercise && isLastExercise)) {
+      const check = detectAggressiveLoad(samples, {
+        kg: kgInput,
+        reps: repsInput,
+        timestamp: Date.now(),
+      }, thresholds, recKg);
+      if (check.trigger && check.reason) {
+        setAaReason(check.reason);
+        setAaPendingRating(rating);
+        setAaModalOpen(true);
+        return;
+      }
     }
     performLogSet(rating, userConfirmed);
   }
