@@ -118,9 +118,10 @@ export function resolveBusySwap(
   engineName: string,
   exIdx: number,
   excludeNames: readonly string[] = [],
+  prescribedSets?: number,
 ): SwapResolution {
   const available = availableTypesExcludingBusy(engineName);
-  return resolveCascade(engineName, available, exIdx, 'Aparat ocupat', excludeNames);
+  return resolveCascade(engineName, available, exIdx, 'Aparat ocupat', excludeNames, prescribedSets);
 }
 
 /**
@@ -135,9 +136,10 @@ export function resolveMissingSwap(
   engineName: string,
   exIdx: number,
   excludeNames: readonly string[] = [],
+  prescribedSets?: number,
 ): SwapResolution {
   const available = availableCoarseTypes(getMissingEquipment());
-  return resolveCascade(engineName, available, exIdx, 'Aparat lipsa', excludeNames);
+  return resolveCascade(engineName, available, exIdx, 'Aparat lipsa', excludeNames, prescribedSets);
 }
 
 // Daniel smoke 2026-05-28 (#3.3 etc) — RO display labels for engine muscle
@@ -199,6 +201,7 @@ export function resolveRefusalSwap(
   engineName: string,
   exIdx: number,
   triedNames: readonly string[] = [],
+  prescribedSets?: number,
 ): SwapResolution {
   const originalName = toExerciseDisplay(engineName).name;
   const { candidates, muscleGroup } = findRefusalPool(
@@ -234,7 +237,7 @@ export function resolveRefusalSwap(
 
   const altName = candidates[0]!.name;
   return {
-    exercise: buildSwappedExercise(altName, exIdx, 'Schimbat la cerere'),
+    exercise: buildSwappedExercise(altName, exIdx, 'Schimbat la cerere', prescribedSets),
     swapped: true,
     alternativeName: toExerciseDisplay(altName).name,
     alternativeEngineName: altName,
@@ -288,6 +291,7 @@ export function resolveSwapPickList(
   exIdx: number,
   excludeNames: readonly string[] = [],
   triedNames: readonly string[] = [],
+  prescribedSets?: number,
 ): SwapPickList {
   const originalName = toExerciseDisplay(engineName).name;
   const { items, muscleGroup } = buildSwapPickList(
@@ -314,7 +318,7 @@ export function resolveSwapPickList(
   const usable = offerable.length > 0 ? offerable : items;
 
   const rows: SwapPickRow[] = usable.map((it) => ({
-    exercise: buildSwappedExercise(it.name, exIdx, 'Schimbat la cerere'),
+    exercise: buildSwappedExercise(it.name, exIdx, 'Schimbat la cerere', prescribedSets),
     engineName: it.name,
     displayName: toExerciseDisplay(it.name).name,
     prePick: it.prePick,
@@ -353,6 +357,7 @@ function resolveCascade(
   exIdx: number,
   reason: string,
   excludeNames: readonly string[] = [],
+  prescribedSets?: number,
 ): SwapResolution {
   const originalName = toExerciseDisplay(engineName).name;
   const res = getFallbackCascade(engineName, availableTypes) as {
@@ -402,7 +407,7 @@ function resolveCascade(
   }
 
   return {
-    exercise: buildSwappedExercise(altName, exIdx, reason),
+    exercise: buildSwappedExercise(altName, exIdx, reason, prescribedSets),
     swapped: true,
     alternativeName: toExerciseDisplay(altName).name,
     originalName,
@@ -498,6 +503,6 @@ export function recomposeWithBusyTypes(
     const altName = res.exercise ?? (Array.isArray(res.exercises) ? res.exercises[0] : undefined);
     if (typeof altName !== 'string' || altName.length === 0) return ex;
     const originalName = toExerciseDisplay(engineName).name;
-    return buildSwappedExercise(altName, idx, `${originalName} ocupat`);
+    return buildSwappedExercise(altName, idx, `${originalName} ocupat`, ex.sets);
   });
 }

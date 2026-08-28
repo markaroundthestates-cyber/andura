@@ -485,11 +485,15 @@ function toPlannedExercise(
  * @param engineName English canonical name of the alternative
  * @param idx position in the session (id slug)
  * @param swapReason short RO reason surfaced in the display sub slot
+ * @param prescribedSets the set count the REPLACED slot carried — the swap keeps
+ *   the session's own volume decision instead of stamping a constant. Omitted /
+ *   invalid → SWAP_FALLBACK_SETS (the legacy 3).
  */
 export function buildSwappedExercise(
   engineName: string,
   idx: number,
   swapReason: string,
+  prescribedSets?: number,
 ): PlannedExercise {
   const experienceEn = experienceToEngine(
     useOnboardingStore.getState().data.experience,
@@ -501,8 +505,21 @@ export function buildSwappedExercise(
     bodyweightKg: getCurrentWeightKg(),
     sex: useOnboardingStore.getState().data.sex,
   };
+  // dp_swap_keeps_prescribed_sets_v1 (founder live 2026-08-28: "daca dadeam
+  // replace... imi recomanda 3 seturi in loc de 2... adauga un set din burta").
+  // The hardcoded 3 OVERWROTE whatever the pipeline had decided for that slot, so
+  // a swap silently discarded the readiness scale, the deficit/energy volume cut,
+  // the MRV ceiling and the time-budget trim — adding a set on a 2-set slot and
+  // REMOVING one on a 4-set slot. Keep the slot's prescribed count; 3 stays the
+  // honest fallback when the caller has no slot to quote (flag OFF → legacy).
+  const sets =
+    isEnabled('dp_swap_keeps_prescribed_sets_v1') &&
+    Number.isFinite(prescribedSets) &&
+    (prescribedSets as number) > 0
+      ? Math.round(prescribedSets as number)
+      : SWAP_FALLBACK_SETS;
   const planned = toPlannedExercise(
-    { name: engineName, sets: 3 },
+    { name: engineName, sets },
     idx,
     experienceEn,
     readinessScore,
@@ -624,6 +641,9 @@ const DEFAULT_PERSONA_TIME_CAP_MIN = PERSONA_TIME_CAP_MIN.gigica ?? 75;
 // re-surfaces as lagging next session (M2 weakness amplification + M1 recovery
 // re-prioritize it), so trimming today is SAFE and self-correcting; the floor
 // only stops the trim from producing a stub.
+// Fallback set count for a swap whose caller cannot quote the replaced slot (the
+// legacy hardcode — kept only as the honest unknown case, see buildSwappedExercise).
+const SWAP_FALLBACK_SETS = 3;
 const MIN_EXERCISES_FLOOR = 4; // never below ~4 exercises
 const MIN_SETS_PER_EX = 2;     // never below MIN_SETS (matches chassis clamp)
 const MIN_SESSION_MIN = 25;    // never trim below a ~25min session

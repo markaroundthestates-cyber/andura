@@ -204,6 +204,8 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
         safeExIdx,
         excludeNames,
         triedNames,
+        // Keep THIS slot's prescribed set count — a swap must not re-decide volume.
+        currentExercise.sets,
       );
       // §C6 audit fix — the busy fallback ('equipment-swap') is a HARD blocker,
       // not a taste refusal; only the 'Nu vreau' path ('ceva-nu-merge') counts as
@@ -495,7 +497,7 @@ export function useWorkoutSwap(args: UseWorkoutSwapArgs): UseWorkoutSwap {
     const missingType = getExerciseMetadata(engineName)?.equipment_type;
     const excludeNames = otherSessionNames();
     const triedNames = [...(refusalTriedByEx[safeExIdx] ?? [])];
-    const { rows, originalName } = resolveSwapPickList(engineName, safeExIdx, excludeNames, triedNames);
+    const { rows, originalName } = resolveSwapPickList(engineName, safeExIdx, excludeNames, triedNames, currentExercise.sets);
     const differentEquip = rows.filter(
       (r) => getExerciseMetadata(r.engineName)?.equipment_type !== missingType,
     );

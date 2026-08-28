@@ -514,6 +514,16 @@ export const FLAGS = Object.freeze({
   // the MRV ceiling downstream. No budget set → persona cap (byte-identical, and the
   // sims never set one). Kill-switch: default false → legacy shrink-only.
   dp_user_time_budget_extends_v1: { rollout: 1, default: true },
+  // dp_swap_keeps_prescribed_sets_v1 (2026-08-28, founder "daca dadeam replace cu
+  // altceva imi recomanda 3 seturi in loc de 2... adauga un set din burta") —
+  // buildSwappedExercise hardcoded `sets: 3`, so ANY swap overwrote the count the
+  // pipeline had computed for that slot: +1 set on a 2-set slot, and a SILENT -1
+  // on a 4-set slot. It discarded, per swapped exercise, the readiness scale, the
+  // deficit/energy volume cut, the MRV ceiling and the time-budget trim. ON: the
+  // replacement inherits the replaced slot's prescribed sets; 3 remains only as
+  // the fallback when a caller cannot quote a slot. Swap paths are user actions,
+  // not on the fp/calibration compose path → no sim pin needed.
+  dp_swap_keeps_prescribed_sets_v1: { rollout: 1, default: true },
 
   // ── F6b Volume/Progress-intelligence cluster (engine-wiring 2026-06-08) —
   // volume + the SHAPE of progress: half path-A (sets), half narration of what

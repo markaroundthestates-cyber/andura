@@ -332,3 +332,51 @@ describe('resolveSwapPickList — manual pick-list rows', () => {
     expect(after.rows.length).toBeGreaterThan(0);
   });
 });
+
+// ══ dp_swap_keeps_prescribed_sets_v1 (founder live 2026-08-28) ═══════════════
+// "daca dadeam replace cu altceva imi recomanda 3 seturi in loc de 2, chiar daca
+// era aceeasi miscarea... adauga un set din burta". buildSwappedExercise
+// hardcoded sets:3, so a swap re-decided the slot's volume: +1 on a 2-set slot
+// and a SILENT -1 on a 4-set slot, discarding the readiness scale, the deficit
+// volume cut, the MRV ceiling and the time-budget trim for that exercise.
+describe('a swap keeps the slot prescribed set count', () => {
+  it('his exact case: a 2-set slot stays 2 sets after the pick (not 3)', () => {
+    const { rows } = resolveSwapPickList('Cable Fly', 0, [], [], 2);
+    expect(rows.length).toBeGreaterThan(0);
+    for (const r of rows) expect(r.exercise.sets).toBe(2);
+  });
+
+  it('a 4-set slot stays 4 — the constant also SILENTLY removed volume', () => {
+    const { rows } = resolveSwapPickList('Incline DB Press', 0, [], [], 4);
+    expect(rows.length).toBeGreaterThan(0);
+    for (const r of rows) expect(r.exercise.sets).toBe(4);
+  });
+
+  it('the refusal path honors it too', () => {
+    const res = resolveRefusalSwap('Incline DB Press', 0, [], 2);
+    expect(res.swapped).toBe(true);
+    expect(res.exercise?.sets).toBe(2);
+  });
+
+  it('the busy path honors it too', () => {
+    const res = resolveBusySwap('Incline Barbell Bench', 0, [], 5);
+    expect(res.swapped).toBe(true);
+    expect(res.exercise?.sets).toBe(5);
+  });
+
+  it('no slot quoted → the honest 3 fallback (legacy shape preserved)', () => {
+    const { rows } = resolveSwapPickList('Cable Fly', 0);
+    expect(rows.length).toBeGreaterThan(0);
+    for (const r of rows) expect(r.exercise.sets).toBe(3);
+  });
+
+  it('the busy-recompose keeps EACH row own count (reads ex.sets per slot)', () => {
+    const plan = [
+      { id: 'a-0', name: 'Incline Barbell Bench', engineName: 'Incline Barbell Bench', sets: 2, targetReps: 10, targetKg: 40, restSec: 90 },
+      { id: 'b-1', name: 'Flat Barbell Bench', engineName: 'Flat Barbell Bench', sets: 5, targetReps: 8, targetKg: 60, restSec: 120 },
+    ] as unknown as PlannedExercise[];
+    const out = recomposeWithBusyTypes(plan, ['barbell']);
+    expect(out[0]!.sets).toBe(2);
+    expect(out[1]!.sets).toBe(5);
+  });
+});
