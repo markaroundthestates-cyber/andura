@@ -62,7 +62,7 @@ const REQUIRED_ADAPTERS = [
   'getGoalPivotProposal',
 ] as const;
 
-const EXPECTED_CAPTURE_EXCEPTION_SITES = 18; // 11 Big-11 (getPatternsBanner now single STAGNATION catch — LOW_ADHERENCE removed 2026-06-13) + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare) + getWorkoutForDay (schedule day-preview) + getCalibrationMaturity (calibration honesty) + getReturnAfterMissSignal (no-shame return) + getGoalPivotProposal (#15 auto-pivot) + writePivotPrompts (#15 prompt-bookkeeping write fallback)
+const EXPECTED_CAPTURE_EXCEPTION_SITES = 19; // 11 Big-11 (getPatternsBanner now single STAGNATION catch — LOW_ADHERENCE removed 2026-06-13) + getWhyExerciseSummary (F-workout-05) + readTdeeEstimateKcal (Piesa 4 Preconizare) + getWorkoutForDay (schedule day-preview) + getCalibrationMaturity (calibration honesty) + getReturnAfterMissSignal (no-shame return) + getGoalPivotProposal (#15 auto-pivot) + writePivotPrompts (#15 prompt-bookkeeping write fallback) + getAlternativeClusterOptions (2026-08-28 group picker)
 
 describe('Sentry adapter coverage anti-drift gate (D063 LOCK V1)', () => {
   const source = readFileSync(ENGINE_WRAPPERS_PATH, 'utf-8');

@@ -13,6 +13,7 @@ import {
   frequencyToSplit,
   weeklySessionsPerGroup,
   pickAlternativeCluster,
+  rankAlternativeClusters,
   getCalendarOverride,
   CALENDAR_OVERRIDE_KEY,
 } from '../scheduleAdapter.js';
@@ -628,6 +629,61 @@ describe('pickAlternativeCluster — most-recovered alternative (pure)', () => {
   it('is deterministic (same inputs → same output)', () => {
     const state = { piept: 'partial', spate: 'recovered' };
     expect(pickAlternativeCluster('legs', state)).toBe(pickAlternativeCluster('legs', state));
+  });
+});
+
+// Founder 2026-08-28 — the override must OFFER, not decide. The ranked list is the
+// same ordering the auto-pick consumes, so ranked[0] === the legacy pick.
+describe('rankAlternativeClusters — the full ranking behind the pick', () => {
+  it('ranked[0] is exactly what pickAlternativeCluster returns', () => {
+    const state = {
+      piept: 'fatigued', umeri: 'fatigued', triceps: 'fatigued',
+      spate: 'recovered', biceps: 'recovered', antebrate: 'recovered',
+    };
+    expect(rankAlternativeClusters('legs', state)[0].cluster)
+      .toBe(pickAlternativeCluster('legs', state));
+  });
+
+  it('offers every cluster EXCEPT the scheduled one, freshest first', () => {
+    const ranked = rankAlternativeClusters('push', {});
+    expect(ranked.map((r) => r.cluster)).not.toContain('push');
+    expect(ranked).toHaveLength(5);
+    for (let i = 1; i < ranked.length; i++) {
+      expect(ranked[i - 1].score).toBeGreaterThanOrEqual(ranked[i].score);
+    }
+  });
+
+  it('an unknown scheduled cluster still offers all six (rest day / no plan)', () => {
+    expect(rankAlternativeClusters('', {})).toHaveLength(6);
+  });
+});
+
+describe('getDailyWorkout — the USER picks the alternative group', () => {
+  it("honors differentMuscleCluster over the engine's freshest pick", async () => {
+    const auto = await getDailyWorkout(
+      buildUserState(), MONDAY_2026_05_18, { differentMuscle: true });
+    const picked = await getDailyWorkout(
+      buildUserState(), MONDAY_2026_05_18, { differentMuscle: true, differentMuscleCluster: 'legs' });
+    expect(picked.sessionType).toBe('LEGS');
+    expect(picked.sessionType).not.toBe(auto.sessionType); // auto would not pick legs here
+  });
+
+  it('ignores a pick that is today\'s own cluster / not a real cluster (falls back to the auto-pick)', async () => {
+    const auto = await getDailyWorkout(
+      buildUserState(), MONDAY_2026_05_18, { differentMuscle: true });
+    const sameAsToday = await getDailyWorkout(
+      buildUserState(), MONDAY_2026_05_18, { differentMuscle: true, differentMuscleCluster: 'upper' });
+    const junk = await getDailyWorkout(
+      buildUserState(), MONDAY_2026_05_18, { differentMuscle: true, differentMuscleCluster: 'nope' });
+    expect(sameAsToday.sessionType).toBe(auto.sessionType);
+    expect(junk.sessionType).toBe(auto.sessionType);
+  });
+
+  it('a pick WITHOUT the differentMuscle override changes nothing (byte-identical)', async () => {
+    const plain = await getDailyWorkout(buildUserState(), MONDAY_2026_05_18);
+    const strayPick = await getDailyWorkout(
+      buildUserState(), MONDAY_2026_05_18, { differentMuscleCluster: 'legs' });
+    expect(strayPick.sessionType).toBe(plain.sessionType);
   });
 });
 

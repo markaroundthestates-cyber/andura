@@ -41,6 +41,9 @@ interface WorkoutPreviewLocationState {
   // engine for the most-recovered ALTERNATIVE cluster (a real different session,
   // ephemeral today-only). Other override kinds (easier/harder) ride intensityMod.
   overrideKind?: 'easier' | 'harder' | 'different-muscle';
+  /** The user's OWN pick among the ranked alternatives (override screen). Absent
+   *  → the engine keeps deciding (freshest-first), byte-identical to before. */
+  differentMuscleCluster?: string;
   cause?: string;
   // U-03 (HIGH) — pain context propagat din PainButton (region + intensity).
   painContext?: { region: string; intensity: 1 | 2 | 3 };
@@ -134,8 +137,15 @@ export function WorkoutPreview(): JSX.Element {
   // here. Read STORE-FIRST; fall back to location.state for the legacy override
   // entry points (schedule-override / pain-button still push state directly).
   const sessionEnergy = useWorkoutStore((s) => s.sessionEnergy);
-  const { intensityMod: stateIntensityMod, overrideKind, painContext, equipmentContext } =
-    (location.state as WorkoutPreviewLocationState | null) ?? {};
+  const {
+    intensityMod: stateIntensityMod,
+    overrideKind,
+    painContext,
+    equipmentContext,
+    // The user's own group pick from the override screen (founder 2026-08-28).
+    // Absent → the engine's freshest-first auto-pick, exactly as before.
+    differentMuscleCluster,
+  } = (location.state as WorkoutPreviewLocationState | null) ?? {};
   const intensityMod: IntensityMod =
     stateIntensityMod ?? sessionEnergy?.intensityMod ?? 'normal';
   const busyCoarseTypes = equipmentContext?.busyCoarseTypes ?? [];
@@ -163,7 +173,16 @@ export function WorkoutPreview(): JSX.Element {
     let cancelled = false;
     setLoading(true);
     setError(false);
-    getTodayWorkout(wantDifferentMuscle ? { differentMuscle: true } : {})
+    getTodayWorkout(
+      wantDifferentMuscle
+        ? {
+            differentMuscle: true,
+            ...(typeof differentMuscleCluster === 'string' && differentMuscleCluster.length > 0
+              ? { differentMuscleCluster }
+              : {}),
+          }
+        : {},
+    )
       .then((w) => {
         if (!cancelled) {
           setWorkout(w);

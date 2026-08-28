@@ -63,7 +63,7 @@ import { FOCUS_PRESETS, deEmphasizedGroups, emphasizedGroups, applyFocusBias, ef
 import { applyFocusVolumeContracts, focusContractDemotions, applyLedgerLowerBackCap } from './focusVolumeContracts.js';
 import { computeWeekLedger } from './weekLedger.js';
 import { detectOwedClusters } from './carryoverBalance.js';
-import { ISRAETEL_BASELINES } from '../../periodization/constants.js';
+import { ISRAETEL_BASELINES, PHASE_CLUSTERS_BIG6 } from '../../periodization/constants.js';
 import {
   laggingGroupsFromLogs,
   applyWeaknessAmplification,
@@ -96,6 +96,11 @@ import {
  *
  * @param {object} [userState] - { user, recentSessions, weights, profileTier, flags, meta }
  * @param {Date} [now=new Date()] - injected for deterministic testing
+ * @param {{differentMuscle?: boolean, differentMuscleCluster?: string, _mrvRecompute?: boolean}} [options]
+ *   differentMuscle = swap today's cluster for an alternative (today only, never
+ *   persisted); differentMuscleCluster = the user's OWN pick among the ranked
+ *   alternatives (ignored unless differentMuscle is set and it names a real,
+ *   non-scheduled Big-6 cluster → engine picks the freshest, as before)
  * @returns {Promise<{
  *   type: 'training',
  *   sessionType: string,
@@ -334,8 +339,19 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     wantDifferentMuscle && overrideRecoveryLogs.length > 0
       ? getRecoveryByGroup(overrideRecoveryLogs, undefined, date.getTime())
       : {};
+  // The user's own pick from the ranked alternatives (founder 2026-08-28 — the
+  // override used to decide FOR them). Only honored inside the different-muscle
+  // override, only when it names a real Big-6 cluster that isn't today's; anything
+  // else falls back to the engine's freshest-first pick (byte-identical).
+  const pickedCluster =
+    wantDifferentMuscle &&
+    typeof options?.differentMuscleCluster === 'string' &&
+    PHASE_CLUSTERS_BIG6.includes(options.differentMuscleCluster) &&
+    options.differentMuscleCluster !== scheduledCluster
+      ? options.differentMuscleCluster
+      : null;
   const cluster = wantDifferentMuscle
-    ? pickAlternativeCluster(scheduledCluster, overrideRecoveryState)
+    ? pickedCluster ?? pickAlternativeCluster(scheduledCluster, overrideRecoveryState)
     : scheduledCluster;
   // dp_rotation_intraweek_v1 — TRAINING-DAY ORDINAL within the week (0-based). This is
   // the SAME `position` clusterForDay computes: today's index among the active days, or —

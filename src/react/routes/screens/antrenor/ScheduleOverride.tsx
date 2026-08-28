@@ -30,9 +30,11 @@
 //   - mockup andura-clasic.html#L1106-1152 screen-schedule-override
 
 import type { JSX } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gotoPath } from '../../../lib/navigation';
 import { SubHeader } from '../../../components/SubHeader';
+import { getAlternativeClusterOptions } from '../../../lib/engineWrappers';
 import { t } from '../../../../i18n/index.js';
 import type { IntensityMod } from './EnergyCheck';
 
@@ -62,10 +64,40 @@ function intensityFor(kind: OverrideKind): IntensityMod {
 
 export function ScheduleOverride(): JSX.Element {
   const navigate = useNavigate();
+  // Founder 2026-08-28 — "Alta grupa" used to DECIDE for the user ("tot ce vrea ea
+  // imi da"). Tapping it now reveals the engine's ranked alternatives (freshest
+  // first, its own auto-pick marked) so the choice is the user's. Empty list (rest
+  // day / engine throw) → the row keeps its legacy behaviour: go with the pick.
+  const [groupOptions, setGroupOptions] = useState<
+    ReadonlyArray<{ cluster: string; label: string; recommended: boolean }>
+  >([]);
+  const [groupsOpen, setGroupsOpen] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    getAlternativeClusterOptions()
+      .then((opts) => { if (!cancelled) setGroupOptions(opts); })
+      .catch(() => { if (!cancelled) setGroupOptions([]); });
+    return () => { cancelled = true; };
+  }, []);
 
   function handleSelect(kind: OverrideKind): void {
+    if (kind === 'different-muscle' && groupOptions.length > 0) {
+      setGroupsOpen((open) => !open);
+      return;
+    }
     navigate(gotoPath('workout-preview'), {
       state: { overrideKind: kind, intensityMod: intensityFor(kind) },
+    });
+  }
+
+  function handlePickGroup(cluster: string): void {
+    navigate(gotoPath('workout-preview'), {
+      state: {
+        overrideKind: 'different-muscle' satisfies OverrideKind,
+        intensityMod: intensityFor('different-muscle'),
+        differentMuscleCluster: cluster,
+      },
     });
   }
 
@@ -86,18 +118,49 @@ export function ScheduleOverride(): JSX.Element {
         {t('scheduleOverride.body')}
       </p>
       <div className="flex flex-col gap-3">
-        {OVERRIDE_OPTIONS.map((opt) => (
-          <button
-            key={opt.kind}
-            type="button"
-            onClick={() => handleSelect(opt.kind)}
-            data-override-kind={opt.kind}
-            className="pulse-card flex flex-col items-start gap-1 p-4 hover:bg-paper transition text-left"
-          >
-            <span className="text-base font-medium text-ink">{t(opt.labelKey)}</span>
-            <span className="text-sm text-ink2">{t(opt.descriptionKey)}</span>
-          </button>
-        ))}
+        {OVERRIDE_OPTIONS.map((opt) => {
+          const isGroupRow = opt.kind === 'different-muscle';
+          const expanded = isGroupRow && groupsOpen && groupOptions.length > 0;
+          return (
+            <div key={opt.kind} className="flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => handleSelect(opt.kind)}
+                data-override-kind={opt.kind}
+                {...(isGroupRow && groupOptions.length > 0
+                  ? { 'aria-expanded': expanded }
+                  : {})}
+                className="pulse-card flex flex-col items-start gap-1 p-4 hover:bg-paper transition text-left"
+              >
+                <span className="text-base font-medium text-ink">{t(opt.labelKey)}</span>
+                <span className="text-sm text-ink2">{t(opt.descriptionKey)}</span>
+              </button>
+              {expanded && (
+                <div className="flex flex-col gap-2 pl-4" data-testid="override-group-picker">
+                  <p className="text-xs uppercase tracking-wide font-semibold text-ink2">
+                    {t('scheduleOverride.pickGroupHeading')}
+                  </p>
+                  {groupOptions.map((g) => (
+                    <button
+                      key={g.cluster}
+                      type="button"
+                      onClick={() => handlePickGroup(g.cluster)}
+                      data-testid={`override-group-${g.cluster}`}
+                      className="pulse-card flex items-center justify-between gap-2 p-3 hover:bg-paper transition text-left"
+                    >
+                      <span className="text-base text-ink">{g.label}</span>
+                      {g.recommended && (
+                        <span className="text-xs font-semibold text-brick">
+                          {t('scheduleOverride.groupRecommended')}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
       </div>
     </section>

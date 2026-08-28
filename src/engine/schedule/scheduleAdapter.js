@@ -69,7 +69,7 @@ export { translateToEngineEquipment } from './scheduleAdapter/equipmentTranslati
 
 export { frequencyToSplit } from './scheduleAdapter/frequencySplit.js';
 
-export { pickAlternativeCluster } from './scheduleAdapter/alternativeCluster.js';
+export { pickAlternativeCluster, rankAlternativeClusters } from './scheduleAdapter/alternativeCluster.js';
 
 export { weeklySessionsPerGroup } from './scheduleAdapter/weeklySessions.js';
 

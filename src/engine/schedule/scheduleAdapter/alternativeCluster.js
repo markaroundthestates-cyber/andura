@@ -55,16 +55,25 @@ function clusterFreshnessScore(cluster, recoveryState) {
  * @returns {string} an alternative cluster id (always ≠ scheduledCluster when one exists)
  */
 export function pickAlternativeCluster(scheduledCluster, recoveryState) {
-  const candidates = PHASE_CLUSTERS_BIG6.filter((c) => c !== scheduledCluster);
-  if (candidates.length === 0) return scheduledCluster; // degenerate (single cluster) — no-op
-  let best = candidates[0];
-  let bestScore = clusterFreshnessScore(best, recoveryState);
-  for (let i = 1; i < candidates.length; i++) {
-    const score = clusterFreshnessScore(candidates[i], recoveryState);
-    if (score > bestScore) {
-      best = candidates[i];
-      bestScore = score;
-    }
-  }
-  return best;
+  const ranked = rankAlternativeClusters(scheduledCluster, recoveryState);
+  if (ranked.length === 0) return scheduledCluster; // degenerate (single cluster) — no-op
+  return ranked[0].cluster;
+}
+
+/**
+ * The SAME ranking pickAlternativeCluster consumes, exposed in full so the user
+ * can CHOOSE instead of only being told (founder 2026-08-28: "daca dau want
+ * something else today... tot ce vrea ea imi da"). Freshest first; ties keep
+ * PHASE_CLUSTERS_BIG6 declaration order (Array#sort is stable), so ranked[0] is
+ * byte-identical to the legacy pick. Pure.
+ *
+ * @param {string} scheduledCluster - the cluster the day would normally train
+ * @param {{[group:string]: 'recovered'|'partial'|'fatigued'}} recoveryState - RO-keyed
+ * @returns {Array<{cluster: string, score: number}>} candidates, freshest first
+ */
+export function rankAlternativeClusters(scheduledCluster, recoveryState) {
+  return PHASE_CLUSTERS_BIG6
+    .filter((c) => c !== scheduledCluster)
+    .map((cluster) => ({ cluster, score: clusterFreshnessScore(cluster, recoveryState) }))
+    .sort((a, b) => b.score - a.score);
 }

@@ -2,10 +2,20 @@
 // MemoryRouter jsdom paradigm per D020.
 
 import type { JSX } from 'react';
-import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
+
+// The group picker (founder 2026-08-28) reads the engine's ranked alternatives.
+// Mock the adapter so BOTH paths are deterministic: default [] = no options →
+// the legacy "engine decides" navigation; a per-test list → the picker.
+vi.mock('../../../lib/engineWrappers', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  getAlternativeClusterOptions: vi.fn(async () => []),
+}));
+
 import { ScheduleOverride } from '../../../routes/screens/antrenor/ScheduleOverride';
+import { getAlternativeClusterOptions } from '../../../lib/engineWrappers';
 // i18n locale pin — these specs assert RO copy (Schimbi planul de azi /
 // Mai usor / Mai greu / etc). Force RO so the i18n indirection resolves
 // to the RO assertion targets. EN coverage is locked separately by
@@ -15,7 +25,9 @@ beforeEach(() => {
   try { localStorage.removeItem('sf.locale'); } catch { /* noop */ }
   _resetI18nCache();
   setLocale('ro');
+  vi.mocked(getAlternativeClusterOptions).mockResolvedValue([]);
 });
+afterEach(() => { vi.clearAllMocks(); });
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -125,6 +137,56 @@ describe('ScheduleOverride — intensityMod mapping flow', () => {
     const probe = screen.getByTestId('probe');
     expect(probe.textContent).toContain('"intensityMod":"normal"');
     expect(probe.textContent).toContain('"overrideKind":"different-muscle"');
+  });
+});
+
+// Founder 2026-08-28 — "daca dau want something else today... tot ce vrea ea imi
+// da": the override used to DECIDE the group. With ranked alternatives available
+// the row opens a picker; the engine's own auto-pick is merely marked.
+describe('ScheduleOverride — group picker (founder 2026-08-28)', () => {
+  const OPTS = [
+    { cluster: 'pull', label: 'Pull (spate si biceps)', recommended: true },
+    { cluster: 'legs', label: 'Picioare', recommended: false },
+  ];
+
+  it('Alta grupa opens the ranked picker instead of deciding for the user', async () => {
+    vi.mocked(getAlternativeClusterOptions).mockResolvedValue(OPTS);
+    renderOverride();
+    await waitFor(() => expect(getAlternativeClusterOptions).toHaveBeenCalled());
+    fireEvent.click(screen.getByRole('button', { name: /Alta grupa/i }));
+    expect(screen.getByTestId('override-group-picker')).toBeInTheDocument();
+    expect(screen.getByTestId('override-group-pull')).toBeInTheDocument();
+    expect(screen.getByTestId('override-group-legs')).toBeInTheDocument();
+    // Still on the override screen — nothing was chosen FOR the user.
+    expect(screen.queryByTestId('probe')).toBeNull();
+  });
+
+  it('picking a group navigates carrying that cluster', async () => {
+    vi.mocked(getAlternativeClusterOptions).mockResolvedValue(OPTS);
+    renderOverride();
+    await waitFor(() => expect(getAlternativeClusterOptions).toHaveBeenCalled());
+    fireEvent.click(screen.getByRole('button', { name: /Alta grupa/i }));
+    fireEvent.click(screen.getByTestId('override-group-legs'));
+    const probe = screen.getByTestId('probe');
+    expect(probe.textContent).toContain('"overrideKind":"different-muscle"');
+    expect(probe.textContent).toContain('"differentMuscleCluster":"legs"');
+  });
+
+  it("the engine's freshest pick is marked, not imposed", async () => {
+    vi.mocked(getAlternativeClusterOptions).mockResolvedValue(OPTS);
+    renderOverride();
+    await waitFor(() => expect(getAlternativeClusterOptions).toHaveBeenCalled());
+    fireEvent.click(screen.getByRole('button', { name: /Alta grupa/i }));
+    const recommended = screen.getByTestId('override-group-pull');
+    expect(recommended.textContent).toMatch(/cea mai odihnita/i);
+    expect(screen.getByTestId('override-group-legs').textContent).not.toMatch(/cea mai odihnita/i);
+  });
+
+  it('no alternatives (rest day / engine throw) → legacy navigation, no dead row', async () => {
+    renderOverride(); // default mock → []
+    await waitFor(() => expect(getAlternativeClusterOptions).toHaveBeenCalled());
+    fireEvent.click(screen.getByRole('button', { name: /Alta grupa/i }));
+    expect(screen.getByTestId('probe').textContent).toContain('"overrideKind":"different-muscle"');
   });
 });
 

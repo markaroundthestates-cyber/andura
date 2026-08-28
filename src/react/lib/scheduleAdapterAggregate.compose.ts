@@ -1331,7 +1331,12 @@ export function shiftRirBand(
  */
 export async function composePlannedWorkoutToday(
   now: Date = new Date(),
-  options: { differentMuscle?: boolean; _mrvRecompute?: boolean } = {},
+  options: {
+    differentMuscle?: boolean;
+    /** The user's own pick among the ranked alternatives (see getDailyWorkout). */
+    differentMuscleCluster?: string;
+    _mrvRecompute?: boolean;
+  } = {},
 ): Promise<PlannedWorkoutOutput | null> {
   try {
     const userState = buildUserStateForPipeline();
@@ -1707,7 +1712,11 @@ export async function composePlannedWorkoutToday(
         // fictional week. Strip it — the siblings revert to their REAL persisted
         // schedule. Today's own day (dIdx===planDayIdx) still reuses trimmedExercises
         // above, so today keeps the swap; only the sibling BASELINE is the schedule's.
-        const { differentMuscle: _omitToday, ...baseOpts } = options;
+        const {
+          differentMuscle: _omitToday,
+          differentMuscleCluster: _omitTodayPick,
+          ...baseOpts
+        } = options;
         const composeDay = async (dIdx: number) => {
           // A sibling day == today → reuse the already-built final plan (no recompose).
           if (dIdx === planDayIdx) return { exercises: trimmedExercises };

@@ -665,7 +665,9 @@
       "harderDescription": "Intensity raised +15%",
       "differentMuscleLabel": "Different group",
       "differentMuscleDescription": "Change today's target"
-    }
+    },
+    "pickGroupHeading": "Which group today?",
+    "groupRecommended": "freshest"
   },
   "energyCheck": {
     "subHeaderTitle": "How do you feel?",

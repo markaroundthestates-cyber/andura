@@ -91,7 +91,11 @@ import { applyMmiCapToWorkout } from './engineWrappers.mmi';
 // dateForWeekdayIndex is used in this module's body (getWorkoutForDay);
 // resolveSessionTitle is only re-exported below (no local use) — keep it out of
 // this import to avoid an unused-binding warning.
-import { dateForWeekdayIndex } from './engineWrappers.session';
+import {
+  dateForWeekdayIndex,
+  resolveSessionTitle as resolveSessionTitleLocal,
+} from './engineWrappers.session';
+import { rankAlternativeClusters } from '../../engine/schedule/scheduleAdapter/alternativeCluster.js';
 import {
   flattenSessionsToEngineLogs,
   estimateOneRM,
@@ -344,7 +348,7 @@ export function getWhyExerciseSummary(input: WhyExerciseInput): string | null {
  * throws (fail-silent).
  */
 export async function getTodayWorkout(
-  options: { differentMuscle?: boolean } = {},
+  options: { differentMuscle?: boolean; differentMuscleCluster?: string } = {},
 ): Promise<PlannedWorkoutOutput | null> {
   try {
     // "Different group" ephemeral override (ScheduleOverride "Alta grupa") threaded
@@ -738,6 +742,45 @@ const MAX_FATIGUED_GROUPS_DISPLAY = 2; // top-2 most fatigued shown in coach lin
  * Returns null cand readiness null AND zero fatigued groups (T0 fresh user).
  * Defensive: engine throws → null fallback graceful.
  */
+/**
+ * The ranked "Alta grupa" alternatives, so the override screen can let the user
+ * CHOOSE instead of announcing the engine's pick (founder 2026-08-28: "andura
+ * saraca zice ca imi da... dar tot ce vrea ea imi da").
+ *
+ * Same ranking the engine's own auto-pick consumes (rankAlternativeClusters over
+ * the recovery state), so `recommended` on the first row is literally what the
+ * user would have got by not choosing. Labels reuse the existing per-session
+ * titles (cluster id uppercased → workout.sessionTitle.*) — no new copy.
+ *
+ * Returns [] when today's cluster can't be resolved (nothing honest to offer) or
+ * the engine throws. Never throws.
+ */
+export async function getAlternativeClusterOptions(
+  now: Date = new Date(),
+): Promise<Array<{ cluster: string; label: string; recommended: boolean }>> {
+  try {
+    // Today's SCHEDULED cluster comes from the engine's own answer (sessionType),
+    // NOT a second derivation here — the split is focus/rebalance/carryover-aware
+    // and duplicating it would drift. Rest day / no plan → offer all six.
+    const planned = await getTodayWorkout();
+    const sessionType = typeof planned?.sessionType === 'string' ? planned.sessionType : '';
+    const scheduled = sessionType.toLowerCase();
+    const logs = flattenSessionsToRecoveryLogs(useWorkoutStore.getState().sessionsHistory);
+    const recoveryState = logs.length > 0 ? getRecoveryByGroup(logs, undefined, now.getTime()) : {};
+    return rankAlternativeClusters(scheduled, recoveryState).map((row, i) => ({
+      cluster: row.cluster,
+      label: resolveSessionTitleLocal(row.cluster.toUpperCase()),
+      recommended: i === 0,
+    }));
+  } catch (e) {
+    logger.warn('[engineWrappers] getAlternativeClusterOptions failed:', e);
+    captureException(e, {
+      tags: { source: 'engine-adapter-fallback', adapter: 'getAlternativeClusterOptions' },
+    });
+    return [];
+  }
+}
+
 export function getCoachRestReason(): CoachRestReason | null {
   try {
     const readiness = getUserReadinessScore();

@@ -665,7 +665,9 @@
       "harderDescription": "Intensitate crescuta +15%",
       "differentMuscleLabel": "Alta grupa",
       "differentMuscleDescription": "Schimba target azi"
-    }
+    },
+    "pickGroupHeading": "Ce grupa vrei azi?",
+    "groupRecommended": "cea mai odihnita"
   },
   "energyCheck": {
     "subHeaderTitle": "Cum te simti?",
