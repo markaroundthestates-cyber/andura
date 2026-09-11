@@ -30,6 +30,7 @@ vi.mock('../../lib/engineWrappers', () => ({
 import { SessionPill } from '../../components/SessionPill';
 import { useWorkoutStore } from '../../stores/workoutStore';
 import { useOnboardingStore } from '../../stores/onboardingStore';
+import { getTodayWorkout } from '../../lib/engineWrappers';
 
 function LocationProbe(): JSX.Element {
   const loc = useLocation();
@@ -282,5 +283,33 @@ describe('SessionPill — Romanian no-diacritics rule (D-LEGACY-064)', () => {
     });
     const { container } = renderPill('/app/antrenor');
     expect(/[ăâîșțĂÂÎȘȚ]/.test(container.textContent ?? '')).toBe(false);
+  });
+});
+
+// ══ PERF — no pipeline compose when the pill will not render ═════════════════
+// Founder live 2026-08-28: "paginile care nu sunt legate de antrenamentul live
+// merg exagerat de prost pe telefon... se incarca in 20+ secunde". This pill sits
+// in Layout.tsx, so it mounts on EVERY screen, and it used to fire an
+// unconditional getTodayWorkout() — a full ~4.7s SYNCHRONOUS pipeline on a dev box
+// (measured on the founder's real account; 3-5x that on a phone) even though the
+// component returns null for idle/finished and `planned` is read only when it
+// actually renders. These specs are the anti-recurrence guard.
+describe('SessionPill — does not compose a plan it will never show', () => {
+  beforeEach(() => {
+    resetStore();
+    vi.mocked(getTodayWorkout).mockClear();
+  });
+
+  it('idle session → NO getTodayWorkout call (the expensive pipeline is skipped)', async () => {
+    useWorkoutStore.setState({ phase: 'idle', sessionStart: null });
+    renderPill('/app/progres');
+    await waitFor(() => expect(screen.queryByTestId('session-pill')).toBeNull());
+    expect(getTodayWorkout).not.toHaveBeenCalled();
+  });
+
+  it('a LIVE session still composes (the pill needs the exercise name)', async () => {
+    useWorkoutStore.setState({ phase: 'logging', sessionStart: Date.now() });
+    renderPill('/app/progres');
+    await waitFor(() => expect(getTodayWorkout).toHaveBeenCalled());
   });
 });

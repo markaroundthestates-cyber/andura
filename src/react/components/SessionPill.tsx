@@ -83,13 +83,24 @@ export function SessionPill(): JSX.Element | null {
     return () => clearInterval(interval);
   }, [liveSessionStart]);
 
+  // PERF (founder live 2026-08-28: "paginile care nu sunt legate de antrenamentul
+  // live merg exagerat de prost pe telefon... se incarca in 20+ secunde"). This pill
+  // lives in Layout.tsx, so it mounts on EVERY screen — and this effect used to run
+  // an UNCONDITIONAL composePlannedWorkoutToday, ~4.7s of SYNCHRONOUS pipeline work
+  // on a dev box (measured on his real account; 3-5x that on a phone) that froze the
+  // main thread even though the component returns null for idle/finished modes and
+  // `planned` is read ONLY on the render paths below. Gate the fetch on "this pill
+  // will actually render": no live/paused session -> no compose at all.
+  const pillWillRender =
+    mode.kind === "active" || mode.kind === "resting" || mode.kind === "paused";
   useEffect(() => {
+    if (!pillWillRender) return;
     let cancelled = false;
     getTodayWorkout().then((p) => {
       if (!cancelled) setPlanned(p);
     });
     return () => { cancelled = true; };
-  }, []);
+  }, [pillWillRender]);
 
   // Aerobic mode-gate — never surface the gym resume pill for a pure aerobic user.
   if (trainingType === 'aerobic') return null;

@@ -156,6 +156,17 @@ export function Antrenor(): JSX.Element {
   const [coach, setCoach] = useState<CoachTodayOutput | null>(null);
   const [coachError, setCoachError] = useState<boolean>(false);
   useEffect(() => {
+    // PERF (founder live 2026-08-28: "dau click pe editare zile si se incarca in
+    // 20+ secunde"). getCoachToday() runs the FULL pipeline — ~4.7s of synchronous
+    // work on a dev box against his real account, 3-5x that on a phone. This effect
+    // re-ran on every scheduleDays / editMode change, so merely TAPPING the pencil
+    // paid one full recompose, and every day toggled paid another.
+    //
+    // While the week editor is OPEN nothing is committed yet (saveWeekly writes the
+    // override and only then flips editMode false), so the plan cannot have changed:
+    // skip the recompose entirely during editing. The editMode dep stays, so the
+    // commit itself still triggers exactly ONE fresh fetch.
+    if (scheduleEditMode) return;
     let cancelled = false;
     getCoachToday()
       .then((c) => {

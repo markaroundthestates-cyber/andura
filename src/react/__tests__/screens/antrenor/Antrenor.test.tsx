@@ -833,3 +833,49 @@ describe('Antrenor home — Smoke #6 schedule reactivity', () => {
     expect(useScheduleStore.getState().days[TODAY_IDX]).toBe('training');
   });
 });
+
+// ══ PERF — the week editor must not re-run the pipeline on every tap ═════════
+// Founder live 2026-08-28: "dau click pe editare zile si se incarca in 20+
+// secunde". getCoachToday() is the FULL pipeline (~4.7s measured on a dev box
+// against his real account, 3-5x on a phone). The effect re-ran on every
+// scheduleDays / editMode change, so opening the editor cost one recompose and
+// every toggled day cost another — while nothing was committed yet.
+describe('Antrenor — no recompose while the week editor is open', () => {
+  beforeEach(() => {
+    resetStores();
+    vi.mocked(getReadiness).mockReturnValue(null);
+    vi.mocked(getFatigue).mockReturnValue(null);
+  });
+
+  it('entering edit mode does NOT re-run the coach pipeline', async () => {
+    renderAntrenor();
+    await waitFor(() => expect(getCoachToday).toHaveBeenCalled());
+    vi.mocked(getCoachToday).mockClear();
+    act(() => { useScheduleStore.setState({ editMode: true }); });
+    await waitFor(() => expect(screen.getByTestId('antrenor-home')).toBeInTheDocument());
+    expect(getCoachToday).not.toHaveBeenCalled();
+  });
+
+  it('toggling days WHILE editing does NOT re-run it either (nothing committed)', async () => {
+    renderAntrenor();
+    await waitFor(() => expect(getCoachToday).toHaveBeenCalled());
+    act(() => { useScheduleStore.setState({ editMode: true }); });
+    vi.mocked(getCoachToday).mockClear();
+    act(() => {
+      useScheduleStore.setState({ days: weekWithToday('rest') as WeekDays });
+    });
+    await waitFor(() => expect(screen.getByTestId('antrenor-home')).toBeInTheDocument());
+    expect(getCoachToday).not.toHaveBeenCalled();
+  });
+
+  it('COMMITTING the edit (editMode -> false) runs it exactly once', async () => {
+    renderAntrenor();
+    await waitFor(() => expect(getCoachToday).toHaveBeenCalled());
+    act(() => { useScheduleStore.setState({ editMode: true }); });
+    vi.mocked(getCoachToday).mockClear();
+    act(() => {
+      useScheduleStore.setState({ days: weekWithToday('rest') as WeekDays, editMode: false });
+    });
+    await waitFor(() => expect(getCoachToday).toHaveBeenCalledTimes(1));
+  });
+});
