@@ -69,11 +69,11 @@ import { ObiectivCard } from '../../../components/Progres/ObiectivCard';
 import { ObiectivGoalCard } from '../../../components/Progres/ObiectivGoalCard';
 import { GoalPivotBanner } from '../../../components/Progres/GoalPivotBanner';
 import { AlertsBanner } from '../../../components/Antrenor/AlertsBanner';
+import { getProactiveAlerts } from '../../../lib/engineWrappers';
+import type { ProactiveAlert } from '../../../lib/engineWrappers';
 import { Sparkline } from '../../../components/pulse/Sparkline';
 import { Kicker } from '../../../components/pulse/Kicker';
 import { Pill } from '../../../components/pulse/Pill';
-import { getCoachToday } from '../../../lib/coachDirectorAggregate';
-import type { CoachTodayOutput } from '../../../lib/coachDirectorAggregate';
 import { t } from '../../../../i18n/index.js';
 
 // Zone heading utility — keeps the 5 section labels identical without
@@ -95,13 +95,16 @@ export function Progres(): JSX.Element {
   const navigate = useNavigate();
   const weightLog = useProgresStore((s) => s.weightLog);
 
-  const [coach, setCoach] = useState<CoachTodayOutput | null>(null);
+  // PERF (founder live 2026-08-28: page transitions still slow on the phone).
+  // This screen used the WHOLE getCoachToday aggregate to read ONE field —
+  // `coach.alerts`. That aggregate awaits getTodayWorkout(), i.e. the full
+  // ~4.7s SYNCHRONOUS compose pipeline (measured on his real account; 3-5x on a
+  // phone), so opening Progres composed an entire workout plan and then used
+  // only the proactive-alert list. getProactiveAlerts() is the direct, synchronous
+  // source of exactly that list — same data, none of the pipeline.
+  const [alerts, setAlerts] = useState<ProactiveAlert[]>([]);
   useEffect(() => {
-    let cancelled = false;
-    getCoachToday().then((c) => {
-      if (!cancelled) setCoach(c);
-    });
-    return () => { cancelled = true; };
+    setAlerts(getProactiveAlerts({}));
   }, []);
 
   // Chronological view — weightLog is NOT date-sorted (addWeightEntry appends
@@ -123,7 +126,6 @@ export function Progres(): JSX.Element {
     [weightLog],
   );
   const lastWeight = sortedWeightLog[sortedWeightLog.length - 1];
-  const alerts = coach?.alerts ?? [];
   // Gate the RECUPERARE zone (heading + grid) on the recovery engine actually
   // returning groups — a fresh T0 user (no logged sets) otherwise sees a lone
   // eyebrow over empty space, since the grid self-hides but the heading didn't

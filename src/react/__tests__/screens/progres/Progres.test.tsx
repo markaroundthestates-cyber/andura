@@ -21,7 +21,12 @@ vi.mock('../../../lib/coachDirectorAggregate', () => ({
 import { Progres } from '../../../routes/screens/progres/Progres';
 import { useProgresStore } from '../../../stores/progresStore';
 import { useNutritionStore } from '../../../stores/nutritionStore';
+vi.mock('../../../lib/engineWrappers', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  getProactiveAlerts: vi.fn(() => []),
+}));
 import { getCoachToday } from '../../../lib/coachDirectorAggregate';
+import { getProactiveAlerts } from '../../../lib/engineWrappers';
 
 // The recovery zone (heading + body map) gates on the recovery selector
 // yielding groups — i.e. the engine throws or the taxonomy is empty hides it.
@@ -254,18 +259,11 @@ describe('Progres — D-LEGACY-064 no-diacritics', () => {
 });
 
 describe('Progres — F-progres-07 Alerte azi banner mockup parity', () => {
+  // PERF 2026-08-28: the screen used to pull the WHOLE coach aggregate (which
+  // awaits the ~4.7s compose pipeline) to read one field. It now calls
+  // getProactiveAlerts directly, so these specs drive that source.
   beforeEach(() => {
-    vi.mocked(getCoachToday).mockResolvedValue({
-      readiness: null,
-      fatigue: null,
-      plannedWorkout: null,
-      isRestDay: true,
-      patternsBanner: [],
-      prWallRecent: [],
-      alerts: [],
-      restReason: null,
-      source: 'baseline',
-    });
+    vi.mocked(getProactiveAlerts).mockReturnValue([]);
   });
 
   it('hides Alerte azi label + banner cand alerts empty', async () => {
@@ -276,21 +274,11 @@ describe('Progres — F-progres-07 Alerte azi banner mockup parity', () => {
   });
 
   it('renders Alerte azi label + 3-row banner when alerts present', async () => {
-    vi.mocked(getCoachToday).mockResolvedValueOnce({
-      readiness: null,
-      fatigue: null,
-      plannedWorkout: null,
-      isRestDay: true,
-      patternsBanner: [],
-      prWallRecent: [],
-      alerts: [
-        { id: 'adherence_0', text: 'Saptamana asta ai sarit 2 antrenamente', severity: 'warn' },
-        { id: 'stagnation_1', text: 'Greutatile stau pe loc de 3 saptamani', severity: 'info' },
-        { id: 'weakness_2', text: 'Umerii ramasi in urma', severity: 'info' },
-      ],
-      restReason: null,
-      source: 'engine',
-    });
+    vi.mocked(getProactiveAlerts).mockReturnValue([
+      { id: 'adherence_0', text: 'Saptamana asta ai sarit 2 antrenamente', severity: 'warn' },
+      { id: 'stagnation_1', text: 'Greutatile stau pe loc de 3 saptamani', severity: 'info' },
+      { id: 'weakness_2', text: 'Umerii ramasi in urma', severity: 'info' },
+    ]);
     renderProgres();
     expect(await screen.findByTestId('alerts-banner')).toBeInTheDocument();
     // Wave C2 i18n: EN default → "Alerts today" (was RO "Alerte azi").
@@ -301,17 +289,9 @@ describe('Progres — F-progres-07 Alerte azi banner mockup parity', () => {
   });
 
   it('Alerte azi banner placed above log-weight CTA', async () => {
-    vi.mocked(getCoachToday).mockResolvedValueOnce({
-      readiness: null,
-      fatigue: null,
-      plannedWorkout: null,
-      isRestDay: true,
-      patternsBanner: [],
-      prWallRecent: [],
-      alerts: [{ id: 'a_0', text: 'alpha', severity: 'warn' }],
-      restReason: null,
-      source: 'engine',
-    });
+    vi.mocked(getProactiveAlerts).mockReturnValue([
+      { id: 'a_0', text: 'alpha', severity: 'warn' },
+    ]);
     renderProgres();
     const banner = await screen.findByTestId('alerts-banner');
     const cta = screen.getByTestId('cta-log-weight');

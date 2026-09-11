@@ -183,6 +183,18 @@ export async function recomputeWeeklyDelivered({ activeWeek, composeDay }) {
   if (!Array.isArray(activeWeek) || typeof composeDay !== 'function') return { total, perDay, perDayIso };
   for (let dIdx = 0; dIdx < 7; dIdx++) {
     if (!activeWeek[dIdx]) continue;
+    // MACROTASK yield (founder live 2026-08-28: "se face tranzitia greu intre
+    // pagini... ca si cand as avea netul slab"). Each composeDay is a FULL
+    // pipeline run (~1.2s of SYNCHRONOUS work), and every await inside it
+    // resolves on the MICROtask queue — so this loop never lets the browser
+    // reach a paint. 4-6 active days chained that way freeze the main thread for
+    // seconds, which reads exactly like a slow network: the route's Suspense
+    // skeleton is stuck on screen because React cannot render.
+    //
+    // One real tick per day costs nothing next to the compose itself and lets
+    // the UI paint between days. Pure scheduling: identical order, identical
+    // sums, so the MRV verdict is unchanged. (Same fix as the fp-sim cohort.)
+    await new Promise((r) => setTimeout(r, 0));
     let plan;
     try { plan = await composeDay(dIdx); } catch { continue; }
     const exs = plan && Array.isArray(plan.exercises) ? plan.exercises : [];
