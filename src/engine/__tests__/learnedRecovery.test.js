@@ -10,7 +10,10 @@ import {
   MUSCLE_HEADS,
   RECOVERY_CLAMP_LO,
   RECOVERY_CLAMP_HI,
+  RECOVERY_CONSTANTS_KEY,
+  learnedRecoveryHours,
 } from '../muscleMap.js';
+import { DB } from '../../db.js';
 
 const MS_DAY = 86400000;
 const T0 = Date.UTC(2026, 0, 1);
@@ -84,5 +87,63 @@ describe('getMuscleState — learned-hours override', () => {
     const a = getMuscleState(logs, now, { hamstring: 0 }); // invalid → global
     const b = getMuscleState(logs, now, null);
     expect(a.hamstring).toBeCloseTo(b.hamstring, 6);
+  });
+});
+
+// Founder account 2026-10-01: the legacy learner pinned his hamstrings at 192h and
+// triceps at 96h (the 2x clamp) on a deep cut — best-EVER baseline across different
+// lifts read the weekly SCHEDULE as recovery, and the cut nudge compounded into the
+// EMA every session. dp_recovery_recent_baseline_v1 (opts.recentBaseline).
+describe('learnRecovery — return-bound evidence (dp_recovery_recent_baseline_v1)', () => {
+  const ON = { recentBaseline: true };
+  const g = MUSCLE_HEADS.hamstring.recoveryHours; // 96
+
+  it('a once-a-week lift that keeps coming back does NOT stretch recovery past the prior', () => {
+    const logs = [];
+    for (let i = 0; i <= 8; i++) logs.push(legCurlLog(i * 7, 100)); // 168h gaps, always back
+    const learned = learnRecovery(logs, undefined, 1, ON);
+    expect(learned.hamstring.hours).toBe(g); // a return after 168h only proves <= 168h
+    expect(learned.hamstring.v).toBe(2);
+  });
+
+  it('coming back after short gaps still learns a FASTER recoverer', () => {
+    const logs = [];
+    for (let i = 0; i <= 8; i++) logs.push(legCurlLog(i * 2, 40)); // 48h gaps, back each time
+    const learned = learnRecovery(logs, undefined, 1, ON);
+    expect(learned.hamstring.hours).toBeLessThan(g);
+  });
+
+  it('two lifts on one muscle are each judged against their OWN previous session', () => {
+    // RDL e1RM ~55, Leg Curl e1RM ~150 alternating every 2 days, each holding its own level:
+    // the legacy all-lift baseline would call every RDL day "not recovered".
+    const logs = [];
+    for (let i = 0; i <= 9; i++) {
+      logs.push(i % 2 ? legCurlLog(i * 2, 118, 9) : { ex: 'Romanian Deadlift', w: 40, reps: 10, rpe: 7.5, ts: day(i * 2) });
+    }
+    const learned = learnRecovery(logs, undefined, 1, ON);
+    expect(learned.hamstring.hours).toBeLessThan(g);
+  });
+
+  it('the cut nudge applies ONCE (converges to 1.15x the prior, not the 2x clamp)', () => {
+    const logs = [];
+    for (let i = 0; i <= 8; i++) logs.push(legCurlLog(i * 7, 100));
+    let state;
+    for (let k = 0; k < 30; k++) state = { ...state, ...learnRecovery(logs, state, 1.15, ON) };
+    expect(state.hamstring.hours).toBeCloseTo(g * 1.15, -1);
+    expect(state.hamstring.hours).toBeLessThan(Math.round(g * RECOVERY_CLAMP_HI));
+  });
+
+  it('a pre-fix constant (no v:2) is not continued — the EMA restarts from the prior', () => {
+    const logs = [];
+    for (let i = 0; i <= 8; i++) logs.push(legCurlLog(i * 7, 100));
+    const learned = learnRecovery(logs, { hamstring: { hours: 192, n: 14 } }, 1, ON);
+    expect(learned.hamstring.hours).toBe(g);
+    expect(learned.hamstring.n).toBe(1);
+  });
+
+  it('read: a pre-fix stored constant is ignored until re-learned (stale 192h → prior)', () => {
+    DB.set(RECOVERY_CONSTANTS_KEY, { hamstring: { hours: 192, n: 14 }, quad: { hours: 110, n: 1, v: 2 } });
+    expect(learnedRecoveryHours()).toEqual({ quad: 110 });
+    localStorage.removeItem(RECOVERY_CONSTANTS_KEY);
   });
 });

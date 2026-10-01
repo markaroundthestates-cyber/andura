@@ -540,6 +540,14 @@ export const FLAGS = Object.freeze({
   // 100 kg (Lower). ON: bodyweightLoad BODYWEIGHT_STATIONS load the body; the target
   // is the ADDED kg, cold start 0. Pinned OFF in fp + calibration sims.
   dp_station_bodyweight_v1: { rollout: 1, default: true },
+  // dp_recovery_recent_baseline_v1 (2026-10-01, founder account) — the learned recovery
+  // judged 'recovered' against the muscle's best-EVER e1RM across ANY of its lifts and
+  // compounded the cut nudge (x1.15) into the EMA state every session (fixed point ~1.8x):
+  // on his cut that read the SCHEDULE as recovery → hamstring 192h, triceps 96h (2x clamp).
+  // ON: each lift vs its own recent level; a return bounds recovery from above, a miss
+  // from below; the nudge applies once to the target; pre-fix constants (no v:2) are read
+  // as the prior until re-learned. Pinned OFF in fp + calibration sims.
+  dp_recovery_recent_baseline_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

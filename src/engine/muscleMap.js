@@ -174,6 +174,45 @@ export const RECOVERY_CLAMP_LO = 0.5;      // learned hours floored at 0.5x the 
 export const RECOVERY_CLAMP_HI = 2.0;      // ceiled at 2x the global
 const RECOVERY_R_CAP = 12;                 // saturate effective reps (same as e1RM #1)
 const RECOVERY_MIN_GAPS = 3;               // need >=3 observed return-gaps to learn
+// ── dp_recovery_recent_baseline_v1 (founder account 2026-10-01) ──────────────
+// The legacy learner judged "recovered" against the muscle's best-EVER e1RM across
+// ANY of its lifts, and took the median of those return-gaps as the constant. On a
+// deep cut almost nothing reaches the all-time best, and hamstrings trained by RDL
+// one day and Leg Curl another compared one lift's e1RM against the other's, so only
+// rare sessions counted — after long gaps — and the learner read the SCHEDULE as
+// recovery (his hamstring 192h, triceps 96h = the 2x clamp). A return after a gap
+// only proves recovery took AT MOST that long; a miss on a cut is the strength trend
+// as much as fatigue (replayed: misses at weekly gaps would still pin hamstrings at
+// 2x). So each lift is judged against its OWN previous session, and the evidence can
+// only pull the constant BELOW the population prior (a demonstrated faster
+// recoverer). Upward moves come from the explicit bodyweight-trend nudge only. PURE.
+/**
+ * @param {Array<{ts:number, byEx: Map<string, number>}>} days chronological
+ * @param {number} global population prior (hours)
+ * @returns {number|null} target hours, or null when there is too little evidence
+ */
+function _returnBoundTarget(days, global) {
+  /** @type {number[]} */ const returned = [];
+  /** @type {Map<string, number>} */ const last = new Map();
+  for (let i = 0; i < days.length; i++) {
+    const d = days[i];
+    let seen = false;
+    let back = false;
+    for (const [ex, best] of d.byEx) {
+      if (!last.has(ex)) continue;
+      seen = true;
+      if (best >= /** @type {number} */ (last.get(ex)) * 0.98) back = true;
+    }
+    const gapH = i > 0 ? (d.ts - days[i - 1].ts) / MS_PER_HOUR : 0;
+    if (seen && back && gapH > 0) returned.push(gapH);
+    for (const [ex, best] of d.byEx) last.set(ex, best);
+  }
+  if (returned.length < RECOVERY_MIN_GAPS) return null;
+  returned.sort((a, b) => a - b);
+  const k = Math.floor(returned.length / 2);
+  const med = returned.length % 2 ? returned[k] : (returned[k - 1] + returned[k]) / 2;
+  return Math.min(global, med);
+}
 
 // Inline RIR-corrected Epley (kept local to avoid a dp.js <-> muscleMap import
 // cycle). Mirrors DP.e1RMForSet: usor 6.5 -> RIR 3, potrivit 7.5 -> 1, greu 8.5 -> 0.
@@ -207,15 +246,19 @@ function _recoveryE1RM(w, reps, rpe) {
  *   to the EMA-blended hours BEFORE the existing [0.5x, 2x] clamp (REUSE the band —
  *   no new clamp). Default 1 (no nudge) → byte-identical. Gated by the caller behind
  *   dp_strength_bw_ratio_v1.
- * @returns {Record<string, {hours:number, n:number}>}
+ * @param {{recentBaseline?: boolean}} [opts] dp_recovery_recent_baseline_v1 (resolved by the
+ *   caller): per-lift return evidence that can only LOWER the prior, the bodyweight nudge
+ *   applied ONCE to the target (not compounded into the EMA state), and only v:2 priors
+ *   continue the EMA.
+ * @returns {Record<string, {hours:number, n:number, v?:number}>}
  */
-export function learnRecovery(logs, prior, bwTrendFactor) {
+export function learnRecovery(logs, prior, bwTrendFactor, opts = {}) {
   const bwF = Number.isFinite(bwTrendFactor) && bwTrendFactor > 0 ? bwTrendFactor : 1;
   /** @type {Record<string, {hours:number, n:number}>} */
   const out = {};
   const rows = (logs || []).filter(l => !l.baseline && l.ex && l.w);
   // Group the best per-session e1RM per muscle (keyed by calendar day).
-  /** @type {Record<string, Map<number, {ts:number, best:number}>>} */
+  /** @type {Record<string, Map<number, {ts:number, best:number, byEx:Map<string, number>}>>} */
   const perMuscle = {};
   for (const l of rows) {
     const ms = musclesForExercise(l.ex); // QA-F8: learn from the whole library, not just curated names
@@ -227,8 +270,10 @@ export function learnRecovery(logs, prior, bwTrendFactor) {
     const day = Math.floor(ts / 86400000);
     for (const m of ms.primary) {
       const map = perMuscle[m] || (perMuscle[m] = new Map());
-      const cur = map.get(day);
-      if (!cur || e > cur.best) map.set(day, { ts, best: e });
+      let cur = map.get(day);
+      if (!cur) { cur = { ts, best: e, byEx: new Map() }; map.set(day, cur); }
+      else if (e > cur.best) { cur.ts = ts; cur.best = e; }
+      cur.byEx.set(l.ex, Math.max(cur.byEx.get(l.ex) ?? 0, e));
     }
   }
   for (const m of Object.keys(perMuscle)) {
@@ -237,6 +282,16 @@ export function learnRecovery(logs, prior, bwTrendFactor) {
     const global = head.recoveryHours;
     const sessions = [...perMuscle[m].values()].sort((a, b) => a.ts - b.ts);
     if (sessions.length < RECOVERY_MIN_GAPS + 1) continue;
+    if (opts.recentBaseline) {
+      const target = _returnBoundTarget(sessions, global);
+      if (target === null) continue;
+      const p = prior && prior[m] && prior[m].v === 2 && Number.isFinite(prior[m].hours) ? prior[m] : null;
+      const start = p ? p.hours : global;
+      const blended = start + RECOVERY_EMA_ALPHA * (target * bwF - start);
+      const hours = Math.max(global * RECOVERY_CLAMP_LO, Math.min(global * RECOVERY_CLAMP_HI, blended));
+      out[m] = { hours: Math.round(hours), n: (p && Number.isFinite(p.n) ? p.n : 0) + 1, v: 2 };
+      continue;
+    }
     // Rolling baseline = best-so-far; a session whose best >= baseline means the
     // user was recovered when they re-loaded -> the prior gap was a sufficient
     // recovery window. Collect those gaps.
@@ -318,7 +373,9 @@ export function learnedRecoveryHours() {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
   /** @type {Record<string, number>} */
   const out = {};
+  const v2Only = isEnabled('dp_recovery_recent_baseline_v1'); // pre-fix constants = stale, read as the prior
   for (const m of Object.keys(raw)) {
+    if (v2Only && !(raw[m] && raw[m].v === 2)) continue;
     const h = Number(raw[m] && raw[m].hours);
     if (Number.isFinite(h) && h > 0) out[m] = h;
   }

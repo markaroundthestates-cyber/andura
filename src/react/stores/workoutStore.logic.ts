@@ -212,7 +212,9 @@ export function persistSessionLogs(
             resolveActivePhase(),
           )
         : 1;
-      const learned = learnRecovery(merged as unknown as Parameters<typeof learnRecovery>[0], prior, bwTrendFactor);
+      const learned = learnRecovery(merged as unknown as Parameters<typeof learnRecovery>[0], prior, bwTrendFactor, {
+        recentBaseline: isEnabled('dp_recovery_recent_baseline_v1'),
+      });
       if (Object.keys(learned).length) saveRecoveryConstants(learned);
     }
     // F4 #10 — learn the per-gym equipment ladder (true load increment) for each
