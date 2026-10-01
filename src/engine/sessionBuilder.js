@@ -1649,6 +1649,7 @@ export function movementKey(name, meta, deepFamily = false) {
  *   seed?: string,
  *   volumeTargets?: Record<string, number>,
  *   weeklySessionsPerGroup?: Record<string, number>,
+ *   budgetSessionsPerGroup?: Record<string, number>|null,
  *   recoveryState?: Record<string, 'recovered'|'partial'|'fatigued'>,
  *   emphasizedGroups?: string[],
  *   exercisePenalties?: Record<string, number>|null,
@@ -1707,7 +1708,7 @@ export function buildSession(cluster, ctx) {
   const effectiveCap = beginnerCap ?? SESSION_SIZE;
   // Per-session exercise budget — from the weekly volume budget (not a fixed 6).
   const sessionSizeRaw = computeSessionExerciseCount(
-    targets, ctx?.volumeTargets, ctx?.weeklySessionsPerGroup, minSession,
+    targets, ctx?.volumeTargets, ctx?.budgetSessionsPerGroup ?? ctx?.weeklySessionsPerGroup, minSession,
   );
   // The beginner cap also bounds the volume-derived count so the slot demand the cap
   // distributes never exceeds it (a high-frequency novice's budget otherwise sizes the
@@ -4275,7 +4276,7 @@ export function buildSession(cluster, ctx) {
   // Per-exercise set count, keyed by name (group distribution applied once).
   const setsByName = /** @type {Record<string, number>} */ ({});
   for (const [g, exs] of Object.entries(byGroup)) {
-    const perSessionBudget = sessionSetBudget(g, ctx?.volumeTargets, ctx?.weeklySessionsPerGroup);
+    const perSessionBudget = sessionSetBudget(g, ctx?.volumeTargets, ctx?.budgetSessionsPerGroup ?? ctx?.weeklySessionsPerGroup);
     // #72 — an emphasized group raises its set band so the focus work carries
     // visibly more sets (DIAG #2), but ONLY when its WEEKLY target still has room to
     // grow toward its ceiling (policy: "an emphasized group's weekly set target rises

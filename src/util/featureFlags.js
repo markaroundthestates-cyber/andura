@@ -526,6 +526,14 @@ export const FLAGS = Object.freeze({
   // (Upper Row 4 vs Pull Row 2). ON: the deficit is measured over PAST days only and
   // spread over today + the rest. Pinned OFF in fp + calibration sims (compose path).
   dp_makeup_through_yesterday_v1: { rollout: 1, default: true },
+  // dp_home_day_volume_v1 (2026-10-01, founder "un antrenament de 27 minute... mi se
+  // pare cam scurt") — the weekly budget was divided by the plain COUNT of days that
+  // train a group, so his back split 7 Pull + 7 Upper and the day named for the muscle
+  // was the thinnest of the week. ON: today's share follows the split's own cluster
+  // weights (back pull 0.625 / upper 0.30 → ~2/3 on Pull; chest ~2/3 on Push), weekly
+  // total unchanged; equal-weight weeks and de-emphasized groups keep the count.
+  // Pinned OFF in fp + calibration sims (compose path).
+  dp_home_day_volume_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

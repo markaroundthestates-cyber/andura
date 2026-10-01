@@ -49,7 +49,7 @@ import {
   reshapeMaintenanceWeek,
 } from './frequencySplit.js';
 import { pickAlternativeCluster } from './alternativeCluster.js';
-import { weeklySessionsPerGroup } from './weeklySessions.js';
+import { weeklySessionsPerGroup, homeDayDivisors } from './weeklySessions.js';
 import { resolveExperienceId } from '../../periodization/volumeLandmarks.js';
 import { flattenSessionsToRecoveryLogs } from './recoveryLogs.js';
 import {
@@ -1094,6 +1094,13 @@ export async function getDailyWorkout(userState, now = new Date(), options = {})
     // Per-group weekly session frequency from the split — buildSession divides
     // the weekly volume budget by it to size the session (count + set counts).
     weeklySessionsPerGroup: sessionsPerGroup,
+    // dp_home_day_volume_v1 — the BUDGET divisor weighted by how much each day of the
+    // split belongs to the group (back ~2/3 on Pull, ~1/3 on Upper); frequency
+    // semantics (exposure counts, low-cap bands) keep weeklySessionsPerGroup. Off /
+    // equal-weight weeks → null → buildSession divides by the count (identical).
+    budgetSessionsPerGroup: isEnabled('dp_home_day_volume_v1')
+      ? homeDayDivisors(split, cluster, sessionsPerGroup, deEmphSet)
+      : null,
     // M1 "make it bite" — per-group recovery state (RO-keyed, recovered/partial/
     // fatigued) so the recovery cut REACHES the visible session: a fatigued group
     // is allowed below the normal compound set-floor AND drops ~1 exercise that
