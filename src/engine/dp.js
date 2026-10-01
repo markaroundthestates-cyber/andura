@@ -2492,7 +2492,7 @@ export const DP = {
     // legacy. Reasons off the JUST-LOGGED load (not dpState.lastW, empty all
     // session on a cold-start lift) so an override is honored on the first session.
     const override = manualOverrideTarget(
-      { wasManualOverride: ctx.wasManualOverride, haveRec, loggedKg, loggedReps, recKg, recReps, lastRPE, ex },
+      { wasManualOverride: ctx.wasManualOverride, haveRec, loggedKg, loggedReps, recKg, recReps, lastRPE, ex, followOneStep: isEnabled('dp_insession_follow_user_v1') },
       { getPrevWeight: getPrevWeightGym, getNextWeight: getNextWeightGym, roundToStep: (kg, e) => this.roundToStep(kg, e), e1RMForSet: (w, reps, rpe, e) => this.e1RMForSet(w, reps, rpe, e), t },
     );
     if (override) return override;
@@ -2560,6 +2560,10 @@ export const DP = {
       return { adjust: false };
     }
 
+    // dp_insession_follow_user_v1: a potrivit set short on reps at/under the rec load → next target = reps done.
+    if (isEnabled('dp_insession_follow_user_v1') && loggedReps != null && loggedReps > 0 && loggedReps < baseReps && loggedKg <= baseKg + 1e-9) {
+      return { adjust: true, dir: 'down', newReps: loggedReps, holdKg: baseKg, msg: t('workout.adjust.taperReps', { reps: loggedReps }) };
+    }
     // POTRIVIT → hold, with a small natural taper on LATE sets only (−1 rep in
     // hypertrophy, weight unchanged — fatigue accumulation, not a correction).
     if (lateSet && !isStrength) {

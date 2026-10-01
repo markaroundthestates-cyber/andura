@@ -74,7 +74,7 @@ const E1RM_UP_MARGIN = 1.10;
  * @returns {({adjust:boolean, dir?:string, newKg?:number, msg?:string})|null}
  */
 export function manualOverrideDownTarget(
-  { wasManualOverride, haveRec, loggedKg, recKg, lastRPE, ex },
+  { wasManualOverride, haveRec, loggedKg, recKg, lastRPE, ex, followOneStep = false, loggedReps, recReps },
   { getPrevWeight, roundToStep, t },
 ) {
   if (wasManualOverride !== true || !haveRec) return null;
@@ -83,9 +83,24 @@ export function manualOverrideDownTarget(
   if (!(logged > 0) || !(rec > 0)) return null;
   // Entered strictly MORE than one ladder step below the rec (getPrevWeight(rec) is
   // rec minus one snapped step). Equal/closer → not an override-down, fall through.
-  if (!(logged < getPrevWeight(rec, ex))) return null;
+  // followOneStep (dp_insession_follow_user_v1, founder live 2026-10-01): ONE step
+  // below counts too. On a pin stack one step is ~10% (Cable Row 73 → 66, Lat
+  // Pulldown 59 → 52) — exactly the move he made every set, and the rec stayed on
+  // 73 for all three ("nu tine cont de cat bag eu"). A deliberate pin down IS the
+  // signal; the noise band only made sense for sub-step differences.
+  const below = followOneStep ? logged <= getPrevWeight(rec, ex) + 1e-9 : logged < getPrevWeight(rec, ex);
+  if (!below) return null;
+  // followOneStep: the next set's REPS also follow what he just did when he fell
+  // short at the lighter load (66x8 on a 73x10 rec → next 66x8, not 66x10).
+  const reps = Number(loggedReps);
+  const recR = Number(recReps);
+  const newReps = followOneStep && reps > 0 && recR > 0 && reps < recR ? reps : undefined;
 
-  const down = (kg, key) => ({ adjust: true, dir: 'down', newKg: kg, msg: t(`workout.adjust.${key}`, { kg }) });
+  const down = (kg, key) => ({
+    adjust: true, dir: 'down', newKg: kg,
+    ...(newReps !== undefined ? { newReps } : {}),
+    msg: t(`workout.adjust.${key}`, { kg }),
+  });
   const HOLD = { adjust: false };
   if (lastRPE <= 6.5) return HOLD; // found the lower load EASY → keep the rec
 
@@ -141,7 +156,7 @@ export function manualOverrideDownTarget(
  * @returns {({adjust:boolean, dir?:string, newKg?:number, msg?:string})|null}
  */
 export function manualOverrideTarget(
-  { wasManualOverride, haveRec, loggedKg, loggedReps, recKg, recReps, lastRPE, ex },
+  { wasManualOverride, haveRec, loggedKg, loggedReps, recKg, recReps, lastRPE, ex, followOneStep = false },
   { getPrevWeight, getNextWeight, roundToStep, e1RMForSet, t },
 ) {
   if (wasManualOverride !== true || !haveRec) return null;
@@ -151,7 +166,7 @@ export function manualOverrideTarget(
 
   // LOWER override → the existing DOWN anchor (unchanged semantics).
   const down = manualOverrideDownTarget(
-    { wasManualOverride, haveRec, loggedKg, recKg, lastRPE, ex },
+    { wasManualOverride, haveRec, loggedKg, recKg, lastRPE, ex, followOneStep, loggedReps, recReps },
     { getPrevWeight, roundToStep, t },
   );
   if (down) return down;

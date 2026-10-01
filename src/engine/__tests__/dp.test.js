@@ -312,13 +312,23 @@ describe('DP.checkInSessionAdjust — F1 manual-override DOWN (real Daniel value
     expect(r.adjust).toBe(false);
   });
 
-  it('a small deviation (one step under rec) does NOT trip the anchor — needs > one step', () => {
+  it('a small deviation (one step under rec) does NOT trip the anchor — needs > one step (legacy, flag OFF)', () => {
     // Entered 27.5 = exactly one dumbbell step below rec 30 → not "more than one step";
     // override-down stays inert (potrivit early set → hold).
+    localStorage.setItem('_devFlags', JSON.stringify({ ...JSON.parse(localStorage.getItem('_devFlags') || '{}'), dp_insession_follow_user_v1: false }));
     const r = DP.checkInSessionAdjust('Seated DB Press', [7.5], [6], {
       recKg: 30, recReps: 6, loggedKg: 27.5, wasManualOverride: true, setIdx: 1,
     });
     expect(r.adjust).toBe(false);
+  });
+
+  it('dp_insession_follow_user_v1 ON: one step under rec IS his choice → next set anchors at 27.5', () => {
+    // Founder live 2026-10-01: one pin lower (Cable Row 73 → 66) every set, rec never moved.
+    localStorage.setItem('_devFlags', JSON.stringify({ ...JSON.parse(localStorage.getItem('_devFlags') || '{}'), dp_insession_follow_user_v1: true }));
+    const r = DP.checkInSessionAdjust('Seated DB Press', [7.5], [6], {
+      recKg: 30, recReps: 6, loggedKg: 27.5, wasManualOverride: true, setIdx: 1,
+    });
+    expect(r).toMatchObject({ adjust: true, dir: 'down', newKg: 27.5 });
   });
 
   it('UP channel is unchanged: easy at a HIGHER entered load still ramps up (Face Pull 9→up)', () => {

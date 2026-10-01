@@ -556,6 +556,15 @@ export const FLAGS = Object.freeze({
   // got its load cut to the corridor ceiling. ON: forta also needs an absolute low
   // band (goal low <= 6). Pinned OFF in fp + calibration sims.
   dp_corridor_forta_only_v1: { rollout: 1, default: true },
+  // dp_insession_follow_user_v1 (2026-10-01, founder "nu tine cont de cat bag eu" +
+  // "daca prima oara fac 10... dupa pot 10 ori mai putine, nu tot 10 mereu") — two
+  // in-session deafnesses: a ONE-pin-lower entry (73 → 66, 59 → 52 — ~10% on his
+  // stacks) sat inside the override noise band, so the next set re-showed 73; and a
+  // potrivit set short on reps held the rep target (or trimmed one). ON: one step
+  // down anchors the next set at his load (reps follow if he fell short), and a short
+  // potrivit set sets the next target to the reps he did. In-session only (not on
+  // the compose path) → no sim pin needed.
+  dp_insession_follow_user_v1: { rollout: 1, default: true },
   // dp_cap_yields_to_repeated_v1 (2026-10-01, founder "reverse pec deck cu o greutate
   // pe care nu o are aparatul, si mereu o schimb") — MAX_KG Reverse Pec Deck = 45 (set
   // at the old gym) while he works at 50 every session → "over the cap" every time:
