@@ -20,6 +20,7 @@
 // review before dp_ceiling_v1 flips ON. Pure functions — no side effects, no DB.
 
 import { getExerciseMetadata } from '../exerciseLibrary.js';
+import { isEnabled } from '../../util/featureFlags.js';
 
 // Elite e1RM as a multiple of bodyweight, per movement pattern (reference adv male).
 // Deliberately generous (elite tier) so the ceiling clips ONLY physically-absurd
@@ -124,6 +125,29 @@ export function isTransferCompatible(targetPattern, srcPattern) {
   if (targetPattern === srcPattern) return true;
   const tf = MOVEMENT_FAMILY[targetPattern];
   return !!tf && tf === MOVEMENT_FAMILY[srcPattern];
+}
+
+// 'generic' is classifyPattern's catch-all for "no known pattern", not a movement:
+// two unrelated lifts landing there matched as "the same pattern" (founder replay
+// 2026-10-01: Machine Pullover seeded at 70 kg off his BB Shrug, 45° Hyperextension
+// at 73 off the same Shrug). dp_transfer_generic_wall_v1: generic-to-generic seeds
+// only between variants of one movement (same last name word: BB Shrug ↔ DB Shrug,
+// Machine ↔ Cable Pullover).
+/** @param {string} n @returns {string} */
+const movementRoot = (n) => String(n).toLowerCase().replace(/[^a-z ]/g, ' ').trim().split(/s+/).pop() ?? '';
+
+/**
+ * Whether lift `src` may seed lift `target`'s cold-start load (classifies both). PURE
+ * apart from the flag read.
+ * @param {string} target @param {string} src @returns {boolean}
+ */
+export function transferCompatibleLifts(target, src) {
+  const tp = classifyPattern(target);
+  const sp = classifyPattern(src);
+  if (tp === 'generic' && sp === 'generic' && isEnabled('dp_transfer_generic_wall_v1')) {
+    return movementRoot(target) === movementRoot(src);
+  }
+  return isTransferCompatible(tp, sp);
 }
 
 /**

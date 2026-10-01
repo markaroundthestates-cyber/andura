@@ -11,6 +11,7 @@ import {
   classifyPattern,
   classifyPlateau,
   isTransferCompatible,
+  transferCompatibleLifts,
   AGE_FRACTION_FLOOR,
   AGE_FRACTION_CEIL,
 } from '../dp/ceiling.js';
@@ -69,6 +70,24 @@ describe('classifyPattern', () => {
     // mtp is NOT 'piept' for these → the chest-press guard does not fire.
     expect(classifyPattern('Cable Triceps Pushdown Straight Bar')).toBe('tricep');
     expect(classifyPattern('Cable OH Triceps Rope')).toBe('tricep');
+  });
+});
+
+// Founder replay 2026-10-01: Machine Pullover seeded at 70 kg off his BB Shrug —
+// both sit in classifyPattern's catch-all 'generic', which matched as 'same pattern'.
+describe('transferCompatibleLifts — generic is not a movement (dp_transfer_generic_wall_v1)', () => {
+  it('two unrelated generic lifts do not seed each other', () => {
+    expect(classifyPattern('Machine Pullover')).toBe('generic');
+    expect(classifyPattern('BB Shrug')).toBe('generic');
+    expect(transferCompatibleLifts('Machine Pullover', 'BB Shrug')).toBe(false);
+  });
+
+  it('variants of one generic movement still do', () => {
+    expect(transferCompatibleLifts('DB Shrug', 'BB Shrug')).toBe(true);
+  });
+
+  it('familied patterns keep the family rule', () => {
+    expect(transferCompatibleLifts('Cable Row', 'Lat Pulldown')).toBe(true);
   });
 });
 

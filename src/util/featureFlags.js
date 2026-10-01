@@ -548,6 +548,11 @@ export const FLAGS = Object.freeze({
   // from below; the nudge applies once to the target; pre-fix constants (no v:2) are read
   // as the prior until re-learned. Pinned OFF in fp + calibration sims.
   dp_recovery_recent_baseline_v1: { rollout: 1, default: true },
+  // dp_transfer_generic_wall_v1 (2026-10-01) — the cold-start transfer treated two lifts in
+  // classifyPattern's catch-all 'generic' bucket as the same movement: founder replay seeded
+  // Machine Pullover at 70 kg (Pull day) off his BB Shrug. ON: generic-to-generic only
+  // between variants of one movement (same last name word). Pinned OFF in fp + sims.
+  dp_transfer_generic_wall_v1: { rollout: 1, default: true },
   // dp_user_time_budget_extends_v1 (2026-08-28, founder "degeaba ma intreaba andura
   // cat timp am pt antrenamentul de azi... ca tot imi da sub 60 min") — the stated
   // budget could only SHRINK the persona ceiling (min(persona, user)), so any answer

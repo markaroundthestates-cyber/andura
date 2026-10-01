@@ -25,7 +25,7 @@ import {
   advanceExperiment as advanceNof1Experiment,
   NOF1_ARMS,
 } from './dp/nof1.js';
-import { ceilingE1RM, gainDecay, deficitClimbFactor, tendonLoadRateCap, classifyPattern, isTransferCompatible } from './dp/ceiling.js';
+import { ceilingE1RM, gainDecay, deficitClimbFactor, tendonLoadRateCap, classifyPattern, transferCompatibleLifts } from './dp/ceiling.js';
 import { populationPriorE1RM } from './dp/populationPrior.js';
 import { sanityCheckSet, logOutlier } from './dp/anomalyGuard.js';
 import { quarantineSet, isQuarantined } from './dp/logQuarantine.js';
@@ -1170,12 +1170,11 @@ export const DP = {
     if (!this._e1rmEligible(ex)) return null;
     const rt = repTarget ?? 10;
     const sources = getTransferSources(ex, getExerciseMetadata, this._loggedExerciseNames());
-    // Movement-family guard (gym-log 2026-06-12 — isTransferCompatible in dp/ceiling.js):
+    // Movement-family guard (gym-log 2026-06-12 — transferCompatibleLifts in dp/ceiling.js):
     // skip a same-muscle wrong-MOVEMENT source (rear-delt fly → Smith OHP, cable fly →
     // chest press) so its meaningless cross-movement e1RM cannot seed the load.
-    const targetPattern = classifyPattern(ex);
     for (const src of sources) {
-      if (!isTransferCompatible(targetPattern, classifyPattern(src))) continue;
+      if (!transferCompatibleLifts(ex, src)) continue;
       const srcE1RM = this._bestE1RM(src, rt);
       if (srcE1RM <= 0) continue;
       // #11 equipment_type accessor (unit-aware cross-equipment) + #12 classifyPattern
